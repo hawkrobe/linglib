@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.50] - 2026-03-09
+
+### Added
+- **GumbelLuce.lean §7**: Close `gumbelMaxProb_is_mcfaddenIntegral` sorry — full FTC proof that the Gumbel max-probability integral equals McFadden's softmax formula. Uses antiderivative `G(x) = (C/S) · exp(-S · exp(-x/β))` with `integral_of_hasDerivAt_of_tendsto`. 0 sorrys remain in GumbelLuce.lean
+
 ## [0.229.49] - 2026-03-09
 
 ### Changed

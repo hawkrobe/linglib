@@ -1,5 +1,7 @@
 import Linglib.Core.Agent.RationalAction
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Gumbel-Luce Equivalence (McFadden's Theorem) @cite{mcfadden-1974}
@@ -55,7 +57,7 @@ set_option autoImplicit false
 
 namespace Core
 
-open Real MeasureTheory Set BigOperators Finset
+open Real MeasureTheory Set BigOperators Finset Filter
 
 -- ============================================================================
 -- §1. Gumbel Distribution
@@ -224,7 +226,162 @@ theorem RationalAction.fromGumbelRUM_policy {ι : Type*} [Fintype ι] [Nonempty 
   · congr 1; ext j; congr 1; ring
 
 -- ============================================================================
--- §7. Measure-Theoretic Connection
+-- §7. Measure-Theoretic Connection (FTC helpers)
+-- ============================================================================
+
+-- F(x) = exp(-S * exp(-x/β)), G(x) = C/S * F(x)
+private noncomputable abbrev gumbelMaxProb_gF (S β x : ℝ) : ℝ := exp (-S * exp (-x / β))
+private noncomputable abbrev gumbelMaxProb_gG (C S β x : ℝ) : ℝ :=
+  C / S * gumbelMaxProb_gF S β x
+
+private lemma gumbelMaxProb_hasDerivAt_exp_neg_div {β : ℝ} (x : ℝ) :
+    HasDerivAt (fun x => exp (-x / β)) (exp (-x / β) * (-1 / β)) x := by
+  have h := hasDerivAt_id x |>.neg.div_const β
+  exact (Real.hasDerivAt_exp _).comp x (h.congr_deriv (by simp [neg_div]))
+
+private lemma gumbelMaxProb_hasDerivAt_gF (S β x : ℝ) :
+    HasDerivAt (gumbelMaxProb_gF S β)
+      (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))) x :=
+  ((gumbelMaxProb_hasDerivAt_exp_neg_div (β := β) x).const_mul (-S)).exp
+
+private lemma gumbelMaxProb_hasDerivAt_gG (C S β x : ℝ) :
+    HasDerivAt (gumbelMaxProb_gG C S β)
+      (C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β))))) x :=
+  (gumbelMaxProb_hasDerivAt_gF S β x).const_mul (C / S)
+
+private lemma gumbelMaxProb_tendsto_gF_one {β : ℝ} (hβ : 0 < β) (S : ℝ) :
+    Tendsto (gumbelMaxProb_gF S β) atTop (nhds 1) := by
+  show Tendsto (fun x => exp (-S * exp (-x / β))) atTop (nhds 1)
+  rw [show (1 : ℝ) = exp 0 from exp_zero.symm]
+  exact (continuous_exp.tendsto 0).comp (by
+    rw [show (0 : ℝ) = -S * 0 from by ring]
+    exact (tendsto_exp_atBot.comp
+      (tendsto_neg_atTop_atBot.atBot_div_const hβ)).const_mul (-S))
+
+private lemma gumbelMaxProb_tendsto_gF_zero {S β : ℝ} (hS : 0 < S) (hβ : 0 < β) :
+    Tendsto (gumbelMaxProb_gF S β) atBot (nhds 0) := by
+  show Tendsto (fun x => exp (-S * exp (-x / β))) atBot (nhds 0)
+  exact tendsto_exp_atBot.comp
+    ((tendsto_exp_atTop.comp
+      (tendsto_neg_atBot_atTop.atTop_div_const hβ)).const_mul_atTop_of_neg
+      (neg_lt_zero.mpr hS))
+
+private lemma gumbelMaxProb_tendsto_gG_top (C : ℝ) {S β : ℝ} (hβ : 0 < β) :
+    Tendsto (gumbelMaxProb_gG C S β) atTop (nhds (C / S)) := by
+  show Tendsto (fun x => C / S * gumbelMaxProb_gF S β x) atTop (nhds (C / S))
+  simpa using (gumbelMaxProb_tendsto_gF_one hβ S).const_mul (C / S)
+
+private lemma gumbelMaxProb_tendsto_gG_bot (C : ℝ) {S β : ℝ} (hS : 0 < S) (hβ : 0 < β) :
+    Tendsto (gumbelMaxProb_gG C S β) atBot (nhds 0) := by
+  show Tendsto (fun x => C / S * gumbelMaxProb_gF S β x) atBot (nhds 0)
+  simpa using (gumbelMaxProb_tendsto_gF_zero hS hβ).const_mul (C / S)
+
+private lemma gumbelMaxProb_gG_deriv_nonneg {C S β : ℝ}
+    (hC : 0 ≤ C) (hS : 0 < S) (_hβ : 0 < β) (x : ℝ) :
+    0 ≤ C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))) := by
+  show 0 ≤ C / S * (exp (-S * exp (-x / β)) * (-S * (exp (-x / β) * (-1 / β))))
+  have : C / S * (exp (-S * exp (-x / β)) * (-S * (exp (-x / β) * (-1 / β)))) =
+      C / (S * β) * (exp (-S * exp (-x / β)) * (S * exp (-x / β))) := by field_simp
+  rw [this]; exact mul_nonneg (div_nonneg hC (by positivity))
+    (mul_nonneg (le_of_lt (exp_pos _)) (by positivity))
+
+private lemma gumbelMaxProb_integrableOn_Ioi {C S β : ℝ}
+    (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) :
+    IntegrableOn
+      (fun x => C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))))
+      (Set.Ioi 0) :=
+  integrableOn_Ioi_deriv_of_nonneg'
+    (fun x _ => gumbelMaxProb_hasDerivAt_gG C S β x)
+    (fun x _ => gumbelMaxProb_gG_deriv_nonneg hC hS hβ x)
+    (gumbelMaxProb_tendsto_gG_top C hβ)
+
+private lemma gumbelMaxProb_integrableOn_Iic {C S β : ℝ}
+    (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) :
+    IntegrableOn
+      (fun x => C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))))
+      (Set.Iic 0) := by
+  set f := fun x => C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β))))
+  have hcont : Continuous f := by
+    show Continuous fun x =>
+      C / S * (exp (-S * exp (-x / β)) * (-S * (exp (-x / β) * (-1 / β))))
+    fun_prop
+  have hfi : ∀ c : ℝ, IntegrableOn f (Set.Ioc c 0) := fun c => hcont.integrableOn_Ioc
+  have hint : ∀ c : ℝ, IntervalIntegrable f volume c 0 := fun c => hcont.intervalIntegrable c 0
+  have hftc : ∀ c ≤ (0 : ℝ), ∫ x in c..0, f x =
+      gumbelMaxProb_gG C S β 0 - gumbelMaxProb_gG C S β c := by
+    intro c hc
+    exact intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hc
+      (fun x _ => (gumbelMaxProb_hasDerivAt_gG C S β x).continuousAt.continuousWithinAt)
+      (fun x _ => gumbelMaxProb_hasDerivAt_gG C S β x) (hint c)
+  have hnorm_eq : ∀ c ≤ (0 : ℝ), ∫ x in c..0, ‖f x‖ = ∫ x in c..0, f x := by
+    intro c hc; congr 1; ext x
+    exact norm_of_nonneg (gumbelMaxProb_gG_deriv_nonneg hC hS hβ x)
+  refine integrableOn_Iic_of_intervalIntegral_norm_tendsto
+    (gumbelMaxProb_gG C S β 0) 0 hfi tendsto_id ?_
+  have hlim : Tendsto (fun c => gumbelMaxProb_gG C S β 0 - gumbelMaxProb_gG C S β c)
+      atBot (nhds (gumbelMaxProb_gG C S β 0)) := by
+    have h : Tendsto (fun c => gumbelMaxProb_gG C S β 0 - gumbelMaxProb_gG C S β c)
+        atBot (nhds (gumbelMaxProb_gG C S β 0 - 0)) :=
+      tendsto_const_nhds.sub (gumbelMaxProb_tendsto_gG_bot C hS hβ)
+    rwa [sub_zero] at h
+  exact hlim.congr' (by
+    filter_upwards [Filter.Iic_mem_atBot (0 : ℝ)] with c (hc : c ≤ 0)
+    rw [hnorm_eq c hc, hftc c hc])
+
+private lemma gumbelMaxProb_integrable_gG_deriv {C S β : ℝ}
+    (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) :
+    Integrable
+      (fun x => C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β))))) := by
+  rw [← integrableOn_univ, show (Set.univ : Set ℝ) = Set.Iic 0 ∪ Set.Ioi 0
+    from (Set.Iic_union_Ioi).symm]
+  exact IntegrableOn.union
+    (gumbelMaxProb_integrableOn_Iic hC hS hβ)
+    (gumbelMaxProb_integrableOn_Ioi hC hS hβ)
+
+private theorem gumbelMaxProb_gG_integral {C S β : ℝ}
+    (hC : 0 ≤ C) (hS : 0 < S) (hβ : 0 < β) :
+    ∫ x : ℝ, C / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β)))) =
+    C / S := by
+  have := integral_of_hasDerivAt_of_tendsto
+    (fun x => gumbelMaxProb_hasDerivAt_gG C S β x)
+    (gumbelMaxProb_integrable_gG_deriv hC hS hβ)
+    (gumbelMaxProb_tendsto_gG_bot C hS hβ)
+    (gumbelMaxProb_tendsto_gG_top C hβ)
+  linarith
+
+private lemma gumbelMaxProb_integrand_eq {n : ℕ}
+    (u : Fin n → ℝ) (β : ℝ) (hβ : 0 < β) (i : Fin n) (x : ℝ) :
+    gumbelPDF β (x - u i) * ∏ j ∈ univ.erase i, gumbelCDF β (x - u j) =
+    exp (u i / β) / (∑ j : Fin n, exp (u j / β)) *
+      (gumbelMaxProb_gF (∑ j : Fin n, exp (u j / β)) β x *
+       (-(∑ j : Fin n, exp (u j / β)) * (exp (-x / β) * (-1 / β)))) := by
+  simp only [gumbelPDF, gumbelCDF]
+  set S := ∑ j : Fin n, exp (u j / β)
+  have hS_ne : S ≠ 0 := ne_of_gt (Finset.sum_pos (fun j _ => exp_pos _) ⟨i, mem_univ _⟩)
+  have hβ_ne : β ≠ 0 := ne_of_gt hβ
+  have h_prod : exp (-exp (-(x - u i) / β)) *
+      ∏ j ∈ univ.erase i, exp (-exp (-(x - u j) / β)) =
+      gumbelMaxProb_gF S β x := by
+    rw [Finset.mul_prod_erase univ (fun j => exp (-exp (-(x - u j) / β))) (mem_univ i)]
+    rw [← exp_sum]
+    show exp (∑ j : Fin n, -exp (-(x - u j) / β)) = exp (-S * exp (-x / β))
+    congr 1
+    simp_rw [show ∀ j : Fin n, -(x - u j) / β = u j / β + (-x / β) from fun j => by ring,
+             exp_add]
+    rw [Finset.sum_neg_distrib, ← Finset.sum_mul]
+    ring
+  have h_exp : exp (-(x - u i) / β) = exp (u i / β) * exp (-x / β) := by
+    rw [show -(x - u i) / β = u i / β + (-x / β) from by ring, exp_add]
+  rw [show (1 / β * exp (-(x - u i) / β) * exp (-exp (-(x - u i) / β))) *
+      ∏ j ∈ univ.erase i, exp (-exp (-(x - u j) / β)) =
+      1 / β * exp (-(x - u i) / β) *
+      (exp (-exp (-(x - u i) / β)) * ∏ j ∈ univ.erase i, exp (-exp (-(x - u j) / β)))
+      from by ring]
+  rw [h_prod, h_exp]
+  show 1 / β * (exp (u i / β) * exp (-x / β)) * gumbelMaxProb_gF S β x =
+    exp (u i / β) / S * (gumbelMaxProb_gF S β x * (-S * (exp (-x / β) * (-1 / β))))
+  field_simp
+
 -- ============================================================================
 
 /-- **Gumbel RUM = McFadden Integral** — the measure-theoretic content
@@ -242,14 +399,21 @@ theorem RationalAction.fromGumbelRUM_policy {ι : Type*} [Fintype ι] [Nonempty 
     2. Substituting in eq. (3) and integrating yields eq. (12):
        `P_i = e^{V_i} / Σⱼ e^{V_j}`
 
-    TODO: Full proof requires the change-of-variables `t = exp(-x/β)` via
-    `MeasureTheory.integral_comp_mul_deriv_Ioi`. -/
+    The proof uses the antiderivative `G(x) = (C/S) · exp(-S · exp(-x/β))` where
+    `C = exp(uᵢ/β)` and `S = Σⱼ exp(uⱼ/β)`. By FTC on ℝ
+    (`integral_of_hasDerivAt_of_tendsto`), `∫ G' = C/S = mcfaddenIntegral`. -/
 theorem gumbelMaxProb_is_mcfaddenIntegral
-    {n : ℕ} (u : Fin n → ℝ) (β : ℝ) (_hβ : 0 < β) (i : Fin n) :
+    {n : ℕ} (u : Fin n → ℝ) (β : ℝ) (hβ : 0 < β) (i : Fin n) :
     (∫ x : ℝ, gumbelPDF β (x - u i) *
       ∏ j ∈ univ.erase i, gumbelCDF β (x - u j))
     = mcfaddenIntegral u β i := by
-  sorry -- TODO: change of variables t = exp(-x/β)
+  have hS : 0 < ∑ j : Fin n, exp (u j / β) :=
+    Finset.sum_pos (fun j _ => exp_pos _) ⟨i, mem_univ _⟩
+  simp_rw [gumbelMaxProb_integrand_eq u β hβ i]
+  rw [gumbelMaxProb_gG_integral (le_of_lt (exp_pos _)) hS hβ]
+  simp only [mcfaddenIntegral]
+  rw [integral_exp_neg_mul_Ioi_zero hS]
+  ring
 
 -- ============================================================================
 -- §8. Uniqueness: Gumbel is the Only Distribution Giving Softmax
