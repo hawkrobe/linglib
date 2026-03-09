@@ -860,7 +860,6 @@ import Linglib.Phenomena.Questions.ScopeReadings
 import Linglib.Phenomena.Questions.SlavicPQStrategies
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.WhComplement
-import Linglib.Phenomena.Questions.Compare
 import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
@@ -1451,7 +1450,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard2025
-import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
 -- Nouwen2024RSA merged into Nouwen2024
 
@@ -1463,9 +1461,6 @@ import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
-import Linglib.Theories.Pragmatics.RSA.Questions.Basic
-import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
-import Linglib.Theories.Pragmatics.RSA.Questions.ResponseSelection
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Attitudes
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic

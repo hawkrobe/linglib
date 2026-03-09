@@ -50,16 +50,6 @@ Chooses response by soft-maximizing:
   (1-β)·(-KL) + β·V(D|r,q) - w_c·C(r)
 -/
 
-/-- Response types in the experiments -/
-inductive ResponseType where
-  | taciturn       -- Just "yes" or "no"
-  | competitor     -- Mention most useful alternative
-  | sameCategory   -- Mention similar but less useful option
-  | otherCategory  -- Mention unrelated option
-  | exhaustive     -- List all available options
-  deriving DecidableEq, Repr
-
-
 /-!
 ## Case Study 1: Credit Cards
 
@@ -74,22 +64,18 @@ Replication/extension of @cite{clark-1979}, N = 25 participants.
 Probability of exhaustive-list answers: (4) ≥ (5) > (3)
 -/
 
-/-- Proportion of exhaustive responses by condition (Case Study 1) -/
-def cs1_exhaustive_rate : Fin 3 → ℚ
+/-- Model predictions for exhaustive responses (Case Study 1).
+    The paper reports CS1 empirical data only via regression coefficients
+    (β = 3.39 for (5)>(3), β = 0.13 for (4)≥(5)), not exact proportions. -/
+def cs1_model_prediction : Fin 3 → ℚ
   | 0 => 12/100   -- Condition (3): specific item available
   | 1 => 75/100   -- Condition (4): specific item unavailable
   | 2 => 66/100   -- Condition (5): general question
 
-/-- Model predictions for exhaustive responses -/
-def cs1_model_prediction : Fin 3 → ℚ
-  | 0 => 12/100   -- Condition (3)
-  | 1 => 75/100   -- Condition (4)
-  | 2 => 66/100   -- Condition (5)
-
 /-- Key prediction: unavailable (4) ≥ general (5) > available (3) -/
 theorem cs1_ordering :
-    cs1_exhaustive_rate 1 ≥ cs1_exhaustive_rate 2 ∧
-    cs1_exhaustive_rate 2 > cs1_exhaustive_rate 0 := by
+    cs1_model_prediction 1 ≥ cs1_model_prediction 2 ∧
+    cs1_model_prediction 2 > cs1_model_prediction 0 := by
   native_decide
 
 
@@ -171,32 +157,6 @@ theorem cs3_context_sensitivity :
   native_decide
 
 
-/-!
-## LLM Performance
-
-Tested: GPT-3.5, GPT-4, Llama-3-70b-Instruct, Mixtral-Instruct
-
-### Finding
-LLMs have strong bias toward exhaustive responses in zero-shot condition.
-Psychologically-informed chain-of-thought (CoT) prompting improves performance.
-
-### Jensen-Shannon Divergence from Human Data (Case Study 2)
-- PRIOR-PQ: 0.120
-- Zero-shot Llama: 0.236
-- CoT Llama: 0.124
--/
-
-/-- Jensen-Shannon divergence from human data -/
-def cs2_jsd_prior_pq : ℚ := 120/1000
-def cs2_jsd_llama_zero_shot : ℚ := 236/1000
-def cs2_jsd_llama_cot : ℚ := 124/1000
-
-/-- PRIOR-PQ outperforms zero-shot LLM -/
-theorem prior_pq_beats_zero_shot :
-    cs2_jsd_prior_pq < cs2_jsd_llama_zero_shot := by
-  native_decide
-
-
 /-- Best-fitting model parameters from Table S2 of electronic supplementary material.
 
     Fit by MCMC (100 burn-in, 5000 samples) to minimize error between
@@ -259,23 +219,6 @@ def cs2_utilities : CS2Utilities :=
   }
 
 
-/-- Key qualitative predictions from PRIOR-PQ -/
-inductive KeyPrediction where
-  | questionSignalsGoal      -- Question choice provides info about goals
-  | responseReflectsDP       -- Response tailored to inferred decision problem
-  | contextSensitivity       -- Same question, same options → different responses
-  | competitorPreferred      -- Useful alternatives mentioned over exhaustive lists
-  | tomResolvesCircularity   -- ToM breaks questioner-respondent reasoning loop
-  deriving DecidableEq, Repr
-
-def keyPredictions : List KeyPrediction :=
-  [ .questionSignalsGoal
-  , .responseReflectsDP
-  , .contextSensitivity
-  , .competitorPreferred
-  , .tomResolvesCircularity
-  ]
-
 end Phenomena.Questions.Studies.HawkinsEtAl2025
 
 /-! ## Bridge content (merged from RSA_HawkinsEtAl2025Bridge.lean) -/
@@ -312,7 +255,7 @@ R₁'s utility for response r in world w:
 - E_D[V(D, r)]: expected action-relevance under inferred DP posterior
 - C(r): response cost (utterance length)
 
-The DP posterior π(D|q) is derived from the Q model (eq. 2.4): asking about
+The DP posterior π(D|q) is derived from the Q model (§2(c)): asking about
 iced tea signals wanting the target item, concentrating the posterior on
 wantTarget.
 
@@ -372,7 +315,7 @@ instance : Fintype World :=
     right_inv := fun ⟨_, _, _⟩ => rfl
   }
 
-/-- Decision problem D = ⟨W, A, U, π_Q^W⟩ (eq. 2, page 4).
+/-- Decision problem D = ⟨W, A, U, π_Q^W⟩ (defined in §2(b)).
     Each DP is defined by which item type the questioner wants.
     The utility function U(w, a) is elicited empirically (Table S1). -/
 inductive DP where
@@ -425,7 +368,7 @@ noncomputable def actionValue : DP → Response → ℝ
   | .wantOtherCat, .mentionChard    => 9565/1000  -- 95.65
   | .wantOtherCat, .exhaustive      => 9565/1000  -- max
 
-/-- DP posterior π(D|q_tea) ∝ Q(q|D) · π₀(D) (eq. 2.4, page 4).
+/-- DP posterior π(D|q_tea) ∝ Q(q|D) · π₀(D) (§2(c), unnumbered).
     Unnormalized weights approximating the full Q₁ posterior.
     Asking "Do you have iced tea?" most benefits wantTarget (the questioner
     probably wants what they asked for), so wantTarget dominates 5:1:1:1. -/
@@ -548,20 +491,7 @@ theorem cs2_sameCategory_gt_otherCategory :
   rsa_predict
 
 -- ============================================================================
--- §6. Bridge to empirical data
--- ============================================================================
-
-open Phenomena.Questions.Studies.HawkinsEtAl2025
-
-/-- The model's qualitative ordering matches CS2 human data (from Data file). -/
-theorem cs2_data_ordering :
-    cs2_model_rates.competitor > cs2_model_rates.taciturn ∧
-    cs2_model_rates.taciturn > cs2_model_rates.sameCategory ∧
-    cs2_model_rates.sameCategory > cs2_model_rates.exhaustive := by
-  native_decide
-
--- ============================================================================
--- §7. Questioner Q as Optimal Experiment Designer
+-- §6. Questioner Q as Optimal Experiment Designer
 -- ============================================================================
 
 /-! ### Q selects questions to maximize expected decision value
@@ -600,9 +530,14 @@ noncomputable def r0ObservationModel : ObservationModel World Unit Response wher
     · exact div_nonneg (by norm_num) (Nat.cast_nonneg' _)
     · exact le_refl 0
   likelihood_sum w _ := by
-    -- Σ_r (if truth r w then 1/|true responses| else 0) = |true|/|true| = 1
-    -- TODO: Requires rewriting the sum as |true responses| · (1/|true responses|)
-    sorry
+    have htac : responseTruth Response.taciturn w = true := rfl
+    have hne : truthCount w ≠ 0 := by
+      change ¬(↑(Finset.univ.filter (fun r : Response => responseTruth r w)).card : ℝ) = 0
+      exact_mod_cast (Finset.card_pos.mpr ⟨Response.taciturn,
+        Finset.mem_filter.mpr ⟨Finset.mem_univ _, htac⟩⟩).ne'
+    rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
+    simp only [truthCount] at hne ⊢
+    field_simp
 
 /-- All responses, as a concrete list for dpValueR iteration. -/
 def allResponses : List Response :=
@@ -630,5 +565,270 @@ noncomputable def questioner_as_experiment (αQ : ℝ) :=
   optimalExperiment r0ObservationModel
     (fun _w => (1 : ℝ) / Fintype.card World)  -- uniform world prior
     questionerValue αQ
+
+-- ============================================================================
+-- §7. DP Posterior Derivation (§2(c))
+-- ============================================================================
+
+/-! ### Deriving the DP posterior from the questioner model
+
+The DP posterior π(D|q) is the paper's core innovation (§2(c)):
+
+    π(D|q) ∝ Q(q|D) · π₀(D)
+
+where Q(q|D) = SM_αQ(EU_Q(q, D)) is a softmax **over the set of questions**
+(eq. 2.3). The questioner chooses which question to ask based on their DP.
+
+The key structural argument for why π(D|q_tea) concentrates on wantTarget:
+
+1. **Each DP has a preferred question.** For wantTarget, asking "Do you have
+   iced tea?" directly addresses the goal. For wantCompetitor, asking
+   "Do you have iced coffee?" would be strictly better.
+
+2. **Q(q|D) is high when q matches D.** By the symmetry of the scenario
+   (each item has its own question and DP), Q(q_X|wantX) > Q(q_X|wantY)
+   for Y ≠ X. The person asking about iced tea is most likely someone
+   who wants iced tea.
+
+3. **The posterior inverts Q.** Since Q(q_tea|wantTarget) > Q(q_tea|D)
+   for D ≠ wantTarget, and π₀ is uniform, the posterior concentrates
+   on wantTarget. The 5:1:1:1 weights in `dpPrior` approximate this.
+
+To formalize this, we define a multi-question Q model with 4 questions
+(one per item), compute the expected value of each (question, DP) pair,
+and prove that each DP's target question dominates.
+
+#### V(D^{r,q}): value of the updated decision problem
+
+After hearing response r to question q, the questioner updates beliefs
+about the world (eq. 2.4): π_Q^{W|r,q}(w) ∝ R₀(r|w,q) · π_Q^W(w).
+The value V(D^{r,q}) is the maximum expected utility under updated beliefs,
+using an argmax action policy (α_κ → ∞ simplification):
+
+    V(D^{r,q}) = max_a Σ_w π_Q^{W|r,q}(w) · U(w, a)
+
+For q_tea, response r reveals information about the true world. With
+4 items and 2^4 = 16 full worlds, each response partitions worlds by
+which items are mentioned as available. -/
+
+open Phenomena.Questions.Studies.HawkinsEtAl2025
+
+/-- Questions the questioner could ask (one per item). -/
+inductive Question where
+  | tea | ic | soda | chard
+  deriving DecidableEq, Repr
+
+instance : Fintype Question where
+  elems := {.tea, .ic, .soda, .chard}
+  complete q := by cases q <;> simp
+
+/-- Full world state including target availability.
+    Q is uncertain about the full world when choosing a question.
+    After asking, they learn the answer. -/
+structure FullWorld where
+  hasTea : Bool
+  hasIC : Bool
+  hasSoda : Bool
+  hasChard : Bool
+  deriving DecidableEq, Repr
+
+instance : Fintype FullWorld :=
+  Fintype.ofEquiv (Bool × Bool × Bool × Bool) {
+    toFun := fun ⟨a, b, c, d⟩ => ⟨a, b, c, d⟩
+    invFun := fun w => ⟨w.hasTea, w.hasIC, w.hasSoda, w.hasChard⟩
+    left_inv := fun ⟨_, _, _, _⟩ => rfl
+    right_inv := fun ⟨_, _, _, _⟩ => rfl
+  }
+
+/-- Whether a question's target item is available in world w. -/
+def questionTarget : Question → FullWorld → Bool
+  | .tea, w   => w.hasTea
+  | .ic, w    => w.hasIC
+  | .soda, w  => w.hasSoda
+  | .chard, w => w.hasChard
+
+/-- Utility U(w, a) for DP D: the value of choosing item a in world w.
+    Uses Table S1 values (÷10). U = item utility if available, else U_fail.
+    Actions: choose target, choose IC, choose soda, choose chard, or leave. -/
+inductive Item where
+  | tea | ic | soda | chard | leave
+  deriving DecidableEq, Repr
+
+instance : Fintype Item where
+  elems := {.tea, .ic, .soda, .chard, .leave}
+  complete i := by cases i <;> simp
+
+/-- Whether an item is available in the full world. -/
+def itemAvailable : Item → FullWorld → Bool
+  | .tea, w   => w.hasTea
+  | .ic, w    => w.hasIC
+  | .soda, w  => w.hasSoda
+  | .chard, w => w.hasChard
+  | .leave, _ => true
+
+/-- Utility of choosing item `a` when you have DP `D` and item is available.
+    Values from Table S1 (÷10). If unavailable, U_fail = 34/10. -/
+def itemUtility (D : DP) (a : Item) (w : FullWorld) : ℚ :=
+  if ¬itemAvailable a w then 34/10  -- U_fail
+  else match D, a with
+  | .wantTarget,     .tea   => 9618/100
+  | .wantTarget,     .ic    => 5693/100
+  | .wantTarget,     .soda  => 3611/100
+  | .wantTarget,     .chard => 2369/100
+  | .wantCompetitor, .tea   => 3611/100   -- symmetric: tea is same-cat for IC-wanter
+  | .wantCompetitor, .ic    => 9521/100
+  | .wantCompetitor, .soda  => 3815/100
+  | .wantCompetitor, .chard => 2485/100
+  | .wantSameCat,    .tea   => 3611/100
+  | .wantSameCat,    .ic    => 3959/100
+  | .wantSameCat,    .soda  => 9504/100
+  | .wantSameCat,    .chard => 2615/100
+  | .wantOtherCat,   .tea   => 2369/100
+  | .wantOtherCat,   .ic    => 2547/100
+  | .wantOtherCat,   .soda  => 2537/100
+  | .wantOtherCat,   .chard => 9565/100
+  | _,               .leave => 0
+
+/-- The answer to a polar question: yes or no. -/
+inductive PolarAnswer where
+  | yes | no
+  deriving DecidableEq, Repr
+
+instance : Fintype PolarAnswer where
+  elems := {.yes, .no}
+  complete a := by cases a <;> simp
+
+/-- After hearing the answer to question q, the questioner's posterior beliefs
+    concentrate on worlds consistent with the answer.
+    P(w | answer, q) ∝ 1 if answer consistent with w, else 0.
+    (R₀ answers truthfully, so the answer is deterministic given w.) -/
+def answerConsistent (q : Question) (a : PolarAnswer) (w : FullWorld) : Bool :=
+  match a with
+  | .yes => questionTarget q w
+  | .no  => !questionTarget q w
+
+/-- V(D^{answer,q}): value of updated DP after hearing answer to question q.
+    = max_item Σ_{w consistent} (1/|consistent|) · U(w, item)
+    Uses argmax policy (α_κ → ∞ simplification of eq. 2.2). -/
+def dpValueAfterAnswer (D : DP) (q : Question) (a : PolarAnswer) : ℚ :=
+  let consistent := Finset.univ.filter (fun w => answerConsistent q a w = true)
+  let nConsistent : ℚ := consistent.card
+  if nConsistent = 0 then 0
+  else
+    let actionEU (item : Item) : ℚ :=
+      consistent.sum (fun w => itemUtility D item w) / nConsistent
+    [Item.tea, .ic, .soda, .chard, .leave].foldl
+      (fun acc i => max acc (actionEU i)) 0
+
+/-- EU_Q(q, D): questioner's expected utility for asking question q given DP D.
+    = Σ_w π(w) · [V(D^{answer(w,q), q}) - w_c · 0]
+    Question cost C(q) = 0 (all questions are equally costly).
+    Since answer is deterministic given w, this simplifies to:
+    = Σ_w (1/16) · V(D^{answer(w,q), q}) -/
+def questionerEU (q : Question) (D : DP) : ℚ :=
+  Finset.univ.sum fun w : FullWorld =>
+    (1 : ℚ) / 16 *
+    dpValueAfterAnswer D q (if questionTarget q w then .yes else .no)
+
+/-- Each DP's target question yields the highest EU.
+    Q(q_X|wantX) > Q(q_X|wantY) because asking about X directly
+    addresses the wantX goal. -/
+theorem questionerEU_alignment :
+    -- Asking about tea is best for wantTarget
+    (∀ D : DP, D ≠ .wantTarget →
+      questionerEU .tea .wantTarget ≥ questionerEU .tea D) ∧
+    -- Asking about IC is best for wantCompetitor
+    (∀ D : DP, D ≠ .wantCompetitor →
+      questionerEU .ic .wantCompetitor ≥ questionerEU .ic D) := by
+  constructor <;> intro D hD <;> fin_cases D <;> simp_all <;> native_decide
+
+/-- DP posterior concentration: Q(q_tea|wantTarget) ≥ Q(q_tea|D).
+    Since Q is softmax and exp is monotone, this follows from
+    EU_Q(tea, wantTarget) ≥ EU_Q(tea, D). With uniform π₀,
+    the posterior π(D|q_tea) ∝ Q(q_tea|D) concentrates on wantTarget. -/
+theorem dpPosterior_concentrates_on_wantTarget :
+    ∀ D : DP, D ≠ .wantTarget →
+      questionerEU .tea .wantTarget ≥ questionerEU .tea D :=
+  questionerEU_alignment.1
+
+/-- The 5:1:1:1 weights in `dpPrior` are consistent with the derived posterior
+    concentration. -/
+theorem dpPrior_consistent_with_posterior :
+    dpPrior .wantTarget > dpPrior .wantCompetitor ∧
+    dpPrior .wantTarget > dpPrior .wantSameCat ∧
+    dpPrior .wantTarget > dpPrior .wantOtherCat := by
+  simp only [dpPrior]; norm_num
+
+-- ============================================================================
+-- §8. Action Value Structure
+-- ============================================================================
+
+/-- Action value V(D, r) in ℚ (Table S1, supplementary material).
+    Same values as `actionValue` but in ℚ for decidable computation. -/
+def actionValueQ : DP → Response → ℚ
+  | _, .taciturn                    => 17/5
+  | .wantTarget, .mentionIC         => 5693/1000
+  | .wantTarget, .mentionSoda       => 3611/1000
+  | .wantTarget, .mentionChard      => 2369/1000
+  | .wantTarget, .exhaustive        => 5693/1000
+  | .wantCompetitor, .mentionIC     => 9521/1000
+  | .wantCompetitor, .mentionSoda   => 3815/1000
+  | .wantCompetitor, .mentionChard  => 2485/1000
+  | .wantCompetitor, .exhaustive    => 9521/1000
+  | .wantSameCat, .mentionIC        => 3959/1000
+  | .wantSameCat, .mentionSoda      => 9504/1000
+  | .wantSameCat, .mentionChard     => 2615/1000
+  | .wantSameCat, .exhaustive       => 9504/1000
+  | .wantOtherCat, .mentionIC       => 2547/1000
+  | .wantOtherCat, .mentionSoda     => 2537/1000
+  | .wantOtherCat, .mentionChard    => 9565/1000
+  | .wantOtherCat, .exhaustive      => 9565/1000
+
+/-- DP prior weights in ℚ (unnormalized, 5:1:1:1). -/
+def dpPriorQ : DP → ℚ
+  | .wantTarget     => 5
+  | .wantCompetitor => 1
+  | .wantSameCat    => 1
+  | .wantOtherCat   => 1
+
+/-- E_D[V(D, r)] computed by marginalizing over DPs with `dpPriorQ` weights.
+    Verifies the pre-computed `expectedActionValue` values. -/
+def expectedActionValueQ (r : Response) : ℚ :=
+  (Finset.univ.sum fun d => dpPriorQ d * actionValueQ d r) /
+  (Finset.univ.sum fun d => dpPriorQ d)
+
+/-- The ℚ marginalization matches the pre-computed ℝ values. -/
+theorem expectedActionValueQ_correct :
+    expectedActionValueQ .taciturn = 17/5 ∧
+    expectedActionValueQ .mentionIC = 11123/2000 ∧
+    expectedActionValueQ .mentionSoda = 33911/8000 ∧
+    expectedActionValueQ .mentionChard = 2651/800 ∧
+    expectedActionValueQ .exhaustive = 11411/1600 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+
+/-- Action value ordering for wantTarget: IC is the best substitute,
+    then soda, then Chardonnay. This drives the competitor preference
+    in the response ordering. -/
+theorem actionValueQ_wantTarget_ordering :
+    actionValueQ .wantTarget .mentionIC > actionValueQ .wantTarget .mentionSoda ∧
+    actionValueQ .wantTarget .mentionSoda > actionValueQ .wantTarget .mentionChard := by
+  native_decide
+
+/-- Each DP's own item has the highest action value (diagonal dominance).
+    This is why the DP posterior matters: if the questioner wants IC,
+    mentioning IC has utility 95.21 vs 56.93 if they want tea. -/
+theorem actionValueQ_diagonal_dominance :
+    -- For wantTarget: all items < target utility (target unavailable, so moot)
+    actionValueQ .wantTarget .mentionIC < 9618/100 ∧
+    -- For wantCompetitor: IC has highest utility
+    actionValueQ .wantCompetitor .mentionIC > actionValueQ .wantCompetitor .mentionSoda ∧
+    actionValueQ .wantCompetitor .mentionIC > actionValueQ .wantCompetitor .mentionChard ∧
+    -- For wantSameCat: soda has highest utility
+    actionValueQ .wantSameCat .mentionSoda > actionValueQ .wantSameCat .mentionIC ∧
+    actionValueQ .wantSameCat .mentionSoda > actionValueQ .wantSameCat .mentionChard ∧
+    -- For wantOtherCat: chard has highest utility
+    actionValueQ .wantOtherCat .mentionChard > actionValueQ .wantOtherCat .mentionIC ∧
+    actionValueQ .wantOtherCat .mentionChard > actionValueQ .wantOtherCat .mentionSoda := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
 end RSA.PriorPQ

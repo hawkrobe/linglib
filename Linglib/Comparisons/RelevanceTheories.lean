@@ -42,15 +42,12 @@ import Linglib.Core.Partition
 import Linglib.Theories.Semantics.Questions.Partition
 import Linglib.Theories.Semantics.Questions.GSVanRooyBridge
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
-import Linglib.Theories.Pragmatics.RSA.Questions.Basic
-import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
 import Mathlib.Tactic.Ring
 
 namespace Comparisons.Relevance
 
 open Core.DecisionTheory
 open Semantics.Questions
-open RSA.Questions
 open scoped GSQuestion  -- For ⊑ notation
 
 

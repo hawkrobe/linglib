@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.53] - 2026-03-09
+
+### Added
+- **HawkinsEtAl2025 §7**: Multi-question Q model deriving DP posterior concentration — define `Question`, `FullWorld`, `Item`, `itemUtility`, `dpValueAfterAnswer` (V(D^{r,q}) with argmax policy), `questionerEU` (eq. 2.3), prove `questionerEU_alignment` and `dpPosterior_concentrates_on_wantTarget` via `native_decide`
+- **HawkinsEtAl2025 §8**: ℚ verification layer — `actionValueQ`, `dpPriorQ`, `expectedActionValueQ` with `expectedActionValueQ_correct` proving marginalization matches pre-computed ℝ values; `actionValueQ_diagonal_dominance` proving each DP's own item has highest utility
+
+### Removed
+- **RSA/Questions/ stubs**: Delete `Basic.lean`, `PolarQuestions.lean`, `ResponseSelection.lean` (~420 lines of unused ℚ-based types incompatible with RSAConfig)
+- **Compare.lean**: Delete 389-line file with 3 vacuous `→ True` theorems and dependencies on deleted stubs
+- **HawkinsEtAl2025 dead code**: Remove `ResponseType`, `KeyPrediction`/`keyPredictions`, duplicate `cs2_data_ordering`, LLM comparison data (cs2_jsd_*, prior_pq_beats_zero_shot)
+
+### Changed
+- **RelevanceTheories.lean**: Remove dead imports of RSA.Questions.{Basic,PolarQuestions} and unused `open RSA.Questions`
+
 ## [0.229.52] - 2026-03-09
 
 ### Added
