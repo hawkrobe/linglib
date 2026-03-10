@@ -38,14 +38,14 @@ Cross-linguistic data on grammatical evidentiality, covering two parameters:
   witnessed it directly, inferred it from indirect evidence, or received it via
   report. Languages range from no grammatical evidentials at all (English,
   Mandarin) to systems with three or more obligatory distinctions (Tuyuca,
-  Quechua). The majority of the world's languages (181/318 = 57%) lack
+  Quechua). The majority of the world's languages (181/418 = 43%) lack
   grammatical evidentials entirely.
 
 - **Ch 78: Coding of Evidentiality**: How evidentiality is
-  morphologically expressed in languages that have it. Four strategies: verbal
-  affix (the dominant pattern, 131/191 = 69%), clitic, modal particle, or
-  fusion with the TAM (tense-aspect-mood) system. Only languages with
-  grammatical evidentials are included in this chapter.
+  morphologically expressed. Six strategies: no grammatical evidentials,
+  verbal affix or clitic (the dominant pattern among languages with
+  evidentials, 131/418), part of the tense system, separate particle,
+  modal morpheme, or mixed. Both chapters cover the same 418-language sample.
 
 ## Key findings
 
@@ -135,15 +135,15 @@ def EvidentialSystem.numChoices : EvidentialSystem -> Nat
     (4) Part of the TAM system: evidential distinctions are fused with
         tense-aspect-mood marking and cannot be separated. -/
 inductive EvidentialCoding where
-  /-- Evidential is a verbal affix (bound morpheme on the verb stem).
-      The dominant strategy worldwide (131/191 = 69%).
+  /-- Evidential is a verbal affix or clitic (bound morpheme).
+      The dominant strategy worldwide (131/418 languages in WALS Ch 78).
       (e.g., Quechua ‑mi, ‑si, ‑chá; Turkish ‑mIş; Tuyuca verbal suffixes) -/
   | verbalAffix
   /-- Evidential is a clitic (phrasal-level bound morpheme, not specific
-      to the verb). Relatively rare (10/191 = 5%).
+      to the verb). WALS Ch 78 groups this with verbal affixes.
       (e.g., Tsafiki =ti, Kham =re) -/
   | clitic
-  /-- Evidential is a free modal particle. Uncommon (19/191 = 10%).
+  /-- Evidential is a free separate particle. (65/418 in WALS Ch 78).
       (e.g., Lhasa Tibetan 'dug, Kalmyk gej) -/
   | particle
   /-- Evidential distinctions are fused into the tense-aspect-mood
@@ -164,6 +164,12 @@ def EvidentialCoding.isBound : EvidentialCoding -> Bool
 -- WALS Distribution Data
 -- ============================================================================
 
+private abbrev ch74 := Core.WALS.F74A.allData
+private abbrev ch75 := Core.WALS.F75A.allData
+private abbrev ch76 := Core.WALS.F76A.allData
+private abbrev ch77 := Core.WALS.F77A.allData
+private abbrev ch78 := Core.WALS.F78A.allData
+
 /-- A single row in a WALS frequency table: a category label and its count. -/
 structure WALSCount where
   label : String
@@ -174,48 +180,36 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-/-- Chapter 77 distribution: semantic distinctions of evidentiality (N = 318). -/
+/-- Chapter 77 distribution: semantic distinctions of evidentiality (N = 418). -/
 def ch77Counts : List WALSCount :=
-  [ ⟨"No grammatical evidentials", 181⟩
-  , ⟨"Indirect evidential only", 38⟩
-  , ⟨"Direct and indirect", 71⟩
-  , ⟨"Direct, indirect, and other", 28⟩ ]
+  [ ⟨"No grammatical evidentials", (ch77.filter (·.value == .noGrammaticalEvidentials)).length⟩
+  , ⟨"Indirect evidential only", (ch77.filter (·.value == .indirectOnly)).length⟩
+  , ⟨"Direct and indirect", (ch77.filter (·.value == .directAndIndirect)).length⟩ ]
 
-/-- Chapter 78 distribution: coding of evidentiality (N = 191).
-    Only languages with grammatical evidentials are included.
-    Note: 191 = 318 - 181 + some overlap differences due to slightly
-    different sampling; the samples overlap but are not identical. -/
+/-- Chapter 78 distribution: coding of evidentiality (N = 418).
+    Both chapters 77 and 78 cover the same 418-language sample. -/
 def ch78Counts : List WALSCount :=
-  [ ⟨"Verbal affix", 131⟩
-  , ⟨"Clitic", 10⟩
-  , ⟨"Modal particle", 19⟩
-  , ⟨"Part of the tense system", 31⟩ ]
+  [ ⟨"No grammatical evidentials", (ch78.filter (·.value == .noGrammaticalEvidentials)).length⟩
+  , ⟨"Verbal affix or clitic", (ch78.filter (·.value == .verbalAffixOrClitic)).length⟩
+  , ⟨"Part of the tense system", (ch78.filter (·.value == .partOfTheTenseSystem)).length⟩
+  , ⟨"Separate particle", (ch78.filter (·.value == .separateParticle)).length⟩
+  , ⟨"Modal morpheme", (ch78.filter (·.value == .modalMorpheme)).length⟩
+  , ⟨"Mixed", (ch78.filter (·.value == .mixed)).length⟩ ]
 
 -- ============================================================================
 -- Aggregate Total Verification
 -- ============================================================================
 
-/-- Ch 77 total: 318 languages. -/
-theorem ch77_total : WALSCount.totalOf ch77Counts = 318 := by native_decide
+/-- Ch 77 total: 418 languages. -/
+theorem ch77_total : WALSCount.totalOf ch77Counts = 418 := by native_decide
 
-/-- Ch 78 total: 191 languages. -/
-theorem ch78_total : WALSCount.totalOf ch78Counts = 191 := by native_decide
+/-- Ch 78 total: 418 languages. -/
+theorem ch78_total : WALSCount.totalOf ch78Counts = 418 := by native_decide
 
-/-- Ch 78 sample size is smaller than Ch 77, since Ch 78 excludes languages
-    without grammatical evidentials. -/
-theorem ch78_subset_of_ch77 :
-    WALSCount.totalOf ch78Counts < WALSCount.totalOf ch77Counts := by
+/-- Ch 77 and Ch 78 cover the same 418-language sample. -/
+theorem ch77_ch78_same_total :
+    WALSCount.totalOf ch77Counts = WALSCount.totalOf ch78Counts := by
   native_decide
-
--- ============================================================================
--- WALS Data Abbreviations
--- ============================================================================
-
-private abbrev ch74 := Core.WALS.F74A.allData
-private abbrev ch75 := Core.WALS.F75A.allData
-private abbrev ch76 := Core.WALS.F76A.allData
-private abbrev ch77 := Core.WALS.F77A.allData
-private abbrev ch78 := Core.WALS.F78A.allData
 
 -- ============================================================================
 -- WALS Sample Size Verification
@@ -880,15 +874,21 @@ theorem westGreenlandic_ch78_raw :
 -- Typological Generalization 1: Most Languages Lack Grammatical Evidentials
 -- ============================================================================
 
-/-- Ch 77: The majority of languages (181/318 = 57%) lack grammatical
+/-- Ch 77: The plurality of languages (181/418 = 43%) lack grammatical
     evidentials entirely. This is the single largest category. -/
 theorem no_evidentials_most_common :
-    (181 : Nat) > 38 ∧ (181 : Nat) > 71 ∧ (181 : Nat) > 28 := by
+    (ch77.filter (·.value == .noGrammaticalEvidentials)).length >
+    (ch77.filter (·.value == .indirectOnly)).length ∧
+    (ch77.filter (·.value == .noGrammaticalEvidentials)).length >
+    (ch77.filter (·.value == .directAndIndirect)).length := by
   native_decide
 
-/-- Ch 77: Languages without grammatical evidentials outnumber all languages
-    WITH evidentials combined (181 vs 137). -/
-theorem no_evidentials_majority : (181 : Nat) > 38 + 71 + 28 := by
+/-- Ch 77: Languages without grammatical evidentials do NOT outnumber all
+    languages with evidentials combined (181 vs 166 + 71 = 237). -/
+theorem no_evidentials_not_majority :
+    (ch77.filter (·.value == .noGrammaticalEvidentials)).length <
+    (ch77.filter (·.value == .indirectOnly)).length +
+    (ch77.filter (·.value == .directAndIndirect)).length := by
   native_decide
 
 /-- In our sample, over a third of languages lack grammatical evidentials
@@ -902,19 +902,37 @@ theorem sample_no_evidentials_count :
 -- Typological Generalization 2: Verbal Affix Is the Dominant Coding Strategy
 -- ============================================================================
 
-/-- Ch 78: Verbal affix (131/191 = 69%) is by far the most common way to
-    encode evidentiality. It outnumbers all other strategies combined. -/
+/-- Ch 78: Verbal affix or clitic (131/418) is the most common way to
+    encode evidentiality among languages that have it. -/
 theorem verbal_affix_dominant :
-    (131 : Nat) > 10 + 19 + 31 := by native_decide
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
+    (ch78.filter (·.value == .separateParticle)).length ∧
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
+    (ch78.filter (·.value == .partOfTheTenseSystem)).length ∧
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
+    (ch78.filter (·.value == .modalMorpheme)).length ∧
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
+    (ch78.filter (·.value == .mixed)).length := by
+  native_decide
 
-/-- Ch 78: Verbal affixes account for more than two-thirds of all
-    evidential coding strategies. -/
-theorem verbal_affix_supermajority :
-    (131 : Nat) * 3 > (131 + 10 + 19 + 31) * 2 := by native_decide
+/-- Ch 78: Among languages WITH evidentials, verbal affixes account for
+    more than half of all coding strategies (131 out of 237). -/
+theorem verbal_affix_majority_of_evidential_langs :
+    let withEvid := ch78.filter (·.value != .noGrammaticalEvidentials)
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length * 2 >
+    withEvid.length := by
+  native_decide
 
-/-- Ch 78: Clitics are the rarest evidential coding strategy (10/191). -/
-theorem clitics_rarest :
-    (10 : Nat) < 19 ∧ (10 : Nat) < 31 ∧ (10 : Nat) < 131 := by
+/-- Ch 78: Modal morpheme is the rarest evidential coding strategy (7/418). -/
+theorem modal_morpheme_rarest :
+    (ch78.filter (·.value == .modalMorpheme)).length <
+    (ch78.filter (·.value == .mixed)).length ∧
+    (ch78.filter (·.value == .modalMorpheme)).length <
+    (ch78.filter (·.value == .partOfTheTenseSystem)).length ∧
+    (ch78.filter (·.value == .modalMorpheme)).length <
+    (ch78.filter (·.value == .separateParticle)).length ∧
+    (ch78.filter (·.value == .modalMorpheme)).length <
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length := by
   native_decide
 
 -- ============================================================================
@@ -922,20 +940,19 @@ theorem clitics_rarest :
 -- Three-or-More-Choice Systems
 -- ============================================================================
 
-/-- Ch 77: Among languages with evidentials, two-choice (direct vs indirect)
-    systems (71) are more common than three-or-more-choice systems (28). -/
-theorem two_choice_more_common_than_three :
-    (71 : Nat) > 28 := by native_decide
+/-- Ch 77: Among languages with evidentials, indirect-only systems (166)
+    are more common than direct-and-indirect systems (71). -/
+theorem indirect_only_more_common_than_two_choice :
+    (ch77.filter (·.value == .indirectOnly)).length >
+    (ch77.filter (·.value == .directAndIndirect)).length := by
+  native_decide
 
-/-- Ch 77: Two-choice systems are also more common than indirect-only
-    systems (71 vs 38). -/
-theorem two_choice_more_common_than_indirect_only :
-    (71 : Nat) > 38 := by native_decide
-
-/-- Ch 77: Two-choice systems are the most common type among languages
+/-- Ch 77: Indirect-only systems are the most common type among languages
     that HAVE evidentials. -/
-theorem two_choice_most_common_with_evidentials :
-    (71 : Nat) > 38 ∧ (71 : Nat) > 28 := by native_decide
+theorem indirect_only_most_common_with_evidentials :
+    (ch77.filter (·.value == .indirectOnly)).length >
+    (ch77.filter (·.value == .directAndIndirect)).length := by
+  native_decide
 
 -- ============================================================================
 -- Typological Generalization 4: Three-or-More Systems Always Include Direct
@@ -975,10 +992,16 @@ theorem tam_fusion_in_sample :
     abkhaz.coding = .partOfTAM := by
   native_decide
 
-/-- TAM fusion is the second most common coding strategy after verbal
-    affixes (31/191 = 16%). -/
-theorem tam_fusion_second_most_common :
-    (31 : Nat) > 19 ∧ (31 : Nat) > 10 := by native_decide
+/-- Separate particle is the second most common coding strategy after verbal
+    affix or clitic (65/418 vs 131/418). -/
+theorem separate_particle_second_most_common :
+    (ch78.filter (·.value == .separateParticle)).length >
+    (ch78.filter (·.value == .partOfTheTenseSystem)).length ∧
+    (ch78.filter (·.value == .separateParticle)).length >
+    (ch78.filter (·.value == .modalMorpheme)).length ∧
+    (ch78.filter (·.value == .separateParticle)).length >
+    (ch78.filter (·.value == .mixed)).length := by
+  native_decide
 
 -- ============================================================================
 -- Typological Generalization 6: Andean Areal Feature

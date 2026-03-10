@@ -14,13 +14,13 @@ chapters, all authored by Johan van der Auwera and Ludo @cite{van-der-auwera-lej
 ## Ch 70: The Morphological Imperative
 
 Whether a language has a dedicated morphological form for second-person
-imperatives. Three values: (1) a second-person-only morphological imperative,
-(2) a morphological imperative for second and other persons, (3) no
-morphological imperative (imperative expressed by structural means such as
-word order, intonation, or bare stems identical to the indicative).
+imperatives. Five values distinguishing number marking in the imperative
+paradigm: (1) second singular and second plural, (2) second singular only,
+(3) second plural only, (4) second person number-neutral, (5) no
+second-person imperatives.
 
-Sample: 495 languages. The vast majority (388/495 = 78.4%) have a
-dedicated morphological imperative of some kind; only 107 lack one entirely.
+Sample: 548 languages. The vast majority (426/548 = 77.7%) have a
+dedicated morphological imperative of some kind; only 122 lack one entirely.
 
 ## Ch 71: The Prohibitive
 
@@ -34,8 +34,8 @@ in declaratives or *special*:
 - Type 3: special imperative + normal negation (e.g., Italian)
 - Type 4: special imperative + special negation (e.g., Sinhala)
 
-Sample: 495 languages. Type 4 (special+special) is the most common
-(182/495 = 36.8%).
+Sample: 496 languages. Type 2 (normal imperative + special negation) is
+the most common (182/496 = 36.7%).
 
 ## Ch 72: Imperative-Hortative Systems
 
@@ -44,17 +44,17 @@ hortatives ("let's go") and/or third-person jussives ("let him go"), in
 addition to the second-person imperative. Four values: imperative only,
 imperative + hortative, imperative + jussive, or all three.
 
-Sample: 495 languages. Imperative-only systems are the most common
-(263/495 = 53.1%); systems with all three forms are the least common
-(43/495 = 8.7%).
+Sample: 375 languages. Neither-type-of-system is the most common
+(201/375 = 53.6%); both-types-of-system is the least common
+(21/375 = 5.6%).
 
 ## Ch 73: The Optative
 
 Whether the language has a morphologically dedicated optative construction
 ("may it rain", "if only she were here"). Binary feature: present or absent.
 
-Sample: 319 languages. Optatives are a minority feature: only 77/319
-(24.1%) of sampled languages have a dedicated optative.
+Sample: 319 languages. Optatives are a minority feature: only 48/319
+(15.0%) of sampled languages have a dedicated optative.
 
 -/
 
@@ -78,7 +78,8 @@ namespace Phenomena.Imperatives.Typology
 inductive MorphImpType where
   /-- Dedicated morphological imperative for second person only.
       (e.g., English `Go!`, Turkish `Gel!` 'Come!').
-      The most common pattern worldwide (213/495 = 43.0%). -/
+      The most common pattern worldwide (426/548 = 77.7% have some
+      morphological imperative; of those, second-person-only forms dominate). -/
   | secondOnly
   /-- Morphological imperative for second person and other persons
       (1st inclusive "let's", 3rd jussive, etc. are also morphologically
@@ -202,52 +203,68 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-/-- Chapter 70 distribution: morphological imperative types (N = 495). -/
+private abbrev f70 := Core.WALS.F70A.allData
+private abbrev f71 := Core.WALS.F71A.allData
+private abbrev f72 := Core.WALS.F72A.allData
+private abbrev f73 := Core.WALS.F73A.allData
+
+/-- Chapter 70 distribution: morphological imperative types (N = 548). -/
 def ch70Counts : List WALSCount :=
-  [ ⟨"Second person only", 213⟩
-  , ⟨"Second and other persons", 175⟩
-  , ⟨"No morphological imperative", 107⟩ ]
+  [ ⟨"Second singular and second plural",
+      (f70.filter (·.value == .secondSingularAndSecondPlural)).length⟩
+  , ⟨"Second singular",
+      (f70.filter (·.value == .secondSingular)).length⟩
+  , ⟨"Second plural",
+      (f70.filter (·.value == .secondPlural)).length⟩
+  , ⟨"Second person number-neutral",
+      (f70.filter (·.value == .secondPersonNumberNeutral)).length⟩
+  , ⟨"No second-person imperatives",
+      (f70.filter (·.value == .noSecondPersonImperatives)).length⟩ ]
 
-/-- Chapter 71 distribution: prohibitive types (N = 495). -/
+/-- Chapter 71 distribution: prohibitive types (N = 496). -/
 def ch71Counts : List WALSCount :=
-  [ ⟨"Normal imperative + normal negation", 93⟩
-  , ⟨"Normal imperative + special negation", 75⟩
-  , ⟨"Special imperative + normal negation", 145⟩
-  , ⟨"Special imperative + special negation", 182⟩ ]
+  [ ⟨"Normal imperative + normal negation",
+      (f71.filter (·.value == .normalImperativeNormalNegative)).length⟩
+  , ⟨"Normal imperative + special negation",
+      (f71.filter (·.value == .normalImperativeSpecialNegative)).length⟩
+  , ⟨"Special imperative + normal negation",
+      (f71.filter (·.value == .specialImperativeNormalNegative)).length⟩
+  , ⟨"Special imperative + special negation",
+      (f71.filter (·.value == .specialImperativeSpecialNegative)).length⟩ ]
 
-/-- Chapter 72 distribution: imperative-hortative systems (N = 495). -/
+/-- Chapter 72 distribution: imperative-hortative systems (N = 375). -/
 def ch72Counts : List WALSCount :=
-  [ ⟨"Imperative only", 263⟩
-  , ⟨"Imperative + hortative", 117⟩
-  , ⟨"Imperative + jussive", 72⟩
-  , ⟨"All three (imperative + hortative + jussive)", 43⟩ ]
+  [ ⟨"Maximal system",
+      (f72.filter (·.value == .maximalSystem)).length⟩
+  , ⟨"Minimal system",
+      (f72.filter (·.value == .minimalSystem)).length⟩
+  , ⟨"Both types of system",
+      (f72.filter (·.value == .bothTypesOfSystem)).length⟩
+  , ⟨"Neither type of system",
+      (f72.filter (·.value == .neitherTypeOfSystem)).length⟩ ]
 
 /-- Chapter 73 distribution: optative presence (N = 319). -/
 def ch73Counts : List WALSCount :=
-  [ ⟨"Optative present", 77⟩
-  , ⟨"Optative absent", 242⟩ ]
+  [ ⟨"Inflectional optative present",
+      (f73.filter (·.value == .inflectionalOptativePresent)).length⟩
+  , ⟨"Inflectional optative absent",
+      (f73.filter (·.value == .inflectionalOptativeAbsent)).length⟩ ]
 
 -- ============================================================================
 -- Aggregate Total Verification
 -- ============================================================================
 
-/-- Ch 70 total: 495 languages. -/
-theorem ch70_total : WALSCount.totalOf ch70Counts = 495 := by native_decide
+/-- Ch 70 total: 548 languages. -/
+theorem ch70_total : WALSCount.totalOf ch70Counts = 548 := by native_decide
 
-/-- Ch 71 total: 495 languages. -/
-theorem ch71_total : WALSCount.totalOf ch71Counts = 495 := by native_decide
+/-- Ch 71 total: 496 languages. -/
+theorem ch71_total : WALSCount.totalOf ch71Counts = 496 := by native_decide
 
-/-- Ch 72 total: 495 languages. -/
-theorem ch72_total : WALSCount.totalOf ch72Counts = 495 := by native_decide
+/-- Ch 72 total: 375 languages. -/
+theorem ch72_total : WALSCount.totalOf ch72Counts = 375 := by native_decide
 
 /-- Ch 73 total: 319 languages. -/
 theorem ch73_total : WALSCount.totalOf ch73Counts = 319 := by native_decide
-
-/-- Chapters 70, 71, and 72 share the same sample size (495). -/
-theorem ch70_ch71_ch72_same_sample :
-    WALSCount.totalOf ch70Counts = WALSCount.totalOf ch71Counts ∧
-    WALSCount.totalOf ch71Counts = WALSCount.totalOf ch72Counts := by
-  native_decide
 
 -- ============================================================================
 -- Language Profile Structure
@@ -667,60 +684,86 @@ def countByImpHort (langs : List ImperativeProfile) (t : ImpHortSystem) : Nat :=
 -- Typological Generalization 1: Morphological Imperatives Are the Majority
 -- ============================================================================
 
-/-- Ch 70: Languages with a morphological imperative (388/495 = 78.4%)
-    vastly outnumber those without (107/495 = 21.6%). -/
-theorem morph_imp_dominant : (213 + 175 : Nat) > 107 * 3 := by native_decide
+/-- Ch 70: Languages with a morphological imperative (426/548 = 77.7%)
+    vastly outnumber those without (122/548 = 22.3%). -/
+theorem morph_imp_dominant :
+    (f70.filter (·.value != .noSecondPersonImperatives)).length >
+    (f70.filter (·.value == .noSecondPersonImperatives)).length * 3 := by native_decide
 
-/-- Ch 70: Second-person-only imperatives (213) are the most common single
-    type, slightly outnumbering second-and-other (175). -/
-theorem second_only_most_common : (213 : Nat) > 175 := by native_decide
+/-- Ch 70: Second-singular-and-second-plural imperatives (292) are the most
+    common single type. -/
+theorem sg_pl_most_common :
+    (f70.filter (·.value == .secondSingularAndSecondPlural)).length >
+    (f70.filter (·.value == .secondPersonNumberNeutral)).length ∧
+    (f70.filter (·.value == .secondSingularAndSecondPlural)).length >
+    (f70.filter (·.value == .noSecondPersonImperatives)).length ∧
+    (f70.filter (·.value == .secondSingularAndSecondPlural)).length >
+    (f70.filter (·.value == .secondSingular)).length ∧
+    (f70.filter (·.value == .secondSingularAndSecondPlural)).length >
+    (f70.filter (·.value == .secondPlural)).length := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 2: Prohibitives Tend to Be Special
 -- ============================================================================
 
-/-- Ch 71: The majority of languages (402/495 = 81.2%) use a special
+/-- Ch 71: The majority of languages (383/496 = 77.2%) use a special
     construction for prohibitives — they do NOT simply negate the imperative.
-    Only 93/495 (18.8%) use normal imperative + normal negation (Type 1).
+    Only 113/496 (22.8%) use normal imperative + normal negation (Type 1).
     This is van der Auwera's key finding: prohibitives are typologically
     marked relative to affirmative imperatives. -/
-theorem prohibitive_mostly_special : (75 + 145 + 182 : Nat) > 93 * 4 := by
+theorem prohibitive_mostly_special :
+    (f71.filter (·.value != .normalImperativeNormalNegative)).length >
+    (f71.filter (·.value == .normalImperativeNormalNegative)).length * 3 := by
   native_decide
 
-/-- Ch 71: Type 4 (special+special) is the single most common prohibitive
-    type: 182 > 145 > 93 > 75. -/
-theorem type4_most_common_prohibitive :
-    (182 : Nat) > 145 ∧ (145 : Nat) > 93 ∧ (93 : Nat) > 75 := by
+/-- Ch 71: Type 2 (normal imperative + special negation) is the single most
+    common prohibitive type: 182 > 146 > 113 > 55. -/
+theorem type2_most_common_prohibitive :
+    (f71.filter (·.value == .normalImperativeSpecialNegative)).length >
+    (f71.filter (·.value == .specialImperativeSpecialNegative)).length ∧
+    (f71.filter (·.value == .specialImperativeSpecialNegative)).length >
+    (f71.filter (·.value == .normalImperativeNormalNegative)).length ∧
+    (f71.filter (·.value == .normalImperativeNormalNegative)).length >
+    (f71.filter (·.value == .specialImperativeNormalNegative)).length := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- Typological Generalization 3: Imperative-Only Systems Dominate
 -- ============================================================================
 
-/-- Ch 72: More than half of languages (263/495 = 53.1%) have only an
-    imperative and lack dedicated hortative or jussive morphology. -/
-theorem imp_only_majority : (263 : Nat) > 495 / 2 := by native_decide
+/-- Ch 72: More than half of languages (201/375 = 53.6%) have neither type
+    of imperative-hortative system. -/
+theorem neither_system_majority :
+    (f72.filter (·.value == .neitherTypeOfSystem)).length >
+    f72.length / 2 := by native_decide
 
-/-- Ch 72: Systems with all three (imperative + hortative + jussive) are
-    the rarest type (43/495 = 8.7%). -/
-theorem all_three_rarest :
-    (43 : Nat) < 72 ∧ (43 : Nat) < 117 ∧ (43 : Nat) < 263 := by
+/-- Ch 72: Minimal systems (20/375 = 5.3%) are the rarest type. -/
+theorem minimal_system_rarest :
+    (f72.filter (·.value == .minimalSystem)).length <
+    (f72.filter (·.value == .bothTypesOfSystem)).length ∧
+    (f72.filter (·.value == .minimalSystem)).length <
+    (f72.filter (·.value == .maximalSystem)).length ∧
+    (f72.filter (·.value == .minimalSystem)).length <
+    (f72.filter (·.value == .neitherTypeOfSystem)).length := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
-/-- Ch 72: Hortatives are more common than jussives. Languages with
-    hortative (imp+hort 117 + all three 43 = 160) vs jussive
-    (imp+juss 72 + all three 43 = 115). -/
-theorem hortatives_more_common_than_jussives :
-    (117 + 43 : Nat) > 72 + 43 := by native_decide
+/-- Ch 72: Maximal systems (133) are much more common than minimal
+    systems (20) or both-types systems (21). -/
+theorem maximal_more_common_than_minimal :
+    (f72.filter (·.value == .maximalSystem)).length >
+    (f72.filter (·.value == .minimalSystem)).length +
+    (f72.filter (·.value == .bothTypesOfSystem)).length := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 4: Optatives Are a Minority Feature
 -- ============================================================================
 
-/-- Ch 73: The majority of languages lack a dedicated optative (242/319).
-    Only 77/319 (24.1%) have one. Optatives outnumbered by non-optatives
-    more than 3:1. -/
-theorem optative_minority : (242 : Nat) > 77 * 3 := by native_decide
+/-- Ch 73: The majority of languages lack a dedicated optative (271/319).
+    Only 48/319 (15.0%) have one. Optatives outnumbered by non-optatives
+    more than 5:1. -/
+theorem optative_minority :
+    (f73.filter (·.value == .inflectionalOptativeAbsent)).length >
+    (f73.filter (·.value == .inflectionalOptativePresent)).length * 5 := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 5: Extended Paradigms Correlate with
@@ -881,11 +924,12 @@ theorem optative_mostly_special_prohibitive :
     special.length * 4 ≥ optLangs.length * 3 := by
   native_decide
 
-/-- Chapters 70--72 use the same sample (495 languages each). -/
-theorem ch70_71_72_same_n :
-    WALSCount.totalOf ch70Counts = 495 ∧
-    WALSCount.totalOf ch71Counts = 495 ∧
-    WALSCount.totalOf ch72Counts = 495 := by
+/-- Chapters 70--73 have different sample sizes. -/
+theorem ch_sample_sizes :
+    WALSCount.totalOf ch70Counts = 548 ∧
+    WALSCount.totalOf ch71Counts = 496 ∧
+    WALSCount.totalOf ch72Counts = 375 ∧
+    WALSCount.totalOf ch73Counts = 319 := by
   native_decide
 
 -- ============================================================================
@@ -973,22 +1017,13 @@ private def fromWALS73A : Core.WALS.F73A.Optative → OptativePresence
   | .inflectionalOptativeAbsent => .absent
 
 -- ============================================================================
--- WALS Data Abbreviations
--- ============================================================================
-
-private abbrev ch70 := Core.WALS.F70A.allData
-private abbrev ch71 := Core.WALS.F71A.allData
-private abbrev ch72 := Core.WALS.F72A.allData
-private abbrev ch73 := Core.WALS.F73A.allData
-
--- ============================================================================
 -- WALS Dataset Size Verification
 -- ============================================================================
 
-theorem ch70_wals_total : ch70.length = 548 := by native_decide
-theorem ch71_wals_total : ch71.length = 496 := by native_decide
-theorem ch72_wals_total : ch72.length = 375 := by native_decide
-theorem ch73_wals_total : ch73.length = 319 := by native_decide
+theorem ch70_wals_total : f70.length = 548 := by native_decide
+theorem ch71_wals_total : f71.length = 496 := by native_decide
+theorem ch72_wals_total : f72.length = 375 := by native_decide
+theorem ch73_wals_total : f73.length = 319 := by native_decide
 
 -- ============================================================================
 -- WALS Grounding: Ch 70 (Morphological Imperative)

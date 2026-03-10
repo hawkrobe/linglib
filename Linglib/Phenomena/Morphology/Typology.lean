@@ -501,15 +501,15 @@ theorem ch27_total :
 -- §4.7 Chapter 23: Locus of Marking in the Clause
 -- ============================================================================
 
-/-- WALS Chapter 23 distribution (N = 236). -/
+/-- WALS Chapter 23 distribution, derived from F23A data (N = 236). -/
 def ch23Distribution : List WALSCount :=
-  [ ⟨"Head marking", 71⟩
-  , ⟨"Dependent marking", 63⟩
-  , ⟨"Double marking", 58⟩
-  , ⟨"No marking", 42⟩
-  , ⟨"Other", 2⟩ ]
+  [ ⟨"Head marking", (ch23.filter (·.value == .headMarking)).length⟩
+  , ⟨"Dependent marking", (ch23.filter (·.value == .dependentMarking)).length⟩
+  , ⟨"Double marking", (ch23.filter (·.value == .doubleMarking)).length⟩
+  , ⟨"No marking", (ch23.filter (·.value == .noMarking)).length⟩
+  , ⟨"Other", (ch23.filter (·.value == .other)).length⟩ ]
 
-/-- Ch 23 total: 236 languages. -/
+/-- Ch 23 total: 236 languages (derived from F23A data). -/
 theorem ch23_total :
     ch23Distribution.foldl (λ acc c => acc + c.count) 0 = 236 := by native_decide
 
@@ -517,15 +517,15 @@ theorem ch23_total :
 -- §4.8 Chapter 24: Locus of Marking in Possessive Noun Phrases
 -- ============================================================================
 
-/-- WALS Chapter 24 distribution (N = 236). -/
+/-- WALS Chapter 24 distribution, derived from F24A data (N = 236). -/
 def ch24Distribution : List WALSCount :=
-  [ ⟨"Head marking", 78⟩
-  , ⟨"Dependent marking", 98⟩
-  , ⟨"Double marking", 22⟩
-  , ⟨"No marking", 32⟩
-  , ⟨"Other", 6⟩ ]
+  [ ⟨"Head marking", (ch24.filter (·.value == .headMarking)).length⟩
+  , ⟨"Dependent marking", (ch24.filter (·.value == .dependentMarking)).length⟩
+  , ⟨"Double marking", (ch24.filter (·.value == .doubleMarking)).length⟩
+  , ⟨"No marking", (ch24.filter (·.value == .noMarking)).length⟩
+  , ⟨"Other", (ch24.filter (·.value == .other)).length⟩ ]
 
-/-- Ch 24 total: 236 languages. -/
+/-- Ch 24 total: 236 languages (derived from F24A data). -/
 theorem ch24_total :
     ch24Distribution.foldl (λ acc c => acc + c.count) 0 = 236 := by native_decide
 
@@ -533,15 +533,15 @@ theorem ch24_total :
 -- §4.9 Chapter 25A: Locus of Marking: Whole-Language Typology
 -- ============================================================================
 
-/-- WALS Chapter 25A distribution (N = 236). -/
+/-- WALS Chapter 25A distribution, derived from F25A data (N = 236). -/
 def ch25aDistribution : List WALSCount :=
-  [ ⟨"Head-marking", 47⟩
-  , ⟨"Dependent-marking", 46⟩
-  , ⟨"Double-marking", 16⟩
-  , ⟨"Zero-marking", 6⟩
-  , ⟨"Inconsistent or other", 121⟩ ]
+  [ ⟨"Head-marking", (ch25a.filter (·.value == .headMarking)).length⟩
+  , ⟨"Dependent-marking", (ch25a.filter (·.value == .dependentMarking)).length⟩
+  , ⟨"Double-marking", (ch25a.filter (·.value == .doubleMarking)).length⟩
+  , ⟨"Zero-marking", (ch25a.filter (·.value == .zeroMarking)).length⟩
+  , ⟨"Inconsistent or other", (ch25a.filter (·.value == .inconsistentOrOther)).length⟩ ]
 
-/-- Ch 25A total: 236 languages. -/
+/-- Ch 25A total: 236 languages (derived from F25A data). -/
 theorem ch25a_total :
     ch25aDistribution.foldl (λ acc c => acc + c.count) 0 = 236 := by native_decide
 
@@ -549,12 +549,12 @@ theorem ch25a_total :
 -- §4.10 Chapter 25B: Zero Marking of A and P Arguments
 -- ============================================================================
 
-/-- WALS Chapter 25B distribution (N = 235). -/
+/-- WALS Chapter 25B distribution, derived from F25B data (N = 235). -/
 def ch25bDistribution : List WALSCount :=
-  [ ⟨"Zero-marking", 16⟩
-  , ⟨"Non-zero marking", 219⟩ ]
+  [ ⟨"Zero-marking", (ch25b.filter (·.value == .zeroMarking)).length⟩
+  , ⟨"Non-zero marking", (ch25b.filter (·.value == .nonZeroMarking)).length⟩ ]
 
-/-- Ch 25B total: 235 languages. -/
+/-- Ch 25B total: 235 languages (derived from F25B data). -/
 theorem ch25b_total :
     ch25bDistribution.foldl (λ acc c => acc + c.count) 0 = 235 := by native_decide
 
@@ -562,14 +562,14 @@ theorem ch25b_total :
 -- §4.11 Chapter 28: Case Syncretism
 -- ============================================================================
 
-/-- WALS Chapter 28 distribution (N = 198). -/
+/-- WALS Chapter 28 distribution, derived from F28A data (N = 198). -/
 def ch28Distribution : List WALSCount :=
-  [ ⟨"No case marking", 123⟩
-  , ⟨"Core cases only", 18⟩
-  , ⟨"Core and non-core", 22⟩
-  , ⟨"No syncretism", 35⟩ ]
+  [ ⟨"No case marking", (ch28.filter (·.value == .noCaseMarking)).length⟩
+  , ⟨"Core cases only", (ch28.filter (·.value == .coreCasesOnly)).length⟩
+  , ⟨"Core and non-core", (ch28.filter (·.value == .coreAndNonCore)).length⟩
+  , ⟨"No syncretism", (ch28.filter (·.value == .noSyncretism)).length⟩ ]
 
-/-- Ch 28 total: 198 languages. -/
+/-- Ch 28 total: 198 languages (derived from F28A data). -/
 theorem ch28_total :
     ch28Distribution.foldl (λ acc c => acc + c.count) 0 = 198 := by native_decide
 
@@ -577,13 +577,13 @@ theorem ch28_total :
 -- §4.12 Chapter 29: Syncretism in Verbal Person/Number Marking
 -- ============================================================================
 
-/-- WALS Chapter 29 distribution (N = 198). -/
+/-- WALS Chapter 29 distribution, derived from F29A data (N = 198). -/
 def ch29Distribution : List WALSCount :=
-  [ ⟨"No subject person/number marking", 57⟩
-  , ⟨"Syncretic", 60⟩
-  , ⟨"Not syncretic", 81⟩ ]
+  [ ⟨"No subject person/number marking", (ch29.filter (·.value == .noSubjectPersonNumberMarking)).length⟩
+  , ⟨"Syncretic", (ch29.filter (·.value == .syncretic)).length⟩
+  , ⟨"Not syncretic", (ch29.filter (·.value == .notSyncretic)).length⟩ ]
 
-/-- Ch 29 total: 198 languages. -/
+/-- Ch 29 total: 198 languages (derived from F29A data). -/
 theorem ch29_total :
     ch29Distribution.foldl (λ acc c => acc + c.count) 0 = 198 := by native_decide
 
@@ -591,16 +591,16 @@ theorem ch29_total :
 -- §4.13 Chapter 21B: Exponence of Tense-Aspect-Mood Inflection
 -- ============================================================================
 
-/-- WALS Chapter 21B distribution (N = 160). -/
+/-- WALS Chapter 21B distribution, derived from F21B data (N = 160). -/
 def ch21bDistribution : List WALSCount :=
-  [ ⟨"Monoexponential TAM", 127⟩
-  , ⟨"TAM+agreement", 19⟩
-  , ⟨"TAM+agreement+diathesis", 4⟩
-  , ⟨"TAM+agreement+construct", 1⟩
-  , ⟨"TAM+polarity", 5⟩
-  , ⟨"No TAM", 4⟩ ]
+  [ ⟨"Monoexponential TAM", (ch21b.filter (·.value == .monoexponentialTam)).length⟩
+  , ⟨"TAM+agreement", (ch21b.filter (·.value == .tamAgreement)).length⟩
+  , ⟨"TAM+agreement+diathesis", (ch21b.filter (·.value == .tamAgreementDiathesis)).length⟩
+  , ⟨"TAM+agreement+construct", (ch21b.filter (·.value == .tamAgreementConstruct)).length⟩
+  , ⟨"TAM+polarity", (ch21b.filter (·.value == .tamPolarity)).length⟩
+  , ⟨"No TAM", (ch21b.filter (·.value == .noTam)).length⟩ ]
 
-/-- Ch 21B total: 160 languages. -/
+/-- Ch 21B total: 160 languages (derived from F21B data). -/
 theorem ch21b_total :
     ch21bDistribution.foldl (λ acc c => acc + c.count) 0 = 160 := by native_decide
 
@@ -608,18 +608,18 @@ theorem ch21b_total :
 -- §4.14 Chapter 62A: Action Nominal Constructions
 -- ============================================================================
 
-/-- WALS Chapter 62A distribution (N = 168). -/
+/-- WALS Chapter 62A distribution, derived from F62A data (N = 168). -/
 def ch62Distribution : List WALSCount :=
-  [ ⟨"Sentential", 25⟩
-  , ⟨"Possessive-Accusative", 29⟩
-  , ⟨"Ergative-Possessive", 21⟩
-  , ⟨"Double-Possessive", 7⟩
-  , ⟨"Other", 6⟩
-  , ⟨"Mixed", 14⟩
-  , ⟨"Restricted", 24⟩
-  , ⟨"No action nominals", 42⟩ ]
+  [ ⟨"Sentential", (ch62.filter (·.value == .sentential)).length⟩
+  , ⟨"Possessive-Accusative", (ch62.filter (·.value == .possessiveAccusative)).length⟩
+  , ⟨"Ergative-Possessive", (ch62.filter (·.value == .ergativePossessive)).length⟩
+  , ⟨"Double-Possessive", (ch62.filter (·.value == .doublePossessive)).length⟩
+  , ⟨"Other", (ch62.filter (·.value == .other)).length⟩
+  , ⟨"Mixed", (ch62.filter (·.value == .mixed)).length⟩
+  , ⟨"Restricted", (ch62.filter (·.value == .restricted)).length⟩
+  , ⟨"No action nominals", (ch62.filter (·.value == .noActionNominals)).length⟩ ]
 
-/-- Ch 62 total: 168 languages. -/
+/-- Ch 62 total: 168 languages (derived from F62A data). -/
 theorem ch62_total :
     ch62Distribution.foldl (λ acc c => acc + c.count) 0 = 168 := by native_decide
 
@@ -627,14 +627,14 @@ theorem ch62_total :
 -- §4.15 Chapter 79A: Suppletion According to Tense and Aspect
 -- ============================================================================
 
-/-- WALS Chapter 79A distribution (N = 193). -/
+/-- WALS Chapter 79A distribution, derived from F79A data (N = 193). -/
 def ch79aDistribution : List WALSCount :=
-  [ ⟨"Tense", 36⟩
-  , ⟨"Aspect", 10⟩
-  , ⟨"Tense and aspect", 24⟩
-  , ⟨"None", 123⟩ ]
+  [ ⟨"Tense", (ch79a.filter (·.value == .tense)).length⟩
+  , ⟨"Aspect", (ch79a.filter (·.value == .aspect)).length⟩
+  , ⟨"Tense and aspect", (ch79a.filter (·.value == .tenseAndAspect)).length⟩
+  , ⟨"None", (ch79a.filter (·.value == .none)).length⟩ ]
 
-/-- Ch 79A total: 193 languages. -/
+/-- Ch 79A total: 193 languages (derived from F79A data). -/
 theorem ch79a_total :
     ch79aDistribution.foldl (λ acc c => acc + c.count) 0 = 193 := by native_decide
 
@@ -642,15 +642,15 @@ theorem ch79a_total :
 -- §4.16 Chapter 79B: Suppletion in Imperatives and Hortatives
 -- ============================================================================
 
-/-- WALS Chapter 79B distribution (N = 193). -/
+/-- WALS Chapter 79B distribution, derived from F79B data (N = 193). -/
 def ch79bDistribution : List WALSCount :=
-  [ ⟨"Regular and suppletive alternate", 8⟩
-  , ⟨"Imperative", 29⟩
-  , ⟨"Hortative", 2⟩
-  , ⟨"Imperative and Hortative", 1⟩
-  , ⟨"None", 153⟩ ]
+  [ ⟨"Regular and suppletive alternate", (ch79b.filter (·.value == .aRegularAndASuppletiveFormAlternate)).length⟩
+  , ⟨"Imperative", (ch79b.filter (·.value == .imperative)).length⟩
+  , ⟨"Hortative", (ch79b.filter (·.value == .hortative)).length⟩
+  , ⟨"Imperative and Hortative", (ch79b.filter (·.value == .imperativeAndHortative)).length⟩
+  , ⟨"None", (ch79b.filter (·.value == .none)).length⟩ ]
 
-/-- Ch 79B total: 193 languages. -/
+/-- Ch 79B total: 193 languages (derived from F79B data). -/
 theorem ch79b_total :
     ch79bDistribution.foldl (λ acc c => acc + c.count) 0 = 193 := by native_decide
 
@@ -658,15 +658,15 @@ theorem ch79b_total :
 -- §4.17 Chapter 80A: Verbal Number and Suppletion
 -- ============================================================================
 
-/-- WALS Chapter 80A distribution (N = 193). -/
+/-- WALS Chapter 80A distribution, derived from F80A data (N = 193). -/
 def ch80Distribution : List WALSCount :=
-  [ ⟨"None", 159⟩
-  , ⟨"Singular-plural pairs, no suppletion", 12⟩
-  , ⟨"Singular-plural pairs, suppletion", 15⟩
-  , ⟨"Singular-dual-plural triples, no suppletion", 5⟩
-  , ⟨"Singular-dual-plural triples, suppletion", 2⟩ ]
+  [ ⟨"None", (ch80.filter (·.value == .none)).length⟩
+  , ⟨"Singular-plural pairs, no suppletion", (ch80.filter (·.value == .singularPluralPairsNoSuppletion)).length⟩
+  , ⟨"Singular-plural pairs, suppletion", (ch80.filter (·.value == .singularPluralPairsSuppletion)).length⟩
+  , ⟨"Singular-dual-plural triples, no suppletion", (ch80.filter (·.value == .singularDualPluralTriplesNoSuppletion)).length⟩
+  , ⟨"Singular-dual-plural triples, suppletion", (ch80.filter (·.value == .singularDualPluralTriplesSuppletion)).length⟩ ]
 
-/-- Ch 80 total: 193 languages. -/
+/-- Ch 80 total: 193 languages (derived from F80A data). -/
 theorem ch80_total :
     ch80Distribution.foldl (λ acc c => acc + c.count) 0 = 193 := by native_decide
 

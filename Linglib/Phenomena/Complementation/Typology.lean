@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Features.F94A
+import Linglib.Core.WALS.Features.F95A
 import Linglib.Core.WALS.Features.F124A
 import Linglib.Core.WALS.Features.F125A
 import Linglib.Core.WALS.Features.F126A
@@ -714,7 +716,7 @@ theorem indicative_hierarchy_japanese :
 fundamental distinction is between word-level and suffix-level subordinators,
 crossed with initial vs final position.
 
-Sample: 611 languages.
+Sample: 659 languages.
 
 The dominant pattern worldwide is clause-initial subordinator words (e.g.,
 English "because he left"), which overwhelmingly correlates with VO order.
@@ -735,21 +737,21 @@ order. This is one of the strongest head-direction correlations.
 inductive SubordinatorOrder where
   /-- Subordinator is a free word preceding the clause.
       E.g., English "because he left", Arabic "li'anna-hu ghaadara".
-      The most common type worldwide (378/611 = 61.9%). -/
+      The most common type worldwide (398/659 = 60.4%). -/
   | initialWord
   /-- Subordinator is a free word following the clause.
       E.g., Japanese "kare-ga kaetta kara" 'he-NOM returned because'.
-      58/611 = 9.5%. -/
+      96/659 = 14.6%. -/
   | finalWord
   /-- Subordinator is a suffix preceding the clause. Extremely rare.
-      7/611 = 1.1%. -/
+      8/659 = 1.2%. -/
   | initialSuffix
   /-- Subordinator is a suffix on the verb at the end of the clause.
       E.g., Turkish "-dIgI icin" 'because of V-NMZ'.
-      54/611 = 8.8%. -/
+      64/659 = 9.7%. -/
   | finalSuffix
   /-- Mixed or no dominant subordination pattern.
-      114/611 = 18.7%. -/
+      93/659 = 14.1%. -/
   | mixed
   deriving DecidableEq, BEq, Repr
 
@@ -763,28 +765,32 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-/-- Chapter 94 distribution: subordinator order (N = 611).
-    Counts from @cite{dryer-2013a}, WALS Online, Ch 94. -/
-def ch94Counts : List WALSCount :=
-  [ ⟨"Initial subordinator word", 378⟩
-  , ⟨"Final subordinator word", 58⟩
-  , ⟨"Initial subordinator suffix", 7⟩
-  , ⟨"Final subordinator suffix", 54⟩
-  , ⟨"Mixed", 114⟩ ]
+private abbrev ch94 := Core.WALS.F94A.allData
+private abbrev ch95 := Core.WALS.F95A.allData
 
-/-- Ch 94 total: 611 languages. -/
-theorem ch94_total : WALSCount.totalOf ch94Counts = 611 := by native_decide
+open Core.WALS.F94A (OrderOfAdverbialSubordinatorAndClause) in
+/-- Chapter 94 distribution: subordinator order (N = 659).
+    Counts computed from @cite{dryer-2013a}, WALS Online, Ch 94. -/
+def ch94Counts : List WALSCount :=
+  [ ⟨"Initial subordinator word",  (ch94.filter (·.value == .initialSubordinatorWord)).length⟩
+  , ⟨"Final subordinator word",    (ch94.filter (·.value == .finalSubordinatorWord)).length⟩
+  , ⟨"Internal subordinator word", (ch94.filter (·.value == .internalSubordinatorWord)).length⟩
+  , ⟨"Subordinating suffix",       (ch94.filter (·.value == .subordinatingSuffix)).length⟩
+  , ⟨"Mixed",                      (ch94.filter (·.value == .mixed)).length⟩ ]
+
+/-- Ch 94 total: 659 languages. -/
+theorem ch94_total : WALSCount.totalOf ch94Counts = 659 := by native_decide
 
 /-! ## I. WALS Chapter 95: OV Order and Adposition Or@cite{dryer-2013b} examines the correlation between verb-object order and
 adposition type. This is one of the strongest head-direction correlations
 in typology: OV languages overwhelmingly use postpositions, and VO languages
 overwhelmingly use prepositions.
 
-Sample: 981 languages.
+Sample: 1142 languages.
 
 The harmonic patterns (VO+prepositions, OV+postpositions) account for
-926/981 = 94.4% of languages. The disharmonic patterns (VO+postpositions,
-OV+prepositions) are extremely rare.
+928/1142 = 81.3% of languages. The disharmonic patterns (VO+postpositions,
+OV+prepositions) are rare.
 -/
 
 /-- WALS Ch 95: Four-way classification combining verb-object order
@@ -795,30 +801,32 @@ OV+prepositions) are extremely rare.
 inductive OVAdpositionType where
   /-- VO order with prepositions (head-initial harmony).
       E.g., English "in the house", "sees the cat".
-      454/981 = 46.3%. -/
+      456/1142 = 39.9%. -/
   | voPrep
   /-- OV order with postpositions (head-final harmony).
       E.g., Japanese "neko-o miru", "ie-ni" (house-in).
-      472/981 = 48.1%. -/
+      472/1142 = 41.3%. -/
   | ovPostp
   /-- VO order with postpositions (disharmonic).
-      E.g., some Austronesian languages. Very rare: 14/981 = 1.4%. -/
+      E.g., some Austronesian languages. Very rare: 42/1142 = 3.7%. -/
   | voPostp
   /-- OV order with prepositions (disharmonic).
-      E.g., some Iranian languages. Rare: 41/981 = 4.2%. -/
+      E.g., some Iranian languages. Rare: 14/1142 = 1.2%. -/
   | ovPrep
   deriving DecidableEq, BEq, Repr
 
-/-- Chapter 95 distribution: OV order × adposition type (N = 981).
-    Counts from @cite{dryer-2013b}, WALS Online, Ch 95. -/
+open Core.WALS.F95A (RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) in
+/-- Chapter 95 distribution: OV order × adposition type (N = 1142).
+    Counts computed from @cite{dryer-2013b}, WALS Online, Ch 95. -/
 def ch95Counts : List WALSCount :=
-  [ ⟨"VO & Prepositions", 454⟩
-  , ⟨"OV & Postpositions", 472⟩
-  , ⟨"VO & Postpositions", 14⟩
-  , ⟨"OV & Prepositions", 41⟩ ]
+  [ ⟨"VO & Prepositions",  (ch95.filter (·.value == .voAndPrepositions)).length⟩
+  , ⟨"OV & Postpositions", (ch95.filter (·.value == .ovAndPostpositions)).length⟩
+  , ⟨"VO & Postpositions", (ch95.filter (·.value == .voAndPostpositions)).length⟩
+  , ⟨"OV & Prepositions",  (ch95.filter (·.value == .ovAndPrepositions)).length⟩
+  , ⟨"Other",              (ch95.filter (·.value == .other)).length⟩ ]
 
-/-- Ch 95 total: 981 languages. -/
-theorem ch95_total : WALSCount.totalOf ch95Counts = 981 := by native_decide
+/-- Ch 95 total: 1142 languages. -/
+theorem ch95_total : WALSCount.totalOf ch95Counts = 1142 := by native_decide
 
 /-! ## J. Additional Subordination Dimensions
 
@@ -1287,24 +1295,35 @@ theorem sub_sample_size : allSubProfiles.length = 20 := by native_decide
 
 /-! ## N. WALS Aggregate Total Verification -/
 
-/-- Ch 94: initial subordinator words are the most common type (378/611). -/
+/-- Ch 94: initial subordinator words are the most common type (398/659). -/
 theorem ch94_initial_word_most_common :
-    (378 : Nat) > 58 ∧ (378 : Nat) > 7 ∧
-    (378 : Nat) > 54 ∧ (378 : Nat) > 114 := by
+    (ch94.filter (·.value == .initialSubordinatorWord)).length >
+      (ch94.filter (·.value == .finalSubordinatorWord)).length ∧
+    (ch94.filter (·.value == .initialSubordinatorWord)).length >
+      (ch94.filter (·.value == .internalSubordinatorWord)).length ∧
+    (ch94.filter (·.value == .initialSubordinatorWord)).length >
+      (ch94.filter (·.value == .subordinatingSuffix)).length ∧
+    (ch94.filter (·.value == .initialSubordinatorWord)).length >
+      (ch94.filter (·.value == .mixed)).length := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
-/-- Ch 95: harmonic patterns (VO+Prep, OV+Postp) dominate (926/981 = 94.4%). -/
+/-- Ch 95: harmonic patterns (VO+Prep, OV+Postp) dominate (928/1142 = 81.3%). -/
 theorem ch95_harmonic_dominant :
-    454 + 472 > (454 + 472 + 14 + 41) * 9 / 10 := by
+    (ch95.filter (·.value == .voAndPrepositions)).length +
+    (ch95.filter (·.value == .ovAndPostpositions)).length >
+      ch95.length * 8 / 10 := by
   native_decide
 
 /-- Ch 95: OV+Postpositions is the single most common pairing. -/
 theorem ch95_ov_postp_most_common :
-    (472 : Nat) > 454 := by native_decide
+    (ch95.filter (·.value == .ovAndPostpositions)).length >
+    (ch95.filter (·.value == .voAndPrepositions)).length := by native_decide
 
-/-- Ch 95: disharmonic patterns are rare (55/981 = 5.6%). -/
+/-- Ch 95: disharmonic patterns are rare (56/1142 = 4.9%). -/
 theorem ch95_disharmonic_rare :
-    (14 + 41) * 100 < 981 * 6 := by native_decide
+    ((ch95.filter (·.value == .voAndPostpositions)).length +
+     (ch95.filter (·.value == .ovAndPrepositions)).length) * 100 <
+      ch95.length * 6 := by native_decide
 
 /-! ## O. Helper Predicates -/
 
@@ -1582,23 +1601,26 @@ theorem internal_rc_rare :
 
 /-! ### Q11. Ch 94 initial words dominate overall
 
-Initial subordinator words (378/611 = 61.9%) are by far the most common
-pattern in WALS Ch 94. Final patterns (word + suffix) together total
-112/611 = 18.3%, less than one-third of the initial word count.
+Initial subordinator words (398/659 = 60.4%) are by far the most common
+pattern in WALS Ch 94. Final subordinator words and subordinating suffixes
+together total 160/659, less than half of the initial word count.
 -/
 
-/-- Initial subordinator words outnumber all final patterns combined. -/
+/-- Initial subordinator words outnumber final words + suffixes combined. -/
 theorem initial_word_dominates_final :
-    (378 : Nat) > 58 + 54 := by native_decide
+    (ch94.filter (·.value == .initialSubordinatorWord)).length >
+    (ch94.filter (·.value == .finalSubordinatorWord)).length +
+    (ch94.filter (·.value == .subordinatingSuffix)).length := by native_decide
 
 /-- Initial subordinator words account for over 60% of Ch 94 sample. -/
 theorem initial_word_over_60_percent :
-    378 * 100 > 611 * 60 := by native_decide
+    (ch94.filter (·.value == .initialSubordinatorWord)).length * 100 >
+    ch94.length * 60 := by native_decide
 
 /-! ### Q12. Subordinator suffixes are restricted to OV languages
 
-In WALS Ch 94, subordinator suffixes (both initial and final) are
-typologically rare (7 + 54 = 61/611). In our sample, all languages
+In WALS Ch 94, subordinating suffixes and internal subordinator words are
+typologically rare (64 + 8 = 72/659). In our sample, all languages
 with subordinator suffixes are OV. This follows from morphological
 typology: suffixal subordination requires the subordinated verb to
 be identifiable by position, which OV order provides.

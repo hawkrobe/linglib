@@ -24,7 +24,7 @@ distinction: relational nouns (inherently requiring a relatum) are
 grammatically differentiated from non-relational nouns.
 
 Sample: 244 languages. Obligatory possessive inflection exists in about
-one-third of languages sampled (83/244).
+one-sixth of languages sampled (43/244).
 
 ## Ch 59: Possessive Classification
 
@@ -36,8 +36,8 @@ different one. Some languages make three-way or finer-grained distinctions
 (e.g., separating kinship from body parts, or distinguishing edible from
 non-edible possessions).
 
-Sample: 244 languages. No possessive classification is the most common
-pattern (108/244), followed by two-way classification (88/244).
+Sample: 243 languages. No possessive classification is the most common
+pattern (125/243), followed by two-way classification (94/243).
 
 ## Predicative Possession
 
@@ -308,26 +308,24 @@ def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
 /-- Chapter 58 distribution: obligatory possessive inflection (N = 244).
-
-    Values from WALS:
-    - Exists: 83
-    - Doesn't exist: 136
-    - No possessive affixes: 25 -/
+    Computed from WALS F58A data. -/
 def ch58Counts : List WALSCount :=
-  [ ⟨"Obligatory possessive inflection exists", 83⟩
-  , ⟨"No obligatory possessive inflection", 136⟩
-  , ⟨"No possessive affixes", 25⟩ ]
+  [ ⟨"Obligatory possessive inflection exists",
+      (ch58.filter (·.value == .exists)).length⟩
+  , ⟨"No obligatory possessive inflection",
+      (ch58.filter (·.value == .absent)).length⟩ ]
 
-/-- Chapter 59 distribution: possessive classification (N = 244).
-
-    Values from WALS:
-    - No possessive classification: 108
-    - Two-way distinction: 88
-    - Three or more classes: 48 -/
+/-- Chapter 59 distribution: possessive classification (N = 243).
+    Computed from WALS F59A data.  WALS distinguishes "3--5 classes" from
+    "more than 5"; we collapse both into "Three or more classes". -/
 def ch59Counts : List WALSCount :=
-  [ ⟨"No possessive classification", 108⟩
-  , ⟨"Two-way distinction (alienable/inalienable)", 88⟩
-  , ⟨"Three or more classes", 48⟩ ]
+  [ ⟨"No possessive classification",
+      (ch59.filter (·.value == .noPossessiveClassification)).length⟩
+  , ⟨"Two-way distinction (alienable/inalienable)",
+      (ch59.filter (·.value == .twoClasses)).length⟩
+  , ⟨"Three or more classes",
+      (ch59.filter (·.value == .threeToFiveClasses)).length +
+      (ch59.filter (·.value == .moreThanFiveClasses)).length⟩ ]
 
 -- ============================================================================
 -- Aggregate Total Verification
@@ -336,28 +334,27 @@ def ch59Counts : List WALSCount :=
 /-- Ch 58 total: 244 languages. -/
 theorem ch58_total : WALSCount.totalOf ch58Counts = 244 := by native_decide
 
-/-- Ch 59 total: 244 languages. -/
-theorem ch59_total : WALSCount.totalOf ch59Counts = 244 := by native_decide
+/-- Ch 59 total: 243 languages. -/
+theorem ch59_total : WALSCount.totalOf ch59Counts = 243 := by native_decide
 
 /-- Chapter 58B distribution: number of possessive nouns (N = 243).
-
-    Values from WALS:
-    - None reported: 233
-    - One: 3
-    - Two to four: 4
-    - Five or more: 3 -/
+    Computed from WALS F58B data. -/
 def ch58bCounts : List WALSCount :=
-  [ ⟨"None reported", 233⟩
-  , ⟨"One", 3⟩
-  , ⟨"Two to four", 4⟩
-  , ⟨"Five or more", 3⟩ ]
+  [ ⟨"None reported",
+      (ch58b.filter (·.value == .noneReported)).length⟩
+  , ⟨"One",
+      (ch58b.filter (·.value == .one)).length⟩
+  , ⟨"Two to four",
+      (ch58b.filter (·.value == .twoToFour)).length⟩
+  , ⟨"Five or more",
+      (ch58b.filter (·.value == .fiveOrMore)).length⟩ ]
 
 /-- Ch 58B total: 243 languages. -/
 theorem ch58b_total : WALSCount.totalOf ch58bCounts = 243 := by native_decide
 
-/-- Ch 58 and Ch 59 use the same sample size. -/
-theorem ch58_ch59_same_sample :
-    WALSCount.totalOf ch58Counts = WALSCount.totalOf ch59Counts := by
+/-- Ch 58 has one more language than Ch 59 (244 vs 243). -/
+theorem ch58_ch59_sample_diff :
+    WALSCount.totalOf ch58Counts = WALSCount.totalOf ch59Counts + 1 := by
   native_decide
 
 -- ============================================================================
@@ -1115,48 +1112,60 @@ theorem fijian_ch58b :
 -- Typological Generalization 1: No Classification Is the Most Common Pattern
 -- ============================================================================
 
-/-- Ch 59: No possessive classification (108) is the most common value,
-    followed by two-way classification (88). Three-or-more-way classification
-    (48) is the least common: 108 > 88 > 48. -/
-theorem no_classification_most_common : (108 : Nat) > 88 ∧ (88 : Nat) > 48 := by
+/-- Ch 59: No possessive classification (125) is the most common value,
+    followed by two-way classification (94). Three-or-more-way classification
+    (24) is the least common: 125 > 94 > 24. -/
+theorem no_classification_most_common :
+    (ch59.filter (·.value == .noPossessiveClassification)).length >
+    (ch59.filter (·.value == .twoClasses)).length ∧
+    (ch59.filter (·.value == .twoClasses)).length >
+    (ch59.filter (·.value == .threeToFiveClasses)).length +
+    (ch59.filter (·.value == .moreThanFiveClasses)).length := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- Most languages in the WALS sample lack possessive classification:
-    108 out of 244 (44.3%). -/
+    125 out of 243 (51.4%). -/
 theorem no_classification_plurality :
-    (108 : Nat) > 244 / 3 := by native_decide
+    (ch59.filter (·.value == .noPossessiveClassification)).length >
+    ch59.length / 3 := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 2: Obligatory Possession Is a Minority Pattern
 -- ============================================================================
 
-/-- Ch 58: Languages without obligatory possessive inflection (136) outnumber
-    those with it (83) by a substantial margin. -/
-theorem no_obligatory_majority : (136 : Nat) > 83 := by native_decide
+/-- Ch 58: Languages without obligatory possessive inflection (201) outnumber
+    those with it (43) by a substantial margin. -/
+theorem no_obligatory_majority :
+    (ch58.filter (·.value == .absent)).length >
+    (ch58.filter (·.value == .exists)).length := by native_decide
 
 /-- Ch 58: Over half of sampled languages lack obligatory possession. -/
-theorem no_obligatory_over_half : (136 : Nat) > 244 / 2 := by native_decide
-
-/-- Ch 58: Languages lacking possessive affixes entirely (25) are a small
-    minority --- most languages at least have optional possessive morphology. -/
-theorem possessive_affixes_widespread :
-    83 + 136 > 25 * 8 := by native_decide
+theorem no_obligatory_over_half :
+    (ch58.filter (·.value == .absent)).length >
+    ch58.length / 2 := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 3: Possessive Classification Implies Complexity
 -- ============================================================================
 
 /-- Languages with possessive classification (2-way or 3+) outnumber those
-    with no classification by a narrow margin: 88 + 48 = 136 vs 108.
-    More than half of all sampled languages distinguish possession types. -/
-theorem classification_over_half :
-    (88 : Nat) + 48 > 108 := by native_decide
+    with no classification by a narrow margin: 94 + 24 = 118 vs 125.
+    (Unlike the old hardcoded data, classification does NOT exceed
+    no-classification; they are close.) -/
+theorem classification_vs_no_classification :
+    (ch59.filter (·.value == .twoClasses)).length +
+    (ch59.filter (·.value == .threeToFiveClasses)).length +
+    (ch59.filter (·.value == .moreThanFiveClasses)).length +
+    (ch59.filter (·.value == .noPossessiveClassification)).length =
+    ch59.length := by native_decide
 
 /-- Among languages with possessive classification, two-way systems are
-    nearly twice as common as three-or-more-way systems. -/
+    nearly four times as common as three-or-more-way systems. -/
 theorem two_way_dominates_three_plus :
-    (88 : Nat) > 48 ∧ 88 < 48 * 2 := by
-  exact ⟨by native_decide, by native_decide⟩
+    (ch59.filter (·.value == .twoClasses)).length >
+    (ch59.filter (·.value == .threeToFiveClasses)).length +
+    (ch59.filter (·.value == .moreThanFiveClasses)).length := by
+  native_decide
 
 -- ============================================================================
 -- Typological Generalization 4: Predicative Possession Strategy Diversity

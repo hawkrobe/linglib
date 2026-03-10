@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F46A
 
 /-!
 # Indefinite Pronoun Typology (@cite{haspelmath-1997} / WALS Ch 46)
@@ -30,16 +31,18 @@ functions.
 
 ## WALS Chapter 46
 
-WALS classifies languages by the number of distinct indefinite pronoun
-series. The chapter is based on @cite{haspelmath-1997}'s cross-linguistic sample:
+WALS classifies languages by the morphological source of their indefinite
+pronouns. The chapter is based on @cite{haspelmath-1997}'s cross-linguistic
+sample of 326 languages:
 
 | Value                      | Count |
 |----------------------------|-------|
-| 1–3 indefinite series      |   98  |
-| 4 indefinite series        |   48  |
-| 5 indefinite series        |   54  |
-| 6 or more indefinite series|  121  |
-| Total                      |  321  |
+| Interrogative-based        |  194  |
+| Generic-noun-based         |   85  |
+| Special                    |   22  |
+| Mixed                      |   23  |
+| Existential construction   |    2  |
+| Total                      |  326  |
 
 -/
 
@@ -253,27 +256,33 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-/-- WALS Chapter 46 distribution (N = 321).
+private abbrev ch46 := Core.WALS.F46A.allData
 
-    The four values classify languages by how many distinct series of
-    indefinite pronouns they have. More series means finer-grained
-    encoding of the nine function types. -/
+/-- WALS Chapter 46 distribution (N = 326).
+
+    The five values classify languages by the morphological source of
+    their indefinite pronouns, computed from the WALS 46A dataset. -/
 def ch46Counts : List WALSCount :=
-  [ ⟨"1–3 indefinite series", 98⟩
-  , ⟨"4 indefinite series", 48⟩
-  , ⟨"5 indefinite series", 54⟩
-  , ⟨"6 or more indefinite series", 121⟩ ]
+  [ ⟨"Interrogative-based", (ch46.filter (·.value == .interrogativeBased)).length⟩
+  , ⟨"Generic-noun-based", (ch46.filter (·.value == .genericNounBased)).length⟩
+  , ⟨"Special", (ch46.filter (·.value == .special)).length⟩
+  , ⟨"Mixed", (ch46.filter (·.value == .mixed)).length⟩
+  , ⟨"Existential construction", (ch46.filter (·.value == .existentialConstruction)).length⟩ ]
 
-/-- Ch 46 total: 321 languages. -/
-theorem ch46_total : WALSCount.totalOf ch46Counts = 321 := by native_decide
+/-- Ch 46 total: 326 languages. -/
+theorem ch46_total : WALSCount.totalOf ch46Counts = 326 := by native_decide
 
-/-- Languages with 6+ series are the most common single category. -/
-theorem six_plus_most_common :
-    ch46Counts.all (λ c => c.count ≤ 121) = true := by native_decide
+/-- Interrogative-based is the most common single category. -/
+theorem interrogative_most_common :
+    ch46Counts.all (λ c => c.count ≤ (ch46.filter (·.value == .interrogativeBased)).length) = true := by native_decide
 
-/-- Languages with 4+ series outnumber those with 1–3 series. -/
-theorem differentiated_majority :
-    48 + 54 + 121 > 98 := by native_decide
+/-- Interrogative-based languages outnumber all other categories combined. -/
+theorem interrogative_majority :
+    (ch46.filter (·.value == .interrogativeBased)).length >
+    (ch46.filter (·.value == .genericNounBased)).length +
+    (ch46.filter (·.value == .special)).length +
+    (ch46.filter (·.value == .mixed)).length +
+    (ch46.filter (·.value == .existentialConstruction)).length := by native_decide
 
 -- ============================================================================
 -- §6: Language Data

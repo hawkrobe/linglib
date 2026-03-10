@@ -22,41 +22,42 @@ on the mat"). The copula, where it exists, is best understood not as a
 single phenomenon but as a family of strategies that languages deploy
 differently across predicate types.
 
-## Ch 117: Predicative Adjectives
+## Ch 117: Predicative Possession (N = 240)
+
+How languages express predicative possession ("I have a book"). Five values:
+- **Locational** (48/240): possession expressed as location ("a book is at me").
+- **Genitive** (22/240): possession expressed with genitive ("my book exists").
+- **Topic** (48/240): possession expressed as topic construction.
+- **Conjunctional** (59/240): possession expressed with conjunctional strategy.
+- **'Have'** (63/240): a dedicated 'have' verb is used.
+
+## Ch 118: Predicative Adjectives (N = 386)
 
 How languages express adjectival predication. Three values:
-- **Verbal**: adjectives behave like verbs (take verbal morphology, no copula).
-  This is the most common strategy worldwide (191/386 = 49.5%).
-- **Non-verbal encoding**: adjectives require a copula or other non-verbal
-  strategy (113/386 = 29.3%).
+- **Verbal encoding**: adjectives behave like verbs (take verbal morphology,
+  no copula). This is the most common strategy worldwide (151/386 = 39.1%).
+- **Nonverbal encoding**: adjectives require a copula or other non-verbal
+  strategy (132/386 = 34.2%).
 - **Mixed**: some adjectives are verbal, others require a copula
-  (82/386 = 21.2%).
+  (103/386 = 26.7%).
 
-## Ch 118: Predicative Noun Phrases
-
-How languages express nominal predication ("She is a doctor"). Two values:
-- **Verbal encoding**: a copula verb is used (171/386 = 44.3%).
-- **Non-verbal encoding**: juxtaposition, with no copula or a non-verbal
-  particle/pronoun (215/386 = 55.7%).
-
-## Ch 119: Nominal and Locational Predication
+## Ch 119: Nominal and Locational Predication (N = 386)
 
 Whether a language uses the *same* or *different* strategy for nominal
 predication ("is a doctor") and locational predication ("is in the room").
 Two values:
-- **Different**: different copulas or strategies for NOM vs LOC (236/386 = 61.1%).
-- **Identical**: same copula/strategy for both (150/386 = 38.9%).
+- **Different**: different copulas or strategies for NOM vs LOC (269/386 = 69.7%).
+- **Identical**: same copula/strategy for both (117/386 = 30.3%).
 
 The majority pattern is to differentiate: even English, which uses "be" for
 both, is cross-linguistically unusual in using a single copula.
 
-## Ch 120: Zero Copula for Predicate Nominals
+## Ch 120: Zero Copula for Predicate Nominals (N = 386)
 
-Whether the copula can be absent in nominal predication. Three values:
-- **Impossible**: copula is always required (182/386 = 47.2%).
-- **Possible in some contexts**: zero copula in restricted environments,
-  typically present tense or 3rd person (107/386 = 27.7%).
-- **Widespread**: zero copula is the normal/default strategy (97/386 = 25.1%).
+Whether the copula can be absent in nominal predication. Two values:
+- **Impossible**: copula is always required (211/386 = 54.7%).
+- **Possible**: zero copula is allowed in some or all contexts
+  (175/386 = 45.3%).
 
 -/
 
@@ -205,34 +206,41 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-/-- Chapter 117 distribution: predicative adjectives (N = 386). -/
-def ch117Counts : List WALSCount :=
-  [ ⟨"Verbal encoding", 191⟩
-  , ⟨"Mixed", 82⟩
-  , ⟨"Non-verbal encoding", 113⟩ ]
+private abbrev ch117 := Core.WALS.F117A.allData
+private abbrev ch118 := Core.WALS.F118A.allData
+private abbrev ch119 := Core.WALS.F119A.allData
+private abbrev ch120 := Core.WALS.F120A.allData
 
-/-- Chapter 118 distribution: predicative noun phrases (N = 386). -/
+/-- Chapter 117 distribution: predicative possession (N = 240). -/
+def ch117Counts : List WALSCount :=
+  [ ⟨"Locational", (ch117.filter (·.value == .locational)).length⟩
+  , ⟨"Genitive", (ch117.filter (·.value == .genitive)).length⟩
+  , ⟨"Topic", (ch117.filter (·.value == .topic)).length⟩
+  , ⟨"Conjunctional", (ch117.filter (·.value == .conjunctional)).length⟩
+  , ⟨"'Have'", (ch117.filter (·.value == .have)).length⟩ ]
+
+/-- Chapter 118 distribution: predicative adjectives (N = 386). -/
 def ch118Counts : List WALSCount :=
-  [ ⟨"Non-verbal encoding", 215⟩
-  , ⟨"Verbal encoding", 171⟩ ]
+  [ ⟨"Verbal encoding", (ch118.filter (·.value == .verbalEncoding)).length⟩
+  , ⟨"Nonverbal encoding", (ch118.filter (·.value == .nonverbalEncoding)).length⟩
+  , ⟨"Mixed", (ch118.filter (·.value == .mixed)).length⟩ ]
 
 /-- Chapter 119 distribution: nominal and locational predication (N = 386). -/
 def ch119Counts : List WALSCount :=
-  [ ⟨"Different", 236⟩
-  , ⟨"Identical", 150⟩ ]
+  [ ⟨"Different", (ch119.filter (·.value == .different)).length⟩
+  , ⟨"Identical", (ch119.filter (·.value == .identical)).length⟩ ]
 
 /-- Chapter 120 distribution: zero copula for predicate nominals (N = 386). -/
 def ch120Counts : List WALSCount :=
-  [ ⟨"Impossible", 182⟩
-  , ⟨"Possible in some contexts", 107⟩
-  , ⟨"Widespread", 97⟩ ]
+  [ ⟨"Impossible", (ch120.filter (·.value == .impossible)).length⟩
+  , ⟨"Possible", (ch120.filter (·.value == .possible)).length⟩ ]
 
 -- ============================================================================
 -- Aggregate Total Verification
 -- ============================================================================
 
-/-- Ch 117 total: 386 languages. -/
-theorem ch117_total : WALSCount.totalOf ch117Counts = 386 := by native_decide
+/-- Ch 117 total: 240 languages. -/
+theorem ch117_total : WALSCount.totalOf ch117Counts = 240 := by native_decide
 
 /-- Ch 118 total: 386 languages. -/
 theorem ch118_total : WALSCount.totalOf ch118Counts = 386 := by native_decide
@@ -243,9 +251,9 @@ theorem ch119_total : WALSCount.totalOf ch119Counts = 386 := by native_decide
 /-- Ch 120 total: 386 languages. -/
 theorem ch120_total : WALSCount.totalOf ch120Counts = 386 := by native_decide
 
-/-- All four chapters use the same sample of 386 languages. -/
-theorem all_chapters_same_sample :
-    WALSCount.totalOf ch117Counts = WALSCount.totalOf ch118Counts ∧
+/-- Chapters 118, 119, 120 use the same 386-language sample.
+    Chapter 117 uses a smaller 240-language sample. -/
+theorem ch118_119_120_same_sample :
     WALSCount.totalOf ch118Counts = WALSCount.totalOf ch119Counts ∧
     WALSCount.totalOf ch119Counts = WALSCount.totalOf ch120Counts := by
   native_decide
@@ -829,53 +837,67 @@ theorem sample_zero_widespread_count :
 -- Generalization 1: Verbal Adjectives Are the Most Common Strategy
 -- ============================================================================
 
-/-- Ch 117: Verbal encoding (191) is the most common strategy for
-    predicative adjectives, exceeding both mixed (82) and non-verbal (113). -/
-theorem verbal_adj_most_common : (191 : Nat) > 113 ∧ (191 : Nat) > 82 := by
+/-- Ch 118: Verbal encoding is the most common strategy for
+    predicative adjectives, exceeding both mixed and nonverbal encoding. -/
+theorem verbal_adj_most_common :
+    (ch118.filter (·.value == .verbalEncoding)).length >
+      (ch118.filter (·.value == .nonverbalEncoding)).length ∧
+    (ch118.filter (·.value == .verbalEncoding)).length >
+      (ch118.filter (·.value == .mixed)).length := by
   exact ⟨by native_decide, by native_decide⟩
 
-/-- Ch 117: Verbal adjectives account for nearly half the sample (191/386). -/
-theorem verbal_adj_near_half : (191 : Nat) * 2 < 386 + 5 := by native_decide
+/-- Ch 118: Verbal adjectives account for roughly 39% of the sample (151/386). -/
+theorem verbal_adj_plurality :
+    (ch118.filter (·.value == .verbalEncoding)).length * 3 > ch118.length := by
+  native_decide
 
 -- ============================================================================
 -- Generalization 2: Non-Verbal Nominal Predication Is More Common
 -- ============================================================================
 
-/-- Ch 118: Non-verbal encoding (215) is more common than verbal encoding
-    (171) for nominal predication. This contrasts with adjectives, where
-    verbal encoding dominates: nouns are more likely than adjectives to
-    be predicated without a verbal copula. -/
-theorem nonverbal_noun_more_common : (215 : Nat) > 171 := by native_decide
+/-- Ch 118: Nonverbal encoding (132) is less common than verbal encoding
+    (151) for predicative adjectives, but the three values are fairly
+    balanced across the 386-language sample. -/
+theorem nonverbal_adj_vs_verbal :
+    (ch118.filter (·.value == .verbalEncoding)).length >
+    (ch118.filter (·.value == .nonverbalEncoding)).length := by native_decide
 
-/-- Ch 118: Non-verbal nominal predication is the majority pattern. -/
-theorem nonverbal_noun_majority : (215 : Nat) * 2 > 386 := by native_decide
+/-- Ch 118: No single predicative adjective strategy is a strict majority. -/
+theorem no_adj_strategy_majority :
+    (ch118.filter (·.value == .verbalEncoding)).length * 2 < ch118.length := by
+  native_decide
 
 -- ============================================================================
 -- Generalization 3: Nom-Loc Split Is the Majority Pattern
 -- ============================================================================
 
 /-- Ch 119: Using different strategies for nominal and locational
-    predication (236) is more common than using the same strategy (150).
+    predication is more common than using the same strategy.
     This means that languages typically distinguish "is a doctor" from
     "is in the room" with different grammatical means. -/
-theorem nomloc_split_majority : (236 : Nat) > 150 := by native_decide
+theorem nomloc_split_majority :
+    (ch119.filter (·.value == .different)).length >
+    (ch119.filter (·.value == .identical)).length := by native_decide
 
 /-- Ch 119: The split pattern accounts for a clear majority. -/
-theorem nomloc_split_supermajority : (236 : Nat) > 386 / 2 := by native_decide
+theorem nomloc_split_supermajority :
+    (ch119.filter (·.value == .different)).length > ch119.length / 2 := by
+  native_decide
 
 -- ============================================================================
 -- Generalization 4: Zero Copula Is a Minority Pattern Overall
 -- ============================================================================
 
-/-- Ch 120: Copula-always-required (182) is the most common single value,
-    but languages that *allow* zero copula (restricted 107 + widespread 97
-    = 204) slightly outnumber those that require it (182). -/
-theorem zero_copula_collectively_common : (107 : Nat) + 97 > 182 := by
+/-- Ch 120: "Impossible" (copula always required) is the majority value. -/
+theorem impossible_is_majority :
+    (ch120.filter (·.value == .impossible)).length >
+    (ch120.filter (·.value == .possible)).length := by
   native_decide
 
-/-- Ch 120: The "impossible" value is the largest single category. -/
-theorem impossible_largest_single : (182 : Nat) > 107 ∧ (182 : Nat) > 97 := by
-  exact ⟨by native_decide, by native_decide⟩
+/-- Ch 120: "Impossible" accounts for more than half the sample. -/
+theorem impossible_over_half :
+    (ch120.filter (·.value == .impossible)).length > ch120.length / 2 := by
+  native_decide
 
 -- ============================================================================
 -- Generalization 5: Verbal Adjectives Rarely Co-occur with Non-Verbal Nouns
@@ -1135,11 +1157,6 @@ theorem verbal_copula_most_common :
 -- ============================================================================
 -- WALS Generated Data
 -- ============================================================================
-
-private abbrev ch117 := Core.WALS.F117A.allData
-private abbrev ch118 := Core.WALS.F118A.allData
-private abbrev ch119 := Core.WALS.F119A.allData
-private abbrev ch120 := Core.WALS.F120A.allData
 
 /-- F117A: 240 languages (predicative possession). -/
 theorem wals_f117a_total : ch117.length = 240 := by native_decide
