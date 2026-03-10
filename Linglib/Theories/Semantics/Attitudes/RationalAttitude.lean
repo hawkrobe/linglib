@@ -1,3 +1,4 @@
+import Linglib.Core.Discourse.SpeechActs
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Events.Basic
@@ -212,5 +213,44 @@ theorem diagnostics_distinguish_readings :
     forcedFutureOrientation .intention = true ∧
     objectControlOnly .intention = true :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 6. Bridge: Reading → @cite{searle-1983} Direction of Fit
+-- ════════════════════════════════════════════════════════════════
+
+open Core.Discourse (DirectionOfFit PsychMode)
+
+/-- Map rational attitude readings to @cite{searle-1983}'s direction of fit.
+
+    Belief readings have mind-to-world fit: the propositional content must
+    match independently existing reality. Intention readings have
+    world-to-mind fit: reality must be changed to match the content. -/
+def Reading.directionOfFit : Reading → DirectionOfFit
+  | .belief    => .mindToWorld
+  | .intention => .worldToMind
+
+/-- Map rational attitude readings to @cite{searle-1983}'s psychological mode.
+
+    This connects @cite{fusco-sgrizzi-2025}'s complement-size analysis to
+    Searle's theory of Intentional states: the same verb produces different
+    psychological modes depending on syntactic complement structure. -/
+def Reading.psychMode : Reading → PsychMode
+  | .belief    => .belief
+  | .intention => .intention
+
+/-- The direction of fit derived from the reading matches the direction
+    derived from the corresponding psychological mode. -/
+theorem reading_direction_matches_psychMode :
+    ∀ r : Reading, r.directionOfFit = r.psychMode.directionOfFit := by
+  intro r; cases r <;> rfl
+
+/-- Belief readings are not causally self-referential; intention readings are.
+    This is the formal correlate of @cite{fusco-sgrizzi-2025}'s CONTENT vs
+    INERTIA modal base distinction: INERTIA worlds are those where the agent's
+    intentions *cause* the events to come about. -/
+theorem intention_self_referential_belief_not :
+    Reading.intention.psychMode.causalSelfRef = .stateToWorld ∧
+    Reading.belief.psychMode.causalSelfRef = .none :=
+  ⟨rfl, rfl⟩
 
 end Semantics.Attitudes.RationalAttitude

@@ -23,6 +23,7 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 
 -/
 
+import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Theories.Semantics.Questions.Hamblin
@@ -708,5 +709,32 @@ pragmatic inference about speaker knowledge, not true local computation.
 
 See `RSA/Implementations/GoodmanStuhlmuller2013.lean` for the RSA treatment.
 -/
+
+-- ════════════════════════════════════════════════════════════════
+-- Bridge: Veridicality → @cite{searle-1983} Causal Self-Referentiality
+-- ════════════════════════════════════════════════════════════════
+
+open Core.Discourse (PsychMode CausalSelfRef)
+
+/-- Map veridicality to @cite{searle-1983}'s psychological mode.
+
+    Veridical attitudes (know, realize) are like perception: the world must
+    *cause* the mental state (you can only know p if p is the case and your
+    epistemic state is appropriately caused by p's being the case).
+    Non-veridical attitudes (believe, think) are like belief: satisfaction
+    depends only on whether p obtains, not on the causal chain. -/
+def Veridicality.psychMode : Veridicality → PsychMode
+  | .veridical    => .perception  -- know: world must cause the state
+  | .nonVeridical  => .belief     -- believe: no causal requirement
+
+/-- Veridical attitudes are causally self-referential (world→state);
+    non-veridical attitudes are not. This connects the linguistic
+    veridicality distinction to @cite{searle-1983}'s metaphysics:
+    knowledge requires the world to cause the knowing, while belief
+    requires only that the content match reality. -/
+theorem veridical_self_referential :
+    Veridicality.veridical.psychMode.causalSelfRef = .worldToState ∧
+    Veridicality.nonVeridical.psychMode.causalSelfRef = .none :=
+  ⟨rfl, rfl⟩
 
 end Semantics.Attitudes.Doxastic
