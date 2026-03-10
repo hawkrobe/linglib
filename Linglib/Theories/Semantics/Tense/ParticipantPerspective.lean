@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Evidential
-import Linglib.Core.Discourse.DiscourseRole
+import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.Context.Basic
 import Linglib.Theories.Morphology.Core.Exponence
 

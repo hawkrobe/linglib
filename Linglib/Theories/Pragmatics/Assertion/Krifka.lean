@@ -1,6 +1,5 @@
-import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Interfaces.AssertionTheory
-import Linglib.Core.Discourse.DiscourseRole
+import Linglib.Core.Discourse.SpeechActs
 
 /-!
 # Krifka: Commitment Space Semantics and Layered Assertive Clauses

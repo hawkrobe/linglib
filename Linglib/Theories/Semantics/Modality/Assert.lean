@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Core.Discourse.DiscourseRole
+import Linglib.Core.Discourse.SpeechActs
 
 /-!
 # The ASSERT Operator and Speech Act Phrase

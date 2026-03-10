@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.Commitment
+import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.Interfaces.AssertionTheory
 
 /-!

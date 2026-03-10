@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.Commitment
+import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.Interfaces.AssertionTheory
 import Mathlib.Data.Rat.Defs
 
@@ -107,7 +107,7 @@ def assertable (s : LauerState W) (p : BProp W) [BEq (BProp W)] : Bool :=
 
 /-- Context set: worlds compatible with all asserted propositions. -/
 def contextSet (s : LauerState W) : ContextSet W :=
-  s.asserted.toContextSet
+  λ w => s.asserted.toContextSet w = true
 
 /-- Stability: always stable (no table mechanism). -/
 def isStable (_ : LauerState W) : Bool := true

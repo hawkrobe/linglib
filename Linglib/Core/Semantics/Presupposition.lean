@@ -2,14 +2,27 @@ import Linglib.Core.Logic.Truth3
 import Linglib.Core.Semantics.Proposition
 
 /-!
-# Presupposition
-@cite{heim-1983} @cite{schlenker-2009} @cite{von-fintel-1999} @cite{geurts-2005}
+# Partial Propositions (PrProp)
+@cite{heim-1983} @cite{schlenker-2009} @cite{von-fintel-1999} @cite{geurts-2005} @cite{belnap-1970}
 
-Presuppositional propositions and projection mechanisms.
+`PrProp W` is linglib's canonical representation of **partial propositions** —
+propositions that may be undefined at some worlds. The two fields are:
+- `presup` (= defined/assertive): whether the proposition says anything at w
+- `assertion` (= content): what it says when defined
 
-`PrProp` decomposes a proposition into presupposition + assertion.
-Filtering connectives model how presuppositions
-project through logical operators.
+This general type has multiple linguistic interpretations:
+- **Presupposition**: `presup` = presupposition holds; failure = undefined
+  (@cite{heim-1983}, @cite{schlenker-2009})
+- **Conditional assertion**: `presup` = assertive; failure = nonassertive
+  (@cite{belnap-1970}: "(A/B) is assertive_w just in case A is true_w")
+- **Homogeneity**: `presup` = all atoms agree; failure = truth-value gap
+  (@cite{kriz-2016})
+
+The choice of **connective system** (how gaps behave under ∧/∨) is
+orthogonal to `PrProp` itself — see `Truth3.GapPolicy`:
+- Classical (`PrProp.and`): both must be defined
+- Filtering (`PrProp.andFilter`): one can satisfy the other's presupposition
+- Belnap (`PrProp.andBelnap`): gaps are skipped, defined operands contribute
 
 -/
 
@@ -226,6 +239,76 @@ def projectPresup (p : PrProp W) : BProp W := p.presup
 
 /-- Assertion extraction: get the assertion as a classical proposition. -/
 def projectAssertion (p : PrProp W) : BProp W := p.assertion
+
+-- ════════════════════════════════════════════════════════════════
+-- Belnap Conditional Assertion Reading
+-- @cite{belnap-1970}
+-- ════════════════════════════════════════════════════════════════
+
+/-- Alias for `presup` under the Belnap reading: whether the proposition
+    is **assertive** at w (asserts something, vs nonassertive/silent). -/
+abbrev assertive (p : PrProp W) : BProp W := p.presup
+
+/-- Belnap's conditional assertion (A/B): assert B on condition A.
+
+    Assertive_w iff A is true at w; what is asserted = B.
+    @cite{belnap-1970}, (3): "(A/B) is assertive_w just in case
+    A is true_w. (A/B)_w = B_w." -/
+def condAssert (A B : BProp W) : PrProp W :=
+  { presup := A, assertion := B }
+
+/-- Belnap conjunction: assertive iff at least one conjunct is assertive.
+    What it asserts = conjunction of assertive conjuncts' content.
+
+    @cite{belnap-1970}, (8). Contrast with classical `PrProp.and` (both
+    must be defined) and filtering `PrProp.andFilter` (left-to-right). -/
+def andBelnap (p q : PrProp W) : PrProp W :=
+  { presup := λ w => p.presup w || q.presup w
+  , assertion := λ w =>
+      (if p.presup w then p.assertion w else true) &&
+      (if q.presup w then q.assertion w else true) }
+
+/-- Belnap disjunction: assertive iff at least one disjunct is assertive.
+    What it asserts = disjunction of assertive disjuncts' content.
+
+    @cite{belnap-1970}, (9). -/
+def orBelnap (p q : PrProp W) : PrProp W :=
+  { presup := λ w => p.presup w || q.presup w
+  , assertion := λ w =>
+      (if p.presup w then p.assertion w else false) ||
+      (if q.presup w then q.assertion w else false) }
+
+/-- Belnap conjunction evaluates to `Truth3.meetBelnap` pointwise. -/
+theorem eval_andBelnap (p q : PrProp W) (w : W) :
+    (andBelnap p q).eval w = Truth3.meetBelnap (p.eval w) (q.eval w) := by
+  simp only [eval, andBelnap, Truth3.meetBelnap, Truth3.meet, Truth3.ofBool]
+  cases p.presup w <;> cases q.presup w <;>
+    simp <;> cases p.assertion w <;> cases q.assertion w <;> rfl
+
+/-- Belnap disjunction evaluates to `Truth3.joinBelnap` pointwise. -/
+theorem eval_orBelnap (p q : PrProp W) (w : W) :
+    (orBelnap p q).eval w = Truth3.joinBelnap (p.eval w) (q.eval w) := by
+  simp only [eval, orBelnap, Truth3.joinBelnap, Truth3.join, Truth3.ofBool]
+  cases p.presup w <;> cases q.presup w <;>
+    simp <;> cases p.assertion w <;> cases q.assertion w <;> rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- Round-trip: Prop3 ↔ PrProp
+-- ════════════════════════════════════════════════════════════════
+
+/-- Convert a three-valued proposition to a PrProp.
+
+    Inverse of `PrProp.eval`: defined ↔ value ≠ indet,
+    assertion ↔ value = true. -/
+def ofProp3 (p : Prop3 W) : PrProp W :=
+  { presup := λ w => (p w).isDefined
+  , assertion := λ w => (p w).toBoolOrFalse }
+
+/-- `Prop3 → PrProp → Prop3` round-trip is the identity. -/
+theorem eval_ofProp3 (p : Prop3 W) : (ofProp3 p).eval = p := by
+  funext w
+  simp only [eval, ofProp3]
+  cases p w <;> rfl
 
 end PrProp
 

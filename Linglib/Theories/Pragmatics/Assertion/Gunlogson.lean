@@ -1,6 +1,5 @@
-import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Interfaces.AssertionTheory
-import Linglib.Core.Discourse.DiscourseRole
+import Linglib.Core.Discourse.SpeechActs
 
 /-!
 # @cite{gunlogson-2004}: Source-Marked Commitments
@@ -171,10 +170,12 @@ theorem cbc_from_uninformativeness (s : GunlogsonState W) (p : BProp W) :
   funext w
   unfold TaggedSlate.toContextSet TaggedSlate.toSlate CommitmentSlate.toContextSet TaggedSlate.add
   simp only [List.map_cons, List.all_cons]
-  apply propext
-  constructor
-  · intro h; cases hp : p w <;> simp_all
-  · intro h; have := hcbc w h; simp [this, h]
+  -- Goal: p w && cs = cs — case split on cs (the old context set)
+  have hcbc_w := hcbc w
+  unfold TaggedSlate.toContextSet TaggedSlate.toSlate CommitmentSlate.toContextSet at hcbc_w
+  generalize List.all (List.map (fun x => TaggedCommitment.content x)
+    s.addresseeSlate.commitments) (fun p_1 => p_1 w) = cs at *
+  cases cs <;> simp_all
 
 -- ════════════════════════════════════════════════════
 -- § 1d. Response Dynamics (Ch. 4)

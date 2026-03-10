@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.110] - 2026-03-10
+
+### Changed
+- **Core/Discourse/SpeechActs.lean**: Unify DiscourseRole.lean + Commitment.lean + Searle 1983 types into single file. Add `DirectionOfFit`, `SearleClass`, `PsychMode` (named enum: belief/desire/intention/perception/expressive), `CausalSelfRef`, `IntentionalState`. Fix hallucinated "Ch. 6 §4" section reference → cite @searle-1979. Fix incorrect `DirectionOfFit.causalSelfRef` (was a function of direction, but Searle Ch. 3 shows self-referentiality depends on specific mode, not direction). Add `self_ref_independent_of_direction` theorem, `sincerity_direction_matches_class`, per-mode causal self-ref theorems
+- **Theories/Pragmatics/Assertion/Gunlogson.lean**: Fix `cbc_from_uninformativeness` proof after `toContextSet` return type change (BProp not ContextSet)
+
+## [0.229.109] - 2026-03-10
+
+### Changed
+- **Phonology/HarmonicGrammar/OTLimit.lean**: Close `expWeights_separated` sorry — exponential weights (M+1)^(n-1-i) are exponentially separated with violation bound M. Proof by recursive decomposition: split {i > k} = {k+1} ∪ {i > k+1}, apply IH, then (M+1) * ew(k+1) = ew(k) absorbs the bound
+- **Core/Agent/RankOrderings.lean**: Close `rankProb_nonneg` sorry — ranking probability is non-negative (product of pChoice values starting from 1)
+
+## [0.229.108] - 2026-03-09
+
+### Added
+- **Phenomena/Conditionals/Studies/Belnap1970.lean**: Formalize Belnap 1970 "Conditional Assertion and Restricted Quantification" — conditional assertion as `PrProp`, restricted ∀/∃ derived from conditional assertion + quantification, Aristotelian square via `Core.SquareOfOpposition.Square`, `SquareRelations` under non-empty restrictor, content bridges to `every_sem`/`some_sem`, Barbara syllogism, contrapositive assertiveness divergence, I-conversion (equitrue but not equi-assertive)
+- **Core/Logic/Truth3.lean**: Add Belnap connectives (`meetBelnap`/`joinBelnap` — indet as identity element), `GapPolicy` inductive (strongKleene/weakKleene/belnap), parametric `meet3`/`join3`, agreement and refinement theorems, `Prop3.andBelnap`/`Prop3.orBelnap`
+- **Core/Semantics/Presupposition.lean**: Add `PrProp.condAssert` (Belnap's A/B), `PrProp.andBelnap`/`PrProp.orBelnap` with eval bridge theorems, `PrProp.ofProp3` with round-trip identity `eval_ofProp3`, `PrProp.assertive` alias; update module docstring to document three interpretations (presupposition, conditional assertion, homogeneity)
+- **Theories/Semantics/Lexical/Determiner/Quantifier.lean**: Add Aristotelian square theorems — `every_contradicts_notEvery` (A-O contradiction), `no_contradicts_some` (E-I contradiction), `a_e_contrary` (A-E contrariety under empty restrictor), `subalternation_a_i`/`subalternation_e_o` (with non-empty restrictor), `subcontrariety_i_o`
+
 ## [0.229.107] - 2026-03-09
 
 ### Changed

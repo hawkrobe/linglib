@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.InformationStructure
-import Linglib.Core.Discourse.Commitment
+import Linglib.Core.Discourse.SpeechActs
 
 /-!
 # Biased Polar Questions

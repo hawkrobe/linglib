@@ -807,6 +807,88 @@ theorem every_filtrating : Filtrating (every_sem m) := by
   · simp
   · simp [hA] at h1 h2; simp [h1, h2]
 
+-- ============================================================================
+-- Aristotelian Square of Opposition
+-- @cite{belnap-1970} @cite{strawson-1952}
+--
+-- The four traditional forms (A/E/I/O) and their logical relations,
+-- derived from generalized quantifier denotations:
+--   A: every(R,S) = ∀x. R(x) → S(x)     (universal affirmative)
+--   E: no(R,S)    = ∀x. R(x) → ¬S(x)    (universal negative)
+--   I: some(R,S)  = ∃x. R(x) ∧ S(x)     (particular affirmative)
+--   O: ¬every(R,S)                        (particular negative)
+-- ============================================================================
+
+/-- **Contradiction (A vs O)**: the A-form and O-form are contradictories. -/
+theorem every_contradicts_notEvery (R S : m.Entity → Bool) :
+    every_sem m R S = !(outerNeg (every_sem m) R S) := by
+  simp [outerNeg, Bool.not_not]
+
+/-- **Contradiction (E vs I)**: the E-form and I-form are contradictories.
+
+    Follows from `outerNeg_some_eq_no`: negating "some" gives "no". -/
+theorem no_contradicts_some (R S : m.Entity → Bool) :
+    no_sem m R S = !(some_sem m R S) :=
+  (congr_fun (congr_fun outerNeg_some_eq_no R) S).symm
+
+/-- **Contrariety (A ∧ E)**: the A-form and E-form can't both hold
+    unless the restrictor is empty. If every R is S and no R is S,
+    then nothing satisfies R. -/
+theorem a_e_contrary (R S : m.Entity → Bool) :
+    every_sem m R S = true → no_sem m R S = true →
+    FiniteModel.elements.any R = false := by
+  simp only [every_sem, no_sem]
+  intro hA hE
+  rw [List.all_eq_true] at hA hE
+  rw [Bool.eq_false_iff]
+  intro hAny
+  rw [List.any_eq_true] at hAny
+  obtain ⟨x, hx, hRx⟩ := hAny
+  have h1 := hA x hx
+  have h2 := hE x hx
+  simp [hRx] at h1 h2
+  exact absurd h1 (by rw [h2]; exact Bool.noConfusion)
+
+/-- **Subalternation (A → I)**: the A-form entails the I-form when the
+    restrictor is non-empty. This is @cite{belnap-1970}'s assertiveness
+    condition: ∀x(Cx/Bx) presupposes ∃xCx. @cite{strawson-1952} argued
+    "All S are P" presupposes there are Ss — Belnap *derives* this. -/
+theorem subalternation_a_i (R S : m.Entity → Bool)
+    (hR : FiniteModel.elements.any R = true) :
+    every_sem m R S = true → some_sem m R S = true := by
+  simp only [every_sem, some_sem]
+  intro hA
+  rw [List.all_eq_true] at hA
+  rw [List.any_eq_true] at hR ⊢
+  obtain ⟨x, hx, hRx⟩ := hR
+  exact ⟨x, hx, by have := hA x hx; simp [hRx] at this; simp [hRx, this]⟩
+
+/-- **Subalternation (E → O)**: the E-form entails the O-form when the
+    restrictor is non-empty. -/
+theorem subalternation_e_o (R S : m.Entity → Bool)
+    (hR : FiniteModel.elements.any R = true) :
+    no_sem m R S = true → outerNeg (every_sem m) R S = true := by
+  intro hE
+  simp only [outerNeg]
+  cases hA : every_sem m R S
+  · rfl
+  · exact absurd hR (by simp [a_e_contrary R S hA hE])
+
+/-- **Subcontrariety (I ∨ O)**: the I-form and O-form can't both fail
+    when the restrictor is non-empty. Either some R is S, or not every
+    R is S (or both). -/
+theorem subcontrariety_i_o (R S : m.Entity → Bool)
+    (hR : FiniteModel.elements.any R = true) :
+    some_sem m R S = true ∨ outerNeg (every_sem m) R S = true := by
+  cases hS : some_sem m R S
+  · right
+    simp only [outerNeg]
+    cases hA : every_sem m R S
+    · rfl
+    · have hE : no_sem m R S = true := by rw [no_contradicts_some, hS]; rfl
+      exact absurd hR (by simp [a_e_contrary R S hA hE])
+  · exact Or.inl rfl
+
 end FiniteModelProofs
 
 end Semantics.Lexical.Determiner.Quantifier

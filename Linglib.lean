@@ -132,8 +132,7 @@ import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Morphology.Core.WordStructure
 import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
 import Linglib.Core.Discourse.CoherenceRelation
-import Linglib.Core.Discourse.Commitment
-import Linglib.Core.Discourse.DiscourseRole
+import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
@@ -623,6 +622,7 @@ import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
 import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
+import Linglib.Phenomena.Conditionals.Studies.Belnap1970
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996

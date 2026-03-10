@@ -245,6 +245,133 @@ theorem metaAssert_idempotent (v : Truth3) : metaAssert (metaAssert v) = metaAss
 theorem metaAssert_of_defined (v : Truth3) (h : v.isDefined = Bool.true) : metaAssert v = v := by
   cases v with | true => rfl | false => rfl | indet => simp [isDefined] at h
 
+-- ════════════════════════════════════════════════════════════════
+-- Belnap Conditional Assertion Connectives
+-- @cite{belnap-1970}
+-- ════════════════════════════════════════════════════════════════
+
+/-- Belnap conjunction: undefined operands are skipped.
+
+    If one operand is undefined, the result equals the other.
+    If both are undefined, the result is undefined.
+    This models @cite{belnap-1970}'s (8): conjunction is assertive iff
+    at least one conjunct is assertive; what it asserts = conjunction
+    of assertive conjuncts only. `indet` is the identity element.
+
+    | meetBelnap | true  | false | indet |
+    |------------|-------|-------|-------|
+    | true       | true  | false | true  |
+    | false      | false | false | false |
+    | indet      | true  | false | indet |
+
+    Contrast: Strong Kleene `meet` (indet propagates unless dominated),
+    Weak Kleene `meetWeak` (indet always propagates). -/
+def meetBelnap : Truth3 → Truth3 → Truth3
+  | .indet, b => b
+  | a, .indet => a
+  | a, b => meet a b
+
+/-- Belnap disjunction: undefined operands are skipped.
+
+    Models @cite{belnap-1970}'s (9): disjunction is assertive iff at
+    least one disjunct is assertive; what it asserts = disjunction of
+    assertive disjuncts only. `indet` is the identity element. -/
+def joinBelnap : Truth3 → Truth3 → Truth3
+  | .indet, b => b
+  | a, .indet => a
+  | a, b => join a b
+
+/-- `indet` is left identity for Belnap conjunction. -/
+theorem meetBelnap_indet_left (a : Truth3) : meetBelnap .indet a = a := rfl
+
+/-- `indet` is right identity for Belnap conjunction. -/
+theorem meetBelnap_indet_right (a : Truth3) : meetBelnap a .indet = a := by
+  cases a <;> rfl
+
+/-- Belnap conjunction is commutative. -/
+theorem meetBelnap_comm (a b : Truth3) : meetBelnap a b = meetBelnap b a := by
+  cases a <;> cases b <;> rfl
+
+/-- `indet` is left identity for Belnap disjunction. -/
+theorem joinBelnap_indet_left (a : Truth3) : joinBelnap .indet a = a := rfl
+
+/-- `indet` is right identity for Belnap disjunction. -/
+theorem joinBelnap_indet_right (a : Truth3) : joinBelnap a .indet = a := by
+  cases a <;> rfl
+
+/-- Belnap disjunction is commutative. -/
+theorem joinBelnap_comm (a b : Truth3) : joinBelnap a b = joinBelnap b a := by
+  cases a <;> cases b <;> rfl
+
+/-- Belnap conjunction agrees with Bool on defined inputs. -/
+theorem meetBelnap_ofBool (a b : Bool) :
+    meetBelnap (ofBool a) (ofBool b) = ofBool (a && b) := by
+  cases a <;> cases b <;> rfl
+
+/-- Belnap disjunction agrees with Bool on defined inputs. -/
+theorem joinBelnap_ofBool (a b : Bool) :
+    joinBelnap (ofBool a) (ofBool b) = ofBool (a || b) := by
+  cases a <;> cases b <;> rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- Gap Policy: Parametric Three-Valued Connectives
+-- ════════════════════════════════════════════════════════════════
+
+/-- How undefined/gap values behave under logical connectives.
+
+    Three truth-functional systems for three-valued logic:
+    - **Strong Kleene**: gap propagates unless the defined operand
+      forces the result (false ∧ _ = false, true ∨ _ = true)
+    - **Weak Kleene**: gap always propagates (both operands must
+      be defined)
+    - **Belnap**: gap is skipped (only defined operands contribute;
+      gap is the identity element for both ∧ and ∨)
+
+    | Policy | gap ∧ T | gap ∧ F | gap ∨ F | gap ∨ T |
+    |--------|---------|---------|---------|---------|
+    | Strong | gap     | F       | gap     | T       |
+    | Weak   | gap     | gap     | gap     | gap     |
+    | Belnap | **T**   | **F**   | **F**   | **T**   | -/
+inductive GapPolicy where
+  | strongKleene
+  | weakKleene
+  | belnap
+  deriving DecidableEq, Repr, BEq
+
+/-- Parametric conjunction indexed by gap policy. -/
+def meet3 : GapPolicy → Truth3 → Truth3 → Truth3
+  | .strongKleene => meet
+  | .weakKleene => meetWeak
+  | .belnap => meetBelnap
+
+/-- Parametric disjunction indexed by gap policy. -/
+def join3 : GapPolicy → Truth3 → Truth3 → Truth3
+  | .strongKleene => join
+  | .weakKleene => joinWeak
+  | .belnap => joinBelnap
+
+/-- All three gap policies agree on fully defined inputs. -/
+theorem meet3_agree_defined (pol : GapPolicy) (a b : Bool) :
+    meet3 pol (ofBool a) (ofBool b) = ofBool (a && b) := by
+  cases pol <;> cases a <;> cases b <;> rfl
+
+/-- All three gap policies agree on fully defined inputs (disjunction). -/
+theorem join3_agree_defined (pol : GapPolicy) (a b : Bool) :
+    join3 pol (ofBool a) (ofBool b) = ofBool (a || b) := by
+  cases pol <;> cases a <;> cases b <;> rfl
+
+/-- Strong Kleene refines Belnap: when Strong Kleene gives a defined
+    answer, Belnap agrees. -/
+theorem strong_refines_belnap (a b : Truth3) (h : meet a b ≠ .indet) :
+    meetBelnap a b = meet a b := by
+  cases a <;> cases b <;> simp_all [meet, meetBelnap]
+
+/-- Weak Kleene refines Strong Kleene: when Weak Kleene gives a defined
+    answer, Strong Kleene agrees. -/
+theorem weak_refines_strong (a b : Truth3) (h : meetWeak a b ≠ .indet) :
+    meet a b = meetWeak a b := by
+  cases a <;> cases b <;> simp_all [meet, meetWeak]
+
 end Truth3
 
 /-- How truth values aggregate through an operator.
@@ -308,6 +435,12 @@ def andWeak (p q : Prop3 W) : Prop3 W := λ w => Truth3.meetWeak (p w) (q w)
 
 /-- Pointwise meta-assertion. -/
 def metaAssert (p : Prop3 W) : Prop3 W := λ w => Truth3.metaAssert (p w)
+
+/-- Pointwise Belnap conjunction. @cite{belnap-1970} -/
+def andBelnap (p q : Prop3 W) : Prop3 W := λ w => Truth3.meetBelnap (p w) (q w)
+
+/-- Pointwise Belnap disjunction. @cite{belnap-1970} -/
+def orBelnap (p q : Prop3 W) : Prop3 W := λ w => Truth3.joinBelnap (p w) (q w)
 
 end Prop3
 
