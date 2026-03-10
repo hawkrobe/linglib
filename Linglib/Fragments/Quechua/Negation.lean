@@ -15,12 +15,13 @@ WALS classifies Imbabura Quechua as **both symmetric and asymmetric**:
   further structural change.
 
 - **Asymmetric (A/NonReal)**: in other constructions, negation triggers
-  obligatory *-chu* marking on the verb. This *-chu* suffix is associated
-  with irrealis/non-realized status — it marks that the event is
-  non-actualized, a category absent from the corresponding affirmative.
+  obligatory *-chu* marking on the verb. *-chu* is a **validator** enclitic
+  that also appears in polar interrogatives; it expresses assertion
+  authority and certainty (@cite{miestamo-2005} p. 158). Its use in
+  negatives introduces a non-realized category absent from affirmatives.
 
 The A/NonReal asymmetry is **paradigmatic**: the negative paradigm
-obligatorily includes an irrealis category (*-chu*) that the affirmative
+obligatorily includes a validator category (*-chu*) that the affirmative
 lacks. The clause structure itself does not change (no constructional
 asymmetry).
 -/
@@ -30,7 +31,8 @@ namespace Fragments.Quechua.Negation
 /-- The standard negation particle. -/
 def negParticle : String := "mana"
 
-/-- The irrealis/focus suffix triggered in negative contexts. -/
+/-- The validator enclitic triggered in negative (and interrogative) contexts.
+    Glossed as VAL (validator); shared with polar questions. -/
 def chuSuffix : String := "-chu"
 
 /-- An Imbabura Quechua negation example. -/
@@ -48,7 +50,7 @@ structure NegExample where
 /-- Simple present: asymmetric (requires -chu, A/NonReal). -/
 def present : NegExample :=
   { affirmative := "shamuni", negative := "mana shamu-ni-chu"
-  , glossAff := "come-1SG", glossNeg := "NEG come-1SG-IRREAL"
+  , glossAff := "come-1SG", glossNeg := "NEG come-1SG-VAL"
   , requiresChu := true, symmetric := false }
 
 /-- Progressive: symmetric (mana alone suffices). -/
@@ -60,7 +62,7 @@ def progressive : NegExample :=
 /-- Past: asymmetric (requires -chu). -/
 def past : NegExample :=
   { affirmative := "shamurca", negative := "mana shamurca-chu"
-  , glossAff := "come-PST", glossNeg := "NEG come-PST-IRREAL"
+  , glossAff := "come-PST", glossNeg := "NEG come-PST-VAL"
   , requiresChu := true, symmetric := false }
 
 def allExamples : List NegExample :=

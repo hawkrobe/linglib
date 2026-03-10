@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.89] - 2026-03-09
+
+### Changed
+- **Phenomena/Presupposition/Studies/QingGoodmanLassiter2016.lean**: Rewrite with full RSAConfig, correct domain (13 utterances from Table 1), correct CG prior (9:6:4 ratio from eq. 8), and 6 verified predictions via `rsa_predict`: QUD_now symmetry (wTT = wFT), QUD answer inference, world elimination, QUD_max projection, context set projection via L1_latent, and stopped→now=F
+
+### Removed
+- **Theories/Pragmatics/RSA/Implementations/QingEtAl2016.lean**: Merged into Phenomena study file
+
 ## [0.229.88] - 2026-03-09
 
 ### Added

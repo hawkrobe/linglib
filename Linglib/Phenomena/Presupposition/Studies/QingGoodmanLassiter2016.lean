@@ -1,608 +1,450 @@
-/-
-# Presupposition Projection: Model Comparison
+import Linglib.Tactics.RSAPredict
+import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
-## Finding: Three Papers, One Model
+/-!
+# @cite{qing-goodman-lassiter-2016}
 
-Three influential RSA approaches to presupposition projection are
-**mathematically identical**—they differ only in terminology and domain:
+A rational speech-act model of projective content. CogSci 2016, pp. 1110–1115.
 
-| Paper | Latent Variable Name | Domain |
-|-------|---------------------|--------|
-| @cite{qing-goodman-lassiter-2016} | "context set" C | Change-of-state verbs |
-| @cite{scontras-tonhauser-2025} | "private assumptions" A | Factives (know/think) |
-| @cite{warstadt-2022} | "context set" C | Genus-species |
+The listener jointly infers the world state and the common ground (context set)
+the speaker assumed. Under the right QUD, this derives presupposition projection
+without any special semantic mechanism.
 
-S&T footnote 10 explicitly acknowledges this equivalence:
-> "@cite{qing-goodman-lassiter-2016} call these subsets the 'common ground,' but we think
-> 'private assumptions' better captures this component of the model."
+## The Model
 
-## The Shared Model
+- **L0** (eq. 5): L0(Q(w) | u, C, Q) ∝ Σ_{w'∈C∩⟦u⟧} δ_{Q(w)=Q(w')} · P(w')
+- **S1** (eq. 6): S(u|w,C,Q) ∝ P(u) · L0(Q(w) | u, C, Q)^α
+- **L1** (eq. 7): L(w,C | u, Q) ∝ P(w) · P(C) · S(u | w, C, Q)
 
-All three papers implement the same RSA equations:
+Domain: 13 utterances × 4 worlds × 9 context sets. α = 6.
 
-```
-L0(Q(w) | u, C, Q) ∝ Σ_{w' ∈ C ∩ ⟦u⟧} δ_{Q(w)=Q(w')} · P(w')
-S(u | w, C, Q) ∝ P(u) · L0(Q(w) | u, C, Q)^α
-L1(w, C | u, Q) ∝ P(w) · P(C) · S(u | w, C, Q)
-```
+## Key Insight: QUD Projection and Context Set Inference
 
-Where:
-- **C** is a latent "conversational state" variable (subsets of worlds)
-- **L0** filters worlds by both utterance truth AND compatibility with C
-- **L1** jointly infers (world, C)
-- **Projection/Accommodation** = marginal P(C | u) over states where presup holds
+Under QUD_now ("Does John smoke now?"), S1 scores depend on `now(w)` only —
+worlds with the same `now` value are indistinguishable (§8.1). This means
+presupposition projection CANNOT be observed at the world marginal level.
+Instead, projection surfaces in the **context set posterior** (L1_latent):
+L1 infers the speaker assumed a context set entailing `past=T` (§8.5).
 
-## Interpretation vs Computation
+Under QUD_max (identity QUD), the past-now degeneracy breaks and projection
+is visible directly at the world level (§8.4).
 
-The models are **computationally identical** but differ in **interpretation**:
+## Context Set Simplification
 
-### Qing/Warstadt Interpretation: "Common Ground"
-- C represents what's mutually accepted by speaker and listener
-- L1 infers: "What does the speaker assume is in our shared CG?"
-- Projection = accommodation (updating the shared CG model)
+The paper uses 15 non-empty context sets (all 2^4 - 1 subsets of 4 worlds) with
+5% noise added to eq. (8) to ensure nonzero priors. We model only the 9 context
+sets derivable from observations about past/now, since the remaining 6 (e.g.,
+`change = {(T,F),(F,T)}`) receive only the noise prior (~38× lower) and do not
+affect qualitative predictions.
 
-### Scontras & Tonhauser Interpretation: "Private Assumptions"
-- A represents what the speaker privately takes for granted
-- L1 infers: "What does the speaker privately believe?"
-- Projection = inference about speaker's mental state
+## Connection to @cite{scontras-tonhauser-2025} and @cite{warstadt-2022}
 
-### Why the Different Interpretations?
-
-S&T argue "private assumptions" is more accurate because:
-1. The speaker may assume things not yet in the actual CG
-2. The listener infers what the speaker takes for granted
-3. This better captures the epistemic asymmetry in communication
-
-Qing/Warstadt argue "common ground" is appropriate because:
-1. Presuppositions constrain felicitous contexts
-2. Accommodation updates the CG to satisfy presuppositions
-3. This connects to Stalnaker's framework directly
-
-**Crucially**: These interpretive differences don't affect the math.
-
+All three papers implement the same mathematical structure with different
+domains (change-of-state verbs, factives, genus-species). The latent variable
+is called "context set" here and "private assumptions" in S&T, but the
+computation is identical. See `ScontrasTonhauser2025.lean` for the factive
+domain.
 -/
 
-import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
-import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
-import Linglib.Theories.Semantics.Dynamic.State
+set_option autoImplicit false
 
 namespace Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
 
+open BigOperators
+open Real (rpow rpow_nonneg)
+open Semantics.Lexical.Verb.ChangeOfState
+
+-- ============================================================================
+-- §1. World State
+-- ============================================================================
+
+/-- World state: (past, now) where past = John smoked, now = John smokes.
+    Flat inductive for tactic enumerability. -/
+inductive WorldState where
+  | wTT  -- (past=T, now=T): smoked, still smokes
+  | wTF  -- (past=T, now=F): smoked, quit (stopped)
+  | wFT  -- (past=F, now=T): didn't smoke, started
+  | wFF  -- (past=F, now=F): never smoked
+  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+
+def WorldState.past : WorldState → Bool
+  | .wTT | .wTF => true
+  | .wFT | .wFF => false
+
+def WorldState.now : WorldState → Bool
+  | .wTT | .wFT => true
+  | .wTF | .wFF => false
+
+-- ============================================================================
+-- §2. Utterances (Table 1 + negations + silence)
+-- ============================================================================
+
+/-- Utterances about John's smoking habits.
+    6 positive utterances from Table 1, their 6 negations, and silence. -/
+inductive Utterance where
+  | smokes              -- "John smokes"           {(T,T),(F,T)}
+  | doesntSmoke         -- "John doesn't smoke"    {(T,F),(F,F)}
+  | smoked              -- "John smoked"           {(T,T),(T,F)}
+  | didntSmoke          -- "John didn't smoke"     {(F,T),(F,F)}
+  | alwaysSmoked        -- "John has always smoked"  {(T,T)}
+  | notAlwaysSmoked     -- "John hasn't always smoked" {(T,F),(F,T),(F,F)}
+  | stoppedSmoking      -- "John stopped smoking"  {(T,F)}
+  | notStoppedSmoking   -- "John didn't stop smoking" {(T,T),(F,T),(F,F)}
+  | startedSmoking      -- "John started smoking"  {(F,T)}
+  | notStartedSmoking   -- "John didn't start smoking" {(T,T),(T,F),(F,F)}
+  | neverSmoked         -- "John has never smoked" {(F,F)}
+  | notNeverSmoked      -- "John hasn't never smoked" {(T,T),(T,F),(F,T)}
+  | silence             -- null utterance          {(T,T),(T,F),(F,T),(F,F)}
+  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+
+-- ============================================================================
+-- §3. Literal Semantics (grounded in CoS theory)
+-- ============================================================================
+
+/-- Literal truth conditions from Table 1. Negation of u is U - ⟦u⟧. -/
+def literalMeaning : Utterance → WorldState → Bool
+  | .smokes,            w => w.now
+  | .doesntSmoke,       w => !w.now
+  | .smoked,            w => w.past
+  | .didntSmoke,        w => !w.past
+  | .alwaysSmoked,      w => w.past && w.now
+  | .notAlwaysSmoked,   w => !(w.past && w.now)
+  | .stoppedSmoking,    w => w.past && !w.now
+  | .notStoppedSmoking, w => !(w.past && !w.now)
+  | .startedSmoking,    w => !w.past && w.now
+  | .notStartedSmoking, w => !(!w.past && w.now)
+  | .neverSmoked,       w => !w.past && !w.now
+  | .notNeverSmoked,    w => !(!w.past && !w.now)
+  | .silence,           _ => true
+
+/-- Cessation semantics matches CoS theory: presup(past=T) ∧ assert(now=F). -/
+theorem stopped_follows_cos (w : WorldState) :
+    literalMeaning .stoppedSmoking w = (w.past && !w.now) := rfl
+
+-- ============================================================================
+-- §4. Context Sets (Common Ground)
+-- ============================================================================
+
+/-- Context sets: subsets of worlds representing common ground.
+    These are the 9 context sets derivable from observations about past and now
+    (eq. 8). The paper's full model uses 15 non-empty subsets with 5% noise;
+    the omitted 6 (e.g., `change = {(T,F),(F,T)}`) have negligible prior. -/
+inductive ContextSet where
+  | pastTrue           -- +past: CG entails John smoked
+  | pastFalse          -- -past: CG entails John didn't smoke
+  | nowTrue            -- +now: CG entails John smokes
+  | nowFalse           -- -now: CG entails John doesn't smoke
+  | pastTrueNowTrue    -- +past+now
+  | pastTrueNowFalse   -- +past-now
+  | pastFalseNowTrue   -- -past+now
+  | pastFalseNowFalse  -- -past-now
+  | universe           -- no constraints
+  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+
+/-- World-context compatibility: w ∈ C. -/
+def compatibleBool : ContextSet → WorldState → Bool
+  | .pastTrue,          w => w.past
+  | .pastFalse,         w => !w.past
+  | .nowTrue,           w => w.now
+  | .nowFalse,          w => !w.now
+  | .pastTrueNowTrue,   w => w.past && w.now
+  | .pastTrueNowFalse,  w => w.past && !w.now
+  | .pastFalseNowTrue,  w => !w.past && w.now
+  | .pastFalseNowFalse, w => !w.past && !w.now
+  | .universe,          _ => true
+
+-- ============================================================================
+-- §5. QUD
+-- ============================================================================
+
+/-- Questions under discussion. -/
+inductive QUD where
+  | now   -- "Does John smoke now?" (partitions by now)
+  | max   -- Full world identification (identity QUD)
+  | past  -- "Did John smoke?" (partitions by past)
+  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+
+/-- QUD aggregation: sums L0 probabilities over the QUD equivalence class.
+    - now: sums over worlds with same now value
+    - max: identity (no aggregation)
+    - past: sums over worlds with same past value -/
+def qudAggregate (qud : QUD) (f : WorldState → ℝ) (w : WorldState) : ℝ :=
+  match qud, w with
+  | .now,  .wTT => f .wTT + f .wFT
+  | .now,  .wTF => f .wTF + f .wFF
+  | .now,  .wFT => f .wTT + f .wFT
+  | .now,  .wFF => f .wTF + f .wFF
+  | .max,  w    => f w
+  | .past, .wTT => f .wTT + f .wTF
+  | .past, .wTF => f .wTT + f .wTF
+  | .past, .wFT => f .wFT + f .wFF
+  | .past, .wFF => f .wFT + f .wFF
+
+theorem qudAggregate_nonneg {qud : QUD} {f : WorldState → ℝ} {w : WorldState}
+    (hf : ∀ w, 0 ≤ f w) : 0 ≤ qudAggregate qud f w := by
+  cases qud <;> cases w <;> simp only [qudAggregate]
+  all_goals first | exact hf _ | exact add_nonneg (hf _) (hf _)
+
+-- ============================================================================
+-- §6. Priors
+-- ============================================================================
+
+/-- Utterance prior (eq. 1): Pr(u) ∝ 2^{-#content-words(u)}.
+    Negation and auxiliaries excluded from count.
+    - 2 content words: stopped/started/always/never smoking → 1/4
+    - 1 content word: smokes/smoked → 1/2
+    - 0 content words: silence → 1 -/
+def utterancePrior : Utterance → ℚ
+  | .smokes | .doesntSmoke | .smoked | .didntSmoke => 1/2
+  | .alwaysSmoked | .notAlwaysSmoked
+  | .stoppedSmoking | .notStoppedSmoking
+  | .startedSmoking | .notStartedSmoking
+  | .neverSmoked | .notNeverSmoked => 1/4
+  | .silence => 1
+
+theorem utterancePrior_nonneg (u : Utterance) : 0 ≤ utterancePrior u := by
+  cases u <;> simp [utterancePrior]
+
+/-- Context set prior (eq. 8): Pr(C) ∝ Σ_{CG⊆Obs} P(CG) · δ_{C=∩CG}.
+    Each observation enters CG independently with probability 0.4.
+    P(CG) = 0.4^|CG| × 0.6^(4-|CG|).
+    - 0 observations (universe): 0.6^4 ∝ 9
+    - 1 observation (single): 0.4 × 0.6^3 ∝ 6
+    - 2 observations (pair): 0.4^2 × 0.6^2 ∝ 4 -/
+def contextPrior : ContextSet → ℚ
+  | .universe => 9
+  | .pastTrue | .pastFalse | .nowTrue | .nowFalse => 6
+  | .pastTrueNowTrue | .pastTrueNowFalse
+  | .pastFalseNowTrue | .pastFalseNowFalse => 4
+
+theorem contextPrior_pos (cs : ContextSet) : 0 < contextPrior cs := by
+  cases cs <;> simp [contextPrior]
+
+-- ============================================================================
+-- §7. RSAConfig
+-- ============================================================================
+
+/-- RSA model parameterized by QUD. The paper's final model uses QUD_now with
+    CG prior.
+
+    - L0: meaning = compatibility ∧ literal truth (eq. 5)
+    - S1: utterancePrior × rpow(qudAggregate(L0), α) (eq. 6)
+    - L1: worldPrior × contextPrior × S1 (eq. 7) -/
+noncomputable def cfg (qud : QUD) : RSA.RSAConfig Utterance WorldState where
+  Latent := ContextSet
+  meaning _ cs u w :=
+    if compatibleBool cs w && literalMeaning u w then (1 : ℝ) else 0
+  meaning_nonneg _ _ _ _ := by split <;> norm_num
+  s1Score l0 α cs w u :=
+    (utterancePrior u : ℝ) * rpow (qudAggregate qud (l0 u) w) α
+  s1Score_nonneg _ _ _ _ u hl _ :=
+    mul_nonneg (Rat.cast_nonneg.mpr (utterancePrior_nonneg u))
+      (rpow_nonneg (qudAggregate_nonneg (fun w' => hl u w')) _)
+  α := 6
+  α_pos := by positivity
+  worldPrior _ := 1
+  worldPrior_nonneg _ := by norm_num
+  latentPrior _ cs := (contextPrior cs : ℝ)
+  latentPrior_nonneg _ cs := Rat.cast_nonneg.mpr (le_of_lt (contextPrior_pos cs))
+
+/-- Final model: CG prior + QUD_now (paper's main prediction). -/
+noncomputable abbrev cfgNow := cfg .now
+
+/-- Comparison model: CG prior + QUD_max. -/
+noncomputable abbrev cfgMax := cfg .max
+
+/-- Comparison model: CG prior + QUD_past. -/
+noncomputable abbrev cfgPast := cfg .past
+
+-- ============================================================================
+-- §8. L1 Predictions
+-- ============================================================================
+
+/-! ### §8.1 QUD_now symmetry
+
+Under QUD_now, `qudAggregate` maps wTT and wFT to the same value (both
+have now=T), so S1(cs, wTT, u) = S1(cs, wFT, u) for all cs. With uniform
+worldPrior and w-independent latentPrior, L1(wTT) = L1(wFT). This means
+presupposition projection **cannot** be measured by world marginal under
+QUD_now — the past dimension is invisible to L1. -/
+
+set_option maxHeartbeats 3200000 in
+/-- **QUD_now symmetry**: wTT and wFT are indistinguishable.
+
+    This is the structural reason why projection under QUD_now must be
+    measured via context set inference (L1_latent), not world marginal. -/
+theorem qud_now_wTT_eq_wFT :
+    cfgNow.L1 .notStoppedSmoking .wTT =
+    cfgNow.L1 .notStoppedSmoking .wFT := by
+  rsa_predict
+
+/-! ### §8.2 QUD answer
+
+After hearing "didn't stop smoking" with QUD = "Does John smoke now?",
+L1 correctly infers the QUD answer: John smokes (now=T). -/
+
+set_option maxHeartbeats 3200000 in
+/-- **QUD answer inference**: L1 infers now=T from "didn't stop smoking". -/
+theorem qud_answer_now_true :
+    cfgNow.L1_marginal .notStoppedSmoking (·.now) >
+    cfgNow.L1_marginal .notStoppedSmoking (fun w => !w.now) := by
+  rsa_predict
+
+/-! ### §8.3 World elimination
+
+Within worlds sharing the same past value, now=T dominates now=F.
+"Didn't stop smoking" is literally false at wTF (past=T, now=F is exactly
+"stopped smoking"), concentrating L1 mass on wTT. -/
+
+set_option maxHeartbeats 3200000 in
+/-- **Now=T dominates now=F** among past=T worlds. -/
+theorem wTT_gt_wTF :
+    cfgNow.L1 .notStoppedSmoking .wTT >
+    cfgNow.L1 .notStoppedSmoking .wTF := by
+  rsa_predict
+
+/-! ### §8.4 Projection under QUD_max (Figure 1c)
+
+Under the identity QUD, the past-now degeneracy of §8.1 breaks: S1 scores
+depend on all world dimensions, so L1 can distinguish wTT from wFT. The
+key asymmetry: under +past context, "didn't stop" narrows to exactly wTT
+(maximally informative for the speaker), while under -past context it
+spreads over both wFT and wFF (less informative). This makes wTT more
+likely than wFT.
+
+Note: the paper observes that (T,T) ≈ (F,F) under QUD_max, so projection
+is incomplete — the past=T marginal still equals the past=F marginal. Full
+projection requires QUD_now + context set inference (§8.5). -/
+
+set_option maxHeartbeats 3200000 in
+/-- **Projection under QUD_max**: wTT > wFT. -/
+theorem projection_under_qud_max :
+    cfgMax.L1 .notStoppedSmoking .wTT >
+    cfgMax.L1 .notStoppedSmoking .wFT := by
+  rsa_predict
+
+/-! ### §8.5 Context set projection (the paper's main result, Figure 3)
+
+The paper's headline result: after hearing "didn't stop smoking" under QUD_now,
+L1 infers the speaker assumed a **+past context set** (common ground where John
+smoked). This is presupposition projection: the presupposed content (past=T)
+enters the listener's beliefs about the common ground, even though the utterance
+literally says nothing about the past.
+
+The mechanism: under +past context, "didn't stop" narrows L0 to exactly wTT,
+giving qudAggregate = 1 and rpow(1, 6) = 1 (maximally informative). Under
+-past context, L0 spreads over wFT and wFF, giving qudAggregate = 1/2 and
+rpow(1/2, 6) = 1/64 (weakly informative). Since S1 rewards informativity,
+the speaker is much more likely to use "didn't stop" when the +past context
+holds, and L1 infers this.
+
+Figure 3 shows that (T,T) with context set +past is the unique maximum of the
+joint distribution under CG prior + QUD_now. -/
+
+set_option maxHeartbeats 3200000 in
+/-- **Context set projection**: L1 infers +past context over -past context. -/
+theorem context_projection :
+    cfgNow.L1_latent .notStoppedSmoking .pastTrue >
+    cfgNow.L1_latent .notStoppedSmoking .pastFalse := by
+  rsa_predict
+
+/-! ### §8.6 "Stopped smoking" projects past=T via QUD answer
+
+"Stopped smoking" is true only at wTF (past=T, now=F). Under QUD_now,
+L1 infers the QUD answer is now=F. -/
+
+set_option maxHeartbeats 3200000 in
+/-- "Stopped smoking" → L1 infers now=F (the assertion). -/
+theorem stopped_qud_answer :
+    cfgNow.L1_marginal .stoppedSmoking (fun w => !w.now) >
+    cfgNow.L1_marginal .stoppedSmoking (·.now) := by
+  rsa_predict
+
+-- ============================================================================
+-- §9. Structural Properties
+-- ============================================================================
+
+/-- "didn't stop smoking" is compatible with 3 of 4 worlds. -/
+theorem notStopped_compatible_worlds :
+    literalMeaning .notStoppedSmoking .wTT = true ∧
+    literalMeaning .notStoppedSmoking .wTF = false ∧
+    literalMeaning .notStoppedSmoking .wFT = true ∧
+    literalMeaning .notStoppedSmoking .wFF = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Under context set +past, "didn't stop" is maximally informative for QUD_now:
+    it narrows to exactly (T,T). -/
+theorem notStopped_informative_in_pastTrue :
+    (compatibleBool .pastTrue .wTT && literalMeaning .notStoppedSmoking .wTT) = true ∧
+    (compatibleBool .pastTrue .wTF && literalMeaning .notStoppedSmoking .wTF) = false ∧
+    (compatibleBool .pastTrue .wFT && literalMeaning .notStoppedSmoking .wFT) = false ∧
+    (compatibleBool .pastTrue .wFF && literalMeaning .notStoppedSmoking .wFF) = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- "stopped smoking" narrows to exactly (T,F): past=T and now=F. -/
+theorem stopped_world :
+    literalMeaning .stoppedSmoking .wTT = false ∧
+    literalMeaning .stoppedSmoking .wTF = true ∧
+    literalMeaning .stoppedSmoking .wFT = false ∧
+    literalMeaning .stoppedSmoking .wFF = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- "always smoked" = {(T,T)}, maximally informative for (T,T). -/
+theorem alwaysSmoked_world :
+    literalMeaning .alwaysSmoked .wTT = true ∧
+    literalMeaning .alwaysSmoked .wTF = false ∧
+    literalMeaning .alwaysSmoked .wFT = false ∧
+    literalMeaning .alwaysSmoked .wFF = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- "never smoked" = {(F,F)}, maximally informative for (F,F). -/
+theorem neverSmoked_world :
+    literalMeaning .neverSmoked .wTT = false ∧
+    literalMeaning .neverSmoked .wTF = false ∧
+    literalMeaning .neverSmoked .wFT = false ∧
+    literalMeaning .neverSmoked .wFF = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Context sets that entail past=T (used for measuring projection). -/
+def entailsPast : ContextSet → Bool
+  | .pastTrue | .pastTrueNowTrue | .pastTrueNowFalse => true
+  | _ => false
+
+/-- 3 of 9 context sets entail past=T. -/
+theorem three_entail_past :
+    (Finset.univ.filter (fun cs : ContextSet => entailsPast cs)).card = 3 := by
+  native_decide
+
+-- ============================================================================
+-- §10. Connection to S&T and Warstadt
+-- ============================================================================
 
 /-!
-## @cite{farkas-bruce-2010} Framework
-@cite{farkas-bruce-2010} @cite{qing-goodman-lassiter-2016} @cite{degen-tonhauser-2021} @cite{heim-1983}
+## Mathematical Equivalence with @cite{scontras-tonhauser-2025} and @cite{warstadt-2022}
 
-All three presupposition projection models fit into the @cite{farkas-bruce-2010}
-discourse state framework. F&B decompose discourse state into:
-
-| Component | Description |
-|-----------|-------------|
-| dcS | Speaker's discourse commitments (not yet joint) |
-| dcL | Listener's discourse commitments |
-| cg | Common ground (joint commitments) |
-| table | Stack of issues under discussion |
-
-### How Each Model Maps to F&B
-
-| Model | Latent Variable | F&B Component | What L1 Infers |
-|-------|-----------------|---------------|----------------|
-| @cite{scontras-tonhauser-2025} | BeliefState | dcS | Speaker's private assumptions |
-| @cite{warstadt-2022} | Context set | cg | Common ground |
-| @cite{qing-goodman-lassiter-2016} | ContextSet | cg | Common ground |
-
-### The Mathematical Identity
-
-Despite the different interpretations, the computation is identical:
-
-```
-L1(w, D | u) ∝ S1(u | w, D) · P(w) · P(D)
-```
-
-Where D is either dcS or cg depending on the model. The key constraint
-function (speakerCredence / contextCredence) checks if w ∈ D.
-
-### Why S&T Prefer "Private Assumptions"
-
-@cite{scontras-tonhauser-2025} footnote 10 explains their terminological choice:
-> "@cite{qing-goodman-lassiter-2016} call these subsets the 'common ground,' but we think
-> 'private assumptions' better captures this component of the model."
-
-Their reasoning: the speaker may assume things not yet in the actual CG.
-The listener infers what the speaker takes for granted, which may exceed
-what's mutually accepted.
-
-### Why Qing/Warstadt Prefer "Common Ground"
-
-The CG interpretation connects directly to:
-- @cite{stalnaker-1974}'s notion of presupposition
-- @cite{lewis-1979}'s scorekeeping (accommodation updates CG)
-- The intuition that presuppositions constrain felicitous contexts
-
-### Unified via Semantics.Dynamic.State
-
-The `Semantics.Dynamic.State` module provides explicit types for F&B components.
-See `RSA.DiscourseIntegration` for credence functions that bridge these
-types to RSA computations.
--/
-
-
-/-!
-## Unified Model Architecture
-
-All three papers (@cite{qing-goodman-lassiter-2016}, @cite{scontras-tonhauser-2025}, @cite{warstadt-2022}) implement the same pattern:
-
-```
-RSAScenario with:
-  - World: What's true in the world
-  - BeliefState: Latent conversational state (called C, A, or Context)
-  - speakerCredence: w ∈ C constraint (world compatible with latent state)
-  - L1_beliefState: Marginal over latent = projection/accommodation measure
-```
-
-### @cite{qing-goodman-lassiter-2016} (Original)
-
-- **World**: ⟨past, now⟩ - John's past/present smoking
-- **Context Set C**: Subsets of worlds taken as common ground
-- **Constraint**: w ∈ C (world must be in context set)
-- **Domain**: Change-of-state verbs ("stopped smoking")
-- **Measure**: P(+past ∈ C | "didn't stop smoking")
-
-### @cite{scontras-tonhauser-2025}
-
-- **World**: ⟨BEL, C⟩ - Cole's belief and complement truth
-- **BeliefState A**: Speaker's private assumptions (same structure as C above)
-- **Constraint**: w ∈ A (world compatible with speaker's assumptions)
-- **Domain**: Factives (know/think)
-- **Measure**: P(C-true ∈ A | "knows C")
-
-### @cite{warstadt-2022}
-
-- **World**: GCWorld (usCitizen, gcHolder, nonUS)
-- **Context**: Subsets of worlds (common ground)
-- **Constraint**: w compatible with context (membership function)
-- **Domain**: Genus-species presuppositions (green card, athlete hierarchy)
-- **Measure**: P(non-US ∈ context | "not green card", QUD)
-
-All three use the `BeliefState` slot in RSAScenario for their latent variable.
--/
-
-
-/--
-All three models share the same computational structure.
-The differences are in interpretation and domain application.
--/
-structure ModelApplication where
-  /-- Paper citation -/
-  paper : String
-  /-- What they call the latent variable -/
-  latentVariableName : String
-  /-- Interpretation of the latent variable -/
-  interpretation : String
-  /-- Linguistic domain applied to -/
-  domain : String
-  /-- Whether QUD variation is explored -/
-  exploresQUD : Bool
-
-/-- @cite{qing-goodman-lassiter-2016} - the original model -/
-def qingEtAl2016 : ModelApplication where
-  paper := "Qing, Goodman & Lassiter (2016)"
-  latentVariableName := "Context set C"
-  interpretation := "Common ground (what's mutually accepted)"
-  domain := "Change-of-state verbs (stop, start)"
-  exploresQUD := true  -- Explores QUD_now, QUD_max, etc.
-
-/-- @cite{scontras-tonhauser-2025} -/
-def scontrasTonhauser2025 : ModelApplication where
-  paper := "Scontras & Tonhauser (2025)"
-  latentVariableName := "Private assumptions A"
-  interpretation := "Speaker's private beliefs (what speaker takes for granted)"
-  domain := "Factives (know, think)"
-  exploresQUD := true  -- BEL? vs C? QUD
-
-/-- @cite{warstadt-2022} -/
-def warstadt2022 : ModelApplication where
-  paper := "Warstadt (2022)"
-  latentVariableName := "Context set C"
-  interpretation := "Common ground (subsets of worlds)"
-  domain := "Genus-species presuppositions (green card, athlete hierarchy)"
-  exploresQUD := true  -- Two QUDs: needVisa, freeDrink
-
-
-/-!
-## Qualitative Agreement
-
-Both models agree on the core prediction that presuppositional content
-becomes more likely after hearing a presuppositional utterance.
-
-### Scontras & Tonhauser
-- `projectionOfC` measures P(C true in speaker's assumptions | utterance)
-- For factives: projection > prior (due to entailment)
-- For non-factives: projection ≈ prior (no entailment)
-
-### Warstadt
-- `gcGenusInference` measures P(non-US ∈ context | utterance, QUD)
-- Under visa QUD: genus inference > prior (accommodation)
-- Under free-drink QUD: genus inference ≈ prior (no accommodation)
--/
-
-/--
-Both models predict that the presupposition content becomes more likely.
-
-This is the core shared prediction: presuppositional triggers increase
-belief in the presupposition content.
--/
-structure QualitativeAgreement where
-  /-- S&T predicts projection for factives -/
-  st_predicts_projection : Bool
-  /-- Warstadt predicts accommodation for presuppositions -/
-  warstadt_predicts_accommodation : Bool
-  /-- Both predictions are positive (increase from prior) -/
-  both_positive : st_predicts_projection ∧ warstadt_predicts_accommodation
-
-
-/-!
-## Interpretive Questions
-
-Since the models are mathematically identical, they make the **same predictions**
-for any given parameterization. However, the different interpretations raise
-interesting theoretical questions about what the latent variable "really" represents.
-
-### The Core Question: What Does L1 Infer?
-
-When L1 computes P(C | utterance), what is C?
-
-**Qing/Warstadt answer**: C is the common ground—what's mutually accepted.
-The listener infers what context would make the utterance felicitous.
-
-**S&T answer**: C is the speaker's private assumptions—what the speaker
-takes for granted. The listener infers the speaker's mental state.
-
-### Why This Matters Philosophically
-
-1. **Stalnaker's Definition**: Presuppositions are propositions that speakers
-   "take for granted" for purposes of the conversation. Are these:
-   - What the speaker privately believes? (S&T)
-   - What's mutually accepted? (Qing/Warstadt)
-   - Stalnaker seems to intend the latter, but S&T argue for the former.
-
-2. **Accommodation**: When presupposition fails, listeners "accommodate."
-   - If C = CG: Accommodation directly updates the shared CG model
-   - If C = private assumptions: Accommodation is inferred indirectly
-
-3. **Epistemic Asymmetry**: Speakers often know things listeners don't.
-   - The S&T interpretation better captures this asymmetry
-   - But the computation is the same either way
-
-### Not Empirically Distinguishable (Without Extensions)
-
-The mathematical equivalence means you cannot distinguish the interpretations
-by observing behavior. To create testable differences, you would need to:
-
-1. Add a **separate** variable for "actual CG" distinct from "speaker assumptions"
-2. Model scenarios where these come apart (speaker privately believes X but
-   X is not in actual CG)
-3. See if listener behavior matches "CG inference" or "belief inference"
-
-This would require a more complex model with TWO latent variables.
--/
-
-/--
-Theoretical question about what the latent variable represents.
-Note: These are interpretive questions, not computational differences.
--/
-structure InterpretiveQuestion where
-  question : String
-  qingWarstadtAnswer : String
-  stAnswer : String
-  /-- Could this be tested empirically with model extensions? -/
-  testable : Bool
-
-/-- What does L1 infer? -/
-def whatDoesL1Infer : InterpretiveQuestion where
-  question := "What does L1's posterior over C represent?"
-  qingWarstadtAnswer := "Inference about shared common ground"
-  stAnswer := "Inference about speaker's private assumptions"
-  testable := true  -- With a two-latent-variable extension
-
-/-- How does accommodation work? -/
-def howAccommodationWorks : InterpretiveQuestion where
-  question := "What is accommodation in this model?"
-  qingWarstadtAnswer := "Direct CG update: P(presup ∈ CG | u) increases"
-  stAnswer := "Indirect: listener infers speaker assumes X, then accepts X"
-  testable := false  -- Same computation, different gloss
-
-
-/-!
-## The Qing-S&T-Warstadt Framework
-
-All three papers implement the same theoretical framework:
+All three papers implement the same RSA computation:
 
 ```
 L1(w, C | u, Q) ∝ S1(u | w, C, Q) · P(w) · P(C)
 ```
 
-Where:
-- **C** is a latent "conversational state" variable
-- **S1** is the speaker model (optimizes for L0 understanding given C)
-- **P(C)** is the prior over conversational states
-
-The key innovation (from @cite{qing-goodman-lassiter-2016}) is **joint inference over (w, C)**,
-which allows the listener to simultaneously:
-1. Update beliefs about the world
-2. Update beliefs about the conversational context
-
-### Implementation in Linglib
-
-We implement this using the `BeliefState` slot in `RSAScenario`:
-
-```lean
--- The latent variable C goes in BeliefState
--- speakerCredence encodes P(w | C) = 1 if w ∈ C, else 0
--- L1_beliefState gives the marginal P(C | u)
-```
-
-This unified API handles all three interpretations identically.
-
-### Possible Extension: Two Latent Variables
-
-To create testable predictions that distinguish the interpretations,
-one could extend the model with TWO latent variables:
-
-- **A**: Speaker's private assumptions
-- **CG**: Actual common ground
-- **Constraint**: A ⊇ CG (speaker assumes at least what's in CG)
-
-This would allow modeling scenarios where speaker knows more than CG contains.
--/
-
-/--
-The shared model structure used by all three papers.
--/
-structure ProjectionModel where
-  /-- Name of the latent variable in this paper -/
-  latentVarName : String
-  /-- Interpretation given to the latent variable -/
-  interpretation : String
-  /-- The math is identical across all three -/
-  mathematicallyEquivalent : Bool := true
-
-/-- All three papers use the same model -/
-def allPapersEquivalent : List ProjectionModel := [
-  ⟨"Context set C", "Common ground (Qing 2016)", true⟩,
-  ⟨"Private assumptions A", "Speaker beliefs (S&T 2025)", true⟩,
-  ⟨"Context", "Common ground (Warstadt 2022)", true⟩
-]
-
-
-/-!
-## Empirical Predictions
-
-### Shared Predictions (Both Models)
-
-1. **Presuppositional > Non-presuppositional**
-   - Both predict stronger belief update for presuppositional variants
-   - "not green card" under visa QUD > "not green card" under free-drink QUD
-
-2. **Prior Sensitivity**
-   - Both predict that higher priors reduce the update
-   - Already believing X → less change when X is presupposed
-
-3. **QUD Effects** (S&T only)
-   - S&T: C-at-issue → less projection
-   - Warstadt: Would need QUD extension
-
-### Divergent Predictions
-
-1. **Speaker Knowledge Manipulation**
-   - Manipulate what speaker seems to know vs what's in CG
-   - S&T: Should affect projection
-   - Warstadt: Should not affect accommodation (only CG matters)
-
-2. **Listener Evidence Manipulation**
-   - Give listener independent evidence about presupposition content
-   - S&T: Shouldn't directly affect speaker belief inference
-   - Warstadt: Should affect context prior, changing accommodation
-
-3. **Cross-speaker Consistency**
-   - Different speakers saying same presupposition
-   - S&T: Each speaker has own A, so separate inferences
-   - Warstadt: Same CG, so cumulative accommodation
-
-### Testable Hypothesis
-
-**Experiment**: Manipulate whether listener has independent evidence for presup.
-
-- Setup: "Tom doesn't have a green card" under visa vs free-drink QUDs
-- Measure: How strongly do participants infer Tom is a non-US citizen?
-
-- S&T prediction: No difference (speaker belief inference unchanged)
-- Warstadt prediction: Smaller accommodation when prior established
--/
-
-
-/-!
-## Connection to Presupposition Literature
-
-### Stalnaker's Framework
-
-Both models connect to @cite{stalnaker-1974} differently:
-
-- **S&T**: Focuses on speaker's "taking for granted" - what speaker assumes
-  the listener will accept. The BeliefState represents this.
-
-- **Warstadt**: Focuses on the common ground itself - what's mutually
-  accepted. The Context directly represents CG.
-
-### Accommodation
-
-Lewis's scorekeeping: Accommodation adds presupposed content to CG.
-
-- **S&T**: Accommodation is implicit - if speaker assumes X, listener
-  can infer X should be added to CG.
-
-- **Warstadt**: Accommodation is explicit - L1 directly infers what's
-  in CG, and the update IS accommodation.
-
-### Local Context
-
-Neither model currently handles local context effects:
-
-- "If Tom is non-US, Tom doesn't have a green card" - presupposition locally satisfied
-- Would need extension to model embedding environments
-
-### Gradient Projection
-
-Both models predict gradient effects:
-
-- S&T: Different entailment patterns → different projection
-- Warstadt: Different priors → different accommodation
-
-The empirical finding that projection is gradient (not categorical)
-is compatible with both models.
-
-### Soft vs Hard Triggers (Romoli, Abusch)
-
-- **Hard triggers** (factives): Project robustly
-- **Soft triggers** (aspectuals): More context-sensitive
-
-- S&T: Can model via entailment differences in φ
-- Warstadt: Would need to model via context prior differences
--/
-
--- SUMMARY
-
-/-!
-## Summary
-
-### Finding
-
-@cite{qing-goodman-lassiter-2016}, @cite{scontras-tonhauser-2025}, and @cite{warstadt-2022} are
-**mathematically identical models** with different interpretations:
-
-| Paper | Latent Variable | Interpretation | Domain |
-|-------|-----------------|----------------|--------|
-| @cite{qing-goodman-lassiter-2016} | Context set C | Common ground | Change-of-state |
+| Paper | Latent | Interpretation | Domain |
+|-------|--------|---------------|--------|
+| @cite{qing-goodman-lassiter-2016} | Context set C | Common ground | CoS verbs |
 | @cite{scontras-tonhauser-2025} | Assumptions A | Speaker beliefs | Factives |
 | @cite{warstadt-2022} | Context set C | Common ground | Genus-species |
 
-The math: `L1(w, C | u) ∝ S1(u | w, C) · P(w) · P(C)`
+The RSAConfig encoding is structurally identical: `Latent` = context/belief
+state, `meaning` filters by compatibility, `s1Score` uses QUD-projected rpow.
+See `ScontrasTonhauser2025.lean` for the factive domain implementation.
 
-### What This Module Documents
+@cite{scontras-tonhauser-2025} fn. 10: "@cite{qing-goodman-lassiter-2016} call these subsets
+the 'common ground,' but we think 'private assumptions' better captures
+this component of the model."
 
-1. **Mathematical equivalence** of the three approaches
-2. **Interpretive differences** (CG vs speaker beliefs)
-3. **Why it matters** philosophically (Stalnaker, accommodation)
-4. **Connection to Linglib's RSAScenario API** (BeliefState slot)
-
-### Implementation Notes
-
-Our `Warstadt2022.lean` implementation uses the same structure as
-`ScontrasTonhauser2025.lean`:
-- Both use `BeliefState` slot for the latent variable
-- Both use `speakerCredence` for the w ∈ C constraint
-- Both compute projection via `L1_beliefState` marginal
-
-The only differences are domain-specific (world states, utterances, QUDs).
-
-### Complete Coverage
-
-All three domains from the literature are now implemented:
-- ✅ @cite{qing-goodman-lassiter-2016}: Change-of-state verbs (`QingEtAl2016.lean`)
-- ✅ @cite{scontras-tonhauser-2025}: Factives (`ScontrasTonhauser2025.lean`)
-- ✅ @cite{warstadt-2022}: Genus-species (`RSA_Warstadt2022Bridge.lean`)
-
-### Future Work
-
-1. Add empirical data from Qing's QUD manipulation experiments
-2. Explore two-latent-variable extension (A and CG separately)
-3. Connect to local context theory for embedded presuppositions
-4. Add @cite{tonhauser-beaver-roberts-simons-2013} taxonomy of projective content
-5. Extend to other Class C triggers (only, almost, definites)
+The terminological difference is interpretive, not computational.
 -/
-
-
-/-!
-## Unified Model Across Three Phenomena
-
-We now have implementations for all three domains from the literature:
-
-1. **QingEtAl2016**: Change-of-state verbs ("stopped smoking")
-2. **ScontrasTonhauser2025**: Factives ("knows that C")
-3. **Warstadt2022**: Genus-species ("Tom doesn't have a green card")
-
-All three use the **same RSA computation** with domain-specific types.
--/
-
-/-- Demonstrate the parallel structure across all three implementations -/
-structure UnifiedProjectionInstance where
-  name : String
-  domain : String
-  exampleUtterance : String
-  presupposition : String
-  worldType : String
-  latentType : String
-  measureName : String
-
-/-- @cite{qing-goodman-lassiter-2016} instance -/
-def qingInstance : UnifiedProjectionInstance where
-  name := "Qing et al. (2016)"
-  domain := "Change-of-state verbs"
-  exampleUtterance := "John didn't stop smoking"
-  presupposition := "John smoked in the past"
-  worldType := "⟨past : Bool, now : Bool⟩"
-  latentType := "ContextSet (past/now constraints)"
-  measureName := "projectionOfPast"
-
-/-- @cite{scontras-tonhauser-2025} instance -/
-def stInstance : UnifiedProjectionInstance where
-  name := "Scontras & Tonhauser (2025)"
-  domain := "Factive attitude verbs"
-  exampleUtterance := "Cole doesn't know that C"
-  presupposition := "C is true"
-  worldType := "⟨bel : Bool, c : Bool⟩"
-  latentType := "BeliefState (speaker assumptions)"
-  measureName := "projectionOfC"
-
-/-- @cite{warstadt-2022} instance -/
-def warstadtInstance : UnifiedProjectionInstance where
-  name := "Warstadt (2022)"
-  domain := "Genus-species presuppositions"
-  exampleUtterance := "Tom doesn't have a green card"
-  presupposition := "Tom is a non-US citizen"
-  worldType := "GCWorld (usCitizen, gcHolder, nonUS)"
-  latentType := "GCContext (subset of worlds)"
-  measureName := "gcGenusInference"
-
-/-- All three instances -/
-def allInstances : List UnifiedProjectionInstance :=
-  [qingInstance, stInstance, warstadtInstance]
-
-/-!
-### Structural Parallel
-
-All three implementations follow the same pattern:
-
-```lean
--- 1. Define World and LatentState types
-structure WorldState where...
-inductive LatentState where...
-
--- 2. Define compatibility function
-def compatibleBool (c : LatentState) (w : WorldState) : Bool :=...
-
--- 3. Use L1_beliefState_givenGoal
-def projectionMeasure (u : Utterance) : ℚ :=
-  let dist := RSA.Eval.L1_beliefState_givenGoal
-    allUtterances allWorlds [] [] allLatentStates allQUDs
-    φ worldPrior... latentPrior...
-    compatibleBool qudProject cost α u q
-  -- Sum over latent states that entail the presupposition
-  dist.foldl (λ acc (c, p) => if entailsPresup c then acc + p else acc) 0
-```
-
-The computation is **identical**; only the types differ.
--/
-
 
 end Phenomena.Presupposition.Studies.QingGoodmanLassiter2016

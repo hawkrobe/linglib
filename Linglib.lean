@@ -1492,7 +1492,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard20
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
 -- Nouwen2024RSA merged into Nouwen2024
 
-import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
+
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
 import Linglib.Theories.Pragmatics.RSA.Implementations.SumersEtAl2023
 import Linglib.Phenomena.Negation.Studies.TesslerFranke2020

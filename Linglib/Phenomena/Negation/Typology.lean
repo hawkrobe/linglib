@@ -161,11 +161,17 @@ inductive NegSymmetry where
 
 /-- WALS Ch 114: Which grammatical domain is affected by asymmetric negation.
 
-    Three primary subtypes:
+    Four primary subtypes (@cite{miestamo-2005} Table 2, p. 60):
     - A/Fin: negation changes finiteness (adds negative verb, lexical verb
       becomes nonfinite / subordinate)
     - A/NonReal: negation introduces irrealis/nonrealized marking
-    - A/Cat: negation changes marking of TAM, person, number, etc. -/
+    - A/Emph: negative contains marking that expresses emphasis in
+      non-negatives (rare; 4 languages in RS)
+    - A/Cat: negation changes marking of TAM, person, number, etc.
+
+    Note: WALS Ch 114 does not distinguish A/Emph as a separate value,
+    collapsing it into other categories. The four-way distinction is from
+    @cite{miestamo-2005} only. -/
 inductive AsymmetrySubtype where
   /-- A/Fin: asymmetry in finiteness. Typically a negative auxiliary becomes
       the finite verb, and the lexical verb appears in a nonfinite form
@@ -175,6 +181,10 @@ inductive AsymmetrySubtype where
       marked with an irrealis/nonrealized category that the affirmative
       lacks (e.g., Imbabura Quechua: negative requires `-chu` irrealis). -/
   | realityStatus
+  /-- A/Emph: the negative contains marking that expresses emphasis
+      in non-negative contexts. Rare (4 languages in the RS).
+      @cite{miestamo-2005} §3.3.3, Table 2 (p. 60). -/
+  | emphasis
   /-- A/Cat: asymmetry in other grammatical categories (TAM, person-number
       affixes, etc.). The negative uses different category markers than the
       affirmative (e.g., Karok: different person-number affixes under
@@ -183,11 +193,15 @@ inductive AsymmetrySubtype where
   /-- Combined: A/Fin and A/NonReal
       (e.g., Copainalá Zoque, Squamish). -/
   | finAndNonReal
+  /-- Combined: A/Fin and A/Emph (e.g., Meithei). -/
+  | finAndEmph
   /-- Combined: A/Fin and A/Cat
       (e.g., Kolokuma Ijo). -/
   | finAndCat
   /-- Combined: A/NonReal and A/Cat. -/
   | nonRealAndCat
+  /-- Combined: A/Emph and A/Cat (e.g., Cantonese, Meithei). -/
+  | emphAndCat
   /-- Non-assignable: language has only symmetric negation (Type Sym in
       Ch 113), so no asymmetry subtype applies. -/
   | nonAssignable

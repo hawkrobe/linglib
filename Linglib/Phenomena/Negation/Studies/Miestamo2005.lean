@@ -55,9 +55,16 @@ constructional changes (Turkish aorist).
 
 Every datum here is consistent with the coarser WALS classification:
 - Symmetric-only → no constructional or paradigmatic asymmetry
-- Asymmetric A/Fin → constructional asymmetry (always)
+- Asymmetric A/Fin → constructional asymmetry (almost always; 44/45 in Table 5)
 - Asymmetric A/Cat → paradigmatic or constructional or both
 - SymAsy → some constructions symmetric, others asymmetric
+
+## Quantitative Data
+
+The book's representative sample (RS) covers **179 languages** (Table 3, p. 171):
+Sym 72 (40%), SymAsy 76 (42%), Asy 31 (17%).
+Note: the WALS Ch 113 sample (also by Miestamo) covers 297 languages with
+different numbers; those are captured separately via `Core.WALS.F113A`.
 -/
 
 namespace Phenomena.Negation.Studies.Miestamo2005
@@ -208,24 +215,26 @@ def spanish : MiestamoDatum :=
       "structural or paradigmatic change. " ++
       "Position-dependent n-word concord (parallels Italian)." }
 
-/-- Mandarin Chinese: SymAsy with A/Fin. Two particles: 不 *bù* (general,
-    symmetric) and 没(有) *méi(yǒu)* (perfective, asymmetric).
-    The *bù*/*méi* split is paradigmatic: the choice of negator depends on
-    aspect, unlike in the affirmative where a single verb form serves.
+/-- Mandarin Chinese: SymAsy with constructional A/Fin.
+    Non-perfectives negated by *bù* (symmetric). Perfectives negated by
+    *méi(yǒu)*: the existential verb *yǒu* is introduced as the finite
+    element (FE), the lexical verb loses finite status (A/Fin/Neg-FE).
+    When *méi* occurs without *yǒu*, it functions as a negative existential
+    verb (A/Fin/NegVerb). @cite{miestamo-2005} pp. 90–91, example 51.
     Forms derived from `Fragments.Mandarin.Negation`. -/
 def mandarin : MiestamoDatum :=
   { language := "Mandarin Chinese"
   , morphemeType := .particle
   , symmetry := .both
   , asymmetrySubtype := .finiteness
-  , asymmetryDimensions := [.paradigmatic]
+  , asymmetryDimensions := [.constructional]
   , asymmetrySource := some .independent
   , negMarkers := [Fragments.Mandarin.Negation.buParticle,
                     Fragments.Mandarin.Negation.meiParticle]
-  , asymmetryDescription := "Paradigmatic: the bù/méi split means the " ++
-      "choice of negator depends on aspect (perfective vs non-perfective), " ++
-      "a distinction not marked on the affirmative verb. " ++
-      "Independent: particle type does not predict the split." }
+  , asymmetryDescription := "Constructional: méi(yǒu) introduces the " ++
+      "existential verb yǒu as the finite element; the lexical verb " ++
+      "loses finite status (A/Fin/Neg-FE). bù constructions are symmetric. " ++
+      "Independent: particle type does not predict A/Fin restructuring." }
 
 /-- English: SymAsy with constructional A/Cat (do-support).
     With modals/be/have, negation is symmetric; with lexical verbs,
@@ -304,8 +313,10 @@ def hixkaryana : MiestamoDatum :=
       "Independent: affix type does not predict deverbalization." }
 
 /-- Imbabura Quechua: SymAsy with paradigmatic A/NonReal, independent.
-    Particle *mana*; suffix *-chu* marks irrealis in negative constructions.
-    Some constructions symmetric, others require *-chu*.
+    Particle *mana*; validator enclitic *-chu* obligatory in some negative
+    constructions. *-chu* also appears in polar interrogatives — it is a
+    general "validator" expressing assertion authority (@cite{miestamo-2005}
+    p. 158). Some constructions symmetric, others require *-chu*.
     Form derived from `Fragments.Quechua.Negation.negParticle`. -/
 def imbaburaQuechua : MiestamoDatum :=
   { language := "Quechua (Imbabura)"
@@ -315,10 +326,10 @@ def imbaburaQuechua : MiestamoDatum :=
   , asymmetryDimensions := [.paradigmatic]
   , asymmetrySource := some .independent
   , negMarkers := [Fragments.Quechua.Negation.negParticle]
-  , asymmetryDescription := "Paradigmatic: negative requires -chu irrealis " ++
-      "suffix, a category absent from the affirmative paradigm (A/NonReal). " ++
+  , asymmetryDescription := "Paradigmatic: negative requires -chu validator " ++
+      "enclitic, a category absent from the affirmative paradigm (A/NonReal). " ++
       "No constructional change: clause structure is preserved. " ++
-      "Independent: particle type does not predict irrealis requirement." }
+      "Independent: particle type does not predict validator requirement." }
 
 def allData : List MiestamoDatum :=
   [finnish, german, japanese, turkish, french, burmese, italian, spanish,
@@ -363,9 +374,7 @@ theorem symasy_has_dimensions :
 
 /-- A/Fin with a *verbal* negator implies constructional asymmetry:
     the negative verb takes over the finite verb slot, necessarily
-    restructuring the clause. A/Fin with a *particle* negator (Mandarin)
-    can be paradigmatic-only — the bù/méi split is a paradigmatic
-    distinction, not a structural one. -/
+    restructuring the clause. -/
 theorem afin_verbal_implies_constructional :
     (allData.filter (fun d =>
       (d.asymmetrySubtype == .finiteness ||
@@ -375,13 +384,15 @@ theorem afin_verbal_implies_constructional :
       (fun d => d.asymmetryDimensions.contains .constructional) = true := by
   native_decide
 
-/-- Mandarin shows that A/Fin with a particle negator is paradigmatic-only:
-    the bù/méi split is a paradigmatic distinction (which negator to use
-    depends on aspect), not a constructional one (clause structure unchanged). -/
-theorem mandarin_afin_paradigmatic_only :
-    mandarin.asymmetrySubtype == .finiteness ∧
-    mandarin.morphemeType == .particle ∧
-    mandarin.asymmetryDimensions == [.paradigmatic] := by
+/-- All A/Fin languages in our sample have constructional asymmetry,
+    regardless of negation marker type. Even Mandarin's particle-type
+    méi(yǒu) introduces structural changes (existential verb as FE). -/
+theorem afin_always_constructional_in_sample :
+    (allData.filter (fun d =>
+      d.asymmetrySubtype == .finiteness ||
+      d.asymmetrySubtype == .finAndCat ||
+      d.asymmetrySubtype == .finAndNonReal)).all
+      (fun d => d.asymmetryDimensions.contains .constructional) = true := by
   native_decide
 
 /-- Symmetric-only (WALS) implies nonAssignable asymmetry subtype. -/
@@ -636,8 +647,8 @@ theorem neg_aux_implies_derived_constructional :
   native_decide
 
 /-- Particles that are symmetric-only have no asymmetry dimensions.
-    Mandarin is the exception: it is SymAsy because the bù/méi split
-    introduces paradigmatic asymmetry despite both being particles. -/
+    Mandarin and English are SymAsy particles with constructional asymmetry
+    (méi(yǒu) introduces A/Fin; do-support introduces A/Cat). -/
 theorem symmetric_particles_no_dimensions :
     (allData.filter (fun d => d.morphemeType == .particle &&
       d.symmetry == .symmetric)).all
@@ -729,12 +740,12 @@ theorem spanish_fragment_confirms_symmetric :
   exact ⟨by native_decide, rfl⟩
 
 /-- Mandarin Fragment confirms SymAsy: 3 bù (symmetric) + 2 méi (asymmetric)
-    constructions, matching the paradigmatic-only classification. -/
+    constructions, matching the constructional A/Fin classification. -/
 theorem mandarin_fragment_confirms_symasy :
     (Fragments.Mandarin.Negation.allExamples.filter (·.symmetric)).length = 3 ∧
     (Fragments.Mandarin.Negation.allExamples.filter (fun e => !e.symmetric)).length = 2 ∧
     mandarin.symmetry == .both ∧
-    mandarin.asymmetryDimensions == [.paradigmatic] := by
+    mandarin.asymmetryDimensions == [.constructional] := by
   exact ⟨by native_decide, by native_decide, rfl, rfl⟩
 
 /-- Mandarin méi-yǒu connects to AspectComparison: the same particle is
@@ -827,10 +838,10 @@ theorem symasy_count :
     (allData.filter (·.symmetry == .both)).length = 4 := by native_decide
 
 theorem constructional_count :
-    (allData.filter (fun d => d.asymmetryDimensions.contains .constructional)).length = 6 := by
+    (allData.filter (fun d => d.asymmetryDimensions.contains .constructional)).length = 7 := by
   native_decide
 theorem paradigmatic_count :
-    (allData.filter (fun d => d.asymmetryDimensions.contains .paradigmatic)).length = 5 := by
+    (allData.filter (fun d => d.asymmetryDimensions.contains .paradigmatic)).length = 4 := by
   native_decide
 theorem both_dimensions_count :
     (allData.filter (fun d =>
@@ -844,11 +855,14 @@ theorem independent_count :
     (allData.filter (·.asymmetrySource == some .independent)).length = 7 := by native_decide
 
 -- ============================================================================
--- § 9: Miestamo's 297-Language Survey Distribution
+-- § 9: Miestamo's 179-Language Survey Distribution (Table 3)
 -- ============================================================================
 
-/-- Distribution from @cite{miestamo-2005}'s full 297-language sample.
-    These are the headline empirical results of the typological survey. -/
+/-- Distribution from @cite{miestamo-2005}'s 179-language representative
+    sample (RS). These are the headline empirical results of Ch 4's
+    typological survey. Note: the WALS Ch 113 sample (also by Miestamo)
+    covers 297 languages with different numbers; those are captured
+    separately in `Typology.lean` via `Core.WALS.F113A`. -/
 structure SurveyDistribution where
   totalLanguages : Nat
   symmetricOnly : Nat
@@ -858,29 +872,57 @@ structure SurveyDistribution where
   complete : symmetricOnly + asymmetricOnly + symAsy = totalLanguages
   deriving Repr
 
-/-- The 297-language distribution from @cite{miestamo-2005} Table 7.1. -/
-def miestamo297 : SurveyDistribution :=
-  { totalLanguages := 297
-  , symmetricOnly := 121
-  , asymmetricOnly := 138
-  , symAsy := 38
+/-- The 179-language RS distribution from @cite{miestamo-2005} Table 3
+    (p. 171). Sym = 72 (40%), SymAsy = 76 (42%), Asy = 31 (17%). -/
+def miestamo179 : SurveyDistribution :=
+  { totalLanguages := 179
+  , symmetricOnly := 72
+  , asymmetricOnly := 31
+  , symAsy := 76
   , complete := by omega }
 
-/-- Asymmetric negation is the most common type in the full sample. -/
-theorem asymmetric_plurality : miestamo297.asymmetricOnly > miestamo297.symmetricOnly := by
-  native_decide
-
-/-- SymAsy is the least common type. -/
-theorem symasy_minority :
-    miestamo297.symAsy < miestamo297.symmetricOnly ∧
-    miestamo297.symAsy < miestamo297.asymmetricOnly := by
+/-- SymAsy is the most common type in the RS (76 > 72 > 31).
+    @cite{miestamo-2005} Table 3 (p. 171). -/
+theorem symasy_plurality :
+    miestamo179.symAsy > miestamo179.symmetricOnly ∧
+    miestamo179.symAsy > miestamo179.asymmetricOnly := by
   exact ⟨by native_decide, by native_decide⟩
 
-/-- Symmetric + SymAsy (languages with *any* symmetric construction)
-    outnumber purely asymmetric languages. -/
+/-- Purely asymmetric negation (type Asy) is the least common type.
+    @cite{miestamo-2005} p. 171: "symmetric negation is more common in
+    the world's languages than asymmetric negation." -/
+theorem asymmetric_minority :
+    miestamo179.asymmetricOnly < miestamo179.symmetricOnly ∧
+    miestamo179.asymmetricOnly < miestamo179.symAsy := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- Languages with any symmetric construction (S column in Table 3:
+    Sym + SymAsy = 148, 83%) greatly outnumber purely asymmetric. -/
 theorem symmetric_constructions_common :
-    miestamo297.symmetricOnly + miestamo297.symAsy > miestamo297.asymmetricOnly := by
+    miestamo179.symmetricOnly + miestamo179.symAsy > miestamo179.asymmetricOnly := by
   native_decide
+
+/-- Asymmetry subtype frequencies from @cite{miestamo-2005} Table 5
+    (p. 173). A/Cat is most common, A/Emph least common.
+    Frequency order: A/Cat (59) > A/Fin (45) > A/NonReal (23) > A/Emph (4). -/
+structure SubtypeDistribution where
+  aFin : Nat
+  aNonReal : Nat
+  aEmph : Nat
+  aCat : Nat
+  deriving Repr
+
+/-- Table 5 totals (across SymAsy + Asy). Languages can show
+    multiple subtypes, so these sum to more than 107. -/
+def subtypeDist : SubtypeDistribution :=
+  { aFin := 45, aNonReal := 23, aEmph := 4, aCat := 59 }
+
+theorem acat_most_common : subtypeDist.aCat > subtypeDist.aFin := by native_decide
+theorem aemph_least_common :
+    subtypeDist.aEmph < subtypeDist.aNonReal ∧
+    subtypeDist.aEmph < subtypeDist.aFin ∧
+    subtypeDist.aEmph < subtypeDist.aCat := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- § 10: Implicational Universals
@@ -900,7 +942,10 @@ theorem anonreal_implies_paradigmatic :
   native_decide
 
 /-- A/NonReal asymmetry in our sample is never constructional.
-    The clause structure is preserved; only the paradigm changes. -/
+    Note: this is a sample limitation (we have only 1 A/NonReal language).
+    @cite{miestamo-2005} (p. 96) reports that "both constructional and
+    paradigmatic asymmetry is commonly found in type A/NonReal", with 8 of
+    23 A/NonReal languages showing constructional asymmetry (Table 5). -/
 theorem anonreal_never_constructional :
     (allData.filter (fun d =>
       d.asymmetrySubtype == .realityStatus)).all
