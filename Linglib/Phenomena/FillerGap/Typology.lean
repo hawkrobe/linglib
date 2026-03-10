@@ -19,11 +19,11 @@ are: gap (the relativized position is simply empty), pronoun retention (a
 resumptive pronoun fills the relativized position), and relative pronoun
 (a dedicated wh-element or relative pronoun fills the position and typically
 fronts). Additional types include non-reduction (the head noun is repeated
-inside the relative clause) and mixed strategies.
+inside the relative clause).
 
-Sample: 824 languages. Gap strategy is the most common for subject
-relativization (326/824 = 39.6%), reflecting the high accessibility of the
-subject position on the @cite{keenan-comrie-1977} hierarchy.
+Sample: 166 languages (WALS v2020.4). Gap strategy is the most common for
+subject relativization (125/166 = 75.3%), reflecting the high accessibility
+of the subject position on the @cite{keenan-comrie-1977} hierarchy.
 
 ## Ch 123: Relativization on Obliques
 
@@ -32,9 +32,10 @@ and if so by what strategy. Many languages that use the gap strategy on
 subjects switch to pronoun retention or relative pronouns for obliques, or
 cannot relativize obliques at all.
 
-Sample: 824 languages. The most common pattern is that obliques cannot be
-relativized (293/824 = 35.6%), reflecting the low position of obliques on
-the accessibility hierarchy.
+Sample: 112 languages (WALS v2020.4). Gap remains the most common strategy
+(55/112 = 49.1%), but pronoun retention is much more common than for subjects
+(20/112 = 17.9% vs 5/166 = 3.0%), and 10 languages cannot relativize
+obliques at all.
 
 ## @cite{keenan-comrie-1977} Accessibility Hierarchy
 
@@ -91,27 +92,28 @@ open Core
 inductive SubjRelStrategy where
   /-- Gap strategy: the relativized position is simply empty.
       E.g., English "the man [that _ left]", Japanese "[ _ kaetta] hito".
-      The most common strategy for subjects (326/824 = 39.6%). -/
+      The most common strategy for subjects (125/166 in WALS). -/
   | gap
   /-- Pronoun-retention: a resumptive pronoun occupies the relativized
       position. E.g., Arabic (dialectal) "ar-rajul [illi huwa raah]"
-      'the-man [that he left]'. Relatively rare for subjects (15/824)
+      'the-man [that he left]'. Rare for subjects (5/166 in WALS)
       but much more common for lower positions on the AH. -/
   | pronounRetention
   /-- Relative pronoun: a dedicated relative pronoun or wh-word fills
       the relativized position and typically fronts to clause-initial
       position. E.g., English "the man [who left]", German "der Mann
-      [der ging]". Concentrated in European languages (107/824). -/
+      [der ging]". Concentrated in European languages (12/166 in WALS). -/
   | relativePronoun
   /-- Non-reduction: the head noun is repeated (or a full NP appears)
       inside the relative clause. The relativized position is not
       "reduced" to a gap or pronoun. E.g., Bambara "tye [tye ye so san]
-      ye n deme" 'man [man PST horse buy] PST me help'. (171/824). -/
+      ye n deme" 'man [man PST horse buy] PST me help'. (24/166 in WALS). -/
   | nonReduction
   /-- Mixed: the language productively uses more than one of the above
       strategies for subject relativization. E.g., English uses both
       gap ("the man [that _ left]") and relative pronoun
-      ("the man [who left]"). (205/824). -/
+      ("the man [who left]"). WALS does not distinguish a "mixed"
+      category; this value is used only in our language profiles. -/
   | mixed
   deriving DecidableEq, BEq, Repr
 
@@ -127,27 +129,27 @@ inductive SubjRelStrategy where
     Those that can often use a different strategy than for subjects
     (typically shifting from gap to pronoun retention or relative pronoun). -/
 inductive OblRelStrategy where
-  /-- Gap strategy on obliques. Rarer than for subjects, since oblique
-      gaps are harder to recover. E.g., English (with stranding):
-      "the city [that I lived in _]". (30/824). -/
+  /-- Gap strategy on obliques. Still the most common strategy, though
+      less dominant than for subjects. E.g., English (with stranding):
+      "the city [that I lived in _]". (55/112 in WALS). -/
   | gap
   /-- Pronoun-retention on obliques. Much more common than for subjects,
       since resumptive pronouns help recover the oblique role.
       E.g., Arabic "al-madina [illi saafartu ila-ha]"
-      'the-city [that I-traveled to-it]'. (105/824). -/
+      'the-city [that I-traveled to-it]'. (20/112 in WALS). -/
   | pronounRetention
   /-- Relative pronoun on obliques. E.g., English "the city [in which
       I lived _]", German "die Stadt [in der ich wohnte]".
-      (75/824). -/
+      (13/112 in WALS). -/
   | relativePronoun
-  /-- Non-reduction on obliques. (29/824). -/
+  /-- Non-reduction on obliques. (14/112 in WALS). -/
   | nonReduction
-  /-- Mixed strategies for oblique relativization. (92/824). -/
+  /-- Mixed strategies for oblique relativization. WALS does not
+      distinguish a "mixed" category; used only in our profiles. -/
   | mixed
   /-- Obliques cannot be relativized in this language. The language
       uses alternative constructions (e.g., nominalization, paraphrase).
-      The most common value for Ch 123 (293/824 = 35.6%), reflecting
-      the low accessibility of obliques. -/
+      (10/112 in WALS). -/
   | notRelativizable
   deriving DecidableEq, BEq, Repr
 
@@ -197,38 +199,37 @@ structure WALSCount where
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
-/-- Chapter 122 distribution: relativization strategies on subjects (N = 824).
-    Counts from @cite{comrie-kuteva-2013a}, WALS Online. -/
+/-- Chapter 122 distribution: relativization strategies on subjects.
+    Computed from the WALS v2020.4 CLDF data in `Core.WALS.F122A`.
+    @cite{comrie-kuteva-2013a}. -/
 def ch122Counts : List WALSCount :=
-  [ ⟨"Gap", 326⟩
-  , ⟨"Pronoun retention", 15⟩
-  , ⟨"Relative pronoun", 107⟩
-  , ⟨"Non-reduction", 171⟩
-  , ⟨"Mixed", 205⟩ ]
+  [ ⟨"Gap", (ch122.filter (·.value == .gap)).length⟩
+  , ⟨"Pronoun retention", (ch122.filter (·.value == .pronounRetention)).length⟩
+  , ⟨"Relative pronoun", (ch122.filter (·.value == .relativePronoun)).length⟩
+  , ⟨"Non-reduction", (ch122.filter (·.value == .nonReduction)).length⟩ ]
 
-/-- Chapter 123 distribution: relativization strategies on obliques (N = 624).
-    Counts from @cite{comrie-kuteva-2013b}, WALS Online.
+/-- Chapter 123 distribution: relativization strategies on obliques.
+    Computed from the WALS v2020.4 CLDF data in `Core.WALS.F123A`.
+    @cite{comrie-kuteva-2013b}.
 
-    Note: the sample for Ch 123 is smaller than Ch 122 because some
-    languages in the Ch 122 sample could not be assessed for oblique
-    relativization. -/
+    The sample for Ch 123 is smaller than Ch 122 because some languages
+    in the Ch 122 sample could not be assessed for oblique relativization. -/
 def ch123Counts : List WALSCount :=
-  [ ⟨"Gap", 30⟩
-  , ⟨"Pronoun retention", 105⟩
-  , ⟨"Relative pronoun", 75⟩
-  , ⟨"Non-reduction", 29⟩
-  , ⟨"Mixed", 92⟩
-  , ⟨"Not relativizable", 293⟩ ]
+  [ ⟨"Gap", (ch123.filter (·.value == .gap)).length⟩
+  , ⟨"Pronoun retention", (ch123.filter (·.value == .pronounRetention)).length⟩
+  , ⟨"Relative pronoun", (ch123.filter (·.value == .relativePronoun)).length⟩
+  , ⟨"Non-reduction", (ch123.filter (·.value == .nonReduction)).length⟩
+  , ⟨"Not relativizable", (ch123.filter (·.value == .notPossible)).length⟩ ]
 
 -- ============================================================================
 -- Aggregate Total Verification
 -- ============================================================================
 
-/-- Ch 122 total: 824 languages (hand-coded aggregate counts). -/
-theorem ch122Counts_total : WALSCount.totalOf ch122Counts = 824 := by native_decide
+/-- Ch 122 total: 166 languages (from WALS v2020.4). -/
+theorem ch122Counts_total : WALSCount.totalOf ch122Counts = 166 := by native_decide
 
-/-- Ch 123 total: 624 languages (hand-coded aggregate counts). -/
-theorem ch123Counts_total : WALSCount.totalOf ch123Counts = 624 := by native_decide
+/-- Ch 123 total: 112 languages (from WALS v2020.4). -/
+theorem ch123Counts_total : WALSCount.totalOf ch123Counts = 112 := by native_decide
 
 -- ============================================================================
 -- Language Profile Structure
@@ -767,38 +768,41 @@ theorem sample_size : allLanguages.length = 20 := by native_decide
 -- Typological Generalization 1: Gap Is the Most Common Subject Strategy
 -- ============================================================================
 
-/-- WALS Ch 122: The gap strategy (326) is the single most common
+/-- WALS Ch 122: The gap strategy is the single most common
     strategy for subject relativization, reflecting the high accessibility
-    of the subject position. Gap > Non-reduction > Mixed > Rel pronoun
-    > Pronoun retention. -/
+    of the subject position. Gap (125) > Non-reduction (24) > Rel pronoun
+    (12) > Pronoun retention (5). Computed from WALS data. -/
 theorem gap_most_common_for_subjects :
-    (326 : Nat) > 205 ∧ (205 : Nat) > 171 ∧ (171 : Nat) > 107 ∧
-    (107 : Nat) > 15 := by
-  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+    (ch122.filter (·.value == .gap)).length >
+    (ch122.filter (·.value == .nonReduction)).length ∧
+    (ch122.filter (·.value == .nonReduction)).length >
+    (ch122.filter (·.value == .relativePronoun)).length ∧
+    (ch122.filter (·.value == .relativePronoun)).length >
+    (ch122.filter (·.value == .pronounRetention)).length := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- Typological Generalization 2: Pronoun Retention Increases for Obliques
 -- ============================================================================
 
-/-- Pronoun retention is rare for subjects (15/824 = 1.8%) but common
-    for obliques (105/624 = 16.8%). This is a key prediction of the
+/-- Pronoun retention is rare for subjects (5/166 = 3.0%) but much more
+    common for obliques (20/112 = 17.9%). This is a key prediction of the
     Accessibility Hierarchy: lower positions require "heavier" strategies
-    to recover the grammatical role. -/
+    to recover the grammatical role. Computed from WALS data. -/
 theorem retention_increases_for_obliques :
-    -- Retention for obliques (105) > retention for subjects (15)
-    (105 : Nat) > 15 * 5 := by native_decide
+    (ch123.filter (·.value == .pronounRetention)).length >
+    (ch122.filter (·.value == .pronounRetention)).length := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 3: Many Languages Cannot Relativize Obliques
 -- ============================================================================
 
-/-- The most common Ch 123 value is "not relativizable" (293/624 = 47.0%).
-    Almost half of all languages in the sample cannot relativize obliques
-    at all. This contrasts with subjects, where all languages with RCs
-    can relativize them. -/
-theorem obliques_often_not_relativizable :
-    (293 : Nat) > 105 ∧ (293 : Nat) > 92 ∧ (293 : Nat) > 75 := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+/-- Some languages cannot relativize obliques at all (10/112 = 8.9%
+    in WALS). This contrasts with subjects, where the WALS 122A enum
+    does not even include a "not possible" value — all sampled languages
+    can relativize subjects. Computed from WALS data. -/
+theorem obliques_sometimes_not_relativizable :
+    (ch123.filter (·.value == .notPossible)).length = 10 := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 4: Relative Pronouns Are European
