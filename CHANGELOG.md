@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.114] - 2026-03-10
+
+### Changed
+- **Phenomena/Focus/Studies/IppolitoKissWilliams2025.lean**: Close `probSupports_implies_posRelevant_binary` and `negRelevant_implies_not_probSupports` sorries — Bayes' theorem bridge between probabilistic support (P(H|S) > P(H)) and DTS positive relevance (BF > 1). Add normalization/non-negativity hypotheses required for the equivalence. Add bridge lemmas (`condProb_eq_probOfProp`, `probOfProp_partition`, `probOfProp_total_partition`) connecting the two probability frameworks
+
 ## [0.229.113] - 2026-03-10
 
 ### Changed

@@ -369,28 +369,100 @@ structure DTSDiscourseOnlyWitness (W : Type*) [Fintype W] where
 -- § 11: Bridge Theorems
 -- ============================================================================
 
-/-- For binary issues, probabilistic `probSupports` (P(H|S) > P(H)) is
-equivalent to DTS `posRelevant` (BF_H(S) > 1).
+-- Helper lemmas bridging probOfProp (ProbabilisticAnswerhood) and
+-- condProb/probSum (DTS). Both compute ∑ w, if f w then prior w else 0
+-- but are separate definitions in different modules.
+
+/-- Bridge: DTS `condProb` expressed in terms of `probOfProp`. -/
+private lemma condProb_eq_probOfProp {W : Type*} [Fintype W]
+    (prior : W → ℚ) (e h : W → Bool) (hh : probOfProp prior h ≠ 0) :
+    condProb prior e h =
+    probOfProp prior (λ w => e w && h w) / probOfProp prior h := by
+  unfold condProb
+  simp only [show probSum prior h = probOfProp prior h from rfl, hh, ↓reduceIte,
+    show probSum prior (Decidable.pand W e h) = probOfProp prior (λ w => e w && h w) from rfl]
+
+/-- Partition: P(E) = P(E∧H) + P(E∧¬H). -/
+private lemma probOfProp_partition {W : Type*} [Fintype W]
+    (prior : W → ℚ) (e h : W → Bool) :
+    probOfProp prior e =
+    probOfProp prior (λ w => e w && h w) +
+    probOfProp prior (λ w => e w && !h w) := by
+  simp only [probOfProp, ← Finset.sum_add_distrib]
+  congr 1; funext w
+  by_cases he : e w = true <;> by_cases hh : h w = true <;> simp [he, hh]
+
+/-- Total partition: ∑ prior = P(H) + P(¬H). -/
+private lemma probOfProp_total_partition {W : Type*} [Fintype W]
+    (prior : W → ℚ) (h : W → Bool) :
+    probOfProp prior (λ _ => true) =
+    probOfProp prior h + probOfProp prior (λ w => !h w) := by
+  have := probOfProp_partition prior (λ _ => true) h
+  simp only [Bool.true_and] at this; exact this
+
+/-- Non-negativity of probOfProp under non-negative prior. -/
+private lemma probOfProp_nonneg' {W : Type*} [Fintype W]
+    (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0) (f : W → Bool) :
+    probOfProp prior f ≥ 0 := by
+  unfold probOfProp; apply Finset.sum_nonneg'; intro w; split
+  · exact hP w
+  · exact le_refl 0
+
+/-- For binary issues, probabilistic `probSupports` (P(H|S) > P(H)) implies
+DTS `posRelevant` (BF_H(S) > 1).
 
 Both capture the same intuition — S provides evidence for H — but via
 different formalizations: `probSupports` uses the absolute probability boost,
 while `posRelevant` uses the Bayes factor ratio.
 
-Proof sketch: For binary issue {H, ¬H}, `probSupports prior S H` means
-P(H|S) > P(H), i.e., `evidentialBoost S H prior > 0`. Meanwhile,
-`posRelevant ctx S` means `bayesFactor ctx S > 1`, i.e.,
-P(S|H)/P(S|¬H) > 1, i.e., P(S|H) > P(S|¬H). By Bayes' theorem,
-P(H|S) > P(H) ↔ P(S|H) > P(S) ↔ P(S|H) > P(S|H)P(H) + P(S|¬H)P(¬H)
-↔ P(S|H)(1−P(H)) > P(S|¬H)P(¬H) ↔ P(S|H)P(¬H) > P(S|¬H)P(¬H)
-↔ P(S|H) > P(S|¬H) (when P(¬H) > 0) ↔ BF > 1. -/
+The bridge is Bayes' theorem: P(H|S) > P(H) ↔ P(S∧H) > P(H)·P(S) (multiply
+by P(S) > 0) ↔ P(S∧H)·(1−P(H)) > P(H)·P(S∧¬H) (partition P(S), expand)
+↔ P(S∧H)·P(¬H) > P(H)·P(S∧¬H) (normalization: P(¬H) = 1−P(H))
+↔ P(S|H) > P(S|¬H) (divide by P(H)P(¬H)) ↔ BF > 1. -/
 theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     (prior : Prior W) (topic : BProp W) (evidence : W → Bool)
     (hH_pos : probOfProp prior topic > 0)
     (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
-    (hS_pos : probOfProp prior evidence > 0) :
+    (hS_pos : probOfProp prior evidence > 0)
+    (hNonneg : ∀ w, prior w ≥ 0)
+    (hNorm : probOfProp prior (fun _ => true) = 1) :
     probSupports prior evidence topic = true →
     posRelevant ⟨⟨topic⟩, prior⟩ evidence := by
-  sorry
+  intro hSupp
+  simp only [probSupports, isPositiveEvidence, evidentialBoost, decide_eq_true_eq] at hSupp
+  unfold conditionalProb at hSupp
+  simp only [gt_iff_lt, hS_pos, ↓reduceIte] at hSupp
+  set pH := probOfProp prior topic
+  set pNH := probOfProp prior (λ w => !(topic w))
+  set pE := probOfProp prior evidence
+  set pEH := probOfProp prior (λ w => evidence w && topic w)
+  set pENH := probOfProp prior (λ w => evidence w && !(topic w))
+  have hPartE : pE = pEH + pENH := probOfProp_partition prior evidence topic
+  have hNormPH : pH + pNH = 1 := by linarith [probOfProp_total_partition prior topic]
+  have hpEH_gt : pEH > pH * pE := by
+    have h1 : pH < pEH / pE := by linarith
+    rw [lt_div_iff₀ hS_pos] at h1; linarith
+  have hCross : pEH * pNH > pH * pENH := by
+    have h_expand : pH * pE = pH * pEH + pH * pENH := by rw [hPartE]; ring
+    have h_sub : pEH - pH * pEH > pH * pENH := by linarith [hpEH_gt, h_expand]
+    have h_prod : pEH * pNH = pEH - pEH * pH := by
+      rw [show pNH = 1 - pH from by linarith]; ring
+    linarith
+  have hpEH_pos : pEH > 0 := by nlinarith [mul_nonneg (le_of_lt hH_pos) (le_of_lt hS_pos)]
+  have hpENH_nonneg : pENH ≥ 0 := probOfProp_nonneg' prior hNonneg _
+  have hCondH : condProb prior evidence topic = pEH / pH :=
+    condProb_eq_probOfProp prior evidence topic (ne_of_gt hH_pos)
+  have hCondNH : condProb prior evidence (Decidable.pnot W topic) = pENH / pNH :=
+    condProb_eq_probOfProp prior evidence (λ w => !(topic w)) (ne_of_gt hNH_pos)
+  show bayesFactor ⟨⟨topic⟩, prior⟩ evidence > 1
+  simp only [bayesFactor, hCondH, hCondNH]
+  by_cases hENH : pENH = 0
+  · simp [hENH, show pEH / pH > 0 from div_pos hpEH_pos hH_pos]
+  · have hpENH_pos : pENH > 0 := lt_of_le_of_ne hpENH_nonneg (Ne.symm hENH)
+    have hCondNH_pos : pENH / pNH > 0 := div_pos hpENH_pos hNH_pos
+    simp only [ne_of_gt hCondNH_pos, ↓reduceIte]
+    rw [gt_iff_lt, one_lt_div hCondNH_pos, div_lt_div_iff₀ hNH_pos hH_pos]
+    linarith [hCross]
 
 /-- Negative relevance (DTS) implies non-support (probabilistic).
 
@@ -399,19 +471,25 @@ then S' does not probabilistically support H. This is the formal content
 of IKW's observation that *but*'s condition on the second clause is strictly
 stronger than discourse *only*'s.
 
-Proof sketch: negRelevant means BF < 1, i.e., P(S'|H)/P(S'|¬H) < 1.
-By the Bayes theorem argument (reverse of above), this gives P(H|S') < P(H),
-i.e., evidentialBoost < 0, which means isNegativeEvidence = true. Since
-evidentialBoost < 0 ↔ ¬(evidentialBoost > 0), we get ¬isPositiveEvidence
-= ¬probSupports. -/
+By contrapositive: if `probSupports` were true, Bayes' theorem would give
+`posRelevant` (BF > 1), contradicting `negRelevant` (BF < 1). -/
 theorem negRelevant_implies_not_probSupports {W : Type*} [Fintype W]
     (prior : Prior W) (topic : BProp W) (evidence : W → Bool)
     (hH_pos : probOfProp prior topic > 0)
     (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
     (hS_pos : probOfProp prior evidence > 0)
+    (hNonneg : ∀ w, prior w ≥ 0)
+    (hNorm : probOfProp prior (fun _ => true) = 1)
     (hNeg : negRelevant ⟨⟨topic⟩, prior⟩ evidence) :
     probSupports prior evidence topic = false := by
-  sorry
+  by_contra hContra
+  push_neg at hContra
+  have hTrue : probSupports prior evidence topic = true :=
+    Bool.eq_iff_iff.mpr (by simp [hContra])
+  have hPos := probSupports_implies_posRelevant_binary prior topic evidence
+    hH_pos hNH_pos hS_pos hNonneg hNorm hTrue
+  simp only [posRelevant, negRelevant] at hPos hNeg
+  linarith
 
 /-- Every *but* context can license discourse *only*.
 
@@ -427,9 +505,12 @@ theorem but_sufficient_for_only {W : Type*} [Fintype W]
     (_hS_pos : probOfProp prior s > 0)
     (hS'_pos : probOfProp prior s' > 0)
     (_hSpos : posRelevant ⟨⟨topic⟩, prior⟩ s)
-    (hS'neg : negRelevant ⟨⟨topic⟩, prior⟩ s') :
+    (hS'neg : negRelevant ⟨⟨topic⟩, prior⟩ s')
+    (hNonneg : ∀ w, prior w ≥ 0)
+    (hNorm : probOfProp prior (fun _ => true) = 1) :
     probSupports prior s' topic = false :=
-  negRelevant_implies_not_probSupports prior topic s' hH_pos hNH_pos hS'_pos hS'neg
+  negRelevant_implies_not_probSupports prior topic s' hH_pos hNH_pos hS'_pos
+    hNonneg hNorm hS'neg
 
 /-- Discourse *only*'s CI implies unexpectedness when the QUD is binary,
 S' is negatively relevant, and CIP holds.
