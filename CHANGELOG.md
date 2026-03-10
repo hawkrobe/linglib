@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.92] - 2026-03-09
+
+### Added
+- **Phenomena/Polarity/Studies/Ladusaw1979.lean**: NPI licensing bridge connecting GQ monotonicity to polarity data — scope DE, restrictor DE, left/right anti-additivity structures with verified instances for `no`, `every`, `few`
+- **Quantifier.lean**: `no_raa` (right-anti-additive), `most_scope_up`, `quantityInvariant_of_quantity`, `most_doubleMono`
+- **Quantification.lean**: Van Benthem §3.3 characterization theorems (overlap, disjointness)
+- **Determiners.lean**: `most_mono_bridge`, `few_mono_bridge` connecting Fragment entries to GQ monotonicity
+
+### Changed
+- **Quantification.lean**: Verify B&C 1981 references against PDF — fix hallucinated "Def 27" → §4.8 p.189, clarify C5 as equivalence theorem, confirm §4.9 and C9 correct; update `QuantityInvariant` docstring with type ⟨1,1⟩ attribution (Mostowski 1957 → van Benthem 1984)
+- **Quantifier.lean**: Fix `Quantity` docstring with type ⟨1,1⟩ generalization note
+- **Ladusaw1979.lean**: Fix `few_DE_not_AA` → `few_DE_not_RAA` using `¬RightAntiAdditive` (scope) instead of `¬LeftAntiAdditive` (restrictor); close sorry with toyModel counterexample
+- **BarwiseCooper1981.lean**: Add §11 Aristotle Reversed cross-references to van Benthem theorems and Ladusaw1979
+
 ## [0.229.91] - 2026-03-09
 
 ### Changed

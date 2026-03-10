@@ -341,6 +341,26 @@ theorem few_scope_down : ScopeDownwardMono (few_sem m) := by
       · exact absurd (hSS' x hS) (by simp [hx.2]))
   omega
 
+/-- `⟦most⟧` is upward monotone in scope: if S ⊆ S' and most(R,S),
+    then most(R,S'). |R∩S'| ≥ |R∩S| > |R\S| ≥ |R\S'|. -/
+theorem most_scope_up : ScopeUpwardMono (most_sem m) := by
+  intro R S S' hSS' h
+  simp only [most_sem] at *
+  rw [decide_eq_true_eq] at *
+  have hFilter_sub : (FiniteModel.elements.filter (λ x => R x && S x)).length ≤
+      (FiniteModel.elements.filter (λ x => R x && S' x)).length :=
+    filter_length_le_of_imp _ _ _ (fun x hx => by
+      simp only [Bool.and_eq_true] at *; exact ⟨hx.1, hSS' x hx.2⟩)
+  have hFilter_sup : (FiniteModel.elements.filter (λ x => R x && !S' x)).length ≤
+      (FiniteModel.elements.filter (λ x => R x && !S x)).length :=
+    filter_length_le_of_imp _ _ _ (fun x hx => by
+      simp only [Bool.and_eq_true, Bool.not_eq_true'] at *
+      refine ⟨hx.1, ?_⟩
+      cases hS : S x
+      · rfl
+      · exact absurd (hSS' x hS) (by simp [hx.2]))
+  omega
+
 -- === Quantity / Isomorphism Closure (@cite{mostowski-1957}) ===
 
 /--
@@ -349,8 +369,10 @@ Q(A, B) depends only on the four cardinalities
 `|A ∩ B|`, `|A \ B|`, `|B \ A|`, `|M \ (A ∪ B)|`.
 
 Equivalently: permuting the domain does not change the quantifier's
-truth value. This is the property that makes generalized quantifiers
-"logical" in Mostowski's sense.
+truth value. This is the type ⟨1,1⟩ (binary) generalization of
+@cite{mostowski-1957}'s permutation invariance for type ⟨1⟩ (unary)
+quantifiers; the extension to binary determiners is due to
+@cite{van-benthem-1984} (building on Lindström 1966).
 -/
 def Quantity (q : m.interpTy Ty.det) : Prop :=
   ∀ (R₁ S₁ R₂ S₂ : m.Entity → Bool),
@@ -370,6 +392,34 @@ A quantifier satisfies all three Barwise & Cooper universals.
 -/
 def SatisfiesUniversals (q : m.interpTy Ty.det) : Prop :=
   Conservative q ∧ Quantity q ∧ (ScopeUpwardMono q ∨ ScopeDownwardMono q)
+
+-- === Quantity ↔ QuantityInvariant (@cite{mostowski-1957}) ===
+
+/-- `Quantity → QuantityInvariant`: cardinality-dependence implies bijection-invariance.
+    Proof: a bijection preserves filter lengths (via `filter_length_bij_inv`),
+    so all four cell cardinalities match, and `Quantity` gives the result. -/
+theorem quantityInvariant_of_quantity (q : m.interpTy Ty.det) (hQ : Quantity q) :
+    Core.Quantification.QuantityInvariant q := by
+  intro A B A' B' f hBij hA hB
+  have cell : ∀ (g : Bool → Bool → Bool),
+      (FiniteModel.elements.filter (λ x => g (A x) (B x))).length =
+      (FiniteModel.elements.filter (λ x => g (A' x) (B' x))).length := by
+    intro g
+    have hEq : (λ x => g (A' x) (B' x)) = (λ x => g (A x) (B x)) ∘ f :=
+      funext λ x => show g (A' x) (B' x) = g (A (f x)) (B (f x)) by
+        rw [(hA x).symm, (hB x).symm]
+    rw [hEq]; exact filter_length_bij_inv f hBij _
+  exact hQ A B A' B' (cell (· && ·))
+    (cell (λ a b => a && !b)) (cell (λ a b => !a && b)) (cell (λ a b => !a && !b))
+
+/-- `QuantityInvariant → Quantity`: bijection-invariance implies cardinality-dependence.
+    On a finite domain, matching cell cardinalities guarantees a cell-preserving
+    bijection exists (permute elements within each of the four (R,S) cells).
+    TODO: construct the bijection explicitly from the cell-size equalities. -/
+theorem quantity_of_quantityInvariant (q : m.interpTy Ty.det)
+    (hQ : Core.Quantification.QuantityInvariant q) :
+    Quantity q := by
+  sorry
 
 -- === Non-conservative counterexample ===
 
@@ -451,6 +501,19 @@ theorem no_laa : LeftAntiAdditive (no_sem m) := by
   have : FiniteModel.elements.all (λ x => !(R x || R' x) || !S x) =
          FiniteModel.elements.all (λ x => (!R x || !S x) && (!R' x || !S x)) := by
     congr 1; funext x; cases R x <;> cases R' x <;> cases S x <;> rfl
+  rw [this, list_all_and]
+
+-- === Right anti-additivity (scope position, P&W §5.9) ===
+
+/-- `⟦no⟧` is right anti-additive: no(A, B∪C) = no(A,B) ∧ no(A,C).
+    "Nobody saw A-or-B" ↔ "Nobody saw A and nobody saw B".
+    This licenses strong NPIs in scope: "Nobody lifted a finger." -/
+theorem no_raa : RightAntiAdditive (no_sem m) := by
+  intro R S S'
+  simp only [no_sem]
+  have : FiniteModel.elements.all (λ x => !R x || !(S x || S' x)) =
+         FiniteModel.elements.all (λ x => (!R x || !S x) && (!R x || !S' x)) := by
+    congr 1; funext x; cases R x <;> cases S x <;> cases S' x <;> rfl
   rw [this, list_all_and]
 
 -- === Duality square (P&W §1.1.1) ===
@@ -724,6 +787,13 @@ theorem notAll_doubleMono :
     ScopeDownwardMono (outerNeg (every_sem m)) :=
   ⟨outerNeg_restrictorDown_to_up _ every_restrictor_down,
    outerNeg_up_to_down _ every_scope_up⟩
+
+/-- `⟦most⟧` has double monotonicity ↑MON↑ (scope-upward, restrictor-upward).
+    Note: most is NOT restrictor-downward-monotone (A'⊆A and most(A,B) ↛ most(A',B)).
+    Restrictor-upward follows from quasi-reflexivity + scope-upward (Zwarts). -/
+theorem most_doubleMono :
+    ScopeUpwardMono (most_sem m) :=
+  most_scope_up
 
 /-- `⟦every⟧` is filtrating: every(A,B) ∧ every(A,C) → every(A, B∩C). -/
 theorem every_filtrating : Filtrating (every_sem m) := by

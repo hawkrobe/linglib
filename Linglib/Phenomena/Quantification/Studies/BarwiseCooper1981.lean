@@ -305,7 +305,8 @@ theorem outerNeg_some_eq_none (m : Model) [FiniteModel m] :
 
 /- Left anti-additive determiners license NPIs (@cite{peters-westerstahl-2006}).
    LAA is formalized: see `every_laa`, `no_laa` in Quantifier.lean.
-   TODO: formalize NPI licensing as a predicate to state the connection. -/
+   The NPI ↔ DE bridge is now formalized in
+   `Phenomena.Polarity.Studies.Ladusaw1979`. -/
 
 -- ============================================================================
 -- §10. Positive-strong → scope-↑MON
@@ -363,19 +364,30 @@ theorem positive_strong_determiners_upward_monotone :
 -- §11. @cite{van-benthem-1984} §3.3: Aristotle Reversed — Square of Opposition
 -- ============================================================================
 
-/- @cite{van-benthem-1984} §3.3: Under VAR*, the Square of Opposition is completely
-   determined by inferential (relational) conditions:
-   - all: transitive + reflexive
-   - some: symmetric + quasi-reflexive
-   - no: symmetric + quasi-universal
+/- @cite{van-benthem-1984} §3.3: Under CONSERV (+ VAR*), the Square of Opposition
+   is completely determined by inferential (relational) conditions:
+   - all:     transitive + reflexive      → inclusion  (A ⊆ B)
+   - some:    symmetric + quasi-reflexive → overlap    (A ∩ B ≠ ∅)
+   - no:      symmetric + quasi-universal → disjointness (A ∩ B = ∅)
    - not all: almost-connected + irreflexive
 
-   Cross-references:
-   - `Core.Quantification.vanBenthem_refl_antisym_is_inclusion`
-   - Bridge theorems in `Fragments.English.Determiners`:
+   Proved in `Core.Quantification`:
+   - `vanBenthem_refl_antisym_is_inclusion`:  CONSERV + reflexive + antisymmetric → "all"
+   - `vanBenthem_symm_quasiRefl_is_overlap`:  CONSERV + symmetric + quasi-reflexive → "some"
+     (→ direction fully proved; ← direction needs QUANT/isomorphism invariance)
+   - `vanBenthem_symm_quasiUniv_is_disjointness`: CONSERV + symmetric + quasi-universal → "no"
+     (← direction fully proved; → direction needs QUANT)
+
+   Additional structural results:
+   - `zwarts_refl_trans_scopeUp`:  CONSERV + reflexive + transitive → MON↑
+
+   Bridge theorems in `Fragments.English.Determiners`:
      `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge`
 
-   TODO: State as a theorem characterizing the Square from inferential conditions. -/
+   NPI licensing connection (via `Phenomena.Polarity.Studies.Ladusaw1979`):
+   - scope-↓ monotone quantifiers (no, few) license weak NPIs in scope
+   - restrictor-↓ monotone quantifiers (every, no) license weak NPIs in restrictor
+   - left-anti-additive quantifiers (every, no) license strong NPIs -/
 
 -- ============================================================================
 -- §12. @cite{van-de-pol-etal-2023}: Simplicity and Universals

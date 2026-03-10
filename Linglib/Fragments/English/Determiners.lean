@@ -516,6 +516,18 @@ theorem all_mono_bridge : all.monotonicity = .increasing ∧
     ScopeUpwardMono (every_sem m) :=
   ⟨rfl, every_scope_up⟩
 
+open Core.Quantification in
+/-- Most: monotonicity metadata says `.increasing` and semantics is scope-↑. -/
+theorem most_mono_bridge : most.monotonicity = .increasing ∧
+    ScopeUpwardMono (most_sem m) :=
+  ⟨rfl, most_scope_up⟩
+
+open Core.Quantification in
+/-- Few: monotonicity metadata says `.decreasing` and semantics is scope-↓. -/
+theorem few_mono_bridge : few.monotonicity = .decreasing ∧
+    ScopeDownwardMono (few_sem m) :=
+  ⟨rfl, few_scope_down⟩
+
 -- ============================================================================
 -- Conservativity bridges (gap G): gqDenotation identity ∧ conservative
 -- ============================================================================
