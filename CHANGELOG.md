@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.101] - 2026-03-09
+
+### Changed
+- **Core/Agent/ExperimentDesign.lean**: Close `eig_nonneg_of_convex` sorry — EIG is non-negative when the value function is convex, via Mathlib's `ConvexOn.map_sum_le` (Jensen's inequality) and `posterior_marginalizes_to_prior`. Added `marginalObs_sum` helper and `convexOn_of_binary` bridge from binary convexity to Mathlib's `ConvexOn`. Added missing `hprior_sum` hypothesis (prior sums to 1).
+
+## [0.229.100] - 2026-03-09
+
+### Changed
+- **Core/Agent/DecisionTheory.lean**: Close `euv_eq_evsi` sorry — van Rooy 2003 p. 742 theorem that EUV(Q) = EVSI(Q), with two hypotheses (law of total expectation, cell probability normalization) dischargeable from partition infrastructure in Core/Partition.lean
+
 ## [0.229.99] - 2026-03-09
 
 ### Added
@@ -16,7 +26,7 @@
 
 ### Added
 - **Phenomena/SocialMeaning/Basic.lean**: Theory-neutral sociolinguistic variation data — Obama ING style shifting (Labov 2012) and NYC stratification (Labov 1966) with monotonicity theorems
-- **Phenomena/SocialMeaning/Studies/Burnett2019.lean**: Full formalization of Social Meaning Games — Bayesian L0/S1/L1 with exact ℚ arithmetic over persona types and ING variants; 25 verified predictions including Table 3 exact values, per-persona variant preferences (cool-guy prefers -in' ~69%), style shifting (casual→careful flips preference), stern-leader exclusion, cool-guy/asshole structural symmetry, /t/ release listener interpretation for Rice/Pelosi/Bush with bulletproofing effect, cross-reference showing model predictions within 5pp of Labov 2012 observations
+- **Phenomena/SocialMeaning/Studies/Burnett2019.lean**: Full formalization of Social Meaning Games — RSAConfig with beliefBased S1 scoring (α=6), prior folded into meaning to match Burnett's L₀(π|v) ∝ Pr(π)·⟦v⟧(π); 5 context configs (casual, careful, Rice, Pelosi, Bush), 12 rsa_predict proofs: per-persona variant preferences (cool-guy prefers -in', stern-leader prefers -ing, doofus prefers -in', asshole prefers -in'), style shifting (casual→careful flips cool-guy preference), Rice /t/ release (sternLeader from released, doofus from flapped), Pelosi prior-overwhelm, Bush bulletproofing (both variants >90% asshole); grounding theorem to EckertMontague emMeaningMI
 - **Theories/Sociolinguistics/EckertMontague.lean**: Added intersection-based EM lift (`emFieldMI`, `emMeaningMI`) matching Burnett's Montagovian Individual semantics (footnote 14), with monotonicity theorem
 
 ## [0.229.96] - 2026-03-09

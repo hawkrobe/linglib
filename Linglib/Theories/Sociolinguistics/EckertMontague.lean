@@ -137,4 +137,44 @@ def fromIndexicalField {Variant : Type}
   { indexedProperties := scmPropertiesFromField field
     indexed_consistent := scmPropertiesFromField_consistent field }
 
+-- ============================================================================
+-- §4. Intersection-based EM lift (Burnett's Montagovian Individual)
+-- ============================================================================
+
+/-- The Eckert–Montague lift with intersection semantics: a persona is
+    compatible with variant `v` iff the persona shares *at least one*
+    property with `v`'s Eckert field.
+
+    This is the Montagovian Individual interpretation from footnote 14 of
+    @cite{burnett-2019}: EM({p₁, p₂}) = {π ∈ PERS | p₁ ∈ π ∨ p₂ ∈ π}.
+
+    Compare `emField` (§2 above) which uses the *subset* semantics
+    (all indexed properties must be in the persona). The intersection
+    semantics gives a weaker / more inclusive meaning function, matching
+    Burnett's Table 1. -/
+def emFieldMI {Variant : Type} {ps : PropertySpace}
+    (gf : GroundedField Variant ps) (v : Variant) : Finset (Finset ps.Property) :=
+  ps.allPersonaeSets.filter fun persona =>
+    decide (∃ p ∈ gf.indexedProperties v, p ∈ persona)
+
+/-- Meaning function from the intersection-based EM lift.
+    Returns `true` iff `persona` shares at least one property with the
+    Eckert field of `v`. -/
+def emMeaningMI {Variant : Type} {ps : PropertySpace}
+    (gf : GroundedField Variant ps) (v : Variant) (persona : Finset ps.Property) : Bool :=
+  decide (∃ p ∈ gf.indexedProperties v, p ∈ persona)
+
+/-- The intersection-based EM lift is monotone: more indexed properties
+    → more compatible personae (opposite of `emField_antitone`). -/
+theorem emFieldMI_monotone {Variant : Type} {ps : PropertySpace}
+    (gf : GroundedField Variant ps) (v₁ v₂ : Variant)
+    (h : gf.indexedProperties v₁ ⊆ gf.indexedProperties v₂) :
+    emFieldMI gf v₁ ⊆ emFieldMI gf v₂ := by
+  intro persona hp
+  simp only [emFieldMI, Finset.mem_filter] at hp ⊢
+  refine ⟨hp.1, ?_⟩
+  rw [decide_eq_true_eq] at hp ⊢
+  obtain ⟨p, hp1, hp2⟩ := hp.2
+  exact ⟨p, h hp1, hp2⟩
+
 end Sociolinguistics.EckertMontague
