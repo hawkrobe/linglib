@@ -801,7 +801,7 @@ import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.Studies.Stakov2026
 import Linglib.Phenomena.Negation.Studies.Stakov2026Typology
 import Linglib.Phenomena.Negation.FlexibleNegation
-import Linglib.Phenomena.Morphology.Studies.Link1983
+import Linglib.Phenomena.Morphology.CompositionBridge
 import Linglib.Phenomena.Morphology.Studies.Bybee1985
 import Linglib.Phenomena.Morphology.Studies.ZwickyPullum1983
 import Linglib.Phenomena.Morphology.Typology
