@@ -224,16 +224,18 @@ theorem updateCG_lr_one {W : Type*} (cg : DistributionalCG W)
 -- § 4. Conversation State
 -- ════════════════════════════════════════════════════
 
-/-- The state of a two-participant conversation.
+/-- The state of a two-participant conversation (Figure 2).
 
 Tracks the common ground (distributional), each participant's private
-beliefs, and the learning rate for updates. In the **shared CG** model,
-both participants access the same `cg`. In the **approximate CG** model,
-each maintains a separate approximation.
+beliefs, and the learning rate for updates. In the **shared CG** model
+(§5.1, Figure 4), both participants access the same `cg`. In the
+**approximate CG** model (§5.2, Figure 6), each maintains a separate
+approximation (not yet formalized).
 
-The distributional CG serves as `RSAConfig.worldPrior` — the common ground
-IS the world prior in the RSA model. Between turns, the world prior evolves
-via `updateCG`, and the RSA model is reconstructed with the updated prior. -/
+The distributional CG serves as both `RSAConfig.meaning` (L0 prior) and
+`RSAConfig.worldPrior` (L1 prior) — the CG enters the RSA model at two
+levels (Figure 4). Between turns, the CG evolves via `updateCG`, and the
+RSA model is reconstructed via `mfRSAAt`. -/
 structure ConversationState (W : Type*) where
   cg : DistributionalCG W
   belA : DistributionalCG W
@@ -353,16 +355,16 @@ open RSA
 
 /-- RSA model for the MutualFriends domain at turn 1.
 
-The common ground is uniform (no information shared yet), so `worldPrior`
-is constant. Boolean literal semantics: L0(w|u) ∝ ⟦u⟧(w).
+Anderson's Shared CG model (Figure 4) uses the distributional CG at BOTH
+L0 and L1:
 
-With `s1Score = identity` and `α = 1`, S1(u|w) ∝ L0(w|u):
+    L0(w|u) ∝ ⟦u⟧(w) · CG(w)     -- CG enters L0 via `meaning`
+    S1(u|w) ∝ L0(w|u)              -- speaker optimizes CG-weighted informativity
+    L1(w|u) ∝ S1(u|w) · CG(w)     -- CG enters L1 via `worldPrior`
 
-    S1(u|w) = L0(w|u) / Σ_{u'} L0(w|u')
-    L1(w|u) ∝ Prior(w) · S1(u|w)
-
-This is the standard one-shot RSA model that Anderson applies at each
-conversation turn, with `worldPrior` set to the current distributional CG. -/
+At turn 1, CG is uniform (weight 1 everywhere), so the CG factor drops out
+of L0 and the meaning reduces to Boolean semantics: `⟦u⟧(w) · 1 = ⟦u⟧(w)`.
+The general CG-weighted pattern is visible in `mfRSA_turn2`. -/
 noncomputable def mfRSA : RSAConfig MFUtterance MFWorld where
   meaning _ _ u w := if mfMeaning u w then 1 else 0
   meaning_nonneg _ _ _ _ := by split <;> norm_num
@@ -464,28 +466,52 @@ theorem l1_null_uniform (w₁ w₂ : MFWorld) :
 -- § 11. RSAConfig: Turn 2 (Post-Update Prior)
 -- ════════════════════════════════════════════════════
 
+/-- CG weights after hearing "studyHumanity" at turn 1.
+
+After L1 processes "studyHumanity" with uniform prior, the posterior
+concentrates on nancy and sally (the German-studying worlds):
+L1(studyHumanity) = [0, 0, 1/2, 1/2]. Updating the normalized uniform
+CG [1/4, 1/4, 1/4, 1/4] via `updateCG` with lr=0.2 (footnote 9) gives:
+
+    CG'(w) = 0.8 · 1/4 + 0.2 · L1(w)
+    CG' = [1/5, 1/5, 3/10, 3/10]
+
+The weights [2, 2, 3, 3] are proportional to [1/5, 1/5, 3/10, 3/10],
+which is the exact post-update CG from the paper's Figure 5, panel 1A.
+Since RSA normalizes, proportional weights give identical predictions. -/
+def cgTurn2 : MFWorld → ℝ
+  | .ina | .katie => 2
+  | .nancy | .sally => 3
+
+theorem cgTurn2_nonneg : ∀ w, 0 ≤ cgTurn2 w := by
+  intro w; cases w <;> norm_num [cgTurn2]
+
 /-- RSA model after hearing "studyHumanity" at turn 1.
 
-The distributional CG shifts toward German-studying individuals
-(nancy, sally). With learning rate 1/2 from uniform CG (weight 1):
+The updated CG enters BOTH L0 and L1 (Figure 4), matching Anderson's
+Shared CG model:
 
-    CG'(nancy) = CG'(sally) = (1-0.5)·1 + 0.5·(1/2 normalized) → weight 3
-    CG'(ina)   = CG'(katie) = (1-0.5)·1 + 0.5·0               → weight 1
+    L0(w|u) ∝ ⟦u⟧(w) · CG'(w)     -- CG in L0 via `meaning`
+    L1(w|u) ∝ S1(u|w) · CG'(w)     -- CG in L1 via `worldPrior`
 
-We use unnormalized weights [1, 1, 3, 3] for [ina, katie, nancy, sally].
-This is the core of Anderson's contribution: the CG IS the world prior,
-and it evolves between turns via `updateCG`. -/
+This means S1 *adapts* to the CG: the speaker reasons about informativity
+relative to the current common ground. After "studyHumanity" shifts the CG
+toward nancy/sally (weights [2,2,3,3] ∝ [1/5, 1/5, 3/10, 3/10]),
+utterances that disambiguate *within* that subspace (e.g., "likeOutdoors")
+become more informative than utterances that merely re-assert the major
+dimension (e.g., "studyHumanity"). -/
 noncomputable def mfRSA_turn2 : RSAConfig MFUtterance MFWorld where
-  meaning _ _ u w := if mfMeaning u w then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> norm_num
+  meaning _ _ u w := if mfMeaning u w then cgTurn2 w else 0
+  meaning_nonneg _ _ _ w := by
+    split
+    · exact cgTurn2_nonneg w
+    · exact le_refl 0
   s1Score l0 _ _ w u := l0 u w
   s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
   α := 1
   α_pos := one_pos
-  worldPrior w := match w with
-    | .ina | .katie => 1
-    | .nancy | .sally => 3
-  worldPrior_nonneg w := by cases w <;> norm_num
+  worldPrior := cgTurn2
+  worldPrior_nonneg := cgTurn2_nonneg
   latentPrior_nonneg _ _ := by norm_num
 
 -- ════════════════════════════════════════════════════
@@ -527,6 +553,45 @@ theorem turn2_breaks_symmetry :
   exact ⟨by rsa_predict, l1_turn2_outdoors_favors_nancy⟩
 
 -- ════════════════════════════════════════════════════
+-- § 12b. Turn 2: S1 CG-Adapted Speaker
+-- ════════════════════════════════════════════════════
+
+/-! With CG entering L0 (Figure 4), the speaker at turn 2 adapts to what's
+already in the common ground. After "studyHumanity" establishes the major
+dimension, utterances that disambiguate within the high-CG subspace become
+more informative. This section verifies that the CG-weighted S1 captures
+Anderson's cooperative contribution mechanism. -/
+
+/-- **CG-adapted informativity**: At turn 2, the speaker who knows it's Nancy
+prefers "likeOutdoors" over "studyHumanity". At turn 1, these were equal
+(both partition the 4-world space into 2+2). After the CG shifts toward
+nancy/sally (weights [2,2,3,3]), "likeOutdoors" discriminates within
+the high-weight subspace (L0(nancy|likeOutdoors) = 3/5) while
+"studyHumanity" merely re-asserts what's already established
+(L0(nancy|studyHumanity) = 1/2).
+
+This is Anderson's key insight: the CG-weighted L0 makes speakers prefer
+*new* information over *redundant* information. -/
+theorem s1_turn2_nancy_prefers_outdoors :
+    mfRSA_turn2.S1 () .nancy .likeOutdoors > mfRSA_turn2.S1 () .nancy .studyHumanity := by
+  rsa_predict
+
+/-- At turn 1, the same two utterances were equal (pre-CG-adaptation). -/
+theorem s1_turn1_nancy_humanity_eq_outdoors :
+    mfRSA.S1 () .nancy .studyHumanity = mfRSA.S1 () .nancy .likeOutdoors :=
+  s1_nancy_humanity_eq_outdoors
+
+/-- CG adaptation works differently for low-CG worlds: at turn 2,
+Ina (weight 2) prefers "studyScience" over "likeIndoors" because
+sally (weight 3) dominates the indoor partition, making
+L0(ina|likeIndoors) = 2/5 < L0(ina|studyScience) = 1/2. The CG shift
+makes the major dimension MORE informative for low-CG worlds, the opposite
+of the high-CG case (nancy, §12b above). -/
+theorem s1_turn2_ina_prefers_science :
+    mfRSA_turn2.S1 () .ina .studyScience > mfRSA_turn2.S1 () .ina .likeIndoors := by
+  rsa_predict
+
+-- ════════════════════════════════════════════════════
 -- § 13. S2: Endorsement Predictions
 -- ════════════════════════════════════════════════════
 
@@ -542,5 +607,117 @@ are equally endorsed (symmetric L1 posteriors). -/
 theorem s2_nancy_humanity_eq_outdoors :
     mfRSA.S2 .nancy .studyHumanity = mfRSA.S2 .nancy .likeOutdoors := by
   rsa_predict
+
+-- ════════════════════════════════════════════════════
+-- § 14. Parametric RSA and Conversation Step
+-- ════════════════════════════════════════════════════
+
+/-- RSA model for MutualFriends at an arbitrary CG (Figure 4).
+
+This is the general form of Anderson's Shared CG model: the CG enters
+as the L0 meaning weight (via `meaning`) AND as the L1 prior (via
+`worldPrior`). One-shot RSA is the special case with uniform CG.
+
+Used by `conversationStep` to construct the RSA model at each turn. -/
+noncomputable def mfRSAAt (cg : MFWorld → ℝ) (hcg : ∀ w, 0 ≤ cg w) :
+    RSAConfig MFUtterance MFWorld where
+  meaning _ _ u w := if mfMeaning u w then cg w else 0
+  meaning_nonneg _ _ _ w := by split; exact hcg w; exact le_refl 0
+  s1Score l0 _ _ w u := l0 u w
+  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
+  α := 1
+  α_pos := one_pos
+  worldPrior := cg
+  worldPrior_nonneg := hcg
+  latentPrior_nonneg _ _ := by norm_num
+
+/-- One step of the Shared CG conversation loop (Figure 2).
+
+Given the current CG and an utterance:
+1. Build the RSA model at the current CG (`mfRSAAt`)
+2. Compute L1 posteriors: the pragmatic listener's world beliefs
+3. Update the CG via convex combination with the posteriors
+
+This closes the loop: RSA inference → CG update → new RSA model.
+The returned CG serves as the world prior for the next turn's model.
+
+**Normalization note**: The L1 posterior is normalized (sums to 1), so
+the CG weights should also be normalized for the convex combination
+to preserve total weight. With normalized CG, `updateCG` is a true
+convex combination and preserves sum-to-1. Starting from
+`DistributionalCG.uniform` (weight=1 per world) gives correct RSA
+predictions but produces CG updates with a different scale than the
+paper's normalized distributions. -/
+noncomputable def conversationStep
+    (cg : DistributionalCG MFWorld) (u : MFUtterance)
+    (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) :
+    DistributionalCG MFWorld :=
+  let rsaModel := mfRSAAt cg.weight cg.weight_nonneg
+  let posterior := rsaModel.L1 u
+  let posterior_nonneg : ∀ w, 0 ≤ posterior w :=
+    fun w => rsaModel.L1agent.policy_nonneg u w
+  updateCG cg posterior posterior_nonneg lr hlr hlr1
+
+/-- The conversation step preserves CG non-negativity. -/
+theorem conversationStep_nonneg (cg : DistributionalCG MFWorld)
+    (u : MFUtterance) (lr : ℝ) (hlr : 0 ≤ lr) (hlr1 : lr ≤ 1) (w : MFWorld) :
+    0 ≤ (conversationStep cg u lr hlr hlr1).weight w :=
+  (conversationStep cg u lr hlr hlr1).weight_nonneg w
+
+/-- With lr = 0, the conversation step leaves the CG unchanged. -/
+theorem conversationStep_lr_zero (cg : DistributionalCG MFWorld) (u : MFUtterance) (w : MFWorld) :
+    (conversationStep cg u 0 (le_refl 0) zero_le_one).weight w = cg.weight w := by
+  simp only [conversationStep]
+  exact updateCG_lr_zero cg _ _ w
+
+-- ════════════════════════════════════════════════════
+-- § 15. Bridge to Empirical Observations (Basic.lean)
+-- ════════════════════════════════════════════════════
+
+/-! The RSA predictions above verify properties from `Phenomena.Dialogue.Basic`:
+
+1. **Contributions informative**: S1 prefers specific utterances over null
+   (§9, `s1_null_suboptimal`), matching `contributionsInformative = true`.
+
+2. **Uncertainty decreases**: L1 concentrates probability after hearing
+   an informative utterance (this section).
+
+3. **CG-adapted contributions**: At turn 2, S1 adapts to what's already
+   in the CG, preferring non-redundant information (§12b). -/
+
+/-- L1 concentrates probability after an informative utterance:
+L1(nancy|studyHumanity) > L1(nancy|null). The null utterance gives
+uniform L1 (= 1/4), while "studyHumanity" concentrates on the 2
+German-studying worlds (= 1/2). This matches
+`Phenomena.Dialogue.successfulInfoSharing.uncertaintyDecreases`. -/
+theorem l1_concentrates_after_utterance :
+    mfRSA.L1 .studyHumanity .nancy > mfRSA.L1 .null .nancy := by
+  rsa_predict
+
+/-- Informed speakers are informative: S1 assigns higher probability
+to a true specific utterance than to null. This matches
+`Phenomena.Dialogue.successfulInfoSharing.contributionsInformative`. -/
+theorem s1_informed_speaker_is_informative :
+    mfRSA.S1 () .nancy .studyHumanity > mfRSA.S1 () .nancy .null :=
+  s1_null_suboptimal
+
+-- ════════════════════════════════════════════════════
+-- § 16. Bridge to Classical CG Update
+-- ════════════════════════════════════════════════════
+
+/-- Anderson's distributional CG update subsumes @cite{stalnaker-2002}'s
+set-intersection update as a special case: with learning rate 1 and a
+posterior that assigns zero weight to worlds where the utterance is false,
+the updated CG excludes exactly those worlds — recovering `ContextSet.update`.
+
+This bridge connects the probabilistic conversation model to the classical
+assertion framework in `Core.Semantics.CommonGround`. -/
+theorem lr_one_excludes_false_worlds (cg : DistributionalCG MFWorld)
+    (posterior : MFWorld → ℝ) (hn : ∀ w, 0 ≤ posterior w) (w : MFWorld)
+    (h : posterior w = 0) :
+    ¬(updateCG cg posterior hn 1 zero_le_one (le_refl 1)).toContextSet w := by
+  apply DistributionalCG.zero_weight_excluded
+  show ((1 - (1 : ℝ)) * cg.weight w + (1 : ℝ) * posterior w : ℝ) = 0
+  rw [h]; ring
 
 end Phenomena.Dialogue.Studies.Anderson2021
