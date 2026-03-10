@@ -36,7 +36,7 @@ is visible directly at the world level (§8.4).
 The paper uses 15 non-empty context sets (all 2^4 - 1 subsets of 4 worlds) with
 5% noise added to eq. (8) to ensure nonzero priors. We model only the 9 context
 sets derivable from observations about past/now, since the remaining 6 (e.g.,
-`change = {(T,F),(F,T)}`) receive only the noise prior (~38× lower) and do not
+`change = {(T,F),(F,T)}`) receive only the noise prior (≥18× lower) and do not
 affect qualitative predictions.
 
 ## Connection to @cite{scontras-tonhauser-2025} and @cite{warstadt-2022}
@@ -54,8 +54,6 @@ namespace Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
 
 open BigOperators
 open Real (rpow rpow_nonneg)
-open Semantics.Lexical.Verb.ChangeOfState
-
 -- ============================================================================
 -- §1. World State
 -- ============================================================================
@@ -100,10 +98,15 @@ inductive Utterance where
   deriving DecidableEq, Repr, BEq, Inhabited, Fintype
 
 -- ============================================================================
--- §3. Literal Semantics (grounded in CoS theory)
+-- §3. Literal Semantics
 -- ============================================================================
 
-/-- Literal truth conditions from Table 1. Negation of u is U - ⟦u⟧. -/
+/-- Literal truth conditions from Table 1. Negation of u is U - ⟦u⟧.
+
+    The change-of-state utterances (stopped, started, always smoked) encode
+    presupposition + assertion as a conjunction over two temporal projections
+    of the world state. See bridge theorems below connecting these to the
+    CoS theory in `Theories.Semantics.Lexical.Verb.ChangeOfState.Theory`. -/
 def literalMeaning : Utterance → WorldState → Bool
   | .smokes,            w => w.now
   | .doesntSmoke,       w => !w.now
@@ -119,9 +122,29 @@ def literalMeaning : Utterance → WorldState → Bool
   | .notNeverSmoked,    w => !(!w.past && !w.now)
   | .silence,           _ => true
 
-/-- Cessation semantics matches CoS theory: presup(past=T) ∧ assert(now=F). -/
-theorem stopped_follows_cos (w : WorldState) :
-    literalMeaning .stoppedSmoking w = (w.past && !w.now) := rfl
+open Semantics.Lexical.Verb.ChangeOfState (priorStatePresup resultStateAssertion)
+
+/-- "Stopped smoking" = cessation presupposition (past=T) ∧ cessation assertion (now=F).
+
+    The CoS theory operates on a single predicate P, but the QGL world model
+    separates prior state (`past`) from current state (`now`). We use `·.past`
+    for the presupposition and `·.now` for the assertion. -/
+theorem stopped_matches_cessation (w : WorldState) :
+    literalMeaning .stoppedSmoking w =
+    (priorStatePresup .cessation (·.past) w &&
+     resultStateAssertion .cessation (·.now) w) := rfl
+
+/-- "Started smoking" = inception presupposition (past=F) ∧ inception assertion (now=T). -/
+theorem started_matches_inception (w : WorldState) :
+    literalMeaning .startedSmoking w =
+    (priorStatePresup .inception (·.past) w &&
+     resultStateAssertion .inception (·.now) w) := rfl
+
+/-- "Always smoked" = continuation presupposition (past=T) ∧ continuation assertion (now=T). -/
+theorem always_matches_continuation (w : WorldState) :
+    literalMeaning .alwaysSmoked w =
+    (priorStatePresup .continuation (·.past) w &&
+     resultStateAssertion .continuation (·.now) w) := rfl
 
 -- ============================================================================
 -- §4. Context Sets (Common Ground)
@@ -314,7 +337,7 @@ key asymmetry: under +past context, "didn't stop" narrows to exactly wTT
 spreads over both wFT and wFF (less informative). This makes wTT more
 likely than wFT.
 
-Note: the paper observes that (T,T) ≈ (F,F) under QUD_max, so projection
+The paper observes that (T,T) = (F,F) under QUD_max (Figure 1c), so projection
 is incomplete — the past=T marginal still equals the past=F marginal. Full
 projection requires QUD_now + context set inference (§8.5). -/
 
@@ -323,6 +346,17 @@ set_option maxHeartbeats 3200000 in
 theorem projection_under_qud_max :
     cfgMax.L1 .notStoppedSmoking .wTT >
     cfgMax.L1 .notStoppedSmoking .wFT := by
+  rsa_predict
+
+set_option maxHeartbeats 3200000 in
+/-- **Incomplete projection under QUD_max**: wTT = wFF (Figure 1c).
+
+    Under the identity QUD, (T,T) and (F,F) receive equal L1 probability.
+    This means the past=T marginal equals the past=F marginal — projection
+    is NOT captured at the world level under QUD_max. -/
+theorem qud_max_incomplete_projection :
+    cfgMax.L1 .notStoppedSmoking .wTT =
+    cfgMax.L1 .notStoppedSmoking .wFF := by
   rsa_predict
 
 /-! ### §8.5 Context set projection (the paper's main result, Figure 3)
@@ -348,6 +382,27 @@ set_option maxHeartbeats 3200000 in
 theorem context_projection :
     cfgNow.L1_latent .notStoppedSmoking .pastTrue >
     cfgNow.L1_latent .notStoppedSmoking .pastFalse := by
+  rsa_predict
+
+set_option maxHeartbeats 3200000 in
+/-- **+past beats uninformative universe** despite lower prior (9 vs 6).
+
+    Under +past, "didn't stop" narrows to exactly wTT (rpow(1,6) = 1).
+    Under universe, it spreads over 3 worlds (rpow(1/4,6) ≈ 0). The
+    informativity gain overwhelms the prior advantage. -/
+theorem context_projection_over_universe :
+    cfgNow.L1_latent .notStoppedSmoking .pastTrue >
+    cfgNow.L1_latent .notStoppedSmoking .universe := by
+  rsa_predict
+
+set_option maxHeartbeats 3200000 in
+/-- **-now context is dispreferred** (p. 1114): -now already entails the QUD
+    answer (John doesn't smoke now), so the speaker would be maximally
+    informative even saying nothing — "didn't stop smoking" adds no value.
+    L1 therefore infers the speaker did NOT assume a -now context. -/
+theorem now_context_dispreferred :
+    cfgNow.L1_latent .notStoppedSmoking .pastTrue >
+    cfgNow.L1_latent .notStoppedSmoking .nowFalse := by
   rsa_predict
 
 /-! ### §8.6 "Stopped smoking" projects past=T via QUD answer

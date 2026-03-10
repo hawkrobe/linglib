@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.90] - 2026-03-09
+
+### Changed
+- **QingGoodmanLassiter2016.lean**: Ground literal semantics in CoS theory (3 bridge theorems: stopped↔cessation, started↔inception, always↔continuation). Add 3 new rsa_predict theorems: QUD_max incomplete projection (wTT=wFF), +past > universe, -now dispreferred. Total: 9 verified predictions
+
 ## [0.229.89] - 2026-03-09
 
 ### Changed
