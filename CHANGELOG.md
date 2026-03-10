@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.93] - 2026-03-09
+
+### Changed
+- **EpistemicThreshold.lean**: Close `identity_belief_eq_world_marginal` sorry — for BToM models with identity perception and belief (δ-functions), belief marginal equals world marginal. Proof: propagate ite through products, collapse inner delta sums via `Finset.sum_ite_eq`, factor constant ites out of inner sums via `ite_sum` helper, collapse outer delta sums
+
 ## [0.229.92] - 2026-03-09
 
 ### Added

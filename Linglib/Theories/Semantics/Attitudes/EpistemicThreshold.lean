@@ -473,21 +473,29 @@ variable {A D S M : Type*}
     perfect belief formation (`P(b|p) = δ(b=p)`), inferring the
     agent's belief state is the same as inferring the world state.
 
-    Proof: both sums reduce to the same expression after collapsing
-    the delta functions via `Finset.sum_ite_eq'`. The perception and
-    belief deltas force `p = w` and `b = p`, so `b = w`, and the
-    remaining sum over `D × S × M` is identical in both cases.
+    Proof: unfold both marginals, substitute the delta functions, then
+    collapse via `Finset.sum_ite_eq`. Both sides reduce to
+    `Σ_{d,s,m} planModel(b,d,s,m,a) · worldPrior(b) · ...`. -/
+private lemma ite_sum {ι G : Type*} [Fintype ι] [AddCommMonoid G]
+    {c : Prop} [Decidable c] {f : ι → G} :
+    (∑ i, if c then f i else 0) = if c then ∑ i, f i else 0 := by
+  split_ifs <;> simp
 
-    TODO: formalize the delta-sum collapse step. The proof requires
-    showing that `Σ_p (if p = w then 1 else 0) * f(p) = f(w)` in a
-    `CommSemiring`, which needs careful handling of `ite` with `mul`. -/
 theorem identity_belief_eq_world_marginal
     (model : BToMModel F A W W D S M W)
     (h_percept : ∀ w p, model.perceptModel w p = if p = w then 1 else 0)
     (h_belief : ∀ p b, model.beliefModel p b = if b = p then 1 else 0)
     (a : A) (b : W) :
     model.beliefMarginal a b = model.worldMarginal a b := by
-  sorry
+  simp only [BToMModel.beliefMarginal, BToMModel.worldMarginal, BToMModel.jointScore,
+    h_percept, h_belief]
+  simp only [ite_mul, mul_ite, zero_mul, mul_zero, mul_one]
+  -- Collapse inner delta sums (if x = y where y is bound)
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ↓reduceIte]
+  -- Factor constant ites (if b = x) out of inner sums where x is free
+  simp_rw [ite_sum]
+  -- Collapse outer delta sums
+  simp only [Finset.sum_ite_eq, Finset.sum_ite_eq', Finset.mem_univ, ↓reduceIte]
 
 /-- For identity-perception BToM models, `btomCredence` is the
     world-marginal-weighted evaluation of φ.
