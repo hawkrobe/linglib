@@ -1,8 +1,9 @@
 # Changelog
 
-## [0.229.105] - 2026-03-09
+## [0.229.106] - 2026-03-09
 
 ### Changed
+- **Core/Agent/PsychophysicalChoice.lean**: Close `stevens_jndL_intensity_ratio` sorry — Weber-like ratio from JND: if s₁ is discriminably preferred to s₂ at threshold π, then s₁/s₂ > (π/(1-π))^(1/n). Proof via cross-multiplication, `div_rpow`, `rpow_lt_rpow` with exponent 1/n, and `rpow_mul` cancellation
 - **Core/Agent/Learning.lean**: Close `linear_convergence` sorry — under constant reinforcement, linear learning converges: `v_n(s,a) → r(a)` as `n → ∞`. Proof via `iterate_linear_closed_form` + `tendsto_pow_atTop_nhds_zero_of_lt_one` (α^n → 0 since 0 < α < 1)
 
 ## [0.229.104] - 2026-03-09

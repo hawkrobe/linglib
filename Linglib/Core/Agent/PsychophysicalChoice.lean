@@ -85,11 +85,19 @@ theorem stevens_jndL_intensity_ratio (σ : StevensScale) (thr : ℝ)
     {s₁ s₂ : ℝ} (h₁ : 0 < s₁) (h₂ : 0 < s₂)
     (hL : jndL (· ^ σ.n) thr s₁ s₂) :
     (thr / (1 - thr)) ^ (1 / σ.n) < s₁ / s₂ := by
-  -- From jndL: s₁ⁿ/(s₁ⁿ+s₂ⁿ) > thr
-  -- Rearranging: s₁ⁿ/s₂ⁿ > thr/(1-thr)
-  -- Since s₁,s₂ > 0: (s₁/s₂)ⁿ > thr/(1-thr)
-  -- Taking n-th root: s₁/s₂ > (thr/(1-thr))^(1/n)
-  sorry
+  simp only [jndL, pairwiseProb] at hL
+  have hp₁ : 0 < s₁ ^ σ.n := rpow_pos_of_pos h₁ σ.n
+  have hp₂ : 0 < s₂ ^ σ.n := rpow_pos_of_pos h₂ σ.n
+  have hd : 0 < s₁ ^ σ.n + s₂ ^ σ.n := add_pos hp₁ hp₂
+  rw [lt_div_iff₀ hd] at hL
+  have h1mt : 0 < 1 - thr := by linarith
+  have hthr_ratio_pos : 0 < thr / (1 - thr) := div_pos (by linarith) h1mt
+  have h_ratio : thr / (1 - thr) < (s₁ / s₂) ^ σ.n := by
+    rw [div_rpow (le_of_lt h₁) (le_of_lt h₂), div_lt_div_iff₀ h1mt hp₂]; nlinarith
+  have h5 := rpow_lt_rpow (le_of_lt hthr_ratio_pos) h_ratio (div_pos one_pos σ.hn_pos)
+  rw [← rpow_mul (le_of_lt (div_pos h₁ h₂)), mul_one_div_cancel (ne_of_gt σ.hn_pos),
+    rpow_one] at h5
+  exact h5
 
 -- ============================================================================
 -- §3. Trace ordering = intensity ordering for power scales
