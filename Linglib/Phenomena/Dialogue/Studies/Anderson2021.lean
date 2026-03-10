@@ -720,4 +720,231 @@ theorem lr_one_excludes_false_worlds (cg : DistributionalCG MFWorld)
   show ((1 - (1 : ℝ)) * cg.weight w + (1 : ℝ) * posterior w : ℝ) = 0
   rw [h]; ring
 
+-- ════════════════════════════════════════════════════
+-- § 17. Exact Numerical Predictions (Figure 5)
+-- ════════════════════════════════════════════════════
+
+/-! Exact rational values for the turn-1 RSA computations underlying
+Figure 5, panel 1A. At turn 1 with uniform CG, the domain's 2×2
+feature symmetry gives clean fractions: each non-null utterance is true
+of exactly 2 worlds (L0 = 1/2), null is true of all 4 (L0 = 1/4), and
+each world makes exactly 2 non-null utterances true, giving
+S1(true u|w) = (1/2)/(5/4) = 2/5 and S1(null|w) = (1/4)/(5/4) = 1/5. -/
+
+-- S1(·|nancy): production probabilities given obs = Nancy
+
+theorem s1_nancy_studyHumanity_val :
+    mfRSA.S1 () .nancy .studyHumanity = 2/5 := by rsa_predict
+
+theorem s1_nancy_studyScience_val :
+    mfRSA.S1 () .nancy .studyScience = 0 := by rsa_predict
+
+theorem s1_nancy_likeIndoors_val :
+    mfRSA.S1 () .nancy .likeIndoors = 0 := by rsa_predict
+
+theorem s1_nancy_likeOutdoors_val :
+    mfRSA.S1 () .nancy .likeOutdoors = 2/5 := by rsa_predict
+
+theorem s1_nancy_null_val :
+    mfRSA.S1 () .nancy .null = 1/5 := by rsa_predict
+
+-- L1(·|studyHumanity): posteriors used in CG update → Figure 5 panel 1A
+
+theorem l1_studyHumanity_nancy_val :
+    mfRSA.L1 .studyHumanity .nancy = 1/2 := by rsa_predict
+
+theorem l1_studyHumanity_sally_val :
+    mfRSA.L1 .studyHumanity .sally = 1/2 := by rsa_predict
+
+theorem l1_studyHumanity_ina_val :
+    mfRSA.L1 .studyHumanity .ina = 0 := by rsa_predict
+
+theorem l1_studyHumanity_katie_val :
+    mfRSA.L1 .studyHumanity .katie = 0 := by rsa_predict
+
+/-- Null gives uniform L1: every world has the same S1(null|w) by the
+domain's symmetry, so L1(w|null) = CG(w)/Σ CG = 1/4. -/
+theorem l1_null_val (w : MFWorld) :
+    mfRSA.L1 .null w = 1/4 := by cases w <;> rsa_predict
+
+-- ════════════════════════════════════════════════════
+-- § 18. Approximate CG Model (§5.2, Figure 6)
+-- ════════════════════════════════════════════════════
+
+/-! The Approximate Common Ground model relaxes the shared-CG assumption:
+each participant maintains their own CG approximation. The speaker uses
+CG_S in production; the listener uses CG_L in comprehension with their
+private beliefs B_L as the L1 world prior.
+
+Key difference from shared CG (Figure 4):
+- Shared:  L1(w|u) ∝ S1(u|w) · CG(w)     — same CG for everyone
+- Approx:  L1(w|u) ∝ S1(u|w) · B_L(w)    — listener's own beliefs
+
+This models realistic divergence: participants with different priors
+hear the same utterance but reach different posteriors, causing their
+CG approximations to drift apart (Figure 7). -/
+
+/-- State for the Approximate CG model (§5.2, Figure 6). -/
+structure ApproxCGState (W : Type*) where
+  cgA : DistributionalCG W
+  cgB : DistributionalCG W
+  belA : DistributionalCG W
+  belB : DistributionalCG W
+  lr : ℝ
+  speakerIsA : Bool
+
+noncomputable def ApproxCGState.initial {W : Type*}
+    (belA belB : DistributionalCG W) (lr : ℝ) : ApproxCGState W where
+  cgA := DistributionalCG.uniform
+  cgB := DistributionalCG.uniform
+  belA := belA
+  belB := belB
+  lr := lr
+  speakerIsA := true
+
+/-- Approximate comprehension RSA (Figure 6): L0 uses CG_L, but L1
+uses B_L (listener's private beliefs) as the world prior. -/
+noncomputable def approxComprehensionRSA
+    (cgL : MFWorld → ℝ) (hcgL : ∀ w, 0 ≤ cgL w)
+    (belL : MFWorld → ℝ) (hbelL : ∀ w, 0 ≤ belL w) :
+    RSAConfig MFUtterance MFWorld where
+  meaning _ _ u w := if mfMeaning u w then cgL w else 0
+  meaning_nonneg _ _ _ w := by split; exact hcgL w; exact le_refl 0
+  s1Score l0 _ _ w u := l0 u w
+  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
+  α := 1
+  α_pos := one_pos
+  worldPrior := belL
+  worldPrior_nonneg := hbelL
+  latentPrior_nonneg _ _ := by norm_num
+
+/-- When beliefs equal the CG, the approximate model reduces to the
+shared CG model — the split is only meaningful when they diverge. -/
+theorem approx_reduces_to_shared (cg : MFWorld → ℝ) (hcg : ∀ w, 0 ≤ cg w) :
+    approxComprehensionRSA cg hcg cg hcg = mfRSAAt cg hcg := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 19. Belief Update Model (§6, Figure 8)
+-- ════════════════════════════════════════════════════
+
+/-! The belief update model extends the conversation system by also
+updating participants' private beliefs. After comprehension, the
+listener updates their beliefs via the same linear rule as CG update:
+
+    Bel'(w) = (1 - lr_bel) · Bel(w) + lr_bel · posterior(w)
+
+The speaker does not update beliefs (they already knew the info).
+Different learning rates for CG vs beliefs allow modeling:
+- §6.2: skeptical listeners (low belief lr, high CG lr)
+- §6.3: uncertainty-based rates (lr scales with entropy) -/
+
+/-- State for the belief update model (Figure 8).
+Extends approximate CG with separate learning rates for CG and beliefs. -/
+structure BeliefUpdateState (W : Type*) where
+  cgA : DistributionalCG W
+  cgB : DistributionalCG W
+  belA : DistributionalCG W
+  belB : DistributionalCG W
+  /-- Learning rate for CG updates. -/
+  cgLR : ℝ
+  /-- Learning rate for belief updates (may be lower for skeptical agents). -/
+  belLR : ℝ
+  speakerIsA : Bool
+
+noncomputable def BeliefUpdateState.initial {W : Type*}
+    (belA belB : DistributionalCG W) (cgLR belLR : ℝ) :
+    BeliefUpdateState W where
+  cgA := DistributionalCG.uniform
+  cgB := DistributionalCG.uniform
+  belA := belA
+  belB := belB
+  cgLR := cgLR
+  belLR := belLR
+  speakerIsA := true
+
+/-- Belief update is algebraically identical to CG update — both are
+instances of @cite{luce-1959}'s linear learning rule. The only difference
+is the learning rate parameter and the interpretation (private vs shared). -/
+theorem belief_update_is_linear_learning {W : Type*}
+    (bel : DistributionalCG W)
+    (posterior : W → ℝ) (hn : ∀ w, 0 ≤ posterior w)
+    (lr : ℝ) (h0 : 0 ≤ lr) (h1 : lr ≤ 1) (w : W) :
+    (updateCG bel posterior hn lr h0 h1).weight w =
+    (1 - lr) * bel.weight w + lr * posterior w := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 20. Noncommittal Speaker Problem (§7.1)
+-- ════════════════════════════════════════════════════
+
+/-! A speaker with uniform beliefs (no private information) assigns equal
+weight to all worlds under weighted sampling. Since no observation is
+more probable than any other, the speaker makes random assertions about
+worlds they don't know, causing the CG to flip-flop (Figure 12).
+
+Solutions:
+1. **Threshold sampling** (§7.1.1): filter out low-confidence worlds;
+   a noncommittal speaker passes (null utterance) instead of guessing.
+2. **Uncertainty-based lr** (§6.3): scale the CG update rate by the
+   listener's uncertainty, so confident listeners resist random input. -/
+
+/-- Uniform beliefs assign equal weight to all worlds under weighted
+sampling — a noncommittal speaker has no basis for choosing. -/
+theorem uniform_weighted_constant (w₁ w₂ : MFWorld) :
+    weightedSample (DistributionalCG.uniform : DistributionalCG MFWorld) w₁ =
+    weightedSample (DistributionalCG.uniform : DistributionalCG MFWorld) w₂ := by
+  simp [weightedSample, DistributionalCG.uniform]
+
+/-- Threshold sampling filters out all worlds when beliefs don't exceed
+the threshold. For uniform beliefs (weight 1), any θ > 1 produces zero
+weight everywhere — the speaker passes (Figure 13). -/
+theorem threshold_filters_uniform (θ : ℝ) (hθ : 1 < θ) (w : MFWorld) :
+    thresholdedSample (DistributionalCG.uniform : DistributionalCG MFWorld) θ w = 0 := by
+  simp only [thresholdedSample, DistributionalCG.uniform]
+  have : ¬((1 : ℝ) ≥ θ) := by linarith
+  simp [this]
+
+/-- Threshold preserves confident worlds: weights above θ pass through. -/
+theorem threshold_preserves_confident {W : Type*}
+    (bel : DistributionalCG W) (θ : ℝ) (w : W) (h : bel.weight w ≥ θ) :
+    thresholdedSample bel θ w = bel.weight w := if_pos h
+
+-- ════════════════════════════════════════════════════
+-- § 21. Redundancy and Difference Sampling (§7.2)
+-- ════════════════════════════════════════════════════
+
+/-! Under weighted sampling, a speaker whose beliefs match the CG keeps
+repeating already-shared information (Figure 14). Difference-based
+sampling fixes this by weighting worlds by `max(0, Bel(w) - CG(w))`:
+worlds already established in the CG get zero weight.
+
+Combined with thresholding, **thresholded difference-based sampling**
+gives the best behavior (Figure 15): informed speakers contribute new
+information, noncommittal speakers pass. -/
+
+/-- When beliefs match the CG exactly, difference sampling assigns zero
+weight to all worlds — nothing new to contribute. -/
+theorem difference_zero_when_aligned {W : Type*}
+    (cg : DistributionalCG W) (w : W) :
+    differenceSample cg cg w = 0 := by
+  simp only [differenceSample, sub_self, max_self]
+
+/-- Difference sampling assigns positive weight when belief exceeds CG —
+these worlds carry new information not yet in the common ground. -/
+theorem difference_positive_when_exceeds {W : Type*}
+    (bel cg : DistributionalCG W) (w : W) (h : cg.weight w < bel.weight w) :
+    0 < differenceSample bel cg w := by
+  simp only [differenceSample]
+  exact lt_of_lt_of_le (by linarith : (0 : ℝ) < bel.weight w - cg.weight w) (le_max_right 0 _)
+
+/-- A's initial difference from uniform CG: Nancy has the highest
+positive difference (belief 3 vs CG 1), so A's first contribution
+should describe Nancy — matching the stochastic trace in Figure 5. -/
+theorem a_initial_diff_nancy_highest :
+    aDiffFromUniform .nancy > aDiffFromUniform .ina ∧
+    aDiffFromUniform .nancy > aDiffFromUniform .katie ∧
+    aDiffFromUniform .nancy > aDiffFromUniform .sally := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    simp only [aDiffFromUniform, differenceSample, beliefsA, DistributionalCG.uniform] <;>
+    norm_num
+
 end Phenomena.Dialogue.Studies.Anderson2021

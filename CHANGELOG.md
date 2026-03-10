@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.229.99] - 2026-03-09
+
+### Added
+- **Anderson2021.lean**: Complete formalization of full paper — exact numerical predictions (S1/L1 = 2/5, 1/2, 1/5, 0 verified via rsa_predict), Approximate CG model (§5.2, Figure 6 with separate CG_S/CG_L/B_L), Belief Update model (§6, Figure 8 with separate cgLR/belLR), Noncommittal Speaker problem + threshold solution (§7.1, uniform_weighted_constant, threshold_filters_uniform), Redundancy + difference sampling (§7.2, difference_zero_when_aligned, difference_positive_when_exceeds); 0 sorry, 950 lines covering all paper sections
+
+## [0.229.98] - 2026-03-09
+
+### Added
+- **Theories/Pragmatics/Dialogue/KOS/Basic.lean**: KOS dialogue framework — Dialogue Gameboards (DGB), C-PARAMS (contextual parameters), utterance skeletons with CONSTITS, coercion operations (parameterFocussing → clausal CE, parameterIdentification → constituent CE), grounding protocol; structural theorems including coercions_same_salUtt, coercions_different_reading, grounded_no_coercion
+- **Phenomena/Ellipsis/ClarificationEllipsis.lean**: Theory-neutral clarification ellipsis data — CEReading (clausal/constituent), five core examples (proper name, rare word, indexical, quantifier, PP), parallelism constraints (phonological required, synonym blocked)
+- **Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean**: Formalization of Ginzburg & Cooper (2004) running example "Did Bo leave?" / "Bo?" — concrete DGB update sequence, coercion application, 15 verification theorems via native_decide (unresolved triggers pending, resolved gets grounded, both readings target same C-PARAM)
+
+## [0.229.97] - 2026-03-09
+
+### Added
+- **Phenomena/SocialMeaning/Basic.lean**: Theory-neutral sociolinguistic variation data — Obama ING style shifting (Labov 2012) and NYC stratification (Labov 1966) with monotonicity theorems
+- **Phenomena/SocialMeaning/Studies/Burnett2019.lean**: Full formalization of Social Meaning Games — Bayesian L0/S1/L1 with exact ℚ arithmetic over persona types and ING variants; 25 verified predictions including Table 3 exact values, per-persona variant preferences (cool-guy prefers -in' ~69%), style shifting (casual→careful flips preference), stern-leader exclusion, cool-guy/asshole structural symmetry, /t/ release listener interpretation for Rice/Pelosi/Bush with bulletproofing effect, cross-reference showing model predictions within 5pp of Labov 2012 observations
+- **Theories/Sociolinguistics/EckertMontague.lean**: Added intersection-based EM lift (`emFieldMI`, `emMeaningMI`) matching Burnett's Montagovian Individual semantics (footnote 14), with monotonicity theorem
+
 ## [0.229.96] - 2026-03-09
 
 ### Added
