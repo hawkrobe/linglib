@@ -217,16 +217,22 @@ reinforcement values: `v_n(s, a) → r(a)` as `n → ∞`.
 
 This follows from the closed form: `v_n = α^n · v_0 + (1 - α^n) · r`, and
 `α^n → 0` since `0 < α < 1`. -/
--- TODO: Prove via `iterate_linear_closed_form` + `tendsto_pow_atTop_nhds_zero_of_lt_one`
--- from Mathlib. The key steps are:
---   1. Rewrite using `iterate_linear_closed_form`
---   2. Apply `Filter.Tendsto.add` and `Filter.Tendsto.mul`
---   3. Use `tendsto_pow_atTop_nhds_zero_of_lt_one` for `α^n → 0`
 theorem linear_convergence (ll : LinearLearner A) (ra : RationalAction S A)
     (s : S) (a : A) :
     Tendsto (λ n => (iterate_linear ll ra n).score s a)
       atTop (nhds (ll.reinforcement a)) := by
-  sorry
+  simp_rw [iterate_linear_closed_form]
+  have htend_pow : Tendsto (fun n => ll.learnRate ^ n) atTop (nhds 0) :=
+    tendsto_pow_atTop_nhds_zero_of_lt_one (le_of_lt ll.learnRate_pos) ll.learnRate_lt_one
+  have h1 : Tendsto (fun n => ll.learnRate ^ n * ra.score s a) atTop
+      (nhds (0 * ra.score s a)) :=
+    htend_pow.mul tendsto_const_nhds
+  have h2 : Tendsto (fun n => (1 - ll.learnRate ^ n) * ll.reinforcement a) atTop
+      (nhds ((1 - (0 : ℝ)) * ll.reinforcement a)) :=
+    (tendsto_const_nhds.sub htend_pow).mul tendsto_const_nhds
+  have h3 := h1.add h2
+  simp only [zero_mul, sub_zero, one_mul, zero_add] at h3
+  exact h3
 
 -- ============================================================================
 -- §6. Expected Choice Sequences (§4.C–G)

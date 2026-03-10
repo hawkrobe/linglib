@@ -247,11 +247,38 @@ theorem multidimensional_decomposition {D : Type*} [Fintype D] [DecidableEq D]
     ∃ C : ℝ, 0 < C ∧
     ∀ (a : (d : D) → S d),
       v a = C * ∏ d : D, ms.scale d (a d) := by
-  -- TODO: proof by induction on the number of dimensions, using ratio_indep
-  -- to show that updating each coordinate from a₀ to a multiplicatively
-  -- contributes the per-dimension scale factor.
-  -- The constant C = v(a₀) / ∏ d, scale d (a₀ d).
-  sorry
+  set P₀ := ∏ d : D, ms.scale d (a₀ d) with hP₀_def
+  have hP₀_pos : 0 < P₀ := Finset.prod_pos (fun d _ => ms.scale_pos d (a₀ d))
+  refine ⟨v a₀ / P₀, div_pos (ind.v_pos a₀) hP₀_pos, ?_⟩
+  intro a
+  set mix : Finset D → ((d : D) → S d) := fun T d => if d ∈ T then a d else a₀ d
+  suffices key : ∀ T : Finset D,
+      v (mix T) = v a₀ * ∏ d ∈ T, (ms.scale d (a d) / ms.scale d (a₀ d)) by
+    have hfull := key Finset.univ
+    have hmix_univ : mix Finset.univ = a :=
+      funext fun d => if_pos (Finset.mem_univ d)
+    rw [hmix_univ] at hfull
+    rw [hfull, Finset.prod_div_distrib, ← hP₀_def, ← mul_div_assoc, mul_div_right_comm]
+  intro T
+  induction T using Finset.induction with
+  | empty =>
+    simp only [Finset.prod_empty, mul_one]
+    congr 1
+  | @insert d₀ T' hd₀ ih =>
+    rw [Finset.prod_insert hd₀]
+    have hmix_ins : mix (insert d₀ T') = Function.update (mix T') d₀ (a d₀) := by
+      ext d'
+      by_cases h : d' = d₀
+      · subst h; simp [mix, Function.update_self]
+      · simp [mix, Finset.mem_insert, h]
+    rw [hmix_ins]
+    have hri := ind.ratio_indep d₀ (mix T') (a d₀)
+    have hv_ne : v (mix T') ≠ 0 := ne_of_gt (ind.v_pos _)
+    rw [div_eq_iff hv_ne] at hri
+    have hmix_d₀ : (mix T') d₀ = a₀ d₀ := if_neg hd₀
+    rw [hmix_d₀] at hri
+    rw [hri, ih]
+    ring
 
 /-- For two dimensions, decomposition gives the explicit product form:
     `v(a₁, a₂) = C · v₁(a₁) · v₂(a₂)`. -/

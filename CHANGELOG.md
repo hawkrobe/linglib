@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.105] - 2026-03-09
+
+### Changed
+- **Core/Agent/Learning.lean**: Close `linear_convergence` sorry — under constant reinforcement, linear learning converges: `v_n(s,a) → r(a)` as `n → ∞`. Proof via `iterate_linear_closed_form` + `tendsto_pow_atTop_nhds_zero_of_lt_one` (α^n → 0 since 0 < α < 1)
+
+## [0.229.104] - 2026-03-09
+
+### Changed
+- **Core/Agent/Psychophysics.lean**: Close `multidimensional_decomposition` sorry — under dimension independence, the overall scale function factors as `v(a) = C · ∏ d, scale d (a d)`. Proof by `Finset.induction` with `mix` function (use `a` on dimensions in `T`, reference `a₀` elsewhere), applying `ratio_indep` at each insertion step
+
 ## [0.229.103] - 2026-03-09
 
 ### Added
