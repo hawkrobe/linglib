@@ -5,7 +5,7 @@ import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
 # Mam Voice System Fragment
-@cite{elkins-imanishi-coon-2026}
+@cite{elkins-torrence-brown-2026}
 
 Minimalist infrastructure for the SJO Mam verbal domain, connecting the
 language-specific clause sizes to the ClauseSpine and VoiceHead abstractions.

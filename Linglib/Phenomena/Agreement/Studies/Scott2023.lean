@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 /-!
 # Minimalism Agree-Conditioned Pronoun Spellout in Mam
 
-@cite{scott-2023} @cite{chomsky-2000} @cite{deal-2021} @cite{elkins-imanishi-coon-2026} @cite{preminger-2014}
+@cite{scott-2023} @cite{chomsky-2000} @cite{deal-2021} @cite{elkins-torrence-brown-2026} @cite{preminger-2014}
 
 Connects the Agree operation (feature valuation) and probe restriction to the empirical distribution of overt vs.
 reduced pronouns in SJA Mam.
@@ -363,7 +363,7 @@ This section makes the unity explicit by running both pipelines in
 parallel and showing they produce different exponents from the same
 mechanism.
 
-See also: `Phenomena.FillerGap.Studies.ElkinsImanishiCoon2026` for the
+See also: `Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026` for the
 full =(y)a' analysis. -/
 
 /-- Voice's oblique probe features (from VoiceSystem). -/

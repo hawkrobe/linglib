@@ -2,7 +2,7 @@ import Linglib.Core.Interfaces.ExtractionMorphology
 
 /-!
 # K'iche' Extraction Morphology Fragment
-@cite{elkins-imanishi-coon-2026} @cite{henderson-2008} @cite{imanishi-2020} @cite{mondloch-2017} @cite{lopez-ixcoy-2022}
+@cite{mendes-ranero-2021} @cite{elkins-torrence-brown-2026} @cite{mondloch-2017}
 
 Theory-neutral data on the extraction particle *wi* in K'iche' (and more
 broadly K'ichean Mayan), contrasted with SJO Mam's =(y)a'.
@@ -62,58 +62,58 @@ structure KicheExtractionDatum where
   deriving Repr
 
 /-- Spatial oblique extraction: *wi* licensed.
-    "Where did you buy it?" — *wi* appears at extraction site.
-    @cite{romero-2012}; @cite{mondloch-2017}. -/
+    "Where did you go yesterday?" — *wi* appears at extraction site.
+    @cite{mondloch-2017} Lesson 14; @cite{mendes-ranero-2021} §2, ex. (9a). -/
 def spatialOblExtraction : KicheExtractionDatum :=
   { label := "Spatial oblique extraction (wi)"
-  , reference := "Romero 2012; Elkins et al. §2, §8"
+  , reference := "Mondloch 2017, Lesson 14; Mendes & Ranero 2021, §2, ex. (9a)"
   , extractedType := .obliqueSpatial
   , wiLicensed := true }
 
 /-- Instrumental oblique extraction: *wi* licensed.
-    "With what did you hit it?" — *wi* at extraction site.
-    @cite{mondloch-2017}. -/
+    "With what did they eat their food?" — *wi* at extraction site.
+    @cite{mendes-ranero-2021} §2, ex. (9b). -/
 def instrumentalOblExtraction : KicheExtractionDatum :=
   { label := "Instrumental oblique extraction (wi)"
-  , reference := "Mondloch 2017; Elkins et al. §8"
+  , reference := "Mendes & Ranero 2021, §2, ex. (9b)"
   , extractedType := .obliqueInstrumental
   , wiLicensed := true }
 
 /-- Temporal oblique extraction: *wi* NOT licensed.
-    "When did you buy it?" — no *wi*. Parallel to Mam: temporal
+    "When did you eat beans?" — no *wi*. Parallel to Mam: temporal
     obliques are exempt in both language groups.
-    Elkins et al. §8.1. -/
+    @cite{mendes-ranero-2021} §2, ex. (12c). -/
 def temporalOblExtraction : KicheExtractionDatum :=
   { label := "Temporal oblique extraction (no wi)"
-  , reference := "Elkins et al. §8.1"
+  , reference := "Mendes & Ranero 2021, §2, ex. (12c)"
   , extractedType := .obliqueTemporal
   , wiLicensed := false }
 
 /-- Reason oblique extraction: *wi* NOT licensed.
-    "Why did you buy it?" — no *wi*. KEY CONTRAST with Mam: SJO
+    "Why did Juan work?" — no *wi*. KEY CONTRAST with Mam: SJO
     =(y)a' IS licensed with reason extraction.
-    Elkins et al. §8.1. -/
+    @cite{mendes-ranero-2021} §2 (adapted from Elkins et al. Table 3). -/
 def reasonOblExtraction : KicheExtractionDatum :=
   { label := "Reason oblique extraction (no wi)"
-  , reference := "Elkins et al. §8.1"
+  , reference := "Mendes & Ranero 2021, §2; Elkins et al. Table 3"
   , extractedType := .obliqueReason
   , wiLicensed := false }
 
 /-- Subject extraction: *wi* NOT licensed (Agent Focus instead).
     "Who bought it?" — AF morphology *-Vk* instead of *wi*.
-    @cite{henderson-2008}; @cite{imanishi-2020}. -/
+    @cite{mendes-ranero-2021} §2, item (6c). -/
 def subjectExtraction : KicheExtractionDatum :=
   { label := "Subject extraction (AF, no wi)"
-  , reference := "Henderson 2008; Imanishi 2020"
+  , reference := "Mendes & Ranero 2021, §2, item (6c)"
   , extractedType := .subject
   , wiLicensed := false }
 
 /-- Object extraction: *wi* NOT licensed.
     "What did you buy?" — no *wi*.
-    @cite{romero-2012}. -/
+    @cite{elkins-torrence-brown-2026}. -/
 def objectExtraction : KicheExtractionDatum :=
   { label := "Object extraction (no wi)"
-  , reference := "Romero 2012"
+  , reference := "Elkins et al. 2026"
   , extractedType := .object
   , wiLicensed := false }
 
@@ -150,7 +150,7 @@ theorem wi_not_core_args :
 theorem temporal_exempt : temporalOblExtraction.wiLicensed = false := rfl
 
 -- ============================================================================
--- § 4: The Fronting Particle Generalization (@cite{henderson-2008}; @cite{imanishi-2020})
+-- § 4: The Fronting Particle Generalization (@cite{mendes-ranero-2021})
 -- ============================================================================
 
 /-- The Fronting Particle Generalization: *wi* occurs in clauses where
@@ -161,9 +161,8 @@ theorem temporal_exempt : temporalOblExtraction.wiLicensed = false := rfl
     =(y)a' is conditioned by clause size (Voice projection) and
     oblique status, not by movement type (phrasal vs. head).
 
-    Elkins et al. §8.2 argue this difference follows from the locus:
-    *wi* is copy spellout (sensitive to what moved), while =(y)a' is
-    Agree on Voice (sensitive to what Voice probes for). -/
+    First discussed by Can Pixabaj (2015); formalized in
+    @cite{mendes-ranero-2021}, definition (5). -/
 def frontingParticleGeneralization : Bool := true
 
 -- ============================================================================
@@ -179,7 +178,7 @@ def kicheanExtractionProfile : Interfaces.ExtractionProfile :=
   , distinguishesPosition := true
   , notes := "Particle wi at extraction site (copy spellout); " ++
              "spatial/instrumental only; temporal and reason exempt; " ++
-             "Fronting Particle Generalization (Henderson 2008): " ++
+             "Fronting Particle Generalization (Mendes & Ranero 2021): " ++
              "XP-movement only, not X⁰-movement" }
 
 theorem kichean_marks_oblique :

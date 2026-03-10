@@ -5,7 +5,7 @@ import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 
 /-!
 # Minimalism Bridge: Toba Batak Extraction Restriction @cite{erlewine-2018}
-@cite{elkins-imanishi-coon-2026}
+@cite{elkins-torrence-brown-2026}
 
 Connects the empirical extraction data from Toba Batak to the
 Minimalist analysis in @cite{erlewine-2018}.

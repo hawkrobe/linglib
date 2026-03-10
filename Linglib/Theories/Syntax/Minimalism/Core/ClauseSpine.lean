@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
 # Clause Spine: Fine-Grained Clause Size
-@cite{elkins-imanishi-coon-2026} @cite{grimshaw-2005} @cite{wurmbrand-2014}
+@cite{elkins-torrence-brown-2026} @cite{grimshaw-2005} @cite{wurmbrand-2014}
 
 `ComplementSize` (ExtendedProjection/Basic.lean) classifies clausal complements
 by their highest functional head, which works well for tense-Agree transparency

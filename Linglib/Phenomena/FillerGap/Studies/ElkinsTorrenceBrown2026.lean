@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
 
 /-!
 # Oblique Extraction in Mayan
-@cite{elkins-imanishi-coon-2026} @cite{henderson-2008} @cite{imanishi-2020}
+@cite{elkins-torrence-brown-2026} @cite{mendes-ranero-2021} @cite{imanishi-2020}
 
 ## Part I: Cross-Linguistic Comparison
 
@@ -47,7 +47,7 @@ and Spellout — to the empirical data on =(y)a' distribution in SJO Mam.
    independently Agrees, yielding multiple =(y)a' (one per Voice/Dir).
 -/
 
-namespace Phenomena.FillerGap.Studies.ElkinsImanishiCoon2026
+namespace Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
 
 -- ============================================================================
 -- Part I: Cross-Linguistic Comparison
@@ -336,4 +336,4 @@ theorem full_derivation_pipeline :
 
 end Derivation
 
-end Phenomena.FillerGap.Studies.ElkinsImanishiCoon2026
+end Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026

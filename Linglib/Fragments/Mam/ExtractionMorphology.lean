@@ -2,7 +2,7 @@ import Linglib.Core.Interfaces.ExtractionMorphology
 import Linglib.Core.Lexical.Word
 
 /-!
-# Mam Extraction Morphology Fragment @cite{elkins-imanishi-coon-2026}
+# Mam Extraction Morphology Fragment @cite{elkins-torrence-brown-2026}
 
 Theory-neutral data on extraction morphology in San Juan Ostuncalco (SJO) Mam,
 a Mayan language spoken in the Western Highlands of Guatemala.
@@ -31,8 +31,8 @@ head along the successive-cyclic movement path (Table 4, §6.2).
 
 ## Data Sources
 
-All data from @cite{elkins-imanishi-coon-2026}, "Wh-movement and oblique
-extraction in SJO Mam". Examples cited by section/example number.
+All data from @cite{elkins-torrence-brown-2026}, "Wh-movement paths and oblique
+extraction in Mam (Mayan)". Examples cited by section/example number.
 
 -/
 
@@ -44,7 +44,7 @@ namespace Fragments.Mam
 
 /-- The three clause sizes relevant for =(y)a' distribution in Mam.
     These correspond to different structural sizes of the verbal domain
-    (@cite{elkins-imanishi-coon-2026} §6.1, following @cite{coon-2019} and @cite{elkins-imanishi-coon-2026}):
+    (@cite{elkins-torrence-brown-2026} §6.1, following @cite{coon-2019} and @cite{elkins-torrence-brown-2026}):
 
     - `fullCP`: Full finite clause with aspect — projects Voice
     - `aspectless`: VoiceP-sized complement (no aspect) — projects Voice
@@ -55,7 +55,7 @@ inductive MamClauseType where
   | fullCP
   /-- VoiceP-sized complement: lacks aspect but projects Voice.
       =(y)a' licensed on oblique extraction (Elkins et al. §6.1,
-      following @cite{elkins-imanishi-coon-2026}). -/
+      following @cite{elkins-torrence-brown-2026}). -/
   | aspectless
   /-- VP-sized infinitival complement: no Voice projected.
       =(y)a' impossible — no Voice⁰ to host [oblique] (Elkins et al. §6.1). -/
@@ -93,7 +93,7 @@ inductive MamExtractionJudgment where
 structure MamExtractionDatum where
   /-- Descriptive label -/
   label : String
-  /-- Section/example reference in @cite{elkins-imanishi-coon-2026} -/
+  /-- Section/example reference in @cite{elkins-torrence-brown-2026} -/
   reference : String
   /-- Type of clause -/
   clauseType : MamClauseType
@@ -112,41 +112,41 @@ structure MamExtractionDatum where
   deriving Repr
 
 /-- Transitive clause, oblique extraction: =(y)a' licensed.
-    "Where did the man buy the tortillas?" — =(y)a' on Dir⁰.
-    Elkins et al. §3.1, ex. (8). -/
+    "With what did María clean the window?" — =(y)a' on predicate.
+    Elkins et al. §4.1, ex. (22b). -/
 def transOblExtraction : MamExtractionDatum :=
   { label := "Transitive, oblique wh-extraction"
-  , reference := "§3.1, ex. (8)"
+  , reference := "§4.1, ex. (22b)"
   , clauseType := .fullCP
   , obliqueExtracted := true
   , judgment := .licensed }
 
 /-- Transitive clause, subject extraction: =(y)a' blocked.
-    "Who bought the tortillas?" — Agent Focus (*-a*) instead, no =(y)a'.
-    Elkins et al. §3.1, ex. (6). -/
+    "Who opened the door?" — antipassive required, no =(y)a'.
+    Elkins et al. §3.2, ex. (19). -/
 def transSubjExtraction : MamExtractionDatum :=
   { label := "Transitive, subject wh-extraction (AF)"
-  , reference := "§3.1, ex. (6)"
+  , reference := "§3.2, ex. (19)"
   , clauseType := .fullCP
   , obliqueExtracted := false
   , judgment := .blocked }
 
 /-- Transitive clause, object extraction: =(y)a' blocked.
-    "What did the man buy?" — no =(y)a'.
-    Elkins et al. §3.1, ex. (7). -/
+    "What did María open?" — no =(y)a'.
+    Elkins et al. §3.2, ex. (18b). -/
 def transObjExtraction : MamExtractionDatum :=
   { label := "Transitive, object wh-extraction"
-  , reference := "§3.1, ex. (7)"
+  , reference := "§3.2, ex. (18b)"
   , clauseType := .fullCP
   , obliqueExtracted := false
   , judgment := .blocked }
 
 /-- Passive clause, oblique extraction: =(y)a' licensed.
-    "Where were the tortillas bought?" — =(y)a' appears even without agent.
-    Elkins et al. §4.1, ex. (17)–(18). -/
+    "Where were the tortillas sold by Juan?" — =(y)a' co-occurs with passive *-njtz*.
+    Elkins et al. §7.2, ex. (54). -/
 def passiveOblExtraction : MamExtractionDatum :=
   { label := "Passive, oblique wh-extraction"
-  , reference := "§4.1, ex. (17)–(18)"
+  , reference := "§7.2, ex. (54)"
   , clauseType := .fullCP
   , obliqueExtracted := true
   , judgment := .licensed }
@@ -198,7 +198,7 @@ structure MamLongDistanceDatum where
   deriving Repr
 
 /-- Long-distance extraction from full CP: =(y)a' licensed on BOTH
-    matrix and embedded predicates. Table 4, Row 1; §6.2, ex. (39)–(40). -/
+    matrix and embedded predicates. Table 4, Row 1; §6.2, ex. (38)–(39). -/
 def ldFullCP : MamLongDistanceDatum :=
   { label := "LD extraction from full CP"
   , reference := "§6.2, Table 4, Row 1"
@@ -216,7 +216,7 @@ def ldAspectless : MamLongDistanceDatum :=
   , embeddedJudgment := .licensed }
 
 /-- Long-distance extraction from infinitival: =(y)a' licensed on
-    matrix but BLOCKED on embedded. Table 4, Row 3; §6.2, ex. (45)–(46). -/
+    matrix but BLOCKED on embedded. Table 4, Row 3; §6.2, ex. (46). -/
 def ldInfinitival : MamLongDistanceDatum :=
   { label := "LD extraction from infinitival"
   , reference := "§6.2, Table 4, Row 3"
@@ -225,10 +225,10 @@ def ldInfinitival : MamLongDistanceDatum :=
   , embeddedJudgment := .blocked }
 
 /-- Embedded question (1-step extraction): =(y)a' BLOCKED on matrix,
-    licensed on embedded. Table 4, Row 4; §4.2, ex. (25)–(26). -/
+    licensed on embedded. Table 4, Row 4; §6.2, ex. (41). -/
 def ldEmbeddedQuestion : MamLongDistanceDatum :=
   { label := "Embedded question (oblique EQ)"
-  , reference := "§4.2, Table 4, Row 4"
+  , reference := "§6.2, Table 4, Row 4"
   , embeddedClauseType := .fullCP
   , matrixJudgment := .blocked
   , embeddedJudgment := .licensed }
@@ -303,7 +303,7 @@ theorem temporal_is_oblique_but_exempt :
 
     References:
     - @cite{chomsky-2000} on PIC
-    - @cite{elkins-imanishi-coon-2026} §7.1 on =(y)a' island sensitivity -/
+    - @cite{elkins-torrence-brown-2026} §7.1 on =(y)a' island sensitivity -/
 structure MovementReflex where
   /-- The morpheme is a spellout of features valued via Agree with
       a constituent that has undergone Ā-movement through the probe's

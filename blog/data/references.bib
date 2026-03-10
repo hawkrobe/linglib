@@ -8730,6 +8730,19 @@
   validated = {true},
   sources   = {Phenomena/Questions/NegativeQuestions.lean;Theories/Semantics/Modality/BiasedPQ.lean;Theories/Semantics/Questions/Polarity.lean;Theories/Semantics/Questions/VerumFocus.lean}
 }
+% REF: Belnap (1972). S-P Interrogatives.
+@article{belnap-1972,
+  author    = {Belnap, Nuel D.},
+  year      = {1972},
+  title     = {S-P Interrogatives},
+  journal   = {Journal of Philosophical Logic},
+  volume    = {1},
+  pages     = {331--346},
+  subfield  = {semantics/questions},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Questions/Answerhood.lean}
+}
 % REF: Belnap (1982). Questions and Answers in Montague Grammar.
 @incollection{belnap-1982,
   author    = {Belnap, Nuel D.},
@@ -10393,15 +10406,14 @@
   sources   = {Phenomena/ArgumentStructure/Unaccusativity/Bridge.lean;Theories/Syntax/Minimalism/Movement/Smuggling.lean}
 }
 
-@article{elkins-imanishi-coon-2026,
-  author    = {Elkins, Noah and Imanishi, Yusuke and Coon, Jessica},
+@misc{elkins-torrence-brown-2026,
+  author    = {Elkins, Noah and Torrence, Harold and Brown, Colin},
   year      = {2026},
-  title     = {Wh-Movement and Oblique Extraction in {SJO} {M}am},
+  title     = {Wh-movement paths and oblique extraction in {M}am ({M}ayan)},
+  url       = {https://ling.auf.net/lingbuzz/009783},
   subfield  = {syntax},
-  doi       = {10.1163/1570-6699_eall_eall_com_0378},
-  validated = {true},
   role      = {formalized},
-  sources   = {Fragments/Mam/ExtractionMorphology.lean;Phenomena/FillerGap/OblExtraction.lean;Phenomena/FillerGap/Bridge/MayanExtractionComparison.lean}
+  sources   = {Fragments/Mam/ExtractionMorphology.lean;Phenomena/FillerGap/OblExtraction.lean;Phenomena/FillerGap/Studies/ElkinsTorrenceBrown2026.lean}
 }
 
 @phdthesis{ross-1967,
@@ -13373,17 +13385,6 @@
   validated = {true},
   sources   = {Theories/Morphology/DM/Categorizer.lean}
 }
-% REF: Henderson, R. (2008). Extraction and word order in K'iche'.
-@unpublished{henderson-2008,
-  author    = {Henderson, Robert},
-  year      = {2008},
-  title     = {Extraction and Word Order in {K}'iche'},
-  note      = {Manuscript, UC Santa Cruz},
-  subfield  = {morphology},
-  role      = {cited},
-  validated = {true},
-  sources   = {Fragments/Kiche/ExtractionMorphology.lean;Phenomena/FillerGap/Bridge/MayanExtractionComparison.lean}
-}
 % REF: Hayes, B. (2009). *Introductory Phonology*. Blackwell. Ch 6 (SPE rules).
 % REF: Dimroth, C. (2010). The acquisition of negation. In L. Horn (ed.), *The Expression of Negation*, 39–72. de Gruyter.
 @incollection{dimroth-2010,
@@ -13519,17 +13520,32 @@
   sources   = {Fragments/Serbian/TemporalConnectives.lean}
 }
 % REF: Mondloch, J. (2017). K'iche' Maya reference grammar.
+@article{mendes-ranero-2021,
+  author    = {Mendes, Gesoel and Ranero, Rodrigo},
+  year      = {2021},
+  title     = {Chain Reduction via Substitution: Evidence from {M}ayan},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {6},
+  number    = {1},
+  pages     = {1--31},
+  doi       = {10.5334/gjgl.1087},
+  subfield  = {syntax},
+  role      = {formalized},
+  sources   = {Fragments/Kiche/ExtractionMorphology.lean}
+}
+
 @book{mondloch-2017,
   author    = {Mondloch, James L.},
   year      = {2017},
-  title     = {Basic {K'ichee'} Grammar: 38 Lessons},
+  title     = {Basic {K'ichee'} Grammar: Thirty-Eight Lessons},
   edition   = {Revised},
   publisher = {University Press of Colorado},
-  isbn      = {9781607325307},
+  isbn      = {978-1-60732-530-7},
+  url       = {https://upcolorado.com/inst-meso-studies/basic-k-ichee-grammar},
   subfield  = {morphology},
   role      = {cited},
   validated = {true},
-  sources   = {}
+  sources   = {Fragments/Kiche/ExtractionMorphology.lean}
 }
 % REF: Sauerland, U. & K. Yatsushiro (2017). Remind-me presuppositions and speech-act decomposition. Linguistic Inquiry 48.
 @article{sauerland-yatsushiro-2017,
@@ -13555,15 +13571,18 @@
   sources   = {Fragments/English/TemporalAdverbials.lean}
 }
 % REF: Imanishi, Y. (2020). Parameterizing split ergativity in Mayan.
-@misc{imanishi-2020,
-  author    = {Imanishi, Y},
+@article{imanishi-2020,
+  author    = {Imanishi, Yusuke},
   year      = {2020},
-  title     = {Parameterizing split ergativity in Mayan},
+  title     = {Parameterizing split ergativity in {M}ayan},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {38},
+  pages     = {151--200},
   doi       = {10.1007/s11049-018-09440-9},
-  subfield  = {morphology},
+  subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Fragments/Kiche/ExtractionMorphology.lean;Phenomena/FillerGap/Bridge/MayanExtractionComparison.lean}
+  sources   = {Fragments/Kiche/ExtractionMorphology.lean;Phenomena/FillerGap/Studies/ElkinsTorrenceBrown2026.lean}
 }
 % REF: Alonso-Ovalle, L. & Royer, J. (2021). On Chuj modal indefinites.
 @misc{alonso-ovalle-royer-2021,
@@ -13612,17 +13631,6 @@
   role      = {cited},
   validated = {true},
   sources   = {Fragments/English/MeasurePhrases.lean;Phenomena/Quantification/BaleSchwarz2026Bridge.lean}
-}
-% REF: López Ixcoy, C. D. (2022). Extraction morphology in K'iche'.
-@phdthesis{lopez-ixcoy-2022,
-  author    = {L\'{o}pez Ixcoy, Candelaria Dominga},
-  year      = {2022},
-  title     = {Extraction Morphology in {K}'iche'},
-  school    = {University of Maryland},
-  subfield  = {morphology},
-  role      = {cited},
-  validated = {true},
-  sources   = {Fragments/Kiche/ExtractionMorphology.lean}
 }
 % REF: Mondloch, J. & S. Romero (2022). Clause structure and movement in K'ichean. Ms.
 % REF: Égré, P., Spector, B., Mortier, A., & Verheyen, S. (2023). On the optimality of vagueness. Linguistics and Philosophy, 4
@@ -16318,15 +16326,6 @@
   sources   = {manual}
 }
 
-
-@misc{romero-2012,
-  author    = {Romero, Sergio},
-  year      = {2012},
-  title     = {Extraction Morphology in {K'iche'}},
-  subfield  = {syntax/morphology},
-  role      = {cited},
-  sources   = {manual}
-}
 
 @misc{tucker-etal-2018,
   author    = {Tucker, Matthew A. and others},

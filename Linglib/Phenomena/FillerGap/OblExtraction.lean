@@ -3,7 +3,7 @@ import Linglib.Fragments.Mam.ExtractionMorphology
 /-!
 # Oblique Extraction Data
 
-@cite{elkins-imanishi-coon-2026}
+@cite{elkins-torrence-brown-2026}
 
 Theory-neutral empirical data on oblique extraction morphology in SJO Mam.
 

@@ -578,7 +578,7 @@ def yoruba : RelativizationProfile :=
 Mam (SJO): gap strategy on subjects via Agent Focus (AF) voice alternation.
 Obliques can be extracted with dedicated morphology (=(y)a'), but oblique
 relativization is limited. Extraction is tracked by =(y)a' on Voice⁰/Dir⁰.
-@cite{elkins-imanishi-coon-2026}.
+@cite{elkins-torrence-brown-2026}.
 -/
 def mam : RelativizationProfile :=
   { language := "Mam (SJO)"

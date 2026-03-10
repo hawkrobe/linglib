@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 /-!
 # Spellout: Feature-to-Morphology Mapping
-@cite{elkins-imanishi-coon-2026} @cite{halle-marantz-1993} @cite{kiparsky-1973}
+@cite{elkins-torrence-brown-2026} @cite{halle-marantz-1993} @cite{kiparsky-1973}
 
 Bridges the gap between Agree (which values features in narrow syntax) and
 PF (which realizes valued feature bundles as phonological exponents). In
