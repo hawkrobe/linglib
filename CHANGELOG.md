@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.95] - 2026-03-09
+
+### Added
+- **Theories/Phonology/StratalOT.lean**: Stratal OT infrastructure (Kiparsky 2000) — `Stratum`, `evalStratum`, `chainEval`, `StratalDerivation`, constraint reranking (`findRank`, `isPromoted`, `isDemoted`), `RankingSpec`
+- **Theories/Phonology/ProsodicWord.lean**: PrWd structure and morphosyntax-prosody mapping — `MorphStatus` (6-way), `PrWd` with mora counting and minimal word constraint, `MorphElement.triggersLongForm`, `HiatusObligation`
+- **Theories/Morphology/DM/RichExponent.lean**: Rich phonological representations for Vocabulary Insertion — `ProsodicPrespec` (stress, foot type), `RichExponent`, `RichVocabItem`, `VocabItem.toRich` bridge
+
+### Changed
+- **Aitha2026.lean**: Add Word-level OT tableaux deriving weak alternation from constraint interaction (NOM deletes *-ni*, DAT triggers compensatory lengthening), PrWd-based surface form prediction connecting OT outputs to paradigm data via `triggersLongForm`
+
 ## [0.229.94] - 2026-03-09
 
 ### Changed

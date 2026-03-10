@@ -1190,6 +1190,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Morphology.WP.LCEC
 import Linglib.Theories.Syntax.Minimalism.VoiceAppl
@@ -1525,6 +1526,8 @@ import Linglib.Theories.Phonology.HarmonicGrammar.Basic
 import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
+import Linglib.Theories.Phonology.StratalOT
+import Linglib.Theories.Phonology.ProsodicWord
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

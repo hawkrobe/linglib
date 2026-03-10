@@ -2,6 +2,9 @@ import Linglib.Core.Case.Containment
 import Linglib.Core.Logic.OT
 import Linglib.Theories.Phonology.Syllable.Foot
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Theories.Phonology.StratalOT
+import Linglib.Theories.Phonology.ProsodicWord
+import Linglib.Theories.Morphology.DM.RichExponent
 
 /-!
 # The Nouns that Say *-ni* @cite{aitha-2026}
@@ -40,6 +43,8 @@ Telugu nouns exhibit two stem alternation patterns:
 - §2: Strong alternation — VI rules and Elsewhere Condition
 - §3: Weak alternation — *ABA violation and syllable-weight conditioning
 - §4: Stem-level metrical parsing (OT tableau)
+- §5: Word-level phonology — NOM and DAT tableaux (Stratal OT)
+- §6: PrWd-based surface form prediction
 -/
 
 namespace Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
@@ -473,7 +478,241 @@ theorem stem_optimal :
       = [.ll_H] := by native_decide
 
 -- ============================================================================
--- § 5: Summary Theorems
+-- § 5: Word-Level Phonology (Stratal OT)
+-- ============================================================================
+
+section WordLevel
+
+open Theories.Phonology.StratalOT
+open Theories.Phonology.ProsodicWord
+open Morphology.DM.RichRepresentation
+
+/-- The singular suffix *-ni* carries prespecified stress.
+    This prespecification, interacting with FT-BIN(μ) and IDENT-STRESS
+    at the Word level, drives deletion of *-ni* when it is PrWd-final
+    and cannot form a binary foot. -/
+def sgNiExponent : RichExponent := .stressed "ni"
+
+theorem sgNi_is_stressed :
+    sgNiExponent.prosody.inherentStress = some true := rfl
+
+-- ────────────────────────────────────────────────────────────────────
+-- § 5.1: NOM — PrWd-final stressed -ni (no following light suffix)
+-- ────────────────────────────────────────────────────────────────────
+
+/-- Word-level candidates for the NOM input (ˈsa.mu).(ˌdram).ní.
+    Stressed *-ni* is PrWd-final: no following suffix to pair with. -/
+inductive WordCandNom where
+  /-- (ˈsa.mu).(ˌdram).ni — stress on *-ni* removed. -/
+  | destress
+  /-- (ˈsa.mu).(ˌdram).(ˌní) — *-ni* as degenerate (monomoraic) foot. -/
+  | degenerateFoot
+  /-- (ˈsa.mu).(ˌdramn) — nucleic /i/ deleted, /n/ joins coda → complex. -/
+  | deleteI_coda
+  /-- (ˈsa.mu).(ˌdran) — /i/ and /m/ deleted, Stem edge misaligned. -/
+  | deleteIM
+  /-- ☞ (ˈsa.mu).(ˌdram) — /ni/ fully deleted. -/
+  | deleteNi
+  deriving DecidableEq, BEq, Repr
+
+/-- Word-level ranking for NOM.
+
+    | Candidate      | ID-STR | FT-BIN | \*CxCODA | AL-R | MAX(μ) | MAX |
+    |----------------|--------|--------|----------|------|--------|-----|
+    | destress       |  1\*   |        |          |      |        |     |
+    | degenerateFoot |        |  1\*   |          |      |        |     |
+    | deleteI\_coda  |        |        |   1\*    |      |   1    |  1  |
+    | deleteIM       |        |        |          |  1\* |   2    |  2  |
+    | ☞ deleteNi     |        |        |          |      |   1    |  2  | -/
+def wordNomRanking : List (NamedConstraint WordCandNom) :=
+  [ { name := "IDENT-STRESS", family := .faithfulness
+    , eval := λ | .destress => 1 | _ => 0 }
+  , { name := "FT-BIN(μ)", family := .markedness
+    , eval := λ | .degenerateFoot => 1 | _ => 0 }
+  , { name := "*COMPLEXCODA", family := .markedness
+    , eval := λ | .deleteI_coda => 1 | _ => 0 }
+  , { name := "ALIGN-RIGHT(Stem,σ)", family := .markedness
+    , eval := λ | .deleteIM => 1 | _ => 0 }
+  , { name := "MAX(μ)", family := .faithfulness
+    , eval := λ | .deleteI_coda => 1 | .deleteIM => 2 | .deleteNi => 1 | _ => 0 }
+  , { name := "MAX", family := .faithfulness
+    , eval := λ | .deleteI_coda => 1 | .deleteIM => 2 | .deleteNi => 2 | _ => 0 } ]
+
+def wordNomCands : List WordCandNom :=
+  [.destress, .degenerateFoot, .deleteI_coda, .deleteIM, .deleteNi]
+
+theorem wordNomCands_ne : wordNomCands ≠ [] := by decide
+
+/-- Word level, NOM: PrWd-final stressed *-ni* is deleted.
+    Surface: *samudr-am* (short form). -/
+theorem wordNom_optimal :
+    (buildTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
+      = [.deleteNi] := by native_decide
+
+-- ────────────────────────────────────────────────────────────────────
+-- § 5.2: DAT — light -ki follows within PrWd
+-- ────────────────────────────────────────────────────────────────────
+
+/-- Word-level candidates for the DAT input (ˈsa.mu).(ˌdram).ní.ki.
+    The light suffix *-ki* is PrWd-internal, so *-ni* can form a
+    bimoraic foot (ˌní.ki) — but the /mn/ boundary violates \*DIST-0. -/
+inductive WordCandDat where
+  /-- (ˈsa.mu).(ˌdram).(ˌní.ki) — faithful. /mn/ boundary retained. -/
+  | faithful
+  /-- (ˈsa.mu).(ˌdra).(ˌmí.ki) — /m/ resyllabified as onset. -/
+  | resyllabify
+  /-- (ˈsa.mu).(ˌdram).ki — /ni/ deleted, *-ki* degenerate. -/
+  | deleteNi
+  /-- ☞ (ˈsa.mu).(ˌdrā).(ˌní.ki) — /m/ deleted, /a/→/ā/ (CL). -/
+  | compLengthen
+  deriving DecidableEq, BEq, Repr
+
+/-- Word-level ranking for DAT. Same constraint set as NOM, with
+    \*DIST-0 additionally relevant (eliminates faithful candidate).
+
+    | Candidate       | \*DIST-0 | AL-R | ID-STR | FT-BIN | MAX(μ) | MAX |
+    |-----------------|----------|------|--------|--------|--------|-----|
+    | faithful        |   1\*    |      |        |        |        |     |
+    | resyllabify     |          |  1\* |        |        |        |     |
+    | deleteNi        |          |      |        |   1\*  |   1    |  2  |
+    | ☞ compLengthen  |          |      |        |        |   1    |  1  | -/
+def wordDatRanking : List (NamedConstraint WordCandDat) :=
+  [ { name := "*DIST-0", family := .markedness
+    , eval := λ | .faithful => 1 | _ => 0 }
+  , { name := "ALIGN-RIGHT(Stem,σ)", family := .markedness
+    , eval := λ | .resyllabify => 1 | _ => 0 }
+  , { name := "IDENT-STRESS", family := .faithfulness
+    , eval := λ _ => 0 }
+  , { name := "FT-BIN(μ)", family := .markedness
+    , eval := λ | .deleteNi => 1 | _ => 0 }
+  , { name := "MAX(μ)", family := .faithfulness
+    , eval := λ | .deleteNi => 1 | .compLengthen => 1 | _ => 0 }
+  , { name := "MAX", family := .faithfulness
+    , eval := λ | .deleteNi => 2 | .compLengthen => 1 | _ => 0 } ]
+
+def wordDatCands : List WordCandDat :=
+  [.faithful, .resyllabify, .deleteNi, .compLengthen]
+
+theorem wordDatCands_ne : wordDatCands ≠ [] := by decide
+
+/-- Word level, DAT: /mn/ boundary repaired by compensatory lengthening.
+    Surface: *samudr-āni-ki* (long form). -/
+theorem wordDat_optimal :
+    (buildTableau wordDatCands wordDatRanking wordDatCands_ne).optimal
+      = [.compLengthen] := by native_decide
+
+-- ────────────────────────────────────────────────────────────────────
+-- § 5.3: Core result — same constraints, different outputs
+-- ────────────────────────────────────────────────────────────────────
+
+/-- The same constraint system derives both surface forms from the same
+    underlying *-am-ni*. The difference is purely phonological: whether
+    a light suffix follows within the PrWd.
+
+    - NOM (no suffix): *-ni* is PrWd-final → deleted → **short**
+    - DAT (*-ki* follows): *-ni* pairs with *-ki* → /mn/ repaired → **long**
+
+    This completes the derivation that the `weakFormPredicted` function
+    (§3) stipulates: the alternation is now DERIVED from OT constraint
+    interaction, not encoded by fiat. -/
+theorem word_level_derives_alternation :
+    (buildTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
+      = [.deleteNi] ∧
+    (buildTableau wordDatCands wordDatRanking wordDatCands_ne).optimal
+      = [.compLengthen] :=
+  ⟨wordNom_optimal, wordDat_optimal⟩
+
+/-- Map Word-level optimal outputs to `WeakStemForm`.
+    NOM deleteNi = short (the -ni is gone, surface is -am).
+    DAT compLengthen = long (the -am becomes -ā, -ni survives as -āni). -/
+def WordCandNom.toStemForm : WordCandNom → WeakStemForm
+  | .deleteNi => .short
+  | _ => .long  -- non-optimal; included for totality
+
+def WordCandDat.toStemForm : WordCandDat → WeakStemForm
+  | .compLengthen => .long
+  | _ => .short  -- non-optimal; included for totality
+
+theorem nom_produces_short : WordCandNom.deleteNi.toStemForm = .short := rfl
+theorem dat_produces_long : WordCandDat.compLengthen.toStemForm = .long := rfl
+
+end WordLevel
+
+-- ============================================================================
+-- § 6: PrWd-Based Surface Form Prediction
+-- ============================================================================
+
+section PrWdIntegration
+
+open Theories.Phonology.ProsodicWord
+
+/-- Predict the weak stem form from the following morphological element.
+    Uses `MorphElement.triggersLongForm` from `ProsodicWord`: the long
+    form surfaces iff the following element is PrWd-internal AND begins
+    with a light syllable. -/
+def weakSurfaceFromPrWd : Option MorphElement → WeakStemForm
+  | some m => if m.triggersLongForm then .long else .short
+  | none   => .short  -- no following element → PrWd-final → short
+
+-- Case suffixes
+
+theorem acc_ni_long :
+    weakSurfaceFromPrWd (some ⟨"-ni", .inflectional, .light⟩) = .long := rfl
+
+theorem dat_ki_long :
+    weakSurfaceFromPrWd (some ⟨"-ki", .inflectional, .light⟩) = .long := rfl
+
+theorem nom_null_short :
+    weakSurfaceFromPrWd none = .short := rfl
+
+theorem gen_null_short :
+    weakSurfaceFromPrWd none = .short := rfl
+
+-- Agreement suffixes (the decisive diagnostic)
+
+theorem agr_1sg_ni_long :
+    weakSurfaceFromPrWd (some ⟨"-ni", .agreement, .light⟩) = .long := rfl
+
+theorem agr_2sg_vi_long :
+    weakSurfaceFromPrWd (some ⟨"-vi", .agreement, .light⟩) = .long := rfl
+
+-- Postpositions (PrWd-external → always short)
+
+theorem postp_lo_short :
+    weakSurfaceFromPrWd (some ⟨"-lō", .postposition, .heavy⟩) = .short := rfl
+
+/-- Postposition *-gurinci* 'about' begins with a light syllable, yet
+    triggers the short form — because it is PrWd-external. This is
+    the key evidence that the conditioning is PrWd membership, not
+    syllable weight alone. -/
+theorem postp_gurinci_short :
+    weakSurfaceFromPrWd (some ⟨"-gurinci", .postposition, .light⟩) = .short := rfl
+
+/-- The PrWd-based prediction matches the original paradigm data for
+    all five cases in the canonical weak paradigm. -/
+theorem prwd_matches_paradigm :
+    weakSurfaceFromPrWd (some ⟨"-ni", .inflectional, .light⟩) = .long ∧
+    weakSurfaceFromPrWd (some ⟨"-ki", .inflectional, .light⟩) = .long ∧
+    weakSurfaceFromPrWd none = .short ∧
+    weakSurfaceFromPrWd none = .short ∧
+    weakSurfaceFromPrWd (some ⟨"-lō", .postposition, .heavy⟩) = .short :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The PrWd-based prediction agrees with the original `weakParadigm`
+    for all five cases. This closes the gap between the phonological
+    derivation (OT + PrWd) and the empirical data (paradigm). -/
+theorem prwd_agrees_with_paradigm :
+    (weakSurfaceFromPrWd (some ⟨"-ni", .inflectional, .light⟩) = weakParadigm .acc) ∧
+    (weakSurfaceFromPrWd (some ⟨"-ki", .inflectional, .light⟩) = weakParadigm .dat) ∧
+    (weakSurfaceFromPrWd none = weakParadigm .nom) ∧
+    (weakSurfaceFromPrWd none = weakParadigm .gen) ∧
+    (weakSurfaceFromPrWd (some ⟨"-lō", .postposition, .heavy⟩) = weakParadigm .loc) :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+end PrWdIntegration
+
+-- ============================================================================
+-- § 7: Summary Theorems
 -- ============================================================================
 
 /-- The two alternation patterns have fundamentally different analyses:
@@ -498,7 +737,7 @@ theorem weak_is_outward_sensitive :
     isOutwardSensitive (conditioningPos := 2) (targetPos := 1) = true := rfl
 
 -- ============================================================================
--- § 6: Integration with Core Infrastructure
+-- § 8: Integration with Core Infrastructure
 -- ============================================================================
 
 /-- Telugu's `hasACC` exactly mirrors `Core.Case.isNonnom` via `toCore`.
