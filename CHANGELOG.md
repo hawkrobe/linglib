@@ -2,8 +2,11 @@
 
 ## [0.229.96] - 2026-03-09
 
+### Added
+- **Core/Agent/BayesianUpdate.lean**: Extract Bayesian update infrastructure from ExperimentDesign — `ObservationModel`, `marginalObs`, `posterior`, `deterministicObs`, and all basic properties (`posterior_nonneg`, `posterior_sum_one`, `posterior_marginalizes_to_prior`). This is the first module with the textbook normalized posterior formula and its properties; BToM and RSA use different representations (unnormalized joints / Luce choice rules)
+
 ### Changed
-- **ExperimentDesign.lean**: Close `posterior_marginalizes_to_prior` sorry — law of total probability for Bayesian posteriors: `∑ o, P(o|e) · P(w|o,e) = prior(w)`. Proof: case split on `marginalObs = 0` (non-negative sum = 0 forces each term to 0 via `Finset.single_le_sum`), then `div_mul_cancel₀` for the non-zero case, factor out prior and use `likelihood_sum`
+- **ExperimentDesign.lean**: Import and re-export from BayesianUpdate; close `posterior_marginalizes_to_prior` sorry — law of total probability for Bayesian posteriors: `∑ o, P(o|e) · P(w|o,e) = prior(w)`. Proof: case split on `marginalObs = 0` (non-negative sum = 0 forces each term to 0 via `Finset.single_le_sum`), then `div_mul_cancel₀` for the non-zero case, factor out prior and use `likelihood_sum`
 
 ## [0.229.95] - 2026-03-09
 

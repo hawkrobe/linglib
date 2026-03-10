@@ -52,6 +52,7 @@ import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Logic.ConstraintEvaluation
 import Linglib.Core.Logic.OT
 import Linglib.Core.Agent.DecisionTheory
+import Linglib.Core.Agent.BayesianUpdate
 import Linglib.Core.Agent.ExperimentDesign
 import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.CoupledEvaluation
