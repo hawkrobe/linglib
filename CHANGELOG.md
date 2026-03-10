@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.117] - 2026-03-10
+
+### Changed
+- **Phenomena/{Modality,Copulas,Imperatives,Complementation,Polarity,Possession,Morphology}/Typology.lean**: Replace hallucinated WALS counts with values computed from local CLDF data across 7 typology files. Wrong totals included: Modality ch77/78 (318/191→418), Copulas ch117 (386→240), Imperatives ch70-72 (495→548/496/375), Complementation ch94/95 (611/981→659/1142), Polarity ch46 (321→326), Possession ch59 (244→243), Morphology ch62/79a (88/70→168/193). All counts now derived via `.filter().length` from auto-generated `Core.WALS.Features` data
+
 ## [0.229.116] - 2026-03-10
 
 ### Changed
