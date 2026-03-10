@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.116] - 2026-03-10
+
+### Changed
+- **Phenomena/FillerGap/Typology.lean**: Replace hallucinated WALS aggregate counts (claimed 824 languages / 326 gap / 293 not relativizable) with values computed from local CLDF data (F122A: 166 languages, F123A: 112 languages). Generalization theorems now derive directly from `Core.WALS.Features.F122A.allData` / `F123A.allData` instead of hardcoded numbers
+- **blog/data/references.bib**: Audit Mayan-area bib entries — fix `deal-2021` (`@misc` → `@article`, expand author to "Deal, Amy Rose", year 2021→2023, add journal/volume/pages), fix `blake-1994` (edition 2→1 to match year 1994, fix ISBN), fix `comrie-1989` (remove "2nd ed" from title, add edition field, remove JSTOR review DOI), fix `de-vries-2002` (add school "University of Amsterdam"), fix `hawkins-1987` comment line, expand abbreviated author names (McCloskey, Woolford, Comrie, de Vries)
+
+## [0.229.115] - 2026-03-10
+
+### Changed
+- **Fragments/Kiche/ExtractionMorphology.lean**: Rewrite Fronting Particle Generalization — replace vacuous `frontingParticleGeneralization : Bool := true` with structural `KicheEmbeddedClauseType` (CP vs AspP), `KicheLongDistanceDatum` data points, and `fronting_particle_generalization` theorem proving matrix *wi* tracks overt complementizer. Fix module docstring with accurate M&R 2021 characterization (Chain Reduction via Substitution, [APPL], low adjuncts, obligatoriness variation, four rejected alternatives)
+- **Phenomena/FillerGap/Studies/ElkinsTorrenceBrown2026.lean**: Add `kichean_fpg_holds` theorem connecting to structural K'ichean LD data; fix `clause_size_sensitivity` to remove vacuous conjunct; update FPG table row and docstrings
+
 ## [0.229.114] - 2026-03-10
 
 ### Changed
