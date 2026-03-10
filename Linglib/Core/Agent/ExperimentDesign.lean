@@ -229,12 +229,25 @@ theorem posterior_marginalizes_to_prior (om : ObservationModel W E O)
     (prior : W → ℝ) (hprior : ∀ w, 0 ≤ prior w) (e : E) (w : W) :
     ∑ o : O, marginalObs om prior e o * posterior om prior e o w =
     prior w := by
-  -- Proof sketch: for each o, marginal(o) · posterior(w|o) simplifies:
-  --   When marginal(o) = 0: the term is 0
-  --   When marginal(o) ≠ 0: marginal(o) · (prior(w) · lik(w,o) / marginal(o))
-  --                        = prior(w) · lik(w,o)
-  -- So Σ_o terms = Σ_o prior(w) · lik(w,o) = prior(w) · Σ_o lik(w,o) = prior(w)
-  -- TODO: Requires case-splitting on marginal(o) = 0 inside the sum
-  sorry
+  -- Each summand equals prior(w) · lik(w,e,o), regardless of marginalObs = 0
+  suffices key : ∀ o, marginalObs om prior e o * posterior om prior e o w =
+      prior w * om.likelihood w e o by
+    simp_rw [key, ← Finset.mul_sum, om.likelihood_sum w e, mul_one]
+  intro o
+  by_cases hm : marginalObs om prior e o = 0
+  · -- marginalObs = 0: posterior is 0, and prior·lik is also 0 (nonneg sum = 0)
+    have hp : posterior om prior e o w = 0 := by simp [posterior, hm]
+    rw [hp, mul_zero]
+    symm
+    have h_le : prior w * om.likelihood w e o ≤ marginalObs om prior e o :=
+      Finset.single_le_sum
+        (fun w' _ => mul_nonneg (hprior w') (om.likelihood_nonneg w' e o))
+        (Finset.mem_univ w)
+    linarith [mul_nonneg (hprior w) (om.likelihood_nonneg w e o)]
+  · -- marginalObs ≠ 0: m · (prior·lik / m) = prior·lik
+    have hp : posterior om prior e o w =
+        prior w * om.likelihood w e o / marginalObs om prior e o := by
+      simp [posterior, hm]
+    rw [hp, mul_comm, div_mul_cancel₀ _ hm]
 
 end Core.ExperimentDesign
