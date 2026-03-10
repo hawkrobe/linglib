@@ -8,9 +8,9 @@
 ## [0.229.98] - 2026-03-09
 
 ### Added
-- **Theories/Pragmatics/Dialogue/KOS/Basic.lean**: KOS dialogue framework — Dialogue Gameboards (DGB), C-PARAMS (contextual parameters), utterance skeletons with CONSTITS, coercion operations (parameterFocussing → clausal CE, parameterIdentification → constituent CE), grounding protocol; structural theorems including coercions_same_salUtt, coercions_different_reading, grounded_no_coercion
-- **Phenomena/Ellipsis/ClarificationEllipsis.lean**: Theory-neutral clarification ellipsis data — CEReading (clausal/constituent), five core examples (proper name, rare word, indexical, quantifier, PP), parallelism constraints (phonological required, synonym blocked)
-- **Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean**: Formalization of Ginzburg & Cooper (2004) running example "Did Bo leave?" / "Bo?" — concrete DGB update sequence, coercion application, 15 verification theorems via native_decide (unresolved triggers pending, resolved gets grounded, both readings target same C-PARAM)
+- **Theories/Pragmatics/Dialogue/KOS/Basic.lean**: KOS dialogue framework — DGB (exactly {FACTS, LATEST-MOVE, QUD} per ex. 34), IS wrapping DGB + {PENDING, MAX-QUD, SAL-UTT}, C-PARAMS with INDEX/RESTRICTION (not resolved Bool), CtxtAssignment for grounding/clarification, utterance skeletons with fractal heterogeneity (PHON+CAT+CONT per sub-utterance), three coercion operations (parameterFocussing, parameterIdentification, existentialGeneralization), IS update protocol; 8 structural theorems including SLASH-CPARAMS analogy bridge to HPSG HeadFiller
+- **Phenomena/Ellipsis/ClarificationEllipsis.lean**: Theory-neutral CE data — CEReading (clausal/constituent), 7 examples from paper (proper name, rare word, non-identical ex.8a/8c, distinct-location indexical ex.11, I-shift ex.13, BNC spunyarn ex.6a), syntactic parallelism (case match ex.10), shared-belief condition (same/different location ex.11–12)
+- **Phenomena/Ellipsis/Studies/GinzburgCooper2004.lean**: Full paper replication — 5-parameter running example (b,t,i,j,k per ex.32), speaker/addressee IS asymmetry (ex.82: A grounds, B goes to PENDING with unresolved b), coercion on antecedent sign (not fragment), existential generalization (ex.77–78), CoercionOp↔CEReading bridge, Hybrid Content Hypothesis evidence; 22 verification theorems via native_decide
 
 ## [0.229.97] - 2026-03-09
 

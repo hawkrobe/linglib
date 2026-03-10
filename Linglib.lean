@@ -661,8 +661,10 @@ import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Phenomena.Ellipsis.VPEllipsis
 import Linglib.Phenomena.Ellipsis.NPEllipsis
+import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
 import Linglib.Phenomena.Ellipsis.Studies.Saab2026
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
+import Linglib.Phenomena.Ellipsis.Studies.GinzburgCooper2004
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.FillerGap.Basic
@@ -1169,6 +1171,8 @@ import Linglib.Theories.Syntax.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.Politeness.Studies.AlokBhalla2026
+import Linglib.Phenomena.SocialMeaning.Basic
+import Linglib.Phenomena.SocialMeaning.Studies.Burnett2019
 import Linglib.Theories.Syntax.Minimalism.Inversion
 import Linglib.Theories.Syntax.Minimalism.SpeechActs
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
@@ -1516,6 +1520,8 @@ import Linglib.Theories.Pragmatics.Assertion.Krifka
 import Linglib.Theories.Pragmatics.Assertion.Brandom
 import Linglib.Theories.Pragmatics.Assertion.Gunlogson
 import Linglib.Theories.Pragmatics.Assertion.Lauer
+-- Theories: Pragmatics: Dialogue
+import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
