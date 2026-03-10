@@ -1,0 +1,474 @@
+import Linglib.Theories.Syntax.Minimalism.Core.Economy
+import Linglib.Theories.Syntax.Minimalism.Core.Multidominance
+
+/-!
+# Economy in PF Reduction
+@cite{citko-gracanin-yuksek-2025}
+
+Coordinated wh-questions (CWHs) and coordinated sluices (CSs) are two
+PF-reduced constructions with wh-phrase remnants. Despite superficial
+similarity, they differ in structure, derivational cost, and empirical
+properties. Economy governs the choice between ellipsis and
+multidominance as the PF reduction mechanism.
+
+## Key Claims
+
+1. CWHs use **non-bulk-sharing MD**: each conjunct CP contains one
+   wh-phrase; functional heads (C, T) are multiply dominated.
+   No ellipsis is involved.
+
+2. CSs use **bulk-sharing MD + ellipsis**: the entire C' is shared
+   between conjuncts; both wh-phrases originate inside the shared vP.
+   The E-feature on C triggers TP deletion (cf. `FeatureVal.ellipsis`
+   in `Core/Features.lean`, which models this E-feature).
+
+3. **Economy selects the structure**: MD is preferred over ellipsis
+   (fewer operations, fewer lexical items). Bulk-sharing MD is more
+   economical than non-bulk-sharing, but is blocked for CWHs by the
+   MWF parameter. CSs can't have the CWH structure because of
+   Pronunciation Economy.
+
+## Empirical Contrasts
+
+- CWHs ban coordination of obligatory wh-arguments;
+  CSs allow it.
+- CWHs ban wh-object + wh-adjunct with obligatorily transitive verbs;
+  CSs allow it.
+- CWHs only allow nonpaired readings;
+  CSs allow paired readings (with obligatorily transitive verbs)
+  and nonpaired readings (with optionally transitive verbs).
+-/
+
+namespace Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025
+
+open Minimalism
+
+-- ============================================================================
+-- § 1: Construction Types and Empirical Data
+-- ============================================================================
+
+/-- The two PF-reduced wh-coordination constructions. -/
+inductive WHCoordType where
+  /-- Coordinated wh-question: "What and when did John teach?" -/
+  | CWH
+  /-- Coordinated sluice: "I forgot what and when." -/
+  | CS
+  deriving Repr, DecidableEq
+
+/-- An empirical datum contrasting CWHs and CSs. -/
+structure WHCoordDatum where
+  sentence : String
+  construction : WHCoordType
+  whPhrases : List String
+  grammatical : Bool
+  notes : String := ""
+  deriving Repr
+
+-- CWH examples
+
+def cwh_basic : WHCoordDatum :=
+  { sentence := "What and when did John teach?"
+  , construction := .CWH
+  , whPhrases := ["what", "when"]
+  , grammatical := true }
+
+/-- CWHs ban coordination of obligatory wh-arguments (ex 5a). -/
+def cwh_obligatory_args_banned : WHCoordDatum :=
+  { sentence := "*What and to whom did John give?"
+  , construction := .CWH
+  , whPhrases := ["what", "to whom"]
+  , grammatical := false
+  , notes := "Both are obligatory arguments of 'give'; banned in CWHs" }
+
+/-- CWHs ban wh-object + wh-adjunct with obligatorily transitive verbs (ex 6a).
+    Distinct from (5a): here only one wh-phrase is an obligatory argument;
+    the other is an adjunct. The ban persists because the verb ('buy')
+    is obligatorily transitive. -/
+def cwh_obj_adjunct_banned : WHCoordDatum :=
+  { sentence := "*What and when did John buy?"
+  , construction := .CWH
+  , whPhrases := ["what", "when"]
+  , grammatical := false
+  , notes := "Wh-object + wh-adjunct; 'buy' is obligatorily transitive" }
+
+-- CS examples
+
+def cs_basic : WHCoordDatum :=
+  { sentence := "John taught something, but I forgot what and when."
+  , construction := .CS
+  , whPhrases := ["what", "when"]
+  , grammatical := true }
+
+/-- CSs allow coordination of obligatory wh-arguments (ex 5b). -/
+def cs_obligatory_args_allowed : WHCoordDatum :=
+  { sentence := "I heard that John gave something to someone, but I forgot what and to whom."
+  , construction := .CS
+  , whPhrases := ["what", "to whom"]
+  , grammatical := true
+  , notes := "Both are obligatory arguments of 'give'; allowed in CSs" }
+
+/-- CSs allow wh-object + wh-adjunct coordination (ex 6b). -/
+def cs_obj_adjunct_allowed : WHCoordDatum :=
+  { sentence := "I heard that John bought something sometime last week, but I forgot what and when."
+  , construction := .CS
+  , whPhrases := ["what", "when"]
+  , grammatical := true
+  , notes := "Wh-object + wh-adjunct with obligatorily transitive 'buy'; allowed in CSs" }
+
+-- Paired vs nonpaired readings
+
+/-- Reading type for wh-coordination. -/
+inductive ReadingType where
+  /-- Each wh-phrase interpreted in its own conjunct only. -/
+  | nonpaired
+  /-- The trace of the first wh-phrase is interpreted as an E-type
+      pronoun in the second conjunct (pairing). -/
+  | paired
+  deriving Repr, DecidableEq
+
+/-- Reading availability datum. -/
+structure ReadingDatum where
+  sentence : String
+  construction : WHCoordType
+  reading : ReadingType
+  available : Bool
+  paraphrase : String := ""
+  deriving Repr
+
+/-- CWHs: only nonpaired reading available (ex 8a). -/
+def cwh_nonpaired : ReadingDatum :=
+  { sentence := "I know John ate candy because he was stressed out, but I don't know what candy and why."
+  , construction := .CWH
+  , reading := .nonpaired
+  , available := true
+  , paraphrase := "what candy he ate; why he was stressed out" }
+
+/-- CWHs: paired reading unavailable (ex 8a). -/
+def cwh_no_paired : ReadingDatum :=
+  { sentence := "I know John ate candy because he was stressed out, but I don't know what candy and why."
+  , construction := .CWH
+  , reading := .paired
+  , available := false
+  , paraphrase := "*what candy he ate and why he ate it" }
+
+/-- CSs: paired reading available with obligatorily transitive verbs (ex 8b).
+    The paired reading arises because in the bulk-sharing structure,
+    both wh-phrases originate inside the shared vP — the lower copy of
+    the first wh-phrase is interpreted as an E-type pronoun in the
+    second conjunct. -/
+def cs_paired : ReadingDatum :=
+  { sentence := "I know John ate candy because he was stressed out, but I don't know what candy and why."
+  , construction := .CS
+  , reading := .paired
+  , available := true
+  , paraphrase := "what candy he ate and why he ate it (= that candy)" }
+
+/-- CSs: nonpaired reading available with optionally transitive verbs (§6.1, ex 43).
+    With verbs like 'teach' (optionally transitive), each wh-phrase can
+    start in its own clause, yielding a nonpaired reading. This requires
+    a different structure: non-bulk-sharing with two independent Cs,
+    only one bearing the E-feature. -/
+def cs_nonpaired : ReadingDatum :=
+  { sentence := "I know John taught something, but I forgot what and where."
+  , construction := .CS
+  , reading := .nonpaired
+  , available := true
+  , paraphrase := "what he taught; where he taught" }
+
+-- Verification: CWH and CS differ on all three properties
+theorem cwh_bans_obligatory_args : cwh_obligatory_args_banned.grammatical = false := rfl
+theorem cs_allows_obligatory_args : cs_obligatory_args_allowed.grammatical = true := rfl
+theorem cwh_bans_obj_adjunct : cwh_obj_adjunct_banned.grammatical = false := rfl
+theorem cs_allows_obj_adjunct : cs_obj_adjunct_allowed.grammatical = true := rfl
+theorem cwh_bans_paired_reading : cwh_no_paired.available = false := rfl
+theorem cs_allows_paired_reading : cs_paired.available = true := rfl
+theorem cs_allows_nonpaired_reading : cs_nonpaired.available = true := rfl
+
+-- ============================================================================
+-- § 2: English MWF Parameter
+-- ============================================================================
+
+/-- English is a non-MWF language: multiple wh-fronting is banned.
+    *"Who what saw?" is ungrammatical (ex 28). -/
+def english : MWFParameter := ⟨false⟩
+
+/-- English bans multiple wh-specifiers at a phase edge. -/
+theorem english_bans_multiple_wh : mwfViolation english 2 = true := by decide
+
+/-- A single wh-specifier is fine in English. -/
+theorem english_allows_single_wh : mwfViolation english 1 = false := by decide
+
+-- ============================================================================
+-- § 3: Derivation Cost Functions
+-- ============================================================================
+
+/-! The derivation cost of a PF-reduced coordination depends on whether
+the shared material is built once (MD) or twice (ellipsis). We provide
+two levels of parameterization:
+
+**Coarse** (MD vs ellipsis): parameterized by total shared/non-shared cost.
+Used for Theorems 1–2.
+
+- `sm`/`sl`: Merge/lexical cost of shared material (built once with MD, twice with ellipsis)
+- `nsm`/`nsl`: cost of non-shared parts (wh-movement, coordination)
+
+**Fine** (non-bulk vs bulk sharing): decomposes shared material into
+heads vs phrasal structure. Used for Theorem 3.
+
+- `hm`/`hl`: cost of shared heads (C, T — built once either way)
+- `pm`/`pl`: cost of per-conjunct phrasal structure (C', TP, vP assembly)
+- `wm`/`wl`: cost of wh-phrases + coordination (non-shared)
+-/
+
+/-- Cost of CWH via non-bulk-sharing MD (adopted structure, paper's (10b)).
+    Shared material built once; no ellipsis. -/
+def cwhMDCost (sm sl nsm nsl : Nat) : DerivationCost where
+  mergeOps := sm + nsm
+  lexicalItems := sl + nsl
+  agreeOps := 0
+  ellipsisOps := 0
+
+/-- Cost of CWH via ellipsis (biclausal alternative, paper's (11b)).
+    Shared material duplicated; one E-feature deletion. -/
+def cwhEllipsisCost (sm sl nsm nsl : Nat) : DerivationCost where
+  mergeOps := 2 * sm + nsm
+  lexicalItems := 2 * sl + nsl
+  agreeOps := 0
+  ellipsisOps := 1
+
+/-- Cost of CWH via non-bulk-sharing MD — fine-grained (paper's (10b)).
+    Individual heads (C, T) shared; per-conjunct phrasal structure
+    (assembling C', TP, vP around shared heads) built in each conjunct. -/
+def cwhNonBulkCost (hm hl pm pl wm wl : Nat) : DerivationCost where
+  mergeOps := hm + 2 * pm + wm
+  lexicalItems := hl + 2 * pl + wl
+  agreeOps := 0
+  ellipsisOps := 0
+
+/-- Cost of CWH via bulk-sharing MD (excluded, paper's (12b)).
+    Entire C' shared — phrasal structure built only once.
+    More economical than non-bulk-sharing, but blocked by MWF. -/
+def cwhBulkMDCost (hm hl pm pl wm wl : Nat) : DerivationCost where
+  mergeOps := hm + pm + wm
+  lexicalItems := hl + pl + wl
+  agreeOps := 0
+  ellipsisOps := 0
+
+/-- Cost of CS via bulk-sharing MD + single ellipsis (adopted, paper's (20b)).
+    C' shared; E-feature on C deletes TP once. -/
+def csBulkCost (sm sl nsm nsl : Nat) : DerivationCost where
+  mergeOps := sm + nsm
+  lexicalItems := sl + nsl
+  agreeOps := 0
+  ellipsisOps := 1
+
+/-- Cost of CS via double ellipsis, no MD (excluded, paper's (19b)).
+    Both conjuncts built in full; E-feature in each. -/
+def csDoubleEllipsisCost (sm sl nsm nsl : Nat) : DerivationCost where
+  mergeOps := 2 * sm + nsm
+  lexicalItems := 2 * sl + nsl
+  agreeOps := 0
+  ellipsisOps := 2
+
+-- ============================================================================
+-- § 4: Economy Theorems
+-- ============================================================================
+
+/-- **Theorem 1**: For CWHs, the MD derivation is strictly more economical
+    than the ellipsis alternative (paper's (10b) vs (11b)).
+
+    The MD derivation saves `sm` Merge operations (shared material built
+    once instead of twice) and avoids the ellipsis operation entirely.
+    This holds for ANY amount of shared material — even if `sm = 0`,
+    the ellipsis operation alone makes the alternative costlier. -/
+theorem cwh_md_beats_ellipsis (sm sl nsm nsl : Nat) :
+    strictlyMoreEconomical (cwhMDCost sm sl nsm nsl) (cwhEllipsisCost sm sl nsm nsl) := by
+  simp only [strictlyMoreEconomical, atLeastAsEconomical, DerivationCost.totalOps,
+    cwhMDCost, cwhEllipsisCost]
+  omega
+
+/-- **Theorem 2**: For CSs, the bulk-sharing derivation is strictly more
+    economical than the double-ellipsis alternative (paper's (20b) vs (19b)).
+
+    The bulk-sharing derivation saves `sm` Merge operations and `sl`
+    lexical items, and uses one fewer ellipsis operation. -/
+theorem cs_bulk_beats_double_ellipsis (sm sl nsm nsl : Nat) :
+    strictlyMoreEconomical (csBulkCost sm sl nsm nsl) (csDoubleEllipsisCost sm sl nsm nsl) := by
+  simp only [strictlyMoreEconomical, atLeastAsEconomical, DerivationCost.totalOps,
+    csBulkCost, csDoubleEllipsisCost]
+  omega
+
+/-- **Theorem 3**: Bulk-sharing is strictly more economical than
+    non-bulk-sharing for CWHs (paper's (12b) vs (10b)).
+
+    This is the paper's crucial insight: the MOST economical derivation
+    for CWHs (bulk-sharing, which builds C' once) is blocked by an
+    independent constraint (MWF), forcing the LESS economical
+    non-bulk-sharing structure. The precondition `0 < pm ∨ 0 < pl`
+    ensures there is at least some phrasal structure to share —
+    which holds for any non-trivial clause. -/
+theorem cwh_bulk_beats_nonbulk (hm hl pm pl wm wl : Nat) (h : 0 < pm ∨ 0 < pl) :
+    strictlyMoreEconomical
+      (cwhBulkMDCost hm hl pm pl wm wl)
+      (cwhNonBulkCost hm hl pm pl wm wl) := by
+  simp only [strictlyMoreEconomical, atLeastAsEconomical, DerivationCost.totalOps,
+    cwhBulkMDCost, cwhNonBulkCost]
+  omega
+
+-- ============================================================================
+-- § 5: Why CWHs Cannot Have the CS Structure
+-- ============================================================================
+
+/-! The CS (bulk-sharing) structure places both wh-phrases inside a single
+vP. Both must pass through the vP phase edge, creating a phase node
+with multiple wh-specifiers (paper's (36b)/(37b)).
+
+In a non-MWF language like English, this configuration receives an
+asterisk at PF, crashing the derivation.
+
+Unlike CSs, CWHs do NOT involve ellipsis — the vP edge survives to PF,
+so the asterisk is not deleted and the crash is unavoidable.
+
+CSs survive because the E-feature on C triggers TP deletion (including
+the offending vP edge), removing the asterisk before PF interprets it. -/
+
+/-- The bulk-sharing structure for CWHs crashes in English:
+    2 wh-specifiers at vP edge in a non-MWF language. -/
+theorem cwh_bulk_crashes_in_english :
+    mwfViolation english 2 = true := by decide
+
+/-- CWHs have no ellipsis to repair the MWF violation —
+    the vP edge survives to PF, and the asterisk crashes. -/
+theorem cwh_no_ellipsis_repair :
+    ellipsisRepairsMWF english 2 (edgeDeleted := false) = false := by decide
+
+/-- CSs survive the same MWF configuration because ellipsis deletes
+    the vP edge containing the multiple wh-specifiers. -/
+theorem cs_ellipsis_repairs_mwf :
+    ellipsisRepairsMWF english 2 (edgeDeleted := true) = true := by decide
+
+-- ============================================================================
+-- § 6: Why CSs Cannot Have the CWH Structure
+-- ============================================================================
+
+/-- If CSs had the non-bulk-sharing (CWH) structure (paper's (38d)),
+    with a shared C bearing the E-feature, the C would have two TP
+    complements (one per conjunct). The E-feature triggers deletion
+    of both TPs:
+
+    1. Deleting TP₁ removes the TP-internal string from PF.
+    2. Deleting TP₂ would remove the same string — but it was already
+       removed by step 1.
+    3. The second deletion is vacuous → violates Pronunciation Economy.
+
+    This reasoning crucially relies on C being shared (economy forces
+    sharing unless independent Cs are needed, as in (16) where each
+    C hosts different phonological material). -/
+theorem cs_nonbulk_violates_pronunciation_economy :
+    let pfAfterFirstDeletion := ["what", "and", "when"]
+    let pfAfterBothDeletions := ["what", "and", "when"]
+    vacuousEllipsis pfAfterFirstDeletion pfAfterBothDeletions := rfl
+
+/-- The Pronunciation Economy principle is violated: the second ellipsis
+    does not change the PF output. -/
+theorem cs_nonbulk_fails_pronEcon :
+    let pfAfterFirstDeletion := ["what", "and", "when"]
+    let pfAfterBothDeletions := ["what", "and", "when"]
+    ¬pronunciationEconomy pfAfterFirstDeletion pfAfterBothDeletions := by
+  simp [pronunciationEconomy]
+
+-- ============================================================================
+-- § 7: Structural Summary
+-- ============================================================================
+
+/-- The adopted CWH structure: non-bulk-sharing MD, no ellipsis (paper's (10b)). -/
+def cwhStructure : PFReducedCoordination where
+  conjunct1 := mkLeaf .C [] 0
+  conjunct2 := mkLeaf .C [] 1
+  mechanisms := [.multidominance]
+  sharing := some .nonBulk
+  sharedNodes := []
+  pfOutput := ["what", "and", "when", "should", "you", "teach"]
+
+/-- The adopted CS structure: bulk-sharing MD + ellipsis (paper's (20b)).
+    The E-feature on C (cf. `FeatureVal.ellipsis` in `Core/Features.lean`)
+    triggers TP deletion, repairing the MWF violation at the vP edge. -/
+def csStructure : PFReducedCoordination where
+  conjunct1 := mkLeaf .C [] 0
+  conjunct2 := mkLeaf .C [] 1
+  mechanisms := [.multidominance, .ellipsis]
+  sharing := some .bulk
+  sharedNodes := []
+  pfOutput := ["what", "and", "when"]
+
+/-- CWHs use only MD. -/
+theorem cwh_uses_md_only :
+    cwhStructure.usesMD = true ∧ cwhStructure.usesEllipsis = false := by decide
+
+/-- CSs use both MD and ellipsis. -/
+theorem cs_uses_both :
+    csStructure.usesBoth = true := by decide
+
+-- ============================================================================
+-- § 8: End-to-End Argumentation Chains
+-- ============================================================================
+
+/-! The paper's central contribution is explaining WHY CWHs and CSs
+must have different structures — and therefore different empirical
+properties — despite their superficial similarity.
+
+**For CWHs** (§4.1):
+1. Bulk-sharing MD is most economical (`cwh_bulk_beats_nonbulk`)
+2. But bulk-sharing creates MWF violation at vP (`cwh_bulk_crashes_in_english`)
+3. CWHs have no ellipsis to repair MWF (`cwh_no_ellipsis_repair`)
+4. So non-bulk-sharing MD is selected (`cwh_md_beats_ellipsis` over ellipsis)
+
+**For CSs** (§4.2):
+1. Bulk-sharing MD + ellipsis is most economical (`cs_bulk_beats_double_ellipsis`)
+2. Bulk-sharing creates MWF at vP, but ellipsis repairs it (`cs_ellipsis_repairs_mwf`)
+3. Non-bulk-sharing (CWH structure) violates Pronunciation Economy (`cs_nonbulk_fails_pronEcon`)
+4. So bulk-sharing MD + ellipsis is selected
+
+**Different structures → different properties**:
+- Non-bulk-sharing (CWH): each conjunct has one wh-phrase → bans
+  obligatory arg coordination, bans obj+adjunct coordination with
+  obligatorily transitive verbs, only nonpaired readings
+- Bulk-sharing (CS): both wh-phrases in shared vP → allows all of the above
+-/
+
+/-- The two constructions use different PF reduction mechanisms,
+    explaining why they have different empirical properties. -/
+theorem different_mechanisms :
+    cwhStructure.mechanisms ≠ csStructure.mechanisms := by decide
+
+/-- The two constructions use different sharing types. -/
+theorem different_sharing :
+    cwhStructure.sharing ≠ csStructure.sharing := by decide
+
+/-- End-to-end: CWHs cannot use bulk-sharing (most economical)
+    because the MWF violation at vP cannot be repaired without ellipsis.
+    Combines Theorems 3, `cwh_bulk_crashes_in_english`, and
+    `cwh_no_ellipsis_repair`. -/
+theorem cwh_forced_to_nonbulk (hm hl pm pl wm wl : Nat) (h : 0 < pm ∨ 0 < pl) :
+    -- Bulk-sharing IS more economical...
+    strictlyMoreEconomical (cwhBulkMDCost hm hl pm pl wm wl) (cwhNonBulkCost hm hl pm pl wm wl)
+    -- ...but it crashes in English (MWF at vP)...
+    ∧ mwfViolation english 2 = true
+    -- ...and CWHs can't repair the crash (no ellipsis).
+    ∧ ellipsisRepairsMWF english 2 (edgeDeleted := false) = false := by
+  exact ⟨cwh_bulk_beats_nonbulk hm hl pm pl wm wl h, rfl, rfl⟩
+
+/-- End-to-end: CSs use bulk-sharing because it is most economical
+    AND the MWF violation is repaired by ellipsis; the CWH structure
+    is excluded by Pronunciation Economy. -/
+theorem cs_forced_to_bulk (sm sl nsm nsl : Nat) :
+    -- Bulk-sharing beats double-ellipsis...
+    strictlyMoreEconomical (csBulkCost sm sl nsm nsl) (csDoubleEllipsisCost sm sl nsm nsl)
+    -- ...ellipsis repairs the MWF violation at vP...
+    ∧ ellipsisRepairsMWF english 2 (edgeDeleted := true) = true
+    -- ...and the CWH (non-bulk) structure violates Pronunciation Economy.
+    ∧ ¬pronunciationEconomy ["what", "and", "when"] ["what", "and", "when"] := by
+  refine ⟨cs_bulk_beats_double_ellipsis sm sl nsm nsl, rfl, ?_⟩
+  simp [pronunciationEconomy]
+
+end Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025

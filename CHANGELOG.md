@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.128] - 2026-03-10
+
+### Added
+- **Theories/Syntax/Minimalism/Core/Modification.lean**: Syntactic modification via feature composition — `AttrStatus` (affix/clitic/freeWord/null), `AdjPosition`, `AdjMorphProfile` (promoted from study file to Theory layer), `ModificationRoute` (.direct vs .attrMediated), `modificationRoute` decision function, `MAGFeatureType` (φ/κ bridge to Minimalist features), `AdjAgreementEntry` (per-language adjective agreement data), `morphStatusToAttrStatus` (bridge from Zwicky & Pullum `MorphStatus`)
+- **Theories/Morphology/Core/ICP.lean**: Input Correspondence Principle (@cite{ackema-neeleman-2004}) — `imposesAdjacency` (affix/null → true), `icpBlocksIntervention`, connection theorem `magCondB_is_not_icp` proving MAG condition (b) is exactly ¬ICP
+- **Fragments/Greek/AdjAgreement.lean**: Greek adjective agreement — identical pred/attr φ/κ-features (number, gender, 3-case), `sameAgreement` and `phiKappaComplete` verification theorems
+- **Fragments/German/AdjAgreement.lean**: German adjective agreement — pred bare, attr inflected for φ+κ; `not_same_agreement` verification
+- **Fragments/Russian/AdjAgreement.lean**: Russian adjective agreement — long forms identical pred/attr, full φ/κ-specification
+- **Fragments/Italian/AdjAgreement.lean**: Italian adjective agreement — pred = attr (both φ), but NOT φ/κ-complete (no case on adjectives)
+
+### Changed
+- **Phenomena/WordOrder/Studies/AlexeyenkoZeijlstra2025.lean**: Import types from Theory layer (`Modification.lean`, `ICP.lean`) instead of defining locally; add fragment bridge theorems (8 theorems deriving profile Booleans from fragment `AdjAgreementEntry` data); add modification route theorems (5 languages); add ICP bridge theorems (4 languages + orthogonality theorem proving MAG's two factors are independent)
+
 ## [0.229.127] - 2026-03-10
 
 ### Added
@@ -10,7 +23,7 @@
 ### Added
 - **Theories/Syntax/Minimalism/Core/Economy.lean**: Derivational economy framework — `DerivationCost` (4-dimensional: mergeOps, lexicalItems, agreeOps, ellipsisOps), `atLeastAsEconomical`/`strictlyMoreEconomical` comparison (reflexive, transitive, irreflexive, asymmetric), `pronunciationEconomy` (bans vacuous ellipsis), `pfEquivalent` (PF string identity), `Derivation.cost` bridge from core step-based model
 - **Theories/Syntax/Minimalism/Core/Multidominance.lean**: Multidominance and PF reduction mechanisms — `PFReductionMechanism` (.ellipsis | .multidominance), `SharingType` (.nonBulk | .bulk), `SharedNode`, `PFReducedCoordination` (with `usesMD`/`usesEllipsis`/`usesBoth`), `MWFParameter` (Multiple Wh-Fronting parameter), `mwfViolation`, `ellipsisRepairsMWF`
-- **Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean**: Formalize Citko & Gračanin-Yuksek 2025 "Economy in PF Reduction" — CWH vs CS empirical contrasts (obligatory argument coordination, paired/nonpaired readings); parameterized derivation cost functions; 4 economy theorems: MD beats ellipsis for CWHs, bulk-sharing beats double-ellipsis for CSs, CWH bulk-sharing crashes in non-MWF languages (MWF violation without ellipsis repair), CS non-bulk-sharing violates Pronunciation Economy
+- **Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean**: Formalize Citko & Gračanin-Yuksek 2025 "Economy in PF Reduction" — CWH vs CS empirical contrasts (obligatory arg coordination, obj+adjunct coordination, paired/nonpaired readings with 11 data points); two-level parameterized derivation cost functions (coarse MD-vs-ellipsis + fine-grained non-bulk-vs-bulk); 5 economy theorems including crucial Theorem 3 (bulk-sharing beats non-bulk but is blocked by MWF); MWF crash/repair mirror (CWHs crash, CSs repair via ellipsis); Pronunciation Economy violation; end-to-end argumentation chains (`cwh_forced_to_nonbulk`, `cs_forced_to_bulk`) connecting economy, MWF, and Pronunciation Economy into complete derivations
 
 ## [0.229.125] - 2026-03-10
 
