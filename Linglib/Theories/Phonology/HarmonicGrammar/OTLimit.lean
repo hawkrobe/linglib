@@ -107,15 +107,44 @@ theorem expWeights_pos (n : Nat) (M : Nat) (i : Fin n) :
   simp only [expWeights]
   positivity
 
+private lemma filter_gt_insert_succ' {n : ℕ} {k : Fin n} (hk : k.val + 1 < n) :
+    univ.filter (· > k) =
+    insert (⟨k.val + 1, hk⟩ : Fin n) (univ.filter (· > ⟨k.val + 1, hk⟩)) := by
+  ext i
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+    Fin.lt_def, Fin.ext_iff]
+  omega
+
+private lemma succ_not_mem_filter_gt' {n : ℕ} {k : Fin n} (hk : k.val + 1 < n) :
+    (⟨k.val + 1, hk⟩ : Fin n) ∉ univ.filter (· > ⟨k.val + 1, hk⟩) := by
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Fin.lt_def]; omega
+
+private lemma expWeights_succ_eq' {n M : ℕ} {k : Fin n} (hk : k.val + 1 < n) :
+    expWeights n M k = (↑M + 1) * expWeights n M ⟨k.val + 1, hk⟩ := by
+  simp only [expWeights]
+  rw [show n - 1 - k.val = (n - 1 - (k.val + 1)) + 1 from by omega, pow_succ]; ring
+
+private lemma expWeights_bound (n M : ℕ) (hM : 0 < M) (k : Fin n) :
+    (↑M : ℚ) * (univ.filter (· > k)).sum (expWeights n M) <
+    expWeights n M k := by
+  by_cases hk : k.val + 1 = n
+  · have hempty : univ.filter (· > k) = (∅ : Finset (Fin n)) := by
+      ext i; constructor
+      · intro hi; simp only [Finset.mem_filter, Fin.lt_def] at hi; omega
+      · exact (Finset.notMem_empty _).elim
+    rw [hempty, Finset.sum_empty, mul_zero]
+    exact expWeights_pos n M k
+  · have hlt : k.val + 1 < n := by omega
+    rw [filter_gt_insert_succ' hlt,
+      Finset.sum_insert (succ_not_mem_filter_gt' hlt), mul_add]
+    have ih := expWeights_bound n M hM ⟨k.val + 1, hlt⟩
+    rw [expWeights_succ_eq' hlt]
+    linarith
+
 /-- Exponential weights are exponentially separated. -/
 theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
-    ExponentiallySeparated (expWeights n M) M := by
-  constructor
-  · exact expWeights_pos n M
-  · intro k
-    -- Proof sketch: Σ_{i>k} (M+1)^(n-1-i) is a geometric series summing to
-    -- ((M+1)^(n-1-k) - 1) / M, so M · Σ = (M+1)^(n-1-k) - 1 < (M+1)^(n-1-k) = w_k
-    sorry
+    ExponentiallySeparated (expWeights n M) M :=
+  ⟨expWeights_pos n M, fun k => expWeights_bound n M hM k⟩
 
 -- ============================================================================
 -- § 3b: Ganging (complement of exponential separation)

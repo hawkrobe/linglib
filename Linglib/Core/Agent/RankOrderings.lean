@@ -66,12 +66,26 @@ theorem rankProbRec_eq_rankProb (ra : RationalAction S A) (s : S) (ranking : Lis
   -- TODO: induction on ranking, unfolding foldl at each step
   sorry
 
+/-- Each `rankStepProb` is non-negative: either 1 (out of range) or `pChoice`. -/
+private theorem rankStepProb_nonneg (ra : RationalAction S A) (s : S)
+    (ranking : List A) (i : Nat) :
+    0 ≤ rankStepProb ra s ranking i := by
+  simp only [rankStepProb]
+  cases ranking[i]? with
+  | none => linarith
+  | some a => exact ra.pChoice_nonneg s _ a
+
+private theorem foldl_mul_nonneg {f : Nat → ℝ} {init : ℝ}
+    (hinit : 0 ≤ init) (hf : ∀ i, 0 ≤ f i) :
+    ∀ l : List Nat, 0 ≤ l.foldl (fun acc i => acc * f i) init
+  | [] => by simpa using hinit
+  | x :: xs => foldl_mul_nonneg (mul_nonneg hinit (hf x)) hf xs
+
 /-- Ranking probability is non-negative: each factor is a `pChoice` value,
     hence non-negative. -/
 theorem rankProb_nonneg (ra : RationalAction S A) (s : S) (ranking : List A) :
-    0 ≤ rankProb ra s ranking := by
-  -- TODO: induction via rankProbRec; each factor is pChoice ≥ 0
-  sorry
+    0 ≤ rankProb ra s ranking :=
+  foldl_mul_nonneg one_pos.le (rankStepProb_nonneg ra s ranking) _
 
 -- ============================================================================
 -- Score-ratio form (Theorem 9, second part)
