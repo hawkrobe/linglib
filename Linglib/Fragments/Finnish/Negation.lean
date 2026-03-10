@@ -32,7 +32,7 @@ rather than within a synthetic word.
 
 namespace Fragments.Finnish.Negation
 
-open Core.Morphology (MorphCategory MorphRule)
+open Core.Morphology (MorphCategory MorphRule InflDistribution)
 
 -- ============================================================================
 -- § 1: Negative Auxiliary Paradigm
@@ -91,19 +91,15 @@ def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
 -- § 3: Inflection Distribution
 -- ============================================================================
 
-/-- Which Bybee categories appear on the negative auxiliary vs. the main verb.
+/-- Finnish negative construction inflection distribution.
 
     The negative auxiliary hosts: negation, tense, agreement.
-    The main verb retains: stem, aspect (via participle choice). -/
-structure InflDistribution where
-  onNegAux : List MorphCategory
-  onMainVerb : List MorphCategory
-  deriving Repr, BEq
-
-/-- Finnish negative construction inflection distribution. -/
+    The main verb retains: stem, aspect (via participle choice).
+    Uses the shared `InflDistribution` from `Core.Morphology`:
+    `onAux` = negative auxiliary, `onLex` = main verb. -/
 def finnishNegDistribution : InflDistribution :=
-  { onNegAux := [.negation, .tense, .agreement]
-  , onMainVerb := [.stem, .aspect] }
+  { onAux := [.negation, .tense, .agreement]
+  , onLex := [.stem, .aspect] }
 
 -- ============================================================================
 -- § 4: Verification Theorems

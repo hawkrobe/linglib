@@ -1,10 +1,14 @@
 import Linglib.Core.Lexical.UD
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.Finnish.Negation
+import Linglib.Fragments.Doyayo.AuxiliaryVerbs
+import Linglib.Fragments.Gorum.AuxiliaryVerbs
+import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
+import Linglib.Fragments.Pipil.AuxiliaryVerbs
 
 /-!
 # Auxiliary Verb Construction Typology
-@cite{anderson-2006} @cite{huddleston-1976}
+@cite{anderson-2006}
 
 Cross-linguistic classification of auxiliary verb constructions (AVCs) based on
 how inflection distributes between auxiliary and lexical verb. Anderson's core
@@ -13,13 +17,13 @@ insight: the **semantic head is always the lexical verb**, but the
 
 ## The Five Patterns
 
-| Pattern | Infl Host | Example | LV Form |
-|---------|-----------|---------|---------|
-| Aux-headed | AUX | English *will go* | nonfinite |
-| Lex-headed | LEX | Doyayo *mà jâ* | finite |
-| Doubled | AUX+LEX | Gorum *kidis-t-an-a* | both agree |
-| Split | AUX or LEX | Jakaltek *x-Ø-ach w-ilwi* | person on one, TAM on other |
-| Split/doubled | AUX+LEX (split) | Pipil *ni-k-miktia-ya* | mixed |
+| Pattern | Infl Host | Example Language |
+|---------|-----------|-----------------|
+| Aux-headed | AUX | English *will go* |
+| Lex-headed | LEX | Pipil *weli ni-nehnemi wehka* |
+| Doubled | AUX+LEX | Gorum *miŋ ne-gaʔ-ru ne-laʔ-ru* |
+| Split | AUX or LEX | Doyayo, Jakaltek, Finnish |
+| Split/doubled | AUX+LEX (split) | (various) |
 
 -/
 
@@ -33,16 +37,18 @@ inductive InflPattern where
       E.g., English *will go*, French *va manger*. -/
   | auxHeaded
   /-- Inflection hosted on lexical verb; auxiliary is grammaticalized.
-      E.g., Doyayo *mà jâ* (AUX uninflected, LV carries TAM). -/
+      E.g., Pipil *weli ni-nehnemi wehka* (AUX uninflected, LV carries person). -/
   | lexHeaded
   /-- Inflection appears on both auxiliary and lexical verb.
-      E.g., Gorum *kidis-t-an-a* (agreement on both). -/
+      E.g., Gorum *miŋ ne-gaʔ-ru ne-laʔ-ru* (subject + TAM on both). -/
   | doubled
   /-- Inflection split between AUX and LV (different features on each).
-      E.g., Jakaltek (person on AUX, TAM on LV). -/
+      E.g., Jakaltek *šk-ach w-ila* (absolutive on AUX, ergative on LV). -/
   | split
-  /-- Combination of split and doubled.
-      E.g., Pipil *ni-k-miktia-ya* (subject on both, TAM split). -/
+  /-- Combination of split and doubled: different inflectional features
+      appear on both AUX and LV, but neither hosts the same set.
+      @cite{anderson-2006} discusses this as a logical possibility;
+      clear exemplars are rare. -/
   | splitDoubled
   deriving DecidableEq, Repr, BEq, Inhabited
 
@@ -66,13 +72,14 @@ def InflPattern.inflHost : InflPattern → AVCElement
   | .split        => .both
   | .splitDoubled => .both
 
-/-- Whether the inflectional head equals the phrasal head.
-    In aux-headed and doubled patterns, inflection is on AUX (= phrasal head).
-    In lex-headed, split, splitDoubled, they dissociate. -/
-def InflPattern.inflEqualsPhrasal : InflPattern → Bool
+/-- Whether inflection is hosted exclusively on the phrasal head (= AUX).
+    Only aux-headed AVCs have this property: the AUX hosts all inflection
+    and the LV is fully nonfinite. In doubled AVCs, both elements carry
+    inflection, so the phrasal head is not the sole inflectional host. -/
+def InflPattern.inflOnlyOnPhrasalHead : InflPattern → Bool
   | .auxHeaded    => true
-  | .doubled      => true
   | .lexHeaded    => false
+  | .doubled      => false
   | .split        => false
   | .splitDoubled => false
 
@@ -83,6 +90,7 @@ structure AVCDatum where
   language : String
   form : String
   inflPattern : InflPattern
+  distribution : Option Core.Morphology.InflDistribution := none
   gloss : String := ""
   deriving Repr, BEq
 
@@ -93,45 +101,71 @@ def english : AVCDatum :=
   , inflPattern := .auxHeaded
   , gloss := "FUT go.INF" }
 
-/-- Doyayo *mà jâ* — lex-headed (AUX is bare particle, LV inflects). -/
+/-- Doyayo — split (AUX hosts subject/benefactive/object; LV hosts tense).
+    Form derived from `Fragments.Doyayo.AuxiliaryVerbs`. -/
 def doyayo : AVCDatum :=
   { language := "Doyayo"
-  , form := "mà jâ"
-  , inflPattern := .lexHeaded
-  , gloss := "AUX come.TAM" }
+  , form := Fragments.Doyayo.AuxiliaryVerbs.form
+  , inflPattern := .split
+  , distribution := some Fragments.Doyayo.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Doyayo.AuxiliaryVerbs.gloss }
 
-/-- Gorum — doubled (agreement copied onto both AUX and LV). -/
+/-- Gorum — doubled (subject + TAM marked on both AUX and LV).
+    Form derived from `Fragments.Gorum.AuxiliaryVerbs`. -/
 def gorum : AVCDatum :=
   { language := "Gorum"
-  , form := "kidis-t-an-a"
+  , form := Fragments.Gorum.AuxiliaryVerbs.form
   , inflPattern := .doubled
-  , gloss := "AUX-AGR LV-AGR" }
+  , distribution := some Fragments.Gorum.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Gorum.AuxiliaryVerbs.gloss }
 
-/-- Jakaltek — split (person on AUX, TAM on LV). -/
+/-- Jakaltek — split (absolutive on AUX, ergative on LV).
+    Form derived from `Fragments.Jakaltek.AuxiliaryVerbs`. -/
 def jakaltek : AVCDatum :=
   { language := "Jakaltek"
-  , form := "x-Ø-ach w-ilwi"
+  , form := Fragments.Jakaltek.AuxiliaryVerbs.form
   , inflPattern := .split
-  , gloss := "ASP-3ABS-2ERG 1ERG-see" }
+  , distribution := some Fragments.Jakaltek.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Jakaltek.AuxiliaryVerbs.gloss }
 
-/-- Pipil — split/doubled (subject marking doubled, TAM on AUX only). -/
+/-- Pipil — split (auxiliaries mark tense; subject/object on LV).
+    Form derived from `Fragments.Pipil.AuxiliaryVerbs`.
+    Note: Pipil also has lex-headed AVCs (see `Fragments.Pipil.AuxiliaryVerbs.lexHeadedForm`). -/
 def pipil : AVCDatum :=
   { language := "Pipil"
-  , form := "ni-k-miktia-ya"
-  , inflPattern := .splitDoubled
-  , gloss := "1SG-3SG-kill-IPFV" }
+  , form := Fragments.Pipil.AuxiliaryVerbs.form
+  , inflPattern := .split
+  , distribution := some Fragments.Pipil.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Pipil.AuxiliaryVerbs.gloss }
 
 /-- Finnish negative auxiliary *ei* — split (person/number on aux, TAM on main verb).
     The split nature derives from `Fragments.Finnish.Negation.finnishNegDistribution`:
     the negative auxiliary hosts negation, tense, and agreement, while the lexical verb
-    retains only the stem and aspect (connegative form). @cite{karlsson-2017}. -/
+    retains only the stem and aspect (connegative form). @cite{karlsson-2017}.
+
+    The neg aux form derives from `Fragments.Finnish.Negation.negParadigm` (1sg). -/
 def finnish : AVCDatum :=
   { language := "Finnish"
-  , form := "e-n lue"
+  , form := match Fragments.Finnish.Negation.negParadigm.find?
+      (fun f => f.person == 1 && f.number == "sg") with
+    | some f => f.form ++ " lue"
+    | none => "en lue"
   , inflPattern := .split
+  , distribution := some Fragments.Finnish.Negation.finnishNegDistribution
   , gloss := "NEG-1SG read.CONNEG" }
 
-def allData : List AVCDatum := [english, doyayo, gorum, jakaltek, pipil, finnish]
+/-- Pipil — lex-headed (AUX *weli* is uninflected; LV carries all agreement).
+    This is Pipil's second AVC pattern, illustrating that a single language can
+    exhibit multiple AVC types. Form derived from `Fragments.Pipil.AuxiliaryVerbs`. -/
+def pipilLexHeaded : AVCDatum :=
+  { language := "Pipil"
+  , form := Fragments.Pipil.AuxiliaryVerbs.lexHeadedForm
+  , inflPattern := .lexHeaded
+  , distribution := some Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution
+  , gloss := Fragments.Pipil.AuxiliaryVerbs.lexHeadedGloss }
+
+def allData : List AVCDatum :=
+  [english, doyayo, gorum, jakaltek, pipil, pipilLexHeaded, finnish]
 
 /-! ## Invariant theorems -/
 
@@ -140,13 +174,18 @@ def allData : List AVCDatum := [english, doyayo, gorum, jakaltek, pipil, finnish
 theorem semantic_head_always_lex (p : InflPattern) :
     p.semanticHead = .lex := rfl
 
-/-- In aux-headed AVCs, inflectional and phrasal headedness align. -/
-theorem auxHeaded_no_dissociation :
-    InflPattern.auxHeaded.inflEqualsPhrasal = true := rfl
+/-- In aux-headed AVCs, inflection is exclusively on the phrasal head (AUX). -/
+theorem auxHeaded_infl_on_phrasal_head :
+    InflPattern.auxHeaded.inflOnlyOnPhrasalHead = true := rfl
 
-/-- In lex-headed AVCs, inflectional and phrasal headedness dissociate. -/
-theorem lexHeaded_dissociation :
-    InflPattern.lexHeaded.inflEqualsPhrasal = false := rfl
+/-- In lex-headed AVCs, inflection is not on the phrasal head. -/
+theorem lexHeaded_infl_not_on_phrasal_head :
+    InflPattern.lexHeaded.inflOnlyOnPhrasalHead = false := rfl
+
+/-- In doubled AVCs, inflection appears on both elements, so the phrasal
+    head is not the sole host. -/
+theorem doubled_infl_not_only_on_phrasal_head :
+    InflPattern.doubled.inflOnlyOnPhrasalHead = false := rfl
 
 /-! ## Bridge to UD -/
 
@@ -175,14 +214,55 @@ open Fragments.English.FunctionWords in
 theorem english_modals_are_aux_type :
     Fragments.English.FunctionWords.can.auxType = AuxType.modal := rfl
 
-/-! ## Per-datum verification -/
+/-! ## Per-datum verification
+
+These theorems are load-bearing: changing a Fragment entry's `inflPattern`
+breaks exactly one theorem here. -/
 
 theorem english_is_auxHeaded : english.inflPattern = .auxHeaded := rfl
-theorem doyayo_is_lexHeaded : doyayo.inflPattern = .lexHeaded := rfl
+theorem doyayo_is_split : doyayo.inflPattern = .split := rfl
 theorem gorum_is_doubled : gorum.inflPattern = .doubled := rfl
 theorem jakaltek_is_split : jakaltek.inflPattern = .split := rfl
-theorem pipil_is_splitDoubled : pipil.inflPattern = .splitDoubled := rfl
+theorem pipil_is_split : pipil.inflPattern = .split := rfl
 theorem finnish_is_split : finnish.inflPattern = .split := rfl
+theorem pipilLexHeaded_is_lexHeaded : pipilLexHeaded.inflPattern = .lexHeaded := rfl
+
+/-! ## Per-datum form verification
+
+These theorems verify that the forms derive from Fragment entries.
+Changing a Fragment form breaks the corresponding theorem. -/
+
+theorem doyayo_form_from_fragment :
+    doyayo.form = Fragments.Doyayo.AuxiliaryVerbs.form := rfl
+theorem gorum_form_from_fragment :
+    gorum.form = Fragments.Gorum.AuxiliaryVerbs.form := rfl
+theorem jakaltek_form_from_fragment :
+    jakaltek.form = Fragments.Jakaltek.AuxiliaryVerbs.form := rfl
+theorem pipil_form_from_fragment :
+    pipil.form = Fragments.Pipil.AuxiliaryVerbs.form := rfl
+theorem finnish_form_from_fragment :
+    finnish.form = "en lue" := rfl
+
+/-! ## Per-datum distribution verification
+
+These theorems verify that distributions derive from Fragment entries.
+Changing a Fragment's `inflDistribution` breaks the corresponding theorem. -/
+
+theorem doyayo_dist_from_fragment :
+    doyayo.distribution = some Fragments.Doyayo.AuxiliaryVerbs.inflDistribution := rfl
+theorem gorum_dist_from_fragment :
+    gorum.distribution = some Fragments.Gorum.AuxiliaryVerbs.inflDistribution := rfl
+theorem jakaltek_dist_from_fragment :
+    jakaltek.distribution = some Fragments.Jakaltek.AuxiliaryVerbs.inflDistribution := rfl
+theorem pipil_dist_from_fragment :
+    pipil.distribution = some Fragments.Pipil.AuxiliaryVerbs.inflDistribution := rfl
+theorem finnish_dist_from_fragment :
+    finnish.distribution = some Fragments.Finnish.Negation.finnishNegDistribution := rfl
+theorem pipilLexHeaded_dist_from_fragment :
+    pipilLexHeaded.distribution =
+      some Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution := rfl
+theorem pipilLexHeaded_form_from_fragment :
+    pipilLexHeaded.form = Fragments.Pipil.AuxiliaryVerbs.lexHeadedForm := rfl
 
 /-! ## Bridge to Finnish Fragment -/
 
@@ -191,7 +271,7 @@ theorem finnish_is_split : finnish.inflPattern = .split := rfl
     neither element hosting all categories. Derived from Fragment distribution. -/
 theorem finnish_split_from_fragment :
     let dist := Fragments.Finnish.Negation.finnishNegDistribution
-    dist.onNegAux ≠ [] ∧ dist.onMainVerb ≠ [] := by
+    dist.onAux ≠ [] ∧ dist.onLex ≠ [] := by
   exact ⟨by decide, by decide⟩
 
 end Phenomena.AuxiliaryVerbs.Typology

@@ -260,4 +260,21 @@ def Stem.allForms (s : Stem σ) (baseMeaning : σ) :
   (s.lemma_, s.baseFeatures, baseMeaning) ::
     s.paradigm.map (s.inflect · baseMeaning)
 
+-- ============================================================================
+-- §7: Inflectional Distribution in Periphrastic Constructions
+-- ============================================================================
+
+/-- Distribution of inflectional categories between two elements of a
+    periphrastic construction (e.g., auxiliary and lexical verb in an AVC).
+    @cite{anderson-2006} @cite{bybee-1985}
+
+    In an aux-headed AVC, `onLex` is minimal (stem only or empty).
+    In a lex-headed AVC, `onAux` is empty.
+    In a split AVC, `onAux` and `onLex` host different category types.
+    In a doubled AVC, `onAux` and `onLex` overlap. -/
+structure InflDistribution where
+  onAux : List MorphCategory
+  onLex : List MorphCategory
+  deriving Repr, BEq, DecidableEq
+
 end Core.Morphology

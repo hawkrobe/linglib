@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.229.87] - 2026-03-09
+
+### Changed
+- **Core/Case/FeatureDecomposition.lean**: Rewrite to faithfully represent Anderson's (2006) THREE-feature system (abs, src, loc) instead of the incorrect two-feature system (abs, erg). Subject selection hierarchy is now directly stated (erg > abs) per eq. 38', not derived from feature cardinality. Adds 8 named case relations including srcLoc (experiencer) and srcAbs (self-mover). Adds Anderson's actual verb derivations from eq. 39 as Scenario constants
+- **Phenomena/Case/Studies/AndersonJM2006.lean**: Rewrite to match Anderson's actual system. Experiencer ({src,loc}) is now correctly distinguished from agent ({src}), fixing the main fidelity error. Adds Anderson's derivations from eq. 39 (read, fell, flew, knew). Updates thetaToCaseRelation, canonicalTheta, and all linking/cost theorems for the three-feature system
+
+## [0.229.86] - 2026-03-09
+
+### Added
+- **Core/Lexical/MorphRule.lean**: `InflDistribution` structure for typed inflectional category distribution in periphrastic constructions (AUX vs LV), replacing ad-hoc `List String` in Fragment files
+- **Studies/Anderson2006.lean**: Anderson (2006) study file with grammaticalization cline (`GramStage`), AVC source constructions (`AVCSource`), pattern coverage theorems, distribution structure theorems, dual-headedness theorem
+
+### Changed
+- **Fragments/{Doyayo,Gorum,Jakaltek,Pipil}/AuxiliaryVerbs.lean**: Replace `List String` categories with typed `InflDistribution` using `MorphCategory` enum
+- **Fragments/Finnish/Negation.lean**: Promote local `InflDistribution` to shared `Core.Morphology.InflDistribution`; rename fields `onNegAux`/`onMainVerb` → `onAux`/`onLex`
+- **Phenomena/AuxiliaryVerbs/Typology.lean**: Add `distribution` field to `AVCDatum`; derive distributions from Fragment entries; add 5 per-datum distribution verification theorems
+- **Phenomena/Negation/Studies/Miestamo2005.lean**: Update Finnish distribution field references
+
 ## [0.229.85] - 2026-03-09
 
 ### Added
