@@ -627,6 +627,9 @@ import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
 import Linglib.Phenomena.DefaultReasoning.Studies.Veltman1996
+import Linglib.Phenomena.Clarification.Basic
+import Linglib.Phenomena.Clarification.Studies.DongEtAl2026
+import Linglib.Phenomena.Clarification.Studies.TsvilodubEtAl2026
 import Linglib.Phenomena.Dialogue.Basic
 import Linglib.Phenomena.Dialogue.Studies.Anderson2021
 import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
@@ -1269,6 +1272,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.TypeShifting
 import Linglib.Theories.Semantics.Lexical.Particle.Additive
 import Linglib.Theories.Semantics.Lexical.Particle.DiscourseOnly
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Theories.Semantics.Lexical.Plural.Link1983
 import Linglib.Theories.Semantics.Montague.PTQ
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Basic

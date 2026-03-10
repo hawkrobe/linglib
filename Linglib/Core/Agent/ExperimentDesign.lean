@@ -1,6 +1,7 @@
 import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.BayesianUpdate
+import Mathlib.Analysis.Convex.Jensen
 
 /-!
 # Optimal Experiment Design @cite{lindley-1956} @cite{chaloner-verdinelli-1995}
@@ -142,21 +143,63 @@ theorem eig_deterministic_eq_euv [DecidableEq O] [DecidableEq W]
 -- §5. Properties
 -- ============================================================================
 
+/-- Marginal observation probabilities sum to the total prior mass:
+    Σ_o P(o|e) = Σ_w prior(w). -/
+theorem marginalObs_sum (om : ObservationModel W E O) (prior : W → ℝ) (e : E) :
+    ∑ o : O, marginalObs om prior e o = ∑ w : W, prior w := by
+  simp only [marginalObs]
+  rw [Finset.sum_comm]
+  congr 1; ext w; rw [← Finset.mul_sum, om.likelihood_sum w e, mul_one]
+
+omit [Fintype W] in
+/-- Binary convexity over (W → ℝ) → ℝ implies Mathlib's `ConvexOn`. -/
+private theorem convexOn_of_binary
+    (V : (W → ℝ) → ℝ)
+    (hconv : ∀ (f g : W → ℝ) (t : ℝ), 0 ≤ t → t ≤ 1 →
+      V (fun w => t * f w + (1 - t) * g w) ≤ t * V f + (1 - t) * V g) :
+    ConvexOn ℝ Set.univ V := by
+  refine ⟨convex_univ, fun {x} _ {y} _ {a} {b} ha hb hab => ?_⟩
+  have h_b : b = 1 - a := by linarith
+  have h_le : a ≤ 1 := by linarith
+  subst h_b
+  have key : a • x + (1 - a) • y = fun w => a * x w + (1 - a) * y w := by
+    ext w; simp [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+  simp only [key, smul_eq_mul]
+  exact hconv x y a ha h_le
+
 /-- EIG is non-negative when V is convex (Jensen's inequality).
 
     For convex V: E[V(posterior)] ≥ V(E[posterior]) = V(prior).
-    The posterior averages back to the prior:
+    The posterior averages back to the prior (by `posterior_marginalizes_to_prior`):
     Σ_o P(o|e) · posterior(w|o,e) = prior(w).
 
-    TODO: Requires Jensen's inequality for finite sums and the
-    law of total probability for posteriors. -/
+    Jensen's inequality then gives V(prior) ≤ E_o[V(posterior)], hence EIG ≥ 0. -/
 theorem eig_nonneg_of_convex (om : ObservationModel W E O) (prior : W → ℝ)
     (valueFn : (W → ℝ) → ℝ) (e : E)
     (hprior : ∀ w, 0 ≤ prior w)
-    (_hconvex : ∀ (f g : W → ℝ) (t : ℝ), 0 ≤ t → t ≤ 1 →
+    (hprior_sum : ∑ w : W, prior w = 1)
+    (hconvex : ∀ (f g : W → ℝ) (t : ℝ), 0 ≤ t → t ≤ 1 →
       valueFn (fun w => t * f w + (1 - t) * g w) ≤
       t * valueFn f + (1 - t) * valueFn g) :
     0 ≤ eig om prior valueFn e := by
-  sorry
+  unfold eig
+  suffices h : valueFn prior ≤
+      ∑ o : O, marginalObs om prior e o * valueFn (posterior om prior e o) by linarith
+  -- Apply Jensen (ConvexOn.map_sum_le) with weights = marginalObs, points = posterior
+  have hVO := convexOn_of_binary valueFn hconvex
+  have hmo_sum : ∑ o : O, marginalObs om prior e o = 1 := by
+    rw [marginalObs_sum]; exact hprior_sum
+  have hJ := hVO.map_sum_le (p := posterior om prior e)
+    (fun o _ => marginalObs_nonneg om prior hprior e o)
+    hmo_sum (fun o _ => Set.mem_univ _)
+  -- hJ : valueFn (∑ o, P(o) • post_o) ≤ ∑ o, P(o) • V(post_o)
+  -- Rewrite LHS of hJ: ∑ P(o) • posterior_o = prior (law of total probability)
+  have hlhs : ∑ o : O, marginalObs om prior e o • posterior om prior e o = prior := by
+    ext w; simp [Finset.sum_apply, Pi.smul_apply, smul_eq_mul,
+      posterior_marginalizes_to_prior om prior hprior e w]
+  rw [hlhs] at hJ
+  -- Rewrite RHS of hJ: • → * for ℝ
+  simp only [smul_eq_mul] at hJ
+  exact hJ
 
 end Core.ExperimentDesign

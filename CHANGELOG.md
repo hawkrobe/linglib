@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.103] - 2026-03-09
+
+### Added
+- **Theories/Semantics/Lexical/Plural/Link1983.lean**: Formalize Link 1983 semantic theory of plurals — `star`/`properPlural`/`Distr`/`Inv` operators, `Materialization` structure with `mPart`/`mEquiv`, theorems T.2/T.4/T.6/T.7/T.8/T.9/T.11 (all proved, 0 sorry), distributive inference with `AtomJoinPrime`, predicate classification lemmas; connects to existing `Core/Mereology.lean` infrastructure
+
+### Changed
+- **Core/Mereology.lean**: Add `@cite{link-1983}` attribution to `AlgClosure`, `CUM`, `Atom` (previously credited only to Champollion 2017)
+- **Phenomena/Morphology/Studies/Link1983.lean → CompositionBridge.lean**: Rename to match actual content (morphological composition tests, not Link 1983 formalization)
+
+## [0.229.102] - 2026-03-09
+
+### Changed
+- **Core/Agent/Psychophysics.lean**: Close `choiceProb_mono` and `stevens_luce_pairwise` sorries — monotonicity of Stevens power-law choice probability (via `rpow_le_rpow` + cross-multiplication), and Luce model recovers pairwise choice probability for two-element sets (via `Fin.sum_univ_two`)
+
 ## [0.229.101] - 2026-03-09
 
 ### Changed

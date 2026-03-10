@@ -36,7 +36,7 @@ inductive TransitivityClass where
   | unaccusative  -- subject = theme (arrive, fall, die)
   | unergative    -- subject = agent, no object (run, laugh)
   | transitive    -- subject = agent, object = theme (eat, build)
-  | reflexive     -- reflexive clitic triggers *be* in some languages
+  | reflexive     -- reflexive clitic triggers *be* in Romance (Italian/French), *have* in German
   deriving DecidableEq, Repr, BEq
 
 /-- Language-level auxiliary selection rule. -/
@@ -49,13 +49,24 @@ inductive SelectionRule where
 
 /-! ## Functions -/
 
-/-- Canonical auxiliary selection (Burzio's generalization):
-    unaccusatives → *be*, everything else → *have*. -/
+/-- Canonical auxiliary selection (Burzio's generalization, Romance pattern):
+    unaccusatives and reflexives → *be*, everything else → *have*.
+
+    **NB**: This models the Romance pattern (Italian, French). German differs:
+    reflexives take *haben* (e.g., *hat sich gewaschen* 'has REFL washed'),
+    not *sein*. For German-specific selection, see `germanSelection`. -/
 def canonicalSelection : TransitivityClass → PerfectAux
   | .unaccusative => .be
   | .unergative   => .have
   | .transitive   => .have
   | .reflexive    => .be
+
+/-- German auxiliary selection: differs from Romance in that reflexives take
+    *haben*, not *sein* (@cite{burzio-1986}). -/
+def germanSelection : TransitivityClass → PerfectAux
+  | .unaccusative => .be
+  | .reflexive    => .have
+  | _             => .have
 
 /-- Does this transitivity class canonically select *be*? -/
 def selectsBe : TransitivityClass → Bool
@@ -75,7 +86,8 @@ structure AuxSelectionDatum where
   gloss : String := ""
   deriving Repr, BEq
 
-/-- Italian *arrivare* (arrive) — unaccusative, selects *essere*. -/
+/-- Italian *arrivare* (arrive) — unaccusative, selects *essere*
+    (@cite{burzio-1986}). -/
 def italianArrivare : AuxSelectionDatum :=
   { language := "Italian"
   , selectionRule := .split
@@ -84,7 +96,8 @@ def italianArrivare : AuxSelectionDatum :=
   , selectedAux := .be
   , gloss := "è arrivato 'is arrived'" }
 
-/-- Italian *mangiare* (eat) — transitive, selects *avere*. -/
+/-- Italian *mangiare* (eat) — transitive, selects *avere*
+    (@cite{burzio-1986}). -/
 def italianMangiare : AuxSelectionDatum :=
   { language := "Italian"
   , selectionRule := .split
@@ -93,7 +106,8 @@ def italianMangiare : AuxSelectionDatum :=
   , selectedAux := .have
   , gloss := "ha mangiato 'has eaten'" }
 
-/-- French *arriver* (arrive) — unaccusative, selects *être*. -/
+/-- French *arriver* (arrive) — unaccusative, selects *être*
+    (@cite{burzio-1986}). -/
 def frenchArriver : AuxSelectionDatum :=
   { language := "French"
   , selectionRule := .split
@@ -102,7 +116,8 @@ def frenchArriver : AuxSelectionDatum :=
   , selectedAux := .be
   , gloss := "est arrivé 'is arrived'" }
 
-/-- German *ankommen* (arrive) — unaccusative, selects *sein*. -/
+/-- German *ankommen* (arrive) — unaccusative, selects *sein*
+    (@cite{burzio-1986}). -/
 def germanAnkommen : AuxSelectionDatum :=
   { language := "German"
   , selectionRule := .split
@@ -111,7 +126,8 @@ def germanAnkommen : AuxSelectionDatum :=
   , selectedAux := .be
   , gloss := "ist angekommen 'is arrived'" }
 
-/-- Dutch *aankomen* (arrive) — unaccusative, selects *zijn*. -/
+/-- Dutch *aankomen* (arrive) — unaccusative, selects *zijn*
+    (@cite{sorace-2000}). -/
 def dutchAankomen : AuxSelectionDatum :=
   { language := "Dutch"
   , selectionRule := .split
@@ -150,5 +166,17 @@ theorem italian_arrivare_matches_canonical :
 /-- English *arrive* breaks the canonical pattern (have-only system). -/
 theorem english_breaks_canonical :
     canonicalSelection englishArrive.transitivityClass ≠ englishArrive.selectedAux := by decide
+
+/-- German reflexives take *haben*, not *sein* — unlike Romance. -/
+theorem german_reflexive_takes_have :
+    germanSelection .reflexive = .have := rfl
+
+/-- Romance reflexives take *be* (canonical pattern). -/
+theorem romance_reflexive_takes_be :
+    canonicalSelection .reflexive = .be := rfl
+
+/-- German and Romance agree on unaccusatives (both select *be*). -/
+theorem german_romance_agree_on_unaccusative :
+    germanSelection .unaccusative = canonicalSelection .unaccusative := rfl
 
 end Phenomena.AuxiliaryVerbs.Selection

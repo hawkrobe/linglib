@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Core Decision Theory
@@ -231,23 +232,119 @@ def expectedVSI {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     acc + prob * vsi
   ) 0
 
+/-! #### EUV = EVSI helpers -/
+
+private lemma foldl_add_shift' {α : Type*} (l : List α) (f : α → ℚ) (init : ℚ) :
+    l.foldl (fun acc x => acc + f x) init = init + l.foldl (fun acc x => acc + f x) 0 := by
+  induction l generalizing init with
+  | nil => simp
+  | cons x xs ih =>
+    simp only [List.foldl_cons, zero_add]
+    rw [ih (init + f x), ih (f x)]; exact add_assoc _ _ _
+
+private lemma foldl_add_eq_map_sum {α : Type*} (l : List α) (f : α → ℚ) :
+    l.foldl (fun acc x => acc + f x) 0 = (l.map f).sum := by
+  induction l with
+  | nil => simp
+  | cons x xs ih =>
+    simp only [List.foldl_cons, zero_add, List.map_cons, List.sum_cons]
+    rw [foldl_add_shift' xs f (f x), ih]
+
+private lemma list_map_sub_sum {α : Type*} (l : List α) (f g : α → ℚ) :
+    (l.map (fun x => f x - g x)).sum = (l.map f).sum - (l.map g).sum := by
+  induction l with
+  | nil => simp
+  | cons x xs ih => simp only [List.map_cons, List.sum_cons]; linarith
+
+private lemma list_sum_mul_const' {α : Type*} (l : List α) (f : α → ℚ) (k : ℚ) :
+    (l.map (fun x => f x * k)).sum = k * (l.map f).sum := by
+  induction l with
+  | nil => simp
+  | cons x xs ih => simp only [List.map_cons, List.sum_cons]; linarith
+
+private lemma per_cell_uv_sub_vsi {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A) (cell : W → Bool) :
+    let cellSet := Finset.univ.filter (fun w => cell w = true)
+    cellProbability dp cellSet * utilityValue dp actions cellSet -
+    cellProbability dp cellSet * valueSampleInfo dp actions cellSet =
+    cellProbability dp cellSet *
+      ((match optimalAction dp actions with
+        | some a => conditionalEU dp cellSet a
+        | none => (0 : ℚ)) - dpValue dp actions) := by
+  dsimp only []
+  unfold utilityValue valueSampleInfo dpValue
+  generalize optimalAction dp actions = oa
+  generalize cellProbability dp (Finset.univ.filter (fun w => cell w = true)) = P
+  generalize valueAfterLearning dp actions (Finset.univ.filter (fun w => cell w = true)) = V
+  cases oa with
+  | none => dsimp; ring
+  | some a =>
+    generalize conditionalEU dp (Finset.univ.filter (fun w => cell w = true)) a = C
+    generalize expectedUtility dp a = E
+    dsimp; ring
+
 /-- EUV(Q) = EVSI(Q): the expected utility value of a question equals
 its expected value of sample information.
 
 @cite{van-rooy-2003}, p. 742: "The expected utility value of a question
 is equal to its expected value of sample information."
 
-Proof: Both equal Σ P(C) · V(D|C) - V(D). For EUV, each summand is
-P(C) · (V(D|C) - V(D)). For EVSI, each summand is
-P(C) · (V(D|C) - EU(a⁰|C)). The difference is
-Σ P(C) · (V(D) - EU(a⁰|C)) = V(D) - Σ P(C) · EU(a⁰|C) = V(D) - EU(a⁰) = 0.
+The key identity `Σ P(C)·UV(C) = Σ P(C)·VSI(C)` follows from:
 
-TODO: Formalize for general proper priors. -/
+1. **Per-cell**: `P(C)·UV(C) - P(C)·VSI(C) = P(C)·(EU(a⁰|C) - V(D))`
+2. **Summing**: the correction `Σ P(C)·EU(a⁰|C) - V(D)·Σ P(C) = EU(a⁰) - V(D) = 0`
+
+The two hypotheses are the **law of total expectation** (`Σ P(C)·EU(a|C) = EU(a)`
+for all actions) and **cell probability normalization** (`Σ P(C) = 1`). Both
+follow from partition + non-negative prior + prior sums to 1 — see
+`eu_eq_partitionEU` and `binary_cellProb_sum` in `Core.Partition`. -/
 theorem euv_eq_evsi {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (actions : List A)
-    (q : Question W) :
+    (q : Question W)
+    (hLTE : ∀ a, (q.map (fun cell =>
+      let cellSet := Finset.univ.filter (fun w => cell w = true)
+      cellProbability dp cellSet * conditionalEU dp cellSet a)).sum =
+      expectedUtility dp a)
+    (hSum : (q.map (fun cell =>
+      cellProbability dp (Finset.univ.filter (fun w => cell w = true)))).sum = 1) :
     questionUtility dp actions q = expectedVSI dp actions q := by
-  sorry
+  -- Convert foldls to map+sum
+  unfold questionUtility expectedVSI
+  rw [foldl_add_eq_map_sum, foldl_add_eq_map_sum]
+  -- Per-cell difference sums to 0
+  suffices hdiff : (q.map (fun cell =>
+      let cellSet := Finset.univ.filter (fun w => cell w = true)
+      cellProbability dp cellSet * utilityValue dp actions cellSet -
+      cellProbability dp cellSet * valueSampleInfo dp actions cellSet)).sum = 0 by
+    rw [list_map_sub_sum] at hdiff; linarith
+  -- Rewrite per-cell differences as P(C)·(EU(a*|C) - V(D))
+  simp_rw [show ∀ cell : W → Bool,
+    (fun cell => let cellSet := Finset.univ.filter (fun w => cell w = true)
+      cellProbability dp cellSet * utilityValue dp actions cellSet -
+      cellProbability dp cellSet * valueSampleInfo dp actions cellSet) cell =
+    (fun cell => let cellSet := Finset.univ.filter (fun w => cell w = true)
+      cellProbability dp cellSet *
+        ((match optimalAction dp actions with
+          | some a => conditionalEU dp cellSet a
+          | none => (0 : ℚ)) - dpValue dp actions)) cell
+    from fun cell => per_cell_uv_sub_vsi dp actions cell]
+  -- Case split on optimalAction
+  cases h : optimalAction dp actions with
+  | none => unfold dpValue; rw [h]; simp
+  | some a =>
+    -- Σ P(C)·(EU(a|C) - EU(a)) = Σ P(C)·EU(a|C) - EU(a)·Σ P(C) = EU(a) - EU(a) = 0
+    simp only [h, dpValue]
+    simp_rw [show ∀ cell : W → Bool,
+      (fun cell => let cellSet := Finset.univ.filter (fun w => cell w = true)
+        cellProbability dp cellSet *
+          (conditionalEU dp cellSet a - expectedUtility dp a)) cell =
+      (fun cell => let cellSet := Finset.univ.filter (fun w => cell w = true)
+        cellProbability dp cellSet * conditionalEU dp cellSet a -
+        cellProbability dp cellSet * expectedUtility dp a) cell
+      from fun cell => by dsimp; ring]
+    rw [list_map_sub_sum]
+    rw [list_sum_mul_const', hSum, mul_one]
+    linarith [hLTE a]
 
 /-! ### Maximin Monotonicity
 

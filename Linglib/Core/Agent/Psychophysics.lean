@@ -113,15 +113,22 @@ theorem StevensScale.choiceProb_eq (σ : StevensScale) {s : ℝ} (hs : 0 < s) :
   field_simp
   ring
 
-/-- Monotonicity: higher stimulus → higher choice probability. -/
+/-- Monotonicity: higher stimulus → higher choice probability.
+    Follows from `rpow_le_rpow` and monotonicity of `x / (x + c)`. -/
 theorem StevensScale.choiceProb_mono (σ : StevensScale) {s₁ s₂ s₃ : ℝ}
     (h₁ : 0 < s₁) (h₂ : 0 < s₂) (h₃ : 0 < s₃)
     (hle : s₁ ≤ s₂) :
     σ.choiceProb s₁ s₃ ≤ σ.choiceProb s₂ s₃ := by
   simp only [choiceProb]
-  -- TODO: follows from rpow_le_rpow for positive base, then monotonicity
-  -- of x / (x + c) for c > 0
-  sorry
+  have hp₁ : 0 < s₁ ^ σ.n := rpow_pos_of_pos h₁ σ.n
+  have hp₂ : 0 < s₂ ^ σ.n := rpow_pos_of_pos h₂ σ.n
+  have hp₃ : 0 < s₃ ^ σ.n := rpow_pos_of_pos h₃ σ.n
+  have hd₁ : 0 < s₁ ^ σ.n + s₃ ^ σ.n := add_pos hp₁ hp₃
+  have hd₂ : 0 < s₂ ^ σ.n + s₃ ^ σ.n := add_pos hp₂ hp₃
+  rw [div_le_div_iff₀ hd₁ hd₂]
+  have hrpow : s₁ ^ σ.n ≤ s₂ ^ σ.n :=
+    rpow_le_rpow (le_of_lt h₁) hle (le_of_lt σ.hn_pos)
+  nlinarith [mul_le_mul_of_nonneg_right hrpow (le_of_lt hp₃)]
 
 /-- Stevens' power law choice probabilities satisfy the Luce model.
 
@@ -140,8 +147,18 @@ theorem stevens_luce_pairwise {σ : StevensScale} {s₁ s₂ : ℝ}
     (h₁ : 0 < s₁) (h₂ : 0 < s₂) :
     let ra := stevens_is_luce σ (![s₁, s₂]) (λ i => by fin_cases i <;> simp_all [Matrix.cons_val_zero, Matrix.cons_val_one])
     ra.policy () (0 : Fin 2) = σ.choiceProb s₁ s₂ := by
-  -- TODO: unfold policy, totalScore, show the sum over Fin 2 matches
-  sorry
+  intro ra
+  have hp₁ : 0 < s₁ ^ σ.n := rpow_pos_of_pos h₁ σ.n
+  have hp₂ : 0 < s₂ ^ σ.n := rpow_pos_of_pos h₂ σ.n
+  have hts : ra.totalScore () = s₁ ^ σ.n + s₂ ^ σ.n := by
+    simp [RationalAction.totalScore, ra, stevens_is_luce, Fin.sum_univ_two,
+      Matrix.cons_val_zero, Matrix.cons_val_one]
+  have hts_ne : ra.totalScore () ≠ 0 := by
+    rw [hts]; exact ne_of_gt (add_pos hp₁ hp₂)
+  simp only [RationalAction.policy, hts_ne, ↓reduceIte]
+  change ra.score () 0 / ra.totalScore () = _
+  rw [hts]
+  simp [ra, stevens_is_luce, StevensScale.choiceProb, Matrix.cons_val_zero]
 
 /-- **Stevens–Fechner equivalence** (@cite{luce-1959}, §2.B):
     Stevens' power law on raw intensity is equivalent to Fechner's

@@ -4,12 +4,17 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Morphology.Studies.ZwickyPullum1983
 
 /-!
-# Morphological Composition: Phenomena
+# Morphological Composition Tests
 @cite{link-1983}
 
 Empirical tests for the `Core.Morphology` pipeline, verifying that
 stem-based generation produces correct surface forms and features
 from real English lexical entries in `Fragments/English/`.
+
+This file tests the *morphological* side of number marking. For
+@cite{link-1983}'s semantic theory of plurals (the `*`-operator,
+distributivity, the individual/material part distinction), see
+`Theories/Semantics/Lexical/Plural/Link1983.lean`.
 
 ## Coverage
 

@@ -42,7 +42,8 @@ namespace Mereology
 
 /-- Algebraic closure of a predicate P under join (⊔):
     *P is the smallest set containing P and closed under ⊔.
-    Corresponds to @cite{champollion-2017} Ch. 2, §2.3.4. -/
+    Originates in @cite{link-1983} (D.32); formulation follows
+    @cite{champollion-2017} Ch. 2. -/
 inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α → Prop where
   /-- Base case: everything in P is in *P. -/
   | base {x : α} : P x → AlgClosure P x
@@ -54,7 +55,8 @@ inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α →
 -- ════════════════════════════════════════════════════
 
 /-- Cumulative reference (CUM): P is closed under join.
-    @cite{champollion-2017} §2.3.2: CUM(P) ⇔ ∀x,y. P(x) ∧ P(y) → P(x ⊕ y).
+    @cite{link-1983} (T.11); @cite{champollion-2017} §2.3.2:
+    CUM(P) ⇔ ∀x,y. P(x) ∧ P(y) → P(x ⊕ y).
     Activities and states are canonically cumulative. -/
 def CUM {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → P y → P (x ⊔ y)
@@ -72,6 +74,7 @@ def QUA {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y < x → ¬ P y
 
 /-- Mereological atom: x has no proper part.
+    @cite{link-1983} (D.10, D.22 condition 2);
     @cite{champollion-2017} §2.2: Atom(x) ⇔ ¬∃y. y < x.
     Defined without OrderBot since many domains lack a natural
     bottom element. -/
