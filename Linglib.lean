@@ -386,6 +386,7 @@ import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Morph
 import Linglib.Fragments.German.Negation
+import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
 import Linglib.Fragments.Georgian.Agreement
@@ -396,6 +397,7 @@ import Linglib.Fragments.Greek.Nouns
 import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Greek.Reciprocals
+import Linglib.Fragments.Greek.AdjAgreement
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.HindiUrdu.Particles
@@ -491,6 +493,7 @@ import Linglib.Fragments.Russian.TemporalDeictic
 import Linglib.Fragments.Russian.Reciprocals
 import Linglib.Fragments.Russian.Morph
 import Linglib.Fragments.Russian.Negation
+import Linglib.Fragments.Russian.AdjAgreement
 import Linglib.Fragments.Serbian.Case
 import Linglib.Fragments.Serbian.TemporalConnectives
 import Linglib.Fragments.Slovenian.Case
@@ -516,6 +519,7 @@ import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Italian.Modals
+import Linglib.Fragments.Italian.AdjAgreement
 import Linglib.Fragments.Spanish.Binominals
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
@@ -679,6 +683,7 @@ import Linglib.Phenomena.Ellipsis.Studies.Saab2026
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
 import Linglib.Phenomena.Ellipsis.Studies.GinzburgCooper2004
 import Linglib.Phenomena.Ellipsis.Studies.Landau2026
+import Linglib.Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.FillerGap.Basic
@@ -993,6 +998,7 @@ import Linglib.Phenomena.Agreement.Studies.Scott2023
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Agreement.Studies.Aissen2003
 import Linglib.Phenomena.Agreement.Studies.PrasertsonSmithCulbertson2026
+import Linglib.Phenomena.Agreement.Studies.AdamsonZompi2025
 import Linglib.Phenomena.Coordination.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
@@ -1194,6 +1200,9 @@ import Linglib.Theories.Syntax.Minimalism.Inversion
 import Linglib.Theories.Syntax.Minimalism.SpeechActs
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Theories.Syntax.Minimalism.Core.Economy
+import Linglib.Theories.Syntax.Minimalism.Core.Multidominance
+import Linglib.Theories.Syntax.Minimalism.Core.Modification
 import Linglib.Theories.Syntax.Minimalism.Formal.MergeUnification
 import Linglib.Theories.Syntax.Minimalism.Scope
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.Interface
@@ -1214,6 +1223,7 @@ import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Morphology.Core.CliticVsAffix
+import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Theories.Morphology.WP.LCEC
 import Linglib.Theories.Syntax.Minimalism.VoiceAppl
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv

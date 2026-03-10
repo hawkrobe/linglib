@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.127] - 2026-03-10
+
+### Added
+- **Phenomena/Agreement/Studies/AdamsonZompi2025.lean**: Formalize Adamson & Zompì 2025 "Polite Pronouns and the PCC" — dual person features (agreement vs interpretable), Strong/Weak PCC, Fancy Constraint, resolved agreement in coordination; 8 Italian clitic judgment data points; morphosyntactic vs syntacticosemantic prediction comparison (42 theorems); integration with PersonGeometry decomposition and Italian pronoun fragments; cross-linguistic extension (Spanish USTED, German SIE)
+
+## [0.229.126] - 2026-03-10
+
+### Added
+- **Theories/Syntax/Minimalism/Core/Economy.lean**: Derivational economy framework — `DerivationCost` (4-dimensional: mergeOps, lexicalItems, agreeOps, ellipsisOps), `atLeastAsEconomical`/`strictlyMoreEconomical` comparison (reflexive, transitive, irreflexive, asymmetric), `pronunciationEconomy` (bans vacuous ellipsis), `pfEquivalent` (PF string identity), `Derivation.cost` bridge from core step-based model
+- **Theories/Syntax/Minimalism/Core/Multidominance.lean**: Multidominance and PF reduction mechanisms — `PFReductionMechanism` (.ellipsis | .multidominance), `SharingType` (.nonBulk | .bulk), `SharedNode`, `PFReducedCoordination` (with `usesMD`/`usesEllipsis`/`usesBoth`), `MWFParameter` (Multiple Wh-Fronting parameter), `mwfViolation`, `ellipsisRepairsMWF`
+- **Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean**: Formalize Citko & Gračanin-Yuksek 2025 "Economy in PF Reduction" — CWH vs CS empirical contrasts (obligatory argument coordination, paired/nonpaired readings); parameterized derivation cost functions; 4 economy theorems: MD beats ellipsis for CWHs, bulk-sharing beats double-ellipsis for CSs, CWH bulk-sharing crashes in non-MWF languages (MWF violation without ellipsis repair), CS non-bulk-sharing violates Pronunciation Economy
+
 ## [0.229.125] - 2026-03-10
 
 ### Added
