@@ -233,16 +233,16 @@ def allRSA : RSAStructure :=
 /-- RSA triggers implicature for "some" -/
 theorem rsa_some_triggers :
     ImplicatureTheory.implicatureStatus (T := RSATheory) someRSA 0 =
-    .triggered := by sorry  -- TODO: re-derive with RSAConfig
+    .triggered := rfl
 
 /-- RSA doesn't trigger implicature for "all" (top of scale) -/
 theorem rsa_all_no_implicature :
     ImplicatureTheory.implicatureStatus (T := RSATheory) allRSA 0 =
-    .absent := by sorry  -- TODO: re-derive with RSAConfig
+    .absent := rfl
 
 /-- Wrong position returns absent -/
 theorem rsa_wrong_position_absent :
     ImplicatureTheory.implicatureStatus (T := RSATheory) someRSA 1 =
-    .absent := by sorry  -- TODO: re-derive with RSAConfig
+    .absent := rfl
 
 end RSA

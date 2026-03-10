@@ -138,6 +138,7 @@ theorem S1_trace_iff_score_ge (cfg : RSAConfig U W) (l : cfg.Latent) (w : W)
 -- §4. L1 invariance under S1-equivalent utterances
 -- ============================================================================
 
+omit [DecidableEq U] in
 /-- If S1 scores match everywhere for two utterances, L1 posteriors are identical.
 
 When `S1agent.score w u₁ = S1agent.score w u₂` for all latent values and
@@ -147,12 +148,20 @@ theorem L1_eq_of_S1_score_eq (cfg : RSAConfig U W) (u₁ u₂ : U)
     (h_eq : ∀ (l : cfg.Latent) (w : W),
       (cfg.S1agent l).score w u₁ = (cfg.S1agent l).score w u₂)
     (w : W) : cfg.L1 u₁ w = cfg.L1 u₂ w := by
-  sorry -- TODO: S1 scores match → S1 policies match (totalScore is shared
-         -- denominator over U, so if score matches for u₁ and u₂, the
-         -- ratio score/totalScore matches) → L1agent.score matches →
-         -- L1agent.totalScore may differ (it sums over all U) →
-         -- need to show the ratio L1agent.score/L1agent.totalScore
-         -- is preserved. Full proof requires careful unfolding.
+  -- S1 scores match → S1 policies match (totalScore is the same denominator)
+  have h_S1 : ∀ l w, cfg.S1 l w u₁ = cfg.S1 l w u₂ := fun l w =>
+    RationalAction.policy_eq_of_score_eq _ w u₁ u₂ (h_eq l w)
+  -- L1 scores match (worldPrior and latentPrior are u-independent)
+  have h_score : ∀ w, cfg.L1agent.score u₁ w = cfg.L1agent.score u₂ w := fun w' => by
+    show cfg.worldPrior w' * ∑ l, cfg.latentPrior w' l * cfg.S1 l w' u₁ =
+         cfg.worldPrior w' * ∑ l, cfg.latentPrior w' l * cfg.S1 l w' u₂
+    congr 1
+    exact Finset.sum_congr rfl fun l _ => by rw [h_S1 l w']
+  -- L1 totalScores match (sum of equal scores)
+  have h_total : cfg.L1agent.totalScore u₁ = cfg.L1agent.totalScore u₂ :=
+    Finset.sum_congr rfl fun w' _ => h_score w'
+  -- policy = score / totalScore, both numerator and denominator equal
+  simp only [L1, RationalAction.policy, h_score w, h_total]
 
 end RSAConfig
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.91] - 2026-03-09
+
+### Changed
+- **RSA/Core/SpeakerDiscrimination.lean**: Close `L1_eq_of_S1_score_eq` sorry — if S1 scores match for u₁, u₂ at all latent values and worlds, L1 posteriors are identical. Proof: S1 score equality → S1 policy equality → L1 score equality → L1 policy equality
+- **RSA/ScalarImplicatures/Basic.lean**: Close 3 sorries (`rsa_some_triggers`, `rsa_all_no_implicature`, `rsa_wrong_position_absent`) — all `rfl` on the ImplicatureTheory stub instance
+
 ## [0.229.90] - 2026-03-09
 
 ### Changed
