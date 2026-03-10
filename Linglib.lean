@@ -532,6 +532,7 @@ import Linglib.Fragments.Kiche.Agreement
 import Linglib.Fragments.Kiche.ExtractionMorphology
 import Linglib.Fragments.Kiche.VoiceSystem
 import Linglib.Fragments.Qanjobal.Agreement
+import Linglib.Fragments.Qanjobal.AgentFocus
 import Linglib.Fragments.Chol.Agreement
 import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Chuj.ModalIndefinites
@@ -589,6 +590,7 @@ import Linglib.Phenomena.Anaphora.Typology
 import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.Ergativity.Basic
+import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
 import Linglib.Phenomena.Ergativity.Studies.Imanishi2020
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
@@ -904,6 +906,7 @@ import Linglib.Phenomena.Questions.PolarAnswers
 import Linglib.Phenomena.Questions.PragmaticAnswerhood
 import Linglib.Phenomena.Questions.ScopeReadings
 import Linglib.Phenomena.Questions.SlavicPQStrategies
+import Linglib.Phenomena.Questions.Studies.GartnerGyuris2017
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.Studies.VanRooy2003
 import Linglib.Phenomena.Questions.WhComplement
@@ -1501,7 +1504,10 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynam
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
+import Linglib.Theories.Diachronic.Grammaticalization
 import Linglib.Theories.Diachronic.Lexicalization
+import Linglib.Theories.Diachronic.ModalChange
+import Linglib.Theories.Diachronic.Subjectification
 import Linglib.Phenomena.Causation.Studies.BellerGerstenberg2025
 import Linglib.Phenomena.Ellipsis.Studies.BergenGoodman2015
 import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021

@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Features
+import Linglib.Phenomena.Ergativity.Basic
 
 /-!
 # Q'anjob'al Agreement and Case Fragment @cite{mateo-pedro-2009}
@@ -65,5 +66,14 @@ theorem acc_alignment :
     ArgPosition.agent.accCase = ArgPosition.intranS.accCase ∧
     ArgPosition.agent.accCase ≠ ArgPosition.patient.accCase :=
   ⟨rfl, by decide⟩
+
+-- ============================================================================
+-- § 3: Absolutive Position (HIGH-ABS)
+-- ============================================================================
+
+/-- Q'anjob'al's absolutive morphemes appear in high position (on the
+    aspect marker, pre-stem). Observable from morpheme order:
+    ASP-ABS-ERG-ROOT-SUFFIX. -/
+def absPosition : Phenomena.Ergativity.ABSPosition := .high
 
 end Fragments.Qanjobal

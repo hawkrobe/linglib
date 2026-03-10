@@ -69,16 +69,7 @@ structure RON where
 -- § 2: Mayan Absolutive Parameter
 -- ============================================================================
 
-/-- The Mayan Absolutive Parameter (@cite{coon-mateo-pedro-preminger-2014}):
-    where absolutive Case is assigned in transitive clauses.
-
-    In high absolutive languages, Infl assigns ABS uniformly. In low
-    absolutive languages, Voice assigns ABS to the transitive object
-    while Infl assigns ABS only in intransitives. -/
-inductive ABSLocus where
-  | high  -- Infl assigns ABS (Kaqchikel, Q'anjob'al)
-  | low   -- Voice assigns ABS in transitives (Chol, Tseltal)
-  deriving DecidableEq, BEq, Repr
+-- Reuses `ABSPosition` from `Basic.lean` directly.
 
 -- ============================================================================
 -- § 3: Language Parameterization
@@ -87,20 +78,20 @@ inductive ABSLocus where
 /-- Parameters for a Mayan language's split-ergative system. -/
 structure MayanParams where
   ron : RON
-  absLocus : ABSLocus
+  absPos : ABSPosition
   deriving DecidableEq, BEq, Repr
 
 /-- Kaqchikel: RON active, high absolutive. -/
 def kaqchikelParams : MayanParams :=
-  { ron := ⟨true⟩, absLocus := .high }
+  { ron := ⟨true⟩, absPos := .high }
 
 /-- Chol: RON inactive, low absolutive. -/
 def cholParams : MayanParams :=
-  { ron := ⟨false⟩, absLocus := .low }
+  { ron := ⟨false⟩, absPos := .low }
 
 /-- Q'anjob'al: RON inactive, high absolutive. -/
 def qanjobalParams : MayanParams :=
-  { ron := ⟨false⟩, absLocus := .high }
+  { ron := ⟨false⟩, absPos := .high }
 
 -- ============================================================================
 -- § 4: Nominalized Clause Structure
@@ -159,19 +150,19 @@ theorem chol_alignment :
 theorem qanjobal_alignment :
     deriveAccPattern qanjobalParams = cholPattern := rfl
 
-/-- The RON alone determines the alignment type, regardless of ABSLocus.
+/-- The RON alone determines the alignment type, regardless of ABSPosition.
     This is the paper's central result: the alignment puzzle reduces to
     a single binary parameter on the nominalizing head. -/
-theorem ron_determines_alignment (abs : ABSLocus) :
-    deriveAccPattern { ron := ⟨true⟩, absLocus := abs } = kaqchikelPattern ∧
-    deriveAccPattern { ron := ⟨false⟩, absLocus := abs } = cholPattern :=
+theorem ron_determines_alignment (abs : ABSPosition) :
+    deriveAccPattern { ron := ⟨true⟩, absPos := abs } = kaqchikelPattern ∧
+    deriveAccPattern { ron := ⟨false⟩, absPos := abs } = cholPattern :=
   ⟨rfl, rfl⟩
 
-/-- Q'anjob'al and Kaqchikel share ABSLocus but differ in alignment —
-    confirming that ABSLocus alone does not determine the accusative-side
+/-- Q'anjob'al and Kaqchikel share ABSPosition but differ in alignment —
+    confirming that ABSPosition alone does not determine the accusative-side
     alignment. -/
-theorem absLocus_insufficient :
-    kaqchikelParams.absLocus = qanjobalParams.absLocus ∧
+theorem absPos_insufficient :
+    kaqchikelParams.absPos = qanjobalParams.absPos ∧
     deriveAccPattern kaqchikelParams ≠ deriveAccPattern qanjobalParams :=
   ⟨rfl, by decide⟩
 

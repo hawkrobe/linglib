@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.124] - 2026-03-10
+
+### Added
+- **Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean**: Add Legate (2008) abstract case decomposition (`AbstractCase`, `FunctionalHead` — ERG from v⁰, NOM from Infl⁰, "absolutive" as cover term); morphological×syntactic ergativity 2×2 typology (`ErgativityTypology` — table (10): Q'anjob'al [+,+], Chol [+,−], English [−,−], unattested [−,+]); vP-internal extraction ban (`VPInternalElement` — subjects, low adverbs, second objects all trapped in HIGH-ABS); double-object construction absent in HIGH-ABS; reflexive→no AF→free extraction end-to-end chain; person-conditioned AF bridge theorems (3rd person only, Crazy AP all persons); `objectCaseIsExternal` replaces `objectCaseAssigner : String`
+- **Fragments/Qanjobal/AgentFocus.lean**: Add `PersonRestriction` (AF restricted to 3rd person agents; Crazy Antipassive unrestricted — §5.1, ex. 72)
+
+### Changed
+- **Phenomena/Ergativity/Studies/Imanishi2020.lean**: Remove `ABSLocus` alias — use `ABSPosition` directly; rename field `absLocus` → `absPos` for consistency
+- **Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean**: Remove `objectCaseAssigner : String` (replaced by typed `objectAbstractCase` + `objectCaseIsExternal`); renumber sections for inserted material
+- **Fragments/Qanjobal/AgentFocus.lean**: Fix section numbering (§1→§3 gap → sequential §1–§7)
+
 ## [0.229.123] - 2026-03-10
 
 ### Fixed

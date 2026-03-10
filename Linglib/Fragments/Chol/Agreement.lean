@@ -1,4 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Features
+import Linglib.Core.Interfaces.ExtractionMorphology
+import Linglib.Phenomena.Ergativity.Basic
 
 /-!
 # Chol Agreement and Case Fragment @cite{coon-2010a} @cite{coon-2013a}
@@ -83,5 +85,71 @@ theorem acc_alignment :
 theorem extended_ergative :
     ArgPosition.agent.accCase = .gen ∧
     ArgPosition.intranS.accCase = .gen := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 3: Absolutive Position (LOW-ABS)
+-- ============================================================================
+
+/-- Chol's absolutive morphemes appear in low position (at the end of
+    the verb stem, post-stem). Observable from morpheme order:
+    ASP-ERG-ROOT-(DERIV)-SUFFIX-ABS. -/
+def absPosition : Phenomena.Ergativity.ABSPosition := .low
+
+-- ============================================================================
+-- § 4: Extraction Data
+-- ============================================================================
+
+/-- Extraction possibilities in Chol transitive clauses. Unlike
+    Q'anjob'al, Chol allows **both** A and P arguments to extract freely.
+    There are no extraction asymmetries — Chol lacks syntactic ergativity.
+
+    The resulting ambiguity (when both arguments are 3rd person) is a
+    natural consequence of the absence of extraction restrictions:
+    `Maxki₁ tyi y-il-ä (___₁) jiñi wiñik (___₁)?`
+    'Who saw the man?' / 'Who did the man see?' -/
+inductive ExtractionTarget where
+  | intranS | patient | agent
+  deriving DecidableEq, BEq, Repr
+
+def ExtractionTarget.extractable : ExtractionTarget → Bool
+  | .intranS => true
+  | .patient => true
+  | .agent   => true   -- Chol: agent extracts freely!
+
+/-- All core arguments extract freely in Chol. -/
+theorem all_extract_freely :
+    ExtractionTarget.intranS.extractable = true ∧
+    ExtractionTarget.patient.extractable = true ∧
+    ExtractionTarget.agent.extractable = true := ⟨rfl, rfl, rfl⟩
+
+/-- Chol's extraction profile: no special morphology for any extraction. -/
+def extractionProfile : Interfaces.ExtractionProfile :=
+  { language := "Chol"
+  , strategy := .none
+  , markedPositions := []
+  , distinguishesPosition := false
+  , notes := "No extraction asymmetries; all core arguments extract freely (Coon et al. 2014)" }
+
+-- ============================================================================
+-- § 5: Non-Finite Absolutive Availability
+-- ============================================================================
+
+/-- In Chol non-finite embedded clauses (aspectless), absolutive objects
+    ARE available. This follows from Chol being LOW-ABS: v⁰ assigns case
+    to the object without needing Infl⁰.
+
+    `Mejl [i-k'el-oñ]` 'She can see me.' (ABS object ✓)
+    `Choñkol [k-mek'-ety]` 'I am hugging you.' (ABS object ✓) -/
+def absObjectInNonFinite : Bool := true
+
+/-- Absolutive intransitive subjects are NOT available in Chol non-finite
+    clauses: they must be marked with the ergative/possessive prefix instead.
+
+    `Choñkol [k-ts'äm-el]` 'I am bathing.' (ERG prefix, not ABS)
+    `*Choñkol [ts'äm-i-yoñ]` intended: 'I am bathing.' (ABS ✗) -/
+def absIntranSInNonFinite : Bool := false
+
+theorem nonfinite_abs_asymmetry :
+    absObjectInNonFinite = true ∧ absIntranSInNonFinite = false := ⟨rfl, rfl⟩
 
 end Fragments.Chol

@@ -76,4 +76,91 @@ theorem patterns_mirror :
     kaqchikelPattern.sMarker = cholPattern.oMarker ∧
     kaqchikelPattern.oMarker = cholPattern.sMarker := ⟨rfl, rfl⟩
 
+-- ============================================================================
+-- § 4: Mayan Absolutive Parameter (observable basis)
+-- ============================================================================
+
+/-- The position of absolutive agreement morphemes relative to the verb
+    stem. This is an observable morphological parameter, not a theoretical
+    claim — it can be determined from the linear order of morphemes in the
+    verb-aspect complex.
+
+    - **HIGH-ABS**: absolutive immediately follows the aspect marker
+      (pre-stem). Template: ASP-ABS-ERG-ROOT-SUFFIX.
+    - **LOW-ABS**: absolutive follows the verb stem (post-stem).
+      Template: ASP-ERG-ROOT-SUFFIX-ABS.
+
+    @cite{coon-mateo-pedro-preminger-2014} observe (extending @cite{tada-1993})
+    that this morphological parameter correlates with extraction asymmetries:
+    overwhelmingly, HIGH-ABS languages exhibit syntactic ergativity (a ban
+    on extracting transitive subjects) while LOW-ABS languages do not. -/
+inductive ABSPosition where
+  | high  -- ABS on aspect marker (pre-stem)
+  | low   -- ABS on verb stem (post-stem)
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
+-- § 5: Tada's Generalization
+-- ============================================================================
+
+/-- A Mayan language's observable extraction behavior. -/
+structure MayanExtractionDatum where
+  name : String
+  absPosition : ABSPosition
+  /-- Does the language ban A-bar extraction of transitive subjects? -/
+  hasExtractionAsymmetry : Bool
+  deriving DecidableEq, BEq, Repr
+
+/-- Tada's Generalization data (table (19) of @cite{coon-mateo-pedro-preminger-2014},
+    extending @cite{tada-1993}).
+
+    The two noted outliers are Yucatec and Ixil (LOW-ABS with extraction
+    asymmetries). Yucatec's AF differs significantly from other Mayan AF;
+    Ixil's absolutive morphemes behave like full pronominal forms. -/
+def tadasTable : List MayanExtractionDatum :=
+  -- HIGH-ABS, +extraction asymmetries
+  [ ⟨"Q'anjob'al",  .high, true⟩
+  , ⟨"Akatek",      .high, true⟩
+  , ⟨"Popti'",      .high, true⟩
+  , ⟨"Chuj",        .high, true⟩
+  , ⟨"Q'eqchi'",    .high, true⟩
+  , ⟨"Uspantek",    .high, true⟩
+  , ⟨"Poqomchi'",   .high, true⟩
+  , ⟨"Poqomam",     .high, true⟩
+  , ⟨"K'ichee'",    .high, true⟩
+  , ⟨"Kaqchikel",   .high, true⟩
+  , ⟨"Tz'utujil",   .high, true⟩
+  , ⟨"Sakapultek",  .high, true⟩
+  , ⟨"Sipakapense", .high, true⟩
+  , ⟨"Mam",         .high, true⟩
+  , ⟨"Awakatek",    .high, true⟩
+  -- LOW-ABS, +extraction asymmetries (outliers)
+  , ⟨"Yucatec",     .low,  true⟩
+  , ⟨"Ixil",        .low,  true⟩
+  -- LOW-ABS, -extraction asymmetries
+  , ⟨"Lakantun",    .low,  false⟩
+  , ⟨"Mopan",       .low,  false⟩
+  , ⟨"Itzaj",       .low,  false⟩
+  , ⟨"Chol",        .low,  false⟩
+  , ⟨"Chontal",     .low,  false⟩
+  , ⟨"Tseltal",     .low,  false⟩
+  , ⟨"Tojol-ab'al", .low,  false⟩ ]
+
+/-- All HIGH-ABS languages in the sample exhibit extraction asymmetries. -/
+theorem high_abs_all_have_asymmetries :
+    (tadasTable.filter (fun l => l.absPosition == .high)).all
+      (fun l => l.hasExtractionAsymmetry) = true := by native_decide
+
+/-- All LOW-ABS languages except the two noted outliers lack
+    extraction asymmetries. -/
+theorem low_abs_mostly_lack_asymmetries :
+    (tadasTable.filter (fun l => l.absPosition == .low &&
+      l.name != "Yucatec" && l.name != "Ixil")).all
+      (fun l => !l.hasExtractionAsymmetry) = true := by native_decide
+
+/-- No HIGH-ABS language lacks extraction asymmetries (unattested cell). -/
+theorem high_abs_none_lack_asymmetries :
+    (tadasTable.filter (fun l => l.absPosition == .high &&
+      !l.hasExtractionAsymmetry)).length = 0 := by native_decide
+
 end Phenomena.Ergativity
