@@ -110,29 +110,25 @@ theorem stevens_jndL_intensity_ratio (σ : StevensScale) (thr : ℝ)
     The trace extracts pairwise dominance over all comparisons, but for
     a monotone power scale this reduces to the physical ordering.
 
-    Note: proved directly rather than via `trace_iff_scale_ge`, because the
-    latter requires `∀ a, 0 < v a` which fails for `v = (· ^ n)` on all of ℝ.
-    Here we restrict to positive stimuli. -/
+    The trace is restricted to positive comparison stimuli because `rpow`
+    on negative bases is defined via complex exponentiation, so `z ^ n`
+    for `z < 0` can be negative (e.g., `rpow (-1) 1 = -1`), violating
+    the positivity assumptions that underlie the choice-probability model.
+    Stimulus intensities are inherently positive reals. -/
 theorem stevens_trace_iff_intensity (σ : StevensScale) {s₁ s₂ : ℝ}
     (h₁ : 0 < s₁) (h₂ : 0 < s₂) :
-    traceGe (· ^ σ.n) s₁ s₂ ↔ s₂ ≤ s₁ := by
+    (∀ z : ℝ, 0 < z → pairwiseProb (· ^ σ.n) s₂ z ≤ pairwiseProb (· ^ σ.n) s₁ z) ↔
+    s₂ ≤ s₁ := by
   constructor
-  · -- Forward: traceGe → s₂ ≤ s₁
-    -- Specialize the trace at z = s₁: P(s₂, s₁) ≤ P(s₁, s₁)
-    -- P(s₁, s₁) = 1/2 (self-comparison), so P(s₂, s₁) ≤ 1/2
-    -- This means s₂ⁿ ≤ s₁ⁿ, hence s₂ ≤ s₁ by rpow monotonicity
+  · -- Forward: positive-restricted trace → s₂ ≤ s₁
+    -- Specialize at z = s₁ (positive): P(s₂, s₁) ≤ P(s₁, s₁) = 1/2
     intro htrace
     by_contra hlt; push_neg at hlt
-    -- hlt : s₁ < s₂, so s₁ⁿ < s₂ⁿ
     have hpow := rpow_lt_rpow (le_of_lt h₁) hlt σ.hn_pos
-    -- From trace: pairwiseProb v s₂ s₁ ≤ pairwiseProb v s₁ s₁ for v = (· ^ n)
-    have hz := htrace s₁
+    have hz := htrace s₁ h₁
     simp only [pairwiseProb] at hz
-    -- hz : s₂ⁿ / (s₂ⁿ + s₁ⁿ) ≤ s₁ⁿ / (s₁ⁿ + s₁ⁿ)
     have hd₁ : 0 < s₁ ^ σ.n := rpow_pos_of_pos h₁ σ.n
     have hd₂ : 0 < s₂ ^ σ.n := rpow_pos_of_pos h₂ σ.n
-    -- From s₁ⁿ < s₂ⁿ: s₂ⁿ/(s₂ⁿ+s₁ⁿ) > 1/2 > s₁ⁿ/(s₁ⁿ+s₁ⁿ) = 1/2
-    -- But that contradicts hz
     have : s₁ ^ σ.n / (s₁ ^ σ.n + s₁ ^ σ.n) = 1 / 2 := by
       field_simp; ring
     rw [this] at hz
@@ -140,15 +136,18 @@ theorem stevens_trace_iff_intensity (σ : StevensScale) {s₁ s₂ : ℝ}
       rw [lt_div_iff₀ (add_pos hd₂ hd₁)]
       linarith
     linarith
-  · -- Backward: s₂ ≤ s₁ → traceGe
-    -- s₂ ≤ s₁ → s₂ⁿ ≤ s₁ⁿ → for all z, s₂ⁿ/(s₂ⁿ+zⁿ) ≤ s₁ⁿ/(s₁ⁿ+zⁿ)
-    -- Cross-multiplying: s₂ⁿ(s₁ⁿ+zⁿ) ≤ s₁ⁿ(s₂ⁿ+zⁿ), i.e., s₂ⁿ·zⁿ ≤ s₁ⁿ·zⁿ.
-    intro hle z
+  · -- Backward: s₂ ≤ s₁ → positive-restricted trace
+    -- s₂ⁿ ≤ s₁ⁿ, and for z > 0 we have zⁿ > 0, so cross-multiplication works:
+    -- s₂ⁿ/(s₂ⁿ+zⁿ) ≤ s₁ⁿ/(s₁ⁿ+zⁿ) ↔ s₂ⁿ·zⁿ ≤ s₁ⁿ·zⁿ (true since s₂ⁿ ≤ s₁ⁿ, zⁿ > 0).
+    intro hle z hz
     simp only [pairwiseProb]
+    have hp₁ : 0 < s₁ ^ σ.n := rpow_pos_of_pos h₁ σ.n
+    have hp₂ : 0 < s₂ ^ σ.n := rpow_pos_of_pos h₂ σ.n
+    have hpz : 0 < z ^ σ.n := rpow_pos_of_pos hz σ.n
     have hpow : s₂ ^ σ.n ≤ s₁ ^ σ.n :=
       rpow_le_rpow (le_of_lt h₂) hle (le_of_lt σ.hn_pos)
-    -- TODO: monotonicity of t/(t+c) in t for c ≥ 0, handling z^n ≥ 0
-    sorry
+    rw [div_le_div_iff₀ (add_pos hp₂ hpz) (add_pos hp₁ hpz)]
+    nlinarith [mul_le_mul_of_nonneg_right hpow (le_of_lt hpz)]
 
 -- ============================================================================
 -- §4. RSA utility = two-dimensional psychophysics

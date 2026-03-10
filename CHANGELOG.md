@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.112] - 2026-03-10
+
+### Changed
+- **Core/Agent/PsychophysicalChoice.lean**: Fix `stevens_trace_iff_intensity` — restrict trace quantifier to positive stimuli (was false for negative z due to `rpow` on negative bases), close sorry with full proof of both directions
+
 ## [0.229.111] - 2026-03-10
 
 ### Changed
