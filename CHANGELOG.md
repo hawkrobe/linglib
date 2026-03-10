@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.111] - 2026-03-10
+
+### Changed
+- **Phenomena/Conditionals/Studies/Belnap1970.lean**: Audit fixes — add obversion theorem (p. 8), split I-conversion into content + equitrue (stronger: no assertiveness hypothesis needed), add `barbara_assertive` (assertiveness propagation), reorder sections to match paper (obversion → I-conversion → Barbara → §6 contrapositive), fix docstring to list four semantic concepts (not three), add "Three Routes to Restricted Quantification" integration section
+
 ## [0.229.110] - 2026-03-10
 
 ### Changed

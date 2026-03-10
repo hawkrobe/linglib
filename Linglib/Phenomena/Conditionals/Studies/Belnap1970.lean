@@ -14,11 +14,12 @@ Nuel D. Belnap Jr. Conditional Assertion and Restricted Quantification.
 "If p then q" is not a truth-functional connective but a **conditional
 assertion** — the assertion of q on the condition p. When p is false,
 (p/q) is *nonassertive*: it asserts nothing. Belnap introduces four
-semantic concepts per sentence A at world w:
+semantic concepts per sentence A at world w (p. 3):
 
-1. A is **true_w** / A is **false_w** — standard truth
-2. A is **assertive_w** — whether A asserts anything at w
-3. **A_w** — what A asserts at w (a proposition = set of worlds)
+1. A is **true_w** — standard sentential truth
+2. A is **false_w** — standard sentential falsity
+3. A is **assertive_w** — whether A asserts anything at w
+4. **A_w** — what A asserts at w (a proposition = set of worlds)
 
 We formalize this via `PrProp` (presup = assertive, assertion = content),
 showing that Belnap's system is isomorphic to linglib's existing partial
@@ -39,9 +40,29 @@ black" = "Consider the crows: each one is black."
 - `subalternation_a_i` (in `Quantifier.lean`): the non-empty-restrictor
   condition that Belnap derives is exactly what @cite{strawson-1952}
   stipulated as a presupposition of universals
+- `content_square_relations`: concrete `SquareRelations` instance from
+  `Core.SquareOfOpposition`, connecting to the abstract algebraic framework
 - `contrapositive_different_assertiveness`: ∀x(Cx/Bx) and ∀x(¬Bx/¬Cx)
   have different assertiveness conditions — relevant to the confirmation
   paradox
+
+## Three Routes to Restricted Quantification
+
+Belnap's derivation is one of three independent routes to restricted
+quantification in linglib:
+
+1. **Conditional assertion** (this file): ∀x(Cx/Bx) = conditional assertion
+   + universal quantification. @cite{belnap-1970}
+2. **Kratzer restrictor**: if-clauses restrict modal bases, deriving
+   restricted quantification from modality. @cite{kratzer-1986}
+   See `Theories/Semantics/Conditionals/Restrictor.lean`.
+3. **Domain restriction**: contextual predicates intersect the restrictor,
+   deriving restricted quantification from pragmatics.
+   @cite{von-fintel-1994} @cite{stanley-szab-2000}
+   See `Theories/Semantics/Lexical/Determiner/DomainRestriction.lean`.
+
+The convergence of three independent mechanisms on the same result
+suggests restricted quantification is a deep linguistic universal.
 -/
 
 set_option autoImplicit false
@@ -268,42 +289,61 @@ theorem content_square_relations {m : Model} [FiniteModel m]
     exact ⟨x, hxInFilter, by simp [hNotB]⟩
 
 -- ════════════════════════════════════════════════════════════════
--- §6. Contrapositive and Confirmation
+-- §5. Obversion
 -- ════════════════════════════════════════════════════════════════
 
-/-- The contrapositive ∀x(¬Bx/¬Cx) has a DIFFERENT assertiveness
-    condition from the original ∀x(Cx/Bx).
-
-    Original: assertive iff ∃xCx (there are crows)
-    Contrapositive: assertive iff ∃x¬Bx (there are nonblack things)
-
-    This is relevant to the confirmation paradox: a nonblack noncrow
-    (~Bt ∧ ~Ct true) supports the contrapositive (when assertive)
-    but is irrelevant to the original unless there are crows. -/
-theorem contrapositive_different_assertiveness {m : Model} [FiniteModel m]
+/-- **Obversion is a strong equivalence** (p. 8): "All S are P" ↔
+    "No S are non-P". In Belnap's framework: ∀x(Cx/Bx) and
+    ∀x(Cx/~~Bx) are equi-assertive and content-identical, since
+    ~~B = B. This is trivially true but worth stating as Belnap
+    explicitly mentions it. -/
+theorem obversion {m : Model} [FiniteModel m]
     (C B : m.Entity → Bool) :
-    (restrictedForall C B).presup () = FiniteModel.elements.any C ∧
-    (restrictedForall (λ x => !B x) (λ x => !C x)).presup () =
-      FiniteModel.elements.any (λ x => !B x) :=
-  ⟨rfl, rfl⟩
+    restrictedForall C B = restrictedForall C (λ x => !!B x) := by
+  simp only [restrictedForall, Bool.not_not]
 
-/-- **I-conversion preserves truth** (Belnap's observation about the
-    I-form): ∃x(Cx/Bx) and ∃x(Bx/Cx) are equitrue — "truth is
-    preserved in passing from one to the other."
+-- ════════════════════════════════════════════════════════════════
+-- §5. I-Conversion
+-- ════════════════════════════════════════════════════════════════
+
+/-- **I-conversion preserves assertion content**: ∃x(Cx/Bx) and
+    ∃x(Bx/Cx) assert the same proposition (when assertive).
 
     Both reduce to ∃x. C(x) ∧ B(x), which is symmetric in C and B.
     However, they are NOT equi-assertive: the first requires ∃xCx,
     the second requires ∃xBx. -/
-theorem i_conversion_equitrue {m : Model} [FiniteModel m]
+theorem i_conversion_content {m : Model} [FiniteModel m]
     (C B : m.Entity → Bool) :
     (restrictedExists C B).assertion () =
     (restrictedExists B C).assertion () := by
   simp only [restrictedExists]
-  -- Both sides reduce to ∃x ∈ elements. C(x) ∧ B(x), which is symmetric
   show (FiniteModel.elements.filter C).any B =
        (FiniteModel.elements.filter B).any C
   rw [← some_sem_extension C B, ← some_sem_extension B C]
   exact some_symmetric C B
+
+/-- **I-conversion is equitrue** (p. 8): "truth is preserved in
+    passing from one to the other." If ∃x(Cx/Bx)'s assertion holds,
+    then ∃x(Bx/Cx) is assertive and its assertion holds too.
+
+    Note: we prove the stronger result that assertion alone suffices —
+    assertiveness is not needed as a hypothesis (it follows from
+    assertion since any witness for the filter also witnesses ∃xBx).
+
+    Belnap: "But 'Some unicorns are animals' is nonassertive while
+    'Some animals are unicorns' is just plain false." -/
+theorem i_conversion_equitrue {m : Model} [FiniteModel m]
+    (C B : m.Entity → Bool)
+    (hTrue : (restrictedExists C B).assertion () = true) :
+    (restrictedExists B C).presup () = true ∧
+    (restrictedExists B C).assertion () = true := by
+  constructor
+  · -- ∃x(Cx ∧ Bx) → ∃xBx
+    simp only [restrictedExists] at *
+    rw [List.any_eq_true] at hTrue ⊢
+    obtain ⟨x, hx, hBx⟩ := hTrue
+    exact ⟨x, List.mem_of_mem_filter hx, hBx⟩
+  · exact (i_conversion_content C B).symm ▸ hTrue
 
 /-- I-conversion is NOT equi-assertive in general. -/
 theorem i_conversion_not_equiassertive :
@@ -319,17 +359,42 @@ theorem i_conversion_not_equiassertive :
 -- §5. Barbara Syllogism
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Barbara holds asymmetrically**: when the minor premise's
-    restrictor is non-empty, the major implies the conclusion.
+/-- **Barbara: assertiveness propagation.** When Barbara's minor
+    premise is true (assertive and assertion holds), both her major
+    and her conclusion are assertive.
+
+    Belnap (p. 9): "for every w in which Barbara's minor is true_w,
+    both her major and her conclusion are assertive_w."
+
+    Proof: the minor's truth means every A-element is a C-element.
+    Combined with its assertiveness (∃xAx), this gives ∃xCx (major
+    is assertive) and ∃xAx (conclusion is assertive, same as minor). -/
+theorem barbara_assertive {m : Model} [FiniteModel m]
+    (A C B : m.Entity → Bool)
+    (hMinorAssertive : (restrictedForall A C).presup () = true)
+    (hMinorTrue : (restrictedForall A C).assertion () = true) :
+    (restrictedForall C B).presup () = true ∧
+    (restrictedForall A B).presup () = true := by
+  simp only [restrictedForall] at *
+  constructor
+  · -- ∃xAx ∧ ∀x∈A.Cx → ∃xCx
+    rw [List.any_eq_true] at hMinorAssertive ⊢
+    rw [List.all_eq_true] at hMinorTrue
+    obtain ⟨x, hx, hAx⟩ := hMinorAssertive
+    exact ⟨x, hx, hMinorTrue x (List.mem_filter.mpr ⟨hx, hAx⟩)⟩
+  · exact hMinorAssertive
+
+/-- **Barbara: content implication.** What Barbara's major asserts
+    propositionally implies what her conclusion asserts.
 
     Major: ∀x(Cx/Bx)  "All crows are black"
     Minor: ∀x(Ax/Cx)  "All of Alan's birds are crows"
     Concl: ∀x(Ax/Bx)  "All of Alan's birds are black"
 
-    Belnap: "for every w in which Barbara's minor is true_w, both
-    her major and her conclusion are assertive_w, and what her major
-    asserts in w propositionally implies what her conclusion asserts
-    in w." -/
+    Belnap (p. 9): "it is her major alone which does any implying
+    of her conclusion, a feature of the situation which doubtless
+    explains the tradition according to which Barbara's major is
+    major and her minor only minor." -/
 theorem barbara {m : Model} [FiniteModel m]
     (A C B : m.Entity → Bool)
     (hMajor : (restrictedForall C B).assertion () = true)
@@ -340,5 +405,27 @@ theorem barbara {m : Model} [FiniteModel m]
   intro x hx
   have hC := hMinor x hx
   exact hMajor x (List.mem_filter.mpr ⟨List.mem_of_mem_filter hx, hC⟩)
+
+-- ════════════════════════════════════════════════════════════════
+-- §6. Contrapositive and Confirmation
+-- ════════════════════════════════════════════════════════════════
+
+/-- The contrapositive ∀x(¬Bx/¬Cx) has a DIFFERENT assertiveness
+    condition from the original ∀x(Cx/Bx).
+
+    Original: assertive iff ∃xCx (there are crows)
+    Contrapositive: assertive iff ∃x¬Bx (there are nonblack things)
+
+    This is relevant to the confirmation paradox (p. 10): "reports
+    that such and such is not a crow, although offering support for
+    the contrapositive 'No nonblack things are noncrows' — ∀x(~Bx/~Cx) —
+    when such and such is not black, is evidentially irrelevant to
+    ∀x(Cx/Bx)." -/
+theorem contrapositive_different_assertiveness {m : Model} [FiniteModel m]
+    (C B : m.Entity → Bool) :
+    (restrictedForall C B).presup () = FiniteModel.elements.any C ∧
+    (restrictedForall (λ x => !B x) (λ x => !C x)).presup () =
+      FiniteModel.elements.any (λ x => !B x) :=
+  ⟨rfl, rfl⟩
 
 end Phenomena.Conditionals.Studies.Belnap1970
