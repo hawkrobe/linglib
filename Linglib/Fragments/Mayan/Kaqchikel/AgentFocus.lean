@@ -47,7 +47,7 @@ cross-referencing agreement.
 
 -/
 
-namespace Fragments.Kaqchikel
+namespace Fragments.Mayan.Kaqchikel
 
 open Minimalism Core.ConstraintEvaluation
 
@@ -337,4 +337,4 @@ theorem kaq_both_promote_agent :
 theorem kaq_not_active_passive :
     kaqVoiceSystem.isActivePassive = false := rfl
 
-end Fragments.Kaqchikel
+end Fragments.Mayan.Kaqchikel

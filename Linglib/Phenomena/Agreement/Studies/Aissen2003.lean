@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Case.Typology
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
-import Linglib.Fragments.Kaqchikel.Agreement
+import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Hungarian.Predicates
@@ -35,7 +35,7 @@ open Core.Prominence
 open Phenomena.Agreement.DifferentialIndexing
 open Phenomena.Case.Typology
 open Minimalism
-open Fragments.Kaqchikel
+open Fragments.Mayan.Kaqchikel
 
 -- ============================================================================
 -- § 1: DOM ↔ DifferentialMarkingProfile Structural Isomorphism

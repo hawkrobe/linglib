@@ -402,4 +402,188 @@ def tryRSABuild (cache : ReifyCache) (activeLhs activeRhs : Expr)
   logInfo m!"rsa_predict: [builder] resolved expressions ({t2 - t0}ms total)"
   return some (lhsResult.1, lhsResult.2, rhsResult.1, rhsResult.2)
 
+-- ============================================================================
+-- Generic L1 Builder (for S2 and other composite goals)
+-- ============================================================================
+
+/-- Build L1 and L1_latent RExprs for an RSAConfig by:
+    1. Instantiating the s1Score lambda body directly (bypassing S1→S1agent→policy chain)
+    2. Reifying each instantiated body via the generic reifier
+    3. Assembling S1→L1 layers algebraically
+
+    This avoids the expensive whnf chain through `cfg.S1 l w u →
+    (S1agent l).policy w u → RationalAction.policy → iteZero → Finset.sum`.
+    Instead, we substitute concrete L0 policy function + args into the s1Score body
+    and reify the resulting simple arithmetic expression (ite/exp/log/Finset.sum).
+
+    Seeds the reification cache with L1/L1_latent values so the generic reifier
+    finds them immediately when processing S2Utility or similar composite expressions. -/
+def buildAndSeedL1 (cache : ReifyCache) (cfg : Expr) : TacticM Unit := do
+  let t0 ← IO.monoMsNow
+
+  -- Check persistent build cache (reuse if same config was already built)
+  let cfgHash := hash cfg
+  let cachedMap ← persistentBuildCache.get
+  if cachedMap.contains cfgHash then
+    logInfo m!"rsa_predict: [generic-L1] cache hit"
+    return
+
+  -- Extract types and enumerate elements
+  let cfgType ← whnf (← inferType cfg)
+  let cfgArgs := cfgType.getAppArgs
+  unless cfgArgs.size ≥ 2 do return
+  let U := cfgArgs[0]!
+  let W := cfgArgs[1]!
+  let L ← whnf (← mkAppM ``RSA.RSAConfig.Latent #[cfg])
+
+  let (_, allU) ← getFiniteElems U
+  let (_, allW) ← getFiniteElems W
+  let (_, allL) ← getFiniteElems L
+  let nU := allU.size
+  let nW := allW.size
+  let nL := allL.size
+
+  -- Only for models large enough to benefit
+  if nL * nU * nW < 500 then return
+
+  logInfo m!"rsa_predict: [generic-L1] building, |U|={nU} |W|={nW} |L|={nL}"
+
+  -- Get s1Score lambda body (whnf once to expose the lambda)
+  let s1ScoreLambda ← whnf (← mkAppM ``RSA.RSAConfig.s1Score #[cfg])
+  unless s1ScoreLambda.isLambda do
+    logInfo m!"rsa_predict: [generic-L1] s1Score is not a lambda, skipping"
+    return
+
+  -- Get α as Lean expression (for substitution into s1Score body)
+  let αLeanExpr ← whnf (← mkAppM ``RSA.RSAConfig.α #[cfg])
+
+  -- Pre-compute priors via generic reifier (small expressions, fast)
+  let mut worldPriors : Array (Expr × MetaBounds) := #[]
+  for w in allW do
+    worldPriors := worldPriors.push
+      (← reifyToRExpr cache (← mkAppM ``RSA.RSAConfig.worldPrior #[cfg, w]) maxDepth)
+
+  let mut latentPriors : Array (Expr × MetaBounds) := Array.mkEmpty (nW * nL)
+  for w in allW do
+    for l in allL do
+      latentPriors := latentPriors.push
+        (← reifyToRExpr cache (← mkAppM ``RSA.RSAConfig.latentPrior #[cfg, w, l]) maxDepth)
+
+  let t1 ← IO.monoMsNow
+
+  -- Build S1 scores by instantiating s1Score body for each (l, w, u).
+  -- Instead of reifyToRExpr(cfg.S1 l w u) which goes through the slow
+  -- S1→S1agent→policy→Finset.sum chain, we:
+  -- 1. Get the L0 policy function expression: (L0agent cfg l).policy
+  -- 2. Substitute it + concrete α,l,w,u into the s1Score lambda
+  -- 3. headBeta to get the body with all args substituted
+  -- 4. reifyToRExpr on the body (simple arithmetic, L0 evals cached)
+  let mut s1Scores : Array (Expr × MetaBounds) := Array.mkEmpty (nL * nW * nU)
+  for l in allL do
+    let l0Agent ← mkAppM ``RSA.RSAConfig.L0agent #[cfg, l]
+    let l0PolicyFn ← mkAppM ``Core.RationalAction.policy #[l0Agent]
+    for w in allW do
+      for u in allU do
+        let body := s1ScoreLambda
+          |>.app l0PolicyFn |>.app αLeanExpr |>.app l |>.app w |>.app u
+          |>.headBeta
+        s1Scores := s1Scores.push (← reifyToRExpr cache body maxDepth)
+
+  let t2 ← IO.monoMsNow
+  logInfo m!"rsa_predict: [generic-L1] S1 cells ({nL*nW*nU}) reified ({t2-t1}ms)"
+
+  -- S1 totals: Σ_u s1Score(l, w, u) for each (l, w)
+  let mut s1Totals : Array (Expr × MetaBounds) := Array.mkEmpty (nL * nW)
+  for li in List.range nL do
+    for wi in List.range nW do
+      let items := (List.range nU).toArray.map fun ui =>
+        s1Scores[li * nW * nU + wi * nU + ui]!
+      s1Totals := s1Totals.push (rexprSum items)
+
+  -- S1 policies: iteZero(total, 0, score/total)
+  let mut s1Policies : Array (Expr × MetaBounds) := Array.mkEmpty (nL * nW * nU)
+  for li in List.range nL do
+    for wi in List.range nW do
+      let total := s1Totals[li * nW + wi]!
+      for ui in List.range nU do
+        s1Policies := s1Policies.push
+          (rexprPolicy s1Scores[li * nW * nU + wi * nU + ui]! total)
+
+  -- L1 scores: worldPrior(w) * Σ_l latentPrior(w,l) * S1policy(l,w,u)
+  let mut l1Scores : Array (Expr × MetaBounds) := Array.mkEmpty (nU * nW)
+  for ui in List.range nU do
+    for wi in List.range nW do
+      let mut innerTerms : Array (Expr × MetaBounds) := Array.mkEmpty nL
+      for li in List.range nL do
+        let lp := latentPriors[wi * nL + li]!
+        let s1p := s1Policies[li * nW * nU + wi * nU + ui]!
+        innerTerms := innerTerms.push (rexprMul lp s1p)
+      l1Scores := l1Scores.push (rexprMul worldPriors[wi]! (rexprSum innerTerms))
+
+  -- L1 totals: Σ_w L1score(u, w)
+  let mut l1Totals : Array (Expr × MetaBounds) := Array.mkEmpty nU
+  for ui in List.range nU do
+    let items := (List.range nW).toArray.map fun wi => l1Scores[ui * nW + wi]!
+    l1Totals := l1Totals.push (rexprSum items)
+
+  -- Seed cache with L1 policy values: L1(u, w) = iteZero(total, 0, score/total)
+  for ui in List.range nU do
+    for wi in List.range nW do
+      let l1Policy := rexprPolicy l1Scores[ui * nW + wi]! l1Totals[ui]!
+      let key ← mkAppM ``RSA.RSAConfig.L1 #[cfg, allU[ui]!, allW[wi]!]
+      cache.modify fun m => m.insert key l1Policy
+
+  -- Seed cache with L1_latent policy values
+  -- L1_latent score(u, l) = Σ_w worldPrior(w) * latentPrior(w,l) * S1policy(l,w,u)
+  -- L1_latent total(u) = same as L1 total (marginal over all l and w)
+  for ui in List.range nU do
+    for li in List.range nL do
+      let mut latentTerms : Array (Expr × MetaBounds) := Array.mkEmpty nW
+      for wi in List.range nW do
+        let wp := worldPriors[wi]!
+        let lp := latentPriors[wi * nL + li]!
+        let s1p := s1Policies[li * nW * nU + wi * nU + ui]!
+        latentTerms := latentTerms.push (rexprMul wp (rexprMul lp s1p))
+      let latentScore := rexprSum latentTerms
+      let l1LatentPolicy := rexprPolicy latentScore l1Totals[ui]!
+      let key ← mkAppM ``RSA.RSAConfig.L1_latent #[cfg, allU[ui]!, allL[li]!]
+      cache.modify fun m => m.insert key l1LatentPolicy
+
+  -- Store in persistent cache to avoid rebuilding for subsequent theorems
+  let result : RSABuildResult := { nU, nW, nL, l1Scores, l1Totals }
+  persistentBuildCache.modify fun m => m.insert cfgHash (allU, allW, result)
+
+  let t3 ← IO.monoMsNow
+  logInfo m!"rsa_predict: [generic-L1] complete ({t3-t0}ms, {nU*nW} L1 + {nU*nL} L1_latent values seeded)"
+
+/-- Scan an expression for RSA.RSAConfig.L1 or L1_latent function heads.
+    Returns the config from the first match, or none. -/
+private partial def findL1Config (e : Expr) (depth : ℕ := 20) : Option Expr :=
+  if depth == 0 then none
+  else
+    let fn := e.getAppFn
+    let args := e.getAppArgs
+    -- Direct L1 or L1_latent reference
+    if (fn.isConstOf ``RSA.RSAConfig.L1 || fn.isConstOf ``RSA.RSAConfig.L1_latent) then
+      -- cfg is the first explicit arg (after implicit type/instance args)
+      -- L1: {U} {W} [DecEq U] [Fin U] [DecEq W] [Fin W] cfg u w → cfg at args.size - 3
+      if args.size ≥ 3 then some args[args.size - 3]!
+      else none
+    else
+      -- Recurse into sub-expressions
+      args.findSome? (findL1Config · (depth - 1))
+
+/-- Pre-seed the reification cache with L1/L1_latent values for RSAConfig
+    references found in the expression. Call before reifyToRExpr to avoid
+    expensive whnf of nested L1 computations (e.g., in S2Utility). -/
+def tryPreseedL1 (cache : ReifyCache) (lhs rhs : Expr) : TacticM Unit := do
+  -- whnf both sides to expose L1 references
+  let lhs' ← whnf lhs
+  let rhs' ← whnf rhs
+  -- Find config from either side
+  let cfg? := findL1Config lhs' <|> findL1Config rhs'
+  let some cfg := cfg? | return
+  -- Build and seed
+  buildAndSeedL1 cache cfg
+
 end Linglib.Tactics.RSAPredict

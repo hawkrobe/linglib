@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Polish Question Particles
+@cite{simik-2024}
 
 Lexical entries for Polish interrogative particles.
 
@@ -35,7 +36,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq, BEq
 
-/-- czy — obligatory clause-initial PQ particle (Šimík 2024 ex. 30).
+/-- czy — obligatory clause-initial PQ particle (@cite{simik-2024} ex. 30).
 Verb-initial PQs possible but unacceptable in quiz scenarios. -/
 def czy : QParticleEntry where
   form := "czy"
@@ -47,7 +48,7 @@ def czy : QParticleEntry where
   requiresEvidentialBias := false
   requiresEpistemicBias := false
 
-/-- czyżby — mirative/dubitative particle (RAZVE family, Šimík 2024 §4.2.4).
+/-- czyżby — mirative/dubitative particle (RAZVE family, @cite{simik-2024} §4.2.4).
 Polish member of the cross-Slavic razve family. -/
 def czyzby : QParticleEntry where
   form := "czyżby"

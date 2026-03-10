@@ -26,6 +26,54 @@ def evalLogPoint (q : ℚ) : ℚ × ℚ :=
     (I.lo, I.hi)
   else (0, 0)
 
+/-- Fast meta-level log bounds using bit-length. O(1), no recursion.
+    For q > 0, returns (lo, hi) with lo ≤ ln(q) ≤ hi.
+    Uses ln(2) ∈ [693/1000, 694/1000] and Nat.log 2 for floor-log₂.
+    Much less precise than `evalLogPoint` but avoids the deep recursion
+    in `logBisectCore` that overflows the interpreter stack on large models. -/
+def fastLogBounds (q : ℚ) : ℚ × ℚ :=
+  if q ≤ 0 then (0, 0)
+  else
+    let p := q.num.toNat  -- q > 0 → q.num > 0 → p ≥ 1
+    let d := q.den         -- always ≥ 1
+    let kp := Nat.log 2 p  -- ⌊log₂ p⌋
+    let kd := Nat.log 2 d  -- ⌊log₂ d⌋
+    -- For n ≥ 1: kn * ln2 ≤ ln(n) ≤ (kn+1) * ln2
+    -- ln(q) = ln(p) - ln(d)
+    let lo := (kp : ℚ) * (693 / 1000) - ((kd : ℚ) + 1) * (694 / 1000)
+    let hi := ((kp : ℚ) + 1) * (694 / 1000) - (kd : ℚ) * (693 / 1000)
+    (lo, hi)
+
+/-- Overflow-safe log bounds. Uses precise `evalLogPoint` for small rationals
+    (≤ 200 bits). For large rationals, coarsens to 64-bit precision first,
+    preserving soundness: truncDown(q) ≤ q → log(truncDown) ≤ log(q),
+    and truncUp(q) ≥ q → log(truncUp) ≥ log(q). -/
+def safeLogBounds (q : ℚ) : ℚ × ℚ :=
+  if q ≤ 0 then (0, 0)
+  else
+    let numBits := Nat.log 2 q.num.toNat + 1
+    let denBits := Nat.log 2 q.den + 1
+    let maxBits := max numBits denBits
+    if maxBits ≤ 200 then evalLogPoint q
+    else
+      -- Shift both num and den right to fit in 64 bits.
+      -- Round conservatively for sound lower/upper bounds.
+      let excess := maxBits - 64
+      let s := (2 : ℕ) ^ excess
+      let p := q.num.toNat  -- q > 0 so num > 0
+      let d := q.den
+      -- qLo = p/s / ceil(d/s) ≤ p/d = q  (for lower bound of log)
+      let pLo := p / s
+      let dHi := (d + s - 1) / s
+      let qLo : ℚ := if dHi == 0 then 1 else (pLo : ℚ) / dHi
+      -- qHi = ceil(p/s) / floor(d/s) ≥ p/d = q  (for upper bound of log)
+      let pHi := (p + s - 1) / s
+      let dLo := d / s
+      let qHi : ℚ := if dLo == 0 then q else (pHi : ℚ) / dLo
+      let lo := if qLo > 0 then (evalLogPoint qLo).1 else (fastLogBounds q).1
+      let hi := if qHi > 0 then (evalLogPoint qHi).2 else (fastLogBounds q).2
+      (lo, hi)
+
 /-- Scan an expression for an embedded raw natural number literal.
     After whnf reduces `n : ℝ` to its Cauchy sequence form, the natural
     number is typically buried inside `@Nat.cast ℚ _ n` or similar.
@@ -414,7 +462,7 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     let (ra, ba) ← reifyToRExpr cache args[0]! (depth - 1)
     let rexpr := mkApp (mkConst ``RExpr.rlog) ra
     let bounds := if ba.lo > 0 then
-                    ⟨(evalLogPoint ba.lo).1, (evalLogPoint ba.hi).2⟩
+                    ⟨(safeLogBounds ba.lo).1, (safeLogBounds ba.hi).2⟩
                   else ⟨-1000, 1000⟩
     return ← cacheReturn cache key (rexpr, bounds)
 
@@ -427,15 +475,17 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
       let cArgs := cond.getAppArgs
       let rhsC := cArgs[2]!
       if let some 0 := getOfNat? rhsC then
-        let lhsC := cArgs[1]!
-        let (rc, bc) ← reifyToRExpr cache lhsC (depth - 1)
-        let (rt, bt) ← reifyToRExpr cache thenBr (depth - 1)
-        let (re, be) ← reifyToRExpr cache elseBr (depth - 1)
-        let rexpr := mkApp3 (mkConst ``RExpr.iteZero) rc rt re
-        let bounds := if bc.lo > 0 then be
-                      else if bc.lo == 0 && bc.hi == 0 then bt
-                      else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
-        return ← cacheReturn cache key (rexpr, bounds)
+        -- iteZero only for ℝ-typed conditions; ℕ/Fin conditions fall through to whnf
+        if cArgs[0]!.isConstOf ``Real then
+          let lhsC := cArgs[1]!
+          let (rc, bc) ← reifyToRExpr cache lhsC (depth - 1)
+          let (rt, bt) ← reifyToRExpr cache thenBr (depth - 1)
+          let (re, be) ← reifyToRExpr cache elseBr (depth - 1)
+          let rexpr := mkApp3 (mkConst ``RExpr.iteZero) rc rt re
+          let bounds := if bc.lo > 0 then be
+                        else if bc.lo == 0 && bc.hi == 0 then bt
+                        else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
+          return ← cacheReturn cache key (rexpr, bounds)
       -- Bool condition: ite ((expr) = true) or ite ((expr) = false)
       -- Try native evaluation first (fast, bypasses maxRecDepth), then whnf fallback
       if cArgs[0]!.isConstOf ``Bool then
@@ -474,19 +524,25 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
       let lhsC := propArgs[1]!
       let rhsC := propArgs[2]!
       if let some 0 := getOfNat? rhsC then
-        let (rc, bc) ← reifyToRExpr cache lhsC (depth - 1)
-        let dummyTrueProof := mkApp2 (mkConst ``sorryAx [levelZero]) prop (toExpr true)
-        let thenBody := (Expr.app isTrueBr dummyTrueProof).headBeta
-        let negProp ← mkAppM ``Not #[prop]
-        let dummyFalseProof := mkApp2 (mkConst ``sorryAx [levelZero]) negProp (toExpr true)
-        let elseBody := (Expr.app isFalseBr dummyFalseProof).headBeta
-        let (rt, bt) ← reifyToRExpr cache thenBody (depth - 1)
-        let (re, be) ← reifyToRExpr cache elseBody (depth - 1)
-        let rexpr := mkApp3 (mkConst ``RExpr.iteZero) rc rt re
-        let bounds := if bc.lo > 0 then be
-                      else if bc.lo == 0 && bc.hi == 0 then bt
-                      else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
-        return ← cacheReturn cache key (rexpr, bounds)
+        -- iteZero only for ℝ-typed conditions; ℕ/Fin conditions try whnf
+        if propArgs[0]!.isConstOf ``Real then
+          let (rc, bc) ← reifyToRExpr cache lhsC (depth - 1)
+          let dummyTrueProof := mkApp2 (mkConst ``sorryAx [levelZero]) prop (toExpr true)
+          let thenBody := (Expr.app isTrueBr dummyTrueProof).headBeta
+          let negProp ← mkAppM ``Not #[prop]
+          let dummyFalseProof := mkApp2 (mkConst ``sorryAx [levelZero]) negProp (toExpr true)
+          let elseBody := (Expr.app isFalseBr dummyFalseProof).headBeta
+          let (rt, bt) ← reifyToRExpr cache thenBody (depth - 1)
+          let (re, be) ← reifyToRExpr cache elseBody (depth - 1)
+          let rexpr := mkApp3 (mkConst ``RExpr.iteZero) rc rt re
+          let bounds := if bc.lo > 0 then be
+                        else if bc.lo == 0 && bc.hi == 0 then bt
+                        else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
+          return ← cacheReturn cache key (rexpr, bounds)
+        else
+          let e' ← whnf e
+          if !e.equal e' then
+            return ← reifyToRExpr cache e' (depth - 1)
 
   -- Structural sum unfolding: Finset.sum Finset.univ f  and
   -- Finset.sum (Finset.filter p Finset.univ) f
@@ -634,6 +690,24 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     if !e.equal e' then
       return ← reifyToRExpr cache e' (depth - 1)
 
+  -- L1/L1_latent cache hit via mkAppM key reconstruction.
+  -- The preseed stores keys constructed via mkAppM, which synthesizes its own
+  -- instance terms. The expression here may have different instance terms
+  -- (from the original elaboration context), so reconstruct the mkAppM key
+  -- from the explicit args (cfg, u, w) to match the preseed.
+  if fn.isConstOf ``RSA.RSAConfig.L1 && args.size ≥ 3 then
+    let altKey ← mkAppM ``RSA.RSAConfig.L1
+      #[args[args.size - 3]!, args[args.size - 2]!, args[args.size - 1]!]
+    if let some result := (← cache.get).get? altKey then
+      cache.modify fun m => m.insert key result  -- cache under original key too
+      return result
+  if fn.isConstOf ``RSA.RSAConfig.L1_latent && args.size ≥ 3 then
+    let altKey ← mkAppM ``RSA.RSAConfig.L1_latent
+      #[args[args.size - 3]!, args[args.size - 2]!, args[args.size - 1]!]
+    if let some result := (← cache.get).get? altKey then
+      cache.modify fun m => m.insert key result
+      return result
+
   -- Default: unfold one definition, headBeta (transparent)
   if let some e' ← unfoldDefinition? e then
     return ← reifyToRExpr cache e'.headBeta (depth - 1)
@@ -722,7 +796,7 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
       let (ra, ba) ← reifyToRExpr cache arg (depth - 1)
       let rexpr := mkApp (mkConst ``RExpr.rlog) ra
       let bounds := if ba.lo > 0 then
-                      ⟨(evalLogPoint ba.lo).1, (evalLogPoint ba.hi).2⟩
+                      ⟨(safeLogBounds ba.lo).1, (safeLogBounds ba.hi).2⟩
                     else ⟨-1000, 1000⟩
       return ← cacheReturn cache key (rexpr, bounds)
     let invMatch ← withNewMCtxDepth do

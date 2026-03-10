@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Core.Interfaces.ExtractionMorphology
-import Linglib.Phenomena.Ergativity.Basic
+import Linglib.Fragments.Mayan.Params
 
 /-!
 # Chol Agreement and Case Fragment @cite{coon-2010a} @cite{coon-2013a}
@@ -32,7 +32,7 @@ generated inside the nominalized clause. Result: S/A = GEN (from D),
 O = ABS (from Voice).
 -/
 
-namespace Fragments.Chol
+namespace Fragments.Mayan.Chol
 
 open Minimalism
 
@@ -93,7 +93,7 @@ theorem extended_ergative :
 /-- Chol's absolutive morphemes appear in low position (at the end of
     the verb stem, post-stem). Observable from morpheme order:
     ASP-ERG-ROOT-(DERIV)-SUFFIX-ABS. -/
-def absPosition : Phenomena.Ergativity.ABSPosition := .low
+def absPosition : Fragments.Mayan.ABSPosition := .low
 
 -- ============================================================================
 -- § 4: Extraction Data
@@ -152,4 +152,4 @@ def absIntranSInNonFinite : Bool := false
 theorem nonfinite_abs_asymmetry :
     absObjectInNonFinite = true ∧ absIntranSInNonFinite = false := ⟨rfl, rfl⟩
 
-end Fragments.Chol
+end Fragments.Mayan.Chol

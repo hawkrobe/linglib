@@ -1,9 +1,10 @@
 import Linglib.Phenomena.Ergativity.Basic
+import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Core.Case.SplitConditions
-import Linglib.Fragments.Kaqchikel.Agreement
-import Linglib.Fragments.Chol.Agreement
-import Linglib.Fragments.Qanjobal.Agreement
+import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+import Linglib.Fragments.Mayan.Chol.Agreement
+import Linglib.Fragments.Mayan.Qanjobal.Agreement
 
 /-!
 # Imanishi (2020): Parameterizing Split Ergativity in Mayan
@@ -201,28 +202,28 @@ theorem anticausative_ron_compatible :
     fragment: A = ERG, S = P = ABS. Confirms the ergative side is
     shared across all three languages. -/
 theorem kaqchikel_perfective_bridge :
-    Fragments.Kaqchikel.KaqArgPosition.agent.case = .erg ∧
-    Fragments.Kaqchikel.KaqArgPosition.patient.case = .abs ∧
-    Fragments.Kaqchikel.KaqArgPosition.intranS.case = .abs := ⟨rfl, rfl, rfl⟩
+    Fragments.Mayan.Kaqchikel.KaqArgPosition.agent.case = .erg ∧
+    Fragments.Mayan.Kaqchikel.KaqArgPosition.patient.case = .abs ∧
+    Fragments.Mayan.Kaqchikel.KaqArgPosition.intranS.case = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- Chol's perfective alignment matches the same ergative pattern. -/
 theorem chol_perfective_bridge :
-    Fragments.Chol.ArgPosition.agent.ergCase = .erg ∧
-    Fragments.Chol.ArgPosition.patient.ergCase = .abs ∧
-    Fragments.Chol.ArgPosition.intranS.ergCase = .abs := ⟨rfl, rfl, rfl⟩
+    Fragments.Mayan.Chol.ArgPosition.agent.ergCase = .erg ∧
+    Fragments.Mayan.Chol.ArgPosition.patient.ergCase = .abs ∧
+    Fragments.Mayan.Chol.ArgPosition.intranS.ergCase = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- Q'anjob'al's perfective alignment matches the same ergative pattern. -/
 theorem qanjobal_perfective_bridge :
-    Fragments.Qanjobal.ArgPosition.agent.ergCase = .erg ∧
-    Fragments.Qanjobal.ArgPosition.patient.ergCase = .abs ∧
-    Fragments.Qanjobal.ArgPosition.intranS.ergCase = .abs := ⟨rfl, rfl, rfl⟩
+    Fragments.Mayan.Qanjobal.ArgPosition.agent.ergCase = .erg ∧
+    Fragments.Mayan.Qanjobal.ArgPosition.patient.ergCase = .abs ∧
+    Fragments.Mayan.Qanjobal.ArgPosition.intranS.ergCase = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- All three languages share ergative alignment in the perfective. -/
 theorem shared_ergative :
-    Fragments.Kaqchikel.KaqArgPosition.agent.case =
-      Fragments.Chol.ArgPosition.agent.ergCase ∧
-    Fragments.Chol.ArgPosition.agent.ergCase =
-      Fragments.Qanjobal.ArgPosition.agent.ergCase := ⟨rfl, rfl⟩
+    Fragments.Mayan.Kaqchikel.KaqArgPosition.agent.case =
+      Fragments.Mayan.Chol.ArgPosition.agent.ergCase ∧
+    Fragments.Mayan.Chol.ArgPosition.agent.ergCase =
+      Fragments.Mayan.Qanjobal.ArgPosition.agent.ergCase := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 9: Case-to-Marker Bridge
@@ -245,49 +246,49 @@ theorem erg_gen_homophonous :
 /-- Chol's fragment case values, mapped through the Mayan marker bridge,
     yield the predicted accusative-side pattern. -/
 theorem chol_case_to_marker_bridge :
-    caseToMarker (Fragments.Chol.ArgPosition.agent.accCase) = cholPattern.sMarker ∧
-    caseToMarker (Fragments.Chol.ArgPosition.patient.accCase) = cholPattern.oMarker :=
+    caseToMarker (Fragments.Mayan.Chol.ArgPosition.agent.accCase) = cholPattern.sMarker ∧
+    caseToMarker (Fragments.Mayan.Chol.ArgPosition.patient.accCase) = cholPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- Q'anjob'al's fragment case values yield the same pattern as Chol. -/
 theorem qanjobal_case_to_marker_bridge :
-    caseToMarker (Fragments.Qanjobal.ArgPosition.agent.accCase) = cholPattern.sMarker ∧
-    caseToMarker (Fragments.Qanjobal.ArgPosition.patient.accCase) = cholPattern.oMarker :=
+    caseToMarker (Fragments.Mayan.Qanjobal.ArgPosition.agent.accCase) = cholPattern.sMarker ∧
+    caseToMarker (Fragments.Mayan.Qanjobal.ArgPosition.patient.accCase) = cholPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- Kaqchikel's fragment accusative-side case values, mapped through the
     Mayan marker bridge, yield the predicted Kaqchikel alignment pattern. -/
 theorem kaqchikel_case_to_marker_bridge :
-    caseToMarker (Fragments.Kaqchikel.KaqArgPosition.agent.accCase) = kaqchikelPattern.sMarker ∧
-    caseToMarker (Fragments.Kaqchikel.KaqArgPosition.patient.accCase) = kaqchikelPattern.oMarker :=
+    caseToMarker (Fragments.Mayan.Kaqchikel.KaqArgPosition.agent.accCase) = kaqchikelPattern.sMarker ∧
+    caseToMarker (Fragments.Mayan.Kaqchikel.KaqArgPosition.patient.accCase) = kaqchikelPattern.oMarker :=
   ⟨rfl, rfl⟩
 
 /-- The accusative-side case contrast between Kaqchikel and Chol is a
     true mirror image: agent and patient cases are swapped. -/
 theorem acc_case_mirror :
-    Fragments.Kaqchikel.KaqArgPosition.agent.accCase =
-      Fragments.Chol.ArgPosition.patient.accCase ∧
-    Fragments.Kaqchikel.KaqArgPosition.patient.accCase =
-      Fragments.Chol.ArgPosition.agent.accCase := ⟨rfl, rfl⟩
+    Fragments.Mayan.Kaqchikel.KaqArgPosition.agent.accCase =
+      Fragments.Mayan.Chol.ArgPosition.patient.accCase ∧
+    Fragments.Mayan.Kaqchikel.KaqArgPosition.patient.accCase =
+      Fragments.Mayan.Chol.ArgPosition.agent.accCase := ⟨rfl, rfl⟩
 
 /-- End-to-end: for all three languages, the fragment case data (mapped
     through the marker bridge) matches the parametrically derived pattern.
     This closes the argumentation chain from parameters → alignment → case → markers. -/
 theorem end_to_end_all_languages :
     -- Kaqchikel: fragment cases match derived pattern
-    (caseToMarker (Fragments.Kaqchikel.KaqArgPosition.agent.accCase) =
+    (caseToMarker (Fragments.Mayan.Kaqchikel.KaqArgPosition.agent.accCase) =
       (deriveAccPattern kaqchikelParams).sMarker ∧
-     caseToMarker (Fragments.Kaqchikel.KaqArgPosition.patient.accCase) =
+     caseToMarker (Fragments.Mayan.Kaqchikel.KaqArgPosition.patient.accCase) =
       (deriveAccPattern kaqchikelParams).oMarker) ∧
     -- Chol: fragment cases match derived pattern
-    (caseToMarker (Fragments.Chol.ArgPosition.agent.accCase) =
+    (caseToMarker (Fragments.Mayan.Chol.ArgPosition.agent.accCase) =
       (deriveAccPattern cholParams).sMarker ∧
-     caseToMarker (Fragments.Chol.ArgPosition.patient.accCase) =
+     caseToMarker (Fragments.Mayan.Chol.ArgPosition.patient.accCase) =
       (deriveAccPattern cholParams).oMarker) ∧
     -- Q'anjob'al: fragment cases match derived pattern
-    (caseToMarker (Fragments.Qanjobal.ArgPosition.agent.accCase) =
+    (caseToMarker (Fragments.Mayan.Qanjobal.ArgPosition.agent.accCase) =
       (deriveAccPattern qanjobalParams).sMarker ∧
-     caseToMarker (Fragments.Qanjobal.ArgPosition.patient.accCase) =
+     caseToMarker (Fragments.Mayan.Qanjobal.ArgPosition.patient.accCase) =
       (deriveAccPattern qanjobalParams).oMarker) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
@@ -310,5 +311,42 @@ theorem mayan_imperfective_acc :
 /-- Mayan and Hindi have the same aspect-conditioned split direction:
     perfective triggers ergativity in both language families. -/
 theorem mayan_hindi_same_split : mayanSplit = Core.hindiSplit := rfl
+
+-- ============================================================================
+-- § 11: Cross-Study Bridge (@cite{coon-mateo-pedro-preminger-2014})
+-- ============================================================================
+
+open CoonMateoPedroPreminger2014 (hasSyntacticErgativity)
+open Fragments.Mayan (toCaseLocus)
+
+/-- Imanishi's RON determines the accusative-side alignment (this study),
+    while CMP2014's CaseLocus determines syntactic ergativity (ergative side).
+    Together they form the full Mayan parameterization: RON for the
+    accusative side, ABSPosition→CaseLocus for the ergative side. -/
+theorem cmp2014_ergativity_from_params (p : MayanParams) :
+    hasSyntacticErgativity (toCaseLocus p.absPos) = (p.absPos == .high) := by
+  cases p.absPos <;> rfl
+
+/-- The two studies agree on Kaqchikel: RON active + HIGH-ABS = syntactic
+    ergativity + Kaqchikel-type accusative alignment. -/
+theorem kaqchikel_full_profile :
+    deriveAccPattern kaqchikelParams = kaqchikelPattern ∧
+    hasSyntacticErgativity (toCaseLocus kaqchikelParams.absPos) = true :=
+  ⟨rfl, rfl⟩
+
+/-- The two studies agree on Chol: RON inactive + LOW-ABS = no syntactic
+    ergativity + Chol-type accusative alignment. -/
+theorem chol_full_profile :
+    deriveAccPattern cholParams = cholPattern ∧
+    hasSyntacticErgativity (toCaseLocus cholParams.absPos) = false :=
+  ⟨rfl, rfl⟩
+
+/-- Q'anjob'al shows that the two dimensions are independent: HIGH-ABS
+    (like Kaqchikel) but RON inactive (like Chol). Syntactic ergativity
+    yes, but Chol-type accusative alignment. -/
+theorem qanjobal_cross_cutting :
+    hasSyntacticErgativity (toCaseLocus qanjobalParams.absPos) = true ∧
+    deriveAccPattern qanjobalParams = cholPattern :=
+  ⟨rfl, rfl⟩
 
 end Phenomena.Ergativity.Studies.Imanishi2020

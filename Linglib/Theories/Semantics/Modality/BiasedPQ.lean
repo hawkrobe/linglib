@@ -5,7 +5,7 @@ import Linglib.Core.Discourse.SpeechActs
 
 /-!
 # Biased Polar Questions
-@cite{anderbois-2019} @cite{bring-gunlogson-2000} @cite{domaneschi-2017} @cite{frana-rawlins-2019} @cite{goodhue-2022} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2015} @cite{romero-2024} @cite{romero-han-2004} @cite{stakov-2026}
+@cite{anderbois-2019} @cite{bring-gunlogson-2000} @cite{domaneschi-2017} @cite{frana-rawlins-2019} @cite{goodhue-2022} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2015} @cite{romero-2024} @cite{romero-han-2004} @cite{simik-2024} @cite{stakov-2026}
 
 Cross-linguistic framework for polar question bias, following @cite{romero-2024}.
 Polar questions come in three forms — PosQ, LoNQ, HiNQ — which differ in
@@ -198,10 +198,10 @@ theorem falsum_atIssue_is_negation (ep : ModalBase) (cv : OrderingSource)
     (mkFalsum ep cv cg p).atIssue w = !p w := rfl
 
 -- ============================================================================
--- §5b: FALSUM^CZ (Šimík 2024 §5, eq. 44)
+-- §5b: FALSUM^CZ (@cite{simik-2024} §5, eq. 44)
 -- ============================================================================
 
-/-- Czech FALSUM (Šimík 2024 eq. 44), weaker than standard FALSUM.
+/-- Czech FALSUM (@cite{simik-2024} eq. 44), weaker than standard FALSUM.
 
 ⟦FALSUM_1^CZ⟧^g(p) = λw : ∃w' ∈ EPI_{g(1)}(w)[p(w') = 1]. p ∉ CG_w
 
@@ -226,7 +226,7 @@ structure FalsumCZ where
   /-- CG-management: p is not part of the common ground at w. -/
   cgContent : World → Prop
 
-/-- Construct Šimík's FALSUM^CZ for a proposition p.
+/-- Construct @cite{simik-2024}'s FALSUM^CZ for a proposition p.
 
 The attitude holder's epistemic state is modeled via the modal base
 (their epistemic alternatives). -/
@@ -255,13 +255,13 @@ theorem standard_falsum_entails_CZ_definedness
   hStd
 
 -- ============================================================================
--- §5c: Náhodou as Ordering Source Modifier (Šimík 2024 §5.1)
+-- §5c: Náhodou as Ordering Source Modifier (@cite{simik-2024} §5.1)
 -- ============================================================================
 
 /-- *Náhodou* 'by chance' loosens the stereotypical ordering source of
 FALSUM^CZ to include more remote (less stereotypical) possibilities.
 
-Šimík (2024 §5.1): "its function is to 'loosen' the default stereotypical
+@cite{simik-2024} §5.1: "its function is to 'loosen' the default stereotypical
 ordering source of the epistemic modal contributed by FALSUM so as to
 include more remote (less likely) possibilities in the quantification domain
 of the modal."

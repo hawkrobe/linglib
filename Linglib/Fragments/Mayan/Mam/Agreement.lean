@@ -44,7 +44,7 @@ through agreement patterns.
 
 -/
 
-namespace Fragments.Mam
+namespace Fragments.Mayan.Mam
 
 open Minimalism
 
@@ -210,4 +210,4 @@ theorem inventory_covers_positions :
     (all are core cases at rank 6, trivially no gaps). -/
 theorem inventory_valid : Core.validInventory caseInventory = true := by native_decide
 
-end Fragments.Mam
+end Fragments.Mayan.Mam

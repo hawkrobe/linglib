@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.CaseFilter
-import Linglib.Fragments.Mam.Agreement
+import Linglib.Fragments.Mayan.Mam.Agreement
 
 /-!
 # Case Theories: Agree vs. Dependent Case vs. Voice-Based
@@ -103,9 +103,9 @@ theorem transitive_acc :
 /-- Voice-based case produces three distinct underlying cases.
     This is the tripartite system visible through agreement patterns. -/
 theorem voice_based_tripartite :
-    Fragments.Mam.MamArgPosition.agent.case ≠ Fragments.Mam.MamArgPosition.patient.case ∧
-    Fragments.Mam.MamArgPosition.agent.case ≠ Fragments.Mam.MamArgPosition.intranS.case ∧
-    Fragments.Mam.MamArgPosition.patient.case ≠ Fragments.Mam.MamArgPosition.intranS.case := by
+    Fragments.Mayan.Mam.MamArgPosition.agent.case ≠ Fragments.Mayan.Mam.MamArgPosition.patient.case ∧
+    Fragments.Mayan.Mam.MamArgPosition.agent.case ≠ Fragments.Mayan.Mam.MamArgPosition.intranS.case ∧
+    Fragments.Mayan.Mam.MamArgPosition.patient.case ≠ Fragments.Mayan.Mam.MamArgPosition.intranS.case := by
   exact ⟨by decide, by decide, by decide⟩
 
 /-- Dependent case also produces a tripartite system (ERG + ACC + ABS). -/
@@ -132,9 +132,9 @@ theorem agree_anticausative_no_acc :
 /-- Voice-based: Voice assigns case DIRECTLY based on argument position,
     not via probing. The agent gets ERG, the patient gets ACC. -/
 theorem voice_assigns_case_by_position :
-    Fragments.Mam.MamArgPosition.agent.case = .erg ∧
-    Fragments.Mam.MamArgPosition.patient.case = .acc ∧
-    Fragments.Mam.MamArgPosition.intranS.case = .abs := ⟨rfl, rfl, rfl⟩
+    Fragments.Mayan.Mam.MamArgPosition.agent.case = .erg ∧
+    Fragments.Mayan.Mam.MamArgPosition.patient.case = .acc ∧
+    Fragments.Mayan.Mam.MamArgPosition.intranS.case = .abs := ⟨rfl, rfl, rfl⟩
 
 /-- Dependent case: Voice flavor is irrelevant. The algorithm only
     cares about NP configuration (higher vs. lower) and lexical case. -/

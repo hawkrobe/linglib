@@ -17,8 +17,8 @@ import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
-import Linglib.Fragments.Mam.Agreement
-import Linglib.Fragments.Kaqchikel.Agreement
+import Linglib.Fragments.Mayan.Mam.Agreement
+import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 
 /-!
 # Dependent Case ↔ Inventory Bridge
@@ -212,12 +212,12 @@ theorem basque_structural_coverage :
 
 theorem mam_structural_coverage :
     (structuralCasesFor mamLangType).all
-      (λ cv => Fragments.Mam.caseInventory.any (· == cv.toCase)) = true := by
+      (λ cv => Fragments.Mayan.Mam.caseInventory.any (· == cv.toCase)) = true := by
   native_decide
 
 theorem kaqchikel_structural_coverage :
     (structuralCasesFor kaqchikelLangType).all
-      (λ cv => Fragments.Kaqchikel.caseInventory.any (· == cv.toCase)) = true := by
+      (λ cv => Fragments.Mayan.Kaqchikel.caseInventory.any (· == cv.toCase)) = true := by
   native_decide
 
 -- ============================================================================

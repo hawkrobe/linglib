@@ -522,18 +522,19 @@ import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Morph
 import Linglib.Fragments.Spanish.Negation
-import Linglib.Fragments.Mam.VoiceSystem
-import Linglib.Fragments.Mam.Agreement
-import Linglib.Fragments.Mam.ExtractionMorphology
+import Linglib.Fragments.Mayan.Params
+import Linglib.Fragments.Mayan.Mam.VoiceSystem
+import Linglib.Fragments.Mayan.Mam.Agreement
+import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Mixtec.SMPM.Basic
-import Linglib.Fragments.Kaqchikel.AgentFocus
-import Linglib.Fragments.Kaqchikel.Agreement
-import Linglib.Fragments.Kiche.Agreement
-import Linglib.Fragments.Kiche.ExtractionMorphology
-import Linglib.Fragments.Kiche.VoiceSystem
-import Linglib.Fragments.Qanjobal.Agreement
-import Linglib.Fragments.Qanjobal.AgentFocus
-import Linglib.Fragments.Chol.Agreement
+import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
+import Linglib.Fragments.Mayan.Kaqchikel.Agreement
+import Linglib.Fragments.Mayan.Kiche.Agreement
+import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
+import Linglib.Fragments.Mayan.Kiche.VoiceSystem
+import Linglib.Fragments.Mayan.Qanjobal.Agreement
+import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
+import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Malagasy.Relativization
@@ -677,6 +678,7 @@ import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
 import Linglib.Phenomena.Ellipsis.Studies.Saab2026
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
 import Linglib.Phenomena.Ellipsis.Studies.GinzburgCooper2004
+import Linglib.Phenomena.Ellipsis.Studies.Landau2026
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.FillerGap.Basic
@@ -1064,6 +1066,7 @@ import Linglib.Phenomena.WordOrder.Studies.Hudson1984
 import Linglib.Phenomena.WordOrder.Studies.SchlotterbeckWang2023
 import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
+import Linglib.Phenomena.WordOrder.Studies.AlexeyenkoZeijlstra2025
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core

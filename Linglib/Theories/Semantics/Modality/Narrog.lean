@@ -255,91 +255,11 @@ theorem imperative_face_threatening :
 theorem strong_weak_differ_only_in_performativity :
     strongObligation.toRegion = weakObligation.toRegion := rfl
 
--- ============================================================================
--- §6. Cross-Linguistic Modal Changes (Bybee et al. 1994 via Narrog Table 2)
--- ============================================================================
+/-! ## §6. Cross-Linguistic Modal Changes
 
-/-- An attested cross-linguistic modal meaning change.
-
-    Source: @cite{bybee-perkins-pagliuca-1994} ch. 6, tabulated in
-    @cite{narrog-2010} Table 2. `gramCount` = number of "grams" (markers)
-    in the sample exhibiting this change. -/
-structure ModalChange where
-  label : String
-  source : NarrogRegion
-  target : NarrogRegion
-  gramCount : Nat
-  deriving Repr
-
-/-- The 8 most common cross-linguistic changes in modal meanings. -/
-def commonChanges : List ModalChange :=
-  [ -- #1: future/prediction → imperative (13 grams)
-    ⟨"future/prediction → imperative",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.volitive, .mood⟩, 13⟩
-  , -- #2: root possibility → permission (9 grams)
-    ⟨"root possibility → permission",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.volitive, .speakerOriented⟩, 9⟩
-  , -- #3: root/epistemic possibility → admonitive (5 grams)
-    -- Target is volitive: Narrog p. 397 explicitly groups #1-3 as
-    -- going "from non-volitive to volitive"
-    ⟨"root/epistemic possibility → admonitive",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.volitive, .mood⟩, 5⟩
-  , -- #4: obligation → imperative (4 grams)
-    ⟨"obligation → imperative",
-     ⟨.volitive, .speakerOriented⟩, ⟨.volitive, .mood⟩, 4⟩
-  , -- #5: ability/root possibility → epistemic possibility (4 grams)
-    ⟨"ability → epistemic possibility",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.nonVolitive, .speakerOriented⟩, 4⟩
-  , -- #6: strong obligation → certainty (3 grams)
-    ⟨"strong obligation → certainty",
-     ⟨.volitive, .speakerOriented⟩, ⟨.nonVolitive, .speakerOriented⟩, 3⟩
-  , -- #7: weak obligation → probability (2 grams)
-    ⟨"weak obligation → probability",
-     ⟨.volitive, .speakerOriented⟩, ⟨.nonVolitive, .speakerOriented⟩, 2⟩
-  , -- #8: prediction/future → probability (2 grams)
-    ⟨"prediction/future → probability",
-     ⟨.nonVolitive, .eventOriented⟩, ⟨.nonVolitive, .speakerOriented⟩, 2⟩
-  ]
-
-/-- **Directionality of change**: every attested change increases (or maintains)
-    speaker-orientation. This is Narrog's central claim — modal meanings always
-    shift upward in the semantic map, regardless of volitivity.
-
-    @cite{narrog-2010} §3.1: "modal meanings always shift in the direction
-    of increased speaker-orientation." -/
-theorem directionality :
-    commonChanges.all (λ c => c.source.orientation ≤ c.target.orientation) = true := by
-  native_decide
-
-/-- No attested change decreases speaker-orientation. -/
-theorem no_decrease :
-    commonChanges.all (λ c => !(c.target.orientation.toNat < c.source.orientation.toNat))
-    = true := by native_decide
-
-/-- Changes #6 and #7 cross the volitivity boundary (volitive to non-volitive)
-    while maintaining speaker-orientation level. This shows volitivity is
-    orthogonal to the directionality of change. Changes #1-3 also cross
-    volitivity (non-volitive to volitive) but simultaneously increase
-    speaker-orientation, so they are not counted by this filter. -/
-theorem volitivity_crossing :
-    (commonChanges.filter (λ c =>
-      c.source.volitivity != c.target.volitivity &&
-      c.source.orientation == c.target.orientation)).length = 2 := by native_decide
-
-/-- Changes #1, #2, #3 go from non-volitive to volitive: the "unexpected"
-    direction per @cite{narrog-2010} p. 397. These are the three most frequent
-    cross-linguistic changes (13, 9, 5 grams respectively). -/
-theorem nonvolitive_to_volitive_changes :
-    (commonChanges.filter (λ c =>
-      c.source.volitivity == .nonVolitive &&
-      c.target.volitivity == .volitive)).length = 3 := by native_decide
-
-/-- End-to-end: the speaker-orientation to subjectivity bridge preserves
-    the directionality claim. Every attested change that increases
-    speaker-orientation also increases (or maintains) subjectivity level. -/
-theorem directionality_via_subjectivity :
-    commonChanges.all (λ c =>
-      c.source.orientation.toSubjectivityLevel ≤
-      c.target.orientation.toSubjectivityLevel) = true := by native_decide
+Diachronic modal change data and directionality theorems are now in
+`Theories.Diachronic.ModalChange`, which imports this file and uses
+`NarrogRegion` and `SpeakerOrientationLevel` to formalize the claim
+that modal meanings always shift upward in the semantic map. -/
 
 end Semantics.Modality.Narrog

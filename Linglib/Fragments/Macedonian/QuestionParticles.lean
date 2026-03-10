@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Macedonian Question Particles
-@cite{mitkovska-saraevi-2024}
+@cite{mitkovska-saraevi-2024} @cite{simik-2024}
 
 Lexical entries for Macedonian interrogative particles.
 
@@ -13,7 +13,7 @@ Lexical entries for Macedonian interrogative particles.
 | дали | dali | neutral PQ | CP | none |
 
 Macedonian *dali* can introduce negative PQs without triggering epistemic
-bias, unlike Bulgarian *li* (Šimík 2024 ex. 32). Mitkovska, Bužarovska &
+bias, unlike Bulgarian *li* (@cite{simik-2024} ex. 32). Mitkovska, Bužarovska &
 Saračević (2024) contrast *dali* with biased particles *zar* and *neli*.
 
 ## Cross-Module Connections
@@ -41,7 +41,7 @@ structure QParticleEntry where
   negationTriggersBias : Bool
   deriving Repr, DecidableEq, BEq
 
-/-- дали dali — clause-initial PQ particle (Šimík 2024 ex. 32).
+/-- дали dali — clause-initial PQ particle (@cite{simik-2024} ex. 32).
 Unlike Bulgarian li, dali + negation is unbiased. -/
 def dali : QParticleEntry where
   form := "дали"
@@ -62,7 +62,7 @@ theorem dali_neutral :
   ⟨rfl, rfl⟩
 
 /-- dali + negation does NOT trigger bias (unlike Bulgarian li).
-This is the key Macedonian-Bulgarian contrast (Šimík 2024 ex. 32). -/
+This is the key Macedonian-Bulgarian contrast (@cite{simik-2024} ex. 32). -/
 theorem dali_neg_unbiased : dali.negationTriggersBias = false := rfl
 
 end Fragments.Macedonian.QuestionParticles

@@ -30,7 +30,7 @@ only when no case competitor exists — i.e., intransitives).
 **Note**: Not all tripartite systems use dependent case. SJA Mam
 achieves tripartite alignment via inherent case from Voice (ERG for agents,
 ACC for objects) plus structural case from Infl (ABS for intransitive S).
-See `Fragments.Mam.Agreement` for the Agree-based analysis.
+See `Fragments.Mayan.Mam.Agreement` for the Agree-based analysis.
 
 ## Key Application: @cite{ozaki-2025}
 

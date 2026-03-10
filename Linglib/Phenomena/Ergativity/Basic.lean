@@ -1,4 +1,5 @@
 import Linglib.Core.Case.Basic
+import Linglib.Fragments.Mayan.Params
 
 /-!
 # The Mayan Alignment Puzzle
@@ -80,24 +81,9 @@ theorem patterns_mirror :
 -- § 4: Mayan Absolutive Parameter (observable basis)
 -- ============================================================================
 
-/-- The position of absolutive agreement morphemes relative to the verb
-    stem. This is an observable morphological parameter, not a theoretical
-    claim — it can be determined from the linear order of morphemes in the
-    verb-aspect complex.
-
-    - **HIGH-ABS**: absolutive immediately follows the aspect marker
-      (pre-stem). Template: ASP-ABS-ERG-ROOT-SUFFIX.
-    - **LOW-ABS**: absolutive follows the verb stem (post-stem).
-      Template: ASP-ERG-ROOT-SUFFIX-ABS.
-
-    @cite{coon-mateo-pedro-preminger-2014} observe (extending @cite{tada-1993})
-    that this morphological parameter correlates with extraction asymmetries:
-    overwhelmingly, HIGH-ABS languages exhibit syntactic ergativity (a ban
-    on extracting transitive subjects) while LOW-ABS languages do not. -/
-inductive ABSPosition where
-  | high  -- ABS on aspect marker (pre-stem)
-  | low   -- ABS on verb stem (post-stem)
-  deriving DecidableEq, BEq, Repr
+-- `ABSPosition` is defined in `Fragments.Mayan.Params` and re-exported here
+-- for backward compatibility.
+export Fragments.Mayan (ABSPosition)
 
 -- ============================================================================
 -- § 5: Tada's Generalization

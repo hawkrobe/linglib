@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Questions.Partition
 import Linglib.Theories.Semantics.Questions.PragmaticAnswerhood
+import Linglib.Theories.Semantics.Questions.Answerhood
 
 /-!
 # Questions/MentionSome.lean
@@ -427,23 +428,59 @@ def cumulativeAnswer {W E : Type*} [DecidableEq E]
 
 
 /-!
-## Grounding in Semantics.Montague.Quantifiers
+## Categorematic Quantifier Grounding
 
-Per CLAUDE.md, RSA/derived semantics should be grounded in Montague semantics.
-The existential in I-MS corresponds to Montague's existential quantifier.
-
-The I-MS rule uses: ∃x[β'(x) ∧...]
-This ∃ is the same existential quantifier from Semantics.Montague.Quantifiers.existsSome.
+@cite{belnap-1982}'s categorematic principle: the same quantifier words (every,
+some, most) work identically in declarative and interrogative contexts. The ∃
+in I-MS is structurally the same generalized-quantifier application as
+`some_sem` in `Semantics.Lexical.Determiner.Quantifier`: both compute
+`domain.any (λ x => restrictor(x) ∧ scope(x))`.
 -/
 
-/-- The existential quantifier used in I-MS is Montague's ∃.
+/-- GQ application: `∃x ∈ domain. R(x) ∧ S(x)`. This is the shared
+    computation underlying both declarative `some_sem` and interrogative I-MS. -/
+def gqApply {E : Type*} (domain : List E) (restrictor : E → Bool) (scope : E → Bool) : Bool :=
+  domain.any (λ x => restrictor x && scope x)
 
-This connects the mention-some semantics to compositional Montague semantics,
-ensuring the analysis is grounded rather than stipulated. -/
-def mentionSomeUsesMontagueExistential : Bool := true
+/-- @cite{belnap-1982}'s categorematic principle: `applyToProperty` factors as
+    `gqApply(whDomain, abstract(w), λx. Q(yn-question(x)))` — the same GQ
+    existential used in declarative `some_sem`. -/
+theorem applyToProperty_eq_gqApply {W E : Type*} [DecidableEq E]
+    (msi : MentionSomeInterrogative W E)
+    (Q : GSQuestion W → Bool) (w : W) :
+    msi.applyToProperty Q w =
+    gqApply msi.whDomain (msi.abstract w) (λ x => Q (yesNoQuestionFor msi.abstract x)) := rfl
 
--- TODO: Full compositional grounding requires proving the ∃ in
--- MentionSomeInterrogative.applyToProperty matches
--- Semantics.Montague.Quantifiers.existsSome
+
+/-!
+## Partial Answer Taxonomy
+
+@cite{belnap-1982} distinguishes direct answers (complete, non-redundant) from
+partial and eliminative answers. Two partial-answer definitions exist in linglib:
+
+- `Answerhood.isPartialAnswer`: p overlaps with some but not all cells (p
+  eliminates at least one possibility)
+- `partialAnswer` (this file): p overlaps with at least two cells (p doesn't
+  pin down a unique cell)
+
+`isPartialAnswer` is strictly stronger: it additionally requires that p fails
+to overlap with at least one cell (ruling out tautological propositions).
+-/
+
+open Semantics.Questions.Answerhood in
+/-- The two partial-answer notions agree on genuine partial answers but diverge
+    on tautologies. Concrete witness on `Fin 3` with the identity partition. -/
+theorem partial_answer_notions_relationship :
+    let q : GSQuestion (Fin 3) := QUD.ofProject id
+    let worlds : List (Fin 3) := [0, 1, 2]
+    let p : Fin 3 → Bool := λ w => decide (w.val < 2)
+    -- Both agree: p (true at 0,1 but not 2) is partial by both definitions
+    isPartialAnswer p q worlds = true ∧
+    partialAnswer p q worlds = true ∧
+    -- Diverge: tautology overlaps all cells — partialAnswer says yes,
+    -- isPartialAnswer says no (doesn't eliminate any cell)
+    isPartialAnswer (λ _ => true) q worlds = false ∧
+    partialAnswer (λ _ => true) q worlds = true := by
+  native_decide
 
 end Semantics.Questions.MentionSome

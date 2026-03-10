@@ -24,7 +24,7 @@ language-specific clause sizes to the ClauseSpine and VoiceHead abstractions.
 
 -/
 
-namespace Fragments.Mam
+namespace Fragments.Mayan.Mam
 
 -- ============================================================================
 -- § 1: Mam Voice Head
@@ -204,4 +204,4 @@ theorem mam_is_active_passive :
 theorem mam_no_oblique_pivots :
     mamVoiceSystem.distinguishesObliques = false := rfl
 
-end Fragments.Mam
+end Fragments.Mayan.Mam

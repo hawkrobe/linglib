@@ -36,7 +36,7 @@ extraction in Mam (Mayan)". Examples cited by section/example number.
 
 -/
 
-namespace Fragments.Mam
+namespace Fragments.Mayan.Mam
 
 -- ============================================================================
 -- § 1: Clause Types
@@ -373,4 +373,4 @@ theorem mam_marks_oblique :
 theorem mam_no_mark_subject :
     mamExtractionProfile.marks .subject = false := by native_decide
 
-end Fragments.Mam
+end Fragments.Mayan.Mam

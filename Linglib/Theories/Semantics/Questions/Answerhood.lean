@@ -3,7 +3,12 @@ import Linglib.Theories.Semantics.Questions.Hamblin
 
 /-
 The ANS operator and the answerhood thesis (@cite{groenendijk-stokhof-1984}, Ch. I).
-@cite{belnap-1970}
+@cite{belnap-1972} @cite{belnap-1982}
+
+Includes @cite{belnap-1982}'s Unique Answer Fallacy (questions can have multiple
+complete true answers), Distributivity Principle (knowing-wh reduces to
+knowing-that for each individual), and Distributivity Test (negative criterion
+for ruling out candidate answers).
 
 -/
 
@@ -213,6 +218,15 @@ theorem ans_situation_dependent {W : Type*} (q : GSQuestion W) (w v : W)
   rw [q.symm] at hDiff
   simp [hDiff]
 
+/-- @cite{belnap-1982}'s Unique Answer Fallacy: it is a fallacy to assume that each
+    question has a unique complete true answer. In the G&S framework, `ans q w`
+    varies with the index `w` — the same question Q yields different complete true
+    answers at different worlds. -/
+theorem unique_answer_fallacy {W : Type*} (q : GSQuestion W) (w v : W)
+    (hDiff : q.sameAnswer w v = false) :
+    ∃ u, ans q w u ≠ ans q v u :=
+  ans_situation_dependent q w v hDiff
+
 /-- Partial answer: eliminates some cells but not all. -/
 def isPartialAnswer {W : Type*} (p : W → Bool) (q : GSQuestion W)
     (worlds : List W) : Bool :=
@@ -238,6 +252,84 @@ theorem exhaustive_answers {W E : Type*} [DecidableEq E]
   · intro h
     rw [beq_iff_eq]
     exact List.map_eq_map_iff.mpr λ e he => by simp [h e he]
+
+/-- @cite{belnap-1982}'s Distributivity Principle: knowing the answer to a wh-question
+    is equivalent to knowing, for each individual, whether the predicate holds.
+
+    An agent whose epistemic state (the set of worlds they consider possible) is
+    `epState` *knows the answer to Q at w* iff their state is a subset of
+    `ans(Q, w)` — i.e., every world they consider possible agrees with w on the
+    full extension of the predicate.
+
+    The Distributivity Principle says this is equivalent to knowing each atomic
+    fact: for every entity e in the domain, the agent knows whether `pred e` holds.
+    This bridges question-embedding ("knows who walks") and propositional attitudes
+    ("knows that John walks ∧ knows that Mary walks ∧ ..."). -/
+theorem distributivity_principle {W E : Type*} [DecidableEq E]
+    (domain : List E) (pred : E → W → Bool) (w : W)
+    (epState : W → Bool) :
+    let q := GSQuestion.ofProject (λ w' => domain.map (λ x => pred x w'))
+    (∀ v, epState v = true → ans q w v = true) ↔
+    (∀ e ∈ domain, ∀ v, epState v = true → pred e v = pred e w) := by
+  simp only [exhaustive_answers]
+  constructor
+  · intro h e he v hv; exact (h v hv e he).symm
+  · intro h v hv e he; exact (h e he v hv).symm
+
+/-- @cite{belnap-1982}'s Distributivity Test (§2.4, p. 177): a negative criterion
+    for ruling out candidate answers. For any proposition P and indirect question
+    IQ, if the following is consistent:
+
+        Sally knows that P, but Sally doesn't know IQ.
+
+    then P is NOT an answer to IQ. The test "distributes" the *know* inside the
+    question and onto its answers: if knowing P doesn't suffice to know IQ, then
+    P doesn't answer IQ.
+
+    Formalization: P fails the test for Q at w if there exists an epistemic state
+    (set of worlds the agent considers possible) that is a subset of P (the agent
+    knows P) but NOT a subset of ans(Q, w) (the agent doesn't know Q). -/
+def failsDistributivityTest {W : Type*} (p : W → Bool) (q : GSQuestion W)
+    (w : W) (worlds : List W) : Bool :=
+  -- ∃ epistemic state ⊆ worlds where agent knows P but doesn't know Q
+  -- Approximation: find a world v where p holds but ans(q,w) doesn't
+  worlds.any λ v => p v && !ans q w v
+
+/-- If P passes the Distributivity Test (no witnessing world exists), then knowing
+    P implies knowing Q — i.e., P is at least as informative as Q w.r.t. the
+    partition. This is the contrapositive of the test. -/
+theorem passes_test_implies_answer {W : Type*} (p : W → Bool) (q : GSQuestion W)
+    (w : W) (worlds : List W)
+    (hPasses : failsDistributivityTest p q w worlds = false) :
+    ∀ v ∈ worlds, p v = true → ans q w v = true := by
+  intro v hv hp
+  by_contra h
+  have : failsDistributivityTest p q w worlds = true := by
+    simp only [failsDistributivityTest]
+    rw [List.any_eq_true]
+    exact ⟨v, hv, by simp [hp, Bool.eq_false_iff.mpr h]⟩
+  rw [this] at hPasses; exact absurd hPasses (by simp)
+
+/-- Concrete demonstration of the Distributivity Test.
+
+    @cite{belnap-1982}, §2.4, p. 177: "Peter knows that the person who kicked Sam
+    is John, but Peter doesn't know who kicked Sam." This is inconsistent — so
+    *the person who kicked Sam is John* IS an answer to *who kicked Sam*.
+
+    Vs: "Peter knows that China is populous, but Peter doesn't know which person
+    kicked Sam." This IS consistent — so *China is populous* is NOT an answer.
+
+    We verify on `Fin 3` with identity partition (who kicked Sam → full extension):
+    - "the answer is 0" passes the test (knowing the answer IS knowing the question)
+    - "w.val < 2" (an irrelevant fact) fails the test -/
+theorem distributivity_test_examples :
+    let q : GSQuestion (Fin 3) := QUD.ofProject id
+    let worlds : List (Fin 3) := [0, 1, 2]
+    -- "The answer is 0" passes (knowing it entails knowing who kicked Sam)
+    failsDistributivityTest (λ w => decide (w = (0 : Fin 3))) q 0 worlds = false ∧
+    -- "w < 2" fails (knowing it does NOT entail knowing who kicked Sam)
+    failsDistributivityTest (λ w => decide (w.val < 2)) q 0 worlds = true := by
+  native_decide
 
 /-- De dicto answer via a (possibly non-rigid) description. -/
 def deDictoAnswer {W E : Type*} [DecidableEq E]

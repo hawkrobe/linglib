@@ -242,7 +242,7 @@ theorem particle_signatures_distinct :
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- Context Sensitivity (Staňková & Šimík 2024 §6)
+-- Context Sensitivity (@cite{stankova-simik-2024} §6)
 -- ============================================================================
 
 /-! Corpus data (NahodouCorpusData, InterNPQUseCategory) and use category

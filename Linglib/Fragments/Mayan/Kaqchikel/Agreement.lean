@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.Spellout
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
-import Linglib.Fragments.Kaqchikel.AgentFocus
+import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Core.Case.Hierarchy
 
 /-!
@@ -68,7 +68,7 @@ the probe finds no suitable goal, no agreement obtains and a default
 
 -/
 
-namespace Fragments.Kaqchikel
+namespace Fragments.Mayan.Kaqchikel
 
 open Minimalism
 
@@ -495,4 +495,4 @@ theorem inventory_covers_positions :
     (both are core cases at rank 6, trivially no gaps). -/
 theorem inventory_valid : Core.validInventory caseInventory = true := by native_decide
 
-end Fragments.Kaqchikel
+end Fragments.Mayan.Kaqchikel

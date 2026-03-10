@@ -1,5 +1,5 @@
 import Linglib.Core.Interfaces.VoiceSystem
-import Linglib.Fragments.Kiche.Agreement
+import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!
 # K'iche' Voice System Fragment @cite{mondloch-2017}
@@ -61,7 +61,7 @@ This is why `subjectExtraction.wiLicensed = false` in
 *wi*.
 -/
 
-namespace Fragments.Kiche
+namespace Fragments.Mayan.Kiche
 
 -- ============================================================================
 -- § 1: Verb Classes
@@ -325,4 +325,4 @@ def intransitiveOrder : BasicWordOrder := .VS
     between the verb and the subject. -/
 def transitiveOrder : BasicWordOrder := .VOS
 
-end Fragments.Kiche
+end Fragments.Mayan.Kiche

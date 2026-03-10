@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.125] - 2026-03-10
+
+### Added
+- **Phenomena/Ellipsis/Studies/Landau2026.lean**: Formalize Landau 2026 "Silent Resumption: A New Test for Ellipsis" — EIR (Ellipsis-Internal Resumption) test for distinguishing deep vs surface anaphora via BVQ; 11 data points (Hebrew EN/ENP, NCA/AE, NCA/PPE + English do so/VPE, Dutch dat doen, Danish det, Korean null objects); diagnostic comparison with extraction test (Conclusion type); integration theorems connecting to Fragments/Hebrew/Relativization resumptive strategy
+
 ## [0.229.124] - 2026-03-10
 
 ### Added

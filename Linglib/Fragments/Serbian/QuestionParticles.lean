@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Serbian Question Particles
-@cite{todorovic-2023}
+@cite{simik-2024} @cite{todorovic-2023}
 
 Lexical entries for Serbian interrogative particles. Serbian has the richest
 PQ repertoire among Slavic languages (Todorović 2023).
@@ -38,7 +38,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq, BEq
 
-/-- da li — default PQ particle combination (Šimík 2024 ex. 31).
+/-- da li — default PQ particle combination (@cite{simik-2024} ex. 31).
 Particle + verb movement. Neutral baseline. -/
 def daLi : QParticleEntry where
   form := "da li"
@@ -50,7 +50,7 @@ def daLi : QParticleEntry where
   requiresEvidentialBias := false
   requiresEpistemicBias := false
 
-/-- zar — mirative/dubitative particle (RAZVE family, Šimík 2024 §4.2.4).
+/-- zar — mirative/dubitative particle (RAZVE family, @cite{simik-2024} §4.2.4).
 Compatible with both outer and inner negation (like Russian razve). -/
 def zar_ : QParticleEntry where
   form := "zar"

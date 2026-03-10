@@ -50,7 +50,7 @@ Analyzed as the same case-assigning mechanism in environments where
 Infl⁰ is absent.
 -/
 
-namespace Fragments.Qanjobal
+namespace Fragments.Mayan.Qanjobal
 
 open Minimalism
 
@@ -257,4 +257,4 @@ def extractionProfile : Interfaces.ExtractionProfile :=
   , distinguishesPosition := true
   , notes := "AF (*-on*) for 3rd person agent extraction; Coon, Mateo Pedro & Preminger 2014" }
 
-end Fragments.Qanjobal
+end Fragments.Mayan.Qanjobal

@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Features
-import Linglib.Phenomena.Ergativity.Basic
+import Linglib.Fragments.Mayan.Params
 
 /-!
 # Q'anjob'al Agreement and Case Fragment @cite{mateo-pedro-2009}
@@ -19,7 +19,7 @@ with Chol on the accusative side because the Restriction on Nominalization
 for a vP lacking an external argument.
 -/
 
-namespace Fragments.Qanjobal
+namespace Fragments.Mayan.Qanjobal
 
 open Minimalism
 
@@ -74,6 +74,6 @@ theorem acc_alignment :
 /-- Q'anjob'al's absolutive morphemes appear in high position (on the
     aspect marker, pre-stem). Observable from morpheme order:
     ASP-ABS-ERG-ROOT-SUFFIX. -/
-def absPosition : Phenomena.Ergativity.ABSPosition := .high
+def absPosition : Fragments.Mayan.ABSPosition := .high
 
-end Fragments.Qanjobal
+end Fragments.Mayan.Qanjobal

@@ -1,5 +1,6 @@
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Theories.Semantics.Modality.Narrog
+import Linglib.Theories.Diachronic.ModalChange
 
 /-!
 # Narrog (2010): (Inter)subjectification in Modality and Mood
@@ -37,6 +38,7 @@ namespace Phenomena.Modality.Studies.Narrog2010
 
 open Core.Modality.DeonticNecessity
 open Semantics.Modality.Narrog
+open Diachronic.ModalChange (commonChanges)
 
 -- ============================================================================
 -- §1. Face-Threatening Potential of Obligation (Derived)

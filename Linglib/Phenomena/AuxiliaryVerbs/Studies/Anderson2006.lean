@@ -1,6 +1,7 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Typology
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Theories.Diachronic.Grammaticalization
 
 /-!
 # Anderson (2006): Auxiliary Verb Constructions
@@ -34,38 +35,13 @@ open Phenomena.AuxiliaryVerbs.Typology
 open Phenomena.AuxiliaryVerbs.NegativeAuxiliaries (NegStrategy)
 open Phenomena.AuxiliaryVerbs.Selection
 open Core.Morphology (InflDistribution MorphCategory)
+open Diachronic.Grammaticalization (GramStage AVCSource)
 
 /-! ## Grammaticalization Cline
 
-@cite{anderson-2006} Ch 7: auxiliaries arise diachronically from full verbs
-and may further grammaticalize through clitic and affix stages. The cline
-is universally unidirectional: movement is always toward greater
-morphological boundedness. -/
-
-/-- Stage on Anderson's grammaticalization cline for auxiliary elements. -/
-inductive GramStage where
-  | fullVerb    -- lexical verb with full argument structure
-  | auxiliary   -- grammaticalized verb, restricted morphosyntax
-  | clitic      -- phonologically reduced, syntactically dependent
-  | affix       -- bound morpheme, part of the verbal word
-  | zero        -- no overt marker (grammaticalization endpoint)
-  deriving DecidableEq, Repr, BEq
-
-/-- Boundedness increases monotonically along the cline. -/
-def GramStage.boundedness : GramStage → Nat
-  | .fullVerb  => 0
-  | .auxiliary => 1
-  | .clitic    => 2
-  | .affix     => 3
-  | .zero      => 4
-
-/-- The cline is strictly ordered: each stage is more bound than the previous. -/
-theorem cline_strictly_ordered :
-    GramStage.fullVerb.boundedness < GramStage.auxiliary.boundedness ∧
-    GramStage.auxiliary.boundedness < GramStage.clitic.boundedness ∧
-    GramStage.clitic.boundedness < GramStage.affix.boundedness ∧
-    GramStage.affix.boundedness < GramStage.zero.boundedness :=
-  ⟨by decide, by decide, by decide, by decide⟩
+The grammaticalization cline and source constructions are now in
+`Theories.Diachronic.Grammaticalization`. `GramStage` and `AVCSource`
+are opened from there. -/
 
 /-- The grammaticalization cline maps to `MorphStatus` categories.
     Auxiliaries and full verbs are free words; clitics and affixes map to
@@ -89,27 +65,6 @@ def negStrategyStage : NegStrategy → GramStage
 theorem negAffix_more_grammaticalized :
     (negStrategyStage .negAffix).boundedness >
     (negStrategyStage .negVerb).boundedness := by decide
-
-/-! ## Source Constructions
-
-@cite{anderson-2006} identifies four main diachronic sources for AVCs.
-These are the construction types from which auxiliaries grammaticalize. -/
-
-/-- Diachronic source construction from which an AVC grammaticalizes. -/
-inductive AVCSource where
-  /-- Serial verb constructions: two verbs in sequence, one
-      grammaticalizes into an auxiliary. Common in West African, SE Asian. -/
-  | serialVerb
-  /-- Complement-taking verb: matrix verb takes clausal complement,
-      the matrix verb grammaticalizes. Common source for modals. -/
-  | complementTaking
-  /-- Motion verb: 'go'/'come' grammaticalize into future/past markers.
-      Cross-linguistically one of the most common paths. -/
-  | motionVerb
-  /-- Postural verb: 'sit'/'stand'/'lie' grammaticalize into
-      progressive/habitual aspect markers. -/
-  | posturalVerb
-  deriving DecidableEq, Repr, BEq
 
 /-! ## Pattern Coverage Theorems -/
 

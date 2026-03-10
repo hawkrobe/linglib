@@ -1,7 +1,16 @@
 /-
 # Multiple Wh-Questions
+@cite{belnap-1982} @cite{groenendijk-stokhof-1984}
 
 Questions with multiple wh-phrases require n-place term answers.
+@cite{belnap-1982} §4 argues for simultaneous introduction of multiple
+*which*-phrases (as opposed to one-at-a-time introduction) — the question
+asks for a unique pair, not sequential individuals.
+
+(Separately, @cite{belnap-1982} §5 argues that different wh-words —
+*which*, *who*, *where*, *what* — should be treated as distinct syntactic
+categories with different answer types, contra the assumption that all
+wh-words are interchangeable.)
 
 ## Examples
 

@@ -64,7 +64,7 @@ formal. The formal forms (laal SG, alaq PL) are syntactically
 postverbal and do not participate in the prefix paradigm.
 -/
 
-namespace Fragments.Kiche
+namespace Fragments.Mayan.Kiche
 
 -- ============================================================================
 -- § 1: Person/Number Features
@@ -330,4 +330,4 @@ theorem pronoun_setB_correspondence :
     independentPronoun (phi .second .pl) = "ix"  :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Kiche
+end Fragments.Mayan.Kiche

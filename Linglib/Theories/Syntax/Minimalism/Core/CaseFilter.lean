@@ -16,7 +16,7 @@ Case assigners (Agree-based):
 
 For the competing dependent-case approach,
 see `DependentCase.lean`. For inherent/Voice-based case,
-see `Voice.lean` and `Fragments.Mam.Agreement`.
+see `Voice.lean` and `Fragments.Mayan.Mam.Agreement`.
 
 -/
 

@@ -4,11 +4,11 @@ import Linglib.Theories.Semantics.Modality.BiasedPQ
 
 /-!
 # Czech Three-Way Negation: Cross-Linguistic Typology
-@cite{repp-2013} @cite{romero-2024} @cite{stakov-2026} @cite{stakov-imk-2024} @cite{gartner-gyuris-2017}
+@cite{repp-2013} @cite{romero-2024} @cite{stakov-2026} @cite{stankova-simik-2024} @cite{gartner-gyuris-2017} @cite{simik-2024}
 
 Bridges between the core three-way negation distinction (CzechThreeWayNeg.lean)
-and cross-linguistic frameworks: @cite{romero-2024} PQ typology, Šimík (2024) Czech
-PQ forms, Staňková & Šimík (2024) verb position / context sensitivity.
+and cross-linguistic frameworks: @cite{romero-2024} PQ typology, @cite{simik-2024} Czech
+PQ forms, @cite{stankova-simik-2024} verb position / context sensitivity.
 
 Also contains example data (CzechNegDatum), bias profiles, and corpus data.
 
@@ -113,7 +113,7 @@ theorem only_outer_requires_focus :
 -- §9: Example Data
 -- ============================================================================
 
-/-- Verb position in Czech polar questions (Staňková & Šimík 2024 §2).
+/-- Verb position in Czech polar questions (@cite{stankova-simik-2024} §2).
 
 Czech PQs use two word orders, determined by whether the finite verb
 moves to clause-initial position:
@@ -374,11 +374,11 @@ theorem czech_refines_loNQ :
   ⟨rfl, by decide, by (unfold signature licenses; decide)⟩
 
 -- ============================================================================
--- §14: Czech PQ Form Typology (Šimík 2024 §3.2)
+-- §14: Czech PQ Form Typology (@cite{simik-2024} §3.2)
 -- ============================================================================
 
 /-- Czech polar question forms: the 2×2 grid of [Interrogative vs Declarative]
-× [Positive vs Negative] (Šimík 2024 §3.2, exx. 11–17).
+× [Positive vs Negative] (@cite{simik-2024} §3.2, exx. 11–17).
 
 Czech uses two independent formal strategies to express bias:
 1. **Negation**: positive vs negative (ne- prefix)
@@ -386,13 +386,13 @@ Czech uses two independent formal strategies to express bias:
 
 This is finer-grained than Romero's PosQ/LoNQ/HiNQ, because Czech
 declarative PQs (DeclPQ) are a separate grammatical category not present
-in English (Šimík: "declarative PQs represent yet another type of utterance
+in English (@cite{simik-2024}: "declarative PQs represent yet another type of utterance
 with a canonical SVO word order"). -/
 inductive CzechPQForm where
   /-- InterPPQ: Interrogative (VSO), Positive. Default unbiased PQ. -/
   | interPPQ
   /-- InterNPQ: Interrogative (VSO), Negative. Conveys positive epistemic bias.
-      Broader distribution than English HiNQ (Šimík §5). -/
+      Broader distribution than English HiNQ (@cite{simik-2024} §5). -/
   | interNPQ
   /-- DeclPPQ: Declarative (SVO), Positive. Conveys positive evidential bias. -/
   | declPPQ
@@ -402,9 +402,9 @@ inductive CzechPQForm where
 
 /-- Map Czech PQ forms to Romero's cross-linguistic PQ typology.
 
-Šimík's InterNPQ is Romero's HiNQ (outer negation with VSO).
-Šimík's DeclNPQ is Romero's LoNQ (inner/medial negation with SVO).
-Šimík's InterPPQ and DeclPPQ are both Romero's PosQ. -/
+@cite{simik-2024}'s InterNPQ is Romero's HiNQ (outer negation with VSO).
+@cite{simik-2024}'s DeclNPQ is Romero's LoNQ (inner/medial negation with SVO).
+@cite{simik-2024}'s InterPPQ and DeclPPQ are both Romero's PosQ. -/
 def CzechPQForm.toPQForm : CzechPQForm → PQForm
   | .interPPQ => .PosQ
   | .interNPQ => .HiNQ  -- outer negation, verb-initial
@@ -474,7 +474,7 @@ def czechBiasProfile : ContextualEvidence → OriginalBias → List CzechPQForm
   | .againstP, .againstP  => []
 
 /-- InterPPQ is the default (unbiased) Czech PQ — the only form felicitous
-in quiz scenarios where no bias is intended (Šimík 2024 §4.1, ex. 25). -/
+in quiz scenarios where no bias is intended (@cite{simik-2024} §4.1, ex. 25). -/
 theorem interPPQ_is_default :
     (czechBiasProfile .neutral .neutral).contains .interPPQ = true := rfl
 
@@ -490,17 +490,17 @@ theorem declNPQ_requires_negative_evidence :
 
 /-- InterNPQ has the broadest distribution among negative forms —
 it appears in three bias cells, reflecting Czech outer negation's
-broader distribution than English HiNQ (Šimík 2024 §5). -/
+broader distribution than English HiNQ (@cite{simik-2024} §5). -/
 theorem interNPQ_broad_distribution :
     (czechBiasProfile .forP .neutral).contains .interNPQ = true ∧
     (czechBiasProfile .neutral .forP).contains .interNPQ = true ∧
     (czechBiasProfile .againstP .forP).contains .interNPQ = true := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §16: DeclPQ Evidential Bias Generalization (Šimík 2024 §3.2)
+-- §16: DeclPQ Evidential Bias Generalization (@cite{simik-2024} §3.2)
 -- ============================================================================
 
-/-- Šimík's key generalization: Declarative PQs are specialized for conveying
+/-- @cite{simik-2024}'s key generalization: Declarative PQs are specialized for conveying
 evidential bias. The polarity of the DeclPQ matches the polarity of the
 evidential bias — DeclPPQ conveys positive evidential bias, DeclNPQ conveys
 negative evidential bias.
@@ -517,7 +517,7 @@ theorem decl_polarity_matches_evidence :
     (czechBiasProfile .againstP .neutral).contains .declNPQ = true := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §17: Verb Position Readings (Staňková & Šimík, FASL 32 / JSL 33)
+-- §17: Verb Position Readings (@cite{stankova-simik-2024})
 -- ============================================================================
 
 /-- Which negation readings are available for each verb position.
@@ -559,11 +559,11 @@ theorem v1_default_is_hiNQ :
 theorem nonV1_default_is_loNQ :
     VerbPosition.nonV1.defaultReading.toPQForm = .LoNQ := rfl
 
-/-- V1 maps to InterNPQ (Šimík's finer typology). -/
+/-- V1 maps to InterNPQ (@cite{simik-2024}'s finer typology). -/
 theorem v1_default_is_interNPQ :
     VerbPosition.v1.defaultReading.toCzechPQForm = .interNPQ := rfl
 
-/-- nonV1 default maps to DeclNPQ (Šimík's finer typology). -/
+/-- nonV1 default maps to DeclNPQ (@cite{simik-2024}'s finer typology). -/
 theorem nonV1_default_is_declNPQ :
     VerbPosition.nonV1.defaultReading.toCzechPQForm = .declNPQ := rfl
 
@@ -609,17 +609,17 @@ V1 PQs with positive evidential bias were rated very natural (median 6/7).
 
 The broader distribution follows from Czech FALSUM being tied to
 epistemic bias (speaker's possibility assessment) rather than to
-evidential bias. FALSUM^CZ (Šimík 2024 eq. 44) only requires that the
+evidential bias. FALSUM^CZ (@cite{simik-2024} eq. 44) only requires that the
 speaker considers p epistemically possible, regardless of evidence. -/
 theorem czech_falsum_broader_than_english :
     VerbPosition.v1.requiresContextualEvidence = false ∧
     VerbPosition.v1.defaultReading.biasStrength = .none_ := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- §20: Corpus Data (Šimík 2024, fn. 56)
+-- §20: Corpus Data (@cite{simik-2024}, fn. 56)
 -- ============================================================================
 
-/-- Corpus data for *náhodou* in PQs (Šimík 2024 fn. 56).
+/-- Corpus data for *náhodou* in PQs (@cite{simik-2024} fn. 56).
 
 From 100 random occurrences of *náhodou* in PQs (SYN v11, Czech National Corpus):
 - All 100 involved negation
@@ -653,10 +653,10 @@ theorem nahodou_only_ppis :
     nahodouCorpus.ppiIndefinites = nahodouCorpus.withIndefinites := rfl
 
 -- ============================================================================
--- §21: InterNPQ Use Categories (Šimík 2024 §5.2)
+-- §21: InterNPQ Use Categories (@cite{simik-2024} §5.2)
 -- ============================================================================
 
-/-- Categories of InterNPQ use with *náhodou* (Šimík 2024 §5.2, fn. 59).
+/-- Categories of InterNPQ use with *náhodou* (@cite{simik-2024} §5.2, fn. 59).
 
 From 100 random occurrences, the four main categories are:
 1. Prior speaker belief (conflict-resolving PQ) — 14%
@@ -677,7 +677,7 @@ inductive InterNPQUseCategory where
   | hope
   deriving DecidableEq, BEq, Repr
 
-/-- Distribution of InterNPQ+náhodou use categories (Šimík 2024 fn. 59). -/
+/-- Distribution of InterNPQ+náhodou use categories (@cite{simik-2024} fn. 59). -/
 def interNPQDistribution : InterNPQUseCategory → Nat
   | .belief             => 14
   | .explanationSeeking => 40
@@ -685,7 +685,7 @@ def interNPQDistribution : InterNPQUseCategory → Nat
   | .hope               => 20
 
 /-- Explanation-seeking is the most common InterNPQ+náhodou use.
-This motivates Šimík's weaker FALSUM^CZ: the attitude holder merely
+This motivates @cite{simik-2024}'s weaker FALSUM^CZ: the attitude holder merely
 considers p epistemically possible, not that they believe p. -/
 theorem explanationSeeking_most_common :
     interNPQDistribution .explanationSeeking >

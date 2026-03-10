@@ -1,4 +1,4 @@
-import Linglib.Fragments.Mam.ExtractionMorphology
+import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 
 /-!
 # Oblique Extraction Data
@@ -7,7 +7,7 @@ import Linglib.Fragments.Mam.ExtractionMorphology
 
 Theory-neutral empirical data on oblique extraction morphology in SJO Mam.
 
-The primary data is in `Fragments.Mam.ExtractionMorphology`, which defines
+The primary data is in `Fragments.Mayan.Mam.ExtractionMorphology`, which defines
 data points, judgments, and generalizations. Bridge files connecting
 this data to specific theories are in `Phenomena/FillerGap/Bridge/`:
 

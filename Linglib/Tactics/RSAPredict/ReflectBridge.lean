@@ -422,6 +422,11 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   let (lhsRExpr, lhsBounds, rhsRExpr, rhsBounds) ← match builderResult with
     | some (lr, lb, rr, rb) => pure (lr, lb, rr, rb)
     | none => do
+      -- Pre-seed L1/L1_latent cache for any RSAConfig references in the goal.
+      -- This builds the full L0→S1→L1 stack algebraically, bypassing the slow
+      -- S1→S1agent→policy→Finset.sum whnf chain.
+      try tryPreseedL1 persistentReifyCache activeLhs activeRhs
+      catch ex => logInfo m!"rsa_predict: [generic-L1] skipped ({ex.toMessageData})"
       let (lr, lb) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
       let (rr, rb) ← reifyToRExpr persistentReifyCache activeRhs maxDepth
       pure (lr, lb, rr, rb)
@@ -446,8 +451,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   if exactOk then return true
 
   unless lhsBounds.lo > rhsBounds.hi do
-    logInfo m!"rsa_predict: [direct] bounds don't separate (lhs=[{lhsBounds.lo}, {lhsBounds.hi}] rhs=[{rhsBounds.lo}, {rhsBounds.hi}])"
-    return false
+    logInfo m!"rsa_predict: [direct] bounds don't separate at meta-level, trying DAG"
 
   -- Build shared DAG at meta-time (O(unique sub-expressions), not O(tree nodes)).
   -- Dead-expression elimination (iteZero resolution, mul-by-zero, add-of-zero,
@@ -456,6 +460,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   let (dagArrayExpr, lhsIdx, rhsIdx, dagSize) ←
     buildSharedDAG lhsRExpr rhsRExpr cacheAfter
   let t1b ← IO.monoMsNow
+  logInfo m!"rsa_predict: [direct] DAG built ({dagSize} nodes, {t1b - t1}ms)"
 
   try
     -- Skip native_decide on large DAGs (>5K nodes) — native_decide fails

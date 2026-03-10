@@ -1,5 +1,5 @@
-import Linglib.Fragments.Mam.Agreement
-import Linglib.Fragments.Mam.VoiceSystem
+import Linglib.Fragments.Mayan.Mam.Agreement
+import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 
 /-!
@@ -54,7 +54,7 @@ both paths.
 
 namespace Phenomena.Agreement.Studies.Scott2023
 
-open Minimalism Fragments.Mam
+open Minimalism Fragments.Mayan.Mam
 
 -- ============================================================================
 -- § 1: Probe Feature Bundles

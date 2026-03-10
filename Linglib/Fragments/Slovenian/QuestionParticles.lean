@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Slovenian Question Particles
+@cite{simik-2024}
 
 Lexical entries for Slovenian interrogative particles.
 
@@ -12,7 +13,7 @@ Lexical entries for Slovenian interrogative particles.
 | ali | neutral PQ | CP | none |
 
 *ali* is a clause-initial particle, optional in default PQs.
-Incompatible with DeclPQs (Šimík 2024 ex. 28).
+Incompatible with DeclPQs (@cite{simik-2024} ex. 28).
 
 ## Cross-Module Connections
 
@@ -36,7 +37,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq, BEq
 
-/-- ali — clause-initial PQ particle (Šimík 2024 ex. 28).
+/-- ali — clause-initial PQ particle (@cite{simik-2024} ex. 28).
 Optional; incompatible with DeclPQs. No bias requirements. -/
 def ali : QParticleEntry where
   form := "ali"

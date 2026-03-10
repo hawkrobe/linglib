@@ -23,7 +23,7 @@ syntactic/prosodic encoding (word order and focus).
 This file contains per-cell verification theorems and scope generalizations.
 The core types (`NegPosition`, `Diagnostic`, `licenses`) are in
 `Theories.Semantics.Polarity.CzechNegation`. Cross-linguistic bridges to
-@cite{romero-2024}, Šimík (2024), verb position, and bias profiles are in
+@cite{romero-2024}, @cite{simik-2024}, verb position, and bias profiles are in
 `CzechThreeWayNeg.Typology`.
 
 -/

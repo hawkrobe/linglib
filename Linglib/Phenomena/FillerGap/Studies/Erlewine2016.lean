@@ -1,4 +1,4 @@
-import Linglib.Fragments.Kaqchikel.AgentFocus
+import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Theories.Syntax.Minimalism.Core.Position
 
 /-!
@@ -88,7 +88,7 @@ about OT candidate competition.
 
 namespace Phenomena.FillerGap.Studies.Erlewine2016
 
-open Fragments.Kaqchikel Minimalism Core.ConstraintEvaluation
+open Fragments.Mayan.Kaqchikel Minimalism Core.ConstraintEvaluation
 
 -- ============================================================================
 -- § 1: Anti-Locality Grounds the Transitive Crash

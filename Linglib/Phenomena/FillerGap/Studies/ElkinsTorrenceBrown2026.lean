@@ -1,6 +1,6 @@
-import Linglib.Fragments.Mam.ExtractionMorphology
-import Linglib.Fragments.Mam.VoiceSystem
-import Linglib.Fragments.Kiche.ExtractionMorphology
+import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
+import Linglib.Fragments.Mayan.Mam.VoiceSystem
+import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
 
 /-!
@@ -53,7 +53,7 @@ namespace Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
 -- Part I: Cross-Linguistic Comparison
 -- ============================================================================
 
-open Fragments.Mam Fragments.Kiche
+open Fragments.Mayan.Mam Fragments.Mayan.Kiche
 
 -- ============================================================================
 -- § 1: Shared Properties
@@ -66,20 +66,20 @@ theorem both_mark_oblique :
 
 /-- Both exempt temporal obliques from extraction marking. -/
 theorem both_exempt_temporal :
-    (Fragments.Mam.temporalOblExtraction.isTemporal = true ∧
-     Fragments.Mam.temporalOblExtraction.judgment = .blocked) ∧
-    Fragments.Kiche.temporalOblExtraction.wiLicensed = false :=
+    (Fragments.Mayan.Mam.temporalOblExtraction.isTemporal = true ∧
+     Fragments.Mayan.Mam.temporalOblExtraction.judgment = .blocked) ∧
+    Fragments.Mayan.Kiche.temporalOblExtraction.wiLicensed = false :=
   ⟨⟨rfl, rfl⟩, rfl⟩
 
 /-- Neither marks subject extraction (Agent Focus instead). -/
 theorem neither_marks_subject :
     transSubjExtraction.judgment = .blocked ∧
-    Fragments.Kiche.subjectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
+    Fragments.Mayan.Kiche.subjectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
 
 /-- Neither marks object extraction. -/
 theorem neither_marks_object :
     transObjExtraction.judgment = .blocked ∧
-    Fragments.Kiche.objectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
+    Fragments.Mayan.Kiche.objectExtraction.wiLicensed = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 2: Parametric Differences
@@ -89,7 +89,7 @@ theorem neither_marks_object :
     Mam =(y)a' IS licensed with reason extraction; K'ichean *wi* is NOT. -/
 theorem reason_oblique_contrast :
     transOblExtraction.judgment = .licensed ∧
-    Fragments.Kiche.reasonOblExtraction.wiLicensed = false := ⟨rfl, rfl⟩
+    Fragments.Mayan.Kiche.reasonOblExtraction.wiLicensed = false := ⟨rfl, rfl⟩
 
 /-- Mam =(y)a' is conditioned by clause size (Voice must project);
     K'ichean *wi* is conditioned by complementizer presence (FPG). -/
@@ -100,7 +100,7 @@ theorem clause_size_sensitivity :
 
 /-- The FPG holds for K'ichean: matrix *wi* tracks overt complementizer. -/
 theorem kichean_fpg_holds :
-    Fragments.Kiche.ldData.all (λ d =>
+    Fragments.Mayan.Kiche.ldData.all (λ d =>
       d.embeddedType.hasComp == d.wiOnMatrix) = true := by
   native_decide
 
