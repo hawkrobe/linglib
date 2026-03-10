@@ -28,7 +28,7 @@ mechanisms and distributional properties differ.
 | Locus                         | On probe (Voice⁰)  | At extraction site    |
 | Mechanism                     | Agree reflex        | Copy spellout         |
 | Reason obliques ('why')       | =(y)a' ✓            | *wi* ✗                |
-| Fronting Particle Generalization | Does not hold    | Holds                 |
+| FPG (matrix wi ↔ embedded comp) | Does not hold    | Holds                 |
 | Conditioned by clause size    | Yes (Voice project.)| No                    |
 | Multiple spellout in LD       | Yes (per Voice/Dir) | Unclear               |
 
@@ -92,12 +92,17 @@ theorem reason_oblique_contrast :
     Fragments.Kiche.reasonOblExtraction.wiLicensed = false := ⟨rfl, rfl⟩
 
 /-- Mam =(y)a' is conditioned by clause size (Voice must project);
-    K'ichean *wi* is not. -/
+    K'ichean *wi* is conditioned by complementizer presence (FPG). -/
 theorem clause_size_sensitivity :
     MamClauseType.fullCP.projectsVoice = true ∧
     MamClauseType.aspectless.projectsVoice = true ∧
-    MamClauseType.infinitival.projectsVoice = false ∧
-    Fragments.Kiche.frontingParticleGeneralization = true := ⟨rfl, rfl, rfl, rfl⟩
+    MamClauseType.infinitival.projectsVoice = false := ⟨rfl, rfl, rfl⟩
+
+/-- The FPG holds for K'ichean: matrix *wi* tracks overt complementizer. -/
+theorem kichean_fpg_holds :
+    Fragments.Kiche.ldData.all (λ d =>
+      d.embeddedType.hasComp == d.wiOnMatrix) = true := by
+  native_decide
 
 -- ============================================================================
 -- § 3: Theoretical Implications

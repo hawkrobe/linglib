@@ -4,26 +4,32 @@ import Linglib.Core.Interfaces.ExtractionMorphology
 # K'iche' Extraction Morphology Fragment
 @cite{mendes-ranero-2021} @cite{elkins-torrence-brown-2026} @cite{mondloch-2017}
 
-Theory-neutral data on the extraction particle *wi* in K'iche' (and more
-broadly K'ichean Mayan), contrasted with SJO Mam's =(y)a'.
+Theory-neutral data on the extraction particle *wi* (the "fronting
+particle") in K'iche' and Kaqchikel (K'ichean Mayan).
 
 ## The Phenomenon
 
-When an oblique or PP undergoes Ā-movement in K'ichean languages, the
-particle *wi* appears after the verb in the position from which the
-phrase moved. Its distribution differs from Mam =(y)a' in several
-key respects:
+When a low adjunct (locative, instrumental, comitative, indirect object)
+undergoes Ā-extraction in K'ichean languages, the particle *wi* appears
+as a verbal enclitic. M&R analyze *wi* as the result of Chain Reduction
+via Substitution: the lower copy of the moved adjunct (bearing [APPL])
+is substituted by *wi* rather than being deleted.
 
-1. **Locus**: *wi* appears at the extraction site (foot of the Ā-chain),
-   while =(y)a' appears on the probe head (Voice⁰/Dir⁰).
-2. **Analysis**: *wi* is copy spellout,
-   while =(y)a' is an Agree reflex.
-3. **Reason obliques**: *wi* does NOT appear with reason ('why')
-   extraction; =(y)a' DOES.
-4. **Fronting Particle Generalization**:
-   *wi* occurs with phrasal (XP) movement but not head (X⁰) movement.
-   This generalization does not hold for =(y)a', which is conditioned
-   by clause size and oblique status, not movement type.
+## Key Properties
+
+1. **Trigger**: Low adjuncts only — those introduced in Spec,ApplP
+   (instrumentals, locatives, comitatives, indirect objects).
+   Temporal and reason adjuncts do NOT trigger *wi*.
+2. **Obligatoriness**: Obligatory in K'iche', optional in Patzún
+   Kaqchikel, absent in some Kaqchikel dialects (e.g. Tecpán).
+3. **Fronting Particle Generalization** (definition 5 of M&R, first
+   observed by Can Pixabaj 2015): In long-distance extraction from a
+   single embedded clause, the presence of *wi* in the matrix clause
+   is contingent on the presence of an overt complementizer in the
+   embedded clause. Embedded CPs yield *wi* on both predicates;
+   embedded AspPs yield *wi* only on the embedded predicate.
+4. **Not a pronoun, applicative head, movement trigger, or AF morpheme**
+   (M&R §4 rejects all four alternative analyses).
 
 -/
 
@@ -130,10 +136,11 @@ def allData : List KicheExtractionDatum :=
 -- § 3: Generalizations
 -- ============================================================================
 
-/-- *wi* is licensed only with spatial and instrumental obliques —
-    a proper subset of the oblique types that trigger Mam =(y)a'.
-    Specifically, *wi* excludes temporal AND reason obliques, while
-    =(y)a' excludes only temporal obliques. -/
+/-- Among the formalized data points, *wi* is licensed exactly for
+    spatial and instrumental obliques. The full set of *wi*-triggering
+    obliques includes comitatives and indirect objects as well
+    (@cite{mendes-ranero-2021} §2; @cite{elkins-torrence-brown-2026}
+    Table 3), but those are not yet formalized here. -/
 theorem wi_subset_of_obliques :
     allData.all (λ d =>
       d.wiLicensed == (d.extractedType == .obliqueSpatial ||
@@ -150,20 +157,75 @@ theorem wi_not_core_args :
 theorem temporal_exempt : temporalOblExtraction.wiLicensed = false := rfl
 
 -- ============================================================================
--- § 4: The Fronting Particle Generalization (@cite{mendes-ranero-2021})
+-- § 4: Embedded Clause Types and the Fronting Particle Generalization
+--      (@cite{mendes-ranero-2021}, definition (5); Can Pixabaj 2015)
 -- ============================================================================
 
-/-- The Fronting Particle Generalization: *wi* occurs in clauses where
-    phrasal (XP) movement has occurred, but NOT in clauses involving
-    only head (X⁰) movement.
+/-- Embedded clause types relevant for long-distance *wi* distribution.
+    The crucial distinction is whether the embedded clause has an overt
+    complementizer (= CP) or not (= AspP, a structurally reduced clause).
+    @cite{mendes-ranero-2021} §2, exx. (17)–(20), (34)–(37). -/
+inductive KicheEmbeddedClauseType where
+  /-- Full CP with overt complementizer *chi*. -/
+  | cp
+  /-- Reduced AspP without complementizer. -/
+  | aspP
+  deriving DecidableEq, BEq, Repr
 
-    This generalization holds for K'ichean but NOT for Mam =(y)a':
-    =(y)a' is conditioned by clause size (Voice projection) and
-    oblique status, not by movement type (phrasal vs. head).
+/-- Does this clause type have an overt complementizer? -/
+def KicheEmbeddedClauseType.hasComp : KicheEmbeddedClauseType → Bool
+  | .cp => true
+  | .aspP => false
 
-    First discussed by Can Pixabaj (2015); formalized in
-    @cite{mendes-ranero-2021}, definition (5). -/
-def frontingParticleGeneralization : Bool := true
+/-- Long-distance extraction datum for K'ichean *wi*. -/
+structure KicheLongDistanceDatum where
+  label : String
+  reference : String
+  embeddedType : KicheEmbeddedClauseType
+  /-- Does *wi* appear on the matrix predicate? -/
+  wiOnMatrix : Bool
+  /-- Does *wi* appear on the embedded predicate? -/
+  wiOnEmbedded : Bool
+  deriving Repr
+
+/-- LD from embedded CP: *wi* on BOTH matrix and embedded predicates.
+    @cite{mendes-ranero-2021} §3, ex. (34); adapted from Can Pixabaj 2015: 166–167. -/
+def ldFromCP : KicheLongDistanceDatum :=
+  { label := "LD extraction from embedded CP (wi on both)"
+  , reference := "Mendes & Ranero 2021, §3, ex. (34)"
+  , embeddedType := .cp
+  , wiOnMatrix := true
+  , wiOnEmbedded := true }
+
+/-- LD from embedded AspP: *wi* only on embedded predicate, NOT matrix.
+    @cite{mendes-ranero-2021} §3, ex. (35); adapted from Can Pixabaj 2015: 163. -/
+def ldFromAspP : KicheLongDistanceDatum :=
+  { label := "LD extraction from embedded AspP (wi on embedded only)"
+  , reference := "Mendes & Ranero 2021, §3, ex. (35)"
+  , embeddedType := .aspP
+  , wiOnMatrix := false
+  , wiOnEmbedded := true }
+
+def ldData : List KicheLongDistanceDatum := [ldFromCP, ldFromAspP]
+
+/-- **The Fronting Particle Generalization** (@cite{mendes-ranero-2021},
+    definition (5); first discussed by Can Pixabaj 2015):
+
+    In long-distance A'-extraction of low adjuncts from a single
+    embedded clause, the presence of *wi* in the matrix clause is
+    contingent on the presence of an overt complementizer in the
+    embedded clause.
+
+    Structural explanation (M&R §3): C⁰ is a phase head, so when the
+    embedded clause is a CP, the extracted adjunct must stop over in
+    the embedded Spec,CP. Chain Reduction via Substitution applies to
+    this intermediate copy, yielding *wi* on the matrix predicate. When
+    the embedded clause is an AspP (no C⁰, no phase boundary), the
+    adjunct moves directly to the matrix Spec,CP — no intermediate copy,
+    no matrix *wi*. -/
+theorem fronting_particle_generalization :
+    ldData.all (λ d => d.embeddedType.hasComp == d.wiOnMatrix) = true := by
+  native_decide
 
 -- ============================================================================
 -- § 5: Extraction Profile
@@ -176,10 +238,11 @@ def kicheanExtractionProfile : Interfaces.ExtractionProfile :=
   , strategy := .dedicatedMorpheme
   , markedPositions := [.oblique]
   , distinguishesPosition := true
-  , notes := "Particle wi at extraction site (copy spellout); " ++
-             "spatial/instrumental only; temporal and reason exempt; " ++
-             "Fronting Particle Generalization (Mendes & Ranero 2021): " ++
-             "XP-movement only, not X⁰-movement" }
+  , notes := "Fronting particle wi (Chain Reduction via Substitution); " ++
+             "triggered by low adjuncts (spatial, instrumental, etc.); " ++
+             "temporal and reason exempt; obligatory in K'iche', " ++
+             "optional in Patzún Kaqchikel; FPG: matrix wi contingent " ++
+             "on overt complementizer in embedded clause" }
 
 theorem kichean_marks_oblique :
     kicheanExtractionProfile.marks .oblique = true := by native_decide
