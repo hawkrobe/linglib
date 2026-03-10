@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.120] - 2026-03-10
+
+### Changed
+- **Fragments/Kaqchikel/Agreement.lean**: Add `KaqArgPosition.accCase` for non-perfective (accusative) alignment — S/A=ABS (from matrix Infl), O=GEN (from D of nominalized clause). Add `acc_alignment` verification theorem
+- **Phenomena/Ergativity/Studies/Imanishi2020.lean**: Replace weak `kaqchikel_erg_is_setA` bridge with full `kaqchikel_case_to_marker_bridge` matching Chol/Q'anjob'al. Add `acc_case_mirror` (Kaqchikel/Chol accusative cases are swapped) and `end_to_end_all_languages` (parameters→alignment→case→markers chain for all three languages). Fix `@cite` key from `coon-preminger-mateo-pedro-2014` to `coon-mateo-pedro-preminger-2014` (author order)
+- **blog/data/references.bib**: Add `coon-mateo-pedro-preminger-2014` (Mayan Absolutive Parameter source). Update `imanishi-2020` sources to include all new files
+
 ## [0.229.119] - 2026-03-10
 
 ### Added

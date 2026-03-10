@@ -181,13 +181,25 @@ inductive KaqArgPosition where
   | intranS
   deriving DecidableEq, BEq, Repr
 
-/-- Case assignment: ergative-absolutive alignment.
+/-- Case assignment in perfective (ergative) clauses: ergative-absolutive alignment.
     Agent gets ERG (from Voice/v); patient and intranS both get ABS
     (from Infl/T). -/
 def KaqArgPosition.case : KaqArgPosition → CaseVal
   | .agent   => .erg
   | .patient => .abs
   | .intranS => .abs
+
+/-- Case assignment in non-perfective (accusative) clauses
+    (@cite{imanishi-2020}, tables (4)/(115)).
+    Due to the Restriction on Nominalization, the external argument cannot
+    appear inside the nominalized clause. The subject is base-generated as
+    the argument of *ajin* in the matrix clause and receives ABS from matrix
+    Infl. The object is the only DP inside the nominalized clause and
+    receives GEN from D. -/
+def KaqArgPosition.accCase : KaqArgPosition → CaseVal
+  | .agent   => .abs  -- from matrix Infl (argument of ajin)
+  | .patient => .gen  -- from D of nominalized clause
+  | .intranS => .abs  -- from matrix Infl
 
 /-- Is this position φ-Agreed-with?
     In Kaqchikel, ALL three argument positions trigger agreement:
@@ -353,6 +365,13 @@ theorem erg_abs_alignment :
     KaqArgPosition.agent.case ≠ KaqArgPosition.patient.case ∧
     KaqArgPosition.patient.case = KaqArgPosition.intranS.case :=
   ⟨by decide, rfl⟩
+
+/-- Accusative alignment in non-perfective: S/A pattern together (ABS),
+    O is distinct (GEN). Mirror image of Chol/Q'anjob'al. -/
+theorem acc_alignment :
+    KaqArgPosition.agent.accCase = KaqArgPosition.intranS.accCase ∧
+    KaqArgPosition.agent.accCase ≠ KaqArgPosition.patient.accCase :=
+  ⟨rfl, by decide⟩
 
 /-- All three argument positions trigger φ-agreement. -/
 theorem all_positions_agreed :
