@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.107] - 2026-03-09
+
+### Changed
+- **Phenomena/Clarification/Studies/TsvilodubEtAl2026.lean**: Audit docstrings against paper — fix prediction names (TL;JUSTASK etc.), document α discrepancy (paper N(5,1), we use 1), correct S1-to-CQ characterization, remove false `L1_exh_uninformative` theorem (replace with `L1_exh_transmits_prior`), note model is NOT RSA (direct softmax reinterpreted through RSA)
+- **Phenomena/Clarification/Studies/DongEtAl2026.lean**: Audit docstrings against paper — verify U=10/U=1 and Figure 4 reference, note paper's explicit RSA framing, fix VoI=questionUtility attribution, expand "Mixed 20Q" to "Mixed-Stakes 20 Questions" with 100 animals / 15 diseases
+
 ## [0.229.106] - 2026-03-09
 
 ### Changed

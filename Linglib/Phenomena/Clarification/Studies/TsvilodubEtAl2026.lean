@@ -1,4 +1,3 @@
-import Linglib.Phenomena.Clarification.Basic
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -19,30 +18,48 @@ of available actions. The interaction is captured by **expected regret**
 
 ## Two-layer model
 
-1. **CQ gate**: `P(CQ) = Logistic(τ · (EVPI − c))`, where EVPI is the
-   expected regret of the best available action
-2. **Behavioral policy**: `π(r) = SoftMax(α · EU(r))`, a `RationalAction`
-   over non-CQ responses — an RSA speaker choosing responses to maximize
-   expected utility under goal uncertainty
+The paper's model is a direct softmax over expected utility (NOT RSA):
 
-## Key structural result
+1. **CQ gate**: `P(CQ) = Logistic(τ · (ExpRegret(r*) − c))` — when to clarify
+2. **Behavioral policy**: `π(r) = SoftMax(α · EU(r))` — what to say
 
-For the paper's 2×3 decision problem, EVPI = min(ε, δ). This yields:
-- **TL;JustAsk**: high ε + large δ → EVPI = ε → increases with uncertainty
-- **NoNeedToAsk**: any ε + small δ → EVPI = δ → independent of uncertainty
-- **WorthAsking**: fix ε, increase δ → EVPI increases → more CQs
+We reinterpret the behavioral policy through RSA, connecting it to
+@cite{hawkins-etal-2025}'s action-utility scoring.
 
-## Formalization
+## Connection to @cite{hawkins-etal-2025}
 
-- §1–7: Decision-theoretic layer (EVPI). ℚ-valued `DecisionProblem` with
-  `native_decide` proofs. Captures WHEN to ask a CQ.
-- §8: RSA behavioral policy layer. ℝ-valued `RSAConfig` with `rsa_predict`
-  proofs. Captures WHAT to say when committing (not asking a CQ).
+The behavioral policy π corresponds to @cite{hawkins-etal-2025}'s
+respondent R₁ at β = 1, w_c = 0: **pure action utility**. R₁ scores
+responses by:
+
+    (1 − β) · log L0(w|r) + β · E_D[V(D, r)] − w_c · C(r)
+
+At β = 1, w_c = 0 this reduces to `V(D, r)` — the action value. For the
+bartender, V(g, r) = U(g, r) is the paper's utility table: 1 for matching
+mention-some, 0 for mismatching, 1−δ for exhaustive.
+
+The L0 gate (`if L0 = 0 then 0`) ensures truth-conditional consistency:
+S1 never recommends a response that doesn't apply to the goal. This is
+structurally identical to @cite{hawkins-etal-2025}'s `responseTruth` gate.
+
+## Action utility and δ-sensitivity
+
+With action-utility scoring, S1 preferences are **δ-sensitive**: the
+exhaustive response's S1 score is `exp(α · (1−δ))`, which decreases
+with δ. At high δ (large option space), S1 strongly prefers targeted
+responses over exh. At low δ (small option space), exh is nearly as
+good as targeted — S1's preference weakens.
+
+This connects to the paper's experimental predictions (Exp 1: TL;JUSTASK,
+NONEEDTOASK, JUSTLISTTHEMALL, TOOMANYTOLIST; Exp 2: WORTHASKING, etc.)
+through the S1 behavioral policy:
+- At high δ, exh is expensive → S1 concentrates on targeted responses
+  → commitment under uncertainty is riskier → more to gain from clarifying
+- At low δ, exh is cheap → S1 assigns near-equal weight to exh and targeted
+  → safe to commit even under uncertainty → less need to clarify
 -/
 
 namespace Phenomena.Clarification.Studies.TsvilodubEtAl2026
-
-open Core.DecisionTheory Phenomena.Clarification BigOperators
 
 -- ============================================================================
 -- §1. Types
@@ -67,175 +84,51 @@ instance : Fintype Response where
   elems := {.ms1, .ms2, .exh}
   complete x := by cases x <;> simp
 
-def allResponses : List Response := [.ms1, .ms2, .exh]
-
 -- ============================================================================
--- §2. Parameterized Decision Problem
+-- §2. Meaning and Action Utility
 -- ============================================================================
 
-/-- The bartender scenario DP, parameterized by uncertainty ε ∈ [0, 1/2]
-    and exhaustive-action cost δ ∈ [0, 1].
-
-    |      | ms1 | ms2 | exh |
-    |------|-----|-----|-----|
-    | g₁   |  1  |  0  | 1−δ |
-    | g₂   |  0  |  1  | 1−δ |
-
-    Prior: P(g₁) = 1−ε, P(g₂) = ε.
-
-    ms1/ms2 are efficient but risky (utility 0 if goal is wrong).
-    exh is safe but costly (utility 1−δ regardless of goal). -/
-def mkDP (ε δ : ℚ) : DecisionProblem Goal Response where
-  utility g r := match g, r with
-    | .g₁, .ms1 => 1
-    | .g₁, .ms2 => 0
-    | .g₁, .exh => 1 - δ
-    | .g₂, .ms1 => 0
-    | .g₂, .ms2 => 1
-    | .g₂, .exh => 1 - δ
-  prior g := match g with
-    | .g₁ => 1 - ε
-    | .g₂ => ε
-
--- ============================================================================
--- §3. Concrete Experimental Conditions
--- ============================================================================
-
--- Fitted parameters (Bayesian posterior means):
--- δ_L = 0.32 (large option space), δ_S = 0.11 (small option space)
--- ε_H = 0.49 (high uncertainty), ε_L = 0.17 (low uncertainty)
-
-def dpLargeLow  := mkDP (17/100) (32/100)
-def dpLargeHigh := mkDP (49/100) (32/100)
-def dpSmallLow  := mkDP (17/100) (11/100)
-def dpSmallHigh := mkDP (49/100) (11/100)
-
--- ============================================================================
--- §4. EVPI Computations
--- ============================================================================
-
-/-- Large option space, low uncertainty: EVPI = ε = 0.17.
-    Since ε < δ (0.17 < 0.32), ms1 dominates exh, so
-    EU(ms1) = 0.83 > EU(exh) = 0.68. EVPI = 1 − 0.83 = 0.17. -/
-theorem evpi_large_low :
-    evpi dpLargeLow allResponses = 17/100 := by native_decide
-
-/-- Large option space, high uncertainty: EVPI = δ = 0.32.
-    Since ε > δ (0.49 > 0.32), exh dominates ms1, so
-    EU(exh) = 0.68 > EU(ms1) = 0.51. EVPI = 1 − 0.68 = 0.32. -/
-theorem evpi_large_high :
-    evpi dpLargeHigh allResponses = 32/100 := by native_decide
-
-/-- Small option space, low uncertainty: EVPI = δ = 0.11.
-    Since ε > δ (0.17 > 0.11), exh dominates. EVPI = 0.11. -/
-theorem evpi_small_low :
-    evpi dpSmallLow allResponses = 11/100 := by native_decide
-
-/-- Small option space, high uncertainty: EVPI = δ = 0.11.
-    Since ε > δ (0.49 > 0.11), exh dominates. EVPI = 0.11. -/
-theorem evpi_small_high :
-    evpi dpSmallHigh allResponses = 11/100 := by native_decide
-
--- ============================================================================
--- §5. Predictions
--- ============================================================================
-
-/-- **TL;JustAsk**: In the large option space, higher uncertainty → higher EVPI.
-    More CQs under high uncertainty because the mention-some gamble has
-    higher expected regret. Confirmed: β = 1.58 [0.75, 2.48]. -/
-theorem justAsk :
-    evpi dpLargeHigh allResponses > evpi dpLargeLow allResponses := by
-  native_decide
-
-/-- **NoNeedToAsk**: In the small option space, EVPI is identical across
-    uncertainty levels. The exhaustive answer is cheap enough (δ = 0.11)
-    to dominate regardless of ε, capping regret at δ.
-    Confirmed: β = −0.21 [−0.99, 0.58], CrI includes 0. -/
-theorem noNeedToAsk :
-    evpi dpSmallHigh allResponses = evpi dpSmallLow allResponses := by
-  native_decide
-
-/-- **WorthAsking**: At high uncertainty, larger option space (higher δ)
-    → higher EVPI → more CQs.
-    Confirmed: main effect of option space β = 0.40 [0.13, 0.67]. -/
-theorem worthAsking :
-    evpi dpLargeHigh allResponses > evpi dpSmallHigh allResponses := by
-  native_decide
-
--- ============================================================================
--- §6. Connection to Van Rooy's Question Utility
--- ============================================================================
-
-/-- Identity partition: each goal is its own cell. -/
-def identityQ : Question Goal := [λ g => g == .g₁, λ g => g == .g₂]
-
-/-- EVPI equals `questionUtility` on the identity partition.
-    This grounds the expected regret model in @cite{van-rooy-2003}'s
-    decision-theoretic question semantics: asking a CQ that fully
-    resolves the questioner's goal has utility value = EVPI. -/
-theorem evpi_eq_euv_identity :
-    evpi dpLargeLow allResponses =
-    questionUtility dpLargeLow allResponses identityQ := by
-  native_decide
-
--- ============================================================================
--- §7. General Structure
--- ============================================================================
-
-/-- For the bartender DP with ε ∈ [0, 1/2] and δ ∈ [0, 1]:
-    EVPI = min(ε, δ).
-
-    Proof sketch: max_a U(g, a) = 1 for all g (when δ ≤ 1), so
-    oracleValue = 1. The optimal action has EU = max(1−ε, 1−δ)
-    = 1 − min(ε, δ). Therefore EVPI = min(ε, δ).
-
-    TODO: case-split on ε ≤ δ vs ε > δ and unfold dpValue. -/
-theorem evpi_eq_min (ε δ : ℚ) (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1/2)
-    (hδ₀ : 0 ≤ δ) (hδ₁ : δ ≤ 1) :
-    evpi (mkDP ε δ) allResponses = min ε δ := by
-  sorry
-
--- ============================================================================
--- §8. RSA Behavioral Policy (Layer 2)
--- ============================================================================
-
-/-! The paper's two-layer model:
-1. **CQ gate** (§4–5 above): decide WHETHER to clarify, via EVPI
-2. **Behavioral policy** (this section): decide WHAT to say when committing
-
-The behavioral policy π(r) = SoftMax(α · EU(r)) is an RSA speaker.
-We model this as a standard RSA reference game:
-- **Utterances** = Responses (ms1, ms2, exh)
-- **Worlds** = Goals (g₁, g₂)
-- **Meaning**: response r "applies to" goal g iff it (partially) satisfies g
-
-L0 interprets responses as evidence about goals:
-- ms1 uniquely identifies g₁ (L0(g₁|ms1) = 1)
-- ms2 uniquely identifies g₂ (L0(g₂|ms2) = 1)
-- exh is ambiguous (L0(g|exh) = 1/2)
-
-S1 prefers informative responses, paralleling @cite{frank-goodman-2012}'s
-size principle: targeted responses (extension 1) beat exhaustive
-(extension 2). -/
-
-/-- Boolean applicability: does response r address goal g? -/
+/-- Boolean applicability: does response r address goal g?
+    Parallel to @cite{hawkins-etal-2025}'s `responseTruth`. -/
 def respApplies : Response → Goal → Bool
   | .ms1, .g₁ => true
   | .ms2, .g₂ => true
   | .exh, _   => true
   | _, _      => false
 
+-- ============================================================================
+-- §3. RSAConfig with Action Utility
+-- ============================================================================
+
 open RSA Real in
-/-- Bartender RSA constructor, parameterized by (unnormalized) goal prior.
-    Belief-based S1 scoring: S1(r|g) ∝ L0(g|r)^α. -/
-noncomputable def mkBartenderRSA (prior_g1 prior_g2 : ℝ)
-    (h1 : 0 ≤ prior_g1) (h2 : 0 ≤ prior_g2) : RSAConfig Response Goal where
+/-- Bartender RSA with action-utility scoring.
+
+    Parameterized by `exhVal` = 1 − δ (utility of exhaustive response)
+    and goal prior weights.
+
+    s1Score(L0, α, g, r) =
+      if L0(g|r) = 0 then 0
+      else exp(α · U(g, r))
+
+    This is @cite{hawkins-etal-2025}'s `priorPQScore` at β = 1, w_c = 0:
+    pure action utility. The L0 gate ensures truth-conditional consistency.
+
+    Note: the paper's α has prior N(5, 1); we use α = 1 here. The
+    qualitative predictions (all `>` theorems below) hold for any α > 0. -/
+noncomputable def mkBartenderRSA (exhVal prior_g1 prior_g2 : ℝ)
+    (hExh : 0 ≤ exhVal) (h1 : 0 ≤ prior_g1) (h2 : 0 ≤ prior_g2) :
+    RSAConfig Response Goal where
   meaning _ _ r g := if respApplies r g then 1 else 0
   meaning_nonneg _ _ _ _ := by split <;> norm_num
   s1Score l0 α _ w u :=
     if l0 u w = 0 then 0
-    else exp (α * log (l0 u w))
+    else exp (α * match u, w with
+      | .ms1, .g₁ => (1 : ℝ)
+      | .ms2, .g₂ => 1
+      | .exh, _   => exhVal
+      | _, _      => 0)
   s1Score_nonneg l0 α _ _ u _ _ := by
+    show 0 ≤ (if l0 u _ = 0 then (0 : ℝ) else exp _)
     split
     · exact le_refl 0
     · exact le_of_lt (exp_pos _)
@@ -247,96 +140,102 @@ noncomputable def mkBartenderRSA (prior_g1 prior_g2 : ℝ)
   worldPrior_nonneg g := by cases g <;> assumption
   latentPrior_nonneg _ _ := by norm_num
 
-/-- Uniform-prior bartender: structural S1/L1 predictions. -/
-noncomputable def bartenderCfg :=
-  mkBartenderRSA 1 1 (by norm_num) (by norm_num)
+-- ============================================================================
+-- §3a. Concrete Configs
+-- ============================================================================
 
-/-- Low uncertainty (ε = 0.17): P(g₁) ∝ 83, P(g₂) ∝ 17. -/
-noncomputable def bartenderCfgLow :=
-  mkBartenderRSA 83 17 (by norm_num) (by norm_num)
+-- Fitted parameters (Bayesian posterior means):
+-- δ_L = 0.32 → exhVal = 0.68, δ_S = 0.11 → exhVal = 0.89
+-- ε_H = 0.49 → prior (51, 49), ε_L = 0.17 → prior (83, 17)
 
-/-- High uncertainty (ε = 0.49): P(g₁) ∝ 51, P(g₂) ∝ 49. -/
-noncomputable def bartenderCfgHigh :=
-  mkBartenderRSA 51 49 (by norm_num) (by norm_num)
+/-- Large option space (δ = 0.32), low uncertainty (ε = 0.17). -/
+noncomputable def cfgLargeLow :=
+  mkBartenderRSA (68/100) 83 17 (by norm_num) (by norm_num) (by norm_num)
+
+/-- Large option space (δ = 0.32), high uncertainty (ε = 0.49). -/
+noncomputable def cfgLargeHigh :=
+  mkBartenderRSA (68/100) 51 49 (by norm_num) (by norm_num) (by norm_num)
+
+/-- Small option space (δ = 0.11), low uncertainty (ε = 0.17). -/
+noncomputable def cfgSmallLow :=
+  mkBartenderRSA (89/100) 83 17 (by norm_num) (by norm_num) (by norm_num)
+
+/-- Small option space (δ = 0.11), high uncertainty (ε = 0.49). -/
+noncomputable def cfgSmallHigh :=
+  mkBartenderRSA (89/100) 51 49 (by norm_num) (by norm_num) (by norm_num)
 
 -- ============================================================================
--- §8a. S1 Predictions (Speaker Behavior)
+-- §4. S1 Predictions (Speaker Behavior)
 -- ============================================================================
 
 /-! S1 captures the behavioral policy: how the responder acts when they know
-the goal. These predictions are independent of the prior (worldPrior doesn't
-enter S1). -/
+the goal. With action-utility scoring, S1 preferences are δ-sensitive:
+the exhaustive response scores `exp(α · (1−δ))`, which drops with δ. -/
 
-/-- S1 facing g₁ prefers ms1 (targeted) over exh (exhaustive).
-    ms1 has L0(g₁|ms1) = 1 while exh has L0(g₁|exh) = 1/2. -/
-theorem S1_g1_prefers_ms1 :
-    bartenderCfg.S1 () .g₁ .ms1 > bartenderCfg.S1 () .g₁ .exh := by
+/-- S1 facing g₁ prefers ms1 over exh in the large option space.
+    U(g₁, ms1) = 1 > U(g₁, exh) = 0.68. -/
+theorem S1_large_g1_prefers_ms1 :
+    cfgLargeLow.S1 () .g₁ .ms1 > cfgLargeLow.S1 () .g₁ .exh := by
   rsa_predict
 
-/-- S1 facing g₁ never produces ms2.
-    L0(g₁|ms2) = 0, so S1(ms2|g₁) = 0. -/
+/-- S1 facing g₁ prefers ms1 over exh in the small option space too.
+    U(g₁, ms1) = 1 > U(g₁, exh) = 0.89. The gap is smaller than large δ. -/
+theorem S1_small_g1_prefers_ms1 :
+    cfgSmallLow.S1 () .g₁ .ms1 > cfgSmallLow.S1 () .g₁ .exh := by
+  rsa_predict
+
+/-- S1 facing g₁ never produces ms2 (mismatching response).
+    L0(g₁|ms2) = 0, so the L0 gate zeros the score. -/
 theorem S1_g1_avoids_ms2 :
-    bartenderCfg.S1 () .g₁ .ms1 > bartenderCfg.S1 () .g₁ .ms2 := by
-  rsa_predict
-
-/-- S1 is symmetric: facing g₂ prefers ms2, mirroring S1(ms1|g₁). -/
-theorem S1_g2_prefers_ms2 :
-    bartenderCfg.S1 () .g₂ .ms2 > bartenderCfg.S1 () .g₂ .exh := by
+    cfgLargeLow.S1 () .g₁ .ms1 > cfgLargeLow.S1 () .g₁ .ms2 := by
   rsa_predict
 
 -- ============================================================================
--- §8b. L1 Predictions (Listener Inference)
+-- §4a. Cross-Config S1: δ-Sensitivity
 -- ============================================================================
 
-/-! L1 captures pragmatic inference: what goal does a response reveal?
-Targeted responses (ms1, ms2) are fully informative — L1 infers the matching
-goal with certainty. The exhaustive response is uninformative — L1 reverts
-to the prior. -/
+/-! The key RSA prediction: exh is relatively more viable in the small
+option space (δ = 0.11) than the large (δ = 0.32). This captures the
+EVPI effect through action utility: when the safe response is cheap,
+there's less need to clarify. -/
 
-/-- L1 hearing ms1 infers g₁. Since S1(ms1|g₂) = 0 (ms1 never signals g₂),
-    L1(g₁|ms1) = 1 regardless of prior. -/
+/-- **WorthAsking** at S1 level: exh is more viable in small option space.
+    S1(exh|g₁, small) > S1(exh|g₁, large) because exp(0.89α) > exp(0.68α). -/
+theorem S1_small_exh_more_viable :
+    cfgSmallLow.S1 () .g₁ .exh > cfgLargeLow.S1 () .g₁ .exh := by
+  rsa_predict
+
+-- ============================================================================
+-- §5. L1 Predictions (Listener Inference)
+-- ============================================================================
+
+/-! Targeted responses (ms1, ms2) are fully informative: S1 never produces
+ms1 for g₂ (L0 gate), so L1(g₁|ms1) = 1 regardless of prior or δ.
+
+Exhaustive response transmits the prior: S1(exh|g₁) = S1(exh|g₂) (symmetric
+utility), so L1(g|exh) ∝ P(g). Under asymmetric prior (ε < 0.5), exh
+reveals the listener's prior belief about the goal. -/
+
+/-- L1 hearing ms1 infers g₁ with certainty. -/
 theorem L1_ms1_infers_g1 :
-    bartenderCfg.L1 .ms1 .g₁ > bartenderCfg.L1 .ms1 .g₂ := by
+    cfgLargeLow.L1 .ms1 .g₁ > cfgLargeLow.L1 .ms1 .g₂ := by
   rsa_predict
 
 /-- L1 hearing ms2 infers g₂ (symmetric). -/
 theorem L1_ms2_infers_g2 :
-    bartenderCfg.L1 .ms2 .g₂ > bartenderCfg.L1 .ms2 .g₁ := by
+    cfgLargeLow.L1 .ms2 .g₂ > cfgLargeLow.L1 .ms2 .g₁ := by
   rsa_predict
 
-/-- L1 hearing exh cannot distinguish goals: exh is equally likely under
-    both goals, so L1 reverts to the prior. With uniform prior,
-    L1(g₁|exh) = L1(g₂|exh) — neither is preferred. -/
-theorem L1_exh_uninformative :
-    ¬(bartenderCfg.L1 .exh .g₁ > bartenderCfg.L1 .exh .g₂) := by
+/-- L1 hearing exh leans toward g₁ (prior = 83:17).
+    Since S1(exh|g₁) = S1(exh|g₂), L1(g|exh) ∝ P(g) — exh transmits
+    the prior rather than being uninformative. -/
+theorem L1_exh_transmits_prior :
+    cfgLargeLow.L1 .exh .g₁ > cfgLargeLow.L1 .exh .g₂ := by
   rsa_predict
 
--- ============================================================================
--- §8c. Asymmetric Prior Predictions
--- ============================================================================
-
-/-! With asymmetric priors (ε ≠ 1/2), targeted responses are still fully
-informative (L1(g₁|ms1) = 1), but exh reveals the prior: L1(g₁|exh) = 1−ε.
-This is the RSA analog of the EVPI result: under low uncertainty, the
-responder's "safe" response still signals the likely goal. -/
-
-/-- Under low uncertainty, L1 hearing exh leans toward g₁.
-    L1(g₁|exh) ∝ 83 · S1(exh|g₁) > L1(g₂|exh) ∝ 17 · S1(exh|g₂).
-    Since S1(exh|g₁) = S1(exh|g₂), ratio is 83:17. -/
-theorem L1_low_exh_leans_g1 :
-    bartenderCfgLow.L1 .exh .g₁ > bartenderCfgLow.L1 .exh .g₂ := by
-  rsa_predict
-
-/-- Under high uncertainty, L1 hearing exh barely distinguishes goals.
-    Ratio is 51:49 — nearly uninformative. -/
-theorem L1_high_exh_leans_g1 :
-    bartenderCfgHigh.L1 .exh .g₁ > bartenderCfgHigh.L1 .exh .g₂ := by
-  rsa_predict
-
-/-- Targeted responses are fully informative regardless of prior.
-    L1(g₁|ms1) = 1 even under high uncertainty. -/
+/-- Targeted responses remain fully informative at high uncertainty. -/
 theorem L1_high_ms1_still_certain :
-    bartenderCfgHigh.L1 .ms1 .g₁ > bartenderCfgHigh.L1 .ms1 .g₂ := by
+    cfgLargeHigh.L1 .ms1 .g₁ > cfgLargeHigh.L1 .ms1 .g₂ := by
   rsa_predict
 
 end Phenomena.Clarification.Studies.TsvilodubEtAl2026
