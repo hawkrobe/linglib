@@ -65,7 +65,7 @@ theorem otToWeighted_eval {C : Type} (ranking : List (NamedConstraint C)) (M : N
     (i : Fin ranking.length) (c : C) :
     ((otToWeighted ranking M).get (i.cast (otToWeighted_length ranking M).symm)).eval c =
     (ranking.get i).eval c := by
-  sorry -- TODO: unfold mapIdx indexing
+  simp only [otToWeighted, List.get_eq_getElem, List.getElem_mapIdx, Fin.val_cast]
 
 -- ============================================================================
 -- § 2: Lexicographic Dominance (Fin n)
@@ -280,6 +280,43 @@ theorem lex_imp_lower_violations {n : Nat} (w : Fin n → ℚ) (M : Nat)
   -- Combine: w_k − M · Σ_{i>k} w_i > 0 from ExponentiallySeparated
   linarith [hw.2 k, hlt_zero]
 
+private lemma foldl_sub_map_sum {α : Type} (l : List α) (f : α → ℚ) (init : ℚ) :
+    l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
+  induction l generalizing init with
+  | nil => simp
+  | cons x xs ih =>
+    simp only [List.foldl_cons, List.map_cons, List.sum_cons]; rw [ih]; ring
+
+private lemma harmonyScore_eq_neg_sum {C : Type}
+    (cons : List (WeightedConstraint C)) (c : C) :
+    harmonyScore cons c = -((cons.map (λ con => con.weight * (con.eval c : ℚ))).sum) := by
+  unfold harmonyScore; rw [foldl_sub_map_sum]; ring
+
+private lemma mapIdx_sum_eq_fin_sum {α : Type} (l : List α) (f : ℕ → α → ℚ) :
+    (l.mapIdx f).sum = ∑ i : Fin l.length, f i (l.get i) := by
+  induction l generalizing f with
+  | nil => simp
+  | cons x xs ih =>
+    simp only [List.mapIdx_cons, List.sum_cons, List.length_cons, List.get_eq_getElem]
+    rw [ih, Fin.sum_univ_succ]; simp
+
+private lemma map_mapIdx_sum {α β : Type} (l : List α) (f : ℕ → α → β) (g : β → ℚ) :
+    (l.mapIdx f |>.map g).sum = (l.mapIdx (fun i x => g (f i x))).sum := by
+  congr 1
+  induction l generalizing f with
+  | nil => simp
+  | cons x xs ih => simp only [List.mapIdx_cons, List.map_cons]; congr 1; exact ih _
+
+private lemma harmonyScore_otToWeighted_eq {C : Type}
+    (ranking : List (NamedConstraint C)) (M : Nat) (c : C) :
+    harmonyScore (otToWeighted ranking M) c =
+    -(weightedViolations (expWeights ranking.length M)
+      (fun i : Fin ranking.length => (ranking.get i).eval c)) := by
+  rw [harmonyScore_eq_neg_sum, neg_inj, weightedViolations]
+  simp only [otToWeighted]
+  rw [map_mapIdx_sum, mapIdx_sum_eq_fin_sum]
+  simp only [expWeights]
+
 /-- HG–OT agreement for a concrete candidate type: if candidate `a`
     lexicographically beats `b` on the violation profile induced by `ranking`,
     then `a` has strictly higher harmony under `otToWeighted ranking M`,
@@ -293,7 +330,14 @@ theorem ot_lex_imp_higher_harmony {C : Type}
       (fun i : Fin ranking.length => (ranking.get i).eval b)) :
     harmonyScoreR (otToWeighted ranking M) a >
     harmonyScoreR (otToWeighted ranking M) b := by
-  sorry
+  simp only [harmonyScoreR, gt_iff_lt]
+  have hlt : harmonyScore (otToWeighted ranking M) b <
+      harmonyScore (otToWeighted ranking M) a := by
+    rw [harmonyScore_otToWeighted_eq, harmonyScore_otToWeighted_eq, neg_lt_neg_iff]
+    exact lex_imp_lower_violations _ M _ _
+      (fun i => hbound (ranking.get i) (by simp [List.get_eq_getElem, List.getElem_mem]))
+      (expWeights_separated ranking.length M hM) hlex
+  exact_mod_cast hlt
 
 -- ============================================================================
 -- § 5: MaxEnt → OT Limit

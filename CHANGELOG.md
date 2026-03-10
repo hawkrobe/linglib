@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.113] - 2026-03-10
+
+### Changed
+- **Theories/Phonology/HarmonicGrammar/OTLimit.lean**: Close `otToWeighted_eval` sorry (mapIdx indexing via `List.getElem_mapIdx`) and `ot_lex_imp_higher_harmony` sorry (HG–OT agreement for concrete candidates — bridge foldl-based `harmonyScore` to Finset-based `weightedViolations` via helper lemmas, then apply `lex_imp_lower_violations`)
+
 ## [0.229.112] - 2026-03-10
 
 ### Changed
