@@ -2098,12 +2098,12 @@
   validated = {true},
   sources   = {Core/Agent/SignalDetection.lean}
 }
-% REF: Searle, J. (1969). *Speech Acts*. Cambridge UP.
-@article{searle-1969,
-  author    = {Searle, J},
+% REF: Searle, J. R. (1969). *Speech Acts: An Essay in the Philosophy of Language*. Cambridge UP.
+@book{searle-1969,
+  author    = {Searle, John R.},
   year      = {1969},
-  title     = {Speech Acts},
-  journal   = {Cambridge UP.},
+  title     = {Speech Acts: An Essay in the Philosophy of Language},
+  publisher = {Cambridge University Press},
   doi       = {10.1017/cbo9781139173438},
   subfield  = {semantics/compositional},
   role      = {cited},
@@ -8731,15 +8731,22 @@
   sources   = {Phenomena/Questions/NegativeQuestions.lean;Theories/Semantics/Modality/BiasedPQ.lean;Theories/Semantics/Questions/Polarity.lean;Theories/Semantics/Questions/VerumFocus.lean}
 }
 % REF: Belnap (1982). Questions and Answers in Montague Grammar.
-@misc{belnap-1982,
-  author    = {Belnap},
+@incollection{belnap-1982,
+  author    = {Belnap, Nuel D.},
   year      = {1982},
   title     = {Questions and Answers in Montague Grammar},
+  booktitle = {Processes, Beliefs, and Questions},
+  editor    = {Peters, Stanley and Saarinen, Esa},
+  publisher = {D. Reidel},
+  address   = {Dordrecht},
+  series    = {Synthese Language Library},
+  volume    = {16},
+  pages     = {165--198},
   doi       = {10.1007/978-94-015-7668-0_6},
   subfield  = {semantics/questions},
   role      = {cited},
   validated = {true},
-  sources   = {Theories/Semantics/Questions/MentionSome.lean}
+  sources   = {Theories/Semantics/Questions/MentionSome.lean, Phenomena/Questions/MentionSome.lean}
 }
 % REF: Crawford & Sobel (1982). Strategic Information Transmission.
 @misc{crawford-sobel-1982,
@@ -8790,9 +8797,9 @@
   validated = {true},
   sources   = {Theories/Semantics/Focus/Particles.lean}
 }
-% REF: Bennett & Belnap (1990). Conditional Assertion and Restricted Quantification.
-@article{bennett-belnap-1990,
-  author    = {Bennett, Jonathan and Belnap, Nuel},
+% REF: Belnap (1970). Conditional Assertion and Restricted Quantification.
+@article{belnap-1970,
+  author    = {Belnap, Nuel D.},
   year      = {1970},
   title     = {Conditional Assertion and Restricted Quantification},
   journal   = {No\^{u}s},
@@ -16152,9 +16159,11 @@
   year      = {1983},
   title     = {Intentionality: An Essay in the Philosophy of Mind},
   publisher = {Cambridge University Press},
+  isbn      = {978-0-521-27302-8},
   subfield  = {philosophy/mind},
   role      = {cited},
-  sources   = {manual}
+  validated = {true},
+  sources   = {Theories/Semantics/Attitudes/RationalAttitude.lean}
 }
 
 @book{sperber-wilson-1986,

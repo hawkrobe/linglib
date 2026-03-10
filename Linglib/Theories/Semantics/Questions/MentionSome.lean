@@ -373,7 +373,7 @@ structure EmbeddedQuestionSentence (W E : Type*) where
 /-!
 ## Mention-Two / Mention-N
 
-@cite{groenendijk-stokhof-1984}, Section 5.3 (following Belnap): Cumulative quantification with
+@cite{groenendijk-stokhof-1984}, Section 5.3 (following @cite{belnap-1982}): Cumulative quantification with
 numerals gives "mention-n" readings:
 
 "Where do two unicorns live?"

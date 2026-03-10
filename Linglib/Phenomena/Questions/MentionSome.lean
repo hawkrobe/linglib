@@ -13,7 +13,7 @@ This file contains theory-neutral empirical data on:
 2. Embedded mention-some paraphrases
 3. The negative answer problem (why "not in drawer" fails)
 4. Verb licensing (why "depends" blocks mention-some)
-5. Mention-two / cumulative quantification (Belnap examples)
+5. Mention-two / cumulative quantification (@cite{belnap-1982} examples)
 
 ## Sources
 
@@ -302,7 +302,7 @@ structure MentionNDatum where
   source : String := "G&S 1984, Section 5.3; Belnap 1982"
   deriving Repr
 
-/-- Belnap's unicorn example.
+/-- @cite{belnap-1982}'s unicorn example.
 
 "Where do two unicorns live?" - classic example of cumulative quantification. -/
 def whereTwoUnicorns : MentionNDatum :=
