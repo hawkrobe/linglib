@@ -389,6 +389,7 @@ import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Gorum.AuxiliaryVerbs
+import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Greek.Case
 import Linglib.Fragments.Greek.Nouns
 import Linglib.Fragments.Greek.TemporalConnectives
@@ -822,6 +823,7 @@ import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Polarity.Studies.DenicEtAl2021
+import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
 import Linglib.Phenomena.Polarity.Studies.Schwab2022
 import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 import Linglib.Phenomena.Polarity.Typology

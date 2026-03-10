@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.88] - 2026-03-09
+
+### Added
+- **Fragments/Hemba/AuxiliaryVerbs.lean**: Hemba (Bantu) split/doubled AVC fragment — subject doubled on both AUX and LV, tense on AUX only, mood on LV only
+- All five Anderson (2006) inflectional patterns now attested: `five_patterns_attested` theorem replaces `four_patterns_attested`
+
+### Changed
+- **Phenomena/AuxiliaryVerbs/Typology.lean**: Add Hemba datum with `.splitDoubled` pattern; extend `allData` to 8 data points
+- **Studies/Anderson2006.lean**: Upgrade coverage theorem to 5/5 patterns; add `hemba_splitDoubled_agreement_doubled` distribution theorem and `splitDoubled_predicts_finite_lv`
+
 ## [0.229.87] - 2026-03-09
 
 ### Changed

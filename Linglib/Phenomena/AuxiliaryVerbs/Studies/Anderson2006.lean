@@ -23,9 +23,9 @@ auxiliary and lexical verb.
 
 ## Coverage
 
-Data from 6 languages (7 data points): English (aux-headed), Doyayo (split),
-Gorum (doubled), Jakaltek (split), Pipil (split + lex-headed), Finnish (split).
-Four of five patterns attested; only split/doubled lacks an exemplar.
+Data from 7 languages (8 data points): English (aux-headed), Doyayo (split),
+Gorum (doubled), Jakaltek (split), Pipil (split + lex-headed), Finnish (split),
+Hemba (split/doubled). All five patterns attested.
 -/
 
 namespace Phenomena.AuxiliaryVerbs.Studies.Anderson2006
@@ -113,14 +113,15 @@ inductive AVCSource where
 
 /-! ## Pattern Coverage Theorems -/
 
-/-- Four of Anderson's five patterns are attested in current data.
-    Only `splitDoubled` lacks an exemplar. -/
-theorem four_patterns_attested :
+/-- All five of Anderson's inflectional patterns are attested in current data. -/
+theorem five_patterns_attested :
     allData.any (·.inflPattern == .auxHeaded) = true ∧
     allData.any (·.inflPattern == .lexHeaded) = true ∧
     allData.any (·.inflPattern == .doubled) = true ∧
-    allData.any (·.inflPattern == .split) = true :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+    allData.any (·.inflPattern == .split) = true ∧
+    allData.any (·.inflPattern == .splitDoubled) = true :=
+  ⟨by native_decide, by native_decide, by native_decide,
+   by native_decide, by native_decide⟩
 
 /-! ## Structural Theorems on Distribution
 
@@ -164,6 +165,21 @@ theorem jakaltek_split_within_agreement :
 /-- In Pipil's lex-headed AVC, the auxiliary hosts no inflection. -/
 theorem pipil_lexHeaded_aux_empty :
     Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution.onAux = [] := rfl
+
+/-- In Hemba's split/doubled AVC, agreement is doubled (on both elements),
+    while tense is AUX-only and mood is LV-only. This is the defining
+    characteristic of the split/doubled pattern: some categories are shared
+    (doubled) while others are exclusive to one element (split). -/
+theorem hemba_splitDoubled_agreement_doubled :
+    let dist := Fragments.Hemba.AuxiliaryVerbs.inflDistribution
+    dist.onAux.contains .agreement = true ∧
+    dist.onLex.contains .agreement = true ∧
+    dist.onAux.contains .tense = true ∧
+    dist.onLex.contains .tense = false ∧
+    dist.onAux.contains .mood = false ∧
+    dist.onLex.contains .mood = true := by
+  exact ⟨by native_decide, by native_decide, by native_decide,
+         by native_decide, by native_decide, by native_decide⟩
 
 /-! ## Dual Headedness
 
@@ -217,6 +233,10 @@ theorem doubled_predicts_finite_lv :
 /-- Split → finite LV. -/
 theorem split_predicts_finite_lv :
     InflPattern.split.lvVerbForm = UD.VerbForm.Fin := rfl
+
+/-- Split/doubled → finite LV. -/
+theorem splitDoubled_predicts_finite_lv :
+    InflPattern.splitDoubled.lvVerbForm = UD.VerbForm.Fin := rfl
 
 /-! ## Bridge to Auxiliary Selection
 

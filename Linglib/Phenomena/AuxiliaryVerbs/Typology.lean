@@ -3,6 +3,7 @@ import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
 import Linglib.Fragments.Gorum.AuxiliaryVerbs
+import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Pipil.AuxiliaryVerbs
 
@@ -164,8 +165,17 @@ def pipilLexHeaded : AVCDatum :=
   , distribution := some Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution
   , gloss := Fragments.Pipil.AuxiliaryVerbs.lexHeadedGloss }
 
+/-- Hemba — split/doubled (subject doubled on both AUX and LV; tense on AUX
+    only, mood on LV only). Form derived from `Fragments.Hemba.AuxiliaryVerbs`. -/
+def hemba : AVCDatum :=
+  { language := "Hemba"
+  , form := Fragments.Hemba.AuxiliaryVerbs.form
+  , inflPattern := .splitDoubled
+  , distribution := some Fragments.Hemba.AuxiliaryVerbs.inflDistribution
+  , gloss := Fragments.Hemba.AuxiliaryVerbs.gloss }
+
 def allData : List AVCDatum :=
-  [english, doyayo, gorum, jakaltek, pipil, pipilLexHeaded, finnish]
+  [english, doyayo, gorum, jakaltek, pipil, pipilLexHeaded, finnish, hemba]
 
 /-! ## Invariant theorems -/
 
@@ -226,6 +236,7 @@ theorem jakaltek_is_split : jakaltek.inflPattern = .split := rfl
 theorem pipil_is_split : pipil.inflPattern = .split := rfl
 theorem finnish_is_split : finnish.inflPattern = .split := rfl
 theorem pipilLexHeaded_is_lexHeaded : pipilLexHeaded.inflPattern = .lexHeaded := rfl
+theorem hemba_is_splitDoubled : hemba.inflPattern = .splitDoubled := rfl
 
 /-! ## Per-datum form verification
 
@@ -263,6 +274,10 @@ theorem pipilLexHeaded_dist_from_fragment :
       some Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution := rfl
 theorem pipilLexHeaded_form_from_fragment :
     pipilLexHeaded.form = Fragments.Pipil.AuxiliaryVerbs.lexHeadedForm := rfl
+theorem hemba_form_from_fragment :
+    hemba.form = Fragments.Hemba.AuxiliaryVerbs.form := rfl
+theorem hemba_dist_from_fragment :
+    hemba.distribution = some Fragments.Hemba.AuxiliaryVerbs.inflDistribution := rfl
 
 /-! ## Bridge to Finnish Fragment -/
 
