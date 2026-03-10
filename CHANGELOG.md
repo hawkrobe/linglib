@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.229.123] - 2026-03-10
+
+### Fixed
+- **Phenomena/Questions/Studies/GartnerGyuris2017.lean**: Fix `ppqNeqNpq` to AND interpretation (both ev and ep must differ, matching paper's §2.2 and 7²×6²×6²=63504 count); fix `markednessCollective` to use `Nat.ble`; fix `japaneseNull_ppqNeqNpq` → `false` (PPQ^ep = IN-NPQ^ep = {+,−,%}); fix `markedness_*_space` theorems from tautologies to actual Appendix B computations; fix docstring typo in SC theorem
+
+### Added
+- **Phenomena/Questions/Studies/GartnerGyuris2017.lean**: Add `japaneseNull_staticComplementarity` (∅-int. is within 512-profile SC space); `japaneseDesho_violates_ppqNeqNpq` and `japaneseDesho_violates_staticComplementarity`; English V1 vs Polarity Match theorems (`englishV1_violates_avoidDisagreement`, `englishV1_violates_dontRuleOutAgreement`) demonstrating §3.1.2's NEC/AD incompatibility; `englishV1_markednessDistributive/Collective`; `czechV1_violates_ppqNeqNpq` (PPQ^ep = IN-NPQ^ep = {+,%})
+
+## [0.229.122] - 2026-03-10
+
+### Added
+- **Phenomena/Ergativity/Studies/CoonMateoPedroPreminger2014.lean**: Formalize @cite{coon-mateo-pedro-preminger-2014} "The role of Case in A-bar extraction asymmetries" — `CaseLocus` (absNom/absDef: theoretical interpretation of Mayan Absolutive Parameter), trapping mechanism (`subjectTrapped`: object movement through phase edge blocks subject extraction), `voiceAF` (AF Voice⁰ variant that assigns case to object, non-phasal), non-finite predictions (`objectLicensedInNonFinite`), caseless object analysis (`ObjectType`, AF unavailable with reflexives/bare NPs), `SyntacticErgativityFactors` (three necessary conditions). Fragment-grounded bridge theorems connecting to Q'anjob'al/Chol extraction data, AF morphology, and non-finite absolutive asymmetries. `tada_from_case_theory` derives Tada's Generalization from case assignment locus
+- **Phenomena/Ergativity/Basic.lean**: Add `ABSPosition` (high/low, observable morpheme-order parameter), `MayanExtractionDatum`, `tadasTable` (24 Mayan languages from table (19)), typological theorems (`high_abs_all_have_asymmetries`, `low_abs_mostly_lack_asymmetries`, `high_abs_none_lack_asymmetries`)
+- **Fragments/Qanjobal/AgentFocus.lean**: Q'anjob'al AF fragment — person morphology paradigm (Set A preC/preV allomorphs, Set B suffixes from table (13)), status suffixes (-i/-V'), extraction data (S/P free, A banned), AF verb form (*-on*, ITV suffix, no Set A), Crazy Antipassive (morphologically identical to AF), extraction profile
+- **Fragments/Chol/Agreement.lean**: Add extraction data (no asymmetries — all core arguments extract freely), `absPosition := .low`, non-finite absolutive availability (objects ✓, intransitive S ✗), extraction profile
+- **Fragments/Qanjobal/Agreement.lean**: Add `absPosition := .high`
+
+### Changed
+- **Phenomena/Ergativity/Studies/Imanishi2020.lean**: `ABSLocus` is now an alias for `ABSPosition` from `Basic.lean` (promotes the Mayan Absolutive Parameter to the shared data layer, respecting chronological priority of @cite{coon-mateo-pedro-preminger-2014})
+
+## [0.229.121] - 2026-03-10
+
+### Added
+- **Phenomena/Questions/Studies/GartnerGyuris2017.lean**: Formalize @cite{gartner-gyuris-2017} bias profile framework — `BiasValue` (+/−/%), `BiasChoice` (non-empty subsets), `BiasProfile` (6-cell grid), 7 delimiting principles as decidable predicates (No Uniformity, PPQ≠NPQ, Markedness, Polarity Match, Convexity, Narrow Epistemic Choice, Static Complementarity), space reduction theorems (7⁶=117649 → (4×2)³=512), 6 cross-linguistic profiles from Appendix A (English V1, Japanese ∅/no/desho, Hungarian ∧/e), verification against principles including known counterexamples, bridge to Romero PQ typology
+
+### Fixed
+- **blog/data/references.bib**: Fix `simik-2024` — single author (Šimík), not co-authored with Gehrke; add `editor` field (Gehrke & Šimík), fix title to include "/Czech", add `address = Berlin`, fix `note` to "To appear". Delete hallucinated duplicate `stakov-imk-2024` (garbled key, wrong type, abbreviated authors). Update `gartner-gyuris-2017` role from `cited` to `formalized` with sources
+- **16 .lean files**: Replace all inline "Šimík (2024)" prose with `@cite{simik-2024}` format; replace inline "Staňková & Šimík (2024)" with `@cite{stankova-simik-2024}`; add `@cite{simik-2024}` to header cite lists in 7 Fragment QuestionParticles files, SlavicPQStrategies, BiasedPQ, Stakov2026, Stakov2026Typology, StankovaSimik2024/Data
+- **Phenomena/Negation/Studies/StankovaSimik2024.lean**: Delete orphaned duplicate (identical to StankovaSimik2024/Data.lean, not imported anywhere)
+
 ## [0.229.120] - 2026-03-10
 
 ### Changed
