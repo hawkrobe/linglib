@@ -165,7 +165,6 @@ theorem jndI_refl (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
   simp only [jndI, pairwiseProb_self v hv]
   constructor <;> linarith
 
-omit [DecidableEq A] in
 /-- **Trichotomy**: for any `x, y`, exactly one of `xLy`, `yLx`, or `xIy` holds.
 
     Since `P(x,y) + P(y,x) = 1`, the three conditions `P(x,y) > π`,
@@ -176,8 +175,15 @@ theorem jnd_trichotomy (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     (jndL v thr x y ∧ ¬jndL v thr y x ∧ ¬jndI v thr x y) ∨
     (jndL v thr y x ∧ ¬jndL v thr x y ∧ ¬jndI v thr x y) ∨
     (jndI v thr x y ∧ ¬jndL v thr x y ∧ ¬jndL v thr y x) := by
-  sorry -- TODO: case split on P(x,y) vs thr: P > thr gives xLy; P(y,x) > thr gives yLx;
-         -- otherwise 1-thr ≤ P ≤ thr gives xIy. Follows from P(x,y) + P(y,x) = 1.
+  have hc := pairwiseProb_complement v hv x y
+  unfold jndL jndI
+  by_cases h₁ : thr < pairwiseProb v x y
+  · left; exact ⟨h₁, fun h => by linarith, fun ⟨_, h⟩ => by linarith⟩
+  · push_neg at h₁
+    by_cases h₂ : thr < pairwiseProb v y x
+    · right; left; exact ⟨h₂, fun h => by linarith, fun ⟨h, _⟩ => by linarith⟩
+    · push_neg at h₂
+      right; right; exact ⟨⟨by linarith, h₁⟩, fun h => by linarith, fun h => by linarith⟩
 
 omit [DecidableEq A] in
 /-- **L-transitivity**: `xLy ∧ yLz → xLz`.
@@ -199,6 +205,7 @@ theorem jndL_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
   have h2 : thr * v z < (1 - thr) * v y := by nlinarith
   nlinarith [mul_pos (by linarith : (0:ℝ) < 1 - thr) hvy]
 
+omit [DecidableEq A] in
 /-- **Interval condition**: `xLy ∧ yIz ∧ zLw → xLw`.
 
     Under Axiom 1: `xLy` gives `v(x)/v(y) > π/(1-π)`, `yIz` gives
@@ -209,15 +216,23 @@ theorem jndL_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     since the middle factor is ≥ (1-π)/π and the outer factors are > π/(1-π),
     giving a product > (π/(1-π))·((1-π)/π)·(π/(1-π)) = π/(1-π). -/
 theorem jndL_interval (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
-    (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1) (x y z w : A)
+    (_hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y z w : A)
     (hxy : jndL v thr x y) (hyz : jndI v thr y z) (hzw : jndL v thr z w) :
     jndL v thr x w := by
-  sorry -- TODO: Follows from the ratio bounds described above.
-         -- The key step is showing v(x)/v(w) > π/(1-π) by multiplying
-         -- the ratios v(x)/v(y), v(y)/v(z), v(z)/v(w) and bounding
-         -- each factor. Requires careful nonlinear arithmetic with
-         -- the positivity constraints.
+  simp only [jndL, jndI, pairwiseProb] at *
+  have hvx := hv x; have hvy := hv y; have hvz := hv z; have hvw := hv w
+  rw [lt_div_iff₀ (add_pos hvx hvy)] at hxy
+  obtain ⟨hyz_lo, _⟩ := hyz
+  rw [le_div_iff₀ (add_pos hvy hvz)] at hyz_lo
+  rw [lt_div_iff₀ (add_pos hvz hvw)] at hzw
+  rw [lt_div_iff₀ (add_pos hvx hvw)]
+  -- hxy: thr * v(y) < (1-thr) * v(x)
+  -- hyz_lo: (1-thr) * v(z) ≤ thr * v(y)
+  -- hzw: thr * v(w) < (1-thr) * v(z)
+  -- Chain: thr * v(w) < (1-thr) * v(z) ≤ thr * v(y) < (1-thr) * v(x)
+  linarith
 
+omit [DecidableEq A] in
 /-- **No sandwiching**: `xLy ∧ yLz → ¬(xIw ∧ wIz)`.
 
     If `v(x) ≫ v(y) ≫ v(z)` (both with ratio > π/(1-π)), then no
@@ -228,10 +243,30 @@ theorem jndL_no_sandwich (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
     (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1) (x y z w : A)
     (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
     ¬(jndI v thr x w ∧ jndI v thr w z) := by
-  sorry -- TODO: From xLy ∧ yLz, get v(x)/v(z) > (π/(1-π))². If xIw,
-         -- then v(x)/v(w) ≤ π/(1-π). If wIz, then v(w)/v(z) ≤ π/(1-π).
-         -- But v(x)/v(z) = (v(x)/v(w))·(v(w)/v(z)) ≤ (π/(1-π))²,
-         -- contradicting the strict bound from transitivity through y.
+  intro ⟨hxw, hwz⟩
+  simp only [jndL, jndI, pairwiseProb] at *
+  have hvx := hv x; have hvy := hv y; have hvz := hv z; have hvw := hv w
+  -- From xLy: thr*(v y) < (1-thr)*(v x)
+  rw [lt_div_iff₀ (add_pos hvx hvy)] at hxy
+  -- From yLz: thr*(v z) < (1-thr)*(v y)
+  rw [lt_div_iff₀ (add_pos hvy hvz)] at hyz
+  -- From xIw: (1-thr)*(v(x)+v(w)) ≤ v(x) and v(x) ≤ thr*(v(x)+v(w))
+  obtain ⟨hxw_lo, hxw_hi⟩ := hxw
+  rw [le_div_iff₀ (add_pos hvx hvw)] at hxw_lo
+  rw [div_le_iff₀ (add_pos hvx hvw)] at hxw_hi
+  -- From wIz: (1-thr)*(v(w)+v(z)) ≤ v(w) and v(w) ≤ thr*(v(w)+v(z))
+  obtain ⟨hwz_lo, hwz_hi⟩ := hwz
+  rw [le_div_iff₀ (add_pos hvw hvz)] at hwz_lo
+  rw [div_le_iff₀ (add_pos hvw hvz)] at hwz_hi
+  -- xIw gives: (1-thr)*v(x) ≤ thr*v(w) (from hxw_hi expanded)
+  -- wIz gives: (1-thr)*v(w) ≤ thr*v(z) (from hwz_hi expanded)
+  -- xLy gives: thr*v(y) < (1-thr)*v(x) (from hxy expanded)
+  -- yLz gives: thr*v(z) < (1-thr)*v(y) (from hyz expanded)
+  -- Chain via nlinarith: multiply inequalities to get contradiction
+  nlinarith [mul_le_mul_of_nonneg_right hxw_hi (le_of_lt hvw),
+             mul_le_mul_of_nonneg_right hwz_hi (le_of_lt hvx),
+             mul_lt_mul_of_pos_right hxy (hv z),
+             mul_lt_mul_of_pos_right hyz (hv x)]
 
 -- ============================================================================
 -- §4. The Trace (Definition 4 and Theorem 6, p. 37)

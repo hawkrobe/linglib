@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.94] - 2026-03-09
+
+### Changed
+- **ChoiceApproximations.lean**: Close all 3 semiorder sorries — `jnd_trichotomy` (case split on P(x,y) vs threshold using `pairwiseProb_complement`), `jndL_interval` (chain `thr·v(w) < (1-thr)·v(z) ≤ thr·v(y) < (1-thr)·v(x)` via `linarith`), `jndL_no_sandwich` (nonlinear contradiction: `(1-thr)²·v(x) ≤ thr²·v(z)` from indistinguishability vs `thr²·v(z) < (1-thr)²·v(x)` from discriminability, via `nlinarith`)
+
 ## [0.229.93] - 2026-03-09
 
 ### Changed
