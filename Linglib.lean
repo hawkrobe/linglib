@@ -121,6 +121,7 @@ import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Core.Lexical.PersonCategory
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
+import Linglib.Core.Efficiency
 import Linglib.Core.InformationTheory
 import Linglib.Core.Distributions
 import Linglib.Core.Divergence
@@ -527,7 +528,11 @@ import Linglib.Fragments.Mam.ExtractionMorphology
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Fragments.Kaqchikel.AgentFocus
 import Linglib.Fragments.Kaqchikel.Agreement
+import Linglib.Fragments.Kiche.Agreement
 import Linglib.Fragments.Kiche.ExtractionMorphology
+import Linglib.Fragments.Kiche.VoiceSystem
+import Linglib.Fragments.Qanjobal.Agreement
+import Linglib.Fragments.Chol.Agreement
 import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Malagasy.Relativization
@@ -583,6 +588,8 @@ import Linglib.Phenomena.Anaphora.ModalSubordination
 import Linglib.Phenomena.Anaphora.Typology
 import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.Alignment.Typology
+import Linglib.Phenomena.Ergativity.Basic
+import Linglib.Phenomena.Ergativity.Studies.Imanishi2020
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
@@ -840,6 +847,7 @@ import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Polysemy.Data
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
+import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
 import Linglib.Phenomena.Possession.Typology
 import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.PsychVerbs.Data
@@ -1493,6 +1501,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynam
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
+import Linglib.Theories.Diachronic.Lexicalization
 import Linglib.Phenomena.Causation.Studies.BellerGerstenberg2025
 import Linglib.Phenomena.Ellipsis.Studies.BergenGoodman2015
 import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021

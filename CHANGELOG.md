@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.229.119] - 2026-03-10
+
+### Added
+- **Phenomena/Ergativity/Basic.lean**: Theory-neutral Mayan alignment puzzle data — `MarkerSet` (setA/setB), `AccSidePattern`, Kaqchikel-type vs Chol-type patterns, mirror-image theorem
+- **Phenomena/Ergativity/Studies/Imanishi2020.lean**: Formalize @cite{imanishi-2020} "Parameterizing split ergativity in Mayan" — RON (Restriction on Nominalization), Mayan Absolutive Parameter (high/low), `MayanParams` for three languages, `deriveAccPattern` deriving alignment from parameters via nominalized clause structure. Key theorems: `ron_determines_alignment` (RON alone predicts pattern regardless of ABSLocus), `absLocus_insufficient`, Voice compatibility with RON, case-to-marker bridge (`caseToMarker`), fragment bridges to Kaqchikel/Chol/Q'anjob'al, `mayan_hindi_same_split` (aspect-conditioning identical across language families)
+- **Fragments/Chol/Agreement.lean**: Chol (Cholan, Mayan) agreement fragment — argument positions with ergative (perfective) and accusative (non-perfective) case assignment, low absolutive language, extended ergative pattern
+- **Fragments/Qanjobal/Agreement.lean**: Q'anjob'al (Q'anjob'alan, Mayan) agreement fragment — high absolutive language patterning with Chol on accusative side due to inactive RON
+
+## [0.229.118] - 2026-03-10
+
+### Added
+- **Fragments/Kiche/Agreement.lean**: K'iche' agreement morphology from Mondloch 2017 — Set A (ergative, preconsonantal and prevocalic) and Set B (absolutive) paradigms, ergative-absolutive alignment theorems, formal/informal distinction, per-cell verification, possessive = Set A identity
+- **Fragments/Kiche/VoiceSystem.lean**: K'iche' five-voice system from Mondloch 2017 — Active (-j), Simple Passive (-x), Absolutive Antipassive (-n), Agent Focus (-n/-Vk), Completed Passive (-taaj); DTV/RTV verb classes, aspect markers, morphological templates, Agent Focus ↔ subject extraction connection, word order, circumfixal negation (na...taj/ta)
+
+### Changed
+- **blog/data/references.bib**: Update `mondloch-2017` — upgrade role from `cited` to `formalized`, add new source files
+
 ## [0.229.117] - 2026-03-10
 
 ### Changed
