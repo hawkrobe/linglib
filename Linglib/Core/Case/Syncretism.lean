@@ -1,5 +1,6 @@
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Containment
+import Linglib.Core.Case.FeatureDecomposition
 
 /-!
 # Case Syncretism @cite{blake-1994}
@@ -150,5 +151,36 @@ theorem gen_dat_syncretism_contiguous :
     ACC, so any form shared by NOM and DAT must also be shared by ACC. -/
 theorem nom_dat_syncretism_violates_aba :
     (AllomorphyPattern.mk 0 1 1 0).violatesABA = true := by native_decide
+
+-- ============================================================================
+-- § 6: Anderson's Feature Decomposition Explains Syncretism
+-- ============================================================================
+
+-- @cite{anderson-jm-2006} provides a semantic explanation for syncretism
+-- patterns that Blake's hierarchy describes but does not explain: cases
+-- that share case-feature content are natural targets for syncretism.
+
+/-- ERG/INST syncretism (@cite{blake-1994}, pp. 174–175) is NOT adjacent on
+    Blake's hierarchy (ranks 6 vs 2), but Anderson's feature decomposition
+    explains it: both ERG and INST share the {src} feature. ERG = abs+src
+    (by subject formation, eq. 40); INST = src (source of force). The shared
+    src feature makes syncretism natural despite hierarchy non-adjacency. -/
+theorem erg_inst_share_src :
+    (Case.toCaseRelation .erg).map CaseRelation.src = some true ∧
+    (Case.toCaseRelation .inst).map CaseRelation.src = some true ∧
+    hierarchyAdjacent .erg .inst = false :=
+  ⟨rfl, rfl, by native_decide⟩
+
+/-- NOM/ACC syncretism (neuter nouns) is explained by Anderson: both are
+    absolutive-containing relations. NOM = abs{erg} by subject formation
+    (eq. 40); ACC = abs{goal}. They share the abs feature. -/
+theorem nom_acc_share_abs :
+    (Case.toCaseRelation .nom).map CaseRelation.abs = some true ∧
+    (Case.toCaseRelation .acc).map CaseRelation.abs = some true :=
+  ⟨rfl, rfl⟩
+
+/-- ABL/LOC syncretism is explained by Anderson: both map to {loc}. -/
+theorem abl_loc_same_case_relation :
+    Case.toCaseRelation .abl = Case.toCaseRelation .loc := rfl
 
 end Core

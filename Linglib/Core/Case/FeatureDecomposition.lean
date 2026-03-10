@@ -133,7 +133,7 @@ def CaseRelation.srcLoc : CaseRelation := ⟨false, true, true⟩
 
 /-- {abs, loc}: absolutive + locative. Contactive — the entity that
     is simultaneously located and holistically affected.
-    "The ferry reached Patra" (eq. 22). -/
+    "The ferry reached Patra" (20a); Contactive = abs,loc (eq. 22). -/
 def CaseRelation.absLoc : CaseRelation := ⟨true, false, true⟩
 
 /-- {abs, src, loc}: all three features. Complex experiencer/sufferer.
@@ -197,6 +197,21 @@ theorem selfMover_agent_same_rank :
 /-- Contactive (abs+loc) has rank 1, same as simple absolutive. -/
 theorem contactive_abs_same_rank :
     CaseRelation.absLoc.subjectRank = CaseRelation.absolutive.subjectRank := rfl
+
+-- ============================================================================
+-- § 5b: Subject Selection is Determined by src
+-- ============================================================================
+
+/-- Anderson's hierarchy (eq. 38') entails that subject selection depends
+    ONLY on the src feature — loc has no effect on subjectRank.
+    This captures his direct statement: "erg > abs". -/
+theorem src_determines_subject_rank (cr : CaseRelation) (h : cr.src = true) :
+    cr.subjectRank = 2 := by simp [CaseRelation.subjectRank, h]
+
+/-- Absence of src with abs yields rank 1. -/
+theorem abs_without_src_rank (cr : CaseRelation)
+    (h1 : cr.src = false) (h2 : cr.abs = true) :
+    cr.subjectRank = 1 := by simp [CaseRelation.subjectRank, h1, h2]
 
 -- ============================================================================
 -- § 6: Feature Containment
