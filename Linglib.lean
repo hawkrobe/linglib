@@ -472,6 +472,7 @@ import Linglib.Fragments.Turkish.MedialVerbs
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Turkish.Morph
+import Linglib.Fragments.Turkish.Anaphors
 import Linglib.Fragments.Turkish.Negation
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Nungon.MedialVerbs
@@ -591,6 +592,7 @@ import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
 import Linglib.Phenomena.Anaphora.Studies.Hudson1990
 import Linglib.Phenomena.Anaphora.Studies.DGNominal
 import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
+import Linglib.Phenomena.Anaphora.Studies.BakayEtAl2026
 import Linglib.Phenomena.Anaphora.Studies.MinimalismCoreference
 import Linglib.Phenomena.Anaphora.Studies.Cooper2023
 import Linglib.Phenomena.Anaphora.Studies.Heim1982
@@ -990,6 +992,7 @@ import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.TenseAspect.Studies.Rouillard2026
 import Linglib.Phenomena.ScalarImplicatures.Studies.Horn1972
+import Linglib.Phenomena.ScalarImplicatures.Studies.ReesReksnesRohde2026
 import Linglib.Phenomena.ScalarImplicatures.Studies.RelevanceTheory
 import Linglib.Phenomena.ScalarImplicatures.Studies.Geurts2010
 import Linglib.Phenomena.ScalarImplicatures.Studies.RSAHurford
@@ -1071,6 +1074,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Ellipsis
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
+import Linglib.Theories.Processing.CueBasedRetrieval.Basic
 import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
@@ -1552,6 +1556,7 @@ import Linglib.Theories.Diachronic.Lexicalization
 import Linglib.Theories.Diachronic.ModalChange
 import Linglib.Theories.Diachronic.Subjectification
 import Linglib.Phenomena.Causation.Studies.BellerGerstenberg2025
+import Linglib.Phenomena.Causation.Studies.KonukEtAl2026
 import Linglib.Phenomena.Ellipsis.Studies.BergenGoodman2015
 import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021
 import Linglib.Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024

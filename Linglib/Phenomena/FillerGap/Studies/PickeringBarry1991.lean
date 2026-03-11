@@ -1,5 +1,5 @@
 import Linglib.Core.ProcessingModel
-import Linglib.Phenomena.FillerGap.CrossSerial
+import Linglib.Phenomena.WordOrder.CrossSerial
 
 /-!
 # Pickering & Barry (1991)
@@ -287,7 +287,7 @@ German nested constructions are hard, like their Dutch cross-serial
 counterparts (though for different structural reasons). -/
 theorem german_nested_consistent :
     fillerVerbPattern .gerMultiSubjRel = .nested ∧
-    Phenomena.FillerGap.CrossSerial.german_3np_3v.pattern = .nested :=
+    Phenomena.WordOrder.CrossSerial.german_3np_3v.pattern = .nested :=
   ⟨rfl, rfl⟩
 
 /-! ### Bridge to CCG combinators

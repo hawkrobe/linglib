@@ -1173,6 +1173,19 @@
   sources   = {Phenomena/Gradability/Studies/RonderosEtAl2024.lean}
 }
 
+@article{rees-reksnes-rohde-2026,
+  author    = {Rees, Alice and Reksnes, Vilde and Rohde, Hannah},
+  year      = {2026},
+  title     = {Why are you telling me this? {The} availability and timing of relevance inferences},
+  journal   = {Journal of Memory and Language},
+  volume    = {148},
+  pages     = {104741},
+  doi       = {10.1016/j.jml.2026.104741},
+  subfield  = {pragmatics},
+  role      = {formalized},
+  sources   = {Phenomena/ScalarImplicatures/Studies/ReesReksnesRohde2026.lean}
+}
+
 @article{sedivy-etal-1999,
   author    = {Sedivy, Julie C. and Tanenhaus, Michael K. and Chambers, Craig G. and Carlson, Gregory N.},
   year      = {1999},
@@ -2722,6 +2735,21 @@
   validated = {true},
   sources   = {Phenomena/Constructions/DG_OsborneGross2012Bridge.lean;Theories/Syntax/ConstructionGrammar/Slot.lean}
 }
+% REF: Barss & Lasnik (1986). A note on anaphora and double objects.
+@article{barss-lasnik-1986,
+  author    = {Barss, Andrew and Lasnik, Howard},
+  year      = {1986},
+  title     = {A Note on Anaphora and Double Objects},
+  journal   = {Linguistic Inquiry},
+  volume    = {17},
+  number    = {2},
+  pages     = {347--354},
+  subfield  = {syntax/argument-structure},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/ArgumentStructure/Studies/Larson1988.lean;Phenomena/ArgumentStructure/Studies/Pylkkanen2008.lean;Phenomena/Quantification/Data.lean}
+}
+
 % REF: Larson (1988). On the double object construction.
 @article{larson-1988,
   author    = {Larson, Richard K.},
@@ -2731,10 +2759,10 @@
   volume    = {19},
   number    = {3},
   pages     = {335--391},
-  subfield  = {semantics/compositional},
-  role      = {cited},
+  subfield  = {syntax/argument-structure},
+  role      = {formalized},
   validated = {true},
-  sources   = {Phenomena/Quantification/Data.lean}
+  sources   = {Phenomena/ArgumentStructure/Studies/Larson1988.lean;Phenomena/Quantification/Data.lean}
 }
 % REF: Sigurd (1988). Round numbers.
 @misc{sigurd-1988,
@@ -4180,6 +4208,20 @@
   role      = {cited},
   validated = {true},
   sources   = {Core/Logic/NaturalLogic.lean;Core/PolarityPartition.lean;Theories/Semantics/Attitudes/Monotonicity.lean}
+}
+% REF: Icard, T. F., Kominsky, J. F., & Knobe, J. (2017). Normality and actual causal strength. Cognition, 161, 80–93.
+@article{icard-et-al-2017,
+  author    = {Icard, Thomas F. and Kominsky, Jonathan F. and Knobe, Joshua},
+  year      = {2017},
+  title     = {Normality and actual causal strength},
+  journal   = {Cognition},
+  volume    = {161},
+  pages     = {80--93},
+  doi       = {10.1016/j.cognition.2017.01.010},
+  subfield  = {causation},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Causation/Studies/KonukEtAl2026.lean}
 }
 % REF: Luo, Z. (2012). Common Nouns as Types. In Béchet & Dikovsky (eds.), LACL 2012, LNCS 7351: 173–185.
 @incollection{luo-2012,
@@ -11858,7 +11900,7 @@
   subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/FillerGap/CCG_CrossSerialBridge.lean;Phenomena/FillerGap/CrossSerial.lean}
+  sources   = {Phenomena/FillerGap/Studies/Steedman2000CrossSerial.lean;Phenomena/WordOrder/CrossSerial.lean}
 }
 % REF: Huang, C.-T. J. (1982). Logical Relations in Chinese and the Theory of Grammar.
 @phdthesis{huang-1982,
@@ -11894,15 +11936,19 @@
   sources   = {Theories/Syntax/CCG/Formal/GenerativeCapacity.lean}
 }
 % REF: Shieber (1985) "Evidence against the context-freeness of natural language"
-@misc{shieber-1985,
-  author    = {Shieber},
+@article{shieber-1985,
+  author    = {Shieber, Stuart M.},
   year      = {1985},
-  title     = {"Evidence against the context-freeness of natural language"},
-  doi       = {10.1007/978-94-009-3401-6_12},
+  title     = {Evidence against the Context-Freeness of Natural Language},
+  journal   = {Linguistics and Philosophy},
+  volume    = {8},
+  number    = {3},
+  pages     = {333--343},
+  doi       = {10.1007/BF00630917},
   subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/FillerGap/CrossSerial.lean}
+  sources   = {Phenomena/WordOrder/CrossSerial.lean;Phenomena/WordOrder/Studies/BachBrownMarslenWilson1986.lean}
 }
 % REF: Zwicky, A. (1985). Heads. Journal of Linguistics, 21(1), 1–29.
 @article{zwicky-1985,
@@ -12615,6 +12661,17 @@
   validated = {true},
   sources   = {Phenomena/ArgumentStructure/Typology.lean}
 }
+% REF: Konuk, C., Quillien, T., & Mascarenhas, S. (2026). Plural causes. Psychological Review.
+@article{konuk-et-al-2026,
+  author    = {Konuk, Can and Quillien, Tadeg and Mascarenhas, Salvador},
+  year      = {2026},
+  title     = {Plural causes},
+  journal   = {Psychological Review},
+  subfield  = {causation},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Phenomena/Causation/Studies/KonukEtAl2026.lean}
+}
 % REF: Hurst, P. (2012). Reciprocation strategies and the syntax of reciprocal constructions. PhD dissertation, University of Melbourne.
 @phdthesis{hurst-2012,
   author    = {Hurst, Peter},
@@ -13116,6 +13173,17 @@
   sources   = {Theories/Semantics/Events/Basic.lean;Theories/Semantics/Events/Mereology.lean}
 }
 
+@phdthesis{evers-1975,
+  author    = {Evers, Arnold},
+  year      = {1975},
+  title     = {The Transformational Cycle in {Dutch} and {German}},
+  school    = {University of Utrecht},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/WordOrder/Studies/BachBrownMarslenWilson1986.lean}
+}
+
 @article{bach-brown-marslen-wilson-1986,
   author    = {Bach, Emmon and Brown, Colin and Marslen-Wilson, William},
   year      = {1986},
@@ -13124,10 +13192,11 @@
   volume    = {1},
   number    = {4},
   pages     = {249--262},
+  doi       = {10.1080/01690968608404677},
   subfield  = {processing},
   validated = {true},
-  role      = {cited},
-  sources   = {Phenomena/FillerGap/Studies/PickeringBarry1991.lean}
+  role      = {formalized},
+  sources   = {Phenomena/WordOrder/Studies/BachBrownMarslenWilson1986.lean;Phenomena/FillerGap/Studies/PickeringBarry1991.lean}
 }
 
 @incollection{rappaport-hovav-levin-1998,

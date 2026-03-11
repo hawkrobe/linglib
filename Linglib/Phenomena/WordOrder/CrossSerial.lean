@@ -32,7 +32,7 @@ German has nested dependencies (can be handled by CFG):
 
 -/
 
-namespace Phenomena.FillerGap.CrossSerial
+namespace Phenomena.WordOrder.CrossSerial
 
 -- NP-Verb Pairing Types
 
@@ -202,4 +202,4 @@ theorem dutch_3_is_crossSerial :
 theorem german_3_is_nested :
     german_3np_3v.pattern = .nested := rfl
 
-end Phenomena.FillerGap.CrossSerial
+end Phenomena.WordOrder.CrossSerial

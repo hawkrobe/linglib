@@ -1,12 +1,12 @@
 import Linglib.Theories.Syntax.CCG.CrossSerial
-import Linglib.Phenomena.FillerGap.CrossSerial
+import Linglib.Phenomena.WordOrder.CrossSerial
 
 /-!
 # CCG Cross-Serial Bridge
 @cite{bresnan-etal-1982} @cite{steedman-2000}
 
 Connects CCG derivations (from `Theories.Syntax.CCG.CrossSerial`) to
-empirical cross-serial dependency data (from `Phenomena.FillerGap.CrossSerial`).
+empirical cross-serial dependency data (from `Phenomena.WordOrder.CrossSerial`).
 
 Proves that CCG derivations produce the correct cross-serial bindings
 for Dutch verb clusters, and that the cross-serial pattern requires
@@ -18,7 +18,7 @@ namespace Phenomena.FillerGap.CCG_CrossSerialBridge
 
 open CCG
 open CCG.CrossSerial
-open Phenomena.FillerGap.CrossSerial
+open Phenomena.WordOrder.CrossSerial
 
 /--
 A CCG derivation annotated with which NP binds to which verb.

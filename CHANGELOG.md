@@ -1,5 +1,50 @@
 # Changelog
 
+## [0.229.157] - 2026-03-11
+
+### Changed
+- **BachBrownMarslenWilson1986.lean**: Fix module docstring (Ger/Inf vs Ger/Part distinction at Level 2); remove unverified F-statistic and scale claims from docstrings
+- **references.bib**: Fix `shieber-1985` (add first name, change `@misc` → `@article`, add journal/volume/pages, fix title formatting, verify DOI `10.1007/BF00630917` and pages 333–343 via Crossref); add verified DOI `10.1080/01690968608404677` for `bach-brown-marslen-wilson-1986`; fix stale source path in `bresnan-etal-1982` (`CCG_CrossSerialBridge.lean` → `Studies/Steedman2000CrossSerial.lean`)
+
+## [0.229.156] - 2026-03-11
+
+### Changed
+- **Larson1988.lean**: Deepen formalization — replace stipulative `DativeVerbEntry` Booleans with θ-role-derived recoverability (`ioRoles : List ThetaRole`, `recoverable` derived from `.goal` membership); add structured Barss & Lasnik 1986 asymmetry data (6 datum records); add scope freezing bridge theorem; add indirect passive derivation (§4, "Mary was sent a letter"); add `contribute`/`promise` to verb inventory; document V-raising limitation in docstring
+- **Scope.lean**: Remove stipulated `inDoubleObject : Bool` from `PositionedQuantifier`; add `so : Option SyntacticObject` for tree-based c-command derivation; add `superiorityFromTree` deriving superiority from asymmetric c-command
+- **MinimalismScope.lean**: Add `tree` field to `MinimalistScopeConfig`; derive DOC scope freezing from Larson's tree via `superiorityFromTree` (`doc_superiority_from_tree` theorem); fallback to `FreezingContext` annotation when no tree available
+- **references.bib**: Fix `larson-1988` subfield (`semantics/compositional` → `syntax/argument-structure`), add `barss-lasnik-1986` entry, update sources fields
+- **DativeAlternation.lean**: Add `@cite{}` tags, document lexical restrictions on alternation (§5)
+- **Quantification/Data.lean**: Fix bare "Barss & Lasnik 1986" citation to `@cite{barss-lasnik-1986}`
+
+## [0.229.155] - 2026-03-11
+
+### Added
+- **ReesReksnesRohde2026.lean**: Formalize Rees, Reksnes & Rohde (2026) on relevance inferences from trivial utterances; model Speaker Knowledge and Speaker Style as effect strengthening in RT comprehension procedure; prove familiar-location selects enriched interpretation, unfamiliar selects literal; derive quiet-speaker prediction via new monotonicity theorem
+- **Comprehension.lean**: Add `StructuralVariant` and `selects_of_strengthened_effects` — monotonicity theorem showing effect strengthening preserves selection across RT scenarios with shared candidates/accessibility
+- **references.bib**: Add `rees-reksnes-rohde-2026` entry
+
+## [0.229.154] - 2026-03-11
+
+### Changed
+- **BachBrownMarslenWilson1986.lean**: Deepen formalization — add Tables 4–5 NP-by-NP comprehension data (`comprehensionByNP`, `errorDiffByNP`); add `np2_hardest` and `dutch_np3_advantage` theorems; add dependency length invariance section proving crossed and nested have identical total dep length (`dep_length_equal_at_3`, `cost_differs_despite_equal_dep_length`); fix `level2_similar` → `level2_german_part_similar` (Ger/Part ≈ Dutch, Ger/Inf worse throughout per paper); add Ger/Part to `syntactic_effect_grows_faster_for_german`; clarify docstrings (model is our formalization, not the paper's; dual anti-PDA argument)
+- **references.bib**: Add `evers-1975` entry
+
+## [0.229.153] - 2026-03-11
+
+### Changed
+- **Larson1988.lean**: Deepen formalization — replace stipulative `DativeVerbEntry` Booleans with θ-role-derived recoverability (`ioRoles : List ThetaRole`, `recoverable` derived from `.goal` membership); add structured Barss & Lasnik 1986 asymmetry data (6 datum records); add scope freezing bridge theorem; add indirect passive derivation (§4, "Mary was sent a letter"); add `contribute`/`promise` to verb inventory; document V-raising limitation in docstring
+- **references.bib**: Fix `larson-1988` subfield (`semantics/compositional` → `syntax/argument-structure`), add `barss-lasnik-1986` entry, update sources fields
+- **DativeAlternation.lean**: Add `@cite{}` tags, document lexical restrictions on alternation (§5)
+- **Quantification/Data.lean**: Fix bare "Barss & Lasnik 1986" citation to `@cite{barss-lasnik-1986}`
+
+## [0.229.152] - 2026-03-11
+
+### Added
+- **Phenomena/WordOrder/Studies/BachBrownMarslenWilson1986.lean**: Formalize Bach, Brown & Marslen-Wilson 1986 — incremental integration model (`integratedBindings`, `totalIntegrationCost`) deriving crossed-dependency processing advantage from top-down vs bottom-up verb-cluster integration; Tables 1 & 3 experimental data (comprehensibility ratings, comprehension accuracy); `formal_processing_dissociation` bridging Chomsky hierarchy to processing predictions; `model_matches_data` confirming model direction matches empirical Dutch advantage at Level 3
+
+### Changed
+- **Move `CrossSerial.lean`** from `Phenomena/FillerGap/` to `Phenomena/WordOrder/` — verb-cluster crossed/nested dependencies are a word-order phenomenon, not filler-gap; update namespace to `Phenomena.WordOrder.CrossSerial` and all downstream imports
+
 ## [0.229.151] - 2026-03-11
 
 ### Fixed
