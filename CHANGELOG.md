@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.135] - 2026-03-10
+
+### Added
+- **Phenomena/Case/Studies/Grimm2011.lean**: New study file exercising the full scope of @cite{grimm-2011}'s agentivity lattice by connecting it to existing DOM infrastructure; Russian DOM matches the lattice's canonical transitive predictions exactly; Spanish DOM is a proper subset (lattice predicts animate DOM, Spanish doesn't); Hindi animacy dimension is consistent; lattice-derived DOM profiles are always Aissen-monotone (`lattice_dom_always_monotone`); lattice prediction matches Aissen 2003 OT Type 2; full case region table for all canonical verbs (kick/build/eat/see/run/arrive/buy/sell); verb persistence classes connecting Dowty P-Patient entailments to Tsunoda transitivity hierarchy; verb class effect on DOM connecting to @cite{von-heusinger-2008}; creation verb DOM inapplicable at all animacy levels; instigation as the dividing feature for NOM/ERG; accusative and ergative alignment predictions
+
+## [0.229.134] - 2026-03-10
+
+### Added
+- **Theories/Semantics/PossibilitySemantics/Basic.lean**: New module formalizing possibility semantics (@cite{holliday-2024}): compatibility frames, orthocomplement negation, De Morgan disjunction, regularity, refinement, worlds; 5-element path frame with distributivity failure (the signature non-Boolean result), double negation, excluded middle, non-contradiction; classical collapse theorem (orthocomplement = Boolean negation when compat = identity)
+- **Theories/Semantics/PossibilitySemantics/Epistemic.lean**: Epistemic extension with modal compatibility frames, box/diamond operators; 5-point epistemic scale (□p—p—◇p∧◇¬p—¬p—□¬p); Wittgenstein sentence contradictions (¬A ∧ ◇A = ∅); free choice at maximal uncertainty with counterexample at x₁; epistemic distributivity failure; T axiom
+- **blog/data/references.bib**: Add `holliday-2024` (Possibility Semantics survey, arXiv:2203.02872) and `holliday-mandelkern-2024` (Epistemic Contradictions, arXiv:2404.00122)
+
 ## [0.229.133] - 2026-03-10
 
 ### Changed

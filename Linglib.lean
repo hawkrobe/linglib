@@ -10,6 +10,8 @@ import Linglib.Core.Lexical.Word
 import Linglib.Core.Grammar
 import Linglib.Core.Lexical.Pronouns
 import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.Consequence
+import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Empirical
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Lexical.UD
@@ -568,6 +570,7 @@ import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Ozaki2025
 import Linglib.Phenomena.Case.Studies.DependentCaseInventories
 import Linglib.Phenomena.Case.Studies.Aissen2003
+import Linglib.Phenomena.Case.Studies.Grimm2011
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Studies.Haspelmath2021
 import Linglib.Phenomena.Case.Studies.Karlsson2017
@@ -1255,6 +1258,10 @@ import Linglib.Theories.Semantics.Degree.Frameworks.Rett
 import Linglib.Theories.Semantics.Degree.Granularity
 -- Theories: Semantics.Supervaluation (general supervaluation framework)
 import Linglib.Theories.Semantics.Supervaluation.Basic
+import Linglib.Theories.Semantics.Supervaluation.TCS
+-- Theories: Semantics.PossibilitySemantics (possibility semantics)
+import Linglib.Theories.Semantics.PossibilitySemantics.Basic
+import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic
 -- Theories: Semantics.Montague (Montague architecture)
 import Linglib.Theories.Semantics.Lexical.Adjective.Classification
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
