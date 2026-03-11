@@ -100,7 +100,8 @@ def qrIsBlocked (q : PositionedQuantifier) : Option QRBarrier :=
     when `q1` asymmetrically c-commands `q2` in `tree`.
 
     This is the theory-layer primitive. Bridge files use it to derive
-    DOC scope freezing from @cite{larson-1988}'s tree derivation. -/
+    DOC scope freezing from @cite{pylkknen-2008}'s Voice + low-Appl
+    tree derivation. -/
 def superiorityFromTree (tree : SyntacticObject)
     (q1 q2 : SyntacticObject) : Bool :=
   cCommandsInB tree q1 q2 && !cCommandsInB tree q2 q1

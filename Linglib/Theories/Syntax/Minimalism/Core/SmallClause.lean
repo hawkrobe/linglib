@@ -94,24 +94,32 @@ def SCPredCategory.constructionName : SCPredCategory → String
     High applicatives relate the applied argument to the event, not
     to the theme — they are NOT affixal particles. -/
 def ApplType.isAffixalParticle : ApplType → Bool
-  | .low  => true   -- Low Appl = P head (transfer/possession SC)
-  | .high => false   -- High Appl = event-level, not SC predication
+  | .lowRecipient => true   -- Low Appl = P head (transfer/possession SC)
+  | .lowSource    => true   -- Low Appl = P head (source/possession SC)
+  | .high         => false  -- High Appl = event-level, not SC predication
 
 /-- Map low applicatives to SC predicate category P.
     Low Appl mediates the same structural relation as a particle:
     `[SC Goal [XP Theme]]` where the applicative head is the P. -/
 def ApplType.toSCPredCategory : ApplType → Option SCPredCategory
-  | .low  => some .P
-  | .high => none
+  | .lowRecipient => some .P
+  | .lowSource    => some .P
+  | .high         => none
 
-/-- Low applicatives are affixal particles. -/
-theorem low_appl_is_particle : ApplType.isAffixalParticle .low = true := rfl
+/-- Low recipient applicatives are affixal particles. -/
+theorem low_recipient_appl_is_particle : ApplType.isAffixalParticle .lowRecipient = true := rfl
+
+/-- Low source applicatives are affixal particles. -/
+theorem low_source_appl_is_particle : ApplType.isAffixalParticle .lowSource = true := rfl
 
 /-- High applicatives are NOT affixal particles. -/
 theorem high_appl_not_particle : ApplType.isAffixalParticle .high = false := rfl
 
-/-- Low applicatives map to SC predicate category P. -/
-theorem low_appl_is_P : ApplType.toSCPredCategory .low = some .P := rfl
+/-- Low recipient applicatives map to SC predicate category P. -/
+theorem low_recipient_appl_is_P : ApplType.toSCPredCategory .lowRecipient = some .P := rfl
+
+/-- Low source applicatives map to SC predicate category P. -/
+theorem low_source_appl_is_P : ApplType.toSCPredCategory .lowSource = some .P := rfl
 
 /-- High applicatives have no SC predication analog. -/
 theorem high_appl_no_SC : ApplType.toSCPredCategory .high = none := rfl

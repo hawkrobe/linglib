@@ -128,7 +128,7 @@ theorem experimental_pvcs_in_inventory :
   constructor <;> native_decide
 
 /-- The ApplP analysis uses a LOW applicative. -/
-def doc_appl_type : ApplType := .low
+def doc_appl_type : ApplType := .lowRecipient
 
 /-! ## Structural analyses -/
 

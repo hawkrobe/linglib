@@ -133,8 +133,9 @@ theorem baseline_is_ambiguous :
 
 /-! ### Superiority derived from c-command
 
-@cite{pylkknen-2008}'s Voice + low-Appl tree (`ditransitiveTree`) produces the
-DOC structure where the goal asymmetrically c-commands the theme. QR of the
+@cite{pylkknen-2008}'s low-Appl tree (`ditransitiveTree`) produces the
+DOC structure where V takes ApplP as complement, so the goal in Spec-ApplP
+asymmetrically c-commands the theme in complement of Appl. QR of the
 theme over the goal is blocked by superiority, derived from c-command rather
 than stipulated. -/
 
