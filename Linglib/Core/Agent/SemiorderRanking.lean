@@ -75,6 +75,32 @@ theorem pairwiseProb_eq_pChoice (v : A → ℝ) (hv : ∀ a, 0 < v a)
 -- §3. Adjacent-swap ranking ratio
 -- ============================================================================
 
+-- Private helpers for swap ratio proof
+
+private theorem pChoice_pos_of_score_pos (ra : RationalAction Unit A) (s : Unit)
+    (T : Finset A) (a : A) (ha : a ∈ T) (hpos : ∀ b, 0 < ra.score s b) :
+    0 < ra.pChoice s T a := by
+  have hsum_pos : 0 < ∑ b ∈ T, ra.score s b :=
+    Finset.sum_pos (fun b _ => hpos b) ⟨a, ha⟩
+  simp only [RationalAction.pChoice, ha, ne_of_gt hsum_pos, ↓reduceIte]
+  exact div_pos (hpos a) hsum_pos
+
+private theorem rankProbRec_pos_of_score_pos (ra : RationalAction Unit A) (s : Unit)
+    (ranking : List A) (hpos : ∀ b, 0 < ra.score s b) :
+    0 < rankProbRec ra s ranking := by
+  induction ranking with
+  | nil => simp [rankProbRec]
+  | cons a rest ih =>
+    show 0 < ra.pChoice s (a :: rest).toFinset a * rankProbRec ra s rest
+    exact mul_pos
+      (pChoice_pos_of_score_pos ra s _ a (by simp [List.toFinset_cons]) hpos) ih
+
+private theorem pChoice_eq_score_div_sum (ra : RationalAction Unit A) (s : Unit)
+    (T : Finset A) (a : A) (ha : a ∈ T)
+    (hne : ∑ b ∈ T, ra.score s b ≠ 0) :
+    ra.pChoice s T a = ra.score s a / ∑ b ∈ T, ra.score s b := by
+  simp [RationalAction.pChoice, ha, hne]
+
 /-- Swapping two adjacent elements in a ranking changes the probability by
     the ratio `(v(x) + S_rest) / (v(y) + S_rest)` where `S_rest = ∑ b ∈ rest, v b`.
 
@@ -89,19 +115,47 @@ theorem pairwiseProb_eq_pChoice (v : A → ℝ) (hv : ∀ a, 0 < v a)
 
     where `T = {x,y} ∪ R` and `S_R = ∑ b ∈ R, v b`. -/
 theorem rankProbRec_swap_ratio (ra : RationalAction Unit A) (s : Unit)
-    (x y : A) (rest : List A) (hne : x ≠ y)
+    (x y : A) (rest : List A) (_hne : x ≠ y)
     (hx : x ∉ rest) (hy : y ∉ rest)
-    (hnd : rest.Nodup)
-    (hpos_tail : 0 < rankProbRec ra s rest)
-    (hpos_sum : ∑ b ∈ (x :: y :: rest).toFinset, ra.score s b ≠ 0) :
+    (_hnd : rest.Nodup)
+    (hpos : ∀ b, 0 < ra.score s b) :
     rankProbRec ra s (x :: y :: rest) / rankProbRec ra s (y :: x :: rest) =
     (ra.score s x + ∑ b ∈ rest.toFinset, ra.score s b) /
     (ra.score s y + ∑ b ∈ rest.toFinset, ra.score s b) := by
-  -- TODO: unfold rankProbRec twice on each side, cancel the common
-  -- rankProbRec(rest) factor, then simplify the pChoice quotients.
-  -- The key step is showing (x::y::rest).toFinset = (y::x::rest).toFinset
-  -- and that the pChoice ratio simplifies to the score ratio.
-  sorry
+  set vx := ra.score s x; set vy := ra.score s y
+  set S_R := ∑ b ∈ rest.toFinset, ra.score s b
+  set tail := rankProbRec ra s rest
+  have hvx := hpos x; have hvy := hpos y
+  have hS_nn : 0 ≤ S_R := Finset.sum_nonneg fun b _ => le_of_lt (hpos b)
+  have htail_pos := rankProbRec_pos_of_score_pos ra s rest hpos
+  have hx_notin : x ∉ rest.toFinset := by rwa [List.mem_toFinset]
+  have hy_notin : y ∉ rest.toFinset := by rwa [List.mem_toFinset]
+  have hT_eq : (x :: y :: rest).toFinset = (y :: x :: rest).toFinset := by
+    simp only [List.toFinset_cons]; ext a; simp [Finset.mem_insert]; tauto
+  show ra.pChoice s (x :: y :: rest).toFinset x *
+       (ra.pChoice s (y :: rest).toFinset y * tail) /
+      (ra.pChoice s (y :: x :: rest).toFinset y *
+       (ra.pChoice s (x :: rest).toFinset x * tail)) =
+      (vx + S_R) / (vy + S_R)
+  rw [hT_eq]
+  set T := (y :: x :: rest).toFinset
+  have hS_T_ne : ∑ b ∈ T, ra.score s b ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (fun b _ => hpos b)
+      ⟨y, by simp [T, List.toFinset_cons]⟩)
+  have hS_yR_ne : vy + S_R ≠ 0 := ne_of_gt (by linarith)
+  have hS_xR_ne : vx + S_R ≠ 0 := ne_of_gt (by linarith)
+  rw [pChoice_eq_score_div_sum ra s T x (by simp [T, List.toFinset_cons]) hS_T_ne,
+      pChoice_eq_score_div_sum ra s T y (by simp [T, List.toFinset_cons]) hS_T_ne,
+      pChoice_eq_score_div_sum ra s (y :: rest).toFinset y (by simp [List.toFinset_cons])
+        (by rw [List.toFinset_cons, Finset.sum_insert hy_notin]; exact hS_yR_ne),
+      pChoice_eq_score_div_sum ra s (x :: rest).toFinset x (by simp [List.toFinset_cons])
+        (by rw [List.toFinset_cons, Finset.sum_insert hx_notin]; exact hS_xR_ne)]
+  rw [show ∑ b ∈ (y :: rest).toFinset, ra.score s b = vy + S_R from
+        by rw [List.toFinset_cons, Finset.sum_insert hy_notin],
+      show ∑ b ∈ (x :: rest).toFinset, ra.score s b = vx + S_R from
+        by rw [List.toFinset_cons, Finset.sum_insert hx_notin]]
+  have hne_tail : (tail : ℝ) ≠ 0 := ne_of_gt htail_pos
+  field_simp
 
 -- ============================================================================
 -- §4. JND effects on ranking probability
@@ -125,9 +179,23 @@ theorem jndL_swap_ordered (v : A → ℝ) (hv : ∀ a, 0 < v a) (thr : ℝ)
       (y :: x :: rest) <
     rankProbRec (RationalAction.fromScale v (λ a => le_of_lt (hv a))) ()
       (x :: y :: rest) := by
-  -- From jndL, v(x) > v(y). The ratio (v(x)+S_R)/(v(y)+S_R) > 1.
-  -- So rankProbRec(x::y::rest) > rankProbRec(y::x::rest).
-  sorry
+  set ra := RationalAction.fromScale v (λ a => le_of_lt (hv a))
+  have hpos : ∀ b, 0 < ra.score () b := fun b => hv b
+  have hne : x ≠ y := by
+    intro heq; subst heq
+    simp [jndL, pairwiseProb_self v hv] at hL; linarith
+  have hvxy : v y < v x :=
+    (pairwiseProb_gt_half_iff v hv x y).mp (lt_trans hthr_lower hL)
+  have hden_pos := rankProbRec_pos_of_score_pos ra () (y :: x :: rest) hpos
+  have hratio := rankProbRec_swap_ratio ra () x y rest hne hx hy hnd hpos
+  have hvy_S_pos : (0 : ℝ) < ra.score () y + ∑ b ∈ rest.toFinset, ra.score () b :=
+    add_pos_of_pos_of_nonneg (hpos y) (Finset.sum_nonneg fun b _ => le_of_lt (hpos b))
+  have h1 : 1 < rankProbRec ra () (x :: y :: rest) / rankProbRec ra () (y :: x :: rest) := by
+    rw [hratio, one_lt_div hvy_S_pos]
+    -- ra.score () x = v x and ra.score () y = v y
+    have : ra.score () y < ra.score () x := hvxy
+    linarith
+  exact (one_lt_div hden_pos).mp h1
 
 /-- If `x` and `y` are indistinguishable at threshold `π` (i.e., `xI(π)y`),
     then swapping them in a ranking changes the probability by at most
@@ -147,11 +215,34 @@ theorem jndI_swap_bounded (v : A → ℝ) (hv : ∀ a, 0 < v a) (thr : ℝ)
       (x :: y :: rest) /
     rankProbRec (RationalAction.fromScale v (λ a => le_of_lt (hv a))) ()
       (y :: x :: rest) ≤ thr / (1 - thr) := by
-  -- From jndI, 1-thr ≤ P(x,y) ≤ thr. The upper bound gives
-  -- v(x)/v(y) ≤ thr/(1-thr). The swap ratio (v(x)+S_R)/(v(y)+S_R)
-  -- is ≤ v(x)/v(y) ≤ thr/(1-thr) when v(x) ≥ v(y),
-  -- and ≤ 1 < thr/(1-thr) when v(x) < v(y).
-  sorry
+  set ra := RationalAction.fromScale v (λ a => le_of_lt (hv a))
+  have hpos : ∀ b, 0 < ra.score () b := fun b => hv b
+  by_cases heq : x = y
+  · -- x = y: ratio is 1, and thr/(1-thr) ≥ 1 since thr > 1/2
+    subst heq
+    rw [div_self (ne_of_gt (rankProbRec_pos_of_score_pos ra () (x :: x :: rest) hpos))]
+    rw [le_div_iff₀ (by linarith : (0:ℝ) < 1 - thr)]
+    linarith
+  · -- x ≠ y: use swap ratio
+    have hratio := rankProbRec_swap_ratio ra () x y rest heq hx hy hnd hpos
+    rw [hratio]
+    -- Convert ra.score to v for arithmetic
+    have hv_eq : ∀ b, ra.score () b = v b := fun _ => by
+      simp only [ra, RationalAction.fromScale]
+    simp_rw [hv_eq]
+    set S_R := ∑ b ∈ rest.toFinset, v b
+    have hS_nn : 0 ≤ S_R := Finset.sum_nonneg fun b _ => le_of_lt (hv b)
+    have h1thr : 0 < 1 - thr := by linarith
+    have hvy_S : 0 < v y + S_R := by linarith [hv y]
+    obtain ⟨_, hhi⟩ := hI
+    simp only [pairwiseProb] at hhi
+    have hvx_bound : v x * (1 - thr) ≤ thr * v y := by
+      have : v x ≤ thr * (v x + v y) := by
+        rwa [div_le_iff₀ (by linarith [hv x, hv y] : (0:ℝ) < v x + v y)] at hhi
+      nlinarith
+    suffices h : (v x + S_R) * (1 - thr) ≤ thr * (v y + S_R) from
+      (div_le_div_iff₀ hvy_S h1thr).mpr h
+    nlinarith [mul_nonneg hS_nn (show 0 ≤ 2 * thr - 1 from by linarith)]
 
 -- ============================================================================
 -- §5. Trace ordering matches expected rank ordering
@@ -160,25 +251,35 @@ theorem jndI_swap_bounded (v : A → ℝ) (hv : ∀ a, 0 < v a) (thr : ℝ)
 /-- The trace ordering from §1.G (Definition 4) matches the expected rank
     ordering from §2.F: `x ≥_T y` iff `E[rank(x)] ≤ E[rank(y)]`.
 
-    By Theorem 6 (trace_iff_scale_ge), `x ≥_T y ↔ v(x) ≥ v(y)`.
-    By Theorem 10 (expectedRank_lt_of_score_gt), `v(x) > v(y)` implies
+    By `trace_iff_scale_ge`, `x ≥_T y ↔ v(x) ≥ v(y)`.
+    By `expectedRank_lt_of_score_gt`, `v(x) > v(y)` implies
     `E[rank(x)] < E[rank(y)]`. So the two orderings agree on strict preference.
 
-    The `≤` case (when `v(x) = v(y)`) follows from the fact that both
-    `traceGe` and `expectedRank` are symmetric in that case.
-
-    NOTE: depends on `expectedRank_lt_of_score_gt`, which is sorry'd
-    in RankOrderings.lean. -/
+    The `≤` case (when `v(x) = v(y)`) follows from `expectedRank_eq_of_score_eq`. -/
 theorem traceGe_iff_expectedRank_le (v : A → ℝ) (hv : ∀ a, 0 < v a)
-    (T : Finset A) (x y : A) (hx : x ∈ T) (hy : y ∈ T) (hne : x ≠ y)
-    (hpos : ∑ b ∈ T, v b ≠ 0) :
+    (T : Finset A) (x y : A) (hx : x ∈ T) (hy : y ∈ T) (hne : x ≠ y) :
     traceGe v x y ↔
     expectedRank (RationalAction.fromScale v (λ a => le_of_lt (hv a))) () T x ≤
     expectedRank (RationalAction.fromScale v (λ a => le_of_lt (hv a))) () T y := by
-  -- Forward: traceGe → v(x) ≥ v(y) (by trace_iff_scale_ge) →
-  --   E[rank(x)] ≤ E[rank(y)] (by expectedRank_lt_of_score_gt or equality)
-  -- Backward: E[rank(x)] ≤ E[rank(y)] → v(x) ≥ v(y) (contrapositive of
-  --   expectedRank_lt_of_score_gt) → traceGe (by trace_iff_scale_ge)
-  sorry
+  set ra := RationalAction.fromScale v (λ a => le_of_lt (hv a))
+  have hpos' : ∀ a ∈ T, 0 < ra.score () a := fun a _ => hv a
+  constructor
+  · -- Forward: traceGe → v(y) ≤ v(x) → E[rank(x)] ≤ E[rank(y)]
+    intro h
+    rw [trace_iff_scale_ge v hv x y] at h
+    rcases eq_or_lt_of_le h with heq | hlt
+    · -- v(y) = v(x): equal scores → equal expected ranks
+      exact le_of_eq (expectedRank_eq_of_score_eq ra () T x y hx hy hne hpos' heq.symm)
+    · -- v(y) < v(x): strict monotonicity
+      exact le_of_lt (expectedRank_lt_of_score_gt ra () T x y hx hy hne hpos' hlt)
+  · -- Backward: E[rank(x)] ≤ E[rank(y)] → traceGe (contrapositive)
+    intro hle
+    rw [trace_iff_scale_ge v hv x y]
+    by_contra h_not
+    push_neg at h_not
+    -- h_not : v x < v y, i.e., ra.score () y > ra.score () x
+    have hgt : ra.score () y > ra.score () x := h_not
+    have := expectedRank_lt_of_score_gt ra () T y x hy hx hne.symm hpos' hgt
+    linarith
 
 end Core
