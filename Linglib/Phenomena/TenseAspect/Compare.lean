@@ -41,7 +41,7 @@ see `Comparisons/Partee1973.lean`.
 
 -/
 
-namespace Comparisons.TenseTheories
+namespace Phenomena.TenseAspect.Compare
 
 open Semantics.Tense
 open Semantics.Tense.Abusch (Abusch)
@@ -396,4 +396,4 @@ theorem size_sensitivity_requires_agree :
         Sharvit, TsiliaEtAl2026, Zeijlstra, Wurmbrand]
 
 
-end Comparisons.TenseTheories
+end Phenomena.TenseAspect.Compare

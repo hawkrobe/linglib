@@ -50,7 +50,7 @@ exclusivity theorems remain with `sorry` for future reimplementation.
 import Linglib.Core.Semantics.Proposition
 import Mathlib.Data.Rat.Defs
 
-namespace SauerlandRSA
+namespace Phenomena.ScalarImplicatures.CompareSauerland
 
 open Core.Proposition
 
@@ -290,4 +290,4 @@ RSA's graded predictions better match empirical judgment data,
 while Sauerland's categorical framework captures the logical structure.
 -/
 
-end SauerlandRSA
+end Phenomena.ScalarImplicatures.CompareSauerland

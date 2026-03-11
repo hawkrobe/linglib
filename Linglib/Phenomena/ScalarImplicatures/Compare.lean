@@ -43,7 +43,7 @@ import Linglib.Core.Interface
 import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
 
-namespace Comparisons.RSAImplicature
+namespace Phenomena.ScalarImplicatures.Compare
 
 open RSA Implicature
 
@@ -409,4 +409,4 @@ RSA S1 (softmax) ──α→∞──> IBR S1 (argmax) ────> exhMW ─�
 5. Explore suboptimality for α < 1 (utility non-monotonicity)
 -/
 
-end Comparisons.RSAImplicature
+end Phenomena.ScalarImplicatures.Compare

@@ -55,7 +55,7 @@ referential mechanism operates over different domains.
 
 -/
 
-namespace Comparisons.Partee1973
+namespace Phenomena.TenseAspect.ComparePartee
 
 open Semantics.Tense (TenseInterpretation TemporalAssignment
   interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST SitProp)
@@ -285,4 +285,4 @@ theorem two_coarsenings (m : ReferentialMode) :
   · cases m <;> simp [ReferentialMode.isFree, Overtness.fromBinding]
 
 
-end Comparisons.Partee1973
+end Phenomena.TenseAspect.ComparePartee

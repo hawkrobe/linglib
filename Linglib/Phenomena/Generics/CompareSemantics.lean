@@ -18,7 +18,7 @@ making the observable "prevalence" sufficient.
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 
-namespace Comparisons.GenericSemantics
+namespace Phenomena.Generics.CompareSemantics
 
 open Semantics.Lexical.Noun.Kind.Generics
 open Semantics.Lexical.CovertQuantifier
@@ -172,4 +172,4 @@ See `Phenomena/Generics/Studies/TesslerGoodman2019.lean` for the
 full RSA implementation with prevalence priors.
 -/
 
-end Comparisons.GenericSemantics
+end Phenomena.Generics.CompareSemantics

@@ -38,7 +38,7 @@ cannot be epistemic. No dedicated functional heads are needed.
 
 -/
 
-namespace Comparisons.ModalPosition
+namespace Phenomena.Modality.ComparePosition
 
 open Semantics.Modality.EventRelativity
 open Core.Modality (ModalFlavor)
@@ -208,4 +208,4 @@ theorem content_licensing_is_uniform :
   ⟨rfl, rfl, rfl, λ _ => rfl⟩
 
 
-end Comparisons.ModalPosition
+end Phenomena.Modality.ComparePosition

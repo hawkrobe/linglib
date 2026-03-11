@@ -31,7 +31,7 @@ and the kernel {wearingRaincoat} doesn't settle isRaining.
 
 -/
 
-namespace Comparisons.TenseModalEvidentiality
+namespace Phenomena.TenseAspect.CompareTenseModal
 
 open Semantics.Tense.Evidential
 open Semantics.Modality
@@ -169,4 +169,4 @@ theorem authority_source_correlation :
     inferentialClaim.authority = .nonparticipant ∧ inferentialClaim.source = .inference := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-end Comparisons.TenseModalEvidentiality
+end Phenomena.TenseAspect.CompareTenseModal

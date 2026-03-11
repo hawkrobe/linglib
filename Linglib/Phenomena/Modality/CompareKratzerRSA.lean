@@ -39,7 +39,7 @@ pipeline.
 
 -/
 
-namespace Comparisons.KratzerEpistemicRSA
+namespace Phenomena.Modality.CompareKratzerRSA
 
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional
@@ -131,4 +131,4 @@ theorem prob_ordering_roundtrip
       (∀ w z : World, P w ≥ P z → prior w ≥ prior z) :=
   sorry -- Requires: l-lift preserves probability ranking; representation theorem
 
-end Comparisons.KratzerEpistemicRSA
+end Phenomena.Modality.CompareKratzerRSA

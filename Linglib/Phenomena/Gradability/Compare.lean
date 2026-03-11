@@ -14,7 +14,7 @@ rather than `Phenomena/`.
 
 -/
 
-namespace Comparisons.VaguenessTheories
+namespace Phenomena.Gradability.Compare
 
 /--
 Major theoretical positions on vagueness.
@@ -193,4 +193,4 @@ theorem tcs_hierarchy_verified :
       (sat M .classical φ = true → sat M .tolerant φ = true) :=
   fun M φ => sat_hierarchy M φ
 
-end Comparisons.VaguenessTheories
+end Phenomena.Gradability.Compare

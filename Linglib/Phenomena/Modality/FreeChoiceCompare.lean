@@ -34,7 +34,7 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 
 -/
 
-namespace Comparisons.FreeChoice
+namespace Phenomena.Modality.FreeChoiceCompare
 
 open Phenomena.Modality.FreeChoice
 open Exhaustification
@@ -685,4 +685,4 @@ Each theory contributes something unique:
 - **Holliday & Mandelkern**: WHEN FC holds (Boolean algebra) vs fails (ortholattice)
 -/
 
-end Comparisons.FreeChoice
+end Phenomena.Modality.FreeChoiceCompare

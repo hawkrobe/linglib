@@ -31,7 +31,7 @@ The proof factors through two key steps:
    `tendsto_softmax_infty_not_max` gives S1(some|both) → 0.
 -/
 
-namespace Comparisons.ExhaustivityLimit
+namespace Phenomena.ScalarImplicatures.CompareExhaustivity
 
 open Core Real BigOperators Finset Filter Topology
 open Exhaustification.Fox2007 (exhB ieIndices)
@@ -149,4 +149,4 @@ theorem exh_true_at_weakOnly :
 theorem exh_false_at_both :
     exhB scaleDomain scaleAlts weakMeaning .both = false := by native_decide
 
-end Comparisons.ExhaustivityLimit
+end Phenomena.ScalarImplicatures.CompareExhaustivity

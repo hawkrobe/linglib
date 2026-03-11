@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.141] - 2026-03-11
+
+### Changed
+- **Comparisons/ refactor**: Move 17 phenomenon-specific comparison files to `Phenomena/X/Compare*.lean`; keep 8 framework-level files in `Comparisons/`. Moved: FreeChoice→Modality, CaseTheories→Case, CommandRelations→Anaphora, VaguenessTheories→Gradability, TenseTheories→TenseAspect, RSAImplicature→ScalarImplicatures, ModalPosition→Modality, Partee1973→TenseAspect, ProjectionMechanisms→Presupposition, AssertionTheories→Assertion, GenericSemantics→Generics, GenericModality→Generics, RSAExhExpressivity→ScalarImplicatures, SauerlandRSA→ScalarImplicatures, ExhaustivityLimit→ScalarImplicatures, KratzerEpistemicRSA→Modality, TenseModalEvidentiality→TenseAspect. Namespaces updated to match new locations.
+
 ## [0.229.140] - 2026-03-11
 
 ### Added
@@ -9,7 +14,7 @@
 - **Phenomena/Gradability/Vagueness.lean**: BorderlineContradictionDatum with empirical entries and all_borderline_peak
 
 ### Changed
-- **Comparisons/VaguenessTheories.lean**: Add .tcs variant with tcsProfile and verification theorems
+- **Phenomena/Gradability/Compare.lean** (was Comparisons/VaguenessTheories.lean): Add .tcs variant with tcsProfile and verification theorems
 - **Theories/Semantics/Alternatives/StructuralAlternatives.lean**: Add Mathlib imports for Relation.ReflTransGen and Set (fixes build)
 - **Phenomena/Gradability/Studies/Fine1975.lean**: Fix D_idempotent proof for Lean 4.28.0 API
 - **Phenomena/Quantification/Studies/ScontrasPearl2021.lean**: Fix NeoGricean→Implicature namespace migration
@@ -28,7 +33,7 @@
 
 ### Changed
 - **Theories/Semantics/PossibilitySemantics/Epistemic.lean**: Wire up to `Core.ModalLogic` — `box_eq_kripkeEval` (box = Kripke necessity, by rfl), `diamond_eq_kripkeEval_classical` (diamond = Kripke possibility when compat = identity), `T_axiom_general` (T axiom from `Core.ModalLogic.T_of_refl`); make `propP` public for cross-file use; docstring connecting to supervaluation's classical-collapse parallel
-- **Comparisons/FreeChoice.lean**: Add @cite{holliday-mandelkern-2024} as 7th theory (algebraic/ortholattice account); re-export `free_choice_at_x3` and `free_choice_fails_at_x1`; update comparison table and summary
+- **Phenomena/Modality/FreeChoiceCompare.lean** (was Comparisons/FreeChoice.lean): Add @cite{holliday-mandelkern-2024} as 7th theory (algebraic/ortholattice account); re-export `free_choice_at_x3` and `free_choice_fails_at_x1`; update comparison table and summary
 
 ## [0.229.137] - 2026-03-10
 

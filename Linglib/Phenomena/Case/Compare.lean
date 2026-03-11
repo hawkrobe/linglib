@@ -45,7 +45,7 @@ Three competing theories of abstract case assignment in Minimalism:
 
 -/
 
-namespace Comparisons.CaseTheories
+namespace Phenomena.Case.Compare
 
 open Minimalism
 
@@ -181,4 +181,4 @@ theorem dependent_case_always_assigns :
     (assignCases .accusative nps).all (λ np => np.case != .obl) = true := by
   native_decide
 
-end Comparisons.CaseTheories
+end Phenomena.Case.Compare

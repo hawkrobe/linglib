@@ -50,7 +50,7 @@ import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
 import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
 
-namespace Comparisons.RSAExhExpressivity
+namespace Phenomena.ScalarImplicatures.CompareRSAExh
 
 open Exhaustification
 open RSA.IBR
@@ -247,4 +247,4 @@ theorem hierarchy_is_strict :
       compositionalMeaning ⟨w, .local_⟩ = false :=
   ⟨.SA, rfl, rfl⟩
 
-end Comparisons.RSAExhExpressivity
+end Phenomena.ScalarImplicatures.CompareRSAExh

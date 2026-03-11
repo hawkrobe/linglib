@@ -61,7 +61,7 @@ private abbrev her := Fragments.English.Pronouns.her.toWord
 private abbrev them := Fragments.English.Pronouns.them.toWord
 private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
-namespace Comparisons.CommandRelations
+namespace Phenomena.Anaphora.Compare
 
 open Set
 open Phenomena.Anaphora.Coreference
@@ -1849,4 +1849,4 @@ The Heyting algebra structure now uses Mathlib's `HeytingAlgebra` typeclass:
    and intersections of basic command relations.
 -/
 
-end Comparisons.CommandRelations
+end Phenomena.Anaphora.Compare

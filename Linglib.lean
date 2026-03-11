@@ -814,7 +814,7 @@ import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
 import Linglib.Theories.Semantics.Dynamic.BSML.Basic
 import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022
-import Linglib.Comparisons.FreeChoice
+import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.ModalIndefinites.Data
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 import Linglib.Phenomena.Negation.Basic
@@ -1015,29 +1015,30 @@ import Linglib.Theories.Syntax.CCG.Formal.FormalLanguageTheory
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
--- Comparisons (pure metatheory)
-import Linglib.Comparisons.CommandRelations
-import Linglib.Comparisons.ExhaustivityLimit
-import Linglib.Comparisons.GenericModality
-import Linglib.Comparisons.GenericSemantics
+-- Comparisons (framework-level metatheory)
 import Linglib.Comparisons.Mueller2013
-import Linglib.Comparisons.Partee1973
 import Linglib.Comparisons.RelevanceTheories
 import Linglib.Comparisons.RSAandPDS
-import Linglib.Comparisons.RSAExhExpressivity
-import Linglib.Comparisons.RSAImplicature
-import Linglib.Comparisons.SauerlandRSA
 import Linglib.Comparisons.SDSandRSA
-import Linglib.Comparisons.TenseModalEvidentiality
-import Linglib.Comparisons.TenseTheories
-import Linglib.Comparisons.VaguenessTheories
-import Linglib.Comparisons.ProjectionMechanisms
-import Linglib.Comparisons.KratzerEpistemicRSA
-import Linglib.Comparisons.ModalPosition
-import Linglib.Comparisons.AssertionTheories
-import Linglib.Comparisons.CaseTheories
 import Linglib.Comparisons.FrameComposition
 import Linglib.Comparisons.CategorialFeatures
+-- Phenomenon-level comparisons (moved from Comparisons/)
+import Linglib.Phenomena.Anaphora.Compare
+import Linglib.Phenomena.Assertion.Compare
+import Linglib.Phenomena.Case.Compare
+import Linglib.Phenomena.Generics.CompareModality
+import Linglib.Phenomena.Generics.CompareSemantics
+import Linglib.Phenomena.Gradability.Compare
+import Linglib.Phenomena.Modality.CompareKratzerRSA
+import Linglib.Phenomena.Modality.ComparePosition
+import Linglib.Phenomena.Presupposition.Compare
+import Linglib.Phenomena.ScalarImplicatures.Compare
+import Linglib.Phenomena.ScalarImplicatures.CompareExhaustivity
+import Linglib.Phenomena.ScalarImplicatures.CompareRSAExh
+import Linglib.Phenomena.ScalarImplicatures.CompareSauerland
+import Linglib.Phenomena.TenseAspect.Compare
+import Linglib.Phenomena.TenseAspect.CompareTenseModal
+import Linglib.Phenomena.TenseAspect.ComparePartee
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Projection

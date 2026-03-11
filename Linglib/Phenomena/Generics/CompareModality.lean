@@ -41,7 +41,7 @@ providing the ordering source.
 -/
 -- UNVERIFIED: chapter number and specific claim about modal base/ordering source mapping
 
-namespace Comparisons.GenericModality
+namespace Phenomena.Generics.CompareModality
 
 open Semantics.Lexical.Noun.Kind.Generics
 open Semantics.Modality.Kratzer
@@ -146,4 +146,4 @@ def correspondenceTable : List Correspondence :=
     , notes := "Both are universal, not existential" }
   ]
 
-end Comparisons.GenericModality
+end Phenomena.Generics.CompareModality

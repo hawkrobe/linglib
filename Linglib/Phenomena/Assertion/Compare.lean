@@ -37,7 +37,7 @@ Stalnaker, Farkas & Bruce, Krifka, Brandom, Gunlogson, and Lauer.
 
 -/
 
-namespace Comparisons.AssertionTheories
+namespace Phenomena.Assertion.Compare
 
 open Interfaces
 open Theories.Pragmatics.Assertion
@@ -185,4 +185,4 @@ def comparisonMatrix : List AssertionComparison :=
 theorem matrix_correct :
     comparisonMatrix.length = 6 := rfl
 
-end Comparisons.AssertionTheories
+end Phenomena.Assertion.Compare

@@ -39,7 +39,7 @@ items).
 
 -/
 
-namespace Comparisons.ProjectionMechanisms
+namespace Phenomena.Presupposition.Compare
 
 open Core.Presupposition
 
@@ -191,4 +191,4 @@ theorem filtering_is_limiting_case :
   · simp
   · simp [h_entails w ha]
 
-end Comparisons.ProjectionMechanisms
+end Phenomena.Presupposition.Compare
