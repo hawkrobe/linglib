@@ -53,7 +53,7 @@ open Core
 -- § 1. Agentivity Primitives (@cite{grimm-2011} Table 2, §2.1)
 -- ════════════════════════════════════════════════════
 
-/-- The four agentivity primitives (@cite{grimm-2011} Table 2, p.520).
+/-- The four agentivity primitives (@cite{grimm-2011} Table 2 (agentive properties), p.520).
 
     Each has an agentive (+) and non-agentive (∅) pole. The non-agentive
     pole is not a separate feature — it is simply the absence of the
@@ -154,24 +154,16 @@ inductive PersistenceLevel where
       Subjects of *die*, *evaporate*; objects of *destroy*, *ruin*. -/
   | exPersBeginning
   /-- +ExPB, +ExPE, +QuPB, ∅QuPE — entity persists but is qualitatively
-      changed. Objects of transitive *move*, *dim*; subjects of *frighten*. -/
+      changed. Objects of transitive *move*, *dim*, *frighten*;
+      intransitive subjects of *fall*. -/
   | quPersBeginning
   /-- +ExPB, +ExPE, +QuPB, +QuPE — entity persists unchanged throughout.
       Prototypical transitive subjects; unaffected objects of *see*, *cut at*. -/
   | totalPersistence
   deriving DecidableEq, Repr, BEq
 
-/-- Whether the argument exists at the beginning of the event. -/
-def PersistenceLevel.existsBeginning : PersistenceLevel → Bool
-  | .exPersBeginning | .quPersBeginning | .totalPersistence => true
-  | _ => false
-
-/-- Whether the argument exists at the end of the event. -/
-def PersistenceLevel.existsEnd : PersistenceLevel → Bool
-  | .exPersEnd | .quPersBeginning | .totalPersistence => true
-  | _ => false
-
-/-- Existential persistence at beginning (positive feature). -/
+/-- Existential persistence at beginning (positive feature).
+    Also serves as "entity exists at the beginning of the event." -/
 def PersistenceLevel.exPersB : PersistenceLevel → Bool
   | .exPersBeginning | .quPersBeginning | .totalPersistence => true
   | _ => false
@@ -292,7 +284,7 @@ def GrimmNode.agentivityValid (n : GrimmNode) : Bool :=
 /-- The cross-lattice constraint: if the argument does not exist at the
     beginning of the event, it cannot have any agentivity properties. -/
 def GrimmNode.crossValid (n : GrimmNode) : Bool :=
-  n.persistence.existsBeginning || n.agentivity == ⊥
+  n.persistence.exPersB || n.agentivity == ⊥
 
 /-- Full validity: both constraints satisfied. -/
 def GrimmNode.valid (n : GrimmNode) : Bool :=
@@ -353,7 +345,7 @@ def maximalPatient : GrimmNode :=
 
 /-- The "effector" participant type: instigation + motion, total
     persistence. The canonical agent of effective action verbs (kill, break).
-    @cite{grimm-2011} §3, labeled Ia in Fig. 5. -/
+    @cite{grimm-2011} §3, labeled Ia/IIa in Fig. 5. -/
 def effectorAgent : GrimmNode :=
   ⟨⟨false, false, true, true⟩, .totalPersistence⟩
 
@@ -378,7 +370,7 @@ def recipientNode : GrimmNode :=
     because the prototypical transitive event requires both participants
     to exist at the beginning (@cite{grimm-2011} p.529–530). -/
 def GrimmNode.inTransitiveRegion (n : GrimmNode) : Bool :=
-  n.persistence.existsBeginning
+  n.persistence.exPersB
 
 /-- Tsunoda's transitivity hierarchy (@cite{grimm-2011} §3, example 8).
 
@@ -832,5 +824,165 @@ def russianGenAcc : GenAccAlternation :=
 /-- The specific reading maps to the ACC/ABS region. -/
 theorem genAcc_specific_is_acc :
     russianGenAcc.specificReading.toCaseRegion = .accAbs := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 16. Upward/Downward Closure (@cite{grimm-2011} §2.3, p.528)
+-- ════════════════════════════════════════════════════
+
+/-- Agents are **upwards closed** in the agentivity dimension
+    (@cite{grimm-2011} p.528): if `a` qualifies as agent for a predicate
+    (i.e., `a` has at least the entailments required by the verb), then
+    any `b ≥ a` also qualifies. An entity with *more* agentive properties
+    can always fill an agent role requiring fewer.
+
+    Formally: the set of acceptable agents for a verb with minimum
+    requirement `minReq` is `{a | minReq ≤ a}`, which is an upper set. -/
+theorem agent_upward_closed (minReq a b : AgentivityNode)
+    (ha : minReq ≤ a) (hab : a ≤ b) :
+    minReq ≤ b :=
+  le_trans ha hab
+
+/-- Patients are **downwards closed** in the persistence dimension
+    (@cite{grimm-2011} p.528): if `p` qualifies as patient (i.e., `p`
+    has at most the persistence features of the verb's patient slot),
+    then any `q ≤ p` also qualifies. A *more* affected entity (less
+    persistence) can always fill a patient role.
+
+    Formally: the set of acceptable patients for a verb with maximum
+    persistence `maxPers` is `{p | p ≤ maxPers}`, which is a lower set. -/
+theorem patient_downward_closed (maxPers p q : PersistenceLevel)
+    (hp : p ≤ maxPers) (hqp : q ≤ p) :
+    q ≤ maxPers :=
+  le_trans hqp hp
+
+-- ════════════════════════════════════════════════════
+-- § 17. Semantic Opposition (@cite{grimm-2011} §3, p.530)
+-- ════════════════════════════════════════════════════
+
+/-- Semantic opposition between two GrimmNodes. Transitivity increases
+    with the distance between agent and patient on the lattice. We measure
+    this as the difference in total feature counts — higher opposition
+    means more prototypically transitive. -/
+def semanticOpposition (agent patient : GrimmNode) : Int :=
+  (agent.featureCount : Int) - (patient.featureCount : Int)
+
+/-- Maximal agent vs maximal patient has the highest opposition (8 - 2 = 6). -/
+theorem maximal_opposition :
+    semanticOpposition maximalAgent maximalPatient = 6 := by native_decide
+
+/-- Class I (break) has more opposition than Class II (shoot):
+    the patient is more affected (fewer persistence features). -/
+theorem classI_more_opposition_than_classII :
+    semanticOpposition effectorAgent
+      (TransitivityClass.resultativeEffective.patientNode) >
+    semanticOpposition effectorAgent
+      (TransitivityClass.contact.patientNode) := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 18. End-to-End: EntailmentProfile → Case
+-- ════════════════════════════════════════════════════
+
+/-- Full pipeline: kick subject → GrimmNode → NOM/ERG → NOM (accusative). -/
+theorem kick_subject_to_nom :
+    (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
+    = .nom := by native_decide
+
+/-- Full pipeline: kick object → GrimmNode → ACC/ABS → ACC (accusative). -/
+theorem kick_object_to_acc :
+    (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
+    = .acc := by native_decide
+
+/-- Build subject → NOM (full agent, total persistence). -/
+theorem build_subject_to_nom :
+    (GrimmNode.fromSubjectProfile buildSubjectProfile).toCaseRegion.toAccusativeCase
+    = .nom := by native_decide
+
+/-- Build object → OBLIQUE (not ACC). The object of *build* maps to
+    exPersEnd (entity comes into existence), which falls OUTSIDE the
+    transitivity region (@cite{grimm-2011} p.529–530). Creation verbs
+    are non-prototypically transitive — the object does not exist at
+    the beginning of the event to "undergo its effects."
+    This is a correct prediction: creation verb objects cross-linguistically
+    show atypical case marking (e.g., pseudo-cleft asymmetry). -/
+theorem build_object_outside_acc :
+    (GrimmNode.fromObjectProfile buildObjectProfile).toCaseRegion ≠ .accAbs := by
+  native_decide
+
+/-- Full pipeline: see subject → OBLIQUE (not NOM/ERG).
+    The see-subject has sentience but no instigation, so it falls
+    outside the NOM/ERG region. Grimm's system predicts non-canonical
+    case for perception verb subjects cross-linguistically. -/
+theorem see_subject_not_nomErg :
+    (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion ≠ .nomErg := by
+  native_decide
+
+/-- Full pipeline: die subject (unaccusative) → ACC/ABS.
+    The sole argument of *die* maps to the patient region (no agentivity,
+    exPersBeginning). In an ergative system this → ABS (= intransitive
+    subject). -/
+theorem die_subject_to_abs :
+    (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion.toErgativeCase
+    = .abs := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 19. Canonical Verb-Agentivity Chain (@cite{grimm-2011} §2.2, p.523–524)
+-- ════════════════════════════════════════════════════
+
+/-! @cite{grimm-2011} illustrates the agentivity lattice with a chain of
+    canonical verbs, each adding one feature. This demonstrates that the
+    lattice directly formalizes "degree of agentivity" — higher on the
+    lattice means more agentive. -/
+
+/-- sit/stand subject: ⊥ (no agentivity). @cite{grimm-2011} p.523. -/
+def sitAgentivity : AgentivityNode := ⊥
+
+/-- know/see subject: sentience only. @cite{grimm-2011} p.524. -/
+def knowAgentivity : AgentivityNode := ⟨false, true, false, false⟩
+
+/-- discover subject: sentience + instigation. @cite{grimm-2011} p.524. -/
+def discoverAgentivity : AgentivityNode := ⟨false, true, true, false⟩
+
+/-- look at subject: sentience + instigation + motion. @cite{grimm-2011} p.524. -/
+def lookAtAgentivity : AgentivityNode := ⟨false, true, true, true⟩
+
+/-- assassinate subject: all four features. @cite{grimm-2011} p.524. -/
+def assassinateAgentivity : AgentivityNode := ⊤
+
+/-- The canonical verb chain is totally ordered and forms a maximal
+    chain from ⊥ to ⊤ in the agentivity lattice. -/
+theorem canonical_verb_chain :
+    sitAgentivity < knowAgentivity ∧
+    knowAgentivity < discoverAgentivity ∧
+    discoverAgentivity < lookAtAgentivity ∧
+    lookAtAgentivity < assassinateAgentivity := by
+  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
+
+/-- All canonical verb positions satisfy volition → sentience. -/
+theorem canonical_verbs_valid :
+    sitAgentivity.valid = true ∧ knowAgentivity.valid = true ∧
+    discoverAgentivity.valid = true ∧ lookAtAgentivity.valid = true ∧
+    assassinateAgentivity.valid = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 20. Persistence Covering Relations (@cite{grimm-2011} Fig. 2)
+-- ════════════════════════════════════════════════════
+
+/-- exPersEnd and quPersBeginning are incomparable (neither ≤ the other).
+    Their feature sets are {ExPE, QuPE} and {ExPB, ExPE, QuPB} —
+    QuPE ∉ {ExPB, ExPE, QuPB} and ExPB ∉ {ExPE, QuPE}.
+    This means the persistence lattice has TWO independent paths from ⊥ to ⊤:
+    (1) ⊥ → exPersEnd → ⊤
+    (2) ⊥ → exPersBeginning → quPersBeginning → ⊤ -/
+theorem exPersEnd_incomparable_quPersBeginning :
+    ¬ (PersistenceLevel.exPersEnd ≤ PersistenceLevel.quPersBeginning) ∧
+    ¬ (PersistenceLevel.quPersBeginning ≤ PersistenceLevel.exPersEnd) := by
+  decide
+
+/-- The persistence lattice inclusion chain (2) from Fig. 2:
+    exPersBeginning ≤ quPersBeginning ≤ totalPersistence. -/
+theorem persistence_chain :
+    PersistenceLevel.exPersBeginning ≤ PersistenceLevel.quPersBeginning ∧
+    PersistenceLevel.quPersBeginning ≤ PersistenceLevel.totalPersistence := by
+  decide
 
 end Semantics.Events.AgentivityLattice

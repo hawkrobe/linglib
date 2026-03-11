@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.131] - 2026-03-10
+
+### Changed
+- **Theories/Semantics/Events/AgentivityLattice.lean**: Add upward/downward closure theorems (§16), semantic opposition measure (§17), end-to-end EntailmentProfile→Case chains (§18), canonical verb-agentivity chain from paper §2.2 (§19), persistence covering relations (§20); fix docstring inaccuracies ("subjects of frighten" → "objects of frighten", Table 2 reference, Fig. 5 label)
+- **Theories/Semantics/Events/ProtoRoles.lean**: Import AgentivityLattice; add §11 cross-theory bridge connecting Cruse agentivity, Krifka SINC, and Grimm lattice predictions
+- **Phenomena/ArgumentStructure/Studies/Dowty1991.lean**: Import AgentivityLattice; add §8 cross-theory consistency theorems (arrive anomaly convergence across Table 1 / modern ASP / Grimm lattice / flat counting)
+- **blog/data/references.bib**: Add verified `grimm-2011` entry (Morphology 21:515–544, DOI: 10.1007/s11525-010-9176-z)
+
 ## [0.229.130] - 2026-03-10
 
 ### Changed
