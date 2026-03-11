@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Events.EntailmentProfile
 import Linglib.Core.Case.Basic
+import Linglib.Core.Prominence
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Data.Fintype.Prod
@@ -984,5 +985,138 @@ theorem persistence_chain :
     PersistenceLevel.exPersBeginning ≤ PersistenceLevel.quPersBeginning ∧
     PersistenceLevel.quPersBeginning ≤ PersistenceLevel.totalPersistence := by
   decide
+
+-- ════════════════════════════════════════════════════
+-- § 21. DOM and Verbal Agentivity (@cite{grimm-2011} §4, p.534)
+-- ════════════════════════════════════════════════════
+
+/-! @cite{grimm-2011} (p.534): "verbal properties may well also have an
+    effect, and accordingly it is a combination of verbal and nominal
+    properties which trigger DOM." The agentivity lattice provides the
+    *verbal* side of DOM: verbs with high agentivity contrast between
+    subject and object need less nominal disambiguation (DOM), while
+    verbs with low contrast need more.
+
+    This section bridges the lattice to the existing DOM infrastructure
+    in `Core.Prominence`, which captures the *nominal* side
+    (@cite{aissen-2003}'s animacy × definiteness grid). -/
+
+open Core.Prominence
+
+/-- Map nominal animacy to baseline agentivity on the lattice.
+    Higher animacy correlates with more agentive properties: human
+    referents typically exhibit sentience and motion; animate referents
+    exhibit sentience; inanimate referents exhibit none. -/
+def animacyToAgentivity : AnimacyLevel → AgentivityNode
+  | .human    => ⟨false, true, false, true⟩   -- {S, M}
+  | .animate  => ⟨false, true, false, false⟩  -- {S}
+  | .inanimate => ⊥
+
+/-- The animacy-to-agentivity mapping is monotone: higher animacy →
+    higher agentivity on the lattice. -/
+theorem animacy_agentivity_monotone :
+    animacyToAgentivity .inanimate ≤ animacyToAgentivity .animate ∧
+    animacyToAgentivity .animate ≤ animacyToAgentivity .human := by
+  constructor <;> decide
+
+/-- A human object is closer to a typical agent on the lattice than
+    an inanimate one — this is WHY high-animacy objects trigger DOM. -/
+theorem human_closer_to_agent :
+    (animacyToAgentivity .human).featureCount >
+    (animacyToAgentivity .inanimate).featureCount := by native_decide
+
+/-- Agentivity contrast between subject and object: the verbal side
+    of semantic distinguishability. Higher contrast → arguments more
+    distinguishable by verbal semantics alone. -/
+def agentivityContrast (subj obj : GrimmNode) : Int :=
+  (subj.agentivity.featureCount : Int) -
+  (obj.agentivity.featureCount : Int)
+
+/-- Verbal DOM class: how a verb's semantics interacts with DOM.
+
+    @cite{grimm-2011} and @cite{von-heusinger-2008}: DOM regularization
+    rate in Spanish varies by verb class — *matar* 'kill' regularized
+    DOM before *ver* 'see'. The lattice explains this: verbs with high
+    agentivity contrast already distinguish their arguments, so DOM
+    can be freely extended (regularized). Verbs with low contrast need
+    DOM to disambiguate, keeping it sensitive to nominal properties. -/
+inductive VerbDOMClass where
+  /-- Object outside transitivity region — DOM not applicable
+      (intensional verbs: seek, want). -/
+  | blocked
+  /-- High agentivity contrast — DOM can regularize to all objects
+      (effective action verbs: kill, break). -/
+  | regularizable
+  /-- Low agentivity contrast — DOM remains sensitive to nominal
+      properties (perception/psych verbs: see, know). -/
+  | nominalSensitive
+  deriving DecidableEq, Repr, BEq
+
+/-- Classify a verb's DOM behavior from its lattice positions. -/
+def verbDOMClass (subj obj : GrimmNode) : VerbDOMClass :=
+  if ¬obj.inTransitiveRegion then .blocked
+  else if agentivityContrast subj obj ≥ 3 then .regularizable
+  else .nominalSensitive
+
+-- ── Per-verb DOM predictions ──
+
+/-- Kick: full agentivity contrast (4 vs 0) → regularizable.
+    Matches @cite{von-heusinger-2008}: *matar* regularized DOM early. -/
+theorem kick_dom_regularizable :
+    verbDOMClass
+      (GrimmNode.fromSubjectProfile kickSubjectProfile)
+      (GrimmNode.fromObjectProfile kickObjectProfile)
+    = .regularizable := by native_decide
+
+/-- Build: full agentivity contrast + creation object (exPersEnd) →
+    blocked. Creation verb objects are outside the transitivity region,
+    so standard DOM does not apply. -/
+theorem build_dom_blocked :
+    verbDOMClass
+      (GrimmNode.fromSubjectProfile buildSubjectProfile)
+      (GrimmNode.fromObjectProfile buildObjectProfile)
+    = .blocked := by native_decide
+
+/-- See: low agentivity contrast (1 vs 0, subject has only sentience)
+    → DOM remains sensitive to nominal properties.
+    Matches @cite{von-heusinger-2008}: *ver* DOM remained variable. -/
+theorem see_dom_nominal_sensitive :
+    verbDOMClass
+      (GrimmNode.fromSubjectProfile seeSubjectProfile)
+      ⟨⊥, .totalPersistence⟩
+    = .nominalSensitive := by native_decide
+
+/-- Class III (pursuit: search, seek) → DOM blocked.
+    Object has total non-persistence (may not exist). -/
+theorem pursuit_dom_blocked :
+    verbDOMClass effectorAgent
+      (TransitivityClass.pursuit.patientNode)
+    = .blocked := by native_decide
+
+-- ── Bridge: animacy-based DOM explained by lattice distance ──
+
+/-- When an object has HIGH animacy (human), its baseline agentivity
+    is closer to a typical agent → greater need for DOM to distinguish
+    it from the subject. This connects @cite{aissen-2003}'s animacy
+    scale to @cite{grimm-2011}'s lattice: DOM targets objects that
+    are "too agentive" for their role. -/
+theorem dom_animacy_lattice_bridge :
+    -- Human object: 2 agentivity features (close to agent)
+    (animacyToAgentivity .human).featureCount = 2 ∧
+    -- Animate object: 1 feature (intermediate)
+    (animacyToAgentivity .animate).featureCount = 1 ∧
+    -- Inanimate object: 0 features (maximally patient-like, no DOM needed)
+    (animacyToAgentivity .inanimate).featureCount = 0 := ⟨rfl, rfl, rfl⟩
+
+/-- The animacy staircase matches the agentivity lattice: each step up
+    the animacy hierarchy corresponds to one additional agentivity
+    feature, reducing the distance to the subject's position and
+    increasing DOM susceptibility. -/
+theorem animacy_staircase_is_lattice_chain :
+    animacyToAgentivity .inanimate <
+    animacyToAgentivity .animate ∧
+    animacyToAgentivity .animate <
+    animacyToAgentivity .human := by
+  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
 
 end Semantics.Events.AgentivityLattice
