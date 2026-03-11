@@ -1,4 +1,4 @@
-import Linglib.Core.Interfaces.AssertionTheory
+import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.SpeechActs
 
 /-!
@@ -211,24 +211,7 @@ def strongDeny (s : GunlogsonState W) (p : BProp W) : GunlogsonState W :=
 end GunlogsonState
 
 -- ════════════════════════════════════════════════════
--- § 2. Interface Instance
--- ════════════════════════════════════════════════════
-
-/-- Marker type for Gunlogson's theory. -/
-inductive GunlogsonTag | mk
-
-instance : Interfaces.AssertionTheory GunlogsonTag where
-  State := GunlogsonState
-  initial := GunlogsonState.empty
-  assert := GunlogsonState.assert
-  contextSet := GunlogsonState.contextSet
-  isStable := GunlogsonState.isStable
-  separatesCommitmentFromBelief := true
-  supportsRetraction := true
-  modelsSourceMarking := true
-
--- ════════════════════════════════════════════════════
--- § 3. Verification
+-- § 2. Verification
 -- ════════════════════════════════════════════════════
 
 /-- Falling declaratives add self-generated commitments to the speaker. -/
@@ -262,12 +245,8 @@ theorem falling_vs_rising_source {W : Type*}
       some .otherGenerated :=
   ⟨rfl, rfl⟩
 
-/-- Gunlogson is the only theory that models source marking. -/
-theorem models_source_marking :
-    Interfaces.AssertionTheory.modelsSourceMarking (T := GunlogsonTag) = true := rfl
-
 -- ════════════════════════════════════════════════════
--- § 3b. Felicity & Response Verification
+-- § 2b. Felicity & Response Verification
 -- ════════════════════════════════════════════════════
 
 /-- Rising declaratives are infelicitous in neutral contexts. -/

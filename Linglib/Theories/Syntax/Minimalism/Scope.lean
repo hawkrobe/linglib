@@ -17,6 +17,15 @@ Inverse scope is unavailable when:
 - **Double Object**: Indirect object c-commands direct object; QR would violate locality
 - **Passive**: By-phrase is an adjunct; QR from adjuncts is blocked
 
+## Superiority from C-Command (not stipulation)
+
+In earlier versions, `PositionedQuantifier` carried a stipulated
+`inDoubleObject : Bool` flag. This has been replaced: the theory layer
+provides `superiorityFromTree`, which derives superiority from
+asymmetric c-command in a `SyntacticObject` tree. Bridge files in
+`Phenomena/` use this to connect DOC scope freezing to
+@cite{larson-1988}'s tree derivation.
+
 -/
 
 import Linglib.Core.Interface
@@ -43,8 +52,9 @@ structure PositionedQuantifier where
   position : Position
   /-- Is this inside another DP? -/
   insideDP : Bool := false
-  /-- Is this in a double object construction? -/
-  inDoubleObject : Bool := false
+  /-- The SyntacticObject this quantifier corresponds to in the tree.
+      When provided, superiority can be derived from c-command. -/
+  so : Option SyntacticObject := none
   deriving Repr
 
 -- QR Operation
@@ -86,10 +96,14 @@ def qrIsBlocked (q : PositionedQuantifier) : Option QRBarrier :=
   else if q.position == .embedded then some .dpPhase
   else none
 
-/-- Check if QR over another quantifier violates superiority -/
-def violatesSuperiority (lower upper : PositionedQuantifier) : Bool :=
-  -- In double object, IO c-commands DO; QR of DO over IO violates superiority
-  lower.inDoubleObject && upper.inDoubleObject
+/-- Superiority derived from a tree: QR of `q2` over `q1` is blocked
+    when `q1` asymmetrically c-commands `q2` in `tree`.
+
+    This is the theory-layer primitive. Bridge files use it to derive
+    DOC scope freezing from @cite{larson-1988}'s tree derivation. -/
+def superiorityFromTree (tree : SyntacticObject)
+    (q1 q2 : SyntacticObject) : Bool :=
+  cCommandsInB tree q1 q2 && !cCommandsInB tree q2 q1
 
 -- Scope Economy (@cite{fox-2000})
 

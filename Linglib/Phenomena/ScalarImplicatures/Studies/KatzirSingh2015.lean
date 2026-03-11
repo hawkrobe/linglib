@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.QUD
-import Linglib.Core.Interfaces.Felicity
+import Linglib.Core.FelicityTypes
 import Linglib.Core.Semantics.Proposition
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
@@ -627,36 +627,6 @@ theorem compose_open_context :
 end Composability
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §11  FelicityCondition Instance
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Input for K&S felicity checking: a scenario paired with an utterance. -/
-structure KSInput (W U : Type*) where
-  scenario : Scenario W U
-  utterance : U
-
-open Interfaces in
-/-- K&S economy as a `FelicityCondition`: an utterance is odd if the
-Question Condition or Answer Condition is violated. -/
-instance {W U : Type*} : FelicityCondition (KSInput W U) where
-  name := "Katzir & Singh 2015"
-  check := λ ⟨s, u⟩ =>
-    if s.badQuestion then
-      { status := .odd, source := some .questionCondition }
-    else if s.needlesslyInferior u then
-      { status := .odd, source := some .answerCondition }
-    else
-      { status := .felicitous }
-
-/-- K&S predicts "some Italians" is odd (via Question Condition). -/
-theorem ks_italian_some_odd :
-    Interfaces.isOdd (KSInput.mk italianWarmthScenario .some_) = true := by native_decide
-
-/-- K&S predicts "some" in grade scenario is odd (via Answer Condition). -/
-theorem ks_grade_some_odd :
-    Interfaces.isOdd (KSInput.mk gradeScenario .some_) = true := by native_decide
-
--- ═══════════════════════════════════════════════════════════════════════
 -- §12  Explicit Question Rescue (K&S §2.2)
 -- ═══════════════════════════════════════════════════════════════════════
 
@@ -763,53 +733,6 @@ theorem ks_spector_diverge_wife :
   exact ⟨by native_decide, by native_decide⟩
 
 end ExplicitQuestionRescue
-
--- ═══════════════════════════════════════════════════════════════════════
--- §13  Spector 2014 FelicityCondition
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Input for @cite{spector-2014} No Trivial Alternatives felicity checking.
-
-Unlike K&S's `Scenario`, Spector's mechanism needs only the utterance
-meaning, its alternatives, context, and worlds — no QUD or complexity. -/
-structure SpectorInput (W : Type*) where
-  /-- Utterance meaning. -/
-  meaning : W → Bool
-  /-- Meanings of scalar alternatives. -/
-  alternatives : List (W → Bool)
-  /-- Context set. -/
-  context : W → Bool
-  /-- World enumeration. -/
-  worlds : List W
-
-open Interfaces in
-/-- @cite{spector-2014} as a `FelicityCondition`: an utterance is odd when
-all its alternatives are trivial in context (C-contradiction, C-tautology,
-or C-equivalent to the utterance). K&S (4)–(5). -/
-instance {W : Type*} : FelicityCondition (SpectorInput W) where
-  name := "Spector 2014"
-  check := λ s =>
-    if allAlternativesTrivial s.worlds s.context s.meaning s.alternatives then
-      { status := .odd, source := some .unspecified }
-    else
-      { status := .felicitous }
-
-/-- Spector predicts "some Italians" is odd (all alternatives trivial). -/
-theorem spector_italian_some_odd :
-    Interfaces.isOdd (SpectorInput.mk
-      (italianWarmthScenario.meaning .some_)
-      [italianWarmthScenario.meaning .all_]
-      (λ w => w == .allWarm)
-      [.allWarm, .noneWarm]) = true := by native_decide
-
-/-- K&S and Spector agree on "some Italians" via the `FelicityCondition` interface. -/
-theorem ks_spector_agree_italian_some :
-    Interfaces.isOdd (KSInput.mk italianWarmthScenario .some_) =
-    Interfaces.isOdd (SpectorInput.mk
-      (italianWarmthScenario.meaning .some_)
-      [italianWarmthScenario.meaning .all_]
-      (λ w => w == .allWarm)
-      [.allWarm, .noneWarm]) := by native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §14  Bridge to Empirical Hurford Data

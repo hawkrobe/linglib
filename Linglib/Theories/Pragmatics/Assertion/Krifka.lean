@@ -1,4 +1,4 @@
-import Linglib.Core.Interfaces.AssertionTheory
+import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.SpeechActs
 
 /-!
@@ -337,24 +337,7 @@ def isStable (s : KrifkaState W) : Bool :=
 end KrifkaState
 
 -- ════════════════════════════════════════════════════
--- § 5. Interface Instance
--- ════════════════════════════════════════════════════
-
-/-- Marker type for Krifka's theory. -/
-inductive KrifkaTag | mk
-
-instance : Interfaces.AssertionTheory KrifkaTag where
-  State := KrifkaState
-  initial := KrifkaState.empty
-  assert := KrifkaState.assert
-  contextSet := KrifkaState.contextSet
-  isStable := KrifkaState.isStable
-  separatesCommitmentFromBelief := true
-  supportsRetraction := true
-  modelsSourceMarking := false
-
--- ════════════════════════════════════════════════════
--- § 6. Layer Independence
+-- § 5. Layer Independence
 -- ════════════════════════════════════════════════════
 
 /-- ComP preserves TP content: changing commitment strength does not
@@ -372,7 +355,7 @@ theorem jp_comp_independent {W : Type*}
   ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 7. Bridge to IllocutionaryMood
+-- § 6. Bridge to IllocutionaryMood
 -- ════════════════════════════════════════════════════
 
 /-- Krifka's ActP layer directly uses `IllocutionaryMood`, grounding
@@ -380,16 +363,8 @@ theorem jp_comp_independent {W : Type*}
 theorem actp_declarative_default {W : Type*} (p : BProp W) :
     ({ content := p : LayeredAssertion W }).actType = .declarative := rfl
 
-/-- Krifka separates commitment from belief. -/
-theorem separates_commitment :
-    Interfaces.AssertionTheory.separatesCommitmentFromBelief (T := KrifkaTag) = true := rfl
-
-/-- Krifka supports retraction. -/
-theorem supports_retraction :
-    Interfaces.AssertionTheory.supportsRetraction (T := KrifkaTag) = true := rfl
-
 -- ════════════════════════════════════════════════════
--- § 8. Informative vs Performative Updates (@cite{krifka-2020}, §2)
+-- § 7. Informative vs Performative Updates (@cite{krifka-2020}, §2)
 -- ════════════════════════════════════════════════════
 
 /-- Update type for assertions.
@@ -457,7 +432,7 @@ theorem question_accept_eq_assert_root {W : Type*}
   | cons _ _ => simp [CommitmentSpace.isSettled] at h
 
 -- ════════════════════════════════════════════════════
--- § 9. Actor vs Committer (@cite{krifka-2015}, §6)
+-- § 8. Actor vs Committer (@cite{krifka-2015}, §6)
 -- ════════════════════════════════════════════════════
 
 /-- The two discourse roles in a speech act.
@@ -494,7 +469,7 @@ theorem actor_committer_diverge :
     assertionRoles.committer ≠ questionRoles.committer := by decide
 
 -- ════════════════════════════════════════════════════
--- § 10. Speech Act Composition (@cite{krifka-2015}, §3–5)
+-- § 9. Speech Act Composition (@cite{krifka-2015}, §3–5)
 -- ════════════════════════════════════════════════════
 
 /-- A speech act in Krifka's framework: ActP content with its

@@ -69,12 +69,6 @@ def ScopedDerivation.toAvailableScopes (sd : ScopedDerivation) : AvailableScopes
   let ids := sd.scopeTakers.map (·.id)
   sd.availability.toAvailableScopes (ids.head!) (ids.tail.head!)
 
-/-- Marker type for CCG scope theory. -/
-def CCGScopeTheory : Type := Unit
-
-instance : HasAvailableScopes CCGScopeTheory ScopedDerivation where
-  availableScopes := ScopedDerivation.toAvailableScopes
-
 -- Examples
 
 def everyHorse_surface : DerivStep :=

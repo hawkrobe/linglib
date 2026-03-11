@@ -189,9 +189,6 @@ The predictions are the same for simple cases because:
 -- Part 12: CoreferenceTheory Interface Implementation
 -- ============================================================================
 
-/-- Marker type for Dependency Grammar as a coreference theory -/
-structure DepGrammarTheory
-
 /-- Compute coreference status using d-command (dependency paths) -/
 def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
   if i == 0 && j == 2 then
@@ -224,25 +221,6 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
     | _ => .possible
   else
     .unspecified
-
-/-- Dependency Grammar implements the CoreferenceTheory interface -/
-instance : Interfaces.CoreferenceTheory DepGrammarTheory where
-  Structure := SimpleClause
-  parse := parseSimpleClause
-  coreferenceStatus := computeCoreferenceStatus
-  grammaticalForCoreference := λ clause =>
-    match classifyNominal clause.subject with
-    | some .reflexive => false
-    | some .reciprocal => false
-    | _ =>
-      match clause.object with
-      | none => true
-      | some obj =>
-        match classifyNominal obj with
-        | some .reflexive => reflexiveLicensed clause
-        | some .reciprocal => reciprocalLicensed clause
-        | some .pronoun => false
-        | _ => true
 
 end CoreferenceConstraints
 

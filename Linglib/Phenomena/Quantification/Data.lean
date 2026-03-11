@@ -141,7 +141,7 @@ def dative_frozen : Example :=
   , confidence := .clear
   , surfaceGloss := "There's someone who gave every student a book"
   , inverseGloss := "*For every student, someone gave them a book"
-  , notes := "Double object: frozen (Barss & Lasnik 1986)" }
+  , notes := "Double object: frozen (@cite{barss-lasnik-1986})" }
 
 def dative_variant : Example :=
   { id := "dat-2"

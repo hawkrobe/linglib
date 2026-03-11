@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Core.Interfaces.VoiceSystem
+import Linglib.Core.VoiceSystem
 
 /-!
 # Finnish Verb Entries @cite{karlsson-2017}

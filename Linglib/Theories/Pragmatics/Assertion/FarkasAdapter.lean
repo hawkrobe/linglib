@@ -1,13 +1,12 @@
 import Linglib.Theories.Semantics.Dynamic.State
-import Linglib.Core.Interfaces.AssertionTheory
 
 /-!
 # @cite{farkas-bruce-2010} Assertion Adapter
 
 @cite{farkas-bruce-2010}
 
-Wraps the existing `Semantics.Dynamic.State.DiscourseState` as an
-`AssertionTheory` instance. Farkas & Bruce's model separates individual
+Wraps the existing `Semantics.Dynamic.State.DiscourseState` with
+bridge theorems for Farkas & Bruce's model. The model separates individual
 discourse commitments (dcS, dcL) from the common ground (cg), with
 assertions going through a "table" stage before reaching the CG.
 
@@ -23,7 +22,6 @@ assertions going through a "table" stage before reaching the CG.
 
 This file is an ADAPTER: it wraps the existing `DiscourseState` type
 from `Theories/Semantics/Dynamic/State.lean` rather than redefining it.
-The adapter provides the `AssertionTheory` interface for comparison.
 
 -/
 
@@ -34,24 +32,7 @@ open Core.CommonGround (ContextSet)
 open Core.Proposition (BProp)
 
 -- ════════════════════════════════════════════════════
--- § 1. Adapter: DiscourseState as AssertionTheory
--- ════════════════════════════════════════════════════
-
-/-- Marker type for Farkas & Bruce's theory. -/
-inductive FarkasTag | mk
-
-instance : Interfaces.AssertionTheory FarkasTag where
-  State := DiscourseState
-  initial := DiscourseState.empty
-  assert := DiscourseState.assertDeclarative
-  contextSet := DiscourseState.toContextSet
-  isStable := DiscourseState.isStable
-  separatesCommitmentFromBelief := true
-  supportsRetraction := false
-  modelsSourceMarking := false
-
--- ════════════════════════════════════════════════════
--- § 2. Bridge Theorems
+-- § 1. Bridge Theorems
 -- ════════════════════════════════════════════════════
 
 /-- Assertion adds to dcS, not directly to cg.
@@ -86,9 +67,5 @@ theorem accept_restores_stability {W : Type*} (ds : DiscourseState W) (p : BProp
              DiscourseState.addToDcS, DiscourseState.acceptTop,
              DiscourseState.isStable] at *
   exact hStable
-
-/-- F&B separates commitment from belief. -/
-theorem separates_commitment :
-    Interfaces.AssertionTheory.separatesCommitmentFromBelief (T := FarkasTag) = true := rfl
 
 end Theories.Pragmatics.Assertion.FarkasAdapter

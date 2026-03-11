@@ -169,7 +169,6 @@ structure MinimalistCoreferenceGrammar where
 
 def defaultGrammar : MinimalistCoreferenceGrammar := {}
 
-structure MinimalismTheory
 def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
   if i == 0 && j == 2 then
     match clause.object with
@@ -199,22 +198,4 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
     | _ => .possible
   else
     .unspecified
-instance : Interfaces.CoreferenceTheory MinimalismTheory where
-  Structure := SimpleClause
-  parse := parseSimpleClause
-  coreferenceStatus := computeCoreferenceStatus
-  grammaticalForCoreference := λ clause =>
-    match classifyNominal clause.subject with
-    | some .reflexive => false
-    | some .reciprocal => false
-    | _ =>
-      match clause.object with
-      | none => true
-      | some obj =>
-        match classifyNominal obj with
-        | some .reflexive => reflexiveLicensed clause
-        | some .reciprocal => reciprocalLicensed clause
-        | some .pronoun => false
-        | _ => true
-
 end Minimalism.Phenomena.Coreference

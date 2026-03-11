@@ -1208,12 +1208,8 @@ end Implicature.ScalarImplicatures
 
 namespace Implicature
 
-open Interfaces
 open Implicature.Alternatives
 open Semantics.Entailment.Polarity (ContextPolarity)
-
-/-- Marker type for the Implicature theory -/
-structure NeoGriceanTheory
 
 /-- Implicature's internal representation for implicature analysis.
 
@@ -1269,54 +1265,7 @@ def parseToNeoGricean (ws : List Word) : Option NeoGriceanStructure :=
        , params := geurtsParams
        }
 
--- ImplicatureTheory Instance
-
-instance : ImplicatureTheory NeoGriceanTheory where
-  Structure := NeoGriceanStructure
-
-  parse := parseToNeoGricean
-
-  implicatureStatus := λ s pos =>
-    -- Check if this position has the scalar item
-    if s.scalarPosition != some pos then .absent
-    else
-      -- Check polarity
-      match s.polarity with
-      | .downward => .blocked  -- DE blocks implicature
-      | .nonMonotonic => .blocked  -- NM blocks implicature
-      | .upward =>
-        -- Check result
-        if s.result.strongImplicature then .triggered
-        else if s.result.weakImplicature then .possible
-        else .absent
-
-  implicatureStrength := λ s pos =>
-    -- Return baseline rate if implicature is triggered
-    if s.scalarPosition == some pos && s.result.strongImplicature
-    then some s.params.predictedNeutralRate
-    else none
-
-  predictsDEBlocking := true  -- Implicature explicitly models DE blocking
-
-  predictsTaskEffect := true  -- Contextualism (geurtsParams) predicts task effect
-
-  predictedBaselineRate := geurtsParams.predictedNeutralRate  -- 35%
-
--- Theorems (Interface Properties)
-
-/-- Implicature predicts DE blocking -/
-theorem neogricean_predicts_de_blocking :
-    ImplicatureTheory.predictsDEBlocking (T := NeoGriceanTheory) = true := rfl
-
-/-- Implicature predicts task effect (under contextualism) -/
-theorem neogricean_predicts_task_effect :
-    ImplicatureTheory.predictsTaskEffect (T := NeoGriceanTheory) = true := rfl
-
-/-- Implicature baseline rate is 35% (Geurts contextualism) -/
-theorem neogricean_baseline_rate :
-    ImplicatureTheory.predictedBaselineRate (T := NeoGriceanTheory) = 35 := rfl
-
--- Example Derivations (via Interface)
+-- Example Derivations
 
 /-- Example: "some students sleep" in UE context -/
 def someStudentsSleepNG : NeoGriceanStructure :=
@@ -1333,20 +1282,5 @@ def someStudentsSleepDE : NeoGriceanStructure :=
   , scalarPosition := some 0
   , params := geurtsParams
   }
-
-/-- In UE, implicature is triggered -/
-theorem ue_triggers_implicature :
-    ImplicatureTheory.implicatureStatus (T := NeoGriceanTheory) someStudentsSleepNG 0 =
-    .triggered := rfl
-
-/-- In DE, implicature is blocked -/
-theorem de_blocks_implicature :
-    ImplicatureTheory.implicatureStatus (T := NeoGriceanTheory) someStudentsSleepDE 0 =
-    .blocked := rfl
-
-/-- Wrong position returns absent -/
-theorem wrong_position_absent :
-    ImplicatureTheory.implicatureStatus (T := NeoGriceanTheory) someStudentsSleepNG 1 =
-    .absent := rfl
 
 end Implicature

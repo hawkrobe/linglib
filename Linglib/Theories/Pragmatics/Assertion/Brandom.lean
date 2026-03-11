@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.SpeechActs
-import Linglib.Core.Interfaces.AssertionTheory
+import Linglib.Core.Semantics.CommonGround
 
 /-!
 # @cite{brandom-1994}: Scorekeeping Model of Assertion
@@ -195,33 +195,8 @@ def inferentialClosure {W : Type*} (cs : CommitmentSlate W)
   rules.foldl (λ acc ⟨_antecedent, consequent⟩ => acc.add consequent) cs
 
 -- ════════════════════════════════════════════════════
--- § 6. Interface Instance
+-- § 6. Verification
 -- ════════════════════════════════════════════════════
-
-/-- Marker type for Brandom's theory. -/
-inductive BrandomTag | mk
-
-instance : Interfaces.AssertionTheory BrandomTag where
-  State := BrandomState
-  initial := BrandomState.empty
-  assert := BrandomState.assert
-  contextSet := BrandomState.effectiveContextSet
-  isStable := BrandomState.isStable
-  separatesCommitmentFromBelief := true
-  supportsRetraction := true
-  modelsSourceMarking := false
-
--- ════════════════════════════════════════════════════
--- § 7. Verification
--- ════════════════════════════════════════════════════
-
-/-- Entitlements have no Stalnaker analog.
-    Stalnaker's `CG.add` doesn't track whether the speaker has REASONS
-    for the assertion — it just adds to shared beliefs. -/
-theorem entitlements_no_stalnaker_analog :
-    Interfaces.AssertionTheory.separatesCommitmentFromBelief (T := BrandomTag) = true ∧
-    Interfaces.AssertionTheory.supportsRetraction (T := BrandomTag) = true :=
-  ⟨rfl, rfl⟩
 
 /-- Scorekeepers can disagree: agent A's view of B's status can differ
     from agent C's view of B's status.

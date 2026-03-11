@@ -1,5 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Scope
+import Linglib.Core.ScopeTypes
 import Linglib.Phenomena.Quantification.Data
+import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 
 /-!
 # Bridge: Minimalist Scope Theory to Quantification Phenomena
@@ -13,6 +15,12 @@ in `Phenomena.Quantification.Data`.
 - `predictsFreezing`: Minimalist predictions for each context
 - `possessor_freezes_scope`, `double_object_freezes_scope`, etc.: Verification theorems
 - `configFromExample`, `predictAvailability`, `correctlyPredicts`: Per-datum predictions
+
+## Superiority from C-Command
+
+Double-object scope freezing is derived from asymmetric c-command in
+@cite{pylkknen-2008}'s Voice + low-Appl tree (`ditransitiveTree`),
+where the goal asymmetrically c-commands the theme.
 -/
 
 namespace Phenomena.Quantification.MinimalismBridge
@@ -48,53 +56,45 @@ structure MinimalistScopeConfig where
   q2 : PositionedQuantifier
   /-- Freezing context if any -/
   freezingContext : FreezingContext := .none
+  /-- The tree in which q1 and q2 are positioned. When provided,
+      superiority is derived from c-command rather than stipulated. -/
+  tree : Option Minimalism.SyntacticObject := none
   deriving Repr
+
+/-- Check if superiority blocks QR in this configuration.
+
+    When a tree and SO positions are provided, superiority is DERIVED
+    from asymmetric c-command. Otherwise falls back to the freezing
+    context annotation. -/
+def superiorityBlocked (config : MinimalistScopeConfig) : Bool :=
+  match config.tree, config.q1.so, config.q2.so with
+  | some t, some s1, some s2 =>
+    -- DERIVED: q1 asymmetrically c-commands q2
+    superiorityFromTree t s1 s2
+  | _, _, _ =>
+    -- FALLBACK: use the freezing context annotation
+    config.freezingContext == .doubleObject
 
 /-- Compute available scope readings in Minimalism -/
 def availableReadings (config : MinimalistScopeConfig) : Availability :=
   let q2Barrier := qrIsBlocked config.q2
   let contextBarrier := analyzeFreezingContext config.freezingContext
-  let superiorityViolation := violatesSuperiority config.q2 config.q1
+  let superiorityViolation := superiorityBlocked config
 
   if q2Barrier.isSome || contextBarrier.isSome || superiorityViolation then
     .surfaceOnly
   else
     .ambiguous
 
--- HasAvailableScopes Instance
-
-/-- Marker type for Minimalist scope theory -/
-structure MinimalismScopeTheory where
-  deriving Repr, Inhabited
-
-/-- Surface reading: q1 > q2 -/
-def surfaceReading (config : MinimalistScopeConfig) : ScopeReading :=
-  ⟨[config.q1.quantifier, config.q2.quantifier]⟩
-
-/-- Inverse reading: q2 > q1 -/
-def inverseReading (config : MinimalistScopeConfig) : ScopeReading :=
-  ⟨[config.q2.quantifier, config.q1.quantifier]⟩
-
-instance : HasAvailableScopes MinimalismScopeTheory MinimalistScopeConfig where
-  availableScopes config :=
-    let avail := availableReadings config
-    match avail with
-    | .ambiguous => ⟨[surfaceReading config, inverseReading config], by simp⟩
-    | .surfaceOnly => ⟨[surfaceReading config], by simp⟩
-    | .inverseOnly => ⟨[inverseReading config], by simp⟩
-
 -- Predictions for Phenomena
 
-/-- Build config from a freezing example -/
+/-- Build config from a freezing example (fallback path — no tree). -/
 def configFromExample (ex : Example) : MinimalistScopeConfig :=
   { q1 := { quantifier := ex.quant1
           , position := .specTP
-          , insideDP := ex.context == .possessor
-          , inDoubleObject := ex.context == .doubleObject }
+          , insideDP := ex.context == .possessor }
   , q2 := { quantifier := ex.quant2
-          , position := if ex.context == .passive then .adjunct else .specVP
-          , insideDP := false
-          , inDoubleObject := ex.context == .doubleObject }
+          , position := if ex.context == .passive then .adjunct else .specVP }
   , freezingContext := ex.context }
 
 /-- Minimalism's prediction for an example -/
@@ -127,6 +127,40 @@ theorem heavy_np_not_grammatically_frozen :
 theorem baseline_is_ambiguous :
     predictsFreezing .none = false := rfl
 
+-- ============================================================================
+-- DOC Scope Freezing (derived from c-command)
+-- ============================================================================
+
+/-! ### Superiority derived from c-command
+
+@cite{pylkknen-2008}'s Voice + low-Appl tree (`ditransitiveTree`) produces the
+DOC structure where the goal asymmetrically c-commands the theme. QR of the
+theme over the goal is blocked by superiority, derived from c-command rather
+than stipulated. -/
+
+open Phenomena.ArgumentStructure.Studies.Pylkkanen2008 in
+
+/-- DOC scope freezing config with @cite{pylkknen-2008}'s tree:
+    superiority is derived from goal asymmetrically c-commanding theme
+    in the Voice + low-Appl structure. -/
+def docScopeConfig : MinimalistScopeConfig :=
+  { q1 := { quantifier := "every worker"
+           , position := .specVP
+           , so := some DP_mary_t }
+  , q2 := { quantifier := "a paycheck"
+           , position := .specVP
+           , so := some DP_letter_t }
+  , freezingContext := .doubleObject
+  , tree := some ditransitiveTree }
+
+open Phenomena.ArgumentStructure.Studies.Pylkkanen2008 in
+
+/-- Superiority in the DOC is DERIVED from c-command in @cite{pylkknen-2008}'s
+    tree: goal (Mary) asymmetrically c-commands theme (a letter) via low Appl,
+    so QR of theme over goal is blocked. -/
+theorem doc_superiority_from_tree :
+    superiorityBlocked docScopeConfig = true := by native_decide
+
 /-!
 ## Summary
 
@@ -134,7 +168,7 @@ theorem baseline_is_ambiguous :
 | Context | Minimalist Explanation |
 |---------|----------------------|
 | Possessor | DP phase blocks QR |
-| Double object | Superiority: IO c-commands DO |
+| Double object | Superiority: goal c-commands theme (@cite{pylkknen-2008} tree) |
 | Passive | Adjunct island |
 | Heavy NP | NOT grammatical (processing) |
 | Attitude | Clause boundary |

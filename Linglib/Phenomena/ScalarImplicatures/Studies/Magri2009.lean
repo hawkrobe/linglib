@@ -1,4 +1,4 @@
-import Linglib.Core.Interfaces.Felicity
+import Linglib.Core.FelicityTypes
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
 
@@ -162,34 +162,6 @@ theorem italian_all_not_odd :
     italianScenario.blindOdd .all_ = false := by native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §4  FelicityCondition Instance
--- ═══════════════════════════════════════════════════════════════════════
-
-/-- Input for @cite{magri-2009} felicity checking. -/
-structure MagriInput (W U : Type) where
-  scenario : BlindScenario W U
-  utterance : U
-
-open Interfaces in
-/-- @cite{magri-2009} as a `FelicityCondition`: an utterance is odd when
-its blind strengthened meaning contradicts common knowledge. -/
-instance {W U : Type} : FelicityCondition (MagriInput W U) where
-  name := "Magri 2009"
-  check := λ ⟨s, u⟩ =>
-    if s.blindOdd u then
-      { status := .odd, source := some .unspecified }
-    else
-      { status := .felicitous }
-
-/-- Magri predicts "some Italians" is odd. -/
-theorem magri_italian_some_odd :
-    Interfaces.isOdd (MagriInput.mk italianScenario .some_) = true := by native_decide
-
-/-- Magri predicts "all Italians" is fine. -/
-theorem magri_italian_all_ok :
-    Interfaces.isOdd (MagriInput.mk italianScenario .all_) = false := by native_decide
-
--- ═══════════════════════════════════════════════════════════════════════
 -- §5  Individual-Level Predicates: Q-Adverbs (§4.1)
 -- ═══════════════════════════════════════════════════════════════════════
 
@@ -269,13 +241,6 @@ theorem tall_sometimes_blind_odd :
 theorem tall_always_not_odd :
     tallScenario.blindOdd .always_ = false := by native_decide
 
-/-- FelicityCondition prediction: "sometimes tall" is odd. -/
-theorem magri_tall_sometimes_odd :
-    Interfaces.isOdd (MagriInput.mk tallScenario .sometimes_) = true := by native_decide
-
-/-- FelicityCondition prediction: "always tall" is fine. -/
-theorem magri_tall_always_ok :
-    Interfaces.isOdd (MagriInput.mk tallScenario .always_) = false := by native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §5.1  Homogeneity from PredicateLevel

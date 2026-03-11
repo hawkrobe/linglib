@@ -1,8 +1,8 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
 import Linglib.Core.Logic.ConstraintEvaluation
-import Linglib.Core.Interfaces.ExtractionMorphology
-import Linglib.Core.Interfaces.VoiceSystem
+import Linglib.Core.ExtractionMorphology
+import Linglib.Core.VoiceSystem
 
 /-!
 # Kaqchikel Agent Focus Fragment @cite{erlewine-2016}

@@ -322,4 +322,95 @@ theorem T_axiom_general {S : Type*} [FiniteWorlds S]
     (h : box F A x = true) : A x = true :=
   Core.ModalLogic.T_of_refl F.access_refl A x h
 
+-- ════════════════════════════════════════════════════
+-- § 10. Disjunctive Syllogism Failure
+-- ════════════════════════════════════════════════════
+
+/-! **Disjunctive syllogism** ({p ∨ q, ¬q} ⊨ p) fails for epistemic modals:
+    "Either the dog is inside or it must be outside; it's not the case that
+    it must be outside; therefore it is inside." The tautological first
+    premise carries no information.
+    @cite{holliday-mandelkern-2024} §2.3. -/
+
+/-- Disjunctive syllogism fails: p ∨ □¬p and ¬□¬p both hold at x₃
+    (full uncertainty) but p does not. -/
+theorem disjSyllogism_fails :
+    let mustNotP := box epistemicScale (orthoNeg pathFrame propP)
+    let pOrMustNotP := disj pathFrame propP mustNotP
+    let notMustNotP := orthoNeg pathFrame mustNotP
+    pOrMustNotP .x3 = true ∧ notMustNotP .x3 = true ∧ propP .x3 = false := by
+  native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 11. Orthomodularity Failure
+-- ════════════════════════════════════════════════════
+
+/-! **Orthomodularity** (if φ ⊨ ψ then ψ ⊨ φ ∨ (¬φ ∧ ψ)) fails.
+    Since p ⊨ ◇p, orthomodularity would give ◇p ⊨ p ∨ (¬p ∧ ◇p).
+    But ¬p ∧ ◇p = ⊥ by Wittgenstein's Law, so this collapses to
+    ◇p ⊨ p — absurd.
+    @cite{holliday-mandelkern-2024} §2.4. -/
+
+/-- p entails ◇p: truth implies epistemic possibility. -/
+theorem p_entails_diamond (x : Poss5) (h : propP x = true) :
+    diamond epistemicScale propP x = true := by
+  cases x <;> (first | exact h | native_decide)
+
+/-- Orthomodularity fails: ◇p holds at x₃ but p ∨ (¬p ∧ ◇p) does not
+    (since ¬p ∧ ◇p = ⊥ by Wittgenstein, this reduces to p). -/
+theorem orthomodularity_fails :
+    let diamP := diamond epistemicScale propP
+    let rhs := disj pathFrame propP (conj (orthoNeg pathFrame propP) diamP)
+    diamP .x3 = true ∧ rhs .x3 = false := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 12. Pseudocomplementation Failure
+-- ════════════════════════════════════════════════════
+
+/-! **Pseudocomplementation** (a ∧ b = 0 → b ≤ ¬a) fails. In a Boolean
+    algebra, ¬a is the greatest element disjoint from a. In an ortholattice
+    this need not hold: p ∧ ◇¬p = ⊥ (Wittgenstein) but ◇¬p ≰ ¬p.
+    This is the algebraic root of why ◇¬p ≠ ¬p.
+    @cite{holliday-mandelkern-2024} Proposition 3.7. -/
+
+/-- Pseudocomplementation fails: p ∧ ◇¬p = ⊥ but ◇¬p ≰ ¬p.
+    x₃ witnesses ◇¬p (might not be raining) without witnessing ¬p. -/
+theorem pseudocomplementation_fails :
+    let negP := orthoNeg pathFrame propP
+    let diamNegP := diamond epistemicScale negP
+    (∀ x : Poss5, conj propP diamNegP x = false) ∧
+    (diamNegP .x3 = true ∧ negP .x3 = false) := by
+  exact ⟨by decide, by native_decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § 13. Level-wise Boolean Classicality
+-- ════════════════════════════════════════════════════
+
+/-! **Level-wise classicality**: classical reasoning is safe *within*
+    an epistemic level but dangerous *across* levels. The subortholattice
+    B₀ = {⊥, p, ¬p, ⊤} is a four-element Boolean algebra; B₁ (generated
+    by applying □ and ◇ to B₀) is an eight-element Boolean algebra.
+    Distributivity only fails when mixing levels.
+    @cite{holliday-mandelkern-2024} §3.2.4. -/
+
+/-- Within-level distributivity (B₁): ◇p ∧ (◇¬p ∨ ◇p) = (◇p ∧ ◇¬p) ∨ (◇p ∧ ◇p).
+    All operands from the same epistemic level → distributivity holds. -/
+theorem within_level_distrib (x : Poss5) :
+    let dp := diamond epistemicScale propP
+    let dnp := diamond epistemicScale (orthoNeg pathFrame propP)
+    conj dp (disj pathFrame dnp dp) x =
+    disj pathFrame (conj dp dnp) (conj dp dp) x := by
+  cases x <;> native_decide
+
+/-- Cross-level failure: ◇p ∧ (p ∨ ¬p) ≠ (◇p ∧ p) ∨ (◇p ∧ ¬p).
+    ◇p is from B₁ but p, ¬p are from B₀. At x₃ the LHS is true
+    (◇p and excluded middle both hold) but the RHS is false (both
+    disjuncts are empty by Wittgenstein's Law). -/
+theorem cross_level_distrib_fails :
+    let dp := diamond epistemicScale propP
+    let negP := orthoNeg pathFrame propP
+    let lhs := conj dp (disj pathFrame propP negP)
+    let rhs := disj pathFrame (conj dp propP) (conj dp negP)
+    lhs .x3 = true ∧ rhs .x3 = false := by native_decide
+
 end Semantics.PossibilitySemantics

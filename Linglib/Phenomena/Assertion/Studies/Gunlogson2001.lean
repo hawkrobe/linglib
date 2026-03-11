@@ -1,6 +1,5 @@
 import Linglib.Phenomena.Assertion.Basic
 import Linglib.Theories.Pragmatics.Assertion.Gunlogson
-import Linglib.Theories.Pragmatics.Assertion.Stalnaker
 
 /-!
 # Gunlogson Bridge: Rising Declaratives
@@ -76,21 +75,5 @@ theorem data_matches_theory :
     falling → speaker commits. -/
 theorem falling_data_matches :
     (risingExamples.filter (! ·.isRising)).all (·.speakerCommits) = true := rfl
-
--- ════════════════════════════════════════════════════
--- § 3. Stalnaker Cannot Model Rising Declaratives
--- ════════════════════════════════════════════════════
-
-/-- Gunlogson's theory handles rising declaratives; Stalnaker's does not.
-
-    This is because Gunlogson models source marking (the only theory to do so),
-    and rising declaratives require distinguishing self- from other-generated
-    commitments. -/
-theorem gunlogson_advantage :
-    Interfaces.AssertionTheory.modelsSourceMarking
-      (T := GunlogsonTag) = true ∧
-    Interfaces.AssertionTheory.modelsSourceMarking
-      (T := Theories.Pragmatics.Assertion.Stalnaker.StalnakerTag) = false :=
-  ⟨rfl, rfl⟩
 
 end Phenomena.Assertion.Studies.Gunlogson2001

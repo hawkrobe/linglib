@@ -53,7 +53,7 @@ open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
 open Core.ModalLogic (AccessRel kripkeEval)
 open Core.Proposition (BProp FiniteWorlds)
-open Interfaces (FelicityStatus FelicityResult FelicityCondition)
+open Interfaces (FelicityStatus FelicityResult)
 open Implicature.Presuppositions (AltStructure PragConstraint Obligatoriness)
 open Semantics.Lexical.Expressives (ciLift)
 
@@ -196,7 +196,7 @@ def speakerK [FiniteWorlds W] (R : AccessRel W) (φ : BProp W) : BProp W :=
 
 
 -- ============================================================================
--- Section 5: FelicityCondition Instance
+-- Section 5: Felicity Check
 -- ============================================================================
 
 /--
@@ -228,13 +228,6 @@ def wangCheck (input : WangInput W) : FelicityResult :=
     | .obligatory => { status := .felicitous }
     | .optional => { status := .borderline }
     | .blocked => { status := .odd, source := some .unspecified }
-
-/--
-@cite{wang-2025} as a felicity theory: predicts felicity from constraint evaluation.
--/
-instance : FelicityCondition (WangInput W) where
-  name := "Wang (2025) Alternative Competition"
-  check := wangCheck
 
 /--
 IC violation always yields oddness, regardless of CG support and alternative structure.

@@ -1,11 +1,10 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Derivation
-import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Core.Lexical.ThetaRole
 
 /-!
 # Larson (1988): On the Double Object Construction
-@cite{larson-1988}
+@cite{larson-1988} @cite{barss-lasnik-1986}
 
 *Linguistic Inquiry* 19(3): 335–391.
 
@@ -25,22 +24,25 @@ import Linglib.Core.Lexical.ThetaRole
    (NP2), deriving six asymmetries: anaphor binding, quantifier-pronoun
    binding, weak crossover, superiority, *each...the other*, NPI licensing.
 
-4. **Recoverability**: Dative Shift requires that *to*'s semantic content
-   be recoverable from V's θ-role assignment. *Give/send* alternate
-   because V's Goal role subsumes *to*'s contribution; *donate/distribute*
-   do not because *to* contributes non-redundant directional semantics.
+4. **Recoverability** (§5.2): Dative Shift requires that *to*'s semantic
+   content be recoverable from V's θ-role assignment. V and *to* both
+   independently assign θ-roles to the indirect object. When V's role
+   **subsumes** *to*'s role (both assign Goal), *to*'s contribution reduces
+   to Case marking and can be absorbed by PASSIVE. When V assigns only
+   Beneficiary and not Goal, *to*'s contribution is non-redundant — its
+   suppression would cause irrecoverable loss of thematic information,
+   blocking Dative Shift.
 
-## Infrastructure Integration
+## Simplification
 
-This file uses the `Derivation` type (`Core/Derivation.lean`) to formalize
-Dative Shift as a `Step.im` (Internal Merge) step. This enforces Larson's
-central thesis at the type level: Passive and Dative Shift are both
-instances of `Step.im`, differing only in which argument moves and when
-the step is applied in the derivation.
-
-The c-command predictions are verified on `Derivation.final` trees using
-`cCommandsInB`, connecting to the same infrastructure used for binding
-verification in `ColeHermon2008.lean`.
+The paper's VP shell has V raising from the inner V position to an
+initially empty outer V position (head-to-head movement, §2.1, trees
+13–14). This formalization uses `Step.im` (phrasal Internal Merge)
+for Dative Shift and Passive, which correctly captures the NP Movement
+component. Head movement (V Raising) is not modeled — the
+`Derivation` infrastructure does not currently support head movement.
+This omission does not affect the c-command predictions, which depend
+on the positions of DP arguments, not the position of V.
 
 ## Cross-references
 
@@ -135,7 +137,7 @@ def docDativeShift : Derivation :=
 
 /-- In the DOC, the indirect object (Mary) c-commands the direct object
     (a letter). Mary has been promoted above the DO by Internal Merge.
-    This derives all six @cite{barss-lasnik-1986} asymmetries:
+    This derives all six @cite{barss-lasnik-1986} asymmetries (§3.2):
     - Anaphor binding: "I showed Mary herself" vs *"I showed herself Mary"
     - Quantifier binding: "I gave every worker his paycheck"
     - Weak crossover, superiority, *each...the other*, NPI licensing -/
@@ -206,48 +208,207 @@ theorem passive_dativeShift_parallel :
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 -- ============================================================================
--- § 6: Recoverability Condition
+-- § 6: Barss & Lasnik (1986) Asymmetries — Structured Data
+-- ============================================================================
+
+/-! @cite{barss-lasnik-1986} identify six asymmetries in DOC sentences
+of the form V–NP1–NP2, all pointing to the same conclusion: NP1
+c-commands NP2 but not vice versa. These are the empirical facts
+that Larson's Dative Shift analysis derives structurally. -/
+
+/-- A single Barss & Lasnik asymmetry datum. -/
+structure BLAsymmetry where
+  name : String
+  grammatical : String
+  ungrammatical : String
+  deriving Repr, BEq
+
+def bl_anaphor : BLAsymmetry :=
+  { name := "anaphor binding"
+    grammatical := "I showed Mary herself."
+    ungrammatical := "*I showed herself Mary." }
+
+def bl_quantifier : BLAsymmetry :=
+  { name := "quantifier-pronoun binding"
+    grammatical := "I gave every worker his paycheck."
+    ungrammatical := "*I gave its owner every paycheck." }
+
+def bl_wco : BLAsymmetry :=
+  { name := "weak crossover"
+    grammatical := "Which man did you send his paycheck?"
+    ungrammatical := "*Whose pay did you send his mother?" }
+
+def bl_superiority : BLAsymmetry :=
+  { name := "superiority"
+    grammatical := "Who did you give which paycheck?"
+    ungrammatical := "*Which paycheck did you give who?" }
+
+def bl_each_other : BLAsymmetry :=
+  { name := "each...the other"
+    grammatical := "I showed each man the other's socks."
+    ungrammatical := "*I showed the other's friend each man." }
+
+def bl_npi : BLAsymmetry :=
+  { name := "NPI licensing"
+    grammatical := "I showed no one anything."
+    ungrammatical := "*I showed anyone nothing." }
+
+def blAsymmetries : List BLAsymmetry :=
+  [bl_anaphor, bl_quantifier, bl_wco, bl_superiority, bl_each_other, bl_npi]
+
+/-- There are exactly six @cite{barss-lasnik-1986} asymmetries. -/
+theorem bl_six_asymmetries : blAsymmetries.length = 6 := rfl
+
+/-- All six asymmetries are derived from a single structural fact:
+    in the DOC, NP1 (IO) asymmetrically c-commands NP2 (DO). -/
+theorem bl_asymmetries_from_ccommand :
+    cCommandsInB docDativeShift.final DP_mary DP_letter = true ∧
+    cCommandsInB docDativeShift.final DP_letter DP_mary = false := by
+  constructor <;> native_decide
+
+-- ============================================================================
+-- § 7: Recoverability Condition (§5 of the paper)
 -- ============================================================================
 
 /-! Dative Shift is possible only when *to*'s semantic content is
-recoverable from V's θ-role assignment. When V independently assigns
-a Goal role, *to*'s contribution reduces to Case marking and can be
-absorbed. When *to* contributes non-redundant directional semantics,
-its suppression would cause irrecoverable loss, blocking Dative Shift.
+recoverable from V's θ-role assignment (§5.2).
 
-This explains the contrast:
-- *give/send*: V assigns Goal → *to* is redundant → Dative Shift ✓
-- *donate/distribute*: V assigns only Beneficiary → *to* is
-  non-redundant → Dative Shift ✗ -/
+Both V and *to* independently assign θ-roles to the indirect object:
+- *to* always assigns **Goal** (goal of motion along some path)
+- V assigns its own role to the IO: **Beneficiary + Goal** for *give/send*,
+  but only **Beneficiary** for *donate/distribute/contribute*
 
+When V's role subsumes *to*'s (V assigns Goal among its roles), *to*'s
+contribution is redundant — it reduces to Case marking and can be
+absorbed by PASSIVE. When V does NOT assign Goal (only Beneficiary),
+*to*'s Goal contribution is non-redundant — its suppression causes
+irrecoverable loss, blocking Dative Shift. -/
+
+/-- A dative verb entry with its θ-role assignment to the IO.
+
+    `ioRoles` lists the θ-roles V assigns to its indirect object.
+    Recoverability is DERIVED: Dative Shift is possible iff V's roles
+    include `.goal`, making *to*'s contribution redundant. -/
 structure DativeVerbEntry where
   verb : String
-  /-- Does V's θ-assignment to the IO subsume *to*'s role? -/
-  verbSubsumesToRole : Bool
-  /-- Dative Shift permitted? -/
-  allowsDativeShift : Bool
+  /-- θ-roles V independently assigns to the indirect object -/
+  ioRoles : List ThetaRole
   deriving Repr, BEq
 
+/-- *to* always assigns Goal — this is its semantic contribution. -/
+def toRole : ThetaRole := .goal
+
+/-- Recoverability: V's IO roles subsume *to*'s contribution iff
+    V independently assigns a Goal role. -/
+def recoverable (e : DativeVerbEntry) : Bool :=
+  e.ioRoles.contains toRole
+
+/-- *give*: V assigns Beneficiary + Goal → subsumes *to* → DS ✓ -/
 def give_entry : DativeVerbEntry :=
-  { verb := "give", verbSubsumesToRole := true, allowsDativeShift := true }
+  { verb := "give", ioRoles := [.goal] }
 
+/-- *send*: V assigns Goal → subsumes *to* → DS ✓ -/
 def send_entry : DativeVerbEntry :=
-  { verb := "send", verbSubsumesToRole := true, allowsDativeShift := true }
+  { verb := "send", ioRoles := [.goal] }
 
+/-- *promise*: V assigns Goal → subsumes *to* → DS ✓ -/
+def promise_entry : DativeVerbEntry :=
+  { verb := "promise", ioRoles := [.goal] }
+
+/-- *donate*: V assigns only Beneficiary → does NOT subsume *to* → DS ✗
+    Example (§5.2): "I donated money to charity." / *"I donated charity money." -/
 def donate_entry : DativeVerbEntry :=
-  { verb := "donate", verbSubsumesToRole := false, allowsDativeShift := false }
+  { verb := "donate", ioRoles := [] }
 
+/-- *distribute*: V assigns only Beneficiary → DS ✗
+    Example (§5.2): "I distributed apples to the children." /
+    *"I distributed the children apples." -/
 def distribute_entry : DativeVerbEntry :=
-  { verb := "distribute", verbSubsumesToRole := false, allowsDativeShift := false }
+  { verb := "distribute", ioRoles := [] }
 
-def recoverability (e : DativeVerbEntry) : Bool :=
-  e.verbSubsumesToRole
+/-- *contribute*: V assigns only Beneficiary → DS ✗
+    Example (§5.2): "I contributed my time to the auction." /
+    *"I contributed the auction my time." -/
+def contribute_entry : DativeVerbEntry :=
+  { verb := "contribute", ioRoles := [] }
 
+def allDativeVerbs : List DativeVerbEntry :=
+  [give_entry, send_entry, promise_entry, donate_entry, distribute_entry, contribute_entry]
+
+/-- Recoverability correctly predicts Dative Shift for all six verbs:
+    give/send/promise alternate (V assigns Goal); donate/distribute/contribute
+    do not (V assigns only Beneficiary, *to*'s Goal is non-redundant). -/
 theorem recoverability_predicts_dative_shift :
-    ∀ e ∈ [give_entry, send_entry, donate_entry, distribute_entry],
-      recoverability e = e.allowsDativeShift := by
-  intro e he
-  simp at he
-  rcases he with rfl | rfl | rfl | rfl <;> rfl
+    (allDativeVerbs.filter recoverable).map (·.verb) = ["give", "send", "promise"] ∧
+    (allDativeVerbs.filter (! recoverable ·)).map (·.verb) = ["donate", "distribute", "contribute"] := by
+  constructor <;> native_decide
+
+-- ============================================================================
+-- § 8: Scope Freezing in the DOC
+-- ============================================================================
+
+/-! In the derived DOC, the IO (NP1) asymmetrically c-commands the DO
+(NP2). This structural asymmetry predicts scope freezing: QR of DO
+over IO would violate locality/superiority, so only surface scope is
+available. The data are recorded in `Phenomena.Quantification.Data`
+(examples `dative_double_object` and `dative_variant`). -/
+
+/-- Scope freezing follows from asymmetric c-command: in the DOC,
+    IO c-commands DO but not vice versa. QR of the lower quantifier
+    (DO) over the higher one (IO) is blocked, yielding surface-only scope.
+
+    This connects to `Phenomena.Quantification.Data.dative_double_object`
+    which records "Someone gave every student a book" as `surfaceOnly`. -/
+theorem doc_scope_freezing_structural_basis :
+    -- IO > DO (IO c-commands DO): surface scope available
+    cCommandsInB docDativeShift.final DP_mary DP_letter = true ∧
+    -- DO ≯ IO (DO does not c-command IO): inverse scope blocked
+    cCommandsInB docDativeShift.final DP_letter DP_mary = false := by
+  constructor <;> native_decide
+
+-- ============================================================================
+-- § 9: Indirect Passive (§4 of the paper)
+-- ============================================================================
+
+/-! @cite{larson-1988} §4: "Mary was sent a letter" is an **indirect
+passive** — the IO is promoted directly to subject. Under the standard
+two-step analysis, this requires Dative Shift (oblique → DOC) followed
+by Passive (DOC → indirect passive). Larson proposes an alternative
+"3→1 advancement" where PASSIVE applies directly to the oblique
+dative, promoting the IO without an intermediate DOC stage.
+
+Both routes use the same operations (NP Movement = `Step.im`). We
+formalize the two-step route, which produces the same surface
+c-command relations. -/
+
+def V_sent     := mkLeafPhon .V [.D]  "was-sent"   320
+def DP_mary2   := mkLeafPhon .D []    "Mary"        321
+def DP_letter2 := mkLeafPhon .D []    "a letter"    322
+def P_to2      := mkLeafPhon .P [.D]  "to"          323
+
+/-- Indirect passive: "Mary was sent a letter"
+
+    Two-step derivation:
+    1. Build oblique dative base: [VP a_letter [V' send [PP to Mary]]]
+    2. Dative Shift (IM Mary): Mary promotes to inner Spec
+    3. Passive (IM Mary again): Mary promotes to outer Spec (subject) -/
+def indirectPassive : Derivation :=
+  { initial := V_sent
+    steps := [
+      .emR (merge P_to2 DP_mary2),   -- [V' sent [PP to Mary]]
+      .emL DP_letter2,                -- [VP a_letter [V' sent [PP to Mary]]]
+      .im DP_mary2 0,                -- DATIVE SHIFT: Mary to inner Spec
+      .im DP_mary2 1                 -- PASSIVE: Mary to outer Spec (subject)
+    ] }
+
+/-- In the indirect passive, the promoted IO (Mary) c-commands the
+    stranded DO (a letter). -/
+theorem indirect_passive_io_ccommands_do :
+    cCommandsInB indirectPassive.final DP_mary2 DP_letter2 = true := by native_decide
+
+/-- The indirect passive uses two Internal Merge steps:
+    Dative Shift + Passive — both are `Step.im`. -/
+theorem indirect_passive_two_im :
+    indirectPassive.movedItems.length = 2 := by native_decide
 
 end Phenomena.ArgumentStructure.Studies.Larson1988

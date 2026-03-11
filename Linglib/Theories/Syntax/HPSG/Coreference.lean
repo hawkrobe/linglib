@@ -9,6 +9,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Core.Interface
+import Linglib.Core.Grammar
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev mary := Fragments.English.Nouns.mary.toWordSg
@@ -332,9 +333,6 @@ The difference is in the mechanism:
 -- CoreferenceTheory Interface Implementation
 -- ============================================================================
 
-/-- Marker type for HPSG as a coreference theory -/
-structure HPSGTheory
-
 /-- Compute coreference status for positions i and j using o-command.
 
     Position 0 = subject, position 2 = object -/
@@ -369,25 +367,6 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
     | _ => .possible
   else
     .unspecified
-
-/-- HPSG implements the CoreferenceTheory interface -/
-instance : Interfaces.CoreferenceTheory HPSGTheory where
-  Structure := SimpleClause
-  parse := parseSimpleClause
-  coreferenceStatus := computeCoreferenceStatus
-  grammaticalForCoreference := λ clause =>
-    match classifyNominal clause.subject with
-    | some .reflexive => false
-    | some .reciprocal => false
-    | _ =>
-      match clause.object with
-      | none => true
-      | some obj =>
-        match classifyNominal obj with
-        | some .reflexive => reflexiveLicensed clause
-        | some .reciprocal => reciprocalLicensed clause
-        | some .pronoun => false
-        | _ => true
 
 end CombinedCheck
 

@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.SpeechActs
-import Linglib.Core.Interfaces.AssertionTheory
+import Linglib.Core.Semantics.CommonGround
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -115,24 +115,7 @@ def isStable (_ : LauerState W) : Bool := true
 end LauerState
 
 -- ════════════════════════════════════════════════════
--- § 3. Interface Instance
--- ════════════════════════════════════════════════════
-
-/-- Marker type for Lauer's theory. -/
-inductive LauerTag | mk
-
-instance : Interfaces.AssertionTheory LauerTag where
-  State := LauerState
-  initial := LauerState.empty
-  assert := LauerState.assert
-  contextSet := LauerState.contextSet
-  isStable := LauerState.isStable
-  separatesCommitmentFromBelief := true
-  supportsRetraction := false
-  modelsSourceMarking := false
-
--- ════════════════════════════════════════════════════
--- § 4. Bridge to RSA
+-- § 3. Bridge to RSA
 -- ════════════════════════════════════════════════════
 
 /-!
@@ -154,10 +137,6 @@ probability over propositions (P(p)). The connection is:
 
 This lifts RSA's world-level prior to Lauer's proposition-level credence.
 -/
-
-/-- Lauer separates commitment from belief (credence ≠ assertion). -/
-theorem separates_commitment :
-    Interfaces.AssertionTheory.separatesCommitmentFromBelief (T := LauerTag) = true := rfl
 
 /-- Lauer is always stable (no pending issues mechanism). -/
 theorem always_stable {W : Type*} (s : LauerState W) :

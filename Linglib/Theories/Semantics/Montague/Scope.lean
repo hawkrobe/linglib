@@ -112,13 +112,6 @@ structure ScopedForm where
 def ScopedForm.toAvailableScopes (f : ScopedForm) : AvailableScopes :=
   Semantics.Scope.toAvailableScopes f.availableScopes f.scopeTaker1 f.scopeTaker2
 
-/-- Marker type for Montague scope theory -/
-def MontagueScopeTheory : Type := Unit
-
-/-- Montague implements HasAvailableScopes for ScopedForm -/
-instance : HasAvailableScopes MontagueScopeTheory ScopedForm where
-  availableScopes := ScopedForm.toAvailableScopes
-
 -- Scope Enumeration Utilities
 
 /-- All binary scope configurations -/

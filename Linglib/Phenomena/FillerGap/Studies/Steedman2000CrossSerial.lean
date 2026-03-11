@@ -19,6 +19,7 @@ namespace Phenomena.FillerGap.CCG_CrossSerialBridge
 open CCG
 open CCG.CrossSerial
 open Phenomena.WordOrder.CrossSerial
+open Core (FormalLanguageType)
 
 /--
 A CCG derivation annotated with which NP binds to which verb.

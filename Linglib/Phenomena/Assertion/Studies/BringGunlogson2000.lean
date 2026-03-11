@@ -1,6 +1,5 @@
 import Linglib.Phenomena.Assertion.Basic
 import Linglib.Theories.Pragmatics.Assertion.Gunlogson
-import Linglib.Theories.Pragmatics.Assertion.Stalnaker
 
 /-!
 Gunlogson Felicity ↔ Contextual Evidence Bias
@@ -101,23 +100,7 @@ theorem rising_response_dynamics {W : Type*}
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 4. Stalnaker Gap
--- ════════════════════════════════════════════════════
-
-/-- Stalnaker cannot represent the asymmetry between rising and falling.
-
-    Both rising and falling have the same propositional content p, but
-    Stalnaker's `assert` treats them identically (CG update with p).
-    Gunlogson's model distinguishes them via source marking. -/
-theorem stalnaker_conflates_rising_falling :
-    Interfaces.AssertionTheory.modelsSourceMarking
-      (T := Theories.Pragmatics.Assertion.Stalnaker.StalnakerTag) = false ∧
-    Interfaces.AssertionTheory.modelsSourceMarking
-      (T := GunlogsonTag) = true :=
-  ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 5. Rising Declaratives ≠ Questions
+-- § 4. Rising Declaratives ≠ Questions
 -- ════════════════════════════════════════════════════
 
 /-- Rising declaratives are not questions: they do not partition

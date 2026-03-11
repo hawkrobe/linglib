@@ -1,5 +1,5 @@
-import Linglib.Core.Interfaces.ExtractionMorphology
-import Linglib.Core.Interfaces.VoiceSystem
+import Linglib.Core.ExtractionMorphology
+import Linglib.Core.VoiceSystem
 
 /-!
 # Toba Batak Fragment @cite{erlewine-2018}

@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Core.Interfaces.VoiceSystem
+import Linglib.Core.VoiceSystem
 
 /-!
 # Chuj Verb Building Fragment @cite{coon-2019}

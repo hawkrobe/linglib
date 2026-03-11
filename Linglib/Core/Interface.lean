@@ -1,25 +1,25 @@
-import Linglib.Core.Interfaces.CombinationSchemata
-import Linglib.Core.Interfaces.BindingSemantics
-import Linglib.Core.Interfaces.ScopeTheory
-import Linglib.Core.Interfaces.ImplicatureTheory
-import Linglib.Core.Interfaces.Felicity
-import Linglib.Core.Interfaces.CoreferenceTheory
-import Linglib.Core.Interfaces.ExtractionMorphology
-import Linglib.Core.Interfaces.VoiceSystem
-import Linglib.Core.Interfaces.AssertionTheory
+import Linglib.Core.CombinationKind
+import Linglib.Core.BindingSemantics
+import Linglib.Core.ScopeTypes
+import Linglib.Core.ImplicatureTypes
+import Linglib.Core.FelicityTypes
+import Linglib.Core.CoreferenceStatus
+import Linglib.Core.ExtractionMorphology
+import Linglib.Core.VoiceSystem
+import Linglib.Core.AssertionTypes
 
 /-!
-# Theory Comparison Interfaces
+# Core Data Types (formerly Theory Comparison Interfaces)
 
-Re-exports all interface modules. Import this file to get all interfaces,
-or import individual files from `Core/Interfaces/` for finer-grained control.
+Re-exports theory-neutral data types:
 
-- `CombinationSchemata`: Müller's three universal schemata (CombinationKind)
-- `BindingSemantics`: H&K binding (BindingConfig, HasBindingConfig)
-- `ScopeTheory`: Scope readings (AvailableScopes, HasBinaryScope)
-- `ImplicatureTheory`: Scalar implicature predictions (ImplicatureTheory)
-- `FelicityCondition`: Felicity/oddness predictions (FelicityCondition)
-- `CoreferenceTheory`: Coreference predictions (CoreferenceTheory)
-- `ExtractionMorphology`: Cross-linguistic extraction marking (ExtractionProfile)
-- `VoiceSystem`: Voice system typology (VoiceSystemProfile)
+- `CombinationKind`: Mueller's three universal schemata
+- `BindingSemantics`: H&K binding data types (Position, BindingConfig)
+- `ScopeTypes`: Scope readings (AvailableScopes, BinaryScopeAvailability)
+- `ImplicatureTypes`: Scalar implicature data types
+- `FelicityTypes`: Felicity/oddness data types
+- `CoreferenceStatus`: Coreference relationship status
+- `ExtractionMorphology`: Cross-linguistic extraction marking
+- `VoiceSystem`: Voice system typology
+- `AssertionTypes`: Assertion outcome types
 -/

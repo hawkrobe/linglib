@@ -8,9 +8,8 @@ Connects the formal proof that CCG is strictly more expressive than CFG
 (from `GenerativeCapacity`) to the empirical cross-serial dependency
 classification in `Phenomena.WordOrder.CrossSerial`.
 
-The key bridge: the phenomenal `crossSerialRequires =.mildlyContextSensitive`
-classification agrees with the theory-level classification, justified by
-the formal proof that {a^n b^n c^n d^n} is not context-free.
+Both layers now use the canonical `Core.FormalLanguageType`, so the
+agreement is definitional.
 -/
 
 namespace CCG.GenerativeCapacity.Bridge
@@ -18,10 +17,15 @@ namespace CCG.GenerativeCapacity.Bridge
 /--
 The phenomenal and theory-level classifications agree: both assign
 cross-serial dependencies to the mildly context-sensitive level.
+
+With the unified `Core.FormalLanguageType`, this is definitionally true —
+both `Phenomena.WordOrder.CrossSerial.crossSerialRequires` and
+`CCG.GenerativeCapacity.crossSerialRequires` reduce to
+`Core.FormalLanguageType.mildlyContextSensitive`.
 -/
 theorem phenomenal_agrees_with_theory :
     Phenomena.WordOrder.CrossSerial.crossSerialRequires =
-      Phenomena.WordOrder.CrossSerial.FormalLanguageType.mildlyContextSensitive := by
+      Core.FormalLanguageType.mildlyContextSensitive := by
   rfl
 
 end CCG.GenerativeCapacity.Bridge

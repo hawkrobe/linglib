@@ -97,6 +97,7 @@ import Linglib.Core.Definiteness
 import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Core.Genericity
+import Linglib.Core.FormalLanguage
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Containment
@@ -403,6 +404,7 @@ import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Morph
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.AdjAgreement
+import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
 import Linglib.Fragments.Georgian.Agreement
@@ -790,6 +792,8 @@ import Linglib.Phenomena.FillerGap.Studies.Erlewine2018
 import Linglib.Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
 import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
 import Linglib.Phenomena.FillerGap.Studies.PickeringBarry1991
+import Linglib.Phenomena.FillerGap.Studies.Steedman2000CrossSerial
+import Linglib.Phenomena.FillerGap.CCGGenerativeCapacity
 import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
@@ -832,6 +836,7 @@ import Linglib.Theories.Semantics.Dynamic.BSML.Basic
 import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.FreeChoiceCompare
+import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Data
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 import Linglib.Phenomena.Negation.Basic
@@ -1035,7 +1040,7 @@ import Linglib.Theories.Syntax.CCG.CrossSerial
 import Linglib.Theories.Syntax.CCG.Gapping
 import Linglib.Phenomena.Entailment.Studies.ScontrasPearl2021
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
-import Linglib.Theories.Syntax.CCG.Formal.FormalLanguageTheory
+import Linglib.Theories.FormalLanguageTheory.PumpingLemma
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
@@ -1104,6 +1109,7 @@ import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 import Linglib.Phenomena.WordOrder.Studies.AlexeyenkoZeijlstra2025
 import Linglib.Phenomena.WordOrder.Studies.FedzechkinaEtAl2017
 import Linglib.Phenomena.WordOrder.Studies.BachBrownMarslenWilson1986
+import Linglib.Phenomena.WordOrder.Studies.Shieber1985
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
@@ -1286,6 +1292,7 @@ import Linglib.Theories.Semantics.Supervaluation.TCS
 -- Theories: Semantics.PossibilitySemantics (possibility semantics)
 import Linglib.Theories.Semantics.PossibilitySemantics.Basic
 import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic
+import Linglib.Theories.Semantics.PossibilitySemantics.Lifting
 -- Theories: Semantics.Montague (Montague architecture)
 import Linglib.Theories.Semantics.Lexical.Adjective.Classification
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification

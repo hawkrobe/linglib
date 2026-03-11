@@ -1,4 +1,4 @@
-import Linglib.Core.Interfaces.ExtractionMorphology
+import Linglib.Core.ExtractionMorphology
 
 /-!
 # K'iche' Extraction Morphology Fragment

@@ -347,9 +347,6 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 -- Part 13: CoreferenceTheory Interface Implementation
 -- ============================================================================
 
-/-- Marker type for CRDC as a coreference theory -/
-structure CRDCTheory
-
 /-- Compute coreference status using CRDC -/
 def computeCoreferenceStatus (clause : ValencyClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
   if i == 0 && j == 2 then
@@ -389,24 +386,6 @@ def computeCoreferenceStatus (clause : ValencyClause) (i j : Nat) : Interfaces.C
   else
     .unspecified
 
-/-- CRDC implements the CoreferenceTheory interface -/
-instance : Interfaces.CoreferenceTheory CRDCTheory where
-  Structure := ValencyClause
-  parse := parseValencyClause
-  coreferenceStatus := computeCoreferenceStatus
-  grammaticalForCoreference := λ clause =>
-    match classifyNominal clause.subject with
-    | some .reflexive => false
-    | some .reciprocal => false
-    | _ =>
-      match clause.object with
-      | none => true
-      | some obj =>
-        match classifyNominal obj with
-        | some .reflexive => reflexiveLicensed clause
-        | some .reciprocal => reciprocalLicensed clause
-        | some .pronoun => false
-        | _ => true
 
 -- ============================================================================
 -- Part 14: Theoretical Notes

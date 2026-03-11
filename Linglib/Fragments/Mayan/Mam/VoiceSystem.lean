@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
 import Linglib.Theories.Syntax.Minimalism.Core.Spellout
-import Linglib.Core.Interfaces.VoiceSystem
+import Linglib.Core.VoiceSystem
 
 /-!
 # Mam Voice System Fragment

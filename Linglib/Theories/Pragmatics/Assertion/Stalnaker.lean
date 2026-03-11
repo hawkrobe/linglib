@@ -1,5 +1,4 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Interfaces.AssertionTheory
 
 /-!
 # Stalnaker's Common Ground Model of Assertion
@@ -58,24 +57,7 @@ def contextSet {W : Type*} (s : StalnakerState W) : ContextSet W :=
 def isStable {W : Type*} (_ : StalnakerState W) : Bool := true
 
 -- ════════════════════════════════════════════════════
--- § 2. Interface Instance
--- ════════════════════════════════════════════════════
-
-/-- Marker type for Stalnaker's theory. -/
-inductive StalnakerTag | mk
-
-instance : Interfaces.AssertionTheory StalnakerTag where
-  State := StalnakerState
-  initial := initial
-  assert := assert
-  contextSet := contextSet
-  isStable := isStable
-  separatesCommitmentFromBelief := false
-  supportsRetraction := false
-  modelsSourceMarking := false
-
--- ════════════════════════════════════════════════════
--- § 3. Verification
+-- § 2. Verification
 -- ════════════════════════════════════════════════════
 
 /-- Empty CG gives trivial context set. -/
@@ -86,18 +68,6 @@ theorem initial_trivial {W : Type*} :
 theorem assert_restricts {W : Type*} (s : StalnakerState W) (p : BProp W) (w : W) :
     contextSet (assert s p) w → contextSet s w :=
   CG.add_restricts s p w
-
-/-- Stalnaker does not separate commitment from belief. -/
-theorem no_commitment_separation :
-    Interfaces.AssertionTheory.separatesCommitmentFromBelief (T := StalnakerTag) = false := rfl
-
-/-- Stalnaker does not support retraction. -/
-theorem no_retraction :
-    Interfaces.AssertionTheory.supportsRetraction (T := StalnakerTag) = false := rfl
-
-/-- Stalnaker does not model source marking. -/
-theorem no_source_marking :
-    Interfaces.AssertionTheory.modelsSourceMarking (T := StalnakerTag) = false := rfl
 
 /-- Stalnaker states are always stable. -/
 theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s = true := rfl

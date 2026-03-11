@@ -528,50 +528,6 @@ theorem all_theories_capture_pronominal_disjoint_reference :
   · exact Phenomena.Anaphora.Studies.Hudson1990.captures_pronominal_disjoint_reference
   · exact Phenomena.Anaphora.Studies.OsborneLi2023.captures_pronominal_disjoint_reference
 
--- D.2: Interface-Based Comparison
-
-open Interfaces
-
-/-- The key test sentences -/
-def testSentences : List (List Word) :=
-  [ [john, sees, himself]
-  , [himself, sees, john]
-  , [mary, sees, herself]
-  , [herself, sees, mary]
-  , [they, see, themselves]
-  , [themselves, see, them]
-  , [john, sees, herself]  -- agreement violation
-  , [they, see, himself]   -- agreement violation
-  , [john, sees, him]      -- pronoun
-  , [mary, sees, her]      -- pronoun
-  , [they, see, eachOther]    -- reciprocal (plural antecedent)
-  , [eachOther, see, them]    -- reciprocal in subject
-  , [john, sees, eachOther]   -- reciprocal (singular antecedent)
-  ]
-
-/-- All four theories are pairwise equivalent on test sentences -/
-theorem all_theories_pairwise_equivalent :
-    -- Original three comparisons
-    theoriesAgreeOnAll (T1 := Minimalism.Phenomena.Coreference.MinimalismTheory)
-                       (T2 := HPSG.Coreference.HPSGTheory)
-                       testSentences = true ∧
-    theoriesAgreeOnAll (T1 := HPSG.Coreference.HPSGTheory)
-                       (T2 := DepGrammar.Coreference.DepGrammarTheory)
-                       testSentences = true ∧
-    theoriesAgreeOnAll (T1 := Minimalism.Phenomena.Coreference.MinimalismTheory)
-                       (T2 := DepGrammar.Coreference.DepGrammarTheory)
-                       testSentences = true ∧
-    -- New comparisons with CRDC
-    theoriesAgreeOnAll (T1 := Minimalism.Phenomena.Coreference.MinimalismTheory)
-                       (T2 := DepGrammar.CRDC.CRDCTheory)
-                       testSentences = true ∧
-    theoriesAgreeOnAll (T1 := HPSG.Coreference.HPSGTheory)
-                       (T2 := DepGrammar.CRDC.CRDCTheory)
-                       testSentences = true ∧
-    theoriesAgreeOnAll (T1 := DepGrammar.Coreference.DepGrammarTheory)
-                       (T2 := DepGrammar.CRDC.CRDCTheory)
-                       testSentences = true := by
-  native_decide
 
 /-- Total minimal pairs tested -/
 def totalPairsTested : Nat :=

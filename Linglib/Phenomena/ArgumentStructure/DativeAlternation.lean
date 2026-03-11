@@ -1,5 +1,6 @@
 /-
 # Dative Alternation (Ditransitive Constructions)
+@cite{barss-lasnik-1986} @cite{larson-1988}
 
 ## The Phenomenon
 
@@ -23,6 +24,13 @@ The choice depends on information structure and other factors.
 
   (4a) *John puts the book. ✗ locative missing PP
   (4b) John puts the book on the table. ✓ locative with PP
+
+## Lexical Restrictions on Alternation (@cite{larson-1988}, §5)
+
+Not all dative verbs alternate:
+- *give/send/promise*: Oblique ✓, DOC ✓ (V's Goal subsumes *to*'s contribution)
+- *donate/distribute/contribute*: Oblique ✓, DOC ✗ (*to* is non-redundant)
+- *envy/spare*: Oblique ✗, DOC ✓ (DOC only, no oblique source)
 
 ## Note on lexical entries
 
