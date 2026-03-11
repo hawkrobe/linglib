@@ -612,6 +612,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.TheoryComparison
 import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
 import Linglib.Phenomena.ArgumentStructure.Studies.Collins2005
 import Linglib.Phenomena.ArgumentStructure.Studies.Kratzer1996
+import Linglib.Phenomena.ArgumentStructure.Studies.Dowty1991
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025
