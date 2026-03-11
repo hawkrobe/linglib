@@ -1,4 +1,5 @@
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
+import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 
 /-!
 # Paape & Vasishth (2026) @cite{paape-vasishth-2026}
@@ -42,6 +43,12 @@ bimodality (@cite{van-schijndel-linzen-2021}, @cite{huang-etal-2024}).
 - `Basic.lean`: Reuses `Disambiguation`, `ReferentialContext`, `Condition`,
   `disambiguationProfile`, `rc_pareto_harder`
 - `Core.ProcessingModel`: Ordinal profile bridge (§ 7)
+- `Theories/Semantics/Lexical/Determiner/Definite.lean`: Uniqueness
+  presupposition of `the_uniq` grounds the context manipulation — bare
+  definites fail uniqueness in non-unique contexts, motivating RC modifiers (§ 9)
+- `Phenomena/Reference/Studies/SedivyEtAl1999.lean`: Shared mechanism —
+  modifier informativity given a contrast set drives both contrastive
+  inference (Sedivy) and context-sensitive attachment (§ 9)
 -/
 
 namespace Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
@@ -467,5 +474,184 @@ theorem mpt_consistent_with_pareto :
     gardenPathRate .ambRC_unique > gardenPathRate .ambCC_unique ∧
     rcCosts.covertReanalysisCost > ccCosts.covertReanalysisCost := by
   constructor <;> native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 9. Bridge: Uniqueness Presupposition Grounds Context Effect
+-- ════════════════════════════════════════════════════
+
+/-! ### Uniqueness presupposition grounds referential context
+
+The experimental manipulation of referential context (unique vs. non-unique
+referents) is grounded in the **uniqueness presupposition** of definite
+descriptions (`the_uniq` in `Theories/Semantics/Lexical/Determiner/Definite.lean`).
+
+In the non-unique condition (*He was introduced to two women. He told the
+woman that...*), a bare definite "the woman" fails uniqueness because two
+entities satisfy the restrictor. An RC modifier ("the woman that he'd risked
+his life for") intersects the restrictor with the RC predicate, narrowing
+to a single entity and rescuing uniqueness.
+
+This makes the RC pragmatically *necessary* in non-unique contexts — the same
+mechanism underlying @cite{sedivy-etal-1999}'s contrastive inference: a
+modifier is informative when a contrast set is available. In Sedivy et al.'s
+visual-world paradigm, the contrast set is perceptual (tall glass vs. short
+glass); here, it is discourse-referential (woman₁ vs. woman₂). Both are
+instances of modifier informativity increasing with the availability of
+alternatives.
+
+The argument chain:
+1. `the_uniq` presupposes exactly one restrictor-satisfier
+2. Non-unique context → presupposition fails for bare NP
+3. RC modifier narrows restrictor → presupposition can succeed
+4. Therefore RC is pragmatically licensed in non-unique contexts
+5. This matches `contextSupports .nonUniqueReferents .relativeClause = true`
+6. Parser is biased toward RC → less garden-pathing (Finding II)
+-/
+
+section UniquenessBridge
+
+open Semantics.Lexical.Determiner.Definite (the_uniq modifierNecessary)
+
+/-- Toy discourse entity for the uniqueness worked example. -/
+inductive DiscEntity where
+  | woman1   -- the woman he risked his life for
+  | woman2   -- a second woman
+  | man
+  deriving DecidableEq, BEq, Repr
+
+/-- Non-unique context domain: a man and two women. -/
+def nonUniqueDomain : List DiscEntity := [.woman1, .woman2, .man]
+
+/-- Unique context domain: a man and one woman. -/
+def uniqueDomain : List DiscEntity := [.woman1, .man]
+
+/-- Restrictor predicate: "woman". -/
+def isWoman : DiscEntity → Bool
+  | .woman1 => true | .woman2 => true | .man => false
+
+/-- RC modifier predicate: "that he'd risked his life for". -/
+def rcModifier : DiscEntity → Bool
+  | .woman1 => true | _ => false
+
+/-- Trivial scope for the worked example. -/
+def toldScope : DiscEntity → Bool := fun _ => true
+
+/-- In non-unique context, bare "the woman" FAILS uniqueness:
+    two entities satisfy the restrictor, so the presupposition
+    of `the_uniq` is not met. -/
+theorem bare_fails_nonunique :
+    (the_uniq nonUniqueDomain isWoman toldScope).presup () = false := by
+  native_decide
+
+/-- In non-unique context, modified "the woman that he'd risked his
+    life for" SUCCEEDS: the RC modifier narrows to one entity. -/
+theorem modified_succeeds_nonunique :
+    (the_uniq nonUniqueDomain
+      (fun e => isWoman e && rcModifier e) toldScope).presup () = true := by
+  native_decide
+
+/-- In unique context, bare "the woman" already SUCCEEDS:
+    only one entity satisfies the restrictor, so no modifier needed. -/
+theorem bare_succeeds_unique :
+    (the_uniq uniqueDomain isWoman toldScope).presup () = true := by
+  native_decide
+
+/-- The full argument chain: uniqueness presupposition grounds
+    `contextSupports` from `Basic.lean`.
+
+    1. Non-unique context → bare definite fails → RC modifier needed
+    2. This is exactly `contextSupports .nonUniqueReferents .relativeClause`
+    3. Unique context → bare definite succeeds → no modifier needed
+    4. This is exactly `contextSupports .uniqueReferent .complementClause` -/
+theorem uniqueness_grounds_context_supports :
+    -- Non-unique: bare fails, modified succeeds, RC is supported
+    (the_uniq nonUniqueDomain isWoman toldScope).presup () = false ∧
+    (the_uniq nonUniqueDomain (fun e => isWoman e && rcModifier e)
+      toldScope).presup () = true ∧
+    contextSupports .nonUniqueReferents .relativeClause = true ∧
+    -- Unique: bare succeeds, CC is supported
+    (the_uniq uniqueDomain isWoman toldScope).presup () = true ∧
+    contextSupports .uniqueReferent .complementClause = true := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+
+-- ────────────────────────────────────────────────────
+-- § 9b. Formal Shared Mechanism: modifierNecessary
+-- ────────────────────────────────────────────────────
+
+/-! ### Shared mechanism with contrastive inference
+
+`modifierNecessary` (defined in `Definite.lean`) captures the abstract
+predicate: a modifier rescues a failed uniqueness presupposition. Both
+Paape & Vasishth's context-sensitive attachment and @cite{sedivy-etal-1999}'s
+contrastive inference are instances of the same predicate — the modifier
+type differs (RC vs. scalar adjective) but the referential mechanism is
+identical. -/
+
+/-- In non-unique context, the RC modifier is referentially necessary:
+    bare "the woman" is ambiguous, modified "the woman that P" is unique. -/
+theorem pv_modifier_necessary :
+    modifierNecessary nonUniqueDomain isWoman rcModifier = true := by
+  native_decide
+
+/-- In unique context, the RC modifier is unnecessary:
+    bare "the woman" already uniquely identifies. -/
+theorem pv_modifier_unnecessary :
+    modifierNecessary uniqueDomain isWoman rcModifier = false := by
+  native_decide
+
+-- Sedivy et al. (1999) visual-world scenario
+
+/-- Toy visual-world entity for the @cite{sedivy-etal-1999} scenario. -/
+inductive SedivyEntity where
+  | tallGlass    -- target
+  | shortGlass   -- same-category competitor
+  | ball         -- distractor
+  | key          -- distractor
+  deriving DecidableEq, BEq, Repr
+
+/-- Contrast display: two glasses (tall and short) plus distractors. -/
+def contrastDisplay : List SedivyEntity :=
+  [.tallGlass, .shortGlass, .ball, .key]
+
+/-- No-contrast display: one glass plus distractors. -/
+def noContrastDisplay : List SedivyEntity :=
+  [.tallGlass, .ball, .key]
+
+/-- Restrictor predicate: "glass". -/
+def isGlass : SedivyEntity → Bool
+  | .tallGlass => true | .shortGlass => true | _ => false
+
+/-- Modifier predicate: "tall". -/
+def isTall : SedivyEntity → Bool
+  | .tallGlass => true | _ => false
+
+/-- With a contrast set (two glasses), "tall" is referentially necessary:
+    bare "the glass" is ambiguous, "the tall glass" is unique. -/
+theorem sedivy_modifier_necessary :
+    modifierNecessary contrastDisplay isGlass isTall = true := by
+  native_decide
+
+/-- Without a contrast set (one glass), "tall" is unnecessary:
+    bare "the glass" already uniquely identifies. -/
+theorem sedivy_modifier_unnecessary :
+    modifierNecessary noContrastDisplay isGlass isTall = false := by
+  native_decide
+
+/-- **Structural identity**: the same `modifierNecessary` predicate governs
+    both phenomena. When alternatives are available, the modifier is
+    necessary; when the referent is already unique, the modifier is
+    redundant. The modifier type is irrelevant — RC (Paape & Vasishth)
+    and scalar adjective (Sedivy et al.) behave identically at this
+    level of abstraction. -/
+theorem shared_mechanism :
+    -- Both: modifier necessary when alternatives present
+    modifierNecessary nonUniqueDomain isWoman rcModifier = true ∧
+    modifierNecessary contrastDisplay isGlass isTall = true ∧
+    -- Both: modifier unnecessary when referent unique
+    modifierNecessary uniqueDomain isWoman rcModifier = false ∧
+    modifierNecessary noContrastDisplay isGlass isTall = false := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+
+end UniquenessBridge
 
 end Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026

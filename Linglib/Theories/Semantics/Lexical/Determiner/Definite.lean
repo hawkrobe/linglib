@@ -238,4 +238,28 @@ def qforceToDefiniteness : QForce → Definiteness
   | .negative     => .indefinite -- "no" is existential (negative)
   | .proportional => .indefinite -- "most" is proportional (no presupposition)
 
+-- ============================================================================
+-- §7: Modifier Necessity
+-- ============================================================================
+
+/-- A modifier is **referentially necessary** in a domain when the bare
+    restrictor fails to uniquely identify a referent but the modified
+    (intersected) restrictor succeeds.
+
+    This captures the shared mechanism underlying:
+    - **Contrastive inference** (@cite{sedivy-etal-1999}): a scalar adjective
+      is informative when a same-category competitor is present
+    - **Context-sensitive attachment** (@cite{paape-vasishth-2026}): an RC
+      modifier is pragmatically licensed when multiple potential referents
+      make the bare definite ambiguous
+
+    In both cases, the modifier rescues a failed uniqueness presupposition. -/
+def modifierNecessary {E : Type}
+    (domain : List E) (restrictor modifier : E → Bool) : Bool :=
+  match domain.filter restrictor with
+  | [_] => false  -- bare NP already uniquely identifies; modifier redundant
+  | _ => match domain.filter (fun e => restrictor e && modifier e) with
+    | [_] => true   -- modifier rescues uniqueness
+    | _ => false    -- modifier doesn't help
+
 end Semantics.Lexical.Determiner.Definite
