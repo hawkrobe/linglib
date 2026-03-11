@@ -215,73 +215,88 @@ theorem manage_senses_share_semantics :
 
 open Phenomena.Reference.Studies.RosaArnold2017
 
-/-- @cite{rosa-arnold-2017} and @cite{solstad-bott-2022} demonstrate the same
-    mechanism operating across different verb classes and phenomena: **thematic
-    roles determine discourse bias independently of grammatical position**.
+/-- Both IC bias and referential form bias are derived from the same
+    starting point: theta-role assignments in the Fragment lexicon. Each
+    chains through a different intermediate module but both derive a
+    binary discourse prediction from a ThetaRole.
 
-    IC bias: stimulus argument → causal explanation target → NP1/NP2 bias
-    Transfer bias: goal argument → next-mention prediction → pronominalization
+    IC path:   enjoy.subjectTheta → canonicalProfile → predictICBias → .np2
+    Form path: give.object2Theta  → transferNextMention → predictedForm → pronoun
 
-    In both cases, swapping the thematic role between subject and object
-    changes the bias direction, proving that the role — not the grammatical
-    position — drives the effect. This is clearest in the IC reversal: StimExp
-    (stimulus=subject) yields NP1 bias while ExpStim (stimulus=object) yields
-    NP2 bias, with the bias direction fully predicted by which argument has
-    the causation entailment. -/
-theorem theta_role_drives_bias_across_phenomena :
-    -- Transfer verbs: goal → high next-mention (Rosa & Arnold)
-    transferNextMention .goal = .high ∧
-    -- IC verbs: stimulus subject → NP1 bias (Solstad & Bott)
+    This parallel structure is non-trivial: it means a single change to a
+    Fragment theta-role annotation simultaneously breaks predictions in
+    BOTH reference form selection and implicit causality. -/
+theorem fragment_theta_drives_both_phenomena :
+    -- IC: enjoy's experiencer subject → NP2 bias (via proto-role profile)
+    (enjoy.subjectTheta.bind (fun θ =>
+      some (predictICBias (ThetaRole.canonicalProfile θ)))) =
+    some ICBias.np2 ∧
+    -- Transfer: give's goal indirect object → pronoun (via next-mention)
+    (give.object2Theta.bind (fun θ =>
+      some (transferNextMention θ).predictedForm)) =
+    some Core.Prominence.DefinitenessLevel.personalPronoun := by
+  exact ⟨by native_decide, rfl⟩
+
+/-- The IC reversal (StimExp→NP1, ExpStim→NP2) and the transfer verb
+    goal bias are both instances of the same deeper pattern: **swapping
+    which argument carries a discourse-prominent thematic role reverses
+    the discourse bias direction**.
+
+    For IC: swapping stimulus between subject (StimExp) and object (ExpStim)
+    reverses the IC bias from NP1 to NP2.
+    For transfer: swapping goal between subject and nonsubject doesn't
+    eliminate the goal bias — goals still get more pronouns in BOTH positions.
+
+    The IC reversal is the stronger demonstration: it shows the bias direction
+    is ENTIRELY determined by the thematic role, not the grammatical position.
+    @cite{rosa-arnold-2017}'s data corroborates this by showing that thematic
+    role affects form even when grammatical role is held constant, violating
+    @cite{kehler-rohde-2013}'s independence hypothesis. -/
+theorem thematic_role_not_position_determines_bias :
+    -- IC: stimulus=subject → NP1 (derived from entailment profile)
     predictICBias stimExpSubjectProfile = .np1 ∧
-    -- IC verbs: experiencer subject → NP2 bias (role reversal)
-    predictICBias expStimSubjectProfile = .np2 := by
-  exact ⟨rfl, by native_decide, by native_decide⟩
-
-/-- Both papers demonstrate coherence-driven modulation of thematic role bias.
-
-    @cite{rosa-arnold-2017}: Occasion/Result coherence amplifies the goal bias
-    (β=1.22, p=.002) while Other coherence does not (β=0.86, p=.12). Result
-    and Occasion focus on the endpoint/aftermath of the event — the Goal.
-
-    @cite{solstad-bott-2024}: Explanation coherence selects for causes
-    (`selectsCause`), and IC bias tracks the argument with the causation
-    entailment profile.
-
-    In both cases, the coherence relation TYPE interacts with the thematic
-    structure of the verb: Explanation selects the cause/stimulus; Occasion/Result
-    selects the endpoint/goal. The coherence relation amplifies a bias that is
-    already latent in the verb's thematic structure. -/
-theorem coherence_modulates_theta_bias_across_phenomena :
-    -- Explanation selects causes (Solstad & Bott)
-    CoherenceRelation.explanation.selectsCause = true ∧
-    -- Occasion/Result amplifies goal bias (Rosa & Arnold)
-    occasionResult_interaction.significant = true ∧
-    -- Other coherence does NOT amplify goal bias
-    other_interaction.significant = false := by
-  exact ⟨rfl, rfl, rfl⟩
-
-/-- @cite{rosa-arnold-2017} explicitly challenges @cite{kehler-rohde-2013}'s
-    independence hypothesis: P(pronoun | referent) should depend ONLY on
-    subjecthood, not on thematic role. Rosa & Arnold violate this for transfer
-    verbs (goals get more pronouns than sources in the same grammatical role).
-
-    The IC data provides an even stronger violation: the ENTIRE continuation
-    bias direction (NP1 vs NP2) reverses based on which argument is the
-    stimulus, with grammatical position (subject vs object) fully dissociated
-    from the bias direction by the StimExp/ExpStim design. -/
-theorem ic_reversal_violates_position_only :
-    -- StimExp (stimulus=subject): NP1 bias — subject gets continuation
-    predictICBias stimExpSubjectProfile = .np1 ∧
-    -- ExpStim (stimulus=object): NP2 bias — object gets continuation
+    -- IC: stimulus=object (experiencer=subject) → NP2 (reversal!)
     predictICBias expStimSubjectProfile = .np2 ∧
-    -- Transfer: goals get more pronouns than sources even in same position
-    -- (Rosa & Arnold Exp 1 subject: 64% goal vs 37% source)
+    -- Transfer: goal gets more reduced form than source
+    -- (derived from transferNextMention, not stipulated)
+    (transferNextMention .goal).predictedForm.rank >
+    (transferNextMention .source).predictedForm.rank ∧
+    -- Rosa & Arnold's data confirms: independence is violated
     ¬ kehlerRohdeIndependence
       (fun role gram => match role, gram with
         | .goal, .subject => 64 | .source, .subject => 37
         | .goal, .nonsubject => 31 | .source, .nonsubject => 18)
       .subject := by
-  refine ⟨by native_decide, by native_decide, ?_⟩
+  refine ⟨by native_decide, by native_decide, by native_decide, ?_⟩
   simp [kehlerRohdeIndependence]
+
+/-- Coherence relations select for COMPLEMENTARY thematic roles in the
+    two phenomena, demonstrating that the coherence–role interaction is
+    systematic rather than accidental:
+
+    Explanation (because) → selects CAUSE → stimulus in psych verbs
+    Occasion/Result       → selects ENDPOINT → goal in transfer verbs
+
+    This complementarity is predicted by the semantics of the coherence
+    relations: Explanation asks "why did this happen?" (→ cause), while
+    Occasion/Result asks "what happened next?" (→ endpoint). The same
+    verb may participate in both patterns depending on which coherence
+    relation the continuation establishes.
+
+    The empirical signatures differ accordingly:
+    - @cite{solstad-bott-2024}: because-continuations target the stimulus
+    - @cite{rosa-arnold-2017}: Occasion/Result amplifies goal bias while
+      Other (including Explanation) does not -/
+theorem coherence_selects_complementary_roles :
+    -- Explanation selects causes (the IC mechanism)
+    CoherenceRelation.explanation.selectsCause = true ∧
+    -- Occasion/Result is the coherence class that amplifies goal bias
+    -- (significant for O/R, NOT significant for Other)
+    occasionResult_interaction.significant = true ∧
+    other_interaction.significant = false ∧
+    -- These are genuinely different coherence classes
+    CoherenceRelation.explanation.toClass ≠
+    CoherenceRelation.occasion.toClass := by
+  refine ⟨rfl, rfl, rfl, by decide⟩
 
 end Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole

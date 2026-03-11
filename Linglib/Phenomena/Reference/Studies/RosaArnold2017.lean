@@ -337,40 +337,60 @@ theorem pronoun_at_most_as_heavy :
 
 open Phenomena.WordOrder.Studies.ArnoldEtAl2000
 
-/-- @cite{arnold-wasow-losongco-ginstrom-2000} and @cite{rosa-arnold-2017}
-    both study the verb "give" in dative constructions but measure different
-    dependent variables: Arnold et al. study **constituent position** (DO vs PD
-    ordering), Rosa & Arnold study **referential form** (pronoun vs name).
+/-- Compositional derivation from a single lexical fact: `give` assigns
+    Goal to its indirect object. By chaining through three modules —
+    Fragment → ThetaRole → NextMentionBias → ReferentialForm — we derive
+    that the indirect object of `give` is predicted to surface as a pronoun.
 
-    The connection runs through NP weight: referential form determines weight,
-    and weight determines position. The thematic role "goal" drives both
-    effects via the same accessibility mechanism:
-      goal → pronoun (Rosa & Arnold) → lighter NP → earlier position (Arnold et al.)
+    Changing any link breaks the chain:
+    - Change `give.object2Theta` from `.goal` → different form predicted
+    - Change `transferNextMention .goal` from `.high` → different form
+    - Change `NextMentionBias.high.predictedForm` → different form
 
-    Arnold et al. prove that heaviness independently predicts ordering in the
-    corpus. Rosa & Arnold prove that goals independently receive lighter forms.
-    These are two aspects of the same production system. -/
-theorem form_reduction_feeds_ordering :
-    -- Goals predict pronouns (Rosa & Arnold)
-    (transferNextMention .goal).predictedForm = .personalPronoun ∧
-    -- Pronouns are at most as heavy as names
-    ReferentialForm.typicalWeight .personalPronoun ≤
-    ReferentialForm.typicalWeight .properName ∧
-    -- Heaviness independently predicts ordering (Arnold et al.)
-    daCorpusResult.heavinessSig := by
-  exact ⟨rfl, by native_decide, rfl⟩
+    This is the same indirect object that @cite{arnold-wasow-losongco-ginstrom-2000}
+    study for constituent ordering — the predicted form connects to their
+    weight dimension. -/
+theorem give_goal_predicted_form :
+    (Fragments.English.Predicates.Verbal.give.object2Theta.bind
+      (fun θ => some (transferNextMention θ).predictedForm)) =
+    some DefinitenessLevel.personalPronoun := rfl
 
-/-- Both studies also demonstrate that **discourse status** (newness/
-    predictability) independently predicts production choices. Arnold et al.
-    show newness predicts ordering; Rosa & Arnold show predictability
-    (next-mention bias) predicts form. Neither weight alone nor discourse
-    status alone suffices. -/
-theorem discourse_status_predicts_in_both :
-    -- Newness predicts ordering (Arnold et al.)
-    daCorpusResult.newnessSig ∧
-    -- Goal predictability predicts form (Rosa & Arnold): goals are
-    -- more predictable (71%) and get more pronouns
-    nextMention_goal.percent > (100 - nextMention_goal.percent) := by
-  exact ⟨rfl, by native_decide⟩
+/-- The goal argument receives a MORE REDUCED referential form than the
+    source argument. This derived contrast — not the individual predictions —
+    is the empirical content of @cite{rosa-arnold-2017}.
+
+    The same reduction asymmetry creates a weight asymmetry: goal arguments
+    surface as lighter NPs (pronouns) while source arguments surface as
+    heavier NPs (names). @cite{arnold-wasow-losongco-ginstrom-2000} prove
+    that exactly this weight dimension independently predicts constituent
+    ordering in dative constructions with the same verb. So thematic roles
+    affect ordering *through* referential form reduction. -/
+theorem goal_more_reduced_than_source :
+    (transferNextMention .goal).predictedForm.rank >
+    (transferNextMention .source).predictedForm.rank := by
+  native_decide
+
+/-- @cite{arnold-wasow-losongco-ginstrom-2000} show that heaviness and
+    newness BOTH independently predict ordering. @cite{rosa-arnold-2017}
+    show thematic roles affect BOTH form (the heaviness dimension) and
+    predictability (the newness dimension). Thematic roles therefore have
+    a **dual path** to constituent ordering:
+
+    Path 1 (via form): θ-role → form reduction → lighter NP → earlier
+    Path 2 (via predictability): θ-role → next-mention bias → given-like → earlier
+
+    This theorem derives the existence of both paths: the goal/source
+    contrast produces different predicted forms (Path 1 input), and
+    goals are more predictable than sources (Path 2 input). Arnold et al.
+    confirm that both receiving dimensions independently matter. -/
+theorem dual_path_to_ordering :
+    -- Path 1: thematic role creates a form contrast (Rosa & Arnold)
+    (transferNextMention .goal).predictedForm ≠
+    (transferNextMention .source).predictedForm ∧
+    -- Path 2: thematic role creates a predictability contrast (Rosa & Arnold)
+    nextMention_goal.percent > (100 - nextMention_goal.percent) ∧
+    -- Both receiving dimensions independently predict ordering (Arnold et al.)
+    daCorpusResult.heavinessSig ∧ daCorpusResult.newnessSig := by
+  refine ⟨by decide, by native_decide, rfl, rfl⟩
 
 end Phenomena.Reference.Studies.RosaArnold2017
