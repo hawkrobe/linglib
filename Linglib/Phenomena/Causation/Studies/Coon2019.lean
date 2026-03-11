@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Causatives.Studies.BeaversEtAl2021
+import Linglib.Phenomena.Causation.Studies.BeaversEtAl2021
 import Linglib.Theories.Morphology.RootTypology
 import Linglib.Fragments.Chuj.VerbBuilding
 
@@ -59,7 +59,7 @@ empirical data.
 
 Connects the theory-side predictions of `Theories/Morphology/RootTypology.lean`
 (@cite{beavers-etal-2021} formalization) to the empirical data in
-`Phenomena/Causatives/Studies/BeaversEtAl2021.lean`.
+`Phenomena/Causation/Studies/BeaversEtAl2021.lean`.
 
 1. **Classification isomorphism**: The theory's `RootType` and the phenomena's
    `CoSRootClass` are provably isomorphic — they describe the same partition.
@@ -82,7 +82,7 @@ Connects the theory-side predictions of `Theories/Morphology/RootTypology.lean`
 
 -/
 
-namespace Phenomena.Causatives.Studies.Coon2019
+namespace Phenomena.Causation.Studies.Coon2019
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root Classes (theory-neutral, §§2–3)
@@ -675,7 +675,7 @@ theorem w_verbalization_cross_class :
 -- § 17. Root Typology Bridge (BeaversEtAl2021)
 -- ════════════════════════════════════════════════════
 
-open Phenomena.Causatives.Studies.BeaversEtAl2021
+open Phenomena.Causation.Studies.BeaversEtAl2021
 
 /-- Map the theory's root type to the phenomena's root class.
     These are parallel enums — the bridge makes the correspondence explicit. -/
@@ -878,4 +878,4 @@ theorem subclass_counts_match :
      .killing, .destroying, .calibratableCoS, .inherentlyDirectedMotion].length :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Causatives.Studies.Coon2019
+end Phenomena.Causation.Studies.Coon2019

@@ -36,13 +36,15 @@ namespace Minimalism.Phenomena.VoiceAppl
 -- § 1: Derivation Building Blocks
 -- ============================================================================
 
-/-- A simplified derivation record for testing Voice/Appl structure.
-    Tracks which heads are present and their properties.
+/-- **Deprecated**: Use `Derivation` (`Core/Derivation.lean`) with
+    `SyntacticObject` trees for new derivations. Flat records cannot
+    verify c-command predictions; tree-based derivations in § 6 below
+    and in `Phenomena/ArgumentStructure/Studies/Larson1988.lean` show
+    the replacement pattern.
 
-    TODO: Replace with real `SyntacticObject` trees once the feature
-    system on `SimpleLI` can encode sub-eventive heads (vDO/vGO/vBE).
-    Currently these all map to `Cat.v`, losing the event-structural
-    distinctions that drive inchoative/causative predictions. -/
+    This record tracks which heads are present but not their structural
+    positions. Retained for backward compatibility with existing theorems
+    and `Phenomena/Case/Studies/Ozaki2025.lean`. -/
 structure VoiceApplDerivation where
   /-- Voice head (if present) -/
   voice : Option VoiceHead
@@ -220,5 +222,101 @@ theorem phase_iff_theta (v : VoiceHead)
     (h : v = voiceAgent ∨ v = voiceCauser ∨ v = voiceAnticausative ∨ v = voiceMiddle) :
     v.phaseHead = v.assignsTheta := by
   rcases h with rfl | rfl | rfl | rfl <;> rfl
+
+-- ============================================================================
+-- § 6: Tree-Based Derivations (SyntacticObject)
+-- ============================================================================
+
+/-! The flat `VoiceApplDerivation` records in §§ 2–4 track which heads
+are present but do not encode the tree geometry needed for c-command
+predictions. This section builds the same derivations as `SyntacticObject`
+trees and verifies c-command structurally.
+
+C-command is verified via `cCommandsInB`, which directly implements
+Reinhart's (1976) definition used throughout @cite{larson-1988} and
+subsequent work on binding asymmetries in ditransitives
+(@cite{barss-lasnik-1986}). -/
+
+section TreeDerivations
+
+def voice_ag_t  := mkLeafPhon .Voice [.v]  "Voice[AG]"  200
+def v_head_t    := mkLeafPhon .v     [.V]  "v"          201
+def appl_low_t  := mkLeafPhon .Appl  [.V]  "Appl[LOW]" 202
+def appl_high_t := mkLeafPhon .Appl  [.v]  "Appl[HI]"  203
+def V_sent_t    := mkLeafPhon .V     [.D]  "sent"       204
+def V_baked_t   := mkLeafPhon .V     [.D]  "baked"      205
+def DP_john_t   := mkLeafPhon .D     []    "John"       206
+def DP_mary_t   := mkLeafPhon .D     []    "Mary"       207
+def DP_letter_t := mkLeafPhon .D     []    "a letter"   208
+def DP_cake_t   := mkLeafPhon .D     []    "a cake"     209
+
+/-- Ditransitive with low applicative (tree): "John sent Mary a letter"
+
+    `[VoiceP John [Voice' Voice_AG [vP v [ApplP Mary [Appl' Appl_LOW [VP sent [DP a letter]]]]]]]`
+
+    Low Appl introduces the goal *below* VP: the goal c-commands the theme
+    but not vice versa (@cite{pylkknen-2008}, @cite{cuervo-2003}). -/
+def ditransitiveTree : SyntacticObject :=
+  merge DP_john_t
+    (merge voice_ag_t
+      (merge v_head_t
+        (merge DP_mary_t
+          (merge appl_low_t
+            (merge V_sent_t DP_letter_t)))))
+
+/-- High applicative benefactive (tree): "John baked Mary a cake"
+
+    `[VoiceP John [Voice' Voice_AG [ApplP Mary [Appl' Appl_HIGH [vP v [VP baked [DP a cake]]]]]]]`
+
+    High Appl introduces the benefactive *above* vP: the benefactive
+    c-commands the theme (@cite{pylkknen-2008}). -/
+def benefactiveTree : SyntacticObject :=
+  merge DP_john_t
+    (merge voice_ag_t
+      (merge DP_mary_t
+        (merge appl_high_t
+          (merge v_head_t
+            (merge V_baked_t DP_cake_t)))))
+
+-- C-command predictions (structurally verified)
+
+/-- Agent c-commands goal in the low-Appl ditransitive. -/
+theorem ditransitiveTree_agent_ccommands_goal :
+    cCommandsInB ditransitiveTree DP_john_t DP_mary_t = true := by native_decide
+
+/-- Agent c-commands theme. -/
+theorem ditransitiveTree_agent_ccommands_theme :
+    cCommandsInB ditransitiveTree DP_john_t DP_letter_t = true := by native_decide
+
+/-- Goal c-commands theme — the @cite{barss-lasnik-1986} asymmetry
+    derived structurally from the low-Appl position. -/
+theorem ditransitiveTree_goal_ccommands_theme :
+    cCommandsInB ditransitiveTree DP_mary_t DP_letter_t = true := by native_decide
+
+/-- Theme does NOT c-command goal: the asymmetry is structural. -/
+theorem ditransitiveTree_theme_not_ccommands_goal :
+    cCommandsInB ditransitiveTree DP_letter_t DP_mary_t = false := by native_decide
+
+/-- Benefactive c-commands theme in the high-Appl derivation. -/
+theorem benefactiveTree_benef_ccommands_theme :
+    cCommandsInB benefactiveTree DP_mary_t DP_cake_t = true := by native_decide
+
+/-- Theme does NOT c-command benefactive. -/
+theorem benefactiveTree_theme_not_ccommands_benef :
+    cCommandsInB benefactiveTree DP_cake_t DP_mary_t = false := by native_decide
+
+-- Record ↔ Tree bridge
+
+/-- The flat record and tree derivation agree: the ditransitive has
+    external, applied, and theme arguments in both representations. -/
+theorem ditransitive_record_tree_consistent :
+    predictsExternalArg ditransitive_send = true ∧
+    predictsAppliedArg ditransitive_send = true ∧
+    containsB ditransitiveTree DP_john_t = true ∧
+    containsB ditransitiveTree DP_mary_t = true ∧
+    containsB ditransitiveTree DP_letter_t = true := by
+  refine ⟨rfl, rfl, ?_, ?_, ?_⟩ <;> native_decide
+
+end TreeDerivations
 
 end Minimalism.Phenomena.VoiceAppl

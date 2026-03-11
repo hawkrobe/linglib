@@ -22,7 +22,7 @@ and proves the predictions match via `native_decide`.
 
 -/
 
-namespace Phenomena.Causatives.StructuralCausation
+namespace Phenomena.Causation.StructuralCausation
 
 open Core.StructuralEquationModel
 open NadathurLauer2020.Sufficiency
@@ -290,4 +290,4 @@ theorem a_manipulates_c :
 
 end Intervention
 
-end Phenomena.Causatives.StructuralCausation
+end Phenomena.Causation.StructuralCausation

@@ -26,7 +26,7 @@ stative) and coded morphological relationships.
 
 -/
 
-namespace Phenomena.Causatives.Studies.BeaversEtAl2021
+namespace Phenomena.Causation.Studies.BeaversEtAl2021
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root Classification (theory-neutral)
@@ -321,4 +321,4 @@ theorem result_roots_rare_statives :
     resultRoots.all (λ r => r.nSimpleStative * 10 ≤ r.nLanguages) = true := by
   native_decide
 
-end Phenomena.Causatives.Studies.BeaversEtAl2021
+end Phenomena.Causation.Studies.BeaversEtAl2021

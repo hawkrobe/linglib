@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
+import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Core.Lexical.MorphRule
 
@@ -46,9 +46,9 @@ SI §4.1-4.2, AUC values from SI Figures 6 and 8.
 
 -/
 
-namespace DepGrammar.MemorySurprisal.MorphemeOrder
+namespace Phenomena.Morphology.Studies.HahnDegenFutrell2021
 
-open DepGrammar.MemorySurprisal
+open Processing.MemorySurprisal
 open Core.Morphology (MorphCategory respectsRelevanceHierarchy)
 
 -- ============================================================================
@@ -257,4 +257,4 @@ theorem relevance_hierarchy_implies_locality :
     sesothoRealAUC100 < sesothoRandomAUC100 :=
   ⟨by native_decide, by native_decide⟩
 
-end DepGrammar.MemorySurprisal.MorphemeOrder
+end Phenomena.Morphology.Studies.HahnDegenFutrell2021

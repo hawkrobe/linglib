@@ -429,7 +429,81 @@ inductive ContextualEvidence where
 end Commitment
 
 -- ════════════════════════════════════════════════════════════════
--- § 10. Verification
+-- § 10. Preparatory Conditions (@cite{searle-1969} @cite{francik-clark-1985})
+-- ════════════════════════════════════════════════════════════════
+
+/-- Preparatory conditions for directive speech acts.
+
+    @cite{searle-1969}: for a request to be felicitous, the hearer must
+    satisfy certain preconditions — ability to comply and willingness to
+    comply. @cite{francik-clark-1985} show that speakers design indirect
+    requests to target the specific preparatory condition most at risk,
+    refining "ability" into a subsumption hierarchy:
+
+    ```
+    ability
+    ├── knowledge
+    │   ├── memory       ("Do you remember?")
+    │   └── perception   ("Did you see/hear/notice?")
+    └── permission       ("Are you allowed?")
+    willingness           ("Would you mind?")
+    ```
+
+    More specific conditions correspond to more specific (less direct)
+    request forms. -/
+inductive PreparatoryCondition where
+  /-- Hearer is able to perform the requested act (general). -/
+  | ability
+  /-- Hearer knows the relevant information. Subtype of ability. -/
+  | knowledge
+  /-- Hearer remembers the information. Subtype of knowledge. -/
+  | memory
+  /-- Hearer has perceived the relevant source. Subtype of knowledge. -/
+  | perception
+  /-- Hearer is permitted to perform the act. Subtype of ability. -/
+  | permission
+  /-- Hearer is willing to perform the act. Independent of ability. -/
+  | willingness
+  deriving DecidableEq, BEq, Repr
+
+/-- Subsumption: `c₁.subsumes c₂` iff satisfying c₂ entails satisfying c₁.
+
+    Memory and perception are subtypes of knowledge; knowledge and
+    permission are subtypes of ability. Willingness is independent. -/
+def PreparatoryCondition.subsumes : PreparatoryCondition → PreparatoryCondition → Bool
+  -- reflexive
+  | .ability, .ability | .knowledge, .knowledge | .memory, .memory
+  | .perception, .perception | .permission, .permission
+  | .willingness, .willingness => true
+  -- ability subsumes its subtypes
+  | .ability, .knowledge | .ability, .memory
+  | .ability, .perception | .ability, .permission => true
+  -- knowledge subsumes its subtypes
+  | .knowledge, .memory | .knowledge, .perception => true
+  | _, _ => false
+
+theorem PreparatoryCondition.subsumes_refl (c : PreparatoryCondition) :
+    c.subsumes c = true := by cases c <;> rfl
+
+/-- The specificity chain: memory/perception → knowledge → ability. -/
+theorem PreparatoryCondition.specificity_chain :
+    PreparatoryCondition.ability.subsumes .knowledge = true ∧
+    PreparatoryCondition.knowledge.subsumes .memory = true ∧
+    PreparatoryCondition.knowledge.subsumes .perception = true ∧
+    PreparatoryCondition.ability.subsumes .permission = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Willingness is independent of ability: neither subsumes the other. -/
+theorem PreparatoryCondition.willingness_independent :
+    PreparatoryCondition.ability.subsumes .willingness = false ∧
+    PreparatoryCondition.willingness.subsumes .ability = false := ⟨rfl, rfl⟩
+
+/-- Directives are the speech act class that has preparatory conditions
+    on the hearer's ability and willingness. -/
+theorem directive_has_preparatory_conditions :
+    SearleClass.directive.directionOfFit = .worldToMind := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § 11. Verification
 -- ════════════════════════════════════════════════════════════════
 
 -- Epistemic authority

@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.229.151] - 2026-03-11
+
+### Fixed
+- **PickeringBarry1991.lean**: Fix hallucinated nesting pattern labels — nested is abba (not aabb), disjoint is aabb (not abab); clarify derivation reference to ex (84) and rule (80a)
+- **references.bib**: Fix `pickering-barry-1991` entry (add first names, correct subfield to `processing`, update sources); add `bach-brown-marslen-wilson-1986` entry
+
+## [0.229.150] - 2026-03-11
+
+### Added
+- **Core/Discourse/SpeechActs.lean** §10: `PreparatoryCondition` — Searle's preparatory conditions for directives (ability, knowledge, memory, perception, permission, willingness) with subsumption hierarchy and `specificity_chain`, `willingness_independent` theorems
+- **Phenomena/Politeness/Studies/FrancikClark1985.lean**: Formalize Francik & Clark 1985 obstacle model — `ObstacleType`, `RequestForm`, Exp. 1 direct-request rates (Table 1), Exp. 2 directness scores (Table 2), Exp. 3 appropriateness ratings (Table 3, 30 data points), `obstacle_reduces_directness`, `know_best_for_ability`, `would_best_for_willingness`, `told_best_for_memory`, `can_could_general_purpose`, `obstacle_specific_forms_increase`; bridge theorems to `PreparatoryCondition` subsumption hierarchy and `ModalFlavor`
+
+### Changed
+- **Phenomena/Imperatives/** → **Phenomena/Directives/**: Rename to reflect that the directory covers directive speech acts broadly (indirect requests, signaling bandits), not just imperative syntax
+
+## [0.229.149] - 2026-03-11
+
+### Added
+- **Theories/Processing/**: New top-level theory directory for processing theories (memory-surprisal, DLT, surprisal), sibling to Syntax/Semantics/Pragmatics
+- **PickeringBarry1991.lean**: Formalize gap-free processing account — `NestingPattern` (nested/disjoint), `SentenceType` (4 types from Tables 1–2), `fillerVerbPattern`, `gapFreePrediction`, `traceBasedPrediction`; `table2_correspondence` (filler-verb pattern = nestedness), `gapFree_all_correct` (4/4 predictions), `traceBased_piedPiping_wrong` (trace analysis fails on pied-piping); ProcessingProfile bridge with `nested_harder_than_disjoint`, 4 ordering predictions; cross-study bridges to CrossSerial and CCG combinators
+
+### Changed
+- **MemorySurprisal/Basic.lean**: Moved from `Theories/Syntax/DependencyGrammar/Formal/` to `Theories/Processing/MemorySurprisal/`; namespace `DepGrammar.MemorySurprisal` → `Processing.MemorySurprisal`
+- **FedzechkinaEtAl2017.lean**: Moved from `Theories/.../MemorySurprisal/` to `Phenomena/WordOrder/Studies/`
+- **MorphemeOrder.lean**: Moved from `Theories/.../MemorySurprisal/` to `Phenomena/Morphology/Studies/HahnDegenFutrell2021.lean`
+
 ## [0.229.148] - 2026-03-11
 
 ### Added

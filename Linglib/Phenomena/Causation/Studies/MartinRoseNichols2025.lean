@@ -22,7 +22,7 @@ four binary properties:
 
 -/
 
-namespace Phenomena.Causatives.ThickThin
+namespace Phenomena.Causation.ThickThin
 
 open MartinRoseNichols2025
 open Fragments.English.Predicates.Verbal (VerbEntry)
@@ -233,7 +233,7 @@ theorem cut_class_rich_alternation :
     This shows the limits of meaning-component prediction. -/
 theorem destroy_class_vs_empirical :
     LevinClass.destroy.participatesIn .causativeInchoative = true
-    ∧ Phenomena.Causatives.ThickThin.destroy.alternating = false := ⟨rfl, rfl⟩
+    ∧ Phenomena.Causation.ThickThin.destroy.alternating = false := ⟨rfl, rfl⟩
 
 /-- Kill (thin, murder class) is predicted to participate in causative
     alternation but empirically does not alternate. -/
@@ -248,4 +248,4 @@ def allEntries : List ThickThinEntry :=
     break_, burn, bury, cut, drop, lift, lock, melt, mix, shut,
     spread, stretch, switch ]
 
-end Phenomena.Causatives.ThickThin
+end Phenomena.Causation.ThickThin

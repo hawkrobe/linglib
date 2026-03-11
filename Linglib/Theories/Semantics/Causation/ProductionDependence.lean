@@ -26,7 +26,7 @@ d-causes without producing anything.
 | P-CAUSE (deterministic) | `causallySufficient` + directness | Sufficiency.lean |
 | D-CAUSE (deterministic) | `causallyNecessary` | Necessity.lean |
 | Thick → P-CAUSE preference | production constraint | (this file) |
-| Thick → strong ASR | resultative compatibility | Causatives/Studies/MartinRoseNichols2025.lean |
+| Thick → strong ASR | resultative compatibility | Causation/Studies/MartinRoseNichols2025.lean |
 | Builder `.make` | sufficiency = P-CAUSE in deterministic limit | Builder.lean |
 
 -/

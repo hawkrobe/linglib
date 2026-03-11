@@ -13,7 +13,7 @@ Experimental data from a tic-tac-toe-based judgment study of
 
 -/
 
-namespace Phenomena.Causatives
+namespace Phenomena.Causation
 
 /-! ## Overall Acceptance Rates (Figure 4)
 
@@ -162,4 +162,4 @@ theorem only_cause_low_suf :
     ex5b.judgment = .unacceptable ∧
     ex5c.judgment = .unacceptable := by decide
 
-end Phenomena.Causatives
+end Phenomena.Causation

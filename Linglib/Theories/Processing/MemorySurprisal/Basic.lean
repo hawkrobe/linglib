@@ -40,7 +40,7 @@ at which predictive information concentrates.
 
 -/
 
-namespace DepGrammar.MemorySurprisal
+namespace Processing.MemorySurprisal
 
 -- ============================================================================
 -- §1: Memory-Surprisal Framework
@@ -340,4 +340,4 @@ prediction resolution (horizon and representational level). -/
 def memorySurprisalConfig : Core.GeneralisedSurprisal.SurprisalConfig :=
   Core.GeneralisedSurprisal.standardSurprisal
 
-end DepGrammar.MemorySurprisal
+end Processing.MemorySurprisal

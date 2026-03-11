@@ -31,7 +31,7 @@ A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 
 -/
 
-namespace Phenomena.Causatives.Studies.MunozPerez2026
+namespace Phenomena.Causation.Studies.MunozPerez2026
 
 -- ============================================================================
 -- § 1: Acceptability Data Types
@@ -370,4 +370,4 @@ theorem olvidar_inchoative : isInchoative olvidar.verbHead = true := by native_d
 theorem ocurrir_inchoative : isInchoative ocurrir.verbHead = true := by native_decide
 theorem mejorar_inchoative : isInchoative mejorar.verbHead = true := by native_decide
 
-end Phenomena.Causatives.Studies.MunozPerez2026
+end Phenomena.Causation.Studies.MunozPerez2026

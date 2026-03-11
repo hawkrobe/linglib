@@ -496,7 +496,7 @@ Consequence:
 
 We model the English passive with the agent as a low complement of V
 (representing the by-phrase adjunct) and the patient as specifier of VP
-(following Larson 1988), with no external argument in Spec,vP.
+(following @cite{larson-1988}), with no external argument in Spec,vP.
 -/
 
 def v_injured     := mkLeafPhon .V [] "was-injured" 21

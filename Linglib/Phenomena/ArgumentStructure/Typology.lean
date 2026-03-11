@@ -41,7 +41,7 @@ WALS (World Atlas of Language Structures) chapters 105--111:
 
 This module focuses on Ch 105--109 (ditransitives, reciprocals, passives,
 antipassives, applicatives). Causative typology (Ch 110--111) is covered in
-`Phenomena.Causatives.Typology`; only aggregate WALS counts are recorded
+`Phenomena.Causation.Typology`; only aggregate WALS counts are recorded
 here for cross-reference.
 
 -/
@@ -295,7 +295,7 @@ def ApplicativeType.hasApplicative : ApplicativeType -> Bool
   | .noApplicative  => false
 
 -- ============================================================================
--- Ch 110--111: Causative types (cross-reference only; see Causatives.Typology)
+-- Ch 110--111: Causative types (cross-reference only; see Causation.Typology)
 -- ============================================================================
 
 /-- WALS Ch 110: Periphrastic causative type. -/

@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
 import Linglib.Theories.Semantics.Causation.ProductionDependence
-import Linglib.Phenomena.Causatives.Studies.MartinRoseNichols2025
+import Linglib.Phenomena.Causation.Studies.MartinRoseNichols2025
 
 /-!
 # Causative Alternation: Cross-Theory Bridge
@@ -16,7 +16,7 @@ Connects four independent formalizations of the causative alternation:
    (accomplishment vs achievement)
 3. **Syntactic** (`Minimalism/Core/Voice + Applicative`): VoiceFlavor
    (agentive vs nonThematic) + VerbHead (vDO, vGO, vBE)
-4. **Empirical** (`Phenomena/Causatives/ThickThin`): alternating,
+4. **Empirical** (`Phenomena/Causation/ThickThin`): alternating,
    thick/thin classification
 
 ## Key Bridge Results
@@ -28,13 +28,13 @@ Connects four independent formalizations of the causative alternation:
 
 -/
 
-namespace Phenomena.Causatives.Compare
+namespace Phenomena.Causation.Compare
 
 open Minimalism
 open Minimalism.Bridge
 open Semantics.Events.EventStructure
 open MartinRoseNichols2025
-open Phenomena.Causatives.ThickThin
+open Phenomena.Causation.ThickThin
 
 -- ============================================================================
 -- § 1: Template ↔ Syntactic Structure
@@ -117,4 +117,4 @@ theorem break_alternation :
 theorem cut_no_anticausative :
     cut.alternating = false ∧ cut.thick = true := ⟨rfl, rfl⟩
 
-end Phenomena.Causatives.Compare
+end Phenomena.Causation.Compare

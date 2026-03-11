@@ -554,7 +554,7 @@ import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Welsh.Relativization
 -- Phenomena
-import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
+import Linglib.Phenomena.Causation.Studies.SpalekMcNally.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
 import Linglib.Phenomena.TemporalConnectives.Studies.AlstottAravind2026
@@ -670,14 +670,14 @@ import Linglib.Phenomena.Constructions.Resultatives.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.Constructions.Resultatives.Studies.Dendikken1995
-import Linglib.Phenomena.Causatives.Studies.BeaversEtAl2021
-import Linglib.Phenomena.Causatives.Data
-import Linglib.Phenomena.Causatives.Typology
-import Linglib.Phenomena.Causatives.Studies.MartinRoseNichols2025
-import Linglib.Phenomena.Causatives.Studies.NadathurLauer2020
-import Linglib.Phenomena.Causatives.Studies.MunozPerez2026
-import Linglib.Phenomena.Causatives.Compare
-import Linglib.Phenomena.Causatives.Studies.Coon2019
+import Linglib.Phenomena.Causation.Studies.BeaversEtAl2021
+import Linglib.Phenomena.Causation.Data
+import Linglib.Phenomena.Causation.Typology
+import Linglib.Phenomena.Causation.Studies.MartinRoseNichols2025
+import Linglib.Phenomena.Causation.Studies.NadathurLauer2020
+import Linglib.Phenomena.Causation.Studies.MunozPerez2026
+import Linglib.Phenomena.Causation.Compare
+import Linglib.Phenomena.Causation.Studies.Coon2019
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
@@ -746,9 +746,9 @@ import Linglib.Phenomena.Comparison.Studies.Stassen1985
 import Linglib.Phenomena.Comparison.Studies.Wellwood2015.Data
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
-import Linglib.Phenomena.Imperatives.Studies.RuytenbeekEtAl2017
-import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
-import Linglib.Phenomena.Imperatives.Typology
+import Linglib.Phenomena.Directives.Studies.RuytenbeekEtAl2017
+import Linglib.Phenomena.Directives.Studies.SumersEtAl2023
+import Linglib.Phenomena.Directives.Typology
 -- Phenomena: Implicit Causality (Solstad & Bott 2022, 2024)
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Presupposition
@@ -778,6 +778,7 @@ import Linglib.Phenomena.FillerGap.Studies.Erlewine2016
 import Linglib.Phenomena.FillerGap.Studies.Erlewine2018
 import Linglib.Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
 import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
+import Linglib.Phenomena.FillerGap.Studies.PickeringBarry1991
 import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
@@ -836,6 +837,7 @@ import Linglib.Phenomena.Morphology.Typology
 import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013
 import Linglib.Phenomena.Morphology.CategoryChanging
 import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
+import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
@@ -864,6 +866,7 @@ import Linglib.Phenomena.Polarity.Studies.Schwab2022
 import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 import Linglib.Phenomena.Polarity.Typology
 import Linglib.Phenomena.Politeness.Honorifics
+import Linglib.Phenomena.Politeness.Studies.FrancikClark1985
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
@@ -1068,10 +1071,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Ellipsis
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.FedzechkinaEtAl2017
--- DGMemorySurprisal merged into Studies/HahnDegenFutrell2021
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.MorphemeOrder
+import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
@@ -1089,6 +1089,7 @@ import Linglib.Phenomena.WordOrder.Studies.SchlotterbeckWang2023
 import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 import Linglib.Phenomena.WordOrder.Studies.AlexeyenkoZeijlstra2025
+import Linglib.Phenomena.WordOrder.Studies.FedzechkinaEtAl2017
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core

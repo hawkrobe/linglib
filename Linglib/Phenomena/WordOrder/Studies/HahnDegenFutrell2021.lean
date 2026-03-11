@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
+import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 

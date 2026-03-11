@@ -32,7 +32,7 @@ All causative events involve: GOAL → EVENT → RESULT
 
 -/
 
-namespace Phenomena.Causatives.Typology
+namespace Phenomena.Causation.Typology
 
 /-- Morphosyntactic type of causative construction.
 
@@ -369,4 +369,4 @@ theorem morphological_dominates :
     (ch111.filter (·.value == .morphologicalOnly)).length * 100 / ch111.length ≥ 81 := by
   native_decide
 
-end Phenomena.Causatives.Typology
+end Phenomena.Causation.Typology

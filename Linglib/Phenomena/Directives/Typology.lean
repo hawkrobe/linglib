@@ -58,7 +58,7 @@ Sample: 319 languages. Optatives are a minority feature: only 48/319
 
 -/
 
-namespace Phenomena.Imperatives.Typology
+namespace Phenomena.Directives.Typology
 
 -- ============================================================================
 -- Chapter 70: The Morphological Imperative
@@ -1203,4 +1203,4 @@ theorem swahili_ch73 :
     some (swahili.optative.getD .absent) := by
   native_decide
 
-end Phenomena.Imperatives.Typology
+end Phenomena.Directives.Typology

@@ -55,7 +55,7 @@ speech acts involve a mismatch — a declarative or interrogative sentence
 type receiving directive illocutionary force.
 -/
 
-namespace Phenomena.Imperatives.Studies.RuytenbeekEtAl2017
+namespace Phenomena.Directives.Studies.RuytenbeekEtAl2017
 
 open Core.Modality (ModalFlavor ModalForce)
 open Core.Discourse (IllocutionaryMood)
@@ -635,4 +635,32 @@ theorem devoir_matches_imperative_speech_act :
     primaryFlavor .imperative = .deontic := by
   exact ⟨by decide, rfl⟩
 
-end Phenomena.Imperatives.Studies.RuytenbeekEtAl2017
+
+-- ════════════════════════════════════════════════════
+-- § 9. Bridge to Preparatory Conditions (@cite{francik-clark-1985})
+-- ════════════════════════════════════════════════════
+
+/-! Mechanism 2 (convention of means) IS the questioning of a preparatory
+    condition. @cite{francik-clark-1985} show that speakers choose among
+    indirect request forms by targeting the specific preparatory condition
+    most at risk — the "greatest obstacle to compliance."
+
+    The bridge: `directiveCompatible` (mechanism 1) checks whether the
+    modal flavor matches the imperative's deontic semantics. Mechanism 2
+    operates on constructions whose flavor does NOT match — circumstantial
+    (ability) rather than deontic. These constructions get directive force
+    by questioning the addressee's ability, a preparatory condition. -/
+
+open Core.Discourse (PreparatoryCondition)
+
+/-- Mechanism 2 constructions query circumstantial (ability) modality,
+    which maps to the `ability` preparatory condition. This is exactly
+    the preparatory condition that @cite{francik-clark-1985}'s obstacle
+    model identifies as the target of "Can you?" forms. -/
+theorem mechanism2_queries_ability_condition :
+    SentType.modalFlavor .canYouInterrog = some .circumstantial ∧
+    SentType.modalFlavor .possibleInterrog = some .circumstantial ∧
+    SentType.isDirectiveCompatible .canYouInterrog = false ∧
+    SentType.isDirectiveCompatible .possibleInterrog = false := ⟨rfl, rfl, rfl, rfl⟩
+
+end Phenomena.Directives.Studies.RuytenbeekEtAl2017

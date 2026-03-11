@@ -1,20 +1,20 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.MorphemeOrder
-import Linglib.Phenomena.Causatives.Typology
+import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
+import Linglib.Phenomena.Causation.Typology
 
 /-!
-# Bridge: Memory-Surprisal MorphemeOrder → Causatives Typology
+# Bridge: Memory-Surprisal MorphemeOrder → Causation Typology
 @cite{song-1996}
 
 Connects the Japanese causative -(s)ase morpheme order analysis from
-`MemorySurprisal.MorphemeOrder` to @cite{song-1996}'s causative typology
-in `Phenomena.Causatives.Typology`.
+`Phenomena.Morphology.Studies.HahnDegenFutrell2021` to @cite{song-1996}'s causative typology
+in `Phenomena.Causation.Typology`.
 
 The key bridge: Japanese -(s)ase occupies the valence slot (innermost
 functional suffix), consistent with its classification as a COMPACT
 morphological causative.
 -/
 
-namespace DepGrammar.MemorySurprisal.MorphemeOrder.Bridge
+namespace Phenomena.Causation.Studies.Song1996
 
 /-! ### Bridge: Japanese -(s)ase = Song's COMPACT morphological causative
 
@@ -36,6 +36,6 @@ The COMPACT type subsumes morphological causatives like Japanese -(s)ase,
 Turkish -dür, and also lexical causatives like English *kill*.
 This is consistent with the slot being valence (innermost). -/
 theorem japanese_causative_is_compact :
-    Phenomena.Causatives.Typology.japaneseAse.constructionType = .compact := by native_decide
+    Phenomena.Causation.Typology.japaneseAse.constructionType = .compact := by native_decide
 
-end DepGrammar.MemorySurprisal.MorphemeOrder.Bridge
+end Phenomena.Causation.Studies.Song1996

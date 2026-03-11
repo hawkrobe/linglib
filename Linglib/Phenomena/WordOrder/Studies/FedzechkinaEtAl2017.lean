@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
+import Linglib.Theories.Processing.MemorySurprisal.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
@@ -27,9 +27,9 @@ bias for dependency-length-minimizing (= memory-efficient) orders.
 
 -/
 
-namespace DepGrammar.MemorySurprisal.FedzechkinaEtAl2017
+namespace Phenomena.WordOrder.Studies.FedzechkinaEtAl2017
 
-open DepGrammar DependencyLength MemorySurprisal
+open DepGrammar DependencyLength Processing.MemorySurprisal
 
 -- ============================================================================
 -- Mini-Language Setup
@@ -158,4 +158,4 @@ theorem short_deps_implies_efficient :
     langACurve.auc < langBCurve.auc :=
   ⟨by native_decide, by native_decide⟩
 
-end DepGrammar.MemorySurprisal.FedzechkinaEtAl2017
+end Phenomena.WordOrder.Studies.FedzechkinaEtAl2017
