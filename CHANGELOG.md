@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.137] - 2026-03-10
+
+### Changed
+- **Phenomena/Imprecision/Studies/EgreEtAl2023.lean**: Migrate RSA model to RSAConfig with rsa_predict; graded meaning (integer BIR weights) gives triangular L0; belief-weighted s1Score with world-dependent KL speaker utility; S1 theorem proved via reflection (93ms); remove hand-rolled ℚ klDivergence, speakerBelief, speakerUtility, softmaxLocal, S1_score; keep standalone BIR/WIR/Bergen/LU sections unchanged
+
+## [0.229.136] - 2026-03-10
+
+### Added
+- **Theories/Semantics/Tense/PTS.lean**: Unified PTS/UTS boundary adverbial framework (@cite{iatridou-zeijlstra-2021}): BoundaryKind (left/right), TimeSpanKind (pts/uts), BoundaryAdverbial structure with NPI strength and domain-widening fields; concrete entries for *in years*, *in (the last) 5 years*, *since 2015*, *until*; SubdomainAlternatives with monotonicity; positive exhaustification contradiction theorem (why *in years* is NPI); negative environment vacuousness (why negation rescues); actuality inference and beyond-expectation inference; aspect interaction — imperfective + subinterval property yields vacuous exhaustification (explaining *until*-d); Constant's Observation; domain widener ↔ strong NPI bridge
+- **blog/data/references.bib**: Add `iatridou-zeijlstra-2021`, `zwarts-1998`, `gajewski-2011`
+
+### Changed
+- **Theories/Semantics/Tense/Aspect/SubintervalProperty.lean**: Fix type class from `[LE Time]` to `[LinearOrder Time]` to match `Interval.subinterval`'s requirements
+
 ## [0.229.135] - 2026-03-10
 
 ### Added
@@ -8,9 +22,9 @@
 ## [0.229.134] - 2026-03-10
 
 ### Added
-- **Theories/Semantics/PossibilitySemantics/Basic.lean**: New module formalizing possibility semantics (@cite{holliday-2024}): compatibility frames, orthocomplement negation, De Morgan disjunction, regularity, refinement, worlds; 5-element path frame with distributivity failure (the signature non-Boolean result), double negation, excluded middle, non-contradiction; classical collapse theorem (orthocomplement = Boolean negation when compat = identity)
-- **Theories/Semantics/PossibilitySemantics/Epistemic.lean**: Epistemic extension with modal compatibility frames, box/diamond operators; 5-point epistemic scale (□p—p—◇p∧◇¬p—¬p—□¬p); Wittgenstein sentence contradictions (¬A ∧ ◇A = ∅); free choice at maximal uncertainty with counterexample at x₁; epistemic distributivity failure; T axiom
-- **blog/data/references.bib**: Add `holliday-2024` (Possibility Semantics survey, arXiv:2203.02872) and `holliday-mandelkern-2024` (Epistemic Contradictions, arXiv:2404.00122)
+- **Theories/Semantics/PossibilitySemantics/Basic.lean**: New module formalizing possibility semantics (@cite{holliday-mandelkern-2024}): compatibility frames, orthocomplement negation, De Morgan disjunction, ◇-regularity, refinement, worlds; 5-element path frame with distributivity failure (the signature non-Boolean result), double negation, excluded middle, non-contradiction; classical collapse theorem (orthocomplement = Boolean negation when compat = identity)
+- **Theories/Semantics/PossibilitySemantics/Epistemic.lean**: Epistemic extension with modal compatibility frames, box/diamond operators; 5-point epistemic scale (□p—p—◇p∧◇¬p—¬p—□¬p); core epistemic failures (◇¬p ↛ ¬p, p ↛ □p); Wittgenstein's Law for all regular propositions (¬A ∧ ◇A = ∅, no sorry); free choice at maximal uncertainty with counterexample at x₁; epistemic distributivity failure; T axiom
+- **blog/data/references.bib**: Add `holliday-mandelkern-2024` (The Orthologic of Epistemic Modals, arXiv:2203.02872)
 
 ## [0.229.133] - 2026-03-10
 
