@@ -1,311 +1,484 @@
-/-
-# @cite{grusdt-lassiter-franke-2022} - Experimental Data
+import Linglib.Tactics.RSAPredict
+import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Core.CausalBayesNet
+import Linglib.Theories.Semantics.Conditionals.Assertability
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+
+/-!
+# @cite{grusdt-lassiter-franke-2022}
 
 "Probabilistic modeling of rational communication with conditionals"
-PLoS ONE
+PLoS ONE 17(7): e0269937.
 
 ## Overview
 
-This file contains the empirical data from @cite{grusdt-lassiter-franke-2022}.
-The paper presents three experiments testing the RSA model of conditionals.
+This paper extends RSA to model conditionals by:
+1. Treating "worlds" as probability distributions (WorldState)
+2. Using assertability (P(C|A) ≥ θ) as the literal meaning of conditionals
+3. Having L1 infer both the world state AND the causal structure
+
+The key insight is that the literal meaning of "if A then C" is an
+assertability condition — P(C|A) ≥ θ — rather than material implication.
+This grounds RSA's meaning function in conditional probability.
+
+## Toy Example (§2.3, Table 2)
+
+The paper's illustrative example uses 3 states and 4 utterances with θ = 0.9:
+
+| | P(A) | P(C) | P(A,C) | P(C\|A) | likely C | if A, C | C | A and C |
+|---|---|---|---|---|---|---|---|---|
+| s1 | 0.9 | 0.9 | 0.81 | 0.9 | ✓ | ✓ | ✓ | — |
+| s2 | 0.65 | 0.65 | 0.6 | 12/13 | ✓ | ✓ | — | — |
+| s3 | 0.6 | 0.6 | 0.36 | 0.6 | ✓ | — | — | — |
+
+Key predictions:
+- S1 in s1 prefers "C" (most informative true utterance)
+- S1 in s2 prefers "if A then C" (only true non-trivial utterance)
+- S1 in s3 prefers "likely C" (only true utterance)
+- L1 hearing "if A then C" infers s2 > s1 (dependency inference)
+- L1 hearing "C" identifies s1 (high marginal probability)
+
+## Full Model (§3)
+
+The full model uses 10,000 sampled world states and three causal relations
+(A→C, C→A, A⊥C) as latent variables. We formalize only the toy example
+here, which captures all qualitative predictions with finite types amenable
+to `rsa_predict`.
+
+## Grounding
+
+The assertability truth values are grounded in the probabilistic assertability
+condition from `Semantics.Conditionals.Assertability`: a conditional
+"if A then C" is assertable when P(A) > 0 and P(C|A) ≥ θ.
 
 ## Experiments
 
-1. **Experiment 1: Dependency Inference**
-   - Participants hear "if A then C" and judge causal structure
-   - Key finding: Conditionals strongly suggest A→C over A⊥C
+1. **Experiment 1: Dependency Inference** — Participants hear "if A then C"
+   and judge causal structure. 72% infer A→C, 15% C→A, 10% A⊥C.
 
-2. **Experiment 2: Conditional Perfection**
-   - Participants judge whether "if ¬A then ¬C" follows from "if A then C"
-   - Key finding: High rates of conditional perfection inference
+2. **Experiment 2: Conditional Perfection** — 85% endorse "if ¬A then ¬C"
+   in A→C contexts vs 45% in independent contexts.
 
-3. **Experiment 3: Douven's Puzzle**
-   - Participants judge assertability of conditionals with different P(C|A)
-   - Key finding: Threshold θ ≈ 0.9 fits human judgments
-
+3. **Experiment 3: Assertability Thresholds** — θ ≈ 0.88 from model fitting.
 -/
 
-import Linglib.Core.Empirical
-import Linglib.Core.CausalBayesNet
+set_option autoImplicit false
 
 namespace Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 
-open Phenomena
 open Core.CausalBayesNet
+open Semantics.Conditionals.Assertability
 
--- Study Metadata
+
+-- ============================================================================
+-- Section 1: Types
+-- ============================================================================
+
+/-- Utterances from the toy example (Table 2, §2.3).
+
+The paper uses a richer utterance space in the full model, but the toy
+example uses four utterances ordered by informativity:
+- "likely C": assertable when P(C) ≥ 0.5 (weakest, true in all toy states)
+- "if A then C": assertable when P(C|A) ≥ 0.9
+- "C": assertable when P(C) ≥ 0.9
+- "A and C": assertable when P(A∧C) ≥ 0.9
+
+"A and C" is false in all three toy states, making it a vacuous alternative
+that nonetheless affects the pragmatic competition. -/
+inductive Utt
+  | likelyC
+  | conditional
+  | C
+  | conjAC
+  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+
+instance : Nonempty Utt := ⟨.likelyC⟩
+
+/-- World states from the toy example (Table 2, §2.3).
+
+Each state is a probability distribution (pA, pC, pAC) representing a
+different degree of dependence between A and C:
+- **s1**: High marginals, P(C|A) = 0.9 = θ (borderline assertable)
+- **s2**: Moderate marginals, P(C|A) = 12/13 ≈ 0.923 > θ (clearly assertable)
+- **s3**: Moderate marginals, P(C|A) = 0.6 < θ (not assertable) -/
+inductive State
+  | s1
+  | s2
+  | s3
+  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+
+instance : Nonempty State := ⟨.s1⟩
 
 
--- Experiment 1: Dependency Inference
+-- ============================================================================
+-- Section 2: WorldState Grounding
+-- ============================================================================
 
-/--
-Experiment 1: Causal Structure Inference from Conditionals
+/-- WorldState for s1: P(A)=0.9, P(C)=0.9, P(A∧C)=0.81.
+    P(C|A) = 0.81/0.9 = 0.9 = θ. -/
+def ws1 : WorldState := { pA := 9/10, pC := 9/10, pAC := 81/100 }
 
-Setup:
-- Participants see a conditional utterance
-- Judge which causal structure best describes the situation
+/-- WorldState for s2: P(A)=0.65, P(C)=0.65, P(A∧C)=0.6.
+    P(C|A) = 0.6/0.65 = 12/13 ≈ 0.923 > θ. -/
+def ws2 : WorldState := { pA := 13/20, pC := 13/20, pAC := 3/5 }
 
-Key manipulation: Utterance type (conditional vs. literal vs. conjunction)
--/
-structure Experiment1Datum where
-  /-- The utterance presented -/
+/-- WorldState for s3: P(A)=0.6, P(C)=0.6, P(A∧C)=0.36.
+    P(C|A) = 0.36/0.6 = 0.6 < θ. -/
+def ws3 : WorldState := { pA := 3/5, pC := 3/5, pAC := 9/25 }
+
+/-- Map states to their WorldState representations. -/
+def stateToWorldState : State → WorldState
+  | .s1 => ws1
+  | .s2 => ws2
+  | .s3 => ws3
+
+
+-- ============================================================================
+-- Section 3: Assertability Semantics
+-- ============================================================================
+
+/-- Assertability threshold θ = 0.9 from the paper. -/
+def θ : ℚ := 9/10
+
+/-- Assertability truth table for the toy example (Table 2).
+
+Defines when each utterance is assertable in each state. The paper uses
+P(C|A) **≥** θ (non-strict), while `Assertability.assertable` uses **>** θ.
+For the toy example, s1 has P(C|A) = 0.9 = θ exactly, so assertability
+under ≥ is true but under > is false. We define the truth table directly
+to match the paper's non-strict threshold.
+
+Truth values from Table 2:
+- **likely C** (P(C) ≥ 0.5): s1 ✓, s2 ✓, s3 ✓
+  (all states have P(C) ≥ 0.6 > 0.5)
+- **if A then C** (P(C|A) ≥ 0.9): s1 ✓, s2 ✓, s3 ✗
+- **C** (P(C) ≥ 0.9): s1 ✓, s2 ✗, s3 ✗
+- **A and C** (P(A∧C) ≥ 0.9): s1 ✗, s2 ✗, s3 ✗ -/
+def assertable' : Utt → State → Bool
+  | .likelyC,      _   => true
+  | .conditional,  .s1 => true
+  | .conditional,  .s2 => true
+  | .conditional,  .s3 => false
+  | .C,            .s1 => true
+  | .C,            .s2 => false
+  | .C,            .s3 => false
+  | .conjAC,       _   => false
+
+
+-- ============================================================================
+-- Section 4: WorldState Grounding Theorems
+-- ============================================================================
+
+/-! Verify that the assertability truth values are grounded in the actual
+conditional/marginal probabilities of the WorldStates. These connect the
+directly-defined truth table to the assertability theory. -/
+
+/-- s1 has P(C|A) = 9/10 ≥ θ. -/
+theorem ws1_conditional_prob : ws1.pCGivenA = 9/10 := by native_decide
+
+/-- s2 has P(C|A) = 12/13 > θ. -/
+theorem ws2_conditional_prob : ws2.pCGivenA = 12/13 := by native_decide
+
+/-- s3 has P(C|A) = 3/5 < θ. -/
+theorem ws3_conditional_prob : ws3.pCGivenA = 3/5 := by native_decide
+
+/-- s1 has P(C) = 9/10 ≥ 0.9 (so "C" is assertable). -/
+theorem ws1_marginal_C : ws1.pC = 9/10 := by rfl
+
+/-- s2 has P(C) = 13/20 ≥ 0.5 (so "likely C" is assertable). -/
+theorem ws2_marginal_C : ws2.pC = 13/20 := by rfl
+
+/-- s3 has P(C) = 3/5 ≥ 0.5 (so "likely C" is assertable). -/
+theorem ws3_marginal_C : ws3.pC = 3/5 := by rfl
+
+/-- s1 has P(A∧C) = 81/100 < 0.9 (so "A and C" is not assertable). -/
+theorem ws1_joint : ws1.pAC = 81/100 := by rfl
+
+/-- The forward conditional is assertable (using strict >) only for s2,
+    not s1, because `Assertability.assertable` uses strict >. This
+    demonstrates the ≥ vs > mismatch that motivates the direct truth table. -/
+theorem strict_assertability_s1_false :
+    assertable ws1 θ = false := by native_decide
+
+theorem strict_assertability_s2_true :
+    assertable ws2 θ = true := by native_decide
+
+theorem strict_assertability_s3_false :
+    assertable ws3 θ = false := by native_decide
+
+
+-- ============================================================================
+-- Section 5: RSAConfig
+-- ============================================================================
+
+open RSA Real in
+/-- @cite{grusdt-lassiter-franke-2022} toy example as RSAConfig.
+
+Meaning: Boolean assertability (1 if assertable, 0 if not).
+World prior: uniform over the 3 states.
+S1 score: belief-based (rpow): score = L0(w|u)^α.
+α = 1 (rationality parameter from the paper's toy example). -/
+noncomputable def cfg : RSAConfig Utt State where
+  meaning _ _ u s := if assertable' u s then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg _ _ _ _ _ hl _ := rpow_nonneg (hl _ _) _
+  α := 1
+  α_pos := one_pos
+  latentPrior_nonneg _ _ := by positivity
+  worldPrior_nonneg _ := by positivity
+
+
+-- ============================================================================
+-- Section 6: S1 Speaker Predictions (rsa_predict)
+-- ============================================================================
+
+/-! ## S1 predictions from the toy example (Table 2)
+
+The pragmatic speaker in each state prefers the most informative true
+utterance. Informativity is measured by L0's posterior concentration:
+utterances that are true in fewer states are more informative.
+
+- s1: "C" > "conditional" > "likely C"
+  (C is true in 1 state, conditional in 2, likely C in 3)
+- s2: "conditional" > "likely C"
+  (conditional in 2 states, likely C in 3; C and conjAC are false)
+- s3: "likely C" dominates
+  (only true utterance; conditional, C, and conjAC are all false)
+
+The ordering follows informativity: utterances true in fewer states
+give L0 a sharper posterior, yielding higher S1 scores. -/
+
+/-- **s1**: S1 prefers "C" over "if A then C."
+
+In s1, both "C" and "conditional" are true, but "C" is true only in s1
+while "conditional" is true in both s1 and s2. So "C" is more informative.
+S1(C|s1) = 6/11, S1(conditional|s1) = 3/11. -/
+theorem s1_C_gt_conditional :
+    cfg.S1 () .s1 .C > cfg.S1 () .s1 .conditional := by
+  rsa_predict
+
+/-- **s1**: S1 prefers "if A then C" over "likely C."
+
+"conditional" is true in 2 states vs "likely C" in all 3.
+S1(conditional|s1) = 3/11, S1(likelyC|s1) = 2/11. -/
+theorem s1_conditional_gt_likelyC :
+    cfg.S1 () .s1 .conditional > cfg.S1 () .s1 .likelyC := by
+  rsa_predict
+
+/-- **s2**: S1 prefers "if A then C" over "likely C."
+
+In s2, "conditional" is true in 2 states while "likely C" is true in all 3.
+S1(conditional|s2) = 3/5, S1(likelyC|s2) = 2/5. -/
+theorem s2_conditional_gt_likelyC :
+    cfg.S1 () .s2 .conditional > cfg.S1 () .s2 .likelyC := by
+  rsa_predict
+
+/-- **s2**: S1 prefers "if A then C" over "C."
+
+"C" is false in s2 (P(C) = 0.65 < 0.9), so S1 assigns it zero. -/
+theorem s2_conditional_gt_C :
+    cfg.S1 () .s2 .conditional > cfg.S1 () .s2 .C := by
+  rsa_predict
+
+/-- **s3**: "likely C" dominates — no other utterance beats it.
+
+"likely C" is the only true utterance in s3. The conditional, C, and
+conjAC are all false, so they get zero S1 score. -/
+theorem s3_likelyC_dominates :
+    cfg.S1 () .s3 .likelyC > cfg.S1 () .s3 .conditional := by
+  rsa_predict
+
+
+-- ============================================================================
+-- Section 7: L1 Listener Predictions (rsa_predict)
+-- ============================================================================
+
+/-! ## L1 predictions: the core dependency inference result
+
+The central prediction: hearing "if A then C" makes the pragmatic listener
+infer s2 (moderate dependence) over s1 (high marginals). This is because
+S1 in s1 would have used the more informative "C" instead of the conditional.
+
+This is the key mechanism behind dependency inference: conditionals
+signal that the speaker could not have used a stronger utterance,
+implicating a state where only the conditional is assertable. -/
+
+/-- **L1 hearing "if A then C"**: prefers s2 over s1.
+
+The core dependency inference result. S1 in s1 would prefer "C" over
+"conditional" (by `s1_C_gt_conditional`), so hearing "conditional"
+makes L1 shift probability toward s2 where "conditional" is the
+best available utterance. -/
+theorem l1_conditional_prefers_s2 :
+    cfg.L1 .conditional .s2 > cfg.L1 .conditional .s1 := by
+  rsa_predict
+
+/-- **L1 hearing "if A then C"**: prefers s2 over s3.
+
+s3 makes the conditional literally false, so it gets zero L1 weight. -/
+theorem l1_conditional_s2_gt_s3 :
+    cfg.L1 .conditional .s2 > cfg.L1 .conditional .s3 := by
+  rsa_predict
+
+/-- **L1 hearing "C"**: identifies s1.
+
+"C" is true only in s1, so L1 assigns it probability 1. -/
+theorem l1_C_identifies_s1 :
+    cfg.L1 .C .s1 > cfg.L1 .C .s2 := by
+  rsa_predict
+
+/-- **L1 hearing "likely C"**: prefers s3 over s1.
+
+"likely C" is true in all states, but S1 in s1 prefers "C" and S1 in s2
+prefers "conditional," so hearing "likely C" implicates that stronger
+utterances were unavailable — i.e., the state is s3 where "likely C" is
+the only option. L1(s3|likelyC) = 55/87 > L1(s1|likelyC) = 10/87. -/
+theorem l1_likelyC_prefers_s3 :
+    cfg.L1 .likelyC .s3 > cfg.L1 .likelyC .s1 := by
+  rsa_predict
+
+
+-- ============================================================================
+-- Section 8: Semantic Grounding Theorems
+-- ============================================================================
+
+/-- The conditional's meaning in the RSA model equals the assertability
+    condition: assertable iff P(C|A) ≥ θ. Since we use the direct truth
+    table, we verify consistency with the WorldState probabilities. -/
+theorem conditional_assertable_iff_high_pCGivenA :
+    (assertable' .conditional .s1 = true ∧ ws1.pCGivenA ≥ θ) ∧
+    (assertable' .conditional .s2 = true ∧ ws2.pCGivenA ≥ θ) ∧
+    (assertable' .conditional .s3 = false ∧ ws3.pCGivenA < θ) := by
+  refine ⟨⟨rfl, ?_⟩, ⟨rfl, ?_⟩, ⟨rfl, ?_⟩⟩ <;> native_decide
+
+/-- "C" is assertable iff P(C) ≥ 0.9. -/
+theorem C_assertable_iff_high_pC :
+    (assertable' .C .s1 = true ∧ ws1.pC ≥ 9/10) ∧
+    (assertable' .C .s2 = false ∧ ws2.pC < 9/10) ∧
+    (assertable' .C .s3 = false ∧ ws3.pC < 9/10) := by
+  refine ⟨⟨rfl, ?_⟩, ⟨rfl, ?_⟩, ⟨rfl, ?_⟩⟩ <;> native_decide
+
+/-- "likely C" is assertable in all states (P(C) ≥ 0.5 everywhere). -/
+theorem likelyC_always_assertable :
+    (assertable' .likelyC .s1 = true ∧ ws1.pC ≥ 1/2) ∧
+    (assertable' .likelyC .s2 = true ∧ ws2.pC ≥ 1/2) ∧
+    (assertable' .likelyC .s3 = true ∧ ws3.pC ≥ 1/2) := by
+  refine ⟨⟨rfl, ?_⟩, ⟨rfl, ?_⟩, ⟨rfl, ?_⟩⟩ <;> native_decide
+
+/-- "A and C" is never assertable (P(A∧C) < 0.9 in all states). -/
+theorem conjAC_never_assertable :
+    assertable' .conjAC .s1 = false ∧
+    assertable' .conjAC .s2 = false ∧
+    assertable' .conjAC .s3 = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+
+-- ============================================================================
+-- Section 9: Causal Inference
+-- ============================================================================
+
+/-! ## Connection to causal inference
+
+The toy example does not include causal relations as a latent variable
+(the full model in §3 does). However, the key qualitative prediction —
+that conditionals signal *dependency* between A and C — is captured by
+the L1 inference: hearing "if A then C" makes the listener prefer s2
+(where A and C are strongly correlated: P(C|A) = 12/13 ≈ 0.923) over
+s1 (where A and C have high marginals but weaker per-unit correlation).
+
+The full model adds CausalRelation (A→C, C→A, A⊥C) as a latent variable,
+but the dependency inference result already emerges from the simpler
+model via scalar implicature. -/
+
+/-- Causal asymmetry detection from assertability patterns.
+
+If the forward conditional "if A then C" is assertable but the reverse
+"if C then A" is not, `inferCausalRelation` returns `.ACausesC`. -/
+theorem causal_asymmetry_detection (ws : WorldState) (thr : ℚ)
+    (h_fwd : assertable ws thr = true)
+    (h_bwd : reverseAssertable ws thr = false) :
+    inferCausalRelation ws thr = .ACausesC := by
+  simp only [inferCausalRelation, h_fwd, h_bwd, Bool.not_false, Bool.and_true, ↓reduceIte]
+
+/-- Conditional perfection is NOT a semantic entailment.
+
+There exist world states where "if A then C" is assertable but the
+converse "if ¬A then ¬C" need not be. This supports the paper's claim
+that conditional perfection is a pragmatic implicature, not entailment. -/
+theorem perfection_not_semantic : ∃ (ws : WorldState),
+    assertable ws (9/10) = true ∧
+    contrapositiveAssertable ws (9/10) = false := by
+  exact ⟨ws2, by native_decide, by native_decide⟩
+
+
+-- ============================================================================
+-- Section 10: Empirical Data
+-- ============================================================================
+
+/-- Experiment 1 result: causal structure inference from conditionals.
+
+Participants (N≈150) hear "if A then C" and judge causal structure.
+The asymmetry between forward and reverse conditionals is the key finding. -/
+structure Experiment1Result where
   utterance : String
-  /-- Proportion choosing A→C -/
   pACausesC : ℚ
-  /-- Proportion choosing C→A -/
   pCCausesA : ℚ
-  /-- Proportion choosing A⊥C -/
   pIndependent : ℚ
-  /-- Sample size -/
-  n : Nat
   deriving Repr
 
-/-- Results for conditional utterance -/
-def conditionalResult : Experiment1Datum := {
-  utterance := "if A then C"
-  pACausesC := 72/100      -- 72% inferred A→C
-  pCCausesA := 18/100      -- 18% inferred C→A
-  pIndependent := 10/100   -- 10% inferred A⊥C
-  n := 150
-}
+def conditionalResult : Experiment1Result :=
+  { utterance := "if A then C", pACausesC := 72/100,
+    pCCausesA := 18/100, pIndependent := 10/100 }
 
-/-- Results for conjunction utterance (baseline) -/
-def conjunctionResult : Experiment1Datum := {
-  utterance := "A and C"
-  pACausesC := 35/100      -- Lower preference for A→C
-  pCCausesA := 30/100
-  pIndependent := 35/100
-  n := 150
-}
+def reverseConditionalResult : Experiment1Result :=
+  { utterance := "if C then A", pACausesC := 15/100,
+    pCCausesA := 75/100, pIndependent := 10/100 }
 
-/-- Results for reverse conditional -/
-def reverseConditionalResult : Experiment1Datum := {
-  utterance := "if C then A"
-  pACausesC := 15/100
-  pCCausesA := 75/100      -- Strong preference for C→A
-  pIndependent := 10/100
-  n := 150
-}
+/-- Fitted assertability threshold from Experiment 3. -/
+def fittedThreshold : ℚ := 88/100
 
-/--
-Key finding: Conditionals strongly indicate the direction of causation.
-"if A then C" → A→C at 72%
-"if C then A" → C→A at 75%
--/
-def experiment1Finding : String :=
-  "Conditional utterances strongly indicate the direction of causation: the antecedent is inferred to be the cause."
-
--- Experiment 2: Conditional Perfection
-
-/--
-Experiment 2: Conditional Perfection Rates
-
-Setup:
-- Participants see "if A then C"
-- Judge whether "if ¬A then ¬C" follows
-
-Key finding: High rates of perfection, modulated by causal structure
--/
-structure Experiment2Datum where
-  /-- The original conditional -/
-  conditional : String
-  /-- The perfected form being judged -/
-  perfected : String
-  /-- Proportion endorsing perfection -/
-  perfectionRate : ℚ
-  /-- Causal context (if manipulated) -/
+/-- Experiment 2 perfection rates by causal context. -/
+structure PerfectionResult where
   causalContext : CausalRelation
-  /-- Sample size -/
-  n : Nat
+  perfectionRate : ℚ
   deriving Repr
 
-/-- Perfection in A→C causal context -/
-def perfectionACausesC : Experiment2Datum := {
-  conditional := "if A then C"
-  perfected := "if ¬A then ¬C"
-  perfectionRate := 85/100  -- 85% endorse perfection
-  causalContext := .ACausesC
-  n := 100
-}
+def perfectionInCausal : PerfectionResult :=
+  { causalContext := .ACausesC, perfectionRate := 85/100 }
 
-/-- Perfection in independent context -/
-def perfectionIndependent : Experiment2Datum := {
-  conditional := "if A then C"
-  perfected := "if ¬A then ¬C"
-  perfectionRate := 45/100  -- Only 45% endorse perfection
-  causalContext := .Independent
-  n := 100
-}
+def perfectionInIndependent : PerfectionResult :=
+  { causalContext := .Independent, perfectionRate := 45/100 }
 
-/--
-Key finding: Perfection rates are much higher when A→C is established.
-This supports the RSA model's prediction that perfection is an implicature
-about causal structure, not a semantic entailment.
--/
-def experiment2Finding : String :=
-  "Conditional perfection rates are high (85%) when A→C causation is established, but low (45%) for independent events."
+/-- Conditional perfection is modulated by causal context:
+    much higher in A→C contexts than in independent contexts. -/
+theorem perfection_modulated_by_context :
+    perfectionInCausal.perfectionRate > perfectionInIndependent.perfectionRate := by
+  native_decide
 
--- Experiment 3: Assertability Thresholds (Douven's Puzzle)
 
-/--
-Experiment 3: Assertability Judgments
+-- ============================================================================
+-- Section 11: Theoretical Claims
+-- ============================================================================
 
-Setup:
-- Participants see scenarios with different P(C|A) values
-- Judge whether "if A then C" is an appropriate thing to say
+/-! ## Key claims supported by the model
 
-Key finding: Threshold for assertability is around θ = 0.9
--/
-structure Experiment3Datum where
-  /-- P(C|A) in the scenario -/
-  conditionalProb : ℚ
-  /-- Proportion judging the conditional as assertable -/
-  assertabilityJudgment : ℚ
-  /-- The scenario description -/
-  scenario : String
-  /-- Sample size -/
-  n : Nat
-  deriving Repr
+1. **Conditionals communicate dependency**: L1 hearing "if A then C" infers
+   a state with high P(C|A) relative to P(C) — i.e., a state where A and C
+   are dependent. This is `l1_conditional_prefers_s2`.
 
-/-- P(C|A) = 0.5: Coin flip case -/
-def assertability50 : Experiment3Datum := {
-  conditionalProb := 50/100
-  assertabilityJudgment := 15/100  -- Very few endorse
-  scenario := "Almost fair coin (51% heads)"
-  n := 50
-}
+2. **Conditional perfection is pragmatic**: The semantic meaning of
+   conditionals (assertability) does NOT entail perfection
+   (`perfection_not_semantic`). Perfection arises via scalar implicature
+   in the full model.
 
-/-- P(C|A) = 0.7: Moderate probability -/
-def assertability70 : Experiment3Datum := {
-  conditionalProb := 70/100
-  assertabilityJudgment := 35/100  -- Some endorse
-  scenario := "Weather forecast: 70% chance of rain"
-  n := 50
-}
+3. **Speaker informativity drives inference**: S1 in s1 prefers "C" over
+   "conditional" (`s1_C_gt_conditional`), so hearing "conditional"
+   implicates that "C" was unavailable (i.e., the state is s2, not s1).
 
-/-- P(C|A) = 0.9: High probability -/
-def assertability90 : Experiment3Datum := {
-  conditionalProb := 90/100
-  assertabilityJudgment := 75/100  -- Most endorse
-  scenario := "Medical test: 90% accuracy"
-  n := 50
-}
+4. **Weak states produce weak utterances**: In s3, the speaker can only
+   use "likely C" (`s3_likelyC_dominates`). Hearing "likely C" makes L1
+   infer s3 (`l1_likelyC_prefers_s3`), the state with weakest dependence. -/
 
-/-- P(C|A) = 0.95: Very high probability -/
-def assertability95 : Experiment3Datum := {
-  conditionalProb := 95/100
-  assertabilityJudgment := 90/100  -- Almost all endorse
-  scenario := "Near-certain causal connection"
-  n := 50
-}
 
-/--
-Key finding: The assertability threshold θ is approximately 0.9.
-Conditionals are only judged appropriate when P(C|A) is quite high.
--/
-def experiment3Finding : String :=
-  "The assertability threshold θ ≈ 0.9 best fits human judgments. Conditionals with P(C|A) < 0.7 are rarely endorsed."
-
-/-- Estimated threshold from model fitting -/
-def fittedThreshold : ℚ := 88/100  -- θ = 0.88 from paper
-
--- Model Fits
-
-/--
-Model fit statistics from the paper.
--/
-structure ModelFit where
-  /-- Experiment number -/
-  experiment : Nat
-  /-- Correlation between model and human data -/
-  correlation : ℚ
-  /-- Root mean squared error -/
-  rmse : ℚ
-  /-- Notes on the fit -/
-  notes : String
-  deriving Repr
-
-def experiment1Fit : ModelFit := {
-  experiment := 1
-  correlation := 92/100  -- r = 0.92
-  rmse := 8/100          -- RMSE = 0.08
-  notes := "RSA model captures causal inference patterns"
-}
-
-def experiment2Fit : ModelFit := {
-  experiment := 2
-  correlation := 89/100  -- r = 0.89
-  rmse := 10/100
-  notes := "RSA model captures perfection as implicature"
-}
-
-def experiment3Fit : ModelFit := {
-  experiment := 3
-  correlation := 94/100  -- r = 0.94
-  rmse := 6/100
-  notes := "RSA model captures assertability thresholds"
-}
-
--- Key Theoretical Claims Supported by Data
-
-/--
-Theoretical claims supported by the experimental evidence.
--/
-structure TheoreticalClaim where
-  /-- The claim -/
-  claim : String
-  /-- Which experiment supports it -/
-  supportingExperiment : Nat
-  /-- Brief justification -/
-  justification : String
-  deriving Repr
-
-def claim1_CausalInference : TheoreticalClaim := {
-  claim := "Conditionals communicate causal direction"
-  supportingExperiment := 1
-  justification := "72% infer A→C from 'if A then C', asymmetry with reverse"
-}
-
-def claim2_PerfectionAsImplicature : TheoreticalClaim := {
-  claim := "Conditional perfection is a pragmatic implicature, not semantic"
-  supportingExperiment := 2
-  justification := "Perfection rates vary with causal context (85% vs 45%)"
-}
-
-def claim3_HighThreshold : TheoreticalClaim := {
-  claim := "Conditional assertability requires P(C|A) > 0.9"
-  supportingExperiment := 3
-  justification := "Assertability judgments show threshold effect at ~0.9"
-}
-
-def claim4_MissingLinkInfelicity : TheoreticalClaim := {
-  claim := "Missing-link conditionals are pragmatically odd"
-  supportingExperiment := 1
-  justification := "Only 10% infer A⊥C from conditionals, suggesting they're avoided"
-}
-
--- Summary
-
-/--
-Summary of empirical findings from @cite{grusdt-lassiter-franke-2022}.
--/
-def summary : String :=
-"The experiments support an RSA model of conditionals where:
-
-1. **Literal meaning** is assertability: P(C|A) > θ (with θ ≈ 0.9)
-
-2. **Pragmatic inference** includes:
-   - Causal direction (antecedent → consequent)
-   - Conditional perfection (as implicature, not entailment)
-
-3. **Model fits** are good:
-   - Experiment 1: r = 0.92 (causal inference)
-   - Experiment 2: r = 0.89 (conditional perfection)
-   - Experiment 3: r = 0.94 (assertability thresholds)
-
-4. **Key parameters**:
-   - Assertability threshold θ = 0.88
-   - RSA rationality α = 1
-"
-
-end GrusdtLassiterFranke2022
+end Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
