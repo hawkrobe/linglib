@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.129] - 2026-03-10
+
+### Changed
+- **Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean**: Deep integration — (1) CS-sluicing bridge: CSs decompose into `SluicingDatum` instances from `Sluicing.lean`, connecting coordinated sluices to sluicing data; (2) populated `sharedNodes` in CWH/CS structures with actual categories (C, T, v); (3) MWF cross-linguistic typology: Bulgarian, German, Greek, English varieties A/B with `MWFLanguageDatum`; (4) RNR section (§9): pure-MD vs ellipsis+MD vs ellipsis-only examples, `rnr_md_beats_ellipsis` economy theorem, prosodic break predictions
+- **Theories/Semantics/Montague/Composition.lean**: Inline `SemanticStructure` typeclasses (`HasTerminals`, `HasBinaryComposition`, `HasUnaryProjection`, `HasBinding`, `HasSemanticType`, `SemanticStructure`) from `Core/Interfaces/` — sole consumer, no need for shared location
+
+### Removed
+- **Core/Interfaces/SemanticStructure.lean**: Inlined into its sole consumer (`Montague/Composition.lean`)
+
 ## [0.229.128] - 2026-03-10
 
 ### Added

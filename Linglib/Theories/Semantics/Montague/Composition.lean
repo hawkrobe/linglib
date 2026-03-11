@@ -9,17 +9,53 @@ Composition principles:
 4. Predicate Modification (PM): combine two `⟨e,t⟩` predicates (Ch. 4)
 
 Interpretation is syntax-agnostic: it works with any structure providing
-terminals and branching via the `SemanticStructure` interface.
+terminals and branching via the `SemanticStructure` typeclasses below.
 
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Modification
-import Linglib.Core.Interface
 
 namespace Semantics.Montague.Composition
 
-open Semantics.Montague Semantics.Montague.Modification Core.Interfaces
+open Semantics.Montague Semantics.Montague.Modification
+
+-- ============================================================================
+-- Syntax–Semantics Interface
+-- ============================================================================
+
+/-- Access to lexical/terminal content. -/
+class HasTerminals (S : Type) where
+  /-- Get terminal content if this is a leaf node -/
+  getTerminal : S → Option String
+
+/-- Binary decomposition for Functional Application and Predicate Modification. -/
+class HasBinaryComposition (S : Type) where
+  /-- Decompose into two children if this is a binary node -/
+  getBinaryChildren : S → Option (S × S)
+
+/-- Unary decomposition for H&K's Non-Branching Nodes rule. -/
+class HasUnaryProjection (S : Type) where
+  /-- Get single child if this is a unary node -/
+  getUnaryChild : S → Option S
+
+/-- Binding sites for λ-abstraction. -/
+class HasBinding (S : Type) where
+  /-- Get binding index and body if this is a binder -/
+  getBinder : S → Option (Nat × S)
+
+/-- Access to semantic types, parameterized over the type system `T`. -/
+class HasSemanticType (S : Type) (T : Type) where
+  /-- Get the semantic type of this node -/
+  getType : S → Option T
+
+/-- Full semantic structure for H&K-style interpretation. -/
+class SemanticStructure (S : Type) (T : Type) extends
+    HasTerminals S,
+    HasBinaryComposition S,
+    HasUnaryProjection S,
+    HasBinding S,
+    HasSemanticType S T
 
 structure TypedDenot (m : Model) where
   ty : Ty
