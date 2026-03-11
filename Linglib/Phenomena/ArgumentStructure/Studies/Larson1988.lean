@@ -1,7 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Derivation
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
-import Linglib.Theories.Syntax.Minimalism.VoiceAppl
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Core.Lexical.ThetaRole
 
@@ -42,14 +40,13 @@ the step is applied in the derivation.
 
 The c-command predictions are verified on `Derivation.final` trees using
 `cCommandsInB`, connecting to the same infrastructure used for binding
-verification in `ColeHermon2008.lean` and tree-based derivations in
-`VoiceAppl.lean` § 6.
+verification in `ColeHermon2008.lean`.
 
 ## Cross-references
 
 - `Theories.Syntax.Minimalism.Core.Derivation`: `Step.im` = Internal Merge
-- `Theories.Syntax.Minimalism.VoiceAppl` § 6: Modern tree-based ditransitive
-  with c-command verification (same predictions, different decomposition)
+- `Studies/Pylkkanen2008.lean`: Modern Voice/Appl decomposition with
+  tree-based c-command verification; bridge theorem proving convergence
 - `Phenomena.WordOrder.Studies.ColeHermon2008`: English passive derivation
   using the same `Derivation` infrastructure
 -/
@@ -252,35 +249,5 @@ theorem recoverability_predicts_dative_shift :
   intro e he
   simp at he
   rcases he with rfl | rfl | rfl | rfl <;> rfl
-
--- ============================================================================
--- § 7: Bridge — Larson VP Shell ↔ Modern Voice/Appl
--- ============================================================================
-
-/-! Larson's VP shell (1988) is the precursor of the modern Voice/v* +
-Applicative decomposition. While the tree shapes differ (Larson uses
-one VP-shell layer; modern theory uses Voice, v, Appl heads), the
-c-command hierarchy among DP arguments is identical:
-agent > goal/IO > theme/DO.
-
-The modern derivation with tree-based c-command verification is in
-`VoiceAppl.lean` § 6. -/
-
-open Minimalism.Phenomena.VoiceAppl in
-
-/-- Larson's DOC and the modern Voice + low-Appl derivation produce
-    the same c-command hierarchy: IO asymmetrically c-commands DO.
-
-    This proves that the Larson 1988 analysis and the Pylkkänen 2008
-    analysis, despite different decompositions, converge on the same
-    structural prediction for @cite{barss-lasnik-1986} asymmetries. -/
-theorem larson_modern_same_hierarchy :
-    -- Larson's DOC: IO > DO
-    cCommandsInB docDativeShift.final DP_mary DP_letter = true ∧
-    cCommandsInB docDativeShift.final DP_letter DP_mary = false ∧
-    -- Modern Voice/Appl: goal > theme (same asymmetry)
-    cCommandsInB ditransitiveTree DP_mary_t DP_letter_t = true ∧
-    cCommandsInB ditransitiveTree DP_letter_t DP_mary_t = false := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 end Phenomena.ArgumentStructure.Studies.Larson1988

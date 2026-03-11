@@ -300,4 +300,26 @@ theorem utah_active_passive :
 theorem passive_no_event_contribution :
     VoiceFlavor.passive.eventContribution = none := rfl
 
+-- ============================================================================
+-- § 8: Voice/Phase Bridge
+-- ============================================================================
+
+/-- Agentive Voice corresponds to traditional v* (phase head).
+    In the @cite{kratzer-1996}/Schäfer framework, agentive Voice replaces
+    v*. Both agentive and causer Voice are phase heads. -/
+theorem agentive_voice_is_phase_head :
+    voiceAgent.phaseHead = true ∧ voiceCauser.phaseHead = true := ⟨rfl, rfl⟩
+
+/-- Non-thematic and expletive Voice are NOT phase heads.
+    Only θ-role-assigning Voice heads (agentive, causer) are phases. -/
+theorem nonthematic_voice_not_phase_head :
+    voiceAnticausative.phaseHead = false ∧ voiceMiddle.phaseHead = false := ⟨rfl, rfl⟩
+
+/-- Phase-head-ness correlates with θ-role assignment:
+    Voice is a phase head iff it assigns a θ-role. -/
+theorem phase_iff_theta (v : VoiceHead)
+    (h : v = voiceAgent ∨ v = voiceCauser ∨ v = voiceAnticausative ∨ v = voiceMiddle) :
+    v.phaseHead = v.assignsTheta := by
+  rcases h with rfl | rfl | rfl | rfl <;> rfl
+
 end Minimalism

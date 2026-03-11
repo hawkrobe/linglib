@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
-import Linglib.Theories.Syntax.Minimalism.VoiceAppl
+import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Fragments.Japanese.Predicates
 
 /-!
@@ -276,35 +276,22 @@ theorem unaccusativity_count : unaccusativityData.length = 3 := rfl
 -- ============================================================================
 
 open Minimalism
-open Minimalism.Phenomena.VoiceAppl
 open Fragments.Japanese.Predicates
 
-/-- Derivation for departure verbs: non-thematic Voice, inchoative,
-    two internal arguments (leaver + source), no external argument. -/
-def departureVerbDerivation : VoiceApplDerivation where
-  voice := some voiceAnticausative
-  appl := none
-  verbHeads := [.vGO, .vBE]
-  hasExternalArg := false
-  hasAppliedArg := false
-  hasTheme := false
-
-/-- Departure verbs predict no external argument. -/
+/-- Departure verbs predict no external argument: non-thematic Voice
+    does not assign a θ-role (@cite{kratzer-1996}, @cite{schfer-2008}). -/
 theorem departure_no_external :
-    predictsExternalArg departureVerbDerivation = false := rfl
+    voiceAnticausative.assignsTheta = false := rfl
 
-/-- Departure verbs have inchoative event structure (vGO + vBE, no vDO). -/
+/-- Departure verbs have inchoative event structure (vGO + vBE, no vDO).
+    Verified via `buildDecomposition` from `Core/Voice.lean`. -/
 theorem departure_is_inchoative :
-    isInchoativeDerivation departureVerbDerivation = true := by native_decide
+    isInchoative (buildDecomposition voiceAnticausative [.vGO, .vBE]) = true := by
+  native_decide
 
 /-- Non-thematic Voice assigns no θ-role. -/
 theorem departure_voice_no_theta :
     voiceAnticausative.assignsTheta = false := rfl
-
-/-- Departure verb derivation matches the anticausative pattern. -/
-theorem departure_matches_anticausative_core :
-    departureVerbDerivation.voice = anticausative_break.voice ∧
-    departureVerbDerivation.verbHeads = anticausative_break.verbHeads := ⟨rfl, rfl⟩
 
 /-- ACC variant produces dependent ACC on source, unmarked NOM on leaver. -/
 theorem acc_derivation_correct :

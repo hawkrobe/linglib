@@ -38,7 +38,7 @@ namespace Minimalism
     agentive Voice = v*. But `Cat.Voice` can be either a phase head
     (agentive) or not (anticausative). This flavor-level distinction
     is tracked by `VoiceHead.phaseHead` in `Core/Voice.lean`, with
-    bridge theorems in `Phenomena/VoiceAppl.lean`. -/
+    bridge theorems in `Core/Voice.lean` § 8. -/
 def isPhaseHead (so : SyntacticObject) : Bool :=
   match labelCat so with
   | some .C => true    -- CP phase
