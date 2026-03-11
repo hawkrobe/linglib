@@ -223,4 +223,68 @@ structure ClauseBArgument (I : Type*) where
   /-- The communicator's constraint: inability or preference -/
   communicatorConstraint : Prop
 
+-- ============================================================================
+-- §6. Comparative Structure: Monotonicity
+-- ============================================================================
+
+/-- Two scenarios are STRUCTURAL VARIANTS when they share the same
+    candidate set and accessibility ordering. This is the natural
+    comparison class in RT: the same utterance type processed in
+    different contexts, where context modulates effects/effort/threshold
+    but not the interpretive search path.
+
+    Structural variants support monotonicity reasoning: if interpretation i
+    is selected in one variant, sufficient conditions for transferring
+    selection to another can be stated algebraically. -/
+structure RTScenario.StructuralVariant (s₁ s₂ : RTScenario I) : Prop where
+  /-- Same candidate interpretations -/
+  candidates_eq : s₁.candidates = s₂.candidates
+  /-- Same accessibility ordering (search path) -/
+  accessibility_eq : ∀ x, s₁.accessibility x = s₂.accessibility x
+
+/-- Effect strengthening preserves selection: if interpretation `i` is
+    selected in scenario `s₁`, and `s₂` is a structural variant with the
+    same threshold parameters where `i`'s effects are weakly higher and
+    every more-accessible candidate's effects are weakly lower, then `i`
+    is also selected in `s₂`.
+
+    This is the core monotonicity property of RT's comprehension procedure.
+    Increasing the cognitive effects of an interpretation (while not
+    strengthening blocking candidates) can only help it get selected.
+
+    The theorem is independent of whether the comprehension procedure is
+    modeled as a step function (qualitative RT) or a sigmoid (graded
+    extension): the ordinal prediction — which interpretation is on the
+    passing side — is preserved under effect strengthening regardless
+    of threshold shape. -/
+theorem RTScenario.selects_of_strengthened_effects
+    {I : Type*} (s₁ s₂ : RTScenario I) (i : I)
+    (hvar : s₁.StructuralVariant s₂)
+    (hsel : s₁.comprehensionSelects i)
+    (hthr : s₁.threshold = s₂.threshold)
+    (hew : s₁.effortWeight = s₂.effortWeight)
+    (heffort : ∀ x, s₁.effort x = s₂.effort x)
+    (hi_stronger : s₁.effects i ≤ s₂.effects i)
+    (hj_weaker : ∀ j ∈ s₁.candidates,
+                  s₁.accessibility j < s₁.accessibility i →
+                  s₂.effects j ≤ s₁.effects j) :
+    s₂.comprehensionSelects i := by
+  obtain ⟨hmem, hpass, hblock⟩ := hsel
+  refine ⟨?_, ?_, ?_⟩
+  · rw [← hvar.candidates_eq]; exact hmem
+  · -- i passes threshold: effects increased, threshold unchanged
+    have : s₂.adjustedThreshold i = s₁.adjustedThreshold i := by
+      unfold adjustedThreshold; rw [← hthr, ← hew, ← heffort]
+    omega
+  · -- Blocking candidates still fail: effects decreased, threshold unchanged
+    intro j hj hacc
+    have hj₁ : j ∈ s₁.candidates := by rw [hvar.candidates_eq]; exact hj
+    have hacc₁ : s₁.accessibility j < s₁.accessibility i := by
+      have := hvar.accessibility_eq j; have := hvar.accessibility_eq i; omega
+    have h_fail := hblock j hj₁ hacc₁
+    have h_weaker := hj_weaker j hj₁ hacc₁
+    have : s₂.adjustedThreshold j = s₁.adjustedThreshold j := by
+      unfold adjustedThreshold; rw [← hthr, ← hew, ← heffort]
+    omega
+
 end Theories.Pragmatics.RelevanceTheory

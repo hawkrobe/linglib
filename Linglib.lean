@@ -45,6 +45,15 @@ import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.Interface
+import Linglib.Core.CoreferenceStatus
+import Linglib.Core.BindingSemantics
+import Linglib.Core.CombinationKind
+import Linglib.Core.AssertionTypes
+import Linglib.Core.ImplicatureTypes
+import Linglib.Core.FelicityTypes
+import Linglib.Core.ScopeTypes
+import Linglib.Core.ExtractionMorphology
+import Linglib.Core.VoiceSystem
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.CausalBayesNet
 import Linglib.Core.NestedRestriction

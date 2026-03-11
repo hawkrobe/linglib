@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.158] - 2026-03-11
+
+### Changed
+- **ReesReksnesRohde2026.lean**: Replace vacuous `emphasis_cue_no_parameter_change` theorem (`rfl`) with explanatory comment block; replace misaligned `ClauseBArgument` usage (comparing interpretations, not stimuli) with comment documenting speaking-vs-silence as a stimulus-level choice; add `quietUnfamiliarScenario` for the Exp 2 Knowledge × Style interaction; add experimental data records (`expN`, `totalN`, `knowledgeSignificant`); add bridge theorems connecting RT predictions to empirical findings (`rt_predicts_knowledge_effect`, `rt_predicts_style_effect`, `style_is_effect_strengthening`); add effect ordering for the interaction (`reticence_strengthens_unfamiliar_changed`, `knowledge_gap_*`); remove unused `variant_familiar_unfamiliar`; fix docstring percentages; add `@cite` tags for `bergen-grodner-2012`, `kravtchenko-demberg-2022`, `bott-noveck-2004`, `crystal-1991`, `zegarac-clark-1999`
+- **references.bib**: Add bib entries for Bergen & Grodner 2012, Bott & Noveck 2004, Kravtchenko & Demberg 2022, Crystal 1991, Zegarac & Clark 1999
+
 ## [0.229.157] - 2026-03-11
 
 ### Changed
