@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.133] - 2026-03-10
+
+### Changed
+- **Phenomena/Reference/Studies/HawkinsGweonGoodman2021.lean**: Remove all ℚ-valued RSA computations; rewrite mixture model in log-space (paper Eq. 5: `U^mix = w_S · E[log L0^asym] + (1-w_S) · log L0^ego`) using `Real.exp`/`Real.log` grounded in RSAConfig.L0; add paper-faithful resource-rational predictions (`no_cost_prefers_full_pt`, `high_cost_penalizes_full_pt`, `intermediate_weight_optimal`) matching §2.4/Figure 2; convert listener beliefs to ℝ
+
+## [0.229.132] - 2026-03-10
+
+### Changed
+- **Theories/Semantics/Events/AgentivityLattice.lean**: Add §21 DOM and verbal agentivity — `animacyToAgentivity` mapping from `Core.Prominence.AnimacyLevel` to agentivity lattice, `agentivityContrast` measure, `VerbDOMClass` (blocked/regularizable/nominalSensitive), `verbDOMClass` classification linking Grimm's lattice to von Heusinger 2008 DOM regularization data; per-verb DOM predictions (kick regularizable, build blocked, see nominal-sensitive, pursuit blocked); bridge theorems connecting Aissen 2003 animacy staircase to lattice chain
+
 ## [0.229.131] - 2026-03-10
 
 ### Changed

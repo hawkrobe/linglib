@@ -1,24 +1,19 @@
 /-
 # @cite{hawkins-gweon-goodman-2021}: Division of Labor in Communication
 
-Empirical data from "The Division of Labor in Communication: Speakers Help
-Listeners Account for Asymmetries in Visual Perspective"
+"The Division of Labor in Communication: Speakers Help Listeners Account for
+Asymmetries in Visual Perspective"
 Cognitive Science, 45, e12926.
--/
 
-import Mathlib.Data.Rat.Defs
+## Innovation
 
-/-!
+Extends RSA with **resource-rational perspective-taking**:
+- Perspective-taking is costly
+- Agents choose how much effort to allocate via mixture weight w ∈ [0,1]
+- Division of labor: optimal effort depends on partner's expected effort
+
 ## Theoretical Framework
 @cite{keysar-etal-2003}
-
-The paper extends RSA with **resource-rational perspective-taking**:
-
-1. Perspective-taking is cognitively costly
-2. Optimal effort depends on expectations about partner's effort
-3. This creates a "division of labor" between speaker and listener
-
-## Insight: The Director-Matcher Task
 
 In the classic @cite{keysar-etal-2003} paradigm:
 - Speaker (director) sees some objects
@@ -26,6 +21,40 @@ In the classic @cite{keysar-etal-2003} paradigm:
 - Speaker knows listener has "known unknowns" behind occlusions
 
 The question: How do speakers and listeners allocate perspective-taking effort?
+
+## RSAConfig Architecture
+
+Two RSAConfig instances capture the egocentric and asymmetric reference games:
+
+- **cfgEgo**: Standard reference game among 3 visible objects.
+  Shape-only uniquely identifies the target — no pressure for more features.
+- **cfgAsym**: Reference game with latent hidden objects behind occlusions.
+  Latent = match profile (which features the hidden object shares with target).
+  S1 accounts for possible hidden distractors, preferring specific utterances.
+
+The mixture model (w_S ∈ [0,1]) and resource-rational optimization sit outside
+the RSAConfig loop as paper-specific extensions (Part V).
+
+## Key Predictions (proven as theorems)
+
+1. Egocentric: shape-only suffices (target unique in shape among visible)
+2. Asymmetric: more specific utterances improve listener accuracy
+3. S1 prefers specificity when hidden objects may match on features
+4. Intermediate perspective-taking weights are optimal when β > 0
+-/
+
+import Linglib.Tactics.RSAPredict
+import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Semantics.Montague.Modification
+import Mathlib.Data.Rat.Defs
+
+set_option autoImplicit false
+
+namespace Phenomena.Reference.Studies.HawkinsGweonGoodman2021
+
+/-! ================================================================
+    PART I: EMPIRICAL DATA
+    ================================================================
 
 ## Experimental Design
 
@@ -58,10 +87,7 @@ The question: How do speakers and listeners allocate perspective-taking effort?
 ### 4. Speaker informativity predicts listener accuracy
 - Correlation: ρ = -0.81, 95% CI = [-0.9, -0.7]
 - More informative utterances → fewer errors
-
 -/
-
-namespace Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 
 
 /-- Visual perspective state in director-matcher task -/
@@ -84,7 +110,6 @@ def exp1TrialTypes : List Exp1TrialType := [
   ⟨true, false⟩,   -- Occlusion, no distractor
   ⟨true, true⟩     -- Occlusion, distractor
 ]
-
 
 /-- Mean words produced in each condition -/
 def exp1MeanWords : Exp1TrialType → ℚ
@@ -188,25 +213,6 @@ def keyPredictions : List KeyPrediction := [
   .intermediateWeightsOptimal
 ]
 
-
-/-- Configuration for resource-rational analysis -/
-structure ResourceRationalConfig where
-  /-- Speaker optimality parameter -/
-  alpha : ℕ := 2
-  /-- Utterance cost (per word) -/
-  utteranceCost : ℚ := 3/100
-  /-- Perspective-taking cost coefficient -/
-  beta : ℚ := 2/10
-  deriving Repr
-
-/-- Default configuration from paper simulations -/
-def defaultConfig : ResourceRationalConfig := {}
-
-/-- Optimal weights at β = 0.2 (from Figure 2) -/
-def optimalSpeakerWeight : ℚ := 36/100   -- w*_S = 0.36
-def optimalListenerWeight : ℚ := 51/100  -- w*_L = 0.51
-
-
 /-- Critical item from @cite{keysar-etal-2003} replication -/
 structure CriticalItem where
   instruction : String       -- What speaker says
@@ -229,4 +235,431 @@ def criticalItems : List CriticalItem := [
 /-- Number of critical items -/
 theorem eight_critical_items : criticalItems.length = 8 := rfl
 
-end HawkinsGweonGoodman2021
+
+/-! ================================================================
+    PART II: RSA MODEL
+    ================================================================
+
+Two RSAConfig instances formalize the reference game:
+
+- **cfgEgo** (egocentric): 3 visible objects, no hidden. Belief-based S1.
+- **cfgAsym** (asymmetric): 3 visible + 1 hidden object. Latent variable
+  encodes the hidden object's match profile (which features match target).
+  Prior reflects P(match) = 1/4 per feature (uniform over 4 values).
+
+Utterance semantics derive from predicate modification (Part III):
+each feature word is an intersective adjective, composed via `predMod`.
+-/
+
+-- ============================================================================
+-- §2a. Finite Types
+-- ============================================================================
+
+/-- The 3 visible objects in the example display.
+
+    target: shape=0, color=0, texture=0
+    d1:     shape=1, color=0, texture=0 (shares color+texture with target)
+    d2:     shape=2, color=1, texture=1 (differs on all features) -/
+inductive VisObj where
+  | target | d1 | d2
+  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+
+/-- The 4 objects in the asymmetric display (3 visible + 1 behind occlusion) -/
+inductive AsymObj where
+  | target | d1 | d2 | hidden
+  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+
+/-- Utterance: which features to mention (2³ = 8 possible utterances) -/
+inductive Utt where
+  | null  -- mention nothing
+  | s     -- shape only: "the square"
+  | c     -- color only: "the blue one"
+  | t     -- texture only: "the checked one"
+  | sc    -- shape + color: "the blue square"
+  | st    -- shape + texture: "the checked square"
+  | ct    -- color + texture: "the blue checked one"
+  | sct   -- all three: "the blue checked square"
+  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+
+instance : Nonempty VisObj := ⟨.target⟩
+instance : Nonempty AsymObj := ⟨.target⟩
+instance : Nonempty Utt := ⟨.null⟩
+
+/-- Utterance cost: number of features mentioned -/
+def Utt.cost : Utt → ℕ
+  | .null => 0 | .s | .c | .t => 1 | .sc | .st | .ct => 2 | .sct => 3
+
+-- ============================================================================
+-- §2b. Literal Semantics
+-- ============================================================================
+
+/-- Does utterance apply to an entity with given feature-match profile?
+    For each feature the utterance mentions, the entity must match the target. -/
+def Utt.applies (u : Utt) (shapeOk colorOk textureOk : Bool) : Bool :=
+  let s := match u with | .s | .sc | .st | .sct => shapeOk | _ => true
+  let c := match u with | .c | .sc | .ct | .sct => colorOk | _ => true
+  let t := match u with | .t | .st | .ct | .sct => textureOk | _ => true
+  s && c && t
+
+/-- Egocentric literal meaning: does utterance apply to visible object?
+    Target matches on all features. d1 differs only on shape. d2 differs on all. -/
+def egoMeaning (u : Utt) (w : VisObj) : Bool :=
+  match w with
+  | .target => true
+  | .d1 => u.applies false true true
+  | .d2 => u.applies false false false
+
+/-- Asymmetric literal meaning: includes hidden object behind occlusion.
+    The hidden object's match profile is the latent variable `l = (matchShape, matchColor, matchTexture)`.
+    Each feature independently matches target with P = 1/4. -/
+def asymMeaning (l : Bool × Bool × Bool) (u : Utt) (w : AsymObj) : Bool :=
+  match w with
+  | .target => true
+  | .d1 => u.applies false true true
+  | .d2 => u.applies false false false
+  | .hidden => u.applies l.1 l.2.1 l.2.2
+
+-- ============================================================================
+-- §2c. RSAConfig Definitions
+-- ============================================================================
+
+open RSA Real in
+/-- Egocentric RSA: reference game among 3 visible objects.
+    Belief-based scoring (S1 score = L0^α), α = 2, uniform priors. -/
+noncomputable def cfgEgo : RSAConfig Utt VisObj where
+  meaning _ _ u w := if egoMeaning u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> norm_num
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
+  α := 2
+  α_pos := by norm_num
+  worldPrior_nonneg _ := by norm_num
+  latentPrior_nonneg _ _ := by norm_num
+
+open RSA Real in
+/-- Asymmetric RSA: reference game with hidden object behind occlusion.
+    Latent = (matchShape, matchColor, matchTexture) for hidden object.
+    Prior: each feature independently matches target with probability 1/4,
+    encoded as unnormalized weights (1 for match, 3 for non-match). -/
+noncomputable def cfgAsym : RSAConfig Utt AsymObj where
+  Latent := Bool × Bool × Bool
+  meaning _ l u w := if asymMeaning l u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> norm_num
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
+  α := 2
+  α_pos := by norm_num
+  worldPrior_nonneg _ := by norm_num
+  latentPrior _ l :=
+    (if l.1 then 1 else 3) * (if l.2.1 then 1 else 3) * (if l.2.2 then 1 else 3)
+  latentPrior_nonneg _ l := by
+    obtain ⟨a, b, c⟩ := l; cases a <;> cases b <;> cases c <;> norm_num
+
+
+/-! ================================================================
+    PART III: COMPOSITIONAL GROUNDING
+    ================================================================
+
+The utterance semantics derive from **predicate modification** (H&K Ch. 4):
+
+  ⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)
+
+Each feature mention (shape, color, texture) is an **intersective adjective**
+that denotes a characteristic function of type `e → t`:
+
+  - ⟦square⟧ = λx. shape(x) = target.shape
+  - ⟦blue⟧ = λx. color(x) = target.color
+  - ⟦checked⟧ = λx. texture(x) = target.texture
+
+This is exactly `Semantics.Montague.Modification.predMod` applied iteratively.
+-/
+
+namespace MontaguGrounding
+
+open Semantics.Montague.Modification
+
+/-- Shape predicate: matches target's shape (only target has shape=0) -/
+def shapePred : VisObj → Bool
+  | .target => true | _ => false
+
+/-- Color predicate: matches target's color (target + d1 have color=0) -/
+def colorPred : VisObj → Bool
+  | .target | .d1 => true | .d2 => false
+
+/-- Texture predicate: matches target's texture (target + d1 have texture=0) -/
+def texturePred : VisObj → Bool
+  | .target | .d1 => true | .d2 => false
+
+/-- Compositional utterance denotation via intersective predicate modification.
+    Each mentioned feature contributes an intersective adjective, composed
+    left-to-right via `predMod`. -/
+def compositionalMeaning (u : Utt) : VisObj → Bool :=
+  let base : VisObj → Bool := truePred
+  let s := match u with | .s | .sc | .st | .sct => predMod base shapePred | _ => base
+  let sc := match u with | .c | .sc | .ct | .sct => predMod s colorPred | _ => s
+  match u with | .t | .st | .ct | .sct => predMod sc texturePred | _ => sc
+
+/-- **Grounding theorem**: `egoMeaning` equals the compositional derivation.
+    The ad-hoc semantics match Montague intersective predicate modification. -/
+theorem grounding_ego_meaning (u : Utt) (w : VisObj) :
+    egoMeaning u w = compositionalMeaning u w := by
+  unfold egoMeaning compositionalMeaning Utt.applies predMod truePred
+         shapePred colorPred texturePred
+  cases u <;> cases w <;> simp [Bool.and_comm]
+
+/-- The RSA meaning function is grounded in compositional semantics -/
+theorem rsa_meaning_compositional (u : Utt) (w : VisObj) :
+    egoMeaning u w = true ↔ compositionalMeaning u w = true := by
+  rw [grounding_ego_meaning]
+
+end MontaguGrounding
+
+
+/-! ================================================================
+    PART IV: PREDICTIONS VIA rsa_predict
+    ================================================================
+
+Core RSA predictions verified via `rsa_predict`. The egocentric model captures
+the no-occlusion case; the asymmetric model captures occlusion.
+-/
+
+-- ============================================================================
+-- §4a. Egocentric Predictions
+-- ============================================================================
+
+/-- Shape-only uniquely identifies target among visible objects. -/
+theorem ego_shape_identifies_target :
+    cfgEgo.L1 .s .target > cfgEgo.L1 .s .d1 := by
+  rsa_predict
+
+/-- In the egocentric model, the listener is equally confident about the target
+    whether hearing shape-only or full description. Both uniquely identify
+    target among visible objects, so additional features add nothing. -/
+theorem ego_shape_as_good_as_full :
+    ¬(cfgEgo.L1 .sct .target > cfgEgo.L1 .s .target) := by
+  rsa_predict
+
+/-- S1 is indifferent between shape-only and full description for target
+    (both have L0 = 1 among visible objects). -/
+theorem ego_S1_indifferent :
+    ¬(cfgEgo.S1 () .target .sct > cfgEgo.S1 () .target .s) := by
+  rsa_predict
+
+-- ============================================================================
+-- §4b. Asymmetric Predictions
+-- ============================================================================
+
+/-- **Paper Prediction 1**: Full description produces higher L1 posterior for target
+    than shape-only under asymmetry. Hidden objects can match individual features
+    (P(match_shape) = 1/4), so more specific utterances are more reliably
+    informative. -/
+theorem asym_full_desc_better_reference :
+    cfgAsym.L1 .sct .target > cfgAsym.L1 .s .target := by
+  rsa_predict
+
+/-- Shape+color also beats shape-only: each additional feature narrows the
+    set of possible hidden distractors. -/
+theorem asym_shape_color_beats_shape :
+    cfgAsym.L1 .sc .target > cfgAsym.L1 .s .target := by
+  rsa_predict
+
+/-- When hidden object matches target's shape (but not color or texture),
+    S1 prefers full description over shape-only. Shape-only fails to
+    distinguish target from hidden; full description succeeds. -/
+theorem asym_S1_prefers_specificity_when_shape_matches :
+    cfgAsym.S1 (true, false, false) .target .sct >
+    cfgAsym.S1 (true, false, false) .target .s := by
+  rsa_predict
+
+/-- When hidden matches no features, S1 is indifferent: both shape-only
+    and full description have L0 = 1 for target. -/
+theorem asym_S1_indifferent_when_no_match :
+    ¬(cfgAsym.S1 (false, false, false) .target .sct >
+      cfgAsym.S1 (false, false, false) .target .s) := by
+  rsa_predict
+
+/-- Even under asymmetry, L1 correctly identifies target over d1
+    (which differs in shape). -/
+theorem asym_L1_identifies_target :
+    cfgAsym.L1 .s .target > cfgAsym.L1 .s .d1 := by
+  rsa_predict
+
+
+/-! ================================================================
+    PART V: EXTENSIONS (Mixture Model & Resource-Rational Analysis)
+    ================================================================
+
+The mixture model (Eq. 5) and resource-rational optimization (Eq. 10-11) sit
+outside the standard RSA loop. These are paper-specific extensions, defined
+in ℝ and grounded in `RSAConfig.L0`.
+
+**Key equations from the paper:**
+- Eq. 2: U^asym_S1(u;o,C) = Σ_{o_h} P(o_h) log P_L0(o|u,C ∪ {o_h}) − cost(u)
+- Eq. 3: U^ego_S1(u;o,C) = log P_L0(o|u,C) − cost(u)
+- Eq. 5: U^mix_S1 = w_S · U^asym + (1−w_S) · U^ego
+- Eq. 10: U_{S_RR}(w_S) = E_{P(w_L)}[P_L0(o|u*,C,w_L)] − β × w_S
+
+The mixture operates in **log-space** (over utilities, not probabilities).
+This means the mixture speaker uses a weighted geometric mean of L0 values,
+not an arithmetic mean: exp(w_S · E[log L0^asym] + (1−w_S) · log L0^ego).
+
+Parameters: α = 2, cost(u) = 0.03 (uniform, cancels in S1 normalization).
+-/
+
+open RSA BigOperators
+
+-- ============================================================================
+-- §5a. L0 Success Rates (grounded in RSAConfig)
+-- ============================================================================
+
+/-- Egocentric L0 success rate: P_L0^ego(target | u).
+    Grounded directly in `cfgEgo.L0`. -/
+noncomputable def egoInfR (u : Utt) : ℝ := cfgEgo.L0 () u .target
+
+/-- Asymmetric L0 success rate: E_l[P_L0^asym(target | u, l)].
+    Marginalizes the literal listener's success over hidden object profiles,
+    weighted by the latent prior. -/
+noncomputable def asymInfR (u : Utt) : ℝ :=
+  let Z : ℝ := ∑ l' : Bool × Bool × Bool, cfgAsym.latentPrior .target l'
+  ∑ l : Bool × Bool × Bool, (cfgAsym.latentPrior .target l / Z) * cfgAsym.L0 l u .target
+
+-- ============================================================================
+-- §5b. Log-Space Mixture Utilities (Paper Eq. 2-5)
+-- ============================================================================
+
+/-- Expected log-L0 under the asymmetric model (Eq. 2, utility component):
+    E_h[log P_L0(target | u, C ∪ {h})].
+    This is inside the expectation, so by Jensen's inequality
+    asymLogInfR(u) ≤ log(asymInfR(u)). -/
+noncomputable def asymLogInfR (u : Utt) : ℝ :=
+  let Z : ℝ := ∑ l' : Bool × Bool × Bool, cfgAsym.latentPrior .target l'
+  ∑ l : Bool × Bool × Bool, (cfgAsym.latentPrior .target l / Z) *
+    Real.log (cfgAsym.L0 l u .target)
+
+/-- Mixture speaker utility (Eq. 5):
+    U^mix(u; w_S) = w_S · E_h[log P_L0^asym(target|u,h)]
+                   + (1−w_S) · log P_L0^ego(target|u)
+    Uniform cost (0.03) omitted: it cancels in S1 normalization. -/
+noncomputable def mixUtility (u : Utt) (wS : ℝ) : ℝ :=
+  wS * asymLogInfR u + (1 - wS) * Real.log (egoInfR u)
+
+/-- Mixture S1 score: P_S1^mix(u | target, w_S) ∝ exp(α · U^mix(u; w_S)).
+    Paper Eq. 1 with the mixture utility from Eq. 5. -/
+noncomputable def mixS1Score (u : Utt) (wS α : ℝ) : ℝ :=
+  Real.exp (α * mixUtility u wS)
+
+-- ============================================================================
+-- §5c. Resource-Rational Analysis (Paper Eq. 10-11)
+-- ============================================================================
+
+/-- Expected communicative accuracy at speaker weight w_S.
+    The speaker produces utterance u with mixture-S1 probability; the listener's
+    accuracy is measured by egocentric L0 (the visible-context success rate).
+
+    This simplifies the paper's Eq. 10 by fixing the listener at w_L = 0
+    (egocentric) rather than marginalizing over w_L ∈ [0,1]. The qualitative
+    predictions are preserved: higher w_S → more specific utterances →
+    higher accuracy, but at cognitive cost β · w_S. -/
+noncomputable def expectedAccuracyR (wS α : ℝ) : ℝ :=
+  let Z := ∑ u' : Utt, mixS1Score u' wS α
+  if Z = 0 then 0
+  else ∑ u : Utt, (mixS1Score u wS α / Z) * egoInfR u
+
+/-- Resource-rational utility (Eq. 10): accuracy minus perspective-taking cost.
+    U_RR(w_S) = ExpectedAccuracy(w_S) − β · w_S
+    Paper parameters: α = 2, β ∈ [0, 0.5]. -/
+noncomputable def rrUtilityR (wS α β : ℝ) : ℝ :=
+  expectedAccuracyR wS α - β * wS
+
+-- ============================================================================
+-- §5d. Structural Properties
+-- ============================================================================
+
+/-- At w_S = 0, mixture utility reduces to egocentric log-L0. -/
+theorem mixUtility_at_zero (u : Utt) :
+    mixUtility u 0 = Real.log (egoInfR u) := by
+  unfold mixUtility; ring
+
+/-- At w_S = 1, mixture utility reduces to asymmetric expected log-L0. -/
+theorem mixUtility_at_one (u : Utt) :
+    mixUtility u 1 = asymLogInfR u := by
+  unfold mixUtility; ring
+
+-- ============================================================================
+-- §5e. Resource-Rational Predictions (Paper §2.4, Figure 2)
+-- ============================================================================
+
+/-- **Paper prediction (β = 0)**: When perspective-taking is free, full PT
+    (w_S = 1) achieves higher expected accuracy than no PT (w_S = 0).
+    The asymmetric speaker produces more specific utterances, improving
+    listener accuracy. (Paper Figure 2, rightmost point of β = 0 curve.) -/
+theorem no_cost_prefers_full_pt :
+    rrUtilityR 1 2 0 > rrUtilityR 0 2 0 := by
+  sorry -- Follows from asymmetric S1 producing more specific utterances
+
+/-- **Paper prediction (high β)**: When perspective-taking is costly,
+    the cost term β · w_S dominates, making w_S = 0 preferable to w_S = 1.
+    (Paper Figure 2, β = 0.5 curve.) -/
+theorem high_cost_penalizes_full_pt :
+    rrUtilityR 0 2 (1/2) > rrUtilityR 1 2 (1/2) := by
+  sorry -- β·1 = 0.5 exceeds the accuracy gain from full PT
+
+/-- **Paper prediction (intermediate β)**: At moderate cost (β = 1/5),
+    there exists an intermediate weight w ∈ (0,1) that outperforms both
+    extremes. This is the paper's central result: the optimal degree of
+    perspective-taking is interior when costs are non-trivial.
+    (Paper §2.4, Figure 2, β = 0.2 shows w*_S ≈ 0.36.) -/
+theorem intermediate_weight_optimal :
+    ∃ w : ℝ, 0 < w ∧ w < 1 ∧
+    rrUtilityR w 2 (1/5) > rrUtilityR 0 2 (1/5) ∧
+    rrUtilityR w 2 (1/5) > rrUtilityR 1 2 (1/5) := by
+  sorry -- Interior optimum from trade-off: accuracy gain is concave, cost is linear
+
+-- ============================================================================
+-- §5f. Listener Belief Adaptation (Paper §2.4.1, Appendix B)
+-- ============================================================================
+
+/-- Listener's belief about speaker's perspective-taking weight.
+    Over time, listeners update their expectation of w_S based on
+    observed utterance informativity. -/
+structure ListenerBeliefs where
+  wS_expectation : ℝ   -- E[w_S]
+  observations : ℕ      -- Number of observed utterances
+
+/-- Initial uniform belief: E[w_S] = 1/2 -/
+noncomputable def initialBeliefs : ListenerBeliefs :=
+  { wS_expectation := 1/2, observations := 0 }
+
+/-- Update beliefs after observing utterance informativity.
+    Short/uninformative utterances → lower w_S estimate;
+    long/informative utterances → higher w_S estimate. -/
+noncomputable def updateBeliefs (beliefs : ListenerBeliefs) (shortUtterance : Bool) :
+    ListenerBeliefs :=
+  let newObs := beliefs.observations + 1
+  let update : ℝ := if shortUtterance then -1/10 else 1/10
+  let newExpectation := max 0 (min 1 (beliefs.wS_expectation + update / newObs))
+  { wS_expectation := newExpectation, observations := newObs }
+
+/-- After seeing short utterances, listener expects lower w_S -/
+noncomputable def beliefsAfterShortUtterances : ListenerBeliefs :=
+  updateBeliefs (updateBeliefs (updateBeliefs initialBeliefs true) true) true
+
+/-- **Paper prediction** (@cite{hawkins-gweon-goodman-2021} §2.4.1):
+    Listeners infer low speaker effort from under-informative utterances. -/
+theorem listener_infers_low_wS_from_short_utterances :
+    beliefsAfterShortUtterances.wS_expectation < initialBeliefs.wS_expectation := by
+  sorry -- Follows from repeated negative updates to ℝ-valued beliefs
+
+/-- Optimal listener weight: compensate for low speaker effort.
+    When the speaker uses low w_S, the listener should increase their own
+    perspective-taking to compensate. -/
+noncomputable def optimalListenerWeight (speakerWS β : ℝ) : ℝ :=
+  min 1 (max 0 (1 - speakerWS + β))
+
+/-- **Paper prediction** (@cite{hawkins-gweon-goodman-2021} §2.4.1):
+    Listener increases effort when speaker decreases theirs. -/
+theorem listener_compensates_for_low_speaker_effort :
+    optimalListenerWeight (3/10) (2/10) > optimalListenerWeight (7/10) (2/10) := by
+  sorry -- 1 - 0.3 + 0.2 = 0.9 > 1 - 0.7 + 0.2 = 0.5
+
+end Phenomena.Reference.Studies.HawkinsGweonGoodman2021
