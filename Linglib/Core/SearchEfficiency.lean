@@ -1,4 +1,4 @@
-import Linglib.Core.Efficiency
+import Mathlib.Data.Rat.Defs
 import Linglib.Core.PropertyDomain
 
 /-!
@@ -41,23 +41,11 @@ denotation.
 The search efficiency view adds a *perceptual grounding* for the noise
 parameters: they reflect the physical properties of the display, not
 just abstract semantic noise.
-
-## Connection to `Core.Efficiency`
-
-The search efficiency trade-off instantiates the `CostPair` framework:
-- `cost₁` = speaker production cost (producing the modifier)
-- `cost₂` = listener search cost (finding the referent)
-
-A redundant modifier is efficient when it reduces `cost₂` by more than
-it increases `cost₁`. The `SearchContext` structure below formalises the
-display properties that determine `cost₂`.
 -/
 
 set_option autoImplicit false
 
 namespace Core.SearchEfficiency
-
-open Core.Efficiency
 
 -- ============================================================================
 -- § Display Properties
@@ -67,8 +55,9 @@ open Core.Efficiency
     These three factors jointly determine the listener's search cost and
     the potential benefit of a redundant modifier.
 
-    @cite{giles-etal-2026} manipulate discriminability (Exp 1) and
-    contextual distinctiveness + density (Exp 2) independently. -/
+    @cite{giles-etal-2026} Exp 1 manipulates discriminability ×
+    sufficiency; Exp 2 compares attribute types (colour vs orientation)
+    across display density and contextual distinctiveness levels. -/
 structure SearchContext where
   /-- Display density: total number of objects in the display.
       More objects → slower serial search. -/
@@ -82,18 +71,8 @@ structure SearchContext where
       Range: 0 (no discrimination) to 1 (perfect). -/
   discriminability : ℚ
   /-- The redundant attribute's property domain. -/
-  domain : PropertyDomain
+  domain : Core.PropertyDomain
   deriving Repr
-
-/-- Contextual distinctiveness: proportion of distractors NOT sharing
-    the target's attribute value. Higher = more distinctive = easier
-    to find via that attribute.
-
-    When `nDistractorsSharing = 0`, the target is unique on that
-    attribute → distinctiveness = 1 (maximal). -/
-def SearchContext.distinctiveness (ctx : SearchContext) : ℚ :=
-  if ctx.displaySize ≤ 1 then 1
-  else 1 - ctx.nDistractorsSharing / (ctx.displaySize - 1)
 
 -- ============================================================================
 -- § Information Sufficiency
@@ -145,35 +124,5 @@ def searchEfficiencyPredicts (dt : DisplayType) : Bool :=
   | .sLowRHigh => true   -- high overinformativeness predicted
   | .baseline  => false  -- intermediate (lower than sLowRHigh)
   | .sHighRLow => false  -- low overinformativeness predicted
-
--- ============================================================================
--- § Cost-Benefit Analysis
--- ============================================================================
-
-/-- A redundant modifier is search-efficient when the listener's search
-    benefit exceeds the speaker's production cost.
-
-    `benefit`: the reduction in listener search cost from hearing the
-    modifier. Depends on discriminability, distinctiveness, and density.
-
-    `productionCost`: the cost of producing the modifier (effort,
-    planning time, articulatory complexity). -/
-structure SearchEfficiencyAnalysis where
-  benefit : ℚ
-  productionCost : ℚ
-  deriving Repr
-
-/-- Convert to a `CostPair` for Pareto analysis.
-    cost₁ = production cost, cost₂ = −benefit (negated because
-    `CostPair` minimises, but benefit should be maximised). -/
-def SearchEfficiencyAnalysis.toCostPair (a : SearchEfficiencyAnalysis) :
-    CostPair where
-  cost₁ := a.productionCost
-  cost₂ := -a.benefit
-
-/-- A modifier is search-efficient iff its benefit exceeds its cost. -/
-def SearchEfficiencyAnalysis.isEfficient (a : SearchEfficiencyAnalysis) :
-    Bool :=
-  decide (a.benefit > a.productionCost)
 
 end Core.SearchEfficiency

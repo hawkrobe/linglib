@@ -712,10 +712,16 @@ private theorem expectedRank_cross_le_aux (ra : RationalAction S A) (s : S) :
             linarith [expectedRank_ge_one ra s ((insert a₂ C).erase c) a₂ ha₂_mem_erase
               (fun b hb => hpos₂ b (Finset.mem_of_mem_erase hb))]
 
-/-- **Theorem 10 (monotonicity)**: higher score implies lower expected rank.
+/-- **Expected rank monotonicity**: higher score implies lower expected rank.
 
     If `v(a₁) > v(a₂)` then `E[rank(a₁)] < E[rank(a₂)]`: the alternative
     with higher ratio-scale value is expected to be ranked higher (closer to 1).
+
+    This is a natural property of the Plackett–Luce model (@cite{luce-1959},
+    @cite{plackett-1975}) but does not appear as a formal theorem in either
+    source. @cite{luce-1959} proves ranking probability decomposition (Theorem 9)
+    and @cite{marden-1995} covers estimation, but neither states the expected
+    rank monotonicity result explicitly.
 
     The proof uses conditional expectation decomposition:
     `E[rank(a, T)] = 1 + ∑_{b≠a} pChoice(b,T) · E[rank(a, T\{b})]`
@@ -792,5 +798,94 @@ theorem expectedRank_lt_of_score_gt (ra : RationalAction S A) (s : S)
             mul_le_mul_of_nonneg_left hE_cross (le_of_lt (pChoice_pos ha₁' hpos'))
     -- Combine: 1 + p₂*E₁' + Σ₁ < 1 + p₁*E₂' + Σ₂
     linarith [Finset.sum_le_sum h_sums]
+
+/-- **Equal scores imply equal expected ranks**: if `score(a₁) = score(a₂)`,
+    then `E[rank(a₁, T)] = E[rank(a₂, T)]`.
+
+    The proof uses the conditional expectation decomposition and antisymmetry:
+    decompose both expected ranks by first element, show the common terms are
+    equal by induction, and show the cross terms are equal by applying
+    `expectedRank_cross_le_aux` in both directions (since `v(a₁) ≥ v(a₂)` and
+    `v(a₂) ≥ v(a₁)` both hold). -/
+theorem expectedRank_eq_of_score_eq (ra : RationalAction S A) (s : S)
+    (T : Finset A) (a₁ a₂ : A) (ha₁ : a₁ ∈ T) (ha₂ : a₂ ∈ T)
+    (hne : a₁ ≠ a₂)
+    (hpos : ∀ a ∈ T, 0 < ra.score s a)
+    (heq : ra.score s a₁ = ra.score s a₂) :
+    expectedRank ra s T a₁ = expectedRank ra s T a₂ := by
+  suffices h : ∀ (n : ℕ) (T : Finset A), T.card = n → a₁ ∈ T → a₂ ∈ T →
+      (∀ a ∈ T, 0 < ra.score s a) →
+      expectedRank ra s T a₁ = expectedRank ra s T a₂ from
+    h T.card T rfl ha₁ ha₂ hpos
+  intro n; induction n with
+  | zero => intro T hcard h₁; simp [Finset.card_eq_zero.mp hcard] at h₁
+  | succ m ih =>
+    intro T hcard ha₁' ha₂' hpos'
+    -- Decompose both expected ranks
+    rw [expectedRank_decomp ra s T a₁ ha₁' hpos',
+        expectedRank_decomp ra s T a₂ ha₂' hpos']
+    -- Split sums to isolate cross terms
+    have ha₂_e₁ : a₂ ∈ T.erase a₁ := Finset.mem_erase.mpr ⟨hne.symm, ha₂'⟩
+    have ha₁_e₂ : a₁ ∈ T.erase a₂ := Finset.mem_erase.mpr ⟨hne, ha₁'⟩
+    rw [← Finset.add_sum_erase _ _ ha₂_e₁, ← Finset.add_sum_erase _ _ ha₁_e₂]
+    rw [show (T.erase a₂).erase a₁ = (T.erase a₁).erase a₂ from Finset.erase_right_comm]
+    -- Common terms equal by IH
+    have h_common : ∀ b ∈ (T.erase a₁).erase a₂,
+        ra.pChoice s T b * expectedRank ra s (T.erase b) a₁ =
+        ra.pChoice s T b * expectedRank ra s (T.erase b) a₂ := by
+      intro b hb
+      congr 1
+      have hb_mem : b ∈ T := Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hb)
+      have hb_ne₁ : b ≠ a₁ := (Finset.mem_erase.mp (Finset.mem_of_mem_erase hb)).1
+      have hb_ne₂ : b ≠ a₂ := (Finset.mem_erase.mp hb).1
+      exact ih (T.erase b)
+        (by rw [Finset.card_erase_of_mem hb_mem, hcard]; omega)
+        (Finset.mem_erase.mpr ⟨hb_ne₁.symm, ha₁'⟩)
+        (Finset.mem_erase.mpr ⟨hb_ne₂.symm, ha₂'⟩)
+        (score_pos_erase hpos' b)
+    -- pChoice equality: pChoice(a₁,T) = pChoice(a₂,T) since scores are equal
+    have hp_eq : ra.pChoice s T a₁ = ra.pChoice s T a₂ := by
+      have hratio := ra.pChoice_ratio s T a₁ a₂ ha₁' ha₂'
+      rw [heq] at hratio
+      exact mul_right_cancel₀ (ne_of_gt (hpos' a₂ ha₂')) hratio
+    -- Cross-set equality by antisymmetry
+    have h_cross : expectedRank ra s (T.erase a₂) a₁ =
+        expectedRank ra s (T.erase a₁) a₂ := by
+      apply le_antisymm
+      · conv_lhs => rw [show T.erase a₂ = insert a₁ ((T.erase a₁).erase a₂) from by
+          rw [← Finset.erase_right_comm]; exact (Finset.insert_erase ha₁_e₂).symm]
+        conv_rhs => rw [show T.erase a₁ = insert a₂ ((T.erase a₁).erase a₂) from
+          (Finset.insert_erase ha₂_e₁).symm]
+        exact expectedRank_cross_le_aux ra s _ _ a₁ a₂ rfl
+          (mt Finset.mem_of_mem_erase (Finset.notMem_erase a₁ T))
+          (Finset.notMem_erase a₂ _)
+          (fun b hb => hpos' b (by
+            rcases Finset.mem_insert.mp hb with rfl | hb'
+            · assumption
+            · exact Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hb')))
+          (fun b hb => hpos' b (by
+            rcases Finset.mem_insert.mp hb with rfl | hb'
+            · assumption
+            · exact Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hb')))
+          (le_of_eq heq.symm)
+      · conv_lhs => rw [show T.erase a₁ = insert a₂ ((T.erase a₁).erase a₂) from
+          (Finset.insert_erase ha₂_e₁).symm]
+        conv_rhs => rw [show T.erase a₂ = insert a₁ ((T.erase a₁).erase a₂) from by
+          rw [← Finset.erase_right_comm]; exact (Finset.insert_erase ha₁_e₂).symm]
+        exact expectedRank_cross_le_aux ra s _ _ a₂ a₁ rfl
+          (Finset.notMem_erase a₂ _)
+          (mt Finset.mem_of_mem_erase (Finset.notMem_erase a₁ T))
+          (fun b hb => hpos' b (by
+            rcases Finset.mem_insert.mp hb with rfl | hb'
+            · assumption
+            · exact Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hb')))
+          (fun b hb => hpos' b (by
+            rcases Finset.mem_insert.mp hb with rfl | hb'
+            · assumption
+            · exact Finset.mem_of_mem_erase (Finset.mem_of_mem_erase hb')))
+          (le_of_eq heq)
+    -- Combine: rewrite common sums, cross terms, and pChoice
+    have h_sum_eq := Finset.sum_congr rfl h_common
+    rw [h_sum_eq, hp_eq, h_cross]
 
 end Core

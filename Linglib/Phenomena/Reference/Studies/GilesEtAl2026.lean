@@ -1,5 +1,6 @@
 import Linglib.Core.SearchEfficiency
 import Linglib.Core.Agent.SignalDetection
+import Linglib.Core.Agent.Psychophysics
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Phenomena.Reference.Studies.KursatDegen2021
 import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
@@ -123,15 +124,15 @@ def exp1_sHighRLow : BayesianCoefficient :=
 def exp2_intercept : BayesianCoefficient :=
   { β := 0.97, se := 0.09, ci_lower := 0.80, ci_upper := 1.14 }
 
-/-- Low-frequency colour terms vs high-frequency (Table 2).
-    Small negative β; CI includes zero → frequency does NOT explain
-    colour's disproportionate use. -/
+/-- Low-frequency colour terms (Table 2, sum contrasts).
+    Small negative β relative to grand mean; CI includes zero →
+    frequency does NOT explain colour's disproportionate use. -/
 def exp2_lf_colour : BayesianCoefficient :=
   { β := -0.20, se := 0.12, ci_lower := -0.44, ci_upper := 0.03 }
 
-/-- Orientation-redundant vs colour-redundant HF (Table 2).
-    Large negative β; CI excludes zero → colour is overinformed
-    SIGNIFICANTLY MORE than orientation. -/
+/-- Orientation-redundant (Table 2, sum contrasts).
+    Large negative β relative to grand mean; CI excludes zero →
+    colour is overinformed SIGNIFICANTLY MORE than orientation. -/
 def exp2_orientation : BayesianCoefficient :=
   { β := -0.97, se := 0.12, ci_lower := -1.20, ci_upper := -0.75 }
 
@@ -242,30 +243,7 @@ theorem frequency_does_not_explain :
     ¬exp2_lf_colour.isSignificant := by native_decide
 
 -- ============================================================================
--- §9. Bridge: Modality
--- ============================================================================
-
-/-- Colour is primarily visual; material in this study is auditory.
-    The search efficiency effect generalises across modalities. -/
-theorem cross_modal_generalisation :
-    Core.PropertyDomain.primaryModality .color = .visual ∧
-    Core.PropertyDomain.primaryModality .material = .haptic ∧
-    -- Yet both show search efficiency effects
-    exp1_sHighRLow.isSignificant := by
-  exact ⟨rfl, rfl, by native_decide⟩
-
-/-- Colour and orientation are both visually privileged features
-    (@cite{wolfe-horowitz-2017}), yet colour is overinformed more.
-    Visual privileging alone does not explain overinformativeness. -/
-theorem privileging_does_not_explain :
-    Core.PropertyDomain.isVisuallyPrivileged .color ∧
-    Core.PropertyDomain.isVisuallyPrivileged .orientation ∧
-    -- Yet colour >> orientation in overinformativeness
-    exp2_orientation.isSignificant := by
-  exact ⟨rfl, rfl, by native_decide⟩
-
--- ============================================================================
--- §10. Bridge: cs-RSA and Overinformativeness
+-- §9. Bridge: cs-RSA and Overinformativeness
 -- ============================================================================
 
 /-- The cs-RSA model (@cite{degen-etal-2020}) explains redundant
@@ -440,7 +418,7 @@ theorem overmod_monotone_in_likelihood_ratio
     likelihood ratio are all monotonically related — the only regime
     where "higher d'" unambiguously predicts "more overmodification." -/
 theorem one_param_ratio_is_param_ordering
-    (x₁ x₂ : ℚ) (hx₁ : 0 < x₁) (_hx₁' : x₁ < 1)
+    (x₁ x₂ : ℚ) (_hx₁ : 0 < x₁) (_hx₁' : x₁ < 1)
     (_hx₂ : 0 < x₂) (_hx₂' : x₂ < 1) :
     x₁ * (1 - x₂) > x₂ * (1 - x₁) ↔ x₁ > x₂ := by
   rw [gt_iff_lt, gt_iff_lt]
@@ -450,15 +428,12 @@ theorem one_param_ratio_is_param_ordering
 -- §15. Symmetry-Breaking: Why Colour Is Special
 -- ============================================================================
 
-/-- The d'/likelihood-ratio model predicts that equal-d' features should
-    be overinformed equally. Colour and orientation have equal d' (both
-    discrimination ≈ 0.98). Yet Exp 2 shows colour >> orientation.
+/-- The d'/likelihood-ratio model's monotonicity is *correct within*
+    a feature (higher d' → more overmod, §14) but *incomplete across*
+    features: two features with equal d' can have different overmod rates.
 
-    The model's monotonicity is *correct within* a feature: higher d' →
-    more overmod. But it is *incomplete across* features: something beyond
-    d' distinguishes colour from orientation.
-
-    @cite{giles-etal-2026} propose two accounts:
+    @cite{giles-etal-2026} propose two accounts for the residual colour
+    privilege:
 
     1. **Category optimality**: Colour naming systems are near-optimal
        partitions of perceptual space (@cite{regier-etal-2007},
@@ -473,18 +448,63 @@ theorem one_param_ratio_is_param_ordering
 
     Both accounts locate the symmetry-breaking *outside* the single-trial
     noise channel — in the ecological statistics of feature reliability
-    across contexts. The d'/PoE model captures within-trial perception;
-    the colour privilege reflects cross-trial learning or evolutionary
-    optimisation of category boundaries. -/
-theorem equal_dprime_different_overmod :
-    -- Theory: equal discrimination for colour and orientation
-    RSA.Noise.colorDiscrimination = RSA.Noise.orientationDiscrimination ∧
-    -- Data: colour is overinformed MORE than orientation
-    exp2_orientation.isSignificant ∧ exp2_orientation.β < 0 ∧
-    -- The model correctly predicts monotonicity WITHIN a feature...
+    across contexts. -/
+theorem within_feature_monotonicity_but_not_across :
+    -- The model correctly predicts ordering WITHIN features...
     RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination ∧
+    RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination ∧
     -- ...but fails to distinguish BETWEEN equal-d' features
-    RSA.Noise.colorDiscrimination = RSA.Noise.orientationDiscrimination := by
+    RSA.Noise.colorDiscrimination = RSA.Noise.orientationDiscrimination ∧
+    -- Data: colour >> orientation despite equal d'
+    exp2_orientation.isSignificant ∧ exp2_orientation.β < 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+
+-- ============================================================================
+-- §15. Bridge: PoE Architecture from Dimension Independence
+-- ============================================================================
+
+/-- The cs-RSA Product of Experts architecture — φ(u, o) = ∏ features,
+    noiseChannel_f(u, o) — is the UNIQUE factoring consistent with
+    @cite{luce-1959}'s dimension independence axiom, as proven by
+    `Core.multidimensional_decomposition` in Psychophysics.lean.
+
+    The argument chain:
+    1. Dimension independence (@cite{luce-1959} §2.C): the ratio
+       v(a[d↦s])/v(a) depends only on dimension d and the old/new values
+    2. Decomposition theorem: under independence, v(a) = C · ∏ scale_d(a_d)
+    3. cs-RSA instantiation: scale_color(match) = colorMatch = 0.99,
+       scale_color(mismatch) = colorMismatch = 0.01, etc.
+    4. @cite{giles-etal-2026} ground the scale parameters in d' measured
+       via psychophysical staircases
+
+    @cite{degen-etal-2020} already proves the factoring holds for the
+    concrete φ (`φ_product_of_experts`). This bridge connects to the
+    ABSTRACT infrastructure that shows the factoring is forced by
+    independence — not an ad hoc modelling choice. -/
+noncomputable def poeNoiseScales : Core.MultidimStimulus (Fin 2) (fun _ => Bool) where
+  scale
+    | 0, true  => ↑RSA.Noise.sizeMatch
+    | 0, false => ↑RSA.Noise.sizeMismatch
+    | 1, true  => ↑RSA.Noise.colorMatch
+    | 1, false => ↑RSA.Noise.colorMismatch
+  scale_pos
+    | 0, true  => by norm_num [RSA.Noise.sizeMatch]
+    | 0, false => by norm_num [RSA.Noise.sizeMismatch]
+    | 1, true  => by norm_num [RSA.Noise.colorMatch]
+    | 1, false => by norm_num [RSA.Noise.colorMismatch]
+
+/-- Map each world to its (sizeMatch?, colorMatch?) feature vector,
+    relative to the "small blue" target from @cite{degen-etal-2020}. -/
+def worldStimulus : DegenEtAl2020.World → (Fin 2 → Bool)
+  | .bigBlue   => ![true,  true]
+  | .bigRed    => ![true,  false]
+  | .smallBlue => ![false, true]
+
+/-- The cs-RSA PoE φ function, expressed as a `multidim_luce` model.
+    The score for each world is ∏ d, scale_d(stimulus(w)(d)), which
+    equals sizeParam × colorParam — exactly the Product of Experts. -/
+noncomputable def poeAsMultidimLuce :
+    Core.RationalAction Unit DegenEtAl2020.World :=
+  Core.multidim_luce poeNoiseScales worldStimulus
 
 end Phenomena.Reference.Studies.GilesEtAl2026

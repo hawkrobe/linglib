@@ -3,6 +3,7 @@ import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Core.Discourse.ReferentialForm
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
+import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
 
 /-!
 # @cite{rosa-arnold-2017}
@@ -392,5 +393,47 @@ theorem dual_path_to_ordering :
     -- Both receiving dimensions independently predict ordering (Arnold et al.)
     daCorpusResult.heavinessSig ∧ daCorpusResult.newnessSig := by
   refine ⟨by decide, by native_decide, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 11. Cross-Study Bridge: @cite{kehler-rohde-2013}
+-- ════════════════════════════════════════════════════
+
+open Phenomena.Reference.Studies.KehlerRohde2013
+
+/-- @cite{kehler-rohde-2013}'s Bayesian decomposition predicts that
+    P(pronoun | referent) depends only on topichood, not on semantic
+    factors like thematic role. This study directly violates that
+    prediction: goals get more pronouns than sources in the same
+    grammatical position (Exp 1: 64% vs 37% for subjects).
+
+    The violation connects to K&R's Table 9 data, which shows that
+    P(pronoun | referent) DOES vary with topichood (passive subject
+    87% vs active subject 62%). Rosa & Arnold extend this: thematic
+    roles also contribute to topichood/predictability, not just
+    syntactic construction. -/
+theorem independence_violated_bridges_to_KR :
+    -- K&R: passive subjects get more pronouns than active subjects
+    pron_passive_subj > pron_active_subj ∧
+    -- Rosa & Arnold: goals get more pronouns than sources (same position)
+    exp1_goal_subj_diff.percent > exp1_source_subj_diff.percent := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- K&R's Table 2 shows that Occasion and Result are Goal-biased
+    (18% and 8% Source respectively). This study's Exp 2 coherence
+    interaction confirms: Occasion/Result continuations amplify the
+    goal bias (β=1.22, p=.002), while Other coherence (including
+    Explanation, which K&R show is Source-biased at 80%) does not
+    reach significance (β=0.86, p=.12). The coherence-specific
+    biases from K&R's passage completion data predict the interaction
+    pattern in this study's sentence completion data. -/
+theorem coherence_interaction_matches_KR_biases :
+    -- K&R: Occasion is Goal-biased, Explanation is Source-biased
+    cr_occasion.sourceGivenCR < 50 ∧
+    cr_explanation.sourceGivenCR > 50 ∧
+    -- Rosa & Arnold: Occasion/Result amplifies goal bias
+    occasionResult_interaction.significant = true ∧
+    -- Rosa & Arnold: Other (Explanation-heavy) does not
+    other_interaction.significant = false := by
+  exact ⟨by native_decide, by native_decide, rfl, rfl⟩
 
 end Phenomena.Reference.Studies.RosaArnold2017

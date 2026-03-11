@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.229.146] - 2026-03-11
+
+### Added
+- **Core/GeneralisedSurprisal.lean**: New Core infrastructure for generalised surprisal (Giulianelli et al. 2026) — `WarpingFn`, `ScoringFn`, `RepLevel` (5 levels), `DistanceSummary` (mean/min/max), `SurprisalConfig`, `standardSurprisal`, `informationValue`, `PsychMeasure` (10 types), `ias_recovers_surprisal`
+- **Phenomena/Processing/Studies/GiulianelliEtAl2026.lean**: Formalize Giulianelli et al. 2026 (JML 148) — `Dataset`, `peakHorizon`, `peakLevel`, `LayerPattern` (unimodal/uShaped/sShaped), `layerPattern`, dataset-dependent `iasOutperformsSurprisal`, `observedSign` (P600 sign reversal), `highComplementarity`, `surprisalBestMatchesSummary` (.min), 12 theorems including `p600_sign_reversal`, `explicit_rt_pattern_dissociation`, `sprt_ias_advantage_dataset_dependent`, `complementarity_dissociation`
+- **MemorySurprisal/Basic.lean** §5: Bridge to Generalised Surprisal — `memorySurprisalConfig` connecting memory-surprisal trade-off to standard surprisal configuration; IAS extends by varying prediction resolution
+- **Core/Agent/RankOrderings.lean**: `expectedRank_eq_of_score_eq` — equal scores imply equal expected ranks (Plackett–Luce)
+- **Phenomena/Reference/Studies/KehlerRohde2013.lean**: Kehler & Rohde 2013 coherence-driven reference formalization
+- **blog/data/references.bib**: Add giulianelli-etal-2026, giulianelli-opedal-cotterell-2024, levy-2008, smith-levy-2013, meister-giulianelli-pimentel-2024
+
+### Changed
+- **GilesEtAl2026.lean**: Improve Exp 2 coefficient docstrings (sum contrasts); add PoE Psychophysics bridge
+- **Core/PropertyDomain.lean**: Remove `Modality`, `primaryModality`, `isVisuallyPrivileged` (belonged in study files, not Core)
+- **Core/SearchEfficiency.lean**: Remove unused `SearchEfficiencyAnalysis`, `distinctiveness`, `Efficiency` import
+
 ## [0.229.145] - 2026-03-11
 
 ### Added

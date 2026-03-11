@@ -24,28 +24,9 @@ established relationships to perceptual discriminability:
 - **Size** is privileged but weaker than colour/orientation.
 - **Material** is not visually privileged; its perception often requires
   auditory or haptic verification (@cite{giles-etal-2026}).
-
-The `primaryModality` and `isVisuallyPrivileged` functions make these
-perceptual properties explicit, connecting the linguistic classification
-to the psychophysics infrastructure in `Core.Agent.SignalDetection` and
-`Core.Agent.Psychophysics`.
 -/
 
 namespace Core
-
--- ═══════════════════════════════════════════
--- Modality
--- ═══════════════════════════════════════════
-
-/-- Sensory modality through which a property is primarily verified
-    during perceptual search. @cite{giles-etal-2026} show that search
-    efficiency generalises across modalities: discriminability drives
-    overinformativeness for both visual colour and auditory material. -/
-inductive Modality where
-  | visual
-  | auditory
-  | haptic
-  deriving Repr, DecidableEq, BEq
 
 -- ═══════════════════════════════════════════
 -- Property Domains
@@ -177,35 +158,5 @@ def PropertyDomain.requiresComparisonClass : PropertyDomain → Bool
   | .material      => false  -- wooden, metal, ...
   | .orientation   => false  -- vertical, horizontal, ...
   | .state         => false  -- full, wet, dead, ...
-
-/-- The primary modality through which a property domain is verified
-    in typical referential contexts. This is a default — experimental
-    designs may present properties in non-default modalities (e.g.,
-    @cite{giles-etal-2026} present material auditorily via impact sounds).
-
-    The distinction matters for search efficiency: visual attributes
-    can be verified by a glance, while auditory or haptic attributes
-    require more effortful verification. -/
-def PropertyDomain.primaryModality : PropertyDomain → Modality
-  | .color       => .visual
-  | .size        => .visual
-  | .orientation => .visual
-  | .material    => .haptic   -- visual texture also possible; haptic is primary
-  | .sensory     => .haptic
-  | _            => .visual   -- evaluative, psychological, state: no strong default
-
-/-- Whether a property domain corresponds to a privileged visual feature
-    that guides pre-attentive search (@cite{wolfe-horowitz-2017}). Privileged
-    features produce pop-out effects: targets with distinctive values are
-    found in constant time regardless of display size.
-
-    @cite{giles-etal-2026} show that colour and orientation are both
-    privileged, yet colour is disproportionately overinformed — privileging
-    alone does not explain colour's special status in reference production. -/
-def PropertyDomain.isVisuallyPrivileged : PropertyDomain → Bool
-  | .color       => true
-  | .orientation => true
-  | .size        => true   -- size pop-out is weaker than colour
-  | _            => false
 
 end Core

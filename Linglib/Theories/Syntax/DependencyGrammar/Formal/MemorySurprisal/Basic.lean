@@ -1,5 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Linglib.Core.ProcessingModel
+import Linglib.Core.GeneralisedSurprisal
 
 /-!
 # Memory-Surprisal Trade-off Framework
@@ -311,5 +312,32 @@ theorem information_locality_generalizes_dep_locality :
   -- If dependency length is bounded by L, then I_t ≈ 0 for t > L.
   -- The weighted sum Σ t·I_t is then bounded by L · Σ I_t = L · I_total.
   -- Minimizing dependency length minimizes this bound.
+
+-- ============================================================================
+-- §5: Bridge to Generalised Surprisal
+-- ============================================================================
+
+/-! ### Bridge: Memory-Surprisal ↔ Generalised Surprisal
+
+The memory-surprisal trade-off operates at the standard surprisal
+configuration: negLog warping, indicator scoring, horizon 1, predictive
+level. The trade-off curve varies *memory capacity* while holding the
+prediction resolution fixed.
+
+@cite{giulianelli-etal-2026} generalizes this by also varying the
+resolution parameters (forecast horizon h and representational level l),
+showing that different psycholinguistic measures are best predicted at
+different resolutions. The memory-surprisal trade-off is the special case
+where prediction resolution is held constant and only the memory budget
+varies. -/
+
+/-- The generalised surprisal configuration used by the memory-surprisal
+trade-off: standard surprisal (negLog × indicator × h=1 × predictive).
+
+The trade-off curve parametrizes over memory encodings while holding
+this resolution fixed. IAS extends this by also parametrizing over the
+prediction resolution (horizon and representational level). -/
+def memorySurprisalConfig : Core.GeneralisedSurprisal.SurprisalConfig :=
+  Core.GeneralisedSurprisal.standardSurprisal
 
 end DepGrammar.MemorySurprisal
