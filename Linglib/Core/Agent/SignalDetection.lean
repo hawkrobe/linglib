@@ -164,6 +164,42 @@ theorem dPrimeFromRates_roundtrip (m : SDTModel) :
   rw [probit_normalCDF, probit_normalCDF]; ring
 
 -- ============================================================================
+-- §3b. Probit Monotonicity
+-- ============================================================================
+
+/-- Probit is strictly monotone on (0, 1): p₁ < p₂ → probit(p₁) < probit(p₂).
+    Since normalCDF is strictly monotone and probit is its inverse, the
+    ordering is preserved. -/
+theorem probit_strictMono {p₁ p₂ : ℝ}
+    (hp₁_lo : 0 < p₁) (hp₁_hi : p₁ < 1)
+    (hp₂_lo : 0 < p₂) (hp₂_hi : p₂ < 1)
+    (h : p₁ < p₂) : probit p₁ < probit p₂ := by
+  by_contra hle
+  push_neg at hle
+  have := normalCDF_strictMono.monotone hle
+  rw [probit_spec hp₁_lo hp₁_hi, probit_spec hp₂_lo hp₂_hi] at this
+  linarith
+
+/-- d' recovered from hit rate H and false alarm rate F is positive
+    iff H > F. This is the fundamental connection between SDT sensitivity
+    and observable discrimination: an observer with d' > 0 can tell
+    signal from noise above chance. -/
+theorem dPrimeFromRates_pos_iff {H F : ℝ}
+    (hH_lo : 0 < H) (hH_hi : H < 1) (hF_lo : 0 < F) (hF_hi : F < 1) :
+    0 < dPrimeFromRates H F ↔ F < H := by
+  unfold dPrimeFromRates
+  constructor
+  · intro hsub
+    by_contra hle; push_neg at hle
+    have : probit H ≤ probit F := by
+      rcases eq_or_lt_of_le hle with rfl | hlt
+      · exact le_refl _
+      · exact le_of_lt (probit_strictMono hH_lo hH_hi hF_lo hF_hi hlt)
+    linarith
+  · intro hlt
+    linarith [probit_strictMono hF_lo hF_hi hH_lo hH_hi hlt]
+
+-- ============================================================================
 -- §4. ROC Curve
 -- ============================================================================
 

@@ -6,7 +6,7 @@ import Linglib.Core.PropertyDomain
 /-!
 # Unified Noise Theory for RSA
 
-@cite{waldon-degen-2021} @cite{kursat-degen-2021}
+@cite{waldon-degen-2021} @cite{kursat-degen-2021} @cite{giles-etal-2026}
 
 This module provides a unified treatment of noise in RSA models.
 
@@ -17,13 +17,32 @@ This module provides a unified treatment of noise in RSA models.
 | @cite{bergen-goodman-2015} | Channel | Transmission |
 | @cite{degen-etal-2020} | Semantic | Perception |
 | @cite{kursat-degen-2021} | Perceptual | Verification |
+| @cite{giles-etal-2026} | Search efficiency | Psychophysics |
 
 ## Insight
 
-All three use the same underlying operation:
+All four use the same underlying operation:
 ```
 noiseChannel(match, mismatch, b) = match * b + mismatch * (1 - b)
 ```
+
+## Perceptual Grounding
+
+@cite{giles-etal-2026} provide experimental evidence for the perceptual
+grounding of noise parameters: discriminability (noise gap) is measured
+via psychophysical staircases, connecting the abstract match/mismatch
+parameters to observable perceptual thresholds. Their Exp 1 shows that
+overinformativeness tracks discriminability × sufficiency across both
+visual (colour) and auditory (material) modalities.
+
+However, noise discrimination alone does not explain why colour is
+disproportionately overinformed relative to other privileged features
+like orientation (Exp 2). The residual colour privilege may reflect
+the optimality of colour naming systems (@cite{regier-etal-2007},
+@cite{zaslavsky-etal-2019}): colour categories are partitioned to
+maximise perceptual discriminability, making colour inherently more
+search-efficient than attributes whose category boundaries are not
+perceptually optimised.
 
 ## Current Status: Shallow Integration
 
@@ -122,6 +141,18 @@ def materialMatch : ℚ := 7/10
 def materialMismatch : ℚ := 3/10
 def materialDiscrimination : ℚ := materialMatch - materialMismatch  -- 0.40
 
+/-- Orientation parameters: high discrimination (like colour).
+    @cite{giles-etal-2026} Exp 2 confirms ≥99% labelling accuracy for
+    orientation (vertical vs horizontal), comparable to colour. Orientation
+    is a privileged visual feature (@cite{wolfe-horowitz-2017}) capable of
+    producing pop-out effects and guiding pre-attentive search.
+
+    Despite equal discrimination, colour is overinformed more than
+    orientation — this dissociation is the key finding of Exp 2. -/
+def orientationMatch : ℚ := 99/100
+def orientationMismatch : ℚ := 1/100
+def orientationDiscrimination : ℚ := orientationMatch - orientationMismatch  -- 0.98
+
 -- Discrimination Ordering
 
 /-- Color has higher discrimination than size -/
@@ -132,17 +163,29 @@ theorem color_gt_size : colorDiscrimination > sizeDiscrimination := by
 theorem size_gt_material : sizeDiscrimination > materialDiscrimination := by
   native_decide
 
-/-- Full ordering: color > size > material -/
+/-- Colour and orientation have equal discrimination. -/
+theorem color_eq_orientation :
+    colorDiscrimination = orientationDiscrimination := by
+  native_decide
+
+/-- Full ordering: color = orientation > size > material -/
 theorem discrimination_ordering :
     colorDiscrimination > sizeDiscrimination ∧
     sizeDiscrimination > materialDiscrimination :=
   ⟨color_gt_size, size_gt_material⟩
 
+/-- The full ordering including orientation. -/
+theorem discrimination_ordering_full :
+    colorDiscrimination = orientationDiscrimination ∧
+    colorDiscrimination > sizeDiscrimination ∧
+    sizeDiscrimination > materialDiscrimination :=
+  ⟨color_eq_orientation, color_gt_size, size_gt_material⟩
+
 -- Perceptual Difficulty Connection
 
 /-- Perceptual difficulty levels -/
 inductive PerceptualDifficulty where
-  | easy    -- Color-like
+  | easy    -- Color-like, orientation-like
   | medium  -- Size-like
   | hard    -- Material-like
   deriving DecidableEq, BEq, Repr
@@ -156,6 +199,32 @@ def difficultyToDiscrimination : PerceptualDifficulty → ℚ
 /-- Easier perception → higher discrimination -/
 theorem easier_higher_discrimination :
     difficultyToDiscrimination .easy > difficultyToDiscrimination .hard := by
+  native_decide
+
+-- ════════════════════════════════════════════════════
+-- Colour Privilege: Limits of Noise-Based Prediction
+-- ════════════════════════════════════════════════════
+
+/-- The noise model predicts that attributes with equal discrimination
+    should be overinformed at equal rates. Colour and orientation have
+    equal noise discrimination (0.98), so the noise model predicts no
+    preference between them.
+
+    @cite{giles-etal-2026} Exp 2 falsifies this prediction: colour is
+    overinformed significantly more than orientation (β = −0.97,
+    95% CI = [−1.20, −0.75]) even when controlling for:
+    - Perceptual discriminability (both ≥99% labelling accuracy)
+    - Contextual distinctiveness (both equally salient)
+    - Production effort (button-click equalises effort)
+    - Word frequency (low-frequency colour terms tested)
+
+    This means the noise model is *necessary but not sufficient*:
+    discriminability drives overinformativeness (Exp 1), but something
+    additional about colour — plausibly the perceptual optimality of
+    colour category boundaries (@cite{regier-etal-2007}) — produces a
+    residual privilege. -/
+theorem noise_model_predicts_no_colour_orientation_difference :
+    colorDiscrimination = orientationDiscrimination := by
   native_decide
 
 /-- Product discrimination is monotone: when match scores are individually
@@ -194,7 +263,8 @@ end RSA.Noise
 /-- Map a `PropertyDomain` to its established noise discrimination value.
     Returns `none` for domains without empirically grounded noise params. -/
 def Core.PropertyDomain.noiseDiscrimination : Core.PropertyDomain → Option ℚ
-  | .color    => some RSA.Noise.colorDiscrimination    -- 0.98
-  | .size     => some RSA.Noise.sizeDiscrimination     -- 0.60
-  | .material => some RSA.Noise.materialDiscrimination -- 0.40
-  | _         => none
+  | .color       => some RSA.Noise.colorDiscrimination       -- 0.98
+  | .orientation => some RSA.Noise.orientationDiscrimination  -- 0.98
+  | .size        => some RSA.Noise.sizeDiscrimination         -- 0.60
+  | .material    => some RSA.Noise.materialDiscrimination     -- 0.40
+  | _            => none

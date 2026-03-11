@@ -125,6 +125,7 @@ import Linglib.Core.Lexical.PersonCategory
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
 import Linglib.Core.Efficiency
+import Linglib.Core.SearchEfficiency
 import Linglib.Core.InformationTheory
 import Linglib.Core.Distributions
 import Linglib.Core.Divergence
@@ -939,6 +940,7 @@ import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
 import Linglib.Phenomena.Reference.Studies.Percus2000
 import Linglib.Phenomena.Reference.Studies.QingFranke2015
 import Linglib.Phenomena.Reference.Studies.KursatDegen2021
+import Linglib.Phenomena.Reference.Studies.GilesEtAl2026
 import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.ScalarImplicatures.Basic
