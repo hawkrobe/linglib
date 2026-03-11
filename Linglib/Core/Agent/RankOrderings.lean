@@ -220,22 +220,164 @@ theorem mem_allRankings_iff (T : Finset A) (ranking : List A) :
     rw [← List.mem_toFinset (l := ranking), hfs,
         Multiset.mem_toList, Finset.mem_val]
 
+-- ============================================================================
+-- Decomposition of allRankings by first element
+-- ============================================================================
+
+/-- Cons into allRankings: if `rest ∈ allRankings (T.erase a)` and `a ∈ T`,
+    then `a :: rest ∈ allRankings T`. -/
+private theorem cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
+    (ha : a ∈ T) (hrest : rest ∈ allRankings (T.erase a)) :
+    a :: rest ∈ allRankings T := by
+  rw [mem_allRankings_iff] at hrest ⊢
+  obtain ⟨hfs, hnd⟩ := hrest
+  constructor
+  · simp only [List.toFinset_cons, hfs, Finset.insert_erase ha]
+  · rw [List.nodup_cons]
+    refine ⟨fun h => ?_, hnd⟩
+    exact (Finset.mem_erase.mp (hfs ▸ List.mem_toFinset.mpr h)).1 rfl
+
+/-- Extract first element: if `a :: rest ∈ allRankings T`,
+    then `a ∈ T` and `rest ∈ allRankings (T.erase a)`. -/
+private theorem of_cons_mem_allRankings {T : Finset A} {a : A} {rest : List A}
+    (h : a :: rest ∈ allRankings T) :
+    a ∈ T ∧ rest ∈ allRankings (T.erase a) := by
+  rw [mem_allRankings_iff] at h
+  obtain ⟨hfs, hnd⟩ := h
+  rw [List.nodup_cons] at hnd
+  constructor
+  · have : a ∈ (a :: rest).toFinset := by simp
+    rw [hfs] at this; exact this
+  · rw [mem_allRankings_iff]
+    constructor
+    · rw [List.toFinset_cons] at hfs
+      have ha_nin : a ∉ rest.toFinset := by rw [List.mem_toFinset]; exact hnd.1
+      rw [← hfs, Finset.erase_insert ha_nin]
+    · exact hnd.2
+
+omit [Fintype A] in
+/-- Rankings of a nonempty set are nonempty lists. -/
+private theorem allRankings_ne_nil {T : Finset A} (hT : T.Nonempty)
+    {r : List A} (hr : r ∈ allRankings T) : r ≠ [] := by
+  intro heq; subst heq
+  rw [mem_allRankings_iff] at hr
+  simp at hr
+  exact Finset.Nonempty.ne_empty hT hr.symm
+
+/-- `allRankings T = ⋃_{a ∈ T} image (cons a) (allRankings (T.erase a))`. -/
+private theorem allRankings_eq_biUnion (T : Finset A) (hT : T.Nonempty) :
+    allRankings T = T.biUnion (fun a => (allRankings (T.erase a)).image (List.cons a)) := by
+  ext r
+  simp only [Finset.mem_biUnion, Finset.mem_image]
+  constructor
+  · intro hr
+    have hne := allRankings_ne_nil hT hr
+    obtain ⟨a, rest, rfl⟩ := List.exists_cons_of_ne_nil hne
+    obtain ⟨ha, hrest⟩ := of_cons_mem_allRankings hr
+    exact ⟨a, ha, rest, hrest, rfl⟩
+  · rintro ⟨a, ha, rest, hrest, rfl⟩
+    exact cons_mem_allRankings ha hrest
+
+/-- Cons-images for distinct first elements are disjoint. -/
+private theorem cons_image_pairwise_disjoint (T : Finset A) :
+    (T : Set A).PairwiseDisjoint
+      (fun a => (allRankings (T.erase a)).image (List.cons a)) := by
+  intro a _ b _ hab
+  simp only [Function.onFun, Finset.disjoint_left, Finset.mem_image]
+  rintro r ⟨_, _, rfl⟩ ⟨_, _, h⟩
+  exact hab (List.cons.inj h).1.symm
+
+/-- Decompose a sum over `allRankings T` by first element. -/
+private theorem sum_allRankings_by_first (T : Finset A) (hT : T.Nonempty)
+    (f : List A → ℝ) :
+    ∑ r ∈ allRankings T, f r =
+    ∑ a ∈ T, ∑ rest ∈ allRankings (T.erase a), f (a :: rest) := by
+  rw [allRankings_eq_biUnion T hT, Finset.sum_biUnion (cons_image_pairwise_disjoint T)]
+  congr 1; ext a
+  rw [Finset.sum_image]
+  intro r₁ _ r₂ _ h
+  exact List.cons.inj h |>.2
+
+/-- `rankProb (a :: rest)` factors as `pChoice s T a * rankProb rest`
+    when `(a :: rest).toFinset = T`. -/
+private theorem rankProb_cons_eq (ra : RationalAction S A) (s : S)
+    (T : Finset A) (a : A) (rest : List A)
+    (hfs : (a :: rest).toFinset = T) :
+    rankProb ra s (a :: rest) = ra.pChoice s T a * rankProb ra s rest := by
+  rw [← rankProbRec_eq_rankProb, ← rankProbRec_eq_rankProb]
+  show ra.pChoice s (a :: rest).toFinset a * rankProbRec ra s rest =
+    ra.pChoice s T a * rankProbRec ra s rest
+  rw [hfs]
+
+-- ============================================================================
+-- Theorem 9 completeness: ranking probabilities sum to 1
+-- ============================================================================
+
+/-- Score positivity propagates to erased subsets. -/
+private theorem score_pos_erase {ra : RationalAction S A} {s : S}
+    {T : Finset A} (hpos : ∀ a ∈ T, 0 < ra.score s a)
+    (a : A) : ∀ b ∈ T.erase a, 0 < ra.score s b :=
+  fun b hb => hpos b (Finset.mem_of_mem_erase hb)
+
+/-- Score positivity implies nonzero sum over nonempty sets. -/
+private theorem score_sum_ne_zero {ra : RationalAction S A} {s : S}
+    {T : Finset A} (hT : T.Nonempty) (hpos : ∀ a ∈ T, 0 < ra.score s a) :
+    ∑ b ∈ T, ra.score s b ≠ 0 := by
+  obtain ⟨a, ha⟩ := hT
+  exact ne_of_gt (Finset.sum_pos (fun b hb => hpos b hb) ⟨a, ha⟩)
+
+/-- Core induction: ranking probabilities sum to 1 for any finset
+    with strictly positive scores. -/
+private theorem rankProb_sum_eq_one_aux (ra : RationalAction S A) (s : S) :
+    ∀ (n : ℕ) (T : Finset A), T.card = n → (∀ a ∈ T, 0 < ra.score s a) →
+    ∑ r ∈ allRankings T, rankProb ra s r = 1 := by
+  intro n
+  induction n with
+  | zero =>
+    intro T hcard _
+    have hT_empty : T = ∅ := Finset.card_eq_zero.mp hcard
+    subst hT_empty
+    simp only [allRankings, Finset.empty_val, Multiset.toList_zero, List.permutations_nil,
+               List.toFinset_cons, List.toFinset_nil, Finset.insert_empty]
+    simp [rankProb]
+  | succ n ih =>
+    intro T hcard hpos
+    have hT : T.Nonempty := Finset.card_pos.mp (by omega)
+    rw [sum_allRankings_by_first T hT]
+    have step : ∀ a ∈ T,
+        ∑ rest ∈ allRankings (T.erase a), rankProb ra s (a :: rest) =
+        ra.pChoice s T a := by
+      intro a ha
+      have hcard_erase : (T.erase a).card = n := by
+        rw [Finset.card_erase_of_mem ha, hcard]; omega
+      have hpos_erase := score_pos_erase hpos a
+      have : ∀ rest ∈ allRankings (T.erase a),
+          rankProb ra s (a :: rest) = ra.pChoice s T a * rankProb ra s rest := by
+        intro rest hrest
+        apply rankProb_cons_eq
+        rw [mem_allRankings_iff] at hrest
+        simp [List.toFinset_cons, hrest.1, Finset.insert_erase ha]
+      rw [Finset.sum_congr rfl this, ← Finset.mul_sum]
+      rw [ih (T.erase a) hcard_erase hpos_erase, mul_one]
+    rw [Finset.sum_congr rfl step]
+    exact ra.pChoice_sum_eq_one s T (score_sum_ne_zero hT hpos)
+
 /-- **Ranking probabilities sum to 1** (@cite{luce-1959}, Theorem 9 completeness):
     Over all `n!` permutations of the alternative set, ranking probabilities
     form a proper distribution.
 
     The proof proceeds by induction on `|T|`:
-    - Base: single element, ranking probability is 1.
-    - Step: factor out the first-choice probability (which sums to 1 over
-      first choices by `pChoice_sum_eq_one`), then apply the inductive
-      hypothesis to each `(n-1)`-element ranking. -/
+    - Base (`T = ∅`): `allRankings ∅ = {[]}`, `rankProb [] = 1`.
+    - Step: decompose `allRankings T` by first element, factor out `pChoice`
+      (which sums to 1 by `pChoice_sum_eq_one`), and apply the inductive
+      hypothesis to each `(n-1)`-element ranking.
+
+    Requires strictly positive scores (Luce's ratio scale assumption). -/
 theorem rankProb_sum_eq_one (ra : RationalAction S A) (s : S)
     (T : Finset A) (hT : T.Nonempty)
-    (hpos : ∑ b ∈ T, ra.score s b ≠ 0) :
-    ∑ r ∈ allRankings T, rankProb ra s r = 1 := by
-  -- TODO: induction on T.card, using pChoice_sum_eq_one and
-  -- the recursive decomposition rankProbRec
-  sorry
+    (hpos : ∀ a ∈ T, 0 < ra.score s a) :
+    ∑ r ∈ allRankings T, rankProb ra s r = 1 :=
+  rankProb_sum_eq_one_aux ra s T.card T rfl hpos
 
 -- ============================================================================
 -- Marginalization (recovering pChoice)
@@ -244,6 +386,23 @@ theorem rankProb_sum_eq_one (ra : RationalAction S A) (s : S)
 /-- Rankings starting with a given element `a`. -/
 noncomputable def rankingsStartingWith (T : Finset A) (a : A) : Finset (List A) :=
   (allRankings T).filter (λ r => r.head? = some a)
+
+/-- Rankings starting with `a` biject with `allRankings (T.erase a)` via cons. -/
+private theorem rankingsStartingWith_eq (T : Finset A) (a : A) (ha : a ∈ T) :
+    rankingsStartingWith T a = (allRankings (T.erase a)).image (List.cons a) := by
+  ext r
+  simp only [rankingsStartingWith, Finset.mem_filter, Finset.mem_image]
+  constructor
+  · intro ⟨hr, hhead⟩
+    obtain ⟨a', rest, rfl⟩ : ∃ a' rest, r = a' :: rest := by
+      cases r with
+      | nil => simp at hhead
+      | cons a' rest => exact ⟨a', rest, rfl⟩
+    simp at hhead; subst hhead
+    obtain ⟨_, hrest⟩ := of_cons_mem_allRankings hr
+    exact ⟨rest, hrest, rfl⟩
+  · rintro ⟨rest, hrest, rfl⟩
+    exact ⟨cons_mem_allRankings ha hrest, by simp⟩
 
 /-- **Marginal first-choice** (@cite{luce-1959}, Theorem 9 corollary):
     Summing the ranking probability over all rankings that start with `a`
@@ -254,11 +413,26 @@ noncomputable def rankingsStartingWith (T : Finset A) (a : A) : Finset (List A) 
     alternatives. -/
 theorem rankProb_marginal_first (ra : RationalAction S A) (s : S)
     (T : Finset A) (a : A) (ha : a ∈ T)
-    (hpos : ∑ b ∈ T, ra.score s b ≠ 0) :
+    (hpos : ∀ b ∈ T, 0 < ra.score s b) :
     ∑ r ∈ rankingsStartingWith T a, rankProb ra s r = ra.pChoice s T a := by
-  -- TODO: decompose each ranking as a :: rest, factor out pChoice,
-  -- apply rankProb_sum_eq_one to the (T \ {a}) rankings
-  sorry
+  rw [rankingsStartingWith_eq T a ha]
+  rw [Finset.sum_image (fun r₁ _ r₂ _ h => (List.cons.inj h).2)]
+  have hrw : ∀ rest ∈ allRankings (T.erase a),
+      rankProb ra s (a :: rest) = ra.pChoice s T a * rankProb ra s rest := by
+    intro rest hrest
+    apply rankProb_cons_eq
+    rw [mem_allRankings_iff] at hrest
+    simp [List.toFinset_cons, hrest.1, Finset.insert_erase ha]
+  rw [Finset.sum_congr rfl hrw, ← Finset.mul_sum]
+  have hcard_pos : 0 < (T.erase a).card ∨ (T.erase a).card = 0 := by omega
+  rcases hcard_pos with hcp | hcp
+  · rw [rankProb_sum_eq_one_aux ra s (T.erase a).card (T.erase a) rfl
+          (score_pos_erase hpos a), mul_one]
+  · have : T.erase a = ∅ := Finset.card_eq_zero.mp hcp
+    simp only [this, allRankings, Finset.empty_val, Multiset.toList_zero,
+               List.permutations_nil, List.toFinset_cons, List.toFinset_nil,
+               Finset.insert_empty, Finset.sum_singleton, rankProb]
+    simp [mul_one]
 
 -- ============================================================================
 -- Expected rank (Theorem 10)
@@ -284,17 +458,25 @@ noncomputable def expectedRank (ra : RationalAction S A) (s : S)
     If `v(a₁) > v(a₂)` then `E[rank(a₁)] < E[rank(a₂)]`: the alternative
     with higher ratio-scale value is expected to be ranked higher (closer to 1).
 
-    The proof uses the marginal decomposition: for each position `k`,
-    the probability that `a₁` lands at position `k` exceeds the probability
-    that `a₂` lands there (by IIA and the score ordering), which makes
-    `a₁`'s expected rank stochastically dominated by `a₂`'s. -/
+    Proof sketch: define the swap involution `φ` that exchanges `a₁ ↔ a₂` in
+    each ranking. Then `2(E[rank(a₂)] - E[rank(a₁)]) = ∑_r (P(r) - P(φ(r))) ·
+    (rank(r,a₂) - rank(r,a₁))`. Each term is non-negative because:
+    - When `a₁` precedes `a₂` in `r`, both factors are positive: the
+      score-ratio form shows `P(r) > P(φ(r))` (the tail sums between the
+      swapped positions each increase by `score(a₁) - score(a₂) > 0`), and
+      `rank(r,a₂) > rank(r,a₁)`.
+    - When `a₂` precedes `a₁`, both factors are negative.
+    At least one term is strictly positive (take `r` with `a₁` first). -/
 theorem expectedRank_lt_of_score_gt (ra : RationalAction S A) (s : S)
     (T : Finset A) (a₁ a₂ : A) (ha₁ : a₁ ∈ T) (ha₂ : a₂ ∈ T)
     (hne : a₁ ≠ a₂)
-    (hpos : ∑ b ∈ T, ra.score s b ≠ 0)
+    (hpos : ∀ a ∈ T, 0 < ra.score s a)
     (hgt : ra.score s a₁ > ra.score s a₂) :
     expectedRank ra s T a₁ < expectedRank ra s T a₂ := by
-  -- TODO: decompose by position, use pChoice monotonicity at each position
+  -- TODO: formalize the swap involution pairing argument from the docstring.
+  -- Key sorry'd step: rankProb r > rankProb (swap r) when a₁ precedes a₂,
+  -- which follows from the telescoping product ∏_{p₁<k≤p₂} (D_k+δ)/D_k > 1
+  -- where δ = score(a₁) - score(a₂) > 0 and D_k are tail sums.
   sorry
 
 end Core
