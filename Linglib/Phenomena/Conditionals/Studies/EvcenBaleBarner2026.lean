@@ -3,6 +3,7 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Competence
+import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 
 /-!
 # @cite{evcen-bale-barner-2026} — Conditional Perfection
@@ -684,18 +685,138 @@ The theory's prediction chain depends entirely on pragmatic factors
 (QUD, speaker knowledge, exhaustification). Two independent lines of evidence
 confirm the pragmatic nature:
 
-1. **Formal**: `perfection_not_entailed` proves the biconditional is not
-   semantically entailed by the material conditional.
+1. **Formal**: `perfection_not_entailed_variablyStrict` proves the biconditional
+   is not semantically entailed even under Stalnaker/Lewis variably strict
+   semantics — the framework the paper adopts. This is stronger than showing
+   it for material implication alone (a weaker semantics could fail to entail
+   perfection while a stronger one succeeds).
 
 2. **Experimental**: Perfection rates vary with QUD type and speaker knowledge.
    Semantic entailments are invariant across these factors. -/
 theorem cp_is_pragmatic :
-    (∃ (W : Type) (p q : Prop' W) (w : W),
-      materialImp p q w ∧ ¬(conditionalPerfection p q w)) ∧
+    (∃ (W : Type) (sim : SimilarityOrdering W) (domain : Set W)
+       (p q : Prop' W) (w : W),
+      variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w)) ∧
     (exp1Data .antecedentFocused).perfectionRate ≠
     (exp1Data .consequentFocused).perfectionRate ∧
     (exp3Data .fullKnowledge).perfectionRate ≠
     (exp3Data .partialKnowledge).perfectionRate := by
-  exact ⟨perfection_not_entailed, by native_decide, by native_decide⟩
+  exact ⟨perfection_not_entailed_variablyStrict, by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- Section H: Competence Bridge — CP uses the same mechanism as SI
+-- ============================================================================
+
+/-! ## Competence Bridge
+
+The competence assumption in conditional perfection is the same mechanism
+formalized in `Implicature.Core.Competence` and tested experimentally by
+@cite{bale-etal-2025} for scalar implicatures. Both paradigms:
+- Map full speaker knowledge to `BeliefState.disbelief` (speaker knows ¬ψ)
+- Map partial knowledge to `BeliefState.noOpinion` (speaker is agnostic)
+- Derive strong inference only when competence holds
+
+This section connects `KnowledgeCondition` to the shared infrastructure. -/
+
+open Implicature Implicature.Competence
+
+private abbrev siToBeliefState :=
+  Phenomena.ScalarImplicatures.Studies.BaleEtAl2025.toBeliefState
+
+/-- Map speaker knowledge in the CP paradigm to NeoGricean belief state.
+
+Mirrors `BaleEtAl2025.toBeliefState`: full knowledge → `.disbelief` (speaker
+knows ¬ψ for each unmentioned alternative), partial knowledge → `.noOpinion`. -/
+def toBeliefStateCP : KnowledgeCondition → BeliefState
+  | .fullKnowledge => .disbelief
+  | .partialKnowledge => .noOpinion
+
+/-- The CP and SI competence mappings are identical: full knowledge maps to
+disbelief and partial knowledge maps to no opinion in both paradigms. -/
+theorem competence_mapping_agrees :
+    (toBeliefStateCP .fullKnowledge = siToBeliefState .fullKnowledge) ∧
+    (toBeliefStateCP .partialKnowledge = siToBeliefState .partialKnowledge) :=
+  ⟨rfl, rfl⟩
+
+/-- `speakerCompetenceAssumed` agrees with the NeoGricean `competent` predicate
+applied via `toBeliefStateCP`. This connects the study-specific Boolean to
+the general implicature infrastructure. -/
+theorem speakerCompetence_matches_neoGricean :
+    ∀ k : KnowledgeCondition,
+      speakerCompetenceAssumed k = competent (toBeliefStateCP k) := by
+  intro k; cases k <;> rfl
+
+/-- Full knowledge: `processAlternative` yields a strong inference
+(exclusion of unmentioned alternatives is licensed). -/
+theorem fk_processAlternative_strong :
+    let p := processAlternative true (toBeliefStateCP .fullKnowledge)
+    p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true := by
+  native_decide
+
+/-- Partial knowledge: `processAlternative` yields weak-only inference
+(exclusion not licensed — silence reflects ignorance, not absence). -/
+theorem pk_processAlternative_weak :
+    let p := processAlternative true (toBeliefStateCP .partialKnowledge)
+    p.weakHolds = true ∧ p.competenceAssumed = false ∧ p.strongDerived = false := by
+  native_decide
+
+/-- Cross-domain unity: CP and SI use the same competence-gated exhaustification.
+
+Both @cite{evcen-bale-barner-2026} (conditional perfection) and
+@cite{bale-etal-2025} (scalar implicatures) map full knowledge to strong
+inference and partial knowledge to weak-only, via the identical
+`processAlternative` machinery from `Implicature.Core.Competence`. -/
+theorem cp_si_competence_unity :
+    -- CP: full knowledge → strong, partial → weak
+    (processAlternative true (toBeliefStateCP .fullKnowledge)).strongDerived = true ∧
+    (processAlternative true (toBeliefStateCP .partialKnowledge)).strongDerived = false ∧
+    -- SI: full knowledge → strong, partial → weak
+    (processAlternative true (siToBeliefState .fullKnowledge)).strongDerived = true ∧
+    (processAlternative true (siToBeliefState .partialKnowledge)).strongDerived = false := by
+  native_decide
+
+-- ============================================================================
+-- Section I: ALT Constraint (Footnote 7)
+-- ============================================================================
+
+/-! ## ALT Constraint
+
+Footnote 7 of @cite{evcen-bale-barner-2026} states the alternatives constraint:
+
+> ALT(p) ⊆ ANS(QUD) ∩ {q : Ks(q) ∨ Ks(¬q)}
+
+The alternatives used for exhaustification must be both answers to the QUD
+(contextual salience) AND propositions the speaker is competent about
+(epistemic license). This is exactly what `exhaustificationLicensed` encodes
+as a conjunction: `qudProvidesAlternatives qud && speakerCompetenceAssumed k`.
+
+- Experiment 1 manipulates the first factor (QUD determines ANS)
+- Experiment 3 manipulates the second factor (knowledge determines competence)
+- When either factor is absent, the intersection is empty → no exhaustification
+-/
+
+/-- The ALT constraint as an intersection: alternatives are non-empty only when
+both QUD provides answers and speaker is competent. `exhaustificationLicensed`
+encodes this as a conjunction. -/
+theorem alt_constraint_is_intersection :
+    ∀ k : KnowledgeCondition, ∀ q : QUDType,
+      exhaustificationLicensed k q =
+      (qudProvidesAlternatives q && speakerCompetenceAssumed k) := by
+  intro k q; rfl
+
+/-- When QUD doesn't provide alternatives, exhaustification is blocked
+regardless of competence — the intersection has an empty first component. -/
+theorem no_qud_blocks_exhaustification :
+    ∀ k : KnowledgeCondition,
+      exhaustificationLicensed k .consequentFocused = false ∧
+      exhaustificationLicensed k .neutral = false := by
+  intro k; cases k <;> exact ⟨rfl, rfl⟩
+
+/-- When speaker lacks competence, exhaustification is blocked regardless
+of QUD — the intersection has an empty second component. -/
+theorem no_competence_blocks_exhaustification :
+    ∀ q : QUDType,
+      exhaustificationLicensed .partialKnowledge q = false := by
+  intro q; cases q <;> rfl
 
 end Phenomena.Conditionals.Studies.EvcenBaleBarner2026

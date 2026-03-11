@@ -166,6 +166,28 @@ theorem perfection_not_entailed : ∃ (W : Type) (p q : Prop' W) (w : W),
     exact h hnot_false_eq_true trivial
 
 /--
+**Conditional perfection is NOT semantically entailed** (variably strict).
+
+Even under Stalnaker/Lewis variably strict semantics (stronger than material
+implication), the conditional does not entail its converse. There exist a
+similarity ordering, propositions p and q, and a world w such that
+"if p then q" holds but "if ¬p then ¬q" does not.
+
+Counterexample: W = Bool, p = (· = true), q = (fun _ => True), w = false.
+The conditional holds (the only p-world is `true`, where q holds trivially),
+but perfection fails (¬p(false) is true but ¬q(false) is false).
+-/
+theorem perfection_not_entailed_variablyStrict :
+    ∃ (W : Type) (sim : SimilarityOrdering W) (domain : Set W)
+      (p q : Prop' W) (w : W),
+      variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w) := by
+  use Bool
+  exact ⟨⟨fun _ _ _ => True, fun _ => trivial, fun _ _ _ _ _ _ => trivial⟩,
+    Set.univ, (· = true), (fun _ => True), false,
+    Or.inr ⟨true, ⟨Set.mem_univ _, rfl⟩, fun _ _ _ => trivial⟩,
+    fun h => h Bool.false_ne_true trivial⟩
+
+/--
 **Strict conditional implies material conditional**.
 
 If w is accessible from itself (reflexive accessibility), then □(p → q) at w implies (p → q) at w.
