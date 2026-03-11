@@ -543,4 +543,86 @@ def heightToleranceSteps : ToleranceStepDatum :=
 def toleranceStepExamples : List ToleranceStepDatum :=
   [baldnessToleranceSteps, heightToleranceSteps]
 
+/--
+Borderline contradiction acceptance.
+
+Experimental data on whether subjects accept sentences of the form
+"X is P and not P" (contradictions) and "X is neither P nor not P"
+(gaps) for borderline cases of vague predicates.
+
+Key finding: acceptance rates for both contradictions and gaps are
+significantly higher for borderline cases than for clear cases.
+This is evidence against both classical logic (which rejects all
+contradictions) and standard supervaluationism (which makes
+contradictions super-false even for borderline cases).
+
+The data is compatible with the TCS framework (@cite{cobreros-etal-2012}),
+which predicts that borderline cases tolerantly satisfy P ∧ ¬P.
+
+Source: @cite{alxatib-pelletier-2011}, @cite{ripley-2011},
+@cite{serchuk-hargreaves-zach-2011}
+-/
+structure BorderlineContradictionDatum where
+  /-- Study identifier -/
+  study : String
+  /-- The vague predicate tested -/
+  predicate : String
+  /-- Stimulus type (visual, scenario-based, etc.) -/
+  stimulusType : String
+  /-- Description of the borderline case -/
+  borderlineCase : String
+  /-- Acceptance rate for "X is P and not P" (contradiction) -/
+  contradictionAcceptance : Option Float
+  /-- Acceptance rate for "X is neither P nor not P" (gap) -/
+  gapAcceptance : Option Float
+  /-- Whether rates are significantly higher for borderline than clear cases -/
+  borderlinePeaks : Bool
+  deriving Repr
+
+/-- @cite{alxatib-pelletier-2011}: 5 men of different heights (visual).
+    Man #2 (5'11", median size) shows peak contradiction/gap acceptance. -/
+def alxatibPelletier2011Tall : BorderlineContradictionDatum :=
+  { study := "Alxatib & Pelletier 2011"
+  , predicate := "tall"
+  , stimulusType := "visual (picture of 5 men with labeled heights)"
+  , borderlineCase := "Man #2 (5'11\", median height in display)"
+  , contradictionAcceptance := some 44.7  -- "both tall and not tall"
+  , gapAcceptance := some 53.9  -- "neither tall nor not tall"
+  , borderlinePeaks := true  -- significantly higher than for extreme cases
+  }
+
+/-- @cite{ripley-2011}: 7 pairs (A-G) of decreasing nearness (visual).
+    Pair C (median distance) shows peak contradiction acceptance. -/
+def ripley2011Near : BorderlineContradictionDatum :=
+  { study := "Ripley 2011"
+  , predicate := "near"
+  , stimulusType := "visual (square and circle at varying distances)"
+  , borderlineCase := "Pair C (median distance between clear-near A and clear-not-near G)"
+  , contradictionAcceptance := none  -- reported as significant but no single percentage
+  , gapAcceptance := none
+  , borderlinePeaks := true  -- agreement peaks at intermediate pairs
+  }
+
+/-- @cite{serchuk-hargreaves-zach-2011}: scenario-based (Susan's wealth).
+    Forced-choice with 6 options including "Both", "Neither", "Partially True". -/
+def serchukEtAl2011Rich : BorderlineContradictionDatum :=
+  { study := "Serchuk, Hargreaves & Zach 2011"
+  , predicate := "rich"
+  , stimulusType := "scenario (Susan described as between clearly rich and clearly non-rich women)"
+  , borderlineCase := "Susan (described as income-wise between clear groups)"
+  , contradictionAcceptance := some 19.0  -- "Susan is rich and not rich" judged True
+  , gapAcceptance := none
+  , borderlinePeaks := true  -- contradiction sentence: 55% False, 19% True, rest other options
+  }
+
+def borderlineContradictionData : List BorderlineContradictionDatum :=
+  [alxatibPelletier2011Tall, ripley2011Near, serchukEtAl2011Rich]
+
+/-- All three studies find borderline-peaking: contradiction/gap acceptance
+    is significantly higher for borderline cases than for clear cases.
+    This is the key empirical finding that TCS accounts for and
+    standard supervaluationism does not. -/
+theorem all_borderline_peak : borderlineContradictionData.all
+    (fun d => d.borderlinePeaks) = true := by decide
+
 end Phenomena.Gradability.Vagueness

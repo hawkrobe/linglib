@@ -23,11 +23,11 @@ Detailed competence analysis from @cite{geurts-2010} Chapter 2.3.
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
+import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 
-namespace NeoGricean.Competence
+namespace Implicature.Competence
 
-open NeoGricean
+open Implicature
 
 
 /--
@@ -241,4 +241,4 @@ theorem disjunction_context_weak_only :
 
 
 
-end NeoGricean.Competence
+end Implicature.Competence

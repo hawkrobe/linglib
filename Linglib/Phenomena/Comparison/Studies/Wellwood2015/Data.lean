@@ -320,7 +320,7 @@ def patientPlaygroundDatum : StateModificationDatum :=
 -- ============================================================================
 
 open Semantics.Lexical.Measurement
-open Semantics.Lexical.Verb.Aspect (AspectualProfile)
+open Semantics.Tense.Aspect.LexicalAspect (AspectualProfile)
 
 /-- Map `LexCat` to `MereologicalStatus` using the theory's bridges. -/
 def lexCatToStatus : LexCat → MereologicalStatus
@@ -379,13 +379,13 @@ theorem nonGradableAdj_patterns_with_qua :
 -- Grammar shift bridges
 
 theorem run_shift_via_telicize :
-    let p : AspectualProfile := Semantics.Lexical.Verb.Aspect.activityProfile
+    let p : AspectualProfile := Semantics.Tense.Aspect.LexicalAspect.activityProfile
     telicityToStatus p.telicity = .cumulative ∧
     telicityToStatus p.telicize.telicity = .quantized :=
   telicize_shifts_status _ rfl
 
 theorem build_shift_via_atelicize :
-    let p : AspectualProfile := Semantics.Lexical.Verb.Aspect.accomplishmentProfile
+    let p : AspectualProfile := Semantics.Tense.Aspect.LexicalAspect.accomplishmentProfile
     telicityToStatus p.telicity = .quantized ∧
     telicityToStatus p.atelicize.telicity = .cumulative :=
   atelicize_shifts_status _ rfl

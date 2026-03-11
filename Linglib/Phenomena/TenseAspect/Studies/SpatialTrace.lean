@@ -29,7 +29,7 @@ namespace Phenomena.TenseAspect.Studies.SpatialTrace
 
 open Fragments.English.Predicates.Verbal
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
-open Semantics.Lexical.Verb.Aspect (VendlerClass Telicity)
+open Semantics.Tense.Aspect.LexicalAspect (VendlerClass Telicity)
 open Core.Path (PathShape)
 open Core.Scale (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)

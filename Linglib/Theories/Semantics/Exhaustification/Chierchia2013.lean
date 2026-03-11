@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 
 /-!
 # Core Theorems from @cite{chierchia-2013} *Logic in Grammar*
@@ -30,9 +30,9 @@ scalar implicatures, free choice, and intervention — all with real proofs.
 
 -/
 
-namespace NeoGricean.Exhaustivity.Chierchia2013
+namespace Exhaustification.Chierchia2013
 
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 -- ============================================================================
 -- § 1. Free Choice via Double Exhaustification
@@ -568,4 +568,4 @@ theorem maximize_strength_eq_exhIE (ALT : Set (Prop' World)) (φ : Prop' World) 
 
 end MaximizeStrength
 
-end NeoGricean.Exhaustivity.Chierchia2013
+end Exhaustification.Chierchia2013

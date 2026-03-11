@@ -2,7 +2,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Interface
-import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
+import Linglib.Theories.Pragmatics.Implicature.Presuppositions
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
@@ -47,14 +47,14 @@ The epistemic operator K (speaker's beliefs) interacts with exhaustification:
 
 -/
 
-namespace NeoGricean.Constraints.Wang2025
+namespace Implicature.Constraints.Wang2025
 
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
 open Core.ModalLogic (AccessRel kripkeEval)
 open Core.Proposition (BProp FiniteWorlds)
 open Interfaces (FelicityStatus FelicityResult FelicityCondition)
-open NeoGricean.Presuppositions (AltStructure PragConstraint Obligatoriness)
+open Implicature.Presuppositions (AltStructure PragConstraint Obligatoriness)
 open Semantics.Lexical.Expressives (ciLift)
 
 
@@ -268,4 +268,4 @@ theorem ciLift_felicitous_when_fp_holds (p : PrProp W)
   exact hfp w hw
 
 
-end NeoGricean.Constraints.Wang2025
+end Implicature.Constraints.Wang2025

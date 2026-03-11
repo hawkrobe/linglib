@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Fox2007
 
 /-!
 # Fox & Spector 2018: Economy and Embedded Exhaustification
@@ -54,9 +54,9 @@ Economy and structural complexity are **complementary**:
   alternatives → blocks vacuous/weakening insertions
 -/
 
-namespace NeoGricean.FoxSpector2018
+namespace Implicature.FoxSpector2018
 
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 
 -- ============================================================
@@ -379,7 +379,7 @@ inductive PQWorld where | pq | p_only | q_only | neither
   deriving Repr, DecidableEq, BEq, Inhabited
 
 open PQWorld
-open NeoGricean.Exhaustivity.Fox2007
+open Exhaustification.Fox2007
 
 private def pqDomain : List PQWorld := [pq, p_only, q_only, neither]
 
@@ -458,4 +458,4 @@ theorem vacuous_violates_economy (ALT : Set (Prop' World))
     (fun w' => ⟨hvac.1 w', hvac.2 w'⟩) w
 
 
-end NeoGricean.FoxSpector2018
+end Implicature.FoxSpector2018

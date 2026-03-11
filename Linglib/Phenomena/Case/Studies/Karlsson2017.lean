@@ -1,5 +1,5 @@
 import Linglib.Core.Case.Basic
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Core.Lexical.MorphRule
 
 /-!
@@ -21,7 +21,7 @@ The partitive also appears obligatorily under negation:
   *En lukenut kirja-a.* 'I didn't read the book.'
 
 This is the first bridge in linglib connecting `Core.Case` to
-`Semantics.Lexical.Verb.Aspect.Telicity`, making the case–aspect
+`Semantics.Tense.Aspect.LexicalAspect.Telicity`, making the case–aspect
 interaction formally verifiable.
 
 ## Theoretical significance
@@ -34,7 +34,7 @@ telicity. The case morphology makes this composition visible.
 
 namespace Phenomena.Case.Studies.Karlsson2017
 
-open Semantics.Lexical.Verb.Aspect (Telicity)
+open Semantics.Tense.Aspect.LexicalAspect (Telicity)
 
 -- ============================================================================
 -- § 1: Case–Aspect Mapping

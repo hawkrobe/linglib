@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
+import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
 import Linglib.Phenomena.Gradability.Studies.Rett2015
 
 /-!
@@ -14,10 +14,10 @@ Tests that the M-alternative framework correctly identifies:
 
 -/
 
-namespace Phenomena.Gradability.NeoGricean_AlternativesBridge
+namespace Phenomena.Gradability.Implicature_AlternativesBridge
 
-open NeoGricean.Alternatives
-open NeoGricean.Markedness
+open Implicature.Alternatives
+open Implicature.Markedness
 
 
 /--
@@ -63,4 +63,4 @@ theorem tall_is_not_marked_in_equative :
   native_decide
 
 
-end Phenomena.Gradability.NeoGricean_AlternativesBridge
+end Phenomena.Gradability.Implicature_AlternativesBridge

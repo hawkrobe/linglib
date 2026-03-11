@@ -982,7 +982,6 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.RelevanceTheory
 import Linglib.Phenomena.ScalarImplicatures.Studies.Geurts2010
 import Linglib.Phenomena.ScalarImplicatures.Studies.RSAHurford
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
-import Linglib.Comparisons.ScalarImplicatureTheories
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.Phonology.Typology
 import Linglib.Phenomena.PhonologicalAlternation.Data
@@ -1345,6 +1344,8 @@ import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty
+import Linglib.Theories.Semantics.Tense.MaximalInformativity
+import Linglib.Theories.Semantics.Tense.PTS
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Lexical.Verb.Habituals

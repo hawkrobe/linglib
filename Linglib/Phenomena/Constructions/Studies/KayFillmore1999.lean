@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Phenomena.Focus.Studies.DeoThomas2025
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Questions.LeftPeriphery
@@ -560,7 +560,7 @@ theorem wxdy_presup_requires_cg {W : Type*}
 -- I. Aspect bridge (Semantics.Montague/Verb/Aspect.lean + Diagnostics)
 -- ============================================================================
 
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 open Phenomena.TenseAspect.Diagnostics
 
 /-- WXDY's *doing* selects for activities and accomplishments — predicates

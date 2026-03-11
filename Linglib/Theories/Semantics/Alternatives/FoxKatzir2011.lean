@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Core.StructuralAlternatives
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Symmetry
+import Linglib.Theories.Semantics.Alternatives.StructuralAlternatives
+import Linglib.Theories.Semantics.Alternatives.Symmetry
 
 /-!
 # Fox & Katzir 2011: On the Characterization of Alternatives
@@ -39,10 +39,10 @@ and @cite{fox-2007} (`Fox2007.lean`):
   symmetry — only F can
 -/
 
-namespace NeoGricean.FoxKatzir2011
+namespace Alternatives.FoxKatzir2011
 
-open NeoGricean.Symmetry
-open NeoGricean.Exhaustivity.Fox2007 hiding sublists
+open Alternatives.Symmetry
+open Exhaustification.Fox2007 hiding sublists
 
 
 -- ============================================================
@@ -140,7 +140,7 @@ These are re-exported from `StructuralAlternatives.lean`.
 
 section FBreaksSymmetry
 
-open NeoGricean.StructuralAlternatives
+open StructuralAlternatives
 
 /-- F contains the non-symmetric alternative (all) but excludes the
     symmetric partner (sbna). This is exactly what's needed for exh
@@ -212,4 +212,4 @@ def formalAlternatives {W : Type}
     (substitutionSourceFC lex φ salient) ψ φ}
 
 
-end NeoGricean.FoxKatzir2011
+end Alternatives.FoxKatzir2011

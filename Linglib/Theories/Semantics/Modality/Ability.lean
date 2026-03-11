@@ -2,7 +2,7 @@ import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Modality.Kratzer
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 /-!
 # Ability Modals and Actuality Inferences (@cite{nadathur-2023}, Chapter 1)
@@ -41,7 +41,7 @@ namespace Nadathur2023.Ability
 open Core.StructuralEquationModel
 open Semantics.Attitudes.Intensional (World allWorlds)
 open Semantics.Modality.Kratzer (ModalBase ConvBackground)
-open Semantics.Lexical.Verb.ViewpointAspect (ViewpointType ViewpointAspectB)
+open Semantics.Tense.Aspect.Core (ViewpointType ViewpointAspectB)
 
 -- ════════════════════════════════════════════════════
 -- Ability Scenario

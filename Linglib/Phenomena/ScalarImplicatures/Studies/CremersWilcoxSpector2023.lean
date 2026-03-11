@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Tactics.RSAPredict
 
@@ -121,7 +121,7 @@ theorem AandNotB_only_in_wa : literalTruth .w_a .AandNotB = true ∧ literalTrut
 -- §3. Exhaustification (Innocent Exclusion)
 -- ============================================================================
 
-open NeoGricean.Exhaustivity (applyIEBool)
+open Exhaustification (applyIEBool)
 
 /-- All worlds for IE enumeration. -/
 def allWorlds : List CWSWorld := [.w_a, .w_ab]

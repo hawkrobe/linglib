@@ -11,7 +11,7 @@ or false under all variable assignments. L-analytic sentences are ungrammatical.
 
 -/
 
-namespace NeoGricean.Analyticity
+namespace Implicature.Analyticity
 
 /-- Semantic types in the Montagovian sense. -/
 inductive SemType where
@@ -372,4 +372,4 @@ def lAnalyticityExamples : List LAnalyticityExample :=
 -- Verify all predictions match
 #guard lAnalyticityExamples.all (·.predictionMatches)
 
-end NeoGricean.Analyticity
+end Implicature.Analyticity

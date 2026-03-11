@@ -31,17 +31,17 @@ plus scale semantics and predictions.
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
+import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Core.Interface
 
-namespace NeoGricean.ScalarImplicatures
+namespace Implicature.ScalarImplicatures
 
-open NeoGricean.Alternatives
-open NeoGricean
-open NeoGricean.Exhaustivity
+open Implicature.Alternatives
+open Implicature
+open Exhaustification
 open Semantics.Entailment.Polarity (ContextPolarity)
 
 
@@ -384,7 +384,7 @@ theorem some_de_no_implicatures :
 /-
 ## Connection to Syntax via SemDeriv.Derivation
 
-This part connects NeoGricean pragmatics to the syntax-semantics pipeline.
+This part connects Implicature pragmatics to the syntax-semantics pipeline.
 Any syntax theory (CCG, HPSG, Minimalism) that produces a `SemDeriv.Derivation`
 can feed into these functions.
 
@@ -460,7 +460,7 @@ def someStudentsSleep_result : List ScalarImplicatureResult :=
 Theorem: "some students sleep" derives "not(all)"
 
 This is the key milestone theorem: starting from a semantic derivation
-(which could come from CCG), NeoGricean pragmatics derives "not all".
+(which could come from CCG), Implicature pragmatics derives "not all".
 -/
 theorem some_students_derives_not_all :
     hasImplicature someStudentsSleep_result "all" = true := by
@@ -1203,19 +1203,19 @@ theorem singh_asymmetry_derived :
   ⟨orThenBoth_predicted_felicitous, bothThenOr_not_predicted_felicitous⟩
 
 
-end NeoGricean.ScalarImplicatures
+end Implicature.ScalarImplicatures
 
 
-namespace NeoGricean
+namespace Implicature
 
 open Interfaces
-open NeoGricean.Alternatives
+open Implicature.Alternatives
 open Semantics.Entailment.Polarity (ContextPolarity)
 
-/-- Marker type for the NeoGricean theory -/
+/-- Marker type for the Implicature theory -/
 structure NeoGriceanTheory
 
-/-- NeoGricean's internal representation for implicature analysis.
+/-- Implicature's internal representation for implicature analysis.
 
     Bundles the Standard Recipe result with context information. -/
 structure NeoGriceanStructure where
@@ -1225,7 +1225,7 @@ structure NeoGriceanStructure where
   polarity : ContextPolarity
   /-- Position of the scalar item (if any) -/
   scalarPosition : Option Nat
-  /-- Which variant of NeoGricean (for baseline rate) -/
+  /-- Which variant of Implicature (for baseline rate) -/
   params : NeoGriceanParams := geurtsParams
   deriving Repr
 
@@ -1246,7 +1246,7 @@ def determinePolarityFromWords (ws : List Word) : ContextPolarity :=
   then .downward
   else .upward
 
-/-- Parse words into NeoGricean structure.
+/-- Parse words into Implicature structure.
 
     For now, uses a simplified analysis:
     - Finds scalar item position
@@ -1296,7 +1296,7 @@ instance : ImplicatureTheory NeoGriceanTheory where
     then some s.params.predictedNeutralRate
     else none
 
-  predictsDEBlocking := true  -- NeoGricean explicitly models DE blocking
+  predictsDEBlocking := true  -- Implicature explicitly models DE blocking
 
   predictsTaskEffect := true  -- Contextualism (geurtsParams) predicts task effect
 
@@ -1304,15 +1304,15 @@ instance : ImplicatureTheory NeoGriceanTheory where
 
 -- Theorems (Interface Properties)
 
-/-- NeoGricean predicts DE blocking -/
+/-- Implicature predicts DE blocking -/
 theorem neogricean_predicts_de_blocking :
     ImplicatureTheory.predictsDEBlocking (T := NeoGriceanTheory) = true := rfl
 
-/-- NeoGricean predicts task effect (under contextualism) -/
+/-- Implicature predicts task effect (under contextualism) -/
 theorem neogricean_predicts_task_effect :
     ImplicatureTheory.predictsTaskEffect (T := NeoGriceanTheory) = true := rfl
 
-/-- NeoGricean baseline rate is 35% (Geurts contextualism) -/
+/-- Implicature baseline rate is 35% (Geurts contextualism) -/
 theorem neogricean_baseline_rate :
     ImplicatureTheory.predictedBaselineRate (T := NeoGriceanTheory) = 35 := rfl
 
@@ -1349,4 +1349,4 @@ theorem wrong_position_absent :
     ImplicatureTheory.implicatureStatus (T := NeoGriceanTheory) someStudentsSleepNG 1 =
     .absent := rfl
 
-end NeoGricean
+end Implicature

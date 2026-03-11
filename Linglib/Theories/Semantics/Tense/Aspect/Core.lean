@@ -29,16 +29,16 @@ Equations:
 -/
 
 import Linglib.Core.Temporal.Time
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
 -- § Main Module
 -- ════════════════════════════════════════════════════
 
-namespace Semantics.Lexical.Verb.ViewpointAspect
+namespace Semantics.Tense.Aspect.Core
 
 open Core.Time
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
 -- § Core Types
@@ -247,9 +247,9 @@ theorem perf_xn_monotone (p : IntervalPred W Time) (tᵣ₁ tᵣ₂ : Set Time)
 -- § Vendler Class Compatibility
 -- ════════════════════════════════════════════════════
 
-end Semantics.Lexical.Verb.ViewpointAspect
+end Semantics.Tense.Aspect.Core
 
-namespace Semantics.Lexical.Verb.Aspect
+namespace Semantics.Tense.Aspect.LexicalAspect
 
 /-- States and activities naturally pair with IMPF (homogeneous). -/
 def VendlerClass.naturallyImperfective : VendlerClass → Bool
@@ -261,12 +261,12 @@ def VendlerClass.naturallyPerfective : VendlerClass → Bool
   | .state | .activity => false
   | .achievement | .accomplishment => true
 
-end Semantics.Lexical.Verb.Aspect
+end Semantics.Tense.Aspect.LexicalAspect
 
-namespace Semantics.Lexical.Verb.ViewpointAspect
+namespace Semantics.Tense.Aspect.Core
 
 open Core.Time
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 variable {Time : Type*} [LinearOrder Time] {W : Type*}
 
@@ -415,4 +415,4 @@ def IntervalPred.atPoint (p : IntervalPred W Time) : PointPred W Time :=
 abbrev PointPred.toSitProp (p : PointPred W Time) : Situation W Time → Prop :=
   p
 
-end Semantics.Lexical.Verb.ViewpointAspect
+end Semantics.Tense.Aspect.Core

@@ -33,13 +33,13 @@ The eval* operators instantiate the situation (fixing world and time).
 
 -/
 
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Compositional
 
 namespace Semantics.TenseAspectComposition
 
 open Core.Time
-open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Tense.Aspect.Core
 
 variable {W Time : Type*} [LinearOrder Time]
 

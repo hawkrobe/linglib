@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
+import Linglib.Theories.Semantics.Exhaustification.Implementations.BarLevFox2020
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
@@ -14,9 +14,9 @@ Exh^{IE+II}) rather than a semantic entailment, matching the empirical data.
 -/
 
 
-namespace Phenomena.Modality.NeoGricean_BarLevFox2020Bridge
+namespace Phenomena.Modality.Implicature_BarLevFox2020Bridge
 
-open NeoGricean.FreeChoice
+open Exhaustification.FreeChoice
 
 /-- The inference is pragmatic (not a semantic entailment) -/
 theorem fc_is_pragmatic : Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEntailment = false := rfl
@@ -24,4 +24,4 @@ theorem fc_is_pragmatic : Phenomena.Modality.FreeChoice.coffeeOrTea.isSemanticEn
 /-- The inference is captured by our pragmatic theory -/
 theorem fc_captured_pragmatically : Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
 
-end Phenomena.Modality.NeoGricean_BarLevFox2020Bridge
+end Phenomena.Modality.Implicature_BarLevFox2020Bridge

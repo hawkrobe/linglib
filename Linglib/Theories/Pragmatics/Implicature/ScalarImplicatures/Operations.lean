@@ -38,7 +38,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
 open Semantics.Lexical.Numeral
 
-namespace NeoGricean
+namespace Implicature
 
 -- Implicature Operations (@cite{horn-1972}, §1.22)
 
@@ -314,4 +314,4 @@ theorem operations_summary :
      operationFelicitous Exact .two .suspend = false) := by
   native_decide
 
-end NeoGricean
+end Implicature

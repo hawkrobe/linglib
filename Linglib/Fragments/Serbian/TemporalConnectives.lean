@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Fragments.English.TemporalExpressions
 
 /-!
@@ -26,7 +26,7 @@ PFV/IMPF opposition rather than Tagalog's finer-grained system.
 
 namespace Fragments.Serbian.TemporalConnectives
 
-open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Tense.Aspect.Core
 open Fragments.English.TemporalExpressions (Reading TemporalExprEntry ComplementType)
 
 -- ============================================================================

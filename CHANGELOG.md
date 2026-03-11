@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.229.140] - 2026-03-11
+
+### Added
+- **Core/Logic/Consequence.lean**: Abstract mixed consequence framework (MixedConsequence, SatImplies, SatDuality, IsSelfDual) with premise/conclusion/mixed monotonicity and duality theorems — reusable beyond TCS
+- **Core/Logic/ThreeValuedLogic.lean**: LP and K3 as named logics on Strong Kleene connectives; key metatheorems (lp_neg_iff_not_k3, k3_no_tautologies, lp_all_satisfiable, lp_no_explosion)
+- **Theories/Semantics/Supervaluation/TCS.lean** §12–§19: Mixed consequence via MixedConsequence; identity model collapse (cc_iff_st); self-duality of st/cc; LP/K3 correspondence (Theorem 3 from Cobreros et al.); sorites chain invalidity
+- **Phenomena/Gradability/Vagueness.lean**: BorderlineContradictionDatum with empirical entries and all_borderline_peak
+
+### Changed
+- **Comparisons/VaguenessTheories.lean**: Add .tcs variant with tcsProfile and verification theorems
+- **Theories/Semantics/Alternatives/StructuralAlternatives.lean**: Add Mathlib imports for Relation.ReflTransGen and Set (fixes build)
+- **Phenomena/Gradability/Studies/Fine1975.lean**: Fix D_idempotent proof for Lean 4.28.0 API
+- **Phenomena/Quantification/Studies/ScontrasPearl2021.lean**: Fix NeoGricean→Implicature namespace migration
+- **Phenomena/Numerals/Compare.lean**: Fix NeoGricean→Implicature namespace migration
+- **blog/data/references.bib**: Add priest-1979, zardini-2008
+
+### Removed
+- **Comparisons/ScalarImplicatureTheories.lean**: Superseded by reorganized implicature theory files
+
+## [0.229.139] - 2026-03-10
+
+### Changed
+- **Phenomena/Numerals/Compare.lean**: Reimplement Bridges 9-10 with RSAConfig + rsa_predict; Bridge 9: lower-bound numeral RSA derives exact readings as scalar implicatures (`lb_rsa_strengthens_two`, `lb_rsa_strengthens_one`, `lb_three_peaked`) with grounding to `LowerBound.meaning`; Bridge 10: Kennedy alternative sets ({bare 3, more than 3, at least 3} and {bare 3, fewer than 3, at most 3}) through belief-based RSA L1 proving all 7 original theorems (`classB_competition_at_boundary`, `classA_no_competition_at_boundary`, `bare_peaked_with_kennedy_alternatives`, `classB_strengthened_above_bare`, `upper_classB_competition`, `upper_classA_no_competition`, `upper_classB_strengthened_below_bare`) with grounding to `maxMeaning`
+
+## [0.229.138] - 2026-03-10
+
+### Changed
+- **Theories/Semantics/PossibilitySemantics/Epistemic.lean**: Wire up to `Core.ModalLogic` — `box_eq_kripkeEval` (box = Kripke necessity, by rfl), `diamond_eq_kripkeEval_classical` (diamond = Kripke possibility when compat = identity), `T_axiom_general` (T axiom from `Core.ModalLogic.T_of_refl`); make `propP` public for cross-file use; docstring connecting to supervaluation's classical-collapse parallel
+- **Comparisons/FreeChoice.lean**: Add @cite{holliday-mandelkern-2024} as 7th theory (algebraic/ortholattice account); re-export `free_choice_at_x3` and `free_choice_fails_at_x1`; update comparison table and summary
+
 ## [0.229.137] - 2026-03-10
 
 ### Changed

@@ -231,7 +231,7 @@ pragmatically explained: the scalar implicature of I (some → not all)
 recovers O's content, making a dedicated lexical item for O redundant.
 
 See `Core.SquareOfOpposition` for the formal square infrastructure.
-See `NeoGricean.ScalarImplicatures` for the some → not-all derivation.
+See `Implicature.ScalarImplicatures` for the some → not-all derivation.
 -/
 
 /-- The O-corner of the Square of Opposition is systematically not

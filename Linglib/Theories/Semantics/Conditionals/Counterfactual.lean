@@ -34,6 +34,7 @@ Ramotowska et al. find experimental support for the SELECTIONAL theory.
 -/
 
 import Linglib.Theories.Semantics.Conditionals.Basic
+import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.Logic.Truth3
 
@@ -645,5 +646,51 @@ theorem selectional_eq_dist {W : Type*} [DecidableEq W]
   cases closestWorldsB closer domain w (domain.filter A) with
   | nil => rfl
   | cons _ _ => rfl
+
+-- ════════════════════════════════════════════════════
+-- Bridge: Selectional Semantics as Supervaluation
+-- ════════════════════════════════════════════════════
+
+/-! The selectional counterfactual is literally supervaluation
+    (@cite{fine-1975}) over closest worlds. Each closest world is a
+    specification point — a legitimate resolution of the selection-function
+    tie. When all closest worlds agree on B, the counterfactual is definite;
+    when they disagree, it is indefinite.
+
+    Combined with `selectional_eq_dist`, this shows three independent
+    implementations are the same operator:
+    - `Semantics.Supervaluation.superTrue` (Finset-based, general)
+    - `Core.Duality.dist` (List-based, `Truth3.lean`)
+    - `selectionalCounterfactual` (List-based, match on closest worlds) -/
+
+open Semantics.Supervaluation (SpecSpace superTrue)
+
+/-- Helper: `List.all` agrees with `∀ ∈ Finset` after `toFinset`. -/
+private theorem list_all_iff_finset_forall {α : Type*} [DecidableEq α]
+    (l : List α) (f : α → Bool) :
+    l.all f = true ↔ ∀ x ∈ l.toFinset, f x = true := by
+  simp [List.all_eq_true, List.mem_toFinset]
+
+/-- **Selectional counterfactual = supervaluation over closest worlds.**
+    When the closest-worlds set is non-empty, the selectional semantics
+    equals `superTrue B` over the closest worlds as a specification space.
+
+    This makes explicit that Stalnaker's "supervaluate over ties" IS
+    Fine's supervaluation with `Spec = W` and `admissible = closest(w, A)`. -/
+theorem selectional_as_supervaluation {W : Type*} [DecidableEq W]
+    (closer : W → W → W → Bool) (domain : List W) (A B : W → Bool) (w : W)
+    (hne : (closestWorldsB closer domain w (domain.filter A)).toFinset.Nonempty) :
+    selectionalCounterfactual closer domain A B w =
+    superTrue B ⟨(closestWorldsB closer domain w (domain.filter A)).toFinset, hne⟩ := by
+  set closest := closestWorldsB closer domain w (domain.filter A) with hcl
+  have hne' : closest ≠ [] := by
+    intro h; simp [h] at hne
+  unfold selectionalCounterfactual superTrue
+  match hm : closest with
+  | [] => exact absurd rfl hne'
+  | _ :: _ =>
+    simp only [hm]
+    split_ifs <;>
+      simp_all [List.all_eq_true, List.mem_toFinset, Bool.not_eq_true']
 
 end Semantics.Conditionals.Counterfactual

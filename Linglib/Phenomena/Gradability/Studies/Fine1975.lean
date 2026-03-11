@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.Truth3
+import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Phenomena.Gradability.Vagueness
@@ -9,51 +9,38 @@ import Mathlib.Data.Fintype.Basic
 # Fine (1975): Vagueness, Truth and Logic @cite{fine-1975}
 @cite{kamp-1975}
 
-Supervaluationism: a vague sentence is true iff true on ALL admissible
-precisifications, false iff false on ALL, and indefinite otherwise.
+Supervaluationism applied to gradable predicates: a vague sentence is
+true iff true on ALL admissible precisifications, false iff false on
+ALL, and indefinite otherwise.
 
-## Core Insight
+## Architecture
 
-A precisification of a vague gradable predicate is a choice of threshold.
-A **specification space** is a set of admissible thresholds — the different
-ways the predicate could be made precise. Super-truth is universal
-quantification over this set, mapping Bool-valued threshold semantics
-to three-valued (`Truth3`) outputs.
+The *general* supervaluation framework (specification spaces, super-truth,
+D operator, classical validity biconditional) lives in
+`Theories/Semantics/Supervaluation/Basic.lean`. This study file
+**specializes** that framework to threshold-based precisifications for
+gradable adjectives, and proves results specific to degree semantics:
 
-## Structure
-
-- § 1: Specification spaces and the supervaluation operator
-- § 2: The D (definitely) operator
-- § 3: Penumbral connection theorems (§ 2 of the paper, pp. 270–271)
-- § 4: Sorites resolution (§ 4, pp. 285–286)
+- § 1: Threshold specification spaces
+- § 2: Comparative entailment (monotonicity of positive predicate)
+- § 3: Sorites resolution
+- § 4: External penumbral connections (pink/red — multi-predicate)
 - § 5: Bridge — `inGapRegion` ↔ `Truth3.indet`
-
-## Scope
-
-Fine's framework is fully general: specification spaces are partially
-ordered sets of precisifications for arbitrary vague predicates. We
-specialize to the case of gradable predicates with threshold-based
-precisifications (`Finset (Threshold max)`), which connects directly to
-linglib's `Degree`/`Threshold` types and the RSA models (e.g.,
-`LassiterGoodman2017.lean`).
+- § 6: Higher-order D operator
+- § 7: Verification of `Vagueness.lean` data
 
 ## Connection to Kamp (1975)
 
-@cite{fine-1975} and @cite{kamp-1975} appeared in the same volume
-(Keenan ed., *Formal Semantics of Natural Languages*, 1975). Kamp's
-"vague model" `⟨M, S, F, p⟩` — a partial model M with completions S,
-a σ-field F, and probability measure p — adds a probability measure to
-the supervaluation framework. Fine's super-truth can be viewed as
-checking whether the measure is 0, 1, or strictly intermediate, though
-neither author draws this connection explicitly.
+@cite{fine-1975} and @cite{kamp-1975} appeared in the same volume.
+Kamp's dilemma (truth-functional three-valued logic cannot distinguish
+P ∧ P from P ∧ ¬P) is resolved by supervaluation — see
+`Supervaluation.Basic.conjunction_self` and
+`Supervaluation.Basic.nonContradiction_superFalse`.
 
 ## Connection to Klein (1980)
 
 @cite{klein-1980}'s comparative — "∃ C where tall(a,C) ∧ ¬tall(b,C)" —
-can be seen as the existential dual of supervaluation: Klein quantifies
-existentially over comparison classes; Fine quantifies universally over
-thresholds. Both descend from @cite{kamp-1975}'s framework of
-quantifying over completions of a partial model. See
+is the existential dual of supervaluation. See
 `Theories/Semantics/Degree/Frameworks/Klein.lean`.
 -/
 
@@ -62,121 +49,25 @@ namespace Phenomena.Gradability.Studies.Fine1975
 open Core.Duality (Truth3)
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat)
 open Semantics.Lexical.Adjective (ThresholdPair inGapRegion)
+open Semantics.Supervaluation (SpecSpace superTrue definitely indefinite)
 
 -- ════════════════════════════════════════════════════
--- § 1. Specification Spaces & Supervaluation
+-- § 1. Threshold Specification Spaces
 -- ════════════════════════════════════════════════════
 
-/-- A specification space: the set of admissible precisifications for a
-    vague predicate. Each element is a threshold — one way of drawing
-    the boundary. -/
-abbrev SpecSpace (max : Nat) := Finset (Threshold max)
-
-/-- Supervaluation operator. Maps a Bool-valued predicate (parameterized
-    by threshold) to a three-valued truth value:
-    - `tt` if true at ALL thresholds in the space
-    - `ff` if false at ALL thresholds in the space
-    - `unk` if true at some and false at others (the borderline case)
-
-    Uses decidable bounded quantification over Finset.
-    Empty specification spaces yield `tt` (vacuous universal). -/
-def superTrue {max : Nat} (p : Threshold max → Bool) (S : SpecSpace max) : Truth3 :=
-  if ∀ θ ∈ S, p θ = true then Truth3.true
-  else if ∀ θ ∈ S, p θ = false then Truth3.false
-  else Truth3.indet
+/-- Construct a specification space from a non-empty set of thresholds. -/
+def mkSpec {max : Nat} (S : Finset (Threshold max)) (hne : S.Nonempty) :
+    SpecSpace (Threshold max) :=
+  ⟨S, hne⟩
 
 /-- Supervaluation of a degree predicate: fix a degree, vary the threshold. -/
 def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Bool)
-    (d : Degree max) (S : SpecSpace max) : Truth3 :=
+    (d : Degree max) (S : SpecSpace (Threshold max)) : Truth3 :=
   superTrue (meaning d) S
 
 -- ════════════════════════════════════════════════════
--- § 2. The D (Definitely) Operator
+-- § 2. Comparative Entailment
 -- ════════════════════════════════════════════════════
-
-/-- The definitely operator (@cite{fine-1975}, § 5, p. 287).
-    DA is true iff A is true at all admissible precisifications.
-    This is the `tt` case of supervaluation — D projects the
-    "super-true" component. Analogous to necessity in S5. -/
-def definitely {max : Nat} (p : Threshold max → Bool)
-    (S : SpecSpace max) : Bool :=
-  decide (∀ θ ∈ S, p θ = true)
-
-/-- The indefiniteness operator: IA ≡ ¬DA ∧ ¬D¬A.
-    A is indefinite iff it is neither definitely true nor definitely false
-    — i.e., true at some precisifications and false at others. -/
-def indefinite {max : Nat} (p : Threshold max → Bool)
-    (S : SpecSpace max) : Bool :=
-  !definitely p S && !definitely (fun θ => !p θ) S
-
-theorem definitely_iff_supertrue {max : Nat} (p : Threshold max → Bool)
-    (S : SpecSpace max) :
-    definitely p S = true ↔ superTrue p S = Truth3.true := by
-  unfold definitely superTrue
-  constructor
-  · intro h; rw [decide_eq_true_eq] at h; exact if_pos h
-  · intro h
-    by_contra hc; rw [decide_eq_true_eq] at hc
-    rw [if_neg hc] at h; split at h <;> cases h
-
-/-- The indefiniteness operator corresponds to `Truth3.indet` under
-    supervaluation: A is indefinite iff it is neither super-true nor
-    super-false. Requires non-empty S to exclude the vacuous case. -/
-theorem indefinite_iff_superunk {max : Nat} (p : Threshold max → Bool)
-    (S : SpecSpace max) (hne : S.Nonempty) :
-    indefinite p S = true ↔ superTrue p S = Truth3.indet := by
-  unfold indefinite definitely superTrue
-  simp only [Bool.and_eq_true, Bool.not_eq_true_eq_eq_false, decide_eq_false_iff_not]
-  constructor
-  · intro ⟨hnt, hnf⟩
-    rw [if_neg hnt, if_neg hnf]
-  · intro h
-    constructor
-    · intro hall; rw [if_pos hall] at h; cases h
-    · intro hall
-      have hnt : ¬(∀ θ ∈ S, p θ = true) := by
-        obtain ⟨θ₀, hθ₀⟩ := hne
-        intro ht; have := hall θ₀ hθ₀; rw [ht θ₀ hθ₀] at this; simp at this
-      rw [if_neg hnt, if_pos hall] at h; cases h
-
--- ════════════════════════════════════════════════════
--- § 3. Penumbral Connection Theorems
--- ════════════════════════════════════════════════════
-
-/-! Penumbral connections are logical relationships that hold even in the
-    borderline region. Fine coined the term (p. 270) and argued that
-    supervaluationism is the only framework that captures them all.
-
-    Below, `p` is a Bool-valued predicate parameterized by threshold —
-    e.g., `fun θ => d.toNat > θ.toNat` for "tall at degree d". -/
-
-/-- **Excluded middle is super-true.** P ∨ ¬P is true on every
-    precisification (each threshold makes P either true or false),
-    so it is true on ALL — i.e., super-true.
-
-    @cite{fine-1975}, § 3: the super-truth theory "covers all cases
-    of penumbral connection" (p. 278). -/
-theorem excluded_middle_supertrue {max : Nat} (p : Threshold max → Bool)
-    (S : SpecSpace max) :
-    superTrue (fun θ => p θ || !p θ) S = Truth3.true := by
-  unfold superTrue
-  exact if_pos (fun θ _ => by cases p θ <;> simp)
-
-/-- **Non-contradiction is super-false.** P ∧ ¬P is false on every
-    precisification, so it is false on ALL — i.e., super-false.
-
-    Requires non-empty specification space (Fine assumes at least one
-    admissible precisification exists). -/
-theorem non_contradiction_superfalse {max : Nat} (p : Threshold max → Bool)
-    (S : SpecSpace max) (hne : S.Nonempty) :
-    superTrue (fun θ => p θ && !p θ) S = Truth3.false := by
-  unfold superTrue
-  have hnt : ¬(∀ θ ∈ S, (p θ && !p θ) = true) := by
-    obtain ⟨θ₀, hθ₀⟩ := hne
-    intro hall; have := hall θ₀ hθ₀; cases p θ₀ <;> simp at this
-  have haf : ∀ θ ∈ S, (p θ && !p θ) = false := by
-    intro θ _; cases p θ <;> simp
-  rw [if_neg hnt, if_pos haf]
 
 /-- **Comparative entailment.** If d₁ > d₂ and d₂ is super-true for a
     positive (upward) predicate, then d₁ is also super-true.
@@ -184,43 +75,83 @@ theorem non_contradiction_superfalse {max : Nat} (p : Threshold max → Bool)
     This captures Fine's internal penumbral connection: if Herbert is
     to be bald, then so is the man with fewer hairs (p. 276). -/
 theorem comparative_entailment {max : Nat}
-    (d₁ d₂ : Degree max) (S : SpecSpace max)
+    (d₁ d₂ : Degree max) (S : SpecSpace (Threshold max))
     (hgt : d₂.toNat < d₁.toNat)
     (hd₂ : superTrueAt (fun d θ => decide (d.toNat > θ.toNat)) d₂ S = Truth3.true) :
     superTrueAt (fun d θ => decide (d.toNat > θ.toNat)) d₁ S = Truth3.true := by
-  unfold superTrueAt superTrue at *
-  have h : ∀ θ ∈ S, decide (d₂.toNat > θ.toNat) = true := by
-    by_contra hc; push_neg at hc
-    obtain ⟨θ, hθ, hv⟩ := hc
-    have : ¬(∀ θ ∈ S, decide (d₂.toNat > θ.toNat) = true) :=
-      fun h => hv (h θ hθ)
-    rw [if_neg this] at hd₂; split at hd₂ <;> cases hd₂
-  have h₁ : ∀ θ ∈ S, decide (d₁.toNat > θ.toNat) = true := by
-    intro θ hθ; have := h θ hθ; simp only [decide_eq_true_eq] at this ⊢; omega
-  exact if_pos h₁
+  unfold superTrueAt at *
+  rw [Semantics.Supervaluation.superTrue_true_iff] at hd₂ ⊢
+  intro θ hθ
+  have := hd₂ θ hθ
+  simp only [decide_eq_true_eq] at this ⊢
+  omega
 
 -- ════════════════════════════════════════════════════
--- § 4. Sorites Resolution
+-- § 3. Sorites Resolution
 -- ════════════════════════════════════════════════════
 
-/-! Fine's resolution (§ 4, pp. 285–286): the tolerance premise
-    "if n hairs is bald, then n+1 hairs is bald" is SUPER-FALSE.
-    For every admissible threshold θ, there exists an n (namely n = θ)
-    where n is below θ but n+1 is above. The premise fails at every
-    precisification, so it fails under supervaluation.
+/-! Fine's resolution: the tolerance premise "if n hairs is bald,
+    then n+1 hairs is bald" is SUPER-FALSE. For every admissible
+    threshold θ, there exists an n (= θ) where n is below θ but n+1
+    is above. The premise fails at every precisification. -/
 
-    We prove the finite version: on a discrete scale, the universal
-    tolerance step "∀ θ ∈ S, (meaning d θ → meaning d' θ)" fails
-    when d is above some threshold and d' is below it. -/
-
-/-- The tolerance premise fails at any threshold that separates d from d'.
-    If d is "tall" at θ but d' is not, the tolerance step from d to d'
-    is falsified at θ. -/
+/-- The tolerance premise fails at any threshold separating d from d'. -/
 theorem tolerance_fails_at_boundary {max : Nat}
     (d d' : Degree max) (θ : Threshold max)
     (hd : d.toNat > θ.toNat) (hd' : ¬(d'.toNat > θ.toNat)) :
     ¬(d.toNat > θ.toNat → d'.toNat > θ.toNat) :=
   fun h => hd' (h hd)
+
+-- ════════════════════════════════════════════════════
+-- § 4. External Penumbral Connections
+-- ════════════════════════════════════════════════════
+
+/-! Fine's most distinctive examples involve *external* penumbral
+    connections between different predicates. A blob on the border of
+    pink and red is borderline pink and borderline red. Yet "the blob
+    is pink AND red" is super-false, because no admissible specification
+    makes something both pink and red.
+
+    We model this with a single threshold governing both: "pink" = above
+    threshold, "red" = at or below threshold. The same threshold
+    determines both predicates, creating the penumbral connection. -/
+
+/-- Pink: degree above the boundary (on a single color dimension). -/
+def isPink {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
+  decide (d.toNat > θ.toNat)
+
+/-- Red: degree at or below the boundary (complementary to pink). -/
+def isRed {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
+  decide (d.toNat ≤ θ.toNat)
+
+/-- Pink and red are complementary: nothing can be both. -/
+theorem pink_red_complementary {max : Nat} (d : Degree max) (θ : Threshold max) :
+    (isPink d θ && isRed d θ) = false := by
+  unfold isPink isRed
+  rcases hgt : decide (d.toNat > θ.toNat) with _ | _
+  · simp
+  · simp only [Bool.true_and, decide_eq_false_iff_not]
+    rw [decide_eq_true_eq] at hgt
+    omega
+
+/-- **"The blob is pink and red" is super-false.** Even when both
+    conjuncts are individually indefinite, their conjunction is false
+    on every precisification, hence super-false.
+
+    This is Fine's central argument for supervaluationism over
+    truth-functional three-valued logic (p. 269-270). In Strong Kleene
+    logic, `indet ∧ indet = indet`; supervaluation gives `false`. -/
+theorem pink_and_red_superFalse {max : Nat} (d : Degree max)
+    (S : SpecSpace (Threshold max)) :
+    superTrue (fun θ => isPink d θ && isRed d θ) S = Truth3.false :=
+  (Semantics.Supervaluation.superTrue_false_iff _ S).mpr
+    (fun θ _ => pink_red_complementary d θ)
+
+/-- Both "pink" and "red" can individually be indefinite (borderline). -/
+theorem pink_indefinite_example :
+    superTrue (isPink ⟨5, by omega⟩ : Threshold 10 → Bool)
+      ⟨{⟨3, by omega⟩, ⟨7, by omega⟩}, ⟨⟨3, by omega⟩, by simp⟩⟩ = Truth3.indet := by
+  native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Bridge: Gap Region ↔ Truth3.indet
@@ -229,16 +160,12 @@ theorem tolerance_fails_at_boundary {max : Nat}
 /-! The `inGapRegion` function in `Adjective.Theory` computes whether a
     degree falls between two thresholds (the "borderline" zone for contrary
     antonyms). A `ThresholdPair` with `neg ≤ pos` is a two-element
-    specification space `{neg, pos}`, and the gap region is exactly the
-    set of degrees that receive `Truth3.indet` under supervaluation.
+    specification space, and the gap region is exactly the set of degrees
+    that receive `Truth3.indet` under supervaluation. -/
 
-    This makes the implicit connection between the adjective theory's
-    computational concept and the Kleene truth-value concept explicit. -/
-
-/-- The specification space induced by a threshold pair: the two thresholds
-    that bound the gap region. -/
-def specOfPair {max : Nat} (tp : ThresholdPair max) : SpecSpace max :=
-  {tp.neg, tp.pos}
+/-- The specification space induced by a threshold pair. -/
+def specOfPair {max : Nat} (tp : ThresholdPair max) : SpecSpace (Threshold max) :=
+  ⟨{tp.neg, tp.pos}, ⟨tp.neg, Finset.mem_insert_self _ _⟩⟩
 
 /-- Extract Nat-level upper bound from `inGapRegion`. -/
 theorem inGapRegion_le_pos {max : Nat} (d : Degree max) (tp : ThresholdPair max)
@@ -252,13 +179,9 @@ theorem inGapRegion_ge_neg {max : Nat} (d : Degree max) (tp : ThresholdPair max)
   simp only [inGapRegion, Bool.and_eq_true, decide_eq_true_eq] at h
   exact h.1
 
-/-- When a degree is strictly inside the gap (above neg, at or below pos),
-    the positive-meaning predicate disagrees across the two thresholds:
-    true at the negative threshold, false at the positive threshold.
-
-    This is the semantic content of the gap for contrary antonyms:
-    the degree is "tall" relative to the lower threshold but "not tall"
-    relative to the higher one. -/
+/-- When a degree is strictly inside the gap, the positive-meaning
+    predicate disagrees across the two thresholds: true at the negative
+    threshold, false at the positive. -/
 theorem gap_implies_disagreement {max : Nat} (d : Degree max) (tp : ThresholdPair max)
     (h_in : inGapRegion d tp = true) (h_strict : tp.neg.toNat < d.toNat) :
     decide (d.toNat > tp.neg.toNat) = true ∧
@@ -267,21 +190,47 @@ theorem gap_implies_disagreement {max : Nat} (d : Degree max) (tp : ThresholdPai
   exact ⟨h_strict, inGapRegion_le_pos d tp h_in⟩
 
 -- ════════════════════════════════════════════════════
--- § 6. Verification: Vagueness.lean Data
+-- § 6. Higher-Order D
 -- ════════════════════════════════════════════════════
 
-/-! The `Vagueness.lean` data file records that supervaluationism captures
-    all four penumbral connections. Fine1975's theorems prove this: -/
+/-! Fine's D operator (§ 5) applied to threshold semantics. DA is true
+    iff A is true at ALL thresholds in the space. Iterated application
+    (DDA, DDDA, ...) collapses: since D is constant across specification
+    points, DD = D. Higher-order vagueness in Fine's framework arises not
+    from iterating D within a fixed space, but from the *specification
+    space itself* being vague — requiring nested spaces (boundaries of
+    boundaries). We do not formalize nested spaces here. -/
+
+/-- D collapses under iteration: DD = D. Since `definitely eval S` is a
+    constant Bool (independent of the specification point), applying D
+    again yields the same value. -/
+theorem D_idempotent {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) :
+    definitely (fun _ => definitely eval S) S = definitely eval S := by
+  unfold definitely
+  cases hd : decide (∀ s ∈ S.admissible, eval s = true)
+  · -- D is false. DD asks: is "false" true at all specs? No.
+    simp only [decide_eq_false_iff_not]
+    intro hall
+    obtain ⟨s₀, hs₀⟩ := S.nonempty
+    exact absurd (hall s₀ hs₀) (by simp)
+  · -- D is true. DD asks: is "true" true at all specs? Yes.
+    simp only [decide_eq_true_eq]
+    intro _ _
+    trivial
+
+-- ════════════════════════════════════════════════════
+-- § 7. Verification: Vagueness.lean Data
+-- ════════════════════════════════════════════════════
 
 open Gradability.Vagueness
 
 /-- Excluded middle data says supervaluationism captures it;
-    `excluded_middle_supertrue` proves this. -/
+    `Supervaluation.Basic.excludedMiddle_superTrue` proves this. -/
 theorem excludedMiddle_captured :
     excludedMiddle.supervaluationismCaptures = true := rfl
 
 /-- Non-contradiction data says supervaluationism captures it;
-    `non_contradiction_superfalse` proves this. -/
+    `Supervaluation.Basic.nonContradiction_superFalse` proves this. -/
 theorem nonContradiction_captured :
     nonContradiction.supervaluationismCaptures = true := rfl
 
@@ -291,30 +240,8 @@ theorem comparativeEntailment_captured :
     comparativeEntailment.supervaluationismCaptures = true := rfl
 
 /-- The D operator data says it eliminates borderline cases;
-    `definitely_iff_supertrue` shows D = super-truth. -/
+    `Supervaluation.Basic.definitely_iff_superTrue` shows D = super-truth. -/
 theorem definitelyOperator_eliminates :
     definitelyOperator.eliminatesBorderline = true := rfl
-
--- ════════════════════════════════════════════════════
--- § 7. Classical Validity (§ 4, p. 283)
--- ════════════════════════════════════════════════════
-
-/-! @cite{fine-1975}'s central logical result (§ 4, pp. 283–284):
-    the super-truth theory yields classical logic. A formula is
-    super-valid (true in all specification spaces) iff classically valid
-    (true in all classical models). This is because each complete
-    specification is a classical model.
-
-    We prove one direction: classical tautologies are super-valid.
-    The converse requires a model-theoretic argument beyond our scope. -/
-
-/-- A classical tautology (true at every threshold) is super-true
-    in every specification space. -/
-theorem classical_tautology_supervalid {max : Nat}
-    (p : Threshold max → Bool)
-    (htaut : ∀ θ, p θ = true) (S : SpecSpace max) :
-    superTrue p S = Truth3.true := by
-  unfold superTrue
-  exact if_pos (fun θ _ => htaut θ)
 
 end Phenomena.Gradability.Studies.Fine1975

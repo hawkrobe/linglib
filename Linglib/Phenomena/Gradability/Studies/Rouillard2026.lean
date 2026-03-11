@@ -54,7 +54,7 @@ namespace Phenomena.Gradability.CrossDomainLicensingBridge
 open Core.Scale
 open Core.Time
 open Semantics.Lexical.Adjective
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 open Fragments.English.Predicates.Adjectival
 
 -- ════════════════════════════════════════════════════

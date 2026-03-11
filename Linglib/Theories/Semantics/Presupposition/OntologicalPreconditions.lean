@@ -38,13 +38,13 @@ and thus can't be "allowed for" independently.
 import Linglib.Core.Polarity
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 namespace Semantics.Presupposition.OntologicalPreconditions
 
 open Core.Presupposition
 open Semantics.Lexical.Verb.ChangeOfState
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 
 variable {W : Type*}

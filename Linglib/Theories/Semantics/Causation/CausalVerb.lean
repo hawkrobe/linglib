@@ -2,7 +2,7 @@ import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Modality.Ability
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 /-!
 # Causal Verb Frame
@@ -53,7 +53,7 @@ This is the deep structural reason that all three phenomena work the same way.
 namespace CausalVerb
 
 open Core.StructuralEquationModel
-open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
+open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Closure-Operator Properties of normalDevelopment

@@ -184,7 +184,7 @@ discourse-salient temporal antecedent. This explains the striking contrast:
   German: "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect ok) -/
 
 open Semantics.TenseAspectComposition
-open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Tense.Aspect.Core
 
 /-- Kratzer's English simple past = PRESENT tense + PERFECT aspect.
     The tense head is PRESENT (indexical-compatible), so the surface form

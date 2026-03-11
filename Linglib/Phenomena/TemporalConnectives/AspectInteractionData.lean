@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 /-!
 # Aspect × Temporal Connective Interaction Data
@@ -26,7 +26,7 @@ aspectual class (Vendler class) of their complement and main clauses.
 
 namespace Phenomena.TemporalConnectives.AspectInteractionData
 
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ============================================================================
 -- § 1: Connective × Aspect Interaction Judgments

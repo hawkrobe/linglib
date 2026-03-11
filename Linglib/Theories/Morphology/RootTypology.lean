@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Events.EventStructure
+import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Core.Root
 
 /-!
@@ -58,7 +59,7 @@ you nothing about whether it entails change, and vice versa.
 open Semantics.Events.EventStructure
 open Semantics.Events.ProtoRoles
 open Semantics.Lexical.Verb.ChangeOfState
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Root Type Subclasses (@cite{beavers-etal-2021} §3.1)

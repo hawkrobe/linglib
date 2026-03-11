@@ -21,13 +21,13 @@ This grounds the NeoGricean analysis in compositional semantics.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 import Mathlib.Tactic.FinCases
 
-namespace NeoGricean.MontagueExhaustivity
+namespace Exhaustification.MontagueExhaustivity
 
 open Semantics.Montague Semantics.Lexical.Determiner.Quantifier
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 /-
 ## World-Indexed Montague Models
@@ -284,4 +284,4 @@ This closes the gap identified in CLAUDE.md:
 Now the scalar implicature derivation is grounded in compositional semantics.
 -/
 
-end NeoGricean.MontagueExhaustivity
+end Exhaustification.MontagueExhaustivity

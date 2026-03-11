@@ -20,12 +20,14 @@ and distinct syntactic frames.
 
 -/
 
-import Linglib.Theories.Semantics.Events.ProtoRoles
+import Linglib.Theories.Semantics.Events.EntailmentProfile
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Core.RootDimensions
 
 namespace Semantics.Events.EventStructure
 
 open Semantics.Events.ProtoRoles
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event Structure Primitives (@cite{rappaport-hovav-levin-1998} + 2024)

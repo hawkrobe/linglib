@@ -1,6 +1,7 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty
 
 /-!
 # Maximal Informativity and Temporal *in*-Adverbials
@@ -53,8 +54,8 @@ E-TIA licensing ◁───── MIP ─────▷ G-TIA polarity sensiti
 namespace Semantics.Montague.Sentence.MaximalInformativity
 
 open Core.Time
-open Semantics.Lexical.Verb.ViewpointAspect
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.Core
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Maximal Informativity
@@ -220,26 +221,10 @@ def GTIA_Licensed_Neg (P : EventPred W Time) (μ : MeasureFun Time)
 -- § 7. Information Collapse and Licensing Theorems
 -- ════════════════════════════════════════════════════
 
-/-- **Subinterval property for event predicates** (mereological version).
-    @cite{rouillard-2026} eq. (82): SUB(P) iff every part of a P-event's runtime
-    that is also the runtime of some event is the runtime of a P-event.
-    States and activities have this property; accomplishments/achievements lack it. -/
-def HasSubintervalProp (P : EventPred W Time) : Prop :=
-  ∀ (e₁ : Eventuality Time) (w : W),
-    P w e₁ →
-    ∀ (t : Interval Time), t.subinterval e₁.τ →
-    ∀ (e₂ : Eventuality Time), e₂.τ = t →
-    P w e₂
-
-/-- **Closed subinterval property** (CSUB).
-    @cite{rouillard-2026} eq. (111): for any portion t of a P-event's runtime,
-    the closed counterpart c(t) is the runtime of some P-event.
-    Stronger than SUB: prevents gaps in the runtime of atelic events. -/
-def HasClosedSubintervalProp (P : EventPred W Time) : Prop :=
-  ∀ (e₁ : Eventuality Time) (w : W),
-    P w e₁ →
-    ∀ (t : Interval Time), t.subinterval e₁.τ →
-    ∃ (e₂ : Eventuality Time), e₂.τ = t ∧ P w e₂
+-- HasSubintervalProp and HasClosedSubintervalProp are now defined in
+-- Tense.Aspect.SubintervalProperty and re-exported here for backwards compatibility.
+open Semantics.Tense.Aspect.SubintervalProperty in
+export Semantics.Tense.Aspect.SubintervalProperty (HasSubintervalProp HasClosedSubintervalProp)
 
 /-- **E-TIA Information Collapse for Atelic VPs**.
     When a VP predicate has the subinterval property (is atelic/DIV),

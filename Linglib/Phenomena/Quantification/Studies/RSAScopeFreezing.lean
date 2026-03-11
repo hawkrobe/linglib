@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
+import Linglib.Phenomena.Quantification.Studies.ScopeFreezing
 import Linglib.Phenomena.Quantification.Data
 import Mathlib.Data.Rat.Defs
 

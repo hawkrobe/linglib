@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Basic
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Anscombe
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 
 /-!
@@ -42,7 +42,7 @@ namespace Semantics.Tense.TemporalConnectives
 
 open Core.Time
 open Core.Time.Interval
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 open Semantics.Lexical.Verb.ChangeOfState
 open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton
   maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)

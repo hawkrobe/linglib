@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Semantics.Events.ThematicRoles
+import Linglib.Core.Lexical.ThetaRole
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 

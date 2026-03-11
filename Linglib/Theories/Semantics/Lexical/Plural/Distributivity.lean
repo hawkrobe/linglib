@@ -25,6 +25,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Powerset
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Logic.Truth3
+import Linglib.Theories.Semantics.Supervaluation.Basic
 
 namespace Semantics.Lexical.Plural.Distributivity
 
@@ -155,6 +156,7 @@ def noneSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
 -- Part 2: Trivalent Truth Values (Core.Duality.Truth3)
 
 open Core.Duality (Truth3)
+open Semantics.Supervaluation (SpecSpace superTrue)
 
 /--
 The trivalent truth value for plural predication "the Xs are P".
@@ -163,33 +165,39 @@ The trivalent truth value for plural predication "the Xs are P".
 - FALSE: no atoms satisfy P
 - GAP: some but not all satisfy P
 
-This is the core of @cite{kriz-spector-2021} Section 2.
+This is the core of @cite{kriz-spector-2021} Section 2, instantiated
+as a supervaluation over the atoms of the plurality: each atom is a
+"specification point", and predication is super-true iff the predicate
+holds at all of them.
 -/
 def pluralTruthValue (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Truth3 :=
-  if allSatisfy P x w then .true
-  else if noneSatisfy P x w then .false
-  else .gap
+  if h : x.Nonempty then
+    superTrue (fun a => P a w) ⟨x, h⟩
+  else .true  -- empty plurality: vacuously true
 
-/-- pluralTruthValue is.true iff allSatisfy holds -/
+/-- pluralTruthValue is .true iff allSatisfy holds -/
 @[simp]
 theorem pluralTruthValue_eq_true_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .true ↔ allSatisfy P x w = true := by
-  simp only [pluralTruthValue]
-  split_ifs with h <;> simp_all
+  unfold pluralTruthValue superTrue allSatisfy
+  simp only [decide_eq_true_eq]
+  split_ifs <;> simp_all
 
-/-- pluralTruthValue is.false iff noneSatisfy holds (and not allSatisfy) -/
+/-- pluralTruthValue is .false iff noneSatisfy holds (and not allSatisfy) -/
 @[simp]
 theorem pluralTruthValue_eq_false_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .false ↔ allSatisfy P x w = false ∧ noneSatisfy P x w = true := by
-  simp only [pluralTruthValue]
-  split_ifs with h1 h2 <;> simp_all
+  unfold pluralTruthValue superTrue allSatisfy noneSatisfy
+  simp only [decide_eq_true_eq]
+  split_ifs <;> simp_all
 
-/-- pluralTruthValue is.gap iff neither all nor none satisfy -/
+/-- pluralTruthValue is .gap iff neither all nor none satisfy -/
 @[simp]
 theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
     pluralTruthValue P x w = .gap ↔ allSatisfy P x w = false ∧ noneSatisfy P x w = false := by
-  simp only [pluralTruthValue]
-  split_ifs with h1 h2 <;> simp_all
+  unfold pluralTruthValue superTrue allSatisfy noneSatisfy
+  simp only [decide_eq_true_eq]
+  split_ifs <;> simp_all
 
 /-- If all satisfy P, then none satisfy ¬P -/
 theorem allSatisfy_imp_noneSatisfy_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
@@ -266,9 +274,10 @@ Corollary: pluralTruthValue is gap iff negated version is gap.
 theorem pluralTruthValue_gap_iff_neg_gap (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     (_hne : x.Nonempty) :
     pluralTruthValue P x w = .gap ↔ pluralTruthValue (λ a w => !P a w) x w = .gap := by
-  unfold pluralTruthValue allSatisfy noneSatisfy
-  simp only [decide_eq_true_eq, Bool.not_eq_true', Bool.not_eq_false', Bool.not_not]
-  constructor <;> (intro h; split_ifs at h ⊢ <;> first | rfl | contradiction | omega)
+  rw [pluralTruthValue_eq_gap_iff, pluralTruthValue_eq_gap_iff]
+  simp only [allSatisfy, noneSatisfy, decide_eq_false_iff_not,
+             Bool.not_eq_true', Bool.not_eq_false']
+  exact And.comm
 
 /--
 Homogeneity Polarity Theorem: Truth and falsity swap under negation.
@@ -284,44 +293,34 @@ theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     | .true => .false
     | .false => .true
     | .indet => .indet := by
-  -- Case split on the value of pluralTruthValue P x w
   cases h : pluralTruthValue P x w
-  -- Case .true: allSatisfy P holds, so noneSatisfy ¬P holds, giving .false
+  -- Case .true → .false: allSatisfy P ⇒ noneSatisfy ¬P, not allSatisfy ¬P
   · rw [pluralTruthValue_eq_true_iff] at h
-    have hNone := allSatisfy_imp_noneSatisfy_neg P x w h
-    -- Need to show allSatisfy ¬P = false
-    have hNotAll : allSatisfy (λ a w => !P a w) x w = false := by
-      simp only [allSatisfy, decide_eq_true_eq, Bool.not_eq_true'] at h
-      simp only [allSatisfy, Bool.not_eq_true', decide_eq_false_iff_not, decide_eq_true_eq,
-                 not_forall, exists_prop]
-      obtain ⟨a, ha⟩ := hne
-      exact ⟨a, ha, by simp [h a ha]⟩
-    simp only [pluralTruthValue, hNotAll, Bool.false_eq_true, ↓reduceIte, hNone, ite_false]
-  -- Case .false: noneSatisfy P holds, so allSatisfy ¬P holds, giving .true
+    rw [pluralTruthValue_eq_false_iff]
+    refine ⟨?_, allSatisfy_imp_noneSatisfy_neg P x w h⟩
+    simp only [allSatisfy, decide_eq_true_eq, Bool.not_eq_true'] at h
+    simp only [allSatisfy, Bool.not_eq_true', decide_eq_false_iff_not, decide_eq_true_eq,
+               not_forall, exists_prop]
+    obtain ⟨a, ha⟩ := hne
+    exact ⟨a, ha, by simp [h a ha]⟩
+  -- Case .false → .true: noneSatisfy P ⇒ allSatisfy ¬P
   · rw [pluralTruthValue_eq_false_iff] at h
-    have hAll := noneSatisfy_imp_allSatisfy_neg P x w h.2
-    simp only [pluralTruthValue, hAll, ↓reduceIte]
-  -- Case .gap: neither all nor none, so gap for ¬P too
+    rw [pluralTruthValue_eq_true_iff]
+    exact noneSatisfy_imp_allSatisfy_neg P x w h.2
+  -- Case .gap → .gap: witnesses on both sides
   · rw [pluralTruthValue_eq_gap_iff] at h
+    rw [pluralTruthValue_eq_gap_iff]
     obtain ⟨hNotAll, hNotNone⟩ := h
-    -- From hNotAll (allSatisfy P = false), get witness where P is false
     simp only [allSatisfy, decide_eq_false_iff_not, decide_eq_true_eq] at hNotAll
     push_neg at hNotAll
     obtain ⟨a, ha, hPa⟩ := hNotAll
-    -- From hNotNone (noneSatisfy P = false), get witness where P is true
     simp only [noneSatisfy, decide_eq_false_iff_not, decide_eq_true_eq] at hNotNone
     push_neg at hNotNone
     obtain ⟨b, hb, hPb⟩ := hNotNone
-    -- Now show allSatisfy ¬P = false and noneSatisfy ¬P = false
-    have h1 : allSatisfy (λ a w => !P a w) x w = false := by
-      simp only [allSatisfy, decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_true',
-                 not_forall, exists_prop]
-      exact ⟨b, hb, by simp [hPb]⟩
-    have h2 : noneSatisfy (λ a w => !P a w) x w = false := by
-      simp only [noneSatisfy, decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_false',
-                 not_forall, exists_prop]
-      exact ⟨a, ha, by simp [hPa]⟩
-    simp only [pluralTruthValue, h1, h2, Bool.false_eq_true, ↓reduceIte, ite_false]
+    exact ⟨by simp only [allSatisfy, decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_true',
+                          not_forall, exists_prop]; exact ⟨b, hb, by simp [hPb]⟩,
+           by simp only [noneSatisfy, decide_eq_false_iff_not, decide_eq_true_eq, Bool.not_eq_false',
+                          not_forall, exists_prop]; exact ⟨a, ha, by simp [hPa]⟩⟩
 
 -- Part 4: Candidate Interpretations
 

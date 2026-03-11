@@ -32,7 +32,7 @@ import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 namespace Semantics.Montague.Sentence.TemporalAdverbials
 
 open Core.Time
-open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Tense.Aspect.Core
 open Semantics.TenseAspectComposition
 
 variable {W Time : Type*} [LinearOrder Time]

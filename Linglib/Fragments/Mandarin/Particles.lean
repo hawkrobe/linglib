@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
+import Linglib.Theories.Pragmatics.Implicature.Presuppositions
 
 /-!
 # Mandarin Presuppositional Particles
@@ -25,15 +25,15 @@ experimental data (@cite{wang-2025} Experiments 1-3).
 
 ## Cross-Module Connections
 
-- `NeoGricean.Presuppositions.AltStructure`: alternative classification
-- `NeoGricean.Presuppositions.PresupTrigger`: trigger type
+- `Implicature.Presuppositions.AltStructure`: alternative classification
+- `Implicature.Presuppositions.PresupTrigger`: trigger type
 - `Phenomena.Presupposition.Studies.Wang2025`: experimental data
 
 -/
 
 namespace Fragments.Mandarin.Particles
 
-open NeoGricean.Presuppositions (PresupTrigger AltStructure PresupTriggerEntry)
+open Implicature.Presuppositions (PresupTrigger AltStructure PresupTriggerEntry)
 
 /-- Mandarin presupposition triggers studied in @cite{wang-2025} Experiments 1-2. -/
 inductive MandarinTrigger where

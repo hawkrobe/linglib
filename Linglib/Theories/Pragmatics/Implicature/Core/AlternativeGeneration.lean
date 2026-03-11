@@ -43,11 +43,11 @@ Future extensions could handle:
 
 import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Montague.Derivation
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
+import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
 import Mathlib.Data.Set.Basic
 
-namespace NeoGricean.AlternativeGeneration
+namespace Implicature.AlternativeGeneration
 
 open Semantics.Montague
 open Semantics.Montague
@@ -55,7 +55,7 @@ open Semantics.Montague.Derivation
 open Semantics.Entailment.Polarity (ContextPolarity)
 open Semantics.Lexical.Determiner.Quantifier
 open Core.Scale
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 /-
 ## Sentence Frames
@@ -528,4 +528,4 @@ theorem exh_some_at_w1 : exhSomePassed w1 := by
     sorry
 
 
-end NeoGricean.AlternativeGeneration
+end Implicature.AlternativeGeneration

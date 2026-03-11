@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.Krifka1998
 import Linglib.Theories.Semantics.Events.Krifka1989
 import Linglib.Theories.Semantics.Events.Mereology
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 
@@ -29,7 +29,7 @@ diagnostic predictions in `DiagnosticsBridge.lean`.
 namespace Phenomena.TenseAspect.Studies.Krifka1998
 
 open Fragments.English.Predicates.Verbal
-open Semantics.Lexical.Verb.Aspect (VendlerClass)
+open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 open Semantics.Events.Krifka1998 (VerbIncClass)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction DiagnosticResult)
 

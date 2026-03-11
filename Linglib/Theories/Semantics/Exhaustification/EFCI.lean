@@ -29,14 +29,14 @@ Combined with assertion ∃x. P(x), this yields ⊥.
 
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Finite.Basic
 
-namespace NeoGricean.Exhaustivity.EFCI
+namespace Exhaustification.EFCI
 
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 /--
 Types of alternatives for EFCIs.
@@ -702,4 +702,4 @@ def anyExamples : List AnyExample :=
 #guard anyExamples.all (λ ex => ex.grammatical == ufciGrammatical ex.context)
 
 
-end NeoGricean.Exhaustivity.EFCI
+end Exhaustification.EFCI

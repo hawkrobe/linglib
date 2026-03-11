@@ -30,7 +30,7 @@ open Semantics.Events.Mereology
 open Semantics.Events.Krifka1998
 open Semantics.Events.StratifiedReference
 open Core.Time
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Nominal Reference Properties

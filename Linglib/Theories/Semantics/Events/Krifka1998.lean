@@ -41,7 +41,7 @@ namespace Semantics.Events.Krifka1998
 open Semantics.Events
 open Semantics.Events.Mereology
 open Core.Time
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Thematic Role Properties (§3.2, eq. 43–52)

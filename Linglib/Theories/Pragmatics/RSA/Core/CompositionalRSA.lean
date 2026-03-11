@@ -38,7 +38,7 @@ not the structural level.
 
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
@@ -47,7 +47,7 @@ import Mathlib.Tactic.Ring
 
 namespace RSA.Compositional
 
-open NeoGricean.Exhaustivity
+open Exhaustification
 open RSA.Core.EmbeddedSI
 
 -- SECTION 1: Local Alternatives at a Node

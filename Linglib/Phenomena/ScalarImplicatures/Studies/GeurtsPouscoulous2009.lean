@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Empirical
-import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
@@ -487,8 +487,8 @@ experimental findings above.
 - Singh asymmetry predictions match felicity judgments
 -/
 
-open NeoGricean.ScalarImplicatures
-open NeoGricean.Alternatives
+open Implicature.ScalarImplicatures
+open Implicature.Alternatives
 open Phenomena.ScalarImplicatures
 
 /-- Exp 1a simple rate (Table 2). -/
@@ -558,7 +558,7 @@ theorem competence_explains_think_bridge :
 
 -- Comparing Neo-Gricean variants
 
-open _root_.NeoGricean
+open _root_.Implicature
 
 theorem defaultism_predicts_high_rate :
     predictsHighNeutralRate levinsonParams = true := by native_decide

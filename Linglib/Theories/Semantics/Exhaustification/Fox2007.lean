@@ -52,7 +52,7 @@ computationally in `Semantics/Conditionals/AlternativeSensitive.lean`,
 which imports this file and proves the correspondence.
 -/
 
-namespace NeoGricean.Exhaustivity.Fox2007
+namespace Exhaustification.Fox2007
 
 
 -- ============================================================
@@ -401,4 +401,4 @@ theorem fc_entails_both_disjuncts (w : ModalW)
 end FreeChoice
 
 
-end NeoGricean.Exhaustivity.Fox2007
+end Exhaustification.Fox2007

@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.Roundness
 import Linglib.Core.Logic.SatisfactionOrdering
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
+import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -36,7 +36,7 @@ The OT constraints map onto RSA parameters:
 
 -/
 
-namespace NeoGricean.Constraints.NumericalExpressions
+namespace Implicature.Constraints.NumericalExpressions
 
 open Core.Roundness
 
@@ -355,4 +355,4 @@ theorem zero_bounds_any_violated (v : ViolationProfile)
   simp only [harmonicallyBounds, lexLessThan]
   rcases h with h | h | h | h <;> simp_all <;> omega
 
-end NeoGricean.Constraints.NumericalExpressions
+end Implicature.Constraints.NumericalExpressions

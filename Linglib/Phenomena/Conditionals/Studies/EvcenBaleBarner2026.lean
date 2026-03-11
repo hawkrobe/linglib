@@ -2,7 +2,7 @@ import Linglib.Core.Empirical
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
+import Linglib.Theories.Pragmatics.Implicature.Core.Competence
 
 /-!
 # @cite{evcen-bale-barner-2026} — Conditional Perfection
@@ -430,7 +430,7 @@ theorem theory_chain_3button_perfection
     intro w' h; cases w' <;> simp_all [button3AnswerSpace, aCausesSound, pressA]
   -- Step 2: All alternative triggers are IE (via general lemma)
   have h_ie : ∀ t' ∈ button3AnswerSpace.triggers, t' ≠ .A →
-      NeoGricean.Exhaustivity.isInnocentlyExcludable
+      Exhaustification.isInnocentlyExcludable
         (answerAlternatives button3AnswerSpace .A)
         (answerProp button3AnswerSpace .A)
         (answerProp button3AnswerSpace t') := by

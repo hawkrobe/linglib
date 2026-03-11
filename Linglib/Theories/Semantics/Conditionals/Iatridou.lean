@@ -4,7 +4,7 @@ import Linglib.Core.Context.Rich
 import Linglib.Theories.Semantics.Tense.BranchingTime
 import Linglib.Theories.Semantics.Tense.Deal
 import Linglib.Theories.Semantics.Mood.Basic
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 /-!
 # @cite{iatridou-2000}: The Grammatical Ingredients of Counterfactuality
@@ -47,7 +47,7 @@ open Core.Context (KContext ContextTower ContextShift temporalShift)
 open Semantics.Tense.Deal (PastMorphologyUse CounterfactualDistance)
 open Semantics.Tense.BranchingTime (WorldHistory historicalBase)
 open Semantics.Mood (subjShift)
-open Semantics.Lexical.Verb.Aspect (VendlerClass)
+open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 
 -- ════════════════════════════════════════════════════════════════
 -- § ExclF: The Exclusion Feature

@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Homogeneity
 
@@ -132,7 +133,7 @@ theorem all_posExt_eq (P : Atom → W → Bool) (x : Finset Atom) :
     posExt (allPluralTV P x) = posExt (barePluralTV P x) := by
   ext w; simp only [posExt, allPluralTV, barePluralTV, Set.mem_setOf_eq]
   constructor
-  · intro h; split_ifs at h; (simp_all [pluralTruthValue])
+  · intro h; split_ifs at h <;> simp_all [pluralTruthValue_eq_true_iff]
   · intro h
     rw [pluralTruthValue_eq_true_iff] at h
     simp [h]
@@ -146,8 +147,9 @@ theorem all_negExt_eq (P : Atom → W → Bool) (x : Finset Atom) :
     negExt (allPluralTV P x) := by
   ext w; simp only [negExt, gapExt, allPluralTV, barePluralTV, Set.mem_union,
     Set.mem_setOf_eq]
-  simp only [pluralTruthValue]
-  split_ifs with h1 h2 <;> simp_all
+  unfold pluralTruthValue Semantics.Supervaluation.superTrue allSatisfy
+  simp only [decide_eq_true_eq]
+  split_ifs <;> simp_all
 
 -- ============================================================================
 -- Section 3: Sufficient Truth and Addressing
@@ -603,5 +605,55 @@ open Phenomena.Plurals.Homogeneity in
 /-- Outside the gap, judgments are clear: all switches on → clearly true. -/
 theorem switches_all_on_clearly_true :
     switchesExample.positiveInAll = .clearlyTrue := rfl
+
+-- ============================================================================
+-- Section 10: Connection to Supervaluation Framework
+-- ============================================================================
+
+/-! Plural predication is an instance of supervaluation (@cite{fine-1975}).
+    Each atom in the plurality is a specification point: the predicate is
+    super-true iff satisfied by all atoms, super-false iff by none, and
+    indefinite when some-but-not-all satisfy it (the homogeneity gap).
+
+    This unifies two independent literatures:
+    - @cite{fine-1975}: varying the *threshold* for vague predicates
+    - @cite{kriz-2016}: varying the *atom* for plural predicates
+
+    Both are instances of `Semantics.Supervaluation.superTrue`. The `dist`
+    operator in `Core.Duality` is a third implementation of the same pattern
+    over `List Bool`; `selectional_eq_dist` in `Counterfactual.lean` proves
+    yet another instance for closest worlds. -/
+
+open Semantics.Supervaluation (SpecSpace superTrue)
+
+/-- **Plural predication = supervaluation over atoms.** The bare plural
+    "the Xs are P" at world w has the same truth value as `superTrue`
+    with atoms as specification points and `P(·,w)` as the evaluation
+    function.
+
+    This is the structural identity connecting homogeneity gaps to
+    vagueness gaps: both arise from disagreement across specification
+    points (atoms vs thresholds vs comparison classes). -/
+theorem barePluralTV_eq_superTrue (P : Atom → W → Bool)
+    (x : Finset Atom) (hne : x.Nonempty) (w : W) :
+    barePluralTV P x w = superTrue (fun a => P a w) ⟨x, hne⟩ := by
+  simp [barePluralTV, pluralTruthValue, dif_pos hne]
+
+/-- Corollary: homogeneity (gap existence) is exactly supervaluation
+    indefiniteness. If the bare plural is gapped at w, then `superTrue`
+    returns `.indet` — witnesses exist on both sides. -/
+theorem homogeneity_gap_is_indefiniteness (P : Atom → W → Bool)
+    (x : Finset Atom) (hne : x.Nonempty) (w : W)
+    (hgap : barePluralTV P x w = .gap) :
+    superTrue (fun a => P a w) ⟨x, hne⟩ = Truth3.indet := by
+  rw [← barePluralTV_eq_superTrue P x hne w]; exact hgap
+
+/-- Corollary: `all` removes homogeneity by collapsing the specification
+    space to a single point (the universal check). This corresponds to
+    Fine's fidelity theorem: singleton specification spaces are classical. -/
+theorem all_removes_supervaluation_gap (P : Atom → W → Bool)
+    (x : Finset Atom) (w : W) :
+    allPluralTV P x w ≠ .gap := by
+  simp only [allPluralTV]; split_ifs <;> simp
 
 end Phenomena.Plurals.Studies.Kriz2016

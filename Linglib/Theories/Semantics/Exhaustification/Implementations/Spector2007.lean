@@ -29,7 +29,7 @@ import Mathlib.Data.Finset.Insert
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Set.Finite.Basic
 
-namespace NeoGricean.Spector2007
+namespace Exhaustification.Spector2007
 
 
 /-
@@ -511,4 +511,4 @@ theorem exhaust_or_eq_exclOr (A B : Atom) (_hne : A ≠ B) :
         | inl hA' => exact Finset.notMem_empty A hA'
         | inr hB' => exact Finset.notMem_empty B hB'
 
-end NeoGricean.Spector2007
+end Exhaustification.Spector2007

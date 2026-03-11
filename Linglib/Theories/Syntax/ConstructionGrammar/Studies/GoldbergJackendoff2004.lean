@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 /-!
 # @cite{goldberg-jackendoff-2004}: The English Resultative as a Family of Constructions
@@ -28,7 +28,7 @@ Formalization of the core claims from @cite{goldberg-jackendoff-2004}.
 namespace ConstructionGrammar.Studies.GoldbergJackendoff2004
 
 open ConstructionGrammar
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 /-! ## Core types -/
 

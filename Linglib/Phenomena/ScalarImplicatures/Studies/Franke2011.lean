@@ -10,12 +10,12 @@ RSA is "soft" IBR: as α → ∞, softmax → argmax → exhMW → exhIE.
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 
 namespace RSA.IBR
 
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 /-- Interpretation game (Franke §6): states are equivalence classes over alternative truth patterns. -/
 structure InterpGame where

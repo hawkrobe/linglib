@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Fragments.English.FunctionWords
 
 /-!
@@ -20,7 +20,7 @@ veridicality and NPI-licensing generalizations.
 
 namespace Fragments.English.TemporalExpressions
 
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ============================================================================
 -- § 1: Shared Types

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
@@ -17,7 +17,7 @@ predictions to the Fragment-level particle licensing.
 
 namespace Phenomena.TenseAspect.CrossDomainBridge
 
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 open Fragments.Mandarin.AspectComparison
 open Core.Time
 

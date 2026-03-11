@@ -45,7 +45,7 @@ All three use the same QUA/CUM pullback mechanism via `MereoDim`.
 open Semantics.Events
 open Semantics.Events.Mereology
 open Core.Path
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 open _root_.Mereology
 
 -- ════════════════════════════════════════════════════

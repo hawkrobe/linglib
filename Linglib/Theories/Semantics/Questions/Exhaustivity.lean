@@ -105,12 +105,12 @@ exhaustification operator Exh. The key insight: a question partitions
 the logical space iff every world has exactly one exhaustified true answer.
 
 The definitions below are Bool-valued analogues of the Prop-valued MC-set/IE
-machinery in `NeoGricean.Exhaustivity.Basic`, specialized to question cells
+machinery in `Exhaustification.Basic`, specialized to question cells
 for decidable computation via `native_decide`.
 
-- `cellMCSets` mirrors `isMCSet` from NeoGricean.Exhaustivity
-- `cellIE` mirrors `IE` from NeoGricean.Exhaustivity
-- `foxExh` mirrors `exhIE` from NeoGricean.Exhaustivity
+- `cellMCSets` mirrors `isMCSet` from Exhaustification
+- `cellIE` mirrors `IE` from Exhaustification
+- `foxExh` mirrors `exhIE` from Exhaustification
 - `foxAns` implements @cite{fox-2018}, definition 35 (answer operator)
 - `foxPartition` implements Schwarzschild's partition test ((38))
 -/
@@ -133,7 +133,7 @@ negated while cell `pIdx` stays true?
 `negConsistent cells pIdx excluded worlds = true` iff
 ∃w ∈ worlds. cells[pIdx](w) ∧ ∀j ∈ excluded. ¬cells[j](w)
 
-This is the Bool analogue of `SetConsistent` in NeoGricean.Exhaustivity,
+This is the Bool analogue of `SetConsistent` in Exhaustification,
 specialized to the pattern φ ∧ ⋀{¬a : a ∈ excluded}. -/
 def negConsistent {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (excluded : List Nat) (worlds : List W) : Bool :=
@@ -147,7 +147,7 @@ A subset `S` of alternative indices (excluding `pIdx`) is an MC-set iff:
 1. Negating all cells in `S` is consistent with `pIdx` being true
 2. No proper superset of `S` is also consistent
 
-Bool analogue of `isMCSet` in NeoGricean.Exhaustivity.Basic. -/
+Bool analogue of `isMCSet` in Exhaustification.Basic. -/
 def cellMCSets {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : List (List Nat) :=
   let altIdxs := (List.range cells.length).filter (· != pIdx)
@@ -161,7 +161,7 @@ def cellMCSets {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
 /-- Innocently excludable alternatives for cell `pIdx`: the indices
 that appear in *every* MC-set (intersection of all MC-sets).
 
-Bool analogue of `IE` in NeoGricean.Exhaustivity.Basic:
+Bool analogue of `IE` in Exhaustification.Basic:
   IE_(ALT,φ) = {ψ : ψ belongs to every MC_(ALT,φ)-set} -/
 def cellIE {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : List Nat :=
@@ -174,7 +174,7 @@ def cellIE {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
 /-- Fox's exhaustified cell: Exh(Q)(p)(w) = cells[pIdx](w) ∧ ∀j ∈ IE. ¬cells[j](w).
 
 The exhaustified meaning of answer p negates all innocently excludable
-alternatives. Bool analogue of `exhIE` in NeoGricean.Exhaustivity.Basic. -/
+alternatives. Bool analogue of `exhIE` in Exhaustification.Basic. -/
 def foxExh {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : W → Bool :=
   λ w => getCell cells pIdx w &&

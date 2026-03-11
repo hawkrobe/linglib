@@ -1,15 +1,16 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.Implementations.BarLevFox2020
+import Linglib.Theories.Semantics.Exhaustification.Fox2007
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
 import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic
 
 /-!
 # Free Choice: Theory Comparison
-@cite{aloni-2022} @cite{alsop-2024} @cite{bar-lev-fox-2020} @cite{champollion-alsop-grosu-2019} @cite{elliott-2025} @cite{fox-2007}
+@cite{aloni-2022} @cite{alsop-2024} @cite{bar-lev-fox-2020} @cite{champollion-alsop-grosu-2019} @cite{elliott-2025} @cite{fox-2007} @cite{holliday-mandelkern-2024}
 
 Comparing how different theories derive free choice inferences.
 
@@ -29,20 +30,22 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 4. **@cite{alsop-2024}**: RSA with Global Intentions (universal *any*)
 5. **@cite{aloni-2022}**: BSML - Bilateral State-based Modal Logic (team semantics)
 6. **@cite{elliott-sudo-2025}**: BUS - Bilateral Update Semantics (dynamic)
+7. **@cite{holliday-mandelkern-2024}**: Possibility semantics (ortholattice algebra)
 
 -/
 
 namespace Comparisons.FreeChoice
 
 open Phenomena.Modality.FreeChoice
-open NeoGricean.Exhaustivity
-open NeoGricean.Exhaustivity.Fox2007
-open NeoGricean.FreeChoice
+open Exhaustification
+open Exhaustification.Fox2007
+open Exhaustification.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
 open Semantics.Dynamic.BUS.FreeChoice
 open Semantics.Dynamic.BSML
 open Phenomena.Modality.Studies.Aloni2022
+open Semantics.PossibilitySemantics
 
 -- ============================================================================
 -- SECTION 1: The Free Choice Puzzle
@@ -140,8 +143,8 @@ For FC alternatives:
 /-- Bar-Lev & Fox: Free choice is derived via Innocent Inclusion -/
 theorem barlevfox_derives_fc :
     ∀ w, exhIEII fcALT fcPrejacent w →
-      NeoGricean.FreeChoice.permA w ∧ NeoGricean.FreeChoice.permB w :=
-  NeoGricean.FreeChoice.free_choice
+      Exhaustification.FreeChoice.permA w ∧ Exhaustification.FreeChoice.permB w :=
+  Exhaustification.FreeChoice.free_choice
 
 -- ============================================================================
 -- SECTION 3: @cite{champollion-alsop-grosu-2019} - RSA + Semantic Uncertainty
@@ -316,6 +319,55 @@ The BUS module provides FC derivation via:
 #check @fc_semantic_first_disjunct
 #check @fc_semantic_second_disjunct
 #check @dual_prohibition
+
+-- ============================================================================
+-- SECTION 3e: @cite{holliday-mandelkern-2024} - Possibility Semantics
+-- ============================================================================
+
+/-!
+## Algebraic Account: Possibility Semantics (Ortholattice)
+
+@cite{holliday-mandelkern-2024} provide a **structural** account of free
+choice rooted in the algebra of propositions. In possibility semantics,
+propositions form an **ortholattice** — validated by excluded middle and
+non-contradiction, but NOT by distributivity. A partial possibility can
+verify A ∨ B without verifying either disjunct, because disjunction is
+De Morgan (A ∨ B = ¬(¬A ∧ ¬B)), weaker than set-theoretic union.
+
+### The Mechanism
+
+**Free choice selective validity**: ◇(A ∨ B) → ◇A ∧ ◇B holds for
+propositions in the image of the Boolean embedding (Proposition 5.12.3),
+but fails when the ortholattice is genuinely non-Boolean.
+
+In the 5-point epistemic scale:
+- At x₃ (full uncertainty), FC holds: both p and ¬p are accessible
+- At x₁ (knows p), FC fails: ◇(p ∨ ¬p) is true but ◇¬p is false
+
+### Key Difference
+
+This is neither pragmatic (reasoning about alternatives) nor dynamic
+(update semantics) — it's **algebraic**. Free choice depends on whether
+the proposition space is Boolean. Standard modal logic (all possibilities
+are worlds, compat = identity) is the special case where the algebra is
+Boolean and FC holds universally (via `diamond_eq_kripkeEval_classical`).
+-/
+
+/-- Holliday & Mandelkern: FC holds at full uncertainty (x₃). -/
+theorem hollidayMandelkern_fc_at_uncertainty :
+    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x3 = true →
+    conj (diamond epistemicScale propP)
+         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 = true :=
+  free_choice_at_x3
+
+/-- Holliday & Mandelkern: FC FAILS at knowledge (x₁). The non-Boolean
+    ortholattice selectively blocks FC where the agent's epistemic state
+    rules out one disjunct. -/
+theorem hollidayMandelkern_fc_fails_at_knowledge :
+    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x1 = true ∧
+    conj (diamond epistemicScale propP)
+         (diamond epistemicScale (orthoNeg pathFrame propP)) .x1 = false :=
+  free_choice_fails_at_x1
 
 -- ============================================================================
 -- SECTION 4: Comparison Table
@@ -596,7 +648,7 @@ def allPredictCancellation : Bool := explicitCancellation.felicitous
 /-!
 ## Summary: Free Choice Theory Landscape
 
-### Five Theories, Two Approaches
+### Seven Theories, Three Approaches
 
 **Pragmatic (FC as implicature)**:
 - @cite{bar-lev-fox-2020}: Innocent Inclusion (categorical)
@@ -607,6 +659,10 @@ def allPredictCancellation : Bool := explicitCancellation.felicitous
 - @cite{aloni-2022}: BSML - team semantics + NE enrichment
 - @cite{elliott-sudo-2025}: BUS - bilateral dynamics + modal ∨ precondition
 
+**Algebraic (FC from proposition structure)**:
+- @cite{holliday-mandelkern-2024}: Possibility semantics — FC holds when the
+  proposition algebra is Boolean, fails in non-Boolean ortholattices
+
 ### Key Differentiators
 
 | Feature | Best Theory |
@@ -616,6 +672,7 @@ def allPredictCancellation : Bool := explicitCancellation.felicitous
 | Formal precision | Bar-Lev & Fox |
 | Cross-disjunct anaphora | Elliott & Sudo |
 | Static team semantics | Aloni |
+| Why FC fails selectively | Holliday & Mandelkern |
 
 ### Complementary Insights
 
@@ -625,6 +682,7 @@ Each theory contributes something unique:
 - **Alsop**: Extension to universal FCIs (*any*)
 - **Aloni**: Static team-semantic alternative to dynamics
 - **Elliott & Sudo**: Anaphora + bilateral structure
+- **Holliday & Mandelkern**: WHEN FC holds (Boolean algebra) vs fails (ortholattice)
 -/
 
 end Comparisons.FreeChoice

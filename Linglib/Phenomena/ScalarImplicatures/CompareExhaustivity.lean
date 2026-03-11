@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.Fox2007
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 set_option autoImplicit false
@@ -34,7 +34,7 @@ The proof factors through two key steps:
 namespace Comparisons.ExhaustivityLimit
 
 open Core Real BigOperators Finset Filter Topology
-open NeoGricean.Exhaustivity.Fox2007 (exhB ieIndices)
+open Exhaustification.Fox2007 (exhB ieIndices)
 
 -- ============================================================================
 -- § 1. Scale Types

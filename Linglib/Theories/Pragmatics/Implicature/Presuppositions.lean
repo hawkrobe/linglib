@@ -1,8 +1,8 @@
 /-
-# NeoGricean Presupposition Integration
+# Implicature Presupposition Integration
 @cite{wang-2025}
 
-Extends NeoGricean infrastructure with presupposition handling, connecting
+Extends Implicature infrastructure with presupposition handling, connecting
 to the core presupposition projection from Core.Presupposition.
 
 ## Key Concepts
@@ -23,7 +23,7 @@ to the core presupposition projection from Core.Presupposition.
 Theory-neutral examples (King, factive verbs, etc.) are in:
   `Phenomena.Presupposition.Basic`
 
-This module provides NeoGricean-specific infrastructure:
+This module provides Implicature-specific infrastructure:
   - Trigger types for alternative generation
   - Derivation tracking for SI computation
   - SI-presupposition interaction
@@ -32,12 +32,12 @@ This module provides NeoGricean-specific infrastructure:
 
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
-namespace NeoGricean.Presuppositions
+import Linglib.Theories.Pragmatics.Implicature.Core.Basic
+namespace Implicature.Presuppositions
 
 open Core.Presupposition
 open Semantics.Entailment.Polarity
-open NeoGricean
+open Implicature
 
 
 /--
@@ -78,7 +78,7 @@ structure TriggerOccurrence where
 /--
 A derivation extended with presupposition tracking.
 
-This extends the basic NeoGricean infrastructure to track presuppositions
+This extends the basic Implicature infrastructure to track presuppositions
 through the derivation, enabling:
 - Presupposition projection computation
 - Interaction between presuppositions and SIs
@@ -255,4 +255,4 @@ def PresupTrigger.defaultAltStructure : PresupTrigger → AltStructure
   | .aspectual => .replacement   -- "start" → "do"
 
 
-end NeoGricean.Presuppositions
+end Implicature.Presuppositions

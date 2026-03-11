@@ -317,7 +317,7 @@ theorem shifted_satisfies_ulc :
 -- ════════════════════════════════════════════════════════════════
 
 open Semantics.Tense (PAST SitProp)
-open Semantics.Lexical.Verb.ViewpointAspect (perfSimple EventPred PointPred)
+open Semantics.Tense.Aspect.Core (perfSimple EventPred PointPred)
 
 /-- The compositional pipeline from aspect to tense is well-typed. -/
 theorem aspect_tense_pipeline_types {W Time : Type*} [LinearOrder Time]

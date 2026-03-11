@@ -1,4 +1,5 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
+import Mathlib.Logic.Relation
+import Mathlib.Data.Set.Basic
 
 /-!
 # Structurally-Defined Alternatives
@@ -47,7 +48,7 @@ structural operations. For φ = "John ate some of the cake":
   in `KatzirSingh2015.lean` is based on structural complexity (def 19)
 -/
 
-namespace NeoGricean.StructuralAlternatives
+namespace StructuralAlternatives
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Syntactic Categories
@@ -690,4 +691,4 @@ def atLeastAsGoodAs {W World : Type}
   atMostAsComplex (substitutionSource lex ψ) φ ψ ∧
   ∀ w, meaning φ w = true → meaning ψ w = true
 
-end NeoGricean.StructuralAlternatives
+end StructuralAlternatives

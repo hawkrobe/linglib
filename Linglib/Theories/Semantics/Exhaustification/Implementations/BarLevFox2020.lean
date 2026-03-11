@@ -24,11 +24,11 @@ that IE cannot assign FALSE to.
 
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 
-namespace NeoGricean.FreeChoice
+namespace Exhaustification.FreeChoice
 
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 -- SECTION 1: Free Choice Setup
 
@@ -523,4 +523,4 @@ The structural difference between FC and simple disjunction is
 
 -/
 
-end NeoGricean.FreeChoice
+end Exhaustification.FreeChoice

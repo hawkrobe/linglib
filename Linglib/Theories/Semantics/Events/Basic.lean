@@ -21,14 +21,14 @@ later module.
 import Mathlib.Order.Basic
 import Linglib.Core.Temporal.Time
 import Linglib.Tactics.OntSort
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 namespace Semantics.Events
 
 open Core.Time
-open Semantics.Lexical.Verb.Aspect
-open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Tense.Aspect.LexicalAspect
+open Semantics.Tense.Aspect.Core
 
 -- ════════════════════════════════════════════════════
 -- § 1. Event Sort (@cite{bach-1986})

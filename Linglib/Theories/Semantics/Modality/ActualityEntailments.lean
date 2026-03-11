@@ -57,7 +57,7 @@ namespace Semantics.Modality.ActualityEntailments
 open Semantics.Modality.EventRelativity
 open Nadathur2023.Ability
 open Semantics.Attitudes.Intensional (World)
-open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
+open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 
 
 -- ════════════════════════════════════════════════════

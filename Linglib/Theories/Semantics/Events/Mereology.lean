@@ -1,7 +1,7 @@
 import Linglib.Core.Mereology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 /-!
 # Event Mereology
@@ -29,7 +29,7 @@ namespace Semantics.Events.Mereology
 
 open Semantics.Events
 open Core.Time
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 open _root_.Mereology
 
 -- Re-export Core.Mereology definitions in this namespace so that

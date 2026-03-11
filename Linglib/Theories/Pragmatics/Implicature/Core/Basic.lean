@@ -24,7 +24,7 @@ Core formalization of the Standard Recipe from @cite{geurts-2010} Chapter 2.
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-namespace NeoGricean
+namespace Implicature
 
 
 /--
@@ -294,4 +294,4 @@ def predictsHighNeutralRate (p : NeoGriceanParams) : Bool :=
 
 
 
-end NeoGricean
+end Implicature

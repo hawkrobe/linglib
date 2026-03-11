@@ -23,10 +23,11 @@ export Core.Verbs (PreferentialBuilder AttitudeBuilder PresupTriggerType
 open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
 open Nadathur2023.Implicative (ImplicativeBuilder)
-open Semantics.Lexical.Verb.Aspect (VendlerClass)
+open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
 open Semantics.Events.Krifka1998 (VerbIncClass)
+open Semantics.Events.ProtoRoles (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules
@@ -129,6 +130,7 @@ def run : VerbEntry where
   formPresPart := "running"
   complementType := .none
   subjectTheta := some .agent
+  subjectEntailments := some ⟨true, true, false, true, true, false, false, false, false, false⟩
   passivizable := false
   vendlerClass := some .activity
   levinClass := some .mannerOfMotion
@@ -143,6 +145,7 @@ def arrive : VerbEntry := .mkRegular {
   form := "arrive"
   complementType := .none
   subjectTheta := some .theme  -- Underlying object
+  subjectEntailments := some ⟨false, false, false, true, true, true, false, false, false, false⟩
   unaccusative := true
   passivizable := false
   vendlerClass := some .achievement
@@ -158,6 +161,8 @@ def eat : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
+  objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, false⟩
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .eat
@@ -173,6 +178,8 @@ def kick : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
+  objectEntailments := some ⟨false, false, false, false, false, true, false, true, true, false⟩
   vendlerClass := some .activity
   levinClass := some .hit
   rootProfile := some {
@@ -248,6 +255,7 @@ def buy : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  subjectEntailments := some ⟨true, true, true, false, true, false, false, false, false, false⟩
   vendlerClass := some .accomplishment
 
 /-- "meet" — irregular transitive -/
@@ -272,6 +280,7 @@ def sell : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  subjectEntailments := some ⟨true, true, true, false, true, false, false, false, false, false⟩
   vendlerClass := some .accomplishment
 
 /-- "leave" — transitive (also used intransitively with argument drop) -/
@@ -297,6 +306,7 @@ def see : VerbEntry where
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  subjectEntailments := some ⟨false, true, false, false, true, false, false, false, false, false⟩
   vendlerClass := some .state
   factivePresup := true
   levinClass := some .see
@@ -1095,6 +1105,8 @@ def build : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
+  objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, true⟩
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .build
@@ -1123,6 +1135,7 @@ def sweep : VerbEntry where
   vendlerClass := some .activity
   subjectTheta := none
   objectTheta := some .theme
+  subjectEntailments := some ⟨false, false, false, true, true, false, false, false, false, false⟩
   passivizable := true
   levinClass := some .wipe
   rootProfile := some {
@@ -1143,6 +1156,7 @@ def sweep_instr : VerbEntry where
   vendlerClass := some .activity
   subjectTheta := some .agent
   objectTheta := some .theme
+  subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
   passivizable := true
   senseTag := .instrumental
   levinClass := some .wipe

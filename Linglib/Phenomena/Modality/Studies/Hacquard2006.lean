@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Modality.ActualityEntailments
 
 /-!
@@ -205,7 +205,7 @@ complement, while those with **imperfective** aspect do not.
 
 namespace Phenomena.Modality.ActualityInferencesBridge
 
-open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
+open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 
 /-- A single cross-linguistic data point for actuality inferences. -/
 structure ActualityDatum where

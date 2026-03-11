@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 /-!
 # Degree Achievements
@@ -28,7 +28,7 @@ This module derives `VendlerClass` from `Boundedness`, connecting to the existin
 namespace Semantics.Lexical.Verb.DegreeAchievement
 
 open Core.Scale (Boundedness LicensingPipeline)
-open Semantics.Lexical.Verb.Aspect (VendlerClass Telicity)
+open Semantics.Tense.Aspect.LexicalAspect (VendlerClass Telicity)
 
 /-- A degree achievement's base scale structure.
 

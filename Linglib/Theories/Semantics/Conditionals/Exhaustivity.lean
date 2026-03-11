@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Discourse.QUD
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!
@@ -98,7 +98,7 @@ At the answer level, `EXH("A causes C", {"B causes C"})` gives
 "A causes C and B does not cause C" — which with coverage yields perfection. -/
 def exhaustifiedAnswer {Trigger W : Type*} (as : AnswerSpace Trigger W)
     (t : Trigger) : Prop' W :=
-  NeoGricean.Exhaustivity.exhIE (answerAlternatives as t) (answerProp as t)
+  Exhaustification.exhIE (answerAlternatives as t) (answerProp as t)
 
 -- ============================================================================
 -- Section D: General Perfection Theorem
@@ -170,10 +170,10 @@ theorem exhaustifiedAnswer_excludes
     {Trigger W : Type*} (as : AnswerSpace Trigger W)
     (t t' : Trigger) (w : W)
     (h_exh : exhaustifiedAnswer as t w)
-    (h_ie : NeoGricean.Exhaustivity.isInnocentlyExcludable
+    (h_ie : Exhaustification.isInnocentlyExcludable
               (answerAlternatives as t) (answerProp as t) (answerProp as t'))
     : ¬as.causes t' w := by
-  unfold exhaustifiedAnswer NeoGricean.Exhaustivity.exhIE at h_exh
+  unfold exhaustifiedAnswer Exhaustification.exhIE at h_exh
   exact h_exh _ h_ie.2
 
 /-- **Full prediction chain: exhaustification → perfection.**
@@ -199,7 +199,7 @@ theorem exhaustification_yields_perfection
     (t : Trigger) (p C : W → Prop) (w : W)
     (h_t_requires_p : ∀ w, as.causes t w → p w)
     (h_all_ie : ∀ t' ∈ as.triggers, t' ≠ t →
-      NeoGricean.Exhaustivity.isInnocentlyExcludable
+      Exhaustification.isInnocentlyExcludable
         (answerAlternatives as t) (answerProp as t) (answerProp as t'))
     (h_coverage : C w → ∃ t' ∈ as.triggers, as.causes t' w)
     (h_exh : exhaustifiedAnswer as t w)
@@ -236,8 +236,8 @@ theorem singleton_alt_innocently_excludable
     (h_mem : a ∈ ALT)
     (h_all_eq : ∀ a' ∈ ALT, a' = a)
     (h_consist : ∃ w, φ w ∧ ¬(a w))
-    : NeoGricean.Exhaustivity.isInnocentlyExcludable ALT φ a := by
-  open NeoGricean.Exhaustivity in
+    : Exhaustification.isInnocentlyExcludable ALT φ a := by
+  open Exhaustification in
   constructor
   · exact h_mem
   · -- Goal: ∼a ∈ IE ALT φ, i.e., ∀ E, isMCSet ALT φ E → ∼a ∈ E
@@ -293,8 +293,8 @@ theorem all_alt_innocently_excludable
     (ALT : Set (Core.Proposition.Prop' World))
     (φ : Core.Proposition.Prop' World)
     (h_consist : ∃ w, φ w ∧ ∀ a ∈ ALT, ¬(a w))
-    : ∀ a ∈ ALT, NeoGricean.Exhaustivity.isInnocentlyExcludable ALT φ a := by
-  open NeoGricean.Exhaustivity in
+    : ∀ a ∈ ALT, Exhaustification.isInnocentlyExcludable ALT φ a := by
+  open Exhaustification in
   intro a ha_mem
   constructor
   · exact ha_mem

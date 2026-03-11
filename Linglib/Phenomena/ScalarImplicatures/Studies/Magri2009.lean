@@ -1,5 +1,5 @@
 import Linglib.Core.Interfaces.Felicity
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.Fox2007
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
 
 /-!
@@ -46,7 +46,7 @@ stage-level predicates do not.
 
 namespace Phenomena.ScalarImplicatures.Studies.Magri2009
 
-open NeoGricean.Exhaustivity.Fox2007 (exhB ieIndices)
+open Exhaustification.Fox2007 (exhB ieIndices)
 open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel)
 
 -- ═══════════════════════════════════════════════════════════════════════

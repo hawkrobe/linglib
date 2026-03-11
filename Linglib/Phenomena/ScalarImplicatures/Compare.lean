@@ -38,14 +38,14 @@ RSA S1 (softmax) ──α→∞──> IBR S1 (argmax) ────> exhMW ─�
 
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
 import Linglib.Core.Interface
-import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
+import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
 
-namespace Comparisons.RSANeoGricean
+namespace Comparisons.RSAImplicature
 
-open RSA NeoGricean
+open RSA Implicature
 
 -- Directional Agreement: Both Favor "Not All" for "Some"
 
@@ -53,8 +53,8 @@ open RSA NeoGricean
 NeoGricean prediction: "some" implicates "not all".
 -/
 def neoGricean_some_implicates_not_all : Bool :=
-  -- From NeoGricean.ScalarImplicatures: someUE.implicatures contains "not(all)"
-  true  -- Proven in NeoGricean.ScalarImplicatures
+  -- From Implicature.ScalarImplicatures: someUE.implicatures contains "not(all)"
+  true  -- Proven in Implicature.ScalarImplicatures
 
 /--
 RSA prediction: L1 probability for "not all" > L1 probability for "all".
@@ -409,4 +409,4 @@ RSA S1 (softmax) ──α→∞──> IBR S1 (argmax) ────> exhMW ─�
 5. Explore suboptimality for α < 1 (utility non-monotonicity)
 -/
 
-end Comparisons.RSANeoGricean
+end Comparisons.RSAImplicature

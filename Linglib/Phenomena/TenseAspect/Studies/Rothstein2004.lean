@@ -40,11 +40,11 @@ The classic tests from @cite{vendler-1957} and @cite{dowty-1979}:
 
 -/
 
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 namespace Phenomena.TenseAspect.Diagnostics
 
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- Diagnostic Results
 

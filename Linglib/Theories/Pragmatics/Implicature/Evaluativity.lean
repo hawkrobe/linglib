@@ -33,17 +33,17 @@ Why do equatives show asymmetry (marked antonyms evaluative) but comparatives do
 
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
+import Linglib.Theories.Pragmatics.Implicature.Core.Basic
+import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
+import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Data.Rat.Defs
 
-namespace NeoGricean.Evaluativity
+namespace Implicature.Evaluativity
 
-open NeoGricean
-open NeoGricean.Markedness
-open NeoGricean.Alternatives
+open Implicature
+open Implicature.Markedness
+open Implicature.Alternatives
 open Semantics.Degree (AdjectivalConstruction)
 open Semantics.Lexical.Adjective
 
@@ -1005,14 +1005,14 @@ Prediction-matching theorems are in `Phenomena.Gradability.Studies.Rett2015NeoGr
 
 ### Connection to Other Modules
 - Uses `AdjectivalConstruction` from `Phenomena/Semantics/Evaluativity.lean`
-- Uses `Markedness` from `NeoGricean/Core/Markedness.lean` (NEW)
-- Uses M-alternatives from `NeoGricean/Core/Alternatives.lean`
+- Uses `Markedness` from `Implicature/Core/Markedness.lean` (NEW)
+- Uses M-alternatives from `Implicature/Core/Alternatives.lean`
 - RSA alternative in `Theories/RSA/`
 
 ### Architecture
 Markedness is COMPUTED from objective properties (morphology, scale direction),
-not stipulated. The lexicon is theory-neutral; NeoGricean computes markedness
+not stipulated. The lexicon is theory-neutral; Implicature computes markedness
 internally, while RSA could derive the same effects via lexical uncertainty + cost.
 -/
 
-end NeoGricean.Evaluativity
+end Implicature.Evaluativity

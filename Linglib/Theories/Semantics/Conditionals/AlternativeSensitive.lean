@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Core.Logic.Truth3
-import Linglib.Theories.Pragmatics.NeoGricean.Core.StructuralAlternatives
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
+import Linglib.Theories.Semantics.Alternatives.StructuralAlternatives
+import Linglib.Theories.Semantics.Exhaustification.Fox2007
 
 /-!
 # Alternative-Sensitive Conditional Semantics
@@ -571,7 +571,7 @@ This section verifies the duality computationally on both algorithms.
 
 section Duality
 
-open NeoGricean.Exhaustivity.Fox2007 hiding sublists
+open Exhaustification.Fox2007 hiding sublists
 
 -- Both algorithms are applied to the same data (Fox2007's public
 -- PQWorld/disjAlts) to verify the duality computationally.

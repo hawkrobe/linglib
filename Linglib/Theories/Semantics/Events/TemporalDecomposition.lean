@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 /-!
 # Temporal Decomposition of Events
@@ -46,7 +46,7 @@ consumable by IMPF/PRFV/PERF. Key results:
 namespace Semantics.Events
 
 open Core.Time
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Subevent Phases
@@ -190,7 +190,7 @@ theorem simple_no_activity {Time : Type*} [LinearOrder Time]
 -- § 6. Phase Event Predicates
 -- ════════════════════════════════════════════════════
 
-open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Tense.Aspect.Core
 
 /-- Event predicate localized to an interval: holds of eventualities whose
     runtime equals the given interval. Converts temporal phases of a

@@ -1,18 +1,20 @@
 import Linglib.Core.Scales.Roundness
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
-import Linglib.Theories.Pragmatics.NeoGricean.Constraints.NumericalExpressions
+import Linglib.Theories.Pragmatics.Implicature.Constraints.NumericalExpressions
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Rat.Cast.Order
+import Linglib.Tactics.RSAPredict
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
 # Bridge Theorems: Numeral Salience across Frameworks
 @cite{blok-2015} @cite{claus-walch-2024} @cite{cummins-2015} @cite{cummins-franke-2021} @cite{lasersohn-1999} @cite{woodin-winter-bhatt-2024}
 
-Connects the graded roundness model (k-ness) to five existing modules:
+Connects the graded roundness model (k-ness) to ten existing modules:
 
 1. **NSAL ↔ RSA cost**: OT NSAL violations as normalized RSA utterance cost
 2. **Woodin frequency ↔ RSA prior**: weighted roundness as utterance prior
@@ -22,13 +24,8 @@ Connects the graded roundness model (k-ness) to five existing modules:
 6. **OT ↔ RSA parameter map**: constraint-to-parameter correspondence
 7. **Evaluative valence ↔ framing**: @cite{claus-walch-2024} framing predictions
 8. **maxMeaning ↔ HasDegree**: degree bridge theorems
-
-## Status
-
-RSA evaluation infrastructure (RSA.Eval.basicL1, boolToRat, getScore) has been
-removed. Bridges 1-8 are preserved (they do not depend on RSA.Eval).
-Bridges 9-10 (NumeralTheory.runL1, Kennedy alternative sets through RSA L1)
-have been removed pending reimplementation with the new RSAConfig framework.
+9. **NumeralTheory ↔ RSA L1**: lower-bound semantics + RSA derives exact readings
+10. **Kennedy alternatives ↔ RSA**: Class A/B competition via `RSAConfig` + `rsa_predict`
 
 ## Architecture
 
@@ -51,7 +48,7 @@ namespace Phenomena.Numerals.Compare
 
 open Core.Roundness
 open Phenomena.Numerals.Studies.WoodinEtAl2024
-open NeoGricean.Constraints.NumericalExpressions
+open Implicature.Constraints.NumericalExpressions
 open Semantics.Lexical.Numeral.Precision
 open Core.Scale (HasDegree)
 
@@ -328,30 +325,221 @@ theorem maxMeaning_le_from_degree (m n : Nat) :
 end Bridge8_Degree
 
 -- ============================================================================
--- Bridge 9: NumeralTheory ↔ RSA L1 (removed)
+-- Bridge 9: NumeralTheory ↔ RSA L1
 -- ============================================================================
 
 /-!
 ### Bridge 9: NumeralTheory ↔ RSA L1
 
-RSA evaluation infrastructure (RSA.Eval.basicL1, boolToRat) has been removed.
-`NumeralTheory.runL1` needs reimplementation with the new RSAConfig framework.
+Standard RSA (L0→S1→L1) with bare numeral utterances over a 0-3 cardinality
+domain. Under lower-bound semantics (≥), RSA pragmatic reasoning derives the
+exact reading as a scalar implicature:
+
+- "two" literally means ≥2, but L1("two") peaks at w=2 (not w=3)
+- "one" literally means ≥1, but L1("one") peaks at w=1
+
+Reimplements `NumeralTheory.runL1` using `RSAConfig` + `rsa_predict`.
 -/
 
+section Bridge9
+
+open Semantics.Lexical.Numeral
+
+/-- Finite cardinality type (worlds 0-3). -/
+inductive NCard where
+  | c0 | c1 | c2 | c3
+  deriving DecidableEq, BEq, Repr, Fintype
+
+def NCard.toNat : NCard → Nat
+  | .c0 => 0 | .c1 => 1 | .c2 => 2 | .c3 => 3
+
+/-- Utterance type for standard numeral words. -/
+inductive NUtt where
+  | one | two | three
+  deriving DecidableEq, BEq, Repr, Fintype
+
+def NUtt.toBareNumeral : NUtt → BareNumeral
+  | .one => .one | .two => .two | .three => .three
+
+/-- Lower-bound meaning: "one" = ≥1, "two" = ≥2, "three" = ≥3.
+    Inlined for `rsa_predict` reification (avoids `maxMeaning` indirection). -/
+def lbNuttMeaning : NUtt → NCard → Bool
+  | .one,   w => w.toNat ≥ 1
+  | .two,   w => w.toNat ≥ 2
+  | .three, w => w.toNat ≥ 3
+
+open RSA Real in
+/-- Lower-bound numeral RSA: bare numerals under ≥ semantics with
+    belief-based S1 (score = L0^α). -/
+noncomputable def lbNumeralCfg : RSAConfig NUtt NCard where
+  Latent := Unit
+  meaning _ _ u w := if lbNuttMeaning u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
+  α := 1
+  α_pos := one_pos
+  worldPrior_nonneg _ := by positivity
+  latentPrior_nonneg _ _ := by positivity
+
+/-- Under lower-bound semantics, RSA strengthens "two" from ≥2 to the exact
+    reading: L1 assigns more probability to w=2 than w=3. -/
+theorem lb_rsa_strengthens_two :
+    lbNumeralCfg.L1 .two .c2 > lbNumeralCfg.L1 .two .c3 := by rsa_predict
+
+/-- RSA strengthens "one" analogously: L1("one", w=1) > L1("one", w=2). -/
+theorem lb_rsa_strengthens_one :
+    lbNumeralCfg.L1 .one .c1 > lbNumeralCfg.L1 .one .c2 := by rsa_predict
+
+/-- "Three" trivially peaks at w=3 (only compatible world in the 0-3 range). -/
+theorem lb_three_peaked :
+    lbNumeralCfg.L1 .three .c3 > lbNumeralCfg.L1 .three .c2 := by rsa_predict
+
+/-- The inlined meaning agrees with `LowerBound.meaning` (grounding). -/
+theorem lbNuttMeaning_eq_lowerBound (u : NUtt) (w : NCard) :
+    lbNuttMeaning u w = LowerBound.meaning u.toBareNumeral w.toNat := by
+  cases u <;> cases w <;> native_decide
+
+end Bridge9
+
 -- ============================================================================
--- Bridge 10: Kennedy Alternative Sets ↔ RSA (removed)
+-- Bridge 10: Kennedy Alternative Sets ↔ RSA
 -- ============================================================================
 
 /-!
 ### Bridge 10: Kennedy Alternative Sets through RSA
+@cite{kennedy-2015}
 
-RSA evaluation infrastructure (RSA.Eval.basicL1, boolToRat, getScore) has been
-removed. `kennedyLowerL1`, `kennedyUpperL1`, and all Kennedy alternative set
-theorems (classB_competition_at_boundary, classA_no_competition_at_boundary,
-bare_peaked_with_kennedy_alternatives, classB_strengthened_above_bare,
-upper_classB_competition, upper_classA_no_competition,
-upper_classB_strengthened_below_bare) need reimplementation with the new
-RSAConfig framework.
+@cite{kennedy-2015}'s alternative sets for modified numerals through RSA L1.
+Lower alternatives for n=3: {bare 3, more than 3, at least 3}.
+Upper alternatives for n=3: {bare 3, fewer than 3, at most 3}.
+
+Under bilateral (exact) bare-numeral semantics, RSA predicts:
+- Class B (≥, ≤) modifiers trigger ignorance implicatures at the boundary
+- Class A (>, <) modifiers exclude the boundary semantically
+- Bare numerals retain peaked (exact) interpretations
+
+Reimplements `kennedyLowerL1`, `kennedyUpperL1`, and all Kennedy
+alternative set theorems using `RSAConfig` + `rsa_predict`.
 -/
+
+section Bridge10
+
+open Semantics.Lexical.Numeral
+
+/-- Wider cardinality range (0-5) for modified numeral competition. -/
+inductive KCard where
+  | c0 | c1 | c2 | c3 | c4 | c5
+  deriving DecidableEq, BEq, Repr, Fintype
+
+def KCard.toNat : KCard → Nat
+  | .c0 => 0 | .c1 => 1 | .c2 => 2 | .c3 => 3 | .c4 => 4 | .c5 => 5
+
+/-- Lower-bound Kennedy alternatives for n=3. -/
+inductive KLowerUtt where
+  | bare3 | moreThan3 | atLeast3
+  deriving DecidableEq, BEq, Repr, Fintype
+
+/-- Inlined meaning for reification (avoids `maxMeaning` indirection). -/
+def kLowerMeaning : KLowerUtt → KCard → Bool
+  | .bare3,     w => w.toNat == 3
+  | .moreThan3, w => w.toNat > 3
+  | .atLeast3,  w => w.toNat ≥ 3
+
+/-- Upper-bound Kennedy alternatives for n=3. -/
+inductive KUpperUtt where
+  | bare3 | fewerThan3 | atMost3
+  deriving DecidableEq, BEq, Repr, Fintype
+
+/-- Inlined meaning for reification (avoids `maxMeaning` indirection). -/
+def kUpperMeaning : KUpperUtt → KCard → Bool
+  | .bare3,      w => w.toNat == 3
+  | .fewerThan3, w => w.toNat < 3
+  | .atMost3,    w => w.toNat ≤ 3
+
+open RSA Real in
+/-- Kennedy lower-bound alternatives through RSA L1 (bilateral bare semantics). -/
+noncomputable def kennedyLowerCfg : RSAConfig KLowerUtt KCard where
+  Latent := Unit
+  meaning _ _ u w := if kLowerMeaning u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
+  α := 1
+  α_pos := one_pos
+  worldPrior_nonneg _ := by positivity
+  latentPrior_nonneg _ _ := by positivity
+
+open RSA Real in
+/-- Kennedy upper-bound alternatives through RSA L1 (bilateral bare semantics). -/
+noncomputable def kennedyUpperCfg : RSAConfig KUpperUtt KCard where
+  Latent := Unit
+  meaning _ _ u w := if kUpperMeaning u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg l0 α _ _ u hl0 _ := rpow_nonneg (hl0 u _) α
+  α := 1
+  α_pos := one_pos
+  worldPrior_nonneg _ := by positivity
+  latentPrior_nonneg _ _ := by positivity
+
+-- Lower-bound alternative set predictions
+
+/-- Class B competition at boundary: at w=3, "bare 3" beats "at least 3" in L1.
+    The speaker who knew exactly 3 would use "bare 3" (more informative), so
+    a listener hearing "at least 3" infers w≥4 is more likely. -/
+theorem classB_competition_at_boundary :
+    kennedyLowerCfg.L1 .bare3 .c3 > kennedyLowerCfg.L1 .atLeast3 .c3 := by rsa_predict
+
+/-- Class A excludes the boundary: "more than 3" is false at w=3, so
+    L1(w=4 | "more than 3") > L1(w=3 | "more than 3"). -/
+theorem classA_no_competition_at_boundary :
+    kennedyLowerCfg.L1 .moreThan3 .c4 > kennedyLowerCfg.L1 .moreThan3 .c3 := by rsa_predict
+
+/-- Bare numeral is peaked: L1("bare 3", w=3) > L1("bare 3", w=4).
+    Under exact semantics, "bare 3" is only true at w=3. -/
+theorem bare_peaked_with_kennedy_alternatives :
+    kennedyLowerCfg.L1 .bare3 .c3 > kennedyLowerCfg.L1 .bare3 .c4 := by rsa_predict
+
+/-- Class B strengthened above bare: L1("at least 3", w=4) > L1("at least 3", w=3).
+    The pragmatic listener hearing "at least 3" infers the speaker didn't know
+    exactly 3 (ignorance implicature pushes probability above the boundary). -/
+theorem classB_strengthened_above_bare :
+    kennedyLowerCfg.L1 .atLeast3 .c4 > kennedyLowerCfg.L1 .atLeast3 .c3 := by rsa_predict
+
+-- Upper-bound alternative set predictions
+
+/-- Upper Class B competition: at w=3, "bare 3" beats "at most 3" in L1. -/
+theorem upper_classB_competition :
+    kennedyUpperCfg.L1 .bare3 .c3 > kennedyUpperCfg.L1 .atMost3 .c3 := by rsa_predict
+
+/-- Upper Class A excludes the boundary: "fewer than 3" is false at w=3. -/
+theorem upper_classA_no_competition :
+    kennedyUpperCfg.L1 .fewerThan3 .c2 > kennedyUpperCfg.L1 .fewerThan3 .c3 := by rsa_predict
+
+/-- Upper Class B strengthened below bare: L1("at most 3", w=2) > L1("at most 3", w=3).
+    Hearing "at most 3" pushes probability below the boundary (ignorance). -/
+theorem upper_classB_strengthened_below_bare :
+    kennedyUpperCfg.L1 .atMost3 .c2 > kennedyUpperCfg.L1 .atMost3 .c3 := by rsa_predict
+
+-- Grounding: inlined meanings agree with maxMeaning
+
+/-- Lower Kennedy meanings agree with `maxMeaning`. -/
+theorem kLowerMeaning_eq_maxMeaning (u : KLowerUtt) (w : KCard) :
+    kLowerMeaning u w = match u with
+      | .bare3 => maxMeaning .eq 3 w.toNat
+      | .moreThan3 => maxMeaning .gt 3 w.toNat
+      | .atLeast3 => maxMeaning .ge 3 w.toNat := by
+  cases u <;> cases w <;> native_decide
+
+/-- Upper Kennedy meanings agree with `maxMeaning`. -/
+theorem kUpperMeaning_eq_maxMeaning (u : KUpperUtt) (w : KCard) :
+    kUpperMeaning u w = match u with
+      | .bare3 => maxMeaning .eq 3 w.toNat
+      | .fewerThan3 => maxMeaning .lt 3 w.toNat
+      | .atMost3 => maxMeaning .le 3 w.toNat := by
+  cases u <;> cases w <;> native_decide
+
+end Bridge10
 
 end Phenomena.Numerals.Compare

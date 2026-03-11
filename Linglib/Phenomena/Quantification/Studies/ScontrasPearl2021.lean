@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-import Linglib.Theories.Pragmatics.NeoGricean.NegationScope
+import Linglib.Theories.Pragmatics.Implicature.NegationScope
 
 /-!
 # @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
@@ -262,14 +262,14 @@ theorem twoNotAtLeast_inverse_matches_maxMeaning :
 /-- The negation-scope asymmetry collapses under exact semantics:
     internal and external negation of "three" give the same result. -/
 theorem exact_collapses_negation_scope :
-    NeoGricean.negatedMeaning Semantics.Lexical.Numeral.Exact .three .internal 4 =
-    NeoGricean.negatedMeaning Semantics.Lexical.Numeral.Exact .three .external 4 := by
+    Implicature.negatedMeaning Semantics.Lexical.Numeral.Exact .three .internal 4 =
+    Implicature.negatedMeaning Semantics.Lexical.Numeral.Exact .three .external 4 := by
   native_decide
 
 /-- Lower-bound semantics preserves the negation-scope distinction. -/
 theorem lowerBound_preserves_negation_scope :
-    NeoGricean.negatedMeaning Semantics.Lexical.Numeral.LowerBound .three .internal 4 ≠
-    NeoGricean.negatedMeaning Semantics.Lexical.Numeral.LowerBound .three .external 4 := by
+    Implicature.negatedMeaning Semantics.Lexical.Numeral.LowerBound .three .internal 4 ≠
+    Implicature.negatedMeaning Semantics.Lexical.Numeral.LowerBound .three .external 4 := by
   native_decide
 
 /-- @cite{kennedy-2015}'s resolution: exact meaning is basic, lower-bound is derived

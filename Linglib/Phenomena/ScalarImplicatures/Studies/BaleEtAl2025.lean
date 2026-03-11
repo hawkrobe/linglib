@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
+import Linglib.Theories.Pragmatics.Implicature.Core.Basic
+import Linglib.Theories.Pragmatics.Implicature.Core.Competence
 
 /-!
 # @cite{bale-etal-2025} — Competence by Default
@@ -228,9 +228,9 @@ theorem only_competenceByDefault_predicts_interaction :
 -- ============================================================================
 
 /-! Connects the experimental findings to the NeoGricean competence
-formalization in `Theories.Pragmatics.NeoGricean.Core`. -/
+formalization in `Theories.Pragmatics.Implicature.Core`. -/
 
-open NeoGricean NeoGricean.Competence
+open Implicature Implicature.Competence
 
 /-- Map speaker knowledge to NeoGricean belief state about the stronger
     alternative ψ. FK speaker knows ¬ψ; PK speaker has no opinion. -/

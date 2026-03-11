@@ -1,7 +1,6 @@
 import Linglib.Core.Case.FeatureDecomposition
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.LocalExtension
-import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.ProtoRoles
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Fragments.English.Predicates.Verbal
@@ -313,13 +312,14 @@ theorem alignment_is_labeling :
 -- ============================================================================
 
 /-- Anderson and Dowty agree on transitive linking despite completely
-    different primitives (features vs entailment counting). -/
+    different primitives (features vs entailment profiles). -/
 theorem anderson_dowty_transitive_agree :
     CaseRelation.canonicalTheta .ergative = some .agent ∧
     CaseRelation.canonicalTheta .absolutive = some .patient ∧
-    selectsSubject (ThetaRole.canonicalProfile .agent) = true ∧
-    selectsObject (ThetaRole.canonicalProfile .patient) = true := by
-  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
+    outranksForSubject
+      (ThetaRole.canonicalProfile .agent)
+      (ThetaRole.canonicalProfile .patient) = true := by
+  exact ⟨rfl, rfl, by native_decide⟩
 
 /-- The three-feature system improves on the old two-feature version
     for the experiencer case: Anderson distinguishes experiencer from

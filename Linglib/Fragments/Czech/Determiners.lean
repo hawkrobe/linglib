@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Semantics.Polarity.CzechNegation
+import Linglib.Theories.Semantics.Negation.CzechNegation
 
 /-!
 # Czech Determiners
@@ -27,7 +27,7 @@ on determiners is the primary scope diagnostic for negation position.
 
 namespace Fragments.Czech.Determiners
 
-open Semantics.Polarity.CzechNegation
+open Semantics.Negation.CzechNegation
 
 -- ============================================================================
 -- Polarity Type

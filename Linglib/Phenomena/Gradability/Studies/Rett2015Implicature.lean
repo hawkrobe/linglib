@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Evaluativity
+import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Linglib.Phenomena.Gradability.Studies.Rett2015
 
 /-!
@@ -16,9 +16,9 @@ empirical evaluativity judgments from Phenomena.Gradability.Evaluativity.
 
 -/
 
-namespace Phenomena.Gradability.NeoGricean_EvaluativityBridge
+namespace Phenomena.Gradability.Implicature_EvaluativityBridge
 
-open NeoGricean.Evaluativity
+open Implicature.Evaluativity
 open Phenomena.Gradability.EvaluativityBridge
 
 
@@ -83,4 +83,4 @@ theorem matches_question_short :
   native_decide
 
 
-end Phenomena.Gradability.NeoGricean_EvaluativityBridge
+end Phenomena.Gradability.Implicature_EvaluativityBridge

@@ -36,12 +36,12 @@ NeoGricean/Exhaustivity/Interface.lean (this file)
 -/
 
 import Linglib.Core.Parse
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 
-namespace NeoGricean.Exhaustivity.Interface
+namespace Exhaustification.Interface
 
 open Core
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 /-- Positions where EXH can occur in a doubly-quantified sentence. -/
 inductive ExhPosition where
@@ -277,4 +277,4 @@ def toRSAMeaning {S W : Type} [Exhaustifiable S W]
   Exhaustifiable.meaningAtParseBool p s w
 
 
-end NeoGricean.Exhaustivity.Interface
+end Exhaustification.Interface

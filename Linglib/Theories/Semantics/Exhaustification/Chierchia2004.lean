@@ -28,11 +28,11 @@ computed in tandem at every compositional step.
 
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 
-namespace NeoGricean.Exhaustivity.Chierchia2004
+namespace Exhaustification.Chierchia2004
 
-open NeoGricean.Exhaustivity
+open Exhaustification
 
 -- ============================================================================
 -- A. Strengthened Meanings
@@ -395,4 +395,4 @@ theorem scalarLicensing_strongerThan_strength (φ : Prop' World)
     strengthCondition (scalarLicensing .strongerThan φ ALT) :=
   krifkaRule_satisfies_strength φ ALT
 
-end NeoGricean.Exhaustivity.Chierchia2004
+end Exhaustification.Chierchia2004

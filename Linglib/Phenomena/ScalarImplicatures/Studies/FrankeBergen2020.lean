@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -203,7 +203,7 @@ def literalMeaning (u : Utterance) (w : World) : Bool :=
 -- §4. Exhaustification (Innocent Exclusion)
 -- ============================================================================
 
-open NeoGricean.Exhaustivity (applyIEBool)
+open Exhaustification (applyIEBool)
 
 /-- All 7 worlds for enumeration. -/
 def allWorlds : List World := [.wN, .wNS, .wNA, .wNSA, .wS, .wSA, .wA]

@@ -32,7 +32,7 @@ namespace Causative.Resultatives
 
 open ConstructionGrammar
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 open Semantics.Lexical.Verb.ChangeOfState
 open Core.Interfaces
 open Core.StructuralEquationModel

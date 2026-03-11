@@ -6,7 +6,7 @@ Formalization of markedness computation for @cite{rett-2015} Chapters 5-6.
 ## Insight
 
 Markedness is COMPUTED from objective properties, not stipulated in the lexicon.
-This module provides the NeoGricean-internal machinery for determining which
+This module provides the Implicature-internal machinery for determining which
 member of an antonym pair is marked.
 
 ## Markedness Criteria
@@ -18,7 +18,7 @@ Following @cite{horn-1984} and @cite{rett-2015}:
 3. **Distributional asymmetry**: marked forms are more restricted
 
 The key point: these are objective, measurable properties. Different theories
-(NeoGricean vs. RSA) can use different mechanisms to derive the same effects.
+(Implicature vs. RSA) can use different mechanisms to derive the same effects.
 
 -/
 
@@ -26,7 +26,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Fragments.English.Predicates.Adjectival
 import Mathlib.Data.Rat.Defs
 
-namespace NeoGricean.Markedness
+namespace Implicature.Markedness
 
 open Semantics.Lexical.Adjective
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
@@ -316,4 +316,4 @@ Markedness is COMPUTED from objective properties, not stipulated.
 This keeps the lexicon theory-neutral.
 -/
 
-end NeoGricean.Markedness
+end Implicature.Markedness

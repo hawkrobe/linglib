@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Semantics.Events.ThematicRoles
+import Linglib.Core.Lexical.ThetaRole
+import Linglib.Theories.Semantics.Events.EntailmentProfile
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.RootDimensions
 import Linglib.Core.Logic.NaturalLogic
@@ -10,7 +11,7 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Causation.Basic
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.PsychCausation
-import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Events.Krifka1998
 
@@ -51,7 +52,8 @@ open Semantics.Attitudes.Doxastic (Veridicality)
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.PsychCausation (CausalSource)
-open Semantics.Lexical.Verb.Aspect (VendlerClass)
+open Semantics.Events.ProtoRoles (EntailmentProfile)
+open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Events.Krifka1998 (VerbIncClass)
 
@@ -234,6 +236,13 @@ structure VerbCore where
   objectTheta : Option ThetaRole := none
   /-- Theta role of second internal argument (indirect object) -/
   object2Theta : Option ThetaRole := none
+  /-- Proto-role entailment profile for the subject (external argument).
+      When present, provides the full @cite{dowty-1991} entailment structure.
+      The authoritative representation from which `subjectTheta` labels
+      are derived via `ThetaRole.canonicalProfile`. -/
+  subjectEntailments : Option EntailmentProfile := none
+  /-- Proto-role entailment profile for the first object (internal argument). -/
+  objectEntailments : Option EntailmentProfile := none
   /-- Control type for infinitival complements -/
   controlType : ControlType := .none
   /-- Alternate complement frame, for verbs with two complement types.

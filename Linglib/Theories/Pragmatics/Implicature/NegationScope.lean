@@ -31,7 +31,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
 open Semantics.Lexical.Numeral
 
-namespace NeoGricean
+namespace Implicature
 
 -- Negation Scope Types
 
@@ -262,4 +262,4 @@ theorem negation_summary :
      compatibleExtended .three .external = [0, 1, 2, 4, 5]) := by
   native_decide
 
-end NeoGricean
+end Implicature

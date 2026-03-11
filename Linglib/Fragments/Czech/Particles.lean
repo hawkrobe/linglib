@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Polarity.CzechNegation
+import Linglib.Theories.Semantics.Negation.CzechNegation
 
 /-!
 # Czech Diagnostic Particles
@@ -29,7 +29,7 @@ that uniquely identifies each negation position.
 
 namespace Fragments.Czech.Particles
 
-open Semantics.Polarity.CzechNegation
+open Semantics.Negation.CzechNegation
 
 -- ============================================================================
 -- Particle Semantic Type

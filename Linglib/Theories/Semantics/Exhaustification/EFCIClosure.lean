@@ -16,13 +16,13 @@ This breaks closure and creates the need for rescue mechanisms.
 
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.EFCI
+import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.EFCI
 
-namespace NeoGricean.Exhaustivity.EFCIClosure
+namespace Exhaustification.EFCIClosure
 
-open NeoGricean.Exhaustivity
-open NeoGricean.Exhaustivity.EFCI
+open Exhaustification
+open Exhaustification.EFCI
 
 variable {World : Type*} {Entity : Type*}
 
@@ -216,4 +216,4 @@ theorem unique_witness_falsifies_allNotPreExh
   exact hnotPreExh hpreExh
 
 
-end NeoGricean.Exhaustivity.EFCIClosure
+end Exhaustification.EFCIClosure

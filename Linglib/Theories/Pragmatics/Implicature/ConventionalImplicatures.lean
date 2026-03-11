@@ -41,15 +41,15 @@ c. ¬⟦φ'⟧ᵘ doesn't contradict C given φ (innocently excludable)
 -/
 
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
+import Linglib.Theories.Pragmatics.Implicature.Core.Basic
+import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
 import Linglib.Theories.Semantics.Entailment.Polarity
 
-namespace NeoGricean.ConventionalImplicatures
+namespace Implicature.ConventionalImplicatures
 
 open Semantics.Lexical.Expressives
 open Semantics.Entailment.Polarity (ContextPolarity)
-open NeoGricean (BeliefState)
+open Implicature (BeliefState)
 
 
 /--
@@ -334,4 +334,4 @@ theorem aci_grounded_in_mcis {W : Type*}
       ∃ w : W, φ.ci w = true ∧ ψ.ci w = false :=
   h_ci_stronger.2
 
-end NeoGricean.ConventionalImplicatures
+end Implicature.ConventionalImplicatures

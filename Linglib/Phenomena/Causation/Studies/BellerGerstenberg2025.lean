@@ -266,129 +266,7 @@ theorem table1b_scenario4 :
 
 
 -- ============================================================================
--- Section 7: L0 and S1 Computations (Table 1c–d)
--- ============================================================================
-
-/-- The four illustrative scenarios from Table 1 (Figure 3). -/
-def table1Scenarios : List CausalWorld :=
-  [scenario1, scenario2, scenario3, scenario4]
-
-/-- All four causal expressions in the order used in Table 1. -/
-def allExpressions : List CausalExpression :=
-  [.madeNoDifference, .affected, .enabled, .caused]
-
-/-- L0 literal listener: P_L0(s|u) ∝ M(s, u) (Eq. 8, p. 348).
-
-Normalizes graded meaning within each utterance across scenarios. -/
-def l0 (s : CausalWorld) (u : CausalExpression) (ν : ℚ) : ℚ :=
-  let m := gradedMeaning s ν u
-  let total := table1Scenarios.foldl (init := (0 : ℚ)) fun acc s' =>
-    acc + gradedMeaning s' ν u
-  if total = 0 then 0 else m / total
-
-/-- S1 pragmatic speaker: P_S1(u|s) ∝ P_L0(s|u)^λ (Eq. 9, p. 348).
-
-With λ=1 for Table 1's illustrative computation. Normalizes L0
-across utterances within each scenario. -/
-def s1 (s : CausalWorld) (u : CausalExpression) (ν : ℚ) : ℚ :=
-  let lu := l0 s u ν
-  let total := allExpressions.foldl (init := (0 : ℚ)) fun acc u' =>
-    acc + l0 s u' ν
-  if total = 0 then 0 else lu / total
-
--- Table 1c: Literal listener distributions
-
-/-- "caused" uniquely identifies Scenario 1 (L0 = 1). -/
-theorem table1c_caused_scenario1 :
-    l0 scenario1 .caused ν_table1 = 1 := by native_decide
-
-/-- "enabled" splits between Scenarios 1 and 2 (L0 = 1/2 each). -/
-theorem table1c_enabled_scenarios :
-    l0 scenario1 .enabled ν_table1 = 1/2 ∧
-    l0 scenario2 .enabled ν_table1 = 1/2 := by
-  constructor <;> native_decide
-
-/-- "affected" splits across Scenarios 1, 2, 3 (L0 = 1/3 each). -/
-theorem table1c_affected_scenarios :
-    l0 scenario1 .affected ν_table1 = 1/3 ∧
-    l0 scenario2 .affected ν_table1 = 1/3 ∧
-    l0 scenario3 .affected ν_table1 = 1/3 := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
-
-/-- "no difference" assigns most mass to Scenario 4 (L0 = 5/6),
-with Scenario 3 getting the remainder (L0 = 1/6) due to ν softening. -/
-theorem table1c_noDiff_scenarios :
-    l0 scenario3 .madeNoDifference ν_table1 = 1/6 ∧
-    l0 scenario4 .madeNoDifference ν_table1 = 5/6 := by
-  constructor <;> native_decide
-
--- Table 1d: Pragmatic speaker distributions (λ=1)
-
-/-- In Scenario 1 (full causation), S1 prefers "caused" (6/11 ≈ 0.55).
-
-This is the core pragmatic prediction: even though all positive
-expressions are literally true, RSA selects the most informative one. -/
-theorem table1d_s1_scenario1 :
-    s1 scenario1 .caused ν_table1 = 6/11 ∧
-    s1 scenario1 .enabled ν_table1 = 3/11 ∧
-    s1 scenario1 .affected ν_table1 = 2/11 ∧
-    s1 scenario1 .madeNoDifference ν_table1 = 0 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
-
-/-- In Scenario 2 (W+S, no H), S1 prefers "enabled" (3/5 = 0.60). -/
-theorem table1d_s1_scenario2 :
-    s1 scenario2 .enabled ν_table1 = 3/5 ∧
-    s1 scenario2 .affected ν_table1 = 2/5 ∧
-    s1 scenario2 .caused ν_table1 = 0 := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
-
-/-- In Scenario 3 (H only), S1 prefers "affected" (2/3) over
-"no difference" (1/3). Even though "no difference" has non-zero
-semantic value (ν), the speaker still prefers "affected" because
-it's more informative about the scenario. -/
-theorem table1d_s1_scenario3 :
-    s1 scenario3 .affected ν_table1 = 2/3 ∧
-    s1 scenario3 .madeNoDifference ν_table1 = 1/3 := by
-  constructor <;> native_decide
-
-/-- In Scenario 4 (no causation), S1 assigns all mass to "no difference." -/
-theorem table1d_s1_scenario4 :
-    s1 scenario4 .madeNoDifference ν_table1 = 1 := by native_decide
-
-
--- ============================================================================
--- Section 8: Key Pragmatic Predictions
--- ============================================================================
-
-/-- S1 prefers "caused" over "enabled" in full causation (Scenario 1).
-
-This is the core informativity prediction: "caused" is the most
-restrictive expression that truthfully applies, so the pragmatic
-speaker selects it. -/
-theorem s1_full_prefers_caused :
-    s1 scenario1 .caused ν_table1 > s1 scenario1 .enabled ν_table1 := by
-  native_decide
-
-/-- S1 prefers "enabled" over "affected" when there's no how-cause.
-
-Scenario 2: Ball A clears the path for Ball B (double prevention).
-"enabled" is more informative than "affected" because it rules out
-H-only worlds (Scenario 3). -/
-theorem s1_double_prevention_prefers_enabled :
-    s1 scenario2 .enabled ν_table1 > s1 scenario2 .affected ν_table1 := by
-  native_decide
-
-/-- In H-only world, "affected" beats "no difference" pragmatically.
-
-Even though "no difference" has non-zero semantic value (ν=1/5),
-"affected" has value 1 and is therefore more informative. -/
-theorem s1_howCause_prefers_affected :
-    s1 scenario3 .affected ν_table1 > s1 scenario3 .madeNoDifference ν_table1 := by
-  native_decide
-
-
--- ============================================================================
--- Section 9: RSAConfig
+-- Section 7: RSAConfig
 -- ============================================================================
 
 open RSA Real in
@@ -413,7 +291,107 @@ noncomputable def cfg : RSAConfig CausalExpression CausalWorld where
 
 
 -- ============================================================================
--- Section 10: World-Specific Truth Values
+-- Section 8: RSAConfig Predictions (rsa_predict)
+-- ============================================================================
+
+/-! ## S1 speaker predictions from the full 8-world Boolean model
+
+These theorems verify that the RSAConfig reproduces the qualitative
+predictions from Table 1d using `rsa_predict`. The predictions arise
+from the full space of 2³ = 8 causal worlds with uniform prior and
+Boolean semantics.
+
+In each scenario, the pragmatic speaker selects the most informative
+true expression, producing the same preference orderings as Table 1d. -/
+
+/-- **Scenario 1 (full causation)**: S1 prefers "caused" over "enabled."
+
+In (W=1, H=1, S=1), all positive expressions are literally true.
+"caused" applies to only 3/8 worlds while "enabled" applies to 6/8,
+so L0("caused") is more informative → S1 selects "caused." -/
+theorem s1_cfg_full_caused_gt_enabled :
+    cfg.S1 () scenario1 .caused > cfg.S1 () scenario1 .enabled := by
+  rsa_predict
+
+/-- **Scenario 1**: S1 prefers "enabled" over "affected." -/
+theorem s1_cfg_full_enabled_gt_affected :
+    cfg.S1 () scenario1 .enabled > cfg.S1 () scenario1 .affected := by
+  rsa_predict
+
+/-- **Scenario 2 (double prevention)**: S1 prefers "enabled" over "affected."
+
+In (W=1, H=0, S=1), "caused" is literally false (H=0), so the speaker
+chooses between "enabled" and "affected." "enabled" is more informative
+(6/8 vs 7/8 worlds), so S1 selects it. -/
+theorem s1_cfg_double_prevention_enabled_gt_affected :
+    cfg.S1 () scenario2 .enabled > cfg.S1 () scenario2 .affected := by
+  rsa_predict
+
+/-- **Scenario 2**: "caused" is ruled out (literally false at H=0). -/
+theorem s1_cfg_double_prevention_caused_zero :
+    ¬(cfg.S1 () scenario2 .caused > cfg.S1 () scenario2 .enabled) := by
+  rsa_predict
+
+/-- **Scenario 3 (H-only)**: S1 prefers "affected" over "caused."
+
+In (W=0, H=1, S=0), "affected" is the only true positive expression.
+"caused" requires H ∧ (W ∨ S), which fails when W=S=0. -/
+theorem s1_cfg_howOnly_affected_gt_caused :
+    cfg.S1 () scenario3 .affected > cfg.S1 () scenario3 .caused := by
+  rsa_predict
+
+/-- **Scenario 3**: "affected" also beats "madeNoDifference."
+
+In the Boolean model (unlike the graded model with ν), "madeNoDifference"
+is strictly false in an H-only world: ¬W ∧ ¬H ∧ ¬S fails because H=1. -/
+theorem s1_cfg_howOnly_affected_gt_noDiff :
+    cfg.S1 () scenario3 .affected > cfg.S1 () scenario3 .madeNoDifference := by
+  rsa_predict
+
+/-- **Scenario 4 (no causation)**: S1 prefers "madeNoDifference" over "affected."
+
+In (W=0, H=0, S=0), only "madeNoDifference" is literally true. -/
+theorem s1_cfg_noCause_noDiff_gt_affected :
+    cfg.S1 () scenario4 .madeNoDifference > cfg.S1 () scenario4 .affected := by
+  rsa_predict
+
+/-! ## L1 listener predictions: scalar implicature effects
+
+The pragmatic listener (L1) inverts S1 via Bayes' rule. Hearing a weaker
+expression triggers a scalar implicature: the listener infers the speaker
+*chose not* to use a stronger expression, shifting probability away from
+worlds where the stronger expression would have been true. -/
+
+/-- **L1 hearing "caused"**: higher probability for full-causation world
+than no-causation world.
+
+L1("caused") assigns positive mass only to worlds where "caused" is
+literally true (H ∧ (W ∨ S)). The no-causation world (F,F,F) gets zero. -/
+theorem l1_cfg_caused_identifies_full :
+    cfg.L1 .caused scenario1 > cfg.L1 .caused scenario4 := by
+  rsa_predict
+
+/-- **L1 scalar implicature for "enabled"**: hearing "enabled" makes the
+listener prefer worlds where "caused" is *false* over worlds where it's true.
+
+Both (T,F,F) and (T,T,T) make "enabled" literally true (W ∨ S). But at
+(T,T,T), S1 would have said "caused" instead (more informative), so
+L1 down-weights (T,T,T) upon hearing "enabled." This is the classic
+scalar implicature: "enabled" ⇝ ¬caused. -/
+theorem l1_cfg_enabled_implicature :
+    cfg.L1 .enabled ⟨true, false, false⟩ > cfg.L1 .enabled scenario1 := by
+  rsa_predict
+
+/-- **L1 hearing "madeNoDifference"**: identifies the no-causation world.
+
+"madeNoDifference" is true only at (F,F,F), so L1 assigns it probability 1. -/
+theorem l1_cfg_noDiff_identifies_none :
+    cfg.L1 .madeNoDifference scenario4 > cfg.L1 .madeNoDifference scenario1 := by
+  rsa_predict
+
+
+-- ============================================================================
+-- Section 9: World-Specific Truth Values
 -- ============================================================================
 
 /-- Canonical test worlds -/
@@ -456,7 +434,7 @@ theorem none_world_only_negative :
 
 
 -- ============================================================================
--- Section 11: Experiment 2 Results (pp. 358–362)
+-- Section 10: Experiment 2 Results (pp. 358–362)
 -- ============================================================================
 
 /-- Fitted model parameters from Experiment 2 (p. 358, MLE).
@@ -512,7 +490,7 @@ theorem exp3_full_best :
 
 
 -- ============================================================================
--- Section 12: Bridge to Structural Causal Models
+-- Section 11: Bridge to Structural Causal Models
 -- ============================================================================
 
 /-! ## Bridge to Core.StructuralEquationModel
@@ -622,7 +600,7 @@ end StructuralBridge
 
 
 -- ============================================================================
--- Section 13: Horn Scale
+-- Section 12: Horn Scale
 -- ============================================================================
 
 section HornScaleBridge
@@ -660,7 +638,7 @@ end HornScaleBridge
 
 
 -- ============================================================================
--- Section 14: End-to-End Argumentation Chains
+-- Section 13: End-to-End Argumentation Chains
 -- ============================================================================
 
 /-! ## Structural Model → Causation Type → Expression → S1
@@ -693,9 +671,12 @@ theorem solo_cause_chain :
     let cw := causalWorldFromModel soloModel Situation.empty mA mC
     profileCausationType (extractProfile soloModel Situation.empty mA mC) = some .production ∧
     expressionMeaning cw .caused = true ∧
-    s1 cw .caused ν_table1 > s1 cw .enabled ν_table1 ∧
-    s1 cw .caused ν_table1 > s1 cw .affected ν_table1 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+    cfg.S1 () cw .caused > cfg.S1 () cw .enabled ∧
+    cfg.S1 () cw .caused > cfg.S1 () cw .affected := by
+  refine ⟨by native_decide, by native_decide, ?_, ?_⟩
+  -- cw reduces to ⟨true, true, true⟩ = scenario1
+  · exact s1_cfg_full_caused_gt_enabled
+  · exact lt_trans s1_cfg_full_enabled_gt_affected s1_cfg_full_caused_gt_enabled
 
 /-- **Causal chain → D-CAUSE → S1 prefers "enabled".**
 
@@ -707,8 +688,10 @@ theorem chain_cause_chain :
     profileCausationType (extractProfile chainModel Situation.empty mA mC) = some .dependence ∧
     expressionMeaning cw .caused = false ∧
     expressionMeaning cw .enabled = true ∧
-    s1 cw .enabled ν_table1 > s1 cw .affected ν_table1 := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+    cfg.S1 () cw .enabled > cfg.S1 () cw .affected := by
+  refine ⟨by native_decide, by native_decide, by native_decide, ?_⟩
+  -- cw reduces to ⟨true, false, true⟩ = scenario2
+  exact s1_cfg_double_prevention_enabled_gt_affected
 
 /-- **Overdetermination: B&G's "caused" diverges from N&L's `causeSem`.**
 

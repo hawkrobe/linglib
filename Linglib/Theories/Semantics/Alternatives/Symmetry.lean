@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.Fox2007
 
 /-!
 # Symmetric Alternatives
@@ -57,9 +57,9 @@ to that paper.
 - `context_cannot_break_symmetry`: C preserves symmetry (constraint 28)
 -/
 
-namespace NeoGricean.Symmetry
+namespace Alternatives.Symmetry
 
-open NeoGricean.Exhaustivity.Fox2007
+open Exhaustification.Fox2007
 
 
 -- ============================================================
@@ -549,4 +549,4 @@ theorem context_cannot_break_symmetry {W : Type}
   rc.conjClosed s (fun w => !s₁ w) hs (rc.negClosed s₁ h₁)
 
 
-end NeoGricean.Symmetry
+end Alternatives.Symmetry

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Core.Temporal.Time
 import Linglib.Core.Temporal.Reichenbach
 import Linglib.Theories.Semantics.Tense.Compositional
@@ -39,8 +39,8 @@ namespace Semantics.Tense.PerfectPolysemy
 
 open Core.Time
 open Core.Reichenbach
-open Semantics.Lexical.Verb.Aspect
-open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Tense.Aspect.LexicalAspect
+open Semantics.Tense.Aspect.Core
 open Semantics.Events
 
 -- ════════════════════════════════════════════════════

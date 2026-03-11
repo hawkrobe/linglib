@@ -8,7 +8,7 @@ so that Fragment files can reference these types without importing empirical dat
 
 -/
 
-namespace Semantics.Polarity.CzechNegation
+namespace Semantics.Negation.CzechNegation
 
 /-- The three LF positions for negation in Czech PQs (Staňková 2026 §3, ex. 16).
 
@@ -63,4 +63,4 @@ def licenses : NegPosition → Diagnostic → Bool
   | .inner,  .jeste         => true
   | .inner,  .fakt          => true
 
-end Semantics.Polarity.CzechNegation
+end Semantics.Negation.CzechNegation

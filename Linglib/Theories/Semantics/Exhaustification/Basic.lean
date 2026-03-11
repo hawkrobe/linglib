@@ -38,7 +38,7 @@ import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Set.Finite.Powerset
 import Linglib.Theories.Semantics.Entailment.Polarity
 
-namespace NeoGricean.Exhaustivity
+namespace Exhaustification
 
 -- Re-export ContextPolarity from the consolidated polarity module
 open Semantics.Entailment.Polarity (ContextPolarity)
@@ -2183,4 +2183,4 @@ def applyIEBool (worlds : List W) (prejacent : W → Bool)
 
 end Decidable
 
-end NeoGricean.Exhaustivity
+end Exhaustification

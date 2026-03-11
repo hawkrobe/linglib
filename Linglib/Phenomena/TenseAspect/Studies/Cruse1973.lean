@@ -17,7 +17,7 @@ and is marginal for others.
 
 namespace Phenomena.TenseAspect.AgentivityBridge
 
-open Semantics.Lexical.Verb.Aspect
+open Semantics.Tense.Aspect.LexicalAspect
 open Phenomena.TenseAspect.Diagnostics
 
 -- ════════════════════════════════════════════════════

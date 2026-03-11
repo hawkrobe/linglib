@@ -36,19 +36,19 @@ From @cite{horn-1984}, @cite{rett-2015}:
 
 -/
 
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
+import Linglib.Theories.Pragmatics.Implicature.Core.Basic
+import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
 import Linglib.Core.Scales.HornScale
 import Linglib.Core.PropertyDomain
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Data.Rat.Defs
 
-namespace NeoGricean.Alternatives
+namespace Implicature.Alternatives
 
 -- Use shared ContextPolarity from Semantics.Entailment.Polarity
 open Semantics.Entailment.Polarity (ContextPolarity)
-open NeoGricean.Markedness
+open Implicature.Markedness
 open Semantics.Degree (AdjectivalConstruction)
 
 
@@ -527,4 +527,4 @@ M-alternatives generate evaluativity from marked forms (cost competition).
 "
 
 
-end NeoGricean.Alternatives
+end Implicature.Alternatives

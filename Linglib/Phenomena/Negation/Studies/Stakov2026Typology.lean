@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Negation.Studies.Stakov2026
-import Linglib.Theories.Semantics.Polarity.CzechNegation
+import Linglib.Theories.Semantics.Negation.CzechNegation
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 
 /-!
@@ -20,7 +20,7 @@ Also contains example data (CzechNegDatum), bias profiles, and corpus data.
 
 open Semantics.Modality.BiasedPQ
 
-namespace Semantics.Polarity.CzechNegation
+namespace Semantics.Negation.CzechNegation
 
 /-- Map Czech negation positions to Romero's PQ form typology.
 
@@ -55,11 +55,11 @@ def NegPosition.requiresFocus : NegPosition → Bool
   | .medial => false
   | .inner  => false
 
-end Semantics.Polarity.CzechNegation
+end Semantics.Negation.CzechNegation
 
 namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
-open Semantics.Polarity.CzechNegation
+open Semantics.Negation.CzechNegation
 open Semantics.Modality.BiasedPQ
 
 /-- Outer negation maps to HiNQ (high negation = interrogative word order). -/
@@ -137,7 +137,7 @@ inductive VerbPosition where
 
 end Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
-namespace Semantics.Polarity.CzechNegation
+namespace Semantics.Negation.CzechNegation
 open Phenomena.Negation.CzechThreeWayNegTypologyBridge (VerbPosition)
 
 /-- Map negation positions to verb position.
@@ -149,10 +149,10 @@ def NegPosition.toVerbPosition : NegPosition → VerbPosition
   | .medial => .nonV1
   | .outer  => .v1
 
-end Semantics.Polarity.CzechNegation
+end Semantics.Negation.CzechNegation
 
 namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
-open Semantics.Polarity.CzechNegation
+open Semantics.Negation.CzechNegation
 open Semantics.Modality.BiasedPQ
 open Phenomena.Negation.CzechThreeWayNegBridge (signature)
 
@@ -416,7 +416,7 @@ theorem declNPQ_is_loNQ : CzechPQForm.declNPQ.toPQForm = .LoNQ := rfl
 
 end Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
-namespace Semantics.Polarity.CzechNegation
+namespace Semantics.Negation.CzechNegation
 open Phenomena.Negation.CzechThreeWayNegTypologyBridge (CzechPQForm)
 
 /-- Map negation positions to Czech PQ forms.
@@ -428,10 +428,10 @@ def NegPosition.toCzechPQForm : NegPosition → CzechPQForm
   | .medial => .declNPQ
   | .outer  => .interNPQ
 
-end Semantics.Polarity.CzechNegation
+end Semantics.Negation.CzechNegation
 
 namespace Phenomena.Negation.CzechThreeWayNegTypologyBridge
-open Semantics.Polarity.CzechNegation
+open Semantics.Negation.CzechNegation
 open Semantics.Modality.BiasedPQ
 
 /-- The CzechPQForm → PQForm mapping is consistent with NegPosition → PQForm. -/

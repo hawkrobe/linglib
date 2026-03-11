@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Karttunen
-import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 /-!
 # Viewpoint Aspect × Temporal Connective Interaction
@@ -41,7 +41,7 @@ namespace Semantics.Tense.TemporalConnectives
 
 open Core.Time
 open Core.Time.Interval
-open Semantics.Lexical.Verb.ViewpointAspect
+open Semantics.Tense.Aspect.Core
 
 variable {Time : Type*} [LinearOrder Time]
 
