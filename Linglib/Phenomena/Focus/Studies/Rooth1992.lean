@@ -1,6 +1,6 @@
 import Linglib.Core.Discourse.InformationStructure
 import Linglib.Theories.Semantics.Focus.Interpretation
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Montague.Composition
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Fragments.English.Nouns

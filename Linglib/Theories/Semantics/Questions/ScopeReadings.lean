@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Questions.Coordination
 import Linglib.Theories.Semantics.Questions.LiftedTypes
-import Linglib.Theories.Semantics.Questions.MentionSome
+import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
 
 /-!
 # Questions/ScopeReadings.lean

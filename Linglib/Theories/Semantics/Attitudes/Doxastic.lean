@@ -26,7 +26,7 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Logic.ModalLogic
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Doxastic
 

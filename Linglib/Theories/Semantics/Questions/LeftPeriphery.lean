@@ -16,8 +16,8 @@ This is DERIVED, not stipulated.
 
 -/
 
-import Linglib.Theories.Semantics.Questions.Hamblin
-import Linglib.Theories.Semantics.Questions.Answerhood
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
+import Linglib.Theories.Semantics.Questions.Answerhood.Answerhood
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
 

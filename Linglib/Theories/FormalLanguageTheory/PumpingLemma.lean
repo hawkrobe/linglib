@@ -486,17 +486,3 @@ theorem anbnc_not_pumpable :
       simp only [List.length_nil, Nat.add_zero] at hra; exact hra
   omega
 
-/-- A formalism is mildly context-sensitive if it generates CFLs plus some non-CFLs. -/
-structure MildlyContextSensitive where
-  name : String
-  generates_anbncndn : Bool
-
-/-- CCG is mildly context-sensitive. -/
-def CCG_MCS : MildlyContextSensitive where
-  name := "Combinatory Categorial Grammar"
-  generates_anbncndn := true
-
-/-- TAG is mildly context-sensitive. -/
-def TAG_MCS : MildlyContextSensitive where
-  name := "Tree Adjoining Grammar"
-  generates_anbncndn := true

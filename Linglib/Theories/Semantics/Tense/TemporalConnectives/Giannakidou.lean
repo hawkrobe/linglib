@@ -355,4 +355,105 @@ theorem wideScopeAvailable_iff_imperfective (sg : ScopeGeneralization)
   | inl h => subst h; exact ⟨fun _ => rfl, fun _ => rfl⟩
   | inr h => subst h; simp [prfvScope]
 
+-- ============================================================================
+-- § 8: Eventive UNTIL (para monon) Semantics (@cite{giannakidou-2002}, §3.2)
+-- ============================================================================
+
+/-- **Eventive UNTIL**: the semantics of Greek *para monon* and Karttunen's
+    punctual *until*. Combines temporal coincidence (A overlaps B) with
+    lateness (A does not precede B):
+
+    ⟦dhen P para monon Q⟧ = (∃t. t∈A ∧ t∈B) ∧ ¬(A before B)
+
+    This builds actualization into the **assertion**, unlike
+    `Karttunen.notUntil` (= ¬before alone) which holds vacuously when A is
+    empty.
+
+    @cite{giannakidou-2002}, eq. 39: the event P occurs at the boundary time
+    Q, and no earlier event of type P occurred. -/
+def eventiveUntil (A B : SentDenotation Time) : Prop :=
+  (∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B) ∧ ¬ Anscombe.before A B
+
+-- ============================================================================
+-- § 9: Actualization Properties
+-- ============================================================================
+
+/-- Eventive UNTIL entails main-clause actualization: A must have occurred.
+    This is the **actualization entailment** that @cite{giannakidou-2002}
+    identifies as the hallmark of NPI-*until* (para monon), absent from
+    durative *until* (mexri) and before (prin). -/
+theorem eventiveUntil_entails_actualization (A B : SentDenotation Time) :
+    eventiveUntil A B → ∃ t, t ∈ timeTrace A := by
+  rintro ⟨⟨t, ht, _⟩, _⟩; exact ⟨t, ht⟩
+
+/-- Eventive UNTIL entails complement actualization: B must have occurred. -/
+theorem eventiveUntil_entails_complement (A B : SentDenotation Time) :
+    eventiveUntil A B → ∃ t, t ∈ timeTrace B := by
+  rintro ⟨⟨t, _, ht⟩, _⟩; exact ⟨t, ht⟩
+
+/-- Eventive UNTIL entails ¬*before*: A didn't happen prior to B. -/
+theorem eventiveUntil_entails_notBefore (A B : SentDenotation Time) :
+    eventiveUntil A B → Karttunen.notUntil A B :=
+  And.right
+
+/-- Eventive UNTIL entails temporal coincidence (*when*): A and B overlap. -/
+theorem eventiveUntil_entails_when (A B : SentDenotation Time) :
+    eventiveUntil A B → Karttunen.when_ A B := by
+  rintro ⟨⟨t, htA, htB⟩, _⟩; exact ⟨t, htA, htB⟩
+
+/-- Karttunen's `notUntil` does NOT entail eventive UNTIL:
+    ¬(A before B) holds vacuously when A is empty (no actualization).
+
+    This is the formal content of the distinction between the *assertion*
+    of NPI-*until* (which entails an event) and the bare logical form
+    ¬before (which doesn't). Karttunen's presupposition fills the gap,
+    but presuppositionally — eventive UNTIL fills it assertionally. -/
+theorem notUntil_not_implies_eventiveUntil :
+    ∃ (A B : SentDenotation ℤ),
+      Karttunen.notUntil A B ∧ ¬ eventiveUntil A B := by
+  refine ⟨∅, { Interval.point 0 }, ?_, ?_⟩
+  · intro ⟨t, ⟨i, hi, _⟩, _⟩
+    exact absurd hi (Set.mem_empty_iff_false i).mp
+  · intro ⟨⟨t, ⟨i, hi, _⟩, _⟩, _⟩
+    exact absurd hi (Set.mem_empty_iff_false i).mp
+
+/-- Durative *until* is compatible with A preceding B:
+    the main clause state can extend well before the complement time.
+
+    Counterexample: A is a state over [0, 10], B is a point at 5.
+    A overlaps B (durative *until* holds), but A also has times before B
+    (times 0–4). Eventive *until* would rule this out via ¬before.
+
+    This is the formal correlate of @cite{giannakidou-2002}'s ex. (7):
+    "Sure, the princess slept until midnight. In fact she only woke up
+    at 2am." — the state extends past the boundary, and the change-of-state
+    is not entailed. -/
+theorem durative_compatible_with_before :
+    ∃ (A B : SentDenotation ℤ),
+      Karttunen.until A B ∧ Anscombe.before A B := by
+  let iA : Interval ℤ := ⟨0, 10, by omega⟩
+  let iB : Interval ℤ := ⟨5, 5, by omega⟩
+  refine ⟨stativeDenotation iA, {iB}, ?_, ?_⟩
+  · -- Durative until (= when): overlap at time 5
+    exact ⟨5,
+      ⟨iA, stativeDenotation_self iA, by simp only [contains, iA]; omega⟩,
+      ⟨iB, rfl, by simp only [contains, iB]; omega⟩⟩
+  · -- Before: time 0 in A precedes all B-times (= 5)
+    refine ⟨0,
+      ⟨iA, stativeDenotation_self iA, by simp only [contains, iA]; omega⟩, ?_⟩
+    intro t' ⟨j, hj, hjt⟩
+    simp only [Set.mem_singleton_iff] at hj; subst hj
+    simp only [contains, iB] at hjt; omega
+
+/-- **Eventive UNTIL is strictly stronger than Karttunen's notUntil.**
+    - eventiveUntil → notUntil (actualization + lateness → lateness)
+    - notUntil ↛ eventiveUntil (lateness alone lacks actualization)
+
+    This is the formal content of @cite{giannakidou-2002}'s central claim:
+    the two readings are not truth-conditionally equivalent under negation. -/
+theorem eventiveUntil_strictly_stronger :
+    (∀ (A B : SentDenotation ℤ), eventiveUntil A B → Karttunen.notUntil A B) ∧
+    (∃ (A B : SentDenotation ℤ), Karttunen.notUntil A B ∧ ¬ eventiveUntil A B) :=
+  ⟨fun _ _ h => h.2, notUntil_not_implies_eventiveUntil⟩
+
 end Semantics.Tense.TemporalConnectives

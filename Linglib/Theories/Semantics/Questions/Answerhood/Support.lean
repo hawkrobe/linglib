@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.ProbabilisticAnswerhood
+import Linglib.Theories.Semantics.Questions.Answerhood.ProbabilisticAnswerhood
 
 /-!
 # Evidential Support

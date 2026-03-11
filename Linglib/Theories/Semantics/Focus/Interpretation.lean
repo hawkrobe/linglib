@@ -28,7 +28,7 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 -/
 
 import Linglib.Core.Discourse.InformationStructure
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 open Core.InformationStructure
 

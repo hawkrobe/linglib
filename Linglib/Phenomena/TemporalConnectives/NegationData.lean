@@ -31,25 +31,41 @@ namespace Phenomena.TemporalConnectives.NegationData
 -- § 1: The Two-*Until* Hypothesis (@cite{giannakidou-2002})
 -- ============================================================================
 
-/-- A judgment about the two-*until* distinction, encoding @cite{giannakidou-2002}'s cross-linguistic evidence.
+/-- Whether a temporal connective entails that the main-clause event
+    actually occurred at the boundary time.
 
-    `semanticType` classifies connectives into the **before-type** (non-veridical,
-    NPI-licensing, no durative restriction) vs **endpoint-type** (veridical,
-    no NPI-licensing, durative restriction). This is the two-way distinction
-    Giannakidou argues is lexicalized cross-linguistically.
+    - `entailment`: actualization is part of the assertion — cancellation
+      yields contradiction (@cite{giannakidou-2002}, ex. 38).
+    - `implicature`: actualization is a Q-implicature — cancellable
+      (@cite{giannakidou-2002}, ex. 7: "Sure, the princess slept until
+      midnight. In fact she only woke up at 2am.").
+    - `none`: no actualization inference at all (@cite{giannakidou-2002},
+      ex. 72–73: *prin/before* is compatible with the complement event
+      never occurring). -/
+inductive ActualizationStatus where
+  | entailment
+  | implicature
+  | none
+  deriving DecidableEq, Repr, BEq
 
-    Note: Greek has a THIRD element — *para monon* (§§4.2, 6) — which is the
-    true NPI-*until* (requires negation, entails actualization). *Prin* shares
-    NPI-licensing and non-veridicality with NPI-*until* but differs in that
-    it does NOT entail actualization (@cite{giannakidou-2002}, ex. 72–73, 77). -/
+/-- A judgment about the two-*until* distinction, encoding
+    @cite{giannakidou-2002}'s cross-linguistic evidence.
+
+    `semanticType` classifies connectives into three groups:
+    - **before-type** (non-veridical, NPI-licensing, no durative restriction)
+    - **endpoint-type** (veridical, no NPI-licensing, durative restriction)
+    - **eventive-type** (requires anti-veridical trigger, actualization entailment)
+
+    Greek lexicalizes all three: *prin* (before-type), *mexri* (endpoint-type),
+    *para monon* (eventive-type). English collapses eventive and before under
+    the single lexeme *until*, disambiguated by negation context. -/
 structure TwoUntilDatum where
   /-- Language -/
   language : String
   /-- Connective form -/
   form : String
-  /-- Semantic type: before-type (non-veridical, NPI-licensing) or
-      endpoint-type (veridical, durative). -/
-  semanticType : String  -- "before" or "endpoint"
+  /-- Semantic type: "before", "endpoint", or "eventive". -/
+  semanticType : String
   /-- Required mood of complement (if applicable) -/
   moodRestriction : Option String
   /-- Does it require a DE (downward-entailing) licensor? -/
@@ -62,6 +78,10 @@ structure TwoUntilDatum where
   licensesNPIs : Bool
   /-- Example sentence -/
   example_ : String
+  /-- Does the connective entail actualization of a change-of-state event
+      at the boundary time? This is the central distinction between
+      NPI-*until* (entailment) and durative *until* (implicature). -/
+  actualizationStatus : ActualizationStatus
   deriving Repr
 
 -- ============================================================================
@@ -85,6 +105,7 @@ def greek_prin : TwoUntilDatum where
   requiresDurativeMain := false
   licensesNPIs := true
   example_ := "Efije prin na erthi o Janis (She left before Janis came)"
+  actualizationStatus := .none
 
 /-- Greek *mexri* (μέχρι): endpoint-type.
     Requires indicative, veridical complement, requires imperfective/stative
@@ -102,6 +123,7 @@ def greek_mexri : TwoUntilDatum where
   requiresDurativeMain := true
   licensesNPIs := false
   example_ := "I Maria perimine mexri irthi o Janis (Maria waited until Janis came)"
+  actualizationStatus := .implicature
 
 /-- English NPI-*until*: before-type (Karttunen: NPI-*until* = ¬*before*).
     Requires DE licensor (negation). Unlike Greek *prin*, English collapses
@@ -120,6 +142,7 @@ def english_npi_until : TwoUntilDatum where
   requiresDurativeMain := false
   licensesNPIs := true
   example_ := "The princess didn't wake up until the prince kissed her"
+  actualizationStatus := .entailment
 
 /-- English durative *until*: endpoint-type. No DE requirement, veridical
     complement, durative main clause required.
@@ -134,6 +157,37 @@ def english_dur_until : TwoUntilDatum where
   requiresDurativeMain := true
   licensesNPIs := false
   example_ := "John slept until 3pm"
+  actualizationStatus := .implicature
+
+/-- Greek *para monon* (παρά μονον, lit. 'but only'): eventive-type.
+    The true NPI-*until* in Greek — lexically distinct from both *mexri*
+    (durative until) and *prin* (before). Requires anti-veridical trigger
+    (negation, 'without'). Entails actualization: the main-clause event
+    occurred at the boundary time. Scalar (introduces a scale of
+    contextually relevant times).
+
+    @cite{giannakidou-2002}, §3.2: *para monon* is incompatible with
+    negated perfective eventives (ex. 35: *I prigipisa dhen eftase para
+    monon ta mesanixta*) but compatible with perfective statives that
+    shift to achievement reading (ex. 37: *I prigipisa dhen (apo)kimithike
+    para monon ta mesanixta* = 'The princess didn't fall asleep until
+    midnight').
+
+    Cancellation of actualization yields contradiction (ex. 38):
+    '#I prigipisa dhen eftase para monon ta mesanixta. Dhen eftase kan
+    ekino to vradi.' ('#The princess didn't arrive until midnight. She
+    didn't even arrive that night.') -/
+def greek_para_monon : TwoUntilDatum where
+  language := "Greek"
+  form := "para monon (παρά μονον)"
+  semanticType := "eventive"
+  moodRestriction := none
+  requiresDE := true
+  complementVeridical := false
+  requiresDurativeMain := false
+  licensesNPIs := false
+  example_ := "I prigipisa dhen (apo)kimithike para monon ta mesanixta (The princess didn't fall asleep until midnight)"
+  actualizationStatus := .entailment
 
 -- ============================================================================
 -- § 3: Two-*Until* Diagnostic Tests
@@ -180,6 +234,56 @@ theorem diagnostics_aligned :
     greek_mexri.requiresDurativeMain = true ∧
     greek_mexri.licensesNPIs = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 3.5: Actualization Diagnostics (@cite{giannakidou-2002}, §§3.2, 6)
+-- ============================================================================
+
+/-- The actualization diagnostic: the three-way split.
+    - *para monon* / English NPI-*until*: actualization is an entailment
+    - *mexri* / English durative *until*: actualization is an implicature
+    - *prin*: no actualization at all -/
+theorem actualization_three_way :
+    greek_para_monon.actualizationStatus = .entailment ∧
+    english_npi_until.actualizationStatus = .entailment ∧
+    greek_mexri.actualizationStatus = .implicature ∧
+    english_dur_until.actualizationStatus = .implicature ∧
+    greek_prin.actualizationStatus = .none :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- *Para monon* requires an anti-veridical trigger (negation, 'without');
+    *mexri* does not; *prin* does not.
+    This distinguishes eventive-type from both endpoint-type and before-type. -/
+theorem de_requirement_diagnostic :
+    greek_para_monon.requiresDE = true ∧
+    greek_mexri.requiresDE = false ∧
+    greek_prin.requiresDE = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- *Para monon* patterns with English NPI-*until* on actualization and
+    DE-requirement, confirming it is the Greek lexicalization of
+    Karttunen's punctual *until*. -/
+theorem para_monon_matches_english_npi_until :
+    greek_para_monon.actualizationStatus = english_npi_until.actualizationStatus ∧
+    greek_para_monon.requiresDE = english_npi_until.requiresDE ∧
+    greek_para_monon.requiresDurativeMain = english_npi_until.requiresDurativeMain :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- *Para monon* differs from *prin* on actualization:
+    *prin/before* has no actualization, *para monon* entails it.
+    This is the paper's central finding — NPI-*until* ≠ *before*
+    on actualization status (@cite{giannakidou-2002}, §6). -/
+theorem para_monon_differs_from_prin :
+    greek_para_monon.actualizationStatus ≠ greek_prin.actualizationStatus ∧
+    greek_para_monon.semanticType ≠ greek_prin.semanticType :=
+  ⟨by decide, by decide⟩
+
+/-- The three Greek connectives are pairwise distinct on semantic type. -/
+theorem greek_three_way_lexicalized :
+    greek_prin.semanticType ≠ greek_mexri.semanticType ∧
+    greek_prin.semanticType ≠ greek_para_monon.semanticType ∧
+    greek_mexri.semanticType ≠ greek_para_monon.semanticType :=
+  ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 4: Expletive Negation Data (@cite{greco-2020})

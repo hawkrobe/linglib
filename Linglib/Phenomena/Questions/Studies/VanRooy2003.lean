@@ -1,6 +1,7 @@
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Theories.Semantics.Questions.Partition
-import Linglib.Theories.Semantics.Questions.MentionSome
+import Linglib.Theories.Semantics.Questions.Denotation.Partition
+import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
+import Linglib.Theories.Semantics.Questions.Utility.Relevance
 
 /-!
 # Van Rooy (2003): Questioning to Resolve Decision Problems
@@ -46,76 +47,7 @@ namespace Phenomena.Questions.Studies.VanRooy2003
 open Core.DecisionTheory
 open Semantics.Questions hiding Question
 open Semantics.Questions.MentionSome
-
-
-/-! ## Op(P): Relevance-Maximal Satisfiers
-
-@cite{van-rooy-2003}, §5 (p. 752): Op(P)(w) selects the group(s) of
-P-satisfiers in world w that are maximally relevant to the agent's
-decision problem. The standard mention-all denotation partitions by
-the full extension of P; Op(P) partitions only by the decision-relevant
-part of the extension.
-
-For a simple "find one" goal, Op(P)(w) = {{a} : P(a)(w)} — any single
-satisfier is a maximally relevant group.
-
-For a "list all" goal, Op(P)(w) = {ext(P)(w)} — only the complete
-extension is maximally relevant.
--/
-
-/-- A relevance function assigns to each world a set of "optimal groups"
-of entities — those groups that are maximally relevant to the agent's
-decision problem. -/
-structure RelevanceFunction (W E : Type*) where
-  /-- The predicate (e.g., "sells Italian newspapers") -/
-  predicate : W → E → Bool
-  /-- The optimal groups in each world: subsets of satisfiers that are
-      maximally relevant to the decision problem -/
-  optimalGroups : W → List (List E)
-
-/-- Standard mention-all: Op(P)(w) = {ext(P)(w)}, the full extension.
-Only one group per world: all satisfiers together. -/
-def mentionAllRelevance {W E : Type*} [DecidableEq E]
-    (predicate : W → E → Bool) (domain : List E) : RelevanceFunction W E where
-  predicate := predicate
-  optimalGroups := λ w => [domain.filter (predicate w)]
-
-/-- Mention-some relevance: Op(P)(w) = {{a} : P(a)(w)}, each satisfier
-is its own optimal group. Any single satisfier suffices. -/
-def mentionSomeRelevance {W E : Type*}
-    (predicate : W → E → Bool) (domain : List E) : RelevanceFunction W E where
-  predicate := predicate
-  optimalGroups := λ w => domain.filter (predicate w) |>.map (·::[])
-
-
-/-! ## ⟦?xPx⟧^R: The Underspecified Question Denotation
-
-@cite{van-rooy-2003}, §5 (p. 753): The relevance-parameterized question
-denotation:
-
-  ⟦?xPx⟧^R = {λv[g ∈ Op(P)(v)] : w ∈ W & g ∈ Op(P)(w)}
-
-Each "answer" is a proposition saying "group g is among the optimal
-groups." The set of such propositions is the question denotation.
-
-When Op = mention-all, this reduces to the standard G&S partition.
-When Op = mention-some, this produces {λv[{a} ∈ Op(P)(v)] : P(a)(w)},
-i.e., one answer per satisfier, each saying "a is a satisfier."
--/
-
-/-- The relevance-parameterized question denotation ⟦?xPx⟧^R.
-
-Each cell says "group g is among the optimal groups in this world."
-The question is the collection of such propositions across all
-groups that appear in some world.
-
-@cite{van-rooy-2003}, p. 753. -/
-def underspecifiedDenotation {W E : Type*} [BEq E] [BEq (List E)]
-    (rf : RelevanceFunction W E) (worlds : List W) : Question W :=
-  -- Collect all optimal groups that appear in any world
-  let allGroups := worlds.flatMap rf.optimalGroups |>.eraseDups
-  -- Each group induces a proposition: "this group is optimal here"
-  allGroups.map λ g => λ v => rf.optimalGroups v |>.any (· == g)
+open Theories.Semantics.Questions.Relevance
 
 
 /-! ## Examples
@@ -331,22 +263,6 @@ positive expected utility value.
 This explains why "Where can I buy an Italian newspaper?" doesn't
 range over non-shops (e.g., hospitals, parks): those locations have
 zero utility value for the buy-newspaper decision problem. -/
-
-/-- An individual d is decision-relevant for question ?xP(x) given DP
-if learning whether P(d) holds has positive utility value. -/
-def isDecisionRelevant {W : Type*} [Fintype W] [DecidableEq W]
-    {A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
-    (predicate : W → Bool) : Bool :=
-  let yesCell := Finset.univ.filter (λ w => predicate w = true)
-  utilityValue dp actions yesCell > 0
-
-/-- The decision-relevant domain: entities whose P-status matters. -/
-def decisionRelevantDomain {W E : Type*} [Fintype W] [DecidableEq W]
-    {A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
-    (predicate : W → E → Bool) (domain : List E) : List E :=
-  domain.filter λ d => isDecisionRelevant dp actions (predicate · d)
 
 /-- In the newspaper example, both shops are decision-relevant. -/
 theorem newspaper_shops_relevant :

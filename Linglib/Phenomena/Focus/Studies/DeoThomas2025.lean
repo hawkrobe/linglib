@@ -15,7 +15,7 @@ alternatives, explaining why it substitutes in only 2 of the 7 flavors.
 -/
 
 import Linglib.Core.Discourse.QUD
-import Linglib.Theories.Semantics.Questions.Partition
+import Linglib.Theories.Semantics.Questions.Denotation.Partition
 import Linglib.Phenomena.Focus.Exclusives
 
 namespace Semantics.Montague.Sentence.DomainWidening

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Support
+import Linglib.Theories.Semantics.Questions.Answerhood.Support
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!

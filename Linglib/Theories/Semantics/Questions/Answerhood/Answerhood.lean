@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Questions.Partition
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Partition
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 /-
 The ANS operator and the answerhood thesis (@cite{groenendijk-stokhof-1984}, Ch. I).

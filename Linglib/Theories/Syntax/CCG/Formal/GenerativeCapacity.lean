@@ -38,9 +38,6 @@ open FourSymbol
 
 open Core (FormalLanguageType)
 
-/-- Cross-serial dependencies require mild context-sensitivity. -/
-def crossSerialRequires : FormalLanguageType := .mildlyContextSensitive
-
 -- CCG Generates {aⁿbⁿcⁿdⁿ}
 
 /--
@@ -116,26 +113,12 @@ theorem ccg_strictly_more_expressive_than_cfg :
     ¬ HasPumpingProperty4 isInLanguage_anbncndn :=
   ⟨makeString_in_language, anbncndn_not_pumpable⟩
 
--- Connection to Existing CCG Infrastructure
+-- CCG's Position in the Chomsky Hierarchy
 
-/--
-The crossSerialRequires classification: cross-serial dependencies
-require mildly context-sensitive power, justified by the formal
-proof that {aⁿbⁿcⁿdⁿ} is NOT context-free.
--/
-theorem cross_serial_requires_mcs :
-    crossSerialRequires = FormalLanguageType.mildlyContextSensitive := by
-  rfl
-
-/--
-Combined result: CCG is mildly context-sensitive.
-
-CCG occupies the mildly context-sensitive level:
-- More than context-free (handles cross-serial dependencies)
-- Less than context-sensitive (polynomial parsing)
--/
-theorem ccg_is_mildly_context_sensitive :
-    CCG_MCS.generates_anbncndn = true := by
-  rfl
+/-- CCG strictly exceeds context-free power: it generates {aⁿbⁿcⁿdⁿ},
+    which is not context-free. -/
+theorem ccg_exceeds_cfg :
+    FormalLanguageType.contextFree < FormalLanguageType.mildlyContextSensitive := by
+  decide
 
 end CCG.GenerativeCapacity

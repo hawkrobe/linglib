@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Theories.Semantics.Lexical.Plural.Cumulativity
 import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference
@@ -116,7 +117,7 @@ variable {Atom W : Type} [DecidableEq Atom] [Fintype Atom]
     - `Kind.concept w : Set Atom` (mathematical, for proofs)
     - `Finset Atom` (computational, for DIST) -/
 noncomputable def kindExtensionFinset (k : Kind W Atom) (w : W) : Finset Atom :=
-  @Finset.filter _ (· ∈ k.concept w) (fun a => Classical.dec _) Finset.univ
+  @Finset.filter _ (· ∈ k.concept w) (fun _ => Classical.dec _) Finset.univ
 
 /--
 Distributive Kind Predication: evaluate a kind at the actual world to
@@ -389,7 +390,7 @@ Property denotation enables BFG (kind enters Gen restrictor).
 Singular indefinites: only BFG (no kind denotation, no DIST). -/
 def lfAvailable (ne : NominalExpression) (lf : GeneralizationLF) : Bool :=
   match lf with
-  | .bonaFideGeneric       => true  -- always available (property enters Gen restrictor)
+  | .bonaFideGeneric       => true  -- always: kind enters Gen restrictor (19) or property does (20)
   | .distributiveKindPred  => canDenote ne .kind
   | .cumulativeKindPred    => canDenote ne .kind
 
@@ -1034,5 +1035,127 @@ theorem generic_type_matches_longobardi_flavor :
     lfFlavor .distributiveKindPred = .accidental := ⟨rfl, rfl⟩
 
 end Longobardi2001Bridge
+
+-- ============================================================================
+-- § 12: Cumulative Kind Predication — Compositional Grounding
+-- ============================================================================
+
+section CumulativeKindPred
+
+open Semantics.Lexical.Plural.Cumulativity (cumulativeOp)
+
+variable {Atom Loc : Type} [DecidableEq Atom] [DecidableEq Loc]
+
+/--
+Cumulative Kind Predication: evaluate a kind at the actual world,
+then apply the cumulative operator `**` to the kind extension and
+a set of locations/arguments.
+
+@cite{guerrini-2026} §4, structure (62):
+  **(λy.λx.⟦Hab live-in⟧_{s₀}(x, y))(Africa ⊕ Asia)(∩elephants_{s₀})
+
+This connects `GeneralizationLF.cumulativeKindPred` to the theory-layer
+`**` operator from `Cumulativity.lean`.
+-/
+def cumulativeKindPred
+    (R : Atom → Loc → Bool)
+    (kindExtension : Finset Atom)
+    (locations : Finset Loc) : Bool :=
+  cumulativeOp R kindExtension locations
+
+end CumulativeKindPred
+
+-- ============================================================================
+-- § 13: Epistemic Adjective Diagnostic (§5.2.2)
+-- ============================================================================
+
+/-!
+## Epistemic Adjectives Block Kind Predication
+
+@cite{guerrini-2026} §5.2.2: Nonlocal readings of epistemic adjectives
+like "unknown" and "unidentified" block kind denotation, which in turn
+blocks the near-universal reading via Distributive Kind Predication.
+
+The argument: "unknown X" under its nonlocal reading ("X whose identity
+is unknown to the speaker") denotes a property that cannot correspond to
+a natural kind. Since ∩ is only defined for natural-kind-forming
+properties, the kind-level LF is unavailable, and so is DKP.
+
+This provides independent evidence that near-universal episodic readings
+require kind denotation (via DKP), not just universality from context.
+-/
+
+/-- Whether an adjective reading supports kind predication. -/
+inductive AdjReading where
+  /-- Local: adjective modifies noun content (descriptive).
+      "American voters" = voters who are American. Supports kind. -/
+  | local
+  /-- Nonlocal: adjective contributes propositional content.
+      "Unknown voters" = voters whose identity is unknown to speaker.
+      Does NOT support kind. -/
+  | nonlocal
+  deriving DecidableEq, Repr, BEq
+
+/-- Kind predication is available only with local adjective readings. -/
+def adjReadingSupportsKind : AdjReading → Bool
+  | .local    => true
+  | .nonlocal => false
+
+/-- Epistemic adjective datum from @cite{guerrini-2026}, examples (99)–(104). -/
+structure EpistemicAdjDatum where
+  bareNP : String
+  adjReading : AdjReading
+  nearUniversalOK : Bool
+  existentialOK : Bool
+  notes : String
+
+def americanVoters : EpistemicAdjDatum :=
+  { bareNP := "American voters"
+  , adjReading := .local
+  , nearUniversalOK := true
+  , existentialOK := true
+  , notes := "Local: denotes kind 'American voter' → DKP available" }
+
+def unidentifiedVoters : EpistemicAdjDatum :=
+  { bareNP := "unidentified voters"
+  , adjReading := .nonlocal
+  , nearUniversalOK := false
+  , existentialOK := true
+  , notes := "Nonlocal: no kind → no DKP → existential only" }
+
+def investigativeJournalists : EpistemicAdjDatum :=
+  { bareNP := "investigative journalists"
+  , adjReading := .local
+  , nearUniversalOK := true
+  , existentialOK := true
+  , notes := "Local: denotes kind → DKP available" }
+
+def unknownJournalists : EpistemicAdjDatum :=
+  { bareNP := "unknown journalists"
+  , adjReading := .nonlocal
+  , nearUniversalOK := false
+  , existentialOK := true
+  , notes := "Nonlocal: no kind → no DKP → existential only" }
+
+def epistemicAdjData : List EpistemicAdjDatum :=
+  [americanVoters, unidentifiedVoters, investigativeJournalists, unknownJournalists]
+
+/-- Near-universal reading availability tracks adjective reading,
+    which tracks kind denotation availability. -/
+example : epistemicAdjData.all
+    (fun d => d.nearUniversalOK == adjReadingSupportsKind d.adjReading) = true := rfl
+
+/-- All epistemic adjective data allow existential readings
+    (property denotation is always available via DPP). -/
+example : epistemicAdjData.all (·.existentialOK) = true := rfl
+
+/-- The epistemic adjective diagnostic derives from the same
+    kind-denotation → DKP chain as Table 1.
+
+    Local adj → kind OK → DKP available → near-universal OK
+    Nonlocal adj → no kind → no DKP → near-universal blocked -/
+theorem epistemic_adj_from_kind_denotation :
+    adjReadingSupportsKind .local = true ∧
+    adjReadingSupportsKind .nonlocal = false := ⟨rfl, rfl⟩
 
 end Phenomena.Generics.Studies.Guerrini2026

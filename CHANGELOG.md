@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.161] - 2026-03-11
+
+### Added
+- **Questions/Utility/Relevance.lean**: Theory-level constructs for Van Rooy's relevance-based question semantics — `RelevanceFunction`, `mentionAllRelevance`, `mentionSomeRelevance`, `underspecifiedDenotation`, `isDecisionRelevant`, `decisionRelevantDomain` (promoted from VanRooy2003.lean study file)
+- **Questions/Utility/MerinBridge.lean**: Bridge between Merin's DTS and Van Rooy's decision-theoretic questions — `truthDP` encoding dichotomic issues as decision problems, `truthDP_complementary`, `truthDP_eu_accept`/`reject`, structural bridge theorems
+
+### Changed
+- **Theories/Semantics/Questions/**: Refactor flat 21-file directory into 3 subdirectories — `Denotation/` (Basic, Hamblin, Partition, Inquisitive), `Answerhood/` (Answerhood, PragmaticAnswerhood, MentionSome, Exhaustivity, ProbabilisticAnswerhood, Support), `Utility/` (GSVanRooyBridge, Polarity, Relevance, MerinBridge) — plus 9 top-level files
+- **VanRooy2003.lean**: Remove duplicate theory definitions (now imported from Relevance.lean); update imports to new subdirectory paths
+- 58 import statements updated across the codebase to reflect new Questions/ structure
+
 ## [0.229.160] - 2026-03-11
 
 ### Added

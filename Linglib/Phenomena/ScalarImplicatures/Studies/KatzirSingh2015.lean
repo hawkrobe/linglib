@@ -3,7 +3,7 @@ import Linglib.Core.FelicityTypes
 import Linglib.Core.Semantics.Proposition
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
-import Linglib.Theories.Semantics.Questions.Partition
+import Linglib.Theories.Semantics.Questions.Denotation.Partition
 
 /-!
 # Economy of Structure and Information

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Denotation.Basic
 
 /-!
 # Questions/Hamblin.lean

@@ -5,9 +5,9 @@ import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Phenomena.Focus.Studies.DeoThomas2025
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Questions.LeftPeriphery
-import Linglib.Theories.Semantics.Questions.Polarity
+import Linglib.Theories.Semantics.Questions.Utility.Polarity
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 

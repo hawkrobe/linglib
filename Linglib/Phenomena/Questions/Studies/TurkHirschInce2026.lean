@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.InformationStructure
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Phenomena.Questions.PolarAnswers
 

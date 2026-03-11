@@ -44,7 +44,7 @@ Then `IsCDistributive propSemantics questionSemantics` is a theorem.
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Preferential
 

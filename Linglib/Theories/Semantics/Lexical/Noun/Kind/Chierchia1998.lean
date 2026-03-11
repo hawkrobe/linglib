@@ -196,6 +196,31 @@ Takes an object-level predicate and returns a kind-level predicate.
 def liftToKind (P : Individual Atom → Bool) : Kind World Atom → World → Prop :=
   λ k w => DKP World Atom P k w
 
+-- Derived Property Predication (DPP)
+
+/--
+Derived Property Predication: coerce a property to yield an existential.
+
+When a property P (rather than a kind) composes with a predicate Q,
+introduce low-scoped existential quantification:
+
+  DPP(Q)(P) = ∃x[P(x) ∧ Q(x)]
+
+This is the mirror image of DKP. Where DKP applies to kinds (via ∪),
+DPP applies to properties directly. @cite{guerrini-2026} §5.3: the
+existential reading of bare plurals in episodic sentences arises from
+property-level LFs via DPP, not from kind-level DKP.
+
+Example: "Bears are destroying my garden" (existential reading)
+- "bears" denotes a property (λx.bear(x))
+- "destroying my garden" is a predicate
+- DPP yields: ∃x[bear(x) ∧ destroying-my-garden(x)]
+
+DPP applies locally (like DKP), so it yields obligatory low scope.
+-/
+def DPP (property : Individual Atom → Bool) (predicate : Individual Atom → Bool) : Prop :=
+  ∃ x, property x = true ∧ predicate x = true
+
 -- The Nominal Mapping Parameter
 
 /--

@@ -7,7 +7,7 @@ Reference: Phillips-Brown, M. (2025). Some-things-considered desire. S&P.
 -/
 
 import Linglib.Theories.Semantics.Modality.Kratzer
-import Linglib.Theories.Semantics.Questions.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 
 namespace Semantics.Modality.PhillipsBrown

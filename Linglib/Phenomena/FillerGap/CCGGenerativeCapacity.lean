@@ -15,13 +15,12 @@ agreement is definitional.
 namespace CCG.GenerativeCapacity.Bridge
 
 /--
-The phenomenal and theory-level classifications agree: both assign
+The phenomenal classification agrees with the theory-level result: both assign
 cross-serial dependencies to the mildly context-sensitive level.
 
-With the unified `Core.FormalLanguageType`, this is definitionally true —
-both `Phenomena.WordOrder.CrossSerial.crossSerialRequires` and
-`CCG.GenerativeCapacity.crossSerialRequires` reduce to
-`Core.FormalLanguageType.mildlyContextSensitive`.
+`Phenomena.WordOrder.CrossSerial.crossSerialRequires` reduces to
+`Core.FormalLanguageType.mildlyContextSensitive`, matching the
+generative capacity established by `CCG.GenerativeCapacity.ccg_exceeds_cfg`.
 -/
 theorem phenomenal_agrees_with_theory :
     Phenomena.WordOrder.CrossSerial.crossSerialRequires =

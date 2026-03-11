@@ -1,6 +1,6 @@
 import Linglib.Core.Discourse.QUD
-import Linglib.Theories.Semantics.Questions.Hamblin
-import Linglib.Theories.Semantics.Questions.Partition
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
+import Linglib.Theories.Semantics.Questions.Denotation.Partition
 
 /-!
 # Inquisitive Semantics Bridge

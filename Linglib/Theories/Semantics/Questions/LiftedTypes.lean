@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Partition
+import Linglib.Theories.Semantics.Questions.Denotation.Partition
 
 /-!
 # Questions/LiftedTypes.lean

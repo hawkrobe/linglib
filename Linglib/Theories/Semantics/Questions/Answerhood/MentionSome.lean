@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Questions.Partition
-import Linglib.Theories.Semantics.Questions.PragmaticAnswerhood
-import Linglib.Theories.Semantics.Questions.Answerhood
+import Linglib.Theories.Semantics.Questions.Denotation.Partition
+import Linglib.Theories.Semantics.Questions.Answerhood.PragmaticAnswerhood
+import Linglib.Theories.Semantics.Questions.Answerhood.Answerhood
 
 /-!
 # Questions/MentionSome.lean

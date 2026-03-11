@@ -1,7 +1,7 @@
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Theories.Semantics.Questions.PragmaticAnswerhood
-import Linglib.Theories.Semantics.Questions.MentionSome
-import Linglib.Theories.Semantics.Questions.Polarity
+import Linglib.Theories.Semantics.Questions.Answerhood.PragmaticAnswerhood
+import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
+import Linglib.Theories.Semantics.Questions.Utility.Polarity
 
 /-!
 # Questions/GSVanRooyBridge.lean

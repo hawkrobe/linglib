@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Questions.ProbabilisticAnswerhood
-import Linglib.Theories.Semantics.Questions.Support
-import Linglib.Theories.Semantics.Questions.Basic
+import Linglib.Theories.Semantics.Questions.Answerhood.ProbabilisticAnswerhood
+import Linglib.Theories.Semantics.Questions.Answerhood.Support
+import Linglib.Theories.Semantics.Questions.Denotation.Basic
 
 /-!
 # Additive Particles: too, also, either

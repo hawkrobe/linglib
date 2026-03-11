@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.Inquisitive
+import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
 
 /-!
 # Probabilistic Answerhood @cite{thomas-2026}

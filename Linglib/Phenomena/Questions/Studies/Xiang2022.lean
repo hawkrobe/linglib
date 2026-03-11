@@ -1,5 +1,5 @@
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Theories.Semantics.Questions.Exhaustivity
+import Linglib.Theories.Semantics.Questions.Answerhood.Exhaustivity
 
 /-!
 # @cite{xiang-2022}: Relativized Exhaustivity @cite{xiang-2022}

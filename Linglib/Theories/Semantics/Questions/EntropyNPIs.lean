@@ -1,5 +1,5 @@
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Theories.Semantics.Questions.Partition
+import Linglib.Theories.Semantics.Questions.Denotation.Partition
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!
