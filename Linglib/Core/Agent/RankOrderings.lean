@@ -60,11 +60,50 @@ noncomputable def rankProbRec (ra : RationalAction S A) (s : S) : List A → ℝ
   | [] => 1
   | a :: rest => ra.pChoice s (a :: rest).toFinset a * rankProbRec ra s rest
 
-/-- `rankProbRec` agrees with the explicit `rankProb` definition. -/
+/-- Foldl with multiplication factors out the initial value:
+    `foldl (· * f ·) c xs = c * foldl (· * f ·) 1 xs`. -/
+private theorem foldl_mul_comm_init (f : Nat → ℝ) (c : ℝ) :
+    ∀ xs : List Nat, xs.foldl (fun acc i => acc * f i) c =
+      c * xs.foldl (fun acc i => acc * f i) 1
+  | [] => by simp
+  | x :: xs => by
+    simp only [List.foldl]
+    rw [foldl_mul_comm_init f (c * f x) xs, foldl_mul_comm_init f (1 * f x) xs]
+    ring
+
+/-- Decompose foldl on range(n+1): peel off index 0 and shift the rest.
+    Uses `List.range_succ_eq_map` and `List.foldl_map` from mathlib. -/
+private theorem foldl_range_succ (f : Nat → ℝ) (n : Nat) :
+    (List.range (n + 1)).foldl (fun acc i => acc * f i) 1 =
+    f 0 * (List.range n).foldl (fun acc i => acc * f (i + 1)) 1 := by
+  rw [List.range_succ_eq_map]
+  show (List.map Nat.succ (List.range n)).foldl (fun acc i => acc * f i) (1 * f 0) =
+    f 0 * (List.range n).foldl (fun acc i => acc * f (i + 1)) 1
+  rw [one_mul, List.foldl_map, foldl_mul_comm_init]
+
+/-- `rankProbRec` agrees with the explicit `rankProb` definition.
+
+    Proof by list induction. The key steps use:
+    - `List.range_succ_eq_map` to decompose `range(n+1) = 0 :: map succ (range n)`
+    - `List.foldl_map` to shift indices through the map
+    - `foldl_mul_comm_init` to factor out the first-choice probability
+    - Definitional equalities: `rankStepProb (a::rest) 0 = pChoice` and
+      `rankStepProb (a::rest) (i+1) = rankStepProb rest i` -/
 theorem rankProbRec_eq_rankProb (ra : RationalAction S A) (s : S) (ranking : List A) :
     rankProbRec ra s ranking = rankProb ra s ranking := by
-  -- TODO: induction on ranking, unfolding foldl at each step
-  sorry
+  induction ranking with
+  | nil => rfl
+  | cons a rest ih =>
+    show ra.pChoice s (a :: rest).toFinset a * rankProbRec ra s rest =
+      (List.range (rest.length + 1)).foldl
+        (fun acc i => acc * rankStepProb ra s (a :: rest) i) 1
+    rw [ih, rankProb, foldl_range_succ]
+    -- Both sides now match by definitional equalities:
+    -- rankStepProb (a::rest) 0 = pChoice (since (a::rest)[0]? = some a
+    --   and tailSuffix (a::rest) 0 = (a::rest).toFinset)
+    -- rankStepProb (a::rest) (i+1) = rankStepProb rest i (since
+    --   (a::rest)[i+1]? = rest[i]? and tailSuffix (a::rest) (i+1) = tailSuffix rest i)
+    congr 1
 
 /-- Each `rankStepProb` is non-negative: either 1 (out of range) or `pChoice`. -/
 private theorem rankStepProb_nonneg (ra : RationalAction S A) (s : S)
@@ -107,16 +146,47 @@ noncomputable def rankProbScoreProd (ra : RationalAction S A) (s : S)
     (ranking : List A) : ℝ :=
   (List.range ranking.length).foldl (λ acc i => acc * scoreRatio ra s ranking i) 1
 
+omit [Fintype A] in
+/-- If `ranking[i]? = some a`, then `a` is in the tail suffix at position `i`.
+    This is because `a = ranking[i]` is the head of `ranking.drop i`. -/
+private theorem mem_tailSuffix_of_getElem?
+    {ranking : List A} {i : Nat} {a : A}
+    (h : ranking[i]? = some a) :
+    a ∈ tailSuffix ranking i := by
+  simp only [tailSuffix, List.mem_toFinset]
+  have hi : i < ranking.length := by
+    by_contra hc; push_neg at hc
+    simp [List.getElem?_eq_none hc] at h
+  rw [List.drop_eq_getElem_cons hi]
+  have hval : ranking[i] = a := by
+    have := List.getElem?_eq_getElem hi
+    rw [h] at this; exact Option.some.inj this.symm
+  rw [hval]; exact List.Mem.head _
+
+/-- `rankStepProb` equals `scoreRatio` at every position: the `pChoice`
+    formulation and the explicit score/sum formulation agree because
+    `ranking[i]` is always in the tail suffix at position `i`. -/
+private theorem rankStepProb_eq_scoreRatio (ra : RationalAction S A) (s : S)
+    (ranking : List A) (i : Nat) :
+    rankStepProb ra s ranking i = scoreRatio ra s ranking i := by
+  simp only [rankStepProb, scoreRatio]
+  cases h : ranking[i]? with
+  | none => rfl
+  | some a =>
+    have hmem : a ∈ tailSuffix ranking i := mem_tailSuffix_of_getElem? h
+    simp only [RationalAction.pChoice, hmem, ↓reduceIte]
+
 /-- **Theorem 9 (score form)**: ranking probability equals the product of score ratios.
 
     Each `pChoice` factor equals the corresponding score ratio by definition of
     the Luce choice rule, so the two products are term-by-term equal. -/
 theorem rankProb_eq_score_prod (ra : RationalAction S A) (s : S) (ranking : List A)
-    (hnd : ranking.Nodup) :
+    (_hnd : ranking.Nodup) :
     rankProb ra s ranking = rankProbScoreProd ra s ranking := by
-  -- TODO: suffices to show rankStepProb = scoreRatio at each position,
-  -- which follows from pChoice_mem when the element is in the tail finset
-  sorry
+  simp only [rankProb, rankProbScoreProd]
+  congr 1
+  ext acc i
+  exact congrArg (acc * ·) (rankStepProb_eq_scoreRatio ra s ranking i)
 
 -- ============================================================================
 -- Summation over permutations (Theorem 9, completeness)
@@ -126,11 +196,29 @@ theorem rankProb_eq_score_prod (ra : RationalAction S A) (s : S) (ranking : List
 noncomputable def allRankings (T : Finset A) : Finset (List A) :=
   T.val.toList.permutations.toFinset
 
-/-- Every ranking in `allRankings T` is a permutation of `T`. -/
+omit [Fintype A] in
+/-- Every ranking in `allRankings T` is a permutation of `T`.
+
+    Uses `List.mem_permutations`, `List.perm_ext_iff_of_nodup`, and
+    `Multiset.mem_toList` from mathlib to connect the List-level
+    permutation API with Finset membership. -/
 theorem mem_allRankings_iff (T : Finset A) (ranking : List A) :
     ranking ∈ allRankings T ↔ ranking.toFinset = T ∧ ranking.Nodup := by
-  -- TODO: follows from Multiset.mem_permutations and List.toFinset properties
-  sorry
+  simp only [allRankings, List.mem_toFinset, List.mem_permutations]
+  have hT_nodup : T.val.toList.Nodup := by
+    rw [← Multiset.coe_nodup, Multiset.coe_toList]; exact T.nodup
+  constructor
+  · intro hperm
+    constructor
+    · ext x
+      simp only [List.mem_toFinset]
+      rw [hperm.mem_iff, Multiset.mem_toList]; exact Iff.rfl
+    · exact hperm.nodup_iff.mpr hT_nodup
+  · intro ⟨hfs, hnd⟩
+    rw [List.perm_ext_iff_of_nodup hnd hT_nodup]
+    intro x
+    rw [← List.mem_toFinset (l := ranking), hfs,
+        Multiset.mem_toList, Finset.mem_val]
 
 /-- **Ranking probabilities sum to 1** (@cite{luce-1959}, Theorem 9 completeness):
     Over all `n!` permutations of the alternative set, ranking probabilities
