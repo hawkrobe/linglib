@@ -987,136 +987,213 @@ theorem persistence_chain :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 21. DOM and Verbal Agentivity (@cite{grimm-2011} §4, p.534)
+-- § 21. DOM and the Agentivity Lattice (@cite{grimm-2011} §4)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{grimm-2011} (p.534): "verbal properties may well also have an
-    effect, and accordingly it is a combination of verbal and nominal
-    properties which trigger DOM." The agentivity lattice provides the
-    *verbal* side of DOM: verbs with high agentivity contrast between
-    subject and object need less nominal disambiguation (DOM), while
-    verbs with low contrast need more.
+/-! @cite{grimm-2011} (p.534): "it is a combination of verbal and nominal
+    properties which trigger DOM." The lattice provides a formal account:
 
-    This section bridges the lattice to the existing DOM infrastructure
-    in `Core.Prominence`, which captures the *nominal* side
-    (@cite{aissen-2003}'s animacy × definiteness grid). -/
+    1. The case regions defined in §6 (`toCaseRegion`) map lattice positions
+       to cases — ACC/ABS for ⊥-agentivity objects with existential
+       persistence, DATIVE for sentient non-instigators with qualitative
+       persistence (Fig. 7).
+
+    2. When we map nominal animacy to baseline agentive capacity and
+       combine it with the verb's persistence profile, animate/human
+       objects shift from ACC/ABS into the DATIVE region.
+
+    3. This is NOT a DOM-specific definition — it reuses `toCaseRegion`
+       (§6) and `inTransitiveRegion` (§5), both defined for general
+       case theory. The DOM prediction is a CONSEQUENCE of case theory.
+
+    The verb class effect (@cite{von-heusinger-2008}) also falls out:
+    verbs whose subjects map to NOM/ERG provide maximal contrast with
+    the object — DOM can regularize. Verbs whose subjects fall outside
+    NOM/ERG provide less contrast — DOM remains sensitive to nominal
+    properties. -/
 
 open Core.Prominence
 
-/-- Map nominal animacy to baseline agentivity on the lattice.
-    Higher animacy correlates with more agentive properties: human
-    referents typically exhibit sentience and motion; animate referents
-    exhibit sentience; inanimate referents exhibit none. -/
+-- ── §21.1 Animacy → agentivity mapping ──
+
+/-- Map nominal animacy to baseline agentive capacity on the lattice.
+
+    Only *inherent* referent properties are mapped — not event-specific
+    ones like instigation or motion:
+
+    - Human: volition + sentience (capacity for intentional action)
+    - Animate: sentience (conscious but non-volitional)
+    - Inanimate: ⊥ (no inherent agentive capacity)
+
+    The exclusion of instigation and motion is principled: these are
+    event properties (did the participant instigate THIS event? move
+    during THIS event?), not referent properties. Volition and sentience
+    are inherent capacities of the referent type. -/
 def animacyToAgentivity : AnimacyLevel → AgentivityNode
-  | .human    => ⟨false, true, false, true⟩   -- {S, M}
-  | .animate  => ⟨false, true, false, false⟩  -- {S}
+  | .human     => ⟨true, true, false, false⟩   -- {V, S}
+  | .animate   => ⟨false, true, false, false⟩  -- {S}
   | .inanimate => ⊥
 
-/-- The animacy-to-agentivity mapping is monotone: higher animacy →
-    higher agentivity on the lattice. -/
+/-- All animacy-derived nodes satisfy volition → sentience. -/
+theorem animacy_all_valid (a : AnimacyLevel) :
+    (animacyToAgentivity a).valid = true := by
+  cases a <;> native_decide
+
+/-- The mapping is monotone: higher animacy → higher agentivity.
+    This is a structural property of the feature-subset ordering,
+    not a stipulation. -/
 theorem animacy_agentivity_monotone :
     animacyToAgentivity .inanimate ≤ animacyToAgentivity .animate ∧
     animacyToAgentivity .animate ≤ animacyToAgentivity .human := by
   constructor <;> decide
 
-/-- A human object is closer to a typical agent on the lattice than
-    an inanimate one — this is WHY high-animacy objects trigger DOM. -/
-theorem human_closer_to_agent :
-    (animacyToAgentivity .human).featureCount >
-    (animacyToAgentivity .inanimate).featureCount := by native_decide
+-- ── §21.2 The core derivation: case regions predict DOM ──
 
-/-- Agentivity contrast between subject and object: the verbal side
-    of semantic distinguishability. Higher contrast → arguments more
-    distinguishable by verbal semantics alone. -/
-def agentivityContrast (subj obj : GrimmNode) : Int :=
-  (subj.agentivity.featureCount : Int) -
-  (obj.agentivity.featureCount : Int)
+/-- Combine a referent's nominal agentivity (from animacy) with the
+    verb's persistence profile for the object. -/
+def objectNodeWithAnimacy (animacy : AnimacyLevel)
+    (verbPersistence : PersistenceLevel) : GrimmNode :=
+  ⟨animacyToAgentivity animacy, verbPersistence⟩
 
-/-- Verbal DOM class: how a verb's semantics interacts with DOM.
+/-- **The key non-circular derivation.** For canonical transitive objects
+    (quPersBeginning = contact verbs like kick, hit, push):
 
-    @cite{grimm-2011} and @cite{von-heusinger-2008}: DOM regularization
-    rate in Spanish varies by verb class — *matar* 'kill' regularized
-    DOM before *ver* 'see'. The lattice explains this: verbs with high
-    agentivity contrast already distinguish their arguments, so DOM
-    can be freely extended (regularized). Verbs with low contrast need
-    DOM to disambiguate, keeping it sensitive to nominal properties. -/
-inductive VerbDOMClass where
-  /-- Object outside transitivity region — DOM not applicable
-      (intensional verbs: seek, want). -/
-  | blocked
-  /-- High agentivity contrast — DOM can regularize to all objects
-      (effective action verbs: kill, break). -/
-  | regularizable
-  /-- Low agentivity contrast — DOM remains sensitive to nominal
-      properties (perception/psych verbs: see, know). -/
-  | nominalSensitive
-  deriving DecidableEq, Repr, BEq
+    - Inanimate: `⟨⊥, qPB⟩` → `toCaseRegion` = **accAbs**
+      (prototypical patient, no DOM needed)
+    - Animate: `⟨{S}, qPB⟩` → `toCaseRegion` = **dative**
+      (sentience shifts it into the dative region, Fig. 7)
+    - Human: `⟨{V,S}, qPB⟩` → `toCaseRegion` = **dative**
+      (volition + sentience, also in dative region)
 
-/-- Classify a verb's DOM behavior from its lattice positions. -/
-def verbDOMClass (subj obj : GrimmNode) : VerbDOMClass :=
-  if ¬obj.inTransitiveRegion then .blocked
-  else if agentivityContrast subj obj ≥ 3 then .regularizable
-  else .nominalSensitive
+    `toCaseRegion` was defined in §6 for general case theory, not for
+    DOM. That it automatically separates inanimate objects (accAbs) from
+    animate/human objects (dative) is the lattice's genuine prediction. -/
+theorem inanimate_object_in_accAbs :
+    (objectNodeWithAnimacy .inanimate .quPersBeginning).toCaseRegion
+    = .accAbs := by native_decide
 
--- ── Per-verb DOM predictions ──
+theorem animate_object_in_dative :
+    (objectNodeWithAnimacy .animate .quPersBeginning).toCaseRegion
+    = .dative := by native_decide
 
-/-- Kick: full agentivity contrast (4 vs 0) → regularizable.
-    Matches @cite{von-heusinger-2008}: *matar* regularized DOM early. -/
-theorem kick_dom_regularizable :
-    verbDOMClass
-      (GrimmNode.fromSubjectProfile kickSubjectProfile)
-      (GrimmNode.fromObjectProfile kickObjectProfile)
-    = .regularizable := by native_decide
+theorem human_object_in_dative :
+    (objectNodeWithAnimacy .human .quPersBeginning).toCaseRegion
+    = .dative := by native_decide
 
-/-- Build: full agentivity contrast + creation object (exPersEnd) →
-    blocked. Creation verb objects are outside the transitivity region,
-    so standard DOM does not apply. -/
-theorem build_dom_blocked :
-    verbDOMClass
-      (GrimmNode.fromSubjectProfile buildSubjectProfile)
-      (GrimmNode.fromObjectProfile buildObjectProfile)
-    = .blocked := by native_decide
+-- ── §21.3 DOM predicted when object leaves ACC/ABS ──
 
-/-- See: low agentivity contrast (1 vs 0, subject has only sentience)
-    → DOM remains sensitive to nominal properties.
-    Matches @cite{von-heusinger-2008}: *ver* DOM remained variable. -/
-theorem see_dom_nominal_sensitive :
-    verbDOMClass
-      (GrimmNode.fromSubjectProfile seeSubjectProfile)
-      ⟨⊥, .totalPersistence⟩
-    = .nominalSensitive := by native_decide
+/-- DOM is predicted when the object is in the transitivity region
+    but its nominal agentivity pushes it outside the ACC/ABS case
+    region. Both conditions use infrastructure defined for general
+    case theory (§5, §6), not for DOM. -/
+def domPredictedByLattice (animacy : AnimacyLevel)
+    (verbPersistence : PersistenceLevel) : Bool :=
+  let node := objectNodeWithAnimacy animacy verbPersistence
+  node.inTransitiveRegion && node.toCaseRegion != .accAbs
 
-/-- Class III (pursuit: search, seek) → DOM blocked.
-    Object has total non-persistence (may not exist). -/
-theorem pursuit_dom_blocked :
-    verbDOMClass effectorAgent
-      (TransitivityClass.pursuit.patientNode)
-    = .blocked := by native_decide
+/-- Inanimate objects of canonical transitives: in ACC/ABS, no DOM. -/
+theorem inanimate_canonical_no_dom :
+    domPredictedByLattice .inanimate .quPersBeginning = false := by
+  native_decide
 
--- ── Bridge: animacy-based DOM explained by lattice distance ──
+/-- Animate objects of canonical transitives: outside ACC/ABS, DOM
+    predicted. The lattice reason: sentience pushes the object into
+    the dative region (@cite{grimm-2011} Fig. 7). -/
+theorem animate_canonical_dom :
+    domPredictedByLattice .animate .quPersBeginning = true := by
+  native_decide
 
-/-- When an object has HIGH animacy (human), its baseline agentivity
-    is closer to a typical agent → greater need for DOM to distinguish
-    it from the subject. This connects @cite{aissen-2003}'s animacy
-    scale to @cite{grimm-2011}'s lattice: DOM targets objects that
-    are "too agentive" for their role. -/
-theorem dom_animacy_lattice_bridge :
-    -- Human object: 2 agentivity features (close to agent)
-    (animacyToAgentivity .human).featureCount = 2 ∧
-    -- Animate object: 1 feature (intermediate)
-    (animacyToAgentivity .animate).featureCount = 1 ∧
-    -- Inanimate object: 0 features (maximally patient-like, no DOM needed)
-    (animacyToAgentivity .inanimate).featureCount = 0 := ⟨rfl, rfl, rfl⟩
+/-- Human objects: also outside ACC/ABS, DOM predicted. -/
+theorem human_canonical_dom :
+    domPredictedByLattice .human .quPersBeginning = true := by
+  native_decide
 
-/-- The animacy staircase matches the agentivity lattice: each step up
-    the animacy hierarchy corresponds to one additional agentivity
-    feature, reducing the distance to the subject's position and
-    increasing DOM susceptibility. -/
-theorem animacy_staircase_is_lattice_chain :
-    animacyToAgentivity .inanimate <
-    animacyToAgentivity .animate ∧
-    animacyToAgentivity .animate <
-    animacyToAgentivity .human := by
-  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
+-- ── §21.4 Resultative transitives (exPersBeginning) ──
+
+/-- The same pattern holds for resultative verbs (break, destroy):
+    inanimate objects stay in ACC/ABS, animate/human objects do not. -/
+theorem inanimate_resultative_no_dom :
+    domPredictedByLattice .inanimate .exPersBeginning = false := by
+  native_decide
+
+theorem animate_resultative_dom :
+    domPredictedByLattice .animate .exPersBeginning = true ∧
+    domPredictedByLattice .human .exPersBeginning = true :=
+  ⟨by native_decide, by native_decide⟩
+
+-- ── §21.5 Creation verbs: outside transitivity entirely ──
+
+/-- Creation verb objects (build, invent — exPersEnd) are outside the
+    transitivity region at ALL animacy levels. The object does not
+    exist at event start, so it cannot "intrude" on the agent's role.
+    DOM is inapplicable, not merely unnecessary. -/
+theorem creation_outside_transitivity (a : AnimacyLevel) :
+    (objectNodeWithAnimacy a .exPersEnd).inTransitiveRegion = false := by
+  cases a <;> native_decide
+
+-- ── §21.6 Verb class effect: subject case region ──
+
+/-- Whether the subject maps to the NOM/ERG case region. When true,
+    the verbal semantics alone provides maximal contrast between
+    subject (NOM/ERG) and object (ACC/ABS or below), and DOM can
+    regularize — it is redundant for disambiguation.
+
+    @cite{von-heusinger-2008}: *matar* 'kill' (Class 1, subject →
+    NOM/ERG) regularized DOM centuries before *ver* 'see' (Class 2,
+    subject → oblique). -/
+def subjectInAgentRegion (subjProfile : EntailmentProfile) : Bool :=
+  (GrimmNode.fromSubjectProfile subjProfile).toCaseRegion == .nomErg
+
+/-- Kick subject → NOM/ERG: maximal verbal contrast.
+    Corresponds to *matar* 'kill' — DOM regularized early. -/
+theorem kick_subject_in_agent_region :
+    subjectInAgentRegion kickSubjectProfile = true := by native_decide
+
+/-- See subject → NOT NOM/ERG: insufficient verbal contrast.
+    Corresponds to *ver* 'see' — DOM remained variable. -/
+theorem see_subject_not_in_agent_region :
+    subjectInAgentRegion seeSubjectProfile = false := by native_decide
+
+/-- Build subject → NOM/ERG: high verbal contrast, but moot because
+    the object is outside the transitivity region (§21.5). -/
+theorem build_subject_in_agent_region :
+    subjectInAgentRegion buildSubjectProfile = true := by native_decide
+
+-- ── §21.7 Monotonicity: Aissen's staircase from lattice structure ──
+
+/-- The lattice reproduces @cite{aissen-2003}'s monotonicity prediction:
+    if DOM is predicted for a lower animacy level, it is also predicted
+    for all higher levels. Universally quantified over persistence.
+
+    This is NOT stipulated — it follows from:
+    1. `animacyToAgentivity` is monotone (higher animacy → more features)
+    2. `toCaseRegion` maps ⊥ agentivity to accAbs, non-⊥ to dative/oblique
+    3. Once agentivity is non-⊥, adding features keeps it non-⊥ -/
+theorem dom_monotone_inanimate_animate (p : PersistenceLevel) :
+    domPredictedByLattice .inanimate p = true →
+    domPredictedByLattice .animate p = true := by
+  cases p <;> decide
+
+theorem dom_monotone_animate_human (p : PersistenceLevel) :
+    domPredictedByLattice .animate p = true →
+    domPredictedByLattice .human p = true := by
+  cases p <;> decide
+
+-- ── §21.8 Limitation: totalPersistence ──
+
+/-! For totalPersistence objects (perception verbs: see, hear, know),
+    `toCaseRegion` maps `⟨⊥, totalPersistence⟩` to oblique, not accAbs,
+    because totalPersistence is not in {exPersBeginning, quPersBeginning}.
+    This means `domPredictedByLattice` returns true for ALL animacy levels,
+    including inanimate — overpredicting DOM for perception verb objects.
+
+    This reflects a genuine theoretical point: Grimm's system treats
+    perception verb objects as non-prototypical patients (they are not
+    affected or changed). But it means `domPredictedByLattice` is most
+    informative for verbs in the transitivity region's core: contact
+    (quPersBeginning) and resultative effective (exPersBeginning) verbs. -/
+theorem totalPersistence_all_outside_accAbs (a : AnimacyLevel) :
+    (objectNodeWithAnimacy a .totalPersistence).toCaseRegion ≠ .accAbs := by
+  cases a <;> native_decide
 
 end Semantics.Events.AgentivityLattice

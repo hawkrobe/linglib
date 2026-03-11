@@ -8,7 +8,7 @@
 ## [0.229.132] - 2026-03-10
 
 ### Changed
-- **Theories/Semantics/Events/AgentivityLattice.lean**: Add §21 DOM and verbal agentivity — `animacyToAgentivity` mapping from `Core.Prominence.AnimacyLevel` to agentivity lattice, `agentivityContrast` measure, `VerbDOMClass` (blocked/regularizable/nominalSensitive), `verbDOMClass` classification linking Grimm's lattice to von Heusinger 2008 DOM regularization data; per-verb DOM predictions (kick regularizable, build blocked, see nominal-sensitive, pursuit blocked); bridge theorems connecting Aissen 2003 animacy staircase to lattice chain
+- **Theories/Semantics/Events/AgentivityLattice.lean**: Rewrite §21 DOM section — derive DOM predictions from `toCaseRegion` (§6, general case theory) rather than magic thresholds; `animacyToAgentivity` maps AnimacyLevel to inherent agentive capacity ({V,S} for human, {S} for animate, ⊥ for inanimate); `domPredictedByLattice` uses `toCaseRegion` + `inTransitiveRegion` to predict that inanimate objects stay in ACC/ABS while animate/human shift to DATIVE region (Fig. 7); `subjectInAgentRegion` explains von Heusinger 2008 verb class effect via subject's case region; universally quantified monotonicity theorems reproduce Aissen 2003 staircase; honest limitation note for totalPersistence
 
 ## [0.229.131] - 2026-03-10
 
