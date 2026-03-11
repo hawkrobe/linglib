@@ -779,6 +779,8 @@ import Linglib.Phenomena.FillerGap.Studies.Erlewine2018
 import Linglib.Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
 import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
 import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
+import Linglib.Phenomena.SyntacticAmbiguity.Basic
+import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
 import Linglib.Phenomena.Nonliteral.Studies.RelevanceTheory
@@ -864,6 +866,7 @@ import Linglib.Phenomena.Polarity.Typology
 import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
+import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
 import Linglib.Phenomena.Polysemy.Data
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024

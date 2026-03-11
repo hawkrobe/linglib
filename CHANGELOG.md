@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.145] - 2026-03-11
+
+### Added
+- **Phenomena/SyntacticAmbiguity/Basic.lean**: New phenomenon category for temporary syntactic ambiguity and garden-path effects — `Disambiguation` (CC/RC), `ReferentialContext` (unique/non-unique), `Condition`, `contextSupports`, context-sensitive vs context-insensitive attachment hypotheses, `disambiguationProfile` with `ProcessingProfile` bridge, `rc_pareto_harder`
+- **Phenomena/SyntacticAmbiguity/Studies/PaapeVasishth2026.lean**: Formalize Paape & Vasishth 2026 (JML 148) — MPT `TrialOutcome` (9 leaf paths incl. triage), `MPTParams`, Bayesian analysis data (Table 2 BF10 values), garden-path rates calibrated to average ~75% for amb-RC, `ProcessingCosts` with GP/attention/regression/covert costs, three findings as theorems (I–III), `graded_context_sensitivity` theorem, `ModelVariant` with 10-variant ranking from PSIS-LOO, `mpt_beats_surprisal` and `noTriage_beats_full`, processing profile consistency bridge
+- **blog/data/references.bib**: Add paape-vasishth-2026, altmann-garnham-dennis-1992, hale-2001, van-schijndel-linzen-2021, huang-etal-2024
+
+### Changed
+- **PaapeVasishth2026.lean**: Fix `hasRegression` — only overt reanalysis (regression) paths involve regression; covert fail paths lead to REJECT without regression (per Fig. 1). Fix covert fail docstrings (remove incorrect "→ overt"). Recalibrate garden-path rates so amb-RC averages ~75% (was 67.5%). Raise CC covert cost from 150→225ms per Fig. 10 slope. Replace superficial definiteness bridge and trivial mixture theorem with Bayesian analysis data and model comparison ranking. Drop `ReferentialForm` import (bridge was proving wrong thing).
+
 ## [0.229.144] - 2026-03-11
 
 ### Added
