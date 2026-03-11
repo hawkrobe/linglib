@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Events.ProtoRoles
 import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Phenomena.Reference.Studies.RosaArnold2017
 
 /-!
 # Psych Verb IC Bias — Proto-Role Bridge
@@ -207,5 +208,80 @@ theorem manage_senses_diverge_on_theta :
 /-- Despite different theta labels, both senses share implicative semantics. -/
 theorem manage_senses_share_semantics :
     manage.implicativeBuilder = manage_occasion.implicativeBuilder := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 8. Cross-Study Bridge: @cite{rosa-arnold-2017}
+-- ════════════════════════════════════════════════════
+
+open Phenomena.Reference.Studies.RosaArnold2017
+
+/-- @cite{rosa-arnold-2017} and @cite{solstad-bott-2022} demonstrate the same
+    mechanism operating across different verb classes and phenomena: **thematic
+    roles determine discourse bias independently of grammatical position**.
+
+    IC bias: stimulus argument → causal explanation target → NP1/NP2 bias
+    Transfer bias: goal argument → next-mention prediction → pronominalization
+
+    In both cases, swapping the thematic role between subject and object
+    changes the bias direction, proving that the role — not the grammatical
+    position — drives the effect. This is clearest in the IC reversal: StimExp
+    (stimulus=subject) yields NP1 bias while ExpStim (stimulus=object) yields
+    NP2 bias, with the bias direction fully predicted by which argument has
+    the causation entailment. -/
+theorem theta_role_drives_bias_across_phenomena :
+    -- Transfer verbs: goal → high next-mention (Rosa & Arnold)
+    transferNextMention .goal = .high ∧
+    -- IC verbs: stimulus subject → NP1 bias (Solstad & Bott)
+    predictICBias stimExpSubjectProfile = .np1 ∧
+    -- IC verbs: experiencer subject → NP2 bias (role reversal)
+    predictICBias expStimSubjectProfile = .np2 := by
+  exact ⟨rfl, by native_decide, by native_decide⟩
+
+/-- Both papers demonstrate coherence-driven modulation of thematic role bias.
+
+    @cite{rosa-arnold-2017}: Occasion/Result coherence amplifies the goal bias
+    (β=1.22, p=.002) while Other coherence does not (β=0.86, p=.12). Result
+    and Occasion focus on the endpoint/aftermath of the event — the Goal.
+
+    @cite{solstad-bott-2024}: Explanation coherence selects for causes
+    (`selectsCause`), and IC bias tracks the argument with the causation
+    entailment profile.
+
+    In both cases, the coherence relation TYPE interacts with the thematic
+    structure of the verb: Explanation selects the cause/stimulus; Occasion/Result
+    selects the endpoint/goal. The coherence relation amplifies a bias that is
+    already latent in the verb's thematic structure. -/
+theorem coherence_modulates_theta_bias_across_phenomena :
+    -- Explanation selects causes (Solstad & Bott)
+    CoherenceRelation.explanation.selectsCause = true ∧
+    -- Occasion/Result amplifies goal bias (Rosa & Arnold)
+    occasionResult_interaction.significant = true ∧
+    -- Other coherence does NOT amplify goal bias
+    other_interaction.significant = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- @cite{rosa-arnold-2017} explicitly challenges @cite{kehler-rohde-2013}'s
+    independence hypothesis: P(pronoun | referent) should depend ONLY on
+    subjecthood, not on thematic role. Rosa & Arnold violate this for transfer
+    verbs (goals get more pronouns than sources in the same grammatical role).
+
+    The IC data provides an even stronger violation: the ENTIRE continuation
+    bias direction (NP1 vs NP2) reverses based on which argument is the
+    stimulus, with grammatical position (subject vs object) fully dissociated
+    from the bias direction by the StimExp/ExpStim design. -/
+theorem ic_reversal_violates_position_only :
+    -- StimExp (stimulus=subject): NP1 bias — subject gets continuation
+    predictICBias stimExpSubjectProfile = .np1 ∧
+    -- ExpStim (stimulus=object): NP2 bias — object gets continuation
+    predictICBias expStimSubjectProfile = .np2 ∧
+    -- Transfer: goals get more pronouns than sources even in same position
+    -- (Rosa & Arnold Exp 1 subject: 64% goal vs 37% source)
+    ¬ kehlerRohdeIndependence
+      (fun role gram => match role, gram with
+        | .goal, .subject => 64 | .source, .subject => 37
+        | .goal, .nonsubject => 31 | .source, .nonsubject => 18)
+      .subject := by
+  refine ⟨by native_decide, by native_decide, ?_⟩
+  simp [kehlerRohdeIndependence]
 
 end Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole

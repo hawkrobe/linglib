@@ -127,6 +127,7 @@ import Linglib.Core.Lexical.Binominal
 import Linglib.Core.Efficiency
 import Linglib.Core.SearchEfficiency
 import Linglib.Core.InformationTheory
+import Linglib.Core.GeneralisedSurprisal
 import Linglib.Core.Distributions
 import Linglib.Core.Divergence
 import Linglib.Core.Inheritance
@@ -137,6 +138,7 @@ import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Morphology.Core.WordStructure
 import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
 import Linglib.Core.Discourse.CoherenceRelation
+import Linglib.Core.Discourse.ReferentialForm
 import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
@@ -942,6 +944,7 @@ import Linglib.Phenomena.Reference.Studies.QingFranke2015
 import Linglib.Phenomena.Reference.Studies.KursatDegen2021
 import Linglib.Phenomena.Reference.Studies.GilesEtAl2026
 import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
+import Linglib.Phenomena.Reference.Studies.RosaArnold2017
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.FrankeBergen2020

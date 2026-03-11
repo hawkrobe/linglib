@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.229.144] - 2026-03-11
+
+### Added
+- **Core/Discourse/ReferentialForm.lean**: New Core infrastructure connecting DefinitenessLevel (prominence) to production form choice — `NextMentionBias`, `predictedForm` monotone link, `typicalWeight` NP weight bridge
+- **Phenomena/Reference/Studies/RosaArnold2017.lean**: Formalize Rosa & Arnold 2017 (JML 94) — Exp 1–3 pronoun rate data (Tables 1, 4, 7), rating study next-mention bias, coherence interaction, Kehler & Rohde independence violation, Fragment bridge (`give.object2Theta`), cross-study bridge to Arnold et al. 2000
+- **SolstadBott2024/ProtoRole.lean** §8: Cross-study bridge to Rosa & Arnold 2017 — `theta_role_drives_bias_across_phenomena`, `coherence_modulates_theta_bias_across_phenomena`, `ic_reversal_violates_position_only` (IC reversal as stronger Kehler-Rohde independence violation)
+- **references.bib**: Add rosa-arnold-2017, ariel-2001, kehler-rohde-2013
+
+## [0.229.143] - 2026-03-11
+
+### Added
+- **Phenomena/Reference/Studies/GilesEtAl2026.lean** §15: PoE-Psychophysics bridge — `poeNoiseScales` (MultidimStimulus with noise params as per-dimension scales), `poeAsMultidimLuce` (cs-RSA PoE expressed as `multidim_luce` from Psychophysics.lean), connecting the concrete PoE φ to `multidimensional_decomposition` (Luce 1959 §2.C)
+- **blog/data/references.bib**: Add giles-etal-2026 (DOI: 10.1162/OPMi.a.337), rubio-fernandez-2019, jara-ettinger-rubio-fernandez-2022, regier-etal-2007, zaslavsky-etal-2019, wolfe-horowitz-2017 (all verified against paper)
+
+### Changed
+- **Phenomena/Reference/Studies/GilesEtAl2026.lean**: Rename equal_dprime_different_overmod → within_feature_monotonicity_but_not_across (eliminates duplication); fix Exp 2 coefficient descriptions to note sum contrasts
+- **Core/SearchEfficiency.lean**: Fix SearchContext docstring; remove unused `SearchEfficiencyAnalysis`, `toCostPair`, `isEfficient`, `distinctiveness`; drop `Core.Efficiency` import
+
+### Removed
+- **Core/PropertyDomain.lean**: Remove `Modality` enum, `primaryModality`, `isVisuallyPrivileged` (only consumed by two thin theorems in GilesEtAl2026)
+- **Phenomena/Reference/Studies/GilesEtAl2026.lean**: Remove `cross_modal_generalisation` and `privileging_does_not_explain` (checked hand-rolled enums with no derivational content)
+
+## [0.229.142] - 2026-03-11
+
+### Added
+- **Phenomena/Reference/Studies/GilesEtAl2026.lean**: Formalize Giles et al. 2026 search efficiency study — regression data from Exps 1–2, display type predictions, cross-study bridges to Degen et al. 2020 / Kursat & Degen 2021 / Engelhardt et al. 2006, colour privilege residual, d'→overmodification biconditional bridging psychophysics (SDT) through noise channel to cs-RSA pragmatics, likelihood ratio monotonicity, one-parameter family specialization
+- **Core/SearchEfficiency.lean**: SearchContext, Sufficiency, DisplayType, SearchEfficiencyAnalysis with CostPair bridge to Core.Efficiency
+- **Core/PropertyDomain.lean**: Add Modality enum, PropertyDomain.orientation, primaryModality, isVisuallyPrivileged
+- **Core/Agent/SignalDetection.lean**: probit_strictMono, dPrimeFromRates_pos_iff (probit monotonicity and d' positivity characterization)
+- **Theories/Pragmatics/RSA/Core/Noise.lean**: Orientation noise params, color_eq_orientation, discrimination_ordering_full, noise_model_predicts_no_colour_orientation_difference, product_discrimination_monotone, PropertyDomain.noiseDiscrimination for orientation, colour privilege section
+
 ## [0.229.141] - 2026-03-11
 
 ### Changed
