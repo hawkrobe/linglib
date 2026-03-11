@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.148] - 2026-03-11
+
+### Added
+- **KehlerRohde2013.lean** §9–§10: Mixture derivation (eq. 9) via `sourceBasisPts`, Bayesian inversion (eq. 13) via `bayesianPrediction`, `eq9_why_exceeds_whatNext`, `eq13_active_exceeds_passive`; refactor `Voice`/`Aspect` to use Core types (`UD.Voice`)
+- **SolstadBott2024/ProtoRole.lean** §9: Cross-study bridge — `ic_instantiates_KR_explanation_bias`, `because_collapses_KR_mixture` connecting IC bias to @cite{kehler-rohde-2013}'s coherence model
+
+## [0.229.147] - 2026-03-11
+
+### Added
+- **Definite.lean** §7: `modifierNecessary` — predicate capturing when a modifier rescues a failed uniqueness presupposition; shared mechanism underlying contrastive inference (@cite{sedivy-etal-1999}) and context-sensitive attachment (@cite{paape-vasishth-2026})
+- **PaapeVasishth2026.lean** §9: Uniqueness presupposition bridge — `DiscEntity` toy domain, `bare_fails_nonunique`, `modified_succeeds_nonunique`, `bare_succeeds_unique`, `uniqueness_grounds_context_supports` connecting `the_uniq` (Definite.lean) → `contextSupports` (Basic.lean) → garden-path findings; §9b: `SedivyEntity` visual-world domain, `pv_modifier_necessary/unnecessary`, `sedivy_modifier_necessary/unnecessary`, `shared_mechanism` proving both phenomena are instances of `modifierNecessary`
+
 ## [0.229.146] - 2026-03-11
 
 ### Added

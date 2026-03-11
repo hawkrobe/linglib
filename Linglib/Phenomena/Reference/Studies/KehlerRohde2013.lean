@@ -1,4 +1,5 @@
 import Linglib.Core.Discourse.CoherenceRelation
+import Linglib.Core.Lexical.UD
 
 /-!
 # @cite{kehler-rohde-2013}
@@ -55,29 +56,16 @@ set_option autoImplicit false
 namespace Phenomena.Reference.Studies.KehlerRohde2013
 
 open Core.Discourse.CoherenceRelation
+open UD (Voice)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Experimental Design
 -- ════════════════════════════════════════════════════
 
-/-- Voice of context sentence. Active/passive express the same
-    proposition but differ in which entity occupies subject position
-    and — crucially — in the strength of the topichood signal. -/
-inductive Voice where
-  | active    -- "Amanda amazed Brittany"
-  | passive   -- "Brittany was amazed by Amanda"
-  deriving DecidableEq, Repr, BEq
-
 /-- Prompt type in passage completion experiments. -/
 inductive PromptType where
   | pronoun      -- "She ___"
   | noPronoun    -- "___" (free completion)
-  deriving DecidableEq, Repr, BEq
-
-/-- Aspect of the context sentence (transfer-of-possession exps). -/
-inductive Aspect where
-  | perfective    -- "John passed a comic to Bill."
-  | imperfective  -- "John was passing a comic to Bill."
   deriving DecidableEq, Repr, BEq
 
 /-- Instruction condition (transfer-of-possession exps). -/
@@ -122,9 +110,9 @@ inductive TopichoodLevel where
 /-- Compute topichood from voice and surface position. -/
 def topichood (voice : Voice) (isSubject : Bool) : TopichoodLevel :=
   match voice, isSubject with
-  | _,        false => .low
-  | .passive, true  => .strong
-  | .active,  true  => .default_
+  | _,     false => .low
+  | .Pass, true  => .strong
+  | _,     true  => .default_
 
 -- ════════════════════════════════════════════════════
 -- § 3. Aspect Manipulation (Table 1)
@@ -400,7 +388,122 @@ theorem passive_prediction_accurate :
     actual_passive_subj - predicted_passive_subj ≤ 1 := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 9. Coherence–Referent Bridge
+-- § 9. Eq. (9): Mixture Derivation
+-- ════════════════════════════════════════════════════
+
+/-- Compute the coherence-marginalized Source bias from a NextMentionModel.
+    This IS equation (9): P(Source) = Σ_CR P(CR) × P(Source | CR).
+    Result is in basis points (×10000); divide by 100 for percentage. -/
+def NextMentionModel.sourceBasisPts (m : NextMentionModel) : Nat :=
+  let crs : List CoherenceRelation :=
+    [.occasion, .elaboration, .explanation, .contrast, .result, .parallel]
+  crs.foldl (λ acc cr => acc + m.pCR cr * m.pSourceGivenCR cr) 0
+
+/-- The instruction manipulation models from Tables 3–4.
+    Both share the SAME P(Source|CR) — the CR-conditioned biases from
+    Table 4 (instruction column). They differ ONLY in P(CR). -/
+private def sharedBias : CoherenceRelation → Nat
+  | .occasion    => 27
+  | .elaboration => 100
+  | .explanation => 82
+  | .contrast    => 74
+  | .result      =>  9
+  | .parallel    => 50
+
+def whatNext_model : NextMentionModel where
+  pCR := fun
+    | .occasion    => 71
+    | .explanation =>  1
+    | .elaboration =>  5
+    | .contrast    =>  8
+    | .result      =>  5
+    | .parallel    => 10
+  pSourceGivenCR := sharedBias
+
+def why_model : NextMentionModel where
+  pCR := fun
+    | .occasion    =>  1
+    | .explanation => 91
+    | .elaboration =>  8
+    | .contrast    =>  1
+    | .result      =>  0
+    | .parallel    =>  0
+  pSourceGivenCR := sharedBias
+
+/-- **Structural invariant**: the two instruction models share the same
+    CR-conditioned biases. The instruction manipulation changes P(CR)
+    while holding P(ref|CR) constant. This is the structural content
+    of Table 4. -/
+theorem instruction_models_share_bias :
+    whatNext_model.pSourceGivenCR = why_model.pSourceGivenCR := rfl
+
+/-- **Eq. (9) derivation**: the "Why?" mixture exceeds the "What next?"
+    mixture. This is DERIVED from the model, not read off Table 5.
+    The proof computes:
+      Why:       1×27 + 91×82 + 8×100 + 1×74 + 0×9 + 0×50 = 8363
+      What next: 71×27 + 1×82 + 5×100 + 8×74 + 5×9 + 10×50 = 3636
+    and verifies 8363 > 3636. The direction follows from Explanation
+    (Source-biased at 82%) dominating the Why mixture at 91%. -/
+theorem eq9_why_exceeds_whatNext :
+    why_model.sourceBasisPts > whatNext_model.sourceBasisPts := by
+  native_decide
+
+/-- The computed mixtures are consistent with Table 5: Why → ~84%
+    Source, What-next → ~36% Source (vs observed 82% and 34%). The
+    small discrepancy is from integer rounding and the "Other" CR
+    category. -/
+theorem eq9_mixtures_approximate_table5 :
+    why_model.sourceBasisPts / 100 > 80 ∧
+    whatNext_model.sourceBasisPts / 100 < 40 := by
+  native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 10. Eq. (13): Bayesian Inversion
+-- ════════════════════════════════════════════════════
+
+/-- Compute P(Subject | pronoun) via Bayes' rule (eq. 13).
+    Takes P(Subject next-mentioned) from no-pronoun data and
+    P(pronoun | position) from pronominalization rates.
+    Result is a percentage (0–100). -/
+def bayesianPrediction (pSubj pPronSubj pPronNonSubj : Nat) : Nat :=
+  let num := pPronSubj * pSubj
+  let den := pPronSubj * pSubj + pPronNonSubj * (100 - pSubj)
+  if den = 0 then 0 else num * 100 / den
+
+/-- **Eq. (13) derivation**: active voice. From:
+    - P(Subject) = 59% (Table 7, no-pronoun, causal ref = subject)
+    - P(pronoun | Subject) = 62% (Table 9)
+    - P(pronoun | NonSubject) = 24% (Table 9)
+    Bayes' rule yields: 62×59 / (62×59 + 24×41) = 3658/4642 ≈ 78%.
+    The paper reports 81% (from unrounded data); the direction matches. -/
+theorem eq13_active_prediction :
+    bayesianPrediction nm_active_noPron pron_active_subj pron_active_nonSubj
+    > 50 := by native_decide
+
+/-- **Eq. (13) derivation**: passive voice. From:
+    - P(Subject) = 100 - 76 = 24% (Table 7: 76% mention causal ref,
+      who is the NON-subject in passive)
+    - P(pronoun | Subject) = 87% (Table 9)
+    - P(pronoun | NonSubject) = 23% (Table 9)
+    Bayes' rule yields: 87×24 / (87×24 + 23×76) = 2088/3836 ≈ 54%. -/
+theorem eq13_passive_prediction :
+    bayesianPrediction (100 - nm_passive_noPron) pron_passive_subj
+      pron_passive_nonSubj > 50 := by native_decide
+
+/-- **Central Bayesian prediction**: Bayes' rule correctly derives that
+    active > passive for P(Subject | pronoun), even though passive
+    subjects are more likely to be pronominalized (87% vs 62%).
+    The prior P(Subject) is much lower in passive (24% vs 59%),
+    and this dominates. Production bias alone would predict passive >
+    active; the Bayesian model correctly reverses this. -/
+theorem eq13_active_exceeds_passive :
+    bayesianPrediction nm_active_noPron pron_active_subj pron_active_nonSubj >
+    bayesianPrediction (100 - nm_passive_noPron) pron_passive_subj
+      pron_passive_nonSubj := by
+  native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 11. Coherence–Referent Bridge
 -- ════════════════════════════════════════════════════
 
 /-- The two Goal-biased CRs (Occasion, Result) both focus on what

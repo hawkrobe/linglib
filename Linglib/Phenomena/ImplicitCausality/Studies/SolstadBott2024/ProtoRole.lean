@@ -3,6 +3,7 @@ import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Reference.Studies.RosaArnold2017
+import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
 
 /-!
 # Psych Verb IC Bias — Proto-Role Bridge
@@ -298,5 +299,59 @@ theorem coherence_selects_complementary_roles :
     CoherenceRelation.explanation.toClass ≠
     CoherenceRelation.occasion.toClass := by
   refine ⟨rfl, rfl, rfl, by decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § 9. Cross-Study Bridge: @cite{kehler-rohde-2013}
+-- ════════════════════════════════════════════════════
+
+open Phenomena.Reference.Studies.KehlerRohde2013
+
+/-- @cite{kehler-rohde-2013}'s Table 2 establishes that Explanation
+    coherence relations are Source-biased (80% Source for transfer
+    verbs). This study's IC data instantiates the same mechanism for
+    psych verbs: Explanation (triggered by "because") selects for
+    causes, and IC bias tracks whichever argument carries the
+    causation entailment — the stimulus.
+
+    K&R's coherence-marginalized model (eq. 9) predicts that IC bias
+    should be driven by P(referent | Explanation), not by grammatical
+    position. The StimExp/ExpStim reversal confirms this: the bias
+    direction is ENTIRELY determined by which argument is the stimulus,
+    regardless of subject/object position. -/
+theorem ic_instantiates_KR_explanation_bias :
+    -- K&R: Explanation is Source-biased and selects for causes
+    cr_explanation.cr.selectsCause = true ∧
+    cr_explanation.sourceGivenCR > 50 ∧
+    -- IC: StimExp (stimulus=subject) → NP1 under "because" (Explanation)
+    predictICBias stimExpSubjectProfile = .np1 ∧
+    -- IC: ExpStim (stimulus=object) → NP2 under "because" (Explanation)
+    predictICBias expStimSubjectProfile = .np2 := by
+  exact ⟨rfl, by native_decide, by native_decide, by native_decide⟩
+
+/-- @cite{kehler-rohde-2013}'s key structural claim is that coherence
+    relations and referential form contribute to DIFFERENT terms in
+    Bayes' rule: P(referent) vs P(pronoun|referent). The IC data
+    provides the strongest evidence for the P(referent) side:
+
+    - K&R: P(referent) = Σ_CR P(CR) × P(referent | CR)
+    - IC context: "because" sets P(Explanation) ≈ 1
+    - Therefore: P(referent) ≈ P(referent | Explanation)
+    - P(referent | Explanation) = whichever argument has causation
+
+    This is exactly what the IC data shows: under "because" prompts,
+    the bias aligns perfectly with the causation entailment profile,
+    as predicted by a model where P(CR=Explanation) dominates the
+    mixture and P(referent|Explanation) tracks the stimulus. -/
+theorem because_collapses_KR_mixture :
+    -- "because" maps to Explanation
+    (Connective.toRelation .because) = .explanation ∧
+    -- Explanation selects causes (backward causal)
+    CoherenceRelation.explanation.selectsCause = true ∧
+    -- When P(CR=Explanation) ≈ 1, the mixture reduces to
+    -- P(referent | Explanation), which tracks the stimulus:
+    -- StimExp stimulus=subject → NP1, ExpStim stimulus=object → NP2
+    predictICBias stimExpSubjectProfile = .np1 ∧
+    predictICBias expStimSubjectProfile = .np2 := by
+  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
 
 end Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole

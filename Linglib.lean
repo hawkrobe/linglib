@@ -946,6 +946,7 @@ import Linglib.Phenomena.Reference.Studies.Percus2000
 import Linglib.Phenomena.Reference.Studies.QingFranke2015
 import Linglib.Phenomena.Reference.Studies.KursatDegen2021
 import Linglib.Phenomena.Reference.Studies.GilesEtAl2026
+import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
 import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
 import Linglib.Phenomena.Reference.Studies.RosaArnold2017
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
