@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Register
+import Linglib.Core.Prominence
 
 /-!
 # Shared Pronoun and Allocutive Entry Types
@@ -46,6 +47,15 @@ structure PronounEntry where
       `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
       Maithili, Korean) use all three levels. -/
   register : Level := .informal
+  /-- Referential person — who the pronoun refers to in terms of discourse
+      role — when it diverges from formal/agreement person. For polite
+      pronouns (Italian LEI, Spanish USTED, German SIE), the formal `person`
+      field is 3rd (governing agreement, clitic allomorphy, reflexive binding),
+      while `referentialPerson` is 2nd (governing the PCC, Fancy Constraint,
+      resolved agreement). For ordinary pronouns, leave as `none` —
+      referential person coincides with formal person.
+      @cite{adamson-zompi-2025} -/
+  referentialPerson : Option Core.Prominence.PersonLevel := none
   /-- Native script form (hangul, kanji, Devanagari, etc.) -/
   script : Option String := none
   deriving Repr, BEq

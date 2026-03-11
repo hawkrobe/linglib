@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.UD
+import Linglib.Core.Prominence
 
 /-!
 # Person Categories
@@ -112,5 +113,53 @@ def PersonCategory.toUDPersonNumber :
 theorem ud_conflates_incl_excl :
     PersonCategory.toUDPersonNumber .augIncl =
     PersonCategory.toUDPersonNumber .excl := rfl
+
+-- ============================================================================
+-- PersonLevel Bridge
+-- ============================================================================
+
+/-- Map singular PersonCategory to PersonLevel (the canonical three-way
+    person distinction used by PersonGeometry, DifferentialIndexing, etc.).
+    Group categories map to `none` — they encode number distinctions that
+    PersonLevel does not capture. -/
+def PersonCategory.toPersonLevel : PersonCategory → Option Core.Prominence.PersonLevel
+  | .s1 => some .first
+  | .s2 => some .second
+  | .s3 => some .third
+  | _   => none
+
+/-- Map PersonLevel to singular PersonCategory. -/
+def PersonCategory.fromPersonLevel : Core.Prominence.PersonLevel → PersonCategory
+  | .first  => .s1
+  | .second => .s2
+  | .third  => .s3
+
+/-- Round-trip: PersonLevel → PersonCategory → PersonLevel is identity. -/
+theorem personLevel_roundtrip (p : Core.Prominence.PersonLevel) :
+    (PersonCategory.fromPersonLevel p).toPersonLevel = some p := by
+  cases p <;> rfl
+
+/-- includesSpeaker on PersonCategory = hasParticipant ∧ hasAuthor on
+    PersonLevel for singular categories: speaker (s1) = [+participant,
+    +author], addressee (s2) = [+participant, −author], other (s3) =
+    [−participant, −author]. This unifies the PersonCategory decomposition
+    in `Spanish/PersonFeatures.lean` with `PersonGeometry.decomposePerson`. -/
+theorem includesSpeaker_iff_author :
+    (PersonCategory.s1.includesSpeaker = true) ∧
+    (PersonCategory.s2.includesSpeaker = false) ∧
+    (PersonCategory.s3.includesSpeaker = false) := ⟨rfl, rfl, rfl⟩
+
+theorem includesAddressee_iff_participant_not_author :
+    (PersonCategory.s1.includesAddressee = false) ∧
+    (PersonCategory.s2.includesAddressee = true) ∧
+    (PersonCategory.s3.includesAddressee = false) := ⟨rfl, rfl, rfl⟩
+
+/-- SAP (speech-act participant) = includesSpeaker ∨ includesAddressee
+    for singular categories. This matches PersonLevel.isSAP. -/
+theorem singular_sap_match :
+    (PersonCategory.s1.includesSpeaker || PersonCategory.s1.includesAddressee) = true ∧
+    (PersonCategory.s2.includesSpeaker || PersonCategory.s2.includesAddressee) = true ∧
+    (PersonCategory.s3.includesSpeaker || PersonCategory.s3.includesAddressee) = false :=
+  ⟨rfl, rfl, rfl⟩
 
 end Core.PersonCategory

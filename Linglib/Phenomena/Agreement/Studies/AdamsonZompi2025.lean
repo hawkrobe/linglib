@@ -1,5 +1,11 @@
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
+import Linglib.Theories.Syntax.Minimalism.Core.PConstraint
+import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Fragments.Italian.Pronouns
+import Linglib.Fragments.Spanish.Pronouns
+import Linglib.Fragments.Spanish.PersonFeatures
+import Linglib.Fragments.German.Pronouns
+import Linglib.Core.Lexical.PersonCategory
 
 /-!
 # Adamson & Zompì (2025): Polite Pronouns and the PCC
@@ -48,6 +54,8 @@ namespace Phenomena.Agreement.Studies.AdamsonZompi2025
 
 open Core.Prominence (PersonLevel)
 open Minimalism (DecomposedPerson decomposePerson)
+open Minimalism.PConstraint (PCCGrammar pccLicit weakGrammar strongGrammar
+  isInherentlyProximate)
 
 -- ============================================================================
 -- § 1: Dual Person Features
@@ -395,7 +403,94 @@ theorem pcc_participant_equivalence (io do_ : PersonLevel) :
   cases io <;> cases do_ <;> rfl
 
 -- ============================================================================
--- § 9: Consistency with Italian Clitic Paradigm
+-- § 9: Integration with P&Z's P-Constraint
+-- ============================================================================
+
+/-- The P-Constraint (@cite{pancheva-zubizarreta-2018}) derives PCC effects
+    from point-of-view encoding. `pccLicit` from `PConstraint.lean` evaluates
+    the constraint over interpretable person values.
+
+    The Weak PCC (P-Uniqueness inactive) produces the same judgments as
+    our `weakPCC` function. -/
+theorem pconstraint_matches_weakPCC (io do_ : PersonLevel) :
+    pccLicit weakGrammar io do_ = weakPCC io do_ := by
+  cases io <;> cases do_ <;> rfl
+
+/-- The Strong PCC (P-Uniqueness active) produces the same judgments as
+    our `strongPCC` function. -/
+theorem pconstraint_matches_strongPCC (io do_ : PersonLevel) :
+    pccLicit strongGrammar io do_ = strongPCC io do_ := by
+  cases io <;> cases do_ <;> rfl
+
+/-- LEI is inherently [+PROXIMATE] by virtue of interpretable 2nd person.
+    This is what triggers PCC effects under P&Z's account. -/
+theorem lei_is_proximate :
+    isInherentlyProximate lei.interpretablePerson = true := rfl
+
+/-- The P-Constraint correctly predicts LEI triggers PCC (Weak grammar). -/
+theorem pconstraint_bans_lei :
+    pccLicit weakGrammar .third lei.interpretablePerson = false := rfl
+
+/-- The P-Constraint correctly predicts imposters do NOT trigger PCC. -/
+theorem pconstraint_allows_imposter :
+    pccLicit weakGrammar .third imposter.interpretablePerson = true := rfl
+
+-- ============================================================================
+-- § 10: Integration with Agree — Why Morphosyntactic Accounts Fail
+-- ============================================================================
+
+/- Morphosyntactic accounts derive PCC effects from the mechanics of Agree.
+   The key mechanism: a probe (on Appl or v) searches for φ-features and
+   its interaction with multiple goals (IO and DO) produces PCC effects.
+
+   All such accounts evaluate the **agreement** features of the goals:
+
+   - @cite{deal-2021} Interaction/Satisfaction: a probe with satisfaction
+     condition [PART(ICIPANT)] is satisfied by the DO's [+participant],
+     then bleeds Agree with the IO.
+   - @cite{coon-keine-2021} Feature Gluttony: an articulated probe copies
+     features from both goals; crash if the feature sets conflict.
+   - @cite{bjar-rezac-2009} Person Licensing: a π-probe seeks [participant]
+     on the DO, licensing it. Blocked by the closer IO.
+
+   For LEI, agreement person is 3rd = [−participant]. So all three accounts
+   predict the probe treats LEI like any 3rd person argument — no PCC
+   effect. This is wrong.
+
+   We demonstrate this using the library's own `hasValuedFeature` from
+   `Agree.lean`: a probe seeking [participant] via φ-features will not
+   find it on a DP whose valued person is 3rd. -/
+
+/-- A feature bundle for a 3rd person DP (LEI's agreement features).
+    The probe sees [Person:3rd]. -/
+private def lei_agreement_bundle : Minimalism.FeatureBundle :=
+  [.valued (.phi (.person .third))]
+
+/-- A feature bundle for a 2nd person DP (LEI's interpretable features).
+    The probe sees [Person:2nd]. -/
+private def lei_interpretable_bundle : Minimalism.FeatureBundle :=
+  [.valued (.phi (.person .second))]
+
+/-- A probe seeking person features finds them on both bundles — the
+    probe can Agree with either. The issue is WHICH person value it sees. -/
+theorem probe_finds_person_on_both :
+    Minimalism.hasValuedFeature lei_agreement_bundle (.phi (.person .third)) = true ∧
+    Minimalism.hasValuedFeature lei_interpretable_bundle (.phi (.person .second)) = true :=
+  ⟨rfl, rfl⟩
+
+/-- Under morphosyntactic accounts, the probe sees LEI's agreement bundle
+    and finds [Person:3rd] — no [participant] feature. The probe treats
+    LEI as a non-participant, predicting no PCC effect. -/
+theorem morphosyntactic_probe_misses_participant :
+    (decomposePerson .third).hasParticipant = false := rfl
+
+/-- Under the syntacticosemantic account, the PCC reads LEI's interpretable
+    bundle and finds [Person:2nd] — [+participant]. PCC effect predicted. -/
+theorem syntacticosemantic_finds_participant :
+    (decomposePerson .second).hasParticipant = true := rfl
+
+-- ============================================================================
+-- § 11: Consistency with Italian Clitic Paradigm
 -- ============================================================================
 
 /-- LEI's agreement features match the 3sg.f clitic `la` in person.
@@ -407,31 +502,25 @@ theorem lei_matches_la_cl_person :
     lei.agreementPerson = .third ∧
     Fragments.Italian.Pronouns.la_cl.person = .third := ⟨rfl, rfl⟩
 
-/-- LEI's agreement person (3rd) differs from 2sg clitic `ti` (2nd).
-
-    The fragment types are `PersonLevel` (agreement) and `Person` (UD),
-    but both encode the same three-way distinction. -/
+/-- LEI's agreement person (3rd) differs from 2sg clitic `ti` (2nd). -/
 theorem lei_differs_from_ti :
     lei.agreementPerson = .third ∧
     Fragments.Italian.Pronouns.ti_acc.person = .second := ⟨rfl, rfl⟩
 
-/-- LEI binds 3rd person reflexive `si`, not 2nd person `ti` (§3, (9)–(10)).
-
-    The fragment has `si_refl` (person = .third) and `ti_refl` (person =
-    .second). LEI's reflexive matches the 3rd person entry, consistent
-    with agreement person, not interpretable person. -/
+/-- LEI binds 3rd person reflexive `si`, not 2nd person `ti` (§3, (9)–(10)). -/
 theorem lei_reflexive_is_3p :
     Fragments.Italian.Pronouns.si_refl.person = .third ∧
     Fragments.Italian.Pronouns.ti_refl.person = .second := ⟨rfl, rfl⟩
 
-/-- The fragment's `lei_formal` records LEI with `person := some .second`,
-    which is the INTERPRETABLE person. This is consistent with our dual-
-    feature analysis. -/
-theorem fragment_lei_is_interpretive :
-    Fragments.Italian.Pronouns.lei_formal.person = some .second := rfl
+/-- The fragment's `lei_formal` encodes dual person features:
+    `person` = 3rd (agreement), `referentialPerson` = 2nd (interpretable).
+    This directly mirrors our `DualPersonFeatures` structure. -/
+theorem fragment_lei_dual_person :
+    Fragments.Italian.Pronouns.lei_formal.person = some .third ∧
+    Fragments.Italian.Pronouns.lei_formal.referentialPerson = some .second := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 10: All Data Points Match Syntacticosemantic Predictions
+-- § 12: All Data Points Match Syntacticosemantic Predictions
 -- ============================================================================
 
 /-- Every Italian judgment matches the Weak PCC evaluated over
@@ -442,7 +531,7 @@ theorem all_data_match_syntacticosemantic :
   native_decide
 
 -- ============================================================================
--- § 11: Cross-Linguistic Extension — Spanish USTED (§6.1)
+-- § 13: Cross-Linguistic Extension — Spanish USTED (§6.1)
 -- ============================================================================
 
 /-- Spanish USTED: agreement 3rd, interpretable 2nd.
@@ -465,8 +554,14 @@ theorem usted_morphosyntactic_wrong : morphosyntacticPrediction usted = true := 
     both are agreement-3rd, interpretable-2nd. -/
 theorem lei_usted_isomorphic : lei = usted := rfl
 
+/-- The Spanish fragment's `usted` entry encodes the same dual-person
+    structure, grounding the study's USTED in fragment data. -/
+theorem spanish_fragment_usted_dual :
+    Fragments.Spanish.Pronouns.usted.person = some .third ∧
+    Fragments.Spanish.Pronouns.usted.referentialPerson = some .second := ⟨rfl, rfl⟩
+
 -- ============================================================================
--- § 12: Cross-Linguistic Extension — German SIE (§6.2)
+-- § 14: Cross-Linguistic Extension — German SIE (§6.2)
 -- ============================================================================
 
 /-- German polite SIE: agreement 3rd (plural), interpretable 2nd.
@@ -480,6 +575,12 @@ def sie : DualPersonFeatures := ⟨.third, .second⟩
 /-- SIE triggers PCC effects under the syntacticosemantic account. -/
 theorem sie_pcc : syntacticosemanticPrediction sie = false := rfl
 
+/-- The German fragment's `sie_polite` entry encodes the same dual-person
+    structure, grounding the study's SIE in fragment data. -/
+theorem german_fragment_sie_dual :
+    Fragments.German.Pronouns.sie_polite.person = some .third ∧
+    Fragments.German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl⟩
+
 /-- German assumed-identity copular constructions (§6.2, (49)–(53)) exhibit
     a DIFFERENT person hierarchy effect — one ameliorated by syncretism of
     verbal forms and therefore attributed to exponence/morphology, not to the
@@ -488,21 +589,29 @@ theorem sie_pcc : syntacticosemanticPrediction sie = false := rfl
     The paper's key modularity argument: PCC effects (syntacticosemantic
     source) are sensitive to interpretable person, so polite pronouns
     trigger them. Assumed-identity effects (exponence-based source) are
-    sensitive to formal features, so polite pronouns do NOT trigger them.
+    sensitive to formal features, so polite pronouns do NOT trigger them. -/
+def assumedIdentityEffect (formalPerson : PersonLevel) (copulaForm3rd : Bool) : Bool :=
+  -- Exponence-based: reads formal/agreement person.
+  -- Effect is ameliorated when copula form is syncretic between
+  -- 1st/3rd person (past tense *war*), supporting an exponence account.
+  formalPerson != .third && !copulaForm3rd
 
-    SIE in assumed-identity contexts: interpretable 2nd → would trigger
-    PCC-type effects, but agreement 3rd → does not trigger exponence-
-    based effects. The data confirms ((52)–(53)): SIE behaves like 3rd
-    for assumed-identity, unlike for PCC.
+/-- SIE does NOT trigger assumed-identity effects (agreement 3rd). -/
+theorem sie_no_assumed_identity :
+    assumedIdentityEffect sie.agreementPerson false = false := rfl
 
-    PCC reads interpretable person → SIE triggers effect.
-    Exponence reads agreement person → SIE does NOT trigger effect. -/
-theorem sie_pcc_vs_exponence_contrast :
+/-- SIE DOES trigger PCC effects (interpretable 2nd). -/
+theorem sie_triggers_pcc :
+    syntacticosemanticPrediction sie = false := rfl
+
+/-- The modularity contrast: PCC reads interpretable person (SIE triggers),
+    exponence reads agreement person (SIE doesn't trigger). -/
+theorem modularity_contrast :
     syntacticosemanticPrediction sie = false ∧
-    (sie.agreementPerson == .third) = true := ⟨rfl, rfl⟩
+    assumedIdentityEffect sie.agreementPerson false = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 13: The PCC + Politeness Prediction (§6, (40))
+-- § 15: The PCC + Politeness Prediction (§6, (40))
 -- ============================================================================
 
 /-- The paper's cross-linguistic prediction (40):
@@ -532,8 +641,34 @@ theorem all_polite_pronouns_predicted :
     syntacticosemanticPrediction usted = false ∧
     syntacticosemanticPrediction sie = false := ⟨rfl, rfl, rfl⟩
 
+/-- All three fragment entries encode dual person features, and the study's
+    DualPersonFeatures values match them. -/
+theorem all_fragments_grounded :
+    Fragments.Italian.Pronouns.lei_formal.referentialPerson = some .second ∧
+    Fragments.Spanish.Pronouns.usted.referentialPerson = some .second ∧
+    Fragments.German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl, rfl⟩
+
 -- ============================================================================
--- § 14: Summary — What the Mismatch Tells Us
+-- § 16: PersonCategory Bridge — Unifying Person Decompositions
+-- ============================================================================
+
+/-- The [±participant] decomposition in `Spanish/PersonFeatures.lean`
+    (operating on `PersonCategory`) is the same decomposition as
+    `PersonGeometry.decomposePerson` (operating on `PersonLevel`).
+
+    This theorem bridges the two: for all singular PersonCategories,
+    converting to PersonLevel and then decomposing yields the same
+    [participant] value as the Spanish fragment's `hasParticipant`. -/
+theorem person_geometry_matches_spanish_features :
+    Fragments.Spanish.PersonFeatures.hasParticipant .s1 =
+      (decomposePerson .first).hasParticipant ∧
+    Fragments.Spanish.PersonFeatures.hasParticipant .s2 =
+      (decomposePerson .second).hasParticipant ∧
+    Fragments.Spanish.PersonFeatures.hasParticipant .s3 =
+      (decomposePerson .third).hasParticipant := ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 17: Summary — What the Mismatch Tells Us
 -- ============================================================================
 
 /-- Only mismatch pronouns distinguish the two accounts. For any pronoun

@@ -44,9 +44,14 @@ def io : PronounEntry :=
 def tu : PronounEntry :=
   { form := "tu", person := some .second, number := some .sg, register := .informal }
 
-/-- *Lei* — 2sg formal (V form, triggers 3sg agreement). -/
+/-- *Lei* — polite 2sg (V form). Formally 3rd person: triggers 3sg verbal
+    agreement, patterns with 3sg.f clitics, binds 3rd person reflexive *si*.
+    Interpretably 2nd person: triggers PCC effects, Fancy Constraint effects,
+    2PL resolved agreement in coordination.
+    @cite{adamson-zompi-2025} -/
 def lei_formal : PronounEntry :=
-  { form := "Lei", person := some .second, number := some .sg, register := .formal }
+  { form := "Lei", person := some .third, number := some .sg, register := .formal,
+    referentialPerson := some .second }
 
 /-- *lui* — 3sg masculine. -/
 def lui : PronounEntry :=
@@ -196,6 +201,12 @@ theorem gli_ne_si : gli_dat.form ≠ si_refl.form := by decide
 /-- *tu* is informal, *Lei* is formal. -/
 theorem tv_distinction :
     tu.register = .informal ∧ lei_formal.register = .formal := ⟨rfl, rfl⟩
+
+/-- *Lei* has 3rd person agreement features but 2nd person interpretable features.
+    @cite{adamson-zompi-2025} -/
+theorem lei_formal_dual_person :
+    lei_formal.person = some .third ∧
+    lei_formal.referentialPerson = some .second := ⟨rfl, rfl⟩
 
 /-- All three persons are attested. -/
 theorem has_all_persons :
