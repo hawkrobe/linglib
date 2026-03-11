@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.130] - 2026-03-10
+
+### Changed
+- **Theories/Semantics/Events/AgentivityLattice.lean**: Replace hand-rolled Bool lattice with Mathlib typeclasses (`PartialOrder`, `Lattice`, `BoundedOrder`, `Fintype`, `DecidableRel`) for `AgentivityNode`, `PersistenceLevel`, and `GrimmNode`; add `fromEntailmentProfile_monotone` theorem; all theorems now use `≤`/`<`/`⊥`/`⊤`/`⊔`/`⊓` notation
+
 ## [0.229.129] - 2026-03-10
 
 ### Changed
