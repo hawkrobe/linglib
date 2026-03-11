@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.229.160] - 2026-03-11
+
+### Added
+- **PossibilitySemantics/Ortholattice.lean**: `OrthocomplementedLattice` typeclass following Mathlib conventions — involutive order-reversing complement, De Morgan laws (`compl_sup`, `compl_inf`), `ComplementedLattice` instance, `BooleanAlgebra → OrthocomplementedLattice` instance
+- **PossibilitySemantics/Epistemic.lean**: Disjunctive syllogism failure, orthomodularity failure, pseudocomplementation failure, level-wise Boolean classicality theorems
+- **PossibilitySemantics/Lifting.lean**: Lifting construction connecting Kripke world-level semantics to possibility semantics via (A,I) pairs; truth-from-worlds lemmas (Lemma 5.4)
+- **Phenomena/Modality/EpistemicContradictions.lean**: Theory-neutral data — Moore vs Wittgenstein vs classical contradictions, embedding diagnostics, distribFailure/disjSyllFailure intuitions
+
+## [0.229.159] - 2026-03-11
+
+### Added
+- **Shieber1985.lean**: Formalize Shieber (1985) "Evidence against the Context-Freeness of Natural Language" — Swiss German cross-serial clause tokens, four claims, homomorphism to {aⁿbⁿcⁿdⁿ}, non-context-freeness theorem connecting to existing pumping lemma proof, fragment grounding via verb-case bridge theorems, Swiss German examples from the paper
+- **Core/FormalLanguage.lean**: Canonical `FormalLanguageType` enum (contextFree, mildlyContextSensitive, contextSensitive) — single source of truth replacing three independent definitions
+- **Fragments/SwissGerman/Case.lean**: Swiss German case inventory and cross-serial verb subcategorization data (hälfe→DAT, lönd→ACC, aastriiche→ACC)
+
+### Changed
+- **FormalLanguageTheory.lean → FormalLanguageTheory/PumpingLemma.lean**: Move pumping lemma proofs out of `Theories/Syntax/CCG/Formal/` to framework-neutral `Theories/FormalLanguageTheory/`; the pumping lemma is a general mathematical result, not CCG-specific
+- **GenerativeCapacity.lean**: Import canonical `Core.FormalLanguageType` instead of defining its own; import pumping lemma from new location
+- **CrossSerial.lean**: Fix attribution — Dutch cross-serial data is from Bresnan et al. 1982, not Shieber 1985; add docstring distinguishing the two arguments (Bresnan et al.'s constituency argument vs Shieber's string-set argument); import canonical `Core.FormalLanguageType` instead of defining its own
+- **Steedman2000CrossSerial.lean**: Open `Core.FormalLanguageType` for unified type
+- **CCGGenerativeCapacity.lean**: Use canonical `Core.FormalLanguageType` in bridge theorem
+- **references.bib**: Promote `shieber-1985` role to `formalized`, add `Shieber1985.lean` and `SwissGerman/Case.lean` to sources; add `gazdar-pullum-1982` entry
+
 ## [0.229.158] - 2026-03-11
 
 ### Changed

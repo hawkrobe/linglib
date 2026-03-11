@@ -1293,6 +1293,7 @@ import Linglib.Theories.Semantics.Supervaluation.TCS
 import Linglib.Theories.Semantics.PossibilitySemantics.Basic
 import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic
 import Linglib.Theories.Semantics.PossibilitySemantics.Lifting
+import Linglib.Theories.Semantics.PossibilitySemantics.Ortholattice
 -- Theories: Semantics.Montague (Montague architecture)
 import Linglib.Theories.Semantics.Lexical.Adjective.Classification
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
