@@ -401,4 +401,55 @@ theorem fc_entails_both_disjuncts (w : ModalW)
 end FreeChoice
 
 
+-- ============================================================
+-- SECTION 5: Relevance-Sensitive Exhaustification
+-- ============================================================
+
+/-!
+## Relevance-Sensitive EXH
+
+@cite{magri-2009} §3.2.3 (eq. 42) introduces a relevance-parameterized
+variant of EXH. A contextually supplied relevance relation R determines
+which alternatives are "active":
+
+    EXH_R(A)(p)(w) = p(w) ∧ ∀q ∈ I-E(p,A). (¬q(w) ∨ ¬R(q))
+
+Alternatives that are not relevant are simply ignored — neither asserted
+nor negated. This explains why non-mismatching implicatures are optional
+(the alternative may be irrelevant in context), while mismatching
+implicatures are mandatory (the alternative is necessarily relevant by
+postulate (43b): relevance is closed under contextual equivalence, so a
+mismatching alternative — contextually equivalent to the prejacent — is
+always relevant).
+-/
+
+section RelevanceSensitive
+
+/-- Relevance-sensitive exhaustivity operator.
+
+    @cite{magri-2009} eq. (42): EXH_R asserts the prejacent and negates
+    only those innocently excludable alternatives that are relevant.
+    Irrelevant alternatives are skipped (the `!relevant i` disjunct
+    trivializes the conjunct).
+
+    When `relevant i = true` for all i, this reduces to `exhB`. -/
+def exhR {W : Type} (domain : List W)
+    (alts : List (W → Bool)) (p : W → Bool)
+    (relevant : Nat → Bool) : W → Bool :=
+  fun w => p w && (ieIndices domain p alts).all fun i =>
+    match alts[i]? with
+    | some q => !relevant i || !q w
+    | none => true
+
+/-- When all alternatives are relevant, `exhR` reduces to `exhB`.
+
+    Universal relevance is the default: `exhB` is the special case of
+    `exhR` where every alternative matters. -/
+theorem exhR_all_relevant_eq_exhB {W : Type} (domain : List W)
+    (alts : List (W → Bool)) (p : W → Bool) :
+    exhR domain alts p (fun _ => true) = exhB domain alts p := rfl
+
+end RelevanceSensitive
+
+
 end Exhaustification.Fox2007

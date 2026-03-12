@@ -25,6 +25,12 @@ inductive OddnessSource where
   | answerCondition
   /-- Both conditions violated. -/
   | both
+  /-- Blind Mismatch: strengthened meaning contradicts common knowledge
+      (@cite{magri-2009} Mismatch Hypothesis, §3.2.2). -/
+  | blindMismatch
+  /-- Blind Presuppositional Mismatch: strengthened presupposition contradicts
+      common knowledge (@cite{magri-2009} MH_prs, §3.4). -/
+  | blindPresupMismatch
   /-- Theory doesn't distinguish sources. -/
   | unspecified
   deriving DecidableEq, BEq, Repr

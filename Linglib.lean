@@ -729,6 +729,7 @@ import Linglib.Phenomena.Generics.Studies.Cohen1999
 import Linglib.Phenomena.Generics.Studies.Guerrini2026
 import Linglib.Phenomena.Generics.Studies.Krifka2013
 import Linglib.Phenomena.Generics.Studies.Longobardi2001
+import Linglib.Phenomena.Generics.Studies.Kirkpatrick2024
 import Linglib.Phenomena.Generics.Studies.Nickel2009
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Phenomena.Gradability.Data
@@ -1129,6 +1130,7 @@ import Linglib.Theories.Semantics.Dynamic.FileChange.Basic
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Frames
+import Linglib.Theories.Semantics.Dynamic.Generics
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.DPL.Bridge
 import Linglib.Theories.Semantics.Dynamic.DRT.Basic

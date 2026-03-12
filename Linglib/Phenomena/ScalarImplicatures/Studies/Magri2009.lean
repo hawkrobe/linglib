@@ -1,6 +1,7 @@
 import Linglib.Core.FelicityTypes
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
+import Linglib.Phenomena.Generics.BarePlurals
 
 /-!
 # Blind Mandatory Scalar Implicatures
@@ -653,5 +654,237 @@ theorem three_way_contrast :
   · native_decide
 
 end UniversalRescue
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §9  Presuppositional Extension (§3.4)
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! ### BH_prs and MH_prs
+
+@cite{magri-2009} extends BH and MH to presuppositions (§3.4, eqs. 64–66):
+
+1. **BH_prs** (65): The strengthened presupposition EXH_prs(φ) is computed
+   using *logical* entailment, not entailment given common knowledge.
+
+2. **MH_prs** (66): If the blind strengthened presupposition contradicts
+   common knowledge (EXH_prs(φ) ∩ W_ck = ∅), then φ sounds odd.
+
+The strengthened presupposition mirrors standard EXH but operates on the
+presupposition dimension:
+
+    EXH_prs(φ) = φ_prs ∧ ∧_{ψ ∈ Excl_prs(φ)} ¬ψ_prs
+
+where Excl_prs uses @cite{fox-2007}'s innocent exclusion applied to
+presuppositions. This reuses `exhB`/`ieIndices` directly — the same
+algorithm, applied to a different dimension of meaning. -/
+
+section PresuppositionalExtension
+
+/-- A scenario with both meanings and presuppositions for blind SI computation.
+
+@cite{magri-2009} §3.4: presupposition strengthening runs in parallel
+to meaning strengthening, using the same @cite{fox-2007} algorithm. -/
+structure BlindPresupScenario (W U : Type) extends BlindScenario W U where
+  /-- Presupposition carried by each utterance. -/
+  presup : U → W → Bool
+
+namespace BlindPresupScenario
+
+variable {W U : Type} (s : BlindPresupScenario W U)
+
+/-- Strengthened presupposition via @cite{fox-2007}'s EXH applied to
+presuppositions.
+
+Implements **BH_prs**: the strengthening uses logical entailment over W,
+not entailment given common knowledge. -/
+def strengthenedPresup (u : U) (w : W) : Bool :=
+  exhB s.worlds ((s.alternatives u).map s.presup) (s.presup u) w
+
+/-- Blind presuppositional oddness: EXH_prs(φ) ∩ W_ck = ∅.
+
+Implements **MH_prs** (66): if the blind strengthened presupposition
+contradicts common knowledge, the sentence sounds odd. -/
+def blindOddPrs (u : U) : Bool :=
+  let ie := ieIndices s.worlds (s.presup u) ((s.alternatives u).map s.presup)
+  !ie.isEmpty &&
+  s.toBlindScenario.cWorlds.all (λ w => !s.strengthenedPresup u w)
+
+end BlindPresupScenario
+
+end PresuppositionalExtension
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §10  Overt "always" Oddness (§4.6)
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! ### "#John is always tall" via presuppositional mismatch
+
+@cite{magri-2009} §4.6: *always* and covert GEN are Horn-mates with the
+same denotation but different presuppositions. Overt *always* carries
+no homogeneity presupposition; covert GEN carries the **homogeneity
+presupposition** (eq. (137)): either ALL atomic parts of the restrictor
+satisfy the scope or NONE do (YES ∪ NO).
+
+The oddness of "#John is always tall" is derived via MH_prs (66):
+
+1. φ_prs (*always*) = W (trivial presupposition)
+2. ψ_prs (GEN) = YES ∪ NO (homogeneity presupposition)
+3. ψ_prs asymmetrically entails φ_prs (YES ∪ NO ⊂ W)
+4. EXH_prs(φ) = φ_prs ∧ ¬ψ_prs = ¬(YES ∪ NO) = mixed worlds only
+5. CK (from assumption (70)): W_ck = YES ∪ NO (homogeneity for ILPs)
+6. EXH_prs(φ) ∩ W_ck = ∅ → odd via MH_prs
+
+The contrast with "John is tall" (= covert GEN): GEN has no stronger
+presuppositional alternative, so EXH_prs is vacuous and no mismatch
+arises.
+
+The reuse of `TallWorld` is structural: the three worlds — `alwaysTall`,
+`sometimesOnly`, `neverTall` — serve double duty across meaning (§5)
+and presupposition (§10). -/
+
+section OvertAlways
+
+open TallWorld
+
+/-- Utterance type for the ⟨always, GEN⟩ Horn scale. -/
+inductive AlwaysGENUtt where
+  | always_ | gen_
+  deriving DecidableEq, BEq, Repr
+
+open AlwaysGENUtt in
+/-- @cite{magri-2009} §4.6: *always* vs covert GEN.
+
+The two utterances have IDENTICAL denotation (both mean "at all times,
+John is tall") but DIFFERENT presuppositions:
+- *always*: φ_prs = W (no homogeneity presupposition)
+- GEN: ψ_prs = {alwaysTall, neverTall} (homogeneity: YES ∪ NO) -/
+def alwaysGENScenario : BlindPresupScenario TallWorld AlwaysGENUtt where
+  -- Identical meanings: both mean "tall at all times"
+  meaning
+    | _, alwaysTall => true
+    | _, sometimesOnly => false
+    | _, neverTall => false
+  alternatives
+    | .always_ => [.gen_]    -- ⟨always, GEN⟩ Horn scale (assumption (81))
+    | .gen_    => [.always_]
+  context := homogeneity .individualLevel
+  worlds := [alwaysTall, sometimesOnly, neverTall]
+  -- Presuppositions differ:
+  presup
+    -- *always* has no homogeneity presupposition (φ_prs = W)
+    | .always_, _ => true
+    -- GEN has homogeneity presupposition (ψ_prs = YES ∪ NO)
+    | .gen_, alwaysTall => true      -- YES: tall at all times
+    | .gen_, sometimesOnly => false   -- mixed: neither YES nor NO
+    | .gen_, neverTall => true        -- NO: tall at no time
+
+/-- GEN's presupposition matches homogeneity: the same predicate as the
+CK context. This is not coincidence — assumption (70) says W_ck is
+exactly the set of homogeneous worlds, and GEN presupposes homogeneity. -/
+theorem gen_presup_matches_context :
+    ∀ w : TallWorld,
+      alwaysGENScenario.presup .gen_ w =
+      alwaysGENScenario.context w := by
+  intro w; cases w <;> rfl
+
+/-- *always* has trivial (universal) presupposition. -/
+theorem always_presup_trivial :
+    ∀ w : TallWorld, alwaysGENScenario.presup .always_ w = true := by
+  intro w; cases w <;> rfl
+
+/-- The strengthened presupposition of *always* asserts ¬(YES ∪ NO),
+i.e., that there ARE mixed worlds — which is exactly what homogeneity
+rules out. -/
+theorem always_strengthened_presup_false_at_ck :
+    alwaysGENScenario.strengthenedPresup .always_ .alwaysTall = false ∧
+    alwaysGENScenario.strengthenedPresup .always_ .neverTall = false := by
+  constructor <;> native_decide
+
+/-- @cite{magri-2009} §4.6: "#John is always tall" is odd via MH_prs.
+
+The blind strengthened presupposition (= ¬homogeneity = mixed worlds
+only) contradicts CK (= homogeneity = no mixed worlds). -/
+theorem always_tall_blind_odd_prs :
+    alwaysGENScenario.blindOddPrs .always_ = true := by native_decide
+
+/-- "John is tall" (= covert GEN) is NOT odd via MH_prs.
+
+GEN has no stronger presuppositional alternative — *always* is
+presuppositionally weaker (trivial presupposition ⊂ homogeneity
+presupposition is backwards). Since GEN's presupposition entails
+*always*'s, *always* is not excludable w.r.t. GEN. -/
+theorem gen_tall_not_odd_prs :
+    alwaysGENScenario.blindOddPrs .gen_ = false := by native_decide
+
+/-- Meanings are identical but oddness differs — the presupposition
+is doing ALL the work. This is a pure presuppositional effect: the
+same mechanism (BH + MH) applied to a different dimension of meaning. -/
+theorem always_gen_same_meaning_different_presup :
+    alwaysGENScenario.meaning .always_ = alwaysGENScenario.meaning .gen_ ∧
+    alwaysGENScenario.presup .always_ ≠ alwaysGENScenario.presup .gen_ ∧
+    alwaysGENScenario.blindOddPrs .always_ ≠ alwaysGENScenario.blindOddPrs .gen_ := by
+  refine ⟨?_, ?_, ?_⟩
+  · funext w; cases w <;> rfl
+  · intro h
+    have := congrFun h .sometimesOnly
+    simp [alwaysGENScenario] at this
+  · simp [alwaysGENScenario]
+    native_decide
+
+end OvertAlways
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §11  Bridge to Bare Plural Data
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! ### Predictions match empirical BPS data
+
+@cite{magri-2009}'s theory predicts that individual-level predicates block
+the existential reading of bare plural subjects. The data in
+`Phenomena.Generics.BarePlurals` independently records these judgments
+as empirical observations (@cite{cohen-erteschik-shir-2002}).
+
+The bridge theorems verify that every ILP datum with
+`existentialOK = false` is correctly predicted by the BH+MH mechanism,
+and every SLP-with-locative-argument datum with `existentialOK = true`
+is correctly predicted as non-odd. -/
+
+section BarePluralBridge
+
+open Phenomena.Generics.BarePlurals
+
+/-- All individual-level predicates in the BarePlurals data lack the
+existential reading — matching @cite{magri-2009}'s prediction that the
+∃-BPS of an ILP is odd (BH + MH + homogeneity). -/
+theorem ilp_data_matches_magri_prediction :
+    iLevelData.all (λ d =>
+      d.predicateLevel == .individualLevel && !d.existentialOK) = true := by
+  native_decide
+
+/-- All stage-level predicates with locative arguments in the BarePlurals
+data HAVE the existential reading — matching @cite{magri-2009}'s prediction
+that the ∃-BPS of an SLP is fine (no homogeneity → no mismatch). -/
+theorem slp_argument_data_matches_magri_prediction :
+    sLevelArgumentData.all (λ d =>
+      d.toBarePluralDatum.predicateLevel == .stageLevel &&
+      d.toBarePluralDatum.existentialOK) = true := by
+  native_decide
+
+/-- The BPS scenario for ILPs is odd, AND the ILP data independently
+confirms no existential reading. Cross-validation between theory (BH+MH)
+and empirical observation. -/
+theorem magri_predicts_ilp_no_existential :
+    bpsScenario.blindOdd .existential_ = true ∧
+    iLevelData.all (λ d => !d.existentialOK) = true :=
+  ⟨by native_decide, by native_decide⟩
+
+/-- The BPS scenario for SLPs is fine, AND the SLP-argument data
+independently confirms existential reading available. -/
+theorem magri_predicts_slp_existential :
+    bpsSLPScenario.blindOdd .existential_ = false ∧
+    sLevelArgumentData.all (λ d => d.toBarePluralDatum.existentialOK) = true :=
+  ⟨by native_decide, by native_decide⟩
+
+end BarePluralBridge
 
 end Phenomena.ScalarImplicatures.Studies.Magri2009

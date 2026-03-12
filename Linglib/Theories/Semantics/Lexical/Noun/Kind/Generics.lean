@@ -233,4 +233,52 @@ def normalDogSituation : NormalcyPredicate := λ s =>
 - `Phenomena/Generics/KindReference.lean` - kind-level predicates, cross-linguistic patterns
 -/
 
+-- Homogeneity Presupposition
+
+/-- GEN's homogeneity presupposition (@cite{magri-2009} eq. (137)).
+
+    The covert generic operator GEN carries a presupposition that the
+    nuclear scope either holds of ALL restrictor-satisfying elements or
+    of NONE — the **YES ∪ NO** partition:
+
+    - YES = {w | ∀s. restrictor(s) → scope(s)}   (all satisfy scope)
+    - NO  = {w | ∀s. restrictor(s) → ¬scope(s)}  (none satisfy scope)
+
+    This presupposition is detectable by negation: "It's false that John
+    smokes" conveys "he never smokes," not "he doesn't always smoke."
+    The stronger reading follows from the plain meaning + homogeneity
+    presupposition (@cite{von-fintel-1997}).
+
+    Overt *always* does NOT carry this presupposition. This asymmetry
+    is the key to @cite{magri-2009} §4.6: "#John is always tall" is odd
+    because the blind strengthened presupposition (asserting that
+    homogeneity fails) contradicts common knowledge. -/
+def genHomogeneityPresup
+    (situations : List Situation)
+    (restrictor : Restrictor)
+    (scope : Scope)
+    : Bool :=
+  let restricted := situations.filter restrictor
+  restricted.all scope || restricted.all (fun s => !scope s)
+
+/-- Homogeneity holds trivially when ALL situations satisfy scope
+    (the YES branch). -/
+theorem homogeneity_yes
+    (situations : List Situation)
+    (restrictor : Restrictor)
+    (scope : Scope)
+    (h : (situations.filter restrictor).all scope = true) :
+    genHomogeneityPresup situations restrictor scope = true := by
+  simp only [genHomogeneityPresup, h, Bool.true_or]
+
+/-- Homogeneity holds trivially when NO situations satisfy scope
+    (the NO branch). -/
+theorem homogeneity_no
+    (situations : List Situation)
+    (restrictor : Restrictor)
+    (scope : Scope)
+    (h : (situations.filter restrictor).all (fun s => !scope s) = true) :
+    genHomogeneityPresup situations restrictor scope = true := by
+  simp only [genHomogeneityPresup, h, Bool.or_true]
+
 end Semantics.Lexical.Noun.Kind.Generics

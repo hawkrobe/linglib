@@ -164,6 +164,34 @@ theorem eliminative_seq {P : Type*} (u v : CCP P)
 
 
 /--
+An update is expansive if it never removes possibilities.
+
+Expansive operations include discourse referent introduction (DRT/DPL),
+modal horizon expansion (@cite{kirkpatrick-2024}), and accommodation.
+These are the dual of eliminative operations: where eliminative updates
+can only shrink the state, expansive updates can only grow it.
+-/
+def IsExpansive {P : Type*} (u : CCP P) : Prop :=
+  ∀ s, s ⊆ u s
+
+/-- Identity is expansive -/
+theorem expansive_id {P : Type*} : IsExpansive (CCP.id : CCP P) :=
+  λ _ => Set.Subset.rfl
+
+/-- Sequential composition preserves expansiveness -/
+theorem expansive_seq {P : Type*} (u v : CCP P)
+    (hu : IsExpansive u) (hv : IsExpansive v) :
+    IsExpansive (u.seq v) := λ s _ hp =>
+  hv (u s) (hu s hp)
+
+/-- A CCP that is both eliminative and expansive is the identity on every input. -/
+theorem eliminative_expansive_id {P : Type*} (u : CCP P)
+    (he : IsEliminative u) (hx : IsExpansive u) :
+    ∀ s, u s = s :=
+  λ s => Set.Subset.antisymm (he s) (hx s)
+
+
+/--
 A test is a CCP that either passes (returns input) or fails (returns ∅).
 
 Tests don't change information - they check compatibility.

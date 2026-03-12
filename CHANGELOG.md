@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.162] - 2026-03-12
+
+### Added
+- **Dynamic/Core/CCP.lean**: `IsExpansive` — dual of `IsEliminative` for CCPs that only grow the state; identity/sequencing/eliminative-expansive-identity theorems
+- **Dynamic/Generics.lean**: Kirkpatrick 2024 dynamic generic semantics — `GenericSentence`, `evalGeneric` (modal horizon expansion), `evalSequence`, `isConsistent`; `horizonExpansionCCP` with `IsExpansive` proof and non-eliminativity witness
+- **Phenomena/Generics/Studies/Kirkpatrick2024.lean**: Raven model (Sobel/reverse Sobel sequences), Animal model (mixed sequences with non-overlapping contextual variables C), 6 `native_decide` theorems verifying order-sensitivity predictions, static vs dynamic comparison
+- **references.bib**: `kirkpatrick-2024` entry
+
 ## [0.229.161] - 2026-03-11
 
 ### Added

@@ -5,7 +5,7 @@ Theory-neutral data about generic and habitual sentences, including prevalence a
 
 ## Main definitions
 
-`PrevalenceAsymmetry`, `RarePropertyGeneric`, `StrikingPropertyEffect`, `ConnectionType`, `HabitualDatum`, `CausalGenericDatum`, `QuantifierContrast`, `AcquisitionDatum`
+`PrevalenceAsymmetry`, `RarePropertyGeneric`, `StrikingPropertyEffect`, `PrincipledSubtype`, `ConnectionType`, `ConnectionDatum`, `HabitualDatum`, `CausalGenericDatum`, `QuantifierContrast`, `AcquisitionDatum`
 
 -/
 
@@ -110,10 +110,35 @@ def malariaVsWings : StrikingPropertyEffect :=
   }
 
 -- Principled vs Statistical Connections
+-- @cite{prasada-dillingham-2006} @cite{prasada-2013}
 
-/-- Principled vs statistical connection (Prasada & Dillingham). -/
+/-- Subtypes of principled connections (@cite{prasada-2013}).
+
+    Principled connections link a kind to a property via an explanatory
+    relation — one can say *why* members have the property. The three
+    subtypes differ in their tolerance for exceptions:
+
+    - **formal**: definitional/analytic ("Triangles have three sides").
+      Zero exceptions tolerated.
+    - **constitutive**: proper physical makeup ("Dogs have four legs").
+      Few exceptions tolerated (birth defects, injury).
+    - **causal**: causal mechanism ("Mosquitos carry malaria").
+      Many exceptions tolerated — the mechanism exists even if
+      rarely manifested. -/
+inductive PrincipledSubtype where
+  | formal        -- Definitional/analytic (zero exceptions)
+  | constitutive  -- Proper physical makeup (few exceptions)
+  | causal        -- Causal mechanism (many exceptions)
+  deriving Repr, DecidableEq, BEq
+
+/-- Kind–property connection type (@cite{prasada-dillingham-2006}, @cite{prasada-2013}).
+
+    Principled connections support "bare" generics at any prevalence
+    because the explanatory relation licenses the generalization.
+    Statistical connections require high prevalence — there is no
+    explanatory "why", just observed frequency. -/
 inductive ConnectionType where
-  | principled
+  | principled (sub : PrincipledSubtype)
   | statistical
   deriving Repr, DecidableEq, BEq
 
@@ -121,22 +146,75 @@ inductive ConnectionType where
 structure ConnectionDatum where
   sentence : String
   connectionType : ConnectionType
+  toleratesExceptions : Bool
   acceptanceThreshold : ℚ
   source : String
 
+/-- "Triangles have three sides" — formal/definitional connection. -/
+def trianglesSides : ConnectionDatum :=
+  { sentence := "Triangles have three sides"
+  , connectionType := .principled .formal
+  , toleratesExceptions := false
+  , acceptanceThreshold := 0  -- True at any prevalence (analytic)
+  , source := "Prasada & Dillingham 2006"
+  }
+
+/-- "Dogs have a heart" — constitutive connection. -/
 def hasHeart : ConnectionDatum :=
   { sentence := "Dogs have a heart"
-  , connectionType := .principled
+  , connectionType := .principled .constitutive
+  , toleratesExceptions := true
   , acceptanceThreshold := 5/10  -- Accepted even if some lack it
   , source := "Prasada & Dillingham 2006"
   }
 
+/-- "Mosquitos carry malaria" — causal connection. -/
+def mosquitosMalariaCxn : ConnectionDatum :=
+  { sentence := "Mosquitos carry malaria"
+  , connectionType := .principled .causal
+  , toleratesExceptions := true
+  , acceptanceThreshold := 1/100  -- Accepted at very low prevalence
+  , source := "Prasada & Dillingham 2006"
+  }
+
+/-- "Dogs have brown fur" — statistical connection. -/
 def hasBrownFur : ConnectionDatum :=
   { sentence := "Dogs have brown fur"
   , connectionType := .statistical
+  , toleratesExceptions := true
   , acceptanceThreshold := 8/10  -- Needs higher prevalence
   , source := "Prasada & Dillingham 2006"
   }
+
+/-- Principled connections have lower acceptance thresholds than statistical. -/
+theorem principled_lower_threshold :
+    hasHeart.acceptanceThreshold < hasBrownFur.acceptanceThreshold ∧
+    mosquitosMalariaCxn.acceptanceThreshold < hasBrownFur.acceptanceThreshold ∧
+    trianglesSides.acceptanceThreshold < hasHeart.acceptanceThreshold := by
+  native_decide
+
+/-- Formal connections tolerate no exceptions; others do. -/
+theorem formal_no_exceptions :
+    trianglesSides.toleratesExceptions = false ∧
+    hasHeart.toleratesExceptions = true ∧
+    mosquitosMalariaCxn.toleratesExceptions = true ∧
+    hasBrownFur.toleratesExceptions = true := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-- All connection data entries. -/
+def connectionData : List ConnectionDatum :=
+  [trianglesSides, hasHeart, mosquitosMalariaCxn, hasBrownFur]
+
+/-- Acceptance thresholds decrease as connection strength increases:
+    formal < constitutive < causal < statistical. -/
+theorem threshold_ordering :
+    trianglesSides.acceptanceThreshold <
+    hasHeart.acceptanceThreshold ∧
+    hasHeart.acceptanceThreshold >
+    mosquitosMalariaCxn.acceptanceThreshold ∧
+    mosquitosMalariaCxn.acceptanceThreshold <
+    hasBrownFur.acceptanceThreshold := by
+  native_decide
 
 -- Habitual Data
 
