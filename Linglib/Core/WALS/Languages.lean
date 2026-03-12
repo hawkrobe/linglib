@@ -2703,4 +2703,8 @@ def languages : List Language := languages_0 ++ languages_1 ++ languages_2 ++ la
 def findLanguage (code : String) : Option Language :=
   languages.find? (·.walsCode == code)
 
+/-- Look up a language by ISO 639-3 code. Returns the first match. -/
+def findByIso (iso : String) : Option Language :=
+  languages.find? (·.iso == iso)
+
 end Core.WALS

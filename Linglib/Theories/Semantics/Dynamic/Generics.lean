@@ -119,6 +119,127 @@ theorem evalGeneric_horizon_superset (horizon : List E)
   · exact List.mem_append_left _ he
 
 
+-- ═══ General Sobel Sequence Theorems ═══
+
+-- The paper's core contribution (§5.1–5.2) is a GENERAL argument that
+-- any generic Sobel sequence is consistent and its reversal is inconsistent.
+-- The argument depends on a structural relationship between the two generics:
+-- the exception's restrictor is a subset of the general's restrictor.
+
+omit [DecidableEq E] in
+/-- Helper: `List.all` over a filtered list follows from the filter source. -/
+private theorem all_filter_of_forall {l : List E} {p q : E → Bool}
+    (h : ∀ e ∈ l, p e = true → q e = true) :
+    (l.filter p).all q = true := by
+  rw [List.all_eq_true]
+  intro x hx
+  rw [List.mem_filter] at hx
+  exact h x hx.1 hx.2
+
+omit [DecidableEq E] in
+/-- Helper: `List.any` is false when no element satisfies the predicate. -/
+private theorem any_eq_false_of_forall {l : List E} {p : E → Bool}
+    (h : ∀ e ∈ l, p e = false) : l.any p = false := by
+  cases hc : l.any p
+  · rfl
+  · rw [List.any_eq_true] at hc
+    obtain ⟨x, hx, hp⟩ := hc
+    exact absurd hp (by rw [h x hx]; exact Bool.false_ne_true)
+
+omit [DecidableEq E] in
+/-- Helper: `List.any` is true when there exists a satisfying element. -/
+private theorem any_eq_true_of_mem {l : List E} {p : E → Bool}
+    {e : E} (he : e ∈ l) (hp : p e = true) : l.any p = true := by
+  rw [List.any_eq_true]; exact ⟨e, he, hp⟩
+
+omit [DecidableEq E] in
+/-- Helper: filter of concatenation where first part is excluded, second included. -/
+private theorem filter_append_eq {l₁ l₂ : List E} {p : E → Bool}
+    (h₁ : ∀ e ∈ l₁, p e = false) (h₂ : ∀ e ∈ l₂, p e = true) :
+    (l₁ ++ l₂).filter p = l₂ := by
+  rw [List.filter_append]
+  have heq₁ : l₁.filter p = [] := by
+    rw [List.filter_eq_nil_iff]
+    intro x hx; simp [h₁ x hx]
+  have heq₂ : l₂.filter p = l₂ := by
+    rw [List.filter_eq_self]
+    exact h₂
+  simp [heq₁, heq₂]
+
+omit [DecidableEq E] in
+/-- Helper: `List.all` is false when a member fails. -/
+private theorem all_eq_false_of_mem {l : List E} {p : E → Bool}
+    {e : E} (he : e ∈ l) (hp : p e = false) : l.all p = false := by
+  cases hc : l.all p
+  · rfl
+  · rw [List.all_eq_true] at hc
+    exact absurd (hc e he) (by rw [hp]; exact Bool.false_ne_true)
+
+omit [DecidableEq E] in
+/-- General Sobel sequence consistency (§5.1).
+
+    If two generics form a Sobel pair — the general's normal instances
+    satisfy its own restrictor and scope, the exception's normal instances
+    satisfy their restrictor and scope, and the general's normal instances
+    are disjoint from the exception's restrictor — then the Sobel sequence
+    [general, exception] is consistent. -/
+theorem sobel_pair_consistent
+    (general exception : GenericSentence E)
+    (hgr : ∀ e ∈ general.normalInstances, general.restrictor e = true)
+    (hgs : ∀ e ∈ general.normalInstances, general.scope e = true)
+    (hdis : ∀ e ∈ general.normalInstances, exception.restrictor e = false)
+    (her : ∀ e ∈ exception.normalInstances, exception.restrictor e = true)
+    (hes : ∀ e ∈ exception.normalInstances, exception.scope e = true) :
+    isConsistent [general, exception] = true := by
+  -- TODO: structured proof using all_filter_of_forall and filter_append_eq
+  -- Proof sketch: Step 1 (general against ∅) expands with normal instances, all
+  -- satisfy scope → true. Step 2 (exception against normalInstances) finds no
+  -- exception-restrictor elements (disjoint), expands, all satisfy scope → true.
+  sorry
+
+omit [DecidableEq E] in
+/-- General reverse Sobel inconsistency (§5.2).
+
+    If exception normal instances satisfy the exception restrictor and scope,
+    the exception restrictor implies the general restrictor (subset),
+    all exception normal instances violate the general scope (genuine
+    counterexamples), and the exception class is nonempty, then the
+    reverse sequence [exception, general] is inconsistent.
+
+    This is the paper's key novel prediction: the dynamic theory explains
+    why reverse Sobel sequences are infelicitous, which static theories
+    cannot account for. -/
+theorem reverse_sobel_pair_inconsistent
+    (general exception : GenericSentence E)
+    (her : ∀ e ∈ exception.normalInstances, exception.restrictor e = true)
+    (hes : ∀ e ∈ exception.normalInstances, exception.scope e = true)
+    (hsub : ∀ e, exception.restrictor e = true → general.restrictor e = true)
+    (hcounter : ∀ e ∈ exception.normalInstances, general.scope e = false)
+    (hne : exception.normalInstances ≠ []) :
+    isConsistent [exception, general] = false := by
+  -- Unfold the two-step evaluation
+  simp only [isConsistent, evalSequence, evalSequence.go, evalGeneric]
+  simp only [List.any_nil, Bool.false_eq_true, ↓reduceIte, List.nil_append]
+  -- After step 1: horizon = exception.normalInstances
+  -- Step 2: exception.normalInstances.any general.restrictor = true
+  --   because exception normal instances satisfy exception restrictor (her)
+  --   and exception restrictor implies general restrictor (hsub)
+  have hsub' : ∀ e ∈ exception.normalInstances, general.restrictor e = true :=
+    fun e he => hsub e (her e he)
+  obtain ⟨e₀, he₀⟩ := List.exists_mem_of_ne_nil exception.normalInstances hne
+  have h_has : exception.normalInstances.any general.restrictor = true :=
+    any_eq_true_of_mem he₀ (hsub' e₀ he₀)
+  simp only [h_has, ↓reduceIte]
+  -- The second truth value is false: exception normal instances violate general scope
+  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, id]
+  -- Need: filter ∧ all = false (right conjunct)
+  have h_false : (exception.normalInstances.filter general.restrictor).all general.scope = false :=
+    all_eq_false_of_mem
+      (List.mem_filter.mpr ⟨he₀, hsub' e₀ he₀⟩)
+      (hcounter e₀ he₀)
+  simp [h_false]
+
+
 -- ═══ Abstract CCP Bridge ═══
 
 open Classical in

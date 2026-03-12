@@ -110,9 +110,9 @@ def malariaVsWings : StrikingPropertyEffect :=
   }
 
 -- Principled vs Statistical Connections
--- @cite{prasada-dillingham-2006} @cite{prasada-2013}
+-- @cite{prasada-dillingham-2006}
 
-/-- Subtypes of principled connections (@cite{prasada-2013}).
+/-- Subtypes of principled connections (@cite{prasada-dillingham-2006}).
 
     Principled connections link a kind to a property via an explanatory
     relation — one can say *why* members have the property. The three
@@ -131,7 +131,7 @@ inductive PrincipledSubtype where
   | causal        -- Causal mechanism (many exceptions)
   deriving Repr, DecidableEq, BEq
 
-/-- Kind–property connection type (@cite{prasada-dillingham-2006}, @cite{prasada-2013}).
+/-- Kind–property connection type (@cite{prasada-dillingham-2006}).
 
     Principled connections support "bare" generics at any prevalence
     because the explanatory relation licenses the generalization.

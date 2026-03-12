@@ -1,5 +1,49 @@
 # Changelog
 
+## [0.229.166] - 2026-03-12
+
+### Fixed
+- **Magri2009.lean**: Remove unused `import Linglib.Core.FelicityTypes`; fix Horn scale comment from "⟨∃-BPS, GEN-BPS⟩" to "⟨BP, definite description⟩" matching paper's eq. (94); fix unverified `p. 16` citation; clarify `BPSReading.generic_` docstring as definite-description alternative
+
+### Added
+- **Magri2009.lean §12**: German *ja doch* bridge — import `BarePluralWordOrder` fragment and prove `german_data_matches_magri` connecting acceptability pattern to BH+MH predictions
+- **Magri2009.lean §13**: §4.6.2 Remark — "Firemen are always tall" (bare plural subject) is fine via `bpAlwaysScenario`, proving `definite_vs_bp_always_contrast` (definite subject → odd, bare plural → fine)
+- **references.bib**: Add `fox-1995` (Economy and Scope, NLS 3: 283–341)
+
+## [0.229.165] - 2026-03-12
+
+### Removed
+- **Phenomena/Generics/Studies/Greenberg2013.lean**: Delete entirely — no Greenberg chapter exists in this volume (Yael Greenberg was a reviewer, not an author); file content (GEN/HAB/DISP three-way distinction, Hebrew triple data, Russian Müller-Reichau data) was hallucinated
+- **references.bib**: Remove `prasada-2013` and `greenberg-2013` (fabricated chapter attributions)
+
+### Fixed
+- **DelPrete2013.lean**: Correct chapter title from "Imperfectivity and Genericity" to "Imperfectivity and Habituality in Italian" (matching actual Ch 8 title, p. 222)
+- **references.bib**: Correct `del-prete-2013` title to match actual chapter
+- **Data.lean**: Remove `@cite{prasada-2013}` references (no such chapter); keep correct `@cite{prasada-dillingham-2006}` (Cognition 2006)
+
+## [0.229.164] - 2026-03-12
+
+### Added
+- **Phenomena/Generics/Studies/BonehDoron2013.lean**: Formalize @cite{boneh-doron-2013} HAB/GEN distinction — `QuantifierDomain` (individualBased vs situationBased), `CovertQConfig` with modal/agent parameters, Hebrew morphological data (beinoni vs haya+beinoni vs past), `gen_hab_distinct` and `shared_skeleton` theorems
+- **Phenomena/Generics/Studies/DelPrete2013.lean**: Formalize @cite{del-prete-2013} imperfective-habituality link — `permitsGenericReading` predicate bridging `ViewpointAspectB` to generic availability, Italian imperfetto/passato remoto minimal pairs, `theory_predicts_data` and `perfective_blocks_both` theorems
+- **Phenomena/Generics/Studies/AsherPelletier2013.lean**: Formalize @cite{asher-pelletier-2013} generic truth via default reasoning — `DefaultRule`, `processDefault` via `NormalityOrder.refine`, Tweety Triangle resolution proving specificity-based override, `generic_nonmonotonic` theorem, bridge from `normalFromOrdering` to `traditionalGEN`
+
+### Changed
+- **Phenomena/Generics/Data.lean**: Refine `ConnectionType` with `PrincipledSubtype` (formal/constitutive/causal) per @cite{prasada-dillingham-2006}; add `trianglesSides`, `mosquitosMalariaCxn` data; `toleratesExceptions` field; `principled_lower_threshold`, `formal_no_exceptions`, `threshold_ordering` theorems
+- **references.bib**: Add `prasada-dillingham-2006`, `boneh-doron-2013`, `del-prete-2013`, `asher-pelletier-2013`
+
+## [0.229.163] - 2026-03-12
+
+### Added
+- **Exhaustification/Fox2007.lean**: `exhR` — relevance-sensitive exhaustivity operator (Magri 2009 eq. 42), parameterized by relevance relation R; `exhR_all_relevant_eq_exhB` proving `exhR` with universal relevance = `exhB`
+- **Generics.lean**: `genHomogeneityPresup` — GEN's homogeneity presupposition (YES ∪ NO partition, Magri 2009 eq. 137); `homogeneity_yes`/`homogeneity_no` lemmas
+- **Fragments/German/BarePluralWordOrder.lean**: German BPS placement data relative to *ja doch* particles (Diesing 1992/Magri 2009 §4.5); `JaDochDatum` structure, 4 data points, `acceptability_pattern` theorem
+- **FelicityTypes.lean**: `blindMismatch`/`blindPresupMismatch` oddness sources for Magri's BH+MH mechanism
+
+### Changed
+- **Magri2009.lean**: Deepen formalization — `BlindPresupScenario` for presuppositional BH/MH (§3.4); overt "always" oddness via MH_prs (§4.6) with `alwaysGENScenario`, `always_tall_blind_odd_prs`, `always_gen_same_meaning_different_presup`; bridge theorems to `BarePlurals.lean` data cross-validating ILP/SLP predictions
+- **references.bib**: `diesing-1992` entry
+
 ## [0.229.162] - 2026-03-12
 
 ### Added

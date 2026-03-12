@@ -731,6 +731,9 @@ import Linglib.Phenomena.Generics.Studies.Krifka2013
 import Linglib.Phenomena.Generics.Studies.Longobardi2001
 import Linglib.Phenomena.Generics.Studies.Kirkpatrick2024
 import Linglib.Phenomena.Generics.Studies.Nickel2009
+import Linglib.Phenomena.Generics.Studies.BonehDoron2013
+import Linglib.Phenomena.Generics.Studies.DelPrete2013
+import Linglib.Phenomena.Generics.Studies.AsherPelletier2013
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Phenomena.Gradability.Data
 import Linglib.Phenomena.Gradability.ComparisonClass

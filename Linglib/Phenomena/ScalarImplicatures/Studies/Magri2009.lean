@@ -1,7 +1,7 @@
-import Linglib.Core.FelicityTypes
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
 import Linglib.Phenomena.Generics.BarePlurals
+import Linglib.Fragments.German.BarePluralWordOrder
 
 /-!
 # Blind Mandatory Scalar Implicatures
@@ -430,12 +430,12 @@ But the BPS of the i-predicate *tall* lacks the existential reading (84b):
 - #∃-BPS: "There are firemen who are tall"
 - GEN-BPS: "Firemen are (generally) tall"
 
-@cite{magri-2009}'s key insight (p. 275): the ∃-BPS reading of an ILP has
+@cite{magri-2009}'s key insight: the ∃-BPS reading of an ILP has
 the SAME abstract structure as "#Sometimes, John is tall" (§4.1). This is
-because existential BPs always take narrowest scope (@cite{carlson-1977},
-p. 16), making narrow-scope ∃ over times equivalent to "sometimes." The GEN
-alternative plays the role of "always." Homogeneity (70) rules out the partial
-world, so the strengthened meaning contradicts CK.
+because existential BPs always take narrowest scope (@cite{carlson-1977}),
+making narrow-scope ∃ over times equivalent to "sometimes." The definite
+description alternative plays the role of "always." Homogeneity (70) rules
+out the partial world, so the strengthened meaning contradicts CK.
 
 We model this with independent types and prove the meaning table is
 isomorphic to the Q-adverb scenario from §5. -/
@@ -453,15 +453,19 @@ inductive BPSWorld where
   | noneTall       -- no fireman is ever tall
   deriving DecidableEq, BEq, Repr
 
-/-- The two readings of bare plural subjects.
+/-- The bare plural reading and its definite-description alternative.
 
-Following the Heim-Diesing framework (@cite{magri-2009} (88)):
-the BP introduces a free variable bound by a default existential
-operator (DEO) with VP scope. The GEN reading arises when the
-time argument is bound by a covert generic operator. -/
+Following the Heim-Diesing framework: the BP introduces a free
+variable bound by a default existential operator (DEO) with VP scope.
+
+The Horn scale is ⟨bare plural, definite description⟩ (eq. (94)):
+the BP *firemen* alternates with *the fireman P* for each specific
+fireman P. In the 3-world model, the definite-description alternative
+ψ (eq. (95)) is extensionally equivalent to the GEN-BPS reading φ
+(eq. (91b)), so we model both as `generic_`. -/
 inductive BPSReading where
   | existential_  -- ∃-BPS: there exist firemen who are tall (narrow scope)
-  | generic_      -- GEN-BPS: firemen are (generally/always) tall
+  | generic_      -- definite/GEN alternative: there is a fireman tall throughout
   deriving DecidableEq, BEq, Repr
 
 open BPSWorld BPSReading in
@@ -483,7 +487,7 @@ def bpsScenario : BlindScenario BPSWorld BPSReading where
     | generic_,     partialOnly   => false  -- not all throughout: no
     | generic_,     noneTall      => false  -- none: no
   alternatives
-    | existential_ => [generic_]    -- ⟨∃-BPS, GEN-BPS⟩ Horn scale
+    | existential_ => [generic_]    -- ⟨BP, definite description⟩ Horn scale (eq. 94)
     | generic_     => [existential_]
   -- Homogeneity (70): partialOnly is CK-incompatible
   context
@@ -886,5 +890,129 @@ theorem magri_predicts_slp_existential :
   ⟨by native_decide, by native_decide⟩
 
 end BarePluralBridge
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §12  Bridge to German *ja doch* Data (§4.5)
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! ### German BPS word order matches BH+MH predictions
+
+@cite{magri-2009} §4.5 argues that @cite{diesing-1992}'s German BPS word
+order contrast (BPS left vs right of *ja doch*) follows from BH+MH:
+
+- S-predicate BPS both positions OK → BH+MH: no mismatch (SLP)
+- I-predicate BPS left only → BH+MH: right-of-*ja doch* = VP-internal =
+  existential reading only → mismatch with homogeneity → odd
+
+The data in `Fragments.German.BarePluralWordOrder` independently records
+this pattern. The bridge theorem confirms that the oddness pattern in
+the German data aligns with the model scenarios. -/
+
+section GermanBridge
+
+open Fragments.German.BarePluralWordOrder
+
+/-- The German *ja doch* data confirms the same ILP/SLP split:
+the ONLY unacceptable configuration is ILP + right of *ja doch*
+(= VP-internal = existential-only reading).
+
+- ILP right of *ja doch* → odd: matches `bpsScenario.blindOdd .existential_`
+- SLP both positions → fine: matches `bpsSLPScenario.blindOdd .existential_`
+- ILP left of *ja doch* → fine: the GEN reading is available (not blocked) -/
+theorem german_data_matches_magri :
+    -- German data: only ILP + right is unacceptable
+    allJaDochData.all (λ d =>
+      d.acceptable == !(d.predicateLevel == .individualLevel &&
+                        d.bpsPosition == .rightOfJaDoch)) = true ∧
+    -- Magri model: ILP existential is odd
+    bpsScenario.blindOdd .existential_ = true ∧
+    -- Magri model: SLP existential is fine
+    bpsSLPScenario.blindOdd .existential_ = false :=
+  ⟨by native_decide, by native_decide, by native_decide⟩
+
+end GermanBridge
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §13  Bare Plurals with "always" (§4.6.2 Remark)
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! ### "Firemen are always tall" is fine (§4.6.2 Remark)
+
+@cite{magri-2009} §4.6.2: "#John is always tall" is odd (§10 above),
+but "Firemen are always tall" is FINE when the definite *John* is replaced
+by a bare plural.
+
+The key difference: with a bare plural subject, the strengthened
+presupposition ¬ψ_prs asserts that homogeneity fails for the restrictor
+(some firemen are tall, others aren't). This is NOT a contradiction given
+common knowledge — there are CK-compatible worlds where some firemen are
+tall and others aren't.
+
+This shows the presuppositional mechanism is sensitive to the logical
+form of the subject: definite subjects (John) produce oddness because
+homogeneity must hold for a single individual; bare plural subjects
+(firemen) don't because different individuals can differ. -/
+
+section BarePluralAlways
+
+open TallWorld
+
+/-- Worlds for "Firemen are always tall" with bare plural subject.
+
+With a bare plural, the homogeneity presupposition of GEN quantifies
+over firemen: either ALL firemen are tall or NONE are. But CK for
+a bare plural does NOT rule out mixed worlds (some tall, some not). -/
+inductive BPAlwaysWorld where
+  | allTall       -- all firemen always tall
+  | mixedFiremen  -- some firemen tall, others not
+  | noneTall      -- no fireman tall
+  deriving DecidableEq, BEq, Repr
+
+open BPAlwaysWorld AlwaysGENUtt in
+/-- @cite{magri-2009} §4.6.2: *always* vs GEN with bare plural subject.
+
+Meanings are identical (both: "all firemen are always tall"), but
+presuppositions differ. GEN's homogeneity presupposition says either
+all firemen are tall or none are (YES ∪ NO). But with a bare plural,
+the mixed world (some tall, some not) IS CK-compatible. -/
+def bpAlwaysScenario : BlindPresupScenario BPAlwaysWorld AlwaysGENUtt where
+  meaning
+    | _, allTall => true
+    | _, mixedFiremen => false
+    | _, noneTall => false
+  alternatives
+    | .always_ => [.gen_]
+    | .gen_    => [.always_]
+  -- CK: ALL worlds are compatible (some firemen could be tall, others not)
+  context := fun _ => true
+  worlds := [allTall, mixedFiremen, noneTall]
+  presup
+    | .always_, _ => true                -- *always* has no homogeneity presup
+    | .gen_, allTall => true             -- YES: all firemen tall
+    | .gen_, mixedFiremen => false       -- mixed: neither YES nor NO
+    | .gen_, noneTall => true            -- NO: no fireman tall
+
+/-- "Firemen are always tall" is NOT odd via MH_prs.
+
+The strengthened presupposition ¬ψ_prs = {mixedFiremen} is satisfiable
+at a CK world (mixedFiremen is CK-compatible for bare plurals), so
+MH_prs does not fire. -/
+theorem bp_always_not_odd_prs :
+    bpAlwaysScenario.blindOddPrs .always_ = false := by native_decide
+
+/-- Contrast: same logical structure, different subjects, different oddness.
+
+- "#John is always tall" (definite): odd via MH_prs (§10)
+- "Firemen are always tall" (bare plural): fine (§4.6.2)
+
+The difference: CK for a definite (John) rules out the mixed world
+(homogeneity for one individual), while CK for a bare plural does not
+(different firemen can differ). -/
+theorem definite_vs_bp_always_contrast :
+    alwaysGENScenario.blindOddPrs .always_ = true ∧
+    bpAlwaysScenario.blindOddPrs .always_ = false :=
+  ⟨by native_decide, by native_decide⟩
+
+end BarePluralAlways
 
 end Phenomena.ScalarImplicatures.Studies.Magri2009
