@@ -37,8 +37,6 @@ def wus_ke_ha : KoreanVerbEntry where
   formAdnom := "wus-ke ha-n"
   formProgressive := "wus-ke ha-go itta"
   complementType := .infinitival
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .cause
 
@@ -50,8 +48,6 @@ def ilk_ke_ha : KoreanVerbEntry where
   formAdnom := "ilk-ke ha-n"
   formProgressive := "ilk-ke ha-go itta"
   complementType := .infinitival
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .cause
 
@@ -63,8 +59,6 @@ def cwuk_i : KoreanVerbEntry where
   formAdnom := "cwuk-i-n"
   formProgressive := "cwuk-i-go itta"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   causativeBuilder := some .make
 
 /-- Korean PURP-type *-ke ha-* uses `.cause` builder. -/

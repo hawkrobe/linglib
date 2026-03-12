@@ -234,24 +234,110 @@ theorem teachers_reverse_inconsistent :
     isConsistent [badTeachersDontCare, teachersCare] = false := by native_decide
 
 
--- ═══ Comparison with Static Theories ═══
+-- ═══ Static-Dynamic Bridge ═══
 
-/-- Static theories assign the same truth conditions to both orders.
-    In the static view, both "Ravens are black" and "Albino ravens aren't
-    black" are independently true. The conjunction should be consistent
-    regardless of order. But speakers judge the reverse order as infelicitous.
+/-- In discourse-initial position, Kirkpatrick's dynamic semantics
+    reduces to static truth conditions. Both "Ravens are black" and
+    "Albino ravens aren't black" are true when evaluated against an
+    empty horizon — matching the predictions of static GEN.
 
-    The dynamic theory explains this: the truth value of each generic
-    depends on which individuals were made salient by prior discourse. -/
+    The dynamic theory diverges from statics only in multi-sentence
+    discourse, where prior generics have expanded the horizon. -/
 theorem static_both_true_independently :
     (evalGeneric [] ravensAreBlack).2 = true ∧
     (evalGeneric [] albinoRavensArentBlack).2 = true := by
   exact ⟨by native_decide, by native_decide⟩
 
+/-- The static-dynamic bridge instantiated for the raven model:
+    discourse-initial evaluation of "Ravens are black" equals the
+    static truth condition (all normal ravens satisfy the scope). -/
+theorem ravens_static_dynamic_bridge :
+    (evalGeneric [] ravensAreBlack).2 =
+    (normalRavens.filter isRaven).all isBlack :=
+  evalGeneric_empty_eq_static ravensAreBlack
+
 /-- Yet the order matters for the dynamic evaluation. -/
 theorem order_matters :
     isConsistent sobelSequence ≠ isConsistent reverseSobelSequence := by
   native_decide
+
+
+-- ═══ Horizon Evolution: Raven Model ═══
+
+/-- Forward Sobel: the raven model instantiates the structural
+    horizon theorem. Both expansions fire — normal ravens first,
+    then the albino raven. -/
+theorem raven_forward_horizons :
+    horizonStep albinoRavensArentBlack (horizonStep ravensAreBlack []) =
+    normalRavens ++ normalAlbinoRavens :=
+  sobel_forward_horizons ravensAreBlack albinoRavensArentBlack (by decide)
+
+/-- Reverse Sobel: the general's expansion is blocked because the
+    albino raven (made salient by the first generic) satisfies the
+    "is a raven" restrictor. The final horizon contains only [albino]. -/
+theorem raven_reverse_horizons :
+    horizonStep ravensAreBlack (horizonStep albinoRavensArentBlack []) =
+    normalAlbinoRavens :=
+  sobel_reverse_horizons ravensAreBlack albinoRavensArentBlack
+    (by decide)
+    (by intro e; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack,
+         isAlbinoRaven, isRaven])
+    (by decide)
+
+/-- The raven model witnesses horizon non-commutativity:
+    the forward horizon [normal1, normal2, albino] differs from
+    the reverse horizon [albino]. -/
+theorem raven_horizon_noncommutative :
+    horizonStep albinoRavensArentBlack (horizonStep ravensAreBlack []) ≠
+    horizonStep ravensAreBlack (horizonStep albinoRavensArentBlack []) :=
+  sobel_horizon_noncommutative ravensAreBlack albinoRavensArentBlack
+    (by decide) (by decide)
+    (by intro e; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack,
+         isAlbinoRaven, isRaven])
+    (by decide) (by decide)
+
+
+-- ═══ Algebraic Properties: Raven Model ═══
+
+/-- The raven generic is idempotent: processing "Ravens are black" twice
+    against any horizon gives the same result as processing it once.
+    This instantiates the general `horizonStep_idempotent`. -/
+theorem raven_idempotent (horizon : List Raven) :
+    horizonStep ravensAreBlack (horizonStep ravensAreBlack horizon) =
+    horizonStep ravensAreBlack horizon :=
+  horizonStep_idempotent ravensAreBlack (by decide) (by decide) horizon
+
+/-- The albino raven generic is also idempotent. -/
+theorem albino_idempotent (horizon : List Raven) :
+    horizonStep albinoRavensArentBlack (horizonStep albinoRavensArentBlack horizon) =
+    horizonStep albinoRavensArentBlack horizon :=
+  horizonStep_idempotent albinoRavensArentBlack (by decide) (by decide) horizon
+
+/-- The mixed lion sequence derives from the structural non-interference
+    theorem rather than finite model checking. -/
+theorem mixed_consistent_structural :
+    isConsistent [lionsHaveManes, lionsGiveBirth] = true ∧
+    isConsistent [lionsGiveBirth, lionsHaveManes] = true :=
+  disjoint_pair_consistent lionsHaveManes lionsGiveBirth
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
+
+
+-- ═══ Appendix A: Veltman Comparison ═══
+
+/-! The structural horizon theorems above explain WHY the asymmetry
+arises: the subset relation between restrictors (albino raven ⊆ raven)
+creates asymmetric blocking in horizon evolution. The abstract
+impossibility theorem (`commutative_implies_equal_verdicts` in
+`Generics.lean`) then rules out ANY commutative framework — including
+@cite{veltman-1996}'s `normallyUpdate` — from modeling this asymmetry.
+
+@cite{veltman-1996}'s `normallyUpdate` is commutative
+(`normallyUpdate_comm` in `UpdateSemantics/Default.lean`), meaning that
+processing "normally (ravens are black)" then "normally (albino ravens
+aren't black)" produces the same expectation state as the reverse order.
+Since the state is identical, any consistency test must give the same
+verdict for both orders — predicting the reverse Sobel is also felicitous,
+contrary to empirical judgment. -/
 
 
 end Phenomena.Generics.Studies.Kirkpatrick2024

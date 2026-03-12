@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Core.Lexical.ThetaRole
+import Linglib.Theories.Semantics.Events.ThetaRole
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
@@ -155,6 +155,31 @@ def severingAccount : LinkingTheory VerbCore VoiceFlavor where
 -- ════════════════════════════════════════════════════════════════════
 -- § 6. Lexicalist account as LinkingTheory (for comparison)
 -- ════════════════════════════════════════════════════════════════════
+
+/-- Lexicalist prediction of the external argument's theta role, based
+    solely on verb-internal properties (@cite{levin-1993},
+    @cite{rappaport-hovav-levin-1998}).
+
+    The cascade mirrors traditional linking rules:
+    - raising / weather → no external role
+    - external causal source → stimulus (Class II psych, @cite{kim-2024})
+    - attitude builder or factive presupposition → experiencer
+    - occasion sense (manage-to) → experiencer
+    - Levin class flinch / learn → experiencer
+    - unaccusative / measure → theme
+    - default → agent -/
+def _root_.Core.Verbs.VerbCore.predictedSubjectTheta (v : VerbCore) : Option ThetaRole :=
+  if v.controlType == .raising then none
+  else if v.levinClass == some .weather then none
+  else if v.causalSource.isSome then some .stimulus
+  else if v.attitudeBuilder.isSome then some .experiencer
+  else if v.factivePresup && v.attitudeBuilder.isNone then some .experiencer
+  else if v.senseTag == .occasion then some .experiencer
+  else if v.levinClass == some .flinch then some .experiencer
+  else if v.levinClass == some .learn then some .experiencer
+  else if v.unaccusative then some .theme
+  else if v.levinClass == some .measure then some .theme
+  else some .agent
 
 /-- The lexicalist account (@cite{levin-1993}, Rappaport @cite{rappaport-hovav-levin-1998})
     as a `LinkingTheory`.

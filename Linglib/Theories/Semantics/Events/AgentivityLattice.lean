@@ -1,4 +1,6 @@
 import Linglib.Theories.Semantics.Events.EntailmentProfile
+import Linglib.Theories.Semantics.Events.Affectedness
+import Linglib.Theories.Semantics.Events.LevinClassProfiles
 import Linglib.Core.Case.Basic
 import Linglib.Core.Prominence
 import Mathlib.Order.Lattice
@@ -1195,5 +1197,154 @@ theorem dom_monotone_animate_human (p : PersistenceLevel) :
 theorem totalPersistence_all_outside_accAbs (a : AnimacyLevel) :
     (objectNodeWithAnimacy a .totalPersistence).toCaseRegion ≠ .accAbs := by
   cases a <;> native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 22. Projection Kernel Theorems
+-- ════════════════════════════════════════════════════
+
+/-- **AgentivityNode kernel**: two profiles map to the same agentivity node
+    iff they agree on {V, S, C, M}. The 5th P-Agent feature (IE) and all
+    5 P-Patient features are irrelevant — they are dropped by the projection.
+
+    This formally characterizes the information loss: `fromEntailmentProfile`
+    is a surjection whose fibers are the equivalence classes of profiles
+    agreeing on {V, S, C, M}. -/
+theorem fromEntailmentProfile_eq_iff (p q : EntailmentProfile) :
+    AgentivityNode.fromEntailmentProfile p =
+    AgentivityNode.fromEntailmentProfile q ↔
+    p.volition = q.volition ∧ p.sentience = q.sentience ∧
+    p.causation = q.causation ∧ p.movement = q.movement := by
+  simp [AgentivityNode.fromEntailmentProfile, AgentivityNode.mk.injEq]
+
+/-- Independent existence is lost by the agentivity projection.
+    Two profiles differing only in IE map to the same node.
+    Concrete witness: full agent (IE=true) and agent-without-IE. -/
+theorem fromEntailmentProfile_drops_IE :
+    AgentivityNode.fromEntailmentProfile
+      ⟨true, true, true, true, true, false, false, false, false, false⟩ =
+    AgentivityNode.fromEntailmentProfile
+      ⟨true, true, true, true, false, false, false, false, false, false⟩ := rfl
+
+/-- All P-Patient features are lost by the agentivity projection.
+    A profile with 5 P-Patient features maps to the same node as one with 0. -/
+theorem fromEntailmentProfile_drops_patient :
+    AgentivityNode.fromEntailmentProfile
+      ⟨true, true, true, true, true, true, true, true, true, true⟩ =
+    AgentivityNode.fromEntailmentProfile
+      ⟨true, true, true, true, true, false, false, false, false, false⟩ := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 23. wellFormedPair Non-Preservation
+-- ════════════════════════════════════════════════════
+
+/-- **wellFormedPair is not preserved by the Grimm projection.**
+
+    @cite{dowty-1991}'s `wellFormedPair` constrains inter-argument entailment
+    pairings: causation→CoS, movement→stationary, IE→DE. These are
+    *relational* constraints between two profiles.
+
+    @cite{grimm-2011}'s system replaces them with a single persistence
+    dimension on the patient side. The IE feature is dropped entirely
+    from the agentivity projection, so the IE→DE constraint becomes
+    invisible.
+
+    Witness: s₁ = {C} and s₂ = {C, IE} map to the same AgentivityNode
+    (both have instigation only). With o = {CoS}, wellFormedPair holds
+    for s₁ (IE=false, so IE→DE vacuously satisfied) but fails for s₂
+    (IE=true but DE=false). The Grimm system cannot detect this. -/
+theorem wellFormedPair_not_preserved_by_grimm :
+    ∃ s₁ o₁ s₂ o₂ : EntailmentProfile,
+    wellFormedPair s₁ o₁ = true ∧ wellFormedPair s₂ o₂ = false ∧
+    GrimmNode.fromSubjectProfile s₁ = GrimmNode.fromSubjectProfile s₂ ∧
+    GrimmNode.fromObjectProfile o₁ = GrimmNode.fromObjectProfile o₂ :=
+  ⟨⟨false, false, true, false, false, false, false, false, false, false⟩,
+   ⟨false, false, false, false, false, true, false, false, false, false⟩,
+   ⟨false, false, true, false, true, false, false, false, false, false⟩,
+   ⟨false, false, false, false, false, true, false, false, false, false⟩,
+   rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 24. ArgTemplate → GrimmNode Bridge
+-- ════════════════════════════════════════════════════
+
+open Semantics.Events.LevinClassProfiles
+open Semantics.Events.Affectedness
+
+/-- Project an ArgTemplate's subject profile to a GrimmNode. -/
+def _root_.Semantics.Events.LevinClassProfiles.ArgTemplate.subjectGrimm
+    (t : ArgTemplate) : GrimmNode :=
+  GrimmNode.fromSubjectProfile t.subjectProfile
+
+/-- Project an ArgTemplate's object profile (if any) to a GrimmNode. -/
+def _root_.Semantics.Events.LevinClassProfiles.ArgTemplate.objectGrimm
+    (t : ArgTemplate) : Option GrimmNode :=
+  t.objectProfile.map GrimmNode.fromObjectProfile
+
+/-- Project an ArgTemplate's object to its affectedness degree. -/
+def _root_.Semantics.Events.LevinClassProfiles.ArgTemplate.objectAffectedness
+    (t : ArgTemplate) : Option AffectednessDegree :=
+  t.objectProfile.map profileToDegree
+
+-- ── Per-template GrimmNode verification ──
+
+/-- Manner-contact subject → full agent on the Grimm lattice. -/
+theorem mannerContact_subject_grimm :
+    mannerContact.subjectGrimm.agentivity = ⊤ := by native_decide
+
+/-- Manner-contact object → potential affectedness (no CoS entailed). -/
+theorem mannerContact_object_affectedness :
+    mannerContact.objectAffectedness = some AffectednessDegree.potential := rfl
+
+/-- Result-change object → nonquantized affectedness (CoS, no IT). -/
+theorem resultChange_object_affectedness :
+    resultChange.objectAffectedness = some AffectednessDegree.nonquantized := rfl
+
+/-- Creation object → quantized affectedness (CoS + IT). -/
+theorem creation_object_affectedness :
+    creation.objectAffectedness = some AffectednessDegree.quantized := rfl
+
+/-- Consumption object → quantized affectedness (CoS + IT). -/
+theorem consumption_object_affectedness :
+    consumption.objectAffectedness = some AffectednessDegree.quantized := rfl
+
+/-- Self-motion (intransitive) → no object affectedness. -/
+theorem selfMotion_no_object :
+    selfMotion.objectAffectedness = none := rfl
+
+/-- **Affectedness ordering across templates**: the named templates
+    are ordered by truth-conditional strength on the object side,
+    reproducing @cite{beavers-2010}'s hierarchy:
+    creation/consumption (quantized) > resultChange (nonquantized)
+    > mannerContact (potential) > perception (unspecified). -/
+theorem template_affectedness_hierarchy :
+    AffectednessDegree.ge .quantized .nonquantized = true ∧
+    AffectednessDegree.ge .nonquantized .potential = true ∧
+    creation.objectAffectedness = some AffectednessDegree.quantized ∧
+    resultChange.objectAffectedness = some AffectednessDegree.nonquantized ∧
+    mannerContact.objectAffectedness = some AffectednessDegree.potential ∧
+    perception.objectAffectedness = some AffectednessDegree.unspecified :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ── Cross-projection consistency: affectedness vs. persistence ──
+
+/-- The affectedness and persistence projections are consistent for
+    manner-contact objects: potential affectedness ↔ totalPersistence
+    (the object may change but the verb doesn't entail it). -/
+theorem mannerContact_cross_projection :
+    mannerContact.objectAffectedness = some AffectednessDegree.potential ∧
+    mannerContact.objectProfile.map PersistenceLevel.fromPatientProfile =
+      some .totalPersistence := ⟨rfl, by native_decide⟩
+
+/-- Result-change: nonquantized ↔ quPersBeginning (changed but persists). -/
+theorem resultChange_cross_projection :
+    resultChange.objectAffectedness = some AffectednessDegree.nonquantized ∧
+    resultChange.objectProfile.map PersistenceLevel.fromPatientProfile =
+      some .quPersBeginning := ⟨rfl, by native_decide⟩
+
+/-- Creation: quantized ↔ exPersEnd (entity comes into existence). -/
+theorem creation_cross_projection :
+    creation.objectAffectedness = some AffectednessDegree.quantized ∧
+    creation.objectProfile.map PersistenceLevel.fromPatientProfile =
+      some .exPersEnd := ⟨rfl, by native_decide⟩
 
 end Semantics.Events.AgentivityLattice

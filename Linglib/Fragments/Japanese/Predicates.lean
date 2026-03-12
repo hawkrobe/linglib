@@ -34,7 +34,6 @@ def tanosimi : JapaneseVerbEntry where
   formGerund := "tanosimi"
   formProgressive := "tanosimi"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.relevanceBased .positive))
@@ -47,7 +46,6 @@ def osore : JapaneseVerbEntry where
   formGerund := "osorete"
   formProgressive := "osoreteiru"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
@@ -60,7 +58,6 @@ def kitai : JapaneseVerbEntry where
   formGerund := "kitai shite"
   formProgressive := "kitai shiteiru"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
@@ -73,7 +70,6 @@ def shinpai : JapaneseVerbEntry where
   formGerund := "shinpai shite"
   formProgressive := "shinpai shiteiru"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
@@ -96,8 +92,6 @@ def ik_ase : JapaneseVerbEntry where
   formGerund := "ik-ase-te"
   formProgressive := "ik-ase-teiru"
   complementType := .smallClause
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .make
 
@@ -109,8 +103,6 @@ def tabe_sase : JapaneseVerbEntry where
   formGerund := "tabe-sase-te"
   formProgressive := "tabe-sase-teiru"
   complementType := .smallClause
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .make
 
@@ -133,8 +125,6 @@ def hanareru : JapaneseVerbEntry where
   formGerund := "hanarete"
   formProgressive := "hanareteiru"
   complementType := .np
-  subjectTheta := some .theme
-  objectTheta := some .source
   unaccusative := true
   passivizable := false
 
@@ -147,8 +137,6 @@ def deru : JapaneseVerbEntry where
   formGerund := "dete"
   formProgressive := "deteiru"
   complementType := .np
-  subjectTheta := some .theme
-  objectTheta := some .source
   unaccusative := true
   passivizable := false
 

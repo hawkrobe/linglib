@@ -1,27 +1,42 @@
-import Linglib.Core.Lexical.ThetaRole
+import Linglib.Theories.Semantics.Events.ThetaRole
 
 /-!
 # Entailment Profiles and the Argument Selection Principle
 
 @cite{dowty-1991} @cite{davis-koenig-2000} @cite{grimm-2011} @cite{levin-2019}
+@cite{beavers-2010}
 
 Entailment profiles encode the lexical entailments a verb imposes on each of
-its arguments. Proto-Agent and Proto-Patient are **cluster concepts**: each is
-defined by a set of independent entailments, and an argument's "degree of
-agenthood/patienthood" is determined by which entailments it satisfies.
+its arguments, reflecting the modern consensus on proto-roles
+(@cite{levin-2019}). Proto-Agent and Proto-Patient are **cluster concepts**:
+each is a set of entailments, and an argument's "degree of agenthood/patienthood"
+is determined by which entailments it satisfies.
 
-## Modern ASP (lattice-based)
+## Entailment structure
 
-@cite{dowty-1991}'s original Argument Selection Principle used flat counting
-(more P-Agent entailments → subject). Subsequent work (@cite{davis-koenig-2000},
-@cite{grimm-2011}, @cite{levin-2019}) identified two problems:
+The 10 entailments are not fully independent (@cite{levin-2019} §2.1):
 
-1. **Entailment non-independence**: causation↔changeOfState, movement↔stationary,
-   and independentExistence↔dependentExistence are paired across arguments;
-   volition presupposes sentience within an argument.
-2. **Priority**: causation outranks other P-Agent entailments for subject selection.
+- **P-Agent pairing**: three P-Agent entailments are paired with P-Patient
+  entailments in asymmetric relations (causation↔changeOfState,
+  movement↔stationary, independentExistence↔dependentExistence).
+- **P-Agent dependency**: volition presupposes sentience.
+- **P-Agent priority**: causation outranks other P-Agent entailments for
+  subject selection (@cite{davis-koenig-2000}).
+- **P-Patient implicational structure**: the affectedness-related entailments
+  (changeOfState, incrementalTheme, causallyAffected) form an implicational
+  hierarchy (@cite{beavers-2010}).
 
-The modern ASP uses **lattice comparison** (@cite{grimm-2011}): argument A outranks
+These dependencies are exploited by the modern ASP (lattice comparison, §3–4)
+and formalized algebraically in `AgentivityLattice.lean`:
+- **P-Agent** → `AgentivityNode` (4 privative features on a lattice;
+  @cite{grimm-2011})
+- **P-Patient** → `PersistenceLevel` (4 persistence dimensions;
+  @cite{grimm-2011}), and `AffectednessDegree` (implicational hierarchy
+  of truth-conditional strength; @cite{beavers-2010})
+
+## Argument Selection Principle (lattice-based)
+
+The ASP uses **lattice comparison** (@cite{grimm-2011}): argument A outranks
 argument B for subjecthood iff A's P-Agent feature set dominates (is a superset of)
 B's. When P-Agent features are incomparable, P-Patient features break the tie.
 This naturally handles priority because feature-set inclusion respects the
@@ -29,6 +44,9 @@ entailment dependencies.
 
 For unaccusativity, the priority-based approach checks whether the sole argument
 has core agentive features (volition/causation) rather than flat-counting.
+
+@cite{dowty-1991}'s original flat-counting ASP is preserved in
+`Phenomena/ArgumentStructure/Studies/Dowty1991.lean` for comparison.
 -/
 
 namespace Semantics.Events.ProtoRoles
@@ -233,14 +251,52 @@ theorem effector_has_pAgent (p : EntailmentProfile) (h : isEffector p = true) :
   simp [EntailmentProfile.pAgentScore, hm, hie]
 
 -- ════════════════════════════════════════════════════
--- § 9. ThetaRole → Canonical Profile
+-- § 9. EntailmentProfile → ThetaRole (canonical direction)
 -- ════════════════════════════════════════════════════
 
-/-- Map each ThetaRole to its canonical entailment profile.
+/-- Derive a convenience theta-role label from an entailment profile.
 
-    Traditional role labels are cluster concepts: each name picks out a
-    typical combination of entailments. This mapping derives the labels
-    from the underlying entailment space. -/
+    This is the **canonical direction**: profiles are authoritative,
+    labels are derived. The function uses feature-based heuristics
+    to assign the most natural label:
+
+    - Volition → agent
+    - Sentience without causation → experiencer
+    - Causation without sentience → stimulus
+    - P-Patient features without P-Agent → patient (if CoS) or theme
+    - IE only → goal (ambiguous with source)
+    - No distinguishing features → none
+
+    Note: instrument and stimulus have identical canonical profiles
+    ({causation, IE}), as do goal and source ({IE}). The function
+    defaults to stimulus and goal respectively. Disambiguation requires
+    external context (e.g., `VerbCore.causalSource`). -/
+def EntailmentProfile.toRole (p : EntailmentProfile) : Option ThetaRole :=
+  if p.volition then some .agent
+  else if p.sentience && !p.causation then some .experiencer
+  else if p.causation && !p.sentience then some .stimulus
+  else if !p.volition && !p.sentience && !p.causation && !p.movement then
+    -- No core P-Agent features (at most IE). Disambiguate by P-Patient.
+    if p.pPatientScore > 0 then
+      if p.changeOfState || p.causallyAffected then some .patient
+      else some .theme
+    else if p.independentExistence then some .goal
+    else none
+  else none
+
+-- ════════════════════════════════════════════════════
+-- § 9b. ThetaRole → Canonical Profile (inverse direction)
+-- ════════════════════════════════════════════════════
+
+/-- Map each ThetaRole label back to its canonical entailment profile.
+
+    This is the **inverse direction** — from convenience labels to the
+    underlying entailment structure. Each label names a prototypical
+    combination of entailments.
+
+    Round-trip: `toRole (canonicalProfile θ) = some θ'` where `θ'` is
+    the canonical representative. Note that instrument→stimulus and
+    source→goal collapse because their canonical profiles are identical. -/
 def ThetaRole.canonicalProfile : ThetaRole → EntailmentProfile
   | .agent       => ⟨true, true, true, true, true,     false, false, false, false, false⟩
   | .patient     => ⟨false, false, false, false, false, true, false, true, true, false⟩
@@ -250,6 +306,40 @@ def ThetaRole.canonicalProfile : ThetaRole → EntailmentProfile
   | .stimulus    => ⟨false, false, true, false, true,   false, false, false, false, false⟩
   | .goal        => ⟨false, false, false, false, true,  false, false, false, false, false⟩
   | .source      => ⟨false, false, false, false, true,  false, false, false, false, false⟩
+
+-- Round-trip: toRole ∘ canonicalProfile for distinguishable roles
+
+/-- Agent survives round-trip. -/
+theorem toRole_canonical_agent :
+    (ThetaRole.canonicalProfile .agent).toRole = some .agent := by native_decide
+
+/-- Patient survives round-trip. -/
+theorem toRole_canonical_patient :
+    (ThetaRole.canonicalProfile .patient).toRole = some .patient := by native_decide
+
+/-- Theme survives round-trip. -/
+theorem toRole_canonical_theme :
+    (ThetaRole.canonicalProfile .theme).toRole = some .theme := by native_decide
+
+/-- Experiencer survives round-trip. -/
+theorem toRole_canonical_experiencer :
+    (ThetaRole.canonicalProfile .experiencer).toRole = some .experiencer := by native_decide
+
+/-- Stimulus survives round-trip. -/
+theorem toRole_canonical_stimulus :
+    (ThetaRole.canonicalProfile .stimulus).toRole = some .stimulus := by native_decide
+
+/-- Goal survives round-trip. -/
+theorem toRole_canonical_goal :
+    (ThetaRole.canonicalProfile .goal).toRole = some .goal := by native_decide
+
+/-- Instrument collapses to stimulus (identical profiles: {C, IE}). -/
+theorem toRole_canonical_instrument :
+    (ThetaRole.canonicalProfile .instrument).toRole = some .stimulus := by native_decide
+
+/-- Source collapses to goal (identical profiles: {IE}). -/
+theorem toRole_canonical_source :
+    (ThetaRole.canonicalProfile .source).toRole = some .goal := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Canonical Verb Profiles
@@ -315,6 +405,23 @@ def sweepBasicSubjectProfile : EntailmentProfile :=
     Instrument lexicalization forces volition, sentience, causation. -/
 def sweepBroomSubjectProfile : EntailmentProfile :=
   ⟨true, true, true, true, true, false, false, false, false, false⟩
+
+-- toRole on canonical verb profiles
+
+/-- "kick" subject profile → agent. -/
+theorem kick_subject_toRole : kickSubjectProfile.toRole = some .agent := by native_decide
+
+/-- "kick" object profile → patient. -/
+theorem kick_object_toRole : kickObjectProfile.toRole = some .patient := by native_decide
+
+/-- "see" subject profile → experiencer. -/
+theorem see_subject_toRole : seeSubjectProfile.toRole = some .experiencer := by native_decide
+
+/-- "arrive" subject profile → none (mixed P-Agent + P-Patient: movement disqualifies). -/
+theorem arrive_subject_toRole : arriveSubjectProfile.toRole = none := by native_decide
+
+/-- "die" subject profile → patient (pure P-Patient). -/
+theorem die_subject_toRole : dieSubjectProfile.toRole = some .patient := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 11. Verification Theorems

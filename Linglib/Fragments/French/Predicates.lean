@@ -39,8 +39,6 @@ def faire : FrenchVerbEntry where
   formPartPasse := "fait"
   formPartPres := "faisant"
   complementType := .smallClause
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .make
 
@@ -52,8 +50,6 @@ def laisser : FrenchVerbEntry where
   formPartPasse := "laissé"
   formPartPres := "laissant"
   complementType := .smallClause
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .enable
 

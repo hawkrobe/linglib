@@ -50,8 +50,6 @@ def lassen : GermanVerbEntry where
   formPast := "ließ"
   formPastPart := "gelassen"
   complementType := .smallClause
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .enable
 
@@ -63,8 +61,6 @@ def machen : GermanVerbEntry where
   formPast := "machte"
   formPastPart := "gemacht"
   complementType := .smallClause
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .make
 
@@ -76,8 +72,6 @@ def toeten : GermanVerbEntry where
   formPast := "tötete"
   formPastPart := "getötet"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   causativeBuilder := some .make
 
 /-- *zerbrechen* — lexical COMPACT causative ("break").
@@ -88,8 +82,6 @@ def zerbrechen : GermanVerbEntry where
   formPast := "zerbrach"
   formPastPart := "zerbrochen"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   causativeBuilder := some .make
 
 -- ============================================================================
@@ -103,7 +95,6 @@ def hoffen : GermanVerbEntry where
   formPast := "hoffte"
   formPastPart := "gehofft"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
@@ -115,7 +106,6 @@ def fuerchten : GermanVerbEntry where
   formPast := "fürchtete"
   formPastPart := "gefürchtet"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
@@ -127,7 +117,6 @@ def befuerchten : GermanVerbEntry where
   formPast := "befürchtete"
   formPastPart := "befürchtet"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
@@ -139,7 +128,6 @@ def wuenschen : GermanVerbEntry where
   formPast := "wünschte"
   formPastPart := "gewünscht"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
@@ -151,7 +139,6 @@ def sorgen : GermanVerbEntry where
   formPast := "sorgte sich"
   formPastPart := "sich gesorgt"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
@@ -174,8 +161,6 @@ def bestrafen : GermanVerbEntry where
   formPast := "bestrafte"
   formPastPart := "bestraft"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   presupType := some .softTrigger
   senseTag := .occasion
 
@@ -186,8 +171,6 @@ def belohnen : GermanVerbEntry where
   formPast := "belohnte"
   formPastPart := "belohnt"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   presupType := some .softTrigger
   senseTag := .occasion
 
@@ -198,8 +181,6 @@ def loben : GermanVerbEntry where
   formPast := "lobte"
   formPastPart := "gelobt"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   presupType := some .softTrigger
   senseTag := .occasion
 
@@ -210,8 +191,6 @@ def kritisieren : GermanVerbEntry where
   formPast := "kritisierte"
   formPastPart := "kritisiert"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   presupType := some .softTrigger
   senseTag := .occasion
 
@@ -222,8 +201,6 @@ def danken : GermanVerbEntry where
   formPast := "dankte"
   formPastPart := "gedankt"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .experiencer
   presupType := some .softTrigger
   senseTag := .occasion
 
@@ -234,8 +211,6 @@ def verklagen : GermanVerbEntry where
   formPast := "verklagte"
   formPastPart := "verklagt"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   presupType := some .softTrigger
   senseTag := .occasion
 
@@ -246,8 +221,6 @@ def gratulieren : GermanVerbEntry where
   formPast := "gratulierte"
   formPastPart := "gratuliert"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   presupType := some .softTrigger
   senseTag := .occasion
 
@@ -258,8 +231,6 @@ def zurechtweisen : GermanVerbEntry where
   formPast := "wies zurecht"
   formPastPart := "zurechtgewiesen"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   presupType := some .softTrigger
   senseTag := .occasion
 
@@ -299,13 +270,13 @@ theorem occasion_verbs_sense_tag :
     loben.senseTag = .occasion ∧
     kritisieren.senseTag = .occasion := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- German occasion verbs have agent subjects (unlike English semi-modal
-    occasion verbs which have experiencer subjects). These are interpersonal
-    action verbs, not implicative/semi-modal verbs. -/
-theorem occasion_verbs_agent_subject :
-    bestrafen.subjectTheta = some .agent ∧
-    belohnen.subjectTheta = some .agent ∧
-    kritisieren.subjectTheta = some .agent := ⟨rfl, rfl, rfl⟩
+/-- German occasion verbs are interpersonal action verbs (not semi-modal).
+    Their agent-subject behavior follows from being non-occasion senseTag
+    (unlike English semi-modal occasion verbs which have experiencer subjects). -/
+theorem occasion_verbs_are_action :
+    bestrafen.senseTag = .occasion ∧
+    belohnen.senseTag = .occasion ∧
+    kritisieren.senseTag = .occasion := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 6: Causative Grounding Theorems

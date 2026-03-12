@@ -233,12 +233,6 @@ theorem murmur_levin_class :
 theorem speak_levin_class :
     speak.levinClass = some .mannerOfSpeaking := rfl
 
-theorem whisper_theme_subject :
-    whisper.subjectTheta = some .theme := rfl
-
-theorem speak_agent_subject :
-    speak.subjectTheta = some .agent := rfl
-
 -- ════════════════════════════════════════════════════
 -- § 7. Dowty Divergence
 -- ════════════════════════════════════════════════════
@@ -674,14 +668,11 @@ theorem mos_levin_diverges :
 
 /-- The MoS split: both whisper and speak are §37.3 mannerOfSpeaking,
     but they diverge on unaccusativity. Levin class membership alone
-    cannot explain this — the split is between verbs that lexicalize
-    their subject as theme (whisper) vs agent (speak). -/
+    cannot explain this. -/
 theorem mos_within_class_split :
     whisper.levinClass = speak.levinClass
     ∧ whisper.unaccusative = true
-    ∧ speak.unaccusative = false
-    ∧ whisper.subjectTheta = some .theme
-    ∧ speak.subjectTheta = some .agent := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    ∧ speak.unaccusative = false := ⟨rfl, rfl, rfl⟩
 
 -- CoS classes: causative/inchoative alternation → unaccusative inchoative
 

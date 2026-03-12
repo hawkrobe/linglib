@@ -21,66 +21,31 @@ open Core.Time
 open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
--- § 1. Per-Verb Role Verification
+-- § 1. Per-Verb Role Verification (via entailment profiles)
 -- ════════════════════════════════════════════════════
 
-/-- "kick" has agent as subject theta role. -/
-theorem kick_subject_agent : kick.subjectTheta = some .agent := rfl
+/-- "kick" has agent as subject role (derived from entailment profile). -/
+theorem kick_subject_agent : kick.toVerbCore.subjectRole = some .agent := by native_decide
 
-/-- "kick" has patient as object theta role. -/
-theorem kick_object_patient : kick.objectTheta = some .patient := rfl
+/-- "kick" has patient as object role (derived from entailment profile). -/
+theorem kick_object_patient : kick.toVerbCore.objectRole = some .patient := by native_decide
 
-/-- "give" has agent subject, theme direct object, goal indirect object. -/
-theorem give_roles :
-    give.subjectTheta = some .agent ∧
-    give.objectTheta = some .theme ∧
-    give.object2Theta = some .goal :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- "see" has experiencer subject and stimulus object. -/
-theorem see_roles :
-    see.subjectTheta = some .experiencer ∧
-    see.objectTheta = some .stimulus :=
-  ⟨rfl, rfl⟩
+/-- "see" has experiencer subject (derived from entailment profile). -/
+theorem see_subject_experiencer : see.toVerbCore.subjectRole = some .experiencer := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. ThetaRole.toRel Bridge Verification
 -- ════════════════════════════════════════════════════
 
-/-- "kick"'s subject theta role maps to the agent relation in any frame. -/
-theorem subjectTheta_toRel_kick {Entity Time : Type*} [LE Time]
+/-- "kick"'s subject role maps to the agent relation in any frame. -/
+theorem subjectRole_toRel_kick {Entity Time : Type*} [LE Time]
     (frame : ThematicFrame Entity Time) :
-    kick.subjectTheta.map (ThetaRole.toRel · frame) = some frame.agent := rfl
+    kick.toVerbCore.subjectRole.map (ThetaRole.toRel · frame) = some frame.agent := rfl
 
-/-- "kick"'s object theta role maps to the patient relation in any frame. -/
-theorem objectTheta_toRel_kick {Entity Time : Type*} [LE Time]
+/-- "kick"'s object role maps to the patient relation in any frame. -/
+theorem objectRole_toRel_kick {Entity Time : Type*} [LE Time]
     (frame : ThematicFrame Entity Time) :
-    kick.objectTheta.map (ThetaRole.toRel · frame) = some frame.patient := rfl
-
-/-- "give"'s subject theta role maps to the agent relation. -/
-theorem subjectTheta_toRel_give {Entity Time : Type*} [LE Time]
-    (frame : ThematicFrame Entity Time) :
-    give.subjectTheta.map (ThetaRole.toRel · frame) = some frame.agent := rfl
-
-/-- "give"'s object theta role maps to the theme relation. -/
-theorem objectTheta_toRel_give {Entity Time : Type*} [LE Time]
-    (frame : ThematicFrame Entity Time) :
-    give.objectTheta.map (ThetaRole.toRel · frame) = some frame.theme := rfl
-
-/-- "give"'s indirect object theta role maps to the goal relation. -/
-theorem object2Theta_toRel_give {Entity Time : Type*} [LE Time]
-    (frame : ThematicFrame Entity Time) :
-    give.object2Theta.map (ThetaRole.toRel · frame) = some frame.goal := rfl
-
-/-- "see"'s subject theta role maps to the experiencer relation. -/
-theorem subjectTheta_toRel_see {Entity Time : Type*} [LE Time]
-    (frame : ThematicFrame Entity Time) :
-    see.subjectTheta.map (ThetaRole.toRel · frame) = some frame.experiencer := rfl
-
-/-- "see"'s object theta role maps to the stimulus relation. -/
-theorem objectTheta_toRel_see {Entity Time : Type*} [LE Time]
-    (frame : ThematicFrame Entity Time) :
-    see.objectTheta.map (ThetaRole.toRel · frame) = some frame.stimulus := rfl
+    kick.toVerbCore.objectRole.map (ThetaRole.toRel · frame) = some frame.patient := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. Concrete Example (Toy model)

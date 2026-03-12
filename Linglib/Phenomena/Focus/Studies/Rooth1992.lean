@@ -567,11 +567,6 @@ theorem fragment_eat_past_form : eat.formPast = "ate" := rfl
 theorem fragment_eat_past_in_lexicon :
     (focusLex .fredBeans eat.formPast).isSome = true := rfl
 
-/-- "eat" assigns agent to subject and patient to object. -/
-theorem fragment_eat_agent_patient :
-    eat.subjectTheta = some .agent ∧
-    eat.objectTheta = some .patient := ⟨rfl, rfl⟩
-
 end FragmentVerbs
 
 -- ═══════════════════════════════════════════════════════════════════════

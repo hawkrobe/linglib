@@ -123,26 +123,6 @@ theorem agPat_profile_matches_agent :
     agPatSubjectProfile = ThetaRole.canonicalProfile .agent := rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Bridge to Fragment: Theta Role Annotations
--- ════════════════════════════════════════════════════
-
-/-- ExpStim (Class I) verbs assign experiencer to subject. -/
-theorem expStim_verbs_experiencer_subject :
-    enjoy.subjectTheta = some .experiencer ∧
-    like.subjectTheta = some .experiencer ∧
-    love.subjectTheta = some .experiencer ∧
-    hate.subjectTheta = some .experiencer :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- StimExp (Class II) verbs assign stimulus to subject. -/
-theorem stimExp_verbs_stimulus_subject :
-    frighten.subjectTheta = some .stimulus ∧
-    amuse.subjectTheta = some .stimulus ∧
-    fascinate.subjectTheta = some .stimulus ∧
-    irritate.subjectTheta = some .stimulus :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
 -- § 6. IC Bias Prediction via Coherence Relations
 -- ════════════════════════════════════════════════════
 
@@ -185,28 +165,7 @@ theorem predictions_match_data :
 -- § 7. Occasion Verbs (@cite{solstad-bott-2024}, S&P 17:11)
 -- ════════════════════════════════════════════════════
 
-/-- Occasion verbs in the S&P paper's sense (manage, dare, bother, hesitate)
-    have experiencer subjects — same profile as ExpStim (S+IE). They
-    presuppose a prior occasioning eventuality but their IC bias properties
-    are not directly tested in the 2022 experiment (which studies only
-    psych verbs). The fragment entries assign `.experiencer` to their
-    subject theta role. -/
-theorem occasion_verbs_experiencer_subject :
-    manage_occasion.subjectTheta = some .experiencer ∧
-    dare.subjectTheta = some .experiencer ∧
-    bother.subjectTheta = some .experiencer ∧
-    hesitate.subjectTheta = some .experiencer :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
-/-- The two senses of "manage" diverge on subject theta role:
-    traditional says agent, Solstad & Bott say experiencer.
-    This is the core of the "agent-evocator" tension. -/
-theorem manage_senses_diverge_on_theta :
-    manage.subjectTheta = some .agent ∧
-    manage_occasion.subjectTheta = some .experiencer :=
-  ⟨rfl, rfl⟩
-
-/-- Despite different theta labels, both senses share implicative semantics. -/
+/-- Despite different sense labels, both senses of "manage" share implicative semantics. -/
 theorem manage_senses_share_semantics :
     manage.implicativeBuilder = manage_occasion.implicativeBuilder := rfl
 
@@ -215,28 +174,6 @@ theorem manage_senses_share_semantics :
 -- ════════════════════════════════════════════════════
 
 open Phenomena.Reference.Studies.RosaArnold2017
-
-/-- Both IC bias and referential form bias are derived from the same
-    starting point: theta-role assignments in the Fragment lexicon. Each
-    chains through a different intermediate module but both derive a
-    binary discourse prediction from a ThetaRole.
-
-    IC path:   enjoy.subjectTheta → canonicalProfile → predictICBias → .np2
-    Form path: give.object2Theta  → transferNextMention → predictedForm → pronoun
-
-    This parallel structure is non-trivial: it means a single change to a
-    Fragment theta-role annotation simultaneously breaks predictions in
-    BOTH reference form selection and implicit causality. -/
-theorem fragment_theta_drives_both_phenomena :
-    -- IC: enjoy's experiencer subject → NP2 bias (via proto-role profile)
-    (enjoy.subjectTheta.bind (fun θ =>
-      some (predictICBias (ThetaRole.canonicalProfile θ)))) =
-    some ICBias.np2 ∧
-    -- Transfer: give's goal indirect object → pronoun (via next-mention)
-    (give.object2Theta.bind (fun θ =>
-      some (transferNextMention θ).predictedForm)) =
-    some Core.Prominence.DefinitenessLevel.personalPronoun := by
-  exact ⟨by native_decide, rfl⟩
 
 /-- The IC reversal (StimExp→NP1, ExpStim→NP2) and the transfer verb
     goal bias are both instances of the same deeper pattern: **swapping

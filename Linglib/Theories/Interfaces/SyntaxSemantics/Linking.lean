@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.ThetaRole
+import Linglib.Theories.Semantics.Events.ThetaRole
 
 /-!
 # Linking Theory Interface

@@ -34,9 +34,9 @@ This follows the `deriveSelectionClass` pattern from LeftPeriphery.lean. -/
 
 /-- Derive Noonan's CTP class from a VerbEntry's primitive fields.
 
-    The mapping uses `objectTheta`, `factivePresup`, `causativeBuilder`,
+    The mapping uses `levinClass`, `factivePresup`, `causativeBuilder`,
     `implicativeBuilder`, `cosType`, `speechActVerb`, and `attitudeBuilder`:
-    - objectTheta ==.stimulus → perception (see)
+    - levinClass ==.see → perception (see)
     - factivePresup → knowledge (know, realize, regret)
     - causativeBuilder.isSome → manipulative (cause, make, force)
     - implicativeBuilder.isSome → achievement (manage, fail)
@@ -47,7 +47,7 @@ This follows the `deriveSelectionClass` pattern from LeftPeriphery.lean. -/
     - attitudeBuilder preferential other → propAttitude (fear, worry)
     - Otherwise → none -/
 def deriveCTPClass (v : VerbEntry) : Option CTPClass :=
-  if v.objectTheta == some .stimulus then some .perception
+  if v.levinClass == some .see then some .perception
   else if v.factivePresup then some .knowledge
   else if v.causativeBuilder.isSome then some .manipulative
   else if v.implicativeBuilder.isSome then some .achievement
@@ -310,7 +310,7 @@ it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern.
     - Preferential negative/uncertainty attitude → indicative (fear, worry)
     - Doxastic attitude → indicative (believe, think)
     - Factive → indicative (know: presupposes truth)
-    - Perception (objectTheta ==.stimulus) → indicative (see)
+    - Perception (levinClass ==.see) → indicative (see)
     - Speech-act verb → moodNeutral (say: varies cross-linguistically)
     - Change-of-state → moodNeutral (stop: varies)
     - Causative → subjunctive (make: irrealis)
@@ -323,7 +323,7 @@ def deriveMoodSelector (v : VerbEntry) : MoodSelector :=
   | some (.doxastic _) => .indicativeSelecting
   | none =>
     if v.factivePresup then .indicativeSelecting
-    else if v.objectTheta == some .stimulus then .indicativeSelecting
+    else if v.levinClass == some .see then .indicativeSelecting
     else if v.speechActVerb then .moodNeutral
     else if v.cosType.isSome then .moodNeutral
     else if v.causativeBuilder.isSome then .subjunctiveSelecting

@@ -4,19 +4,31 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Core.WALS.Languages
 
 /-!
-# 54-Language Word-Order Efficiency
+# Study 2: 54-Language Word-Order Efficiency
 @cite{hahn-degen-futrell-2021}
 
-54 languages from Universal Dependencies corpora, measuring whether real
-word orders achieve more efficient memory-surprisal trade-offs than
-grammar-preserving random baselines. 50/54 languages are more efficient;
+Tests the **Efficient Trade-off Hypothesis**: the ordering regularities
+of natural language optimize the memory-surprisal trade-off, serving the
+communicative interest of the hearer. 54 languages from Universal
+Dependencies corpora are measured against grammar-preserving random
+baselines. 50/54 languages have significantly more efficient trade-offs;
 the 4 exceptions (Latvian, North Sami, Polish, Slovak) all have high
 word-order freedom (high branching direction entropy).
 
+Key empirical finding (Figure 13): branching direction entropy is
+**negatively correlated** with optimization strength (Spearman ρ ≈ −.58,
+p < .0001). Languages with freer word order show weaker optimization,
+plausibly because free-order languages use word order to encode
+information structure rather than minimize processing cost.
+
 ## Values
 
-- `moreEfficient`: whether the real language's trade-off AUC < baseline AUC
-- `gMean1000`: bootstrapped mean G × 1000 (SI Figure 2). G = 1.0 means fully optimized.
+- `moreEfficient`: whether the real language's trade-off AUC is
+  significantly lower than baseline AUCs (two-sided binomial test,
+  Hochberg-corrected p < .01)
+- `gMean1000`: bootstrapped mean G × 1000 (SI Figure 2). G = fraction of
+  baseline grammars less efficient than the real language. 1000 = fully
+  optimized.
 - `branchDirEntropy1000`: branching direction entropy × 1000 (higher = more
   word-order freedom). From `branching_entropy.tsv` at
   https://github.com/m-hahn/memory-surprisal (used in Figure 13 via `order_freedom.R`).
@@ -24,6 +36,8 @@ word-order freedom (high branching direction entropy).
 -/
 
 namespace Phenomena.WordOrder.Studies.HahnDegenFutrell2021
+
+open Processing.MemorySurprisal
 
 -- ============================================================================
 -- Data Structure
@@ -34,7 +48,10 @@ structure LanguageEfficiency where
   name : String
   isoCode : String
   family : String
-  /-- Whether the real language achieves a more efficient trade-off than baselines -/
+  /-- Whether the real language's trade-off AUC is significantly lower than
+  baseline AUCs (Hochberg-corrected p < .01). This is the empirical
+  instantiation of `Processing.MemorySurprisal.efficientTradeoffHypothesis`
+  from the theory module. -/
   moreEfficient : Bool
   /-- Bootstrapped mean G × 1000 (from SI Figure 2). 1000 = fully optimized. -/
   gMean1000 : Nat
@@ -276,32 +293,23 @@ theorem all_exceptions_below_threshold :
     exceptionLanguages.all (·.gMean1000 < 500) = true := by native_decide
 
 -- ============================================================================
--- Per-Datum Verification
+-- Cross-Field Consistency
 -- ============================================================================
 
-/-- Japanese is efficient (strongly head-final, low entropy). -/
-theorem japanese_efficient : japanese.moreEfficient = true := by native_decide
-/-- English is efficient. -/
-theorem english_efficient : english.moreEfficient = true := by native_decide
-/-- Arabic is efficient. -/
-theorem arabic_efficient : arabic.moreEfficient = true := by native_decide
-/-- German is efficient. -/
-theorem german_efficient : german.moreEfficient = true := by native_decide
-/-- Finnish is efficient. -/
-theorem finnish_efficient : finnish.moreEfficient = true := by native_decide
-/-- Turkish is efficient. -/
-theorem turkish_efficient : turkish.moreEfficient = true := by native_decide
-/-- Korean is efficient. -/
-theorem korean_efficient : korean.moreEfficient = true := by native_decide
+/-- The `moreEfficient` flag is consistent with a G ≥ 500 threshold
+across all 54 languages. This cross-checks two independently encoded
+fields: `moreEfficient` (from the binomial test) and `gMean1000`
+(from SI Figure 2's bootstrapped fraction). -/
+theorem efficiency_consistent_with_g_threshold :
+    allLanguages.all (λ l => l.moreEfficient == (l.gMean1000 ≥ 500)) = true := by
+  native_decide
 
-/-- Latvian is an exception. -/
-theorem latvian_exception : latvian.moreEfficient = false := by native_decide
-/-- North Sami is an exception. -/
-theorem northSami_exception : northSami.moreEfficient = false := by native_decide
-/-- Polish is an exception. -/
-theorem polish_exception : polish.moreEfficient = false := by native_decide
-/-- Slovak is an exception. -/
-theorem slovak_exception : slovak.moreEfficient = false := by native_decide
+/-- The 4 exceptions form a contiguous block at the bottom of the G
+ranking: no efficient language has G below any exception's G. -/
+theorem exceptions_below_all_efficient :
+    exceptionLanguages.all (λ exc =>
+      efficientLanguages.all (λ eff => eff.gMean1000 > exc.gMean1000)
+    ) = true := by native_decide
 
 -- ============================================================================
 -- Entropy Patterns
@@ -339,9 +347,10 @@ theorem exceptions_higher_mean_entropy :
 theorem slovak_lowest_g :
     allLanguages.all (·.gMean1000 ≥ slovak.gMean1000) = true := by native_decide
 
-/-- Most efficient languages have G = 1.0 (44 out of 50). -/
+/-- 42 out of 50 efficient languages have G = 1.0 (fully optimized:
+the real language beats every sampled baseline grammar). -/
 theorem most_efficient_fully_optimized :
-    (efficientLanguages.filter (·.gMean1000 = 1000)).length ≥ 40 := by native_decide
+    (efficientLanguages.filter (·.gMean1000 = 1000)).length = 42 := by native_decide
 
 -- ============================================================================
 -- Crosslinguistic Bridge to @cite{futrell-gibson-2020}
@@ -378,31 +387,91 @@ theorem polish_only_shared_exception :
     )) = ["pl"] := by native_decide
 
 -- ============================================================================
--- Bridge to HarmonicOrder (DLM explains head-direction generalization)
+-- Entropy–Optimization Correlation (Figure 13)
 -- ============================================================================
 
-/-- The DLM harmonic order prediction holds (from HarmonicOrder.lean). -/
-theorem harmonic_dlm_holds :
-    DepGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true := by native_decide
+/-! ### Negative correlation between word-order freedom and optimization
 
-/-- Languages with known low branching entropy (< 300) are all efficient. -/
+Figure 13 of @cite{hahn-degen-futrell-2021} shows that branching direction
+entropy (x-axis) is negatively correlated with the surprisal difference
+between real and baseline orders (y-axis). Spearman ρ ≈ −.58, p < .0001.
+
+We cannot compute a Spearman correlation in Lean without a ranking function,
+but we can verify the key structural claims that drive the correlation:
+- All low-entropy languages are efficient (rigid order → strong optimization)
+- All exceptions have high entropy (free order → weak optimization)
+- High entropy is necessary but not sufficient for being an exception -/
+
+/-- Languages with known low branching entropy (< 300) are all efficient.
+This is the left side of Figure 13: rigid-order languages cluster at
+high surprisal difference (strong optimization). -/
 theorem rigid_order_languages_efficient :
     (allLanguages.filter (λ l =>
       match l.branchDirEntropy1000 with | some e => e < 300 | none => false
     )).all (·.moreEfficient) = true := by native_decide
 
-/-- All 4 exceptions have entropy ≥ 315. -/
+/-- All 4 exceptions have entropy ≥ 315.
+This is the lower-right of Figure 13: exceptions cluster at high entropy. -/
 theorem exceptions_all_high_entropy :
     exceptionLanguages.all (λ l =>
       match l.branchDirEntropy1000 with | some e => e ≥ 315 | none => false
     ) = true := by native_decide
 
 /-- Not all high-entropy languages are exceptions: word-order freedom is
-necessary but not sufficient for being an exception. -/
+necessary but not sufficient for being an exception. Estonian (entropy 435)
+and Finnish (357) are efficient despite high entropy. -/
 theorem high_entropy_not_sufficient :
     (allLanguages.filter (λ l =>
       match l.branchDirEntropy1000 with | some e => e ≥ 315 | none => false
     )).any (·.moreEfficient) = true := by native_decide
+
+/-- The mean G value decreases as entropy increases: partition languages
+into low-entropy (< 250) and high-entropy (≥ 250) groups. The low-entropy
+group has higher mean G, consistent with the negative correlation. -/
+theorem low_entropy_higher_mean_g :
+    let lowEntropy := allLanguages.filter (λ l =>
+      match l.branchDirEntropy1000 with | some e => e < 250 | none => false)
+    let highEntropy := allLanguages.filter (λ l =>
+      match l.branchDirEntropy1000 with | some e => e ≥ 250 | none => false)
+    (lowEntropy.map (·.gMean1000)).foldl (· + ·) 0 / lowEntropy.length >
+    (highEntropy.map (·.gMean1000)).foldl (· + ·) 0 / highEntropy.length := by
+  native_decide
+
+-- ============================================================================
+-- Bridge to Information Locality and DLM
+-- ============================================================================
+
+/-! ### Information locality generalizes dependency locality
+
+@cite{hahn-degen-futrell-2021} argue (§"Other Kinds of Memory Bottlenecks"
+and Discussion) that information locality generalizes dependency length
+minimization: DLM minimizes *structural* distance between related words,
+while information locality minimizes the *information-theoretic* distance
+at which predictive information concentrates.
+
+The HarmonicOrder module proves that consistent head direction achieves
+shorter dependency chains (`harmonic_always_shorter`). The present study
+shows that languages with shorter dependencies (lower branching entropy,
+more consistent direction) achieve better memory-surprisal trade-offs
+(`rigid_order_languages_efficient`). Together, these two results establish
+the chain: harmonic order → short dependencies → information locality
+→ efficient trade-off. -/
+
+/-- The DLM harmonic order prediction holds: consistent head direction
+produces shorter total dependency length (from HarmonicOrder.lean). -/
+theorem harmonic_dlm_holds :
+    DepGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true := by native_decide
+
+/-- The full chain: all languages with low entropy (consistent direction,
+short dependencies) are efficient, and the DLM prediction holds.
+This connects the structural argument (HarmonicOrder) to the
+information-theoretic result (memory-surprisal efficiency). -/
+theorem dlm_to_efficiency_chain :
+    DepGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true ∧
+    (allLanguages.filter (λ l =>
+      match l.branchDirEntropy1000 with | some e => e < 300 | none => false
+    )).all (·.moreEfficient) = true := by
+  exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- Bridge to WALS (@cite{dryer-haspelmath-2013})

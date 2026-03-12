@@ -343,22 +343,6 @@ theorem hanareru_not_passivizable :
 theorem deru_not_passivizable :
     Fragments.Japanese.Predicates.deru.passivizable = false := rfl
 
-/-- Fragment *hanareru* assigns source θ-role to object. -/
-theorem hanareru_source_theta :
-    Fragments.Japanese.Predicates.hanareru.objectTheta = some .source := rfl
-
-/-- Fragment *deru* assigns source θ-role to object. -/
-theorem deru_source_theta :
-    Fragments.Japanese.Predicates.deru.objectTheta = some .source := rfl
-
-/-- Fragment *hanareru* assigns theme θ-role to subject. -/
-theorem hanareru_theme_subject :
-    Fragments.Japanese.Predicates.hanareru.subjectTheta = some .theme := rfl
-
-/-- Fragment *deru* assigns theme θ-role to subject. -/
-theorem deru_theme_subject :
-    Fragments.Japanese.Predicates.deru.subjectTheta = some .theme := rfl
-
 /-- Non-passivizability aligns with direct passive being ungrammatical. -/
 theorem passive_data_matches_fragment :
     hanareru_direct_passive.grammatical = false ∧
@@ -379,10 +363,5 @@ theorem deru_form_matches :
 /-- All argumenthood diagnostics succeed. -/
 theorem source_is_argument_both_frames :
     argumenthoodData.all (·.grammatical) = true := by native_decide
-
-/-- The source's θ-role is invariant across case frames. -/
-theorem source_theta_invariant :
-    Fragments.Japanese.Predicates.hanareru.objectTheta = some .source ∧
-    Fragments.Japanese.Predicates.deru.objectTheta = some .source := ⟨rfl, rfl⟩
 
 end Phenomena.Case.Ozaki2025.Data

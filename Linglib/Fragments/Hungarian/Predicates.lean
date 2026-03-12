@@ -66,7 +66,6 @@ def tud : HungarianVerbEntry where
   formPastIndef := "tudott"
   complementType := .finiteClause
   altComplementType := some .smallClause
-  subjectTheta := some .experiencer
   factivePresup := true
   presupType := some .softTrigger
   attitudeBuilder := some (.doxastic .veridical)
@@ -98,7 +97,6 @@ def hisz : HungarianVerbEntry where
   formPastDef := "hitte"
   formPastIndef := "hitt"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   opaqueContext := true
   attitudeBuilder := some (.doxastic .nonVeridical)
   complementSig := some .mono

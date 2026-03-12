@@ -130,16 +130,6 @@ def stimProfile : EntailmentProfile := ThetaRole.canonicalProfile .stimulus
 theorem psych_inchoative_stimulus_is_subject :
     outranksForSubject stimProfile expInchoativeProfile = true := by native_decide
 
-/-- Bridge: fragment records frighten/surprise as stimulus-subject. -/
-theorem stimExp_fragment :
-    frighten.subjectTheta = some .stimulus ∧
-    surprise.subjectTheta = some .stimulus := ⟨rfl, rfl⟩
-
-/-- Bridge: fragment records like/fear as experiencer-subject. -/
-theorem expStim_fragment :
-    like.subjectTheta = some .experiencer ∧
-    fear.subjectTheta = some .experiencer := ⟨rfl, rfl⟩
-
 -- ════════════════════════════════════════════════════
 -- § 3. Three Verb Classes (§9.3, pp.587–597)
 -- ════════════════════════════════════════════════════
@@ -344,14 +334,6 @@ theorem arrive_prediction_matches_fragment :
 theorem run_prediction_matches_fragment :
     predictsUnaccusative runSubjectProfile =
     Fragments.English.Predicates.Verbal.run.unaccusative := by native_decide
-
-/-- Bridge: basic sweep subject theta is underspecified (none). -/
-theorem sweep_underspecified :
-    Fragments.English.Predicates.Verbal.sweep.subjectTheta = none := rfl
-
-/-- Bridge: broom sweep subject theta is agent (obligatory agentivity). -/
-theorem sweep_instr_agentive :
-    Fragments.English.Predicates.Verbal.sweep_instr.subjectTheta = some .agent := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 8. Cross-Theory: @cite{grimm-2011} Lattice Predictions

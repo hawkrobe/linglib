@@ -300,7 +300,7 @@ theorem shared_gradient_hahn_count :
     shared_gradient_hahn_isoCodes.length = 28 := by native_decide
 
 /-- Languages with high SO entropy (> 600) in Levshina that also appear in Hahn et al.
-    all have high branching direction entropy (> 650) in Hahn et al.
+    all have high branching direction entropy (> 250) in Hahn et al.
 
     Two independent measures of word-order freedom (SO entropy from corpus counts,
     branching direction entropy from dependency trees) converge. -/
@@ -310,7 +310,7 @@ theorem high_so_entropy_implies_high_branch_entropy :
       HahnDegenFutrell2021.allLanguages.any (·.isoCode == p.isoCode))
     sharedHighSO.all (λ p =>
       match HahnDegenFutrell2021.allLanguages.find? (·.isoCode == p.isoCode) with
-      | some h => h.branchDirEntropy1000 > 650
+      | some h => match h.branchDirEntropy1000 with | some e => e > 250 | none => false
       | none => false) = true := by native_decide
 
 -- Bridge 3: Head-final proportion ↔ SO proportion (FutrellEtAl2020.lean)

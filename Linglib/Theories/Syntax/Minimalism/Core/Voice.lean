@@ -322,4 +322,127 @@ theorem phase_iff_theta (v : VoiceHead)
     v.phaseHead = v.assignsTheta := by
   rcases h with rfl | rfl | rfl | rfl <;> rfl
 
+-- ============================================================================
+-- § 9: Parametric Voice Decomposition (@cite{alexiadou-schfer-2015}, @cite{schfer-2017})
+-- ============================================================================
+
+/-- How a Voice head introduces (or fails to introduce) an external
+    argument semantically.
+
+    - `thematicArgument`: [+λx] — introduces agent/causer via λ-abstraction;
+      the external argument occupies Spec,VoiceP
+    - `thematicExistential`: [+∃x] — introduces agent/causer via ∃-binding;
+      agent is semantically present but syntactically implicit
+      (Finnish impersonal "passive"; @cite{schfer-2017}: 143–144)
+    - `expletive`: [−λx] — no semantic contribution; Voice is semantically
+      vacuous (anticausative SE, middles) -/
+inductive ExternalArgSemantics where
+  | thematicArgument
+  | thematicExistential
+  | expletive
+  deriving DecidableEq, BEq, Repr
+
+/-- The ±D / ±λx parametric decomposition of Voice heads.
+
+    From @cite{alexiadou-schfer-2015} (especially p. 109ff), extended by
+    @cite{schfer-2017}: 143–144. Two binary parameters generate the core
+    cross-linguistic typology of Voice:
+
+    - **±D** (`selectsSpecifier`): does Voice select a syntactic specifier?
+    - **±λx** (`extArgSemantics`): does Voice introduce semantic agentivity?
+
+    `none` values represent **underspecification**: the morpheme is compatible
+    with multiple parameter settings, with the actual setting determined by
+    independent factors (argument realization, verb class, pragmatics).
+    Indonesian *ber-* is fully underspecified ⟨none, none⟩
+    (@cite{beavers-udayana-2022}); Spanish *se* is underspecified for ±D. -/
+structure VoiceParams where
+  /-- Does Voice select a syntactic specifier (DP)?
+      `some true` = [+D], `some false` = [−D], `none` = underspecified -/
+  selectsSpecifier : Option Bool
+  /-- Does Voice introduce semantic agentivity/causation?
+      `none` = underspecified -/
+  extArgSemantics : Option ExternalArgSemantics
+  deriving DecidableEq, BEq, Repr
+
+/-- Map each named VoiceFlavor to its position in the ±D / ±λx
+    parameter space.
+
+    | Flavor | ±D | ±λx | Example |
+    |--------|----|-----|---------|
+    | agentive | +D | +λx (arg) | English active |
+    | causer | +D | +λx (arg) | Psych causative |
+    | nonThematic | +D | −λx | Romance anticausative SE |
+    | expletive | −D | −λx | English dispositional middle |
+    | impersonal | −D | +∃x | Finnish impersonal |
+    | passive | +D | −λx | English passive (*by*) |
+
+    Note: `nonThematic` and `passive` occupy the same cell [+D, −λx].
+    They differ in Case-checking (`VoiceHead.checksCase`), which is
+    a property of the full `VoiceHead`, not of the parametric decomposition. -/
+def VoiceFlavor.toParams : VoiceFlavor → VoiceParams
+  | .agentive    => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
+  | .causer      => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
+  | .nonThematic => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
+  | .expletive   => { selectsSpecifier := some false, extArgSemantics := some .expletive }
+  | .impersonal  => { selectsSpecifier := some false, extArgSemantics := some .thematicExistential }
+  | .passive     => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
+
+/-- The parametric decomposition of a VoiceHead, derived from its flavor. -/
+def VoiceHead.params (v : VoiceHead) : VoiceParams := v.flavor.toParams
+
+/-- Does this parameter setting assign a theta role?
+    Returns `none` when underspecified. -/
+def VoiceParams.assignsTheta? (p : VoiceParams) : Option Bool :=
+  match p.extArgSemantics with
+  | some .thematicArgument    => some true
+  | some .thematicExistential => some true
+  | some .expletive           => some false
+  | none                      => none
+
+/-- Are two VoiceParams settings compatible?
+    Two settings are compatible if they agree on all specified dimensions.
+    An underspecified dimension (none) is compatible with anything. -/
+def VoiceParams.isCompatibleWith (p q : VoiceParams) : Bool :=
+  (p.selectsSpecifier.isNone || q.selectsSpecifier.isNone ||
+   p.selectsSpecifier == q.selectsSpecifier) &&
+  (p.extArgSemantics.isNone || q.extArgSemantics.isNone ||
+   p.extArgSemantics == q.extArgSemantics)
+
+/-- Is this parameter setting fully specified (no underspecification)? -/
+def VoiceParams.isFullySpecified (p : VoiceParams) : Bool :=
+  p.selectsSpecifier.isSome && p.extArgSemantics.isSome
+
+-- ============================================================================
+-- § 10: Parametric Bridge Theorems
+-- ============================================================================
+
+/-- All named VoiceFlavors produce fully specified params. -/
+theorem flavor_params_fully_specified (f : VoiceFlavor) :
+    f.toParams.isFullySpecified = true := by
+  cases f <;> rfl
+
+/-- VoiceHead.assignsTheta is consistent with VoiceParams.assignsTheta?:
+    for fully-specified params, they agree. -/
+theorem flavor_params_theta_consistent (f : VoiceFlavor) :
+    f.toParams.assignsTheta? = some (match f with
+      | .agentive | .causer | .impersonal => true
+      | .nonThematic | .expletive | .passive => false) := by
+  cases f <;> rfl
+
+/-- Compatibility is reflexive. -/
+theorem params_compatible_refl (p : VoiceParams) :
+    p.isCompatibleWith p = true := by
+  cases p with | mk s e =>
+  cases s with
+  | none => cases e with | none => rfl | some e => cases e <;> rfl
+  | some s => cases s <;> (cases e with | none => rfl | some e => cases e <;> rfl)
+
+/-- A fully underspecified VoiceParams is compatible with every
+    named VoiceFlavor — the key property for Indonesian *ber-*. -/
+theorem underspecified_compatible_with_all (f : VoiceFlavor) :
+    let ber : VoiceParams := { selectsSpecifier := none, extArgSemantics := none }
+    ber.isCompatibleWith f.toParams = true := by
+  cases f <;> rfl
+
 end Minimalism

@@ -77,8 +77,6 @@ structure ItalianVerbEntry extends VerbCore where
 def convincere : ItalianVerbEntry :=
   { form := "convincere"
     complementType := .infinitival
-    subjectTheta := some .agent
-    objectTheta := some .experiencer
     controlType := .objectControl
     altComplementType := some .finiteClause
     opaqueContext := true
@@ -94,8 +92,6 @@ def convincere : ItalianVerbEntry :=
 def persuadere : ItalianVerbEntry :=
   { form := "persuadere"
     complementType := .infinitival
-    subjectTheta := some .agent
-    objectTheta := some .experiencer
     controlType := .objectControl
     opaqueContext := true
     -- No fixed attitudeBuilder: intention reading derived from
@@ -107,7 +103,6 @@ def persuadere : ItalianVerbEntry :=
 def credere : ItalianVerbEntry :=
   { form := "credere"
     complementType := .finiteClause
-    subjectTheta := some .experiencer
     controlType := .subjectControl
     altComplementType := some .infinitival
     opaqueContext := true

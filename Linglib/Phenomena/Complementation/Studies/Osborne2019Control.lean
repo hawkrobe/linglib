@@ -84,14 +84,6 @@ theorem persuade_is_object_control :
 theorem seem_is_raising :
     Fragments.English.Predicates.Verbal.seem.controlType = .raising := rfl
 
-/-- Raising verbs assign no theta role to their subject (Fragment data). -/
-theorem seem_no_subject_theta :
-    Fragments.English.Predicates.Verbal.seem.subjectTheta = none := rfl
-
-/-- Control verbs DO assign a theta role to their subject (Fragment data). -/
-theorem manage_has_subject_theta :
-    Fragments.English.Predicates.Verbal.manage.subjectTheta = some .agent := rfl
-
 -- ============================================================================
 -- §3: DG Trees — Basic (unique heads) and Enhanced (shared dependents)
 -- ============================================================================
@@ -283,8 +275,7 @@ theorem control_predicts_equi_deletion :
     seem does not appear in allEnglishCTPData — it's a purely syntactic
     phenomenon, not a CTP in Noonan's semantic classification. -/
 theorem seem_is_raising_not_ctp :
-    seem.controlType = .raising ∧
-    seem.subjectTheta = none := ⟨rfl, rfl⟩
+    seem.controlType = .raising := rfl
 
 -- ============================================================================
 -- §9: Complete Derivation Chain

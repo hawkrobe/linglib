@@ -57,11 +57,10 @@ open Semantics.Events.ProtoRoles
 -- ════════════════════════════════════════════════════
 
 /-- A Class II (object-experiencer) psych verb entry is internally consistent
-    when its four independently-set fields agree with @cite{kim-2024}'s predictions:
+    when its independently-set fields agree with @cite{kim-2024}'s predictions:
 
     (a) It has a causal source (external or internal)
-    (b) UPH theta grid: stimulus subject, experiencer object
-    (c) Opacity agrees with `subjectIntensional` applied to the causal source
+    (b) Opacity agrees with `subjectIntensional` applied to the causal source
 
     The existential over `CausalSource` ties the causal source to the opacity
     prediction: changing the causal source field MUST change the opacity field
@@ -69,17 +68,13 @@ open Semantics.Events.ProtoRoles
 def classII_consistent (v : VerbEntry) : Prop :=
   ∃ cs : CausalSource,
     v.causalSource = some cs ∧
-    v.subjectTheta = some .stimulus ∧
-    v.objectTheta = some .experiencer ∧
     v.opaqueContext = subjectIntensional cs
 
 /-- A Class I (experiencer-subject) psych verb entry is consistent with
-    @cite{belletti-rizzi-1988}'s *temere* pattern: experiencer subject, stimulus object,
-    no causal source (the internal/external distinction is Class-II-specific). -/
+    @cite{belletti-rizzi-1988}'s *temere* pattern: no causal source
+    (the internal/external distinction is Class-II-specific). -/
 def classI_consistent (v : VerbEntry) : Prop :=
-  v.causalSource = none ∧
-  v.subjectTheta = some .experiencer ∧
-  v.objectTheta = some .stimulus
+  v.causalSource = none
 
 -- ════════════════════════════════════════════════════
 -- § 2. Per-Verb Consistency Verification
@@ -93,116 +88,96 @@ def classI_consistent (v : VerbEntry) : Prop :=
 -- Eventive Class II (external causal source, transparent subjects)
 
 theorem frighten_consistent : classII_consistent frighten :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem amuse_consistent : classII_consistent amuse :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem fascinate_consistent : classII_consistent fascinate :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem irritate_consistent : classII_consistent irritate :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem annoy_consistent : classII_consistent annoy :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem bore_consistent : classII_consistent bore :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem charm_consistent : classII_consistent charm :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem impress_consistent : classII_consistent impress :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem surprise_consistent : classII_consistent surprise :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem scare_consistent : classII_consistent scare :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem delight_consistent : classII_consistent delight :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem embarrass_consistent : classII_consistent embarrass :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem upset_psych_consistent : classII_consistent upset_psych :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem disgust_consistent : classII_consistent disgust :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem shock_consistent : classII_consistent shock :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem confuse_consistent : classII_consistent confuse :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem disappoint_consistent : classII_consistent disappoint :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 theorem worry_eventive_consistent : classII_consistent worry_eventive :=
-  ⟨.external, rfl, rfl, rfl, rfl⟩
+  ⟨.external, rfl, rfl⟩
 
 -- Stative Class II (internal causal source, opaque subjects)
 
 theorem concern_consistent : classII_consistent concern :=
-  ⟨.internal, rfl, rfl, rfl, rfl⟩
+  ⟨.internal, rfl, rfl⟩
 
 theorem interest_consistent : classII_consistent interest :=
-  ⟨.internal, rfl, rfl, rfl, rfl⟩
+  ⟨.internal, rfl, rfl⟩
 
 theorem worry_stative_consistent : classII_consistent worry_stative :=
-  ⟨.internal, rfl, rfl, rfl, rfl⟩
+  ⟨.internal, rfl, rfl⟩
 
 theorem please_psych_consistent : classII_consistent please_psych :=
-  ⟨.internal, rfl, rfl, rfl, rfl⟩
+  ⟨.internal, rfl, rfl⟩
 
 theorem trouble_consistent : classII_consistent trouble :=
-  ⟨.internal, rfl, rfl, rfl, rfl⟩
+  ⟨.internal, rfl, rfl⟩
 
 theorem puzzle_consistent : classII_consistent puzzle :=
-  ⟨.internal, rfl, rfl, rfl, rfl⟩
+  ⟨.internal, rfl, rfl⟩
 
 -- Class I (experiencer-subject, no causal source)
 
-theorem enjoy_consistent : classI_consistent enjoy :=
-  ⟨rfl, rfl, rfl⟩
+theorem enjoy_consistent : classI_consistent enjoy := rfl
 
-theorem like_consistent : classI_consistent like :=
-  ⟨rfl, rfl, rfl⟩
+theorem like_consistent : classI_consistent like := rfl
 
-theorem love_consistent : classI_consistent love :=
-  ⟨rfl, rfl, rfl⟩
+theorem love_consistent : classI_consistent love := rfl
 
-theorem hate_consistent : classI_consistent hate :=
-  ⟨rfl, rfl, rfl⟩
+theorem hate_consistent : classI_consistent hate := rfl
 
-theorem fear_np_consistent : classI_consistent fear_np :=
-  ⟨rfl, rfl, rfl⟩
+theorem fear_np_consistent : classI_consistent fear_np := rfl
 
-theorem dread_np_consistent : classI_consistent dread_np :=
-  ⟨rfl, rfl, rfl⟩
+theorem dread_np_consistent : classI_consistent dread_np := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. Derivations from Consistency
 -- ════════════════════════════════════════════════════
-
-/-- **UPH (derived)**: any two consistent Class II verbs share the same
-    theta grid, regardless of their causal source. This is Kim's central
-    claim — the eventive/stative split is orthogonal to argument structure.
-
-    The proof extracts the theta-grid equalities from consistency and
-    chains them. No enumeration of verbs needed. -/
-theorem uph_from_consistency (v₁ v₂ : VerbEntry)
-    (h₁ : classII_consistent v₁) (h₂ : classII_consistent v₂) :
-    v₁.subjectTheta = v₂.subjectTheta ∧
-    v₁.objectTheta = v₂.objectTheta := by
-  obtain ⟨_, _, hs₁, ho₁, _⟩ := h₁
-  obtain ⟨_, _, hs₂, ho₂, _⟩ := h₂
-  exact ⟨hs₁.trans hs₂.symm, ho₁.trans ho₂.symm⟩
 
 /-- **Opacity derivation**: any consistent Class II verb with internal
     causal source has an opaque subject position.
@@ -213,7 +188,7 @@ theorem uph_from_consistency (v₁ v₂ : VerbEntry)
 theorem internal_implies_opaque (v : VerbEntry)
     (h : classII_consistent v) (hs : v.causalSource = some .internal) :
     v.opaqueContext = true := by
-  obtain ⟨cs, hcs, _, _, ho⟩ := h
+  obtain ⟨cs, hcs, ho⟩ := h
   cases hcs ▸ hs; exact ho
 
 /-- **Transparency derivation**: any consistent Class II verb with external
@@ -221,27 +196,15 @@ theorem internal_implies_opaque (v : VerbEntry)
 theorem external_implies_transparent (v : VerbEntry)
     (h : classII_consistent v) (hs : v.causalSource = some .external) :
     v.opaqueContext = false := by
-  obtain ⟨cs, hcs, _, _, ho⟩ := h
+  obtain ⟨cs, hcs, ho⟩ := h
   cases hcs ▸ hs; exact ho
 
-/-- **Theta reversal (derived)**: consistent Class I and Class II verbs
-    swap subject and object theta roles. -/
-theorem theta_reversal_from_consistency (vI vII : VerbEntry)
-    (hI : classI_consistent vI) (hII : classII_consistent vII) :
-    vI.subjectTheta = vII.objectTheta ∧
-    vI.objectTheta = vII.subjectTheta := by
-  obtain ⟨_, hsI, hoI⟩ := hI
-  obtain ⟨_, _, hsII, hoII, _⟩ := hII
-  exact ⟨hsI.trans hoII.symm, hoI.trans hsII.symm⟩
-
 /-- **UPH within a single verb**: worry's eventive and stative readings
-    share the same theta grid but differ in causal source.
+    differ in causal source.
     This is Kim's strongest test case — same lexical item, two readings. -/
 theorem worry_uniform_projection :
-    worry_eventive.subjectTheta = worry_stative.subjectTheta ∧
-    worry_eventive.objectTheta = worry_stative.objectTheta ∧
     worry_eventive.causalSource ≠ worry_stative.causalSource :=
-  ⟨rfl, rfl, by decide⟩
+  by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Temporal Prediction from CausalSource
@@ -288,13 +251,10 @@ theorem concern_temporal :
   ⟨rfl, rfl, rfl⟩
 
 /-- **UPH at the causal link level**: eventive and stative Class II verbs
-    share the same theta grid (from § 3) but differ in temporal and
-    event-structural predictions. This is Kim's full claim: the aspectual
-    split is orthogonal to argument structure. -/
+    differ in temporal and event-structural predictions despite both being
+    Class II. This is Kim's full claim: the aspectual split is orthogonal
+    to argument structure. -/
 theorem uph_causal_link_level :
-    -- Same theta grid
-    frighten.subjectTheta = concern.subjectTheta ∧
-    frighten.objectTheta = concern.objectTheta ∧
     -- Different temporal behavior
     (CausalSource.toLink Time .external).temporalConstraint =
       Interval.precedes ∧
@@ -303,7 +263,7 @@ theorem uph_causal_link_level :
     -- Different event structure
     (CausalSource.toLink Time .external).involvesTransition = true ∧
     (CausalSource.toLink Time .internal).involvesTransition = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. T/SM Restriction from Onset Condition

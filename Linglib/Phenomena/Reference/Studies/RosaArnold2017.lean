@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.ThetaRole
+import Linglib.Theories.Semantics.Events.ThetaRole
 import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Core.Discourse.ReferentialForm
 import Linglib.Fragments.English.Predicates.Verbal
@@ -269,11 +269,6 @@ theorem independence_violated_exp1_subj :
 -- § 7. Fragment Bridge — Transfer Verb Theta Structure
 -- ════════════════════════════════════════════════════
 
-/-- Transfer verbs assign Goal to their indirect object.
-    This connects the experimental manipulation to the Fragment lexicon. -/
-theorem give_has_goal_role :
-    Fragments.English.Predicates.Verbal.give.object2Theta = some .goal := rfl
-
 /-- Transfer verb next-mention prediction: Goal arguments have higher
     next-mention bias than Source arguments in narrative (Occasion/Result)
     continuations. This maps the ThetaRole distinction to NextMentionBias. -/
@@ -337,24 +332,6 @@ theorem pronoun_at_most_as_heavy :
 -- ════════════════════════════════════════════════════
 
 open Phenomena.WordOrder.Studies.ArnoldEtAl2000
-
-/-- Compositional derivation from a single lexical fact: `give` assigns
-    Goal to its indirect object. By chaining through three modules —
-    Fragment → ThetaRole → NextMentionBias → ReferentialForm — we derive
-    that the indirect object of `give` is predicted to surface as a pronoun.
-
-    Changing any link breaks the chain:
-    - Change `give.object2Theta` from `.goal` → different form predicted
-    - Change `transferNextMention .goal` from `.high` → different form
-    - Change `NextMentionBias.high.predictedForm` → different form
-
-    This is the same indirect object that @cite{arnold-wasow-losongco-ginstrom-2000}
-    study for constituent ordering — the predicted form connects to their
-    weight dimension. -/
-theorem give_goal_predicted_form :
-    (Fragments.English.Predicates.Verbal.give.object2Theta.bind
-      (fun θ => some (transferNextMention θ).predictedForm)) =
-    some DefinitenessLevel.personalPronoun := rfl
 
 /-- The goal argument receives a MORE REDUCED referential form than the
     source argument. This derived contrast — not the individual predictions —

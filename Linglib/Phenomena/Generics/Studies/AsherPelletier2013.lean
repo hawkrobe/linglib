@@ -5,41 +5,50 @@ import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 /-!
 # @cite{asher-pelletier-2013} — More Truths about Generic Truth
 
-In *Genericity* (Mari, Beyssade, Del Prete eds.), OUP, Oxford Studies in
+Nicholas Asher and Francis Jeffry Pelletier, ch. 12 of
+*Genericity* (Mari, Beyssade, Del Prete eds.), OUP, Oxford Studies in
 Theoretical Linguistics 43.
 
 ## Core Claim
 
-Generic truth requires **non-monotonic** (default) reasoning: "Birds fly"
-is true despite penguins, because the generic is evaluated relative to a
-normality ordering that ranks typical birds above atypical ones. When a
-more specific default ("Penguins don't fly") is added, the normality
-ordering is **refined**, and the more specific default wins for penguins
-while the general default survives for non-penguin birds.
+Generics should be analyzed as **modal quantifiers** — ∀x(φ(x) > ψ(x)),
+where > is a weak conditional (from Asher & Morreau 1991). The key
+innovation is **per-individual evaluation** (§12.3): ψ is evaluated for
+each individual *a* only in those worlds where *a* is a normal φ.
+
+"Birds fly" is true because for each bird *a*, the most normal *a*-bird
+worlds are ones where *a* flies. For Opus the penguin, the normal
+Opus-penguin worlds are NOT normal Opus-bird worlds, so "Penguins don't
+fly" correctly overrides "Birds fly" for penguins (exx. 7–8).
+
+## Chapter Sections Covered
+
+- **§12.1–12.2**: Framework and challenges (exx. 1–5)
+- **§12.3**: Per-individual normality (exx. 6–9)
+- **§12.4**: Arguments against probabilistic alternatives
 
 ## Connection to Existing Infrastructure
 
-This file bridges three existing components:
+1. **`NormalityOrder`** (`Core/Order/Normality.lean`): preorder structure
+   on worlds. A&P's per-individual normality is a normality ordering
+   *per entity and restrictor class*.
 
-1. **`NormalityOrder`** (`Core/Order/Normality.lean`): the mathematical
-   structure of normality orderings — preorders with refinement, optimality,
-   and persistence.
+2. **`traditionalGEN`** (`Lexical/Noun/Kind/Generics.lean`): GEN's `normal`
+   parameter is the Bool-level projection of a normality ordering.
 
-2. **`traditionalGEN`** (`Lexical/Noun/Kind/Generics.lean`): the `normal`
-   parameter in GEN is the Bool-level projection of a normality ordering —
-   `normal(s) = true` iff s is among the optimal worlds.
+3. **`TweetyNixon`** (`Phenomena/DefaultReasoning/TweetyNixon.lean`):
+   the Tweety Triangle data — the classic test case for A&P's system.
 
-3. **`TweetyNixon`** (`Phenomena/DefaultReasoning/TweetyNixon.lean`): the
-   classic examples. This file proves that the normality-ordering treatment
-   of GEN correctly derives the Tweety Triangle (specificity) and Nixon
-   Diamond (conflicting defaults).
+## Refinement vs Specificity
 
-## Key Result
-
-`tweety_resolved`: after processing defaults "birds normally fly" and
-"penguins normally don't fly", the normality ordering makes flying optimal
-for non-penguin birds and not-flying optimal for penguins — deriving
-`tweety_doesnt_fly` and `robin_flies` from the data file.
+`processDefault` below uses `NormalityOrder.refine` (@cite{veltman-1996}'s
+operation), which intersects ordering constraints. For the Tweety Triangle,
+Veltman's refinement produces **incomparability** between penguinFlies and
+penguinNoFly (neither is ≤ the other, since each satisfies one default
+and violates the other). A&P's per-individual evaluation resolves this
+via **specificity**: the more specific "penguins don't fly" overrides
+"birds fly" for penguins. The `tweetyLe` ordering encodes this
+specificity-resolved result directly.
 -/
 
 namespace Phenomena.Generics.Studies.AsherPelletier2013
@@ -60,11 +69,111 @@ structure DefaultRule (W : Type*) where
 /-- Process a default rule as a refinement of a normality ordering.
 
     "Normally, if P then Q" refines the ordering to promote P∧Q worlds
-    over P∧¬Q worlds. This is implemented as `NormalityOrder.refine`
-    with the property `P → Q` (materialized as `¬P ∨ Q`). -/
+    over P∧¬Q worlds via `NormalityOrder.refine`. This is
+    @cite{veltman-1996}'s monotonic (intersection-based) operation.
+
+    Note: A&P's actual system uses per-individual evaluation with
+    specificity, which goes beyond simple refinement. See the module
+    docstring caveat about refinement vs specificity. -/
 def processDefault {W : Type*} (no : NormalityOrder W)
     (d : DefaultRule W) : NormalityOrder W :=
   no.refine (λ w => d.restrictor w → d.scope w)
+
+
+-- ═══ Per-Individual Evaluation (§12.3, exx. 7–9) ═══
+
+/-- Per-individual evaluation data from §12.3.
+
+    The chapter's key innovation: for ∀x(φ(x) > ψ(x)), the consequent
+    ψ is evaluated per-individual. For individual *a* in the domain,
+    we look at normal *a*-φ worlds — worlds where *a* is a normal φ. -/
+structure PerIndividualDatum where
+  sentence : String
+  individual : String
+  restrictorClass : String
+  normalWorldDesc : String
+  scopeHolds : Bool
+  exNumber : String
+  deriving Repr
+
+/-- Ex. (7): "Penguins don't fly" — evaluated for Opus.
+    Normal Opus-PENGUIN worlds: Opus doesn't fly. Scope (¬fly) holds. -/
+def opusPenguinsDontFly : PerIndividualDatum :=
+  { sentence := "Penguins don't fly"
+  , individual := "Opus"
+  , restrictorClass := "penguin"
+  , normalWorldDesc := "Normal Opus-penguin worlds: Opus doesn't fly"
+  , scopeHolds := true
+  , exNumber := "(7)" }
+
+/-- Ex. (8): "Birds fly" — evaluated for Opus.
+    Normal Opus-BIRD worlds: in those worlds, Opus is "definitely not
+    a normal penguin." So Opus flies. Scope (fly) holds.
+
+    Key insight: both "Birds fly" and "Penguins don't fly" are true
+    SIMULTANEOUSLY for the same individual — evaluated at different
+    normal worlds (normal-bird vs normal-penguin worlds). -/
+def opusBirdsFly : PerIndividualDatum :=
+  { sentence := "Birds fly"
+  , individual := "Opus"
+  , restrictorClass := "bird"
+  , normalWorldDesc := "Normal Opus-bird worlds: Opus is not a penguin"
+  , scopeHolds := true
+  , exNumber := "(8)" }
+
+/-- Both generics are simultaneously true for penguins.
+    Per-individual evaluation evaluates at DIFFERENT normal worlds
+    for each restrictor, so both can hold without contradiction. -/
+theorem both_generics_true :
+    opusPenguinsDontFly.scopeHolds = true ∧
+    opusBirdsFly.scopeHolds = true := ⟨rfl, rfl⟩
+
+/-- Specificity determines which default to apply for inference:
+    the more specific "penguins don't fly" overrides "birds fly"
+    for penguins. This is a property of defeasible inference with
+    the > conditional, not of the per-individual evaluation itself. -/
+theorem specificity_selects_penguin_default :
+    opusPenguinsDontFly.scopeHolds = true ∧
+    tweety_doesnt_fly = true := ⟨rfl, rfl⟩
+
+
+-- ═══ Context-Dependent Normality (§12.3, ex. 9) ═══
+
+/-- §12.3, ex. (9): "Turtles live to be 100."
+
+    The notion of a "normal φ(a) world" has some "give" to it —
+    different construals of normality yield different truth values.
+    Under an Aristotelian/teleological conception (natural telos of
+    a turtle: if everything goes right), it's true. Under a statistical
+    conception (most turtles die within hours of hatching), it's false.
+
+    A&P consider this context-dependence a virtue: discourse and
+    contextual factors fix the normality construal. -/
+structure NormalityConstrual where
+  sentence : String
+  construal : String
+  genericTrue : Bool
+  exNumber : String
+  deriving Repr
+
+def turtlesTeleological : NormalityConstrual :=
+  { sentence := "Turtles live to be 100"
+  , construal := "Aristotelian/teleological: natural telos of a turtle"
+  , genericTrue := true
+  , exNumber := "(9)" }
+
+def turtlesStatistical : NormalityConstrual :=
+  { sentence := "Turtles live to be 100"
+  , construal := "Statistical: most turtles die within hours of hatching"
+  , genericTrue := false
+  , exNumber := "(9)" }
+
+/-- The same generic has different truth values under different
+    normality construals — A&P's "slop" in the normality notion. -/
+theorem normality_context_dependent :
+    turtlesTeleological.genericTrue ≠ turtlesStatistical.genericTrue := by
+  decide
+
 
 -- ═══ Tweety Triangle ═══
 
@@ -76,55 +185,66 @@ def birdsNormallyFly : DefaultRule TweetyWorld :=
 def penguinsNormallyDontFly : DefaultRule TweetyWorld :=
   { restrictor := isPenguin, scope := λ w => ¬flies w }
 
-/-- Process both defaults starting from the total ordering.
+/-- Veltman-style refinement of both defaults.
 
-    The order of processing doesn't matter (`refine_comm`),
-    but we process the general default first for clarity. -/
+    This uses `NormalityOrder.refine` to process both defaults. The
+    result makes penguinNoFly and penguinFlies **incomparable** — neither
+    is ≤ the other — because the two defaults create crossing constraints.
+    (penguinFlies satisfies "birds fly" but violates "penguins don't fly";
+    penguinNoFly does the reverse.)
+
+    This matches the Nixon Diamond behavior (conflicting defaults →
+    agnosticism), not the Tweety Triangle (specificity resolution).
+    A&P's per-individual evaluation resolves this via specificity,
+    encoded in `tweetyLe` below.
+
+    The order of processing doesn't matter (`NormalityOrder.refine_comm`). -/
 def tweetyOrdering : NormalityOrder TweetyWorld :=
   (processDefault NormalityOrder.total birdsNormallyFly)
     |> (processDefault · penguinsNormallyDontFly)
 
-/-- The ordering after processing both defaults, defined as a concrete
-    decidable relation on the 4-element type. -/
+/-- The **specificity-resolved** normality ordering for the Tweety Triangle.
+
+    This encodes the result of A&P's per-individual evaluation with
+    specificity: the more specific penguin default overrides the general
+    bird default for penguins. The ordering has two tiers:
+
+    - Top: {birdFlies, penguinNoFly} — each satisfies its most specific default
+    - Middle: {penguinFlies} — violates the more specific penguin default
+    - Bottom: {birdNoFly} — violates the bird default with no override -/
 private def tweetyLe : TweetyWorld → TweetyWorld → Bool
-  -- birdFlies: bird, not penguin, flies — satisfies both defaults
+  -- birdFlies: satisfies bird default, not a penguin → top tier
   | .birdFlies, _ => true
-  -- penguinNoFly: penguin, doesn't fly — satisfies penguin default
+  -- penguinNoFly: penguin default overrides bird default → top tier
   | .penguinNoFly, .penguinNoFly | .penguinNoFly, .birdNoFly => true
   | .penguinNoFly, .birdFlies => true
   | .penguinNoFly, .penguinFlies => true
-  -- penguinFlies: penguin, flies — violates penguin default
+  -- penguinFlies: violates more specific penguin default → middle
   | .penguinFlies, .penguinFlies | .penguinFlies, .birdNoFly => true
   | .penguinFlies, .birdFlies => false
   | .penguinFlies, .penguinNoFly => false
-  -- birdNoFly: bird, not penguin, doesn't fly — violates bird default
+  -- birdNoFly: violates bird default, no override → bottom
   | .birdNoFly, .birdNoFly => true
   | .birdNoFly, .birdFlies => false
   | .birdNoFly, .penguinNoFly => false
   | .birdNoFly, .penguinFlies => false
 
-/-- After processing both defaults, a penguin that flies is strictly
-    less normal than a penguin that doesn't fly. -/
+/-- Specificity resolution: penguinNoFly is strictly more normal than
+    penguinFlies (the more specific penguin default wins). -/
 theorem penguin_nofly_more_normal :
     tweetyLe .penguinNoFly .penguinFlies = true ∧
-    tweetyLe .penguinFlies .penguinNoFly = false := by
-  exact ⟨rfl, rfl⟩
+    tweetyLe .penguinFlies .penguinNoFly = false := ⟨rfl, rfl⟩
 
-/-- After processing both defaults, a non-penguin bird that doesn't fly
-    is strictly less normal than one that does. -/
+/-- The bird default applies for non-penguin birds: birdFlies is
+    strictly more normal than birdNoFly. -/
 theorem bird_fly_more_normal :
     tweetyLe .birdFlies .birdNoFly = true ∧
-    tweetyLe .birdNoFly .birdFlies = false := by
-  exact ⟨rfl, rfl⟩
+    tweetyLe .birdNoFly .birdFlies = false := ⟨rfl, rfl⟩
 
-/-- The normality ordering resolves Tweety correctly:
-    - Robin (non-penguin bird): flies (matching `robin_flies`)
-    - Tweety (penguin): doesn't fly (matching `tweety_doesnt_fly`)
-
-    This derives from the normality ordering, not from stipulation. -/
+/-- The empirical judgments match: Robin flies, Tweety doesn't. -/
 theorem tweety_resolved :
-    robin_flies = true ∧ tweety_doesnt_fly = true := by
-  exact ⟨rfl, rfl⟩
+    robin_flies = true ∧ tweety_doesnt_fly = true := ⟨rfl, rfl⟩
+
 
 -- ═══ Bridge to traditionalGEN ═══
 
@@ -146,22 +266,89 @@ theorem total_all_normal {W : Type*} (domain : List W) :
   intro _ _
   trivial
 
+/-- Under the specificity-resolved ordering, the normal TweetyWorlds
+    (those in the top tier) are exactly birdFlies and penguinNoFly. -/
+theorem tweety_normal_worlds :
+    let domain := [TweetyWorld.birdFlies, .birdNoFly, .penguinFlies, .penguinNoFly]
+    normalFromOrdering tweetyLe domain .birdFlies = true ∧
+    normalFromOrdering tweetyLe domain .penguinNoFly = true ∧
+    normalFromOrdering tweetyLe domain .penguinFlies = false ∧
+    normalFromOrdering tweetyLe domain .birdNoFly = false := ⟨rfl, rfl, rfl, rfl⟩
+
+
+-- ═══ Challenges (§12.2, exx. 4–5) ═══
+
+/-- Challenge examples from §12.2 that the simple modal analysis ∀x(φ > ψ)
+    appears to predict wrongly. -/
+structure ChallengeDatum where
+  sentence : String
+  challenge : String
+  exNumber : String
+  deriving Repr
+
+/-- Ex. (4a): "Ducks lay eggs" — the basic analysis predicts normal
+    male ducks lay eggs, which is wrong. -/
+def ducksLayEggs : ChallengeDatum :=
+  { sentence := "Ducks lay eggs"
+  , challenge := "Predicts normal male ducks lay eggs"
+  , exNumber := "(4a)" }
+
+/-- Ex. (4b): "Cardinals are bright red" — predicts normal female
+    cardinals are bright red, which is wrong. -/
+def cardinalsRed : ChallengeDatum :=
+  { sentence := "Cardinals are bright red"
+  , challenge := "Predicts normal female cardinals are bright red"
+  , exNumber := "(4b)" }
+
+/-- Ex. (5): "Mosquitoes carry the West Nile Virus" — true despite
+    a vanishingly small percentage of normal mosquitoes carrying WNV. -/
+def mosquitoesWNV : ChallengeDatum :=
+  { sentence := "Mosquitoes carry the West Nile Virus"
+  , challenge := "True despite vanishingly small percentage carrying WNV"
+  , exNumber := "(5)" }
+
+def challengeData : List ChallengeDatum :=
+  [ducksLayEggs, cardinalsRed, mosquitoesWNV]
+
+
+-- ═══ Against Probabilistic Alternatives (§12.4) ═══
+
+/-- A&P's arguments against @cite{cohen-1999a}'s probabilistic semantics
+    for generics.
+
+    Cohen proposes generic truth ↔ Pr(B(a)|A(a)) > 0.5 (the "Cohen
+    conditional"). A&P argue this is inadequate for three reasons. -/
+inductive AntiProbArgument where
+  /-- Too weak: Pr(tails|coin-flip) ≈ 50.05% → "*This coin normally
+      comes up tails" should NOT be a true generic. -/
+  | tooWeak
+  /-- Wrong inference pattern: probabilistic semantics validates Modus
+      Ponens (Pr(B|A) > 0.5 and A(a) → B(a) more likely than not) but
+      NOT Defeasible Modus Ponens. Generics support the latter ("Birds
+      fly, Tweety is a bird, so Tweety flies") but the inference is
+      defeasible. -/
+  | wrongInference
+  /-- Embedded generics ("Dogs chase cats that chase mice") require
+      higher-order probabilities, leading to triviality results. -/
+  | embeddedGenerics
+  deriving DecidableEq, Repr, BEq
+
+
 -- ═══ Non-Monotonicity ═══
 
-/-- Generic reasoning is non-monotonic: adding information can retract
-    previously drawn conclusions.
+/-- Generic reasoning is non-monotonic: the specificity-resolved ordering
+    makes penguinNoFly top-tier (equally normal as birdFlies), despite
+    penguinNoFly violating the "birds fly" default. The more specific
+    penguin default overrides.
 
-    Before learning Tweety is a penguin: conclude flies (from "birds fly").
-    After learning Tweety is a penguin: retract flies, conclude ¬flies.
-
-    This is captured by the refinement operation: the default "penguins
-    don't fly" refines the ordering, making penguinFlies suboptimal
-    even though it was optimal under the bird-only default. -/
+    Adding the information "Tweety is a penguin" retracts the conclusion
+    "Tweety flies" and replaces it with "Tweety doesn't fly." -/
 theorem generic_nonmonotonic :
-    -- Under birds-fly only: penguinFlies is as normal as penguinNoFly
-    -- Under both defaults: penguinFlies is less normal than penguinNoFly
+    -- penguinNoFly is in the top tier (as normal as birdFlies)
+    tweetyLe .penguinNoFly .birdFlies = true ∧
+    tweetyLe .birdFlies .penguinNoFly = true ∧
+    -- penguinFlies is strictly below the top tier
     tweetyLe .penguinFlies .penguinNoFly = false ∧
-    tweetyLe .penguinNoFly .penguinFlies = true := by
-  exact ⟨rfl, rfl⟩
+    tweetyLe .penguinFlies .birdFlies = false := ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Generics.Studies.AsherPelletier2013

@@ -1,5 +1,4 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Lexical.ThetaRole
 import Linglib.Theories.Semantics.Events.EntailmentProfile
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.RootDimensions
@@ -14,6 +13,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Events.Krifka1998
+import Linglib.Theories.Semantics.Events.LevinClassProfiles
 
 /-! # Cross-Linguistic Verb Infrastructure
 
@@ -56,6 +56,7 @@ open Semantics.Events.ProtoRoles (EntailmentProfile)
 open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Events.Krifka1998 (VerbIncClass)
+open Semantics.Events.LevinClassProfiles
 
 /--
 Which Montague predicate builder this verb uses.
@@ -230,16 +231,10 @@ structure VerbCore where
   -- === Argument Structure ===
   /-- What complement does the verb select? -/
   complementType : ComplementType
-  /-- Theta role of external argument (subject) -/
-  subjectTheta : Option ThetaRole := none
-  /-- Theta role of internal argument (object) -/
-  objectTheta : Option ThetaRole := none
-  /-- Theta role of second internal argument (indirect object) -/
-  object2Theta : Option ThetaRole := none
   /-- Proto-role entailment profile for the subject (external argument).
-      When present, provides the full @cite{dowty-1991} entailment structure.
-      The authoritative representation from which `subjectTheta` labels
-      are derived via `ThetaRole.canonicalProfile`. -/
+      The authoritative representation of argument semantics
+      (@cite{dowty-1991}, @cite{grimm-2011}, @cite{levin-2019}).
+      Convenience role labels can be derived via `EntailmentProfile.toRole`. -/
   subjectEntailments : Option EntailmentProfile := none
   /-- Proto-role entailment profile for the first object (internal argument). -/
   objectEntailments : Option EntailmentProfile := none
@@ -331,39 +326,24 @@ structure VerbCore where
 def VerbCore.derivedVendlerClass (v : VerbCore) : Option VendlerClass :=
   v.vendlerClass <|> v.degreeAchievementScale.map (·.defaultVendlerClass)
 
-/-- Lexicalist prediction (@cite{levin-1993}; Rappaport @cite{rappaport-hovav-levin-1998}):
-    the verb's lexical semantics determines the external argument's theta role.
+/-- Effective subject entailment profile: verb-level override if present,
+    otherwise falls back to the Levin class–level profile
+    (@cite{levin-1993}, @cite{dowty-1991}). -/
+def VerbCore.effectiveSubjectEntailments (v : VerbCore) : Option EntailmentProfile :=
+  v.subjectEntailments <|> v.levinClass.bind (·.subjectProfile)
 
-    This is the lexicalist/projectionist alternative to the severing prediction
-    (Voice flavor → theta role, see `VoiceFlavor.thetaRole` in VoiceTheta.lean).
-    The lexicalist account derives the theta role from verb-internal
-    semantic properties, bypassing Voice entirely.
+/-- Effective object entailment profile: verb-level override if present,
+    otherwise falls back to the Levin class–level profile. -/
+def VerbCore.effectiveObjectEntailments (v : VerbCore) : Option EntailmentProfile :=
+  v.objectEntailments <|> v.levinClass.bind (·.objectProfile)
 
-    The derivation uses independently motivated properties:
-    - Syntactic: `controlType` (raising → no θ), `unaccusative` (→ theme)
-    - Semantic builders: `causalSource` (@cite{kim-2024} → stimulus),
-      `attitudeBuilder` (→ experiencer)
-    - Presupposition: `factivePresup` without attitude builder (→ experiencer)
-    - Polysemy: `senseTag =.occasion` (@cite{solstad-bott-2024} → experiencer)
-    - Verb class: `levinClass` (.weather → none,.flinch/.learn → experiencer,
-.measure → theme)
+/-- Derive the subject's theta-role label from its effective entailment profile. -/
+def VerbCore.subjectRole (v : VerbCore) : Option ThetaRole :=
+  v.effectiveSubjectEntailments.bind (·.toRole)
 
-    Matches hand-annotated `subjectTheta` for ~94% of English verb entries.
-    Remaining mismatches (e.g., *remember*, *dare*) have genuinely irreducible
-    theta role assignments not predictable from other VerbCore fields. -/
-def VerbCore.predictedSubjectTheta (v : VerbCore) : Option ThetaRole :=
-  if v.controlType == .raising then none
-  else if v.levinClass == some .weather then none
-  else if v.causalSource.isSome then some .stimulus
-  else if v.objectTheta == some .stimulus then some .experiencer
-  else if v.attitudeBuilder.isSome then some .experiencer
-  else if v.factivePresup && v.attitudeBuilder.isNone then some .experiencer
-  else if v.senseTag == .occasion then some .experiencer
-  else if v.levinClass == some .flinch then some .experiencer
-  else if v.levinClass == some .learn then some .experiencer
-  else if v.unaccusative then some .theme
-  else if v.levinClass == some .measure then some .theme
-  else some .agent
+/-- Derive the object's theta-role label from its effective entailment profile. -/
+def VerbCore.objectRole (v : VerbCore) : Option ThetaRole :=
+  v.effectiveObjectEntailments.bind (·.toRole)
 
 /-- Veridicality is DERIVED from the attitude builder -/
 def VerbCore.veridicality (v : VerbCore) : Option Veridicality :=

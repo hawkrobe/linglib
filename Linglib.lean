@@ -5,7 +5,6 @@ A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
 -/
 -- Core
-import Linglib.Core.Lexical.ThetaRole
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Grammar
 import Linglib.Core.Lexical.Pronouns
@@ -421,6 +420,8 @@ import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Thai.Morph
 import Linglib.Fragments.Indonesian.Morph
+import Linglib.Fragments.Indonesian.VoiceSystem
+import Linglib.Fragments.Indonesian.Predicates
 import Linglib.Fragments.Quechua.Morph
 import Linglib.Fragments.Quechua.Negation
 import Linglib.Fragments.Hungarian.Case
@@ -635,6 +636,8 @@ import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
 import Linglib.Phenomena.ArgumentStructure.Studies.Collins2005
 import Linglib.Phenomena.ArgumentStructure.Studies.Kratzer1996
 import Linglib.Phenomena.ArgumentStructure.Studies.Dowty1991
+import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
+import Linglib.Phenomena.ArgumentStructure.Studies.BeaversUdayana2022
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025
@@ -1403,7 +1406,10 @@ import Linglib.Theories.Semantics.Events.Krifka1989
 import Linglib.Theories.Semantics.Events.Krifka1998
 import Linglib.Theories.Semantics.Events.Agentivity
 import Linglib.Theories.Semantics.Events.AgentivityLattice
+import Linglib.Theories.Semantics.Events.ThetaRole
 import Linglib.Theories.Semantics.Events.EntailmentProfile
+import Linglib.Theories.Semantics.Events.Affectedness
+import Linglib.Theories.Semantics.Events.LevinClassProfiles
 import Linglib.Theories.Semantics.Events.ProtoRoles
 import Linglib.Theories.Semantics.Events.EventStructure
 import Linglib.Theories.Morphology.RootTypology

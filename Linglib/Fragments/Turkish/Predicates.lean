@@ -34,7 +34,6 @@ def kork : TurkishVerbEntry where
   formEvidential := "korkmuş"
   formParticiple := "korkan"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .negative))
@@ -47,7 +46,6 @@ def um : TurkishVerbEntry where
   formEvidential := "ummuş"
   formParticiple := "uman"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive))
@@ -60,7 +58,6 @@ def merakEt : TurkishVerbEntry where
   formEvidential := "merak etmiş"
   formParticiple := "merak eden"
   complementType := .question
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   takesQuestionBase := true
@@ -73,7 +70,6 @@ def endiselen : TurkishVerbEntry where
   formEvidential := "endişelenmiş"
   formParticiple := "endişelenen"
   complementType := .finiteClause
-  subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
   attitudeBuilder := some (.preferential .uncertaintyBased)
@@ -92,8 +88,6 @@ def ol_dur : TurkishVerbEntry where
   formEvidential := "öl-dür-müş"
   formParticiple := "öl-dür-en"
   complementType := .np
-  subjectTheta := some .agent
-  objectTheta := some .patient
   causativeBuilder := some .make
 
 /-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
@@ -104,8 +98,6 @@ def yap_tir : TurkishVerbEntry where
   formEvidential := "yap-tır-mış"
   formParticiple := "yap-tır-an"
   complementType := .smallClause
-  subjectTheta := some .agent
-  objectTheta := some .patient
   controlType := .objectControl
   causativeBuilder := some .make
 

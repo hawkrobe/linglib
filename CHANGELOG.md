@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.171] - 2026-03-12
+
+### Changed
+- **ThetaRole demoted from Core/ to Theories/**: Move `Core/Lexical/ThetaRole.lean` → `Theories/Semantics/Events/ThetaRole.lean`, reflecting field consensus that discrete role labels are derived convenience names for entailment-profile clusters, not primitives
+- **EntailmentProfile.toRole**: New canonical-direction mapping (profiles → labels) using feature-based heuristics; 8 round-trip theorems + 5 verb-profile theorems
+- **VerbCore.derivedSubjectTheta/derivedObjectTheta**: Compute theta from entailment profiles when available, fall back to stored labels
+- **Affectedness.lean**: Promote AffectednessDegree + profileToDegree from Beavers2010 study to theory layer; kernel theorem proving projection depends on exactly 4 of 10 features; per-degree guarantee theorems
+- **AgentivityLattice §22–24**: Projection kernel theorems, wellFormedPair non-preservation proof (Grimm projection loses Dowty inter-argument constraints), ArgTemplate→GrimmNode bridge with cross-projection consistency
+- **LevinClassProfiles.lean**: New ArgTemplate system mapping Levin classes to subject/object entailment profiles
+- **Beavers2010.lean**: New study file formalizing affectedness hierarchy, PatientLRole, MAP theorem (imports promoted Affectedness theory)
+- **BeaversUdayana2022.lean**: New study file formalizing Indonesian *ber-* middles as generalized argument suppression
+- **references.bib**: Fix `beavers-2010` entry metadata (title, author, pages, subfield, role, sources)
+
 ## [0.229.170] - 2026-03-12
 
 ### Fixed
