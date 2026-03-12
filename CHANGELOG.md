@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.173] - 2026-03-12
+
+### Changed
+- **Everdell2024.lean**: Audit against dissertation — fix hallucinated verb forms (`ga'lhi-dha'`, `bua'`/`throw.SG`, `sarni-dha'`), add missing `oncho_hide` (Table 5.2), add Cora to Krejci table (Table 5.4), remove dead `BeneficiaryType`, add `junmada_make_mole` to bulk verification, add MAP bridge section (§19) with `promotion_orthogonal_to_entailment` and `animacy_gates_promotion` theorems
+- **LevinClassProfiles.lean**: Add `RootEntailments.toArgTemplate` derivation (§7–8) with consistency verification against hand-specified templates, documented psych-causal and creation overrides
+- **references.bib**: Add `everdell-2024`, `naess-2007`, `krejci-2012`, `beavers-2023-sag-lectures` entries
+
 ## [0.229.172] - 2026-03-12
 
 ### Added

@@ -41,7 +41,7 @@ open Semantics.Lexical.Verb.EntailmentProfile
 structure ArgTemplate where
   subjectProfile : EntailmentProfile
   objectProfile : Option EntailmentProfile := none
-  deriving Repr, BEq
+  deriving DecidableEq, Repr, BEq
 
 -- ════════════════════════════════════════════════════
 -- § 2. Named Templates
@@ -227,5 +227,153 @@ theorem psychCausal_subject_role :
 /-- Directed-motion subject → none (mixed P-Agent + P-Patient). -/
 theorem directedMotion_subject_role :
     directedMotion.subjectProfile.toRole = none := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 7. RootEntailments → ArgTemplate (the missing derivation)
+-- ════════════════════════════════════════════════════
+
+/-! Root entailments determine argument templates — this is the field
+consensus (@cite{beavers-koontz-garboden-2020}, @cite{rappaport-hovav-levin-2024}).
+The derivational direction runs:
+
+    RootEntailments → Template → ArgTemplate → ThetaRole labels
+
+`RootEntailments.toArgTemplate` formalizes the default derivation. It
+captures the majority pattern: causative roots produce agent subjects
+and affected objects; manner-only roots produce agent subjects without
+causation; result-only roots produce unaccusative subjects; state-only
+roots produce experiencer subjects.
+
+Two classes of systematic overrides exist:
+- **Psych-causal verbs** (amuse): `causativeResult` roots where the
+  subject is a non-volitional stimulus, not a volitional agent.
+  Override: `psychCausal` template.
+- **Creation verbs** (build): `causativeResult` roots where the object
+  has dependent existence and incremental theme structure.
+  Override: `creation` template.
+
+These overrides are documented and verified below. -/
+
+/-- Derive a default ArgTemplate from root structural entailments.
+
+    The derivation follows B&KG's event structure decomposition:
+
+    - `cause`: subject is external causer → full agent (V+S+C+M+IE),
+      object undergoes change → CoS+CA
+    - `result` without `cause`: internally caused change → unaccusative,
+      sole argument is patient (CoS+CA)
+    - `manner` without `cause`/`result`: activity → agent without
+      causation (V+S+M+IE), no affected object
+    - `state` only: stative → experiencer subject (S+IE)
+    - no entailments: no default derivation
+
+    For `cause+manner` (fullSpec) vs `cause` without `manner`
+    (causativeResult): both produce the same default ArgTemplate.
+    The manner flag restricts HOW the cause proceeds (cutting vs.
+    breaking), not WHETHER there's an agent. -/
+def toArgTemplate (re : RootEntailments) : Option ArgTemplate :=
+  if re.cause then
+    some resultChange
+  else if re.result then
+    some unaccusativeCoS
+  else if re.manner then
+    some selfMotion
+  else if re.state then
+    some perception
+  else
+    none
+
+-- ════════════════════════════════════════════════════
+-- § 8. Consistency: rootEntailments vs argTemplate
+-- ════════════════════════════════════════════════════
+
+/-! For each LevinClass with both `rootEntailments` and `argTemplate`
+defined, we verify that the derived ArgTemplate either MATCHES the
+hand-specified one or is a documented override. -/
+
+-- § 8a. Classes where derivation matches exactly
+
+/-- Break-class: causativeResult → resultChange ✓ -/
+theorem break_derived_matches :
+    toArgTemplate (LevinClass.rootEntailments .break_) =
+    LevinClass.argTemplate .break_ := by native_decide
+
+/-- Bend-class: causativeResult → resultChange ✓ -/
+theorem bend_derived_matches :
+    toArgTemplate (LevinClass.rootEntailments .bend) =
+    LevinClass.argTemplate .bend := by native_decide
+
+/-- Destroy-class: causativeResult → resultChange ✓ -/
+theorem destroy_derived_matches :
+    toArgTemplate (LevinClass.rootEntailments .destroy) =
+    LevinClass.argTemplate .destroy := by native_decide
+
+/-- Murder-class: causativeResult → resultChange ✓ -/
+theorem murder_derived_matches :
+    toArgTemplate (LevinClass.rootEntailments .murder) =
+    LevinClass.argTemplate .murder := by native_decide
+
+/-- Cooking-class: causativeResult → resultChange ✓ -/
+theorem cooking_derived_matches :
+    toArgTemplate (LevinClass.rootEntailments .cooking) =
+    LevinClass.argTemplate .cooking := by native_decide
+
+/-- Cut-class: fullSpec → resultChange ✓ -/
+theorem cut_derived_matches :
+    toArgTemplate (LevinClass.rootEntailments .cut) =
+    LevinClass.argTemplate .cut := by native_decide
+
+/-- MannerOfMotion-class: pureManner → selfMotion ✓ -/
+theorem mannerOfMotion_derived_matches :
+    toArgTemplate (LevinClass.rootEntailments .mannerOfMotion) =
+    LevinClass.argTemplate .mannerOfMotion := by native_decide
+
+-- § 8b. Documented overrides (derivation gives a default that the
+--        class specializes)
+
+/-- Build-class: causativeResult derives `resultChange`, but build
+    verbs have a CREATION object (CoS+IT+CA+DE) — the object comes
+    into existence. Dependent existence and incremental theme are
+    additional entailments not captured by root structural features. -/
+theorem build_override_creation :
+    toArgTemplate (LevinClass.rootEntailments .build) = some resultChange ∧
+    LevinClass.argTemplate .build = some creation := ⟨rfl, rfl⟩
+
+/-- Amuse-class: causativeResult derives `resultChange` (agent subject),
+    but psych-causal verbs have a STIMULUS subject (C+IE, no volition)
+    and EXPERIENCER object (S+IE). The nature of causation (volitional
+    vs. stimulus) isn't encoded in root entailments. -/
+theorem amuse_override_psychCausal :
+    toArgTemplate (LevinClass.rootEntailments .amuse) = some resultChange ∧
+    LevinClass.argTemplate .amuse = some psychCausal := ⟨rfl, rfl⟩
+
+/-- Eat/devour: default from rootEntailments is not defined (minimal),
+    but class-level argTemplate specifies `consumption`. -/
+theorem eat_has_class_template :
+    LevinClass.argTemplate .eat = some consumption := rfl
+
+-- § 8c. Subject agreement: even for overrides, the subject profile's
+--        core agentivity features agree
+
+/-- Build-class subject matches the derivation's subject
+    (both are full agent V+S+C+M+IE). The override affects only
+    the object, not the subject. -/
+theorem build_subject_agrees :
+    resultChange.subjectProfile = creation.subjectProfile := rfl
+
+-- § 8d. The derivation produces well-formed ArgTemplates
+
+/-- All canonical root entailments derive well-formed internal constraints
+    (volition → sentience holds for derived subject profiles). -/
+theorem derived_subjects_wellformed :
+    (toArgTemplate .causativeResult |>.map
+      (·.subjectProfile.wellFormedInternal)) = some true ∧
+    (toArgTemplate .pureManner |>.map
+      (·.subjectProfile.wellFormedInternal)) = some true ∧
+    (toArgTemplate .pureResult |>.map
+      (·.subjectProfile.wellFormedInternal)) = some true ∧
+    (toArgTemplate .propertyConcept |>.map
+      (·.subjectProfile.wellFormedInternal)) = some true := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
 
 end Semantics.Lexical.Verb.LevinClassProfiles

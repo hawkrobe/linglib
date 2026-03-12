@@ -4,8 +4,8 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 /-!
 # @cite{everdell-2024} — Applicativization in O'dam (Southeastern Tepiman)
 
-Everdell, Michael. 2024. *House rules of a cross-linguistic game: The
-argument-adjunct distinction in O'dam (Southeastern Tepiman)*. PhD
+Everdell, Michael. 2023. *Arguments and adjuncts in O'dam:
+language-specific realization of a cross-linguistic distinction*. PhD
 dissertation, University of Texas at Austin.
 
 Chapter 5 formalizes O'dam applicativization, which provides evidence
@@ -146,13 +146,6 @@ inductive ApplFunction where
   | blocked              -- Cannot applicativize (ditransitives)
   deriving DecidableEq, BEq, Repr
 
-/-- The type of beneficiary introduced (when the function is benefactive). -/
-inductive BeneficiaryType where
-  | deputative   -- Agent acts in place of beneficiary
-  | basic        -- Agent acts for the general benefit of beneficiary
-  | recipient    -- Beneficiary receives the theme
-  deriving DecidableEq, BEq, Repr
-
 -- ════════════════════════════════════════════════════
 -- § 3. Predicting Applicative Function (the core algorithm)
 -- ════════════════════════════════════════════════════
@@ -285,6 +278,11 @@ def tulhiina_suffer : OdamVerb :=
   , appliedForm := "tulhiiñ-chuda'", verbClass := .lexicalMiddle
   , transitivity := .transitive, entailedParticipant := .none }
 
+def oncho_hide : OdamVerb :=
+  { baseForm := "o'ñcho'", gloss := "hide (animate subject)"
+  , appliedForm := "o'ñxi-dha'", verbClass := .lexicalMiddle
+  , transitivity := .transitive, entailedParticipant := .none }
+
 -- ════════════════════════════════════════════════════
 -- § 6. Verb Data — Transitives with Promotion (§5.2–5.3)
 -- ════════════════════════════════════════════════════
@@ -292,7 +290,7 @@ def tulhiina_suffer : OdamVerb :=
 /-- Verbs with implicit objects (promoted by applicative). -/
 def gara_sell : OdamVerb :=
   { baseForm := "ga'ra'", gloss := "sell"
-  , appliedForm := "ga'r-dha'", verbClass := .simpleTransitive
+  , appliedForm := "ga'lhi-dha'", verbClass := .simpleTransitive
   , transitivity := .transitive, entailedParticipant := .implicitObject }
 
 def jotsa_send : OdamVerb :=
@@ -307,8 +305,8 @@ def aga_say : OdamVerb :=
 
 /-- Verbs with locative participants compatible with animate referents
     (promoted to object with animacy entailment). -/
-def buidha_throw : OdamVerb :=
-  { baseForm := "buidha'", gloss := "throw"
+def bua_throw : OdamVerb :=
+  { baseForm := "bua'", gloss := "throw.SG"
   , appliedForm := "bui-'ñ", verbClass := .simpleTransitive
   , transitivity := .transitive, entailedParticipant := .locative
   , animateLocative := .compatible }
@@ -341,7 +339,7 @@ def sooma_sew : OdamVerb :=
 
 def sarna_tear : OdamVerb :=
   { baseForm := "sarna'", gloss := "tear, rip"
-  , appliedForm := "sarñi-dha'", verbClass := .simpleTransitive
+  , appliedForm := "sarni-dha'", verbClass := .simpleTransitive
   , transitivity := .transitive, entailedParticipant := .none }
 
 def uana_clean : OdamVerb :=
@@ -455,6 +453,9 @@ theorem namkia_refined_agent :
 theorem tulhiina_refined_agent :
     predictFunctionRefined tulhiina_suffer = .agentIntroduction := rfl
 
+theorem oncho_refined_agent :
+    predictFunctionRefined oncho_hide = .agentIntroduction := rfl
+
 /-- The naive predictor gets exceptional transitives WRONG — it would
     predict beneficiary, not agent. This motivates the refined predictor. -/
 theorem naive_wrong_for_exceptionals :
@@ -473,8 +474,8 @@ theorem jotsa_promotes :
 theorem aga_promotes :
     predictFunction aga_say = .promotion := rfl
 
-theorem buidha_promotes :
-    predictFunction buidha_throw = .promotion := rfl
+theorem bua_promotes :
+    predictFunction bua_throw = .promotion := rfl
 
 theorem baabu_promotes :
     predictFunction baabu_take_out = .promotion := rfl
@@ -515,6 +516,11 @@ theorem bakta_inanimate_loc_not_promoted :
 theorem gammu_inanimate_loc_not_promoted :
     predictFunction gammu_put_inside = .beneficiary := rfl
 
+-- ── Denominal creation (transitive base) → beneficiary ──
+
+theorem junmada_gets_beneficiary :
+    predictFunction junmada_make_mole = .beneficiary := rfl
+
 -- ── Ditransitives → blocked ──
 
 theorem makia_blocked :
@@ -546,7 +552,7 @@ def allData : List ApplDatum :=
   , ⟨gara_sell, .promotion⟩
   , ⟨jotsa_send, .promotion⟩
   , ⟨aga_say, .promotion⟩
-  , ⟨buidha_throw, .promotion⟩
+  , ⟨bua_throw, .promotion⟩
   , ⟨baabu_take_out, .promotion⟩
   , ⟨nuina_push, .promotion⟩
     -- Transitives without promotable participants (beneficiary)
@@ -559,6 +565,8 @@ def allData : List ApplDatum :=
   , ⟨bulhia_tie, .beneficiary⟩
   , ⟨bakta_hang, .beneficiary⟩
   , ⟨gammu_put_inside, .beneficiary⟩
+    -- Denominal creation (transitive base → beneficiary)
+  , ⟨junmada_make_mole, .beneficiary⟩
     -- Ditransitives (blocked)
   , ⟨makia_give, .blocked⟩
   , ⟨tikka_ask, .blocked⟩
@@ -696,6 +704,8 @@ def krejciLanguages : List CausativizabilityData :=
   [ { language := "Slave",            morpheme := "-h-",    unaccusative := true }
   , { language := "Mapudungun",       morpheme := "-'ɨm",   unaccusative := true }
   , { language := "Classical Nahuatl", morpheme := "-tia",  unaccusative := true }
+  , { language := "Cora",             morpheme := "-te",    unaccusative := true
+    , middlesIngestive := true }
   , { language := "Marathi",          morpheme := "-aw",    unaccusative := true
     , middlesIngestive := true }
   , { language := "Amharic",          morpheme := "a-",     unaccusative := true
@@ -729,8 +739,6 @@ theorem krejci_hierarchy_holds :
 -- ════════════════════════════════════════════════════
 -- § 16. Bridge to Pylkkänen 2008 (High/Low Typology)
 -- ════════════════════════════════════════════════════
-
-open Minimalism (ApplType) in
 
 /-! O'dam applicatives challenge the @cite{pylkknen-2008} binary
     high/low classification. They exhibit properties of BOTH types:
@@ -843,5 +851,49 @@ theorem motion_verbs_intransitive :
 theorem motion_verbs_gain_agents :
     predictFunction tisdia = .agentIntroduction ∧
     predictFunction aaya = .agentIntroduction := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 19. Bridge to MAP (@cite{beavers-2010})
+-- ════════════════════════════════════════════════════
+
+/-! O'dam applicative promotion is orthogonal to MAP. MAP governs
+    direct/oblique alternations based on **truth-conditional strength**
+    (affectedness degree). O'dam promotion is governed by **animacy**,
+    a representational property independent of change-of-state
+    entailments.
+
+    This creates a two-dimensional space for argument realization:
+
+    | Dimension        | Governing property     | Framework       |
+    |------------------|------------------------|-----------------|
+    | Direct vs oblique| Truth-conditional strength| MAP (Beavers)  |
+    | Promoted vs not  | Animacy compatibility  | Hierarchy (273) |
+
+    Instruments can be truth-conditionally strong (entailed by the
+    verb) but STILL not promotable, because they are categorically
+    inanimate. This is a content-independent constraint that MAP
+    cannot capture. -/
+
+/-- Instruments are entailed (potentially high affectedness) but
+    not promotable. This witnesses a dimension of argument realization
+    orthogonal to MAP: animacy governs promotion, not truth-conditional
+    strength. -/
+theorem promotion_orthogonal_to_entailment :
+    kuagia_cut_firewood.entailedParticipant = .instrument ∧
+    predictFunction kuagia_cut_firewood = .beneficiary ∧
+    bulhia_tie.entailedParticipant = .instrument ∧
+    predictFunction bulhia_tie = .beneficiary := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The thematic hierarchy makes categorical predictions that
+    cannot be derived from truth-conditional strength alone:
+    the SAME type of entailed participant (locative) gets different
+    treatment based solely on animate compatibility. -/
+theorem animacy_gates_promotion :
+    baabu_take_out.entailedParticipant = .locative ∧
+    baabu_take_out.animateLocative = .compatible ∧
+    predictFunction baabu_take_out = .promotion ∧
+    bakta_hang.entailedParticipant = .locative ∧
+    bakta_hang.animateLocative = .incompatible ∧
+    predictFunction bakta_hang = .beneficiary := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Phenomena.ArgumentStructure.Studies.Everdell2024
