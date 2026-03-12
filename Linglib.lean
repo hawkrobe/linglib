@@ -1339,6 +1339,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 import Linglib.Theories.Semantics.Lexical.Noun.Binominal

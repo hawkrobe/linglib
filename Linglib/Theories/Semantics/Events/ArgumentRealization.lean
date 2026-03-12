@@ -46,4 +46,17 @@ structure MiddleType where
   suppressedVar : SuppressedVarReading
   deriving DecidableEq, BEq, Repr
 
+/-- Which argument surfaces as subject in a middle construction depends
+    on object realization, not on the suppression operation itself.
+
+    - Incorporation: agent surfaces (patient is incorporated)
+    - No incorporation: patient surfaces (agent is suppressed)
+
+    This connects the `MiddleType` typology to the voice system's
+    `PivotTarget` (@cite{beavers-udayana-2022}, (32d)). -/
+def MiddleType.agentSurfaces (m : MiddleType) : Bool :=
+  match m.objRealization with
+  | .incorporation => true
+  | .noIncorporation => false
+
 end Semantics.Events.ArgumentRealization

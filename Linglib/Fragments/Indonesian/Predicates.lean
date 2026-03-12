@@ -512,6 +512,95 @@ theorem causer_unspecified_have_stative_ter :
 -- § 6: Aggregate Properties
 -- ============================================================================
 
+-- ============================================================================
+-- § 6b: Denominal ber- middles (@cite{beavers-udayana-2022} §4)
+-- ============================================================================
+
+/-- Denominal root class: relational nouns (body parts, kin terms,
+    clothing) that form *ber-* middles with stative possessional readings.
+    The root names a relational noun, not a verbal action.
+
+    Examples: *ber-topi* 'have a hat on', *ber-kaki* 'have legs',
+    *ber-istri* 'have a wife'.
+
+    These combine incorporation (the noun head-adjoins to *ber-*) with
+    object promotion (the possessor surfaces as subject). The reading
+    derives from the relational noun's possession relation π'
+    (@cite{barker-1995}; @cite{beavers-udayana-2022} §4). -/
+inductive DenominalNounClass where
+  /-- Body part nouns: inalienable possession. -/
+  | bodyPart
+  /-- Kin terms: social/familial relation. -/
+  | kinTerm
+  /-- Clothing nouns: wearing relation. -/
+  | clothing
+  deriving DecidableEq, BEq, Repr
+
+/-- A denominal *ber-* entry: a relational noun that forms a stative
+    possessional middle via *ber-* + incorporation. -/
+structure DenominalBerEntry where
+  /-- The noun root. -/
+  root : String
+  /-- The *ber-* form. -/
+  formBer : String
+  /-- The noun class determining the possession relation. -/
+  nounClass : DenominalNounClass
+  /-- English gloss. -/
+  gloss : String
+  deriving Repr, BEq
+
+-- Body parts (@cite{beavers-udayana-2022} table (61))
+
+def kaki : DenominalBerEntry :=
+  { root := "kaki", formBer := "ber-kaki", nounClass := .bodyPart
+  , gloss := "have legs" }
+
+def mulut : DenominalBerEntry :=
+  { root := "mulut", formBer := "ber-mulut", nounClass := .bodyPart
+  , gloss := "have a mouth" }
+
+def tangan : DenominalBerEntry :=
+  { root := "tangan", formBer := "ber-tangan", nounClass := .bodyPart
+  , gloss := "have hands" }
+
+-- Kin terms (@cite{beavers-udayana-2022} table (61))
+
+def istri : DenominalBerEntry :=
+  { root := "istri", formBer := "ber-istri", nounClass := .kinTerm
+  , gloss := "have a wife" }
+
+def suami : DenominalBerEntry :=
+  { root := "suami", formBer := "ber-suami", nounClass := .kinTerm
+  , gloss := "have a husband" }
+
+def adik : DenominalBerEntry :=
+  { root := "adik", formBer := "ber-adik", nounClass := .kinTerm
+  , gloss := "have a younger sibling" }
+
+-- Clothing (@cite{beavers-udayana-2022} table (61))
+
+def topi : DenominalBerEntry :=
+  { root := "topi", formBer := "ber-topi", nounClass := .clothing
+  , gloss := "have a hat on" }
+
+def sepatu : DenominalBerEntry :=
+  { root := "sepatu", formBer := "ber-sepatu", nounClass := .clothing
+  , gloss := "have shoes on" }
+
+def baju : DenominalBerEntry :=
+  { root := "baju", formBer := "ber-baju", nounClass := .clothing
+  , gloss := "have a dress on" }
+
+/-- All denominal ber- entries. -/
+def denominalEntries : List DenominalBerEntry :=
+  [kaki, mulut, tangan, istri, suami, adik, topi, sepatu, baju]
+
+/-- All three noun classes are covered in the fragment. -/
+theorem denominal_classes_covered :
+    [DenominalNounClass.bodyPart, .kinTerm, .clothing].all
+      (fun nc => denominalEntries.any (fun e => e.nounClass == nc))
+    = true := rfl
+
 /-- All 13 verbs in the fragment. -/
 def allVerbs : List IndonesianVerbEntry :=
   [jual, masak, cuci, tambat, dandan, cukur, jemur, sisir, buka, pecah,

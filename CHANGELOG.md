@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.174] - 2026-03-12
+
+### Added
+- **VoiceSemantics.lean**: New syntax-semantics interface file defining voice denotations as Montague-typed compositional functions. `activeSem` (identity), `berSemG` (assignment-relative argument suppression with open variable), `suppressArg` (suppression at a specific value), `diSemProp` (existential binding), `incorporate` (NP classifier incorporation preserving arity). Key theorems prove the 2×2 middle typology is a consequence of Montague composition: same `suppressArg`, different VP types → different surface structures
+- **Denominal ber- entries (Predicates.lean)**: 9 denominal `DenominalBerEntry` entries from Beavers & Udayana 2022 §4 — body parts (*kaki*, *mulut*, *tangan*), kin terms (*istri*, *suami*, *adik*), clothing (*topi*, *sepatu*, *baju*). `DenominalNounClass` enum with coverage theorem
+- **Compositional derivation (BeaversUdayana2022.lean)**: New §5 proving dispositional and incorporation middle derivations via `suppressArg` over arbitrary models, showing the operation is identical and the surface difference comes from VP type
+- **MiddleType.agentSurfaces (ArgumentRealization.lean)**: Structural predicate connecting middle type to which argument surfaces as subject
+
+### Changed
+- **diParams (VoiceSystem.lean)**: Fix from `.expletive` to `.thematicExistential` — Indonesian *di-* passives have a semantically active implicit agent (licenses *oleh* 'by' phrases and rationale clause control), placing them in the [+D, +∃x] cell rather than [+D, −λx]
+
 ## [0.229.173] - 2026-03-12
 
 ### Changed

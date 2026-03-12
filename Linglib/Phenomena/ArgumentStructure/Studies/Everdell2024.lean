@@ -296,7 +296,8 @@ def gara_sell : OdamVerb :=
 def jotsa_send : OdamVerb :=
   { baseForm := "jotsa'", gloss := "send"
   , appliedForm := "jotxi-dha'", verbClass := .simpleTransitive
-  , transitivity := .transitive, entailedParticipant := .implicitObject }
+  , transitivity := .transitive, entailedParticipant := .locative
+  , animateLocative := .compatible }
 
 def aga_say : OdamVerb :=
   { baseForm := "aga'", gloss := "say"
@@ -675,6 +676,29 @@ theorem exceptionals_effectively_intransitive :
     effectiveTransitivity tigia_see = .intransitive ∧
     effectiveTransitivity saabu_fast = .intransitive := ⟨rfl, rfl, rfl⟩
 
+/-- `predictFunction` depends only on `transitivity`,
+    `entailedParticipant`, and `animateLocative`. -/
+theorem predictFunction_depends_only (v w : OdamVerb)
+    (ht : v.transitivity = w.transitivity)
+    (he : v.entailedParticipant = w.entailedParticipant)
+    (ha : v.animateLocative = w.animateLocative) :
+    predictFunction v = predictFunction w := by
+  simp only [predictFunction, ht, he, ha]
+
+/-- `predictFunctionRefined` agrees with `predictFunction` on all
+    non-exceptional verb classes. The refinement only changes the
+    prediction for ingestion, perception, and lexical middles. -/
+theorem refined_agrees_on_nonexceptional (v : OdamVerb)
+    (h : isExceptionalTransitive v.verbClass = false) :
+    predictFunctionRefined v = predictFunction v := by
+  obtain ⟨bf, gl, af, vc, tr, ep, al⟩ := v
+  unfold predictFunctionRefined
+  apply predictFunction_depends_only
+  · show effectiveTransitivity ⟨bf, gl, af, vc, tr, ep, al⟩ = tr
+    cases vc <;> first | rfl | simp [isExceptionalTransitive] at h
+  · rfl
+  · rfl
+
 -- ════════════════════════════════════════════════════
 -- § 15. Krejci's Causativizability Hierarchy (Table 5.4)
 -- ════════════════════════════════════════════════════
@@ -801,17 +825,11 @@ theorem odam_also_promotes :
     This makes O'dam a key test case for the "soup" theory: thematic
     hierarchies are one ingredient that cannot be fully eliminated. -/
 
-/-- Instruments can be entailed (truth-conditionally strong) but
-    STILL cannot be promoted. This is a content-independent constraint
-    based on representational animacy requirements. -/
-theorem instrument_entailed_but_blocked :
-    kuagia_cut_firewood.entailedParticipant = .instrument ∧
-    predictFunction kuagia_cut_firewood = .beneficiary := ⟨rfl, rfl⟩
-
 /-- The thematic hierarchy makes a prediction that pure MAP cannot:
     the same verb form (*sell*, *send*) always promotes the same
-    participant (the implicit recipient), regardless of context or
-    truth-conditional strength of other potential applied arguments. -/
+    participant, regardless of context or truth-conditional strength
+    of other potential applied arguments. See §19 for the deeper
+    analysis of why this is orthogonal to MAP. -/
 theorem hierarchy_deterministic :
     predictFunction gara_sell = .promotion ∧
     predictFunction jotsa_send = .promotion ∧

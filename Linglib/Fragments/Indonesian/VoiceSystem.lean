@@ -86,13 +86,21 @@ def menParams : VoiceParams :=
   { selectsSpecifier := some true
   , extArgSemantics := some .thematicArgument }
 
-/-- *di-* parameters: passive Voice[+D, −λx].
-    Projects a specifier (weak implicit argument *e*[−D]) but introduces
-    no semantic agent — the agent is entailed to exist but is syntactically
-    defective (@cite{alexiadou-schfer-2015}: 132, 141–142). -/
+/-- *di-* parameters: Voice[+D, +∃x].
+    Projects a specifier (weak implicit argument *e*[−D]) and introduces
+    an existentially bound agent — the agent is entailed to exist but is
+    syntactically defective (lacking [+D]).
+
+    Unlike English passive Voice (which is [+D, −λx] in the
+    @cite{alexiadou-schfer-2015} typology), *di-*'s implicit argument is
+    semantically active: it licenses *oleh* 'by' phrases and controls
+    rationale clause PRO (@cite{beavers-udayana-2022}: §2.1). This places
+    *di-* in the [+D, +∃x] cell — specifier selected, agent existentially
+    bound — rather than the [+D, −λx] cell occupied by English passive
+    and Romance anticausative SE. -/
 def diParams : VoiceParams :=
   { selectsSpecifier := some true
-  , extArgSemantics := some .expletive }
+  , extArgSemantics := some .thematicExistential }
 
 /-- *ber-* parameters: underspecified Voice[±D, ±λx].
     Neither ±D nor ±λx is fixed — the actual setting is determined by
@@ -123,9 +131,14 @@ theorem ber_underspecified : berParams.isFullySpecified = false := rfl
 theorem men_is_agentive :
     menParams = VoiceFlavor.agentive.toParams := rfl
 
-/-- *di-* maps to the same cell as Minimalist passive/anticausative Voice. -/
-theorem di_is_passive_cell :
-    diParams = VoiceFlavor.passive.toParams := rfl
+/-- *di-* occupies the [+D, +∃x] cell — a specifier that introduces an
+    existentially bound participant. This is distinct from English passive
+    Voice [+D, −λx] and Finnish impersonal [−D, +∃x]. -/
+theorem di_has_existential_agent :
+    diParams.extArgSemantics = some .thematicExistential := rfl
+
+theorem di_selects_specifier :
+    diParams.selectsSpecifier = some true := rfl
 
 /-- *ber-* is compatible with EVERY named VoiceFlavor — the defining
     property of an underspecified voice morpheme. -/
