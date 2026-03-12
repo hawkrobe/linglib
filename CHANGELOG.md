@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.169] - 2026-03-12
+
+### Changed
+- **MemorySurprisal/Basic.lean**: Restructure from data catalog to mathematical edifice — prove marginal rate theorem (`surplus_step`, `memoryCost_step`, `marginal_rate`) and boundary conditions from definitions; replace `True := trivial` stub with `InformationLocalityPostulates` structure; replace tail-recursive `memoryCostAux` with proof-friendly `weightedPrefixSum`
+
+## [0.229.168] - 2026-03-12
+
+### Fixed
+- **BonehDoron2013.lean**: Complete rewrite — remove fabricated Hebrew examples (danYodea, danHayaYodea, danYada not in Ch 6); replace with actual English data from chapter (Mary cigarette restrictor contrast ex. (4), actualization contrast ex. (42), would-vs-used-to puzzle ex. (47), Table (41) properties); fix operator distinction from individual/situation-based to existential/universal quantificational force with restrictor requirement; fix `isModal` (both GEN and HAB are modal per chapter's denotations eqs. (13), (21))
+- **AsherPelletier2013.lean**: Fix docstring Core Claim — chapter defends modal quantifier approach (∀x(φ > ψ) with per-individual normality), not primarily about "non-monotonic default reasoning"; add actual section references (§12.1, §12.3, §12.4) and examples (exx. (7)–(8))
+
+### Changed
+- **CHANGELOG 0.229.164**: Correct descriptions of BonehDoron2013 and DelPrete2013 entries to reflect actual chapter content (not fabricated Hebrew/Italian data)
+
 ## [0.229.167] - 2026-03-12
 
 ### Added
@@ -31,9 +45,9 @@
 ## [0.229.164] - 2026-03-12
 
 ### Added
-- **Phenomena/Generics/Studies/BonehDoron2013.lean**: Formalize @cite{boneh-doron-2013} HAB/GEN distinction — `QuantifierDomain` (individualBased vs situationBased), `CovertQConfig` with modal/agent parameters, Hebrew morphological data (beinoni vs haya+beinoni vs past), `gen_hab_distinct` and `shared_skeleton` theorems
-- **Phenomena/Generics/Studies/DelPrete2013.lean**: Formalize @cite{del-prete-2013} imperfective-habituality link — `permitsGenericReading` predicate bridging `ViewpointAspectB` to generic availability, Italian imperfetto/passato remoto minimal pairs, `theory_predicts_data` and `perfective_blocks_both` theorems
-- **Phenomena/Generics/Studies/AsherPelletier2013.lean**: Formalize @cite{asher-pelletier-2013} generic truth via default reasoning — `DefaultRule`, `processDefault` via `NormalityOrder.refine`, Tweety Triangle resolution proving specificity-based override, `generic_nonmonotonic` theorem, bridge from `normalFromOrdering` to `traditionalGEN`
+- **Phenomena/Generics/Studies/BonehDoron2013.lean**: Formalize @cite{boneh-doron-2013} HAB/GEN distinction — `QForce` (existential vs universal), `CovertQConfig`, English habitual form data, `gen_hab_distinct` and `shared_skeleton` theorems
+- **Phenomena/Generics/Studies/DelPrete2013.lean**: Formalize @cite{del-prete-2013} Same-Object Effect — `ImperfettoReading`, `SOEStatus`, Italian imperfective data (exx. 1, 2a, 2b, 11), `soe_blocks_hab`, `bare_plural_rescues_hab`, `hab_prog_complementarity` theorems
+- **Phenomena/Generics/Studies/AsherPelletier2013.lean**: Formalize @cite{asher-pelletier-2013} generic truth via modal quantification — `DefaultRule`, `processDefault` via `NormalityOrder.refine`, Tweety Triangle resolution, `generic_nonmonotonic` theorem, bridge from `normalFromOrdering` to `traditionalGEN`
 
 ### Changed
 - **Phenomena/Generics/Data.lean**: Refine `ConnectionType` with `PrincipledSubtype` (formal/constitutive/causal) per @cite{prasada-dillingham-2006}; add `trianglesSides`, `mosquitosMalariaCxn` data; `toleratesExceptions` field; `principled_lower_threshold`, `formal_no_exceptions`, `threshold_ordering` theorems
