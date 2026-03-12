@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.172] - 2026-03-12
+
+### Added
+- **TerClass (Predicates.lean)**: Three-way *ter-* classification from Sneddon 1996 §1.265–1.275 — stative (result state, no agent), accidental (nonvolitional action), abilitative (circumstantial possibility). Semantic bridges to `Volitionality` and suffix retention. Three new verbs: *tulis* (stative), *bawa* (accidental), *dengar* (abilitative). 27 verification theorems including cross-source bridge connecting B&U root classes to Sneddon ter- classes.
+- **Passive type system (VoiceSystem.lean)**: Two passive types from Sneddon §3.27–3.32 — type one (*di-*verb + *oleh* + agent) and type two (agent + bare verb). `AgentDP` classification with Box A/Box B selection rules, `VoicePrefixConstraint` for *ter-* override (§3.32 forces type one for all agents). 10 theorems including universal quantifier proofs.
+- **Morphophonology.lean**: Fix `String.data` → `String.toList` deprecation
+- **ArgumentRealization.lean**: Extract `SuppressedVarReading`, `ObjectRealization`, `MiddleType` to theory layer (fixes Fragment→Phenomena dependency violation)
+
 ## [0.229.171] - 2026-03-12
 
 ### Changed
