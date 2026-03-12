@@ -70,7 +70,7 @@ English [+arg, +pred] allows both; Italian [-arg, +pred] forces D.
 namespace Phenomena.Generics.Studies.Guerrini2026
 
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping Kind canDenoteKind
-  canDenoteProperty downDefinedFor)
+  canDenoteProperty downDefinedFor DPP)
 open Core.Duality (Truth3)
 open Semantics.Lexical.Plural.Distributivity (distMaximal pluralTruthValue
   allSatisfy noneSatisfy)
@@ -80,10 +80,13 @@ open Phenomena.Generics.KindReference (NominalDenotation)
 -- § 1: Structural Ambiguity — The Two LFs
 -- ============================================================================
 
-/-- Available LF parses for generalizations with kind-denoting plurals.
+/-- Available LF parses for sentences with kind-denoting plurals.
 
-Guerrini's central claim: "Lions hunt" is structurally ambiguous.
-Kind-denoting plurals admit three LF types; singular indefinites admit only BFG. -/
+Guerrini's central claim: English bare plurals are structurally ambiguous
+between four LF types (diagram (145)). The first three require kind
+denotation; the fourth requires property denotation.
+
+Kind-denoting plurals can access all four; singular indefinites access only BFG. -/
 inductive GeneralizationLF where
   /-- Kind enters restrictor of Gen. World variable bound by Gen.
       Law-like reading: "Generally, lions hunt." (Guerrini's (29)) -/
@@ -95,6 +98,11 @@ inductive GeneralizationLF where
   /-- Kind evaluated at actual world s₀, ** (cumulative operator)
       applies. No Gen. "Elephants live in Africa and Asia." (§4) -/
   | cumulativeKindPred
+  /-- Property reading: bare plural interpreted as property, composed
+      with predicate via DPP (Derived Property Predication, §5.3).
+      Low-scoped existential: "Bears are destroying my garden" ≈
+      ∃x[bear(x) ∧ destroying-my-garden(x)]. (Guerrini's (105b)) -/
+  | existentialDPP
   deriving DecidableEq, Repr, BEq
 
 -- Singular indefinites cannot denote kinds (∩ undefined for singular count
@@ -207,11 +215,14 @@ theorem kind_plural_wider_distribution :
 /-- The LF parse determines the generalization flavor.
 
 BFG → law-like (modal generalization, Gen quantifies over situations).
-DKP/CKP → accidental (no Gen; predicate applies to actual kind instances). -/
+DKP/CKP → accidental (no Gen; predicate applies to actual kind instances).
+DPP → neither law-like nor accidental: it's an existential episodic reading,
+  not a generalization at all. We classify it as accidental (non-generic). -/
 def lfFlavor : GeneralizationLF → GenFlavor
   | .bonaFideGeneric      => .lawLike
   | .distributiveKindPred => .accidental
   | .cumulativeKindPred   => .accidental
+  | .existentialDPP       => .accidental
 
 /-- The accidental flavor is unavailable for singular indefinites.
 
@@ -226,9 +237,9 @@ than kind-denoting plurals in generalizations. -/
 theorem singular_no_accidental :
     -- Step 1: ∩ undefined for singular count nouns
     downDefinedFor .count false = false ∧
-    -- Step 2: No accidental LF available (DKP/CKP both require kinds)
+    -- Step 2: Non-generic LFs require kind or property denotation
     (∀ lf : GeneralizationLF, lfFlavor lf = .accidental →
-      lf = .distributiveKindPred ∨ lf = .cumulativeKindPred) ∧
+      lf = .distributiveKindPred ∨ lf = .cumulativeKindPred ∨ lf = .existentialDPP) ∧
     -- Step 3: Table 1 reflects this — singular indefinites lack accidental
     table1 .singularIndefinite .accidental = false := by
   exact ⟨rfl, fun lf h => by cases lf <;> simp_all [lfFlavor], rfl⟩
@@ -385,32 +396,40 @@ theorem italian_bare_pl_property_only :
 
 /-- Which LFs are available for a given nominal form.
 
-Kind denotation enables DKP and CKP.
-Property denotation enables BFG (kind enters Gen restrictor).
-Singular indefinites: only BFG (no kind denotation, no DIST). -/
+Kind denotation enables DKP and CKP (kind-level LFs).
+Property denotation enables BFG (property enters Gen restrictor)
+and existential DPP (property yields low-scoped ∃).
+Diagram (145): four paths for English BPs, two via kind, two via property. -/
 def lfAvailable (ne : NominalExpression) (lf : GeneralizationLF) : Bool :=
   match lf with
   | .bonaFideGeneric       => true  -- always: kind enters Gen restrictor (19) or property does (20)
   | .distributiveKindPred  => canDenote ne .kind
   | .cumulativeKindPred    => canDenote ne .kind
+  | .existentialDPP        => canDenote ne .property
 
-/-- English bare plurals allow all three LFs. -/
+/-- English bare plurals allow all four LFs (diagram (145)):
+    kind path → BFG, DKP, CKP; property path → BFG, DPP. -/
 theorem english_bp_all_lfs :
     lfAvailable .englishBarePlural .bonaFideGeneric = true ∧
     lfAvailable .englishBarePlural .distributiveKindPred = true ∧
-    lfAvailable .englishBarePlural .cumulativeKindPred = true := ⟨rfl, rfl, rfl⟩
+    lfAvailable .englishBarePlural .cumulativeKindPred = true ∧
+    lfAvailable .englishBarePlural .existentialDPP = true := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Italian definite plurals allow all three LFs. -/
-theorem italian_def_pl_all_lfs :
+/-- Italian definite plurals: kind-level LFs only (no property → no DPP).
+    This predicts near-universal but no existential readings in episodics (§5.4). -/
+theorem italian_def_pl_lfs :
     lfAvailable .italianDefinitePlural .bonaFideGeneric = true ∧
     lfAvailable .italianDefinitePlural .distributiveKindPred = true ∧
-    lfAvailable .italianDefinitePlural .cumulativeKindPred = true := ⟨rfl, rfl, rfl⟩
+    lfAvailable .italianDefinitePlural .cumulativeKindPred = true ∧
+    lfAvailable .italianDefinitePlural .existentialDPP = false := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Italian bare plurals: only Bona Fide Generic (no kind denotation). -/
-theorem italian_bare_pl_bfg_only :
+/-- Italian bare plurals: property-level LFs only (BFG + DPP, no DKP/CKP).
+    This predicts existential but no near-universal readings in episodics (§5.4). -/
+theorem italian_bare_pl_lfs :
     lfAvailable .italianBarePlural .bonaFideGeneric = true ∧
     lfAvailable .italianBarePlural .distributiveKindPred = false ∧
-    lfAvailable .italianBarePlural .cumulativeKindPred = false := ⟨rfl, rfl, rfl⟩
+    lfAvailable .italianBarePlural .cumulativeKindPred = false ∧
+    lfAvailable .italianBarePlural .existentialDPP = true := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 7: Episodic Sentences (§5 of the paper)
@@ -515,34 +534,68 @@ def itBarePlJournalists : ItalianEpisodicDatum :=
   , existentialOK := true        -- property → DPP → some journalists asked
   , notes := "Property denotation → DPP → existential only" }
 
--- (113)-(114): Accidental generalization parallel
-def itDefPlCandidates : ItalianEpisodicDatum :=
-  { sentence := "I candidati puntuali non vengono assunti."
-  , gloss := "Punctual candidates don't get hired."
-  , nominalExpression := .italianDefinitePlural
-  , nearUniversalOK := true     -- both BFG (law-like) and DKP (accidental)
-  , existentialOK := false
-  , notes := "Definite plural: both law-like and accidental readings" }
-
-def itBarePlCandidates : ItalianEpisodicDatum :=
-  { sentence := "Candidati puntuali non vengono assunti."
-  , gloss := "Punctual candidates don't get hired."
-  , nominalExpression := .italianBarePlural
-  , nearUniversalOK := false    -- BFG only (law-like)
-  , existentialOK := true
-  , notes := "Bare plural: law-like only; accidental reading unavailable" }
-
 def italianEpisodicData : List ItalianEpisodicDatum :=
-  [itDefPlJournalists, itBarePlJournalists,
-   itDefPlCandidates, itBarePlCandidates]
+  [itDefPlJournalists, itBarePlJournalists]
 
 /-- Italian definite plurals get near-universal readings in episodics;
-    Italian bare plurals get only existential readings. -/
+    Italian bare plurals get only existential readings. (§5.4) -/
 theorem italian_episodic_disambiguation :
     (italianEpisodicData.filter (·.nominalExpression == .italianDefinitePlural)
       |>.all (·.nearUniversalOK)) = true ∧
     (italianEpisodicData.filter (·.nominalExpression == .italianBarePlural)
       |>.all (!·.nearUniversalOK)) = true := ⟨rfl, rfl⟩
+
+-- (113)-(114): Italian generalization disambiguation (§5.4)
+-- These are generalizations, not episodics — definite plurals support
+-- accidental readings (DKP), bare plurals support only law-like (BFG).
+
+/-- Italian generalization datum (§5.4, examples (113)-(114)). -/
+structure ItalianGenDisambiguationDatum where
+  sentence : String
+  gloss : String
+  nominalExpression : NominalExpression
+  /-- Accidental reading available (via DKP)? -/
+  accidentalOK : Bool
+  /-- Law-like reading available (via BFG)? -/
+  lawLikeOK : Bool
+  notes : String
+
+def itDefPlCandidates : ItalianGenDisambiguationDatum :=
+  { sentence := "I candidati puntuali non vengono assunti."
+  , gloss := "Punctual candidates don't get hired."
+  , nominalExpression := .italianDefinitePlural
+  , accidentalOK := true    -- DKP available (def pl denotes kind)
+  , lawLikeOK := true        -- BFG always available
+  , notes := "Definite plural: both law-like and accidental readings" }
+
+def itBarePlCandidates : ItalianGenDisambiguationDatum :=
+  { sentence := "Candidati puntuali non vengono assunti."
+  , gloss := "Punctual candidates don't get hired."
+  , nominalExpression := .italianBarePlural
+  , accidentalOK := false   -- no DKP (bare pl cannot denote kind)
+  , lawLikeOK := true        -- BFG via property entering Gen restrictor
+  , notes := "Bare plural: law-like only; accidental reading unavailable" }
+
+def italianGenDisambiguationData : List ItalianGenDisambiguationDatum :=
+  [itDefPlCandidates, itBarePlCandidates]
+
+/-- Italian definite plurals support accidental generalizations;
+    Italian bare plurals do not. Derived from kind denotation availability. -/
+theorem italian_gen_disambiguation :
+    (italianGenDisambiguationData.filter
+      (·.nominalExpression == .italianDefinitePlural)
+      |>.all (·.accidentalOK)) = true ∧
+    (italianGenDisambiguationData.filter
+      (·.nominalExpression == .italianBarePlural)
+      |>.all (!·.accidentalOK)) = true := ⟨rfl, rfl⟩
+
+/-- The gen disambiguation derives from the same kind-denotation chain:
+    def pl can denote kind → DKP → accidental; bare pl cannot. -/
+theorem italian_gen_from_kind_denotation :
+    canDenote .italianDefinitePlural .kind = true ∧
+    lfAvailable .italianDefinitePlural .distributiveKindPred = true ∧
+    canDenote .italianBarePlural .kind = false ∧
+    lfAvailable .italianBarePlural .distributiveKindPred = false := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- This disambiguation is derived from unambiguous denotation types. -/
 theorem italian_episodic_from_denotation :
@@ -602,12 +655,14 @@ def subjectToGenericInference (lf : GeneralizationLF) : Bool :=
   | .bonaFideGeneric      => true   -- Gen is present; threshold applies
   | .distributiveKindPred => false  -- No Gen; DIST gives referential truth
   | .cumulativeKindPred   => false  -- No Gen; ** gives cumulative truth
+  | .existentialDPP       => false  -- No Gen; DPP gives existential truth
 
 /-- Only the Bona Fide Generic parse is subject to T&G inference. -/
 theorem only_bfg_has_generic_inference :
     subjectToGenericInference .bonaFideGeneric = true ∧
     subjectToGenericInference .distributiveKindPred = false ∧
-    subjectToGenericInference .cumulativeKindPred = false := ⟨rfl, rfl, rfl⟩
+    subjectToGenericInference .cumulativeKindPred = false ∧
+    subjectToGenericInference .existentialDPP = false := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 8a: DKP ↔ Prevalence ↔ T&G Threshold (structural connection)
@@ -777,28 +832,29 @@ def subjunctiveForcesLawLike (mood : ItalianMood) : Bool :=
 /-- Available LFs given mood on the relative clause.
 
     Subjunctive is licensed inside the restrictor of Gen (an intensional
-    environment). DKP and CKP place the kind outside Gen, so the subject
-    DP is not in Gen's restrictor — subjunctive is not licensed. -/
+    environment). DKP, CKP, and DPP place the DP outside Gen, so the
+    subject DP is not in Gen's restrictor — subjunctive is not licensed. -/
 def lfAvailableWithMood (mood : ItalianMood) (lf : GeneralizationLF) : Bool :=
   match mood, lf with
-  | .indicative,  .bonaFideGeneric      => true
-  | .indicative,  .distributiveKindPred => true
-  | .indicative,  .cumulativeKindPred   => true
+  | .indicative,  _                     => true
   | .subjunctive, .bonaFideGeneric      => true
   | .subjunctive, .distributiveKindPred => false  -- kind outside Gen
   | .subjunctive, .cumulativeKindPred   => false  -- kind outside Gen
+  | .subjunctive, .existentialDPP       => false  -- property outside Gen
 
 /-- Subjunctive disambiguates: only Bona Fide Generic survives. -/
 theorem subjunctive_disambiguates :
     lfAvailableWithMood .subjunctive .bonaFideGeneric = true ∧
     lfAvailableWithMood .subjunctive .distributiveKindPred = false ∧
-    lfAvailableWithMood .subjunctive .cumulativeKindPred = false := ⟨rfl, rfl, rfl⟩
+    lfAvailableWithMood .subjunctive .cumulativeKindPred = false ∧
+    lfAvailableWithMood .subjunctive .existentialDPP = false := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Indicative preserves full ambiguity. -/
 theorem indicative_ambiguous :
     lfAvailableWithMood .indicative .bonaFideGeneric = true ∧
     lfAvailableWithMood .indicative .distributiveKindPred = true ∧
-    lfAvailableWithMood .indicative .cumulativeKindPred = true := ⟨rfl, rfl, rfl⟩
+    lfAvailableWithMood .indicative .cumulativeKindPred = true ∧
+    lfAvailableWithMood .indicative .existentialDPP = true := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 10: Empirical Data — Flavors of Genericity
@@ -956,7 +1012,9 @@ theorem parses_use_different_operators :
     -- DKP = DIST (not subject to generic inference)
     subjectToGenericInference .distributiveKindPred = false ∧
     -- CKP = ** (not subject to generic inference)
-    subjectToGenericInference .cumulativeKindPred = false := ⟨rfl, rfl, rfl⟩
+    subjectToGenericInference .cumulativeKindPred = false ∧
+    -- DPP = ∃ (not subject to generic inference)
+    subjectToGenericInference .existentialDPP = false := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Table 1 is derivable from LF availability + LF → flavor mapping.
 
@@ -1157,5 +1215,143 @@ example : epistemicAdjData.all (·.existentialOK) = true := rfl
 theorem epistemic_adj_from_kind_denotation :
     adjReadingSupportsKind .local = true ∧
     adjReadingSupportsKind .nonlocal = false := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 14: Q-Adverb Diagnostics (§3.1, §5.1)
+-- ============================================================================
+
+/-!
+## Q-Adverb Resistance as a DKP Diagnostic
+
+@cite{guerrini-2026} §3.1: Q-adverbs like "usually" and "rarely" are
+overt counterparts of Gen (Krifka et al. 1995). Since DKP does not
+involve Gen, Q-adverbs are incompatible with DKP readings. This
+provides a diagnostic: if a Q-adverb is added, only the BFG parse
+survives, and accidental readings disappear.
+
+§5.1: Episodic bare plurals with DKP allow 'all' (DIST's non-homogeneous
+counterpart) but not 'always' (Gen's counterpart), confirming the
+absence of Gen from the DKP parse.
+-/
+
+/-- Q-adverb diagnostic datum (§3.1 examples (25), (49); §5.1 examples (89)-(90)). -/
+structure QAdvDatum where
+  sentence : String
+  nominalForm : NominalForm
+  /-- Does adding a Q-adverb allow the intended reading? -/
+  qAdvCompatible : Bool
+  /-- What reading is being tested? -/
+  testedReading : GenFlavor
+  notes : String
+
+-- (25a): "*Lions are usually extinct" — kind predicate resists Q-adverbs
+def lionsUsuallyExtinct : QAdvDatum :=
+  { sentence := "*Lions are usually extinct."
+  , nominalForm := .kindDenotingPlural
+  , qAdvCompatible := false
+  , testedReading := .accidental
+  , notes := "Kind predicate 'extinct' resists Q-adverb; DKP only" }
+
+-- (25b): "LLMs are usually popular" — accidental predicate OK with Q-adverb
+-- (forces BFG parse; see (49))
+def llmsUsuallyPopular : QAdvDatum :=
+  { sentence := "LLMs are usually popular."
+  , nominalForm := .kindDenotingPlural
+  , qAdvCompatible := true
+  , testedReading := .lawLike
+  , notes := "Q-adverb replaces Gen in BFG parse; accidental reading lost" }
+
+-- (89): "Birds are all migrating" — 'all' OK with episodic DKP
+def birdsAllMigrating : QAdvDatum :=
+  { sentence := "Birds are all migrating."
+  , nominalForm := .kindDenotingPlural
+  , qAdvCompatible := true
+  , testedReading := .accidental
+  , notes := "'all' replaces DIST-homogeneity; DKP parse preserved" }
+
+-- (90): "#Birds are always migrating" — 'always' incompatible with episodic DKP
+def birdsAlwaysMigrating : QAdvDatum :=
+  { sentence := "#Birds are always migrating."
+  , nominalForm := .kindDenotingPlural
+  , qAdvCompatible := false
+  , testedReading := .accidental
+  , notes := "'always' is a Q-adverb (Gen counterpart); no Gen in DKP" }
+
+def qAdvData : List QAdvDatum :=
+  [lionsUsuallyExtinct, llmsUsuallyPopular,
+   birdsAllMigrating, birdsAlwaysMigrating]
+
+/-- Q-adverbs (Gen counterparts) are incompatible with accidental/episodic
+    DKP readings, confirming that DKP does not involve Gen. -/
+theorem qadv_blocks_dkp :
+    -- 'all' (DIST counterpart) OK with DKP readings
+    birdsAllMigrating.qAdvCompatible = true ∧
+    -- 'always' (Gen counterpart) blocks DKP readings
+    birdsAlwaysMigrating.qAdvCompatible = false := ⟨rfl, rfl⟩
+
+/-- The Q-adverb asymmetry aligns with Table 3: episodic bare plurals
+    (DKP parse) accept 'all' but not 'always', confirming they have
+    DIST but not Gen in their LF. -/
+theorem episodic_qadv_aligns_with_table3 :
+    removerAvailable .referentialDefinitePlural .all = true ∧
+    removerAvailable .referentialDefinitePlural .always = false ∧
+    -- Episodic bare plural via DKP ≈ referential definite plural
+    birdsAllMigrating.qAdvCompatible = true ∧
+    birdsAlwaysMigrating.qAdvCompatible = false := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 15: DPP Compositional Bridge (§5.3, diagram (145))
+-- ============================================================================
+
+/-!
+## DPP Completes the Four-Way Typology
+
+@cite{guerrini-2026} diagram (145) shows English bare plurals have
+four LF paths. Two via kind denotation (DKP, CKP), two via property
+denotation (BFG, DPP). The DPP path yields the existential reading
+of episodic bare plurals ("Bears are destroying my garden" ≈ ∃x[bear(x)
+∧ destroying-my-garden(x)]), grounded via `DPP` from
+`Chierchia1998.lean`.
+-/
+
+/-- DPP (from `Chierchia1998.lean`) is the compositional engine behind
+    the `.existentialDPP` LF parse.
+
+    This theorem connects the structural LF typology to the theory-layer
+    definition: existential readings arise exactly when property denotation
+    is available, via DPP. -/
+theorem existential_via_dpp :
+    -- English BPs: property available → DPP LF available → existential
+    lfAvailable .englishBarePlural .existentialDPP = true ∧
+    -- Italian bare pl: property available → DPP LF available → existential
+    lfAvailable .italianBarePlural .existentialDPP = true ∧
+    -- Italian def pl: no property → no DPP → no existential
+    lfAvailable .italianDefinitePlural .existentialDPP = false := ⟨rfl, rfl, rfl⟩
+
+/-- The four-way LF typology from diagram (145), connecting denotation
+    types to available LFs and their truth conditions:
+
+    Kind path:
+    - BFG: Gen(⟦kind⟧, ⟦VP⟧) — law-like, prevalence-sensitive
+    - DKP: DIST(⟦VP⟧)(∩kind_{s₀}) — near-universal over actual instances
+    - CKP: **(⟦VP⟧)(locations)(∩kind_{s₀}) — cumulative coverage
+
+    Property path:
+    - BFG: Gen(⟦property⟧, ⟦VP⟧) — law-like, prevalence-sensitive
+    - DPP: ∃x[property(x) ∧ VP(x)] — low-scoped existential -/
+theorem diagram_145_four_paths :
+    -- Kind-requiring LFs
+    (lfAvailable .englishBarePlural .distributiveKindPred = true) ∧
+    (lfAvailable .englishBarePlural .cumulativeKindPred = true) ∧
+    -- Property-requiring LF
+    (lfAvailable .englishBarePlural .existentialDPP = true) ∧
+    -- BFG available via either path
+    (lfAvailable .englishBarePlural .bonaFideGeneric = true) ∧
+    -- Italian definite plural: kind path only
+    (lfAvailable .italianDefinitePlural .existentialDPP = false) ∧
+    (lfAvailable .italianDefinitePlural .distributiveKindPred = true) ∧
+    -- Italian bare plural: property path only
+    (lfAvailable .italianBarePlural .distributiveKindPred = false) ∧
+    (lfAvailable .italianBarePlural .existentialDPP = true) := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Generics.Studies.Guerrini2026
