@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.167] - 2026-03-12
+
+### Added
+- **Dynamic/Generics.lean**: General `sobel_pair_consistent` and `reverse_sobel_pair_inconsistent` theorems (§5.1–5.2) with full structured proofs — captures the paper's core argument that ANY Sobel pair exhibits the consistency/inconsistency asymmetry, not just specific toy models
+- **Kirkpatrick2024.lean**: General theorem instantiations for ravens, Teacher model (§2 example 4) with Sobel/reverse Sobel verification, Veltman 1996 comparison note
+- **references.bib**: `kirkpatrick-2024` bib entry
+
 ## [0.229.166] - 2026-03-12
 
 ### Fixed

@@ -181,6 +181,59 @@ theorem mixed_reverse_consistent :
     isConsistent [lionsGiveBirth, lionsHaveManes] = true := by native_decide
 
 
+-- ═══ General Theorem Instantiations ═══
+
+/-- The raven Sobel pair satisfies the general consistency theorem.
+    This derives `sobel_consistent` from the paper's general argument (§5.1)
+    rather than finite model checking. -/
+theorem sobel_consistent_general :
+    isConsistent sobelSequence = true :=
+  sobel_pair_consistent ravensAreBlack albinoRavensArentBlack
+    (by decide) (by decide) (by decide) (by decide)
+
+/-- The raven reverse Sobel pair satisfies the general inconsistency theorem.
+    This derives `reverse_sobel_inconsistent` from the general argument (§5.2). -/
+theorem reverse_sobel_inconsistent_general :
+    isConsistent reverseSobelSequence = false :=
+  reverse_sobel_pair_inconsistent ravensAreBlack albinoRavensArentBlack
+    (by decide) (by decide)
+    (by intro e; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack, isAlbinoRaven, isRaven])
+    (by decide) (by decide)
+
+
+-- ═══ Additional Data from §2 ═══
+
+/-- Example (4): "Teachers care for their students; but bad teachers don't."
+    Another Sobel pair demonstrating the generality of the phenomenon. -/
+inductive Person where
+  | goodTeacher1 | goodTeacher2 | badTeacher
+  deriving DecidableEq, BEq, Repr
+
+def isTeacher : Person → Bool := fun _ => true
+def isBadTeacher : Person → Bool
+  | .badTeacher => true
+  | _ => false
+def caresForStudents : Person → Bool
+  | .goodTeacher1 => true
+  | .goodTeacher2 => true
+  | .badTeacher => false
+
+def teachersCare : GenericSentence Person :=
+  ⟨isTeacher, caresForStudents, [.goodTeacher1, .goodTeacher2]⟩
+def badTeachersDontCare : GenericSentence Person :=
+  ⟨isBadTeacher, fun e => !caresForStudents e, [.badTeacher]⟩
+
+-- (4a) "Teachers care for their students; but bad teachers don't." — felicitous
+#guard isConsistent [teachersCare, badTeachersDontCare] = true
+-- (4b) "#Bad teachers don't care for their students; but teachers do." — infelicitous
+#guard isConsistent [badTeachersDontCare, teachersCare] = false
+
+theorem teachers_sobel_consistent :
+    isConsistent [teachersCare, badTeachersDontCare] = true := by native_decide
+theorem teachers_reverse_inconsistent :
+    isConsistent [badTeachersDontCare, teachersCare] = false := by native_decide
+
+
 -- ═══ Comparison with Static Theories ═══
 
 /-- Static theories assign the same truth conditions to both orders.

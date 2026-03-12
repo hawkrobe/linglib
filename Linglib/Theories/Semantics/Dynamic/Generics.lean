@@ -38,6 +38,15 @@ evaluation order determines which individuals are salient.
 - `traditionalGEN` (`Lexical/Noun/Kind/Generics.lean`): the static
   normality-based truth conditions that this theory dynamicizes
 
+## Comparison with @cite{veltman-1996}
+
+The paper's Appendix A compares with Veltman's update semantics for defaults
+(`UpdateSemantics/Default.lean`). Veltman treats generics as default rules
+(constraints on the preference structure of information states) and makes the
+same predictions for Sobel sequences. But his theory incorrectly predicts
+that reverse Sobel sequences are also consistent, because default rules
+don't make exceptional individuals *salient* — they just adjust preferences.
+
 ## What's not here
 
 This formalizes the single-world case of Kirkpatrick's theory. The full
@@ -179,23 +188,28 @@ omit [DecidableEq E] in
 /-- General Sobel sequence consistency (§5.1).
 
     If two generics form a Sobel pair — the general's normal instances
-    satisfy its own restrictor and scope, the exception's normal instances
-    satisfy their restrictor and scope, and the general's normal instances
-    are disjoint from the exception's restrictor — then the Sobel sequence
+    satisfy the general scope, the exception's normal instances satisfy
+    their restrictor and scope, and the general's normal instances are
+    disjoint from the exception's restrictor — then the Sobel sequence
     [general, exception] is consistent. -/
 theorem sobel_pair_consistent
     (general exception : GenericSentence E)
-    (hgr : ∀ e ∈ general.normalInstances, general.restrictor e = true)
     (hgs : ∀ e ∈ general.normalInstances, general.scope e = true)
     (hdis : ∀ e ∈ general.normalInstances, exception.restrictor e = false)
     (her : ∀ e ∈ exception.normalInstances, exception.restrictor e = true)
     (hes : ∀ e ∈ exception.normalInstances, exception.scope e = true) :
     isConsistent [general, exception] = true := by
-  -- TODO: structured proof using all_filter_of_forall and filter_append_eq
-  -- Proof sketch: Step 1 (general against ∅) expands with normal instances, all
-  -- satisfy scope → true. Step 2 (exception against normalInstances) finds no
-  -- exception-restrictor elements (disjoint), expands, all satisfy scope → true.
-  sorry
+  unfold isConsistent evalSequence
+  simp only [evalSequence.go, evalGeneric, List.any_nil, Bool.false_eq_true,
+             ↓reduceIte, List.nil_append, any_eq_false_of_forall hdis]
+  -- Goal: [truth₂, truth₁].reverse.all id = true
+  -- Rewrite both truth values to true, then the goal is trivially true
+  have h1 : (general.normalInstances.filter general.restrictor).all general.scope = true :=
+    all_filter_of_forall (fun e he _ => hgs e he)
+  have h2 : ((general.normalInstances ++ exception.normalInstances).filter
+      exception.restrictor).all exception.scope = true := by
+    rw [filter_append_eq hdis her, List.all_eq_true]; exact hes
+  rw [h1, h2]; decide
 
 omit [DecidableEq E] in
 /-- General reverse Sobel inconsistency (§5.2).
@@ -217,27 +231,24 @@ theorem reverse_sobel_pair_inconsistent
     (hcounter : ∀ e ∈ exception.normalInstances, general.scope e = false)
     (hne : exception.normalInstances ≠ []) :
     isConsistent [exception, general] = false := by
-  -- Unfold the two-step evaluation
-  simp only [isConsistent, evalSequence, evalSequence.go, evalGeneric]
-  simp only [List.any_nil, Bool.false_eq_true, ↓reduceIte, List.nil_append]
-  -- After step 1: horizon = exception.normalInstances
-  -- Step 2: exception.normalInstances.any general.restrictor = true
-  --   because exception normal instances satisfy exception restrictor (her)
-  --   and exception restrictor implies general restrictor (hsub)
+  unfold isConsistent evalSequence
+  simp only [evalSequence.go, evalGeneric, List.any_nil, Bool.false_eq_true,
+             ↓reduceIte, List.nil_append]
+  -- Step 2: exception normal instances satisfy general restrictor (via subset)
   have hsub' : ∀ e ∈ exception.normalInstances, general.restrictor e = true :=
     fun e he => hsub e (her e he)
   obtain ⟨e₀, he₀⟩ := List.exists_mem_of_ne_nil exception.normalInstances hne
   have h_has : exception.normalInstances.any general.restrictor = true :=
     any_eq_true_of_mem he₀ (hsub' e₀ he₀)
   simp only [h_has, ↓reduceIte]
-  -- The second truth value is false: exception normal instances violate general scope
-  simp only [List.reverse_cons, List.reverse_nil, List.nil_append, id]
-  -- Need: filter ∧ all = false (right conjunct)
-  have h_false : (exception.normalInstances.filter general.restrictor).all general.scope = false :=
+  -- The second truth value is false: counterexamples on the horizon
+  have h_false : (exception.normalInstances.filter general.restrictor).all
+      general.scope = false :=
     all_eq_false_of_mem
       (List.mem_filter.mpr ⟨he₀, hsub' e₀ he₀⟩)
       (hcounter e₀ he₀)
-  simp [h_false]
+  rw [h_false]
+  simp [all_filter_of_forall (fun e he _ => hes e he)]
 
 
 -- ═══ Abstract CCP Bridge ═══
