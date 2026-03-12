@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Events.EntailmentProfile
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Core.RootDimensions
 
 /-!
@@ -27,9 +28,9 @@ Individual verbs can override class-level profiles via explicit
 `subjectEntailments`/`objectEntailments` on `VerbCore`.
 -/
 
-namespace Semantics.Events.LevinClassProfiles
+namespace Semantics.Lexical.Verb.LevinClassProfiles
 
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Argument Structure Templates
@@ -227,4 +228,4 @@ theorem psychCausal_subject_role :
 theorem directedMotion_subject_role :
     directedMotion.subjectProfile.toRole = none := by native_decide
 
-end Semantics.Events.LevinClassProfiles
+end Semantics.Lexical.Verb.LevinClassProfiles

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.ThetaRole
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Core.Discourse.ReferentialForm
 import Linglib.Fragments.English.Predicates.Verbal

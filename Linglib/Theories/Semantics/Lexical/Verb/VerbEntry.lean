@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Semantics.Events.EntailmentProfile
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.RootDimensions
 import Linglib.Core.Logic.NaturalLogic
@@ -13,7 +13,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Events.Krifka1998
-import Linglib.Theories.Semantics.Events.LevinClassProfiles
+import Linglib.Theories.Semantics.Lexical.Verb.LevinClassProfiles
 
 /-! # Cross-Linguistic Verb Infrastructure
 
@@ -52,11 +52,11 @@ open Semantics.Attitudes.Doxastic (Veridicality)
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.PsychCausation (CausalSource)
-open Semantics.Events.ProtoRoles (EntailmentProfile)
+open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile)
 open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Events.Krifka1998 (VerbIncClass)
-open Semantics.Events.LevinClassProfiles
+open Semantics.Lexical.Verb.LevinClassProfiles
 
 /--
 Which Montague predicate builder this verb uses.
@@ -336,14 +336,6 @@ def VerbCore.effectiveSubjectEntailments (v : VerbCore) : Option EntailmentProfi
     otherwise falls back to the Levin class–level profile. -/
 def VerbCore.effectiveObjectEntailments (v : VerbCore) : Option EntailmentProfile :=
   v.objectEntailments <|> v.levinClass.bind (·.objectProfile)
-
-/-- Derive the subject's theta-role label from its effective entailment profile. -/
-def VerbCore.subjectRole (v : VerbCore) : Option ThetaRole :=
-  v.effectiveSubjectEntailments.bind (·.toRole)
-
-/-- Derive the object's theta-role label from its effective entailment profile. -/
-def VerbCore.objectRole (v : VerbCore) : Option ThetaRole :=
-  v.effectiveObjectEntailments.bind (·.toRole)
 
 /-- Veridicality is DERIVED from the attitude builder -/
 def VerbCore.veridicality (v : VerbCore) : Option Veridicality :=

@@ -20,13 +20,13 @@ and distinct syntactic frames.
 
 -/
 
-import Linglib.Theories.Semantics.Events.EntailmentProfile
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Core.RootDimensions
 
-namespace Semantics.Events.EventStructure
+namespace Semantics.Lexical.Verb.EventStructure
 
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EntailmentProfile
 open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
@@ -198,22 +198,22 @@ theorem lexicalized_is_full_agent :
     The `motionContact` template is specific to the sweep/rub/scrape
     class and requires a class-specific override. -/
 
-end Semantics.Events.EventStructure
+end Semantics.Lexical.Verb.EventStructure
 
 /-- Predicted event structure template from meaning components. -/
-def MeaningComponents.predictedTemplate : MeaningComponents → Semantics.Events.EventStructure.Template
+def MeaningComponents.predictedTemplate : MeaningComponents → Semantics.Lexical.Verb.EventStructure.Template
   | mc => if mc.changeOfState && mc.causation then .accomplishment
     else if mc.changeOfState then .achievement
     else if !mc.motion && !mc.contact then .state
     else .activity
 
 /-- Predicted template for a Levin class, with class-specific overrides. -/
-def LevinClass.eventTemplate : LevinClass → Semantics.Events.EventStructure.Template
+def LevinClass.eventTemplate : LevinClass → Semantics.Lexical.Verb.EventStructure.Template
   -- motionContact is class-specific (sweep/rub/scrape)
   | .wipe => .motionContact
   | c => c.meaningComponents.predictedTemplate
 
-namespace Semantics.Events.EventStructure
+namespace Semantics.Lexical.Verb.EventStructure
 
 /-! ### Verification: canonical quadruple -/
 
@@ -288,4 +288,4 @@ theorem hit_atelic :
 theorem exist_stative :
     LevinClass.exist.eventTemplate.vendlerClass = .state := rfl
 
-end Semantics.Events.EventStructure
+end Semantics.Lexical.Verb.EventStructure

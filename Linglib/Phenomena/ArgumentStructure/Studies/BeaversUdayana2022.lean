@@ -1,6 +1,7 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
 import Linglib.Core.RootDimensions
+import Linglib.Theories.Semantics.Events.ArgumentRealization
 
 /-!
 # @cite{beavers-udayana-2022} Middle voice as generalized argument suppression
@@ -78,43 +79,8 @@ namespace Phenomena.ArgumentStructure.Studies.BeaversUdayana2022
 open Fragments.Indonesian.VoiceSystem
 open Minimalism (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Phenomena.ArgumentStructure.Studies.Beavers2010
-open Semantics.Events.Affectedness (AffectednessDegree)
-
--- ============================================================================
--- § 1: Typological Dimensions
--- ============================================================================
-
-/-- How the suppressed variable *z* is interpreted vis-à-vis the surface
-    subject. This is the paper's primary classificatory axis (table (58)):
-
-    - **coreferent**: *z* is interpreted as coreferent with the surface
-      subject, yielding a reflexive reading (body care, grooming verbs).
-    - **disjoint**: *z* is interpreted as disjoint from the surface subject,
-      yielding dispositional/passive or non-reflexive incorporation readings.
-
-    Anticausatives are treated separately (§5) as they arise from
-    causer-unspecified verb roots rather than from this dimension. -/
-inductive SuppressedVarReading where
-  | coreferent    -- z = surface subject → reflexive
-  | disjoint      -- z ≠ surface subject → dispositional/passive/non-refl incorp
-  deriving DecidableEq, BEq, Repr
-
-/-- Whether the base object undergoes noun incorporation. -/
-inductive ObjectRealization where
-  | incorporation     -- Object = incorporated NP (head-adjoined to V)
-  | noIncorporation   -- Object = full DP (functional application)
-  deriving DecidableEq, BEq, Repr
-
-/-- The 2×2 typology from the paper's (31): middle types are classified by
-    how the suppressed variable is interpreted (coreferent vs. disjoint) and
-    whether the base object is incorporated.
-
-    Indonesian *ber-* is unique in instantiating ALL FOUR cells. Most
-    languages only have the no-incorporation row. -/
-structure MiddleType where
-  objRealization : ObjectRealization
-  suppressedVar : SuppressedVarReading
-  deriving DecidableEq, BEq, Repr
+open Semantics.Lexical.Verb.Affectedness (AffectednessDegree)
+open Semantics.Events.ArgumentRealization
 
 -- ============================================================================
 -- § 2: Indonesian ber- Middle Inventory
@@ -291,9 +257,12 @@ theorem sendirinya_licensing :
     dispPassiveDiag.licensesDenganSendiriNya = false ∧
     diPassiveDiag.licensesDenganSendiriNya = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-/-- All five diagnostic profiles are distinct — each middle type
-    has a unique fingerprint. -/
-theorem all_profiles_distinct :
+/-- Four of the five profiles are pairwise distinct. The exception:
+    reflexive and incorporation middles share the same diagnostic
+    fingerprint (*{¬oleh, rationale, sendirinya}*). The paper
+    distinguishes them by ARGUMENT STRUCTURE (which DP surfaces as
+    subject), not by these syntactic diagnostics. -/
+theorem diag_profiles_mostly_distinct :
     dispPassiveDiag ≠ diPassiveDiag ∧
     dispPassiveDiag ≠ reflexiveDiag ∧
     dispPassiveDiag ≠ incorporationDiag ∧
@@ -301,9 +270,16 @@ theorem all_profiles_distinct :
     diPassiveDiag ≠ reflexiveDiag ∧
     diPassiveDiag ≠ incorporationDiag ∧
     diPassiveDiag ≠ anticausativeDiag ∧
-    reflexiveDiag ≠ anticausativeDiag := by
+    reflexiveDiag ≠ anticausativeDiag ∧
+    incorporationDiag ≠ anticausativeDiag := by
   exact ⟨by decide, by decide, by decide, by decide,
-         by decide, by decide, by decide, by decide⟩
+         by decide, by decide, by decide, by decide, by decide⟩
+
+/-- Reflexive and incorporation middles are diagnostically IDENTICAL —
+    they are distinguished by argument structure (agent vs. patient
+    as surface subject), not by oleh/rationale/sendirinya tests. -/
+theorem reflexive_incorporation_same_diag :
+    reflexiveDiag = incorporationDiag := rfl
 
 -- ============================================================================
 -- § 5: Voice Parameter Bridge

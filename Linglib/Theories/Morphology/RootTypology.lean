@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.EventStructure
+import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Core.Root
 
@@ -56,8 +56,8 @@ you nothing about whether it entails change, and vice versa.
   40, 225–276.
 -/
 
-open Semantics.Events.EventStructure
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EventStructure
+open Semantics.Lexical.Verb.EntailmentProfile
 open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Tense.Aspect.LexicalAspect
 

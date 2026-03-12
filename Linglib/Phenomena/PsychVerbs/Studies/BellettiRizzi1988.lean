@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.PsychCausalLink
-import Linglib.Theories.Semantics.Events.ProtoRoles
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
@@ -50,7 +50,7 @@ open Fragments.English.Predicates.Verbal
 open Phenomena.PsychVerbs.Data
 open Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Consistency Predicates

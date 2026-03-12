@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Events.EntailmentProfile
-import Linglib.Theories.Semantics.Events.Affectedness
-import Linglib.Theories.Semantics.Events.LevinClassProfiles
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Lexical.Verb.Affectedness
+import Linglib.Theories.Semantics.Lexical.Verb.LevinClassProfiles
 import Linglib.Core.Case.Basic
 import Linglib.Core.Prominence
 import Mathlib.Order.Lattice
@@ -47,9 +47,9 @@ All ordering infrastructure uses Mathlib typeclasses:
 - Transitivity hierarchy → `Tsunoda` verb classification
 -/
 
-namespace Semantics.Events.AgentivityLattice
+namespace Semantics.Lexical.Verb.AgentivityLattice
 
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EntailmentProfile
 open Core
 
 -- ════════════════════════════════════════════════════
@@ -1267,21 +1267,21 @@ theorem wellFormedPair_not_preserved_by_grimm :
 -- § 24. ArgTemplate → GrimmNode Bridge
 -- ════════════════════════════════════════════════════
 
-open Semantics.Events.LevinClassProfiles
-open Semantics.Events.Affectedness
+open Semantics.Lexical.Verb.LevinClassProfiles
+open Semantics.Lexical.Verb.Affectedness
 
 /-- Project an ArgTemplate's subject profile to a GrimmNode. -/
-def _root_.Semantics.Events.LevinClassProfiles.ArgTemplate.subjectGrimm
+def _root_.Semantics.Lexical.Verb.LevinClassProfiles.ArgTemplate.subjectGrimm
     (t : ArgTemplate) : GrimmNode :=
   GrimmNode.fromSubjectProfile t.subjectProfile
 
 /-- Project an ArgTemplate's object profile (if any) to a GrimmNode. -/
-def _root_.Semantics.Events.LevinClassProfiles.ArgTemplate.objectGrimm
+def _root_.Semantics.Lexical.Verb.LevinClassProfiles.ArgTemplate.objectGrimm
     (t : ArgTemplate) : Option GrimmNode :=
   t.objectProfile.map GrimmNode.fromObjectProfile
 
 /-- Project an ArgTemplate's object to its affectedness degree. -/
-def _root_.Semantics.Events.LevinClassProfiles.ArgTemplate.objectAffectedness
+def _root_.Semantics.Lexical.Verb.LevinClassProfiles.ArgTemplate.objectAffectedness
     (t : ArgTemplate) : Option AffectednessDegree :=
   t.objectProfile.map profileToDegree
 
@@ -1347,4 +1347,4 @@ theorem creation_cross_projection :
     creation.objectProfile.map PersistenceLevel.fromPatientProfile =
       some .exPersEnd := ⟨rfl, by native_decide⟩
 
-end Semantics.Events.AgentivityLattice
+end Semantics.Lexical.Verb.AgentivityLattice

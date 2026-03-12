@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Derivation
-import Linglib.Theories.Semantics.Events.ThetaRole
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
 /-!
 # Larson (1988): On the Double Object Construction

@@ -16,7 +16,7 @@ to events. This module provides:
 
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Semantics.Events.ThetaRole
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
 namespace Semantics.Events.ThematicRoles
 

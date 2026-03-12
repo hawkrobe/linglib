@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Events.EntailmentProfile
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 
 /-!
 # Affectedness Hierarchy
@@ -56,9 +56,9 @@ projection here operates on the proto-role level, which is the final
 composed meaning — not the root-level or surface-diagnostic level.
 -/
 
-namespace Semantics.Events.Affectedness
+namespace Semantics.Lexical.Verb.Affectedness
 
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. AffectednessDegree (@cite{beavers-2010} §3.1)
@@ -232,4 +232,4 @@ theorem see_unspecified :
 theorem die_nonquantized :
     profileToDegree dieSubjectProfile = .nonquantized := rfl
 
-end Semantics.Events.Affectedness
+end Semantics.Lexical.Verb.Affectedness

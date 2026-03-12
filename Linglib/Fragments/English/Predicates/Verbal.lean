@@ -27,7 +27,7 @@ open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
 open Semantics.Events.Krifka1998 (VerbIncClass)
-open Semantics.Events.ProtoRoles (EntailmentProfile)
+open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules

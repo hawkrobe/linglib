@@ -1,7 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Semantics.Events.ThetaRole
-import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
+import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Severing Account of θ-Role Assignment

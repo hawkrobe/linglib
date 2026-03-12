@@ -1,6 +1,6 @@
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Semantics.Events.ProtoRoles
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
@@ -243,7 +243,7 @@ theorem speak_levin_class :
     divergence between semantic proto-role predictions and syntactic
     diagnostics. -/
 
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EntailmentProfile
 
 /-- MoS subject entailment profile: volitional (P-Agent), sentient (P-Agent),
     exists independently (P-Agent), but no P-Patient entailments. -/

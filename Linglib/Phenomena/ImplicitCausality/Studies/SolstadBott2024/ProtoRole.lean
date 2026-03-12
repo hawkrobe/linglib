@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Events.ProtoRoles
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
 import Linglib.Fragments.English.Predicates.Verbal
@@ -34,7 +35,7 @@ participant is the subject or the object.
 
 namespace Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
 
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EntailmentProfile
 open Core.Discourse.CoherenceRelation
 open Fragments.English.Predicates.Verbal
 

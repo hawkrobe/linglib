@@ -32,7 +32,7 @@ namespace Phenomena.Causation.Compare
 
 open Minimalism
 open Minimalism.Bridge
-open Semantics.Events.EventStructure
+open Semantics.Lexical.Verb.EventStructure
 open MartinRoseNichols2025
 open Phenomena.Causation.ThickThin
 

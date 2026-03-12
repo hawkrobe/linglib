@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Events.AgentivityLattice
-import Linglib.Theories.Semantics.Events.ProtoRoles
+import Linglib.Theories.Semantics.Lexical.Verb.AgentivityLattice
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Phenomena.Case.Typology
 
 /-!
@@ -36,8 +36,8 @@ object marking profiles in `Phenomena/Case/Typology.lean`.
 
 namespace Phenomena.Case.Studies.Grimm2011
 
-open Semantics.Events.AgentivityLattice
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.AgentivityLattice
+open Semantics.Lexical.Verb.EntailmentProfile
 open Core.Prominence
 open Phenomena.Case.Typology
 

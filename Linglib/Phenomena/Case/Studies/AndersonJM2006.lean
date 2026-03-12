@@ -1,7 +1,7 @@
 import Linglib.Core.Case.FeatureDecomposition
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.LocalExtension
-import Linglib.Theories.Semantics.Events.ProtoRoles
+import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -58,7 +58,7 @@ namespace Phenomena.Case.Studies.AndersonJM2006
 
 open Core (CaseRelation Scenario Case)
 open Interfaces.SyntaxSemantics (LinkingTheory ArgPosition)
-open Semantics.Events.ProtoRoles
+open Semantics.Lexical.Verb.EntailmentProfile
 open Fragments.English.Predicates.Verbal
 
 -- ============================================================================
@@ -146,10 +146,16 @@ theorem experiencer_agent_distinct_same_rank :
 -- § 3: VerbCore → Scenario (End-to-End Bridge)
 -- ============================================================================
 
+private def subjectRole (v : Core.Verbs.VerbCore) : Option ThetaRole :=
+  v.effectiveSubjectEntailments.bind (·.toRole)
+
+private def objectRole (v : Core.Verbs.VerbCore) : Option ThetaRole :=
+  v.effectiveObjectEntailments.bind (·.toRole)
+
 /-- Derive Anderson's `Scenario` from a Fragment verb entry's derived roles. -/
 def toScenario (v : Core.Verbs.VerbCore) : Scenario :=
-  ⟨(v.subjectRole.map thetaToCaseRelation).toList ++
-   (v.objectRole.map thetaToCaseRelation).toList⟩
+  ⟨(subjectRole v |>.map thetaToCaseRelation).toList ++
+   (objectRole v |>.map thetaToCaseRelation).toList⟩
 
 -- ============================================================================
 -- § 4: Anderson as LinkingTheory
@@ -200,7 +206,7 @@ theorem experiencer_correctly_predicted :
 theorem anderson_linking_accuracy :
     (allVerbs.filter λ v =>
       (andersonPredictedSubjectTheta v.toVerbCore).isSome ==
-      v.toVerbCore.subjectRole.isSome).length = 183 := by
+      (subjectRole v.toVerbCore).isSome).length = 183 := by
   native_decide
 
 -- ============================================================================
@@ -242,10 +248,10 @@ theorem experiencer_distinguished :
     not collapsed into agent (for verbs with entailment profiles). -/
 theorem experiencer_verbs_correct :
     (allVerbs.filter λ v =>
-      v.toVerbCore.subjectRole == some .experiencer ∧
+      (subjectRole v.toVerbCore) == some .experiencer ∧
       andersonPredictedSubjectTheta v.toVerbCore == some .experiencer).length =
     (allVerbs.filter λ v =>
-      v.toVerbCore.subjectRole == some .experiencer).length := by
+      (subjectRole v.toVerbCore) == some .experiencer).length := by
   native_decide
 
 -- ============================================================================
