@@ -53,155 +53,154 @@ G ≥ 0.5 in the LSTM estimator (main paper). Most have G = 1.0. -/
 
 def afrikaans : LanguageEfficiency :=
   { name := "Afrikaans", isoCode := "af", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 195 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 195 }
 def amharic : LanguageEfficiency :=
   { name := "Amharic", isoCode := "am", family := "Afro-Asiatic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 247 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 247 }
 def arabic : LanguageEfficiency :=
   { name := "Arabic", isoCode := "ar", family := "Afro-Asiatic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 178 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 178 }
 def armenian : LanguageEfficiency :=
   { name := "Armenian", isoCode := "hy", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 920, branchDirEntropy1000 := 337 }
+    moreEfficient := true, gMean1000 := 920, branchDirEntropy1000 := some 337 }
 def bambara : LanguageEfficiency :=
   { name := "Bambara", isoCode := "bm", family := "Mande"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 110 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 110 }
 def basque : LanguageEfficiency :=
   { name := "Basque", isoCode := "eu", family := "Isolate"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 397 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 397 }
 def breton : LanguageEfficiency :=
   { name := "Breton", isoCode := "br", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 279 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 279 }
 def bulgarian : LanguageEfficiency :=
   { name := "Bulgarian", isoCode := "bg", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 254 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 254 }
 def buryat : LanguageEfficiency :=
   { name := "Buryat", isoCode := "bxr", family := "Mongolic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 169 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 169 }
 def cantonese : LanguageEfficiency :=
   { name := "Cantonese", isoCode := "yue", family := "Sino-Tibetan"
-    moreEfficient := true, gMean1000 := 960, branchDirEntropy1000 := 171 }
+    moreEfficient := true, gMean1000 := 960, branchDirEntropy1000 := some 171 }
 def catalan : LanguageEfficiency :=
   { name := "Catalan", isoCode := "ca", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 207 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 207 }
 def chinese : LanguageEfficiency :=
   { name := "Chinese", isoCode := "zh", family := "Sino-Tibetan"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 144 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 144 }
 def croatian : LanguageEfficiency :=
   { name := "Croatian", isoCode := "hr", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 271 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 271 }
 def czech : LanguageEfficiency :=
   { name := "Czech", isoCode := "cs", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 328 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 328 }
 def danish : LanguageEfficiency :=
   { name := "Danish", isoCode := "da", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 250 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 250 }
 def dutch : LanguageEfficiency :=
   { name := "Dutch", isoCode := "nl", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 280 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 280 }
 def english : LanguageEfficiency :=
   { name := "English", isoCode := "en", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 191 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 191 }
 def erzya : LanguageEfficiency :=
   { name := "Erzya", isoCode := "myv", family := "Uralic"
-    moreEfficient := true, gMean1000 := 990, branchDirEntropy1000 := 429 }
+    moreEfficient := true, gMean1000 := 990, branchDirEntropy1000 := some 429 }
 def estonian : LanguageEfficiency :=
   { name := "Estonian", isoCode := "et", family := "Uralic"
-    moreEfficient := true, gMean1000 := 800, branchDirEntropy1000 := 435 }
+    moreEfficient := true, gMean1000 := 800, branchDirEntropy1000 := some 435 }
 def faroese : LanguageEfficiency :=
   { name := "Faroese", isoCode := "fo", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 211 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 211 }
 def finnish : LanguageEfficiency :=
   { name := "Finnish", isoCode := "fi", family := "Uralic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 357 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 357 }
 def french : LanguageEfficiency :=
   { name := "French", isoCode := "fr", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 186 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 186 }
 def german : LanguageEfficiency :=
   { name := "German", isoCode := "de", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 280 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 280 }
 def greek : LanguageEfficiency :=
   { name := "Greek", isoCode := "el", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 219 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 219 }
 def hebrew : LanguageEfficiency :=
   { name := "Hebrew", isoCode := "he", family := "Afro-Asiatic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 173 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 173 }
 def hindi : LanguageEfficiency :=
   { name := "Hindi", isoCode := "hi", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 59 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 59 }
 def hungarian : LanguageEfficiency :=
   { name := "Hungarian", isoCode := "hu", family := "Uralic"
-    moreEfficient := true, gMean1000 := 870, branchDirEntropy1000 := 290 }
+    moreEfficient := true, gMean1000 := 870, branchDirEntropy1000 := some 290 }
 def indonesian : LanguageEfficiency :=
   { name := "Indonesian", isoCode := "id", family := "Austronesian"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 237 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 237 }
 def italian : LanguageEfficiency :=
   { name := "Italian", isoCode := "it", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 216 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 216 }
 def japanese : LanguageEfficiency :=
   { name := "Japanese", isoCode := "ja", family := "Japonic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 24 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 24 }
 def kazakh : LanguageEfficiency :=
   { name := "Kazakh", isoCode := "kk", family := "Turkic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 147 }
--- Korean is absent from the published branching_entropy.tsv; entropy unavailable
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 147 }
 def korean : LanguageEfficiency :=
   { name := "Korean", isoCode := "ko", family := "Koreanic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 0 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := none }
 def kurmanji : LanguageEfficiency :=
   { name := "Kurmanji", isoCode := "kmr", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 930, branchDirEntropy1000 := 262 }
+    moreEfficient := true, gMean1000 := 930, branchDirEntropy1000 := some 262 }
 def maltese : LanguageEfficiency :=
   { name := "Maltese", isoCode := "mt", family := "Afro-Asiatic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 185 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 185 }
 def naija : LanguageEfficiency :=
   { name := "Naija", isoCode := "pcm", family := "Creole"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 239 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 239 }
 def norwegian : LanguageEfficiency :=
   { name := "Norwegian", isoCode := "no", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 220 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 220 }
 def persian : LanguageEfficiency :=
   { name := "Persian", isoCode := "fa", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 142 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 142 }
 def portuguese : LanguageEfficiency :=
   { name := "Portuguese", isoCode := "pt", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 223 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 223 }
 def romanian : LanguageEfficiency :=
   { name := "Romanian", isoCode := "ro", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 267 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 267 }
 def russian : LanguageEfficiency :=
   { name := "Russian", isoCode := "ru", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 252 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 252 }
 def serbian : LanguageEfficiency :=
   { name := "Serbian", isoCode := "sr", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 244 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 244 }
 def slovenian : LanguageEfficiency :=
   { name := "Slovenian", isoCode := "sl", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 820, branchDirEntropy1000 := 309 }
+    moreEfficient := true, gMean1000 := 820, branchDirEntropy1000 := some 309 }
 def spanish : LanguageEfficiency :=
   { name := "Spanish", isoCode := "es", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 228 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 228 }
 def swedish : LanguageEfficiency :=
   { name := "Swedish", isoCode := "sv", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 229 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 229 }
 def thai : LanguageEfficiency :=
   { name := "Thai", isoCode := "th", family := "Kra-Dai"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 149 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 149 }
 def turkish : LanguageEfficiency :=
   { name := "Turkish", isoCode := "tr", family := "Turkic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 246 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 246 }
 def ukrainian : LanguageEfficiency :=
   { name := "Ukrainian", isoCode := "uk", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 313 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 313 }
 def urdu : LanguageEfficiency :=
   { name := "Urdu", isoCode := "ur", family := "Indo-European"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 85 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 85 }
 def uyghur : LanguageEfficiency :=
   { name := "Uyghur", isoCode := "ug", family := "Turkic"
-    moreEfficient := true, gMean1000 := 650, branchDirEntropy1000 := 87 }
+    moreEfficient := true, gMean1000 := 650, branchDirEntropy1000 := some 87 }
 def vietnamese : LanguageEfficiency :=
   { name := "Vietnamese", isoCode := "vi", family := "Austroasiatic"
-    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := 320 }
+    moreEfficient := true, gMean1000 := 1000, branchDirEntropy1000 := some 320 }
 
 /-! ### Exception languages (4)
 
@@ -210,16 +209,16 @@ All have high branching direction entropy (free word order). -/
 
 def latvian : LanguageEfficiency :=
   { name := "Latvian", isoCode := "lv", family := "Indo-European"
-    moreEfficient := false, gMean1000 := 490, branchDirEntropy1000 := 347 }
+    moreEfficient := false, gMean1000 := 490, branchDirEntropy1000 := some 347 }
 def northSami : LanguageEfficiency :=
   { name := "North Sami", isoCode := "sme", family := "Uralic"
-    moreEfficient := false, gMean1000 := 370, branchDirEntropy1000 := 315 }
+    moreEfficient := false, gMean1000 := 370, branchDirEntropy1000 := some 315 }
 def polish : LanguageEfficiency :=
   { name := "Polish", isoCode := "pl", family := "Indo-European"
-    moreEfficient := false, gMean1000 := 100, branchDirEntropy1000 := 375 }
+    moreEfficient := false, gMean1000 := 100, branchDirEntropy1000 := some 375 }
 def slovak : LanguageEfficiency :=
   { name := "Slovak", isoCode := "sk", family := "Indo-European"
-    moreEfficient := false, gMean1000 := 70, branchDirEntropy1000 := 372 }
+    moreEfficient := false, gMean1000 := 70, branchDirEntropy1000 := some 372 }
 
 -- ============================================================================
 -- Language Lists
@@ -268,7 +267,9 @@ equally acceptable, reducing the signal of optimization.
 Entropy values from `branching_entropy.tsv` at
 https://github.com/m-hahn/memory-surprisal -/
 theorem all_exceptions_have_high_word_order_freedom :
-    exceptionLanguages.all (·.branchDirEntropy1000 > 300) = true := by native_decide
+    exceptionLanguages.all (λ l =>
+      match l.branchDirEntropy1000 with | some e => e > 300 | none => false
+    ) = true := by native_decide
 
 /-- All 4 exceptions have G < 500 (below the optimization threshold). -/
 theorem all_exceptions_below_threshold :
@@ -310,21 +311,22 @@ theorem slovak_exception : slovak.moreEfficient = false := by native_decide
 known entropy data (most rigid word order). Korean is excluded because its
 entropy is not available in the published data. -/
 theorem japanese_lowest_known_entropy :
-    (allLanguages.filter (·.branchDirEntropy1000 > 0)).all
-      (·.branchDirEntropy1000 ≥ japanese.branchDirEntropy1000) = true := by
+    (allLanguages.filterMap (·.branchDirEntropy1000)).all (· ≥ 24) = true := by
   native_decide
 
 /-- Estonian has the highest entropy among efficient languages (435) but is
 still efficient (G = 0.80), showing that word-order freedom is necessary
 but not sufficient for being an exception. -/
 theorem estonian_high_entropy_efficient :
-    estonian.branchDirEntropy1000 > 400 ∧ estonian.moreEfficient = true := by
-  constructor <;> native_decide
+    estonian.branchDirEntropy1000 = some 435 ∧ estonian.moreEfficient = true := by
+  exact ⟨rfl, rfl⟩
 
-/-- Mean branching direction entropy is higher for exceptions than efficient languages. -/
+/-- Mean branching direction entropy is higher for exceptions than efficient
+languages (computed over languages with known entropy). -/
 def meanEntropy (ls : List LanguageEfficiency) : Nat :=
-  if ls.isEmpty then 0
-  else ls.foldl (λ acc l => acc + l.branchDirEntropy1000) 0 / ls.length
+  let known := ls.filterMap (·.branchDirEntropy1000)
+  if known.isEmpty then 0
+  else known.foldl (· + ·) 0 / known.length
 
 theorem exceptions_higher_mean_entropy :
     meanEntropy exceptionLanguages > meanEntropy efficientLanguages := by native_decide
@@ -383,20 +385,24 @@ theorem polish_only_shared_exception :
 theorem harmonic_dlm_holds :
     DepGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true := by native_decide
 
-/-- Languages with low branching entropy (< 300) are all efficient. -/
+/-- Languages with known low branching entropy (< 300) are all efficient. -/
 theorem rigid_order_languages_efficient :
-    (allLanguages.filter (·.branchDirEntropy1000 < 300)).all (·.moreEfficient) = true := by
-  native_decide
+    (allLanguages.filter (λ l =>
+      match l.branchDirEntropy1000 with | some e => e < 300 | none => false
+    )).all (·.moreEfficient) = true := by native_decide
 
 /-- All 4 exceptions have entropy ≥ 315. -/
 theorem exceptions_all_high_entropy :
-    exceptionLanguages.all (·.branchDirEntropy1000 ≥ 315) = true := by native_decide
+    exceptionLanguages.all (λ l =>
+      match l.branchDirEntropy1000 with | some e => e ≥ 315 | none => false
+    ) = true := by native_decide
 
 /-- Not all high-entropy languages are exceptions: word-order freedom is
 necessary but not sufficient for being an exception. -/
 theorem high_entropy_not_sufficient :
-    (allLanguages.filter (·.branchDirEntropy1000 ≥ 315)).any (·.moreEfficient) = true := by
-  native_decide
+    (allLanguages.filter (λ l =>
+      match l.branchDirEntropy1000 with | some e => e ≥ 315 | none => false
+    )).any (·.moreEfficient) = true := by native_decide
 
 -- ============================================================================
 -- Bridge to WALS (@cite{dryer-haspelmath-2013})
