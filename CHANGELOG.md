@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.170] - 2026-03-12
+
+### Fixed
+- **Krifka2013.lean**: Complete audit and rewrite (277→577 lines) — fix stale `Comparisons/GenericSemantics.lean` path; remove `dogsBarkBP` (not from Ch 15); fix `donkeyChromosomesIS` context (moved from §15.2 to §15.3.3 with Kripke/Putnam); add `felicitous`/`exNumber` fields to `GenericDatum`; add core IS/BP asymmetry data (exx. 1–2), analyticity contrast (3–4), pomegranate cost (8), "Boys don't cry" (13), animal-cage infelicity (37), descriptive IS (44a); add `NumberDomain`/`isAtomicDomain` for §15.3.4 atom/sum; add 8 theorems (`is_bp_asymmetry`, `bp_always_felicitous`, `infelicitous_is_lacks_rule_type`, `rule_typed_is_felicitous`, `natural_kind_required`, update order-independence, cross-study connections)
+- **DelPrete2013.lean**: Complete audit and rewrite (202→485 lines) — remove dead `GenericReading` import; add `ObjectType`/`SOEStatus.kindLevel`/`objectType` field; add exx. (3), (4a), (8/29); add GEN scope critique (§8.2) with `GENScopeAssumption`; add `TheoreticalConcept` inductive; add `OddnessPrinciple` (§8.7); add cross-study connection to BonehDoron2013; fix misleading `both_readings_when_no_soe_issue` theorem
+
 ## [0.229.169] - 2026-03-12
 
 ### Changed
