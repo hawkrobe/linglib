@@ -256,34 +256,134 @@ theorem fullSpec_derives_five :
     (deriveAll .fullSpec).length = 5 := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 5. Consistency: Pipeline vs Shortcut (toArgTemplate)
+-- § 5. Root-Enriched Derivation
+-- ════════════════════════════════════════════════════
+
+/-! The template determines structural argument positions, but for
+activity verbs, the ROOT contributes the object. In R&HL's notation,
+`[x ACT<HIT> y]` — the `y` is an argument of the root (HIT), not of
+the template (ACT).
+
+This means activity objects come from meaning components (contact,
+motion), not from template structure. When a root involves contact
+with another entity, the activity becomes transitive, and the subject
+gains causation (C) from the causal interaction with the object. -/
+
+/-- Root-contributed object profile for activity verbs.
+    Contact in meaning components → transitive activity with a
+    contacted, stationary object (CA+St). No contact → intransitive. -/
+def activityObjectProfile (mc : MeaningComponents) : Option EntailmentProfile :=
+  if mc.contact then
+    some ⟨false, false, false, false, false, false, false, true, true, false⟩
+  else
+    none
+
+/-- Root-enriched derivation: combines template-level profiles with
+    root-contributed objects.
+
+    For activity templates, the root's meaning components determine
+    whether there's a contacted object. When there is one, the subject
+    also gains C (causation) — causal interaction with the object is
+    a Dowty P-Agent entailment that comes from having an affected
+    participant, not from the template.
+
+    For other templates, the template's own profiles are used directly.
+
+    Returns `none` for roots with no structural entailments (minimal). -/
+def deriveEnriched (re : RootEntailments) (mc : MeaningComponents) : Option ArgTemplate :=
+  match primaryTemplate re with
+  | none => none
+  | some t =>
+    let base := templateArgTemplate t
+    match t with
+    | .activity =>
+      if mc.contact then
+        -- Transitive activity: subject gets C from causal interaction
+        some { subjectProfile := ⟨true, true, true, true, true, false, false, false, false, false⟩,
+               objectProfile := some ⟨false, false, false, false, false, false, false, true, true, false⟩ }
+      else
+        some base
+    | _ => some base
+
+-- § 5a. Enriched derivation matches named templates
+
+/-- Hit-class: enriched derivation gives mannerContact (full agent +
+    contacted object). The root's contact meaning component contributes
+    the object and adds C to the subject. -/
+theorem hit_enriched_matches :
+    deriveEnriched .pureManner .hit = some mannerContact := rfl
+
+/-- MannerOfMotion: enriched derivation gives selfMotion (no contact,
+    no object). The root contributes no object. -/
+theorem run_enriched_matches :
+    deriveEnriched .pureManner ⟨false, false, true, false, false, false⟩ = some selfMotion := rfl
+
+/-- Break: enriched derivation gives resultChange (full agent +
+    CoS+CA object). Accomplishment template used directly — the
+    root doesn't modify it for non-activity templates. -/
+theorem break_enriched_matches :
+    deriveEnriched .causativeResult .break_ = some resultChange := rfl
+
+/-- Cut: enriched derivation gives resultChange (same as break).
+    The manner component doesn't affect the accomplishment template. -/
+theorem cut_enriched_matches :
+    deriveEnriched .fullSpec .cut = some resultChange := rfl
+
+-- § 5b. Enriched derivation vs hand-specified LevinClass.argTemplate
+
+/-- For hit-class, the enriched derivation matches the hand-specified
+    argTemplate exactly — no override needed. -/
+theorem hit_enriched_matches_class :
+    deriveEnriched
+      (LevinClass.rootEntailments .hit)
+      (LevinClass.meaningComponents .hit) =
+    LevinClass.argTemplate .hit := rfl
+
+/-- For break-class, same exact match. -/
+theorem break_enriched_matches_class :
+    deriveEnriched
+      (LevinClass.rootEntailments .break_)
+      (LevinClass.meaningComponents .break_) =
+    LevinClass.argTemplate .break_ := rfl
+
+/-- For cut-class, same exact match. -/
+theorem cut_enriched_matches_class :
+    deriveEnriched
+      (LevinClass.rootEntailments .cut)
+      (LevinClass.meaningComponents .cut) =
+    LevinClass.argTemplate .cut := rfl
+
+/-- For mannerOfMotion, same exact match. -/
+theorem mannerOfMotion_enriched_matches_class :
+    deriveEnriched
+      (LevinClass.rootEntailments .mannerOfMotion)
+      (LevinClass.meaningComponents .mannerOfMotion) =
+    LevinClass.argTemplate .mannerOfMotion := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 6. Consistency: Pipeline vs Shortcut (toArgTemplate)
 -- ════════════════════════════════════════════════════
 
 /-! The `toArgTemplate` shortcut (§7 of LevinClassProfiles) maps
 root entailments directly to named ArgTemplates. The pipeline goes
-through an intermediate Template step. These agree on SUBJECT profiles
-for causative roots but diverge for manner and state roots.
+through an intermediate Template step.
 
-The divergences are informative — they reveal where template-level
-defaults and class-level refinements differ:
+After fixing the template defaults (activity subject C=false,
+accomplishment object IT=false), the pipeline and shortcut now
+AGREE on 4 of 5 canonical root types:
 
 | Root type | Pipeline subject | Shortcut subject | Agree? |
 |---|---|---|---|
 | causativeResult | V+S+C+M+IE | V+S+C+M+IE | yes |
 | fullSpec | V+S+C+M+IE | V+S+C+M+IE | yes |
-| pureManner | V+S+C+M+IE | V+S+M+IE | **no** (C) |
+| pureManner | V+S+M+IE | V+S+M+IE | yes |
 | propertyConcept | S+IE | S+IE | yes |
 | pureResult | M+IE+CoS | CoS+CA | **no** |
 
-The pureManner divergence: the template says "activity subjects cause
-things" (C=true, assuming transitive activity like "hit"); the shortcut
-says "manner-only activities don't cause anything" (C=false, selfMotion
-pattern). The shortcut is more refined.
-
-The pureResult divergence: the template says "achievement subjects move
-and change" (M+IE+CoS); the shortcut says "unaccusative subjects are
-changed and affected" (CoS+CA). These reflect different emphases in
-what unaccusativity means. -/
+The pureResult divergence reflects genuinely different theoretical
+emphases on what characterizes unaccusatives: the template emphasizes
+movement and change (M+IE+CoS), while the shortcut emphasizes being
+affected (CoS+CA). -/
 
 /-- causativeResult: pipeline and shortcut AGREE on subject profile.
     Both give the accomplishment subject = full agent (V+S+C+M+IE). -/
@@ -302,14 +402,13 @@ theorem propertyConcept_subject_agrees :
     (derivePrimary .propertyConcept).map (·.subjectProfile) =
     (toArgTemplate .propertyConcept).map (·.subjectProfile) := rfl
 
-/-- pureManner: pipeline and shortcut DISAGREE on subject.
-    Pipeline gives C=true (template-level: transitive activity default).
-    Shortcut gives C=false (class-level: intransitive manner activity).
-    The shortcut is correct for self-propelled motion verbs (run, jog)
-    that don't cause changes in other participants. -/
-theorem pureManner_subject_diverges :
-    (derivePrimary .pureManner).map (·.subjectProfile) ≠
-    (toArgTemplate .pureManner).map (·.subjectProfile) := by decide
+/-- pureManner: pipeline and shortcut AGREE on subject profile.
+    Both give V+S+M+IE (no causation): the activity template does not
+    entail causal interaction with another participant, matching
+    selfMotion verbs like run and jog. -/
+theorem pureManner_subject_agrees :
+    (derivePrimary .pureManner).map (·.subjectProfile) =
+    (toArgTemplate .pureManner).map (·.subjectProfile) := rfl
 
 /-- pureResult: pipeline and shortcut DISAGREE on subject.
     Pipeline: achievement subject = M+IE+CoS (moves, changes).
@@ -319,14 +418,13 @@ theorem pureResult_subject_diverges :
     (derivePrimary .pureResult).map (·.subjectProfile) ≠
     (toArgTemplate .pureResult).map (·.subjectProfile) := by decide
 
-/-- causativeResult: pipeline and shortcut DISAGREE on object.
-    Pipeline: accomplishment object has IT=true (incremental theme).
-    Shortcut: resultChange object has IT=false.
-    Not all caused-change objects are incremental themes (break isn't;
-    eat is). The template overpredicts IT; the class refines it. -/
-theorem causativeResult_object_diverges :
-    (derivePrimary .causativeResult).bind (·.objectProfile) ≠
-    (toArgTemplate .causativeResult).bind (·.objectProfile) := by decide
+/-- causativeResult: pipeline and shortcut AGREE on object profile.
+    Both give CoS+CA (change of state, causally affected). The
+    template default correctly excludes IT (incremental theme) —
+    not all caused-change objects measure the event. -/
+theorem causativeResult_object_agrees :
+    (derivePrimary .causativeResult).bind (·.objectProfile) =
+    (toArgTemplate .causativeResult).bind (·.objectProfile) := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 6. Consistency: Pipeline vs LevinClass.argTemplate
@@ -452,29 +550,30 @@ theorem pc_result_stative_difference :
 -- § 8. Summary: Where the Pipeline is Informative
 -- ════════════════════════════════════════════════════
 
-/-! Making the pipeline explicit reveals three kinds of relationships:
+/-! The enriched pipeline (`deriveEnriched`) captures the field consensus:
 
-1. **Agreement**: template-level and class-level predictions align.
-   Break/cut subjects are full agents in both derivations.
-   This is the DEFAULT and covers the majority of verbs.
+1. **Template determines structural positions**: CAUSE introduces an
+   external argument; BECOME introduces an internal argument.
+   The template-level `templateArgTemplate` gives DEFAULT profiles.
 
-2. **Refinement**: template-level gives a broader profile; class-level
-   narrows it. Activity subjects lose C for intransitive manner verbs.
-   Accomplishment objects lose IT for non-incremental-theme verbs.
-   The template gives the MAXIMAL entailment set; the class removes
-   inapplicable ones.
+2. **Root contributes additional participants**: for activity verbs,
+   the root's meaning components (contact, motion) determine whether
+   there's a contacted object. This adds transitivity and causation
+   to the subject — effects that come from the ROOT, not the template.
 
-3. **Override**: class-level assigns a fundamentally different profile.
-   Amuse-class replaces the full agent subject with a stimulus subject.
-   This is irreducible to template structure — it requires knowing
-   that the causer is non-volitional, which is a lexical property
-   of the class.
+3. **Class overrides remain for irreducible properties**: psych-causal
+   (amuse), creation (build), consumption (eat) require class-level
+   information not in root entailments or meaning components.
 
-The derivational chain:
+The enriched pipeline covers hit, break, cut, mannerOfMotion classes
+exactly — `deriveEnriched` matches `LevinClass.argTemplate` with no
+override needed. Only amuse, build/create, eat/devour, perception,
+directedMotion, and minimal-rootEntailments classes need overrides.
 
-    Root content → Template selection → Default ArgTemplate → Class refinement
-    (RootEntailments)  (primaryTemplate)   (templateArgTemplate)  (LevinClass.argTemplate)
+The full derivational chain:
 
-Each step is explicit and independently verifiable. -/
+    Root entailments → Template → Template profiles → Root enrichment → Class override
+    (RootEntailments)   (primary)  (templateArg)     (deriveEnriched)   (LevinClass.argTemplate)
+-/
 
 end Semantics.Lexical.Verb.ArgDerivation

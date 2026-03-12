@@ -56,7 +56,6 @@ import Linglib.Core.VoiceSystem
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.CausalBayesNet
 import Linglib.Core.NestedRestriction
-import Linglib.Core.Root
 import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
@@ -791,6 +790,7 @@ import Linglib.Phenomena.Imprecision.Projection
 import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Phenomena.Iconicity.Studies.SchlenkerEtAl2026
 import Linglib.Phenomena.LexicalTypology.Typology
+import Linglib.Phenomena.LexicalTypology.Studies.MajidBosterBowerman2008
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare

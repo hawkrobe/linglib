@@ -209,6 +209,35 @@ inductive ResultType where
   | totalDestruction -- entity ceases to exist as such (destroy, ruin)
   deriving DecidableEq, BEq, Repr
 
+/-- Type of instrument used in the event.
+
+    @cite{majid-boster-bowerman-2008}: instrument type interacts with object
+    properties to determine the predictability of separation locus (their
+    Dimension 1). Sharp instruments yield predictable separations; blunt
+    instruments and hands yield unpredictable separations.
+
+    @cite{levin-1993}: *cut* verbs (§21) specify their instrument
+    (`instrumentSpec = true`); *break* verbs (§45.1) do not. -/
+inductive InstrumentType where
+  | sharpBlade    -- knife, scissors, saw, chisel (predictable separation)
+  | bluntImpact   -- hammer, mallet, rock (unpredictable separation)
+  | hands         -- bare hands (tearing, snapping, pulling apart)
+  | none          -- no instrument / unspecified
+  deriving DecidableEq, BEq, Repr
+
+/-- Dimensionality of the affected object (patient).
+
+    @cite{majid-boster-bowerman-2008}: object dimensionality interacts
+    with instrument type and manner of action to determine event
+    categorization cross-linguistically. 1D objects (rope, stick) can
+    be snapped; 2D objects (cloth, paper) can be torn; 3D objects
+    (melon, pot) can be smashed. -/
+inductive ObjectDimensionality where
+  | oneD          -- elongated: rope, stick, twig, carrot, yarn
+  | twoD          -- flat/flexible: cloth, paper, plate
+  | threeD        -- solid/volumetric: melon, pot, box, orange
+  deriving DecidableEq, BEq, Repr
+
 /-- Whether the agent acts with volitional intent.
 
     @cite{dowty-1991}: Proto-Agent entailment P1 = "volitional involvement
@@ -266,6 +295,12 @@ structure RootProfile where
   agentVolition : Range Volitionality := none
   /-- Agent control: @cite{dowty-1991} P2, Spalek & McNally. -/
   agentControl : Range AgentControl := none
+  /-- Instrument type the root selects for: @cite{majid-boster-bowerman-2008}.
+      *cut* selects for sharp blades; *break* is unspecified. -/
+  instrumentType : Range InstrumentType := none
+  /-- Patient dimensionality: @cite{majid-boster-bowerman-2008}.
+      *tear* selects for 2D objects (cloth, paper); *snap* for 1D (stick, twig). -/
+  patientDim : Range ObjectDimensionality := none
   deriving BEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════

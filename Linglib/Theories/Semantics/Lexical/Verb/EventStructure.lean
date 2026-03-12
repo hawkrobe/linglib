@@ -105,8 +105,11 @@ def Template.subjectProfile : Template → EntailmentProfile
     -- State holder: sentience + IE only
     ⟨false, true, false, false, true, false, false, false, false, false⟩
   | .activity =>
-    -- Agentive activity: V+S+C+M+IE (full proto-agent)
-    ⟨true, true, true, true, true, false, false, false, false, false⟩
+    -- Activity: V+S+M+IE (no causation — the template [x ACT] does not
+    -- entail causing a change in another participant; Dowty P-Agent #3
+    -- requires "another participant"). Transitive activities (hit) add
+    -- C at the class level via root-contributed objects.
+    ⟨true, true, false, true, true, false, false, false, false, false⟩
   | .achievement =>
     -- Achievement subject: M+IE+CoS (undergoes change)
     ⟨false, false, false, true, true, true, false, false, false, false⟩
@@ -123,8 +126,11 @@ def Template.objectProfile : Template → Option EntailmentProfile
   | .activity => none
   | .achievement => none
   | .accomplishment =>
-    -- Result patient: CoS+IT+CA (undergoes caused change)
-    some ⟨false, false, false, false, false, true, true, true, false, false⟩
+    -- Result patient: CoS+CA (undergoes caused change).
+    -- IT (incremental theme) is NOT included in the template default —
+    -- not all accomplishment objects measure the event. Verbs with IT
+    -- (eat, build) add it at the class level.
+    some ⟨false, false, false, false, false, true, false, true, false, false⟩
   | .motionContact =>
     -- Force recipient: CA+St (causally affected, stationary surface)
     some ⟨false, false, false, false, false, false, false, true, true, false⟩

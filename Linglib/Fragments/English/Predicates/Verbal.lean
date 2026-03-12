@@ -744,13 +744,17 @@ def break_ : VerbEntry where
     patientRob := some [.moderate, .robust]
     resultType := some [.fracture]
     agentControl := some [.incompatible, .neutral]
+    -- break is unspecified for instrument and object dimensionality
+    -- (@cite{majid-boster-bowerman-2008}: Dim 1 low predictability)
   }
 
 /-- "tear" — Levin 45.1 Break Verbs. Contrary-direction separation with force.
     Unlike *break*, *tear* implies a specific directionality (bidirectional /
     pulling apart) and is compatible with careful controlled action.
     Patient restriction: any solid capable of irregular separation.
-    Spalek & McNally (forthcoming, §3.1–3.2). -/
+    Spalek & McNally (forthcoming, §3.1–3.2).
+    @cite{majid-boster-bowerman-2008}: Dimension 2 — tearing consistently
+    distinguished from break/cut across 10/28 languages. -/
 def tear_ : VerbEntry where
   form := "tear"
   form3sg := "tears"
@@ -769,6 +773,8 @@ def tear_ : VerbEntry where
     patientRob := some [.flimsy, .moderate, .robust]
     resultType := some [.separation]
     agentControl := some [.neutral, .compatible]
+    instrumentType := some [.hands]
+    patientDim := some [.twoD]
   }
 
 /-- "burn" — thick lexical causative (manner = by fire/heat). -/
@@ -1917,7 +1923,9 @@ def touch : VerbEntry := .mkRegular {
 -- § Levin Class Expansion — Cutting (§ 21)
 -- ════════════════════════════════════════════════════
 
-/-- "cut" — Levin 21.1 Cut verbs. Incremental by length of cut. -/
+/-- "cut" — Levin 21.1 Cut verbs. Incremental by length of cut.
+    @cite{majid-boster-bowerman-2008}: Dimension 1 high predictability —
+    sharp instrument on yielding object → predictable locus of separation. -/
 def cut : VerbEntry where
   form := "cut"
   form3sg := "cuts"
@@ -1928,6 +1936,10 @@ def cut : VerbEntry where
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .cut
+  rootProfile := some {
+    resultType := some [.surfaceBreach]
+    instrumentType := some [.sharpBlade]
+  }
 
 /-- "chop" — Levin 21.2 Carve verbs. -/
 def chop : VerbEntry where

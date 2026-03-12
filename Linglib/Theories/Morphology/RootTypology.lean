@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
-import Linglib.Core.Root
+import Linglib.Core.RootDimensions
 
 /-!
 # Root Typology: States and Changes of State (@cite{beavers-etal-2021}, B&@cite{beavers-koontz-garboden-2020}) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
@@ -65,7 +65,89 @@ open Semantics.Tense.Aspect.LexicalAspect
 -- § 1. Root Type Subclasses (@cite{beavers-etal-2021} §3.1)
 -- ════════════════════════════════════════════════════
 
--- RootType, RootArity, RootDenotationType, and Root are defined in Core/Root.lean.
+-- ════════════════════════════════════════════════════
+-- § 0. Root Primitive Types
+-- ════════════════════════════════════════════════════
+
+/-- Two types of change-of-state verb roots (@cite{beavers-etal-2021} §3.1).
+
+    **Property concept (PC) roots**: underlie
+    deadjectival CoS verbs. The root describes a gradable property
+    (dimension, color, value, etc.). Examples: flat, red, long, warm.
+
+    **Result roots**: underlie non-deadjectival CoS verbs. The root describes
+    a specific result state that arises from a particular kind of event
+    (breaking, cooking, killing, etc.). Examples: crack, break, shatter. -/
+inductive RootType where
+  | propertyConcept  -- flat, red, long — deadjectival CoS (flatten, redden)
+  | result           -- crack, break, shatter — non-deadjectival CoS
+  deriving DecidableEq, Repr, BEq
+
+/-- Whether a root lexically entails prior change (@cite{beavers-etal-2021} §3.6).
+
+    PC roots denote simple states that can hold without any prior change event.
+    Result roots denote states that entail a prior change event. -/
+def RootType.entailsChange : RootType → Bool
+  | .propertyConcept => false
+  | .result => true
+
+/-- Whether a root selects an internal (theme) argument.
+
+    @cite{coon-2019}: the central division of labor is that **roots determine
+    internal arguments** while **functional heads (v/Voice⁰) determine
+    external arguments**. This is orthogonal to change entailment. -/
+inductive RootArity where
+  | selectsTheme  -- root obligatorily takes internal argument (Coon's √TV)
+  | noTheme       -- no internal argument selection (Coon's √ITV, √NOM, √POS)
+  deriving DecidableEq, Repr, BEq
+
+/-- Does this root arity entail an obligatory internal argument? -/
+def RootArity.hasInternalArg : RootArity → Bool
+  | .selectsTheme => true
+  | .noTheme => false
+
+/-- The semantic denotation domain of a root (@cite{coon-2019}, (3)).
+
+    - **eventPred** ⟨e, ⟨s,t⟩⟩: entity → event → truth-value (√TV, √ITV)
+    - **measureFn** ⟨e, ⟨s,d⟩⟩: entity → event → degree (√POS; @cite{henderson-2019})
+    - **entityPred** ⟨e,t⟩: entity → truth-value, no event (√NOM) -/
+inductive RootDenotationType where
+  | eventPred   -- ⟨e, ⟨s,t⟩⟩ (√TV, √ITV)
+  | measureFn   -- ⟨e, ⟨s,d⟩⟩ (√POS; @cite{henderson-2019})
+  | entityPred  -- ⟨e,t⟩ (√NOM)
+  deriving DecidableEq, BEq, Repr
+
+/-- Unified root characterization bundling all classification dimensions.
+
+    A root is characterized along five independent axes:
+    1. **Arity**: does it select an internal argument?
+    2. **Change entailment**: does it lexically
+       entail a prior change event?
+    3. **Denotation type** (@cite{coon-2019}, (3)): event predicate, measure
+       function, or entity predicate.
+    4. **Quality dimensions** (Spalek & McNally): within-class root content
+    5. **Class membership**: verb class taxonomy
+
+    Axes 1, 2, and 3 cross-classify: Coon's four Chuj root classes are
+    recovered as (arity × denotationType) pairs:
+    √TV = selectsTheme + eventPred, √ITV = noTheme + eventPred,
+    √POS = noTheme + measureFn, √NOM = noTheme + entityPred. -/
+structure Root where
+  /-- Does this root select an internal argument? -/
+  arity : RootArity
+  /-- Does this root lexically entail prior change? -/
+  changeType : RootType
+  /-- Semantic denotation domain (@cite{coon-2019}, (3)). Optional — not all
+      roots have been annotated. -/
+  denotationType : Option RootDenotationType := none
+  /-- Within-class quality dimensions (Spalek & McNally) -/
+  profile : RootProfile := {}
+  /-- Verb class membership -/
+  levinClass : Option LevinClass := none
+  deriving BEq, Repr
+
+/-- Does this root lexically entail prior change? -/
+def Root.entailsChange (r : Root) : Bool := r.changeType.entailsChange
 
 /-- Property concept root subclasses (@cite{dixon-1982}; @cite{beavers-etal-2021} ex. 5). -/
 inductive PCClass where

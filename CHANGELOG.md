@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.175] - 2026-03-12
+
+### Added
+- **MajidBosterBowerman2008.lean**: Formalize cross-linguistic cutting/breaking event categorization — `SeparationEvent` type as points in `RootProfile` feature space, 4 cross-linguistic dimensions as computable projections (predictability, tearing, snap/smash, poke-hole), representative clip encodings, English/Yélî Dnye/Tzeltal verb mappings, bridge theorems to `LevinClass`/`MeaningComponents`, `compatibleWith` connecting stimulus events to verb root profiles
+- **RootDimensions.lean**: Add `InstrumentType` (sharpBlade/bluntImpact/hands/none) and `ObjectDimensionality` (oneD/twoD/threeD) types; add `instrumentType` and `patientDim` fields to `RootProfile`
+- **references.bib**: Add `majid-boster-bowerman-2008`
+
 ## [0.229.174] - 2026-03-12
 
 ### Added
