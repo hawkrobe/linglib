@@ -1412,6 +1412,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Lexical.Verb.Affectedness
 import Linglib.Theories.Semantics.Lexical.Verb.LevinClassProfiles
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
+import Linglib.Theories.Semantics.Lexical.Verb.ArgDerivation
 import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.DimensionBridge
