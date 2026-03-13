@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.194] - 2026-03-13
+
+### Added
+- **Composition/Effects.lean §6.5**: Binding bridge via C meta-combinator — `store` (antecedent storage ▷), `counitApp_ba_store_is_W`, `john_sees_himself_via_C`, `binding_C_agrees_with_hk`/`_mary` connecting C to H&K predicate abstraction
+- **Composition/Effects.lean §7**: General scope agreement theorems — `cont_scope_reduce`, `cont_scope_double`, `scope_ambiguity_is_bind_order`, `cont_scope_triple` (all `rfl`); `cont_pure_is_fa` (Reader embeds in Cont); `qr_cont_structural_agreement` (QR scope = Cont scope via `lambdaAbsG`)
+- **Composition/Effects.lean §8**: Three-way binding unification — `w_three_way`, `binding_unification`, `binding_triangle` proving `denotGJoin` = `W` = `adj_ε` (all `rfl`)
+
 ## [0.229.193] - 2026-03-13
 
 ### Added

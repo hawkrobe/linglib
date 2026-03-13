@@ -611,4 +611,233 @@ theorem inverse_scope_via_cont :
 
 end ScopeBridge
 
+section BindingBridge
+
+/-! #### Binding via the C meta-combinator
+
+Worked derivation connecting C (@cite{bumford-charlow-2024} eq. 5.8) to
+existing binding infrastructure over the toy model.
+
+The **W combinator** `W κ x = κ x x` is the shared link between three
+independent binding mechanisms:
+
+- **C** (co-unit meta-combinator): `C(<) ▷(x) body = W body x`
+- **H&K** (assignment-based): `body (g[n↦x] n) (g[n↦x] n) = W body x`
+- **@cite{charlow-2018}'s Reader join**: `denotGJoin body = W body`
+  (proven in `Charlow2018.lean:denotGJoin_is_W`)
+
+The derivation follows @cite{bumford-charlow-2024} §5.1: the subject
+stores itself as an antecedent via `▷(x) = ⟨x, x⟩` (a W-computation),
+the reflexive pronoun is the identity reader (an R-computation), and
+C resolves the binding by feeding the stored referent to the reader. -/
+
+/-- Antecedent storage: `▷(x) = ⟨x, x⟩`.
+
+    @cite{bumford-charlow-2024} eq. 5.1b: an entity stores its
+    referent in the W (product) effect, making it available for
+    downstream binding via the co-unit ε. -/
+def store {α : Type} (x : α) : α × α := (x, x)
+
+/-- C(<) with storage yields the W combinator.
+
+    Backward-application variant of `counitApp_reflexive_is_W`:
+    `C(<) ▷(x) body = body x x = W body x`. -/
+theorem counitApp_ba_store_is_W {ι β : Type} (body : ι → ι → β) (x : ι) :
+    counitApp ba' (store x) body = W body x := rfl
+
+/-- Reflexive binding: "John sees himself" via C.
+
+    The subject stores itself (`▷(john) = ⟨john, john⟩`), the reflexive
+    pronoun resolves to the object via the identity reader, and C(<)
+    merges them: `C(<) ▷(j) (λi. sees i) = sees j j = false`.
+
+    The false result confirms the toy model has no reflexive seeing
+    (John sees Mary and Mary sees John, but neither sees themselves). -/
+theorem john_sees_himself_via_C :
+    counitApp ba' (store ToyEntity.john)
+      (λ i => ToyLexicon.sees_sem i) = false := rfl
+
+/-- C-based binding agrees with H&K assignment-based binding:
+    both compute `sees(g[1↦j](1), g[1↦j](1)) = sees(j, j)`.
+
+    This connects @cite{bumford-charlow-2024}'s adjunction mechanism
+    to @cite{heim-kratzer-1998}'s predicate abstraction. -/
+theorem binding_C_agrees_with_hk (g : Assignment toyModel) :
+    counitApp ba' (store ToyEntity.john)
+      (λ i => ToyLexicon.sees_sem i) =
+    ToyLexicon.sees_sem (g[1 ↦ ToyEntity.john] 1)
+                        (g[1 ↦ ToyEntity.john] 1) := by
+  show ToyLexicon.sees_sem ToyEntity.john ToyEntity.john =
+       ToyLexicon.sees_sem (g[1 ↦ ToyEntity.john] 1)
+                           (g[1 ↦ ToyEntity.john] 1)
+  simp only [update_same]
+
+/-- C and H&K agree for Mary as well: `C(<) ▷(m) (λi. sees i) = sees m m`. -/
+theorem binding_C_agrees_with_hk_mary (g : Assignment toyModel) :
+    counitApp ba' (store ToyEntity.mary)
+      (λ i => ToyLexicon.sees_sem i) =
+    ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)
+                        (g[2 ↦ ToyEntity.mary] 2) := by
+  show ToyLexicon.sees_sem ToyEntity.mary ToyEntity.mary =
+       ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)
+                           (g[2 ↦ ToyEntity.mary] 2)
+  simp only [update_same]
+
+end BindingBridge
+
+-- ════════════════════════════════════════════════════════════════════
+-- §7 General Scope Agreement: Cont ≡ GQ Application
+-- ════════════════════════════════════════════════════════════════════
+
+/-! ### §7 General scope agreement
+
+The ScopeBridge section (§6) proved Cont ↔ QR agreement for the toy model
+via `native_decide`. Here we prove the agreement is *structural*: it holds
+for any type, any quantifier, and any predicate — not because we checked
+all cases, but because the two approaches compute the same function.
+
+The key insight: `Cont R E := (E → R) → R` is literally a generalized
+quantifier. The identity function `gqAsCont` witnesses this — there is no
+encoding, no coercion, no wrapper. So the Cont derivation *is* GQ
+application by definition.
+
+Scope ambiguity in the Cont framework is not a special mechanism: it is
+the *order of monadic bind*. Surface scope = bind the subject first;
+inverse scope = bind the object first. The bind order IS the scope order,
+and `lower` IS GQ application.
+
+This establishes Cont as a *general* scope framework, with QR trees as
+one particular syntax for specifying bind order. -/
+
+section GeneralScopeAgreement
+
+variable {E R : Type}
+
+/-- **Single scope reduction**: lowering a Cont-wrapped quantifier
+    with a pure scope predicate is plain GQ application.
+
+    `lower(Q >>= λx. pure(P x)) = Q(P)`
+
+    This is the general version of `scope_agrees_with_qr_everyStudentSleeps`
+    — it holds for ANY quantifier and ANY predicate, not just the toy model. -/
+theorem cont_scope_reduce (q : Cont R E) (scope : E → R) :
+    Cont.lower (Cont.bind q (fun x => Cont.pure (scope x))) = q scope := rfl
+
+/-- **Two-quantifier scope reduction**: nested Cont binds compute
+    nested GQ application. The bind nesting determines scope order.
+
+    `lower(Q₁ >>= λx. Q₂ >>= λy. pure(R x y)) = Q₁(λx. Q₂(λy. R x y))` -/
+theorem cont_scope_double (q₁ q₂ : Cont R E) (rel : E → E → R) :
+    Cont.lower (Cont.bind q₁ (fun x =>
+      Cont.bind q₂ (fun y => Cont.pure (rel x y)))) =
+    q₁ (fun x => q₂ (fun y => rel x y)) := rfl
+
+/-- **Scope ambiguity = bind order**. The two readings of "Q₁ R Q₂"
+    arise from nesting Q₁ outside Q₂ vs Q₂ outside Q₁.
+
+    Both reduce to GQ application in the corresponding order. -/
+theorem scope_ambiguity_is_bind_order (q₁ q₂ : Cont R E) (rel : E → E → R) :
+    Cont.lower (Cont.bind q₁ (fun x =>
+      Cont.bind q₂ (fun y => Cont.pure (rel x y)))) =
+    q₁ (fun x => q₂ (fun y => rel x y))
+    ∧
+    Cont.lower (Cont.bind q₂ (fun y =>
+      Cont.bind q₁ (fun x => Cont.pure (rel x y)))) =
+    q₂ (fun y => q₁ (fun x => rel x y)) :=
+  ⟨rfl, rfl⟩
+
+/-- **Three-quantifier scope**: the pattern extends to arbitrary depth. -/
+theorem cont_scope_triple (q₁ q₂ q₃ : Cont R E) (rel : E → E → E → R) :
+    Cont.lower (Cont.bind q₁ (fun x =>
+      Cont.bind q₂ (fun y =>
+        Cont.bind q₃ (fun z => Cont.pure (rel x y z))))) =
+    q₁ (fun x => q₂ (fun y => q₃ (fun z => rel x y z))) := rfl
+
+/-- **Non-scope-taking = ordinary FA**: when all meanings are wrapped
+    in `Cont.pure`, Cont composition reduces to function application.
+
+    `lower(pure(f) >>= λg. pure(x) >>= λy. pure(g y)) = f x`
+
+    This is the embedding of Reader (the non-scope-taking fragment)
+    into Cont: @cite{charlow-2018}'s `ρ(f) ⊛ ρ(x) = ρ(f x)` is
+    exactly the Cont homomorphism law. -/
+theorem cont_pure_is_fa {A : Type} (f : A → R) (x : A) :
+    Cont.lower (Cont.bind (Cont.pure f) (fun g =>
+      Cont.bind (Cont.pure x) (fun y => Cont.pure (g y)))) = f x := rfl
+
+/-- **QR scope = Cont scope via lambdaAbsG**: the structural connection
+    between QR trees and Cont derivations.
+
+    In a QR tree `[Q [n body]]`, Predicate Abstraction produces
+    `Q(λx. ⟦body⟧^{g[n↦x]})` = `Q(lambdaAbsG n body g)`.
+
+    In a Cont derivation, `lower(bind(Q, λx. pure(body(g[n↦x]))))`
+    = `Q(λx. body(g[n↦x]))` = `Q(lambdaAbsG n body g)`.
+
+    Both compute the same thing: the quantifier applied to the
+    predicate abstraction of its scope. QR and Cont differ only in
+    how scope order is *specified* (tree structure vs bind order),
+    not in what they *compute*. -/
+theorem qr_cont_structural_agreement {m : Model}
+    (q : (m.Entity → Bool) → Bool)
+    (body : DenotG m .t) (n : Nat) (g : Assignment m) :
+    q (lambdaAbsG n body g) =
+    Cont.lower (Cont.bind q (fun x => Cont.pure (body (g[n ↦ x])))) := rfl
+
+end GeneralScopeAgreement
+
+-- ════════════════════════════════════════════════════════════════════
+-- §8 Three-Way Binding Unification
+-- ════════════════════════════════════════════════════════════════════
+
+/-! ### §8 Three-way binding unification
+
+Three independently-developed binding mechanisms in linglib all compute
+the same operation `f e e`:
+
+| Source | Operation | Definition | File |
+|--------|-----------|------------|------|
+| @cite{heim-kratzer-1998} | `denotGJoin` (μ) | `λg. f g g` | `Variables.lean` |
+| @cite{barker-shan-2014} | `W` (duplicator) | `W κ x = κ x x` | `Binding.lean` |
+| @cite{bumford-charlow-2024} | `adj_ε` (co-unit) | `ε(f e, e) = (f e) e` | `Effects.lean` §4 |
+
+The individual two-way bridges exist:
+- `denotGJoin_is_W` (`Charlow2018.lean`)
+- `adj_counit_yields_W` (`Effects.lean` §4)
+
+Here we close the triangle with a single three-way theorem. -/
+
+section BindingUnification
+
+/-- **Three-way W**: the duplicator, Reader join, and adjunction co-unit
+    all compute `f e e`. This is the universal binding mechanism.
+
+    The identity is *definitional*: the three frameworks are not merely
+    extensionally equal but intensionally identical up to
+    currying/pairing. -/
+theorem w_three_way {E A : Type} (f : E → E → A) (e : E) :
+    (fun g => f g g) e = W f e ∧ W f e = adj_ε (f e, e) := ⟨rfl, rfl⟩
+
+/-- Specialization for Montague assignments: `denotGJoin` = `W` = `adj_ε`
+    when applied to assignment-dependent meanings. -/
+theorem binding_unification {m : Model} {A : Type}
+    (f : Assignment m → Assignment m → A) (g : Assignment m) :
+    denotGJoin f g = W f g ∧ W f g = adj_ε (f g, g) := ⟨rfl, rfl⟩
+
+/-- Closing the triangle directly: `denotGJoin` = `adj_ε ∘ ⟨f·, ·⟩`.
+
+    ```
+        denotGJoin ──── rfl ────→ W
+              \                    |
+               \                   |
+           rfl  \              rfl |
+                 ↘                 ↓
+                   adj_ε ∘ ⟨f·, ·⟩
+    ``` -/
+theorem binding_triangle {m : Model} {A : Type}
+    (f : Assignment m → Assignment m → A) (g : Assignment m) :
+    denotGJoin f g = adj_ε (f g, g) := rfl
+
+end BindingUnification
+
 end Semantics.Composition.Effects
