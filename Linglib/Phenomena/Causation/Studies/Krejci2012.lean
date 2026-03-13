@@ -37,10 +37,11 @@ Texas at Austin.
 
 ## Bridges
 
+- `reflexive_is_bieventive` → `IntransitivizationType` (central claim)
 - `eat_is_causativeResult` → `LevinClass.rootEntailments` (root typology)
 - `eat_licenses_accomplishment` → `rootLicensesTemplate` (ArgDerivation)
 - `eat_argTemplate_is_consumption` → `LevinClass.argTemplate` (LevinClassProfiles)
-- `alternation_strips_cause` → `Template.intransitiveVariant`
+- `accomplishment_has_variant` → `Template.intransitiveVariant`
 - `anticausative_no_theta` / `middle_no_theta` → `VoiceHead` (Minimalist syntax)
 -/
 
@@ -108,7 +109,7 @@ def eat : LexReflexiveVerb :=
     againAmbiguity := true       -- (70) "Your guy ate the coin again..."
     rePrefixation := true         -- (76–77) "re-eat" attested, restitutive available
     almostAmbiguity := true       -- (85) "John almost ate the pie"
-    negationOverCause := true }   -- (92) "I didn't eat pie; you fed me pie!"
+    negationOverCause := true }   -- (92) "I didn't eat pie; you fed pie to me!"
 
 /-- *wash*: middle. `[[ACT⟨manipulate water⟩(x)] CAUSE [BECOME ⟨washed⟩ (x)]]`.
     Transitive *wash (someone)* is the antireflexivized form (§4.2.2). -/
@@ -296,7 +297,47 @@ theorem alternation_loses_cause :
     Template.hasCause .achievement = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 8. Bridge to Minimalist Voice
+-- § 8. Bridge to IntransitivizationType
+-- ════════════════════════════════════════════════════
+
+/-! @cite{krejci-2012}'s central theoretical claim: lexically reflexive
+    verbs have *reflexive* intransitivization (coidentification of causer
+    and causee), not *anticausative* intransitivization (removal of the
+    external cause). This is what makes their simple forms bieventive —
+    the causer position is retained, filled by the same participant as
+    the causee.
+
+    The connection: all four verb-level diagnostics (§4.3–4.5) detect
+    bieventive structure, and `IntransitivizationType.reflexive` is the
+    type-level characterization of exactly that structure. -/
+
+/-- Reflexive intransitivization is bieventive — matching what the
+    four verb-level diagnostics detect. -/
+theorem reflexive_is_bieventive :
+    IntransitivizationType.isBieventive .reflexive = true := rfl
+
+/-- Anticausative intransitivization is monoeventive — the diagnostics
+    would NOT detect bieventive structure for true anticausatives. -/
+theorem anticausative_is_monoeventive :
+    IntransitivizationType.isBieventive .anticausative = false := rfl
+
+/-- Reflexive intransitivization involves coidentification of causer
+    and causee — the structural basis of lexical reflexivity. -/
+theorem reflexive_has_coidentification :
+    IntransitivizationType.hasCoidentification .reflexive = true := rfl
+
+/-- Reflexive intransitives license "by itself" (§4.5, (114a–d)),
+    because a causer position exists (even if coidentified). -/
+theorem reflexive_licenses_bySelf :
+    IntransitivizationType.licensesBySelf .reflexive = true := rfl
+
+/-- True anticausatives do NOT license "by itself" — no causer
+    position to negate with "without outside help". -/
+theorem anticausative_blocks_bySelf :
+    IntransitivizationType.licensesBySelf .anticausative = false := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 9. Bridge to Minimalist Voice
 -- ════════════════════════════════════════════════════
 
 /-! @cite{krejci-2012}'s reflexive/anticausative distinction maps onto
@@ -314,7 +355,7 @@ theorem middle_no_theta :
     Minimalism.voiceMiddle.assignsTheta = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 9. Cross-Linguistic Causativizability
+-- § 10. Cross-Linguistic Causativizability
 -- ════════════════════════════════════════════════════
 
 /-! @cite{krejci-2012} Table 2.8 validates the causativizability

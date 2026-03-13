@@ -414,7 +414,7 @@ theorem reflexive_bieventive :
 
     The hierarchy is implicational: if a morpheme causativizes a
     higher verb class, it also causativizes all lower classes. This
-    is validated across 12 languages in @cite{krejci-2012} Table 5.4. -/
+    is validated across 12 languages in @cite{krejci-2012} Table 2.8. -/
 
 /-- Cross-linguistic data on causativizability: which verb classes
     a given morphological causative morpheme can apply to. -/
@@ -434,11 +434,11 @@ def CausativizabilityData.respectsHierarchy (d : CausativizabilityData) : Bool :
   (!d.unergative || d.middlesIngestive) &&
   (!d.middlesIngestive || d.unaccusative)
 
-/-- Cross-linguistic causativizability data from @cite{krejci-2012} Table 5.4.
+/-- Cross-linguistic causativizability data from @cite{krejci-2012} Table 2.8.
     Languages are ordered from narrowest to broadest causative scope. -/
 def krejciLanguages : List CausativizabilityData :=
   [ { language := "Slave",            morpheme := "-h-",    unaccusative := true }
-  , { language := "Mapudungun",       morpheme := "-'ɨm",   unaccusative := true }
+  , { language := "Mapudungun",       morpheme := "-ɨm",    unaccusative := true }
   , { language := "Classical Nahuatl", morpheme := "-tia",  unaccusative := true }
   , { language := "Cora",             morpheme := "-te",    unaccusative := true
     , middlesIngestive := true }
@@ -454,7 +454,7 @@ def krejciLanguages : List CausativizabilityData :=
     , middlesIngestive := true, unergative := true }
   , { language := "Basque",           morpheme := "-arazi", unaccusative := true
     , middlesIngestive := true, unergative := true, simpleTransitive := true }
-  , { language := "Dulong/Rawang",    morpheme := "-shv",   unaccusative := true
+  , { language := "Dulong/Rawang",    morpheme := "shv-",   unaccusative := true
     , middlesIngestive := true, unergative := true, simpleTransitive := true }
   , { language := "Koyukon",          morpheme := "-ɬ-",    unaccusative := true
     , middlesIngestive := true, unergative := true, simpleTransitive := true }
