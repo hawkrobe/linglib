@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.191] - 2026-03-13
+
+### Changed
+- **DecisionTheory.lean**: Refactor `questionUtility` and `expectedVSI` from `List (W → Bool)` to `Finset (Finset W)`; delete list helpers (`list_sum_map_sub`, `list_sum_map_mul_right`, `per_cell_uv_sub_vsi`); re-prove `euv_eq_evsi` with `Finset.sum_sub_distrib`/`Finset.sum_mul`; add `questionToFinset` for call sites with list-based cell construction
+- **Partition.lean**: Delete ~170 lines of List→Finset bridge infrastructure (arithmetic helpers, `cellOfRep` bijection, `questionUtility_eq_finsetSum`); close `cellProb_mul_valueAfterLearning` and `questionUtility_qud_nonneg` sorrys; fix `questionUtility_qud_nonneg` hypothesis from `≤ 1` to `= 1`
+- **GSVanRooyBridge.lean, RelevanceTheories.lean**: Update `questionUtility` call sites from `.toCells`/`.toQuestion` to `.toCellsFinset Finset.univ`; fix `≤ 1` to `= 1` in nonneg hypotheses
+- **VanRooy2003.lean, Xiang2022.lean**: Wrap list-literal cells with `questionToFinset`
+- **HawkinsEtAl2025.lean**: `questionToPartition` now returns `Finset (Finset FullWorld)` directly
+
 ## [0.229.190] - 2026-03-12
 
 ### Changed

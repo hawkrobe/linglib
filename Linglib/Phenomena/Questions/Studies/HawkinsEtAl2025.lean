@@ -872,12 +872,12 @@ def toCoreDP (D : DP) : Core.DecisionTheory.DecisionProblem FullWorld Item where
   prior _ := 1 / 16
 
 /-- All items as a list for `Core.DecisionTheory` functions. -/
-def allItemsList : List Item := [.tea, .ic, .soda, .chard, .leave]
+def allItemsFinset : Finset Item := {.tea, .ic, .soda, .chard, .leave}
 
-/-- A polar question induces a binary partition: yes-worlds and no-worlds.
-    This is Van Rooy's question type (`List (W → Bool)`). -/
-def questionToPartition (q : Question) : List (FullWorld → Bool) :=
-  [fun w => questionTarget q w, fun w => !(questionTarget q w)]
+/-- A polar question induces a binary partition: yes-worlds and no-worlds. -/
+def questionToPartition (q : Question) : Finset (Finset FullWorld) :=
+  { Finset.univ.filter (fun w => questionTarget q w = true),
+    Finset.univ.filter (fun w => (!(questionTarget q w)) = true) }
 
 /-- The uniform prior on `toCoreDP` sums to 1. -/
 theorem toCoreDP_prior_sum (D : DP) :
@@ -895,9 +895,9 @@ theorem questionerEU_eq_weighted_value (q : Question) (D : DP) :
     let yesCell := Finset.univ.filter (fun w => P w = true)
     let noCell := Finset.univ.filter (fun w => (!P w) = true)
     Core.DecisionTheory.cellProbability (toCoreDP D) yesCell *
-      Core.DecisionTheory.valueAfterLearning (toCoreDP D) allItemsList yesCell +
+      Core.DecisionTheory.valueAfterLearning (toCoreDP D) allItemsFinset yesCell +
     Core.DecisionTheory.cellProbability (toCoreDP D) noCell *
-      Core.DecisionTheory.valueAfterLearning (toCoreDP D) allItemsList noCell := by
+      Core.DecisionTheory.valueAfterLearning (toCoreDP D) allItemsFinset noCell := by
   fin_cases q <;> fin_cases D <;> native_decide
 
 /-- **Van Rooy correspondence**: PRIOR-PQ's `questionerEU` equals Van Rooy's
@@ -916,12 +916,12 @@ theorem questionerEU_eq_weighted_value (q : Question) (D : DP) :
     @cite{van-rooy-2003}'s decision-theoretic question framework. -/
 theorem vanRooy_correspondence (q : Question) (D : DP) :
     questionerEU q D =
-    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsList
+    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsFinset
       (questionToPartition q) +
-    Core.DecisionTheory.dpValue (toCoreDP D) allItemsList := by
+    Core.DecisionTheory.dpValue (toCoreDP D) allItemsFinset := by
   rw [questionerEU_eq_weighted_value]
   exact Core.DecisionTheory.binary_question_value_decomposition
-    (toCoreDP D) allItemsList (fun w => questionTarget q w)
+    (toCoreDP D) allItemsFinset (fun w => questionTarget q w)
     (toCoreDP_prior_sum D)
 
 /-- Question ordering is preserved: since `dpValue` depends only on D (not q),
@@ -929,9 +929,9 @@ theorem vanRooy_correspondence (q : Question) (D : DP) :
     comparing Van Rooy's `questionUtility`. -/
 theorem vanRooy_question_ordering (q₁ q₂ : Question) (D : DP) :
     questionerEU q₁ D ≥ questionerEU q₂ D ↔
-    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsList
+    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsFinset
       (questionToPartition q₁) ≥
-    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsList
+    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsFinset
       (questionToPartition q₂) := by
   simp only [vanRooy_correspondence]
   constructor <;> intro h <;> linarith
@@ -971,13 +971,13 @@ noncomputable def questionerEUR (q : Question) (D : DP) : ℝ :=
 
 /-- Van Rooy's `questionUtility` cast to ℝ. -/
 noncomputable def questionUtilityR (q : Question) (D : DP) : ℝ :=
-  (Core.DecisionTheory.questionUtility (toCoreDP D) allItemsList
+  (Core.DecisionTheory.questionUtility (toCoreDP D) allItemsFinset
     (questionToPartition q) : ℝ)
 
 /-- Baseline `dpValue` cast to ℝ (constant across questions for fixed D).
     Named to avoid shadowing `Core.ExperimentDesign.dpValueR`. -/
 noncomputable def baselineDPValueR (D : DP) : ℝ :=
-  (Core.DecisionTheory.dpValue (toCoreDP D) allItemsList : ℝ)
+  (Core.DecisionTheory.dpValue (toCoreDP D) allItemsFinset : ℝ)
 
 /-- Uniform prior over DPs (ℝ). -/
 noncomputable def dpPriorUniformR : DP → ℝ := fun _ => 1 / 4
@@ -1252,15 +1252,15 @@ This is the β = 1 instantiation of `priorPQ_cost_dominance`:
 value saturation (`newspaper_value_saturation_A`) cancels the
 partitionValue terms, leaving the cost difference as sole discriminant. -/
 theorem newspaper_mentionSome_preferred (w_c : ℚ) (hw : w_c > 0) :
-    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] - w_c * 1 >
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] - w_c * 2 := by
+    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ {Shop.A, .B} - w_c * 1 >
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} - w_c * 2 := by
   linarith [newspaper_value_saturation_A.symm]
 
 /-- The mention-some advantage is exactly one unit of cost:
 the savings from mentioning one fewer shop. -/
 theorem newspaper_mentionSome_advantage (w_c : ℚ) :
-    (QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] - w_c * 1) -
-    (QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] - w_c * 2)
+    (QUD.partitionValue newspaperDP newspaperMS_A Finset.univ {Shop.A, .B} - w_c * 1) -
+    (QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} - w_c * 2)
     = w_c := by
   linarith [newspaper_value_saturation_A.symm]
 

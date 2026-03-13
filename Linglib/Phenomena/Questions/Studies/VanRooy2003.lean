@@ -119,7 +119,7 @@ def newspaperDP : DecisionProblem NewspaperWorld Shop where
 /-- The newspaper DP has mention-some structure: both cells resolve it. -/
 theorem newspaper_mentionSome :
     isMentionSome newspaperDP
-      [.shopA_only, .shopB_only, .both] [.A, .B]
+      {NewspaperWorld.shopA_only, .shopB_only, .both} {Shop.A, .B}
       [λ w => sellsItalian w .A, λ w => sellsItalian w .B] = true := by
   native_decide
 
@@ -236,16 +236,16 @@ def recordShopDP : DecisionProblem BeatleWorld Beatle where
 
 This is the scalar ordering: UV({hasJohn}) > UV({hasRingo}). -/
 theorem john_more_useful_than_ringo :
-    utilityValue recordShopDP [.john, .paul, .george, .ringo]
+    utilityValue recordShopDP {Beatle.john, .paul, .george, .ringo}
       (Finset.univ.filter (· == BeatleWorld.hasJohn)) >
-    utilityValue recordShopDP [.john, .paul, .george, .ringo]
+    utilityValue recordShopDP {Beatle.john, .paul, .george, .ringo}
       (Finset.univ.filter (· == BeatleWorld.hasRingo)) := by
   native_decide
 
 /-- The full scalar ordering: John > Paul > George > Ringo in utility value. -/
 theorem beatle_utility_ordering :
     let uv := λ w : BeatleWorld =>
-      utilityValue recordShopDP [.john, .paul, .george, .ringo]
+      utilityValue recordShopDP {Beatle.john, .paul, .george, .ringo}
         (Finset.univ.filter (· == w))
     uv .hasJohn > uv .hasPaul ∧
     uv .hasPaul > uv .hasGeorge ∧
@@ -266,8 +266,8 @@ zero utility value for the buy-newspaper decision problem. -/
 
 /-- In the newspaper example, both shops are decision-relevant. -/
 theorem newspaper_shops_relevant :
-    decisionRelevantDomain newspaperDP [Shop.A, Shop.B]
-      sellsItalian [Shop.A, Shop.B] = [Shop.A, Shop.B] := by
+    decisionRelevantDomain newspaperDP {Shop.A, .B}
+      sellsItalian [Shop.A, Shop.B] = {Shop.A, .B} := by
   native_decide
 
 
@@ -283,26 +283,26 @@ We use the newspaper DP directly (not `mentionSomeDP` which takes a unary
 predicate). The newspaper DP has utility 1 for going to a shop that sells
 Italian papers, so each shop-cell resolves it. -/
 theorem mentionSome_from_goal_dp :
-    let worlds := [NewspaperWorld.shopA_only, .shopB_only, .both]
+    let worlds : Finset NewspaperWorld := {.shopA_only, .shopB_only, .both}
     let q : Question NewspaperWorld :=
       [λ w => sellsItalian w Shop.A, λ w => sellsItalian w Shop.B]
-    isMentionSome newspaperDP worlds [Shop.A, Shop.B] q = true := by
+    isMentionSome newspaperDP worlds {Shop.A, .B} q = true := by
   native_decide
 
 /-- Mention-all reading arises when the decision problem requires
 complete information (e.g., the complete information DP). -/
 theorem mentionAll_from_complete_dp :
     let dp := completeInformationDP (W := NewspaperWorld)
-    let worlds := [NewspaperWorld.shopA_only, .shopB_only, .both]
+    let worlds : Finset NewspaperWorld := {.shopA_only, .shopB_only, .both}
     let q : Question NewspaperWorld :=
       [λ w => sellsItalian w Shop.A, λ w => sellsItalian w Shop.B]
-    isMentionAll dp worlds [.shopA_only, .shopB_only, .both] q = true := by
+    isMentionAll dp worlds {NewspaperWorld.shopA_only, .shopB_only, .both} q = true := by
   native_decide
 
 /-- The newspaper question utility is positive: asking is worthwhile. -/
 theorem newspaper_question_has_value :
-    questionUtility newspaperDP [Shop.A, Shop.B]
-      [λ w => sellsItalian w Shop.A, λ w => sellsItalian w Shop.B] > 0 := by
+    questionUtility newspaperDP {Shop.A, .B}
+      (questionToFinset [λ w => sellsItalian w Shop.A, λ w => sellsItalian w Shop.B]) > 0 := by
   native_decide
 
 
@@ -395,14 +395,14 @@ This is the concrete instance of value saturation: coarsening from the
 exhaustive partition to the mention-some partition loses nothing,
 because both resolve the DP. -/
 theorem newspaper_value_saturation_A :
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] =
-    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] := by
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} =
+    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ {Shop.A, .B} := by
   native_decide
 
 /-- Same for the shop-B mention-some partition. -/
 theorem newspaper_value_saturation_B :
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] =
-    QUD.partitionValue newspaperDP newspaperMS_B Finset.univ [Shop.A, Shop.B] := by
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} =
+    QUD.partitionValue newspaperDP newspaperMS_B Finset.univ {Shop.A, .B} := by
   native_decide
 
 /-- Both mention-some partitions achieve the same value as the exact
@@ -410,16 +410,16 @@ theorem newspaper_value_saturation_B :
 coarsest resolving partition extracts all decision-relevant information. -/
 theorem newspaper_value_saturation_exact :
     QUD.partitionValue newspaperDP (QUD.exact (M := NewspaperWorld))
-      Finset.univ [Shop.A, Shop.B] =
-    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] := by
+      Finset.univ {Shop.A, .B} =
+    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ {Shop.A, .B} := by
   native_decide
 
 /-- Verification: the G&S partition also equals the exact partition's value.
 (Follows from the previous two, but verified independently.) -/
 theorem newspaper_GS_eq_exact :
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] =
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} =
     QUD.partitionValue newspaperDP (QUD.exact (M := NewspaperWorld))
-      Finset.univ [Shop.A, Shop.B] := by
+      Finset.univ {Shop.A, .B} := by
   native_decide
 
 
@@ -430,9 +430,9 @@ the mention-some partition achieves STRICTLY LESS value than the G&S
 partition. Coarsening is no longer free — information is lost. -/
 theorem complete_info_value_NOT_saturated :
     QUD.partitionValue (completeInformationDP (W := NewspaperWorld))
-      newspaperMS_A Finset.univ [NewspaperWorld.shopA_only, .shopB_only, .both] <
+      newspaperMS_A Finset.univ {NewspaperWorld.shopA_only, .shopB_only, .both} <
     QUD.partitionValue (completeInformationDP (W := NewspaperWorld))
-      newspaperGS Finset.univ [NewspaperWorld.shopA_only, .shopB_only, .both] := by
+      newspaperGS Finset.univ {NewspaperWorld.shopA_only, .shopB_only, .both} := by
   native_decide
 
 
@@ -453,7 +453,7 @@ Op(P) produces cells → cells resolve → value is saturated. -/
 theorem underspecified_all_cells_resolve :
     newspaperUnderspecCells.all
       (resolves newspaperDP
-        [NewspaperWorld.shopA_only, .shopB_only, .both] [Shop.A, Shop.B])
+        {NewspaperWorld.shopA_only, .shopB_only, .both} {Shop.A, .B})
       = true := by
   native_decide
 
@@ -491,7 +491,7 @@ achieves f(a_dom) when a_dom is the greatest element. -/
 theorem resolution_value_saturation
     {W : Type*} [Fintype W] [DecidableEq W]
     {A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (q : QUD W) (actions : List A)
+    (dp : DecisionProblem W A) (q : QUD W) (actions : Finset A)
     (hResolves : ∀ cell ∈ q.toCellsFinset Finset.univ,
       ∃ a ∈ actions, ∀ b ∈ actions, ∀ w ∈ cell,
         dp.utility w a ≥ dp.utility w b)
@@ -511,8 +511,8 @@ structure of a question should match the decision problem's resolution
 structure, and coarser-than-necessary partitions that still resolve
 lose nothing. -/
 theorem mentionSome_value_eq_mentionAll :
-    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] =
-    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] :=
+    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ {Shop.A, .B} =
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} :=
   newspaper_value_saturation_A.symm
 
 end Phenomena.Questions.Studies.VanRooy2003

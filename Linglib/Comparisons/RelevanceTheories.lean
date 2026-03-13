@@ -95,37 +95,17 @@ private theorem identityDP_eu_eq {W : Type*} [Fintype W] [DecidableEq W]
       simp [this, h]
   simp_rw [h1, Finset.sum_ite_eq', Finset.mem_univ, if_true]
 
-/-- `optimalAction` returns an element of the input list (when it returns `some`). -/
+/-- `optimalAction` returns an element of the input finset (when it returns `some`). -/
 private theorem optimalAction_mem {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A) (a : A)
+    (dp : DecisionProblem W A) (actions : Finset A) (a : A)
     (h : optimalAction dp actions = some a) : a ∈ actions := by
   unfold optimalAction at h
-  suffices ∀ (xs : List A) (init : Option A),
-      xs.foldl (fun best b => match best with
-        | none => some b
-        | some c => if expectedUtility dp b > expectedUtility dp c
-                    then some b else some c) init = some a →
-      init = some a ∨ a ∈ xs by
-    rcases this actions none h with h | h
-    · exact absurd h (by simp)
-    · exact h
-  intro xs
-  induction xs with
-  | nil => intro init h; exact Or.inl h
-  | cons x xs ih =>
-    intro init h
-    rcases ih _ h with hstep | hxs
-    · cases init with
-      | none =>
-        have := Option.some.inj hstep
-        exact Or.inr (List.mem_cons.mpr (Or.inl this.symm))
-      | some c =>
-        simp only at hstep
-        split at hstep
-        · have := Option.some.inj hstep
-          exact Or.inr (List.mem_cons.mpr (Or.inl this.symm))
-        · exact Or.inl hstep
-    · exact Or.inr (List.mem_cons_of_mem x hxs)
+  split at h
+  · next hne =>
+    have ha := Option.some.inj h
+    rw [← ha]
+    exact (Finset.exists_max_image actions (expectedUtility dp) hne).choose_spec.1
+  · simp at h
 
 /-- Under the identity DP, the DP value is non-negative for non-negative priors.
 
@@ -134,14 +114,16 @@ from `worlds` and all posteriors in `worlds` are non-negative. -/
 theorem identityDP_value_is_max_posterior {W : Type*} [Fintype W] [DecidableEq W]
     (worlds : List W) (posterior : W → ℚ)
     (hNonneg : ∀ w ∈ worlds, posterior w ≥ 0) :
-    Core.DecisionTheory.dpValue (identityDP worlds posterior) worlds ≥ 0 := by
+    Core.DecisionTheory.dpValue (identityDP worlds posterior) worlds.toFinset ≥ 0 := by
   unfold Core.DecisionTheory.dpValue
-  cases hopt : optimalAction (identityDP worlds posterior) worlds with
-  | none => exact le_refl 0
-  | some a =>
-    show expectedUtility (identityDP worlds posterior) a ≥ 0
-    rw [identityDP_eu_eq]
-    exact hNonneg a (optimalAction_mem _ worlds a hopt)
+  by_cases hne : worlds.toFinset.Nonempty
+  · rw [dif_pos hne]
+    calc worlds.toFinset.sup' hne (expectedUtility (identityDP worlds posterior))
+        ≥ expectedUtility (identityDP worlds posterior) hne.choose :=
+          Finset.le_sup' _ hne.choose_spec
+      _ = posterior hne.choose := identityDP_eu_eq worlds posterior hne.choose
+      _ ≥ 0 := hNonneg hne.choose (List.mem_toFinset.mp hne.choose_spec)
+  · rw [dif_neg hne]
 
 /-- Per-cell utility value can be negative: `utilityValue` for a single cell
 is `max_a E[U|C] − max_a E[U]`, and the conditional optimum can be worse
@@ -153,9 +135,9 @@ in `GSVanRooyBridge.lean`, which follows from Blackwell's theorem (every
 partition refines the trivial partition). -/
 theorem identityDP_questionUtility_nonneg {W : Type*} [Fintype W] [DecidableEq W]
     (q : QUD W)
-    (hsum : Finset.univ.sum (fun (_ : W) => (1 : ℚ)) ≤ 1) :
-    questionUtility (identityDP (Finset.univ.val.toList)) (Finset.univ.val.toList)
-      (q.toCells (Finset.univ.val.toList)) ≥ 0 :=
+    (hsum : Finset.univ.sum (fun (_ : W) => (1 : ℚ)) = 1) :
+    questionUtility (identityDP (Finset.univ.val.toList)) Finset.univ
+      (q.toCellsFinset Finset.univ) ≥ 0 :=
   QUD.questionUtility_qud_nonneg _ q _ (fun _ => by simp [identityDP]) hsum
 
 
@@ -323,24 +305,14 @@ theorem qud_as_decision_problem
 If U(w, a) depends only on which cell w is, the DP is QUD-equivalent.
 -/
 def dpToQUD {W A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A) : GSQuestion W where
+    (dp : DecisionProblem W A) (actions : Finset A) : GSQuestion W where
   -- Two worlds are equivalent iff they have the same utility profile
-  sameAnswer w v := actions.all λ a => dp.utility w a == dp.utility v a
-  refl w := by
-    simp only [List.all_eq_true]
-    intro a _
-    exact beq_self_eq_true (dp.utility w a)
-  symm w v := by
-    congr 1
-    funext a
-    simp only [BEq.comm]
+  sameAnswer w v := decide (∀ a ∈ actions, dp.utility w a = dp.utility v a)
+  refl w := decide_eq_true_eq.mpr (fun _ _ => rfl)
+  symm w v := by simp only [eq_comm]
   trans w v x hwv hvx := by
-    simp only [List.all_eq_true] at *
-    intro a ha
-    have h1 := hwv a ha
-    have h2 := hvx a ha
-    rw [beq_iff_eq] at *
-    exact h1.trans h2
+    rw [decide_eq_true_eq] at *
+    exact fun a ha => (hwv a ha).trans (hvx a ha)
 
 
 /-!
@@ -472,10 +444,10 @@ non-negativity is the weighted average across cells.)
 This is `questionUtility_nonneg_from_blackwell` in GSVanRooyBridge.lean. -/
 theorem pragmatic_answerhood_partition_UV
     {W : Type*} [Fintype W] [DecidableEq W]
-    (dp : DecisionProblem W W) (q : QUD W) (actions : List W)
+    (dp : DecisionProblem W W) (q : QUD W) (actions : Finset W)
     (hprior : ∀ w, dp.prior w ≥ 0)
-    (hsum : Finset.univ.sum dp.prior ≤ 1) :
-    questionUtility dp actions (q.toCells (Finset.univ.val.toList)) ≥ 0 :=
+    (hsum : Finset.univ.sum dp.prior = 1) :
+    questionUtility dp actions (q.toCellsFinset Finset.univ) ≥ 0 :=
   QUD.questionUtility_qud_nonneg dp q actions hprior hsum
 
 /-- Corollary: The identity DP links pragmatic answerhood to UV.
@@ -514,10 +486,10 @@ theorem blackwell_unifies_relevance
     {W : Type*} [Fintype W] [DecidableEq W]
     (q q' : GSQuestion W) :
     q ⊑ q' ↔
-    ∀ (A : Type) [DecidableEq A] (dp : DecisionProblem W A) (actions : List A),
+    ∀ (A : Type) [DecidableEq A] (dp : DecisionProblem W A) (actions : Finset A),
       (∀ w, dp.prior w ≥ 0) →
-      questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) >=
-      questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList)) := by
+      questionUtility dp actions (q.toCellsFinset Finset.univ) >=
+      questionUtility dp actions (q'.toCellsFinset Finset.univ) := by
   exact Semantics.Questions.Bridge.blackwell_full q q'
 
 
@@ -555,7 +527,7 @@ applies directly. -/
 theorem partition_blackwell_refinement
     {W A : Type*} [DecidableEq W]
     (dp : DecisionProblem W A) (q q' : GSQuestion W)
-    (worlds : Finset W) (actions : List A)
+    (worlds : Finset W) (actions : Finset A)
     (hRefines : q ⊑ q')
     (hprior : ∀ w, dp.prior w ≥ 0) :
     QUD.partitionValue dp q worlds actions ≥
@@ -573,11 +545,11 @@ which establishes the algebraic decomposition directly. -/
 theorem partitionValue_implies_questionUtility
     {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (q q' : GSQuestion W)
-    (actions : List A)
+    (actions : Finset A)
     (hRefines : q ⊑ q')
     (hprior : ∀ w, dp.prior w ≥ 0) :
-    questionUtility dp actions (q.toQuestion (Finset.univ.val.toList)) ≥
-    questionUtility dp actions (q'.toQuestion (Finset.univ.val.toList)) :=
+    questionUtility dp actions (q.toCellsFinset Finset.univ) ≥
+    questionUtility dp actions (q'.toCellsFinset Finset.univ) :=
   QUD.questionUtility_refinement_ge dp q q' actions hRefines hprior
 
 /-- EU compositionality grounds the QUD→DP direction (Sumers Theorem 2).
@@ -685,7 +657,7 @@ value dominates. -/
 theorem qud_maximizes_mutual_information
     {W A : Type*} [DecidableEq W] [BEq W] [LawfulBEq W]
     (dp : DecisionProblem W A) (q : GSQuestion W)
-    (worlds : Finset W) (actions : List A)
+    (worlds : Finset W) (actions : Finset A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
     QUD.partitionValue dp (GSQuestion.exact (W := W)) worlds actions ≥
     QUD.partitionValue dp q worlds actions :=
@@ -723,12 +695,12 @@ theorem unified_view
     {W : Type*} [DecidableEq W]
     (q q' : GSQuestion W) :
     (q ⊑ q') ↔
-    (∀ (worlds : Finset W) (A : Type) (dp : DecisionProblem W A) (actions : List A),
+    (∀ (worlds : Finset W) (A : Type) [DecidableEq A] (dp : DecisionProblem W A) (actions : Finset A),
       (∀ w, dp.prior w ≥ 0) →
       QUD.partitionValue dp q worlds actions ≥
       QUD.partitionValue dp q' worlds actions) := by
   constructor
-  · intro h worlds A dp actions hprior
+  · intro h worlds A _ dp actions hprior
     exact QUD.blackwell_refinement_value dp q q' worlds actions h hprior
   · intro h
     exact QUD.blackwell_characterizes_refinement q q' h
