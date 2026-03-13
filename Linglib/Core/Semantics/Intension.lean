@@ -12,10 +12,12 @@ and `RSA/` — any module that needs world-parameterized meanings.
 import Linglib.Core.Semantics.Proposition
 import Linglib.Tactics.OntSort
 
-namespace Core.Intension
+namespace Core
 
 /-- An intension of type τ over indices W: a function from worlds to extensions. -/
 @[ont_sort] abbrev Intension (W : Type*) (τ : Type*) := W → τ
+
+namespace Intension
 
 /-- A rigid designator: an intension that returns the same value at every world. -/
 def rigid {W τ : Type*} (x : τ) : Intension W τ := λ _ => x
@@ -35,6 +37,34 @@ theorem proposition_eq_bprop (W : Type*) : Intension W Bool = BProp W := rfl
 
 /-- evalAt of rigid returns the original value. -/
 theorem evalAt_rigid {W τ : Type*} (x : τ) (w : W) : evalAt (rigid x) w = x := rfl
+
+/-- `rigid` is a section (right inverse) of world-evaluation: embedding an
+entity as a rigid intension and then evaluating recovers the entity.
+
+Function-level formulation of `evalAt_rigid`. Together with
+`rigid_evalAt_lossy`, this establishes `τ` as a retract of `Intension W τ`
+via the section-retraction pair `(rigid, evalAt · w)`. -/
+theorem rigid_section {W τ : Type*} (w : W) :
+    (fun (x : τ) => evalAt (rigid (W := W) x) w) = id :=
+  funext (fun _ => rfl)
+
+/-- The reverse composition — evaluating and re-embedding — is lossy:
+it collapses non-rigid intensions to their value at `w`.
+
+If `f` is non-rigid, `rigid (f w) ≠ f` because `rigid (f w)` is the constant
+function at `f w`, which disagrees with `f` at the worlds where `f` varies.
+Together with `rigid_section`, this shows that `τ` is a proper retract of
+`Intension W τ`: the round-trip `rigid ∘ evalAt · w` is the identity on the
+image of `rigid` but collapses everything else. -/
+theorem rigid_evalAt_lossy {W τ : Type*}
+    (f : Intension W τ) (w : W) (hNonRigid : ¬ IsRigid f) :
+    rigid (f w) ≠ f := by
+  intro heq
+  apply hNonRigid
+  intro w₁ w₂
+  have h₁ : f w = f w₁ := congrFun heq w₁
+  have h₂ : f w = f w₂ := congrFun heq w₂
+  exact h₁.symm.trans h₂
 
 /-- rigid is injective: different values give different intensions. -/
 theorem rigid_injective {W τ : Type*} [Inhabited W] :
@@ -123,7 +153,9 @@ theorem rigid_stableChar_constant {C W τ : Type*} [Inhabited C]
   calc char c₁ w₁ = char c₁ w₂ := hRigid c₁ w₁ w₂
     _ = char c₂ w₂ := congrFun (hStable c₁ c₂) w₂
 
-end Core.Intension
+end Intension
+
+end Core
 
 
 -- ════════════════════════════════════════════════════════════════

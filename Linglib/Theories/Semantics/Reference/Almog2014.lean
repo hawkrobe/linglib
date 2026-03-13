@@ -61,7 +61,9 @@ open Semantics.Reference.Kaplan (SingularProposition indexical)
 open Semantics.Reference.Donnellan (UseMode referentialExpression)
 open Semantics.Reference.KaplanLD (dthatW dthatW_isRigid)
 open Semantics.Reference.Kripke (rigid_iff_scope_invariant deRe deDicto)
-open Core.Intension (Intension rigid IsRigid rigid_isRigid)
+open Core (Intension)
+open Core.Intension (rigid IsRigid rigid_isRigid evalAt rigid_section
+  rigid_evalAt_lossy)
 
 /-! ## Canonical Referential Profiles -/
 
@@ -453,5 +455,280 @@ that the referent was fixed before any nominal was deployed. -/
 theorem kdthat_is_preNominal :
     nominalFunctionOf .referential = .preNominal :=
   rfl
+
+/-! ## The Orthogonality of Mechanism and Content
+
+@cite{almog-2014}'s deepest structural claim: the *mechanism* by which
+reference is secured (designation, cognitive fix, etc.) and the *content*
+that results (the intension, the proposition expressed) are orthogonal.
+Same content can arise from different mechanisms; same mechanism can
+produce different content.
+
+Categorically, this is a commutativity diagram. Both `dthat` and `kdthat`
+factor through `rigid : E → Intension W E`:
+
+```
+                      eval
+    Desc × World ——————————→ E
+         |                   |
+         | dthat             | rigid
+         |                   |
+         v                   v
+      Content ════════════ Content
+         ^                   ^
+         | kdthat            | rigid
+         |                   |
+    E × Guide ———— π₁ ————→ E
+```
+
+Both squares commute by construction (`dthat_factors`, `kdthat_factors`).
+The outer rectangle commutes when `eval(desc, cW) = π₁(loaded, guide)`,
+i.e., when `desc cW = loaded` — the `hMatch` hypothesis.
+
+The content projection is a coequalizer of the two mechanism paths.
+But the diagram does NOT lift to `ReferringExpression` (which carries
+the profile): the profile projection distinguishes what the content
+projection conflates. This non-liftability is `mechanism_content_orthogonality`. -/
+
+/-- Dthat factors through `rigid`: `dthat = rigid ∘ eval`.
+
+This is the top square of the commutativity diagram. The inside-out
+mechanism first *evaluates* the description at the actual world to
+obtain an entity, then *rigidifies* that entity. -/
+theorem dthat_factors {W E : Type*} (desc : Intension W E) (cW : W) :
+    dthatW desc cW = rigid (desc cW) :=
+  rfl
+
+/-- KDthat factors through `rigid`: `kdthat = rigid ∘ π₁`.
+
+This is the bottom square of the commutativity diagram. The outside-in
+mechanism *projects* the loaded entity (ignoring the guide), then
+*rigidifies*. The factorization is trivial because `kdthat` is defined
+as `rigid loaded`. -/
+theorem kdthat_factors {W E : Type*} (loaded : E) (guide : E → W → Bool) :
+    kdthat loaded guide = rigid loaded :=
+  rfl
+
+/-- **The Separation Theorem.** The content square commutes but the
+profile square does not — mechanism and content are orthogonal.
+
+When the inside-out evaluation (`desc cW`) and the outside-in cognitive
+fix (`loaded`) converge on the same entity, both paths through `rigid`
+produce the same content. But the referential profiles — which record
+*how* reference was secured — differ: dthat has `⟨T, F, F⟩` (designation),
+KDthat has `⟨F, F, T⟩` (referential use).
+
+Categorically: the forgetful functor `π_content : ReferringExpression → Content`
+is a coequalizer of the two mechanism paths, but the projection
+`π_profile : ReferringExpression → ReferentialProfile` is NOT — it
+distinguishes the two paths. The profile is genuinely new information
+not recoverable from the content. -/
+theorem mechanism_content_orthogonality {C W E : Type*}
+    (loaded : E) (desc : Intension W E) (guide : E → W → Bool) (cW : W)
+    (hMatch : desc cW = loaded) :
+    -- Content square commutes (same intension)...
+    (dthatExpression (C := C) desc cW).character =
+      (kdthatExpression (C := C) loaded guide).character ∧
+    -- ...but profile square does not (different mechanism)
+    (dthatExpression (C := C) desc cW).profile ≠
+      (kdthatExpression (C := C) loaded guide).profile := by
+  constructor
+  · -- Commutativity: both paths through `rigid` agree
+    ext _ w
+    simp only [dthatExpression, kdthatExpression, dthatW, kdthat, rigid, hMatch]
+  · -- Non-commutativity: profiles distinguish the paths
+    intro heq
+    have : (dthatExpression (C := C) desc cW).profile.designation =
+           (kdthatExpression (C := C) loaded guide).profile.designation :=
+      congrArg ReferentialProfile.designation heq
+    simp [dthatExpression, kdthatExpression, dthatProfile, refDescProfile] at this
+
+/-! ## The Flow Diagram Reversal (Ch 1, §2.3)
+
+@cite{almog-2014}'s recurring structural observation: in all four founding
+fathers' work, the classical Fregean direction of semantic determination is
+*reversed*. Classically, meaning (intension) determines denotation (extension)
+— symbol → satisfaction → object. In the historical/referential account,
+the object determines the reference — object → signal → loaded symbol.
+
+The mathematical content of this reversal is a **section-retraction pair**:
+`rigid : E → Intension W E` is a section (right inverse) of world-evaluation
+`evalAt · w : Intension W E → E`.
+
+- `evalAt w ∘ rigid = id` (`rigid_section`): The historical chain
+  (object → loaded name → evaluation) is lossless.
+- `rigid ∘ evalAt w ≠ id` on non-rigid intensions (`rigid_evalAt_lossy`):
+  The Fregean direction (intension → evaluate → re-embed) is lossy —
+  it discards world-variation.
+
+This makes `E` a **retract** of `Intension W E`. The image of `rigid` —
+the rigid intensions — is isomorphic to `E`. Non-rigid intensions (descriptions)
+live in the ambient space but collapse under the retraction.
+
+Consequences already formalized in this module:
+- `dthat_factors` / `kdthat_factors`: Both paths factor through the section `rigid`
+- `informativeness_not_semantic`: The retraction annihilates modal information,
+  so informativeness cannot be a semantic property of the retracted content
+- `mechanism_content_orthogonality`: The retraction coequalizes the two mechanism
+  paths, but the profile is not in the retracted image -/
+
+/-- The flow diagram reversal as a retraction: `evalAt w ∘ rigid = id`.
+
+@cite{almog-2014} Ch 1, §2.3: "this reversal of the flow diagram is a
+pattern that recurs in all four founding fathers' works on direct reference."
+Kripke's reversal for names (Ch 1), Donnellan's for descriptions (Ch 3),
+Kaplan's for demonstratives (Ch 2), Putnam's for common nouns (Ch 4). -/
+theorem flowDiagramReversal {W E : Type*} (w : W) :
+    (fun (x : E) => evalAt (rigid (W := W) x) w) = id :=
+  rigid_section w
+
+/-- The Fregean direction is lossy: non-rigid intensions (descriptions)
+cannot survive the round-trip through entity.
+
+This is the mathematical content of @cite{almog-2014}'s "no entailments"
+thesis: once you project to the retracted image (rigid intensions / entities),
+the modal information that lived in the ambient intension space is gone.
+"The man drinking a martini" varies across worlds; `rigid (desc w)` does not.
+The retraction annihilates the very information that would distinguish
+de re from de dicto readings. -/
+theorem fregeDirectionLossy {W E : Type*}
+    (desc : Intension W E) (w : W) (hVaries : ¬ IsRigid desc) :
+    rigid (desc w) ≠ desc :=
+  rigid_evalAt_lossy desc w hVaries
+
+/-! ## The Russell-Partee-Kaplan Challenge (Ch 4, §3)
+
+@cite{almog-2014}'s formulation of the RPK impossibility: three natural
+desiderata for a global semantics of nominals cannot all be satisfied
+simultaneously. Each of the three historical waves of logical reformers
+sacrifices exactly one.
+
+The three desiderata:
+1. **Syntactic faithfulness**: Preserve the visible subject-predicate grammar.
+   "John is wise" and "Every philosopher is wise" have the same form.
+2. **Semantic faithfulness**: Subject terms *refer* to entities (type `E`),
+   not to constructed denotations (sets-of-properties, GQs, etc.).
+3. **Uniform composition**: The same compositional mechanism handles all
+   subject-predicate constructions.
+
+The impossibility arises because referential subjects (type `E`) and
+quantificational subjects (type `(E → Prop) → Prop`) have incompatible
+types. Uniform composition requires a single subject type; semantic
+faithfulness requires it to be `E`; but quantifiers cannot be entities.
+
+The three waves each sacrifice one desideratum:
+- Russell 1905: Drops syntactic faithfulness (invisible logical form)
+- Montague 1970: Drops semantic faithfulness (type-lifts `E` to GQ)
+- Direct reference (Almog): Drops uniform composition (dual semantic function) -/
+
+/-- The three desiderata of the Russell-Partee-Kaplan challenge. -/
+inductive RPKDesideratum where
+  /-- Preserve visible subject-predicate grammar -/
+  | syntacticFaith
+  /-- Subject terms refer to entities (not constructed denotations) -/
+  | semanticFaith
+  /-- Same composition for all subject-predicate structures -/
+  | uniformComp
+  deriving DecidableEq, BEq, Repr
+
+/-- A semantic approach: satisfies some subset of the three desiderata. -/
+structure RPKApproach where
+  satisfies : RPKDesideratum → Bool
+
+/-- Russell 1905: Drop visible grammar, keep referential semantics +
+uniform composition. "Every philosopher is wise" gets invisible logical
+form `∀x(P(x) → W(x))`. -/
+def russell : RPKApproach :=
+  { satisfies := fun
+    | .syntacticFaith => false
+    | .semanticFaith => true
+    | .uniformComp => true }
+
+/-- Montague 1970: Keep visible grammar + uniform composition, sacrifice
+referential semantics. "John" is type-lifted from `E` to `(E → Prop) → Prop`
+via the Montague lift (= `TypeShifting.lift`). -/
+def montague : RPKApproach :=
+  { satisfies := fun
+    | .syntacticFaith => true
+    | .semanticFaith => false
+    | .uniformComp => true }
+
+/-- Direct reference (@cite{almog-2014}): Keep visible grammar + referential
+semantics, sacrifice uniform composition. "John" and "every philosopher"
+have different semantic functions (pre-nominal vs nominal). -/
+def directRef : RPKApproach :=
+  { satisfies := fun
+    | .syntacticFaith => true
+    | .semanticFaith => true
+    | .uniformComp => false }
+
+/-- Each of the three historical approaches sacrifices exactly one
+desideratum. No approach satisfies all three. -/
+theorem rpk_each_sacrifices_one :
+    russell.satisfies .syntacticFaith = false ∧
+    montague.satisfies .semanticFaith = false ∧
+    directRef.satisfies .uniformComp = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Each approach satisfies the other two desiderata. -/
+theorem rpk_each_keeps_two :
+    russell.satisfies .semanticFaith = true ∧ russell.satisfies .uniformComp = true ∧
+    montague.satisfies .syntacticFaith = true ∧ montague.satisfies .uniformComp = true ∧
+    directRef.satisfies .syntacticFaith = true ∧ directRef.satisfies .semanticFaith = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The type-theoretic content of the RPK impossibility: referential subjects
+have type `E`, quantificational subjects have type `(E → Prop) → Prop`.
+The Montague lift `fun e P => P e` embeds the former into the latter, but
+it is injective-not-surjective: not every GQ arises from an entity.
+
+This means the lift is a genuine sacrifice — "John" is no longer type `E`
+but a constructed object of type `(E → Prop) → Prop`.
+
+Bridge to `TypeShifting.lift`: this is the same operation as Partee's
+type-raising `lift(j) = λP. P(j)`. -/
+def rpkLift {E : Type*} (e : E) : (E → Prop) → Prop := fun P => P e
+
+/-- The RPK lift is injective: distinct entities give distinct GQs. -/
+theorem rpkLift_injective {E : Type*} :
+    Function.Injective (rpkLift (E := E)) := by
+  intro a b hab
+  have h : rpkLift b (· = a) := by rw [← hab]; exact rfl
+  exact h.symm
+
+/-- The RPK lift is NOT surjective in general: the universal quantifier
+`fun P => ∀ x, P x` is a GQ that is not in the image of the lift
+(assuming `E` has at least 2 elements).
+
+This is the type-theoretic witness of the RPK impossibility: Montague's
+uniform composition requires all subjects to be GQs, but not all GQs
+are referential. The gap between `E` and `(E → Prop) → Prop` is real. -/
+theorem rpkLift_not_surjective {E : Type*} (a b : E) (hab : a ≠ b) :
+    ¬ ∃ e : E, rpkLift e = (fun P => ∀ x, P x) := by
+  intro ⟨e, he⟩
+  apply hab
+  have h := congrFun he (fun x => x = e)
+  dsimp [rpkLift] at h
+  -- h : (e = e) = (∀ x, x = e)
+  have hall : ∀ x, x = e := cast h rfl
+  exact (hall a).trans (hall b).symm
+
+/-- **The RPK Impossibility Theorem.** If:
+(1) Subject terms denote entities (type `E`) — *semantic faithfulness*
+(2) Composition is uniform: sentence meaning = `P(subject)` — *uniform composition*
+then no entity can serve as the subject of "Every φ is ψ" — *syntactic
+faithfulness* fails for quantificational sentences.
+
+The proof: if the subject is `e : E` and composition is function application,
+the sentence meaning is `fun P => P e`. But by `rpkLift_not_surjective`, the
+universal quantifier `fun P => ∀ x, P x` is not in the image of this map
+(assuming `E` has ≥ 2 elements). Therefore "Every philosopher is wise" cannot
+be given a subject-predicate semantics in this framework.
+
+This is the formal core of @cite{almog-2014}'s RPK challenge (Ch 4, §3):
+all three desiderata cannot be satisfied simultaneously. -/
+theorem rpk_impossibility {E : Type*} (a b : E) (hab : a ≠ b) :
+    ¬ ∃ e : E, (fun P : E → Prop => P e) = (fun P => ∀ x, P x) :=
+  rpkLift_not_surjective a b hab
 
 end Semantics.Reference.Almog2014
