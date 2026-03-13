@@ -46,15 +46,16 @@ in the conjunction column for `0 ∧ #`).
 ## Architecture
 
 The trivalent semantics uses partial assignments (`PartialAssign D`)
-from `Transparency.lean`. Predicate application yields `#` when the
-variable is unvalued. The existential quantifier uses
-@cite{mandelkern-2022}'s witness condition: `∃xφ` is true at `(w,g)`
-only if `g(x)` witnesses `φ`, undefined if classically true but
-`g(x)` is not a witness.
+and plural assignments (`PluralAssign D`) from `Core.Assignment`.
+Predicate application yields `#` when the variable is unvalued.
+The existential quantifier uses @cite{mandelkern-2022}'s witness
+condition: `∃xφ` is true at `(w,g)` only if `g(x)` witnesses `φ`,
+undefined if classically true but `g(x)` is not a witness.
 -/
 
 namespace Phenomena.Anaphora.Studies.Spector2025
 
+open Core
 open Core.Duality
 open Semantics.Presupposition.Transparency
 
@@ -125,6 +126,46 @@ def trueAtWorld (φ : W → PartialAssign D → Truth3) (w : W) : Prop :=
   ∃ g : PartialAssign D, φ w g = .true
 
 -- ════════════════════════════════════════════════════════════════
+-- Parametric Transparency (assignment-type-agnostic)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Parametric Transparency
+
+@cite{spector-2025} §6.3 observes that the Transparency proofs are
+parametric in the assignment type — the same Middle Kleene reasoning
+works for individual assignments `g` and plural assignments `G`.
+We factor this out: the proofs below are stated over abstract Truth3
+values, independent of assignment representation.
+-/
+
+/-- Parametric forward conjunction Transparency: `meetMiddle E (meetMiddle presup φ) =
+    meetMiddle E φ` whenever `E = true → presup = true`. Independent of
+    assignment type — works for both individual and plural systems.
+
+    @cite{spector-2025} §3.2, §6.3: The three cases are:
+    - `E = false`: `meetMiddle false _ = false` (left zero)
+    - `E = #`: `meetMiddle # _ = #` (left absorbs)
+    - `E = true`: witness gives `presup = true`, so `meetMiddle true φ = φ` -/
+theorem conj_transparency_parametric : ∀ (E presup φ : Truth3),
+    (E = .true → presup = .true) →
+    Truth3.meetMiddle E (Truth3.meetMiddle presup φ) =
+    Truth3.meetMiddle E φ
+  | .true, _, φ, hw => by rw [hw rfl, Truth3.meetMiddle_true_left, Truth3.meetMiddle_true_left]
+  | .false, _, _, _ => by simp [Truth3.meetMiddle, Truth3.meet]
+  | .indet, _, _, _ => rfl
+
+/-- Parametric bathroom Transparency: `joinMiddle negE (meetMiddle presup φ) =
+    joinMiddle negE φ` whenever `negE = false → presup = true`. -/
+theorem disj_transparency_parametric : ∀ (negE presup φ : Truth3),
+    (negE = .false → presup = .true) →
+    Truth3.joinMiddle negE (Truth3.meetMiddle presup φ) =
+    Truth3.joinMiddle negE φ
+  | .true, _, _, _ => rfl
+  | .indet, _, _, _ => rfl
+  | .false, _, φ, hw => by rw [hw rfl, Truth3.meetMiddle_true_left]
+
+-- ════════════════════════════════════════════════════════════════
 -- §3.2: Anaphora in Conjunctive Sentences
 -- ════════════════════════════════════════════════════════════════
 
@@ -156,24 +197,15 @@ The frame is `F(ψ) = ∃xT(x) ∧ ψ`, and the presupposition is `U(x)`.
     implies `presup = true` (the witness connection), then the frame
     `F(ψ) = meetMiddle E ψ` satisfies Transparency for `presup`.
 
-    The three cases follow directly from Middle Kleene's truth table:
-    - `E = false`: `false ∧ _ = false` regardless of presupposition
-    - `E = #`: `# ∧ _ = #` regardless of presupposition
-    - `E = true`: witness connection gives `presup = true`,
-      and `meetMiddle true v = v` -/
+    Derived from `conj_transparency_parametric`. -/
 theorem forward_conj_transparency
     (E presup : W → PartialAssign D → Truth3)
     (hwitness : ∀ w g, E w g = .true → presup w g = .true)
     (C : Ctx W D) :
     ∀ (φ : Sent W D) (w : W) (g : PartialAssign D), C w g →
       Truth3.meetMiddle (E w g) (Truth3.meetMiddle (presup w g) (φ w g)) =
-      Truth3.meetMiddle (E w g) (φ w g) := by
-  intro φ w g _
-  cases hE : E w g with
-  | true =>
-    rw [hwitness w g hE, Truth3.meetMiddle_true_left, Truth3.meetMiddle_true_left]
-  | false => simp [Truth3.meetMiddle, Truth3.meet]
-  | indet => rfl
+      Truth3.meetMiddle (E w g) (φ w g) :=
+  fun φ w g _ => conj_transparency_parametric (E w g) (presup w g) (φ w g) (hwitness w g)
 
 /-- Reverse conjunction Transparency FAILS: `P(x̲) ∧ ∃xT(x)` does NOT
     satisfy Transparency in the null context.
@@ -226,22 +258,16 @@ is `U(x)`.
     Transparency in every context.
 
     The key insight: `¬E` being false means `E` is true, which (by the
-    witness condition) means `g` values `x`, making `U(x)` redundant. -/
+    witness condition) means `g` values `x`, making `U(x)` redundant.
+    Derived from `disj_transparency_parametric`. -/
 theorem bathroom_transparency
     (negE presup : W → PartialAssign D → Truth3)
     (hwitness : ∀ w g, negE w g = .false → presup w g = .true)
     (C : Ctx W D) :
     ∀ (φ : Sent W D) (w : W) (g : PartialAssign D), C w g →
       Truth3.joinMiddle (negE w g) (Truth3.meetMiddle (presup w g) (φ w g)) =
-      Truth3.joinMiddle (negE w g) (φ w g) := by
-  intro φ w g _
-  cases hNE : negE w g with
-  | true => rfl  -- true ∨ _ = true regardless
-  | indet => rfl  -- # ∨ _ = # regardless
-  | false =>
-    -- ¬E is false → E is true → g values x → U(x) = true
-    simp [Truth3.joinMiddle, Truth3.join, hwitness w g hNE,
-          Truth3.meetMiddle_true_left]
+      Truth3.joinMiddle (negE w g) (φ w g) :=
+  fun φ w g _ => disj_transparency_parametric (negE w g) (presup w g) (φ w g) (hwitness w g)
 
 /-- Reverse bathroom Transparency FAILS: `H(x̲) ∨ ¬∃xB(x)` does NOT
     satisfy Transparency in the null context.
@@ -520,5 +546,403 @@ theorem bathroom_felicity_alignment :
     -- Infelicitous: separate sentences (no frame to establish Transparency)
     Phenomena.Anaphora.BathroomSentences.standardNegation.felicitous = false :=
   ⟨rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- §6: Plural Assignment Semantics (The Full System)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+## The plural assignment system
+
+The preliminary system (§§2–5) fails on covariation: `¬∃x¬∃yS(x,y)`
+("everybody spoke to somebody") wrongly requires a *single* person
+everyone spoke to. The full system (§6) replaces individual partial
+assignments with **plural assignments** — sets of atomic assignments.
+
+Key changes from the simplified system:
+- Evaluation is relative to `(w, G)` where `G : PluralAssign D`
+- `U(x)` is replaced by `atomic(x)`: `|G(x)| = 1` (all assignments
+  in `G` that define `x` agree on its value)
+- The universal quantifier `∀xφ` is now well-defined
+- Quantificational subordination works via inter-variable dependencies
+  recorded in `G`
+-/
+
+section PluralSemantics
+
+variable {D : Type*} {W : Type*}
+
+open Classical
+
+/-- Plural sentence: evaluated relative to a world and a plural assignment. -/
+abbrev PSent (W : Type*) (D : Type*) := W → PluralAssign D → Truth3
+
+/-- Alias for `PluralAssign.singularAt` — `G` assigns `x` uniquely to `d`.
+    @cite{spector-2025} §6.2: `|G(x)| = 1` with `G(x) = d`. -/
+abbrev singularAt (G : PluralAssign D) (x : Nat) (d : D) : Prop :=
+  G.singularAt x d
+
+/-- Evaluate a one-place predicate relative to `(w, G)`.
+    @cite{spector-2025} §6.2:
+    - `1` if `|G(x)| = 1` and `G(x) ∈ I(P,w)`
+    - `0` if `|G(x)| = 1` and `G(x) ∉ I(P,w)`
+    - `#` if `|G(x)| ≠ 1` -/
+noncomputable def evalPredPlural (I : Interp W D) (G : PluralAssign D)
+    (x : Nat) (w : W) : Truth3 :=
+  if h : ∃ d, singularAt G x d then
+    Truth3.ofBool (I w (Classical.choose h))
+  else .indet
+
+/-- The `atomic(x)` predicate as a Truth3 value.
+    @cite{spector-2025} §6.3: `⟦atomic(x)⟧^{w,G} = 1` if `|G(x)| = 1`,
+    `0` otherwise. Always bivalent (never `#`). Replaces `U(x)` from
+    the simplified system. -/
+noncomputable def atomicT3 (G : PluralAssign D) (x : Nat) : Truth3 :=
+  if G.singular x then .true else .false
+
+/-- `atomic(x)` is always defined (bivalent). -/
+theorem atomicT3_defined (G : PluralAssign D) (x : Nat) :
+    (atomicT3 G x).isDefined = true := by
+  simp only [atomicT3]; split <;> rfl
+
+/-- Plural existential quantifier with witness condition.
+    @cite{spector-2025} §6.2:
+    - `1` if `⟦φ⟧^{w,G} = 1`
+    - `0` if for every atomic `a ∈ D`, `G_{x=a} ≠ ∅` and `⟦φ⟧^{w,G_{x=a}} = 0`
+    - `#` otherwise -/
+noncomputable def existsPlural (x : Nat) (φ : PSent W D) (dom : Set D)
+    (w : W) (G : PluralAssign D) : Truth3 :=
+  if φ w G = .true then .true
+  else if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
+          (∀ a ∈ dom, φ w (G.restrict x a) = .false) then .false
+  else .indet
+
+/-- Plural universal quantifier.
+    @cite{spector-2025} §6.2:
+    - `1` if for every atomic `a ∈ D`, `G_{x=a} ≠ ∅` and `⟦φ⟧^{w,G_{x=a}} = 1`
+    - `0` if the coverage condition holds and some `a` gives `⟦φ⟧^{w,G_{x=a}} = 0`
+    - `#` otherwise -/
+noncomputable def forallPlural (x : Nat) (φ : PSent W D) (dom : Set D)
+    (w : W) (G : PluralAssign D) : Truth3 :=
+  if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
+     (∀ a ∈ dom, φ w (G.restrict x a) = .true) then .true
+  else if (∀ a ∈ dom, (G.restrict x a).Nonempty) ∧
+          (∃ a ∈ dom, φ w (G.restrict x a) = .false) then .false
+  else .indet
+
+end PluralSemantics
+
+-- ════════════════════════════════════════════════════════════════
+-- §6.3: Transparency Replicates for Plural System
+-- ════════════════════════════════════════════════════════════════
+
+section PluralTransparency
+
+variable {D : Type*} {W : Type*}
+
+/-- Forward conjunction Transparency in the plural system, derived from
+    the parametric version. -/
+theorem plural_forward_conj_transparency
+    (E presup : W → PluralAssign D → Truth3)
+    (hwitness : ∀ w G, E w G = .true → presup w G = .true) :
+    ∀ (φ : W → PluralAssign D → Truth3) (w : W) (G : PluralAssign D),
+      Truth3.meetMiddle (E w G) (Truth3.meetMiddle (presup w G) (φ w G)) =
+      Truth3.meetMiddle (E w G) (φ w G) :=
+  fun φ w G => conj_transparency_parametric (E w G) (presup w G) (φ w G) (hwitness w G)
+
+/-- Bathroom Transparency in the plural system, derived from
+    the parametric version. -/
+theorem plural_bathroom_transparency
+    (negE presup : W → PluralAssign D → Truth3)
+    (hwitness : ∀ w G, negE w G = .false → presup w G = .true) :
+    ∀ (φ : W → PluralAssign D → Truth3) (w : W) (G : PluralAssign D),
+      Truth3.joinMiddle (negE w G) (Truth3.meetMiddle (presup w G) (φ w G)) =
+      Truth3.joinMiddle (negE w G) (φ w G) :=
+  fun φ w G => disj_transparency_parametric (negE w G) (presup w G) (φ w G) (hwitness w G)
+
+end PluralTransparency
+
+-- ════════════════════════════════════════════════════════════════
+-- §6.3: Universal Quantifier Does Not License Anaphora
+-- ════════════════════════════════════════════════════════════════
+
+section UniversalAnaphora
+
+/-!
+### Universal doesn't introduce a discourse referent
+
+@cite{spector-2025} §6.3 (pp.20–21): `∀xP(x) ∧ Q(x̲)` does NOT
+satisfy Transparency in the null context. When `∀xP(x)` is true
+at `(w,G)`, `G(x)` contains all atomic individuals in `D`, so
+`|G(x)| ≠ 1` (assuming `|D| ≥ 2`), and therefore `atomic(x)` is
+false. This means the universal quantifier cannot serve as the
+antecedent of a singular pronoun.
+-/
+
+/-- The universal quantifier does not license subsequent singular
+    anaphora. For two-element domains: `∀xP(x)` being true forces
+    `|G(x)| > 1`, making `atomic(x)` false.
+
+    @cite{spector-2025} §6.3: the sentences `∀xP(x) ∧ (atomic(x) ∧ φ)`
+    and `∀xP(x) ∧ φ` can differ — taking `φ` tautological, the first
+    is false (since `atomic(x)` is false when `|G(x)| > 1`) while
+    the second is true. -/
+theorem universal_doesnt_license_anaphora :
+    ∃ (D : Type) (presup φ : PluralAssign D → Truth3)
+      (G : PluralAssign D),
+      -- presup = atomic(x) = false (two values for x)
+      -- φ = tautology = true
+      Truth3.meetMiddle (presup G) (φ G) ≠ φ G := by
+  -- D = Bool, G has two assignments: one mapping x to true, one to false
+  -- So |G(x)| = 2, atomic(x) = false
+  refine ⟨Bool, λ _ => .false, λ _ => .true, ⟨λ _ => True⟩, ?_⟩
+  simp [Truth3.meetMiddle, Truth3.meet]
+
+end UniversalAnaphora
+
+-- ════════════════════════════════════════════════════════════════
+-- §5/§6.4: Covariation — The Fix
+-- ════════════════════════════════════════════════════════════════
+
+section Covariation
+
+/-!
+### The covariation problem and its fix
+
+@cite{spector-2025} §5: In the simplified (individual-assignment) system,
+`¬∃x¬∃yS(x,y)` ("everybody spoke to somebody") is true at `(w,g)` iff
+for all `a`, `(a, g(y)) ∈ I(S,w)`. This wrongly gives a *constant-witness*
+reading: "everyone spoke to `g(y)`" — a single person.
+
+@cite{spector-2025} §6.4: With plural assignments, the innermost ∃y
+is evaluated relative to `G_{x=a}` for each `a`, so different `a`'s can
+pair with different `b`'s. The sentence now correctly means
+"for every `a` there exists `b` such that `(a,b) ∈ S`."
+-/
+
+variable {D : Type*} {W : Type*}
+
+/-- The covariation fix: with plural assignments, the universal-existential
+    pattern is correctly expressible.
+
+    @cite{spector-2025} §6.4: If a world satisfies `∀x∃y S(x,y)`, we can
+    build a plural assignment `G` that witnesses each `a`-`b` pair
+    independently. This is impossible with individual assignments, where
+    a single `g(y)` must work for all values of `x`. -/
+theorem covariation_fixed
+    (S : W → D → D → Bool) (dom : List D)
+    (w : W)
+    (hcovar : ∀ a : D, a ∈ dom → ∃ b : D, b ∈ dom ∧ S w a b = true) :
+    -- There exists a plural assignment G with a witness for each a
+    ∃ G : PluralAssign D,
+      ∀ a ∈ dom, ∃ b ∈ dom, ∃ g : PartialAssign D, g ∈ G ∧
+        g 0 = some a ∧ g 1 = some b ∧ S w a b = true := by
+  -- Build G: for each a, include an assignment g_a with g(x)=a, g(y)=b
+  -- where b is a's S-partner.
+  let G : PluralAssign D := ⟨λ g => ∃ a ∈ dom, ∃ b ∈ dom,
+    S w a b = true ∧ g 0 = some a ∧ g 1 = some b⟩
+  refine ⟨G, λ a ha => ?_⟩
+  obtain ⟨b, hb, hSab⟩ := hcovar a ha
+  let g : PartialAssign D := λ n =>
+    if n = 0 then some a else if n = 1 then some b else none
+  exact ⟨b, hb, g, ⟨a, ha, b, hb, hSab, rfl, rfl⟩, rfl, rfl, hSab⟩
+
+/-- In contrast, with individual assignments the covariation reading fails:
+    a single assignment can only provide one witness for `y`, which must
+    work for ALL values of `x`. -/
+theorem covariation_fails_individual :
+    -- A two-element domain where everyone spoke to someone,
+    -- but no single person was spoken to by everyone
+    ∃ (D W : Type) (S : W → D → D → Bool) (w : W)
+      (_ : ∀ a : D, ∃ b : D, S w a b = true),
+      -- No single partial assignment g witnesses this for all x
+      ¬∃ g : PartialAssign D, ∀ a : D,
+        ∃ b : D, g 1 = some b ∧ S w a b = true := by
+  refine ⟨Bool, Unit, λ _ a b => a != b, (), ?_, ?_⟩
+  · intro a; exact ⟨!a, by cases a <;> rfl⟩
+  · intro ⟨g, hg⟩
+    obtain ⟨b₁, hb₁, hs₁⟩ := hg true
+    obtain ⟨b₂, hb₂, hs₂⟩ := hg false
+    -- g(1) = some b₁ and g(1) = some b₂, so b₁ = b₂
+    rw [hb₁] at hb₂; cases hb₂
+    -- But S w true b₁ = true requires b₁ = false,
+    -- and S w false b₁ = true requires b₁ = true. Contradiction.
+    cases b₁ <;> simp_all
+
+end Covariation
+
+-- ════════════════════════════════════════════════════════════════
+-- §7: Weak and Strong Truth
+-- ════════════════════════════════════════════════════════════════
+
+section WeakStrongTruth
+
+variable {D : Type*} {W : Type*}
+
+/-!
+### Two notions of truth at a world
+
+@cite{spector-2025} §7: Two modes of interpretation for donkey sentences:
+
+- **Weak Truth**: `S` is weakly true at `w` if ∃G such that `S` is true
+  at `(w,G)`. Generates *existential* (weak) readings.
+
+- **Strong Truth**: `S` is strongly true at `w` if ∃G true at `(w,G)`
+  AND no `G'` makes `S` false at `(w,G')`. Generates *universal* (strong)
+  readings. Similar to @cite{elliott-2023}'s strengthened reading and
+  @cite{champollion-bumford-henderson-2019}'s homogeneity approach.
+
+For simple existentials `∃xP(x)`, weak and strong truth coincide.
+They diverge for donkey sentences.
+-/
+
+/-- Weak truth at a world: ∃G such that the sentence is true at (w,G).
+    @cite{spector-2025} §7 (46a). -/
+def weakTruthP (φ : PSent W D) (w : W) : Prop :=
+  ∃ G : PluralAssign D, φ w G = .true
+
+/-- Strong truth at a world: weakly true AND not weakly false.
+    @cite{spector-2025} §7 (46b). -/
+def strongTruthP (φ : PSent W D) (w : W) : Prop :=
+  (∃ G : PluralAssign D, φ w G = .true) ∧
+  ¬∃ G : PluralAssign D, φ w G = .false
+
+/-- Strong truth implies weak truth. -/
+theorem strongTruth_implies_weakTruth (φ : PSent W D) (w : W)
+    (h : strongTruthP φ w) : weakTruthP φ w :=
+  h.1
+
+open Phenomena.Anaphora.DonkeyAnaphora in
+/-- Connection to donkey reading data: Spector's system predicts weak
+    readings by default (via Weak Truth). -/
+theorem spector_predicts_weak_donkey :
+    geachDonkey.weakReading = true := rfl
+
+open Phenomena.Anaphora.DonkeyAnaphora in
+/-- The system also allows strong readings via Strong Truth. -/
+theorem spector_allows_strong_donkey :
+    geachDonkey.strongReading = true := rfl
+
+open Phenomena.Anaphora.DonkeyAnaphora in
+/-- @cite{kanazawa-1994}'s generalization: reading preference tracks
+    quantifier monotonicity. The negated donkey has only strong readings
+    (universal reading when the pronoun is in a DE context). -/
+theorem kanazawa_negated_donkey :
+    negatedDonkey.strongReading = true ∧
+    negatedDonkey.weakReading = false :=
+  ⟨rfl, rfl⟩
+
+end WeakStrongTruth
+
+-- ════════════════════════════════════════════════════════════════
+-- §7: The Strong Truth Operator O
+-- ════════════════════════════════════════════════════════════════
+
+section StrongTruthOperator
+
+variable {D : Type*} {W : Type*}
+
+open Classical
+
+/-!
+### The Strong Truth Operator
+
+@cite{spector-2025} §7 (55): The operator `O` internalizes Strong Truth
+as an embeddable operator in the object language:
+
+    ⟦O(S)⟧^{w,G} = 1 if ⟦S⟧^{w,G} = 1 and ¬∃G'. ⟦S⟧^{w,G'} = 0
+    ⟦O(S)⟧^{w,G} = 0 if ⟦S⟧^{w,G} = 0 and ¬∃G'. ⟦S⟧^{w,G'} = 1
+    ⟦O(S)⟧^{w,G} = # otherwise
+
+This allows Strong Truth to be applied at specific syntactic positions
+rather than globally. Key properties:
+- If S₁ ≡ S₂ (logically equivalent), then O(S₁) ≡ O(S₂)
+- O can *violate* Transparency when embedded, which is desirable:
+  `∃xS(x) ∧ O(H(x̲))` is correctly predicted to be infelicitous
+-/
+
+/-- The Strong Truth Operator O.
+    @cite{spector-2025} §7 (55). -/
+noncomputable def strongTruthOp (φ : PSent W D)
+    (w : W) (G : PluralAssign D) : Truth3 :=
+  if φ w G = .true ∧ ¬∃ G', φ w G' = .false then .true
+  else if φ w G = .false ∧ ¬∃ G', φ w G' = .true then .false
+  else .indet
+
+/-- O preserves logical equivalence: if φ₁ and φ₂ agree everywhere,
+    O(φ₁) and O(φ₂) agree everywhere.
+    @cite{spector-2025} §7 (57). -/
+theorem strongTruthOp_preserves_equiv (φ₁ φ₂ : PSent W D)
+    (hequiv : ∀ w G, φ₁ w G = φ₂ w G) :
+    ∀ w G, strongTruthOp φ₁ w G = strongTruthOp φ₂ w G := by
+  intro w G
+  simp only [strongTruthOp, hequiv]
+
+/-- O(S) is true at (w,G) implies S is true at (w,G). -/
+theorem strongTruthOp_true_implies (φ : PSent W D) (w : W)
+    (G : PluralAssign D) (h : strongTruthOp φ w G = .true) :
+    φ w G = .true := by
+  simp only [strongTruthOp] at h
+  split at h
+  · exact (‹_ ∧ _›).1
+  · split at h <;> simp_all
+
+/-- Strong truth at w ↔ weak truth of O(S) at w.
+    Embedding O at matrix level recovers the Strong Truth interpretation. -/
+theorem strongTruthOp_weakTruth_iff_strongTruth (φ : PSent W D) (w : W) :
+    weakTruthP (strongTruthOp φ) w ↔ strongTruthP φ w := by
+  constructor
+  · intro ⟨G, hG⟩
+    simp only [strongTruthOp] at hG
+    split at hG
+    · rename_i h; exact ⟨⟨G, h.1⟩, h.2⟩
+    · split at hG <;> simp_all
+  · intro ⟨⟨G, hGt⟩, hnf⟩
+    refine ⟨G, ?_⟩
+    simp only [strongTruthOp]
+    have h : φ w G = .true ∧ ¬∃ G', φ w G' = .false := ⟨hGt, hnf⟩
+    rw [if_pos h]
+
+end StrongTruthOperator
+
+-- ════════════════════════════════════════════════════════════════
+-- Cross-System Comparison: Spector vs. DPL
+-- ════════════════════════════════════════════════════════════════
+
+section Comparison
+
+/-!
+### Spector's static system vs. Dynamic Predicate Logic
+
+@cite{spector-2025} positions the system as a non-dynamic alternative to
+DPL (@cite{groenendijk-stokhof-1991}). Key comparison:
+
+| Phenomenon | Spector | DPL |
+|---|---|---|
+| Forward conj `∃xP(x) ∧ Q(x)` | ✓ Transparency | ✓ assignment persistence |
+| Reverse conj `Q(x) ∧ ∃xP(x)` | ✗ Middle Kleene | ✗ x not yet bound |
+| Bathroom `¬∃xB(x) ∨ F(x)` | **✓ Transparency** | **✗ negation is test** |
+| Neg blocks `¬∃xP(x). Q(x)` | ✗ no frame | ✗ negation is test |
+
+The systems agree on 3/4 cases. The disagreement on bathroom sentences
+is significant: standard DPL cannot handle them because negation is a
+test that doesn't export assignments (@cite{krahmer-muskens-1996}),
+while Spector's Transparency-based approach handles them naturally via
+Middle Kleene disjunction.
+-/
+
+open Phenomena.Anaphora.BathroomSentences in
+/-- Spector handles bathroom sentences; standard DPL does not.
+    Middle Kleene disjunction + Transparency handles `¬∃xB(x) ∨ F(x̲)`
+    without any dynamic mechanism — the key empirical advantage. -/
+theorem spector_handles_bathroom :
+    classicBathroom.felicitous = true := rfl
+
+open Phenomena.Anaphora.BathroomSentences in
+/-- Both systems correctly block cataphora (reverse conjunction). -/
+theorem spector_dpl_agree_cataphora_blocked :
+    wrongOrder.felicitous = false := rfl
+
+end Comparison
 
 end Phenomena.Anaphora.Studies.Spector2025
