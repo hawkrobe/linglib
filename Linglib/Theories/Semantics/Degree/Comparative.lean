@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Degree.Core
 
 /-!
@@ -124,5 +124,47 @@ structure MannerEffect where
 /-- EN in ambidirectional constructions triggers evaluativity. -/
 def enEvaluativeEffect : MannerEffect :=
   { evaluative := true, atypical := false }
+
+-- ════════════════════════════════════════════════════
+-- § 7. Comparative as Extent Inclusion
+-- ════════════════════════════════════════════════════
+
+/-- Comparative via extents: "A is taller than B" iff A's positive
+    extent strictly contains B's. Bridges the point comparison
+    to the algebraic `posExt_ssubset_iff` from `Core.Scale`. -/
+theorem comparative_iff_posExt_ssubset {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    comparativeSem μ a b .positive ↔
+      Core.Scale.posExt μ b ⊂ Core.Scale.posExt μ a := by
+  exact (Core.Scale.posExt_ssubset_iff μ b a).symm
+
+/-- Equative via extents: "A is as tall as B" iff B's positive
+    extent is a subset of A's. -/
+def equativeViaExtent {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (a b : Entity) : Prop :=
+  Core.Scale.posExt μ b ⊆ Core.Scale.posExt μ a
+
+/-- Equative-via-extents is equivalent to μ(a) ≥ μ(b). -/
+theorem equativeViaExtent_iff {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    equativeViaExtent μ a b ↔ μ a ≥ μ b := by
+  simp only [equativeViaExtent, Core.Scale.posExt_subset_iff]
+
+-- ════════════════════════════════════════════════════
+-- § 8. Antonymy from Extent Algebra
+-- ════════════════════════════════════════════════════
+
+/-- "A is taller than B" iff "B is shorter than A" — derived from
+    the complementarity of positive and negative extents, not
+    stipulated as a lexical property of antonym pairs.
+
+    This is @cite{kennedy-1999}'s central result: antonymy equivalence
+    follows from the algebra of extents. Delegates to
+    `Core.Scale.antonymy_biconditional`. -/
+theorem comparative_iff_negExt_ssubset {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    comparativeSem μ a b .positive ↔
+      Core.Scale.negExt μ a ⊂ Core.Scale.negExt μ b := by
+  rw [comparative_iff_posExt_ssubset, Core.Scale.antonymy_biconditional]
 
 end Semantics.Degree.Comparative

@@ -22,7 +22,8 @@ import Linglib.Core.Context.Shifts
 
 namespace Semantics.Reference.Kaplan
 
-open Core.Intension (Intension rigid IsRigid rigid_isRigid)
+open Core (Intension)
+open Core.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Reference.Basic
 open Core.Context (KContext)
 
@@ -35,7 +36,7 @@ Example: "I" has a different content when uttered by Alice vs Bob,
 but once we fix the context, the content rigidly picks out the agent. -/
 def indexical {W E : Type*} (charFn : Context W E → E) : ReferringExpression (Context W E) W E :=
   { character := λ c => rigid (charFn c)
-  , mechanisms := [.designation, .singularProp] }
+  , profile := ⟨true, true, false⟩ }
 
 /-- "I": picks out the agent of the context. -/
 def pronI {W E : Type*} : ReferringExpression (Context W E) W E :=
@@ -52,7 +53,7 @@ theorem pronI_directlyReferential {W E : Type*} :
     rather than the simple `Context` (which only has `agent` and `world`). -/
 def pronYou {W E P T : Type*} : ReferringExpression (KContext W E P T) W E :=
   { character := λ c => rigid c.addressee
-  , mechanisms := [.designation, .singularProp] }
+  , profile := ⟨true, true, false⟩ }
 
 /-- "You" is directly referential: at every context, its content is rigid. -/
 theorem pronYou_directlyReferential {W E P T : Type*} :

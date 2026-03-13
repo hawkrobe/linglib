@@ -17,6 +17,9 @@ and distinct syntactic frames.
 - `motionContact_variable_agentivity` → `sweepBasicSubjectProfile` (proto-roles)
 - `contact_determines_implies_effector_subject` → `isEffector` (proto-roles)
 - `lexicalize_increases_agentivity` → `pAgentScore` ordering (proto-roles)
+- `hasResultState` → bieventive sub-event boundary (@cite{krejci-2012}; @cite{dowty-1979})
+- `cause_implies_resultState` → CAUSE entails result state
+- `intransitiveVariant` → causative/inchoative alternation (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998})
 
 -/
 
@@ -30,24 +33,7 @@ open Semantics.Lexical.Verb.EntailmentProfile
 open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════
--- § 1. Event Structure Primitives (@cite{rappaport-hovav-levin-1998} + 2024)
--- ════════════════════════════════════════════════════
-
-/-- Primitive event structure operators.
-    ACT, CAUSE, BECOME, STATE are from @cite{rappaport-hovav-levin-1998}.
-    MOVE and CONTACT are from @cite{rappaport-hovav-levin-2024}, decomposing manner verbs
-    more finely than the original ACT-based templates. -/
-inductive Primitive where
-  | ACT      -- agentive activity
-  | CAUSE    -- causal relation between sub-events
-  | BECOME   -- change of state (transition)
-  | STATE    -- simple state holding
-  | MOVE     -- motion (possibly non-agentive)
-  | CONTACT  -- force through sustained contact
-  deriving DecidableEq, Repr, BEq
-
--- ════════════════════════════════════════════════════
--- § 2. Event Structure Templates (@cite{rappaport-hovav-levin-1998} + 2024)
+-- § 1. Event Structure Templates (@cite{rappaport-hovav-levin-1998} + 2024)
 -- ════════════════════════════════════════════════════
 
 /-- Canonical event structure templates.
@@ -62,7 +48,7 @@ inductive Template where
   deriving DecidableEq, Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § 3. Template Properties
+-- § 2. Template Properties
 -- ════════════════════════════════════════════════════
 
 /-- Does the template involve CAUSE? -/
@@ -94,6 +80,84 @@ def Template.toAspectualProfile : Template → AspectualProfile
 /-- Predicted Vendler class for each template (derived from profile). -/
 def Template.vendlerClass (t : Template) : VendlerClass :=
   t.toAspectualProfile.toVendlerClass
+
+-- ════════════════════════════════════════════════════
+-- § 3. Bieventive Structure Diagnostics
+-- (@cite{krejci-2012}; @cite{dowty-1979}; @cite{koontz-garboden-2009})
+-- ════════════════════════════════════════════════════
+
+/-! Templates with complex internal structure — multiple sub-events connected
+    by CAUSE or embedding BECOME — license scopal ambiguities that
+    mono-eventive templates do not.
+
+    At the template level, three diagnostics from @cite{dowty-1979} reduce
+    to two structural properties already defined above:
+
+    1. ***again*/*re-* ambiguity** tracks `hasResultState`: templates
+       embedding [BECOME [STATE]] allow restitutive readings where a
+       scopal modifier targets just the result sub-event.
+    2. **Negation over CAUSE** (@cite{koontz-garboden-2009}) tracks
+       `hasCause`: negation can scope narrowly over CAUSE, denying
+       the causal link while maintaining the result.
+    3. **"By itself" licensing** (@cite{koontz-garboden-2009}) also tracks
+       `hasCause`: "without outside help" requires CAUSE in the meaning.
+
+    @cite{krejci-2012}'s insight is that some verbs assigned simpler templates
+    (eat, wash, dress, learn) nonetheless pass all three diagnostics — evidence
+    that they have bieventive, causative event structures in their simple forms.
+    This verb-level property is captured in `RootTypology` and `ArgDerivation`,
+    not at the template level here. -/
+
+/-- Does the template embed a result state under BECOME?
+    Templates with [BECOME [STATE]] have a sub-event boundary that
+    scopal modifiers (*again*, *re-*, *almost*) can target independently. -/
+def Template.hasResultState : Template → Bool
+  | .achievement => true      -- [BECOME [x ⟨STATE⟩]]
+  | .accomplishment => true   -- [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]
+  | _ => false
+
+/-- CAUSE implies a result state (accomplishment embeds BECOME). -/
+theorem cause_implies_resultState (t : Template) :
+    t.hasCause = true → t.hasResultState = true := by
+  cases t <;> simp [Template.hasCause, Template.hasResultState]
+
+/-! ### Causative/Inchoative Alternation
+
+    The accomplishment template [[x ACT] CAUSE [BECOME [y STATE]]]
+    has an intransitive variant: the achievement [BECOME [x STATE]],
+    obtained by stripping the external cause. This is the
+    event-structural core of the causative/inchoative alternation
+    (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998}).
+
+    Whether the intransitive variant is *monoeventive* (true
+    anticausative) or *bieventive* (reflexive, with coidentification
+    of causer and causee) is a language- and verb-specific property
+    formalized in `MorphologicalCausation.IntransitivizationType`. -/
+
+/-- The intransitive variant of a template, stripping the external cause.
+    Only accomplishments have an alternation partner. -/
+def Template.intransitiveVariant : Template → Option Template
+  | .accomplishment => some .achievement
+  | _ => none
+
+/-- The intransitive variant retains the result state
+    (BECOME STATE survives stripping of ACT CAUSE). -/
+theorem intransitive_has_resultState (t t' : Template) :
+    t.intransitiveVariant = some t' → t'.hasResultState = true := by
+  cases t <;> simp [Template.intransitiveVariant, Template.hasResultState]
+  rintro rfl; rfl
+
+/-- The intransitive variant loses CAUSE. -/
+theorem intransitive_no_cause (t t' : Template) :
+    t.intransitiveVariant = some t' → t'.hasCause = false := by
+  cases t <;> simp [Template.intransitiveVariant, Template.hasCause]
+  rintro rfl; rfl
+
+/-- Only accomplishments have an intransitive variant
+    (only templates with CAUSE can undergo the alternation). -/
+theorem only_accomplishment_alternates (t : Template) :
+    t.intransitiveVariant.isSome → t = .accomplishment := by
+  cases t <;> simp [Template.intransitiveVariant]
 
 -- ════════════════════════════════════════════════════
 -- § 4. Argument Realization from Templates

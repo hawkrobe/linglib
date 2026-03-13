@@ -35,7 +35,7 @@ between functional head and root.
 ## Bridges
 
 - `EntailmentProfile.changeOfState` = result root entailment (ProtoRoles §8)
-- `Primitive.BECOME` = the templatic operator that result roots lexicalize (EventStructure)
+- `TemplateHead.vBecome` = the templatic operator that result roots lexicalize
 - `CoSType.inception` = BECOME as ¬P→P transition (ChangeOfState/Theory)
 - `Template.achievement`/`.accomplishment` = templates containing BECOME (EventStructure)
 - Crosslinguistic data validates the correlations (Phenomena)
@@ -1498,16 +1498,6 @@ inductive TemplateHead where
   | pHave    -- P_have: possession preposition (ditransitive transfer)
   deriving DecidableEq, Repr, BEq
 
-/-- Bridge to event structure primitives. The three verbal heads
-    correspond to @cite{rappaport-hovav-levin-1998} primitives; the prepositional heads
-    are not event-structural primitives. -/
-def TemplateHead.toPrimitive : TemplateHead → Option Primitive
-  | .vAct => some .ACT
-  | .vCause => some .CAUSE
-  | .vBecome => some .BECOME
-  | .pLoc => none
-  | .pHave => none
-
 /-- Which template heads a root's entailments make redundant (Table 13).
 
     The mapping is monotone: more root entailments → more heads entailed.
@@ -1582,13 +1572,6 @@ theorem heads_monotone :
     RootEntailments.causativeResult.entailedHeads.length ∧
     RootEntailments.causativeResult.entailedHeads.length ≤
     RootEntailments.fullSpec.entailedHeads.length := ⟨by native_decide, by native_decide⟩
-
-/-- All entailed heads for verbal template heads correspond to
-    event structure primitives. -/
-theorem verbal_heads_have_primitives :
-    (TemplateHead.vAct.toPrimitive).isSome = true ∧
-    (TemplateHead.vCause.toPrimitive).isSome = true ∧
-    (TemplateHead.vBecome.toPrimitive).isSome = true := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 19. Gap Predictions (B&@cite{beavers-koontz-garboden-2020} §5.4.1, Table 12)

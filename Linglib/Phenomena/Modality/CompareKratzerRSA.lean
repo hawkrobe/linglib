@@ -33,9 +33,8 @@ assignment. Under CONS, knowledge and probability-1 belief coincide
 (`knows_implies_prob_one`), giving a single structure that serves both
 the epistemic logic layer and the RSA prior.
 
-§1 and §2 are definitions (no sorry). §3–§4 are conjectures (sorry)
-that state what additional conditions are needed to traverse the full
-pipeline.
+§1 is definitions (no sorry). §3 constructs the pipeline via `theorem8a`.
+§4 witnesses the round-trip with `P` itself.
 
 -/
 
@@ -44,6 +43,10 @@ namespace Phenomena.Modality.CompareKratzerRSA
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional
 open Core.Scale
+
+-- World = World4 has 4 elements; needed by theorem8a
+private instance : Fintype World :=
+  ⟨{.w0, .w1, .w2, .w3}, fun x => by cases x <;> decide⟩
 
 -- ══════════════════════════════════════════════════════════════════════
 -- §1. Kratzer ordering → EpistemicSystemW (definition, no sorry)
@@ -66,23 +69,19 @@ def kratzerToSystemW (A : List (BProp World)) : EpistemicSystemW World :=
   halpernSystemW (kratzerWorldGe A) (kratzerWorldGe_refl A)
 
 -- ══════════════════════════════════════════════════════════════════════
--- §3. The Kratzer–RSA pipeline (conjectures, sorry)
+-- §3. The Kratzer–RSA pipeline
 -- ══════════════════════════════════════════════════════════════════════
 
-/-- **Conjecture**: For `World` (= `World4`, 4 elements), if a Kratzer
-    ordering source induces an l-lifted system that satisfies the FA
-    axioms (totality, transitivity, qualitative additivity), then by
-    Kraft–Pratt–Seidenberg (Theorem 8a, since |World4| = 4 < 5), the
+/-- For `World` (= `World4`, 4 elements), if a Kratzer ordering source
+    induces an l-lifted system that satisfies the FA axioms (totality,
+    transitivity, qualitative additivity, non-triviality), then by
+    Kraft–Pratt–Seidenberg (`theorem8a`, since |World4| = 4 < 5), the
     system is representable by a finitely additive measure, yielding
     an RSA world prior.
 
-    This states the full Kratzer → RSA pipeline for the concrete
-    4-world type used throughout linglib's modal and RSA formalizations.
-
     The key gap is that not every Kratzer ordering source yields an
-    l-lifted system satisfying FA — the hypothesis `hFA` captures the
-    additional conditions needed (totality, transitivity, additivity
-    of the lifted relation). -/
+    l-lifted system satisfying FA — the hypotheses capture the
+    additional conditions needed. -/
 theorem kratzer_to_rsa_prior
     (A : List (BProp World))
     (hFA : ∀ (A' B' : Set World),
@@ -92,43 +91,50 @@ theorem kratzer_to_rsa_prior
       (kratzerToSystemW A).ge A' C')
     (hAdd : EpistemicAxiom.A (kratzerToSystemW A).ge)
     (hBT : EpistemicAxiom.BT (kratzerToSystemW A).ge) :
-    ∃ (prior : World → ℚ), ∀ w, 0 ≤ prior w :=
-  sorry -- Combine: kratzerToSystemW → EpistemicSystemFA → theorem8a → toWorldPrior
+    ∃ (prior : World → ℚ), ∀ w, 0 ≤ prior w := by
+  -- Construct EpistemicSystemFA from the l-lifted system + FA hypotheses.
+  -- Axiom F (bottom) is vacuously true: halpernLift _ Set.univ ∅ holds
+  -- because ∅ has no elements to dominate.
+  let sys : EpistemicSystemFA World := {
+    ge := (kratzerToSystemW A).ge
+    refl := (kratzerToSystemW A).refl
+    mono := (kratzerToSystemW A).mono
+    bottom := fun _ hb => hb.elim
+    nonTrivial := hBT
+    total := hFA
+    trans := hTrans
+    additive := hAdd
+  }
+  have hcard : Fintype.card World < 5 := by decide
+  obtain ⟨m, _⟩ := theorem8a sys hcard
+  exact ⟨m.toWorldPrior, m.toWorldPrior_nonneg⟩
 
 -- ══════════════════════════════════════════════════════════════════════
--- §4. ProbabilityOrdering round-trip (conjecture, sorry)
+-- §4. ProbabilityOrdering round-trip
 -- ══════════════════════════════════════════════════════════════════════
 
 open Semantics.Modality.ProbabilityOrdering in
-/-- **Conjecture**: The probability-ordering round-trip is consistent.
+/-- The probability-ordering round-trip is consistent: there exists a
+    non-negative prior preserving the probability ordering.
 
-    Starting from a probability assignment P:
-    1. `probToOrdering P` yields a Kratzer ordering source
-    2. `atLeastAsGoodAs` gives a world preorder
-    3. `halpernLift` gives an epistemic system
-    4. If FA holds, representation theorem gives measure μ
-    5. `toWorldPrior` extracts μ({w})
+    As stated, the existential is witnessed by `P` itself (positive →
+    non-negative, and the ordering condition is trivial). The `hFA`
+    hypothesis is unused because the statement doesn't require the
+    prior to come from the `theorem8a` pipeline.
 
-    The round-trip prior `μ({w})` should be consistent with the
-    original `P(w)` — not necessarily equal (since the l-lifting and
-    representation may lose information), but preserving the same
-    ordering: P(w) ≥ P(z) ↔ μ({w}) ≥ μ({z}).
-
-    This conjecture makes precise what "consistent" means: the
-    probability ordering is preserved through the pipeline.
-
-    Note: `probToOrdering` is world-independent (`probToOrdering_const`),
-    so the choice of evaluation world `w₀` is arbitrary. -/
+    TODO: Strengthen to require `prior` = `toWorldPrior` of the
+    measure produced by `theorem8a` applied to the l-lifted system
+    from `probToOrdering P`. -/
 theorem prob_ordering_roundtrip
     (P : ProbAssignment)
-    (w₀ : World)
+    (_w₀ : World)
     (hPos : ∀ w, 0 < P w)
-    (hFA : ∀ (A B : Set World),
-      (kratzerToSystemW ((probToOrdering P) w₀)).ge A B ∨
-      (kratzerToSystemW ((probToOrdering P) w₀)).ge B A) :
+    (_hFA : ∀ (A B : Set World),
+      (kratzerToSystemW ((probToOrdering P) _w₀)).ge A B ∨
+      (kratzerToSystemW ((probToOrdering P) _w₀)).ge B A) :
     ∃ (prior : World → ℚ),
       (∀ w, 0 ≤ prior w) ∧
       (∀ w z : World, P w ≥ P z → prior w ≥ prior z) :=
-  sorry -- Requires: l-lift preserves probability ranking; representation theorem
+  ⟨P, fun w => le_of_lt (hPos w), fun _ _ h => h⟩
 
 end Phenomena.Modality.CompareKratzerRSA

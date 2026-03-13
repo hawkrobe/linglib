@@ -620,6 +620,7 @@ import Linglib.Phenomena.Anaphora.ModalSubordination
 import Linglib.Phenomena.Anaphora.Typology
 import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.Anaphora.Studies.Spector2025
+import Linglib.Phenomena.Anaphora.Studies.Charlow2018
 import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
@@ -857,6 +858,7 @@ import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Data
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 import Linglib.Phenomena.Negation.Basic
+import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Phenomena.Negation.Studies.Rett2026
 import Linglib.Phenomena.WordOrder.NonProjectivity
 import Linglib.Phenomena.Negation.DoubleNegation
@@ -1329,6 +1331,7 @@ import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Composition.Glue
 import Linglib.Theories.Semantics.Composition.WriterMonad
+import Linglib.Theories.Semantics.Composition.Effects
 import Linglib.Theories.Semantics.Montague.Conjunction
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Montague.Lexicon

@@ -7595,10 +7595,10 @@
   number    = {1},
   pages     = {39--78},
   doi       = {10.1515/lingty-2020-2053},
-  subfield  = {semantics/tense},
+  subfield  = {semantics},
   validated = {true},
-  role      = {cited},
-  sources   = {Phenomena/TemporalConnectives/NegationData.lean}
+  role      = {formalized},
+  sources   = {Phenomena/Negation/Studies/JinKoenig2021.lean, Phenomena/TemporalConnectives/NegationData.lean}
 }
 
 @article{rouillard-2026,
@@ -10293,6 +10293,18 @@
   sources   = {Theories/Semantics/Dynamic/Core/DynamicTy2.lean;Theories/Semantics/Dynamic/Core/Translation.lean}
 }
 
+@book{bumford-charlow-2024,
+  author    = {Bumford, Dylan and Charlow, Simon},
+  year      = {2024},
+  title     = {Effect-Driven Interpretation: Functors for Natural Language Composition},
+  series    = {Elements in Semantics},
+  publisher = {Cambridge University Press},
+  subfield  = {semantics/composition},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Composition/Effects.lean}
+}
+
 @article{charlow-2021,
   author    = {Charlow, Simon},
   year      = {2021},
@@ -10377,6 +10389,44 @@
   validated = {true},
   role      = {formalized},
   sources   = {Theories/Semantics/Dynamic/Effects/Default/Basic.lean;Core/Order/Normality.lean;Theories/Semantics/Dynamic/Core/CCP.lean;Theories/Semantics/Dynamic/Effects/Epistemic/Basic.lean}
+}
+
+@unpublished{charlow-2018,
+  author    = {Charlow, Simon},
+  year      = {2018},
+  title     = {A Modular Theory of Pronouns and Binding},
+  note      = {Manuscript, Rutgers University},
+  subfield  = {semantics},
+  role      = {primary},
+  sources   = {Theories/Semantics/Montague/Variables.lean;Phenomena/Anaphora/Studies/Charlow2018.lean}
+}
+
+@article{jacobson-1999,
+  author    = {Jacobson, Pauline},
+  year      = {1999},
+  title     = {Towards a Variable-Free Semantics},
+  journal   = {Linguistics and Philosophy},
+  volume    = {22},
+  number    = {2},
+  pages     = {117--184},
+  doi       = {10.1023/A:1005464228727},
+  subfield  = {semantics},
+  role      = {cited},
+  sources   = {Phenomena/Anaphora/Studies/Charlow2018.lean}
+}
+
+@article{mcbride-paterson-2008,
+  author    = {McBride, Conor and Paterson, Ross},
+  year      = {2008},
+  title     = {Applicative Programming with Effects},
+  journal   = {Journal of Functional Programming},
+  volume    = {18},
+  number    = {1},
+  pages     = {1--13},
+  doi       = {10.1017/S0956796806006326},
+  subfield  = {semantics},
+  role      = {cited},
+  sources   = {Theories/Semantics/Montague/Variables.lean;Phenomena/Anaphora/Studies/Charlow2018.lean}
 }
 
 @article{charlow-2019,
@@ -13915,6 +13965,20 @@
   validated = {true},
   sources   = {Fragments/Tagalog/TemporalConnectives.lean}
 }
+@article{dell-1986,
+  author    = {Dell, Gary S.},
+  year      = {1986},
+  title     = {A Spreading-Activation Theory of Retrieval in Sentence Production},
+  journal   = {Psychological Review},
+  volume    = {93},
+  number    = {3},
+  pages     = {283--321},
+  doi       = {10.1037/0033-295X.93.3.283},
+  subfield  = {processing},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Negation/Studies/JinKoenig2021.lean}
+}
 % REF: Bybee, J. L. (1985). *Morphology: A Study of the Relation between Meaning and Form*. Benjamins.
 @book{bybee-1985,
   author    = {Bybee, J. L},
@@ -14286,14 +14350,14 @@
   sources   = {Fragments/Japanese/Determiners.lean}
 }
 % REF: Acquaviva, P. (2008). Roots and lexicality in Distributed Morphology. LingBuzz/000654.
-@article{acquaviva-2008,
+@incollection{acquaviva-2009,
   author    = {Acquaviva, Paolo},
-  year      = {2008},
-  title     = {Roots and lexicality in Distributed Morphology},
-  journal   = {York Papers in Linguistics},
-  volume    = {2},
-  number    = {10},
+  year      = {2009},
+  title     = {Roots and Lexicality in Distributed Morphology},
+  booktitle = {York-Essex Morphology Meeting 5},
+  editor    = {Galani, A. and Redinger, D. and Yeo, N.},
   pages     = {1--21},
+  publisher = {University of York, Department of Language and Linguistic Science},
   url       = {https://ling.auf.net/lingbuzz/000654},
   subfield  = {morphology},
   role      = {cited},

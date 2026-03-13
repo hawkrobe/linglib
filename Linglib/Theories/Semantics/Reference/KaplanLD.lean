@@ -26,7 +26,8 @@ import Linglib.Theories.Semantics.Reference.Basic
 
 namespace Semantics.Reference.KaplanLD
 
-open Core.Intension (Intension rigid IsRigid rigid_isRigid StableCharacter)
+open Core (Intension)
+open Core.Intension (rigid IsRigid rigid_isRigid StableCharacter)
 open Core.Context (KContext ProperContext LocatedContext)
 open Semantics.Reference.Basic (Context Character Content)
 

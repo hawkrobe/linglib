@@ -202,7 +202,7 @@ theorem rett_after_implies_anscombe (A B : SentDenotation Time) :
 @cite{rett-2026} shows that *before* is **ambidirectional**: negating B
 in "A before B" doesn't change truth conditions. This is why
 *before*-clauses license expletive negation cross-linguistically
-(@cite{jin-koenig-2021}: 50 languages).
+(@cite{jin-koenig-2021}: 50 of 74 EN-attesting languages, from a 722-language survey).
 
 The mechanism: for B = [s, f], both B and its
 **pre-event complement** (−∞, s] share s as their "most informative

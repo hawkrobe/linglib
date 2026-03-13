@@ -3,15 +3,33 @@
 
 Formalizes @cite{donnellan-1966}: definite descriptions have two uses:
 - **Attributive**: "The φ is ψ" means whoever uniquely satisfies φ is ψ
-- **Referential**: "The φ is ψ" means the speaker's intended individual is ψ
+- **Referential**: "The φ is ψ" — the speaker has a particular individual
+  in mind; what is *said* is about that individual
 
-The referential use yields rigid content — Almog's third mechanism of direct
-reference (Ch 3). The attributive use yields Russellian/Fregean descriptive
-content that varies across worlds.
+On @cite{donnellan-1966}'s account, the truth conditions of a referential
+use depend on the *intended referent*, not on whoever satisfies the
+description. "The man drinking a martini is happy" (said about Jones,
+who is drinking water) is true iff Jones is happy.
+
+Whether this makes the expression's semantic content rigid is a disputed
+interpretive question:
+- @cite{kripke-1977} argues referential use is merely pragmatic (speaker's
+  reference ≠ semantic reference); the semantic content remains descriptive.
+- @cite{almog-2014} (Ch 3) argues referential use is genuinely semantic but
+  operates through a cognitive mechanism independent of rigidification.
+- Many semanticists (Kaplan, Wettstein) treat referential use as producing
+  singular propositional content about the intended individual.
+
+We formalize Donnellan's own position: in referential use, the truth
+conditions track the intended individual. The profile ⟨false, false, true⟩
+records that the expression is not a rigid *designator* by type
+(designation = false) and does not produce structured ⟨individual, property⟩
+content (singularProp = false), but is used referentially.
 
 ## Key Results
 
-- `referentialUse_isRigid`: Referential use produces rigid content
+- `referentialContent`: The intended referent, modeled as a rigid intension
+- `referentialExpression`: A referentially-used description
 - `donnellanDivergence`: The two uses come apart when the description
   fails to apply to the intended referent
 - `definitePrProp`: Attributive semantics with presupposition (bridges
@@ -24,7 +42,8 @@ import Linglib.Core.Semantics.Presupposition
 
 namespace Semantics.Reference.Donnellan
 
-open Core.Intension (Intension rigid IsRigid rigid_isRigid)
+open Core (Intension)
+open Core.Intension (rigid IsRigid rigid_isRigid)
 open Core.Presupposition (PrProp)
 open Semantics.Reference.Basic
 
@@ -34,8 +53,10 @@ open Semantics.Reference.Basic
 
 - `attributive`: The speaker means "whoever uniquely satisfies the
   description". Content is descriptive (non-rigid in general).
-- `referential`: The speaker uses the description to pick out a
-  *particular* individual they have in mind. Content is rigid. -/
+- `referential`: The speaker has a particular individual in mind.
+  What is *said* is about that individual (@cite{donnellan-1966}).
+  The interpretive status of this (pragmatic vs. semantic) is disputed;
+  see module docstring. -/
 inductive UseMode where
   | attributive
   | referential
@@ -88,23 +109,33 @@ def definitePrProp {W E : Type*} (domain : List E) (restrictor : E → W → Boo
 
 /-! ## Referential Semantics -/
 
-/-- Referential content: the intension is rigid, fixed to the speaker's
-intended referent regardless of which world we evaluate at.
+/-- Referential content: truth conditions fixed to the speaker's intended
+referent, regardless of which world we evaluate at.
 
-This is Donnellan's key insight: in referential use, "the φ" functions
-like a proper name for the intended individual. -/
+@cite{donnellan-1966}: in referential use, what is *said* is about the
+intended individual. "The man drinking a martini is happy" (referential,
+about Jones) is true iff Jones is happy — even if Jones isn't drinking
+a martini.
+
+Note: modeling this as `rigid intended` captures Donnellan's claim about
+truth conditions. Whether this represents the expression's *semantic*
+content or merely the *speaker's* reference is the Kripke 1977 vs
+Donnellan dispute — see module docstring. -/
 def referentialContent {W E : Type*} (intended : E) : Intension W E :=
   rigid intended
 
-/-- Referential use produces rigid content. -/
-theorem referentialUse_isRigid {W E : Type*} (intended : E) :
-    IsRigid (referentialContent (W := W) intended) :=
-  rigid_isRigid intended
+/-- A referential definite description as a `ReferringExpression`.
 
-/-- A referential definite description as a `ReferringExpression`. -/
+The profile ⟨false, false, true⟩ records:
+- `designation = false`: not a rigid designator by linguistic type
+  (it is a description, not a name or indexical)
+- `singularProp = false`: per @cite{almog-2014}'s reading of Donnellan
+  (Ch 3, §2.12), referential use gives a "proposition-free" account,
+  not a structured ⟨individual, property⟩ pair
+- `referentialUse = true`: the speaker has a cognitive fix on the referent -/
 def referentialExpression {C W E : Type*} (intended : E) : ReferringExpression C W E :=
   { character := λ _ => rigid intended
-  , mechanisms := [.referentialUse] }
+  , profile := ⟨false, false, true⟩ }
 
 /-! ## Donnellan Divergence -/
 

@@ -95,7 +95,7 @@ if learning whether P(d) holds has positive utility value.
 could affect the agent's decision. -/
 def isDecisionRelevant {W : Type*} [Fintype W] [DecidableEq W]
     {A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem W A) (actions : Finset A)
     (predicate : W → Bool) : Bool :=
   let yesCell := Finset.univ.filter (λ w => predicate w = true)
   utilityValue dp actions yesCell > 0
@@ -106,7 +106,7 @@ the agent's decision problem.
 @cite{van-rooy-2003}, p. 746: D_optimal = {d | UV(P(d)) > 0}. -/
 def decisionRelevantDomain {W E : Type*} [Fintype W] [DecidableEq W]
     {A : Type*} [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem W A) (actions : Finset A)
     (predicate : W → E → Bool) (domain : List E) : List E :=
   domain.filter λ d => isDecisionRelevant dp actions (predicate · d)
 

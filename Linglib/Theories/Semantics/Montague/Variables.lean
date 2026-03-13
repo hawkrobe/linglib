@@ -125,6 +125,86 @@ theorem sleeps_lambda_eq : sleeps_lambda g₀ = sleeps_sem := by
 end Examples
 
 -- ════════════════════════════════════════════════════════════════
+-- § Applicative Functor Structure
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### Assignment-sensitive composition as an applicative functor
+
+@cite{charlow-2018} observes that `constDenot` (ρ) and `applyG` (⊛)
+form an applicative functor for the Reader type constructor `G a := g → a`
+(@cite{mcbride-paterson-2008}). These are not new operations — they are
+factored out of the standard @cite{heim-kratzer-1998} account. The four
+applicative functor laws hold definitionally.
+
+Adding the join operation `denotGJoin` (μ) — which flattens doubly
+assignment-dependent meanings by feeding the same assignment twice —
+upgrades the structure to a monad (the Reader/Environment monad),
+enabling analyses of paycheck pronouns and binding reconstruction. -/
+
+section ApplicativeFunctor
+
+variable {m : Model} {σ τ υ : Ty}
+
+/-- **Homomorphism**: `ρ f ⊛ ρ x = ρ (f x)`. -/
+theorem constDenot_applyG (f : m.interpTy (σ ⇒ τ)) (x : m.interpTy σ) :
+    applyG (constDenot f) (constDenot x) = constDenot (f x) := rfl
+
+/-- **Identity**: `ρ id ⊛ v = v`. -/
+theorem applyG_constDenot_id (v : DenotG m σ) :
+    applyG (constDenot id) v = v := rfl
+
+/-- **Interchange**: `u ⊛ ρ y = ρ (· y) ⊛ u`. -/
+theorem applyG_constDenot_interchange
+    (u : DenotG m (σ ⇒ τ)) (y : m.interpTy σ) :
+    applyG u (constDenot y) =
+    applyG (constDenot (ty := (σ ⇒ τ) ⇒ τ) (fun f => f y)) u := rfl
+
+/-- **Composition**: `ρ comp ⊛ u ⊛ v ⊛ w = u ⊛ (v ⊛ w)`. -/
+theorem applyG_composition
+    (u : DenotG m (τ ⇒ υ)) (v : DenotG m (σ ⇒ τ)) (w : DenotG m σ) :
+    applyG (applyG (applyG (constDenot
+      (ty := (τ ⇒ υ) ⇒ (σ ⇒ τ) ⇒ σ ⇒ υ)
+      (fun f g x => f (g x))) u) v) w =
+    applyG u (applyG v w) := rfl
+
+end ApplicativeFunctor
+
+-- ════════════════════════════════════════════════════════════════
+-- § Monadic Join for Higher-Order Variables
+-- ════════════════════════════════════════════════════════════════
+
+section MonadicJoin
+
+variable {m : Model}
+
+/-- **Join** (μ): flatten a doubly assignment-dependent meaning.
+
+    @cite{charlow-2018} §4.2: `μ m := λg. m g g`.
+
+    Enables higher-order variables: a pronoun anaphoric to an *intension*
+    (type `g → g → a`) is flattened to a standard denotation (type `g → a`)
+    by evaluating the retrieved intension at the current assignment. -/
+def denotGJoin {A : Type} (ho : Assignment m → Assignment m → A) :
+    Assignment m → A :=
+  fun g => ho g g
+
+/-- **Left identity**: `μ (ρ d) = d`. -/
+theorem denotGJoin_const {A : Type} (d : Assignment m → A) :
+    denotGJoin (fun _ => d) = d := rfl
+
+/-- **Right identity**: `μ (λg. ρ(d g)) = d`. -/
+theorem denotGJoin_inner_const {A : Type} (d : Assignment m → A) :
+    denotGJoin (fun g _ => d g) = d := rfl
+
+/-- **Associativity**: `μ ∘ μ = μ ∘ fmap μ`. -/
+theorem denotGJoin_assoc {A : Type}
+    (hho : Assignment m → Assignment m → Assignment m → A) :
+    denotGJoin (denotGJoin hho) =
+    denotGJoin (fun g => denotGJoin (hho g)) := rfl
+
+end MonadicJoin
+
+-- ════════════════════════════════════════════════════════════════
 -- § Cylindric Algebra Structure
 -- ════════════════════════════════════════════════════════════════
 

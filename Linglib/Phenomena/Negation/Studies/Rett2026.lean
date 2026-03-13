@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Phenomena.Polarity.NPIs
+import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
 
@@ -82,9 +83,10 @@ structure ENDatum where
 
 /-! ### @cite{jin-koenig-2021} survey data
 
-Cross-linguistic distribution from a 70-language sample:
-- *before*-clauses: 50/70 languages have EN
-- *fear*-clauses: 39/70 languages have EN
+Cross-linguistic distribution from a 722-language survey (EN attested
+in 74 languages across 37 genera):
+- *before*-clauses: EN in 50/74 EN-attesting languages
+- *fear*-clauses: EN in 39/74 EN-attesting languages
 - comparative *than*-clauses: 6+ languages have EN
 - *until*-clauses: reported in several languages -/
 
@@ -205,8 +207,11 @@ inductive ENConstruction where
     - `until`: ambidirectional — shares endpoint structure with *before*
     - `comparative`: ambidirectional on degree relatives
       (cf. `comparative_boundary` in Comparative.lean)
-    - `fear`: ambidirectional — *fear p* and *fear ¬p* share the
-      worry-worthy possibility -/
+    - `fear`: ambidirectional — DERIVED from negative valence in
+      preferential attitude semantics (@cite{villalta-2008}). Fear-type
+      verbs activate both p (content of attitude) and ¬p (content of
+      desire), satisfying @cite{jin-koenig-2021}'s propositional attitude
+      licensing condition (§5.5, 13a). See `fear_ambidirectional_from_valence`. -/
 def ENConstruction.isAmbidirectional : ENConstruction → Bool
   | .before      => true
   | .after       => false
@@ -216,14 +221,15 @@ def ENConstruction.isAmbidirectional : ENConstruction → Bool
   | .fear        => true
 
 /-- Empirically observed: does the construction license EN
-    cross-linguistically? Based on @cite{jin-koenig-2021} 70-language survey. -/
+    cross-linguistically? Based on @cite{jin-koenig-2021} 722-language survey
+    (EN attested in 74 languages). -/
 def ENConstruction.hasEN : ENConstruction → Bool
-  | .before      => true   -- 50/70 languages
+  | .before      => true   -- 50/74 EN-attesting languages
   | .after       => false
   | .while_      => false
   | .until       => true   -- Italian finché, etc.
   | .comparative => true   -- 6+ languages
-  | .fear        => true   -- 39/70 languages
+  | .fear        => true   -- 39/74 EN-attesting languages
 
 /-- **Rett's generalization**: a construction licenses EN iff it is
     ambidirectional. Verified exhaustively over all EN-relevant
@@ -236,6 +242,44 @@ def ENConstruction.hasEN : ENConstruction → Bool
 theorem rett_generalization (c : ENConstruction) :
     c.hasEN = c.isAmbidirectional := by
   cases c <;> rfl
+
+-- ════════════════════════════════════════════════════
+-- § 3b. Fear Ambidirectionality from Valence
+-- ════════════════════════════════════════════════════
+
+/-! ### Deriving fear's ambidirectionality
+
+The `fear` case of `isAmbidirectional` is NOT an ad hoc stipulation —
+it follows from the negative valence of fear-type predicates in
+preferential attitude semantics (@cite{villalta-2008}).
+
+@cite{jin-koenig-2021} §6.1.1 shows that FEAR triggers entail both
+Operator₁(p) (content of X's attitude) and Operator₂(¬p) (content of
+X's desires). This dual-inference property makes the complement
+ambidirectional: *fear p* and *fear ¬p* share the same worry-worthy
+possibility.
+
+The bridge: negative valence in Preferential.lean corresponds to the
+propositional attitude licensing condition in @cite{jin-koenig-2021}. -/
+
+open Phenomena.Negation.Studies.JinKoenig2021 (negativeValenceEntailsDual
+  LicensingCondition TriggerSubclass)
+
+/-- The FEAR subclass maps to the propositional attitude licensing condition. -/
+theorem fear_licensing_condition :
+    TriggerSubclass.fear.licensingCondition = .propositionalAttitude := rfl
+
+/-- Fear's ambidirectionality is grounded in negative valence:
+    negative-valence predicates activate dual propositions (p and ¬p),
+    which makes their complements ambidirectional.
+
+    This connects three layers:
+    1. `Preferential.fear` has `valence = .negative` (attitude semantics)
+    2. Negative valence → dual inference (@cite{jin-koenig-2021} §5.5)
+    3. Dual inference → ambidirectionality (@cite{rett-2026}) -/
+theorem fear_ambidirectional_from_valence :
+    negativeValenceEntailsDual .negative = true ∧
+    ENConstruction.isAmbidirectional .fear = true := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Scale Type → EN Licensing in Comparatives

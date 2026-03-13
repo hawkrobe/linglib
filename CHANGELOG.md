@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.193] - 2026-03-13
+
+### Added
+- **Anaphora/Studies/Charlow2018.lean**: Formalize Charlow 2018 "A modular theory of pronouns and binding" — H&K decomposition into ρ/⊛ (`hk_decomposition`); categorematic Λᵢ (`lambda_pronoun`, `lambda_rho_ap_pronoun`); paycheck pronouns via higher-order variables and μ (`mu_right_identity`, `paycheck_full_derivation`); compositional intension derivation (`intension_is_rho_ap_pro`, `momIntension_eq_rho_ap_pro`); binding reconstruction (`reconstruction_predicate`, `reconstruction_independent`); composed applicative closure (§3.3, `composedPure`/`composedAp` with 3 laws + `composed_paycheck`); variable-free semantics (§6, `vf_pure_is_reader_pure`); bridge to `DonkeyAnaphora.paycheckSentence`; bridge to `Binding.lean` Reader/W (`constDenot_is_reader_pure`, `denotGJoin_is_W`)
+- **Montague/Variables.lean**: Applicative functor laws for `constDenot`/`applyG` (homomorphism, identity, interchange, composition — all `rfl`); monadic join `denotGJoin` with 3 monad laws (all `rfl`)
+
+## [0.229.192] - 2026-03-13
+
+### Added
+- **Composition/Effects.lean**: Formalize Bumford & Charlow 2024 "Effect-driven interpretation" — Functor/Applicative/Monad instances for `Cont R` and `Writer P`; meta-combinators (`mapL`/`mapR`/`structuredApp`/`joinMode`) lifting basic combination modes to effectful meanings; generalized application hierarchy (functorial fApp, applicative aApp, monadic mApp); W ⊣ R adjunction for binding (`Φ`/`Ψ` as curry/uncurry, `adj_η`/`adj_ε`, co-unit yields W combinator, agreement with H&K binding); effect operations (`aside`, `handleScope`, `handleCI`); bridge theorems connecting `Writer.app` to `<*>`, `TwoDimProp` to Writer, GQs to `Cont Bool Entity`; scope agreement theorems proving Cont-based composition matches QR tree interpretation
+
 ## [0.229.191] - 2026-03-13
 
 ### Changed

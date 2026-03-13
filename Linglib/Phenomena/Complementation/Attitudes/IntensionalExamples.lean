@@ -167,7 +167,7 @@ Hesperus/Phosphorus examples to the direct reference framework. -/
 
 Contrast with `morningStar` above, which is a Fregean individual concept
 that varies across worlds. The proper name always returns `.hesperus`. -/
-def hesperus_rigid : Core.Intension.Intension World ToyIEntity :=
+def hesperus_rigid : Core.Intension World ToyIEntity :=
   Core.Intension.rigid .hesperus
 
 /-- `morningStar` is NOT rigid: it picks out different entities at

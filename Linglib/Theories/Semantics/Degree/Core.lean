@@ -260,4 +260,48 @@ instance : ToString AdjectivalConstruction where
     | .measurePhrase => "measurePhrase"
     | .degreeQuestion => "degreeQuestion"
 
+-- ════════════════════════════════════════════════════
+-- § 7. Positive Form Standard (@cite{kennedy-2007})
+-- ════════════════════════════════════════════════════
+
+/-- Positive form standard: how the contextual threshold is determined.
+    @cite{kennedy-2007}: for open scales, the standard is the contextual
+    norm; for closed scales, it's the relevant endpoint. -/
+inductive PositiveStandard where
+  | contextual    -- open-scale: θ = norm relative to comparison class
+  | minEndpoint   -- lower-bounded: θ = minimum (e.g., "bent", "wet")
+  | maxEndpoint   -- upper-bounded/closed: θ = maximum (e.g., "full", "dry")
+  deriving DecidableEq, BEq, Repr
+
+/-- Interpretive Economy determines the standard from scale structure.
+    When a scale has an endpoint, Interpretive Economy requires using it
+    as the standard (more informative than contextual norm). -/
+def interpretiveEconomy (b : Boundedness) : PositiveStandard :=
+  match b with
+  | .open_        => .contextual
+  | .lowerBounded => .minEndpoint
+  | .upperBounded => .maxEndpoint
+  | .closed       => .maxEndpoint   -- both endpoints; max is default
+
+/-- @cite{kennedy-2007} Class A vs. Class B adjectives.
+    - **Class A** (relative): open scale, contextual standard.
+      "tall", "expensive", "heavy"
+    - **Class B** (absolute): closed scale, endpoint standard.
+      "full", "empty", "straight", "bent"
+
+    The class is determined entirely by scale boundedness. -/
+def isClassA (b : Boundedness) : Bool :=
+  match b with
+  | .open_ => true
+  | _ => false
+
+def isClassB (b : Boundedness) : Bool :=
+  !isClassA b
+
+/-- Class A adjectives have contextual standards. -/
+theorem classA_contextual : interpretiveEconomy .open_ = .contextual := rfl
+
+/-- Class B adjectives (closed scale) have endpoint standards. -/
+theorem classB_endpoint : interpretiveEconomy .closed = .maxEndpoint := rfl
+
 end Semantics.Degree

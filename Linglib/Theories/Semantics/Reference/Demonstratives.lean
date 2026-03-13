@@ -26,10 +26,10 @@ import Linglib.Theories.Semantics.Reference.KaplanLD
 
 namespace Semantics.Reference.Demonstratives
 
-open Core.Intension (Intension rigid IsRigid rigid_isRigid)
+open Core (Intension)
+open Core.Intension (rigid IsRigid rigid_isRigid)
 open Core.Context (KContext)
-open Semantics.Reference.Basic (ReferringExpression isDirectlyReferential
-  RefMechanism)
+open Semantics.Reference.Basic (ReferringExpression isDirectlyReferential)
 
 /-! ## Demonstrations -/
 
@@ -146,7 +146,7 @@ the `Reference/Basic.lean` types. -/
 def TrueDemonstrative.toReferringExpression {C W E : Type*} [Inhabited E]
     (td : TrueDemonstrative C W E) : ReferringExpression C W E :=
   { character := td.character
-  , mechanisms := [.designation, .singularProp, .referentialUse] }
+  , profile := ⟨true, true, true⟩ }
 
 /-!
 ### Bridge to RSA Reference Games

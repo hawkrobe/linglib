@@ -307,7 +307,7 @@ TTR proposition. -/
 
 /-- An intension of Prop is a world-indexed family of TTR propositions. -/
 theorem intension_prop_is_ttr_prop (W : Type*) :
-    Core.Intension.Intension W Prop = Core.Proposition.Prop' W := rfl
+    Core.Intension W Prop = Core.Proposition.Prop' W := rfl
 
 /-! ## Modal type systems (Cooper Def 54)
 
@@ -358,7 +358,7 @@ to the framework-agnostic intension machinery. -/
     At each possibility w, the type either has witnesses (true) or not (false).
     @cite{cooper-2023} Def 54: possibilities index witness assignments. -/
 def IType.toIntension {W : Type} (mts : ModalTypeSystem W String)
-    (T : IType) : Core.Intension.Intension W Bool :=
+    (T : IType) : Core.Intension W Bool :=
   mts.toBProp T.name
 
 /-- An IType's intension is rigid iff it has constant witness status

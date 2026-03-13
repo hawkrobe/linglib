@@ -92,13 +92,13 @@ For informativity: UV(p) = inf(p) = -log P(p)
 
 We use a general definition: improvement in expected utility after conditioning. -/
 def answerUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem W A) (actions : Finset A)
     (p : W -> Bool) : ℚ :=
   utilityValue dp actions (Finset.univ.filter (fun w => p w = true))
 
 /-- Compare utility of positive vs negative answer. -/
 def compareUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem W A) (actions : Finset A)
     (p : W -> Bool) : Ordering :=
   let uvPos := answerUtility dp actions p
   let uvNeg := answerUtility dp actions (pnot p)
@@ -114,7 +114,7 @@ def compareUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
 - NPQ if UV(¬q) > UV(q)
 - Alt if UV(q) ≈ UV(¬q) -/
 def optimalQuestionType {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem W A) (actions : Finset A)
     (p : W -> Bool) : PolarQuestionType :=
   match compareUtility dp actions p with
   | .gt => .positive
@@ -123,7 +123,7 @@ def optimalQuestionType {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A
 
 /-- Threshold-based comparison (for approximate equality). -/
 def optimalQuestionTypeWithThreshold {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem W A) (actions : Finset A)
     (p : W -> Bool) (threshold : ℚ) : PolarQuestionType :=
   let uvPos := answerUtility dp actions p
   let uvNeg := answerUtility dp actions (pnot p)
@@ -347,7 +347,7 @@ NPQ (?¬q) requires UV(¬q) > UV(q), which can happen when:
 1. Goal is reached by ¬q being true (medical diagnosis, ecological quiz)
 2. Prior strongly favors q, so ¬q is more informative (tag questions) -/
 def npqAppropriate {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem W A) (actions : Finset A)
     (p : W -> Bool) : Bool :=
   compareUtility dp actions p == .lt
 
@@ -438,7 +438,7 @@ UV(q) ≈ UV(¬q) signals:
 2. Genuine information seeking without bias
 3. Higher urgency (explicit enumeration of alternatives) -/
 def altAppropriate {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
-    (dp : DecisionProblem W A) (actions : List A)
+    (dp : DecisionProblem W A) (actions : Finset A)
     (p : W -> Bool) (threshold : ℚ) : Bool :=
   let uvPos := answerUtility dp actions p
   let uvNeg := answerUtility dp actions (pnot p)

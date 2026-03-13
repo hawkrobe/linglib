@@ -488,6 +488,101 @@ theorem weak_refines_strong (a b : Truth3) (h : meetWeak a b ≠ .indet) :
     meet a b = meetWeak a b := by
   cases a <;> cases b <;> simp_all [meet, meetWeak]
 
+-- ════════════════════════════════════════════════════════════════
+-- Definedness Hierarchy: Weak ≤ Middle ≤ Strong ≤ Belnap
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### The definedness hierarchy
+
+The four gap policies form a hierarchy in terms of how often they
+produce defined (non-`#`) results:
+
+    Weak Kleene ≤ Middle Kleene ≤ Strong Kleene ≤ Belnap
+
+- **Weak Kleene**: `#` is absorbing — both operands must be defined.
+- **Middle Kleene**: `#` absorbs from the left; if left is defined, Strong
+  Kleene applies. The left-to-right asymmetry captures presupposition
+  filtering (@cite{peters-1979}, @cite{beaver-krahmer-2001},
+  @cite{spector-2025}).
+- **Strong Kleene**: `#` propagates unless the defined operand forces the
+  result (`false ∧ # = false`, `true ∨ # = true`).
+- **Belnap**: `#` is the identity — undefined operands are skipped
+  entirely (@cite{belnap-1970}).
+
+The **refinement property**: if a weaker system produces a defined result,
+every stronger system agrees on that result. The systems only disagree
+on cases where the weaker one yields `#` but the stronger one rescues
+a defined value.
+-/
+
+-- ── Meet (conjunction): missing pairwise refinements ────────────
+
+/-- Weak Kleene refines Middle Kleene conjunction. -/
+theorem weak_refines_middle_meet (a b : Truth3) (h : meetWeak a b ≠ .indet) :
+    meetMiddle a b = meetWeak a b := by
+  cases a <;> cases b <;> simp_all [meetMiddle, meetWeak, meet]
+
+/-- Middle Kleene refines Strong Kleene conjunction. -/
+theorem middle_refines_strong_meet (a b : Truth3) (h : meetMiddle a b ≠ .indet) :
+    meet a b = meetMiddle a b := by
+  cases a <;> cases b <;> simp_all [meetMiddle, meet]
+
+-- ── Join (disjunction): missing pairwise refinements ────────────
+
+/-- Strong Kleene refines Belnap disjunction. -/
+theorem strong_refines_belnap_join (a b : Truth3) (h : join a b ≠ .indet) :
+    joinBelnap a b = join a b := by
+  cases a <;> cases b <;> simp_all [join, joinBelnap]
+
+-- ── Transitive chains ──────────────────────────────────────────
+
+/-- Weak → Strong conjunction (transitive: Weak ≤ Middle ≤ Strong). -/
+theorem weak_refines_strong_meet (a b : Truth3) (h : meetWeak a b ≠ .indet) :
+    meet a b = meetWeak a b :=
+  weak_refines_strong a b h
+
+/-- Weak → Strong disjunction (transitive: Weak ≤ Middle ≤ Strong). -/
+theorem weak_refines_strong_join (a b : Truth3) (h : joinWeak a b ≠ .indet) :
+    join a b = joinWeak a b := by
+  cases a <;> cases b <;> simp_all [join, joinWeak]
+
+/-- Weak → Belnap conjunction (full chain). -/
+theorem weak_refines_belnap_meet (a b : Truth3) (h : meetWeak a b ≠ .indet) :
+    meetBelnap a b = meetWeak a b := by
+  cases a <;> cases b <;> simp_all [meetBelnap, meetWeak, meet]
+
+/-- Weak → Belnap disjunction (full chain). -/
+theorem weak_refines_belnap_join (a b : Truth3) (h : joinWeak a b ≠ .indet) :
+    joinBelnap a b = joinWeak a b := by
+  cases a <;> cases b <;> simp_all [joinBelnap, joinWeak, join]
+
+/-- Middle → Belnap conjunction (two-step chain). -/
+theorem middle_refines_belnap_meet (a b : Truth3) (h : meetMiddle a b ≠ .indet) :
+    meetBelnap a b = meetMiddle a b := by
+  cases a <;> cases b <;> simp_all [meetBelnap, meetMiddle, meet]
+
+/-- Middle → Belnap disjunction (two-step chain). -/
+theorem middle_refines_belnap_join (a b : Truth3) (h : joinMiddle a b ≠ .indet) :
+    joinBelnap a b = joinMiddle a b := by
+  cases a <;> cases b <;> simp_all [joinBelnap, joinMiddle, join]
+
+/-- The full 4-system refinement chain for conjunction:
+    if `meetWeak a b` is defined, all four systems agree. -/
+theorem meet_full_chain (a b : Truth3) (h : meetWeak a b ≠ .indet) :
+    meetWeak a b = meetMiddle a b ∧
+    meetMiddle a b = meet a b ∧
+    meet a b = meetBelnap a b := by
+  cases a <;> cases b <;> simp_all [meetWeak, meetMiddle, meet, meetBelnap]
+
+/-- The full 4-system refinement chain for disjunction:
+    if `joinWeak a b` is defined, all four systems agree. -/
+theorem join_full_chain (a b : Truth3) (h : joinWeak a b ≠ .indet) :
+    joinWeak a b = joinMiddle a b ∧
+    joinMiddle a b = join a b ∧
+    join a b = joinBelnap a b := by
+  cases a <;> cases b <;> simp_all [joinWeak, joinMiddle, join, joinBelnap]
+
 end Truth3
 
 /-- How truth values aggregate through an operator.

@@ -61,7 +61,7 @@ def truthDP {W : Type*} (ctx : DTSContext W) : DecisionProblem W Bool where
   prior := ctx.prior
 
 /-- The action set for the truth DP: accept or reject. -/
-def truthActions : List Bool := [true, false]
+def truthActions : Finset Bool := {true, false}
 
 /-! ## Bridge Theorems -/
 
@@ -116,7 +116,7 @@ Properties that hold by construction, connecting the two frameworks
 without requiring full numerical computation. -/
 
 /-- The truth DP has exactly two actions. -/
-theorem truthActions_length : truthActions.length = 2 := rfl
+theorem truthActions_card : truthActions.card = 2 := by decide
 
 /-- In the truth DP, the two actions partition the utility: for any world,
 exactly one action has utility 1 and the other has utility 0. -/

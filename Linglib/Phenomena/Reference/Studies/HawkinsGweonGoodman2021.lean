@@ -648,7 +648,9 @@ noncomputable def beliefsAfterShortUtterances : ListenerBeliefs :=
     Listeners infer low speaker effort from under-informative utterances. -/
 theorem listener_infers_low_wS_from_short_utterances :
     beliefsAfterShortUtterances.wS_expectation < initialBeliefs.wS_expectation := by
-  sorry -- Follows from repeated negative updates to ℝ-valued beliefs
+  unfold beliefsAfterShortUtterances updateBeliefs initialBeliefs
+  simp only [ite_true, ListenerBeliefs.wS_expectation, min_def, max_def]
+  split_ifs <;> linarith
 
 /-- Optimal listener weight: compensate for low speaker effort.
     When the speaker uses low w_S, the listener should increase their own
@@ -660,6 +662,8 @@ noncomputable def optimalListenerWeight (speakerWS β : ℝ) : ℝ :=
     Listener increases effort when speaker decreases theirs. -/
 theorem listener_compensates_for_low_speaker_effort :
     optimalListenerWeight (3/10) (2/10) > optimalListenerWeight (7/10) (2/10) := by
-  sorry -- 1 - 0.3 + 0.2 = 0.9 > 1 - 0.7 + 0.2 = 0.5
+  unfold optimalListenerWeight
+  simp only [min_def, max_def]
+  split_ifs <;> linarith
 
 end Phenomena.Reference.Studies.HawkinsGweonGoodman2021

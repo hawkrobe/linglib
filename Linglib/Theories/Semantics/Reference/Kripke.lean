@@ -31,7 +31,8 @@ import Linglib.Theories.Semantics.Reference.KaplanLD
 
 namespace Semantics.Reference.Kripke
 
-open Core.Intension (Intension IsRigid rigid rigid_isRigid CoRefer CoExtensional
+open Core (Intension)
+open Core.Intension (IsRigid rigid rigid_isRigid CoRefer CoExtensional
   rigid_identity_necessary varying_not_rigid rigid_neq_nonrigid)
 open Semantics.Reference.Basic (properName isDirectlyReferential)
 open Semantics.Reference.KaplanLD (dthatW dthatW_isRigid)

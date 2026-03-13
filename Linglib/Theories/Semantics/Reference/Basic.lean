@@ -12,7 +12,7 @@ These mechanisms are independent: a term can exhibit any subset.
 
 - `Context`: Kaplanian context of utterance (agent, world)
 - `Character`: Two-stage semantics — context → content
-- `ReferringExpression`: Bundles character + mechanism
+- `ReferringExpression`: Bundles character + referential profile
 - `isDirectlyReferential`: Content is rigid at every context
 - `properName`: Constant character, rigid content
 
@@ -24,7 +24,8 @@ import Linglib.Core.Context.Basic
 
 namespace Semantics.Reference.Basic
 
-open Core.Intension (Intension rigid IsRigid rigid_isRigid evalAt CoRefer CoExtensional
+open Core (Intension)
+open Core.Intension (rigid IsRigid rigid_isRigid evalAt CoRefer CoExtensional
   rigid_identity_necessary)
 
 /-! ## Context and Character -/
@@ -50,27 +51,34 @@ abbrev Character (C : Type*) (W : Type*) (E : Type*) := C → Intension W E
 /-- Content is just an intension — a function from worlds to extensions. -/
 abbrev Content (W : Type*) (E : Type*) := Intension W E
 
-/-! ## Reference Mechanisms -/
+/-! ## Referential Profile (@cite{almog-2014}) -/
 
-/-- Almog's three independent mechanisms of direct reference.
+/-- @cite{almog-2014}'s three independent mechanisms of direct reference,
+represented as a three-dimensional Boolean profile.
 
-Each mechanism is a distinct *way* that an expression can refer directly:
+Each dimension is a distinct *way* that an expression can refer:
 - `designation`: The expression rigidly designates its referent (Kripke)
 - `singularProp`: The content is a structured singular proposition (Kaplan)
 - `referentialUse`: The speaker uses the expression to pick out a particular
-  individual, regardless of the expression's descriptive content (Donnellan) -/
-inductive RefMechanism where
-  | designation
-  | singularProp
-  | referentialUse
+  individual, regardless of the expression's descriptive content (Donnellan)
+
+The three dimensions are logically independent: any of the 2³ = 8 combinations
+is coherent, and @cite{almog-2014} argues each is linguistically attested. -/
+structure ReferentialProfile where
+  /-- Kripke: the expression rigidly designates its referent -/
+  designation : Bool
+  /-- Kaplan: the content is a structured ⟨individual, property⟩ pair -/
+  singularProp : Bool
+  /-- Donnellan: the speaker has a cognitive fix on a particular individual -/
+  referentialUse : Bool
   deriving DecidableEq, BEq, Repr
 
-/-- A referring expression bundles a character with the mechanism(s) it exhibits. -/
+/-- A referring expression bundles a character with its referential profile. -/
 structure ReferringExpression (C : Type*) (W : Type*) (E : Type*) where
   /-- The expression's character (linguistic meaning) -/
   character : Character C W E
-  /-- Which direct-reference mechanism(s) the expression exhibits -/
-  mechanisms : List RefMechanism
+  /-- Which direct-reference mechanisms the expression exhibits -/
+  profile : ReferentialProfile
 
 /-! ## Direct Reference Properties -/
 
@@ -98,7 +106,7 @@ function returning e). This is the paradigm case of direct reference
 via the designation mechanism. -/
 def properName {C W E : Type*} (e : E) : ReferringExpression C W E :=
   { character := λ _ => rigid e
-  , mechanisms := [.designation, .singularProp] }
+  , profile := ⟨true, true, false⟩ }
 
 /-- Proper names have constant character. -/
 theorem properName_constantCharacter {C W E : Type*} (e : E) :
@@ -123,18 +131,18 @@ Cf. @cite{kripke-1980}: "one meter" is de facto rigid (happens to pick out the
 same length at every world) but not de jure rigid (its character involves
 a description). -/
 def IsDeJureRigid {C W E : Type*} (expr : ReferringExpression C W E) : Prop :=
-  .designation ∈ expr.mechanisms ∧ isDirectlyReferential expr.character
+  expr.profile.designation = true ∧ isDirectlyReferential expr.character
 
 /-- De facto rigidity: the expression happens to have rigid content at
 the actual context, but not by mechanism. "The smallest prime" is de facto
 rigid (it's 2 at every world) but its character is descriptive. -/
 def IsDeFactoRigid {C W E : Type*} (expr : ReferringExpression C W E) (c : C) : Prop :=
-  IsRigid (expr.character c) ∧ .designation ∉ expr.mechanisms
+  IsRigid (expr.character c) ∧ expr.profile.designation = false
 
 /-- Proper names are de jure rigid. -/
 theorem properName_deJureRigid {C W E : Type*} (e : E) :
     IsDeJureRigid (properName (C := C) (W := W) e) :=
-  ⟨List.Mem.head _, properName_isDirectlyReferential e⟩
+  ⟨rfl, properName_isDirectlyReferential e⟩
 
 /-- Two proper names that co-refer are co-extensional (Kripke's argument).
 

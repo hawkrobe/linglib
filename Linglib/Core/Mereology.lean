@@ -97,6 +97,17 @@ theorem subset_algClosure {α : Type*} [SemilatticeSup α]
     AlgClosure P x :=
   AlgClosure.base h
 
+/-- Closure of a cumulative predicate is itself: *P = P when CUM(P).
+    Mass nouns and bare plurals are already cumulative, so
+    closure is a no-op — the key to Krifka's absorption rule ⊔⊔S = ⊔S. -/
+theorem algClosure_of_cum {α : Type*} [SemilatticeSup α]
+    {P : α → Prop} (hCUM : CUM P) {x : α} :
+    AlgClosure P x ↔ P x :=
+  ⟨fun h => by induction h with
+    | base h => exact h
+    | sum _ _ ihx ihy => exact hCUM _ _ ihx ihy,
+   fun h => AlgClosure.base h⟩
+
 /-- QUA predicates cannot be cumulative (for predicates with ≥ 2 elements).
     @cite{champollion-2017} §2.3.5: QUA and CUM are incompatible for non-singletons. -/
 theorem qua_cum_incompatible {α : Type*} [SemilatticeSup α]

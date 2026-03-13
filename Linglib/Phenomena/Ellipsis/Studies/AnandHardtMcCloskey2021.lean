@@ -1,6 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Theories.Syntax.Minimalism.Formal.Sluicing.FormalMatching
+import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
 
 /-!
 # @cite{anand-hardt-mccloskey-2021} — Corpus Data
@@ -383,5 +384,36 @@ theorem sprouting_is_default :
     (merger, entity). -/
 theorem why_dominates :
     scss.whyCount > scss.totalSluices / 2 := by native_decide
+
+-- ============================================================================
+-- § 8: Merchant's Deletion Domain Predictions (@cite{merchant-2013})
+-- ============================================================================
+
+-- Merchant's [E]-feature theory provides a complementary explanation for
+-- the corpus findings. The SIC (§ 7) explains voice mismatch blocking
+-- via structural identity within the argument domain; Merchant's deletion
+-- domain analysis explains it via the position of [E]: sluicing has C[E],
+-- so everything below C (including Voice and v) is inside the deletion domain.
+
+/-- Merchant's deletion domain theory converges with the corpus: sluicing
+    (C[E]) predicts both voice and transitivity mismatches are blocked,
+    and the SCSS finds exactly 0 attestations of each.
+
+    This is a convergent prediction with the SIC (§ 7.2): both the SIC
+    (structural identity within the argument domain) and the deletion
+    domain analysis ([E] on C → Voice inside TP) independently predict
+    that voice and argument structure mismatches are blocked in sluicing. -/
+theorem merchant_deletion_domain_matches_corpus :
+    -- Merchant predicts: voice mismatches blocked under sluicing
+    Minimalism.Ellipsis.canMismatch Minimalism.Ellipsis.sluicing
+      Minimalism.Ellipsis.voiceMismatch = false ∧
+    -- Corpus confirms: 0 voice mismatches
+    MismatchDimension.corpusCount .voice = 0 ∧
+    -- Merchant predicts: transitivity mismatches blocked under sluicing
+    Minimalism.Ellipsis.canMismatch Minimalism.Ellipsis.sluicing
+      Minimalism.Ellipsis.transitivityMismatch = false ∧
+    -- Corpus confirms: 0 argument structure mismatches
+    MismatchDimension.corpusCount .argumentStructure = 0 :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021

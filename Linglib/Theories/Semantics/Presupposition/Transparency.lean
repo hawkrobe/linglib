@@ -28,6 +28,10 @@ The Transparency proofs rely on Middle Kleene truth tables:
 
 This asymmetry is what makes `∃xT(x) ∧ P(x̲)` felicitous (Transparency
 holds) while `P(x̲) ∧ ∃xT(x)` is infelicitous (Transparency fails).
+
+## Assignment types
+
+`PartialAssign` and `PluralAssign` are defined in `Core.Assignment`.
 -/
 
 namespace Semantics.Presupposition.Transparency
@@ -36,49 +40,6 @@ open Core
 open Core.Duality
 
 universe u
-
--- ════════════════════════════════════════════════════════════════
--- Partial Assignments
--- ════════════════════════════════════════════════════════════════
-
-/-- Partial assignment: variables may be undefined (`none`).
-
-    In @cite{spector-2025}'s system, `g(x) = #` means variable `x`
-    is not valued by assignment `g`. This is the source of
-    undefinedness in the trivalent semantics. -/
-abbrev PartialAssign (D : Type u) := Nat → Option D
-
-namespace PartialAssign
-
-variable {D : Type u}
-
-/-- A partial assignment that values no variables. -/
-def empty : PartialAssign D := λ _ => none
-
-/-- Update a partial assignment at index `n`. -/
-def update (g : PartialAssign D) (n : Nat) (d : D) : PartialAssign D :=
-  λ m => if m = n then some d else g m
-
-/-- Whether variable `n` is valued by `g`. -/
-def valued (g : PartialAssign D) (n : Nat) : Bool :=
-  (g n).isSome
-
-/-- The `U(x)` predicate: `x` is valued.
-    @cite{spector-2025} §2.2.2: `⟦U(x)⟧^{w,g} = 1` if `g(x) ≠ #`,
-    `0` if `g(x) = #`. Bivalent (never undefined). -/
-def isValued (g : PartialAssign D) (n : Nat) : Bool :=
-  g.valued n
-
-@[simp] theorem valued_update_at (g : PartialAssign D) (n : Nat) (d : D) :
-    (g.update n d).valued n = true := by simp [update, valued]
-
-@[simp] theorem valued_update_ne (g : PartialAssign D) {n m : Nat} (d : D)
-    (h : m ≠ n) : (g.update n d).valued m = g.valued m := by
-  simp [update, valued, h]
-
-theorem valued_empty (n : Nat) : (empty (D := D)).valued n = false := rfl
-
-end PartialAssign
 
 -- ════════════════════════════════════════════════════════════════
 -- Contexts and Transparency

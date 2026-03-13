@@ -18,8 +18,8 @@ temporal connectives, focusing on:
   'until') requires indicative. This mood distinction tracks veridicality.
 - *Mexri* requires imperfective/stative main clause; *prin* has no aspect
   restriction. This mirrors Karttunen's durative selectional restriction.
-- Expletive negation (EN) in *before*-clauses is attested in 50/70
-  languages. EN is NOT attested in *after*-clauses.
+- Expletive negation (EN) in *before*-clauses is attested in 50 of 74
+  EN-attesting languages (722 surveyed). EN is NOT attested in *after*-clauses.
 - Italian: *prima che non* (before + EN), *finché non* (until + EN).
   French: *avant que ne* (before + EN).
 
@@ -408,28 +408,39 @@ theorem en_iff_ambidirectional :
 -- ============================================================================
 
 /-- Cross-linguistic survey data on EN prevalence.
-    @cite{jin-koenig-2021} surveyed 70 languages; 50 have EN in
-    *before*-clauses. This makes EN the norm, not the exception. -/
+    @cite{jin-koenig-2021} surveyed 722 languages; EN was attested in 74
+    (across 37 genera, every continental area except South America).
+    BEFORE (UNTIL) is the most widespread trigger, attested in 50 of
+    the 74 EN-attesting languages. -/
 structure ENSurvey where
   /-- Total languages surveyed -/
-  totalLanguages : Nat
-  /-- Languages with EN in before-clauses -/
-  withEN : Nat
-  /-- Languages without EN in before-clauses -/
-  withoutEN : Nat
+  totalSurveyed : Nat
+  /-- Languages where EN was attested (any trigger) -/
+  languagesWithEN : Nat
+  /-- Languages with EN in BEFORE-clauses specifically -/
+  beforeTriggerCount : Nat
+  /-- Languages with EN in FEAR-clauses specifically -/
+  fearTriggerCount : Nat
   deriving Repr
 
 def jinKoenig2021 : ENSurvey where
-  totalLanguages := 70
-  withEN := 50
-  withoutEN := 20
+  totalSurveyed := 722
+  languagesWithEN := 74
+  beforeTriggerCount := 50
+  fearTriggerCount := 39
 
-theorem en_majority :
-    jinKoenig2021.withEN > jinKoenig2021.withoutEN :=
+/-- EN is attested in a substantial minority of surveyed languages. -/
+theorem en_attested_widely :
+    jinKoenig2021.languagesWithEN ≥ 74 := by decide
+
+/-- BEFORE is the most common EN trigger. -/
+theorem before_most_common :
+    jinKoenig2021.beforeTriggerCount > jinKoenig2021.fearTriggerCount :=
   by decide
 
-theorem en_survey_consistent :
-    jinKoenig2021.withEN + jinKoenig2021.withoutEN = jinKoenig2021.totalLanguages :=
-  rfl
+/-- BEFORE triggers occur in most EN-attesting languages. -/
+theorem before_trigger_majority :
+    jinKoenig2021.beforeTriggerCount * 2 > jinKoenig2021.languagesWithEN :=
+  by decide
 
 end Phenomena.TemporalConnectives.NegationData

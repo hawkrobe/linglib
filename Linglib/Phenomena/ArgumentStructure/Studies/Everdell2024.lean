@@ -700,65 +700,22 @@ theorem refined_agrees_on_nonexceptional (v : OdamVerb)
   · rfl
 
 -- ════════════════════════════════════════════════════
--- § 15. Krejci's Causativizability Hierarchy (Table 5.4)
+-- § 15. Connection to Krejci's Causativizability Hierarchy
 -- ════════════════════════════════════════════════════
 
 /-! @cite{krejci-2012} proposes a hierarchy of causativizability:
 
-    unaccusatives > middles/ingestives > unergatives > simple transitives
+        unaccusatives > middles/ingestives > unergatives > simple transitives
 
     O'dam's exceptional transitives are exactly middles and ingestives —
     the verb classes that cross-linguistically pattern with intransitives
     in causativization. This explains why O'dam applicatives (which are
     syncretic with causatives) treat them as intransitive:
     causative-applicative syncretism + the causativizability hierarchy
-    predicts the exceptional transitive class. -/
+    predicts the exceptional transitive class.
 
-/-- Cross-linguistic data on causativizability from Krejci 2012 Table 5.4. -/
-structure CausativizabilityData where
-  language : String
-  morpheme : String
-  unaccusative : Bool
-  middlesIngestive : Bool := false
-  unergative : Bool := false
-  simpleTransitive : Bool := false
-  deriving Repr, BEq
-
-def krejciLanguages : List CausativizabilityData :=
-  [ { language := "Slave",            morpheme := "-h-",    unaccusative := true }
-  , { language := "Mapudungun",       morpheme := "-'ɨm",   unaccusative := true }
-  , { language := "Classical Nahuatl", morpheme := "-tia",  unaccusative := true }
-  , { language := "Cora",             morpheme := "-te",    unaccusative := true
-    , middlesIngestive := true }
-  , { language := "Marathi",          morpheme := "-aw",    unaccusative := true
-    , middlesIngestive := true }
-  , { language := "Amharic",          morpheme := "a-",     unaccusative := true
-    , middlesIngestive := true }
-  , { language := "Ahtna",            morpheme := "-ɬ-",    unaccusative := true
-    , middlesIngestive := true, unergative := true }
-  , { language := "Tariana",          morpheme := "-i-ta",  unaccusative := true
-    , middlesIngestive := true, unergative := true }
-  , { language := "Malayalam",        morpheme := "-icc",   unaccusative := true
-    , middlesIngestive := true, unergative := true }
-  , { language := "Basque",           morpheme := "-arazi", unaccusative := true
-    , middlesIngestive := true, unergative := true, simpleTransitive := true }
-  , { language := "Dulong/Rawang",    morpheme := "-shv",   unaccusative := true
-    , middlesIngestive := true, unergative := true, simpleTransitive := true }
-  , { language := "Koyukon",          morpheme := "-ɬ-",    unaccusative := true
-    , middlesIngestive := true, unergative := true, simpleTransitive := true }
-  ]
-
-/-- The hierarchy is implicational: if a morpheme causativizes a
-    higher verb class, it also causativizes all lower classes.
-    This validates the total ordering. -/
-def respectsHierarchy (d : CausativizabilityData) : Bool :=
-  -- simpleTransitive → unergative → middlesIngestive → unaccusative
-  (!d.simpleTransitive || d.unergative) &&
-  (!d.unergative || d.middlesIngestive) &&
-  (!d.middlesIngestive || d.unaccusative)
-
-theorem krejci_hierarchy_holds :
-    krejciLanguages.all respectsHierarchy = true := by native_decide
+    The hierarchy data and implicational validation are formalized in
+    `Semantics.Causation.MorphologicalCausation` (§11). -/
 
 -- ════════════════════════════════════════════════════
 -- § 16. Bridge to Pylkkänen 2008 (High/Low Typology)

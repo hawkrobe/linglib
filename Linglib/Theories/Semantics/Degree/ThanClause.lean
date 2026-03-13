@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Degree.Core
 
 /-!
@@ -79,6 +79,18 @@ inductive ThanClauseType where
 theorem phrasal_clausal_equivalence {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (b : Entity) :
     thanClauseMax μ b = μ b :=
+  rfl
+
+-- ════════════════════════════════════════════════════
+-- § 4. Bridge to Extent Functions
+-- ════════════════════════════════════════════════════
+
+/-- The than-clause denotation is the positive extent of the standard
+    entity — the same algebraic object that Kennedy calls "degree set"
+    and Schwarzschild calls "positive interval". -/
+theorem thanClause_eq_posExt {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (b : Entity) :
+    thanClauseDenotation μ b = Core.Scale.posExt μ b :=
   rfl
 
 end Semantics.Degree.ThanClause

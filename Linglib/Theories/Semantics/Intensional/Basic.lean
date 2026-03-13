@@ -69,55 +69,35 @@ instance (m : IntensionalModel) : DecidableEq m.World := m.worldDecEq
 
 -- Intensions
 
-/--
-An intension is a function from possible worlds to extensions.
+/-- An intension is a function from possible worlds to extensions.
 
-For type τ, an intension maps each world to a value of type ⟦τ⟧.
--/
-def Intension (m : IntensionalModel) (τ : Ty) : Type :=
-  m.World → m.base.interpTy τ
+    Unified with `Core.Intension` — this is `m.World → m.base.interpTy τ`. -/
+abbrev Intension (m : IntensionalModel) (τ : Ty) : Type :=
+  Core.Intension m.World (m.base.interpTy τ)
 
-/-- A proposition is an intension of type t (World → Bool) -/
-def Proposition (m : IntensionalModel) : Type := m.World → Bool
+/-- A proposition is an intension of type t (`BProp m.World`). -/
+abbrev Proposition (m : IntensionalModel) : Type := BProp m.World
 
-/-- Semantics.Intensional.Proposition equals Core.Proposition.BProp. -/
-theorem proposition_eq_bprop (m : IntensionalModel) :
-    Proposition m = Core.Proposition.BProp m.World := rfl
+/-- A property intension: `Core.Intension m.World (Entity → Bool)`. -/
+abbrev PropertyIntension (m : IntensionalModel) : Type :=
+  Core.Intension m.World (m.base.Entity → Bool)
 
-/-- Semantics.Intensional.Intension.t equals Core.Intension.Intension W Bool. -/
-theorem intension_t_eq_core (m : IntensionalModel) :
-    Intension m .t = Core.Intension.Intension m.World Bool := rfl
+/-- A relation intension: `Core.Intension m.World (Entity → Entity → Bool)`. -/
+abbrev RelationIntension (m : IntensionalModel) : Type :=
+  Core.Intension m.World (m.base.Entity → m.base.Entity → Bool)
 
-/-- A property intension: World → (Entity → Bool) -/
-def PropertyIntension (m : IntensionalModel) : Type :=
-  m.World → (m.base.Entity → Bool)
-
-/-- A relation intension: World → (Entity → Entity → Bool) -/
-def RelationIntension (m : IntensionalModel) : Type :=
-  m.World → (m.base.Entity → m.base.Entity → Bool)
-
--- Intensional Interpretation of Types
-
-/--
-Full intensional type interpretation (Gallin's IL).
-
-Every type gets lifted to an intension:
-- ⟦e⟧ = World → Entity (individual concepts)
-- ⟦t⟧ = World → Bool (propositions)
-- ⟦σ → τ⟧ = World → (⟦σ⟧_ext → ⟦τ⟧_ext) (intensions of functions)
-
-Note: We use the simpler approach where function arguments are extensional
-at each world, following standard practice for RSA applications.
--/
-def IntensionalModel.interpTyIntensional (m : IntensionalModel) (τ : Ty) : Type :=
-  m.World → m.base.interpTy τ
+/-- Full intensional type interpretation (@cite{gallin-1975}).
+    Equivalent to `Intension m τ`. -/
+abbrev IntensionalModel.interpTyIntensional (m : IntensionalModel) (τ : Ty) : Type :=
+  Intension m τ
 
 -- Evaluation
 
-/-- Evaluate an intension at a world to get its extension -/
+/-- Evaluate an intension at a world to get its extension.
+    Delegates to `Core.Intension.evalAt`. -/
 def evalAt {m : IntensionalModel} {τ : Ty} (meaning : Intension m τ) (w : m.World)
     : m.base.interpTy τ :=
-  meaning w
+  Core.Intension.evalAt meaning w
 
 /-- Evaluate a proposition at a world -/
 def Proposition.evalAt {m : IntensionalModel} (p : Proposition m) (w : m.World) : Bool :=
@@ -157,17 +137,12 @@ def IntensionalDerivation.trueAt {m : IntensionalModel}
 
 -- Lifting Extensional to Intensional
 
-/--
-Lift a constant extension to an intension (rigid designator).
-
-For entities like proper names, the extension doesn't vary by world.
--/
+/-- Lift a constant extension to an intension (rigid designator).
+    Delegates to `Core.Intension.rigid`. -/
 def rigid {m : IntensionalModel} {τ : Ty} (ext : m.base.interpTy τ) : Intension m τ :=
-  λ _ => ext
+  Core.Intension.rigid ext
 
-/--
-Create a world-varying intension from a function.
--/
+/-- Create a world-varying intension from a function. -/
 def varying {m : IntensionalModel} {τ : Ty}
     (f : m.World → m.base.interpTy τ) : Intension m τ := f
 

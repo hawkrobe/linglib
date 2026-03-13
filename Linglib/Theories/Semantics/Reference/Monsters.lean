@@ -30,7 +30,8 @@ are languages where attitude verbs push non-identity shifts (e.g.,
 namespace Semantics.Reference.Monsters
 
 open Core.Context
-open Core.Intension (Intension IsRigid)
+open Core (Intension)
+open Core.Intension (IsRigid)
 
 -- ════════════════════════════════════════════════════════════════
 -- § Tower Monster

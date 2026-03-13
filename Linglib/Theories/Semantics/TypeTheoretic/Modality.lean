@@ -977,7 +977,7 @@ which is exactly what an intension does across worlds. -/
 /-- A ModalSystem induces an intension for each type: the function
 mapping each possibility to the type's extension at that possibility. -/
 def modalSystem_induces_intension {Ty Obj : Type} (ms : ModalSystem Ty Obj)
-    (T : Ty) : Core.Intension.Intension ms.Poss (Obj → Prop) :=
+    (T : Ty) : Core.Intension ms.Poss (Obj → Prop) :=
   λ p => ms.ext p T
 
 /-- A type is rigid in a modal system iff its extension is constant

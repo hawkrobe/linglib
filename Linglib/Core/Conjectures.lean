@@ -17,7 +17,8 @@ import Mathlib.Data.Rat.Defs
 namespace Core.Conjectures
 
 open Core.ModalLogic (AgentAccessRel)
-open Core.Intension (Intension IsRigid)
+open Core (Intension)
+open Core.Intension (IsRigid)
 
 /-! ## BToM ↔ Intensional Logic Correspondence
 
@@ -122,7 +123,7 @@ The three mechanisms of direct reference (designation, singular proposition,
 referential use) are empirically independent: natural language supplies
 expressions exercising every non-empty subset.
 
-See `Semantics.Reference.Almog2014.IndependenceWitness` for
+See `Semantics.Reference.Almog2014.designation_indep_singularProp` etc. for
 the formal content. -/
 
 /-- Almog's independence thesis: for any two of the three mechanisms,

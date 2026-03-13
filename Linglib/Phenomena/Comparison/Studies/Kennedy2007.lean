@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Comparison.Comparative.Data
 import Linglib.Phenomena.Comparison.Comparative.Differential
-import Linglib.Theories.Semantics.Degree.Frameworks.Kennedy
+import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Core.Scales.Scale
 
@@ -29,24 +29,11 @@ comparative construction data in `Phenomena/Comparison/Comparative/`.
 
 namespace Phenomena.Comparison.Comparative.KennedyBridge
 
-open Semantics.Degree.Frameworks.Kennedy
+open Semantics.Degree
 open Core.Scale (Boundedness)
 
 -- ════════════════════════════════════════════════════
--- § 1. Kennedy Comparative = Direct Measure Comparison
--- ════════════════════════════════════════════════════
-
-/-- Kennedy's comparative "A is taller than B" reduces to μ(A) > μ(B).
-    This is definitionally equal to the framework-independent
-    `comparativeSem` at positive direction. -/
-theorem kennedy_is_comparativeSem {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
-    kennedyComparative μ a b ↔
-      Semantics.Degree.Comparative.comparativeSem μ a b .positive :=
-  Iff.rfl
-
--- ════════════════════════════════════════════════════
--- § 2. Interpretive Economy Predictions
+-- § 1. Interpretive Economy Predictions
 -- ════════════════════════════════════════════════════
 
 /-- Open-scale adjectives (Class A) use contextual standards. -/

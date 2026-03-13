@@ -26,7 +26,8 @@ and **mediation** (direct/indirect).
 ## Semantic Prototypes (Table 25)
 
 @cite{hafeez-2025} identifies hypothesized semantic prototypes for 5 of
-the 7 constructions via acceptability rating peaks (>50% ceiling):
+the 7 constructions via acceptability rating peaks (>50% ceiling).
+Prototypes use both positive ([+F]) and negative ([-F]) features:
 
 - **LEX-ERG**: [+IHCr, +InanCEAF] — prototypical direct causation
 - **LEX-INST**: [-IHCr, +InanCEAF] — accidental causer acting on object
@@ -47,7 +48,8 @@ The discourse production study confirms key patterns:
 
 - Each construction is typed as `CausativeConstruction` from
   `Theories/Semantics/Causation/MorphologicalCausation.lean`
-- `prototype` field encodes Table 25 semantic prototypes
+- `prototype` field encodes Table 25 semantic prototypes using
+  `presentCausers`/`absentCausers`/`presentCausees`/`absentCausees`
 - Per-datum verification theorems check complexity, mediation,
   and restriction properties
 - Key empirical generalizations are encoded as theorems
@@ -70,7 +72,7 @@ structure ConstructionEntry where
 
 /-- Lexical Ergative (LEX-ERG): transitive/causative verb with ergative
     case on the causer NP in perfective aspect.
-    Prototype: intentional causer + inanimate affectee.
+    Prototype: [+IHCr, +InanCEAF] — prototypical direct causation.
     This is Hopper & Thompson's (1980) prototypical transitive clause. -/
 def lexErg : ConstructionEntry :=
   { construction :=
@@ -79,14 +81,17 @@ def lexErg : ConstructionEntry :=
         causerRestriction := none
         causeeRestriction := none }
     prototype :=
-      { causerFeatures := [.intentionalHuman]
-        causeeFeatures := [.inanimate]
+      { presentCausers := [.intentionalHuman]
+        absentCausers := []
+        presentCausees := [.inanimate]
+        absentCausees := []
         requiresMediation := some false } }
 
 /-- Lexical Instrumental (LEX-INST): intransitive verb with instrumental
     case on the causer NP. The causer appears as an adjunct rather than
     a core argument.
-    Prototype: non-intentional causer + inanimate affectee. -/
+    Prototype: [-IHCr, +InanCEAF] — non-intentional causer acting on
+    inanimate affectee. -/
 def lexInst : ConstructionEntry :=
   { construction :=
       { complexity := .lexical
@@ -94,8 +99,10 @@ def lexInst : ConstructionEntry :=
         causerRestriction := none
         causeeRestriction := none }
     prototype :=
-      { causerFeatures := [.accidentalHuman, .naturalForce]
-        causeeFeatures := [.inanimate]
+      { presentCausers := []
+        absentCausers := [.intentionalHuman]
+        presentCausees := [.inanimate]
+        absentCausees := []
         requiresMediation := some false } }
 
 /-- Lexical Dative (LEX-DAT): causative verb with dative case on the
@@ -110,15 +117,17 @@ def lexDat : ConstructionEntry :=
         causerRestriction := none
         causeeRestriction := none }
     prototype :=
-      { causerFeatures := []
-        causeeFeatures := []
+      { presentCausers := []
+        absentCausers := []
+        presentCausees := []
+        absentCausees := []
         requiresMediation := none } }
 
 /-- Morphological Causative Verb (MCV): productive -aa suffix.
     Always involves mediation — the causer instructs a causee who
     performs the action.
-    Prototype: intentional causer + mediation + controlling causee
-    (causation by command/communication). -/
+    Prototype: [+Mediation, +IHCr, +ContrHCEAF] — causation by
+    command/communication. -/
 def mcv : ConstructionEntry :=
   { construction :=
       { complexity := .morphological
@@ -126,13 +135,15 @@ def mcv : ConstructionEntry :=
         causerRestriction := none
         causeeRestriction := none }
     prototype :=
-      { causerFeatures := [.intentionalHuman]
-        causeeFeatures := [.controllingHuman]
+      { presentCausers := [.intentionalHuman]
+        absentCausers := []
+        presentCausees := [.controllingHuman]
+        absentCausees := []
         requiresMediation := some true } }
 
 /-- Adverbial Causative (ADV): two clauses connected by *keyoonkeh*
     'because' or *itni...keh* 'so...that'.
-    Prototype: inanimate affectee (weak prototype, broad acceptability). -/
+    Prototype: [+InanCEAF] — weak prototype, broad acceptability. -/
 def adv : ConstructionEntry :=
   { construction :=
       { complexity := .periphrastic
@@ -140,15 +151,16 @@ def adv : ConstructionEntry :=
         causerRestriction := none
         causeeRestriction := none }
     prototype :=
-      { causerFeatures := []
-        causeeFeatures := [.inanimate]
+      { presentCausers := []
+        absentCausers := []
+        presentCausees := [.inanimate]
+        absentCausees := []
         requiresMediation := none } }
 
 /-- Non-sentential Cause Adjunct (NCA): phrasal cause adjunct marked
     with *wajah=se* 'because of', *par/pe* 'on', or *=se* INST.
     Matrix clause expresses the result; adjunct expresses the cause.
-    Prototype: no inanimate affectee, no natural force causer
-    (human causer + human affectee). -/
+    Prototype: [-InanCEAF, -NFCr] — human causer with human affectee. -/
 def nca : ConstructionEntry :=
   { construction :=
       { complexity := .periphrastic
@@ -156,15 +168,18 @@ def nca : ConstructionEntry :=
         causerRestriction := none
         causeeRestriction := none }
     prototype :=
-      { causerFeatures := [.intentionalHuman, .accidentalHuman]
-        causeeFeatures := [.psychImpactHuman]
+      { presentCausers := []
+        absentCausers := [.naturalForce]
+        presentCausees := []
+        absentCausees := [.inanimate]
         requiresMediation := none } }
 
 /-- Non-sentential Causer Adjunct (NCrA): causer NP as adjunct phrase
     in a matrix clause predicting the result.
     Categorically restricted to natural force causers in
     @cite{hafeez-2025}'s data — human causers never trigger NCrA.
-    Prototype: natural force causer + human affectee (no inanimate). -/
+    Prototype: [-InanCEAF, +NFCr] — natural force causer with human
+    affectee. -/
 def ncrA : ConstructionEntry :=
   { construction :=
       { complexity := .periphrastic
@@ -172,8 +187,10 @@ def ncrA : ConstructionEntry :=
         causerRestriction := some .naturalForce
         causeeRestriction := none }
     prototype :=
-      { causerFeatures := [.naturalForce]
-        causeeFeatures := [.physImpactHuman]
+      { presentCausers := [.naturalForce]
+        absentCausers := []
+        presentCausees := []
+        absentCausees := [.inanimate]
         requiresMediation := none } }
 
 /-- The acceptability study system as a list, from most compact to most
@@ -209,32 +226,55 @@ theorem lexDat_direct : lexDat.construction.mediation = .direct := rfl
 -- § 4. Semantic Prototype Verification
 -- ════════════════════════════════════════════════════
 
-/-- LEX-ERG prototype includes IHCr. -/
+/-- LEX-ERG prototype: [+IHCr]. -/
 theorem lexErg_prototype_ihcr :
-    lexErg.prototype.causerFeatures = [.intentionalHuman] := rfl
+    lexErg.prototype.presentCausers = [.intentionalHuman] := rfl
 
-/-- LEX-ERG prototype includes InanCEAF. -/
+/-- LEX-ERG prototype: [+InanCEAF]. -/
 theorem lexErg_prototype_inan :
-    lexErg.prototype.causeeFeatures = [.inanimate] := rfl
+    lexErg.prototype.presentCausees = [.inanimate] := rfl
+
+/-- LEX-INST prototype: [-IHCr] — excludes intentional causers. -/
+theorem lexInst_prototype_no_ihcr :
+    lexInst.prototype.absentCausers = [.intentionalHuman] := rfl
+
+/-- LEX-INST prototype: [+InanCEAF]. -/
+theorem lexInst_prototype_inan :
+    lexInst.prototype.presentCausees = [.inanimate] := rfl
 
 /-- MCV prototype requires mediation. -/
 theorem mcv_prototype_mediation :
     mcv.prototype.requiresMediation = some true := rfl
 
-/-- MCV prototype includes IHCr + ContrHCEAF. -/
+/-- MCV prototype: [+IHCr, +ContrHCEAF]. -/
 theorem mcv_prototype_command :
-    mcv.prototype.causerFeatures = [.intentionalHuman] ∧
-    mcv.prototype.causeeFeatures = [.controllingHuman] := ⟨rfl, rfl⟩
+    mcv.prototype.presentCausers = [.intentionalHuman] ∧
+    mcv.prototype.presentCausees = [.controllingHuman] := ⟨rfl, rfl⟩
 
-/-- NCrA prototype includes NFCr. -/
+/-- NCrA prototype: [+NFCr]. -/
 theorem ncrA_prototype_nfcr :
-    ncrA.prototype.causerFeatures = [.naturalForce] := rfl
+    ncrA.prototype.presentCausers = [.naturalForce] := rfl
+
+/-- NCrA prototype: [-InanCEAF] — requires human affectee. -/
+theorem ncrA_prototype_no_inan :
+    ncrA.prototype.absentCausees = [.inanimate] := rfl
+
+/-- NCA prototype: [-NFCr, -InanCEAF] — human causer, human affectee. -/
+theorem nca_prototype_human :
+    nca.prototype.absentCausers = [.naturalForce] ∧
+    nca.prototype.absentCausees = [.inanimate] := ⟨rfl, rfl⟩
+
+/-- ADV prototype: [+InanCEAF] (weak). -/
+theorem adv_prototype_inan :
+    adv.prototype.presentCausees = [.inanimate] := rfl
 
 /-- LEX-DAT has no prototype features (default case). -/
 theorem lexDat_no_prototype :
-    lexDat.prototype.causerFeatures = [] ∧
-    lexDat.prototype.causeeFeatures = [] ∧
-    lexDat.prototype.requiresMediation = none := ⟨rfl, rfl, rfl⟩
+    lexDat.prototype.presentCausers = [] ∧
+    lexDat.prototype.absentCausers = [] ∧
+    lexDat.prototype.presentCausees = [] ∧
+    lexDat.prototype.absentCausees = [] ∧
+    lexDat.prototype.requiresMediation = none := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Key Empirical Generalizations
@@ -308,7 +348,7 @@ theorem system_has_both_mediations :
     the prototype requires an intentional causer. -/
 theorem full_agentivity_drives_lexErg :
     CauserType.agentivityDegree .intentionalHuman = .full ∧
-    lexErg.prototype.causerFeatures = [.intentionalHuman] := ⟨rfl, rfl⟩
+    lexErg.prototype.presentCausers = [.intentionalHuman] := ⟨rfl, rfl⟩
 
 /-- Non-agentive causer (NFCr) drives NCrA selection:
     NCrA is categorically restricted to natural force. -/
@@ -320,6 +360,6 @@ theorem nonagentive_drives_ncrA :
     the controlling causee has partial agentivity. -/
 theorem induced_agentivity_drives_mcv :
     CauseeAffecteeType.hasInducedAgentivity .controllingHuman = true ∧
-    mcv.prototype.causeeFeatures = [.controllingHuman] := ⟨rfl, rfl⟩
+    mcv.prototype.presentCausees = [.controllingHuman] := ⟨rfl, rfl⟩
 
 end Fragments.Urdu.CausativeSystem
