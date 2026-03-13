@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.229.189] - 2026-03-12
+
+### Added
+- **Core/Alternation.lean**: Formalize Creissels (2025) valency/voice framework — TRRole (S/A/P/X), nucleativization/denucleativization operations, 12+ voice alternation types (causativization, decausativization, passivization, antipassivization, applicativization, reflexivization, reciprocalization, portative derivation, etc.), alignment typology, voice marker polysemy (Bahrt 2021 data), flexivalency/ambitransitivity, bridge from Levin DiathesisAlternation to ValencyAlternation
+- **ArgumentStructure/Studies/Creissels2025.lean**: Bridge theorems connecting Creissels framework to MorphologicalCausation, VoiceSystem, Applicative; voice stacking (Tswana examples); alignment profiles (Russian, Avar, Basque, Mandinka); Russian -sja and Tswana -el polysemy data
+
+## [0.229.188] - 2026-03-12
+
+### Added
+- **Reference/Studies/Ariel2001.lean**: Add `rigidity` form-function criterion (third of three, was missing); add `criteria_correlate_at_extremes`, `names_rigid_pronouns_not`, `accessibility_prediction_coherent` theorems; fix `attenuation` to differentiate cliticized/agreement/zero (was conflating); expand `givenness_collapses_pronominal_distinctions` to four levels; add Givenness mapping caveat for indefinite statuses; add end-to-end bridge to NextMentionBias
+
+## [0.229.187] - 2026-03-12
+
+### Added
+- **Reference/Studies/Ariel2001.lean**: Formalize Ariel's Accessibility Theory — 18-level accessibility marking scale, form-function criteria (informativity, attenuation), multi-factor accessibility assessment, coarsening to DefinitenessLevel with non-monotonicity proof, PronounStrength bridge, Givenness Hierarchy (Gundel et al. 1993) with monotone coarsening and distinction-collapsing critique
+
 ## [0.229.186] - 2026-03-12
 
 ### Added
