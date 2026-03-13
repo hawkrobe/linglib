@@ -105,55 +105,6 @@ structure FrameDef (Concept : Type) where
 
 
 /-!
-## Example Scenarios for the "bat" and "star" examples
--/
-
-/-- Concept type for bat disambiguation -/
-inductive BatConcept where
-  | animal      -- flying mammal
-  | equipment   -- baseball bat
-  deriving Repr, BEq, DecidableEq
-
-/-- Concept type for star disambiguation -/
-inductive StarConcept where
-  | celestial   -- astronomical object
-  | celebrity   -- famous person
-  deriving Repr, BEq, DecidableEq
-
-/-- WILDLIFE scenario: nature, animals, habitat -/
-def wildlifeScenario : Scenario BatConcept :=
-  { name := "WILDLIFE"
-  , conceptDist := λ
-      | .animal => 95/100
-      | .equipment => 5/100
-  }
-
-/-- SPORTS scenario: games, players, equipment -/
-def sportsScenario : Scenario BatConcept :=
-  { name := "SPORTS"
-  , conceptDist := λ
-      | .animal => 5/100
-      | .equipment => 95/100
-  }
-
-/-- ASTRONOMY scenario: telescopes, observations, celestial objects -/
-def astronomyScenario : Scenario StarConcept :=
-  { name := "ASTRONOMY"
-  , conceptDist := λ
-      | .celestial => 95/100
-      | .celebrity => 5/100
-  }
-
-/-- ENTERTAINMENT scenario: movies, celebrities, awards -/
-def entertainmentScenario : Scenario StarConcept :=
-  { name := "ENTERTAINMENT"
-  , conceptDist := λ
-      | .celestial => 10/100
-      | .celebrity => 90/100
-  }
-
-
-/-!
 ## Scenario Induction from Context
 
 Context words activate scenarios:
@@ -162,6 +113,9 @@ Context words activate scenarios:
 - "cave" activates WILDLIFE/NATURE
 
 This is modeled as P(scenario | context-words).
+
+See `Phenomena.Polysemy.Studies.ErkHerbelot2024` for worked disambiguation
+examples using these types.
 -/
 
 /--
@@ -186,63 +140,6 @@ def inferScenario {S : Type} [BEq S]
   let unnorm s := prior s * likelihood s
   let Z := scenarios.foldl (λ acc s => acc + unnorm s) 0
   λ s => if Z = 0 then 0 else unnorm s / Z
-
-
-/-!
-## Worked Example: Player + Bat
-
-"A player was holding a bat"
-
-### Context Cues
-- "player" → strong evidence for SPORTS scenario
-
-### Scenario Inference
-P(SPORTS | "player") >> P(WILDLIFE | "player")
-
-### Concept Disambiguation
-P(bat=EQUIPMENT | SPORTS) = 0.95
-P(bat=ANIMAL | SPORTS) = 0.05
-
-### Combined
-The SPORTS scenario strongly favors the EQUIPMENT reading.
--/
-
-inductive BatScenario where
-  | sports
-  | wildlife
-  deriving Repr, BEq, DecidableEq
-
-/-- "player" cue: strong evidence for SPORTS -/
-def playerCue : ContextCue BatScenario :=
-  { word := "player"
-  , likelihood := λ
-      | .sports => 95/100
-      | .wildlife => 5/100
-  }
-
-/-- Prior over scenarios (before context) -/
-def batScenarioPrior : BatScenario → ℚ
-  | .sports => 50/100
-  | .wildlife => 50/100
-
-/-- Posterior after seeing "player" -/
-def scenarioPosterior : BatScenario → ℚ :=
-  inferScenario batScenarioPrior [playerCue] [.sports, .wildlife]
-
-/-- Map scenarios to concept distributions -/
-def scenarioConceptDist : BatScenario → (BatConcept → ℚ)
-  | .sports => sportsScenario.conceptDist
-  | .wildlife => wildlifeScenario.conceptDist
-
-/--
-Final concept distribution: marginalize over scenarios.
-
-P(concept | context) = Σ_s P(s | context) × P(concept | s)
--/
-def batConceptDist (cues : List (ContextCue BatScenario)) : BatConcept → ℚ :=
-  let scenPost := inferScenario batScenarioPrior cues [.sports, .wildlife]
-  λ c => [BatScenario.sports, .wildlife].foldl
-    (λ acc s => acc + scenPost s * scenarioConceptDist s c) 0
 
 
 /-!

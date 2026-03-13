@@ -289,4 +289,59 @@ SDS unifies many linguistic phenomena under a common computational pattern:
 All share: **Boolean semantics + parameter uncertainty = soft/graded meanings**
 -/
 
+-- Convenience Structure for Concept Disambiguation
+
+/--
+A disambiguation scenario with selectional and scenario constraints.
+
+This is the standard SDS setup from @cite{erk-herbelot-2024}: an ambiguous word
+in context, with a selectional factor (from the governing predicate) and a
+scenario factor (from the activated frame/script).
+-/
+structure DisambiguationScenario (C : Type) where
+  /-- Name of the ambiguous word -/
+  word : String
+  /-- Context sentence -/
+  context : String
+  /-- Selectional constraint (from predicate) -/
+  selectional : C → ℚ
+  /-- Scenario constraint (from frame/context words) -/
+  scenario : C → ℚ
+  /-- Support (list of concepts) -/
+  concepts : List C
+
+instance {C : Type} : SDSConstraintSystem (DisambiguationScenario C) C where
+  paramSupport s := s.concepts
+  selectionalFactor s c := s.selectional c
+  scenarioFactor s c := s.scenario c
+
+-- Concept Features (@cite{erk-herbelot-2024} §6)
+
+/--
+Concept-associated features, following @cite{mcrae-etal-2005}.
+
+Each concept has features with associated probabilities. For example,
+`BAT-ANIMAL` has features like `flies` (prob 1.0), `is_black` (prob 0.75).
+These features can be projected back into DRS conditions after disambiguation.
+-/
+structure ConceptFeature (Concept Feature : Type*) where
+  /-- P(feature | concept) — probability of feature given concept -/
+  featureProb : Concept → Feature → ℚ
+
+/--
+Project a feature through the posterior over concepts.
+
+Given a posterior distribution over concepts and concept-feature associations,
+compute the posterior probability of a feature:
+
+`P(feature | context) = Σ_c P(feature | c) × P(c | context)`
+
+This is the mechanism by which disambiguation affects truth conditions:
+features inferred from the winning concept become DRS conditions.
+-/
+def ConceptFeature.projectFeature {α Concept Feature : Type*}
+    [SDSConstraintSystem α Concept]
+    (cf : ConceptFeature Concept Feature) (sys : α) (f : Feature) : ℚ :=
+  SDSConstraintSystem.expectation sys (λ c => cf.featureProb c f)
+
 end Semantics.Probabilistic.SDS.Core

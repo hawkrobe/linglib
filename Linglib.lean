@@ -906,6 +906,7 @@ import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
 import Linglib.Phenomena.Polysemy.Data
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
+import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024
 import Linglib.Phenomena.Possession.Typology
 import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.PsychVerbs.Data
@@ -1650,7 +1651,7 @@ import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Theories.Sociolinguistics.SMG
 -- Theories: SDS
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
-import Linglib.Theories.Semantics.Probabilistic.SDS.Examples
+-- SDS/Examples.lean moved to Phenomena/Polysemy/Studies/ErkHerbelot2024.lean
 import Linglib.Theories.Semantics.Probabilistic.SDS.Marginalization
 import Linglib.Theories.Semantics.Probabilistic.SDS.MeasureTheory
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
