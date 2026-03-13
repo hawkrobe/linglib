@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.184] - 2026-03-12
+
+### Added
+- **Presupposition/Transparency.lean**: Formalize Schlenker's Transparency Principle (Schlenker 2007/2008a, Spector 2025) — PartialAssign, Ctx, Sent, Frame, stalnakerUpdate, agreeIn, transparent, noveltyCondition; `transparent_of_presup_true` theorem
+- **Anaphora/Studies/Spector2025.lean**: Formalize Spector 2025 "Trivalence and Transparency" — trivalent predicate semantics with partial assignments; four sorry-free Transparency proofs (forward conjunction, reverse conjunction fails, bathroom, reverse bathroom fails); bathroom truth-condition equivalence (`bathroom_truth_equiv`: trivalent ↔ classical); bridge theorems to DonkeyAnaphora and BathroomSentences data
+- **Core/Logic/Truth3.lean**: Add Middle Kleene connectives (Peters 1979, Beaver & Krahmer 2001) — `meetMiddle`, `joinMiddle` with asymmetric left-undefined absorption; 15 theorems including non-commutativity, left-identity/zero, ofBool agreement, GapPolicy unification via `meet3`/`join3`
+
 ## [0.229.183] - 2026-03-12
 
 ### Added

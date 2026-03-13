@@ -246,6 +246,115 @@ theorem metaAssert_of_defined (v : Truth3) (h : v.isDefined = Bool.true) : metaA
   cases v with | true => rfl | false => rfl | indet => simp [isDefined] at h
 
 -- ════════════════════════════════════════════════════════════════
+-- Middle Kleene Connectives
+-- @cite{peters-1979} @cite{beaver-krahmer-2001} @cite{spector-2025}
+-- ════════════════════════════════════════════════════════════════
+
+/-- Middle Kleene conjunction: left-undefined absorbs; left-defined
+    follows Strong Kleene. **Asymmetric**: `false ∧ # = false` but
+    `# ∧ false = #`.
+
+    This captures left-to-right evaluation for conjunction
+    (@cite{peters-1979}, @cite{beaver-krahmer-2001}, @cite{spector-2025}):
+    if the first conjunct is undefined, the result is undefined regardless
+    of the second. If the first conjunct is defined, Strong Kleene applies.
+
+    | meetMiddle | true  | false | indet |
+    |------------|-------|-------|-------|
+    | true       | true  | false | indet |
+    | false      | false | false | false |
+    | indet      | indet | indet | indet | -/
+def meetMiddle : Truth3 → Truth3 → Truth3
+  | .indet, _ => .indet
+  | a, b => meet a b
+
+/-- Middle Kleene disjunction: left-undefined absorbs; left-defined
+    follows Strong Kleene. **Asymmetric**: `true ∨ # = true` but
+    `# ∨ true = #`.
+
+    This captures left-to-right presupposition filtering
+    (@cite{peters-1979}): if the first disjunct is defined, its
+    truth value can settle the result even when the second is
+    undefined. But if the first is undefined, the whole disjunction
+    is undefined regardless of the second.
+
+    | joinMiddle | true  | false | indet |
+    |------------|-------|-------|-------|
+    | true       | true  | true  | true  |
+    | false      | true  | false | indet |
+    | indet      | indet | indet | indet | -/
+def joinMiddle : Truth3 → Truth3 → Truth3
+  | .indet, _ => .indet
+  | a, b => join a b
+
+/-- Middle Kleene conjunction is NOT commutative.
+    `meetMiddle false indet = false` but `meetMiddle indet false = indet`. -/
+theorem meetMiddle_not_comm : ¬ ∀ a b : Truth3, meetMiddle a b = meetMiddle b a := by
+  intro h; have := h .false .indet; simp [meetMiddle, meet] at this
+
+/-- When the left operand is defined, Middle Kleene conjunction
+    equals Strong Kleene conjunction. -/
+theorem meetMiddle_eq_meet_of_left_defined (a b : Truth3) (h : a.isDefined = Bool.true) :
+    meetMiddle a b = meet a b := by
+  cases a with | true => rfl | false => rfl | indet => simp [isDefined] at h
+
+/-- Middle Kleene disjunction is NOT commutative.
+    `joinMiddle true indet = true` but `joinMiddle indet true = indet`. -/
+theorem joinMiddle_not_comm : ¬ ∀ a b : Truth3, joinMiddle a b = joinMiddle b a := by
+  intro h; have := h .true .indet; simp [joinMiddle, join] at this
+
+/-- Left-undefined absorbs Middle Kleene conjunction. -/
+theorem meetMiddle_indet_left (a : Truth3) : meetMiddle .indet a = .indet := rfl
+
+/-- Left-undefined absorbs Middle Kleene disjunction. -/
+theorem joinMiddle_indet_left (a : Truth3) : joinMiddle .indet a = .indet := rfl
+
+/-- `true` is left identity for Middle Kleene conjunction:
+    `true ∧ ψ = ψ`. When the first conjunct is true, the result
+    is just the second conjunct. -/
+theorem meetMiddle_true_left (a : Truth3) : meetMiddle .true a = a := by cases a <;> rfl
+
+/-- `false` is left zero for Middle Kleene conjunction:
+    `false ∧ ψ = false` for all `ψ`. This is the key asymmetry vs
+    Weak Kleene: `meetMiddle false indet = false` (defined operand
+    absorbs via Strong Kleene) whereas `meetWeak false indet = indet`. -/
+theorem meetMiddle_false_left (a : Truth3) : meetMiddle .false a = .false := by
+  cases a <;> rfl
+
+/-- `false` is left identity for Middle Kleene disjunction:
+    `false ∨ ψ = ψ`. When the first disjunct is false, the result
+    is just the second disjunct. -/
+theorem joinMiddle_false_left (a : Truth3) : joinMiddle .false a = a := by cases a <;> rfl
+
+/-- Middle Kleene conjunction agrees with Bool on defined inputs. -/
+theorem meetMiddle_ofBool (a b : Bool) :
+    meetMiddle (ofBool a) (ofBool b) = ofBool (a && b) := by
+  cases a <;> cases b <;> rfl
+
+/-- Middle Kleene disjunction agrees with Bool on defined inputs. -/
+theorem joinMiddle_ofBool (a b : Bool) :
+    joinMiddle (ofBool a) (ofBool b) = ofBool (a || b) := by
+  cases a <;> cases b <;> rfl
+
+/-- When the left operand is defined, Middle Kleene disjunction
+    equals Strong Kleene disjunction. -/
+theorem joinMiddle_eq_join_of_left_defined (a b : Truth3) (h : a.isDefined = Bool.true) :
+    joinMiddle a b = join a b := by
+  cases a with | true => rfl | false => rfl | indet => simp [isDefined] at h
+
+/-- Weak Kleene refines Middle Kleene disjunction: when Weak Kleene
+    gives a defined answer, Middle Kleene agrees. -/
+theorem weak_refines_middle_join (a b : Truth3) (h : joinWeak a b ≠ .indet) :
+    joinMiddle a b = joinWeak a b := by
+  cases a <;> cases b <;> simp_all [joinMiddle, joinWeak, join]
+
+/-- Middle Kleene refines Strong Kleene disjunction: when Middle
+    Kleene gives a defined answer, Strong Kleene agrees. -/
+theorem middle_refines_strong_join (a b : Truth3) (h : joinMiddle a b ≠ .indet) :
+    join a b = joinMiddle a b := by
+  cases a <;> cases b <;> simp_all [joinMiddle, join]
+
+-- ════════════════════════════════════════════════════════════════
 -- Belnap Conditional Assertion Connectives
 -- @cite{belnap-1970}
 -- ════════════════════════════════════════════════════════════════
@@ -319,21 +428,26 @@ theorem joinBelnap_ofBool (a b : Bool) :
 
 /-- How undefined/gap values behave under logical connectives.
 
-    Three truth-functional systems for three-valued logic:
+    Four truth-functional systems for three-valued logic:
     - **Strong Kleene**: gap propagates unless the defined operand
       forces the result (false ∧ _ = false, true ∨ _ = true)
+    - **Middle Kleene**: left-gap absorbs; left-defined uses Strong
+      Kleene. Both conjunction and disjunction are asymmetric.
+      (@cite{peters-1979}, @cite{beaver-krahmer-2001})
     - **Weak Kleene**: gap always propagates (both operands must
       be defined)
     - **Belnap**: gap is skipped (only defined operands contribute;
       gap is the identity element for both ∧ and ∨)
 
-    | Policy | gap ∧ T | gap ∧ F | gap ∨ F | gap ∨ T |
-    |--------|---------|---------|---------|---------|
-    | Strong | gap     | F       | gap     | T       |
-    | Weak   | gap     | gap     | gap     | gap     |
-    | Belnap | **T**   | **F**   | **F**   | **T**   | -/
+    | Policy | gap ∧ T | gap ∧ F | F ∧ gap | T ∨ gap | gap ∨ T |
+    |--------|---------|---------|---------|---------|---------|
+    | Strong | gap     | **F**   | **F**   | T       | **T**   |
+    | Middle | gap     | gap     | **F**   | **T**   | gap     |
+    | Weak   | gap     | gap     | gap     | gap     | gap     |
+    | Belnap | **T**   | **F**   | **F**   | T       | **T**   | -/
 inductive GapPolicy where
   | strongKleene
+  | middleKleene
   | weakKleene
   | belnap
   deriving DecidableEq, Repr, BEq
@@ -341,21 +455,23 @@ inductive GapPolicy where
 /-- Parametric conjunction indexed by gap policy. -/
 def meet3 : GapPolicy → Truth3 → Truth3 → Truth3
   | .strongKleene => meet
+  | .middleKleene => meetMiddle
   | .weakKleene => meetWeak
   | .belnap => meetBelnap
 
 /-- Parametric disjunction indexed by gap policy. -/
 def join3 : GapPolicy → Truth3 → Truth3 → Truth3
   | .strongKleene => join
+  | .middleKleene => joinMiddle
   | .weakKleene => joinWeak
   | .belnap => joinBelnap
 
-/-- All three gap policies agree on fully defined inputs. -/
+/-- All four gap policies agree on fully defined inputs. -/
 theorem meet3_agree_defined (pol : GapPolicy) (a b : Bool) :
     meet3 pol (ofBool a) (ofBool b) = ofBool (a && b) := by
   cases pol <;> cases a <;> cases b <;> rfl
 
-/-- All three gap policies agree on fully defined inputs (disjunction). -/
+/-- All four gap policies agree on fully defined inputs (disjunction). -/
 theorem join3_agree_defined (pol : GapPolicy) (a b : Bool) :
     join3 pol (ofBool a) (ofBool b) = ofBool (a || b) := by
   cases pol <;> cases a <;> cases b <;> rfl
@@ -441,6 +557,14 @@ def andBelnap (p q : Prop3 W) : Prop3 W := λ w => Truth3.meetBelnap (p w) (q w)
 
 /-- Pointwise Belnap disjunction. @cite{belnap-1970} -/
 def orBelnap (p q : Prop3 W) : Prop3 W := λ w => Truth3.joinBelnap (p w) (q w)
+
+/-- Pointwise Middle Kleene conjunction.
+    @cite{peters-1979} @cite{beaver-krahmer-2001} @cite{spector-2025} -/
+def andMiddle (p q : Prop3 W) : Prop3 W := λ w => Truth3.meetMiddle (p w) (q w)
+
+/-- Pointwise Middle Kleene disjunction (asymmetric: left-to-right).
+    @cite{peters-1979} @cite{beaver-krahmer-2001} @cite{spector-2025} -/
+def orMiddle (p q : Prop3 W) : Prop3 W := λ w => Truth3.joinMiddle (p w) (q w)
 
 end Prop3
 
