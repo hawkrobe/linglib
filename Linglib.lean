@@ -18,6 +18,7 @@ import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Quantification
 import Linglib.Core.Logic.PolarizedIndividuals
 import Linglib.Core.Logic.SquareOfOpposition
+import Linglib.Core.Scales.Extent
 import Linglib.Core.Scales.HornScale
 import Linglib.Core.Semantics.Intension
 import Linglib.Core.Logic.ModalLogic
@@ -53,6 +54,7 @@ import Linglib.Core.FelicityTypes
 import Linglib.Core.ScopeTypes
 import Linglib.Core.ExtractionMorphology
 import Linglib.Core.VoiceSystem
+import Linglib.Core.Alternation
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.CausalBayesNet
 import Linglib.Core.NestedRestriction
@@ -641,6 +643,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Dowty1991
 import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
 import Linglib.Phenomena.ArgumentStructure.Studies.BeaversUdayana2022
 import Linglib.Phenomena.ArgumentStructure.Studies.Everdell2024
+import Linglib.Phenomena.ArgumentStructure.Studies.Creissels2025
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025
@@ -758,6 +761,7 @@ import Linglib.Phenomena.Comparison.Data
 import Linglib.Phenomena.Comparison.Comparative.Data
 import Linglib.Phenomena.Comparison.Comparative.Differential
 import Linglib.Phenomena.Comparison.Comparative.Subcomparative
+import Linglib.Phenomena.Comparison.Studies.Kennedy1999
 import Linglib.Phenomena.Comparison.Studies.Kennedy2007
 import Linglib.Phenomena.Comparison.Studies.Heim2001
 import Linglib.Phenomena.Comparison.Comparative.Compare
@@ -965,6 +969,7 @@ import Linglib.Phenomena.Questions.WhComplement
 import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
+import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
 import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
@@ -1298,11 +1303,9 @@ import Linglib.Theories.Semantics.Degree.ThanClause
 import Linglib.Theories.Semantics.Degree.Differential
 import Linglib.Theories.Semantics.Degree.DegreeQuestion
 import Linglib.Theories.Semantics.Degree.Wellwood
-import Linglib.Theories.Semantics.Degree.Frameworks.Kennedy
-import Linglib.Theories.Semantics.Degree.Frameworks.Heim
-import Linglib.Theories.Semantics.Degree.Frameworks.Klein
-import Linglib.Theories.Semantics.Degree.Frameworks.Schwarzschild
-import Linglib.Theories.Semantics.Degree.Frameworks.Rett
+import Linglib.Theories.Semantics.Degree.DegreeAbstraction
+import Linglib.Theories.Semantics.Degree.Intervals
+import Linglib.Theories.Semantics.Comparison.Delineation
 import Linglib.Theories.Semantics.Degree.Granularity
 -- Theories: Semantics.Supervaluation (general supervaluation framework)
 import Linglib.Theories.Semantics.Supervaluation.Basic

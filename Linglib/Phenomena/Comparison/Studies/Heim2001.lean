@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Comparison.Comparative.Data
-import Linglib.Theories.Semantics.Degree.Frameworks.Heim
+import Linglib.Theories.Semantics.Degree.DegreeAbstraction
 import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
@@ -24,7 +24,7 @@ Heim's framework makes different predictions about scope:
 
 namespace Phenomena.Comparison.Comparative.HeimBridge
 
-open Semantics.Degree.Frameworks.Heim
+open Semantics.Degree.DegreeAbstraction
 
 -- ════════════════════════════════════════════════════
 -- § 1. Heim = Kennedy Extensionally

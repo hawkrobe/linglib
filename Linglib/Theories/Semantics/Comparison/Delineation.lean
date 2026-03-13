@@ -50,7 +50,7 @@ frameworks.
 
 -/
 
-namespace Semantics.Degree.Frameworks.Klein
+namespace Semantics.Comparison.Delineation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Comparison Class
@@ -167,4 +167,4 @@ theorem comparative_prevents_superTrue {Entity : Type*}
   simp only [decide_eq_true_eq] at this
   exact hnotb this
 
-end Semantics.Degree.Frameworks.Klein
+end Semantics.Comparison.Delineation

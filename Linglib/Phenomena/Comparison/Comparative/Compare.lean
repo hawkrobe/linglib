@@ -1,34 +1,31 @@
-import Linglib.Theories.Semantics.Degree.Frameworks.Kennedy
-import Linglib.Theories.Semantics.Degree.Frameworks.Heim
-import Linglib.Theories.Semantics.Degree.Frameworks.Klein
-import Linglib.Theories.Semantics.Degree.Frameworks.Schwarzschild
-import Linglib.Theories.Semantics.Degree.Frameworks.Rett
+import Linglib.Theories.Semantics.Degree.DegreeAbstraction
+import Linglib.Theories.Semantics.Comparison.Delineation
+import Linglib.Theories.Semantics.Degree.Intervals
 import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
 # Framework Comparison: Where Kennedy and Heim Diverge
-@cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{rett-2026} @cite{schwarzschild-2008}
+@cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{schwarzschild-2008}
 
-Formal comparison of the five degree semantic frameworks on shared
-empirical ground. This is the key intellectual payoff of the `Degree/`
-reorganization: by implementing all five frameworks with the same type
+Formal comparison of the degree semantic frameworks on shared
+empirical ground. By implementing all frameworks with the same type
 signatures, we can formally state where they agree and where they diverge.
 
 ## Agreement
 
-All five frameworks agree on the truth conditions of simple comparatives:
-"A is taller than B" iff μ(A) > μ(B) (for frameworks with degrees) or
-∃C such that tall(A, C) ∧ ¬tall(B, C) (for Klein).
+All degree-based frameworks agree on the truth conditions of simple
+comparatives: "A is taller than B" iff μ(A) > μ(B). Klein's degree-free
+framework agrees under the natural correspondence between delineation
+functions and measure functions.
 
 ## Divergences
 
-| Question                    | Kennedy | Heim | Klein | Schwarzschild | Rett |
-|-----------------------------|---------|------|-------|---------------|------|
-| Degrees in ontology?        | Yes     | Yes  | No    | Yes (intervals)| Yes |
-| Scope of -er                | DP      | CP   | N/A   | DP            | DP  |
-| Measure phrases             | Direct  | Direct| Hard | Direct        | Direct|
-| Subcomparatives             | Special | Special| Special| Natural    | Special|
-| EN licensing explanation    | —       | —    | —     | —             | ✓   |
+| Question                    | Kennedy | Heim | Klein | Schwarzschild |
+|-----------------------------|---------|------|-------|---------------|
+| Degrees in ontology?        | Yes     | Yes  | No    | Yes (intervals)|
+| Scope of -er                | DP      | CP   | N/A   | DP            |
+| Measure phrases             | Direct  | Direct| Hard | Direct        |
+| Subcomparatives             | Special | Special| Special| Natural    |
 
 -/
 
@@ -38,28 +35,22 @@ namespace Phenomena.Comparison.Comparative.Compare
 -- § 1. Extensional Equivalence of Degree Frameworks
 -- ════════════════════════════════════════════════════
 
-/-- All four degree-based frameworks agree on simple comparatives.
-    Kennedy, Heim, Schwarzschild (intervals), and Rett (MAX) all
-    yield μ(A) > μ(B) for "A is taller than B". -/
-theorem four_degree_frameworks_agree {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
+/-- All degree-based frameworks agree on simple comparatives.
+    Heim and Schwarzschild (intervals) both yield
+    μ(A) > μ(B) for "A is taller than B" — the consensus
+    `comparativeSem` at positive direction. -/
+theorem heim_agrees {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (a b : Entity) :
-    Semantics.Degree.Frameworks.Kennedy.kennedyComparative μ a b ↔
-    Semantics.Degree.Frameworks.Heim.heimComparativeWithMeasure μ a b := by
+    Semantics.Degree.DegreeAbstraction.heimComparativeWithMeasure μ a b ↔
+    Semantics.Degree.Comparative.comparativeSem μ a b .positive := by
   exact Iff.rfl
 
 /-- Schwarzschild's interval comparative also agrees (reduces to point
     comparison on positive intervals). -/
 theorem schwarzschild_agrees {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (a b : Entity) :
-    Semantics.Degree.Frameworks.Schwarzschild.intervalComparative μ a b ↔
-    Semantics.Degree.Frameworks.Kennedy.kennedyComparative μ a b := by
-  exact Iff.rfl
-
-/-- Rett's MAX-based framework agrees with Kennedy on positive direction. -/
-theorem rett_agrees_with_kennedy {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
-    Semantics.Degree.Frameworks.Rett.rettComparative μ a b .positive ↔
-    Semantics.Degree.Frameworks.Kennedy.kennedyComparative μ a b := by
+    Semantics.Degree.Intervals.intervalComparative μ a b ↔
+    Semantics.Degree.Comparative.comparativeSem μ a b .positive := by
   exact Iff.rfl
 
 -- ════════════════════════════════════════════════════
@@ -71,12 +62,12 @@ theorem rett_agrees_with_kennedy {Entity D : Type*} [LinearOrder D]
     Heim: -er is sentential → wide scope available
 
     We can't formalize the scope prediction directly (it's about
-    LF movement), but we can state that the frameworks are
-    extensionally equivalent in scope-free contexts. -/
-theorem extensional_equivalence_scope_free {Entity D : Type*} [LinearOrder D]
+    LF movement), but we can state that Heim's denotation is
+    extensionally equivalent to the consensus in scope-free contexts. -/
+theorem heim_extensional_scope_free {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    Semantics.Degree.Frameworks.Kennedy.kennedyComparative μ a b =
-    Semantics.Degree.Frameworks.Heim.heimComparativeWithMeasure μ a b :=
+    Semantics.Degree.Comparative.comparativeSem μ a b .positive =
+    Semantics.Degree.DegreeAbstraction.heimComparativeWithMeasure μ a b :=
   rfl
 
 -- ════════════════════════════════════════════════════
@@ -90,15 +81,16 @@ theorem extensional_equivalence_scope_free {Entity D : Type*} [LinearOrder D]
     However, under the natural correspondence — a delineation function
     that classifies entities as "tall in C" when they exceed some
     threshold determined by C — Klein's comparative follows from
-    Kennedy's. If μ(a) > μ(b), then for the comparison class {a, b},
-    delineating at μ(b) puts a in the positive extension but not b. -/
+    the degree-based analysis. If μ(a) > μ(b), then for the comparison
+    class {a, b}, delineating at μ(b) puts a in the positive extension
+    but not b. -/
 theorem klein_correspondence {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity)
     (delineation : Set Entity → Entity → Prop)
     (hdiscrim : μ a > μ b →
       ∃ C : Set Entity, delineation C a ∧ ¬ delineation C b) :
-    Semantics.Degree.Frameworks.Kennedy.kennedyComparative μ a b →
-    Semantics.Degree.Frameworks.Klein.comparativeSem delineation a b := by
+    Semantics.Degree.Comparative.comparativeSem μ a b .positive →
+    Semantics.Comparison.Delineation.comparativeSem delineation a b := by
   exact hdiscrim
 
 end Phenomena.Comparison.Comparative.Compare

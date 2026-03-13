@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Degree.Core
-import Linglib.Theories.Semantics.Degree.Frameworks.Kennedy
+import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
 # Heim's Sentential Operator Approach
@@ -37,7 +37,7 @@ level.
 
 -/
 
-namespace Semantics.Degree.Frameworks.Heim
+namespace Semantics.Degree.DegreeAbstraction
 
 open Core.Scale
 
@@ -112,13 +112,13 @@ inductive ComparativeScopeReading where
 -- § 4. Kennedy–Heim Equivalence
 -- ════════════════════════════════════════════════════
 
-/-- **Extensional equivalence**: Kennedy and Heim yield the same truth
-    conditions for simple comparatives. They differ only in scope
-    predictions with other operators. -/
-theorem kennedy_heim_extensional_equivalence {Entity D : Type*} [LinearOrder D]
+/-- **Extensional equivalence**: Heim yields the same truth conditions
+    as the consensus comparative semantics for simple comparatives.
+    They differ only in scope predictions with other operators. -/
+theorem heim_extensional_equivalence {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     heimComparativeWithMeasure μ a b ↔
-      Semantics.Degree.Frameworks.Kennedy.kennedyComparative μ a b :=
+      Semantics.Degree.Comparative.comparativeSem μ a b .positive :=
   Iff.rfl
 
-end Semantics.Degree.Frameworks.Heim
+end Semantics.Degree.DegreeAbstraction

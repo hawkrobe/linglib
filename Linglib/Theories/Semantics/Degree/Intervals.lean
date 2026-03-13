@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Degree.Core
 
 /-!
@@ -29,7 +29,7 @@ degree morphology manipulates these intervals.
 
 -/
 
-namespace Semantics.Degree.Frameworks.Schwarzschild
+namespace Semantics.Degree.Intervals
 
 open Core.Scale
 
@@ -100,4 +100,19 @@ def subcomparative {Entity D : Type*} [LinearOrder D]
     (μ₁ μ₂ : Entity → D) (a b : Entity) : Prop :=
   μ₁ a > μ₂ b
 
-end Semantics.Degree.Frameworks.Schwarzschild
+-- ════════════════════════════════════════════════════
+-- § 5. Bridge to Extent Functions
+-- ════════════════════════════════════════════════════
+
+/-- The positive interval's membership predicate is exactly `posExt`:
+    d is in the interval [⊥, μ(x)] iff d ∈ posExt(μ, x).
+    This connects Schwarzschild's interval semantics to the algebraic
+    extent functions in `Core.Scale`. -/
+theorem positiveInterval_iff_posExt {Entity D : Type*}
+    [LinearOrder D] [BoundedOrder D]
+    (μ : Entity → D) (x : Entity) (d : D) :
+    (positiveInterval μ x).lower ≤ d ∧ d ≤ (positiveInterval μ x).upper ↔
+      d ∈ Core.Scale.posExt μ x := by
+  simp [positiveInterval, Core.Scale.posExt]
+
+end Semantics.Degree.Intervals
