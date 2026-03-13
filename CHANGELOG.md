@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.186] - 2026-03-12
+
+### Added
+- **Merchant2013.lean**: Add `end_to_end_voice_chain` (Kratzer→Merchant→data), `again_confirms_vp_boundary`; remove anachronistic AHM2021 reference (chronological dependency)
+
+### Fixed
+- **FillerGap/LongDistance.lean**, **Islands/Data.lean**: Fix `countable := some true` → `some .count` after MassCount migration
+- **Core/Temporal/Tense.lean**: Remove nonexistent `Core.Assignment.update` from simp call
+
 ## [0.229.185] - 2026-03-12
 
 ### Added

@@ -48,13 +48,13 @@ private def who : Word := ⟨"who", .PRON, { wh := true }⟩
 private def bought : Word := ⟨"bought", .VERB, { valence := some .transitive, vform := some .finite }⟩
 private def see : Word := ⟨"see", .VERB, { valence := some .transitive, number := some .pl }⟩
 private def met : Word := ⟨"met", .VERB, { valence := some .transitive, vform := some .finite }⟩
-private def man : Word := ⟨"man", .NOUN, { number := some .sg, countable := some true }⟩
+private def man : Word := ⟨"man", .NOUN, { number := some .sg, countable := some .count }⟩
 private def that : Word := ⟨"that", .DET, { number := some .sg }⟩
 private def saw : Word := ⟨"saw", .VERB, { valence := some .transitive, vform := some .finite }⟩
 private def leave : Word := ⟨"leave", .VERB, { valence := some .intransitive, number := some .pl }⟩
 private def before : Word := ⟨"before", .ADP, {}⟩
 private def because : Word := ⟨"because", .SCONJ, {}⟩
-private def books : Word := ⟨"books", .NOUN, { number := some .pl, countable := some true }⟩
+private def books : Word := ⟨"books", .NOUN, { number := some .pl, countable := some .count }⟩
 private def and_ : Word := ⟨"and", .CCONJ, {}⟩
 private def sell : Word := ⟨"sell", .VERB, { valence := some .transitive, number := some .pl }⟩
 private def do_ : Word := ⟨"do", .AUX, { number := some .pl }⟩

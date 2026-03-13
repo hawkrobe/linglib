@@ -42,8 +42,8 @@ private def if_ : Word := ⟨"if", .SCONJ, {}⟩
 private def think : Word := ⟨"think", .VERB, { valence := some .transitive, number := some .pl }⟩
 private def that : Word := ⟨"that", .DET, { number := some .sg }⟩
 private def the : Word := ⟨"the", .DET, {}⟩
-private def boy : Word := ⟨"boy", .NOUN, { number := some .sg, countable := some true }⟩
-private def book : Word := ⟨"book", .NOUN, { number := some .sg, countable := some true }⟩
+private def boy : Word := ⟨"boy", .NOUN, { number := some .sg, countable := some .count }⟩
+private def book : Word := ⟨"book", .NOUN, { number := some .sg, countable := some .count }⟩
 private def reads : Word := ⟨"reads", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
 private def sleeps : Word := ⟨"sleeps", .VERB, { valence := some .intransitive, number := some .sg, person := some .third }⟩
 

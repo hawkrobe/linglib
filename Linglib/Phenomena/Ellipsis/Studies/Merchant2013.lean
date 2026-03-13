@@ -27,8 +27,7 @@ inside the deletion domain regardless of ellipsis height.
 
 Every grammaticality judgment is verified against `canMismatch` from
 `DeletionDomain.lean`. Cross-linguistic data (German, Greek) supplements
-the English paradigm. See also @cite{anand-hardt-mccloskey-2021} for
-independent corpus validation (0 voice mismatches in 4,700 sluices).
+the English paradigm.
 -/
 
 namespace Phenomena.Ellipsis.Studies.Merchant2013
@@ -295,5 +294,40 @@ theorem voice_between_boundaries :
     prepAlternation.headPosition = .v ∧
     middleAlternation.headPosition = .v ∧
     lexicalMismatch.headPosition = .V := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 7. End-to-End Argumentation Chain
+-- ════════════════════════════════════════════════════
+
+/-- End-to-end chain: Voice severing (@cite{kratzer-1996}) →
+    Merchant's deletion domain theory (@cite{merchant-2013}) →
+    voice mismatch asymmetry.
+
+    Step 1 (Voice.lean): Active and passive are distinct Voice flavors;
+    Voice is an independent head above vP.
+
+    Step 2 (DeletionDomain.lean): VPE's [E] sits on Voice, deleting vP.
+    Voice is external → mismatches invisible to identity.
+
+    Step 3 (this file): Active→passive and passive→active under VPE
+    are both grammatical, matching `canMismatch`. -/
+theorem end_to_end_voice_chain :
+    -- Step 1: Active and passive are distinct Voice flavors
+    VoiceFlavor.agentive ≠ VoiceFlavor.passive ∧
+    -- Step 2: Voice is external to VPE's deletion domain
+    canMismatch englishVPE voiceMismatch = true ∧
+    -- Step 3: Empirical data matches
+    ex1a.grammatical = true ∧
+    ex2a.grammatical = true := by
+  refine ⟨?_, rfl, rfl, rfl⟩
+  intro h; cases h
+
+/-- The *again* diagnostic (§4): under VPE, only repetitive *again*
+    (high, VoiceP-adjunction) survives; restitutive *again* (low,
+    VP-adjunction) is inside the deletion domain. This confirms
+    that VPE targets vP, not VP. -/
+theorem again_confirms_vp_boundary :
+    againSurvives .vP_adjunction englishVPE = true ∧
+    againSurvives .VP_adjunction englishVPE = false := by native_decide
 
 end Phenomena.Ellipsis.Studies.Merchant2013
