@@ -860,6 +860,7 @@ import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Phenomena.Negation.Studies.Rett2026
+import Linglib.Phenomena.Negation.Studies.Tsiakmakis2025
 import Linglib.Phenomena.WordOrder.NonProjectivity
 import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.Studies.Stakov2026
@@ -873,6 +874,7 @@ import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013
 import Linglib.Phenomena.Morphology.CategoryChanging
 import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
 import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
+import Linglib.Phenomena.Morphology.Studies.Adamson2024
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026

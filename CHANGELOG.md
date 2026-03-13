@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.197] - 2026-03-13
+
+### Added
+- **Phenomena/Negation/Studies/Tsiakmakis2025.lean**: Formalize Tsiakmakis 2025 "On the non-homogeneity of expletive negation in Greek and beyond" — bipartite NEG₁/NEG₂ distinction (`NegatorType`); NEG₁ = standard sentential negation λp.¬p, NEG₂ = Kratzer necessity over best worlds; `NegatorDiagnostics` (NCI licensing, co-occurrence with canonical neg, left-periphery merge, modal component); cross-classification of Jin & Koenig 2021 trigger subclasses to negator types (`negatorType`); revised EN host inventory (`ENHostCategory`, 6 apparent + 6 proper); cross-linguistic data (Greek dhen/min, French ne, Italian non, Spanish no, Classical Greek, Hebrew, Latin); `NEG2OrderingFlavor` (deontic/normative/epistemic/habitual); `MaskingMechanism` for NEG₁ hosts (verbal aspect, NC, operator spell-out, rhetoricity, extreme degree, speaker bias); complementarity theorems (`ordering_flavor_iff_neg2`, `masking_mechanism_iff_neg1`, `neg1_neg2_complementary`); bridges to Rett 2026 (`ambidirectionality_covers_neg1`) and preferential attitudes (`fear_neg2_with_deontic_ordering`)
+
+## [0.229.196] - 2026-03-13
+
+### Added
+- **Theories/Morphology/DM/Categorizer.lean**: Extend with phi-feature infrastructure following Kramer 2015 *The Morphosyntax of Gender*: `GenderVal` ([±FEM]), `Interpretability` (natural vs arbitrary), `GenderFeature`, `PhiBundle` (gender + number on n), `CatHead` (categorizer + phi-features); Kramer's four types of n (`n_iFem`, `n_iMasc`, `n_plain`, `n_uFem`); `LicensingType` (semantic vs arbitrary); `RootLicense`; split plurality (`NumberOnN`); verification theorems (`four_n_types_distinct`, `natural_arbitrary_exclusive`, licensing–interpretability correspondence)
+- **Phenomena/Morphology/Studies/Adamson2024.lean**: Formalize Adamson 2024 "Gender Assignment Is Local" (*Language* 100(2)) — Gender Locality Hypothesis (GLH: gender on n valued only within nP); structural positions (`NominalPosition`); possession types (inalienable = nP-internal, alienable = PossP); Teop possessee gender (body-part switch gI↔gII, ex. 39); Jarawara possessee gender (all iPossessable nouns feminine, impoverishment [MASC]→∅); inherited gender mechanisms (Yanyuwa 7 genders, Coastal Marind 4 genders); GLH predictions for number (low on n vs high on Num), case, definiteness; bridge theorems to `CatHead` phi-feature locus
+
 ## [0.229.195] - 2026-03-13
 
 ### Added
