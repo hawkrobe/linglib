@@ -1,4 +1,5 @@
 import Linglib.Phenomena.WordOrder.CrossSerial
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Bach, Brown & Marslen-Wilson (1986)
@@ -78,7 +79,7 @@ def unintegratedAt (pat : DependencyPattern) (n k : Nat) : Nat :=
     Crossed: (n−1) + (n−2) + ··· + 0 = n(n−1)/2
     Nested:  n + n + ··· + n + 0      = n(n−1) -/
 def totalIntegrationCost (pat : DependencyPattern) (n : Nat) : Nat :=
-  (List.range n).map (λ k => unintegratedAt pat n (k + 1)) |>.foldl (· + ·) 0
+  ∑ k ∈ Finset.range n, unintegratedAt pat n (k + 1)
 
 -- ============================================================================
 -- §2: Model Predictions
@@ -105,104 +106,24 @@ theorem gap_grows :
     totalIntegrationCost .nested 2 - totalIntegrationCost .crossSerial 2 := by
   native_decide
 
--- ── Induction infrastructure for List.range sums ──────────────────────
-
-/-- Recursive sum: `sumFn f n = f 0 + f 1 + ⋯ + f (n−1)`. -/
-private def sumFn (f : Nat → Nat) : Nat → Nat
-  | 0 => 0
-  | n + 1 => sumFn f n + f n
-
-/-- `List.range n |>.map f |>.foldl (·+·) 0 = sumFn f n`. -/
-private theorem list_foldl_eq_sumFn (f : Nat → Nat) (n : Nat) :
-    ((List.range n).map f).foldl (· + ·) 0 = sumFn f n := by
-  induction n with
-  | zero => rfl
-  | succ n ih =>
-    rw [List.range_succ, List.map_append, List.foldl_append]
-    simp only [List.map, List.foldl, sumFn]
-    omega
-
-/-- `sumFn` respects pointwise equality on `{0,…,n−1}`. -/
-private theorem sumFn_congr (f g : Nat → Nat) (n : Nat)
-    (h : ∀ i, i < n → f i = g i) : sumFn f n = sumFn g n := by
-  induction n with
-  | zero => rfl
-  | succ n ih =>
-    unfold sumFn
-    rw [ih (λ i hi => h i (by omega)), h n (by omega)]
-
-/-- Constant sum: `sumFn (fun _ => c) n = n * c`. -/
-private theorem sumFn_const (c n : Nat) : sumFn (fun _ => c) n = n * c := by
-  induction n with
-  | zero => simp [sumFn, Nat.zero_mul]
-  | succ n ih =>
-    change sumFn (fun _ => c) n + c = (n + 1) * c
-    rw [ih, Nat.succ_mul]
-
-/-- Adding a constant per element: `sumFn (f + c) = sumFn f + n * c`. -/
-private theorem sumFn_add_const (f : Nat → Nat) (c n : Nat) :
-    sumFn (fun i => f i + c) n = sumFn f n + n * c := by
-  induction n with
-  | zero => simp [sumFn, Nat.zero_mul]
-  | succ n ih =>
-    show sumFn (fun i => f i + c) n + (f n + c) = sumFn f n + f n + (n + 1) * c
-    rw [ih, Nat.succ_mul]
-    omega
-
--- ── §2b: Element-wise comparison ─────────────────────────────────────
-
-private theorem sumFn_le_of_le (f g : Nat → Nat) (n : Nat)
-    (h : ∀ i, i < n → f i ≤ g i) : sumFn f n ≤ sumFn g n := by
-  induction n with
-  | zero => exact Nat.le_refl _
-  | succ n ih =>
-    simp only [sumFn]
-    have := ih (fun i hi => h i (by omega))
-    have := h n (by omega)
-    omega
-
-private theorem sumFn_lt_of_le_lt {f g : Nat → Nat} {n : Nat}
-    (h_le : ∀ i, i < n → f i ≤ g i)
-    {j : Nat} (hj : j < n) (h_lt : f j < g j) :
-    sumFn f n < sumFn g n := by
-  induction n with
-  | zero => exact absurd hj (Nat.not_lt_zero _)
-  | succ n ih =>
-    simp only [sumFn]
-    rcases (show j < n ∨ j = n from by omega) with hjn | hjn
-    · -- j < n: IH gives strict inequality for first n, pointwise ≤ for last
-      have h1 : sumFn f n < sumFn g n :=
-        ih (fun i hi => h_le i (by omega)) hjn
-      have h2 : f n ≤ g n := h_le n (by omega)
-      omega
-    · -- j = n: pointwise ≤ for first n, strict for last
-      have h1 : sumFn f n ≤ sumFn g n :=
-        sumFn_le_of_le f g n (fun i hi => h_le i (by omega))
-      have h2 : f n < g n := by rw [← hjn]; exact h_lt
-      omega
-
 /-- Crossed is strictly cheaper for n ≥ 2.
 
-    Proof by element-wise comparison: at each verb position k ∈ {1,…,n},
-    unintegratedAt .crossSerial ≤ unintegratedAt .nested, with strict
-    inequality at k = 1 (the first verb heard). -/
+    Proof by element-wise comparison via `Finset.sum_lt_sum`: at each verb
+    position k ∈ {1,…,n}, unintegratedAt .crossSerial ≤ unintegratedAt .nested,
+    with strict inequality at k = 1 (the first verb heard). -/
 theorem crossed_lt_nested (n : Nat) (h : n ≥ 2) :
     totalIntegrationCost .crossSerial n < totalIntegrationCost .nested n := by
   unfold totalIntegrationCost
-  rw [list_foldl_eq_sumFn, list_foldl_eq_sumFn]
-  apply sumFn_lt_of_le_lt (j := 0)
-  · -- h_le: pointwise ≤
-    intro i hi
+  apply Finset.sum_lt_sum
+  · intro i hi
+    have him := Finset.mem_range.mp hi
     simp only [unintegratedAt, integratedBindings]
-    rw [Nat.min_eq_left (show i + 1 ≤ n from by omega)]
+    rw [Nat.min_eq_left (by omega)]
     split <;> omega
-  · -- hj: 0 < n
-    omega
-  · -- h_lt: strict at j = 0
-    simp only [unintegratedAt, integratedBindings]
-    rw [Nat.min_eq_left (show 0 + 1 ≤ n from by omega),
-        if_neg (show ¬(0 + 1 ≥ n) from by omega)]
-    omega
+  · exact ⟨0, Finset.mem_range.mpr (by omega), by
+      simp only [unintegratedAt, integratedBindings]
+      rw [Nat.min_eq_left (by omega), if_neg (show ¬(0 + 1 ≥ n) from by omega)]
+      omega⟩
 
 -- ============================================================================
 -- §3: Dependency Length Invariance
@@ -219,7 +140,7 @@ def npVerbDistance : DependencyPattern → (n i : Nat) → Nat
 
 /-- Total NP-verb dependency length across all n pairs. -/
 def totalNPVerbDist (pat : DependencyPattern) (n : Nat) : Nat :=
-  (List.range n).map (λ i => npVerbDistance pat n (i + 1)) |>.foldl (· + ·) 0
+  ∑ i ∈ Finset.range n, npVerbDistance pat n (i + 1)
 
 /-- Crossed and nested have identical total dependency length.
 
@@ -236,36 +157,29 @@ theorem dep_length_equal_at_4 :
 /-- Cross-serial total distance = n². -/
 private theorem crossSerial_dist_sq (n : Nat) :
     totalNPVerbDist .crossSerial n = n * n := by
-  unfold totalNPVerbDist
-  rw [list_foldl_eq_sumFn]
-  rw [sumFn_congr _ (fun _ => n) n (fun i _ => by simp [npVerbDistance])]
-  exact sumFn_const n n
+  simp only [totalNPVerbDist, npVerbDistance,
+    Finset.sum_const, Finset.card_range, Nat.nsmul_eq_mul]
 
 /-- Nested total distance = n² (sum of first n odd numbers). -/
 private theorem nested_dist_sq (n : Nat) :
     totalNPVerbDist .nested n = n * n := by
   unfold totalNPVerbDist
-  rw [list_foldl_eq_sumFn]
   induction n with
-  | zero => simp [sumFn]
+  | zero => simp
   | succ n ih =>
-    -- Split off the last element
-    change sumFn (fun i => npVerbDistance .nested (n + 1) (i + 1)) n +
-           npVerbDistance .nested (n + 1) (n + 1) = (n + 1) * (n + 1)
-    -- Last element: 2 * 0 + 1 = 1
+    rw [Finset.sum_range_succ]
     have hLast : npVerbDistance .nested (n + 1) (n + 1) = 1 := by
-      simp [npVerbDistance]
-    rw [hLast]
-    -- Relate first n terms to IH: each is 2 more than the corresponding IH term
-    have hStep : ∀ i, i < n →
+      simp only [npVerbDistance, Nat.sub_self]
+    have hStep : ∀ i ∈ Finset.range n,
         npVerbDistance .nested (n + 1) (i + 1) =
         npVerbDistance .nested n (i + 1) + 2 := by
-      intro i hi; simp [npVerbDistance]; omega
-    have expand : (n + 1) * (n + 1) = n * n + 2 * n + 1 := by
-      rw [Nat.add_mul, Nat.mul_add, Nat.mul_one, Nat.one_mul]; omega
-    rw [sumFn_congr _ (fun i => npVerbDistance .nested n (i + 1) + 2) n hStep,
-        sumFn_add_const, ih, expand]
-    omega
+      intro i hi
+      have him := Finset.mem_range.mp hi
+      simp only [npVerbDistance]
+      omega
+    rw [hLast, Finset.sum_congr rfl hStep, Finset.sum_add_distrib,
+        Finset.sum_const, Finset.card_range, Nat.nsmul_eq_mul, ih]
+    rw [Nat.add_mul, Nat.mul_add, Nat.mul_one, Nat.one_mul]; omega
 
 /-- General case: both patterns yield total distance n². -/
 theorem dep_length_equal (n : Nat) :
