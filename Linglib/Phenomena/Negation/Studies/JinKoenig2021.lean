@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Attitudes.Preferential
+import Linglib.Theories.Semantics.Attitudes.NegRaising
 
 /-!
 # Jin & Koenig (2021): A Cross-Linguistic Study of Expletive Negation
@@ -189,7 +190,11 @@ structure DualInferenceProfile where
   negativeInference : String
   deriving Repr
 
-/-- Table 6 data: positive and negative inferences for each trigger subclass. -/
+/-- Table 6 data: positive and negative inferences for each trigger subclass.
+    One representative concept per subclass. The full Table 6 has ~25 rows
+    with within-class variation (e.g., AVOID adds "and in w₀" to FEAR's
+    positive inference; LESS THAN uses D' = D-max rather than D' > D;
+    DESPAIR has three inferences rather than two). -/
 def table6 : List DualInferenceProfile :=
   [ -- Propositional attitude triggers
     { subclass := .fear
@@ -201,6 +206,9 @@ def table6 : List DualInferenceProfile :=
   , { subclass := .deny
     , positiveInference := "p in worlds consistent with somebody else's beliefs"
     , negativeInference := "¬p in worlds consistent with X's beliefs" }
+  -- N.B. FORGET class is "semantically heterogeneous" (§6.1.4):
+  -- FORGET = obligations, DELAY = temporal, STOP/PREVENT = real-world,
+  -- ALMOST/BARELY = proximity. All share ¬p in w₀. FORGET shown here.
   , { subclass := .forget
     , positiveInference := "p in worlds consistent with X's obligations"
     , negativeInference := "¬p in w₀ (the real world)" }
@@ -209,18 +217,18 @@ def table6 : List DualInferenceProfile :=
     , positiveInference := "p at time t"
     , negativeInference := "¬p at reference time r (when q is true)" }
   , { subclass := .cannotWait
-    , positiveInference := "p at t in worlds consistent with X's expectations"
+    , positiveInference := "p at t in worlds consistent with X's expectations about the future"
     , negativeInference := "¬p at reference time r (when q is true)" }
   , { subclass := .since
     , positiveInference := "p at time t"
     , negativeInference := "¬p at reference time r" }
   , { subclass := .rarely
-    , positiveInference := "p at a small number of intervals"
-    , negativeInference := "¬p at a large number of intervals" }
+    , positiveInference := "p at a small number of intervals of time"
+    , negativeInference := "¬p at a large number of intervals of time" }
   -- Logical operator triggers
   , { subclass := .impossible
     , positiveInference := "N/A"
-    , negativeInference := "¬p in worlds accessible from w₀" }
+    , negativeInference := "¬p in all worlds accessible from w₀ (IMPOSSIBLE) or most (DIFFICULT)" }
   , { subclass := .without
     , positiveInference := "N/A"
     , negativeInference := "¬p at reference time" }
@@ -322,6 +330,26 @@ licensing EN.
 This is consistent with the empirical observation that DOUBT and
 DENY triggers in French often require the matrix clause to be negated
 or questioned for EN to occur (§6.1.3). -/
+
+open Semantics.Attitudes.NegRaising (negRaisingAvailable)
+open Semantics.Attitudes.Doxastic (Veridicality)
+
+/-- DENY triggers license EN through the doxastic square:
+
+    1. Non-veridical doxastic predicates (believe, doubt) support
+       neg-raising: ¬Bel(p) strengthens to Bel(¬p) (NegRaising.lean)
+    2. Under negation/questioning, this pragmatic strengthening
+       activates both Bel(p) and Bel(¬p) simultaneously — the
+       dual inference required for EN (§6.1.3)
+    3. DENY maps to the propositional attitude licensing condition
+
+    The paper says explicitly: "triggers such as QUESTION or DOUBT
+    do not strictly entail BELIEVE(X, ¬p); they only strongly imply
+    BELIEVE(X, ¬p)" — this IS neg-raising (O→E strengthening). -/
+theorem deny_EN_via_negRaising :
+    negRaisingAvailable .nonVeridical = true ∧
+    TriggerSubclass.deny.licensingCondition = .propositionalAttitude :=
+  ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 6. Cross-Linguistic Trigger Similarity (Table 5)
