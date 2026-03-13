@@ -80,7 +80,7 @@ by host:
 namespace Phenomena.Negation.Studies.Tsiakmakis2025
 
 open Phenomena.Negation.Studies.JinKoenig2021
-  (LicensingCondition TriggerSubclass DualInferenceProfile)
+  (LicensingCondition TriggerSubclass DualInferenceProfile negativeValenceEntailsDual)
 open Semantics.Attitudes.Intensional (World)
 open Core.Proposition (BProp)
 open Semantics.Modality.Kratzer
@@ -206,9 +206,9 @@ taxonomy: the propositional attitude condition spans both types
     §5.12 of @cite{tsiakmakis-2025}: not listed as a proper EN host.) -/
 def negatorType : TriggerSubclass → NegatorType
   -- Propositional attitude triggers with modal ordering → NEG₂
-  | .fear       => .neg2    -- deontic ordering (desires)
-  | .regret     => .neg2    -- deontic ordering (behavioral standards)
-  | .deny       => .neg2    -- epistemic ordering (beliefs)
+  | .fear       => .neg2    -- deontic ordering (speaker's desires; §5.1, eq. 60)
+  | .regret     => .neg2    -- deontic ordering (behavioral standards; §6.1.2 of @cite{jin-koenig-2021})
+  | .deny       => .neg2    -- deontic ordering (speaker's beliefs; §5.2, eq. 63)
   -- FORGET: factual ¬p in w₀ → NEG₁
   | .forget     => .neg1
   -- Temporal operators: standard negation masked by aspect → NEG₁
@@ -312,10 +312,26 @@ structure NegatorDatum where
   construction : String
   deriving Repr
 
-def greekDhenBefore : NegatorDatum :=
+/-- Greek *dhen* in exclamatives: ⟦dhen⟧ = λp.¬p, masked by extreme-degree
+    semantics (§3.1, ex. 22–24). -/
+def greekDhenExclamative : NegatorDatum :=
   { language := "Greek", form := "dhen", negType := .neg1
-  , hostCategory := .temporalExpressions
-  , construction := "negative rhetorical questions, exclamatives, polar questions" }
+  , hostCategory := .exclamatives
+  , construction := "negative exclamatives (§3.1, ex. 22–24)" }
+
+/-- Greek *dhen* in negative rhetorical questions: ⟦dhen⟧ = λp.¬p,
+    masked by rhetoricity / polarity reversal (§3.2, ex. 26–29; eq. 30). -/
+def greekDhenRhetoricalQ : NegatorDatum :=
+  { language := "Greek", form := "dhen", negType := .neg1
+  , hostCategory := .rhetoricalQuestions
+  , construction := "negative rhetorical questions (§3.2, ex. 26–29)" }
+
+/-- Greek *dhen* in preposed negation questions: ⟦dhen⟧ = λp.¬p,
+    masked by speaker's epistemic bias (§3.3, ex. 31–36; eq. 36–37). -/
+def greekDhenPolarQ : NegatorDatum :=
+  { language := "Greek", form := "dhen", negType := .neg1
+  , hostCategory := .optionallyBiasedPolarQs
+  , construction := "preposed negation questions (§3.3, ex. 31–36)" }
 
 def greekMinFear : NegatorDatum :=
   { language := "Greek", form := "min", negType := .neg2
@@ -373,7 +389,8 @@ def latinNeQuestion : NegatorDatum :=
   , construction := "non -ne animadvertis? (don't you observe?; §5.8, ex. 84)" }
 
 def allNegatorData : List NegatorDatum :=
-  [ greekDhenBefore, greekMinFear, greekMinConditional, greekMinQuestion
+  [ greekDhenExclamative, greekDhenRhetoricalQ, greekDhenPolarQ
+  , greekMinFear, greekMinConditional, greekMinQuestion
   , frenchNeFear, frenchNeForbid
   , italianNonTemporal, italianNonComparative
   , spanishNoDubitative, classicalGreekMeDubitative
@@ -447,8 +464,8 @@ but the **ordering source** g varies:
 
 - Fear predicates: deontic (desires/preferences) — p worlds are ranked
   higher than ¬p worlds by the speaker's preferences (§5.1, eq. 60)
-- Negative predicates (*forbid*): deontic (norms) — p worlds ranked
-  higher by social/moral norms (§5.2, eq. 63)
+- Negative predicates (*forbid*): deontic (norms/standards) — p worlds
+  ranked higher by social/moral norms (§5.2, eq. 63: "deontically modal")
 - Dubitative predicates (*doubt*): epistemic (beliefs) — p worlds ranked
   higher by the speaker's epistemic state (§5.3, eq. 66)
 - Conditionals: circumstantial + habit/norm (§4.2, eq. 50) — p worlds
@@ -458,10 +475,11 @@ but the **ordering source** g varies:
 
 /-- The modal flavor of the ordering source for each NEG₂ host. -/
 inductive NEG2OrderingFlavor where
-  /-- Deontic: ranked by desires or preferences (fear, worry) -/
+  /-- Deontic: ranked by desires, preferences, or norms (fear, worry, forbid, deny).
+      The paper uses "deontic" for both fear (speaker's desires, §5.1)
+      and forbid (social/moral norms, §5.2: "deontically modal interpretative
+      contribution"). -/
   | deontic
-  /-- Normative: ranked by norms or standards (forbid, deny) -/
-  | normative
   /-- Epistemic: ranked by beliefs or evidence (doubt, questions) -/
   | epistemic
   /-- Habitual: ranked by what has happened before (conditionals) -/
@@ -471,7 +489,7 @@ inductive NEG2OrderingFlavor where
 /-- Each proper EN host category maps to a modal ordering flavor. -/
 def ENHostCategory.orderingFlavor : ENHostCategory → Option NEG2OrderingFlavor
   | .emotiveDoxasticPredicates => some .deontic
-  | .negativePredicates        => some .normative
+  | .negativePredicates        => some .deontic
   | .dubitativePredicates      => some .epistemic
   | .biasedQuestions           => some .epistemic
   | .conditionals              => some .habitual
@@ -568,9 +586,9 @@ theorem neg1_neg2_complementary (h : ENHostCategory) :
 
 /-! ### Non-homogeneity refines ambidirectionality
 
-@cite{rett-2026}'s ambidirectionality generalization predicts EN licensing
-at the construction level. @cite{tsiakmakis-2025}'s non-homogeneity
-claim refines this by distinguishing the *nature* of the negation:
+The ambidirectionality generalization (formalized in `Rett2026.lean`)
+predicts EN licensing at the construction level. The non-homogeneity
+claim here refines this by distinguishing the *nature* of the negation:
 
 - In **NEG₁** hosts (before, than), ambidirectionality explains why
   standard negation is truth-conditionally vacuous → appears "expletive"
@@ -578,70 +596,56 @@ claim refines this by distinguishing the *nature* of the negation:
   but a modal — so "ambidirectionality" applies to the modal component
   (both p and ¬p worlds are relevant to the ordering)
 
-The two accounts are compatible: Rett's generalization covers the
-distributional pattern (where EN appears), while Tsiakmakis's
-distinction explains the mechanism (what kind of marker appears). -/
+The two accounts are compatible: the ambidirectionality generalization
+covers the distributional pattern (where EN appears), while the
+non-homogeneity distinction explains the mechanism (what kind of
+marker appears).
 
-/-- NEG₁ hosts are exactly the constructions where ambidirectionality
-    explains truth-conditional vacuity of standard negation.
-
-    NEG₂ hosts involve a different mechanism (modal semantics, not
-    negation + ambidirectionality), so ambidirectionality is not the
-    relevant explanation for their "expletive" appearance. -/
-def neg1HostExplainedByAmbidirectionality : ENHostCategory → Bool
-  | .temporalExpressions    => true   -- before/until ambidirectional
-  | .negativeAdverbials     => true   -- without
-  | .comparatives           => true   -- than-clause ambidirectional
-  | .optionallyBiasedPolarQs => true
-  | .rhetoricalQuestions    => true
-  | .exclamatives           => true
-  | _ => false
-
-theorem ambidirectionality_covers_neg1 (h : ENHostCategory) :
-    neg1HostExplainedByAmbidirectionality h = (h.negatorType == .neg1) := by
-  cases h <;> rfl
+**Note**: The formal bridge theorem mapping `ENConstruction` to
+`ENHostCategory` lives in `Rett2026.lean` (chronological direction:
+Rett 2026 can reference Tsiakmakis 2025, not vice versa). -/
 
 -- ════════════════════════════════════════════════════
 -- § 10. Bridge to Preferential Attitudes
 -- ════════════════════════════════════════════════════
 
-/-! ### Fear predicates: NEG₂ + negative valence
+/-! ### Fear predicates: negative valence → dual inference → NEG₂
 
-The connection between Tsiakmakis's NEG₂ classification of fear
-predicates and Villalta's negative valence (@cite{villalta-2008}):
+The connection between NEG₂ classification of fear predicates and
+@cite{villalta-2008}'s negative valence, mediated by @cite{jin-koenig-2021}:
 
 1. Fear has negative valence (Preferential.lean)
-2. Negative valence → dual inference (JinKoenig2021.lean)
-3. The NEG₂ marker in fear complements is a modal encoding the
-   ordering source (speaker's preferences/desires)
+2. Negative valence → dual inference (@cite{jin-koenig-2021} §5.5, §6.1.1)
+3. Propositional attitude licensing condition (@cite{jin-koenig-2021} (13a))
+4. NEG₂ classification with deontic ordering (@cite{tsiakmakis-2025} §5.1, eq. 60)
 
-The ordering source g ranks p worlds above ¬p worlds: the speaker
-considers p more likely/preferable. This is the deontic component
-that @cite{tsiakmakis-2025} identifies (§5.1, eq. 60). -/
+This is a four-layer argumentation chain connecting attitude semantics
+to the negator-type classification. -/
 
-open Semantics.Attitudes.Preferential (AttitudeValence)
+/-- Fear predicates: the full chain from negative valence to NEG₂.
 
-/-- Fear predicates: negative valence → NEG₂ with deontic ordering.
-
-    Three layers connected:
-    1. `fear.valence = .negative` (Preferential.lean)
-    2. Negative valence → dual inference (@cite{jin-koenig-2021} §5.5)
-    3. Fear = NEG₂ host with deontic ordering (@cite{tsiakmakis-2025} §5.1) -/
-theorem fear_neg2_with_deontic_ordering :
+    1. `negativeValenceEntailsDual .negative = true` (valence → dual inference)
+    2. `fear.licensingCondition = .propositionalAttitude` (J&K licensing)
+    3. `negatorType .fear = .neg2` (Tsiakmakis classification)
+    4. `emotiveDoxasticPredicates.orderingFlavor = some .deontic` (modal flavor) -/
+theorem fear_neg2_from_negative_valence :
+    negativeValenceEntailsDual .negative = true ∧
+    TriggerSubclass.fear.licensingCondition = .propositionalAttitude ∧
     negatorType .fear = .neg2 ∧
-    ENHostCategory.emotiveDoxasticPredicates.orderingFlavor = some .deontic ∧
-    ENHostCategory.emotiveDoxasticPredicates.negatorType = .neg2 :=
-  ⟨rfl, rfl, rfl⟩
+    ENHostCategory.emotiveDoxasticPredicates.orderingFlavor = some .deontic :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Deny predicates: NEG₂ with epistemic ordering + neg-raising.
+/-- Deny predicates: NEG₂ with deontic ordering.
 
-    DENY triggers have neg-raising semantics (NegRaising.lean) AND
-    are classified as NEG₂ proper EN hosts. The ordering source is
-    epistemic (the speaker's beliefs about what the denier believes). -/
-theorem deny_neg2_with_epistemic_ordering :
+    DENY triggers entail that X believes ¬p or says ¬p
+    (@cite{jin-koenig-2021} §6.1.3). This propositional attitude
+    licensing condition maps to NEG₂ with a deontic ordering source
+    (the speaker's beliefs about what the denier believes). -/
+theorem deny_neg2_with_deontic_ordering :
     negatorType .deny = .neg2 ∧
-    TriggerSubclass.deny.licensingCondition = .propositionalAttitude :=
-  ⟨rfl, rfl⟩
+    TriggerSubclass.deny.licensingCondition = .propositionalAttitude ∧
+    ENHostCategory.negativePredicates.orderingFlavor = some .deontic :=
+  ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 11. Summary Consistency Checks

@@ -4,6 +4,7 @@ import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
+import Linglib.Phenomena.Negation.Studies.Tsiakmakis2025
 
 /-!
 # Expletive Negation: Typology and Licensing
@@ -412,5 +413,58 @@ def allMannerData : List MannerImplicatureDatum :=
 theorem evaluative_manner_data :
     [frenchBeforeEvaluative, italianComparativeEvaluative].all
       (·.effect.evaluative) = true := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 6. Bridge to Tsiakmakis 2025
+-- ════════════════════════════════════════════════════
+
+/-! ### Connecting EN constructions to negator types
+
+@cite{tsiakmakis-2025} classifies EN hosts as NEG₁ (standard negation
+masked) or NEG₂ (modal, intrinsically non-negative). The EN constructions
+formalized here map onto Tsiakmakis's host categories:
+
+| ENConstruction | ENHostCategory              | NegatorType |
+|----------------|-----------------------------|-------------|
+| before         | temporalExpressions         | NEG₁        |
+| until          | temporalExpressions         | NEG₁        |
+| comparative    | comparatives                | NEG₁        |
+| fear           | emotiveDoxasticPredicates   | NEG₂        |
+| after          | (no EN)                     | —           |
+| while_         | (no EN)                     | —           |
+
+The key structural insight: all ambidirectional constructions that are
+NEG₁ hosts have their negative semantics masked by independent factors
+(verbal aspect, operator spell-out), while the one NEG₂ host (fear)
+has a genuinely different marker — a modal, not negation. -/
+
+open Phenomena.Negation.Studies.Tsiakmakis2025
+  (ENHostCategory NegatorType)
+
+/-- Map each EN construction to its Tsiakmakis host category.
+    Constructions without EN (after, while) have no host. -/
+def ENConstruction.toHostCategory : ENConstruction → Option ENHostCategory
+  | .before      => some .temporalExpressions
+  | .until       => some .temporalExpressions
+  | .comparative => some .comparatives
+  | .fear        => some .emotiveDoxasticPredicates
+  | .after       => none
+  | .while_      => none
+
+/-- Constructions with EN are exactly those with a host category. -/
+theorem en_iff_has_host (c : ENConstruction) :
+    c.hasEN = c.toHostCategory.isSome := by
+  cases c <;> rfl
+
+/-- Fear maps to NEG₂ (modal); temporal and comparative map to NEG₁
+    (standard negation masked). This connects ambidirectionality
+    (distributional pattern) to negator type (mechanism). -/
+theorem neg_type_of_en_hosts :
+    (ENConstruction.toHostCategory .fear).map ENHostCategory.negatorType
+      = some .neg2 ∧
+    [ENConstruction.before, .until, .comparative].all
+      (fun c => (c.toHostCategory.map ENHostCategory.negatorType) == some .neg1)
+      = true :=
+  ⟨rfl, rfl⟩
 
 end Phenomena.Negation.ExpletiveNegation
