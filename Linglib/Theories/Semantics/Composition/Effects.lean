@@ -135,9 +135,11 @@ produce new combinators that work when one or both daughters carry effects.
 | F̃ (Map Right) | right | Functor | Figure 4 |
 | A (Structured App) | both | Applicative | Figure 7 |
 | J (Join) | both + nested | Monad | Figure 8 |
+| C (Co-unit) | adjoint pair | Adjunction | Figure 10 |
 
-These are parameterized over any effect type Σ for which the appropriate
-typeclass (Functor/Applicative/Monad) holds. -/
+F̄, F̃, A, and J are parameterized over any effect type Σ for which the
+appropriate typeclass (Functor/Applicative/Monad) holds. C is defined in §4,
+parameterized over an adjunction (specifically W ⊣ R). -/
 
 section MetaCombinators
 
@@ -380,14 +382,59 @@ theorem adj_counit_yields_W (κ : ι → ι → β) (x : ι) :
 
     This connects the adjunction (§5.1 of the paper) to the existing
     `hk_bs_reflexive_equiv` theorem in `Binding.lean`. -/
-theorem adj_binding_agrees_with_hk (n : Nat)
-    (body : toyModel.Entity → toyModel.Entity → Bool)
-    (binder : toyModel.Entity) (g : Assignment toyModel) :
+theorem adj_binding_agrees_with_hk {m : Model} (n : Nat)
+    (body : m.Entity → m.Entity → Bool)
+    (binder : m.Entity) (g : Assignment m) :
     adj_ε (body binder, binder) = body (g[n ↦ binder] n) (g[n ↦ binder] n) := by
   show body binder binder = body (g[n ↦ binder] n) (g[n ↦ binder] n)
   simp only [update_same]
 
 end WRAdjunction
+
+section CounitCombinator
+
+/-! #### The C meta-combinator
+
+@cite{bumford-charlow-2024} eq. 5.8, Figure 10: the **co-unit** meta-combinator
+uses the adjunction's ε to compose W-computations (antecedent storage) with
+R-computations (pronoun resolution). For W ⊣ R, C reduces to unpacking the
+stored referent and feeding it to the reader function. -/
+
+variable {ι σ τ ω : Type}
+
+/-- **C** (Co-unit): the adjunction-based meta-combinator for binding.
+
+    @cite{bumford-charlow-2024} eq. 5.8, Figure 10:
+    `C(∗) E₁ E₂ := ε((λl. (λr. l ∗ r) • E₂) • E₁)`
+
+    For the W ⊣ R adjunction (§5.1), where W α = α × ι (product)
+    and R α = ι → α (reader), the two fmap operations compose the
+    binary combinator with both computations, and ε extracts the result:
+    `C(∗) ⟨s, i⟩ f = s ∗ f(i)` -/
+def counitApp (star : σ → τ → ω) (e₁ : σ × ι) (e₂ : ι → τ) : ω :=
+  star e₁.1 (e₂ e₁.2)
+
+/-- C decomposes as ε applied to the doubly-mapped product.
+
+    The general formula maps `(λr. l ∗ r)` over E₂ (R-fmap = ∘),
+    maps the result over E₁ (W-fmap on the first component),
+    then applies ε to extract the value. -/
+theorem counitApp_via_adj_ε (star : σ → τ → ω) (e₁ : σ × ι) (e₂ : ι → τ) :
+    counitApp star e₁ e₂ = adj_ε (star e₁.1 ∘ e₂, e₁.2) := rfl
+
+/-- C with reflexive storage `▷(x) = ⟨x, x⟩` and identity reader yields W.
+
+    When an antecedent stores itself and the pronoun is the identity
+    reader, C(>) reduces to the W combinator from `Binding.lean`:
+    `C(>) ⟨κ x, x⟩ id = κ x x = W κ x`.
+
+    This connects @cite{bumford-charlow-2024}'s adjunction mechanism
+    (their central §5 contribution) to the classical duplicator
+    combinator that underlies binding. -/
+theorem counitApp_reflexive_is_W (κ : ι → ι → ω) (x : ι) :
+    counitApp fa' (κ x, x) id = W κ x := rfl
+
+end CounitCombinator
 
 -- ════════════════════════════════════════════════════════════════════
 -- §5 Effect Operations and Handlers
