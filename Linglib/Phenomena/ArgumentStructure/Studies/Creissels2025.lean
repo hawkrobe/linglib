@@ -51,10 +51,10 @@ the prefix *de-* transparently marks removal of the causation component,
 while "anticausative" misleadingly suggests a parallel with "antipassive"
 that doesn't hold (§8.3.1.2). -/
 
-/-- Decausativization denucleativizes A — same structural effect as
-    anticausative intransitivization. -/
+/-- Decausativization suppresses A from participant structure — same
+    structural effect as anticausative intransitivization. -/
 theorem decausativization_matches_anticausative :
-    decausativization.fateOfA = .denucleativized ∧
+    decausativization.fateOfA = .suppressed ∧
     IntransitivizationType.anticausative.isBieventive = false :=
   ⟨rfl, rfl⟩
 
@@ -93,10 +93,10 @@ theorem causative_construction_nucleativizes :
 
 /-- Causativization and decausativization are inverse operations on the
     causality chain (§8.3.1): causativization adds a causer in A,
-    decausativization removes A. -/
+    decausativization suppresses A from participant structure. -/
 theorem causativization_decausativization_inverse :
     causativization.newParticipant = some .A ∧
-    decausativization.fateOfA = .denucleativized :=
+    decausativization.fateOfA = .suppressed :=
   ⟨rfl, rfl⟩
 
 /-- The three morphological complexity levels of @cite{comrie-1981} map to
@@ -168,20 +168,41 @@ theorem english_is_active_passive :
     englishVoiceSystem.isActivePassive = true := rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Bridge: Passivization ↔ Antipassivization structural symmetry
+-- § 5. Passivization vs Decausativization (§8.3.1.2 vs §8.3.2.1)
+-- ════════════════════════════════════════════════════
+
+/-! @cite{creissels-2025} §8.3.2.1: "The maintenance of the initial A in
+participant structure is essential to distinguish passivization from
+decausativization."
+
+Both operations denucleativize A and yield an intransitive construction,
+but they differ in whether A remains in participant structure:
+- **Passivization**: A is `.denucleativized` (oblique or unexpressed, but
+  still semantically present — can appear as oblique agent phrase)
+- **Decausativization**: A is `.suppressed` (removed from participant
+  structure entirely — no agent phrase possible)
+
+This distinction is now directly encoded in `ParticipantFate`. -/
+
+/-- Passivization and decausativization are structurally distinct despite
+    both yielding intransitive constructions: they differ in whether A
+    remains in participant structure. -/
+theorem passive_decausative_distinct :
+    passivization.fateOfA ≠ decausativization.fateOfA := by
+  simp [passivization, decausativization]
+
+-- ════════════════════════════════════════════════════
+-- § 6. Bridge: Passivization ↔ Antipassivization structural symmetry
 -- ════════════════════════════════════════════════════
 
 /-! @cite{creissels-2025} §8.3.2: passivization, antipassivization, and
 S-denucleativization form a natural class — all three denucleativize a core
-term without nucleativizing any other participant. They differ only in which
+term without nucleativizing any other participant, and the denucleativized
+participant remains in participant structure. They differ only in which
 core term is targeted:
 - Passivization: A denucleativized
 - Antipassivization: P denucleativized
-- S-denucleativization: S denucleativized
-
-This structural parallelism is not reflected in linglib's current organization,
-where passivization lives in `Phenomena/ArgumentStructure/Passive.lean` and
-antipassivization is just a WALS count. -/
+- S-denucleativization: S denucleativized -/
 
 /-- Passivization and antipassivization are structural mirrors: both
     denucleativize exactly one core term without nucleativizing any other. -/
@@ -201,7 +222,7 @@ theorem denucleativization_paradigm :
   ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 6. Bridge: Reflexivization/Reciprocalization ↔ existing data
+-- § 7. Bridge: Reflexivization/Reciprocalization ↔ existing data
 -- ════════════════════════════════════════════════════
 
 /-! @cite{creissels-2025} §8.3.3: reflexivization and reciprocalization
@@ -225,7 +246,7 @@ theorem refl_recip_same_structure :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 7. Voice Marker Stacking (@cite{creissels-2025} §8.4)
+-- § 8. Voice Marker Stacking (@cite{creissels-2025} §8.4)
 -- ════════════════════════════════════════════════════
 
 /-! @cite{creissels-2025} §8.4: voice markers can be stacked compositionally.
@@ -249,7 +270,7 @@ def tswana_caus_appl_pass : VoiceStack :=
   [causativization, pApplicativization, passivization]
 
 -- ════════════════════════════════════════════════════
--- § 8. Portative Derivation (@cite{creissels-2025} §8.3.7)
+-- § 9. Portative Derivation (@cite{creissels-2025} §8.3.7)
 -- ════════════════════════════════════════════════════
 
 /-! @cite{creissels-2025} §8.3.7 identifies portative derivation as a distinct
@@ -275,7 +296,7 @@ theorem portative_distinct_from_causativization :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 9. Alignment Profiles (@cite{creissels-2025} §1.3.4)
+-- § 10. Alignment Profiles (@cite{creissels-2025} §1.3.4)
 -- ════════════════════════════════════════════════════
 
 /-! @cite{creissels-2025} §1.3.4.2: most languages have a clear preference
@@ -302,7 +323,7 @@ def mandinka : ObligatoryCodingProfile :=
   , violationsExist := true }
 
 -- ════════════════════════════════════════════════════
--- § 10. Russian -sja polysemy (@cite{creissels-2025} §8.2, ex. 8)
+-- § 11. Russian -sja polysemy (@cite{creissels-2025} §8.2, ex. 8)
 -- ════════════════════════════════════════════════════
 
 /-! The Russian verbal suffix *-sja / -s'* is a paradigmatic example of voice
@@ -315,16 +336,16 @@ marker polysemy. It marks at least four different voice alternation types:
 
 def russian_sja : VoiceMarkerProfile :=
   { language := "Russian"
-  , marker := "-sja/-s'"
-  , alternations := ["reflexivization", "reciprocalization",
-                      "passivization", "antipassivization"] }
+  , marker := "-sja / -s'"
+  , alternations := [reflexivization, reciprocalization,
+                      passivization, antipassivization] }
 
 /-- Russian *-sja* is polysemous across four voice alternation types. -/
 theorem russian_sja_polysemy :
     russian_sja.alternations.length = 4 := rfl
 
 -- ════════════════════════════════════════════════════
--- § 11. Tswana -el polysemy (@cite{creissels-2025} §8.2)
+-- § 12. Tswana -el polysemy (@cite{creissels-2025} §8.2)
 -- ════════════════════════════════════════════════════
 
 /-! The Tswana voice suffix *-el* (traditionally called "applicative") marks
@@ -339,10 +360,10 @@ obliques (non-causative A/S-nucleativization). Example:
 def tswana_el : VoiceMarkerProfile :=
   { language := "Tswana"
   , marker := "-el"
-  , alternations := ["P-applicativization", "A/S-nucleativization"] }
+  , alternations := [pApplicativization, asNucleativizationOfObliques] }
 
 -- ════════════════════════════════════════════════════
--- § 12. Causativizability and Voice Alternations
+-- § 13. Causativizability and Voice Alternations
 -- ════════════════════════════════════════════════════
 
 /-! @cite{creissels-2025} Ch 12 discusses restrictions on causativization.

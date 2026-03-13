@@ -84,8 +84,18 @@ inductive ParticipantFate where
   /-- Participant is nucleativized: becomes a core term in the derived
       construction. The `target` specifies which TR-role it acquires. -/
   | nucleativized (target : TRRole)
-  /-- Participant is denucleativized: becomes oblique or unexpressed. -/
+  /-- Participant is denucleativized: demoted from core term to oblique or
+      unexpressed, but MAINTAINED IN PARTICIPANT STRUCTURE. The participant
+      is still semantically present and may appear as an oblique phrase.
+      @cite{creissels-2025} §8.3.2.1: "the referent of the initial A is
+      denucleativized ... but is maintained in participant structure." -/
   | denucleativized
+  /-- Participant is suppressed: REMOVED FROM PARTICIPANT STRUCTURE entirely.
+      The participant has no syntactic realization in the derived construction
+      and is not semantically implied.
+      @cite{creissels-2025} §8.3.1.2: "Decausativization suppresses the
+      referent of the initial A from participant structure." -/
+  | suppressed
   /-- Participant's coding is maintained unchanged. -/
   | maintained
   /-- Two participants are cumulated into a single participant
@@ -168,13 +178,18 @@ def causativization : ValencyAlternation :=
   , derivedTransitive := some true }
 
 /-- Decausativization (@cite{creissels-2025} §8.3.1.2): the initial A is
-    suppressed from participant structure; initial P becomes S of an
+    SUPPRESSED FROM PARTICIPANT STRUCTURE; initial P becomes S of an
     intransitive construction. Called "anticausative" in most other
     frameworks; Creissels prefers "decausative" because the prefix *de-*
-    transparently marks the removal of causation. -/
+    transparently marks the removal of causation.
+
+    The critical difference from passivization: in decausativization, A is
+    entirely removed from participant structure (`.suppressed`), whereas in
+    passivization, A is denucleativized but remains in participant structure
+    (`.denucleativized`). -/
 def decausativization : ValencyAlternation :=
   { name := "decausativization"
-  , fateOfA := .denucleativized
+  , fateOfA := .suppressed
   , fateOfP := .maintained  -- P becomes S
   , fateOfS := .na
   , newParticipant := none
@@ -290,15 +305,41 @@ def xApplicativization : ValencyAlternation :=
   , initialTransitive := none
   , derivedTransitive := none }
 
+/-- A/S-nucleativization of obliques (@cite{creissels-2025} §8.3.4.1):
+    an oblique participant (e.g., an instrument) takes over the A or S role
+    in the derived construction. The nucleativized participant does NOT
+    outrank the initial A/S in agentivity (distinguishing this from
+    causativization).
+
+    Example: Laalaa (Cangin) *Fetal-aa ap-ah-an paloom*
+    'The gun will be used to kill antelopes' — instrument nucleativized as A. -/
+def asNucleativizationOfObliques : ValencyAlternation :=
+  { name := "A/S-nucleativization of obliques"
+  , fateOfA := .maintained  -- initial A maintained (or .na if intransitive)
+  , fateOfP := .maintained
+  , fateOfS := .na
+  , newParticipant := some .A  -- oblique promoted to A
+  , initialTransitive := some true
+  , derivedTransitive := some true }
+
 /-- Concernativization (@cite{creissels-2025} §8.3.4.2): nucleativization
-    of a concernee (external possessor / adversely affected party). -/
+    of a concernee (external possessor / adversely affected party) into
+    the A role. The initial construction may be transitive or intransitive.
+
+    When initial is intransitive: S is maintained (becomes P-like), concernee
+    becomes A, derived construction is transitive.
+    When initial is transitive: A is maintained, P is maintained, concernee
+    becomes an additional A-like participant.
+
+    Example: Central Alaskan Yupik *Kit'-i-aqa kicaq*
+    'I had the anchor sunk (me negatively affected)' — concernee as A. -/
 def concernativization : ValencyAlternation :=
   { name := "concernativization"
   , fateOfA := .na
-  , fateOfP := .maintained
-  , fateOfS := .maintained
-  , newParticipant := some .A
-  , initialTransitive := none
+  , fateOfP := .na
+  , fateOfS := .maintained  -- S maintained (becomes P in derived transitive)
+  , newParticipant := some .A  -- concernee nucleativized as A
+  , initialTransitive := some false  -- prototypical case is intransitive
   , derivedTransitive := some true }
 
 /-- Portative derivation (@cite{creissels-2025} §8.3.7): converts a motion
@@ -366,7 +407,7 @@ structure VoiceMarkerProfile where
   /-- Morpheme form -/
   marker : String
   /-- Which alternation types this marker can encode -/
-  alternations : List String
+  alternations : List ValencyAlternation
   deriving Repr, BEq
 
 -- ════════════════════════════════════════════════════
@@ -375,29 +416,31 @@ structure VoiceMarkerProfile where
 
 /-- Cross-linguistic prevalence of voice alternation types.
 
-    @cite{creissels-2025} §8.3.8, citing Bahrt (2021): distribution of
+    @cite{creissels-2025} §8.3.8, citing @cite{bahrt-2021}: distribution of
     synthetic voice marking across 222 languages from all genera. -/
 structure VoiceDistribution where
-  alternation : String
+  alternation : ValencyAlternation
   /-- Percentage of languages with synthetic marking for this alternation -/
   percentage : Float
   deriving Repr, BEq
 
-/-- Bahrt (2021) distribution data, cited in @cite{creissels-2025} §8.3.8. -/
+/-- @cite{bahrt-2021} distribution data, cited in @cite{creissels-2025}
+    §8.3.8. Percentages represent languages (out of 222) with synthetic
+    marking for each voice alternation type. -/
 def bahrt2021Distribution : List VoiceDistribution :=
-  [ { alternation := "causativization",    percentage := 73.9 }
-  , { alternation := "reciprocalization",  percentage := 60.4 }
-  , { alternation := "applicativization",  percentage := 45.9 }
-  , { alternation := "reflexivization",    percentage := 41.9 }
-  , { alternation := "decausativization",  percentage := 36.0 }
-  , { alternation := "passivization",      percentage := 36.0 }
-  , { alternation := "antipassivization",  percentage := 18.5 } ]
+  [ { alternation := causativization,       percentage := 73.9 }
+  , { alternation := reciprocalization,     percentage := 60.4 }
+  , { alternation := pApplicativization,    percentage := 45.9 }
+  , { alternation := reflexivization,       percentage := 41.9 }
+  , { alternation := decausativization,     percentage := 36.0 }
+  , { alternation := passivization,         percentage := 36.0 }
+  , { alternation := antipassivization,     percentage := 18.5 } ]
 
 /-- Causativization is the most common voice alternation type
-    cross-linguistically. -/
+    cross-linguistically (@cite{bahrt-2021}). -/
 theorem causativization_most_common :
-    bahrt2021Distribution.head? =
-    some { alternation := "causativization", percentage := 73.9 } := rfl
+    (bahrt2021Distribution.head?.map (·.alternation.name)) =
+    some "causativization" := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 9. Properties
@@ -407,11 +450,12 @@ theorem causativization_most_common :
 def ValencyAlternation.involvesNucleativization (va : ValencyAlternation) : Bool :=
   va.newParticipant.isSome
 
-/-- Does this alternation involve denucleativization (removing a core term)? -/
+/-- Does this alternation involve denucleativization or suppression
+    (removing a participant from core-term status)? -/
 def ValencyAlternation.involvesDenucleativization (va : ValencyAlternation) : Bool :=
-  va.fateOfA == .denucleativized ||
-  va.fateOfP == .denucleativized ||
-  va.fateOfS == .denucleativized
+  va.fateOfA == .denucleativized || va.fateOfA == .suppressed ||
+  va.fateOfP == .denucleativized || va.fateOfP == .suppressed ||
+  va.fateOfS == .denucleativized || va.fateOfS == .suppressed
 
 /-- Is this a valency-increasing alternation? -/
 def ValencyAlternation.isValencyIncreasing (va : ValencyAlternation) : Bool :=
@@ -438,6 +482,15 @@ theorem decausativization_decreases :
 theorem passivization_decreases :
     passivization.isValencyDecreasing = true := rfl
 
+/-- The central distinction of @cite{creissels-2025} §8.3.2.1:
+    passivization MAINTAINS A in participant structure (`.denucleativized`),
+    while decausativization SUPPRESSES A from participant structure
+    (`.suppressed`). These are structurally distinct operations. -/
+theorem passivization_vs_decausativization :
+    passivization.fateOfA = .denucleativized ∧
+    decausativization.fateOfA = .suppressed :=
+  ⟨rfl, rfl⟩
+
 theorem antipassivization_decreases :
     antipassivization.isValencyDecreasing = true := rfl
 
@@ -449,6 +502,10 @@ theorem reciprocalization_cumulates :
 
 theorem pApplicativization_increases :
     pApplicativization.isValencyIncreasing = true := rfl
+
+/-- A/S-nucleativization of obliques is valency-increasing. -/
+theorem as_nucleativization_increases :
+    asNucleativizationOfObliques.isValencyIncreasing = true := rfl
 
 /-- Portative derivation is valency-increasing, like causativization and
     applicativization, but cannot be reduced to either (§8.3.7). -/
