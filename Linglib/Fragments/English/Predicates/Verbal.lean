@@ -740,7 +740,8 @@ def break_ : VerbEntry where
   levinClass := some .break_
   rootProfile := some {
     forceMag := some [.moderate, .high]
-    forceDir := some [.omnidirectional]
+    -- forceDir unconstrained: *break* covers snapping (bidirectional),
+    -- hammering (omnidirectional), and directed blows (unidirectional)
     patientRob := some [.moderate, .robust]
     resultType := some [.fracture]
     agentControl := some [.incompatible, .neutral]

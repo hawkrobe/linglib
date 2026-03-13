@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.229.179] - 2026-03-12
+
+### Changed
+- **MajidBosterBowerman2008.lean**: Second audit pass — structural cleanup:
+  - Remove dead `TzeltalCBVerb` type (5 constructors, no function or theorems); replace with docstring observation about Tzeltal's 50+ verbs
+  - Add `isPokingHole` function for Dimension 4 with verification theorem
+  - Add consistency theorems for paired clips (10≡09, 36≡01, 57≡19, 40≡39) — all previously unused clip definitions now have theorems
+  - Add `dim3_nested_in_dim1`: Dimension 3 (snap/smash) only distinguishes within low-predictability events, formalizing hierarchical dimension structure
+  - Add `yeliDnye_grain_limitation` theorem documenting known model limitation: paper reports YD groups along-the-grain cutting with tearing, which our predictability-based model cannot capture
+  - Expand Yélî Dnye docstrings with grain-alignment limitation details
+
+## [0.229.178] - 2026-03-12
+
+### Changed
+- **MorphologicalCausation.lean**: Complete rewrite after audit against Hafeez (2025) dissertation. Replace hallucinated `CauserType` (human/naturalForce/instrument) with `intentionalHuman/accidentalHuman/naturalForce` (IHCr/AHCr/NFCr) — intentionality is the key dimension. Replace binary `CauseeType` with 4-level `CauseeAffecteeType` (controllingHuman/physImpactHuman/psychImpactHuman/inanimate). Add `AgentivityDegree` (full/marginal/partial) with derivation from causer/causee types. Update all bridges to `CausalSource`, `AgentivityNode`, `Volitionality`
+- **CausativeSystem.lean**: Complete rewrite. Move from `Fragments/HindiUrdu/` to `Fragments/Urdu/`. Replace 7 hallucinated constructions (lexical/-aa/-vaa/periphrastic *kar*/*say*/*dena*) with Hafeez's actual 7 acceptability study constructions (LEX-ERG, LEX-INST, LEX-DAT, MCV, ADV, NCA, NCrA). Add `SemanticPrototype` per construction from Table 25. Encode key empirical results: NCrA categorical restriction to NFCr, MCV→mediation, LEX-ERG↔full agentivity, agentivity–construction correspondences
+- **references.bib**: Fix `raza-2020` → `hafeez-2025` (correct author: Saima Hafeez, University of Stuttgart, 2025). Add `bohnemeyer-2004`
+
+## [0.229.177] - 2026-03-12
+
+### Added
+- **MorphologicalCausation.lean**: Theory-layer types for causative construction typology — `CauserType`, `CauseeAffecteeType`, `Mediation`, `CausativeComplexity`, `CausativeConstruction`, `comrie_monotone`. Bridge theorems connecting to `CausalSource`, `AgentivityNode`, and `Volitionality`
+- **CausativeSystem.lean** (Fragments/Urdu/): 7 Urdu causative constructions from Hafeez (2025) with semantic prototypes and per-datum verification
+- **references.bib**: Add `comrie-1981`, `shibatani-1976`, `dixon-2000`, `hafeez-2025`
+
+## [0.229.176] - 2026-03-12
+
+### Changed
+- **MajidBosterBowerman2008.lean**: Audit and accuracy fixes:
+  - Replace hallucinated Yélî Dnye verb forms (`kpaa`/`tpee`/`ghaa`) and Tzeltal verb forms (`xet`/`jat`/`buch`/`set`) with abstract labels — the paper does not list specific verb forms for these languages
+  - Fix clip 45 (poke hole with twig): `.sharpBlade` → `.none` (a twig is a pointed implement, not a sharp blade)
+  - Fix clip 53 (chisel blow): `.bluntImpact` → `.sharpBlade` (a chisel is sharp-edged; used ballistically)
+  - Update `predictability` function: sharp blade + high force (ballistic blow) now yields `.intermediate` rather than `.high`, capturing the paper's finding that Dimension 1 is continuous and not reducible to instrument type alone
+  - Fix `breakProfile` and Fragment `break_` entry: remove restrictive `forceDir := some [.omnidirectional]` — English *break* is underspecified for manner, covering snapping (bidirectional), hammering (omnidirectional), and directed blows
+  - Fix `snapTwig_compatible_break`: now correctly proves `true` (English *break* covers snapping events)
+  - Replace inline profiles (§9) with references to actual Fragment entries via `fragmentProfile`, eliminating duplication
+  - Add cross-linguistic disagreement theorems (§11): `tear_disagreement`, `dim3_agreement`, `chiselBlow_english_break`/`chiselBlow_yeliDnye` — formalizing the key relativity finding that languages share dimensional structure but place boundaries differently
+  - Add docstring note about three-valued predictability being a simplification of the paper's continuous Dimension 1
+
 ## [0.229.175] - 2026-03-12
 
 ### Added
