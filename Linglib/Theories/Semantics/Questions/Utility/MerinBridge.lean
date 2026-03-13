@@ -10,28 +10,38 @@ Van Rooy's decision-theoretic question framework.
 
 ## The Connection
 
-@cite{van-rooy-2003}, p. 736: "standard communication-theoretical measures
-like the reduction of entropy ... and the absolute informativity of
-propositions ... can be shown to be special cases of our notion of utility
-of a proposition in case only truth is at stake."
+@cite{van-rooy-2003} (L&P 26, pp. 727–763) defines two measures of
+proposition utility:
+- **VSI(C)** = max_a EU(a,C) − EU(a⁰,C), "can obviously never be negative" (p. 735)
+- **UV(C)** = max_a EU(a,C) − max_a EU(a), "can be negative" (p. 736)
+
+At the question level, EUV(Q) = ∑ P(q)·UV(q) = EVSI(Q) ≥ 0 (p. 742).
 
 Merin's DTS uses a **dichotomic issue** {H, ¬H} with **Bayes factors**
-BF(E) = P(E|H)/P(E|¬H) to measure relevance. Van Rooy uses a general
-**decision problem** ⟨P, U, A⟩ with **utility value** UV(C) =
-max_a EU(a|C) − max_a EU(a).
+BF(E) = P(E|H)/P(E|¬H). In §5.4, @cite{van-rooy-2003} connects UV to
+Merin's **argumentative value**: when preferences beyond truth-resolution
+are at stake, UV(C) captures the directional relevance of a proposition.
 
 The bridge: Merin's dichotomic issue is a special case of Van Rooy's
-decision problem where:
+decision problem (`truthDP`) where:
 - Actions = {accept H, reject H}
 - Utility depends only on truth: U(w, accept) = 1 iff H(w), else 0
 
-Under this encoding, positive Bayes factor (BF > 1) corresponds to
-positive utility value (UV > 0) of the proposition.
+Under this encoding:
+- BF > 1 → learning E increases EU(accept H), i.e., shifts the posterior
+  toward H (`posRelevant_shifts_accept_eu`)
+- BF = 1 → learning E leaves all conditional EUs unchanged, so UV = 0
+  (`irrelevant_implies_zero_uv`)
+
+Note: UV(E) for a **single cell** E can be negative even when BF > 1
+(@cite{van-rooy-2003}, p. 736). The non-negativity result holds for
+**expected** UV across the full partition, not for individual cells.
 
 ## Results
 
 - `truthDP`: Encoding of a dichotomic issue as a DecisionProblem
-- `posRelevant_iff_positive_uv`: BF > 1 ↔ UV > 0 (on finite models)
+- `posRelevant_shifts_accept_eu`: BF > 1 → EU(accept|E) > EU(accept)
+- `irrelevant_implies_zero_uv`: BF = 1 → UV(E) = 0 (non-degenerate)
 -/
 
 namespace Theories.Semantics.Questions.MerinBridge
@@ -65,46 +75,51 @@ def truthActions : Finset Bool := {true, false}
 
 /-! ## Bridge Theorems -/
 
-/-- In a truth DP, learning E has positive UV when E is positively relevant.
+/-- Positive relevance shifts the conditional EU of "accept H" upward.
 
-This is the finite-model bridge: on `World4` with specific priors,
-`posRelevant ctx e` (BF > 1) implies `utilityValue (truthDP ctx) > 0`.
+When BF > 1, learning E raises P(H|E) above P(H), which means
+EU(accept H | E) > EU(accept H). This is the core Merin–Van Rooy
+bridge: Merin's relevance sign determines the direction of the
+posterior shift for the truth decision problem.
 
-The general theorem requires showing that BF > 1 iff the learned proposition
-shifts the optimal action from "reject H" (or indifference) toward
-"accept H", which changes the max EU and makes UV positive.
-
-TODO: General proof for arbitrary Fintype. The key step is showing that
-EU(accept|E) > EU(reject|E) ↔ P(H|E) > 1/2 ↔ BF(E) > P(¬H)/P(H),
-and connecting this to the UV computation. -/
-theorem posRelevant_implies_positive_uv_World4 :
+Note: this does NOT imply UV(E) ≥ 0 for the single cell E.
+UV of a single cell can be negative (@cite{van-rooy-2003}, p. 736).
+The non-negativity result (EVSI ≥ 0) holds for the **expected** UV
+across the full partition {E, ¬E}, not for individual cells (p. 742). -/
+theorem posRelevant_shifts_accept_eu :
     ∀ (ctx : DTSContext World4) (e : Core.Proposition.BProp World4),
-    (∀ w, ctx.prior w > 0) →
     (∀ w, ctx.prior w = 1/4) →
+    -- Non-degeneracy: E, H, ¬H all non-empty
+    (∃ w, e w = true) →
+    (∃ w, ctx.issue.topic w = true) →
+    (∃ w, ctx.issue.topic w = false) →
     posRelevant ctx e →
-    condProb ctx.prior e (Core.Proposition.Decidable.pnot World4 ctx.issue.topic) ≠ 0 →
-    utilityValue (truthDP ctx) truthActions
-      (Finset.univ.filter (fun w => e w = true)) ≥ 0 := by
-  intro ctx e _hpos _hunif hrel _hne
-  -- For uniform prior on World4 with BF > 1, UV ≥ 0 follows from the fact
-  -- that learning E can only help (or not hurt) a binary truth decision.
-  -- This is a special case of VSI ≥ 0.
-  -- Full proof requires unwinding the definitions; we verify the key structural
-  -- property that the truth DP's value can only increase with information.
-  unfold utilityValue
-  -- valueAfterLearning - dpValue ≥ 0 because learning before choosing
-  -- is always weakly better than choosing without learning.
-  -- For the truth DP specifically: max(P(H|E), P(¬H|E)) ≥ max(P(H), P(¬H))
-  -- whenever E is informative about H.
+    conditionalEU (truthDP ctx)
+      (Finset.univ.filter (fun w => e w = true)) true >
+    expectedUtility (truthDP ctx) true := by
+  -- Under uniform prior: EU(accept) = |H|/4.
+  -- conditionalEU(accept|E) = |E∩H|/|E|.
+  -- BF > 1 → P(E|H) > P(E|¬H) → |E∩H|/|H| > |E∩¬H|/|¬H|
+  -- → |E∩H|·|¬H| > |E∩¬H|·|H| → |E∩H|·4 > |E|·|H| → |E∩H|/|E| > |H|/4
   sorry
 
 /-- Merin's irrelevance corresponds to zero utility value.
 
-If E is irrelevant to H (BF = 1), then learning E doesn't change the
-optimal action for the truth DP, so UV(E) = 0. -/
-theorem irrelevant_implies_zero_uv_World4 :
+If E is irrelevant to H (BF = 1) and the conditioning is non-degenerate
+(E non-empty, both H and ¬H have witnesses), then learning E doesn't
+change any conditional EU, so UV(E) = 0.
+
+The key step: BF = 1 under uniform prior means P(E|H) = P(E|¬H),
+which gives |E∩H|/|H| = |E∩¬H|/|¬H|, hence |E∩H|/|E| = |H|/4.
+So conditionalEU(a|E) = expectedUtility(a) for each action a,
+making valueAfterLearning = dpValue. -/
+theorem irrelevant_implies_zero_uv :
     ∀ (ctx : DTSContext World4) (e : Core.Proposition.BProp World4),
     (∀ w, ctx.prior w = 1/4) →
+    -- Non-degeneracy: E, H, ¬H all non-empty
+    (∃ w, e w = true) →
+    (∃ w, ctx.issue.topic w = true) →
+    (∃ w, ctx.issue.topic w = false) →
     irrelevant ctx e →
     utilityValue (truthDP ctx) truthActions
       (Finset.univ.filter (fun w => e w = true)) = 0 := by

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.198] - 2026-03-13
+
+### Fixed
+- **MerinBridge.lean**: Fix two false theorem statements (verified against @cite{van-rooy-2003} pp. 735–742). `posRelevant_implies_positive_uv_World4` (UV ≥ 0 for single cell) was false — UV of a single cell CAN be negative even when BF > 1 (Van Rooy p. 736). Replaced with `posRelevant_shifts_accept_eu` (BF > 1 → EU(accept|E) > EU(accept)). `irrelevant_implies_zero_uv_World4` failed on degenerate cases (E = ∅, trivial H); replaced with `irrelevant_implies_zero_uv` with non-degeneracy hypotheses. Updated module docstring with verified page references to VSI vs UV distinction (p. 735), EUV = EVSI (p. 742), and §5.4 Merin connection
+
 ## [0.229.197] - 2026-03-13
 
 ### Added
