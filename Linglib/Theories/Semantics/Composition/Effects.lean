@@ -37,6 +37,17 @@ linglib infrastructure:
 - **§4** The W ⊣ R adjunction for binding
 - **§5** Effect operations and handlers
 - **§6** Bridge theorems
+- **§7** General scope agreement (Cont ≡ GQ application)
+- **§8** Three-way binding unification (denotGJoin = W = adj_ε)
+
+## Coverage
+
+Of the 9 meta-combinators in Figure 10, this file formalizes 5:
+F̄ (Map Left), F̃ (Map Right), A (Structured App), J (Join), C (Co-unit).
+
+Omitted: Ū/Ũ (Unit Left/Right) are trivial wrappers around `pure`;
+⊿̄/⊿̃ (Eject Left/Right) require the Υ isomorphism from §5.3.2
+(Kleisli arrow repackaging), which is not yet formalized.
 -/
 
 namespace Semantics.Composition.Effects
@@ -115,6 +126,37 @@ instance : Seq (Writer P) where
   seq mf mx := Writer.app mf (mx ())
 
 instance : Monad (Writer P) where
+
+private theorem append_nil_right {α : Type} (l₁ l₂ : List α) :
+    l₁ ++ l₂ = l₁ ++ (l₂ ++ []) := by simp
+
+instance : LawfulFunctor (Writer P) where
+  map_const := rfl
+  id_map _ := Writer.ext rfl rfl
+  comp_map _ _ _ := rfl
+
+instance : LawfulApplicative (Writer P) where
+  seqLeft_eq a b := by cases a; cases b; exact Writer.ext rfl rfl
+  seqRight_eq a b := by
+    cases a; cases b; exact Writer.ext rfl (append_nil_right _ _)
+  pure_seq _ _ := Writer.ext rfl (List.append_nil _)
+  map_pure _ _ := rfl
+  seq_pure _ _ := Writer.ext rfl (List.append_nil _)
+  seq_assoc f g x := by
+    cases f; cases g; cases x
+    simp only [Functor.map, Writer.map, Seq.seq, Writer.app, Writer.bind, Writer.pure,
+      Writer.mk.injEq]
+    exact ⟨rfl, by simp [List.append_assoc]⟩
+
+instance : LawfulMonad (Writer P) where
+  bind_pure_comp _ _ := Writer.ext rfl (List.append_nil _)
+  bind_map f x := by
+    cases f; cases x; exact Writer.ext rfl (append_nil_right _ _)
+  pure_bind _ _ := Writer.ext rfl rfl
+  bind_assoc x f g := by
+    cases x
+    simp only [Bind.bind, Writer.bind, Writer.mk.injEq]
+    exact ⟨trivial, by simp [List.append_assoc]⟩
 
 end WriterInstances
 
@@ -410,7 +452,13 @@ variable {ι σ τ ω : Type}
     For the W ⊣ R adjunction (§5.1), where W α = α × ι (product)
     and R α = ι → α (reader), the two fmap operations compose the
     binary combinator with both computations, and ε extracts the result:
-    `C(∗) ⟨s, i⟩ f = s ∗ f(i)` -/
+    `C(∗) ⟨s, i⟩ f = s ∗ f(i)`
+
+    **Crossover** (§5.2): The type signature encodes the crossover
+    constraint — the W effect (antecedent, `σ × ι`) must be the left
+    daughter and the R effect (pronoun, `ι → τ`) the right daughter.
+    Swapping them produces a type error, not a binding failure: there
+    is no well-typed `counitApp star (e₂ : ι → τ) (e₁ : σ × ι)`. -/
 def counitApp (star : σ → τ → ω) (e₁ : σ × ι) (e₂ : ι → τ) : ω :=
   star e₁.1 (e₂ e₁.2)
 
