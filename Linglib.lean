@@ -714,6 +714,7 @@ import Linglib.Phenomena.Ellipsis.Studies.GinzburgCooper2004
 import Linglib.Phenomena.Ellipsis.Studies.Landau2026
 import Linglib.Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025
 import Linglib.Phenomena.Ellipsis.Studies.Kalyakin2026
+import Linglib.Phenomena.Ellipsis.Studies.Merchant2013
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.FillerGap.Basic

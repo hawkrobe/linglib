@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.185] - 2026-03-12
+
+### Added
+- **Ellipsis/Studies/Merchant2013.lean**: Formalize Merchant 2013 "Voice and Ellipsis" — voice mismatch data for VPE (tolerated), sluicing, fragment answers, gapping, stripping (blocked); argument structure alternation data (causative/inchoative, middle, dative, prepositional) all blocked under all ellipsis types; per-datum bridge theorems to `canMismatch`; `uneven_distribution`, `voice_uniquely_discriminates`, `no_inverse_language` (monotonicity)
+- **DeletionDomain.lean**: Add `dativeAlternation`, `prepAlternation`, `middleAlternation` mismatch dimensions at `SpinePos.v` for argument structure alternations under ellipsis
+
 ## [0.229.184] - 2026-03-12
 
 ### Added
