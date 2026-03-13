@@ -280,10 +280,10 @@ def transferNextMention : ThetaRole → NextMentionBias
 /-- Goal → pronoun, Source → name: the predicted referential form for
     transfer verb arguments follows from next-mention bias. -/
 theorem goal_predicts_pronoun :
-    (transferNextMention .goal).predictedForm = .personalPronoun := rfl
+    (transferNextMention .goal).predictedForm = .unstressedPron := rfl
 
 theorem source_predicts_name :
-    (transferNextMention .source).predictedForm = .properName := rfl
+    (transferNextMention .source).predictedForm = .fullName := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 8. Coherence Bridge
@@ -318,13 +318,13 @@ theorem result_is_cause_effect :
     Together: Goal → pronoun → early position. The referential form
     choice mediates between thematic role and syntactic position. -/
 theorem pronoun_more_reduced :
-    DefinitenessLevel.personalPronoun.rank >
-    DefinitenessLevel.properName.rank := by
+    AccessibilityLevel.unstressedPron.rank >
+    AccessibilityLevel.fullName.rank := by
   native_decide
 
 theorem pronoun_at_most_as_heavy :
-    ReferentialForm.typicalWeight .personalPronoun ≤
-    ReferentialForm.typicalWeight .properName := by
+    ReferentialForm.typicalWeight .unstressedPron ≤
+    ReferentialForm.typicalWeight .fullName := by
   native_decide
 
 -- ════════════════════════════════════════════════════

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.190] - 2026-03-12
+
+### Changed
+- **Core/Discourse/ReferentialForm.lean**: Replace `abbrev ReferentialForm := DefinitenessLevel` with `abbrev ReferentialForm := AccessibilityLevel` — Ariel's 18-level scale is now the canonical referential form type; add `rank`, `toDefLevel`, `typicalWeight`; update `NextMentionBias.predictedForm` to `.unstressedPron`/`.fullName`
+- **Reference/Studies/Ariel2001.lean**: Remove duplicated `AccessibilityLevel`/`rank`/`toDefLevel` (now from Core); extend Core namespace with `informativity`, `rigidity`, `attenuation`
+- **Reference/Studies/RosaArnold2017.lean**: Update `.personalPronoun`→`.unstressedPron`, `.properName`→`.fullName`
+
 ## [0.229.189] - 2026-03-12
 
 ### Added
