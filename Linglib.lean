@@ -617,6 +617,7 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.ModalSubordination
 import Linglib.Phenomena.Anaphora.Typology
 import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
+import Linglib.Phenomena.Anaphora.Studies.Spector2025
 import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
@@ -1313,7 +1314,9 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
 import Linglib.Theories.Semantics.Montague.Basic
-import Linglib.Theories.Semantics.Montague.Composition
+import Linglib.Theories.Semantics.Composition.Tree
+import Linglib.Theories.Semantics.Composition.QuantifierComposition
+import Linglib.Theories.Semantics.Composition.Glue
 import Linglib.Theories.Semantics.Montague.Conjunction
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Montague.Lexicon
@@ -1376,6 +1379,7 @@ import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Theories.Semantics.Presupposition.TonhauserDerivation
+import Linglib.Theories.Semantics.Presupposition.Transparency
 import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
@@ -1592,6 +1596,7 @@ import Linglib.Theories.Diachronic.ModalChange
 import Linglib.Theories.Diachronic.Subjectification
 import Linglib.Phenomena.Causation.Studies.BellerGerstenberg2025
 import Linglib.Phenomena.Causation.Studies.KonukEtAl2026
+import Linglib.Phenomena.Causation.Studies.Krejci2012
 import Linglib.Phenomena.Ellipsis.Studies.BergenGoodman2015
 import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021
 import Linglib.Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024

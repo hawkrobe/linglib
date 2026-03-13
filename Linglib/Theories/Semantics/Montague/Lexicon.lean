@@ -165,7 +165,19 @@ theorem students_entry_number : students_entry.word.features.number = some .Plur
 theorem student_plural_flat_sem :
     students_entry.denot = student_entry.denot := rfl
 
+/-- Project a rich lexical entry down to the bare type+denotation
+    needed by the composition engine (`interpTree`/`interpTreeG`). -/
+def SemLexEntry.toLexEntry {m : Model} (e : SemLexEntry m) : LexEntry m :=
+  ⟨e.ty, e.denot⟩
+
 def SemLexicon (m : Model) := String → Option (SemLexEntry m)
+
+/-- Convert a rich `SemLexicon` to a bare `Lexicon` for use with the
+    composition engine. This is the primary bridge between the lexicon
+    layer (which carries Word metadata and scalar info) and the
+    interpretation layer (which only needs types and denotations). -/
+def SemLexicon.toLexicon {m : Model} (lex : SemLexicon m) : Lexicon m :=
+  fun form => (lex form).map SemLexEntry.toLexEntry
 
 def toyLexicon : SemLexicon toyModel := λ form =>
   match form with

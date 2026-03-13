@@ -8,64 +8,66 @@ Provides assignment functions, modified assignments, pronoun interpretation, and
 
 `Assignment`, `Assignment.update`, `DenotG`, `interpPronoun`, `applyG`, `lambdaAbsG`
 
+## Unification with Core.Assignment
+
+`Assignment m` is an abbreviation for `Core.Assignment m.Entity` (i.e., `Nat → m.Entity`).
+This makes it the same type used across the library:
+- Static binding (@cite{heim-kratzer-1998} Ch. 5): `Assignment m = Nat → m.Entity`
+- Dynamic semantics (DRT, DPL, CDRT): `Core.Assignment E`
+- Cylindric algebra (@cite{henkin-monk-tarski-1971}): `Core.Assignment D`
+
+For heterogeneous assignments mapping indices to entities, concepts, and
+world-time indices (@cite{krifka-2026}), instantiate `Core.Assignment (DRefVal W E)`.
+
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Core.Assignment
 
 namespace Semantics.Montague.Variables
 
 open Semantics.Montague
 
-/-- Assignment function: maps variable indices to entities. -/
-@[ext]
-structure Assignment (m : Model) where
-  /-- Function mapping indices to entities. -/
-  val : ℕ → m.Entity
+/-- Assignment function: maps variable indices to entities.
 
-instance {m : Model} : CoeFun (Assignment m) (λ _ => ℕ → m.Entity) where
-  coe g := g.val
+Unified with `Core.Assignment` — this is `Nat → m.Entity`. All variable-binding
+frameworks in the library (Montague, DRT, DPL, CDRT, cylindric algebra) share
+this canonical type, differing only in the entity parameter. -/
+abbrev Assignment (m : Model) := Core.Assignment m.Entity
 
-/-- Modified assignment g[n↦x]. -/
-def Assignment.update {m : Model} (g : Assignment m) (n : ℕ) (x : m.Entity)
+namespace Assignment
+
+/-- Modified assignment g[n↦x]. Delegates to `Core.Assignment.update`. -/
+def update {m : Model} (g : Assignment m) (n : ℕ) (x : m.Entity)
     : Assignment m :=
-  ⟨λ i => if i = n then x else g i⟩
+  Core.Assignment.update g n x
 
-notation:max g "[" n " ↦ " x "]" => Assignment.update g n x
+end Assignment
+
+scoped notation:max g "[" n " ↦ " x "]" => Assignment.update g n x
 
 @[simp]
 theorem update_same {m : Model} (g : Assignment m) (n : ℕ) (x : m.Entity)
-    : g[n ↦ x] n = x := by
-  simp only [Assignment.update, ite_true]
+    : g[n ↦ x] n = x :=
+  Core.Assignment.update_at g n x
 
 @[simp]
 theorem update_other {m : Model} (g : Assignment m) (n i : ℕ) (x : m.Entity)
-    (h : i ≠ n) : g[n ↦ x] i = g i := by
-  simp only [Assignment.update, h, ite_false]
+    (h : i ≠ n) : g[n ↦ x] i = g i :=
+  Core.Assignment.update_ne g x h
 
 theorem update_update_same {m : Model} (g : Assignment m) (n : ℕ) (x y : m.Entity)
-    : g[n ↦ x][n ↦ y] = g[n ↦ y] := by
-  ext i
-  simp only [Assignment.update]
-  split_ifs <;> rfl
+    : g[n ↦ x][n ↦ y] = g[n ↦ y] :=
+  Core.Assignment.update_overwrite g n x y
 
 theorem update_update_comm {m : Model} (g : Assignment m) (n₁ n₂ : ℕ)
     (x₁ x₂ : m.Entity) (h : n₁ ≠ n₂)
-    : g[n₁ ↦ x₁][n₂ ↦ x₂] = g[n₂ ↦ x₂][n₁ ↦ x₁] := by
-  ext i
-  simp only [Assignment.update]
-  split_ifs with h1 h2 h3
-  · exact absurd (h1.symm.trans h2) h.symm
-  · rfl
-  · rfl
-  · rfl
+    : g[n₁ ↦ x₁][n₂ ↦ x₂] = g[n₂ ↦ x₂][n₁ ↦ x₁] :=
+  Core.Assignment.update_comm g x₁ x₂ h
 
 theorem update_self {m : Model} (g : Assignment m) (n : ℕ)
-    : g[n ↦ g n] = g := by
-  ext i
-  simp only [Assignment.update]
-  split_ifs with h
-  · simp only [h]
-  · rfl
+    : g[n ↦ g n] = g :=
+  Core.Assignment.update_self g n
 
 /-- Denotation depending on assignment function. -/
 def DenotG (m : Model) (ty : Ty) := Assignment m → m.interpTy ty
@@ -107,15 +109,11 @@ section Examples
 
 open ToyEntity ToyLexicon
 
-def g₀ : Assignment toyModel := ⟨λ _ => .john⟩
+def g₀ : Assignment toyModel := λ _ => .john
 
 example : interpPronoun 0 g₀ = ToyEntity.john := rfl
-
-example : (g₀[0 ↦ ToyEntity.mary]) 0 = ToyEntity.mary := update_same g₀ 0 ToyEntity.mary
-
-example : (g₀[0 ↦ ToyEntity.mary]) 1 = ToyEntity.john := by
-  simp only [update_other g₀ 0 1 ToyEntity.mary (by decide)]
-  rfl
+example : (g₀[0 ↦ ToyEntity.mary]) 0 = ToyEntity.mary := rfl
+example : (g₀[0 ↦ ToyEntity.mary]) 1 = ToyEntity.john := rfl
 
 def sleeps_lambda : DenotG toyModel (.e ⇒ .t) :=
   lambdaAbsG 0 (applyG (constDenot sleeps_sem) (interpPronoun 0))

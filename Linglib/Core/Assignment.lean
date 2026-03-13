@@ -44,6 +44,10 @@ theorem update_comm {E : Type u} (g : Assignment E) {n m : Nat} (x y : E)
     (h : n ≠ m) : (g.update n x).update m y = (g.update m y).update n x := by
   funext k; simp [update]; by_cases hn : k = n <;> by_cases hm : k = m <;> simp_all
 
+theorem update_self {E : Type u} (g : Assignment E) (n : Nat) :
+    g.update n (g n) = g := by
+  funext i; simp [update]; intro h; exact congrArg g h.symm
+
 end Assignment
 
 end Core

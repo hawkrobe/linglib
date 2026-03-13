@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.229.183] - 2026-03-12
+
+### Added
+- **Composition/Glue.lean**: Formalize Glue Semantics (Asudeh 2022) — GlueTy (implicational linear logic), MeaningConstructor, GlueProof with type checking and resource verification; derive both scope readings of "everybody loves somebody" via proof search; bridge theorem `glue_qr_agree` proving Glue and QR yield identical truth values; ResourceCondition enum; CompositionApproach taxonomy
+- **Composition/QuantifierComposition.lean**: Factor out QR scope composition from Tree.lean; 10 verified theorems over toy model
+- **Composition/Tree.lean**: Full H&K Ch. 3-5 composition engine — SemanticStructure typeclasses, SynTree with binding/traces, `interpTreeG` (assignment-relative), `evalTree`
+
+### Changed
+- **Montague/Derivation.lean**: Migrate 5 SemDerivs from hand-assembled to tree-derived meanings via `evalTree`; add grounding theorems proving tree interpretation = direct GQ application
+- **Montague/Lexicon.lean**: Add `SemLexEntry.toLexEntry` and `SemLexicon.toLexicon` bridge from rich lexicon to bare composition engine
+- **Montague/Variables.lean**: Unify Assignment with Core.Assignment; scope `g[n ↦ x]` notation to prevent parser conflicts in downstream files
+- **Core/Assignment.lean**: Fix `update_self` proof (split_ifs → intro/subst after simp change)
+
+### Removed
+- **Montague/Composition.lean**: Superseded by Composition/Tree.lean
+
+## [0.229.182] - 2026-03-12
+
+### Changed
+- **Reference/Donnellan.lean**: Rewrite docstrings to present Donnellan's own position neutrally while noting the interpretive dispute (Kripke 1977, Almog 2014). `referentialExpression` retains `rigid intended` content (Donnellan's truth-conditional claim) with profile ⟨F,F,T⟩ (not a rigid designator by type). Remove `referentialUse_isRigid` (was testing a trivial consequence of `rigid`)
+- **Reference/Almog2014.lean**: Deep audit against the paper:
+  - Rename `deReDescProfile` → `deReScopeProfile` with docstring clarifying it's a scope configuration (not an expression type) needed for independence witness
+  - Remove trivial aliases (`barePluralProfile`/`naturalKindProfile` = `nameProfile`, `l0_attributive_s1_referential`)
+  - Add end-to-end argumentation chain: `dthat_scope_inert` (dthat rigid → scope-inert via Kripke), `dthat_insufficient_for_frege` (co-denoting dthat-expressions collapse → can't solve Frege puzzle), documenting Almog's central argument that designation ≠ singularity
+  - Import `Reference/Kripke` to enable the argumentation chain
+  - Fix docstrings to cite specific sections from the paper (§2.2–2.12, §2.13)
+- **Core/Conjectures.lean**: Fix stale reference to `IndependenceWitness`
+
+## [0.229.181] - 2026-03-12
+
+### Changed
+- **Reference/Basic.lean**: Replace `List RefMechanism` with `ReferentialProfile` — three independent Bool dimensions (designation, singularProp, referentialUse) making Almog's 8-cell independence thesis structural
+- **Reference/Almog2014.lean**: Add 6 canonical profiles (name, dthat, refDesc, attrDesc, demo, deReDesc); prove full pairwise independence of all 3 dimensions; add `dthatExpression` constructor and `dthat_deJureRigid`/`dthat_not_singular` theorems formalizing designation-without-singularity; add `barePluralProfile`/`naturalKindProfile` kind reference bridges
+- **Reference/Kaplan.lean**, **Donnellan.lean**, **Demonstratives.lean**: Update to use `ReferentialProfile`
+
+## [0.229.180] - 2026-03-12
+
+### Changed
+- **MorphologicalCausation.lean**: Refactor `SemanticPrototype` to support Table 25's negative features — rename `causerFeatures`/`causeeFeatures` to `presentCausers`/`absentCausers`/`presentCausees`/`absentCausees`
+- **CausativeSystem.lean**: Update all prototype encodings to faithfully represent Table 19's positive/negative feature specifications: LEX-INST uses [-IHCr] (not [+AHCr,+NFCr]); NCrA uses [-InanCEAF] (not [+PhysImpHCEAF]); NCA uses [-InanCEAF,-NFCr] (not [+IHCr,+AHCr,+PsychImpHCEAF]). Add new verification theorems for negative features (`lexInst_prototype_no_ihcr`, `ncrA_prototype_no_inan`, `nca_prototype_human`). Update `lexDat_no_prototype` to verify all 5 fields
+- **references.bib**: Add subtitle to Hafeez 2025: "Semantics, Pragmatics and Cognition"
+
 ## [0.229.179] - 2026-03-12
 
 ### Changed
@@ -16,7 +58,7 @@
 ### Changed
 - **MorphologicalCausation.lean**: Complete rewrite after audit against Hafeez (2025) dissertation. Replace hallucinated `CauserType` (human/naturalForce/instrument) with `intentionalHuman/accidentalHuman/naturalForce` (IHCr/AHCr/NFCr) — intentionality is the key dimension. Replace binary `CauseeType` with 4-level `CauseeAffecteeType` (controllingHuman/physImpactHuman/psychImpactHuman/inanimate). Add `AgentivityDegree` (full/marginal/partial) with derivation from causer/causee types. Update all bridges to `CausalSource`, `AgentivityNode`, `Volitionality`
 - **CausativeSystem.lean**: Complete rewrite. Move from `Fragments/HindiUrdu/` to `Fragments/Urdu/`. Replace 7 hallucinated constructions (lexical/-aa/-vaa/periphrastic *kar*/*say*/*dena*) with Hafeez's actual 7 acceptability study constructions (LEX-ERG, LEX-INST, LEX-DAT, MCV, ADV, NCA, NCrA). Add `SemanticPrototype` per construction from Table 25. Encode key empirical results: NCrA categorical restriction to NFCr, MCV→mediation, LEX-ERG↔full agentivity, agentivity–construction correspondences
-- **references.bib**: Fix `raza-2020` → `hafeez-2025` (correct author: Saima Hafeez, University of Stuttgart, 2025). Add `bohnemeyer-2004`
+- **references.bib**: Fix `raza-2020` → `hafeez-2025` (correct author: Saima Hafeez, University at Buffalo, 2025). Add `bohnemeyer-2004`
 
 ## [0.229.177] - 2026-03-12
 

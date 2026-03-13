@@ -7,18 +7,29 @@ Interface between syntax and pragmatics via `SemDeriv` bundles.
 
 `ScalarOccurrence`, `SemDeriv`, `alternativeMeanings`, `alternativeForms`, `SemanticsProducer`
 
+## Compositional derivation
+
+The `SemDeriv` instances below derive their meanings from tree interpretation
+(`interpTreeG`) rather than hand-assembling function applications. Each
+derivation specifies a `SynTree` and a `Lexicon`, and the meaning is computed
+by the composition engine. Grounding theorems verify that tree interpretation
+produces the same values as direct GQ application.
+
 -/
 
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Core.Scales.HornScale
 
 namespace Semantics.Montague.Derivation
 
 open Semantics.Montague
 open Semantics.Montague
+open Semantics.Composition.Tree
+open Semantics.Montague.Variables
 open Core.Scale
 
 /-- Scalar item occurrence in a derivation -/
@@ -61,49 +72,115 @@ def alternativeForms {m : Model} (d : SemDeriv m) (ctx : ContextPolarity)
     alts.map λ altForm =>
       d.surface.set occ.position altForm
 
+-- ════════════════════════════════════════════════════════════════════
+-- § Tree-derived SemDerivs
+-- ════════════════════════════════════════════════════════════════════
+
 open ToyLexicon
 open Semantics.Lexical.Determiner.Quantifier
+
+/-- Lexicon for derivation trees, derived from `toyLexicon` via `SemLexicon.toLexicon`.
+    Bare forms ("sleep", "laugh") are added for plural agreement contexts. -/
+def derivLex : Lexicon toyModel :=
+  fun word => match word with
+  | "sleep" => some ⟨.e ⇒ .t, ToyLexicon.sleeps_sem⟩
+  | "laugh" => some ⟨.e ⇒ .t, ToyLexicon.laughs_sem⟩
+  | other => toyLexicon.toLexicon other
+
+/-- Default assignment (closed sentences are independent of this choice). -/
+def g₀ : Assignment toyModel := λ _ => .john
+
+-- Trees
+
+/-- `[S John sleeps]` — simple FA -/
+def tree_johnSleeps : SynTree :=
+  .binary (.terminal "John") (.terminal "sleeps")
+
+/-- `[S [DP some students] [1 [S t₁ sleep]]]` — QR -/
+def tree_someStudentsSleep : SynTree :=
+  .binary
+    (.binary (.terminal "some") (.terminal "students"))
+    (.bind 1 (.binary (.trace 1) (.terminal "sleep")))
+
+/-- `[S [DP every student] [1 [S t₁ sleeps]]]` — QR -/
+def tree_everyStudentSleeps : SynTree :=
+  .binary
+    (.binary (.terminal "every") (.terminal "student"))
+    (.bind 1 (.binary (.trace 1) (.terminal "sleeps")))
+
+/-- `[S [DP some students] [1 [S t₁ laugh]]]` — QR -/
+def tree_someStudentsLaugh : SynTree :=
+  .binary
+    (.binary (.terminal "some") (.terminal "students"))
+    (.bind 1 (.binary (.trace 1) (.terminal "laugh")))
+
+/-- `[S [DP every student] [1 [S t₁ laughs]]]` — QR -/
+def tree_everyStudentLaughs : SynTree :=
+  .binary
+    (.binary (.terminal "every") (.terminal "student"))
+    (.bind 1 (.binary (.trace 1) (.terminal "laughs")))
+
+-- Derivations: meanings derived from tree interpretation
 
 def johnSleeps : SemDeriv toyModel :=
   { surface := ["John", "sleeps"]
   , ty := .t
-  , meaning := sleeps_sem john_sem
+  , meaning := (evalTree derivLex g₀ tree_johnSleeps).getD false
   , scalarItems := []
   }
 
 def someStudentsSleep : SemDeriv toyModel :=
   { surface := ["some", "students", "sleep"]
   , ty := .t
-  , meaning := some_sem toyModel student_sem sleeps_sem
+  , meaning := (evalTree derivLex g₀ tree_someStudentsSleep).getD false
   , scalarItems := [⟨0, some_entry⟩]
   }
 
 def everyStudentSleeps : SemDeriv toyModel :=
   { surface := ["every", "student", "sleeps"]
   , ty := .t
-  , meaning := every_sem toyModel student_sem sleeps_sem
+  , meaning := (evalTree derivLex g₀ tree_everyStudentSleeps).getD false
   , scalarItems := [⟨0, every_entry⟩]
   }
 
 def someStudentsLaugh : SemDeriv toyModel :=
   { surface := ["some", "students", "laugh"]
   , ty := .t
-  , meaning := some_sem toyModel student_sem laughs_sem
+  , meaning := (evalTree derivLex g₀ tree_someStudentsLaugh).getD false
   , scalarItems := [⟨0, some_entry⟩]
   }
 
 def everyStudentLaughs : SemDeriv toyModel :=
   { surface := ["every", "student", "laughs"]
   , ty := .t
-  , meaning := every_sem toyModel student_sem laughs_sem
+  , meaning := (evalTree derivLex g₀ tree_everyStudentLaughs).getD false
   , scalarItems := [⟨0, every_entry⟩]
   }
 
+-- Truth-value verification
+
 theorem johnSleeps_no_scalars : johnSleeps.hasScalarItems = false := rfl
 theorem someStudentsSleep_has_scalars : someStudentsSleep.hasScalarItems = true := rfl
-theorem someStudentsSleep_true : someStudentsSleep.meaning = true := rfl
-theorem everyStudentSleeps_false : everyStudentSleeps.meaning = false := rfl
-theorem everyStudentLaughs_true : everyStudentLaughs.meaning = true := rfl
+theorem someStudentsSleep_true : someStudentsSleep.meaning = true := by
+  show (evalTree derivLex g₀ tree_someStudentsSleep).getD false = true; native_decide
+theorem everyStudentSleeps_false : everyStudentSleeps.meaning = false := by
+  show (evalTree derivLex g₀ tree_everyStudentSleeps).getD false = false; native_decide
+theorem everyStudentLaughs_true : everyStudentLaughs.meaning = true := by
+  show (evalTree derivLex g₀ tree_everyStudentLaughs).getD false = true; native_decide
+
+-- Grounding: tree interpretation = direct GQ application
+
+theorem johnSleeps_grounding :
+    evalTree derivLex g₀ tree_johnSleeps =
+    some (sleeps_sem john_sem) := by native_decide
+
+theorem someStudentsSleep_grounding :
+    evalTree derivLex g₀ tree_someStudentsSleep =
+    some (some_sem toyModel student_sem sleeps_sem) := by native_decide
+
+theorem everyStudentSleeps_grounding :
+    evalTree derivLex g₀ tree_everyStudentSleeps =
+    some (every_sem toyModel student_sem sleeps_sem) := by native_decide
 
 /-- Syntax theory that can produce semantic derivations -/
 class SemanticsProducer (SynDeriv : Type) (m : Model) where
