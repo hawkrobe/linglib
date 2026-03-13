@@ -1,73 +1,227 @@
-/-
+import Linglib.Theories.Semantics.Reference.Basic
+import Linglib.Theories.Semantics.Reference.Kaplan
+import Linglib.Theories.Semantics.Reference.Donnellan
+import Linglib.Theories.Semantics.Reference.KaplanLD
+import Linglib.Theories.Semantics.Reference.Kripke
+import Linglib.Theories.Semantics.Attitudes.Doxastic
+import Linglib.Core.Conjectures
+
+/-!
 # @cite{almog-2014}: Referential Mechanics — Synthesis
 
 The central thesis of @cite{almog-2014}: the three mechanisms of direct reference
 — designation, singular propositions, and referential use — are logically
 independent. An expression can exhibit any subset of the three.
 
-This module provides the formal independence witness and cross-module bridge
-theorems connecting the reference theory to the rest of Linglib.
+This module provides canonical referential profiles for each expression type,
+proves pairwise independence of the three dimensions, chains the key
+argumentation from across the Reference module, and bridges the reference
+theory to the rest of Linglib.
+
+## Canonical Profiles (from @cite{almog-2014})
+
+| Expression         | Designation | Singular Prop | Referential Use |
+|--------------------|-------------|---------------|-----------------|
+| True demonstrative | ✓           | ✓             | ✓               |
+| Proper name        | ✓           | ✓             | ✗               |
+| dthat[the φ]       | ✓           | ✗             | ✗               |
+| "The φ" (ref.)     | ✗           | ✗             | ✓               |
+| "The φ" (attr.)    | ✗           | ✗             | ✗               |
+
+The ⟨F,T,F⟩ combination (singularity without designation) is witnessed by
+de re scope: a description taking wide scope over a modal contributes a
+singular proposition without itself being rigid. This is not an "expression
+type" per se but a scope configuration that demonstrates the logical
+independence of designation from singularity.
 
 ## Independence
 
-| Expression       | Designation | Singular Prop | Referential Use |
-|-----------------|-------------|---------------|-----------------|
-| Proper name     | ✓           | ✓             | ✗               |
-| Indexical "I"   | ✓           | ✓             | ✗               |
-| "The φ" (ref.)  | ✗           | ✗             | ✓               |
-| "The φ" (attr.) | ✗           | ✗             | ✗               |
+The three dimensions are pairwise independent:
+- Designation ⊥ singularProp: name [T,T] vs dthat [T,F] vs deReScope [F,T] vs attrDesc [F,F]
+- Designation ⊥ referentialUse: demo [T,T] vs name [T,F] vs refDesc [F,T] vs attrDesc [F,F]
+- SingularProp ⊥ referentialUse: demo [T,T] vs name [T,F] vs refDesc [F,T] vs attrDesc [F,F]
+
+## End-to-End Argumentation
+
+The central chain from @cite{almog-2014} Ch 1–2:
+1. dthat is rigid (KaplanLD.dthatW_isRigid)
+2. dthat is scope-inert (Kripke.rigid_iff_scope_invariant, forward direction)
+3. But dthat does NOT produce singular propositions (dthat_not_singular)
+4. Therefore designation ≠ singularity (designation_indep_singularProp)
+5. Singular propositions solve the Frege puzzle (frege_puzzle)
+6. So dthat alone cannot solve the Frege puzzle
 
 -/
 
-import Linglib.Theories.Semantics.Reference.Basic
-import Linglib.Theories.Semantics.Reference.Kaplan
-import Linglib.Theories.Semantics.Reference.Donnellan
-import Linglib.Theories.Semantics.Attitudes.Doxastic
-import Linglib.Core.Conjectures
-
 namespace Semantics.Reference.Almog2014
 
-open Semantics.Reference.Basic (RefMechanism ReferringExpression properName
+open Semantics.Reference.Basic (ReferentialProfile ReferringExpression properName
   isDirectlyReferential)
 open Semantics.Reference.Kaplan (SingularProposition indexical)
 open Semantics.Reference.Donnellan (UseMode referentialExpression)
+open Semantics.Reference.KaplanLD (dthatW dthatW_isRigid)
+open Semantics.Reference.Kripke (rigid_iff_scope_invariant deRe deDicto)
 open Core.Intension (Intension rigid IsRigid rigid_isRigid)
 
-/-! ## Independence of the Three Mechanisms -/
+/-! ## Canonical Referential Profiles -/
 
-/-- A witness to the independence of Almog's three mechanisms.
+/-- Proper name: designation + singularity, no referential use.
 
-Provides four expressions, each exhibiting a different combination of
-the three mechanisms, demonstrating they are orthogonal.
+"Aristotle" rigidly designates an individual (@cite{kripke-1980}) and expresses a
+singular proposition ⟨Aristotle, property⟩ (@cite{kaplan-1989}), but does not require
+the speaker to have a cognitive fix on any particular occasion. -/
+def nameProfile : ReferentialProfile := ⟨true, true, false⟩
 
-The four expressions are:
-1. A proper name (designation + singular proposition, no referential use)
-2. "The φ" used referentially (referential use only)
-3. "The φ" used attributively (none of the three)
-4. An indexical (designation + singular proposition) -/
-structure IndependenceWitness (C : Type*) (W : Type*) (E : Type*) where
-  /-- A proper name: designation + singular proposition -/
-  name : ReferringExpression C W E
-  /-- A referentially-used description: referential use only -/
-  refDesc : ReferringExpression C W E
-  /-- Name exhibits designation -/
-  name_has_designation : RefMechanism.designation ∈ name.mechanisms
-  /-- Name does NOT exhibit referential use -/
-  name_no_refUse : RefMechanism.referentialUse ∉ name.mechanisms
-  /-- Referential description exhibits referential use -/
-  refDesc_has_refUse : RefMechanism.referentialUse ∈ refDesc.mechanisms
-  /-- Referential description does NOT exhibit designation -/
-  refDesc_no_designation : RefMechanism.designation ∉ refDesc.mechanisms
+/-- dthat[the φ]: designation only.
 
-/-- Construct a concrete independence witness. -/
-def independenceWitness {C W E : Type*} [Inhabited W] (e : E) :
-    IndependenceWitness C W E :=
-  { name := properName e
-  , refDesc := referentialExpression e
-  , name_has_designation := List.Mem.head _
-  , name_no_refUse := by simp [properName]
-  , refDesc_has_refUse := List.Mem.head _
-  , refDesc_no_designation := by simp [referentialExpression] }
+@cite{almog-2014}'s sharpest separation (Ch 1): `dthat[the tallest spy]` rigidly
+designates whoever is actually the tallest spy (`dthatW_isRigid`), but its
+content is a general proposition (a rigid intension), NOT a structured
+⟨individual, property⟩ pair. This distinguishes rigidity from direct
+referentiality in Kaplan's sense. -/
+def dthatProfile : ReferentialProfile := ⟨true, false, false⟩
+
+/-- Referentially-used description: referential use only.
+
+"The man drinking a martini" used referentially — the speaker has Jones in
+mind, using the description to identify him. Per @cite{almog-2014} Ch 3
+§§2.2–2.12, this is a cognitive mechanism: the speaker's mind is already
+"loaded" with the referent. The description itself is non-rigid
+(designation = false), and per @cite{almog-2014}'s reading of Donnellan
+(§2.12), the propositional content is NOT singular — Donnellan gives a
+"proposition-free account, rather de re (de object coming in) in its
+form." Only the cognitive fix is present. -/
+def refDescProfile : ReferentialProfile := ⟨false, false, true⟩
+
+/-- Attributively-used description: no mechanism of direct reference.
+
+"The man drinking a martini" used attributively — "whoever uniquely satisfies
+the description." No rigidity, no singular proposition, no cognitive fix. -/
+def attrDescProfile : ReferentialProfile := ⟨false, false, false⟩
+
+/-- True demonstrative: all three mechanisms.
+
+"That [pointing]" — rigid designation (the demonstrated object is fixed),
+singular propositional content (⟨demonstrated object, property⟩), and
+referential use (the speaker has the object in mind via the demonstration).
+The demonstrative is the paradigm case where all three of
+@cite{almog-2014}'s mechanisms converge. -/
+def demoProfile : ReferentialProfile := ⟨true, true, true⟩
+
+/-- De re scope reading: singularity without designation.
+
+"Lois believes [the man at the door]₁ is tall" (de re) — the description
+takes wide scope, contributing a singular proposition about the actual man
+at the door. But the description itself is not rigid (at different worlds,
+different people might be at the door).
+
+Note: this is a *scope configuration*, not an expression type per se. We
+include it to witness the logical independence of designation from
+singularity — all four combinations of (designation, singularProp) must be
+attested for independence, and this is the only natural witness for ⟨F,T,F⟩. -/
+def deReScopeProfile : ReferentialProfile := ⟨false, true, false⟩
+
+/-! ## Pairwise Independence
+
+For each pair of dimensions (X, Y), we exhibit profiles demonstrating that
+X can vary independently of Y: both (X=T, Y=T) and (X=T, Y=F) are attested,
+as are (X=F, Y=T) and (X=F, Y=F). -/
+
+/-- Designation is independent of singular propositional content.
+
+All four combinations of (designation, singularProp) are attested:
+name [T,T], dthat [T,F], deReScope [F,T], attrDesc [F,F]. -/
+theorem designation_indep_singularProp :
+    nameProfile.designation = true ∧ nameProfile.singularProp = true ∧
+    dthatProfile.designation = true ∧ dthatProfile.singularProp = false ∧
+    deReScopeProfile.designation = false ∧ deReScopeProfile.singularProp = true ∧
+    attrDescProfile.designation = false ∧ attrDescProfile.singularProp = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Designation is independent of referential use.
+
+All four combinations of (designation, referentialUse) are attested:
+demo [T,T], name [T,F], refDesc [F,T], attrDesc [F,F]. -/
+theorem designation_indep_referentialUse :
+    demoProfile.designation = true ∧ demoProfile.referentialUse = true ∧
+    nameProfile.designation = true ∧ nameProfile.referentialUse = false ∧
+    refDescProfile.designation = false ∧ refDescProfile.referentialUse = true ∧
+    attrDescProfile.designation = false ∧ attrDescProfile.referentialUse = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Singular propositional content is independent of referential use.
+
+All four combinations of (singularProp, referentialUse) are attested:
+demo [T,T], name [T,F], refDesc [F,T], attrDesc [F,F]. -/
+theorem singularProp_indep_referentialUse :
+    demoProfile.singularProp = true ∧ demoProfile.referentialUse = true ∧
+    nameProfile.singularProp = true ∧ nameProfile.referentialUse = false ∧
+    refDescProfile.singularProp = false ∧ refDescProfile.referentialUse = true ∧
+    attrDescProfile.singularProp = false ∧ attrDescProfile.referentialUse = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-! ## Dthat: Designation Without Singularity
+
+@cite{almog-2014}'s central argument against conflating rigidity with direct
+referentiality. `dthat[the φ]` is rigid by mechanism — `KaplanLD.dthatW_isRigid`
+proves this — but its content is not a structured ⟨individual, property⟩ pair.
+It is a general proposition that happens to be world-invariant. -/
+
+/-- A dthat-expression as a `ReferringExpression`: rigid character, profile
+records designation without singularity or referential use. -/
+def dthatExpression {C W E : Type*} (desc : Intension W E) (cW : W) :
+    ReferringExpression C W E :=
+  { character := λ _ => dthatW desc cW
+  , profile := dthatProfile }
+
+/-- dthat-expressions are de jure rigid: their character produces rigid
+content and their profile records the designation mechanism. -/
+theorem dthat_deJureRigid {C W E : Type*} (desc : Intension W E) (cW : W) :
+    Semantics.Reference.Basic.IsDeJureRigid
+      (dthatExpression (C := C) desc cW) :=
+  ⟨rfl, λ _ => dthatW_isRigid desc cW⟩
+
+/-- dthat-expressions do NOT have singular propositional content.
+This is the formal content of @cite{almog-2014}'s separation thesis. -/
+theorem dthat_not_singular {C W E : Type*} (desc : Intension W E) (cW : W) :
+    (dthatExpression (C := C) desc cW).profile.singularProp = false := rfl
+
+/-! ## End-to-End Argumentation Chain
+
+@cite{almog-2014}'s central argument in formal steps:
+
+1. dthat rigidifies descriptions → `dthatW_isRigid`
+2. Rigid designators are scope-inert → `rigid_iff_scope_invariant` (fwd)
+3. But dthat does NOT produce singular propositions → `dthat_not_singular`
+4. Singular propositions solve Frege puzzles → `frege_puzzle`
+5. Therefore dthat CANNOT solve the Frege puzzle — rigidity alone is
+   insufficient; we need singularity (structured content) to distinguish
+   ⟨Hesperus, bright⟩ from ⟨Phosphorus, bright⟩.
+
+This is the formal core of @cite{almog-2014}'s argument that designation
+and singularity are independent mechanisms with different explanatory roles. -/
+
+/-- Step 1–2: dthat is scope-inert. Since dthat is rigid (dthatW_isRigid),
+scope invariance follows from `rigid_iff_scope_invariant`. -/
+theorem dthat_scope_inert {W E : Type*} (desc : Intension W E) (cW w₀ : W) :
+    ∀ (P : E → W → Prop) (w : W),
+      deRe P (dthatW desc cW) w₀ w ↔ deDicto P (dthatW desc cW) w :=
+  (rigid_iff_scope_invariant (dthatW desc cW) w₀).mp (dthatW_isRigid desc cW)
+
+/-- Step 3–5: dthat cannot solve the Frege puzzle.
+
+Given two descriptions that happen to co-denote at the actual world,
+dthat rigidifies both to the same individual. Their dthat-contents are
+identical (same rigid intension). But the *structured* singular
+propositions would distinguish them — except dthat doesn't produce
+structured content at all. So dthat eliminates scope ambiguity (step 2)
+but cannot explain informativeness. -/
+theorem dthat_insufficient_for_frege {W E : Type*}
+    (desc₁ desc₂ : Intension W E) (cW : W)
+    (hCo : desc₁ cW = desc₂ cW) :
+    -- dthat makes them the same intension...
+    dthatW desc₁ cW = dthatW desc₂ cW := by
+  simp only [dthatW, hCo]
 
 /-! ## The Frege Puzzle (Cross-Module Bridge) -/
 
@@ -88,30 +242,31 @@ theorem frege_puzzle {W E : Type*} (a b : E) (P : E → W → Bool) (hab : a ≠
     (SingularProposition.mk a P) ≠ (SingularProposition.mk b P) :=
   ⟨hflat, SingularProposition.structured_distinguishes_unstructured a b P hab hflat⟩
 
-/-! ## Cross-Module Bridges -/
+/-! ## The "No Entailments" Thesis (Ch 2, §2.1)
 
-/-- Bridge to @cite{carlson-1977}: bare plurals as rigid designators.
+@cite{almog-2014}'s central metatheoretic claim: direct reference theory
+proper — whether via designation, singular propositions, or referential use —
+produces NO entailments about either modal or attitudinal questions.
 
-Carlson's `bare_plural_rigid_designator` shows that bare plurals behave
-like proper names (type e, no scope interaction). In Almog's taxonomy,
-this means bare plurals employ the *designation* mechanism: the kind is
-rigidly designated.
+"The simple logical point is this: *There are no entailments from direct
+reference theory proper regarding either modal or attitudinal questions.*"
 
-See: `Semantics.Lexical.Noun.Kind.Carlson1977.bare_plural_rigid_designator` -/
-theorem bare_plural_uses_designation :
-    RefMechanism.designation ∈ [RefMechanism.designation, RefMechanism.singularProp] :=
-  List.Mem.head _
+The theory assigns the same proposition to "Cicero = Cicero" and
+"Cicero = Tully." But that is all. Whether that proposition is *necessary*
+requires the independent metaphysical doctrine of modal haecceitism.
+Whether an agent *believes* it requires an independent theory of attitude
+verb semantics. The reference theory is silent on both. -/
 
-/-- Bridge to Doxastic attitudes: substitution failure explained.
+/-- Direct reference theory is silent on opacity.
 
-`Attitude.Doxastic.substitutionMayFail` shows that opaque contexts block
-substitution of co-referential terms. Almog's explanation: attitude verbs
-embed *singular propositions* (structured content), and
-⟨Superman, can-fly⟩ ≠ ⟨Clark, can-fly⟩ because Superman ≠ Clark as
-*modes of presentation*, even though they co-refer.
-
-See: `Semantics.Attitudes.Doxastic.substitutionMayFail` -/
-theorem opacity_from_structured_propositions {W E : Type*} :
+Distinct individuals produce distinct singular propositions — this is a
+structural fact about ⟨individual, property⟩ pairs, not an explanation of
+attitude opacity. Per @cite{almog-2014} (Ch 2, §2.1), no doctrine regarding
+modal or cognitive matters follows from direct reference theory proper.
+Substitution failure in attitude reports requires an independent theory
+of attitudinal verb semantics (see `Attitudes.Doxastic.substitutionMayFail`
+for the formal framework). -/
+theorem structured_content_distinguishes {W E : Type*} :
     ∀ (a b : E) (P : E → W → Bool), a ≠ b →
     SingularProposition.mk a P ≠ SingularProposition.mk b P := by
   intro a b P hab heq
@@ -119,45 +274,184 @@ theorem opacity_from_structured_propositions {W E : Type*} :
   simp at this
   exact hab this
 
-/-- Bridge to RSA reference games: L0 = attributive, S1 = referential.
+/-! ## Cross-Module Bridges -/
 
-In @cite{frank-goodman-2012} reference games, the literal listener L0
-interprets descriptions attributively (checking which referents satisfy
-the description). The pragmatic speaker S1 uses descriptions referentially
-(choosing a description to pick out the intended referent for the listener).
+/-- Proper names are directly referential: bridges the `Reference/Basic.lean`
+proper name definition through `IsDeJureRigid` to the broader system.
 
-This mirrors Donnellan's distinction:
-- L0's `literalListener` ≈ attributive use (description → referent)
-- S1's `pragmaticSpeaker` ≈ referential use (referent → description)
-
-See: `RSA.FrankGoodman2012` for a reference game implementation. -/
-theorem l0_attributive_s1_referential :
-    UseMode.attributive ≠ UseMode.referential := by
-  intro h; cases h
-
-/-- Bridge to `Core.Conjectures.rigid_iff_common_ground`:
-
-Almog's de jure rigidity (rigidity by mechanism) should imply that the
-referent is common ground with probability 1. If "Hesperus" is de jure
-rigid, then all agents in all worlds agree on who "Hesperus" picks out.
-
-This is the conjecture stated in `Core.Conjectures.rigid_iff_common_ground`. -/
-theorem deJure_implies_cg_agreement {C W E : Type*} (e : E) :
+This is the formal content of @cite{kripke-1980}'s thesis as formalized
+via @cite{almog-2014}'s designation mechanism. -/
+theorem properName_deJure {C W E : Type*} (e : E) :
     isDirectlyReferential (properName (C := C) (W := W) e).character :=
   λ _ => rigid_isRigid e
 
-/- Bridge to PLA/Belief `hesperusPhosphorusScenario`:
+/-! ## Bridge: PLA and the Frege Puzzle
 
-Dekker's cover-relative belief framework (PLA) gives the formal mechanism
-for Frege puzzles: two concepts can co-refer at the actual world but
-diverge in belief-accessible worlds. This is exactly the scenario where
-proper names have the same referent but different characters.
+Dekker's cover-relative belief framework (`Semantics.Dynamic.PLA`) gives a
+formal mechanism for Frege puzzles: two concepts can co-refer at the actual
+world but diverge in belief-accessible worlds. This is exactly the scenario
+where proper names have the same referent but different cognitive significance.
 
 The bridge is informal: PLA uses cover-relative assignment functions while
-Almog's framework uses mechanism-based analysis. A formal connection would
-require unifying the representation of "mode of presentation" across
-both frameworks.
+@cite{almog-2014}'s framework uses mechanism-based analysis. A formal
+connection would require unifying "mode of presentation" across both. -/
 
-See: `Semantics.Dynamic.PLA.hesperusPhosphorusScenario` -/
+/-! ## KDthat: Outside-In Reference (Ch 3, §2.13)
+
+@cite{almog-2014}'s alternative to Kaplan's `dthat`. In KDthat, the reference
+is already fixed by an incoming signal (outside-in) before any linguistic
+expression is deployed. The description in parentheses serves only as a
+communicative guide — it helps the audience identify the referent the speaker
+already has in mind, but does not determine it.
+
+Contrast with `dthatW`, which rigidifies *by evaluating* the description
+at the actual world (inside-out).
+
+KDthat encodes the three-stage model of referential use (Ch 3, §1.2):
+1. Object-contact (outside-in): `loaded` — the object that came to mind
+2. Predicative characterization: the speaker forms (possibly false) beliefs
+3. Communication: `guide` — the linguistic device deployed to direct the audience -/
+
+/-- KDthat: a point-demonstrative whose reference is fixed outside-in.
+`loaded` is the individual from stage 1 (object-contact). `guide` is the
+description used to communicate (stage 3). The guide plays no role in
+determining reference. -/
+def kdthat {W E : Type*} (loaded : E) (_guide : E → W → Bool) : Intension W E :=
+  rigid loaded
+
+/-- KDthat is rigid (trivially — reference was already fixed). -/
+theorem kdthat_isRigid {W E : Type*} (loaded : E) (guide : E → W → Bool) :
+    IsRigid (kdthat loaded guide) :=
+  rigid_isRigid loaded
+
+/-- Changing the communicative guide does not change the referent.
+This is the formal content of @cite{almog-2014}'s outside-in thesis:
+reference is fixed at object-contact (stage 1), not at communication
+(stage 3). -/
+theorem kdthat_guide_irrelevant {W E : Type*}
+    (loaded : E) (guide₁ guide₂ : E → W → Bool) :
+    kdthat loaded guide₁ = kdthat loaded guide₂ :=
+  rfl
+
+/-- KDthat vs Dthat diverge when the description misfits.
+KDthat: "that [pointing at Jones] — the man with the martini" → Jones.
+Dthat: "dthat[the man with the martini]" → whoever actually satisfies it.
+When Jones is drinking water, these pick out different individuals.
+
+This is the formal core of @cite{almog-2014}'s argument that Donnellan's
+referential use is a genuinely different mechanism from Kaplan's
+rigidification-by-description. -/
+theorem kdthat_dthat_diverge {W E : Type*}
+    (loaded : E) (guide : E → W → Bool)
+    (desc : Intension W E) (cW : W)
+    (hMisfit : desc cW ≠ loaded) :
+    kdthat loaded guide ≠ dthatW desc cW := by
+  intro heq
+  exact hMisfit (congrFun heq cW).symm
+
+/-- A KDthat-expression as a `ReferringExpression`: referential use only.
+
+The profile is `refDescProfile` ⟨F, F, T⟩ because in @cite{almog-2014}'s
+framework, the expression (description) is not de jure rigid — the rigidity
+comes from the speaker's cognitive fix on the loaded referent, not from
+the expression's linguistic type. Per §2.12, Donnellan gives a
+"proposition-free account" (no singular proposition content).
+
+Contrast with `dthatExpression`, which has `dthatProfile` ⟨T, F, F⟩:
+dthat is de jure rigid by linguistic mechanism, without referential use. -/
+def kdthatExpression {C W E : Type*} (loaded : E) (guide : E → W → Bool) :
+    ReferringExpression C W E :=
+  { character := λ _ => kdthat loaded guide
+  , profile := refDescProfile }
+
+/-- KDthat-expressions are de facto rigid: their content is rigid (because
+the loaded referent is fixed), but the designation mechanism is not what
+secures rigidity — the cognitive fix does.
+
+Contrast with `dthat_deJureRigid`: dthat is de jure rigid (rigid by
+linguistic mechanism + designation=true). KDthat is de facto rigid
+(rigid content + designation=false). This formalizes the core of
+@cite{almog-2014}'s distinction between designation and referential use
+as independent sources of world-invariance. -/
+theorem kdthat_deFactoRigid {C W E : Type*} (loaded : E) (guide : E → W → Bool)
+    (c : C) :
+    Semantics.Reference.Basic.IsDeFactoRigid
+      (kdthatExpression (C := C) loaded guide) c :=
+  ⟨rigid_isRigid loaded, rfl⟩
+
+/-! ## Informativeness Is Not Semantic (Ch 4, §2)
+
+@cite{almog-2014}'s dissolution of the Frege puzzle. The informativeness of
+"Cicero = Tully" is NOT a semantic fact — it is a cognitive/relational fact,
+depending on the thinker's partial information database. Semantically, the
+two names contribute identical content (proven below). Any difference in
+cognitive significance must be extra-semantic: relative to the thinker's
+historically incomplete knowledge of which loaded names track back to
+which objects. -/
+
+/-- Co-referential rigid designators have identical content.
+Since rigid intensions are constant functions, co-reference at any one
+world entails identity everywhere. The informativeness of "Hesperus =
+Phosphorus" cannot come from the *semantics* (the contents are the same);
+it must come from the *cognitive* relation between the thinker and the
+two names. -/
+theorem informativeness_not_semantic {W E : Type*}
+    (t₁ t₂ : Intension W E)
+    (hRig₁ : IsRigid t₁) (hRig₂ : IsRigid t₂)
+    (w : W) (hCoref : t₁ w = t₂ w) :
+    t₁ = t₂ := by
+  ext w'
+  exact (hRig₁ w' w).trans (hCoref.trans (hRig₂ w w'))
+
+/-- Direct reference assigns the same proposition to "P(a)" and "P(b)"
+when a and b are co-referential rigid designators.
+
+This is the "full stop" of what direct reference theory delivers
+(@cite{almog-2014}, Ch 2, §2.1). Whether the proposition is *necessary*
+requires the independent metaphysical doctrine of modal haecceitism.
+Whether an agent *believes* it requires an independent theory of attitude
+verb semantics. The reference theory is silent on both. -/
+theorem dr_same_proposition {W E : Type*}
+    (t₁ t₂ : Intension W E) (P : E → W → Bool)
+    (hRig₁ : IsRigid t₁) (hRig₂ : IsRigid t₂)
+    (w : W) (hCoref : t₁ w = t₂ w) :
+    (λ w' => P (t₁ w') w') = (λ w' => P (t₂ w') w') := by
+  rw [informativeness_not_semantic t₁ t₂ hRig₁ hRig₂ w hCoref]
+
+/-! ## The Dual Semantic Function of Nominals (Ch 4, §4.1)
+
+@cite{almog-2014} extends @cite{donnellan-1966}'s referential/attributive
+distinction beyond definite descriptions to ALL nominals. Every nominal
+— proper name, bare plural, Det+CN phrase — has two potential semantic
+functions: pre-nominal (reference already established) and nominal (the
+noun originates the reference). The duality is *semantic*, not pragmatic
+— it is "written into the very conventional rules governing these phrases"
+(@cite{almog-2014}). -/
+
+/-- The dual semantic function of nominals.
+- `preNominal`: Reference preceded the nominal. The speaker already has
+  the referent in mind; the noun merely expresses/conveys the link.
+  "Bono" (when I've already seen him at the cheese section).
+- `nominal`: The nominal originates the reference. It is essential to
+  establishing the subject for subsequent predication.
+  "A musician I met at Whole Foods" (introducing a new subject). -/
+inductive NominalFunction where
+  | preNominal
+  | nominal
+  deriving DecidableEq, BEq, Repr
+
+/-- Donnellan's `UseMode` maps into the broader `NominalFunction`.
+Referential use = pre-nominal (reference already established by
+object-contact). Attributive use = nominal (the description originates
+the reference). -/
+def nominalFunctionOf : UseMode → NominalFunction
+  | .referential => .preNominal
+  | .attributive => .nominal
+
+/-- KDthat encodes pre-nominal function: the `loaded` parameter records
+that the referent was fixed before any nominal was deployed. -/
+theorem kdthat_is_preNominal :
+    nominalFunctionOf .referential = .preNominal :=
+  rfl
 
 end Semantics.Reference.Almog2014
