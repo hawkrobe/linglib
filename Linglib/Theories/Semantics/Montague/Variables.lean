@@ -23,6 +23,7 @@ world-time indices (@cite{krifka-2026}), instantiate `Core.Assignment (DRefVal W
 
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Core.Assignment
+import Linglib.Core.CylindricAlgebra
 
 namespace Semantics.Montague.Variables
 
@@ -285,6 +286,52 @@ theorem existsClosure_eq_exists_lambda (n : Nat) (body : DenotG m .t) (g : Assig
     existsClosure n (fun g' => body g' = true) g ↔
     ∃ x : m.Entity, lambdaAbsG n body g x = true := by
   simp [existsClosure, lambdaAbsG]
+
+-- ────────────────────────────────────────────────────
+-- Bridge to Core.CylindricAlgebra
+-- ────────────────────────────────────────────────────
+
+/-! #### Montague ≡ Core.CylindricAlgebra
+
+The operations in this section — `existsClosure`, `diag`, `resolve` —
+are the same functions as `cylindrify`, `diagonal`, `directSubst` from
+`Core.CylindricAlgebra`. Both are defined via `Core.Assignment.update`.
+The identities are definitional (`rfl`).
+
+Together with the DPL ↔ Cylindric Algebra bridge in `DPL/Bridge.lean`
+(which proves `closure(∃x.φ) = cylindrify x (closure φ)`), this
+establishes a three-way connection:
+
+```
+  Montague (static)         DPL (dynamic)
+  existsClosure n φ         DPLRel.exists_ x φ
+        │                         │
+        │ rfl                     │ closure
+        ▼                         ▼
+  Core.CylindricAlgebra.cylindrify n
+```
+
+H&K's static binding and DPL's dynamic binding are both instances of
+cylindrification — they differ only in whether the output assignment
+is visible (DPL: relation `g → h → Prop`) or projected away
+(Montague: predicate `g → Prop`). -/
+
+open Core.CylindricAlgebra
+
+/-- `existsClosure` IS `cylindrify`: H&K's existential closure is
+    literally cylindrification on the assignment algebra. -/
+theorem existsClosure_eq_cylindrify (n : Nat) (φ : Assignment m → Prop) :
+    existsClosure n φ = cylindrify n φ := rfl
+
+/-- `diag` IS `diagonal`: H&K's variable identity test is literally
+    the cylindric algebra's diagonal element. -/
+theorem diag_eq_diagonal (n k : Nat) :
+    @diag m n k = @diagonal m.Entity n k := rfl
+
+/-- `resolve` IS `directSubst`: H&K's pronoun resolution is literally
+    cylindric substitution. -/
+theorem resolve_eq_directSubst (κ l : Nat) (φ : Assignment m → Prop) :
+    resolve κ l φ = @directSubst m.Entity κ l φ := rfl
 
 end CylindricStructure
 

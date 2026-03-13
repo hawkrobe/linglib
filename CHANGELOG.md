@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.195] - 2026-03-13
+
+### Added
+- **Montague/Variables.lean**: Bridge theorems connecting static Montague operations to `Core.CylindricAlgebra` — `existsClosure_eq_cylindrify`, `diag_eq_diagonal`, `resolve_eq_directSubst` (all `rfl`). Together with `DPL/Bridge.lean`'s existing `closure_exists_eq_cylindrify`, establishes three-way Montague ↔ CylindricAlgebra ↔ DPL connection
+
 ## [0.229.194] - 2026-03-13
 
 ### Added
