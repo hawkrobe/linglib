@@ -992,6 +992,7 @@ import Linglib.Phenomena.Reference.Studies.Krifka2026
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.FrankeBergen2020
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
+import Linglib.Phenomena.ScalarImplicatures.Studies.ChowErlewine2022
 import Linglib.Phenomena.Persuasion.Studies.BarnettEtAl2022
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
