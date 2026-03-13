@@ -713,6 +713,7 @@ import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
 import Linglib.Phenomena.Ellipsis.Studies.GinzburgCooper2004
 import Linglib.Phenomena.Ellipsis.Studies.Landau2026
 import Linglib.Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025
+import Linglib.Phenomena.Ellipsis.Studies.Kalyakin2026
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.FillerGap.Basic
@@ -980,6 +981,7 @@ import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
 import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
 import Linglib.Phenomena.Reference.Studies.RosaArnold2017
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
+import Linglib.Phenomena.Reference.Studies.Krifka2026
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.FrankeBergen2020
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
@@ -1135,6 +1137,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
+import Linglib.Theories.Semantics.Dynamic.Core.KindAnaphora
 -- Theories: Dynamic Semantics — Frameworks
 import Linglib.Theories.Semantics.Dynamic.FileChange.Basic
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
@@ -1234,6 +1237,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.PConstraint
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 import Linglib.Theories.Syntax.Minimalism.Core.CaseDiscrimination
 import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
 import Linglib.Theories.Syntax.Minimalism.Formal.Amalgamation
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
 import Linglib.Theories.Syntax.Minimalism.Coreference

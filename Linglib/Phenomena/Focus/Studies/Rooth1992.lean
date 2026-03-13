@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.InformationStructure
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
-import Linglib.Theories.Semantics.Montague.Composition
+import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
@@ -400,7 +400,7 @@ theorem bridge_qa_incongruent :
     run once per world to yield a world-indexed proposition. -/
 
 open Semantics.Montague
-open Semantics.Montague.Composition
+open Semantics.Composition.Tree
 
 /-- Entity domain for the focus model. -/
 inductive E where
@@ -539,7 +539,7 @@ theorem fragment_fred_proper : fred.proper = true := rfl
 theorem fragment_mary_proper : mary.proper = true := rfl
 
 /-- "bean" is countable in the English fragment. -/
-theorem fragment_bean_countable : bean.countable = true := rfl
+theorem fragment_bean_countable : bean.countable = .count := rfl
 
 /-- Fragment surface forms feed the Montague lexicon.
     The form field of each fragment entry matches a lexicon key. -/

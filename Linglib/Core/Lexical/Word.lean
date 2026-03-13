@@ -95,6 +95,18 @@ end Tense
 -- Types Without UD Equivalents
 -- ============================================================================
 
+/-- Morphosyntactic mass/count feature. No direct UD equivalent.
+
+    A formal feature parallel to grammatical gender — not an ontological
+    distinction. Determines kind-anaphor morphology: [MASS] → *it*,
+    [COUNT] → *they*. Evidence: *pollen*[MASS] → *it* vs
+    *pollen grains*[COUNT] → *they* for the same referent
+    (@cite{krifka-2026} §2). -/
+inductive MassCount where
+  | mass   -- mass nouns: *mold*, *pollen*, *milk*, *gold*
+  | count  -- count nouns: *spider*, *pollen grain*, *dog*, *cup*
+  deriving Repr, DecidableEq, BEq, Hashable
+
 /-- Transitivity / argument structure. No direct UD equivalent. -/
 inductive Valence where
   | intransitive  -- sleep, arrive
@@ -129,7 +141,7 @@ structure Features where
   voice : Option Voice := none
   vform : Option VForm := none
   tense : Option Tense := none
-  countable : Option Bool := none  -- for count vs mass nouns
+  countable : Option MassCount := none  -- for count vs mass nouns
   deriving Repr, DecidableEq
 
 /-- A word: form + category + features. -/

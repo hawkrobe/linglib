@@ -36,7 +36,8 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 namespace Semantics.Lexical.Noun.Kind.Dayal2004
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping BlockingPrinciple NounType downDefinedFor)
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping BlockingPrinciple downDefinedFor)
+
 
 variable (World Atom : Type)
 
@@ -485,10 +486,10 @@ theorem english_singular_kind_uses_iota :
 Convert Chierchia's BlockingPrinciple + noun info to Dayal's TypeShiftContext.
 
 This shows how Dayal's framework generalizes Chierchia's:
-- Chierchia: BlockingPrinciple + NounType + isPlural → bare argument OK?
+- Chierchia: BlockingPrinciple + MassCount + isPlural → bare argument OK?
 - Dayal: TypeShiftContext → which type-shift is selected?
 -/
-def chierchiaToContext (bp : BlockingPrinciple) (nt : NounType) (isPlural : Bool)
+def chierchiaToContext (bp : BlockingPrinciple) (nt : MassCount) (isPlural : Bool)
     (instantiationAccessible : Bool := true) : TypeShiftContext :=
   { number := match nt with
               | .mass => .mass

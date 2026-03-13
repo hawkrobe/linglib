@@ -35,7 +35,11 @@ come from Mathlib for free, giving us Link's semilattice directly.
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
+import Linglib.Core.Lexical.Word
 import Linglib.Core.Mereology
+import Linglib.Core.Semantics.Intension
+
+
 
 namespace Semantics.Lexical.Noun.Kind.Chierchia1998
 
@@ -54,11 +58,13 @@ def Individual.atom {Atom : Type} (a : Atom) : Individual Atom := {a}
 
 variable (World Atom : Type)
 
-/-- A property (intension): function from worlds to sets of individuals -/
-abbrev Property := World → Set (Individual Atom)
+/-- A property (intension): function from worlds to sets of individuals.
+    This is `Core.Intension World (Set (Individual Atom))`. -/
+abbrev Property := Core.Intension World (Set (Individual Atom))
 
-/-- An individual concept: function from worlds to individuals -/
-abbrev IndividualConcept := World → Individual Atom
+/-- An individual concept: function from worlds to individuals.
+    This is `Core.Intension World (Individual Atom)`. -/
+abbrev IndividualConcept := Core.Intension World (Individual Atom)
 
 /--
 Kinds are a special subset of individual concepts.
@@ -139,6 +145,84 @@ theorem isMass_cum (P : Property World Atom) (hMass : IsMass World Atom P) (w : 
     Or.elim ha (fun h => (hMass w x).mp hx a h) (fun h => (hMass w y).mp hy a h)
 
 end MereologyBridge
+
+-- Plural Closure (Link's *P via Core/Mereology.AlgClosure)
+
+/--
+Plural closure of a property: close extensions under join (⊔) at each world.
+
+This is @cite{link-1983}'s *P operator, Krifka's ⊔ superscript: the smallest
+superset of P(w) closed under set union. Singular count nouns like *spider*
+are not cumulative, so `pluralClosure(⟦spider⟧)` adds pluralities — the
+denotation of the bare plural *spiders*.
+
+Mass nouns like *mold* are already cumulative, so plural closure is a
+no-op: `pluralClosure(⟦mold⟧) = ⟦mold⟧` (see `pluralClosure_mass`).
+-/
+def pluralClosure (P : Property World Atom) : Property World Atom :=
+  λ w => Mereology.AlgClosure (P w)
+
+section PluralClosure
+
+variable {World Atom : Type}
+
+/-- Plural closure is idempotent for mass nouns: ⊔P = P when P is cumulative.
+    This is Krifka's absorption rule ⊔⊔S = ⊔S from @cite{krifka-2026} (16). -/
+theorem pluralClosure_mass (P : Property World Atom)
+    (hMass : IsMass World Atom P) :
+    pluralClosure World Atom P = P := by
+  funext w; ext x
+  exact Mereology.algClosure_of_cum (isMass_cum P hMass w)
+
+/-- A property is contained in its plural closure. -/
+theorem subset_pluralClosure (P : Property World Atom) (w : World) :
+    P w ⊆ pluralClosure World Atom P w :=
+  fun _ h => Mereology.AlgClosure.base h
+
+/-- Plural closure is always cumulative. -/
+theorem pluralClosure_cum (P : Property World Atom) (w : World) :
+    Mereology.CUM (pluralClosure World Atom P w) :=
+  Mereology.algClosure_cum
+
+end PluralClosure
+
+-- Kind Anaphora (@cite{krifka-2026} §2)
+
+/--
+Kind anaphor for [MASS] concepts: ⟦it⟧ = λP[MASS]. λi. ∩P(i).
+
+Mass nouns are already cumulative, so ∩ applies directly without
+plural closure. The singular pronoun *it* picks up a mass concept
+dref and derives the corresponding kind individual.
+
+Example: *John noticed mold. He is allergic against it.*
+  ⟦it⟧(⟦mold⟧) = ∩⟦mold⟧ = the mold-kind
+-/
+def kindAnaphorMass (P : Property World Atom) : Kind World Atom :=
+  down World Atom P
+
+/--
+Kind anaphor for [COUNT] concepts: ⟦they⟧ = λP[COUNT]. λi. ∩(⊔P)(i).
+
+Count nouns need plural closure (⊔) before nominalization (∩).
+The plural pronoun *they* picks up a count concept dref, applies
+plural closure to get a cumulative predicate, then derives the
+kind individual via ∩.
+
+Example: *John noticed a spider. He has a phobia against them.*
+  ⟦they⟧(⟦spider⟧) = ∩(⊔⟦spider⟧) = ∩⟦spiders⟧ = the spider-kind
+-/
+def kindAnaphorCount (P : Property World Atom) : Kind World Atom :=
+  down World Atom (pluralClosure World Atom P)
+
+/-- For mass nouns, the two anaphors yield the same kind (up to absorption).
+    This is why *it* and *they* are interchangeable for mass concepts —
+    except that the morphosyntactic [MASS] feature blocks *they*. -/
+theorem kindAnaphorCount_mass (P : Property World Atom)
+    (hMass : IsMass World Atom P) :
+    kindAnaphorCount World Atom P = kindAnaphorMass World Atom P := by
+  unfold kindAnaphorCount kindAnaphorMass
+  rw [pluralClosure_mass P hMass]
 
 -- Round-Trip Theorems
 
@@ -277,17 +361,7 @@ def canDenoteProperty (mapping : NominalMapping) : Bool :=
   | .predOnly   => true   -- nouns are predicates by default
 
 -- Mass/Count Distinction
-
-/--
-The mass/count distinction in [+pred] languages.
-
-Count nouns have atomic extensions (sets of atoms).
-Mass nouns have non-atomic extensions (closed under parts).
--/
-inductive NounType where
-  | count  -- Extension is a set of atoms
-  | mass   -- Extension is closed under the part-of relation
-  deriving DecidableEq, Repr
+-- Uses `MassCount` from `Core.Lexical.Word`.
 
 /--
 Pluralization / mass extension: the set of non-empty sub-individuals.
@@ -329,7 +403,7 @@ structure BlockingPrinciple where
   downBlocked : Bool := False  -- Never blocked in natural languages
 
 /-- Bare argument is licensed iff the required type shift is not blocked -/
-def bareArgumentLicensed (bp : BlockingPrinciple) (nounType : NounType) : Bool :=
+def bareArgumentLicensed (bp : BlockingPrinciple) (nounType : MassCount) : Bool :=
   match nounType with
   | .mass => !bp.downBlocked  -- Mass nouns use ∩, which is not blocked
   | .count => !bp.downBlocked  -- But only plurals can use ∩ (see below)
@@ -351,7 +425,7 @@ Therefore:
 This, combined with blocking of ι and ∃ by articles, explains why
 bare singular count nouns cannot occur as arguments in English.
 -/
-def downDefinedFor (nounType : NounType) (isPlural : Bool) : Bool :=
+def downDefinedFor (nounType : MassCount) (isPlural : Bool) : Bool :=
   match nounType with
   | .mass => true           -- Mass nouns can always use ∩
   | .count => isPlural      -- Count nouns can use ∩ only if plural

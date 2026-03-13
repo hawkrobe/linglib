@@ -1,16 +1,23 @@
 /-
 # Discourse Referents
 
-Types for individual and propositional discourse referents, following
-@cite{hofmann-2025} "Anaphoric accessibility with flat update".
+Types for individual, propositional, and concept discourse referents.
+
+Individual and propositional drefs follow @cite{hofmann-2025} "Anaphoric
+accessibility with flat update". Concept drefs and the mass/count feature
+follow @cite{krifka-2026} "Anaphora for Concepts, Kinds, and Parts in
+Dynamic Interpretation".
 
 ## Key Types
 
-| Type | Notation | Description |
-|------|----------|-------------|
-| `Entity E` | e or ⋆ | Entity with universal falsifier |
-| `IDref W E` | s(we) | Individual dref (assignment → world → entity) |
-| `PDref W E` | s(wt) | Propositional dref (assignment → set of worlds) |
+| Type | Description |
+|------|-------------|
+| `Entity E` | Entity with universal falsifier ⋆ |
+| `MassCount` | Morphosyntactic [MASS] vs [COUNT] feature |
+| `ConceptDRef W E` | Concept dref: property + count feature |
+| `DRefVal W E` | Heterogeneous dref value (entity / concept / index) |
+| `IDref W E` | Individual dref (assignment → world → entity) |
+| `PDref W E` | Propositional dref (assignment → set of worlds) |
 
 ## The Universal Falsifier ⋆
 
@@ -19,6 +26,15 @@ referent doesn't exist. For example, in "There's no bathroom", the bathroom
 variable maps to ⋆ in all worlds.
 
 The falsifier ⋆ satisfies: R(⋆) = false for all predicates R.
+
+## Concept Discourse Referents
+
+@cite{krifka-2026} proposes that head nouns introduce concept drefs alongside
+entity drefs. For example, *dog* in *a dog* introduces a concept dref anchored
+to the property `λi.λx[dog(i)(x)]` with a [COUNT] feature. Kind anaphors
+(*it* for [MASS], *they* for [COUNT]) pick up concept drefs and derive kind
+individuals via Chierchia's ∩ operator. Concept drefs project past anaphoric
+islands (negation, modals, conditionals) — they behave like names.
 
 ## Propositional Drefs as Local Contexts
 
@@ -31,8 +47,11 @@ This separation enables anaphora to indefinites under negation:
 
 -/
 
+import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
 import Mathlib.Data.Fintype.Basic
+
+
 
 namespace Semantics.Dynamic.Core
 
@@ -92,6 +111,102 @@ instance [Fintype E] : Fintype (Entity E) where
 end Entity
 
 
+-- ════════════════════════════════════════════════════
+-- Concept Discourse Referents
+-- ════════════════════════════════════════════════════
+
+-- Mass/Count Feature: uses `MassCount` from `Core.Lexical.Word`.
+
+/--
+A concept discourse referent value: a property annotated with a
+morphosyntactic count feature.
+
+Introduced by the NP of an antecedent DP. For example, *dog* in
+*John owns a dog* introduces a concept dref anchored to the property
+`λi.λx[dog(i)(x)]` with feature [COUNT].
+
+Kind anaphors pick up concept drefs and derive kind individuals
+via Chierchia's ∩ (down) operator:
+- ⟦it⟧   = λP[MASS].  λi. ∩P(i)
+- ⟦they⟧ = λP[COUNT]. λi. ∩(⊔P)(i)
+
+The ⊔-closure for count nouns introduces pluralization, allowing for
+the number mismatch between *a spider* (singular) and *they* (plural).
+For mass nouns, ⊔-closure is vacuous (mass predicates are already
+cumulative), so the singular *it* is used.
+-/
+structure ConceptDRef (W E : Type*) where
+  /-- The property this concept is anchored to: λi.λx[P(i)(x)] -/
+  property : W → E → Bool
+  /-- Morphosyntactic count feature -/
+  feature : MassCount
+
+/--
+Values that discourse referent indices can map to.
+
+Standard dynamic semantics restricts assignments to map indices to
+entities. @cite{krifka-2026} §4 extends this: assignments are partial
+functions from ℕ to a heterogeneous universe including entities,
+concepts (properties with count features), and world-time indices.
+
+- `.entity e`: an individual referent (standard entity dref)
+- `.concept c`: a concept dref — the NP property with [MASS]/[COUNT]
+- `.index w`: a world-time index dref
+- `.undef`: index not in the domain (models assignment partiality)
+
+Key property: concept drefs project past operators like negation,
+disjunction, and modals — they are introduced in the global
+assignment, not in local sub-assignments. This is what licenses
+kind anaphora out of anaphoric islands:
+
+  *John doesn't own a dog. He is afraid of them.*
+
+The entity dref for *a dog* is trapped under negation, but the
+concept dref for 'dog' projects to the global context.
+-/
+inductive DRefVal (W E : Type*) where
+  | entity : E → DRefVal W E
+  | concept : ConceptDRef W E → DRefVal W E
+  | index : W → DRefVal W E
+  | undef : DRefVal W E
+
+namespace DRefVal
+
+variable {W E : Type*}
+
+/-- Extract entity value, if present. -/
+def getEntity : DRefVal W E → Option E
+  | .entity e => some e
+  | _ => none
+
+/-- Extract concept dref, if present. -/
+def getConcept : DRefVal W E → Option (ConceptDRef W E)
+  | .concept c => some c
+  | _ => none
+
+/-- Extract world-time index, if present. -/
+def getIndex : DRefVal W E → Option W
+  | .index w => some w
+  | _ => none
+
+/-- Is this index in the domain of the assignment? -/
+def isDefined : DRefVal W E → Bool
+  | .undef => false
+  | _ => true
+
+/-- Lift a predicate on entities to DRefVal (false for non-entities). -/
+def liftEntityPred (p : E → Bool) : DRefVal W E → Bool
+  | .entity e => p e
+  | _ => false
+
+/-- Lift a predicate on concepts to DRefVal (false for non-concepts). -/
+def liftConceptPred (p : ConceptDRef W E → Bool) : DRefVal W E → Bool
+  | .concept c => p c
+  | _ => false
+
+end DRefVal
+
+
 /--
 Variable indices for discourse referents.
 
@@ -113,6 +228,16 @@ structure PVar where
 An individual variable (names an individual dref).
 -/
 structure IVar where
+  idx : Nat
+  deriving DecidableEq, BEq, Repr, Hashable
+
+/--
+A concept variable (names a concept dref).
+
+Concept variables are indices into the assignment that map to
+`ConceptDRef` values — properties annotated with [MASS]/[COUNT].
+-/
+structure CVar where
   idx : Nat
   deriving DecidableEq, BEq, Repr, Hashable
 

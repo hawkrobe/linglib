@@ -490,7 +490,7 @@ distinction and cross-linguistic variation:
 
 | Dimension        | @cite{chierchia-1998}            | @cite{borer-2005}              |
 |------------------|--------------------------|-------------------------|
-| Mass/count       | Lexical (`NounType`)      | Structural (`Div`)      |
+| Mass/count       | Lexical (`MassCount`)     | Structural (`Div`)      |
 | Cross-ling.      | Parameter (`NominalMapping`)| Functional inventory  |
 | "beer" → count   | Not predicted             | `Div(√BEER)`            |
 | Classifier langs | `[+arg, -pred]` parameter | Overt CL# at Q         |

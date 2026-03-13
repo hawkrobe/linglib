@@ -94,8 +94,8 @@ theorem dog_pl_number :
     dogStem.paradigm.head?.map (·.featureRule dogStem.baseFeatures |>.number)
     = some (some UD.Number.Plur) := rfl
 
-/-- Count nouns have `countable := some true`. -/
-theorem dog_countable : dogStem.baseFeatures.countable = some true := rfl
+/-- Count nouns have `countable := some .count`. -/
+theorem dog_countable : dogStem.baseFeatures.countable = some .count := rfl
 
 -- ============================================================================
 -- §4: Mass Nouns — Empty Paradigms

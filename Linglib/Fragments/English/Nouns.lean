@@ -31,8 +31,8 @@ structure NounEntry where
   formSg : String
   /-- Plural form (none for mass nouns) -/
   formPl : Option String := none
-  /-- Is this a count noun? -/
-  countable : Bool := true
+  /-- Mass/count feature -/
+  countable : MassCount := .count
   /-- Is this a proper name? -/
   proper : Bool := false
   deriving Repr, BEq
@@ -134,12 +134,12 @@ def horse : NounEntry := { formSg := "horse", formPl := "horses" }
 def brother : NounEntry := { formSg := "brother", formPl := "brothers" }
 def spy : NounEntry := { formSg := "spy", formPl := "spies" }
 
-def water : NounEntry := { formSg := "water", formPl := none, countable := false }
-def sand : NounEntry := { formSg := "sand", formPl := none, countable := false }
-def furniture : NounEntry := { formSg := "furniture", formPl := none, countable := false }
-def rice : NounEntry := { formSg := "rice", formPl := none, countable := false }
-def gold : NounEntry := { formSg := "gold", formPl := none, countable := false }
-def air : NounEntry := { formSg := "air", formPl := none, countable := false }
+def water : NounEntry := { formSg := "water", formPl := none, countable := .mass }
+def sand : NounEntry := { formSg := "sand", formPl := none, countable := .mass }
+def furniture : NounEntry := { formSg := "furniture", formPl := none, countable := .mass }
+def rice : NounEntry := { formSg := "rice", formPl := none, countable := .mass }
+def gold : NounEntry := { formSg := "gold", formPl := none, countable := .mass }
+def air : NounEntry := { formSg := "air", formPl := none, countable := .mass }
 
 
 def john : NounEntry := { formSg := "John", formPl := none, proper := true }
@@ -194,7 +194,7 @@ def NounEntry.toStem {α : Type} (n : NounEntry) : Core.Morphology.Stem (α → 
                     , countable := if n.proper then none else some n.countable
                     , person := if n.proper then some .third else none }
   , paradigm :=
-      if n.countable && !n.proper then
+      if n.countable == .count && !n.proper then
         let irregForm := n.formPl.bind λ pl =>
           if pl == n.formSg ++ "s" then none else some pl
         [Core.Morphology.Number.pluralNounRuleFlat (irregularForm := irregForm)]
