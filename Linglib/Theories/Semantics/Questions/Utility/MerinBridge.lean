@@ -97,11 +97,12 @@ theorem posRelevant_shifts_accept_eu :
     conditionalEU (truthDP ctx)
       (Finset.univ.filter (fun w => e w = true)) true >
     expectedUtility (truthDP ctx) true := by
-  -- Under uniform prior: EU(accept) = |H|/4.
-  -- conditionalEU(accept|E) = |E∩H|/|E|.
-  -- BF > 1 → P(E|H) > P(E|¬H) → |E∩H|/|H| > |E∩¬H|/|¬H|
-  -- → |E∩H|·|¬H| > |E∩¬H|·|H| → |E∩H|·4 > |E|·|H| → |E∩H|/|E| > |H|/4
-  sorry
+  -- Finite verification over World4: 16 topics × 16 evidence props = 256 cases
+  intro ⟨⟨topic⟩, prior⟩ e hPrior hE hH hnotH hPos
+  have hP : prior = fun _ => (1 : ℚ) / 4 := funext hPrior
+  subst hP
+  revert topic e
+  native_decide
 
 /-- Merin's irrelevance corresponds to zero utility value.
 
@@ -123,7 +124,12 @@ theorem irrelevant_implies_zero_uv :
     irrelevant ctx e →
     utilityValue (truthDP ctx) truthActions
       (Finset.univ.filter (fun w => e w = true)) = 0 := by
-  sorry
+  -- Finite verification over World4: 16 topics × 16 evidence props = 256 cases
+  intro ⟨⟨topic⟩, prior⟩ e hPrior hE hH hnotH hIrr
+  have hP : prior = fun _ => (1 : ℚ) / 4 := funext hPrior
+  subst hP
+  revert topic e
+  native_decide
 
 /-! ## Structural Properties
 

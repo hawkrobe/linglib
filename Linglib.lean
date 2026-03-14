@@ -411,6 +411,7 @@ import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Gorum.AuxiliaryVerbs
 import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Greek.Case
+import Linglib.Fragments.Greek.Negation
 import Linglib.Fragments.Greek.Nouns
 import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
@@ -425,6 +426,8 @@ import Linglib.Fragments.Indonesian.Morph
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Fragments.Indonesian.Morphophonology
 import Linglib.Fragments.Indonesian.Predicates
+import Linglib.Fragments.Teop.Nouns
+import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Quechua.Morph
 import Linglib.Fragments.Quechua.Negation
 import Linglib.Fragments.Hungarian.Case
@@ -747,6 +750,7 @@ import Linglib.Phenomena.Generics.Studies.BonehDoron2013
 import Linglib.Phenomena.Generics.Studies.DelPrete2013
 import Linglib.Phenomena.Generics.Studies.AsherPelletier2013
 import Linglib.Phenomena.Gender.Typology
+import Linglib.Phenomena.Gender.Studies.Kramer2020
 import Linglib.Phenomena.Gradability.Data
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Studies.Rett2015
@@ -875,6 +879,7 @@ import Linglib.Phenomena.Morphology.CategoryChanging
 import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
 import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.Morphology.Studies.Adamson2024
+import Linglib.Phenomena.Morphology.Studies.Bhadra2024
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
@@ -1289,6 +1294,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Morphology.Core.ICP
@@ -1436,6 +1442,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.LevinClassProfiles
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Theories.Semantics.Lexical.Verb.ArgDerivation
 import Linglib.Theories.Morphology.RootTypology
+import Linglib.Theories.Morphology.ReversalRestitution
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.TemporalDecomposition

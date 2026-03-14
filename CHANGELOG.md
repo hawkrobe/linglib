@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.200] - 2026-03-13
+
+### Added
+- **Theories/Morphology/ReversalRestitution.lean**: Formalize Bhadra 2024 "Verb roots encode outcomes" (*Linguistics and Philosophy* 47:557–610) — Verb-Root-Outcomes framework: `OutcomeCardinality` (multi/singleton/empty); `ForceTransmissionClass` (PFC/IE/COS/no-force) with `outcomeCardinality` and `unCompatible`/`reCompatible`; `BoundaryStates` structure with `reversible` (eq. 49) and `restitutive` (eq. 50) predicates; `LevinClass.forceTransmissionClass` bridge (~30 Levin classes); `LevinClass.reCompatible` (verb-specific re- blocking for consumption/destruction/killing); structural theorems (`un_requires_multi`, `pfc_unique_overlap`, `ie_disallows_both`, `cos_un_blocked_re_available`); bridges to EventStructure (`pfc_orthogonal_to_hasResultState`), Affectedness hierarchy (PFC/IE refines `potential` degree), and RootTypology (`result_roots_singleton_outcomes`, `pc_roots_allow_restitutive_again`)
+- **Phenomena/Morphology/Studies/Bhadra2024.lean**: Empirical verification of Bhadra 2024 — per-class *un-* tests from paper's (12) (coil, bend ✓; break, color, build, destroy, eat, hit, wipe, swim ✗); per-class *re-* tests from (45) (PFC, physical-property/creation COS ✓; consumption/killing COS, IE, no-change ✗); outcome cardinality verification; worked examples: fold/unfold reversibility with `ParchmentState`, paint/repaint restitution with `WallState`; `pfc_is_overlap_class` (central distributional generalization); `bend_reclassification` (COS→PFC, paper's central theoretical move); `motionContact_is_ie` bridge; end-to-end Fragment→prediction chains (`kick_end_to_end`, `bend_end_to_end`, `break_end_to_end`)
+
+## [0.229.199] - 2026-03-13
+
+### Changed
+- **Theories/Morphology/DM/Categorizer.lean**: Parameterize gender feature system across languages following Kramer 2015 Chs 3, 5-7 — replace binary `GenderVal` (fem/masc) with `GenderDimension` (fem/masc/anim) × `Polarity` (pos/neg), enabling [±FEM] (Amharic, Spanish), [±MASC] (Maa, Jarawara), and [±ANIM] (Algonquian, Teop) systems; add `selectsD` field to `CatHead` for Myler 2016's {D} selectional feature (iPossessor licensing); add ANIM-dimension convenience constructors (`n_iAnim`, `n_iInanim`, `n_uAnim`) and MASC-dimension (`n_uMasc`); add `ImpoverishmentRule` type for postsyntactic feature deletion; cross-dimensional distinctness theorems
+- **Phenomena/Morphology/Studies/Adamson2024.lean**: Comprehensive rewrite — structural two-n analysis for Teop body-part gender switch (`teopBodyPartN` with u[+ANIM] and selectsD vs `teopAlienatorN` plain); Teop VI rules using `VocabItem` framework (article paradigm *a/ra/e/o/ro*); end-to-end derivation chains (structure → gender prediction → article realization); Jarawara gender derived from MASC dimension via `jarawaraGenderFromN`; impoverishment connected to `ImpoverishmentRule`; `ExternalFeature` theorem fixed (was vacuous, now uses per-feature position mapping); `teopGenderFromN`/`jarawaraGenderFromN` derive gender from n head's feature content rather than lookup tables
+
 ## [0.229.198] - 2026-03-13
 
 ### Fixed

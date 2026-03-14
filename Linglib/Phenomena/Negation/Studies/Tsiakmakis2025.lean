@@ -1,5 +1,7 @@
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Fragments.Greek.Negation
+import Linglib.Fragments.Italian.Negation
 
 /-!
 # Tsiakmakis (2025): On the Non-Homogeneity of Expletive Negation
@@ -85,6 +87,7 @@ open Semantics.Attitudes.Intensional (World)
 open Core.Proposition (BProp)
 open Semantics.Modality.Kratzer
   (bestWorlds necessity ModalBase OrderingSource)
+open Core.Modality (ModalFlavor)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The NEG₁ / NEG₂ Distinction
@@ -315,36 +318,36 @@ structure NegatorDatum where
 /-- Greek *dhen* in exclamatives: ⟦dhen⟧ = λp.¬p, masked by extreme-degree
     semantics (§3.1, ex. 22–24). -/
 def greekDhenExclamative : NegatorDatum :=
-  { language := "Greek", form := "dhen", negType := .neg1
+  { language := "Greek", form := Fragments.Greek.Negation.dhen.form, negType := .neg1
   , hostCategory := .exclamatives
   , construction := "negative exclamatives (§3.1, ex. 22–24)" }
 
 /-- Greek *dhen* in negative rhetorical questions: ⟦dhen⟧ = λp.¬p,
     masked by rhetoricity / polarity reversal (§3.2, ex. 26–29; eq. 30). -/
 def greekDhenRhetoricalQ : NegatorDatum :=
-  { language := "Greek", form := "dhen", negType := .neg1
+  { language := "Greek", form := Fragments.Greek.Negation.dhen.form, negType := .neg1
   , hostCategory := .rhetoricalQuestions
   , construction := "negative rhetorical questions (§3.2, ex. 26–29)" }
 
 /-- Greek *dhen* in preposed negation questions: ⟦dhen⟧ = λp.¬p,
     masked by speaker's epistemic bias (§3.3, ex. 31–36; eq. 36–37). -/
 def greekDhenPolarQ : NegatorDatum :=
-  { language := "Greek", form := "dhen", negType := .neg1
+  { language := "Greek", form := Fragments.Greek.Negation.dhen.form, negType := .neg1
   , hostCategory := .optionallyBiasedPolarQs
   , construction := "preposed negation questions (§3.3, ex. 31–36)" }
 
 def greekMinFear : NegatorDatum :=
-  { language := "Greek", form := "min", negType := .neg2
+  { language := "Greek", form := Fragments.Greek.Negation.min.form, negType := .neg2
   , hostCategory := .emotiveDoxasticPredicates
   , construction := "fear-predicate complements (§4.1, ex. 38)" }
 
 def greekMinConditional : NegatorDatum :=
-  { language := "Greek", form := "min", negType := .neg2
+  { language := "Greek", form := Fragments.Greek.Negation.min.form, negType := .neg2
   , hostCategory := .conditionals
   , construction := "conditional antecedents (§4.2, ex. 45)" }
 
 def greekMinQuestion : NegatorDatum :=
-  { language := "Greek", form := "min", negType := .neg2
+  { language := "Greek", form := Fragments.Greek.Negation.min.form, negType := .neg2
   , hostCategory := .biasedQuestions
   , construction := "biased polar questions (§4.3, ex. 51)" }
 
@@ -359,12 +362,12 @@ def frenchNeForbid : NegatorDatum :=
   , construction := "negative-predicate complements: défendre que...ne (§5.2, ex. 62)" }
 
 def italianNonTemporal : NegatorDatum :=
-  { language := "Italian", form := "non", negType := .neg1
+  { language := "Italian", form := Fragments.Italian.Negation.negMarker, negType := .neg1
   , hostCategory := .temporalExpressions
   , construction := "finché non (until; §5.4, ex. 68)" }
 
 def italianNonComparative : NegatorDatum :=
-  { language := "Italian", form := "non", negType := .neg1
+  { language := "Italian", form := Fragments.Italian.Negation.negMarker, negType := .neg1
   , hostCategory := .comparatives
   , construction := "più...di quanto non (more...than; §5.7, ex. 77)" }
 
@@ -473,27 +476,19 @@ but the **ordering source** g varies:
 - Biased questions: epistemic (speaker's prior belief) — p worlds
   ranked higher by positive speaker bias (§4.3, eq. 56) -/
 
-/-- The modal flavor of the ordering source for each NEG₂ host. -/
-inductive NEG2OrderingFlavor where
-  /-- Deontic: ranked by desires, preferences, or norms (fear, worry, forbid, deny).
-      The paper uses "deontic" for both fear (speaker's desires, §5.1)
-      and forbid (social/moral norms, §5.2: "deontically modal interpretative
-      contribution"). -/
-  | deontic
-  /-- Epistemic: ranked by beliefs or evidence (doubt, questions) -/
-  | epistemic
-  /-- Habitual: ranked by what has happened before (conditionals) -/
-  | habitual
-  deriving DecidableEq, BEq, Repr
+/-- Each proper EN host category maps to a Kratzer modal flavor.
 
-/-- Each proper EN host category maps to a modal ordering flavor. -/
-def ENHostCategory.orderingFlavor : ENHostCategory → Option NEG2OrderingFlavor
-  | .emotiveDoxasticPredicates => some .deontic
-  | .negativePredicates        => some .deontic
-  | .dubitativePredicates      => some .epistemic
-  | .biasedQuestions           => some .epistemic
-  | .conditionals              => some .habitual
-  | .freeRelatives             => some .epistemic   -- tentative
+    NEG₂'s ordering source varies by host; the flavor tag is exactly
+    `Core.Modality.ModalFlavor`, reused here rather than duplicated.
+    "Habitual" (conditionals) maps to `.circumstantial` — both concern
+    facts and what has happened, following Kratzer's subsumption. -/
+def ENHostCategory.orderingFlavor : ENHostCategory → Option ModalFlavor
+  | .emotiveDoxasticPredicates => some .deontic         -- desires/preferences (§5.1)
+  | .negativePredicates        => some .deontic         -- norms/standards (§5.2)
+  | .dubitativePredicates      => some .epistemic       -- beliefs (§5.3)
+  | .biasedQuestions           => some .epistemic       -- speaker's prior (§4.3)
+  | .conditionals              => some .circumstantial  -- habitual/factual (§4.2)
+  | .freeRelatives             => some .epistemic       -- tentative
   -- Apparent hosts have no ordering source
   | .temporalExpressions       => none
   | .negativeAdverbials        => none
@@ -677,5 +672,63 @@ theorem negatorType_counts :
       .moreThan, .differentThan, .tooTo].filter
         (fun t => negatorType t == .neg1)).length = 11 := by
   constructor <;> native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 12. NEG₂ / NEG₁ Decomposition
+-- ════════════════════════════════════════════════════
+
+/-! ### Negative *min* = modal ∘ negation
+
+The paper's central formal insight: negative *min* (eq. 13) differs from
+expletive *min* (eq. 58) only by the presence of negation inside the modal.
+
+- ⟦min_negative⟧(p)(w) = ∀w' ∈ Best. **¬**p(w') = NEG₂(NEG₁(p))(w)
+- ⟦min_expletive⟧(p)(w) = ∀w' ∈ Best. p(w') = NEG₂(p)(w)
+
+Expletive *min* is therefore negative *min* with the negation stripped out.
+Equivalently, feeding ¬p to negative *min* cancels the double negation
+and yields expletive *min*'s semantics. -/
+
+/-- Negative *min*: modal necessity over ¬p (eq. 13). -/
+def negativeMinSem (f : ModalBase) (g : OrderingSource) (p : BProp World)
+    (w : World) : Bool :=
+  neg2Sem f g (neg1Sem p) w
+
+/-- Negative *min* decomposes as NEG₂ ∘ NEG₁. -/
+theorem negative_min_is_modal_of_negation (f : ModalBase) (g : OrderingSource)
+    (p : BProp World) (w : World) :
+    negativeMinSem f g p w = neg2Sem f g (neg1Sem p) w := rfl
+
+/-- Expletive *min* = negative *min* with double negation cancelled:
+    ⟦NEG₂⟧(p) = negativeMin(¬p). Feeding ¬p into negative *min*
+    cancels the inner negation (!!p = p), recovering expletive semantics. -/
+theorem expletive_from_negative_double_neg (f : ModalBase) (g : OrderingSource)
+    (p : BProp World) (w : World) :
+    neg2Sem f g p w = negativeMinSem f g (neg1Sem p) w := by
+  simp only [negativeMinSem, neg2Sem, necessity]
+  congr 1; ext w'; exact (Bool.not_not (p w')).symm
+
+-- ════════════════════════════════════════════════════
+-- § 13. Fragment Grounding
+-- ════════════════════════════════════════════════════
+
+/-! ### Greek and Italian data derive from fragment entries
+
+The `NegatorDatum` records for Greek and Italian derive their surface
+forms from `Fragments.Greek.Negation` and `Fragments.Italian.Negation`
+respectively — the connection is true by construction, not by bridge
+theorem. -/
+
+/-- Greek *dhen* data derives its form from the Greek negation fragment. -/
+theorem greek_dhen_form_grounded :
+    greekDhenExclamative.form = Fragments.Greek.Negation.dhen.form := rfl
+
+/-- Greek *min* data derives its form from the Greek negation fragment. -/
+theorem greek_min_form_grounded :
+    greekMinFear.form = Fragments.Greek.Negation.min.form := rfl
+
+/-- Italian *non* data derives its form from the Italian negation fragment. -/
+theorem italian_non_form_grounded :
+    italianNonTemporal.form = Fragments.Italian.Negation.negMarker := rfl
 
 end Phenomena.Negation.Studies.Tsiakmakis2025
