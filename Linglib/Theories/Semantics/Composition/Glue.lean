@@ -403,6 +403,7 @@ theorem glue_inverse_false : glue_inverse_meaning = false := by
     engine. -/
 
 open Semantics.Scope
+open Core.Tree
 open Semantics.Composition.Tree
 open Semantics.Montague.Variables
 
@@ -419,25 +420,25 @@ private def g₀ : Assignment toyModel := λ _ => .john
 
 /-- Surface scope QR tree (∀>∃):
     `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]` -/
-private def qr_surface : LFTree :=
-  .binary
-    (.binary (.terminal "every") (.terminal "person"))
-    (.bind 1
-      (.binary
-        (.binary (.terminal "some") (.terminal "person"))
-        (.bind 2
-          (.binary (.trace 1) (.binary (.terminal "sees") (.trace 2))))))
+private def qr_surface : Tree Unit String :=
+  .bin
+    (.bin (.leaf "every") (.leaf "person"))
+    (.binder 1
+      (.bin
+        (.bin (.leaf "some") (.leaf "person"))
+        (.binder 2
+          (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
 
 /-- Inverse scope QR tree (∃>∀):
     `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]` -/
-private def qr_inverse : LFTree :=
-  .binary
-    (.binary (.terminal "some") (.terminal "person"))
-    (.bind 2
-      (.binary
-        (.binary (.terminal "every") (.terminal "person"))
-        (.bind 1
-          (.binary (.trace 1) (.binary (.terminal "sees") (.trace 2))))))
+private def qr_inverse : Tree Unit String :=
+  .bin
+    (.bin (.leaf "some") (.leaf "person"))
+    (.binder 2
+      (.bin
+        (.bin (.leaf "every") (.leaf "person"))
+        (.binder 1
+          (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
 
 /-- Map ScopeConfig to truth values via Glue evaluation. -/
 def glueReading : ScopeConfig → Bool

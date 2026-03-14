@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.249] - 2026-03-14
+
+### Changed
+- **Core/Tree.lean**: Unify `BinaryTree W` and `SynTree C W` into single `Tree C W` type; add `.leaf`/`.bin`/`.un`/`.tr`/`.binder` convenience constructors for `C = Unit`
+- **Composition/Tree.lean**: Merge parallel BinaryTree/SynTree interpretation into single polymorphic `interpTree`/`interpTreeG`/`evalTree` over `Tree C String`
+- Update 8 consumer files (QuantifierComposition, Glue, Derivation, Rooth1992, Structural, AtomicConstraint, ContextualConstraint, Katzir2007)
+
 ## [0.229.248] - 2026-03-14
 
 ### Changed

@@ -41,7 +41,7 @@ structural operations. For φ = "John ate some of the cake":
 
 ## Tree Type
 
-Uses the unified `SynTree C W` from `Core.Tree`. All definitions are
+Uses the unified `Tree C W` from `Core.Tree`. All definitions are
 parameterized over the category type `C`, so they work with UD-grounded
 `Cat`, framework-specific categories, or any `C` with `BEq`/`DecidableEq`.
 
@@ -58,7 +58,7 @@ parameterized over the category type `C`, so they work with UD-grounded
 namespace StructuralAlternatives
 
 open Core.Tree
-open SynTree
+open Tree
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Substitution Source (def 41)
@@ -75,8 +75,8 @@ subtrees of φ to derive the inference in examples like:
   "It was warm yesterday, and it is a little bit more than warm today"
 where "a little bit more than warm" (a subtree of φ) substitutes for
 "warm" in the left conjunct. -/
-def substitutionSource {C W : Type} (lexicon : List (SynTree C W))
-    (φ : SynTree C W) : List (SynTree C W) :=
+def substitutionSource {C W : Type} (lexicon : List (Tree C W))
+    (φ : Tree C W) : List (Tree C W) :=
   lexicon ++ φ.subtrees
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -97,27 +97,27 @@ The three operations:
 The `inBind` constructor extends Katzir's original PF-only operations
 to handle binding structures, allowing structural operations inside
 the body of a λ-binder. -/
-inductive StructOp {C W : Type} (source : List (SynTree C W)) :
-    SynTree C W → SynTree C W → Prop where
+inductive StructOp {C W : Type} (source : List (Tree C W)) :
+    Tree C W → Tree C W → Prop where
   /-- Substitute: replace tree with a same-category item from source. -/
-  | subst {φ ψ : SynTree C W}
+  | subst {φ ψ : Tree C W}
     (h_cat : ψ.cat = φ.cat) (h_src : ψ ∈ source) :
     StructOp source φ ψ
   /-- Delete: remove the i-th child from a node. -/
-  | delete {cat : C} {cs : List (SynTree C W)} (i : Fin cs.length) :
+  | delete {cat : C} {cs : List (Tree C W)} (i : Fin cs.length) :
     StructOp source (.node cat cs) (.node cat (cs.eraseIdx i))
   /-- Contract: replace a node with one of its same-category children. -/
-  | contract {cat : C} {cs : List (SynTree C W)}
-    {child : SynTree C W}
+  | contract {cat : C} {cs : List (Tree C W)}
+    {child : Tree C W}
     (h_mem : child ∈ cs) (h_cat : child.cat = cat) :
     StructOp source (.node cat cs) child
   /-- Recursive: apply an operation inside one child of a node. -/
-  | inChild {cat : C} {cs : List (SynTree C W)}
-    (i : Fin cs.length) {ψ_child : SynTree C W}
+  | inChild {cat : C} {cs : List (Tree C W)}
+    (i : Fin cs.length) {ψ_child : Tree C W}
     (h_step : StructOp source (cs.get i) ψ_child) :
     StructOp source (.node cat cs) (.node cat (cs.set i ψ_child))
   /-- Recursive: apply an operation inside a binder body. -/
-  | inBind {n : Nat} {cat : C} {body body' : SynTree C W}
+  | inBind {n : Nat} {cat : C} {body body' : Tree C W}
     (h_step : StructOp source body body') :
     StructOp source (.bind n cat body) (.bind n cat body')
 
@@ -130,29 +130,29 @@ transformed into ψ by a finite chain of structural operations
 using items from `source`.
 
 Formally: the reflexive-transitive closure of `StructOp source`. -/
-def atMostAsComplex {C W : Type} (source : List (SynTree C W))
-    (ψ φ : SynTree C W) : Prop :=
+def atMostAsComplex {C W : Type} (source : List (Tree C W))
+    (ψ φ : Tree C W) : Prop :=
   Relation.ReflTransGen (StructOp source) φ ψ
 
 /-- Equal complexity (def 19): φ ∼ ψ iff φ ≲ ψ ∧ ψ ≲ φ. -/
-def equalComplexity {C W : Type} (source : List (SynTree C W))
-    (φ ψ : SynTree C W) : Prop :=
+def equalComplexity {C W : Type} (source : List (Tree C W))
+    (φ ψ : Tree C W) : Prop :=
   atMostAsComplex source φ ψ ∧ atMostAsComplex source ψ φ
 
 /-- Strictly less complex (def 19): ψ < φ iff ψ ≲ φ ∧ ¬(φ ≲ ψ). -/
-def strictlyLessComplex {C W : Type} (source : List (SynTree C W))
-    (ψ φ : SynTree C W) : Prop :=
+def strictlyLessComplex {C W : Type} (source : List (Tree C W))
+    (ψ φ : Tree C W) : Prop :=
   atMostAsComplex source ψ φ ∧ ¬atMostAsComplex source φ ψ
 
 /-- Structural alternatives (def 20):
 A_str(φ) := {ψ : ψ ≲ φ}, where ≲ uses L(φ) = lexicon ∪ subtrees(φ). -/
-def structuralAlternatives {C W : Type} (lex : List (SynTree C W))
-    (φ : SynTree C W) : Set (SynTree C W) :=
+def structuralAlternatives {C W : Type} (lex : List (Tree C W))
+    (φ : Tree C W) : Set (Tree C W) :=
   {ψ | atMostAsComplex (substitutionSource lex φ) ψ φ}
 
 /-- φ is always a structural alternative to itself (reflexivity of ≲). -/
-theorem self_is_alternative {C W : Type} (lex : List (SynTree C W))
-    (φ : SynTree C W) :
+theorem self_is_alternative {C W : Type} (lex : List (Tree C W))
+    (φ : Tree C W) :
     φ ∈ structuralAlternatives lex φ :=
   Relation.ReflTransGen.refl
 
@@ -173,7 +173,7 @@ section SomeAll
 open Cat ExWord
 
 /-- Minimal lexicon: terminal items available for substitution. -/
-def exLexicon : List (SynTree Cat ExWord) :=
+def exLexicon : List (Tree Cat ExWord) :=
   [.terminal .N .john, .terminal .V .ate,
    .terminal .Det .some_, .terminal .Det .all_,
    .terminal .N .cake, .terminal .N .apple, .terminal .N .pear,
@@ -181,13 +181,13 @@ def exLexicon : List (SynTree Cat ExWord) :=
    .terminal .Adj .tall, .terminal .N .man]
 
 /-- φ = "John ate some cake" (simplified parse tree). -/
-def someSentence : SynTree Cat ExWord :=
+def someSentence : Tree Cat ExWord :=
   .node .S [
     .terminal .N .john,
     .node .VP [.terminal .V .ate, .terminal .Det .some_, .terminal .N .cake]]
 
 /-- φ' = "John ate all cake" — the scalar alternative. -/
-def allSentence : SynTree Cat ExWord :=
+def allSentence : Tree Cat ExWord :=
   .node .S [
     .terminal .N .john,
     .node .VP [.terminal .V .ate, .terminal .Det .all_, .terminal .N .cake]]
@@ -254,7 +254,7 @@ should block assertion of φ. But it licenses the inference that John
 ate ALL of the cake — the opposite of the correct implicature.
 Katzir's structural approach excludes φ'' because it requires ConjP
 and NegP structure not derivable from L(φ). -/
-def someButNotAllSentence : SynTree Cat ExWord :=
+def someButNotAllSentence : Tree Cat ExWord :=
   .node .S [
     .terminal .N .john,
     .node .VP [
@@ -284,55 +284,55 @@ theorem source_lacks_conjp :
 -- ── Private helpers for category_preservation ──────────────────
 
 private theorem containsCatList_false_of_mem {C W : Type} [BEq C] (c : C)
-    (cs : List (SynTree C W)) (t : SynTree C W)
-    (h : SynTree.containsCat.containsCatList c cs = false)
+    (cs : List (Tree C W)) (t : Tree C W)
+    (h : Tree.containsCat.containsCatList c cs = false)
     (ht : t ∈ cs) :
     t.containsCat c = false := by
   induction cs with
   | nil => exact absurd ht List.not_mem_nil
   | cons x xs ih =>
-    simp only [SynTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
+    simp only [Tree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
     cases List.mem_cons.mp ht with
     | inl heq => subst heq; exact h.1
     | inr hmem => exact ih h.2 hmem
 
 private theorem containsCatList_eraseIdx {C W : Type} [BEq C] (c : C)
-    (cs : List (SynTree C W)) (i : Nat) (hi : i < cs.length)
-    (h : SynTree.containsCat.containsCatList c cs = false) :
-    SynTree.containsCat.containsCatList c (cs.eraseIdx i) = false := by
+    (cs : List (Tree C W)) (i : Nat) (hi : i < cs.length)
+    (h : Tree.containsCat.containsCatList c cs = false) :
+    Tree.containsCat.containsCatList c (cs.eraseIdx i) = false := by
   induction cs generalizing i with
   | nil => simp at hi
   | cons x xs ih =>
-    simp only [SynTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
+    simp only [Tree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
     cases i with
     | zero => simp [List.eraseIdx]; exact h.2
     | succ n =>
       have hn : n < xs.length := by simp [List.length] at hi; omega
-      simp only [List.eraseIdx, SynTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      simp only [List.eraseIdx, Tree.containsCat.containsCatList, Bool.or_eq_false_iff]
       exact ⟨h.1, ih n hn h.2⟩
 
 private theorem containsCatList_set {C W : Type} [BEq C] (c : C)
-    (cs : List (SynTree C W)) (i : Nat) (hi : i < cs.length)
-    (t : SynTree C W)
-    (h_cs : SynTree.containsCat.containsCatList c cs = false)
+    (cs : List (Tree C W)) (i : Nat) (hi : i < cs.length)
+    (t : Tree C W)
+    (h_cs : Tree.containsCat.containsCatList c cs = false)
     (h_t : t.containsCat c = false) :
-    SynTree.containsCat.containsCatList c (cs.set i t) = false := by
+    Tree.containsCat.containsCatList c (cs.set i t) = false := by
   induction cs generalizing i with
   | nil => simp at hi
   | cons x xs ih =>
-    simp only [SynTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h_cs
+    simp only [Tree.containsCat.containsCatList, Bool.or_eq_false_iff] at h_cs
     cases i with
     | zero =>
-      simp only [List.set, SynTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      simp only [List.set, Tree.containsCat.containsCatList, Bool.or_eq_false_iff]
       exact ⟨h_t, h_cs.2⟩
     | succ n =>
       have hn : n < xs.length := by simp [List.length] at hi; omega
-      simp only [List.set, SynTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      simp only [List.set, Tree.containsCat.containsCatList, Bool.or_eq_false_iff]
       exact ⟨h_cs.1, ih n hn h_cs.2⟩
 
 private theorem structOp_preserves_no_cat {C W : Type} [BEq C]
-    (source : List (SynTree C W)) (c : C)
-    (φ ψ : SynTree C W)
+    (source : List (Tree C W)) (c : C)
+    (φ ψ : Tree C W)
     (h_source : ∀ s ∈ source, s.containsCat c = false)
     (h_φ : φ.containsCat c = false)
     (h_step : StructOp source φ ψ) :
@@ -340,15 +340,15 @@ private theorem structOp_preserves_no_cat {C W : Type} [BEq C]
   induction h_step with
   | subst _ h_src => exact h_source _ h_src
   | @delete cat cs i =>
-    unfold SynTree.containsCat at h_φ ⊢
+    unfold Tree.containsCat at h_φ ⊢
     simp only [Bool.or_eq_false_iff] at h_φ ⊢
     exact ⟨h_φ.1, containsCatList_eraseIdx c cs i i.isLt h_φ.2⟩
   | @contract cat cs child h_mem _ =>
-    unfold SynTree.containsCat at h_φ
+    unfold Tree.containsCat at h_φ
     simp only [Bool.or_eq_false_iff] at h_φ
     exact containsCatList_false_of_mem c cs child h_φ.2 h_mem
   | @inChild cat cs i ψ_child _ ih =>
-    unfold SynTree.containsCat at h_φ ⊢
+    unfold Tree.containsCat at h_φ ⊢
     simp only [Bool.or_eq_false_iff] at h_φ ⊢
     constructor
     · exact h_φ.1
@@ -356,7 +356,7 @@ private theorem structOp_preserves_no_cat {C W : Type} [BEq C]
         (ih (containsCatList_false_of_mem c cs (cs.get i) h_φ.2
           (List.get_mem cs i)))
   | @inBind n cat body body' _ ih =>
-    unfold SynTree.containsCat at h_φ ⊢
+    unfold Tree.containsCat at h_φ ⊢
     simp only [Bool.or_eq_false_iff] at h_φ ⊢
     exact ⟨h_φ.1, ih h_φ.2⟩
 
@@ -376,8 +376,8 @@ Proof by induction on `ReflTransGen`, reducing to the single-step
 `structOp_preserves_no_cat` which case-splits on the five `StructOp`
 constructors. -/
 theorem category_preservation {C W : Type} [BEq C]
-    (source : List (SynTree C W)) (c : C)
-    (φ ψ : SynTree C W)
+    (source : List (Tree C W)) (c : C)
+    (φ ψ : Tree C W)
     (h_source : ∀ s ∈ source, s.containsCat c = false)
     (h_φ : φ.containsCat c = false)
     (h_reach : atMostAsComplex source ψ φ) :
@@ -423,7 +423,7 @@ section Disjunction
 open Cat ExWord
 
 /-- φ = "John ate the apple or the pear" (ex. 26a). -/
-def orSentence : SynTree Cat ExWord :=
+def orSentence : Tree Cat ExWord :=
   .node .S [
     .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]],
     .terminal .Conj .or_,
@@ -431,7 +431,7 @@ def orSentence : SynTree Cat ExWord :=
 
 /-- φ' = "John ate the apple and the pear" (ex. 26b).
 Obtained by substituting Conj "or" with "and". -/
-def andSentence : SynTree Cat ExWord :=
+def andSentence : Tree Cat ExWord :=
   .node .S [
     .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]],
     .terminal .Conj .and_,
@@ -460,7 +460,7 @@ the left argument of a binary connective) from structural operations
 alone, without stipulating L as a primitive. The paper (p. 683) notes
 that L and R are "somewhat stipulative" and that structural
 alternatives derive the same predictions. -/
-def leftDisjunct : SynTree Cat ExWord :=
+def leftDisjunct : Tree Cat ExWord :=
   .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]]
 
 theorem left_disjunct_is_alternative :
@@ -478,7 +478,7 @@ theorem left_disjunct_is_alternative :
   · rfl
 
 /-- The right disjunct is also an alternative (Sauerland's R operator). -/
-def rightDisjunct : SynTree Cat ExWord :=
+def rightDisjunct : Tree Cat ExWord :=
   .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .pear]]
 
 theorem right_disjunct_is_alternative :
@@ -504,11 +504,11 @@ section Deletion
 open Cat ExWord
 
 /-- "A tall man" parse tree (ex. 29a). -/
-def tallMan : SynTree Cat ExWord :=
+def tallMan : Tree Cat ExWord :=
   .node .NP [.terminal .Adj .tall, .terminal .N .man]
 
 /-- "A man" — obtained by deleting the Adj modifier (ex. 29b). -/
-def justMan : SynTree Cat ExWord :=
+def justMan : Tree Cat ExWord :=
   .node .NP [.terminal .N .man]
 
 /-- Deletion produces a simpler alternative: "a man" ∈ A_str("a tall man").
@@ -536,9 +536,9 @@ end Deletion
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- Lift a ReflTransGen chain at position i through inChild. -/
-private theorem lift_at_position {C W : Type} {source : List (SynTree C W)}
-    {cat : C} (cs : List (SynTree C W))
-    (i : Nat) (hi : i < cs.length) (ψ : SynTree C W)
+private theorem lift_at_position {C W : Type} {source : List (Tree C W)}
+    {cat : C} (cs : List (Tree C W))
+    (i : Nat) (hi : i < cs.length) (ψ : Tree C W)
     (h : Relation.ReflTransGen (StructOp source) cs[i] ψ) :
     Relation.ReflTransGen (StructOp source)
       (.node cat cs) (.node cat (cs.set i ψ)) := by
@@ -554,8 +554,8 @@ private theorem lift_at_position {C W : Type} {source : List (SynTree C W)}
     rw [hget]; exact hbd
 
 /-- Lift a ReflTransGen chain through a bind constructor. -/
-private theorem lift_bind {C W : Type} {source : List (SynTree C W)}
-    {n : Nat} {cat : C} {body body' : SynTree C W}
+private theorem lift_bind {C W : Type} {source : List (Tree C W)}
+    {n : Nat} {cat : C} {body body' : Tree C W}
     (h : Relation.ReflTransGen (StructOp source) body body') :
     Relation.ReflTransGen (StructOp source) (.bind n cat body) (.bind n cat body') := by
   induction h with
@@ -564,18 +564,18 @@ private theorem lift_bind {C W : Type} {source : List (SynTree C W)}
 
 /-- leafSubstList is just List.map. -/
 private theorem leafSubstList_eq_map {C W : Type} [BEq C] [BEq W]
-    (α β : W) (c : C) (cs : List (SynTree C W)) :
-    SynTree.leafSubst.leafSubstList α β c cs =
+    (α β : W) (c : C) (cs : List (Tree C W)) :
+    Tree.leafSubst.leafSubstList α β c cs =
     cs.map (·.leafSubst α β c) := by
   induction cs with
   | nil => rfl
   | cons t ts ih =>
-    simp only [SynTree.leafSubst.leafSubstList, List.map_cons]
+    simp only [Tree.leafSubst.leafSubstList, List.map_cons]
     exact congrArg _ ih
 
 /-- Process children one at a time: .node cat cs →* .node cat (cs.map f). -/
-private theorem mapChildren_reachable {C W : Type} {source : List (SynTree C W)}
-    {cat : C} {cs : List (SynTree C W)} {f : SynTree C W → SynTree C W}
+private theorem mapChildren_reachable {C W : Type} {source : List (Tree C W)}
+    {cat : C} {cs : List (Tree C W)} {f : Tree C W → Tree C W}
     (hf : ∀ (i : Nat) (hi : i < cs.length),
       Relation.ReflTransGen (StructOp source) cs[i] (f cs[i])) :
     Relation.ReflTransGen (StructOp source)
@@ -629,18 +629,18 @@ set_option maxHeartbeats 400000 in
 /-- Leaf substitution is reachable via structural operations for any
 source containing `.terminal c β`. -/
 private theorem leafSubst_reachable {C W : Type} [BEq C] [LawfulBEq C] [BEq W]
-    {source : List (SynTree C W)} (α β : W) (c : C)
-    (h_β : SynTree.terminal c β ∈ source)
-    (φ : SynTree C W) :
+    {source : List (Tree C W)} (α β : W) (c : C)
+    (h_β : Tree.terminal c β ∈ source)
+    (φ : Tree C W) :
     Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c) := by
-  refine SynTree.rec
+  refine Tree.rec
     (motive_1 := fun φ => Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c))
     (motive_2 := fun cs => ∀ (i : Nat) (hi : i < cs.length),
       Relation.ReflTransGen (StructOp source) cs[i] ((cs[i]).leafSubst α β c))
     ?_ ?_ ?_ ?_ ?_ ?_ φ
   · -- terminal case
     intro c' w
-    simp only [SynTree.leafSubst]
+    simp only [Tree.leafSubst]
     split
     · rename_i h
       rw [Bool.and_eq_true] at h
@@ -651,7 +651,7 @@ private theorem leafSubst_reachable {C W : Type} [BEq C] [LawfulBEq C] [BEq W]
   · -- node case
     intro c' cs ih_cs
     show Relation.ReflTransGen (StructOp source) (.node c' cs)
-      (.node c' (SynTree.leafSubst.leafSubstList α β c cs))
+      (.node c' (Tree.leafSubst.leafSubstList α β c cs))
     rw [leafSubstList_eq_map]
     exact mapChildren_reachable ih_cs
   · -- trace case
@@ -686,10 +686,10 @@ generate too. But structural operations also generate alternatives that
 scales miss: deletion alternatives in DE contexts (§4.3), and
 sub-constituent alternatives for disjunction (§4.2). -/
 theorem horn_alternatives_are_structural {C W : Type} [BEq C] [LawfulBEq C] [BEq W]
-    (lex : List (SynTree C W)) (φ : SynTree C W)
+    (lex : List (Tree C W)) (φ : Tree C W)
     (α β : W) (c : C)
-    (_h_α_in_lex : SynTree.terminal c α ∈ lex)
-    (_h_β_in_lex : SynTree.terminal c β ∈ lex) :
+    (_h_α_in_lex : Tree.terminal c α ∈ lex)
+    (_h_β_in_lex : Tree.terminal c β ∈ lex) :
     φ.leafSubst α β c ∈ structuralAlternatives lex φ := by
   unfold structuralAlternatives atMostAsComplex
   exact leafSubst_reachable α β c (List.mem_append_left _ _h_β_in_lex) φ
@@ -713,10 +713,10 @@ formalized in `KatzirSingh2015.lean` as `atLeastAsGood`, where complexity
 is an abstract ℕ parameter — the structural complexity defined here
 gives that parameter its intended content. -/
 def violatesConversationalPrinciple {C W World : Type}
-    (lex : List (SynTree C W))
-    (meaning : SynTree C W → World → Bool)
-    (φ : SynTree C W)
-    (weaklyAssertable : SynTree C W → Bool) : Prop :=
+    (lex : List (Tree C W))
+    (meaning : Tree C W → World → Bool)
+    (φ : Tree C W)
+    (weaklyAssertable : Tree C W → Bool) : Prop :=
   ∃ φ' ∈ structuralAlternatives lex φ,
     -- ⟦φ'⟧ ⊂ ⟦φ⟧ (strictly more informative)
     (∀ w, meaning φ' w = true → meaning φ w = true) ∧
@@ -740,9 +740,9 @@ The key insight: in `KatzirSingh2015.lean`, complexity is an abstract
 `ℕ` parameter. Here, structural complexity gives that parameter its
 intended content — the number of structural operations needed. -/
 def atLeastAsGoodAs {C W World : Type}
-    (lex : List (SynTree C W))
-    (meaning : SynTree C W → World → Bool)
-    (φ ψ : SynTree C W) : Prop :=
+    (lex : List (Tree C W))
+    (meaning : Tree C W → World → Bool)
+    (φ ψ : Tree C W) : Prop :=
   atMostAsComplex (substitutionSource lex ψ) φ ψ ∧
   ∀ w, meaning φ w = true → meaning ψ w = true
 

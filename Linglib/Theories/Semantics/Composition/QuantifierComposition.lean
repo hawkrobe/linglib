@@ -41,6 +41,7 @@ The two trees differ only in which quantifier is raised higher.
 namespace Semantics.Composition.QuantifierComposition
 
 open Semantics.Montague
+open Core.Tree
 open Semantics.Composition.Tree
 open Semantics.Montague.Variables
 open Semantics.Lexical.Determiner.Quantifier
@@ -67,10 +68,10 @@ def g₀ : Assignment toyModel := λ _ => .john
 -- ════════════════════════════════════════════════════════════════════
 
 /-- QR tree: `[S [DP every student] [1 [S t₁ sleeps]]]` -/
-def tree_everyStudentSleeps : LFTree :=
-  .binary
-    (.binary (.terminal "every") (.terminal "student"))
-    (.bind 1 (.binary (.trace 1) (.terminal "sleeps")))
+def tree_everyStudentSleeps : Tree Unit String :=
+  .bin
+    (.bin (.leaf "every") (.leaf "student"))
+    (.binder 1 (.bin (.tr 1) (.leaf "sleeps")))
 
 /-- Every student sleeps = false (Mary is a student but doesn't sleep). -/
 theorem every_student_sleeps_false :
@@ -84,10 +85,10 @@ theorem every_student_sleeps_grounding :
   native_decide
 
 /-- QR tree: `[S [DP some student] [1 [S t₁ sleeps]]]` -/
-def tree_someStudentSleeps : LFTree :=
-  .binary
-    (.binary (.terminal "some") (.terminal "student"))
-    (.bind 1 (.binary (.trace 1) (.terminal "sleeps")))
+def tree_someStudentSleeps : Tree Unit String :=
+  .bin
+    (.bin (.leaf "some") (.leaf "student"))
+    (.binder 1 (.bin (.tr 1) (.leaf "sleeps")))
 
 /-- Some student sleeps = true (John is a student and sleeps). -/
 theorem some_student_sleeps_true :
@@ -112,28 +113,28 @@ which quantifier occupies the higher position. -/
 [S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]
 ```
 ∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]] -/
-def tree_surface : LFTree :=
-  .binary
-    (.binary (.terminal "every") (.terminal "person"))
-    (.bind 1
-      (.binary
-        (.binary (.terminal "some") (.terminal "person"))
-        (.bind 2
-          (.binary (.trace 1) (.binary (.terminal "sees") (.trace 2))))))
+def tree_surface : Tree Unit String :=
+  .bin
+    (.bin (.leaf "every") (.leaf "person"))
+    (.binder 1
+      (.bin
+        (.bin (.leaf "some") (.leaf "person"))
+        (.binder 2
+          (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
 
 /-- Inverse scope (∃>∀):
 ```
 [S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]
 ```
 ∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]] -/
-def tree_inverse : LFTree :=
-  .binary
-    (.binary (.terminal "some") (.terminal "person"))
-    (.bind 2
-      (.binary
-        (.binary (.terminal "every") (.terminal "person"))
-        (.bind 1
-          (.binary (.trace 1) (.binary (.terminal "sees") (.trace 2))))))
+def tree_inverse : Tree Unit String :=
+  .bin
+    (.bin (.leaf "some") (.leaf "person"))
+    (.binder 2
+      (.bin
+        (.bin (.leaf "every") (.leaf "person"))
+        (.binder 1
+          (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
 
 /-- Surface scope is true in the toy model.
 (John sees Mary and Mary sees John — each person sees some person.) -/
@@ -182,31 +183,29 @@ theorem assignment_independent :
   native_decide
 
 -- ════════════════════════════════════════════════════════════════════
--- § Unified SynTree: Same Sentence with UD Categories
+-- § Unified Tree: Same Sentence with UD Categories
 -- ════════════════════════════════════════════════════════════════════
 
-/-! The same QR tree built as `SynTree Cat String` — carrying real UD-grounded
-categories on every node. `interpSynTreeG` ignores the categories and produces
-identical truth conditions to the category-free `LFTree` version. -/
-
-open Core.Tree
+/-! The same QR tree built as `Tree Cat String` — carrying real UD-grounded
+categories on every node. `interpTreeG` ignores the categories and produces
+identical truth conditions to the category-free `Tree Unit String` version. -/
 
 /-- QR tree with UD categories:
-`[S [DP [Det every] [N student]] [1 [S [t₁] [VP sleeps]]]]` -/
-def synTree_everyStudentSleeps : SynTree Cat String :=
+`[S [DP [Det every] [N student]] [1 [S [t₁:NP] [VP sleeps]]]]` -/
+def synTree_everyStudentSleeps : Tree Cat String :=
   .node .S
     (.node .DP (.terminal .Det "every" :: .terminal .N "student" :: []) ::
      .bind 1 .S
        (.node .S (.trace 1 .NP :: .node .VP (.terminal .V "sleeps" :: []) :: [])) :: [])
 
-/-- Category-bearing tree yields the same result as category-free LFTree. -/
+/-- Category-bearing tree yields the same result as category-free tree. -/
 theorem synTree_every_student_sleeps_false :
-    evalSynTree quantLex g₀ synTree_everyStudentSleeps = some false := by
+    evalTree quantLex g₀ synTree_everyStudentSleeps = some false := by
   native_decide
 
-/-- SynTree grounding matches LFTree grounding. -/
-theorem synTree_agrees_with_lfTree :
-    evalSynTree quantLex g₀ synTree_everyStudentSleeps =
+/-- Tree Cat String agrees with Tree Unit String. -/
+theorem catTree_agrees_with_unitTree :
+    evalTree quantLex g₀ synTree_everyStudentSleeps =
     evalTree quantLex g₀ tree_everyStudentSleeps := by
   native_decide
 

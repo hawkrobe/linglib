@@ -18,7 +18,7 @@ connection to English fragment entries.
 ## Pipeline
 
 ```
-Fragments/English/Nouns ──▷ Montague Lexicon ──▷ LFTree
+Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
                                                         │
                                                     interpTree
                                                         │
@@ -50,7 +50,7 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ LFTree
 - `Theme`, `Rheme`, `InfoStructure` — information structure analysis (§5)
 - `HasInfoStructure` — typeclass instance (§5b)
 - `FIPApplication` — FIP application classification (§8)
-- `LFTree`, `interpTree` — compositional derivation (§10–§11)
+- `Tree`, `interpTree` — compositional derivation (§10–§11)
 - `SemDeriv` — derivation bundles (§13)
 - `Fragments.English.Nouns`, `.Predicates.Verbal` — fragment entries (§14)
 
@@ -396,10 +396,11 @@ theorem bridge_qa_incongruent :
     `interpTree` to produce the same truth conditions.
 
     The derivational chain is:
-      Fragment entry → Montague LexEntry → LFTree → interpTree → Bool
+      Fragment entry → Montague LexEntry → Tree → interpTree → Bool
     run once per world to yield a world-indexed proposition. -/
 
 open Semantics.Montague
+open Core.Tree
 open Semantics.Composition.Tree
 
 /-- Entity domain for the focus model. -/
@@ -436,20 +437,20 @@ def focusLex (w : QAWorld) : Lexicon focusModel := fun word =>
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- Syntax tree: [S [NP Fred] [VP [V ate] [NP beans]]] -/
-def tree_fredAteBeans : LFTree :=
-  .binary (.terminal "Fred") (.binary (.terminal "ate") (.terminal "beans"))
+def tree_fredAteBeans : Tree Unit String :=
+  .bin (.leaf "Fred") (.bin (.leaf "ate") (.leaf "beans"))
 
 /-- Syntax tree: [S [NP Mary] [VP [V ate] [NP beans]]] -/
-def tree_maryAteBeans : LFTree :=
-  .binary (.terminal "Mary") (.binary (.terminal "ate") (.terminal "beans"))
+def tree_maryAteBeans : Tree Unit String :=
+  .bin (.leaf "Mary") (.bin (.leaf "ate") (.leaf "beans"))
 
 /-- Syntax tree: [S [NP Fred] [VP [V ate] [NP rice]]] -/
-def tree_fredAteRice : LFTree :=
-  .binary (.terminal "Fred") (.binary (.terminal "ate") (.terminal "rice"))
+def tree_fredAteRice : Tree Unit String :=
+  .bin (.leaf "Fred") (.bin (.leaf "ate") (.leaf "rice"))
 
 /-- Extract the Bool truth value from a tree interpretation.
     Returns `none` if the tree is uninterpretable or has non-`t` type. -/
-def treeResult (lex : Lexicon focusModel) (t : LFTree) : Option Bool :=
+def treeResult (lex : Lexicon focusModel) (t : Tree Unit String) : Option Bool :=
   match interpTree focusModel lex t with
   | some ⟨.t, b⟩ => some b
   | _ => none
@@ -577,7 +578,7 @@ end FragmentVerbs
 
     1. Fragment entries (§14) provide surface forms and properties
     2. Surface forms feed the Montague lexicon (§10)
-    3. LFTree derivations compose meanings via interpTree (§11)
+    3. Tree derivations compose meanings via interpTree (§11)
     4. Running at each world yields propositions grounding §2 (§12)
     5. Propositions build Hamblin questions and focus values (§6)
     6. FIP/qaCongruent proves congruence (§6a) or incongruence (§6b)

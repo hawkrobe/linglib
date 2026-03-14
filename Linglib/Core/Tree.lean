@@ -1,39 +1,33 @@
 import Linglib.Core.Lexical.UD
 
 /-!
-# Syntactic Trees
+# Trees
 
-Framework-neutral tree type for representing syntactic structure.
-Used by both compositional interpretation (@cite{heim-kratzer-1998})
-and structural alternative generation (@cite{katzir-2007}).
+Unified tree type parameterized by node labels (`C`) and terminal content (`W`).
 
-## Design
+## `Tree C W` — The Y-Model Tree
 
-`SynTree C W` is parameterized by:
-- `C` — category type (UD UPOS tags, CCG categories, feature bundles, ...)
-- `W` — word/terminal type (`String` for interpretation, finite enum for examples)
+N-ary branching with categories on every node. Supports both:
+- **Compositional interpretation** (LF): `interpTree`/`interpTreeG`/`evalTree`
+  in `Composition/Tree.lean` — type-driven, ignores categories
+- **Structural operations** (PF): @cite{katzir-2007} `StructOp` (substitution,
+  deletion, contraction) in `Alternatives/Structural.lean` — category-aware
 
-Four constructors:
-- `terminal` — lexical item with category and word
-- `node` — internal node with category and children (n-ary)
-- `trace` — movement trace with binding index and category
-- `bind` — λ-abstraction site with index, category, and body
+Parameterized by category type `C` (UD tags, CCG categories, feature
+bundles, `Unit` for unlabeled, ...) and terminal type `W`.
 
-The tree type is maximally permissive: it allows n-ary branching, traces,
-and binding simultaneously. Framework-specific well-formedness constraints
-(binary branching for Minimalism, no traces for CCG, etc.) are expressed
-as predicates on trees, not as type-level restrictions.
+### Instantiations
 
-Each syntax theory defines its own `C`:
-- Minimalism: feature bundles
-- CCG: complex functor categories (`S\NP`, etc.)
-- HPSG: feature structures
-- UD: `UPOS` flat tags
+- `Tree Unit String` — category-free, for H&K composition. Use convenience
+  constructors `.leaf`, `.bin`, `.un`, `.tr`, `.binder`.
+- `Tree Cat String` — UD-grounded categories, for Katzir structural alternatives.
+- `Tree Unit LIToken` — bare phrase structure, for Minimalist syntax
+  (categories inside `LIToken`, not on nodes).
 
-`Cat` (defined below) provides a convenient default for theory-neutral
-work, grounding word-level categories in UD UPOS and deriving phrasal
-categories via X-bar projection. It is not privileged — any `C` with
-`BEq` works.
+## `Cat` — Default Category System
+
+Grounded in Universal Dependencies UPOS. Word-level categories via
+`head : UPOS → Cat`, phrasal via `proj : UPOS → Cat`, plus `S` and `CP`.
 -/
 
 namespace Core.Tree
@@ -55,7 +49,7 @@ UPOS (@cite{de-marneffe-zeman-2021}).
 Phrasal categories are derived systematically: NP = `proj .NOUN`,
 VP = `proj .VERB`, DP = `proj .DET`, ConjP = `proj .CCONJ`, etc.
 
-This is one possible instantiation of `SynTree`'s `C` parameter.
+This is one possible instantiation of `Tree`'s `C` parameter.
 Framework-specific category systems (CCG functors, Minimalist
 feature bundles, etc.) can be used instead. -/
 inductive Cat where
@@ -108,10 +102,10 @@ end Cat
 
 
 -- ════════════════════════════════════════════════════════════════════
--- §2  Syntactic Trees
+-- §2  Unified Tree Type
 -- ════════════════════════════════════════════════════════════════════
 
-/-- Framework-neutral syntactic tree, parameterized by category type `C`
+/-- Framework-neutral tree, parameterized by node label type `C`
 and terminal word type `W`.
 
 - `terminal c w` — leaf carrying category `c` and word `w`
@@ -124,17 +118,30 @@ binary branching (for Heim & Kratzer composition) and n-ary structure
 (for Katzir's deletion operation). Binary nodes are `node c [l, r]`.
 
 `trace` and `bind` support Quantifier Raising and variable binding.
-Frameworks without movement (CCG, HPSG) simply never construct these. -/
-inductive SynTree (C : Type) (W : Type) where
-  | terminal : C → W → SynTree C W
-  | node     : C → List (SynTree C W) → SynTree C W
-  | trace    : Nat → C → SynTree C W
-  | bind     : Nat → C → SynTree C W → SynTree C W
+Frameworks without movement (CCG, HPSG) simply never construct these.
+
+For category-free trees (`C = Unit`), use the convenience constructors
+`leaf`, `bin`, `un`, `tr`, `binder` which hide the `Unit` parameter. -/
+inductive Tree (C : Type) (W : Type) where
+  | terminal : C → W → Tree C W
+  | node     : C → List (Tree C W) → Tree C W
+  | trace    : Nat → C → Tree C W
+  | bind     : Nat → C → Tree C W → Tree C W
   deriving Repr
 
-namespace SynTree
+namespace Tree
 
 variable {C W : Type}
+
+-- ── Convenience constructors for C = Unit ─────────────────────────
+-- Category-free trees (for H&K composition, Minimalism, etc.) use
+-- these to avoid writing `()` everywhere.
+
+@[match_pattern] abbrev leaf (w : W) : Tree Unit W := .terminal () w
+@[match_pattern] abbrev un (t : Tree Unit W) : Tree Unit W := .node () (t :: [])
+@[match_pattern] abbrev bin (t1 t2 : Tree Unit W) : Tree Unit W := .node () (t1 :: t2 :: [])
+@[match_pattern] abbrev tr (n : Nat) : Tree Unit W := .trace n ()
+@[match_pattern] abbrev binder (n : Nat) (body : Tree Unit W) : Tree Unit W := .bind n () body
 
 -- ════════════════════════════════════════════════════════════════════
 -- §3  Basic Accessors
@@ -142,7 +149,7 @@ variable {C W : Type}
 
 /-- Category label of the root node. Total: every constructor carries
 a category (including `bind`, where it labels the result of PA). -/
-def cat : SynTree C W → C
+def cat : Tree C W → C
   | .terminal c _ => c
   | .node c _ => c
   | .trace _ c => c
@@ -153,32 +160,32 @@ def cat : SynTree C W → C
 -- ════════════════════════════════════════════════════════════════════
 
 /-- Structural equality for trees (mutual recursion through List). -/
-def beq [BEq C] [BEq W] : SynTree C W → SynTree C W → Bool
+def beq [BEq C] [BEq W] : Tree C W → Tree C W → Bool
   | .terminal c₁ w₁, .terminal c₂ w₂ => c₁ == c₂ && w₁ == w₂
   | .node c₁ cs₁, .node c₂ cs₂ => c₁ == c₂ && beqList cs₁ cs₂
   | .trace n₁ c₁, .trace n₂ c₂ => n₁ == n₂ && c₁ == c₂
   | .bind n₁ c₁ b₁, .bind n₂ c₂ b₂ => n₁ == n₂ && c₁ == c₂ && beq b₁ b₂
   | _, _ => false
 where
-  beqList : List (SynTree C W) → List (SynTree C W) → Bool
+  beqList : List (Tree C W) → List (Tree C W) → Bool
   | [], [] => true
   | a :: as, b :: bs => beq a b && beqList as bs
   | _, _ => false
 
-instance [BEq C] [BEq W] : BEq (SynTree C W) := ⟨beq⟩
+instance [BEq C] [BEq W] : BEq (Tree C W) := ⟨beq⟩
 
 -- ════════════════════════════════════════════════════════════════════
 -- §5  Size
 -- ════════════════════════════════════════════════════════════════════
 
 /-- Number of nodes in the tree. -/
-def size : SynTree C W → Nat
+def size : Tree C W → Nat
   | .terminal _ _ => 1
   | .node _ cs => 1 + sizeList cs
   | .trace _ _ => 1
   | .bind _ _ body => 1 + size body
 where
-  sizeList : List (SynTree C W) → Nat
+  sizeList : List (Tree C W) → Nat
   | [] => 0
   | t :: ts => size t + sizeList ts
 
@@ -187,13 +194,13 @@ where
 -- ════════════════════════════════════════════════════════════════════
 
 /-- All subtrees including self (pre-order traversal). -/
-def subtrees : SynTree C W → List (SynTree C W)
+def subtrees : Tree C W → List (Tree C W)
   | t@(.terminal _ _) => [t]
   | t@(.node _ cs) => t :: subtreesList cs
   | t@(.trace _ _) => [t]
   | t@(.bind _ _ body) => t :: subtrees body
 where
-  subtreesList : List (SynTree C W) → List (SynTree C W)
+  subtreesList : List (Tree C W) → List (Tree C W)
   | [] => []
   | t :: ts => subtrees t ++ subtreesList ts
 
@@ -202,13 +209,13 @@ where
 -- ════════════════════════════════════════════════════════════════════
 
 /-- Whether a category appears anywhere in the tree. -/
-def containsCat [BEq C] (target : C) : SynTree C W → Bool
+def containsCat [BEq C] (target : C) : Tree C W → Bool
   | .terminal c _ => target == c
   | .node c cs => target == c || containsCatList target cs
   | .trace _ c => target == c
   | .bind _ c body => target == c || containsCat target body
 where
-  containsCatList (target : C) : List (SynTree C W) → Bool
+  containsCatList (target : C) : List (Tree C W) → Bool
   | [] => false
   | t :: ts => containsCat target t || containsCatList target ts
 
@@ -220,7 +227,7 @@ where
 with `replacement`. This is the most common structural operation:
 replacing one scalar item with another of the same category. -/
 def leafSubst [BEq C] [BEq W] (target replacement : W) (c : C) :
-    SynTree C W → SynTree C W
+    Tree C W → Tree C W
   | .terminal c' w =>
     if c == c' && w == target then .terminal c' replacement
     else .terminal c' w
@@ -229,11 +236,11 @@ def leafSubst [BEq C] [BEq W] (target replacement : W) (c : C) :
   | .bind n c' body => .bind n c' (leafSubst target replacement c body)
 where
   leafSubstList (target replacement : W) (c : C) :
-      List (SynTree C W) → List (SynTree C W)
+      List (Tree C W) → List (Tree C W)
   | [] => []
   | t :: ts => leafSubst target replacement c t ::
                leafSubstList target replacement c ts
 
-end SynTree
+end Tree
 
 end Core.Tree

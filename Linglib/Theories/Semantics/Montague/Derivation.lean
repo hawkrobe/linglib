@@ -11,7 +11,7 @@ Interface between syntax and pragmatics via `SemDeriv` bundles.
 
 The `SemDeriv` instances below derive their meanings from tree interpretation
 (`interpTreeG`) rather than hand-assembling function applications. Each
-derivation specifies a `LFTree` and a `Lexicon`, and the meaning is computed
+derivation specifies a `Tree` and a `Lexicon`, and the meaning is computed
 by the composition engine. Grounding theorems verify that tree interpretation
 produces the same values as direct GQ application.
 
@@ -28,6 +28,7 @@ namespace Semantics.Montague.Derivation
 
 open Semantics.Montague
 open Semantics.Montague
+open Core.Tree
 open Semantics.Composition.Tree
 open Semantics.Montague.Variables
 open Alternatives
@@ -93,32 +94,32 @@ def g₀ : Assignment toyModel := λ _ => .john
 -- Trees
 
 /-- `[S John sleeps]` — simple FA -/
-def tree_johnSleeps : LFTree :=
-  .binary (.terminal "John") (.terminal "sleeps")
+def tree_johnSleeps : Tree Unit String :=
+  .bin (.leaf "John") (.leaf "sleeps")
 
 /-- `[S [DP some students] [1 [S t₁ sleep]]]` — QR -/
-def tree_someStudentsSleep : LFTree :=
-  .binary
-    (.binary (.terminal "some") (.terminal "students"))
-    (.bind 1 (.binary (.trace 1) (.terminal "sleep")))
+def tree_someStudentsSleep : Tree Unit String :=
+  .bin
+    (.bin (.leaf "some") (.leaf "students"))
+    (.binder 1 (.bin (.tr 1) (.leaf "sleep")))
 
 /-- `[S [DP every student] [1 [S t₁ sleeps]]]` — QR -/
-def tree_everyStudentSleeps : LFTree :=
-  .binary
-    (.binary (.terminal "every") (.terminal "student"))
-    (.bind 1 (.binary (.trace 1) (.terminal "sleeps")))
+def tree_everyStudentSleeps : Tree Unit String :=
+  .bin
+    (.bin (.leaf "every") (.leaf "student"))
+    (.binder 1 (.bin (.tr 1) (.leaf "sleeps")))
 
 /-- `[S [DP some students] [1 [S t₁ laugh]]]` — QR -/
-def tree_someStudentsLaugh : LFTree :=
-  .binary
-    (.binary (.terminal "some") (.terminal "students"))
-    (.bind 1 (.binary (.trace 1) (.terminal "laugh")))
+def tree_someStudentsLaugh : Tree Unit String :=
+  .bin
+    (.bin (.leaf "some") (.leaf "students"))
+    (.binder 1 (.bin (.tr 1) (.leaf "laugh")))
 
 /-- `[S [DP every student] [1 [S t₁ laughs]]]` — QR -/
-def tree_everyStudentLaughs : LFTree :=
-  .binary
-    (.binary (.terminal "every") (.terminal "student"))
-    (.bind 1 (.binary (.trace 1) (.terminal "laughs")))
+def tree_everyStudentLaughs : Tree Unit String :=
+  .bin
+    (.bin (.leaf "every") (.leaf "student"))
+    (.binder 1 (.bin (.tr 1) (.leaf "laughs")))
 
 -- Derivations: meanings derived from tree interpretation
 

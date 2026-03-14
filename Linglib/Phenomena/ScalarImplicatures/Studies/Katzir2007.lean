@@ -9,17 +9,17 @@ Linguistics and Philosophy, 30(6), 669–690.
 
 ## Unified Tree Demonstration
 
-This file demonstrates that a single `SynTree Cat String` supports both:
+This file demonstrates that a single `Tree Cat String` supports both:
 - **Structural operations** (PF-level): `leafSubst` generates scalar
   alternatives by same-category word substitution
-- **Compositional interpretation** (LF-level): `evalSynTree` computes
+- **Compositional interpretation** (LF-level): `evalTree` computes
   truth conditions via FA, PM, and Predicate Abstraction
 
 One tree, two interfaces — the Y-model made concrete.
 
 ## The Argument
 
-1. Build φ = "some student sleeps" as `SynTree Cat String` with QR
+1. Build φ = "some student sleeps" as `Tree Cat String` with QR
 2. Generate φ' = "every student sleeps" via `leafSubst` (Det substitution)
 3. Interpret both: ⟦φ⟧ = true, ⟦φ'⟧ = false → asserting φ implicates ¬φ'
 4. Show φ contains no `ConjP`/`NegP` → symmetric alternative
@@ -44,7 +44,7 @@ open Semantics.Composition.QuantifierComposition
 ```
 [S [DP [Det some] [N student]] [₁ [S [t₁:NP] [VP [V sleeps]]]]]
 ``` -/
-def φ : SynTree Cat String :=
+def φ : Tree Cat String :=
   .node .S [
     .node .DP [.terminal .Det "some", .terminal .N "student"],
     .bind 1 .S
@@ -58,25 +58,25 @@ def φ : SynTree Cat String :=
 This is Katzir's core operation (def 19, substitution): replace a
 terminal with a same-category item from the substitution source.
 Both "some" and "every" are Det terminals in the lexicon. -/
-def φ' : SynTree Cat String := φ.leafSubst "some" "every" .Det
+def φ' : Tree Cat String := φ.leafSubst "some" "every" .Det
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Compositional Interpretation (on the same trees)
 -- ════════════════════════════════════════════════════════════════════
 
 /-- "Some student sleeps" is true: John is a student and sleeps. -/
-theorem some_student_sleeps : evalSynTree quantLex g₀ φ = some true := by
+theorem some_student_sleeps : evalTree quantLex g₀ φ = some true := by
   native_decide
 
 /-- The scalar alternative "every student sleeps" is false:
 Mary is a student but doesn't sleep. -/
-theorem every_student_sleeps : evalSynTree quantLex g₀ φ' = some false := by
+theorem every_student_sleeps : evalTree quantLex g₀ φ' = some false := by
   native_decide
 
 /-- The two readings differ: genuine scalar inference.
 Asserting "some" when "every" was available implicates ¬"every". -/
 theorem readings_differ :
-    evalSynTree quantLex g₀ φ ≠ evalSynTree quantLex g₀ φ' := by
+    evalTree quantLex g₀ φ ≠ evalTree quantLex g₀ φ' := by
   native_decide
 
 -- ════════════════════════════════════════════════════════════════════
