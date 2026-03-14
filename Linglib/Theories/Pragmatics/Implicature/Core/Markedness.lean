@@ -316,4 +316,99 @@ Markedness is COMPUTED from objective properties, not stipulated.
 This keeps the lexicon theory-neutral.
 -/
 
+-- ============================================================
+-- M-Alternatives (Manner Alternatives)
+-- ============================================================
+
+/-! ## M-Alternatives
+
+M-alternatives differ in FORM COST (markedness), not truth conditions.
+They only exist in polar-invariant constructions where antonyms have
+the same truth conditions (@cite{rett-2015} Chapter 5).
+
+### Polar Variance
+
+Whether antonyms have the same truth conditions depends on the construction:
+- Polar-VARIANT: "taller than" ≠ "shorter than" → no M-alternatives
+- Polar-INVARIANT: "as tall as" = "as short as" → M-alternatives exist
+-/
+
+open Semantics.Degree (AdjectivalConstruction)
+
+/-- Polar variance: do antonyms have the same truth conditions in this construction? -/
+inductive PolarVariance where
+  | variant    -- Different truth conditions (comparatives, positives)
+  | invariant  -- Same truth conditions (equatives, questions)
+  deriving Repr, DecidableEq, BEq
+
+/-- Polar variance by adjectival construction type.
+    @cite{rett-2015} Table 3.1/5.1. -/
+def polarVariance : AdjectivalConstruction → PolarVariance
+  | .positive => .variant
+  | .comparative => .variant
+  | .equative => .invariant
+  | .degreeQuestion => .invariant
+  | .measurePhrase => .variant
+
+/-- An M-alternative set: forms differing in cost but not truth conditions. -/
+structure MAlternativeSet where
+  /-- The marked (costlier) form -/
+  marked : String
+  /-- The unmarked (cheaper) form -/
+  unmarked : String
+  /-- The dimension they share (e.g., .height) -/
+  dimension : Core.Dimension
+  /-- The cost difference between forms -/
+  costDifference : ℚ
+  /-- Construction where they're equivalent -/
+  construction : AdjectivalConstruction
+  deriving Repr
+
+instance : BEq MAlternativeSet where
+  beq s1 s2 := s1.marked == s2.marked && s1.unmarked == s2.unmarked &&
+               s1.dimension == s2.dimension && s1.construction == s2.construction
+
+/-- Generate M-alternatives from an antonym pair.
+
+    M-alternatives are generated when:
+    1. The construction is polar-invariant (antonyms semantically equivalent)
+    2. Markedness can be determined for the pair -/
+def generateMAlternatives (adj1 adj2 : GradableAdjWithMorphology)
+    (construction : AdjectivalConstruction) : Option MAlternativeSet :=
+  if polarVariance construction != .invariant then
+    none
+  else
+    match computeMarked adj1 adj2 with
+    | none => none
+    | some markedForm =>
+      let unmarkedForm := if markedForm == adj1.form then adj2.form else adj1.form
+      some {
+        marked := markedForm
+        unmarked := unmarkedForm
+        dimension := adj1.dimension
+        costDifference := Markedness.costDifference
+        construction := construction
+      }
+
+/-- Check if a form is the marked member of an M-alternative pair. -/
+def isMarkedInMAlternatives
+    (form : String)
+    (adj1 adj2 : GradableAdjWithMorphology)
+    (construction : AdjectivalConstruction) : Bool :=
+  match generateMAlternatives adj1 adj2 construction with
+  | none => false
+  | some mAlt => mAlt.marked == form
+
+/-- Get the M-alternative for a form (if any). -/
+def getMAlternative
+    (form : String)
+    (adj1 adj2 : GradableAdjWithMorphology)
+    (construction : AdjectivalConstruction) : Option String :=
+  match generateMAlternatives adj1 adj2 construction with
+  | none => none
+  | some mAlt =>
+    if mAlt.marked == form then some mAlt.unmarked
+    else if mAlt.unmarked == form then some mAlt.marked
+    else none
+
 end Implicature.Markedness

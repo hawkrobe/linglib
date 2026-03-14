@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.236] - 2026-03-14
+
+### Removed
+- **AlternativeGeneration.lean**: Delete 531-line unused SentenceFrame pipeline (only imported by Linglib.lean, `sorry`-bearing, used `exhMW` while studies use `exhB`)
+- **Implicature/Core/Alternatives.lean**: Delete file; redistribute contents — M-alternative definitions (PolarVariance, MAlternativeSet, generateMAlternatives) → Markedness.lean; Q-alternative definitions (HornSet, EntailmentChecker, generateAlternatives) → ScalarImplicatures/Basic.lean
+
+### Changed
+- **Evaluativity.lean**: Remove duplicate PolarVariance; use Markedness.lean's version
+- **Horn1984.lean**: Import Markedness instead of deleted Alternatives
+- **GeurtsPouscoulous2009.lean**: Remove unused Alternatives import
+- **ConventionalImplicatures.lean**: Remove unused Alternatives import
+
 ## [0.229.235] - 2026-03-14
 
 ### Changed

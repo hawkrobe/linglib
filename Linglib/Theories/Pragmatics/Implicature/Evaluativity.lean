@@ -35,7 +35,6 @@ Why do equatives show asymmetry (marked antonyms evaluative) but comparatives do
 
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
-import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Data.Rat.Defs
 
@@ -43,7 +42,6 @@ namespace Implicature.Evaluativity
 
 open Implicature
 open Implicature.Markedness
-open Implicature.Alternatives
 open Semantics.Degree (AdjectivalConstruction)
 open Semantics.Lexical.Adjective
 
@@ -84,39 +82,6 @@ def Polarity.cost : Polarity → ℚ
   | .positive => 1  -- baseline
   | .negative => 2  -- marked form is costlier
 
-
-/--
-Polar variance: do the two antonyms have different truth conditions
-in this construction?
-
-This is the key property that determines whether manner implicature applies:
-- Polar-VARIANT: "taller than" ≠ "shorter than" (different truth conditions)
-- Polar-INVARIANT: "as tall as" = "as short as" (same truth conditions!)
-
-When a construction is polar-invariant, the marked form is semantically
-equivalent to the unmarked form, so using it signals something pragmatically.
--/
-inductive PolarVariance where
-  | variant    -- Different truth conditions (comparatives)
-  | invariant  -- Same truth conditions (equatives, questions)
-  deriving Repr, DecidableEq, BEq
-
-/--
-Polar variance by construction type.
-
-From @cite{rett-2015} Table 3.1/5.1:
-- Positive: variant ("tall" ≠ "short" - different thresholds)
-- Comparative: variant ("taller than" ≠ "shorter than")
-- Equative: INVARIANT ("as tall as" = "as short as")
-- Degree question: INVARIANT ("How tall?" = "How short?" - same answers!)
-- Measure phrase: variant (but negative is ungrammatical anyway)
--/
-def polarVariance : AdjectivalConstruction → PolarVariance
-  | .positive => .variant
-  | .comparative => .variant
-  | .equative => .invariant
-  | .degreeQuestion => .invariant
-  | .measurePhrase => .variant
 
 /--
 Does manner implicature apply to this construction?
@@ -490,7 +455,7 @@ def applyMMP
   -- Check if this form is marked in the pair
   let isMarked := isMarkedForm adjForm adj1 adj2
   -- Check if construction is polar-invariant
-  let isPolarInvariant := Alternatives.polarVariance construction == .invariant
+  let isPolarInvariant := Markedness.polarVariance construction == .invariant
   -- Get the unmarked alternative
   let unmarkedAlt := if isMarked then
       if adjForm == adj1.form then some adj2.form else some adj1.form
@@ -662,14 +627,14 @@ MMP only applies in polar-invariant constructions (equative case).
 -/
 theorem mmp_requires_invariance_equative :
     (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true →
-    Alternatives.polarVariance .equative = .invariant := λ _ => rfl
+    Markedness.polarVariance .equative = .invariant := λ _ => rfl
 
 /--
 MMP only applies in polar-invariant constructions (question case).
 -/
 theorem mmp_requires_invariance_question :
     (applyMMP "short" .degreeQuestion tall_with_morphology short_with_morphology).mmpApplies = true →
-    Alternatives.polarVariance .degreeQuestion = .invariant := λ _ => rfl
+    Markedness.polarVariance .degreeQuestion = .invariant := λ _ => rfl
 
 /--
 MMP does not apply in comparative constructions.
@@ -697,7 +662,7 @@ Equative asymmetry emerges from MMP + markedness.
 -/
 theorem equative_asymmetry_from_mmp :
     (isMarkedForm "short" tall_with_morphology short_with_morphology) ∧
-    (Alternatives.polarVariance .equative = .invariant) →
+    (Markedness.polarVariance .equative = .invariant) →
     ((applyMMP "short" .equative tall_with_morphology short_with_morphology).implicature = some .manner ∧
      (applyMMP "tall" .equative tall_with_morphology short_with_morphology).implicature = none) := by
   intro ⟨_, _⟩
@@ -907,7 +872,7 @@ theorem complete_derivation_as_short_as :
     -- Step 2: Markedness
     isMarkedForm "short" tall_with_morphology short_with_morphology = true ∧
     -- Step 3: Polar invariance
-    Alternatives.polarVariance .equative = .invariant ∧
+    Markedness.polarVariance .equative = .invariant ∧
     -- Step 4: MMP applies
     (applyMMP "short" .equative tall_with_morphology short_with_morphology).mmpApplies = true ∧
     -- Step 5: Manner implicature
@@ -931,7 +896,7 @@ theorem complete_derivation_as_tall_as :
     -- Step 2: Not marked
     isMarkedForm "tall" tall_with_morphology short_with_morphology = false ∧
     -- Step 3: Polar invariance (still holds)
-    Alternatives.polarVariance .equative = .invariant ∧
+    Markedness.polarVariance .equative = .invariant ∧
     -- Step 4: MMP doesn't apply (not marked)
     (applyMMP "tall" .equative tall_with_morphology short_with_morphology).mmpApplies = false ∧
     -- Step 5: No implicature

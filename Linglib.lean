@@ -1608,7 +1608,6 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
 -- Theories: Alternatives + Exhaustification + Implicature
 import Linglib.Theories.Pragmatics.Implicature.Analyticity
 import Linglib.Theories.Pragmatics.Implicature.ConventionalImplicatures
-import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Competence
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness

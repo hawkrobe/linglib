@@ -488,7 +488,6 @@ experimental findings above.
 -/
 
 open Implicature.ScalarImplicatures
-open Implicature.Alternatives
 open Phenomena.ScalarImplicatures
 
 /-- Exp 1a simple rate (Table 2). -/

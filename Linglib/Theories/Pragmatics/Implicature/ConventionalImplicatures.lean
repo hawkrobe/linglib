@@ -42,7 +42,6 @@ c. ¬⟦φ'⟧ᵘ doesn't contradict C given φ (innocently excludable)
 
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
-import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
 import Linglib.Theories.Semantics.Entailment.Polarity
 
 namespace Implicature.ConventionalImplicatures

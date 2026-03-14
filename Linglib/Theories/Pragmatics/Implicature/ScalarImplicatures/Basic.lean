@@ -31,7 +31,8 @@ plus scale semantics and predictions.
 Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
+import Linglib.Theories.Pragmatics.Implicature.Core.Basic
+import Linglib.Theories.Semantics.Alternatives.HornScale
 import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Montague.Derivation
@@ -39,10 +40,86 @@ import Linglib.Core.Interface
 
 namespace Implicature.ScalarImplicatures
 
-open Implicature.Alternatives
 open Implicature
 open Exhaustification
 open Semantics.Entailment.Polarity (ContextPolarity)
+open Alternatives.Quantifiers (QuantExpr)
+open Alternatives.Connectives (ConnExpr)
+
+-- ============================================================
+-- Q-Alternative Infrastructure
+-- ============================================================
+
+/-- An unordered set of expressions (following @cite{geurts-2010} p.58). -/
+structure HornSet (α : Type) where
+  members : List α
+  deriving Repr
+
+def HornSet.otherMembers {α : Type} [BEq α] (h : HornSet α) (x : α) : List α :=
+  h.members.filter (· != x)
+
+/-- A sentence context determines alternative strength via polarity. -/
+structure SentenceContext where
+  polarity : ContextPolarity
+  description : String
+  deriving Repr
+
+def simpleAssertion : SentenceContext :=
+  { polarity := .upward, description := "Simple assertion" }
+
+def underNegation : SentenceContext :=
+  { polarity := .downward, description := "Under negation" }
+
+/-- Abstract entailment checker for sentences. -/
+structure EntailmentChecker (α : Type) where
+  isStronger : ContextPolarity → α → α → Bool
+
+/-- An alternative with its context-dependent strength. -/
+structure Alternative (α : Type) where
+  term : α
+  isStrongerInContext : Bool
+  deriving Repr
+
+def generateAlternatives {α : Type} [BEq α]
+    (hornSet : HornSet α) (checker : EntailmentChecker α)
+    (context : SentenceContext) (term : α) : List (Alternative α) :=
+  hornSet.otherMembers term |>.map λ alt =>
+    { term := alt, isStrongerInContext := checker.isStronger context.polarity alt term }
+
+def strongerAlternatives {α : Type} [BEq α]
+    (hornSet : HornSet α) (checker : EntailmentChecker α)
+    (context : SentenceContext) (term : α) : List α :=
+  (generateAlternatives hornSet checker context term).filter (·.isStrongerInContext) |>.map (·.term)
+
+-- Quantifier checkers (grounded in Alternatives.Quantifiers.entails)
+private def quantifierChecker : EntailmentChecker QuantExpr :=
+  { isStronger := λ pol q1 q2 =>
+      match pol with
+      | .upward => Alternatives.Quantifiers.entails q1 q2 && q1 != q2
+      | .downward => Alternatives.Quantifiers.entails q2 q1 && q1 != q2
+      | .nonMonotonic => false }
+
+private def connectiveChecker : EntailmentChecker ConnExpr :=
+  { isStronger := λ pol c1 c2 =>
+      match pol with
+      | .upward => Alternatives.Connectives.entails c1 c2 && c1 != c2
+      | .downward => Alternatives.Connectives.entails c2 c1 && c1 != c2
+      | .nonMonotonic => false }
+
+def quantifierCheckerString : EntailmentChecker String :=
+  { isStronger := λ pol s1 s2 =>
+      match QuantExpr.ofString? s1, QuantExpr.ofString? s2 with
+      | some q1, some q2 => quantifierChecker.isStronger pol q1 q2
+      | _, _ => false }
+
+def connectiveCheckerString : EntailmentChecker String :=
+  { isStronger := λ pol s1 s2 =>
+      match ConnExpr.ofString? s1, ConnExpr.ofString? s2 with
+      | some c1, some c2 => connectiveChecker.isStronger pol c1 c2
+      | _, _ => false }
+
+def quantifierSetString : HornSet String := ⟨["some", "most", "all"]⟩
+def connectiveSetString : HornSet String := ⟨["or", "and"]⟩
 
 
 /--
@@ -142,8 +219,6 @@ structure DisjunctionAnalysis where
   compatible : Bool
   deriving Repr
 
--- Note: connectiveCheckerString is defined in Alternatives.lean
--- It's grounded in Alternatives.Connectives.entails
 
 /--
 Analyze a simple disjunction in UE context.
@@ -401,7 +476,7 @@ open Semantics.Montague
 Map scale membership to the appropriate HornSet and EntailmentChecker.
 
 Uses string-based versions for interface with SemDeriv, but these
-are backed by type-safe implementations grounded in Core.Scale.
+are backed by type-safe implementations grounded in Alternatives.
 -/
 def getScaleInfo (sm : ScaleMembership) : HornSet String × EntailmentChecker String :=
   match sm with
@@ -1208,7 +1283,6 @@ end Implicature.ScalarImplicatures
 
 namespace Implicature
 
-open Implicature.Alternatives
 open Semantics.Entailment.Polarity (ContextPolarity)
 
 /-- Implicature's internal representation for implicature analysis.

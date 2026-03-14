@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
+import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
 import Linglib.Phenomena.Gradability.Studies.Rett2015
 
 /-!
@@ -16,7 +16,6 @@ Tests that the M-alternative framework correctly identifies:
 
 namespace Phenomena.Gradability.Implicature_AlternativesBridge
 
-open Implicature.Alternatives
 open Implicature.Markedness
 
 
