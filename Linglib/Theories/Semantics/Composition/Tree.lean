@@ -139,42 +139,42 @@ def interpret {S : Type} [HasTerminals S] [HasBinaryComposition S] [HasUnaryProj
         interpBinary d1 d2
       | none => none
 
-section SynTree
+section LFTree
 
-inductive SynTree where
-  | terminal : String → SynTree
-  | unary : SynTree → SynTree
-  | binary : SynTree → SynTree → SynTree
-  | trace : Nat → SynTree
-  | bind : Nat → SynTree → SynTree
+inductive LFTree where
+  | terminal : String → LFTree
+  | unary : LFTree → LFTree
+  | binary : LFTree → LFTree → LFTree
+  | trace : Nat → LFTree
+  | bind : Nat → LFTree → LFTree
   deriving Repr
 
-instance : HasTerminals SynTree where
+instance : HasTerminals LFTree where
   getTerminal
     | .terminal w => some w
     | _ => none
 
-instance : HasBinaryComposition SynTree where
+instance : HasBinaryComposition LFTree where
   getBinaryChildren
     | .binary t1 t2 => some (t1, t2)
     | _ => none
 
-instance : HasUnaryProjection SynTree where
+instance : HasUnaryProjection LFTree where
   getUnaryChild
     | .unary t => some t
     | _ => none
 
-instance : HasBinding SynTree where
+instance : HasBinding LFTree where
   getBinder
     | .bind n body => some (n, body)
     | _ => none
 
-instance : HasSemanticType SynTree Ty where
+instance : HasSemanticType LFTree Ty where
   getType _ := none
 
-instance : SemanticStructure SynTree Ty where
+instance : SemanticStructure LFTree Ty where
 
-def interpTree (m : Model) (lex : Lexicon m) : SynTree → Option (TypedDenot m)
+def interpTree (m : Model) (lex : Lexicon m) : LFTree → Option (TypedDenot m)
   | .terminal w => interpTerminal m lex w
   | .unary t =>
     (interpTree m lex t).map interpNonBranching
@@ -195,7 +195,7 @@ PA is the key to quantifier scope: after QR moves a quantifier DP
 to a higher position, PA abstracts over the trace it leaves behind,
 producing a predicate that the quantifier can take as its scope argument. -/
 def interpTreeG (m : Model) (lex : Lexicon m) (g : Assignment m)
-    : SynTree → Option (TypedDenot m)
+    : LFTree → Option (TypedDenot m)
   | .terminal w => interpTerminal m lex w
   | .unary t => (interpTreeG m lex g t).map interpNonBranching
   | .binary t1 t2 => do
@@ -211,13 +211,13 @@ def interpTreeG (m : Model) (lex : Lexicon m) (g : Assignment m)
       | none => probeVal⟩
 
 /-- Extract truth value from assignment-relative tree interpretation. -/
-def evalTree {m : Model} (lex : Lexicon m) (g : Assignment m) (t : SynTree)
+def evalTree {m : Model} (lex : Lexicon m) (g : Assignment m) (t : LFTree)
     : Option Bool :=
   match interpTreeG m lex g t with
   | some ⟨.t, b⟩ => some b
   | _ => none
 
-end SynTree
+end LFTree
 
 section Interpretability
 
@@ -227,10 +227,10 @@ def isInterpretableWith {S : Type} {m : Model} (interp : S → Option (TypedDeno
 def satisfiesInterpretabilityWith {S : Type} {m : Model} (interp : S → Option (TypedDenot m)) (s : S) : Prop :=
   isInterpretableWith interp s = true
 
-def isInterpretable (m : Model) (lex : Lexicon m) (t : SynTree) : Bool :=
+def isInterpretable (m : Model) (lex : Lexicon m) (t : LFTree) : Bool :=
   (interpTree m lex t).isSome
 
-def satisfiesInterpretability (m : Model) (lex : Lexicon m) (t : SynTree) : Prop :=
+def satisfiesInterpretability (m : Model) (lex : Lexicon m) (t : LFTree) : Prop :=
   isInterpretable m lex t = true
 
 end Interpretability

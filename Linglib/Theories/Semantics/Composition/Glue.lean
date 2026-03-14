@@ -419,7 +419,7 @@ private def g₀ : Assignment toyModel := λ _ => .john
 
 /-- Surface scope QR tree (∀>∃):
     `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]` -/
-private def qr_surface : SynTree :=
+private def qr_surface : LFTree :=
   .binary
     (.binary (.terminal "every") (.terminal "person"))
     (.bind 1
@@ -430,7 +430,7 @@ private def qr_surface : SynTree :=
 
 /-- Inverse scope QR tree (∃>∀):
     `[S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]` -/
-private def qr_inverse : SynTree :=
+private def qr_inverse : LFTree :=
   .binary
     (.binary (.terminal "some") (.terminal "person"))
     (.bind 2

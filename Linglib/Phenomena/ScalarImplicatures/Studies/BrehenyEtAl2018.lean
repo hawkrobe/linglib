@@ -465,7 +465,7 @@ This paper reveals several tensions in linglib's organization:
 
 2. **Type-level vs value-level alternatives**: RSA models define
    alternatives as `Fintype U` (compile-time); structural alternatives
-   are computed as `List (ParseTree W)` (runtime). No bridge exists.
+   are computed as `List (PFTree W)` (runtime). No bridge exists.
 
 3. **Adjective scale structure and alternative generation are
    disconnected**: the full/empty case requires connecting

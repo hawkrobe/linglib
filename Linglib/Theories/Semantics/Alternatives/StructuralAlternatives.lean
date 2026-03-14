@@ -73,65 +73,65 @@ instance : LawfulBEq SynCat where
 /-- Parse tree with syntactic category labels.
 Leaves carry a word of type `W`; internal nodes carry a list of children.
 This is the structure that Katzir's operations act on. -/
-inductive ParseTree (W : Type) where
+inductive PFTree (W : Type) where
   | leaf (cat : SynCat) (word : W)
-  | node (cat : SynCat) (children : List (ParseTree W))
+  | node (cat : SynCat) (children : List (PFTree W))
   deriving Repr
 
-namespace ParseTree
+namespace PFTree
 
 variable {W : Type}
 
 /-- Syntactic category of the root node. -/
-def cat : ParseTree W → SynCat
+def cat : PFTree W → SynCat
   | .leaf c _ => c
   | .node c _ => c
 
 -- ── BEq ──────────────────────────────────────────────────────────────
 
 /-- Structural equality for parse trees. -/
-def beq [BEq W] : ParseTree W → ParseTree W → Bool
+def beq [BEq W] : PFTree W → PFTree W → Bool
   | .leaf c₁ w₁, .leaf c₂ w₂ => c₁ == c₂ && w₁ == w₂
   | .node c₁ cs₁, .node c₂ cs₂ => c₁ == c₂ && beqList cs₁ cs₂
   | _, _ => false
 where
-  beqList : List (ParseTree W) → List (ParseTree W) → Bool
+  beqList : List (PFTree W) → List (PFTree W) → Bool
   | [], [] => true
   | a :: as, b :: bs => a.beq b && beqList as bs
   | _, _ => false
 
-instance [BEq W] : BEq (ParseTree W) := ⟨beq⟩
+instance [BEq W] : BEq (PFTree W) := ⟨beq⟩
 
 -- ── Size ─────────────────────────────────────────────────────────────
 
 /-- Number of nodes in the tree. -/
-def size : ParseTree W → Nat
+def size : PFTree W → Nat
   | .leaf _ _ => 1
   | .node _ cs => 1 + sizeList cs
 where
-  sizeList : List (ParseTree W) → Nat
+  sizeList : List (PFTree W) → Nat
   | [] => 0
   | t :: ts => t.size + sizeList ts
 
 -- ── Subtrees ─────────────────────────────────────────────────────────
 
 /-- All subtrees including self (pre-order). -/
-def subtrees : ParseTree W → List (ParseTree W)
+def subtrees : PFTree W → List (PFTree W)
   | t@(.leaf _ _) => [t]
   | t@(.node _ cs) => t :: subtreesList cs
 where
-  subtreesList : List (ParseTree W) → List (ParseTree W)
+  subtreesList : List (PFTree W) → List (PFTree W)
   | [] => []
   | t :: ts => t.subtrees ++ subtreesList ts
 
 -- ── Categories ───────────────────────────────────────────────────────
 
 /-- Whether a category appears anywhere in the tree. -/
-def containsCat (c : SynCat) : ParseTree W → Bool
+def containsCat (c : SynCat) : PFTree W → Bool
   | .leaf c' _ => c == c'
   | .node c' cs => c == c' || containsCatList c cs
 where
-  containsCatList (c : SynCat) : List (ParseTree W) → Bool
+  containsCatList (c : SynCat) : List (PFTree W) → Bool
   | [] => false
   | t :: ts => t.containsCat c || containsCatList c ts
 
@@ -141,16 +141,16 @@ where
 `replacement`. This is the most common structural operation: replacing
 one scalar item with another of the same category. -/
 def leafSubst [BEq W] (target replacement : W) (c : SynCat) :
-    ParseTree W → ParseTree W
+    PFTree W → PFTree W
   | .leaf c' w => if c == c' && w == target then .leaf c' replacement else .leaf c' w
   | .node c' cs => .node c' (leafSubstList target replacement c cs)
 where
   leafSubstList [BEq W] (target replacement : W) (c : SynCat) :
-      List (ParseTree W) → List (ParseTree W)
+      List (PFTree W) → List (PFTree W)
   | [] => []
   | t :: ts => t.leafSubst target replacement c :: leafSubstList target replacement c ts
 
-end ParseTree
+end PFTree
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §3  Substitution Source (def 41)
@@ -167,8 +167,8 @@ subtrees of φ to derive the inference in examples like:
   "It was warm yesterday, and it is a little bit more than warm today"
 where "a little bit more than warm" (a subtree of φ) substitutes for
 "warm" in the left conjunct. -/
-def substitutionSource {W : Type} (lexicon : List (ParseTree W))
-    (φ : ParseTree W) : List (ParseTree W) :=
+def substitutionSource {W : Type} (lexicon : List (PFTree W))
+    (φ : PFTree W) : List (PFTree W) :=
   lexicon ++ φ.subtrees
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -185,23 +185,23 @@ The three operations:
   with one of its same-category children)
 - **Substitution**: replace any constituent with a same-category item
   from the substitution source L(φ) -/
-inductive StructOp {W : Type} (source : List (ParseTree W)) :
-    ParseTree W → ParseTree W → Prop where
+inductive StructOp {W : Type} (source : List (PFTree W)) :
+    PFTree W → PFTree W → Prop where
   /-- Substitute: replace tree with a same-category item from source. -/
-  | subst {φ ψ : ParseTree W}
+  | subst {φ ψ : PFTree W}
     (h_cat : ψ.cat = φ.cat) (h_src : ψ ∈ source) :
     StructOp source φ ψ
   /-- Delete: remove the i-th child from a node. -/
-  | delete {cat : SynCat} {cs : List (ParseTree W)} (i : Fin cs.length) :
+  | delete {cat : SynCat} {cs : List (PFTree W)} (i : Fin cs.length) :
     StructOp source (.node cat cs) (.node cat (cs.eraseIdx i))
   /-- Contract: replace a node with one of its same-category children. -/
-  | contract {cat : SynCat} {cs : List (ParseTree W)}
-    {child : ParseTree W}
+  | contract {cat : SynCat} {cs : List (PFTree W)}
+    {child : PFTree W}
     (h_mem : child ∈ cs) (h_cat : child.cat = cat) :
     StructOp source (.node cat cs) child
   /-- Recursive: apply an operation inside one child of a node. -/
-  | inChild {cat : SynCat} {cs : List (ParseTree W)}
-    (i : Fin cs.length) {ψ_child : ParseTree W}
+  | inChild {cat : SynCat} {cs : List (PFTree W)}
+    (i : Fin cs.length) {ψ_child : PFTree W}
     (h_step : StructOp source (cs.get i) ψ_child) :
     StructOp source (.node cat cs) (.node cat (cs.set i ψ_child))
 
@@ -214,29 +214,29 @@ transformed into ψ by a finite chain of structural operations
 using items from `source`.
 
 Formally: the reflexive-transitive closure of `StructOp source`. -/
-def atMostAsComplex {W : Type} (source : List (ParseTree W))
-    (ψ φ : ParseTree W) : Prop :=
+def atMostAsComplex {W : Type} (source : List (PFTree W))
+    (ψ φ : PFTree W) : Prop :=
   Relation.ReflTransGen (StructOp source) φ ψ
 
 /-- Equal complexity (def 19): φ ∼ ψ iff φ ≲ ψ ∧ ψ ≲ φ. -/
-def equalComplexity {W : Type} (source : List (ParseTree W))
-    (φ ψ : ParseTree W) : Prop :=
+def equalComplexity {W : Type} (source : List (PFTree W))
+    (φ ψ : PFTree W) : Prop :=
   atMostAsComplex source φ ψ ∧ atMostAsComplex source ψ φ
 
 /-- Strictly less complex (def 19): ψ < φ iff ψ ≲ φ ∧ ¬(φ ≲ ψ). -/
-def strictlyLessComplex {W : Type} (source : List (ParseTree W))
-    (ψ φ : ParseTree W) : Prop :=
+def strictlyLessComplex {W : Type} (source : List (PFTree W))
+    (ψ φ : PFTree W) : Prop :=
   atMostAsComplex source ψ φ ∧ ¬atMostAsComplex source φ ψ
 
 /-- Structural alternatives (def 20):
 A_str(φ) := {ψ : ψ ≲ φ}, where ≲ uses L(φ) = lexicon ∪ subtrees(φ). -/
-def structuralAlternatives {W : Type} (lex : List (ParseTree W))
-    (φ : ParseTree W) : Set (ParseTree W) :=
+def structuralAlternatives {W : Type} (lex : List (PFTree W))
+    (φ : PFTree W) : Set (PFTree W) :=
   {ψ | atMostAsComplex (substitutionSource lex φ) ψ φ}
 
 /-- φ is always a structural alternative to itself (reflexivity of ≲). -/
-theorem self_is_alternative {W : Type} (lex : List (ParseTree W))
-    (φ : ParseTree W) :
+theorem self_is_alternative {W : Type} (lex : List (PFTree W))
+    (φ : PFTree W) :
     φ ∈ structuralAlternatives lex φ :=
   Relation.ReflTransGen.refl
 
@@ -257,7 +257,7 @@ section SomeAll
 open SynCat ExWord
 
 /-- Minimal lexicon: terminal items available for substitution. -/
-def exLexicon : List (ParseTree ExWord) :=
+def exLexicon : List (PFTree ExWord) :=
   [.leaf .N .john, .leaf .V .ate,
    .leaf .Det .some_, .leaf .Det .all_,
    .leaf .N .cake, .leaf .N .apple, .leaf .N .pear,
@@ -265,13 +265,13 @@ def exLexicon : List (ParseTree ExWord) :=
    .leaf .Adj .tall, .leaf .N .man]
 
 /-- φ = "John ate some cake" (simplified parse tree). -/
-def someSentence : ParseTree ExWord :=
+def someSentence : PFTree ExWord :=
   .node .S [
     .leaf .N .john,
     .node .VP [.leaf .V .ate, .leaf .Det .some_, .leaf .N .cake]]
 
 /-- φ' = "John ate all cake" — the scalar alternative. -/
-def allSentence : ParseTree ExWord :=
+def allSentence : PFTree ExWord :=
   .node .S [
     .leaf .N .john,
     .node .VP [.leaf .V .ate, .leaf .Det .all_, .leaf .N .cake]]
@@ -338,7 +338,7 @@ should block assertion of φ. But it licenses the inference that John
 ate ALL of the cake — the opposite of the correct implicature.
 Katzir's structural approach excludes φ'' because it requires ConjP
 and NegP structure not derivable from L(φ). -/
-def someButNotAllSentence : ParseTree ExWord :=
+def someButNotAllSentence : PFTree ExWord :=
   .node .S [
     .leaf .N .john,
     .node .VP [
@@ -368,55 +368,55 @@ theorem source_lacks_conjp :
 -- ── Private helpers for category_preservation ──────────────────
 
 private theorem containsCatList_false_of_mem {W : Type} (c : SynCat)
-    (cs : List (ParseTree W)) (t : ParseTree W)
-    (h : ParseTree.containsCat.containsCatList c cs = false)
+    (cs : List (PFTree W)) (t : PFTree W)
+    (h : PFTree.containsCat.containsCatList c cs = false)
     (ht : t ∈ cs) :
     t.containsCat c = false := by
   induction cs with
   | nil => exact absurd ht List.not_mem_nil
   | cons x xs ih =>
-    simp only [ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
+    simp only [PFTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
     cases List.mem_cons.mp ht with
     | inl heq => subst heq; exact h.1
     | inr hmem => exact ih h.2 hmem
 
 private theorem containsCatList_eraseIdx {W : Type} (c : SynCat)
-    (cs : List (ParseTree W)) (i : Nat) (hi : i < cs.length)
-    (h : ParseTree.containsCat.containsCatList c cs = false) :
-    ParseTree.containsCat.containsCatList c (cs.eraseIdx i) = false := by
+    (cs : List (PFTree W)) (i : Nat) (hi : i < cs.length)
+    (h : PFTree.containsCat.containsCatList c cs = false) :
+    PFTree.containsCat.containsCatList c (cs.eraseIdx i) = false := by
   induction cs generalizing i with
   | nil => simp at hi
   | cons x xs ih =>
-    simp only [ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
+    simp only [PFTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
     cases i with
     | zero => simp [List.eraseIdx]; exact h.2
     | succ n =>
       have hn : n < xs.length := by simp [List.length] at hi; omega
-      simp only [List.eraseIdx, ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      simp only [List.eraseIdx, PFTree.containsCat.containsCatList, Bool.or_eq_false_iff]
       exact ⟨h.1, ih n hn h.2⟩
 
 private theorem containsCatList_set {W : Type} (c : SynCat)
-    (cs : List (ParseTree W)) (i : Nat) (hi : i < cs.length)
-    (t : ParseTree W)
-    (h_cs : ParseTree.containsCat.containsCatList c cs = false)
+    (cs : List (PFTree W)) (i : Nat) (hi : i < cs.length)
+    (t : PFTree W)
+    (h_cs : PFTree.containsCat.containsCatList c cs = false)
     (h_t : t.containsCat c = false) :
-    ParseTree.containsCat.containsCatList c (cs.set i t) = false := by
+    PFTree.containsCat.containsCatList c (cs.set i t) = false := by
   induction cs generalizing i with
   | nil => simp at hi
   | cons x xs ih =>
-    simp only [ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h_cs
+    simp only [PFTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h_cs
     cases i with
     | zero =>
-      simp only [List.set, ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      simp only [List.set, PFTree.containsCat.containsCatList, Bool.or_eq_false_iff]
       exact ⟨h_t, h_cs.2⟩
     | succ n =>
       have hn : n < xs.length := by simp [List.length] at hi; omega
-      simp only [List.set, ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      simp only [List.set, PFTree.containsCat.containsCatList, Bool.or_eq_false_iff]
       exact ⟨h_cs.1, ih n hn h_cs.2⟩
 
 private theorem structOp_preserves_no_cat {W : Type}
-    (source : List (ParseTree W)) (c : SynCat)
-    (φ ψ : ParseTree W)
+    (source : List (PFTree W)) (c : SynCat)
+    (φ ψ : PFTree W)
     (h_source : ∀ s ∈ source, s.containsCat c = false)
     (h_φ : φ.containsCat c = false)
     (h_step : StructOp source φ ψ) :
@@ -424,15 +424,15 @@ private theorem structOp_preserves_no_cat {W : Type}
   induction h_step with
   | subst _ h_src => exact h_source _ h_src
   | @delete cat cs i =>
-    unfold ParseTree.containsCat at h_φ ⊢
+    unfold PFTree.containsCat at h_φ ⊢
     simp only [Bool.or_eq_false_iff] at h_φ ⊢
     exact ⟨h_φ.1, containsCatList_eraseIdx c cs i i.isLt h_φ.2⟩
   | @contract cat cs child h_mem _ =>
-    unfold ParseTree.containsCat at h_φ
+    unfold PFTree.containsCat at h_φ
     simp only [Bool.or_eq_false_iff] at h_φ
     exact containsCatList_false_of_mem c cs child h_φ.2 h_mem
   | @inChild cat cs i ψ_child _ ih =>
-    unfold ParseTree.containsCat at h_φ ⊢
+    unfold PFTree.containsCat at h_φ ⊢
     simp only [Bool.or_eq_false_iff] at h_φ ⊢
     constructor
     · exact h_φ.1
@@ -456,8 +456,8 @@ Proof by induction on `ReflTransGen`, reducing to the single-step
 `structOp_preserves_no_cat` which case-splits on the four `StructOp`
 constructors. -/
 theorem category_preservation {W : Type}
-    (source : List (ParseTree W)) (c : SynCat)
-    (φ ψ : ParseTree W)
+    (source : List (PFTree W)) (c : SynCat)
+    (φ ψ : PFTree W)
     (h_source : ∀ s ∈ source, s.containsCat c = false)
     (h_φ : φ.containsCat c = false)
     (h_reach : atMostAsComplex source ψ φ) :
@@ -503,7 +503,7 @@ section Disjunction
 open SynCat ExWord
 
 /-- φ = "John ate the apple or the pear" (ex. 26a). -/
-def orSentence : ParseTree ExWord :=
+def orSentence : PFTree ExWord :=
   .node .S [
     .node .S [.leaf .N .john, .node .VP [.leaf .V .ate, .leaf .N .apple]],
     .leaf .Conj .or_,
@@ -511,7 +511,7 @@ def orSentence : ParseTree ExWord :=
 
 /-- φ' = "John ate the apple and the pear" (ex. 26b).
 Obtained by substituting Conj "or" with "and". -/
-def andSentence : ParseTree ExWord :=
+def andSentence : PFTree ExWord :=
   .node .S [
     .node .S [.leaf .N .john, .node .VP [.leaf .V .ate, .leaf .N .apple]],
     .leaf .Conj .and_,
@@ -540,7 +540,7 @@ the left argument of a binary connective) from structural operations
 alone, without stipulating L as a primitive. The paper (p. 683) notes
 that L and R are "somewhat stipulative" and that structural
 alternatives derive the same predictions. -/
-def leftDisjunct : ParseTree ExWord :=
+def leftDisjunct : PFTree ExWord :=
   .node .S [.leaf .N .john, .node .VP [.leaf .V .ate, .leaf .N .apple]]
 
 theorem left_disjunct_is_alternative :
@@ -558,7 +558,7 @@ theorem left_disjunct_is_alternative :
   · rfl
 
 /-- The right disjunct is also an alternative (Sauerland's R operator). -/
-def rightDisjunct : ParseTree ExWord :=
+def rightDisjunct : PFTree ExWord :=
   .node .S [.leaf .N .john, .node .VP [.leaf .V .ate, .leaf .N .pear]]
 
 theorem right_disjunct_is_alternative :
@@ -584,11 +584,11 @@ section Deletion
 open SynCat ExWord
 
 /-- "A tall man" parse tree (ex. 29a). -/
-def tallMan : ParseTree ExWord :=
+def tallMan : PFTree ExWord :=
   .node .NP [.leaf .Adj .tall, .leaf .N .man]
 
 /-- "A man" — obtained by deleting the Adj modifier (ex. 29b). -/
-def justMan : ParseTree ExWord :=
+def justMan : PFTree ExWord :=
   .node .NP [.leaf .N .man]
 
 /-- Deletion produces a simpler alternative: "a man" ∈ A_str("a tall man").
@@ -616,9 +616,9 @@ end Deletion
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- Lift a ReflTransGen chain at position i through inChild. -/
-private theorem lift_at_position {W : Type} {source : List (ParseTree W)}
-    {cat : SynCat} (cs : List (ParseTree W))
-    (i : Nat) (hi : i < cs.length) (ψ : ParseTree W)
+private theorem lift_at_position {W : Type} {source : List (PFTree W)}
+    {cat : SynCat} (cs : List (PFTree W))
+    (i : Nat) (hi : i < cs.length) (ψ : PFTree W)
     (h : Relation.ReflTransGen (StructOp source) cs[i] ψ) :
     Relation.ReflTransGen (StructOp source)
       (.node cat cs) (.node cat (cs.set i ψ)) := by
@@ -635,18 +635,18 @@ private theorem lift_at_position {W : Type} {source : List (ParseTree W)}
 
 /-- leafSubstList is just List.map. -/
 private theorem leafSubstList_eq_map {W : Type} [BEq W]
-    (α β : W) (c : SynCat) (cs : List (ParseTree W)) :
-    ParseTree.leafSubst.leafSubstList α β c cs =
+    (α β : W) (c : SynCat) (cs : List (PFTree W)) :
+    PFTree.leafSubst.leafSubstList α β c cs =
     cs.map (·.leafSubst α β c) := by
   induction cs with
   | nil => rfl
   | cons t ts ih =>
-    simp only [ParseTree.leafSubst.leafSubstList, List.map_cons]
+    simp only [PFTree.leafSubst.leafSubstList, List.map_cons]
     exact congrArg _ ih
 
 /-- Process children one at a time: .node cat cs →* .node cat (cs.map f). -/
-private theorem mapChildren_reachable {W : Type} {source : List (ParseTree W)}
-    {cat : SynCat} {cs : List (ParseTree W)} {f : ParseTree W → ParseTree W}
+private theorem mapChildren_reachable {W : Type} {source : List (PFTree W)}
+    {cat : SynCat} {cs : List (PFTree W)} {f : PFTree W → PFTree W}
     (hf : ∀ (i : Nat) (hi : i < cs.length),
       Relation.ReflTransGen (StructOp source) cs[i] (f cs[i])) :
     Relation.ReflTransGen (StructOp source)
@@ -700,18 +700,18 @@ set_option maxHeartbeats 400000 in
 /-- Leaf substitution is reachable via structural operations for any
 source containing `.leaf c β`. -/
 private theorem leafSubst_reachable {W : Type} [BEq W]
-    {source : List (ParseTree W)} (α β : W) (c : SynCat)
-    (h_β : ParseTree.leaf c β ∈ source)
-    (φ : ParseTree W) :
+    {source : List (PFTree W)} (α β : W) (c : SynCat)
+    (h_β : PFTree.leaf c β ∈ source)
+    (φ : PFTree W) :
     Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c) := by
-  refine ParseTree.rec
+  refine PFTree.rec
     (motive_1 := fun φ => Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c))
     (motive_2 := fun cs => ∀ (i : Nat) (hi : i < cs.length),
       Relation.ReflTransGen (StructOp source) cs[i] ((cs[i]).leafSubst α β c))
     ?_ ?_ ?_ ?_ φ
   · -- leaf case
     intro c' w
-    simp only [ParseTree.leafSubst]
+    simp only [PFTree.leafSubst]
     split
     · rename_i h
       rw [Bool.and_eq_true] at h
@@ -722,7 +722,7 @@ private theorem leafSubst_reachable {W : Type} [BEq W]
   · -- node case
     intro c' cs ih_cs
     show Relation.ReflTransGen (StructOp source) (.node c' cs)
-      (.node c' (ParseTree.leafSubst.leafSubstList α β c cs))
+      (.node c' (PFTree.leafSubst.leafSubstList α β c cs))
     rw [leafSubstList_eq_map]
     exact mapChildren_reachable ih_cs
   · -- nil case
@@ -751,10 +751,10 @@ generate too. But structural operations also generate alternatives that
 scales miss: deletion alternatives in DE contexts (§4.3), and
 sub-constituent alternatives for disjunction (§4.2). -/
 theorem horn_alternatives_are_structural {W : Type} [BEq W]
-    (lex : List (ParseTree W)) (φ : ParseTree W)
+    (lex : List (PFTree W)) (φ : PFTree W)
     (α β : W) (c : SynCat)
-    (_h_α_in_lex : ParseTree.leaf c α ∈ lex)
-    (_h_β_in_lex : ParseTree.leaf c β ∈ lex) :
+    (_h_α_in_lex : PFTree.leaf c α ∈ lex)
+    (_h_β_in_lex : PFTree.leaf c β ∈ lex) :
     φ.leafSubst α β c ∈ structuralAlternatives lex φ := by
   unfold structuralAlternatives atMostAsComplex
   exact leafSubst_reachable α β c (List.mem_append_left _ _h_β_in_lex) φ
@@ -778,10 +778,10 @@ formalized in `KatzirSingh2015.lean` as `atLeastAsGood`, where complexity
 is an abstract ℕ parameter — the structural complexity defined here
 gives that parameter its intended content. -/
 def violatesConversationalPrinciple {W World : Type}
-    (lex : List (ParseTree W))
-    (meaning : ParseTree W → World → Bool)
-    (φ : ParseTree W)
-    (weaklyAssertable : ParseTree W → Bool) : Prop :=
+    (lex : List (PFTree W))
+    (meaning : PFTree W → World → Bool)
+    (φ : PFTree W)
+    (weaklyAssertable : PFTree W → Bool) : Prop :=
   ∃ φ' ∈ structuralAlternatives lex φ,
     -- ⟦φ'⟧ ⊂ ⟦φ⟧ (strictly more informative)
     (∀ w, meaning φ' w = true → meaning φ w = true) ∧
@@ -805,9 +805,9 @@ The key insight: in `KatzirSingh2015.lean`, complexity is an abstract
 `ℕ` parameter. Here, structural complexity gives that parameter its
 intended content — the number of structural operations needed. -/
 def atLeastAsGoodAs {W World : Type}
-    (lex : List (ParseTree W))
-    (meaning : ParseTree W → World → Bool)
-    (φ ψ : ParseTree W) : Prop :=
+    (lex : List (PFTree W))
+    (meaning : PFTree W → World → Bool)
+    (φ ψ : PFTree W) : Prop :=
   atMostAsComplex (substitutionSource lex ψ) φ ψ ∧
   ∀ w, meaning φ w = true → meaning ψ w = true
 

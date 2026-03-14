@@ -67,7 +67,7 @@ def g₀ : Assignment toyModel := λ _ => .john
 -- ════════════════════════════════════════════════════════════════════
 
 /-- QR tree: `[S [DP every student] [1 [S t₁ sleeps]]]` -/
-def tree_everyStudentSleeps : SynTree :=
+def tree_everyStudentSleeps : LFTree :=
   .binary
     (.binary (.terminal "every") (.terminal "student"))
     (.bind 1 (.binary (.trace 1) (.terminal "sleeps")))
@@ -84,7 +84,7 @@ theorem every_student_sleeps_grounding :
   native_decide
 
 /-- QR tree: `[S [DP some student] [1 [S t₁ sleeps]]]` -/
-def tree_someStudentSleeps : SynTree :=
+def tree_someStudentSleeps : LFTree :=
   .binary
     (.binary (.terminal "some") (.terminal "student"))
     (.bind 1 (.binary (.trace 1) (.terminal "sleeps")))
@@ -112,7 +112,7 @@ which quantifier occupies the higher position. -/
 [S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]
 ```
 ∀x[person(x) → ∃y[person(y) ∧ sees(x,y)]] -/
-def tree_surface : SynTree :=
+def tree_surface : LFTree :=
   .binary
     (.binary (.terminal "every") (.terminal "person"))
     (.bind 1
@@ -126,7 +126,7 @@ def tree_surface : SynTree :=
 [S [DP some person] [2 [S [DP every person] [1 [S t₁ [VP sees t₂]]]]]]
 ```
 ∃y[person(y) ∧ ∀x[person(x) → sees(x,y)]] -/
-def tree_inverse : SynTree :=
+def tree_inverse : LFTree :=
   .binary
     (.binary (.terminal "some") (.terminal "person"))
     (.bind 2

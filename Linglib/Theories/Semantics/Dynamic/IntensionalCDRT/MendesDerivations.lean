@@ -162,7 +162,7 @@ Step 1: parse tree.
 Antecedent: Maria + SF + em casa
 Consequent: ela + vai + atender
 -/
-structure ParseTree (W Time E : Type*) where
+structure PFTree (W Time E : Type*) where
   antecedentSubject : E
   antecedentVP : E → Situation W Time → Prop
   consequentSubject : E

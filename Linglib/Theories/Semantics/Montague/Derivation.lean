@@ -11,7 +11,7 @@ Interface between syntax and pragmatics via `SemDeriv` bundles.
 
 The `SemDeriv` instances below derive their meanings from tree interpretation
 (`interpTreeG`) rather than hand-assembling function applications. Each
-derivation specifies a `SynTree` and a `Lexicon`, and the meaning is computed
+derivation specifies a `LFTree` and a `Lexicon`, and the meaning is computed
 by the composition engine. Grounding theorems verify that tree interpretation
 produces the same values as direct GQ application.
 
@@ -93,29 +93,29 @@ def g₀ : Assignment toyModel := λ _ => .john
 -- Trees
 
 /-- `[S John sleeps]` — simple FA -/
-def tree_johnSleeps : SynTree :=
+def tree_johnSleeps : LFTree :=
   .binary (.terminal "John") (.terminal "sleeps")
 
 /-- `[S [DP some students] [1 [S t₁ sleep]]]` — QR -/
-def tree_someStudentsSleep : SynTree :=
+def tree_someStudentsSleep : LFTree :=
   .binary
     (.binary (.terminal "some") (.terminal "students"))
     (.bind 1 (.binary (.trace 1) (.terminal "sleep")))
 
 /-- `[S [DP every student] [1 [S t₁ sleeps]]]` — QR -/
-def tree_everyStudentSleeps : SynTree :=
+def tree_everyStudentSleeps : LFTree :=
   .binary
     (.binary (.terminal "every") (.terminal "student"))
     (.bind 1 (.binary (.trace 1) (.terminal "sleeps")))
 
 /-- `[S [DP some students] [1 [S t₁ laugh]]]` — QR -/
-def tree_someStudentsLaugh : SynTree :=
+def tree_someStudentsLaugh : LFTree :=
   .binary
     (.binary (.terminal "some") (.terminal "students"))
     (.bind 1 (.binary (.trace 1) (.terminal "laugh")))
 
 /-- `[S [DP every student] [1 [S t₁ laughs]]]` — QR -/
-def tree_everyStudentLaughs : SynTree :=
+def tree_everyStudentLaughs : LFTree :=
   .binary
     (.binary (.terminal "every") (.terminal "student"))
     (.bind 1 (.binary (.trace 1) (.terminal "laughs")))
