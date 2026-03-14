@@ -298,12 +298,19 @@ def cooccurrenceTable : List CooccurrenceDatum := [
   , structurePredicts := false
   , interpretationPredicts := false
   , exampleStr := "*kaputt müde gearbeitet (intended: worked to exhaustion)" },
-  -- pfx/PRT + RSP: blocked by both factors.
+  -- pfx-RSP: head cannot wrap phrase, and double delimitation.
   { outer := .pfx, inner := .rsp
   , allowed := false
   , structurePredicts := false
   , interpretationPredicts := false
-  , exampleStr := "*ver-platt-hämmern (blocked in all orders)" }
+  , exampleStr := "*ver-platt-hämmern (blocked in all orders)" },
+  -- PRT-RSP: two phrases cannot stack. PRT doesn't always delimit,
+  -- so interpretation alone would allow it, but structure blocks.
+  { outer := .prt, inner := .rsp
+  , allowed := false
+  , structurePredicts := false
+  , interpretationPredicts := true
+  , exampleStr := "*an-wach-küssen (intended: kiss awake at)" }
 ]
 
 -- ────────────────────────────────────────────────────
@@ -421,7 +428,9 @@ theorem german_allows_non_unergative_M :
 -- § 11. RSP Co-occurrence Restriction Data (§4.1)
 -- ────────────────────────────────────────────────────
 
-/-- RSPs are incompatible with prefixed verbs. @cite{benz-2025} (87). -/
+/-- RSPs are incompatible with prefixed verbs.
+    @cite{benz-2025} Ch. 4: adding an RSP to a prefix verb is ungrammatical,
+    but the same RSP with the simplex verb is fine. -/
 def rsp_pfx_contrasts : List (GermanResultativeDatum × GermanResultativeDatum) := [
   ( { sentence := "*Sie haben uns arm be-raubt"
     , gloss := "they have us.ACC poor BE-robbed.PTCP"
@@ -461,7 +470,9 @@ theorem rsp_pfx_contrast_pattern :
       bad.judgment == .ungrammatical && good.judgment == .grammatical) = true := by
   native_decide
 
-/-- RSPs are also incompatible with particles. @cite{benz-2025} (88). -/
+/-- RSPs are also incompatible with particles.
+    @cite{benz-2025} Ch. 4: adding an RSP to a particle verb is ungrammatical,
+    but the same RSP with the simplex verb is fine. -/
 def rsp_prt_contrasts : List (GermanResultativeDatum × GermanResultativeDatum) := [
   ( { sentence := "*Sie hat den Tisch trocken ab-gewischt"
     , gloss := "she has the.ACC table dry AB-wiped.PTCP"
@@ -554,5 +565,109 @@ theorem claim1_two_factors :
     (cooccurrenceTable.any (λ d =>
       d.interpretationPredicts && !d.structurePredicts && !d.allowed)) = true := by
   constructor <;> native_decide
+
+-- ════════════════════════════════════════════════════════════════════
+-- Part IV: Prefixes in Nominalizations (Ch. 5)
+-- ════════════════════════════════════════════════════════════════════
+
+-- ────────────────────────────────────────────────────
+-- § 15. Nominalization Type Inventory
+-- ────────────────────────────────────────────────────
+
+/-- German nominalization types discussed in @cite{benz-2025} Ch. 5.
+
+    - **ung**: *-ung* suffixation (*Beobachtung*, *Erzählung*). Requires
+      the verb to project a full verbal shell including v; the entire
+      vP is nominalized by n.
+    - **ge_e**: *Ge-...-e* circumfixation (*Gerede*, *Gelaufe*). Directly
+      nominalizes the root without a full verbal projection; the root
+      must be able to stand without obligatory internal arguments.
+    - **nomInfinitive**: Nominalized infinitive (*das Beobachten*,
+      *das Erzählen*). The most permissive: the full verbal structure
+      is preserved under nominalization. -/
+inductive NominalizationType where
+  | ung           -- -ung suffixation
+  | ge_e          -- Ge-...-e circumfixation
+  | nomInfinitive -- nominalized infinitive (das V-en)
+  deriving DecidableEq, BEq, Repr
+
+-- ────────────────────────────────────────────────────
+-- § 16. PE Acceptability across Nominalization Types
+-- ────────────────────────────────────────────────────
+
+/-- Whether a preverbal element is acceptable in a given nominalization type.
+
+    @cite{benz-2025} Ch. 5: the distribution of preverbal elements across
+    nominalization types reveals complementary distribution between prefixes
+    and RSPs:
+
+    |             | pfx | prt | RSP |
+    |-------------|-----|-----|-----|
+    | -ung        |  ✓  |  ✓  |  ✗  |
+    | Ge-...-e    |  ✗  |  ✓  |  ✓  |
+    | nom. inf.   |  ✓  |  ✓  |  ✓  |
+
+    - **-ung + RSP = ✗**: RSPs are phrasal and cannot be trapped inside the
+      complex head that -ung nominalization creates. The RSP would need to
+      be inside the vP that n selects, but as a phrase it cannot incorporate.
+    - **Ge-...-e + pfx = ✗**: Ge-...-e directly nominalizes the root; it
+      requires the root to be available without obligatory internal arguments.
+      Prefixed verbs (where the prefix saturates argument structure) are
+      incompatible because the prefix has already formed a complex head with
+      the root, and the Ge-...-e circumfix cannot wrap around a complex head.
+    - **Nom. inf.**: maximally permissive because the full verbal projection
+      (including any preverbal element) is preserved under nominalization. -/
+def peAcceptable : NominalizationType → PreverbalElement → Bool
+  | .ung,           .pfx => true
+  | .ung,           .prt => true
+  | .ung,           .rsp => false
+  | .ge_e,          .pfx => false
+  | .ge_e,          .prt => true
+  | .ge_e,          .rsp => true
+  | .nomInfinitive, _    => true
+
+-- ────────────────────────────────────────────────────
+-- § 17. Complementary Distribution Theorems
+-- ────────────────────────────────────────────────────
+
+/-- Prefixes and RSPs show complementary distribution across -ung and Ge-...-e:
+    pfx is accepted where RSP is rejected, and vice versa.
+
+    @cite{benz-2025} Ch. 5: this complementarity follows from the structural
+    difference between head-level (pfx) and phrase-level (RSP) preverbal
+    elements, interacting with the different structural requirements of
+    -ung (requires full vP) vs Ge-...-e (directly nominalizes root). -/
+theorem pfx_rsp_complementary_ung_ge :
+    peAcceptable .ung .pfx = true ∧ peAcceptable .ung .rsp = false ∧
+    peAcceptable .ge_e .pfx = false ∧ peAcceptable .ge_e .rsp = true := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Particles are accepted in both -ung and Ge-...-e: they are structurally
+    flexible enough to appear in both configurations. -/
+theorem prt_accepted_in_both :
+    peAcceptable .ung .prt = true ∧ peAcceptable .ge_e .prt = true := by
+  exact ⟨rfl, rfl⟩
+
+/-- Nominalized infinitives accept all three PE types. -/
+theorem nom_inf_maximally_permissive (pe : PreverbalElement) :
+    peAcceptable .nomInfinitive pe = true := by
+  cases pe <;> rfl
+
+/-- RSPs are blocked in -ung nominalizations — this connects to the
+    co-occurrence restriction: RSPs as phrases cannot incorporate into
+    the complex head structure that -ung creates. -/
+theorem rsp_blocked_in_ung : peAcceptable .ung .rsp = false := rfl
+
+/-- Prefixes are blocked in Ge-...-e nominalizations — the circumfix
+    cannot wrap around a root that already has a prefix head. -/
+theorem pfx_blocked_in_ge_e : peAcceptable .ge_e .pfx = false := rfl
+
+/-- The head/phrase distinction predicts the -ung pattern:
+    heads (pfx) are accepted, phrases (rsp) are not.
+    Particles are the exception — separable but still accepted. -/
+theorem ung_head_phrase_pattern :
+    (peAcceptable .ung .pfx = PreverbalElement.pfx.isHead) ∧
+    (peAcceptable .ung .rsp = PreverbalElement.rsp.isHead) := by
+  exact ⟨rfl, rfl⟩
 
 end Phenomena.Morphology.Studies.Benz2025

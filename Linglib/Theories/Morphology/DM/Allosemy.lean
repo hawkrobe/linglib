@@ -1,5 +1,6 @@
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics
+import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 
 /-!
@@ -26,7 +27,7 @@ linglib already formalizes several cases of allosemy without naming them:
   (relational/sortal/alienator), selected by `selectsD` and context
 - `Minimalism.VoiceFlavor`: Voice has six flavors (agentive/causer/
   nonThematic/expletive/impersonal/passive), each with different semantics
-- `RootTypology.RootType` / `Root.changeType`: roots vary in whether
+- `RootType` / `Root.changeType`: roots vary in whether
   they entail change, conditioning the semantics of the v that embeds them
 
 This module provides the general abstraction: `AllosemicEntry` and
@@ -133,6 +134,33 @@ def vAllosemic : AllosemicHead VAlloseme where
 
 /-- v has exactly two allosemes. -/
 theorem v_has_two_allosemes : vAllosemic.allosemeCount = 2 := rfl
+
+/-- Root change-type conditions v alloseme selection.
+
+    Result roots (entailing prior change) yield eventive v — the change
+    entailed by the root requires an event variable in v.
+    Property concept roots yield stative v — no inherent change event.
+
+    This connects @cite{beavers-etal-2021}'s root typology to
+    @cite{benz-2025}'s v allosemy: the root's lexical semantics
+    determines which v alloseme is selected. -/
+def VAlloseme.fromRootType : _root_.RootType → VAlloseme
+  | .result          => .eventive
+  | .propertyConcept => .stative
+
+/-- Result roots yield eventive v. -/
+theorem result_root_eventive :
+    VAlloseme.fromRootType .result = .eventive := rfl
+
+/-- PC roots yield stative v. -/
+theorem pc_root_stative :
+    VAlloseme.fromRootType .propertyConcept = .stative := rfl
+
+/-- The bridge preserves the change entailment information:
+    eventive v iff the root entails change. -/
+theorem fromRootType_iff_entailsChange (rt : _root_.RootType) :
+    (VAlloseme.fromRootType rt).introducesEvent = rt.entailsChange := by
+  cases rt <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. n Allosemy (retroactive classification)
@@ -294,7 +322,7 @@ theorem readings_distinct :
 -- § 6. The Allomorphy Analogy (@cite{benz-2025} §2.5)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{benz-2025} §2.5 evaluates three positions on the relationship
+/-- @cite{benz-2025} Ch. 2 evaluates three positions on the relationship
     between allosemy and allomorphy:
 
     1. The allomorphy analogy is deeply flawed and should be abandoned.
