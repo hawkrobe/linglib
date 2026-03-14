@@ -13,6 +13,7 @@ terminals and branching via the `SemanticStructure` typeclasses below.
 
 -/
 
+import Linglib.Core.Tree
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Theories.Semantics.Montague.Variables
@@ -218,6 +219,90 @@ def evalTree {m : Model} (lex : Lexicon m) (g : Assignment m) (t : LFTree)
   | _ => none
 
 end LFTree
+
+-- ============================================================================
+-- SynTree Interpretation (unified tree type from Core.Tree)
+-- ============================================================================
+
+section SynTreeInterp
+
+open Core.Tree
+
+variable {C : Type}
+
+instance : HasTerminals (SynTree C String) where
+  getTerminal
+    | .terminal _ w => some w
+    | _ => none
+
+instance : HasBinaryComposition (SynTree C String) where
+  getBinaryChildren
+    | .node _ (t1 :: t2 :: []) => some (t1, t2)
+    | _ => none
+
+instance : HasUnaryProjection (SynTree C String) where
+  getUnaryChild
+    | .node _ (t :: []) => some t
+    | _ => none
+
+instance : HasBinding (SynTree C String) where
+  getBinder
+    | .bind _ _ body => some (0, body)  -- index ignored; extracted by interpSynTreeG
+    | _ => none
+
+instance : HasSemanticType (SynTree C String) Ty where
+  getType _ := none
+
+instance : SemanticStructure (SynTree C String) Ty where
+
+/-- Interpret a SynTree without binding (ignores categories).
+Categories are structurally present but irrelevant to H&K composition. -/
+def interpSynTree (m : Model) (lex : Lexicon m) : SynTree C String → Option (TypedDenot m)
+  | .terminal _ w => interpTerminal m lex w
+  | .node _ (t :: []) => (interpSynTree m lex t).map interpNonBranching
+  | .node _ (t1 :: t2 :: []) => do
+    let d1 ← interpSynTree m lex t1
+    let d2 ← interpSynTree m lex t2
+    interpBinary d1 d2
+  | .node _ _ => none
+  | .trace _ _ => none
+  | .bind _ _ _ => none
+
+/-- Assignment-relative interpretation for SynTree with binding.
+
+Extends `interpSynTree` with cases from @cite{heim-kratzer-1998} Ch. 5:
+- **Traces**: `⟦tₙ⟧^g = g(n)` (index from trace constructor)
+- **Predicate Abstraction**: `⟦[n β]⟧^g = λx. ⟦β⟧^{g[n↦x]}`
+
+The category parameter `C` is ignored during interpretation — composition
+is type-driven, not category-driven. This means the same function works
+for `SynTree Cat String` (UD-grounded), `SynTree Unit String` (category-free),
+or any other category system. -/
+def interpSynTreeG (m : Model) (lex : Lexicon m) (g : Assignment m)
+    : SynTree C String → Option (TypedDenot m)
+  | .terminal _ w => interpTerminal m lex w
+  | .node _ (t :: []) => (interpSynTreeG m lex g t).map interpNonBranching
+  | .node _ (t1 :: t2 :: []) => do
+    let d1 ← interpSynTreeG m lex g t1
+    let d2 ← interpSynTreeG m lex g t2
+    interpBinary d1 d2
+  | .node _ _ => none
+  | .trace n _ => some ⟨.e, g n⟩
+  | .bind n _ body => do
+    let ⟨bodyTy, probeVal⟩ ← interpSynTreeG m lex g body
+    some ⟨.fn .e bodyTy, λ (x : m.Entity) =>
+      match interpSynTreeG m lex (g[n ↦ x]) body with
+      | some ⟨ty, val⟩ => if h : ty = bodyTy then h ▸ val else probeVal
+      | none => probeVal⟩
+
+/-- Extract truth value from SynTree interpretation. -/
+def evalSynTree {m : Model} (lex : Lexicon m) (g : Assignment m) (t : SynTree C String)
+    : Option Bool :=
+  match interpSynTreeG m lex g t with
+  | some ⟨.t, b⟩ => some b
+  | _ => none
+
+end SynTreeInterp
 
 section Interpretability
 

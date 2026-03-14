@@ -23,6 +23,12 @@
 - **Composition/Tree.lean**: `interpSynTree`, `interpSynTreeG`, `evalSynTree` — compositional interpretation for `SynTree C String` (polymorphic in category type `C`); `SemanticStructure` instances for `SynTree`; categories ignored during type-driven composition
 - **Katzir2007.lean** (Phenomena/ScalarImplicatures/Studies): End-to-end demonstration of unified tree — build "some student sleeps" as `SynTree Cat String`, generate "every student sleeps" via `leafSubst` (Katzir's substitution), interpret both with `evalSynTree`; symmetry-breaking theorems (`no_conjp`, `no_negp`, `subtrees_lack_conjp`)
 - **QuantifierComposition.lean**: `synTree_everyStudentSleeps` — QR tree with UD categories; `synTree_agrees_with_lfTree` — category-bearing SynTree yields identical results to category-free LFTree
+- **Structural.lean**: `StructOp.inBind` constructor — extends structural operations into binder bodies; `lift_bind` helper for ReflTransGen through bind
+
+### Changed
+- **Structural.lean**: Migrated from `PFTree W`/`SynCat` to `SynTree C W`/`Cat` (Core/Tree.lean); removed duplicate tree type and operations; all definitions parameterized over generic category `C`
+- **AtomicConstraint.lean**: `ATree` uses `SynTree Cat W` instead of `PFTree W`; `lift` handles trace/bind as opaque AT-marked nodes
+- **ContextualConstraint.lean**: `substitutionSourceFC`/`formalAlternatives` use `SynTree C W`
 
 ## [0.229.246] - 2026-03-14
 

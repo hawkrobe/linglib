@@ -24,7 +24,7 @@ that IE cannot assign FALSE to.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 
 namespace Exhaustification.FreeChoice
 

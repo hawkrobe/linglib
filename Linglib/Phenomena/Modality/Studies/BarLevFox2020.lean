@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Implementations.InnocentInclusion
+import Linglib.Theories.Semantics.Exhaustification.InnocentInclusion
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!

@@ -38,7 +38,7 @@ not the structural level.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith

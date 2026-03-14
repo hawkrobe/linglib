@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Implementations.InnocentInclusion
+import Linglib.Theories.Semantics.Exhaustification.InnocentInclusion
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.Alsop2024
@@ -92,7 +92,7 @@ The original grammatical account: recursive application of `exh`
 - **Layer 1**: Exh(C)(◇(p∨q)) = ◇(p∨q) ∧ ¬◇(p∧q)
 - **Layer 2**: Exh²(◇(p∨q)) = ◇p ∧ ◇q ∧ ¬◇(p∧q) — free choice!
 
-See `Exhaustivity/InnocentExclusion.lean` for the computable algorithm and
+See `Exhaustification/InnocentExclusion.lean` for the computable algorithm and
 full derivation.
 -/
 

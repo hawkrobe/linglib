@@ -2,15 +2,17 @@ import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Phenomena.Copulas.Typology
 
 /-!
-# Partee (1987): The Copula as Type-Shifting Functor
+# Partee (1987): Type-Shifting and the Copula
 @cite{partee-1987}
 
-English `be` IS the `BE` type-shifting functor (§5):
+Partee's §5 argues that English `be` subcategorizes for an `e` argument and
+an `⟨e,t⟩` argument, meaning "apply predicate." The `BE` type-shifting
+functor applies to the post-copular NP to convert its GQ meaning (⟨⟨e,t⟩,t⟩)
+into a predicative one (⟨e,t⟩):
 
-  ⟦be⟧ = BE = λQ.λx. Q(λy. y = x)  :  ⟨⟨e,t⟩,t⟩ → ⟨e,t⟩
+  BE = λQ.λx. Q(λy. y = x)  :  ⟨⟨e,t⟩,t⟩ → ⟨e,t⟩
 
-The copula contributes no semantic content of its own; it applies the `BE`
-type-shift to turn a generalized quantifier meaning into a predicative one.
+The copula's combined effect is thus `BE(⟦NP⟧)(⟦subject⟧)`.
 "John is a teacher" composes as `BE(⟦a teacher⟧)(⟦John⟧) = teacher'(john')`.
 
 This connects compositional semantics (Theory) to cross-linguistic copula

@@ -27,11 +27,13 @@ Two variants are formalized:
    cannot move to Spec,HP. Restated positionally here; the original
    formulation is in `Phase.lean`.
 
-2. **Spec-to-Spec**: movement
+2. **Spec-to-Spec** (@cite{brillman-hirsch-2016}): movement
    from Spec,XP to Spec,YP is blocked when YP immediately dominates XP
-   (no intervening maximal projection). This interacts with Toba Batak's
-   clause structure (@cite{erlewine-2018}, fn. 24) and drives Agent Focus in
-   Kaqchikel.
+   (no intervening maximal projection). Originally proposed for Agent Focus
+   in Kaqchikel (Erlewine), extended by @cite{brillman-hirsch-2016} to
+   English subject/non-subject asymmetries (*that*-trace effects,
+   *tough*-constructions, matrix *wh*-questions). Also interacts with
+   Toba Batak clause structure (@cite{erlewine-2018}).
 
 -/
 

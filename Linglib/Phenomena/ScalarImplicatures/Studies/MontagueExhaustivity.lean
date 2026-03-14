@@ -7,7 +7,7 @@ Connects compositional Montague semantics to exhaustivity operators.
 
 1. Define worlds parameterized by "how many students passed"
 2. For each world, use Montague's `some_sem`/`every_sem` to compute truth values
-3. Show these match the hand-crafted `someStudents`/`allStudents` from Exhaustivity.lean
+3. Show these match the hand-crafted `someStudents`/`allStudents` from Operators.lean
 4. Apply Theorem 9 to compositionally-derived meanings
 
 ## Result
@@ -21,10 +21,10 @@ This grounds the NeoGricean analysis in compositional semantics.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 import Mathlib.Tactic.FinCases
 
-namespace Exhaustification.MontagueExhaustivity
+namespace Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity
 
 open Semantics.Montague Semantics.Lexical.Determiner.Quantifier
 open Exhaustification
@@ -129,13 +129,13 @@ def someAllALT_Montague : Set (Prop' (Fin 4)) := {somePassed_Prop, allPassed_Pro
 ## Grounding: Montague = Hand-Crafted
 
 We show that the compositionally-derived meanings match the
-hand-crafted definitions from Exhaustivity.lean Section 6.
+hand-crafted definitions from Operators.lean Section 6.
 -/
 
-/-- someStudents from Exhaustivity.lean -/
+/-- someStudents from Operators.lean -/
 def someStudents_handcrafted : Prop' (Fin 4) := λ w => w.val ≥ 1
 
-/-- allStudents from Exhaustivity.lean -/
+/-- allStudents from Operators.lean -/
 def allStudents_handcrafted : Prop' (Fin 4) := λ w => w.val = 3
 
 /-- Compositional "some" matches hand-crafted definition -/
@@ -237,7 +237,7 @@ theorem exhMW_somePassed_not_w3 :
 
 By Proposition 6, exhMW ⊆ exhIE always holds.
 For the reverse direction on our two-element scale, we use the same
-argument as in Exhaustivity.lean Section 6.3.
+argument as in Operators.lean Section 6.3.
 -/
 
 /-- Proposition 6 applies: exhMW ⊆ exhIE for compositional meanings -/
@@ -284,4 +284,4 @@ This closes the gap identified in CLAUDE.md:
 Now the scalar implicature derivation is grounded in compositional semantics.
 -/
 
-end Exhaustification.MontagueExhaustivity
+end Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity

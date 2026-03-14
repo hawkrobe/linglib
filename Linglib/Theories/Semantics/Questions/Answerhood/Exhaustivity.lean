@@ -105,7 +105,7 @@ exhaustification operator Exh. The key insight: a question partitions
 the logical space iff every world has exactly one exhaustified true answer.
 
 The definitions below are Bool-valued analogues of the Prop-valued MC-set/IE
-machinery in `Exhaustification.Basic`, specialized to question cells
+machinery in `Exhaustification.Operators`, specialized to question cells
 for decidable computation via `native_decide`.
 
 - `cellMCSets` mirrors `isMCSet` from Exhaustification
@@ -147,7 +147,7 @@ A subset `S` of alternative indices (excluding `pIdx`) is an MC-set iff:
 1. Negating all cells in `S` is consistent with `pIdx` being true
 2. No proper superset of `S` is also consistent
 
-Bool analogue of `isMCSet` in Exhaustification.Basic. -/
+Bool analogue of `isMCSet` in Exhaustification.Operators. -/
 def cellMCSets {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : List (List Nat) :=
   let altIdxs := (List.range cells.length).filter (· != pIdx)
@@ -161,7 +161,7 @@ def cellMCSets {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
 /-- Innocently excludable alternatives for cell `pIdx`: the indices
 that appear in *every* MC-set (intersection of all MC-sets).
 
-Bool analogue of `IE` in Exhaustification.Basic:
+Bool analogue of `IE` in Exhaustification.Operators:
   IE_(ALT,φ) = {ψ : ψ belongs to every MC_(ALT,φ)-set} -/
 def cellIE {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : List Nat :=
@@ -174,7 +174,7 @@ def cellIE {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
 /-- Fox's exhaustified cell: Exh(Q)(p)(w) = cells[pIdx](w) ∧ ∀j ∈ IE. ¬cells[j](w).
 
 The exhaustified meaning of answer p negates all innocently excludable
-alternatives. Bool analogue of `exhIE` in Exhaustification.Basic. -/
+alternatives. Bool analogue of `exhIE` in Exhaustification.Operators. -/
 def foxExh {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : W → Bool :=
   λ w => getCell cells pIdx w &&

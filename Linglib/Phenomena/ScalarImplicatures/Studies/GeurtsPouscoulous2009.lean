@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Empirical
 import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
-import Linglib.Theories.Semantics.Exhaustification.SemanticScales
+import Linglib.Theories.Semantics.Exhaustification.ScalePredictions
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!

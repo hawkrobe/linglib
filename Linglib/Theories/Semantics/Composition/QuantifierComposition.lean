@@ -181,4 +181,33 @@ theorem assignment_independent :
     evalTree quantLex g₁ tree_everyStudentSleeps := by
   native_decide
 
+-- ════════════════════════════════════════════════════════════════════
+-- § Unified SynTree: Same Sentence with UD Categories
+-- ════════════════════════════════════════════════════════════════════
+
+/-! The same QR tree built as `SynTree Cat String` — carrying real UD-grounded
+categories on every node. `interpSynTreeG` ignores the categories and produces
+identical truth conditions to the category-free `LFTree` version. -/
+
+open Core.Tree
+
+/-- QR tree with UD categories:
+`[S [DP [Det every] [N student]] [1 [S [t₁] [VP sleeps]]]]` -/
+def synTree_everyStudentSleeps : SynTree Cat String :=
+  .node .S
+    (.node .DP (.terminal .Det "every" :: .terminal .N "student" :: []) ::
+     .bind 1 .S
+       (.node .S (.trace 1 .NP :: .node .VP (.terminal .V "sleeps" :: []) :: [])) :: [])
+
+/-- Category-bearing tree yields the same result as category-free LFTree. -/
+theorem synTree_every_student_sleeps_false :
+    evalSynTree quantLex g₀ synTree_everyStudentSleeps = some false := by
+  native_decide
+
+/-- SynTree grounding matches LFTree grounding. -/
+theorem synTree_agrees_with_lfTree :
+    evalSynTree quantLex g₀ synTree_everyStudentSleeps =
+    evalTree quantLex g₀ tree_everyStudentSleeps := by
+  native_decide
+
 end Semantics.Composition.QuantifierComposition

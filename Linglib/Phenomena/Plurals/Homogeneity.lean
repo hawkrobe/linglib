@@ -245,6 +245,16 @@ def hamletExample : UpwardHomogeneityDatum :=
   , judgment := .neitherTrueNorFalse
   }
 
+/-- @cite{kriz-spector-2021} §3.3, example (31): "The soldiers of my brigade
+    didn't surround the castle." False when half the brigade surrounded the
+    castle WITH other soldiers — the predicate's truth leaks upward through
+    mereological overlap. -/
+def soldiersExample : UpwardHomogeneityDatum :=
+  { sentence := "The soldiers of my brigade didn't surround the castle."
+  , scenario := "Half the soldiers of my brigade, together with soldiers from another brigade, formed a circle around the castle."
+  , judgment := .neitherTrueNorFalse
+  }
+
 
 /--
 Elements that remove homogeneity gaps.

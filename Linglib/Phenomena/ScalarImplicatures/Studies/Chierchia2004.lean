@@ -28,9 +28,9 @@ computed in tandem at every compositional step.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 
-namespace Exhaustification.RecursiveStrengthening
+namespace Phenomena.ScalarImplicatures.Studies.Chierchia2004
 
 open Exhaustification
 
@@ -395,4 +395,4 @@ theorem scalarLicensing_strongerThan_strength (φ : Prop' World)
     strengthCondition (scalarLicensing .strongerThan φ ALT) :=
   krifkaRule_satisfies_strength φ ALT
 
-end Exhaustification.RecursiveStrengthening
+end Phenomena.ScalarImplicatures.Studies.Chierchia2004

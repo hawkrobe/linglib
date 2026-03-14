@@ -29,12 +29,12 @@ Combined with assertion ∃x. P(x), this yields ⊥.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Finite.Basic
 
-namespace Exhaustification.EFCI
+namespace Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 
 open Exhaustification
 
@@ -702,4 +702,4 @@ def anyExamples : List AnyExample :=
 #guard anyExamples.all (λ ex => ex.grammatical == ufciGrammatical ex.context)
 
 
-end Exhaustification.EFCI
+end Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025

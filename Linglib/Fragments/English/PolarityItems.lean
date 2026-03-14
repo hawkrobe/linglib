@@ -15,7 +15,7 @@ Theory-neutral lexical entries for polarity-sensitive items:
 
 ## Theoretical Analyses (in Theories/)
 
-- `Theories/NeoGricean/Exhaustivity/EFCI.lean`: Chierchia's exhaustification analysis
+- `Phenomena/Polarity/Studies/AlonsoOvalleMoghiseh2025.lean`: EFCI exhaustification analysis
 - `Phenomena/NPIs/Data.lean`: Empirical distribution data
 
 -/

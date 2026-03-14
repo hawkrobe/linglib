@@ -624,4 +624,66 @@ theorem decomposition_reflects_transitivity :
     (decompose noncausativePropertyConstruction).length = 2 := by
   constructor <;> native_decide
 
+/-! ## Cross-linguistic Resultative Parameters (@cite{tay-2024})
+
+Resultative constructions vary cross-linguistically along dimensions orthogonal
+to the G&J subconstruction typology. @cite{tay-2024} identifies three:
+realization (how the result predicate is morphosyntactically encoded),
+orientation (whether DOR holds), and phase grammaticalization. -/
+
+section CrossLinguistic
+
+/-- How the result predicate is morphosyntactically realized. -/
+inductive ResultativeRealization where
+  /-- English: result AP/PP is a syntactic adjunct -/
+  | syntacticAdjunct
+  /-- Mandarin V-V: V2 morphologically incorporated into V1 -/
+  | verbCompound
+  /-- Mandarin V-de: result clause introduced by particle de -/
+  | deComplement
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether the result predicate targets the subject or object.
+    English enforces DOR (Direct Object Restriction): the result must
+    predicate of the direct object. Mandarin allows subject-oriented
+    resultatives productively (kū-lèi "cry-tired"). -/
+inductive ResultOrientation where
+  | objectOriented
+  | subjectOriented
+  deriving DecidableEq, BEq, Repr
+
+/-- Phase complements: a grammaticalized closed-class subset of Mandarin
+    V2 resultatives with fixed change-of-state semantics.
+    Maps to `CoSType` from `ChangeOfState.Theory`. -/
+inductive PhaseComplement where
+  | dao   -- 倒 dǎo "fall" → inception of horizontal/fallen state
+  | wan   -- 完 wán "finish" → cessation of activity
+  | hao   -- 好 hǎo "good" → inception of satisfactory/completed state
+  | diao  -- 掉 diào "fall off" → inception of detachment/disappearance
+  | zhu   -- 住 zhù "hold" → continuation of state
+  deriving DecidableEq, BEq, Repr
+
+/-- Phase complements have fixed CoS semantics, bridging Mandarin morphology
+    to the cross-linguistic `CoSType` infrastructure in `ChangeOfState.Theory`. -/
+def PhaseComplement.cosType : PhaseComplement → CoSType
+  | .dao  => .inception
+  | .wan  => .cessation
+  | .hao  => .inception
+  | .diao => .inception
+  | .zhu  => .continuation
+
+/-- All inceptive phase complements share the presupposition ¬P. -/
+theorem inceptive_phases_share_presup :
+    PhaseComplement.dao.cosType = .inception ∧
+    PhaseComplement.hao.cosType = .inception ∧
+    PhaseComplement.diao.cosType = .inception := ⟨rfl, rfl, rfl⟩
+
+/-- Phase complements cover all three CoS types (inception, cessation, continuation). -/
+theorem phase_complements_cover_cos_types :
+    PhaseComplement.dao.cosType = .inception ∧
+    PhaseComplement.wan.cosType = .cessation ∧
+    PhaseComplement.zhu.cosType = .continuation := ⟨rfl, rfl, rfl⟩
+
+end CrossLinguistic
+
 end Causative.Resultatives

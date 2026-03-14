@@ -518,4 +518,36 @@ theorem cum_qua_dimension_disjoint {α β : Type*}
     ¬ (CUM (P ∘ f) ∧ QUA (P ∘ f)) :=
   cum_qua_disjoint ⟨x, y, hx, hy, hne⟩
 
+-- ════════════════════════════════════════════════════
+-- § 13. Convex Closure (@cite{kriz-spector-2021} def. 21)
+-- ════════════════════════════════════════════════════
+
+/-- Convex closure under a partial order: add all elements "in between"
+    existing members. z is in-between x and y if x ≤ z ≤ y.
+    @cite{kriz-spector-2021} def. 21: Conv_⊑(A) is the smallest superset
+    of A such that for any x, y ∈ A, every z with x ⊑ z ⊑ y is also in
+    Conv_⊑(A). One step suffices because ⊑ is transitive. -/
+def convexClosure {α : Type*} [PartialOrder α] (S : Set α) : Set α :=
+  { c | ∃ a ∈ S, ∃ b ∈ S, a ≤ c ∧ c ≤ b }
+
+/-- S ⊆ convexClosure S. -/
+theorem subset_convexClosure {α : Type*} [PartialOrder α] (S : Set α) :
+    S ⊆ convexClosure S :=
+  fun x hx => ⟨x, hx, x, hx, le_refl x, le_refl x⟩
+
+/-- convexClosure is idempotent: Conv(Conv(S)) = Conv(S).
+    If c ∈ Conv(Conv(S)), then a₁ ≤ c ≤ b₂ for some a₁, b₂ ∈ S. -/
+theorem convexClosure_idempotent {α : Type*} [PartialOrder α] (S : Set α) :
+    convexClosure (convexClosure S) = convexClosure S := by
+  ext c; constructor
+  · rintro ⟨a, ⟨a₁, ha₁, a₂, _, ha₁a, _⟩, b, ⟨_, _, b₂, hb₂, _, hbb₂⟩, hac, hcb⟩
+    exact ⟨a₁, ha₁, b₂, hb₂, le_trans ha₁a (le_trans hac (le_refl c)),
+           le_trans (le_refl c) (le_trans hcb hbb₂)⟩
+  · exact fun hc => subset_convexClosure _ hc
+
+/-- Convex closure is monotone: S ⊆ T → Conv(S) ⊆ Conv(T). -/
+theorem convexClosure_mono {α : Type*} [PartialOrder α] {S T : Set α}
+    (h : S ⊆ T) : convexClosure S ⊆ convexClosure T :=
+  fun _ ⟨a, ha, b, hb, hac, hcb⟩ => ⟨a, h ha, b, h hb, hac, hcb⟩
+
 end Mereology

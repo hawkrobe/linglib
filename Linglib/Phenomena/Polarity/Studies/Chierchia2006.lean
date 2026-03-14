@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Polarity.Typology
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
-import Linglib.Theories.Semantics.Exhaustification.EFCI
+import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 
 /-!
 # Chierchia 2006: Domain Widening and the PSI Typology
@@ -51,7 +51,7 @@ refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 namespace Phenomena.Polarity.Studies.Chierchia2006
 
 open Phenomena.Polarity.Typology
-open Exhaustification.EFCI (FCIFlavor EFCIRescue)
+open Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025 (FCIFlavor EFCIRescue)
 
 -- ============================================================================
 -- §1. The PSI Parameter Space

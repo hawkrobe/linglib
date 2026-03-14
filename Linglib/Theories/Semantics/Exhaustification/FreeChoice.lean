@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 
 /-!
 # Core Theorems from @cite{chierchia-2013} *Logic in Grammar*

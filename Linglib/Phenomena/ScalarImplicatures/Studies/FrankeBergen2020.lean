@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 

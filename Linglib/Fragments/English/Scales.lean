@@ -334,7 +334,7 @@ def predictExhEffect (isClosed : Bool) : ClosureEffect :=
 **Theorem 9**:
 When ALT is closed under conjunction, exh_mw = exh_ie.
 
-This is proven in `Theories/Semantics/Exhaustification/Basic.lean`.
+This is proven in `Theories/Semantics/Exhaustification/Operators.lean`.
 
 The closure property ensures that the different ways of computing
 "what to exclude" all converge to the same result.

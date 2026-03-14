@@ -35,7 +35,8 @@ to structural operations. This refines @cite{fox-katzir-2011} /
 
 namespace Alternatives.AtomicConstraint
 
-open StructuralAlternatives (PFTree SynCat)
+open Core.Tree (SynTree Cat)
+open Core.Tree.Cat
 open Alternatives.Symmetric (isSymmetric)
 open Exhaustification.InnocentExclusion (exhB ieIndices nonWeakerIndices)
 
@@ -93,33 +94,37 @@ def isValidDomain {W : Type} (domain : List W)
     (def 32): "Expressions in the substitution source are syntactically
     atomic." -/
 inductive ATree (W : Type) where
-  | leaf (cat : SynCat) (word : W)
-  | node (cat : SynCat) (children : List (ATree W))
-  | atNode (cat : SynCat) (content : PFTree W)
+  | leaf (cat : Cat) (word : W)
+  | node (cat : Cat) (children : List (ATree W))
+  | atNode (cat : Cat) (content : SynTree Cat W)
 
 namespace ATree
 
 variable {W : Type}
 
-def cat : ATree W → SynCat
+def cat : ATree W → Cat
   | .leaf c _ | .node c _ | .atNode c _ => c
 
-/-- Expand to `PFTree` by unsealing AT-marked nodes. -/
-def expand : ATree W → PFTree W
-  | .leaf c w => .leaf c w
+/-- Expand to `SynTree Cat` by unsealing AT-marked nodes. -/
+def expand : ATree W → SynTree Cat W
+  | .leaf c w => .terminal c w
   | .node c cs => .node c (expandList cs)
   | .atNode _ content => content
 where
-  expandList : List (ATree W) → List (PFTree W)
+  expandList : List (ATree W) → List (SynTree Cat W)
   | [] => []
   | t :: ts => t.expand :: expandList ts
 
-/-- Lift a `PFTree` to `ATree` (no AT-marking). -/
-def lift : PFTree W → ATree W
-  | .leaf c w => .leaf c w
+/-- Lift a `SynTree Cat` to `ATree` (no AT-marking).
+Traces and binders are wrapped as opaque AT-marked nodes, since
+they are LF-specific structure inaccessible to PF-level operations. -/
+def lift : SynTree Cat W → ATree W
+  | .terminal c w => .leaf c w
   | .node c cs => .node c (liftList cs)
+  | .trace n c => .atNode c (.trace n c)
+  | .bind n c body => .atNode c (.bind n c body)
 where
-  liftList : List (PFTree W) → List (ATree W)
+  liftList : List (SynTree Cat W) → List (ATree W)
   | [] => []
   | t :: ts => lift t :: liftList ts
 
@@ -133,14 +138,14 @@ inductive ATStructOp {W : Type} (source : List (ATree W)) :
   | subst {φ ψ : ATree W}
     (h_cat : ψ.cat = φ.cat) (h_src : ψ ∈ source) :
     ATStructOp source φ ψ
-  | delete {cat : SynCat} {cs : List (ATree W)}
+  | delete {cat : Cat} {cs : List (ATree W)}
     (i : Fin cs.length) :
     ATStructOp source (.node cat cs) (.node cat (cs.eraseIdx i))
-  | contract {cat : SynCat} {cs : List (ATree W)}
+  | contract {cat : Cat} {cs : List (ATree W)}
     {child : ATree W}
     (h_mem : child ∈ cs) (h_cat : child.cat = cat) :
     ATStructOp source (.node cat cs) child
-  | inChild {cat : SynCat} {cs : List (ATree W)}
+  | inChild {cat : Cat} {cs : List (ATree W)}
     (i : Fin cs.length) {ψ_child : ATree W}
     (h_step : ATStructOp source (cs.get i) ψ_child) :
     -- Only matches .node — NOT .atNode. This is the constraint.
@@ -155,9 +160,9 @@ def atReachable {W : Type} (source : List (ATree W))
     lexical items + subtrees of S are lifted (transparent);
     contextual constituents are wrapped in `atNode` (opaque). -/
 def atomicSubstitutionSource {W : Type}
-    (lexicon : List (PFTree W))
-    (φ : PFTree W)
-    (context : List (PFTree W)) : List (ATree W) :=
+    (lexicon : List (SynTree Cat W))
+    (φ : SynTree Cat W)
+    (context : List (SynTree Cat W)) : List (ATree W) :=
   (lexicon ++ φ.subtrees).map ATree.lift ++
   context.map (fun t => .atNode t.cat t)
 
@@ -165,9 +170,9 @@ def atomicSubstitutionSource {W : Type}
     S' ∈ F_AT(S) iff ∃ ATree `t` reachable from `lift(S)` via
     AT-constrained operations with `t.expand = S'`. -/
 def structuralAlternativesAT {W : Type}
-    (lex : List (PFTree W))
-    (φ : PFTree W)
-    (context : List (PFTree W)) : Set (PFTree W) :=
+    (lex : List (SynTree Cat W))
+    (φ : SynTree Cat W)
+    (context : List (SynTree Cat W)) : Set (SynTree Cat W) :=
   {ψ | ∃ t, atReachable (atomicSubstitutionSource lex φ context)
     t (ATree.lift φ) ∧ t.expand = ψ}
 

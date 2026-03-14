@@ -20,7 +20,7 @@ Compositional Semantics*, pp. 71--120. Palgrave Macmillan.
 
 This file provides a **computable** (Bool/List) implementation of Fox's
 innocent exclusion algorithm, complementing the Set-theoretic version
-in `Exhaustivity/Basic.lean` (@cite{spector-2016}). The definitions are:
+in `Exhaustification/Operators.lean` (@cite{spector-2016}). The definitions are:
 
 - `nonWeakerIndices`: NW(p, A) — alternatives not entailed by prejacent
 - `exclusionConsistent`: consistency of {p} ∪ {¬q : q ∈ excl}

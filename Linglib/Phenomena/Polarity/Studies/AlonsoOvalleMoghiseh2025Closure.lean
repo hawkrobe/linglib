@@ -16,13 +16,13 @@ This breaks closure and creates the need for rescue mechanisms.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Basic
-import Linglib.Theories.Semantics.Exhaustification.EFCI
+import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 
-namespace Exhaustification.EFCIClosure
+namespace Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025Closure
 
 open Exhaustification
-open Exhaustification.EFCI
+open Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 
 variable {World : Type*} {Entity : Type*}
 
@@ -216,4 +216,4 @@ theorem unique_witness_falsifies_allNotPreExh
   exact hnotPreExh hpreExh
 
 
-end Exhaustification.EFCIClosure
+end Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025Closure

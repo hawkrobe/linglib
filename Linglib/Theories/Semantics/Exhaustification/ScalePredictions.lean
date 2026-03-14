@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Semantics.Alternatives.Lexical
 
 /-!

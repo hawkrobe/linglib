@@ -10,7 +10,7 @@ RSA is "soft" IBR: as α → ∞, softmax → argmax → exhMW → exhIE.
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 
 namespace RSA.IBR
@@ -1089,28 +1089,11 @@ theorem speakerOptionCount_bestResponse (G : InterpGame) (H : HearerStrategy G)
   · intro h; exact (SpeakerStrategy.bestResponse_pos_iff G H t m).mpr
       ⟨h, Finset.card_pos.mpr ⟨m, h⟩⟩
 
-/-- At the fixed point with flat priors, fewer speaker options ↔ higher hearer probability (eq. 131).
-
-    Requires m to be optimal at both states (in the speaker's support). Without this,
-    the speaker assigns zero probability to m and the hearer probability is zero,
-    making the comparison degenerate. -/
-theorem fp_prefers_fewer_options (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (m : G.Message) (t₁ t₂ : G.State)
-    (hOpt₁ : m ∈ SpeakerStrategy.optimalMessages G H t₁)
-    (hOpt₂ : m ∈ SpeakerStrategy.optimalMessages G H t₂) :
-    let S := speakerUpdate G H
-    H.respond m t₁ > H.respond m t₂ ↔
-      speakerOptionCount G S t₁ < speakerOptionCount G S t₂ := by
-  -- TODO: Rewrite proof for hearerBR (argmax) model.
-  -- The original proof used the Bayesian posterior formula from hearerUpdate.
-  -- With hearerBR, the fixed-point structure gives H(m,t) = 1/k for argmax
-  -- states and 0 otherwise, based on w(t) = S(t,m)·P(t) = P/n_t.
-  -- The ↔ still holds: H(m,t₁) > H(m,t₂) iff t₁ is argmax and t₂ isn't,
-  -- which with flat priors means n₁ < n₂.
-  sorry
+-- fp_prefers_fewer_options was here but has been removed:
+-- The theorem stated H(m,t₁) > H(m,t₂) ↔ speakerOptionCount(t₁) < speakerOptionCount(t₂).
+-- This is FALSE for the hearerBR (argmax) model: with 3+ states, two states can both
+-- get H = 0 (beaten by a third in the argmax) despite having different option counts,
+-- breaking the backward direction of the ↔. The theorem was unused.
 
 /-- Best-response speaker uses ⊆ true messages, so speakerOptionCount ≤ |trueMessages|. -/
 theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
@@ -1133,14 +1116,22 @@ theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
 The key insight of @cite{franke-2011} is that IBR reasoning yields exactly
 the same interpretation as exhaustive interpretation (exhMW).
 
-**Theorem (@cite{franke-2011}, Section 9.3)**: For an interpretation game G,
-the IBR fixed point listener's support for message m equals the set of
-minimal m-worlds relative to the alternative ordering.
+**Theorem (@cite{franke-2011}, Section 9.3)**: For a **scalar** interpretation
+game G (truth sets are nested), the IBR fixed point listener's support for
+message m equals the set of minimal m-worlds relative to the alternative ordering.
 
 In notation:
   support(L∞(· | m)) = exhMW(ALT, m)
 
 This connects game-theoretic pragmatics to grammatical exhaustification.
+
+**Important**: The scalar game hypothesis (`isScalarGame`) is required.
+For general games where truth sets are NOT nested, the theorem is false.
+Counterexample: States {a,b,c}, Messages {m,p,q,r} with m true everywhere,
+p true at {a,b}, q true at {a}, r true at {c}. At the FP, message m is
+"dominated" (no state uses it optimally), so the L0 fallback gives uniform
+probability to ALL m-true states including non-minimal ones.
+See `nonScalarCounterexample` below for a machine-checked proof.
 
 ### Results from Section 10 and Appendix A
 
@@ -1156,6 +1147,80 @@ Under "homogeneity" of alternatives, R₁(mₛ) = ExhMM(S).
 
 **Fact 4** (Appendix A): ExhMM = ExhIE when Alt satisfies closure conditions.
 -/
+
+/-- A scalar game has truth sets that are totally ordered by inclusion.
+    This is the structural condition required for Franke's Proposition 4
+    (IBR FP = exhMW). Without it, "dominated" messages (never optimal at
+    any state) fall back to L0, breaking the exhMW characterization.
+    See `nonScalarCounterexample` below for a machine-checked counterexample
+    without this condition. -/
+def isScalarGame (G : InterpGame) : Prop :=
+  ∀ m₁ m₂ : G.Message, G.trueStates m₁ ⊆ G.trueStates m₂ ∨ G.trueStates m₂ ⊆ G.trueStates m₁
+
+/-- In a scalar game, trueMessages are totally ordered: for any two states,
+    one's true messages are a subset of the other's.
+
+    Proof: If ∃ m₁ ∈ trueMessages(s₁) \ trueMessages(s₂) and
+    ∃ m₂ ∈ trueMessages(s₂) \ trueMessages(s₁), then trueStates(m₁) and
+    trueStates(m₂) are incomparable (s₁ distinguishes them one way, s₂ the
+    other), contradicting isScalarGame. -/
+theorem scalar_trueMessages_total (G : InterpGame) (hScalar : isScalarGame G)
+    (s₁ s₂ : G.State) :
+    G.trueMessages s₁ ⊆ G.trueMessages s₂ ∨ G.trueMessages s₂ ⊆ G.trueMessages s₁ := by
+  by_contra h
+  push_neg at h
+  simp only [Finset.subset_iff, not_forall] at h
+  obtain ⟨⟨m₁, hm₁_in, hm₁_out⟩, ⟨m₂, hm₂_in, hm₂_out⟩⟩ := h
+  simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at *
+  cases hScalar m₁ m₂ with
+  | inl hsub =>
+    have h1 : s₁ ∈ G.trueStates m₁ :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm₁_in⟩
+    have h2 := hsub h1
+    simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at h2
+    -- h2 : G.meaning m₂ s₁ = true, but hm₂_out : ¬(G.meaning m₂ s₁ = true)
+    exact absurd h2 hm₂_out
+  | inr hsub =>
+    have h1 : s₂ ∈ G.trueStates m₂ :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm₂_in⟩
+    have h2 := hsub h1
+    simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at h2
+    exact absurd h2 hm₁_out
+
+/-- In a scalar game, at the m-true state s₀ with fewest true messages,
+    every message true at s₀ has trueStates ⊇ trueStates(m).
+
+    This is because trueMessages(s₀) ⊆ trueMessages(t) for all m-true t
+    (by totality + minimality). So any m' ∈ trueMessages(s₀) is true at
+    all m-true states, hence trueStates(m) ⊆ trueStates(m'). -/
+theorem scalar_minimal_messages_weaker (G : InterpGame) (hScalar : isScalarGame G)
+    (m : G.Message) (s₀ : G.State)
+    (hs₀ : G.meaning m s₀ = true)
+    (hmin : ∀ t, G.meaning m t = true → (G.trueMessages s₀).card ≤ (G.trueMessages t).card)
+    (m' : G.Message) (hm' : G.meaning m' s₀ = true) :
+    G.trueStates m ⊆ G.trueStates m' := by
+  intro t ht
+  simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at ht ⊢
+  -- t is m-true. Need: m' is true at t.
+  -- By totality: trueMessages(s₀) ⊆ trueMessages(t) or vice versa
+  cases scalar_trueMessages_total G hScalar s₀ t with
+  | inl hsub =>
+    -- trueMessages(s₀) ⊆ trueMessages(t), so m' ∈ trueMessages(s₀) → m' ∈ trueMessages(t)
+    have hm'_in : m' ∈ G.trueMessages s₀ :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩
+    have := hsub hm'_in
+    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at this
+    exact this
+  | inr hsub =>
+    -- trueMessages(t) ⊆ trueMessages(s₀). Since s₀ is minimal in card, this means equal.
+    have hcard := hmin t ht
+    have hcard' := Finset.card_le_card hsub
+    have heq : G.trueMessages t = G.trueMessages s₀ := Finset.eq_of_subset_of_card_le hsub hcard
+    have hm'_in : m' ∈ G.trueMessages s₀ :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩
+    rw [← heq] at hm'_in
+    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm'_in
+    exact hm'_in
 
 /-- Convert interpretation game to alternative set for exhaustification.
     Converts Bool meaning to Prop' by using equality with true. -/
@@ -1449,7 +1514,7 @@ theorem r1_eq_exhMW_under_totality (G : InterpGame) (m : G.Message) (s : G.State
     Since IE = ⋂ Max-CE, w satisfies all propositions in IE.
     Hence w ∈ ExhIE(S, Alt).
 
-    This is already proved as `prop6_exhMW_entails_exhIE` in Exhaustivity/Basic.lean.
+    This is already proved as `prop6_exhMW_entails_exhIE` in Exhaustification/Operators.lean.
 -/
 theorem fact3_exhMW_subset_exhIE (G : InterpGame) (m : G.Message) :
     exhMW (toAlternatives G) (prejacent G m) ⊆ₚ exhIE (toAlternatives G) (prejacent G m) :=
@@ -1467,97 +1532,169 @@ theorem fact3_exhMW_subset_exhIE (G : InterpGame) (m : G.Message) :
     When Alt is closed under conjunction, this condition holds automatically
     because we can take A = A(w) ∧ A(w').
 
-    This is proved as `theorem9_main` in Exhaustivity/Basic.lean.
+    This is proved as `theorem9_main` in Exhaustification/Operators.lean.
 -/
 theorem fact4_exhMW_eq_exhIE_closed (G : InterpGame) (m : G.Message)
     (hClosed : closedUnderConj (toAlternatives G)) :
     exhMW (toAlternatives G) (prejacent G m) ≡ₚ exhIE (toAlternatives G) (prejacent G m) :=
   theorem9_main (toAlternatives G) (prejacent G m) hClosed
 
---5.5: IBR Fixed Point Theorems (previously in this section)
+--5.5: IBR Fixed Point Theorems
+
+/-- In a scalar game at the FP with flat positive priors, if s is exhMW-minimal
+    for m, then either maxW_m = 0 (and L0 gives positive probability) or
+    w_m(s) = maxW_m (s is in the argmax).
+
+    **Proof sketch**: s has fewest true messages among m-true states (by
+    `scalar_trueMessages_total` + minimality). All messages m' at s have
+    trueStates(m') ⊇ trueStates(m) (by `scalar_minimal_messages_weaker`).
+    So m is (tied for) most informative at s. At the FP, the speaker at s
+    uses m, giving w(s) > 0. Since s has the fewest options, w(s) is maximal. -/
+private theorem scalar_fp_minimal_weight (G : InterpGame) (H : HearerStrategy G)
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (_hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m : G.Message) (s : G.State)
+    (hs_true : G.meaning m s = true)
+    (_hs_min : ¬∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
+    let S := SpeakerStrategy.bestResponse G H
+    let w := fun t => S.choose t m * G.prior t
+    let maxW := Finset.univ.fold max 0 w
+    maxW == 0 ∨ w s == maxW := by
+  sorry
+
+/-- In a scalar game at the FP with flat positive priors, non-minimal states
+    have H(m,s) = 0. This is the key lemma for the forward direction of
+    `ibr_equals_exhMW`.
+
+    **Proof sketch**: If s is non-minimal (∃ s' <_ALT s with m true at s'),
+    then trueMessages(s') ⊊ trueMessages(s). In a scalar game, this means
+    ∃ m' true at s but not s', with trueStates(m') ⊊ trueStates(m). The
+    speaker at s prefers m' (more informative), so w(s) is either 0 or
+    suboptimal. Meanwhile, minimal states have higher w values (by
+    `scalar_fp_minimal_weight`), ensuring maxW > 0 and s ∉ argmax. -/
+private theorem scalar_fp_nonminimal_zero (G : InterpGame) (H : HearerStrategy G)
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (_hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m : G.Message) (s : G.State)
+    (_hs_true : G.meaning m s = true)
+    (hNonMin : ∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
+    H.respond m s = 0 := by
+  sorry
 
 /-- IBR fixed point equals exhMW (Main theorem - @cite{franke-2011}, Section 9.3)
 
 This is the central result connecting game theory to exhaustification.
-At the fixed point, the IBR listener's interpretation of message m is
-exactly the exhaustive interpretation exhMW(ALT, m).
+At the fixed point of a **scalar** interpretation game, the IBR listener's
+interpretation of message m is exactly the exhaustive interpretation exhMW(ALT, m).
+
+Two structural hypotheses are required:
+
+- `isScalarGame`: truth sets are totally ordered by inclusion (nested). Without
+  this, "dominated" messages fall back to L0, assigning positive probability
+  to non-minimal states. See `nonScalarCounterexample` below.
+
+- `hDistinct`: no two messages have identical truth sets. Without this,
+  asymmetric FPs exist that break the biconditional: two exhMW-minimal states
+  with identical trueMessages can be treated asymmetrically by the FP, with
+  one getting H > 0 and the other H = 0.
 
 **Proof Strategy:**
 
-1. **Non-minimal states eliminated**: If s is non-minimal (∃s' < s with m(s')),
-   then at s', there's a message m' true at s' but not at s (by definition of <).
-   Message m' is more informative than m. So S_n prefers m' at s', leading to
-   S_n(m|s') < 1. This propagates: L_{n+1}(s|m) decreases each iteration.
+1. **Non-minimal states eliminated** (`scalar_fp_nonminimal_zero`):
+   At non-minimal s, the speaker prefers more informative messages,
+   so w(s) = 0 or w(s) < maxW. Since distinct truth sets ensure
+   maxW > 0 (every message has unique states), s gets H = 0.
 
-2. **Minimal states preserved**: If s is minimal among m-worlds, then at s,
-   no "stronger" alternative is true, so m is optimal. S_n(m|s) = 1/|optimal|,
-   and L_{n+1}(s|m) > 0 is maintained.
-
-3. **Convergence**: By well-foundedness of < on finite sets, this stabilizes.
-   The fixed point support equals the set of minimal m-worlds = exhMW.
-
-**Key Lemma**: For any s in support(L_∞(·|m)):
-- m(s) must be true (literal content)
-- No s' < s can have m(s') true (minimality)
-This is exactly exhMW(ALT, m).
+2. **Minimal states preserved** (`scalar_fp_minimal_weight`):
+   At minimal s, m is (tied for) most informative. With distinct truth
+   sets, the speaker uses m, giving w(s) = maxW.
 -/
 theorem ibr_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H) (m : G.Message) :
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (_hScalar : isScalarGame G)
+    (_hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m : G.Message) :
     (∀ s, H.respond m s > 0 ↔ exhMW (toAlternatives G) (prejacent G m) s) := by
   intro s
   constructor
   · -- Forward: H.respond m s > 0 → exhMW s
     intro hPos
-    -- At a fixed point, H.respond m s = (hearerUpdate G (speakerUpdate G H)).respond m s
-    -- If H.respond m s > 0, then the numerator S(m|s) * prior(s) > 0
-    -- This means S(m|s) > 0, i.e., m is an optimal message at s for speaker
-    -- S(m|s) > 0 means m maximizes H.respond m' s among true messages at s
-    -- Since H.respond m s > 0, s must be in the support
-    -- For s to be in support, m must be true at s (prejacent)
-    -- And no strictly more informative message should dominate
     constructor
     · -- prejacent: m is true at s
-      -- If m were false at s, then S(m|s) = 0 (speaker only uses true messages)
-      -- So numerator = 0, and H.respond m s = 0, contradicting hPos
       by_contra hNotTrue
-      -- Convert ¬(meaning m s = true) to meaning m s = false
       simp only [prejacent] at hNotTrue
       have hFalse : G.meaning m s = false := by
         cases hm : G.meaning m s
         · rfl
         · exact absurd hm hNotTrue
-      -- At the fixed point, H.respond m s = hearerBR(bestResponse(H)).respond m s
       have hFPms := hFP m s
       simp only [ibrStep, speakerUpdate] at hFPms
       have hSzero := SpeakerStrategy.bestResponse_false_zero G H s m hFalse
       rw [hFPms] at hPos
-      -- Unfold hearerBR to expose the if/else structure
       simp only [hearerBR] at hPos
       split_ifs at hPos with hmaxW hwm
-      · -- maxW == 0 → L0 fallback → 0 for false message
-        simp only [L0, HearerStrategy.literal, hFalse, ↓reduceIte] at hPos
-        exact absurd hPos (lt_irrefl 0)
-      · -- w(s) == maxW: but w(s) = 0 (hSzero) and maxW ≠ 0, contradiction
-        rw [beq_iff_eq] at hmaxW hwm
+      · simp only [L0, HearerStrategy.literal]  at hPos
+        rw [show (G.meaning m s) = false from hFalse] at hPos
+        simp at hPos
+      · rw [beq_iff_eq] at hmaxW hwm
         simp only [hSzero, zero_mul] at hwm
         exact absurd hwm.symm hmaxW
-      · -- result is 0, contradicts hPos > 0
-        exact absurd hPos (lt_irrefl 0)
+      · exact absurd hPos (lt_irrefl 0)
     · -- minimality: no s' <_ALT s with m true at s'
-      intro ⟨s', hs'_true, hs'_lt⟩
-      -- If there were such s', then at s', a more informative message m' is available
-      -- (by definition of <_ALT, there's an alternative true at s' but not s)
-      -- The speaker at s' would prefer m' over m
-      -- This would reduce H.respond m s through the Bayes update
-      -- At a fixed point, this propagates to eliminate s from support
-      sorry
+      intro hNonMin
+      have hm_true : G.meaning m s = true := by
+        by_contra hf
+        have hFalse : G.meaning m s = false := by
+          cases hm : G.meaning m s
+          · rfl
+          · exact absurd hm hf
+        have hFPms := hFP m s
+        simp only [ibrStep, speakerUpdate] at hFPms
+        have hSz := SpeakerStrategy.bestResponse_false_zero G H s m hFalse
+        rw [hFPms] at hPos
+        simp only [hearerBR] at hPos
+        split_ifs at hPos with hmW hwm
+        · simp only [L0, HearerStrategy.literal, hFalse] at hPos; simp at hPos
+        · rw [beq_iff_eq] at hmW hwm; simp [hSz, zero_mul] at hwm
+          exact absurd hwm.symm hmW
+        · exact absurd hPos (lt_irrefl 0)
+      have hzero := scalar_fp_nonminimal_zero G H hFP hPriorPos hFlatPrior _hScalar _hDistinct m s
+        hm_true hNonMin
+      linarith
   · -- Backward: exhMW s → H.respond m s > 0
     intro ⟨hs_true, hs_min⟩
-    -- s is minimal among m-worlds
-    -- At a fixed point, minimal states are preserved
-    -- The speaker uses m at s (it's among the best options)
-    -- The Bayes update maintains positive probability
-    sorry
+    have hTrue : G.meaning m s = true := hs_true
+    -- At the FP: H(m,s) = hearerBR(bestResponse(H))(m,s).
+    have hFPms := hFP m s
+    rw [hFPms]
+    simp only [ibrStep, speakerUpdate, hearerBR]
+    split_ifs with hmaxW hwm
+    · -- maxW = 0: L0 fallback. m true at s, so L0 gives 1/|trueStates| > 0.
+      simp only [L0, HearerStrategy.literal]
+      rw [hTrue]; simp only [↓reduceIte]
+      have hcard : (G.trueStates m).card > 0 := Finset.card_pos.mpr
+        ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hTrue⟩⟩
+      split_ifs with h
+      · omega
+      · exact div_pos one_pos (Nat.cast_pos.mpr (by omega))
+    · -- w(s) = maxW: s is in the argmax. H = 1/|argmax| > 0.
+      exact div_pos one_pos (Nat.cast_pos.mpr (Finset.card_pos.mpr
+        ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hwm⟩⟩))
+    · -- w(s) ≠ maxW and maxW ≠ 0: impossible for minimal s.
+      exfalso
+      have hweight := scalar_fp_minimal_weight G H hFP hPriorPos hFlatPrior _hScalar _hDistinct m s
+        hTrue hs_min
+      cases hweight with
+      | inl h => exact absurd h hmaxW
+      | inr h => exact absurd h hwm
 
 /-- At the fixed point, IBR excludes non-minimal states.
 
@@ -1566,20 +1703,19 @@ L2 alone doesn't necessarily exclude all non-minimal states; the full
 elimination happens through iteration to the fixed point.
 -/
 theorem ibr_fp_excludes_nonminimal (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H) (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ s, G.prior s > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
     (m : G.Message) (s : G.State)
     (_hs : G.meaning m s = true)
     (hNonMin : ∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
     H.respond m s = 0 := by
-  -- s is not in exhMW because it's non-minimal
   have hNotExh : ¬exhMW (toAlternatives G) (prejacent G m) s := λ hexh => hexh.2 hNonMin
-  -- By ibr_equals_exhMW, H.respond m s > 0 ↔ exhMW s
-  -- Since ¬exhMW s, we have ¬(H.respond m s > 0)
   have hNotPos : ¬(H.respond m s > 0) :=
-    λ hpos => hNotExh ((ibr_equals_exhMW G H hFP m s).mp hpos)
-  -- At a fixed point with non-negative priors, H.respond ≥ 0
-  have hNonneg := fp_respond_nonneg G H hFP hPriorNonneg m s
-  -- ¬(x > 0) ∧ x ≥ 0 → x = 0
+    λ hpos => hNotExh ((ibr_equals_exhMW G H hFP hPriorPos hFlatPrior hScalar hDistinct m s).mp hpos)
+  have hNonneg := fp_respond_nonneg G H hFP (fun s => le_of_lt (hPriorPos s)) m s
   simp only [not_lt] at hNotPos
   linarith
 
@@ -1589,15 +1725,17 @@ If s is minimal among m-worlds (no s' < s with m(s')), then the fixed point
 listener assigns positive probability to s given m.
 -/
 theorem ibr_fp_keeps_minimal (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H) (m : G.Message) (s : G.State)
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m : G.Message) (s : G.State)
     (hs : G.meaning m s = true)
-    (hMin : ¬∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s)
-    (_hPriorPos : G.prior s > 0) :
+    (hMin : ¬∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
     H.respond m s > 0 := by
-  -- s is in exhMW because it's minimal
   have hExh : exhMW (toAlternatives G) (prejacent G m) s := ⟨hs, hMin⟩
-  -- By ibr_equals_exhMW, H.respond m s > 0 ↔ exhMW s
-  exact (ibr_equals_exhMW G H hFP m s).mpr hExh
+  exact (ibr_equals_exhMW G H hFP hPriorPos hFlatPrior hScalar hDistinct m s).mpr hExh
 
 -- SECTION 6: RSA as "Soft" IBR
 
@@ -1760,6 +1898,96 @@ def scalarGame : InterpGame where
 #guard (L0 scalarGame).respond .all .all == 1
 #guard (L0 scalarGame).respond .all .someNotAll == 0
 
+/-- The scalar implicature game IS a scalar game: truth sets are nested. -/
+theorem scalarGame_is_scalar : isScalarGame scalarGame := by
+  intro m₁ m₂; cases m₁ <;> cases m₂ <;>
+    simp [scalarGame, InterpGame.trueStates, Finset.subset_iff, Finset.mem_filter]
+
+/-- The scalar implicature game has distinct truth sets: no two messages have
+    the same set of true states. -/
+theorem scalarGame_distinct :
+    ∀ m₁ m₂ : scalarGame.Message, scalarGame.trueStates m₁ = scalarGame.trueStates m₂ → m₁ = m₂ := by
+  intro m₁ m₂; cases m₁ <;> cases m₂ <;> simp [scalarGame, InterpGame.trueStates] <;> decide
+
+-- 7.1: Counterexample for non-scalar games
+
+/-!
+## Counterexample: `ibr_equals_exhMW` fails for non-scalar games
+
+States: {a, b, c}. Messages: {m, p, q, r}.
+- m: true at a, b, c
+- p: true at a, b (not c)
+- q: true at a (not b, c)
+- r: true at c (not a, b)
+
+trueMessages: a={m,p,q}, b={m,p}, c={m,r}.
+Only b <_ALT a (since {m,p} ⊂ {m,p,q}). a and c, b and c are incomparable.
+
+At the FP with flat prior 1/3:
+- q and r each have a unique true state, so H(q,a) = 1, H(r,c) = 1.
+- opt(a) = {q}, opt(c) = {r}, opt(b) = {p} (each state uses its most informative message).
+- Message m is never optimal at any state → maxW_m = 0 → L0 fallback.
+- L0 gives H(m,s) = 1/3 for ALL m-true states, including a (non-minimal).
+
+Result: H(m,a) = 1/3 > 0 but exhMW(m,a) = false.
+The `isScalarGame` hypothesis prevents this by ensuring no message is dominated.
+-/
+
+private inductive NSState | a | b | c deriving DecidableEq, Fintype
+private inductive NSMsg | m | p | q | r deriving DecidableEq, Fintype
+
+private def nsGame : InterpGame where
+  State := NSState
+  Message := NSMsg
+  meaning := fun msg st => match msg, st with
+    | .m, _ => true | .p, .a => true | .p, .b => true | .q, .a => true | .r, .c => true
+    | _, _ => false
+  prior := fun _ => 1 / 3
+
+/-- The non-scalar game is NOT a scalar game: trueStates(q) = {a} and trueStates(r) = {c}
+    are incomparable. -/
+theorem nsGame_not_scalar : ¬isScalarGame nsGame := by
+  intro h
+  have hqr := h .q .r
+  -- trueStates(q) = {a}, trueStates(r) = {c}: incomparable
+  rcases hqr with hsub | hsub
+  · have : NSState.a ∈ nsGame.trueStates .q :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩
+    have hmem := hsub this
+    simp only [nsGame, InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ,
+      true_and] at hmem
+    exact absurd hmem Bool.noConfusion
+  · have : NSState.c ∈ nsGame.trueStates .r :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩
+    have hmem := hsub this
+    simp only [nsGame, InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ,
+      true_and] at hmem
+    exact absurd hmem Bool.noConfusion
+
+private def nsFPHearer : HearerStrategy nsGame where
+  respond := fun msg st => match msg, st with
+    | .m, _ => 1 / 3  -- L0 fallback
+    | .p, .b => 1 | .q, .a => 1 | .r, .c => 1 | _, _ => 0
+
+private theorem nsFP_is_fp : isIBRFixedPoint nsGame nsFPHearer := by
+  intro msg st
+  cases msg <;> cases st <;> native_decide
+
+/-- At the FP of the non-scalar game, H(m,a) > 0 but a is non-minimal for m.
+    This shows `ibr_equals_exhMW` is false without the `isScalarGame` hypothesis. -/
+theorem nonScalarCounterexample :
+    nsFPHearer.respond .m .a > 0 ∧
+    ¬exhMW (toAlternatives nsGame) (prejacent nsGame .m) .a := by
+  refine ⟨by simp [nsFPHearer], fun ⟨_, hmin⟩ => hmin ⟨.b, ?_, ?_⟩⟩
+  · exact rfl
+  · constructor
+    · intro alt halt htrue
+      simp only [toAlternatives, Set.mem_setOf_eq] at halt
+      obtain ⟨msg, hmsg⟩ := halt; subst hmsg
+      cases msg <;> simp_all [nsGame]
+    · intro hle
+      exact absurd (hle (fun s => nsGame.meaning .q s = true) ⟨.q, rfl⟩ rfl) (by decide)
+
 /-!
 ## Free Choice Disjunction (Franke Section 3.3)
 
@@ -1860,18 +2088,20 @@ At the fixed point, the IBR listener's interpretation of message m is
 exactly the exhaustive interpretation exhMW(ALT, m).
 -/
 theorem ibr_fp_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H) (m : G.Message)
-    (_hGame : ∀ s₁ s₂ : G.State, (∀ m', G.meaning m' s₁ = G.meaning m' s₂) → s₁ = s₂) :
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m : G.Message) :
     (∀ s, H.respond m s > 0 ↔ exhMW (toAlternatives G) (prejacent G m) s) :=
-  -- This is just ibr_equals_exhMW; the homogeneity condition is not needed
-  -- once we have the full fixed point characterization.
-  ibr_equals_exhMW G H hFP m
+  ibr_equals_exhMW G H hFP hPriorPos hFlatPrior hScalar hDistinct m
 
 --8.2: ExhMW to ExhIE (Spector's Theorem 9)
 
 /-- When alternatives are closed under conjunction, ExhMW = ExhIE.
 
-This is Spector's Theorem 9, already proved in Exhaustivity/Basic.lean.
+This is Spector's Theorem 9, already proved in Exhaustification/Operators.lean.
 We re-export it here for the chain. -/
 theorem exhMW_eq_exhIE_under_closure (G : InterpGame) (m : G.Message)
     (hClosed : closedUnderConj (toAlternatives G)) :
@@ -1891,13 +2121,16 @@ This combines:
 
 Combined: Under closure, IBR = exhMW = exhIE -/
 theorem ibr_fp_equals_exhIE (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H) (m : G.Message)
-    (hGame : ∀ s₁ s₂ : G.State, (∀ m', G.meaning m' s₁ = G.meaning m' s₂) → s₁ = s₂)
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m : G.Message)
     (hClosed : closedUnderConj (toAlternatives G)) :
     (∀ s, H.respond m s > 0 ↔ exhIE (toAlternatives G) (prejacent G m) s) := by
   intro s
-  -- Chain: IBR = exhMW = exhIE
-  have h1 := ibr_fp_equals_exhMW G H hFP m hGame s
+  have h1 := ibr_fp_equals_exhMW G H hFP hPriorPos hFlatPrior hScalar hDistinct m s
   have h2 := exhMW_eq_exhIE_under_closure G m hClosed s
   exact ⟨λ h => h2.1 (h1.1 h), λ h => h1.2 (h2.2 h)⟩
 

@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Discourse.QUD
-import Linglib.Theories.Semantics.Exhaustification.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!

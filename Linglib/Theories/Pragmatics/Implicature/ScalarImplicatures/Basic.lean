@@ -24,7 +24,7 @@ Reference: @cite{geurts-2010}
 
 Scale semantics (SemanticScale, HurfordSemantic, SinghSemantic) and
 exhaustification predictions live in `Alternatives/Lexical.lean` and
-`Exhaustification/SemanticScales.lean`.
+`Exhaustification/ScalePredictions.lean`.
 -/
 
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
