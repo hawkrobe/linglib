@@ -745,6 +745,7 @@ import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Phenomena.Ellipsis.VPEllipsis
 import Linglib.Phenomena.Ellipsis.NPEllipsis
 import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
+import Linglib.Phenomena.Ellipsis.Studies.BenzSalzmann2025
 import Linglib.Phenomena.Ellipsis.Studies.Saab2026
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
 import Linglib.Phenomena.Ellipsis.Studies.GinzburgCooper2004
@@ -1615,6 +1616,7 @@ import Linglib.Theories.Semantics.Alternatives.AlternativeSource
 import Linglib.Theories.Semantics.Alternatives.FoxKatzir2011
 import Linglib.Theories.Semantics.Alternatives.StructuralAlternatives
 import Linglib.Theories.Semantics.Alternatives.Symmetry
+import Linglib.Theories.Semantics.Alternatives.TrinhHaida2015
 import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Semantics.Exhaustification.Chierchia2004
