@@ -61,7 +61,7 @@ variable {World : Type*}
 Entailment: φ ⊆ ψ (Spector uses set-theoretic notation)
 "I also adopt the set-theoretic notation φ ⊆ ψ to mean that φ entails ψ."
 -/
-def entails (φ ψ : Prop' World) : Prop := ∀ w, φ w → ψ w
+abbrev entails (φ ψ : Prop' World) : Prop := φ ≤ ψ
 
 notation:50 φ " ⊆ₚ " ψ => entails φ ψ
 
