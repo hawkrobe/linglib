@@ -461,6 +461,259 @@ example : lower (m := toyModel) toyDomain₂ (lift john_sem) = some john_sem := 
 end ToyExamples
 
 -- ============================================================================
+-- The Type-Shifting Triangle (@cite{partee-1987} Figure 3)
+-- ============================================================================
+
+/-! ## The Full Commutativity Diagram
+
+Partee's type-shifting triangle connects three NP semantic types via
+six operations (three inverse pairs). The triangle **commutes**: any
+two paths between the same pair of types yield the same result.
+
+```
+           e
+          ╱ ╲
+    ident╱   ╲lift
+        ╱     ╲
+       ↓       ↓
+    ⟨e,t⟩ ⇄ ⟨⟨e,t⟩,t⟩
+        A →
+       ← BE
+```
+
+**Commutativity** (two faces):
+- `BE ∘ lift = ident`    (right face, `BE_lift_eq_ident`)
+- `A  ∘ ident = lift`    (left face, `A_ident_eq_lift`)
+
+**Retraction**: `BE ∘ A = id` on `⟨e,t⟩` (`BE_A_id`) — `A` is a section of `BE`.
+
+**Consequence**: All composite paths agree. The triangle is a commutative
+diagram in **Set**, with `A` and `BE` witnessing that the two embeddings
+`ident : e → ⟨e,t⟩` and `lift : e → ⟨⟨e,t⟩,t⟩` are "the same map" up to
+the A/BE retraction on their codomains.
+-/
+
+section TypeShiftingTriangle
+
+/-- **Left face of the triangle**: `A ∘ ident = lift`.
+
+    `A(ident(j))(P) = ∃x∈dom. [j=x] ∧ P(x) = P(j) = lift(j)(P)`.
+
+    Together with `BE_lift_eq_ident` (right face), this establishes
+    full commutativity of the type-shifting triangle. -/
+theorem A_ident_eq_lift (domain : List m.Entity) (j : m.interpTy .e)
+    (hj : j ∈ domain) :
+    A domain (ident j) = lift j := by
+  funext P; simp only [A, lift, ident]
+  exact any_decide_eq_apply domain j hj P
+
+/-- Full cycle e →lift ⟨⟨e,t⟩,t⟩ →BE ⟨e,t⟩ →A ⟨⟨e,t⟩,t⟩ = lift.
+
+    Going around the triangle through GQ-space returns to the same GQ. -/
+theorem A_BE_lift (domain : List m.Entity) (j : m.interpTy .e)
+    (hj : j ∈ domain) :
+    A domain (BE (lift j)) = lift j := by
+  rw [BE_lift_eq_ident]; exact A_ident_eq_lift domain j hj
+
+/-- Full cycle e →ident ⟨e,t⟩ →A ⟨⟨e,t⟩,t⟩ →BE ⟨e,t⟩ = ident.
+
+    Going around the triangle through predicate-space returns to
+    the same predicate. -/
+theorem BE_A_ident (domain : List m.Entity) (j : m.interpTy .e)
+    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
+    BE (A domain (ident j)) = ident j :=
+  BE_A_id domain (ident j) hcomplete
+
+/-- Partial path e →lift ⟨⟨e,t⟩,t⟩ →BE ⟨e,t⟩ →iota e = some.
+
+    The indirect route through GQ-space recovers the entity. -/
+theorem iota_BE_lift (domain : List m.Entity) (j : m.interpTy .e)
+    (hmem : j ∈ domain) (hnd : domain.Nodup) :
+    iota domain (BE (lift j)) = some j := by
+  rw [BE_lift_eq_ident]; exact iota_ident domain j hmem hnd
+
+/-- Partial path e →ident ⟨e,t⟩ →A ⟨⟨e,t⟩,t⟩ →lower e = some.
+
+    The indirect route through predicate-space recovers the entity. -/
+theorem lower_A_ident (domain : List m.Entity) (j : m.interpTy .e)
+    (hmem : j ∈ domain) (hnd : domain.Nodup) :
+    lower domain (A domain (ident j)) = some j := by
+  rw [A_ident_eq_lift domain j hmem]; exact lower_lift domain j hmem hnd
+
+/-- THE respects the triangle: `THE ∘ BE ∘ lift = some ∘ lift`.
+
+    Recovering the definite description from a type-raised proper name
+    via BE, then THE, yields the original type-raised individual. -/
+theorem THE_BE_lift (domain : List m.Entity) (j : m.interpTy .e)
+    (hmem : j ∈ domain) (hnd : domain.Nodup) :
+    THE domain (BE (lift j)) = some (lift j) := by
+  rw [BE_lift_eq_ident]; exact THE_ident domain j hmem hnd
+
+-- --------------------------------------------------------------------------
+-- Section/retraction structure via Mathlib
+-- --------------------------------------------------------------------------
+
+/-- `BE` is a left inverse of `A`: the section/retraction structure of the
+    type-shifting triangle, expressed using `Function.LeftInverse`.
+
+    This connects to Mathlib's function infrastructure, giving us
+    `Surjective BE` and `Injective (A domain)` for free. -/
+theorem BE_leftInverse_A (domain : List m.Entity)
+    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
+    Function.LeftInverse BE (A domain) :=
+  fun P => BE_A_id domain P hcomplete
+
+/-- `BE` is surjective: every predicate is the predicative content of some GQ.
+    Derived from `Function.LeftInverse.surjective`. -/
+theorem BE_surjective (domain : List m.Entity)
+    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
+    Function.Surjective (@BE m) :=
+  (BE_leftInverse_A domain hcomplete).surjective
+
+/-- `A` is injective: distinct predicates yield distinct GQs under
+    existential closure. Linguistically: different common nouns mean
+    different things as indefinites.
+    Derived from `Function.LeftInverse.injective`. -/
+theorem A_injective (domain : List m.Entity)
+    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
+    Function.Injective (A domain) :=
+  (BE_leftInverse_A domain hcomplete).injective
+
+end TypeShiftingTriangle
+
+-- ============================================================================
+-- Galois Coinsertion on Upward-Closed GQs
+-- ============================================================================
+
+/-! ## The A/BE Adjunction on Monotone GQs
+
+@cite{barwise-cooper-1981} observed that natural language determiners
+denote **upward-closed** (monotone) generalized quantifiers: if `Q(P)` and
+`P ⊆ P'`, then `Q(P')`. This constraint is exactly what makes `A` and `BE`
+form a `GaloisCoinsertion` — an adjunction where the upper adjoint (`BE`)
+retracts the lower adjoint (`A`).
+
+On the full Boolean algebra of all GQs, `A ⊣ BE` fails: for non-monotone Q
+(e.g., `λR. ¬R(a)`), `A(BE(Q)) ≤ Q` does not hold. But restricted to the
+sublattice of monotone GQs, the key inequality `A(BE(Q)) ≤ Q` holds because
+singleton predicates `{x} ≤ R` whenever `R(x)`, and monotonicity of `Q`
+lifts this to `Q({x}) ≤ Q(R)`.
+
+The `GaloisCoinsertion` gives us, via Mathlib:
+- `GaloisConnection`: `A(P) ≤ Q ↔ P ≤ BE(Q)` for monotone Q
+- `BE_up` is surjective on `UpwardGQ` and `A_up` is injective
+- `A_up` is strictly monotone
+-/
+
+section GaloisStructure
+
+-- Bridge instance: Ty.et is a `def` for (.e ⇒ .t), so interpTy (.e ⇒ .t)
+-- doesn't match interpTy Ty.et for type class synthesis.
+private instance (m : Model) : BooleanAlgebra (m.interpTy (.e ⇒ .t)) :=
+  show BooleanAlgebra (m.Entity → Bool) from inferInstance
+
+/-- Monotonicity of `List.any` with respect to pointwise `≤`. -/
+private lemma list_any_mono {α : Type*} {domain : List α} {f g : α → Bool}
+    (h : ∀ x, f x ≤ g x) : domain.any f ≤ domain.any g := by
+  induction domain with
+  | nil => exact le_refl _
+  | cons a tl ih => simp only [List.any_cons]; exact sup_le_sup (h a) ih
+
+/-- Upward-closed (monotone) generalized quantifiers — the
+    @cite{barwise-cooper-1981} constraint on natural language determiners.
+
+    `Q` is upward-closed when `Q(P)` and `P ≤ P'` imply `Q(P')`.
+    Equivalently, `Monotone Q` in the pointwise order on `⟨e,t⟩`. -/
+def UpwardGQ (m : Model) := { Q : m.interpTy Ty.ett // Monotone Q }
+
+instance : PartialOrder (UpwardGQ m) := Subtype.partialOrder _
+
+/-- `A(P)` is always upward-closed: if ∃x∈dom with P(x) ∧ R(x),
+    and R ≤ R', then ∃x∈dom with P(x) ∧ R'(x). -/
+theorem A_monotone_gq (domain : List m.Entity) (P : m.interpTy Ty.et) :
+    Monotone (A domain P) := by
+  intro R R' hRR'
+  show domain.any (fun x => P x && R x) ≤ domain.any (fun x => P x && R' x)
+  exact list_any_mono (fun x => inf_le_inf_left (P x) (hRR' x))
+
+/-- Lift `A` to the `UpwardGQ` subtype. -/
+def A_up (domain : List m.Entity) (P : m.interpTy Ty.et) : UpwardGQ m :=
+  ⟨A domain P, A_monotone_gq domain P⟩
+
+/-- Project `BE` from the `UpwardGQ` subtype. -/
+def BE_up (Q : UpwardGQ m) : m.interpTy Ty.et := BE Q.val
+
+/-- `A` is monotone as a map from predicates to GQs. -/
+theorem A_up_mono (domain : List m.Entity) : Monotone (A_up domain (m := m)) := by
+  intro P P' hPP'; show A domain P ≤ A domain P'; intro R
+  exact list_any_mono (fun x => inf_le_inf_right (R x) (hPP' x))
+
+/-- `BE` is monotone on `UpwardGQ`. -/
+theorem BE_up_mono : Monotone (BE_up (m := m)) := by
+  intro Q Q' hQQ'; show BE Q.val ≤ BE Q'.val; intro x
+  exact hQQ' (fun y => @decide (y = x) (m.decEq y x))
+
+/-- Singleton predicate `{x}` is below any `R` with `R(x) = true`. -/
+private lemma singleton_le_of_mem {x : m.Entity} {R : m.interpTy Ty.et}
+    (hRx : R x = true) :
+    (fun y => @decide (y = x) (m.decEq y x)) ≤ R := by
+  intro y
+  show @decide (y = x) (m.decEq y x) ≤ R y
+  by_cases h : y = x
+  · subst h; simp [hRx]
+  · have : @decide (y = x) (m.decEq y x) = false := by simp [h]
+    rw [this]; exact Bool.false_le _
+
+/-- **Key inequality**: `A(BE(Q)) ≤ Q` for upward-closed Q.
+
+    `A(BE(Q))(R) = ∃x∈dom. Q({x}) ∧ R(x)`. When `R(x)` holds,
+    `{x} ≤ R` in the pointwise order. By monotonicity of `Q`,
+    `Q({x}) ≤ Q(R)`, establishing the inequality.
+
+    This is precisely the condition that fails for non-monotone Q
+    (e.g., `Q = λR. ¬R(a)` where `Q({a}) = false` but `Q(∅) = true`). -/
+theorem A_BE_le_of_mono (domain : List m.Entity) (Q : UpwardGQ m) :
+    A_up domain (BE_up Q) ≤ Q := by
+  show A domain (BE Q.val) ≤ Q.val
+  intro R; simp only [A, BE]
+  cases h : domain.any (fun x =>
+    Q.val (fun y => @decide (y = x) (m.decEq y x)) && R x)
+  · exact Bool.false_le _
+  · rw [List.any_eq_true] at h
+    obtain ⟨x, _, hx⟩ := h
+    have hQx : Q.val (fun y => @decide (y = x) (m.decEq y x)) = true := by
+      revert hx; cases Q.val (fun y => @decide (y = x) (m.decEq y x)) <;> simp
+    have hRx : R x = true := by revert hx; cases R x <;> simp
+    exact le_trans (le_of_eq hQx.symm) (Q.property (singleton_le_of_mem hRx))
+
+/-- **Galois coinsertion**: `A` (existential closure) and `BE` (predicative
+    content) form a `GaloisCoinsertion` on the sublattice of upward-closed GQs.
+
+    This is the order-theoretic content of Partee's type-shifting triangle:
+    - `BE ∘ A = id` on predicates (the retraction)
+    - `A(BE(Q)) ≤ Q` for monotone Q (the counit inequality)
+
+    Linguistically: @cite{barwise-cooper-1981}'s constraint that natural
+    language determiners denote monotone GQs is **exactly** the condition
+    under which the A/BE pair forms an adjunction. -/
+def galoisCoinsertion (domain : List m.Entity)
+    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
+    GaloisCoinsertion (A_up domain (m := m)) BE_up :=
+  GaloisCoinsertion.monotoneIntro
+    BE_up_mono
+    (A_up_mono domain)
+    (A_BE_le_of_mono domain)
+    (fun P => BE_A_id domain P hcomplete)
+
+/-- The Galois connection: `A(P) ≤ Q ↔ P ≤ BE(Q)` for monotone Q. -/
+theorem gc_A_BE (domain : List m.Entity)
+    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
+    GaloisConnection (A_up domain (m := m)) BE_up :=
+  (galoisCoinsertion domain hcomplete).gc
+
+end GaloisStructure
+
+-- ============================================================================
 -- Numeral type-shifters (@cite{snyder-2026})
 -- ============================================================================
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.242] - 2026-03-14
+
+### Changed
+- **BenzSalzmann2025.lean**: Audit and improve formalization — remove unused HeadMovement import; add missing examples (ex. 27 contrast condition, ex. 28a all-or-nothing); add `no_individual_prenominal_deletion` and `no_individual_numeral_deletion` impossibility theorems; add `gender_voice_parallel` theorem connecting nominal gender mismatches to clausal voice mismatches via categorizer externality; fix `ePosition` encoding for ungrammatical examples; fix contrast condition theorem names and statements; fix `n_stranding_parallels_v_stranding` to use `isInDeletionDomain` consistently
+- **references.bib**: Add sternefeld-2006
+
 ## [0.229.241] - 2026-03-14
 
 ### Changed
