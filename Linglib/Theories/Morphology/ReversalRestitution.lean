@@ -453,24 +453,24 @@ def unSem (stateAt : StateFunction Entity State Time)
     1. The base verb P holds of *e'* and *x*
     2. The prior event temporally precedes the re-event: τ(e') ≪ τ(e)
     3. Result-state equivalence: res(e)(x) = res(e')(x)
-    4. No blocking threshold: there is no threshold state in T_e that,
-       if it were in O_e', would make the verb undefined (eq. 68 condition) -/
+
+    Note: re- blocking for specific verb classes (destroy, eat) is handled
+    at the lexical level by `ForceTransmissionClass.reCompatible` and
+    `LevinClass.reCompatible`, not by the compositional presupposition.
+    The compositional layer captures structural temporal/state conditions;
+    the Boolean layer captures lexical acceptability. -/
 def rePresupposition (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
     (x : Entity) (e : Ev Time) : Prop :=
   ∃ e' : Ev Time,
     vro.verb x e' ∧
     (Ev.τ e').precedes (Ev.τ e) ∧
-    resState stateAt e x = resState stateAt e' x ∧
-    -- No blocking threshold: no threshold of the re-event
-    -- exists in the base event's outcome set that would block restitution
-    ¬∃ k' ∈ vro.thresholds, k' ∈ vro.outcomes →
-      vro.verb x e → False
+    resState stateAt e x = resState stateAt e' x
 
 /-- Full semantics of restitutive *re-* (@cite{bhadra-2024} eq. 68).
 
     ⟦re-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ τ(e') ≪ τ(e) ∧
-      res(e)(x) = res(e')(x) ∧ no blocking threshold] ∧ P(e)(x) -/
+      res(e)(x) = res(e')(x)] ∧ P(e)(x) -/
 def reSem (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
     (x : Entity) (e : Ev Time) : Prop :=
@@ -513,14 +513,5 @@ theorem empty_blocks_un
   obtain ⟨s₁, _, h1, _, _⟩ := h_multi
   rw [h_empty] at h1
   exact h1
-
-/-- Multi-membered outcome sets are compatible with *un-* (necessary condition
-    is satisfiable). Given appropriate boundary state equivalences and temporal
-    ordering, `unSem` can hold. -/
-theorem multi_allows_un
-    (vro : VerbRootVRO Entity State Time)
-    (h_multi : vro.outcomes.multiMembered) :
-    vro.outcomes.multiMembered :=
-  h_multi
 
 end CompositionalVRO
