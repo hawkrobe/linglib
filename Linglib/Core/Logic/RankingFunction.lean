@@ -386,34 +386,114 @@ def satisfies_C4 [Fintype W] [DecidableEq W] (κ : RankingFunction W) : Prop :=
     (fun w => ¬ψ w) ∉ ((κ.conditionα ψ hψ hNψ β).conditionα φ hφ
       (by obtain ⟨w, hw⟩ := hNφ; exact ⟨w, hw⟩) α).beliefSet
 
+/-- `rankProp` is ≤ any satisfying world's rank. -/
+private theorem rankProp_le_rank [Fintype W]
+    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
+    (hsat : ∃ w, φ w) (w : W) (hw : φ w) :
+    κ.rankProp φ hsat ≤ κ.rank w := by
+  unfold rankProp
+  exact Finset.inf'_le κ.rank (Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩)
+
+/-- If φ ⊆ ψ, then `rankProp ψ ≤ rankProp φ` (min over superset ≤ min over subset). -/
+private theorem rankProp_anti [Fintype W]
+    (κ : RankingFunction W) (φ ψ : W → Prop)
+    [DecidablePred φ] [DecidablePred ψ]
+    (hφ : ∃ w, φ w) (hψ : ∃ w, ψ w)
+    (himp : ∀ w, φ w → ψ w) :
+    κ.rankProp ψ hψ ≤ κ.rankProp φ hφ := by
+  unfold rankProp
+  apply Finset.le_inf'
+  intro v hv
+  have hφv := (Finset.mem_filter.mp hv).2
+  exact Finset.inf'_le κ.rank (Finset.mem_filter.mpr ⟨Finset.mem_univ v, himp v hφv⟩)
+
+set_option maxHeartbeats 800000 in
 /-- **Theorem**: Ranking conditioning satisfies C1.
 
     When φ → ψ, conditioning κ on ψ shifts all ψ-worlds (including
     all φ-worlds) down by κ(ψ). Then conditioning on φ shifts the
     φ-worlds down by the new κ_ψ(φ) = κ(φ) - κ(ψ). Net shift for
     φ-worlds: κ(w) - κ(ψ) - (κ(φ) - κ(ψ)) = κ(w) - κ(φ), which
-    equals direct conditioning on φ.
-
-    TODO: The arithmetic involves nested Finset.inf' and ℕ subtraction,
-    requiring careful handling of the relationship between rankProp
-    computations across nested conditionings. -/
+    equals direct conditioning on φ. -/
 theorem ranking_satisfies_C1 [Fintype W] [DecidableEq W]
     (κ : RankingFunction W) : κ.satisfies_C1 := by
-  sorry
+  intro φ ψ _ _ hφ hNφ hψ hNψ himp α β w hφw
+  have hψw : ψ w := himp w hφw
+  set κ' := κ.conditionα ψ hψ hNψ β
+  have h_κ'_at_φ : ∀ v, φ v → κ'.rank v = κ.rank v - κ.rankProp ψ hψ := by
+    intro v hφv; simp only [κ', conditionα, if_pos (himp v hφv)]
+  have h_κ'_rankProp : κ'.rankProp φ hφ = κ.rankProp φ hφ - κ.rankProp ψ hψ := by
+    apply Nat.le_antisymm
+    · have hne : (Finset.univ.filter fun w => φ w).Nonempty := by
+        obtain ⟨w, hw⟩ := hφ; exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩⟩
+      obtain ⟨v₀, hv₀_mem, hv₀_eq⟩ := Finset.exists_mem_eq_inf' hne κ.rank
+      have hφv₀ := (Finset.mem_filter.mp hv₀_mem).2
+      calc κ'.rankProp φ hφ
+          ≤ κ'.rank v₀ := rankProp_le_rank κ' φ hφ v₀ hφv₀
+        _ = κ.rank v₀ - κ.rankProp ψ hψ := h_κ'_at_φ v₀ hφv₀
+        _ = κ.rankProp φ hφ - κ.rankProp ψ hψ := by
+            congr 1; unfold rankProp; exact hv₀_eq.symm
+    · unfold rankProp
+      apply Finset.le_inf'
+      intro v hv
+      rw [h_κ'_at_φ v (Finset.mem_filter.mp hv).2]
+      exact Nat.sub_le_sub_right (rankProp_le_rank κ φ hφ v (Finset.mem_filter.mp hv).2) _
+  have h_lhs : (κ'.conditionα φ hφ (by obtain ⟨w, hw⟩ := hNφ; exact ⟨w, hw⟩) α).rank w =
+      κ'.rank w - κ'.rankProp φ hφ := by
+    simp only [conditionα, if_pos hφw]
+  have h_rhs : (κ.conditionα φ hφ hNφ α).rank w = κ.rank w - κ.rankProp φ hφ := by
+    simp only [conditionα, if_pos hφw]
+  rw [h_lhs, h_rhs, h_κ'_at_φ w hφw, h_κ'_rankProp]
+  have h1 : κ.rankProp ψ hψ ≤ κ.rankProp φ hφ := rankProp_anti κ φ ψ hφ hψ himp
+  have h2 : κ.rankProp φ hφ ≤ κ.rank w := rankProp_le_rank κ φ hφ w hφw
+  omega
 
+set_option maxHeartbeats 800000 in
 /-- **Theorem**: Ranking conditioning satisfies C2.
 
     When φ and ψ are disjoint, φ-worlds are ¬ψ-worlds. After
     conditioning on ψ with firmness β, φ-worlds are shifted up by
     β + (A-part relative to ¬ψ). Subsequent conditioning on φ
     normalizes away this shift: the relative ordering among
-    φ-worlds depends only on their original ranks.
-
-    TODO: Requires showing that the β-dependent shift cancels in the
-    double-conditioning arithmetic. -/
+    φ-worlds depends only on their original ranks. -/
 theorem ranking_satisfies_C2 [Fintype W] [DecidableEq W]
     (κ : RankingFunction W) : κ.satisfies_C2 := by
-  sorry
+  intro φ ψ _ _ hφ hNφ hψ hNψ hdisj α β w hφw
+  set κ' := κ.conditionα ψ hψ hNψ β
+  have h_κ'_at_φ : ∀ v, φ v →
+      κ'.rank v = β + (κ.rank v - κ.rankProp (fun w => ¬ψ w) hNψ) := by
+    intro v hφv; simp only [κ', conditionα, if_neg (hdisj v hφv)]
+  have h_κ'_rankProp : κ'.rankProp φ hφ =
+      β + (κ.rankProp φ hφ - κ.rankProp (fun w => ¬ψ w) hNψ) := by
+    apply Nat.le_antisymm
+    · have hne : (Finset.univ.filter fun w => φ w).Nonempty := by
+        obtain ⟨w, hw⟩ := hφ; exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩⟩
+      obtain ⟨v₀, hv₀_mem, hv₀_eq⟩ := Finset.exists_mem_eq_inf' hne κ.rank
+      have hφv₀ := (Finset.mem_filter.mp hv₀_mem).2
+      calc κ'.rankProp φ hφ
+          ≤ κ'.rank v₀ := rankProp_le_rank κ' φ hφ v₀ hφv₀
+        _ = β + (κ.rank v₀ - κ.rankProp (fun w => ¬ψ w) hNψ) := h_κ'_at_φ v₀ hφv₀
+        _ = β + (κ.rankProp φ hφ - κ.rankProp (fun w => ¬ψ w) hNψ) := by
+            congr 1; congr 1; unfold rankProp; exact hv₀_eq.symm
+    · unfold rankProp
+      apply Finset.le_inf'
+      intro v hv
+      rw [h_κ'_at_φ v (Finset.mem_filter.mp hv).2]
+      exact Nat.add_le_add_left
+        (Nat.sub_le_sub_right (rankProp_le_rank κ φ hφ v (Finset.mem_filter.mp hv).2) _) _
+  -- Both conditionα pick if-true for φ w. Show the rank expressions are equal.
+  suffices κ'.rank w - κ'.rankProp φ hφ = κ.rank w - κ.rankProp φ hφ by
+    show (κ'.conditionα φ hφ _ α).rank w = (κ.conditionα φ hφ hNφ α).rank w
+    simp only [conditionα, if_pos hφw]; exact this
+  have h1 := h_κ'_at_φ w hφw
+  have h2 := h_κ'_rankProp
+  -- h1: κ'.rank w = β + (κ.rank w - rp(¬ψ))
+  -- h2: κ'.rankProp φ = β + (rp(φ) - rp(¬ψ))
+  rw [h1, h2]
+  have h3 : κ.rankProp φ hφ ≤ κ.rank w := rankProp_le_rank κ φ hφ w hφw
+  have h4 : κ.rankProp (fun w => ¬ψ w) hNψ ≤ κ.rankProp φ hφ :=
+    rankProp_anti κ φ (fun w => ¬ψ w) hφ hNψ hdisj
+  omega
 
 /-- **Theorem**: Ranking conditioning satisfies C3.
 

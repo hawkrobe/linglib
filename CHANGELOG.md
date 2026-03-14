@@ -1,5 +1,49 @@
 # Changelog
 
+## [0.229.215] - 2026-03-13
+
+### Fixed
+- **RankingFunction.lean**: Close `ranking_satisfies_C1` and `ranking_satisfies_C2` sorrys — Darwiche-Pearl iterated revision postulates C1 (φ→ψ entailment) and C2 (φ⊥ψ disjointness); add `rankProp_le_rank` and `rankProp_anti` helper lemmas
+
+## [0.229.214] - 2026-03-13
+
+### Added
+- **Theories/Semantics/Composition/Applicative.lean**: New theory file extracting generic applicative functor infrastructure from Charlow 2018 — Reader (4 laws, all `rfl`), composed Reader×Reader (4 laws including previously missing Composition law, all `rfl`), variable-free semantics (pronoun as `id`, reflexive/independent readings), Set applicative (4 laws with `Prop`-valued sets), Continuation applicative bridge to `Core/Continuation.lean`, typed assignment family `Gᵣ` for paycheck pronouns
+- **Charlow2018.lean bridge theorems**: `constDenot_is_readerPure`, `applyG_is_readerAp` connecting Montague `DenotG` infrastructure to generic applicative operations
+
+### Changed
+- **Charlow2018.lean refactored**: Study file now imports `Composition/Applicative.lean` and uses its definitions — removed ~100 lines of duplicated definitions (composedPure/Ap, vfPronoun, composed applicative laws, VF examples)
+- **Binding.lean cleanup**: Removed duplicate `Cont'` type alias + monad instance + `contAsYoneda` (~15 lines) — `Core/Continuation.Cont` is the single continuation type
+
+## [0.229.213] - 2026-03-13
+
+### Added
+- **Fragments/Italian/NumberGender.lean**: Italian -a plural gender alternation (*braccio* m.sg → *braccia* f.pl) — `PluralClass` (aPlural vs regular), `numberGenderPipeline` composing PluralClass → NumberPosition → NominalPosition → GLH, 9 -a plural nouns (6 body parts + 3 measure), 4 regular nouns for contrast, `gender_change_tracks_glh` verified over full inventory via `native_decide`
+- **Adamson2024 §8 (Italian §5.1)**: Bridge Italian Fragment to GLH prediction about number position — `italian_fragment_bridge` verifies that gender changes track number position across the inventory; `italian_body_part_dominance` connects to cross-linguistic body-part convergence (Teop, Jarawara, Yanyuwa, Italian)
+
+## [0.229.212] - 2026-03-13
+
+### Fixed
+- **JinKoenig2021 hallucinated examples**: Remove fabricated Januubi FEAR example (`fearExample`) and ALMOST example (`almostExample`) — neither sentence appears in the paper. Replace with paper's actual ex. 23 (BARELY, *b-il-guwah*). Remove fabricated Zarma-Sonrai FEAR example (`fearExample`) — no glossed FEAR sentence in the paper
+- **JinKoenig2021 trivial theorem**: Delete `impossible_contains_negation` which proved `x = x`; the meaningful `not_impossible_activates_p` (¬□¬p → ◇p) remains
+- **Zarma-Sonrai docstring**: Fix "MORE THAN" listed under "Notable Absences" when it IS attested
+
+### Changed
+- **`table6_complete` → `table6_one_per_subclass`**: Rename to reflect that only 14 of ~25 Table 6 rows are encoded (one representative per TriggerSubclass)
+- **EN survey data → `Negation/Typology.lean`**: Move `ENSurveyResult` (722/74/37) from JinKoenig2021.lean to the shared typology data file; JinKoenig2021 re-exports as `survey`; remove duplicate from `TemporalConnectives/NegationData.lean`
+- **Stipulative Bool constants → typed enums**: Replace `regretBlockedByModalRestriction : Bool := true` (Januubi) and `withoutAnalytic : Bool := true` (ZS) with typed `ENBlockingReason` inductives (`.modalRestriction`, `.npOnlyComplement`, `.analyticNegation`)
+
+## [0.229.211] - 2026-03-13
+
+### Added
+- **`CatHead.iPoss` smart constructor** (Categorizer.lean): iPossessable n-heads get `selectsD := true` by construction — the bug where Jarawara used `n_plain` (selectsD = false) for iPossessable nouns is now impossible to repeat. All three iPossessable n-heads (`teopBodyPartN`, `jarawaraIPossN`, `inheritedGenderN`) now use `.iPoss`
+- **Regression test** `ipossessable_n_heads_have_selectsD`: quantified over all iPossessable n-heads, verifies selectsD = true
+
+### Changed
+- **Conjunction-as-proof audit**: Delete three `*_argumentation_chain` theorems and `morphosyntax_semantics_correspondence` that were conjunctions of independent `rfl` facts masquerading as causal chains. Replace with genuine pipeline functions (`teopPFDerive`, `canTakePossessorSem`, `jarawaraPFDerive`) that compose stages, plus quantified correlation theorems (`pf_semantic_correlation`)
+- **Jarawara iPossessable n-head bug fix**: Define `jarawaraIPossN` via `CatHead.iPoss` — iPossessable nouns DO license iPossessors via {D}. Was incorrectly using `CatHead.n_plain` (selectsD = false). The feminine gender reflects the absence of a gender feature, not the absence of {D}
+- **Jarawara PF pipeline**: Add `jarawaraPFDerive` (possessor → impoverishment → manoForm) with verification theorems; `jarawara_ipossessable_is_relational` showing iPossessable n → relational semantics (π)
+
 ## [0.229.210] - 2026-03-13
 
 ### Changed
