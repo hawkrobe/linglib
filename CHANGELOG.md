@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.229.221] - 2026-03-13
+
+### Added
+- **EventStructure.lean**: `EventType` (process/stateChange) and `CausationType` (internal/external) — the process vs state-change distinction crosscuts Vendler classes; internal/external causation is a per-verb root property governing transitivization
+- **Fragments/Mayan/Yukatek/VerbClasses.lean**: Yukatek Maya fragment — 5 verb stem classes (active/inactive/inchoative/positional/transitive active), 4 status categories with aspect-mood semantics, aspect-governed argument marking split (completive→ergative, incompletive→accusative), 14 representative verbs with causation type
+- **Bohnemeyer2004.lean**: Study file formalizing split intransitivity in Yukatek Maya — linking-by-viewpoint derives the ergative/accusative split from perfective/imperfective aspect; transitivization type (applicative *-t* vs causative *-s*) predicted by internal/external causation; degree achievements as counterevidence to aspect-based linking
+- **references.bib**: Add `kraemer-wunderlich-1999`, `lucy-1994`, `smith-1978`; update `bohnemeyer-2004` sources
+
+## [0.229.220] - 2026-03-13
+
+### Added
+- **ShapeDimension**: New enum (oneD/twoD/threeD) in `Core/Lexical/NounCategorization.lean` decomposing shape classifiers by dimensionality (Downing 1996 Ch. 5, Allan 1977)
+- **Japanese/Classifiers.lean**: Expand from 9 to 20 classifiers — add mei (名 honorific), ko (個 3D), sao (竿 pole), ken (軒 building), ki (機 aircraft), soku (足 footwear), tsuu (通 letters), furi (振 swords), zen (膳 chopsticks), kyaku (脚 furniture), hai (杯 mensural); tag all shape classifiers with `shapeDimension`
+- **Mandarin/Classifiers.lean**: Tag shape classifiers (tiao, zhang, ben, ke) with `shapeDimension`
+- **Downing1996.lean**: New study file — shape dimensionality, animacy hierarchy, anaphoric corpus data (Ch. 6 Tables 6.1–6.2), individuation bridge to Chierchia 1998, semantic supplementation (7 morpheme-category relations), classifier system composition
+
+### Changed
+- **NounCategorization.lean**: Update Japanese inventory size 9 → 20
+- **Phenomena/Classifiers/**: New phenomenon directory — classifiers are their own phenomenon, not a sub-topic of Agreement
+- **Phenomena/Classifiers/Typology.lean**: Moved from `Phenomena/Agreement/NounCategorization.lean` + `Theories/Typology/NounCategorization.lean`; includes `NounCategorizationSystem`, Dixon's divide, per-language instances, and Aikhenvald universals
+- **Phenomena/Classifiers/Studies/Downing1996.lean**: Moved from `Agreement/Studies/`
+- **Core/Lexical/NounCategorization.lean**: Trimmed to settled infrastructure only (`ClassifierType`, `SemanticParameter`, `ShapeDimension`, `ClassifierEntry`); framework-specific structure moved to Phenomena
+- **Classifiers/Typology.lean**: Add WALS Ch 55 content — `ClassifierStatus`, `ClassifierDistribution`, `ch55Distribution`, `fromWALS55A`, and three distribution generalizations (moved from `Numerals/Typology.lean`)
+- **Numerals/Typology.lean**: Import `ClassifierStatus` etc. from `Classifiers.Typology` instead of defining locally
+
+### Fixed
+- **references.bib**: Update `downing-1996` sources field to include all citing files
+
 ## [0.229.219] - 2026-03-13
 
 ### Changed

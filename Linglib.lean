@@ -390,6 +390,10 @@ import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Czech.Reciprocals
 import Linglib.Fragments.Czech.Negation
+import Linglib.Fragments.Dargwa.Agreement
+import Linglib.Fragments.Dargwa.Case
+import Linglib.Fragments.Dargwa.ComplexPredicates
+import Linglib.Fragments.Dargwa.Coordination
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.German.Case
@@ -571,6 +575,7 @@ import Linglib.Fragments.Mayan.Kiche.VoiceSystem
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement
+import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Malagasy.Relativization
@@ -648,6 +653,7 @@ import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
 import Linglib.Phenomena.Ergativity.Studies.Imanishi2020
+import Linglib.Phenomena.Ergativity.Studies.Bohnemeyer2004
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
@@ -726,6 +732,7 @@ import Linglib.Phenomena.Causation.Compare
 import Linglib.Phenomena.Causation.Studies.Coon2019
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
+import Linglib.Phenomena.Coordination.Studies.Stassen2000
 import Linglib.Phenomena.Coordination.Typology
 import Linglib.Phenomena.Coordination.Conjectures
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
@@ -964,8 +971,9 @@ import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
 import Linglib.Phenomena.Modality.OutlookMarkers
-import Linglib.Phenomena.Agreement.NounCategorization
+import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Phenomena.Agreement.Studies.Chierchia1998
+import Linglib.Phenomena.Classifiers.Studies.Downing1996
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Data

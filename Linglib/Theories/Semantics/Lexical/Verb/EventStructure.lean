@@ -268,6 +268,46 @@ theorem lexicalized_is_full_agent :
     The `motionContact` template is specific to the sweep/rub/scrape
     class and requires a class-specific override. -/
 
+-- ════════════════════════════════════════════════════
+-- § 8. Process vs State-Change (@cite{bohnemeyer-2004})
+-- ════════════════════════════════════════════════════
+
+/-- The fundamental binary distinction in event types: whether a predicate
+    encodes a process (PROC only) or a state change (involves CHANGE).
+
+    This crosscuts Vendler's four-way classification: degree achievements
+    are Vendler activities or accomplishments depending on scale boundedness
+    but are event-structurally state-change predicates (@cite{bohnemeyer-2004} §5).
+
+    @cite{bohnemeyer-2004} argues this is the primary semantic distinction
+    governing verb classification in Yukatek Maya — more fundamental than
+    Vendler classes for predicting argument linking and transitivization. -/
+inductive EventType where
+  | process     -- PROC only: walk, sing, roll, buzz
+  | stateChange -- Involves CHANGE: die, break, grow, darken, sit
+  deriving DecidableEq, BEq, Repr
+
+/-- Derive event type from template.
+    Activities and motionContact are processes; states, achievements, and
+    accomplishments involve state change. -/
+def Template.eventType : Template → EventType
+  | .activity => .process
+  | .motionContact => .process
+  | _ => .stateChange
+
+/-- Whether a process is internally caused — the event is instigated by
+    a participant — or externally caused — occurring "spontaneously"
+    without an instigator.
+
+    This is a per-verb property of the ROOT, not of the template.
+    Two activity verbs can differ: *sing* (internal) vs *roll* (external).
+
+    @cite{levin-hovav-1995} §4; @cite{smith-1978}; @cite{bohnemeyer-2004} §2,6. -/
+inductive CausationType where
+  | internal   -- instigated by a participant (sing, walk, write, play)
+  | external   -- no instigator; "spontaneous" (break, fall, roll, buzz)
+  deriving DecidableEq, BEq, Repr
+
 end Semantics.Lexical.Verb.EventStructure
 
 /-- Predicted event structure template from meaning components. -/
