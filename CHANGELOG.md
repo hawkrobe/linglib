@@ -1,5 +1,51 @@
 # Changelog
 
+## [0.229.209] - 2026-03-13
+
+### Fixed
+- **Chierchia2006 `toFCIFlavor` bug**: Pure NPIs (D-MAX) were misclassified as `some .universal` FCI; fixed by adding grain check (only D-MIN items are FCIs). Added `pureNPI_not_fci` regression test
+
+### Changed
+- **Chierchia2006 cross-linguistic verification**: Replace all 7 hardcoded function lists with `seriesFunctions` derivations from `Typology.lean` language profiles (Italian, English, German, Mandarin) — changes to typological data now break exactly the theorems they should
+- **Chierchia2006 Fragment bridges**: Add 8 bridge theorems connecting Italian/English `PolarityItemEntry` classifications to PSI profiles (mai→pureNPI, qualsiasi→pureFCI, any→npiFCI, etc.)
+- **Chierchia2006 `dMin_de_iff_weak`**: Add theorem formalizing the key insight — among D-MIN items, `requiresProperStrengthening` is the sole parameter determining DE eligibility
+
+### Added
+- **Italian `alcuno`**: Pure NPI (formal register), listed in @cite{chierchia-2006} table (76)/(94) alongside *mai* and *ever*
+
+## [0.229.208] - 2026-03-13
+
+### Changed
+- **Conjunction-as-proof audit**: Delete three `*_argumentation_chain` theorems and `morphosyntax_semantics_correspondence` that were conjunctions of independent `rfl` facts masquerading as causal chains. Replace with genuine pipeline functions (`teopPFDerive`, `canTakePossessorSem`, `jarawaraPFDerive`) that compose stages, plus quantified correlation theorems (`pf_semantic_correlation`)
+- **Jarawara iPossessable n-head bug fix**: Define `jarawaraIPossN` with `selectsD := true` — iPossessable nouns DO license iPossessors via {D}. Was incorrectly using `CatHead.n_plain` (selectsD = false). The feminine gender reflects the absence of a gender feature, not the absence of {D}
+- **Jarawara PF pipeline**: Add `jarawaraPFDerive` (possessor → impoverishment → manoForm) with verification theorems; `jarawara_ipossessable_is_relational` showing iPossessable n → relational semantics (π)
+
+## [0.229.207] - 2026-03-13
+
+### Added
+- **Phenomena/Polarity/Studies/Chierchia2006.lean**: Formalize the 2026-consensus distillation of @cite{chierchia-2006} "Broaden Your Views" — PSI parameter space (DomainAltGrain, PSIProfile), five PSI classes (pureNPI, npiFCI, pureFCI, efciNpiFci, efciPureFci), predicted Haspelmath function regions, contiguity theorems for all five classes, cross-linguistic verification (Italian nessuno/qualsiasi/qualcuno, English any, German irgendwer, Mandarin 谁), the qualsiasi/any contrast under negation derived from requiresProperStrengthening, and EFCI bridge theorems (toEFCIRescue, toFCIFlavor)
+- **Fragments/Italian/PolarityItems.lean**: Italian PSI lexicon — pure NPIs (nessuno, niente, mai, neanche), pure universal FCIs (qualsiasi, qualunque), existential FCI (uno_qualsiasi); typed by PolarityItemEntry from English/PolarityItems; verification theorems for NPI/FCI distinction, strengthening direction, obligatory domain alternatives
+
+## [0.229.206] - 2026-03-13
+
+### Added
+- **Fragments/Januubi/Negation.lean**: Januubi Arabic negation fragment — standard negator *maa*, EN negator data (all triggers use standard *maa*), glossed examples (FEAR, BEFORE, ALMOST), structural constraints explaining absence of REGRET-EN (modal restriction) and comparative-EN (NP-only complements); from @cite{jin-koenig-2021} Table 5
+- **Fragments/ZarmaSonrai/Negation.lean**: Zarma-Sonrai negation fragment — aspect-split standard negation (*si* IPFV / *mana*/*batu* PFV), EN negator selection by aspect (not trigger class), glossed examples (FEAR, DELAY, CANNOT WAIT, HIDE), WITHOUT/TOO…TO analytic expression; from @cite{jin-koenig-2021} Table 5
+
+### Changed
+- **JinKoenig2021.lean**: Add bridge theorems grounding all four EN licensing conditions in Theory-layer semantics — temporal (BEFORE via Karttunen/Anscombe temporal separation), logical (IMPOSSIBLE via Kratzer necessity of ¬p; UNLESS via material conditional with negated antecedent), comparative (MORE THAN via degree comparison dual predication); fragment bridges connecting cross-linguistic attestation to French *ne*, Mandarin *bié*/*bùgāi*, Januubi *maa*, Zarma-Sonrai *si*/*batu*; `all_conditions_grounded` summary theorem
+- **Fragments/French/Negation.lean**: Add EN marker data — dedicated *ne* (high entrenchment) vs *ne...pas* (low entrenchment) per trigger class, 8 trigger-negator pairings from Table 5
+- **Fragments/Mandarin/Negation.lean**: Add EN marker data — trigger-class covariation: FEAR→*bié* (imperative), REGRET/COMPLAIN→*bùgāi* (deontic), DENY/BEFORE→*bù* (general), ALMOST→*méi* (perfective); 7 trigger-negator pairings
+- **references.bib**: Update jin-koenig-2021 subfield to semantics/typology, add new fragment sources
+
+## [0.229.205] - 2026-03-13
+
+### Added
+- **Theories/Morphology/DM/CategorizerSemantics.lean**: Bridge DM categorizer heads to compositional semantics via Barker 2011 — three n-head denotation functions (`nBodyPartDenot` = π, `nSortalDenot` = bare, `nAlienatorDenot` = existential closure); `NSemanticType` inductive (relational/sortal/alienator); `catHeadSemanticType` maps CatHead features to semantic types; bridge theorems (`nBodyPartDenot_eq_pi`, `nSortalDenot_eq_bare`, `nAlienatorDenot_is_ex_flipped`); `selectsD_iff_relational` connecting morphosyntax to semantic type; Teop composition examples (iPossessed spleen, aPossessed spleen, sortal house); `alienator_retraction` (nAlienatorDenot ∘ π recovers root up to ∃-closure); `NSemanticType.toBarker` mapping; `possessor_requires_relational`; `morphosyntax_semantics_correspondence`
+
+### Changed
+- **Adamson 2024 audit against paper**: Derive `manoForm` from MARKED features + impoverishment + VI (Appendix B) instead of stipulating the paradigm; type `ImpoverishmentRule.context` as `ImpoverishmentContext` enum (was `String`); split Jarawara impoverishment into two rules (ex. 63: [MASC]→∅/[PL] and [MASC]→∅/[PARTICIPANT]); fix `inheritedGenderN` probe to be dimension-agnostic (was hard-coded `.anim`); strengthen `both_mechanisms_glh_consistent` to reference both `PossessionGenderMechanism` constructors via new `possessorPosition` function; add five Teop prediction theorems (§3.1 p.234–235); add Jarawara and inherited-gender argumentation chain theorems; add `mano_3m_pl`/`mano_3f_pl` verification theorems; extend `teop_argumentation_chain` to include VI step
+
 ## [0.229.203] - 2026-03-13
 
 ### Changed
