@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Core.RootDimensions
 
 /-!
 # Merchant's Theory of Ellipsis: [E] Features and Deletion Domains
@@ -11,9 +12,8 @@ ellipsis types correspond to different [E] positions in the clausal spine.
 ## Key Insight (@cite{merchant-2013}, Figure 1)
 
 Voice mismatch tolerance tracks the *height* of ellipsis:
-- **VPE** ([E] on Voice; @cite{merchant-2013} is ambivalent between
-  T[E] and Voice[E]; the Voice[E] analysis is adopted here following
-  @cite{kalyakin-2026}): elides vP, Voice is *external* → voice mismatch OK
+- **VPE** ([E] on Voice; @cite{merchant-2013} adopts Voice[E],
+  eliding vP): Voice is *external* → voice mismatch OK
 - **Sluicing** ([E] on C): elides TP, Voice is *internal* → voice mismatch blocked
 - **vVPE** ([E] on v): elides VP, both v and Voice are *external* →
   voice *and* transitivity mismatches OK (@cite{kalyakin-2026})
@@ -22,7 +22,7 @@ The generalization: a mismatch in feature F is tolerated iff the head
 bearing F is *outside* the deletion domain (i.e., at or above the [E]-
 bearing head in the clausal spine).
 
-## Monotonicity (Sailor's Generalization)
+## Monotonicity (@cite{sailor-2014}'s Generalization)
 
 Lower [E] position → smaller deletion domain → more features external
 → more mismatches tolerated. This is a strict monotonicity: if ellipsis
@@ -39,27 +39,56 @@ namespace Minimalism.Ellipsis
     This is a deliberately coarse-grained linear order sufficient for
     ellipsis domain computation. It does not replace `Cat` or
     `ExtendedProjection`; it captures the relative height relevant
-    to Merchant's deletion-domain theory. -/
+    to Merchant's deletion-domain theory.
+
+    `VP_adj` encodes VP-adjunction — the attachment site of restitutive
+    *again* and result-state modifiers. Structurally below v but NOT in
+    v's complement: adjuncts to XP are part of the XP projection but
+    not selected by the head that takes XP as complement. This matters
+    for vVPE (@cite{kalyakin-2026}): VP-adjuncts survive when [E] is on
+    v (complement of v = bare VP, excluding adjuncts) but are deleted
+    when [E] is on Voice (complement of Voice = full vP, including
+    VP-adjuncts). -/
 inductive SpinePos where
-  | V     -- Lexical verb
-  | v     -- Little v (transitivity, event structure)
-  | Voice -- Voice head (active/passive/anticausative)
-  | T     -- Tense
-  | C     -- Complementizer
+  | V      -- Lexical verb
+  | VP_adj -- VP-adjunction (restitutive *again*, result-state modifiers)
+  | v      -- Little v (transitivity, event structure)
+  | Voice  -- Voice head (active/passive/anticausative)
+  | T      -- Tense
+  | C      -- Complementizer
   deriving DecidableEq, BEq, Repr
 
-/-- Strict ordering on spine positions. -/
+/-- Strict "in deletion domain of" relation on spine positions.
+
+    `isBelow p₁ p₂` means "p₁ is inside the deletion domain when [E]
+    is at p₂." This is NOT a simple structural ordering — it encodes
+    the complement-vs-adjunction distinction:
+
+    - `V.isBelow .v = true`: V is in v's complement (VP)
+    - `VP_adj.isBelow .v = false`: VP-adjuncts are NOT in v's complement
+    - `VP_adj.isBelow .Voice = true`: VP-adjuncts ARE inside Voice's
+      complement (vP contains the full VP projection including adjuncts)
+
+    This distinction is what makes vVPE (@cite{kalyakin-2026}) predict
+    both *again* readings survive: restitutive *again* (VP-adjoined) is
+    outside the complement of v but inside vP. -/
 def SpinePos.isBelow : SpinePos → SpinePos → Bool
-  | .V, .v | .V, .Voice | .V, .T | .V, .C => true
+  | .V, .VP_adj | .V, .v | .V, .Voice | .V, .T | .V, .C => true
+  | .VP_adj, .Voice | .VP_adj, .T | .VP_adj, .C => true
   | .v, .Voice | .v, .T | .v, .C => true
   | .Voice, .T | .Voice, .C => true
   | .T, .C => true
   | _, _ => false
 
-/-- Non-strict ordering on spine positions.
+/-- Structural height comparison (non-strict).
+    Used for monotonicity: `p₁.isAtOrBelow p₂` means p₁ is structurally
+    at or below p₂. Unlike `isBelow`, this IS a simple linear ordering
+    with VP_adj between V and v.
     Fully pattern-matched to avoid BEq reduction issues in proofs. -/
 def SpinePos.isAtOrBelow : SpinePos → SpinePos → Bool
   | .V, _ => true
+  | .VP_adj, .VP_adj | .VP_adj, .v | .VP_adj, .Voice
+  | .VP_adj, .T | .VP_adj, .C => true
   | .v, .v | .v, .Voice | .v, .T | .v, .C => true
   | .Voice, .Voice | .Voice, .T | .Voice, .C => true
   | .T, .T | .T, .C => true
@@ -191,8 +220,8 @@ theorem vVPE_lexical_blocked :
 
 /-- If a head is outside the deletion domain at position p₁, then it
     is also outside the deletion domain at any lower position p₂.
-    This is Sailor's monotonicity: lower [E] → smaller domain →
-    more mismatches tolerated. -/
+    This is @cite{sailor-2014}'s monotonicity: lower [E] → smaller
+    domain → more mismatches tolerated. -/
 private theorem isBelow_monotone (d p₁ p₂ : SpinePos)
     (h₁ : d.isBelow p₁ = false) (h₂ : p₂.isAtOrBelow p₁ = true) :
     d.isBelow p₂ = false := by
@@ -213,35 +242,29 @@ theorem mismatch_monotone (d : MismatchDimension) (e₁ e₂ : EllipsisType)
 -- § 6. Root Attachment Position
 -- ════════════════════════════════════════════════════
 
-/-- Root attachment positions in Muira Dargwa complex predicates.
-    Object-adjoined roots attach low (inside VP), while v-adjoined
-    roots attach high (outside VP but inside vP). This determines
-    whether a root is inside the vVPE deletion domain. -/
-inductive RootPosition where
-  | objectAdjoined  -- Low: inside VP (change-of-state roots)
-  | vAdjoined       -- High: outside VP (manner/activity roots)
-  deriving DecidableEq, BEq, Repr
-
 /-- Is a root inside the vVPE deletion domain (= VP)?
-    Object-adjoined roots are inside; v-adjoined roots are outside. -/
+    Uses `RootPosition` from `Core.RootDimensions` (Marantz 2013,
+    @cite{beavers-koontz-garboden-2020}):
+    - `.complement` roots (change-of-state) are inside VP → deleted
+    - `.adjoined` roots (manner/activity) are outside VP → survive -/
 def rootInVVPEDomain : RootPosition → Bool
-  | .objectAdjoined => true
-  | .vAdjoined => false
+  | .complement => true
+  | .adjoined => false
 
-/-- Object-adjoined roots (change-of-state) are deleted under vVPE. -/
-theorem objectRoot_in_vVPE : rootInVVPEDomain .objectAdjoined = true := rfl
+/-- Complement roots (change-of-state) are deleted under vVPE. -/
+theorem complementRoot_in_vVPE : rootInVVPEDomain .complement = true := rfl
 
-/-- v-adjoined roots (manner/activity) survive vVPE — they are outside
+/-- Adjoined roots (manner/activity) survive vVPE — they are outside
     the deletion domain. This is why antipassive roots block vVPE in
-    Muira Dargwa: antipassive coerces v-adjunction. -/
-theorem vRoot_outside_vVPE : rootInVVPEDomain .vAdjoined = false := rfl
+    Muira Dargwa: antipassive coerces adjunction (@cite{kalyakin-2026}). -/
+theorem adjoinedRoot_outside_vVPE : rootInVVPEDomain .adjoined = false := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 7. Again Ambiguity
 -- ════════════════════════════════════════════════════
 
 /-- Adjunction position of *again*, following @cite{merchant-2013}
-    (building on Johnson 2004). -/
+    (building on Johnson 2004, von Stechow 1996). -/
 inductive AgainPosition where
   | vP_adjunction  -- Repetitive: event-level *again* (high)
   | VP_adjunction  -- Restitutive: result-state *again* (low)
@@ -249,28 +272,36 @@ inductive AgainPosition where
 
 /-- Is an *again* reading available under a given ellipsis type?
 
-    Repetitive *again* adjoins high (VoiceP or above): outside the
-    deletion domain of both VPE ([E] on Voice) and vVPE ([E] on v).
-    Restitutive *again* adjoins low (to VP): inside the deletion
-    domain of both VPE and vVPE. -/
+    Repetitive *again* adjoins high (vP or VoiceP): modeled at `Voice`
+    level — outside the deletion domain of both VPE and vVPE.
+
+    Restitutive *again* adjoins to VP — modeled at `VP_adj`. This is
+    inside vP (deleted under English VPE, [E] on Voice) but NOT inside
+    v's complement (survives vVPE, [E] on v). The distinction between
+    `VP_adj` and `V` is crucial: V (the head) is in v's complement,
+    but VP-adjunction is at the complement boundary, outside it. -/
 def againSurvives (pos : AgainPosition) (e : EllipsisType) : Bool :=
   match pos with
-  | .vP_adjunction => !isInDeletionDomain .Voice e  -- VoiceP-level adjunction
-  | .VP_adjunction => !isInDeletionDomain .V e      -- VP-level adjunction
+  | .vP_adjunction => !isInDeletionDomain .Voice e   -- VoiceP-level adjunction
+  | .VP_adjunction => !isInDeletionDomain .VP_adj e   -- VP-adjunction level
 
 /-- Under English VPE, restitutive *again* is inside the deletion domain
     (deleted), while repetitive *again* survives.
-    @cite{merchant-2013}: only repetitive reading available. -/
+    @cite{merchant-2013}: only repetitive reading available (Johnson 2004
+    exx. 49a–b). -/
 theorem englishVPE_again :
     againSurvives .vP_adjunction englishVPE = true ∧
     againSurvives .VP_adjunction englishVPE = false := by native_decide
 
-/-- Under vVPE, restitutive *again* (VP-adjoined) is inside VP (deleted),
-    but repetitive *again* (vP-adjoined) survives. Same pattern as English,
-    since both vP and VP adjunction straddle the v boundary. -/
+/-- Under vVPE, BOTH readings survive: restitutive *again* (VP-adjoined)
+    is outside v's complement, so it is not deleted.
+    @cite{kalyakin-2026} §4.1 (exx. 52a–b): both repetitive and
+    restitutive ʔibrra 'again' are available under vVPE in Muira Dargwa.
+    This is the key diagnostic proving the deletion domain is VP (smaller
+    than English VPE's vP). -/
 theorem vVPE_again :
     againSurvives .vP_adjunction vVPE = true ∧
-    againSurvives .VP_adjunction vVPE = false := by native_decide
+    againSurvives .VP_adjunction vVPE = true := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Cross-Linguistic Comparison
@@ -293,5 +324,73 @@ theorem transitivity_divergence :
 theorem lexical_blocked_both :
     canMismatch englishVPE lexicalMismatch = false ∧
     canMismatch vVPE lexicalMismatch = false := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 9. Cross-Linguistic vVPE Typology
+-- ════════════════════════════════════════════════════
+
+/-- Extended ellipsis type with cross-linguistic variation parameters.
+    Languages with verb-stranding ellipsis vary in:
+    - deletion domain size (*again* test: VP vs vP)
+    - whether the Verbal Identity Requirement holds (LV must match)
+    - whether argument-structure alternations are tolerated -/
+structure VPEProfile where
+  /-- The core ellipsis type (spine position of [E]) -/
+  ellipsisType : EllipsisType
+  /-- Verbal Identity Requirement (@cite{goldberg-2005}): antecedent and
+      target light verbs must be identical in root and derivational
+      morphology. Active in Persian and Bangla; inactive in Muira Dargwa. -/
+  virRequired : Bool
+  /-- Language label -/
+  language : String
+  deriving Repr
+
+/-- Muira Dargwa vVPE: [E] on v, deletion domain = VP.
+    Both *again* readings survive; arg-structure alternations tolerated;
+    LV mismatches tolerated (@cite{kalyakin-2026} ex. 78). -/
+def muiraDargwaVVPE : VPEProfile :=
+  { ellipsisType := vVPE, virRequired := false, language := "Muira Dargwa" }
+
+/-- Persian vVPE: [E] on v, deletion domain = VP.
+    Both *again* readings survive (@cite{toosarvandani-2009} ex. 90).
+    But arg-structure alternations blocked (ex. 91) and LV identity
+    required — VIR is active. -/
+def persianVVPE : VPEProfile :=
+  { ellipsisType := vVPE, virRequired := true, language := "Persian" }
+
+/-- Bangla verb-stranding: deletion domain = vP (NOT VP).
+    Only repetitive *again* survives (Haldar 2021 ex. 94a–b);
+    adjuncts CAN be interpreted in the ellipsis site (ex. 95).
+    This means the [E] position is Voice (same as English VPE),
+    with the LV evacuating via head movement. -/
+def banglaVVPE : VPEProfile :=
+  { ellipsisType := englishVPE, virRequired := true, language := "Bangla" }
+
+/-- British *do* ellipsis: [E] on v, deletion domain = VP.
+    Tolerates voice mismatches (Silk 2025 ex. 97) and arg-structure
+    alternations (ex. 98), matching Muira Dargwa vVPE. -/
+def britishDoVVPE : VPEProfile :=
+  { ellipsisType := vVPE, virRequired := false, language := "British English" }
+
+/-- Muira Dargwa and Persian share the same [E] position but differ on VIR. -/
+theorem dargwa_persian_same_domain :
+    muiraDargwaVVPE.ellipsisType.ePosition = persianVVPE.ellipsisType.ePosition ∧
+    muiraDargwaVVPE.virRequired ≠ persianVVPE.virRequired := ⟨rfl, by decide⟩
+
+/-- Bangla has a LARGER deletion domain than Muira Dargwa: [E] on Voice
+    (= English VPE) vs [E] on v. The *again* test diagnoses this: Bangla
+    deletes restitutive *again* (Haldar 2021), Muira Dargwa does not. -/
+theorem bangla_larger_domain :
+    banglaVVPE.ellipsisType.ePosition = SpinePos.Voice ∧
+    muiraDargwaVVPE.ellipsisType.ePosition = SpinePos.v ∧
+    SpinePos.v.isBelow SpinePos.Voice = true := ⟨rfl, rfl, rfl⟩
+
+/-- The *again* test correctly differentiates Bangla (vP domain) from
+    Muira Dargwa (VP domain): restitutive *again* is deleted under
+    Bangla's ellipsis but survives Muira Dargwa's. -/
+theorem again_differentiates_bangla_dargwa :
+    againSurvives .VP_adjunction banglaVVPE.ellipsisType = false ∧
+    againSurvives .VP_adjunction muiraDargwaVVPE.ellipsisType = true := by
+  native_decide
 
 end Minimalism.Ellipsis

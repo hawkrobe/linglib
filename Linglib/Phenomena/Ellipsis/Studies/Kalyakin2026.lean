@@ -1,14 +1,17 @@
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
 # VP Ellipsis and Argument Structure Alternations in Muira Dargwa
 @cite{kalyakin-2026}
 
-@cite{kalyakin-2026} discovers **v-stranding VPE (vVPE)** in Muira Dargwa
-(Nakh-Dagestanian) complex predicates: the light verb (= v) survives while
-its complement (= VP, containing the nominal root) is elided. This is the
-first attested ellipsis type where [E] sits on v rather than Voice.
+@cite{kalyakin-2026} argues that **v-stranding VPE (vVPE)** exists in Muira
+Dargwa (Nakh-Dagestanian) complex predicates: the light verb (= v) survives
+while its complement (= VP, containing the nominal root) is elided. The
+construction was first identified in Persian (@cite{toosarvandani-2009});
+Muira Dargwa provides independent evidence and novel argument-structure
+alternation diagnostics.
 
 ## Key Empirical Findings
 
@@ -20,9 +23,12 @@ first attested ellipsis type where [E] sits on v rather than Voice.
    (manner/activity position), placing them *outside* vVPE's deletion
    domain (VP). Antipassive roots therefore cannot be elided.
 
-3. **Again diagnostic**: Under vVPE, only the repetitive reading of *again*
-   survives (restitutive *again* is VP-internal, hence deleted). Same
-   pattern as English VPE (@cite{merchant-2013}).
+3. **Again diagnostic**: Under vVPE, BOTH repetitive and restitutive
+   readings of *again* survive (@cite{kalyakin-2026} §4.1, exx. 52a–b).
+   This contrasts with English VPE (only repetitive survives) and
+   confirms the deletion domain is VP (complement of v), not vP.
+   @cite{toosarvandani-2009} (ex. 90) independently shows both readings
+   available for Persian vVPE.
 
 ## Theoretical Analysis
 
@@ -160,12 +166,12 @@ theorem alternation_predicted_by_merchant :
     placing them outside vVPE's deletion domain. They therefore
     cannot be elided under vVPE. -/
 theorem antipassive_blocks_vVPE :
-    rootInVVPEDomain .vAdjoined = false := rfl
+    rootInVVPEDomain .adjoined = false := rfl
 
 /-- Change-of-state roots (object-adjoined) ARE inside vVPE's
     deletion domain — they can be elided. -/
 theorem change_of_state_allows_vVPE :
-    rootInVVPEDomain .objectAdjoined = true := rfl
+    rootInVVPEDomain .complement = true := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 5. Cross-Linguistic Predictions
@@ -223,11 +229,138 @@ theorem end_to_end_causative_chain :
 
 /-- Convergent prediction: Merchant's theory correctly predicts that
     sluicing (C[E]) blocks voice mismatches — Voice is inside TP, the
-    deletion domain of sluicing. The SCSS corpus (@cite{anand-hardt-mccloskey-2021})
-    independently confirms this with 0 attested voice mismatches in 4,700
-    sluices. The same theoretical apparatus that Kalyakin extends to vVPE
+    deletion domain of sluicing. The SCSS corpus (@cite{anand-hardt-mccloskey-2021},
+    §5.5) independently confirms this: across 4,700 annotated sluices, zero
+    antecedent–ellipsis site pairings exhibit active/passive voice mismatches.
+    The same theoretical apparatus that Kalyakin extends to vVPE
     already works for sluicing. -/
 theorem sluicing_voice_blocked_convergent :
     canMismatch sluicing voiceMismatch = false := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 7. Again Diagnostic
+-- ════════════════════════════════════════════════════
+
+/-- Under vVPE, BOTH repetitive and restitutive *again* survive.
+    This contrasts with English VPE (only repetitive survives) and
+    confirms the deletion domain is VP (complement of v), not vP.
+
+    @cite{kalyakin-2026} §4.1 (exx. 52a–b): both repetitive and
+    restitutive ʔibrra 'again' are available under vVPE in Muira Dargwa.
+    @cite{toosarvandani-2009} (ex. 90) independently shows both readings
+    available for Persian vVPE. -/
+theorem vVPE_both_again :
+    againSurvives .vP_adjunction vVPE = true ∧
+    againSurvives .VP_adjunction vVPE = true := by native_decide
+
+/-- English VPE deletes restitutive *again*: only repetitive survives.
+    (@cite{merchant-2013}, building on Johnson 2004, von Stechow 1996). -/
+theorem englishVPE_only_repetitive :
+    againSurvives .vP_adjunction englishVPE = true ∧
+    againSurvives .VP_adjunction englishVPE = false := by native_decide
+
+/-- The *again* contrast directly distinguishes vVPE from English VPE:
+    same test, different result — proving different deletion domains. -/
+theorem again_distinguishes_vVPE_from_englishVPE :
+    againSurvives .VP_adjunction vVPE = true ∧
+    againSurvives .VP_adjunction englishVPE = false := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 8. Fragment Integration: NV Root Position → vVPE
+-- ════════════════════════════════════════════════════
+
+open Fragments.Dargwa.ComplexPredicates in
+
+/-- Is a CPr's NV inside vVPE's deletion domain?
+    The fragment's `AnnotatedCPr` stores `RootPosition` (from
+    `Core.RootDimensions`); this function bridges to the
+    Minimalist `rootInVVPEDomain` from `DeletionDomain.lean`. -/
+def cprInVVPEDomain (cpr : Fragments.Dargwa.ComplexPredicates.AnnotatedCPr) : Bool :=
+  rootInVVPEDomain cpr.rootPosition
+
+open Fragments.Dargwa.ComplexPredicates in
+
+/-- Change-of-state NVs (complement position) are inside vVPE's
+    deletion domain: they can be elided. -/
+theorem cos_in_domain :
+    cprInVVPEDomain warmUp = true ∧ cprInVVPEDomain openCPr = true ∧
+    cprInVVPEDomain calmCPr = true ∧ cprInVVPEDomain praiseCPr = true ∧
+    cprInVVPEDomain repairCPr = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+open Fragments.Dargwa.ComplexPredicates in
+
+/-- Manner/activity NVs (adjoined position) are outside vVPE's
+    deletion domain: they survive ellipsis. This is why antipassive
+    roots (coerced to adjunction) block vVPE. -/
+theorem manner_outside_domain :
+    cprInVVPEDomain runCPr = false ∧ cprInVVPEDomain jumpCPr = false := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 9. NV-Drop Test (vVPE vs Argument Ellipsis)
+-- ════════════════════════════════════════════════════
+
+/-- Datum for the NV-drop constituency test.
+    @cite{kalyakin-2026} §3.2 distinguishes vVPE from argument ellipsis (AE):
+    - vVPE: NV+argument deleted together (constituent = VP)
+    - AE: argument alone deleted, NV survives
+    - *NV alone deleted, argument survives → ungrammatical
+    The ungrammaticality of NV-only deletion proves the elided
+    constituent is VP (containing both NV and argument), not just NV. -/
+structure NVDropDatum where
+  description : String
+  nvDropped : Bool
+  argDropped : Bool
+  grammatical : Bool
+  deriving Repr
+
+/-- NV + argument both dropped (= vVPE): grammatical. -/
+def nvArgDrop : NVDropDatum :=
+  { description := "vVPE: NV+arg elided together"
+  , nvDropped := true, argDropped := true, grammatical := true }
+
+/-- Argument alone dropped (= argument ellipsis): grammatical. -/
+def argOnlyDrop : NVDropDatum :=
+  { description := "AE: argument elided, NV survives"
+  , nvDropped := false, argDropped := true, grammatical := true }
+
+/-- NV alone dropped, argument survives: ungrammatical.
+    This rules out NV-drop as a process distinct from vVPE —
+    you can't delete just the NV without its complement. -/
+def nvOnlyDrop : NVDropDatum :=
+  { description := "NV-only drop: ungrammatical"
+  , nvDropped := true, argDropped := false, grammatical := false }
+
+/-- The NV-drop test confirms constituent deletion: NV+arg is a
+    constituent (VP), NV alone is not. -/
+theorem nv_drop_constituency :
+    nvArgDrop.grammatical = true ∧
+    argOnlyDrop.grammatical = true ∧
+    nvOnlyDrop.grammatical = false := ⟨rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 10. Cross-Linguistic vVPE Profiles
+-- ════════════════════════════════════════════════════
+
+/-- Bridge: Muira Dargwa, Persian, British English share [E] on v
+    (= vVPE), while Bangla's deletion domain is vP (= English VPE
+    with LV evacuation via head movement). -/
+theorem cross_ling_e_positions :
+    muiraDargwaVVPE.ellipsisType.ePosition = SpinePos.v ∧
+    persianVVPE.ellipsisType.ePosition = SpinePos.v ∧
+    britishDoVVPE.ellipsisType.ePosition = SpinePos.v ∧
+    banglaVVPE.ellipsisType.ePosition = SpinePos.Voice := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Muira Dargwa and British *do* pattern together: same [E] position,
+    no VIR, arg-structure alternations tolerated. -/
+theorem dargwa_british_parallel :
+    muiraDargwaVVPE.ellipsisType.ePosition = britishDoVVPE.ellipsisType.ePosition ∧
+    muiraDargwaVVPE.virRequired = britishDoVVPE.virRequired := ⟨rfl, rfl⟩
+
+/-- Persian has same [E] position as Muira Dargwa but stricter identity:
+    VIR blocks arg-structure alternations in Persian that Dargwa allows. -/
+theorem persian_stricter_than_dargwa :
+    persianVVPE.ellipsisType.ePosition = muiraDargwaVVPE.ellipsisType.ePosition ∧
+    persianVVPE.virRequired = true ∧
+    muiraDargwaVVPE.virRequired = false := ⟨rfl, rfl, rfl⟩
 
 end Phenomena.Ellipsis.Studies.Kalyakin2026

@@ -1380,25 +1380,6 @@ theorem same_change_same_morphosyntax (r₁ r₂ : Root)
 -- § 17. Root Position in Event Structure (B&@cite{beavers-koontz-garboden-2020} §5.4.1, Table 12)
 -- ════════════════════════════════════════════════════
 
-/-- Where a root sits in event structure (B&@cite{beavers-koontz-garboden-2020} §5.4.1).
-
-    - **complement**: under v_become, filling the result/state slot.
-      The root provides the state that BECOME operates on.
-      Examples: √FLAT, √CRACK, √DROWN.
-    - **adjoined**: to v_cause/v_act, modifying the causing event.
-      The root specifies the manner of the activity.
-      Examples: √JOG, √TOSS, √HAND.
-
-    Position is NOT determined solely by the 4 entailment features.
-    √DROWN and √TOSS have identical features (+S,+M,+R,+C) but differ
-    in position — √DROWN is complement (manner restricts how the state
-    is caused), √TOSS is adjoined (manner is the primary event,
-    which happens to cause a state change). -/
-inductive RootPosition where
-  | complement  -- under v_become: root fills the result/state slot
-  | adjoined    -- to v_cause: root modifies the causing event
-  deriving DecidableEq, Repr, BEq
-
 /-- Full root specification: entailment features + structural position.
     This is B&@cite{beavers-koontz-garboden-2020}'s Table 12 in full — the 4 binary entailment
     features × 2 positions give 32 theoretical cells, of which 7 are

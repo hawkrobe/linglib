@@ -415,6 +415,30 @@ theorem causativeResult_respects_MRC : causativeResult.violatesMRC = false := rf
 end RootEntailments
 
 -- ════════════════════════════════════════════════════
+-- § 3c. Root Structural Position
+-- ════════════════════════════════════════════════════
+
+/-- Structural attachment position of a verb root, following
+    Marantz (2009a;b, 2013) as systematized by
+    @cite{beavers-koontz-garboden-2020} Table 12.
+
+    - **Complement**: root merges as complement of v (inside VP).
+      Fills the result-state slot. Change-of-state roots: √FLAT,
+      √CRACK, √BLOSSOM, √DROWN.
+    - **Adjoined**: root merges as adjunct to v (outside VP).
+      Modifies the causing event. Manner/activity roots: √JOG,
+      √TOSS, √HAND.
+
+    This distinction is structurally significant beyond root typology:
+    it determines vVPE eligibility (@cite{kalyakin-2026}), scope of
+    result-state modifiers, and the restitutive/repetitive *again*
+    ambiguity (@cite{beavers-koontz-garboden-2020}, @cite{merchant-2013}). -/
+inductive RootPosition where
+  | complement  -- under v: fills result/state slot (inside VP)
+  | adjoined    -- to v: modifies causing event (outside VP)
+  deriving DecidableEq, BEq, Repr
+
+-- ════════════════════════════════════════════════════
 -- § 4. @cite{levin-1993} Verb Class Taxonomy
 -- ════════════════════════════════════════════════════
 

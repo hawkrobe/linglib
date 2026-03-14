@@ -1,6 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Core.Alternation
+import Linglib.Core.RootDimensions
 
 /-!
 # Dargwa (Tanti / Muira) Complex Predicates @cite{sumbatova-2021}
@@ -14,7 +13,9 @@ ideophones. Often the lexical element does not occur independently.
 This is the structural basis for @cite{kalyakin-2026}'s analysis of
 **v-stranding VP ellipsis (vVPE)** in Muira Dargwa: the light verb
 (= v) survives while its complement (= VP, containing the nominal
-root) is elided.
+root) is elided. The theoretical analysis (mismatch predictions,
+root position mapping, *again* diagnostics) lives in the study file
+`Phenomena/Ellipsis/Studies/Kalyakin2026.lean`.
 
 ## Light Verbs (§4.5.1 of @cite{sumbatova-2021})
 
@@ -34,15 +35,9 @@ Under vVPE, the light verb (v head) survives while the nominal root
 1. The light verb is overt in the ellipsis site
 2. Causative alternations (which differ only in Voice) are tolerated
 3. Antipassive roots (v-adjoined) cannot be elided
-
-The `vVPE` ellipsis type from `DeletionDomain.lean` models this:
-[E] on v, deletion domain = VP.
 -/
 
 namespace Fragments.Dargwa.ComplexPredicates
-
-open Minimalism
-open Minimalism.Ellipsis
 
 -- ============================================================================
 -- § 1: Light Verb Inventory
@@ -162,51 +157,6 @@ def cough : ComplexPredicate :=
   , lightVerb := ik, meaning := "cough" }
 
 -- ============================================================================
--- § 3: Connection to vVPE (DeletionDomain.lean)
--- ============================================================================
-
-/-- The structural mapping: in a complex predicate, the light verb
-    occupies the v head and the lexical stem occupies VP (complement of v).
-
-    Under vVPE ([E] on v), the lexical stem (VP) is deleted and the
-    light verb (v) survives. This is exactly what @cite{kalyakin-2026}
-    observes in Muira Dargwa. -/
-structure VVPEAnalysis where
-  /-- The surviving element (light verb = v) -/
-  survivor : LightVerb
-  /-- The elided element (lexical stem = VP content) -/
-  elided : String
-  /-- Is the alternation grammatical? -/
-  grammatical : Bool
-
-/-- Under vVPE, the light verb *b-arq'* 'do' survives. -/
-def vvpeExample : VVPEAnalysis :=
-  { survivor := arq, elided := "taman (= 'end')"
-  , grammatical := true }
-
-/-- vVPE tolerates voice mismatches: same light verb with different
-    Voice heads (agentive vs nonThematic). -/
-theorem vvpe_voice_tolerated :
-    canMismatch vVPE voiceMismatch = true := rfl
-
-/-- vVPE tolerates transitivity mismatches: causative alternation
-    across the ellipsis boundary. -/
-theorem vvpe_transitivity_tolerated :
-    canMismatch vVPE transitivityMismatch = true := rfl
-
-/-- vVPE blocks lexical verb mismatches: different lexical stems
-    cannot be elided across the boundary. -/
-theorem vvpe_lexical_blocked :
-    canMismatch vVPE lexicalMismatch = false := rfl
-
-/-- Under vVPE, both repetitive and restitutive *again* survive.
-    This contrasts with English VPE (only repetitive survives) and
-    confirms the deletion domain is VP (complement of v), not vP. -/
-theorem vvpe_both_again :
-    againSurvives .vP_adjunction vVPE = true ∧
-    againSurvives .VP_adjunction vVPE = true := by native_decide
-
--- ============================================================================
 -- § 4: Causative (@cite{sumbatova-2021} §4.5.7)
 -- ============================================================================
 
@@ -310,5 +260,73 @@ theorem most_lvs_have_gender :
 theorem some_lvs_bound :
     (allLightVerbs.filter (·.boundToComplex)).length ≥ 1 := by
   native_decide
+
+-- ============================================================================
+-- § 7: NV Root Position (@cite{kalyakin-2026} §2.2)
+-- ============================================================================
+
+/-- A complex predicate annotated with its NV root position, following
+    Marantz (2009a;b, 2013) as applied to Dargwa by @cite{kalyakin-2026} §2.2.
+
+    Uses `RootPosition` from `Core.RootDimensions`:
+    - `.complement`: change-of-state roots — *wana* 'warm', *hark* 'open'
+    - `.adjoined`: manner/activity roots — *duc'* 'run', *taˤh* 'jump'
+
+    The vVPE eligibility implications are derived in the study file. -/
+structure AnnotatedCPr where
+  lexicalStem : String
+  stemGloss : String
+  rootPosition : RootPosition
+  lightVerb : LightVerb
+  meaning : String
+  deriving Repr
+
+-- § 7a: Paper examples (@cite{kalyakin-2026})
+
+/-- *wana AGR-arq'*- 'to warm smth. up' (exx. 3, 8a, 64, 66).
+    NV *wana* 'warm' is a change-of-state root → object-adjoined. -/
+def warmUp : AnnotatedCPr :=
+  { lexicalStem := "wana", stemGloss := "warm"
+  , rootPosition := .complement, lightVerb := arq, meaning := "warm smth. up" }
+
+/-- *gap AGR-arq'*- 'to praise' (exx. 9, 17).
+    NV *gap* 'praise' is a change-of-state root → object-adjoined. -/
+def praiseCPr : AnnotatedCPr :=
+  { lexicalStem := "gap", stemGloss := "praise"
+  , rootPosition := .complement, lightVerb := arq, meaning := "praise" }
+
+/-- *hark AGR-arq'*- 'to open' (ex. 52).
+    NV *hark* 'open' is a change-of-state root → object-adjoined. -/
+def openCPr : AnnotatedCPr :=
+  { lexicalStem := "hark", stemGloss := "open"
+  , rootPosition := .complement, lightVerb := arq, meaning := "open" }
+
+/-- *parʁat AGR-arq'*- 'to calm' (exx. 36, 37, 69).
+    NV *parʁat* 'calm' is a change-of-state root → object-adjoined. -/
+def calmCPr : AnnotatedCPr :=
+  { lexicalStem := "parʁat", stemGloss := "calm"
+  , rootPosition := .complement, lightVerb := arq, meaning := "calm" }
+
+/-- *dawk AGR-irq'*- 'to repair' (exx. 84–86).
+    NV *dawk* 'repaired' is a change-of-state root → object-adjoined. -/
+def repairCPr : AnnotatedCPr :=
+  { lexicalStem := "dawk", stemGloss := "repaired"
+  , rootPosition := .complement
+  , lightVerb := { form := "w-irq'-", gloss := "make", genderSlot := true }
+  , meaning := "repair" }
+
+/-- *duc' Ø-uq-* 'to run' (ex. 58). Activity root → v-adjoined. -/
+def runCPr : AnnotatedCPr :=
+  { lexicalStem := "duc'", stemGloss := "run"
+  , rootPosition := .adjoined
+  , lightVerb := { form := "Ø-uq-", gloss := "move", genderSlot := false }
+  , meaning := "run" }
+
+/-- *taˤh Ø-uq-* 'to jump' (ex. 57). Activity root → v-adjoined. -/
+def jumpCPr : AnnotatedCPr :=
+  { lexicalStem := "taˤh", stemGloss := "jump"
+  , rootPosition := .adjoined
+  , lightVerb := { form := "Ø-uq-", gloss := "move", genderSlot := false }
+  , meaning := "jump" }
 
 end Fragments.Dargwa.ComplexPredicates

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.223] - 2026-03-13
+
+### Changed
+- **Core/RootDimensions.lean**: Unify `RootPosition` (.complement/.adjoined) into Core — the Marantz complement/adjunct distinction is now shared infrastructure used by RootTypology, DeletionDomain, and Dargwa fragment
+- **DeletionDomain.lean**: Replace local `RootPosition` with Core import; `rootInVVPEDomain` now takes `RootPosition` directly
+- **RootTypology.lean**: Remove local `RootPosition` definition (uses Core)
+- **ComplexPredicates.lean**: Remove Minimalist theory imports (DeletionDomain, Voice); `AnnotatedCPr` uses `RootPosition` from Core directly; all mismatch/again theorems moved to study file
+
+### Added
+- **Kalyakin2026.lean §§ 7–10**: *Again* diagnostic (vVPE vs English VPE contrast), fragment→vVPE bridge (`cprInVVPEDomain`), NV-drop constituency test, cross-linguistic profile comparisons (Dargwa/Persian/British/Bangla)
+
 ## [0.229.222] - 2026-03-13
 
 ### Added
