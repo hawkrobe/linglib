@@ -32,12 +32,8 @@ this with two arguments:
 ## Integration
 
 - The conjunction regimentation corresponds to `sdaEval` in
-  `AlternativeSensitive.lean` (@cite{santorio-2018})
+  `AlternativeSensitive.lean`
 - Lewis's disjunctive-closure semantics corresponds to `lewisDAC`
-- @cite{santorio-2018} refines this as optionality: DIST_π mediates
-  between the two readings (when present → SDA; when absent → Lewis)
-- @cite{zani-ciardelli-sanfelici-2026} find developmental evidence:
-  SDA is preferred at all ages; DCR decreases with age
 -/
 
 namespace Phenomena.Conditionals.Studies.McKayVanInwagen1977
@@ -188,10 +184,9 @@ English judgments differ:
 - Bumper crop: the English sentence is **unacceptable** (matches conjunction)
 
 This shows that natural-language "or" in counterfactual antecedents does
-not uniformly correspond to either formal reading. @cite{santorio-2018}
-later formalizes this ambiguity via the optional DIST_π operator:
-with DIST_π, alternatives distribute (conjunction/SDA reading);
-without DIST_π, the modal takes the disjunctive closure (Lewis reading).
+not uniformly correspond to either formal reading. The ambiguity is
+between conjunction/SDA (each disjunct evaluated separately) and Lewis's
+disjunctive closure (disjuncts combined before evaluation).
 -/
 
 /-- Both examples show the two formal readings diverge: Lewis gives true,

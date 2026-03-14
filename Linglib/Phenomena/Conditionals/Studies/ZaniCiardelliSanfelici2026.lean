@@ -13,7 +13,7 @@ Simplification of disjunctive antecedents: Insights from acquisition.
 Experimental study of 148 Italian children (ages 4;1–9;11) and 28 adults
 on disjunctive antecedent conditionals (DACs), testing three readings:
 
-1. **SDA** (Simplification): "if A or B, C" ≡ "(if A, C) and (if B, C)"
+1. **SDA** (Simplification, @cite{mckay-vaninwagen-1977}): "if A or B, C" ≡ "(if A, C) and (if B, C)"
 2. **DCR** (Disjunctive Conditional Reading): "if A or B, C" ≡ "(if A, C) or (if B, C)"
 3. **AR** (Asymmetric Reading): only the more realistic disjunct matters
 
