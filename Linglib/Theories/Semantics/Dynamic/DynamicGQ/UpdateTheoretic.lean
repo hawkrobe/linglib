@@ -16,7 +16,7 @@ produces cumulative readings automatically.
 
 - `Mvar_u_nondistributive`: M_v is not distributive (@cite{charlow-2021}, Theorem 1)
 - `CardTest_u_distributive`: cardinality tests ARE distributive
-- `exactlyN_u_cumulative`: the composed meaning has cumulative truth conditions
+- `exactlyN_u_distributive`: the composed pipeline IS distributive (despite containing non-distributive `Mvar_u`)
 
 -/
 
@@ -108,15 +108,81 @@ theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
     subst this
     exact ⟨hi, hcard⟩
 
-/-- The update-theoretic composed meaning has cumulative truth conditions:
-    `exactlyN_u` is not distributive for suitable choices of parameters,
-    because it inherits non-distributivity from `Mvar_u`.
-    TODO: Construct a concrete counterexample through the full
-    Evar_u ; Mvar_u ; CardTest_u pipeline. -/
-theorem exactlyN_u_cumulative [PartialOrder E] [Fintype E] [Nonempty W]
-    (a b : E) (hab : a < b) :
-    ∃ (v : Nat) (P : E → Prop) (n : Nat),
-    ¬ IsDistributive (exactlyN_u (W := W) (E := E) v P n) := by
-  sorry
+/-- `Evar_u v P` is idempotent: applying it twice gives the same result as
+    applying it once, because `(g.update v x).update v y = g.update v y`. -/
+private theorem evar_u_idempotent (v : Nat) (P : E → Prop) (s : State W E) :
+    Evar_u v P (Evar_u v P s) = Evar_u v P s := by
+  ext ⟨w, g⟩; simp only [Evar_u, Set.mem_setOf_eq]; constructor
+  · intro ⟨q₁, hq₁, hw₁, y, hPy, hg₁⟩
+    obtain ⟨q₂, hq₂s, hw₂, x, _, hg₂⟩ := hq₁
+    exact ⟨q₂, hq₂s, hw₂ ▸ hw₁, y, hPy, by rw [hg₁, hg₂, Core.Assignment.update_overwrite]⟩
+  · intro ⟨q, hqs, hw, x, hPx, hg⟩
+    exact ⟨⟨q.1, q.2.update v x⟩, ⟨q, hqs, rfl, x, hPx, rfl⟩, hw, x, hPx,
+           by rw [hg, Core.Assignment.update_overwrite]⟩
+
+/-- Congruence for `isMaximal`: pointwise-equivalent predicates give equivalent maximality. -/
+private theorem isMaximal_congr {α : Type*} [PartialOrder α] {P Q : α → Prop}
+    (h : ∀ x, P x ↔ Q x) (y : α) :
+    Mereology.isMaximal P y ↔ Mereology.isMaximal Q y :=
+  ⟨fun ⟨hp, hm⟩ => ⟨(h y).mp hp, fun z hz hle => hm z ((h z).mpr hz) hle⟩,
+   fun ⟨hq, hm⟩ => ⟨(h y).mpr hq, fun z hz hle => hm z ((h z).mp hz) hle⟩⟩
+
+/-- The v-values after `Evar_u v P s` are exactly `{x | P x}` (requires nonempty input). -/
+private theorem evar_u_vvals (v : Nat) (P : E → Prop) (s : State W E) (y : E)
+    (hs : s.Nonempty) :
+    (∃ q ∈ Evar_u v P s, q.2 v = y) ↔ P y := by
+  simp only [Evar_u, Set.mem_setOf_eq]
+  constructor
+  · rintro ⟨⟨_, _⟩, ⟨_, _, _, x, hPx, hg⟩, hv⟩
+    rw [hg, Core.Assignment.update_at] at hv; rwa [← hv]
+  · intro hPy
+    obtain ⟨⟨w₀, g₀⟩, hw₀⟩ := hs
+    exact ⟨⟨w₀, g₀.update v y⟩, ⟨⟨w₀, g₀⟩, hw₀, rfl, y, hPy, rfl⟩,
+           Core.Assignment.update_at g₀ v y⟩
+
+/-- The v-values after `Evar_u v P {i}` are exactly `{x | P x}`. -/
+private theorem evar_u_vvals_single (v : Nat) (P : E → Prop)
+    (i : W × Core.Assignment E) (y : E) :
+    (∃ q ∈ Evar_u v P ({i} : Set _), q.2 v = y) ↔ P y := by
+  simp only [Evar_u, Set.mem_setOf_eq]
+  constructor
+  · rintro ⟨⟨_, _⟩, ⟨_, _, _, x, hPx, hg⟩, hv⟩
+    rw [hg, Core.Assignment.update_at] at hv; rwa [← hv]
+  · intro hPy
+    exact ⟨⟨i.1, i.2.update v y⟩, ⟨i, rfl, rfl, y, hPy, rfl⟩,
+           Core.Assignment.update_at i.2 v y⟩
+
+/-- The update-theoretic composed "exactly N" is distributive.
+
+    Despite containing the non-distributive `Mvar_u`, the full pipeline
+    `Evar_u ; Mvar_u ∘ Evar_u ; CardTest_u` is distributive because `Evar_u`
+    normalizes the v-values: after `Evar_u v P`, the set of values at
+    position v is always `{x | P x}` regardless of the input state.
+    The maximization in `Mvar_u` therefore selects the same maximal
+    P-elements whether processing the full state or per-element.
+
+    The cumulative reading (@cite{charlow-2021}) arises from the
+    non-distributivity of `Mvar_u` itself (see `Mvar_u_nondistributive`),
+    not from the composed pipeline. -/
+theorem exactlyN_u_distributive [PartialOrder E] [Fintype E]
+    (v : Nat) (P : E → Prop) (n : Nat) :
+    IsDistributive (exactlyN_u (W := W) (E := E) v P n) := by
+  intro s; ext ⟨w, g⟩
+  simp only [exactlyN_u, dseq_u, Function.comp,
+             CardTest_u, Mvar_u, Set.mem_sep_iff, evar_u_idempotent]
+  constructor
+  · -- (⊆) Full pipeline → per-element
+    intro ⟨⟨hmem, hmax⟩, hcount⟩
+    obtain ⟨q, hqs, hwq, x, hPx, hgq⟩ := hmem
+    refine ⟨q, hqs, ⟨⟨⟨q, rfl, hwq, x, hPx, hgq⟩,
+      (isMaximal_congr (fun y => (evar_u_vvals v P s y ⟨q, hqs⟩).trans
+        (evar_u_vvals_single v P q y).symm) _).mp hmax⟩, hcount⟩⟩
+  · -- (⊇) Per-element → full pipeline
+    intro ⟨i, his, ⟨⟨hmem_i, hmax_i⟩, hcount_i⟩⟩
+    obtain ⟨r, hr_eq, hwr, x, hPx, hgr⟩ := hmem_i
+    have hri : r = i := hr_eq; rw [hri] at hwr hgr
+    exact ⟨⟨⟨i, his, hwr, x, hPx, hgr⟩,
+      (isMaximal_congr (fun y => (evar_u_vvals_single v P i y).trans
+        (evar_u_vvals v P s y ⟨i, his⟩).symm) _).mp hmax_i⟩, hcount_i⟩
 
 end Semantics.Dynamic.DynamicGQ.UpdateTheoretic
