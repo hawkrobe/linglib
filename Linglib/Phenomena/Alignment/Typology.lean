@@ -4,6 +4,10 @@ import Linglib.Core.Prominence
 import Linglib.Core.WALS.Features.F98A
 import Linglib.Core.WALS.Features.F99A
 import Linglib.Core.WALS.Features.F100A
+-- Fragment imports for bridge theorems (verify Fragment ↔ Typology consistency)
+import Linglib.Fragments.Dargwa.Case
+import Linglib.Fragments.Japanese.Case
+import Linglib.Fragments.Hindi.Case
 
 /-!
 # Morphosyntactic Alignment Typology (WALS Chapters 98--100)
@@ -91,24 +95,24 @@ inductive AlignmentType where
 instance : Inhabited AlignmentType := ⟨.neutral⟩
 
 /-- Whether this alignment type marks the agent (A) distinctly from S. -/
-def AlignmentType.marksAgent : AlignmentType -> Bool
+def AlignmentType.marksAgent : AlignmentType → Bool
   | .ergative   => true
   | .tripartite => true
   | _           => false
 
 /-- Whether this alignment type marks the patient (P) distinctly from S. -/
-def AlignmentType.marksPatient : AlignmentType -> Bool
+def AlignmentType.marksPatient : AlignmentType → Bool
   | .accusative => true
   | .tripartite => true
   | _           => false
 
 /-- Whether this alignment groups S with A (nominative-accusative pattern). -/
-def AlignmentType.isNomAcc : AlignmentType -> Bool
+def AlignmentType.isNomAcc : AlignmentType → Bool
   | .accusative => true
   | _           => false
 
 /-- Whether this alignment groups S with P (absolutive-ergative pattern). -/
-def AlignmentType.isAbsErg : AlignmentType -> Bool
+def AlignmentType.isAbsErg : AlignmentType → Bool
   | .ergative => true
   | _         => false
 
@@ -482,6 +486,20 @@ def warlpiri : AlignmentProfile :=
     verbAlignment := .neutral
     notes := "Split ergative: NPs erg, pronouns acc; free word order" }
 
+/-- Dargwa (Tanti; Nakh-Dagestanian): consistently ergative across all
+    three domains. Ergative -li marks A on both full NPs and pronouns
+    (@cite{sumbatova-2021} §4.4.3). Gender agreement on the verb is controlled
+    by the absolutive argument (ergative alignment). Person agreement follows
+    a hierarchical pattern (1,2 > 3; abs > erg) but the primary dimension
+    is ergative. No tense-conditioned or animacy-conditioned split. -/
+def dargwa : AlignmentProfile :=
+  { name := "Dargwa (Tanti)"
+    iso639 := "dar"
+    npAlignment := .ergative
+    pronAlignment := .ergative
+    verbAlignment := .ergative
+    notes := "Consistently ergative; -li on A; gender agrees with absolutive" }
+
 end LanguageData
 
 -- ============================================================================
@@ -493,9 +511,9 @@ def allProfiles : List AlignmentProfile :=
   [ english, hindiUrdu, basque, dyirbal, georgian, tagalog
   , japanese, latin, russian, mandarin, turkish, tongan
   , guarani, samoan, german, swahili, tibetan, nezPerce
-  , finnish, warlpiri ]
+  , finnish, warlpiri, dargwa ]
 
-theorem allProfiles_count : allProfiles.length = 20 := by native_decide
+theorem allProfiles_count : allProfiles.length = 21 := by native_decide
 
 -- ============================================================================
 -- ISO 639-3 Verification
@@ -540,6 +558,11 @@ theorem latin_verb_accusative : latin.verbAlignment = .accusative := by native_d
 theorem japanese_verb_neutral : japanese.verbAlignment = .neutral := by native_decide
 theorem georgian_verb_active : georgian.verbAlignment = .active := by native_decide
 
+-- Dargwa
+theorem dargwa_np_ergative : dargwa.npAlignment = .ergative := by native_decide
+theorem dargwa_pron_ergative : dargwa.pronAlignment = .ergative := by native_decide
+theorem dargwa_verb_ergative : dargwa.verbAlignment = .ergative := by native_decide
+
 -- Split ergativity
 theorem dyirbal_is_dixon_split : dyirbal.dixonSplit = true := by native_decide
 theorem hindiUrdu_is_dixon_split : hindiUrdu.dixonSplit = true := by native_decide
@@ -548,6 +571,7 @@ theorem samoan_is_dixon_split : samoan.dixonSplit = true := by native_decide
 
 -- Uniform alignment
 theorem basque_fully_uniform : basque.fullyUniform = true := by native_decide
+theorem dargwa_fully_uniform : dargwa.fullyUniform = true := by native_decide
 theorem mandarin_fully_uniform : mandarin.fullyUniform = true := by native_decide
 theorem latin_fully_uniform : latin.fullyUniform = true := by native_decide
 
@@ -737,10 +761,10 @@ def dixonSplitCount : Nat :=
 def uniformCount : Nat :=
   (allProfiles.filter (fun p => p.fullyUniform)).length
 
-theorem ergativeNp_is_7 : ergativeNpCount = 7 := by native_decide
-theorem ergativePron_is_3 : ergativePronCount = 3 := by native_decide
+theorem ergativeNp_is_8 : ergativeNpCount = 8 := by native_decide
+theorem ergativePron_is_4 : ergativePronCount = 4 := by native_decide
 theorem dixonSplit_is_4 : dixonSplitCount = 4 := by native_decide
-theorem uniform_is_9 : uniformCount = 9 := by native_decide
+theorem uniform_is_10 : uniformCount = 10 := by native_decide
 
 -- ============================================================================
 -- Cross-Chapter Consistency
@@ -1114,5 +1138,59 @@ theorem ditrans_indirective_more_common :
     (allDitransProfiles.filter (λ p => p.alignment == .indirective)).length >
     (allDitransProfiles.filter (λ p => p.alignment == .secundative)).length := by
   native_decide
+
+-- ============================================================================
+-- Fragment Bridge Theorems
+-- ============================================================================
+
+/-! ### Bridge: Fragment grammatical descriptions ↔ Typology classifications
+
+These theorems verify that the inline `AlignmentProfile` entries are
+consistent with the grammatical facts described in each language's
+Fragment directory. The Fragment describes *what the language does*
+(e.g., agent gets ERG, patient gets ABS); the Typology *classifies*
+that pattern (e.g., ergative NP alignment). Bridge theorems ensure the
+classification faithfully reflects the grammar.
+
+Languages without Fragment directories rely on WALS grounding (above)
+instead. -/
+
+section FragmentBridges
+
+/-- Dargwa: Fragment says A=ERG, S/P=ABS → Typology says ergative NP alignment.
+    The classification follows from the case facts. -/
+theorem dargwa_fragment_bridge :
+    Fragments.Dargwa.Case.agentCase = .erg ∧
+    Fragments.Dargwa.Case.patientCase = .abs ∧
+    dargwa.npAlignment = .ergative := ⟨rfl, rfl, rfl⟩
+
+/-- Dargwa: Fragment says alignment family is ergative →
+    Typology profile is consistently ergative. -/
+theorem dargwa_alignment_family_bridge :
+    toAlignmentType Fragments.Dargwa.Case.alignment
+    = dargwa.npAlignment := rfl
+
+/-- Japanese: Fragment case inventory contains NOM and ACC →
+    Typology says accusative NP alignment. -/
+theorem japanese_fragment_bridge :
+    Fragments.Japanese.Case.caseInventory.any (· == .nom) = true ∧
+    Fragments.Japanese.Case.caseInventory.any (· == .acc) = true ∧
+    japanese.npAlignment = .accusative := ⟨by native_decide, by native_decide, rfl⟩
+
+/-- Hindi: Fragment split-ergative system perfective→ERG matches
+    Typology's ergative NP alignment (the dominant/WALS-coded pattern). -/
+theorem hindi_fragment_bridge :
+    Core.hindiSplit.alignment .perfective = .ergative ∧
+    toAlignmentType (Core.hindiSplit.alignment .perfective)
+      = hindiUrdu.npAlignment := ⟨rfl, rfl⟩
+
+/-- Hindi: Fragment split-ergative system imperfective→ACC matches
+    Typology's accusative pronoun alignment. -/
+theorem hindi_split_bridge :
+    Core.hindiSplit.alignment .imperfective = .accusative ∧
+    toAlignmentType (Core.hindiSplit.alignment .imperfective)
+      = hindiUrdu.pronAlignment := ⟨rfl, rfl⟩
+
+end FragmentBridges
 
 end Phenomena.Alignment.Typology

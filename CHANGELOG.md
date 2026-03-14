@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.222] - 2026-03-13
+
+### Added
+- **Fragments/Dargwa/**: New 4-file Fragment for Dargwa (Tanti dialect, Nakh-Dagestanian) based on @cite{sumbatova-2021} — Case.lean (6 grammatical cases + 8×4×4 locative decomposition, consistent ergative alignment), Agreement.lean (3 singular + 3 plural genders, "Dargic type" person agreement using Core.Prominence.PersonLevel directly, SAP > 3 hierarchy), ComplexPredicates.lean (12 light verbs, complex predicate structure, vVPE connection to Kalyakin 2026), Coordination.lean (MU-only conjunction =ra, disjunction ja...ja)
+- **Alignment/Typology.lean**: Add Dargwa as 21st AlignmentProfile entry (consistently ergative); Fragment bridge theorems connecting Dargwa, Japanese, and Hindi case descriptions to typological classifications
+
+### Fixed
+- **Dargwa Agreement.lean**: Fix 1SG and 2PL clitic markers (were `none`, now correctly `some "=da"` per Table 4.21); eliminate redundant local Person type in favor of Core.Prominence.PersonLevel
+- **Dargwa Case.lean**: Add `LocativeForm.wellFormed` predicate encoding all combinatorial constraints (translative restricted to SUB/ANTE/POST, POST only with translative, direction obligatory in elative, absent in essive/translative)
+
 ## [0.229.221] - 2026-03-13
 
 ### Added
