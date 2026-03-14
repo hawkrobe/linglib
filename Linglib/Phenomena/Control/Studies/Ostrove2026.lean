@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
-import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
+import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
 import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Phenomena.Complementation.Typology
 
@@ -56,7 +56,7 @@ infinitival classification.
 namespace Phenomena.Control.Studies.Ostrove2026
 
 open Syntax.Minimalism.MinimalPronoun
-open Minimalism.Tense.Wurmbrand (InfinitivalTenseClass)
+open Minimalism.Tense.InfinitivalTense (InfinitivalTenseClass)
 open Fragments.Mixtec.SMPM (ClauseType clauseProperties)
 
 -- ════════════════════════════════════════════════════════════════

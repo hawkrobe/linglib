@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Basic
+import Linglib.Core.Temporal.Tense
 
 /-!
 # @cite{klecha-2016}: Modality and Embedded Temporal Operators
@@ -28,11 +28,10 @@ update this index just as attitude verbs do.
 
 -/
 
-namespace Semantics.Tense.Klecha
+namespace Semantics.Tense.ModalTense
 
 open Core.Tense
 open Core.Reichenbach
-open Semantics.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -111,19 +110,4 @@ theorem evalTimeIndex_grounds_klecha {Time : Type*}
   evalTime_shifts_under_embedding tp g modalEvalTime
 
 
--- ════════════════════════════════════════════════════════════════
--- § Theory Identity Card
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{klecha-2016} theory identity card. -/
-def Klecha : TenseTheory where
-  name := "Klecha 2016"
-  citation := "Klecha, P. (2016). Modality and embedded temporal operators. S&P 9(9): 1-55."
-  hasTemporalDeRe := false
-  hasULC := false
-  hasZeroTense := false
-  hasSOTDeletion := false
-  simultaneousMechanism := "not primary focus (inherits from base tense theory)"
-
-
-end Semantics.Tense.Klecha
+end Semantics.Tense.ModalTense

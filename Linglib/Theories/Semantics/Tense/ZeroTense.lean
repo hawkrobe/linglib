@@ -26,7 +26,7 @@ about the source: ambiguity (Ogihara) vs deletion (Kratzer).
 
 -/
 
-namespace Semantics.Tense.Ogihara
+namespace Semantics.Tense.ZeroTense
 
 open Core.Tense
 open Core.Reichenbach
@@ -100,29 +100,13 @@ theorem ogihara_derives_shifted {Time : Type*} [LinearOrder Time]
   simp [embeddedFrame, ReichenbachFrame.isPast]
   exact hPast
 
--- ════════════════════════════════════════════════════════════════
--- § Theory Identity Card
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{ogihara-1996} theory identity card. -/
-def Ogihara : TenseTheory where
-  name := "Ogihara 1996"
-  citation := "Ogihara, T. (1996). Tense, Attitudes, and Scope. Kluwer."
-  hasTemporalDeRe := false
-  hasULC := false
-  hasZeroTense := true
-  hasSOTDeletion := false
-  simultaneousMechanism := "zero tense (ambiguous past = bound variable)"
-
 /-- Ogihara's key claim: past IS ambiguous between genuine past and
     zero tense. This is a categorical structural difference from Kratzer.
     In Ogihara, the simultaneous reading = the zero-tense READING of past
     (semantic ambiguity); in Kratzer, it = deletion of past (morphological
     operation, no ambiguity). -/
 theorem ogihara_ambiguity_vs_deletion :
-    OgiharaPastReading.genuinePast ≠ OgiharaPastReading.zeroTense ∧
-    Ogihara.hasZeroTense = true :=
-  ⟨nofun, rfl⟩
+    OgiharaPastReading.genuinePast ≠ OgiharaPastReading.zeroTense := nofun
 
 
-end Semantics.Tense.Ogihara
+end Semantics.Tense.ZeroTense

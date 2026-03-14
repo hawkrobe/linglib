@@ -723,6 +723,7 @@ import Linglib.Phenomena.Constructions.Resultatives.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.Constructions.Resultatives.Studies.Dendikken1995
+import Linglib.Phenomena.Constructions.Resultatives.Studies.Levin2026
 import Linglib.Phenomena.Causation.Studies.BeaversEtAl2021
 import Linglib.Phenomena.Causation.Data
 import Linglib.Phenomena.Causation.Typology
@@ -845,6 +846,7 @@ import Linglib.Phenomena.FillerGap.Studies.PickeringBarry1991
 import Linglib.Phenomena.FillerGap.Studies.Steedman2000CrossSerial
 import Linglib.Phenomena.FillerGap.CCGGenerativeCapacity
 import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
+import Linglib.Phenomena.FillerGap.Studies.Charlow2020
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
@@ -1043,6 +1045,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Linglib.Phenomena.TenseAspect.Data
 import Linglib.Phenomena.TenseAspect.Studies.HeimKratzer1998
+import Linglib.Phenomena.TenseAspect.Studies.TsiliaZhao2026
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025ThenPresent
 import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
@@ -1371,6 +1374,7 @@ import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Composition.Glue
 import Linglib.Theories.Semantics.Composition.WriterMonad
+import Linglib.Theories.Semantics.Composition.SetMonad
 import Linglib.Theories.Semantics.Composition.Applicative
 import Linglib.Theories.Semantics.Composition.Effects
 import Linglib.Theories.Semantics.Montague.Conjunction
@@ -1441,12 +1445,12 @@ import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
-import Linglib.Theories.Semantics.Tense.TsiliaZhao2026
+import Linglib.Theories.Semantics.Tense.Perspective
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense
-import Linglib.Theories.Semantics.Tense.Declerck
-import Linglib.Theories.Semantics.Tense.Anderson
+import Linglib.Theories.Semantics.Tense.TOChain
+import Linglib.Theories.Semantics.Tense.ConditionalShift
 import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
@@ -1559,15 +1563,15 @@ import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
 import Linglib.Theories.Semantics.Intensional.Situations.Percus
 import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Theories.Semantics.Tense.Abusch
-import Linglib.Theories.Semantics.Tense.VonStechow
-import Linglib.Theories.Semantics.Tense.Kratzer
-import Linglib.Theories.Semantics.Tense.Ogihara
-import Linglib.Theories.Semantics.Tense.Klecha
-import Linglib.Theories.Semantics.Tense.Deal
-import Linglib.Theories.Semantics.Tense.Sharvit
-import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
-import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
+import Linglib.Theories.Semantics.Tense.TemporalDeRe
+import Linglib.Theories.Semantics.Tense.FeatureChecking
+import Linglib.Theories.Semantics.Tense.Decomposition
+import Linglib.Theories.Semantics.Tense.ZeroTense
+import Linglib.Theories.Semantics.Tense.ModalTense
+import Linglib.Theories.Semantics.Tense.CounterfactualTense
+import Linglib.Theories.Semantics.Tense.SimultaneousTense
+import Linglib.Theories.Syntax.Minimalism.Tense.AgreeSOT
+import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
 -- Theories: Semantics.Questions
 import Linglib.Theories.Semantics.Questions.Denotation.Basic
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin

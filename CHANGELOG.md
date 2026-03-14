@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.229.227] - 2026-03-13
+
+### Changed
+- **Tense theory files: paper-based → concept-based names.** Renamed 12 theory files so `Theories/` reflects consensus infrastructure, not paper attribution: `Abusch.lean` → `TemporalDeRe.lean`, `VonStechow.lean` → `FeatureChecking.lean`, `Kratzer.lean` → `Decomposition.lean`, `Ogihara.lean` → `ZeroTense.lean`, `Klecha.lean` → `ModalTense.lean`, `Deal.lean` → `CounterfactualTense.lean`, `Sharvit.lean` → `SimultaneousTense.lean`, `Anderson.lean` → `ConditionalShift.lean`, `Declerck.lean` → `TOChain.lean`, `Zeijlstra.lean` → `AgreeSOT.lean`, `Wurmbrand.lean` → `InfinitivalTense.lean`, `TsiliaZhao2026.lean` → `Perspective.lean`
+- **Compare.lean**: TenseTheory identity cards moved from individual theory files into Compare.lean as local definitions — theory files no longer carry metadata about themselves
+- **Zhao2025ThenPresent.lean**: Trimmed to core puzzle content (root clause incompatibility, presuppositional bridge); typology verification and embedded clause derivations moved to TsiliaZhao2026 study
+- **HeimKratzer1998.lean**: Removed card-dependent conjuncts from `kratzer_zero_tense_chain`
+- **Decomposition.lean**: Removed identity-card-dependent theorems (`kratzer_no_zero_tense`, `kratzer_uses_deletion`); simplified `past_never_zero`
+
+### Added
+- **TsiliaZhao2026.lean** (study): Tsilia & Zhao 2026 paper-specific analysis — Shift Together theorems, Sharvit bridge, tense shift typology verification (5 languages × 4 configurations), WOLL analysis, deleted-present prediction, embedded clause derivations
+
+## [0.229.226] - 2026-03-13
+
+### Added
+- **SetMonad.lean**: Set monad `(S, η, ⫝̸)` for indeterminacy effect (@cite{charlow-2020}) — `eta`/`setBind`/`setMap`, three monad laws (LEFT IDENTITY, RIGHT IDENTITY, ASSOCIATIVITY), existential closure, bridge to `setPure`/`setAp` in Applicative.lean, LIFT decomposition (`lift = A ∘ η`), exceptional scope derivation via ASSOCIATIVITY, higher-order alternative sets for selectivity
+- **Charlow2020.lean**: Study file — exceptional scope out of conditional islands, intermediate scope, selectivity with multiple island-bound indefinites, Binder Roof Constraint
+
+### Changed
+- **Effects.lean**: Import SetMonad.lean, fill indeterminacy effect gap (`α → Prop`), add §9 bridge section with re-exported ASSOCIATIVITY theorem
+
 ## [0.229.225] - 2026-03-13
 
 ### Added

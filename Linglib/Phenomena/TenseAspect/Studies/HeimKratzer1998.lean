@@ -1,13 +1,13 @@
 import Linglib.Phenomena.TenseAspect.Data
-import Linglib.Theories.Semantics.Tense.Abusch
-import Linglib.Theories.Semantics.Tense.VonStechow
-import Linglib.Theories.Semantics.Tense.Kratzer
-import Linglib.Theories.Semantics.Tense.Ogihara
-import Linglib.Theories.Semantics.Tense.Klecha
-import Linglib.Theories.Semantics.Tense.Deal
-import Linglib.Theories.Semantics.Tense.Sharvit
-import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
-import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
+import Linglib.Theories.Semantics.Tense.TemporalDeRe
+import Linglib.Theories.Semantics.Tense.FeatureChecking
+import Linglib.Theories.Semantics.Tense.Decomposition
+import Linglib.Theories.Semantics.Tense.ZeroTense
+import Linglib.Theories.Semantics.Tense.ModalTense
+import Linglib.Theories.Semantics.Tense.CounterfactualTense
+import Linglib.Theories.Semantics.Tense.SimultaneousTense
+import Linglib.Theories.Syntax.Minimalism.Tense.AgreeSOT
+import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Fragments.English.Tense
@@ -370,7 +370,7 @@ theorem perfective_implies_aspect_assumption
 -- § Per-Theory Derivations: Abusch
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.Abusch
+open Semantics.Tense.TemporalDeRe
 
 /-- Abusch derives the simultaneous data frame via binding. -/
 theorem abusch_derives_embeddedSickSimultaneous :
@@ -387,7 +387,7 @@ theorem abusch_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Von Stechow
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.VonStechow
+open Semantics.Tense.FeatureChecking
 
 /-- Von Stechow derives the simultaneous frame via [PRES] feature. -/
 theorem vonStechow_derives_embeddedSickSimultaneous :
@@ -404,7 +404,7 @@ theorem vonStechow_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Kratzer
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.Kratzer
+open Semantics.Tense.Decomposition
 
 /-- Kratzer derives the simultaneous frame via SOT deletion. -/
 theorem kratzer_derives_embeddedSickSimultaneous :
@@ -421,7 +421,7 @@ theorem kratzer_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Ogihara
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.Ogihara
+open Semantics.Tense.ZeroTense
 
 /-- Ogihara derives the simultaneous frame via zero tense. -/
 theorem ogihara_derives_embeddedSickSimultaneous
@@ -435,7 +435,7 @@ theorem ogihara_derives_embeddedSickSimultaneous
 -- § Per-Theory Derivations: Klecha
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.Klecha
+open Semantics.Tense.ModalTense
 
 /-- Klecha derives the modal-past data: past tense checked against
     modal eval time. -/
@@ -448,7 +448,7 @@ theorem klecha_derives_modalPast :
 -- § Per-Theory Derivations: Deal
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.Deal
+open Semantics.Tense.CounterfactualTense
 
 /-- Deal derives the counterfactual frame: past morphology with
     present reference, via modal distance rather than temporal
@@ -466,7 +466,7 @@ theorem deal_derives_counterfactualFrame :
 -- § Per-Theory Derivations: Zeijlstra
 -- ════════════════════════════════════════════════════════════════
 
-open Minimalism.Tense.Zeijlstra
+open Minimalism.Tense.AgreeSOT
 
 /-- Zeijlstra derives the simultaneous data frame:
     embedded T has [uPAST] (semantically vacuous via Agree),
@@ -487,7 +487,7 @@ theorem zeijlstra_derives_embeddedSickShifted :
 -- § Per-Theory Derivations: Wurmbrand
 -- ════════════════════════════════════════════════════════════════
 
-open Minimalism.Tense.Wurmbrand
+open Minimalism.Tense.InfinitivalTense
 
 /-- Wurmbrand classifies "wanted to leave" as future irrealis:
     the complement is tenseless + woll → future-oriented. -/
@@ -512,7 +512,7 @@ theorem wurmbrand_classifies_triedToLeave :
 -- § Per-Theory Derivations: Sharvit
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Tense.Sharvit
+open Semantics.Tense.SimultaneousTense
 
 /-- Sharvit derives the indirect question simultaneous reading:
     the simultaneous tense in "John asked who was sick" locates
@@ -694,7 +694,7 @@ section KratzerChain
 
 open Fragments.English.Tense (kratzerSimplePast kratzerPresentPerfect)
 open Fragments.German.Tense (kratzerPreterit kratzerPerfekt)
-open Semantics.Tense.Kratzer
+open Semantics.Tense.Decomposition
 open Core.Tense (Overtness)
 
 /-- **English full chain**: Fragment entry → Theory → Composed semantics → Data.
@@ -779,12 +779,8 @@ theorem kratzer_zero_tense_chain :
     -- (2) Surfaces as zero (bound + local domain)
     Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero ∧
     -- (3) SOT deletion produces simultaneous frame
-    (applyDeletion matrixSaid).isPresent ∧
-    -- (4) Theory card: no zero tense ambiguity
-    KratzerTense.hasZeroTense = false ∧
-    -- (5) Theory card: uses deletion mechanism
-    KratzerTense.hasSOTDeletion = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+    (applyDeletion matrixSaid).isPresent :=
+  ⟨rfl, rfl, rfl⟩
 
 end KratzerChain
 

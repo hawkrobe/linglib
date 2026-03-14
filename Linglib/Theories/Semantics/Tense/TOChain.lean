@@ -65,7 +65,7 @@ Declercian projection — the "perfect" lives in the chain structure
 
 -/
 
-namespace Semantics.Tense.Declerck
+namespace Semantics.Tense.TOChain
 
 open Core.Time (TemporalRelation)
 open Core.Reichenbach (ReichenbachFrame)
@@ -702,4 +702,4 @@ theorem conditionalPerfect_tower_depth (t0 to2 to3 toSit : Time) {E P : Type*}
 
 end TowerBridge
 
-end Semantics.Tense.Declerck
+end Semantics.Tense.TOChain

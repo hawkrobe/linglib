@@ -38,7 +38,7 @@ and simultaneous readings) but differ on what "past" means:
 
 -/
 
-namespace Semantics.Tense.Kratzer
+namespace Semantics.Tense.Decomposition
 
 open Core.Tense
 open Core.Reichenbach
@@ -107,31 +107,6 @@ theorem kratzer_deletion_yields_simultaneous {Time : Type*}
     (matrixFrame : ReichenbachFrame Time) :
     (applyDeletion matrixFrame).referenceTime = matrixFrame.eventTime :=
   rfl
-
--- ════════════════════════════════════════════════════════════════
--- § Theory Identity Card
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{heim-kratzer-1998} theory identity card. -/
-def KratzerTense : TenseTheory where
-  name := "Kratzer 1998"
-  citation := "Kratzer, A. (1998). More structural analogies between pronouns and tenses. SALT VIII, 92-110."
-  hasTemporalDeRe := false
-  hasULC := false
-  hasZeroTense := false
-  hasSOTDeletion := true
-  simultaneousMechanism := "SOT deletion of morphologically identical embedded tense"
-
-/-- Kratzer's key claim: past is NEVER zero tense. The simultaneous
-    reading comes from deletion, not from an ambiguity in what "past"
-    means. This is a categorical structural difference from Ogihara. -/
-theorem kratzer_no_zero_tense :
-    KratzerTense.hasZeroTense = false := rfl
-
-/-- Kratzer uses deletion (not ambiguity) for the simultaneous reading. -/
-theorem kratzer_uses_deletion :
-    KratzerTense.hasSOTDeletion = true := rfl
-
 
 -- ════════════════════════════════════════════════════════════════
 -- § Tense Decomposition Structure
@@ -278,13 +253,11 @@ theorem zero_tense_is_present (n : ℕ) :
 theorem zero_tense_overtness (n : ℕ) :
     Overtness.fromBinding (kratzerZeroTense n).mode true = .zero := rfl
 
-/-- Kratzer's key claim: past is NEVER zero tense (hasZeroTense = false).
+/-- Kratzer's key claim: past is NEVER zero tense.
     The zero morpheme under SOT is a bound PRESENT, not an ambiguous PAST.
     Contrast with `kratzerZeroTense` which IS zero but is PRESENT. -/
 theorem past_never_zero :
-    KratzerTense.hasZeroTense = false ∧
-    (kratzerZeroTense 1).constraint = .present :=
-  ⟨rfl, rfl⟩
+    (kratzerZeroTense 1).constraint = .present := rfl
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -326,4 +299,4 @@ theorem english_indexical_always_overt (localDomain : Bool) :
   cases localDomain <;> rfl
 
 
-end Semantics.Tense.Kratzer
+end Semantics.Tense.Decomposition

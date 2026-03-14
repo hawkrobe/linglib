@@ -40,7 +40,7 @@ Agree spell-out, not semantic past.
 
 -/
 
-namespace Minimalism.Tense.Zeijlstra
+namespace Minimalism.Tense.AgreeSOT
 
 open Core.Tense
 open Core.Reichenbach
@@ -410,22 +410,4 @@ theorem williams_bridges_sotparam :
     allowsUninterpretableTense .absolute = false := ⟨rfl, rfl⟩
 
 
--- ════════════════════════════════════════════════════════════════
--- § Identity Card
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{zeijlstra-2012} identity card, extended with @cite{egressy-2026}
-    size-sensitive SOT prediction. -/
-def Zeijlstra : TenseTheory where
-  name := "Zeijlstra 2012"
-  citation := "Zeijlstra, H. (2012). There is only one way to agree. The Linguistic Review 29(3): 491-539."
-  hasTemporalDeRe := false
-  hasULC := false
-  hasZeroTense := false
-  hasSOTDeletion := false
-  hasAgreeBasedSOT := true
-  hasSizeSensitiveSOT := true
-  simultaneousMechanism := "uninterpretable [uPAST] Agrees upward with [iPAST]"
-
-
-end Minimalism.Tense.Zeijlstra
+end Minimalism.Tense.AgreeSOT

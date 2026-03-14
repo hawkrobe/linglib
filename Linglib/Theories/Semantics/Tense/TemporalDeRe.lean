@@ -34,7 +34,7 @@ via res movement, just as DPs can scope out of attitude complements.
 
 -/
 
-namespace Semantics.Tense.Abusch
+namespace Semantics.Tense.TemporalDeRe
 
 open Core.Tense
 open Core.Reichenbach
@@ -186,19 +186,4 @@ theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
   exact hBefore
 
 
--- ════════════════════════════════════════════════════════════════
--- § Theory Identity Card
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{abusch-1997} theory identity card. -/
-def Abusch : TenseTheory where
-  name := "Abusch 1997"
-  citation := "Abusch, D. (1997). Sequence of tense and temporal de re. L&P 20(1): 1-50."
-  hasTemporalDeRe := true
-  hasULC := true
-  hasZeroTense := false
-  hasSOTDeletion := false
-  simultaneousMechanism := "bound variable receives matrix event time"
-
-
-end Semantics.Tense.Abusch
+end Semantics.Tense.TemporalDeRe

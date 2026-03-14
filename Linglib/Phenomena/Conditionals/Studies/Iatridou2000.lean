@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Conditionals.Iatridou
-import Linglib.Theories.Semantics.Tense.Deal
+import Linglib.Theories.Semantics.Tense.CounterfactualTense
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 
@@ -273,7 +273,7 @@ theorem pastCF_has_more_layers :
 -- ════════════════════════════════════════════════════════════════
 
 open Semantics.Conditionals.Iatridou
-open Semantics.Tense.Deal
+open Semantics.Tense.CounterfactualTense
 
 /-- English FLV: 1 past layer = 1 ExclF (FLV). -/
 theorem english_flv_layers :

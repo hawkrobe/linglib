@@ -2,7 +2,7 @@ import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
 import Linglib.Theories.Semantics.Tense.BranchingTime
-import Linglib.Theories.Semantics.Tense.Deal
+import Linglib.Theories.Semantics.Tense.CounterfactualTense
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
@@ -44,7 +44,7 @@ ExclF stress-tests the tower because:
 namespace Semantics.Conditionals.Iatridou
 
 open Core.Context (KContext ContextTower ContextShift temporalShift)
-open Semantics.Tense.Deal (PastMorphologyUse CounterfactualDistance)
+open Semantics.Tense.CounterfactualTense (PastMorphologyUse CounterfactualDistance)
 open Semantics.Tense.BranchingTime (WorldHistory historicalBase)
 open Semantics.Mood (subjShift)
 open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)

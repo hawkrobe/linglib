@@ -27,7 +27,7 @@ conditionals to the tower architecture.
 
 -/
 
-namespace Semantics.Tense.Anderson
+namespace Semantics.Tense.ConditionalShift
 
 open Core.Time
 open Core.Context (RichContext KContext ContextTower ContextShift
@@ -189,4 +189,4 @@ theorem subj_subsumes_hp_expansion
 
 end SubjBridge
 
-end Semantics.Tense.Anderson
+end Semantics.Tense.ConditionalShift

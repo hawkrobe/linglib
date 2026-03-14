@@ -45,7 +45,7 @@ properties. The key insight: infinitival complements are not uniformly
 
 -/
 
-namespace Minimalism.Tense.Wurmbrand
+namespace Minimalism.Tense.InfinitivalTense
 
 open Core.Tense
 open Core.Reichenbach
@@ -441,26 +441,4 @@ theorem episodic_correlates_with_size :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 
--- ════════════════════════════════════════════════════════════════
--- § 10: Identity Card
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{wurmbrand-2014} identity card.
-
-    Note: the paper is primarily about the three-way classification of
-    infinitival tense, not about SOT mechanisms. It is compatible with
-    both semantic and syntactic approaches to SOT. `hasAgreeBasedSOT`
-    is `false` because the paper does not present an Agree mechanism
-    (that is @cite{zeijlstra-2012}'s contribution). -/
-def Wurmbrand : TenseTheory where
-  name := "Wurmbrand 2014"
-  citation := "Wurmbrand, S. (2014). Tense and aspect in English infinitives. LI 45(3): 403-447."
-  hasTemporalDeRe := false
-  hasULC := false
-  hasZeroTense := false
-  hasSOTDeletion := false
-  hasAgreeBasedSOT := false
-  simultaneousMechanism := "propositional NOW-anchoring or restructuring single domain"
-
-
-end Minimalism.Tense.Wurmbrand
+end Minimalism.Tense.InfinitivalTense

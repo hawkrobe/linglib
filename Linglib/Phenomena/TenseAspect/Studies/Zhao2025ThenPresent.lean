@@ -1,5 +1,5 @@
 import Linglib.Core.Temporal.Reichenbach
-import Linglib.Theories.Semantics.Tense.TsiliaZhao2026
+import Linglib.Theories.Semantics.Tense.Perspective
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.Mandarin.TemporalDeictic
@@ -10,18 +10,17 @@ import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
-# Then-Present Puzzle (@cite{zhao-2025}, @cite{tsilia-zhao-2026})
-@cite{zhao-2025} @cite{tsilia-zhao-2026} @cite{kiparsky-2002}Temporal "then" is cross-linguistically incompatible with present tense.
-@cite{zhao-2025} explains this via a perspective parameter π (= Kiparsky's P):
-present tense requires P = R, but "then" shifts P away from S, making
-P ≠ S. In root clauses, isSimpleCase requires P = S, so present + then
-forces R = P ≠ S — but present tense in root clauses needs R = S,
-creating a contradiction.
+# Then-Present Puzzle (@cite{zhao-2025})
+@cite{zhao-2025} @cite{kiparsky-2002}
 
-@cite{tsilia-zhao-2026} provide the presuppositional analysis: tenses
-are presupposition triggers anchored to π, and the incompatibility is a
-presupposition clash between ⌈then⌉ (P ≠ local eval) and OP_π (P = local
-eval).
+Temporal ⌈then⌉ is cross-linguistically incompatible with present tense.
+
+## The puzzle
+
+⌈then⌉ presupposes ¬(g(n) ○ π): its reference is disjoint from the
+temporal perspective. PRES presupposes g(n) ○ π: overlap with the
+perspective. When composition forces the PRES reference inside the then
+reference ("during then"), the presuppositions clash.
 
 ## Cross-linguistic data
 
@@ -36,22 +35,14 @@ eval).
 | Hebrew   | אז az             | yes                 |
 | Hungarian| akkor             | yes                 |
 
-## Key theorem
-
-`then_present_incompatible`: In a simple root clause (P = S) with present
-tense (R = P), "then" (P ≠ S) leads to contradiction.
-
-The presuppositional generalization (`then_perspective_clash` in
-`TsiliaZhao2026.lean`) subsumes this: OP_π forces P = localEval while
-⌈then⌉ requires P ≠ localEval.
-
 -/
 
-namespace Phenomena.TenseAspect.ThenPresentBridge
+namespace Phenomena.TenseAspect.Studies.Zhao2025ThenPresent
 
 open Core.Reichenbach
 open Semantics.Tense
-open Semantics.Tense.TsiliaZhao2026
+open Semantics.Tense.Perspective
+
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Linguistic "Then" Inventory
@@ -68,10 +59,6 @@ def thenAdverbs : List ThenAdverb :=
   , Fragments.Hebrew.TemporalDeictic.az
   , Fragments.Hungarian.TemporalDeictic.akkor ]
 
--- ════════════════════════════════════════════════════
--- § 2. Per-Datum Verification
--- ════════════════════════════════════════════════════
-
 /-- Every "then" adverb in our inventory shifts perspective. -/
 theorem all_then_shift_perspective :
     ∀ a ∈ thenAdverbs, a.shiftsPerspective = true := by
@@ -79,16 +66,15 @@ theorem all_then_shift_perspective :
   simp only [thenAdverbs, List.mem_cons, List.mem_nil_iff, or_false] at ha
   rcases ha with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
 
+
 -- ════════════════════════════════════════════════════
--- § 3. The Then-Present Incompatibility
+-- § 2. The Then-Present Incompatibility (Root Clause)
 -- ════════════════════════════════════════════════════
 
-/-- The then-present incompatibility (@cite{zhao-2025}, Part I):
-    In a simple root clause (P = S) with present tense (R = P),
-    "then" requires P ≠ S — contradiction.
-
-    This is the formal core of why *"Then John is sick" (with temporal
-    "then" = at that time) is infelicitous. -/
+/-- Root clause: PRES (R = P) + isSimpleCase (P = S) means R = S.
+    ⌈then⌉ requires its reference ≠ π = S. Since composition puts
+    the PRES reference inside the then reference, both equal S in the
+    point model, contradicting then's presupposition. -/
 theorem then_present_incompatible {Time : Type*} [LinearOrder Time]
     (f : ReichenbachFrame Time)
     (_hPresent : f.isPresent)    -- R = P (present tense)
@@ -97,13 +83,14 @@ theorem then_present_incompatible {Time : Type*} [LinearOrder Time]
     : False :=
   hShift hSimple
 
+
 -- ════════════════════════════════════════════════════
--- § 4. Presuppositional Bridge Theorems
+-- § 3. Presuppositional Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-/-- The root-clause incompatibility is a corollary of the presuppositional
-    theorem: in root clauses, P = S is the default (no OP_π applied),
-    so localEval = S and `then_perspective_clash` applies. -/
+/-- The root-clause incompatibility is a corollary of the general
+    perspective clash: in root clauses, π = S (no OP_π), so
+    localEval = S and `then_perspective_clash` applies. -/
 theorem root_clause_is_presuppositional_corollary {Time : Type*}
     (f : ReichenbachFrame Time)
     (hSimple : f.isSimpleCase)
@@ -112,12 +99,13 @@ theorem root_clause_is_presuppositional_corollary {Time : Type*}
   then_perspective_clash f f.speechTime hSimple hThen
 
 /-- ⌈then⌉ + deleted tense is compatible: when SOT deletes the embedded
-    tense, no presupposition anchors π, so ⌈then⌉ can freely shift P. -/
+    tense, no presupposition anchors it to π, so ⌈then⌉ can freely
+    pick a reference disjoint from π. -/
 theorem then_compatible_with_deleted_tense {Time : Type*}
-    (f : ReichenbachFrame Time)
-    (hShifted : f.perspectiveTime ≠ f.speechTime)
-    (hOverlap : f.referenceTime = f.perspectiveTime) :
-    thenPresup f :=
-  then_deleted_tense_compatible f hShifted hOverlap
+    (thenRef perspective : Time)
+    (hDisjoint : thenRef ≠ perspective) :
+    thenPresup thenRef perspective :=
+  then_deleted_tense_compatible thenRef perspective hDisjoint
 
-end Phenomena.TenseAspect.ThenPresentBridge
+
+end Phenomena.TenseAspect.Studies.Zhao2025ThenPresent

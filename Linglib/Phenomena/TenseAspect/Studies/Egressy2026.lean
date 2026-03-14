@@ -1,6 +1,6 @@
 import Linglib.Core.Temporal.Tense
 import Linglib.Core.Temporal.Reichenbach
-import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
+import Linglib.Theories.Syntax.Minimalism.Tense.AgreeSOT
 import Linglib.Fragments.Hungarian.Predicates
 import Linglib.Fragments.Hungarian.FunctionWords
 import Linglib.Fragments.Hungarian.TemporalDeictic
@@ -220,7 +220,7 @@ theorem all_tp_simultaneous :
 -- ════════════════════════════════════════════════════════════════
 
 open Minimalism (ComplementSize fValue Cat)
-open Minimalism.Tense.Zeijlstra
+open Minimalism.Tense.AgreeSOT
 open Semantics.Tense (EmbeddedTenseReading)
 open Fragments.Hungarian.Predicates
 open Fragments.Hungarian.FunctionWords

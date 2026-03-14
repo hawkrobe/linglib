@@ -25,7 +25,7 @@ that must be checked against the local temporal anchor.
 
 -/
 
-namespace Semantics.Tense.VonStechow
+namespace Semantics.Tense.FeatureChecking
 
 open Core.Tense
 open Core.Reichenbach
@@ -136,19 +136,4 @@ theorem feature_checking_is_fullPresupposition {Time : Type*} [LinearOrder Time]
   Iff.rfl
 
 
--- ════════════════════════════════════════════════════════════════
--- § Theory Identity Card
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{von-stechow-2009} theory identity card. -/
-def VonStechow : TenseTheory where
-  name := "Von Stechow 2009"
-  citation := "Von Stechow, A. (2009). Tenses in compositional semantics. In Klein & Li (eds.), The Expression of Time, 129-166."
-  hasTemporalDeRe := false
-  hasULC := false
-  hasZeroTense := false
-  hasSOTDeletion := false
-  simultaneousMechanism := "[PRES] feature checked against matrix event time"
-
-
-end Semantics.Tense.VonStechow
+end Semantics.Tense.FeatureChecking

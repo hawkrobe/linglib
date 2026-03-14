@@ -24,7 +24,7 @@ temporal tense (subject to ULC) from counterfactual tense (exempt from ULC).
 
 -/
 
-namespace Semantics.Tense.Deal
+namespace Semantics.Tense.CounterfactualTense
 
 open Core.Tense
 open Core.Reichenbach
@@ -124,19 +124,4 @@ theorem temporal_ne_counterfactual :
   nofun
 
 
--- ════════════════════════════════════════════════════════════════
--- § Theory Identity Card
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{deal-2020} theory identity card. -/
-def Deal : TenseTheory where
-  name := "Deal 2020"
-  citation := "Deal, A. R. (2020). Counterfactuals and the Upper Limit Constraint."
-  hasTemporalDeRe := false
-  hasULC := true  -- has ULC but refined (temporal only)
-  hasZeroTense := false
-  hasSOTDeletion := false
-  simultaneousMechanism := "not primary focus (inherits from base tense theory)"
-
-
-end Semantics.Tense.Deal
+end Semantics.Tense.CounterfactualTense

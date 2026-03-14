@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
-import Linglib.Theories.Semantics.Tense.Kratzer
+import Linglib.Theories.Semantics.Tense.Decomposition
 
 /-!
 # English Tense Fragment (@cite{cumming-2026} + @cite{lakoff-1970})
@@ -160,7 +160,7 @@ theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
 -- § 6. Kratzer Decomposition (@cite{heim-kratzer-1998})
 -- ════════════════════════════════════════════════════
 
-open Semantics.Tense.Kratzer
+open Semantics.Tense.Decomposition
 open Core.Tense
 
 /-- English simple past: Kratzer decomposition.

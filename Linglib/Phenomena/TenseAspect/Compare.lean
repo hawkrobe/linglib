@@ -1,13 +1,4 @@
-import Linglib.Theories.Semantics.Tense.Abusch
-import Linglib.Theories.Semantics.Tense.VonStechow
-import Linglib.Theories.Semantics.Tense.Kratzer
-import Linglib.Theories.Semantics.Tense.Ogihara
-import Linglib.Theories.Semantics.Tense.Klecha
-import Linglib.Theories.Semantics.Tense.Deal
-import Linglib.Theories.Semantics.Tense.Sharvit
-import Linglib.Theories.Semantics.Tense.TsiliaZhao2026
-import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
-import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
+import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Tense Theories: Cross-Cutting Comparison
@@ -44,17 +35,106 @@ see `Comparisons/Partee1973.lean`.
 namespace Phenomena.TenseAspect.Compare
 
 open Semantics.Tense
-open Semantics.Tense.Abusch (Abusch)
-open Semantics.Tense.VonStechow (VonStechow)
-open Semantics.Tense.Kratzer (KratzerTense)
-open Semantics.Tense.Ogihara (Ogihara)
-open Semantics.Tense.Klecha (Klecha)
-open Semantics.Tense.Deal (Deal)
-open Semantics.Tense.Sharvit (Sharvit)
-open Semantics.Tense.TsiliaZhao2026 (TsiliaZhao2026)
-open Minimalism.Tense.Zeijlstra (Zeijlstra)
-open Minimalism.Tense.Wurmbrand (Wurmbrand)
-open Core.Reichenbach
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 0. Theory Identity Cards
+-- ════════════════════════════════════════════════════════════════
+
+def Abusch : TenseTheory where
+  name := "Abusch 1997"
+  citation := "Abusch, D. (1997). Sequence of tense and temporal de re. L&P 20(1): 1-50."
+  hasTemporalDeRe := true
+  hasULC := true
+  hasZeroTense := false
+  hasSOTDeletion := false
+  simultaneousMechanism := "bound variable receives matrix event time"
+
+def VonStechow : TenseTheory where
+  name := "Von Stechow 2009"
+  citation := "Von Stechow, A. (2009). Tenses in compositional semantics. In Klein & Li (eds.), The Expression of Time, 129-166."
+  hasTemporalDeRe := false
+  hasULC := false
+  hasZeroTense := false
+  hasSOTDeletion := false
+  simultaneousMechanism := "[PRES] feature checked against matrix event time"
+
+def KratzerTense : TenseTheory where
+  name := "Kratzer 1998"
+  citation := "Kratzer, A. (1998). More structural analogies between pronouns and tenses. SALT VIII, 92-110."
+  hasTemporalDeRe := false
+  hasULC := false
+  hasZeroTense := false
+  hasSOTDeletion := true
+  simultaneousMechanism := "SOT deletion of morphologically identical embedded tense"
+
+def Ogihara : TenseTheory where
+  name := "Ogihara 1996"
+  citation := "Ogihara, T. (1996). Tense, Attitudes, and Scope. Kluwer."
+  hasTemporalDeRe := false
+  hasULC := false
+  hasZeroTense := true
+  hasSOTDeletion := false
+  simultaneousMechanism := "zero tense (ambiguous past = bound variable)"
+
+def Klecha : TenseTheory where
+  name := "Klecha 2016"
+  citation := "Klecha, P. (2016). Modality and embedded temporal operators. S&P 9(9): 1-55."
+  hasTemporalDeRe := false
+  hasULC := false
+  hasZeroTense := false
+  hasSOTDeletion := false
+  simultaneousMechanism := "not primary focus (inherits from base tense theory)"
+
+def Deal : TenseTheory where
+  name := "Deal 2020"
+  citation := "Deal, A. R. (2020). Counterfactuals and the Upper Limit Constraint."
+  hasTemporalDeRe := false
+  hasULC := true
+  hasZeroTense := false
+  hasSOTDeletion := false
+  simultaneousMechanism := "not primary focus (inherits from base tense theory)"
+
+def Sharvit : TenseTheory where
+  name := "Sharvit 2003"
+  citation := "Sharvit, Y. (2003). Embedded tense and universal grammar. LI 34(4): 669-681."
+  hasTemporalDeRe := false
+  hasULC := false
+  hasZeroTense := false
+  hasSOTDeletion := false
+  hasPresuppositionalTense := false
+  simultaneousMechanism := "simultaneous tense with its own semantics (not deletion/zero/binding)"
+
+def TsiliaZhao2026 : TenseTheory where
+  name := "Tsilia & Zhao 2026"
+  citation := "Tsilia, A. & Zhao, Z. (2026). Tense and perspective: A solution to the ⌈then⌉-present puzzle. Linguistics and Philosophy."
+  hasTemporalDeRe := false
+  hasULC := false
+  hasZeroTense := false
+  hasSOTDeletion := true
+  hasPresuppositionalTense := true
+  simultaneousMechanism := "tense presuppositions anchored to perspective parameter π"
+
+def Zeijlstra : TenseTheory where
+  name := "Zeijlstra 2012"
+  citation := "Zeijlstra, H. (2012). There is only one way to agree. The Linguistic Review 29(3): 491-539."
+  hasTemporalDeRe := false
+  hasULC := false
+  hasZeroTense := false
+  hasSOTDeletion := false
+  hasAgreeBasedSOT := true
+  hasSizeSensitiveSOT := true
+  simultaneousMechanism := "uninterpretable [uPAST] Agrees upward with [iPAST]"
+
+def Wurmbrand : TenseTheory where
+  name := "Wurmbrand 2014"
+  citation := "Wurmbrand, S. (2014). Tense and aspect in English infinitives. LI 45(3): 403-447."
+  hasTemporalDeRe := false
+  hasULC := false
+  hasZeroTense := false
+  hasSOTDeletion := false
+  hasAgreeBasedSOT := false
+  simultaneousMechanism := "propositional NOW-anchoring or restructuring single domain"
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -355,7 +435,7 @@ theorem all_ten_theories_distinct :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Size-Sensitive SOT (@cite{egressy-2026})
+-- § 8. Size-Sensitive SOT (@cite{egressy-2026})
 -- ════════════════════════════════════════════════════════════════
 
 /-! Only Zeijlstra's Agree-based account predicts size-sensitive SOT.
