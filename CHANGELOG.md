@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.229.241] - 2026-03-14
+
+### Changed
+- **Franke2011.lean**: Fully prove IBR convergence (ibr_reaches_fixed_point) — 0 sorrys. Cycle elimination via EG monotonicity + 11 helper lemmas; pigeonhole via finite value encoding (ibrValueSet = {0, 1/1, ..., 1/|S|}) + Finite.exists_ne_map_eq_of_infinite
+
+## [0.229.240] - 2026-03-14
+
+### Added
+- **TypeShifting.lean**: Full commutativity diagram for Partee's type-shifting triangle — prove `A ∘ ident = lift` (missing left face), composite path theorems (`A_BE_lift`, `BE_A_ident`), partial-map paths (`iota_BE_lift`, `lower_A_ident`, `THE_BE_lift`)
+- **TypeShifting.lean**: Section/retraction structure via Mathlib — `Function.LeftInverse BE (A domain)`, derived `Surjective BE` and `Injective A`
+- **TypeShifting.lean**: `GaloisCoinsertion` of A/BE on upward-closed GQs — define `UpwardGQ` (monotone GQs, Barwise-Cooper constraint), prove `A(BE(Q)) ≤ Q` for monotone Q via singleton-below-superset argument, construct `GaloisCoinsertion (A_up domain) BE_up` giving `GaloisConnection`, injectivity, surjectivity, and strict monotonicity for free from Mathlib
+
+## [0.229.239] - 2026-03-14
+
+### Added
+- **DeletionDomain.lean**: Generalize ellipsis deletion-domain theory with `DeletionSpine` typeclass — clausal (`SpinePos`) and nominal (`NomSpinePos`) spines are now instances of a shared framework; generic monotonicity, irreflexivity, and X-stranding theorems proved once for all spines
+- **DeletionDomain.lean**: Add nominal spine (N, NP_adj, n, Num, D) with three ellipsis types: N-stranding NP-ellipsis (n[E]), nP-ellipsis (Num[E]), NumP-ellipsis (D[E]); predict prenominal/postnominal asymmetry and monotonicity across nominal E-positions
+- **BenzSalzmann2025.lean**: Formalize Benz & Salzmann 2025 (CLS 60) — German N-stranding NP-ellipsis data, contrast condition on E-placement, prenominal vs postnominal asymmetry, connection to Saab 2026 Spanish Num[E], X-stranding parallel with v-stranding VPE
+
 ## [0.229.238] - 2026-03-14
 
 ### Added
@@ -447,7 +466,7 @@
 ### Added
 - **Composition/Glue.lean**: Formalize Glue Semantics (Asudeh 2022) — GlueTy (implicational linear logic), MeaningConstructor, GlueProof with type checking and resource verification; derive both scope readings of "everybody loves somebody" via proof search; bridge theorem `glue_qr_agree` proving Glue and QR yield identical truth values; ResourceCondition enum; CompositionApproach taxonomy
 - **Composition/QuantifierComposition.lean**: Factor out QR scope composition from Tree.lean; 10 verified theorems over toy model
-- **Composition/Tree.lean**: Full H&K Ch. 3-5 composition engine — SemanticStructure typeclasses, SynTree with binding/traces, `interpTreeG` (assignment-relative), `evalTree`
+- **Composition/Tree.lean**: Full H&K Ch. 3-5 composition engine — SemanticStructure typeclasses, LFTree with binding/traces, `interpTreeG` (assignment-relative), `evalTree`
 
 ### Changed
 - **Montague/Derivation.lean**: Migrate 5 SemDerivs from hand-assembled to tree-derived meanings via `evalTree`; add grounding theorems proving tree interpretation = direct GQ application
@@ -1916,7 +1935,7 @@
 ## [0.229.3] - 2026-03-07
 
 ### Added
-- **StructuralAlternatives.lean**: Formalize Katzir 2007 — structurally-defined alternatives. `ParseTree` type with `SynCat` labels, `StructOp` inductive (substitution/deletion/contraction/recursive), `atMostAsComplex` (≲), `equalComplexity` (∼), `strictlyLessComplex` (<) from def 19, `structuralAlternatives` (A_str, def 20), `substitutionSource` (def 41: lexicon ∪ subtrees). Examples: some/all substitution with `some_all_equal_complexity`, or/and with L/R derivation (`left_disjunct_is_alternative`, `right_disjunct_is_alternative`), deletion (`deletion_produces_alternative`). `symmetry_problem_solved` via category preservation. `violatesConversationalPrinciple` (def 21), `atLeastAsGoodAs` (def 23, bridge to Katzir & Singh 2015)
+- **StructuralAlternatives.lean**: Formalize Katzir 2007 — structurally-defined alternatives. `PFTree` type with `SynCat` labels, `StructOp` inductive (substitution/deletion/contraction/recursive), `atMostAsComplex` (≲), `equalComplexity` (∼), `strictlyLessComplex` (<) from def 19, `structuralAlternatives` (A_str, def 20), `substitutionSource` (def 41: lexicon ∪ subtrees). Examples: some/all substitution with `some_all_equal_complexity`, or/and with L/R derivation (`left_disjunct_is_alternative`, `right_disjunct_is_alternative`), deletion (`deletion_produces_alternative`). `symmetry_problem_solved` via category preservation. `violatesConversationalPrinciple` (def 21), `atLeastAsGoodAs` (def 23, bridge to Katzir & Singh 2015)
 
 ### Changed
 - **references.bib**: `katzir-2007` upgraded from `cited` to `formalized`, fixed journal metadata (L&P 30 → Linguistics and Philosophy 30(6):669–690)
@@ -4337,7 +4356,7 @@
 ## [0.224.95] - 2026-02-20
 
 ### Added
-- **`Phenomena/Focus/Rooth1992Bridge.lean` §10–§15**: Full end-to-end derivational chain from Fragment entries through Montague composition to FIP. Adds `focusModel` (4-entity model), world-parameterized lexicon, `SynTree` derivations for "Fred ate beans"/"Mary ate beans"/"Fred ate rice", `interpTree` composition, `SemDeriv` bundles, grounding theorems (`comp_grounds_*`), Fragment connection (linking `Fragments.English.Nouns.fred`/`bean` and `Predicates.Verbal.eat` to the model), and `endToEnd_question_grounded` proving compositionally-derived question = hand-defined question
+- **`Phenomena/Focus/Rooth1992Bridge.lean` §10–§15**: Full end-to-end derivational chain from Fragment entries through Montague composition to FIP. Adds `focusModel` (4-entity model), world-parameterized lexicon, `LFTree` derivations for "Fred ate beans"/"Mary ate beans"/"Fred ate rice", `interpTree` composition, `SemDeriv` bundles, grounding theorems (`comp_grounds_*`), Fragment connection (linking `Fragments.English.Nouns.fred`/`bean` and `Predicates.Verbal.eat` to the model), and `endToEnd_question_grounded` proving compositionally-derived question = hand-defined question
 - **`Fragments/English/Nouns.lean`**: Add `fred` (proper name) and `bean` (count noun, irregular plural "beans") to English noun lexicon
 
 ## [0.224.94] - 2026-02-20

@@ -907,10 +907,64 @@ private theorem opt_eq_bestResponse_eq (G : InterpGame) (H₁ H₂ : HearerStrat
        (SpeakerStrategy.bestResponse G H₂).choose t m
   simp only [SpeakerStrategy.bestResponse_val]; rw [hOpt t]
 
-/-- Strategy space is finite → IBR sequence eventually repeats. -/
+/-- The set of possible values for any IBR hearer strategy:
+    {0} ∪ {1/k : 1 ≤ k ≤ |State|}. -/
+private def ibrValueSet (G : InterpGame) : Finset ℚ :=
+  insert 0 ((Finset.range (Fintype.card G.State)).image (fun k : ℕ => 1 / ((k : ℚ) + 1)))
+
+private lemma one_div_mem_ibrValueSet (G : InterpGame) (n : ℕ)
+    (hn1 : 1 ≤ n) (hn2 : n ≤ Fintype.card G.State) :
+    (1 : ℚ) / (n : ℚ) ∈ ibrValueSet G := by
+  simp only [ibrValueSet, Finset.mem_insert, Finset.mem_image, Finset.mem_range]
+  right; exact ⟨n - 1, by omega, by congr 1; rw [Nat.cast_sub hn1]; ring⟩
+
+private theorem L0_respond_mem_values (G : InterpGame) (m : G.Message) (s : G.State) :
+    (L0 G).respond m s ∈ ibrValueSet G := by
+  simp only [L0, HearerStrategy.literal]
+  split_ifs with hm hn
+  · exact Finset.mem_insert_self 0 _
+  · exact one_div_mem_ibrValueSet G _ (by omega) (Finset.card_le_card (Finset.filter_subset _ _))
+  · exact Finset.mem_insert_self 0 _
+
+private theorem hearerBR_respond_mem_values (G : InterpGame) (S : SpeakerStrategy G)
+    (m : G.Message) (s : G.State) :
+    (hearerBR G S).respond m s ∈ ibrValueSet G := by
+  simp only [hearerBR]
+  split_ifs with hmaxW hwm
+  · exact L0_respond_mem_values G m s
+  · exact one_div_mem_ibrValueSet G _
+      (Finset.card_pos.mpr ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ s, hwm⟩⟩)
+      (Finset.card_le_card (Finset.filter_subset _ _))
+  · exact Finset.mem_insert_self 0 _
+
+private theorem ibrN_respond_mem_values (G : InterpGame) (n : ℕ) (m : G.Message) (s : G.State) :
+    (ibrN G n).respond m s ∈ ibrValueSet G := by
+  induction n with
+  | zero => exact L0_respond_mem_values G m s
+  | succ n _ => simp only [ibrN, ibrStep]; exact hearerBR_respond_mem_values G _ m s
+
+private noncomputable def encodeIBR (G : InterpGame) (n : ℕ) :
+    G.Message → G.State → ↥(ibrValueSet G) :=
+  fun m s => ⟨(ibrN G n).respond m s, ibrN_respond_mem_values G n m s⟩
+
+private theorem encodeIBR_faithful (G : InterpGame) {n₁ n₂ : ℕ}
+    (h : encodeIBR G n₁ = encodeIBR G n₂) :
+    ibrN G n₁ = ibrN G n₂ := by
+  show HearerStrategy.mk _ = HearerStrategy.mk _
+  congr 1; ext m s
+  exact Subtype.mk.inj (congr_fun (congr_fun h m) s)
+
+/-- Strategy space is finite → IBR sequence eventually repeats.
+    Proof: IBR hearer strategies have values in {0, 1/1, 1/2, ..., 1/|State|},
+    giving at most (|State|+1)^(|Message|×|State|) distinct strategies.
+    By pigeonhole (Finite.exists_ne_map_eq_of_infinite), two agree. -/
 private theorem ibr_sequence_repeats (G : InterpGame) :
     ∃ n₁ n₂ : ℕ, n₁ < n₂ ∧ ibrN G n₁ = ibrN G n₂ := by
-  sorry -- TODO: hearerBR values in {0, 1/k : 1 ≤ k ≤ |State|}, pigeonhole
+  obtain ⟨n₁, n₂, hne, heq⟩ := Finite.exists_ne_map_eq_of_infinite (encodeIBR G)
+  have hstrat := encodeIBR_faithful G heq
+  rcases Nat.lt_or_gt_of_ne hne with h | h
+  · exact ⟨n₁, n₂, h, hstrat⟩
+  · exact ⟨n₂, n₁, h, hstrat.symm⟩
 
 /-- Theorem 3: IBR converges. EG is monotone increasing and bounded ⟹ fixed point.
 
