@@ -33,8 +33,6 @@ def irgendein : PolarityItemEntry :=
   , licensingContexts :=
       [.question, .conditional_ant, .modal_possibility, .modal_necessity, .imperative]
   , scalarDirection := .strengthening
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "irgend- prefix = domain widening; Chierchia's EFCI class" }
 
 /-- *wer* (conditional/negative) — Bare wh-word as weak NPI.
@@ -66,8 +64,5 @@ theorem irgendein_is_npi_fci : irgendein.polarityType = .npi_fci := rfl
 theorem german_npis_strengthening :
     [irgendein, wer, niemand].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
-
-theorem irgendein_obligatory_domain_alts :
-    irgendein.obligatoryDomainAlts = true := rfl
 
 end Fragments.German.PolarityItems

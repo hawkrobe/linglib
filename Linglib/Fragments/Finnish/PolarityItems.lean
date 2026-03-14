@@ -53,8 +53,6 @@ def kukaTahansa : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Free choice: 'kuka tahansa voi tehdä sen' (anyone can do it)" }
 
 -- ============================================================================
@@ -64,8 +62,5 @@ def kukaTahansa : PolarityItemEntry :=
 theorem finnish_npis_strengthening :
     [kukaan, eiKukaan].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
-
-theorem kukaTahansa_obligatory_domain_alts :
-    kukaTahansa.obligatoryDomainAlts = true := rfl
 
 end Fragments.Finnish.PolarityItems

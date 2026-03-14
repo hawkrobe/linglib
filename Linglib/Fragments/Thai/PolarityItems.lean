@@ -10,8 +10,6 @@ Thai indefinite pronoun polarity items, typed by the categories from
 - **mâj mii khraj** (ไม่มีใคร): Negative indefinite (NEG + exist + wh)
 - **khraj kɔ̂** (ใครก็): FCI (wh + kɔ̂ particle)
 
-Properties beyond the @cite{haspelmath-1997} function data (scalar direction,
-domain alternatives, modal rescue) use conservative defaults. -- UNVERIFIED
 -/
 
 namespace Fragments.Thai.PolarityItems
@@ -29,7 +27,6 @@ def majMiiKhraj : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening  -- UNVERIFIED: conservative default
   , notes := "NEG + exist + wh: nobody" }
 
 -- ============================================================================
@@ -43,8 +40,6 @@ def khrajKo : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true  -- UNVERIFIED: conservative default
-  , modalRescue := true  -- UNVERIFIED: conservative default
   , notes := "wh + kɔ̂ particle: free choice" }
 
 -- ============================================================================

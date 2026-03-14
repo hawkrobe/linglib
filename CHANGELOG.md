@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.229.219] - 2026-03-13
+
+### Changed
+- **PolarityItemEntry**: Remove `obligatoryDomainAlts` and `modalRescue` fields — these are Chierchia-specific theoretical parameters that belong in `PSIProfile` (Chierchia2006.lean), not in theory-neutral Fragment entries
+- **ScalarDirection**: Add `.unknown` variant (new default) for items with unverified scalar direction; `.nonScalar` now explicitly means "idiomatic, not scalar"
+- **Georgian/PolarityItems.lean**: Fix morphological decomposition (ara- + vin 'who', not vinme); verify forms and distribution against Borise 2019 Ch. 4 §2
+- **Chierchia2006.lean**: Simplify Fragment bridge theorems to test `polarityType` only (theoretical parameters stay in `PSIProfile`)
+
+### Removed
+- Remove guessed `scalarDirection := .strengthening` with UNVERIFIED tags from 6 less-known languages (Georgian, Quechua, Yoruba, Thai, Tagalog, Swahili) — unknown values now use `.unknown` default
+- Remove `obligatoryDomainAlts` theorems from all 17 Fragment PolarityItems files and Typology.lean bridge section
+
+### Added
+- **references.bib**: Add `borise-2019` (Phrasing is Key: The Syntax and Prosody of Focus in Georgian, Harvard PhD dissertation)
+
 ## [0.229.218] - 2026-03-13
 
 ### Changed

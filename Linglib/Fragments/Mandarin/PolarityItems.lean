@@ -34,8 +34,6 @@ def shei : PolarityItemEntry :=
       , .modal_possibility, .modal_necessity, .imperative, .generic
       , .comparative ]
   , scalarDirection := .strengthening
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Wh-word covers 7 functions: irrealis through free choice" }
 
 -- ============================================================================
@@ -43,8 +41,5 @@ def shei : PolarityItemEntry :=
 -- ============================================================================
 
 theorem shei_is_npi_fci : shei.polarityType = .npi_fci := rfl
-
-theorem shei_obligatory_domain_alts :
-    shei.obligatoryDomainAlts = true := rfl
 
 end Fragments.Mandarin.PolarityItems

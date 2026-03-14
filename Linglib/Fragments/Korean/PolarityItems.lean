@@ -53,8 +53,6 @@ def nwukwuNa : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "wh + na: free choice / universal" }
 
 -- ============================================================================
@@ -64,8 +62,5 @@ def nwukwuNa : PolarityItemEntry :=
 theorem korean_npis_strengthening :
     [nwukwu, nwukwuTo].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
-
-theorem nwukwuNa_obligatory_domain_alts :
-    nwukwuNa.obligatoryDomainAlts = true := rfl
 
 end Fragments.Korean.PolarityItems

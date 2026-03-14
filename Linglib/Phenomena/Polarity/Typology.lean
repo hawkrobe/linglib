@@ -1296,32 +1296,17 @@ theorem english_any_covers_question :
     Fragments.English.PolarityItems.any.licensingContexts.contains .question = true := by
   native_decide
 
--- English: Fragment any has obligatory domain alternatives, consistent with
--- Typology "any- (FC)" series covering freeChoice function
-theorem english_any_has_domain_alts :
-    Fragments.English.PolarityItems.any.obligatoryDomainAlts = true := rfl
-
 -- Italian: Fragment nessuno (NPI) licensed under negation, matching
 -- Typology "nessuno" series covering directNeg function
 theorem italian_nessuno_covers_negation :
     Fragments.Italian.PolarityItems.nessuno.licensingContexts.contains .negation = true := by
   native_decide
 
--- Italian: Fragment qualsiasi (FCI) has obligatory domain alts, matching
--- Typology "qualunque/qualsiasi" series covering freeChoice
-theorem italian_qualsiasi_has_domain_alts :
-    Fragments.Italian.PolarityItems.qualsiasi.obligatoryDomainAlts = true := rfl
-
 -- Russian: Fragment nikto (NPI) licensed under negation, matching
 -- Typology "никто" series covering directNeg
 theorem russian_nikto_covers_negation :
     Fragments.Russian.PolarityItems.nikto.licensingContexts.contains .negation = true := by
   native_decide
-
--- Russian: Fragment ktoUgodno (FCI) has obligatory domain alts, matching
--- Typology "кто угодно" series covering freeChoice
-theorem russian_ktoUgodno_has_domain_alts :
-    Fragments.Russian.PolarityItems.ktoUgodno.obligatoryDomainAlts = true := rfl
 
 -- German: Fragment irgendein is NPI/FCI, matching Typology "irgendwer"
 -- series covering both question (NPI) and irrealis (FCI-like)
@@ -1340,11 +1325,6 @@ theorem japanese_dareMo_covers_negation :
     Fragments.Japanese.PolarityItems.dareMo.licensingContexts.contains .negation = true := by
   native_decide
 
--- Japanese: Fragment dareDemo (FCI) has obligatory domain alts, matching
--- Typology "dare-demo" series covering freeChoice
-theorem japanese_dareDemo_has_domain_alts :
-    Fragments.Japanese.PolarityItems.dareDemo.obligatoryDomainAlts = true := rfl
-
 -- Korean: Fragment nwukwuTo (NPI) licensed under negation, matching
 -- Typology "nwukwu-to (neg)" series covering directNeg
 theorem korean_nwukwuTo_covers_negation :
@@ -1361,11 +1341,6 @@ theorem mandarin_shei_is_npi_fci :
 theorem turkish_kimse_covers_question :
     Fragments.Turkish.PolarityItems.kimse.licensingContexts.contains .question = true := by
   native_decide
-
--- Hindi: Fragment koiiBhii (FCI) has obligatory domain alts, matching
--- Typology "koii bhii" series covering freeChoice
-theorem hindi_koiiBhii_has_domain_alts :
-    Fragments.Hindi.PolarityItems.koiiBhii.obligatoryDomainAlts = true := rfl
 
 -- Finnish: Fragment kukaan (NPI) licensed in questions, matching
 -- Typology "kukaan" series covering question function

@@ -42,8 +42,6 @@ def koiiBhii : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "koii + bhii (even/also): anyone at all (FC)" }
 
 -- ============================================================================
@@ -52,8 +50,5 @@ def koiiBhii : PolarityItemEntry :=
 
 theorem koiiNahiin_koiiBhii_distinct :
     koiiNahiin.polarityType ≠ koiiBhii.polarityType := by decide
-
-theorem koiiBhii_obligatory_domain_alts :
-    koiiBhii.obligatoryDomainAlts = true := rfl
 
 end Fragments.Hindi.PolarityItems

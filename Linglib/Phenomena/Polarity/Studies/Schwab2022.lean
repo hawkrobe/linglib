@@ -148,6 +148,7 @@ def predictsIllusion (npi : NPIType) : Bool :=
   | .strengthening => true   -- ScalAssert condition superficially met
   | .attenuating => false    -- Attenuation condition NOT met
   | .nonScalar => false
+  | .unknown => false
 
 -- The theoretical prediction matches the observed data
 #guard predictsIllusion .strengthening == jemals_illusion.accepted

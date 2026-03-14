@@ -89,8 +89,6 @@ def qualsiasi : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts :=
       [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Pure FCI; 'qualsiasi studente' = any/every student; no NPI reading" }
 
 /-- *qualunque* — Pure universal FCI (post-nominal only). -/
@@ -100,8 +98,6 @@ def qualunque : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts :=
       [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Post-nominal FCI; 'libro qualunque' = any/whatever book" }
 
 -- ============================================================================
@@ -116,8 +112,6 @@ def uno_qualsiasi : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Existential FCI; 'un dottore qualsiasi' = a doctor whatever; needs modal" }
 
 -- ============================================================================
@@ -132,10 +126,5 @@ theorem mai_qualsiasi_distinct :
 theorem italian_npis_strengthening :
     [nessuno, niente, mai, alcuno, neanche].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
-
-/-- All Italian FCIs have obligatory domain alternatives. -/
-theorem italian_fcis_obligatory_domain_alts :
-    [qualsiasi, qualunque, uno_qualsiasi].all
-      (λ e => e.obligatoryDomainAlts) = true := by native_decide
 
 end Fragments.Italian.PolarityItems

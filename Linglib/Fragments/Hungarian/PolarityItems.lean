@@ -41,8 +41,6 @@ def akarki : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Free choice: anyone at all" }
 
 -- ============================================================================
@@ -51,8 +49,5 @@ def akarki : PolarityItemEntry :=
 
 theorem senki_akarki_distinct :
     senki.polarityType ≠ akarki.polarityType := by decide
-
-theorem akarki_obligatory_domain_alts :
-    akarki.obligatoryDomainAlts = true := rfl
 
 end Fragments.Hungarian.PolarityItems

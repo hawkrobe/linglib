@@ -11,8 +11,6 @@ Yoruba has a minimally differentiated system with a single polarity-sensitive
 form covering both NPI and FCI functions:
 - **ẹ̀nìkẹ́ni**: NPI/FCI (indirect neg, direct neg, comparative, free choice)
 
-Properties beyond the @cite{haspelmath-1997} function data (scalar direction,
-domain alternatives, modal rescue) use conservative defaults. -- UNVERIFIED
 -/
 
 namespace Fragments.Yoruba.PolarityItems
@@ -34,9 +32,6 @@ def enikeni : PolarityItemEntry :=
       [ .negation, .nobody
       , .modal_possibility, .modal_necessity, .imperative, .generic
       , .comparative ]
-  , scalarDirection := .strengthening  -- UNVERIFIED: conservative default
-  , obligatoryDomainAlts := true  -- UNVERIFIED: conservative default
-  , modalRescue := true  -- UNVERIFIED: conservative default
   , notes := "Covers 4 Haspelmath functions: indirectNeg through freeChoice" }
 
 -- ============================================================================

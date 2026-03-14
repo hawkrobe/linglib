@@ -393,26 +393,23 @@ theorem pureNPI_no_rescue :
 /-!
 ## Connecting Fragment entries to PSI theory
 
-Fragment entries store observable properties (polarityType,
-obligatoryDomainAlts); PSI profiles encode theoretical parameters.
-Bridge theorems verify consistency between the two layers.
-
-Note: `PolarityItemEntry.obligatoryDomainAlts` captures D-MIN
-(FCI-type) alternatives. Pure NPIs have D-MAX alternatives, which
-are encoded in the PSI profile's `grain` field, not in the Fragment.
+Fragment entries store observable distributional properties (polarityType,
+licensingContexts); PSI profiles encode theoretical parameters
+(obligatoryDomainAlts, grain, scalar alternatives). Bridge theorems verify
+consistency between the two layers via polarityType.
 -/
 
 open Fragments.English.PolarityItems (any ever)
 open Fragments.Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)
 
--- English *any* is npi_fci with obligatory domain alts → matches npiFCI
+-- English *any* is npi_fci → matches npiFCI profile
 theorem any_fragment_matches_npiFCI :
-    any.polarityType = .npi_fci ∧ any.obligatoryDomainAlts = true := ⟨rfl, rfl⟩
+    any.polarityType = .npi_fci := rfl
 
--- English *ever* is npiWeak without FCI-type domain alts → matches pureNPI
+-- English *ever* is npiWeak → matches pureNPI profile
 theorem ever_fragment_matches_pureNPI :
-    ever.polarityType = .npiWeak ∧ ever.obligatoryDomainAlts = false := ⟨rfl, rfl⟩
+    ever.polarityType = .npiWeak := rfl
 
 -- Italian *mai* is npiWeak → matches pureNPI
 theorem mai_fragment_matches_pureNPI :
@@ -426,16 +423,16 @@ theorem alcuno_fragment_matches_pureNPI :
 theorem nessuno_fragment_matches_pureNPI :
     nessuno.polarityType = .npiWeak := rfl
 
--- Italian *qualsiasi* is fci with obligatory domain alts → matches pureFCI
+-- Italian *qualsiasi* is fci → matches pureFCI profile
 theorem qualsiasi_fragment_matches_pureFCI :
-    qualsiasi.polarityType = .fci ∧ qualsiasi.obligatoryDomainAlts = true := ⟨rfl, rfl⟩
+    qualsiasi.polarityType = .fci := rfl
 
--- Italian *qualunque* is fci with obligatory domain alts → matches pureFCI
+-- Italian *qualunque* is fci → matches pureFCI profile
 theorem qualunque_fragment_matches_pureFCI :
-    qualunque.polarityType = .fci ∧ qualunque.obligatoryDomainAlts = true := ⟨rfl, rfl⟩
+    qualunque.polarityType = .fci := rfl
 
--- Italian *uno qualsiasi* is fci with obligatory domain alts → matches efciPureFci
+-- Italian *uno qualsiasi* is fci → matches efciPureFci profile
 theorem uno_qualsiasi_fragment_matches_efciPureFci :
-    uno_qualsiasi.polarityType = .fci ∧ uno_qualsiasi.obligatoryDomainAlts = true := ⟨rfl, rfl⟩
+    uno_qualsiasi.polarityType = .fci := rfl
 
 end Phenomena.Polarity.Studies.Chierchia2006

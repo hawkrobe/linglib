@@ -11,8 +11,6 @@ Tagalog indefinite pronoun polarity items, typed by the categories from
 - **walang (tao)**: Negative existential (direct negation)
 - **kahit sino**: FCI (concessive + wh: anyone at all)
 
-Properties beyond the @cite{haspelmath-1997} function data (scalar direction,
-domain alternatives, modal rescue) use conservative defaults. -- UNVERIFIED
 -/
 
 namespace Fragments.Tagalog.PolarityItems
@@ -30,7 +28,6 @@ def sinuman : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.question, .conditional_ant, .negation]
-  , scalarDirection := .strengthening  -- UNVERIFIED: conservative default
   , notes := "wh-based polarity-sensitive indefinite" }
 
 /-- *walang (tao)* — Negative existential.
@@ -40,7 +37,6 @@ def walang : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening  -- UNVERIFIED: conservative default
   , notes := "Negative existential: nobody" }
 
 -- ============================================================================
@@ -55,19 +51,13 @@ def kahitSino : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true  -- UNVERIFIED: conservative default
-  , modalRescue := true  -- UNVERIFIED: conservative default
   , notes := "Concessive + wh: anyone at all (FC)" }
 
 -- ============================================================================
 -- Verification
 -- ============================================================================
 
-theorem tagalog_npis_strengthening :
-    [sinuman, walang].all
-      (λ e => e.scalarDirection == .strengthening) = true := by native_decide
-
-theorem kahitSino_obligatory_domain_alts :
-    kahitSino.obligatoryDomainAlts = true := rfl
+theorem sinuman_walang_distinct :
+    sinuman.form ≠ walang.form := by decide
 
 end Fragments.Tagalog.PolarityItems

@@ -7,11 +7,15 @@ import Linglib.Fragments.English.PolarityItems
 Georgian indefinite pronoun polarity items, typed by the categories from
 `Fragments.English.PolarityItems`.
 
-- **aravin** (არავინ): Negative indefinite (NEG + vinme)
+- **aravin** (არავინ): Negative indefinite (ara- NEG prefix + vin 'who')
 - **nebismieri** (ნებისმიერი): Free choice item
 
-Properties beyond the @cite{haspelmath-1997} function data (scalar direction,
-domain alternatives, modal rescue) use conservative defaults. -- UNVERIFIED
+Forms and basic distribution verified against @cite{borise-2019} Ch. 4 §2:
+aravin is morphologically NEG + wh (not NEG + indefinite), and Georgian is a
+non-strict negative concord language (verbal negation *ar* is optional with
+preverbal neg-words). Mood-conditioned variants: vera-vin (modal), nura-vin
+(prohibitive). nebismieri confirmed as FC indefinite in questions/modals.
+
 -/
 
 namespace Fragments.Georgian.PolarityItems
@@ -23,28 +27,26 @@ open Fragments.English.PolarityItems
 -- ============================================================================
 
 /-- *aravin* (არავინ) — Negative indefinite.
-    Morphologically NEG + vinme: 'aravin ar mosula' (nobody came). -/
+    Morphologically ara- (NEG) + vin (who): 'aravin (ar) mosula' (nobody came).
+    Non-strict negative concord: verbal negation *ar* is optional. -/
 def aravin : PolarityItemEntry :=
   { form := "aravin (არავინ)"
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening  -- UNVERIFIED: conservative default
-  , notes := "Negative indefinite: NEG + vinme" }
+  , notes := "Negative indefinite: ara- (NEG) + vin (who); non-strict NC" }
 
 -- ============================================================================
 -- FCI
 -- ============================================================================
 
 /-- *nebismieri* (ნებისმიერი) — Free choice item.
-    'Any / every': 'nebismieri adamiani' (any person). -/
+    'Any / whichever': 'nebismier matarebels' (any train). -/
 def nebismieri : PolarityItemEntry :=
   { form := "nebismieri (ნებისმიერი)"
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true  -- UNVERIFIED: conservative default
-  , modalRescue := true  -- UNVERIFIED: conservative default
   , notes := "Free choice: any/every" }
 
 -- ============================================================================

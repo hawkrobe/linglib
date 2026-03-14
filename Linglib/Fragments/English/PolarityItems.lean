@@ -11,7 +11,7 @@ Theory-neutral lexical entries for polarity-sensitive items:
 1. Licensing contexts: where the item can appear
 2. Strength: weak (DE) vs strong (anti-additive) NPIs
 3. Base quantificational force: underlying semantic type
-4. Domain alternatives: obligatory vs optional activation
+4. Scalar direction: strengthening vs attenuating (Israel 1996)
 
 ## Theoretical Analyses (in Theories/)
 
@@ -78,6 +78,7 @@ inductive ScalarDirection where
   | strengthening  -- ever, any, jemals: assertion stronger than alternatives
   | attenuating    -- all that, so recht, long: assertion weaker than alternatives
   | nonScalar      -- lift a finger: idiomatic, not scalar
+  | unknown        -- not yet verified for this item
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -126,11 +127,7 @@ structure PolarityItemEntry where
   /-- Contexts where licensed (empty = needs positive) -/
   licensingContexts : List LicensingContext
   /-- Scalar direction: strengthening, attenuating, or non-scalar -/
-  scalarDirection : ScalarDirection := .nonScalar
-  /-- Has obligatory domain alternatives? (for Chierchia analysis) -/
-  obligatoryDomainAlts : Bool := false
-  /-- Can be rescued by modals? -/
-  modalRescue : Bool := false
+  scalarDirection : ScalarDirection := .unknown
   /-- Notes -/
   notes : String := ""
   deriving Repr
@@ -152,8 +149,6 @@ def any : PolarityItemEntry :=
       [ .negation, .nobody, .conditional_ant, .question
       , .modal_possibility, .modal_necessity, .imperative, .generic ]
   , scalarDirection := .strengthening  -- domain widening → stronger assertion
-  , obligatoryDomainAlts := true  -- Central to Chierchia's analysis
-  , modalRescue := true
   , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC"
   }
 
@@ -235,6 +230,7 @@ def liftAFinger : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
+  , scalarDirection := .nonScalar
   , notes := "Idiomatic; requires anti-additive (*few people lifted a finger)"
   }
 
@@ -244,6 +240,7 @@ def budgeAnInch : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
+  , scalarDirection := .nonScalar
   , notes := "Idiomatic strong NPI"
   }
 
@@ -276,8 +273,6 @@ def whatever : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts :=
       [.modal_possibility, .modal_necessity, .imperative, .generic, .free_relative]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Free relative; 'Read whatever you want'"
   }
 
@@ -288,8 +283,6 @@ def whoever : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts :=
       [.modal_possibility, .modal_necessity, .imperative, .generic, .free_relative]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Free relative; 'Invite whoever you like'"
   }
 
@@ -300,8 +293,6 @@ def whichever : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts :=
       [.modal_possibility, .modal_necessity, .imperative, .generic, .free_relative]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Free relative with restriction; 'whichever book you prefer'"
   }
 

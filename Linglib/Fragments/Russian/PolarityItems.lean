@@ -52,8 +52,6 @@ def ktoUgodno : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Free choice: 'kto ugodno možet èto sdelat'' (anyone can do that)" }
 
 -- ============================================================================
@@ -66,8 +64,5 @@ theorem nikto_ktoUgodno_distinct :
 theorem russian_npis_strengthening :
     [ktoLibo, nikto].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
-
-theorem russian_fci_obligatory_domain_alts :
-    ktoUgodno.obligatoryDomainAlts = true := rfl
 
 end Fragments.Russian.PolarityItems

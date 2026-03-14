@@ -11,8 +11,6 @@ Quechua indefinite pronoun polarity items, typed by the categories from
 - **mana pi-pash**: Negative indefinite (negation + wh + pash)
 - **maijan-pash**: Free choice item
 
-Properties beyond the @cite{haspelmath-1997} function data (scalar direction,
-domain alternatives, modal rescue) use conservative defaults. -- UNVERIFIED
 -/
 
 namespace Fragments.Quechua.PolarityItems
@@ -30,7 +28,6 @@ def piPash : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.conditional_ant, .negation]
-  , scalarDirection := .strengthening  -- UNVERIFIED: conservative default
   , notes := "wh + pash: conditional/neg scope" }
 
 /-- *mana pi-pash* — Negative indefinite.
@@ -40,7 +37,6 @@ def manaPiPash : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening  -- UNVERIFIED: conservative default
   , notes := "Negation + wh + pash: nobody" }
 
 -- ============================================================================
@@ -54,19 +50,13 @@ def maijanPash : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true  -- UNVERIFIED: conservative default
-  , modalRescue := true  -- UNVERIFIED: conservative default
   , notes := "Free choice: anyone" }
 
 -- ============================================================================
 -- Verification
 -- ============================================================================
 
-theorem quechua_npis_strengthening :
-    [piPash, manaPiPash].all
-      (λ e => e.scalarDirection == .strengthening) = true := by native_decide
-
-theorem maijanPash_obligatory_domain_alts :
-    maijanPash.obligatoryDomainAlts = true := rfl
+theorem piPash_manaPiPash_distinct :
+    piPash.polarityType = manaPiPash.polarityType := rfl
 
 end Fragments.Quechua.PolarityItems

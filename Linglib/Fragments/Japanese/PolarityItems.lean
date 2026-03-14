@@ -41,8 +41,6 @@ def dareDemo : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "wh + demo: free choice / concessive conditional" }
 
 -- ============================================================================
@@ -51,8 +49,5 @@ def dareDemo : PolarityItemEntry :=
 
 theorem dareMo_dareDemo_distinct :
     dareMo.polarityType ≠ dareDemo.polarityType := by decide
-
-theorem dareDemo_obligatory_domain_alts :
-    dareDemo.obligatoryDomainAlts = true := rfl
 
 end Fragments.Japanese.PolarityItems

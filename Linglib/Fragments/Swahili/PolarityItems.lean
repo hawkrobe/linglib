@@ -10,8 +10,6 @@ Swahili indefinite pronoun polarity items, typed by the categories from
 - **hakuna mtu / mtu …-si-**: Negative indefinite
 - **mtu ye yote**: FCI ('person any whatsoever')
 
-Properties beyond the @cite{haspelmath-1997} function data (scalar direction,
-domain alternatives, modal rescue) use conservative defaults. -- UNVERIFIED
 -/
 
 namespace Fragments.Swahili.PolarityItems
@@ -29,7 +27,6 @@ def hakunaMtu : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody]
-  , scalarDirection := .strengthening  -- UNVERIFIED: conservative default
   , notes := "Negative existential or negative verb concord: nobody" }
 
 -- ============================================================================
@@ -43,8 +40,6 @@ def mtuYeYote : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true  -- UNVERIFIED: conservative default
-  , modalRescue := true  -- UNVERIFIED: conservative default
   , notes := "Person any whatsoever: free choice" }
 
 -- ============================================================================

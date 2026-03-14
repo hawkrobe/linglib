@@ -52,8 +52,6 @@ def herhangiBiri : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
-  , obligatoryDomainAlts := true
-  , modalRescue := true
   , notes := "Free choice: 'herhangi biri yapabilir' (anyone can do it)" }
 
 -- ============================================================================
@@ -63,8 +61,5 @@ def herhangiBiri : PolarityItemEntry :=
 theorem turkish_npis_strengthening :
     [kimse, hicKimse].all
       (λ e => e.scalarDirection == .strengthening) = true := by native_decide
-
-theorem herhangiBiri_obligatory_domain_alts :
-    herhangiBiri.obligatoryDomainAlts = true := rfl
 
 end Fragments.Turkish.PolarityItems
