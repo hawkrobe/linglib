@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.243] - 2026-03-14
+
+### Added
+- **McKayVanInwagen1977.lean**: Formalize McKay & Van Inwagen 1977 (Counterfactuals with Disjunctive Antecedents) — Spain counterexample and bumper crop argument proving SDA invalidity; Lewis vs conjunction readings diverge on both examples; `sda_invalid` existential theorem; `readings_diverge` summary connecting both arguments
+- **references.bib**: Add mckay-vaninwagen-1977
+
+### Changed
+- **AlternativeSensitive.lean**: Add @cite{mckay-vaninwagen-1977} attribution to Spain example
+
 ## [0.229.242] - 2026-03-14
 
 ### Changed

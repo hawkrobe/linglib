@@ -701,6 +701,7 @@ import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
 import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 import Linglib.Phenomena.Conditionals.Studies.Belnap1970
+import Linglib.Phenomena.Conditionals.Studies.McKayVanInwagen1977
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
@@ -1364,6 +1365,8 @@ import Linglib.Theories.Semantics.Degree.Granularity
 -- Theories: Semantics.Supervaluation (general supervaluation framework)
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Theories.Semantics.Supervaluation.TCS
+-- Theories: Semantics.Homogeneity (cross-domain homogeneity: plurals, conditionals, generics)
+import Linglib.Theories.Semantics.Homogeneity
 -- Theories: Semantics.PossibilitySemantics (possibility semantics)
 import Linglib.Theories.Semantics.PossibilitySemantics.Basic
 import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic

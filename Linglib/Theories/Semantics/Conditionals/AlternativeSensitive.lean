@@ -192,8 +192,8 @@ theorem dcr_is_existential_homogeneity {W : Type*} [DecidableEq W]
 /-!
 ## SDA is optional — the Spain example
 
-Example (8) from @cite{santorio-2018} (p. 522; attributed to McKay and
-van Inwagen): "If Spain had fought with the Axis or the Allies, she would
+Example (8) from @cite{santorio-2018} (p. 522; originally from
+@cite{mckay-vaninwagen-1977}): "If Spain had fought with the Axis or the Allies, she would
 have fought with the Axis." This conditional is acceptable WITHOUT
 implying (9): "If Spain had fought with the Allies, she would have fought
 with the Axis."
