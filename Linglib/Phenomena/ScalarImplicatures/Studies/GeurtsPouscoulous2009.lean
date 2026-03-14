@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Empirical
 import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
+import Linglib.Theories.Semantics.Exhaustification.SemanticScales
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
@@ -488,6 +489,7 @@ experimental findings above.
 -/
 
 open Implicature.ScalarImplicatures
+open Exhaustification
 open Phenomena.ScalarImplicatures
 
 /-- Exp 1a simple rate (Table 2). -/

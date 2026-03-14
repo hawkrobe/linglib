@@ -1622,6 +1622,7 @@ import Linglib.Theories.Semantics.Exhaustification.Chierchia2013
 import Linglib.Theories.Semantics.Exhaustification.EFCI
 import Linglib.Theories.Semantics.Exhaustification.EFCIClosure
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.SemanticScales
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Semantics.Exhaustification.Implementations.BarLevFox2020
 import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018

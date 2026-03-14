@@ -301,4 +301,167 @@ def Polarity.toMonotonicity : Core.Polarity → Monotonicity
   | .positive => .upward
   | .negative => .downward
 
+-- ============================================================
+-- Semantic Scales (proposition-level Horn scales)
+-- ============================================================
+
+/--
+A Horn scale with semantic content: a pair of propositions where
+`stronger` entails `weaker` but not vice versa.
+
+This is the proposition-level counterpart of `HornScale α` (form-level).
+The entailment asymmetry drives scalar implicatures via exhaustification.
+-/
+structure SemanticScale (World : Type*) where
+  /-- Name of the scale -/
+  name : String
+  /-- The weaker scalar term (e.g., "some") -/
+  weakerTerm : String
+  /-- The stronger scalar term (e.g., "all") -/
+  strongerTerm : String
+  /-- Semantic denotation of weaker term -/
+  weaker : World → Prop
+  /-- Semantic denotation of stronger term -/
+  stronger : World → Prop
+  /-- Stronger entails weaker -/
+  entailment : ∀ w, stronger w → weaker w
+  /-- Weaker does not entail stronger (non-trivial scale) -/
+  nonTrivial : ¬(∀ w, weaker w → stronger w)
+
+/--
+Alternative set for a semantic scale: {weaker, stronger}.
+-/
+def SemanticScale.alts {World : Type*} (s : SemanticScale World) : Set (World → Prop) :=
+  {s.weaker, s.stronger}
+
+
+-- ============================================================
+-- Quantifier Scale: some/all
+-- ============================================================
+
+/-- Worlds for quantifier scale: number satisfying predicate (0 to 3). -/
+abbrev SemQuantWorld := Fin 4
+
+/-- "Some Ps are Q" = at least one. -/
+def someQ : SemQuantWorld → Prop := λ w => w.val ≥ 1
+
+/-- "All Ps are Q" = all three. -/
+def allQ : SemQuantWorld → Prop := λ w => w.val = 3
+
+/-- All entails some. -/
+theorem all_entails_some : ∀ w, allQ w → someQ w := by
+  intro w h
+  simp only [allQ] at h
+  simp only [someQ, h]
+  decide
+
+/-- Some does not entail all. -/
+theorem some_not_entails_all : ¬(∀ w, someQ w → allQ w) := by
+  intro h
+  have : allQ ⟨1, by omega⟩ := h ⟨1, by omega⟩ (by simp [someQ])
+  simp [allQ] at this
+
+/-- The some/all semantic scale. -/
+def someAllScale : SemanticScale SemQuantWorld :=
+  { name := "Quantifiers (some/all)"
+  , weakerTerm := "some"
+  , strongerTerm := "all"
+  , weaker := someQ
+  , stronger := allQ
+  , entailment := all_entails_some
+  , nonTrivial := some_not_entails_all
+  }
+
+
+-- ============================================================
+-- Connective Scale: or/and
+-- ============================================================
+
+/-- Worlds for connective scale. -/
+inductive ConnWorld where
+  | neither | onlyA | onlyB | both
+  deriving DecidableEq, Repr
+
+/-- "A or B" (inclusive). -/
+def orConn : ConnWorld → Prop
+  | .neither => False
+  | .onlyA => True
+  | .onlyB => True
+  | .both => True
+
+/-- "A and B". -/
+def andConn : ConnWorld → Prop
+  | .neither => False
+  | .onlyA => False
+  | .onlyB => False
+  | .both => True
+
+/-- And entails or. -/
+theorem and_entails_or : ∀ w, andConn w → orConn w := by
+  intro w h
+  cases w <;> simp [andConn, orConn] at h ⊢
+
+/-- Or does not entail and. -/
+theorem or_not_entails_and : ¬(∀ w, orConn w → andConn w) := by
+  intro h
+  have : andConn .onlyA := h .onlyA (by simp [orConn])
+  simp [andConn] at this
+
+/-- The or/and semantic scale. -/
+def orAndScale : SemanticScale ConnWorld :=
+  { name := "Connectives (or/and)"
+  , weakerTerm := "or"
+  , strongerTerm := "and"
+  , weaker := orConn
+  , stronger := andConn
+  , entailment := and_entails_or
+  , nonTrivial := or_not_entails_and
+  }
+
+
+-- ============================================================
+-- Modal Scale: possible/necessary
+-- ============================================================
+
+/-- Worlds for modal scale: accessibility relation outcomes. -/
+inductive ModalWorld where
+  | none    -- no accessible world has P
+  | some    -- some but not all accessible worlds have P
+  | all     -- all accessible worlds have P
+  deriving DecidableEq, Repr
+
+/-- "Possibly P" = at least one accessible world has P. -/
+def possibleP : ModalWorld → Prop
+  | .none => False
+  | .some => True
+  | .all => True
+
+/-- "Necessarily P" = all accessible worlds have P. -/
+def necessaryP : ModalWorld → Prop
+  | .none => False
+  | .some => False
+  | .all => True
+
+/-- Necessary entails possible. -/
+theorem necessary_entails_possible : ∀ w, necessaryP w → possibleP w := by
+  intro w h
+  cases w <;> simp [necessaryP, possibleP] at h ⊢
+
+/-- Possible does not entail necessary. -/
+theorem possible_not_entails_necessary : ¬(∀ w, possibleP w → necessaryP w) := by
+  intro h
+  have : necessaryP .some := h .some (by simp [possibleP])
+  simp [necessaryP] at this
+
+/-- The possible/necessary semantic scale. -/
+def possibleNecessaryScale : SemanticScale ModalWorld :=
+  { name := "Modals (possible/necessary)"
+  , weakerTerm := "possible"
+  , strongerTerm := "necessary"
+  , weaker := possibleP
+  , stronger := necessaryP
+  , entailment := necessary_entails_possible
+  , nonTrivial := possible_not_entails_necessary
+  }
+
 end Alternatives

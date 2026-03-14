@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.238] - 2026-03-14
+
+### Added
+- **SemanticScales.lean**: New `Exhaustification/SemanticScales.lean` — HurfordSemantic, SinghSemantic structures + exhaustification prediction theorems (someAll_implicature, orAnd_implicature, possibleNecessary_implicature, Hurford rescue, Singh asymmetry)
+
+### Changed
+- **HornScale.lean**: Add `SemanticScale` type (proposition-level Horn scale with entailment proofs) + concrete scales (someAllScale, orAndScale, possibleNecessaryScale) with world types and entailment theorems
+- **ScalarImplicatures/Basic.lean**: Remove 656 lines of semantic scale infrastructure (moved to Alternatives/HornScale + Exhaustification/SemanticScales); scales are semantics, not pragmatics
+
 ## [0.229.237] - 2026-03-14
 
 ### Changed
