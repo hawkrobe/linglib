@@ -1,5 +1,6 @@
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Fragments.Spanish.Gender
 
 /-!
 # Kramer 2020: Grammatical Gender — A Close Look at Gender Assignment
@@ -535,5 +536,139 @@ theorem vrac_mixed_agreement : russianVrac.showsMixedAgreement = true := rfl
 theorem hybrid_nouns_favor_structural :
     structuralApproach.hybridAgreement = .handled ∧
     lexicalApproach.hybridAgreement = .problematic := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 8: N Inventory Typology (@cite{kramer-2015} Chs 5-7)
+-- ============================================================================
+
+/-- An inventory of n heads for a language, with the number of surface
+    genders that result from VI (@cite{kramer-2015} Chs 5-7).
+
+    The key insight: surface gender count is determined by VI rules, not
+    directly by the n inventory. Two languages can have the SAME set of
+    n heads but different numbers of surface genders (e.g., Dieri 2 vs
+    Mangarayi 3). -/
+structure NInventory where
+  language : String
+  nHeads : List CatHead
+  surfaceGenders : Nat
+  deriving Repr
+
+/-- Does this inventory include any arbitrary (uninterpretable) gender? -/
+def NInventory.hasArbitraryGender (inv : NInventory) : Bool :=
+  inv.nHeads.any (λ ch => match ch.phi.gender with
+    | some gf => gf.isArbitrary | none => false)
+
+/-- Is this a purely semantic gender system (no u-features)? -/
+def NInventory.purelySemanticGender (inv : NInventory) : Bool :=
+  !inv.hasArbitraryGender
+
+-- 3-n languages: no u-feature (@cite{kramer-2015} Ch 5)
+
+def dieriNs : NInventory :=
+  ⟨"Dieri", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 2⟩
+
+def zayseNs : NInventory :=
+  ⟨"Zayse", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 2⟩
+
+def mangarayiNs : NInventory :=
+  ⟨"Mangarayi", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 3⟩
+
+-- 4-n languages, Set 1: u[+FEM] (@cite{kramer-2015} Ch 6)
+
+def amharicNs : NInventory :=
+  ⟨"Amharic", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
+               CatHead.n_uFem], 2⟩
+
+def spanishNs : NInventory :=
+  ⟨"Spanish", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
+               CatHead.n_uFem], 2⟩
+
+-- 4-n languages, Set 2: u[−FEM] (@cite{kramer-2015} Ch 6)
+
+def maaNs : NInventory :=
+  ⟨"Maa", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
+           CatHead.n_uNegFem], 2⟩
+
+-- 4-n languages with 3 surface genders
+
+def lealaoNs : NInventory :=
+  ⟨"Lealao Chinantec", [CatHead.n_iAnim, CatHead.n_iInanim,
+                         CatHead.n_plain, CatHead.n_uAnim], 3⟩
+
+def wariNs : NInventory :=
+  ⟨"Wari'", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
+             CatHead.n_uNegFem], 3⟩
+
+-- 5-n languages (@cite{kramer-2015} Ch 7)
+
+def lavukaleveNs : NInventory :=
+  ⟨"Lavukaleve", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
+                  CatHead.n_uFem, CatHead.n_uNegFem], 3⟩
+
+/-- Same n inventory, different surface genders: Dieri (2) vs Mangarayi (3).
+    This demonstrates that surface gender count depends on VI, not the
+    inventory itself. -/
+theorem same_ns_different_genders :
+    dieriNs.nHeads = mangarayiNs.nHeads ∧
+    dieriNs.surfaceGenders ≠ mangarayiNs.surfaceGenders := ⟨rfl, by decide⟩
+
+/-- Set 1 languages share the same n inventory (@cite{kramer-2015} Ch 6). -/
+theorem set1_shared : amharicNs.nHeads = spanishNs.nHeads := rfl
+
+/-- 3-n languages have purely semantic gender (no u-features). -/
+theorem dieri_purely_semantic :
+    dieriNs.purelySemanticGender = true := rfl
+
+/-- Lavukaleve is maximal: 5 n heads (both u[+FEM] and u[−FEM]). -/
+theorem lavukaleve_maximal :
+    lavukaleveNs.nHeads.length = 5 := rfl
+
+/-- More n heads does not entail more surface genders:
+    Amharic has 4 ns but only 2 surface genders. -/
+theorem more_ns_same_genders :
+    amharicNs.nHeads.length > dieriNs.nHeads.length ∧
+    amharicNs.surfaceGenders = dieriNs.surfaceGenders := ⟨by decide, rfl⟩
+
+-- ============================================================================
+-- § 9: Spanish Gender Case Study (@cite{kramer-2015} Ch 6)
+-- ============================================================================
+
+/-- Derive from fragment: *hombre* 'man' has natural masculine gender (i[−FEM]). -/
+theorem hombre_natural_masculine :
+    Fragments.Spanish.Gender.hombre.nHead.phi.gender =
+      some ⟨.i, ⟨.fem, .neg⟩⟩ := rfl
+
+/-- Derive from fragment: *mujer* 'woman' has natural feminine gender (i[+FEM]). -/
+theorem mujer_natural_feminine :
+    Fragments.Spanish.Gender.mujer.nHead.phi.gender =
+      some ⟨.i, ⟨.fem, .pos⟩⟩ := rfl
+
+/-- Derive from fragment: *mesa* 'table' has arbitrary feminine gender (u[+FEM]). -/
+theorem mesa_arbitrary_feminine :
+    Fragments.Spanish.Gender.mesa.nHead.phi.gender =
+      some ⟨.u, ⟨.fem, .pos⟩⟩ := rfl
+
+/-- Derive from fragment: *libro* 'book' has default masculine (plain n). -/
+theorem libro_default_masculine :
+    Fragments.Spanish.Gender.libro.nHead.phi.gender = none := rfl
+
+/-- Spanish *soldado* 'soldier' as a same-root nominal:
+    the root √SOLDAD can combine with i[+FEM] or i[−FEM]. -/
+theorem soldado_is_same_root :
+    Fragments.Spanish.Gender.soldado.mascHead ≠
+    Fragments.Spanish.Gender.soldado.femHead := by decide
+
+/-- Spanish has the full Set 1 inventory: 4 n types. -/
+theorem spanish_four_n_types :
+    spanishNs.nHeads.length = 4 := rfl
+
+/-- The fragment inventory covers all four n-types from the NInventory. -/
+theorem fragment_covers_inventory :
+    Fragments.Spanish.Gender.allNouns.any (·.nHead == CatHead.n_iFem) = true ∧
+    Fragments.Spanish.Gender.allNouns.any (·.nHead == CatHead.n_iMasc) = true ∧
+    Fragments.Spanish.Gender.allNouns.any (·.nHead == CatHead.n_uFem) = true ∧
+    Fragments.Spanish.Gender.allNouns.any (·.nHead == CatHead.n_plain) = true :=
+  Fragments.Spanish.Gender.four_n_types_covered
 
 end Phenomena.Gender.Studies.Kramer2020

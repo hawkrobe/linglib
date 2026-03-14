@@ -42,7 +42,7 @@ across languages by **dimension** (what binary feature is used):
 |-------------|-----------|------------------------------------------|
 | Amharic     | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[+FEM]      |
 | Spanish     | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[+FEM]      |
-| Maa         | [±MASC]   | n i[+MASC], n i[−MASC], n, n u[+MASC]   |
+| Maa         | [±FEM]    | n i[+FEM], n i[−FEM], n, n u[−FEM]       |
 | Algonquian  | [±ANIM]   | n i[+ANIM], n i[−ANIM], n, n u[+ANIM]   |
 
 (@cite{kramer-2015} Chs 3, 5-7; @cite{adamson-2024} extends this to Teop [±ANIM]
@@ -204,7 +204,12 @@ def CatHead.n_iFem : CatHead where
   phi := { gender := some ⟨.i, ⟨.fem, .pos⟩⟩ }
 
 /-- n with interpretable [−FEM]: male natural gender.
-    Examples: Amharic animate male nouns. -/
+    Examples: Amharic animate male nouns.
+
+    Note: `iMasc` is a mnemonic for the *gender* this n yields (masculine),
+    not the feature dimension. The feature is i[−FEM] — negative polarity
+    in the FEM dimension. For the separate MASC dimension used in
+    Jarawara (@cite{adamson-2024}), see `n_uMasc`. -/
 def CatHead.n_iMasc : CatHead where
   cat := .n
   phi := { gender := some ⟨.i, ⟨.fem, .neg⟩⟩ }
@@ -216,10 +221,26 @@ def CatHead.n_plain : CatHead where
 
 /-- n with uninterpretable [+FEM]: feminine arbitrary gender.
     Examples: Amharic nouns arbitrarily assigned to feminine class
-    (door, lip, sun, ear, eye). -/
+    (door, lip, sun, ear, eye).
+    In Set 1 languages (@cite{kramer-2015} Chs 5-6), the u-feature
+    has positive polarity, making feminine the arbitrary gender and
+    masculine the default. Languages: Amharic, Spanish. -/
 def CatHead.n_uFem : CatHead where
   cat := .n
   phi := { gender := some ⟨.u, ⟨.fem, .pos⟩⟩ }
+
+/-- n with uninterpretable [−FEM]: masculine arbitrary gender in the
+    FEM dimension. In Set 2 languages (@cite{kramer-2015} Ch 6), the
+    u-feature has negative polarity, making masculine the arbitrary
+    gender and feminine the default.
+    Languages: Maa, Wari' (@cite{kramer-2015} Chs 6-7). -/
+def CatHead.n_uNegFem : CatHead where
+  cat := .n
+  phi := { gender := some ⟨.u, ⟨.fem, .neg⟩⟩ }
+
+/-- u[+FEM] and u[−FEM] are distinct n heads: Set 1 vs Set 2. -/
+theorem u_fem_polarity_contrast :
+    CatHead.n_uFem ≠ CatHead.n_uNegFem := by decide
 
 /-! ### ANIM dimension (Teop, Algonquian, Lealao Chinantec;
     @cite{kramer-2015} Chs 5-6; @cite{adamson-2024} §3.1) -/
@@ -414,6 +435,15 @@ theorem anim_not_plain :
 -- § 1f: Impoverishment (@cite{adamson-2024} §3.2; Bonet 1991)
 -- ============================================================================
 
+/-- A morphosyntactic context that can trigger impoverishment.
+
+    @cite{adamson-2024} ex. 63: [MASC] → ∅ in context of [PL] or
+    [PARTICIPANT]. Each context is a separate impoverishment rule. -/
+inductive ImpoverishmentContext where
+  | plural       -- [PL]: number feature
+  | participant  -- [PARTICIPANT]: 1st/2nd person (speech act participants)
+  deriving DecidableEq, BEq, Repr
+
 /-- Impoverishment: postsyntactic deletion of morphosyntactic features.
 
     In DM, impoverishment rules apply after syntax but before Vocabulary
@@ -426,7 +456,7 @@ structure ImpoverishmentRule where
   /-- The feature to be deleted. -/
   targetGender : GenderVal
   /-- The conditioning context (feature that triggers deletion). -/
-  context : String  -- descriptive; actual matching is language-specific
+  context : ImpoverishmentContext
   deriving DecidableEq, BEq, Repr
 
 /-- Apply impoverishment: if the rule matches, delete the gender feature. -/

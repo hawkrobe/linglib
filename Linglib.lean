@@ -428,6 +428,8 @@ import Linglib.Fragments.Indonesian.Morphophonology
 import Linglib.Fragments.Indonesian.Predicates
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns
+import Linglib.Fragments.Januubi.Negation
+import Linglib.Fragments.ZarmaSonrai.Negation
 import Linglib.Fragments.Quechua.Morph
 import Linglib.Fragments.Quechua.Negation
 import Linglib.Fragments.Hungarian.Case
@@ -546,12 +548,14 @@ import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Italian.Modals
 import Linglib.Fragments.Italian.AdjAgreement
+import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.Spanish.Binominals
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.Morph
+import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Spanish.Negation
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
@@ -905,6 +909,7 @@ import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Polarity.Studies.DenicEtAl2021
 import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
 import Linglib.Phenomena.Polarity.Studies.Schwab2022
+import Linglib.Phenomena.Polarity.Studies.Chierchia2006
 import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 import Linglib.Phenomena.Polarity.Typology
 import Linglib.Phenomena.Politeness.Honorifics
@@ -1293,6 +1298,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.CausalSourceBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Theories.Morphology.DM.CategorizerSemantics
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Morphology.DM.RichExponent

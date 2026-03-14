@@ -140,8 +140,43 @@ theorem bodyParts_iPossessed_gI :
 /-- The article paradigm: iPossessed body part gets *a*,
     unpossessed body part gets *o*. -/
 theorem spleen_ipossessed_article :
-    articleForm ⟨iPossessedGender bina, false⟩ = "a" := rfl
+    articleForm ⟨iPossessedGender bina, false, false⟩ = "a" := rfl
 theorem spleen_unpossessed_article :
-    articleForm ⟨bina.gender, false⟩ = "o" := rfl
+    articleForm ⟨bina.gender, false, false⟩ = "o" := rfl
+
+-- ============================================================================
+-- § 7: Bridge to DM Categorizer (@cite{kramer-2015} Ch 5)
+-- ============================================================================
+
+open Morphology.DM in
+/-- Map Teop gender classes to their DM categorizing heads.
+    Gender I (animates) ↔ n i[+ANIM]; Gender II (inanimates) ↔ plain n. -/
+def Gender.toCatHead : Gender → CatHead
+  | .gI  => CatHead.n_iAnim
+  | .gII => CatHead.n_plain
+
+open Morphology.DM in
+/-- Gender I maps to a natural (interpretable) gender feature. -/
+theorem gI_natural_gender :
+    Gender.gI.toCatHead.phi.gender = some ⟨.i, ⟨.anim, .pos⟩⟩ := rfl
+
+open Morphology.DM in
+/-- Gender II maps to plain n (no gender feature). -/
+theorem gII_no_gender :
+    Gender.gII.toCatHead.phi.gender = none := rfl
+
+open Morphology.DM in
+/-- Body-part nouns when iPossessed switch to n with u[+ANIM]
+    (@cite{adamson-2024} §3.1). -/
+def iPossessedCatHead (n : Noun) : CatHead :=
+  if n.isBodyPart then CatHead.n_uAnim else n.gender.toCatHead
+
+open Morphology.DM in
+theorem spleen_ipossessed_cathead :
+    iPossessedCatHead bina = CatHead.n_uAnim := rfl
+
+open Morphology.DM in
+theorem spleen_free_cathead :
+    bina.gender.toCatHead = CatHead.n_plain := rfl
 
 end Fragments.Teop
