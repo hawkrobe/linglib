@@ -1,5 +1,6 @@
 import Linglib.Core.Continuation
 import Linglib.Theories.Semantics.Composition.WriterMonad
+import Linglib.Theories.Semantics.Composition.SetMonad
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
@@ -27,7 +28,7 @@ linglib infrastructure:
 | CI / supplementation | W | `α × List P` | `Writer P A` |
 | Input (binding) | R | `ι → α` | `Reader` (Binding.lean) |
 | Output (antecedents) | W | `α × ι` | `Prod` |
-| Indeterminacy | S | `{α}` | — (universe issues) |
+| Indeterminacy | S | `{α}` | `α → Prop` (SetMonad.lean) |
 
 ## Organization
 
@@ -887,5 +888,55 @@ theorem binding_triangle {m : Model} {A : Type}
     denotGJoin f g = adj_ε (f g, g) := rfl
 
 end BindingUnification
+
+-- ════════════════════════════════════════════════════════════════════
+-- §9 Indeterminacy Effect (Set Monad)
+-- ════════════════════════════════════════════════════════════════════
+
+/-! ### §9 Indeterminacy effect
+
+The **indeterminacy** effect — labeled `S` in @cite{bumford-charlow-2024}'s
+Table 2 — is the set monad `(S, η, ⫝̸)` from @cite{charlow-2020},
+formalized in `SetMonad.lean`.
+
+| Effect | η (pure) | ⫝̸ (bind) | Linguistic use |
+|---|---|---|---|
+| Scope (C) | `λκ. κ x` | `λκ. m(λa. f a κ)` | Quantifier scope |
+| CI (W) | `⟨x, []⟩` | `⟨(f m.val).val, m.log ++ ...⟩` | Supplements |
+| Binding (R) | `λ_. x` | `λe. f(m e) e` | Assignment-sensitivity |
+| **Indeterminacy (S)** | **`{x}`** | **`⋃_{a ∈ m} f(a)`** | **Indefinites, focus, *wh*** |
+
+The set monad's applicative instance is *pointwise composition* — the
+standard mechanism of alternative semantics (@cite{hamblin-1973b},
+@cite{kratzer-shimoyama-2002}). Its monadic bind is *scope-taking* — the
+mechanism @cite{charlow-2020} argues is needed for exceptional scope.
+
+The applicative is strictly weaker: it cannot derive selectivity (§5.4 of
+the paper) or the Binder Roof Constraint (§6.4). The monad can. -/
+
+section IndeterminacyBridge
+
+open Semantics.Composition.SetMonad
+
+/-- The set monad's η is the indeterminacy effect's `pure`. -/
+theorem indeterminacy_pure_is_eta {A : Type} (x : A) :
+    eta x = fun y => y = x := rfl
+
+/-- The set monad's ⫝̸ is the indeterminacy effect's `bind`. -/
+theorem indeterminacy_bind_is_setBind {A B : Type}
+    (m : A → Prop) (f : A → B → Prop) :
+    setBind m f = fun b => ∃ a, m a ∧ f a b := rfl
+
+/-- **Indeterminacy obeys ASSOCIATIVITY.** Re-export from `SetMonad.lean`.
+
+    This is the property that distinguishes the full monad from the mere
+    applicative: `(m ⫝̸ f) ⫝̸ g = m ⫝̸ (λx. f x ⫝̸ g)`. Without it,
+    indefinites cannot iteratively scope out of nested islands. -/
+theorem indeterminacy_associativity {A B C : Type}
+    (m : A → Prop) (f : A → B → Prop) (g : B → C → Prop) :
+    setBind (setBind m f) g = setBind m (fun a => setBind (f a) g) :=
+  set_associativity m f g
+
+end IndeterminacyBridge
 
 end Semantics.Composition.Effects

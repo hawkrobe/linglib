@@ -233,26 +233,17 @@ and whether the language has productive reduplication.
 Typological classification types are defined in `Core.Morphology.MorphProfile`.
 
 Sources:
-- Bickel, B. & Nichols, J. (2013a). Fusion of selected inflectional
-  formatives. WALS Online. Ch. 20.
-- Bickel, B. & Nichols, J. (2013b). Exponence of selected inflectional
-  formatives. WALS Online. Ch. 21.
-- Bickel, B. & Nichols, J. (2013c). Inflectional synthesis of the verb.
-  WALS Online. Ch. 22.
-- Nichols, J. & Bickel, B. (2013a). Locus of marking in the clause.
-  WALS Online. Ch. 23.
-- Nichols, J. & Bickel, B. (2013b). Locus of marking in possessive NPs.
-  WALS Online. Ch. 24.
-- Nichols, J. & Bickel, B. (2013c). Locus of marking: whole-language
-  typology. WALS Online. Ch. 25.
-- Nichols, J. & Bickel, B. (2013d). Zero marking of A and P arguments.
-  WALS Online. Ch. 25B.
-- Baerman, M. & Brown, D. (2013a). Case syncretism. WALS Online. Ch. 28.
-- Baerman, M. & Brown, D. (2013b). Syncretism in verbal person/number
-  marking. WALS Online. Ch. 29.
-- Dryer, M. S. (2013). Prefixing vs. suffixing in inflectional morphology.
-  WALS Online. Ch. 26.
-- Rubino, C. (2013). Reduplication. WALS Online. Ch. 27.
+@cite{bickel-nichols-2013a} (Ch 20, Fusion)
+@cite{bickel-nichols-2013b} (Ch 21, Exponence)
+@cite{bickel-nichols-2013c} (Ch 22, Inflectional Synthesis)
+@cite{nichols-bickel-2013b} (Ch 23, Locus of Marking in the Clause)
+@cite{nichols-bickel-2013c} (Ch 24, Locus of Marking in Possessive NPs)
+@cite{nichols-bickel-2013a} (Ch 25, Locus of Marking: Whole-language Typology)
+@cite{nichols-bickel-2013d} (Ch 25B, Zero Marking of A and P Arguments)
+@cite{baerman-brown-2013} (Ch 28, Case Syncretism)
+@cite{baerman-brown-2013a} (Ch 29, Syncretism in Verbal Person/Number Marking)
+@cite{dryer-2013-wals} (Ch 26, Prefixing vs. Suffixing)
+@cite{rubino-2013} (Ch 27, Reduplication)
 -/
 
 -- ============================================================================
@@ -404,26 +395,13 @@ theorem ch22_total :
 -- ============================================================================
 
 open Core.WALS.F25A (LocusOfMarkingWholeLanguageTypology) in
-/-- Map WALS 25A fine-grained locus-of-marking types to coarse 4-way classification.
-    The large "inconsistent or other" category (121 langs) maps to `.zeroMarking`
-    since these languages lack a consistent marking pattern. -/
+/-- Map WALS 25A values to the 5-way `LocusOfMarking` classification. -/
 def toLocusOfMarking : LocusOfMarkingWholeLanguageTypology → LocusOfMarking
   | .headMarking => .headMarking
   | .dependentMarking => .dependentMarking
   | .doubleMarking => .doubleMarking
-  | .zeroMarking | .inconsistentOrOther => .zeroMarking
-
-/-- WALS Chapter 25A distribution, derived from F25A data (N = 236). -/
-def ch25Distribution : List WALSCount :=
-  [ ⟨"Head-marking", (ch25a.filter (·.value == .headMarking)).length⟩
-  , ⟨"Dependent-marking", (ch25a.filter (·.value == .dependentMarking)).length⟩
-  , ⟨"Double-marking", (ch25a.filter (·.value == .doubleMarking)).length⟩
-  , ⟨"Zero-marking", (ch25a.filter (·.value == .zeroMarking)).length⟩
-  , ⟨"Inconsistent or other", (ch25a.filter (·.value == .inconsistentOrOther)).length⟩ ]
-
-/-- Ch 25 total: 236 languages (derived from F25A data). -/
-theorem ch25_total :
-    ch25Distribution.foldl (λ acc c => acc + c.count) 0 = 236 := by native_decide
+  | .zeroMarking => .zeroMarking
+  | .inconsistentOrOther => .inconsistentOrOther
 
 -- ============================================================================
 -- §4.5 Chapter 26: Prefixing vs Suffixing in Inflectional Morphology
@@ -756,13 +734,15 @@ theorem sample_high_synthesis :
 
 /-- Locus of marking distribution in our sample. -/
 theorem sample_dependent_marking :
-    countByLocus allMorphProfiles .dependentMarking = 11 := by native_decide
+    countByLocus allMorphProfiles .dependentMarking = 10 := by native_decide
 theorem sample_head_marking :
     countByLocus allMorphProfiles .headMarking = 1 := by native_decide
 theorem sample_double_marking :
     countByLocus allMorphProfiles .doubleMarking = 4 := by native_decide
 theorem sample_zero_marking :
-    countByLocus allMorphProfiles .zeroMarking = 2 := by native_decide
+    countByLocus allMorphProfiles .zeroMarking = 3 := by native_decide
+theorem sample_inconsistent_marking :
+    countByLocus allMorphProfiles .inconsistentOrOther = 0 := by native_decide
 
 /-- Fusion counts sum to total. -/
 theorem fusion_counts_sum :
@@ -776,7 +756,8 @@ theorem locus_counts_sum :
     countByLocus allMorphProfiles .headMarking +
     countByLocus allMorphProfiles .dependentMarking +
     countByLocus allMorphProfiles .doubleMarking +
-    countByLocus allMorphProfiles .zeroMarking =
+    countByLocus allMorphProfiles .zeroMarking +
+    countByLocus allMorphProfiles .inconsistentOrOther =
     allMorphProfiles.length := by native_decide
 
 -- ============================================================================
@@ -787,12 +768,12 @@ theorem locus_counts_sum :
 
 Greenberg's Universal 27: "If a language is exclusively suffixing, it is
 postpositional; if it is exclusively prefixing, it is prepositional."
-More broadly, suffixing is far more common than prefixing. In the WALS
-Ch 26 data, strongly+weakly suffixing (529) vastly outnumber strongly+
-weakly prefixing (229). -/
+More broadly, suffixing is far more common than prefixing. -/
 
 theorem greenberg_universal_27_wals :
-    (406 + 123 : Nat) > (135 + 94) := by native_decide
+    let suff := (ch26.filter (λ d => d.value == .stronglySuffixing ∨ d.value == .weaklySuffixing)).length
+    let pref := (ch26.filter (λ d => d.value == .strongPrefixing ∨ d.value == .weaklyPrefixing)).length
+    suff > pref := by native_decide
 
 theorem suffixing_dominates_in_sample :
     let suffCount := (allMorphProfiles.filter (·.isSuffixing)).length
@@ -801,12 +782,15 @@ theorem suffixing_dominates_in_sample :
 
 /-! ### Generalization 2: Concatenative morphology is the most common fusion type.
 
-In the WALS Ch 20 data, exclusively+strongly+weakly concatenative
-languages (110/160 = 69%) vastly outnumber fusional and isolating types.
-In our sample, concatenative languages also form the plurality. -/
+In the WALS Ch 20 data, exclusively concatenative languages form the
+largest single category. In our sample, concatenative languages also
+form the plurality. -/
 
 theorem concatenative_most_common_wals :
-    (58 + 28 + 24 : Nat) > 25 ∧ (58 + 28 + 24 : Nat) > 25 := by native_decide
+    let concat := (ch20.filter (·.value == .exclusivelyConcatenative)).length
+    let isolating := (ch20.filter (·.value == .exclusivelyIsolating)).length
+    let tonal := (ch20.filter (·.value == .exclusivelyTonal)).length
+    concat > isolating ∧ concat > tonal := by native_decide
 
 theorem concatenative_plurality_in_sample :
     countByFusion allMorphProfiles .concatenative >
@@ -821,11 +805,12 @@ theorem dependent_marking_common :
     countByLocus allMorphProfiles .dependentMarking >=
     countByLocus allMorphProfiles .headMarking := by native_decide
 
-/-! ### Generalization 4: Reduplication is present in a majority of languages
-in the WALS Ch 27 data (182/368 = 49% have productive reduplication). -/
+/-! ### Generalization 4: Productive reduplication is present in a majority of
+languages in the WALS Ch 27 data. -/
 
 theorem reduplication_in_majority_wals :
-    (147 + 35 : Nat) > 186 / 2 := by native_decide
+    let hasRedup := (ch27.filter (·.value != .noProductiveReduplication)).length
+    hasRedup * 2 > ch27.length := by native_decide
 
 theorem reduplication_attested_in_sample :
     (allMorphProfiles.filter (·.hasRedup)).length >= 3 := by native_decide
@@ -1169,9 +1154,39 @@ theorem korean_ch25a :
 theorem german_ch25a :
     (Core.WALS.F25A.lookup "ger").map (fromWALS25A ·.value) =
     some (.dependentMarking : WholeLanguageMarking) := by native_decide
+theorem turkish_ch25a :
+    (Core.WALS.F25A.lookup "tur").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
+theorem finnish_ch25a :
+    (Core.WALS.F25A.lookup "fin").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
+theorem swahili_ch25a :
+    (Core.WALS.F25A.lookup "swa").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
+theorem hindi_ch25a :
+    (Core.WALS.F25A.lookup "hin").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
+theorem tagalog_ch25a :
+    (Core.WALS.F25A.lookup "tag").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
+theorem hungarian_ch25a :
+    (Core.WALS.F25A.lookup "hun").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
+theorem georgian_ch25a :
+    (Core.WALS.F25A.lookup "geo").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
+theorem thai_ch25a :
+    (Core.WALS.F25A.lookup "tha").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 theorem indonesian_ch25a :
     (Core.WALS.F25A.lookup "ind").map (fromWALS25A ·.value) =
     some (.zeroMarking : WholeLanguageMarking) := by native_decide
+theorem spanish_ch25a :
+    (Core.WALS.F25A.lookup "spa").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
+theorem arabic_eg_ch25a :
+    (Core.WALS.F25A.lookup "aeg").map (fromWALS25A ·.value) =
+    some (.inconsistentOrOther : WholeLanguageMarking) := by native_decide
 
 -- --------------------------------------------------------------------------
 -- §11.8 Chapter 25B: Zero Marking of A and P Arguments

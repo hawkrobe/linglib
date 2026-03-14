@@ -123,8 +123,27 @@ def Dimension.cleanliness : Dimension := ⟨"cleanliness", .state⟩
 def Dimension.straightness : Dimension := ⟨"straightness", .state⟩
 def Dimension.flatness : Dimension := ⟨"flatness", .state⟩
 def Dimension.openness : Dimension := ⟨"openness", .state⟩
+def Dimension.freedom : Dimension := ⟨"freedom", .state⟩
+def Dimension.tightness : Dimension := ⟨"tightness", .state⟩
 def Dimension.alive : Dimension := ⟨"alive", .state⟩
 def Dimension.pregnancy : Dimension := ⟨"pregnancy", .state⟩
+def Dimension.hardness : Dimension := ⟨"hardness", .state⟩
+def Dimension.smoothness : Dimension := ⟨"smoothness", .state⟩
+def Dimension.purity : Dimension := ⟨"purity", .state⟩
+
+-- Physical dimension
+def Dimension.weight : Dimension := ⟨"weight", .size⟩
+def Dimension.thickness : Dimension := ⟨"thickness", .size⟩
+def Dimension.depth : Dimension := ⟨"depth", .size⟩
+def Dimension.speed : Dimension := ⟨"speed", .size⟩
+def Dimension.strength : Dimension := ⟨"strength", .size⟩
+def Dimension.age : Dimension := ⟨"age", .size⟩
+def Dimension.brightness : Dimension := ⟨"brightness", .sensory⟩
+def Dimension.volume : Dimension := ⟨"volume", .sensory⟩
+def Dimension.danger : Dimension := ⟨"danger", .evaluative⟩
+def Dimension.beauty : Dimension := ⟨"beauty", .evaluative⟩
+def Dimension.importance : Dimension := ⟨"importance", .evaluative⟩
+def Dimension.safety : Dimension := ⟨"safety", .evaluative⟩
 
 -- General size dimension (large/small/gigantic/tiny)
 def Dimension.generalSize : Dimension := ⟨"size", .size⟩

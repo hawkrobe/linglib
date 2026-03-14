@@ -1,25 +1,38 @@
 import Linglib.Core.Morphology.MorphProfile
 
 /-!
-# Arabic (MSA) Morphological Profile
+# Arabic (Egyptian) Morphological Profile
 
-WALS-derived morphological profile for Arabic (MSA).
-Arabic (MSA): mostly fallback (MSA absent from most WALS chapters; only F26A has iso=arb). Linguistically: nonlinear, polyexponential, moderate synthesis, dependent-marking.
+WALS-derived morphological profile for Arabic (Egyptian).
+WALS uses Egyptian Arabic (ISO arz, WALS code aeg) as the representative
+Arabic variety for most morphology chapters.
 -/
 
 namespace Fragments.Arabic
 
 open Core.Morphology in
-/-- Arabic (MSA): mostly fallback (MSA absent from most WALS chapters; only F26A has iso=arb). Linguistically: nonlinear, polyexponential, moderate synthesis, dependent-marking. -/
+/-- Arabic (Egyptian): F20A nonlinear; F22A moderate; F23A noMarking;
+    F25A inconsistentOrOther; F26A weaklySuffixing; F27A productiveFull. -/
 def morphProfile : MorphProfile :=
-  { language := "Arabic (MSA)"
-  , iso := "arb"
-  , fusion := (walsFusion "arb").getD .nonlinear
-  , exponence := (walsExponence "arb").getD .polyexponential
-  , verbSynthesis := (walsVerbSynthesis "arb").getD .moderate
-  , locus := (walsLocus "arb").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "arb").getD .stronglySuffixing
-  , reduplication := (walsReduplication "arb").getD .noProductive
+  { language := "Arabic (Egyptian)"
+  , iso := "arz"
+  , fusion := (walsFusion "arz").getD .nonlinear
+  , exponence := (walsExponence "arz").getD .polyexponential
+  , verbSynthesis := (walsVerbSynthesis "arz").getD .moderate
+  , locus := (walsLocus "arz").getD .dependentMarking
+  , prefixSuffix := (walsPrefixSuffix "arz").getD .weaklySuffixing
+  , reduplication := (walsReduplication "arz").getD .productiveFull
+  , locusClause := walsLocusClause "arz"
+  , locusPossessive := walsLocusPossessive "arz"
+  , wholeLanguageMarking := walsWholeLanguageMarking "arz"
+  , zeroMarkingAP := walsZeroMarkingAP "arz"
+  , caseSyncretism := walsCaseSyncretism "arz"
+  , verbalSyncretism := walsVerbalSyncretism "arz"
+  , tamExponence := walsTAMExponence "arz"
+  , actionNominal := walsActionNominal "arz"
+  , suppletionTA := walsSuppletionTA "arz"
+  , suppletionImperative := walsSuppletionImperative "arz"
+  , verbalNumber := walsVerbalNumber "arz"
   }
 
 end Fragments.Arabic

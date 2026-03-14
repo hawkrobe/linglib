@@ -53,12 +53,14 @@ inductive VerbSynthesis where
   | high      -- 8+ categories per verb word
   deriving DecidableEq, BEq, Repr
 
-/-- Locus of marking: where grammatical relations are marked. -/
+/-- Locus of marking: where grammatical relations are marked.
+    Derived from WALS Ch 25A @cite{nichols-bickel-2013a}. -/
 inductive LocusOfMarking where
   | headMarking
   | dependentMarking
   | doubleMarking
   | zeroMarking
+  | inconsistentOrOther
   deriving DecidableEq, BEq, Repr
 
 /-- WALS Ch 26: Whether a language predominantly uses prefixes or suffixes. -/
@@ -78,7 +80,8 @@ inductive Reduplication where
   | noProductive
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Ch 23: Where grammatical relations are marked in clausal syntax. -/
+/-- WALS Ch 23: Where grammatical relations are marked in clausal syntax.
+    @cite{nichols-bickel-2013b} -/
 inductive LocusClause where
   | headMarking
   | dependentMarking
@@ -87,7 +90,8 @@ inductive LocusClause where
   | other
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Ch 24: Where grammatical relations are marked in possessive NPs. -/
+/-- WALS Ch 24: Where grammatical relations are marked in possessive NPs.
+    @cite{nichols-bickel-2013c} -/
 inductive LocusPossessive where
   | headMarking
   | dependentMarking
@@ -96,7 +100,8 @@ inductive LocusPossessive where
   | other
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Ch 25A: Whole-language locus-of-marking classification. -/
+/-- WALS Ch 25A: Whole-language locus-of-marking classification.
+    @cite{nichols-bickel-2013a} -/
 inductive WholeLanguageMarking where
   | headMarking
   | dependentMarking
@@ -105,7 +110,8 @@ inductive WholeLanguageMarking where
   | inconsistentOrOther
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Ch 25B: Whether A and P arguments are zero-marked. -/
+/-- WALS Ch 25B: Whether A and P arguments are zero-marked.
+    @cite{nichols-bickel-2013d} -/
 inductive ZeroMarkingAP where
   | zeroMarking
   | nonZeroMarking
@@ -355,13 +361,13 @@ def fromWALS80A :
 -- §4. WALS Lookup Helpers
 -- ============================================================================
 
-/-- Map clause-level locus (F23A) to the 4-way whole-language classification. -/
+/-- Map clause-level locus (F23A) to the 5-way whole-language classification. -/
 def locusClauseToLocus : LocusClause → LocusOfMarking
   | .headMarking      => .headMarking
   | .dependentMarking => .dependentMarking
   | .doubleMarking    => .doubleMarking
   | .noMarking        => .zeroMarking
-  | .other            => .zeroMarking
+  | .other            => .inconsistentOrOther
 
 /-! WALS lookup helpers derive MorphProfile field values from auto-generated
     WALS data. Each returns `Option`, yielding `none` when the language is

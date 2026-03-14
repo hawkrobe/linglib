@@ -13,7 +13,7 @@ Three complementary typological perspectives on coordination:
 Classifies coordination by overt form:
 - **Syndesis**: asyndetic (A B), monosyndetic (A co-B), bisyndetic (co-A co-B)
 - **Coordinator position**: prepositive (co-A) vs postpositive (A-co)
-- **Universal gap**: the pattern co-A B is unattested (@cite{stassen-2000}, n=260)
+- **Universal gap**: the pattern co-A B is unattested (@cite{haspelmath-2007}; sample: @cite{stassen-2000}, n=260)
 - **Diachronic sources**: comitative ("with") -> monosyndetic J;
   additive focus particle ("also") -> bisyndetic MU
 
@@ -82,8 +82,8 @@ inductive Syndesis where
 /--
 Coordinator position relative to its coordinand (Haspelmath §1.2).
 
-Haspelmath notes that **co-A B (prepositive on first coordinand only)
-is unattested** across 260 languages. This is the one
+@cite{haspelmath-2007} notes that **co-A B (prepositive on first coordinand only)
+is unattested** (cf. @cite{stassen-2000}, n=260). This is the one
 logically possible monosyndetic pattern that never occurs.
 -/
 inductive CoordinatorPosition where
@@ -99,7 +99,7 @@ Monosyndetic: 3 attested patterns (of 4 logically possible).
   A-co B (postpositive on 1st: Tibetan "A-daŋ B")
   A B-co (postpositive on 2nd: Latin "A B-que")
 
-  co-A B — UNATTESTED (@cite{stassen-2000}, n=260 languages)
+  co-A B — UNATTESTED (@cite{haspelmath-2007}; cf. @cite{stassen-2000}, n=260)
 
 Bisyndetic: 4 attested patterns.
   co-A co-B (prepositive: Yoruba "àtí A àtí B")
@@ -721,6 +721,27 @@ inductive ConjComitativeRelation where
   | andIdenticalToWith
   deriving DecidableEq, BEq, Repr
 
+/--
+@cite{stassen-2000} AND/WITH classification of languages.
+AND-languages have structurally distinct coordinate and comitative strategies.
+WITH-languages use comitative encoding as the only strategy for NP conjunction.
+
+Derived from WALS Ch 63 conjunction/comitative relation: languages where
+"and" ≠ "with" have differentiated the two strategies (AND-status);
+languages where "and" = "with" retain comitative-based conjunction (WITH-status).
+-/
+inductive AndWithStatus where
+  | andLang   -- Coordinate and comitative are structurally distinct
+  | withLang  -- Comitative marker = coordinator; no balanced coordination
+  deriving DecidableEq, BEq, Repr
+
+/-- Derive AND/WITH status from the conjunction-comitative relation.
+    @cite{stassen-2000}: lexical identity of "and" and "with" is the
+    diagnostic for WITH-language status. -/
+def ConjComitativeRelation.toAndWithStatus : ConjComitativeRelation → AndWithStatus
+  | .andDifferentFromWith => .andLang
+  | .andIdenticalToWith   => .withLang
+
 -- ============================================================================
 -- Chapter 64: Nominal and Verbal Conjunction
 -- ============================================================================
@@ -787,6 +808,12 @@ structure CoordinationProfile where
   /-- Notes on the coordination system. -/
   walsNotes : String := ""
   deriving Repr
+
+/-- Derive AND/WITH status for a coordination profile from its Ch 63 value.
+    @cite{stassen-2000}: lexical identity of "and" and "with" is the
+    diagnostic for WITH-language status. -/
+def CoordinationProfile.andWithStatus (p : CoordinationProfile) : Option AndWithStatus :=
+  p.conjComitative.map (·.toAndWithStatus)
 
 -- ============================================================================
 -- Language Profiles
@@ -1246,5 +1273,31 @@ theorem juxtaposition_rare : (15 : Nat) * 20 < 301 := by native_decide
 theorem comitative_source_substantial_minority :
     (103 : Nat) * 2 < 234 ∧ (103 : Nat) * 3 > 234 := by
   exact ⟨by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- AND/WITH Classification (@cite{stassen-2000})
+-- ============================================================================
+
+/-- In the WALS F63A sample, AND-languages outnumber WITH-languages (131 > 103).
+    @cite{stassen-2000}: this reflects the diachronic drift from WITH → AND. -/
+theorem and_languages_majority :
+    (ch63.filter (·.value == .andDifferentFromWith)).length >
+    (ch63.filter (·.value == .andIdenticalToWith)).length := by native_decide
+
+/-- Per-language AND/WITH classification. -/
+theorem english_is_andLang : englishWALS.andWithStatus = some .andLang := by native_decide
+theorem french_is_andLang : frenchWALS.andWithStatus = some .andLang := by native_decide
+theorem spanish_is_andLang : spanishWALS.andWithStatus = some .andLang := by native_decide
+theorem russian_is_andLang : russianWALS.andWithStatus = some .andLang := by native_decide
+theorem japanese_is_withLang : japaneseWALS.andWithStatus = some .withLang := by native_decide
+theorem mandarin_is_withLang : mandarinWALS.andWithStatus = some .withLang := by native_decide
+theorem korean_is_andLang : koreanWALS.andWithStatus = some .andLang := by native_decide
+theorem turkish_is_andLang : turkishWALS.andWithStatus = some .andLang := by native_decide
+theorem finnish_is_andLang : finnishWALS.andWithStatus = some .andLang := by native_decide
+theorem hungarian_is_andLang : hungarianWALS.andWithStatus = some .andLang := by native_decide
+theorem hindi_is_andLang : hindiWALS.andWithStatus = some .andLang := by native_decide
+theorem arabic_is_andLang : arabicWALS.andWithStatus = some .andLang := by native_decide
+theorem swahili_is_withLang : swahiliWALS.andWithStatus = some .withLang := by native_decide
+theorem tagalog_is_andLang : tagalogWALS.andWithStatus = some .andLang := by native_decide
 
 end Phenomena.Coordination.Typology

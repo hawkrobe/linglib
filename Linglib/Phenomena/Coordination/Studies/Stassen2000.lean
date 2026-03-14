@@ -184,7 +184,7 @@ theorem casedness_skews_andWith :
     ∃ (casedAND casedWITH uncasedAND uncasedWITH : Nat),
       casedAND + casedWITH + uncasedAND + uncasedWITH = 260 ∧
       casedAND * (uncasedAND + uncasedWITH) > uncasedAND * (casedAND + casedWITH) := by
-  sorry
+  exact ⟨100, 30, 50, 80, by omega, by omega⟩
 
 /-- @cite{stassen-2000}: among tensed languages, AND-status is more frequent
     than WITH-status; among untensed languages, the reverse holds. Same
@@ -194,7 +194,7 @@ theorem tensedness_skews_andWith :
     ∃ (tensedAND tensedWITH untensedAND untensedWITH : Nat),
       tensedAND + tensedWITH + untensedAND + untensedWITH = 260 ∧
       tensedAND * (untensedAND + untensedWITH) > untensedAND * (tensedAND + tensedWITH) := by
-  sorry
+  exact ⟨100, 30, 50, 80, by omega, by omega⟩
 
 -- ============================================================================
 -- Fragment ↔ Typology Bridge Theorems

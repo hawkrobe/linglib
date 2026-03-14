@@ -62,6 +62,10 @@ inductive SynCat where
   | DP | Deg | Conj | ConjP | Neg | NegP
   deriving DecidableEq, BEq, Repr, Inhabited
 
+instance : LawfulBEq SynCat where
+  eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
+  rfl {a} := by cases a <;> decide
+
 -- ═══════════════════════════════════════════════════════════════════════
 -- §2  Parse Trees
 -- ═══════════════════════════════════════════════════════════════════════
@@ -611,6 +615,124 @@ end Deletion
 -- §10  Bridge: Horn Scales ⊆ Structural Alternatives
 -- ═══════════════════════════════════════════════════════════════════════
 
+/-- Lift a ReflTransGen chain at position i through inChild. -/
+private theorem lift_at_position {W : Type} {source : List (ParseTree W)}
+    {cat : SynCat} (cs : List (ParseTree W))
+    (i : Nat) (hi : i < cs.length) (ψ : ParseTree W)
+    (h : Relation.ReflTransGen (StructOp source) cs[i] ψ) :
+    Relation.ReflTransGen (StructOp source)
+      (.node cat cs) (.node cat (cs.set i ψ)) := by
+  induction h with
+  | refl => rw [List.set_getElem_self hi]
+  | @tail b d _ hbd ih =>
+    apply ih.trans
+    apply Relation.ReflTransGen.single
+    have hlen : i < (cs.set i b).length := by rw [List.length_set]; exact hi
+    rw [show cs.set i d = (cs.set i b).set i d from (List.set_set ..).symm]
+    apply StructOp.inChild ⟨i, hlen⟩
+    have hget : (cs.set i b).get ⟨i, hlen⟩ = b := List.getElem_set_self ..
+    rw [hget]; exact hbd
+
+/-- leafSubstList is just List.map. -/
+private theorem leafSubstList_eq_map {W : Type} [BEq W]
+    (α β : W) (c : SynCat) (cs : List (ParseTree W)) :
+    ParseTree.leafSubst.leafSubstList α β c cs =
+    cs.map (·.leafSubst α β c) := by
+  induction cs with
+  | nil => rfl
+  | cons t ts ih =>
+    simp only [ParseTree.leafSubst.leafSubstList, List.map_cons]
+    exact congrArg _ ih
+
+/-- Process children one at a time: .node cat cs →* .node cat (cs.map f). -/
+private theorem mapChildren_reachable {W : Type} {source : List (ParseTree W)}
+    {cat : SynCat} {cs : List (ParseTree W)} {f : ParseTree W → ParseTree W}
+    (hf : ∀ (i : Nat) (hi : i < cs.length),
+      Relation.ReflTransGen (StructOp source) cs[i] (f cs[i])) :
+    Relation.ReflTransGen (StructOp source)
+      (.node cat cs) (.node cat (cs.map f)) := by
+  suffices h : ∀ k (hk : k ≤ cs.length),
+    Relation.ReflTransGen (StructOp source)
+      (.node cat cs)
+      (.node cat (List.take k (cs.map f) ++ List.drop k cs)) by
+    have h' := h cs.length le_rfl
+    rw [List.take_of_length_le (by simp), List.drop_length, List.append_nil] at h'
+    exact h'
+  intro k
+  induction k with
+  | zero => intro _; simp; exact Relation.ReflTransGen.refl
+  | succ k ih =>
+    intro hk
+    have hk' : k < cs.length := by omega
+    apply Relation.ReflTransGen.trans (ih (by omega))
+    have hmid_len : (List.take k (cs.map f) ++ List.drop k cs).length = cs.length := by
+      simp [List.length_take, List.length_drop, List.length_map]; omega
+    have htk_len : (List.take k (cs.map f)).length = k := by
+      simp [List.length_take, List.length_map]; omega
+    have hmid_k : (List.take k (cs.map f) ++ List.drop k cs)[k]'(by omega) = cs[k] := by
+      rw [List.getElem_append_right (by omega)]
+      simp [htk_len, List.getElem_drop]
+    suffices heq : List.take (k + 1) (cs.map f) ++ List.drop (k + 1) cs =
+        (List.take k (cs.map f) ++ List.drop k cs).set k (f cs[k]) by
+      rw [heq]
+      apply lift_at_position _ k (by omega) (f cs[k])
+      rw [hmid_k]; exact hf k hk'
+    have htk1_len : (List.take (k + 1) (cs.map f)).length = k + 1 := by
+      simp [List.length_take, List.length_map]; omega
+    apply List.ext_getElem
+    · simp [List.length_set, List.length_take, List.length_drop, List.length_map]; omega
+    · intro i hi1 hi2
+      by_cases hik : i = k
+      · subst hik
+        rw [List.getElem_set_self, List.getElem_append_left (by omega)]
+        simp [List.getElem_take, List.getElem_map]
+      · rw [List.getElem_set_ne (Ne.symm hik)]
+        by_cases hilt : i < k
+        · rw [List.getElem_append_left (by omega),
+              List.getElem_append_left (by omega)]
+          simp [List.getElem_take, List.getElem_map]
+        · rw [List.getElem_append_right (by omega),
+              List.getElem_append_right (by omega)]
+          simp [htk1_len, htk_len, List.getElem_drop]
+          congr 1; omega
+
+set_option maxHeartbeats 400000 in
+/-- Leaf substitution is reachable via structural operations for any
+source containing `.leaf c β`. -/
+private theorem leafSubst_reachable {W : Type} [BEq W]
+    {source : List (ParseTree W)} (α β : W) (c : SynCat)
+    (h_β : ParseTree.leaf c β ∈ source)
+    (φ : ParseTree W) :
+    Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c) := by
+  refine ParseTree.rec
+    (motive_1 := fun φ => Relation.ReflTransGen (StructOp source) φ (φ.leafSubst α β c))
+    (motive_2 := fun cs => ∀ (i : Nat) (hi : i < cs.length),
+      Relation.ReflTransGen (StructOp source) cs[i] ((cs[i]).leafSubst α β c))
+    ?_ ?_ ?_ ?_ φ
+  · -- leaf case
+    intro c' w
+    simp only [ParseTree.leafSubst]
+    split
+    · rename_i h
+      rw [Bool.and_eq_true] at h
+      have hc : c = c' := eq_of_beq h.1
+      subst hc
+      exact Relation.ReflTransGen.single (StructOp.subst rfl h_β)
+    · exact Relation.ReflTransGen.refl
+  · -- node case
+    intro c' cs ih_cs
+    show Relation.ReflTransGen (StructOp source) (.node c' cs)
+      (.node c' (ParseTree.leafSubst.leafSubstList α β c cs))
+    rw [leafSubstList_eq_map]
+    exact mapChildren_reachable ih_cs
+  · -- nil case
+    intro i hi; exact absurd hi (by simp)
+  · -- cons case
+    intro head tail ih_head ih_tail i hi
+    match i, hi with
+    | 0, _ => exact ih_head
+    | i+1, hi => exact ih_tail i (by simp [List.length_cons] at hi; omega)
+
 /-- Horn scale alternatives are a special case of structural alternatives.
 
 If two words α and β are on the same Horn scale (and therefore have the
@@ -627,17 +749,15 @@ like ⟨some, most, all⟩) is not wrong — it is subsumed by the structural
 approach. Everything a Horn scale generates, structural operations
 generate too. But structural operations also generate alternatives that
 scales miss: deletion alternatives in DE contexts (§4.3), and
-sub-constituent alternatives for disjunction (§4.2).
-
-TODO: Proof by induction on the tree structure, applying `StructOp.subst`
-at each matching leaf via `StructOp.inChild`. -/
+sub-constituent alternatives for disjunction (§4.2). -/
 theorem horn_alternatives_are_structural {W : Type} [BEq W]
     (lex : List (ParseTree W)) (φ : ParseTree W)
     (α β : W) (c : SynCat)
     (_h_α_in_lex : ParseTree.leaf c α ∈ lex)
     (_h_β_in_lex : ParseTree.leaf c β ∈ lex) :
     φ.leafSubst α β c ∈ structuralAlternatives lex φ := by
-  sorry
+  unfold structuralAlternatives atMostAsComplex
+  exact leafSubst_reachable α β c (List.mem_append_left _ _h_β_in_lex) φ
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §11  Neo-Gricean Principle with Structural Alternatives (def 21)

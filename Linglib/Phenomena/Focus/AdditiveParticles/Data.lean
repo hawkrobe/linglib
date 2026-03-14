@@ -2,7 +2,7 @@ import Linglib.Core.Empirical
 
 /-!
 # Additive Particle Data
-@cite{ahn-2015} @cite{heim-1992} @cite{kripke-2009} @cite{rooth-1992}
+@cite{heim-1992} @cite{kripke-2009} @cite{rooth-1992}
 
 Empirical data on additive particles (too, also, either) and their felicity conditions.
 
@@ -300,162 +300,14 @@ def roothExamples : List AdditiveParticleDatum :=
   , roothTooMary
   ]
 
--- @cite{ahn-2015} Examples: "Either" Analysis
-
-/-!
-## Ahn's Analysis of "Either"
-
-@cite{ahn-2015} analyzes "either" as the negative polarity counterpart of "too":
-- "too" presupposes conjunction: q ∧ p (antecedent q is true, prejacent p is true)
-- "either" presupposes disjunction: ¬q ∨ ¬p (at least one is false)
-
-### Three Key Properties
-
-1. **Antecedent Requirement**: Both require a salient antecedent
-2. **Focus Sensitivity**: Both associate with focus
-3. **Distinctness**: Antecedent and prejacent must be distinct propositions
-
-### Polarity Restriction
-
-- "too" is a PPI: requires positive context
-- "either" is an NPI: requires negative context
--/
-
-/-- Ahn's semantic characterization of "too" vs "either" -/
-structure AdditiveSemanticsDatum where
-  /-- The particle -/
-  particle : String
-  /-- Semantic contribution -/
-  semantics : String
-  /-- Polarity restriction -/
-  polarity : String
-  /-- Notes -/
-  notes : String := ""
-  /-- Source -/
-  source : String := ""
-  deriving Repr
-
-def ahnTooSemantics : AdditiveSemanticsDatum :=
-  { particle := "too"
-  , semantics := "q ∧ p (conjunction: antecedent q true, prejacent p true)"
-  , polarity := "PPI (positive polarity item)"
-  , notes := "Presupposes both antecedent and prejacent are true"
-  , source := "Ahn (2015)"
-  }
-
-def ahnEitherSemantics : AdditiveSemanticsDatum :=
-  { particle := "either"
-  , semantics := "¬q ∨ ¬p (disjunction: at least one false)"
-  , polarity := "NPI (negative polarity item)"
-  , notes := "Presupposes at least one of antecedent/prejacent is false"
-  , source := "Ahn (2015)"
-  }
-
-/-- Ahn's three properties of additive particles -/
-structure AhnPropertyDatum where
-  /-- Property name -/
-  property : String
-  /-- Particle this applies to -/
-  particle : String
-  /-- Example sentence -/
-  exampleSentence : String
-  /-- Explanation -/
-  explanation : String
-  /-- Source -/
-  source : String := "Ahn (2015)"
-  deriving Repr
-
-/-- Antecedent requirement for "too" -/
-def ahnAntecedentToo : AhnPropertyDatum :=
-  { property := "antecedent_requirement"
-  , particle := "too"
-  , exampleSentence := "#Mary came to the party too. (out of the blue)"
-  , explanation := "Requires salient antecedent proposition in discourse"
-  }
-
-/-- Antecedent requirement for "either" -/
-def ahnAntecedentEither : AhnPropertyDatum :=
-  { property := "antecedent_requirement"
-  , particle := "either"
-  , exampleSentence := "#Mary didn't come to the party either. (out of the blue)"
-  , explanation := "Requires salient antecedent proposition in discourse"
-  }
-
-/-- Focus sensitivity for "too" -/
-def ahnFocusToo : AhnPropertyDatum :=
-  { property := "focus_sensitivity"
-  , particle := "too"
-  , exampleSentence := "John read Lear. Mary read MACBETH too."
-  , explanation := "Focus on 'Macbeth' determines alternatives (other plays)"
-  }
-
-/-- Focus sensitivity for "either" -/
-def ahnFocusEither : AhnPropertyDatum :=
-  { property := "focus_sensitivity"
-  , particle := "either"
-  , exampleSentence := "John didn't read Lear. Mary didn't read MACBETH either."
-  , explanation := "Focus determines what's being denied as an alternative"
-  }
-
-/-- Distinctness for "too" -/
-def ahnDistinctToo : AhnPropertyDatum :=
-  { property := "distinctness"
-  , particle := "too"
-  , exampleSentence := "#John came, and John came too."
-  , explanation := "Antecedent and prejacent must be distinct"
-  }
-
-/-- Distinctness for "either" -/
-def ahnDistinctEither : AhnPropertyDatum :=
-  { property := "distinctness"
-  , particle := "either"
-  , exampleSentence := "#John didn't come, and John didn't come either."
-  , explanation := "Antecedent and prejacent must be distinct"
-  }
-
-def ahnPropertyData : List AhnPropertyDatum :=
-  [ ahnAntecedentToo, ahnAntecedentEither
-  , ahnFocusToo, ahnFocusEither
-  , ahnDistinctToo, ahnDistinctEither
-  ]
-
-/-- Ahn's "either" examples as AdditiveParticleDatum -/
-def ahnEitherBasic : AdditiveParticleDatum :=
-  { sentence := "John didn't come. Mary didn't come either."
-  , antecedent := "John didn't come"
-  , prejacent := "Mary didn't come"
-  , particle := "either"
-  , resolvedQuestion := some "Who didn't come?"
-  , felicity := .ok
-  , useType := .standard
-  , notes := "Basic 'either' with parallel negation"
-  , source := "Ahn (2015)"
-  }
-
-def ahnEitherVerb : AdditiveParticleDatum :=
-  { sentence := "John doesn't sing. He doesn't dance either."
-  , antecedent := "John doesn't sing"
-  , prejacent := "John doesn't dance"
-  , particle := "either"
-  , resolvedQuestion := some "What doesn't John do?"
-  , felicity := .ok
-  , useType := .standard
-  , notes := "Verb focus with 'either'"
-  , source := "Ahn (2015)"
-  }
-
-def ahnExamples : List AdditiveParticleDatum :=
-  [ ahnEitherBasic
-  , ahnEitherVerb
-  ]
-
 -- Summary Statistics
 
 /-- All additive particle examples in this file.
-    Note: Argument-building examples are in Studies/Thomas2026.lean -/
+    Note: Argument-building examples are in Studies/Thomas2026.lean
+    Note: Ahn's "either" analysis is in Studies/Ahn2015.lean -/
 def allExamples : List AdditiveParticleDatum :=
   classicExamples ++ infelicitousExamples ++
-  eitherExamples ++ scalarExamples ++ roothExamples ++ ahnExamples
+  eitherExamples ++ scalarExamples ++ roothExamples
 
 /-- Count felicitous examples. -/
 def felicitousCount : Nat :=

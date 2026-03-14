@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.228] - 2026-03-13
+
+### Added
+- **Levin2026.lean**: Formalize Levin (2026) "The door pushed open" — intransitive resultatives with transitive-only verbs; verb class restriction (pushPull/hit/swat), spatially instantiated adjectives (open/closed/shut/free/loose/flat), AlternationPair data (8 pairs + negative evidence), PCC ↔ independent-source/tightness bridge, discourse licensing (CauseStatus), autonomous motion (ThemeMotionCapacity), directed motion parallels, end-to-end 8-step argument chain
+- **PropertyDomain.lean**: 17 new Dimension smart constructors (freedom, tightness, hardness, smoothness, purity, weight, thickness, depth, speed, strength, age, brightness, volume, danger, beauty, importance, safety)
+- **Adjectival.lean**: Expand English adjective fragment from ~28 to ~60 entries — add closed/shut/free/loose/tight (for Levin 2026), bent/smooth/rough/hard/soft/pure/dead/alive, heavy/light/thick/thin/deep/shallow/strong/weak/fast/slow/old/young, bright/dark/loud/quiet, good/bad/beautiful/ugly/important/safe/dangerous
+- **references.bib**: Add `levin-2026`
+
 ## [0.229.227] - 2026-03-13
 
 ### Changed

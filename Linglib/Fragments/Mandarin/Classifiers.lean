@@ -20,7 +20,7 @@ function); the general classifier 个 serves as a default/residue.
 
 namespace Fragments.Mandarin.Classifiers
 
-open Core.NounCategorization (ClassifierEntry SemanticParameter)
+open Core.NounCategorization (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
 -- Sortal classifiers (inherent properties)
@@ -41,7 +41,7 @@ def zhi : ClassifierEntry :=
     Encodes: shape (flat, bound objects). -/
 def ben : ClassifierEntry :=
   { form := "本", gloss := "bound.volume"
-  , semantics := [.shape] }
+  , semantics := [.shape], shapeDimension := some .twoD }
 
 /-- 辆 liàng — wheeled vehicles (cars, bicycles, carts).
     Encodes: function (transport). -/
@@ -65,13 +65,13 @@ def wei : ClassifierEntry :=
     Encodes: shape (1D, elongated). -/
 def tiao : ClassifierEntry :=
   { form := "条", gloss := "long.thin"
-  , semantics := [.shape] }
+  , semantics := [.shape], shapeDimension := some .oneD }
 
 /-- 张 zhāng — flat objects with a surface (paper, tables, beds, maps).
     Encodes: shape (2D, flat surface). -/
 def zhang : ClassifierEntry :=
   { form := "张", gloss := "flat.surface"
-  , semantics := [.shape] }
+  , semantics := [.shape], shapeDimension := some .twoD }
 
 /-- 把 bǎ — objects with a handle (knives, chairs, umbrellas).
     Encodes: shape (graspable handle) + function. -/
@@ -89,7 +89,7 @@ def tou : ClassifierEntry :=
     Encodes: shape (upright, rooted). -/
 def ke : ClassifierEntry :=
   { form := "棵", gloss := "plant/tree"
-  , semantics := [.shape] }
+  , semantics := [.shape], shapeDimension := some .oneD }
 
 -- ============================================================================
 -- Inventory

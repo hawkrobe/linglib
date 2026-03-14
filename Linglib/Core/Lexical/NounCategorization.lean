@@ -5,9 +5,14 @@
 Cross-linguistic typology of noun categorization devices, following
 @cite{aikhenvald-2000} "Classifiers: A Typology of Noun Categorization Devices."
 
-Defines the parameter space for classifying noun categorization systems:
+Defines the vocabulary types for describing noun categorization systems:
 classifier types, semantic parameters, structural properties, and a
 common `ClassifierEntry` type for individual classifier lexical entries.
+
+Per-language system descriptions (`NounCategorizationSystem`) and the
+Dixon noun-class vs. classifier divide live in
+`Theories.Typology.NounCategorization` — they represent a specific
+typological framework, not framework-agnostic infrastructure.
 
 ## Organization
 
@@ -15,7 +20,6 @@ common `ClassifierEntry` type for individual classifier lexical entries.
 - **§2 Semantic parameters**: What classifiers encode (§11.1.1)
 - **§3 Structural properties**: Assignment, realization, scope
 - **§4 ClassifierEntry**: Per-classifier lexical entry with semantic typing
-- **§5 NounCategorizationSystem**: Per-language system description
 
 -/
 
@@ -93,6 +97,23 @@ inductive SemanticParameter where
   deriving DecidableEq, Repr, BEq
 
 -- ============================================================================
+-- §2b Shape Dimensionality (@cite{downing-1996} Ch. 5; @cite{allan-1977})
+-- ============================================================================
+
+/-- Dimensionality sub-classification for shape-based classifiers.
+
+    @cite{downing-1996} Ch. 5 and @cite{allan-1977} show that shape-based
+    classifiers decompose along a dimensionality axis:
+    - 1D: long, slender, elongated (e.g., Japanese 本 hon, Mandarin 条 tiáo)
+    - 2D: flat, thin, planar (e.g., Japanese 枚 mai, Mandarin 张 zhāng)
+    - 3D: round, compact, globular (e.g., Japanese 個 ko) -/
+inductive ShapeDimension where
+  | oneD    -- long, slender (1-dimensional extent)
+  | twoD    -- flat, thin (2-dimensional extent)
+  | threeD  -- round, compact (3-dimensional extent)
+  deriving DecidableEq, Repr, BEq
+
+-- ============================================================================
 -- §3 Structural Properties
 -- ============================================================================
 
@@ -148,6 +169,9 @@ structure ClassifierEntry where
   isDefault : Bool := false
   /-- Sortal (inherent properties) vs. mensural (configuration/measure) -/
   isMensural : Bool := false
+  /-- Shape dimensionality sub-classification (@cite{downing-1996} Ch. 5).
+      Only meaningful when `semantics` includes `.shape`. -/
+  shapeDimension : Option ShapeDimension := none
   deriving Repr, BEq
 
 /-- Whether this classifier encodes a given semantic parameter. -/
@@ -165,60 +189,5 @@ instance : ToString ClassifierEntry where
 def collectSemantics (cls : List ClassifierEntry) : List SemanticParameter :=
   let all := cls.foldl (λ acc c => acc ++ c.semantics) []
   all.eraseDups
-
--- ============================================================================
--- §5 NounCategorizationSystem: per-language system description
--- ============================================================================
-
-/-- A noun categorization system in a language.
-
-    Captures Aikhenvald's 7 definitional properties (A–G from §1.5):
-    (A) morphosyntactic locus → `scopes`
-    (B) scope/domain → `classifierType` + `scopes`
-    (C) assignment principles → `assignment`
-    (D) surface realization → `realizations`
-    (E) agreement → `hasAgreement`
-    (F) markedness → `hasUnmarkedDefault`
-    (G) grammaticalization → `isObligatory` -/
-structure NounCategorizationSystem where
-  /-- Language name -/
-  language : String
-  /-- Language family -/
-  family : String
-  /-- Aikhenvald classifier type -/
-  classifierType : ClassifierType
-  /-- Morphosyntactic scopes this system operates in (A, B) -/
-  scopes : List CategorizationScope
-  /-- How nouns are assigned to classes/classifiers (C) -/
-  assignment : AssignmentPrinciple
-  /-- Morphological realization types used (D) -/
-  realizations : List SurfaceRealization
-  /-- Does the system involve agreement? (E) — definitional for noun classes -/
-  hasAgreement : Bool
-  /-- Inventory size (number of classes or classifiers) -/
-  inventorySize : Nat
-  /-- Is realization obligatory or optional? (G) -/
-  isObligatory : Bool
-  /-- Is there a formally/functionally unmarked default? (F) -/
-  hasUnmarkedDefault : Bool := false
-  /-- Preferred semantic parameters (§11.2, Table 11.13) -/
-  preferredSemantics : List SemanticParameter := []
-  /-- Citation -/
-  source : String := ""
-  deriving Repr
-
--- ============================================================================
--- §6 Key Distinctions
--- ============================================================================
-
-/-- @cite{dixon-1982}'s noun-class vs. classifier divide (Table 1.2).
-    Noun classes: small, closed, grammaticalized, agreement.
-    Classifiers: large, open, lexical, no agreement. -/
-def isNounClassType (t : ClassifierType) : Bool :=
-  t == .nounClass
-
-/-- All non-noun-class types are "classifier" types in the broad sense. -/
-def isClassifierType (t : ClassifierType) : Bool :=
-  !isNounClassType t
 
 end Core.NounCategorization

@@ -1,25 +1,39 @@
 import Linglib.Core.Morphology.MorphProfile
 
 /-!
-# Quechua (Cusco) Morphological Profile
+# Quechua (Imbabura) Morphological Profile
 
-WALS-derived morphological profile for Quechua (Cusco).
-Quechua (Cusco): all fallback (iso=quz absent from morphology chapters). Values based on Quechuan typology — cf. Quechua (Imbabura) in WALS.
+WALS-derived morphological profile for Imbabura Quechua (ISO qvi).
+Consistent with the Imbabura data used in the Negation and PolarityItems
+fragments in this directory.
 -/
 
 namespace Fragments.Quechua
 
 open Core.Morphology in
-/-- Quechua (Cusco): all fallback (iso=quz absent from morphology chapters). Values based on Quechuan typology — cf. Quechua (Imbabura) in WALS. -/
+/-- Quechua (Imbabura): F20A concatenative; F21A monoexponential; F22A high;
+    F23A dependentMarking; F25A dependentMarking; F26A stronglySuffixing;
+    F27A fullOnly. -/
 def morphProfile : MorphProfile :=
-  { language := "Quechua (Cusco)"
-  , iso := "quz"
-  , fusion := (walsFusion "quz").getD .concatenative
-  , exponence := (walsExponence "quz").getD .monoexponential
-  , verbSynthesis := (walsVerbSynthesis "quz").getD .high
-  , locus := (walsLocus "quz").getD .dependentMarking
-  , prefixSuffix := (walsPrefixSuffix "quz").getD .stronglySuffixing
-  , reduplication := (walsReduplication "quz").getD .noProductive
+  { language := "Quechua (Imbabura)"
+  , iso := "qvi"
+  , fusion := (walsFusion "qvi").getD .concatenative
+  , exponence := (walsExponence "qvi").getD .monoexponential
+  , verbSynthesis := (walsVerbSynthesis "qvi").getD .high
+  , locus := (walsLocus "qvi").getD .dependentMarking
+  , prefixSuffix := (walsPrefixSuffix "qvi").getD .stronglySuffixing
+  , reduplication := (walsReduplication "qvi").getD .fullOnly
+  , locusClause := walsLocusClause "qvi"
+  , locusPossessive := walsLocusPossessive "qvi"
+  , wholeLanguageMarking := walsWholeLanguageMarking "qvi"
+  , zeroMarkingAP := walsZeroMarkingAP "qvi"
+  , caseSyncretism := walsCaseSyncretism "qvi"
+  , verbalSyncretism := walsVerbalSyncretism "qvi"
+  , tamExponence := walsTAMExponence "qvi"
+  , actionNominal := walsActionNominal "qvi"
+  , suppletionTA := walsSuppletionTA "qvi"
+  , suppletionImperative := walsSuppletionImperative "qvi"
+  , verbalNumber := walsVerbalNumber "qvi"
   }
 
 end Fragments.Quechua

@@ -1,8 +1,8 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.WALS.Features.F53A
 import Linglib.Core.WALS.Features.F54A
-import Linglib.Core.WALS.Features.F55A
 import Linglib.Core.WALS.Features.F131A
+import Linglib.Phenomena.Classifiers.Typology
 
 /-!
 # Cross-Linguistic Typology of Numeral Systems (WALS Chapters 53--56, 131)
@@ -25,12 +25,10 @@ and the relationship between conjunctions and universal quantification.
    that mark distributives (e.g., Turkish iki-ser 'two each', Tagalog dalawa-
    dalawa 'two-two'). Many languages lack a dedicated form entirely.
 
-3. **Numeral Classifiers** (Ch 55, Gil): Whether the language uses numeral
-   classifiers --- dedicated morphemes required or available when a numeral
-   combines with a noun. Classifier languages concentrate in East and Southeast
-   Asia and Mesoamerica. The global majority of languages lack classifiers.
-   An important typological correlation: classifier
-   languages tend to lack obligatory plural marking on nouns.
+3. **Numeral Classifiers** (Ch 55, Gil): Core types and distribution data
+   live in `Phenomena.Classifiers.Typology`. This file imports `ClassifierStatus`
+   from there and uses it in `NumeralProfile` for cross-dimensional
+   generalizations (Sanches-Slobin, areal concentration).
 
 4. **Conjunctions and Universal Quantifiers** (Ch 56, Gil): Whether a language
    uses the same morpheme for 'and' (conjunction) and 'all' / 'every' (universal
@@ -41,6 +39,9 @@ and the relationship between conjunctions and universal quantification.
 -/
 
 namespace Phenomena.Numerals.Typology
+
+open Phenomena.Classifiers.Typology (ClassifierStatus ClassifierDistribution
+  ch55Distribution fromWALS55A)
 
 -- ============================================================================
 -- WALS Data Abbreviations
@@ -136,39 +137,6 @@ def ch54Distribution : DistributiveDistribution :=
   , otherMeans := 50 }
 
 -- ============================================================================
--- Chapter 55: Numeral Classifiers (Gil)
--- ============================================================================
-
-/-- Whether a language uses numeral classifiers (WALS Ch 55).
-
-    Numeral classifiers are morphemes that co-occur with a numeral when it
-    modifies a noun (e.g., Mandarin san *ge* ren 'three CL person'). The key
-    distinction is between obligatory classifiers (required whenever a numeral
-    modifies a noun) and optional classifiers (available but not required). -/
-inductive ClassifierStatus where
-  | absent               -- no numeral classifiers (e.g., English, Spanish, Arabic)
-  | optional             -- classifiers available but not required (e.g., Turkish, Bengali)
-  | obligatory           -- classifiers required with numeral+noun (e.g., Mandarin, Japanese, Thai)
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Chapter 55 distribution: language counts per classifier status.
-    Total: 400 languages. -/
-structure ClassifierDistribution where
-  absent : Nat
-  optional : Nat
-  obligatory : Nat
-  deriving Repr
-
-def ClassifierDistribution.total (d : ClassifierDistribution) : Nat :=
-  d.absent + d.optional + d.obligatory
-
-/-- Actual WALS Ch 55 counts. -/
-def ch55Distribution : ClassifierDistribution :=
-  { absent := 260
-  , optional := 62
-  , obligatory := 78 }
-
--- ============================================================================
 -- Chapter 56: Conjunctions and Universal Quantifiers (Gil)
 -- ============================================================================
 
@@ -208,9 +176,6 @@ example : ch53Distribution.total = 321 := by native_decide
 
 /-- Ch 54 total: 251 languages. -/
 example : ch54Distribution.total = 251 := by native_decide
-
-/-- Ch 55 total: 400 languages. -/
-example : ch55Distribution.total = 400 := by native_decide
 
 /-- Ch 56 total: 220 languages. -/
 example : ch56Distribution.total = 220 := by native_decide
@@ -292,13 +257,6 @@ private def fromWALS54A : Core.WALS.F54A.DistributiveNumerals → DistributiveNu
   | .markedByPrecedingWord => .markedByOtherMeans
   | .markedByFollowingWord => .markedByOtherMeans
   | .markedByMixedOrOtherStrategies => .markedByOtherMeans
-
-/-- Convert WALS 55A numeral classifier values to our ClassifierStatus type.
-    The mapping is one-to-one: absent, optional, obligatory. -/
-private def fromWALS55A : Core.WALS.F55A.NumeralClassifiers → ClassifierStatus
-  | .absent => .absent
-  | .optional => .optional
-  | .obligatory => .obligatory
 
 /-- Convert WALS 131A numeral base values to our NumeralBase type.
     The mapping is one-to-one. -/
@@ -697,28 +655,6 @@ theorem reduplication_most_common_distributive :
     ch54Distribution.reduplication > ch54Distribution.prefixCount ∧
     ch54Distribution.reduplication > ch54Distribution.otherMeans ∧
     ch54Distribution.reduplication > ch54Distribution.noDistributive := by
-  native_decide
-
--- ============================================================================
--- Typological Generalizations: Numeral Classifiers (Ch 55)
--- ============================================================================
-
-/-- Languages without numeral classifiers are the global majority (WALS Ch 55).
-    260 out of 400 sampled languages lack classifiers entirely. -/
-theorem no_classifiers_is_majority :
-    ch55Distribution.absent > ch55Distribution.optional + ch55Distribution.obligatory := by
-  native_decide
-
-/-- Languages without classifiers constitute over half the sample. -/
-theorem no_classifiers_over_half :
-    ch55Distribution.absent * 2 > ch55Distribution.total := by
-  native_decide
-
-/-- Obligatory classifiers are more common than optional ones globally.
-    This is somewhat counterintuitive --- it suggests that once a language
-    develops classifiers, they tend to become grammaticalized as obligatory. -/
-theorem obligatory_more_common_than_optional :
-    ch55Distribution.obligatory > ch55Distribution.optional := by
   native_decide
 
 -- ============================================================================

@@ -176,6 +176,110 @@ def open_ : AdjectivalPredicateEntry where
   antonymForm := some "closed"
   antonymRelation := some .contradictory
 
+/-- "closed" — closed scale, contradictory to "open" -/
+def closed_ : AdjectivalPredicateEntry where
+  form := "closed"
+  scaleType := .closed
+  dimension := .openness
+  antonymForm := some "open"
+  antonymRelation := some .contradictory
+
+/-- "shut" — closed scale, contradictory to "open" (near-synonym of "closed") -/
+def shut : AdjectivalPredicateEntry where
+  form := "shut"
+  scaleType := .closed
+  dimension := .openness
+  antonymForm := some "open"
+  antonymRelation := some .contradictory
+
+/-- "free" — closed scale (maximally free = unattached), contradictory to "stuck" -/
+def free_ : AdjectivalPredicateEntry where
+  form := "free"
+  scaleType := .closed
+  dimension := .freedom
+  antonymForm := some "stuck"
+  antonymRelation := some .contradictory
+
+/-- "loose" — closed scale (maximally loose), contradictory to "tight" -/
+def loose : AdjectivalPredicateEntry where
+  form := "loose"
+  scaleType := .closed
+  dimension := .tightness
+  antonymForm := some "tight"
+  antonymRelation := some .contradictory
+
+/-- "tight" — closed scale (maximally tight), contradictory to "loose" -/
+def tight : AdjectivalPredicateEntry where
+  form := "tight"
+  scaleType := .closed
+  dimension := .tightness
+  antonymForm := some "loose"
+  antonymRelation := some .contradictory
+
+/-- "bent" — lower-closed scale (minimum at 0 = straight), contradictory to "straight" -/
+def bent : AdjectivalPredicateEntry where
+  form := "bent"
+  scaleType := .lowerBounded
+  dimension := .straightness
+  antonymForm := some "straight"
+  antonymRelation := some .contradictory
+
+/-- "smooth" — closed scale, contradictory to "rough" -/
+def smooth : AdjectivalPredicateEntry where
+  form := "smooth"
+  scaleType := .closed
+  dimension := .smoothness
+  antonymForm := some "rough"
+  antonymRelation := some .contradictory
+
+/-- "rough" — closed scale, contradictory to "smooth" -/
+def rough : AdjectivalPredicateEntry where
+  form := "rough"
+  scaleType := .closed
+  dimension := .smoothness
+  antonymForm := some "smooth"
+  antonymRelation := some .contradictory
+
+/-- "hard" — open scale, contrary to "soft" -/
+def hard : AdjectivalPredicateEntry where
+  form := "hard"
+  scaleType := .open_
+  dimension := .hardness
+  antonymForm := some "soft"
+  antonymRelation := some .contrary
+
+/-- "soft" — open scale, contrary to "hard" -/
+def soft : AdjectivalPredicateEntry where
+  form := "soft"
+  scaleType := .open_
+  dimension := .hardness
+  antonymForm := some "hard"
+  antonymRelation := some .contrary
+
+/-- "pure" — closed scale (maximally pure), contradictory to "impure" -/
+def pure_ : AdjectivalPredicateEntry where
+  form := "pure"
+  scaleType := .closed
+  dimension := .purity
+  antonymForm := some "impure"
+  antonymRelation := some .contradictory
+
+/-- "dead" — closed scale (absolute: maximal endpoint), contradictory to "alive" -/
+def dead : AdjectivalPredicateEntry where
+  form := "dead"
+  scaleType := .closed
+  dimension := .alive
+  antonymForm := some "alive"
+  antonymRelation := some .contradictory
+
+/-- "alive" — closed scale (absolute), contradictory to "dead" -/
+def alive : AdjectivalPredicateEntry where
+  form := "alive"
+  scaleType := .closed
+  dimension := .alive
+  antonymForm := some "dead"
+  antonymRelation := some .contradictory
+
 /-- "large" — open scale, contrary to "small" -/
 def large : AdjectivalPredicateEntry where
   form := "large"
@@ -256,18 +360,225 @@ def warm : AdjectivalPredicateEntry where
   antonymForm := some "cool"
   antonymRelation := some .contrary
 
+/-! ## Physical dimension adjectives -/
+
+/-- "heavy" — open scale, contrary to "light" -/
+def heavy : AdjectivalPredicateEntry where
+  form := "heavy"
+  scaleType := .open_
+  dimension := .weight
+  antonymForm := some "light"
+  antonymRelation := some .contrary
+
+/-- "light" — open scale, contrary to "heavy" -/
+def light : AdjectivalPredicateEntry where
+  form := "light"
+  scaleType := .open_
+  dimension := .weight
+  antonymForm := some "heavy"
+  antonymRelation := some .contrary
+
+/-- "thick" — open scale, contrary to "thin" -/
+def thick : AdjectivalPredicateEntry where
+  form := "thick"
+  scaleType := .open_
+  dimension := .thickness
+  antonymForm := some "thin"
+  antonymRelation := some .contrary
+
+/-- "thin" — open scale, contrary to "thick" -/
+def thin : AdjectivalPredicateEntry where
+  form := "thin"
+  scaleType := .open_
+  dimension := .thickness
+  antonymForm := some "thick"
+  antonymRelation := some .contrary
+
+/-- "deep" — open scale, contrary to "shallow" -/
+def deep : AdjectivalPredicateEntry where
+  form := "deep"
+  scaleType := .open_
+  dimension := .depth
+  antonymForm := some "shallow"
+  antonymRelation := some .contrary
+
+/-- "shallow" — open scale, contrary to "deep" -/
+def shallow : AdjectivalPredicateEntry where
+  form := "shallow"
+  scaleType := .open_
+  dimension := .depth
+  antonymForm := some "deep"
+  antonymRelation := some .contrary
+
+/-- "strong" — open scale, contrary to "weak" -/
+def strong : AdjectivalPredicateEntry where
+  form := "strong"
+  scaleType := .open_
+  dimension := .strength
+  antonymForm := some "weak"
+  antonymRelation := some .contrary
+
+/-- "weak" — open scale, contrary to "strong" -/
+def weak : AdjectivalPredicateEntry where
+  form := "weak"
+  scaleType := .open_
+  dimension := .strength
+  antonymForm := some "strong"
+  antonymRelation := some .contrary
+
+/-- "fast" — open scale, contrary to "slow" -/
+def fast : AdjectivalPredicateEntry where
+  form := "fast"
+  scaleType := .open_
+  dimension := .speed
+  antonymForm := some "slow"
+  antonymRelation := some .contrary
+
+/-- "slow" — open scale, contrary to "fast" -/
+def slow : AdjectivalPredicateEntry where
+  form := "slow"
+  scaleType := .open_
+  dimension := .speed
+  antonymForm := some "fast"
+  antonymRelation := some .contrary
+
+/-- "old" — open scale, contrary to "young" -/
+def old : AdjectivalPredicateEntry where
+  form := "old"
+  scaleType := .open_
+  dimension := .age
+  antonymForm := some "young"
+  antonymRelation := some .contrary
+
+/-- "young" — open scale, contrary to "old" -/
+def young : AdjectivalPredicateEntry where
+  form := "young"
+  scaleType := .open_
+  dimension := .age
+  antonymForm := some "old"
+  antonymRelation := some .contrary
+
+/-! ## Sensory adjectives -/
+
+/-- "bright" — open scale, contrary to "dark" -/
+def bright : AdjectivalPredicateEntry where
+  form := "bright"
+  scaleType := .open_
+  dimension := .brightness
+  antonymForm := some "dark"
+  antonymRelation := some .contrary
+
+/-- "dark" — open scale, contrary to "bright" -/
+def dark : AdjectivalPredicateEntry where
+  form := "dark"
+  scaleType := .open_
+  dimension := .brightness
+  antonymForm := some "bright"
+  antonymRelation := some .contrary
+
+/-- "loud" — open scale, contrary to "quiet" -/
+def loud : AdjectivalPredicateEntry where
+  form := "loud"
+  scaleType := .open_
+  dimension := .volume
+  antonymForm := some "quiet"
+  antonymRelation := some .contrary
+
+/-- "quiet" — open scale, contrary to "loud" -/
+def quiet : AdjectivalPredicateEntry where
+  form := "quiet"
+  scaleType := .open_
+  dimension := .volume
+  antonymForm := some "loud"
+  antonymRelation := some .contrary
+
+/-! ## Evaluative adjectives -/
+
+/-- "good" — open scale, contrary to "bad" -/
+def good : AdjectivalPredicateEntry where
+  form := "good"
+  scaleType := .open_
+  dimension := .quality
+  antonymForm := some "bad"
+  antonymRelation := some .contrary
+
+/-- "bad" — open scale, contrary to "good" -/
+def bad : AdjectivalPredicateEntry where
+  form := "bad"
+  scaleType := .open_
+  dimension := .quality
+  antonymForm := some "good"
+  antonymRelation := some .contrary
+
+/-- "beautiful" — open scale, contrary to "ugly" -/
+def beautiful : AdjectivalPredicateEntry where
+  form := "beautiful"
+  scaleType := .open_
+  dimension := .beauty
+  antonymForm := some "ugly"
+  antonymRelation := some .contrary
+
+/-- "ugly" — open scale, contrary to "beautiful" -/
+def ugly : AdjectivalPredicateEntry where
+  form := "ugly"
+  scaleType := .open_
+  dimension := .beauty
+  antonymForm := some "beautiful"
+  antonymRelation := some .contrary
+
+/-- "important" — open scale -/
+def important : AdjectivalPredicateEntry where
+  form := "important"
+  scaleType := .open_
+  dimension := .importance
+
+/-- "safe" — open scale, contrary to "dangerous" -/
+def safe : AdjectivalPredicateEntry where
+  form := "safe"
+  scaleType := .open_
+  dimension := .safety
+  antonymForm := some "dangerous"
+  antonymRelation := some .contrary
+
+/-- "dangerous" — open scale, contrary to "safe" -/
+def dangerous : AdjectivalPredicateEntry where
+  form := "dangerous"
+  scaleType := .open_
+  dimension := .danger
+  antonymForm := some "safe"
+  antonymRelation := some .contrary
+
 /-- All adjectival predicate entries -/
 def allEntries : List (AdjectivalPredicateEntry) := [
-  tall, short,
+  -- Height / size
+  tall, short, large, small, gigantic, tiny,
+  -- Happiness / evaluative
   happy, unhappy, sad,
+  -- Fullness
   full, empty,
-  hot, cold,
+  -- Temperature
+  hot, cold, cool, warm,
+  -- Cost
   expensive, cheap,
+  -- Wetness
   wet, dry,
-  clean, dirty, straight, flat, open_,
-  large, small, gigantic, tiny,
+  -- State: cleanliness, shape, surface
+  clean, dirty, straight, bent, flat, smooth, rough,
+  -- State: openness / barrier
+  open_, closed_, shut,
+  -- State: attachment / fit
+  free_, loose, tight,
+  -- State: hardness, purity, alive
+  hard, soft, pure_, dead, alive,
+  -- Informationally strong
   pristine, filthy,
-  long, wide, cool, warm
+  -- Physical dimensions
+  long, wide, heavy, light, thick, thin, deep, shallow,
+  strong, weak, fast, slow, old, young,
+  -- Sensory
+  bright, dark, loud, quiet,
+  -- Evaluative
+  good, bad, beautiful, ugly, important, safe, dangerous
 ]
 
 /-- Look up an entry by form -/

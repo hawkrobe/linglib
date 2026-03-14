@@ -38,7 +38,7 @@ four levels of control and animacy, following @cite{hafeez-2025}:
 ## Agentivity
 
 Agentivity decomposes into **intentionality × control** (following
-@cite{van-valin-wilkins-1996}, @cite{bohnemeyer-2004}). Three degrees:
+@cite{van-valin-wilkins-1996}). Three degrees:
 - **full**: intentional causer (IHCr)
 - **marginal**: accidental human (AHCr) or natural force (NFCr)
 - **partial/induced**: causee exercises control under causer's influence

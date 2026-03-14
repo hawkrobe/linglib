@@ -229,9 +229,12 @@ theorem argStructure_data_predicted :
     ex44.grammatical  = canMismatch ex44.ellipsisType ex44.alternationType := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-- All v-level alternations are blocked under every ellipsis type —
-    because v is always inside the deletion domain. -/
-theorem v_alternations_universally_blocked :
+/-- All v-level alternations are blocked under high-[E] ellipsis types
+    (sluicing, VPE, fragment answers, gapping, pseudogapping) — because
+    v is inside the deletion domain when [E] is at Voice or above.
+    Under vVPE ([E] on v), these alternations ARE tolerated
+    (@cite{kalyakin-2026}). -/
+theorem v_alternations_blocked_high_ellipsis :
     canMismatch sluicing dativeAlternation = false ∧
     canMismatch sluicing prepAlternation = false ∧
     canMismatch sluicing middleAlternation = false ∧
