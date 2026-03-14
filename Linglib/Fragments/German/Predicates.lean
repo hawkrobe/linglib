@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
+import Linglib.Theories.Morphology.RootTypology
 
 /-!
 # German Predicate Lexicon Fragment
@@ -27,6 +28,7 @@ namespace Fragments.German.Predicates
 
 open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
+open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 
 /-- German verb entry: extends VerbCore with German inflectional paradigm. -/
 structure GermanVerbEntry extends VerbCore where
@@ -36,6 +38,9 @@ structure GermanVerbEntry extends VerbCore where
   formPast : String
   /-- Past participle (Partizip II) -/
   formPastPart : String
+  /-- Root type (@cite{beavers-etal-2021}): result vs property concept.
+      Only set for change-of-state verbs where the distinction is applicable. -/
+  rootType : Option _root_.RootType := none
   deriving Repr, BEq
 
 -- ============================================================================
@@ -235,20 +240,152 @@ def zurechtweisen : GermanVerbEntry where
   senseTag := .occasion
 
 -- ============================================================================
--- § 4: Verb List
+-- § 4: Verbs from @cite{benz-2025} (Chs. 3–5)
+-- ============================================================================
+
+/-! ### Simplex manner/activity verbs
+
+These verbs have no inherent result state. They cannot form *-ung*
+nominalizations on their own, but can participate in resultative
+constructions (as the M predicate). -/
+
+/-- *hämmern* — "hammer": manner-of-action activity. Used in resultatives
+    (*Er hämmerte das Metall platt*) and -ung tests (**Platt-hämmer-ung*). -/
+def haemmern : GermanVerbEntry where
+  form := "hämmern"
+  form3sg := "hämmert"
+  formPast := "hämmerte"
+  formPastPart := "gehämmert"
+  complementType := .np
+  vendlerClass := some .activity
+
+/-- *malen* — "paint": activity. Contrast: **Mal-ung* vs *Be-mal-ung* ✓.
+    The *be-* prefix creates a complex change-of-state event. -/
+def malen : GermanVerbEntry where
+  form := "malen"
+  form3sg := "malt"
+  formPast := "malte"
+  formPastPart := "gemalt"
+  complementType := .np
+  vendlerClass := some .activity
+
+/-- *küssen* — "kiss": activity. Used in RSP examples (*wach-küssen*). -/
+def kuessen : GermanVerbEntry where
+  form := "küssen"
+  form3sg := "küsst"
+  formPast := "küsste"
+  formPastPart := "geküsst"
+  complementType := .np
+  vendlerClass := some .activity
+
+/-- *führen* — "lead": activity. Base for *ein-führen* (introduce).
+    *Führ-ung* is an -ung nominalization but only with the meaning
+    "leadership" (RN), not a CEN of simplex *führen*. -/
+def fuehren : GermanVerbEntry where
+  form := "führen"
+  form3sg := "führt"
+  formPast := "führte"
+  formPastPart := "geführt"
+  complementType := .np
+  vendlerClass := some .activity
+
+/-- *rauben* — "rob": activity. Contrast: **arm be-raubt* (RSP + prefix = blocked)
+    vs *arm geraubt* (RSP + simplex = OK). -/
+def rauben : GermanVerbEntry where
+  form := "rauben"
+  form3sg := "raubt"
+  formPast := "raubte"
+  formPastPart := "geraubt"
+  complementType := .np
+  vendlerClass := some .activity
+
+/-! ### Change-of-state verbs
+
+These verbs have inherent result states and can form *-ung* nominalizations
+(complex event reading). Their root type determines the canonical v alloseme
+via `VAlloseme.fromRootType`. -/
+
+/-- *brechen* — "break": achievement with result root. The broken state
+    entails prior change (you can't be broken without having been broken).
+    Used in RSP data (*Hans hat den Stock kaputt gebrochen*). -/
+def brechen : GermanVerbEntry where
+  form := "brechen"
+  form3sg := "bricht"
+  formPast := "brach"
+  formPastPart := "gebrochen"
+  complementType := .np
+  vendlerClass := some .achievement
+  rootType := some .result
+
+/-- *frieren* — "freeze": achievement, unaccusative. PC root: the frozen
+    state does not entail prior change (ice can be perpetually frozen).
+    *Das Wasser fror fest* — used in RSP data. -/
+def frieren : GermanVerbEntry where
+  form := "frieren"
+  form3sg := "friert"
+  formPast := "fror"
+  formPastPart := "gefroren"
+  complementType := .none
+  unaccusative := true
+  vendlerClass := some .achievement
+  rootType := some .propertyConcept
+
+/-! ### Prefix verbs (complex event structure)
+
+Prefix verbs have complex event structure: the prefix creates a
+change-of-state interpretation from the root. They can typically
+form *-ung* nominalizations (CEN reading). -/
+
+/-- *beobachten* — "observe" (*be-* prefix): accomplishment. The running
+    example in @cite{benz-2025} Ch. 3 — all three nominalization readings
+    (CEN, RN, CCN) are available for *Beobachtung*. -/
+def beobachten : GermanVerbEntry where
+  form := "beobachten"
+  form3sg := "beobachtet"
+  formPast := "beobachtete"
+  formPastPart := "beobachtet"
+  complementType := .np
+  vendlerClass := some .accomplishment
+
+/-- *einführen* — "introduce" (*ein-* particle): accomplishment.
+    *Ein-führ-ung* is a productive -ung nominalization.
+    Demonstrates that particle verbs with complex event structure
+    can undergo -ung nominalization (particles-as-heads solution). -/
+def einfuehren : GermanVerbEntry where
+  form := "einführen"
+  form3sg := "führt ein"
+  formPast := "führte ein"
+  formPastPart := "eingeführt"
+  complementType := .np
+  vendlerClass := some .accomplishment
+
+/-- *verbinden* — "connect" (*ver-* prefix): accomplishment.
+    *Ver-bind-ung* — productive -ung nominalization. -/
+def verbinden : GermanVerbEntry where
+  form := "verbinden"
+  form3sg := "verbindet"
+  formPast := "verband"
+  formPastPart := "verbunden"
+  complementType := .np
+  vendlerClass := some .accomplishment
+
+-- ============================================================================
+-- § 5: Verb List
 -- ============================================================================
 
 def allVerbs : List GermanVerbEntry :=
   [lassen, machen, toeten, zerbrechen,
    hoffen, fuerchten, befuerchten, wuenschen, sorgen,
    bestrafen, belohnen, loben, kritisieren, danken,
-   verklagen, gratulieren, zurechtweisen]
+   verklagen, gratulieren, zurechtweisen,
+   haemmern, malen, kuessen, fuehren, rauben,
+   brechen, frieren, beobachten, einfuehren, verbinden]
 
 def lookup (form : String) : Option GermanVerbEntry :=
   allVerbs.find? (·.form == form)
 
 -- ============================================================================
--- § 5: Occasion Verb Grounding Theorems
+-- § 6: Occasion Verb Grounding Theorems
 -- ============================================================================
 
 /-- All 8 German occasion verbs are soft presupposition triggers. -/
@@ -279,7 +416,7 @@ theorem occasion_verbs_are_action :
     kritisieren.senseTag = .occasion := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 6: Causative Grounding Theorems
+-- § 7: Causative Grounding Theorems
 -- ============================================================================
 
 /-- *lassen* uses `.enable` builder (permissive). -/
@@ -300,7 +437,7 @@ theorem lexical_causatives_use_make :
     zerbrechen.causativeBuilder = some .make := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 7: Attitude Grounding Theorems
+-- § 8: Attitude Grounding Theorems
 -- ============================================================================
 
 /-- *hoffen* and *wünschen* are positive preferential (Class 3). -/
@@ -320,7 +457,7 @@ theorem sorgen_is_uncertainty :
     sorgen.attitudeBuilder = some (.preferential .uncertaintyBased) := rfl
 
 -- ============================================================================
--- § 8: Cross-Linguistic Bridge Theorems
+-- § 9: Cross-Linguistic Bridge Theorems
 -- ============================================================================
 
 /-- German *fürchten* matches Japanese 恐れ *osore* and Turkish *kork-*:

@@ -1,5 +1,6 @@
 import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+import Linglib.Fragments.German.Predicates
 
 /-!
 # Benz (2025): Structure and Interpretation Across Categories
@@ -35,6 +36,8 @@ namespace Phenomena.Morphology.Studies.Benz2025
 
 open Morphology.DM.Allosemy
 open Phenomena.Constructions.Studies.FillmoreKayOConnor1988 (Judgment)
+open Fragments.German.Predicates
+open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 
 -- ════════════════════════════════════════════════════════════════════
 -- Part I: Content Nominalizations (Ch. 3)
@@ -669,5 +672,410 @@ theorem ung_head_phrase_pattern :
     (peAcceptable .ung .pfx = PreverbalElement.pfx.isHead) ∧
     (peAcceptable .ung .rsp = PreverbalElement.rsp.isHead) := by
   exact ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════════
+-- Part V: Principled Derivation of the Co-occurrence Paradigm
+-- ════════════════════════════════════════════════════════════════════
+
+/-! ### Benz's core theoretical argument (Chs. 4–5)
+
+@cite{benz-2025}'s central claim is that the 9-cell co-occurrence paradigm
+(§6, Table 3) and the PE×nominalization distribution (§16, the table in
+Ch. 5) are not stipulated — they follow from the conjunction of two
+independently motivated principles:
+
+1. **Lexical Integrity** (structural): a phrase cannot incorporate into a
+   head. Only head+head or phrase+head are licit; head+phrase and
+   phrase+phrase are not.
+
+2. **Result State Uniqueness** (interpretive): an event can have at most
+   one telos. Two elements that both obligatorily specify a result state
+   cannot co-occur.
+
+The types `SynLevel` and `ResultStateSpec` below formalize these two
+dimensions abstractly. The compatibility functions `incorporationAllowed`
+and `resultStatesCompatible` are defined purely over these abstract types,
+with no reference to `PreverbalElement`. Only then do we classify each PE
+into these dimensions and prove that the predicted paradigm matches. -/
+
+-- ────────────────────────────────────────────────────
+-- § 18. Abstract Structural Dimension: Syntactic Level
+-- ────────────────────────────────────────────────────
+
+/-- The syntactic level of a morphological element: head (X⁰) or phrase (XP).
+
+    This distinction is standard in X-bar theory and is logically prior to
+    the PE typology — it applies to any syntactic object, not just German
+    preverbal elements. -/
+inductive SynLevel where
+  | head    -- X⁰: can incorporate into other heads
+  | phrase  -- XP: cannot incorporate
+  deriving DecidableEq, BEq, Repr
+
+/-- **Lexical Integrity**: a head can take a head complement (head-adjunction
+    / incorporation), and a phrase can take a head complement (normal
+    complementation), but a head cannot take a phrase complement in a
+    word-internal structure, and two phrases cannot form a word.
+
+    This is a general principle of morphosyntactic structure, not specific
+    to German preverbal elements. It follows from the ban on phrasal
+    incorporation (@cite{benz-2025} §4.3.1, following Baker 1988). -/
+def incorporationAllowed (outer inner : SynLevel) : Bool :=
+  match outer, inner with
+  | .head,   .head   => true   -- incorporation / head-adjunction
+  | .phrase, .head   => true   -- normal complementation
+  | .head,   .phrase => false  -- *phrasal incorporation
+  | .phrase, .phrase => false  -- *phrase stacking inside a word
+
+-- ────────────────────────────────────────────────────
+-- § 19. Abstract Interpretive Dimension: Result State Specification
+-- ────────────────────────────────────────────────────
+
+/-- Whether an element obligatorily introduces a result state specification.
+
+    This is a semantic property that applies to any predicate-modifying
+    element — it is not specific to German PEs. An element that always
+    specifies a result state will conflict with another such element
+    because a single event has at most one telos. -/
+inductive ResultStateSpec where
+  | specifies  -- obligatorily introduces a result state
+  | neutral    -- compatible with either (e.g. directional/completive readings)
+  deriving DecidableEq, BEq, Repr
+
+/-- **Result State Uniqueness**: two elements that both obligatorily specify
+    a result state cannot co-occur, because a single event cannot be
+    delimited by two conflicting endpoints.
+
+    This is an instance of a general thematic uniqueness constraint: just as
+    an event has at most one agent (Carlson 1998), it has at most one telos.
+    The constraint is purely interpretive — it says nothing about syntax. -/
+def resultStatesCompatible (a b : ResultStateSpec) : Bool :=
+  match a, b with
+  | .specifies, .specifies => false  -- conflicting result states
+  | _, _ => true
+
+-- ────────────────────────────────────────────────────
+-- § 20. PE Classification into Abstract Dimensions
+-- ────────────────────────────────────────────────────
+
+/-- Classify each PE by its syntactic level.
+
+    @cite{benz-2025} §4.3.1: prefixes are heads (inseparable under V2);
+    particles and RSPs are phrases (stranded under V2, can be modified). -/
+def PreverbalElement.synLevel : PreverbalElement → SynLevel
+  | .pfx => .head
+  | .prt => .phrase
+  | .rsp => .phrase
+
+/-- Classify each PE by its result state specification.
+
+    @cite{benz-2025} §4.1: prefixes and RSPs obligatorily specify a result
+    state. Particles are neutral — they can have non-delimiting readings
+    (directional, completive) that do not introduce a result state. -/
+def PreverbalElement.resultSpec : PreverbalElement → ResultStateSpec
+  | .pfx => .specifies
+  | .prt => .neutral
+  | .rsp => .specifies
+
+-- ────────────────────────────────────────────────────
+-- § 21. Bridge: Abstract Classification Matches PE Booleans
+-- ────────────────────────────────────────────────────
+
+/-- The abstract `synLevel` classification is equivalent to `isHead`. -/
+theorem synLevel_matches_isHead (pe : PreverbalElement) :
+    (pe.synLevel == .head) = pe.isHead := by
+  cases pe <;> rfl
+
+/-- The abstract `resultSpec` classification is equivalent to
+    `alwaysSpecifiesResult`. -/
+theorem resultSpec_matches_alwaysSpecifies (pe : PreverbalElement) :
+    (pe.resultSpec == .specifies) = pe.alwaysSpecifiesResult := by
+  cases pe <;> rfl
+
+-- ────────────────────────────────────────────────────
+-- § 22. Blocking Derivations
+-- ────────────────────────────────────────────────────
+
+/-- A blocking derivation: a proof that a PE combination violates one of
+    Benz's two independently motivated principles.
+
+    Each constructor is a derivation rule whose premises are stated in terms
+    of the abstract classification (`SynLevel`, `ResultStateSpec`), not
+    PE-specific Booleans. A combination is blocked iff at least one
+    derivation can be constructed.
+
+    **`byLexicalIntegrity`** (@cite{benz-2025} §4.3.1, Baker 1988): only
+    heads can occupy the inner (closer-to-root) position in a word-internal
+    combination. A phrasal inner element cannot incorporate.
+
+    **`byResultUniqueness`** (@cite{benz-2025} §4.1): an event has at most
+    one telos. Two elements that both obligatorily specify a result state
+    yield conflicting endpoints. -/
+inductive Blocked : PreverbalElement → PreverbalElement → Prop where
+  | byLexicalIntegrity {o i : PreverbalElement} :
+      i.synLevel = .phrase → Blocked o i
+  | byResultUniqueness {o i : PreverbalElement} :
+      o.resultSpec = .specifies → i.resultSpec = .specifies → Blocked o i
+
+/-- Boolean decomposition lemma: `predictedAllowed` factors into the
+    conjunction of the two abstract compatibility functions. Used as a
+    stepping stone in the soundness proof below. -/
+theorem paradigm_from_principles (o i : PreverbalElement) :
+    predictedAllowed o i =
+      (incorporationAllowed o.synLevel i.synLevel &&
+       resultStatesCompatible o.resultSpec i.resultSpec) := by
+  cases o <;> cases i <;> rfl
+
+-- ────────────────────────────────────────────────────
+-- § 23. Characterization Theorem
+-- ────────────────────────────────────────────────────
+
+/-! The derivation system (`Blocked`) is both *sound* and *complete* with
+respect to the empirical paradigm (`predictedAllowed`). Together with
+`combined_prediction_matches` (§9), this means the two principles exactly
+generate the data: every blocked cell has a derivation, every derivation
+corresponds to a blocked cell, and the unique allowed cell (PRT-pfx) has
+no derivation. -/
+
+/-- **Soundness**: every blocking derivation corresponds to a genuinely
+    blocked combination. The theory does not over-generate.
+
+    - `byLexicalIntegrity`: a phrasal inner element makes `incorporationAllowed`
+      return `false` regardless of the outer element's level.
+    - `byResultUniqueness`: two result-specifying elements make
+      `resultStatesCompatible` return `false` regardless of structure. -/
+theorem blocked_sound {o i : PreverbalElement} (h : Blocked o i) :
+    predictedAllowed o i = false := by
+  rw [paradigm_from_principles]
+  cases h with
+  | byLexicalIntegrity hi =>
+    have : incorporationAllowed o.synLevel i.synLevel = false := by
+      rw [hi]; cases o <;> rfl
+    simp [this]
+  | byResultUniqueness ho hi =>
+    have : resultStatesCompatible o.resultSpec i.resultSpec = false := by
+      rw [ho, hi]; rfl
+    simp [this]
+
+/-- **Completeness**: every blocked combination has a blocking derivation.
+    The two principles account for ALL restrictions — nothing is left
+    unexplained.
+
+    For each of the 8 blocked cells, an explicit derivation is constructed
+    (6 by Lexical Integrity, 2 by Result State Uniqueness). For PRT-pfx,
+    the hypothesis is contradictory. -/
+theorem blocked_complete {o i : PreverbalElement}
+    (h : predictedAllowed o i = false) : Blocked o i := by
+  cases o <;> cases i <;>
+    first
+    | exact .byLexicalIntegrity rfl
+    | exact .byResultUniqueness rfl rfl
+    | simp [predictedAllowed, structurallyCompatible, interpretivelyCompatible,
+            PreverbalElement.isHead, PreverbalElement.alwaysSpecifiesResult] at h
+
+/-- **The allowed combination has no derivation.** PRT-pfx is allowed
+    precisely because neither principle applies:
+    - pfx is a head (not a phrase), so Lexical Integrity is satisfied
+    - prt is result-neutral (not specifying), so Result Uniqueness is satisfied
+
+    We examine each possible derivation and show its premises are
+    contradicted by the PE classifications. -/
+theorem prt_pfx_no_derivation : ¬ Blocked .prt .pfx := by
+  intro h
+  cases h with
+  | byLexicalIntegrity hi => exact absurd hi (by decide)
+  | byResultUniqueness ho _ => exact absurd ho (by decide)
+
+-- ────────────────────────────────────────────────────
+-- § 24. Both Derivation Rules Are Needed
+-- ────────────────────────────────────────────────────
+
+/-- pfx-pfx is blocked ONLY by Result State Uniqueness — Lexical Integrity
+    cannot derive it (both are heads, so the inner is not phrasal). This
+    shows the interpretive rule is not redundant. -/
+theorem pfx_pfx_only_by_result :
+    Blocked .pfx .pfx ∧ PreverbalElement.pfx.synLevel ≠ .phrase :=
+  ⟨.byResultUniqueness rfl rfl, by decide⟩
+
+/-- pfx-PRT is blocked ONLY by Lexical Integrity — Result State Uniqueness
+    cannot derive it (PRT is result-neutral). This shows the structural
+    rule is not redundant. -/
+theorem pfx_prt_only_by_structure :
+    Blocked .pfx .prt ∧ PreverbalElement.prt.resultSpec ≠ .specifies :=
+  ⟨.byLexicalIntegrity rfl, by decide⟩
+
+/-- Incorporation depends only on the inner element's level: the outer
+    element's level is irrelevant. This is a derived property of the
+    `incorporationAllowed` function, not stipulated. -/
+theorem incorporation_only_depends_on_inner (outer inner : SynLevel) :
+    incorporationAllowed outer inner = (inner == .head) := by
+  cases outer <;> cases inner <;> rfl
+
+-- ────────────────────────────────────────────────────
+-- § 24. Ch. 5 Nominalization Distribution from Principles
+-- ────────────────────────────────────────────────────
+
+/-- **The nominalization theorem.** *-ung* acceptability (Ch. 5) follows from
+    the same two abstract principles applied reflexively: a PE is acceptable
+    in *-ung* iff it can incorporate with itself (headedness) OR its result
+    state does not conflict with itself (neutrality).
+
+    This connects Ch. 5 to Ch. 4: the PE×nominalization distribution is not
+    an independent observation — it is a projection of the same two principles
+    that generate the co-occurrence paradigm. -/
+theorem ung_from_principles (pe : PreverbalElement) :
+    peAcceptable .ung pe =
+      (incorporationAllowed pe.synLevel pe.synLevel ||
+       resultStatesCompatible pe.resultSpec pe.resultSpec) := by
+  cases pe <;> rfl
+
+/-- *Ge-...-e* acceptability reduces to a single abstract principle:
+    a PE is acceptable in *Ge-...-e* iff it is a phrase (not a head).
+    The circumfix directly nominalizes the root, so only non-head elements
+    are compatible. -/
+theorem ge_e_from_principles (pe : PreverbalElement) :
+    peAcceptable .ge_e pe = (pe.synLevel == .phrase) := by
+  cases pe <;> rfl
+
+/-- The *-ung* / *Ge-...-e* mirror: for heads, the two nominalization types
+    give opposite results. This follows from `ge_e_from_principles` and the
+    fact that heads satisfy `incorporationAllowed` reflexively. -/
+theorem ung_ge_e_mirror (pe : PreverbalElement) (h : pe.synLevel = .head) :
+    peAcceptable .ung pe = true ∧ peAcceptable .ge_e pe = false := by
+  cases pe <;> simp_all [PreverbalElement.synLevel, peAcceptable]
+
+-- ────────────────────────────────────────────────────
+-- § 25. End-to-End: Root Semantics → v Allosemy → Nominalization → PE
+-- ────────────────────────────────────────────────────
+
+/-! These theorems chain through four independently defined modules:
+`RootTypology.lean` (root semantics) → `Allosemy.lean` (v alloseme
+selection) → `Allosemy.lean` (nominalization reading) → `Benz2025.lean`
+(PE distribution from abstract principles). No single module defines
+the full path. -/
+
+/-- End-to-end for result roots: a result root selects eventive v, yielding
+    CEN in *-ung* nominalizations. *-ung* accepts heads (pfx) and rejects
+    phrases that specify results (RSP) — both predictions derived from
+    the abstract principles, not from the `peAcceptable` table. -/
+theorem end_to_end_result_root :
+    let v := VAlloseme.fromRootType .result
+    v = .eventive ∧
+    readingFromAllosemes v .sortal = some .complexEvent ∧
+    -- PE distribution derived from principles, not table lookup
+    incorporationAllowed (PreverbalElement.pfx).synLevel (PreverbalElement.pfx).synLevel = true ∧
+    resultStatesCompatible (PreverbalElement.rsp).resultSpec (PreverbalElement.rsp).resultSpec = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Mirror chain for PC roots: stative v → RN reading → *Ge-...-e*, which
+    accepts phrases (RSP) and rejects heads (pfx). -/
+theorem end_to_end_pc_root :
+    let v := VAlloseme.fromRootType .propertyConcept
+    v = .stative ∧
+    readingFromAllosemes v .sortal = some .result ∧
+    -- Ge-...-e distribution: phrase (RSP) accepted, head (pfx) rejected
+    ((PreverbalElement.rsp).synLevel == .phrase) = true ∧
+    ((PreverbalElement.pfx).synLevel == .phrase) = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════════
+-- Part VI: Fragment Grounding
+-- ════════════════════════════════════════════════════════════════════
+
+-- ────────────────────────────────────────────────────
+-- § 21. -ung Nominalizability (Event Structure)
+-- ────────────────────────────────────────────────────
+
+/-- Whether a verb can undergo *-ung* nominalization, based on its
+    Vendler class.
+
+    @cite{benz-2025} Ch. 5, following Roßdeutscher & Kamp (2010):
+    *-ung* requires complex change-of-state event structure. Only
+    accomplishments and achievements (which contain a result state
+    component) qualify. Activities and states do not. -/
+def canUngNominalize : Option VendlerClass → Bool
+  | some .accomplishment => true
+  | some .achievement => true
+  | _ => false
+
+/-- Activity simplex verbs cannot form *-ung* nominalizations:
+    **Hämmer-ung*, **Mal-ung*, **Küss-ung*. -/
+theorem activity_no_ung :
+    canUngNominalize haemmern.vendlerClass = false ∧
+    canUngNominalize malen.vendlerClass = false ∧
+    canUngNominalize kuessen.vendlerClass = false ∧
+    canUngNominalize fuehren.vendlerClass = false ∧
+    canUngNominalize rauben.vendlerClass = false := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> rfl
+
+/-- Prefix/particle verbs with complex event structure CAN form
+    *-ung* nominalizations: *Beobacht-ung*, *Einführ-ung*, *Verbind-ung*. -/
+theorem complex_event_ung :
+    canUngNominalize beobachten.vendlerClass = true ∧
+    canUngNominalize einfuehren.vendlerClass = true ∧
+    canUngNominalize verbinden.vendlerClass = true ∧
+    canUngNominalize brechen.vendlerClass = true := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> rfl
+
+-- ────────────────────────────────────────────────────
+-- § 22. Fragment Entries Ground RSP Data
+-- ────────────────────────────────────────────────────
+
+/-- Transitivity derived from fragment fields (not from a raw string). -/
+def isTransitiveVerb (v : GermanVerbEntry) : Bool :=
+  v.complementType == .np && !v.unaccusative
+
+/-- The verb classifications in the RSP data (§10, encoded as raw strings)
+    are derivable from the fragment entries' typed fields. Changing
+    *frieren*'s `unaccusative` field or *hämmern*'s `complementType` would
+    break this theorem without touching the RSP data. -/
+theorem rsp_data_grounded_in_fragments :
+    isTransitiveVerb haemmern = true ∧
+    isTransitiveVerb brechen = true ∧
+    frieren.unaccusative = true ∧
+    isTransitiveVerb frieren = false := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ────────────────────────────────────────────────────
+-- § 23. Root Type → v Alloseme on Fragment Entries
+-- ────────────────────────────────────────────────────
+
+/-- *brechen* (result root) and *frieren* (PC root) yield opposite v
+    allosemes. This connects three modules: the fragment entry's
+    `rootType` (Predicates.lean), `VAlloseme.fromRootType` (Allosemy.lean),
+    and `VAlloseme.introducesEvent` (Allosemy.lean). -/
+theorem rootType_alloseme_divergence :
+    brechen.rootType.map VAlloseme.fromRootType = some .eventive ∧
+    frieren.rootType.map VAlloseme.fromRootType = some .stative ∧
+    brechen.rootType.map (VAlloseme.fromRootType · |>.introducesEvent) = some true ∧
+    frieren.rootType.map (VAlloseme.fromRootType · |>.introducesEvent) = some false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The allosemy-based CEN prediction and the event-structure-based *-ung*
+    prediction agree for *brechen*: result root → eventive v → CEN reading
+    → can -ung, and achievement vendlerClass → can -ung. Two independent
+    paths to the same conclusion. -/
+theorem brechen_two_paths :
+    -- Path 1: rootType → VAlloseme → readingFromAllosemes → CEN
+    brechen.rootType.bind (λ rt =>
+      readingFromAllosemes (VAlloseme.fromRootType rt) .sortal)
+      = some .complexEvent ∧
+    -- Path 2: vendlerClass → canUngNominalize
+    canUngNominalize brechen.vendlerClass = true := ⟨rfl, rfl⟩
+
+/-- The two paths DISAGREE for *frieren*: the canonical PC root → stative
+    v → RN (not CEN), yet the achievement vendlerClass → can -ung. This
+    is not a bug — it captures @cite{benz-2025}'s key insight that allosemy
+    means BOTH v allosemes are available for any verb. The canonical
+    alloseme is a default, not a constraint. *Frieren* CAN have eventive v
+    and thus CAN form a CEN, even though its canonical alloseme is stative. -/
+theorem frieren_canonical_vs_possible :
+    -- Canonical path: PC root → stative v → RN (no CEN)
+    frieren.rootType.bind (λ rt =>
+      readingFromAllosemes (VAlloseme.fromRootType rt) .sortal)
+      = some .result ∧
+    -- But -ung is still possible (achievement vendlerClass)
+    canUngNominalize frieren.vendlerClass = true ∧
+    -- Because eventive v is always available (that's what allosemy means)
+    readingFromAllosemes .eventive .sortal = some .complexEvent := ⟨rfl, rfl, rfl⟩
 
 end Phenomena.Morphology.Studies.Benz2025
