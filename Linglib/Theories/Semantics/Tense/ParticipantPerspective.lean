@@ -8,9 +8,9 @@ import Linglib.Theories.Morphology.Core.Exponence
 @cite{cumming-2026} @cite{lakoff-1970}
 
 **Participant perspective** — psychological salience and hearer
-novelty — is distinct from **temporal perspective** (Kiparsky's π / Tsilia,
-@cite{tsilia-zhao-sharvit-2026}), which concerns the tense anchor point. This module
-handles the former; `TsiliaEtAl2026.lean` handles the latter.
+novelty — is distinct from **temporal perspective** (Kiparsky's π /
+@cite{tsilia-zhao-2026}), which concerns the tense anchor point. This module
+handles the former; `TsiliaZhao2026.lean` handles the latter.
 
 @cite{lakoff-1970} "Tense and Its Relation to Participants" argues that tense
 selection is sensitive to speaker/hearer epistemic states, not just temporal

@@ -5,17 +5,17 @@ import Linglib.Theories.Semantics.Tense.Ogihara
 import Linglib.Theories.Semantics.Tense.Klecha
 import Linglib.Theories.Semantics.Tense.Deal
 import Linglib.Theories.Semantics.Tense.Sharvit
-import Linglib.Theories.Semantics.Tense.TsiliaEtAl2026
+import Linglib.Theories.Semantics.Tense.TsiliaZhao2026
 import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
 import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 
 /-!
 # Tense Theories: Cross-Cutting Comparison
-@cite{abusch-1997} @cite{von-stechow-2009} @cite{kratzer-1998} @cite{ogihara-1996} @cite{klecha-2016} @cite{deal-2020} @cite{sharvit-2003} @cite{tsilia-zhao-sharvit-2026} @cite{zeijlstra-2012} @cite{wurmbrand-2014}
+@cite{abusch-1997} @cite{von-stechow-2009} @cite{kratzer-1998} @cite{ogihara-1996} @cite{klecha-2016} @cite{deal-2020} @cite{sharvit-2003} @cite{tsilia-zhao-2026} @cite{zeijlstra-2012} @cite{wurmbrand-2014}
 
 Comparison matrix for ten tense theories:
 - Semantic: @cite{abusch-1997}, @cite{von-stechow-2009}, @cite{heim-kratzer-1998}, @cite{ogihara-1996},
-  @cite{klecha-2016}, @cite{deal-2020}, @cite{sharvit-2003}, @cite{tsilia-zhao-sharvit-2026}
+  @cite{klecha-2016}, @cite{deal-2020}, @cite{sharvit-2003}, @cite{tsilia-zhao-2026}
 - Syntactic: @cite{zeijlstra-2012}, @cite{wurmbrand-2014}
 
 Verdicts are **assembled from derivation theorems** proved in each theory's
@@ -51,7 +51,7 @@ open Semantics.Tense.Ogihara (Ogihara)
 open Semantics.Tense.Klecha (Klecha)
 open Semantics.Tense.Deal (Deal)
 open Semantics.Tense.Sharvit (Sharvit)
-open Semantics.Tense.TsiliaEtAl2026 (TsiliaEtAl2026)
+open Semantics.Tense.TsiliaZhao2026 (TsiliaZhao2026)
 open Minimalism.Tense.Zeijlstra (Zeijlstra)
 open Minimalism.Tense.Wurmbrand (Wurmbrand)
 open Core.Reichenbach
@@ -324,10 +324,10 @@ theorem semantic_vs_syntactic_divide :
 -- § 7. Presuppositional Tense and Then-Present Incompatibility
 -- ════════════════════════════════════════════════════════════════
 
-/-- Only @cite{tsilia-zhao-sharvit-2026} treats tenses as presupposition
+/-- Only @cite{tsilia-zhao-2026} treats tenses as presupposition
     triggers. All other theories have `hasPresuppositionalTense = false`. -/
 theorem only_tsilia_has_presuppositional_tense :
-    TsiliaEtAl2026.hasPresuppositionalTense = true ∧
+    TsiliaZhao2026.hasPresuppositionalTense = true ∧
     Abusch.hasPresuppositionalTense = false ∧
     VonStechow.hasPresuppositionalTense = false ∧
     KratzerTense.hasPresuppositionalTense = false ∧
@@ -347,11 +347,11 @@ theorem all_ten_theories_distinct :
     Ogihara.name ≠ Klecha.name ∧
     Klecha.name ≠ Deal.name ∧
     Deal.name ≠ Sharvit.name ∧
-    Sharvit.name ≠ TsiliaEtAl2026.name ∧
-    TsiliaEtAl2026.name ≠ Zeijlstra.name ∧
+    Sharvit.name ≠ TsiliaZhao2026.name ∧
+    TsiliaZhao2026.name ≠ Zeijlstra.name ∧
     Zeijlstra.name ≠ Wurmbrand.name := by
   simp [Abusch, VonStechow, KratzerTense, Ogihara, Klecha, Deal,
-        Sharvit, TsiliaEtAl2026, Zeijlstra, Wurmbrand]
+        Sharvit, TsiliaZhao2026, Zeijlstra, Wurmbrand]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -374,7 +374,7 @@ theorem only_zeijlstra_predicts_size_sensitive_sot :
     Klecha.hasSizeSensitiveSOT = false ∧
     Deal.hasSizeSensitiveSOT = false ∧
     Sharvit.hasSizeSensitiveSOT = false ∧
-    TsiliaEtAl2026.hasSizeSensitiveSOT = false ∧
+    TsiliaZhao2026.hasSizeSensitiveSOT = false ∧
     Wurmbrand.hasSizeSensitiveSOT = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
@@ -390,10 +390,10 @@ theorem only_zeijlstra_predicts_size_sensitive_sot :
     4. Therefore: data favors Agree-based (syntactic) approach -/
 theorem size_sensitivity_requires_agree :
     ∀ t ∈ [Abusch, VonStechow, KratzerTense, Ogihara, Klecha, Deal,
-           Sharvit, TsiliaEtAl2026, Zeijlstra, Wurmbrand],
+           Sharvit, TsiliaZhao2026, Zeijlstra, Wurmbrand],
       t.hasSizeSensitiveSOT = true → t.hasAgreeBasedSOT = true := by
   simp [Abusch, VonStechow, KratzerTense, Ogihara, Klecha, Deal,
-        Sharvit, TsiliaEtAl2026, Zeijlstra, Wurmbrand]
+        Sharvit, TsiliaZhao2026, Zeijlstra, Wurmbrand]
 
 
 end Phenomena.TenseAspect.Compare

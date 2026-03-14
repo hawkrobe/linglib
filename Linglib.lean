@@ -1439,7 +1439,7 @@ import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
-import Linglib.Theories.Semantics.Tense.TsiliaEtAl2026
+import Linglib.Theories.Semantics.Tense.TsiliaZhao2026
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense

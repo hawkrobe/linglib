@@ -1,5 +1,5 @@
 import Linglib.Core.Temporal.Reichenbach
-import Linglib.Theories.Semantics.Tense.TsiliaEtAl2026
+import Linglib.Theories.Semantics.Tense.TsiliaZhao2026
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.Mandarin.TemporalDeictic
@@ -10,15 +10,15 @@ import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
-# Then-Present Puzzle (@cite{zhao-2025}, Tsilia, @cite{tsilia-zhao-sharvit-2026})
-@cite{zhao-2025} @cite{tsilia-zhao-sharvit-2026} @cite{kiparsky-2002}Temporal "then" is cross-linguistically incompatible with present tense.
+# Then-Present Puzzle (@cite{zhao-2025}, @cite{tsilia-zhao-2026})
+@cite{zhao-2025} @cite{tsilia-zhao-2026} @cite{kiparsky-2002}Temporal "then" is cross-linguistically incompatible with present tense.
 @cite{zhao-2025} explains this via a perspective parameter π (= Kiparsky's P):
 present tense requires P = R, but "then" shifts P away from S, making
 P ≠ S. In root clauses, isSimpleCase requires P = S, so present + then
 forces R = P ≠ S — but present tense in root clauses needs R = S,
 creating a contradiction.
 
-@cite{tsilia-zhao-sharvit-2026} provide the presuppositional analysis: tenses
+@cite{tsilia-zhao-2026} provide the presuppositional analysis: tenses
 are presupposition triggers anchored to π, and the incompatibility is a
 presupposition clash between ⌈then⌉ (P ≠ local eval) and OP_π (P = local
 eval).
@@ -42,7 +42,7 @@ eval).
 tense (R = P), "then" (P ≠ S) leads to contradiction.
 
 The presuppositional generalization (`then_perspective_clash` in
-`TsiliaEtAl2026.lean`) subsumes this: OP_π forces P = localEval while
+`TsiliaZhao2026.lean`) subsumes this: OP_π forces P = localEval while
 ⌈then⌉ requires P ≠ localEval.
 
 -/
@@ -51,7 +51,7 @@ namespace Phenomena.TenseAspect.ThenPresentBridge
 
 open Core.Reichenbach
 open Semantics.Tense
-open Semantics.Tense.TsiliaEtAl2026
+open Semantics.Tense.TsiliaZhao2026
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Linguistic "Then" Inventory

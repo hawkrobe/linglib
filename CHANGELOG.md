@@ -5341,7 +5341,7 @@
 
 ### Added
 - Formalize Tsilia, Zhao & Sharvit (2026) "Tense and Perspective": presuppositional tense theory
-- Add `Theories/Semantics/Tense/TsiliaEtAl2026.lean`: tense presuppositions, OP_π, ⌈then⌉ presupposition, PrProp bridge
+- Add `Theories/Semantics/Tense/TsiliaZhao2026.lean`: tense presuppositions, OP_π, ⌈then⌉ presupposition, PrProp bridge
 - Create tense→presupposition import edge (`Core.Presupposition`)
 - Add `thenPresentIncompatibility` to `TensePhenomenon`, `hasPresuppositionalTense` to `TenseTheory`
 - Add cross-linguistic `ThenAdverb` Fragment entries for 7 languages (English, German, Mandarin, Japanese, Greek, Russian, Hebrew)

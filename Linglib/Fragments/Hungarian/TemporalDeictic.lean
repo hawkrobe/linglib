@@ -31,7 +31,7 @@ open Semantics.Tense
 
 /-- Hungarian *akkor* 'then' — perspective-shifting temporal deictic.
     Part of the cross-linguistic "then"-present incompatibility
-    inventory (@cite{zhao-2025}, Tsilia, @cite{tsilia-zhao-sharvit-2026}). -/
+    inventory (@cite{zhao-2025}, @cite{tsilia-zhao-2026}). -/
 def akkor : ThenAdverb where
   language := "Hungarian"
   form := "akkor"

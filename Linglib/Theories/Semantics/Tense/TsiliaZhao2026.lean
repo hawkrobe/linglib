@@ -3,8 +3,8 @@ import Linglib.Core.Temporal.Reichenbach
 import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
-# @cite{tsilia-zhao-sharvit-2026}: Tense and Perspective
-@cite{tsilia-zhao-sharvit-2026} @cite{sharvit-2003} @cite{zhao-2025}The cross-linguistic incompatibility of temporal ⌈then⌉ with shifted present
+# @cite{tsilia-zhao-2026}: Tense and Perspective
+@cite{tsilia-zhao-2026} @cite{sharvit-2003} @cite{zhao-2025}The cross-linguistic incompatibility of temporal ⌈then⌉ with shifted present
 tense is derived from **tense presuppositions** anchored to a perspectival
 parameter π. This creates the architecturally significant import edge from
 tense theory to `Core.Presupposition`.
@@ -30,7 +30,7 @@ the PRES presupposition at the shifted π.
 
 -/
 
-namespace Semantics.Tense.TsiliaEtAl2026
+namespace Semantics.Tense.TsiliaZhao2026
 
 open Core.Reichenbach
 open Core.Presupposition
@@ -168,12 +168,12 @@ theorem presAsPrProp_defined_iff {Time : Type*} [DecidableEq Time]
 -- § 7. Identity Card + Sharvit Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{tsilia-zhao-sharvit-2026} identity card.
+/-- @cite{tsilia-zhao-2026} identity card.
     The theory treats tenses as presupposition triggers (the key innovation)
     and uses SOT deletion for the then-deleted tense compatibility. -/
-def TsiliaEtAl2026 : TenseTheory where
-  name := "Tsilia, Zhao & Sharvit 2026"
-  citation := "Tsilia, D., Zhao, Z. & Sharvit, Y. (2026). Tense and perspective."
+def TsiliaZhao2026 : TenseTheory where
+  name := "Tsilia & Zhao 2026"
+  citation := "Tsilia, A. & Zhao, Z. (2026). Tense and perspective: A solution to the ⌈then⌉-present puzzle. Linguistics and Philosophy."
   hasTemporalDeRe := false
   hasULC := false
   hasZeroTense := false
@@ -190,4 +190,4 @@ theorem sharvit_simultaneous_satisfies_presPresup {Time : Type*} [LinearOrder Ti
   rfl
 
 
-end Semantics.Tense.TsiliaEtAl2026
+end Semantics.Tense.TsiliaZhao2026

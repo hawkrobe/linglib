@@ -48,7 +48,7 @@ open Core.Reichenbach
     The first 11 are the core comparison set. The next 7 are eventual
     targets documented with data frames. The final 6 are added for
     @cite{zeijlstra-2012}, @cite{wurmbrand-2014}, @cite{sharvit-2003}, and
-    @cite{tsilia-zhao-sharvit-2026} coverage. -/
+    @cite{tsilia-zhao-2026} coverage. -/
 inductive TensePhenomenon where
   -- Core comparison set (11)
   /-- "John said Mary was sick" — shifted reading (sick before saying) -/
@@ -514,7 +514,7 @@ theorem bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
 
 /-- A "then"-type temporal adverb.
     Cross-linguistically, "then" shifts the perspective time P away
-    from the speech time S (@cite{zhao-2025}, Tsilia, @cite{tsilia-zhao-sharvit-2026}). -/
+    from the speech time S (@cite{zhao-2025}, @cite{tsilia-zhao-2026}). -/
 structure ThenAdverb where
   /-- Language name -/
   language : String

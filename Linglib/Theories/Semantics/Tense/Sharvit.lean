@@ -237,8 +237,8 @@ theorem sharvit_derives_rc_tense {Time : Type*}
 /-- @cite{sharvit-2003} identity card.
 
     @cite{sharvit-2003} does not treat tenses as presupposition triggers;
-    the presuppositional extension is @cite{tsilia-zhao-sharvit-2026},
-    formalized in `TsiliaEtAl2026.lean`. -/
+    the presuppositional extension is @cite{tsilia-zhao-2026},
+    formalized in `TsiliaZhao2026.lean`. -/
 def Sharvit : TenseTheory where
   name := "Sharvit 2003"
   citation := "Sharvit, Y. (2003). Embedded tense and universal grammar. LI 34(4): 669-681."
