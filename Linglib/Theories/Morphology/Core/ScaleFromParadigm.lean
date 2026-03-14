@@ -10,7 +10,7 @@ with comparative and superlative rules, we can construct the scale
 `⟨positive, comparative, superlative⟩` — ordered from weakest to strongest.
 
 This connects morphological infrastructure (`Core/Morphology/`) to
-scalar-alternative infrastructure (`Core/HornScale.lean`), enabling
+scalar-alternative infrastructure (`Theories/Semantics/Alternatives/HornScale.lean`), enabling
 automatic generation of the alternatives needed for scalar implicature
 computation.
 
@@ -24,7 +24,7 @@ computation.
 
 namespace Core.Morphology.ScaleFromParadigm
 
-open Core.Scale (HornScale strongerAlternatives weakerAlternatives)
+open Alternatives (HornScale strongerAlternatives weakerAlternatives)
 
 /-- A morphologically-derived Horn scale, tracking the positive,
     comparative, and superlative forms. -/

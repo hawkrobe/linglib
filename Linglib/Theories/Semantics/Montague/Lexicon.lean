@@ -19,7 +19,7 @@ namespace Semantics.Montague
 
 open Semantics.Montague
 open Semantics.Lexical.Determiner.Quantifier
-open Core.Scale
+open Alternatives
 
 private def word_some : Word := ⟨"some", .DET, {}⟩
 private def word_every : Word := ⟨"every", .DET, { number := some .sg }⟩
@@ -54,17 +54,17 @@ def SemLexEntry.strongerAlternatives {m : Model} (e : SemLexEntry m) : List Stri
   match e.scaleMembership with
   | none => []
   | some (.quantifier pos) =>
-    (Core.Scale.strongerAlternatives Quantifiers.quantScale pos).map λ
+    (Alternatives.strongerAlternatives Quantifiers.quantScale pos).map λ
       | .none_ => "no"
       | .some_ => "some"
       | .most => "most"
       | .all => "all"
   | some (.connective pos) =>
-    (Core.Scale.strongerAlternatives Connectives.connScale pos).map λ
+    (Alternatives.strongerAlternatives Connectives.connScale pos).map λ
       | .or_ => "or"
       | .and_ => "and"
   | some (.modal pos) =>
-    (Core.Scale.strongerAlternatives Modals.modalScale pos).map λ
+    (Alternatives.strongerAlternatives Modals.modalScale pos).map λ
       | .possible => "might"
       | .necessary => "must"
 

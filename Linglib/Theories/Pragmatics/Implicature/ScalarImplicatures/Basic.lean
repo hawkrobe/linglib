@@ -143,7 +143,7 @@ structure DisjunctionAnalysis where
   deriving Repr
 
 -- Note: connectiveCheckerString is defined in Alternatives.lean
--- It's grounded in Core.Scale.Connectives.entails
+-- It's grounded in Alternatives.Connectives.entails
 
 /--
 Analyze a simple disjunction in UE context.

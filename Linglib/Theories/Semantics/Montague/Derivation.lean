@@ -30,7 +30,7 @@ open Semantics.Montague
 open Semantics.Montague
 open Semantics.Composition.Tree
 open Semantics.Montague.Variables
-open Core.Scale
+open Alternatives
 
 /-- Scalar item occurrence in a derivation -/
 structure ScalarOccurrence (m : Model) where

@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Alternatives.HornScale
 
 Connects the string-based `HornScaleDatumPair` records in
 `Phenomena/ScalarImplicatures/Basic.lean` to the typed Horn scale algebra
-in `Core/HornScale.lean` (`Quantifiers.entails`, `Connectives.entails`,
+in `Theories/Semantics/Alternatives/HornScale.lean` (`Quantifiers.entails`, `Connectives.entails`,
 `Modals.entails`, `strongerAlternatives`).
 
 ## Structure
@@ -28,7 +28,7 @@ possibleNecessaryDatum), we prove:
 
 namespace Phenomena.ScalarImplicatures.Studies.Horn1972
 
-open Core.Scale
+open Alternatives
 open Phenomena.ScalarImplicatures
 
 -- ════════════════════════════════════════════════════

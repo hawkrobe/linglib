@@ -38,8 +38,8 @@ and rates should be correlated.
 
 namespace Phenomena.Plurals.Studies.TieuEtAl2020
 
-open Core.Scale (Monotonicity)
-open Core.Scale.Number (NumberExpr numberScale)
+open Alternatives (Monotonicity)
+open Alternatives.Number (NumberExpr numberScale)
 open Phenomena.Plurals.Multiplicity (PluralTheory MonotonicityParallel)
 
 
@@ -159,19 +159,19 @@ theorem uniformity_all_confirmed :
 /-- The singular/plural scale predicts multiplicity as a scalar implicature:
     using the plural (weaker) implicates the negation of the singular (stronger). -/
 theorem plural_has_singular_alternative :
-    Core.Scale.strongerAlternatives numberScale .plural = [.singular] := by
+    Alternatives.strongerAlternatives numberScale .plural = [.singular] := by
   native_decide
 
 /-- In DE contexts, the scale reverses (weaker alternatives are relevant),
     so the multiplicity inference does not arise. -/
 theorem de_context_no_multiplicity :
-    Core.Scale.scalarAlternativesInContext numberScale .plural .downward = [] := by
+    Alternatives.scalarAlternativesInContext numberScale .plural .downward = [] := by
   native_decide
 
 /-- In UE contexts, the singular is the relevant alternative,
     producing the multiplicity inference. -/
 theorem ue_context_multiplicity :
-    Core.Scale.scalarAlternativesInContext numberScale .plural .upward = [.singular] := by
+    Alternatives.scalarAlternativesInContext numberScale .plural .upward = [.singular] := by
   native_decide
 
 
@@ -258,10 +258,10 @@ theorem multiplicity_parallels_si_de_blocking :
 /-- Both the number scale and the quantifier scale predict the same
     pattern: stronger alternatives in UE, none/weaker in DE. -/
 theorem scales_predict_same_pattern :
-    (Core.Scale.scalarAlternativesInContext numberScale .plural .upward).length > 0 ∧
-    (Core.Scale.scalarAlternativesInContext numberScale .plural .downward).length = 0 ∧
-    (Core.Scale.scalarAlternativesInContext
-      Core.Scale.Quantifiers.quantScale .some_ .upward).length > 0 := by
+    (Alternatives.scalarAlternativesInContext numberScale .plural .upward).length > 0 ∧
+    (Alternatives.scalarAlternativesInContext numberScale .plural .downward).length = 0 ∧
+    (Alternatives.scalarAlternativesInContext
+      Alternatives.Quantifiers.quantScale .some_ .upward).length > 0 := by
   native_decide
 
 end Phenomena.Plurals.Studies.TieuEtAl2020

@@ -14,7 +14,7 @@ stronger members entail weaker members. Scale ordering determines scalar implica
 import Linglib.Core.Polarity
 import Mathlib.Data.Rat.Defs
 
-namespace Core.Scale
+namespace Alternatives
 
 -- General Scale Infrastructure
 
@@ -301,4 +301,4 @@ def Polarity.toMonotonicity : Core.Polarity → Monotonicity
   | .positive => .upward
   | .negative => .downward
 
-end Core.Scale
+end Alternatives

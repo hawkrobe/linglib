@@ -176,9 +176,9 @@ theorem zero_allows_none :
 
 /-- The quantifier ordering matches the Horn scale from Core.Scale -/
 theorem quantifier_ordering_matches_scale :
-    Core.Scale.Quantifiers.entails .all .most = true ∧
-    Core.Scale.Quantifiers.entails .most .some_ = true ∧
-    Core.Scale.Quantifiers.entails .some_ .none_ = false := by native_decide
+    Alternatives.Quantifiers.entails .all .most = true ∧
+    Alternatives.Quantifiers.entails .most .some_ = true ∧
+    Alternatives.Quantifiers.entails .some_ .none_ = false := by native_decide
 
 /-- The weakening pattern: increasing difficulty leads to weaker
 strongest-truthful quantifier. Demonstrated for high-success framing. -/
@@ -353,8 +353,8 @@ def exp1_crossovers_highSuccess_right : List DifficultyQuantifierPrediction :=
 /-- The crossover pattern matches the Horn scale ordering:
 at each threshold, the dominant quantifier shifts one step down. -/
 theorem crossovers_follow_horn_scale :
-    Core.Scale.Quantifiers.entails .all .most = true ∧
-    Core.Scale.Quantifiers.entails .most .some_ = true := by native_decide
+    Alternatives.Quantifiers.entails .all .most = true ∧
+    Alternatives.Quantifiers.entails .most .some_ = true := by native_decide
 
 
 end Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024

@@ -49,7 +49,6 @@ Exhaustified meaning : World → Bool
 
 namespace Alternatives
 
-open Core.Scale
 open Exhaustification.Fox2007
 
 /-- An alternative source generates candidate alternatives for an expression.
@@ -236,7 +235,7 @@ theorem quant_source_eq_scale :
 
 /-- The Horn scale records `all` as stronger than `some`. -/
 theorem hornscale_all_stronger_some :
-    Core.Scale.isStronger quantScale .all .some_ = true := by native_decide
+    isStronger quantScale .all .some_ = true := by native_decide
 
 /-- `exhB` via `AlternativeSource` derives the same conclusion: `all` is
     negated in the exhaustified meaning of `some`. No stipulated ordering

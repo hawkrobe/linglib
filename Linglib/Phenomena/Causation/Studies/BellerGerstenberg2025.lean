@@ -605,7 +605,7 @@ end StructuralBridge
 
 section HornScaleBridge
 
-open Core.Scale
+open Alternatives
 
 /-- The causal expression Horn scale: ⟨affected, enabled, caused⟩.
 

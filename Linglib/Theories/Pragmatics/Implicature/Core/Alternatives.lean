@@ -116,9 +116,9 @@ def HornSet.otherMembers {α : Type} [BEq α] (h : HornSet α) (x : α) : List �
   h.members.filter (· != x)
 
 
-open Core.Scale.Quantifiers (QuantExpr)
-open Core.Scale.Connectives (ConnExpr)
-open Core.Scale.Modals (ModalExpr)
+open Alternatives.Quantifiers (QuantExpr)
+open Alternatives.Connectives (ConnExpr)
+open Alternatives.Modals (ModalExpr)
 
 /--
 The quantifier Horn set: {some, most, all}
@@ -244,7 +244,7 @@ Uses `QuantExpr.entails` from Core.Scale:
 -/
 def quantifierStrengthUE (q1 q2 : QuantExpr) : Bool :=
   -- q1 is stronger than q2 iff q1 entails q2 (and they're different)
-  Core.Scale.Quantifiers.entails q1 q2 && q1 != q2
+  Alternatives.Quantifiers.entails q1 q2 && q1 != q2
 
 /--
 Reversed quantifier strength (for DE contexts).
@@ -254,12 +254,12 @@ In DE context, "some" is stronger than "all" at sentence level.
 -/
 def quantifierStrengthDE (q1 q2 : QuantExpr) : Bool :=
   -- In DE, entailment reverses: q1 stronger iff q2 entails q1
-  Core.Scale.Quantifiers.entails q2 q1 && q1 != q2
+  Alternatives.Quantifiers.entails q2 q1 && q1 != q2
 
 /--
 Entailment checker for quantifiers (type-safe).
 
-Grounded in Core.Scale.Quantifiers.entails.
+Grounded in Alternatives.Quantifiers.entails.
 -/
 def quantifierChecker : EntailmentChecker QuantExpr :=
   { isStronger := λ pol q1 q2 =>
@@ -276,13 +276,13 @@ Connective strength in UE context.
 "and" is stronger than "or".
 -/
 def connectiveStrengthUE (c1 c2 : ConnExpr) : Bool :=
-  Core.Scale.Connectives.entails c1 c2 && c1 != c2
+  Alternatives.Connectives.entails c1 c2 && c1 != c2
 
 /--
 Connective strength in DE context (reversed).
 -/
 def connectiveStrengthDE (c1 c2 : ConnExpr) : Bool :=
-  Core.Scale.Connectives.entails c2 c1 && c1 != c2
+  Alternatives.Connectives.entails c2 c1 && c1 != c2
 
 /--
 Entailment checker for connectives (type-safe).
@@ -341,7 +341,7 @@ Convert a HornScale (from Core.Scale) to a HornSet.
 This allows us to reuse the scale definitions while treating them
 as unordered sets. The ordering comes from the SentenceContext.
 -/
-def fromHornScale {α : Type} (scale : Core.Scale.HornScale α) : HornSet α :=
+def fromHornScale {α : Type} (scale : Alternatives.HornScale α) : HornSet α :=
   ⟨scale.members⟩
 
 /--

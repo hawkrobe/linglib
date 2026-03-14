@@ -10,7 +10,7 @@ import Linglib.Theories.Semantics.Alternatives.HornScale
 namespace Semantics.Entailment.ScaleInteraction
 
 open Semantics.Entailment
-open Core.Scale
+open Alternatives
 
 /-- Scale reversal: UE alternatives of "some" are [most, all]; DE alternatives are [none]. -/
 theorem scale_alternatives_reverse :

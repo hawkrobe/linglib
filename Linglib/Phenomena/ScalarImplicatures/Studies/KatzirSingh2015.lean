@@ -250,7 +250,7 @@ weak: "all" is equally complex and semantically stronger.
 
 Connects to Core.Scale: the ⟦all⟧ ⊆ ⟦some⟧ entailment that drives
 the Answer Condition is the same relationship captured by
-`Core.Scale.Quantifiers.entails.all.some_ = true`. -/
+`Alternatives.Quantifiers.entails.all.some_ = true`. -/
 
 section NeedlesslyWeak
 
