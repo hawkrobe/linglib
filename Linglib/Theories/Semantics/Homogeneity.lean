@@ -14,13 +14,14 @@ phenomenon appears across multiple linguistic domains:
 - **Plural definites**: "The professors smiled" — gap when some but not all smiled
 - **Conditionals**: "If Mary comes, John will be happy" — gap when John is
   happy in some but not all closest worlds (conditional excluded middle)
-- **Summative predicates**: "The wall is painted" — gap when part is painted
-- **Generics**: "Birds can fly" — gap when most but not all species can
 
-All instances share the same abstract structure: **supervaluation over
-specification points** (@cite{fine-1975}). The spec points are atoms (for
-plurals), accessible worlds (for conditionals), spatial parts (for
-summatives), or subkinds (for generics).
+Other domains (summative predicates like "The wall is painted", generics
+like "Birds can fly") are predicted to exhibit homogeneity by the same
+mechanism but are not yet formalized here.
+
+The formalized instances share the same abstract structure: **supervaluation
+over specification points** (@cite{fine-1975}). The spec points are atoms
+(for plurals) or accessible worlds (for conditionals).
 
 **Non-maximal readings** arise from the interaction of two independent
 pragmatic principles:
@@ -87,6 +88,25 @@ def isHomogeneous (S : SentenceTV W) : Prop := gapExt S ≠ ∅
     `all`, `necessarily`, and `completely` make sentences bivalent. -/
 def isBivalent (S : SentenceTV W) : Prop :=
   ∀ w, S w = .true ∨ S w = .false
+
+/-- Bivalence and homogeneity are complementary:
+    a sentence is bivalent iff it has no extension gap. -/
+theorem isBivalent_iff_not_homogeneous (S : SentenceTV W) :
+    isBivalent S ↔ ¬isHomogeneous S := by
+  constructor
+  · intro hbiv hhom
+    apply hhom; ext w
+    simp only [gapExt, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    cases hbiv w with | inl h => simp [h] | inr h => simp [h]
+  · intro hnotHom w
+    have hempty : gapExt S = ∅ := by
+      by_contra hne; exact hnotHom hne
+    have := (Set.eq_empty_iff_forall_notMem.mp hempty w)
+    simp only [gapExt, Set.mem_setOf_eq] at this
+    cases hSw : S w with
+    | true => left; rfl
+    | false => right; rfl
+    | indet => exact absurd hSw this
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- § 2. Supervaluation as Homogeneity Source
@@ -270,6 +290,18 @@ theorem bivalent_communicated_eq_posExt (q : QUD W) (S : SentenceTV W)
       exact absurd ⟨w', w, hSymm, hTrue, hFalse⟩ hAddr
   · exact literal_imp_sufficient q S w
 
+/-- Communicated content is antitone in issue refinement: coarser issues
+    (bigger cells) communicate more content. If q' refines q (q' is finer),
+    then everything communicated under q' is also communicated under q.
+
+    This is @cite{kriz-2016}'s key prediction: coarser QUDs enable more
+    non-maximal use. The finite model in `Kriz2016.lean` demonstrates this:
+    `coarseQ` communicates `smithNeutral` but `fineQ` does not. -/
+theorem communicatedContent_antitone (q q' : QUD W) (S : SentenceTV W)
+    (hRef : ∀ w₁ w₂, q'.sameAnswer w₁ w₂ = true → q.sameAnswer w₁ w₂ = true) :
+    communicatedContent q' S ⊆ communicatedContent q S :=
+  fun _ ⟨w', hEq, hTrue⟩ => ⟨w', hRef _ _ hEq, hTrue⟩
+
 /-- Extract the Bool truth predicate from a bivalent sentence.
     Used to bridge between the trivalent Addressing constraint and
     bivalent strong-relevance filtering (Križ & Spector 2021). -/
@@ -302,7 +334,13 @@ variable {W : Type*} [DecidableEq W]
 /-- A bare conditional "if P, Q" as a trivalent sentence.
     The spec points are the closest P-worlds; the eval function is Q.
     TRUE if Q holds at all closest P-worlds, FALSE if Q fails at all,
-    GAP otherwise (conditional excluded middle). -/
+    GAP otherwise (conditional excluded middle).
+
+    This is the same computation as `selectionalCounterfactual` in
+    `Conditionals/Counterfactual.lean`, which proves the equivalence
+    with `superTrue` via `selectional_as_supervaluation`. The two
+    formalizations use different input representations (Finset vs List)
+    but compute the same three-valued truth value. -/
 def conditionalTV (closestPWorlds : W → Finset W) (Q : W → Bool) : SentenceTV W :=
   λ w =>
     let pWorlds := closestPWorlds w
@@ -423,7 +461,7 @@ theorem overlaps_symm (a b : Finset Atom) : overlaps a b = overlaps b a := by
   simp only [overlaps, Finset.inter_comm]
 
 /-- If two pluralities overlap, they share a member. -/
-private theorem overlaps_exists_mem {a b : Finset Atom} (h : overlaps a b = true) :
+theorem overlaps_exists_mem {a b : Finset Atom} (h : overlaps a b = true) :
     ∃ y, y ∈ a ∧ y ∈ b := by
   simp only [overlaps, Bool.not_eq_true', beq_eq_false_iff_ne,
     Finset.nonempty_iff_ne_empty.symm.eq] at h
@@ -431,7 +469,7 @@ private theorem overlaps_exists_mem {a b : Finset Atom} (h : overlaps a b = true
   exact ⟨y, Finset.mem_inter.mp hy⟩
 
 /-- A singleton of a member overlaps with the plurality. -/
-private theorem overlaps_singleton_of_mem {a : Finset Atom} {x : Atom} (hx : x ∈ a) :
+theorem overlaps_singleton_of_mem {a : Finset Atom} {x : Atom} (hx : x ∈ a) :
     overlaps a {x} = true := by
   unfold overlaps
   have hne : (a ∩ {x}).Nonempty :=

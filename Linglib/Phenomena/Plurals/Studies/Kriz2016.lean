@@ -71,6 +71,28 @@ def barePluralTV (P : Atom → W → Bool) (x : Finset Atom) : SentenceTV W :=
 def allPluralTV (P : Atom → W → Bool) (x : Finset Atom) : SentenceTV W :=
   λ w => if allSatisfy P x w then .true else .false
 
+/-- `all` IS gap removal: the `all`-sentence is the bare plural with its
+    extension gap collapsed into the negative extension.
+
+    This is the central structural claim of @cite{kriz-2016}: the semantic
+    contribution of `all` is not to add universal quantification (the bare
+    plural already universally quantifies), but to remove homogeneity. -/
+theorem allPluralTV_eq_removeGap (P : Atom → W → Bool) (x : Finset Atom) :
+    allPluralTV P x = removeGap (barePluralTV P x) := by
+  ext w; simp only [allPluralTV, barePluralTV, removeGap]
+  cases hall : allSatisfy P x w
+  · -- allSatisfy = false: need removeGap (pluralTruthValue ...) = .false
+    simp only [Bool.false_eq_true, ite_false]
+    have hne : pluralTruthValue P x w ≠ .true := by
+      intro h; rw [pluralTruthValue_eq_true_iff] at h; simp [hall] at h
+    cases hpv : pluralTruthValue P x w with
+    | true => exact absurd hpv hne
+    | false => rfl
+    | indet => rfl
+  · -- allSatisfy = true
+    simp only [ite_true]
+    rw [(pluralTruthValue_eq_true_iff P x w).mpr hall]
+
 omit [DecidableEq Atom] in
 /-- `all` eliminates the extension gap. -/
 theorem all_no_gap (P : Atom → W → Bool) (x : Finset Atom) :

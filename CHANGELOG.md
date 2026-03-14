@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.246] - 2026-03-14
+
+### Added
+- **Homogeneity.lean**: `isBivalent_iff_not_homogeneous` — bivalence is exactly the complement of homogeneity; `communicatedContent_antitone` — coarser QUDs communicate more content
+- **Kriz2016.lean**: `allPluralTV_eq_removeGap` — `all` is exactly `removeGap` applied to the bare plural, making the homogeneity-removal analysis structural
+- **references.bib**: Add stalnaker-1981 (CEM defense, cited by conditionalTV)
+
+### Changed
+- **Homogeneity.lean**: Make `overlaps_exists_mem` and `overlaps_singleton_of_mem` public; add cross-reference to `selectionalCounterfactual` in conditionalTV docstring; trim docstring claims to match what's actually formalized
+- **Kriz2016.lean**: Fix linter-flagged proof style
+
 ## [0.229.245] - 2026-03-14
 
 ### Added
