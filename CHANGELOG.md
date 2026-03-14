@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.229.245] - 2026-03-14
+
+### Added
+- **Tay2024.lean** (Phenomena/Constructions/Resultatives/Studies): Formalize Tay 2024 (UCL) Mandarin V-V compound resultatives — CompoundDatum with 8 entries; DOR failure theorems; Onset Condition (CCF must participate in V1 event); MorphWord.compound morphology; CausalDynamics with completesForEffect tightness; PhaseComplementDatum with CoSType bridge; cross-linguistic contrast with English Data.lean
+- **Resultatives.lean** (Theories/Semantics/Causation): Add cross-linguistic resultative parameters — ResultativeRealization (syntacticAdjunct/verbCompound/deComplement), ResultOrientation (objectOriented/subjectOriented), PhaseComplement enum (dao/wan/hao/diao/zhu) with cosType mapping to CoSType
+- **references.bib**: Add tay-2024
+
+## [0.229.244] - 2026-03-14
+
+### Added
+- **Homogeneity.lean** (Theories/Semantics): Extract cross-domain homogeneity theory — SentenceTV, posExt/negExt/gapExt, supervaluationTV, removeGap, sufficientlyTrue, addressesIssue, usable, communicatedContent, bivalentPred; conditional homogeneity (CEM) with conditionalTV/strictConditionalTV; generalised homogeneity for collective predicates via mereological overlap
+- **KrizSpector2021.lean**: Bridge theorems connecting Križ 2016 Addressing to Križ & Spector 2021 strong relevance — `bivalent_addressing_iff_stronglyRelevant`, `all_addressing_iff_relevant`
+
+### Changed
+- **Kriz2016.lean**: Import general definitions from Theories/Semantics/Homogeneity.lean instead of defining locally; remove Bridge section (moved to KrizSpector2021.lean per chronological dependency rule)
+- **Linglib.lean**: Add imports for Homogeneity.lean and KrizSpector2021.lean
+
 ## [0.229.243] - 2026-03-14
 
 ### Added

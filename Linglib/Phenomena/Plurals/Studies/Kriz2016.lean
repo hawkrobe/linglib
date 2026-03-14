@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Theories.Semantics.Supervaluation.Basic
+import Linglib.Theories.Semantics.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Homogeneity
 
@@ -28,18 +29,19 @@ to exploit.
 
 ## Key Definitions
 
-- **Positive/negative extension**: ⟦S⟧⁺ = {w | S true at w}, ⟦S⟧⁻ = {w | S false at w}
-- **Homogeneous sentence**: ⟦S⟧⁺ ∪ ⟦S⟧⁻ ≠ W (the gap is non-empty)
-- **Sufficient Truth**: S is "true enough" at w wrt issue I iff ∃w' ∈ ⟦S⟧⁺ s.t. w ≈_I w'
-- **Addressing an Issue**: S may address I only if no cell overlaps both ⟦S⟧⁺ and ⟦S⟧⁻
-- **Communicated Content**: the set of worlds indistinguishable (under I) from ⟦S⟧⁺
+These general definitions live in `Theories/Semantics/Homogeneity.lean` and
+are imported here:
 
-## Connection to Križ & Spector 2021
+- **SentenceTV**: trivalent sentence denotation (W → Truth3)
+- **posExt / negExt / gapExt**: positive, negative, and gap extensions
+- **sufficientlyTrue**: S "true enough" at w wrt issue I
+- **addressesIssue**: no cell overlaps both ⟦S⟧⁺ and ⟦S⟧⁻
+- **usable**: conjunction of not-false, sufficiently true, addresses issue
+- **communicatedContent**: worlds indistinguishable from ⟦S⟧⁺ under I
+- **removeGap**: collapse gap into negative extension (what `all` does)
 
-The later K&S account (formalized in `Distributivity.lean`) replaces Sufficient
-Truth with candidate interpretation filtering via strong relevance. We prove the
-correspondence: for bivalent sentences (those with `all`), Addressing an Issue
-is equivalent to strong relevance of the truth predicate to the QUD.
+This file adds plural-specific instantiations and bridges to Križ & Spector
+2021's strong relevance filtering in `Distributivity.lean`.
 
 ## Finite Model
 
@@ -52,45 +54,12 @@ namespace Phenomena.Plurals.Studies.Kriz2016
 
 open Core.Duality (Truth3)
 open Semantics.Lexical.Plural.Distributivity
+open Semantics.Homogeneity
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
 -- ============================================================================
--- Section 1: Sentence Extensions
--- ============================================================================
-
-/-- A trivalent sentence denotation: maps worlds to truth values. -/
-abbrev SentenceTV (W : Type*) := W → Truth3
-
-/-- Positive extension: worlds where the sentence is true. -/
-def posExt (S : SentenceTV W) : Set W := {w | S w = .true}
-
-/-- Negative extension: worlds where the sentence is false. -/
-def negExt (S : SentenceTV W) : Set W := {w | S w = .false}
-
-/-- Extension gap: worlds where the sentence is neither true nor false. -/
-def gapExt (S : SentenceTV W) : Set W := {w | S w = .gap}
-
-/-- The three extensions partition the world space. -/
-theorem extensions_partition (S : SentenceTV W) (w : W) :
-    w ∈ posExt S ∨ w ∈ negExt S ∨ w ∈ gapExt S := by
-  simp only [posExt, negExt, gapExt, Set.mem_setOf_eq]
-  cases S w <;> simp
-
-/-- The three extensions are pairwise disjoint. -/
-theorem posExt_negExt_disjoint (S : SentenceTV W) :
-    posExt S ∩ negExt S = ∅ := by
-  ext w; simp only [posExt, negExt, Set.mem_inter_iff, Set.mem_setOf_eq,
-    Set.mem_empty_iff_false]
-  exact ⟨λ ⟨h₁, h₂⟩ => by rw [h₁] at h₂; exact absurd h₂ (by decide), False.elim⟩
-
-/-- A sentence is homogeneous if its extension gap is non-empty (Definition 2).
-Homogeneity is the source of non-maximal readings: the gap creates worlds
-that are neither true nor false, which the pragmatic mechanism can exploit. -/
-def isHomogeneous (S : SentenceTV W) : Prop := gapExt S ≠ ∅
-
--- ============================================================================
--- Section 2: Plural Predication as Sentence Extension
+-- Section 1: Plural Predication as Sentence Extension
 -- ============================================================================
 
 /-- The bare plural sentence "the Xs are P" as a trivalent sentence. -/
@@ -152,71 +121,14 @@ theorem all_negExt_eq (P : Atom → W → Bool) (x : Finset Atom) :
   split_ifs <;> simp_all
 
 -- ============================================================================
--- Section 3: Sufficient Truth and Addressing
+-- Section 2: The Effect of `all`
 -- ============================================================================
-
-/-- Sufficient Truth: a sentence S is "true enough" at world w relative to
-issue I (modeled as a QUD) iff there is a world w' that is I-equivalent to w
-where S is literally true.
-
-This weakens the standard maxim of quality: a speaker need not assert
-something literally true, only something equivalent to something true
-for current purposes. -/
-def sufficientlyTrue (q : QUD W) (S : SentenceTV W) (w : W) : Prop :=
-  ∃ w', q.sameAnswer w w' = true ∧ S w' = .true
-
-/-- Literal truth implies sufficient truth (for any issue). -/
-theorem literal_imp_sufficient (q : QUD W) (S : SentenceTV W) (w : W)
-    (h : S w = .true) : sufficientlyTrue q S w :=
-  ⟨w, q.refl w, h⟩
-
-/-- Addressing an Issue: S may be used to address issue I only if no
-cell of I overlaps with both the positive and the negative extension of S.
-
-If a cell contains both true-worlds and false-worlds, then the distinction
-between S being true and S being false is relevant to the issue, and S
-cannot be used loosely. Gap-worlds are fine — they are "hushed up." -/
-def addressesIssue (q : QUD W) (S : SentenceTV W) : Prop :=
-  ¬∃ w₁ w₂, q.sameAnswer w₁ w₂ = true ∧ S w₁ = .true ∧ S w₂ = .false
-
-/-- A sentence may be used at w iff: (1) S is not false at w,
-(2) S is sufficiently true at w, and (3) S addresses the issue. -/
-def usable (q : QUD W) (S : SentenceTV W) (w : W) : Prop :=
-  S w ≠ .false ∧ sufficientlyTrue q S w ∧ addressesIssue q S
-
--- ============================================================================
--- Section 4: The Effect of `all`
--- ============================================================================
-
-/-- A sentence is bivalent if it has no extension gap. -/
-def isBivalent (S : SentenceTV W) : Prop :=
-  ∀ w, S w = .true ∨ S w = .false
 
 omit [DecidableEq Atom] in
 /-- `all`-sentences are bivalent. -/
 theorem all_bivalent (P : Atom → W → Bool) (x : Finset Atom) :
     isBivalent (allPluralTV P x) := by
   intro w; simp only [allPluralTV]; split_ifs <;> simp
-
-/-- For bivalent sentences, Sufficient Truth at a gap-world is vacuous
-(there are no gap-worlds). -/
-theorem bivalent_no_gap_sufficient (q : QUD W) (S : SentenceTV W) (hbiv : isBivalent S)
-    (w : W) :
-    sufficientlyTrue q S w → S w = .true ∨ S w = .false :=
-  λ _ => hbiv w
-
-/-- For bivalent sentences, usability reduces to literal truth + addressing.
-A bivalent sentence is usable at w iff it is literally true AND it addresses
-the issue. Sufficient Truth adds nothing because there are no gap-worlds
-where it could weaken the requirement. -/
-theorem bivalent_usable_iff_true_and_addresses (q : QUD W) (S : SentenceTV W)
-    (hbiv : isBivalent S) (w : W) :
-    usable q S w ↔ S w = .true ∧ addressesIssue q S := by
-  constructor
-  · intro ⟨hNotFalse, _, hAddr⟩
-    exact ⟨by cases hbiv w with | inl h => exact h | inr h => exact absurd h hNotFalse, hAddr⟩
-  · intro ⟨hTrue, hAddr⟩
-    exact ⟨by simp [hTrue], literal_imp_sufficient q S w hTrue, hAddr⟩
 
 omit [DecidableEq Atom] in
 /-- `all` prevents non-maximal use: if an `all`-sentence is usable at w,
@@ -245,140 +157,28 @@ theorem all_exceptions_unmentionable (q : QUD W) (P : Atom → W → Bool)
   exact this a ha
 
 -- ============================================================================
--- Section 5: Communicated Content
+-- Section 3: Gap Enables Non-Maximal Use
 -- ============================================================================
 
-/-- The communicated content of S relative to issue I: the set of worlds
-the hearer considers possible after hearing S.
-
-This is the union of all cells of I that overlap with the positive
-extension of S. Equivalently, the set of worlds that are I-equivalent
-to some world where S is literally true.
-
-The hearer infers not that S is literally true, but that the actual world
-is indistinguishable (relative to current purposes) from one where S is
-literally true. For bivalent sentences that address the issue, communicated
-content collapses to literal truth (no pragmatic weakening possible). -/
-def communicatedContent (q : QUD W) (S : SentenceTV W) : Set W :=
-  {w | sufficientlyTrue q S w}
-
-/-- Literal truth is always communicated. -/
-theorem posExt_subset_communicated (q : QUD W) (S : SentenceTV W) :
-    posExt S ⊆ communicatedContent q S :=
-  λ _ hw => literal_imp_sufficient q S _ hw
-
-/-- For bivalent sentences that address the issue, communicated content
-equals the positive extension — no pragmatic weakening is possible.
-
-If S is bivalent, every world is either true or false. If a false world
-were in the communicated content, there would be a true world in the same
-cell, contradicting Addressing. So only true worlds are communicated. -/
-theorem bivalent_communicated_eq_posExt (q : QUD W) (S : SentenceTV W)
-    (hbiv : isBivalent S) (hAddr : addressesIssue q S) :
-    communicatedContent q S = posExt S := by
-  ext w
-  constructor
-  · intro ⟨w', hEq, hTrue⟩
-    cases hbiv w with
-    | inl h => exact h
-    | inr hFalse =>
-      have hSymm : q.sameAnswer w' w = true := by rw [q.symm]; exact hEq
-      exact absurd ⟨w', w, hSymm, hTrue, hFalse⟩ hAddr
-  · exact literal_imp_sufficient q S w
-
--- ============================================================================
--- Section 6: Bridge to Križ & Spector 2021 (Distributivity.lean)
--- ============================================================================
-
-/-! For bivalent sentences, Addressing an Issue is equivalent to the truth
-predicate being strongly relevant to the QUD. This connects Križ 2016's
-pragmatic mechanism to Križ & Spector 2021's strong relevance filtering. -/
-
-section Bridge
-
-variable [Fintype W] [DecidableEq W]
-
-/-- Extract the Bool truth predicate from a bivalent sentence. -/
-def bivalentPred (S : SentenceTV W) : BProp W :=
-  λ w => S w == .true
-
-omit [DecidableEq Atom] [Fintype W] [DecidableEq W] in
-/-- For bivalent sentences, Addressing ↔ strong relevance of the truth predicate.
-
-The Addressing condition says no cell has both true and false worlds.
-Strong relevance says the truth predicate is constant on each cell.
-For bivalent sentences these are equivalent: if the predicate varies
-within a cell, one world must be true and the other false (there is
-no gap to break the dichotomy). -/
-theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : SentenceTV W)
-    (hbiv : isBivalent S) :
-    addressesIssue q S ↔ isStronglyRelevantProp q (bivalentPred S) := by
-  constructor
-  · -- Addressing → strong relevance
-    intro hAddr w₁ w₂ hEquiv
-    by_contra hNeq
-    simp only [bivalentPred] at hNeq
-    -- w₁ and w₂ have different truth values, both bivalent
-    cases hbiv w₁ with
-    | inl h₁ =>
-      cases hbiv w₂ with
-      | inl h₂ => exact hNeq (by rw [h₁, h₂])
-      | inr h₂ => exact hAddr ⟨w₁, w₂, hEquiv, h₁, h₂⟩
-    | inr h₁ =>
-      cases hbiv w₂ with
-      | inl h₂ =>
-        have hEquiv' := q.symm w₁ w₂ ▸ hEquiv
-        exact hAddr ⟨w₂, w₁, hEquiv', h₂, h₁⟩
-      | inr h₂ => exact hNeq (by rw [h₁, h₂])
-  · -- Strong relevance → Addressing
-    intro hSR ⟨w₁, w₂, hEquiv, hTrue, hFalse⟩
-    have := hSR w₁ w₂ hEquiv
-    simp only [bivalentPred] at this
-    rw [hTrue, hFalse] at this
-    exact absurd this (by decide)
-
-omit [DecidableEq Atom] [Fintype W] [DecidableEq W] in
-/-- Corollary: for `all`-sentences, Addressing ↔ `allSatisfy` is strongly
-relevant to the QUD. This connects directly to `nonMaximality_from_coarse_qud`
-in Distributivity.lean: when the QUD groups an all-true world with a
-not-all-true world, the `all`-sentence fails to address the issue,
-so `all` cannot be used non-maximally. -/
-theorem all_addressing_iff_relevant (q : QUD W) (P : Atom → W → Bool)
-    (x : Finset Atom) :
-    addressesIssue q (allPluralTV P x) ↔
-    isStronglyRelevantProp q (allSatisfy P x) := by
-  rw [bivalent_addressing_iff_stronglyRelevant q _ (all_bivalent P x)]
-  constructor <;> intro h w₁ w₂ hEquiv
-  · have := h w₁ w₂ hEquiv
-    simp only [bivalentPred, allPluralTV] at this
-    split_ifs at this with h₁ h₂
-    · simp_all
-    · exact absurd this (by decide)
-    · exact absurd this (by decide)
-    · simp_all
-  · have := h w₁ w₂ hEquiv
-    simp only [bivalentPred, allPluralTV]
-    congr 1; split_ifs with h₁ h₂ <;> (first | rfl | simp_all)
-
-omit [DecidableEq Atom] [Fintype W] [DecidableEq W] in
+omit [DecidableEq Atom] in
 /-- The gap enables non-maximal use: if the bare plural has a gap at w
 and w's cell contains a positive-extension world, then the bare plural
 is usable at w (assuming addressing is satisfied). This is the mechanism
 Križ 2016 identifies for non-maximality: gap-worlds can be "true enough"
-without being literally true. -/
-theorem gap_enables_nonmax (q : QUD W) (P : Atom → W → Bool) (x : Finset Atom)
+without being literally true.
+
+This is an instance of the general `Semantics.Homogeneity.gap_enables_nonmax`. -/
+theorem plural_gap_enables_nonmax (q : QUD W) (P : Atom → W → Bool) (x : Finset Atom)
     (w w' : W)
     (hGap : barePluralTV P x w = .gap)
     (hEquiv : q.sameAnswer w w' = true)
     (hTrue : barePluralTV P x w' = .true)
     (hAddr : addressesIssue q (barePluralTV P x)) :
-    usable q (barePluralTV P x) w := by
-  refine ⟨by simp [hGap], ⟨w', hEquiv, hTrue⟩, hAddr⟩
-
-end Bridge
+    usable q (barePluralTV P x) w :=
+  Semantics.Homogeneity.gap_enables_nonmax q (barePluralTV P x) w w' hGap hEquiv hTrue hAddr
 
 -- ============================================================================
--- Section 7: Finite Model
+-- Section 4: Finite Model
 -- ============================================================================
 
 /-! A concrete 4-world model demonstrates the theory's predictions end-to-end.
@@ -533,7 +333,7 @@ theorem fine_does_not_communicate_gap :
 end FiniteModel
 
 -- ============================================================================
--- Section 8: Connection to Empirical Data (NonMaximality.lean)
+-- Section 5: Connection to Empirical Data (NonMaximality.lean)
 -- ============================================================================
 
 /-! The finite model captures the same pattern as the theory-neutral data
@@ -568,7 +368,7 @@ theorem coarse_issue_irrelevant :
     switchesNonMaximality.nonMaximalContext.allSomeDistinctionRelevant = false := rfl
 
 -- ============================================================================
--- Section 9: Connection to Homogeneity Data (Homogeneity.lean)
+-- Section 6: Connection to Homogeneity Data (Homogeneity.lean)
 -- ============================================================================
 
 /-! Bridge to the theory-neutral homogeneity data in `Homogeneity.lean`.
@@ -607,7 +407,7 @@ theorem switches_all_on_clearly_true :
     switchesExample.positiveInAll = .clearlyTrue := rfl
 
 -- ============================================================================
--- Section 10: Connection to Supervaluation Framework
+-- Section 7: Connection to Supervaluation Framework
 -- ============================================================================
 
 /-! Plural predication is an instance of supervaluation (@cite{fine-1975}).
