@@ -407,40 +407,7 @@ theorem en_iff_ambidirectional :
 -- § 6: Cross-Linguistic EN Prevalence (@cite{jin-koenig-2021})
 -- ============================================================================
 
-/-- Cross-linguistic survey data on EN prevalence.
-    @cite{jin-koenig-2021} surveyed 722 languages; EN was attested in 74
-    (across 37 genera, every continental area except South America).
-    BEFORE (UNTIL) is the most widespread trigger, attested in 50 of
-    the 74 EN-attesting languages. -/
-structure ENSurvey where
-  /-- Total languages surveyed -/
-  totalSurveyed : Nat
-  /-- Languages where EN was attested (any trigger) -/
-  languagesWithEN : Nat
-  /-- Languages with EN in BEFORE-clauses specifically -/
-  beforeTriggerCount : Nat
-  /-- Languages with EN in FEAR-clauses specifically -/
-  fearTriggerCount : Nat
-  deriving Repr
-
-def jinKoenig2021 : ENSurvey where
-  totalSurveyed := 722
-  languagesWithEN := 74
-  beforeTriggerCount := 50
-  fearTriggerCount := 39
-
-/-- EN is attested in a substantial minority of surveyed languages. -/
-theorem en_attested_widely :
-    jinKoenig2021.languagesWithEN ≥ 74 := by decide
-
-/-- BEFORE is the most common EN trigger. -/
-theorem before_most_common :
-    jinKoenig2021.beforeTriggerCount > jinKoenig2021.fearTriggerCount :=
-  by decide
-
-/-- BEFORE triggers occur in most EN-attesting languages. -/
-theorem before_trigger_majority :
-    jinKoenig2021.beforeTriggerCount * 2 > jinKoenig2021.languagesWithEN :=
-  by decide
+/-! EN survey data (722 languages, 74 with EN, 37 genera) is defined
+    in `Phenomena.Negation.Typology.enSurvey` to avoid duplication. -/
 
 end Phenomena.TemporalConnectives.NegationData

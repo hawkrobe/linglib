@@ -142,7 +142,7 @@ def japanese : NounCategorizationSystem :=
   , isObligatory := true
   , hasUnmarkedDefault := true  -- つ tsu is default
   , preferredSemantics := semanticsFromClassifiers Fragments.Japanese.Classifiers.allClassifiers
-  , source := "Aikhenvald (2000), §4; Downing (1996)" }
+  , source := "@cite{aikhenvald-2000}; @cite{downing-1996}" }
 
 -- ============================================================================
 -- §4: Per-language verification

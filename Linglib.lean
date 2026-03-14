@@ -549,6 +549,7 @@ import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Italian.Modals
 import Linglib.Fragments.Italian.AdjAgreement
 import Linglib.Fragments.Italian.PolarityItems
+import Linglib.Fragments.Italian.NumberGender
 import Linglib.Fragments.Spanish.Binominals
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
@@ -576,6 +577,21 @@ import Linglib.Fragments.Malagasy.Relativization
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Welsh.Relativization
+import Linglib.Fragments.Russian.PolarityItems
+import Linglib.Fragments.German.PolarityItems
+import Linglib.Fragments.Japanese.PolarityItems
+import Linglib.Fragments.Korean.PolarityItems
+import Linglib.Fragments.Mandarin.PolarityItems
+import Linglib.Fragments.Turkish.PolarityItems
+import Linglib.Fragments.Hindi.PolarityItems
+import Linglib.Fragments.Finnish.PolarityItems
+import Linglib.Fragments.Hungarian.PolarityItems
+import Linglib.Fragments.Georgian.PolarityItems
+import Linglib.Fragments.Quechua.PolarityItems
+import Linglib.Fragments.Yoruba.PolarityItems
+import Linglib.Fragments.Thai.PolarityItems
+import Linglib.Fragments.Tagalog.PolarityItems
+import Linglib.Fragments.Swahili.PolarityItems
 -- Phenomena
 import Linglib.Phenomena.Causation.Studies.SpalekMcNally.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
@@ -1345,6 +1361,7 @@ import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Composition.Glue
 import Linglib.Theories.Semantics.Composition.WriterMonad
+import Linglib.Theories.Semantics.Composition.Applicative
 import Linglib.Theories.Semantics.Composition.Effects
 import Linglib.Theories.Semantics.Montague.Conjunction
 import Linglib.Theories.Semantics.Montague.Derivation

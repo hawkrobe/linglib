@@ -1,8 +1,10 @@
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Theories.Morphology.DM.CategorizerSemantics
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns
+import Linglib.Fragments.Italian.NumberGender
 
 /-!
 # Adamson 2024: Gender Assignment Is Local @cite{adamson-2024}
@@ -92,6 +94,7 @@ theorem glh_targets_nominal_categorizer :
     CatHead.v_plain.phi.gender.isNone = true ∧
     CatHead.a_plain.phi.gender.isNone = true := ⟨rfl, rfl, rfl⟩
 
+
 -- ============================================================================
 -- § 2: Teop — Possessee Gender (@cite{adamson-2024} §3.1)
 -- ============================================================================
@@ -100,10 +103,8 @@ theorem glh_targets_nominal_categorizer :
     When a body-part root combines with this n, the {D} feature creates
     a specifier position for an iPossessor DP. The u[+ANIM] feature
     results in gender I (animate article *a*). -/
-def teopBodyPartN : CatHead where
-  cat := .n
-  phi := { gender := some ⟨.u, ⟨.anim, .pos⟩⟩ }
-  selectsD := true
+def teopBodyPartN : CatHead :=
+  .iPoss { gender := some ⟨.u, ⟨.anim, .pos⟩⟩ }
 
 /-- Teop alienator n: plain n with no gender feature and no iPossessor. -/
 def teopAlienatorN : CatHead := CatHead.n_plain
@@ -188,6 +189,41 @@ theorem teop_fragment_bridge :
     teopGenderFromN teopBodyPartN = Fragments.Teop.iPossessedGender Fragments.Teop.bina ∧
     teopGenderFromN teopAlienatorN = Fragments.Teop.bina.gender := ⟨rfl, rfl⟩
 
+/-! ### Five Teop Predictions (@cite{adamson-2024} §3.1)
+
+The two-n analysis generates five testable predictions (p.234–235): -/
+
+/-- Prediction 1: aPossessed body parts → gender II.
+    When a body-part root combines with the alienator n (aPossession),
+    the result is gender II, not gender I. -/
+theorem teop_prediction_apossessed_gII :
+    teopGenderFromN teopAlienatorN = .gII := rfl
+
+/-- Prediction 2: the iPossessor's own gender is immaterial.
+    The body-part n bears u[+ANIM] regardless of the possessor's features.
+    This is *possessee* gender (determined by WHETHER iPossessed), not
+    *inherited* gender (determined by possessor's gender value). -/
+theorem teop_prediction_possessor_gender_immaterial :
+    teopBodyPartN.phi.gender = some ⟨.u, ⟨.anim, .pos⟩⟩ := rfl
+
+/-- Prediction 3: the alienator n has no gender feature and no {D}.
+    aPossession is mediated by PossP, not Spec,nP. -/
+theorem teop_prediction_alienator_properties :
+    teopAlienatorN.phi.gender.isNone = true ∧
+    teopAlienatorN.selectsD = false := ⟨rfl, rfl⟩
+
+/-- Prediction 4: any noun combining with n_{body-part{D}} gets gender I,
+    not just canonical body parts. Relational nouns with the same structural
+    profile (orientation terms, place nouns) also show the alternation. -/
+theorem teop_prediction_relational_nouns :
+    teopGenderFromN teopBodyPartN = .gI := rfl
+
+/-- Prediction 5: kinship nouns use the alienator n (aPossession),
+    so they are always gender II regardless of possession. -/
+theorem teop_prediction_kinship_alienator :
+    teopGenderFromN teopAlienatorN = .gII ∧
+    teopAlienatorN.selectsD = false := ⟨rfl, rfl⟩
+
 -- ============================================================================
 -- § 3: Jarawara — Possessee Gender (@cite{adamson-2024} §3.2)
 -- ============================================================================
@@ -198,31 +234,60 @@ def jarawaraGenderFromN (nh : CatHead) : Bool :=  -- true = masculine
   | some gf => gf.val.dim == .masc
   | none    => false  -- feminine (unmarked)
 
-/-- iPossessable roots in Jarawara are licensed only by plain n (feminine). -/
+/-- The n head for Jarawara iPossessable nouns: has {D} (licenses iPossessor
+    in Spec,nP) but no gender feature (feminine = unmarked in the [±MASC]
+    system). This is distinct from `CatHead.n_plain` (which has selectsD = false). -/
+def jarawaraIPossN : CatHead := .iPoss
+
+/-- iPossessable roots in Jarawara are feminine: their n has no marked gender. -/
 theorem jarawara_ipossessable_always_fem :
-    jarawaraGenderFromN CatHead.n_plain = false := rfl
+    jarawaraGenderFromN jarawaraIPossN = false := rfl
+
+/-- iPossessable n in Jarawara has {D} — by construction via `CatHead.iPoss`. -/
+theorem jarawara_ipossessable_selectsD :
+    jarawaraIPossN.selectsD = true := rfl
 
 /-- Masculine nouns in Jarawara bear [+MASC] on n. -/
 theorem jarawara_masc_has_feature :
     jarawaraGenderFromN CatHead.n_uMasc = true := rfl
 
-/-! ### Jarawara impoverishment -/
+/-! ### Jarawara impoverishment (@cite{adamson-2024} ex. 63)
 
-/-- The Jarawara impoverishment rule: [MASC] → ∅ in marked contexts. -/
-def jarawaraImpoverishmentRule : ImpoverishmentRule where
+Two separate impoverishment rules delete [MASC] in different contexts:
+- [MASC] → ∅ / [PL]
+- [MASC] → ∅ / [PARTICIPANT]
+-/
+
+/-- Impoverishment rule 1: [MASC] → ∅ / [PL]. -/
+def jarawaraImpoverishPL : ImpoverishmentRule where
   targetGender := ⟨.masc, .pos⟩
-  context := "[PL] or [PARTICIPANT]"
+  context := .plural
 
-/-- Impoverishment deletes [MASC], yielding feminine (unmarked) agreement. -/
-theorem jarawara_impoverishment_yields_fem :
+/-- Impoverishment rule 2: [MASC] → ∅ / [PARTICIPANT]. -/
+def jarawaraImpoverishParticipant : ImpoverishmentRule where
+  targetGender := ⟨.masc, .pos⟩
+  context := .participant
+
+/-- Both rules from ex. 63. -/
+def jarawaraImpoverishmentRules : List ImpoverishmentRule :=
+  [jarawaraImpoverishPL, jarawaraImpoverishParticipant]
+
+/-- Impoverishment deletes [MASC] when [PL] is active. -/
+theorem jarawara_impoverishment_pl :
     let mascPhi : PhiBundle := { gender := some ⟨.u, ⟨.masc, .pos⟩⟩ }
-    let result := jarawaraImpoverishmentRule.apply mascPhi true
+    let result := jarawaraImpoverishPL.apply mascPhi true
+    result.gender = none := rfl
+
+/-- Impoverishment deletes [MASC] when [PARTICIPANT] is active. -/
+theorem jarawara_impoverishment_participant :
+    let mascPhi : PhiBundle := { gender := some ⟨.u, ⟨.masc, .pos⟩⟩ }
+    let result := jarawaraImpoverishParticipant.apply mascPhi true
     result.gender = none := rfl
 
 /-- Impoverishment does not apply when context is inactive. -/
 theorem jarawara_no_impoverishment_when_inactive :
     let mascPhi : PhiBundle := { gender := some ⟨.u, ⟨.masc, .pos⟩⟩ }
-    let result := jarawaraImpoverishmentRule.apply mascPhi false
+    let result := jarawaraImpoverishPL.apply mascPhi false
     result.gender = some ⟨.u, ⟨.masc, .pos⟩⟩ := rfl
 
 /-! ### Bridge to Fragment Data
@@ -261,11 +326,12 @@ structure InheritedGenderNoun where
   hasUnvaluedGender : Bool := true
   deriving DecidableEq, BEq, Repr
 
-/-- The n head for an inherited-gender noun: has {D} and unvalued gender. -/
-def inheritedGenderN : CatHead where
-  cat := .n
-  phi := { gender := some ⟨.u, ⟨.anim, .pos⟩⟩ }  -- unvalued; value from possessor
-  selectsD := true
+/-- The n head for an inherited-gender noun: has {D} and an unvalued
+    gender probe. The probe is dimension-agnostic — it has no pre-specified
+    dimension or polarity. Its value (including dimension) comes entirely
+    from the iPossessor DP via Probe-Goal Agree (@cite{adamson-2024} (90)).
+    We represent this as `phi := {}` (no valued gender on n itself). -/
+def inheritedGenderN : CatHead := .iPoss
 
 /-- Yanyuwa: seven gender classes (Kirton 1971a,b).
 
@@ -274,9 +340,13 @@ def inheritedGenderN : CatHead where
     prefixes expressing the possessor's φ-features. -/
 inductive YanyuwaGender where
   | female | male | feminine | masculine | food | arboreal | abstract
-  deriving DecidableEq, BEq, Repr, Fintype
+  deriving DecidableEq, BEq, Repr
 
-theorem yanyuwa_seven_genders : Fintype.card YanyuwaGender = 7 := by native_decide
+/-- All seven Yanyuwa gender values. -/
+def YanyuwaGender.all : List YanyuwaGender :=
+  [.female, .male, .feminine, .masculine, .food, .arboreal, .abstract]
+
+theorem yanyuwa_seven_genders : YanyuwaGender.all.length = 7 := rfl
 
 /-- Coastal Marind: four genders (Olsson 2017).
 
@@ -285,10 +355,13 @@ theorem yanyuwa_seven_genders : Fintype.card YanyuwaGender = 7 := by native_deci
     IV (other inanimates, e.g., *himbu* 'feathered headdress'). -/
 inductive CoastalMarindGender where
   | gI | gII | gIII | gIV
-  deriving DecidableEq, BEq, Repr, Fintype
+  deriving DecidableEq, BEq, Repr
+
+/-- All four Coastal Marind gender values. -/
+def CoastalMarindGender.all : List CoastalMarindGender := [.gI, .gII, .gIII, .gIV]
 
 theorem coastalMarind_four_genders :
-    Fintype.card CoastalMarindGender = 4 := by native_decide
+    CoastalMarindGender.all.length = 4 := rfl
 
 /-- Coastal Marind inherited-gender nouns (Olsson 2017:187). -/
 def coastalMarindInheritingNouns : List InheritedGenderNoun :=
@@ -298,13 +371,13 @@ def coastalMarindInheritingNouns : List InheritedGenderNoun :=
 /-- Both inheriting nouns have {D} and unvalued gender — prerequisites
     for Probe-Goal agreement with the iPossessor. -/
 theorem coastalMarind_inheriting_prerequisites :
-    coastalMarindInheritingNouns.all (·.selectsD && ·.hasUnvaluedGender) = true := by
+    coastalMarindInheritingNouns.all (λ n => n.selectsD && n.hasUnvaluedGender) = true := by
   native_decide
 
 /-- Inherited gender is consistent with the GLH: the possessor whose
-    gender is inherited is an iPossessor (nP-internal), not an aPossessor. -/
+    gender is inherited occupies Spec,nP (nP-internal). -/
 theorem inherited_gender_glh_consistent :
-    PossessionType.inalienable.canAffectGender = true := rfl
+    genderLocalityHypothesis PossessionGenderMechanism.inheritedGender.possessorPosition = true := rfl
 
 -- ============================================================================
 -- § 5: n-Type System ↔ Surface Gender Counts
@@ -346,17 +419,188 @@ theorem teop_two_gender_system :
     classes.eraseDups.length = 2 := by native_decide
 
 -- ============================================================================
--- § 6: Full Argumentation Chain
+-- § 6: Regression: iPossessable n-heads must have selectsD
 -- ============================================================================
 
-/-- The full argumentation chain for Teop:
-    1. Body-part n_{body-part{D}} has {D} → iPossessor in Spec,nP
-    2. Spec,nP is within nP → GLH allows gender interaction
-    3. n_{body-part{D}} has u[+ANIM] → gender I
-    4. D agrees with n → article *a* is inserted -/
-theorem teop_argumentation_chain :
-    teopBodyPartN.selectsD = true ∧
-    genderLocalityHypothesis .specN = true ∧
-    teopGenderFromN teopBodyPartN = .gI := ⟨rfl, rfl, rfl⟩
+/-! Every n-head used for inalienable possession must have `selectsD = true`.
+Without this, the n-head cannot license an iPossessor in Spec,nP, and the
+semantic pipeline (`catHeadSemanticType`) will compute sortal instead of
+relational. This invariant was violated before 0.229.208 (Jarawara used
+`CatHead.n_plain` which has selectsD = false). -/
+
+/-- All iPossessable n-heads across all four languages have selectsD = true.
+    Regression test: adding a new iPossessable n-head? Add it to the
+    disjunction here. If it fails, the n-head is missing {D}. -/
+theorem ipossessable_n_heads_have_selectsD
+    (nh : CatHead) (h : nh = teopBodyPartN ∨ nh = jarawaraIPossN ∨ nh = inheritedGenderN) :
+    nh.selectsD = true := by
+  rcases h with rfl | rfl | rfl <;> rfl
+
+-- ============================================================================
+-- § 7: Morphosyntax → Semantics Bridge (@cite{adamson-2024} §3.1 + @cite{barker-2011})
+-- ============================================================================
+
+/-! ### Two derivation pipelines from a single n-head
+
+A CatHead determines two things in parallel:
+
+```
+           ┌──→ gender ──→ article form   (PF pipeline)
+CatHead ──┤
+           └──→ NSemanticType ──→ can take possessor?   (semantic pipeline)
+```
+
+The PF pipeline genuinely threads: `teopGenderFromN` computes the gender,
+which feeds into `vocabularyInsert` as the article context. The semantic
+pipeline threads similarly: `catHeadSemanticType` computes the semantic
+type, which feeds into `.toBarker.canTakePossessor`.
+
+The non-trivial claim is that these two pipelines produce correlated
+outputs: gender I co-occurs with relational semantics (possessor slot),
+and gender II co-occurs with non-relational (no possessor slot). The
+correlation is structural — both paths read `selectsD` from the same
+n-head. -/
+
+open Morphology.DM.CategorizerSemantics
+
+/-- The PF derivation pipeline: n-head → gender → article.
+    Gender is an intermediate value computed from φ-features, then fed
+    into VI as part of the article context. -/
+def teopPFDerive (nh : CatHead) (pl proprial : Bool := false) : Option String :=
+  let gender := teopGenderFromN nh
+  vocabularyInsert teopArticleRules ⟨gender, pl, proprial⟩ ()
+
+/-- The semantic derivation pipeline: n-head → semantic type → possessor capability.
+    The semantic type is an intermediate value, fed into Barker's type classification
+    to determine whether the noun can directly take a possessor.
+    Generic over any CatHead — not Teop-specific despite the examples below. -/
+def canTakePossessorSem (nh : CatHead) (mediatesAPoss : Bool := false) : Bool :=
+  let semType := catHeadSemanticType nh (mediatesAPossession := mediatesAPoss)
+  semType.toBarker.canTakePossessor
+
+-- PF pipeline: body-part n → gender I → article *a*
+theorem pf_body_part : teopPFDerive teopBodyPartN = some "a" := by native_decide
+-- PF pipeline: alienator n → gender II → article *o*
+theorem pf_alienator : teopPFDerive teopAlienatorN = some "o" := by native_decide
+
+-- Semantic pipeline: body-part n (selectsD) → relational → can take possessor
+theorem sem_body_part : canTakePossessorSem teopBodyPartN = true := rfl
+-- Semantic pipeline: alienator n → alienator type → cannot take possessor
+theorem sem_alienator : canTakePossessorSem teopAlienatorN = false := rfl
+
+/-- The two pipelines produce correlated results: the PF pipeline yields
+    gender I exactly when the semantic pipeline yields possessor capability.
+
+    This is the Adamson–Barker correspondence. The gender alternation
+    (gender I vs II) and the semantic type alternation (relational vs
+    non-relational) are not independent — they are both downstream
+    consequences of the same structural feature (selectsD on n).
+
+    Stated as a Bool identity: "is gender I" = "can take possessor". -/
+theorem pf_semantic_correlation (nh : CatHead)
+    (h : nh = teopBodyPartN ∨ nh = teopAlienatorN) :
+    (teopGenderFromN nh == .gI) = canTakePossessorSem nh := by
+  rcases h with rfl | rfl <;> rfl
+
+/-! ### Jarawara: PF pipeline via manoForm
+
+Jarawara doesn't have articles, but it DOES have a PF pipeline: possessor
+features → impoverishment → MARKED feature check → possessed noun form
+(mano vs mani). This is the `manoForm` function from `Fragments.Jarawara`.
+
+The semantic pipeline parallels Teop: the iPossessable n has {D} →
+relational semantic type → can take possessor. The gender is feminine
+because n has no marked gender feature, not because it lacks {D}. -/
+
+/-- Jarawara PF pipeline: possessor features → impoverishment →
+    MARKED feature check → possessed form (mano/mani).
+    The possessor's features thread through each stage. -/
+def jarawaraPFDerive (poss : Fragments.Jarawara.Possessor) : Fragments.Jarawara.PossessedForm :=
+  Fragments.Jarawara.manoForm poss
+
+-- PF pipeline: 1SG possessor → [PARTICIPANT] is MARKED → mano
+theorem jarawara_pf_1sg : jarawaraPFDerive ⟨.first, .sg, none⟩ = .mascForm := rfl
+-- PF pipeline: 3.M.SG → [MASC] survives → mano
+theorem jarawara_pf_3msg : jarawaraPFDerive ⟨.third, .sg, some .masc⟩ = .mascForm := rfl
+-- PF pipeline: 3.M.PL → [MASC] impoverished by [PL] → mani
+theorem jarawara_pf_3mpl : jarawaraPFDerive ⟨.third, .pl, some .masc⟩ = .femForm := rfl
+
+/-- Jarawara iPossessable n has {D} → relational semantic type.
+    The n head licenses an iPossessor AND yields relational (π) semantics. -/
+theorem jarawara_ipossessable_is_relational :
+    catHeadSemanticType jarawaraIPossN = .relational := rfl
+
+/-- Jarawara PF–semantic correlation: iPossessable n yields feminine gender
+    (no marked feature) AND relational semantics (has {D}). The correlation
+    shows that Jarawara iPossessable nouns CAN take possessors despite
+    being feminine — femininity reflects the absence of a gender feature,
+    not the absence of a possessor slot. -/
+theorem jarawara_pf_semantic :
+    jarawaraGenderFromN jarawaraIPossN = false ∧
+    canTakePossessorSem jarawaraIPossN = true := ⟨rfl, rfl⟩
+
+/-! ### Inherited gender: the GLH contrast
+
+For Yanyuwa and Coastal Marind, the n-head has {D} → relational semantics.
+The key GLH prediction is a contrast: iPossessors (specN) can affect gender,
+aPossessors (specPoss) cannot. The contrast is captured by the GLH function
+applied to two different positions — not a chain, just two evaluations of
+the same predicate on different inputs. -/
+
+/-- The inherited-gender n head has {D} → relational semantic type.
+    Gender is unvalued on n and comes from the iPossessor via Agree. -/
+theorem inherited_gender_is_relational :
+    catHeadSemanticType inheritedGenderN = .relational := rfl
+
+/-- The GLH contrast: iPossessors can affect gender, aPossessors cannot.
+    This is not a derivation — it's two evaluations of `genderLocalityHypothesis`
+    on the two possessor positions. The function does the work. -/
+theorem glh_contrast :
+    genderLocalityHypothesis PossessionType.inalienable.possessorPosition = true ∧
+    genderLocalityHypothesis PossessionType.alienable.possessorPosition = false := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 8: Italian Low-Number Gender Interaction (@cite{adamson-2024} §5.1)
+-- ============================================================================
+
+/-! ### Beyond possession: number position and gender
+
+@cite{adamson-2024} §5.1 extends the GLH beyond possession: if gender
+features sit on n, then OTHER features on n should also interact with
+gender. Number features on n (low/derivational number) are within nP
+and can interact with gender; number features on Num (high/inflectional)
+are outside nP and cannot.
+
+Standard Italian confirms this: the -a plural class (*braccio* → *braccia*
+'arm → arms') changes gender from masculine to feminine. These are low-number
+plurals (number on n). Regular -i plurals (*libro* → *libri*) preserve
+gender — they involve high number (on Num).
+
+The same function (`genderLocalityHypothesis`) that predicts possession–gender
+interaction in Teop and Jarawara also predicts number–gender interaction in
+Italian. The GLH is a single principle applied to different feature types. -/
+
+open Fragments.Italian.NumberGender
+
+/-- The Italian data confirms the GLH prediction: gender changes in the
+    plural track the number position. Verified over the full noun inventory.
+    The pipeline (`numberGenderPipeline`) composes
+    PluralClass → NumberPosition → NominalPosition → GLH. -/
+theorem italian_fragment_bridge :
+    allNouns.all (fun n =>
+      n.genderChanges == n.pluralClass.canAffectGender) = true := by
+  native_decide
+
+/-- Cross-linguistic convergence: the -a plural class is dominated by
+    body parts (6 of 9). Body parts drive gender interaction in ALL
+    four languages examined:
+    - Teop: body parts switch gender I/II with iPossession
+    - Jarawara: body parts are always iPossessable (feminine)
+    - Yanyuwa/Coastal Marind: body parts inherit possessor's gender
+    - Italian: body parts show the -a plural gender alternation -/
+theorem italian_body_part_dominance :
+    (aPluralNouns.filter (fun n =>
+      ["arm", "finger", "knee", "lip", "bone", "eyebrow"].contains n.gloss)).length = 6 := by
+  native_decide
 
 end Phenomena.Morphology.Studies.Adamson2024

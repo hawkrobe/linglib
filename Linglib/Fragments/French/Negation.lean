@@ -129,4 +129,76 @@ theorem colloquial_contains_pas :
     allExamples.all (fun e => hasSubstr e.negativeColloquial "pas") = true := by
   native_decide
 
+-- ════════════════════════════════════════════════════
+-- Expletive Negation Markers
+-- ════════════════════════════════════════════════════
+
+/-! ## Expletive Negation
+@cite{jin-koenig-2021}
+
+French has a **dedicated** expletive negation marker: the preverbal clitic
+*ne* used alone (without *pas*). This is the grammaticalized form of EN,
+distinct from standard *ne...pas*. In a few low-entrenchment contexts
+(REGRET, FORGET), the full *ne...pas* appears instead.
+
+| Trigger class | EN negator | Entrenchment |
+|---------------|------------|--------------|
+| FEAR          | ne         | high         |
+| BEFORE        | ne         | high         |
+| UNLESS        | ne         | high         |
+| DENY          | ne         | high (requires negation/question) |
+| REGRET        | ne (pas)   | low          |
+| FORGET        | ne pas     | low          |
+| COMPARATIVES  | ne         | high         |
+
+The distinction between *ne* (EN) and *ne...pas* (standard) makes
+French uniquely transparent: the grammaticalization of EN is visible
+in the form of the negator itself.
+-/
+
+/-- An expletive negation marker and its trigger context. -/
+structure ENTriggerNegator where
+  /-- The trigger class label (from @cite{jin-koenig-2021} Table 5) -/
+  triggerClass : String
+  /-- French lexical trigger -/
+  triggerForm : String
+  /-- EN negator form -/
+  enNegatorForm : String
+  /-- Whether the EN is highly entrenched (grammaticalized) -/
+  highEntrenchment : Bool
+  deriving Repr, BEq
+
+/-- *ne* alone is the dedicated EN marker (grammaticalized). -/
+def enMarker : String := neClitic
+
+/-- EN trigger-negator pairings from @cite{jin-koenig-2021}, Table 5
+    and §6.1–6.4. -/
+def enTriggerNegators : List ENTriggerNegator :=
+  [ { triggerClass := "FEAR", triggerForm := "avoir peur"
+    , enNegatorForm := "ne", highEntrenchment := true }
+  , { triggerClass := "AVOID", triggerForm := "éviter"
+    , enNegatorForm := "ne", highEntrenchment := true }
+  , { triggerClass := "BEFORE", triggerForm := "avant que"
+    , enNegatorForm := "ne", highEntrenchment := true }
+  , { triggerClass := "UNLESS", triggerForm := "à moins que"
+    , enNegatorForm := "ne", highEntrenchment := true }
+  , { triggerClass := "DENY", triggerForm := "nier"
+    , enNegatorForm := "ne", highEntrenchment := true }
+  , { triggerClass := "COMPARATIVES", triggerForm := "que (than)"
+    , enNegatorForm := "ne", highEntrenchment := true }
+  , { triggerClass := "REGRET", triggerForm := "regretter"
+    , enNegatorForm := "ne (pas)", highEntrenchment := false }
+  , { triggerClass := "FORGET", triggerForm := "oublier"
+    , enNegatorForm := "ne pas", highEntrenchment := false } ]
+
+/-- High-entrenchment EN uses the dedicated *ne* alone;
+    low-entrenchment EN uses *ne...pas* (the standard negator). -/
+theorem high_entrenchment_uses_ne_alone :
+    (enTriggerNegators.filter (·.highEntrenchment)).all
+      (·.enNegatorForm == "ne") = true := by native_decide
+
+/-- French EN marker = preverbal *ne* = same clitic as in standard
+    *ne...pas*, but without the reinforcer. -/
+theorem en_marker_is_ne_clitic : enMarker = neClitic := rfl
+
 end Fragments.French.Negation

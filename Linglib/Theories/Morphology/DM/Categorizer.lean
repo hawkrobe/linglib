@@ -84,9 +84,9 @@ def Categorizer.toCategory : Categorizer → Cat
 /-- Gender feature dimension. Different languages locate different
     binary features on n (@cite{kramer-2015} Chs 3, 5-7):
 
-    - **FEM**: feminine is the marked value (Amharic, Spanish, Romanian, Hebrew)
-    - **MASC**: masculine is the marked value (Maa, Jarawara)
-    - **ANIM**: animacy is the relevant dimension (Algonquian, Teop, Lealao Chinantec) -/
+    - **FEM**: [±FEM] dimension (Amharic, Spanish, Maa, Dieri, Wari', Lavukaleve)
+    - **MASC**: [±MASC] dimension (Jarawara; @cite{adamson-2024})
+    - **ANIM**: [±ANIM] dimension (Algonquian, Teop, Lealao Chinantec) -/
 inductive GenderDimension where
   | fem   -- [FEM] dimension
   | masc  -- [MASC] dimension
@@ -94,10 +94,14 @@ inductive GenderDimension where
   deriving DecidableEq, BEq, Repr
 
 /-- Polarity of a gender feature value.
-    The binary [±VAL] system from @cite{kramer-2015} Ch 3. -/
+    The binary [±VAL] system from @cite{kramer-2015} Ch 3.
+
+    Note: polarity is about the *feature value* (+/−), not about
+    markedness. In Set 1 languages, u[+FEM] is the arbitrary gender;
+    in Set 2, u[−FEM] is. Neither polarity is inherently "marked." -/
 inductive Polarity where
-  | pos  -- [+VAL]: marked / positive
-  | neg  -- [−VAL]: unmarked / negative
+  | pos  -- [+VAL]: positive polarity
+  | neg  -- [−VAL]: negative polarity
   deriving DecidableEq, BEq, Repr
 
 /-- A gender feature value: a dimension (what kind of feature) combined
@@ -107,7 +111,7 @@ inductive Polarity where
     - `⟨.fem, .pos⟩` = [+FEM] (female, as in Amharic *innat* 'mother')
     - `⟨.fem, .neg⟩` = [−FEM] (male, as in Amharic *abbat* 'father')
     - `⟨.anim, .pos⟩` = [+ANIM] (animate, as in Teop body-part nouns)
-    - `⟨.masc, .pos⟩` = [+MASC] (masculine, as in Maa *ol-ayióní* 'man') -/
+    - `⟨.masc, .pos⟩` = [+MASC] (masculine, as in Jarawara) -/
 structure GenderVal where
   dim : GenderDimension
   pol : Polarity
@@ -126,14 +130,14 @@ inductive Interpretability where
 
 /-- A gender feature annotated for interpretability.
 
-    @cite{kramer-2015} Ch 3 identifies three attested combinations on n
+    @cite{kramer-2015} Ch 3 identifies four attested combinations on n
     (per dimension):
-    - i[+VAL]: natural gender, positive polarity
-    - i[−VAL]: natural gender, negative polarity
-    - u[+VAL]: arbitrary gender, positive polarity
+    - i[+VAL]: natural gender, positive polarity (e.g. female)
+    - i[−VAL]: natural gender, negative polarity (e.g. male)
+    - u[+VAL]: arbitrary gender, positive polarity (Set 1: Amharic, Spanish)
+    - u[−VAL]: arbitrary gender, negative polarity (Set 2: Maa, Wari')
 
-    The fourth combination u[−VAL] is the default/unmarked case —
-    realized as plain n with no gender feature. -/
+    A fifth option is plain n with no gender feature at all (the default). -/
 structure GenderFeature where
   interp : Interpretability
   val : GenderVal
@@ -190,6 +194,23 @@ structure CatHead where
 /-- The syntactic category of a phi-enriched categorizer head. -/
 def CatHead.toCategory (ch : CatHead) : Cat :=
   ch.cat.toCategory
+
+/-- An iPossessable n head: has {D} (selectsD = true) by construction.
+    Use this for any n that licenses an iPossessor in Spec,nP.
+    The phi-bundle determines gender; selectsD is not a free parameter.
+
+    Examples:
+    - Teop body-part n: `.iPoss { gender := some ⟨.u, ⟨.anim, .pos⟩⟩ }`
+    - Jarawara iPossessable n: `.iPoss` (no gender feature → feminine)
+    - Inherited-gender n: `.iPoss` (gender comes from iPossessor via Agree) -/
+def CatHead.iPoss (phi : PhiBundle := {}) : CatHead where
+  cat := .n
+  phi := phi
+  selectsD := true
+
+/-- iPossessable n-heads always have selectsD = true, by construction. -/
+theorem CatHead.iPoss_selectsD (phi : PhiBundle) :
+    (CatHead.iPoss phi).selectsD = true := rfl
 
 -- ============================================================================
 -- § 1c: Kramer's Four Types of n (@cite{kramer-2015} Ch 3)
@@ -263,8 +284,11 @@ def CatHead.n_uAnim : CatHead where
   cat := .n
   phi := { gender := some ⟨.u, ⟨.anim, .pos⟩⟩ }
 
-/-! ### MASC dimension (Maa, Jarawara; @cite{kramer-2015} Ch 6;
-    @cite{adamson-2024} §3.2) -/
+/-! ### MASC dimension (Jarawara; @cite{adamson-2024} §3.2)
+
+    Note: Maa uses the FEM dimension (Set 2: u[−FEM]), not the MASC
+    dimension. The MASC dimension is used only by Jarawara in our
+    current coverage (@cite{adamson-2024} §3.2). -/
 
 /-- n with uninterpretable [+MASC]: masculine arbitrary gender.
     In Jarawara, masculine is the marked gender;

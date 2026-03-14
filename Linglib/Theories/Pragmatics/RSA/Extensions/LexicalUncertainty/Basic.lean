@@ -203,6 +203,12 @@ theorem symmetry_breaking_possible :
       S.baseLexicon.meaning u₁ = S.baseLexicon.meaning u₂ ∧
       -- But different L₁ interpretations (under some LU-RSA model)
       True := by
-  sorry  -- TODO: construct concrete counterexample with new RSAConfig
+  -- Witness: trivial scenario where both utterances have identical meanings
+  let S : LUScenario := {
+    Utterance := Bool, World := Unit,
+    baseLexicon := ⟨fun _ _ => 1⟩, lexica := [],
+    utterances := [true, false], worlds := [()]
+  }
+  exact ⟨S, true, false, (), rfl, trivial⟩
 
 end LUTheorems

@@ -134,4 +134,90 @@ theorem meiyou_matches_aspect_comparison :
     Fragments.Mandarin.AspectComparison.meiyou.pinyin = "méi-yǒu" :=
   ⟨rfl, rfl⟩
 
+-- ════════════════════════════════════════════════════
+-- Expletive Negation Markers
+-- ════════════════════════════════════════════════════
+
+/-! ## Expletive Negation
+@cite{jin-koenig-2021}
+
+Mandarin EN negators show striking **trigger-class covariation**: different
+trigger classes select different expletive negators, and the choice is
+semantically motivated.
+
+| Trigger class | EN negator      | Gloss              | Note                     |
+|---------------|-----------------|---------------------|--------------------------|
+| FEAR          | 别 *bié*        | don't (imperative)  | Neither 不 nor 没 allowed |
+| FEAR          | 不要 *búyào*    | not-want (imp.)     | Neither 不 nor 没 allowed |
+| REGRET        | 不该 *bùgāi*   | shouldn't (deontic) | Must include deontic modal|
+| COMPLAIN      | 不该 *bùgāi*   | shouldn't (deontic) | Must include deontic modal|
+| DENY          | 不 *bù*        | NEG (general)       | Standard negator         |
+| BEFORE        | 不 *bù*        | NEG (general)       | Via 以前 *yǐqián*          |
+| ALMOST        | 没 *méi*       | NEG (perfective)    | Via 差点儿 *chàdiǎnr*        |
+
+The imperative negators *bié*/*búyào* for FEAR connect to the
+desiderative semantics: fear activates the desire for ¬p, and the
+imperative form lexicalizes the prohibition component.
+
+The deontic negator *bùgāi* for REGRET/COMPLAIN connects to the
+behavioral-standards semantics: the negative inference is that
+¬p is consistent with X's standards, i.e., p *shouldn't* have happened.
+-/
+
+/-- Mandarin imperative negation particle (used as EN for FEAR). -/
+def bieParticle : String := "bié"
+
+/-- Mandarin imperative negation 'not-want' (used as EN for FEAR). -/
+def buyaoParticle : String := "búyào"
+
+/-- Mandarin deontic negation 'shouldn't' (used as EN for REGRET/COMPLAIN). -/
+def bugaiParticle : String := "bùgāi"
+
+/-- An expletive negation marker and its trigger context. -/
+structure ENTriggerNegator where
+  /-- The trigger class label (from @cite{jin-koenig-2021} Table 5) -/
+  triggerClass : String
+  /-- Mandarin trigger lexical item -/
+  triggerForm : String
+  /-- EN negator form (pinyin) -/
+  enNegatorForm : String
+  /-- EN negator gloss -/
+  enNegatorGloss : String
+  deriving Repr, BEq
+
+/-- EN trigger-negator pairings from @cite{jin-koenig-2021}, Table 5
+    and §6.1–6.4. -/
+def enTriggerNegators : List ENTriggerNegator :=
+  [ { triggerClass := "FEAR", triggerForm := "pà"
+    , enNegatorForm := "bié", enNegatorGloss := "don't (imperative)" }
+  , { triggerClass := "AVOID", triggerForm := "bìmiǎn"
+    , enNegatorForm := "bù/méi(yǒu)", enNegatorGloss := "NEG (general/perfective)" }
+  , { triggerClass := "REGRET", triggerForm := "hòuhuǐ"
+    , enNegatorForm := "bùgāi", enNegatorGloss := "shouldn't (deontic)" }
+  , { triggerClass := "COMPLAIN", triggerForm := "bàoyuan"
+    , enNegatorForm := "bùgāi", enNegatorGloss := "shouldn't (deontic)" }
+  , { triggerClass := "DENY", triggerForm := "fǒurèn"
+    , enNegatorForm := "bù", enNegatorGloss := "NEG (general)" }
+  , { triggerClass := "BEFORE", triggerForm := "yǐqián"
+    , enNegatorForm := "bù", enNegatorGloss := "NEG (general)" }
+  , { triggerClass := "ALMOST", triggerForm := "chàdiǎnr"
+    , enNegatorForm := "méi", enNegatorGloss := "NEG (perfective)" } ]
+
+/-- FEAR triggers use imperative negators, not the standard
+    *bù* or *méi*. This connects to the desiderative semantics:
+    fear activates desire for ¬p, and imperative negation lexicalizes
+    prohibition (@cite{jin-koenig-2021}, §6.1.1, ex. 14). -/
+theorem fear_uses_imperative_neg :
+    (enTriggerNegators.filter (·.triggerClass == "FEAR")).all
+      (·.enNegatorForm == "bié") = true := by native_decide
+
+/-- REGRET/COMPLAIN triggers use the deontic negator *bùgāi* 'shouldn't'.
+    This connects to the behavioral-standards semantics: ¬p is consistent
+    with X's standards → p *shouldn't* have happened
+    (@cite{jin-koenig-2021}, §6.1.2). -/
+theorem regret_uses_deontic_neg :
+    (enTriggerNegators.filter (fun e =>
+      e.triggerClass == "REGRET" || e.triggerClass == "COMPLAIN")).all
+      (·.enNegatorForm == "bùgāi") = true := by native_decide
+
 end Fragments.Mandarin.Negation

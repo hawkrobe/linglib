@@ -163,18 +163,47 @@ structure Possessor where
 inductive PossessedForm where | mascForm | femForm
   deriving DecidableEq, BEq, Repr
 
-/-- The possessed form of *mano* 'arm', from Table 5.
+/-! ### Derived mano paradigm (@cite{adamson-2024} Appendix B)
 
-    The form tracks the possessor's gender for 3rd person:
-    3.M → masculine form; 3.F / 3.PL → feminine form.
-    1st/2nd person always get the masculine form. -/
+The mano/mani alternation is derived from three components:
+
+1. **MARKED features**: [PARTICIPANT] (1st/2nd person) and [MASC]
+   (masculine possessor gender) are both MARKED.
+2. **Impoverishment** (ex. 63): [MASC] → ∅ / [PL] and
+   [MASC] → ∅ / [PARTICIPANT]. Impoverishment deletes [MASC] when
+   [PL] or [PARTICIPANT] is present.
+3. **VI** (A7): √MANV ↔ *mano* / [MARKED]; √MANV ↔ *mani* (elsewhere).
+
+The derivation:
+- 1st/2nd (any number): [PARTICIPANT] is MARKED → *mano*
+- 3.M.SG: [MASC] survives (no [PL], no [PARTICIPANT]) → *mano*
+- 3.F.SG: no MARKED feature → *mani*
+- 3.M.PL: [MASC] deleted by impoverishment / [PL]; no [PARTICIPANT] → *mani*
+- 3.F.PL / 3.PL: no MARKED feature → *mani*
+-/
+
+/-- Whether the possessor is a speech act participant ([PARTICIPANT]). -/
+def Possessor.isParticipant (p : Possessor) : Bool :=
+  p.person != .third
+
+/-- Whether the possessor has [MASC] that survives impoverishment.
+    [MASC] is deleted when [PL] or [PARTICIPANT] is present. -/
+def Possessor.mascSurvivesImpoverishment (p : Possessor) : Bool :=
+  match p.gender with
+  | some .masc => !p.isParticipant && p.number == .sg
+  | _          => false
+
+/-- Whether any MARKED feature remains after impoverishment.
+    MARKED = [PARTICIPANT] or [MASC] (if it survives). -/
+def Possessor.hasMarkedFeature (p : Possessor) : Bool :=
+  p.isParticipant || p.mascSurvivesImpoverishment
+
+/-- The possessed form of *mano* 'arm', derived from MARKED features,
+    impoverishment, and VI (A7). -/
 def manoForm (p : Possessor) : PossessedForm :=
-  match p.person, p.number, p.gender with
-  | .third, .sg, some .fem  => .femForm   -- Jane mani
-  | .third, .pl, _          => .femForm   -- mee mani
-  | _, _, _                  => .mascForm  -- all others: mano
+  if p.hasMarkedFeature then .mascForm else .femForm
 
-/-- Table 5 verification: each possessor combination. -/
+/-- Table 5/6 verification: each possessor combination. -/
 theorem mano_1sg : manoForm ⟨.first, .sg, none⟩ = .mascForm := rfl
 theorem mano_2sg : manoForm ⟨.second, .sg, none⟩ = .mascForm := rfl
 theorem mano_1pl : manoForm ⟨.first, .pl, none⟩ = .mascForm := rfl
@@ -182,6 +211,11 @@ theorem mano_2pl : manoForm ⟨.second, .pl, none⟩ = .mascForm := rfl
 theorem mano_3m_sg : manoForm ⟨.third, .sg, some .masc⟩ = .mascForm := rfl
 theorem mano_3f_sg : manoForm ⟨.third, .sg, some .fem⟩ = .femForm := rfl
 theorem mano_3pl : manoForm ⟨.third, .pl, none⟩ = .femForm := rfl
+/-- 3.M.PL: [MASC] is deleted by impoverishment in context of [PL],
+    and 3rd person is not [PARTICIPANT], so no MARKED feature remains. -/
+theorem mano_3m_pl : manoForm ⟨.third, .pl, some .masc⟩ = .femForm := rfl
+/-- 3.F.PL: no [MASC], 3rd person not [PARTICIPANT] → elsewhere. -/
+theorem mano_3f_pl : manoForm ⟨.third, .pl, some .fem⟩ = .femForm := rfl
 
 -- ============================================================================
 -- § 3: Free vs Possessed Forms (Table 4; Dixon 2004:312)
@@ -216,10 +250,13 @@ theorem all_classes_inalienable :
     allClasses.all (·.inalienabilityRank.toNat ≥ InalienabilityRank.culturalItem.toNat)
     = true := by native_decide
 
-/-- The three core inalienable categories account for the majority. -/
+/-- The four highest-ranked inalienable categories (body parts, spatial
+    relations, part-whole, and kinship-adjacent) account for the majority:
+    62 (body parts) + 17 (orientation) + 14 (whole/part) + 19 (plant parts)
+    + 6 (place) = 118 / 175. -/
 theorem core_inalienable_majority :
     let core := allClasses.filter (·.inalienabilityRank.toNat ≥
-                  InalienabilityRank.spatialRelation.toNat)
-    (core.map (·.memberCount)).foldl (· + ·) 0 = 112 := by native_decide
+                  InalienabilityRank.partWhole.toNat)
+    (core.map (·.memberCount)).foldl (· + ·) 0 = 118 := by native_decide
 
 end Fragments.Jarawara

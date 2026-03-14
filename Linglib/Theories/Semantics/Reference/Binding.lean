@@ -72,20 +72,6 @@ def W {A B : Type} (κ : A → A → B) (x : A) : B := κ x x
 
 example : W (λ x y => x == y) 5 = true := rfl
 
-/-- Continuation monad for binding (GQ type as a monad). -/
-abbrev Cont' (R A : Type) := (A → R) → R
-
-/-- `pure`: lift a value into the continuation monad. -/
-def Cont'.pure {R A : Type} (a : A) : Cont' R A := λ k => k a
-
-/-- `bind`: compose continuations. -/
-def Cont'.bind {R A B : Type} (m : Cont' R A) (f : A → Cont' R B) : Cont' R B :=
-  λ k => m (λ a => f a k)
-
-instance {R : Type} : Monad (Cont' R) where
-  pure := Cont'.pure
-  bind := Cont'.bind
-
 /-- H&K interpretation of binding. -/
 def hkBinding {m : Model} (n : Nat) (body : m.Entity → Bool)
     (binder : m.Entity) (g : Assignment m) : Bool :=
@@ -116,9 +102,6 @@ instance {E : Type} : Monad (Reader E) where
 /-- CPS transform: Reader → Continuation-expecting function. -/
 def cpsTransform {E A R : Type} (f : Reader E A) : (A → R) → E → R :=
   λ k e => k (f e)
-
-/-- The Yoneda embedding view: `Cont R A ≅ ∀X. (A → X) → (R → X) → X`. -/
-def contAsYoneda {R A : Type} (c : Cont' R A) : (A → R) → R := c
 
 /-- CPS transform preserves binding semantics. -/
 theorem cps_preserves_semantics {E A : Type} (f : Reader E A) (e : E) (k : A → Bool) :

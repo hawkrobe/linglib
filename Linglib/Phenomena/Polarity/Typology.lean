@@ -1,5 +1,22 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.WALS.Features.F46A
+import Linglib.Fragments.English.PolarityItems
+import Linglib.Fragments.Italian.PolarityItems
+import Linglib.Fragments.Russian.PolarityItems
+import Linglib.Fragments.German.PolarityItems
+import Linglib.Fragments.Japanese.PolarityItems
+import Linglib.Fragments.Korean.PolarityItems
+import Linglib.Fragments.Mandarin.PolarityItems
+import Linglib.Fragments.Turkish.PolarityItems
+import Linglib.Fragments.Hindi.PolarityItems
+import Linglib.Fragments.Finnish.PolarityItems
+import Linglib.Fragments.Hungarian.PolarityItems
+import Linglib.Fragments.Georgian.PolarityItems
+import Linglib.Fragments.Quechua.PolarityItems
+import Linglib.Fragments.Yoruba.PolarityItems
+import Linglib.Fragments.Thai.PolarityItems
+import Linglib.Fragments.Tagalog.PolarityItems
+import Linglib.Fragments.Swahili.PolarityItems
 
 /-!
 # Indefinite Pronoun Typology (@cite{haspelmath-1997} / WALS Ch 46)
@@ -230,21 +247,16 @@ def IndefinitePronounProfile.coversAllFunctions
     (p : IndefinitePronounProfile) : Bool :=
   IndefiniteFunction.all.all (λ f => p.allFunctions.contains f)
 
+/-- Whether the series in a profile have disjoint function sets
+    (no function appears in two different series). -/
+def IndefinitePronounProfile.seriesDisjoint
+    (p : IndefinitePronounProfile) : Bool :=
+  let allFuncs := p.series.flatMap (·.functions)
+  allFuncs.length == allFuncs.eraseDups.length
+
 -- ============================================================================
 -- §5: WALS Chapter 46 Distribution
 -- ============================================================================
-
-/-- WALS Ch 46 values: number of indefinite pronoun series per language. -/
-inductive PronounSeriesCount where
-  /-- 1–3 indefinite series (least differentiated). -/
-  | oneToThree
-  /-- 4 indefinite series. -/
-  | four
-  /-- 5 indefinite series. -/
-  | five
-  /-- 6 or more indefinite series (most differentiated). -/
-  | sixPlus
-  deriving DecidableEq, BEq, Repr
 
 /-- A single row in a WALS frequency table. -/
 structure WALSCount where
@@ -283,6 +295,11 @@ theorem interrogative_majority :
     (ch46.filter (·.value == .special)).length +
     (ch46.filter (·.value == .mixed)).length +
     (ch46.filter (·.value == .existentialConstruction)).length := by native_decide
+
+/-- Look up a language profile's WALS 46A morphological source classification. -/
+def IndefinitePronounProfile.wals46A
+    (p : IndefinitePronounProfile) : Option Core.WALS.F46A.IndefinitePronouns :=
+  (Core.WALS.F46A.lookupISO p.iso).map (·.value)
 
 -- ============================================================================
 -- §6: Language Data
@@ -860,6 +877,43 @@ theorem all_languages_cover_all_functions :
     allLanguages.all (·.coversAllFunctions) = true := by native_decide
 
 -- ============================================================================
+-- §9a: Disjointness Verification (Series Partition)
+-- ============================================================================
+
+/-! Every language's series have **disjoint** function sets — no function
+    appears in two different series. Together with coverage (§9), this means
+    the series form a **partition** of the nine function types. -/
+
+theorem english_disjoint : english.seriesDisjoint = true := by native_decide
+theorem russian_disjoint : russian.seriesDisjoint = true := by native_decide
+theorem german_disjoint : german.seriesDisjoint = true := by native_decide
+theorem japanese_disjoint : japanese.seriesDisjoint = true := by native_decide
+theorem mandarin_disjoint : mandarin.seriesDisjoint = true := by native_decide
+theorem turkish_disjoint : turkish.seriesDisjoint = true := by native_decide
+theorem hindi_disjoint : hindi.seriesDisjoint = true := by native_decide
+theorem italian_disjoint : italian.seriesDisjoint = true := by native_decide
+theorem finnish_disjoint : finnish.seriesDisjoint = true := by native_decide
+theorem korean_disjoint : korean.seriesDisjoint = true := by native_decide
+theorem hungarian_disjoint : hungarian.seriesDisjoint = true := by native_decide
+theorem georgian_disjoint : georgian.seriesDisjoint = true := by native_decide
+theorem quechua_disjoint : quechua.seriesDisjoint = true := by native_decide
+theorem yoruba_disjoint : yoruba.seriesDisjoint = true := by native_decide
+theorem thai_disjoint : thai.seriesDisjoint = true := by native_decide
+theorem tagalog_disjoint : tagalog.seriesDisjoint = true := by native_decide
+theorem swahili_disjoint : swahili.seriesDisjoint = true := by native_decide
+
+/-- **Master disjointness theorem**: every language's series are disjoint. -/
+theorem all_languages_disjoint :
+    allLanguages.all (·.seriesDisjoint) = true := by native_decide
+
+/-- **Master partition theorem**: every language's series form a partition
+    of the nine function types (contiguous + covering + disjoint). -/
+theorem all_languages_partition :
+    allLanguages.all (λ p =>
+      p.allContiguous && p.coversAllFunctions && p.seriesDisjoint) = true := by
+  native_decide
+
+-- ============================================================================
 -- §10: Typological Generalizations
 -- ============================================================================
 
@@ -970,14 +1024,6 @@ theorem sample_3_series : countBySeriesCount allLanguages 3 = 5 := by native_dec
 theorem sample_4_series : countBySeriesCount allLanguages 4 = 6 := by native_decide
 theorem sample_5_series : countBySeriesCount allLanguages 5 = 4 := by native_decide
 
-/-- Classify a language by its WALS Ch 46 value. -/
-def IndefinitePronounProfile.walsValue
-    (p : IndefinitePronounProfile) : PronounSeriesCount :=
-  if p.seriesCount ≤ 3 then .oneToThree
-  else if p.seriesCount == 4 then .four
-  else if p.seriesCount == 5 then .five
-  else .sixPlus
-
 -- ============================================================================
 -- §12: Per-Language Verification
 -- ============================================================================
@@ -1001,6 +1047,61 @@ theorem yoruba_series_count : yoruba.seriesCount = 2 := by native_decide
 theorem thai_series_count : thai.seriesCount = 3 := by native_decide
 theorem tagalog_series_count : tagalog.seriesCount = 4 := by native_decide
 theorem swahili_series_count : swahili.seriesCount = 3 := by native_decide
+
+-- ============================================================================
+-- §12a: WALS 46A Bridge
+-- ============================================================================
+
+/-! Every language in our sample appears in the WALS 46A dataset. We verify
+    each profile's morphological source classification, bridging our Haspelmath
+    function-map data to the WALS morphological-source typology.
+
+    Distribution in our 17-language sample:
+    - Interrogative-based: Russian, Japanese, Korean, Hungarian, Georgian,
+      Quechua, Thai (7)
+    - Generic-noun-based: English, Turkish, Italian, Yoruba, Swahili (5)
+    - Special: Hindi, Finnish (2)
+    - Mixed: German, Mandarin (2)
+    - Existential construction: Tagalog (1) -/
+
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem english_wals : english.wals46A = some .genericNounBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem russian_wals : russian.wals46A = some .interrogativeBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem german_wals : german.wals46A = some .mixed := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem japanese_wals : japanese.wals46A = some .interrogativeBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem mandarin_wals : mandarin.wals46A = some .mixed := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem turkish_wals : turkish.wals46A = some .genericNounBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem hindi_wals : hindi.wals46A = some .special := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem italian_wals : italian.wals46A = some .genericNounBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem finnish_wals : finnish.wals46A = some .special := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem korean_wals : korean.wals46A = some .interrogativeBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem hungarian_wals : hungarian.wals46A = some .interrogativeBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem georgian_wals : georgian.wals46A = some .interrogativeBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem quechua_wals : quechua.wals46A = some .interrogativeBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem yoruba_wals : yoruba.wals46A = some .genericNounBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem thai_wals : thai.wals46A = some .interrogativeBased := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem tagalog_wals : tagalog.wals46A = some .existentialConstruction := by native_decide
+open Core.WALS.F46A (IndefinitePronouns) in
+theorem swahili_wals : swahili.wals46A = some .genericNounBased := by native_decide
+
+/-- Every language in our sample has a WALS 46A entry. -/
+theorem all_languages_in_wals :
+    allLanguages.all (λ p => p.wals46A.isSome) = true := by native_decide
 
 -- ============================================================================
 -- §13: Cross-Linguistic Pattern Tests
@@ -1036,6 +1137,35 @@ theorem neg_concord_directNeg_grouped :
     negConcordLanguages.any (λ p =>
       p.series.any (λ s =>
         s.functions.contains .directNeg && s.functions.length > 1)) = true := by
+  native_decide
+
+/-! ### WALS morphological source and series count
+
+Interrogative-based languages (which build indefinites from wh-words) should
+correlate with our wh-based language list. We verify this and test whether
+morphological source predicts series differentiation. -/
+
+open Core.WALS.F46A (IndefinitePronouns) in
+/-- All four wh-based languages are classified as interrogative-based or
+    mixed in WALS 46A. -/
+theorem wh_based_are_interrogative_or_mixed :
+    whBasedLanguages.all (λ p =>
+      p.wals46A == some .interrogativeBased ||
+      p.wals46A == some .mixed) = true := by native_decide
+
+/-- Languages classified as interrogative-based in WALS 46A. -/
+def interrogativeBasedProfiles : List IndefinitePronounProfile :=
+  allLanguages.filter (λ p =>
+    p.wals46A == some Core.WALS.F46A.IndefinitePronouns.interrogativeBased)
+
+/-- Seven of our 17 languages are interrogative-based. -/
+theorem interrogative_based_sample_count :
+    interrogativeBasedProfiles.length = 7 := by native_decide
+
+/-- Interrogative-based languages in our sample average ≤ 4 series per
+    language (total series ≤ 28 across 7 languages). -/
+theorem interrogative_based_avg_series :
+    (interrogativeBasedProfiles.map (·.seriesCount)).foldl (· + ·) 0 ≤ 28 := by
   native_decide
 
 -- ============================================================================
@@ -1146,5 +1276,144 @@ theorem most_common_series_count :
     countBySeriesCount allLanguages 4 ≥ countBySeriesCount allLanguages 3 ∧
     countBySeriesCount allLanguages 4 ≥ countBySeriesCount allLanguages 5 := by
   native_decide
+
+-- ============================================================================
+-- §17: Fragment Bridges
+-- ============================================================================
+
+/-! Verify consistency between Typology profiles and Fragment PolarityItems
+    entries. For each language with a Fragment PolarityItems file, we check
+    that Fragment NPI entries are licensed in contexts corresponding to
+    Haspelmath functions the Typology profile assigns to polarity-sensitive
+    series, and that Fragment FCI entries have obligatory domain alternatives
+    when the Typology profile assigns free choice functions. -/
+
+section FragmentBridges
+
+-- English: Fragment any (NPI/FCI) licensed in questions, matching
+-- Typology "any- (NPI)" series covering question function
+theorem english_any_covers_question :
+    Fragments.English.PolarityItems.any.licensingContexts.contains .question = true := by
+  native_decide
+
+-- English: Fragment any has obligatory domain alternatives, consistent with
+-- Typology "any- (FC)" series covering freeChoice function
+theorem english_any_has_domain_alts :
+    Fragments.English.PolarityItems.any.obligatoryDomainAlts = true := rfl
+
+-- Italian: Fragment nessuno (NPI) licensed under negation, matching
+-- Typology "nessuno" series covering directNeg function
+theorem italian_nessuno_covers_negation :
+    Fragments.Italian.PolarityItems.nessuno.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Italian: Fragment qualsiasi (FCI) has obligatory domain alts, matching
+-- Typology "qualunque/qualsiasi" series covering freeChoice
+theorem italian_qualsiasi_has_domain_alts :
+    Fragments.Italian.PolarityItems.qualsiasi.obligatoryDomainAlts = true := rfl
+
+-- Russian: Fragment nikto (NPI) licensed under negation, matching
+-- Typology "никто" series covering directNeg
+theorem russian_nikto_covers_negation :
+    Fragments.Russian.PolarityItems.nikto.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Russian: Fragment ktoUgodno (FCI) has obligatory domain alts, matching
+-- Typology "кто угодно" series covering freeChoice
+theorem russian_ktoUgodno_has_domain_alts :
+    Fragments.Russian.PolarityItems.ktoUgodno.obligatoryDomainAlts = true := rfl
+
+-- German: Fragment irgendein is NPI/FCI, matching Typology "irgendwer"
+-- series covering both question (NPI) and irrealis (FCI-like)
+theorem german_irgendein_is_npi_fci :
+    Fragments.German.PolarityItems.irgendein.polarityType = .npi_fci := rfl
+
+-- German: Fragment niemand (NPI) licensed under negation, matching
+-- Typology "niemand" series covering directNeg
+theorem german_niemand_covers_negation :
+    Fragments.German.PolarityItems.niemand.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Japanese: Fragment dareMo (NPI) licensed under negation, matching
+-- Typology "dare-mo (neg)" series covering directNeg
+theorem japanese_dareMo_covers_negation :
+    Fragments.Japanese.PolarityItems.dareMo.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Japanese: Fragment dareDemo (FCI) has obligatory domain alts, matching
+-- Typology "dare-demo" series covering freeChoice
+theorem japanese_dareDemo_has_domain_alts :
+    Fragments.Japanese.PolarityItems.dareDemo.obligatoryDomainAlts = true := rfl
+
+-- Korean: Fragment nwukwuTo (NPI) licensed under negation, matching
+-- Typology "nwukwu-to (neg)" series covering directNeg
+theorem korean_nwukwuTo_covers_negation :
+    Fragments.Korean.PolarityItems.nwukwuTo.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Mandarin: Fragment shei is NPI/FCI, matching Typology "shéi" series
+-- covering 7 functions from irrealis through freeChoice
+theorem mandarin_shei_is_npi_fci :
+    Fragments.Mandarin.PolarityItems.shei.polarityType = .npi_fci := rfl
+
+-- Turkish: Fragment kimse (NPI) licensed in questions, matching
+-- Typology "kimse" series covering question function
+theorem turkish_kimse_covers_question :
+    Fragments.Turkish.PolarityItems.kimse.licensingContexts.contains .question = true := by
+  native_decide
+
+-- Hindi: Fragment koiiBhii (FCI) has obligatory domain alts, matching
+-- Typology "koii bhii" series covering freeChoice
+theorem hindi_koiiBhii_has_domain_alts :
+    Fragments.Hindi.PolarityItems.koiiBhii.obligatoryDomainAlts = true := rfl
+
+-- Finnish: Fragment kukaan (NPI) licensed in questions, matching
+-- Typology "kukaan" series covering question function
+theorem finnish_kukaan_covers_question :
+    Fragments.Finnish.PolarityItems.kukaan.licensingContexts.contains .question = true := by
+  native_decide
+
+-- Hungarian: Fragment senki (NPI) licensed under negation, matching
+-- Typology "senki" series covering directNeg
+theorem hungarian_senki_covers_negation :
+    Fragments.Hungarian.PolarityItems.senki.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Georgian: Fragment aravin (NPI) licensed under negation, matching
+-- Typology "aravin" series covering directNeg
+theorem georgian_aravin_covers_negation :
+    Fragments.Georgian.PolarityItems.aravin.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Quechua: Fragment manaPiPash (NPI) licensed under negation, matching
+-- Typology "mana pi-pash" series covering directNeg
+theorem quechua_manaPiPash_covers_negation :
+    Fragments.Quechua.PolarityItems.manaPiPash.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Yoruba: Fragment enikeni is NPI/FCI, matching Typology "ẹ̀nìkẹ́ni"
+-- series covering indirectNeg through freeChoice
+theorem yoruba_enikeni_is_npi_fci :
+    Fragments.Yoruba.PolarityItems.enikeni.polarityType = .npi_fci := rfl
+
+-- Thai: Fragment majMiiKhraj (NPI) licensed under negation, matching
+-- Typology series covering directNeg
+theorem thai_majMiiKhraj_covers_negation :
+    Fragments.Thai.PolarityItems.majMiiKhraj.licensingContexts.contains .negation = true := by
+  native_decide
+
+-- Tagalog: Fragment sinuman (NPI) licensed in questions, matching
+-- Typology "sinuman" series covering question function
+theorem tagalog_sinuman_covers_question :
+    Fragments.Tagalog.PolarityItems.sinuman.licensingContexts.contains .question = true := by
+  native_decide
+
+-- Swahili: Fragment hakunaMtu (NPI) licensed under negation, matching
+-- Typology series covering directNeg
+theorem swahili_hakunaMtu_covers_negation :
+    Fragments.Swahili.PolarityItems.hakunaMtu.licensingContexts.contains .negation = true := by
+  native_decide
+
+end FragmentBridges
 
 end Phenomena.Polarity.Typology

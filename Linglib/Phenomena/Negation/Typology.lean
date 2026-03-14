@@ -1656,4 +1656,363 @@ theorem ch144_subtypes_cover_sample :
     ch144D.length + ch144L.length + ch144T.length + ch144Y.length > ch144A.length := by
   native_decide
 
+-- ============================================================================
+-- Expletive Negation: Cross-Linguistic Survey (@cite{jin-koenig-2021})
+-- ============================================================================
+
+/-! ## Expletive negation survey
+@cite{jin-koenig-2021}
+
+Expletive negation (EN) — semantically vacuous negation triggered by the
+lexical meaning of an embedding predicate or operator — was surveyed
+across 722 languages. EN was attested in 74 languages across 37 genera
+(every continental area except South America).
+
+The two most widespread EN triggers:
+- BEFORE (UNTIL): 50 of the 74 EN-attesting languages
+- FEAR (AFRAID): 39 of the 74 EN-attesting languages -/
+
+/-- Cross-linguistic EN survey results. -/
+structure ENSurveyResult where
+  /-- Total languages surveyed -/
+  totalSurveyed : Nat
+  /-- Languages where EN was attested -/
+  languagesWithEN : Nat
+  /-- Genera where EN was attested -/
+  generaWithEN : Nat
+  /-- Languages with EN in BEFORE-clauses specifically -/
+  beforeTriggerCount : Nat
+  /-- Languages with EN in FEAR-clauses specifically -/
+  fearTriggerCount : Nat
+  deriving Repr
+
+/-- The overall EN survey from @cite{jin-koenig-2021}. -/
+def enSurvey : ENSurveyResult where
+  totalSurveyed := 722
+  languagesWithEN := 74
+  generaWithEN := 37
+  beforeTriggerCount := 50
+  fearTriggerCount := 39
+
+/-- EN is attested in a substantial minority of surveyed languages. -/
+theorem en_attested_minority :
+    enSurvey.languagesWithEN < enSurvey.totalSurveyed := by decide
+
+/-- EN is found across many genera (not an areal phenomenon). -/
+theorem en_across_many_genera :
+    enSurvey.generaWithEN ≥ 30 := by decide
+
+/-- BEFORE is the most common EN trigger. -/
+theorem en_before_most_common :
+    enSurvey.beforeTriggerCount > enSurvey.fearTriggerCount := by decide
+
+/-- BEFORE triggers occur in the majority of EN-attesting languages. -/
+theorem en_before_trigger_majority :
+    enSurvey.beforeTriggerCount * 2 > enSurvey.languagesWithEN := by decide
+
+-- ============================================================================
+-- Table 2: EN by Continental Area (@cite{jin-koenig-2021})
+-- ============================================================================
+
+/-- Continental areas from @cite{jin-koenig-2021} Table 2. -/
+inductive ContinentalArea where
+  | africa
+  | australiaNewGuinea
+  | eurasia
+  | northAmerica
+  | southAmerica
+  | pidginsCreoles
+  deriving DecidableEq, BEq, Repr
+
+/-- Per-area EN survey data (Table 2). -/
+structure ENAreaData where
+  area : ContinentalArea
+  languagesLookedAt : Nat
+  languagesWithEN : Nat
+  generaCovered : Option Nat  -- None for Pidgins & Creoles
+  generaWithEN : Option Nat
+  deriving Repr
+
+/-- Table 2: Distribution of languages with and without EN by
+    continental area (@cite{jin-koenig-2021}). -/
+def enByArea : List ENAreaData :=
+  [ ⟨.africa,             177, 11, some 74, some 5⟩
+  , ⟨.australiaNewGuinea,  96,  2, some 57, some 2⟩
+  , ⟨.eurasia,            304, 56, some 42, some 29⟩
+  , ⟨.northAmerica,        90,  1, some 43, some 1⟩
+  , ⟨.southAmerica,        50,  0, some 34, some 0⟩
+  , ⟨.pidginsCreoles,      11,  4, none,    none⟩ ]
+
+/-- The per-area EN counts sum to 74. (The per-area language-looked-at
+    counts sum to 728, not 722 — the paper's total is 722, suggesting
+    6 Pidgin/Creole languages are also counted in geographic areas.) -/
+theorem enByArea_sums_to_74 :
+    (enByArea.map (·.languagesWithEN)).sum = 74 := by native_decide
+
+/-- EN is not attested in South America in this sample. -/
+theorem en_absent_south_america :
+    (enByArea.filter (·.area == .southAmerica)).all
+      (·.languagesWithEN == 0) = true := by native_decide
+
+/-- Eurasia has the highest concentration of EN-attesting languages. -/
+theorem eurasia_most_en :
+    (enByArea.filter (·.area == .eurasia)).all
+      (·.languagesWithEN > 50) = true := by native_decide
+
+-- ============================================================================
+-- Table 3: EN Languages and Trigger Concepts (@cite{jin-koenig-2021})
+-- ============================================================================
+
+/-! ### Per-language EN attestation
+
+Table 3 lists all 74 languages where EN was attested, grouped by
+continental area and genus. Each entry records the EN trigger concepts
+attested in that language (using the concept labels from the paper,
+in small capitals). Lexical forms are recorded in the `forms` field
+where available in the paper. -/
+
+/-- A language with attested EN and its trigger concepts (Table 3). -/
+structure ENLanguageEntry where
+  /-- Language name -/
+  name : String
+  /-- ISO 639-3 code -/
+  iso : String
+  /-- Genus (following the paper's classification) -/
+  genus : String
+  /-- Continental area -/
+  area : ContinentalArea
+  /-- EN trigger concepts attested (concept labels from Table 3) -/
+  triggers : List String
+  deriving Repr
+
+/-- Table 3: All 74 languages where EN was attested, with their trigger
+    concepts (@cite{jin-koenig-2021}, pp. 45–48). -/
+def enLanguages : List ENLanguageEntry :=
+  -- ── Africa (11 languages) ──────────────────────────────────────────
+  [ ⟨"Shupamem",        "bax", "Bantoid",    .africa,
+    ["AFRAID", "FORBID", "PROHIBIT"]⟩
+  , ⟨"Fongbe",          "fon", "Kwa",        .africa,
+    ["DENY", "FEAR", "REFUSE"]⟩
+  , ⟨"Supyire",         "spp", "Kwa",        .africa,
+    ["PREVENT"]⟩
+  , ⟨"Dinka",           "dik", "Nilotic",    .africa,
+    ["FEAR", "FORBID", "REFUSE", "TOO EXHAUSTED/DIFFICULT TO"]⟩
+  , ⟨"Egyptian Arabic", "arz", "Semitic",    .africa,
+    ["FEAR"]⟩
+  , ⟨"Hebrew",          "heb", "Semitic",    .africa,
+    ["ALMOST", "BEFORE", "FEAR", "UNTIL", "WORRY", "WITHOUT"]⟩
+  , ⟨"Jibbali",         "shv", "Semitic",    .africa,
+    ["FEAR", "REFUSE", "WARN", "PREVENT", "BEFORE"]⟩
+  , ⟨"Maltese",         "mlt", "Semitic",    .africa,
+    ["BEFORE", "UNTIL"]⟩
+  , ⟨"Tigre",           "tig", "Semitic",    .africa,
+    ["BEFORE", "FEAR"]⟩
+  , ⟨"Tigrinya",        "tir", "Semitic",    .africa,
+    ["BEFORE", "FEAR"]⟩
+  , ⟨"Miya",            "mkf", "West Chadic", .africa,
+    ["FEAR"]⟩
+  -- ── Australia-New Guinea (2 languages) ─────────────────────────────
+  , ⟨"Amele",           "aey", "Madang",     .australiaNewGuinea,
+    ["APPREHENSIVE"]⟩
+  , ⟨"Warrongo",        "wrg", "Northern Pama-Nyungan", .australiaNewGuinea,
+    ["APPREHENSIONAL"]⟩
+  -- ── Eurasia (56 languages) ─────────────────────────────────────────
+  , ⟨"Albanian",        "sqi", "Albanian",   .eurasia,
+    ["FEAR"]⟩
+  , ⟨"Latvian",         "lvs", "Baltic",     .eurasia,
+    ["FEAR"]⟩
+  , ⟨"Lithuanian",      "lit", "Baltic",     .eurasia,
+    ["FEAR", "UNTIL"]⟩
+  , ⟨"Basque",          "eus", "Basque",     .eurasia,
+    ["FEAR", "FORBID"]⟩
+  , ⟨"Tshangla",        "tsj", "Bodic",      .eurasia,
+    ["UNTIL"]⟩
+  , ⟨"Rabha",           "rah", "Bodo-Garo",  .eurasia,
+    ["UNTIL"]⟩
+  , ⟨"Burushaski",      "bsk", "Burushaski", .eurasia,
+    ["UNTIL"]⟩
+  , ⟨"Breton",          "bre", "Celtic",     .eurasia,
+    ["FOR FEAR THAT", "UNTIL", "WITHOUT"]⟩
+  , ⟨"Kambera",         "xbr", "Central Malayo-Polynesian", .eurasia,
+    ["FORBID"]⟩
+  , ⟨"Mandarin",        "cmn", "Chinese",    .eurasia,
+    ["ALMOST", "AVOID", "BEFORE", "BEWARE", "BLAME", "COMPLAIN",
+     "DENY", "DOUBT", "INEVITABLE", "REFUSE", "REGRET", "UNLESS"]⟩
+  , ⟨"Finnish",         "fin", "Finnic",     .eurasia,
+    ["DENY", "DOUBT", "FEAR", "FORBID"]⟩
+  , ⟨"Komi-Zyrian",     "kpf", "Finnic",     .eurasia,
+    ["FEAR"]⟩
+  , ⟨"Livonian",        "liv", "Livonian",   .eurasia,
+    ["THAN"]⟩
+  , ⟨"Afrikaans",       "afr", "Germanic",   .eurasia,
+    ["BEFORE", "UNLESS"]⟩
+  , ⟨"Dutch",           "nld", "Germanic",   .eurasia,
+    ["BEFORE", "DENY", "THAN", "UNLESS"]⟩
+  , ⟨"English",         "eng", "Germanic",   .eurasia,
+    ["AVOID", "HOLD BACK FROM", "IMPOSSIBLE", "MISS",
+     "KEEP FROM", "SINCE", "WITHOUT"]⟩
+  , ⟨"German",          "deu", "Germanic",   .eurasia,
+    ["BEFORE", "DENY", "UNTIL"]⟩
+  , ⟨"Yiddish",         "yid", "Germanic",   .eurasia,
+    ["FEAR", "UNTIL", "BEFORE"]⟩
+  , ⟨"Greek",           "ell", "Greek",      .eurasia,
+    ["BEWARE", "FEAR", "WORRY"]⟩
+  , ⟨"Bengali",         "ben", "Indic",      .eurasia,
+    ["UNTIL"]⟩
+  , ⟨"Domari",          "rmt", "Indic",      .eurasia,
+    ["PREVENT"]⟩
+  , ⟨"Hindi",           "hin", "Indic",      .eurasia,
+    ["FEAR", "UNTIL"]⟩
+  , ⟨"Kashmiri",        "kas", "Indic",      .eurasia,
+    ["UNTIL"]⟩
+  , ⟨"Punjabi",         "pan", "Indic",      .eurasia,
+    ["UNTIL"]⟩
+  , ⟨"Persian",         "fas", "Iranian",    .eurasia,
+    ["UNTIL/UNLESS"]⟩
+  , ⟨"Catalan",         "cat", "Italic",     .eurasia,
+    ["AVOID", "BEFORE", "DENY", "DOUBT", "FEAR", "THAN"]⟩
+  , ⟨"French",          "fra", "Italic",     .eurasia,
+    ["ADVISE AGAINST", "ALMOST", "ANXIOUS", "AVOID", "BEFORE",
+     "BEWARE", "CAN'T WAIT", "DENY", "DESPAIR", "DOUBT", "FEAR",
+     "FORBID", "HIDE", "IMPOSSIBLE", "IT ONLY DEPENDS ON SOMEONE THAT",
+     "PREVENT", "RARELY", "SINCE", "TOO…TO", "UNLESS", "WITHOUT",
+     "THAN", "WORRY"]⟩
+  , ⟨"Italian",         "ita", "Italic",     .eurasia,
+    ["BEFORE", "DOUBT", "HARDLY", "NEARLY", "THAN", "UNLESS",
+     "UNTIL", "WITHOUT"]⟩
+  , ⟨"Ligurian",        "lij", "Italic",     .eurasia,
+    ["FEAR", "PREVENT"]⟩
+  , ⟨"Portuguese",      "por", "Italic",     .eurasia,
+    ["ALMOST", "AVOID", "FORBID", "PREVENT", "WATCH OUT", "WITHOUT"]⟩
+  , ⟨"Romanian",        "ron", "Italic",     .eurasia,
+    ["FEAR", "UNTIL/BEFORE"]⟩
+  , ⟨"Spanish",         "spa", "Italic",     .eurasia,
+    ["ALMOST", "AVOID", "DOUBT", "FEAR", "PREVENT", "UNTIL", "THAN"]⟩
+  , ⟨"Japanese",        "jpn", "Japanese",   .eurasia,
+    ["BEFORE"]⟩
+  , ⟨"Kadu",            "zkd", "Jingpho-Luish", .eurasia,
+    ["BEFORE"]⟩
+  , ⟨"Lao",             "lao", "Kam-Tai",    .eurasia,
+    ["FORBID"]⟩
+  , ⟨"Georgian",        "kat", "Kartvelian",  .eurasia,
+    ["FEAR", "UNTIL"]⟩
+  , ⟨"Korean",          "kor", "Korean",     .eurasia,
+    ["BEFORE", "IT'S BEEN A LONG TIME SINCE"]⟩
+  , ⟨"Karbi",           "mjw", "Kuki-Chin",  .eurasia,
+    ["BEFORE"]⟩
+  , ⟨"Ingush",          "inh", "Nakh",       .eurasia,
+    ["ONLY"]⟩
+  , ⟨"Kurux",           "kxl", "Northern Dravidian", .eurasia,
+    ["NOT WITHOUT", "UNTIL"]⟩
+  , ⟨"Abkhaz",          "abk", "Northwest Caucasian", .eurasia,
+    ["FEAR"]⟩
+  , ⟨"Daakaka",         "bpa", "Oceanic",    .eurasia,
+    ["FEAR", "LACK"]⟩
+  , ⟨"Samoan",          "smo", "Oceanic",    .eurasia,
+    ["AFRAID", "DISLIKE"]⟩
+  , ⟨"Tuvaluan",        "tvl", "Oceanic",    .eurasia,
+    ["BEFORE"]⟩
+  , ⟨"Vaeakau-Taumako", "piv", "Oceanic",    .eurasia,
+    ["CRITICIZE"]⟩
+  , ⟨"Bulgarian",       "bul", "Slavic",     .eurasia,
+    ["UNTIL"]⟩
+  , ⟨"Czech",           "cse", "Slavic",     .eurasia,
+    ["FEAR"]⟩
+  , ⟨"Croatian",        "hrv", "Slavic",     .eurasia,
+    ["BEFORE", "FEAR", "UNLESS", "UNTIL"]⟩
+  , ⟨"Polish",          "pol", "Slavic",     .eurasia,
+    ["BEFORE", "FEAR", "ALMOST"]⟩
+  , ⟨"Russian",         "rus", "Slavic",     .eurasia,
+    ["ALMOST", "BEWARE", "FEAR", "SINCE", "UNTIL", "WORRY"]⟩
+  , ⟨"Slovenian",       "slv", "Slavic",     .eurasia,
+    ["BEFORE", "FEAR", "UNLESS", "UNTIL"]⟩
+  , ⟨"Ukrainian",       "ukr", "Slavic",     .eurasia,
+    ["FEAR", "UNTIL"]⟩
+  , ⟨"Turkish",         "tur", "Turkic",     .eurasia,
+    ["BEFORE", "WITHOUT/FROM"]⟩
+  , ⟨"Kumyk",           "kum", "Turkic",     .eurasia,
+    ["FEAR"]⟩
+  , ⟨"Hungarian",       "hun", "Ugric",      .eurasia,
+    ["UNTIL"]⟩
+  , ⟨"Vietnamese",      "vie", "Viet-Muong", .eurasia,
+    ["AVOID", "FORBID", "FORGET", "REFUSE", "STOP"]⟩
+  -- ── North America (1 language) ─────────────────────────────────────
+  , ⟨"Lakhota",         "lkt", "Core Siouan", .northAmerica,
+    ["BEFORE"]⟩
+  -- ── Pidgins & Creoles (4 languages) ────────────────────────────────
+  , ⟨"Haitian creole",  "hat", "Pidgin/Creole", .pidginsCreoles,
+    ["WITHOUT"]⟩
+  , ⟨"Nigerian pidgin", "pcm", "Pidgin/Creole", .pidginsCreoles,
+    ["UNTIL"]⟩
+  , ⟨"Pichinglis",      "fpe", "Pidgin/Creole", .pidginsCreoles,
+    ["FEAR"]⟩
+  , ⟨"Saramaccan creole", "srm", "Pidgin/Creole", .pidginsCreoles,
+    ["CANNOT BE THAT"]⟩ ]
+
+-- ── Verification ─────────────────────────────────────────────────────
+
+/-- Table 3 has exactly 74 languages. -/
+theorem enLanguages_count : enLanguages.length = 74 := by native_decide
+
+/-- Per-area counts match Table 2. -/
+theorem enLanguages_africa :
+    (enLanguages.filter (·.area == .africa)).length = 11 := by native_decide
+
+theorem enLanguages_australiaNewGuinea :
+    (enLanguages.filter (·.area == .australiaNewGuinea)).length = 2 := by
+  native_decide
+
+theorem enLanguages_eurasia :
+    (enLanguages.filter (·.area == .eurasia)).length = 56 := by native_decide
+
+theorem enLanguages_northAmerica :
+    (enLanguages.filter (·.area == .northAmerica)).length = 1 := by
+  native_decide
+
+theorem enLanguages_pidginsCreoles :
+    (enLanguages.filter (·.area == .pidginsCreoles)).length = 4 := by
+  native_decide
+
+/-- No South American languages have EN in this sample. -/
+theorem enLanguages_no_southAmerica :
+    (enLanguages.filter (·.area == .southAmerica)).length = 0 := by
+  native_decide
+
+/-- Every language has at least one trigger concept. -/
+theorem enLanguages_all_have_triggers :
+    enLanguages.all (fun e => !e.triggers.isEmpty) = true := by native_decide
+
+/-- The number of distinct genera represented (counting unique genus strings). -/
+theorem enLanguages_many_genera :
+    (enLanguages.map (·.genus) |>.eraseDups).length ≥ 37 := by native_decide
+
+-- ── Cross-validation: Table 3 triggers vs Table 4 counts ────────────
+
+/-! ### Cross-validating Table 3 and Table 4
+
+Table 4 reports that BEFORE (UNTIL) triggers EN in 50 languages and
+FEAR (AFRAID) in 39. We can verify these counts against the per-language
+trigger lists in Table 3. -/
+
+private def hasTrigger (triggers : List String) (concept : String) : Bool :=
+  triggers.any (· == concept)
+
+private def hasAnyTrigger (triggers : List String) (concepts : List String) : Bool :=
+  concepts.any (hasTrigger triggers)
+
+/-- BEFORE/UNTIL EN triggers occur in 50 languages (Table 4). -/
+theorem enLanguages_before_count :
+    (enLanguages.filter (λ e =>
+      hasAnyTrigger e.triggers
+        ["BEFORE", "UNTIL", "UNTIL/BEFORE", "UNTIL/UNLESS"])).length = 50 := by
+  native_decide
+
+/-- FEAR/AFRAID EN triggers occur in 39 languages (Table 4). -/
+theorem enLanguages_fear_count :
+    (enLanguages.filter (λ e =>
+      hasAnyTrigger e.triggers
+        ["FEAR", "AFRAID", "APPREHENSIVE", "APPREHENSIONAL",
+         "FOR FEAR THAT", "FEAR⁵"])).length = 39 := by
+  native_decide
+
 end Phenomena.Negation.Typology

@@ -193,9 +193,18 @@ inductive PossessionGenderMechanism where
   | inheritedGender   -- gender copied from iPossessor via agreement
   deriving DecidableEq, BEq, Repr
 
-/-- Both mechanisms are consistent with the GLH: in both cases,
-    the gender-affecting element (the iPossessor) is nP-internal. -/
+/-- Both mechanisms involve an iPossessor in Spec,nP. -/
+def PossessionGenderMechanism.possessorPosition :
+    PossessionGenderMechanism → NominalPosition
+  | .possesseeGender  => .specN  -- gender determined by n head that licenses iPossessor
+  | .inheritedGender  => .specN  -- gender copied from iPossessor via Agree
+
+/-- Both mechanisms are consistent with the GLH: in both possessee gender
+    (Teop, Jarawara) and inherited gender (Yanyuwa, Coastal Marind), the
+    gender-affecting element is nP-internal. -/
 theorem both_mechanisms_glh_consistent :
-    PossessionType.inalienable.canAffectGender = true := rfl
+    genderLocalityHypothesis PossessionGenderMechanism.possesseeGender.possessorPosition = true ∧
+    genderLocalityHypothesis PossessionGenderMechanism.inheritedGender.possessorPosition = true :=
+  ⟨rfl, rfl⟩
 
 end Morphology.DM
