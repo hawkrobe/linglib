@@ -410,7 +410,7 @@ private theorem fold_unfold_boundaries :
 theorem fold_un_satisfiable :
     ∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Ev ℤ),
     unSem stateAt foldVRO x e :=
-  ⟨foldUnfoldState, (), ev₂, ev₁, trivial,
+  ⟨foldUnfoldState, (), ev₂, ev₁, trivial, trivial,
    ev₁_precedes_ev₂,
    -- resState ev₁ () = preState ev₂ ()  (folded = folded)
    rfl,
@@ -446,8 +446,10 @@ theorem fold_re_satisfiable :
     ∃ (stateAt : StateFunction Unit ParchmentState ℤ) (x : Unit) (e : Ev ℤ),
     reSem stateAt foldVRO x e :=
   ⟨foldRefoldState, (), ev₃,
-   -- rePresupposition: ∃ e', verb e' ∧ precedes ∧ resState match
-   ⟨ev₁, trivial, ev₁_precedes_ev₃, rfl⟩,
+   -- rePresupposition: ∃ e', verb e' ∧ applies e' ∧ precedes ∧ resState match
+   ⟨ev₁, trivial, trivial, ev₁_precedes_ev₃, rfl⟩,
+   -- applies holds of re-event
+   trivial,
    -- verb holds of the re-event
    trivial⟩
 
@@ -469,8 +471,8 @@ theorem break_re_satisfiable :
     ∃ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Ev ℤ),
     reSem stateAt breakVRO x e :=
   ⟨breakRebreakState, (), ev₃,
-   ⟨ev₁, trivial, ev₁_precedes_ev₃, rfl⟩,
-   trivial⟩
+   ⟨ev₁, trivial, trivial, ev₁_precedes_ev₃, rfl⟩,
+   trivial, trivial⟩
 
 /-- **Cross-layer agreement: Boolean and compositional predictions align.**
     The Boolean layer (ForceTransmissionClass) and compositional layer (VRO)
@@ -488,6 +490,77 @@ theorem cross_layer_un_agreement :
   ⟨rfl, rfl,
    fold_un_satisfiable,
    λ stateAt x e => singleton_blocks_un stateAt breakVRO ⟨.broken, rfl⟩ x e⟩
+
+-- ════════════════════════════════════════════════════
+-- § 12. APPLIES Blocks re-destroy Compositionally
+-- ════════════════════════════════════════════════════
+
+/-! With APPLIES in the semantics, we can now compositionally derive that
+    *redestroy is blocked — not just via the Boolean layer, but because
+    APPLIES fails when the object has ceased to exist. This closes the
+    gap between the Boolean prediction (`destroy_no_re`) and the
+    compositional semantics (`reSem`). -/
+
+/-- VRO for "destroy" with state-aware APPLIES: force can only be exerted
+    on an object that exists at the start of the event.
+    The `applies` predicate is parameterized by a state function, capturing
+    the fact that you can't destroy what doesn't exist. -/
+def destroyVRO_withApplies (stateAt : StateFunction Unit ObjectExistence ℤ)
+    : VerbRootVRO Unit ObjectExistence ℤ where
+  verb := λ _ _ => True
+  applies := λ _ e => stateAt (Ev.τ e).start () = .exists_
+  outcomes := {.ceasedToExist}
+  thresholds := {.exists_}
+
+/-- State function for a destroy scenario: the object exists until destroyed
+    at t=5, then ceases to exist permanently.
+    - t ≤ 5: exists (available for force transmission)
+    - t > 5: ceasedToExist (no longer available) -/
+private def postDestroyState : StateFunction Unit ObjectExistence ℤ := λ t _ =>
+  if t ≤ 5 then .exists_ else .ceasedToExist
+
+/-- APPLIES holds for the destroy event (ev₁: t=0..5): the object exists
+    at t=0 when force is first exerted. -/
+private theorem destroy_applies_ev₁ :
+    (destroyVRO_withApplies postDestroyState).applies () ev₁ := by
+  show postDestroyState (Ev.τ ev₁).start () = .exists_; rfl
+
+/-- APPLIES fails for any event after destruction: at t≥10, the object
+    has ceased to exist. -/
+private theorem destroy_not_applies_ev₃ :
+    ¬ (destroyVRO_withApplies postDestroyState).applies () ev₃ := by
+  show ¬ (postDestroyState (Ev.τ ev₃).start () = .exists_)
+  simp [postDestroyState, ev₃, Ev.τ]
+
+/-- **Compositional re- blocking for destroy.**
+    With state-aware APPLIES, `reSem` is unsatisfiable for destroy because
+    the re-event requires APPLIES(e)(x), but the object has ceased to exist
+    after the first destruction. The proof shows the assertion's APPLIES
+    condition directly contradicts the post-destruction state. -/
+theorem destroy_re_blocked_compositionally :
+    ¬ reSem postDestroyState (destroyVRO_withApplies postDestroyState) () ev₃ := by
+  intro ⟨_, h_applies, _⟩
+  exact destroy_not_applies_ev₃ h_applies
+
+/-- **Cross-layer re- agreement for destroy.**
+    The Boolean layer (`destroy_no_re`) and the compositional layer
+    (`destroy_re_blocked_compositionally`) now agree: *redestroy is blocked
+    at both levels.
+
+    For break, both layers agree that re- IS allowed:
+    Boolean (`break_re`) and compositional (`break_re_satisfiable`). -/
+theorem cross_layer_re_agreement :
+    -- Boolean: destroy blocks re-, break allows re-
+    LevinClass.reCompatible .destroy = false ∧
+    LevinClass.reCompatible .break_ = true ∧
+    -- Compositional: destroy re- blocked (with state-aware APPLIES)
+    ¬ reSem postDestroyState (destroyVRO_withApplies postDestroyState) () ev₃ ∧
+    -- Compositional: break re- satisfiable
+    (∃ (stateAt : StateFunction Unit LimbState ℤ) (x : Unit) (e : Ev ℤ),
+      reSem stateAt breakVRO x e) :=
+  ⟨rfl, rfl,
+   destroy_re_blocked_compositionally,
+   break_re_satisfiable⟩
 
 end StressTests
 

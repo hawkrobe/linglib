@@ -406,41 +406,20 @@ def preState (stateAt : StateFunction Entity State Time)
 def Set.multiMembered (s : Set State) : Prop :=
   ∃ s₁ s₂, s₁ ∈ s ∧ s₂ ∈ s ∧ s₁ ≠ s₂
 
-/-- Presupposition of reversative *un-* (@cite{bhadra-2024} eq. 66, boxed content).
-
-    There exists a prior event *e'* such that:
-    1. The base verb P holds of *e'* and *x*
-    2. The prior event temporally precedes the un-event: τ(e') ≪ τ(e)
-    3. Inverse equivalence: res(e')(x) = pre(e)(x)
-    4. The base verb has multi-membered outcomes: |O| > 1 -/
-def unPresupposition (stateAt : StateFunction Entity State Time)
-    (vro : VerbRootVRO Entity State Time)
-    (x : Entity) (e : Ev Time) : Prop :=
-  ∃ e' : Ev Time,
-    vro.verb x e' ∧
-    (Ev.τ e').precedes (Ev.τ e) ∧
-    resState stateAt e' x = preState stateAt e x ∧
-    vro.outcomes.multiMembered
-
-/-- Assertion of reversative *un-* (@cite{bhadra-2024} eq. 66, unboxed content).
-
-    The result state of the un-event equals the pre-state of the base event:
-    res(e)(x) = pre(e')(x). -/
-def unAssertion (stateAt : StateFunction Entity State Time)
-    (x : Entity) (e e' : Ev Time) : Prop :=
-  resState stateAt e x = preState stateAt e' x
-
 /-- Full semantics of reversative *un-* (@cite{bhadra-2024} eq. 66).
 
-    ⟦un-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ τ(e') ≪ τ(e) ∧
+    ⟦un-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ APPLIES(e')(x) ∧ τ(e') ≪ τ(e) ∧
       res(e')(x) = pre(e)(x) ∧ |O| > 1] ∧
-      res(e)(x) = pre(e')(x) -/
+      res(e)(x) = pre(e')(x)
+
+    The APPLIES condition ensures force was exerted on x in the base event. -/
 def unSem (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
     (x : Entity) (e : Ev Time) : Prop :=
   ∃ e' : Ev Time,
-    -- Presupposition: prior event with inverse pre-state equivalence
+    -- Presupposition: prior event with force transmission and inverse equivalence
     vro.verb x e' ∧
+    vro.applies x e' ∧
     (Ev.τ e').precedes (Ev.τ e) ∧
     resState stateAt e' x = preState stateAt e x ∧
     vro.outcomes.multiMembered ∧
@@ -451,31 +430,33 @@ def unSem (stateAt : StateFunction Entity State Time)
 
     There exists a prior event *e'* such that:
     1. The base verb P holds of *e'* and *x*
-    2. The prior event temporally precedes the re-event: τ(e') ≪ τ(e)
-    3. Result-state equivalence: res(e)(x) = res(e')(x)
-
-    Note: re- blocking for specific verb classes (destroy, eat) is handled
-    at the lexical level by `ForceTransmissionClass.reCompatible` and
-    `LevinClass.reCompatible`, not by the compositional presupposition.
-    The compositional layer captures structural temporal/state conditions;
-    the Boolean layer captures lexical acceptability. -/
+    2. APPLIES(e')(x) — force was exerted on x in the prior event
+    3. The prior event temporally precedes the re-event: τ(e') ≪ τ(e)
+    4. Result-state equivalence: res(e)(x) = res(e')(x) -/
 def rePresupposition (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
     (x : Entity) (e : Ev Time) : Prop :=
   ∃ e' : Ev Time,
     vro.verb x e' ∧
+    vro.applies x e' ∧
     (Ev.τ e').precedes (Ev.τ e) ∧
     resState stateAt e x = resState stateAt e' x
 
 /-- Full semantics of restitutive *re-* (@cite{bhadra-2024} eq. 68).
 
-    ⟦re-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ τ(e') ≪ τ(e) ∧
-      res(e)(x) = res(e')(x)] ∧ P(e)(x) -/
+    ⟦re-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ APPLIES(e')(x) ∧ τ(e') ≪ τ(e) ∧
+      res(e)(x) = res(e')(x)] ∧ APPLIES(e)(x) ∧ P(e)(x)
+
+    The APPLIES conditions ensure force transmission in both the prior and
+    re-events. This is what compositionally blocks *re-destroy*: after
+    destruction, APPLIES fails for the re-event because force cannot be
+    exerted on a non-existent object. -/
 def reSem (stateAt : StateFunction Entity State Time)
     (vro : VerbRootVRO Entity State Time)
     (x : Entity) (e : Ev Time) : Prop :=
   rePresupposition stateAt vro x e ∧
-  -- Assertion: the base verb predicate holds of the re-event
+  -- Assertion: force is exerted and verb holds of the re-event
+  vro.applies x e ∧
   vro.verb x e
 
 -- ════════════════════════════════════════════════════════════════
@@ -494,7 +475,7 @@ theorem singleton_blocks_un
     (h_single : ∃ s, vro.outcomes = {s})
     (x : Entity) (e : Ev Time) :
     ¬ unSem stateAt vro x e := by
-  intro ⟨e', _, _, _, h_multi, _⟩
+  intro ⟨e', _, _, _, _, h_multi, _⟩
   obtain ⟨s, hs⟩ := h_single
   obtain ⟨s₁, s₂, h1, h2, hne⟩ := h_multi
   rw [hs] at h1 h2
@@ -509,7 +490,7 @@ theorem empty_blocks_un
     (h_empty : vro.outcomes = ∅)
     (x : Entity) (e : Ev Time) :
     ¬ unSem stateAt vro x e := by
-  intro ⟨e', _, _, _, h_multi, _⟩
+  intro ⟨e', _, _, _, _, h_multi, _⟩
   obtain ⟨s₁, _, h1, _, _⟩ := h_multi
   rw [h_empty] at h1
   exact h1
