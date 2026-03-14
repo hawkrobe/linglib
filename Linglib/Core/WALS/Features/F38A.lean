@@ -1,6 +1,6 @@
 /-!
 # WALS Feature 38A: Indefinite Articles
-@cite{dryer-2013b}
+@cite{dryer-2013-wals}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 38A`.

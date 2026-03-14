@@ -711,7 +711,7 @@ theorem indicative_hierarchy_japanese :
 
 /-! ## H. WALS Chapter 94: Order of Adverbial Subordinator and Clause
 
-@cite{dryer-2013a} classifies languages by where the adverbial subordinator
+@cite{dryer-2013-wals} classifies languages by where the adverbial subordinator
 (e.g., "because", "when", "if") appears relative to its clause. The
 fundamental distinction is between word-level and suffix-level subordinators,
 crossed with initial vs final position.
@@ -743,9 +743,10 @@ inductive SubordinatorOrder where
       E.g., Japanese "kare-ga kaetta kara" 'he-NOM returned because'.
       96/659 = 14.6%. -/
   | finalWord
-  /-- Subordinator is a suffix preceding the clause. Extremely rare.
+  /-- Subordinator is a word appearing clause-internally (between subject and verb).
+      E.g., Nkore-Kiga "when Brer Rabbit challenged the elephant".
       8/659 = 1.2%. -/
-  | initialSuffix
+  | internalWord
   /-- Subordinator is a suffix on the verb at the end of the clause.
       E.g., Turkish "-dIgI icin" 'because of V-NMZ'.
       64/659 = 9.7%. -/
@@ -770,7 +771,7 @@ private abbrev ch95 := Core.WALS.F95A.allData
 
 open Core.WALS.F94A (OrderOfAdverbialSubordinatorAndClause) in
 /-- Chapter 94 distribution: subordinator order (N = 659).
-    Counts computed from @cite{dryer-2013a}, WALS Online, Ch 94. -/
+    Counts computed from @cite{dryer-2013-wals}, WALS Online, Ch 94. -/
 def ch94Counts : List WALSCount :=
   [ ⟨"Initial subordinator word",  (ch94.filter (·.value == .initialSubordinatorWord)).length⟩
   , ⟨"Final subordinator word",    (ch94.filter (·.value == .finalSubordinatorWord)).length⟩
@@ -781,7 +782,7 @@ def ch94Counts : List WALSCount :=
 /-- Ch 94 total: 659 languages. -/
 theorem ch94_total : WALSCount.totalOf ch94Counts = 659 := by native_decide
 
-/-! ## I. WALS Chapter 95: OV Order and Adposition Or@cite{dryer-2013b} examines the correlation between verb-object order and
+/-! ## I. WALS Chapter 95: OV Order and Adposition Or@cite{dryer-2013-wals} examines the correlation between verb-object order and
 adposition type. This is one of the strongest head-direction correlations
 in typology: OV languages overwhelmingly use postpositions, and VO languages
 overwhelmingly use prepositions.
@@ -817,7 +818,7 @@ inductive OVAdpositionType where
 
 open Core.WALS.F95A (RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) in
 /-- Chapter 95 distribution: OV order × adposition type (N = 1142).
-    Counts computed from @cite{dryer-2013b}, WALS Online, Ch 95. -/
+    Counts computed from @cite{dryer-2013-wals}, WALS Online, Ch 95. -/
 def ch95Counts : List WALSCount :=
   [ ⟨"VO & Prepositions",  (ch95.filter (·.value == .voAndPrepositions)).length⟩
   , ⟨"OV & Postpositions", (ch95.filter (·.value == .ovAndPostpositions)).length⟩
@@ -1329,7 +1330,7 @@ theorem ch95_disharmonic_rare :
 
 /-- Does this profile have an initial subordinator (word or suffix)? -/
 def SubordinationProfile.hasInitialSubordinator (p : SubordinationProfile) : Bool :=
-  p.subordinatorOrder == .initialWord || p.subordinatorOrder == .initialSuffix
+  p.subordinatorOrder == .initialWord || p.subordinatorOrder == .internalWord
 
 /-- Does this profile have a final subordinator (word or suffix)? -/
 def SubordinationProfile.hasFinalSubordinator (p : SubordinationProfile) : Bool :=
@@ -1630,7 +1631,7 @@ be identifiable by position, which OV order provides.
 theorem sub_suffix_implies_ov :
     let suffixLangs := allSubProfiles.filter
       (λ p => p.subordinatorOrder == .finalSuffix ||
-              p.subordinatorOrder == .initialSuffix)
+              p.subordinatorOrder == .internalWord)
     suffixLangs.all (·.isOV) = true := by
   native_decide
 

@@ -184,20 +184,20 @@ FEATURES = {
 # Constructor names are derived from WALS value labels in codes.csv.
 AUTO_FEATURES = {
     # ── Word Order (Ch 81–90) ──────────────────────────────────────────
-    "81A": {"enum": "BasicWordOrder",      "author": "dryer-2013a"},
-    "82A": {"enum": "SubjectVerbOrder",    "author": "dryer-2013a"},
-    "83A": {"enum": "ObjectVerbOrder",     "author": "dryer-2013a"},
-    "84A": {"enum": "ObjectObliqueVerbOrder", "author": "dryer-2013a"},
-    "85A": {"enum": "AdpositionNPOrder",   "author": "dryer-2013a"},
-    "86A": {"enum": "GenitiveNounOrder",   "author": "dryer-2013a"},
-    "87A": {"enum": "AdjectiveNounOrder",  "author": "dryer-2013a"},
-    "88A": {"enum": "DemonstrativeNounOrder", "author": "dryer-2013a"},
-    "89A": {"enum": "NumeralNounOrder",    "author": "dryer-2013a"},
-    "90A": {"enum": "RelClauseNounOrder",  "author": "dryer-2013a"},
+    "81A": {"enum": "BasicWordOrder",      "author": "dryer-2013-wals"},
+    "82A": {"enum": "SubjectVerbOrder",    "author": "dryer-2013-wals"},
+    "83A": {"enum": "ObjectVerbOrder",     "author": "dryer-2013-wals"},
+    "84A": {"enum": "ObjectObliqueVerbOrder", "author": "dryer-2013-wals"},
+    "85A": {"enum": "AdpositionNPOrder",   "author": "dryer-2013-wals"},
+    "86A": {"enum": "GenitiveNounOrder",   "author": "dryer-2013-wals"},
+    "87A": {"enum": "AdjectiveNounOrder",  "author": "dryer-2013-wals"},
+    "88A": {"enum": "DemonstrativeNounOrder", "author": "dryer-2013-wals"},
+    "89A": {"enum": "NumeralNounOrder",    "author": "dryer-2013-wals"},
+    "90A": {"enum": "RelClauseNounOrder",  "author": "dryer-2013-wals"},
 
     # ── Articles/Determiners (Ch 37–38) ────────────────────────────────
-    "37A": {"enum": "DefiniteArticleType", "author": "dryer-2013b"},
-    "38A": {"enum": "IndefiniteArticleType", "author": "dryer-2013b"},
+    "37A": {"enum": "DefiniteArticleType", "author": "dryer-2013-wals"},
+    "38A": {"enum": "IndefiniteArticleType", "author": "dryer-2013-wals"},
 
     # ── Case (Ch 49–51) ────────────────────────────────────────────────
     "49A": {"enum": "CaseCount",           "author": "iggesen-2013"},
@@ -219,14 +219,14 @@ AUTO_FEATURES = {
     "78A": {"enum": "EvidentialityCoding", "author": "deandradedehaanValenzuela-2013"},
 
     # ── Negation (Ch 112–115, 143) ─────────────────────────────────────
-    "112A": {"enum": "NegativeMorphemeType", "author": "dryer-2013c"},
+    "112A": {"enum": "NegativeMorphemeType", "author": "dryer-2013-wals"},
     "113A": {"enum": "NegationSymmetry",   "author": "miestamo-2013"},
     "114A": {"enum": "AsymmetricNegationSubtype", "author": "miestamo-2013"},
     "115A": {"enum": "NegativeIndefiniteType", "author": "haspelmath-2013"},
-    "143A": {"enum": "NegVerbOrder",       "author": "dryer-2013c"},
+    "143A": {"enum": "NegVerbOrder",       "author": "dryer-2013-wals"},
 
     # ── Questions (Ch 116) ─────────────────────────────────────────────
-    "116A": {"enum": "PolarQuestionType",  "author": "dryer-2013d"},
+    "116A": {"enum": "PolarQuestionType",  "author": "dryer-2013-wals"},
 
     # ── Gender/Number (Ch 30–31, 33–35) ────────────────────────────────
     "30A": {"enum": "GenderCount",         "author": "corbett-2013"},
@@ -247,7 +247,7 @@ AUTO_FEATURES = {
     "20A": {"enum": "FusionType",          "author": "bickel-nichols-2013a"},
     "21A": {"enum": "ExponenceType",       "author": "bickel-nichols-2013b"},
     "22A": {"enum": "InflectionalSynthesis", "author": "bickel-nichols-2013c"},
-    "26A": {"enum": "PrefixSuffixPreference", "author": "dryer-2013e"},
+    "26A": {"enum": "PrefixSuffixPreference", "author": "dryer-2013-wals"},
     "27A": {"enum": "ReduplicationType",   "author": "rubino-2013"},
 
     # ── Alignment (Ch 98–100) ──────────────────────────────────────────

@@ -1,6 +1,6 @@
 /-!
 # WALS Feature 85A: Order of Adposition and Noun Phrase
-@cite{dryer-2013a}
+@cite{dryer-2013-wals}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 85A`.
