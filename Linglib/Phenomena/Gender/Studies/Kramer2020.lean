@@ -21,7 +21,7 @@ assignment. Three main results:
 
 3. **Cross-linguistic variation in arbitrary assignment** (Table 2):
    remainder nouns vary along two dimensions — same vs different gender(s),
-   recycled vs novel gender.
+   recycled vs novel vs both.
 
 ## Integration
 
@@ -50,8 +50,16 @@ semantic property organizes the system*, while DM asks *what binary feature
 sits on n*. @cite{kramer-2020} makes this connection explicit by analyzing
 sex-based systems as [±FEM] or [±MASC], and animacy-based systems as [±ANIM].
 
-The mapping is partial because `SemanticBasis.shape` and `.rationality` have
-no standard DM feature dimension (no [±SHAPE] or [±RATIONAL] in the literature).
+The mapping is partial in two ways:
+
+1. `SemanticBasis.shape` and `.rationality` have no standard DM feature
+   dimension (no [±SHAPE] or [±RATIONAL] in the literature).
+
+2. `SemanticBasis.humanness` maps to `.anim` because @cite{kramer-2015}
+   does not posit a [±HUMAN] dimension — the closest is [±ANIM]. This is
+   a limitation of the current DM feature inventory, not a claim that
+   humanness is a subset of animacy (e.g. Akɔɔse distinguishes human vs
+   nonhuman, which is orthogonal to animate vs inanimate).
 -/
 
 namespace Phenomena.Gender.Typology
@@ -77,11 +85,15 @@ def GenderProfile.satisfiesSemanticCore (p : GenderProfile) : Bool :=
   p.genderCount == .none || p.semanticBases.any SemanticBasis.isCore
 
 /-- Map a typological semantic basis to its corresponding DM gender dimension,
-    when one exists. (@cite{kramer-2020} §3) -/
+    when one exists. (@cite{kramer-2020} §3)
+
+    The `.humanness` → `.anim` mapping reflects a gap in @cite{kramer-2015}'s
+    feature inventory: no [±HUMAN] dimension is posited, so humanness-based
+    systems are approximated by [±ANIM]. -/
 def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
   | .sex         => some .fem   -- default: feminine as marked value
   | .animacy     => some .anim
-  | .humanness   => some .anim  -- human/nonhuman ⊂ animate/inanimate
+  | .humanness   => some .anim  -- no [±HUMAN] in Kramer 2015; closest is [±ANIM]
   | .shape       => none
   | .rationality => none
 
@@ -159,44 +171,62 @@ theorem roundtrip_anim :
 -- § 3: Cross-Linguistic Variation in Arbitrary Assignment (Table 2)
 -- ============================================================================
 
+/-- Whether remainder nouns use recycled genders, novel genders, or both.
+    (@cite{kramer-2020} Table 2) -/
+inductive RemainderGenderSource where
+  | recycled  -- gender reused from semantic core (e.g. Dieri: masc, Spanish: masc/fem)
+  | novel     -- novel gender not used for semantic core (e.g. Tamil: neuter)
+  | both      -- mix of recycled and novel genders (e.g. Blackfoot: animate + inanimate)
+  deriving DecidableEq, BEq, Repr
+
 /-- How remainder nouns (those not assigned gender by the semantic core)
     are distributed across genders (@cite{kramer-2020} Table 2).
 
     Two independent parameters:
     1. Are all remainder nouns in the same gender, or spread across genders?
-    2. Is the remainder gender recycled from a semantically-assigned gender,
-       or is it a novel gender not used for the semantic core? -/
+    2. Is the remainder gender recycled, novel, or a mix of both? -/
 structure RemainderPattern where
   /-- Are all remainder nouns assigned to a single gender? -/
   sameGender : Bool
-  /-- Is the remainder gender recycled from a semantic-core gender? -/
-  recycled : Bool
+  /-- Source of the remainder gender(s). -/
+  genderSource : RemainderGenderSource
   deriving DecidableEq, BEq, Repr
 
 /-- Dieri (Pama-Nyungan): all remainder nouns are masculine (= same gender
-    used for male humans). One gender, recycled. (@cite{kramer-2020} Table 2) -/
-def dieri : RemainderPattern := ⟨true, true⟩
+    used for male humans). Same gender, recycled. (@cite{kramer-2020} Table 2) -/
+def dieri : RemainderPattern := ⟨true, .recycled⟩
 
 /-- Tamil (Dravidian): remainder nouns go to neuter — a novel gender not
-    used for the male/female semantic core.
+    used for the male/female semantic core. Same gender, novel.
     (@cite{kramer-2020} Table 2; Asher 1982) -/
-def tamil : RemainderPattern := ⟨true, false⟩
+def tamil : RemainderPattern := ⟨true, .novel⟩
 
 /-- Spanish: remainder nouns are split arbitrarily across masculine and
-    feminine — both recycled genders. (@cite{kramer-2020} Table 1, Table 2;
-    @cite{harris-1991}) -/
-def spanishRemainder : RemainderPattern := ⟨false, true⟩
+    feminine — both recycled genders. Different genders, recycled.
+    (@cite{kramer-2020} Table 1, Table 2; @cite{harris-1991}) -/
+def spanishRemainder : RemainderPattern := ⟨false, .recycled⟩
 
 /-- Akɔɔse (Niger-Congo: Bantu): remainder nouns spread across at least
-    7 noun classes — novel genders. (@cite{kramer-2020} Table 2;
-    Hedinger 2008) -/
-def akoose : RemainderPattern := ⟨false, false⟩
+    7 noun classes — novel genders. Different genders, novel.
+    (@cite{kramer-2020} Table 2; Hedinger 2008) -/
+def akoose : RemainderPattern := ⟨false, .novel⟩
 
-/-- All four cells of Table 2 are attested. -/
+/-- Blackfoot (Algic: Algonquian): inanimate nouns are assigned either a
+    novel inanimate gender or a recycled animate gender. Different genders,
+    both recycled and novel. (@cite{kramer-2020} Table 2; Frantz 2017) -/
+def blackfoot : RemainderPattern := ⟨false, .both⟩
+
+-- NOTE: Table 2 marks "same gender + both recycled and novel" as
+-- "Not applicable" — if all remainder nouns go to ONE gender, that gender
+-- is either recycled or novel, not both. This is a conceptual constraint,
+-- not derivable from our type. (@cite{kramer-2020} Table 2)
+
+/-- All five attested cells of Table 2 are distinct patterns. -/
 theorem table2_all_cells :
     dieri ≠ tamil ∧ dieri ≠ spanishRemainder ∧ dieri ≠ akoose ∧
-    tamil ≠ spanishRemainder ∧ tamil ≠ akoose ∧
-    spanishRemainder ≠ akoose := by decide
+    dieri ≠ blackfoot ∧ tamil ≠ spanishRemainder ∧ tamil ≠ akoose ∧
+    tamil ≠ blackfoot ∧ spanishRemainder ≠ akoose ∧
+    spanishRemainder ≠ blackfoot ∧ akoose ≠ blackfoot := by decide
 
 -- ============================================================================
 -- § 4: Lexical vs Structural Gender Assignment (@cite{kramer-2020} §3)
@@ -220,59 +250,83 @@ Three phenomena differentiate them (§3.3):
 -/
 
 /-- A lexical gender rule: maps a semantic feature to a grammatical gender
-    feature in a specified context. (@cite{harris-1991}) -/
+    feature in a specified context. (@cite{harris-1991})
+
+    The `semanticBasis` identifies which semantic property triggers the
+    rule; `targetDimension` identifies which DM gender dimension is
+    assigned; `context` describes the conditioning environment. -/
 structure LexicalGenderRule where
-  /-- Semantic trigger (e.g. "FEMALE", "ANIMATE") -/
-  semanticFeature : String
-  /-- Grammatical gender feature assigned (e.g. "F") -/
-  genderFeature : String
-  /-- Context restriction (e.g. "HUMAN") -/
-  context : String
+  /-- Semantic trigger (e.g. sex → social gender triggers the rule) -/
+  semanticBasis : SemanticBasis
+  /-- DM gender dimension assigned (e.g. fem) -/
+  targetDimension : GenderDimension
+  /-- Context restriction (e.g. humanness) -/
+  context : SemanticBasis
   deriving DecidableEq, BEq, Repr
 
 /-- Harris's Human Gender rule for Spanish:
     [FEMALE] → [F] / __ [HUMAN]
+    The semantic feature [FEMALE] triggers assignment of the grammatical
+    gender feature [F] (feminine) in the context of [HUMAN] nouns.
     (@cite{harris-1991}; @cite{kramer-2020} ex. 23) -/
 def harrisHumanGenderRule : LexicalGenderRule :=
-  ⟨"FEMALE", "F", "HUMAN"⟩
+  ⟨.sex, .fem, .humanness⟩
 
-/-- A gender assignment approach, abstractly characterized by what
-    phenomena it can and cannot handle. -/
+/-- Harris's rule connects two core semantic bases: assignment is triggered
+    by social gender/sex and conditioned on humanness. -/
+theorem harris_rule_uses_core_bases :
+    harrisHumanGenderRule.semanticBasis.isCore ∧
+    harrisHumanGenderRule.context.isCore := ⟨rfl, rfl⟩
+
+/-- The status of a diagnostic phenomenon for a theoretical approach.
+    @cite{kramer-2020} §3.3 argues that some phenomena are genuinely
+    diagnostic while others are inconclusive. -/
+inductive DiagnosticStatus where
+  | handled       -- the approach handles this phenomenon
+  | problematic   -- the approach cannot handle this phenomenon
+  | inconclusive  -- the phenomenon may not exist or can be reanalyzed
+  deriving DecidableEq, BEq, Repr
+
+/-- A gender assignment approach, characterized by how it handles
+    each of the three diagnostic phenomena from §3.3. -/
 structure ApproachCapabilities where
-  /-- Can the approach handle phonological gender assignment? -/
-  phonologicalAssignment : Bool
-  /-- Can a single entry trigger both masculine and feminine agreement? -/
-  hybridAgreement : Bool
-  /-- Does the approach predict the Semantic Core? -/
-  predictsSemanticCore : Bool
+  /-- §3.3.1: phonological gender assignment -/
+  phonologicalAssignment : DiagnosticStatus
+  /-- §3.3.2: hybrid nouns (simultaneous dual agreement) -/
+  hybridAgreement : DiagnosticStatus
+  /-- §3.3.3: the Semantic Core Generalization -/
+  predictsSemanticCore : DiagnosticStatus
   deriving DecidableEq, BEq, Repr
 
 /-- The lexical approach (@cite{harris-1991}).
 
-    - **Phonological assignment**: yes (lexical rules can reference phonology)
-    - **Hybrid agreement**: no — a lexical entry has one gender feature;
-      a single entry cannot be both [M] and [F] (@cite{kramer-2020} §3.3.2)
-    - **Semantic Core**: not predicted — nothing prevents a language from
+    - **Phonological assignment**: handled (lexical rules can reference
+      phonology), but @cite{kramer-2020} §3.3.1 argues the phenomenon may
+      not exist — Hausa -ā is morphophonological realization, not assignment.
+    - **Hybrid agreement**: problematic — a lexical entry has one gender
+      feature; a single entry cannot be both [M] and [F]
+      (@cite{kramer-2020} §3.3.2)
+    - **Semantic Core**: problematic — nothing prevents a language from
       having only arbitrary gender rules without any semantic connection
       (@cite{kramer-2020} §3.3.3) -/
 def lexicalApproach : ApproachCapabilities :=
-  ⟨true, false, false⟩
+  ⟨.handled, .problematic, .problematic⟩
 
 /-- The structural approach (@cite{kramer-2015}).
 
-    - **Phonological assignment**: no — syntax cannot see phonology, so gender
-      cannot be assigned by phonological rule. Apparent cases (e.g. Hausa -ā)
-      are reanalyzed as morphophonological *realization* of a gender feature
-      on *n* (@cite{kramer-2020} §3.3.1)
-    - **Hybrid agreement**: yes — a root can combine with different *n* heads
-      bearing different features, or a social-gender projection can override
-      the morphosyntactic gender (@cite{kramer-2020} §3.3.2)
-    - **Semantic Core**: yes — via the Thesis of Radical Interpretability:
+    - **Phonological assignment**: inconclusive — syntax cannot see phonology,
+      but @cite{kramer-2020} §3.3.1 argues the phenomenon is better analyzed
+      as morphophonological realization of a gender feature on *n*, so the
+      structural approach is not genuinely challenged.
+    - **Hybrid agreement**: handled — a root can combine with different *n*
+      heads, or a social-gender projection can override morphosyntactic
+      gender (@cite{kramer-2020} §3.3.2)
+    - **Semantic Core**: handled — via the Thesis of Radical Interpretability:
       if a language has gender features, at least some must be interpretable,
       which forces semantic assignment for at least some nouns
       (@cite{kramer-2020} §3.3.3) -/
 def structuralApproach : ApproachCapabilities :=
-  ⟨false, true, true⟩
+  ⟨.inconclusive, .handled, .handled⟩
 
 /-- The approaches differ on all three diagnostic phenomena. -/
 theorem approaches_differ :
@@ -281,15 +335,17 @@ theorem approaches_differ :
     lexicalApproach.predictsSemanticCore ≠ structuralApproach.predictsSemanticCore := by
   decide
 
-/-- The structural approach handles 2 out of 3 diagnostic phenomena;
-    the lexical approach handles 1. This is the basis for
-    @cite{kramer-2020}'s conclusion favoring the structural approach. -/
-theorem structural_advantage :
-    let s := structuralApproach
-    let l := lexicalApproach
-    (s.hybridAgreement.toNat + s.predictsSemanticCore.toNat) >
-    (l.hybridAgreement.toNat + l.predictsSemanticCore.toNat) := by
-  native_decide
+/-- The structural approach handles 2 of the 3 diagnostic phenomena;
+    the lexical approach handles 1. Phonological assignment is inconclusive
+    for both (the structural approach because syntax can't see phonology;
+    the lexical approach because Kramer argues the phenomenon doesn't exist
+    as described). This is the basis for @cite{kramer-2020} §3.4's conclusion
+    that "structural gender assignment has a slight edge." -/
+theorem structural_edge :
+    structuralApproach.hybridAgreement = .handled ∧
+    structuralApproach.predictsSemanticCore = .handled ∧
+    lexicalApproach.hybridAgreement = .problematic ∧
+    lexicalApproach.predictsSemanticCore = .problematic := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 5: Thesis of Radical Interpretability (@cite{kramer-2020} ex. 29)
@@ -340,16 +396,39 @@ theorem no_purely_arbitrary_under_ri
   obtain ⟨gf', hgf', hi, _⟩ := hRI gf hgf (hAllU gf hgf)
   exact absurd hi (by rw [hAllU gf' hgf']; decide)
 
+/-- Positive direction of the RI → Semantic Core derivation:
+    if a language has gender features and satisfies Radical Interpretability,
+    then it has at least one interpretable gender feature (which, being
+    interpretable, forces semantic gender assignment for at least some nouns).
+    (@cite{kramer-2020} §3.3.3) -/
+theorem ri_implies_interpretable_exists
+    (features : List GenderFeature)
+    (hRI : radicalInterpretability features)
+    (hNonempty : ∃ gf ∈ features, True) :
+    ∃ gf ∈ features, gf.interp = .i := by
+  by_contra h
+  push_neg at h
+  have hAllU : ∀ gf ∈ features, gf.interp = .u := by
+    intro gf hgf
+    cases hInterp : gf.interp with
+    | i => exact absurd hInterp (by intro heq; exact h gf hgf heq)
+    | u => rfl
+  exact no_purely_arbitrary_under_ri features hRI hNonempty hAllU
+
 -- ============================================================================
 -- § 6: Referent-Based Gender Assignment (@cite{kramer-2020} §2.2.3)
 -- ============================================================================
 
 /-- Same-root nominals: nouns that can be assigned different grammatical
     genders depending on the social gender of their referent.
-    (@cite{kramer-2020} §2.2.3; @cite{corbett-1991})
+    (@cite{kramer-2020} §2.2.3; @cite{kramer-2015}; @cite{corbett-1991})
 
-    Examples: Russian *vrač* 'doctor', Spanish *juez* 'judge',
-    Greek *odigós* 'driver', Amharic *hakim* 'doctor'. -/
+    In the structural approach, the root itself is ungendered; gender
+    depends on which *n* head it merges with. Same-root nominals combine
+    with alternative n heads depending on the referent.
+
+    Examples: Amharic *hakim* 'doctor' (ex. 13), Spanish *estudiante*
+    'student', Greek *odigós* 'driver'. -/
 structure SameRootNominal where
   /-- The noun form -/
   form : String
@@ -381,5 +460,80 @@ theorem same_root_two_n_heads :
 /-- The two n heads for *hakim* are distinct gender features. -/
 theorem hakim_distinct_genders :
     CatHead.n_iFem ≠ CatHead.n_iMasc := by decide
+
+-- ============================================================================
+-- § 7: Hybrid Nouns (@cite{kramer-2020} §2.2.3, §3.3.2)
+-- ============================================================================
+
+/-! Hybrid nouns are distinct from same-root nominals. Where same-root
+nominals alternate gender depending on the referent (Amharic *hakim* is
+EITHER masculine OR feminine), hybrid nouns trigger BOTH genders
+SIMULTANEOUSLY on different agreement targets in the same sentence.
+
+@cite{kramer-2020} ex. 16/27: Russian *vrač* 'doctor'
+  *očen' xoroš-aja glavn-yj vrač*
+   very  good-F    head-M   doctor
+  'a very good head doctor'
+
+Here *xoroš-aja* shows feminine agreement and *glavn-yj* shows masculine
+agreement with the SAME noun *vrač* in the SAME clause.
+
+@cite{kramer-2020} §3.3.2 argues this is problematic for lexical approaches
+(a lexical entry has one gender feature) but handled by structural approaches
+(a social-gender projection can coexist with morphosyntactic gender on n).
+-/
+
+/-- Agreement gender triggered on a specific target type. -/
+structure AgreementGender where
+  /-- The agreement target (attributive, predicate, etc.) -/
+  target : AgreementTarget
+  /-- The gender triggered on this target -/
+  gender : GenderDimension
+  /-- Polarity of the gender feature -/
+  polarity : Polarity
+  deriving DecidableEq, BEq, Repr
+
+/-- A hybrid noun: a single lexical item that triggers different genders
+    on different agreement targets simultaneously.
+    (@cite{kramer-2020} §2.2.3, §3.3.2; @cite{corbett-1991}) -/
+structure HybridNoun where
+  /-- The noun form -/
+  form : String
+  /-- Language -/
+  language : String
+  /-- Morphosyntactic gender (from n head) -/
+  morphGender : GenderVal
+  /-- Semantic gender (from social-gender projection, triggered by referent) -/
+  semGender : GenderVal
+  /-- The two genders must differ for hybrid agreement to arise. -/
+  distinct : morphGender ≠ semGender
+  deriving Repr
+
+/-- Whether a hybrid noun shows mixed agreement: morphosyntactic gender on
+    some targets, semantic gender on others. -/
+def HybridNoun.showsMixedAgreement (hn : HybridNoun) : Bool :=
+  hn.morphGender ≠ hn.semGender
+
+/-- Russian *vrač* 'doctor': morphologically masculine (from n), but
+    can trigger feminine agreement when referring to a female doctor.
+    (@cite{kramer-2020} ex. 15-16/27; @cite{corbett-1991}) -/
+def russianVrac : HybridNoun :=
+  { form := "vrač"
+    language := "Russian"
+    morphGender := ⟨.fem, .neg⟩  -- [−FEM] = morphological masculine
+    semGender := ⟨.fem, .pos⟩    -- [+FEM] = semantic feminine (female referent)
+    distinct := by decide }
+
+/-- Hybrid nouns have distinct morphological and semantic genders. -/
+theorem vrac_mixed_agreement : russianVrac.showsMixedAgreement = true := rfl
+
+/-- Hybrid nouns are problematic for lexical approaches: a lexical entry
+    can bear only one gender feature, but hybrid nouns need two genders
+    simultaneously. The structural approach handles this via separate
+    projections for morphosyntactic and social gender.
+    (@cite{kramer-2020} §3.3.2) -/
+theorem hybrid_nouns_favor_structural :
+    structuralApproach.hybridAgreement = .handled ∧
+    lexicalApproach.hybridAgreement = .problematic := ⟨rfl, rfl⟩
 
 end Phenomena.Gender.Studies.Kramer2020
