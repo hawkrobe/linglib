@@ -40,9 +40,9 @@ linking-relevant property. Two classes of counterevidence:
 
 namespace Phenomena.Ergativity.Studies.Bohnemeyer2004
 
-open Semantics.Lexical.Verb.EventStructure (EventType CausationType)
+open Semantics.Lexical.Verb.EventStructure (EventType CausationType Template)
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
-open Phenomena.Ergativity (MarkerSet)
+open Fragments.Mayan (MarkerSet)
 open Fragments.Mayan.Yukatek
 
 -- ════════════════════════════════════════════════════
@@ -349,5 +349,82 @@ theorem antipassive_active_pattern :
 
 theorem anticausative_removes_cause :
     (DetransitivizationType.toGeneral .anticausative).isBieventive = false := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 10. Template-Level Detransitivization
+-- ════════════════════════════════════════════════════
+
+/-- Detransitivization as a template-level operation.
+    @cite{bohnemeyer-2004} rules (28)–(30) decompose detransitivization
+    in terms of which subevent is retained:
+
+    - Antipassive: retain the causing process → accomplishment → activity
+    - Anticausative: retain the caused change → accomplishment → achievement
+    - Passive: like anticausative but adds PROC_C + instigator (same template
+      output as anticausative, with additional participant structure) -/
+def DetransitivizationType.templateResult : DetransitivizationType → Option Template
+  | .antipassive => some .activity       -- retain PROC, remove CAUSE+CHANGE
+  | .anticausative => some .achievement  -- remove PROC+CAUSE, retain CHANGE
+  | .passive => some .achievement        -- retain CHANGE, add instigator
+
+/-- Antipassive yields a process (activity); anticausative/passive yield
+    a state change (achievement). This connects to the event type distinction
+    that governs verb class membership. -/
+theorem antipassive_yields_process :
+    (DetransitivizationType.templateResult .antipassive).map Template.eventType
+    = some .process := rfl
+
+theorem anticausative_yields_stateChange :
+    (DetransitivizationType.templateResult .anticausative).map Template.eventType
+    = some .stateChange := rfl
+
+/-- Anticausative template result matches `Template.intransitiveVariant`
+    from `EventStructure.lean`: both yield achievement from accomplishment. -/
+theorem anticausative_matches_intransitiveVariant :
+    DetransitivizationType.templateResult .anticausative
+    = Template.intransitiveVariant .accomplishment := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 11. Additional Verb Predictions
+-- ════════════════════════════════════════════════════
+
+/-- All externally-caused manner-of-motion verbs causativize,
+    regardless of their active stem class. -/
+theorem manner_of_motion_all_causative :
+    verbTransitivization chiik = .causative ∧
+    verbTransitivization haarax = .causative ∧
+    verbTransitivization huuy = .causative ∧
+    verbTransitivization mosoon = .causative ∧
+    verbTransitivization pirik = .causative ∧
+    verbTransitivization walak = .causative := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Additional positional verbs causativize (externally caused). -/
+theorem additional_positionals_causative :
+    verbTransitivization chilTal = .causative ∧
+    verbTransitivization xolTal = .causative := ⟨rfl, rfl⟩
+
+/-- Degree achievements in the inactive class causativize despite
+    lacking discrete end states — additional evidence beyond ka'n and na'k. -/
+theorem additional_degree_achievements_causative :
+    verbTransitivization lab = .causative ∧
+    verbTransitivization tiil = .causative ∧
+    verbTransitivization tsuuk = .causative := ⟨rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 12. Bridge to SplitErgativity
+-- ════════════════════════════════════════════════════
+
+/-- The linking-by-viewpoint mechanism derives the same alignment
+    as the `SplitErgativity` system parameterized by status category. -/
+theorem linking_consistent_with_split :
+    (yukatekSplit.alignment .completive = .ergative) ∧
+    (yukatekSplit.alignment .incompletive = .accusative) := ⟨rfl, rfl⟩
+
+/-- Yukatek's split is aspect-conditioned, like Hindi and Georgian.
+    All three use perfective → ergative, imperfective → accusative
+    (modulo language-specific factor types). -/
+theorem aspect_conditioned_split_family :
+    yukatekSplit.alignment .completive =
+      Core.hindiSplit.alignment .perfective := rfl
 
 end Phenomena.Ergativity.Studies.Bohnemeyer2004

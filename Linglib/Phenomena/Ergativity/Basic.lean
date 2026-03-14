@@ -27,20 +27,11 @@ for non-perfective clauses, yet display contrastive alignment patterns.
 namespace Phenomena.Ergativity
 
 -- ============================================================================
--- § 1: Marker Sets
+-- § 1: Marker Sets (canonical definition in Fragments.Mayan.Params)
 -- ============================================================================
 
-/-- The two agreement marker paradigms found in Mayan languages.
-    Set A and set B are the traditional Mayanist labels for the two
-    cross-referencing paradigms on the verb. -/
-inductive MarkerSet where
-  /-- Set A: cross-references ergative arguments (transitive agent) and
-      genitives (possessors). Ergative and genitive are homophonous. -/
-  | setA
-  /-- Set B: cross-references absolutive arguments (intransitive subject
-      and, in ergative alignment, transitive patient). -/
-  | setB
-  deriving DecidableEq, BEq, Repr
+open Fragments.Mayan (MarkerSet)
+export Fragments.Mayan (MarkerSet)
 
 -- ============================================================================
 -- § 2: Accusative-Side Alignment Patterns

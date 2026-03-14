@@ -68,4 +68,24 @@ def toCaseLocus : ABSPosition → CaseLocus
   | .high => .absNom
   | .low  => .absDef
 
+-- ============================================================================
+-- § 3: Agreement Marker Paradigms
+-- ============================================================================
+
+/-- The two agreement marker paradigms found in Mayan languages.
+    Set A and set B are the traditional Mayanist labels for the two
+    cross-referencing paradigms on the verb.
+
+    These are framework-agnostic descriptive labels — they do not commit
+    to an analysis of the markers as ergative, accusative, nominative,
+    or absolutive. -/
+inductive MarkerSet where
+  /-- Set A: cross-references ergative arguments (transitive agent) and
+      genitives (possessors). Ergative and genitive are homophonous. -/
+  | setA
+  /-- Set B: cross-references absolutive arguments (intransitive subject
+      and, in ergative alignment, transitive patient). -/
+  | setB
+  deriving DecidableEq, BEq, Repr
+
 end Fragments.Mayan

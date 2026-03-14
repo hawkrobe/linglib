@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
-import Linglib.Phenomena.Ergativity.Basic
+import Linglib.Fragments.Mayan.Params
+import Linglib.Core.Case.SplitConditions
 
 /-!
 # Yukatek Maya Verb Classes and Status System
@@ -41,7 +42,7 @@ namespace Fragments.Mayan.Yukatek
 
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 open Semantics.Lexical.Verb.EventStructure (EventType CausationType)
-open Phenomena.Ergativity (MarkerSet)
+open Fragments.Mayan (MarkerSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Verb Stem Classes
@@ -171,6 +172,26 @@ def waalTal : YukatekVerb := ⟨"stand up", .positional, .external⟩
 -- @cite{bohnemeyer-2004} ex. (9): hàan-t-ik (applicative -t, not causative -s)
 def haan : YukatekVerb := ⟨"eat", .inactive, .internal⟩
 
+-- Active verbs (externally caused: manner of motion)
+def chiik : YukatekVerb := ⟨"shake", .active, .external⟩
+def haarax : YukatekVerb := ⟨"slide", .active, .external⟩
+def huuy : YukatekVerb := ⟨"stir", .active, .external⟩
+def mosoon : YukatekVerb := ⟨"whirl", .active, .external⟩
+def pirik : YukatekVerb := ⟨"flick", .active, .external⟩
+def walak : YukatekVerb := ⟨"turn/revolve", .active, .external⟩
+
+-- Active verbs (externally caused: sound emission)
+def nikich : YukatekVerb := ⟨"squeak", .active, .external⟩
+
+-- Positional verbs (additional)
+def chilTal : YukatekVerb := ⟨"lie down", .positional, .external⟩
+def xolTal : YukatekVerb := ⟨"kneel", .positional, .external⟩
+
+-- Degree achievements (additional, inactive class but atelic)
+def lab : YukatekVerb := ⟨"deteriorate", .inactive, .external⟩
+def tiil : YukatekVerb := ⟨"last/drag on", .inactive, .external⟩
+def tsuuk : YukatekVerb := ⟨"rot", .inactive, .external⟩
+
 -- Transitive active
 def haats : YukatekVerb := ⟨"hit", .transitiveActive, .internal⟩
 
@@ -200,5 +221,39 @@ def VerbStemClass.toTemplate : VerbStemClass → Template
 theorem eventType_consistent (c : VerbStemClass) :
     c.eventType = c.toTemplate.eventType := by
   cases c <;> rfl
+
+-- ════════════════════════════════════════════════════
+-- § 6. Split-Ergative System
+-- ════════════════════════════════════════════════════
+
+/-- Yukatek split-ergative system, parameterized by status category.
+    Perfective status (completive/subjunctive) triggers ergative alignment;
+    imperfective status (incompletive) triggers accusative alignment.
+    Imperative is treated as ergative (completive-like default).
+
+    This instantiates the same `Core.SplitErgativity` type used by Hindi
+    and Georgian, enabling cross-linguistic comparison. -/
+def yukatekSplit : Core.SplitErgativity StatusCategory :=
+  { ergCondition := λ s => match s.viewpointAspect with
+      | some .perfective => true
+      | some .imperfective => false
+      | none => true }  -- imperative: ergative-like default
+
+theorem yukatek_completive_erg :
+    yukatekSplit.alignment .completive = .ergative := rfl
+
+theorem yukatek_subjunctive_erg :
+    yukatekSplit.alignment .subjunctive = .ergative := rfl
+
+theorem yukatek_incompletive_acc :
+    yukatekSplit.alignment .incompletive = .accusative := rfl
+
+/-- Yukatek and Hindi share the same split conditioning: perfective → ergative,
+    imperfective → accusative. This is @cite{bohnemeyer-2004}'s core insight
+    that a single linking-by-viewpoint mechanism underlies both systems. -/
+theorem yukatek_hindi_same_split :
+    yukatekSplit.alignment .completive = Core.hindiSplit.alignment .perfective ∧
+    yukatekSplit.alignment .incompletive = Core.hindiSplit.alignment .imperfective :=
+  ⟨rfl, rfl⟩
 
 end Fragments.Mayan.Yukatek

@@ -500,6 +500,24 @@ def dargwa : AlignmentProfile :=
     verbAlignment := .ergative
     notes := "Consistently ergative; -li on A; gender agrees with absolutive" }
 
+/-- Yukatek Maya (Yucatecan Mayan): aspect-conditioned split-intransitive
+    system. In perfective clauses (completive/subjunctive status), S is
+    cross-referenced by set-B markers (ergative pattern). In imperfective
+    clauses (incompletive status), S is cross-referenced by set-A markers
+    (accusative pattern). Transitive marking is not affected by the split.
+
+    @cite{bohnemeyer-2004}: the split is not conditioned by lexical verb
+    class (not split-S or fluid-S) but by viewpoint aspect, making it
+    a typologically rare case of aspect-conditioned split intransitivity.
+    WALS codes Yukatek verbal person marking as "split" (F100A). -/
+def yukatek : AlignmentProfile :=
+  { name := "Yukatek Maya"
+    iso639 := "yua"
+    npAlignment := .neutral      -- no NP case marking
+    pronAlignment := .neutral    -- pronouns lack case morphology
+    verbAlignment := .active     -- aspect-conditioned split in S marking
+    notes := "Aspect-conditioned split-S: PRV → erg (set-B), IMPFV → acc (set-A)" }
+
 end LanguageData
 
 -- ============================================================================
@@ -511,9 +529,9 @@ def allProfiles : List AlignmentProfile :=
   [ english, hindiUrdu, basque, dyirbal, georgian, tagalog
   , japanese, latin, russian, mandarin, turkish, tongan
   , guarani, samoan, german, swahili, tibetan, nezPerce
-  , finnish, warlpiri, dargwa ]
+  , finnish, warlpiri, dargwa, yukatek ]
 
-theorem allProfiles_count : allProfiles.length = 21 := by native_decide
+theorem allProfiles_count : allProfiles.length = 22 := by native_decide
 
 -- ============================================================================
 -- ISO 639-3 Verification
@@ -562,6 +580,11 @@ theorem georgian_verb_active : georgian.verbAlignment = .active := by native_dec
 theorem dargwa_np_ergative : dargwa.npAlignment = .ergative := by native_decide
 theorem dargwa_pron_ergative : dargwa.pronAlignment = .ergative := by native_decide
 theorem dargwa_verb_ergative : dargwa.verbAlignment = .ergative := by native_decide
+
+-- Yukatek Maya
+theorem yukatek_np_neutral : yukatek.npAlignment = .neutral := by native_decide
+theorem yukatek_pron_neutral : yukatek.pronAlignment = .neutral := by native_decide
+theorem yukatek_verb_active : yukatek.verbAlignment = .active := by native_decide
 
 -- Split ergativity
 theorem dyirbal_is_dixon_split : dyirbal.dixonSplit = true := by native_decide
@@ -648,6 +671,21 @@ only Georgian shows active case marking on NPs and pronouns. -/
 theorem gen6_active_rare_case :
     (allProfiles.filter (fun p => p.npAlignment == .active)).length <= 2 := by
   native_decide
+
+/-! ### Generalization 6a: Aspect-conditioned split intransitivity.
+
+Yukatek Maya and Georgian both show active (split-S) verbal person marking.
+In both languages, the split is conditioned by viewpoint aspect: perfective
+triggers ergative-like marking, imperfective triggers accusative-like marking.
+@cite{bohnemeyer-2004} argues this reduces to a single linking-by-viewpoint
+mechanism projected from the causal chain of subevents in event structure. -/
+
+theorem gen6a_aspect_split_languages :
+    (allProfiles.filter (fun p => p.verbAlignment == .active)).length >= 2 := by
+  native_decide
+
+theorem gen6a_yukatek_and_georgian_both_active :
+    yukatek.verbAlignment = .active ∧ georgian.verbAlignment = .active := ⟨rfl, rfl⟩
 
 /-! ### Generalization 7: Languages with ergative NP marking tend to have
 ergative or neutral verbal person marking.
