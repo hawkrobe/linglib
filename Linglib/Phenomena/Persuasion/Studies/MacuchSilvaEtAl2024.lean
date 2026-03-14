@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Quantities
-import Linglib.Core.Scales.HornScale
+import Linglib.Theories.Semantics.Alternatives.HornScale
 import Mathlib.Data.Rat.Defs
 
 /-!

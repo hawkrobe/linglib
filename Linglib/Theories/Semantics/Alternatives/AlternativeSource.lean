@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.HornScale
+import Linglib.Theories.Semantics.Alternatives.HornScale
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
 
 /-!

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.234] - 2026-03-14
+
+### Changed
+- **HornScale.lean**: Move from `Core/Scales/` to `Theories/Semantics/Alternatives/` — collocates with `AlternativeSource.lean`; update 12 import paths
+
 ## [0.229.233] - 2026-03-14
 
 ### Added

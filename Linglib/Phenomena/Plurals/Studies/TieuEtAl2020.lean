@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Core.Scales.HornScale
+import Linglib.Theories.Semantics.Alternatives.HornScale
 
 /-!
 # Tieu, Bill, Romoli & Crain (2020) @cite{tieu-etal-2020}

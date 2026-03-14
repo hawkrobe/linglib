@@ -19,7 +19,7 @@ import Linglib.Core.Logic.Quantification
 import Linglib.Core.Logic.PolarizedIndividuals
 import Linglib.Core.Logic.SquareOfOpposition
 import Linglib.Core.Scales.Extent
-import Linglib.Core.Scales.HornScale
+import Linglib.Theories.Semantics.Alternatives.HornScale
 import Linglib.Core.Semantics.Intension
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Logic.BeliefRevision

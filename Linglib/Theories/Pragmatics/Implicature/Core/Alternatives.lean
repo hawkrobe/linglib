@@ -38,7 +38,7 @@ From @cite{horn-1984}, @cite{rett-2015}:
 
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
-import Linglib.Core.Scales.HornScale
+import Linglib.Theories.Semantics.Alternatives.HornScale
 import Linglib.Core.PropertyDomain
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
