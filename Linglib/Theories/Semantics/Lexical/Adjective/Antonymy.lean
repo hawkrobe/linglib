@@ -44,7 +44,7 @@ open Semantics.Degree (positiveMeaning antonymMeaning)
 theorem contradictory_is_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
     contradictoryNeg d θ = !positiveMeaning d θ := by
-  simp only [contradictoryNeg, positiveMeaning]
+  simp only [contradictoryNeg, antonymMeaning, positiveMeaning]
   cases h : decide ((θ : Degree max) < d) <;> simp_all
 
 /-- Double contradictory negation eliminates: "not [not happy]" = "happy".
@@ -62,7 +62,7 @@ theorem contradictory_dne {max : Nat}
 theorem contradictory_exhaustive {max : Nat}
     (d : Degree max) (θ : Threshold max) :
     positiveMeaning d θ = true ∨ contradictoryNeg d θ = true := by
-  simp only [positiveMeaning, contradictoryNeg, decide_eq_true_eq]
+  simp only [positiveMeaning, contradictoryNeg, antonymMeaning, decide_eq_true_eq]
   by_cases h : (θ : Degree max) < d
   · exact Or.inl h
   · push_neg at h; exact Or.inr h

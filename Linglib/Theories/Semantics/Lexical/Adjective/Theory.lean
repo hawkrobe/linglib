@@ -82,9 +82,11 @@ instance {n : Nat} : DecidableEq (ThresholdPair n) :=
 -- Negation Semantics
 -- ════════════════════════════════════════════════════
 
-/-- Contradictory negation: "not happy" = degree ≤ theta. -/
-def contradictoryNeg {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
-  d ≤ (θ : Degree max)
+/-- Contradictory negation: "not happy" = degree ≤ theta.
+    Alias for `Semantics.Degree.antonymMeaning` — same comparison,
+    named for its role in the contradictory/contrary distinction. -/
+abbrev contradictoryNeg {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
+  Semantics.Degree.antonymMeaning d θ
 
 /-- Contrary negation: "unhappy" = degree < theta_neg. -/
 def contraryNeg {max : Nat} (d : Degree max) (θ_neg : Threshold max) : Bool :=

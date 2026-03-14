@@ -50,9 +50,9 @@ Formalizes the quadruplet structure, proves the contradictory synonymy
 puzzle and its resolution via ThresholdPair, and bridges to the empirical
 data in `FlexibleNegation.lean`. The pragmatic mechanism connecting
 contradictory base → effective ThresholdPair is derived via two routes:
-1. **Bidirectional OT** (§ 9): @cite{blutner-2000}'s superoptimality with
-   M-Principle >> Economy derives the four-way form-meaning assignment directly
-   from `Core.ConstraintEvaluation.superoptimal`.
+1. **Bidirectional OT** (§ 9 below): @cite{blutner-2000}'s superoptimality
+   with M-Principle >> Economy derives the four-way form-meaning assignment
+   directly from `Core.ConstraintEvaluation.superoptimal`.
 2. **RSA model**: @cite{tessler-franke-2019} (`Studies/TesslerFranke2020.lean`)
    derives the same effect through Bayesian pragmatic reasoning.
 -/
@@ -61,7 +61,6 @@ set_option autoImplicit false
 
 namespace Phenomena.Negation.Studies.Krifka2007
 
-open Core (NegationType)
 open Core.Scale (Degree Threshold deg thr)
 open Semantics.Lexical.Adjective (ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning contradictoryNeg)
@@ -84,7 +83,7 @@ inductive QuadForm where
   | notNegative  -- "not unhappy"
   deriving Repr, DecidableEq, BEq
 
-/-- Form complexity ordering (p. 173):
+/-- Form complexity ordering:
     |happy| < |unhappy| < |not happy| < |not unhappy|
 
     Matches `utteranceCost` in @cite{tessler-franke-2019}'s RSA model. -/
@@ -264,7 +263,7 @@ theorem cost_asymmetry_reflects_complexity :
 -- § 8. Unconditionals: Evidence for Contradictory Base
 -- ════════════════════════════════════════════════════
 
-/-- Krifka's unconditional argument (ex. 22, p. 174):
+/-- Krifka's unconditional argument:
     "Regardless whether you are happy or unhappy, you should read this book."
 
     This sentence entails the predicate covers EVERYONE — no gap.
@@ -291,7 +290,7 @@ theorem strengthened_not_exhaustive :
 
 /-! @cite{blutner-2000}'s Bidirectional OT (superoptimality) derives the
     form-meaning assignment from constraint competition. This formalizes
-    Krifka's diagrams (14)-(15), connecting the M-principle to the
+    Krifka's BiOT analysis, connecting the M-principle to the
     `superoptimal` infrastructure in `Core.Logic.ConstraintEvaluation`.
 
     Two ranked constraints:
@@ -356,7 +355,7 @@ def biotProfile (ranking : List (NamedConstraint (QuadForm × Region)))
     (p : QuadForm × Region) : List Nat :=
   ranking.map fun c => c.eval p
 
-/-- **Main BiOT result** (diagrams 14-15): M-Principle >> Economy derives
+/-- **Main BiOT result**: M-Principle >> Economy derives
     Krifka's quadruplet assignment. Each form gets a unique meaning region:
     - "happy" → clearly positive (stereotypical)
     - "not unhappy" → borderline positive / plateau (non-stereotypical)

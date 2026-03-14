@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Lexical.Adjective.Antonymy
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Phenomena.Gradability.Data
 
@@ -27,8 +28,7 @@ open Core (NegationType)
 open Core.Scale (Boundedness Degree Threshold
   Degree.toNat Threshold.toNat deg thr)
 open Semantics.Lexical.Adjective (GradableAdjEntry InformationalStrength
-  ThresholdPair inGapRegion positiveMeaning' contraryNegMeaning
-  contradictoryNeg contraryNeg)
+  ThresholdPair inGapRegion positiveMeaning' contraryNegMeaning contraryNeg)
 open Semantics.Degree (positiveMeaning negativeMeaning antonymMeaning
   positiveMeaning_monotone)
 open Fragments.English.Predicates.Adjectival
@@ -119,12 +119,6 @@ theorem contraryNeg_eq_negativeMeaning {max : Nat}
 theorem notPositiveRel_eq_antonymMeaning (d : Deg5) (s : RelativeScale) :
     notPositiveRel d s = antonymMeaning d s.θ_pos := rfl
 
-/-- Theory.lean's `contradictoryNeg` IS Core.lean's `antonymMeaning`.
-    Both compute `d ≤ (θ : Degree max)`. -/
-theorem contradictoryNeg_eq_antonymMeaning {max : Nat}
-    (d : Degree max) (θ : Threshold max) :
-    contradictoryNeg d θ = antonymMeaning d θ := rfl
-
 /-- Theory.lean's `contraryNeg` IS Core.lean's `negativeMeaning`.
     Both compute `d < (θ : Degree max)`. -/
 theorem contraryNeg_eq_negativeMeaning' {max : Nat}
@@ -196,22 +190,19 @@ theorem gap_iff_neither {max : Nat}
     complements: every degree satisfies exactly one. No gap is possible.
     This is WHY absolute adjectives show symmetric negation (Exp 2). -/
 
-/-- Contradictory antonyms partition the scale with no gap. -/
+/-- Contradictory antonyms partition the scale with no gap.
+    Now derived from `Antonymy.contradictory_exhaustive`. -/
 theorem contradictory_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
-    positiveMeaning d θ = true ∨ antonymMeaning d θ = true := by
-  simp only [positiveMeaning, antonymMeaning, decide_eq_true_eq]
-  by_cases h : (θ : Degree max) < d
-  · exact Or.inl h
-  · push_neg at h; exact Or.inr h
+    positiveMeaning d θ = true ∨ antonymMeaning d θ = true :=
+  Semantics.Lexical.Adjective.Antonymy.contradictory_exhaustive d θ
 
 /-- `antonymMeaning` IS the Boolean complement of `positiveMeaning`.
-    Structural basis for single-threshold symmetry. -/
+    Now derived from `Antonymy.contradictory_is_complement`. -/
 theorem contradictory_is_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
-    antonymMeaning d θ = !positiveMeaning d θ := by
-  simp only [antonymMeaning, positiveMeaning]
-  cases h : decide ((θ : Degree max) < d) <;> simp_all
+    antonymMeaning d θ = !positiveMeaning d θ :=
+  Semantics.Lexical.Adjective.Antonymy.contradictory_is_complement d θ
 
 -- ============================================================================
 -- § 6. Monotonicity → Strength & Precision
