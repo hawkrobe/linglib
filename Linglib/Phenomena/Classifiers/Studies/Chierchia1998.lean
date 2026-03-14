@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Agreement.NounCategorization
+import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
@@ -6,7 +6,7 @@ Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
 @cite{chierchia-1998}
 
 Connects the cross-linguistic noun categorization typology in
-`Phenomena.Agreement.NounCategorization` to the Nominal Mapping
+`Phenomena.Classifiers.Typology` to the Nominal Mapping
 Parameter from `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`.
 
 ## Predictions verified
@@ -22,11 +22,11 @@ Parameter from `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`.
 - English [+arg, +pred] prediction (no system) not yet connected to data
 -/
 
-namespace Phenomena.Agreement.Studies.Chierchia1998
+namespace Phenomena.Classifiers.Studies.Chierchia1998
 
 open Core.NounCategorization
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping)
-open Phenomena.Agreement.NounCategorization
+open Phenomena.Classifiers.Typology
 
 /-- Map NominalMapping to the expected classifier type.
     [+arg, -pred] languages have numeral classifiers.
@@ -90,4 +90,4 @@ theorem french_italian_same_mapping :
     Fragments.French.Nouns.frenchMapping =
       Fragments.Italian.Nouns.italianMapping := rfl
 
-end Phenomena.Agreement.Studies.Chierchia1998
+end Phenomena.Classifiers.Studies.Chierchia1998

@@ -524,7 +524,7 @@ theorem wals_missing :
     = ["Buryat", "Croatian", "Serbian"] := by native_decide
 
 /-- For all 42 languages where the family names agree, the study family
-matches the WALS family exactly. -/
+    matches the WALS family exactly. -/
 theorem wals_family_agreement_count :
     (walsMatchedLanguages.filter (λ l =>
       match walsLookup l with
@@ -533,13 +533,13 @@ theorem wals_family_agreement_count :
     )).length = 42 := by native_decide
 
 /-- The 9 family-name divergences (all terminological, not errors):
-- Basque: study "Isolate" vs WALS "Basque"
-- Japanese: "Japonic" vs "Japanese"
-- Kazakh/Turkish/Uyghur: "Turkic" vs "Altaic" (Altaic hypothesis disputed)
-- Korean: "Koreanic" vs "Korean"
-- Naija: "Creole" vs "other"
-- Thai: "Kra-Dai" vs "Tai-Kadai"
-- Vietnamese: "Austroasiatic" vs "Austro-Asiatic" (hyphenation) -/
+    - Basque: study "Isolate" vs WALS "Basque"
+    - Japanese: "Japonic" vs "Japanese"
+    - Kazakh/Turkish/Uyghur: "Turkic" vs "Altaic" (Altaic hypothesis disputed)
+    - Korean: "Koreanic" vs "Korean"
+    - Naija: "Creole" vs "other"
+    - Thai: "Kra-Dai" vs "Tai-Kadai"
+    - Vietnamese: "Austroasiatic" vs "Austro-Asiatic" (hyphenation) -/
 theorem wals_family_divergence_count :
     (walsMatchedLanguages.filter (λ l =>
       match walsLookup l with

@@ -572,6 +572,10 @@ def generate_languages(langs, used_ids):
     lines.append('def findLanguage (code : String) : Option Language :=')
     lines.append('  languages.find? (·.walsCode == code)')
     lines.append('')
+    lines.append('/-- Look up a language by ISO 639-3 code. -/')
+    lines.append('def findByIso (iso : String) : Option Language :=')
+    lines.append('  languages.find? (·.iso == iso)')
+    lines.append('')
     lines.append('end Core.WALS')
     lines.append('')
 

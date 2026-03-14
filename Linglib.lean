@@ -972,7 +972,7 @@ import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Classifiers.Typology
-import Linglib.Phenomena.Agreement.Studies.Chierchia1998
+import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 import Linglib.Phenomena.Classifiers.Studies.Downing1996
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
