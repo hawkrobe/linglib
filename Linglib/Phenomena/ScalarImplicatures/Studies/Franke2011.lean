@@ -89,57 +89,105 @@ variable {G : InterpGame}
 def support (S : SpeakerStrategy G) (s : G.State) : Finset G.Message :=
   Finset.univ.filter (λ m => S.choose s m > 0)
 
-/-- Best response speaker: choose messages that maximize hearer success -/
+/-- Max utility among true messages at state s (0 if no true messages). -/
+def maxUtility (G : InterpGame) (H : HearerStrategy G) (s : G.State) : ℚ :=
+  (G.trueMessages s).fold max 0 (λ m' => H.respond m' s)
+
+/-- Optimal messages at state s: true messages achieving max utility.
+
+    This is the set-level best response (Franke eq. 76): the speaker at state t
+    uses messages in R_k^{-1}(t) that minimize |R_k(m)|, which corresponds to
+    maximizing H(m|t) in the probabilistic rendering.
+
+    All probability-level reasoning should go through this set. -/
+def optimalMessages (G : InterpGame) (H : HearerStrategy G) (s : G.State) : Finset G.Message :=
+  (G.trueMessages s).filter (λ m => H.respond m s == maxUtility G H s)
+
+theorem optimalMessages_subset_trueMessages (G : InterpGame) (H : HearerStrategy G)
+    (s : G.State) : optimalMessages G H s ⊆ G.trueMessages s :=
+  Finset.filter_subset _ _
+
+theorem optimalMessages_meaning (G : InterpGame) (H : HearerStrategy G)
+    (s : G.State) (m : G.Message) (hm : m ∈ optimalMessages G H s) :
+    G.meaning m s = true := by
+  have := optimalMessages_subset_trueMessages G H s hm
+  simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at this
+  exact this
+
+theorem optimalMessages_utility (G : InterpGame) (H : HearerStrategy G)
+    (s : G.State) (m : G.Message) (hm : m ∈ optimalMessages G H s) :
+    H.respond m s = maxUtility G H s := by
+  simp only [optimalMessages, Finset.mem_filter] at hm
+  rw [beq_iff_eq] at hm; exact hm.2
+
+theorem maxUtility_nonneg (G : InterpGame) (H : HearerStrategy G) (s : G.State) :
+    0 ≤ maxUtility G H s :=
+  (Finset.le_fold_max 0).mpr (Or.inl (le_refl _))
+
+theorem utility_le_maxUtility (G : InterpGame) (H : HearerStrategy G)
+    (s : G.State) (m : G.Message) (hm : m ∈ G.trueMessages s) :
+    H.respond m s ≤ maxUtility G H s :=
+  (Finset.le_fold_max _).mpr (Or.inr ⟨m, hm, le_refl _⟩)
+
+/-- Best response speaker: uniform distribution over optimal messages (eq. 76). -/
 def bestResponse (G : InterpGame) (H : HearerStrategy G) : SpeakerStrategy G where
   choose := λ s m =>
-    -- Utility of message m at state s = P(hearer guesses s | m)
-    let utility := H.respond m s
-    -- Find max utility among true messages
-    let trueMessages := G.trueMessages s
-    -- Use fold to find max (handles empty case)
-    let maxUtility := trueMessages.fold max 0 (λ m' => H.respond m' s)
-    -- Uniform over optimal messages
-    if G.meaning m s = true ∧ utility == maxUtility then
-      let optimalCount := trueMessages.filter (λ m' =>
-        H.respond m' s == maxUtility)
-      if optimalCount.card = 0 then 0 else 1 / optimalCount.card
+    if m ∈ optimalMessages G H s then
+      let k := (optimalMessages G H s).card
+      if k = 0 then 0 else 1 / k
     else 0
+
+/-- bestResponse gives 1/k to optimal messages, 0 to others. -/
+theorem bestResponse_val (G : InterpGame) (H : HearerStrategy G) (s : G.State) (m : G.Message) :
+    (bestResponse G H).choose s m =
+      if m ∈ optimalMessages G H s then
+        if (optimalMessages G H s).card = 0 then 0
+        else 1 / ((optimalMessages G H s).card : ℚ)
+      else 0 := by
+  simp only [bestResponse]
 
 /-- Best response speaker always gives non-negative probabilities. -/
 theorem bestResponse_nonneg (G : InterpGame) (H : HearerStrategy G) (s : G.State) (m : G.Message) :
     0 ≤ (bestResponse G H).choose s m := by
-  simp only [bestResponse]
-  split_ifs with hcond hzero
-  · -- Branch: hcond true, hzero (optimalCount.card = 0) true → value is 0
-    exact le_refl 0
-  · -- Branch: hcond true, hzero false → value is 1 / optimalCount.card
-    apply one_div_nonneg.mpr
-    exact Nat.cast_nonneg _
-  · -- Branch: hcond false → value is 0
-    exact le_refl 0
+  rw [bestResponse_val]
+  split_ifs <;> first | exact le_refl 0 | exact one_div_nonneg.mpr (Nat.cast_nonneg _)
 
 /-- Best response speaker gives zero probability to false messages. -/
 theorem bestResponse_false_zero (G : InterpGame) (H : HearerStrategy G) (s : G.State) (m : G.Message)
     (hFalse : G.meaning m s = false) :
     (bestResponse G H).choose s m = 0 := by
-  simp only [bestResponse]
-  split_ifs with hcond hzero
-  · -- hcond says meaning m s = true, but hFalse says it's false, contradiction
-    exact absurd hcond.1 (by simp [hFalse])
-  · -- Same contradiction
-    exact absurd hcond.1 (by simp [hFalse])
-  · -- hcond false → value is 0
-    rfl
+  rw [bestResponse_val, if_neg]
+  intro hmem
+  exact absurd (optimalMessages_meaning G H s m hmem) (by simp [hFalse])
 
-/-- Best response speaker probabilities sum to at most 1 at any state.
+/-- bestResponse gives positive probability iff m is optimal (and optimal set is nonempty). -/
+theorem bestResponse_pos_iff (G : InterpGame) (H : HearerStrategy G)
+    (s : G.State) (m : G.Message) :
+    (bestResponse G H).choose s m > 0 ↔
+      m ∈ optimalMessages G H s ∧ (optimalMessages G H s).card > 0 := by
+  rw [bestResponse_val]
+  split_ifs with hmem hcard
+  · simp [hcard]
+  · constructor
+    · intro h; exact ⟨hmem, by omega⟩
+    · intro _; exact div_pos one_pos (Nat.cast_pos.mpr (by omega))
+  · simp [hmem]
 
-For states with at least one true message, this is exactly 1 (uniform over optimal).
-For states with no true messages, this is 0. -/
+/-- Best response speaker probabilities sum to at most 1 at any state. -/
 theorem bestResponse_sum_le_one (G : InterpGame) (H : HearerStrategy G) (s : G.State) :
     Finset.univ.sum (λ m => (bestResponse G H).choose s m) ≤ 1 := by
-  -- bestResponse distributes probability uniformly over k optimal messages.
-  -- Each gets 1/k, sum = k*(1/k) = 1 (or 0 if no optimal messages).
-  sorry
+  set opt := optimalMessages G H s
+  set k := opt.card
+  have hval : ∀ m, (bestResponse G H).choose s m =
+      if m ∈ opt then (if k = 0 then 0 else 1 / (k : ℚ)) else 0 := by
+    intro m; exact bestResponse_val G H s m
+  simp_rw [hval]
+  rw [Finset.sum_ite, Finset.sum_const_zero, add_zero,
+      Finset.filter_mem_eq_inter, Finset.univ_inter,
+      Finset.sum_const, nsmul_eq_mul]
+  by_cases hk0 : k = 0
+  · simp [hk0]
+  · rw [if_neg hk0, mul_one_div_cancel (Nat.cast_ne_zero.mpr hk0)]
 
 end SpeakerStrategy
 
@@ -225,26 +273,153 @@ noncomputable def expectedGain (G : InterpGame) (S : SpeakerStrategy G) (H : Hea
     G.prior t * Finset.univ.sum λ m =>
       S.choose t m * H.respond m t
 
-/-- Lemma 3a: best-response speaker improves EG. -/
+/-- Helper: fold max is attained at the initial value or at some element. -/
+private theorem fold_max_attained {α : Type*} [DecidableEq α]
+    (s : Finset α) (f : α → ℚ) (b : ℚ) :
+    s.fold max b f = b ∨ ∃ x ∈ s, s.fold max b f = f x := by
+  induction s using Finset.induction_on with
+  | empty => left; simp [Finset.fold_empty]
+  | @insert a s' hna ih =>
+    rw [Finset.fold_insert hna]
+    cases ih with
+    | inl hb =>
+      rw [hb]
+      by_cases h : f a ≤ b
+      · left; exact max_eq_right h
+      · right
+        push_neg at h
+        exact ⟨a, Finset.mem_insert_self a s', max_eq_left (le_of_lt h)⟩
+    | inr hex =>
+      obtain ⟨x, hx, hfx⟩ := hex
+      rw [hfx]
+      by_cases h : f a ≤ f x
+      · right; exact ⟨x, Finset.mem_insert_of_mem hx, max_eq_right h⟩
+      · right
+        push_neg at h
+        exact ⟨a, Finset.mem_insert_self a s', max_eq_left (le_of_lt h)⟩
+
+/-- If no element attains the fold max, then fold max = init. -/
+private theorem fold_max_eq_init_of_no_attainer {α : Type*} [DecidableEq α]
+    (s : Finset α) (f : α → ℚ) (b : ℚ)
+    (h : ∀ x ∈ s, f x ≠ s.fold max b f) :
+    s.fold max b f = b := by
+  cases fold_max_attained s f b with
+  | inl hb => exact hb
+  | inr hex =>
+    obtain ⟨x, hx, hfx⟩ := hex
+    exact absurd hfx.symm (h x hx)
+
+/-- Lemma 3a: best-response speaker improves EG.
+
+    At each state t, bestResponse maximizes ∑_m S(t,m) * H(m,t) by concentrating
+    all probability on messages that maximize H(m,t). Any valid S_old achieves
+    at most maxU(t), which is exactly what S_new achieves. -/
 theorem eg_speaker_improvement (G : InterpGame)
     (S_old S_new : SpeakerStrategy G) (H : HearerStrategy G)
-    (hBR : S_new = SpeakerStrategy.bestResponse G H) :
+    (hBR : S_new = SpeakerStrategy.bestResponse G H)
+    (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (hSNonneg : ∀ s m, S_old.choose s m ≥ 0)
+    (hSSum : ∀ s, Finset.univ.sum (λ m => S_old.choose s m) ≤ 1)
+    (hSTruth : ∀ s m, G.meaning m s = false → S_old.choose s m = 0)
+    (_hHNonneg : ∀ m s, H.respond m s ≥ 0) :
     expectedGain G S_old H ≤ expectedGain G S_new H := by
-  sorry -- Requires showing best response improves expected utility at each state
+  unfold expectedGain
+  apply Finset.sum_le_sum; intro t _
+  apply mul_le_mul_of_nonneg_left _ (hPriorNonneg t)
+  set maxU := (G.trueMessages t).fold max 0 (λ m' => H.respond m' t) with maxU_def
+  have hMaxUNonneg : 0 ≤ maxU := (Finset.le_fold_max 0).mpr (Or.inl (le_refl _))
+  -- S_old inner product ≤ maxU
+  have hOldBound : Finset.univ.sum (λ m => S_old.choose t m * H.respond m t) ≤ maxU := by
+    calc Finset.univ.sum (λ m => S_old.choose t m * H.respond m t)
+        ≤ Finset.univ.sum (λ m => S_old.choose t m * maxU) := by
+          apply Finset.sum_le_sum; intro m _
+          cases hm : G.meaning m t with
+          | false => simp [hSTruth t m hm]
+          | true =>
+            apply mul_le_mul_of_nonneg_left _ (hSNonneg t m)
+            exact (Finset.le_fold_max _).mpr (Or.inr ⟨m,
+              Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm⟩, le_refl _⟩)
+      _ = Finset.univ.sum (λ m => S_old.choose t m) * maxU := by rw [Finset.sum_mul]
+      _ ≤ 1 * maxU := mul_le_mul_of_nonneg_right (hSSum t) hMaxUNonneg
+      _ = maxU := one_mul maxU
+  -- S_new achieves ≥ maxU
+  suffices hNewEq : Finset.univ.sum (λ m => S_new.choose t m * H.respond m t) ≥ maxU by
+    linarith
+  subst hBR
+  -- optimalMessages G H t is exactly our optSet (since maxU = maxUtility G H t)
+  set opt := SpeakerStrategy.optimalMessages G H t
+  set k := opt.card
+  have hval : ∀ m, (SpeakerStrategy.bestResponse G H).choose t m * H.respond m t =
+      if m ∈ opt then (if k = 0 then 0 else 1 / (k : ℚ)) * maxU else 0 := by
+    intro m
+    rw [SpeakerStrategy.bestResponse_val]
+    by_cases hmem : m ∈ opt
+    · rw [if_pos hmem, if_pos hmem]
+      have hUtilEq : H.respond m t = maxU :=
+        SpeakerStrategy.optimalMessages_utility G H t m hmem
+      split_ifs with hk0
+      · simp
+      · rw [hUtilEq]
+    · rw [if_neg hmem, if_neg hmem]; simp
+  simp_rw [hval]
+  rw [Finset.sum_ite, Finset.sum_const_zero, add_zero,
+      Finset.filter_mem_eq_inter, Finset.univ_inter,
+      Finset.sum_const, nsmul_eq_mul]
+  by_cases hk0 : k = 0
+  · have hMaxU0 : maxU = 0 := by
+      apply fold_max_eq_init_of_no_attainer
+      intro m hm hfm
+      have hmem : m ∈ opt := by
+        simp only [opt, SpeakerStrategy.optimalMessages, Finset.mem_filter]
+        exact ⟨hm, by rw [beq_iff_eq]; exact hfm⟩
+      exact absurd (Finset.card_pos.mpr ⟨m, hmem⟩) (by omega)
+    simp [hk0, hMaxU0]
+  · simp only [if_neg hk0, k]
+    rw [show (opt.card : ℚ) * (1 / (opt.card : ℚ) * maxU) =
+        (opt.card : ℚ) * (1 / (opt.card : ℚ)) * maxU from by ring,
+      mul_one_div_cancel (Nat.cast_ne_zero.mpr hk0), one_mul]
 
-/-- Lemma 3b: Bayesian hearer update improves EG. -/
-theorem eg_hearer_improvement (G : InterpGame)
-    (S : SpeakerStrategy G) (H_old H_new : HearerStrategy G)
-    (hBR : H_new = hearerUpdate G S) :
-    expectedGain G S H_old ≤ expectedGain G S H_new := by
-  sorry -- Requires showing Bayesian update improves expected accuracy
+/-- Franke's Lemma 3: EG is monotone non-decreasing along the IBR sequence.
+
+    The combined effect of speaker best response + Bayesian hearer update
+    produces a strategy pair with at least as high expected gain:
+      EG(S_{n+1}, L_n) ≤ EG(S_{n+2}, L_{n+1})
+
+    Note: the decomposition into separate "speaker improvement" (Lemma 3a,
+    proved as `eg_speaker_improvement`) and "hearer improvement" steps is
+    subtle. The standalone hearer improvement claim "EG(S, H_old) ≤
+    EG(S, hearerUpdate(S)) for arbitrary H_old" is false — a counterexample
+    is any H_old that concentrates mass on the argmax state. The correct
+    monotonicity holds for the *combined* IBR step. -/
+theorem eg_ibr_monotone (G : InterpGame)
+    (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (hPriorSum : Finset.univ.sum G.prior = 1)
+    (n : ℕ) :
+    expectedGain G (speakerUpdate G (ibrN G n)) (ibrN G n) ≤
+    expectedGain G (speakerUpdate G (ibrN G (n + 1))) (ibrN G (n + 1)) := by
+  sorry -- Requires combining speaker improvement with IBR sequence structure
 
 /-- Expected gain is bounded above by 1 (probability of perfect communication). -/
 theorem eg_bounded (G : InterpGame) (S : SpeakerStrategy G) (H : HearerStrategy G)
     (hPriorSum : Finset.univ.sum G.prior = 1)
-    (hPriorNonneg : ∀ s, G.prior s ≥ 0) :
+    (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (hSNonneg : ∀ s m, S.choose s m ≥ 0)
+    (hSSum : ∀ s, Finset.univ.sum (λ m => S.choose s m) ≤ 1)
+    (hHBound : ∀ m s, H.respond m s ≤ 1)
+    (_hHNonneg : ∀ m s, H.respond m s ≥ 0) :
     expectedGain G S H ≤ 1 := by
-  sorry -- Requires showing it's a probability
+  unfold expectedGain
+  calc Finset.univ.sum (λ t => G.prior t * Finset.univ.sum (λ m => S.choose t m * H.respond m t))
+      ≤ Finset.univ.sum (λ t => G.prior t * 1) := by
+        apply Finset.sum_le_sum; intro t _
+        apply mul_le_mul_of_nonneg_left _ (hPriorNonneg t)
+        calc Finset.univ.sum (λ m => S.choose t m * H.respond m t)
+            ≤ Finset.univ.sum (λ m => S.choose t m * 1) := by
+              apply Finset.sum_le_sum; intro m _
+              exact mul_le_mul_of_nonneg_left (hHBound m t) (hSNonneg t m)
+          _ = Finset.univ.sum (λ m => S.choose t m) := by simp only [mul_one]
+          _ ≤ 1 := hSSum t
+    _ = 1 := by simp [hPriorSum]
 
 /-- Theorem 3: IBR converges. EG is monotone increasing and bounded ⟹ fixed point. -/
 theorem ibr_reaches_fixed_point (G : InterpGame) :
@@ -257,40 +432,110 @@ theorem ibr_reaches_fixed_point (G : InterpGame) :
 def speakerOptionCount (G : InterpGame) (S : SpeakerStrategy G) (t : G.State) : ℕ :=
   (Finset.univ.filter λ m => S.choose t m > 0).card
 
-/-- At the fixed point with flat priors, fewer speaker options ↔ higher hearer probability (eq. 131). -/
+/-- For bestResponse speaker, speakerOptionCount = |optimalMessages|.
+    This connects the counting definition to the set-level API. -/
+theorem speakerOptionCount_bestResponse (G : InterpGame) (H : HearerStrategy G)
+    (t : G.State) :
+    speakerOptionCount G (SpeakerStrategy.bestResponse G H) t =
+    (SpeakerStrategy.optimalMessages G H t).card := by
+  simp only [speakerOptionCount]
+  congr 1
+  ext m
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  constructor
+  · intro h; exact ((SpeakerStrategy.bestResponse_pos_iff G H t m).mp h).1
+  · intro h; exact (SpeakerStrategy.bestResponse_pos_iff G H t m).mpr
+      ⟨h, Finset.card_pos.mpr ⟨m, h⟩⟩
+
+/-- At the fixed point with flat priors, fewer speaker options ↔ higher hearer probability (eq. 131).
+
+    Requires m to be optimal at both states (in the speaker's support). Without this,
+    the speaker assigns zero probability to m and the hearer probability is zero,
+    making the comparison degenerate. -/
 theorem fp_prefers_fewer_options (G : InterpGame) (H : HearerStrategy G)
     (hFP : isIBRFixedPoint G H)
-    (hFlatPrior : ∀ t₁ t₂, G.prior t₁ = G.prior t₂)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
     (hPriorPos : ∀ t, G.prior t > 0)
     (m : G.Message) (t₁ t₂ : G.State)
-    (ht₁ : G.meaning m t₁ = true) (ht₂ : G.meaning m t₂ = true) :
+    (hOpt₁ : m ∈ SpeakerStrategy.optimalMessages G H t₁)
+    (hOpt₂ : m ∈ SpeakerStrategy.optimalMessages G H t₂) :
     let S := speakerUpdate G H
     H.respond m t₁ > H.respond m t₂ ↔
       speakerOptionCount G S t₁ < speakerOptionCount G S t₂ := by
-  sorry -- Follows from Bayes' rule with flat priors (eq. 131)
+  intro S
+  simp only [S, speakerUpdate]
+  rw [speakerOptionCount_bestResponse G H t₁, speakerOptionCount_bestResponse G H t₂]
+  set n₁ := (SpeakerStrategy.optimalMessages G H t₁).card
+  set n₂ := (SpeakerStrategy.optimalMessages G H t₂).card
+  have hn₁pos : 0 < n₁ := Finset.card_pos.mpr ⟨m, hOpt₁⟩
+  have hn₂pos : 0 < n₂ := Finset.card_pos.mpr ⟨m, hOpt₂⟩
+  have hn₁cast : (0 : ℚ) < n₁ := Nat.cast_pos.mpr hn₁pos
+  have hn₂cast : (0 : ℚ) < n₂ := Nat.cast_pos.mpr hn₂pos
+  -- Speaker probabilities at t₁ and t₂
+  have hS₁ : (SpeakerStrategy.bestResponse G H).choose t₁ m = 1 / (n₁ : ℚ) := by
+    rw [SpeakerStrategy.bestResponse_val, if_pos hOpt₁,
+        if_neg (Nat.pos_iff_ne_zero.mp hn₁pos)]
+  have hS₂ : (SpeakerStrategy.bestResponse G H).choose t₂ m = 1 / (n₂ : ℚ) := by
+    rw [SpeakerStrategy.bestResponse_val, if_pos hOpt₂,
+        if_neg (Nat.pos_iff_ne_zero.mp hn₂pos)]
+  -- Fixed point gives Bayesian formula
+  have hFP₁ := hFP m t₁
+  have hFP₂ := hFP m t₂
+  simp only [ibrStep, hearerUpdate, speakerUpdate] at hFP₁ hFP₂
+  -- Common denominator
+  set den := Finset.univ.sum (λ s' =>
+    (SpeakerStrategy.bestResponse G H).choose s' m * G.prior s') with den_def
+  -- den > 0 (the t₁ term contributes positively)
+  have hDenPos : den > 0 :=
+    lt_of_lt_of_le
+      (mul_pos (by rw [hS₁]; exact div_pos one_pos hn₁cast) (hPriorPos t₁))
+      (Finset.single_le_sum
+        (λ s _ => mul_nonneg (SpeakerStrategy.bestResponse_nonneg G H s m)
+          (le_of_lt (hPriorPos s)))
+        (Finset.mem_univ t₁))
+  -- BEq check resolves to false
+  have hDenBEq : (den == (0 : ℚ)) = false := by
+    cases h : (den == (0 : ℚ))
+    · rfl
+    · rw [beq_iff_eq] at h; exact absurd h (ne_of_gt hDenPos)
+  rw [hDenBEq] at hFP₁ hFP₂
+  simp only [Bool.false_eq_true, ↓reduceIte] at hFP₁ hFP₂
+  -- Substitute speaker values and flat prior
+  rw [hS₁] at hFP₁
+  rw [hS₂, hFlatPrior t₂ t₁] at hFP₂
+  set p := G.prior t₁
+  have hpPos : (0 : ℚ) < p := hPriorPos t₁
+  -- hFP₁ : H.respond m t₁ = 1/n₁ * p / den
+  -- hFP₂ : H.respond m t₂ = 1/n₂ * p / den
+  rw [hFP₁, hFP₂]
+  constructor
+  · -- H(t₁) > H(t₂) → n₁ < n₂ (by contradiction)
+    intro h
+    by_contra hge; push_neg at hge
+    have hle : (↑n₂ : ℚ) ≤ ↑n₁ := Nat.cast_le.mpr hge
+    have h1 : (1 : ℚ) / ↑n₁ ≤ 1 / ↑n₂ :=
+      div_le_div_of_nonneg_left (by norm_num : (0:ℚ) ≤ 1) hn₂cast hle
+    have h2 : (1 : ℚ) / ↑n₁ * p ≤ 1 / ↑n₂ * p :=
+      mul_le_mul_of_nonneg_right h1 (le_of_lt hpPos)
+    exact not_lt.mpr (div_le_div_of_nonneg_right h2 (le_of_lt hDenPos)) h
+  · -- n₁ < n₂ → H(t₁) > H(t₂)
+    intro h
+    have hlt : (↑n₁ : ℚ) < ↑n₂ := Nat.cast_lt.mpr h
+    have h1 : (1 : ℚ) / ↑n₂ < 1 / ↑n₁ := one_div_lt_one_div_of_lt hn₁cast hlt
+    have h2 : (1 : ℚ) / ↑n₂ * p < 1 / ↑n₁ * p := mul_lt_mul_of_pos_right h1 hpPos
+    exact div_lt_div_of_pos_right h2 hDenPos
 
 /-- Best-response speaker uses ⊆ true messages, so speakerOptionCount ≤ |trueMessages|. -/
 theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
     (t : G.State) :
     let S := speakerUpdate G H
     speakerOptionCount G S t ≤ (G.trueMessages t).card := by
-  -- speakerOptionCount counts messages with S.choose t m > 0
-  -- bestResponse only assigns positive probability to true messages
   simp only [speakerOptionCount, speakerUpdate]
   apply Finset.card_le_card
   intro m hm
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hm
-  -- hm says S.choose t m > 0
-  -- We need to show m ∈ G.trueMessages t, i.e., G.meaning m t = true
-  simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and]
-  simp only [SpeakerStrategy.bestResponse] at hm
-  split_ifs at hm with hcond hzero
-  · -- hcond true, hzero true → S.choose = 0, contradicts hm
-    exact absurd (le_refl 0) (not_le.mpr hm)
-  · -- hcond true, hzero false → meaning is true (from hcond)
-    exact hcond.1
-  · -- hcond false → S.choose = 0, contradicts hm
-    exact absurd (le_refl 0) (not_le.mpr hm)
+  have ⟨hmem, _⟩ := (SpeakerStrategy.bestResponse_pos_iff G H t m).mp hm
+  exact SpeakerStrategy.optimalMessages_subset_trueMessages G H t hmem
 
 -- SECTION 5: Connection to Exhaustive Interpretation (Franke Section 10)
 
