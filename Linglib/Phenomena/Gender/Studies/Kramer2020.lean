@@ -590,11 +590,19 @@ def maaNs : NInventory :=
   ⟨"Maa", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
            CatHead.n_uNegFem], 2⟩
 
--- 4-n languages with 3 surface genders
+-- 3-n languages with animacy features (@cite{kramer-2015} Ch 5, §5.3)
 
 def lealaoNs : NInventory :=
   ⟨"Lealao Chinantec", [CatHead.n_iAnim, CatHead.n_iInanim,
-                         CatHead.n_plain, CatHead.n_uAnim], 3⟩
+                         CatHead.n_plain], 2⟩
+
+-- 4-n languages, animacy dimension (@cite{kramer-2015} Ch 6, §6.4)
+
+def ojibweNs : NInventory :=
+  ⟨"Ojibwe", [CatHead.n_iAnim, CatHead.n_iInanim, CatHead.n_plain,
+              CatHead.n_uAnim], 2⟩
+
+-- 4-n languages, Set 2 with 3 surface genders (@cite{kramer-2015} Ch 7)
 
 def wariNs : NInventory :=
   ⟨"Wari'", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
@@ -616,9 +624,24 @@ theorem same_ns_different_genders :
 /-- Set 1 languages share the same n inventory (@cite{kramer-2015} Ch 6). -/
 theorem set1_shared : amharicNs.nHeads = spanishNs.nHeads := rfl
 
-/-- 3-n languages have purely semantic gender (no u-features). -/
+/-- 3-n languages have purely semantic gender (no u-features).
+    (@cite{kramer-2015} Ch 5) -/
 theorem dieri_purely_semantic :
     dieriNs.purelySemanticGender = true := rfl
+
+/-- Lealao Chinantec is also purely semantic (animacy-based, Ch 5). -/
+theorem lealao_purely_semantic :
+    lealaoNs.purelySemanticGender = true := rfl
+
+/-- Ojibwe is a 4-n animacy language with arbitrary animate assignment
+    (u[+ANIM]). (@cite{kramer-2015} Ch 6, §6.4) -/
+theorem ojibwe_has_uAnim :
+    ojibweNs.hasArbitraryGender = true := rfl
+
+/-- Ojibwe has the same structure as Set 1 sex-based languages (Amharic,
+    Spanish) but in the animacy dimension: i[+ANIM], i[−ANIM], plain n,
+    u[+ANIM]. -/
+theorem ojibwe_four_ns : ojibweNs.nHeads.length = 4 := rfl
 
 /-- Lavukaleve is maximal: 5 n heads (both u[+FEM] and u[−FEM]). -/
 theorem lavukaleve_maximal :
@@ -653,11 +676,26 @@ theorem mesa_arbitrary_feminine :
 theorem libro_default_masculine :
     Fragments.Spanish.Gender.libro.nHead.phi.gender = none := rfl
 
+/-- Bridge: convert a Spanish `SameRootEntry` to the cross-linguistic
+    `SameRootNominal` type. -/
+def spanishSameRoot (e : Fragments.Spanish.Gender.SameRootEntry) : SameRootNominal :=
+  { form := e.form
+    language := "Spanish"
+    possibleNHeads := e.possibleNHeads }
+
 /-- Spanish *soldado* 'soldier' as a same-root nominal:
     the root √SOLDAD can combine with i[+FEM] or i[−FEM]. -/
 theorem soldado_is_same_root :
     Fragments.Spanish.Gender.soldado.mascHead ≠
     Fragments.Spanish.Gender.soldado.femHead := by decide
+
+/-- Spanish same-root nominals are genuine same-root nominals
+    (they have two possible n heads). -/
+theorem spanish_same_roots_genuine :
+    (spanishSameRoot Fragments.Spanish.Gender.soldado).isSameRoot = true ∧
+    (spanishSameRoot Fragments.Spanish.Gender.estudiante).isSameRoot = true ∧
+    (spanishSameRoot Fragments.Spanish.Gender.artista).isSameRoot = true :=
+  ⟨rfl, rfl, rfl⟩
 
 /-- Spanish has the full Set 1 inventory: 4 n types. -/
 theorem spanish_four_n_types :
@@ -670,5 +708,208 @@ theorem fragment_covers_inventory :
     Fragments.Spanish.Gender.allNouns.any (·.nHead == CatHead.n_uFem) = true ∧
     Fragments.Spanish.Gender.allNouns.any (·.nHead == CatHead.n_plain) = true :=
   Fragments.Spanish.Gender.four_n_types_covered
+
+-- ============================================================================
+-- § 10: Root Licensing (@cite{kramer-2015} §3.4, Table 6.2)
+-- ============================================================================
+
+/-! @cite{kramer-2015} §3.4 identifies four classes of roots, distinguished by
+which n heads they are licensed to combine with:
+
+1. **Female-denoting roots** (√WOMAN, √QUEEN): semantic licensing (List 3)
+   requires n i[+FEM]. The Encyclopedia entry only provides a denotation in the
+   context of an n head bearing [+FEM].
+2. **Male-denoting roots** (√MAN, √KING): semantic licensing requires n i[−FEM].
+3. **Arbitrarily feminine roots** (√TABLE, √CHAIR): PF licensing (List 2)
+   requires n u[+FEM]. A VI rule specifies the exponent in the context of
+   [+FEM] on n.
+4. **Default roots** (√BOOK, √CAR): no licensing requirement. Combine with
+   plain n (the elsewhere case).
+
+This classification generates the licensing tables found in Tables 3.1
+(Amharic, 3 ns) and 6.2 (Spanish, 4 ns). -/
+
+/-- Root classes from @cite{kramer-2015} §3.4, parameterized by which n head
+    the root is licensed to combine with. -/
+inductive RootClass where
+  | femaleReferent    -- √WOMAN, √QUEEN: semantically requires i[+FEM]
+  | maleReferent      -- √MAN, √KING: semantically requires i[−FEM]
+  | arbitraryFem      -- √TABLE, √CHAIR: PF-licensed with u[+FEM]
+  | default           -- √BOOK, √CAR: no requirement, combines with plain n
+  deriving DecidableEq, BEq, Repr
+
+/-- The n head each root class is licensed to combine with. -/
+def RootClass.licensedNHead : RootClass → CatHead
+  | .femaleReferent => CatHead.n_iFem
+  | .maleReferent   => CatHead.n_iMasc
+  | .arbitraryFem   => CatHead.n_uFem
+  | .default        => CatHead.n_plain
+
+/-- The licensing type for each root class. -/
+def RootClass.licensing : RootClass → LicensingType
+  | .femaleReferent => .semantic   -- Encyclopedia / List 3
+  | .maleReferent   => .semantic   -- Encyclopedia / List 3
+  | .arbitraryFem   => .arbitrary  -- PF / List 2
+  | .default        => .arbitrary  -- elsewhere
+
+/-- Natural-gender roots are semantically licensed. -/
+theorem natural_roots_semantic :
+    RootClass.femaleReferent.licensing = .semantic ∧
+    RootClass.maleReferent.licensing = .semantic := ⟨rfl, rfl⟩
+
+/-- Arbitrary and default roots are PF-licensed. -/
+theorem arbitrary_roots_pf :
+    RootClass.arbitraryFem.licensing = .arbitrary ∧
+    RootClass.default.licensing = .arbitrary := ⟨rfl, rfl⟩
+
+/-- Each root class maps to a distinct n head. -/
+theorem root_classes_distinct_n :
+    RootClass.femaleReferent.licensedNHead ≠ RootClass.maleReferent.licensedNHead ∧
+    RootClass.femaleReferent.licensedNHead ≠ RootClass.arbitraryFem.licensedNHead ∧
+    RootClass.femaleReferent.licensedNHead ≠ RootClass.default.licensedNHead ∧
+    RootClass.maleReferent.licensedNHead ≠ RootClass.arbitraryFem.licensedNHead ∧
+    RootClass.maleReferent.licensedNHead ≠ RootClass.default.licensedNHead ∧
+    RootClass.arbitraryFem.licensedNHead ≠ RootClass.default.licensedNHead := by
+  decide
+
+/-- Verify that the Spanish fragment's nouns match their expected root classes.
+    Each noun's nHead should equal the licensed n head for its root class. -/
+theorem spanish_licensing_mujer :
+    Fragments.Spanish.Gender.mujer.nHead = RootClass.femaleReferent.licensedNHead := rfl
+theorem spanish_licensing_hombre :
+    Fragments.Spanish.Gender.hombre.nHead = RootClass.maleReferent.licensedNHead := rfl
+theorem spanish_licensing_mesa :
+    Fragments.Spanish.Gender.mesa.nHead = RootClass.arbitraryFem.licensedNHead := rfl
+theorem spanish_licensing_libro :
+    Fragments.Spanish.Gender.libro.nHead = RootClass.default.licensedNHead := rfl
+
+-- ============================================================================
+-- § 11: NInventory ↔ GenderProfile Bridge
+-- ============================================================================
+
+/-! The `NInventory` (from the DM analysis of n heads, @cite{kramer-2015}) and
+the `GenderProfile` (from WALS typology, @cite{corbett-2013}) describe the
+same languages from different theoretical perspectives. The key bridge:
+the `NInventory.surfaceGenders` count should match `GenderProfile.rawGenderCount`
+for the same language. -/
+
+/-- Spanish: the DM n-inventory predicts the same number of surface genders
+    as the WALS typological profile. -/
+theorem spanish_ninventory_matches_profile :
+    spanishNs.surfaceGenders = spanish.rawGenderCount := rfl
+
+/-- Spanish surface genders are consistent with the WALS gender count bin. -/
+theorem spanish_surface_genders_consistent :
+    Phenomena.Gender.Typology.GenderCount.two.contains spanishNs.surfaceGenders = true := rfl
+
+/-- For Spanish, the n-inventory has 4 structural heads mapping to 2 surface
+    genders — a many-to-one mapping mediated by VI (@cite{kramer-2015} Ch 6).
+    This is the central insight: structural richness (4 n types) does not
+    imply surface richness (only 2 genders). -/
+theorem spanish_structural_vs_surface :
+    spanishNs.nHeads.length > spanishNs.surfaceGenders := by decide
+
+-- ============================================================================
+-- § 12: Default Gender Derivation (@cite{kramer-2015} §6.2)
+-- ============================================================================
+
+/-! In Set 1 languages (Spanish, Amharic), masculine is the DEFAULT gender:
+nouns with plain n (no gender feature) surface as masculine. The derivation:
+
+  1. The root combines with plain n (no gender feature on n).
+  2. At PF, Vocabulary Insertion looks for a matching exponent.
+  3. The [+FEM] exponent requires [+FEM] on n — it does NOT match.
+  4. The elsewhere/default exponent (masculine) is inserted.
+
+In Set 2 languages (Maa, Wari'), the same logic yields feminine as default:
+  1. The root combines with plain n (no gender feature on n).
+  2. The [−FEM] exponent requires [−FEM] on n — it does NOT match.
+  3. The elsewhere/default exponent (feminine) is inserted.
+
+The polarity of the u-feature determines which gender is arbitrary vs default. -/
+
+/-- Derive the surface gender for Set 1 Spanish: plain n has no [+FEM],
+    so the [+FEM] VI rule does not match, yielding default masculine. -/
+inductive SurfaceGender where
+  | masculine
+  | feminine
+  deriving DecidableEq, BEq, Repr
+
+/-- Set 1 default gender derivation: if n has no [+FEM] feature, the
+    default VI rule inserts masculine. If n has [+FEM] (interpretable or
+    uninterpretable), VI inserts feminine.
+    (@cite{kramer-2015} §6.2; @cite{kramer-2020} §3) -/
+def set1SurfaceGender (ch : CatHead) : SurfaceGender :=
+  match ch.phi.gender with
+  | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
+  | none    => .masculine  -- default: no gender feature → masculine
+
+/-- Set 2 default gender derivation: if n has no [−FEM] feature, the
+    default VI rule inserts feminine. If n has [−FEM] (interpretable or
+    uninterpretable), VI inserts masculine.
+    (@cite{kramer-2015} §6.3) -/
+def set2SurfaceGender (ch : CatHead) : SurfaceGender :=
+  match ch.phi.gender with
+  | some gf => if gf.val == ⟨.fem, .neg⟩ then .masculine else .feminine
+  | none    => .feminine  -- default: no gender feature → feminine
+
+-- Set 1 (Spanish) derivation chain
+
+/-- Plain n → masculine (the default). -/
+theorem set1_plain_n_masculine :
+    set1SurfaceGender CatHead.n_plain = .masculine := rfl
+
+/-- i[+FEM] → feminine (natural female). -/
+theorem set1_iFem_feminine :
+    set1SurfaceGender CatHead.n_iFem = .feminine := rfl
+
+/-- i[−FEM] → masculine (natural male). -/
+theorem set1_iMasc_masculine :
+    set1SurfaceGender CatHead.n_iMasc = .masculine := rfl
+
+/-- u[+FEM] → feminine (arbitrary feminine). -/
+theorem set1_uFem_feminine :
+    set1SurfaceGender CatHead.n_uFem = .feminine := rfl
+
+-- Set 2 (Maa) derivation chain
+
+/-- Plain n → feminine (the default in Set 2). -/
+theorem set2_plain_n_feminine :
+    set2SurfaceGender CatHead.n_plain = .feminine := rfl
+
+/-- u[−FEM] → masculine (arbitrary masculine in Set 2). -/
+theorem set2_uNegFem_masculine :
+    set2SurfaceGender CatHead.n_uNegFem = .masculine := rfl
+
+/-- i[−FEM] → masculine (natural male, same in both sets). -/
+theorem set2_iMasc_masculine :
+    set2SurfaceGender CatHead.n_iMasc = .masculine := rfl
+
+/-- i[+FEM] → feminine (natural female, same in both sets). -/
+theorem set2_iFem_feminine :
+    set2SurfaceGender CatHead.n_iFem = .feminine := rfl
+
+/-- The Set 1 ↔ Set 2 contrast: plain n defaults to OPPOSITE genders. -/
+theorem set1_set2_default_contrast :
+    set1SurfaceGender CatHead.n_plain ≠ set2SurfaceGender CatHead.n_plain := by decide
+
+/-- Verify the full derivation chain for Spanish fragment nouns:
+    the surface gender computed from each noun's CatHead matches
+    the expected gender assignment. -/
+theorem spanish_derivation_chain :
+    set1SurfaceGender Fragments.Spanish.Gender.mujer.nHead = .feminine ∧
+    set1SurfaceGender Fragments.Spanish.Gender.hombre.nHead = .masculine ∧
+    set1SurfaceGender Fragments.Spanish.Gender.mesa.nHead = .feminine ∧
+    set1SurfaceGender Fragments.Spanish.Gender.libro.nHead = .masculine ∧
+    set1SurfaceGender Fragments.Spanish.Gender.persona.nHead = .feminine ∧
+    set1SurfaceGender Fragments.Spanish.Gender.ángel.nHead = .masculine :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Fixed-gender nouns: *persona* surfaces as feminine despite denoting
+    persons of any sex; *ángel* surfaces as masculine. The derivation
+    chain correctly predicts this from their n heads. -/
+theorem fixed_gender_from_n_head :
+    set1SurfaceGender Fragments.Spanish.Gender.persona.nHead = .feminine ∧
+    set1SurfaceGender Fragments.Spanish.Gender.ángel.nHead = .masculine := ⟨rfl, rfl⟩
 
 end Phenomena.Gender.Studies.Kramer2020

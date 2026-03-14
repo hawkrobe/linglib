@@ -52,6 +52,7 @@ def casa     : SpanishNoun := ⟨"casa",      "house",    CatHead.n_uFem⟩
 def puerta   : SpanishNoun := ⟨"puerta",    "door",     CatHead.n_uFem⟩
 def ventana  : SpanishNoun := ⟨"ventana",   "window",   CatHead.n_uFem⟩
 def cama     : SpanishNoun := ⟨"cama",      "bed",      CatHead.n_uFem⟩
+def persona  : SpanishNoun := ⟨"persona",   "person",   CatHead.n_uFem⟩
 
 -- ============================================================================
 -- § 4: Default Masculine Nouns (plain n)
@@ -63,6 +64,7 @@ def coche    : SpanishNoun := ⟨"coche",     "car",      CatHead.n_plain⟩
 def árbol    : SpanishNoun := ⟨"árbol",     "tree",     CatHead.n_plain⟩
 def cielo    : SpanishNoun := ⟨"cielo",     "sky",      CatHead.n_plain⟩
 def vaso     : SpanishNoun := ⟨"vaso",      "glass",    CatHead.n_plain⟩
+def ángel    : SpanishNoun := ⟨"ángel",     "angel",    CatHead.n_plain⟩
 
 -- ============================================================================
 -- § 5: Same-Root Nominals
@@ -76,6 +78,10 @@ structure SameRootEntry where
   mascHead : CatHead := CatHead.n_iMasc
   femHead  : CatHead := CatHead.n_iFem
   deriving Repr
+
+/-- The possible n heads for a same-root entry (always two: masc and fem). -/
+def SameRootEntry.possibleNHeads (e : SameRootEntry) : List CatHead :=
+  [e.femHead, e.mascHead]
 
 def soldado    : SameRootEntry := { form := "soldado",    gloss := "soldier" }
 def estudiante : SameRootEntry := { form := "estudiante", gloss := "student" }
@@ -92,10 +98,10 @@ def naturalMascNouns : List SpanishNoun :=
   [hombre, niño, rey, gato]
 
 def arbitraryFemNouns : List SpanishNoun :=
-  [mesa, silla, casa, puerta, ventana, cama]
+  [mesa, silla, casa, puerta, ventana, cama, persona]
 
 def defaultMascNouns : List SpanishNoun :=
-  [libro, zapato, coche, árbol, cielo, vaso]
+  [libro, zapato, coche, árbol, cielo, vaso, ángel]
 
 def allNouns : List SpanishNoun :=
   naturalFemNouns ++ naturalMascNouns ++ arbitraryFemNouns ++ defaultMascNouns
@@ -118,6 +124,15 @@ theorem arbitraryFem_all_uFem :
 
 theorem defaultMasc_all_plain :
     defaultMascNouns.all (·.nHead == CatHead.n_plain) = true := by native_decide
+
+/-- *persona* 'person' is always feminine regardless of referent's sex:
+    the gender is arbitrary (u[+FEM]), not interpretable. -/
+theorem persona_arbitrary_fem :
+    persona.nHead.phi.gender = some ⟨.u, ⟨.fem, .pos⟩⟩ := rfl
+
+/-- *ángel* 'angel' is always masculine (plain n, default gender). -/
+theorem ángel_default_masc :
+    ángel.nHead.phi.gender = none := rfl
 
 /-- All four n-types are represented in the inventory. -/
 theorem four_n_types_covered :
