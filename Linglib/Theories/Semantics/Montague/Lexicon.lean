@@ -12,7 +12,7 @@ Lexical entries with semantic denotations and scalar alternatives.
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Theories.Semantics.Alternatives.HornScale
+import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Morphology.Core.Exponence
 
 namespace Semantics.Montague

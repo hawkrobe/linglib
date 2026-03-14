@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
-import Linglib.Theories.Semantics.Alternatives.AlternativeSource
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Fragments.German.BarePluralWordOrder
@@ -48,7 +48,7 @@ stage-level predicates do not.
 
 namespace Phenomena.ScalarImplicatures.Studies.Magri2009
 
-open Exhaustification.Fox2007 (exhB ieIndices)
+open Exhaustification.InnocentExclusion (exhB ieIndices)
 open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel)
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -1022,13 +1022,13 @@ end BarePluralAlways
 
 section AlternativeSourceBridge
 
-open Alternatives
+open Alternatives Exhaustification.InnocentExclusion
 
 /-- AlternativeSource instance for the Italian ⟨some, all⟩ scale. -/
 instance : AlternativeSource ItalyUtt where
   alternatives _ := [.some_, .all_]
 
-/-- AlternativeSource.exhaust agrees with BlindScenario.strengthened.
+/-- Exhaustifying via AlternativeSource agrees with BlindScenario.strengthened.
 
     BlindScenario carries its own `alternatives` field; here we show that
     deriving alternatives from the AlternativeSource typeclass produces
@@ -1038,8 +1038,9 @@ instance : AlternativeSource ItalyUtt where
 theorem strengthened_eq_alternativeSource :
     ∀ w : ItalyWorld₃,
       italianScenario.strengthened .some_ w =
-      AlternativeSource.exhaust italianScenario.worlds
-        italianScenario.meaning ItalyUtt.some_ w := by
+      exhB italianScenario.worlds
+        ((AlternativeSource.alternatives ItalyUtt.some_).map italianScenario.meaning)
+        (italianScenario.meaning ItalyUtt.some_) w := by
   intro w; cases w <;> native_decide
 
 end AlternativeSourceBridge

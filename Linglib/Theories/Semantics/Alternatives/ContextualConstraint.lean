@@ -39,7 +39,7 @@ and @cite{fox-2007} (`InnocentExclusion.lean`):
   symmetry — only F can
 -/
 
-namespace Alternatives.ContextualRestriction
+namespace Alternatives.ContextualConstraint
 
 open Alternatives.Symmetric
 open Exhaustification.InnocentExclusion hiding sublists
@@ -212,4 +212,4 @@ def formalAlternatives {W : Type}
     (substitutionSourceFC lex φ salient) ψ φ}
 
 
-end Alternatives.ContextualRestriction
+end Alternatives.ContextualConstraint

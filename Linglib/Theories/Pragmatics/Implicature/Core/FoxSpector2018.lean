@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Exhaustification.Basic
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Fox & Spector 2018: Economy and Embedded Exhaustification
@@ -45,7 +45,7 @@ non-weaker alternatives, `exh` is vacuous (proved by
 rather than producing wrong results. But economy does not *derive*
 the correct SI — that requires @cite{katzir-2007}'s structural
 complexity restricting the alternative set (see
-`StructuralAlternatives.lean`).
+`Structural.lean`).
 
 Economy and structural complexity are **complementary**:
 - @cite{katzir-2007} determines *which* alternatives enter the set
@@ -379,7 +379,7 @@ inductive PQWorld where | pq | p_only | q_only | neither
   deriving Repr, DecidableEq, BEq, Inhabited
 
 open PQWorld
-open Exhaustification.Fox2007
+open Exhaustification.InnocentExclusion
 
 private def pqDomain : List PQWorld := [pq, p_only, q_only, neither]
 

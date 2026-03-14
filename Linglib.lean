@@ -14,6 +14,7 @@ import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Empirical
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Lexical.UD
+import Linglib.Core.Tree
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Quantification
 import Linglib.Core.Logic.PolarizedIndividuals
@@ -1609,6 +1610,7 @@ import Linglib.Theories.Semantics.Questions.SignalingGames
 import Linglib.Theories.Semantics.Questions.VerumFocus
 import Linglib.Theories.Semantics.Questions.QParticleLayer
 import Linglib.Phenomena.ScalarImplicatures.Studies.BrehenyEtAl2018
+import Linglib.Phenomena.ScalarImplicatures.Studies.Katzir2007
 import Linglib.Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
 -- Theories: Alternatives + Exhaustification + Implicature
@@ -1617,10 +1619,10 @@ import Linglib.Theories.Pragmatics.Implicature.ConventionalImplicatures
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Competence
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
-import Linglib.Theories.Semantics.Alternatives.ContextualRestriction
+import Linglib.Theories.Semantics.Alternatives.ContextualConstraint
 import Linglib.Theories.Semantics.Alternatives.Structural
-import Linglib.Theories.Semantics.Alternatives.Symmetry
-import Linglib.Theories.Semantics.Alternatives.Atomicity
+import Linglib.Theories.Semantics.Alternatives.Symmetric
+import Linglib.Theories.Semantics.Alternatives.AtomicConstraint
 import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Linglib.Theories.Semantics.Exhaustification.Basic
 import Linglib.Theories.Semantics.Exhaustification.RecursiveStrengthening

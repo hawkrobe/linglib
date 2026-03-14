@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Symmetric Alternatives
@@ -57,9 +57,9 @@ to that paper.
 - `context_cannot_break_symmetry`: C preserves symmetry (constraint 28)
 -/
 
-namespace Alternatives.Symmetry
+namespace Alternatives.Symmetric
 
-open Exhaustification.Fox2007
+open Exhaustification.InnocentExclusion
 
 
 -- ============================================================
@@ -470,7 +470,7 @@ private theorem ie_elem_in_nw {W : Type} (domain : List W)
     exhaustification is vacuous.
 
     This is the general principle underlying the concrete
-    `FoxKatzir2011.symmetry_problem`: with both symmetric
+    `ContextualRestriction.symmetry_problem`: with both symmetric
     alternatives present and no other non-weaker alternatives,
     I-E is empty, so `exh` does nothing. -/
 theorem symmetric_exhB_vacuous {W : Type} (domain : List W)
@@ -549,4 +549,4 @@ theorem context_cannot_break_symmetry {W : Type}
   rc.conjClosed s (fun w => !s₁ w) hs (rc.negClosed s₁ h₁)
 
 
-end Alternatives.Symmetry
+end Alternatives.Symmetric

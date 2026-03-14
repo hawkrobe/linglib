@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.229.248] - 2026-03-14
+
+### Changed
+- **Alternatives/**: Rename author-named files to concept names; merge AlternativeSource into Lexical.lean
+  - `HornScale.lean` + `AlternativeSource.lean` → `Lexical.lean` (scales, types, AlternativeSource typeclass)
+  - `StructuralAlternatives.lean` → `Structural.lean`
+  - `Symmetry.lean` → `Symmetric.lean`
+  - `FoxKatzir2011.lean` → `ContextualConstraint.lean`
+  - `TrinhHaida2015.lean` → `AtomicConstraint.lean`
+- **Exhaustification/**: Rename author-named files to concept names
+  - `Fox2007.lean` → `InnocentExclusion.lean`
+  - `Chierchia2013.lean` → `FreeChoice.lean`
+  - `Chierchia2004.lean` → `RecursiveStrengthening.lean`
+  - `Implementations/BarLevFox2020.lean` → `Implementations/InnocentInclusion.lean`
+- Update all imports, namespace references, and docstring cross-references across 36 files
+
+## [0.229.247] - 2026-03-14
+
+### Added
+- **Core/Tree.lean**: Unified `SynTree (C W : Type)` tree type — parameterized by category and word types, with 4 constructors (`terminal`, `node`, `trace`, `bind`); UD-grounded `Cat` default category system (`head`/`proj` wrapping UPOS); basic operations (`cat`, `beq`, `size`, `subtrees`, `containsCat`, `leafSubst`); `@[match_pattern]` abbreviations for traditional category names (NP, VP, DP, etc.)
+- **Composition/Tree.lean**: `interpSynTree`, `interpSynTreeG`, `evalSynTree` — compositional interpretation for `SynTree C String` (polymorphic in category type `C`); `SemanticStructure` instances for `SynTree`; categories ignored during type-driven composition
+- **Katzir2007.lean** (Phenomena/ScalarImplicatures/Studies): End-to-end demonstration of unified tree — build "some student sleeps" as `SynTree Cat String`, generate "every student sleeps" via `leafSubst` (Katzir's substitution), interpret both with `evalSynTree`; symmetry-breaking theorems (`no_conjp`, `no_negp`, `subtrees_lack_conjp`)
+- **QuantifierComposition.lean**: `synTree_everyStudentSleeps` — QR tree with UD categories; `synTree_agrees_with_lfTree` — category-bearing SynTree yields identical results to category-free LFTree
+
 ## [0.229.246] - 2026-03-14
 
 ### Added

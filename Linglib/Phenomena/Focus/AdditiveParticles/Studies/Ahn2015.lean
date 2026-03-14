@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Chierchia2013
+import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 
 /-!
@@ -111,10 +111,10 @@ theorem either_negative_vacuous (q p : Prop' World) :
 /-- *Either*'s NPI behavior as an instance of @cite{chierchia-2013}'s
     SI–NPI generalization: for any antitone (DE) context C,
     C(q ⊔ p) ∧ ¬C(q ⊓ p) is vacuous. -/
-theorem either_npi_via_chierchia (C : Chierchia2013.Ctx World)
+theorem either_npi_via_chierchia (C : FreeChoice.Ctx World)
     (hDE : Antitone C) (q p : Prop' World) :
-    Chierchia2013.siVacuous C (eitherDenotation q p) (q ⊓ p) :=
-  Chierchia2013.si_vacuous_in_de C hDE _ _
+    FreeChoice.siVacuous C (eitherDenotation q p) (q ⊓ p) :=
+  FreeChoice.si_vacuous_in_de C hDE _ _
     (inf_le_left.trans le_sup_left : q ⊓ p ≤ q ⊔ p)
 
 -- ═══════════════════════════════════════════════════════════════════════════

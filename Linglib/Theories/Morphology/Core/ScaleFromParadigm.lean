@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.MorphRule
-import Linglib.Theories.Semantics.Alternatives.HornScale
+import Linglib.Theories.Semantics.Alternatives.Lexical
 
 /-!
 # Scale Generation from Morphological Paradigms

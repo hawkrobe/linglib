@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Implementations.BarLevFox2020
+import Linglib.Theories.Semantics.Exhaustification.Implementations.InnocentInclusion
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!

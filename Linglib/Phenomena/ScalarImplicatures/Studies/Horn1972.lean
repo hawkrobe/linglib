@@ -1,5 +1,5 @@
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Theories.Semantics.Alternatives.HornScale
+import Linglib.Theories.Semantics.Alternatives.Lexical
 
 /-!
 # Horn Scales

@@ -22,7 +22,7 @@ import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Theories.Semantics.Composition.Tree
-import Linglib.Theories.Semantics.Alternatives.HornScale
+import Linglib.Theories.Semantics.Alternatives.Lexical
 
 namespace Semantics.Montague.Derivation
 

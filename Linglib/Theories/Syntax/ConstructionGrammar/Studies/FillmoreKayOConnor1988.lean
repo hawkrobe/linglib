@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Alternatives.HornScale
+import Linglib.Theories.Semantics.Alternatives.Lexical
 
 /-!
 # @cite{fillmore-oconnor-1988}: Let Alone

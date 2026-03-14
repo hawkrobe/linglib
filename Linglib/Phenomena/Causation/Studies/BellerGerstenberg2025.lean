@@ -3,7 +3,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
-import Linglib.Theories.Semantics.Alternatives.HornScale
+import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Causation.ProductionDependence
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Rat.Defs

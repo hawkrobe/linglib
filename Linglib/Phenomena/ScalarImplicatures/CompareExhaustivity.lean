@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
-import Linglib.Theories.Semantics.Alternatives.AlternativeSource
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Alternatives.Lexical
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 set_option autoImplicit false
@@ -35,7 +35,7 @@ The proof factors through two key steps:
 namespace Phenomena.ScalarImplicatures.CompareExhaustivity
 
 open Core Real BigOperators Finset Filter Topology
-open Exhaustification.Fox2007 (exhB ieIndices)
+open Exhaustification.InnocentExclusion (exhB ieIndices)
 
 -- ============================================================================
 -- § 1. Scale Types
@@ -158,15 +158,14 @@ theorem exh_false_at_both :
 instance : Alternatives.AlternativeSource ScaleU where
   alternatives _ := [.weak, .strong]
 
-/-- AlternativeSource.exhaust agrees with the hand-crafted exhB call.
+/-- Exhaustifying via AlternativeSource agrees with the hand-crafted exhB call.
 
     This validates the full pipeline: AlternativeSource instance →
-    meanings (via interp = meaning) → exhB → exhaustified meaning.
-    The `meaning` function here serves as the interpretation bridge
-    from forms (ScaleU) to truth conditions (ScaleW → Bool). -/
+    meanings (via interp = meaning) → exhB → exhaustified meaning. -/
 theorem exh_via_alternativeSource :
-    ∀ w : ScaleW, Alternatives.AlternativeSource.exhaust
-      scaleDomain meaning ScaleU.weak w =
+    ∀ w : ScaleW, exhB scaleDomain
+      ((Alternatives.AlternativeSource.alternatives ScaleU.weak).map meaning)
+      (meaning ScaleU.weak) w =
       exhB scaleDomain scaleAlts weakMeaning w := by
   intro w; cases w <;> native_decide
 

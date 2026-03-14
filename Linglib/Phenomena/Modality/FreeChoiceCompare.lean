@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.Implementations.BarLevFox2020
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.Implementations.InnocentInclusion
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
@@ -38,7 +38,7 @@ namespace Phenomena.Modality.FreeChoiceCompare
 
 open Phenomena.Modality.FreeChoice
 open Exhaustification
-open Exhaustification.Fox2007
+open Exhaustification.InnocentExclusion
 open Exhaustification.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
@@ -92,17 +92,17 @@ The original grammatical account: recursive application of `exh`
 - **Layer 1**: Exh(C)(◇(p∨q)) = ◇(p∨q) ∧ ¬◇(p∧q)
 - **Layer 2**: Exh²(◇(p∨q)) = ◇p ∧ ◇q ∧ ¬◇(p∧q) — free choice!
 
-See `Exhaustivity/Fox2007.lean` for the computable algorithm and
+See `Exhaustivity/InnocentExclusion.lean` for the computable algorithm and
 full derivation.
 -/
 
 /-- Fox 2007: FC is derived via double exhaustification (Exh²).
-    Re-exports the verified computation from `Fox2007.lean`. -/
+    Re-exports the verified computation from `InnocentExclusion.lean`. -/
 theorem fox2007_derives_fc :
-    ∀ w : Fox2007.ModalW,
-      Fox2007.exhB Fox2007.mDomain Fox2007.layer2Alts Fox2007.layer1Result w =
-      (Fox2007.diamP w && Fox2007.diamQ w && !Fox2007.diamPandQ w) :=
-  Fox2007.free_choice
+    ∀ w : InnocentExclusion.ModalW,
+      InnocentExclusion.exhB InnocentExclusion.mDomain InnocentExclusion.layer2Alts InnocentExclusion.layer1Result w =
+      (InnocentExclusion.diamP w && InnocentExclusion.diamQ w && !InnocentExclusion.diamPandQ w) :=
+  InnocentExclusion.free_choice
 
 -- ============================================================================
 -- SECTION 2: @cite{bar-lev-fox-2020} - Innocent Inclusion

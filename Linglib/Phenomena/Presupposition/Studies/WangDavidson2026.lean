@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Semantics.Presupposition
 
@@ -69,7 +69,7 @@ namespace Phenomena.Presupposition.Studies.WangDavidson2026
 
 open Core.Duality (Truth3 Prop3)
 open Core.Presupposition (PrProp)
-open Exhaustification.Fox2007
+open Exhaustification.InnocentExclusion
 open Exhaustification.Trivalent
 
 
@@ -84,7 +84,7 @@ The fundamental asymmetry: inclusive disjunction can "see past" an
 undefined disjunct when the other is true. Exclusive cannot.
 
 This single fact drives the Type A prediction for bivalent EXH + SK:
-since `Fox2007.disj_exh_eq_exor` shows Exh strengthens ∨ to ⊻,
+since `InnocentExclusion.disj_exh_eq_exor` shows Exh strengthens ∨ to ⊻,
 and `Truth3.xor_indet_iff` shows ⊻ propagates undefinedness
 unconditionally, exhaustification eliminates filtering.
 -/
@@ -207,7 +207,7 @@ theorem exh2_always_typeA (proj : ProjectionTheory) :
 ### Bivalent EXH strengthens inclusive to exclusive
 
 The bridge from bivalent EXH to the SK prediction:
-1. `Fox2007.disj_exh_eq_exor`: Exh(Alt)(p∨q) = p ⊕ q
+1. `InnocentExclusion.disj_exh_eq_exor`: Exh(Alt)(p∨q) = p ⊕ q
 2. The exclusive truth conditions, when lifted to Truth3 via SK,
    yield `Truth3.xor` — which propagates `#` unconditionally
 3. Therefore: bivalent EXH + SK → no filtering (Type A prediction)
@@ -354,7 +354,7 @@ theorem null_result_challenges_typeA :
     truth conditions → SK propagates undefinedness → Type A predicted →
     experiment finds no effect → challenges bivalent EXH + SK.
 
-    This links `Fox2007.disj_exh_eq_exor`, `Truth3.xor_indet_iff`,
+    This links `InnocentExclusion.disj_exh_eq_exor`, `Truth3.xor_indet_iff`,
     the Type A classification, and the null experimental result. -/
 theorem end_to_end_bivalent_sk_challenged :
     -- (1) Bivalent EXH yields exclusive disjunction

@@ -43,7 +43,7 @@ contiguous function ranges cross-linguistically.
 ## Theoretical engine
 
 The mechanism behind PSI licensing is **domain widening reversal**
-(@cite{kadmon-landman-1993}, proved in `Exhaustification.Chierchia2013`):
+(@cite{kadmon-landman-1993}, proved in `Exhaustification.FreeChoice`):
 widening strengthens in DE but weakens in UE. The PSI parameter space
 refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 -/

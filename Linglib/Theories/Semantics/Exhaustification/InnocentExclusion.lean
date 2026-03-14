@@ -40,9 +40,9 @@ Innocent exclusion was designed to handle **symmetric alternatives**
 (see `Symmetry.lean`): when S₁, S₂ partition S's denotation, excluding
 both is inconsistent, so they land in different MCEs and neither is in
 I-E. This correctly predicts that `exh` is vacuous when the alternative
-set contains both symmetric partners (`FoxKatzir2011.symmetry_problem`).
+set contains both symmetric partners (`ContextualRestriction.symmetry_problem`).
 The problem of *which alternatives enter the set* is addressed by
-@cite{katzir-2007}'s structural complexity (`StructuralAlternatives.lean`).
+@cite{katzir-2007}'s structural complexity (`Structural.lean`).
 
 ## Duality with Santorio 2018
 
@@ -52,7 +52,7 @@ computationally in `Semantics/Conditionals/AlternativeSensitive.lean`,
 which imports this file and proves the correspondence.
 -/
 
-namespace Exhaustification.Fox2007
+namespace Exhaustification.InnocentExclusion
 
 
 -- ============================================================
@@ -452,4 +452,4 @@ theorem exhR_all_relevant_eq_exhB {W : Type} (domain : List W)
 end RelevanceSensitive
 
 
-end Exhaustification.Fox2007
+end Exhaustification.InnocentExclusion

@@ -1,8 +1,8 @@
 /-
 # Neo-Gricean Pragmatics: Scalar Implicatures
 
-Scalar implicature specifics from @cite{geurts-2010} Chapter 3.2-3.3,
-plus scale semantics and predictions.
+Scalar implicature derivation using Horn scales from
+`Alternatives/Lexical.lean` and semantic entailment.
 
 ## Key Topics
 
@@ -20,148 +20,82 @@ plus scale semantics and predictions.
    For n>2 disjuncts, substitution method fails.
    Need closure under conjunction for all alternatives.
 
-Reference: Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
+Reference: @cite{geurts-2010}
 
 Scale semantics (SemanticScale, HurfordSemantic, SinghSemantic) and
-exhaustification predictions live in `Alternatives/HornScale.lean` and
+exhaustification predictions live in `Alternatives/Lexical.lean` and
 `Exhaustification/SemanticScales.lean`.
 -/
 
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
-import Linglib.Theories.Semantics.Alternatives.HornScale
-import Linglib.Theories.Semantics.Exhaustification.SemanticScales
-import Linglib.Theories.Semantics.Entailment.Basic
+import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Core.Interface
 
 namespace Implicature.ScalarImplicatures
 
 open Implicature
-open Exhaustification
 open Semantics.Entailment.Polarity (ContextPolarity)
 open Alternatives.Quantifiers (QuantExpr)
 open Alternatives.Connectives (ConnExpr)
+open Semantics.Montague (ScaleMembership)
+
 
 -- ============================================================
--- Q-Alternative Infrastructure
+-- Scalar Alternative Computation (via HornScale + entailment)
 -- ============================================================
 
-/-- An unordered set of expressions (following @cite{geurts-2010} p.58). -/
-structure HornSet (α : Type) where
-  members : List α
-  deriving Repr
+/-- Filter HornScale members to those that are context-appropriate alternatives.
+    In UE: alternatives that entail the term (stronger).
+    In DE: alternatives that the term entails (reversed).
+    In NM: no alternatives. -/
+private def filterAlts {α : Type} [BEq α] [ToString α]
+    (scale : Alternatives.HornScale α) (pos : α) (entailsFn : α → α → Bool)
+    (ctx : ContextPolarity) : List String :=
+  match ctx with
+  | .nonMonotonic => []
+  | .upward =>
+    scale.members.filter (λ alt => alt != pos && entailsFn alt pos) |>.map toString
+  | .downward =>
+    scale.members.filter (λ alt => alt != pos && entailsFn pos alt) |>.map toString
 
-def HornSet.otherMembers {α : Type} [BEq α] (h : HornSet α) (x : α) : List α :=
-  h.members.filter (· != x)
-
-/-- A sentence context determines alternative strength via polarity. -/
-structure SentenceContext where
-  polarity : ContextPolarity
-  description : String
-  deriving Repr
-
-def simpleAssertion : SentenceContext :=
-  { polarity := .upward, description := "Simple assertion" }
-
-def underNegation : SentenceContext :=
-  { polarity := .downward, description := "Under negation" }
-
-/-- Abstract entailment checker for sentences. -/
-structure EntailmentChecker (α : Type) where
-  isStronger : ContextPolarity → α → α → Bool
-
-/-- An alternative with its context-dependent strength. -/
-structure Alternative (α : Type) where
-  term : α
-  isStrongerInContext : Bool
-  deriving Repr
-
-def generateAlternatives {α : Type} [BEq α]
-    (hornSet : HornSet α) (checker : EntailmentChecker α)
-    (context : SentenceContext) (term : α) : List (Alternative α) :=
-  hornSet.otherMembers term |>.map λ alt =>
-    { term := alt, isStrongerInContext := checker.isStronger context.polarity alt term }
-
-def strongerAlternatives {α : Type} [BEq α]
-    (hornSet : HornSet α) (checker : EntailmentChecker α)
-    (context : SentenceContext) (term : α) : List α :=
-  (generateAlternatives hornSet checker context term).filter (·.isStrongerInContext) |>.map (·.term)
-
--- Quantifier checkers (grounded in Alternatives.Quantifiers.entails)
-private def quantifierChecker : EntailmentChecker QuantExpr :=
-  { isStronger := λ pol q1 q2 =>
-      match pol with
-      | .upward => Alternatives.Quantifiers.entails q1 q2 && q1 != q2
-      | .downward => Alternatives.Quantifiers.entails q2 q1 && q1 != q2
-      | .nonMonotonic => false }
-
-private def connectiveChecker : EntailmentChecker ConnExpr :=
-  { isStronger := λ pol c1 c2 =>
-      match pol with
-      | .upward => Alternatives.Connectives.entails c1 c2 && c1 != c2
-      | .downward => Alternatives.Connectives.entails c2 c1 && c1 != c2
-      | .nonMonotonic => false }
-
-def quantifierCheckerString : EntailmentChecker String :=
-  { isStronger := λ pol s1 s2 =>
-      match QuantExpr.ofString? s1, QuantExpr.ofString? s2 with
-      | some q1, some q2 => quantifierChecker.isStronger pol q1 q2
-      | _, _ => false }
-
-def connectiveCheckerString : EntailmentChecker String :=
-  { isStronger := λ pol s1 s2 =>
-      match ConnExpr.ofString? s1, ConnExpr.ofString? s2 with
-      | some c1, some c2 => connectiveChecker.isStronger pol c1 c2
-      | _, _ => false }
-
-def quantifierSetString : HornSet String := ⟨["some", "most", "all"]⟩
-def connectiveSetString : HornSet String := ⟨["or", "and"]⟩
+/-- Get scalar alternatives for a scale member in context.
+    Delegates to `HornScale` members filtered by semantic entailment,
+    polarity-aware. -/
+def scaleAlternatives (sm : ScaleMembership) (ctx : ContextPolarity) : List String :=
+  match sm with
+  | .quantifier pos =>
+    filterAlts Alternatives.Quantifiers.quantScale pos Alternatives.Quantifiers.entails ctx
+  | .connective pos =>
+    filterAlts Alternatives.Connectives.connScale pos Alternatives.Connectives.entails ctx
+  | .modal pos =>
+    filterAlts Alternatives.Modals.modalScale pos Alternatives.Modals.entails ctx
 
 
-/--
-A scalar implicature derivation attempt.
+-- ============================================================
+-- DE Blocking (using HornScale directly)
+-- ============================================================
 
-Records whether the implicature arises and why/why not.
--/
-structure ImplicatureDerivation where
-  /-- The scalar term used -/
-  term : String
-  /-- The potential stronger alternative -/
-  alternative : String
-  /-- The context polarity -/
-  polarity : ContextPolarity
-  /-- Does the alternative count as stronger in this context? -/
-  alternativeIsStronger : Bool
-  /-- Does the implicature arise? -/
+/-- Lightweight wrapper preserving the `.implicatureArises` accessor. -/
+structure ImplicatureCheck where
   implicatureArises : Bool
-  deriving Repr
+  deriving Repr, DecidableEq
 
-/--
-Attempt to derive a scalar implicature.
--/
-def deriveImplicature
-    (term alternative : String)
-    (ctx : SentenceContext)
-    (checker : EntailmentChecker String) : ImplicatureDerivation :=
-  let stronger := checker.isStronger ctx.polarity alternative term
-  { term := term
-  , alternative := alternative
-  , polarity := ctx.polarity
-  , alternativeIsStronger := stronger
-  , implicatureArises := stronger
-  }
+/-- Does an alternative arise as a scalar implicature of a quantifier term? -/
+def quantImplicatureArises (term alt : QuantExpr) (ctx : ContextPolarity) : Bool :=
+  (scaleAlternatives (.quantifier term) ctx).contains (toString alt)
 
 /--
 Example: "some" → "not all" in UE context
 -/
-def someNotAll_UE : ImplicatureDerivation :=
-  deriveImplicature "some" "all" simpleAssertion quantifierCheckerString
+def someNotAll_UE : ImplicatureCheck :=
+  ⟨quantImplicatureArises .some_ .all .upward⟩
 
 /--
 Example: "some" → "not all" blocked in DE context
 -/
-def someNotAll_DE : ImplicatureDerivation :=
-  deriveImplicature "some" "all" underNegation quantifierCheckerString
+def someNotAll_DE : ImplicatureCheck :=
+  ⟨quantImplicatureArises .some_ .all .downward⟩
 
 /--
 Theorem: DE Blocks "Some → Not All"
@@ -179,8 +113,8 @@ Theorem: In DE, "All" Has Implicatures
 
 In DE context, "all" can implicate "not some" (reversed!).
 -/
-def allNotSome_DE : ImplicatureDerivation :=
-  deriveImplicature "all" "some" underNegation quantifierCheckerString
+def allNotSome_DE : ImplicatureCheck :=
+  ⟨quantImplicatureArises .all .some_ .downward⟩
 
 theorem de_all_has_implicature :
     allNotSome_DE.implicatureArises = true := by
@@ -217,14 +151,12 @@ structure DisjunctionAnalysis where
 
 
 /--
-Analyze a simple disjunction in UE context.
+Analyze a simple disjunction in context.
 
 Both exclusivity AND ignorance can arise together.
 -/
-def analyzeDisjunction (ctx : SentenceContext) : DisjunctionAnalysis :=
-  let exclusivity := connectiveCheckerString.isStronger ctx.polarity "and" "or"
-  -- Ignorance arises when competence is not assumed (for disjuncts)
-  -- In standard disjunction contexts, ignorance typically arises
+def analyzeDisjunction (ctx : ContextPolarity) : DisjunctionAnalysis :=
+  let exclusivity := (scaleAlternatives (.connective .or_) ctx).contains "and"
   { statement := "A or B"
   , exclusivityArises := exclusivity
   , ignoranceArises := true  -- Typically arises for disjunctions
@@ -235,7 +167,7 @@ def analyzeDisjunction (ctx : SentenceContext) : DisjunctionAnalysis :=
 Theorem: Disjunction in UE Has Exclusivity
 -/
 theorem disjunction_exclusivity_ue :
-    (analyzeDisjunction simpleAssertion).exclusivityArises = true := by
+    (analyzeDisjunction .upward).exclusivityArises = true := by
   native_decide
 
 /--
@@ -246,12 +178,12 @@ Theorem: Both Inferences Are Compatible
 - "speaker doesn't know which" (ignorance)
 -/
 theorem exclusivity_ignorance_compatible :
-    (analyzeDisjunction simpleAssertion).compatible = true := by
+    (analyzeDisjunction .upward).compatible = true := by
   native_decide
 
 
 /--
-The long disjunction problem (Geurts p.61-64).
+The long disjunction problem (@cite{geurts-2010} p.61-64).
 
 For "A or B or C", the alternatives are not just {A, B, C}.
 We need ALL conjunctive closures:
@@ -399,10 +331,6 @@ Complete scalar implicature derivation result.
 structure ScalarImplicatureResult where
   /-- The original utterance's scalar term -/
   term : String
-  /-- The Horn set used -/
-  hornSet : HornSet String
-  /-- The context -/
-  context : SentenceContext
   /-- Stronger alternatives found -/
   strongerAlts : List String
   /-- Implicatures derived (negations of stronger alternatives) -/
@@ -410,17 +338,14 @@ structure ScalarImplicatureResult where
   deriving Repr
 
 /--
-Derive all scalar implicatures for a term.
+Derive all scalar implicatures for a term via HornScale.
 -/
 def deriveScalarImplicatures
     (term : String)
-    (hornSet : HornSet String)
-    (checker : EntailmentChecker String)
-    (context : SentenceContext) : ScalarImplicatureResult :=
-  let alts := strongerAlternatives hornSet checker context term
+    (sm : ScaleMembership)
+    (ctx : ContextPolarity) : ScalarImplicatureResult :=
+  let alts := scaleAlternatives sm ctx
   { term := term
-  , hornSet := hornSet
-  , context := context
   , strongerAlts := alts
   , implicatures := alts.map λ a => s!"not({a})"
   }
@@ -429,7 +354,7 @@ def deriveScalarImplicatures
 Example: Complete derivation for "some" in UE context
 -/
 def someUE : ScalarImplicatureResult :=
-  deriveScalarImplicatures "some" quantifierSetString quantifierCheckerString simpleAssertion
+  deriveScalarImplicatures "some" (.quantifier .some_) .upward
 
 /--
 Theorem: "some" in UE derives "not(most)" and "not(all)"
@@ -442,7 +367,7 @@ theorem some_ue_implicatures :
 Example: Complete derivation for "some" in DE context
 -/
 def someDE : ScalarImplicatureResult :=
-  deriveScalarImplicatures "some" quantifierSetString quantifierCheckerString underNegation
+  deriveScalarImplicatures "some" (.quantifier .some_) .downward
 
 /--
 Theorem: "some" in DE derives NO implicatures
@@ -466,30 +391,6 @@ CCG/HPSG/Minimalism → SemDeriv.Derivation → deriveFromDerivation → ScalarI
 
 open Semantics.Montague
 open Semantics.Montague.SemDeriv
-open Semantics.Montague
-
-/--
-Map scale membership to the appropriate HornSet and EntailmentChecker.
-
-Uses string-based versions for interface with SemDeriv, but these
-are backed by type-safe implementations grounded in Alternatives.
--/
-def getScaleInfo (sm : ScaleMembership) : HornSet String × EntailmentChecker String :=
-  match sm with
-  | .quantifier _ => (quantifierSetString, quantifierCheckerString)
-  | .connective _ => (connectiveSetString, connectiveCheckerString)
-  | .modal _ => (connectiveSetString, connectiveCheckerString)  -- simplified for now
-
-/--
-Create a SentenceContext from a ContextPolarity.
--/
-def toSentenceContext (ctx : ContextPolarity) : SentenceContext :=
-  { polarity := ctx
-  , description := match ctx with
-    | .upward => "Upward-entailing context"
-    | .downward => "Downward-entailing context"
-    | .nonMonotonic => "Non-monotonic context"
-  }
 
 /--
 Derive scalar implicatures from a semantic derivation.
@@ -508,10 +409,7 @@ def deriveFromDerivation {m : Model} (d : Derivation m) (ctx : ContextPolarity)
   d.scalarItems.filterMap λ occ =>
     match occ.entry.scaleMembership with
     | none => none
-    | some sm =>
-      let (hornSet, checker) := getScaleInfo sm
-      let sentCtx := toSentenceContext ctx
-      some (deriveScalarImplicatures occ.entry.form hornSet checker sentCtx)
+    | some sm => some (deriveScalarImplicatures occ.entry.form sm ctx)
 
 /--
 Check if any implicature in the results negates a given alternative.

@@ -1,12 +1,12 @@
 import Linglib.Theories.Semantics.Exhaustification.Basic
-import Linglib.Theories.Semantics.Alternatives.HornScale
+import Linglib.Theories.Semantics.Alternatives.Lexical
 
 /-!
 # Exhaustification Predictions for Semantic Scales
 @cite{spector-2016} @cite{fox-2007} @cite{hurford-1974} @cite{singh-2008}
 
 Exhaustification predictions for the semantic scales defined in
-`Alternatives.HornScale`: proves that `exhIE(weaker) → ¬stronger` for
+`Alternatives.Lexical`: proves that `exhIE(weaker) → ¬stronger` for
 each Horn scale, and derives Hurford rescue and Singh asymmetry predictions.
 
 - **HurfordSemantic**: Disjunction rescue via exhaustification

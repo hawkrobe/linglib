@@ -33,7 +33,7 @@ to structural operations. This refines @cite{fox-katzir-2011} /
 - `structuralAlternativesAT`: F_AT(S) ⊆ F(S)
 -/
 
-namespace Alternatives.Atomicity
+namespace Alternatives.AtomicConstraint
 
 open StructuralAlternatives (PFTree SynCat)
 open Alternatives.Symmetric (isSymmetric)
@@ -348,4 +348,4 @@ def nonWeakeningStep {W : Type} (domain : List W)
   domain.any fun w => after w && !before w
 
 
-end Alternatives.Atomicity
+end Alternatives.AtomicConstraint

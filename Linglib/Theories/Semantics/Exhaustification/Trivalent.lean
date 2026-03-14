@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Core.Logic.Truth3
 
 /-!
@@ -37,14 +37,14 @@ consistent with Type B (EXH¹).
 ## Design
 
 This file is generic infrastructure, not a paper replication.
-The IE computation reuses `Fox2007.ieIndices` (computable, Bool-based).
+The IE computation reuses `InnocentExclusion.ieIndices` (computable, Bool-based).
 The trivalent layer wraps the bivalent IE result with `Truth3` semantics.
 -/
 
 namespace Exhaustification.Trivalent
 
 open Core.Duality (Truth3 Prop3)
-open Exhaustification.Fox2007
+open Exhaustification.InnocentExclusion
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -158,7 +158,7 @@ theorem exh2_preserves_presup {W : Type} [BEq W] (domain : List W)
 
 "φ or ψ" where ψ presupposes π and ¬φ entails π.
 
-Using the four-world model from Fox2007.lean (`PQWorld`), we add
+Using the four-world model from InnocentExclusion.lean (`PQWorld`), we add
 a presupposition to q: q is defined only when p is false (i.e.,
 the presupposition π = ¬p holds). This is the "bathroom disjunction"
 pattern used in @cite{wang-davidson-2026}'s experiment.

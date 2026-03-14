@@ -30,7 +30,7 @@ scalar implicatures, free choice, and intervention — all with real proofs.
 
 -/
 
-namespace Exhaustification.Chierchia2013
+namespace Exhaustification.FreeChoice
 
 open Exhaustification
 
@@ -568,4 +568,4 @@ theorem maximize_strength_eq_exhIE (ALT : Set (Prop' World)) (φ : Prop' World) 
 
 end MaximizeStrength
 
-end Exhaustification.Chierchia2013
+end Exhaustification.FreeChoice

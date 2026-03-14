@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
-import Linglib.Theories.Semantics.Alternatives.Symmetry
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Alternatives.Symmetric
 
 /-!
 # The Symmetry Problem: Current Theories and Prospects
@@ -34,7 +34,7 @@ No single approach handles all cases. The symmetry problem remains open.
 ## Formalization Strategy
 
 The paper's core arguments are demonstrated computationally using the
-`exhB`/`ieIndices` machinery from @cite{fox-2007} (`Fox2007.lean`).
+`exhB`/`ieIndices` machinery from @cite{fox-2007} (`InnocentExclusion.lean`).
 Each section defines a small domain and shows how different alternative
 sets yield different (correct/incorrect) predictions. This makes the
 paper's claims machine-checkable: the structural approach's failures
@@ -53,8 +53,8 @@ and the AC's overcorrection are verified by `native_decide`.
 
 namespace Phenomena.ScalarImplicatures.Studies.BrehenyEtAl2018
 
-open Exhaustification.Fox2007
-open Alternatives.Symmetry
+open Exhaustification.InnocentExclusion
+open Alternatives.Symmetric
 
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -469,7 +469,7 @@ This paper reveals several tensions in linglib's organization:
 
 3. **Adjective scale structure and alternative generation are
    disconnected**: the full/empty case requires connecting
-   `Adjective/Theory.lean` antonym pairs to `StructuralAlternatives.lean`
+   `Adjective/Theory.lean` antonym pairs to `Structural.lean`
    substitution — currently four separate modules with no wiring.
 
 4. **No embedded exhaustification**: `exhB` operates at a single

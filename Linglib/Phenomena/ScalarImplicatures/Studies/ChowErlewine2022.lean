@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 /-!
 # Chow & Erlewine 2022: Restrictions on the Position of *exh*
 @cite{chow-erlewine-2022}
@@ -35,9 +35,9 @@ a presupposition trigger (like *also*), and @cite{fox-2007}'s computable
 
 ## Related Files
 
-- `Exhaustification/Fox2007.lean`: `exhB`, innocent exclusion algorithm
-- `Exhaustification/Chierchia2013.lean`: feature-checking, scale reversal, FC
-- `Exhaustification/Fox2007.lean`: `exhB`, `ieIndices` (computable exhaustification)
+- `Exhaustification/InnocentExclusion.lean`: `exhB`, innocent exclusion algorithm
+- `Exhaustification/FreeChoice.lean`: feature-checking, scale reversal, FC
+- `Exhaustification/InnocentExclusion.lean`: `exhB`, `ieIndices` (computable exhaustification)
 - `ScalarImplicatures/CompareRSAExh.lean`: grammatical vs pragmatic SI
 -/
 
@@ -151,7 +151,7 @@ theorem ex7_trigger_above_also :
 -- § 5. Semantic Predictions via Fox 2007
 -- ============================================================================
 
-open Exhaustification.Fox2007
+open Exhaustification.InnocentExclusion
 
 /-- Exhaustified disjunction: `exh(A ∨ B)` = exclusive or.
 Directly reuses @cite{fox-2007}'s `disj_exh_eq_exor`. -/
