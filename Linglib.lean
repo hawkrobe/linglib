@@ -606,6 +606,7 @@ import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
+import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Ahn2015
 import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
@@ -966,6 +967,7 @@ import Linglib.Phenomena.Presupposition.Studies.Heim1983
 import Linglib.Phenomena.Presupposition.Studies.RobertsSimons2024
 import Linglib.Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
 import Linglib.Phenomena.Presupposition.Studies.TowerDerivation
+import Linglib.Phenomena.Presupposition.Studies.WangDavidson2026
 import Linglib.Phenomena.Presupposition.Studies.Heim1992
 import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
@@ -1611,6 +1613,7 @@ import Linglib.Theories.Semantics.Exhaustification.EFCI
 import Linglib.Theories.Semantics.Exhaustification.EFCIClosure
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
 import Linglib.Theories.Semantics.Exhaustification.Interface
+import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Semantics.Exhaustification.Implementations.BarLevFox2020
 import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018
 import Linglib.Phenomena.Plurals.Studies.Magri2014

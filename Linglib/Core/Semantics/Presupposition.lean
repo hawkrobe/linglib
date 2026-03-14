@@ -98,6 +98,16 @@ def orFilter (p q : PrProp W) : PrProp W :=
       (p.presup w || q.presup w)
   , assertion := λ w => p.assertion w || q.assertion w }
 
+/-- Exclusive disjunction: both presuppositions must hold (no filtering).
+
+    Under Strong Kleene, `Truth3.xor` propagates undefinedness
+    unconditionally (`xor_indet_iff`), so exclusive disjunction never
+    filters presupposition failure from either disjunct.
+    @cite{wang-davidson-2026} -/
+def xor (p q : PrProp W) : PrProp W :=
+  { presup := λ w => p.presup w && q.presup w
+  , assertion := λ w => p.assertion w ^^ q.assertion w }
+
 -- Notation for filtering connectives
 scoped infixl:65 " /\\' " => andFilter
 scoped infixr:55 " ->' " => impFilter
@@ -188,6 +198,20 @@ theorem eval_impFilter_antecedent_true (p q : PrProp W) (w : W)
     (impFilter p q).eval w = Truth3.ofBool (q.assertion w) := by
   simp only [eval, impFilter, hp, ha, hq, Bool.true_and, Bool.not_true, Bool.false_or,
              Truth3.ofBool, ite_true]
+
+/-- Exclusive disjunction evaluation matches `Truth3.xor` when both defined. -/
+theorem eval_xor (p q : PrProp W) (w : W)
+    (hp : p.presup w = true) (hq : q.presup w = true) :
+    (xor p q).eval w = Truth3.xor (p.eval w) (q.eval w) := by
+  simp only [eval, xor, hp, hq, Bool.true_and, ite_true]
+  cases p.assertion w <;> cases q.assertion w <;> rfl
+
+/-- Exclusive disjunction never filters: when either presupposition fails,
+    the result is undefined. @cite{wang-davidson-2026} -/
+theorem eval_xor_no_filter (p q : PrProp W) (w : W)
+    (hq : q.presup w = false) :
+    (xor p q).eval w = .indet := by
+  simp only [eval, xor, hq, Bool.and_false]; rfl
 
 /-- Strong entailment: p entails q at all worlds where both are defined. -/
 def strongEntails (p q : PrProp W) : Prop :=

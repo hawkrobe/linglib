@@ -199,6 +199,61 @@ theorem meet_assoc (a b c : Truth3) : meet (meet a b) c = meet a (meet b c) := b
 theorem join_assoc (a b c : Truth3) : join (join a b) c = join a (join b c) := by
   cases a <;> cases b <;> cases c <;> rfl
 
+-- ════════════════════════════════════════════════════════════════
+-- Exclusive Disjunction (XOR)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Strong Kleene exclusive disjunction.
+
+    True when exactly one operand is true; false when both or neither;
+    undefined when either operand is undefined.
+
+    Unlike inclusive disjunction (`join`), XOR cannot "see past" an
+    undefined operand: `join .true .indet = .true` (the true operand
+    settles the result), but `xor .true .indet = .indet` (we need to
+    know the other's value to determine XOR).
+
+    @cite{wang-davidson-2026} Figure 2. -/
+def xor : Truth3 → Truth3 → Truth3
+  | .true, .false => .true
+  | .false, .true => .true
+  | .true, .true => .false
+  | .false, .false => .false
+  | _, _ => .indet
+
+/-- XOR is commutative. -/
+theorem xor_comm (a b : Truth3) : xor a b = xor b a := by
+  cases a <;> cases b <;> rfl
+
+/-- XOR decomposes as (a ∨ b) ∧ ¬(a ∧ b) under Strong Kleene. -/
+theorem xor_eq_join_meet_neg (a b : Truth3) :
+    xor a b = meet (join a b) (neg (meet a b)) := by
+  cases a <;> cases b <;> rfl
+
+/-- XOR propagates indet unconditionally from the left. -/
+theorem xor_indet_left (a : Truth3) : xor .indet a = .indet := by
+  cases a <;> rfl
+
+/-- XOR propagates indet unconditionally from the right. -/
+theorem xor_indet_right (a : Truth3) : xor a .indet = .indet := by
+  cases a <;> rfl
+
+/-- XOR agrees with Bool XOR on defined inputs. -/
+theorem xor_ofBool (a b : Bool) : xor (ofBool a) (ofBool b) = ofBool (a ^^ b) := by
+  cases a <;> cases b <;> rfl
+
+/-- **Uniform projection under XOR**: XOR returns undefined iff at
+    least one operand is undefined. This is the semantic core of
+    @cite{wang-davidson-2026}'s prediction: exclusive disjunction
+    does not filter presuppositions.
+
+    Contrast with inclusive disjunction (`join`), where
+    `join .true .indet = .true` — a true first disjunct "filters"
+    the second's presupposition failure. -/
+theorem xor_indet_iff (a b : Truth3) :
+    xor a b = .indet ↔ a = .indet ∨ b = .indet := by
+  cases a <;> cases b <;> simp [xor]
+
 -- Weak Kleene Logic and Meta-Assertion
 -- References:
 -- - @cite{kleene-1952}, weak tables (§64)
@@ -660,6 +715,10 @@ def andMiddle (p q : Prop3 W) : Prop3 W := λ w => Truth3.meetMiddle (p w) (q w)
 /-- Pointwise Middle Kleene disjunction (asymmetric: left-to-right).
     @cite{peters-1979} @cite{beaver-krahmer-2001} @cite{spector-2025} -/
 def orMiddle (p q : Prop3 W) : Prop3 W := λ w => Truth3.joinMiddle (p w) (q w)
+
+/-- Pointwise Strong Kleene exclusive disjunction.
+    @cite{wang-davidson-2026} -/
+def xor (p q : Prop3 W) : Prop3 W := λ w => Truth3.xor (p w) (q w)
 
 end Prop3
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.229.225] - 2026-03-13
+
+### Added
+- **Trivalent.lean**: Generic trivalent exhaustification infrastructure (EXH¹/EXH², @cite{spector-sudo-2017}) with computable IE reuse from Fox2007, bathroom disjunction verification via `native_decide`
+- **WangDavidson2026.lean**: Formalize presupposition filtering × exclusivity (@cite{wang-davidson-2026}) — Type A/B theory classification, SK filtering contrast, Fox2007→XOR→Type A argumentation chain, norming task + null experimental result, trigger-dependent (a)symmetry
+- **Truth3.xor**: Strong Kleene exclusive disjunction with `xor_indet_iff` (semantic core of the prediction)
+- **CCP.disj**: Dynamic disjunction via De Morgan (`¬(¬φ ; ¬ψ)`)
+- **PrProp.xor**: Exclusive disjunction for partial propositions with `eval_xor` and `eval_xor_no_filter` bridge theorems
+- **references.bib**: Add `wang-davidson-2026`, `spector-sudo-2017`, `kalomoiros-schwarz-2024`
+
+## [0.229.224] - 2026-03-13
+
+### Changed
+- **Ahn2015.lean**: Replace string-level stub with formal semantics — conjunction/disjunction denotations for too/either, De Morgan scope theorems, exhaustification-based NPI derivation (positive → ⊥, negative → vacuous), bridge to Chierchia 2013 SI–NPI generalization via ∨/∧ scale
+
 ## [0.229.223] - 2026-03-13
 
 ### Changed

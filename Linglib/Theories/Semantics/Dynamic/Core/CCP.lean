@@ -132,6 +132,15 @@ impl(φ,ψ)(s) = s if φ(s) ⊆ ψ(φ(s)), else ∅
 noncomputable def impl (φ ψ : CCP P) : CCP P :=
   λ s => if φ s ⊆ ψ (φ s) then s else ∅
 
+/--
+Dynamic disjunction via De Morgan: φ ∨ ψ = ¬(¬φ ; ¬ψ).
+
+@cite{heim-1983}: the local context for the second disjunct is the
+global context updated with ¬φ. This yields the standard Karttunen
+projection pattern for inclusive disjunction.
+-/
+noncomputable def disj (φ ψ : CCP P) : CCP P := neg (seq (neg φ) (neg ψ))
+
 /-- Dynamic entailment: φ entails ψ iff ψ adds no information after φ. -/
 def entails (φ ψ : CCP P) : Prop :=
   ∀ s : InfoStateOf P, (φ s).Nonempty → ψ (φ s) = φ s
