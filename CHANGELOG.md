@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.237] - 2026-03-14
+
+### Changed
+- **Franke2011.lean**: Prove IBR convergence theorem (ibr_reaches_fixed_point) via cycle elimination — add 10 helper lemmas (bestResponse_inner_ge_maxU, speaker_inner_le_maxU, eg_eq_inner_eq, inner_eq_maxU_respond_eq, eg_eq_opt_containment, eg_eq_opt_subset, ibrN_shift_congr, ibrN_consecutive_fp, monotone_cycle_eq_first, cycle_containment_eq, opt_eq_bestResponse_eq); proof complete modulo ibr_sequence_repeats (pigeonhole on finite strategy space)
+
 ## [0.229.236] - 2026-03-14
 
 ### Removed

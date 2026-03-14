@@ -652,10 +652,367 @@ theorem eg_bounded (G : InterpGame) (S : SpeakerStrategy G) (H : HearerStrategy 
           _ ≤ 1 := hSSum t
     _ = 1 := by simp [hPriorSum]
 
-/-- Theorem 3: IBR converges. EG is monotone increasing and bounded ⟹ fixed point. -/
-theorem ibr_reaches_fixed_point (G : InterpGame) :
+-- ===== Convergence helpers =====
+
+/-- bestResponse inner product ≥ maxU: the best-response speaker achieves the maximum
+    utility at each state. -/
+private theorem bestResponse_inner_ge_maxU (G : InterpGame) (H : HearerStrategy G)
+    (s : G.State) :
+    SpeakerStrategy.maxUtility G H s ≤ Finset.univ.sum (λ m =>
+      (SpeakerStrategy.bestResponse G H).choose s m * H.respond m s) := by
+  set opt := SpeakerStrategy.optimalMessages G H s
+  set k := opt.card
+  set maxU := SpeakerStrategy.maxUtility G H s
+  have hval : ∀ m, (SpeakerStrategy.bestResponse G H).choose s m * H.respond m s =
+      if m ∈ opt then (if k = 0 then 0 else 1 / (k : ℚ)) * H.respond m s else 0 := by
+    intro m; rw [SpeakerStrategy.bestResponse_val]; split_ifs with hmem <;> ring
+  simp_rw [hval]
+  rw [Finset.sum_ite, Finset.sum_const_zero, add_zero,
+      Finset.filter_mem_eq_inter, Finset.univ_inter]
+  by_cases hk0 : k = 0
+  · have : maxU = 0 := by
+      have hge : maxU ≥ 0 := SpeakerStrategy.maxUtility_nonneg G H s
+      by_contra hne; push_neg at hne
+      have hpos : maxU > 0 := lt_of_le_of_ne hge (Ne.symm hne)
+      cases fold_max_attained (G.trueMessages s) (fun m' => H.respond m' s) 0 with
+      | inl h0 =>
+        have : maxU = 0 := h0; linarith
+      | inr hex =>
+        obtain ⟨m₀, hm₀, heq⟩ := hex
+        have : m₀ ∈ opt := by
+          simp only [opt, SpeakerStrategy.optimalMessages, Finset.mem_filter, beq_iff_eq]
+          exact ⟨hm₀, by simp only [SpeakerStrategy.maxUtility]; exact heq.symm⟩
+        exact absurd (Finset.card_pos.mpr ⟨m₀, this⟩) (by omega)
+    simp [hk0, this]
+  · have hopt_eq : ∀ m ∈ opt, H.respond m s = maxU :=
+      fun m hm => SpeakerStrategy.optimalMessages_utility G H s m hm
+    rw [if_neg hk0]
+    have : opt.sum (fun m => (1 : ℚ) / (k : ℚ) * H.respond m s) =
+        opt.sum (fun _ => (1 : ℚ) / (k : ℚ) * maxU) := by
+      apply Finset.sum_congr rfl; intro m hm; rw [hopt_eq m hm]
+    rw [this, Finset.sum_const, nsmul_eq_mul]
+    rw [show (k : ℚ) * (1 / (k : ℚ) * maxU) = maxU * ((k : ℚ) * (1 / (k : ℚ))) from by ring,
+        mul_one_div_cancel (Nat.cast_ne_zero.mpr hk0), mul_one]
+
+/-- Any valid speaker's inner product ≤ maxU. -/
+private theorem speaker_inner_le_maxU' (G : InterpGame)
+    (S : SpeakerStrategy G) (H : HearerStrategy G) (t : G.State)
+    (hSNonneg : ∀ m, S.choose t m ≥ 0)
+    (hSSum : Finset.univ.sum (λ m => S.choose t m) ≤ 1)
+    (hSTruth : ∀ m, G.meaning m t = false → S.choose t m = 0) :
+    Finset.univ.sum (λ m => S.choose t m * H.respond m t) ≤
+    SpeakerStrategy.maxUtility G H t := by
+  set maxU := SpeakerStrategy.maxUtility G H t
+  calc Finset.univ.sum (λ m => S.choose t m * H.respond m t)
+      ≤ Finset.univ.sum (λ m => S.choose t m * maxU) := by
+        apply Finset.sum_le_sum; intro m _
+        cases hm : G.meaning m t with
+        | false => simp [hSTruth m hm]
+        | true =>
+          exact mul_le_mul_of_nonneg_left
+            (SpeakerStrategy.utility_le_maxUtility G H t m
+              (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm⟩))
+            (hSNonneg m)
+    _ = Finset.univ.sum (λ m => S.choose t m) * maxU := by rw [Finset.sum_mul]
+    _ ≤ 1 * maxU := mul_le_mul_of_nonneg_right hSSum (SpeakerStrategy.maxUtility_nonneg G H t)
+    _ = maxU := one_mul maxU
+
+/-- EG equality → per-state inner product equality. If S_old achieves the same EG as
+    bestResponse against H, then at each positive-prior state, S_old's inner product
+    equals maxUtility. -/
+private theorem eg_eq_inner_eq' (G : InterpGame)
+    (S_old : SpeakerStrategy G) (H : HearerStrategy G)
+    (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (hSNonneg : ∀ s m, S_old.choose s m ≥ 0)
+    (hSSum : ∀ s, Finset.univ.sum (λ m => S_old.choose s m) ≤ 1)
+    (hSTruth : ∀ s m, G.meaning m s = false → S_old.choose s m = 0)
+    (hEG : expectedGain G S_old H = expectedGain G (SpeakerStrategy.bestResponse G H) H)
+    (t : G.State) (hPt : G.prior t > 0) :
+    Finset.univ.sum (λ m => S_old.choose t m * H.respond m t) =
+    SpeakerStrategy.maxUtility G H t := by
+  have h_best_eq : ∀ s, Finset.univ.sum (λ m =>
+      (SpeakerStrategy.bestResponse G H).choose s m * H.respond m s) =
+      SpeakerStrategy.maxUtility G H s := by
+    intro s
+    linarith [speaker_inner_le_maxU' G (SpeakerStrategy.bestResponse G H) H s
+      (fun m => SpeakerStrategy.bestResponse_nonneg G H s m)
+      (SpeakerStrategy.bestResponse_sum_le_one G H s)
+      (fun m hm => SpeakerStrategy.bestResponse_false_zero G H s m hm),
+      bestResponse_inner_ge_maxU G H s]
+  have h_old_le : ∀ s, Finset.univ.sum (λ m => S_old.choose s m * H.respond m s) ≤
+      SpeakerStrategy.maxUtility G H s :=
+    fun s => speaker_inner_le_maxU' G S_old H s (hSNonneg s) (hSSum s) (hSTruth s)
+  -- Σ P(s) * (maxU(s) - inner_old(s)) = 0 with all terms ≥ 0
+  have hdiff : Finset.univ.sum (fun s => G.prior s *
+      (SpeakerStrategy.maxUtility G H s -
+       Finset.univ.sum (λ m => S_old.choose s m * H.respond m s))) = 0 := by
+    have hEGnew : expectedGain G (SpeakerStrategy.bestResponse G H) H =
+        Finset.univ.sum (fun s => G.prior s * SpeakerStrategy.maxUtility G H s) := by
+      unfold expectedGain; congr 1; ext s; rw [h_best_eq s]
+    have hEGold : expectedGain G S_old H =
+        Finset.univ.sum (fun s => G.prior s *
+          Finset.univ.sum (λ m => S_old.choose s m * H.respond m s)) := rfl
+    rw [show (fun s => G.prior s * (SpeakerStrategy.maxUtility G H s -
+        Finset.univ.sum (fun m => S_old.choose s m * H.respond m s))) =
+        (fun s => G.prior s * SpeakerStrategy.maxUtility G H s -
+          G.prior s * Finset.univ.sum (fun m => S_old.choose s m * H.respond m s))
+      from by ext; ring]
+    rw [Finset.sum_sub_distrib]; linarith [hEGnew, hEGold, hEG]
+  have hnonneg : ∀ s, 0 ≤ G.prior s *
+      (SpeakerStrategy.maxUtility G H s -
+       Finset.univ.sum (λ m => S_old.choose s m * H.respond m s)) :=
+    fun s => mul_nonneg (hPriorNonneg s) (sub_nonneg.mpr (h_old_le s))
+  -- sum of nonneg = 0 → each = 0
+  have hzero := (Finset.sum_eq_zero_iff_of_nonneg (fun i _ => hnonneg i)).mp hdiff t
+    (Finset.mem_univ t)
+  rcases mul_eq_zero.mp hzero with h | h
+  · linarith
+  · linarith
+
+/-- If inner product = maxU and S(t,m) > 0, then H(m,t) = maxU. -/
+private theorem inner_eq_maxU_respond_eq' (G : InterpGame)
+    (S : SpeakerStrategy G) (H : HearerStrategy G) (t : G.State) (m : G.Message)
+    (hSNonneg : ∀ m', S.choose t m' ≥ 0)
+    (hSSum : Finset.univ.sum (λ m' => S.choose t m') ≤ 1)
+    (hSTruth : ∀ m', G.meaning m' t = false → S.choose t m' = 0)
+    (hInner : Finset.univ.sum (λ m' => S.choose t m' * H.respond m' t) =
+              SpeakerStrategy.maxUtility G H t)
+    (hSm : S.choose t m > 0) :
+    H.respond m t = SpeakerStrategy.maxUtility G H t := by
+  set maxU := SpeakerStrategy.maxUtility G H t
+  have hTrue : G.meaning m t = true := by
+    by_contra hFalse
+    linarith [hSTruth m (by cases h : G.meaning m t <;> simp_all)]
+  have hle : H.respond m t ≤ maxU :=
+    SpeakerStrategy.utility_le_maxUtility G H t m
+      (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hTrue⟩)
+  by_contra hne; push_neg at hne
+  have hlt : H.respond m t < maxU := lt_of_le_of_ne hle hne
+  linarith [show Finset.univ.sum (λ m' => S.choose t m' * H.respond m' t) < maxU from
+    calc Finset.univ.sum (λ m' => S.choose t m' * H.respond m' t)
+        < Finset.univ.sum (λ m' => S.choose t m' * maxU) := by
+          apply Finset.sum_lt_sum
+          · intro m' _
+            cases hm' : G.meaning m' t with
+            | false => simp [hSTruth m' hm']
+            | true =>
+              exact mul_le_mul_of_nonneg_left
+                (SpeakerStrategy.utility_le_maxUtility G H t m'
+                  (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩))
+                (hSNonneg m')
+          · exact ⟨m, Finset.mem_univ m, mul_lt_mul_of_pos_left hlt hSm⟩
+      _ = Finset.univ.sum (λ m' => S.choose t m') * maxU := by rw [Finset.sum_mul]
+      _ ≤ 1 * maxU := mul_le_mul_of_nonneg_right hSSum (SpeakerStrategy.maxUtility_nonneg G H t)
+      _ = maxU := one_mul maxU]
+
+/-- EG equality → support contained in optimalMessages. -/
+private theorem eg_eq_opt_containment' (G : InterpGame)
+    (S_old : SpeakerStrategy G) (H : HearerStrategy G)
+    (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (hSNonneg : ∀ s m, S_old.choose s m ≥ 0)
+    (hSSum : ∀ s, Finset.univ.sum (λ m => S_old.choose s m) ≤ 1)
+    (hSTruth : ∀ s m, G.meaning m s = false → S_old.choose s m = 0)
+    (hEG : expectedGain G S_old H = expectedGain G (SpeakerStrategy.bestResponse G H) H)
+    (t : G.State) (hPt : G.prior t > 0)
+    (m : G.Message) (hSm : S_old.choose t m > 0) :
+    m ∈ SpeakerStrategy.optimalMessages G H t := by
+  have hInner := eg_eq_inner_eq' G S_old H hPriorNonneg hSNonneg hSSum hSTruth hEG t hPt
+  have hResp := inner_eq_maxU_respond_eq' G S_old H t m (hSNonneg t) (hSSum t) (hSTruth t) hInner hSm
+  simp only [SpeakerStrategy.optimalMessages, Finset.mem_filter, InterpGame.trueMessages,
+    Finset.mem_univ, true_and, beq_iff_eq]
+  exact ⟨by by_contra hF; linarith [hSTruth t m (by cases h : G.meaning m t <;> simp_all)], hResp⟩
+
+/-- EG equality → optimalMessages containment between hearer strategies.
+    If S_old = bestResponse(H_old) achieves the same EG as bestResponse(H) against H,
+    then optimalMessages(H_old, t) ⊆ optimalMessages(H, t) for all t with P(t) > 0. -/
+private theorem eg_eq_opt_subset (G : InterpGame) (H_old H : HearerStrategy G)
+    (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (hPriorPos : ∀ s, G.prior s > 0)
+    (hEG : expectedGain G (speakerUpdate G H_old) H =
+           expectedGain G (SpeakerStrategy.bestResponse G H) H) :
+    ∀ t, SpeakerStrategy.optimalMessages G H_old t ⊆
+         SpeakerStrategy.optimalMessages G H t := by
+  intro t m hm
+  have hSm : (speakerUpdate G H_old).choose t m > 0 := by
+    simp only [speakerUpdate]
+    exact (SpeakerStrategy.bestResponse_pos_iff G H_old t m).mpr
+      ⟨hm, Finset.card_pos.mpr ⟨m, hm⟩⟩
+  exact eg_eq_opt_containment' G (speakerUpdate G H_old) H hPriorNonneg
+    (fun s m' => SpeakerStrategy.bestResponse_nonneg G H_old s m')
+    (fun s => SpeakerStrategy.bestResponse_sum_le_one G H_old s)
+    (fun s m' hm' => SpeakerStrategy.bestResponse_false_zero G H_old s m' hm')
+    hEG t (hPriorPos t) m hSm
+
+/-- Determinism: equal hearer strategies produce equal shifted sequences. -/
+private lemma ibrN_shift_congr (G : InterpGame) {n m : ℕ}
+    (h : ibrN G n = ibrN G m) (k : ℕ) :
+    ibrN G (n + k) = ibrN G (m + k) := by
+  induction k with
+  | zero => simpa
+  | succ k ih =>
+    show ibrN G (n + k + 1) = _
+    simp only [ibrN]; exact congrArg (ibrStep G) ih
+
+/-- Consecutive repeat → fixed point. -/
+private lemma ibrN_consecutive_fp (G : InterpGame) (n : ℕ)
+    (h : ibrN G n = ibrN G (n + 1)) :
+    isIBRFixedPoint G (ibrN G n) := by
+  intro m s
+  have : (ibrN G n).respond m s = (ibrN G (n + 1)).respond m s :=
+    congrFun (congrFun (congrArg HearerStrategy.respond h) m) s
+  rw [this]; rfl
+
+/-- Monotone sequence constant at first step of cycle. -/
+private lemma monotone_cycle_eq_first {f : ℕ → ℚ} {n p : ℕ} (hp : 0 < p)
+    (hMono : ∀ k, n ≤ k → k < n + p → f k ≤ f (k + 1))
+    (hCycle : f n = f (n + p)) :
+    f n = f (n + 1) := by
+  have h1 : f n ≤ f (n + 1) := hMono n (le_refl _) (by omega)
+  suffices f (n + 1) ≤ f n by linarith
+  rw [hCycle]
+  suffices ∀ j, 1 ≤ j → j ≤ p → f (n + 1) ≤ f (n + j) by exact this p (by omega) (le_refl _)
+  intro j; induction j with
+  | zero => omega
+  | succ j ih =>
+    intro hj1 hjp
+    by_cases hj : j = 0
+    · subst hj; simp
+    · exact le_trans (ih (by omega) (by omega)) (hMono (n + j) (by omega) (by omega))
+
+/-- Containment around a cycle of finite sets → equality at first step. -/
+private lemma cycle_containment_eq {α : Type*} [DecidableEq α] {p : ℕ}
+    (A : ℕ → Finset α) (hp : 0 < p)
+    (hContain : ∀ k, k < p → A k ⊆ A (k + 1))
+    (hCycle : A p = A 0) :
+    A 0 = A 1 := by
+  apply Finset.Subset.antisymm (hContain 0 (by omega))
+  rw [← hCycle]
+  suffices ∀ j, 1 ≤ j → j ≤ p → A 1 ⊆ A j by exact this p (by omega) (le_refl _)
+  intro j; induction j with
+  | zero => omega
+  | succ j ih =>
+    intro hj1 hjp
+    by_cases hj : j = 0
+    · subst hj; simp
+    · exact Finset.Subset.trans (ih (by omega) (by omega)) (hContain j (by omega))
+
+/-- Equal optimalMessages at all states → equal bestResponse speakers. -/
+private theorem opt_eq_bestResponse_eq (G : InterpGame) (H₁ H₂ : HearerStrategy G)
+    (hOpt : ∀ t, SpeakerStrategy.optimalMessages G H₁ t =
+                  SpeakerStrategy.optimalMessages G H₂ t) :
+    SpeakerStrategy.bestResponse G H₁ = SpeakerStrategy.bestResponse G H₂ := by
+  show SpeakerStrategy.mk _ = SpeakerStrategy.mk _
+  congr 1; ext t m
+  show (SpeakerStrategy.bestResponse G H₁).choose t m =
+       (SpeakerStrategy.bestResponse G H₂).choose t m
+  simp only [SpeakerStrategy.bestResponse_val]; rw [hOpt t]
+
+/-- Strategy space is finite → IBR sequence eventually repeats. -/
+private theorem ibr_sequence_repeats (G : InterpGame) :
+    ∃ n₁ n₂ : ℕ, n₁ < n₂ ∧ ibrN G n₁ = ibrN G n₂ := by
+  sorry -- TODO: hearerBR values in {0, 1/k : 1 ≤ k ≤ |State|}, pigeonhole
+
+/-- Theorem 3: IBR converges. EG is monotone increasing and bounded ⟹ fixed point.
+
+    The proof uses cycle elimination: since the hearer strategy space is finite, the
+    IBR sequence must repeat. EG monotonicity forces EG constant on the cycle.
+    Constant EG implies optimalMessages containment at each step. Around the cycle,
+    containment of finite sets gives equality. Equal optimalMessages gives equal
+    bestResponse speakers, hence equal hearer BR, giving a consecutive repeat,
+    which is a fixed point. -/
+theorem ibr_reaches_fixed_point (G : InterpGame)
+    (hPriorNonneg : ∀ s, G.prior s ≥ 0)
+    (hPriorPos : ∀ s, G.prior s > 0)
+    (hPriorSum : Finset.univ.sum G.prior = 1) :
     ∃ n : ℕ, isIBRFixedPoint G (ibrN G n) := by
-  sorry -- Requires formalizing the monotonicity + finiteness argument
+  obtain ⟨n₁, n₂, hlt, heq⟩ := ibr_sequence_repeats G
+  set p := n₂ - n₁
+  have hp : 0 < p := by omega
+  have hperiod : ibrN G n₁ = ibrN G (n₁ + p) := by
+    rwa [Nat.add_sub_cancel' (le_of_lt hlt)]
+  -- EG is monotone
+  set eg := fun n => expectedGain G (speakerUpdate G (ibrN G n)) (ibrN G n)
+  -- EG constant at first step of cycle
+  have hEGconst : eg n₁ = eg (n₁ + 1) := by
+    apply monotone_cycle_eq_first hp
+      (fun k _ _ => eg_ibr_monotone G hPriorNonneg hPriorSum k)
+    show expectedGain G (speakerUpdate G (ibrN G n₁)) (ibrN G n₁) =
+         expectedGain G (speakerUpdate G (ibrN G (n₁ + p))) (ibrN G (n₁ + p))
+    rw [hperiod]
+  -- optimalMessages containment at each step of the cycle
+  have hOptSubAll : ∀ k, k < p →
+      ∀ t, SpeakerStrategy.optimalMessages G (ibrN G (n₁ + k)) t ⊆
+           SpeakerStrategy.optimalMessages G (ibrN G (n₁ + k + 1)) t := by
+    intro k hk
+    -- eg(n₁+k) = eg(n₁+k+1) by monotonicity + cycle
+    have hEGk : eg (n₁ + k) = eg (n₁ + k + 1) := by
+      have h1 : eg n₁ ≤ eg (n₁ + k) := by
+        suffices ∀ j, j ≤ k → eg n₁ ≤ eg (n₁ + j) by exact this k (le_refl _)
+        intro j; induction j with
+        | zero => simp
+        | succ j ih =>
+          intro hjk
+          exact le_trans (ih (by omega)) (eg_ibr_monotone G hPriorNonneg hPriorSum (n₁ + j))
+      have h2 : eg (n₁ + k + 1) ≤ eg (n₁ + p) := by
+        suffices ∀ j, k + 1 ≤ j → j ≤ p → eg (n₁ + k + 1) ≤ eg (n₁ + j) by
+          exact this p (by omega) (le_refl _)
+        intro j; induction j with
+        | zero => omega
+        | succ j ih =>
+          intro hj1 hjp
+          by_cases hj : k + 1 ≤ j
+          · exact le_trans (ih hj (by omega)) (eg_ibr_monotone G hPriorNonneg hPriorSum (n₁ + j))
+          · have : j = k := by omega
+            subst this; exact le_refl _
+      have h3 := eg_ibr_monotone G hPriorNonneg hPriorSum (n₁ + k)
+      have : eg (n₁ + p) = eg n₁ := by
+        show expectedGain G (speakerUpdate G (ibrN G (n₁ + p))) (ibrN G (n₁ + p)) =
+             expectedGain G (speakerUpdate G (ibrN G n₁)) (ibrN G n₁)
+        rw [hperiod]
+      linarith
+    -- Decompose EG step: eg(n₁+k) ≤ mid ≤ eg(n₁+k+1), both equalities
+    have hSpeakerEqK : expectedGain G (speakerUpdate G (ibrN G (n₁ + k)))
+        (ibrN G (n₁ + k + 1)) =
+        expectedGain G (speakerUpdate G (ibrN G (n₁ + k + 1)))
+        (ibrN G (n₁ + k + 1)) := by
+      have hH' : eg (n₁ + k) ≤ expectedGain G (speakerUpdate G (ibrN G (n₁ + k)))
+          (ibrN G (n₁ + k + 1)) := by
+        simp only [eg, ibrN, ibrStep]
+        exact eg_hearerBR_improvement G (speakerUpdate G (ibrN G (n₁ + k)))
+          (ibrN G (n₁ + k)) hPriorNonneg
+          (fun s m => SpeakerStrategy.bestResponse_nonneg G (ibrN G (n₁ + k)) s m)
+          (ibrN_respond_nonneg G (n₁ + k))
+          (ibrN_sum_le_one G (n₁ + k))
+      have hS' : expectedGain G (speakerUpdate G (ibrN G (n₁ + k)))
+          (ibrN G (n₁ + k + 1)) ≤ eg (n₁ + k + 1) := by
+        simp only [eg]
+        exact eg_speaker_improvement G
+          (speakerUpdate G (ibrN G (n₁ + k)))
+          (speakerUpdate G (ibrN G (n₁ + k + 1)))
+          (ibrN G (n₁ + k + 1)) rfl hPriorNonneg
+          (fun s m => SpeakerStrategy.bestResponse_nonneg G (ibrN G (n₁ + k)) s m)
+          (fun s => SpeakerStrategy.bestResponse_sum_le_one G (ibrN G (n₁ + k)) s)
+          (fun s m hm => SpeakerStrategy.bestResponse_false_zero G (ibrN G (n₁ + k)) s m hm)
+          (fun m s => hearerBR_respond_nonneg G (speakerUpdate G (ibrN G (n₁ + k))) m s)
+      linarith
+    exact eg_eq_opt_subset G (ibrN G (n₁ + k)) (ibrN G (n₁ + k + 1))
+      hPriorNonneg hPriorPos hSpeakerEqK
+  -- Containment around cycle → equality at first step
+  have hOptEq : ∀ t, SpeakerStrategy.optimalMessages G (ibrN G n₁) t =
+      SpeakerStrategy.optimalMessages G (ibrN G (n₁ + 1)) t := by
+    intro t
+    exact cycle_containment_eq
+      (fun k => SpeakerStrategy.optimalMessages G (ibrN G (n₁ + k)) t) hp
+      (fun k hk => hOptSubAll k hk t)
+      (by show SpeakerStrategy.optimalMessages G (ibrN G (n₁ + p)) t =
+              SpeakerStrategy.optimalMessages G (ibrN G n₁) t
+          rw [hperiod])
+  -- Equal optimalMessages → equal bestResponse → consecutive repeat → fixed point
+  have hBReq := opt_eq_bestResponse_eq G (ibrN G n₁) (ibrN G (n₁ + 1)) hOptEq
+  have hConsec : ibrN G (n₁ + 1) = ibrN G (n₁ + 2) := by
+    show ibrStep G (ibrN G n₁) = ibrStep G (ibrN G (n₁ + 1))
+    simp only [ibrStep, speakerUpdate]; rw [hBReq]
+  exact ⟨n₁ + 1, ibrN_consecutive_fp G (n₁ + 1) hConsec⟩
 
 -- Fixed point = minimum alternatives = exhMW (Franke Appendix B.2, eq. 131)
 
