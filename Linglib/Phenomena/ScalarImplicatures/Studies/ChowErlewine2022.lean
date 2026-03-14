@@ -1,6 +1,4 @@
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
-import Linglib.Theories.Semantics.Exhaustification.Interface
-
 /-!
 # Chow & Erlewine 2022: Restrictions on the Position of *exh*
 @cite{chow-erlewine-2022}
@@ -39,7 +37,7 @@ a presupposition trigger (like *also*), and @cite{fox-2007}'s computable
 
 - `Exhaustification/Fox2007.lean`: `exhB`, innocent exclusion algorithm
 - `Exhaustification/Chierchia2013.lean`: feature-checking, scale reversal, FC
-- `Exhaustification/Interface.lean`: `ExhPosition` (M/O/I), `Exhaustifiable`
+- `Exhaustification/Fox2007.lean`: `exhB`, `ieIndices` (computable exhaustification)
 - `ScalarImplicatures/CompareRSAExh.lean`: grammatical vs pragmatic SI
 -/
 
@@ -387,23 +385,17 @@ theorem box_embedded_in_37b :
     parse37b.inScopeOf "exh2" "box" = true := by native_decide
 
 -- ============================================================================
--- § 9. Connection to Exhaustification.Interface
+-- § 9. Tree-Based *exh* Positioning
 -- ============================================================================
 
-/-! `ExhFeature` generalizes `ExhPosition` from `Interface.lean`.
+/-! `ExhFeature` determines which tree positions are available for *exh*.
 
-The `M`/`O`/`I` positions of `Interface.lean` correspond to specific nodes
-in a doubly-quantified sentence tree. `ExhFeature` determines WHICH of those
-positions are available for a given SI trigger. The tree-based `inScopeOf`
-predicate subsumes the `M`/`O`/`I` enum by computing available positions
-from tree structure rather than stipulating them.
+The standard M/O/I positions correspond to specific nodes in a
+doubly-quantified sentence tree. The tree-based `inScopeOf` predicate
+subsumes an enumeration of positions by computing them from tree structure
+rather than stipulating them.
 
-`Interface.ExhPosition` answers: "where CAN *exh* go?"
-`ExhFeature` answers: "where MUST *exh* go, given the trigger's feature?"
-
-A complete integration would replace `Interface.exhParses` with a function
-that filters parse positions based on the trigger's `ExhFeature` and the
-sentence tree. -/
+`ExhFeature` answers: "where MUST *exh* go, given the trigger's feature?" -/
 
 /-- Doubly-quantified tree with *exh* at position I (below *also*):
 `[Q₁ [also [exh [V Q₂]]]]` -/
@@ -420,7 +412,7 @@ def treeExhM : OpTree :=
 /-- For a `[uexh*]` trigger (e.g., "Q2") inside *also*'s scope,
 the tree-based constraint forces exh below *also* — i.e., position I.
 Position M (above *also*) is ruled out. This recovers the M/O/I
-distinction from `Interface.ExhPosition` as a special case. -/
+distinction as a special case of tree structure. -/
 theorem strong_forces_inner :
     satisfiesUExhStar treeExhI "also" "exh" "Q2" = true
     ∧ satisfiesUExhStar treeExhM "also" "exh" "Q2" = false := by

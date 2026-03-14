@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Alternatives.AlternativeSource
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Fragments.German.BarePluralWordOrder
@@ -1014,5 +1015,33 @@ theorem definite_vs_bp_always_contrast :
   ⟨by native_decide, by native_decide⟩
 
 end BarePluralAlways
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §8  Bridge to AlternativeSource
+-- ═══════════════════════════════════════════════════════════════════════
+
+section AlternativeSourceBridge
+
+open Alternatives
+
+/-- AlternativeSource instance for the Italian ⟨some, all⟩ scale. -/
+instance : AlternativeSource ItalyUtt where
+  alternatives _ := [.some_, .all_]
+
+/-- AlternativeSource.exhaust agrees with BlindScenario.strengthened.
+
+    BlindScenario carries its own `alternatives` field; here we show that
+    deriving alternatives from the AlternativeSource typeclass produces
+    the same exhaustified meaning. The key: including the assertion in the
+    alternative list (AlternativeSource convention) doesn't change the
+    result — exhB filters it out via the non-weaker check. -/
+theorem strengthened_eq_alternativeSource :
+    ∀ w : ItalyWorld₃,
+      italianScenario.strengthened .some_ w =
+      AlternativeSource.exhaust italianScenario.worlds
+        italianScenario.meaning ItalyUtt.some_ w := by
+  intro w; cases w <;> native_decide
+
+end AlternativeSourceBridge
 
 end Phenomena.ScalarImplicatures.Studies.Magri2009

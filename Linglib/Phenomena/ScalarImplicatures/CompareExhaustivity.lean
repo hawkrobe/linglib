@@ -1,5 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
+import Linglib.Theories.Semantics.Alternatives.AlternativeSource
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 set_option autoImplicit false
@@ -148,5 +149,25 @@ theorem exh_true_at_weakOnly :
 /-- exh(weak) is false at the "both" world — L1 assigns probability 0 there. -/
 theorem exh_false_at_both :
     exhB scaleDomain scaleAlts weakMeaning .both = false := by native_decide
+
+-- ============================================================================
+-- § 6. Bridge to AlternativeSource
+-- ============================================================================
+
+/-- AlternativeSource instance for the {weak, strong} scale. -/
+instance : Alternatives.AlternativeSource ScaleU where
+  alternatives _ := [.weak, .strong]
+
+/-- AlternativeSource.exhaust agrees with the hand-crafted exhB call.
+
+    This validates the full pipeline: AlternativeSource instance →
+    meanings (via interp = meaning) → exhB → exhaustified meaning.
+    The `meaning` function here serves as the interpretation bridge
+    from forms (ScaleU) to truth conditions (ScaleW → Bool). -/
+theorem exh_via_alternativeSource :
+    ∀ w : ScaleW, Alternatives.AlternativeSource.exhaust
+      scaleDomain meaning ScaleU.weak w =
+      exhB scaleDomain scaleAlts weakMeaning w := by
+  intro w; cases w <;> native_decide
 
 end Phenomena.ScalarImplicatures.CompareExhaustivity

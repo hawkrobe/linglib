@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.229.233] - 2026-03-14
+
+### Added
+- **Antonymy.lean**: Theory file for contradictory vs contrary negation — `contradictory_is_complement`, `contradictory_dne`, `contradictory_exhaustive`, `gap_eq_not_neg_and_not_pos`, `contrary_gap_exists`, `gap_nonempty`
+- **Krifka2007.lean**: Formalize Krifka's "Negated Antonyms" — quadruplet structure, contradictory base semantics, strengthened (ThresholdPair) semantics, BiOT derivation via `superoptimal` with M-Principle >> Economy; bridges to FlexibleNegation, Markedness, unconditionals
+- **references.bib**: Add `krifka-2007b`, `sauerland-stateva-2007-volume`
+
+## [0.229.232] - 2026-03-14
+
+### Added
+- **AlternativeSource.lean**: `AlternativeSource` typeclass — form-level alternative generation abstraction with instances for Horn scale types (QuantExpr, ConnExpr, ModalExpr, NumberExpr); `meanings`/`exhaust` bridge to Fox 2007's `exhB`; worked examples showing scale choice matters (full scale derives "exactly one", classic {some, all} derives "some but not all"); HornScale bridge section
+- **CompareExhaustivity.lean**: Bridge theorem `exh_via_alternativeSource` showing `AlternativeSource.exhaust` agrees with hand-crafted `exhB` call
+- **Magri2009.lean**: Bridge theorem `strengthened_eq_alternativeSource` showing `BlindScenario.strengthened` agrees with `AlternativeSource.exhaust`
+
+### Removed
+- **Interface.lean**: Delete dead `Exhaustifiable` typeclass (broken `meaningAtParseBool`, unused); clean up `ChowErlewine2022.lean` references
+
+## [0.229.231] - 2026-03-14
+
+### Added
+- **BrehenyEtAl2018.lean**: Formalize the symmetry problem survey — indirect SIs (exh blocked/correct with/without symmetric alts), gradable adjective counterexample (AC wrongly derives "the glass is empty"), particularised SIs (smoked/ran∧¬smoked partition), Swanson's lexicalized symmetry (permitted/optional/required); all verified via `native_decide`
+- **references.bib**: Add `trinh-haida-2015`, `swanson-2010`
+
 ## [0.229.230] - 2026-03-14
 
 ### Added

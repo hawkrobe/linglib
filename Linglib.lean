@@ -911,11 +911,13 @@ import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
 import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.Morphology.Studies.Adamson2024
 import Linglib.Phenomena.Morphology.Studies.Bhadra2024
+import Linglib.Phenomena.Morphology.Studies.Benz2025
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Negation.Studies.Greco2020
+import Linglib.Phenomena.Negation.Studies.Krifka2007
 import Linglib.Phenomena.Negation.Studies.Miestamo2005
 import Linglib.Phenomena.Negation.Denial
 import Linglib.Phenomena.Plurals.Basic
@@ -1332,6 +1334,7 @@ import Linglib.Theories.Morphology.DM.CategorizerSemantics
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Morphology.DM.RichExponent
+import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Theories.Morphology.WP.LCEC
@@ -1365,6 +1368,7 @@ import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic
 import Linglib.Theories.Semantics.PossibilitySemantics.Lifting
 import Linglib.Theories.Semantics.PossibilitySemantics.Ortholattice
 -- Theories: Semantics.Montague (Montague architecture)
+import Linglib.Theories.Semantics.Lexical.Adjective.Antonymy
 import Linglib.Theories.Semantics.Lexical.Adjective.Classification
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
@@ -1597,6 +1601,7 @@ import Linglib.Theories.Semantics.Questions.EntropyNPIs
 import Linglib.Theories.Semantics.Questions.SignalingGames
 import Linglib.Theories.Semantics.Questions.VerumFocus
 import Linglib.Theories.Semantics.Questions.QParticleLayer
+import Linglib.Phenomena.ScalarImplicatures.Studies.BrehenyEtAl2018
 import Linglib.Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
 -- Theories: Alternatives + Exhaustification + Implicature
@@ -1607,6 +1612,7 @@ import Linglib.Theories.Pragmatics.Implicature.Core.Alternatives
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Competence
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
+import Linglib.Theories.Semantics.Alternatives.AlternativeSource
 import Linglib.Theories.Semantics.Alternatives.FoxKatzir2011
 import Linglib.Theories.Semantics.Alternatives.StructuralAlternatives
 import Linglib.Theories.Semantics.Alternatives.Symmetry
@@ -1617,7 +1623,6 @@ import Linglib.Theories.Semantics.Exhaustification.Chierchia2013
 import Linglib.Theories.Semantics.Exhaustification.EFCI
 import Linglib.Theories.Semantics.Exhaustification.EFCIClosure
 import Linglib.Theories.Semantics.Exhaustification.Fox2007
-import Linglib.Theories.Semantics.Exhaustification.Interface
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Semantics.Exhaustification.Implementations.BarLevFox2020
 import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018
