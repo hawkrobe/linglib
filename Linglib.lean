@@ -489,6 +489,7 @@ import Linglib.Fragments.Mandarin.TemporalDeictic
 import Linglib.Fragments.Mandarin.AspectComparison
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Mandarin.Reciprocals
+import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Fragments.Mandarin.Morph
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Turkish.Case
