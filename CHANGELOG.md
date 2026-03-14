@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.210] - 2026-03-13
+
+### Changed
+- **UpdateTheoretic.lean**: Add `RelTest` (eq. 73) and `sentenceMeaning_u` (eq. 82) from @cite{charlow-2021}; fix `exactlyN_u` docstring (was falsely attributed to eq. 81); remove unused simp arg warning
+
 ## [0.229.209] - 2026-03-13
 
 ### Fixed

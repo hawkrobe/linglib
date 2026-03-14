@@ -14,9 +14,10 @@ produces cumulative readings automatically.
 
 ## Main results
 
-- `Mvar_u_nondistributive`: M_v is not distributive (@cite{charlow-2021}, Theorem 1)
+- `Mvar_u_nondistributive`: M_v is not distributive (p. 33 of @cite{charlow-2021})
 - `CardTest_u_distributive`: cardinality tests ARE distributive
-- `exactlyN_u_distributive`: the composed pipeline IS distributive (despite containing non-distributive `Mvar_u`)
+- `sentenceMeaning_u`: the full two-quantifier composed meaning (eq. 82)
+- `exactlyN_u_distributive`: the single-quantifier pipeline (no nuclear scope) is distributive
 
 -/
 
@@ -52,11 +53,35 @@ def dseq_u (L R : StateCCP W E) : StateCCP W E := R ∘ L
 
 infixl:65 " ⨟ᵤ " => dseq_u
 
-/-- Composed update-theoretic "exactly N" (equation 81):
-    E^v_u; M_v_u; n_v_u -/
+/-- Relational test at the state level (eq. 73 in @cite{charlow-2021}):
+    filter for assignments where R(g(v₁), g(v₂)) holds.
+    Used to encode verb meanings in the dynamic pipeline. -/
+def RelTest (v₁ v₂ : Nat) (R : E → E → Prop) : StateCCP W E :=
+  λ s => {p ∈ s | R (p.2 v₁) (p.2 v₂)}
+
+/-- Single-quantifier "exactly N" pipeline (no nuclear scope):
+    E^v P ; M_v(E^v P) ; n_v.
+    This is the trivial-scope instantiation of @cite{charlow-2021}'s
+    scope-taking GQ (eq. 81), with the nuclear scope set to identity. -/
 def exactlyN_u (v : Nat) (P : E → Prop) (n : Nat) [PartialOrder E] [Fintype E] :
     StateCCP W E :=
   dseq_u (dseq_u (Evar_u v P) (Mvar_u v (Evar_u v P))) (CardTest_u v n)
+
+/-- The full update-theoretic sentence meaning for
+    "exactly n_subj P_subj R exactly n_obj P_obj" (eq. 82 in @cite{charlow-2021}).
+
+    Structure: `M_v (E^v P_subj ; M_u (E^u P_obj ; R u v)) ; n_obj_u ; n_subj_v`
+
+    The two maximization operators nest: the inner `M_u` maximizes the object
+    dref within the scope of the outer subject dref, while the outer `M_v`
+    maximizes over the entire state. The non-distributivity of `M_v` is what
+    produces the cumulative reading. -/
+def sentenceMeaning_u (v u : Nat) (P_subj P_obj : E → Prop)
+    (R : E → E → Prop) (n_subj n_obj : Nat)
+    [PartialOrder E] [Fintype E] : StateCCP W E :=
+  let inner := dseq_u (Evar_u u P_obj) (RelTest u v R)
+  let K_v := dseq_u (Evar_u v P_subj) (Mvar_u u inner)
+  dseq_u (dseq_u (Mvar_u v K_v) (CardTest_u u n_obj)) (CardTest_u v n_subj)
 
 -- ════════════════════════════════════════════════════
 -- § Key Theorems
@@ -97,7 +122,7 @@ theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
     IsDistributive (CardTest_u (W := W) (E := E) v n) := by
   intro s
   ext p
-  simp only [CardTest_u, Set.mem_setOf_eq, Set.mem_sep_iff]
+  simp only [CardTest_u, Set.mem_setOf_eq]
   constructor
   · intro ⟨hp, hcard⟩
     exact ⟨p, hp, ⟨Set.mem_singleton p, hcard⟩⟩
