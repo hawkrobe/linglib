@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Conjunction
 import Mathlib.Order.Hom.BoundedLattice
+import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # NP Type-Shifting Principles
@@ -61,10 +62,20 @@ end TotalShifts
 
 section BooleanHomomorphism
 
+instance (m : Model) : BooleanAlgebra (m.interpTy Ty.t) :=
+  show BooleanAlgebra Bool from inferInstance
 instance (m : Model) : BooleanAlgebra (m.interpTy Ty.et) :=
   show BooleanAlgebra (m.Entity → Bool) from inferInstance
 instance (m : Model) : BooleanAlgebra (m.interpTy Ty.ett) :=
   show BooleanAlgebra ((m.Entity → Bool) → Bool) from inferInstance
+
+/-- Evaluate `Finset.inf` of function-valued functions at a point. -/
+private lemma finset_inf_fun_eval {ι α : Type*}
+    (s : Finset ι) (g : ι → α → Bool) (a : α) :
+    (s.inf g) a = s.inf (fun i => g i a) := by
+  induction s using Finset.cons_induction with
+  | empty => rfl
+  | cons x s hx ih => simp only [Finset.inf_cons, Pi.inf_apply, ih]
 
 /-- `BE` is a `BoundedLatticeHom` (Partee §3.3, Fact 1). -/
 def BE_hom (m : Model) : BoundedLatticeHom (m.interpTy Ty.ett) (m.interpTy Ty.et) where
@@ -78,6 +89,103 @@ def BE_hom (m : Model) : BoundedLatticeHom (m.interpTy Ty.ett) (m.interpTy Ty.et
 theorem BE_lift_eq_ident (j : m.interpTy .e) :
     BE (lift j) = ident j := by
   funext x; simp only [BE, lift, ident]
+
+/-- **Fact 2** (@cite{partee-1987} §3.3): `BE` is the **unique**
+    `BoundedLatticeHom` from `⟨⟨e,t⟩,t⟩` to `⟨e,t⟩` that makes
+    Figure 3 commute (i.e., satisfies `f(lift(j)) = ident(j)`).
+
+    Proof (@cite{keenan-faltz-1985}): For each entity `x`, construct the
+    atom `atom_x = ⨅_j literal(j)` where `literal(j) = lift(j)` if `j = x`
+    and `(lift(j))ᶜ` otherwise. This atom is the indicator of `{P_x}` where
+    `P_x = λy. [y = x]`. Since `f` preserves `⊓` and complements, `f` maps
+    `atom_x` correctly. Then monotonicity determines `f(Q)(x)` for arbitrary
+    `Q` by cases on `Q(P_x)`. -/
+theorem BE_unique [Fintype m.Entity]
+    (f : BoundedLatticeHom (m.interpTy Ty.ett) (m.interpTy Ty.et))
+    (hcomm : ∀ j : m.Entity, f (lift j) = ident j) :
+    ∀ Q : m.interpTy Ty.ett, f Q = BE Q := by
+  letI : DecidableEq m.Entity := m.decEq
+  intro Q; funext x
+  show f Q x = Q (fun j => decide (j = x))
+  let lit : m.Entity → m.interpTy Ty.ett := fun j =>
+    if j = x then (lift j : m.interpTy Ty.ett) else (lift j)ᶜ
+  let atom_x : m.interpTy Ty.ett := Finset.inf Finset.univ lit
+  let f_lit : m.Entity → m.interpTy Ty.et := fun j =>
+    if j = x then (ident j : m.interpTy Ty.et) else (ident j)ᶜ
+  -- Step 1: f maps each literal correctly
+  have hf_lit : ∀ j, f (lit j) = f_lit j := by
+    intro j; simp only [lit, f_lit]; split
+    · exact hcomm j
+    · rw [map_compl' f, hcomm j]
+  -- Step 2: f preserves the atom
+  have hf_atom_eq : f atom_x = Finset.inf Finset.univ f_lit := by
+    show f (Finset.inf Finset.univ lit) = _
+    rw [map_finset_inf f Finset.univ lit]; congr 1; funext j; exact hf_lit j
+  -- Step 3: Each f_lit j evaluates to true at x
+  have hf_lit_x : ∀ j : m.Entity, f_lit j x = true := by
+    intro j; simp only [f_lit]; split
+    · next h => rw [h]; simp [ident]
+    · next h =>
+      have hid : ident j x = false := by simp [ident, h]
+      have := Pi.compl_apply (ident j) x
+      rw [this, hid]; rfl
+  -- f(atom_x) at x is true
+  have hf_atom_true : f atom_x x = true := by
+    rw [congrFun hf_atom_eq x, finset_inf_fun_eval Finset.univ f_lit x]
+    have h := Finset.le_inf (fun j (_ : j ∈ Finset.univ) => ge_of_eq (hf_lit_x j))
+    exact top_le_iff.mp h
+  -- Step 4: atom_x R = true → R = P_x
+  have hatom_point : ∀ R : m.interpTy Ty.et, atom_x R = true →
+      R = fun j => decide (j = x) := by
+    intro R hR
+    have hlit_true : ∀ j : m.Entity, lit j R = true := by
+      intro j
+      have h1 : atom_x ≤ lit j := Finset.inf_le (Finset.mem_univ j)
+      have h2 := h1 R
+      rw [hR] at h2
+      exact top_le_iff.mp h2
+    funext j
+    have hj := hlit_true j; simp only [lit] at hj
+    split at hj
+    · next h =>
+      simp only [lift] at hj; rw [hj]; symm
+      exact @decide_eq_true _ (m.decEq j x) h
+    · next h =>
+      have hcompl := Pi.compl_apply (lift j) R
+      rw [hcompl] at hj; simp only [lift] at hj
+      have hRj : R j = false := by
+        cases hv : R j with
+        | false => rfl
+        | true => rw [hv] at hj; exact Bool.noConfusion hj
+      rw [hRj]; symm
+      exact @decide_eq_false _ (m.decEq j x) h
+  -- Step 5: conclude by cases on Q(P_x)
+  set P_x := fun j => decide (j = x)
+  have hatom_le : ∀ S : m.interpTy Ty.ett, S P_x = true → atom_x ≤ S := by
+    intro S hS R
+    cases hR : atom_x R with
+    | false => exact Bool.false_le _
+    | true =>
+      have : R = P_x := hatom_point R hR
+      rw [this]; exact le_of_eq hS.symm
+  cases hQPx : Q P_x with
+  | false =>
+    have hQc : Qᶜ P_x = true := by
+      change (Q P_x)ᶜ = true; rw [hQPx]; rfl
+    have hfQc : f Qᶜ x = true := by
+      have h := (hatom_le Qᶜ hQc : atom_x ≤ Qᶜ)
+      have h2 := OrderHomClass.mono f h x
+      rw [hf_atom_true] at h2
+      exact top_le_iff.mp h2
+    have hfQc2 : (f Q x)ᶜ = true := by
+      rw [← Pi.compl_apply, ← map_compl' f]; exact hfQc
+    cases hv : f Q x with
+    | false => rfl
+    | true => rw [hv] at hfQc2; exact Bool.noConfusion hfQc2
+  | true =>
+    have h := OrderHomClass.mono f (hatom_le Q hQPx) x
+    rw [hf_atom_true] at h
+    exact top_le_iff.mp h
 
 /-- `BE(Q₁ ∧ Q₂) = BE(Q₁) ∧ BE(Q₂)` -/
 theorem BE_conj (Q₁ Q₂ : m.interpTy Ty.ett) :
@@ -191,42 +299,6 @@ theorem THE_ident (domain : List m.Entity) (j : m.interpTy .e)
 
 end PartialShifts
 
--- ============================================================================
--- BE ∘ A = id : A is a right inverse of BE (§3.3)
--- ============================================================================
-
-/-- Helper: if `x ∈ domain`, then `domain.any (λ z => P(z) && decide(z=x)) = P(x)`.
-    The `decide(z=x)` filter selects exactly `z = x`, collapsing the `any` to `P(x)`. -/
-private theorem any_decide_eq_apply_rev (domain : List m.Entity) (x : m.interpTy .e)
-    (hx : x ∈ domain) (P : m.interpTy Ty.et) :
-    domain.any (fun z => P z && @decide (z = x) (m.decEq z x)) = P x := by
-  cases hP : P x with
-  | true =>
-    rw [List.any_eq_true]
-    exact ⟨x, hx, by simp [hP]⟩
-  | false =>
-    rw [Bool.eq_false_iff, List.any_eq_true, not_exists]
-    intro z; rw [not_and]; intro _
-    cases m.decEq z x with
-    | isTrue h => subst h; simp [hP]
-    | isFalse h => simp [decide_eq_false_iff_not.mpr h]
-
-/-- **`BE ∘ A = id` on properties** (@cite{partee-1987} §3.3).
-
-    For any property `P`, `BE(A(P)) = P`. This makes `A` a right inverse
-    of `BE`: existential closure followed by predicative content recovers
-    the original property.
-
-    This is the key result establishing `A` as a "natural" type-shifting
-    functor — it is an inverse of `BE`, and Partee argues it (together with
-    `some`) is the most natural DET-type functor. -/
-theorem BE_A_id (domain : List m.Entity) (P : m.interpTy Ty.et)
-    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
-    BE (A domain P) = P := by
-  funext x
-  simp only [BE, A]
-  exact any_decide_eq_apply_rev domain x (hcomplete x) P
-
 section LexicalTypes
 
 /-- Lexical semantic type of an NP: `e` (proper nouns) or `⟨e,t⟩` (common nouns). -/
@@ -327,6 +399,36 @@ theorem roundtrip_preserves_principal (domain : List m.Entity) (j : m.interpTy .
   intro P
   simp only [A, BE, lift]
   exact any_decide_eq_apply domain j hj P
+
+/-- **`BE ∘ A = id` on properties** (@cite{partee-1987} §3.3).
+
+    For any property `P`, `BE(A(P)) = P`. This makes `A` a right inverse
+    of `BE`: existential closure followed by predicative content recovers
+    the original property.
+
+    This is the key result establishing `A` as a "natural" type-shifting
+    functor — it is an inverse of `BE`, and Partee argues it (together with
+    `some`) is the most natural DET-type functor.
+
+    Proof: `BE(A(P))(x) = A(P)(λy. y=x) = ∃z∈dom. P(z) ∧ (z=x) = P(x)`.
+    The `decide(z=x)` selects exactly `z = x`, collapsing the existential. -/
+theorem BE_A_id (domain : List m.Entity) (P : m.interpTy Ty.et)
+    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
+    BE (A domain P) = P := by
+  funext x; simp only [BE, A]
+  -- Goal: domain.any (fun z => P z && decide(z=x)) = P x
+  -- Reduce to any_decide_eq_apply by swapping conjunction and equality direction
+  have h := any_decide_eq_apply domain x (hcomplete x) P
+  rw [← h]; congr 1; funext z
+  rw [Bool.and_comm]
+  congr 1
+  cases m.decEq z x with
+  | isTrue hz => cases m.decEq x z with
+    | isTrue _ => rfl
+    | isFalse h' => exact absurd hz.symm h'
+  | isFalse hz => cases m.decEq x z with
+    | isTrue h' => exact absurd h'.symm hz
+    | isFalse _ => rfl
 
 /-- For non-principal GQs, the round-trip can differ.
     Example: `⟦every⟧(P)(Q) = ∀x[P(x) → Q(x)]`, but

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.235] - 2026-03-14
+
+### Changed
+- **TypeShifting.lean**: Prove `BE_unique` (Partee 1987 Fact 2) — BE is the unique BoundedLatticeHom making Figure 3 commute; atom-based proof via Mathlib's `map_finset_inf`, `map_compl'`, and `Finset.inf_le`; add `BooleanAlgebra (m.interpTy Ty.t)` instance and `finset_inf_fun_eval` helper
+
 ## [0.229.234] - 2026-03-14
 
 ### Changed
