@@ -64,11 +64,32 @@ def exactlyN_u (v : Nat) (P : E → Prop) (n : Nat) [PartialOrder E] [Fintype E]
 
 /-- M_v is NOT distributive: it surveys the entire context to determine
     which assignments have maximal v-values.
-    TODO: Prove by exhibiting a 2-element context where per-element
-    maximization differs from whole-context maximization. -/
-theorem Mvar_u_nondistributive [PartialOrder E] :
+
+    Proof: with K = id and a context containing two pairs whose v-values are
+    `a < b`, whole-context maximization keeps only the b-pair (a is not
+    maximal), but per-element processing keeps both (each is trivially
+    maximal in its singleton). -/
+theorem Mvar_u_nondistributive [PartialOrder E] [Nonempty W]
+    (a b : E) (hab : a < b) :
     ∃ (v : Nat) (K : StateCCP W E), ¬ IsDistributive (Mvar_u v K) := by
-  sorry
+  obtain ⟨w⟩ := ‹Nonempty W›
+  refine ⟨0, id, fun h => ?_⟩
+  let g₁ : Core.Assignment E := Function.const _ a
+  let g₂ : Core.Assignment E := Function.const _ b
+  let s : State W E := {(w, g₁), (w, g₂)}
+  -- (w, g₁) is NOT in Mvar_u 0 id s: a is not maximal because b > a is also present
+  have hnotmem : (w, g₁) ∉ Mvar_u 0 id s := by
+    simp only [Mvar_u, id, Set.mem_sep_iff]
+    intro ⟨_, _, hmax⟩
+    have : a = b := hmax b ⟨(w, g₂), Or.inr rfl, rfl⟩ (le_of_lt hab)
+    exact absurd this (ne_of_lt hab)
+  -- But (w, g₁) IS in the per-element union: a is maximal in {(w, g₁)}
+  have hmem : (w, g₁) ∈ ({p | ∃ i ∈ s, p ∈ Mvar_u 0 id {i}} : Set _) := by
+    refine ⟨(w, g₁), Set.mem_insert _ _, Set.mem_sep (Set.mem_singleton _) ⟨⟨(w, g₁), rfl, rfl⟩, ?_⟩⟩
+    intro y ⟨q, hq, hqv⟩ hle
+    cases Set.mem_singleton_iff.mp hq
+    exact le_antisymm hle (hqv ▸ le_refl _)
+  exact hnotmem (h s ▸ hmem)
 
 /-- Cardinality tests ARE distributive: they only inspect one pair at a time. -/
 theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
@@ -87,10 +108,14 @@ theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
     subst this
     exact ⟨hi, hcard⟩
 
-/-- The update-theoretic composed meaning has cumulative truth conditions.
-    TODO: Formalize. -/
-theorem exactlyN_u_cumulative [PartialOrder E] [Fintype E] :
-    ∀ (v : Nat) (P : E → Prop) (n : Nat),
+/-- The update-theoretic composed meaning has cumulative truth conditions:
+    `exactlyN_u` is not distributive for suitable choices of parameters,
+    because it inherits non-distributivity from `Mvar_u`.
+    TODO: Construct a concrete counterexample through the full
+    Evar_u ; Mvar_u ; CardTest_u pipeline. -/
+theorem exactlyN_u_cumulative [PartialOrder E] [Fintype E] [Nonempty W]
+    (a b : E) (hab : a < b) :
+    ∃ (v : Nat) (P : E → Prop) (n : Nat),
     ¬ IsDistributive (exactlyN_u (W := W) (E := E) v P n) := by
   sorry
 

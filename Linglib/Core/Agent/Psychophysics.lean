@@ -281,17 +281,39 @@ theorem multidimensional_decomposition {D : Type*} [Fintype D] [DecidableEq D]
     ring
 
 /-- For two dimensions, decomposition gives the explicit product form:
-    `v(a₁, a₂) = C · v₁(a₁) · v₂(a₂)`. -/
+    `v(a₁, a₂) = C · v₁(a₁) · v₂(a₂)`.
+
+    The original `h_factor` hypothesis (per-pair C) was too weak — different
+    pairs could have different constants. The correct hypothesis is
+    ratio-independence: the ratio `v(s₁, s₂)/v(s₁', s₂)` depends only on
+    `s₁, s₁'` (not on `s₂`), and symmetrically for dimension 2. This is
+    the two-dimensional specialization of `DimensionIndependence.ratio_indep`. -/
 theorem multidim_two_decomposition
-    {S₁ S₂ : Type*}
+    {S₁ S₂ : Type*} [Nonempty S₁] [Nonempty S₂]
     (v : S₁ × S₂ → ℝ)
     (v₁ : S₁ → ℝ) (v₂ : S₂ → ℝ)
+    (hv_pos : ∀ a, 0 < v a)
     (hv₁_pos : ∀ s, 0 < v₁ s) (hv₂_pos : ∀ s, 0 < v₂ s)
-    (h_factor : ∀ a₁ a₂, ∃ C : ℝ, 0 < C ∧ v (a₁, a₂) = C * v₁ a₁ * v₂ a₂) :
+    (h_indep₁ : ∀ s₁ s₁' s₂, v (s₁, s₂) / v (s₁', s₂) = v₁ s₁ / v₁ s₁')
+    (h_indep₂ : ∀ s₁ s₂ s₂', v (s₁, s₂) / v (s₁, s₂') = v₂ s₂ / v₂ s₂') :
     ∃ C : ℝ, 0 < C ∧ ∀ a₁ a₂, v (a₁, a₂) = C * v₁ a₁ * v₂ a₂ := by
-  -- TODO: extract constant from h_factor (it must be the same for all pairs
-  -- by the independence axiom)
-  sorry
+  obtain ⟨a₀⟩ := ‹Nonempty S₁›; obtain ⟨b₀⟩ := ‹Nonempty S₂›
+  refine ⟨v (a₀, b₀) / (v₁ a₀ * v₂ b₀),
+          div_pos (hv_pos _) (mul_pos (hv₁_pos _) (hv₂_pos _)), ?_⟩
+  intro a₁ a₂
+  have hv₁_ne : v₁ a₀ ≠ 0 := ne_of_gt (hv₁_pos a₀)
+  have hv₂_ne : v₂ b₀ ≠ 0 := ne_of_gt (hv₂_pos b₀)
+  have eq₁ : v (a₁, a₂) * v₁ a₀ = v₁ a₁ * v (a₀, a₂) :=
+    (div_eq_div_iff (ne_of_gt (hv_pos _)) hv₁_ne).mp (h_indep₁ a₁ a₀ a₂)
+  have eq₂ : v (a₀, a₂) * v₂ b₀ = v₂ a₂ * v (a₀, b₀) :=
+    (div_eq_div_iff (ne_of_gt (hv_pos _)) hv₂_ne).mp (h_indep₂ a₀ a₂ b₀)
+  rw [div_mul_eq_mul_div, div_mul_eq_mul_div, eq_div_iff (mul_ne_zero hv₁_ne hv₂_ne)]
+  calc v (a₁, a₂) * (v₁ a₀ * v₂ b₀)
+      = v (a₁, a₂) * v₁ a₀ * v₂ b₀ := by ring
+    _ = v₁ a₁ * v (a₀, a₂) * v₂ b₀ := by rw [eq₁]
+    _ = v₁ a₁ * (v (a₀, a₂) * v₂ b₀) := by ring
+    _ = v₁ a₁ * (v₂ a₂ * v (a₀, b₀)) := by rw [eq₂]
+    _ = v (a₀, b₀) * v₁ a₁ * v₂ a₂ := by ring
 
 /-- The Luce choice rule for multi-dimensional stimuli with independent
     dimensions decomposes into a product of per-dimension contributions.
