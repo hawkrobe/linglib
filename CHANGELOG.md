@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.229.218] - 2026-03-13
+
+### Changed
+- **Stassen2000.lean**: Connect `DriftDirection` to `DiachronicSource.comitative` via `toDiachronicSource`; add `attested_drift_is_comitative` and `drift_yields_monosyndetic` theorems creating end-to-end chain (drift → source → pattern)
+- **Stassen2000.lean**: Replace vacuous `True` correlational theorems with sorry-marked `casedness_skews_andWith` / `tensedness_skews_andWith` stating actual cross-tabulation claims over the 260-language sample
+
+### Removed
+- **Stassen2000.lean**: Remove tautological `drift_unidirectional` (was just case exhaustion on 2-element type)
+- **Stassen2000.lean**: Remove trivial `primaryEncoding` + 2 `rfl` theorems (just unpacked a pattern match)
+- **Stassen2000.lean**: Remove 3 duplicate AND/WITH classification theorems (already in Typology.lean)
+
+### Fixed
+- **Stassen2000.lean**: Fix hallucinated Latin "cum" → Romance "and" example in drift docstring (Latin "cum" became Romance comitative prepositions, not conjunctions)
+- **Stassen2000.lean**: Fix vague "Table on structural properties" reference to "structural diagnostics for balanced vs dependent encoding"
+
+## [0.229.217] - 2026-03-13
+
+### Added
+- **Stassen2000.lean**: Formalize @cite{stassen-2000} AND/WITH typological parameter — `ConjunctionEncoding`, `StrategyFeatures` diagnostics, `Casedness`/`Tensedness` correlational parameters, `DriftDirection` (WITH→AND), Fragment↔Typology bridge theorems for Georgian, Hungarian, Latin, Irish (form, boundness, additivity consistency)
+- **Typology.lean**: Add `AndWithStatus` type and `ConjComitativeRelation.toAndWithStatus` derivation from WALS Ch 63; add `CoordinationProfile.andWithStatus` accessor; add `and_languages_majority` theorem and 14 per-language AND/WITH classification theorems
+
+### Fixed
+- **Typology.lean**: Fix citation misattribution — co-A B universal gap and structural pattern inventory are @cite{haspelmath-2007} observations (sample size n=260 from @cite{stassen-2000}), not Stassen's own findings
+
+## [0.229.216] - 2026-03-13
+
+### Changed
+- **JinKoenig2021.lean**: Expand Table 6 from 14 to 28 rows — full paper data (pp. 70–71): AVOID, COMPLAIN, ADVISE AGAINST, HIDE, DESPAIR, DELAY, REFUSE, STOP, PREVENT, BARELY, DIFFICULT, LESS THAN, IT ONLY DEPENDS ON SOMEONE THAT
+- **JinKoenig2021.lean**: Add WITHOUT bridge (§9b): `withoutSem`, `without_entails_not_p`, `without_entails_q`, `without_licensing` — completes bridge coverage for all four licensing conditions
+- **JinKoenig2021.lean**: Add formal EN definition (§14): `ENDefinition` structure encoding the three conditions from ex. (2), with `isEN`, `fear_is_en`, `wish_is_not_en`
+- **JinKoenig2021.lean**: Add Rett 2026 integration (§15): theorems connecting licensing conditions to ambidirectionality via `temporal_triggers_are_rett_ambidirectional`, `comparative_triggers_are_rett_ambidirectional`, `fear_triggers_are_rett_ambidirectional`
+- **Typology.lean**: Add Table 3 → Table 4 cross-validation: `enLanguages_before_at_least` (≥42), `enLanguages_fear_at_least` (≥38), `before_more_widespread_than_fear`
+- **ZarmaSonrai/Negation.lean**: Document that HIDE example negator *sinda* is a copular negative, not aspect-based (falls outside `enNegatorForAspect` system)
+
 ## [0.229.215] - 2026-03-13
 
 ### Fixed
