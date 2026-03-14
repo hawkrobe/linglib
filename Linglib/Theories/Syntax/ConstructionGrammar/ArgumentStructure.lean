@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Core.Interface
+import Linglib.Core.RootDimensions
 
 /-!
 # Argument Structure Constructions
@@ -48,7 +49,15 @@ structure ConstructionSlot where
 
 This extends the basic `Construction` with a decomposed argument frame,
 enabling formal analysis of how the construction relates to the three
-universal combination schemata. -/
+universal combination schemata.
+
+The `semanticContribution` field captures which meaning components
+(@cite{levin-1993}) the construction adds independently of the verb
+(@cite{goldberg-1995}). When a verb fuses with a construction, the
+composed meaning = `verb.meaningComponents.fuse cxn.semanticContribution`.
+This is how constructions can license alternation behavior that verbs
+lack in isolation — e.g., the resultative adds CoS + causation, enabling
+the causative alternation for manner verbs (@cite{levin-2026}). -/
 structure ArgStructureConstruction where
   /-- The underlying construction -/
   construction : Construction
@@ -56,6 +65,9 @@ structure ArgStructureConstruction where
   slots : List ConstructionSlot
   /-- At least one slot should be the head -/
   hasHead : slots.any (·.isHead) = true
+  /-- What meaning components this construction contributes independently
+      of the verb. Defaults to `.none` (no augmentation). -/
+  semanticContribution : MeaningComponents := .none
   deriving Repr
 
 /-! ## Concrete argument structure constructions -/
@@ -76,7 +88,9 @@ def ditransitive : ArgStructureConstruction :=
   , hasHead := by native_decide }
 
 /-- Caused-motion construction: [Subj V Obj Obl].
-"X CAUSES Y to MOVE to Z" (e.g., "She sneezed the napkin off the table"). -/
+"X CAUSES Y to MOVE to Z" (e.g., "She sneezed the napkin off the table").
+Contributes motion + causation: verbs that lexicalize neither (like *sneeze*)
+acquire both from the construction (@cite{goldberg-1995} p. 152–179). -/
 def causedMotion : ArgStructureConstruction :=
   { construction :=
       { name := "Caused-motion"
@@ -88,10 +102,15 @@ def causedMotion : ArgStructureConstruction :=
       , ⟨.VERB, "predicate", true⟩    -- V (head)
       , ⟨.NOUN, "theme", false⟩       -- Obj
       , ⟨.ADP, "goal", false⟩ ]       -- Obl
-  , hasHead := by native_decide }
+  , hasHead := by native_decide
+  , semanticContribution := ⟨false, false, true, true, false, false⟩ }
 
 /-- Resultative construction: [Subj V Obj Pred].
-"X CAUSES Y to BECOME Z" (e.g., "She hammered the metal flat"). -/
+"X CAUSES Y to BECOME Z" (e.g., "She hammered the metal flat").
+Contributes CoS + causation: manner verbs that lexicalize neither
+acquire both from the construction (@cite{rappaport-hovav-levin-1998};
+@cite{levin-2026} §3). This is what enables the causative alternation
+for verbs like *push* that lack it in isolation. -/
 def resultative : ArgStructureConstruction :=
   { construction :=
       { name := "Resultative"
@@ -103,7 +122,8 @@ def resultative : ArgStructureConstruction :=
       , ⟨.VERB, "predicate", true⟩    -- V (head)
       , ⟨.NOUN, "patient", false⟩     -- Obj
       , ⟨.ADJ, "result", false⟩ ]     -- Pred
-  , hasHead := by native_decide }
+  , hasHead := by native_decide
+  , semanticContribution := ⟨true, false, false, true, false, false⟩ }
 
 /-- Intransitive motion construction: [Subj V Obl].
 "X MOVES to Y" (e.g., "The ball rolled down the hill"). -/
@@ -410,5 +430,94 @@ theorem all_link_types_instantiated :
     -- I_I: instance (resultative subconstructions, in GoldbergJackendoff2004)
     True := by
   exact ⟨by native_decide, rfl, rfl, trivial⟩
+
+-- ════════════════════════════════════════════════════
+-- Constructional fusion (@cite{goldberg-1995})
+-- ════════════════════════════════════════════════════
+
+/-! ## Verb–construction fusion
+
+@cite{goldberg-1995}'s central claim: argument structure constructions are
+independent form–meaning pairings. When a verb appears in a construction,
+its meaning **fuses** with the construction's meaning. The composed meaning
+can have properties neither has alone.
+
+At the level of @cite{levin-1993} meaning components, fusion is componentwise
+OR: if either the verb or the construction contributes a component, the
+composed meaning has it. This simple mechanism derives construction-dependent
+alternation behavior (@cite{levin-2026}):
+
+- *push* alone: `{−CoS, +contact, +motion, −causation}` → no causative alternation
+- *push* + resultative: `{+CoS, +contact, +motion, +causation}` → causative alternation predicted
+
+The construction adds what the verb lacks; `predictedAlternation` on the
+fused result gives the correct prediction without any new alternation logic. -/
+
+/-- The composed meaning of a verb in an argument structure construction.
+    Verb root semantics fused with the construction's semantic contribution. -/
+def composedMeaning (verbMC : MeaningComponents) (cxn : ArgStructureConstruction) :
+    MeaningComponents :=
+  verbMC.fuse cxn.semanticContribution
+
+/-- Whether an alternation is predicted for a verb *in a construction*.
+    Generalizes `MeaningComponents.predictedAlternation` to construction contexts. -/
+def predictedAlternationInConstruction (verbMC : MeaningComponents)
+    (cxn : ArgStructureConstruction) (alt : DiathesisAlternation) : Bool :=
+  (composedMeaning verbMC cxn).predictedAlternation alt
+
+/-! ### Core theorems: constructions that don't augment -/
+
+/-- Ditransitive contributes nothing beyond the verb (`.none`). -/
+theorem ditransitive_no_augmentation :
+    ditransitive.semanticContribution = .none := rfl
+
+/-- With no augmentation, the composed meaning equals the verb's own. -/
+theorem no_augmentation_identity (mc : MeaningComponents) :
+    composedMeaning mc ditransitive = mc := by
+  simp [composedMeaning, ditransitive, MeaningComponents.fuse_none_right]
+
+/-! ### Core theorems: constructions that augment -/
+
+/-- The resultative adds CoS + causation. -/
+theorem resultative_adds_cos_causation :
+    resultative.semanticContribution.changeOfState = true ∧
+    resultative.semanticContribution.causation = true := ⟨rfl, rfl⟩
+
+/-- The caused-motion construction adds motion + causation. -/
+theorem causedMotion_adds_motion_causation :
+    causedMotion.semanticContribution.motion = true ∧
+    causedMotion.semanticContribution.causation = true := ⟨rfl, rfl⟩
+
+/-! ### Key derivation: construction-dependent alternation
+
+The payoff: `predictedAlternation` on fused components derives that manner
+verbs participate in the causative alternation inside the resultative, even
+though they cannot outside it. No new alternation logic is needed — the
+existing component-based prediction (`mc.changeOfState && mc.causation`)
+fires on the fused result. -/
+
+/-- A pure manner verb (no CoS, no causation) cannot alternate alone. -/
+theorem manner_verb_no_alternation (mc : MeaningComponents)
+    (hCoS : mc.changeOfState = false) (hCaus : mc.causation = false) :
+    mc.predictedAlternation .causativeInchoative = false := by
+  simp [MeaningComponents.predictedAlternation, hCoS]
+
+/-- A pure manner verb in the resultative CAN alternate: the construction
+    adds the CoS and causation the verb lacks. -/
+theorem manner_verb_alternates_in_resultative (mc : MeaningComponents)
+    (hInstr : mc.instrumentSpec = false) :
+    predictedAlternationInConstruction mc resultative .causativeInchoative = true := by
+  simp [predictedAlternationInConstruction, composedMeaning,
+    MeaningComponents.fuse, resultative, MeaningComponents.predictedAlternation, hInstr]
+
+/-- Concrete instance: hit-class components + resultative → causative alternation. -/
+theorem hit_alternates_in_resultative :
+    predictedAlternationInConstruction .hit resultative .causativeInchoative = true := by
+  native_decide
+
+/-- Concrete instance: hit-class components alone → no causative alternation. -/
+theorem hit_no_alternation_alone :
+    MeaningComponents.hit.predictedAlternation .causativeInchoative = false := by
+  native_decide
 
 end ConstructionGrammar

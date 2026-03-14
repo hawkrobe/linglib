@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Noun.TypeShifting
+import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
@@ -81,7 +81,7 @@ def closeAppositive {m : Semantics.Montague.Model}
     (domain : List m.Entity)
     (n1 n2 : m.interpTy Semantics.Montague.Ty.et)
     : Option (m.interpTy .e) :=
-  Semantics.Lexical.Noun.TypeShifting.iota domain (fun x => n1 x && n2 x)
+  Semantics.Composition.TypeShifting.iota domain (fun x => n1 x && n2 x)
 
 /-- Specificational copula: ⟦be⟧ = λx.λy_i. ∨y_i = x (@cite{romero-2005}, (34)).
     Maps individual concepts to their actual present values. -/

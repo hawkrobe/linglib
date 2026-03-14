@@ -627,6 +627,7 @@ import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
 import Linglib.Phenomena.Copulas.Typology
+import Linglib.Phenomena.Copulas.Studies.Partee1987
 import Linglib.Phenomena.Complementation.Attitudes.IntensionalExamples
 import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
@@ -1377,6 +1378,7 @@ import Linglib.Theories.Semantics.Composition.WriterMonad
 import Linglib.Theories.Semantics.Composition.SetMonad
 import Linglib.Theories.Semantics.Composition.Applicative
 import Linglib.Theories.Semantics.Composition.Effects
+import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Montague.Conjunction
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Montague.Lexicon
@@ -1414,7 +1416,6 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Krifka2004
 import Linglib.Theories.Semantics.Lexical.Noun.Relational.Barker2011
-import Linglib.Theories.Semantics.Lexical.Noun.TypeShifting
 import Linglib.Theories.Semantics.Lexical.Particle.Additive
 import Linglib.Theories.Semantics.Lexical.Particle.DiscourseOnly
 import Linglib.Theories.Semantics.Lexical.Plural.Cumulativity

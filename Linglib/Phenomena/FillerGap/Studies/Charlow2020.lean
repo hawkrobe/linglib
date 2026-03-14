@@ -26,7 +26,7 @@ Alternative-denoting expressions interact with their semantic context by
 - (1) If [a rich relative of mine dies], I'll inherit a house. ✓ ∃ ≫ if
 - (2) If [every rich relative of mine dies], I'll inherit a house. ✗ *∀ ≫ if
 - (3) Each student has to come up with three arguments showing that
-      [some condition proposed by Chomsky is wrong]. ✓ ∃ ≫ ∃ ≫ 3
+      [some condition proposed by Chomsky is wrong]. ✓ ∀ ≫ ∃ ≫ 3
 - (43) If [a persuasive lawyer visits a rich relative of mine],
        I'll inherit a house. ✓ selective: ∃_lawyer ≫ if ≫ ∃_relative
 
@@ -56,7 +56,14 @@ can take scope out of the antecedent of a conditional.
       ✓ Reading: ∃x ∈ rel. if(dies x) → house
 
   (2) If [every rich relative of mine dies], I'll inherit a house.
-      ✗ No reading: *∀x ∈ rel. if(dies x) → house -/
+      ✗ No reading: *∀x ∈ rel. if(dies x) → house
+
+The indefinite *a rich relative of mine* denotes a set of individuals
+(type `S e`). The monad's `⫝̸` turns the island into a set of alternative
+propositions, and ASSOCIATIVITY guarantees this equals direct wide scope.
+
+The derivation follows @cite{charlow-2020} §4.1–4.2, eq. (33),
+Figures 6–7. -/
 
 section ConditionalIsland
 
@@ -71,7 +78,8 @@ def myRel : Ind → Prop
   | .nonrel => False
 
 /-- "a rich relative of mine" — the set-valued (indefinite) meaning.
-    @cite{charlow-2020} eq. (30): `a.rel := {x | rel x}`. -/
+    The indefinite denotes the characteristic function of my relatives
+    (type `S e`). -/
 def aRichRelative : Ind → Prop := myRel
 
 /-- "x dies" — a predicate on individuals. -/
@@ -80,42 +88,50 @@ def dies : Ind → Prop := fun _ => True
 /-- "I'll inherit a house" — simplified as a constant proposition. -/
 def house : Prop := True
 
-/-- **Derivation of the exceptional scope reading.**
+/-- **Step 1** (island-internal): the indefinite takes scope at the
+    island edge via `⫝̸`, turning the island into a set of alternative
+    antecedent propositions.
 
-    The indefinite takes scope out of the conditional island in two
-    steps, each mediated by `⫝̸`:
+    @cite{charlow-2020} eq. (33), first `⫝̸`:
+    `aRel ⫝̸ (λx. η(dies x)) = {dies r₁, dies r₂}`. -/
+def islandMeaning : Prop → Prop :=
+  setBind aRichRelative (fun x => eta (dies x))
 
-    Step 1 (island-internal): `aRichRelative ⫝̸ (λx. η(dies x))`
-    produces `{dies r₁, dies r₂}` — a set of antecedent propositions.
+/-- **Step 2** (island-external): the pied-piped island takes scope
+    over the conditional via a second `⫝̸`.
 
-    Step 2 (island-external): `... ⫝̸ (λp. η(p → house))`
-    produces `{dies r₁ → house, dies r₂ → house}`.
+    @cite{charlow-2020} eq. (33), second `⫝̸`:
+    `{dies x | rel x} ⫝̸ (λp. η(p → house))`. -/
+def conditionalMeaning : Prop → Prop :=
+  setBind islandMeaning (fun antecedent => eta (antecedent → house))
 
-    By ASSOCIATIVITY, this equals direct wide scope:
-    `aRichRelative ⫝̸ (λx. η(dies x → house))`
-    = `{dies r₁ → house, dies r₂ → house}`.
-
-    The exceptional scope reading is then `∃p ∈ result. p`. -/
-def islandReading : Prop → Prop :=
-  setBind (setBind aRichRelative (fun x => eta (dies x)))
-    (fun antecedent => eta (antecedent → house))
-
+/-- **Direct wide scope**: the indefinite scopes directly over the
+    conditional, bypassing the island boundary. -/
 def wideScope : Prop → Prop :=
   setBind aRichRelative (fun x => eta (dies x → house))
 
-/-- The two-step derivation (via island edge) equals direct wide scope,
-    by ASSOCIATIVITY + LEFT IDENTITY. -/
-theorem island_eq_wide : islandReading = wideScope := by
-  simp only [islandReading, wideScope]
+/-- **ASSOCIATIVITY derives exceptional scope** (the key theorem).
+
+    The two-step derivation (scope at island edge via first `⫝̸`,
+    then scope over conditional via second `⫝̸`) equals direct wide
+    scope by ASSOCIATIVITY + LEFT IDENTITY:
+
+    `(aRel ⫝̸ λx. η(dies x)) ⫝̸ (λp. η(p → house))`
+    `= aRel ⫝̸ (λx. η(dies x) ⫝̸ (λp. η(p → house)))` — ASSOCIATIVITY
+    `= aRel ⫝̸ (λx. η(dies x → house))`               — LEFT IDENTITY
+    `= wideScope` -/
+theorem island_eq_wide : conditionalMeaning = wideScope := by
+  simp only [conditionalMeaning, islandMeaning, wideScope]
+  -- Step 1: ASSOCIATIVITY re-brackets the two ⫝̸ applications
   rw [set_associativity]
+  -- Step 2: LEFT IDENTITY simplifies η(dies x) ⫝̸ ... = η(dies x → house)
   congr 1; funext x
   exact set_left_identity (dies x) (fun p => eta (p → house))
 
 /-- The exceptional scope reading is satisfiable: there exists a
     member of the result set (since r₁ is a relative). -/
 theorem exceptional_scope_satisfiable :
-    ∃ p, wideScope p := by
-  exact ⟨dies .r₁ → house, .r₁, trivial, rfl⟩
+    ∃ p, wideScope p := ⟨dies .r₁ → house, .r₁, trivial, rfl⟩
 
 end ConditionalIsland
 
@@ -125,27 +141,29 @@ end ConditionalIsland
 
 /-! ### §2 Intermediate exceptional scope
 
-@cite{charlow-2020} §2.1, eq. (3): indefinites allow not just widest
-scope but also **intermediate** exceptional scope readings.
+@cite{charlow-2020} §2.1, eq. (3), §4.2 Figure 8: indefinites allow not
+just widest scope but also **intermediate** exceptional scope.
 
   (3) Each student has to come up with three arguments showing that
       [some condition proposed by Chomsky is wrong].
       ✓ ∀ ≫ ∃ ≫ 3: for each student, there is some condition ...
 
-The indefinite scopes out of the relative clause (a scope island)
-but not over the universal subject. This falls out from ASSOCIATIVITY:
-the indefinite pied-pipes to the island edge, then takes scope at the
-next available position — which need not be the matrix level. -/
+The indefinite *some condition* is embedded in a relative clause (a scope
+island). It escapes the relative clause via ASSOCIATIVITY — exactly the
+same mechanism as §1 — but stops at an intermediate position under the
+universal *each student*.
+
+The difference from §1 is simply WHERE the indefinite stops. Each
+application of ASSOCIATIVITY crosses one island boundary. The indefinite
+can always "forego one or more of the secondary island scopings, come
+what may higher up in the tree" (@cite{charlow-2020} p. 442). -/
 
 section IntermediateScope
-
-inductive Student where | s₁ | s₂
-  deriving DecidableEq, Repr
 
 inductive Condition where | c₁ | c₂ | c₃
   deriving DecidableEq, Repr
 
-/-- "some condition proposed by Chomsky" — the indefinite. -/
+/-- "some condition proposed by Chomsky" — the indefinite (type `S e`). -/
 def someCondition : Condition → Prop
   | .c₁ => True
   | .c₂ => True
@@ -154,19 +172,36 @@ def someCondition : Condition → Prop
 /-- "x is wrong" -/
 def isWrong : Condition → Prop := fun _ => True
 
-/-- Intermediate scope: the indefinite escapes the relative clause
-    but stays under each student's universal. The result is a set of
-    propositions, one per condition that could be "the condition". -/
-def intermediateReading : Prop → Prop :=
+/-- Island-internal meaning: the relative clause with the indefinite.
+    The first `⫝̸` at the island edge produces a set of propositions. -/
+def rcIsland : Prop → Prop :=
   setBind someCondition (fun c => eta (isWrong c))
 
-/-- The intermediate reading has multiple alternatives (one per
-    accessible condition), confirming it generates genuine scope. -/
+/-- Island-external: a second `⫝̸` carries the alternatives out
+    into the matrix clause "showing that ...". -/
+def matrixMeaning : Prop → Prop :=
+  setBind rcIsland (fun p => eta p)
+
+/-- **ASSOCIATIVITY + LEFT IDENTITY** let the indefinite escape the
+    relative clause, producing a set of alternative propositions.
+
+    After escaping, the set `{isWrong c | condition c}` can be
+    universally quantified per student (intermediate scope) without
+    needing a further `⫝̸` over the universal — the indefinite simply
+    stops here. -/
+theorem intermediate_escapes_rc :
+    matrixMeaning = setBind someCondition (fun c => eta (isWrong c)) := by
+  simp only [matrixMeaning, rcIsland]
+  rw [set_associativity]
+  congr 1; funext c
+  exact set_left_identity (isWrong c) (fun p => eta p)
+
+/-- The escaped set has distinct alternatives (one per accessible
+    condition), confirming the indefinite genuinely scopes out. -/
 theorem intermediate_has_alternatives :
-    intermediateReading (isWrong .c₁) ∧ intermediateReading (isWrong .c₂) := by
-  constructor
-  · exact ⟨.c₁, trivial, rfl⟩
-  · exact ⟨.c₂, trivial, rfl⟩
+    matrixMeaning (isWrong .c₁) ∧ matrixMeaning (isWrong .c₂) := by
+  rw [intermediate_escapes_rc]
+  exact ⟨⟨.c₁, trivial, rfl⟩, ⟨.c₂, trivial, rfl⟩⟩
 
 end IntermediateScope
 
@@ -176,9 +211,9 @@ end IntermediateScope
 
 /-! ### §3 Selectivity
 
-@cite{charlow-2020} §5.1, eq. (43): when two indefinites occur on an
-island, the grammar generates **selective** exceptional scope — each
-indefinite can independently take scope inside or outside the island.
+@cite{charlow-2020} §5: when multiple indefinites occur on an island,
+the grammar generates **selective** exceptional scope — each indefinite
+can independently take scope inside or outside the island.
 
   (43) If [a persuasive lawyer visits a rich relative of mine],
        I'll inherit a house.
@@ -186,9 +221,16 @@ indefinite can independently take scope inside or outside the island.
        ✓ ∃_relative ≫ if ≫ ∃_lawyer  (specific relative, any lawyer)
        ✓ ∃_lawyer ≫ ∃_relative ≫ if  (both wide scope)
 
-The key mechanism is **higher-order alternative sets**: applying `η`
-multiple times produces `S(S t)`, which preserves the identity of
-distinct sources of alternatives. -/
+**The mechanism** (§5.2, Figure 10): applying `η` to a scope argument
+that is itself a function into sets produces **higher-order alternative
+sets** `S(S t)`. The outer set tracks one indefinite, the inner set
+tracks the other. Because the layers are independent, the grammar can
+process them differently — scoping one above the conditional while
+existentially closing the other inside it.
+
+This is what alternative semantics (pointwise `{{·}}`) CANNOT do: the
+pointwise interpretation function `{{·}}` maps everything to flat sets
+`S t`, conflating distinct sources of alternatives (§5.4). -/
 
 section Selectivity
 
@@ -207,6 +249,42 @@ def isRelative : LawyerOrRel → Prop
 
 def visits : LawyerOrRel → LawyerOrRel → Prop := fun _ _ => True
 
+/-- **Higher-order island meaning**: two applications of `η` produce
+    `S(S t)` — a set of sets.
+
+    @cite{charlow-2020} §5.2, Figure 10 (left tree): the lawyer
+    indefinite sits in the outer layer (via an extra `η`), the relative
+    in the inner layer.
+
+    Each member of the outer set corresponds to one lawyer; each is
+    itself a set of visit-propositions (one per relative). -/
+def higherOrderIsland : (Prop → Prop) → Prop :=
+  setBind isLawyer (fun l =>
+    eta (setBind isRelative (fun r =>
+      eta (visits l r))))
+
+/-- The higher-order structure is genuine: the outer set contains
+    distinct inner sets, one per lawyer. -/
+theorem higherOrder_has_layers :
+    higherOrderIsland (setBind isRelative (fun r => eta (visits .l₁ r))) ∧
+    higherOrderIsland (setBind isRelative (fun r => eta (visits .l₂ r))) :=
+  ⟨⟨.l₁, trivial, rfl⟩, ⟨.l₂, trivial, rfl⟩⟩
+
+/-- **Flattening** (monadic join `μ`): collapsing the two layers via
+    `⫝̸ id` recovers the flat island where both indefinites scope at
+    the same level. This uses ASSOCIATIVITY + LEFT IDENTITY — the same
+    mechanism as exceptional scope in §1.
+
+    This gives the both-wide-scope reading: both indefinites escape. -/
+theorem flatten_higher_order :
+    setBind higherOrderIsland id =
+    setBind isLawyer (fun l =>
+      setBind isRelative (fun r => eta (visits l r))) := by
+  simp only [higherOrderIsland]
+  rw [set_associativity]
+  congr 1; funext l
+  exact set_left_identity _ id
+
 /-- Both-wide-scope reading: both indefinites escape the island.
     The result is `{visits l r → house | lawyer l ∧ relative r}`. -/
 def bothWide : Prop → Prop :=
@@ -215,19 +293,21 @@ def bothWide : Prop → Prop :=
       eta (visits l r → house)))
 
 /-- Lawyer-wide, relative-narrow: only the lawyer escapes.
-    For each lawyer, the conditional quantifies over relatives inside. -/
+    For each lawyer, the conditional quantifies over relatives inside.
+
+    This arises from the higher-order island: the outer layer (lawyers)
+    scopes above the conditional, while the inner layer (relatives)
+    is existentially closed inside it (@cite{charlow-2020} eq. 49). -/
 def lawyerWide : Prop → Prop :=
   setBind isLawyer (fun l =>
     eta ((∃ r, isRelative r ∧ visits l r) → house))
 
-/-- The two readings are genuinely different sets: `bothWide` has
+/-- The two readings are genuinely different: `bothWide` has
     alternatives for each (lawyer, relative) pair, while `lawyerWide`
     has alternatives only for each lawyer. -/
 theorem selectivity_produces_distinct_readings :
-    (∃ p, bothWide p) ∧ (∃ p, lawyerWide p) := by
-  constructor
-  · exact ⟨_, .l₁, trivial, .r₁, trivial, rfl⟩
-  · exact ⟨_, .l₁, trivial, rfl⟩
+    (∃ p, bothWide p) ∧ (∃ p, lawyerWide p) :=
+  ⟨⟨_, .l₁, trivial, .r₁, trivial, rfl⟩, ⟨_, .l₁, trivial, rfl⟩⟩
 
 end Selectivity
 
@@ -243,36 +323,27 @@ the indefinite cannot scope over that operator.
   (52) Every boyˣ who talked to a friend of hisₓ left.     *∃ ≫ ∀
   (53) No candidateˣ submitted a paper heₓ had written.     *∃ ≫ no
 
-The η-and-⫝̸ approach predicts this because scope-taking requires
-the indefinite (or its containing island) to move to the edge of the
-binder's scope via `⫝̸`. But the binder's variable is internal to the
-indefinite's restrictor — if the indefinite scopes over the binder,
-the variable becomes unbound.
+**The type-theoretic argument**: because the η-and-⫝̸ approach is oriented
+around scope-taking, an indefinite whose restrictor contains a bound
+variable `x` is of type `A → B → Prop` — a function that DEPENDS on `x`.
 
-This contrasts with **choice-function** approaches (Reinhart 1997),
-which leave indefinites in situ and therefore fail to predict the
-Binder Roof Constraint without additional stipulations. -/
+    `m x : B → Prop`    -- the indefinite's meaning, given a value for x
+    `setBind (m x) f`   -- well-typed: x is in scope
 
-section BinderRoof
+For the indefinite to scope OVER x's binder, we would need:
 
-/-- The Binder Roof Constraint is a structural consequence of scope-based
-    indefinites: an indefinite whose restrictor contains a bound variable
-    cannot scope over the binder, because doing so would unbind the variable.
+    `setBind m ...`      -- ILL-TYPED: m has type `A → B → Prop`,
+                         -- not `B → Prop`
 
-    We state this as: if the indefinite's meaning `m` depends on a
-    parameter `x` bound by a higher operator, then `m x` can only appear
-    *inside* the scope of the operator that provides `x`. Scope-taking
-    via `⫝̸` cannot move `m x` above the operator — the `x` dependency
-    tethers it. -/
-theorem binder_roof_structural {A B : Type} (m : A → B → Prop) (f : B → Prop → Prop)
-    (x : A) :
-    setBind (m x) (fun b => f b) =
-    setBind (m x) (fun b => f b) := rfl
-    -- The point: `setBind (m x) f` is well-formed only when `x` is in scope.
-    -- There is no well-typed term `setBind m (fun x => ...)` that would
-    -- take the indefinite above the binder of `x`, because `m` is a
-    -- function of `x`, not a closed set. The constraint is *type-theoretic*.
+There is no well-typed term that achieves this. The constraint is
+enforced by the type system, not by a stipulation.
 
-end BinderRoof
+This contrasts with **choice-function** approaches (@cite{reinhart-1997}),
+which leave indefinites in situ and therefore need additional stipulations
+to block the wide-scope reading (cf. eqs (67)–(69) in the paper). -/
+
+-- No theorem needed: the Binder Roof Constraint is enforced by
+-- Lean's type checker. The indefinite's dependence on the bound
+-- variable `x` prevents it from scoping over x's binder.
 
 end Phenomena.FillerGap.Studies.Charlow2020

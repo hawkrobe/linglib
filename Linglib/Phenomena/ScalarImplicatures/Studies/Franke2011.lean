@@ -385,19 +385,57 @@ theorem eg_speaker_improvement (G : InterpGame)
     produces a strategy pair with at least as high expected gain:
       EG(S_{n+1}, L_n) ≤ EG(S_{n+2}, L_{n+1})
 
-    Note: the decomposition into separate "speaker improvement" (Lemma 3a,
-    proved as `eg_speaker_improvement`) and "hearer improvement" steps is
-    subtle. The standalone hearer improvement claim "EG(S, H_old) ≤
-    EG(S, hearerUpdate(S)) for arbitrary H_old" is false — a counterexample
-    is any H_old that concentrates mass on the argmax state. The correct
-    monotonicity holds for the *combined* IBR step. -/
+    Proof decomposes into two steps via the intermediate EG(S_{n+1}, L_{n+1}):
+
+    **Speaker step** (proved via `eg_speaker_improvement`):
+    EG(S_{n+1}, L_{n+1}) ≤ EG(S_{n+2}, L_{n+1}) because S_{n+2} = bestResponse(L_{n+1})
+    achieves at least as much EG against L_{n+1} as any valid speaker strategy.
+
+    **Hearer step** (sorry):
+    EG(S_{n+1}, L_n) ≤ EG(S_{n+1}, L_{n+1}) where L_{n+1} = hearerUpdate(S_{n+1}).
+    This says Bayesian update improves EG when paired with the speaker that generated it.
+    Reduces to the aggregate inequality Σ_m ||w_m||²/||w_m||₁ ≥ Σ_m ⟨w_m, H_m⟩ where
+    w_m(t) = S(t,m)·P(t). The per-message inequality ||w_m||²/Z_m ≥ ⟨w_m, H_m⟩ fails
+    in general (numerical counterexamples exist for n ≥ 1); the aggregate holds by
+    cross-message cancellations that resist Cauchy-Schwarz, QM-AM, Chebyshev sum,
+    and covariance-based approaches. The n = 0 base case (literal listener L₀ with
+    constant H per message group) is amenable to QM-AM, but the inductive step is
+    not. Verified numerically for many games. -/
 theorem eg_ibr_monotone (G : InterpGame)
     (hPriorNonneg : ∀ s, G.prior s ≥ 0)
     (hPriorSum : Finset.univ.sum G.prior = 1)
     (n : ℕ) :
     expectedGain G (speakerUpdate G (ibrN G n)) (ibrN G n) ≤
     expectedGain G (speakerUpdate G (ibrN G (n + 1))) (ibrN G (n + 1)) := by
-  sorry -- Requires combining speaker improvement with IBR sequence structure
+  -- Decompose: f(n) ≤ EG(S_{n+1}, L_{n+1}) ≤ f(n+1)
+  calc expectedGain G (speakerUpdate G (ibrN G n)) (ibrN G n)
+      ≤ expectedGain G (speakerUpdate G (ibrN G n)) (ibrN G (n + 1)) := by
+        -- Hearer step: EG(S_{n+1}, L_n) ≤ EG(S_{n+1}, L_{n+1})
+        -- Per-message Cauchy-Schwarz fails for n ≥ 1; aggregate requires
+        -- cross-message cancellations (see docstring above)
+        sorry
+    _ ≤ expectedGain G (speakerUpdate G (ibrN G (n + 1))) (ibrN G (n + 1)) := by
+        -- Speaker step: S_{n+2} = bestResponse(L_{n+1}) beats S_{n+1} against L_{n+1}
+        apply eg_speaker_improvement G
+          (speakerUpdate G (ibrN G n))
+          (speakerUpdate G (ibrN G (n + 1)))
+          (ibrN G (n + 1))
+        · rfl
+        · exact hPriorNonneg
+        · exact SpeakerStrategy.bestResponse_nonneg G (ibrN G n)
+        · exact SpeakerStrategy.bestResponse_sum_le_one G (ibrN G n)
+        · exact SpeakerStrategy.bestResponse_false_zero G (ibrN G n)
+        · intro m s
+          simp only [ibrN, ibrStep, hearerUpdate]
+          split_ifs
+          · exact le_refl 0
+          · apply div_nonneg
+            · exact mul_nonneg
+                (SpeakerStrategy.bestResponse_nonneg G (ibrN G n) s m)
+                (hPriorNonneg s)
+            · exact Finset.sum_nonneg (λ s' _ => mul_nonneg
+                (SpeakerStrategy.bestResponse_nonneg G (ibrN G n) s' m)
+                (hPriorNonneg s'))
 
 /-- Expected gain is bounded above by 1 (probability of perfect communication). -/
 theorem eg_bounded (G : InterpGame) (S : SpeakerStrategy G) (H : HearerStrategy G)

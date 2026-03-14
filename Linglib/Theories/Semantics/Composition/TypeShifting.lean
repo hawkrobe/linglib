@@ -1,30 +1,28 @@
-/-
-# NP Type-Shifting Principles
-
-The type-shifting triangle between three NP semantic types:
-- `e` : referential (proper names, pronouns)
-- `⟨e,t⟩` : predicative (common nouns, adjectives)
-- `⟨⟨e,t⟩,t⟩` : quantificational (generalized quantifiers)
-
-```
-         e ——lift——→ ⟨⟨e,t⟩,t⟩
-         ↑ ←—lower—— ↑
-       iota BE
-         ↑ ↑
-        ⟨e,t⟩ ——A——→ ⟨⟨e,t⟩,t⟩
-         ↑
-       ident
-         ↑
-         e
-```
-
--/
-
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Conjunction
 import Mathlib.Order.Hom.BoundedLattice
 
-namespace Semantics.Lexical.Noun.TypeShifting
+/-!
+# NP Type-Shifting Principles
+@cite{partee-1987}
+
+Three NP semantic types and six type-shifting operations (three inverse pairs):
+
+    lift  / lower : e ↔ ⟨⟨e,t⟩,t⟩         (total / partial)
+    ident / iota  : e ↔ ⟨e,t⟩              (formal; total / partial)
+    pred  / nom   : e ↔ ⟨e,t⟩              (substantive; Chierchia's ∪/∩)
+          A / BE  : ⟨e,t⟩ ↔ ⟨⟨e,t⟩,t⟩     (total / total)
+        THE       : ⟨e,t⟩ → ⟨⟨e,t⟩,t⟩     (partial; presuppositional)
+
+In the finite extensional setting, `pred = ident` and `nom = iota`. The
+conceptual difference: `ident`/`iota` are *formal* (pure combinatorics),
+while `pred`/`nom` are *substantive* (depend on entity-property correspondence).
+The intensional generalizations are Chierchia's ∪ (up) and ∩ (down) operators
+in `Semantics.Lexical.Noun.Kind.Chierchia1998`.
+
+-/
+
+namespace Semantics.Composition.TypeShifting
 
 open Semantics.Montague (Model Ty toyModel ToyEntity)
 open Semantics.Montague.Conjunction (typeRaise)
@@ -45,6 +43,19 @@ def ident (j : m.interpTy .e) : m.interpTy Ty.et :=
 /-- Predicative content of a GQ: `BE(Q) = λx. Q(λy. y = x)` -/
 def BE (Q : m.interpTy Ty.ett) : m.interpTy Ty.et :=
   fun x => Q (fun y => @decide (y = x) (m.decEq y x))
+
+/-- Predicativize: extensional counterpart of Chierchia's ∪ (up) operator.
+
+    In the finite extensional setting, `pred` coincides with `ident`:
+    both map an entity to its singleton property `λx. [j = x]`.
+
+    Conceptually distinct (@cite{partee-1987} Figure 1):
+    - `ident` is *formal* — pure combinatorics, always defined.
+    - `pred` is *substantive* — applies to entity-correlates of properties
+      and returns the corresponding property.
+
+    The intensional generalization is `Semantics.Lexical.Noun.Kind.Chierchia1998.up`. -/
+abbrev pred := @ident m
 
 end TotalShifts
 
@@ -99,9 +110,27 @@ def iota (domain : List m.Entity) (P : m.interpTy Ty.et) : Option (m.interpTy .e
   | [j] => some j
   | _ => none
 
+/-- NOM: Nominalization (@cite{partee-1987} Figure 1, @cite{chierchia-1984}).
+    Maps a property to its individual correlate: `⟨e,t⟩ → e` (partial).
+
+    In the finite extensional setting, NOM = iota (returns the unique
+    satisfier of P, if singleton). The intensional generalization is
+    `Semantics.Lexical.Noun.Kind.Chierchia1998.down` (Chierchia's ∩). -/
+def NOM (domain : List m.Entity) (P : m.interpTy Ty.et) : Option (m.interpTy .e) :=
+  iota domain P
+
 /-- Existential closure: `A(P) = λQ. ∃x. P(x) ∧ Q(x)` -/
 def A (domain : List m.Entity) (P : m.interpTy Ty.et) : m.interpTy Ty.ett :=
   fun Q => domain.any (fun x => P x && Q x)
+
+/-- THE: Presuppositional type-shifter for definites (@cite{partee-1987} Figure 1).
+    `THE(P) = lift(iota(P))` when `iota(P)` is defined (P has a unique satisfier).
+
+    Maps `⟨e,t⟩ → ⟨⟨e,t⟩,t⟩` (partial). Unlike `A` (which is total), `THE`
+    presupposes existence and uniqueness. Connects to the semantics of "the"
+    in `Semantics.Lexical.Determiner.Definite`. -/
+def THE (domain : List m.Entity) (P : m.interpTy Ty.et) : Option (m.interpTy Ty.ett) :=
+  (iota domain P).map lift
 
 /-- Helper: for a nodup list, filtering for equality gives a singleton or empty. -/
 private theorem filter_decEq_of_mem (domain : List m.Entity) (j : m.Entity)
@@ -152,7 +181,51 @@ theorem iota_ident (domain : List m.Entity) (j : m.interpTy .e)
   unfold iota ident
   erw [filter_decEq_of_mem domain j hmem hnd]
 
+/-- `THE ∘ ident = some ∘ lift` on the domain.
+    When `ident(j)` has a unique satisfier (always, given Nodup),
+    THE shifts it to the corresponding principal ultrafilter. -/
+theorem THE_ident (domain : List m.Entity) (j : m.interpTy .e)
+    (hmem : j ∈ domain) (hnd : domain.Nodup) :
+    THE domain (ident j) = some (lift j) := by
+  simp only [THE, iota_ident domain j hmem hnd, Option.map]
+
 end PartialShifts
+
+-- ============================================================================
+-- BE ∘ A = id : A is a right inverse of BE (§3.3)
+-- ============================================================================
+
+/-- Helper: if `x ∈ domain`, then `domain.any (λ z => P(z) && decide(z=x)) = P(x)`.
+    The `decide(z=x)` filter selects exactly `z = x`, collapsing the `any` to `P(x)`. -/
+private theorem any_decide_eq_apply_rev (domain : List m.Entity) (x : m.interpTy .e)
+    (hx : x ∈ domain) (P : m.interpTy Ty.et) :
+    domain.any (fun z => P z && @decide (z = x) (m.decEq z x)) = P x := by
+  cases hP : P x with
+  | true =>
+    rw [List.any_eq_true]
+    exact ⟨x, hx, by simp [hP]⟩
+  | false =>
+    rw [Bool.eq_false_iff, List.any_eq_true, not_exists]
+    intro z; rw [not_and]; intro _
+    cases m.decEq z x with
+    | isTrue h => subst h; simp [hP]
+    | isFalse h => simp [decide_eq_false_iff_not.mpr h]
+
+/-- **`BE ∘ A = id` on properties** (@cite{partee-1987} §3.3).
+
+    For any property `P`, `BE(A(P)) = P`. This makes `A` a right inverse
+    of `BE`: existential closure followed by predicative content recovers
+    the original property.
+
+    This is the key result establishing `A` as a "natural" type-shifting
+    functor — it is an inverse of `BE`, and Partee argues it (together with
+    `some`) is the most natural DET-type functor. -/
+theorem BE_A_id (domain : List m.Entity) (P : m.interpTy Ty.et)
+    (hcomplete : ∀ x : m.Entity, x ∈ domain) :
+    BE (A domain P) = P := by
+  funext x
+  simp only [BE, A]
+  exact any_decide_eq_apply_rev domain x (hcomplete x) P
 
 section LexicalTypes
 
@@ -184,7 +257,9 @@ end LexicalTypes
 theorem lift_eq_typeRaise {m : Model} (j : m.interpTy .e) :
     lift j = typeRaise j := rfl
 
-/-- Coherence of the three readings of "the king" (Partee §3.2). -/
+/-- Coherence of the three readings of "the king" (@cite{partee-1987} §3.2).
+    When `iota` succeeds, the `e`, `⟨e,t⟩`, and `⟨⟨e,t⟩,t⟩` readings are
+    related by `BE(lift(j)) = ident(j)` (Figure 2 commutativity). -/
 theorem the_king_coherence (domain : List m.Entity) (P : m.interpTy Ty.et)
     (j : m.interpTy .e) (_h : iota domain P = some j) :
     BE (lift j) = ident j :=
@@ -257,8 +332,8 @@ theorem roundtrip_preserves_principal (domain : List m.Entity) (j : m.interpTy .
     Example: `⟦every⟧(P)(Q) = ∀x[P(x) → Q(x)]`, but
     `A(BE(⟦every⟧(P)))(Q) = ∃x[P(x) ∧ Q(x)]` — existential, not universal.
     Verified on the toy model. -/
-private def toyDom : List ToyEntity := [.john, .mary, .pizza]
-private def toyEvery : toyModel.interpTy Ty.ett := fun P => toyDom.all P
+private def toyDomain₁ : List ToyEntity := [.john, .mary, .pizza]
+private def toyEvery : toyModel.interpTy Ty.ett := fun P => toyDomain₁.all P
 
 /-- For non-principal GQs, the round-trip changes truth conditions.
     `every(⊤) = true` but `A(BE(every))(⊤) = false` — the round-trip
@@ -266,28 +341,28 @@ private def toyEvery : toyModel.interpTy Ty.ett := fun P => toyDom.all P
     (`BE(every)` asks "which entity equals all entities?" — none do.) -/
 theorem roundtrip_changes_nonprincipal :
     toyEvery (fun _ => true) = true ∧
-    A toyDom (BE toyEvery) (fun _ => true) = false :=
+    A toyDomain₁ (BE toyEvery) (fun _ => true) = false :=
   ⟨rfl, rfl⟩
 
 section ToyExamples
 
 open Semantics.Montague.ToyLexicon (john_sem)
 
-private def toyDomain : List ToyEntity := [.john, .mary, .pizza, .book]
+private def toyDomain₂ : List ToyEntity := [.john, .mary, .pizza, .book]
 
 example : lift (m := toyModel) john_sem Semantics.Montague.ToyLexicon.sleeps_sem = true := rfl
 example : BE (m := toyModel) (lift john_sem) = ident john_sem :=
   BE_lift_eq_ident john_sem
-example : iota (m := toyModel) toyDomain (ident john_sem) = some john_sem := rfl
-example : lower (m := toyModel) toyDomain (lift john_sem) = some john_sem := rfl
+example : iota (m := toyModel) toyDomain₂ (ident john_sem) = some john_sem := rfl
+example : lower (m := toyModel) toyDomain₂ (lift john_sem) = some john_sem := rfl
 
 end ToyExamples
 
 -- ============================================================================
--- @cite{snyder-2026} / @cite{partee-1986} Type-Shifters
+-- Numeral type-shifters (@cite{snyder-2026})
 -- ============================================================================
 
-section SnyderShifts
+section NumeralShifts
 
 /-- CARD: number → cardinality predicate (@cite{snyder-2026}, (6a)).
     CARD = λn.λx. μ(x) = n. Turns a number into a predicate
@@ -300,12 +375,14 @@ def CARD (μ : m.interpTy .e → Nat) (n : Nat) : m.interpTy Ty.et :=
 def PM (P Q : m.interpTy Ty.et) : m.interpTy Ty.et :=
   fun x => P x && Q x
 
-/-- NOM: Nominalization (@cite{partee-1986}, @cite{chierchia-1984}, (10a)).
-    Maps a property to its individual property correlate.
-    In the finite setting, returns the unique entity satisfying P if singleton. -/
-def NOM (domain : List m.Entity) (P : m.interpTy Ty.et) : Option (m.interpTy .e) :=
-  iota domain P  -- NOM and iota coincide for singleton predicates
+end NumeralShifts
 
-end SnyderShifts
+/-- `NOM(pred(j)) = some j`: nominalizing the predicativization of an entity
+    returns that entity. The extensional counterpart of Chierchia's `∩(∪k) = k`
+    (`Semantics.Lexical.Noun.Kind.Chierchia1998.down_up_id`). -/
+theorem NOM_pred (domain : List m.Entity) (j : m.interpTy .e)
+    (hmem : j ∈ domain) (hnd : domain.Nodup) :
+    NOM domain (pred j) = some j :=
+  iota_ident domain j hmem hnd
 
-end Semantics.Lexical.Noun.TypeShifting
+end Semantics.Composition.TypeShifting

@@ -1,5 +1,6 @@
 import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Causation.Resultatives
+import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
@@ -67,6 +68,7 @@ open NadathurLauer2020.Necessity (causallyNecessary)
 open Causative.Resultatives (completesForEffect resultativeCausativeBuilder
   freezeSolidModel)
 open Semantics.Lexical.Verb.ChangeOfState (CoSType)
+open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Verb classes in the construction
@@ -127,6 +129,52 @@ theorem all_classes_no_cos_no_causation :
 theorem push_is_pushPull : push.levinClass = some .pushPull := rfl
 theorem pull_is_pushPull : pull.levinClass = some .pushPull := rfl
 theorem kick_is_hit : kick.levinClass = some .hit := rfl
+
+/-! ### Construction-dependent alternation (@cite{goldberg-1995})
+
+The key derivation: these verbs cannot alternate *alone* (shown above),
+but they CAN alternate *inside the resultative construction*. The
+resultative adds CoS + causation via `semanticContribution`; the
+composed meaning has all four components needed for the causative
+alternation. No new alternation logic is needed — `predictedAlternation`
+on the fused result fires automatically.
+
+This formalizes the paper's central insight (§3): "when such verbs are
+found in a resultative, the construction as a whole describes a change
+of state ... properties of the resultative construction itself are
+implicated in the 'loosening' of transitivity that characterizes
+intr-*push open* resultatives." -/
+
+/-- PushPull alone: no causative alternation. -/
+theorem pushPull_alone_no_alternation :
+    LevinClass.pushPull.meaningComponents.predictedAlternation
+      .causativeInchoative = false := by native_decide
+
+/-- PushPull in the resultative: causative alternation predicted.
+    The construction adds CoS + causation → the composed meaning
+    has `changeOfState && causation`, which is the precondition. -/
+theorem pushPull_alternates_in_resultative :
+    predictedAlternationInConstruction
+      LevinClass.pushPull.meaningComponents
+      resultative .causativeInchoative = true := by native_decide
+
+/-- Hit alone: no causative alternation. -/
+theorem hit_alone_no_alternation :
+    LevinClass.hit.meaningComponents.predictedAlternation
+      .causativeInchoative = false := by native_decide
+
+/-- Hit in the resultative: causative alternation predicted. -/
+theorem hit_alternates_in_resultative :
+    predictedAlternationInConstruction
+      LevinClass.hit.meaningComponents
+      resultative .causativeInchoative = true := by native_decide
+
+/-- All core intr-push-open classes alternate in the resultative. -/
+theorem all_classes_alternate_in_resultative :
+    intrPushOpenClasses.all (λ c =>
+      predictedAlternationInConstruction
+        c.meaningComponents resultative .causativeInchoative
+    ) = true := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Adjective set: spatially instantiated states
@@ -306,6 +354,7 @@ def blockedVerbs : List (String × String × String) :=
   , ("wire",  "shut",  "*The windows wired shut.")     -- (52b)
   , ("shovel","free",  "*Her car shoveled free.")      -- (53b)
   , ("lever", "free",  "*One of the clasps levered free.")  -- (54b)
+  , ("nudge", "loose", "*The tooth nudged loose.")      -- (55b)
   , ("oil",   "flat",  "*His hair oiled flat.")        -- (56b)
   , ("nail",  "shut",  "*The root cellar door nailed shut.") ]  -- (74→75)
 
@@ -680,28 +729,34 @@ theorem blocked_wrong_adjective :
 /-! ### End-to-end: the full argument chain
 
 1. *push* is pushPull (§12) → pure manner, no CoS, no causation
-2. No causative alternation for pushPull (meaning-component prediction)
-3. Resultative construction adds CAUSE (non-empty CausalDynamics)
-4. Constructional BECOME = inception (CoSType.inception)
-5. Constructional CAUSE = `.make` (sufficiency, completion event)
-6. Anticausative: cause suppressed under discourse licensing
-7. PCC: projectile has independent energy → cause not continuously needed
-8. Theme passes autonomous-motion check → anticausative OK -/
+2. No causative alternation for pushPull alone (meaning-component prediction)
+3. **Fusion**: resultative construction adds CoS + causation → composed
+   meaning now predicts the causative alternation
+4. Resultative construction adds CAUSE (non-empty CausalDynamics)
+5. Constructional BECOME = inception (CoSType.inception)
+6. Constructional CAUSE = `.make` (sufficiency, completion event)
+7. Anticausative: cause suppressed under discourse licensing
+8. PCC: projectile has independent energy → cause not continuously needed
+9. Theme passes autonomous-motion check → anticausative OK -/
 
 theorem end_to_end_push_open :
     -- Step 1-2: verb class blocks alternation alone
     LevinClass.pushPull.participatesIn .causativeInchoative = false ∧
     LevinClass.rootEntailments .pushPull == .pureManner ∧
-    -- Step 3: construction adds CAUSE (non-empty dynamics)
+    -- Step 3: fusion — construction adds CoS + causation → alternation predicted
+    predictedAlternationInConstruction
+      LevinClass.pushPull.meaningComponents
+      resultative .causativeInchoative = true ∧
+    -- Step 4: construction adds CAUSE (non-empty dynamics)
     pushDoorOpenModel.laws.length > 0 ∧
-    -- Step 4: BECOME = inception
+    -- Step 5: BECOME = inception
     resultativeBECOME == .inception ∧
-    -- Step 5: CAUSE = .make (sufficiency)
+    -- Step 6: CAUSE = .make (sufficiency)
     resultativeCausativeBuilder == .make ∧
-    -- Step 6: discourse licenses anticausative
+    -- Step 7: discourse licenses anticausative
     anticausativeLicensed .recoverableInContext = true ∧
-    -- Step 7-8: theme is projectile → autonomous motion OK
+    -- Step 8-9: theme is projectile → autonomous motion OK
     canBeIntrPushOpenSubject .projectile = true := by
-  refine ⟨rfl, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
+  refine ⟨rfl, ?_, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
 
 end Phenomena.Constructions.Resultatives.Studies.Levin2026

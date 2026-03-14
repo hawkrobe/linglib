@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.229.230] - 2026-03-14
+
+### Added
+- **Verbal.lean**: 13 new verb entries for Levin 2026 inventory — exerting force (shove, tug, yank, jerk, wrench, fling), surface contact hitting (slam, punch, smack, thump, bang, thrash), surface contact wiping (scrape)
+- **Levin2026.lean**: Add `nudge loose` to blocked verbs (example 55b)
+
+### Changed
+- **RootDimensions.lean**: Rename `MeaningComponents.merge` → `MeaningComponents.fuse` (Goldberg's term; avoids Minimalist connotation of "merge")
+- **ArgumentStructure.lean**: Update all references from `merge` to `fuse`
+
+## [0.229.229] - 2026-03-13
+
+### Changed
+- **SetMonad.lean**: Remove duplicate empirical example (moved to study file), remove dead `setIf` operator, reformulate `existsClosure` as `∃ p, m p ∧ p` (avoids propext issues with eta-produced sets), rename §7→§6
+- **Charlow2020.lean**: Fix wrong eq. (30) citation; add step-by-step ASSOCIATIVITY + LEFT IDENTITY proof in §1; restructure §2 (intermediate scope) to show ASSOCIATIVITY escaping relative clause island; add higher-order alternative set mechanism in §3 (`higherOrderIsland`, `higherOrder_has_layers`, `flatten_higher_order`); replace vacuous `rfl` Binder Roof theorem with type-theoretic docstring argument in §4
+
 ## [0.229.228] - 2026-03-13
 
 ### Added

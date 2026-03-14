@@ -1703,6 +1703,118 @@ def pull : VerbEntry := .mkRegular {
   verbIncClass := some .cumOnly
   levinClass := some .pushPull }
 
+/-- "shove" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+def shove : VerbEntry := .mkRegular {
+  form := "shove"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .pushPull }
+
+/-- "tug" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+def tug : VerbEntry where
+  form := "tug"
+  form3sg := "tugs"
+  formPast := "tugged"
+  formPastPart := "tugged"
+  formPresPart := "tugging"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .pushPull
+
+/-- "yank" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+def yank : VerbEntry := .mkRegular {
+  form := "yank"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .pushPull }
+
+/-- "jerk" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+def jerk : VerbEntry := .mkRegular {
+  form := "jerk"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .pushPull }
+
+/-- "wrench" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+def wrench : VerbEntry := .mkRegular {
+  form := "wrench"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .pushPull }
+
+/-- "fling" — verb of exerting force / throwing (Levin 12/17,
+    @cite{levin-2026} (31)). Irregular past. -/
+def fling : VerbEntry where
+  form := "fling"
+  form3sg := "flings"
+  formPast := "flung"
+  formPastPart := "flung"
+  formPresPart := "flinging"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .pushPull
+
+/-- "slam" — verb of surface contact, hitting (Levin 18.1,
+    @cite{levin-2026} (32a)). Irregular doubling. -/
+def slam : VerbEntry where
+  form := "slam"
+  form3sg := "slams"
+  formPast := "slammed"
+  formPastPart := "slammed"
+  formPresPart := "slamming"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .hit
+
+/-- "punch" — verb of surface contact, hitting (Levin 18.1,
+    @cite{levin-2026} (32a)) -/
+def punch : VerbEntry := .mkRegular {
+  form := "punch"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .hit }
+
+/-- "smack" — verb of surface contact, hitting (Levin 18.1,
+    @cite{levin-2026} (32a)) -/
+def smack : VerbEntry := .mkRegular {
+  form := "smack"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .hit }
+
+/-- "thump" — verb of surface contact, hitting (Levin 18.1,
+    @cite{levin-2026} (32a)) -/
+def thump : VerbEntry := .mkRegular {
+  form := "thump"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .hit }
+
+/-- "bang" — verb of surface contact, hitting (Levin 18.1,
+    @cite{levin-2026} (32a)) -/
+def bang : VerbEntry := .mkRegular {
+  form := "bang"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .hit }
+
+/-- "thrash" — verb of surface contact, hitting (Levin 18.1,
+    @cite{levin-2026} (32a)) -/
+def thrash : VerbEntry := .mkRegular {
+  form := "thrash"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .hit }
+
+/-- "scrape" — verb of surface contact, wiping (Levin 10.4,
+    @cite{levin-2026} (32b)). In intr-push-open, enters through
+    surface-contact sense, not removing sense. -/
+def scrape : VerbEntry := .mkRegular {
+  form := "scrape"
+  complementType := .np
+  vendlerClass := some .activity
+  levinClass := some .wipe }
+
 /-- "carry" — AgPat verb (Levin 11.4) -/
 def carry : VerbEntry where
   form := "carry"
@@ -2494,6 +2606,12 @@ def allVerbs : List VerbEntry := [
   concern, interest,
   -- Agent-Patient (@cite{solstad-bott-2024})
   chase, hit, push, pull, carry, drag, call,
+  -- Levin § 12 Push/Pull (exerting force, @cite{levin-2026})
+  shove, tug, yank, jerk, wrench, fling,
+  -- Levin § 18.1 Hit (surface contact, @cite{levin-2026})
+  slam, punch, smack, thump, bang, thrash,
+  -- Levin § 10.4 Wipe (surface contact, @cite{levin-2026})
+  scrape,
   -- Levin § 9 Putting
   place, pour, spray, load,
   -- Levin § 10 Removing

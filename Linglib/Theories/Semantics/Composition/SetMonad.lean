@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Composition.Applicative
-import Linglib.Theories.Semantics.Lexical.Noun.TypeShifting
+import Linglib.Theories.Semantics.Composition.TypeShifting
 
 /-!
 # The Set Monad: Indeterminacy and Scope
@@ -137,28 +137,21 @@ Operations that **discharge** sets of alternatives, turning them into
 propositions or combining them with other sets.
 
 - `∃̣` (existential closure): turns a set of truth values into a single
-  truth value — true iff the set contains `True`.
-- `if` (conditional closure): combines two sets of propositions into a
-  set of conditional propositions. -/
+  truth value — true iff the set contains a true member. -/
 
 section Closure
 
 variable {A : Type}
 
-/-- **∃̣** (existential closure): `m^∃̣ := True ∈ m`.
+/-- **∃̣** (existential closure): a set of propositions is "true" iff
+    it contains a true member.
 
-    @cite{charlow-2020} eq. (19): `m^∃̣ := λm. T ∈ m`. Extracts
-    propositional content from a set of truth values by checking
-    whether `True` is a member. -/
-def existsClosure (m : Prop → Prop) : Prop := m True
-
-/-- **if** (conditional closure): combines antecedent and consequent
-    sets of propositions.
-
-    @cite{charlow-2020} eq. (31): `if m n := {if m^∃̣ n^∃̣}`.
-    Each pair of antecedent/consequent alternatives yields a conditional. -/
-def setIf (antecedent consequent : Prop → Prop) : Prop → Prop :=
-  eta (antecedent True → consequent True)
+    @cite{charlow-2020} eq. (19): `m^∃̣ := T ∈ m`. In classical set
+    theory this checks whether `True` is literally in the set. In Lean's
+    type theory, we use `∃ p, m p ∧ p` (there exists a true member),
+    which avoids `propext` issues when propositions are logically but
+    not definitionally equal to `True`. -/
+def existsClosure (m : Prop → Prop) : Prop := ∃ p, m p ∧ p
 
 end Closure
 
@@ -225,7 +218,7 @@ indefinites compositionally. -/
 
 section LiftDecomposition
 
-open Semantics.Lexical.Noun.TypeShifting (lift A)
+open Semantics.Composition.TypeShifting (lift A)
 open Semantics.Montague (Model Ty)
 
 variable {m : Model}
@@ -275,130 +268,32 @@ theorem lift_eq_A_eta (domain : List m.Entity) (j : m.interpTy .e)
 end LiftDecomposition
 
 -- ════════════════════════════════════════════════════════════════
--- §6 Exceptional Scope via ASSOCIATIVITY
+-- §6 Higher-Order Alternative Sets
 -- ════════════════════════════════════════════════════════════════
 
-/-! ### §6 Exceptional scope via ASSOCIATIVITY
+/-! ### §6 Higher-order alternative sets
 
-The payoff: ASSOCIATIVITY of `⫝̸` generates exceptional scope readings
-for indefinites embedded in scope islands, without movement.
+@cite{charlow-2020} §5.2, eq. (48): when a scope argument `f` is itself
+a function into sets, `⫝̸` with an extra `η` produces **higher-order
+alternative sets** of type `S(S b)`. These preserve the identity of
+distinct sources of alternatives, enabling selective exceptional scope
+when multiple indefinites occur on an island.
 
-**The mechanism** (@cite{charlow-2020} §4.1–4.2, Figures 6–8):
+See `Phenomena/FillerGap/Studies/Charlow2020.lean` for worked derivations
+of exceptional scope, selectivity, and the Binder Roof Constraint. -/
 
-1. An indefinite `m : S e` denotes a set of individuals.
-2. Inside the island, `⫝̸` turns the island into a set of alternative
-   propositions (scope at the island edge).
-3. A second `⫝̸` takes scope over the conditional/matrix
-   (scope at the next level).
-4. **ASSOCIATIVITY** guarantees this two-step process produces the same
-   result as if `m` had directly scoped out of the island.
+section HigherOrder
 
-**Example**: "If [a rich relative of mine dies], I'll inherit a house."
-The indefinite *a rich relative* can take scope over the conditional
-despite being embedded in the conditional's antecedent (a scope island).
+/-- Applying `η` inside a `⫝̸` computation produces higher-order
+    alternative sets: the result is of type `S(S b)`, a set of sets.
 
-The derivation below shows this for a finite model. -/
-
-section ExceptionalScope
-
-/-- A tiny model for the island-escaping example. -/
-inductive Person where | alice | bob | carol
-  deriving DecidableEq, Repr, BEq
-
-/-- Relatives of mine. -/
-def rel : Person → Prop
-  | .alice => True
-  | .bob => True
-  | .carol => False
-
-/-- The indefinite "a rich relative of mine": the set of my relatives. -/
-def aRel : Person → Prop := rel
-
-/-- "x dies" (a property). -/
-def dies : Person → Prop := fun _ => True
-
-/-- Step 1: Inside the island, the indefinite takes scope via ⫝̸,
-    turning the island into a set of alternative antecedent propositions.
-
-    @cite{charlow-2020} eq. (33), first ⫝̸:
-    `{dies x | rel x}` — the island's meaning is a set of propositions. -/
-def islandMeaning : Prop → Prop :=
-  setBind aRel (fun x => eta (dies x))
-
-/-- Step 2: The pied-piped island takes scope over the conditional
-    via a second ⫝̸.
-
-    @cite{charlow-2020} eq. (33), second ⫝̸:
-    `{if(dies x) house | rel x}` — for each relative, a conditional. -/
-def house : Prop := True  -- simplified
-
-def conditionalMeaning : Prop → Prop :=
-  setBind islandMeaning (fun antecedent => eta (antecedent → house))
-
-/-- The exceptional scope reading: `∃x ∈ rel. if(dies x) house`.
-
-    By ASSOCIATIVITY, the two-step derivation (scope at island edge,
-    then scope over conditional) equals direct wide scope:
-    `aRel ⫝̸ (λx. η(dies x)) ⫝̸ (λp. η(p → house))`
-    `= aRel ⫝̸ (λx. η(dies x) ⫝̸ (λp. η(p → house)))` — by ASSOCIATIVITY
-    `= aRel ⫝̸ (λx. η(dies x → house))`                — by LEFT IDENTITY
-    `= {dies x → house | rel x}`                         — wide scope -/
-theorem exceptional_scope_via_associativity :
-    conditionalMeaning =
-    setBind aRel (fun x => setBind (eta (dies x)) (fun p => eta (p → house))) := by
-  simp only [conditionalMeaning, islandMeaning]
-  exact set_associativity aRel (fun x => eta (dies x)) (fun p => eta (p → house))
-
-/-- After applying LEFT IDENTITY, the wide-scope form simplifies. -/
-theorem exceptional_scope_simplified :
-    setBind aRel (fun x => setBind (eta (dies x)) (fun p => eta (p → house))) =
-    setBind aRel (fun x => eta (dies x → house)) := by
-  congr 1; funext x
-  exact set_left_identity (dies x) (fun p => eta (p → house))
-
-/-- The full derivation: two-step island-escaping = direct wide scope. -/
-theorem exceptional_scope_full :
-    conditionalMeaning = setBind aRel (fun x => eta (dies x → house)) := by
-  rw [exceptional_scope_via_associativity, exceptional_scope_simplified]
-
-end ExceptionalScope
-
--- ════════════════════════════════════════════════════════════════
--- §7 Selectivity and the Binder Roof Constraint
--- ════════════════════════════════════════════════════════════════
-
-/-! ### §7 Selectivity and the Binder Roof Constraint
-
-Two further predictions of the η-and-⫝̸ approach:
-
-**Selectivity** (@cite{charlow-2020} §5): When multiple indefinites live
-on an island, extra applications of `η` produce **higher-order alternative
-sets** `S(S t)`. These allow different indefinites to take exceptional scope
-in different ways — the grammar never conflates distinct sources of
-alternatives.
-
-**Binder Roof Constraint** (@cite{charlow-2020} §6.4): When an operator
-binds into an indefinite, the indefinite cannot scope over that operator.
-This falls out naturally because scope-taking (via `⫝̸`) requires the
-indefinite (or its island) to dominate the binding operator in the tree.
-If the operator binds *into* the indefinite, it must c-command the
-indefinite's restrictor, which means the indefinite is below the operator
-and can't scope over it. -/
-
-section Selectivity
-
-/-- Higher-order alternative sets: applying `η` to a set produces `S(S a)`.
-
-    @cite{charlow-2020} §5.2, eq. (48): if `m : S a` and `f : a → S b`,
-    then `m ⫝̸ η(f x)` has type `S(S b)` — a set of sets.
-
-    This is what enables selectivity: distinct indefinites produce
-    distinct layers of the higher-order set, so they can be independently
-    extracted outside the island. -/
+    @cite{charlow-2020} §5.2, eq. (48): if `m : S a` and `f : a → b`,
+    then `m ⫝̸ (λx. η(η(f x)))` has type `S(S b)`. Each member of the
+    outer set is a singleton containing one alternative. -/
 theorem higher_order_from_eta {A B : Type} (m : A → Prop) (f : A → B) :
     setBind m (fun x => eta (eta (f x))) =
     (fun (s : B → Prop) => ∃ a, m a ∧ s = eta (f a)) := rfl
 
-end Selectivity
+end HigherOrder
 
 end Semantics.Composition.SetMonad

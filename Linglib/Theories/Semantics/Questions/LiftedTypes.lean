@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.Denotation.Partition
 
 /-!
 # Questions/LiftedTypes.lean
-@cite{barker-shan-2014} @cite{groenendijk-stokhof-1984} @cite{partee-1986} @cite{partee-rooth-1983}
+@cite{barker-shan-2014} @cite{groenendijk-stokhof-1984} @cite{partee-1987} @cite{partee-rooth-1983}
 
 Lifted Question Types (@cite{groenendijk-stokhof-1984}, Chapter VI, Section 6; @cite{partee-rooth-1983}).
 

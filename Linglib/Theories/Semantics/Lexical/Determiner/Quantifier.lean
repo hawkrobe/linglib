@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Core.Logic.Quantification
 import Mathlib.Data.List.Perm.Basic
 
@@ -57,6 +58,13 @@ def every_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
 def some_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
   λ restrictor => λ scope =>
     FiniteModel.elements.any (λ x => restrictor x && scope x)
+
+/-- Partee's `A` (existential closure) = Barwise & Cooper's `⟦some⟧`.
+    Both compute `λR.λS. ∃x. R(x) ∧ S(x)` over a finite domain.
+    `A` takes the domain explicitly; `some_sem` uses `FiniteModel.elements`. -/
+theorem A_eq_some_sem (m : Model) [fm : FiniteModel m] :
+    Semantics.Composition.TypeShifting.A fm.elements = some_sem m := by
+  funext R S; rfl
 
 def no_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
   λ restrictor => λ scope =>

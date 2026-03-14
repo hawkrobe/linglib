@@ -114,6 +114,33 @@ def destroy : MeaningComponents :=
 def bend : MeaningComponents :=
   ⟨true, false, false, true, false, false⟩
 
+/-- No meaning components contributed. Identity for `fuse`. -/
+def none : MeaningComponents := ⟨false, false, false, false, false, false⟩
+
+/-- Componentwise OR. Models how a construction augments a verb's
+    inherent semantics (@cite{goldberg-1995}): if either the verb or
+    the construction contributes a component, the composed meaning has it.
+    This is the semantic side of @cite{goldberg-1995}'s "fusion". -/
+def fuse (a b : MeaningComponents) : MeaningComponents :=
+  { changeOfState := a.changeOfState || b.changeOfState
+  , contact := a.contact || b.contact
+  , motion := a.motion || b.motion
+  , causation := a.causation || b.causation
+  , instrumentSpec := a.instrumentSpec || b.instrumentSpec
+  , mannerSpec := a.mannerSpec || b.mannerSpec }
+
+instance : Append MeaningComponents where
+  append := fuse
+
+theorem fuse_none_left (mc : MeaningComponents) : none.fuse mc = mc := by
+  cases mc; simp [fuse, none]
+
+theorem fuse_none_right (mc : MeaningComponents) : mc.fuse none = mc := by
+  cases mc; simp [fuse, none, Bool.or_false]
+
+theorem fuse_comm (a b : MeaningComponents) : a.fuse b = b.fuse a := by
+  cases a; cases b; simp [fuse, Bool.or_comm]
+
 end MeaningComponents
 
 -- ════════════════════════════════════════════════════
