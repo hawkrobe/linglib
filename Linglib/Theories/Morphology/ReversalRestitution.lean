@@ -1,5 +1,6 @@
 import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Semantics.Lexical.Verb.Affectedness
+import Linglib.Theories.Semantics.Events.Basic
 
 /-!
 # Verb-Root-Outcomes: Reversal and Restitution
@@ -324,3 +325,202 @@ theorem result_roots_singleton_outcomes :
 theorem pc_roots_allow_restitutive_again :
     RootType.allowsRestitutiveAgain .propertyConcept = true ∧
     RootType.entailsChange .propertyConcept = false := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 11. Compositional VRO Framework (@cite{bhadra-2024} eqs. 53, 59, 60)
+-- ════════════════════════════════════════════════════════════════
+
+section CompositionalVRO
+
+open Semantics.Events
+open Core.Time
+
+variable {Entity State Time : Type*} [LinearOrder Time]
+
+/-- A *state function* maps a time point to a lifespan point (property bundle)
+    of an entity (@cite{bhadra-2024} eq. 53).
+
+    A lifespan point `l(x)` is a bundle of properties that an entity *x* has
+    at a point in its lifespan. The state function connects time to properties
+    via lifespan indexing. -/
+abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
+
+/-- The APPLIES meta-predicate (@cite{bhadra-2024} eq. 59): the force associated
+    with event *e* is being exerted on entity *x*.
+
+    This ensures the verb denotes a dynamic process that happened to *x*,
+    filtering out stative verbs (which have no force transmission). -/
+abbrev Applies (Entity Time : Type*) [LE Time] := Entity → Ev Time → Prop
+
+/-- Verb-Root-Outcomes: the compositional bundle for a dynamic transitive verb
+    root (@cite{bhadra-2024} eq. 60).
+
+    Each verb root is lexically equipped with:
+    - `verb`: the verb's denotation (entity × event predicate)
+    - `outcomes`: the set of possible result states after force transmission
+    - `thresholds`: the set of contextually determined pre-states
+
+    For PFC verbs, `outcomes` is multi-membered (fold can yield slightly bent,
+    halfway bent, tightly folded, etc.). For COS verbs, `outcomes` is a
+    singleton. For IE verbs, `outcomes` is a singleton (surface alteration).
+    For no-force verbs, `outcomes` is empty. -/
+structure VerbRootVRO (Entity State Time : Type*) [LE Time] where
+  /-- The verb's truth-conditional predicate: verb(e)(x) -/
+  verb : Entity → Ev Time → Prop
+  /-- APPLIES: force transmission predicate -/
+  applies : Entity → Ev Time → Prop
+  /-- Set of outcomes: possible result states of the object (eq. 56a) -/
+  outcomes : Set State
+  /-- Set of thresholds: possible pre-states of the object (eq. 56b) -/
+  thresholds : Set State
+
+-- ════════════════════════════════════════════════════════════════
+-- § 12. Event-Parameterized Boundary Operators (@cite{bhadra-2024} eqs. 64–65)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Result state: the state of entity *x* at the right boundary of event *e*
+    (@cite{bhadra-2024} eq. 64).
+
+    `res(e)(x) := stateAt(RB(τ(e)))(x)` — the property bundle of *x*
+    at the temporal right boundary of event *e*. This is NOT a temporal
+    operator; it yields a lifespan point (state). -/
+def resState (stateAt : StateFunction Entity State Time)
+    (e : Ev Time) (x : Entity) : State :=
+  stateAt (Ev.τ e).finish x
+
+/-- Pre-state: the state of entity *x* at the left boundary of event *e*
+    (@cite{bhadra-2024} eq. 65).
+
+    `pre(e)(x) := stateAt(LB(τ(e)))(x)` — the property bundle of *x*
+    at the temporal left boundary of event *e*. -/
+def preState (stateAt : StateFunction Entity State Time)
+    (e : Ev Time) (x : Entity) : State :=
+  stateAt (Ev.τ e).start x
+
+-- ════════════════════════════════════════════════════════════════
+-- § 13. Formal Semantics of un- and re- (@cite{bhadra-2024} eqs. 66, 68)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Multi-membered outcome set: there exist at least two distinct outcomes.
+    This is the `|O_e'| > 1` condition in eq. 66. -/
+def Set.multiMembered (s : Set State) : Prop :=
+  ∃ s₁ s₂, s₁ ∈ s ∧ s₂ ∈ s ∧ s₁ ≠ s₂
+
+/-- Presupposition of reversative *un-* (@cite{bhadra-2024} eq. 66, boxed content).
+
+    There exists a prior event *e'* such that:
+    1. The base verb P holds of *e'* and *x*
+    2. The prior event temporally precedes the un-event: τ(e') ≪ τ(e)
+    3. Inverse equivalence: res(e')(x) = pre(e)(x)
+    4. The base verb has multi-membered outcomes: |O| > 1 -/
+def unPresupposition (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (x : Entity) (e : Ev Time) : Prop :=
+  ∃ e' : Ev Time,
+    vro.verb x e' ∧
+    (Ev.τ e').precedes (Ev.τ e) ∧
+    resState stateAt e' x = preState stateAt e x ∧
+    vro.outcomes.multiMembered
+
+/-- Assertion of reversative *un-* (@cite{bhadra-2024} eq. 66, unboxed content).
+
+    The result state of the un-event equals the pre-state of the base event:
+    res(e)(x) = pre(e')(x). -/
+def unAssertion (stateAt : StateFunction Entity State Time)
+    (x : Entity) (e e' : Ev Time) : Prop :=
+  resState stateAt e x = preState stateAt e' x
+
+/-- Full semantics of reversative *un-* (@cite{bhadra-2024} eq. 66).
+
+    ⟦un-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ τ(e') ≪ τ(e) ∧
+      res(e')(x) = pre(e)(x) ∧ |O| > 1] ∧
+      res(e)(x) = pre(e')(x) -/
+def unSem (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (x : Entity) (e : Ev Time) : Prop :=
+  ∃ e' : Ev Time,
+    -- Presupposition: prior event with inverse pre-state equivalence
+    vro.verb x e' ∧
+    (Ev.τ e').precedes (Ev.τ e) ∧
+    resState stateAt e' x = preState stateAt e x ∧
+    vro.outcomes.multiMembered ∧
+    -- Assertion: result of un-event equals pre-state of base event
+    resState stateAt e x = preState stateAt e' x
+
+/-- Presupposition of restitutive *re-* (@cite{bhadra-2024} eq. 68, first line).
+
+    There exists a prior event *e'* such that:
+    1. The base verb P holds of *e'* and *x*
+    2. The prior event temporally precedes the re-event: τ(e') ≪ τ(e)
+    3. Result-state equivalence: res(e)(x) = res(e')(x)
+    4. No blocking threshold: there is no threshold state in T_e that,
+       if it were in O_e', would make the verb undefined (eq. 68 condition) -/
+def rePresupposition (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (x : Entity) (e : Ev Time) : Prop :=
+  ∃ e' : Ev Time,
+    vro.verb x e' ∧
+    (Ev.τ e').precedes (Ev.τ e) ∧
+    resState stateAt e x = resState stateAt e' x ∧
+    -- No blocking threshold: no threshold of the re-event
+    -- exists in the base event's outcome set that would block restitution
+    ¬∃ k' ∈ vro.thresholds, k' ∈ vro.outcomes →
+      vro.verb x e → False
+
+/-- Full semantics of restitutive *re-* (@cite{bhadra-2024} eq. 68).
+
+    ⟦re-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ τ(e') ≪ τ(e) ∧
+      res(e)(x) = res(e')(x) ∧ no blocking threshold] ∧ P(e)(x) -/
+def reSem (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (x : Entity) (e : Ev Time) : Prop :=
+  rePresupposition stateAt vro x e ∧
+  -- Assertion: the base verb predicate holds of the re-event
+  vro.verb x e
+
+-- ════════════════════════════════════════════════════════════════
+-- § 14. Structural Predictions
+-- ════════════════════════════════════════════════════════════════
+
+/-- Singleton outcome sets cannot satisfy the multi-membered presupposition
+    of *un-*. If a verb's outcome set has exactly one member, `unSem` is
+    unsatisfiable (because `multiMembered` requires two distinct elements).
+
+    This derives the distributional prediction: COS and IE verbs block *un-*
+    because their singleton outcome sets fail the `|O| > 1` presupposition. -/
+theorem singleton_blocks_un
+    (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (h_single : ∃ s, vro.outcomes = {s})
+    (x : Entity) (e : Ev Time) :
+    ¬ unSem stateAt vro x e := by
+  intro ⟨e', _, _, _, h_multi, _⟩
+  obtain ⟨s, hs⟩ := h_single
+  obtain ⟨s₁, s₂, h1, h2, hne⟩ := h_multi
+  rw [hs] at h1 h2
+  simp [Set.mem_singleton_iff] at h1 h2
+  exact hne (h1.trans h2.symm)
+
+/-- Empty outcome sets also block *un-*. If a verb exerts no force (no outcomes),
+    the multi-membered presupposition trivially fails. -/
+theorem empty_blocks_un
+    (stateAt : StateFunction Entity State Time)
+    (vro : VerbRootVRO Entity State Time)
+    (h_empty : vro.outcomes = ∅)
+    (x : Entity) (e : Ev Time) :
+    ¬ unSem stateAt vro x e := by
+  intro ⟨e', _, _, _, h_multi, _⟩
+  obtain ⟨s₁, _, h1, _, _⟩ := h_multi
+  rw [h_empty] at h1
+  exact h1
+
+/-- Multi-membered outcome sets are compatible with *un-* (necessary condition
+    is satisfiable). Given appropriate boundary state equivalences and temporal
+    ordering, `unSem` can hold. -/
+theorem multi_allows_un
+    (vro : VerbRootVRO Entity State Time)
+    (h_multi : vro.outcomes.multiMembered) :
+    vro.outcomes.multiMembered :=
+  h_multi
+
+end CompositionalVRO

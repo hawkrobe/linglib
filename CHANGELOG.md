@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.229.203] - 2026-03-13
+
+### Changed
+- **Phenomena/Gender/Studies/Kramer2020.lean**: Audit against paper — fix `RemainderPattern.recycled : Bool` → `RemainderGenderSource` three-valued enum (recycled/novel/both) to faithfully represent Table 2; add Blackfoot (both recycled and novel genders); add `HybridNoun` structure for Russian *vrač* (simultaneous dual-gender agreement, §3.3.2), distinct from `SameRootNominal` (alternative n-head selection); fix `SameRootNominal` docstring (remove Russian *vrač* — it's a hybrid noun, not a same-root nominal); replace `String` fields in `LexicalGenderRule` with typed `SemanticBasis`/`GenderDimension`; replace `ApproachCapabilities` `Bool` fields with `DiagnosticStatus` enum (handled/problematic/inconclusive) to capture Kramer's nuanced argument about phonological assignment; replace misleading `structural_advantage` (2-out-of-3 counting) with `structural_edge` (factual claims about each diagnostic); fix `SemanticBasis.humanness` → `.anim` comment (limitation of DM inventory, not subset claim); add positive RI direction `ri_implies_interpretable_exists`
+
+## [0.229.202] - 2026-03-13
+
+### Added
+- **Theories/Morphology/DM/NominalStructure.lean**: Promote general nominal-structure types from Adamson2024 study file to theory layer — `NominalPosition`, `genderLocalityHypothesis`, `PossessionType`, `NumberPosition`, `ExternalFeature`, `PossessionGenderMechanism` now importable by any file without Theories→Phenomena dependency violation
+- **Fragments/Teop/Nouns.lean**: Teop noun inventory (Table 1) — 12 gender I nouns, 12 gender II nouns, 8 body-part nouns with iPossession gender switch; article paradigm (`articleForm`); per-datum verification theorems
+- **Fragments/Jarawara/PossessedNouns.lean**: All 12 semantic classes of iPossessable nouns (Table 3, 175 total) with member counts and inalienability-hierarchy mapping; *mano* 'arm' paradigm (Table 5/6) with per-cell verification; free vs possessed forms (Table 4); bridge to `Possession.Typology.InalienabilityRank`
+
+### Changed
+- **Phenomena/Morphology/Studies/Adamson2024.lean**: Rewrite to import from NominalStructure.lean (removing local type definitions); add Yanyuwa 7-gender and Coastal Marind 4-gender enumerations with `InheritedGenderNoun` Probe-Goal agreement formalization; add n-type↔surface-gender-count bridge (Amharic 3 surface genders, Jarawara 2, Teop 2); Fragment data bridges (`teop_fragment_bridge`, `jarawara_fragment_total`)
+- **references.bib**: Add DOI for @cite{adamson-2024} (10.1353/lan.2024.a929736); update sources list
+
+## [0.229.201] - 2026-03-13
+
+### Added
+- **Phenomena/Gender/Studies/Kramer2020.lean**: Formalize @cite{kramer-2020} — Semantic Core Generalization (every gender system has a semantic core from {animacy, humanness, sex}), verified over 21-language sample; cross-linguistic remainder-noun variation (Table 2: Dieri/Tamil/Spanish/Akɔɔse); lexical vs structural gender assignment comparison with three diagnostic phenomena; Thesis of Radical Interpretability deriving why purely arbitrary gender is impossible; referent-based gender assignment (same-root nominals like Amharic *hakim*)
+- **Theories/Morphology/DM/Categorizer.lean**: DM→Minimalism bridge — `GenderVal.toNat` (injective), `GenderFeature.toPhiFeature`, `GenderFeature.toGramFeature` (interpretable→valued, uninterpretable→unvalued)
+- **SemanticBasis↔GenderDimension bridge**: `SemanticBasis.toGenderDimension`/`GenderDimension.toSemanticBasis` connecting typological bases to DM dimensions; `SemanticBasis.isCore` and `GenderProfile.satisfiesSemanticCore`
+- **references.bib**: Add @cite{kramer-2020} and @cite{harris-1991}
+
 ## [0.229.200] - 2026-03-13
 
 ### Added

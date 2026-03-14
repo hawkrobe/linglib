@@ -262,4 +262,99 @@ theorem break_end_to_end :
     (LevinClass.forceTransmissionClass .break_).unCompatible = false ∧
     LevinClass.reCompatible .break_ = true := ⟨rfl, rfl, rfl, rfl⟩
 
+-- ════════════════════════════════════════════════════
+-- § 10. Compositional VRO Worked Examples (@cite{bhadra-2024} §5)
+-- ════════════════════════════════════════════════════
+
+section CompositionalExamples
+
+open Semantics.Events Core.Time
+
+/-- VRO for "fold": PFC verb with multi-membered outcome set.
+    The parchment can end up in any of several states after folding.
+    Outcome set = {slightlyCreased, folded, tightlyFolded} (3 members).
+    Threshold set = {flat, slightlyCreased} (contextual pre-states). -/
+def foldVRO : VerbRootVRO Unit ParchmentState ℤ where
+  verb := λ _ _ => True  -- simplified: fold always applies
+  applies := λ _ _ => True
+  outcomes := {.slightlyCreased, .folded, .tightlyFolded}
+  thresholds := {.flat, .slightlyCreased}
+
+/-- fold's outcome set is multi-membered: slightlyCreased ≠ folded. -/
+theorem fold_outcomes_multi : foldVRO.outcomes.multiMembered :=
+  ⟨.slightlyCreased, .folded,
+   Or.inl rfl, Or.inr (Or.inl rfl),
+   ParchmentState.noConfusion⟩
+
+/-- VRO for "break": COS verb with singleton outcome set.
+    Breaking yields exactly one lexically specified result: broken. -/
+inductive LimbState where
+  | intact | broken
+  deriving DecidableEq, BEq, Repr
+
+def breakVRO : VerbRootVRO Unit LimbState ℤ where
+  verb := λ _ _ => True
+  applies := λ _ _ => True
+  outcomes := {.broken}  -- singleton: only one result state
+  thresholds := {.intact}
+
+/-- break's singleton outcome set blocks un-: *unbreak is predicted
+    to fail because |O| = 1, so the multi-membered presupposition
+    of un- (eq. 66) cannot be satisfied. -/
+theorem break_blocks_un (stateAt : StateFunction Unit LimbState ℤ)
+    (x : Unit) (e : Ev ℤ) :
+    ¬ unSem stateAt breakVRO x e :=
+  singleton_blocks_un stateAt breakVRO ⟨.broken, rfl⟩ x e
+
+/-- VRO for "hit": IE verb with singleton outcome set (surface alteration).
+    The object's surface is altered in exactly one way. -/
+inductive SurfaceState where
+  | unaltered | surfaceAltered
+  deriving DecidableEq, BEq, Repr
+
+def hitVRO : VerbRootVRO Unit SurfaceState ℤ where
+  verb := λ _ _ => True
+  applies := λ _ _ => True
+  outcomes := {.surfaceAltered}  -- singleton: surface alteration only
+  thresholds := {.unaltered}
+
+/-- hit's singleton outcome set blocks un-: *unhit is predicted
+    to fail for the same reason as *unbreak. -/
+theorem hit_blocks_un (stateAt : StateFunction Unit SurfaceState ℤ)
+    (x : Unit) (e : Ev ℤ) :
+    ¬ unSem stateAt hitVRO x e :=
+  singleton_blocks_un stateAt hitVRO ⟨.surfaceAltered, rfl⟩ x e
+
+/-- VRO for "destroy": COS consumption verb with singleton outcome set.
+    The outcome (ceased to exist) is also a blocking threshold for re-,
+    since the object cannot be acted on again after being destroyed. -/
+inductive ObjectExistence where
+  | exists_ | ceasedToExist
+  deriving DecidableEq, BEq, Repr
+
+def destroyVRO : VerbRootVRO Unit ObjectExistence ℤ where
+  verb := λ _ _ => True
+  applies := λ _ _ => True
+  outcomes := {.ceasedToExist}
+  -- The threshold IS an outcome → blocks re- (eq. 68 condition)
+  thresholds := {.ceasedToExist}
+
+/-- destroy blocks un- (singleton outcomes). -/
+theorem destroy_blocks_un (stateAt : StateFunction Unit ObjectExistence ℤ)
+    (x : Unit) (e : Ev ℤ) :
+    ¬ unSem stateAt destroyVRO x e :=
+  singleton_blocks_un stateAt destroyVRO ⟨.ceasedToExist, rfl⟩ x e
+
+/-- The three-way distributional split is derived from outcome set structure:
+    - PFC (fold): multi-membered → un- possible
+    - COS (break): singleton → un- blocked
+    - IE (hit): singleton → un- blocked -/
+theorem distributional_split_derived :
+    foldVRO.outcomes.multiMembered ∧
+    (∃ s, breakVRO.outcomes = {s}) ∧
+    (∃ s, hitVRO.outcomes = {s}) :=
+  ⟨fold_outcomes_multi, ⟨.broken, rfl⟩, ⟨.surfaceAltered, rfl⟩⟩
+
+end CompositionalExamples
+
 end Phenomena.Morphology.Studies.Bhadra2024
