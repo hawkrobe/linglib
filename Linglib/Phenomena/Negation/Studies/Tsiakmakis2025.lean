@@ -185,51 +185,7 @@ theorem diagnostics_fully_distinguish :
   ⟨by decide, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 3. Cross-Classification with Jin & Koenig 2021
--- ════════════════════════════════════════════════════
-
-/-! ### Mapping trigger subclasses to negator types
-
-Each of @cite{jin-koenig-2021}'s trigger subclasses is classified as
-hosting NEG₁ or NEG₂. This cross-cuts their licensing condition
-taxonomy: the propositional attitude condition spans both types
-(FEAR → NEG₂, but FORGET members vary). -/
-
-/-- Assign each trigger subclass to its negator type.
-
-    **NEG₂ (proper EN)**: Triggers whose complement involves a modal
-    ordering source (fear, regret, deny).
-
-    **NEG₁ (apparent EN)**: Triggers where standard negation is masked
-    (temporals, logical operators, comparatives).
-
-    **FORGET**: Classified as NEG₁ because the negative inference is
-    "¬p in w₀" (the real world) — factual negation, not modal.
-    (§6.1.4 of @cite{jin-koenig-2021}: "semantically heterogeneous";
-    §5.12 of @cite{tsiakmakis-2025}: not listed as a proper EN host.) -/
-def negatorType : TriggerSubclass → NegatorType
-  -- Propositional attitude triggers with modal ordering → NEG₂
-  | .fear       => .neg2    -- deontic ordering (speaker's desires; §5.1, eq. 60)
-  | .regret     => .neg2    -- deontic ordering (behavioral standards; §6.1.2 of @cite{jin-koenig-2021})
-  | .deny       => .neg2    -- deontic ordering (speaker's beliefs; §5.2, eq. 63)
-  -- FORGET: factual ¬p in w₀ → NEG₁
-  | .forget     => .neg1
-  -- Temporal operators: standard negation masked by aspect → NEG₁
-  | .before     => .neg1
-  | .cannotWait => .neg1
-  | .since      => .neg1
-  | .rarely     => .neg1
-  -- Logical operators: standard negation is part of meaning → NEG₁
-  | .impossible => .neg1
-  | .without    => .neg1
-  | .unless     => .neg1
-  -- Comparatives: negation is spell-out of comparative operator → NEG₁
-  | .moreThan    => .neg1
-  | .differentThan => .neg1
-  | .tooTo       => .neg1
-
--- ════════════════════════════════════════════════════
--- § 4. The Revised Host Inventory (§5.12, ex. 95)
+-- § 3. The Revised Host Inventory (§5.12, ex. 95)
 -- ════════════════════════════════════════════════════
 
 /-- EN host categories from the revised inventory (§5.12, ex. 95).
@@ -267,6 +223,55 @@ def ENHostCategory.negatorType : ENHostCategory → NegatorType
   | .biasedQuestions        => .neg2
   | .conditionals           => .neg2
   | .freeRelatives          => .neg2
+
+-- ════════════════════════════════════════════════════
+-- § 4. Cross-Classification with Jin & Koenig 2021
+-- ════════════════════════════════════════════════════
+
+/-! ### Mapping trigger subclasses to negator types
+
+Each of @cite{jin-koenig-2021}'s trigger subclasses is classified as
+hosting NEG₁ or NEG₂. The negator type is **derived from** the host
+category: `negatorType t = (t.toHostCategory.map negatorType).getD .neg1`.
+This makes the trigger-level and host-level classifications agree by
+construction, not by bridge theorem. -/
+
+/-- Map each trigger subclass to its EN host category (partial).
+
+    The mapping is partial because some trigger subclasses do not
+    correspond to any EN host in @cite{tsiakmakis-2025}'s inventory:
+    - FORGET: semantically heterogeneous (§6.1.4 of @cite{jin-koenig-2021})
+    - RARELY/IMPOSSIBLE: not listed as EN hosts in §5.12 -/
+@[reducible] def triggerToHost : TriggerSubclass → Option ENHostCategory
+  -- Propositional attitude triggers → NEG₂ hosts
+  | .fear       => some .emotiveDoxasticPredicates  -- §5.1
+  | .regret     => some .emotiveDoxasticPredicates  -- §5.1
+  | .deny       => some .negativePredicates         -- §5.2
+  -- Temporal triggers → temporal expressions
+  | .before     => some .temporalExpressions        -- §5.4
+  | .cannotWait => some .temporalExpressions        -- §5.4
+  | .since      => some .temporalExpressions        -- §5.4
+  -- Logical operator triggers → negative adverbials
+  | .without    => some .negativeAdverbials          -- §5.5
+  | .unless     => some .negativeAdverbials          -- §5.6
+  -- Comparative triggers → comparatives
+  | .moreThan     => some .comparatives              -- §5.7
+  | .differentThan => some .comparatives             -- §5.7
+  | .tooTo        => some .comparatives              -- §5.7
+  -- Unmapped: no clean EN host category
+  | .forget     => none    -- heterogeneous (factual ¬p in w₀, not modal)
+  | .rarely     => none    -- not in Tsiakmakis's inventory
+  | .impossible => none    -- not in Tsiakmakis's inventory
+
+/-- Negator type for each trigger subclass, derived from its host category.
+
+    When a trigger maps to a host category, its negator type is the host's.
+    Unmapped triggers (forget, rarely, impossible) default to NEG₁ — all
+    involve standard negation, not modal semantics. -/
+@[reducible] def negatorType (t : TriggerSubclass) : NegatorType :=
+  match triggerToHost t with
+  | some h => h.negatorType
+  | none   => .neg1
 
 /-- All apparent hosts are NEG₁. -/
 theorem apparent_hosts_are_neg1 :
@@ -454,7 +459,8 @@ theorem comparative_triggers_are_neg1 :
 theorem neg1_iff_not_core_attitude (t : TriggerSubclass) :
     negatorType t = .neg1 ↔
     (t.licensingCondition ≠ .propositionalAttitude ∨ t = .forget) := by
-  cases t <;> simp [negatorType, TriggerSubclass.licensingCondition]
+  cases t <;> simp [negatorType, ENHostCategory.negatorType,
+    TriggerSubclass.licensingCondition]
 
 -- ════════════════════════════════════════════════════
 -- § 7. NEG₂ Ordering Sources by Host
