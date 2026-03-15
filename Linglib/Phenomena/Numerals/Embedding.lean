@@ -235,7 +235,7 @@ def almost_passed : NumeralEmbeddingDatum where
   lowerBoundReading := "Close to ≥3 but not ≥3: approximately 2 passed (below only)"
   bilateralReading := "Close to =3 but not =3: approximately 2 or 4 passed (above or below)"
   preferredReading := some "approximately 2 (below only)"
-  source := "Nouwen 2006; Penka 2006; Sadock 1981"
+  source := "Nouwen 2006; Penka 2006"
 
 -- ============================================================================
 -- "Only" + Focus (@cite{coppock-beaver-2014})

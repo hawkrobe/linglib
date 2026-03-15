@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
+import Linglib.Theories.Semantics.Modality.Narrog
 
 /-!
 # @cite{cinque-1999} vs @cite{hacquard-2006}: Modal Position
@@ -207,5 +208,51 @@ theorem content_licensing_is_uniform :
     (∀ b : EventBinder, b.canProjectEpistemic = b.hasContent) :=
   ⟨rfl, rfl, rfl, λ _ => rfl⟩
 
+
+-- ════════════════════════════════════════════════════
+-- § 6. Narrog's Perspective: Empirical Scope from Japanese
+-- ════════════════════════════════════════════════════
+
+/-! @cite{narrog-2012} provides a third perspective on the position–flavor
+correlation, complementing Cinque (stipulation) and Hacquard (derivation).
+Narrog's empirical scope hierarchy from Japanese (@cite{narrog-2009a}) shows
+that epistemic categories empirically outscope deontic categories, which in
+turn outscope dynamic (ability) categories, which outscope voice and aspect.
+
+This agrees with both Cinque and Hacquard on the basic prediction (epistemic
+is high, root is low) but adds a finer-grained picture with ~10 scope levels
+vs. Cinque's 2 (high/low) or Hacquard's 2 (above/below AspP). The detailed
+hierarchy is formalized in `Phenomena.Modality.Studies.Narrog2012`.
+
+The key insight: Narrog's event-oriented / speaker-oriented cut aligns with
+Hacquard's AspP boundary. Below aspect: event-oriented (no propositional
+content, root modality only). Above aspect: speaker-oriented (propositional
+content, epistemic available). The diachronic claim (meanings climb the
+hierarchy) and the synchronic claim (content licensing) are two views of the
+same structural fact. -/
+
+/-- Narrog's speaker-orientation maps to Hacquard's position:
+    event-oriented = belowAsp, speaker-oriented/mood = aboveAsp. -/
+def narrogOrientationToPosition :
+    Semantics.Modality.Narrog.SpeakerOrientationLevel → ModalPosition
+  | .eventOriented => .belowAsp
+  | .speakerOriented => .aboveAsp
+  | .mood => .aboveAsp
+
+/-- The Narrog → Hacquard bridge preserves the epistemic availability
+    prediction: event-oriented categories (belowAsp) lack content and
+    cannot project epistemic; speaker-oriented categories (aboveAsp)
+    have content and can project epistemic. -/
+theorem narrog_hacquard_bridge :
+    -- Event-oriented → belowAsp → no epistemic
+    (narrogOrientationToPosition .eventOriented).defaultBinder.canProjectEpistemic
+      = false ∧
+    -- Speaker-oriented → aboveAsp → epistemic available
+    (narrogOrientationToPosition .speakerOriented).defaultBinder.canProjectEpistemic
+      = true ∧
+    -- Mood → aboveAsp → epistemic available
+    (narrogOrientationToPosition .mood).defaultBinder.canProjectEpistemic
+      = true :=
+  ⟨rfl, rfl, rfl⟩
 
 end Phenomena.Modality.ComparePosition

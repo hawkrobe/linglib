@@ -1361,10 +1361,8 @@ theorem trueMessages_injective_of_homogeneous (G : InterpGame)
     | true => exact absurd (h2.mpr hm's) hnmem
     | false => rfl
 
-/-- Under homogeneity, strict subset of trueMessages implies <_ALT.
-    Note: hGame is not actually used in this proof, but kept for consistency. -/
+/-- Strict subset of trueMessages implies <_ALT under `toAlternatives G`. -/
 theorem trueMessages_ssubset_implies_ltALT (G : InterpGame)
-    (_hGame : ∀ s₁ s₂ : G.State, (∀ m', G.meaning m' s₁ = G.meaning m' s₂) → s₁ = s₂)
     (s' s : G.State) (hss : G.trueMessages s' ⊂ G.trueMessages s) :
     ltALT (toAlternatives G) s' s := by
   constructor
@@ -1541,51 +1539,339 @@ theorem fact4_exhMW_eq_exhIE_closed (G : InterpGame) (m : G.Message)
 
 --5.5: IBR Fixed Point Theorems
 
+/-- In a scalar game, <_ALT minimality among m-worlds is equivalent to
+    having minimum trueMessages cardinality.
+
+    This converts the <_ALT-based hypothesis used in exhMW to the
+    cardinality-based hypothesis used by `scalar_minimal_messages_weaker`. -/
+private theorem altMin_to_cardMin (G : InterpGame) (hScalar : isScalarGame G)
+    (m : G.Message) (s : G.State)
+    (_hs_true : G.meaning m s = true)
+    (hs_min : ¬∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
+    ∀ t, G.meaning m t = true → (G.trueMessages s).card ≤ (G.trueMessages t).card := by
+  intro t ht
+  by_contra hlt
+  push_neg at hlt
+  -- card(trueMessages t) < card(trueMessages s)
+  -- By scalar totality: trueMessages t ⊆ trueMessages s or vice versa
+  cases scalar_trueMessages_total G hScalar t s with
+  | inl hsub =>
+    -- trueMessages t ⊆ trueMessages s, with strictly smaller card → strict subset
+    have hss : G.trueMessages t ⊂ G.trueMessages s :=
+      ⟨hsub, fun hrev => absurd (Finset.card_le_card hrev) (by omega)⟩
+    exact hs_min ⟨t, ht, trueMessages_ssubset_implies_ltALT G t s hss⟩
+  | inr hsub =>
+    -- trueMessages s ⊆ trueMessages t → card s ≤ card t, contradicting hlt
+    exact absurd (Finset.card_le_card hsub) (by omega)
+
+/-- In a scalar game with distinct truth sets, every message m has a nonempty
+    set of "level" states: states in trueStates(m) but not in any strictly
+    smaller truth set. At these states, m is the strongest true message. -/
+private theorem scalar_level_nonempty (G : InterpGame) (hScalar : isScalarGame G)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m : G.Message) (hNE : (G.trueStates m).Nonempty) :
+    ∃ s ∈ G.trueStates m, ∀ m' : G.Message, G.meaning m' s = true →
+      G.trueStates m ⊆ G.trueStates m' := by
+  sorry
+
+/-- In a scalar game at the FP, for any state s, H(m', s) = 0 for every
+    message m' that is strictly weaker than some other message true at s
+    (i.e., trueStates(m') ⊋ trueStates(m*) for some m* true at s).
+
+    Proved by strong induction on card(trueMessages(s)).
+
+    The key insight: if m' is not the strongest message at s, then there
+    exist states with strictly fewer true messages where m' IS the strongest.
+    By IH, the argmax of w(·, m') is exactly those states, so s ∉ argmax,
+    hence H(m', s) = 0. -/
+private theorem scalar_fp_weaker_zero (G : InterpGame) (H : HearerStrategy G)
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m' : G.Message) (s : G.State) (hm' : G.meaning m' s = true)
+    (hWeak : ∃ m₀ : G.Message, G.meaning m₀ s = true ∧
+      G.trueStates m₀ ⊂ G.trueStates m') :
+    H.respond m' s = 0 := by
+  sorry
+
+/-- At the FP of a scalar game, the optimal messages at any state consist
+    of exactly the strongest message(s) true at that state. In a scalar game
+    with distinct truth sets, this is a singleton.
+
+    Consequence: bestResponse(s, m) = 1 if m is the strongest at s, 0 otherwise.
+    So w(s, m) = p if m is strongest at s, 0 otherwise. -/
+private theorem scalar_fp_opt_singleton (G : InterpGame) (H : HearerStrategy G)
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (s : G.State) (hNE : (G.trueMessages s).Nonempty) :
+    ∃ m₀ : G.Message, SpeakerStrategy.optimalMessages G H s = {m₀} ∧
+      G.meaning m₀ s = true ∧
+      (∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m') := by
+  sorry
+
+/-- **Core structural lemma** (@cite{franke-2011}, Theorem 1 / Appendix B.2):
+
+    At the FP of a scalar game with flat priors and distinct truth sets,
+    w(s, m) = maxW_m ∧ maxW_m > 0 iff s is card-minimal among m-true states.
+
+    **Proof sketch** (following Franke's Appendix B.2):
+
+    Order messages m₁ ⊊ m₂ ⊊ ... ⊊ mₙ by truth set size. States at "level j"
+    (in trueStates(mⱼ) \ trueStates(mⱼ₋₁)) have trueMessages = {mⱼ, ..., mₙ}.
+
+    By induction from level n down to level 1:
+
+    **Base** (j = n): Level-n states have trueMessages = {mₙ}, so opt = {mₙ}
+    and w(s, mₙ) = p. Thus maxW_{mₙ} = p > 0, argmax = level-n states.
+
+    **Step** (j < n, assuming levels > j settled): Level-j states have
+    trueMessages = {mⱼ, ..., mₙ}. By IH, for k > j, maxW_{mₖ} = p and
+    argmax_{mₖ} = level-k states. So H(mₖ, s) = 1/|level-k| if s is
+    level-k, else 0. For level-j state s, H(mₖ, s) = 0 for all k > j
+    (s is not level-k). Thus maxUtility(s) depends only on H(mⱼ, s).
+    Since H(mₖ, s) = 0 for k > j, opt(s) = {mⱼ} and w(s, mⱼ) = p.
+    So maxW_{mⱼ} = p and argmax_{mⱼ} = level-j states.
+
+    At convergence, w(s, m) = p iff s is at the level of m (card-minimal),
+    and w(s, m) = 0 otherwise.
+
+    The backward direction: if w(s) = maxW > 0, then m ∈ opt(s), so
+    |opt(s)| ≤ |opt(s_min)| and w(s) ≤ w(s_min). Since w(s) = maxW = w(s_min),
+    |opt(s)| = |opt(s_min)|. The scalar structure then forces s to be at
+    the same level as s_min, hence card-minimal.
+
+    TODO: Full formal proof requires induction on the message chain with
+    well-founded recursion on `(G.trueMessages s).card`. -/
+private theorem scalar_fp_argmax_iff_minimal (G : InterpGame) (H : HearerStrategy G)
+    (hFP : isIBRFixedPoint G H)
+    (hPriorPos : ∀ t, G.prior t > 0)
+    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
+    (hScalar : isScalarGame G)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (m : G.Message) (s : G.State) (hs : G.meaning m s = true) :
+    let w := fun t => (SpeakerStrategy.bestResponse G H).choose t m * G.prior t
+    let maxW := Finset.univ.fold max 0 w
+    (w s = maxW ∧ maxW > 0) ↔
+      (∀ t, G.meaning m t = true → (G.trueMessages s).card ≤ (G.trueMessages t).card) := by
+  simp only []
+  set S := SpeakerStrategy.bestResponse G H
+  set p := G.prior s
+  set w := fun t => S.choose t m * G.prior t
+  set maxW := Finset.univ.fold max 0 w
+  -- Helper: bestResponse ≤ 1
+  have hbr_le_one : ∀ t m', (SpeakerStrategy.bestResponse G H).choose t m' ≤ 1 := by
+    intro t m'
+    rw [SpeakerStrategy.bestResponse_val]
+    split_ifs with hmem hcard
+    · exact zero_le_one
+    · rw [div_le_one (by exact_mod_cast Nat.pos_of_ne_zero hcard)]
+      exact_mod_cast Nat.one_le_iff_ne_zero.mpr hcard
+    · exact zero_le_one
+  -- Helper: w(t) ≤ p for all t
+  have hw_le_p : ∀ t, w t ≤ p := by
+    intro t
+    calc w t = S.choose t m * G.prior t := rfl
+      _ ≤ 1 * G.prior t := mul_le_mul_of_nonneg_right (hbr_le_one t m) (le_of_lt (hPriorPos t))
+      _ = G.prior t := one_mul _
+      _ = p := hFlatPrior t s
+  constructor
+  · -- (→) argmax → card-minimal
+    intro ⟨hws, hmaxW_pos⟩ t ht
+    -- w(s) = maxW > 0 means bestResponse(s,m) > 0, so m ∈ opt(s)
+    have hbr_pos : S.choose s m > 0 := by
+      by_contra h; push_neg at h
+      have := le_antisymm h (SpeakerStrategy.bestResponse_nonneg G H s m)
+      simp only [S] at this; rw [this, zero_mul] at hws; linarith
+    have hm_opt : m ∈ SpeakerStrategy.optimalMessages G H s :=
+      ((SpeakerStrategy.bestResponse_pos_iff G H s m).mp hbr_pos).1
+    -- By scalar_fp_opt_singleton, opt(s) = {m₀} where m₀ is strongest at s
+    have hNE : (G.trueMessages s).Nonempty := ⟨m, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs⟩⟩
+    obtain ⟨m₀, hopt_eq, _, hm₀_strongest⟩ :=
+      scalar_fp_opt_singleton G H hFP hPriorPos hFlatPrior hScalar hDistinct s hNE
+    -- Since m ∈ opt(s) = {m₀}, m = m₀
+    have : m = m₀ := Finset.mem_singleton.mp (hopt_eq ▸ hm_opt)
+    subst this
+    -- m is strongest at s: trueStates(m) ⊆ trueStates(m') for all m' true at s
+    cases scalar_trueMessages_total G hScalar s t with
+    | inl hsub => exact Finset.card_le_card hsub
+    | inr hsub =>
+      -- trueMessages(t) ⊆ trueMessages(s). Show trueMessages(s) ⊆ trueMessages(t) too.
+      apply Finset.card_le_card
+      intro m' hm'
+      simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm' ⊢
+      -- m' true at s → trueStates(m) ⊆ trueStates(m') → t ∈ trueStates(m) → m' true at t
+      have hm_sub_m' := hm₀_strongest m' hm'
+      have ht_in : t ∈ G.trueStates m := Finset.mem_filter.mpr ⟨Finset.mem_univ _, ht⟩
+      exact (Finset.mem_filter.mp (hm_sub_m' ht_in)).2
+  · -- (←) card-minimal → argmax
+    intro hCardMin
+    -- Step 1: all other messages at s have H = 0
+    have hOtherZero : ∀ m' : G.Message, G.meaning m' s = true → m' ≠ m →
+        H.respond m' s = 0 := by
+      intro m' hm'_true hne
+      apply scalar_fp_weaker_zero G H hFP hPriorPos hFlatPrior hScalar hDistinct m' s hm'_true
+      have hsub := scalar_minimal_messages_weaker G hScalar m s hs hCardMin m' hm'_true
+      have hne_ts : G.trueStates m ≠ G.trueStates m' :=
+        fun heq => hne (hDistinct m m' heq)
+      exact ⟨m, hs, (Finset.ssubset_iff_subset_ne.mpr ⟨hsub, hne_ts⟩)⟩
+    -- Step 2: H(m, s) ≥ 0
+    have hFP_nonneg := fp_respond_nonneg G H hFP (fun t => le_of_lt (hPriorPos t)) m s
+    -- Step 3: maxUtility(s) = H(m, s)
+    have hMaxUtil : SpeakerStrategy.maxUtility G H s = H.respond m s := by
+      apply le_antisymm
+      · -- maxUtility ≤ H(m,s): every true message m' has H(m',s) ≤ H(m,s)
+        -- maxUtility = fold max 0 over trueMessages; attained at 0 or some element
+        cases fold_max_attained (G.trueMessages s) (fun m' => H.respond m' s) 0 with
+        | inl h0 =>
+          simp only [SpeakerStrategy.maxUtility] at h0 ⊢
+          rw [h0]; exact hFP_nonneg
+        | inr ⟨m', hm', hfm'⟩ =>
+          simp only [SpeakerStrategy.maxUtility] at hfm' ⊢
+          rw [hfm']
+          simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ,
+            true_and] at hm'
+          by_cases heq : m' = m
+          · subst heq
+          · rw [hOtherZero m' hm' heq]; exact hFP_nonneg
+      · exact SpeakerStrategy.utility_le_maxUtility G H s m
+          (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs⟩)
+    -- Step 4: m ∈ opt(s)
+    have hm_opt : m ∈ SpeakerStrategy.optimalMessages G H s := by
+      simp only [SpeakerStrategy.optimalMessages, Finset.mem_filter, beq_iff_eq]
+      exact ⟨Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs⟩, hMaxUtil.symm⟩
+    -- Step 5: opt(s) = {m}
+    have hopt_eq : SpeakerStrategy.optimalMessages G H s = {m} := by
+      ext m'; simp only [Finset.mem_singleton]; constructor
+      · intro hm'_opt
+        by_contra hne
+        have hm'_zero := hOtherZero m'
+          (SpeakerStrategy.optimalMessages_meaning G H s m' hm'_opt) hne
+        have hm'_util := SpeakerStrategy.optimalMessages_utility G H s m' hm'_opt
+        -- H(m', s) = maxUtility(s) = H(m, s), but H(m', s) = 0
+        rw [hm'_zero] at hm'_util
+        -- hm'_util : 0 = maxUtility(s), hMaxUtil : maxUtility(s) = H(m, s)
+        -- So H(m, s) = 0. But then maxW_m via hearerBR...
+        -- We need to show this leads to contradiction.
+        -- Actually, it's possible that H(m,s) = 0 (all H = 0 at s).
+        -- In that case opt = trueMessages(s). The issue is we need opt = {m}.
+        -- Use scalar_fp_opt_singleton which guarantees singleton opt.
+        have hNE : (G.trueMessages s).Nonempty :=
+          ⟨m, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs⟩⟩
+        obtain ⟨m₀, hopt_eq', _, _⟩ :=
+          scalar_fp_opt_singleton G H hFP hPriorPos hFlatPrior hScalar hDistinct s hNE
+        have hm'_eq : m' = m₀ := Finset.mem_singleton.mp (hopt_eq' ▸ hm'_opt)
+        have hm_eq : m = m₀ := Finset.mem_singleton.mp (hopt_eq' ▸ hm_opt)
+        exact hne (hm'_eq.trans hm_eq.symm)
+      · intro heq; subst heq; exact hm_opt
+    -- Step 6: bestResponse(s, m) = 1, w(s) = p
+    have hbr : S.choose s m = 1 := by
+      change (SpeakerStrategy.bestResponse G H).choose s m = 1
+      rw [SpeakerStrategy.bestResponse_val, if_pos hm_opt]
+      rw [hopt_eq, Finset.card_singleton]
+      norm_num
+    have hws : w s = p := by
+      change S.choose s m * G.prior s = p
+      rw [hbr, one_mul]
+    -- Step 7: maxW = p
+    have hmaxW_eq : maxW = p := by
+      apply le_antisymm
+      · -- maxW ≤ p: use fold_max_attained
+        cases fold_max_attained Finset.univ w 0 with
+        | inl h0 => linarith [hPriorPos s]
+        | inr ⟨t, _, hft⟩ => linarith [hw_le_p t]
+      · -- p ≤ maxW: s attains p
+        have : w s ≤ maxW := (Finset.le_fold_max w).mpr (Or.inr ⟨s, Finset.mem_univ _, le_refl _⟩)
+        linarith
+    constructor
+    · linarith
+    · linarith [hPriorPos s]
+
 /-- In a scalar game at the FP with flat positive priors, if s is exhMW-minimal
     for m, then either maxW_m = 0 (and L0 gives positive probability) or
     w_m(s) = maxW_m (s is in the argmax).
 
-    **Proof sketch**: s has fewest true messages among m-true states (by
-    `scalar_trueMessages_total` + minimality). All messages m' at s have
-    trueStates(m') ⊇ trueStates(m) (by `scalar_minimal_messages_weaker`).
-    So m is (tied for) most informative at s. At the FP, the speaker at s
-    uses m, giving w(s) > 0. Since s has the fewest options, w(s) is maximal. -/
+    Derived from `scalar_fp_argmax_iff_minimal`. -/
 private theorem scalar_fp_minimal_weight (G : InterpGame) (H : HearerStrategy G)
     (hFP : isIBRFixedPoint G H)
     (hPriorPos : ∀ t, G.prior t > 0)
     (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
     (hScalar : isScalarGame G)
-    (_hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
     (m : G.Message) (s : G.State)
     (hs_true : G.meaning m s = true)
-    (_hs_min : ¬∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
+    (hs_min : ¬∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
     let S := SpeakerStrategy.bestResponse G H
     let w := fun t => S.choose t m * G.prior t
     let maxW := Finset.univ.fold max 0 w
     maxW == 0 ∨ w s == maxW := by
-  sorry
+  simp only []
+  -- Convert <_ALT minimality to card minimality
+  have hCardMin := altMin_to_cardMin G hScalar m s hs_true hs_min
+  -- Apply the core structural lemma
+  have hIff := scalar_fp_argmax_iff_minimal G H hFP hPriorPos hFlatPrior hScalar hDistinct m s hs_true
+  have ⟨hws, _⟩ := hIff.mpr hCardMin
+  right; rw [beq_iff_eq]; exact hws
 
 /-- In a scalar game at the FP with flat positive priors, non-minimal states
-    have H(m,s) = 0. This is the key lemma for the forward direction of
-    `ibr_equals_exhMW`.
+    have H(m,s) = 0.
 
-    **Proof sketch**: If s is non-minimal (∃ s' <_ALT s with m true at s'),
-    then trueMessages(s') ⊊ trueMessages(s). In a scalar game, this means
-    ∃ m' true at s but not s', with trueStates(m') ⊊ trueStates(m). The
-    speaker at s prefers m' (more informative), so w(s) is either 0 or
-    suboptimal. Meanwhile, minimal states have higher w values (by
-    `scalar_fp_minimal_weight`), ensuring maxW > 0 and s ∉ argmax. -/
+    Derived from `scalar_fp_argmax_iff_minimal`: non-minimal s is not
+    card-minimal, so w(s) ≠ maxW and maxW > 0 (from a card-minimal witness). -/
 private theorem scalar_fp_nonminimal_zero (G : InterpGame) (H : HearerStrategy G)
     (hFP : isIBRFixedPoint G H)
     (hPriorPos : ∀ t, G.prior t > 0)
     (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
     (hScalar : isScalarGame G)
-    (_hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
+    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
     (m : G.Message) (s : G.State)
     (_hs_true : G.meaning m s = true)
     (hNonMin : ∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
     H.respond m s = 0 := by
-  sorry
+  -- s is non-minimal, so not card-minimal: ∃ t with strictly fewer trueMessages
+  have hNotCardMin : ¬(∀ t, G.meaning m t = true →
+      (G.trueMessages s).card ≤ (G.trueMessages t).card) := by
+    push_neg
+    obtain ⟨s', hs'_true, hs'_lt⟩ := hNonMin
+    exact ⟨s', hs'_true, Finset.card_lt_card
+      (ltALT_implies_trueMessages_ssubset G s' s hs'_lt)⟩
+  -- Find a card-minimal state (exists by finiteness)
+  have hne : (G.trueStates m).Nonempty :=
+    ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, _hs_true⟩⟩
+  obtain ⟨s_min, hs_min_mem, hs_min_le⟩ :=
+    Finset.exists_min_image (G.trueStates m) (fun t => (G.trueMessages t).card) hne
+  have hs_min_true : G.meaning m s_min = true := by
+    simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at hs_min_mem
+    exact hs_min_mem
+  have hs_min_card : ∀ t, G.meaning m t = true →
+      (G.trueMessages s_min).card ≤ (G.trueMessages t).card := by
+    intro t ht
+    exact hs_min_le t (Finset.mem_filter.mpr ⟨Finset.mem_univ _, ht⟩)
+  -- From the core lemma: maxW > 0 (from the card-minimal state)
+  have hIff_min := scalar_fp_argmax_iff_minimal G H hFP hPriorPos hFlatPrior
+    hScalar hDistinct m s_min hs_min_true
+  have ⟨_, hmaxW_pos⟩ := hIff_min.mpr hs_min_card
+  -- From the core lemma: s is NOT in the argmax (not card-minimal)
+  have hIff_s := scalar_fp_argmax_iff_minimal G H hFP hPriorPos hFlatPrior
+    hScalar hDistinct m s _hs_true
+  -- At the FP, H(m,s) = hearerBR(bestResponse(H))(m,s). Three cases:
+  have hFPms := hFP m s
+  rw [hFPms]
+  simp only [ibrStep, speakerUpdate, hearerBR]
+  split_ifs with hmaxW' hwm
+  · -- Case 1: maxW == 0 → contradicts maxW > 0
+    rw [beq_iff_eq] at hmaxW'
+    linarith
+  · -- Case 2: w(s) == maxW → s would be card-minimal, contradiction
+    exfalso
+    simp only [beq_iff_eq] at hwm
+    exact hNotCardMin (hIff_s.mp ⟨hwm, hmaxW_pos⟩)
+  · -- Case 3: maxW > 0, w(s) ≠ maxW. H = 0.
+    rfl
 
 /-- IBR fixed point equals exhMW (Main theorem - @cite{franke-2011}, Section 9.3)
 

@@ -357,7 +357,7 @@ Unlike tolerance modifiers ("around"), "almost" EXCLUDES the target value
 Empirically, "almost three" means ~2 (below only), favoring LB.
 
 Source: @cite{nouwen-2006} "Remarks on the Polar Orientation of Almost";
-  @cite{penka-2006}; @cite{sadock-1981}.
+  @cite{penka-2006}.
 -/
 def almost : NumeralModifierEntry :=
   { form := "almost"
