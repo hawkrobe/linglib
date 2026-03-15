@@ -471,6 +471,7 @@ import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Coordination
+import Linglib.Fragments.Latvian.IndeterminatePronouns
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Japanese.Determiners
@@ -830,7 +831,7 @@ import Linglib.Phenomena.Comparison.CrossCategorial
 import Linglib.Phenomena.Comparison.Typology
 import Linglib.Phenomena.Comparison.Studies.Kennedy2007Typology
 import Linglib.Phenomena.Comparison.Studies.Stassen1985
-import Linglib.Phenomena.Comparison.Studies.Wellwood2015.Data
+import Linglib.Phenomena.Comparison.Studies.Wellwood2015
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Directives.Studies.RuytenbeekEtAl2017
@@ -924,6 +925,7 @@ import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
+import Linglib.Phenomena.ModalIndefinites.Studies.KratzerShimoyama2002
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Phenomena.Negation.Studies.Rett2026
@@ -1400,7 +1402,6 @@ import Linglib.Theories.Semantics.Degree.Superlative
 import Linglib.Theories.Semantics.Degree.ThanClause
 import Linglib.Theories.Semantics.Degree.Differential
 import Linglib.Theories.Semantics.Degree.DegreeQuestion
-import Linglib.Theories.Semantics.Degree.Wellwood
 import Linglib.Theories.Semantics.Degree.DegreeAbstraction
 import Linglib.Theories.Semantics.Degree.Intervals
 import Linglib.Theories.Semantics.Comparison.Delineation

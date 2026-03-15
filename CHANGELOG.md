@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.284] - 2026-03-15
+
+### Added
+- **Latvian indeterminate pronoun fragment**: new `Fragments/Latvian/IndeterminatePronouns.lean` with 6-row Haspelmath (1997) paradigm data (person/thing/place/time/manner/determiner × interrogative/existential/negPolarity/freeChoice), prefix verification theorems for ne- and jeb- series
+
+### Changed
+- **K&S 2002**: extract Latvian paradigm data from study file to new fragment (single source of truth); fix `sorry` in `distrib_not_entailed_by_nec` (reflexive-only accessibility model); clean up unused hypotheses in `fc_necessity_total`; fix `|>` parse error in `beck_scope_bearing_block`
+
 ## [0.229.283] - 2026-03-15
 
 ### Added
