@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.290] - 2026-03-15
+
+### Added
+- **`EventRelativity.lean` §8a**: `ContentFn` / `CON(e)` as first-class propositional content function (Hacquard 2010 eq. 51); `epistemicFromContent`, `contentDefined`, `binderContent`; `hasContent_from_contentFn` derives `hasContent` from `binderContent` definedness
+- **`EventRelativity.lean` §9a**: Aspect as event binder — `ViewpointAspectB'.bindsTo`, `aspect_always_binds_vp`, `aspect_bound_no_epistemic`; documents the structural mechanism behind `ModalPosition.belowAsp.defaultBinder = .vpEvent`
+- **`EventRelativity.lean` §10c**: Doxastic-modality bridge — `doxasticAnchoring` constructs an `AnchoringFn` from Hintikka-style `AgentAccessRel`; `doxastic_necessity_eq` / `doxastic_possibility_eq` prove event-relative □/◇ equals Hintikka's ∀w'∈DOX / ∃w'∈DOX; `filter_all_eq_all_guard` lemma
+
+### Changed
+- **`EventRelativity.lean`**: tagged 4 unverified page/example citations from Hacquard 2006 dissertation with `-- UNVERIFIED`
+
 ## [0.229.289] - 2026-03-15
 
 ### Added

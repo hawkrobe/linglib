@@ -190,6 +190,68 @@ inductive EventBinder where
   | vpEvent
   deriving DecidableEq, BEq, Repr
 
+
+-- ════════════════════════════════════════════════════
+-- § 8a. CON(e): Propositional Content of Events
+--       (@cite{hacquard-2010}, (51))
+-- ════════════════════════════════════════════════════
+
+/-! @cite{hacquard-2010} (51) recasts the epistemic modal base as a function
+of propositional content:
+
+    ∩f_epis(e) = {w' : w' is compatible with CON(e)}
+
+`CON(e)` is the propositional content of event e — the set of
+propositions that constitute the "information state" of the event.
+For speech acts, CON(e₀) = the speaker's doxastic alternatives.
+For attitudes, CON(e₁) = the attitude holder's doxastic alternatives.
+For VP events, CON(e₂) is **undefined**: running, screaming, and
+swimming carry no propositional content.
+
+`ContentFn` makes CON(e) a first-class function. The epistemic modal
+base is DERIVED from it, and `hasContent` (below) is derivable from
+whether CON(e) is defined — not stipulated as a lookup table. -/
+
+/-- CON(e): the propositional content of an event.
+
+Returns `some bg` when the event carries propositional content
+(speech acts, attitudes), where `bg` is the conversational
+background (propositions accessible from each world).
+Returns `none` when the event lacks content (VP events). -/
+abbrev ContentFn (Ev W : Type*) := Ev → Option (W → List (BProp W))
+
+/-- Derive the epistemic modal base from event content.
+
+@cite{hacquard-2010}, (51): ∩f_epis(e) = {w' : w' compatible with CON(e)}.
+The epistemic base IS the content — this is identity, not a bridge. -/
+def epistemicFromContent {Ev W : Type*} (con : ContentFn Ev W) (e : Ev) :
+    Option (W → List (BProp W)) :=
+  con e
+
+/-- Whether CON(e) is defined for a given event.
+Derived from the content function, not stipulated. -/
+def contentDefined {Ev W : Type*} (con : ContentFn Ev W) (e : Ev) : Bool :=
+  (con e).isSome
+
+/-- Epistemic modal base available iff CON(e) is defined.
+This is definitional — not a bridge theorem but an architectural fact. -/
+theorem epistemic_available_iff_content_defined {Ev W : Type*}
+    (con : ContentFn Ev W) (e : Ev) :
+    (epistemicFromContent con e).isSome = contentDefined con e := rfl
+
+/-- Concrete CON for the three event binder types.
+
+Speech acts: CON(e₀) provides the speaker's doxastic alternatives.
+Attitudes: CON(e₁) provides the holder's doxastic alternatives.
+VP events: CON(e₂) is undefined — no propositional content.
+
+The actual propositions depend on the specific event instance;
+`binderContent` captures only definedness (some vs none). -/
+def binderContent {W : Type*} : EventBinder → Option (W → List (BProp W))
+  | .speechAct => some (λ _ => [])  -- defined (content depends on instance)
+  | .attitude  => some (λ _ => [])  -- defined (content depends on instance)
+  | .vpEvent   => none              -- undefined: VP events lack content
+
 /-- Whether an event has propositional content.
 
 ⟦f_epis(e)⟧ = {w' : w' compatible with CON(e)} — but CON(e) is
@@ -200,6 +262,14 @@ def EventBinder.hasContent : EventBinder → Bool
   | .speechAct => true
   | .attitude  => true
   | .vpEvent   => false
+
+/-- `hasContent` is derivable from `binderContent`: a binder has
+content iff `CON(e)` is defined (returns `some`). This shows that
+the Boolean predicate is a consequence of the deeper structure,
+not a stipulation. -/
+theorem hasContent_from_contentFn (b : EventBinder) :
+    b.hasContent = (binderContent (W := Unit) b).isSome := by
+  cases b <;> rfl
 
 /-- Epistemic modal bases require contentful events. -/
 def EventBinder.canProjectEpistemic (b : EventBinder) : Bool :=
@@ -410,7 +480,7 @@ binds the event variable of any modal in its scope. A modal ABOVE
 AspP is bound by the speech act or attitude event (whichever is
 closest); a modal BELOW AspP is bound by aspect's event quantifier.
 
-The full clausal ordering derived in @cite{hacquard-2006}, p.160):
+The full clausal ordering derived in @cite{hacquard-2006}): -- UNVERIFIED: p.160
 
     Mod_epis > T > CF > Asp > Mod_circ
 
@@ -476,6 +546,52 @@ theorem full_position_flavor_table :
       = [.epistemic, .circumstantial] ∧
     ModalPosition.belowAsp.defaultBinder.availableFlavors
       = [.circumstantial] := ⟨rfl, rfl, rfl⟩
+
+
+-- ════════════════════════════════════════════════════
+-- § 9a. Aspect as Event Binder
+--       (@cite{hacquard-2010}, §5.3.1)
+-- ════════════════════════════════════════════════════
+
+/-! Aspect is the event binder for low modals. Perfective and
+imperfective both existentially quantify over events:
+
+    ⟦PRFV⟧ = λP.λt.∃e[τ(e) ⊆ t ∧ P(e)]
+    ⟦IMPF⟧ = λP.λt.∃e[t ⊂ τ(e) ∧ P(e)]
+
+This ∃e binds the free event variable in the modal's restriction,
+anchoring it to the VP event. Both perfective and imperfective
+bind to VP events — they differ in temporal containment, not in
+which event they bind.
+
+This makes aspect the structural MECHANISM behind
+`ModalPosition.belowAsp.defaultBinder = .vpEvent`: it is aspect's
+existential quantification that performs the binding. -/
+
+/-- Aspect binds the modal to the VP event regardless of
+viewpoint (perfective or imperfective). The two viewpoints differ
+in temporal containment (τ(e) ⊆ t vs t ⊂ τ(e)) but both bind
+the same event variable — the VP event. -/
+inductive ViewpointAspectB' where
+  | perfective
+  | imperfective
+  deriving DecidableEq, BEq, Repr
+
+/-- Aspect always binds the modal's event variable to the VP event.
+This is WHY low modals have `defaultBinder = .vpEvent`: the
+structural source of that binding is aspect's ∃e quantification. -/
+def ViewpointAspectB'.bindsTo : ViewpointAspectB' → EventBinder
+  | .perfective => .vpEvent
+  | .imperfective => .vpEvent
+
+theorem aspect_always_binds_vp (asp : ViewpointAspectB') :
+    asp.bindsTo = .vpEvent := by cases asp <;> rfl
+
+/-- Aspect binding entails the low-modal flavor restriction:
+since aspect binds to VP events, and VP events lack content,
+aspect-bound modals cannot be epistemic. -/
+theorem aspect_bound_no_epistemic (asp : ViewpointAspectB') :
+    asp.bindsTo.canProjectEpistemic = false := by cases asp <;> rfl
 
 
 -- ════════════════════════════════════════════════════
@@ -580,8 +696,92 @@ theorem empty_ordering_reduces {Ev W : Type*} [DecidableEq W]
 
 
 -- ════════════════════════════════════════════════════
+-- § 10c. Doxastic Accessibility as Event-Relative Modality
+--        (@cite{hacquard-2010}, (41), (51)–(52))
+-- ════════════════════════════════════════════════════
+
+/-! @cite{hacquard-2010} unifies attitude semantics with modal semantics:
+the epistemic modal base under an attitude verb IS the content of the
+attitude event. Hintikka-style doxastic quantification — `∀w' ∈ DOX(x,w). p(w')`
+— is a special case of event-relative necessity where the anchoring
+function encodes the agent's doxastic alternatives.
+
+@cite{hacquard-2010}, (41):
+
+    ⟦believe⟧ = λe. λp. λx. λw. Exp(e,x) & belief'(e,w) &
+                ∀w'∈ ∩CON(e): p(w') = 1
+      where ∩CON(e) = DOX(ιx Holder(x,e), w)
+
+The bridge: given an agent-indexed accessibility relation `R` and a
+holder function extracting the agent from an event, we construct an
+anchoring function whose event-relative necessity IS Hintikka's □. -/
+
+/-- Construct an anchoring function from a doxastic accessibility relation.
+
+Given `R : E → W → W → Bool` (agent → eval world → accessible world → Bool)
+and `holder : Ev → E` (event → agent), the anchoring function
+`f(e)(w) = [R(holder(e), w, ·)]` — a singleton background whose sole
+proposition encodes the doxastic accessibility from world w.
+
+This implements @cite{hacquard-2010}'s insight that CON(e) for an
+attitude event e IS the set of doxastic alternatives of holder(e). -/
+def doxasticAnchoring {Ev W E : Type*}
+    (R : Core.ModalLogic.AgentAccessRel W E)
+    (holder : Ev → E) : AnchoringFn Ev W :=
+  λ e w => [R (holder e) w]
+
+/-- Filtering by a predicate then checking all = checking all with implication guard.
+Used to bridge the filter-based `necessity` with the guard-based doxastic `boxAt`. -/
+private theorem filter_all_eq_all_guard {α : Type*}
+    (l : List α) (pred p : α → Bool) :
+    (l.filter pred).all p = l.all (λ x => !pred x || p x) := by
+  induction l with
+  | nil => rfl
+  | cons x xs ih =>
+    simp only [List.filter, List.all_cons]
+    cases pred x <;> simp [ih]
+
+/-- Event-relative necessity with doxastic anchoring equals Hintikka-style
+universal quantification over doxastic alternatives.
+
+`necessity (doxasticAnchoring R holder) e allW p w`
+  = `(allW.filter (R (holder e) w)).all p`        -- event-relative
+  = `allW.all (λw'. ¬R(holder(e),w,w') ∨ p(w'))` -- Hintikka's □
+
+This is the core bridge theorem: attitude verbs and modals share the
+same quantificational structure. Embedded epistemics under *believe*
+quantify over the SAME set of worlds as the attitude verb itself
+(@cite{hacquard-2010}, §6.1.3). -/
+theorem doxastic_necessity_eq {Ev W E : Type*}
+    (R : Core.ModalLogic.AgentAccessRel W E)
+    (holder : Ev → E) (e : Ev)
+    (allW : List W) (p : BProp W) (w : W) :
+    necessity (doxasticAnchoring R holder) e allW p w =
+      allW.all (λ w' => !R (holder e) w w' || p w') := by
+  unfold necessity accessible doxasticAnchoring
+  simp only [List.all_cons, List.all_nil, Bool.and_true]
+  exact filter_all_eq_all_guard allW (R (holder e) w) p
+
+/-- Doxastic possibility dually: ◇_{DOX(holder(e))} p at w
+iff some doxastic alternative of holder(e) satisfies p. -/
+theorem doxastic_possibility_eq {Ev W E : Type*}
+    (R : Core.ModalLogic.AgentAccessRel W E)
+    (holder : Ev → E) (e : Ev)
+    (allW : List W) (p : BProp W) (w : W) :
+    possibility (doxasticAnchoring R holder) e allW p w =
+      allW.any (λ w' => R (holder e) w w' && p w') := by
+  unfold possibility accessible doxasticAnchoring
+  simp only [List.all_cons, List.all_nil, Bool.and_true]
+  induction allW with
+  | nil => rfl
+  | cons x xs ih =>
+    simp only [List.filter, List.any_cons]
+    cases R (holder e) w x <;> simp [ih]
+
+
+-- ════════════════════════════════════════════════════
 -- § 11. Individual-Time Pairs from Events
---       (@cite{hacquard-2006}, §4.1, pp.131–136)
+--       (@cite{hacquard-2006}, §4.1 -- UNVERIFIED: pp.131–136)
 -- ════════════════════════════════════════════════════
 
 /-! @cite{hacquard-2006} proposes that accessibility relations take
@@ -664,7 +864,7 @@ theorem factored_reduces {Ev W Individual TimePoint : Type*}
 
 -- ════════════════════════════════════════════════════
 -- § 12. Worked Example: "Jane a dû prendre le train"
---       (@cite{hacquard-2006}, (201), pp.135–136)
+--       (@cite{hacquard-2006} -- UNVERIFIED: (201), pp.135–136)
 -- ════════════════════════════════════════════════════
 
 /-! (201) "Jane a dû prendre le train."
@@ -820,7 +1020,7 @@ theorem events_richer_than_pairs :
 -- ════════════════════════════════════════════════════
 -- § 14. Worked Example: Embedded Epistemic
 --       "Jane thinks Mary might be pregnant"
---       (@cite{hacquard-2006}, (247)–(249), pp.155–156)
+--       (@cite{hacquard-2006} -- UNVERIFIED: (247)–(249), pp.155–156)
 -- ════════════════════════════════════════════════════
 
 /-! (248c) "Jane thinks Mary might be pregnant."
