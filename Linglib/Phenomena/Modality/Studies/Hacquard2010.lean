@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 
 /-!
 # Event-Relative Modality
-@cite{hacquard-2010} @cite{kratzer-1981} @cite{cinque-2004} @cite{rizzi-1978}
+@cite{hacquard-2010} @cite{kratzer-1981} @cite{cinque-1999} @cite{cinque-2004} @cite{rizzi-1978}
 
 ## Part I: Italian Restructuring
 
@@ -24,12 +24,13 @@ This is the key empirical argument for event-relative modality: the same
 lexical modal (*potere*) shows different flavor availability depending
 purely on its syntactic position, explained by content licensing.
 
-## Part II: Position-Based Flavor Availability
+## Part II: Event Projection and Unattested Pairs
 
-Derives from EventRelativity which modal flavors are available at each
-structural position. A modal's fragment entry lists its FULL flavor
-inventory across all positions; at any given position, content licensing
-and addressee licensing act as filters.
+@cite{hacquard-2010}, §4.2: modals are keyed to (individual, time) pairs,
+but not all combinations are attested. A modal must be keyed to the
+participants and running time of the MOST LOCAL event. Event projection
+(holder(e), τ(e)) derives the correct pair for each event binder,
+explaining why certain pairs are systematically absent.
 -/
 
 namespace Phenomena.Modality.Studies.Hacquard2010
@@ -144,113 +145,95 @@ theorem both_modals_restructure :
     potere.canRestructure = true ∧ dovere.canRestructure = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- Part II: Position-Based Flavor Availability
+-- Part II: Event Projection and Unattested Pairs
 -- ============================================================================
 
 -- ============================================================================
--- § 6: Union of Position-Available Flavors
+-- § 6: The Unattested Pairs Restriction
 -- ============================================================================
 
-/-- The full set of modal flavors available across ALL positions and
-contexts: the union of flavors from high (matrix), high (embedded),
-and low positions.
+/-! @cite{hacquard-2010}, §4.2: modals are keyed to (individual, time)
+pairs, but not all combinations of individuals and times are attested.
 
-This should equal the set of flavors listed in the fragment entry
-for any given modal — the fragment entry is the MAXIMUM over all
-structural contexts. -/
-def allPositionFlavors : List ModalFlavor :=
-  -- High matrix: speech act binder → epistemic, circumstantial, deontic
-  ModalPosition.aboveAsp.defaultBinder.fullAvailableFlavors ++
-  -- Low: VP event binder → circumstantial only
-  ModalPosition.belowAsp.defaultBinder.fullAvailableFlavors
+| Individual | Time | Attested? | Example |
+|-----------|------|-----------|---------|
+| speaker | speech time | ✓ | epistemic *have to* |
+| attitude holder | attitude time | ✓ | embedded epistemic |
+| VP participant | VP time | ✓ | root *have to* |
+| speaker | VP time | ✗ | — |
+| VP participant | speech time | ✗ | — |
 
-/-- High matrix position contributes epistemic, circumstantial, and
-deontic (from the speech act's addressee). -/
-theorem high_matrix_flavors :
-    ModalPosition.aboveAsp.defaultBinder.fullAvailableFlavors =
-      [.epistemic, .circumstantial, .deontic] := rfl
+The missing diagonal pairs (speaker + VP time, subject + speech time)
+are explained by event projection: each event binder projects a FIXED
+(individual, time) pair. There is no event that pairs the speaker with
+the VP time, or the subject with the speech time. -/
 
-/-- Low position contributes only circumstantial. -/
-theorem low_flavors :
-    ModalPosition.belowAsp.defaultBinder.fullAvailableFlavors =
-      [.circumstantial] := rfl
+/-- The three event binders each project a specific (individual, time)
+pair. This is why not all combinations are attested — pairs not
+projected by any event are systematically absent.
 
-/-- The union covers all three flavors. -/
-theorem union_covers_all_three :
-    (.epistemic ∈ allPositionFlavors) ∧
-    (.circumstantial ∈ allPositionFlavors) ∧
-    (.deontic ∈ allPositionFlavors) := by
-  unfold allPositionFlavors
-  refine ⟨?_, ?_, ?_⟩ <;> simp [high_matrix_flavors, low_flavors]
+@cite{hacquard-2010}, §4.2: "a modal seems to be relative to an
+individual and a time, but not all time/individual pairs are attested.
+Instead, the modal has to be keyed to the participants and running
+time of the most local event." -/
+theorem event_projection_constrains_pairs :
+    -- Speech event → speaker-oriented, speech time
+    ModalPosition.aboveAsp.defaultBinder = .speechAct ∧
+    -- Attitude event → attitude holder, attitude time
+    ModalPosition.aboveAsp.withAttitude = .attitude ∧
+    -- VP event → VP participant, VP time
+    ModalPosition.belowAsp.defaultBinder = .vpEvent :=
+  ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 7: Fragment Entry Verification
+-- § 7: Content Licensing Derives Position–Flavor Correlation
 -- ============================================================================
 
-/-- A modal with all three flavors (like *must*, *can*): each flavor
-is derivable from some position.
+/-- The paper's central claim: the position → flavor correlation
+is DERIVED from content licensing, not stipulated.
 
-- Epistemic: high position (speech act is contentful)
-- Circumstantial: any position (always available)
-- Deontic: high position (speech act has addressee) -/
-theorem three_flavor_modal_derivable :
-    -- Epistemic: available at high position (content licensing)
-    ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true ∧
-    -- Circumstantial: available at any position
-    ModalPosition.aboveAsp.defaultBinder.canProjectCircumstantial = true ∧
-    ModalPosition.belowAsp.defaultBinder.canProjectCircumstantial = true ∧
-    -- Deontic: available when binder has addressee (speech act)
-    ModalPosition.aboveAsp.defaultBinder.hasAddressee = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+High modals (above AspP) bind to contentful events → epistemic
+available. Low modals (below AspP) bind by aspect to the VP event →
+no content → no epistemic. This dissolves @cite{cinque-1999}'s puzzle
+without dedicated functional heads for each modal flavor.
 
-/-- A modal with only [epistemic] (like *might*): derived from
-high position content licensing. Note that *might* being
-epistemic-only is a LEXICAL restriction (it selects for epistemic
-flavor), not a structural one — structurally, high position allows
-both epistemic and circumstantial. -/
-theorem epistemic_only_derivable :
-    ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true := rfl
-
-/-- A modal with [deontic, circumstantial] but no epistemic (like
-*have to*): the modal selects for non-epistemic flavors and occupies
-the low position, where content licensing independently blocks
-epistemic. -/
-theorem non_epistemic_modal_consistent :
+@cite{hacquard-2010}, §6.3: "high modals tend to be epistemic and
+low modals circumstantial, without having to stipulate two separate
+entries for each modal." -/
+theorem position_flavor_derived_not_stipulated :
+    -- Low: VP event is contentless → no epistemic (content licensing)
+    ModalPosition.belowAsp.defaultBinder.hasContent = false ∧
     ModalPosition.belowAsp.defaultBinder.canProjectEpistemic = false ∧
-    ModalPosition.belowAsp.defaultBinder.canProjectCircumstantial = true :=
-  ⟨rfl, rfl⟩
+    -- High: speech act is contentful → epistemic available
+    ModalPosition.aboveAsp.defaultBinder.hasContent = true ∧
+    ModalPosition.aboveAsp.defaultBinder.canProjectEpistemic = true ∧
+    -- Embedded high: attitude is contentful → epistemic still available
+    ModalPosition.aboveAsp.withAttitude.hasContent = true ∧
+    ModalPosition.aboveAsp.withAttitude.canProjectEpistemic = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 8: Position Restricts Fragment Readings
+-- § 8: Events Carry More Than (Individual, Time) Pairs
 -- ============================================================================
 
-/-- The key insight: a modal's fragment entry lists its FULL flavor
-inventory, but at any given structural position, only a SUBSET is
-available. Content licensing acts as a FILTER.
+/-- Events carry propositional content that (individual, time) pairs
+do not. This is the key advantage of event-relative modality over
+pair-relative modality: the content licensing predicate `hasContent`
+discriminates events even when they project to similar pairs.
 
-At low position: [epistemic, deontic, circumstantial] is filtered
-to [circumstantial] — content licensing removes epistemic (no content)
-and addressee licensing removes deontic (no addressee). -/
-theorem low_position_filters :
-    -- Low position: only circumstantial survives
-    ModalPosition.belowAsp.defaultBinder.fullAvailableFlavors =
-      [.circumstantial] := rfl
-
-/-- At high position: all flavors survive (speech act has both
-content and addressee). -/
-theorem high_position_preserves :
-    ModalPosition.aboveAsp.defaultBinder.fullAvailableFlavors =
-      [.epistemic, .circumstantial, .deontic] := rfl
-
-/-- The filtering relationship: high position flavors INCLUDE all
-the flavors available at low position (monotonicity). Moving a
-modal higher can only ADD flavors, never remove them. -/
-theorem high_subsumes_low :
-    ∀ f : ModalFlavor,
-      f ∈ ModalPosition.belowAsp.defaultBinder.fullAvailableFlavors →
-      f ∈ ModalPosition.aboveAsp.defaultBinder.fullAvailableFlavors := by
-  intro f hf
-  simp [low_position_filters] at hf
-  simp [high_position_preserves, hf]
+@cite{hacquard-2010}, §6: "what sets speech and attitude events
+apart from ordinary events is (what I am calling) their associated
+propositional 'content', which I take to be crucial for licensing
+epistemic modal bases." -/
+theorem events_richer_than_pairs :
+    -- Content licensing discriminates event binders
+    EventBinder.speechAct.hasContent = true ∧
+    EventBinder.attitude.hasContent = true ∧
+    EventBinder.vpEvent.hasContent = false ∧
+    -- Yet speech acts and attitudes yield the SAME available flavors
+    -- (both are contentful). Pairs would lose this shared structure.
+    EventBinder.speechAct.availableFlavors =
+      EventBinder.attitude.availableFlavors :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Modality.Studies.Hacquard2010

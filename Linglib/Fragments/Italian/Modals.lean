@@ -4,7 +4,9 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 /-!
 # Italian Modal Auxiliaries
 
-@cite{hacquard-2010} @cite{cinque-2004} @cite{hacquard-2006} @cite{rizzi-1978}Italian modal auxiliaries *dovere* ('must') and *potere* ('can'), with
+@cite{hacquard-2010} @cite{cinque-2004} @cite{hacquard-2006} @cite{rizzi-1978}
+
+Italian modal auxiliaries *dovere* ('must') and *potere* ('can'), with
 their behavior under restructuring. These are the primary empirical
 evidence for @cite{hacquard-2006}'s event-relative analysis: when
 Italian modals appear in restructuring configurations (syntactically
@@ -111,9 +113,10 @@ structure RestructuringExample where
   availableFlavors : List ModalFlavor
   deriving Repr
 
-/-- (17): Non-restructured *potere* — epistemic.
+/-- Non-restructured *potere* — epistemic.
     "Gianni può essere intelligente" = Gianni may be intelligent.
-    No clitic climbing; epistemic reading available. -/
+    No clitic climbing; epistemic reading available.
+    @cite{hacquard-2006}, Ch. 4. -/
 def potere_high : RestructuringExample where
   italian := "Gianni può essere intelligente."
   gloss := "Gianni can be intelligent."
@@ -121,9 +124,10 @@ def potere_high : RestructuringExample where
   diagnostic := none
   availableFlavors := [.epistemic]
 
-/-- (18): Restructured *potere* — root only.
+/-- Restructured *potere* — root only.
     "Lo posso fare" = I can do it (clitic climbing).
-    Clitic climbing diagnoses low position; epistemic unavailable. -/
+    Clitic climbing diagnoses low position; epistemic unavailable.
+    @cite{rizzi-1978}; @cite{hacquard-2006}, Ch. 4. -/
 def potere_low_clitic : RestructuringExample where
   italian := "Lo posso fare."
   gloss := "It I-can do."
@@ -131,9 +135,10 @@ def potere_low_clitic : RestructuringExample where
   diagnostic := some .cliticClimbing
   availableFlavors := [.circumstantial]
 
-/-- (13): Non-restructured *dovere* — epistemic.
+/-- Non-restructured *dovere* — epistemic.
     "Gianni deve essere a casa" = Gianni must be at home.
-    Epistemic necessity. -/
+    Epistemic necessity.
+    @cite{hacquard-2006}, Ch. 4. -/
 def dovere_high : RestructuringExample where
   italian := "Gianni deve essere a casa."
   gloss := "Gianni must be at home."
@@ -141,9 +146,10 @@ def dovere_high : RestructuringExample where
   diagnostic := none
   availableFlavors := [.epistemic]
 
-/-- (14): Restructured *dovere* — deontic/root only.
-    "É dovuto andare a casa" = He had to go home.
-    Auxiliary change (*essere* from unaccusative *andare*). -/
+/-- Restructured *dovere* — deontic/root only.
+    "È dovuto andare a casa" = He had to go home.
+    Auxiliary change (*essere* from unaccusative *andare*).
+    @cite{rizzi-1978}; @cite{hacquard-2006}, Ch. 4. -/
 def dovere_low_aux : RestructuringExample where
   italian := "È dovuto andare a casa."
   gloss := "He had-to go home."
