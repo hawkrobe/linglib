@@ -33,12 +33,10 @@ Goodman's result: "threshold semantics + uncertainty = graded semantics".
 
 -/
 
+import Linglib.Core.FinitePMF
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.GradedProposition
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Prod
-import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
 namespace Semantics.Montague.BayesianSemantics
@@ -46,57 +44,8 @@ namespace Semantics.Montague.BayesianSemantics
 open Core.Proposition
 open Core.GradedProposition
 
--- Finite PMF (Simple Version)
-
-/--
-A finite probability mass function over type Θ.
-
-This is a simplified PMF for finite types using rationals.
-Values are non-negative and sum to 1.
-
-For full Mathlib PMF integration with ℝ≥0∞, see:
-`Mathlib.Probability.ProbabilityMassFunction.Basic`
--/
-structure FinitePMF (Θ : Type*) [Fintype Θ] where
-  /-- Probability mass function -/
-  mass : Θ → ℚ
-  /-- All masses are non-negative -/
-  mass_nonneg : ∀ θ, 0 ≤ mass θ := by intros; decide
-  /-- Masses sum to 1 -/
-  mass_sum_one : Finset.sum Finset.univ mass = 1 := by native_decide
-
-namespace FinitePMF
-
-variable {Θ : Type*} [Fintype Θ] [DecidableEq Θ]
-
-/-- Point mass at a single value -/
-def pure (θ₀ : Θ) : FinitePMF Θ where
-  mass := λ θ => if θ = θ₀ then 1 else 0
-  mass_nonneg := λ θ => by split_ifs <;> decide
-  mass_sum_one := by
-    rw [Finset.sum_eq_single θ₀]
-    · simp
-    · intro b _ hb; simp [hb]
-    · intro h; exact (h (Finset.mem_univ _)).elim
-
-/-- Expected value of a function under this distribution -/
-def expect (pmf : FinitePMF Θ) (f : Θ → ℚ) : ℚ :=
-  Finset.sum Finset.univ λ θ => pmf.mass θ * f θ
-
-/-- Expected value of an indicator (probability of event) -/
-def prob (pmf : FinitePMF Θ) (event : Θ → Bool) : ℚ :=
-  pmf.expect λ θ => if event θ then 1 else 0
-
-/-- Expected value of pure distribution is the value at that point -/
-theorem expect_pure (θ₀ : Θ) (f : Θ → ℚ) :
-    (pure θ₀).expect f = f θ₀ := by
-  simp only [expect, pure]
-  rw [Finset.sum_eq_single θ₀]
-  · simp
-  · intro b _ hb; simp [hb]
-  · intro h; exact (h (Finset.mem_univ _)).elim
-
-end FinitePMF
+-- Use the canonical FinitePMF from Core
+open Core
 
 -- Parameterized Predicates
 

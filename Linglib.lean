@@ -136,7 +136,8 @@ import Linglib.Core.Continuation
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.VarAssignment
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
-import Linglib.Core.Lexical.PersonCategory
+import Linglib.Core.Person.Features
+import Linglib.Core.Person.Category
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
 import Linglib.Core.Efficiency
@@ -144,6 +145,7 @@ import Linglib.Core.SearchEfficiency
 import Linglib.Core.InformationTheory
 import Linglib.Core.GeneralisedSurprisal
 import Linglib.Core.Distributions
+import Linglib.Core.FinitePMF
 import Linglib.Core.Divergence
 import Linglib.Core.Inheritance
 import Linglib.Core.Morphology.MorphProfile

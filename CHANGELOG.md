@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.287] - 2026-03-15
+
+### Changed
+- **Rename `Core.FinDist` → `Core.FinitePMF`**: standard PMF terminology; promote `pure`, `expect`, `prob`, `expect_pure` from `BayesianSemantics.lean`'s local duplicate into the canonical `Core/FinitePMF.lean`; `BayesianSemantics.lean` now imports `Core.FinitePMF` via `open Core` instead of defining its own copy; all downstream consumers updated (`ProbabilisticAnswerhood`, `IppolitoKissWilliams2025`)
+
+## [0.229.286] - 2026-03-15
+
+### Added
+- **`Core.FinitePMF`** (originally `Core.FinDist`): new bundled type for normalized, non-negative probability distributions over finite types (`FinitePMF W` with `mass : W → ℚ`, `mass_nonneg`, `mass_sum_one`); `CoeFun` + `Coe` instances for seamless use as both `W → ℚ` functions and in modules expecting bare function types; `uniform` constructor for equiprobable distributions
+
+### Changed
+- **`ProbabilisticAnswerhood`**: `Prior W` is now `Core.FinitePMF W` instead of bare `W → ℚ` — normalization and non-negativity proofs are bundled at construction time; `probAnswersFull_eq_simple_binary` no longer needs `hNN`/`hNorm` hypotheses (uses `prior.mass_nonneg`/`prior.mass_sum_one` directly); 8 private helper lemmas simplified (drop `hNN`/`hNorm` parameters)
+- **`IppolitoKissWilliams2025`**: `prior` construction updated to `FinitePMF` `where` syntax with proofs; 4 private bridge lemmas updated from `W → ℚ` to `Prior W`; DTS interop via `prior.mass` for `DTSContext` construction
+
 ## [0.229.285] - 2026-03-15
 
 ### Added

@@ -1,3 +1,4 @@
+import Linglib.Core.FinitePMF
 import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
 import Mathlib.Algebra.Order.Field.Basic
 
@@ -45,8 +46,12 @@ open Discourse
 
 -- Conditional Probability Infrastructure
 
-/-- A prior distribution as a mass function over worlds. -/
-abbrev Prior (W : Type*) := W → ℚ
+/-- A prior distribution as a normalized mass function over worlds.
+
+Bundled with non-negativity and normalization (∑ w, mass w = 1) proofs
+via `Core.FinitePMF`. Use `prior w` to access the mass at world `w`
+(via `CoeFun`). -/
+abbrev Prior (W : Type*) [Fintype W] := Core.FinitePMF W
 
 /-- Compute P(φ) - probability that φ is true.
 
@@ -165,46 +170,44 @@ def probAnswersFull {W : Type*} [Fintype W]
 
 private lemma probOfProp_complement_add' {W : Type*} [Fintype W]
     (prior : Prior W) (f : W → Bool) :
-    probOfProp prior f + probOfProp prior (fun w => !f w) = ∑ w : W, prior w := by
-  unfold probOfProp; rw [← Finset.sum_add_distrib]
-  apply Finset.sum_congr rfl; intro w _
-  by_cases hf : f w = true <;> simp [hf]
+    probOfProp prior f + probOfProp prior (fun w => !f w) = 1 := by
+  have h : probOfProp prior f + probOfProp prior (fun w => !f w) = ∑ w : W, prior w := by
+    unfold probOfProp; rw [← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl; intro w _
+    by_cases hf : f w = true <;> simp [hf]
+  rw [h]; exact prior.mass_sum_one
 
 private lemma probOfProp_nonneg' {W : Type*} [Fintype W]
-    (prior : Prior W) (f : W → Bool)
-    (hNN : ∀ w, 0 ≤ prior w) : 0 ≤ probOfProp prior f := by
+    (prior : Prior W) (f : W → Bool) : 0 ≤ probOfProp prior f := by
   unfold probOfProp
   exact Finset.sum_nonneg fun w _ => by
-    by_cases hf : f w = true <;> simp [hf]; exact hNN w
+    by_cases hf : f w = true <;> simp [hf]; exact prior.mass_nonneg w
 
 private lemma probOfProp_and_le' {W : Type*} [Fintype W]
-    (prior : Prior W) (f g : W → Bool)
-    (hNN : ∀ w, 0 ≤ prior w) :
+    (prior : Prior W) (f g : W → Bool) :
     probOfProp prior (fun w => g w && f w) ≤ probOfProp prior f := by
   unfold probOfProp; apply Finset.sum_le_sum; intro w _
-  by_cases hg : g w = true <;> by_cases hf : f w = true <;> simp [hg, hf]; exact hNN w
+  by_cases hg : g w = true <;> by_cases hf : f w = true <;> simp [hg, hf]; exact prior.mass_nonneg w
 
 private lemma pp_pos_of_cond_gt' {W : Type*} [Fintype W]
     (prior : Prior W) (f g : W → Bool)
-    (hNN : ∀ w, 0 ≤ prior w)
     (hGt : conditionalProb prior g f > probOfProp prior f) :
     probOfProp prior g > 0 := by
   by_contra h_le; push_neg at h_le
-  have := le_antisymm h_le (probOfProp_nonneg' prior g hNN)
+  have := le_antisymm h_le (probOfProp_nonneg' prior g)
   simp only [conditionalProb, this, lt_irrefl, ↓reduceIte] at hGt
-  linarith [probOfProp_nonneg' prior f hNN]
+  linarith [probOfProp_nonneg' prior f]
 
 private lemma pf_pos_of_cond_gt' {W : Type*} [Fintype W]
     (prior : Prior W) (f g : W → Bool)
-    (hNN : ∀ w, 0 ≤ prior w)
     (hGt : conditionalProb prior g f > probOfProp prior f) :
     probOfProp prior f > 0 := by
-  have hPg := pp_pos_of_cond_gt' prior f g hNN hGt
+  have hPg := pp_pos_of_cond_gt' prior f g hGt
   by_contra h_le; push_neg at h_le
-  have h_eq := le_antisymm h_le (probOfProp_nonneg' prior f hNN)
+  have h_eq := le_antisymm h_le (probOfProp_nonneg' prior f)
   have hAnd_eq : probOfProp prior (fun w => g w && f w) = 0 :=
-    le_antisymm (by linarith [probOfProp_and_le' prior f g hNN])
-               (probOfProp_nonneg' prior _ hNN)
+    le_antisymm (by linarith [probOfProp_and_le' prior f g])
+               (probOfProp_nonneg' prior _)
   simp only [conditionalProb, hPg, ↓reduceIte] at hGt
   rw [hAnd_eq] at hGt; simp at hGt; linarith
 
@@ -226,22 +229,20 @@ private lemma condProb_complement_sum' {W : Type*} [Fintype W]
 
 private lemma cond_complement_lt' {W : Type*} [Fintype W]
     (prior : Prior W) (p f : W → Bool)
-    (hNN : ∀ w, 0 ≤ prior w) (hNorm : ∑ w : W, prior w = 1)
     (hGt : conditionalProb prior p f > probOfProp prior f) :
     conditionalProb prior p (fun w => !f w) < probOfProp prior (fun w => !f w) := by
-  have hPp := pp_pos_of_cond_gt' prior f p hNN hGt
+  have hPp := pp_pos_of_cond_gt' prior f p hGt
   linarith [condProb_complement_sum' prior p f hPp,
-            probOfProp_complement_add' prior f, hNorm]
+            probOfProp_complement_add' prior f]
 
 private lemma bayes_factor_dominates' {W : Type*} [Fintype W]
     (prior : Prior W) (p f : W → Bool)
-    (hNN : ∀ w, 0 ≤ prior w) (hNorm : ∑ w : W, prior w = 1)
     (hGt : conditionalProb prior p f > probOfProp prior f)
     (hNfPos : probOfProp prior (fun w => !f w) > 0) :
     conditionalProb prior p f / probOfProp prior f >
     conditionalProb prior p (fun w => !f w) / probOfProp prior (fun w => !f w) := by
-  have hfPos := pf_pos_of_cond_gt' prior f p hNN hGt
-  have hCondLt := cond_complement_lt' prior p f hNN hNorm hGt
+  have hfPos := pf_pos_of_cond_gt' prior f p hGt
+  have hCondLt := cond_complement_lt' prior p f hGt
   linarith [(one_lt_div hfPos).mpr hGt, (div_lt_one hNfPos).mpr hCondLt]
 
 private lemma and_and_iff_or {a b x c d y : Bool}
@@ -264,9 +265,7 @@ Without normalization, the theorem is false: if ∑ prior < 1, both
 alternatives can have their probability raised simultaneously with equal
 Bayes factors, making `probAnswersFull` false while `probAnswers` is true. -/
 theorem probAnswersFull_eq_simple_binary {W : Type*} [Fintype W]
-    (p : W → Bool) (h : W → Bool) (prior : Prior W)
-    (hNN : ∀ w, 0 ≤ prior w)
-    (hNorm : ∑ w : W, prior w = 1) :
+    (p : W → Bool) (h : W → Bool) (prior : Prior W) :
     probAnswersFull p (Issue.polar h) prior =
     probAnswers p (Issue.polar h) prior := by
   -- Both are Bool; prove they agree by showing true ↔ true
@@ -318,7 +317,7 @@ theorem probAnswersFull_eq_simple_binary {W : Type*} [Fintype W]
   apply and_and_iff_or
   · -- dH = true → dB (prior positivity) = true
     intro hA; rw [decide_eq_true_eq] at hA ⊢
-    exact pf_pos_of_cond_gt' prior h p hNN hA
+    exact pf_pos_of_cond_gt' prior h p hA
   · -- dH = true → bayesCheck_h = true
     intro hA; rw [decide_eq_true_eq] at hA
     split
@@ -326,11 +325,11 @@ theorem probAnswersFull_eq_simple_binary {W : Type*} [Fintype W]
     · split
       · -- P(¬h) > 0: Bayes factor dominates under normalization
         rename_i _ hNhPos; rw [decide_eq_true_eq]
-        exact bayes_factor_dominates' prior p h hNN hNorm hA hNhPos
+        exact bayes_factor_dominates' prior p h hA hNhPos
       · rfl  -- P(¬h) = 0: vacuous
   · -- dNH = true → dD (prior positivity) = true
     intro hC; rw [decide_eq_true_eq] at hC ⊢
-    exact pf_pos_of_cond_gt' prior (fun w => !h w) p hNN hC
+    exact pf_pos_of_cond_gt' prior (fun w => !h w) p hC
   · -- dNH = true → bayesCheck_nh = true
     intro hC; rw [decide_eq_true_eq] at hC
     split
@@ -338,12 +337,12 @@ theorem probAnswersFull_eq_simple_binary {W : Type*} [Fintype W]
     · split
       · -- P(h) > 0: Bayes factor via complement argument
         rename_i _ hHPos; rw [decide_eq_true_eq]
-        have hPp := pp_pos_of_cond_gt' prior (fun w => !h w) p hNN hC
+        have hPp := pp_pos_of_cond_gt' prior (fun w => !h w) p hC
         have hComp := condProb_complement_sum' prior p h hPp
         have hAdd := probOfProp_complement_add' prior h
-        have pos_nh := pf_pos_of_cond_gt' prior (fun w => !h w) p hNN hC
+        have pos_nh := pf_pos_of_cond_gt' prior (fun w => !h w) p hC
         have cp_h_lt : conditionalProb prior p h < probOfProp prior h := by
-          linarith [hComp, hAdd, hNorm]
+          linarith [hComp, hAdd]
         linarith [(div_lt_one hHPos).mpr cp_h_lt, (one_lt_div pos_nh).mpr hC]
       · rfl  -- P(h) = 0: vacuous
 
