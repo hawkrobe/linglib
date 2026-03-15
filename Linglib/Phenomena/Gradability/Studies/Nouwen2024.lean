@@ -672,4 +672,116 @@ theorem seq_pleasantly_prefers_moderate :
     (seqAdjCfg muPleasant).L1 .warm (deg 6) > (seqAdjCfg muPleasant).L1 .warm (deg 9) := by
   rsa_predict
 
+-- ============================================================================
+-- Zwicky's Generalization: RSA-Derived Predictions
+-- ============================================================================
+
+/-! ## Zwicky Vacuity: Derived from RSA
+
+@cite{nouwen-2024} §5: Positive modal adverbs (*usually, *expectedly) cannot
+serve as intensifiers because their evaluative measure is constant across
+heights, providing no discriminating information about degree. In the
+sequential model, the evaluative step with a constant measure preserves
+the prior's bell-curve shape — "usually warm" offers no intensifying
+information beyond bare "warm".
+
+In contrast, negative modal measures (unusual ≈ horrible) peak at extremes,
+shifting the evaluative posterior away from the norm and producing genuine
+intensification. This is why negative modals pattern with negative evaluatives
+in the Goldilocks effect.
+
+The theorems below derive Zwicky's generalization from the sequential RSA
+model, connecting the data-layer check (`zwickyHolds`) to L1 posterior
+predictions. -/
+
+/-- ℕ-valued constant measure for the sequential model.
+    Models "usual": μ_usual(h) = 5 for all h (no height discrimination). -/
+def muUsualN : Height → ℕ := λ _ => 5
+
+/-- μ_unusual has the same shape as μ_horrible: peaks at extremes.
+    Negative modals pattern with negative evaluatives because both assign
+    high values to heights far from the norm. -/
+def muUnusualN : Height → ℕ := muHorrible
+
+/-- Negative modal and negative evaluative measures are structurally identical.
+    This is the semantic foundation of why both types make good intensifiers
+    (@cite{nouwen-2024} §5: "the corresponding measure function has a shape
+    similar to that of negative evaluatives"). -/
+theorem muUnusualN_eq_muHorrible : muUnusualN = muHorrible := rfl
+
+/-- Bare adjective RSAConfig: "warm" vs silence with the original height prior.
+    This is the baseline — what "warm" means without any evaluative step. -/
+@[reducible]
+noncomputable def bareAdjCfg : RSA.RSAConfig AdjUtterance Height where
+  Latent := Threshold
+  meaning _ l u h := if adjMeaning u h l then heightPriorR h else 0
+  meaning_nonneg _ l u h := by
+    show 0 ≤ if adjMeaning u h l then heightPriorR h else 0
+    split
+    · exact heightPriorR_nonneg h
+    · exact le_refl 0
+  s1Score := adjS1Score
+  s1Score_nonneg := adjS1Score_nonneg
+  α := 4
+  α_pos := by norm_num
+  worldPrior := heightPriorR
+  worldPrior_nonneg := heightPriorR_nonneg
+  latentPrior_nonneg _ _ := by positivity
+
+/-! ### Evaluative Step: Constant vs Extreme Measures -/
+
+/-- Constant-measure evaluative step preserves the prior's peak at the norm. -/
+theorem eval_constant_preserves_peak :
+    (evalCfg muUsualN).L1 .eval_pos (deg 5) >
+    (evalCfg muUsualN).L1 .eval_pos (deg 9) := by
+  rsa_predict
+
+/-- Extreme measure (unusual/horrible) boosts extreme heights in L1
+    beyond what the constant measure assigns. -/
+theorem eval_unusual_boosts_extreme :
+    (evalCfg muUnusualN).L1 .eval_pos (deg 9) >
+    (evalCfg muUsualN).L1 .eval_pos (deg 9) := by
+  rsa_predict
+
+/-! ### Sequential Model: Zwicky Predictions -/
+
+/-- "Usually warm" preserves moderate-height preference (like bare "warm"). -/
+theorem usually_warm_prefers_moderate :
+    (seqAdjCfg muUsualN).L1 .warm (deg 6) >
+    (seqAdjCfg muUsualN).L1 .warm (deg 9) := by
+  rsa_predict
+
+/-- "Unusually warm" shifts toward extremes (like "horribly warm").
+    Note: `muUnusualN = muHorrible` by `muUnusualN_eq_muHorrible`,
+    so this is structurally the same prediction as `seq_horribly_shifts_upward`. -/
+theorem unusually_warm_shifts_extreme :
+    (seqAdjCfg muUnusualN).L1 .warm (deg 8) >
+    (seqAdjCfg muUnusualN).L1 .warm (deg 4) := by
+  rsa_predict
+
+set_option maxHeartbeats 4000000 in
+/-- **Zwicky's generalization, derived**: at extreme heights, "unusually warm"
+    assigns more probability than "usually warm". Negative modal intensifiers
+    are more informative than positive modal ones because μ_unusual discriminates
+    heights while μ_usual does not. -/
+theorem zwicky_extreme_discrimination :
+    (seqAdjCfg muUnusualN).L1 .warm (deg 9) >
+    (seqAdjCfg muUsualN).L1 .warm (deg 9) := by
+  rsa_predict
+
+set_option maxHeartbeats 4000000 in
+/-- Converse: at moderate heights, "usually warm" dominates "unusually warm".
+    The constant measure concentrates mass near the prior peak, while the
+    extreme measure depletes mass at moderate heights. -/
+theorem zwicky_moderate_discrimination :
+    (seqAdjCfg muUsualN).L1 .warm (deg 6) >
+    (seqAdjCfg muUnusualN).L1 .warm (deg 6) := by
+  rsa_predict
+
+/-- Bare "warm" baseline: prefers moderate heights (deg 6 > deg 9).
+    Demonstrates that the bare model and "usually warm" agree qualitatively. -/
+theorem bare_warm_prefers_moderate :
+    bareAdjCfg.L1 .warm (deg 6) > bareAdjCfg.L1 .warm (deg 9) := by
+  rsa_predict
+
 end RSA.Nouwen2024
