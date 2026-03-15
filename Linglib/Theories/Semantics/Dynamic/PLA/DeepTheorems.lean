@@ -6,7 +6,6 @@ Fundamental results distinguishing dynamic from static semantics.
 ## Main definitions
 
 - `export_witness`, `cross_sentential_binding`
-- `existential_introduces_witness`
 - `static_conjunction_commutes`
 
 -/
@@ -75,13 +74,6 @@ theorem dne_domain_same (φ : Formula) :
 theorem dne_range_same (φ : Formula) :
     (∼(∼φ)).range = φ.range := by
   simp only [Formula.range]
-
-/-- Existential introduces witness unlike double-negated existential. -/
-theorem existential_introduces_witness (M : Model E) (x : VarIdx) (φ : Formula)
-    (s : InfoState E) (p : Poss E) (hp : p ∈ (Formula.exists_ x φ).update M s) :
-    ∃ e : E, φ.sat M (p.1[x ↦ e]) p.2 := by
-  simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat] at hp
-  exact hp.2
 
 /-- Existential domain is nonempty. -/
 theorem exists_domain_nonempty (x : VarIdx) (φ : Formula) :

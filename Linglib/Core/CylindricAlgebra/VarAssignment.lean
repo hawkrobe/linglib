@@ -22,7 +22,7 @@ cylindric set algebra defined in `Core.CylindricAlgebra`.
 | Partee 1973 | `Time` | `TemporalAssignment Time` |
 | Percus 2000 | `Situation W Time` | `SituationAssignment W Time` |
 | CDRT (Muskens) | `E` | `Register E` |
-| PLA (Dekker) | `E` | `VarIdx → E` |
+| PLA (@cite{dekker-2012}) | `E` | `VarIdx → E` |
 
 All share the same cylindric algebra axioms (C1–C7) and the same
 substitution theory (HMT §1.5).

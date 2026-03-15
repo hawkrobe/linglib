@@ -1,7 +1,8 @@
 import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Core.Logic.Quantification
-import Mathlib.Data.List.Perm.Basic
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.Finset.Card
 
 /-!
 # Generalized Quantifiers
@@ -28,7 +29,10 @@ the universals.
 
 - **Generic GQ properties**: `Core.Quantification` — `Conservative`, `ScopeUpwardMono`,
   `ScopeDownwardMono`, `outerNeg`, `innerNeg`, `dualQ`, etc. (model-agnostic)
-- `FiniteModelProofs`: Concrete proofs for specific denotations (requires FiniteModel)
+- **Concrete denotations**: `every_sem`, `some_sem`, etc. — require `[Fintype m.Entity]`
+  for decidable computation via `decide (∀/∃ x, ...)`
+- **Counting quantifiers**: `most_sem`, `few_sem`, etc. — use `Finset.univ.filter`
+  for cardinality comparisons
 
 `ScopeUpwardMono`/`ScopeDownwardMono` are equivalent to Mathlib's
 `Monotone`/`Antitone` (see `Core.Quantification.scopeUpMono_iff_monotone`),
@@ -43,89 +47,98 @@ open Core.Quantification
 
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
 
-/-- A model with a computable finite domain.
-    `nodup` ensures each entity appears exactly once, which is needed for
-    `QuantityInvariant` (bijection-invariance of filter-length–based quantifiers). -/
-class FiniteModel (m : Model) where
-  elements : List m.Entity
-  complete : ∀ x : m.Entity, x ∈ elements
-  nodup : elements.Nodup
+/-- Decidability of implication (not in Lean 4 core). -/
+instance decImpl {p q : Prop} [Decidable p] [Decidable q] : Decidable (p → q) :=
+  if hp : p then
+    if hq : q then .isTrue (fun _ => hq)
+    else .isFalse (fun h => hq (h hp))
+  else .isTrue (fun h => absurd h hp)
 
-def every_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    FiniteModel.elements.all (λ x => !restrictor x || scope x)
+/-- Decidable universal quantification over a `Fintype`. -/
+instance instDecidableForallFintype {α : Type} [Fintype α] {p : α → Prop} [DecidablePred p] :
+    Decidable (∀ x : α, p x) :=
+  Fintype.decidableForallFintype
 
-def some_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    FiniteModel.elements.any (λ x => restrictor x && scope x)
+/-- Decidable existential quantification over a `Fintype`. -/
+instance instDecidableExistsFintype {α : Type} [Fintype α] {p : α → Prop} [DecidablePred p] :
+    Decidable (∃ x : α, p x) :=
+  Fintype.decidableExistsFintype
+
+/-- Count of elements satisfying a predicate, via `Finset.univ.filter`. -/
+private def count {α : Type} [Fintype α] (P : α → Prop) [DecidablePred P] : Nat :=
+  (Finset.univ.filter P).card
+
+def every_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  fun (R : m.Entity → Bool) (S : m.Entity → Bool) =>
+    decide (∀ x : m.Entity, R x = true → S x = true)
+
+def some_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  fun (R : m.Entity → Bool) (S : m.Entity → Bool) =>
+    decide (∃ x : m.Entity, R x = true ∧ S x = true)
 
 /-- Partee's `A` (existential closure) = Barwise & Cooper's `⟦some⟧`.
     Both compute `λR.λS. ∃x. R(x) ∧ S(x)` over a finite domain.
-    `A` takes the domain explicitly; `some_sem` uses `FiniteModel.elements`. -/
-theorem A_eq_some_sem (m : Model) [fm : FiniteModel m] :
-    Semantics.Composition.TypeShifting.A fm.elements = some_sem m := by
-  funext R S; rfl
+    `A` takes the domain explicitly; `some_sem` uses `decide` over `Fintype`. -/
+theorem A_eq_some_sem (m : Model) [Fintype m.Entity] (domain : List m.Entity)
+    (hComplete : ∀ x : m.Entity, x ∈ domain) :
+    Semantics.Composition.TypeShifting.A domain = some_sem m := by
+  funext R S
+  simp only [Semantics.Composition.TypeShifting.A, some_sem]
+  rw [Bool.eq_iff_iff, List.any_eq_true, decide_eq_true_eq]
+  constructor
+  · rintro ⟨x, _, h⟩
+    exact ⟨x, by simp only [Bool.and_eq_true] at h; exact h⟩
+  · rintro ⟨x, hR, hS⟩
+    exact ⟨x, hComplete x, by simp [hR, hS]⟩
 
-def no_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    FiniteModel.elements.all (λ x => !restrictor x || !scope x)
+def no_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  fun (R : m.Entity → Bool) (S : m.Entity → Bool) =>
+    decide (∀ x : m.Entity, R x = true → S x = false)
 
 /-- `⟦most⟧(R)(S) = |R ∩ S| > |R \ S|` -/
-def most_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    let inBoth := FiniteModel.elements.filter (λ x => restrictor x && scope x)
-    let inROnly := FiniteModel.elements.filter (λ x => restrictor x && !scope x)
-    decide (inBoth.length > inROnly.length)
+def most_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  λ R S =>
+    decide (count (fun x : m.Entity => R x = true ∧ S x = true) >
+            count (fun x : m.Entity => R x = true ∧ S x = false))
 
 /-- `⟦few⟧(R)(S) = |R ∩ S| < |R \ S|` — a minority of Rs are Ss.
     Dual of `most_sem`: few(R,S) ↔ ¬most(R,S) ∧ ¬half(R,S). -/
-def few_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    let inBoth := FiniteModel.elements.filter (λ x => restrictor x && scope x)
-    let inROnly := FiniteModel.elements.filter (λ x => restrictor x && !scope x)
-    decide (inBoth.length < inROnly.length)
+def few_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  λ R S =>
+    decide (count (fun x : m.Entity => R x = true ∧ S x = true) <
+            count (fun x : m.Entity => R x = true ∧ S x = false))
 
 /-- `⟦half⟧(R)(S) = 2 * |R ∩ S| = |R|` — exactly half of Rs are Ss. -/
-def half_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    let inR := FiniteModel.elements.filter restrictor |>.length
-    let inBoth := FiniteModel.elements.filter (λ x => restrictor x && scope x) |>.length
-    decide (2 * inBoth = inR)
+def half_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  λ R S =>
+    decide (2 * count (fun x : m.Entity => R x = true ∧ S x = true) =
+            count (fun x : m.Entity => R x = true))
 
 /-- `⟦at least n⟧(R)(S) = |R ∩ S| ≥ n` -/
-def at_least_n_sem (m : Model) [FiniteModel m] (n : Nat) : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    let count := FiniteModel.elements.filter (λ x => restrictor x && scope x) |>.length
-    decide (count ≥ n)
+def at_least_n_sem (m : Model) [Fintype m.Entity] (n : Nat) : m.interpTy Ty.det :=
+  λ R S => decide (count (fun x : m.Entity => R x = true ∧ S x = true) ≥ n)
 
 /-- `⟦at most n⟧(R)(S) = |R ∩ S| ≤ n` -/
-def at_most_n_sem (m : Model) [FiniteModel m] (n : Nat) : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    let count := FiniteModel.elements.filter (λ x => restrictor x && scope x) |>.length
-    decide (count ≤ n)
+def at_most_n_sem (m : Model) [Fintype m.Entity] (n : Nat) : m.interpTy Ty.det :=
+  λ R S => decide (count (fun x : m.Entity => R x = true ∧ S x = true) ≤ n)
 
 /-- `⟦exactly n⟧(R)(S) = |R ∩ S| = n` -/
-def exactly_n_sem (m : Model) [FiniteModel m] (n : Nat) : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    let count := FiniteModel.elements.filter (λ x => restrictor x && scope x) |>.length
-    decide (count = n)
+def exactly_n_sem (m : Model) [Fintype m.Entity] (n : Nat) : m.interpTy Ty.det :=
+  λ R S => decide (count (fun x : m.Entity => R x = true ∧ S x = true) = n)
 
 /-- `⟦all but n⟧(R)(S) = |R \ S| = n` — exactly n R-elements are non-S.
     Generalizes "every" (= all but 0). The exceptive counterpart of
     `exactly_n_sem` (which counts |R ∩ S| = n). -/
-def all_but_n_sem (m : Model) [FiniteModel m] (n : Nat) : m.interpTy Ty.det :=
-  λ restrictor => λ scope =>
-    let exceptions := FiniteModel.elements.filter (λ x => restrictor x && !scope x) |>.length
-    decide (exceptions = n)
+def all_but_n_sem (m : Model) [Fintype m.Entity] (n : Nat) : m.interpTy Ty.det :=
+  λ R S => decide (count (fun x : m.Entity => R x = true ∧ S x = false) = n)
 
 /-- `⟦between n and k⟧(R)(S) = n ≤ |R ∩ S| ≤ k` -/
-def between_n_m_sem (m : Model) [FiniteModel m] (n k : Nat) : m.interpTy Ty.det :=
+def between_n_m_sem (m : Model) [Fintype m.Entity] (n k : Nat) : m.interpTy Ty.det :=
   gqMeet (at_least_n_sem m n) (at_most_n_sem m k)
 
-instance : FiniteModel toyModel where
-  elements := [.john, .mary, .pizza, .book]
-  complete := λ x => by cases x <;> simp
-  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
+instance : Fintype ToyEntity where
+  elems := {.john, .mary, .pizza, .book}
+  complete := fun x => by cases x <;> simp
 
 section ToyLexicon
 
@@ -183,12 +196,12 @@ def somePersonSleeps : toyModel.interpTy .t :=
 end Examples
 
 -- ============================================================================
--- Finite Model Proofs (require FiniteModel for FiniteModel.elements)
+-- Fintype Model Proofs (require Fintype for decidable quantification)
 -- ============================================================================
 
-section FiniteModelProofs
+section FintypeProofs
 
-variable {m : Model} [FiniteModel m]
+variable {m : Model} [Fintype m.Entity]
 
 -- === Bijection invariance of filter length (for QuantityInvariant) ===
 
@@ -1608,6 +1621,6 @@ theorem at_least_2_not_proportional : ¬Proportional (at_least_n_sem toyModel 2)
   rw [h1, h2] at this
   exact Bool.noConfusion this
 
-end FiniteModelProofs
+end FintypeProofs
 
 end Semantics.Lexical.Determiner.Quantifier

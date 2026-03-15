@@ -2,7 +2,7 @@
 # Predicate Logic with Anaphora (PLA)
 @cite{dekker-2012} @cite{dekker-2008}
 
-Dekker's foundational system for dynamic semantics.
+@cite{dekker-2012}'s foundational system for dynamic semantics.
 
 ## Innovation
 
@@ -12,7 +12,7 @@ PLA distinguishes variables (x_i) from pronouns (p_i):
 
 This distinction prevents variable clash and enables clean compositional semantics.
 
-## Core Definitions (Dekker §2)
+## Core Definitions (@cite{dekker-2012} Ch. 2)
 
 | Concept | Notation | Description |
 |---------|----------|-------------|

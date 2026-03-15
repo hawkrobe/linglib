@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.274] - 2026-03-15
+
+### Changed
+- **Dekker 2012 PLA audit**: fix 12+ hallucinated observation/theorem numbers across PLA files; rename `obs5_*`/`obs6_*`/`obs17_*` theorems to match actual book numbering (Obs 9, Obs 20, Obs 21); replace `knowsWho_cover_relative` stub with real `knowsWho_not_transferable` theorem; remove duplicate `existential_introduces_witness`; rewrite `might_not_must_neg` as clean modal duality `might_iff_not_must_neg`; fix bare "Dekker" references to `@cite{dekker-2012}`; update bib entry paths
+
 ## [0.229.273] - 2026-03-15
 
 ### Added

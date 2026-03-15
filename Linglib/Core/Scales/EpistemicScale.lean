@@ -62,12 +62,96 @@ theorem theorem8b :
 
 -- ── Completeness (Theorems 6–7) ──────────────────
 
+/-- Count of finsets dominated by A under the ge ordering. -/
+private noncomputable def belowCount {W : Type*} [Fintype W]
+    (sys : EpistemicSystemFA W) (A : Set W) : ℕ :=
+  (Finset.univ.filter (fun S : Finset W => sys.ge A ↑S)).card
+
+private theorem belowCount_univ {W : Type*} [Fintype W]
+    (sys : EpistemicSystemFA W) :
+    belowCount sys Set.univ = Fintype.card (Finset W) := by
+  unfold belowCount
+  rw [Finset.filter_true_of_mem]
+  · exact Finset.card_univ
+  · intro S _; exact sys.mono _ _ (Set.subset_univ _)
+
+private theorem belowCount_mono {W : Type*} [Fintype W]
+    (sys : EpistemicSystemFA W) (A B : Set W)
+    (h : sys.ge A B) : belowCount sys A ≥ belowCount sys B := by
+  unfold belowCount
+  apply Finset.card_le_card
+  intro S hS
+  rw [Finset.mem_filter] at hS ⊢
+  exact ⟨hS.1, sys.trans _ _ _ h hS.2⟩
+
+private theorem belowCount_strict {W : Type*} [Fintype W]
+    (sys : EpistemicSystemFA W) (A B : Set W)
+    (h : ¬sys.ge A B) : belowCount sys A < belowCount sys B := by
+  unfold belowCount
+  apply Finset.card_lt_card
+  refine ⟨?_, ?_⟩
+  · intro S hS
+    rw [Finset.mem_filter] at hS ⊢
+    have hBA := (sys.total A B).resolve_left h
+    exact ⟨hS.1, sys.trans _ _ _ hBA hS.2⟩
+  · intro hsub
+    have : B.toFinset ∈ Finset.univ.filter (fun S : Finset W => sys.ge A ↑S) :=
+      hsub (Finset.mem_filter.mpr ⟨Finset.mem_univ _, by rw [Set.coe_toFinset]; exact sys.refl B⟩)
+    rw [Finset.mem_filter] at this
+    rw [Set.coe_toFinset] at this
+    exact h this.2
+
+private theorem belowCount_iff {W : Type*} [Fintype W]
+    (sys : EpistemicSystemFA W) (A B : Set W) :
+    belowCount sys A ≥ belowCount sys B ↔ sys.ge A B := by
+  constructor
+  · intro hcount
+    by_contra hng
+    have := belowCount_strict sys A B hng
+    omega
+  · exact belowCount_mono sys A B
+
+private theorem ge_div_iff {a b d : ℚ} (hd : 0 < d) :
+    a / d ≥ b / d ↔ a ≥ b := by
+  rw [ge_iff_le, ge_iff_le, div_le_div_iff_of_pos_right hd]
+
 /-- **Theorem 6 completeness** (@cite{holliday-icard-2013}, Theorem 6; @cite{van-der-hoek-1996}):
-    every EpistemicSystemFA is representable by a **qualitatively additive** measure. -/
+    every EpistemicSystemFA is representable by a **qualitatively additive** measure.
+
+    Construction: define μ(A) = |{S : Finset W | ge A S}| / 2^|W|.
+    Totality + transitivity of ge ensure μ A ≥ μ B ↔ ge A B;
+    qualitative additivity then follows from Axiom A. -/
 theorem theorem6_completeness {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) :
-    ∃ (m : QualAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-  sorry -- @cite{van-der-hoek-1996}; linear extension of qualitative probability
+    ∃ (m : QualAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  classical
+  let N : ℚ := Fintype.card (Finset W)
+  have hN_pos : (0 : ℚ) < N := Nat.cast_pos.mpr Fintype.card_pos
+  let mu : Set W → ℚ := fun A => (belowCount sys A : ℚ) / N
+  refine ⟨⟨mu, ?nonneg, ?total, ?qualAdd⟩, ?repr⟩
+  case nonneg =>
+    intro A; exact div_nonneg (Nat.cast_nonneg _) (le_of_lt hN_pos)
+  case total =>
+    show (belowCount sys Set.univ : ℚ) / N = 1
+    rw [belowCount_univ]; exact div_self (ne_of_gt hN_pos)
+  case qualAdd =>
+    intro A B
+    show (belowCount sys A : ℚ) / N ≥ (belowCount sys B : ℚ) / N ↔
+         (belowCount sys (A \ B) : ℚ) / N ≥ (belowCount sys (B \ A) : ℚ) / N
+    rw [ge_div_iff hN_pos, ge_div_iff hN_pos]
+    constructor
+    · intro h
+      have hge := (belowCount_iff sys A B).mp (by exact_mod_cast h)
+      exact_mod_cast (belowCount_iff sys (A \ B) (B \ A)).mpr (sys.additive A B |>.mp hge)
+    · intro h
+      have hge := (belowCount_iff sys (A \ B) (B \ A)).mp (by exact_mod_cast h)
+      exact_mod_cast (belowCount_iff sys A B).mpr (sys.additive A B |>.mpr hge)
+  case repr =>
+    intro A B
+    show sys.ge A B ↔ (belowCount sys A : ℚ) / N ≥ (belowCount sys B : ℚ) / N
+    rw [ge_div_iff hN_pos]
+    exact ⟨fun h => by exact_mod_cast (belowCount_iff sys A B).mpr h,
+           fun h => (belowCount_iff sys A B).mp (by exact_mod_cast h)⟩
 
 /-- Helper: if ge A {b} for every b ∈ B, then ge A B, given monotonicity (T)
     and right-union (J). Proved by Finset induction on B.toFinset. -/

@@ -1,20 +1,20 @@
 /-
 # PLA Dynamic Update Semantics
 
-@cite{dekker-2012} Chapter 3: Updates and Information Exchange.
+@cite{dekker-2012} Chapter 3: Information Update and Support.
 
 ## Three Equivalent Views
 
-Dekker shows three equivalent perspectives on dynamic meaning:
+@cite{dekker-2012} shows three equivalent perspectives on dynamic meaning:
 
 1. Contents: sets of world-assignment pairs (what information is conveyed)
 2. Updates: functions from input states to output states (how information changes)
 3. Support: when a state supports a formula (evidential perspective)
 
-## Theorems
+## Key Results
 
-- Theorem 3.1: contents-to-updates equivalence
-- Theorem 3.2: updates-to-support equivalence
+- Observation 16 (Proper Update): contents-to-updates equivalence
+- Observation 17 (Proper Support): updates-to-support equivalence
 - Dynamic conjunction: non-commutative, non-idempotent
 
 -/
@@ -156,7 +156,7 @@ theorem Formula.mem_update {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
 
 
 /--
-Theorem 3.1 (contents-updates equivalence).
+Observation 16 (Proper Update, @cite{dekker-2012} §3.2, p.60).
 
 The update of φ is intersection with the content of φ:
 
@@ -209,7 +209,7 @@ theorem InfoState.supports_conj {E : Type*} [Nonempty E] (s : InfoState E) (M : 
 
 
 /--
-Theorem 3.2 (updates-support equivalence).
+Observation 17 (Proper Support, @cite{dekker-2012} §3.2, p.61).
 
 A state supports φ iff updating with φ leaves it unchanged:
 
@@ -233,10 +233,11 @@ theorem updates_support_equiv {E : Type*} [Nonempty E]
 
 
 /--
-Dynamic conjunction (Observation 4): sequential update, φ then ψ.
+Dynamic conjunction: sequential update, φ then ψ.
 
 Non-commutative: "A man came. He sat down." ≠ "He sat down. A man came."
 Non-idempotent: ∃x.φ; ∃x.φ ≠ ∃x.φ (may introduce different witnesses).
+(Non-commutativity and non-idempotence are Observation 9, @cite{dekker-2012} §2.2, p.32.)
 -/
 def Formula.dynConj {E : Type*} [Nonempty E] (M : Model E) (φ ψ : Formula) : Update E :=
   φ.update M ;; ψ.update M
@@ -266,24 +267,24 @@ theorem dynConj_static {E : Type*} [Nonempty E] (M : Model E)
 
 
 /--
-Observation 5: existentials are not idempotent.
+Existentials are not idempotent (@cite{dekker-2012} Observation 9, §2.2, p.32).
 
 "A man came. A man sat down." - may be different men.
 Each ∃x.φ independently chooses a witness.
 -/
-theorem obs5_exists_domain_grows (x : VarIdx) (φ : Formula) :
+theorem exists_domain_idempotent (x : VarIdx) (φ : Formula) :
     ((Formula.exists_ x φ) ⋀ (Formula.exists_ x φ)).domain =
     (Formula.exists_ x φ).domain := by
   simp only [Formula.domain, Finset.union_self]
 
 /--
-Observation 6: ¬¬φ ≢ φ for dref-introducing φ.
+DNE failure for dref-introducing formulas (discussed in @cite{dekker-2012} §2.2, around Observation 9).
 
 "It's not the case that no man came. He sat down." - "He" is problematic.
 Negation "traps" drefs: ∃x.P(x) exports x, but ¬¬∃x.P(x) only tests existence.
 This motivates bilateral semantics (BUS), where DNE holds structurally.
 -/
-theorem obs6_dne_syntactic (φ : Formula) :
+theorem dne_syntactic (φ : Formula) :
     (∼(∼φ)).domain = φ.domain := by
   simp only [Formula.domain]
 

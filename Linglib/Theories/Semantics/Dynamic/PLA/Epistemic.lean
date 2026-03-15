@@ -1,7 +1,7 @@
 /-
 # PLA Epistemic Operators
 
-@cite{dekker-2012} Chapter 4: Epistemic and doxastic modals.
+@cite{dekker-2012} Chapter 4: Quantification and Modality (§4.3: Alethic and Epistemic Modality).
 
 ## Key Concepts
 
@@ -15,7 +15,7 @@ TEST the information state:
 - might φ passes if some (g, ê) satisfies φ
 - must φ passes if all (g, ê) satisfy φ
 
-### Conceptual Covers (Dekker §4.3)
+### Conceptual Covers (@cite{dekker-2012} §3.2/§4.2)
 For de re/de dicto distinctions:
 - A peg is an extensional reference to an entity
 - A concept is an intensional way of identifying entities
@@ -185,58 +185,50 @@ theorem supports_implies_must (M : Model E) (φ : Formula) (s : InfoState E)
 
 
 /--
-might φ ≈ ¬must ¬φ
+Modal duality: might φ passes iff must ¬φ fails (on nonempty states).
 
-φ is possible iff ¬φ is not necessary.
+`might φ` passes on s ↔ `must ¬φ` fails on s (i.e., s does not support ¬φ).
+This is the dynamic version of the classical duality ◇φ ↔ ¬□¬φ.
 -/
-theorem might_not_must_neg (M : Model E) (φ : Formula) (s : InfoState E)
+theorem might_iff_not_must_neg (M : Model E) (φ : Formula) (s : InfoState E)
     (hs : s.Nonempty) :
-    (φ.might M s).Nonempty ↔ ¬((∼φ).must M s = s ∧ s.Nonempty) ∨ ¬(s ⊫[M] (∼φ)) := by
-  simp only [Formula.might, Formula.must]
+    φ.might M s = s ↔ (∼φ).must M s ≠ s := by
   constructor
-  · intro h
-    split_ifs at h with hne
-    · -- might passed
-      right
-      intro hsup_neg
-      -- hsup_neg : s ⊫[M] (∼φ) means ∀ p ∈ s, ¬φ.sat
-      simp only [InfoState.supports, Formula.sat] at hsup_neg
-      -- But hne says φ.update M s is nonempty
-      obtain ⟨p, hp⟩ := hne
-      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
-      exact hsup_neg p hp.1 hp.2
-    · exact absurd h Set.not_nonempty_empty
-  · intro h
-    split_ifs with hne
-    · exact hs
-    · cases h with
-      | inl hnot =>
-        by_cases hsup_neg : s ⊫[M] (∼φ)
-        · simp only [if_pos hsup_neg, hs, and_self, not_true_eq_false] at hnot
-        · simp only [Set.not_nonempty_iff_eq_empty] at hne
-          -- If update is empty and s is nonempty, then ∀ p ∈ s, ¬φ.sat
-          have : s ⊫[M] (∼φ) := by
-            intro p hp
-            simp only [Formula.sat]
-            intro hsat
-            have : p ∈ φ.update M s := by
-              simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
-              exact ⟨hp, hsat⟩
-            rw [hne] at this
-            exact this
-          exact absurd this hsup_neg
-      | inr hnot =>
-        simp only [Set.not_nonempty_iff_eq_empty] at hne
-        have : s ⊫[M] (∼φ) := by
-          intro p hp
-          simp only [Formula.sat]
-          intro hsat
-          have : p ∈ φ.update M s := by
-            simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
-            exact ⟨hp, hsat⟩
-          rw [hne] at this
-          exact this
-        exact absurd this hnot
+  · -- (→) might φ passes → must ¬φ fails
+    intro hmight hmust
+    -- might passed, so φ.update M s is nonempty
+    have hne : (φ.update M s).Nonempty := by
+      simp only [Formula.might] at hmight
+      split_ifs at hmight with h
+      · exact h
+      · exact absurd hmight.symm (Set.nonempty_iff_ne_empty.mp hs)
+    -- must ¬φ passed, so s supports ¬φ
+    have hsup : s ⊫[M] (∼φ) := by
+      simp only [Formula.must] at hmust
+      split_ifs at hmust with h
+      · exact h
+      · exact absurd hmust.symm (Set.nonempty_iff_ne_empty.mp hs)
+    -- Contradiction: some p ∈ s satisfies φ, but all p ∈ s satisfy ¬φ
+    obtain ⟨p, hp⟩ := hne
+    simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
+    have := hsup p hp.1
+    simp only [Formula.sat] at this
+    exact this hp.2
+  · -- (←) must ¬φ fails → might φ passes
+    intro h
+    -- s does not support ¬φ
+    have hnsup : ¬(s ⊫[M] (∼φ)) := by
+      intro hsup
+      apply h
+      simp only [Formula.must, if_pos hsup]
+    -- So some p ∈ s does not satisfy ¬φ, i.e., satisfies φ
+    simp only [InfoState.supports, Formula.sat, not_forall, Classical.not_not] at hnsup
+    obtain ⟨p, hp, hsat⟩ := hnsup
+    have hne : (φ.update M s).Nonempty := by
+      use p
+      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
+      exact ⟨hp, hsat⟩
+    simp only [Formula.might, if_pos hne]
 
 
 /--

@@ -1,7 +1,7 @@
 /-
 # PLA Generalized Quantifiers
 
-@cite{dekker-2012} Chapter 4, §4.1: Generalized Quantifiers in Dynamic Semantics.
+@cite{dekker-2012} Chapter 4 (Quantification and Modality), §4.1: Terms and Quantifiers.
 
 ## Key Concepts
 
@@ -197,7 +197,7 @@ some condition, a witnessing entity.
 For "Every farmer who owns a donkey beats it":
 - For each farmer f who owns a donkey, `wit f` is a donkey that f owns
 
-This is Dekker's solution to donkey anaphora with universal quantifiers.
+This is @cite{dekker-2012}'s solution to donkey anaphora with universal quantifiers.
 -/
 abbrev WitnessFn (α : Type*) := α → α
 

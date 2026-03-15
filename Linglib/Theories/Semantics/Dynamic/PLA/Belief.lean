@@ -1,7 +1,7 @@
 /-
 # PLA Belief Reports
 
-@cite{dekker-2012} @cite{kaplan-1968} Chapter 4, §4.2: Belief Reports and Conceptual Covers.
+@cite{dekker-2012} @cite{kaplan-1968} Chapter 4 (Quantification and Modality), §4.2: Knowing Who and Believing What.
 
 ## Key Concepts
 
@@ -20,7 +20,7 @@
   The belief is about whoever satisfies "the winner" in John's belief worlds.
   Uses descriptive concept - may pick out different individuals.
 
-### Conceptual Covers (@cite{aloni-2001}, Dekker §4.3)
+### Conceptual Covers (@cite{aloni-2001}, @cite{dekker-2012} §3.2/§4.2)
 A conceptual cover is a set of concepts that:
 1. Covers the domain (every entity is picked out by some concept)
 2. Is functional (each concept picks out at most one entity per possibility)
@@ -336,9 +336,9 @@ theorem quine_requires_divergence (R : DoxAccessibility E) (M : Model E)
 
 
 /-!
-## Observation 17: Quantifier Scope and Belief
+## Observation 20: Quantifier Scope and Belief
 
-@cite{dekker-2012} Observation 17 (p.88):
+@cite{dekker-2012} Observation 20 (Quantifier Import and Export, p.95):
 > B(r, ∃x_C Sx) = ∃x_C B(r, Sx)
 
 This equivalence holds when quantification is relativized to a conceptual cover C.
@@ -385,14 +385,14 @@ def believeExistsWide (R : DoxAccessibility E) (M : Model E) (agent : E)
     ∃ c ∈ C, ∀ q ∈ doxAccessible R agent p, M.interp pred [c q] }
 
 /--
-Observation 17: Wide scope implies narrow scope (always holds).
+Observation 20 (wide → narrow): Wide scope implies narrow scope (always holds).
 
 ∃x_C B(r, Sx) → B(r, ∃x_C Sx)
 
 If there's a specific concept c such that Ralph believes P(c),
 then Ralph believes that something satisfies P.
 -/
-theorem obs17_wide_implies_narrow (R : DoxAccessibility E) (M : Model E)
+theorem obs20_wide_implies_narrow (R : DoxAccessibility E) (M : Model E)
     (agent : E) (C : Cover E) (pred : String) (s : InfoState E) :
     believeExistsWide R M agent C pred s ⊆ believeExistsNarrow R M agent C pred s := by
   intro p hp
@@ -404,7 +404,7 @@ theorem obs17_wide_implies_narrow (R : DoxAccessibility E) (M : Model E)
     exact ⟨c, hc, hall q hq⟩
 
 /--
-Observation 17 (converse): Narrow scope implies wide scope
+Observation 20 (narrow → wide): Narrow scope implies wide scope
 WHEN the cover is closed under the agent's beliefs.
 
 B(r, ∃x_C Sx) → ∃x_C B(r, Sx)
@@ -417,7 +417,7 @@ This formalizes when "Ralph believes someone is a spy"
 licenses the inference to "Ralph has someone specific in mind" - namely,
 when Ralph's conceptual repertoire provides stable ways of identifying individuals.
 -/
-theorem obs17_narrow_implies_wide (R : DoxAccessibility E) (M : Model E)
+theorem obs20_narrow_implies_wide (R : DoxAccessibility E) (M : Model E)
     (agent : E) (C : Cover E) (pred : String) (s : InfoState E) (p : Poss E)
     -- Key assumption: agent has at least one accessible belief state
     (_hdox : (doxAccessible R agent p).Nonempty)
@@ -430,9 +430,9 @@ theorem obs17_narrow_implies_wide (R : DoxAccessibility E) (M : Model E)
 
 
 /-!
-## Observation 18: Knowing Who is Cover-Relative
+## Observation 21: Knowing Who is Cover-Relative
 
-@cite{dekker-2012} Observation 18 (p.91):
+@cite{dekker-2012} Observation 21 (Knowing and not Knowing Who, p.97):
 > "Knowing who" is relative to a conceptual cover.
 
 The Hesperus/Phosphorus puzzle:
@@ -488,7 +488,7 @@ def hesperusPhosphorusScenario (R : DoxAccessibility E) (agent : E)
   ∃ q ∈ doxAccessible R agent p, hesperus q ≠ phosphorus q
 
 /--
-Observation 18: Knowing who is cover-relative.
+Observation 21: Knowing who is cover-relative.
 
 If the cover includes only rigid concepts (like proper names),
 then knowing who is equivalent to de re identification.
@@ -514,29 +514,25 @@ theorem knowsWho_with_rigid_cover (R : DoxAccessibility E) (agent individual : E
   rw [hrig q p, hpicks]
 
 /--
-Knowing who failure: An agent can know who x is under one cover
-but not under another, even for the same individual.
+Knowing who under one cover does not transfer to another cover.
 
-This is the formal content of the Hesperus/Phosphorus puzzle.
+If the agent knows who x is under cover C₁, this does NOT imply
+they know who x is under a different cover C₂.
+
+This is the formal content of the Hesperus/Phosphorus puzzle:
+the ancients knew "who Hesperus is" under an observational cover
+but not under an astronomical cover.
 -/
-theorem knowsWho_cover_relative (R : DoxAccessibility E) (agent venus : E)
-    (hesperus phosphorus : Concept E)
-    (Cobs : Cover E)   -- Observational cover (includes hesperus, phosphorus)
-    (Castro : Cover E) -- Astronomical cover (rigid concepts only)
-    (p : Poss E)
-    -- Setup: Hesperus/Phosphorus scenario
-    (_hHP : hesperusPhosphorusScenario R agent hesperus phosphorus venus p)
-    -- Hesperus is in observational cover
-    (_hHinC : hesperus ∈ Cobs)
-    -- Astronomical cover only has rigid concepts
-    (_hCastro_rigid : ∀ c ∈ Castro, c.isRigid)
-    -- Hesperus is not in astronomical cover (it's descriptive)
-    (_hHnotCastro : hesperus ∉ Castro)
-    -- Agent knows who Venus is via Hesperus in observational cover
-    (_hknowsObs : knowsWho R agent venus Cobs p) :
-    -- But we can't conclude the same for astronomical cover without more info
-    True := by
-  trivial
+theorem knowsWho_not_transferable (R : DoxAccessibility E) (agent individual : E)
+    (_C₁ C₂ : Cover E) (p : Poss E)
+    (_hknows : knowsWho R agent individual _C₁ p)
+    -- No concept in C₂ rigidly tracks individual across belief worlds
+    (hno_rigid : ∀ c ∈ C₂, c p = individual →
+      ∃ q ∈ doxAccessible R agent p, c q ≠ individual) :
+    ¬knowsWho R agent individual C₂ p := by
+  intro ⟨c₂, hc₂, hpicks₂, hunif₂⟩
+  obtain ⟨q, hq, hneq⟩ := hno_rigid c₂ hc₂ hpicks₂
+  exact hneq (hunif₂ q hq)
 
 
 /--

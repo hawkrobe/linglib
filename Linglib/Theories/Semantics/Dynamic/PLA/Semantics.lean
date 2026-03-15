@@ -79,7 +79,7 @@ theorem Term.eval_pron {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (i : P
 /--
 PLA Satisfaction: M, g, ê ⊨ φ
 
-Dekker Definition 3 (adapted to type-theoretic setting).
+@cite{dekker-2012} Definition 4, Ch. 2 (PLA Satisfaction and Truth, p.22; adapted to type-theoretic setting).
 
 - Atomic: check predicate interpretation on evaluated terms
 - Negation: classical negation
@@ -140,7 +140,7 @@ theorem Term.eval_resolve {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (ρ
     exact h i rfl
 
 /--
-Resolution Correctness Theorem (Dekker §2.3).
+Resolution Correctness (@cite{dekker-2012} Observation 7, §2.2, p.30).
 
 If the witness sequence agrees with the assignment via resolution (ê = g ∘ ρ on pronouns),
 and no pronoun resolves to a bound variable, then satisfaction is preserved:

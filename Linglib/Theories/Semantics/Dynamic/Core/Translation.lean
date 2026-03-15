@@ -1,7 +1,7 @@
 /-
 # Dynamic Semantics Translation Layer
 
-Unifies PLA (Dekker) and Core (Muskens-style) infrastructures.
+Unifies PLA (@cite{dekker-2012}) and Core (Muskens-style) infrastructures.
 
 ## The Problem
 
