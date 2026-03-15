@@ -44,9 +44,17 @@ variable (G : InterpGame)
 def trueStates (m : G.Message) : Finset G.State :=
   Finset.univ.filter (λ s => G.meaning m s = true)
 
+@[simp] theorem mem_trueStates {m : G.Message} {s : G.State} :
+    s ∈ G.trueStates m ↔ G.meaning m s = true := by
+  simp [trueStates]
+
 /-- Messages true at state s -/
 def trueMessages (s : G.State) : Finset G.Message :=
   Finset.univ.filter (λ m => G.meaning m s = true)
+
+@[simp] theorem mem_trueMessages {s : G.State} {m : G.Message} :
+    m ∈ G.trueMessages s ↔ G.meaning m s = true := by
+  simp [trueMessages]
 
 /-- Informativity of a message (reciprocal of true states, as ratio) -/
 def informativity (m : G.Message) : ℚ :=
@@ -109,10 +117,8 @@ theorem optimalMessages_subset_trueMessages (G : InterpGame) (H : HearerStrategy
 
 theorem optimalMessages_meaning (G : InterpGame) (H : HearerStrategy G)
     (s : G.State) (m : G.Message) (hm : m ∈ optimalMessages G H s) :
-    G.meaning m s = true := by
-  have := optimalMessages_subset_trueMessages G H s hm
-  simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at this
-  exact this
+    G.meaning m s = true :=
+  G.mem_trueMessages.mp (optimalMessages_subset_trueMessages G H s hm)
 
 theorem optimalMessages_utility (G : InterpGame) (H : HearerStrategy G)
     (s : G.State) (m : G.Message) (hm : m ∈ optimalMessages G H s) :
@@ -354,7 +360,7 @@ theorem eg_speaker_improvement (G : InterpGame)
           | true =>
             apply mul_le_mul_of_nonneg_left _ (hSNonneg t m)
             exact (Finset.le_fold_max _).mpr (Or.inr ⟨m,
-              Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm⟩, le_refl _⟩)
+              G.mem_trueMessages.mpr hm, le_refl _⟩)
       _ = Finset.univ.sum (λ m => S_old.choose t m) * maxU := by rw [Finset.sum_mul]
       _ ≤ 1 * maxU := mul_le_mul_of_nonneg_right (hSSum t) hMaxUNonneg
       _ = maxU := one_mul maxU
@@ -423,7 +429,7 @@ private theorem literal_sum_le_one (G : InterpGame) (m : G.Message) :
         (if n = 0 then (0 : ℚ) else 1 / ↑n) else 0) =
         if s ∈ G.trueStates m then 1 / (↑n : ℚ) else 0 := by
       intro s
-      simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and]
+      simp only [InterpGame.mem_trueStates]
       split_ifs <;> simp_all
     simp_rw [hval]
     rw [Finset.sum_ite_mem, Finset.sum_const, nsmul_eq_mul, Finset.univ_inter]
@@ -691,8 +697,7 @@ private theorem speaker_inner_le_maxU' (G : InterpGame)
         | false => simp [hSTruth m hm]
         | true =>
           exact mul_le_mul_of_nonneg_left
-            (SpeakerStrategy.utility_le_maxUtility G H t m
-              (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm⟩))
+            (SpeakerStrategy.utility_le_maxUtility G H t m (G.mem_trueMessages.mpr hm))
             (hSNonneg m)
     _ = Finset.univ.sum (λ m => S.choose t m) * maxU := by rw [Finset.sum_mul]
     _ ≤ 1 * maxU := mul_le_mul_of_nonneg_right hSSum (SpeakerStrategy.maxUtility_nonneg G H t)
@@ -765,8 +770,7 @@ private theorem inner_eq_maxU_respond_eq' (G : InterpGame)
     by_contra hFalse
     linarith [hSTruth m (by cases h : G.meaning m t <;> simp_all)]
   have hle : H.respond m t ≤ maxU :=
-    SpeakerStrategy.utility_le_maxUtility G H t m
-      (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hTrue⟩)
+    SpeakerStrategy.utility_le_maxUtility G H t m (G.mem_trueMessages.mpr hTrue)
   by_contra hne; push_neg at hne
   have hlt : H.respond m t < maxU := lt_of_le_of_ne hle hne
   linarith [show Finset.univ.sum (λ m' => S.choose t m' * H.respond m' t) < maxU from
@@ -778,8 +782,7 @@ private theorem inner_eq_maxU_respond_eq' (G : InterpGame)
             | false => simp [hSTruth m' hm']
             | true =>
               exact mul_le_mul_of_nonneg_left
-                (SpeakerStrategy.utility_le_maxUtility G H t m'
-                  (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩))
+                (SpeakerStrategy.utility_le_maxUtility G H t m' (G.mem_trueMessages.mpr hm'))
                 (hSNonneg m')
           · exact ⟨m, Finset.mem_univ m, mul_lt_mul_of_pos_left hlt hSm⟩
       _ = Finset.univ.sum (λ m' => S.choose t m') * maxU := by rw [Finset.sum_mul]
@@ -1152,20 +1155,18 @@ theorem scalar_trueMessages_total (G : InterpGame) (hScalar : isScalarGame G)
   push_neg at h
   simp only [Finset.subset_iff, not_forall] at h
   obtain ⟨⟨m₁, hm₁_in, hm₁_out⟩, ⟨m₂, hm₂_in, hm₂_out⟩⟩ := h
-  simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at *
+  simp only [InterpGame.mem_trueMessages] at *
   cases hScalar m₁ m₂ with
   | inl hsub =>
-    have h1 : s₁ ∈ G.trueStates m₁ :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm₁_in⟩
+    have h1 : s₁ ∈ G.trueStates m₁ := G.mem_trueStates.mpr hm₁_in
     have h2 := hsub h1
-    simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at h2
+    simp only [InterpGame.mem_trueStates] at h2
     -- h2 : G.meaning m₂ s₁ = true, but hm₂_out : ¬(G.meaning m₂ s₁ = true)
     exact absurd h2 hm₂_out
   | inr hsub =>
-    have h1 : s₂ ∈ G.trueStates m₂ :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm₂_in⟩
+    have h1 : s₂ ∈ G.trueStates m₂ := G.mem_trueStates.mpr hm₂_in
     have h2 := hsub h1
-    simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at h2
+    simp only [InterpGame.mem_trueStates] at h2
     exact absurd h2 hm₁_out
 
 /-- In a scalar game, at the m-true state s₀ with fewest true messages,
@@ -1181,27 +1182,19 @@ theorem scalar_minimal_messages_weaker (G : InterpGame) (hScalar : isScalarGame 
     (m' : G.Message) (hm' : G.meaning m' s₀ = true) :
     G.trueStates m ⊆ G.trueStates m' := by
   intro t ht
-  simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at ht ⊢
+  simp only [InterpGame.mem_trueStates] at ht ⊢
   -- t is m-true. Need: m' is true at t.
   -- By totality: trueMessages(s₀) ⊆ trueMessages(t) or vice versa
   cases scalar_trueMessages_total G hScalar s₀ t with
   | inl hsub =>
     -- trueMessages(s₀) ⊆ trueMessages(t), so m' ∈ trueMessages(s₀) → m' ∈ trueMessages(t)
-    have hm'_in : m' ∈ G.trueMessages s₀ :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩
-    have := hsub hm'_in
-    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at this
-    exact this
+    exact G.mem_trueMessages.mp (hsub (G.mem_trueMessages.mpr hm'))
   | inr hsub =>
     -- trueMessages(t) ⊆ trueMessages(s₀). Since s₀ is minimal in card, this means equal.
     have hcard := hmin t ht
     have hcard' := Finset.card_le_card hsub
     have heq : G.trueMessages t = G.trueMessages s₀ := Finset.eq_of_subset_of_card_le hsub hcard
-    have hm'_in : m' ∈ G.trueMessages s₀ :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩
-    rw [← heq] at hm'_in
-    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm'_in
-    exact hm'_in
+    exact G.mem_trueMessages.mp (heq ▸ G.mem_trueMessages.mpr hm')
 
 /-- Convert interpretation game to alternative set for exhaustification.
     Converts Bool meaning to Prop' by using equality with true. -/
@@ -1250,7 +1243,7 @@ theorem ltALT_implies_trueMessages_ssubset (G : InterpGame) (s' s : G.State)
   constructor
   · -- Subset: trueMessages s' ⊆ trueMessages s
     intro m' hm'
-    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm' ⊢
+    simp only [InterpGame.mem_trueMessages] at hm' ⊢
     -- m' is true at s', so the alternative "meaning m' = true" is true at s'
     -- By hle, this alternative is also true at s
     have halt : (λ x => G.meaning m' x = true) s' → (λ x => G.meaning m' x = true) s := by
@@ -1269,12 +1262,8 @@ theorem ltALT_implies_trueMessages_ssubset (G : InterpGame) (s' s : G.State)
     subst hm'_eq
     -- ha_s : (λ x => G.meaning m' x = true) s, i.e., G.meaning m' s = true
     -- Since trueMessages s' = trueMessages s, m' ∈ trueMessages s implies m' ∈ trueMessages s'
-    have hm'_in : m' ∈ G.trueMessages s := by
-      simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ha_s
-    rw [← heq] at hm'_in
-    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm'_in
-    exact hm'_in
+    have hm'_in : m' ∈ G.trueMessages s := G.mem_trueMessages.mpr ha_s
+    exact G.mem_trueMessages.mp (heq ▸ hm'_in)
 
 /-- **Franke Fact 1 (containment direction)**: Level-1 receiver interpretation
     is contained in minimal-models exhaustification.
@@ -1316,10 +1305,8 @@ theorem trueMessages_injective_of_homogeneous (G : InterpGame)
     (s' s : G.State) (heq : G.trueMessages s' = G.trueMessages s) : s' = s := by
   apply hGame
   intro m'
-  have h1 : (m' ∈ G.trueMessages s') ↔ (G.meaning m' s' = true) := by
-    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and]
-  have h2 : (m' ∈ G.trueMessages s) ↔ (G.meaning m' s = true) := by
-    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and]
+  have h1 := G.mem_trueMessages (s := s') (m := m')
+  have h2 := G.mem_trueMessages (s := s) (m := m')
   rw [heq] at h1
   -- Now h1 : m' ∈ trueMessages s ↔ meaning m' s' = true
   -- and h2 : m' ∈ trueMessages s ↔ meaning m' s = true
@@ -1353,18 +1340,14 @@ theorem trueMessages_ssubset_implies_ltALT (G : InterpGame)
     obtain ⟨m', hm'_eq⟩ := ha_mem
     subst hm'_eq
     -- a = meaning m' = true, and a s' holds
-    have hm'_in_s' : m' ∈ G.trueMessages s' := by
-      simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact ha_s'
-    have hm'_in_s : m' ∈ G.trueMessages s := Finset.mem_of_subset hss.1 hm'_in_s'
-    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm'_in_s
-    exact hm'_in_s
+    have hm'_in_s' : m' ∈ G.trueMessages s' := G.mem_trueMessages.mpr ha_s'
+    exact G.mem_trueMessages.mp (Finset.mem_of_subset hss.1 hm'_in_s')
   · -- ¬(leALT s s'): NOT every alt true at s is true at s'
     intro hle
     -- If leALT s s', then trueMessages s ⊆ trueMessages s'
     have hsub : G.trueMessages s ⊆ G.trueMessages s' := by
       intro m' hm'
-      simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm' ⊢
+      simp only [InterpGame.mem_trueMessages] at hm' ⊢
       have h : (λ x => G.meaning m' x = true) s := hm'
       have halt := hle (λ x => G.meaning m' x = true) ⟨m', rfl⟩ h
       exact halt
@@ -1452,20 +1435,14 @@ theorem exhMW_subset_r1_under_totality (G : InterpGame) (m : G.Message) (s : G.S
             simp only [toAlternatives, Set.mem_setOf_eq] at ha_mem
             obtain ⟨m', hm'_eq⟩ := ha_mem
             subst hm'_eq
-            have hm'_in_s' : m' ∈ G.trueMessages s' := by
-              simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and]
-              exact ha_s'
-            have hm'_in_s : m' ∈ G.trueMessages s := Finset.mem_of_subset hss.1 hm'_in_s'
-            simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm'_in_s
-            exact hm'_in_s
+            have hm'_in_s' : m' ∈ G.trueMessages s' := G.mem_trueMessages.mpr ha_s'
+            exact G.mem_trueMessages.mp (Finset.mem_of_subset hss.1 hm'_in_s')
           · -- ¬leALT s s': NOT every alt true at s is true at s'
             intro hle
             have hsub'' : G.trueMessages s ⊆ G.trueMessages s' := by
               intro m' hm'
-              simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm' ⊢
-              have h : (λ x => G.meaning m' x = true) s := hm'
-              have halt := hle (λ x => G.meaning m' x = true) ⟨m', rfl⟩ h
-              exact halt
+              simp only [InterpGame.mem_trueMessages] at hm' ⊢
+              exact hle (λ x => G.meaning m' x = true) ⟨m', rfl⟩ hm'
             exact hss.2 hsub''
         -- hmw.2 says there's no v such that (prejacent G m v ∧ v <_ALT s)
         exfalso
@@ -1560,12 +1537,12 @@ private theorem scalar_level_nonempty (G : InterpGame) (hScalar : isScalarGame G
   -- Need: trueStates(m) ⊆ trueStates(m')
   -- Equivalently: every m-true state is m'-true
   intro t ht
-  simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at hs_in ht ⊢
+  simp only [InterpGame.mem_trueStates] at hs_in ht ⊢
   -- By scalar: trueStates(m) ⊆ trueStates(m') or trueStates(m') ⊆ trueStates(m)
   cases hScalar m m' with
   | inl hsub =>
     -- trueStates(m) ⊆ trueStates(m'), so m true at t → m' true at t
-    exact (Finset.mem_filter.mp (hsub (Finset.mem_filter.mpr ⟨Finset.mem_univ _, ht⟩))).2
+    exact (G.mem_trueStates.mp (hsub (G.mem_trueStates.mpr ht)))
   | inr hsub =>
     -- trueStates(m') ⊆ trueStates(m)
     -- m' true at s, so s ∈ trueStates(m'). Since trueStates(m') ⊆ trueStates(m),
@@ -1579,17 +1556,15 @@ private theorem scalar_level_nonempty (G : InterpGame) (hScalar : isScalarGame G
       -- trueMessages(t) ⊆ trueMessages(s). card(t) ≤ card(s).
       -- But s has min card among m-true states, so card(s) ≤ card(t). Equal.
       have heq := Finset.eq_of_subset_of_card_le hsub_tm
-        (hs_min t (Finset.mem_filter.mpr ⟨Finset.mem_univ _, ht⟩))
+        (hs_min t (G.mem_trueStates.mpr ht))
       -- trueMessages(t) = trueMessages(s), so m' ∈ trueMessages(s) → m' ∈ trueMessages(t)
-      have hm'_in_s : m' ∈ G.trueMessages s :=
-        Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩
+      have hm'_in_s : m' ∈ G.trueMessages s := G.mem_trueMessages.mpr hm'
       rw [← heq] at hm'_in_s
-      exact (Finset.mem_filter.mp hm'_in_s).2
+      exact G.mem_trueMessages.mp hm'_in_s
     | inr hsub_st =>
       -- trueMessages(s) ⊆ trueMessages(t), so m' ∈ trueMessages(s) → m' ∈ trueMessages(t)
-      have hm'_in_s : m' ∈ G.trueMessages s :=
-        Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩
-      exact (Finset.mem_filter.mp (hsub_st hm'_in_s)).2
+      have hm'_in_s : m' ∈ G.trueMessages s := G.mem_trueMessages.mpr hm'
+      exact G.mem_trueMessages.mp (hsub_st hm'_in_s)
 
 /-- L0 response value for a true message. -/
 private theorem L0_respond_true (G : InterpGame) (m : G.Message) (s : G.State)
@@ -1597,7 +1572,7 @@ private theorem L0_respond_true (G : InterpGame) (m : G.Message) (s : G.State)
     (L0 G).respond m s = 1 / ((G.trueStates m).card : ℚ) := by
   simp only [L0, HearerStrategy.literal]
   split_ifs with h
-  · exact absurd h (Finset.card_ne_zero.mpr ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm⟩⟩)
+  · exact absurd h (Finset.card_ne_zero.mpr ⟨s, G.mem_trueStates.mpr hm⟩)
   · rfl
 
 /-- In a scalar game with distinct truth sets, for all n ≥ 0, the speaker's
@@ -1622,15 +1597,15 @@ private theorem ibrN_opt_singleton (G : InterpGame)
     intro s hNE
     obtain ⟨m₀, hm₀_in, hm₀_min⟩ := Finset.exists_min_image (G.trueMessages s)
       (fun m => (G.trueStates m).card) hNE
-    simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm₀_in
+    have hm₀_in := G.mem_trueMessages.mp hm₀_in
     have hm₀_str : ∀ m', G.meaning m' s = true → G.trueStates m₀ ⊆ G.trueStates m' := by
       intro m' hm'
       cases hScalar m₀ m' with
       | inl h => exact h
       | inr h =>
         exact Finset.eq_of_subset_of_card_le h
-          (hm₀_min m' (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm'⟩)) ▸ Finset.Subset.refl _
-    refine ⟨m₀, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm₀_in⟩, hm₀_in, hm₀_str, ?_⟩
+          (hm₀_min m' (G.mem_trueMessages.mpr hm')) ▸ Finset.Subset.refl _
+    refine ⟨m₀, G.mem_trueMessages.mpr hm₀_in, hm₀_in, hm₀_str, ?_⟩
     intro m' hm' hne
     exact lt_of_le_of_ne (hm₀_str m' hm')
       (fun heq => hne (hDistinct m₀ m' heq).symm)
@@ -1650,18 +1625,18 @@ private theorem ibrN_opt_singleton (G : InterpGame)
     -- L0(m) ≤ L0(m₀) for all m; strict for m ≠ m₀
     have hL0_le : ∀ m ∈ G.trueMessages s, (L0 G).respond m s ≤ (L0 G).respond m₀ s := by
       intro m hm_mem
-      simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm_mem
+      have hm_mem := G.mem_trueMessages.mp hm_mem
       rw [L0_respond_true G m s hm_mem, L0_respond_true G m₀ s hm₀_in]
       exact div_le_div_of_nonneg_left zero_le_one
-        (by exact_mod_cast Finset.card_pos.mpr ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm₀_in⟩⟩)
+        (by exact_mod_cast Finset.card_pos.mpr ⟨s, G.mem_trueStates.mpr hm₀_in⟩)
         (by exact_mod_cast Finset.card_le_card (hm₀_str m hm_mem))
     have hL0_strict : ∀ m ∈ G.trueMessages s, m ≠ m₀ →
         (L0 G).respond m s < (L0 G).respond m₀ s := by
       intro m hm_mem hne
-      simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm_mem
+      have hm_mem := G.mem_trueMessages.mp hm_mem
       rw [L0_respond_true G m s hm_mem, L0_respond_true G m₀ s hm₀_in]
       exact div_lt_div_of_pos_left one_pos
-        (by exact_mod_cast Finset.card_pos.mpr ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm₀_in⟩⟩)
+        (by exact_mod_cast Finset.card_pos.mpr ⟨s, G.mem_trueStates.mpr hm₀_in⟩)
         (by exact_mod_cast Finset.card_lt_card (hm₀_sstr m hm_mem hne))
     -- maxUtility = L0(m₀, s)
     have hMaxUtil : SpeakerStrategy.maxUtility G (ibrN G 0) s = (L0 G).respond m₀ s := by
@@ -1724,10 +1699,10 @@ private theorem ibrN_opt_singleton (G : InterpGame)
         rw [hbr_zero s m' hNE hm's ⟨m₀, hm₀_in, hm₀_sstr m' hm's hne⟩, zero_mul]
       -- level states for m' exist, giving maxW > 0
       obtain ⟨t₀, ht₀_in, ht₀_str⟩ := scalar_level_nonempty G hScalar hDistinct m'
-        ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm's⟩⟩
-      simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at ht₀_in
+        ⟨s, G.mem_trueStates.mpr hm's⟩
+      simp only [InterpGame.mem_trueStates] at ht₀_in
       have ht₀_NE : (G.trueMessages t₀).Nonempty :=
-        ⟨m', Finset.mem_filter.mpr ⟨Finset.mem_univ _, ht₀_in⟩⟩
+        ⟨m', G.mem_trueMessages.mpr ht₀_in⟩
       have hwt₀ : S.choose t₀ m' * G.prior t₀ = p := by
         rw [hbr_eq t₀ m' ht₀_NE ht₀_in ht₀_str, one_mul, hFlatPrior t₀ s]
       -- Use FP equation: ibrN(n+1) = hearerBR(S)
@@ -1777,8 +1752,7 @@ private theorem ibrN_opt_singleton (G : InterpGame)
             (fun m => (ibrN G (n + 1)).respond m s) 0 with h0 | ⟨m', hm', hfm'⟩
         · simp only [SpeakerStrategy.maxUtility, h0]; exact le_of_lt hH_pos
         · simp only [SpeakerStrategy.maxUtility, hfm']
-          simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ,
-            true_and] at hm'
+          have hm' := G.mem_trueMessages.mp hm'
           by_cases heq : m' = m₀
           · subst heq; exact le_refl _
           · rw [hH_zero m' hm' heq]; exact le_of_lt hH_pos
@@ -1821,7 +1795,7 @@ private theorem ibrN_respond_pos_iff_strongest (G : InterpGame)
   set p := G.prior s
   set w := fun t => S.choose t m * G.prior t
   have hNE : (G.trueMessages s).Nonempty :=
-    ⟨m, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs⟩⟩
+    ⟨m, G.mem_trueMessages.mpr hs⟩
   -- From ibrN_opt_singleton: opt(s) = {m₀} where m₀ is the strongest at s
   obtain ⟨m₀, hopt₀, hm₀_true, hm₀_str⟩ :=
     ibrN_opt_singleton G hPriorPos hFlatPrior hScalar hDistinct k s hNE
@@ -1833,10 +1807,10 @@ private theorem ibrN_respond_pos_iff_strongest (G : InterpGame)
     rw [SpeakerStrategy.bestResponse_val, if_neg (hopt₀ ▸ mt Finset.mem_singleton.mp hne)]
   -- Level state t₀ for m: m is strongest there, giving w(t₀) = p
   obtain ⟨t₀, ht₀_in, ht₀_str⟩ := scalar_level_nonempty G hScalar hDistinct m
-    ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs⟩⟩
-  simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and] at ht₀_in
+    ⟨s, G.mem_trueStates.mpr hs⟩
+  have ht₀_in := G.mem_trueStates.mp ht₀_in
   have ht₀_NE : (G.trueMessages t₀).Nonempty :=
-    ⟨m, Finset.mem_filter.mpr ⟨Finset.mem_univ _, ht₀_in⟩⟩
+    ⟨m, G.mem_trueMessages.mpr ht₀_in⟩
   obtain ⟨m_t₀, hopt_t₀, _, hstr_t₀⟩ :=
     ibrN_opt_singleton G hPriorPos hFlatPrior hScalar hDistinct k t₀ ht₀_NE
   -- m = strongest at t₀ (by distinctness of truth sets)
@@ -1896,7 +1870,6 @@ private theorem ibrN_respond_pos_iff_strongest (G : InterpGame)
     rw [if_pos hws]
     exact div_pos one_pos (Nat.cast_pos.mpr (Finset.card_pos.mpr
       ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hws⟩⟩))
-
 /-- IBR fixed point equals exhMW (Main theorem — @cite{franke-2011}, Section 9.3)
 
 This is the central result connecting game theory to exhaustification.
@@ -1956,10 +1929,9 @@ theorem ibr_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
       have hss := ltALT_implies_trueMessages_ssubset G s' s hs'_lt
       apply hss.2
       intro m' hm'
-      simp only [InterpGame.trueMessages, Finset.mem_filter, Finset.mem_univ, true_and] at hm' ⊢
+      simp only [InterpGame.mem_trueMessages] at hm' ⊢
       -- m' true at s → trueStates(m) ⊆ trueStates(m') → s' ∈ trueStates(m) → m' true at s'
-      exact (Finset.mem_filter.mp (hStr m' hm'
-        (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs'_true⟩))).2
+      exact G.mem_trueStates.mp (hStr m' hm' (G.mem_trueStates.mpr hs'_true))
   · -- Backward: exhMW(m, s) → H(m,s) > 0
     intro ⟨hTrue, hMin⟩
     -- exhMW-minimal → card-minimal → m strongest at s → H > 0
@@ -2083,8 +2055,7 @@ theorem rsa_to_ibr_limit (G : InterpGame) [Nonempty G.Message] (s : G.State) (m 
           -- which contradicts hm' : meaning m' s = true
           exfalso
           have hempty : G.trueStates m' = ∅ := Finset.card_eq_zero.mp hcard
-          have hs_mem : s ∈ G.trueStates m' := by
-            simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and, hm']
+          have hs_mem : s ∈ G.trueStates m' := G.mem_trueStates.mpr hm'
           simp only [hempty, Finset.notMem_empty] at hs_mem
         · exact one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hcard))
       exact Real.log_lt_log (Rat.cast_pos.mpr hm'_pos) (Rat.cast_lt.mpr (hUnique m' hne hm'))
@@ -2097,8 +2068,7 @@ theorem rsa_to_ibr_limit (G : InterpGame) [Nonempty G.Message] (s : G.State) (m 
       -- Equivalently: log(inf m) > -log(|State|) - 1
       haveI : Nonempty G.State := ⟨s⟩
       have hcard_pos : 0 < Fintype.card G.State := Fintype.card_pos
-      have hs_in_true : s ∈ G.trueStates m := by
-        simp only [InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ, true_and, hTrue]
+      have hs_in_true : s ∈ G.trueStates m := G.mem_trueStates.mpr hTrue
       have htrue_card_pos : 0 < (G.trueStates m).card :=
         Finset.card_pos.mpr ⟨s, hs_in_true⟩
       have htrue_card_le : (G.trueStates m).card ≤ Fintype.card G.State :=
@@ -2226,18 +2196,12 @@ theorem nsGame_not_scalar : ¬isScalarGame nsGame := by
   have hqr := h .q .r
   -- trueStates(q) = {a}, trueStates(r) = {c}: incomparable
   rcases hqr with hsub | hsub
-  · have : NSState.a ∈ nsGame.trueStates .q :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩
+  · have : NSState.a ∈ nsGame.trueStates .q := nsGame.mem_trueStates.mpr rfl
     have hmem := hsub this
-    simp only [nsGame, InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ,
-      true_and] at hmem
-    exact absurd hmem Bool.noConfusion
-  · have : NSState.c ∈ nsGame.trueStates .r :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, rfl⟩
+    exact absurd (nsGame.mem_trueStates.mp hmem) (by decide)
+  · have : NSState.c ∈ nsGame.trueStates .r := nsGame.mem_trueStates.mpr rfl
     have hmem := hsub this
-    simp only [nsGame, InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ,
-      true_and] at hmem
-    exact absurd hmem Bool.noConfusion
+    exact absurd (nsGame.mem_trueStates.mp hmem) (by decide)
 
 private def nsFPHearer : HearerStrategy nsGame where
   respond := fun msg st => match msg, st with
