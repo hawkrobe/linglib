@@ -7,6 +7,14 @@ import Mathlib.Tactic.Common
 The standard classification of adjective meanings as functions from
 properties to properties, constrained by meaning postulates.
 
+@cite{parsons-1970} independently introduced the operator approach
+(modifiers as functions on predicates, not conjoinable predicates) and
+distinguished "predicative" adjectives (analyzable as conjunction =
+intersective) from "non-predicative" (= non-intersective), and
+"standard" modifiers (A N → N = subsective) from "non-standard"
+(= non-subsective). @cite{kamp-1975} refined these binary distinctions
+into the full four-class hierarchy below; the terminology follows Kamp.
+
 ## Hierarchy
 
 1. **Intersective** (Kamp's "predicative", def. 4): `⟦A N⟧ = ⟦A⟧ ∩ ⟦N⟧`
