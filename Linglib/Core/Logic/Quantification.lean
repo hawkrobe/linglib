@@ -445,6 +445,38 @@ theorem innerNeg_involution (q : GQ α) : innerNeg (innerNeg q) = q := by
 theorem dualQ_involution (q : GQ α) : dualQ (dualQ q) = q := by
   funext R S; simp [dualQ, outerNeg, innerNeg, Bool.not_not]
 
+-- §2.4 QuantityInvariant closure --
+
+/-- Outer negation preserves QuantityInvariant: if Q is bijection-invariant,
+    so is ~Q. -/
+theorem quantityInvariant_outerNeg (q : GQ α)
+    (h : QuantityInvariant q) : QuantityInvariant (outerNeg q) := by
+  intro A B A' B' f hBij hA hB
+  simp only [outerNeg]
+  rw [h A B A' B' f hBij hA hB]
+
+/-- Inner negation preserves QuantityInvariant: if Q is bijection-invariant,
+    so is Q~. -/
+theorem quantityInvariant_innerNeg (q : GQ α)
+    (h : QuantityInvariant q) : QuantityInvariant (innerNeg q) := by
+  intro A B A' B' f hBij hA hB
+  simp only [innerNeg]
+  exact h A (λ x => !B x) A' (λ x => !B' x) f hBij hA
+    (λ x => by simp only [Function.comp]; rw [hB x])
+
+/-- Dual preserves QuantityInvariant. -/
+theorem quantityInvariant_dualQ (q : GQ α)
+    (h : QuantityInvariant q) : QuantityInvariant (dualQ q) :=
+  quantityInvariant_outerNeg _ (quantityInvariant_innerNeg _ h)
+
+/-- Meet preserves QuantityInvariant. -/
+theorem quantityInvariant_gqMeet (f g : GQ α)
+    (hf : QuantityInvariant f) (hg : QuantityInvariant g) :
+    QuantityInvariant (gqMeet f g) := by
+  intro A B A' B' σ hBij hA hB
+  simp only [gqMeet]
+  rw [hf A B A' B' σ hBij hA hB, hg A B A' B' σ hBij hA hB]
+
 /-- Conservative + intersection condition → symmetric (B&C Theorem C5).
     Proof: by conservativity Q(A,B) = Q(A, A∩B) and Q(B,A) = Q(B, B∩A);
     both have the same restrictor∩scope = A∩B, so intersection condition

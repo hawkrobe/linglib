@@ -1250,6 +1250,148 @@ theorem every_scope_up_from_smooth : ScopeUpwardMono (every_sem m) :=
 theorem at_least_n_scope_up_from_smooth (n : Nat) : ScopeUpwardMono (at_least_n_sem m n) :=
   smooth_conservative_scopeUpMono _ (at_least_n_conservative n) (at_least_n_smooth n)
 
+-- ============================================================================
+-- Quantity / Isomorphism Closure Proofs (@cite{mostowski-1957})
+-- ============================================================================
+
+/-- `Quantity` is closed under outerNeg: if Q depends only on cell cardinalities,
+    so does ~Q. -/
+theorem quantity_outerNeg (q : m.interpTy Ty.det) (h : Quantity q) :
+    Quantity (outerNeg q) := by
+  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
+  simp only [outerNeg]; rw [h R₁ S₁ R₂ S₂ hTT hTF hFT hFF]
+
+/-- `Quantity` is closed under meet: if Q₁ and Q₂ depend only on cell
+    cardinalities, so does Q₁ ⊓ Q₂. -/
+theorem quantity_gqMeet (q₁ q₂ : m.interpTy Ty.det)
+    (h₁ : Quantity q₁) (h₂ : Quantity q₂) :
+    Quantity (gqMeet q₁ q₂) := by
+  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
+  simp only [gqMeet]
+  rw [h₁ R₁ S₁ R₂ S₂ hTT hTF hFT hFF, h₂ R₁ S₁ R₂ S₂ hTT hTF hFT hFF]
+
+/-- `⟦at least n⟧` satisfies Quantity: truth depends only on |A ∩ B|. -/
+theorem at_least_n_quantity (n : Nat) : Quantity (at_least_n_sem m n) := by
+  intro R₁ S₁ R₂ S₂ hTT _ _ _
+  dsimp only [at_least_n_sem]
+  exact congrArg (fun k => decide (k ≥ n)) hTT
+
+/-- `⟦at most n⟧` satisfies Quantity: truth depends only on |A ∩ B|. -/
+theorem at_most_n_quantity (n : Nat) : Quantity (at_most_n_sem m n) := by
+  intro R₁ S₁ R₂ S₂ hTT _ _ _
+  dsimp only [at_most_n_sem]
+  exact congrArg (fun k => decide (k ≤ n)) hTT
+
+/-- `⟦exactly n⟧` satisfies Quantity. Derived from meet closure:
+    exactly n = (at least n) ⊓ (at most n). -/
+theorem exactly_n_quantity (n : Nat) : Quantity (exactly_n_sem m n) := by
+  rw [exactly_eq_meet_at_least_at_most]
+  exact quantity_gqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity n)
+
+/-- `⟦some⟧` satisfies Quantity. Derived: some = at least 1. -/
+theorem some_quantity : Quantity (some_sem m) := by
+  rw [some_eq_at_least_1]; exact at_least_n_quantity 1
+
+/-- `⟦no⟧` satisfies Quantity. Derived: no = at most 0. -/
+theorem no_quantity : Quantity (no_sem m) := by
+  rw [no_eq_at_most_0]; exact at_most_n_quantity 0
+
+/-- `⟦every⟧` satisfies Quantity: truth depends only on |A \ B|.
+    every(A,B) ↔ |A \ B| = 0. Proof via QuantityInvariant bridge:
+    `all_bij_inv` gives bijection-invariance, `quantity_of_quantityInvariant`
+    converts to cell-cardinality form. -/
+private theorem every_quantityInvariant :
+    Core.Quantification.QuantityInvariant (every_sem m) := by
+  intro A B A' B' f hBij hA hB
+  simp only [every_sem]
+  rw [all_bij_inv f hBij]; congr 1; funext x
+  simp only [Function.comp]; rw [hA, hB]
+
+theorem every_quantity : Quantity (every_sem m) :=
+  quantity_of_quantityInvariant _ every_quantityInvariant
+
+/-- `⟦most⟧` satisfies Quantity: truth depends on |A ∩ B| and |A \ B|.
+    most(A,B) ↔ |A ∩ B| > |A \ B|. -/
+theorem most_quantity : Quantity (most_sem m) := by
+  intro R₁ S₁ R₂ S₂ hTT hTF _ _
+  dsimp only [most_sem]
+  exact congrArg₂ (fun a b => decide (a > b)) hTT hTF
+
+/-- `⟦few⟧` satisfies Quantity: truth depends on |A ∩ B| and |A \ B|.
+    few(A,B) ↔ |A ∩ B| < |A \ B|. -/
+theorem few_quantity : Quantity (few_sem m) := by
+  intro R₁ S₁ R₂ S₂ hTT hTF _ _
+  dsimp only [few_sem]
+  exact congrArg₂ (fun a b => decide (a < b)) hTT hTF
+
+/-- Filter-length decomposition: |filter R| = |filter (R∧S)| + |filter (R∧¬S)|.
+    Every R-element is either in S or not. -/
+private theorem filter_length_decompose (es : List m.Entity) (R S : m.Entity → Bool) :
+    (es.filter R).length =
+    (es.filter (λ x => R x && S x)).length +
+    (es.filter (λ x => R x && !S x)).length := by
+  induction es with
+  | nil => simp
+  | cons a t ih =>
+    simp only [List.filter_cons]
+    cases hR : R a <;> cases hS : S a <;>
+      simp only [hR, hS, ↓reduceIte, Bool.false_and, Bool.true_and,
+        Bool.not_true, Bool.not_false, Bool.false_eq_true, List.length_cons] <;>
+      omega
+
+/-- `⟦half⟧` satisfies Quantity: truth depends on |A ∩ B| and |A \ B|.
+    half(A,B) ↔ 2 * |A ∩ B| = |A|, and |A| = |A ∩ B| + |A \ B|. -/
+theorem half_quantity : Quantity (half_sem m) := by
+  intro R₁ S₁ R₂ S₂ hTT hTF _ _
+  dsimp only [half_sem]
+  exact congrArg₂ (fun a b => decide (2 * a = b)) hTT
+    (show (FiniteModel.elements.filter R₁).length =
+          (FiniteModel.elements.filter R₂).length by
+      have h₁ := filter_length_decompose FiniteModel.elements R₁ S₁
+      have h₂ := filter_length_decompose FiniteModel.elements R₂ S₂
+      omega)
+
+-- ============================================================================
+-- SatisfiesUniversals (@cite{van-de-pol-etal-2023})
+-- ============================================================================
+
+/-- `⟦some⟧` satisfies all three universals: CONSERV ∧ QUANTITY ∧ Mon↑. -/
+theorem some_satisfiesUniversals : SatisfiesUniversals (some_sem m) :=
+  ⟨some_conservative, some_quantity, Or.inl some_scope_up⟩
+
+/-- `⟦every⟧` satisfies all three universals: CONSERV ∧ QUANTITY ∧ Mon↑. -/
+theorem every_satisfiesUniversals : SatisfiesUniversals (every_sem m) :=
+  ⟨every_conservative, every_quantity, Or.inl every_scope_up⟩
+
+/-- `⟦no⟧` satisfies all three universals: CONSERV ∧ QUANTITY ∧ Mon↓. -/
+theorem no_satisfiesUniversals : SatisfiesUniversals (no_sem m) :=
+  ⟨no_conservative, no_quantity, Or.inr no_scope_down⟩
+
+/-- `⟦most⟧` satisfies all three universals: CONSERV ∧ QUANTITY ∧ Mon↑. -/
+theorem most_satisfiesUniversals : SatisfiesUniversals (most_sem m) :=
+  ⟨most_conservative, most_quantity, Or.inl most_scope_up⟩
+
+/-- `⟦few⟧` satisfies all three universals: CONSERV ∧ QUANTITY ∧ Mon↓. -/
+theorem few_satisfiesUniversals : SatisfiesUniversals (few_sem m) :=
+  ⟨few_conservative, few_quantity, Or.inr few_scope_down⟩
+
+/-- `⟦at least n⟧` satisfies all three universals: CONSERV ∧ QUANTITY ∧ Mon↑. -/
+theorem at_least_n_satisfiesUniversals (n : Nat) :
+    SatisfiesUniversals (at_least_n_sem m n) :=
+  ⟨at_least_n_conservative n, at_least_n_quantity n, Or.inl (at_least_n_scope_up n)⟩
+
+/-- `⟦at most n⟧` satisfies all three universals: CONSERV ∧ QUANTITY ∧ Mon↓. -/
+theorem at_most_n_satisfiesUniversals (n : Nat) :
+    SatisfiesUniversals (at_most_n_sem m n) :=
+  ⟨at_most_n_conservative n, at_most_n_quantity n, Or.inr (at_most_n_scope_down n)⟩
+
+/-- `⟦exactly n⟧` satisfies CONSERV ∧ QUANTITY but is neither Mon↑ nor Mon↓
+    for n ≥ 1. This is expected: "exactly n" is a non-monotone quantifier.
+    We prove the first two universals. -/
+theorem exactly_n_conservative_quantity (n : Nat) :
+    Conservative (exactly_n_sem m n) ∧ Quantity (exactly_n_sem m n) :=
+  ⟨exactly_n_conservative n, exactly_n_quantity n⟩
+
 end FiniteModelProofs
 
 end Semantics.Lexical.Determiner.Quantifier
