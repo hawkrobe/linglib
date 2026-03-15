@@ -60,7 +60,9 @@ import Linglib.Core.Alternation
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.CausalBayesNet
 import Linglib.Core.NestedRestriction
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.RootFeatures
+import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.DiathesisAlternation
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Logic.ConstraintEvaluation
@@ -459,6 +461,7 @@ import Linglib.Fragments.French.Modals
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.French.Negation
+import Linglib.Fragments.French.ModalIndefinites
 import Linglib.Fragments.French.Reciprocals
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
@@ -558,6 +561,7 @@ import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Italian.Modals
 import Linglib.Fragments.Italian.AdjAgreement
 import Linglib.Fragments.Italian.PolarityItems
+import Linglib.Fragments.Italian.ModalIndefinites
 import Linglib.Fragments.Italian.NumberGender
 import Linglib.Fragments.Spanish.Binominals
 import Linglib.Fragments.Spanish.Clitics
@@ -566,6 +570,7 @@ import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.Morph
 import Linglib.Fragments.Spanish.Gender
+import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.Spanish.Negation
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
@@ -589,6 +594,7 @@ import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Russian.PolarityItems
 import Linglib.Fragments.German.PolarityItems
+import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.German.QuestionParticles
 import Linglib.Fragments.Japanese.PolarityItems
 import Linglib.Fragments.Korean.PolarityItems
@@ -912,7 +918,6 @@ import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Linglib.Phenomena.Modality.Studies.Kratzer1981
 import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.Modality.EpistemicContradictions
-import Linglib.Phenomena.ModalIndefinites.Data
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021

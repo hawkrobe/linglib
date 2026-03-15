@@ -3,7 +3,9 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 /-!
 # Modal Indefinite Semantics
 
-@cite{alonso-ovalle-royer-2024} @cite{alonso-ovalle-menendez-benito-2010} @cite{hacquard-2006}Formal denotation of modal indefinites: existential quantifiers carrying a
+@cite{alonso-ovalle-royer-2024} @cite{alonso-ovalle-menendez-benito-2010} @cite{hacquard-2006}
+
+Formal denotation of modal indefinites: existential quantifiers carrying a
 modal component whose domain is projected from an event argument via an
 anchoring function. Extracted from EventRelativity §§3–7.
 
