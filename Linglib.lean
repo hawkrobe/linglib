@@ -1382,8 +1382,6 @@ import Linglib.Theories.Semantics.Degree.Granularity
 -- Theories: Semantics.Supervaluation (general supervaluation framework)
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Theories.Semantics.Supervaluation.TCS
--- Theories: Semantics.Homogeneity (cross-domain homogeneity: plurals, conditionals, generics)
-import Linglib.Theories.Semantics.Homogeneity
 -- Theories: Semantics.PossibilitySemantics (possibility semantics)
 import Linglib.Theories.Semantics.PossibilitySemantics.Basic
 import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic

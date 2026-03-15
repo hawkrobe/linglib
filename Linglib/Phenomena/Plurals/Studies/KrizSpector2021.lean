@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
-import Linglib.Theories.Semantics.Homogeneity
 import Linglib.Phenomena.Plurals.Studies.Kriz2016
 
 /-!
