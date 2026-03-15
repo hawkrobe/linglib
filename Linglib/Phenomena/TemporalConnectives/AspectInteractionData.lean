@@ -2,7 +2,9 @@ import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 /-!
 # Aspect × Temporal Connective Interaction Data
-@cite{moens-steedman-1988} @cite{vendler-1957}Theory-neutral empirical data on how temporal connectives interact with the @cite{heinamaki-1974} @cite{rett-2020}
+@cite{moens-steedman-1988} @cite{vendler-1957}
+
+Theory-neutral empirical data on how temporal connectives interact with the @cite{heinamaki-1974} @cite{rett-2020}
 aspectual class (Vendler class) of their complement and main clauses.
 
 ## Key Empirical Generalizations
@@ -52,7 +54,7 @@ structure AspectInteraction where
   deriving Repr
 
 -- ============================================================================
--- § 2: *When* + Embedded Clause (@cite{moens-steedman-1988}, §3)
+-- § 2: *When* + Embedded Clause (@cite{moens-steedman-1988}, §4.2)
 -- ============================================================================
 
 /-- *when* + state → no coercion (state persists).
@@ -102,7 +104,7 @@ def when_achievement : AspectInteraction where
   example_ := "When John arrived, Mary left"
 
 -- ============================================================================
--- § 3: *Until* Main Clause Restrictions (@cite{moens-steedman-1988}, §4; @cite{karttunen-1974})
+-- § 3: *Until* Main Clause Restrictions (@cite{karttunen-1974})
 -- ============================================================================
 
 /-- *until* + stative main clause → acceptable (canonical use).
@@ -300,7 +302,10 @@ def addProcess : CoercionEdge where
   example_ := "John noticed the painting (for hours → iterative)"
 
 /-- Iterate: achievement → activity.
-    "John coughed" → "John coughed for hours" (iterated). -/
+    "John coughed" → "John coughed for hours" (iterated).
+    In @cite{moens-steedman-1988} Fig. 2, the iteration arrow goes from POINT
+    to PROCESS specifically; culminations reach process via a two-step path
+    (culmination → point → process). At the Vendler level both are "achievement." -/
 def iterate_ : CoercionEdge where
   source := .achievement
   target := .activity
