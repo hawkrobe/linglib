@@ -123,12 +123,12 @@ def addresseeAssignment : CtxtAssignment where
 /-- A's IS after uttering "Did Bo leave?": fully grounded.
 Speaker resolves all C-PARAMS, so the utterance goes straight to FACTS. -/
 def speakerIS : IS String String :=
-  IS.initial.integrateUtterance didBoLeave speakerAssignment
+  IS.initial.integrateUtteranceStr didBoLeave speakerAssignment
 
 /-- B's IS after hearing "Did Bo leave?": partial assignment → pending.
 Addressee cannot resolve b, so the utterance goes to PENDING. -/
 def addresseeIS : IS String String :=
-  IS.initial.integrateUtterance didBoLeave addresseeAssignment
+  IS.initial.integrateUtteranceStr didBoLeave addresseeAssignment
 
 -- ════════════════════════════════════════════════════
 -- § 5. Coercion Operations (paper ex. 53–54, 59–60)
@@ -160,11 +160,11 @@ def existGenOnBo : UttSkeleton :=
 
 /-- B applies parameter focussing to set up clarification context. -/
 def addresseeISAfterFocussing : Option (IS String String) :=
-  focussingOnBo.map addresseeIS.applyCoercion
+  focussingOnBo.map addresseeIS.applyCoercionStr
 
 /-- B applies parameter identification to set up clarification context. -/
 def addresseeISAfterIdentification : Option (IS String String) :=
-  identificationOnBo.map addresseeIS.applyCoercion
+  identificationOnBo.map addresseeIS.applyCoercionStr
 
 -- ════════════════════════════════════════════════════
 -- § 7. Verification Theorems

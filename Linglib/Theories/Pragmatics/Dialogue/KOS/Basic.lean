@@ -76,7 +76,7 @@ inductive IllocMove (Fact QContent : Type) where
   | greet : IllocMove Fact QContent
   /-- Counter-greeting. -/
   | counterGreet : IllocMove Fact QContent
-  deriving Repr
+  deriving Repr, DecidableEq, BEq
 
 /-- Extract the propositional content from a move, if any. -/
 def IllocMove.factContent {Fact QContent : Type} : IllocMove Fact QContent → Option Fact
@@ -392,12 +392,61 @@ def existentialGeneralization (sk : UttSkeleton) (paramIdx : String) : UttSkelet
     cparams := sk.cparams.filter (·.index != paramIdx)
     cont := s!"∃{paramIdx}.{sk.cont}" }
 
+-- ════════════════════════════════════════════════════
+-- § 10. IS: 2004-era Information State (@cite{ginzburg-cooper-2004})
+-- ════════════════════════════════════════════════════
+
+/-- Information State for the @cite{ginzburg-cooper-2004} model.
+
+Bundles a DGB with CE processing state (pending utterances). Uses `String`
+for both Fact and QContent, matching the string-based representations in
+the 2004 paper. The `Participant` type parameter is set to `String`.
+
+This is NOT the @cite{ginzburg-2012} TIS — it predates the genre/agenda
+private state. It exists to support the CE running example. -/
+structure IS (Fact QContent : Type) where
+  dgb : DGB String Fact QContent := {}
+  /-- Utterances awaiting full C-PARAMS resolution -/
+  pending : List SignAssignment := []
+  ce : CEState QContent := {}
+
+/-- An empty IS. -/
+def IS.initial {Fact QContent : Type} : IS Fact QContent := {}
+
+/-- Integrate an utterance into the IS.
+
+If the assignment fully resolves all C-PARAMS, the utterance is grounded:
+its content goes to FACTS. Otherwise, it goes to PENDING.
+@cite{ginzburg-cooper-2004} §6, ex. 82. -/
+def IS.integrateUtterance {Fact QContent : Type} [BEq Fact]
+    (is_ : IS Fact QContent) (skel : UttSkeleton) (assign : CtxtAssignment)
+    (toFact : String → Fact) : IS Fact QContent :=
+  if assign.resolvesAll skel.cparams then
+    { is_ with dgb := { is_.dgb with facts := is_.dgb.facts ++ [toFact skel.cont] } }
+  else
+    { is_ with pending := is_.pending ++ [{ sign := skel, assignment := assign }] }
+
+/-- String-specialized integration (content IS the fact). -/
+def IS.integrateUtteranceStr (is_ : IS String String)
+    (skel : UttSkeleton) (assign : CtxtAssignment) : IS String String :=
+  is_.integrateUtterance skel assign id
+
+/-- Apply a coercion output to the IS: set MAX-QUD and SAL-UTT. -/
+def IS.applyCoercion {Fact QContent : Type}
+    (is_ : IS Fact QContent) (co : CoercionOutput)
+    (toQ : String → QContent) : IS Fact QContent :=
+  { is_ with ce := { is_.ce with maxQud := some (toQ co.maxQud), salUtt := some co.salUtt } }
+
+/-- String-specialized coercion application. -/
+def IS.applyCoercionStr (is_ : IS String String) (co : CoercionOutput) : IS String String :=
+  is_.applyCoercion co id
+
 -- ════════════════════════════════════════════════════════════
 -- Part III: Structural Theorems
 -- ════════════════════════════════════════════════════════════
 
 -- ════════════════════════════════════════════════════
--- § 10. DGB Properties
+-- § 11. DGB Properties
 -- ════════════════════════════════════════════════════
 
 /-- An empty DGB has no moves. -/
@@ -413,7 +462,7 @@ theorem DGB.initial_no_latestMove {Participant Fact QContent : Type} :
     (DGB.initial : DGB Participant Fact QContent).latestMove = none := rfl
 
 -- ════════════════════════════════════════════════════
--- § 11. CE Theorems (@cite{ginzburg-cooper-2004})
+-- § 12. CE Theorems (@cite{ginzburg-cooper-2004})
 -- ════════════════════════════════════════════════════
 
 /-- Both coercion operations target the same SAL-UTT. -/
@@ -455,7 +504,7 @@ theorem existential_gen_weakens (sk : UttSkeleton) (idx : String) :
   exact List.length_filter_le _ _
 
 -- ════════════════════════════════════════════════════
--- § 12. SLASH Analogy Bridge
+-- § 13. SLASH Analogy Bridge
 -- ════════════════════════════════════════════════════
 
 /-- Structural analogy: discharging a SLASH gap and resolving a C-PARAM
@@ -470,7 +519,7 @@ theorem slash_cparams_both_decrease
   · exact List.length_filter_le _ _
 
 -- ════════════════════════════════════════════════════
--- § 13. HasContextSet Bridge
+-- § 14. HasContextSet Bridge
 -- ════════════════════════════════════════════════════
 
 open Core.CommonGround in
@@ -496,7 +545,7 @@ theorem tis_contextSet_eq_dgb {W Participant QContent : Type}
     HasContextSet.toContextSet tis = HasContextSet.toContextSet tis.dgb := rfl
 
 -- ════════════════════════════════════════════════════
--- § 14. DGB Content Mapping
+-- § 15. DGB Content Mapping
 -- ════════════════════════════════════════════════════
 
 /-- Map over a DGB's fact type, preserving structure. -/

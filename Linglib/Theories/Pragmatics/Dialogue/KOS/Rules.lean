@@ -4,33 +4,36 @@ import Linglib.Core.Discourse.QUD
 
 /-!
 # KOS Conversational Rules
-@cite{ginzburg-2012} @cite{ginzburg-cooper-2004}
+@cite{ginzburg-2012} Ch. 4
 
 Conversational rules govern how dialogue gameboards evolve during
 conversation. @cite{ginzburg-2012} Ch. 4 defines these as precondition/effect
-pairs on information states.
+pairs (record types with `pre` and `effects` fields).
 
-## Core Rules
+## Core Rules (@cite{ginzburg-2012} Ch. 4, pp. 87–112)
 
-1. **Ask** (QUD-push): A question utterance pushes a question onto QUD
-2. **Assert** (FACTS + QUD-downdate): An assertion adds to FACTS and
-   removes any question it resolves from QUD
-3. **Accept**: Grounding an assertion — addressee adds it to own FACTS
-4. **QSPEC** (Question Specification): A subquestion refines a QUD entry
-5. **Acknowledge**: Minimal grounding without new content
+1. **Greeting / CounterGreeting** — conversation initialization (p. 87)
+2. **Initiating Move** — refined Free Speech with genre relevance (p. 108, ex. 94)
+3. **Ask QUD-incrementation** — question pushes onto QUD (p. 95, ex. 66)
+4. **Assert QUD-incrementation** — assertion pushes About(p) onto QUD (p. 95, ex. 66)
+5. **QSPEC** — subquestion accommodation (p. 95, ex. 66)
+6. **QCoord** — successive question coordination (p. 99, ex. 77)
+7. **Accept** — addressee grounds an assertion (p. 95, ex. 66)
+8. **Check** — addressee requests confirmation (p. 95, ex. 68)
+9. **Confirm** — speaker confirms in response to check (p. 95, ex. 68)
+10. **Fact update/QUD-downdate** — accept triggers fact addition + QUD removal (p. 95; p. 103, ex. 85)
 
 ## Answerhood
 
-The `Answerhood` typeclass abstracts the resolves-relation between
-facts and questions. This connects to the partition-based `QUD` type
-in `Core/Discourse/QUD.lean`: a fact resolves a question when it
-determines a unique cell in the question's partition.
+The `Answerhood` typeclass abstracts the resolves-relation between facts
+and questions — connecting to partition-based `QUD W` from `Core/Discourse/QUD.lean`
+and to inquisitive `Issue W`.
 
-## Genre / Interaction Type
+## Genre (@cite{ginzburg-2012} §4.6)
 
-@cite{ginzburg-2012} Ch. 2 classifies conversational genres by their
-characteristic conversational rule sequences — e.g., inquiry
-(Ask → Assert → Accept) vs. examination (Ask → Assert → Evaluate).
+Genres are TTR record types classifying conversations by their characteristic
+structure. Activity relevance (`GenreRelevant`, p. 105, ex. 90) constrains
+which initiating moves are felicitous.
 -/
 
 namespace Theories.Pragmatics.Dialogue.KOS
@@ -45,8 +48,7 @@ This abstracts the answerhood relation between accumulated facts
 and QUD entries. Concrete instances connect to:
 - Partition-based answerhood (`QUD M`): a fact determines a unique cell
 - String-based answerhood: pattern matching on content strings
-- Propositional answerhood (`BProp W`): a fact entails a question's
-  presupposition and satisfies its content
+- Propositional answerhood (`BProp W`): a fact entails a question's answer
 
 @cite{ginzburg-2012} Ch. 4: "q is resolved relative to a DGB dgb iff
 the FACTS in dgb contextually entail an answer to q." -/
@@ -65,177 +67,191 @@ def allResolved {Fact QContent : Type} [Answerhood Fact QContent]
 /-- Push a question onto the QUD stack.
 
 @cite{ginzburg-2012} Ch. 4: when a question is asked, it becomes
-the maximal element of QUD. We model QUD as a stack (list with
-most recent at front) following the "QUD-maximality" constraint. -/
-def DGB.pushQud {Fact QContent : Type}
-    (dgb : DGB Fact QContent) (q : QContent) : DGB Fact QContent :=
+the maximal element of QUD. -/
+def DGB.pushQud {P Fact QContent : Type}
+    (dgb : DGB P Fact QContent) (q : QContent) : DGB P Fact QContent :=
   { dgb with qud := q :: dgb.qud }
 
-/-- Remove resolved questions from the QUD stack.
+/-- Remove resolved questions from QUD.
 
 @cite{ginzburg-2012} Ch. 4: QUD-downdate removes a question q
 from QUD when FACTS contextually entail an answer to q. -/
-def DGB.downdateQud {Fact QContent : Type} [Answerhood Fact QContent]
-    (dgb : DGB Fact QContent) : DGB Fact QContent :=
+def DGB.downdateQud {P Fact QContent : Type} [Answerhood Fact QContent]
+    (dgb : DGB P Fact QContent) : DGB P Fact QContent :=
   { dgb with
     qud := dgb.qud.filter fun q => !dgb.facts.any fun f => Answerhood.resolves f q }
 
 /-- Add a fact to the DGB's FACTS. -/
-def DGB.addFact {Fact QContent : Type}
-    (dgb : DGB Fact QContent) (p : Fact) : DGB Fact QContent :=
+def DGB.addFact {P Fact QContent : Type}
+    (dgb : DGB P Fact QContent) (p : Fact) : DGB P Fact QContent :=
   { dgb with facts := p :: dgb.facts }
 
-/-- Assert: add a fact to FACTS and downdate QUD.
+/-- Record a move in the DGB's MOVES list. -/
+def DGB.recordMove {P Fact QContent : Type}
+    (dgb : DGB P Fact QContent) (m : IllocMove Fact QContent) :
+    DGB P Fact QContent :=
+  { dgb with moves := dgb.moves ++ [m] }
 
-This is the combined effect of assertion on the DGB:
-1. The asserted content enters FACTS
-2. Any question in QUD that the new fact resolves is removed
+/-- Assert: add fact to FACTS, record the move, and downdate QUD.
 
-@cite{ginzburg-2012} Ch. 4. -/
-def DGB.assertFact {Fact QContent : Type} [Answerhood Fact QContent]
-    (dgb : DGB Fact QContent) (p : Fact) : DGB Fact QContent :=
+@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 66): assertion adds content to
+FACTS, pushes About(p,?) onto QUD, and any resolved question is removed. -/
+def DGB.assertFact {P Fact QContent : Type} [Answerhood Fact QContent]
+    (dgb : DGB P Fact QContent) (p : Fact) : DGB P Fact QContent :=
   (dgb.addFact p).downdateQud
 
 -- ════════════════════════════════════════════════════
--- § 3. Conversational Rules on IS
+-- § 3. Conversational Rules on TIS
 -- ════════════════════════════════════════════════════
 
-/-- **Ask rule**: a question utterance pushes onto QUD.
+/-- **Ask rule**: a question utterance pushes onto QUD and records the move.
 
-Precondition: LatestMove is a question.
-Effect: push the question onto the DGB's QUD stack.
+@cite{ginzburg-2012} Ch. 4, "Ask QUD-incrementation" (p. 95, ex. 66). -/
+def TIS.ask {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (q : QContent) :
+    TIS P Fact QContent :=
+  { tis with
+    dgb := (tis.dgb.pushQud q).recordMove (.ask q) }
 
-@cite{ginzburg-2012} Ch. 4, "Ask QUD-push". -/
-def IS.ask {Fact QContent : Type}
-    (is_ : IS Fact QContent) (q : QContent) (lm : LatestMove) :
-    IS Fact QContent :=
-  { is_ with
-    dgb := { is_.dgb.pushQud q with latestMove := some lm }
-    maxQud := some q }
+/-- **Assert rule**: assertion adds to FACTS, pushes onto QUD, and downdates.
 
-/-- **Assert rule**: an assertion adds to FACTS and downdates QUD.
+@cite{ginzburg-2012} Ch. 4, "Assert QUD-incrementation" (p. 95, ex. 66). -/
+def TIS.assertRule {P Fact QContent : Type} [Answerhood Fact QContent]
+    (tis : TIS P Fact QContent) (p : Fact) :
+    TIS P Fact QContent :=
+  { tis with
+    dgb := (tis.dgb.assertFact p).recordMove (.assert p) }
 
-Precondition: LatestMove is an assertion, content resolves MaxQud.
-Effect: add content to FACTS, remove resolved questions from QUD.
+/-- **Accept rule**: addressee grounds an assertion — adds fact to own FACTS.
 
-@cite{ginzburg-2012} Ch. 4, "Assert". -/
-def IS.assertRule {Fact QContent : Type} [Answerhood Fact QContent]
-    (is_ : IS Fact QContent) (p : Fact) (lm : LatestMove) :
-    IS Fact QContent :=
-  { is_ with
-    dgb := { (is_.dgb.assertFact p) with latestMove := some lm }
-    maxQud := none
-    salUtt := none }
-
-/-- **Accept rule**: grounding — addressee integrates asserted content.
-
-Precondition: LatestMove is an assertion by the other participant.
-Effect: add the content to own FACTS.
-
-@cite{ginzburg-2012} Ch. 4, "Accept". This is distinct from
-`IS.integrateUtterance` (which handles C-PARAMS resolution);
-Accept operates after grounding is complete. -/
-def IS.accept {Fact QContent : Type}
-    (is_ : IS Fact QContent) (p : Fact) : IS Fact QContent :=
-  { is_ with dgb := is_.dgb.addFact p }
+@cite{ginzburg-2012} Ch. 4, "Accept" (p. 95, ex. 66 step 4a). -/
+def TIS.accept {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
+  { tis with dgb := (tis.dgb.addFact p).recordMove (.accept p) }
 
 /-- **QSPEC rule**: a subquestion refines a QUD entry.
 
-Precondition: q₂ is a subquestion of some q₁ on QUD.
+Precondition: q₂ influences some q₁ on QUD (q₂ is a subquestion).
 Effect: push q₂ onto QUD (it becomes the new MaxQud).
 
-@cite{ginzburg-2012} Ch. 4: "QSPEC — accommodation of a question
-whose answering may contribute to resolving MaxQud." -/
-def IS.qspec {Fact QContent : Type}
-    (is_ : IS Fact QContent) (q : QContent) : IS Fact QContent :=
-  { is_ with
-    dgb := is_.dgb.pushQud q
-    maxQud := some q }
+@cite{ginzburg-2012} Ch. 4, "QSPEC" (p. 95, ex. 66 step 2). -/
+def TIS.qspec {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (q : QContent) : TIS P Fact QContent :=
+  { tis with
+    dgb := (tis.dgb.pushQud q).recordMove (.ask q) }
 
-/-- **Acknowledge rule**: minimal grounding without new content.
+/-- **Check rule**: addressee requests confirmation of an assertion.
 
-The addressee signals that the latest move has been perceived
-and understood, but does not add new content to FACTS.
+@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 68): a Check move pushes
+a polar question about the asserted content onto QUD. -/
+def TIS.check {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (p : Fact) (aboutP : QContent) :
+    TIS P Fact QContent :=
+  { tis with
+    dgb := (tis.dgb.pushQud aboutP).recordMove (.check p) }
 
-This clears PENDING without modifying FACTS. -/
-def IS.acknowledge {Fact QContent : Type}
-    (is_ : IS Fact QContent) : IS Fact QContent :=
-  { is_ with pending := [] }
+/-- **Confirm rule**: speaker confirms in response to a check.
+
+@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 68 step 2). -/
+def TIS.confirm {P Fact QContent : Type} [Answerhood Fact QContent]
+    (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
+  { tis with
+    dgb := (tis.dgb.assertFact p).recordMove (.confirm p) }
+
+/-- **QCoord rule**: successive question coordination.
+
+@cite{ginzburg-2012} Ch. 4, ex. 77 (p. 99): allows a speaker to follow
+up an initial question with a non-influencing question, where the initial
+question remains QUD-maximal.
+
+Effect: push q onto QUD without displacing the current maximal question. -/
+def TIS.qcoord {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (q : QContent) : TIS P Fact QContent :=
+  { tis with
+    dgb := { tis.dgb with
+      qud := tis.dgb.qud ++ [q]
+      moves := tis.dgb.moves ++ [.ask q] } }
+
+/-- **Fact update/QUD-downdate**: combined rule.
+
+@cite{ginzburg-2012} Ch. 4, ex. 85 (p. 103): when Accept occurs,
+FACTS is updated and resolved questions are downdated from QUD. -/
+def TIS.factUpdateQudDowndate {P Fact QContent : Type} [Answerhood Fact QContent]
+    (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
+  { tis with dgb := (tis.dgb.addFact p).downdateQud }
+
+/-- **Greeting**: conversation initialization.
+
+@cite{ginzburg-2012} Ch. 4 (p. 87): precondition is MOVES = ⟨⟩. -/
+def TIS.greet {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) : TIS P Fact QContent :=
+  { tis with dgb := tis.dgb.recordMove .greet }
 
 -- ════════════════════════════════════════════════════
 -- § 4. Structural Theorems
 -- ════════════════════════════════════════════════════
 
 /-- Ask pushes exactly one question onto QUD. -/
-theorem ask_pushes_qud {Fact QContent : Type}
-    (is_ : IS Fact QContent) (q : QContent) (lm : LatestMove) :
-    (is_.ask q lm).dgb.qud = q :: is_.dgb.qud := rfl
-
-/-- Ask sets MaxQud to the asked question. -/
-theorem ask_sets_maxqud {Fact QContent : Type}
-    (is_ : IS Fact QContent) (q : QContent) (lm : LatestMove) :
-    (is_.ask q lm).maxQud = some q := rfl
+theorem ask_pushes_qud {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (q : QContent) :
+    (tis.ask q).dgb.qud = q :: tis.dgb.qud := rfl
 
 /-- Ask does not modify FACTS. -/
-theorem ask_preserves_facts {Fact QContent : Type}
-    (is_ : IS Fact QContent) (q : QContent) (lm : LatestMove) :
-    (is_.ask q lm).dgb.facts = is_.dgb.facts := rfl
+theorem ask_preserves_facts {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (q : QContent) :
+    (tis.ask q).dgb.facts = tis.dgb.facts := rfl
+
+/-- Ask records the move. -/
+theorem ask_records_move {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (q : QContent) :
+    (tis.ask q).dgb.moves = tis.dgb.moves ++ [.ask q] := rfl
 
 /-- Assert adds the fact to FACTS. -/
-theorem assert_adds_fact {Fact QContent : Type} [Answerhood Fact QContent]
-    (is_ : IS Fact QContent) (p : Fact) (lm : LatestMove) :
-    p ∈ (is_.assertRule p lm).dgb.facts := by
-  simp [IS.assertRule, DGB.assertFact, DGB.downdateQud, DGB.addFact]
-
-/-- Assert clears MaxQud. -/
-theorem assert_clears_maxqud {Fact QContent : Type} [Answerhood Fact QContent]
-    (is_ : IS Fact QContent) (p : Fact) (lm : LatestMove) :
-    (is_.assertRule p lm).maxQud = none := rfl
+theorem assert_adds_fact {P Fact QContent : Type} [Answerhood Fact QContent]
+    (tis : TIS P Fact QContent) (p : Fact) :
+    p ∈ (tis.assertRule p).dgb.facts := by
+  simp [TIS.assertRule, DGB.assertFact, DGB.downdateQud, DGB.addFact, DGB.recordMove]
 
 /-- Accept adds a fact without changing QUD. -/
-theorem accept_preserves_qud {Fact QContent : Type}
-    (is_ : IS Fact QContent) (p : Fact) :
-    (is_.accept p).dgb.qud = is_.dgb.qud := rfl
+theorem accept_preserves_qud {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (p : Fact) :
+    (tis.accept p).dgb.qud = tis.dgb.qud := rfl
 
 /-- Accept adds the fact to FACTS. -/
-theorem accept_adds_fact {Fact QContent : Type}
-    (is_ : IS Fact QContent) (p : Fact) :
-    (is_.accept p).dgb.facts = p :: is_.dgb.facts := rfl
+theorem accept_adds_fact {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (p : Fact) :
+    (tis.accept p).dgb.facts = p :: tis.dgb.facts := rfl
 
-/-- QSPEC pushes a subquestion and updates MaxQud. -/
-theorem qspec_pushes_and_sets_max {Fact QContent : Type}
-    (is_ : IS Fact QContent) (q : QContent) :
-    (is_.qspec q).dgb.qud = q :: is_.dgb.qud ∧
-    (is_.qspec q).maxQud = some q := ⟨rfl, rfl⟩
+/-- QSPEC pushes a subquestion. -/
+theorem qspec_pushes {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (q : QContent) :
+    (tis.qspec q).dgb.qud = q :: tis.dgb.qud := rfl
 
-/-- Acknowledge clears PENDING. -/
-theorem acknowledge_clears_pending {Fact QContent : Type}
-    (is_ : IS Fact QContent) :
-    (is_.acknowledge).pending = [] := rfl
+/-- Check pushes a question onto QUD. -/
+theorem check_pushes_qud {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (p : Fact) (aboutP : QContent) :
+    (tis.check p aboutP).dgb.qud = aboutP :: tis.dgb.qud := rfl
 
-/-- Assert then accept yields the same FACTS as double-assert.
-
-When A asserts p and B accepts, B's FACTS match what A's FACTS
-would be if A also ran assert. This is the grounding invariant:
-successful grounding means both participants' FACTS agree. -/
-theorem assert_accept_facts_agree {Fact QContent : Type} [Answerhood Fact QContent]
-    (is_ : IS Fact QContent) (p : Fact) :
-    (is_.accept p).dgb.facts = p :: is_.dgb.facts := rfl
+/-- Greeting requires empty moves (precondition check). -/
+theorem greet_precond_empty_moves {P Fact QContent : Type}
+    (tis : TIS P Fact QContent) (h : tis.dgb.moves = []) :
+    (tis.greet).dgb.moves = [.greet] := by
+  simp [TIS.greet, DGB.recordMove, h]
 
 -- ════════════════════════════════════════════════════
 -- § 5. QUD Downdate Properties
 -- ════════════════════════════════════════════════════
 
 /-- Downdate never increases QUD size. -/
-theorem downdateQud_length_le {Fact QContent : Type} [Answerhood Fact QContent]
-    (dgb : DGB Fact QContent) :
+theorem downdateQud_length_le {P Fact QContent : Type} [Answerhood Fact QContent]
+    (dgb : DGB P Fact QContent) :
     dgb.downdateQud.qud.length ≤ dgb.qud.length := by
   simp only [DGB.downdateQud]
   exact List.length_filter_le _ _
 
 /-- If a fact resolves the only question on QUD, downdate removes it. -/
-theorem downdateQud_removes_resolved {Fact QContent : Type} [Answerhood Fact QContent]
-    (dgb : DGB Fact QContent) (q : QContent) (f : Fact)
+theorem downdateQud_removes_resolved {P Fact QContent : Type} [Answerhood Fact QContent]
+    (dgb : DGB P Fact QContent) (q : QContent) (f : Fact)
     (hq : dgb.qud = [q]) (hf : f ∈ dgb.facts) (hr : Answerhood.resolves f q = true) :
     dgb.downdateQud.qud = [] := by
   unfold DGB.downdateQud
@@ -246,119 +262,140 @@ theorem downdateQud_removes_resolved {Fact QContent : Type} [Answerhood Fact QCo
   simp [this]
 
 -- ════════════════════════════════════════════════════
--- § 6. Genre / Interaction Type
+-- § 6. M-Coherence (@cite{ginzburg-2012} ex. 70, p. 96)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{ginzburg-2012} Ch. 2: conversational genres are characterized
-by their conversational rule sequences.
+/-! ## Move Coherence
 
-A genre specifies the expected pattern of moves. The type parameter
-`Move` abstracts over the specific move vocabulary. -/
-inductive Genre where
-  /-- Information-seeking: Ask → Assert → Accept. The asker doesn't
-      know the answer; the answerer provides it. -/
-  | inquiry
-  /-- Examination: Ask → Assert → Evaluate. The asker already knows
-      the answer (e.g., teacher-student, quiz shows). -/
-  | examination
-  /-- Deliberation: Assert → (Accept | Reject). Proposing and
-      evaluating courses of action. -/
-  | deliberation
-  /-- Chat: unconstrained alternation of assertions and questions. -/
-  | chat
-  deriving Repr, DecidableEq, BEq
+@cite{ginzburg-2012} ex. 70 (p. 96) defines M(ove)-Coherence: a move m₁
+is coherent with respect to a DGB dgb₀ iff there exists a conversational
+rule c₁ mapping dgb₀ to dgb₁ such that dgb₁.LatestMove = m₁.
 
-/-- The expected answer source for each genre.
+Pairwise and sequential M-Coherence extend this to move pairs and sequences. -/
 
-In inquiry, the addressee is expected to answer (the asker lacks
-information). In examination, the addressee also answers, but
-the asker already knows and will evaluate.
+/-- A conversational rule: a function from DGB to DGB.
 
-@cite{ginzburg-2012} Ch. 2: "Who is expected to provide the answer?" -/
-def Genre.answerSource : Genre → Core.Discourse.DiscourseRole
-  | .inquiry => .addressee
-  | .examination => .addressee
-  | .deliberation => .speaker
-  | .chat => .addressee
+@cite{ginzburg-2012} Ch. 4 summary (p. 112): "a mapping that indicates
+how one DGB can be modified by a conversationally related action." -/
+abbrev ConvRule (P Fact QContent : Type) :=
+  DGB P Fact QContent → DGB P Fact QContent
 
-/-- In inquiry, the asker lacks knowledge of the answer.
-In examination, the asker already knows.
+/-- A move is M-Coherent with respect to a DGB if some conversational rule
+produces a DGB whose latest move is that move.
 
-This is the key distinguishing property between inquiry and
-examination genres. @cite{ginzburg-2012} Ch. 2. -/
-def Genre.askerKnows : Genre → Bool
-  | .inquiry => false
-  | .examination => true
-  | .deliberation => false
-  | .chat => false
-
-/-- Inquiry and examination share answer source but differ in asker knowledge. -/
-theorem inquiry_vs_examination :
-    Genre.inquiry.answerSource = Genre.examination.answerSource ∧
-    Genre.inquiry.askerKnows ≠ Genre.examination.askerKnows := by decide
+@cite{ginzburg-2012} ex. 70a (p. 96). -/
+def mCoherent {P Fact QContent : Type}
+    (rules : List (ConvRule P Fact QContent))
+    (dgb₀ : DGB P Fact QContent) (m : IllocMove Fact QContent) : Prop :=
+  ∃ rule, rule ∈ rules ∧ (rule dgb₀).latestMove = some m
 
 -- ════════════════════════════════════════════════════
--- § 7. Worked Example: Inquiry Cycle
+-- § 7. Activity Relevance (@cite{ginzburg-2012} ex. 90, p. 105)
+-- ════════════════════════════════════════════════════
+
+/-- A move is genre-relevant if the outcome of adding it to the DGB
+can be anticipated to conclude as a conversation of the genre type.
+
+@cite{ginzburg-2012} ex. 90 (p. 105): "m0 is relevant to G0 in dgb0 for A
+iff A believes that outcome(dgb0 ⊕ₘₒᵥₑₛ m0, G0) will be fulfilled." -/
+def genreRelevant {P Fact QContent : Type}
+    (genre : GenreType QContent)
+    (dgb : DGB P Fact QContent) (m : IllocMove Fact QContent) : Bool :=
+  match genre.qudConstraint with
+  | none => true  -- unrestricted genre: all moves are relevant
+  | some constraint =>
+    match m.questionContent with
+    | some q => constraint (q :: dgb.qud)
+    | none => true  -- non-question moves don't violate QUD constraints
+
+-- ════════════════════════════════════════════════════
+-- § 8. Worked Example: Inquiry Cycle
 -- ════════════════════════════════════════════════════
 
 section InquiryExample
 
-/-- String-based answerhood: a fact resolves a question if the question
-    content appears as a substring pattern. Simple but sufficient for
-    demonstrating the rule mechanics. -/
+/-- String-based answerhood: a fact resolves a question if they match. -/
 instance : Answerhood String String where
   resolves fact question := fact == question
 
-/-- Start: empty IS. -/
-private def is₀ : IS String String := IS.initial
+/-- Start: empty TIS. -/
+private def tis₀ : TIS String String String := TIS.initial
 
-/-- A asks "Is Bo here?" -/
-private def lmAsk : LatestMove :=
-  { sign := { phon := "Is Bo here?", cat := "S", cont := "Bo is here" }
-    assignment := { bindings := [("b", "Bo")] } }
+/-- Step 1: A asks "Is Bo here?" -/
+private def tis₁ : TIS String String String := tis₀.ask "Bo is here"
 
-/-- Step 1: Ask pushes "Bo is here?" onto QUD. -/
-private def is₁ : IS String String := is₀.ask "Bo is here" lmAsk
-
-/-- B answers "Bo is here." -/
-private def lmAssert : LatestMove :=
-  { sign := { phon := "Bo is here", cat := "S", cont := "Bo is here" }
-    assignment := { bindings := [("b", "Bo")] } }
-
-/-- Step 2: Assert adds fact and downdates QUD. -/
-private def is₂ : IS String String := is₁.assertRule "Bo is here" lmAssert
+/-- Step 2: B asserts "Bo is here." -/
+private def tis₂ : TIS String String String := tis₁.assertRule "Bo is here"
 
 /-- Step 3: A accepts B's assertion. -/
-private def is₃ : IS String String := is₂.accept "Bo is here"
+private def tis₃ : TIS String String String := tis₂.accept "Bo is here"
 
 -- Verification
 
 /-- After Ask, QUD contains the question. -/
-theorem inquiry_step1_qud : is₁.dgb.qud = ["Bo is here"] := rfl
+theorem inquiry_step1_qud : tis₁.dgb.qud = ["Bo is here"] := rfl
 
 /-- After Ask, FACTS are unchanged. -/
-theorem inquiry_step1_facts : is₁.dgb.facts = [] := rfl
+theorem inquiry_step1_facts : tis₁.dgb.facts = [] := rfl
+
+/-- After Ask, the move is recorded. -/
+theorem inquiry_step1_moves : tis₁.dgb.moves = [.ask "Bo is here"] := rfl
 
 /-- After Assert, the fact is in FACTS. -/
-theorem inquiry_step2_has_fact : "Bo is here" ∈ is₂.dgb.facts := by
-  simp [is₂, IS.assertRule, DGB.assertFact, DGB.addFact, DGB.downdateQud]
+theorem inquiry_step2_has_fact : "Bo is here" ∈ tis₂.dgb.facts := by
+  simp [tis₂, TIS.assertRule, DGB.assertFact, DGB.addFact, DGB.downdateQud, DGB.recordMove]
 
 /-- After Assert, QUD is empty (the question was resolved). -/
-theorem inquiry_step2_qud_empty : is₂.dgb.qud = [] := by native_decide
+theorem inquiry_step2_qud_empty : tis₂.dgb.qud = [] := by native_decide
 
 /-- After Accept, the fact appears twice (once from assert, once from accept). -/
-theorem inquiry_step3_facts : is₃.dgb.facts = ["Bo is here", "Bo is here"] := by
+theorem inquiry_step3_facts : tis₃.dgb.facts = ["Bo is here", "Bo is here"] := by
   native_decide
 
 /-- The full inquiry cycle: QUD starts empty, gets a question, then empties. -/
 theorem inquiry_cycle_qud :
-    is₀.dgb.qud = [] ∧ is₁.dgb.qud = ["Bo is here"] ∧ is₂.dgb.qud = [] := by
+    tis₀.dgb.qud = [] ∧ tis₁.dgb.qud = ["Bo is here"] ∧ tis₂.dgb.qud = [] := by
+  native_decide
+
+/-- Moves accumulate through the inquiry cycle. -/
+theorem inquiry_cycle_moves :
+    tis₃.dgb.moves = [.ask "Bo is here", .assert "Bo is here", .accept "Bo is here"] := by
   native_decide
 
 end InquiryExample
 
 -- ════════════════════════════════════════════════════
--- § 8. Bridge: Answerhood ↔ QUD Partitions
+-- § 9. Check/Confirm Example (@cite{ginzburg-2012} ex. 68, p. 95)
+-- ════════════════════════════════════════════════════
+
+section CheckExample
+
+instance : Answerhood String String where
+  resolves fact question := fact == question
+
+/-- A(1): Bo is in Essen. (Assert) -/
+private def checkTIS₀ : TIS String String String := TIS.initial
+private def checkTIS₁ : TIS String String String :=
+  checkTIS₀.assertRule "Bo is in Essen"
+
+/-- B(1b): Is he? (Check) -/
+private def checkTIS₂ : TIS String String String :=
+  checkTIS₁.check "Bo is in Essen" "Bo is in Essen"
+
+/-- A(2): Confirm. -/
+private def checkTIS₃ : TIS String String String :=
+  checkTIS₂.confirm "Bo is in Essen"
+
+/-- After Check, QUD has the polar question. -/
+theorem check_pushes : checkTIS₂.dgb.qud = ["Bo is in Essen"] := by native_decide
+
+/-- After Confirm, the fact is in FACTS and QUD is resolved. -/
+theorem confirm_resolves : checkTIS₃.dgb.qud = [] := by native_decide
+
+end CheckExample
+
+-- ════════════════════════════════════════════════════
+-- § 10. Bridge: Answerhood ↔ QUD Partitions
 -- ════════════════════════════════════════════════════
 
 /-! ## Partition-Based Answerhood
@@ -370,13 +407,10 @@ Here we connect it to the partition-based `QUD W` from
 
 A `BProp W` fact resolves a `QUD W` question when the fact determines
 a unique cell — all worlds where the fact holds are in the same
-partition cell. This means learning the fact settles the question. -/
+partition cell. -/
 
 /-- A `BProp W` resolves a `QUD W` if all fact-worlds are in the same
-partition cell.
-
-Given a finite list of worlds, we check: for every pair of worlds
-where the fact holds, they have the same answer under the QUD. -/
+partition cell. -/
 def bpropResolvesQUD {W : Type} [BEq W] (worlds : List W)
     (fact : Core.Proposition.BProp W) (q : QUD W) : Bool :=
   let factWorlds := worlds.filter fact
@@ -384,21 +418,15 @@ def bpropResolvesQUD {W : Type} [BEq W] (worlds : List W)
     factWorlds.all fun w₂ =>
       q.sameAnswer w₁ w₂
 
-/-- Answerhood instance: `BProp W` resolves `QUD W` over a fixed world list.
-
-This connects KOS conversational rules (which use `Answerhood`) to
-the partition-based question semantics in `Core/Discourse/QUD.lean`.
-The world list must be provided at instance creation. -/
+/-- Answerhood instance: `BProp W` resolves `QUD W` over a fixed world list. -/
 def answerhoodFromPartition {W : Type} [BEq W] (worlds : List W) :
     Answerhood (Core.Proposition.BProp W) (QUD W) where
   resolves := bpropResolvesQUD worlds
 
-/-- A `BProp W` resolves a `Discourse.Issue W` if it settles some
-alternative — the fact entails at least one of the issue's alternatives.
+/-- A `BProp W` resolves a `Discourse.Issue W` if it settles some alternative.
 
-This connects KOS to Inquisitive Semantics (@cite{ciardelli-groenendijk-roelofsen-2019}):
-resolving an issue means establishing enough information to determine
-which alternative holds. -/
+@cite{ciardelli-groenendijk-roelofsen-2019}: resolving an issue means
+establishing enough information to determine which alternative holds. -/
 def bpropResolvesIssue {W : Type} (worlds : List W)
     (fact : Core.Proposition.BProp W) (q : Discourse.Issue W) : Bool :=
   q.alternatives.any fun alt =>
@@ -410,7 +438,7 @@ def answerhoodFromIssue {W : Type} (worlds : List W) :
   resolves := bpropResolvesIssue worlds
 
 -- ════════════════════════════════════════════════════
--- § 9. Partition Answerhood Example
+-- § 11. Partition Answerhood Example
 -- ════════════════════════════════════════════════════
 
 section PartitionExample
@@ -434,39 +462,30 @@ def itIsSunny : Core.Proposition.BProp RainWorld :=
 
 private def rainWorlds : List RainWorld := [.sunny, .rainy, .cloudy]
 
-/-- "It is raining" resolves "Is it raining?" — all raining-worlds
-are in the same cell (trivially: there's only one). -/
+/-- "It is raining" resolves "Is it raining?" -/
 theorem raining_resolves_raining :
     bpropResolvesQUD rainWorlds itIsRaining isRainingQ = true := by native_decide
 
-/-- "It is sunny" also resolves "Is it raining?" — all sunny-worlds
-are in the same cell (the non-rainy cell). -/
+/-- "It is sunny" also resolves "Is it raining?" -/
 theorem sunny_resolves_raining :
     bpropResolvesQUD rainWorlds itIsSunny isRainingQ = true := by native_decide
 
-/-- Using the instance: full inquiry cycle with partition-based answerhood. -/
-private def rainIS₀ : IS (Core.Proposition.BProp RainWorld) (QUD RainWorld) := IS.initial
-private def rainLM : LatestMove :=
-  { sign := { phon := "Is it raining?", cat := "S", cont := "raining" }
-    assignment := { bindings := [] } }
+/-- Full inquiry cycle with partition-based answerhood. -/
+private def rainTIS₀ : TIS String (Core.Proposition.BProp RainWorld) (QUD RainWorld) := TIS.initial
 
 attribute [local instance] answerhoodFromPartition
 
-private def rainIS₁ : IS (Core.Proposition.BProp RainWorld) (QUD RainWorld) :=
-  rainIS₀.ask isRainingQ rainLM
+private def rainTIS₁ : TIS String (Core.Proposition.BProp RainWorld) (QUD RainWorld) :=
+  rainTIS₀.ask isRainingQ
 
 /-- After asking, QUD has the partition question. -/
-theorem rain_ask_qud : rainIS₁.dgb.qud = [isRainingQ] := rfl
+theorem rain_ask_qud : rainTIS₁.dgb.qud = [isRainingQ] := rfl
 
-private def rainAssertLM : LatestMove :=
-  { sign := { phon := "It is raining", cat := "S", cont := "raining" }
-    assignment := { bindings := [] } }
-
-private def rainIS₂ : IS (Core.Proposition.BProp RainWorld) (QUD RainWorld) :=
-  @IS.assertRule _ _ (answerhoodFromPartition rainWorlds) rainIS₁ itIsRaining rainAssertLM
+private def rainTIS₂ : TIS String (Core.Proposition.BProp RainWorld) (QUD RainWorld) :=
+  @TIS.assertRule _ _ _ (answerhoodFromPartition rainWorlds) rainTIS₁ itIsRaining
 
 /-- After asserting "It is raining", QUD is empty (resolved). -/
-theorem rain_assert_resolves : rainIS₂.dgb.qud = [] := by native_decide
+theorem rain_assert_resolves : rainTIS₂.dgb.qud = [] := by native_decide
 
 end PartitionExample
 

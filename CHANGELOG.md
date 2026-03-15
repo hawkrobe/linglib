@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.229.265] - 2026-03-15
+
+### Changed
+- **KOS rewrite: faithful Ginzburg 2012** — complete rewrite of `KOS/Basic.lean` and `KOS/Rules.lean` against the actual PDF
+  - **DGB** now has 3 type params (`Participant`, `Fact`, `QContent`) with fields: `spkr`, `addr`, `facts`, `moves` (list), `pending` (Ch. 6), `qud`; `latestMove` computed from `moves.getLast?`
+  - **TIS** replaces old `IS`: wraps DGB + `PrivateState` (genre, agenda) per ex. 93 (p. 107)
+  - **GenreType** is now a record with `name` + optional `qudConstraint` (was a fabricated enum with hallucinated properties)
+  - **IllocMove** inductive type for move tracking: `assert`, `ask`, `accept`, `check`, `confirm`, `greet`, `counterGreet`
+  - Clear **Part I (2012) / Part II (2004 CE)** separation; 2004 CE material (`CParam`, `UttSkeleton`, `CEState`, coercion ops) preserved but attributed correctly
+  - **IS** re-added as 2004-era compatibility type for `GinzburgCooper2004.lean` study
+  - All conversational rules now on TIS: Ask, Assert, Accept, QSPEC, QCoord, Check, Confirm, Greeting, FactUpdateQudDowndate
+  - **M-Coherence** formalization (`mCoherent`, `ConvRule`) per ex. 70 (p. 96)
+  - **genreRelevant** activity relevance check per ex. 90 (p. 105)
+  - Worked examples: inquiry cycle (Ask→Assert→Accept) + Check/Confirm cycle
+  - Removed hallucinated `Genre` enum and fabricated properties (`answerSource`, `askerKnows`, `inquiry_vs_examination`)
+
 ## [0.229.264] - 2026-03-15
 
 ### Added
