@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.255] - 2026-03-14
+
+### Changed
+- **TesslerTenenbaumGoodman2022 quality pass**: Fix misleading docstrings (false claims about using `every_transitive`/`subalternation_a_i`), rewrite `all_entails_some_AC` and `barbara_some_valid` to genuinely call `subalternation_a_i` from `Quantifier.lean`, add all three speaker models (S₀ Literal Speaker, State Communication, Belief Alignment), prove `stateCom_eq_beliefAlignment` via `kl_eq_neg_crossEntropy_plus_negEntropy` from `Divergence.lean`, add figural bias β, clean up confused docstrings
+
 ## [0.229.254] - 2026-03-14
 
 ### Changed

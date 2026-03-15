@@ -14,27 +14,34 @@ Syllogistic reasoning decomposes into two pragmatic subproblems:
 1. **Listener**: interprets premises via Bayesian update over Venn diagram states
 2. **Speaker**: selects the conclusion that best communicates beliefs to a naive listener
 
-Three speaker models are compared: Literal Speaker (S₀), State Communication
-(standard RSA informativity), and **Belief Alignment** (utility = −KL divergence
-between reasoner's posterior and naive listener's posterior). Belief Alignment
-wins decisively (r = .82, 3 parameters: α, φ, β).
+Three speaker models are formalized:
+- **S₀ (Literal Speaker, eq. 3)**: scores conclusions by expected literal truth
+- **State Communication (eq. 4)**: scores by expected log-likelihood (standard RSA)
+- **Belief Alignment (eq. 6)**: scores by −KL divergence (the paper's winning model,
+  r = .82 with 3 parameters: α, φ, β)
+
+State Communication and Belief Alignment produce identical conclusion distributions
+after softmax normalization (they differ by an additive constant H(post) that cancels);
+their distinct fitted parameters reflect the fitting procedure, not the functional form.
+This equivalence is proved as `stateCom_eq_beliefAlignment`.
 
 ## Grounding in Linglib
 
-- Syllogistic quantifiers grounded in `every_sem`/`some_sem`/`no_sem`
-  from `Quantifier.lean` — applied to Venn diagram regions as entities
+- Syllogistic quantifiers are `every_sem`/`some_sem`/`no_sem`
+  from `Quantifier.lean` applied to Venn diagram regions as entities
+- Subalternation (All→Some) proved via `subalternation_a_i` from `Quantifier.lean`
 - Noisy semantics via `RSA.Noise.noiseChannel`
 - Belief Alignment utility via `Core.Divergence.klDivergence`
+- SC ≡ BA equivalence via `Core.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy`
 - "Nothing follows" as vacuous utterance (true in every state)
-- Barbara validity connects to GQ properties (`every_transitive`)
-- Preference for "All" over "Some" connects to Aristotelian subalternation
 -/
 
 set_option autoImplicit false
 
 namespace Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
 
-open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem no_sem FiniteModel)
+open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem no_sem FiniteModel
+  subalternation_a_i)
 open Semantics.Montague (Model)
 
 -- ============================================================================
@@ -90,7 +97,7 @@ def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
   no_sem regionModel (fun r => s r && X r) Y
 
 -- ============================================================================
--- §3. Conclusion Space
+-- §3. Conclusion Space and Figural Bias
 -- ============================================================================
 
 /-- The 9 possible conclusions: 4 quantifiers × 2 term orders + NVC. -/
@@ -106,6 +113,22 @@ instance : Fintype Conclusion where
   elems := {.allAC, .allCA, .someAC, .someCA,
             .someNotAC, .someNotCA, .noAC, .noCA, .nvc}
   complete := fun x => by cases x <;> simp
+
+/-- Does the conclusion use A→C term order (vs C→A)?
+    Used for the figural bias parameter β. -/
+def Conclusion.isAC : Conclusion → Bool
+  | .allAC | .someAC | .someNotAC | .noAC => true
+  | _ => false
+
+/-- Figural bias prior weight: conclusions whose term order matches the
+    premise figure get weight β; others get weight 1. NVC always gets 1.
+
+    The paper fits β ≈ 2.01 (MAP), meaning conclusions matching the
+    premise term order are preferred by roughly 2:1. -/
+def figuralWeight (β : ℚ) (premiseIsAB : Bool) (c : Conclusion) : ℚ :=
+  if c = .nvc then 1
+  else if c.isAC == premiseIsAB then β
+  else 1
 
 /-- Literal meaning of each conclusion in a Venn state.
     "Nothing follows" is true in every state — the vacuous utterance. -/
@@ -130,10 +153,13 @@ theorem nvc_always_true (s : VennState) : concMeaning .nvc s = true := rfl
 
 /-- **Barbara** (All A-B, All B-C ⊢ All A-C) is logically valid.
 
-    Proof: if region r is populated and has A, then by premise 1 it has B,
-    and by premise 2 it has C. This is transitivity of the subset relation
-    among populated regions — the same structural property captured by
-    `every_transitive` in `Quantifier.lean`, applied to the region model. -/
+    The proof chains through populated regions: if r is a populated
+    A-region, premise 1 gives it B, making it a populated B-region,
+    and premise 2 gives it C. This is a *state-restricted* form of
+    transitivity — stricter than `every_transitive` from `Quantifier.lean`,
+    which applies to unrestricted universal quantification. Here the
+    restrictors shift between premises (`s ∧ hasA` vs `s ∧ hasB`),
+    and the middle term B bridges them via the population predicate s. -/
 theorem barbara_valid (s : VennState)
     (h1 : syllAll s hasA hasB = true)
     (h2 : syllAll s hasB hasC = true) :
@@ -147,21 +173,25 @@ theorem barbara_valid (s : VennState)
   cases r <;> simp_all [hasA, hasB, hasC]
 
 /-- Barbara also validates "Some A are C" (by subalternation: All → Some).
-    This connects to `subalternation_a_i` from `Quantifier.lean`:
-    the A-form entails the I-form when the restrictor is non-empty. -/
+    Uses `barbara_valid` for the All A-C premise, then
+    `subalternation_a_i` from `Quantifier.lean` to step from A-form
+    to I-form — genuine structural coupling with the GQ infrastructure. -/
 theorem barbara_some_valid (s : VennState)
     (h1 : syllAll s hasA hasB = true)
     (h2 : syllAll s hasB hasC = true)
     (hA : syllSome s hasA hasA = true) :
     syllSome s hasA hasC = true := by
-  unfold syllAll syllSome every_sem some_sem at *
-  simp only [FiniteModel.elements] at *
-  rw [List.all_eq_true] at h1 h2
+  -- Step 1: derive All A-C from Barbara
+  have hAllAC := barbara_valid s h1 h2
+  -- Step 2: apply subalternation (All → Some when restrictor non-empty)
+  unfold syllAll at hAllAC; unfold syllSome
+  apply subalternation_a_i _ _ _ hAllAC
+  -- Step 3: derive restrictor non-emptiness from hA
+  unfold syllSome some_sem at hA
+  simp only [FiniteModel.elements] at hA ⊢
   rw [List.any_eq_true] at hA ⊢
   obtain ⟨r, hr, hpred⟩ := hA
-  exact ⟨r, hr, by
-    have := h1 r hr; have := h2 r hr
-    cases r <;> simp_all [hasA, hasB, hasC]⟩
+  exact ⟨r, hr, by cases r <;> simp_all [hasA]⟩
 
 -- ============================================================================
 -- §5. Logical Invalidity
@@ -201,9 +231,8 @@ theorem allAB_allCB_invalid :
 -- ============================================================================
 
 /-- Noisy semantics ℒ(u, s): a small probability φ of misjudging truth value.
-    Directly instantiates `RSA.Noise.noiseChannel(1−φ, φ, ⟦u⟧)`.
-    This is the first deep integration of `Noise.lean` into an RSA meaning
-    function — establishing a reusable pattern. -/
+    Directly instantiates `RSA.Noise.noiseChannel(1−φ, φ, ⟦u⟧)`:
+    ℒ(u,s) = 1−φ when ⟦u⟧(s) = true, φ when false. -/
 def noisyConcMeaning (φ : ℚ) (c : Conclusion) (s : VennState) : ℚ :=
   RSA.Noise.noiseChannel (1 - φ) φ (if concMeaning c s then 1 else 0)
 
@@ -226,31 +255,93 @@ theorem noisyConcMeaning_nvc (φ : ℚ) (s : VennState) :
 -- ============================================================================
 
 /-- L₀ joint likelihood of two premises in state s (unnormalized).
-    The literal listener updates beliefs by multiplying noisy semantics
-    of both premises. Uses Bernoulli(θ) prior per region. -/
+
+    Computes ℒ(u₁,s) · ℒ(u₂,s) — the likelihood term only. The full L₀
+    posterior (eq. 2) also includes the state prior P(s). The paper fixes
+    θ = 0.5 per region, making P(s) = 0.5⁷ = 1/128 for all states — a
+    uniform prior that cancels in normalization. For this reason, the
+    likelihood alone determines the relative posterior weights. -/
 def l0PremiseLikelihood (φ : ℚ) (p1 p2 : VennState → Bool)
     (s : VennState) : ℚ :=
   RSA.Noise.noiseChannel (1 - φ) φ (if p1 s then 1 else 0) *
   RSA.Noise.noiseChannel (1 - φ) φ (if p2 s then 1 else 0)
 
 -- ============================================================================
--- §8. Belief Alignment Speaker Model
+-- §8. Speaker Models (eqs. 3, 4, 6)
 -- ============================================================================
 
-/-- Belief Alignment speaker score: the utility of conclusion c is
-    −KL(reasoner's posterior ‖ naive listener's posterior given c).
+/-- **S₀ (Literal Speaker, eq. 3)**: scores conclusions by expected literal
+    truth under the reasoner's posterior.
 
-    The reasoner selects the conclusion that would best convey their
-    entire belief distribution to a naive listener. This is the first
-    use of `Core.Divergence.klDivergence` as an RSA speaker utility.
+    S₀(u₃ | u₁,u₂) ∝ exp[α · Σ_s ℒ(u₃,s) · L₀(s|u₁,u₂)]
 
-    The `premPost` parameter is the reasoner's posterior over states
-    (computed from L₀ premise interpretation in phase 1). The naive
-    listener's posterior given conclusion c is `naivePost c`. -/
+    Here ℒ(u₃,s) is the *deterministic* semantic function (not the noisy
+    version inside L₀). This speaker samples states from the posterior and
+    randomly selects conclusions that are literally true. -/
+noncomputable def literalSpeakerScore
+    (premPost : VennState → ℝ) (α : ℝ) (c : Conclusion) : ℝ :=
+  Real.exp (α * ∑ s : VennState,
+    (if concMeaning c s then (1 : ℝ) else 0) * premPost s)
+
+/-- **State Communication (S₁, eq. 4)**: scores conclusions by expected
+    log-likelihood — standard RSA informativity applied to syllogisms.
+
+    S₁(u₃ | u₁,u₂) ∝ exp[α · Σ_s L₀(s|u₁,u₂) · ln L₀(s|u₃)]
+
+    The two L₀ agents are distinct: L₀(s|u₁,u₂) is the reasoner who
+    interpreted the premises; L₀(s|u₃) is a hypothetical naive listener
+    who interprets just the conclusion. Both use noisy semantics (same φ). -/
+noncomputable def stateComScore
+    (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
+    (α : ℝ) (c : Conclusion) : ℝ :=
+  Real.exp (α * ∑ s : VennState,
+    premPost s * Real.log (naivePost c s))
+
+/-- **Belief Alignment (S₁, eq. 6)**: the paper's winning model.
+    Scores conclusions by negative KL divergence between the reasoner's
+    full posterior and the naive listener's posterior given the conclusion.
+
+    S₁(u₃ | u₁,u₂) ∝ exp[α · −KL(L₀(·|u₁,u₂) ‖ L₀(·|u₃))]
+
+    Uses `Core.Divergence.klDivergence` directly. -/
 noncomputable def beliefAlignmentScore
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
     (α : ℝ) (c : Conclusion) : ℝ :=
   Real.exp (α * (-Core.Divergence.klDivergence premPost (naivePost c)))
+
+-- ============================================================================
+-- §9. State Communication ≡ Belief Alignment
+-- ============================================================================
+
+/-- State Communication and Belief Alignment differ by an additive constant
+    (the entropy H(post)) that does not depend on the conclusion.
+
+    By `kl_eq_neg_crossEntropy_plus_negEntropy` from `Divergence.lean`:
+      KL(P ∥ Q) = Σ P·log P − Σ P·log Q
+
+    So: −KL(P ∥ Q) = Σ P·log Q − Σ P·log P = [State Com utility] + H(P).
+
+    Since H(P) is constant in the conclusion c, it cancels in softmax
+    normalization: both models produce identical conclusion distributions.
+    The paper's different fit statistics (r = .67 vs .82) reflect different
+    optimal α values found by MCMC, not different functional forms. -/
+theorem stateCom_eq_beliefAlignment
+    (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
+    (α : ℝ) (c : Conclusion)
+    (hQ : ∀ s, 0 < naivePost c s) :
+    beliefAlignmentScore premPost naivePost α c =
+    Real.exp (α * (-(∑ s : VennState, premPost s * Real.log (premPost s)))) *
+    stateComScore premPost naivePost α c := by
+  simp only [beliefAlignmentScore, stateComScore]
+  rw [Core.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy premPost
+    (naivePost c) hQ]
+  rw [show α * -((_ : ℝ) - _) = α * -(∑ s, premPost s * Real.log (premPost s))
+    + α * ∑ s, premPost s * Real.log (naivePost c s) from by ring]
+  rw [Real.exp_add]
+
+-- ============================================================================
+-- §10. Speaker Model Properties
+-- ============================================================================
 
 /-- The Belief Alignment score for NVC depends on how much the premises
     shifted beliefs from the prior. When premises are uninformative
@@ -264,14 +355,12 @@ theorem beliefAlignment_nvc_uninformative
   simp [beliefAlignmentScore]
 
 -- ============================================================================
--- §9. Informativity: "All" More Informative Than "Some"
+-- §11. Informativity: "All" More Informative Than "Some"
 -- ============================================================================
 
-/-- The set of states compatible with "All A are C" is a subset of those
-    compatible with "Some A are C" (when there are As). This is the
-    region-model instance of Aristotelian subalternation (A → I),
-    which is already proved generically in `Quantifier.lean` as
-    `subalternation_a_i`.
+/-- Subalternation in the region model: "All A are C" entails "Some A are C"
+    (when there are As). Proved by applying `subalternation_a_i` from
+    `Quantifier.lean` — the generic A→I entailment for any `FiniteModel`.
 
     For the Belief Alignment model, this means "All A-C" produces a
     more peaked L₀ posterior than "Some A-C", yielding lower KL
@@ -282,17 +371,19 @@ theorem all_entails_some_AC (s : VennState)
     (h : concMeaning .allAC s = true) :
     concMeaning .someAC s = true := by
   simp only [concMeaning] at *
-  unfold syllAll syllSome every_sem some_sem at *
-  simp only [FiniteModel.elements] at *
-  rw [List.all_eq_true] at h
+  unfold syllAll at h; unfold syllSome
+  apply subalternation_a_i _ _ _ h
+  -- Derive restrictor non-emptiness from hA
+  unfold syllSome some_sem at hA
+  simp only [FiniteModel.elements] at hA ⊢
   rw [List.any_eq_true] at hA ⊢
   obtain ⟨r, hr, hpred⟩ := hA
-  exact ⟨r, hr, by have := h r hr; cases r <;> simp_all [hasA, hasC]⟩
+  exact ⟨r, hr, by cases r <;> simp_all [hasA]⟩
 
 /-- Strict informativity: "All A-C" is compatible with strictly fewer states.
-    Witness: s with only AC populated satisfies "Some A-C" but not "All A-C"
-    (region A has property A but not C — wait, .AC has A and C; we need a
-    state where .A is populated). -/
+    Witness: `state_A_AC` has regions .A and .AC populated. Region .A has
+    property A but not C, so "All A-C" fails while "Some A-C" holds
+    (region .AC has both A and C). -/
 private def state_A_AC : VennState
   | .A => true | .AC => true | _ => false
 
