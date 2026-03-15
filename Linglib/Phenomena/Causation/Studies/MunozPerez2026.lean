@@ -166,18 +166,18 @@ open Minimalism.Morphology
 open Fragments.Spanish.PersonFeatures
 open Fragments.Spanish.Predicates
 open Fragments.Spanish.Clitics
-open Core.PersonCategory
+open Core.Person
 
 /-- The stylistic applicative Fission rule for Chilean Spanish.
     Instantiates the generic Fission framework with Spanish-specific data:
     - Context: inchoative (vGO ∧ vBE)
     - Person: [+PART, +SING] (1SG or 2SG)
     - Realization: Cl₁ = me/te (from [±AUTHOR]), Cl₂ = le (invariable) -/
-def spanishFissionRule : FissionRule PersonCategory where
+def spanishFissionRule : FissionRule Category where
   contextOk := isInchoative
   personOk := fissionApplicable
   realize := fun p => {
-    cl1Form := if hasAuthor p then "me" else "te"
+    cl1Form := if p.toFeatures.hasAuthor then "me" else "te"
     cl2Form := "le"
   }
 
@@ -187,13 +187,13 @@ def spanishAnticausativePF : PFMarkingCondition where
   isSatisfied := fun cs => cs.any (fun c => c == "se" || c == "me" || c == "te" || c == "nos")
 
 /-- Apply the Spanish stylistic applicative Fission rule. -/
-def applySpanishFission (p : PersonCategory) (heads : List VerbHead) :
+def applySpanishFission (p : Category) (heads : List VerbHead) :
     Option FissionOutput :=
   applyFission spanishFissionRule p heads
 
 /-- Check whether the Spanish Fission output satisfies the anticausative
     PF marking condition, making overt SE optional. -/
-def spanishFissionSatisfiesPF (p : PersonCategory) (heads : List VerbHead) : Bool :=
+def spanishFissionSatisfiesPF (p : Category) (heads : List VerbHead) : Bool :=
   fissionSatisfiesPF spanishFissionRule spanishAnticausativePF p heads
 
 -- ============================================================================

@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Core.Person.Features
 
 /-!
 # Person Feature Geometry @cite{preminger-2014}
@@ -38,6 +38,14 @@ fails, #⁰ provides the result; if both fail, the default surfaces.
 also captures the 3P proximate/obviative split in direct/inverse
 alignment systems (@cite{pancheva-zubizarreta-2018}, §2.1 (11)).
 
+## Relationship to Core PersonFeatures
+
+`DecomposedPerson` extends `Core.Person.Features`
+(the framework-neutral [±participant, ±author] decomposition) with
+the Minimalism-specific [±proximate] feature. The two-feature core
+is shared across all theoretical frameworks; `[±proximate]` is
+specific to @cite{pancheva-zubizarreta-2018}'s P-Constraint.
+
 ## Person Type
 
 `decomposePerson` takes `Core.Prominence.PersonLevel` (`.first |
@@ -60,6 +68,10 @@ open Core.Prominence
     geometry, extended with `[±proximate]` from
     @cite{pancheva-zubizarreta-2018}.
 
+    Extends `Core.Person.Features` (the framework-neutral
+    [±participant, ±author] core) with the Minimalism-specific
+    [±proximate] feature:
+
     - [proximate] marks potential point-of-view centers. 1P/2P are
       inherently [+proximate]; 3P can be contextually [+proximate].
     - [participant] distinguishes 1st/2nd from 3rd person.
@@ -73,13 +85,9 @@ open Core.Prominence
     [−participant]. We encode this as `Bool` for computational
     convenience; the well-formedness constraint `wellFormed`
     ensures the privative entailments are maintained. -/
-structure DecomposedPerson where
+structure DecomposedPerson extends Core.Person.Features where
   /-- Bears [proximate]? SAPs inherently; 3P contextually. -/
   hasProximate : Bool
-  /-- Bears [participant]? 1st and 2nd person = true; 3rd = false. -/
-  hasParticipant : Bool
-  /-- Bears [author]? 1st person = true; 2nd and 3rd = false. -/
-  hasAuthor : Bool
   deriving DecidableEq, BEq, Repr
 
 /-- Geometry well-formedness: [author] → [participant] → [proximate].
@@ -101,9 +109,9 @@ def DecomposedPerson.wellFormed (dp : DecomposedPerson) : Bool :=
     3rd person is [-proximate] by default; contextual [+proximate]
     marking is handled by the P-Constraint evaluation. -/
 def decomposePerson : PersonLevel → DecomposedPerson
-  | .first  => ⟨true, true, true⟩
-  | .second => ⟨true, true, false⟩
-  | .third  => ⟨false, false, false⟩
+  | .first  => { hasParticipant := true,  hasAuthor := true,  hasProximate := true }
+  | .second => { hasParticipant := true,  hasAuthor := false, hasProximate := true }
+  | .third  => { hasParticipant := false, hasAuthor := false, hasProximate := false }
 
 -- ============================================================================
 -- § 3: Probe Targets
@@ -179,6 +187,13 @@ theorem third_person_decomposition :
 /-- All person values yield well-formed decompositions. -/
 theorem all_decompositions_wellFormed (p : PersonLevel) :
     (decomposePerson p).wellFormed = true := by
+  cases p <;> rfl
+
+/-- `decomposePerson` is consistent with the framework-neutral
+    `PersonLevel.toFeatures`: the [±participant, ±author] core of
+    the Minimalist decomposition agrees with Core Person.Features. -/
+theorem decomposePerson_toFeatures_eq (p : PersonLevel) :
+    (decomposePerson p).toFeatures = p.toFeatures := by
   cases p <;> rfl
 
 -- ============================================================================

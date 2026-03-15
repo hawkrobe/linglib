@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.288] - 2026-03-15
+
+### Added
+- **`Core/Person/Features.lean`**: framework-neutral `[±participant, ±author]` person feature decomposition (`Core.Person.Features`), shared across Minimalism, DM, and typological frameworks; well-formedness constraint, canonical bundles, `PersonLevel.toFeatures` bridge
+- **`Core/Person/Category.lean`**: moved from `Core/Lexical/PersonCategory.lean`; `PersonCategory` → `Core.Person.Category`, eliminating `Core.PersonCategory.PersonCategory` stutter; added `Category.toFeatures` mapping all 8 Cysouw cells to `Features`
+
+### Changed
+- **PersonGeometry**: `DecomposedPerson` now extends `Core.Person.Features` (adds `[±proximate]` on top); `decomposePerson_toFeatures_eq` proves consistency with Core features
+- **Spanish PersonFeatures**: `fissionApplicable` now uses `Core.Person.Category.toFeatures` instead of standalone `hasParticipant`/`hasAuthor`
+- **Namespace cleanup**: `Core.PersonFeatures.PersonFeatures` → `Core.Person.Features`, `Core.PersonCategory.PersonCategory` → `Core.Person.Category`; all 5 downstream files updated
+
 ## [0.229.287] - 2026-03-15
 
 ### Changed

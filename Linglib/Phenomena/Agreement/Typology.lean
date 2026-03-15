@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.PersonCategory
+import Linglib.Core.Person.Category
 import Linglib.Fragments.Finnish.Negation
 
 /-!
@@ -38,7 +38,7 @@ sharing a class are homophonous (marked by the same form).
 
 namespace Phenomena.Agreement.Typology
 
-open Core.PersonCategory
+open Core.Person
 
 -- ============================================================================
 -- §2: Paradigmatic Structure
@@ -57,7 +57,7 @@ structure ParadigmaticStructure where
   isoCode : String := ""
   /-- Maps each person category to a morpheme class index.
       Same index = same morpheme (homophony). -/
-  morphClass : PersonCategory → Nat
+  morphClass : Category → Nat
   /-- Whether this is an inflectional (true) or independent (false) paradigm -/
   isInflectional : Bool := false
 instance : BEq ParadigmaticStructure where
@@ -65,12 +65,12 @@ instance : BEq ParadigmaticStructure where
 
 /-- Two categories are homophonous in a paradigm iff they share morphClass. -/
 def ParadigmaticStructure.homophonous
-    (s : ParadigmaticStructure) (c1 c2 : PersonCategory) : Bool :=
+    (s : ParadigmaticStructure) (c1 c2 : Category) : Bool :=
   s.morphClass c1 == s.morphClass c2
 
 /-- Number of distinct morphemes in the paradigm. -/
 def ParadigmaticStructure.distinctForms (s : ParadigmaticStructure) : Nat :=
-  let classes := PersonCategory.all.map s.morphClass
+  let classes := Category.all.map s.morphClass
   classes.eraseDups.length
 
 -- ============================================================================
@@ -153,8 +153,8 @@ def ParadigmaticStructure.firstPersonComplexType
 
 /-- Whether a paradigm has horizontal homophony (singular = non-singular). -/
 def ParadigmaticStructure.hasHorizontalHomophony (s : ParadigmaticStructure) : Bool :=
-  PersonCategory.all.filter (·.isSingular) |>.any λ sg =>
-    PersonCategory.all.filter (·.isGroup) |>.any λ grp =>
+  Category.all.filter (·.isSingular) |>.any λ sg =>
+    Category.all.filter (·.isGroup) |>.any λ grp =>
       s.homophonous sg grp
 
 /-- Whether a paradigm has singular homophony (between singular categories). -/
@@ -168,8 +168,8 @@ Cysouw §10.1.6: "the various kinds of homophony between the categories of the
 first person complex are not included under this heading." So we only check
 mergers between the first person complex and {2+3, 3+3}, or between 2+3 and 3+3. -/
 def ParadigmaticStructure.hasVerticalHomophony (s : ParadigmaticStructure) : Bool :=
-  let fpc := [PersonCategory.minIncl, .augIncl, .excl]
-  let nonFPC := [PersonCategory.secondGrp, .thirdGrp]
+  let fpc := [Category.minIncl, .augIncl, .excl]
+  let nonFPC := [Category.secondGrp, .thirdGrp]
   -- Any first-person-complex category = any non-first-person group?
   fpc.any (λ f => nonFPC.any (λ n => s.homophonous f n)) ||
   -- Or: 2+3 = 3+3?
@@ -568,8 +568,8 @@ theorem first_person_hierarchy :
 -- §15: Bridges to Existing Infrastructure
 -- ============================================================================
 
--- UD bridges (PersonCategory ↔ UD.Person, PersonCategory ↔ UD.Person × UD.Number)
--- are in Core/PersonCategory.lean.
+-- UD bridges (Category ↔ UD.Person, Category ↔ UD.Person × UD.Number)
+-- are in Core/Person/Category.lean.
 
 /-! ### Bridge 3: English Fragment Pronouns ↔ Paradigmatic Structure
 
@@ -640,8 +640,8 @@ inductive NumberStage where
 /-- Classify a paradigm's number stage by checking singular/group opposition. -/
 def ParadigmaticStructure.numberStage (s : ParadigmaticStructure) : NumberStage :=
   -- Check if there's any singular ≠ group distinction at all
-  let hasSgGrpOpposition := PersonCategory.all.filter (·.isSingular) |>.any λ sg =>
-    PersonCategory.all.filter (·.isGroup) |>.any λ grp =>
+  let hasSgGrpOpposition := Category.all.filter (·.isSingular) |>.any λ sg =>
+    Category.all.filter (·.isGroup) |>.any λ grp =>
       !(s.homophonous sg grp)
   if !hasSgGrpOpposition then .N1
   else .N2  -- N3/N4 require dual/paucal data not in our 8-cell grid

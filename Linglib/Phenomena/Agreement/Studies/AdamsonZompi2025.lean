@@ -5,7 +5,7 @@ import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.German.Pronouns
-import Linglib.Core.Lexical.PersonCategory
+import Linglib.Core.Person.Category
 import Linglib.Phenomena.Agreement.Studies.Deal2024
 
 /-!
@@ -677,22 +677,22 @@ theorem all_fragments_grounded :
     Fragments.German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 16: PersonCategory Bridge — Unifying Person Decompositions
+-- § 16: Person Category Bridge — Unifying Person Decompositions
 -- ============================================================================
 
-/-- The [±participant] decomposition in `Spanish/PersonFeatures.lean`
-    (operating on `PersonCategory`) is the same decomposition as
+open Core.Person in
+/-- The [±participant] decomposition in `Core/Person/Category.lean`
+    (operating on `Category`) is the same decomposition as
     `PersonGeometry.decomposePerson` (operating on `PersonLevel`).
 
-    This theorem bridges the two: for all singular PersonCategories,
-    converting to PersonLevel and then decomposing yields the same
-    [participant] value as the Spanish fragment's `hasParticipant`. -/
-theorem person_geometry_matches_spanish_features :
-    Fragments.Spanish.PersonFeatures.hasParticipant .s1 =
+    This theorem bridges the two: for all singular Categories,
+    `toFeatures.hasParticipant` equals `decomposePerson.hasParticipant`. -/
+theorem person_geometry_matches_core_features :
+    (Category.s1.toFeatures).hasParticipant =
       (decomposePerson .first).hasParticipant ∧
-    Fragments.Spanish.PersonFeatures.hasParticipant .s2 =
+    (Category.s2.toFeatures).hasParticipant =
       (decomposePerson .second).hasParticipant ∧
-    Fragments.Spanish.PersonFeatures.hasParticipant .s3 =
+    (Category.s3.toFeatures).hasParticipant =
       (decomposePerson .third).hasParticipant := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
