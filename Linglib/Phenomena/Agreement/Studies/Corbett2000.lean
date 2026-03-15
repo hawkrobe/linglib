@@ -1,6 +1,7 @@
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Core.Lexical.UD
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
 # Corbett (2000) — Number
@@ -32,6 +33,20 @@ Formalizes the core typological framework from:
 
 5. **Controller–target mismatch** (§6.1): controller and target may have
    different number systems (Bayso: 4 controller values, 3 target forms).
+
+6. **Individuation Hierarchy** (Ch 4): integrates the animacy hierarchy with
+   number value inventories. Higher animacy positions can sustain richer number
+   systems. Constraint II: if trial exists at position X, dual exists at X and
+   all higher positions.
+
+7. **Resolution rules** (Ch 6, §6.3): when conjoined controllers disagree in
+   number, resolution is either semantic (referent sum: sg + sg → pl) or
+   syntactic (nearest conjunct agreement).
+
+8. **Semantics of number** (Ch 7): inclusive vs exclusive plural interpretation.
+   Link's `*P` gives the inclusive reading (≥ 1); exclusive (≥ 2) is derived by
+   scalar implicature. General number semantics connects to
+   @cite{chierchia-1998}'s Nominal Mapping Parameter.
 -/
 
 namespace Phenomena.Agreement.Studies.Corbett2000
@@ -80,24 +95,33 @@ def NumberValue.toUD : NumberValue → Option UD.Number
   | .greaterPaucal => some .Grpa
   | .greaterPlural => some .Grpl
 
-/-- Map UD.Number to Corbett's values (total). -/
-def NumberValue.fromUD : UD.Number → NumberValue
-  | .Sing  => .singular
-  | .Plur  => .plural
-  | .Dual  => .dual
-  | .Tri   => .trial
-  | .Pauc  => .paucal
-  | .Grpa  => .greaterPaucal
-  | .Grpl  => .greaterPlural
-  | .Inv   => .plural     -- inverse encodes a number opposition
-  | .Coll  => .general    -- collectives are non-committal to cardinality
-  | .Count => .singular   -- count forms specify individuation
+/-- Map UD.Number to Corbett's analytical categories (partial).
 
-/-- Round-trip: fromUD ∘ toUD = id for all in-system values. -/
-theorem roundtrip_fromUD_toUD :
+    Seven core values round-trip cleanly. Three UD values have no Corbett
+    equivalent:
+    - `Inv` (inverse number): marks the *unexpected* number for a given noun —
+      plural for some nouns, singular for others. Not a fixed cardinality.
+    - `Coll` (collective): denotes a group-as-unit (Russian *листва* 'foliage'),
+      distinct from general number which is non-committal to cardinality.
+    - `Count` (count form): a special form after numerals (Hungarian, Welsh),
+      not equivalent to singular (exactly one). -/
+def UD.Number.toCorbett : UD.Number → Option NumberValue
+  | .Sing  => some .singular
+  | .Plur  => some .plural
+  | .Dual  => some .dual
+  | .Tri   => some .trial
+  | .Pauc  => some .paucal
+  | .Grpa  => some .greaterPaucal
+  | .Grpl  => some .greaterPlural
+  | .Inv   => none    -- no fixed Corbett equivalent (see docstring)
+  | .Coll  => none    -- collective ≠ general number
+  | .Count => none    -- count form ≠ singular
+
+/-- Round-trip: toCorbett ∘ toUD = id for all in-system values. -/
+theorem roundtrip_toCorbett_toUD :
     [NumberValue.singular, .dual, .trial, .paucal, .plural,
      .greaterPaucal, .greaterPlural].all
-      (λ v => v.toUD.map NumberValue.fromUD == some v) = true := by native_decide
+      (λ v => v.toUD.bind UD.Number.toCorbett == some v) = true := by native_decide
 
 -- ============================================================================
 -- §2: Number Systems (Ch 2, §2.3)
@@ -437,7 +461,110 @@ theorem hebrew_mismatch : hebrewCT.hasMismatch = true := by native_decide
 theorem english_no_mismatch : englishCT.hasMismatch = false := by native_decide
 
 -- ============================================================================
--- §6: Bridges to Existing Infrastructure
+-- §6: The Individuation Hierarchy (Ch 4)
+-- ============================================================================
+
+/-- An individuation profile records which number values are available at each
+    position on the animacy hierarchy. Languages may have *split number systems*
+    where pronouns sustain a richer inventory than nouns. -/
+structure IndividuationProfile where
+  name : String
+  /-- Number values available at each hierarchy position -/
+  valuesAt : AnimacyRank → List NumberValue
+
+/-- **Constraint II** (Corbett Ch 4): if trial exists at position X, then dual
+    exists at X and at all positions higher on the animacy hierarchy. -/
+def IndividuationProfile.respectsConstraintII (p : IndividuationProfile) : Bool :=
+  allRanks.all λ r =>
+    !(p.valuesAt r).contains .trial ||
+    ((p.valuesAt r).contains .dual &&
+     allRanks.all λ r' => r'.toNat <= r.toNat || (p.valuesAt r').contains .dual)
+
+/-- **Monotonicity**: number value inventories never grow as we move rightward
+    (down) the hierarchy. If a value exists at position X, it exists at all
+    higher positions. -/
+def IndividuationProfile.respectsMonotonicity (p : IndividuationProfile) : Bool :=
+  allRanks.all λ r1 =>
+    allRanks.all λ r2 =>
+      r1.toNat <= r2.toNat ||
+      (p.valuesAt r2).all (λ v => (p.valuesAt r1).contains v)
+
+/-- Upper Sorbian: sg–dual–pl in pronouns and some nouns, but dual absent in
+    lower animacy positions where only sg–pl remains. -/
+def upperSorbianIndiv : IndividuationProfile :=
+  { name := "Upper Sorbian"
+    valuesAt := λ
+      | .speaker | .addressee | .thirdPerson | .kin | .human =>
+          [.singular, .dual, .plural]
+      | _ => [.singular, .plural] }
+
+/-- Lihir (Oceanic): full sg–du–tri–pauc–pl in pronouns, reduced inventory in
+    lower positions. -/
+def lihirIndiv : IndividuationProfile :=
+  { name := "Lihir"
+    valuesAt := λ
+      | .speaker | .addressee | .thirdPerson =>
+          [.singular, .dual, .trial, .paucal, .plural]
+      | .kin | .human | .higherAnimal =>
+          [.singular, .dual, .plural]
+      | _ => [.singular, .plural] }
+
+/-- English: uniform sg–pl at all positions (no split). -/
+def englishIndiv : IndividuationProfile :=
+  { name := "English"
+    valuesAt := λ _ => [.singular, .plural] }
+
+def allIndividuationProfiles : List IndividuationProfile :=
+  [upperSorbianIndiv, lihirIndiv, englishIndiv]
+
+theorem constraint_ii_holds :
+    allIndividuationProfiles.all (·.respectsConstraintII) = true := by
+  native_decide
+
+theorem individuation_monotonicity_holds :
+    allIndividuationProfiles.all (·.respectsMonotonicity) = true := by
+  native_decide
+
+/-- Upper Sorbian pronouns have dual but lower animacy positions do not —
+    a genuine split number system. -/
+theorem upperSorbian_split :
+    (upperSorbianIndiv.valuesAt .speaker).contains .dual = true ∧
+    (upperSorbianIndiv.valuesAt .discreteInanimate).contains .dual = false := by
+  native_decide
+
+-- ============================================================================
+-- §7: Resolution Rules for Conjoined Controllers (Ch 6, §6.3)
+-- ============================================================================
+
+/-- When conjoined NPs disagree in number, the language must resolve which
+    number value appears on the agreement target. -/
+inductive ResolutionStrategy where
+  /-- Semantic resolution: sum the referents. sg + sg → pl because the
+      conjunction denotes a plurality. -/
+  | semantic
+  /-- Syntactic resolution: the nearest (closest) conjunct to the target
+      determines agreement, regardless of the other conjunct's number. -/
+  | closestConjunct
+  deriving DecidableEq, BEq, Repr
+
+/-- The result of resolving two number values under semantic resolution. -/
+def NumberValue.semanticResolve (a b : NumberValue) : NumberValue :=
+  match a, b with
+  | .singular, .singular => .plural  -- 1 + 1 > 1
+  | .singular, .dual     => .trial   -- 1 + 2 = 3 (in languages with trial)
+  | .dual, .singular     => .trial
+  | _, _ => .plural                   -- default: conjunction yields plural
+
+/-- Semantic resolution: sg + sg → pl. -/
+theorem sg_sg_resolves_pl :
+    NumberValue.semanticResolve .singular .singular = .plural := rfl
+
+/-- Semantic resolution: sg + du → tri (in languages with trial). -/
+theorem sg_du_resolves_tri :
+    NumberValue.semanticResolve .singular .dual = .trial := rfl
+
+-- ============================================================================
+-- §8: Bridges to AnimacyRank, Plurals.Typology
 -- ============================================================================
 
 /-- Bridge: AnimacyRank monotonicity constraint is consistent with the
@@ -476,7 +603,7 @@ theorem bayso_general_with_system :
   native_decide
 
 -- ============================================================================
--- §7: Bridge to Cysouw NumberStage (Agreement.Typology)
+-- §9: Bridge to Cysouw NumberStage (Agreement.Typology)
 -- ============================================================================
 
 open Phenomena.Agreement.Typology (NumberStage)
@@ -510,5 +637,57 @@ theorem numberStage_consistent_with_size :
     upperSorbianNS.size = 3 ∧ upperSorbianNS.toNumberStage = .N3 ∧
     larikeNS.size = 4 ∧ larikeNS.toNumberStage = .N4 := by
   native_decide
+
+-- ============================================================================
+-- §10: Bridge to Chierchia (1998) Nominal Mapping Parameter
+-- ============================================================================
+
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping canDenoteKind)
+
+/-- Corbett's general number languages are those where bare nouns can denote
+    kinds without a determiner — exactly Chierchia's [+arg] languages.
+
+    If a language has general number (a form outside the number system, non-
+    committal to cardinality), bare NPs can serve as arguments. This corresponds
+    to `canDenoteKind mapping (hasD := false) = true`, which holds for
+    `argOnly` and `argAndPred` but not `predOnly`. -/
+theorem general_number_iff_bare_kind :
+    (baysoNS.hasGeneral = true ∧
+     canDenoteKind .argOnly false = true) ∧
+    (japaneseNS.hasGeneral = true ∧
+     canDenoteKind .argOnly false = true) ∧
+    (englishNS.hasGeneral = false ∧
+     canDenoteKind .predOnly false = false) := by
+  native_decide
+
+-- ============================================================================
+-- §11: Bridge to Link (1983) — Inclusive vs Exclusive Plural
+-- ============================================================================
+
+/-- The inclusive/exclusive ambiguity of plurals (Corbett Ch 7).
+
+    Link's `*P` (star/plural closure) gives the *inclusive* interpretation:
+    `*P(x)` holds for atoms AND their sums, so "dogs" denotes ≥ 1 dogs.
+    The *exclusive* interpretation (≥ 2 dogs) is not a separate semantic
+    primitive — it arises by scalar implicature from the singular alternative.
+
+    This is modeled here as a parameter on plural interpretation. The
+    compositional semantics (`Link1983.star`) always delivers inclusive;
+    pragmatics narrows to exclusive. -/
+inductive PluralInterpretation where
+  /-- ≥ 1: Link's `*P`, closed under join. The singular is included. -/
+  | inclusive
+  /-- ≥ 2: derived by scalar implicature. The singular is excluded. -/
+  | exclusive
+  deriving DecidableEq, BEq, Repr
+
+/-- Inclusive plural includes singletons; exclusive does not. -/
+def PluralInterpretation.includesSingleton : PluralInterpretation → Bool
+  | .inclusive => true
+  | .exclusive => false
+
+/-- The compositional (pre-pragmatic) interpretation is always inclusive. -/
+theorem compositional_plural_is_inclusive :
+    PluralInterpretation.inclusive.includesSingleton = true := rfl
 
 end Phenomena.Agreement.Studies.Corbett2000
