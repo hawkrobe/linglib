@@ -26,7 +26,7 @@ valid for intersective adjectives only.
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Mathlib.Data.Set.Basic
 
 namespace Semantics.Montague.Modification
@@ -259,16 +259,5 @@ theorem grayCat_order :
   rw [predicateModification_comm gray_sem big_sem]
 
 end Examples
-
-section TypeDriven
-
-def canPM (ty₁ ty₂ : Ty) : Bool :=
-  decide (ty₁ = Ty.fn Ty.e Ty.t) && decide (ty₂ = Ty.fn Ty.e Ty.t)
-
-theorem canPM_spec (ty₁ ty₂ : Ty) :
-    canPM ty₁ ty₂ = true ↔ ty₁ = Ty.fn Ty.e Ty.t ∧ ty₂ = Ty.fn Ty.e Ty.t := by
-  simp only [canPM, Bool.and_eq_true, decide_eq_true_eq]
-
-end TypeDriven
 
 end Semantics.Montague.Modification

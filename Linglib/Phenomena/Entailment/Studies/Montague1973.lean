@@ -21,21 +21,21 @@ open ToyLexicon
 open Phenomena.Entailment
 
 theorem captures_john_sleeps :
-    (apply sleeps_sem john_sem = true) ↔ johnSleepsTrue.judgedTrue = true := by
+    (sleeps_sem john_sem = true) ↔ johnSleepsTrue.judgedTrue = true := by
   constructor <;> intro _ <;> rfl
 
 theorem captures_mary_sleeps :
-    (apply sleeps_sem mary_sem = false) ↔ marySleepsFalse.judgedTrue = false := by
+    (sleeps_sem mary_sem = false) ↔ marySleepsFalse.judgedTrue = false := by
   constructor <;> intro _ <;> rfl
 
 theorem captures_intransitive_contrast :
-    apply sleeps_sem john_sem = johnSleepsTrue.judgedTrue ∧
-    apply sleeps_sem mary_sem = marySleepsFalse.judgedTrue := by
+    sleeps_sem john_sem = johnSleepsTrue.judgedTrue ∧
+    sleeps_sem mary_sem = marySleepsFalse.judgedTrue := by
   constructor <;> rfl
 
 theorem captures_transitive_seeing :
-    apply (apply sees_sem mary_sem) john_sem = johnSeesMaryTrue.judgedTrue ∧
-    apply (apply sees_sem john_sem) john_sem = johnSeesJohnFalse.judgedTrue := by
+    sees_sem mary_sem john_sem = johnSeesMaryTrue.judgedTrue ∧
+    sees_sem john_sem john_sem = johnSeesJohnFalse.judgedTrue := by
   constructor <;> rfl
 
 end Phenomena.Entailment.CompositionalBridge

@@ -988,6 +988,7 @@ import Linglib.Phenomena.Presupposition.Studies.Heim1992
 import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
+import Linglib.Phenomena.Presupposition.Studies.Grove2022
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
@@ -1106,7 +1107,6 @@ import Linglib.Theories.Syntax.CCG.Core.Combinators
 import Linglib.Theories.Syntax.CCG.Core.FromFragments
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Homomorphism
-import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Derivation
 import Linglib.Phenomena.Agreement.Studies.CCGAgreement
 import Linglib.Phenomena.Agreement.Studies.Scott2023
 import Linglib.Phenomena.Agreement.DifferentialIndexing
@@ -1395,9 +1395,9 @@ import Linglib.Theories.Semantics.Composition.WriterMonad
 import Linglib.Theories.Semantics.Composition.SetMonad
 import Linglib.Theories.Semantics.Composition.Applicative
 import Linglib.Theories.Semantics.Composition.Effects
+import Linglib.Theories.Semantics.Composition.MaybeMonad
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Montague.Conjunction
-import Linglib.Theories.Semantics.Composition.Derivation
 import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Tense.BranchingTime
@@ -1418,7 +1418,6 @@ import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
 import Linglib.Core.Semantics.GradedProposition
-import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking

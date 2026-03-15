@@ -21,7 +21,7 @@ world-time indices (@cite{krifka-2026}), instantiate `Core.Assignment (DRefVal W
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Core.Assignment
 import Linglib.Core.CylindricAlgebra
 

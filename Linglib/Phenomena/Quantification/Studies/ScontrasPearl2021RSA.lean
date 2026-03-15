@@ -2,7 +2,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Tactics.RSAPredict
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Theories.Semantics.Montague.Scope
+import Linglib.Theories.Semantics.Composition.Scope
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!

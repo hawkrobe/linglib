@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Montague.Basic
-import Linglib.Theories.Semantics.Montague.Scope
+import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Montague.Variables
@@ -40,7 +40,7 @@ premise multiset. Each multiset has exactly one normal-form proof.
 
 This module connects Glue to:
 - `ScopeConfig` from `Montague/Scope.lean`
-- `interpTreeG`-based QR composition from `Composition/Tree.lean`
+- `interp`-based QR composition from `Composition/Tree.lean`
 - `QuantifierComposition.lean` for the same scope example via H&K
 
 The bridge theorem `glue_qr_agree` proves that Glue proof search and
@@ -398,7 +398,7 @@ theorem glue_inverse_false : glue_inverse_meaning = false := by
 
 /-! Both Glue and QR are extensionally equivalent on the canonical
     scope example: both yield exactly {∀>∃, ∃>∀} with the same
-    truth values. The QR side is computed via `interpTreeG` from
+    truth values. The QR side is computed via `interp` from
     `Composition/Tree.lean`, connecting Glue to the H&K composition
     engine. -/
 

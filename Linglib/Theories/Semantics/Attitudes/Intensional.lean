@@ -13,7 +13,7 @@ For worked examples using this infrastructure, see:
 Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordinary English.
 -/
 
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.Intension
 -- Re-export modular attitude theories

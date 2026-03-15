@@ -18,7 +18,7 @@ This module provides:
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.Interface
 

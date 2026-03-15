@@ -10,7 +10,7 @@ Lexical entries with semantic denotations and scalar alternatives.
 -/
 
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Morphology.Core.Exponence
@@ -166,7 +166,7 @@ theorem student_plural_flat_sem :
     students_entry.denot = student_entry.denot := rfl
 
 /-- Project a rich lexical entry down to the bare type+denotation
-    needed by the composition engine (`interpTree`/`interpTreeG`). -/
+    needed by the composition engine (`interp`). -/
 def SemLexEntry.toLexEntry {m : Model} (e : SemLexEntry m) : LexEntry m :=
   ⟨e.ty, e.denot⟩
 

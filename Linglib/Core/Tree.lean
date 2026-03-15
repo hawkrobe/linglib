@@ -8,7 +8,7 @@ Unified tree type parameterized by node labels (`C`) and terminal content (`W`).
 ## `Tree C W` — The Y-Model Tree
 
 N-ary branching with categories on every node. Supports both:
-- **Compositional interpretation** (LF): `interpTree`/`interpTreeG`/`evalTree`
+- **Compositional interpretation** (LF): `interp`/`evalTree`
   in `Composition/Tree.lean` — type-driven, ignores categories
 - **Structural operations** (PF): @cite{katzir-2007} `StructOp` (substitution,
   deletion, contraction) in `Alternatives/Structural.lean` — category-aware

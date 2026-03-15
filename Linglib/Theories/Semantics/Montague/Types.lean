@@ -1,17 +1,24 @@
 /-
-# Montague-Style Compositional Semantics
+# Montague Semantic Type System
+
+The foundation for compositional semantics: semantic types, models,
+type interpretation, and lexical entry structures.
 
 ## Semantic Types
 
 - `e` : entities
 - `t` : truth values
+- `s` : possible worlds
 - `e → t` : properties
 - `e → e → t` : relations
 - `(e → t) → t` : generalized quantifiers
 
-## Composition
+## Key Definitions
 
-Function application: if α has type σ → τ and β has type σ, then ⟦α β⟧ = ⟦α⟧(⟦β⟧).
+- `Ty` — semantic types
+- `Model` — entity domain + world domain
+- `Model.interpTy` — interpretation of types in a model
+- `LexEntry`, `Lexicon` — lexical entry structures for composition
 -/
 
 import Linglib.Core.Lexical.Word
@@ -110,31 +117,9 @@ def book_sem : toyModel.interpTy (.e ⇒ .t) :=
 
 end ToyLexicon
 
-section Composition
-
-def apply {m : Model} {σ τ : Ty}
-    (f : m.interpTy (σ ⇒ τ)) (x : m.interpTy σ) : m.interpTy τ :=
-  f x
-
-structure SemanticDeriv (m : Model) where
-  words : List Word
-  ty : Ty
-  meaning : m.interpTy ty
-
-def interpSV (m : Model)
-    (subj : m.interpTy .e)
-    (verb : m.interpTy (.e ⇒ .t)) : m.interpTy .t :=
-  apply verb subj
-
-def interpSVO (m : Model)
-    (subj : m.interpTy .e)
-    (verb : m.interpTy (.e ⇒ .e ⇒ .t))
-    (obj : m.interpTy .e) : m.interpTy .t :=
-  apply (apply verb obj) subj
-
-end Composition
-
-section SententialOperators
+-- ============================================================================
+-- Sentential Operators
+-- ============================================================================
 
 /-- Sentence negation. See `Core.Proposition.Decidable.pnot` for the
 world-indexed version with proven DE property. -/
@@ -143,37 +128,16 @@ def neg {m : Model} (p : m.interpTy .t) : m.interpTy .t := !p
 def conj {m : Model} (p q : m.interpTy .t) : m.interpTy .t := p && q
 def disj {m : Model} (p q : m.interpTy .t) : m.interpTy .t := p || q
 
-def interpNegSV (m : Model)
-    (subj : m.interpTy .e)
-    (verb : m.interpTy (.e ⇒ .t)) : m.interpTy .t :=
-  neg (interpSV m subj verb)
-
-def interpNegSVO (m : Model)
-    (subj : m.interpTy .e)
-    (verb : m.interpTy (.e ⇒ .e ⇒ .t))
-    (obj : m.interpTy .e) : m.interpTy .t :=
-  neg (interpSVO m subj verb obj)
-
-end SententialOperators
-
-open ToyLexicon
-
-section TruthConditions
-
-def isTrue (m : Model) (meaning : m.interpTy .t) : Prop :=
-  meaning = true
-
-example : isTrue toyModel (interpSV toyModel john_sem sleeps_sem) := rfl
-example : isTrue toyModel (interpSVO toyModel john_sem eats_sem ToyEntity.pizza) := rfl
-example : isTrue toyModel (interpNegSV toyModel mary_sem sleeps_sem) := rfl
-example : interpNegSV toyModel john_sem sleeps_sem = false := rfl
-
 theorem double_negation {m : Model} (p : m.interpTy .t) : neg (neg p) = p := by
   simp only [neg, Bool.not_not]
 
-end TruthConditions
+-- ============================================================================
+-- Characteristic Functions
+-- ============================================================================
 
 section CharacteristicFunctions
+
+open ToyLexicon
 
 /-- Convert a predicate `e → t` to a `Set` (the extension). -/
 def predicateToSet {m : Model} (p : m.interpTy (.e ⇒ .t)) : Set m.Entity :=
@@ -205,7 +169,13 @@ theorem john_mary_in_laughs :
 
 end CharacteristicFunctions
 
+-- ============================================================================
+-- Currying
+-- ============================================================================
+
 section Currying
+
+open ToyLexicon
 
 def uncurry {m : Model} (f : m.interpTy (.e ⇒ .e ⇒ .t)) : m.Entity × m.Entity → Bool :=
   λ (x, y) => f y x
@@ -231,6 +201,10 @@ theorem sees_uncurry_matches :
   cases x <;> cases y <;> rfl
 
 end Currying
+
+-- ============================================================================
+-- Intensional Types
+-- ============================================================================
 
 section IntensionalTypes
 

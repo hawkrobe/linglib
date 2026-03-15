@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Proposition
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
@@ -381,7 +381,7 @@ def has_sem : pwModel.interpTy (.e ⇒ .e ⇒ .t) :=
 
 /-- Positive sentence meaning: "A has B". -/
 def posMeaning (container part : PWEntity) : pwModel.interpTy .t :=
-  interpSVO pwModel container has_sem part
+  has_sem part container
 
 /-- Negative sentence meaning: "A doesn't have B" = neg(has(A, B)). -/
 def negMeaning (container part : PWEntity) : pwModel.interpTy .t :=

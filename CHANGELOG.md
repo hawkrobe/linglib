@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.252] - 2026-03-14
+
+### Changed
+- **Composition API cleanup**: Rename `interpTreeG` → `interp`, delete redundant `interpTree`; single composition function with `evalTree` convenience wrapper
+- **Montague/Basic.lean → Montague/Types.lean**: Strip `apply`, `interpSV`, `interpSVO`, `isTrue` and all examples; file now contains only `Ty`, `Model`, `interpTy`, sentential operators
+- **PTQ.lean → Phenomena/Quantification/Studies/Montague1973.lean**: Historical artifact moved to studies
+- **Scope.lean → Composition/Scope.lean**: Scope infrastructure moved to Composition/
+
+### Removed
+- **Dissolve SemDeriv middleman**: Delete `Composition/Derivation.lean`; pragmatics consumers (`deriveFromScalarItems`, `hasSomeQuantifier`) now take `List (SemLexEntry m)` directly instead of going through a bundle type
+- **Delete SemanticBackend.lean**: 65-line stub with zero consumers
+- **Delete CCG/Derivation.lean**: Dead code, nothing imported it
+- **Dead code**: `canPM` (Modification), `conjFunc`/`disjFunc` (Conjunction), `LexicalNPType`/`pluralAppliesTo`/`coercedPlural` (TypeShifting), `ScalarOccurrence`/`SemanticsProducer`/`alternativeMeanings`/`alternativeForms`
+
+## [0.229.251] - 2026-03-14
+
+### Added
+- **MaybeMonad.lean**: Formalize Grove 2022 — the Maybe monad (`Option`) as the presuppositional analog of Charlow 2020's set monad; middle Kleene connectives (`materialCond`, `meetMK`, `joinMK`); intensional-presuppositional monad `Iₚ` (= `ReaderT i Option`) with monad laws; `evalI`, `forallP`, `believe` definitions; bridges to `Truth3` and `PrProp`
+- **Grove2022.lean**: Proviso problem dissolution via scope ambiguity — 4-world conditional model, local reading (conditional presupposition) vs global reading (unconditional), attitude verb projection (local = doxastic, global = factive), 5 bridge theorems to Heim1992.lean
+
 ## [0.229.250] - 2026-03-14
 
 ### Added

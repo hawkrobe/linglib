@@ -7,7 +7,7 @@ Conjunction and disjunction defined recursively over the type structure:
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 
 namespace Semantics.Montague
 
@@ -140,64 +140,5 @@ theorem tall_and_happy_is_pointwise :
     tall_and_happy = λ x => tall_sem x && happy_sem x := rfl
 
 end Examples
-
-section PolymorphicSchemata
-
-/-- Pointwise conjunction for functions (model-independent). -/
-def conjFunc {A B : Type*} (conjB : B → B → B) (f g : A → B) : A → B :=
-  λ x => conjB (f x) (g x)
-
-def disjFunc {A B : Type*} (disjB : B → B → B) (f g : A → B) : A → B :=
-  λ x => disjB (f x) (g x)
-
-theorem conjFunc_distributes {A B : Type*} (conjB : B → B → B)
-    (f g : A → B) (x : A) :
-    conjFunc conjB f g x = conjB (f x) (g x) := rfl
-
-theorem disjFunc_distributes {A B : Type*} (disjB : B → B → B)
-    (f g : A → B) (x : A) :
-    disjFunc disjB f g x = disjB (f x) (g x) := rfl
-
-end PolymorphicSchemata
-
-section INCL
-
-/-- Inclusion at type `t`: `p ⊆ q` iff `p → q`. -/
-def inclT (p q : Bool) : Bool := !p || q
-
-def inclFunc {A : Type*} (f g : A → Bool) (domain : List A) : Bool :=
-  domain.all λ x => inclT (f x) (g x)
-
-def inclProperty {E : Type*} (p q : E → Bool) (entities : List E) : Bool :=
-  inclFunc p q entities
-
-def inclProposition {W : Type*} (p q : W → Bool) (worlds : List W) : Bool :=
-  inclFunc p q worlds
-
-end INCL
-
-section QUANT
-
-/-- `∃x∈D. P(x)` -/
-def existsOver {A : Type*} (domain : List A) (p : A → Bool) : Bool :=
-  domain.any p
-
-/-- `∀x∈D. P(x)` -/
-def forallOver {A : Type*} (domain : List A) (p : A → Bool) : Bool :=
-  domain.all p
-
-theorem exists_is_disj {A : Type*} (domain : List A) (p : A → Bool) :
-    existsOver domain p = (domain.map p).any id := by
-  simp [existsOver, List.any_map]
-
-theorem forall_is_conj {A : Type*} (domain : List A) (p : A → Bool) :
-    forallOver domain p = (domain.map p).all id := by
-  simp [forallOver, List.all_map]
-
-theorem forall_exists_duality {A : Type*} (domain : List A) (p : A → Bool) :
-    forallOver domain p = !existsOver domain (λ x => !p x) := by
-  simp [forallOver, existsOver, List.all_eq_not_any_not]
-
-end QUANT
 
 end Semantics.Montague.Conjunction

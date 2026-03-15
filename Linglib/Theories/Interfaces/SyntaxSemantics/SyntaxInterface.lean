@@ -9,7 +9,7 @@ Documents compositional homomorphism requirement and syntax-agnostic nature of M
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 
 namespace Semantics.Montague.Interface.SyntaxInterface
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Montague.Conjunction
 import Mathlib.Order.Hom.BoundedLattice
 import Mathlib.Data.Finset.Lattice.Fold
@@ -298,32 +298,6 @@ theorem THE_ident (domain : List m.Entity) (j : m.interpTy .e)
   simp only [THE, iota_ident domain j hmem hnd, Option.map]
 
 end PartialShifts
-
-section LexicalTypes
-
-/-- Lexical semantic type of an NP: `e` (proper nouns) or `⟨e,t⟩` (common nouns). -/
-inductive LexicalNPType where
-  | entity
-  | pred
-  deriving DecidableEq, Repr, BEq
-
-/-- Link's `*` operator applies to type `⟨e,t⟩` only. -/
-def pluralAppliesTo : LexicalNPType → Bool
-  | .pred => true
-  | .entity => false
-
-theorem proper_noun_no_direct_plural :
-    pluralAppliesTo .entity = false := rfl
-
-theorem common_noun_pluralizable :
-    pluralAppliesTo .pred = true := rfl
-
-/-- Coerced plural via `ident`: `e → ⟨e,t⟩`, enabling `*` to apply. -/
-def coercedPlural {m : Model} (j : m.interpTy .e)
-    (star : m.interpTy Ty.et → m.interpTy Ty.et) : m.interpTy Ty.et :=
-  star (ident j)
-
-end LexicalTypes
 
 /-- `lift = Conjunction.typeRaise` -/
 theorem lift_eq_typeRaise {m : Model} (j : m.interpTy .e) :

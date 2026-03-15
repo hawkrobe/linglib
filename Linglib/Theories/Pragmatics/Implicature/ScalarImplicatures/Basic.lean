@@ -29,7 +29,8 @@ exhaustification predictions live in `Alternatives/Lexical.lean` and
 
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Semantics.Alternatives.Lexical
-import Linglib.Theories.Semantics.Montague.Derivation
+import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Core.Interface
 
 namespace Implicature.ScalarImplicatures
@@ -378,38 +379,27 @@ theorem some_de_no_implicatures :
 
 
 /-
-## Connection to Syntax via SemDeriv.Derivation
+## Scalar Implicatures from Lexical Entries
 
-This part connects Implicature pragmatics to the syntax-semantics pipeline.
-Any syntax theory (CCG, HPSG, Minimalism) that produces a `SemDeriv.Derivation`
-can feed into these functions.
-
-```
-CCG/HPSG/Minimalism → SemDeriv.Derivation → deriveFromDerivation → ScalarImplicatureResult
-```
+Derives implicatures directly from `SemLexEntry` scalar metadata.
+Any syntax theory that identifies scalar items can feed into these functions.
 -/
 
 open Semantics.Montague
-open Semantics.Montague.SemDeriv
 
 /--
-Derive scalar implicatures from a semantic derivation.
+Derive scalar implicatures from a list of scalar lexical entries.
 
-This is the key function that connects syntax to pragmatics:
-1. Takes a SemDeriv.Derivation (produced by any syntax theory)
-2. Extracts scalar items from the derivation
-3. For each scalar item, derives implicatures based on its scale
-4. Returns all derived implicatures
-
-Syntax-agnostic: Works with CCG, HPSG, Minimalism, or any theory
-that implements the SemDeriv interface.
+For each entry with a scale membership, derives the corresponding
+implicatures based on polarity context.
 -/
-def deriveFromDerivation {m : Model} (d : Derivation m) (ctx : ContextPolarity)
+def deriveFromScalarItems {m : Model}
+    (items : List (SemLexEntry m)) (ctx : ContextPolarity)
     : List ScalarImplicatureResult :=
-  d.scalarItems.filterMap λ occ =>
-    match occ.entry.scaleMembership with
+  items.filterMap λ entry =>
+    match entry.scaleMembership with
     | none => none
-    | some sm => some (deriveScalarImplicatures occ.entry.form sm ctx)
+    | some sm => some (deriveScalarImplicatures entry.form sm ctx)
 
 /--
 Check if any implicature in the results negates a given alternative.
@@ -417,63 +407,34 @@ Check if any implicature in the results negates a given alternative.
 def hasImplicature (results : List ScalarImplicatureResult) (alt : String) : Bool :=
   results.any λ r => r.implicatures.contains s!"not({alt})"
 
-/--
-Example: "some students sleep" via CCG
-
-Using the CCG derivation from CCG/Interpret.lean:
--/
+/-- "some students sleep": scalar item is "some" -/
 def someStudentsSleep_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Semantics.Montague.SemDeriv.someStudentsSleep .upward
+  deriveFromScalarItems [some_entry] .upward
 
-/--
-Theorem: "some students sleep" derives "not(all)"
-
-This is the key milestone theorem: starting from a semantic derivation
-(which could come from CCG), Implicature pragmatics derives "not all".
--/
+/-- "some students sleep" derives "not(all)" -/
 theorem some_students_derives_not_all :
     hasImplicature someStudentsSleep_result "all" = true := by
   native_decide
 
-/--
-Theorem: "some students sleep" derives "not(most)" as well
--/
+/-- "some students sleep" derives "not(most)" -/
 theorem some_students_derives_not_most :
     hasImplicature someStudentsSleep_result "most" = true := by
   native_decide
 
-/--
-Example: "every student sleeps" in UE
-
-"every" is at the top of the quantifier scale, so no stronger alternatives.
--/
+/-- "every student sleeps": "every" is scale-top, no stronger alternatives -/
 def everyStudentsSleeps_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Semantics.Montague.SemDeriv.everyStudentSleeps .upward
+  deriveFromScalarItems [every_entry] .upward
 
-/--
-Theorem: "every student sleeps" has no implicatures
-
-Since "every/all" is the strongest quantifier, there are no stronger
-alternatives to negate.
--/
+/-- "every student sleeps" has no implicatures -/
 theorem every_students_no_implicatures :
     everyStudentsSleeps_result.all (·.implicatures.isEmpty) = true := by
   native_decide
 
-/--
-Example: "some students sleep" in DE context
-
-In a downward-entailing context (e.g., "No one thinks some students sleep"),
-the "not all" implicature is blocked.
--/
+/-- "some students sleep" in DE: implicature blocked -/
 def someStudentsSleep_DE_result : List ScalarImplicatureResult :=
-  deriveFromDerivation Semantics.Montague.SemDeriv.someStudentsSleep .downward
+  deriveFromScalarItems [some_entry] .downward
 
-/--
-Theorem: "some" in DE has no "not all" implicature
-
-Downward-entailing contexts block the standard scalar implicature.
--/
+/-- "some" in DE has no "not all" implicature -/
 theorem some_students_de_no_not_all :
     hasImplicature someStudentsSleep_DE_result "all" = false := by
   native_decide

@@ -1,5 +1,5 @@
 /-
-# Type-Driven Interpretation (@cite{heim-kratzer-1998}, Ch. 3-4)
+# Type-Driven Interpretation (@cite{heim-kratzer-1998}, Ch. 3-5)
 @cite{klein-sag-1985}
 
 Composition principles:
@@ -7,14 +7,12 @@ Composition principles:
 2. Non-Branching Nodes (NN): identity
 3. Functional Application (FA): `⟦α⟧ = ⟦β⟧(⟦γ⟧)` when types match
 4. Predicate Modification (PM): combine two `⟨e,t⟩` predicates (Ch. 4)
-
-Interpretation is syntax-agnostic: it works with any structure providing
-terminals and branching via the `SemanticStructure` typeclasses below.
+5. Predicate Abstraction (PA): `⟦[n β]⟧^g = λx. ⟦β⟧^{g[n↦x]}` (Ch. 5)
 
 -/
 
 import Linglib.Core.Tree
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Theories.Semantics.Montague.Variables
 
@@ -24,41 +22,8 @@ open Semantics.Montague Semantics.Montague.Modification
 open Semantics.Montague.Variables
 
 -- ============================================================================
--- Syntax–Semantics Interface
+-- Composition Primitives
 -- ============================================================================
-
-/-- Access to lexical/terminal content. -/
-class HasTerminals (S : Type) where
-  /-- Get terminal content if this is a leaf node -/
-  getTerminal : S → Option String
-
-/-- Binary decomposition for Functional Application and Predicate Modification. -/
-class HasBinaryComposition (S : Type) where
-  /-- Decompose into two children if this is a binary node -/
-  getBinaryChildren : S → Option (S × S)
-
-/-- Unary decomposition for H&K's Non-Branching Nodes rule. -/
-class HasUnaryProjection (S : Type) where
-  /-- Get single child if this is a unary node -/
-  getUnaryChild : S → Option S
-
-/-- Binding sites for λ-abstraction. -/
-class HasBinding (S : Type) where
-  /-- Get binding index and body if this is a binder -/
-  getBinder : S → Option (Nat × S)
-
-/-- Access to semantic types, parameterized over the type system `T`. -/
-class HasSemanticType (S : Type) (T : Type) where
-  /-- Get the semantic type of this node -/
-  getType : S → Option T
-
-/-- Full semantic structure for H&K-style interpretation. -/
-class SemanticStructure (S : Type) (T : Type) extends
-    HasTerminals S,
-    HasBinaryComposition S,
-    HasUnaryProjection S,
-    HasBinding S,
-    HasSemanticType S T
 
 structure TypedDenot (m : Model) where
   ty : Ty
@@ -123,25 +88,8 @@ def tryPM {m : Model} (d1 d2 : TypedDenot m) : Option (TypedDenot m) :=
 def interpBinary {m : Model} (d1 d2 : TypedDenot m) : Option (TypedDenot m) :=
   tryFA d1 d2 <|> tryPM d1 d2
 
-/-- Generic recursive interpretation for any syntax via `SemanticStructure`. -/
-def interpret {S : Type} [HasTerminals S] [HasBinaryComposition S] [HasUnaryProjection S]
-    (m : Model) (lex : Lexicon m) (interp : S → Option (TypedDenot m)) (s : S)
-    : Option (TypedDenot m) :=
-  match HasTerminals.getTerminal s with
-  | some word => interpTerminal m lex word
-  | none =>
-    match HasUnaryProjection.getUnaryChild s with
-    | some child => (interp child).map interpNonBranching
-    | none =>
-      match HasBinaryComposition.getBinaryChildren s with
-      | some (left, right) => do
-        let d1 ← interp left
-        let d2 ← interp right
-        interpBinary d1 d2
-      | none => none
-
 -- ============================================================================
--- Tree Interpretation (unified Core.Tree.Tree)
+-- Tree Interpretation
 -- ============================================================================
 
 open Core.Tree
@@ -150,47 +98,12 @@ section TreeInterp
 
 variable {C : Type}
 
-instance : HasTerminals (Tree C String) where
-  getTerminal
-    | .terminal _ w => some w
-    | _ => none
+/-- Interpret a tree under an assignment.
 
-instance : HasBinaryComposition (Tree C String) where
-  getBinaryChildren
-    | .node _ (t1 :: t2 :: []) => some (t1, t2)
-    | _ => none
-
-instance : HasUnaryProjection (Tree C String) where
-  getUnaryChild
-    | .node _ (t :: []) => some t
-    | _ => none
-
-instance : HasBinding (Tree C String) where
-  getBinder
-    | .bind _ _ body => some (0, body)  -- index ignored; extracted by interpTreeG
-    | _ => none
-
-instance : HasSemanticType (Tree C String) Ty where
-  getType _ := none
-
-instance : SemanticStructure (Tree C String) Ty where
-
-/-- Interpret a tree without binding (ignores categories).
-Categories are structurally present but irrelevant to H&K composition. -/
-def interpTree (m : Model) (lex : Lexicon m) : Tree C String → Option (TypedDenot m)
-  | .terminal _ w => interpTerminal m lex w
-  | .node _ (t :: []) => (interpTree m lex t).map interpNonBranching
-  | .node _ (t1 :: t2 :: []) => do
-    let d1 ← interpTree m lex t1
-    let d2 ← interpTree m lex t2
-    interpBinary d1 d2
-  | .node _ _ => none
-  | .trace _ _ => none
-  | .bind _ _ _ => none
-
-/-- Assignment-relative interpretation for trees with binding.
-
-Extends `interpTree` with cases from @cite{heim-kratzer-1998} Ch. 5:
+Implements @cite{heim-kratzer-1998} Ch. 3-5 type-driven interpretation:
+- **TN**: terminal → lexical lookup
+- **NN**: unary node → identity
+- **FA/PM**: binary node → try FA then PM
 - **Traces/Pronouns**: `⟦tₙ⟧^g = g(n)`
 - **Predicate Abstraction (PA)**: `⟦[n β]⟧^g = λx. ⟦β⟧^{g[n↦x]}`
 
@@ -202,47 +115,31 @@ The category parameter `C` is ignored during interpretation — composition
 is type-driven, not category-driven. This means the same function works
 for `Tree Cat String` (UD-grounded), `Tree Unit String` (category-free),
 or any other category system. -/
-def interpTreeG (m : Model) (lex : Lexicon m) (g : Assignment m)
+def interp (m : Model) (lex : Lexicon m) (g : Assignment m)
     : Tree C String → Option (TypedDenot m)
   | .terminal _ w => interpTerminal m lex w
-  | .node _ (t :: []) => (interpTreeG m lex g t).map interpNonBranching
+  | .node _ (t :: []) => (interp m lex g t).map interpNonBranching
   | .node _ (t1 :: t2 :: []) => do
-    let d1 ← interpTreeG m lex g t1
-    let d2 ← interpTreeG m lex g t2
+    let d1 ← interp m lex g t1
+    let d2 ← interp m lex g t2
     interpBinary d1 d2
   | .node _ _ => none
   | .trace n _ => some ⟨.e, g n⟩
   | .bind n _ body => do
-    let ⟨bodyTy, probeVal⟩ ← interpTreeG m lex g body
+    let ⟨bodyTy, probeVal⟩ ← interp m lex g body
     some ⟨.fn .e bodyTy, λ (x : m.Entity) =>
-      match interpTreeG m lex (g[n ↦ x]) body with
+      match interp m lex (g[n ↦ x]) body with
       | some ⟨ty, val⟩ => if h : ty = bodyTy then h ▸ val else probeVal
       | none => probeVal⟩
 
 /-- Extract truth value from tree interpretation. -/
 def evalTree {m : Model} (lex : Lexicon m) (g : Assignment m) (t : Tree C String)
     : Option Bool :=
-  match interpTreeG m lex g t with
+  match interp m lex g t with
   | some ⟨.t, b⟩ => some b
   | _ => none
 
 end TreeInterp
-
-section Interpretability
-
-def isInterpretableWith {S : Type} {m : Model} (interp : S → Option (TypedDenot m)) (s : S) : Bool :=
-  (interp s).isSome
-
-def satisfiesInterpretabilityWith {S : Type} {m : Model} (interp : S → Option (TypedDenot m)) (s : S) : Prop :=
-  isInterpretableWith interp s = true
-
-def isInterpretable {C : Type} (m : Model) (lex : Lexicon m) (t : Tree C String) : Bool :=
-  (interpTree m lex t).isSome
-
-def satisfiesInterpretability {C : Type} (m : Model) (lex : Lexicon m) (t : Tree C String) : Prop :=
-  isInterpretable m lex t = true
-
-end Interpretability
 
 section TypeMismatch
 

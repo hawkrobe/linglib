@@ -2,7 +2,6 @@ import Linglib.Core.Discourse.InformationStructure
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Composition.Tree
-import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Focus.Basic
@@ -20,7 +19,7 @@ connection to English fragment entries.
 ```
 Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
                                                         │
-                                                    interpTree
+                                                    interp
                                                         │
                                                         ▼
                               propositions (QAWorld → Bool)
@@ -50,8 +49,8 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 - `Theme`, `Rheme`, `InfoStructure` — information structure analysis (§5)
 - `HasInfoStructure` — typeclass instance (§5b)
 - `FIPApplication` — FIP application classification (§8)
-- `Tree`, `interpTree` — compositional derivation (§10–§11)
-- `SemDeriv` — derivation bundles (§13)
+- `Tree`, `interp` — compositional derivation (§10–§11)
+- `Derivation` — derivation bundles (§13)
 - `Fragments.English.Nouns`, `.Predicates.Verbal` — fragment entries (§14)
 
 -/
@@ -392,11 +391,11 @@ theorem bridge_qa_incongruent :
 
 /-! The propositions in §2 were hand-defined. Here we derive them
     compositionally: entity denotations + a world-indexed verb meaning
-    are combined via Montague's `interpSVO` and Heim & Kratzer's
-    `interpTree` to produce the same truth conditions.
+    are combined via direct function application and Heim & Kratzer's
+    `interp` to produce the same truth conditions.
 
     The derivational chain is:
-      Fragment entry → Montague LexEntry → Tree → interpTree → Bool
+      Fragment entry → Montague LexEntry → Tree → interp → Bool
     run once per world to yield a world-indexed proposition. -/
 
 open Semantics.Montague
@@ -412,7 +411,7 @@ def focusModel : Model := { Entity := E, decEq := inferInstance }
 
 /-- World-indexed verb semantics for "ate".
     `ateInWorld w obj subj` follows Montague's argument order
-    (object first, then subject — cf. `interpSVO`). -/
+    (object first, then subject). -/
 def ateInWorld (w : QAWorld) : focusModel.interpTy (.e ⇒ .e ⇒ .t) :=
   fun obj subj => match w, subj, obj with
   | .fredBeans, .fred, .beans => true
@@ -448,10 +447,13 @@ def tree_maryAteBeans : Tree Unit String :=
 def tree_fredAteRice : Tree Unit String :=
   .bin (.leaf "Fred") (.bin (.leaf "ate") (.leaf "rice"))
 
+/-- Default assignment for binding-free trees. -/
+private def g₀ : Semantics.Montague.Variables.Assignment focusModel := λ _ => E.fred
+
 /-- Extract the Bool truth value from a tree interpretation.
     Returns `none` if the tree is uninterpretable or has non-`t` type. -/
 def treeResult (lex : Lexicon focusModel) (t : Tree Unit String) : Option Bool :=
-  match interpTree focusModel lex t with
+  match interp focusModel lex g₀ t with
   | some ⟨.t, b⟩ => some b
   | _ => none
 
@@ -460,7 +462,7 @@ def treeResult (lex : Lexicon focusModel) (t : Tree Unit String) : Option Bool :
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! The propositions from §2 were stipulated directly. Here we show
-    they are derivable: running `interpTree` at each world produces
+    they are derivable: running `interp` at each world produces
     the same truth values. -/
 
 /-- Compositionally derived "Fred ate beans" proposition. -/
@@ -490,39 +492,14 @@ theorem comp_grounds_fredAteRice :
     fredAteRice_comp = fredAteRice := by
   funext w; cases w <;> native_decide
 
-/-- Direct composition matches tree interpretation. -/
-theorem interpSVO_eq_interpTree (w : QAWorld) :
+/-- Direct function application matches tree interpretation. -/
+theorem direct_eq_interp (w : QAWorld) :
     treeResult (focusLex w) tree_fredAteBeans =
-    some (interpSVO focusModel E.fred (ateInWorld w) E.beans) := by
+    some (ateInWorld w E.beans E.fred) := by
   cases w <;> native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §13  SemDeriv: Derivation Bundles
--- ═══════════════════════════════════════════════════════════════════════
-
-open Semantics.Montague.Derivation
-
-/-- Semantic derivation bundle for "Fred ate beans" at world w.
-    Packages surface form + Montague type + compositional meaning. -/
-def fredAteBeans_deriv (w : QAWorld) : SemDeriv focusModel :=
-  { surface := ["Fred", "ate", "beans"]
-  , ty := .t
-  , meaning := interpSVO focusModel E.fred (ateInWorld w) E.beans }
-
-/-- The derivation sentence matches the surface string. -/
-theorem deriv_sentence :
-    (fredAteBeans_deriv .fredBeans).sentence = "Fred ate beans" := rfl
-
-/-- The derivation meaning is true in the correct world. -/
-theorem deriv_true_in_actual :
-    (fredAteBeans_deriv .fredBeans).meaning = true := rfl
-
-/-- The derivation meaning is false in other worlds. -/
-theorem deriv_false_elsewhere :
-    (fredAteBeans_deriv .maryBeans).meaning = false := rfl
-
--- ═══════════════════════════════════════════════════════════════════════
--- §14  Fragment Connection
+-- §13  Fragment Connection
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! Connect the model's lexicon to English fragment entries. Fragment
@@ -578,7 +555,7 @@ end FragmentVerbs
 
     1. Fragment entries (§14) provide surface forms and properties
     2. Surface forms feed the Montague lexicon (§10)
-    3. Tree derivations compose meanings via interpTree (§11)
+    3. Tree derivations compose meanings via interp (§11)
     4. Running at each world yields propositions grounding §2 (§12)
     5. Propositions build Hamblin questions and focus values (§6)
     6. FIP/qaCongruent proves congruence (§6a) or incongruence (§6b)

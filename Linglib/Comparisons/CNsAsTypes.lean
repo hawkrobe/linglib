@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!

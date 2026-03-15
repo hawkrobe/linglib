@@ -37,15 +37,12 @@ L0(u, w) = ⟦u⟧(w) -- where ⟦u⟧ : World → Bool
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Basic
-import Linglib.Theories.Semantics.Montague.Derivation
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Core.Semantics.Intension
 
 namespace Semantics.Intensional
 
-open Semantics.Montague
-open Semantics.Montague.Derivation
 open Semantics.Montague
 
 -- Intensional Models
@@ -112,18 +109,13 @@ def Proposition.trueAt {m : IntensionalModel} (p : Proposition m) (w : m.World) 
 /--
 An intensional semantic derivation.
 
-Like `SemDeriv` but with a world-parameterized meaning.
+Packages a world-parameterized meaning with its surface form and type.
 This is what RSA needs: a meaning that can be evaluated at any world.
 -/
 structure IntensionalDerivation (m : IntensionalModel) where
-  /-- The surface form -/
   surface : List String
-  /-- The result semantic type -/
   ty : Ty
-  /-- The world-parameterized meaning -/
   meaning : Intension m ty
-  /-- Scalar item positions -/
-  scalarItems : List (ScalarOccurrence m.base) := []
 
 /-- Evaluate the derivation at a specific world -/
 def IntensionalDerivation.evalAt {m : IntensionalModel}
@@ -240,7 +232,6 @@ def someStudentsSleep_intensional : IntensionalDerivation scalarModel := {
   surface := ["some", "students", "sleep"]
   ty := .t
   meaning := someIntensional students_rigid sleep_varying
-  scalarItems := [⟨0, some_entry⟩]
 }
 
 /--
@@ -255,7 +246,6 @@ def everyStudentsSleep_intensional : IntensionalDerivation scalarModel := {
   surface := ["every", "student", "sleeps"]
   ty := .t
   meaning := everyIntensional students_rigid sleep_varying
-  scalarItems := [⟨0, every_entry⟩]
 }
 
 -- Key Theorems: Truth Conditions Vary by World

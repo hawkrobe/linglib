@@ -7,8 +7,11 @@ Traditional semantic treatments of focus-sensitive particles.
 
 ## EVEN and NPI Licensing
 
-@cite{lahiri-1998} and @cite{crnic-2014} propose that NPIs like "anyone"
-are licensed by a covert EVEN operator that contributes:
+@cite{lahiri-1998} shows that Hindi NPIs are morphologically composed of
+an indefinite plus the overt EVEN particle bhii, and that implicature clash
+in positive contexts explains their distribution. @cite{crnic-2014} extends
+this to English, proposing that NPIs like "anyone" contain a covert EVEN
+operator that contributes:
 
 1. **Presupposition**: The focused element is the LEAST LIKELY alternative
 2. **Assertion**: The prejacent is true
@@ -51,7 +54,7 @@ structure FocusStructure (α : Type) where
 -- EVEN: The Traditional Account
 
 /-!
-## Covert EVEN (@cite{lahiri-1998}, @cite{crnic-2014})
+## Covert EVEN (@cite{crnic-2014}, building on @cite{lahiri-1998})
 @cite{rooth-1992}
 
 EVEN has two semantic contributions:
@@ -184,6 +187,20 @@ def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : BProp 
 /-- Full "only" meaning -/
 def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World) : Prop :=
   only.prejacent w ∧ only.assertion w
+
+-- Likelihood Monotonicity
+
+/-- A likelihood ordering is MONOTONE w.r.t. entailment when stronger
+    propositions (true in fewer worlds) are less likely.
+
+    If `p` entails `q` (i.e., `p` is true only at worlds where `q` is true),
+    then `lessLikely p q` (p is at least as unlikely as q).
+
+    This is the bridge between `Theories/Semantics/Entailment/` and
+    focus particle semantics — the connection that @cite{lahiri-1998}
+    relies on to derive NPI licensing from the cardinality scale. -/
+def LikelihoodMonotone {W : Type} (lessLikely : BProp W → BProp W → Prop) : Prop :=
+  ∀ (p q : BProp W), (∀ w, p w = true → q w = true) → lessLikely p q
 
 -- Comparison: EVEN vs EXH vs Only
 

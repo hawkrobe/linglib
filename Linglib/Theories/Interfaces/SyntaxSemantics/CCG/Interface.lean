@@ -13,7 +13,7 @@ to function application and composition.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Montague.Conjunction
 
 namespace CCG

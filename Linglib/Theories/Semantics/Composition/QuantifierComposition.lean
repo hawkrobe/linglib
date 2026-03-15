@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 /-!
 # Quantifier Composition via Predicate Abstraction
 
-Demonstrates that `interpTreeG` composes quantificational sentences
+Demonstrates that `interp` composes quantificational sentences
 end-to-end: lexicon → syntax tree (with QR traces and binders) →
 truth conditions.
 
@@ -187,7 +187,7 @@ theorem assignment_independent :
 -- ════════════════════════════════════════════════════════════════════
 
 /-! The same QR tree built as `Tree Cat String` — carrying real UD-grounded
-categories on every node. `interpTreeG` ignores the categories and produces
+categories on every node. `interp` ignores the categories and produces
 identical truth conditions to the category-free `Tree Unit String` version. -/
 
 /-- QR tree with UD categories:

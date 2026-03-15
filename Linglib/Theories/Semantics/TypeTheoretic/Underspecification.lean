@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
-import Linglib.Theories.Semantics.Montague.Scope
+import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Core.Interface
 
 /-!

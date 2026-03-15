@@ -65,7 +65,7 @@ independent operations:
 - ρ lifts assignment-independent values: `⟦John⟧ = ρ(j)`
 - ⊛ composes assignment-dependent meanings: `⟦α β⟧ = ⟦α⟧ ⊛ ⟦β⟧`
 
-This decomposition is directly visible in linglib's `interpTreeG`
+This decomposition is directly visible in linglib's `interp`
 (`Composition/Tree.lean`): its binary case computes
 `FA(⟦α⟧^g, ⟦β⟧^g)`, which is `applyG ⟦α⟧ ⟦β⟧` evaluated at `g`. -/
 

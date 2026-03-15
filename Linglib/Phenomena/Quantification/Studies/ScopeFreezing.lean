@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Montague.Scope
+import Linglib.Theories.Semantics.Composition.Scope
 import Mathlib.Data.Rat.Defs
 
 /-!

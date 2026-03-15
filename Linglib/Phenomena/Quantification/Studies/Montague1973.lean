@@ -18,10 +18,10 @@ represented as `s ⇒ τ` rather than a separate `intens` constructor.
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Mathlib.Data.Set.Basic
 
-namespace Semantics.Montague.PTQ
+namespace Phenomena.Quantification.Studies.Montague1973
 
 open Semantics.Montague
 
@@ -453,4 +453,4 @@ def Derivation.cat : Derivation → Cat
   | .quantIn _ _ _ => .t
 
 
-end Semantics.Montague.PTQ
+end Phenomena.Quantification.Studies.Montague1973
