@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.269] - 2026-03-15
+
+### Changed
+- **Franke2011.lean eq. 131 helper** (1830→1818 lines, −12):
+  - `hearerBR_deterministic_flat`: new helper capturing the paper's eq. (131) — under flat priors with a deterministic speaker, hearerBR argmax is determined purely by speaker values (priors cancel)
+  - `ibrN_opt_singleton` inductive step: ~52-line inline `hH_zero`+`hH_pos` blocks replaced with ~20 lines via the helper
+  - `ibrN_respond_pos_iff_strongest`: ~73-line proof replaced with ~35 lines using the helper directly
+
+## [0.229.268] - 2026-03-15
+
+### Added
+- **Deal 2023 study file** (`Phenomena/Agreement/Studies/Deal2023.lean`): formalize Interaction/Satisfaction PCC framework
+  - `DealGrammar` with `satisfaction` (SAT feature) and `dynInteraction` (dynamic narrowing) parameters
+  - `isLicit` derives PCC predictions from probe-goal interaction mechanics
+  - 5 grammar instances: `strong`, `meFirst`, `weak`, `strictlyDescending`, `noPCC`
+  - 45 cell-by-cell verification theorems across all 5 PCC varieties
+  - Bridge to P&Z: `strong_matches_pz`, `weak_matches_pz`, `mefirst_matches_pz` (exact match, all 9 cells)
+  - Strictly descending vs ultra-strong: 7/9 match; `sd_ultra_discrepancy_1_1`/`sd_ultra_discrepancy_2_2` document divergences
+  - Bridge to CyclicAgree: `residue_empty_iff_bears_part` — probe satisfaction = residue depletion
+
 ## [0.229.267] - 2026-03-15
 
 ### Changed
