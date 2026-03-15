@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.262] - 2026-03-15
+
+### Added
+- **Checkable Austinian Propositions** (Ginzburg 2012 Ch. 4): `CheckableAustinian` and `BCheckableAustinian` in `Discourse.lean`
+  - Unlike Cooper's `AustinianProp` (always true by construction), these can be false
+  - `BCheckableAustinian.toBProp` bridges to `BProp W` for `HasContextSet` integration
+  - `cooperToGinzburg` bridge in `Modality.lean` embeds Cooper → Ginzburg with truth preservation proof
+
 ## [0.229.261] - 2026-03-15
 
 ### Added

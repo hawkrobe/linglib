@@ -809,4 +809,67 @@ theorem passenger_individuation :
 
 end FramePhenomena
 
+-- ============================================================================
+-- Austinian Propositions — Ginzburg's checkable version (§6.5 + Ch. 4)
+-- ============================================================================
+
+/-! ## Austinian Propositions for Discourse
+@cite{ginzburg-2012} @cite{cooper-2023} @cite{barwise-perry-1983}
+
+@cite{cooper-2023} §6.5 defines `AustinianProp` as a situation–type pair
+that carries its own witness (always true by construction). This suffices
+for truth-conditional semantics but not for discourse: when A asserts
+"Bo is here", the content enters FACTS as a *checkable* claim that can
+be true or false.
+
+@cite{ginzburg-2012} Ch. 4 uses Austinian propositions as the content type
+for DGB FACTS. The key difference: the situation and type are *independent*
+— the proposition is true iff the situation satisfies the type, but this
+need not hold.
+
+`CheckableAustinian` separates the situation from the classifying predicate,
+enabling:
+1. Propositions that can be false (sit doesn't satisfy the type)
+2. A bridge to `BProp W` for `HasContextSet` integration
+3. DGB FACTS typed as checkable Austinian propositions -/
+
+/-- A checkable Austinian proposition: situation + classifying predicate.
+
+Unlike `AustinianProp` (which carries its own witness), a `CheckableAustinian`
+separates the situation from the predicate, so it can be false.
+
+@cite{ginzburg-2012} Ch. 4: `[sit = s, sit-type = T]` where truth requires
+`s : T`. @cite{barwise-perry-1983}: situation supports a type. -/
+structure CheckableAustinian (S : Type) where
+  /-- The situation being classified -/
+  sit : S
+  /-- The classifying predicate (situation type) -/
+  sitType : S → Prop
+
+/-- A checkable Austinian proposition is true iff the situation satisfies the type. -/
+def CheckableAustinian.isTrue {S : Type} (p : CheckableAustinian S) : Prop :=
+  p.sitType p.sit
+
+/-- A checkable Austinian proposition is false iff the situation doesn't satisfy the type. -/
+def CheckableAustinian.isFalse {S : Type} (p : CheckableAustinian S) : Prop :=
+  ¬p.sitType p.sit
+
+/-- Decidable variant for computational use. -/
+structure BCheckableAustinian (S : Type) where
+  sit : S
+  sitType : S → Bool
+
+/-- Decidable truth check. -/
+def BCheckableAustinian.isTrue {S : Type} (p : BCheckableAustinian S) : Bool :=
+  p.sitType p.sit
+
+/-- Convert a decidable Austinian to a `BProp`: evaluate at each world/situation. -/
+def BCheckableAustinian.toBProp {S : Type} (p : BCheckableAustinian S) :
+    Core.Proposition.BProp S :=
+  p.sitType
+
+/-- A true Austinian proposition's `toBProp` holds at its situation. -/
+theorem BCheckableAustinian.toBProp_at_sit {S : Type} (p : BCheckableAustinian S)
+    (h : p.isTrue = true) : p.toBProp p.sit = true := h
+
 end Semantics.TypeTheoretic

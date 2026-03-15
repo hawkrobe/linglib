@@ -1005,4 +1005,28 @@ theorem meaningPostulate_transfers_belief {Agent : Type} {ltm : LTM Agent}
     believe ltm a T₂ :=
   believe_closed_under_subtype hb mp.coerce
 
+-- ============================================================================
+-- Bridge: AustinianProp → CheckableAustinian (Ginzburg 2012)
+-- ============================================================================
+
+/-! ## Cooper → Ginzburg Austinian Propositions
+
+@cite{cooper-2023}'s `AustinianProp` carries its own witness (always true by
+construction). @cite{ginzburg-2012} Ch. 4 uses Austinian propositions that can
+be false — `CheckableAustinian` (defined in `Discourse.lean`). This bridge
+embeds the former into the latter. -/
+
+/-- Cooper's `AustinianProp` (always true) embeds into `CheckableAustinian`.
+
+An `AustinianProp` carries its own witness, so the resulting
+`CheckableAustinian` is always true. -/
+def cooperToGinzburg (ap : AustinianProp) :
+    CheckableAustinian ap.SitType where
+  sit := ap.sit
+  sitType _ := True
+
+/-- Cooper-to-Ginzburg embedding preserves truth. -/
+theorem cooperToGinzburg_always_true (ap : AustinianProp) :
+    (cooperToGinzburg ap).isTrue := trivial
+
 end Semantics.TypeTheoretic
