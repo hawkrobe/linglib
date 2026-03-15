@@ -140,6 +140,12 @@ def InfoState.toCG {W SignT : Type}
     Core.CommonGround.CG W where
   propositions := s.commitments
 
+/-- InfoState with BProp commitments projects to a context set via CG. -/
+instance {W SignT : Type} :
+    Core.CommonGround.HasContextSet
+      (InfoState SignT (List (Core.Proposition.BProp W))) W where
+  toContextSet s := s.toCG.contextSet
+
 /-- Bridge theorem: initial state maps to empty common ground. -/
 theorem infoState_initial_eq_empty_cg (W SignT : Type) :
     (InfoState.initial (SignT := SignT)

@@ -40,10 +40,10 @@ preserving the independence of `Core/Semantics/` and `Core/Discourse/`.
 ## Scope
 
 This module captures the layer taxonomy and the `Off` function (which
-layers are offensive = inconsistent with a correction). It does NOT
-capture the full directed reverse anaphora (RA*) mechanism, which
-requires DRT resolution infrastructure (binding, accommodation,
-subordination) that is not yet implemented.
+layers are offensive = inconsistent with a correction). The directed
+reverse anaphora (RA*) mechanism that uses `Off` to selectively retract
+conditions is defined in `Theories.Semantics.Dynamic.DRT.Basic` as
+`LDRS.directedRA`.
 -/
 
 set_option linter.dupNamespace false

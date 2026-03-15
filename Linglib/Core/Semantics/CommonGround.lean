@@ -58,7 +58,7 @@ theorem absurd_entails (p : BProp W) : absurd ⊧ p := λ _ hw => hw.elim
 def update (c : ContextSet W) (p : BProp W) : ContextSet W :=
   λ w => c w ∧ p w = true
 
-notation:60 c " + " p => update c p
+scoped notation:60 c " + " p => update c p
 
 /-- Update restricts the context. -/
 theorem update_restricts (c : ContextSet W) (p : BProp W) (w : W) :
@@ -190,5 +190,68 @@ theorem update_toProp (c : BContextSet W) (p : W → Bool) :
   simp only [update, toProp, ContextSet.update, Bool.and_eq_true]
 
 end BContextSet
+
+-- ════════════════════════════════════════════════════════════════
+-- Unified Common Ground Interface
+-- ════════════════════════════════════════════════════════════════
+
+/-! ## HasContextSet: Uniform Access to Context Sets
+@cite{ginzburg-2012} @cite{stalnaker-2002} @cite{krifka-2015}
+
+Common ground appears in many guises across discourse theories:
+`CG W` (@cite{stalnaker-2002}), `CommitmentSlate W` (@cite{krifka-2015}),
+`CommitmentSpace W` (commitment trees), `DistributionalCG W` (probabilistic),
+`DGB` (dialogue gameboard FACTS), and `InfoState` (TTR gameboard).
+All of these induce a **context set** — the set of worlds compatible with
+accumulated information.
+
+`HasContextSet` provides uniform extraction, enabling framework-agnostic
+discourse operations and bridge theorems connecting the representations. -/
+
+/-- A discourse state from which a context set can be extracted.
+
+Every discourse state representation (Stalnaker CG, Krifka commitment spaces,
+Ginzburg DGB, distributional CG, TTR gameboard) projects to a context set:
+the worlds compatible with the state's accumulated information. -/
+class HasContextSet (S : Type*) (W : outParam Type*) where
+  toContextSet : S → ContextSet W
+
+namespace HasContextSet
+
+variable {S W : Type*} [HasContextSet S W]
+
+/-- A discourse state entails a proposition if the context set does. -/
+def entails (s : S) (p : BProp W) : Prop :=
+  ContextSet.entails (toContextSet s) p
+
+/-- Updating a discourse state's context set with a proposition. -/
+def updateCS (s : S) (p : BProp W) : ContextSet W :=
+  ContextSet.update (toContextSet s) p
+
+/-- Entailment via HasContextSet reduces to ContextSet.entails. -/
+theorem entails_eq (s : S) (p : BProp W) :
+    entails s p = ContextSet.entails (toContextSet s) p := rfl
+
+end HasContextSet
+
+-- Canonical instances
+
+instance {W : Type*} : HasContextSet (ContextSet W) W where
+  toContextSet := id
+
+instance {W : Type*} : HasContextSet (CG W) W where
+  toContextSet := CG.contextSet
+
+instance {W : Type*} : HasContextSet (BContextSet W) W where
+  toContextSet := BContextSet.toProp
+
+/-- The CG instance agrees with CG.contextSet. -/
+theorem hasContextSet_CG_eq {W : Type*} (cg : CG W) :
+    HasContextSet.toContextSet cg = cg.contextSet := rfl
+
+/-- Adding to CG restricts the HasContextSet extraction. -/
+theorem hasContextSet_add_restricts {W : Type*} (cg : CG W) (p : BProp W) (w : W) :
+    HasContextSet.toContextSet (cg.add p) w → HasContextSet.toContextSet cg w :=
+  CG.add_restricts cg p w
 
 end Core.CommonGround

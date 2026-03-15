@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.260] - 2026-03-15
+
+### Added
+- **Unified Common Ground — `HasContextSet` typeclass**: All 6+ CG incarnations project to context sets through a single interface
+  - `HasContextSet` class + `entails`/`updateCS` in `Core/Semantics/CommonGround.lean`
+  - 9 instances: `ContextSet`, `CG`, `BContextSet`, `CommitmentSlate`, `CommitmentSpace`, `KrifkaState`, `InfoState`, `DGB`, `IS`, `DistributionalCG`
+  - KOS `DGB`/`IS` parameterized over content types: `DGB (Fact QContent : Type)`, `IS (Fact QContent : Type)`
+  - `DGB.mapFacts`/`DGB.mapQud` utilities, bridge theorems
+  - Scoped `+` notation for `ContextSet.update` to prevent arithmetic conflicts
+
+## [0.229.259] - 2026-03-15
+
+### Added
+- **Van der Sandt & Maier 2003 — Denials in Discourse**: Formalize directed reverse anaphora (RA*) and denial as non-monotonic discourse update
+  - `LDRS.directedRA`: RA* algorithm partitions LDRS conditions by offensive layers, moves offensive under negation
+  - `LDRS.denialUpdate`: full denial pipeline (merge correction + RA*)
+  - `LDRS.directedRA_preserves_drefs`: RA* preserves discourse referents (Strawson bridge constraint)
+  - Study file `Phenomena/Negation/Studies/VanDerSandtMaier2003.lean`: 3 worked examples (King of France presuppositional, possible/necessary implicature, lady/wife connotation), Off computations, discourse pipeline, end-to-end Off→DenialDatum bridges, denial≠negation observations
+  - 18 verification theorems including 3 Off→targetLayer agreement proofs
+
 ## [0.229.258] - 2026-03-15
 
 ### Changed

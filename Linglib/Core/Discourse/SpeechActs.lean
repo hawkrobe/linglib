@@ -1,5 +1,5 @@
 import Linglib.Core.Context.Tower
-import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.CommonGround
 
 /-!
 # Speech Acts and Intentional States
@@ -596,5 +596,15 @@ theorem self_ref_independent_of_direction :
     of satisfaction." -/
 theorem conditions_are_content {W : Type*} (s : IntentionalState W) :
     s.conditionsOfSatisfaction = s.content := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § 12. HasContextSet Instance
+-- ════════════════════════════════════════════════════════════════
+
+open Core.CommonGround in
+/-- A commitment slate projects to a context set: the worlds compatible
+    with all committed propositions. -/
+instance {W : Type*} : HasContextSet (Commitment.CommitmentSlate W) W where
+  toContextSet s := λ w => s.toContextSet w
 
 end Core.Discourse

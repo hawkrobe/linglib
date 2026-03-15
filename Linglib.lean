@@ -928,6 +928,7 @@ import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Negation.Studies.Greco2020
 import Linglib.Phenomena.Negation.Studies.Krifka2007
 import Linglib.Phenomena.Negation.Studies.Miestamo2005
+import Linglib.Phenomena.Negation.Studies.VanDerSandtMaier2003
 import Linglib.Phenomena.Negation.Denial
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity

@@ -236,4 +236,43 @@ theorem toLDRS_toDRSExpr_conditions (drefs : List Nat) (conds : List DRSExpr) :
   congr 1
   exact List.map_id _
 
+-- ════════════════════════════════════════════════════
+-- § 6. Directed Reverse Anaphora (RA*)
+-- ════════════════════════════════════════════════════
+
+/-! @cite{van-der-sandt-maier-2003} §4.3: given a set of offensive
+layers (computed by `Off` from `Core.Semantics.ContentLayer`), RA*
+partitions the LDRS conditions: surviving conditions remain in the
+main DRS, offensive conditions are moved under negation. -/
+
+/-- Directed reverse anaphora (RA*): move offensive-layer conditions
+under negation, preserving non-offensive conditions.
+
+@cite{van-der-sandt-maier-2003} §4.3, def (67). -/
+def LDRS.directedRA (k : LDRS) (offLayers : List ContentLayer) : LDRS :=
+  let surviving := k.survivingConditions offLayers
+  let offensive := k.offensiveConditions offLayers
+  { drefs := k.drefs
+  , conditions :=
+    surviving ++ match offensive with
+    | [] => []
+    | cs => [⟨.atIssue, .neg (.box [] (cs.map (·.condition)))⟩] }
+
+/-- Denial pipeline: merge correction, then apply RA*.
+
+@cite{van-der-sandt-maier-2003} §4.3: in an assertion-denial-correction
+sequence ⟨σᵢ, σᵢ₊₁, σᵢ₊₂⟩, the correction is merged with the
+discourse state, then RA* retracts the offensive layers. -/
+def LDRS.denialUpdate (state : LDRS) (correction : LDRS)
+    (offLayers : List ContentLayer) : LDRS :=
+  (state.merge correction).directedRA offLayers
+
+/-- RA* always preserves discourse referents — denial retracts conditions,
+not referent introductions. This matches the paper's treatment: drefs
+introduced by σ₁ remain available for anaphoric reference even after
+denial (@cite{van-der-sandt-maier-2003} §3.6, ex. 51: "A man jumped
+off the bridge. He didn't jump, he was pushed."). -/
+theorem LDRS.directedRA_preserves_drefs (k : LDRS) (offLayers : List ContentLayer) :
+    (k.directedRA offLayers).drefs = k.drefs := rfl
+
 end Semantics.Dynamic.DRT

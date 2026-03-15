@@ -563,4 +563,23 @@ theorem tag_type_distinction {W : Type*} (φ negφ : BProp W) :
     (∃ a b, reverseTag φ negφ = .disj a b) :=
   ⟨⟨_, _, rfl⟩, ⟨_, _, rfl⟩⟩
 
+-- ════════════════════════════════════════════════════
+-- § 10. HasContextSet Instances
+-- ════════════════════════════════════════════════════
+
+open Core.CommonGround in
+/-- A commitment space projects to a context set via its root. -/
+instance {W : Type*} : HasContextSet (CommitmentSpace W) W where
+  toContextSet := CommitmentSpace.toContextSet
+
+open Core.CommonGround in
+/-- A Krifka state projects to a context set via the commitment space root. -/
+instance {W : Type*} : HasContextSet (KrifkaState W) W where
+  toContextSet := KrifkaState.contextSet
+
+open Core.CommonGround in
+/-- KrifkaState context set agrees with CommitmentSpace context set. -/
+theorem krifkaState_contextSet_eq_space {W : Type*} (s : KrifkaState W) :
+    HasContextSet.toContextSet s = HasContextSet.toContextSet s.space := rfl
+
 end Theories.Pragmatics.Assertion.Krifka

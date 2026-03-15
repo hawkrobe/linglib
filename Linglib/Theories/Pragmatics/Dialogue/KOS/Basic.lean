@@ -21,6 +21,18 @@ The IS wraps the DGB and adds processing state:
 - **MAX-QUD**: the currently maximal question
 - **SAL-UTT**: the salient sub-utterance (for clarification)
 
+## Type Parameterization
+
+`DGB` and `IS` are parameterized over content types:
+- `Fact`: the type of accumulated facts (e.g., `String` for the string-based
+  coercion machinery, `BProp W` for the typed `HasContextSet` bridge)
+- `QContent`: the type of QUD entries (e.g., `String` for coercion outputs,
+  `QUD M` for the partition-based QUD infrastructure)
+
+This makes explicit which operations are inherently string-based (coercion,
+utterance integration) and which are generic (the DGB structure itself,
+context set extraction).
+
 ## C-PARAMS and SLASH
 
 C-PARAMS (contextual parameters) model referential dependencies that
@@ -137,11 +149,6 @@ def UttSkeleton.constitForParam (u : UttSkeleton) (paramIdx : String) :
 -- § 4. Dialogue Gameboard (paper ex. 34)
 -- ════════════════════════════════════════════════════
 
-/-- A question on the QUD stack. -/
-structure Question where
-  content : String
-  deriving Repr, DecidableEq, BEq
-
 /-- LATEST-MOVE: a sign paired with a contextual assignment.
 
 This is the structured value of LATEST-MOVE (@cite{ginzburg-cooper-2004}
@@ -152,18 +159,24 @@ structure LatestMove where
   assignment : CtxtAssignment
   deriving Repr, DecidableEq, BEq
 
-/-- The Dialogue Gameboard: exactly {FACTS, LATEST-MOVE, QUD}.
+/-- The Dialogue Gameboard: {FACTS, LATEST-MOVE, QUD}.
 
-@cite{ginzburg-cooper-2004} ex. 34, p.325. This is the *public* component
-of a participant's conversational state. Processing state (PENDING,
-MAX-QUD, SAL-UTT) lives in the broader Information State. -/
-structure DGB where
-  facts : List String := []
+@cite{ginzburg-cooper-2004} ex. 34, p.325. @cite{ginzburg-2012} Ch. 4.
+This is the *public* component of a participant's conversational state.
+Processing state (PENDING, MAX-QUD, SAL-UTT) lives in the broader
+Information State.
+
+The type parameters make the content types explicit:
+- `Fact`: type of accumulated facts in the common ground. Use `String`
+  for the string-based coercion machinery, `BProp W` for typed CG access.
+- `QContent`: type of QUD entries. Use `String` for coercion outputs,
+  or a richer question type for the partition-based QUD infrastructure. -/
+structure DGB (Fact QContent : Type) where
+  facts : List Fact := []
   latestMove : Option LatestMove := none
-  qud : List Question := []
-  deriving Repr
+  qud : List QContent := []
 
-def DGB.initial : DGB := {}
+def DGB.initial {Fact QContent : Type} : DGB Fact QContent := {}
 
 -- ════════════════════════════════════════════════════
 -- § 5. Information State
@@ -184,14 +197,13 @@ The IS adds utterance-processing state to the public DGB:
 
 @cite{ginzburg-cooper-2004} ex. 82 shows that speaker and addressee
 maintain *distinct* information states after the same utterance. -/
-structure IS where
-  dgb : DGB := {}
+structure IS (Fact QContent : Type) where
+  dgb : DGB Fact QContent := {}
   pending : List PendingUtt := []
-  maxQud : Option Question := none
+  maxQud : Option QContent := none
   salUtt : Option SubUtterance := none
-  deriving Repr
 
-def IS.initial : IS := {}
+def IS.initial {Fact QContent : Type} : IS Fact QContent := {}
 
 -- ════════════════════════════════════════════════════
 -- § 6. Coercion Operations
@@ -208,13 +220,17 @@ inductive CoercionOp where
   deriving Repr, DecidableEq, BEq
 
 /-- Output of a coercion operation: partial specification for the
-    clarification context. -/
+    clarification context.
+
+The `maxQud` field is `String` because coercion operations construct
+question content via string interpolation. When the IS uses a richer
+`QContent` type, a conversion step mediates. -/
 structure CoercionOutput where
   op : CoercionOp
   /-- SAL-UTT: the sub-utterance to be echoed -/
   salUtt : SubUtterance
-  /-- MAX-QUD: the question raised -/
-  maxQud : Question
+  /-- MAX-QUD: the question raised (string representation) -/
+  maxQud : String
   deriving Repr, DecidableEq, BEq
 
 /-- Parameter focussing (ex. 53): derive clausal CE reading.
@@ -233,7 +249,7 @@ def parameterFocussing (antecedent : UttSkeleton) (paramIdx : String) :
   | some constit => some {
     op := .paramFocussing
     salUtt := constit
-    maxQud := { content := s!"?{paramIdx}.{antecedent.cont}" }
+    maxQud := s!"?{paramIdx}.{antecedent.cont}"
   }
 
 /-- Parameter identification (ex. 59): derive constituent CE reading.
@@ -252,7 +268,7 @@ def parameterIdentification (antecedent : UttSkeleton) (paramIdx : String) :
   | some constit => some {
     op := .paramIdentification
     salUtt := constit
-    maxQud := { content := s!"?c.spkr-meaning-rel(addr,{constit.phon},c)" }
+    maxQud := s!"?c.spkr-meaning-rel(addr,{constit.phon},c)"
   }
 
 /-- Contextual existential generalization (ex. 77): ground without clarifying.
@@ -276,8 +292,12 @@ FACTS and clear processing state.
 If the assignment is partial → **pending**: add to PENDING for
 subsequent clarification.
 
+This operation is inherently string-based: it adds `sk.cont` (a String)
+to the DGB's facts. For typed DGBs, use a conversion step.
+
 @cite{ginzburg-cooper-2004} ex. 81, p.353. -/
-def IS.integrateUtterance (is_ : IS) (sk : UttSkeleton) (f : CtxtAssignment) : IS :=
+def IS.integrateUtterance {QContent : Type} (is_ : IS String QContent) (sk : UttSkeleton)
+    (f : CtxtAssignment) : IS String QContent :=
   let lm : LatestMove := { sign := sk, assignment := f }
   if f.resolvesAll sk.cparams then
     { is_ with
@@ -291,8 +311,11 @@ def IS.integrateUtterance (is_ : IS) (sk : UttSkeleton) (f : CtxtAssignment) : I
       dgb := { is_.dgb with latestMove := some lm }
       pending := { sign := sk, assignment := f } :: is_.pending }
 
-/-- Apply a coercion to set MAX-QUD and SAL-UTT on the IS. -/
-def IS.applyCoercion (is_ : IS) (co : CoercionOutput) : IS :=
+/-- Apply a coercion to set MAX-QUD and SAL-UTT on the IS.
+
+This operation requires `QContent = String` because coercion outputs
+produce string-valued question content. -/
+def IS.applyCoercion {Fact : Type} (is_ : IS Fact String) (co : CoercionOutput) : IS Fact String :=
   { is_ with maxQud := some co.maxQud, salUtt := some co.salUtt }
 
 -- ════════════════════════════════════════════════════
@@ -339,22 +362,25 @@ theorem existential_gen_weakens (sk : UttSkeleton) (idx : String) :
   exact List.length_filter_le _ _
 
 /-- Grounding adds exactly one fact. -/
-theorem grounding_adds_fact (is_ : IS) (sk : UttSkeleton) (f : CtxtAssignment)
+theorem grounding_adds_fact {QContent : Type}
+    (is_ : IS String QContent) (sk : UttSkeleton) (f : CtxtAssignment)
     (h : f.resolvesAll sk.cparams = true) :
     (is_.integrateUtterance sk f).dgb.facts = sk.cont :: is_.dgb.facts := by
-  simp [IS.integrateUtterance, h]
+  simp only [IS.integrateUtterance, h, ↓reduceIte]
 
 /-- A partial assignment does not add facts. -/
-theorem partial_no_facts (is_ : IS) (sk : UttSkeleton) (f : CtxtAssignment)
+theorem partial_no_facts {QContent : Type}
+    (is_ : IS String QContent) (sk : UttSkeleton) (f : CtxtAssignment)
     (h : f.resolvesAll sk.cparams = false) :
     (is_.integrateUtterance sk f).dgb.facts = is_.dgb.facts := by
-  simp [IS.integrateUtterance, h]
+  unfold IS.integrateUtterance; simp [h]
 
 /-- A partial assignment adds to PENDING. -/
-theorem partial_adds_pending (is_ : IS) (sk : UttSkeleton) (f : CtxtAssignment)
+theorem partial_adds_pending {QContent : Type}
+    (is_ : IS String QContent) (sk : UttSkeleton) (f : CtxtAssignment)
     (h : f.resolvesAll sk.cparams = false) :
     (is_.integrateUtterance sk f).pending.length = is_.pending.length + 1 := by
-  simp [IS.integrateUtterance, h]
+  unfold IS.integrateUtterance; simp [h]
 
 -- ════════════════════════════════════════════════════
 -- § 9. SLASH Analogy Bridge
@@ -376,5 +402,58 @@ theorem slash_cparams_both_decrease
   constructor
   · simp only [HPSG.SlashValue.discharge]; exact List.length_erase_le
   · exact List.length_filter_le _ _
+
+-- ════════════════════════════════════════════════════
+-- § 10. HasContextSet Bridge
+-- ════════════════════════════════════════════════════
+
+open Core.CommonGround in
+open Core.Proposition (BProp) in
+/-- DGB with `BProp W` facts projects to a context set: the worlds
+    compatible with all accumulated facts. This connects the dialogue
+    gameboard to the unified common ground interface.
+
+    @cite{ginzburg-2012} Ch. 4: the DGB's FACTS field IS the common ground. -/
+instance {W : Type} {QContent : Type} :
+    HasContextSet (DGB (BProp W) QContent) W where
+  toContextSet dgb := λ w => dgb.facts.all (· w)
+
+open Core.CommonGround in
+open Core.Proposition (BProp) in
+/-- IS with `BProp W` facts inherits the DGB's context set. -/
+instance {W : Type} {QContent : Type} :
+    HasContextSet (IS (BProp W) QContent) W where
+  toContextSet is_ := λ w => is_.dgb.facts.all (· w)
+
+open Core.CommonGround in
+open Core.Proposition (BProp) in
+/-- IS context set is extracted from the DGB. -/
+theorem is_contextSet_eq_dgb {W : Type} {QContent : Type}
+    (is_ : IS (BProp W) QContent) :
+    HasContextSet.toContextSet is_ = HasContextSet.toContextSet is_.dgb := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 11. DGB Content Mapping
+-- ════════════════════════════════════════════════════
+
+/-- Map over a DGB's fact type, preserving structure. -/
+def DGB.mapFacts {Fact Fact' QContent : Type} (f : Fact → Fact')
+    (dgb : DGB Fact QContent) : DGB Fact' QContent where
+  facts := dgb.facts.map f
+  latestMove := dgb.latestMove
+  qud := dgb.qud
+
+/-- Map over a DGB's question type, preserving structure. -/
+def DGB.mapQud {Fact QContent QContent' : Type} (f : QContent → QContent')
+    (dgb : DGB Fact QContent) : DGB Fact QContent' where
+  facts := dgb.facts
+  latestMove := dgb.latestMove
+  qud := dgb.qud.map f
+
+/-- Mapping facts preserves fact count. -/
+theorem DGB.mapFacts_length {Fact Fact' QContent : Type} (f : Fact → Fact')
+    (dgb : DGB Fact QContent) :
+    (dgb.mapFacts f).facts.length = dgb.facts.length := by
+  simp only [DGB.mapFacts, List.length_map]
 
 end Theories.Pragmatics.Dialogue.KOS

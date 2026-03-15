@@ -160,6 +160,11 @@ theorem zero_weight_excluded (cg : DistributionalCG W) (w : W)
 
 end DistributionalCG
 
+open Core.CommonGround in
+/-- A distributional CG projects to a context set: worlds with positive weight. -/
+instance {W : Type*} : HasContextSet (DistributionalCG W) W where
+  toContextSet := DistributionalCG.toContextSet
+
 -- ════════════════════════════════════════════════════
 -- § 3. CG Update
 -- ════════════════════════════════════════════════════

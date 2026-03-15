@@ -122,12 +122,12 @@ def addresseeAssignment : CtxtAssignment where
 
 /-- A's IS after uttering "Did Bo leave?": fully grounded.
 Speaker resolves all C-PARAMS, so the utterance goes straight to FACTS. -/
-def speakerIS : IS :=
+def speakerIS : IS String String :=
   IS.initial.integrateUtterance didBoLeave speakerAssignment
 
 /-- B's IS after hearing "Did Bo leave?": partial assignment → pending.
 Addressee cannot resolve b, so the utterance goes to PENDING. -/
-def addresseeIS : IS :=
+def addresseeIS : IS String String :=
   IS.initial.integrateUtterance didBoLeave addresseeAssignment
 
 -- ════════════════════════════════════════════════════
@@ -159,11 +159,11 @@ def existGenOnBo : UttSkeleton :=
 -- ════════════════════════════════════════════════════
 
 /-- B applies parameter focussing to set up clarification context. -/
-def addresseeISAfterFocussing : Option IS :=
+def addresseeISAfterFocussing : Option (IS String String) :=
   focussingOnBo.map addresseeIS.applyCoercion
 
 /-- B applies parameter identification to set up clarification context. -/
-def addresseeISAfterIdentification : Option IS :=
+def addresseeISAfterIdentification : Option (IS String String) :=
   identificationOnBo.map addresseeIS.applyCoercion
 
 -- ════════════════════════════════════════════════════
@@ -247,12 +247,12 @@ theorem exist_gen_weakens_content :
 
 /-- Focussing MAX-QUD is a question about the antecedent content. -/
 theorem focussing_maxqud :
-    focussingOnBo.map (·.maxQud.content) =
+    focussingOnBo.map (·.maxQud) =
     some "?b.ask(i,j,?.leave-rel(b,t))" := by native_decide
 
 /-- Identification MAX-QUD is a speaker-meaning question. -/
 theorem identification_maxqud :
-    identificationOnBo.map (·.maxQud.content) =
+    identificationOnBo.map (·.maxQud) =
     some "?c.spkr-meaning-rel(addr,Bo,c)" := by native_decide
 
 -- Bridge: CoercionOp ↔ CEReading
