@@ -316,4 +316,44 @@ def loudestNoise : AmbiguousSuperlativeDatum :=
 #guard faintestNoise.likelihoodEffect == .impeding
 #guard loudestNoise.likelihoodEffect == .facilitating
 
+-- ════════════════════════════════════════════════════
+-- § 8. Bridge: Scale-Reversing = DE, Scale-Preserving = UE
+-- ════════════════════════════════════════════════════
+
+/-! @cite{israel-2001} §2 connects the Scalar Model to the Fauconnier-Ladusaw
+tradition of monotonicity-based licensing:
+
+- **Scale-reversing** contexts (NPI-licensing): inferences run from high to
+  low values. In formal terms, these are **downward entailing** (DE) contexts
+  — Mathlib's `Antitone`, linglib's `IsDE`.
+- **Scale-preserving** contexts (PPI-licensing): inferences run from low to
+  high values. In formal terms, these are **upward entailing** (UE) contexts
+  — Mathlib's `Monotone`, linglib's `IsUE`.
+
+Israel's key departure from Ladusaw: the relevant inferences need not be
+strictly logical — they can be *pragmatic* entailments within a scalar model.
+This is why the Scalar Model can handle cases that pure monotonicity misses. -/
+
+/-- Israel's "scale-reversing" corresponds to formal DE (= Antitone).
+    This is the bridge between the Scalar Model (pragmatic) and the
+    Fauconnier-Ladusaw tradition (logical). -/
+inductive ScaleDirection where
+  | reversing   -- NPI-licensing: high → low (= DE)
+  | preserving  -- PPI-licensing: low → high (= UE)
+  deriving DecidableEq, BEq, Repr
+
+/-- Map from polarity type to expected scale direction in licensing contexts. -/
+def expectedScaleDirection : PolarityType → Option ScaleDirection
+  | .npiWeak | .npiStrong | .npi_fci => some .reversing
+  | .ppi => some .preserving
+  | .fci => none  -- FCIs require non-veridicality, not DE/UE
+
+-- NPIs need scale-reversing (= DE) contexts
+#guard expectedScaleDirection .npiWeak == some .reversing
+#guard expectedScaleDirection .npiStrong == some .reversing
+-- PPIs need scale-preserving (= UE) contexts
+#guard expectedScaleDirection .ppi == some .preserving
+-- FCIs are orthogonal to this distinction
+#guard expectedScaleDirection .fci == none
+
 end Phenomena.Polarity.Studies.Israel2001

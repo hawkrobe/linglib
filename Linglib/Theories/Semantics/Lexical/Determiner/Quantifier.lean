@@ -420,14 +420,101 @@ theorem quantityInvariant_of_quantity (q : m.interpTy Ty.det) (hQ : Quantity q) 
   exact hQ A B A' B' (cell (· && ·))
     (cell (λ a b => a && !b)) (cell (λ a b => !a && b)) (cell (λ a b => !a && !b))
 
+local instance decEqEntity : DecidableEq m.Entity := m.decEq
+
+def finsetElems : Finset m.Entity := FiniteModel.elements.toFinset
+
+local instance fintypeEntity : Fintype m.Entity where
+  elems := finsetElems
+  complete := by intro x; simp [finsetElems, FiniteModel.complete x]
+
+private lemma card_cell (R S : m.Entity → Bool) (b₁ b₂ : Bool) :
+    Fintype.card {x : m.Entity // R x == b₁ && S x == b₂} =
+    (FiniteModel.elements.filter (λ x => R x == b₁ && S x == b₂)).length := by
+  have : Fintype.card {x : m.Entity // R x == b₁ && S x == b₂} =
+         (FiniteModel.elements.filter (λ x => R x == b₁ && S x == b₂)).toFinset.card := by
+    apply Fintype.card_of_subtype
+    intro x
+    simp [FiniteModel.complete x]
+  rw [this]
+  apply List.toFinset_card_of_nodup
+  apply List.Nodup.filter
+  exact FiniteModel.nodup
+
+private def entityEquivCells (R S : m.Entity → Bool) :
+    m.Entity ≃ Σ (b₁ : Bool) (b₂ : Bool), {x : m.Entity // R x == b₁ && S x == b₂} where
+  toFun x := ⟨R x, S x, ⟨x, by simp⟩⟩
+  invFun := λ ⟨_, _, ⟨x, _⟩⟩ => x
+  left_inv x := rfl
+  right_inv := λ ⟨b₁, b₂, ⟨x, h⟩⟩ => by
+    simp only [Bool.and_eq_true, beq_iff_eq] at h
+    rcases h with ⟨h₁, h₂⟩
+    subst h₁ h₂
+    rfl
+
+private lemma build_bijection (R₁ S₁ R₂ S₂ : m.Entity → Bool)
+    (h_len : ∀ b₁ b₂, (FiniteModel.elements.filter (λ x => R₁ x == b₁ && S₁ x == b₂)).length =
+                      (FiniteModel.elements.filter (λ x => R₂ x == b₁ && S₂ x == b₂)).length) :
+    ∃ (f : m.Entity ≃ m.Entity), (∀ x, R₁ (f x) = R₂ x) ∧ (∀ x, S₁ (f x) = S₂ x) := by
+  have h_card : ∀ b₁ b₂, Fintype.card {x : m.Entity // R₂ x == b₁ && S₂ x == b₂} =
+                         Fintype.card {x : m.Entity // R₁ x == b₁ && S₁ x == b₂} := by
+    intro b₁ b₂
+    rw [card_cell, card_cell, ←h_len b₁ b₂]
+  let innerEquiv (b₁ b₂ : Bool) : {x : m.Entity // R₂ x == b₁ && S₂ x == b₂} ≃
+                                  {x : m.Entity // R₁ x == b₁ && S₁ x == b₂} :=
+    Fintype.equivOfCardEq (h_card b₁ b₂)
+  let e3 : (Σ b₁ b₂, {x : m.Entity // R₂ x == b₁ && S₂ x == b₂}) ≃
+           (Σ b₁ b₂, {x : m.Entity // R₁ x == b₁ && S₁ x == b₂}) :=
+    Equiv.sigmaCongrRight (λ b₁ => Equiv.sigmaCongrRight (λ b₂ => innerEquiv b₁ b₂))
+  let e1 := entityEquivCells R₁ S₁
+  let e2 := entityEquivCells R₂ S₂
+  let f := e2.trans (e3.trans e1.symm)
+  use f
+  have h_prop : ∀ x, R₁ (f x) = R₂ x ∧ S₁ (f x) = S₂ x := by
+    intro x
+    have h_eval : f x = (innerEquiv (R₂ x) (S₂ x) ⟨x, by simp⟩).val := rfl
+    have h_inner := (innerEquiv (R₂ x) (S₂ x) ⟨x, by simp⟩).property
+    rw [←h_eval] at h_inner
+    simp only [Bool.and_eq_true, beq_iff_eq] at h_inner
+    exact h_inner
+  exact ⟨λ x => (h_prop x).1, λ x => (h_prop x).2⟩
+
+private lemma hypotheses_to_all (R₁ S₁ R₂ S₂ : m.Entity → Bool)
+    (hTT : (FiniteModel.elements.filter (λ x => R₁ x && S₁ x)).length =
+           (FiniteModel.elements.filter (λ x => R₂ x && S₂ x)).length)
+    (hTF : (FiniteModel.elements.filter (λ x => R₁ x && !S₁ x)).length =
+           (FiniteModel.elements.filter (λ x => R₂ x && !S₂ x)).length)
+    (hFT : (FiniteModel.elements.filter (λ x => !R₁ x && S₁ x)).length =
+           (FiniteModel.elements.filter (λ x => !R₂ x && S₂ x)).length)
+    (hFF : (FiniteModel.elements.filter (λ x => !R₁ x && !S₁ x)).length =
+           (FiniteModel.elements.filter (λ x => !R₂ x && !S₂ x)).length) :
+    ∀ (b₁ b₂ : Bool), (FiniteModel.elements.filter (λ x => R₁ x == b₁ && S₁ x == b₂)).length =
+             (FiniteModel.elements.filter (λ x => R₂ x == b₁ && S₂ x == b₂)).length := by
+  intro b₁ b₂
+  cases b₁ <;> cases b₂
+  · have H1 : (λ x => R₁ x == false && S₁ x == false) = (λ x => !R₁ x && !S₁ x) := by funext x; cases R₁ x <;> cases S₁ x <;> rfl
+    have H2 : (λ x => R₂ x == false && S₂ x == false) = (λ x => !R₂ x && !S₂ x) := by funext x; cases R₂ x <;> cases S₂ x <;> rfl
+    rw [H1, H2]; exact hFF
+  · have H1 : (λ x => R₁ x == false && S₁ x == true) = (λ x => !R₁ x && S₁ x) := by funext x; cases R₁ x <;> cases S₁ x <;> rfl
+    have H2 : (λ x => R₂ x == false && S₂ x == true) = (λ x => !R₂ x && S₂ x) := by funext x; cases R₂ x <;> cases S₂ x <;> rfl
+    rw [H1, H2]; exact hFT
+  · have H1 : (λ x => R₁ x == true && S₁ x == false) = (λ x => R₁ x && !S₁ x) := by funext x; cases R₁ x <;> cases S₁ x <;> rfl
+    have H2 : (λ x => R₂ x == true && S₂ x == false) = (λ x => R₂ x && !S₂ x) := by funext x; cases R₂ x <;> cases S₂ x <;> rfl
+    rw [H1, H2]; exact hTF
+  · have H1 : (λ x => R₁ x == true && S₁ x == true) = (λ x => R₁ x && S₁ x) := by funext x; cases R₁ x <;> cases S₁ x <;> rfl
+    have H2 : (λ x => R₂ x == true && S₂ x == true) = (λ x => R₂ x && S₂ x) := by funext x; cases R₂ x <;> cases S₂ x <;> rfl
+    rw [H1, H2]; exact hTT
+
 /-- `QuantityInvariant → Quantity`: bijection-invariance implies cardinality-dependence.
     On a finite domain, matching cell cardinalities guarantees a cell-preserving
-    bijection exists (permute elements within each of the four (R,S) cells).
-    TODO: construct the bijection explicitly from the cell-size equalities. -/
+    bijection exists (permute elements within each of the four (R,S) cells). -/
 theorem quantity_of_quantityInvariant (q : m.interpTy Ty.det)
     (hQ : Core.Quantification.QuantityInvariant q) :
     Quantity q := by
-  sorry
+  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
+  have h_len := hypotheses_to_all R₁ S₁ R₂ S₂ hTT hTF hFT hFF
+  obtain ⟨f, hR, hS⟩ := build_bijection R₁ S₁ R₂ S₂ h_len
+  exact hQ R₁ S₁ R₂ S₂ f f.bijective hR hS
 
 -- === Non-conservative counterexample ===
 

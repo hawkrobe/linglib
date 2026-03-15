@@ -338,21 +338,26 @@ theorem tested_npis_are_npis :
 /-- The PPI tested is classified as a PPI in the Fragment lexicon. -/
 theorem tested_ppi_is_ppi : some_ppi.isPPI = true := rfl
 
-/-- The tested NPIs have heterogeneous scalar directions. -/
-theorem scalar_direction_heterogeneity :
+/-- The tested NPIs are all strengthening (@cite{israel-2001} Figure 1)
+    but have heterogeneous semantic bases — the mechanism isn't
+    purely about domain widening (§10.2). -/
+theorem tested_npis_all_strengthening :
     any.scalarDirection = .strengthening ∧
     ever.scalarDirection = .strengthening ∧
-    atAll.scalarDirection = .attenuating :=
+    atAll.scalarDirection = .strengthening :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Mechanism constraints: effect persists across scalar direction
-heterogeneity and without domain widening. -/
+/-- Mechanism constraints: effect persists across semantically
+heterogeneous NPIs (different base forces) and without domain
+widening. The heterogeneity that matters for the non-scalar argument
+is in baseForce (existential vs temporal vs degree), not in scalar
+direction — all three are strengthening per @cite{israel-2001}. -/
 theorem mechanism_constraints :
     exp1_npi_NM.significant = true ∧
-    atAll.scalarDirection ≠ any.scalarDirection ∧
+    atAll.baseForce ≠ any.baseForce ∧
     exp3_npi_NM_controlled.significant = true ∧
-    ever.scalarDirection = .strengthening :=
-  ⟨rfl, by decide, rfl, rfl⟩
+    ever.baseForce ≠ any.baseForce :=
+  ⟨rfl, by decide, rfl, by decide⟩
 
 /-- Predict NPI significance from signature. -/
 def predictNPIEffect (env : MonotonicityEnv) : Bool :=

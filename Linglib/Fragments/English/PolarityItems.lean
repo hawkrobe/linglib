@@ -93,7 +93,7 @@ def atAll : PolarityItemEntry :=
   , baseForce := .degree
   , licensingContexts :=
       [.negation, .nobody, .conditional_ant, .question]
-  , scalarDirection := .attenuating  -- weakens: "not at all" = not even minimally
+  , scalarDirection := .strengthening -- emphatic: "not at all" = complete negation (@cite{israel-2001} Figure 1)
   , scalarValue := .low              -- minimal degree
   , canonicity := .canonical
   , notes := "Degree emphasis; 'Did you sleep at all?'"
@@ -136,7 +136,7 @@ def liftAFinger : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
-  , scalarDirection := .nonScalar
+  , scalarDirection := .strengthening  -- emphatic minimizer (@cite{israel-2001} §1, Figure 1)
   , scalarValue := .low           -- minimal effort (a finger, not a hand)
   , canonicity := .canonical      -- low-value NPI = canonical
   , likelihoodEffect := .impeding -- patient/increment: more effort → less likely
@@ -150,7 +150,7 @@ def budgeAnInch : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
-  , scalarDirection := .nonScalar
+  , scalarDirection := .strengthening  -- emphatic minimizer (@cite{israel-2001} §1, Figure 1)
   , scalarValue := .low           -- minimal distance (an inch)
   , canonicity := .canonical      -- low-value NPI = canonical
   , likelihoodEffect := .impeding -- increment: more distance → less likely
@@ -257,6 +257,36 @@ def rather : PolarityItemEntry :=
   , scalarValue := .low              -- low-to-mid degree
   , canonicity := .canonical         -- low-value attenuating PPI = canonical
   , notes := "PPI (in degree sense): '*I don't rather like it'"
+  }
+
+-- ----------------------------------------------------------------------------
+-- Canonical Emphatic PPIs (@cite{israel-2001} Figure 1: high value, emphatic)
+-- ----------------------------------------------------------------------------
+
+/-- "tons of" - canonical emphatic PPI (high value)
+    "She has tons of friends." -/
+def tonsOf : PolarityItemEntry :=
+  { form := "tons of"
+  , polarityType := .ppi
+  , baseForce := .degree
+  , licensingContexts := []
+  , scalarDirection := .strengthening  -- emphatic: maximal quantity
+  , scalarValue := .high               -- high on quantity scale
+  , canonicity := .canonical           -- high-value emphatic PPI = canonical
+  , notes := "@cite{israel-2001} Figure 1: canonical emphatic PPI"
+  }
+
+/-- "utterly" - canonical emphatic PPI (high degree)
+    "I was utterly depressed." -/
+def utterly : PolarityItemEntry :=
+  { form := "utterly"
+  , polarityType := .ppi
+  , baseForce := .degree
+  , licensingContexts := []
+  , scalarDirection := .strengthening  -- emphatic: maximal degree
+  , scalarValue := .high               -- high on degree scale
+  , canonicity := .canonical           -- high-value emphatic PPI = canonical
+  , notes := "@cite{israel-2001} Figure 1: canonical emphatic PPI"
   }
 
 -- ----------------------------------------------------------------------------
@@ -412,7 +442,7 @@ def allFCIs : List PolarityItemEntry :=
 
 /-- Canonical PPIs -/
 def canonicalPPIs : List PolarityItemEntry :=
-  [some_ppi, already, somewhat, rather]
+  [some_ppi, already, somewhat, rather, tonsOf, utterly]
 
 /-- Inverted (minimizer) PPIs (@cite{israel-2001} §3) -/
 def invertedPPIs : List PolarityItemEntry :=
@@ -453,8 +483,8 @@ def lookup (form : String) : Option PolarityItemEntry :=
 -- Scalar direction tags
 #guard ever.scalarDirection == .strengthening
 #guard any.scalarDirection == .strengthening
-#guard atAll.scalarDirection == .attenuating
-#guard liftAFinger.scalarDirection == .nonScalar
+#guard atAll.scalarDirection == .strengthening
+#guard liftAFinger.scalarDirection == .strengthening
 
 -- Scalar value: canonical NPIs are low, inverted NPIs are high
 #guard liftAFinger.scalarValue == .low
@@ -475,6 +505,14 @@ def lookup (form : String) : Option PolarityItemEntry :=
 #guard wildHorses.likelihoodEffect == .facilitating
 #guard allTheTeaInChina.likelihoodEffect == .facilitating
 #guard atTheDropOfAHat.likelihoodEffect == .facilitating
+
+-- Canonical emphatic PPIs: high value, strengthening (@cite{israel-2001} Figure 1)
+#guard tonsOf.scalarValue == .high
+#guard tonsOf.scalarDirection == .strengthening
+#guard tonsOf.canonicity == .canonical
+#guard utterly.scalarValue == .high
+#guard utterly.scalarDirection == .strengthening
+#guard utterly.canonicity == .canonical
 
 -- All classified items have consistent canonicity predictions
 #guard allPolarityItems.all (·.canonicityConsistent)

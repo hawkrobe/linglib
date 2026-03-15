@@ -668,7 +668,7 @@ def allThatNPI : NPIDatum :=
   , npiItem := "all that"
   , grammatical := true
   , context := some .sententialNegation
-  , notes := "Non-minimizer: weakens rather than strengthens. Israel 2001"
+  , notes := "Non-minimizer: weakens rather than strengthens. @cite{israel-2001}"
   }
 
 def longNPI : NPIDatum :=
@@ -676,7 +676,7 @@ def longNPI : NPIDatum :=
   , npiItem := "long"
   , grammatical := true
   , context := some .sententialNegation
-  , notes := "Non-minimizer NPI. Israel 2001"
+  , notes := "Non-minimizer NPI. @cite{israel-2001}"
   }
 
 -- Aggregate Data

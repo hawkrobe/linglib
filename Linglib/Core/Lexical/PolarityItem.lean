@@ -266,36 +266,28 @@ def PolarityItemEntry.isPPI (p : PolarityItemEntry) : Bool :=
   p.polarityType == .ppi
 
 /--
-Israel's prediction: canonical/inverted is determined by likelihood effect.
+Israel's prediction (@cite{israel-2001} §4): canonical/inverted is determined
+solely by likelihood effect (propositional role).
 
-Facilitating roles produce inverted items (high-value NPIs, low-value PPIs).
-Impeding roles produce canonical items (low-value NPIs, high-value PPIs). -/
-def predictCanonicity (le : LikelihoodEffect) (pt : PolarityType) (sv : ScalarValue) : Canonicity :=
-  match le, pt, sv with
-  -- Impeding + low NPI = canonical (a wink, an inch)
-  | .impeding, .npiWeak,  .low | .impeding, .npiStrong, .low
-  | .impeding, .npi_fci,  .low => .canonical
-  -- Impeding + high PPI = canonical (tons, utterly)
-  | .impeding, .ppi, .high => .canonical
-  -- Facilitating + high NPI = inverted (wild horses, all the tea in China)
-  | .facilitating, .npiWeak,  .high | .facilitating, .npiStrong, .high
-  | .facilitating, .npi_fci,  .high => .inverted
-  -- Facilitating + low PPI = inverted (for a pittance, in a jiffy)
-  | .facilitating, .ppi, .low => .inverted
-  -- Attenuating NPIs/PPIs follow the same logic
-  | .impeding, .npiWeak,  .high | .impeding, .npiStrong, .high
-  | .impeding, .npi_fci,  .high => .canonical
-  | .impeding, .ppi, .low => .canonical
-  | .facilitating, .npiWeak,  .low | .facilitating, .npiStrong, .low
-  | .facilitating, .npi_fci,  .low => .inverted
-  | .facilitating, .ppi, .high => .inverted
-  | _, _, _ => .unknown
+- Impeding roles → canonical items
+- Facilitating roles → inverted items
 
-/-- Check if a polarity item's stated canonicity agrees with the prediction. -/
+This holds for both NPIs and PPIs, regardless of scalar value. Scalar value
+determines WHERE on the scale an item sits; likelihood effect determines
+WHETHER the item is canonical or inverted. -/
+def predictCanonicity (le : LikelihoodEffect) (pt : PolarityType) : Canonicity :=
+  match le, pt with
+  | _, .fci => .unknown  -- pure FCIs don't have canonicity
+  | .impeding, _ => .canonical
+  | .facilitating, _ => .inverted
+  | .unknown, _ => .unknown
+
+/-- Check if a polarity item's stated canonicity agrees with the prediction.
+    Returns true if canonicity or likelihood effect is unknown (insufficient data),
+    or if the stated canonicity matches the prediction from likelihood effect. -/
 def PolarityItemEntry.canonicityConsistent (p : PolarityItemEntry) : Bool :=
   p.canonicity == .unknown ||
   p.likelihoodEffect == .unknown ||
-  p.scalarValue == .unknown ||
-  p.canonicity == predictCanonicity p.likelihoodEffect p.polarityType p.scalarValue
+  p.canonicity == predictCanonicity p.likelihoodEffect p.polarityType
 
 end Core.Lexical.PolarityItem
