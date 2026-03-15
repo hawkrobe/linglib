@@ -60,7 +60,7 @@ structure ItalianModalEntry where
     High: epistemic, deontic, circumstantial.
     Low (restructured): deontic, circumstantial only.
 
-    (@cite{hacquard-2010}, (17)–(19)):
+    @cite{rizzi-1978}; @cite{hacquard-2006}, Ch. 4:
     - "Gianni può essere intelligente" (epistemic, non-restructured)
     - "Gianni lo può fare" (root, restructured — clitic climbing) -/
 def potere : ItalianModalEntry where
@@ -74,7 +74,7 @@ def potere : ItalianModalEntry where
     High: epistemic, deontic, circumstantial.
     Low (restructured): deontic, circumstantial only.
 
-    (@cite{hacquard-2010}, (13)–(15)):
+    @cite{rizzi-1978}; @cite{hacquard-2006}, Ch. 4:
     - "Gianni deve essere a casa" (epistemic, non-restructured)
     - "Gianni deve lavorare" (deontic/circumstantial, restructured) -/
 def dovere : ItalianModalEntry where
