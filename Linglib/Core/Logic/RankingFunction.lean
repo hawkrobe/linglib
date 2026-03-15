@@ -327,6 +327,24 @@ theorem ranking_rationalMonotonicity (κ : RankingFunction W) :
 def beliefSet (κ : RankingFunction W) : Set (W → Prop) :=
   { ψ | ∀ w, κ.rank w = 0 → ψ w }
 
+/-- Spohn revision: α-conditionalization with canonical firmness
+    α = κ(¬φ) + 1.
+
+    This is the standard belief-revision operator for ranking functions
+    (@cite{spohn-1988}). The firmness is determined by the current
+    ranking, not a free parameter: the agent revises just firmly enough
+    to make φ believed (the success postulate).
+
+    C1 and C2 hold for `conditionα` with arbitrary α, β. C3 and C4
+    require the canonical firmness — a counterexample with α = β = 1
+    on a 4-world ranking shows the universally-quantified version is
+    false. -/
+noncomputable def revise [Fintype W] [DecidableEq W]
+    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
+    (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w) : RankingFunction W :=
+  have : DecidablePred (fun w => ¬φ w) := fun w => instDecidableNot
+  κ.conditionα φ hφ hNφ (κ.rankProp (fun w => ¬φ w) hNφ + 1)
+
 /-- Darwiche-Pearl postulate C1: if φ → ψ then (κ *_{ψ,β} ) *_{φ,α} = κ *_{φ,α}.
     Revising first by a weaker ψ (with any firmness β), then by a
     stronger φ that entails it (with any firmness α), yields the same
@@ -360,31 +378,33 @@ def satisfies_C2 [Fintype W] [DecidableEq W] (κ : RankingFunction W) : Prop :=
         (by obtain ⟨w, hw⟩ := hNφ; exact ⟨w, hw⟩) α).rank w =
       (κ.conditionα φ hφ hNφ α).rank w
 
-/-- Darwiche-Pearl postulate C3: if ψ ∈ beliefSet(κ *_{φ,α}),
-    then ψ ∈ beliefSet((κ *_{ψ,β}) *_{φ,α}).
+/-- Darwiche-Pearl postulate C3: if ψ ∈ beliefSet(κ * φ),
+    then ψ ∈ beliefSet((κ * ψ) * φ).
     If ψ is believed after revising by φ, then revising first by ψ
-    preserves this. -/
+    preserves this.
+
+    Uses the canonical `revise` operator (firmness = κ(¬φ) + 1).
+    The version with arbitrary firmness parameters is false — see
+    the `revise` docstring. -/
 def satisfies_C3 [Fintype W] [DecidableEq W] (κ : RankingFunction W) : Prop :=
   ∀ (φ ψ : W → Prop) [DecidablePred φ] [DecidablePred ψ]
     (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w)
-    (hψ : ∃ w, ψ w) (hNψ : ∃ w, ¬ψ w)
-    (α β : ℕ),
-    (fun w => ψ w) ∈ (κ.conditionα φ hφ hNφ α).beliefSet →
-    (fun w => ψ w) ∈ ((κ.conditionα ψ hψ hNψ β).conditionα φ hφ
-      (by obtain ⟨w, hw⟩ := hNφ; exact ⟨w, hw⟩) α).beliefSet
+    (hψ : ∃ w, ψ w) (hNψ : ∃ w, ¬ψ w),
+    (fun w => ψ w) ∈ (κ.revise φ hφ hNφ).beliefSet →
+    (fun w => ψ w) ∈ ((κ.revise ψ hψ hNψ).revise φ hφ hNφ).beliefSet
 
-/-- Darwiche-Pearl postulate C4: if ¬ψ ∉ beliefSet(κ *_{φ,α}),
-    then ¬ψ ∉ beliefSet((κ *_{ψ,β}) *_{φ,α}).
+/-- Darwiche-Pearl postulate C4: if ¬ψ ∉ beliefSet(κ * φ),
+    then ¬ψ ∉ beliefSet((κ * ψ) * φ).
     If ¬ψ is not believed after revising by φ, then revising first
-    by ψ doesn't make ¬ψ believed either. -/
+    by ψ doesn't make ¬ψ believed either.
+
+    Uses the canonical `revise` operator (firmness = κ(¬φ) + 1). -/
 def satisfies_C4 [Fintype W] [DecidableEq W] (κ : RankingFunction W) : Prop :=
   ∀ (φ ψ : W → Prop) [DecidablePred φ] [DecidablePred ψ]
     (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w)
-    (hψ : ∃ w, ψ w) (hNψ : ∃ w, ¬ψ w)
-    (α β : ℕ),
-    (fun w => ¬ψ w) ∉ (κ.conditionα φ hφ hNφ α).beliefSet →
-    (fun w => ¬ψ w) ∉ ((κ.conditionα ψ hψ hNψ β).conditionα φ hφ
-      (by obtain ⟨w, hw⟩ := hNφ; exact ⟨w, hw⟩) α).beliefSet
+    (hψ : ∃ w, ψ w) (hNψ : ∃ w, ¬ψ w),
+    (fun w => ¬ψ w) ∉ (κ.revise φ hφ hNφ).beliefSet →
+    (fun w => ¬ψ w) ∉ ((κ.revise ψ hψ hNψ).revise φ hφ hNφ).beliefSet
 
 /-- `rankProp` is ≤ any satisfying world's rank. -/
 private theorem rankProp_le_rank [Fintype W]
@@ -495,25 +515,121 @@ theorem ranking_satisfies_C2 [Fintype W] [DecidableEq W]
     rankProp_anti κ φ (fun w => ¬ψ w) hφ hNψ hdisj
   omega
 
+set_option maxHeartbeats 800000 in
 /-- **Theorem**: Ranking conditioning satisfies C3.
 
-    TODO: Requires relating belief sets across conditioned rankings.
-    The key insight is that if ψ holds at all rank-0 worlds of κ*φ,
-    then after pre-conditioning on ψ (which makes ψ-worlds more
-    plausible), the rank-0 worlds of (κ*ψ)*φ are a subset of the
-    rank-0 worlds of κ*φ (or have the same ψ-status). -/
+    If w is rank-0 in (κ*ψ)*φ but ¬ψ w, then κ'(w) = κ(w) + 1
+    (¬ψ-worlds are penalized by revise). But the hypothesis gives
+    a witness v₀ with φ v₀, ψ v₀, κ(v₀) = κ(φ), so κ'(v₀) =
+    κ(v₀) − κ(ψ) ≤ κ(φ) ≤ κ(w) < κ(w) + 1 = κ'(w), contradicting
+    w being rank-minimal among φ-worlds in κ'. -/
 theorem ranking_satisfies_C3 [Fintype W] [DecidableEq W]
     (κ : RankingFunction W) : κ.satisfies_C3 := by
-  sorry
+  intro φ ψ _ _ hφ hNφ hψ hNψ hbel
+  unfold beliefSet at hbel ⊢
+  simp only [Set.mem_setOf_eq] at hbel ⊢
+  intro w hw
+  by_contra hψw
+  -- Step 1: w must satisfy φ (¬φ-worlds have rank ≥ 1 in any revise)
+  have hφw : φ w := by
+    by_contra hNφw
+    have : ((κ.revise ψ hψ hNψ).revise φ hφ hNφ).rank w ≥ 1 := by
+      unfold revise conditionα; simp only [if_neg hNφw]
+      have := rankProp_le_rank (κ.revise ψ hψ hNψ) (fun w => ¬φ w) hNφ w hNφw
+      omega
+    omega
+  -- Step 2: rank 0 at φ-world means κ'(w) = κ'.rankProp(φ)
+  have h_outer : ((κ.revise ψ hψ hNψ).revise φ hφ hNφ).rank w =
+      (κ.revise ψ hψ hNψ).rank w - (κ.revise ψ hψ hNψ).rankProp φ hφ := by
+    unfold revise conditionα; simp only [if_pos hφw]
+  have h_ge := rankProp_le_rank (κ.revise ψ hψ hNψ) φ hφ w hφw
+  -- κ'(w) = κ'.rankProp φ
+  have h_κ'w_eq : (κ.revise ψ hψ hNψ).rank w = (κ.revise ψ hψ hNψ).rankProp φ hφ := by
+    omega
+  -- Step 3: ¬ψ w means κ'(w) = κ(w) + 1
+  have h_Nψ : (κ.revise ψ hψ hNψ).rank w = κ.rank w + 1 := by
+    unfold revise conditionα; simp only [if_neg hψw]
+    have := rankProp_le_rank κ (fun w => ¬ψ w) hNψ w hψw
+    omega
+  -- Step 4: find v₀ — a min-rank φ-world, which satisfies ψ by hypothesis
+  have hne : (Finset.univ.filter (fun w => φ w)).Nonempty := by
+    obtain ⟨w₁, hw₁⟩ := hφ; exact ⟨w₁, Finset.mem_filter.mpr ⟨Finset.mem_univ w₁, hw₁⟩⟩
+  obtain ⟨v₀, hv₀_mem, hv₀_eq⟩ := Finset.exists_mem_eq_inf' hne κ.rank
+  have hφv₀ := (Finset.mem_filter.mp hv₀_mem).2
+  have hv₀_rank : κ.rank v₀ = κ.rankProp φ hφ := by unfold rankProp; exact hv₀_eq.symm
+  -- v₀ has rank 0 in κ.revise φ, so ψ v₀ by hypothesis
+  have hψv₀ : ψ v₀ := by
+    apply hbel; show (κ.revise φ hφ hNφ).rank v₀ = 0
+    unfold revise conditionα; simp only [if_pos hφv₀]
+    rw [hv₀_rank]; exact Nat.sub_self _
+  -- Step 5: κ'(v₀) = κ(v₀) - κ(ψ)
+  have h_κ'v₀ : (κ.revise ψ hψ hNψ).rank v₀ = κ.rank v₀ - κ.rankProp ψ hψ := by
+    unfold revise conditionα; simp only [if_pos hψv₀]
+  -- Step 6: κ'.rankProp(φ) ≤ κ'(v₀) ≤ κ(v₀) = κ.rankProp(φ) ≤ κ(w)
+  have h_rp_le := rankProp_le_rank (κ.revise ψ hψ hNψ) φ hφ v₀ hφv₀
+  have h_rpφ_le_w := rankProp_le_rank κ φ hφ w hφw
+  -- Contradiction: κ(w) + 1 ≤ κ(v₀) - κ(ψ) ≤ κ(v₀) = κ.rankProp(φ) ≤ κ(w)
+  omega
 
+set_option maxHeartbeats 800000 in
 /-- **Theorem**: Ranking conditioning satisfies C4.
 
-    TODO: Dual of C3. If there exists a rank-0 world of κ*φ
-    satisfying ψ (i.e., ¬ψ is not believed), then pre-conditioning
-    on ψ preserves this witness. -/
+    The hypothesis gives v₀ with rank 0 in κ*φ and ψ v₀. We show
+    v₀ also has rank 0 in (κ*ψ)*φ: since ψ v₀, κ'(v₀) =
+    κ(v₀) − κ(ψ), and this is minimal among φ-worlds in κ' because
+    φ∧ψ-worlds have κ' ≥ κ(φ) − κ(ψ) = κ'(v₀) and φ∧¬ψ-worlds
+    have κ' = κ(w) + 1 > κ(φ) ≥ κ'(v₀). -/
 theorem ranking_satisfies_C4 [Fintype W] [DecidableEq W]
     (κ : RankingFunction W) : κ.satisfies_C4 := by
-  sorry
+  intro φ ψ _ _ hφ hNφ hψ hNψ hNbel
+  unfold beliefSet at hNbel ⊢
+  simp only [Set.mem_setOf_eq] at hNbel ⊢
+  push_neg at hNbel ⊢
+  -- hNbel : ∃ w, (κ.revise φ).rank w = 0 ∧ ψ w
+  obtain ⟨v₀, hv₀_rank, hψv₀⟩ := hNbel
+  -- Step 1: φ v₀
+  have hφv₀ : φ v₀ := by
+    by_contra h
+    have : (κ.revise φ hφ hNφ).rank v₀ ≥ 1 := by
+      unfold revise conditionα; simp only [if_neg h]
+      have := rankProp_le_rank κ (fun w => ¬φ w) hNφ v₀ h
+      omega
+    omega
+  -- Step 2: κ(v₀) = κ.rankProp φ
+  have hv₀_eq : κ.rank v₀ = κ.rankProp φ hφ := by
+    have h1 : (κ.revise φ hφ hNφ).rank v₀ = κ.rank v₀ - κ.rankProp φ hφ := by
+      unfold revise conditionα; simp only [if_pos hφv₀]
+    have h2 := rankProp_le_rank κ φ hφ v₀ hφv₀
+    omega
+  -- Step 3: κ'(v₀) = κ(v₀) - κ(ψ) (since ψ v₀)
+  have h_κ'v₀ : (κ.revise ψ hψ hNψ).rank v₀ = κ.rank v₀ - κ.rankProp ψ hψ := by
+    unfold revise conditionα; simp only [if_pos hψv₀]
+  -- Step 4: v₀ achieves the minimum rank among φ-worlds under κ'
+  have h_v₀_min : (κ.revise ψ hψ hNψ).rankProp φ hφ = (κ.revise ψ hψ hNψ).rank v₀ := by
+    apply Nat.le_antisymm
+    · exact rankProp_le_rank (κ.revise ψ hψ hNψ) φ hφ v₀ hφv₀
+    · unfold rankProp; apply Finset.le_inf'; intro u hu
+      have hφu := (Finset.mem_filter.mp hu).2
+      have h_u_ge := rankProp_le_rank κ φ hφ u hφu
+      by_cases hψu : ψ u
+      · -- ψ u: κ'(u) = κ(u) - κ(ψ) ≥ κ(v₀) - κ(ψ) = κ'(v₀)
+        have h_κ'u : (κ.revise ψ hψ hNψ).rank u = κ.rank u - κ.rankProp ψ hψ := by
+          unfold revise conditionα; simp only [if_pos hψu]
+        rw [h_κ'v₀, h_κ'u, hv₀_eq]
+        exact Nat.sub_le_sub_right h_u_ge _
+      · -- ¬ψ u: κ'(u) = κ(u) + 1 > κ(v₀) - κ(ψ) = κ'(v₀)
+        have h_κ'u : (κ.revise ψ hψ hNψ).rank u = κ.rank u + 1 := by
+          unfold revise conditionα; simp only [if_neg hψu]
+          have := rankProp_le_rank κ (fun w => ¬ψ w) hNψ u hψu
+          omega
+        rw [h_κ'v₀, h_κ'u, hv₀_eq]; omega
+  -- Step 5: v₀ has rank 0 in (κ.revise ψ).revise φ
+  refine ⟨v₀, ?_, hψv₀⟩
+  have h_final : ((κ.revise ψ hψ hNψ).revise φ hφ hNφ).rank v₀ =
+      (κ.revise ψ hψ hNψ).rank v₀ - (κ.revise ψ hψ hNψ).rankProp φ hφ := by
+    unfold revise conditionα; simp only [if_pos hφv₀]
+  rw [h_final, h_v₀_min]
+  exact Nat.sub_self _
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 3. Independence (@cite{spohn-1988}, Definition 8)
