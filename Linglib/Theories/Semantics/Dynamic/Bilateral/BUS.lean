@@ -72,12 +72,4 @@ theorem conj_negative (φ ψ : BUSDen W E) (s : InfoState W E) :
 
 end BUSDen
 
-namespace Compat
-
-/-- Backward compatibility alias. -/
-abbrev BilateralDen := Semantics.Dynamic.Core.BilateralDen
-
-end Compat
-
-
 end Semantics.Dynamic.BUS

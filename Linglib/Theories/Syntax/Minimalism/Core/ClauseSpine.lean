@@ -11,7 +11,7 @@ have fValue = 1. Languages like Mam need this
 distinction: =(y)a' appears when Voice⁰ is projected but not when only Appl⁰ is.
 
 `ClauseSpine` records the full list of projected heads, enabling per-head
-projection queries while remaining backward-compatible with `ComplementSize`.
+projection queries.
 
 -/
 
@@ -61,17 +61,7 @@ def ClauseSpine.size (spine : ClauseSpine) : Nat :=
   spine.projectedHeads.length
 
 -- ============================================================================
--- § 3: Bridge to ComplementSize
--- ============================================================================
-
-/-- Convert a ClauseSpine to a ComplementSize by extracting the highest head.
-    This preserves backward compatibility: existing consumers of ComplementSize
-    can interoperate with the new ClauseSpine. -/
-def ClauseSpine.toComplementSize (spine : ClauseSpine) : ComplementSize :=
-  ⟨spine.highestHead⟩
-
--- ============================================================================
--- § 4: Named Spines
+-- § 3: Named Spines
 -- ============================================================================
 
 /-- ApplP-sized clause: [V, Appl]. Infinitival complement without Voice.
@@ -105,7 +95,7 @@ def ClauseSpine.cP : ClauseSpine :=
   ⟨[.V, .Appl, .v, .Voice, .T, .C], by decide⟩
 
 -- ============================================================================
--- § 5: Projection Theorems
+-- § 4: Projection Theorems
 -- ============================================================================
 
 /-- VoiceP projects Voice. -/
@@ -139,16 +129,8 @@ theorem voiceP_applP_same_fLevel :
     fValue ClauseSpine.voiceP.highestHead = fValue ClauseSpine.applP.highestHead := by
   native_decide
 
-/-- CP spine roundtrips through ComplementSize. -/
-theorem cP_roundtrips : ClauseSpine.cP.toComplementSize = ComplementSize.cP := by
-  native_decide
-
-/-- TP spine roundtrips through ComplementSize. -/
-theorem tP_roundtrips : ClauseSpine.tP.toComplementSize = ComplementSize.tP := by
-  native_decide
-
 -- ============================================================================
--- § 6: Size Ordering
+-- § 5: Size Ordering
 -- ============================================================================
 
 /-- Spine sizes are ordered: ApplP < vP < VoiceP < TP < CP. -/

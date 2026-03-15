@@ -56,6 +56,7 @@ namespace Semantics.Montague.Sentence.MaximalInformativity
 open Core.Time
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.Aspect.LexicalAspect
+open Semantics.Tense.Aspect.SubintervalProperty
 
 -- ════════════════════════════════════════════════════
 -- § 1. Maximal Informativity
@@ -220,11 +221,6 @@ def GTIA_Licensed_Neg (P : EventPred W Time) (μ : MeasureFun Time)
 -- ════════════════════════════════════════════════════
 -- § 7. Information Collapse and Licensing Theorems
 -- ════════════════════════════════════════════════════
-
--- HasSubintervalProp and HasClosedSubintervalProp are now defined in
--- Tense.Aspect.SubintervalProperty and re-exported here for backwards compatibility.
-open Semantics.Tense.Aspect.SubintervalProperty in
-export Semantics.Tense.Aspect.SubintervalProperty (HasSubintervalProp HasClosedSubintervalProp)
 
 /-- **E-TIA Information Collapse for Atelic VPs**.
     When a VP predicate has the subinterval property (is atelic/DIV),

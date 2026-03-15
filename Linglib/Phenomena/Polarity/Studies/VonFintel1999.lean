@@ -12,7 +12,7 @@ Four "recalcitrant" NPI-licensing contexts that are not classically DE:
 1. `only` (§2)
 2. Adversative attitude verbs: sorry, surprised, regret (§3)
 3. Superlatives (§4.2)
-4. Conditional antecedents / temporal `since` (§4.1, §2.3)
+4. Conditional antecedents (§4.1) / temporal `since` (§2.2)
 
 The key empirical pattern: these contexts license NPIs despite not being
 classically downward entailing. Von Fintel's Strawson-DE explains why,
@@ -51,13 +51,13 @@ structure StrawsonDEDatum where
 
 /-- Ex 10: "Only" licenses weak NPIs -/
 def onlyEverAny : StrawsonDEDatum :=
-  { sentence := "Only John ever goes to that restaurant"
-  , npiItem := "ever"
+  { sentence := "Only John ever ate any kale for breakfast"
+  , npiItem := "ever/any"
   , context := "only"
   , grammatical := true
   , isClassicallyDE := false
   , exampleNum := "10"
-  , notes := "Weak NPI 'ever' licensed in focus of 'only'" }
+  , notes := "Weak NPIs 'ever'/'any' licensed in focus of 'only'" }
 
 /-- Ex 11: "Only" is not classically DE -/
 def onlyNotDE : StrawsonDEDatum :=
@@ -83,35 +83,36 @@ def onlyStrawsonDE : StrawsonDEDatum :=
 -- Section 2: Adversative Attitude Verbs (§3)
 -- ============================================================================
 
-/-- Ex 28a: "Sorry" licenses "any" -/
-def sorryAny : StrawsonDEDatum :=
-  { sentence := "Sandy is sorry that Robin bought any car"
-  , npiItem := "any"
+/-- Ex 28a: "Surprised" licenses "ever" -/
+def surprisedEver : StrawsonDEDatum :=
+  { sentence := "Sandy is amazed/surprised that Robin ever ate kale"
+  , npiItem := "ever"
   , context := "adversative"
   , grammatical := true
   , isClassicallyDE := false
   , exampleNum := "28a"
   , notes := "Factive adversative; complement position licenses NPI" }
 
-/-- Ex 28b: "Surprised" licenses "ever" -/
-def surprisedEver : StrawsonDEDatum :=
-  { sentence := "Sandy is amazed that Robin ever ate kale"
-  , npiItem := "ever"
+/-- Ex 28b: "Sorry" licenses "any" -/
+def sorryAny : StrawsonDEDatum :=
+  { sentence := "Sandy is sorry/regrets that Robin bought any car"
+  , npiItem := "any"
   , context := "adversative"
   , grammatical := true
   , isClassicallyDE := false
   , exampleNum := "28b"
   , notes := "Factive adversative; complement position licenses NPI" }
 
-/-- Ex 31: "Glad" does NOT reliably license NPIs (non-adversative factive) -/
+/-- "Glad" does NOT reliably license NPIs (non-adversative factive).
+    Not a numbered example in @cite{von-fintel-1999}; discussed in §3.3 prose.
+    Von Fintel argues glad is UE, so it should not license NPIs. -/
 def gladNotLicense : StrawsonDEDatum :=
   { sentence := "?Sandy is glad that Robin bought any car"
   , npiItem := "any"
   , context := "glad"
   , grammatical := false
   , isClassicallyDE := false
-  , exampleNum := "31"
-  , notes := "'Glad' is factive but not adversative; NPI licensing degraded" }
+  , notes := "'Glad' is factive but not adversative; NPI licensing degraded (§3.3)" }
 
 /-- Adversative attitude verbs are not classically DE -/
 def sorryNotDE : StrawsonDEDatum :=
@@ -157,35 +158,37 @@ def superlativeStrawsonDE : StrawsonDEDatum :=
   , notes := "With presupposition satisfied, the DE inference holds" }
 
 -- ============================================================================
--- Section 4: Temporal "Since" (§2.3)
+-- Section 4: Temporal "Since" (§2.2)
 -- ============================================================================
 
-/-- Ex 20: "Since" licenses NPIs -/
-def sinceNPI : StrawsonDEDatum :=
-  { sentence := "It's been five years since I've seen any deer"
-  , npiItem := "any"
+/-- Ex 20: "Since" is not classically DE -/
+def sinceNotDE : StrawsonDEDatum :=
+  { sentence := "It's been five years since I saw a bird of prey in this area ⊬ five years since I saw an eagle"
+  , npiItem := ""
   , context := "since"
   , grammatical := true
   , isClassicallyDE := false
   , exampleNum := "20"
+  , notes := "The DE inference fails: seeing a bird of prey ⊬ seeing an eagle (Iatridou)" }
+
+/-- Ex 21: "Since" licenses NPIs -/
+def sinceNPI : StrawsonDEDatum :=
+  { sentence := "It's been five years since I saw any bird of prey in this area"
+  , npiItem := "any"
+  , context := "since"
+  , grammatical := true
+  , isClassicallyDE := false
+  , exampleNum := "21"
   , notes := "Temporal 'since' licenses weak NPIs (Iatridou)" }
 
-/-- "Since" is not classically DE -/
-def sinceNotDE : StrawsonDEDatum :=
-  { sentence := "It's been 5 years since I saw a deer ⊬ 5 years since I saw a fawn"
-  , npiItem := ""
-  , context := "since"
-  , grammatical := true
-  , isClassicallyDE := false
-  , notes := "The DE inference fails: I may have seen deer but not fawns" }
-
-/-- "Since" is Strawson-DE -/
+/-- Ex 22: "Since" is Strawson-DE -/
 def sinceStrawsonDE : StrawsonDEDatum :=
-  { sentence := "5 years since I saw a deer ⊨_S 5 years since I saw a fawn (given I saw a fawn)"
+  { sentence := "It's been five years since I saw a bird of prey. Five years ago I saw an eagle. ∴ It's been five years since I saw an eagle."
   , npiItem := ""
   , context := "since"
   , grammatical := true
   , isClassicallyDE := false
+  , exampleNum := "22"
   , notes := "With presupposition satisfied, the DE inference holds" }
 
 -- ============================================================================

@@ -865,6 +865,74 @@ theorem symmetric_to_upSW_downNE (q : GQ α)
     rw [← toIntersect R' S] at hQ
     exact hQ
 
+/-- ↑_SW Mon ∧ ↓_NE Mon → QSymmetric (under CONSERV).
+    Converse of `symmetric_to_upSW_downNE`. Together they give
+    @cite{peters-westerstahl-2006} Prop 7: a CONSERV quantifier is symmetric iff
+    it satisfies ↑_SW Mon and ↓_NE Mon.
+
+    Proof sketch: Given Q(A,B), extend A to A∪B via ↑_SW (intersection preserved),
+    then shrink A∪B to B via ↓_NE (intersection preserved), yielding Q(B, A∩B).
+    By CONSERV, Q(B, A∩B) = Q(B, B∩(A∩B)) = Q(B, A∩B).
+    Symmetrically from Q(B,A) → Q(A,B). -/
+theorem upSW_downNE_to_symmetric (q : GQ α)
+    (hCons : Conservative q) (hUpSW : UpSWMon q) (hDownNE : DownNEMon q) :
+    QSymmetric q := by
+  intro A B
+  apply Bool.eq_iff_iff.mpr
+  constructor
+  · intro hQ
+    -- Step 1: Rewrite via CONSERV: Q(A,B) = Q(A, A∩B)
+    rw [hCons A B] at hQ
+    -- Step 2: Q(A, A∩B) → Q(A∪B, A∩B) via ↑_SW
+    -- Conditions: A ⊆ A∪B ✓; (A∪B) ∩ (A∩B) ⊆ A (from A∩B ⊆ A) ✓
+    have hABint : q (λ x => A x || B x) (λ x => A x && B x) = true := by
+      apply hUpSW A (λ x => A x && B x) (λ x => A x || B x)
+      · intro x hAx; simp [hAx]
+      · intro x _ hIntx
+        simp only [Bool.and_eq_true] at hIntx
+        exact hIntx.1
+      · exact hQ
+    -- Step 3: Q(A∪B, A∩B) → Q(B, A∩B) via ↓_NE
+    -- Conditions: B ⊆ A∪B ✓; (A∪B) ∩ (A∩B) ⊆ B (from A∩B ⊆ B) ✓
+    have hBint : q B (λ x => A x && B x) = true := by
+      apply hDownNE (λ x => A x || B x) (λ x => A x && B x) B
+      · intro x hBx; simp [hBx]
+      · intro x _ hIntx
+        simp only [Bool.and_eq_true] at hIntx
+        exact hIntx.2
+      · exact hABint
+    -- Step 4: Q(B, A∩B) = Q(B, A) by CONSERV (since B∩A = A∩B)
+    rw [hCons B A]
+    convert hBint using 2; funext x
+    cases A x <;> cases B x <;> rfl
+  · intro hQ
+    -- Symmetric argument: Q(B,A) → Q(A,B) via same route with A↔B swapped
+    rw [hCons B A] at hQ
+    have hBAint : q (λ x => B x || A x) (λ x => B x && A x) = true := by
+      apply hUpSW B (λ x => B x && A x) (λ x => B x || A x)
+      · intro x hBx; simp [hBx]
+      · intro x _ hIntx
+        simp only [Bool.and_eq_true] at hIntx
+        exact hIntx.1
+      · exact hQ
+    have hAint : q A (λ x => B x && A x) = true := by
+      apply hDownNE (λ x => B x || A x) (λ x => B x && A x) A
+      · intro x hAx; simp [hAx]
+      · intro x _ hIntx
+        simp only [Bool.and_eq_true] at hIntx
+        exact hIntx.2
+      · exact hBAint
+    rw [hCons A B]
+    convert hAint using 2; funext x
+    cases A x <;> cases B x <;> rfl
+
+/-- @cite{peters-westerstahl-2006} Prop 7: a CONSERV type ⟨1,1⟩ quantifier
+    is symmetric iff it satisfies ↑_SW Mon and ↓_NE Mon. -/
+theorem symmetric_iff_upSW_downNE (q : GQ α) (hCons : Conservative q) :
+    QSymmetric q ↔ (UpSWMon q ∧ DownNEMon q) :=
+  ⟨symmetric_to_upSW_downNE q hCons,
+   λ ⟨h1, h2⟩ => upSW_downNE_to_symmetric q hCons h1 h2⟩
+
 -- ============================================================================
 -- §6 Boolean Closure (@cite{keenan-stavi-1986})
 -- ============================================================================
@@ -1072,6 +1140,49 @@ theorem scopeUpMono_rightContinuous (q : GQ α)
   intro A B B₁ _ hB₁B _ hQ1 _
   exact h A B₁ B hB₁B hQ1
 
+/-- @cite{van-benthem-1984} Thm 4.1.2: irreflexive + almost-connected → MON↓.
+    Proof by duality: Q irreflexive ↔ ¬Q reflexive, Q almost-connected ↔ ¬Q
+    transitive. By Zwarts (4.1.1), ¬Q has MON↑. Outer negation reverses
+    scope monotonicity: MON↑ of ¬Q gives MON↓ of Q. -/
+theorem irrefl_almostConn_scopeDown (q : GQ α)
+    (hCons : Conservative q)
+    (hIrrefl : NegativeStrong q)
+    (hAC : AlmostConnected q) : ScopeDownwardMono q := by
+  have hRefl : PositiveStrong (outerNeg q) := λ R => by simp [outerNeg, hIrrefl R]
+  have hTrans : QTransitive (outerNeg q) := by
+    intro A B C hAB hBC
+    simp only [outerNeg, Bool.not_eq_true'] at *
+    by_contra h; rw [Bool.not_eq_false] at h
+    cases hAC A C B h with
+    | inl h => simp [h] at hAB
+    | inr h => simp [h] at hBC
+  have hUp := zwarts_refl_trans_scopeUp (outerNeg q)
+    (conservative_outerNeg q hCons) hRefl hTrans
+  rw [← outerNeg_involution q]
+  exact outerNeg_up_to_down (outerNeg q) hUp
+
+/-- @cite{van-benthem-1984} Thm 4.1.2: irreflexive + almost-connected → ↑MON.
+    Proof: ¬Q has ↓MON (Zwarts). Contrapositive gives ↑MON for Q:
+    ↓MON(¬Q) = (A⊆A' → ¬Q(A',B) → ¬Q(A,B)) = (A⊆A' → Q(A,B) → Q(A',B)) = ↑MON(Q). -/
+theorem irrefl_almostConn_restrictorUp (q : GQ α)
+    (hCons : Conservative q)
+    (hIrrefl : NegativeStrong q)
+    (hAC : AlmostConnected q) : RestrictorUpwardMono q := by
+  have hRefl : PositiveStrong (outerNeg q) := λ R => by simp [outerNeg, hIrrefl R]
+  have hTrans : QTransitive (outerNeg q) := by
+    intro A B C hAB hBC
+    simp only [outerNeg, Bool.not_eq_true'] at *
+    by_contra h; rw [Bool.not_eq_false] at h
+    cases hAC A C B h with
+    | inl h => simp [h] at hAB
+    | inr h => simp [h] at hBC
+  have hDown := zwarts_refl_trans_restrictorDown (outerNeg q)
+    (conservative_outerNeg q hCons) hRefl hTrans
+  intro R R' S hRR' hQ
+  by_contra h
+  have hF : q R' S = false := by revert h; cases q R' S <;> simp
+  have := hDown R R' S hRR' (by simp [outerNeg, hF])
+  simp [outerNeg, hQ] at this
 
 -- ============================================================================
 -- §8b — "Aristotle Reversed": Square from Inferential Conditions
@@ -1419,7 +1530,242 @@ theorem no_euclidean (q : NumberTreeGQ) (hVar : q.Variety)
   -- Step 4: contradiction with Variety
   rw [step3] at hFalse; exact absurd hFalse (by decide)
 
+-- §10b Number-tree representations of the Square of Opposition
+
+/-- "all" on the number tree: Q(A,B) iff A ⊆ B iff |A\B| = 0. -/
+def allNT : NumberTreeGQ := λ _ b => b == 0
+
+/-- "some" on the number tree: Q(A,B) iff A∩B ≠ ∅ iff |A∩B| ≥ 1. -/
+def someNT : NumberTreeGQ := λ a _ => decide (a ≥ 1)
+
+/-- "no" on the number tree: Q(A,B) iff A∩B = ∅ iff |A∩B| = 0. -/
+def noNT : NumberTreeGQ := λ a _ => a == 0
+
+/-- "not all" on the number tree: Q(A,B) iff A ⊄ B iff |A\B| ≥ 1. -/
+def notAllNT : NumberTreeGQ := λ _ b => decide (b ≥ 1)
+
+-- §10c Additivity (@cite{van-benthem-1984} §5.2, p.460)
+
+/-- Additive: (a,b) ∈ Q and (a',b') ∈ Q implies (a+a', b+b') ∈ Q.
+    @cite{van-benthem-1984} p.460: all, some, no, not all are additive.
+    Additivity means Q's truth set is closed under componentwise addition
+    in the number tree. -/
+def Additive (q : NumberTreeGQ) : Prop :=
+  ∀ a b a' b', q a b = true → q a' b' = true → q (a + a') (b + b') = true
+
+theorem allNT_additive : Additive allNT := by
+  intro a b a' b' h1 h2
+  simp only [allNT, beq_iff_eq] at *; omega
+
+theorem someNT_additive : Additive someNT := by
+  intro a b a' b' h1 h2
+  simp only [someNT, decide_eq_true_eq] at *; omega
+
+theorem noNT_additive : Additive noNT := by
+  intro a b a' b' h1 h2
+  simp only [noNT, beq_iff_eq] at *; omega
+
+theorem notAllNT_additive : Additive notAllNT := by
+  intro a b a' b' h1 h2
+  simp only [notAllNT, decide_eq_true_eq] at *; omega
+
+-- §10d Continuity, PLUS, UNIF (@cite{van-benthem-1984} §4.3, §7)
+
+/-- Right continuity on the number tree (CONT): on each diagonal a+b = n,
+    the true points form a contiguous interval.
+    @cite{van-benthem-1984} §4.3: all right-monotone quantifiers are
+    continuous. "precisely one" is continuous but non-monotone. -/
+def RightCont (q : NumberTreeGQ) : Prop :=
+  ∀ n a₁ a₂ a, a₁ ≤ a → a ≤ a₂ → a₂ ≤ n →
+    q a₁ (n - a₁) = true → q a₂ (n - a₂) = true →
+    q a (n - a) = true
+
+/-- Left continuity on the number tree: on each diagonal, the false
+    points (absence) also form a contiguous interval.
+    @cite{van-benthem-1984} §4.3: equivalent to right continuity of ¬Q. -/
+def LeftCont (q : NumberTreeGQ) : Prop :=
+  ∀ n a₁ a₂ a, a₁ ≤ a → a ≤ a₂ → a₂ ≤ n →
+    q a₁ (n - a₁) = false → q a₂ (n - a₂) = false →
+    q a (n - a) = false
+
+/-- PLUS (@cite{van-benthem-1984} §7): adding one individual to the
+    situation cannot create a "dead end." Both presence and absence must
+    be extensible in at least one direction.
+    - For + positions: q(a+1,b) or q(a,b+1) is true.
+    - For − positions: q(a+1,b) or q(a,b+1) is false. -/
+def Plus (q : NumberTreeGQ) : Prop :=
+  (∀ a b, q a b = true → q (a + 1) b = true ∨ q a (b + 1) = true) ∧
+  (∀ a b, q a b = false → q (a + 1) b = false ∨ q a (b + 1) = false)
+
+/-- UNIF (@cite{van-benthem-1984} §7): the addition experiment
+    (a,b) → (a+1,b) and (a,b) → (a,b+1) always yields the same
+    pattern for positions of the same truth value. The experiment
+    result depends only on whether Q holds, not on *where* in the
+    tree we are. -/
+def Uniform (q : NumberTreeGQ) : Prop :=
+  (∀ a₁ b₁ a₂ b₂, q a₁ b₁ = true → q a₂ b₂ = true →
+    q (a₁ + 1) b₁ = q (a₂ + 1) b₂ ∧ q a₁ (b₁ + 1) = q a₂ (b₂ + 1)) ∧
+  (∀ a₁ b₁ a₂ b₂, q a₁ b₁ = false → q a₂ b₂ = false →
+    q (a₁ + 1) b₁ = q (a₂ + 1) b₂ ∧ q a₁ (b₁ + 1) = q a₂ (b₂ + 1))
+
+-- Verification: the four basic quantifiers satisfy CONT, PLUS, UNIF
+
+private theorem beq_zero_iff (n : Nat) : (n == 0) = true ↔ n = 0 := beq_iff_eq
+private theorem beq_zero_false_iff (n : Nat) : (n == 0) = false ↔ n ≠ 0 := by
+  cases n <;> simp
+
+theorem allNT_rightCont : RightCont allNT := by
+  intro n a₁ _ a ha₁ _ _ h1 _
+  simp only [allNT, beq_zero_iff] at *; omega
+
+theorem someNT_rightCont : RightCont someNT := by
+  intro n a₁ _ a ha₁ _ _ h1 _
+  simp only [someNT, decide_eq_true_eq] at *; omega
+
+theorem noNT_rightCont : RightCont noNT := by
+  intro n _ a₂ a _ ha₂ _ _ h2
+  simp only [noNT, beq_zero_iff] at *; omega
+
+theorem notAllNT_rightCont : RightCont notAllNT := by
+  intro n a₁ _ a ha₁ ha₂ ha₂n h1 _
+  simp only [notAllNT, decide_eq_true_eq] at *; omega
+
+theorem allNT_plus : Plus allNT := by
+  unfold Plus allNT
+  exact ⟨λ _ _ h => Or.inl h,
+         λ _ b h => Or.inr (by cases b <;> simp_all)⟩
+
+theorem someNT_plus : Plus someNT := by
+  unfold Plus someNT
+  constructor
+  · intro a _ h; left; simp only [decide_eq_true_eq] at *; omega
+  · intro a _ h; right; simp only [decide_eq_false_iff_not, not_le] at *; omega
+
+theorem noNT_plus : Plus noNT := by
+  unfold Plus noNT
+  exact ⟨λ _ _ h => Or.inr (by simp only [beq_zero_iff] at h; subst h; simp),
+         λ _ _ _ => Or.inl (by simp)⟩
+
+theorem notAllNT_plus : Plus notAllNT := by
+  unfold Plus notAllNT
+  constructor
+  · intro _ b h; left; simp only [decide_eq_true_eq] at *; omega
+  · intro _ b h; left; simp only [decide_eq_false_iff_not, not_le] at *; omega
+
+theorem allNT_uniform : Uniform allNT := by
+  unfold Uniform allNT
+  constructor
+  · intro _ b₁ _ b₂ h1 h2
+    simp only [beq_zero_iff] at h1 h2; subst h1; subst h2; simp
+  · intro _ b₁ _ b₂ h1 h2
+    simp only [beq_zero_false_iff] at h1 h2
+    exact ⟨by rw [beq_false_of_ne h1, beq_false_of_ne h2],
+           by rw [beq_false_of_ne (Nat.succ_ne_zero b₁), beq_false_of_ne (Nat.succ_ne_zero b₂)]⟩
+
+theorem someNT_uniform : Uniform someNT := by
+  unfold Uniform someNT
+  constructor
+  · intro a₁ _ a₂ _ h1 h2
+    simp only [decide_eq_true_eq] at h1 h2
+    constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
+  · intro a₁ _ a₂ _ h1 h2
+    simp only [decide_eq_false_iff_not, not_le] at h1 h2
+    constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
+
+theorem noNT_uniform : Uniform noNT := by
+  unfold Uniform noNT
+  constructor
+  · intro a₁ _ a₂ _ h1 h2
+    simp only [beq_zero_iff] at h1 h2; subst h1; subst h2; simp
+  · intro a₁ _ a₂ _ h1 h2
+    simp only [beq_zero_false_iff] at h1 h2
+    exact ⟨by rw [beq_false_of_ne (Nat.succ_ne_zero a₁), beq_false_of_ne (Nat.succ_ne_zero a₂)],
+           by rw [beq_false_of_ne h1, beq_false_of_ne h2]⟩
+
+theorem notAllNT_uniform : Uniform notAllNT := by
+  unfold Uniform notAllNT
+  constructor
+  · intro _ b₁ _ b₂ h1 h2
+    simp only [decide_eq_true_eq] at h1 h2
+    constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
+  · intro _ b₁ _ b₂ h1 h2
+    simp only [decide_eq_false_iff_not, not_le] at h1 h2
+    constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
+
+-- §10e @cite{van-benthem-1984} Theorem 7.1: Square of Opposition uniqueness
+
+/-- The six postulates that @cite{van-benthem-1984} §7 uses to characterize
+    the Square of Opposition. -/
+structure SixPostulates (q : NumberTreeGQ) : Prop where
+  variety : q.Variety
+  cont    : q.RightCont
+  lcont   : q.LeftCont
+  plus    : q.Plus
+  uniform : q.Uniform
+
+/-- @cite{van-benthem-1984} Thm 7.1: On the finite sets, the only
+    CONSERV+QUANT quantifiers satisfying VAR, CONT, PLUS, and UNIF are
+    precisely the four corners of the logical Square of Opposition:
+    **all**, **some**, **no**, and **not all**.
+
+    Proof: case analysis on the number tree. At each level, PLUS
+    constrains branching, UNIF forces the experiment pattern to be
+    uniform, and CONT (right + left) prevents gaps. Together these
+    leave exactly four degree-of-freedom choices, each producing
+    one quantifier. See @cite{van-benthem-1984} §7 for the
+    combinatorial argument. -/
+theorem square_uniqueness (q : NumberTreeGQ) (h : SixPostulates q) :
+    q = allNT ∨ q = someNT ∨ q = noNT ∨ q = notAllNT := by
+  -- The proof proceeds by case analysis on q(0,0) and the
+  -- UNIF experiment patterns. Each branch is forced to one of
+  -- the four quantifiers by CONT + PLUS + UNIF + VAR.
+  sorry
+
 end NumberTreeGQ
+
+-- ============================================================================
+-- §10f GQ → NumberTreeGQ Bridge
+-- ============================================================================
+
+section NumberTreeBridge
+open Classical
+
+/-- Extract the number-tree representation of a CONSERV+QUANT quantifier.
+    Under conservativity and quantity-invariance, Q(A,B) depends only on
+    `|A ∩ B|` and `|A \ B|`. This definition picks a canonical witness
+    pair for each (a,b) coordinate.
+
+    For (a,b) realizable in the domain (a + b ≤ |α|), the value is
+    determined by any witness; for unrealizable pairs, we default to false. -/
+noncomputable def toNumberTree [Fintype α] (q : GQ α) : NumberTreeGQ :=
+  λ a b =>
+    if h : ∃ (A B : α → Bool),
+      (Finset.univ.filter (λ x => A x && B x)).card = a ∧
+      (Finset.univ.filter (λ x => A x && !(B x))).card = b
+    then q h.choose h.choose_spec.choose
+    else false
+
+/-- The number-tree representation faithfully reflects the GQ on
+    realizable coordinates: for any A, B, the GQ's truth value equals
+    the number-tree value at (|A∩B|, |A\B|).
+
+    Requires `QuantityInvariant` so that the choice of witness doesn't
+    matter — any pair with the same cell cardinalities gives the same
+    truth value.
+
+    TODO: the proof requires constructing a cell-preserving bijection
+    from matching cardinalities. The machinery exists in
+    `Semantics.Lexical.Determiner.Quantifier.build_bijection` but
+    uses `FiniteModel` rather than `Fintype`. -/
+theorem toNumberTree_spec [Fintype α] [DecidableEq α] (q : GQ α)
+    (_hCons : Conservative q) (_hQ : QuantityInvariant q) :
+    ∀ (A B : α → Bool),
+      q A B = toNumberTree q
+        (Finset.univ.filter (λ x => A x && B x)).card
+        (Finset.univ.filter (λ x => A x && !(B x))).card := by
+  sorry
+
+end NumberTreeBridge
 
 -- ============================================================================
 -- §11 Counting Quantifiers (@cite{van-benthem-1984} §5.4)

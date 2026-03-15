@@ -38,9 +38,7 @@ sharing a class are homophonous (marked by the same form).
 
 namespace Phenomena.Agreement.Typology
 
--- Re-export PersonCategory from Core for backwards compatibility
 open Core.PersonCategory
-export Core.PersonCategory (PersonCategory)
 
 -- ============================================================================
 -- §2: Paradigmatic Structure

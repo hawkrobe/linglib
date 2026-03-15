@@ -410,9 +410,4 @@ theorem perf_prog_entails_universal_at_point (P : EventPred W Time) (w : W) (t :
 def IntervalPred.atPoint (p : IntervalPred W Time) : PointPred W Time :=
   λ s => p s.world (Interval.point s.time)
 
-/-- `PointPred` is now `Situation W Time → Prop`, so `toSitProp` is the identity.
-    Retained as an abbreviation for backward compatibility at call sites. -/
-abbrev PointPred.toSitProp (p : PointPred W Time) : Situation W Time → Prop :=
-  p
-
 end Semantics.Tense.Aspect.Core

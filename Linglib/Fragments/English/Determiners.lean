@@ -528,6 +528,12 @@ theorem few_mono_bridge : few.monotonicity = .decreasing ∧
     ScopeDownwardMono (few_sem m) :=
   ⟨rfl, few_scope_down⟩
 
+open Core.Quantification in
+/-- Half: monotonicity metadata says `.nonMonotone` — half is neither scope-↑
+    nor scope-↓. Adding elements to S can flip half(R,S) either way. -/
+theorem half_mono_bridge : half.monotonicity = .nonMonotone :=
+  rfl
+
 -- ============================================================================
 -- Conservativity bridges (gap G): gqDenotation identity ∧ conservative
 -- ============================================================================

@@ -2092,7 +2092,7 @@
   subfield  = {semantics/compositional},
   validated = {true},
   role      = {cited},
-  sources   = {Core/Logic/Quantification.lean;Phenomena/Quantification/Bridge.lean}
+  sources   = {Core/Logic/Quantification.lean;Theories/Semantics/Lexical/Determiner/Quantifier.lean;Phenomena/Quantification/Bridge.lean}
 }
 
 @article{gajewski-2007,
@@ -8522,6 +8522,21 @@
   sources   = {Phenomena/Generics/Studies/Cohen1999.lean}
 }
 
+@article{nunberg-1995,
+  author    = {Nunberg, Geoffrey},
+  year      = {1995},
+  title     = {Transfers of Meaning},
+  journal   = {Journal of Semantics},
+  volume    = {12},
+  number    = {2},
+  pages     = {109--132},
+  doi       = {10.1093/jos/12.2.109},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Composition/PredicateTransfer.lean}
+}
+
 @incollection{cohen-2013,
   author    = {Cohen, Ariel},
   year      = {2013},
@@ -8533,10 +8548,11 @@
   number    = {43},
   pages     = {334--351},
   isbn      = {978-0-19-969180-7},
+  doi       = {10.1093/acprof:oso/9780199691807.003.0013},
   subfield  = {semantics/lexical},
-  role      = {cited},
+  role      = {formalized},
   validated = {true},
-  sources   = {Comparisons/GenericModality.lean}
+  sources   = {Theories/Semantics/Composition/PredicateTransfer.lean, Phenomena/Generics/Studies/Cohen2013.lean, Phenomena/Generics/CompareModality.lean}
 }
 
 @incollection{asher-pelletier-2013,
@@ -11495,6 +11511,47 @@
   sources   = {Theories/Phonology/HarmonicGrammar/NoisyHG.lean;Phenomena/PhonologicalAlternation/Studies/Flemming2021.lean}
 }
 
+@article{magri-2025,
+  author    = {Magri, Giorgio},
+  year      = {2025},
+  title     = {Constraint Interaction in Probabilistic Phonology: Deducing {Maximum Entropy} Grammars from {Hayes} and {Zuraw}'s Shifted Sigmoids Generalization},
+  journal   = {Linguistic Inquiry},
+  note      = {Early Access Corrected Proof},
+  doi       = {10.1162/LING.a.66},
+  subfield  = {phonology},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Theories/Phonology/HarmonicGrammar/Separability.lean;Fragments/Tagalog/Phonology.lean;Phenomena/PhonologicalAlternation/Studies/Magri2025.lean}
+}
+
+@article{hayes-2022,
+  author    = {Hayes, Bruce},
+  year      = {2022},
+  title     = {Deriving the Wug-Shaped Curve: A Criterion for Assessing Formal Theories of Linguistic Variation},
+  journal   = {Annual Review of Linguistics},
+  volume    = {8},
+  pages     = {473--494},
+  doi       = {10.1146/annurev-linguistics-031220-011048},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {}
+}
+
+@article{zuraw-2010,
+  author    = {Zuraw, Kie},
+  year      = {2010},
+  title     = {A Model of Lexical Variation and the Grammar with Application to {Tagalog} Nasal Substitution},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {28},
+  pages     = {417--472},
+  doi       = {10.1007/s11049-010-9095-z},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {}
+}
+
 @incollection{boersma-pater-2016,
   author    = {Boersma, Paul and Pater, Joe},
   year      = {2016},
@@ -13598,12 +13655,13 @@
   validated = {true},
   sources   = {Phenomena/ArgumentStructure/Typology.lean}
 }
-% REF: Konuk, C., Quillien, T., & Mascarenhas, S. (2026). Plural causes. Psychological Review.
+% REF: Konuk, C., Quillien, T., & Mascarenhas, S. (2026). Plural causes. Open Mind.
 @article{konuk-et-al-2026,
   author    = {Konuk, Can and Quillien, Tadeg and Mascarenhas, Salvador},
   year      = {2026},
   title     = {Plural causes},
-  journal   = {Psychological Review},
+  journal   = {Open Mind},
+  url       = {https://lingbuzz.net/lingbuzz/008485},
   subfield  = {causation},
   role      = {formalized},
   validated = {true},

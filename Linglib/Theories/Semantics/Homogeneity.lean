@@ -2,6 +2,7 @@ import Mathlib.Data.Finset.Card
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Logic.Truth3
 import Linglib.Theories.Semantics.Supervaluation.Basic
+import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 
 /-!
 # Homogeneity: General Theory
@@ -580,5 +581,39 @@ theorem gap_not_false (S : SentenceTV W) (w : W) (h : S w = .gap) :
     S w ≠ .false := by simp [h]
 
 end CrossDomain
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- § 9. Plural Instance
+-- ════════════════════════════════════════════════════════════════════════════
+
+/-! `pluralTruthValue` from `Distributivity.lean` is an instance of
+    `supervaluationTV` with atoms as specification points. This bridge
+    makes the general gap-manipulation machinery (§3, §8) applicable
+    to plural predication. -/
+
+section PluralInstance
+
+variable {Atom W : Type*} [DecidableEq Atom]
+
+open Semantics.Lexical.Plural.Distributivity (pluralTruthValue allSatisfy)
+
+omit [DecidableEq Atom] in
+/-- `pluralTruthValue` is `supervaluationTV` with atoms as spec points. -/
+theorem pluralTruthValue_eq_supervaluationTV (P : Atom → W → Bool)
+    (x : Finset Atom) (hne : x.Nonempty) (w : W) :
+    pluralTruthValue P x w =
+    supervaluationTV (fun w a => P a w) (fun _ => ⟨x, hne⟩) w := by
+  simp only [pluralTruthValue, supervaluationTV, dif_pos hne]
+
+/-- Gap removal on a plural sentence is true iff all atoms satisfy P.
+    This is the formal content of "`all` removes homogeneity." -/
+theorem removeGap_plural_true_iff (P : Atom → W → Bool)
+    (x : Finset Atom) (hne : x.Nonempty) (w : W) :
+    removeGap (fun w => pluralTruthValue P x w) w = .true ↔
+    allSatisfy P x w = true := by
+  simp only [removeGap, pluralTruthValue, dif_pos hne, superTrue, allSatisfy]
+  split_ifs <;> simp_all
+
+end PluralInstance
 
 end Semantics.Homogeneity

@@ -9,8 +9,6 @@ The `nge_close` tactic automatically derives negated ordering facts
 of monotonicity, transitivity, and positivity lemmas up to depth 3, with
 backtracking over hypothesis assignments.
 
-The `ngeFS_close` variant works with Finset-typed goals (`¬sys.geFS A B`).
-
 ## Supported patterns
 
 * **0-step**: direct `assumption`
@@ -363,20 +361,6 @@ elab "nge_close" : tactic => do
   for (o, m, i) in NgeFS.lemmas3 do
     if ← NgeFS.try3 o m i then setGoals otherGoals; return
   throwError "nge_close: no pattern matched"
-
-/-- Backward-compatible alias for `nge_close`. -/
-elab "ngeFS_close" : tactic => do
-  let goal ← getMainGoal
-  let otherGoals := (← getGoals).filter (· != goal)
-  setGoals [goal]
-  try goal.assumption; setGoals otherGoals; return catch _ => pure ()
-  for lem in NgeFS.lemmas1 do
-    if ← NgeFS.tryLem lem then setGoals otherGoals; return
-  for (o, i) in NgeFS.lemmas2 do
-    if ← NgeFS.try2 o i then setGoals otherGoals; return
-  for (o, m, i) in NgeFS.lemmas3 do
-    if ← NgeFS.try3 o m i then setGoals otherGoals; return
-  throwError "ngeFS_close: no pattern matched"
 
 /-- Close `∀ pair ∈ pairs, ¬sys.ge ↑pair.1 ↑pair.2` goals by iterating over
     list membership, substituting each pair, normalizing Finset→Set coercions,

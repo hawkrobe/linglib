@@ -495,8 +495,37 @@ theorem softmax_ratio [Nonempty ι] (s : ι → ℝ) (α : ℝ) (i j : ι) :
   field_simp at h ⊢
   linarith [h]
 
-/-- The logistic (sigmoid) function. -/
+/-- The logistic (sigmoid) function: `S(x) = 1 / (1 + exp(−x))`. -/
 noncomputable def logistic (x : ℝ) : ℝ := 1 / (1 + exp (-x))
+
+/-- The logit function: `L(p) = log(p / (1 − p))`.
+    Inverse of `logistic` on (0, 1). -/
+noncomputable def logit (p : ℝ) : ℝ := log (p / (1 - p))
+
+/-- `logit` inverts `logistic`: `logit(logistic(x)) = x`. -/
+theorem logit_logistic (x : ℝ) : logit (logistic x) = x := by
+  simp only [logit, logistic]
+  have hdenom_ne : (1 + exp (-x)) ≠ 0 := ne_of_gt (by linarith [exp_pos (-x)])
+  have hexp_ne : exp (-x) ≠ 0 := ne_of_gt (exp_pos _)
+  have key : 1 / (1 + exp (-x)) / (1 - 1 / (1 + exp (-x))) = exp x := by
+    field_simp
+    ring_nf
+    rw [← Real.exp_add]; simp
+  rw [key, Real.log_exp]
+
+/-- `logistic` inverts `logit` for `0 < p < 1`: `logistic(logit(p)) = p`. -/
+theorem logistic_logit {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
+    logistic (logit p) = p := by
+  simp only [logistic, logit]
+  have h1mp : 0 < 1 - p := by linarith
+  have hfrac : 0 < p / (1 - p) := div_pos hp0 h1mp
+  have hinv : 0 < (p / (1 - p))⁻¹ := inv_pos.mpr hfrac
+  rw [show -Real.log (p / (1 - p)) = Real.log (p / (1 - p))⁻¹
+    from (Real.log_inv _).symm]
+  rw [Real.exp_log hinv]
+  have hp_ne : p ≠ 0 := ne_of_gt hp0
+  field_simp
+  linarith
 
 /-- Fact 3: For n = 2, softmax reduces to logistic. -/
 theorem softmax_binary (s : Fin 2 → ℝ) (α : ℝ) :
@@ -507,6 +536,12 @@ theorem softmax_binary (s : Fin 2 → ℝ) (α : ℝ) :
            exp (α * s 0) * (1 + exp (-(α * (s 0 - s 1)))) := by
     rw [mul_add, mul_one, ← exp_add, key]
   rw [h, ← div_div, div_self (ne_of_gt (exp_pos _))]
+
+/-- Softmax log-odds equals `logit` of the binary softmax probability
+    (when there are exactly two alternatives). -/
+theorem logit_softmax_binary (s : Fin 2 → ℝ) (α : ℝ) :
+    logit (softmax s α 0) = α * (s 0 - s 1) := by
+  rw [softmax_binary, logit_logistic]
 
 /-- Fact 6: Softmax is translation invariant. -/
 theorem softmax_add_const (s : ι → ℝ) (α c : ℝ) :

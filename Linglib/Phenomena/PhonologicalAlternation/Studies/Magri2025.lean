@@ -82,6 +82,20 @@ theorem unifPang_insensitive_to_col (o : NasalSubOutput) :
     unifPang (.pang_b, o) = unifPang (.pang_k, o) := by
   cases o <;> decide
 
+/-- **Constraint independence** (§2.3): for each fixed output, the six
+    constraints satisfy `ConstraintIndependence` on the nasal substitution
+    square.
+
+    C₁–C₄ (markedness) are insensitive to row (prefix);
+    C₅–C₆ (faithfulness) are insensitive to column (stem obstruent). -/
+theorem constraint_independence (o : NasalSubOutput) :
+    ConstraintIndependence (fun k x => constraints k (x, o)) nasalSubSquare := by
+  intro k; fin_cases k <;> cases o <;>
+    simp only [constraints, starNC, starNCvoiceless, starStemVelar,
+      starStemVelarCoronal, unifMang, unifPang, nasalSubSquare,
+      InsensitiveToRow, InsensitiveToCol] <;>
+    decide
+
 -- ============================================================================
 -- § 2: Violation Difference Consistency
 -- ============================================================================
@@ -239,5 +253,32 @@ theorem odds_ratios_close :
     6412 * 514494 = 3298935528 ∧
     39494 * 83412 = 3294273528 := by
   constructor <;> norm_num
+
+-- ============================================================================
+-- § 7: Separable Forward Direction (§5.4)
+-- ============================================================================
+
+/-- **ME predicts HZ at the probability level**: the log-probability-ratio
+    `log(P(YES|x)/P(NO|x))` under ME satisfies HZ's constant-difference
+    identity for Tagalog nasal substitution, for *any* weight assignment.
+
+    This instantiates `separable_predicts_hz` with `meSeparable` and the
+    Tagalog constraints. Since ME rescaling is the identity
+    (`meSeparable_rescale`), the rescaled violation differences reduce to
+    the raw violation differences, and `violDiff_independence` provides
+    the independence hypothesis. -/
+theorem me_separable_predicts_hz_tagalog (w : Fin 6 → ℝ) :
+    ConstantLogitDiff
+      (fun x => Real.log (
+        (meSeparable 6 w).eval (fun k => constraints k (x, .yes)) /
+        (meSeparable 6 w).eval (fun k => constraints k (x, .no))))
+      nasalSubSquare := by
+  apply separable_predicts_hz
+  intro k
+  simp only [SeparableHarmony.rescale, meSeparable, Real.log_exp, nasalSubSquare]
+  fin_cases k <;>
+    simp only [constraints, starNC, starNCvoiceless, starStemVelar,
+      starStemVelarCoronal, unifMang, unifPang] <;>
+    simp
 
 end Phenomena.PhonologicalAlternation.Studies.Magri2025

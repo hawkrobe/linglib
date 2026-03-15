@@ -47,15 +47,15 @@ inductive LicensingStrength where
   deriving DecidableEq, BEq, Repr
 
 /-- Classify NPI licensing contexts by their monotonicity-based strength.
-    Anti-additive contexts (negation, "without", "no one") license strong NPIs.
-    Merely DE contexts ("few", conditionals, universal restrictor) license only weak NPIs.
+    Anti-additive contexts (negation, "without", "no one", universal restrictor) license strong NPIs.
+    Merely DE contexts ("few", conditionals) license only weak NPIs.
     Non-DE contexts (questions, superlatives) license NPIs via other mechanisms. -/
 def licensingStrength : LicensingContext → LicensingStrength
   | .sententialNegation  => .antiAdditive
   | .constituentNegation => .antiAdditive
   | .withoutClause       => .antiAdditive
   | .denyVerb            => .antiAdditive
-  | .universalRestrictor => .downwardEntailing
+  | .universalRestrictor => .antiAdditive  -- P&W Prop 13: every/no are LAA
   | .fewNP               => .downwardEntailing
   | .beforeClause        => .downwardEntailing
   | .comparativeThan     => .downwardEntailing
@@ -119,7 +119,7 @@ def every_restrictor_licenses_weak :
     RestrictorDELicensesWeakNPIs (every_sem m) :=
   { restrictorDE := every_restrictor_down
   , context := .universalRestrictor
-  , isDE := Or.inl rfl }
+  , isDE := Or.inr rfl }
 
 /-- "No" licenses weak NPIs in restrictor via restrictor-↓ monotonicity. -/
 def no_restrictor_licenses_weak :
@@ -147,11 +147,12 @@ structure AntiAddLicensesStrongNPIs (q : m.interpTy Ty.det) where
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
 
-/-- "Every" is left-anti-additive → licenses strong NPIs in restrictor. -/
+/-- "Every" is left-anti-additive → licenses strong NPIs in restrictor.
+    P&W Prop 13: the restrictor of "every" is anti-additive (not just DE). -/
 def every_laa_licenses_strong :
     AntiAddLicensesStrongNPIs (every_sem m) :=
   { laa := every_laa
-  , context := .constituentNegation
+  , context := .universalRestrictor
   , isAA := rfl }
 
 /-- "No" is left-anti-additive → licenses strong NPIs in restrictor. -/

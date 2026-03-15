@@ -46,7 +46,7 @@ property (the backward direction).
 
 namespace Theories.Phonology.HarmonicGrammar
 
-open Core Real Finset
+open Real Finset
 
 -- ============================================================================
 -- § 1: The 2×2 Square of Underlying Forms (§2.4)
@@ -98,13 +98,6 @@ def ConstraintIndependence {n : ℕ} {X : Type}
 -- ============================================================================
 -- § 3: HZ's Generalization as Constant Logit-Rate Differences (§2.2)
 -- ============================================================================
-
-/-- The **violation difference** `Δₖ(x) = Cₖ(x, NO) − Cₖ(x, YES)` of
-    constraint k between the two surface variants of underlying form x.
-    @cite{magri-2025}'s key step (eq. 16c) rewrites harmony ratios in
-    terms of these differences. -/
-def violDiff {X : Type} (C_yes C_no : X → ℕ) (x : X) : ℤ :=
-  (C_no x : ℤ) - (C_yes x : ℤ)
 
 /-- **HZ's generalization** (eq. 13): the difference between logit rates
     of application for two underlying forms in the same row (or column)
@@ -174,7 +167,7 @@ theorem me_predicts_hz {n : ℕ} {X : Type}
     Each `hₖ` must be positive, normalized (`hₖ(0) = 1`), and decreasing
     (more violations → lower harmony). -/
 structure SeparableHarmony (n : ℕ) where
-  /-- Constraint weights (nonneg). -/
+  /-- Constraint weights. -/
   w : Fin n → ℝ
   /-- Per-constraint rescaling functions. -/
   h : Fin n → ℕ → ℝ
@@ -266,6 +259,12 @@ theorem SeparableHarmony.rescale_zero {n : ℕ} (H : SeparableHarmony n)
     H.rescale k 0 = 0 := by
   simp [SeparableHarmony.rescale, H.h_norm]
 
+/-- ME rescaling is the identity: since `hₖ = exp(−·)`,
+    `Ĉₖ(v) = −log(exp(−v)) = v`. -/
+theorem meSeparable_rescale {n : ℕ} (w : Fin n → ℝ) (k : Fin n) (v : ℕ) :
+    (meSeparable n w).rescale k v = (v : ℝ) := by
+  simp [SeparableHarmony.rescale, meSeparable, Real.log_exp]
+
 /-- **Any separable harmony is ME under rescaling** (@cite{magri-2025}
     eq. 34): `H(C₁, …, Cₙ) = H_ME(Ĉ₁, …, Ĉₙ)` where `Ĉₖ = −log hₖ(Cₖ)`.
 
@@ -286,26 +285,38 @@ theorem separable_eq_me_rescaled {n : ℕ} (H : SeparableHarmony n)
 -- § 8: Forward Direction — Separable ⟹ HZ (§5.4)
 -- ============================================================================
 
--- **Separable harmonies predict HZ** (@cite{magri-2025} §5.4):
--- Because any separable harmony can be construed as ME through
--- constraint rescaling (`separable_eq_me_rescaled`), and ME predicts
--- HZ's generalization (`me_predicts_hz`), any grammar based on a
--- separable harmony predicts constant logit-rate differences.
---
--- The proof strategy:
--- 1. Rescale constraints via `H.rescale` (eq. 33)
--- 2. The grammar `G_H^C` coincides with `G_ME^{Ĉ}` (eq. 35)
--- 3. ME predicts HZ (§3), so `G_H^C` does too
---
--- TODO: The forward direction requires `separable_eq_me_rescaled` +
--- showing that rescaling preserves constraint independence + `me_predicts_hz`.
--- The logit rate under H is `log(H(v_NO)/H(v_YES))`, which by
--- `separable_eq_me_rescaled` equals the ME logit rate under rescaled
--- constraints. Since rescaling is per-constraint and monotone, it
--- preserves independence, so `me_predicts_hz` applies.
--- The full statement requires threading through the logit of
--- `H.eval (fun k => C_no k x) / H.eval (fun k => C_yes k x)`,
--- which is deferred pending `separable_eq_me_rescaled`.
+/-- **Separable harmonies predict HZ** (@cite{magri-2025} §5.4):
+    for *any* separable harmony `H`, if the rescaled violation differences
+    `Δ̂ₖ(x) = Ĉₖ(Cₖ(x,NO)) − Ĉₖ(Cₖ(x,YES))` satisfy independence on a
+    square, then the logit rate `log(H(v_YES)/H(v_NO))` satisfies HZ's
+    constant-difference identity.
+
+    The proof composes two results:
+    1. `separable_eq_me_rescaled`: `H(v) = exp(−Σ wₖĈₖ(vₖ))`
+    2. `me_predicts_hz`: weighted sums with independent differences
+       satisfy constant logit-rate differences
+
+    Since `log(exp(a)/exp(b)) = a − b`, the logit rate is a weighted sum
+    of rescaled violation differences, and `me_predicts_hz` applies. -/
+theorem separable_predicts_hz {n : ℕ} {X : Type}
+    (H : SeparableHarmony n)
+    (C_yes C_no : Fin n → X → ℕ)
+    (sq : Square X)
+    (hind : ViolDiffIndependence
+      (fun k x => H.rescale k (C_no k x) - H.rescale k (C_yes k x)) sq) :
+    ConstantLogitDiff
+      (fun x => Real.log (H.eval (fun k => C_yes k x) / H.eval (fun k => C_no k x)))
+      sq := by
+  suffices h : ∀ x : X,
+      Real.log (H.eval (fun k => C_yes k x) / H.eval (fun k => C_no k x)) =
+      ∑ k : Fin n, H.w k * (H.rescale k (C_no k x) - H.rescale k (C_yes k x)) by
+    simp only [ConstantLogitDiff, h]
+    exact me_predicts_hz H.w _ sq hind
+  intro x
+  rw [separable_eq_me_rescaled, separable_eq_me_rescaled,
+    Real.log_div (exp_ne_zero _) (exp_ne_zero _), Real.log_exp, Real.log_exp,
+    neg_sub_neg, ← sum_sub_distrib]
+  congr 1; ext k; ring
 
 -- ============================================================================
 -- § 9: Backward Direction — HZ ⟹ Separable (§5.5, online appendices)

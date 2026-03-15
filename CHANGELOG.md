@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.272] - 2026-03-15
+
+### Changed
+- **Cohen 2013 review fixes**: definitions now use `transferGen`/`gamma` directly (not manual expansion); add `shift_neg_noncommutative` counterexample (Bool model), `gamma_noncommutative` theorem, end-to-end SHIFT→γ→narrow-scope argumentation chain, `both_reduce_to_covertQ` showing both mechanisms produce `covertQ` instances, Chierchia ∩/∪ documentation for kind modeling
+
+## [0.229.271] - 2026-03-15
+
+### Added
+- **Cohen 2013 — No Quantification without Reinterpretation**: new theory-layer `PredicateTransfer.lean` (T_g, γ, SHIFT, `QuantifierSource` with scope hierarchy) and study file `Cohen2013.lean` with finite-model verification of scope predictions (generic ambiguity via local/global T_g, habitual narrow scope via local-only γ, opaque context blocking)
+
 ## [0.229.270] - 2026-03-15
 
 ### Changed

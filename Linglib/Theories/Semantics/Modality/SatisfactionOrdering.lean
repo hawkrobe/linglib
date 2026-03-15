@@ -12,9 +12,6 @@ namespace Semantics.Modality
 
 open Core.SatisfactionOrdering (SatisfactionOrdering)
 
--- Re-export for backwards compatibility
-export Core.SatisfactionOrdering (SatisfactionOrdering)
-
 /-- Kratzer's world ordering: w satisfies p iff p(w) = true. -/
 def worldOrdering (World : Type*) (props : List (World → Bool)) :
     SatisfactionOrdering World (World → Bool) where

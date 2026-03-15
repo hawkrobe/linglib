@@ -1,8 +1,9 @@
 /-
 # Counterfactual Conditionals: Three Theories
 
-Formalization of three competing theories of counterfactual conditionals,
-following Ramotowska, @cite{ramotowska-santorio-2025}.
+@cite{ramotowska-santorio-2025}
+
+Formalization of three competing theories of counterfactual conditionals.
 
 ## The Three Theories
 
@@ -19,17 +20,13 @@ following Ramotowska, @cite{ramotowska-santorio-2025}.
 
 ## Key Prediction: Quantifier Embedding
 
-The theories diverge when counterfactuals are embedded under quantifiers.
-Given a domain where SOME closest A-worlds satisfy B and SOME don't:
+The theories diverge when counterfactuals are embedded under quantifiers
+in mixed scenarios:
+- Selectional: quantifier STRENGTH determines truth values (QUD-independent)
+- Homogeneity: QUD × polarity interaction
+- Universal: all individual CFs false → strength-independent
 
-| Quantifier | Universal | Selectional | Homogeneity |
-|------------|-----------|-------------|-------------|
-| Every NP □→ | FALSE | INDET | PRESUP FAIL |
-| Some NP □→ | TRUE | TRUE | TRUE |
-| No NP □→ | FALSE | FALSE | PRESUP FAIL |
-| Not every NP □→ | TRUE | INDET | PRESUP FAIL |
-
-Ramotowska et al. find experimental support for the SELECTIONAL theory.
+See `RamotowskaEtAl2025.lean` for experimental evaluation.
 
 -/
 
@@ -282,13 +279,16 @@ supervaluation naturally implements this projection duality.
 
 -- ProjectionType is now defined in Core.Duality (Core/Logic/Truth3.lean)
 
-/-- Quantifier strength corresponds to projection type. -/
-def quantifierProjection : String → ProjectionType
-  | "every" => .conjunctive
-  | "no" => .conjunctive      -- ¬∃ is universal-like
-  | "some" => .disjunctive
-  | "not-every" => .disjunctive  -- ¬∀ is existential-like
-  | _ => .disjunctive
+/-- Quantifier strength as projection type. -/
+inductive QStrength where
+  | strong  -- every, no: conjunctive (universal-like)
+  | weak    -- some, not-every: disjunctive (existential-like)
+  deriving Repr, DecidableEq, BEq
+
+/-- Strong quantifiers use conjunctive projection; weak use disjunctive. -/
+def QStrength.toProjection : QStrength → ProjectionType
+  | .strong => .conjunctive
+  | .weak => .disjunctive
 
 /--
 The Projection Duality Theorem.
@@ -316,16 +316,18 @@ Strength effect as projection duality.
 
 Strong quantifiers use conjunctive projection; weak use disjunctive.
 -/
-theorem strength_is_projection_duality (q : String) (results : List Truth3) :
-    (q = "every" ∨ q = "no" → projectTruthValues (quantifierProjection q) results =
+theorem strength_is_projection_duality (s : QStrength) (results : List Truth3) :
+    projectTruthValues s.toProjection results =
+    match s with
+    | .strong =>
       if results.all (· == .true) then .true
       else if results.any (· == .false) then .false
-      else .gap) ∧
-    (q = "some" ∨ q = "not-every" → projectTruthValues (quantifierProjection q) results =
+      else .gap
+    | .weak =>
       if results.any (· == .true) then .true
       else if results.all (· == .false) then .false
-      else .gap) := by
-  constructor <;> intro h <;> cases h <;> simp_all [quantifierProjection, projectTruthValues]
+      else .gap := by
+  cases s <;> simp [QStrength.toProjection, projectTruthValues]
 
 /--
 Conjunctive projection is fragile: one false element yields false.
@@ -449,126 +451,250 @@ general principle, which also explains:
 ## Quantifier Embedding
 
 The three theories make different predictions when counterfactuals are
-embedded under quantifiers. This is the key empirical test.
+embedded under quantifiers in mixed scenarios (some individuals satisfy
+the consequent, others don't).
 
-Given:
-- A domain of individuals D = {a, b, c,...}
-- For each d ∈ D, a counterfactual "If d were A, d would be B"
-- Mixed results: some individuals' closest A-worlds satisfy B, others don't
+- **Universal theory**: each individual's closest worlds include both B and ¬B
+  worlds, so each individual CF is FALSE. The quantifier then
+  operates over all-false values.
+- **Selectional theory**: within each selected world, individual outcomes
+  are Boolean (some true, some false). The quantifier evaluates within
+  the world, giving determinate results. All selection functions agree.
+- **Homogeneity theory**: each individual CF has presupposition failure
+  (closest worlds disagree), so all quantified forms are undefined.
 
-| Sentence | Universal | Selectional | Homogeneity |
-|----------|-----------|-------------|-------------|
-| Every d □→ | FALSE | INDET | PRESUP FAIL |
-| Some d □→ | TRUE | TRUE | TRUE (partial?) |
-| No d □→ | FALSE | FALSE | PRESUP FAIL |
-| Not every d □→ | TRUE | INDET | PRESUP FAIL |
+| Sentence         | Universal | Selectional | Homogeneity |
+|------------------|-----------|-------------|-------------|
+| Every d □→       | FALSE     | FALSE       | PRESUP FAIL |
+| Some d □→        | FALSE     | TRUE        | PRESUP FAIL |
+| No d □→          | TRUE      | FALSE       | PRESUP FAIL |
+| Not every d □→   | TRUE      | TRUE        | PRESUP FAIL |
 
-Ramotowska et al. find that participants' judgments pattern with the selectional theory:
-- Quantifier strength determines responses, not polarity
+The universal and selectional theories agree on "every" and "not every"
+but DISAGREE on "some" and "no".
 -/
 
-/--
-Result of embedding counterfactual under a quantifier.
+/-- Evaluate embedded counterfactual under a quantifier via projection.
+    Strong quantifiers (every, no) use conjunctive projection;
+    weak quantifiers (some, not every) use disjunctive projection. -/
+def embeddedSelectional (s : QStrength) (results : List Truth3) : Truth3 :=
+  projectTruthValues s.toProjection results
 
-For each individual, we get a truth value. The quantifier then operates
-over these truth values.
--/
-structure QuantifiedCounterfactualResult where
-  /-- Individual results before quantification -/
-  individualResults : List Truth3
-  /-- The quantifier used -/
-  quantifier : String
-  /-- Final result after quantification -/
-  result : Truth3
-  deriving Repr
-
-/--
-Evaluate "every d: if d were A, d would be B" under selectional semantics.
-
-TRUE iff all individual counterfactuals are true.
-FALSE iff some individual counterfactual is false.
-INDETERMINATE otherwise.
--/
-def everySelectional (results : List Truth3) : Truth3 :=
-  if results.all (· == .true) then .true
-  else if results.any (· == .false) then .false
-  else .gap
-
-/--
-Evaluate "some d: if d were A, d would be B" under selectional semantics.
-
-TRUE iff some individual counterfactual is true.
-FALSE iff all individual counterfactuals are false.
-INDETERMINATE otherwise.
--/
-def someSelectional (results : List Truth3) : Truth3 :=
-  if results.any (· == .true) then .true
-  else if results.all (· == .false) then .false
-  else .gap
-
-/--
-Evaluate "no d: if d were A, d would be B" under selectional semantics.
-
-TRUE iff all individual counterfactuals are false.
-FALSE iff some individual counterfactual is true.
-INDETERMINATE otherwise.
--/
+/-- "No" quantifier: conjunctive projection over NEGATED individual results.
+    "No X would V" = "Every X would NOT V" = conjunctive over ¬individual. -/
 def noSelectional (results : List Truth3) : Truth3 :=
-  if results.all (· == .false) then .true
-  else if results.any (· == .true) then .false
-  else .gap
+  projectTruthValues .conjunctive (results.map Truth3.neg)
+
+/-- "Not every" quantifier: disjunctive projection over NEGATED individual results.
+    "Not every X would V" = "∃X. ¬(X would V)" = disjunctive over ¬individual. -/
+def notEverySelectional (results : List Truth3) : Truth3 :=
+  projectTruthValues .disjunctive (results.map Truth3.neg)
+
+/-!
+### Selectional Theory: Embedded Determinacy
+
+The paper's key theoretical insight (§2.2.2): embedded
+selectional counterfactuals are DETERMINATE even though unembedded
+ones can be indeterminate. This is because the quantifier operates
+INSIDE the scope of the selection function — within each selected world,
+individual results are Bool (true/false), not Truth3.
+
+In the win-some-lose-some lottery scenario, every candidate selection
+function selects a world with mixed outcomes. The quantifier evaluates
+WITHIN that world, giving a determinate result. Supervaluating over
+selection functions then preserves determinacy because all give the
+same quantified result.
+-/
+
+-- Helpers: ofBool BEq reduction to Bool
+private theorem ofBool_beq_true (b : Bool) : (Truth3.ofBool b == Truth3.true) = b := by
+  cases b <;> rfl
+private theorem ofBool_beq_false (b : Bool) : (Truth3.ofBool b == Truth3.false) = !b := by
+  cases b <;> rfl
+
+-- Bridging: List.all/any on mapped ofBool list ↔ Bool-level all/any
+private theorem all_map_ofBool_beq_true (bs : List Bool) :
+    (bs.map Truth3.ofBool).all (· == Truth3.true) = bs.all id := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simp only [List.map, List.all, ofBool_beq_true, ih, id]
+private theorem any_map_ofBool_beq_false (bs : List Bool) :
+    (bs.map Truth3.ofBool).any (· == Truth3.false) = bs.any (!·) := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simp only [List.map, List.any, ofBool_beq_false, ih]
+private theorem any_map_ofBool_beq_true (bs : List Bool) :
+    (bs.map Truth3.ofBool).any (· == Truth3.true) = bs.any id := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simp only [List.map, List.any, ofBool_beq_true, ih, id]
+private theorem all_map_ofBool_beq_false (bs : List Bool) :
+    (bs.map Truth3.ofBool).all (· == Truth3.false) = bs.all (!·) := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simp only [List.map, List.all, ofBool_beq_false, ih]
 
 /--
-Quantifier strength determines response pattern.
+**Embedded selectional determinacy**: when individual results are all
+determinate (Bool), the projected result is always determinate.
 
-Under selectional semantics with mixed individual results:
-- Strong quantifiers (every, no) yield false
-- Weak quantifier (some) yields true
+This is the formal content of the paper's claim that embedded
+selectional counterfactuals are determinate in mixed scenarios. -/
+theorem embeddedSelectional_determinate (s : QStrength) (bs : List Bool) :
+    embeddedSelectional s (bs.map Truth3.ofBool) ≠ .gap := by
+  simp only [embeddedSelectional, projectTruthValues, Truth3.gap]
+  cases s <;> simp only [QStrength.toProjection]
+  · -- conjunctive: gap requires ¬all_true ∧ ¬any_false — impossible for Bool
+    rw [all_map_ofBool_beq_true, any_map_ofBool_beq_false]
+    split_ifs with h1 h2
+    · exact Truth3.noConfusion
+    · exact Truth3.noConfusion
+    · exfalso
+      have hf : bs.all id = Bool.false := by cases bs.all id <;> simp_all
+      induction bs with
+      | nil => simp [List.all] at hf
+      | cons b bs ih =>
+        simp only [List.all, List.any, id] at hf h2 ⊢
+        cases b <;> simp_all
+  · -- disjunctive: gap requires ¬any_true ∧ ¬all_false — impossible for Bool
+    rw [any_map_ofBool_beq_true, all_map_ofBool_beq_false]
+    split_ifs with h1 h2
+    · exact Truth3.noConfusion
+    · exact Truth3.noConfusion
+    · exfalso
+      have hf : bs.any id = Bool.false := by cases bs.any id <;> simp_all
+      induction bs with
+      | nil => simp [List.all] at h2
+      | cons b bs ih =>
+        simp only [List.any, List.all, id] at hf h2 ⊢
+        cases b <;> simp_all
 
-This matches Ramotowska et al.'s experimental findings.
+/--
+**Strength determines pattern**: under selectional semantics with mixed
+Bool individual results (some true, some false):
+- Conjunctive projection (strong quantifiers) yields `.false`
+- Disjunctive projection (weak quantifiers) yields `.true` -/
+theorem strength_determines_pattern (bs : List Bool)
+    (h_some_true : bs.any id)
+    (h_some_false : bs.any (!·)) :
+    embeddedSelectional .strong (bs.map Truth3.ofBool) = .false ∧
+    embeddedSelectional .weak (bs.map Truth3.ofBool) = .true := by
+  simp only [embeddedSelectional, projectTruthValues, QStrength.toProjection]
+  rw [all_map_ofBool_beq_true, any_map_ofBool_beq_false, any_map_ofBool_beq_true]
+  refine ⟨?_, by simp [h_some_true]⟩
+  have h_not_all : bs.all id = Bool.false := by
+    by_contra h_all
+    have h_all' : bs.all id = Bool.true := by cases bs.all id <;> simp_all
+    induction bs with
+    | nil => simp [List.any] at h_some_false
+    | cons b bs ih =>
+      simp only [List.all, List.any, id, Bool.and_eq_true] at h_all' h_some_false ⊢
+      cases b <;> simp_all
+  simp [h_not_all, h_some_false]
 
-Proof sketch:
-- "every": Since some result is false, not all are true, so `everySelectional` checks
-  if any is false. Since h_some_false holds, the result is `.false`.
-- "some": Since some result is true, `someSelectional` returns `.true`.
-- "no": Since some result is true, not all are false, so `noSelectional` returns `.false`.
+-- Bridge: negating ofBool = ofBool of negation
+private theorem map_neg_map_ofBool (bs : List Bool) :
+    (bs.map Truth3.ofBool).map Truth3.neg = (bs.map (!·)).map Truth3.ofBool := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simp only [List.map, Truth3.neg_ofBool, ih]
+
+-- Mixed list negation preserves mixedness
+private theorem any_map_not_id (bs : List Bool) :
+    (bs.map (!·)).any id = bs.any (!·) := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simp only [List.map, List.any, id, ih]
+
+private theorem any_map_not_not (bs : List Bool) :
+    (bs.map (!·)).any (!·) = bs.any id := by
+  induction bs with
+  | nil => rfl
+  | cons b bs ih => simp only [List.map, List.any, Bool.not_not, id, ih]
+
+/--
+**"No" in mixed scenario gives FALSE** under selectional semantics.
+
+"No d would B if A" = ∀d.¬CF(d). In a mixed world where some
+individuals satisfy B and some don't, negating gives a mixed list
+of ¬results. Conjunctive projection of a mixed list is FALSE. -/
+theorem no_mixed (bs : List Bool)
+    (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
+    noSelectional (bs.map Truth3.ofBool) = .false := by
+  unfold noSelectional
+  rw [map_neg_map_ofBool]
+  have h1 : (bs.map (!·)).any id := by rw [any_map_not_id]; exact h_some_false
+  have h2 : (bs.map (!·)).any (!·) := by rw [any_map_not_not]; exact h_some_true
+  exact (strength_determines_pattern _ h1 h2).1
+
+/--
+**"Not every" in mixed scenario gives TRUE** under selectional semantics.
+
+"Not every d would B if A" = ∃d.¬CF(d). In a mixed world, negating
+gives a mixed list. Disjunctive projection of a mixed list is TRUE. -/
+theorem notEvery_mixed (bs : List Bool)
+    (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
+    notEverySelectional (bs.map Truth3.ofBool) = .true := by
+  unfold notEverySelectional
+  rw [map_neg_map_ofBool]
+  have h1 : (bs.map (!·)).any id := by rw [any_map_not_id]; exact h_some_false
+  have h2 : (bs.map (!·)).any (!·) := by rw [any_map_not_not]; exact h_some_true
+  exact (strength_determines_pattern _ h1 h2).2
+
+/--
+**All four quantifiers in mixed scenarios**: under selectional semantics
+with mixed Bool individual results, strong quantifiers (every, no) yield
+`.false` and weak quantifiers (some, not every) yield `.true`. -/
+theorem all_four_quantifiers_mixed (bs : List Bool)
+    (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
+    embeddedSelectional .strong (bs.map Truth3.ofBool) = .false ∧
+    embeddedSelectional .weak (bs.map Truth3.ofBool) = .true ∧
+    noSelectional (bs.map Truth3.ofBool) = .false ∧
+    notEverySelectional (bs.map Truth3.ofBool) = .true :=
+  ⟨(strength_determines_pattern bs h_some_true h_some_false).1,
+   (strength_determines_pattern bs h_some_true h_some_false).2,
+   no_mixed bs h_some_true h_some_false,
+   notEvery_mixed bs h_some_true h_some_false⟩
+
+/-!
+### Universal Theory: All Individual Counterfactuals False
+
+Under the universal theory in a mixed scenario, EVERY individual
+counterfactual is false (because not all closest worlds satisfy the
+consequent for any given individual). The quantifier then operates
+over a list of all-false values.
+
+This gives DIFFERENT predictions from the selectional theory:
+- Universal: every=FALSE, some=FALSE, no=TRUE, not-every=TRUE
+- Selectional: every=FALSE, some=TRUE, no=FALSE, not-every=TRUE
+
+The theories agree on "every" and "not every" but DISAGREE on
+"some" and "no" — the key empirical discriminators.
 -/
-theorem strength_determines_pattern (results : List Truth3)
-    (h_mixed : results.any (· == .true) ∧ results.any (· == .false)) :
-    everySelectional results = .false ∧
-    someSelectional results = .true ∧
-    noSelectional results = .false := by
-  obtain ⟨h_some_true, h_some_false⟩ := h_mixed
-  simp only [everySelectional, someSelectional, noSelectional]
-  -- Use the hypothesis that some element is true and some is false
+
+/--
+Universal theory embedded predictions: when all individual counterfactuals
+are false (as the universal theory predicts in mixed scenarios),
+strong quantifiers give false and weak quantifiers ALSO give false.
+
+Contrast with the selectional theory where weak quantifiers give true. -/
+theorem universal_all_false (n : Nat) (hn : n > 0) :
+    projectTruthValues .conjunctive (List.replicate n Truth3.false) = .false ∧
+    projectTruthValues .disjunctive (List.replicate n Truth3.false) = .false := by
+  simp only [projectTruthValues]
   constructor
-  · -- every: has false element → second branch
-    split_ifs with h1 h2
-    · -- All true - contradicts having a false element
-      simp only [List.any_eq_true] at h_some_false
-      obtain ⟨x, hx_mem, hx_eq⟩ := h_some_false
-      have hx_true := List.all_eq_true.mp h1 x hx_mem
-      -- x == .true and x == .false both true is impossible
-      cases x with
-      | true => exact absurd hx_eq (by decide)
-      | false => exact absurd hx_true (by decide)
-      | indet => exact absurd hx_eq (by decide)
+  · split_ifs with h1 h2
+    · exfalso; rw [List.all_eq_true] at h1
+      exact absurd (h1 Truth3.false (List.mem_replicate.mpr ⟨by omega, rfl⟩)) (by decide)
     · rfl
-  constructor
-  · -- some: has true element → first branch
-    simp only [h_some_true, ↓reduceIte]
-  · -- no: has true element → second branch
-    split_ifs with h1 h2
-    · -- All false - contradicts having a true element
-      simp only [List.any_eq_true] at h_some_true
-      obtain ⟨x, hx_mem, hx_eq⟩ := h_some_true
-      have hx_false := List.all_eq_true.mp h1 x hx_mem
-      -- x == .true and x == .false both true is impossible
-      cases x with
-      | true => exact absurd hx_false (by decide)
-      | false => exact absurd hx_eq (by decide)
-      | indet => exact absurd hx_eq (by decide)
+    · exfalso; apply h2; rw [List.any_eq_true]
+      exact ⟨Truth3.false, List.mem_replicate.mpr ⟨by omega, rfl⟩, by decide⟩
+  · split_ifs with h1 h2
+    · exfalso; rw [List.any_eq_true] at h1; obtain ⟨x, hx, hx_eq⟩ := h1
+      have := (List.mem_replicate.mp hx).2; subst this; exact absurd hx_eq (by decide)
     · rfl
+    · exfalso; apply h2; rw [List.all_eq_true]
+      intro x hx; have := (List.mem_replicate.mp hx).2; subst this; decide
 
 
 /-!
@@ -633,8 +759,7 @@ private theorem all_map_not {α : Type*} (f : α → Bool) (l : List α) :
   | cons h t ih => simp [List.map_cons, List.all_cons, ih]
 
 /-- Selectional counterfactual = `dist` applied to closest worlds mapped
-    through B. This shows the selectional theory
-    (@cite{ramotowska-santorio-2025}) uses the same distributivity
+    through B. The selectional theory uses the same distributivity
     operator as DIST_π (@cite{santorio-2018}). -/
 theorem selectional_eq_dist {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)

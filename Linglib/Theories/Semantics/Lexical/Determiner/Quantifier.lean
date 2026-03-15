@@ -5,7 +5,7 @@ import Mathlib.Data.List.Perm.Basic
 
 /-!
 # Generalized Quantifiers
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{van-de-pol-2023} @cite{van-de-pol-etal-2023} @cite{mostowski-1957}
+@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-de-pol-2023} @cite{van-de-pol-etal-2023} @cite{mostowski-1957}
 
 Determiners have type `(e→t) → ((e→t) → t)`:
 - `⟦every⟧ = λR.λS. ∀x. R(x) → S(x)`
@@ -109,6 +109,18 @@ def exactly_n_sem (m : Model) [FiniteModel m] (n : Nat) : m.interpTy Ty.det :=
   λ restrictor => λ scope =>
     let count := FiniteModel.elements.filter (λ x => restrictor x && scope x) |>.length
     decide (count = n)
+
+/-- `⟦all but n⟧(R)(S) = |R \ S| = n` — exactly n R-elements are non-S.
+    Generalizes "every" (= all but 0). The exceptive counterpart of
+    `exactly_n_sem` (which counts |R ∩ S| = n). -/
+def all_but_n_sem (m : Model) [FiniteModel m] (n : Nat) : m.interpTy Ty.det :=
+  λ restrictor => λ scope =>
+    let exceptions := FiniteModel.elements.filter (λ x => restrictor x && !scope x) |>.length
+    decide (exceptions = n)
+
+/-- `⟦between n and k⟧(R)(S) = n ≤ |R ∩ S| ≤ k` -/
+def between_n_m_sem (m : Model) [FiniteModel m] (n k : Nat) : m.interpTy Ty.det :=
+  gqMeet (at_least_n_sem m n) (at_most_n_sem m k)
 
 instance : FiniteModel toyModel where
   elements := [.john, .mary, .pizza, .book]
@@ -387,7 +399,7 @@ theorem most_scope_up : ScopeUpwardMono (most_sem m) := by
       · exact absurd (hSS' x hS) (by simp [hx.2]))
   omega
 
--- === Counting quantifier identities (@cite{peters-westerstahl-2006} §5) ===
+-- === Counting quantifier identities (@cite{peters-westerstahl-2006} §4.3) ===
 
 /-- Bridge between `List.any` and `List.filter.length`: existential check ↔ non-empty filter. -/
 private lemma any_eq_decide_filter_ge_one {β : Type*} (l : List β) (p : β → Bool) :
@@ -477,6 +489,29 @@ A quantifier satisfies all three Barwise & Cooper universals.
 -/
 def SatisfiesUniversals (q : m.interpTy Ty.det) : Prop :=
   Conservative q ∧ Quantity q ∧ (ScopeUpwardMono q ∨ ScopeDownwardMono q)
+
+/-- Proportional (@cite{peters-westerstahl-2006} §4.3): Q's truth value depends
+    only on the ratio |A ∩ B| / |A| (the proportion of A-elements in B).
+
+    Under CONS + QUANT, cardinal quantifiers ("at least 3") depend on
+    absolute cardinalities, while proportional quantifiers ("most", "half")
+    depend only on the proportion of A-elements that are B-elements.
+
+    Formally: if the cross-ratio |A₁∩B₁|·|A₂\B₂| = |A₂∩B₂|·|A₁\B₁|
+    (same ratio of successes to failures) and both restrictors are
+    non-empty, the truth values agree.
+
+    Proportional ⊂ Quantity: Quantity requires all four cells to match;
+    Proportional requires only the ratio of two cells (hTT, hTF). -/
+def Proportional (q : m.interpTy Ty.det) : Prop :=
+  ∀ (R₁ S₁ R₂ S₂ : m.Entity → Bool),
+    let tt₁ := (FiniteModel.elements.filter (λ x => R₁ x && S₁ x)).length
+    let tf₁ := (FiniteModel.elements.filter (λ x => R₁ x && !S₁ x)).length
+    let tt₂ := (FiniteModel.elements.filter (λ x => R₂ x && S₂ x)).length
+    let tf₂ := (FiniteModel.elements.filter (λ x => R₂ x && !S₂ x)).length
+    0 < tt₁ + tf₁ → 0 < tt₂ + tf₂ →
+    tt₁ * tf₂ = tt₂ * tf₁ →
+    q R₁ S₁ = q R₂ S₂
 
 -- === Quantity ↔ QuantityInvariant (@cite{mostowski-1957}) ===
 
@@ -646,7 +681,7 @@ theorem some_intersective : IntersectionCondition (some_sem m) :=
 theorem no_intersective : IntersectionCondition (no_sem m) :=
   (conserv_symm_iff_int _ no_conservative).mp no_symmetric
 
--- === Left anti-additivity (P&W §5.9) ===
+-- === Left anti-additivity (P&W §5.8) ===
 
 private theorem list_all_and {β : Type*} {l : List β} {p q : β → Bool} :
     l.all (λ x => p x && q x) = (l.all p && l.all q) := by
@@ -687,6 +722,24 @@ theorem no_raa : RightAntiAdditive (no_sem m) := by
          FiniteModel.elements.all (λ x => (!R x || !S x) && (!R x || !S' x)) := by
     congr 1; funext x; cases R x <;> cases S x <;> cases S' x <;> rfl
   rw [this, list_all_and]
+
+/-- @cite{peters-westerstahl-2006} Prop 13: the only non-trivial CONSERV, EXT,
+    and ISOM quantifiers satisfying LAA are `every` and `no` (and `A = ∅`).
+    TODO: Full proof requires showing that under ISOM, LAA + CONSERV + non-triviality
+    forces the quantifier to be one of these three, by number triangle analysis. -/
+theorem laa_characterization :
+    LeftAntiAdditive (every_sem m) ∧
+    LeftAntiAdditive (no_sem m) ∧
+    ¬LeftAntiAdditive (most_sem (m := toyModel)) := by
+  exact ⟨every_laa, no_laa, by
+    intro h
+    -- A = {john, pizza}, B = {mary}, C = {john, mary}
+    -- most(A∪B, C) = most({j,p,m}, {j,m}) = 2>1 = true
+    -- most(A, C) = most({j,p}, {j,m}) = 1>1 = false  → conjunction false
+    exact absurd (h (λ x => match x with | .john | .pizza => true | _ => false)
+                    (λ x => match x with | .mary => true | _ => false)
+                    (λ x => match x with | .john | .mary => true | _ => false))
+                 (by native_decide)⟩
 
 -- === Duality square (P&W §1.1.1) ===
 
@@ -819,6 +872,31 @@ theorem every_positive_strong : PositiveStrong (every_sem m) := by
   intro x _
   cases R x <;> rfl
 
+/-- `no_sem` is negative strong (@cite{peters-westerstahl-2006} §5.3 fn.9):
+    no(A,A) = false for all non-empty A.
+    For the empty restrictor, no(∅,∅) = true (vacuously), so `NegativeStrong`
+    (which requires Q(R,R) = false for ALL R) fails when empty R exists.
+    We prove the non-empty case. -/
+theorem no_negative_strong_nonempty (R : m.Entity → Bool)
+    (hR : FiniteModel.elements.any R = true) :
+    no_sem m R R = false := by
+  simp only [no_sem]
+  rw [Bool.eq_false_iff]
+  intro hAll
+  rw [List.all_eq_true] at hAll
+  rw [List.any_eq_true] at hR
+  obtain ⟨x, hx, hRx⟩ := hR
+  have := hAll x hx
+  simp [hRx] at this
+
+/-- `no_sem` is NOT positive strong: no(A,A) = false when A is non-empty.
+    Counterexample: R = {john}. -/
+theorem no_not_positive_strong : ¬PositiveStrong (no_sem (m := toyModel)) := by
+  intro h
+  have := h student_sem
+  simp only [no_sem, student_sem, FiniteModel.elements] at this
+  exact absurd this Bool.noConfusion
+
 -- === K&S Existential det classification (§3.3, G3) ===
 
 /-- `⟦some⟧` is existential (K&S G3): some(A,B) = some(A∩B, everything).
@@ -856,13 +934,6 @@ theorem most_not_existential : ¬Existential (most_sem (m := toyModel)) := by
   have := h student_sem (λ x => match x with | .john => true | .pizza => true | _ => false)
   simp only [most_sem, student_sem, FiniteModel.elements] at this
   exact absurd this Bool.noConfusion
-
-/-- Existential ↔ weak (strength metadata): the existential dets are exactly those
-    that can appear in there-sentences. Third independent path to weak/strong. -/
-theorem some_existential_weak_bridge :
-    Existential (some_sem m) ∧
-    ¬Existential (every_sem (m := toyModel)) :=
-  ⟨some_existential, every_not_existential⟩
 
 -- ============================================================================
 -- @cite{van-benthem-1984}: Relational Properties of Concrete Quantifiers
@@ -953,13 +1024,6 @@ theorem notAll_doubleMono :
     ScopeDownwardMono (outerNeg (every_sem m)) :=
   ⟨outerNeg_restrictorDown_to_up _ every_restrictor_down,
    outerNeg_up_to_down _ every_scope_up⟩
-
-/-- `⟦most⟧` has double monotonicity ↑MON↑ (scope-upward, restrictor-upward).
-    Note: most is NOT restrictor-downward-monotone (A'⊆A and most(A,B) ↛ most(A',B)).
-    Restrictor-upward follows from quasi-reflexivity + scope-upward (Zwarts). -/
-theorem most_doubleMono :
-    ScopeUpwardMono (most_sem m) :=
-  most_scope_up
 
 /-- `⟦every⟧` is filtrating: every(A,B) ∧ every(A,C) → every(A, B∩C). -/
 theorem every_filtrating : Filtrating (every_sem m) := by
@@ -1235,21 +1299,6 @@ theorem at_most_n_coSmooth (n : Nat) : CoSmooth (at_most_n_sem m n) := by
   rw [at_most_eq_outerNeg_at_least_succ]
   exact (smooth_iff_outerNeg_coSmooth _).mp (at_least_n_smooth _)
 
--- === Smoothness implies scope monotonicity (Prop 9 verification) ===
-
-/-- Smooth + CONSERV → Mon↑ applied to `⟦some⟧`: an alternative derivation
-    of scope-upward-monotonicity from smoothness. -/
-theorem some_scope_up_from_smooth : ScopeUpwardMono (some_sem m) :=
-  smooth_conservative_scopeUpMono _ some_conservative some_smooth
-
-/-- Smooth + CONSERV → Mon↑ applied to `⟦every⟧`. -/
-theorem every_scope_up_from_smooth : ScopeUpwardMono (every_sem m) :=
-  smooth_conservative_scopeUpMono _ every_conservative every_smooth
-
-/-- Smooth + CONSERV → Mon↑ applied to `⟦at least n⟧`. -/
-theorem at_least_n_scope_up_from_smooth (n : Nat) : ScopeUpwardMono (at_least_n_sem m n) :=
-  smooth_conservative_scopeUpMono _ (at_least_n_conservative n) (at_least_n_smooth n)
-
 -- ============================================================================
 -- Quantity / Isomorphism Closure Proofs (@cite{mostowski-1957})
 -- ============================================================================
@@ -1335,7 +1384,7 @@ private theorem filter_length_decompose (es : List m.Entity) (R S : m.Entity →
   | cons a t ih =>
     simp only [List.filter_cons]
     cases hR : R a <;> cases hS : S a <;>
-      simp only [hR, hS, ↓reduceIte, Bool.false_and, Bool.true_and,
+      simp only [↓reduceIte, Bool.false_and, Bool.true_and,
         Bool.not_true, Bool.not_false, Bool.false_eq_true, List.length_cons] <;>
       omega
 
@@ -1391,6 +1440,173 @@ theorem at_most_n_satisfiesUniversals (n : Nat) :
 theorem exactly_n_conservative_quantity (n : Nat) :
     Conservative (exactly_n_sem m n) ∧ Quantity (exactly_n_sem m n) :=
   ⟨exactly_n_conservative n, exactly_n_quantity n⟩
+
+-- ============================================================================
+-- Exceptive Quantifiers: "all but n" (@cite{peters-westerstahl-2006})
+-- ============================================================================
+
+/-- `⟦all but 0⟧ = ⟦every⟧`: zero exceptions means universal. -/
+theorem all_but_0_eq_every : all_but_n_sem m 0 = every_sem m := by
+  funext R S; dsimp only [all_but_n_sem, every_sem]
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, List.all_eq_true]
+  rw [List.length_eq_zero_iff, List.eq_nil_iff_forall_not_mem]
+  constructor
+  · intro h x hx
+    specialize h x
+    simp only [List.mem_filter, hx, true_and] at h
+    cases hR : R x <;> cases hS : S x <;> simp_all
+  · intro h x
+    simp only [List.mem_filter]
+    intro ⟨hx, hRS⟩
+    specialize h x hx
+    cases hR : R x <;> cases hS : S x <;> simp_all
+
+/-- `⟦all but n⟧` is conservative: depends only on R ∩ S within R. -/
+theorem all_but_n_conservative (n : Nat) : Conservative (all_but_n_sem m n) := by
+  intro R S
+  dsimp only [all_but_n_sem]
+  congr 1; congr 1; congr 1
+  exact List.filter_congr (fun x _ => by cases R x <;> simp)
+
+/-- `⟦all but n⟧` satisfies Quantity: truth depends only on |A \ B|. -/
+theorem all_but_n_quantity (n : Nat) : Quantity (all_but_n_sem m n) := by
+  intro R₁ S₁ R₂ S₂ _ hTF _ _
+  dsimp only [all_but_n_sem]
+  exact congrArg (fun k => decide (k = n)) hTF
+
+/-- `⟦all but n⟧` satisfies CONSERV ∧ QUANTITY (but not MON for n ≥ 1). -/
+theorem all_but_n_conservative_quantity (n : Nat) :
+    Conservative (all_but_n_sem m n) ∧ Quantity (all_but_n_sem m n) :=
+  ⟨all_but_n_conservative n, all_but_n_quantity n⟩
+
+/-- `⟦between n and k⟧` is conservative (from meet closure). -/
+theorem between_n_m_conservative (n k : Nat) :
+    Conservative (between_n_m_sem m n k) := by
+  intro R S; simp only [between_n_m_sem, gqMeet]
+  rw [(at_least_n_conservative n R S), (at_most_n_conservative k R S)]
+
+/-- `⟦between n and k⟧` satisfies Quantity (from meet closure). -/
+theorem between_n_m_quantity (n k : Nat) : Quantity (between_n_m_sem m n k) :=
+  quantity_gqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity k)
+
+/-- `⟦between n and k⟧` satisfies CONSERV ∧ QUANTITY. -/
+theorem between_n_m_conservative_quantity (n k : Nat) :
+    Conservative (between_n_m_sem m n k) ∧ Quantity (between_n_m_sem m n k) :=
+  ⟨between_n_m_conservative n k, between_n_m_quantity n k⟩
+
+-- ============================================================================
+-- Proportional Quantifiers (@cite{peters-westerstahl-2006} §4.3)
+-- ============================================================================
+
+/-- Cross-ratio preserves strict inequality (one direction):
+    if a₁ * b₂ = a₂ * b₁ and a₂ + b₂ > 0, then a₁ > b₁ → a₂ > b₂. -/
+private theorem cross_ratio_preserves_gt (a₁ b₁ a₂ b₂ : Nat)
+    (hne₂ : 0 < a₂ + b₂)
+    (hcross : a₁ * b₂ = a₂ * b₁)
+    (hgt : a₁ > b₁) :
+    a₂ > b₂ := by
+  by_contra hle
+  push_neg at hle
+  rcases Nat.eq_zero_or_pos b₂ with rfl | hb₂pos
+  · omega
+  · have h1 : (b₁ + 1) * b₂ ≤ a₁ * b₂ :=
+      Nat.mul_le_mul_right b₂ hgt
+    have h3 : a₂ * b₁ ≤ b₂ * b₁ :=
+      Nat.mul_le_mul_right b₁ hle
+    rw [Nat.add_mul] at h1
+    rw [Nat.mul_comm b₂ b₁] at h3
+    omega
+
+/-- Cross-ratio preserves strict inequality (biconditional). -/
+private theorem cross_ratio_gt_iff (a₁ b₁ a₂ b₂ : Nat)
+    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
+    (hcross : a₁ * b₂ = a₂ * b₁) :
+    a₁ > b₁ ↔ a₂ > b₂ :=
+  ⟨cross_ratio_preserves_gt a₁ b₁ a₂ b₂ hne₂ hcross,
+   cross_ratio_preserves_gt a₂ b₂ a₁ b₁ hne₁ hcross.symm⟩
+
+/-- Cross-ratio preserves strict `<` inequality. -/
+private theorem cross_ratio_lt_iff (a₁ b₁ a₂ b₂ : Nat)
+    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
+    (hcross : a₁ * b₂ = a₂ * b₁) :
+    a₁ < b₁ ↔ a₂ < b₂ := by
+  have hcross' : b₁ * a₂ = b₂ * a₁ := by
+    rw [Nat.mul_comm b₁ a₂, Nat.mul_comm b₂ a₁]; exact hcross.symm
+  exact cross_ratio_gt_iff b₁ a₁ b₂ a₂ (by omega) (by omega) hcross'
+
+/-- Cross-ratio preserves equality. -/
+private theorem cross_ratio_eq_iff (a₁ b₁ a₂ b₂ : Nat)
+    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
+    (hcross : a₁ * b₂ = a₂ * b₁) :
+    a₁ = b₁ ↔ a₂ = b₂ := by
+  constructor
+  · intro heq
+    rw [heq] at hcross hne₁
+    rw [Nat.mul_comm a₂ b₁] at hcross
+    exact (Nat.mul_left_cancel (by omega) hcross).symm
+  · intro heq
+    rw [heq] at hcross hne₂
+    rw [Nat.mul_comm a₁ b₂] at hcross
+    exact Nat.mul_left_cancel (by omega) hcross
+
+/-- `⟦most⟧` is proportional: most(A,B) ↔ |A∩B| > |A\B| depends only on
+    the ratio |A∩B|/|A\B|. Cross-ratio equality preserves the > comparison. -/
+theorem most_proportional : Proportional (most_sem m) := by
+  intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
+  simp only [most_sem]
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
+  exact cross_ratio_gt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
+
+/-- `⟦few⟧` is proportional: few(A,B) ↔ |A∩B| < |A\B|. -/
+theorem few_proportional : Proportional (few_sem m) := by
+  intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
+  simp only [few_sem]
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
+  exact cross_ratio_lt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
+
+/-- Core arithmetic: 2a = a+b ↔ a = b, and cross-ratio preserves this. -/
+private theorem half_prop_core (a₁ b₁ a₂ b₂ : Nat)
+    (hNE₁ : 0 < a₁ + b₁) (hNE₂ : 0 < a₂ + b₂)
+    (hCross : a₁ * b₂ = a₂ * b₁) :
+    (2 * a₁ = a₁ + b₁) ↔ (2 * a₂ = a₂ + b₂) := by
+  constructor
+  · intro h
+    have := (cross_ratio_eq_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross).mp (by omega)
+    omega
+  · intro h
+    have := (cross_ratio_eq_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross).mpr (by omega)
+    omega
+
+theorem half_proportional : Proportional (half_sem m) := by
+  intro R₁ S₁ R₂ S₂
+  dsimp only []
+  intro hNE₁ hNE₂ hCross
+  simp only [half_sem]
+  rw [filter_length_decompose FiniteModel.elements R₁ S₁,
+      filter_length_decompose FiniteModel.elements R₂ S₂]
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
+  exact half_prop_core _ _ _ _ hNE₁ hNE₂ hCross
+
+/-- `⟦at least n⟧` is NOT proportional for n ≥ 2: it depends on absolute count,
+    not ratio. Counterexample on toyModel: |{john}∩{john}| = 1, |{john}\{john}| = 0
+    vs |{john,mary}∩{john,mary}| = 2, |{john,mary}\{john,mary}| = 0.
+    Same ratio (1/0 = 2/0 in cross-ratio: 1*0 = 0 = 2*0) but at_least_2
+    gives false for the first and true for the second. -/
+theorem at_least_2_not_proportional : ¬Proportional (at_least_n_sem toyModel 2) := by
+  intro h
+  -- R₁ = {john}, S₁ = {john}: tt₁ = 1, tf₁ = 0
+  -- R₂ = {john,mary}, S₂ = {john,mary}: tt₂ = 2, tf₂ = 0
+  -- cross-ratio: 1 * 0 = 2 * 0 ✓, non-emptiness: 1 > 0 ✓, 2 > 0 ✓
+  -- But at_least_2({john},{john}) = false, at_least_2({john,mary},{john,mary}) = true
+  let R₁ : toyModel.Entity → Bool := fun x => match x with | .john => true | _ => false
+  let S₁ := R₁
+  let R₂ : toyModel.Entity → Bool := fun x => match x with | .john | .mary => true | _ => false
+  let S₂ := R₂
+  have := h R₁ S₁ R₂ S₂ (by native_decide) (by native_decide) (by native_decide)
+  have h1 : at_least_n_sem toyModel 2 R₁ S₁ = false := rfl
+  have h2 : at_least_n_sem toyModel 2 R₂ S₂ = true := rfl
+  rw [h1, h2] at this
+  exact Bool.noConfusion this
 
 end FiniteModelProofs
 

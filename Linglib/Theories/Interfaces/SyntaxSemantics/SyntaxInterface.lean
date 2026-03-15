@@ -38,8 +38,3 @@ structure MontagueBenefits (SynCat : Type) (Deriv : Type) [MontagueSyntax SynCat
   entails : Deriv → Deriv → Model → Bool
 
 end Semantics.Montague.Interface.SyntaxInterface
-
--- Backward compatibility alias
-namespace Semantics.Montague.SyntaxInterface
-  export Semantics.Montague.Interface.SyntaxInterface (TypeAssignment CompositionalSemantics MontagueSyntax MontagueBenefits)
-end Semantics.Montague.SyntaxInterface

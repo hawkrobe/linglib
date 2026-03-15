@@ -26,6 +26,13 @@ canonical GQ denotations from `Semantics.Lexical.Determiner.Quantifier`
 This bridges the entailment-testing infrastructure (finite, decidable)
 with the model-theoretic GQ definitions (proved conservative and monotone
 for arbitrary finite models).
+
+**Relation to general monotonicity theorems.** The `native_decide` proofs
+below verify monotonicity over the 4-element `World` model. The general
+theorems — `every_scope_up`, `no_scope_down`, `every_restrictor_down`,
+`some_scope_up` — are proved for arbitrary `FiniteModel` in
+`Quantifier.lean` and `Core.Logic.Quantification`. The results here are
+consistent instances of those general proofs.
 -/
 
 /-- The entailment World type, viewed as a Model entity domain. -/

@@ -591,7 +591,7 @@ Events project to (individual, time) pairs via two functions:
 - `τ(e)`: the temporal trace — the time of the event.
 
 This makes individual-time pairs (the traditional modal parameter per
-@cite{kratzer-1981}, @cite{von-fintel-1999}) DERIVED from events, not
+@cite{kratzer-1981}; @cite{von-fintel-1999} generalizes to (individual, world) pairs) DERIVED from events, not
 primitive. Three advantages:
 
 1. **Unification**: The same mechanism (event projection) applies
@@ -606,8 +606,9 @@ primitive. Three advantages:
 /-- An individual-time pair: the traditional modal parameter.
 
 @cite{kratzer-1981} relativizes accessibility to circumstances at a world.
-@cite{von-fintel-1999} relativize to an (individual, time). Hacquard
-derives the pair from events, making it redundant as a primitive. -/
+@cite{von-fintel-1999} §3.2 generalizes to (individual, world) pairs for
+attitude predicates. Hacquard derives (individual, time) from events,
+making stipulated parameters redundant. -/
 structure IndTimePair (Individual TimePoint : Type*) where
   individual : Individual
   time : TimePoint
