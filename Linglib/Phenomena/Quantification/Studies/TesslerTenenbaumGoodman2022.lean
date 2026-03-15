@@ -97,8 +97,28 @@ def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
   no_sem regionModel (fun r => s r && X r) Y
 
 -- ============================================================================
--- §3. Conclusion Space and Figural Bias
+-- §3. Premise and Conclusion Space
 -- ============================================================================
+
+/-- Syllogistic quantifier: the four Aristotelian quantifiers. -/
+inductive SyllQuant where
+  | all | some | someNot | no
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+instance : Fintype SyllQuant where
+  elems := {.all, .some, .someNot, .no}
+  complete := fun x => by cases x <;> simp
+
+/-- A syllogism is a pair of quantified premises sharing middle term B.
+    `order1AB = true` means premise 1 is "Q₁ A-B"; false means "Q₁ B-A".
+    `order2BC = true` means premise 2 is "Q₂ B-C"; false means "Q₂ C-B".
+    This gives 4 × 2 × 4 × 2 = 64 syllogisms. -/
+structure Syllogism where
+  q1 : SyllQuant
+  order1AB : Bool
+  q2 : SyllQuant
+  order2BC : Bool
+  deriving DecidableEq, BEq, Repr, Inhabited
 
 /-- The 9 possible conclusions: 4 quantifiers × 2 term orders + NVC. -/
 inductive Conclusion where
@@ -120,15 +140,26 @@ def Conclusion.isAC : Conclusion → Bool
   | .allAC | .someAC | .someNotAC | .noAC => true
   | _ => false
 
-/-- Figural bias prior weight: conclusions whose term order matches the
-    premise figure get weight β; others get weight 1. NVC always gets 1.
+/-- Figural bias prior weight, determined by the Aristotelian figure.
 
-    The paper fits β ≈ 2.01 (MAP), meaning conclusions matching the
-    premise term order are preferred by roughly 2:1. -/
-def figuralWeight (β : ℚ) (premiseIsAB : Bool) (c : Conclusion) : ℚ :=
+    The "figural effect" biases toward conclusions whose end-term order
+    matches the chain direction through the middle term B:
+    - **Figure 1** (A-B, B-C): B is predicate of P1, subject of P2 →
+      chain reads A→B→C → **A-C** conclusions get weight β
+    - **Figure 4** (B-A, C-B): B is subject of P1, predicate of P2 →
+      chain reads C→B→A → **C-A** conclusions get weight β
+    - **Figures 2 & 3**: B occupies the same position in both premises →
+      no directional chain → all conclusions get weight 1
+
+    NVC always gets weight 1 (no directional bias for "nothing follows").
+    The paper fits β ≈ 2.01 (MAP). -/
+def figuralWeight (β : ℚ) (syl : Syllogism) (c : Conclusion) : ℚ :=
   if c = .nvc then 1
-  else if c.isAC == premiseIsAB then β
-  else 1
+  else if syl.order1AB && syl.order2BC then      -- Figure 1: A-B, B-C → prefer A-C
+    if c.isAC then β else 1
+  else if !syl.order1AB && !syl.order2BC then    -- Figure 4: B-A, C-B → prefer C-A
+    if !c.isAC then β else 1
+  else 1                                          -- Figures 2 & 3: no bias
 
 /-- Literal meaning of each conclusion in a Venn state.
     "Nothing follows" is true in every state — the vacuous utterance. -/
@@ -396,28 +427,8 @@ theorem all_strictly_stronger_than_some :
   decide
 
 -- ============================================================================
--- §12. Premise Space and Full Pipeline
+-- §12. Premise Evaluation and Named Syllogisms
 -- ============================================================================
-
-/-- Syllogistic quantifier: the four Aristotelian quantifiers. -/
-inductive SyllQuant where
-  | all | some | someNot | no
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-instance : Fintype SyllQuant where
-  elems := {.all, .some, .someNot, .no}
-  complete := fun x => by cases x <;> simp
-
-/-- A syllogism is a pair of quantified premises sharing middle term B.
-    `order1AB = true` means premise 1 is "Q₁ A-B"; false means "Q₁ B-A".
-    `order2BC = true` means premise 2 is "Q₂ B-C"; false means "Q₂ C-B".
-    This gives 4 × 2 × 4 × 2 = 64 syllogisms. -/
-structure Syllogism where
-  q1 : SyllQuant
-  order1AB : Bool
-  q2 : SyllQuant
-  order2BC : Bool
-  deriving DecidableEq, BEq, Repr, Inhabited
 
 /-- Evaluate a syllogistic quantifier on given terms in a Venn state. -/
 def syllQuantEval (q : SyllQuant) (s : VennState) (X Y : Region → Bool) : Bool :=
@@ -439,13 +450,13 @@ def premise2Truth (syl : Syllogism) (s : VennState) : Bool :=
 
 -- Named syllogisms
 
-/-- Barbara: All A-B, All B-C. The paradigmatic valid syllogism. -/
+/-- Barbara: All A-B, All B-C. Figure 1 (paradigmatic valid syllogism). -/
 def barbara : Syllogism := ⟨.all, true, .all, true⟩
 
-/-- All A-B, All C-B. The paradigmatic invalid syllogism (Figure 4). -/
+/-- All A-B, All C-B. Figure 3 (paradigmatic invalid syllogism). -/
 def allAB_allCB : Syllogism := ⟨.all, true, .all, false⟩
 
-/-- Some A-B, Some B-C (Figure 9 bottom-right quadrant). -/
+/-- Some A-B, Some B-C. Figure 1. -/
 def someSome : Syllogism := ⟨.some, true, .some, true⟩
 
 -- ============================================================================
@@ -494,7 +505,7 @@ def naiveL0Post (φ : ℚ) (c : Conclusion) (s : VennState) : ℚ :=
     Parameters: α (rationality), φ (noise), β (figural bias). -/
 noncomputable def baScore (α : ℝ) (φ β : ℚ) (syl : Syllogism)
     (c : Conclusion) : ℝ :=
-  (figuralWeight β syl.order1AB c : ℝ) *
+  (figuralWeight β syl c : ℝ) *
   Real.exp (α * (-Core.Divergence.klDivergence
     (fun s => (l0Post φ syl s : ℝ))
     (fun s => (naiveL0Post φ c s : ℝ))))
@@ -550,7 +561,7 @@ def predictFloat (α : Float) (φ β : ℚ) (syl : Syllogism) :
   let scores := allConclusions.map fun c =>
     let naiveFloat : VennState → Float := fun s => ratToFloat (naiveL0Post φ c s)
     let kl := klFloat postFloat naiveFloat
-    let figural := ratToFloat (figuralWeight β syl.order1AB c)
+    let figural := ratToFloat (figuralWeight β syl c)
     (c, figural * Float.exp (α * (-kl)))
   -- Normalize
   let total := (scores.map Prod.snd).foldl (· + ·) 0.0
@@ -575,13 +586,14 @@ def showPrediction (α : Float) (φ β : ℚ) (syl : Syllogism) : String :=
 
 -- Verified numerical predictions (α=6.88, φ=0.06, β=2.01):
 --
--- Barbara (All A-B, All B-C):  Aac:99.21% — the paradigmatic valid syllogism
+-- Fig 1: Barbara (All A-B, All B-C)   → Aac:99.21%  (A-C bias)
+-- Fig 3: All A-B, All C-B (invalid)   → NVC:52.35%, Eac=Eca:14.74%  (no bias)
+-- Fig 1: Some A-B, Some B-C           → Iac:41.54%, NVC:26.61%, Ica:20.66%
+-- Fig 4: All B-A, All C-B             → Aca:99.21%  (C-A bias, mirror of Fig 1)
+-- Fig 2: All B-A, All B-C             → NVC:68.40%, Aca=Aac:11.76%  (no bias)
+--
 -- #eval showPrediction 6.88 φ_fit β_fit barbara
---
--- All A-B, All C-B (invalid):  NVC:42.19%, Eac:23.88%, Aac:14.59%
 -- #eval showPrediction 6.88 φ_fit β_fit allAB_allCB
---
--- Some-Some (Some A-B, Some B-C):  Iac:41.54%, NVC:26.61%, Ica:20.66%
 -- #eval showPrediction 6.88 φ_fit β_fit someSome
 
 -- ============================================================================
