@@ -459,14 +459,26 @@ Dividing by prior(p) > 0 and cross-multiplying:
 noncomputable def expectedBin (prior : Prevalence → ℝ) : ℝ :=
   (∑ w : Prevalence, prior w * (w.toNat : ℝ)) / (∑ w : Prevalence, prior w)
 
+open Core in
+/-- Policy comparison ↔ score comparison for any RationalAction.
+    Combines `policy_gt_of_score_gt` and `policy_not_gt_of_score_le`. -/
+private theorem policy_gt_iff_score_gt {S A : Type*} [Fintype A]
+    (ra : RationalAction S A) (s : S) (a₁ a₂ : A) :
+    ra.policy s a₁ > ra.policy s a₂ ↔ ra.score s a₁ > ra.score s a₂ :=
+  ⟨fun h => by
+    by_contra hle; push_neg at hle
+    exact absurd h (not_lt.mpr (ra.policy_monotone s a₁ a₂ hle)),
+   ra.policy_gt_of_score_gt s a₁ a₂⟩
+
 /-- The endorsement condition reduces to a cue validity comparison:
     a generic is endorsed iff the referent prevalence bin exceeds
     the prior expected bin. This is the paper's central analytical
     result (Appendix A).
 
-    TODO: Prove by unfolding S1 through RationalAction.policy, showing
-    rpow monotonicity preserves the L0 comparison, cancelling common
-    prior(p) factors, and cross-multiplying the normalizers. -/
+    Proof: S1 policy comparison reduces to S1 score comparison (same
+    denominator at world p), which equals L0 policy (rpow with α=1).
+    The L0 policy comparison cross-multiplies to
+    p.toNat × Σ prior > Σ prior × toNat, i.e., p.toNat > E[k|prior]. -/
 theorem endorsement_iff_exceeds_expected
     (prior : Prevalence → ℝ) (hp : ∀ p, 0 ≤ prior p)
     (p : Prevalence)
@@ -474,7 +486,56 @@ theorem endorsement_iff_exceeds_expected
     (hZ : 0 < ∑ w : Prevalence, prior w) :
     (mkGenericCfg prior hp).S1 () p .generic > (mkGenericCfg prior hp).S1 () p .silent ↔
     (p.toNat : ℝ) > expectedBin prior := by
-  sorry
+  set cfg := mkGenericCfg prior hp
+  set l0 := cfg.L0agent ()
+  -- Step 1: S1 policy → S1 score → L0 policy
+  have hs1_eq : ∀ u, (cfg.S1agent ()).score p u = l0.policy u p :=
+    fun u => Real.rpow_one _
+  have step1 : cfg.S1 () p .generic > cfg.S1 () p .silent ↔
+      l0.policy .generic p > l0.policy .silent p := by
+    rw [show cfg.S1 () p .generic > cfg.S1 () p .silent ↔
+        (cfg.S1agent ()).score p .generic > (cfg.S1agent ()).score p .silent from
+      policy_gt_iff_score_gt _ _ _ _, hs1_eq, hs1_eq]
+  rw [step1]
+  -- Step 2: L0 totalScore facts
+  have htg : l0.totalScore .generic = ∑ w, prior w * (w.toNat : ℝ) :=
+    Finset.sum_congr rfl fun _ _ => rfl
+  have hts : l0.totalScore .silent = 20 * ∑ w, prior w := by
+    show ∑ w, l0.score .silent w = _
+    simp_rw [show ∀ w, l0.score .silent w = prior w * 20 from fun _ => rfl, ← Finset.sum_mul]
+    ring
+  have hts_pos : 0 < l0.totalScore .silent := by rw [hts]; positivity
+  have hts_ne : l0.totalScore .silent ≠ 0 := ne_of_gt hts_pos
+  -- L0 silent policy = prior(p) / Zp
+  have hpol_sil : l0.policy .silent p = prior p / ∑ w, prior w := by
+    rw [Core.RationalAction.policy, if_neg hts_ne, hts]
+    show prior p * 20 / (20 * ∑ w, prior w) = _
+    rw [mul_comm (prior p) 20, mul_div_mul_left _ _ (by norm_num : (20 : ℝ) ≠ 0)]
+  -- Case split on Zg
+  by_cases hg0 : l0.totalScore .generic = 0
+  · -- Zg = 0: p.toNat must be 0 (since prior(p) > 0), so both sides false
+    rw [htg] at hg0
+    have hpn : prior p * (p.toNat : ℝ) ≤ 0 :=
+      hg0 ▸ Finset.single_le_sum (fun w _ => mul_nonneg (hp w) (Nat.cast_nonneg _))
+        (Finset.mem_univ p)
+    have hpn0 : (p.toNat : ℝ) = 0 := by
+      nlinarith [mul_nonneg (le_of_lt hp_pos) (Nat.cast_nonneg (α := ℝ) (Degree.toNat p))]
+    have hpol_gen : l0.policy .generic p = 0 := by
+      rw [Core.RationalAction.policy, if_pos (by rw [htg]; exact hg0)]
+    rw [hpol_gen, hpol_sil, hpn0, expectedBin, hg0, zero_div]
+    constructor
+    · intro h; linarith [div_pos hp_pos hZ]
+    · intro h; linarith
+  · -- Zg > 0: cross-multiply
+    have hg_pos : 0 < l0.totalScore .generic :=
+      lt_of_le_of_ne (l0.totalScore_nonneg .generic) (Ne.symm hg0)
+    have hpol_gen : l0.policy .generic p = prior p * (p.toNat : ℝ) /
+        (∑ w, prior w * (w.toNat : ℝ)) := by
+      rw [Core.RationalAction.policy, if_neg hg0, htg]; rfl
+    rw [hpol_gen, hpol_sil, expectedBin, gt_iff_lt, gt_iff_lt,
+        div_lt_div_iff₀ hZ (by rwa [htg] at hg_pos), div_lt_iff₀ hZ]
+    -- Goal: prior p * Zg < prior p * p.toNat * Zp ↔ Zg < p.toNat * Zp
+    constructor <;> intro h <;> nlinarith
 
 -- ============================================================================
 -- § 8. Connection to Phenomena.Generics.Data
