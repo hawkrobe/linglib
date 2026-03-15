@@ -18,7 +18,7 @@ RSA S1 (softmax) ──α→∞──> IBR S1 (argmax) ────> exhMW ─�
   proved proved (WIP) (Spector)
 ```
 
-- `rsa_to_ibr_limit`: RSA S1 → IBR S1 as α → ∞ (Franke2011.lean)
+- `rsa_speaker_to_ibr`: RSA S1 → IBR S1 as α → ∞
 - `ibr_equals_exhMW`: IBR fixed point = exhMW (in progress)
 - Under closure (Spector Thm 9): exhMW = exhIE
 
@@ -38,6 +38,7 @@ RSA S1 (softmax) ──α→∞──> IBR S1 (argmax) ────> exhMW ─�
 
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
+import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
 import Linglib.Core.Interface
 import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
@@ -86,7 +87,7 @@ As RSA rationality parameter α → ∞:
 
 **This is now proved** via the chain:
 
-1. `rsa_to_ibr_limit` (Franke2011.lean): RSA S1 → IBR S1 as α → ∞
+1. `rsa_speaker_to_ibr` (this file): RSA S1 → IBR S1 as α → ∞
    - RSA S1 = softmax(log-informativity, α)
    - Uses `tendsto_softmax_infty_at_max` from Softmax.Limits
    - Softmax concentrates on the unique maximum
@@ -112,6 +113,25 @@ As α → ∞, RSA's softmax becomes EXH's argmax.
 
 open RSA.IBR
 
+-- RSA as "Soft" IBR: RSA → IBR as α → ∞
+
+/-- Floor score for false messages. Uses -log(|State|) - 1, which is always
+    below the minimum possible log-informativity for any true message. -/
+noncomputable def falseMessageScore (G : InterpGame) : ℝ :=
+  - Real.log (Fintype.card G.State : ℝ) - 1
+
+/-- RSA S1 probability (real version for limit theorems).
+
+RSA S1 is exactly softmax over log-informativity scores:
+  rsaS1(m | s) = exp(α · log(inf(m))) / Σ exp(α · log(inf(m')))
+              = inf(m)^α / Σ inf(m')^α
+              = softmax(log ∘ inf, α)(m)
+-/
+noncomputable def rsaS1Real (G : InterpGame) (α : ℝ) (s : G.State) : G.Message → ℝ :=
+  let score := λ m =>
+    if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G
+  Core.softmax score α
+
 /--
 The rationality parameter α controls how "sharp" RSA predictions are.
 - α = 0: uniform (speaker is random)
@@ -126,15 +146,52 @@ structure RationalityParameter where
 **The Limit Theorem** (@cite{franke-2011}, formalized):
 
 As α → ∞, RSA S1 probability concentrates on the IBR-optimal message.
-
-This is `rsa_to_ibr_limit` from Franke2011.lean, re-exported here for convenience.
+This follows from `tendsto_softmax_infty_at_max`: softmax → argmax as α → ∞.
 -/
 theorem rsa_speaker_to_ibr (G : InterpGame) [Nonempty G.Message] (s : G.State) (m : G.Message)
     (hTrue : G.meaning m s = true)
     (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
     (hInfPos : 0 < G.informativity m) :
-    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) :=
-  rsa_to_ibr_limit G s m hTrue hUnique hInfPos
+    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
+  let score := λ m' => if G.meaning m' s then Real.log (G.informativity m' : ℝ) else falseMessageScore G
+  have hmax : ∀ m', m' ≠ m → score m' < score m := by
+    intro m' hne
+    simp only [score, hTrue, ↓reduceIte]
+    split_ifs with hm'
+    · have hm'_pos : 0 < G.informativity m' := by
+        simp only [InterpGame.informativity]
+        split_ifs with hcard
+        · exfalso
+          have hempty : G.trueStates m' = ∅ := Finset.card_eq_zero.mp hcard
+          have hs_mem : s ∈ G.trueStates m' := G.mem_trueStates.mpr hm'
+          simp only [hempty, Finset.notMem_empty] at hs_mem
+        · exact one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hcard))
+      exact Real.log_lt_log (Rat.cast_pos.mpr hm'_pos) (Rat.cast_lt.mpr (hUnique m' hne hm'))
+    · simp only [falseMessageScore]
+      haveI : Nonempty G.State := ⟨s⟩
+      have hcard_pos : 0 < Fintype.card G.State := Fintype.card_pos
+      have hs_in_true : s ∈ G.trueStates m := G.mem_trueStates.mpr hTrue
+      have htrue_card_pos : 0 < (G.trueStates m).card :=
+        Finset.card_pos.mpr ⟨s, hs_in_true⟩
+      have htrue_card_le : (G.trueStates m).card ≤ Fintype.card G.State :=
+        Finset.card_le_card (Finset.subset_univ _)
+      have hinf_eq : G.informativity m = 1 / (G.trueStates m).card := by
+        simp only [InterpGame.informativity]
+        split_ifs with hcard
+        · exact absurd hcard (Nat.pos_iff_ne_zero.mp htrue_card_pos)
+        · rfl
+      have hlog_eq : Real.log (G.informativity m : ℝ) = -Real.log ((G.trueStates m).card : ℝ) := by
+        rw [hinf_eq]
+        simp only [Rat.cast_div, Rat.cast_one, Rat.cast_natCast]
+        rw [Real.log_div (by norm_num : (1 : ℝ) ≠ 0)
+            (Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp htrue_card_pos)),
+            Real.log_one]
+        ring
+      rw [hlog_eq]
+      have hlog_le : Real.log ((G.trueStates m).card : ℝ) ≤ Real.log (Fintype.card G.State : ℝ) :=
+        Real.log_le_log (Nat.cast_pos.mpr htrue_card_pos) (Nat.cast_le.mpr htrue_card_le)
+      linarith
+  exact Softmax.tendsto_softmax_infty_at_max score m hmax
 
 /--
 The full limit chain: RSA → IBR → exhMW → exhIE (under closure).
@@ -376,7 +433,7 @@ def isNeoGriceanLimit (α : ℚ) : Bool :=
 ## What This Module Establishes
 
 ### Proven
-1. **Limit theorem**: RSA S1 → IBR S1 as α → ∞ (`rsa_to_ibr_limit`)
+1. **Limit theorem**: RSA S1 → IBR S1 as α → ∞ (`rsa_speaker_to_ibr`)
 2. **Directional agreement**: Both predict "some" → "not all"
 3. **Ordinal agreement**: Both rank interpretations the same way
 4. **DE blocking agreement**: Both predict blocking under negation
@@ -398,7 +455,7 @@ def isNeoGriceanLimit (α : ℚ) : Bool :=
 RSA S1 (softmax) ──α→∞──> IBR S1 (argmax) ────> exhMW ──closure──> exhIE
      ↑ ↑ ↑ ↑
   PROVED PROVED (TODO) (Spector)
-  rsa_to_ibr_limit (trivial) ibr_equals_exhMW Theorem 9
+  rsa_speaker_to_ibr         ibr_equals_exhMW Theorem 9
 ```
 
 ### Future Work

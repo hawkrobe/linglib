@@ -3,15 +3,14 @@
 rational conversation. S&P 4(1):1-82.
 
 IBR (iterated best response) converges to exhaustive interpretation (exhMW).
-RSA is "soft" IBR: as α → ∞, softmax → argmax → exhMW → exhIE.
-
 -/
 
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Fintype.Pigeonhole
+import Linglib.Core.Agent.RationalAction
 import Linglib.Theories.Semantics.Exhaustification.Operators
-import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 
 namespace RSA.IBR
 
@@ -846,22 +845,23 @@ private lemma ibrN_consecutive_fp (G : InterpGame) (n : ℕ)
     congrFun (congrFun (congrArg HearerStrategy.respond h) m) s
   rw [this]; rfl
 
-/-- Monotone sequence constant at first step of cycle. -/
-private lemma monotone_cycle_eq_first {f : ℕ → ℚ} {n p : ℕ} (hp : 0 < p)
-    (hMono : ∀ k, n ≤ k → k < n + p → f k ≤ f (k + 1))
-    (hCycle : f n = f (n + p)) :
-    f n = f (n + 1) := by
-  have h1 : f n ≤ f (n + 1) := hMono n (le_refl _) (by omega)
-  suffices f (n + 1) ≤ f n by linarith
-  rw [hCycle]
-  suffices ∀ j, 1 ≤ j → j ≤ p → f (n + 1) ≤ f (n + j) by exact this p (by omega) (le_refl _)
-  intro j; induction j with
-  | zero => omega
-  | succ j ih =>
-    intro hj1 hjp
-    by_cases hj : j = 0
-    · subst hj; simp
-    · exact le_trans (ih (by omega) (by omega)) (hMono (n + j) (by omega) (by omega))
+/-- Monotone sequence constant at every step of a cycle.
+    If f is monotone and f(n) = f(n + p), then f(n + k) = f(n + k + 1) for all k < p.
+    Proof: f(n) ≤ f(n+k) ≤ f(n+k+1) ≤ f(n+p) = f(n), so all are equal. -/
+private lemma monotone_cycle_all_eq {f : ℕ → ℚ} {n p : ℕ}
+    (hMono : ∀ k, f k ≤ f (k + 1))
+    (hCycle : f n = f (n + p))
+    (k : ℕ) (hk : k < p) :
+    f (n + k) = f (n + k + 1) := by
+  have mono_shift : ∀ (a : ℕ) (j : ℕ), f a ≤ f (a + j) := by
+    intro a j; induction j with
+    | zero => simp
+    | succ j ih => exact le_trans ih (hMono (a + j))
+  have h1 := mono_shift n k
+  have h2 := hMono (n + k)
+  have h3 := mono_shift (n + k + 1) (p - k - 1)
+  have h4 : n + k + 1 + (p - k - 1) = n + p := by omega
+  rw [h4] at h3; linarith
 
 /-- Containment around a cycle of finite sets → equality at first step. -/
 private lemma cycle_containment_eq {α : Type*} [DecidableEq α] {p : ℕ}
@@ -968,46 +968,19 @@ theorem ibr_reaches_fixed_point (G : InterpGame)
   have hp : 0 < p := by omega
   have hperiod : ibrN G n₁ = ibrN G (n₁ + p) := by
     rwa [Nat.add_sub_cancel' (le_of_lt hlt)]
-  -- EG is monotone
+  -- EG is monotone along the IBR sequence
   set eg := fun n => expectedGain G (speakerUpdate G (ibrN G n)) (ibrN G n)
-  -- EG constant at first step of cycle
-  have hEGconst : eg n₁ = eg (n₁ + 1) := by
-    apply monotone_cycle_eq_first hp
-      (fun k _ _ => eg_ibr_monotone G hPriorNonneg hPriorSum k)
-    show expectedGain G (speakerUpdate G (ibrN G n₁)) (ibrN G n₁) =
-         expectedGain G (speakerUpdate G (ibrN G (n₁ + p))) (ibrN G (n₁ + p))
-    rw [hperiod]
+  have hEGmono : ∀ k, eg k ≤ eg (k + 1) := eg_ibr_monotone G hPriorNonneg hPriorSum
+  have hEGcycle : eg n₁ = eg (n₁ + p) := by
+    simp only [eg]; rw [hperiod]
   -- optimalMessages containment at each step of the cycle
   have hOptSubAll : ∀ k, k < p →
       ∀ t, SpeakerStrategy.optimalMessages G (ibrN G (n₁ + k)) t ⊆
            SpeakerStrategy.optimalMessages G (ibrN G (n₁ + k + 1)) t := by
     intro k hk
-    -- eg(n₁+k) = eg(n₁+k+1) by monotonicity + cycle
-    have hEGk : eg (n₁ + k) = eg (n₁ + k + 1) := by
-      have h1 : eg n₁ ≤ eg (n₁ + k) := by
-        suffices ∀ j, j ≤ k → eg n₁ ≤ eg (n₁ + j) by exact this k (le_refl _)
-        intro j; induction j with
-        | zero => simp
-        | succ j ih =>
-          intro hjk
-          exact le_trans (ih (by omega)) (eg_ibr_monotone G hPriorNonneg hPriorSum (n₁ + j))
-      have h2 : eg (n₁ + k + 1) ≤ eg (n₁ + p) := by
-        suffices ∀ j, k + 1 ≤ j → j ≤ p → eg (n₁ + k + 1) ≤ eg (n₁ + j) by
-          exact this p (by omega) (le_refl _)
-        intro j; induction j with
-        | zero => omega
-        | succ j ih =>
-          intro hj1 hjp
-          by_cases hj : k + 1 ≤ j
-          · exact le_trans (ih hj (by omega)) (eg_ibr_monotone G hPriorNonneg hPriorSum (n₁ + j))
-          · have : j = k := by omega
-            subst this; exact le_refl _
-      have h3 := eg_ibr_monotone G hPriorNonneg hPriorSum (n₁ + k)
-      have : eg (n₁ + p) = eg n₁ := by
-        show expectedGain G (speakerUpdate G (ibrN G (n₁ + p))) (ibrN G (n₁ + p)) =
-             expectedGain G (speakerUpdate G (ibrN G n₁)) (ibrN G n₁)
-        rw [hperiod]
-      linarith
+    -- EG is constant on the entire cycle (monotone + cycle → all steps equal)
+    have hEGk : eg (n₁ + k) = eg (n₁ + k + 1) :=
+      monotone_cycle_all_eq hEGmono hEGcycle k hk
     -- Decompose EG step: eg(n₁+k) ≤ mid ≤ eg(n₁+k+1), both equalities
     have hSpeakerEqK : expectedGain G (speakerUpdate G (ibrN G (n₁ + k)))
         (ibrN G (n₁ + k + 1)) =
@@ -1111,11 +1084,8 @@ This connects game-theoretic pragmatics to grammatical exhaustification.
 
 **Important**: The scalar game hypothesis (`isScalarGame`) is required.
 For general games where truth sets are NOT nested, the theorem is false.
-Counterexample: States {a,b,c}, Messages {m,p,q,r} with m true everywhere,
-p true at {a,b}, q true at {a}, r true at {c}. At the FP, message m is
-"dominated" (no state uses it optimally), so the L0 fallback gives uniform
-probability to ALL m-true states including non-minimal ones.
-See `nonScalarCounterexample` below for a machine-checked proof.
+Without it, "dominated" messages (never optimal at any state) fall back to
+L0, assigning uniform probability to ALL m-true states including non-minimal ones.
 
 ### Results from Section 10 and Appendix A
 
@@ -1135,9 +1105,7 @@ Under "homogeneity" of alternatives, R₁(mₛ) = ExhMM(S).
 /-- A scalar game has truth sets that are totally ordered by inclusion.
     This is the structural condition required for Franke's Proposition 4
     (IBR FP = exhMW). Without it, "dominated" messages (never optimal at
-    any state) fall back to L0, breaking the exhMW characterization.
-    See `nonScalarCounterexample` below for a machine-checked counterexample
-    without this condition. -/
+    any state) fall back to L0, breaking the exhMW characterization. -/
 def isScalarGame (G : InterpGame) : Prop :=
   ∀ m₁ m₂ : G.Message, G.trueStates m₁ ⊆ G.trueStates m₂ ∨ G.trueStates m₂ ⊆ G.trueStates m₁
 
@@ -1877,15 +1845,15 @@ At the fixed point of a **scalar** interpretation game, the IBR listener's
 interpretation of message m is exactly the exhaustive interpretation exhMW(ALT, m).
 
 **Restriction**: Requires `hIBR : ∃ k, H = ibrN G (k + 1)`, i.e., H is from
-the IBR iteration sequence. The claim is FALSE for arbitrary FPs of scalar
-games (see `scalarFPCounterexample`). This matches @cite{franke-2011}'s proof
-(Appendix B.2), which works by induction on the IBR iteration, not FP alone.
+the IBR iteration sequence. The claim is false for arbitrary FPs of scalar
+games. This matches @cite{franke-2011}'s proof (Appendix B.2), which works
+by induction on the IBR iteration, not FP alone.
 
 Two structural hypotheses are required:
 
 - `isScalarGame`: truth sets are totally ordered by inclusion (nested). Without
   this, "dominated" messages fall back to L0, assigning positive probability
-  to non-minimal states. See `nonScalarCounterexample`.
+  to non-minimal states.
 
 - `hDistinct`: no two messages have identical truth sets. Without this,
   asymmetric FPs exist that break the biconditional.
@@ -1917,7 +1885,7 @@ theorem ibr_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
       split_ifs at hPos with hmW hwm
       · simp only [L0, HearerStrategy.literal, hFalse] at hPos; simp at hPos
       · exact hmW hwm.symm
-      · exact absurd hPos (lt_irrefl 0)
+      · simp at hPos
     -- Step 2: m is the strongest message at s (from ibrN_respond_pos_iff_strongest)
     have hStr := (ibrN_respond_pos_iff_strongest G hPriorPos hFlatPrior _hScalar _hDistinct
       k m s hTrue).mp hPos
@@ -1940,164 +1908,6 @@ theorem ibr_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
       fun m' hm' => scalar_minimal_messages_weaker G _hScalar m s hTrue hCardMin m' hm'
     exact (ibrN_respond_pos_iff_strongest G hPriorPos hFlatPrior _hScalar _hDistinct
       k m s hTrue).mpr hStr
-
-/-- At the fixed point, IBR excludes non-minimal states.
-
-Note: This is stated for the FIXED POINT listener, not L2 specifically.
-L2 alone doesn't necessarily exclude all non-minimal states; the full
-elimination happens through iteration to the fixed point.
--/
-theorem ibr_fp_excludes_nonminimal (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H)
-    (hPriorPos : ∀ s, G.prior s > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
-    (hIBR : ∃ k, H = ibrN G (k + 1))
-    (m : G.Message) (s : G.State)
-    (_hs : G.meaning m s = true)
-    (hNonMin : ∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
-    H.respond m s = 0 := by
-  have hNotExh : ¬exhMW (toAlternatives G) (prejacent G m) s := λ hexh => hexh.2 hNonMin
-  have hNotPos : ¬(H.respond m s > 0) :=
-    λ hpos => hNotExh ((ibr_equals_exhMW G H hFP hPriorPos hFlatPrior hScalar hDistinct hIBR m s).mp hpos)
-  have hNonneg := fp_respond_nonneg G H hFP (fun s => le_of_lt (hPriorPos s)) m s
-  simp only [not_lt] at hNotPos
-  linarith
-
-/-- At the fixed point, IBR keeps minimal states.
-
-If s is minimal among m-worlds (no s' < s with m(s')), then the fixed point
-listener assigns positive probability to s given m.
--/
-theorem ibr_fp_keeps_minimal (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
-    (hIBR : ∃ k, H = ibrN G (k + 1))
-    (m : G.Message) (s : G.State)
-    (hs : G.meaning m s = true)
-    (hMin : ¬∃ s', G.meaning m s' = true ∧ ltALT (toAlternatives G) s' s) :
-    H.respond m s > 0 := by
-  have hExh : exhMW (toAlternatives G) (prejacent G m) s := ⟨hs, hMin⟩
-  exact (ibr_equals_exhMW G H hFP hPriorPos hFlatPrior hScalar hDistinct hIBR m s).mpr hExh
-
--- SECTION 6: RSA as "Soft" IBR
-
-/-!
-## RSA → IBR as α → ∞
-
-RSA uses softmax instead of argmax:
-- RSA S₁(m | s) ∝ exp(α · log L₀(s | m)) -- softmax
-- IBR S₁(m | s) = argmax_m L₀(s | m) -- hard argmax
-
-As the rationality parameter α → ∞, softmax becomes argmax.
-This connects the probabilistic RSA model to the deterministic IBR model.
--/
-
-/-- Floor score for false messages. Uses -log(|State|) - 1, which is always
-    below the minimum possible log-informativity for any true message. -/
-noncomputable def falseMessageScore (G : InterpGame) : ℝ :=
-  - Real.log (Fintype.card G.State : ℝ) - 1
-
-/-- RSA S1 probability (real version for limit theorems).
-
-RSA S1 is exactly softmax over log-informativity scores:
-  rsaS1(m | s) = exp(α · log(inf(m))) / Σ exp(α · log(inf(m')))
-              = inf(m)^α / Σ inf(m')^α
-              = softmax(log ∘ inf, α)(m)
--/
-noncomputable def rsaS1Real (G : InterpGame) (α : ℝ) (s : G.State) : G.Message → ℝ :=
-  -- Score = log(informativity) for true messages, floor for false
-  let score := λ m =>
-    if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G
-  Core.softmax score α
-
-/-- RSA S1 equals softmax over log-informativity.
-
-This is the key observation: RSA speaker choice is softmax with
-scores = log(informativity of message).
--/
-theorem rsaS1_eq_softmax (G : InterpGame) [Nonempty G.Message] (α : ℝ) (s : G.State) :
-    rsaS1Real G α s = Core.softmax
-      (λ m => if G.meaning m s then Real.log (G.informativity m : ℝ) else falseMessageScore G) α := rfl
-
-/-- As α → ∞, RSA S1 concentrates on optimal messages (IBR S1).
-
-This follows directly from `softmax_tendsto_hardmax`:
-- RSA S1 = softmax(log-informativity, α)
-- As α → ∞, softmax → argmax
-- argmax(log-informativity) = argmax(informativity) = IBR S1
-
-The proof uses `tendsto_softmax_infty_at_max` from Limits.lean.
--/
-theorem rsa_to_ibr_limit (G : InterpGame) [Nonempty G.Message] (s : G.State) (m : G.Message)
-    (hTrue : G.meaning m s = true)
-    (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
-    (hInfPos : 0 < G.informativity m) :
-    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
-  -- RSA S1 = softmax over log-informativity
-  -- The optimal message m has highest log-informativity among true messages
-  -- By softmax_tendsto_hardmax, softmax concentrates on the maximum
-  let score := λ m' => if G.meaning m' s then Real.log (G.informativity m' : ℝ) else falseMessageScore G
-  -- m is the unique maximum of score (log is monotone, so max inf = max log inf)
-  have hmax : ∀ m', m' ≠ m → score m' < score m := by
-    intro m' hne
-    simp only [score, hTrue, ↓reduceIte]
-    split_ifs with hm'
-    · -- Both true: log is strictly monotone, so inf m > inf m' implies log(inf m) > log(inf m')
-      have hm'_pos : 0 < G.informativity m' := by
-        simp only [InterpGame.informativity]
-        split_ifs with hcard
-        · -- card = 0 case: informativity = 0, but this means message is never true
-          -- which contradicts hm' : meaning m' s = true
-          exfalso
-          have hempty : G.trueStates m' = ∅ := Finset.card_eq_zero.mp hcard
-          have hs_mem : s ∈ G.trueStates m' := G.mem_trueStates.mpr hm'
-          simp only [hempty, Finset.notMem_empty] at hs_mem
-        · exact one_div_pos.mpr (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hcard))
-      exact Real.log_lt_log (Rat.cast_pos.mpr hm'_pos) (Rat.cast_lt.mpr (hUnique m' hne hm'))
-    · -- m true, m' false: falseMessageScore < log(inf m)
-      -- falseMessageScore = -log(|State|) - 1
-      -- log(inf m) ≥ -log(|State|) since inf m ≥ 1/|State|
-      -- So log(inf m) > -log(|State|) - 1 = falseMessageScore
-      simp only [falseMessageScore]
-      -- We need: -log(|State|) - 1 < log(inf m)
-      -- Equivalently: log(inf m) > -log(|State|) - 1
-      haveI : Nonempty G.State := ⟨s⟩
-      have hcard_pos : 0 < Fintype.card G.State := Fintype.card_pos
-      have hs_in_true : s ∈ G.trueStates m := G.mem_trueStates.mpr hTrue
-      have htrue_card_pos : 0 < (G.trueStates m).card :=
-        Finset.card_pos.mpr ⟨s, hs_in_true⟩
-      have htrue_card_le : (G.trueStates m).card ≤ Fintype.card G.State :=
-        Finset.card_le_card (Finset.subset_univ _)
-      -- informativity m = 1 / (trueStates m).card
-      have hinf_eq : G.informativity m = 1 / (G.trueStates m).card := by
-        simp only [InterpGame.informativity]
-        split_ifs with hcard
-        · exact absurd hcard (Nat.pos_iff_ne_zero.mp htrue_card_pos)
-        · rfl
-      -- log(inf m) = log(1/card) = -log(card)
-      have hinf_cast_pos : 0 < (G.informativity m : ℝ) := Rat.cast_pos.mpr hInfPos
-      have hlog_eq : Real.log (G.informativity m : ℝ) = -Real.log ((G.trueStates m).card : ℝ) := by
-        rw [hinf_eq]
-        simp only [Rat.cast_div, Rat.cast_one, Rat.cast_natCast]
-        rw [Real.log_div (by norm_num : (1 : ℝ) ≠ 0)
-            (Nat.cast_ne_zero.mpr (Nat.pos_iff_ne_zero.mp htrue_card_pos)),
-            Real.log_one]
-        ring
-      rw [hlog_eq]
-      -- Need: -log(|State|) - 1 < -log(card(trueStates m))
-      -- i.e., log(card(trueStates m)) < log(|State|) + 1
-      -- Since card(trueStates m) ≤ |State|, we have log(card) ≤ log(|State|)
-      -- So log(card) < log(|State|) + 1
-      have hlog_le : Real.log ((G.trueStates m).card : ℝ) ≤ Real.log (Fintype.card G.State : ℝ) :=
-        Real.log_le_log (Nat.cast_pos.mpr htrue_card_pos) (Nat.cast_le.mpr htrue_card_le)
-      linarith
-  -- Apply the softmax limit theorem
-  exact Softmax.tendsto_softmax_infty_at_max score m hmax
 
 -- SECTION 7: Examples from the Paper
 
@@ -2154,163 +1964,6 @@ theorem scalarGame_distinct :
     ∀ m₁ m₂ : scalarGame.Message, scalarGame.trueStates m₁ = scalarGame.trueStates m₂ → m₁ = m₂ := by
   intro m₁ m₂; cases m₁ <;> cases m₂ <;> simp [scalarGame, InterpGame.trueStates] <;> decide
 
--- 7.1: Counterexample for non-scalar games
-
-/-!
-## Counterexample: `ibr_equals_exhMW` fails for non-scalar games
-
-States: {a, b, c}. Messages: {m, p, q, r}.
-- m: true at a, b, c
-- p: true at a, b (not c)
-- q: true at a (not b, c)
-- r: true at c (not a, b)
-
-trueMessages: a={m,p,q}, b={m,p}, c={m,r}.
-Only b <_ALT a (since {m,p} ⊂ {m,p,q}). a and c, b and c are incomparable.
-
-At the FP with flat prior 1/3:
-- q and r each have a unique true state, so H(q,a) = 1, H(r,c) = 1.
-- opt(a) = {q}, opt(c) = {r}, opt(b) = {p} (each state uses its most informative message).
-- Message m is never optimal at any state → maxW_m = 0 → L0 fallback.
-- L0 gives H(m,s) = 1/3 for ALL m-true states, including a (non-minimal).
-
-Result: H(m,a) = 1/3 > 0 but exhMW(m,a) = false.
-The `isScalarGame` hypothesis prevents this by ensuring no message is dominated.
--/
-
-private inductive NSState | a | b | c deriving DecidableEq, Fintype
-private inductive NSMsg | m | p | q | r deriving DecidableEq, Fintype
-
-private def nsGame : InterpGame where
-  State := NSState
-  Message := NSMsg
-  meaning := fun msg st => match msg, st with
-    | .m, _ => true | .p, .a => true | .p, .b => true | .q, .a => true | .r, .c => true
-    | _, _ => false
-  prior := fun _ => 1 / 3
-
-/-- The non-scalar game is NOT a scalar game: trueStates(q) = {a} and trueStates(r) = {c}
-    are incomparable. -/
-theorem nsGame_not_scalar : ¬isScalarGame nsGame := by
-  intro h
-  have hqr := h .q .r
-  -- trueStates(q) = {a}, trueStates(r) = {c}: incomparable
-  rcases hqr with hsub | hsub
-  · have : NSState.a ∈ nsGame.trueStates .q := nsGame.mem_trueStates.mpr rfl
-    have hmem := hsub this
-    exact absurd (nsGame.mem_trueStates.mp hmem) (by decide)
-  · have : NSState.c ∈ nsGame.trueStates .r := nsGame.mem_trueStates.mpr rfl
-    have hmem := hsub this
-    exact absurd (nsGame.mem_trueStates.mp hmem) (by decide)
-
-private def nsFPHearer : HearerStrategy nsGame where
-  respond := fun msg st => match msg, st with
-    | .m, _ => 1 / 3  -- L0 fallback
-    | .p, .b => 1 | .q, .a => 1 | .r, .c => 1 | _, _ => 0
-
-private theorem nsFP_is_fp : isIBRFixedPoint nsGame nsFPHearer := by
-  intro msg st
-  cases msg <;> cases st <;> native_decide
-
-/-- At the FP of the non-scalar game, H(m,a) > 0 but a is non-minimal for m.
-    This shows `ibr_equals_exhMW` is false without the `isScalarGame` hypothesis. -/
-theorem nonScalarCounterexample :
-    nsFPHearer.respond .m .a > 0 ∧
-    ¬exhMW (toAlternatives nsGame) (prejacent nsGame .m) .a := by
-  refine ⟨by simp [nsFPHearer], fun ⟨_, hmin⟩ => hmin ⟨.b, ?_, ?_⟩⟩
-  · exact rfl
-  · constructor
-    · intro alt halt htrue
-      simp only [toAlternatives, Set.mem_setOf_eq] at halt
-      obtain ⟨msg, hmsg⟩ := halt; subst hmsg
-      cases msg <;> simp_all [nsGame]
-    · intro hle
-      exact absurd (hle (fun s => nsGame.meaning .q s = true) ⟨.q, rfl⟩ rfl) (by decide)
-
--- 7.2: Counterexample for scalar games (arbitrary FPs)
-
-/-!
-## Counterexample: `ibr_equals_exhMW` fails for arbitrary FPs of scalar games
-
-Even with `isScalarGame`, `hDistinct`, and flat positive priors, the theorem
-fails for FPs that are NOT the IBR-sequence FP. The paper's proof (Appendix B.2)
-works by induction on the IBR iteration sequence, not by FP properties alone.
-
-**Game**: 5 states, 3 messages (nested truth sets).
-- m₁ true at {a₁, a₂, a₃}         (level 1: 3 states)
-- m₂ true at {a₁, a₂, a₃, b₁}     (level 2: 1 state)
-- m₃ true at {a₁, a₂, a₃, b₁, c₁} (level 3: 1 state = all)
-
-**Bad FP**: opt(aᵢ) = {m₁}, opt(b₁) = {m₃}, opt(c₁) = {m₃}.
-- b₁ "skips" m₂ and uses the weaker m₃ instead.
-- m₂ is never used → L0 fallback: H(m₂, b₁) = 1/4.
-- argmax_{m₃} = {b₁, c₁}: H(m₃, b₁) = 1/2 > 1/4 = H(m₂, b₁). Consistent.
-- But b₁ is non-minimal for m₃ (c₁ <_ALT b₁), yet H(m₃, b₁) = 1/2 > 0.
-
-This FP is self-consistent and satisfies anonymity (same-level states have same
-behavior), but violates `ibr_equals_exhMW`. The IBR sequence from L0 avoids this
-because L0 gives H(m₂, b₁) = 1/4 > H(m₃, b₁) = 1/5, forcing S1 to pick m₂ at b₁.
--/
-
-private inductive SFPState | a1 | a2 | a3 | b1 | c1
-  deriving DecidableEq, Fintype, Repr
-
-private inductive SFPMsg | m1 | m2 | m3
-  deriving DecidableEq, Fintype, Repr
-
-private def sfpGame : InterpGame where
-  State := SFPState
-  Message := SFPMsg
-  meaning := fun msg st => match msg, st with
-    | .m1, .a1 => true | .m1, .a2 => true | .m1, .a3 => true
-    | .m2, .a1 => true | .m2, .a2 => true | .m2, .a3 => true | .m2, .b1 => true
-    | .m3, _ => true
-    | _, _ => false
-  prior := fun _ => 1 / 5
-
-/-- The scalar FP game IS a scalar game (truth sets are nested). -/
-private theorem sfpGame_scalar : isScalarGame sfpGame := by
-  intro m₁ m₂; cases m₁ <;> cases m₂ <;> simp only [sfpGame, InterpGame.trueStates]
-  all_goals first | (left; decide) | (right; decide)
-
-/-- The scalar FP game has distinct truth sets. -/
-private theorem sfpGame_distinct :
-    ∀ m₁ m₂ : sfpGame.Message, sfpGame.trueStates m₁ = sfpGame.trueStates m₂ → m₁ = m₂ := by
-  intro m₁ m₂; cases m₁ <;> cases m₂ <;> simp [sfpGame, InterpGame.trueStates] <;> decide
-
-/-- The "bad" FP hearer: b₁ skips m₂ and uses m₃ instead. -/
-private def sfpBadFP : HearerStrategy sfpGame where
-  respond := fun msg st => match msg, st with
-    -- m₁: argmax = {a₁, a₂, a₃}, H = 1/3
-    | .m1, .a1 => 1 / 3 | .m1, .a2 => 1 / 3 | .m1, .a3 => 1 / 3
-    -- m₂: no state uses it → L0 fallback, H = 1/|trueStates| = 1/4
-    | .m2, .a1 => 1 / 4 | .m2, .a2 => 1 / 4 | .m2, .a3 => 1 / 4 | .m2, .b1 => 1 / 4
-    -- m₃: argmax = {b₁, c₁}, H = 1/2
-    | .m3, .b1 => 1 / 2 | .m3, .c1 => 1 / 2
-    | _, _ => 0
-
-set_option maxHeartbeats 800000 in
-/-- The "bad" FP is a genuine IBR fixed point. -/
-private theorem sfpBadFP_is_fp : isIBRFixedPoint sfpGame sfpBadFP := by
-  intro msg st; cases msg <;> cases st <;> native_decide
-
-/-- b₁ is non-minimal for m₃ (c₁ <_ALT b₁), yet H(m₃, b₁) > 0.
-    This shows `ibr_equals_exhMW` is false for arbitrary FPs of scalar games. -/
-theorem scalarFPCounterexample :
-    sfpBadFP.respond .m3 .b1 > 0 ∧
-    ¬exhMW (toAlternatives sfpGame) (prejacent sfpGame .m3) .b1 := by
-  refine ⟨by simp [sfpBadFP], fun ⟨_, hmin⟩ => hmin ⟨.c1, ?_, ?_⟩⟩
-  · -- m₃ true at c₁
-    exact rfl
-  · -- c₁ <_ALT b₁: trueMessages(c₁) = {m₃} ⊂ {m₂, m₃} = trueMessages(b₁)
-    constructor
-    · intro alt halt htrue
-      simp only [toAlternatives, Set.mem_setOf_eq] at halt
-      obtain ⟨msg, hmsg⟩ := halt; subst hmsg
-      cases msg <;> simp_all [sfpGame]
-    · intro hle
-      exact absurd (hle (fun s => sfpGame.meaning .m2 s = true) ⟨.m2, rfl⟩ rfl) (by decide)
-
 /-!
 ## Free Choice Disjunction (Franke Section 3.3)
 
@@ -2355,192 +2008,5 @@ def freeChoiceGame : InterpGame where
     | .mayAandB, .both => true
     | _, _ => false
   prior := λ _ => 1 / 4  -- Uniform prior
-
--- SECTION 8: The Complete Chain: RSA → IBR → ExhMW → ExhIE
-
-/-!
-## The Complete Chain
-
-This section states the full limit theorem connecting RSA to EXH, combining:
-
-- **@cite{franke-2011}**: RSA → IBR as α → ∞; IBR ≈ ExhMW (Appendix A)
-- **@cite{spector-2007}**: Iterated exhaustification
-- **@cite{spector-2016}**: Theorem 9 (ExhMW = ExhIE under closure)
-
-### The Chain
-
-```
-RSA S1 (softmax)
-    │ α → ∞ [rsa_to_ibr_limit - PROVED]
-    ↓
-IBR S1 (argmax) = R₁
-    │ Fact 1 [r1_subset_exhMW] (@cite{franke-2011} Appendix A)
-    ↓
-ExhMW (minimal worlds)
-    │ Theorem 9 [fact4_exhMW_eq_exhIE_closed]
-    ↓
-ExhIE (innocent exclusion)
-```
-
-### Results
-
-1. **rsa_to_ibr_limit** (proved above): RSA S1 → IBR S1 as α → ∞
-2. **Fact 1** (r1_subset_exhMW): IBR R₁ ⊆ ExhMW (@cite{franke-2011} Appendix A)
-3. **Fact 3** (fact3_exhMW_subset_exhIE): ExhMW ⊆ ExhIE (@cite{franke-2011} Appendix A)
-4. **Theorem 9** (fact4_exhMW_eq_exhIE_closed): Under closure, ExhMW = ExhIE
-
-Combined: Under closure, lim_{α→∞} RSA = IBR = ExhMW = ExhIE
-
-### Temperature Interpretation
-
-- Temperature 1/α = 0 (α = ∞): deterministic selection (EXH/IBR)
-- Temperature 1/α > 0 (α finite): probabilistic selection (RSA)
-
-**RSA and EXH are the same rational principle at different "temperatures"**
--/
-
---8.1: IBR to ExhMW (combining facts from Section 5)
-
-/-- IBR fixed point equals exhMW (Main theorem - @cite{franke-2011}, Section 9.3)
-
-This combines:
-- Equation (107): R₁ selects states with minimum alternative count
-- Fact 1: Such states are exactly the minimal worlds
-
-At the fixed point, the IBR listener's interpretation of message m is
-exactly the exhaustive interpretation exhMW(ALT, m).
--/
-theorem ibr_fp_equals_exhMW (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
-    (hIBR : ∃ k, H = ibrN G (k + 1))
-    (m : G.Message) :
-    (∀ s, H.respond m s > 0 ↔ exhMW (toAlternatives G) (prejacent G m) s) :=
-  ibr_equals_exhMW G H hFP hPriorPos hFlatPrior hScalar hDistinct hIBR m
-
---8.2: ExhMW to ExhIE (Spector's Theorem 9)
-
-/-- When alternatives are closed under conjunction, ExhMW = ExhIE.
-
-This is Spector's Theorem 9, already proved in Exhaustification/Operators.lean.
-We re-export it here for the chain. -/
-theorem exhMW_eq_exhIE_under_closure (G : InterpGame) (m : G.Message)
-    (hClosed : closedUnderConj (toAlternatives G)) :
-    (∀ s, exhMW (toAlternatives G) (prejacent G m) s ↔
-          exhIE (toAlternatives G) (prejacent G m) s) := by
-  intro s
-  have h := fact4_exhMW_eq_exhIE_closed G m hClosed
-  exact ⟨h.1 s, h.2 s⟩
-
---8.3: IBR to ExhIE (combining the chain)
-
-/-- When alternatives are closed under conjunction, IBR = exhIE.
-
-This combines:
-- ibr_fp_equals_exhMW: IBR fixed point = exhMW
-- fact4_exhMW_eq_exhIE_closed: Under closure, exhMW = exhIE
-
-Combined: Under closure, IBR = exhMW = exhIE -/
-theorem ibr_fp_equals_exhIE (G : InterpGame) (H : HearerStrategy G)
-    (hFP : isIBRFixedPoint G H)
-    (hPriorPos : ∀ t, G.prior t > 0)
-    (hFlatPrior : ∀ t₁ t₂ : G.State, G.prior t₁ = G.prior t₂)
-    (hScalar : isScalarGame G)
-    (hDistinct : ∀ m₁ m₂ : G.Message, G.trueStates m₁ = G.trueStates m₂ → m₁ = m₂)
-    (hIBR : ∃ k, H = ibrN G (k + 1))
-    (m : G.Message)
-    (hClosed : closedUnderConj (toAlternatives G)) :
-    (∀ s, H.respond m s > 0 ↔ exhIE (toAlternatives G) (prejacent G m) s) := by
-  intro s
-  have h1 := ibr_fp_equals_exhMW G H hFP hPriorPos hFlatPrior hScalar hDistinct hIBR m s
-  have h2 := exhMW_eq_exhIE_under_closure G m hClosed s
-  exact ⟨λ h => h2.1 (h1.1 h), λ h => h1.2 (h2.2 h)⟩
-
---8.4: RSA to ExhIE (the full limit theorem)
-
-/-- The grand unification: RSA → ExhMW as α → ∞.
-
-This combines:
-- rsa_to_ibr_limit: RSA S1 → IBR S1 as α → ∞
-- IBR fixed point = exhMW
-
-Therefore: lim_{α→∞} support(RSA.L1(α, m)) = exhMW(ALT, m) -/
-theorem rsa_to_exhMW_limit (G : InterpGame) [Nonempty G.Message] (m : G.Message) (s : G.State)
-    (hTrue : G.meaning m s = true)
-    (hMin : isMinimalByAltCount G m s)
-    (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
-    (hInfPos : 0 < G.informativity m) :
-    -- The RSA speaker probability for message m at state s converges to 1 as α → ∞
-    -- when s is a minimal state (i.e., in exhMW)
-    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) :=
-  rsa_to_ibr_limit G s m hTrue hUnique hInfPos
-
-/-- The full limit theorem: RSA → ExhIE under closure as α → ∞.
-
-This combines results from:
-- **@cite{franke-2011}**: RSA → IBR (softmax → argmax), IBR = exhMW (Appendix A)
-- **@cite{spector-2007}**: Iterated exhaustification
-- **@cite{spector-2016}**: Theorem 9 (exhMW = exhIE under closure)
-
-The chain:
-1. RSA S1 → IBR S1 as α → ∞ (softmax → argmax)
-2. IBR = exhMW (@cite{franke-2011} Appendix A, Fact 1)
-3. exhMW = exhIE under closure (@cite{spector-2016} Theorem 9)
-
-Therefore: Under closure, lim_{α→∞} RSA = exhIE -/
-theorem rsa_to_exhIE_limit (G : InterpGame) [Nonempty G.Message] (m : G.Message) (s : G.State)
-    (hTrue : G.meaning m s = true)
-    (hMin : exhIE (toAlternatives G) (prejacent G m) s)
-    (hClosed : closedUnderConj (toAlternatives G))
-    (hUnique : ∀ m', m' ≠ m → G.meaning m' s = true → G.informativity m > G.informativity m')
-    (hInfPos : 0 < G.informativity m) :
-    Filter.Tendsto (λ α => rsaS1Real G α s m) Filter.atTop (nhds 1) := by
-  -- Chain: exhIE = exhMW (under closure) = isMinimalByAltCount = RSA limit
-  -- We use the closure condition to connect exhIE to exhMW
-  have hMW : exhMW (toAlternatives G) (prejacent G m) s :=
-    (fact4_exhMW_eq_exhIE_closed G m hClosed).2 s hMin
-  -- Then apply the RSA → IBR limit (which is RSA → exhMW under homogeneity)
-  exact rsa_to_ibr_limit G s m hTrue hUnique hInfPos
-
--- SECTION 10: Epistemic Implicatures (Franke Section 3.2)
-
-/-!
-## Epistemic Readings (Franke Section 3.2)
-
-Franke distinguishes three epistemic readings of scalar implicatures:
-
-1. **Simple SI**: "Some but not all" (most common)
-2. **Weak epistemic**: "The speaker doesn't know that all"
-3. **Strong epistemic**: "The speaker knows that not all"
-
-These arise from different assumptions about speaker competence:
-- Full competence → Simple SI
-- No competence assumed → Weak epistemic
-- Intermediate → Strong epistemic
-
-IBR naturally handles these by adjusting the state space.
--/
-
-/-- Speaker competence level (Franke Section 3.2) -/
-inductive CompetenceLevel where
-  | full : CompetenceLevel       -- Speaker knows the true state
-  | uncertain : CompetenceLevel  -- Speaker may be uncertain
-  | none : CompetenceLevel       -- No competence assumption
-  deriving DecidableEq, Repr
-
-/-- Epistemic state: combines world state with speaker knowledge.
-    Used for epistemic readings of scalar implicatures. -/
-structure EpistemicState (S : Type) where
-  actualWorld : S
-  speakerKnowledge : Set S  -- What worlds speaker considers possible
-
-/-- Build epistemic interpretation game from base game -/
-def toEpistemicGame (G : InterpGame) (comp : CompetenceLevel) : InterpGame :=
-  match comp with
-  | .full => G  -- Full competence: same as base game
-  | _ => G      -- Simplified: would need richer state space
 
 end RSA.IBR
