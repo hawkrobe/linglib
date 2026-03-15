@@ -139,31 +139,32 @@ But with presupposition satisfied:
 -/
 
 /--
-Presupposition of "only x VP": x satisfies VP.
+"Only x VP" as a `PrProp`: Horn's asymmetric decomposition.
 
-`x` picks out a world (individual), `scope` is the VP denotation.
-In our finite model, x is a characteristic function selecting one world.
+- **Presupposition**: the focused individual x satisfies VP
+- **Assertion**: no y ≠ x satisfies VP
+
+Uses `Core.Presupposition.PrProp` directly, making the presupposition/assertion
+split structural rather than ad-hoc.
 -/
-def onlyPresup (x : World → Bool) (scope : BProp World) : Prop :=
-  ∃ w, x w = true ∧ scope w = true
-
-/--
-Assertion of "only x VP": no y ≠ x satisfies VP.
-
-For all worlds in the model, if y is not x, then y doesn't satisfy scope.
--/
-def onlyAssert (x : World → Bool) (scope : BProp World) : BProp World :=
-  λ w => allWorlds.all λ y =>
-    (x y) || !(scope y)
+def onlyPrProp (x : World → Bool) (scope : BProp World) : Core.Presupposition.PrProp World where
+  presup := λ _ => allWorlds.any λ y => x y && scope y
+  assertion := λ _ => allWorlds.all λ y => x y || !(scope y)
 
 /--
 The full "only" meaning: presupposition + assertion combined.
 
 "Only x VP" is true at w iff x satisfies VP AND no one else does.
+Equivalent to `(onlyPrProp x scope).presup w && (onlyPrProp x scope).assertion w`.
 -/
 def onlyFull (x : World → Bool) (scope : BProp World) : BProp World :=
   λ w => (allWorlds.any λ y => x y && scope y) &&
          (allWorlds.all λ y => x y || !(scope y))
+
+/-- `onlyFull` equals the conjunction of `onlyPrProp`'s components. -/
+theorem onlyFull_eq_prprop (x : World → Bool) (scope : BProp World) (w : World) :
+    onlyFull x scope w = ((onlyPrProp x scope).presup w && (onlyPrProp x scope).assertion w) :=
+  rfl
 
 /--
 "Only" (full meaning) is not classically DE (von Fintel ex 11).
@@ -240,67 +241,87 @@ theorem onlyFull_isStrawsonDE (x : World → Bool) :
 
 /-!
 ### Adversative/Factive Attitudes
+@cite{von-fintel-1999} @cite{kratzer-1981}
 
-"Sorry", "surprised", "regret" license NPIs in their complement:
-- "Sandy is sorry that Robin bought any car" ✓ (ex 28a)
-- "Sandy is amazed that Robin ever ate kale" ✓
+"Sorry", "surprised", "regret" license NPIs in their complement.
+Von Fintel's analysis (§3.2): these attitudes quantify over "best worlds"
+(worlds optimal according to the agent's preferences). The complement
+position's monotonicity is *derived* from the preference structure.
 
-These are factive (presuppose their complement is true) and the complement
-position is DE on the ordering source. The factivity presupposition ensures
-the complement is in the "defined" region, making them Strawson-DE.
+Key insight: `sorry that p` ≈ `want that ¬p` — adversative attitudes
+negate the complement relative to the preference ordering. This makes the
+complement position Strawson-DE (DE conditional on factivity presupposition).
 
-Contrast with "glad" which is not factive and doesn't reliably license NPIs.
+Contrast: `glad that p` ≈ `want that p` — the complement position is UE,
+so `glad` does NOT license NPIs.
+
+The `bestOf` parameter corresponds to `bestWorlds f g` from
+`Modality/Kratzer.lean` (Kratzer's modal base + ordering source).
+The two modules use different `World` types, so the connection is
+structural rather than via direct import.
 -/
 
 /--
-A factive predicate's complement position is Strawson-DE.
+`sorry` denotation: adversative factive attitude.
 
-Structure capturing: the predicate presupposes its complement is true,
-and once the complement is assumed true, the complement position is DE
-(the ordering reversal makes it antitone on constant perspective).
+"α is sorry that p" = in α's preferred worlds, p is NOT true.
+`bestOf w` returns the "best" accessible worlds from w — intended to be
+instantiated with `Kratzer.bestWorlds f g` from `Modality/Kratzer.lean`.
 -/
-structure FactiveStrawsonDE where
-  /-- The predicate name -/
-  name : String
-  /-- Is factive? (presupposes complement truth) -/
-  factive : Bool
-  /-- Licenses NPIs in complement? -/
-  licensesNPIs : Bool
-  /-- The ordering-source reversal makes complement position Strawson-DE -/
-  strawsonDE : Bool
-  /-- Notes -/
-  notes : String := ""
-
-/-- "sorry" / "regret" — factive adversative, licenses NPIs via Strawson-DE -/
-def sorry_pred : FactiveStrawsonDE :=
-  { name := "sorry/regret"
-  , factive := true
-  , licensesNPIs := true
-  , strawsonDE := true
-  , notes := "von Fintel ex 28a: Sandy is sorry that Robin bought any car" }
-
-/-- "surprised" / "amazed" — factive adversative, licenses NPIs -/
-def surprised_pred : FactiveStrawsonDE :=
-  { name := "surprised/amazed"
-  , factive := true
-  , licensesNPIs := true
-  , strawsonDE := true
-  , notes := "von Fintel ex 28b: Sandy is amazed that Robin ever ate kale" }
-
-/-- "glad" — not reliably factive, weaker NPI licensing -/
-def glad_pred : FactiveStrawsonDE :=
-  { name := "glad"
-  , factive := false  -- Debatable; weaker factivity
-  , licensesNPIs := false
-  , strawsonDE := false
-  , notes := "Does not reliably license NPIs; von Fintel ex 31" }
+def sorryDen (bestOf : World → List World) (p : BProp World) : BProp World :=
+  λ w => (bestOf w).all λ w' => !p w'
 
 /--
-Adversative factives are Strawson-DE in their complement.
+`glad` denotation: non-adversative factive attitude.
 
-This is a semantic-level theorem: for a factive operator that presupposes
-complement truth and has an adversative ordering source, the complement
-position is DE conditional on presupposition satisfaction.
+"α is glad that p" = in α's preferred worlds, p IS true.
+Same structure as `sorryDen` but without negation.
+-/
+def gladDen (bestOf : World → List World) (p : BProp World) : BProp World :=
+  λ w => (bestOf w).all λ w' => p w'
+
+/--
+`sorry` is Strawson-DE in its complement.
+
+The definedness condition is factivity: the complement p holds at all
+preferred worlds. Given factivity and p ⊆ q, contraposition (¬q ⊆ ¬p)
+gives the Strawson-DE inference.
+-/
+theorem sorryDen_isStrawsonDE (bestOf : World → List World) :
+    IsStrawsonDE (sorryDen bestOf)
+      (λ p => ∀ w w', w' ∈ bestOf w → p w' = true) := by
+  intro p q hpq hdef w
+  simp only [sorryDen]
+  intro hAll
+  apply List.all_eq_true.mpr
+  intro w' hw'
+  have hpw' : p w' = true := hdef w w' hw'
+  have hqw' : q w' = true := le_antisymm le_top (hpw' ▸ hpq w')
+  simp only [Bool.not_eq_true'] at hAll ⊢
+  exact absurd hqw' (by
+    have := List.all_eq_true.mp hAll w' hw'
+    simp only [Bool.not_eq_true'] at this; rw [this]; decide)
+
+/--
+`glad` is NOT Strawson-DE — it is upward entailing (UE).
+
+If p ⊆ q, and all preferred worlds satisfy p, then they satisfy q.
+This means `glad` preserves entailment direction — it does NOT license NPIs.
+-/
+theorem gladDen_isUE (bestOf : World → List World) :
+    ∀ p q : BProp World, (∀ w, p w ≤ q w) →
+      ∀ w, gladDen bestOf p w ≤ gladDen bestOf q w := by
+  intro p q hpq w
+  simp only [gladDen]
+  intro hAll
+  apply List.all_eq_true.mpr
+  intro w' hw'
+  have hpw' := List.all_eq_true.mp hAll w' hw'
+  exact le_antisymm le_top (hpw' ▸ hpq w')
+
+/--
+Abstract adversative Strawson-DE: any factive operator whose complement
+position is DE given presupposition satisfaction is Strawson-DE.
 -/
 theorem adversative_isStrawsonDE
     (f : BProp World → BProp World) (hFactive : ∀ p w, f p w = true → p w = true)
@@ -397,6 +418,62 @@ theorem superlative_isStrawsonDE (subject : World → Bool) :
       · exact absurd hCq (by rw [h_false]; decide)
     · -- C(p) is false: no non-subject satisfies p — third disjunct holds
       right; exact Bool.eq_false_iff.mpr hCp
+
+-- ============================================================================
+-- Section 5b: Conditional Antecedents (von Fintel §4.1)
+-- ============================================================================
+
+/-!
+### Conditional Antecedents
+@cite{von-fintel-1999} @cite{kratzer-1986}
+
+If-clauses license NPIs: "If you've *ever* been to Paris, you know the Louvre."
+Under the restrictor analysis (@cite{kratzer-1986}), "if α, must β" =
+necessity over the α-restricted modal base. The antecedent position is
+classically DE: strengthening the antecedent can only shrink the domain,
+making the universal check easier to satisfy.
+
+`condNecessity` corresponds to `conditionalNecessity f emptyBackground α β`
+from `Conditionals/Restrictor.lean` (with empty ordering source, where
+best worlds = accessible worlds). The two modules use different `World`
+types, so the correspondence is structural.
+-/
+
+/--
+Conditional necessity via domain restriction.
+
+"If α, must β" is true at w iff β holds at all α-worlds accessible from w.
+`domain w` returns accessible worlds — intended to be instantiated with
+`Kratzer.accessibleWorlds f` from `Modality/Kratzer.lean`.
+-/
+def condNecessity (domain : World → List World) (α β : BProp World) : BProp World :=
+  λ w => ((domain w).filter α).all β
+
+/--
+The antecedent position of `condNecessity` is classically DE.
+
+If α₁ ⊆ α₂, then "if α₂, must β" entails "if α₁, must β": the α₁-worlds
+are a subset of the α₂-worlds, so the `.all β` check passes on the smaller
+set whenever it passes on the larger.
+-/
+theorem conditional_antecedent_DE (domain : World → List World) (β : BProp World) :
+    IsDownwardEntailing (λ α => condNecessity domain α β) := by
+  intro α₁ α₂ hle w
+  simp only [condNecessity]
+  intro h
+  apply List.all_eq_true.mpr
+  intro w' hw'
+  have ⟨hw'_mem, hw'_α₁⟩ := List.mem_filter.mp hw'
+  have hw'_α₂ : α₂ w' = true := le_antisymm le_top (hw'_α₁ ▸ hle w')
+  exact List.all_eq_true.mp h w' (List.mem_filter.mpr ⟨hw'_mem, hw'_α₂⟩)
+
+/--
+Conditional antecedent is Strawson-DE (trivially, since it is classically DE).
+-/
+theorem conditional_antecedent_strawsonDE (domain : World → List World) (β : BProp World)
+    (defined : BProp World → Prop) :
+    IsStrawsonDE (λ α => condNecessity domain α β) defined :=
+  de_implies_strawsonDE _ (conditional_antecedent_DE domain β) defined
 
 -- ============================================================================
 -- Section 6: Bridge Theorems
