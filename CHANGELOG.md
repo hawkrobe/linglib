@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.250] - 2026-03-14
+
+### Added
+- **Siloni2012.lean**: Formalize reciprocal verbs and symmetry — three-way classification (periphrastic/lexical/syntactic), nine-property cluster with complementarity theorem, θ-role bundling via EntailmentProfile, "I" reading derivation chain (singular event → no sub-events → blocked; dual role → blocked), 10-language sample, 5 bridge theorems to Typology.lean
+
 ## [0.229.249] - 2026-03-14
 
 ### Changed
