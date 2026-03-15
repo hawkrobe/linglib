@@ -1,5 +1,6 @@
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
 import Linglib.Core.Discourse.SpeechActs
+import Linglib.Core.Discourse.QUD
 
 /-!
 # KOS Conversational Rules
@@ -218,7 +219,7 @@ When A asserts p and B accepts, B's FACTS match what A's FACTS
 would be if A also ran assert. This is the grounding invariant:
 successful grounding means both participants' FACTS agree. -/
 theorem assert_accept_facts_agree {Fact QContent : Type} [Answerhood Fact QContent]
-    (is_ : IS Fact QContent) (p : Fact) (lm : LatestMove) :
+    (is_ : IS Fact QContent) (p : Fact) :
     (is_.accept p).dgb.facts = p :: is_.dgb.facts := rfl
 
 -- ════════════════════════════════════════════════════
@@ -355,5 +356,118 @@ theorem inquiry_cycle_qud :
   native_decide
 
 end InquiryExample
+
+-- ════════════════════════════════════════════════════
+-- § 8. Bridge: Answerhood ↔ QUD Partitions
+-- ════════════════════════════════════════════════════
+
+/-! ## Partition-Based Answerhood
+
+@cite{ginzburg-2012} Ch. 4 defines QUD-downdate in terms of FACTS
+resolving questions. The `Answerhood` typeclass above abstracts this.
+Here we connect it to the partition-based `QUD W` from
+`Core/Discourse/QUD.lean` (@cite{groenendijk-stokhof-1984}):
+
+A `BProp W` fact resolves a `QUD W` question when the fact determines
+a unique cell — all worlds where the fact holds are in the same
+partition cell. This means learning the fact settles the question. -/
+
+/-- A `BProp W` resolves a `QUD W` if all fact-worlds are in the same
+partition cell.
+
+Given a finite list of worlds, we check: for every pair of worlds
+where the fact holds, they have the same answer under the QUD. -/
+def bpropResolvesQUD {W : Type} [BEq W] (worlds : List W)
+    (fact : Core.Proposition.BProp W) (q : QUD W) : Bool :=
+  let factWorlds := worlds.filter fact
+  factWorlds.all fun w₁ =>
+    factWorlds.all fun w₂ =>
+      q.sameAnswer w₁ w₂
+
+/-- Answerhood instance: `BProp W` resolves `QUD W` over a fixed world list.
+
+This connects KOS conversational rules (which use `Answerhood`) to
+the partition-based question semantics in `Core/Discourse/QUD.lean`.
+The world list must be provided at instance creation. -/
+def answerhoodFromPartition {W : Type} [BEq W] (worlds : List W) :
+    Answerhood (Core.Proposition.BProp W) (QUD W) where
+  resolves := bpropResolvesQUD worlds
+
+/-- A `BProp W` resolves a `Discourse.Issue W` if it settles some
+alternative — the fact entails at least one of the issue's alternatives.
+
+This connects KOS to Inquisitive Semantics (@cite{ciardelli-groenendijk-roelofsen-2019}):
+resolving an issue means establishing enough information to determine
+which alternative holds. -/
+def bpropResolvesIssue {W : Type} (worlds : List W)
+    (fact : Core.Proposition.BProp W) (q : Discourse.Issue W) : Bool :=
+  q.alternatives.any fun alt =>
+    Discourse.propEntails fact alt worlds
+
+/-- Answerhood instance: `BProp W` resolves `Discourse.Issue W`. -/
+def answerhoodFromIssue {W : Type} (worlds : List W) :
+    Answerhood (Core.Proposition.BProp W) (Discourse.Issue W) where
+  resolves := bpropResolvesIssue worlds
+
+-- ════════════════════════════════════════════════════
+-- § 9. Partition Answerhood Example
+-- ════════════════════════════════════════════════════
+
+section PartitionExample
+
+/-- Three-world scenario: is it raining? -/
+inductive RainWorld where
+  | sunny | rainy | cloudy
+  deriving Repr, DecidableEq, BEq
+
+/-- "Is it raining?" — partition into rainy vs non-rainy. -/
+def isRainingQ : QUD RainWorld :=
+  QUD.ofProject (fun w => match w with | .rainy => true | _ => false) "raining?"
+
+/-- "It is raining" — true only in the rainy world. -/
+def itIsRaining : Core.Proposition.BProp RainWorld :=
+  fun w => match w with | .rainy => true | _ => false
+
+/-- "It is sunny" — true only in the sunny world. -/
+def itIsSunny : Core.Proposition.BProp RainWorld :=
+  fun w => match w with | .sunny => true | _ => false
+
+private def rainWorlds : List RainWorld := [.sunny, .rainy, .cloudy]
+
+/-- "It is raining" resolves "Is it raining?" — all raining-worlds
+are in the same cell (trivially: there's only one). -/
+theorem raining_resolves_raining :
+    bpropResolvesQUD rainWorlds itIsRaining isRainingQ = true := by native_decide
+
+/-- "It is sunny" also resolves "Is it raining?" — all sunny-worlds
+are in the same cell (the non-rainy cell). -/
+theorem sunny_resolves_raining :
+    bpropResolvesQUD rainWorlds itIsSunny isRainingQ = true := by native_decide
+
+/-- Using the instance: full inquiry cycle with partition-based answerhood. -/
+private def rainIS₀ : IS (Core.Proposition.BProp RainWorld) (QUD RainWorld) := IS.initial
+private def rainLM : LatestMove :=
+  { sign := { phon := "Is it raining?", cat := "S", cont := "raining" }
+    assignment := { bindings := [] } }
+
+attribute [local instance] answerhoodFromPartition
+
+private def rainIS₁ : IS (Core.Proposition.BProp RainWorld) (QUD RainWorld) :=
+  rainIS₀.ask isRainingQ rainLM
+
+/-- After asking, QUD has the partition question. -/
+theorem rain_ask_qud : rainIS₁.dgb.qud = [isRainingQ] := rfl
+
+private def rainAssertLM : LatestMove :=
+  { sign := { phon := "It is raining", cat := "S", cont := "raining" }
+    assignment := { bindings := [] } }
+
+private def rainIS₂ : IS (Core.Proposition.BProp RainWorld) (QUD RainWorld) :=
+  @IS.assertRule _ _ (answerhoodFromPartition rainWorlds) rainIS₁ itIsRaining rainAssertLM
+
+/-- After asserting "It is raining", QUD is empty (resolved). -/
+theorem rain_assert_resolves : rainIS₂.dgb.qud = [] := by native_decide
+
+end PartitionExample
 
 end Theories.Pragmatics.Dialogue.KOS

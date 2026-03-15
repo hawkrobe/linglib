@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.263] - 2026-03-15
+
+### Added
+- **Answerhood ↔ QUD partition bridge** in `KOS/Rules.lean`: connect KOS conversational rules to formal question semantics
+  - `bpropResolvesQUD`: `BProp W` resolves `QUD W` when fact determines a unique partition cell
+  - `bpropResolvesIssue`: `BProp W` resolves `Discourse.Issue W` when fact entails an alternative
+  - `answerhoodFromPartition`/`answerhoodFromIssue`: `Answerhood` instances bridging KOS to G&S/Inquisitive Semantics
+  - Worked example: three-world rain scenario with partition-based inquiry cycle
+
 ## [0.229.262] - 2026-03-15
 
 ### Added
