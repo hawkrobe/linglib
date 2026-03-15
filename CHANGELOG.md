@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.285] - 2026-03-15
+
+### Added
+- **K&S 2002 deep audit**: add singleton collapse theorems (`hamblinPoss_singleton`, `hamblinNec_singleton`) proving Hamblin modals reduce to standard Kripke modals on singleton alternative sets — the paper's core architectural claim; add end-to-end FC derivation `fc_end_to_end_possibility` connecting §7 modal semantics to §8 pragmatic derivation in a single theorem; add `QuantOperator.applyProp` mapping operator tags to their semantic implementations; add `InterventionDatum.isScopeBearing` field and `beck_generalization` theorem proving the scope-bearing = ungrammatical correspondence; add `exist_prefix` theorem verifying kaut- prefix on Latvian existential series
+
+### Changed
+- **K&S 2002**: rename `AccessRel` to `HamblinAccessRel` to avoid shadowing `Core.ModalLogic.AccessRel` (Prop vs Bool); fix dangling `@cite{chierchia-2001}` and `@cite{schwarzschild-2000}` (no bib entries); fix section numbers in banners (§6 vs §8 for distribution requirement evidence vs derivation; §7 not §5 for modal interaction)
+
 ## [0.229.284] - 2026-03-15
 
 ### Added

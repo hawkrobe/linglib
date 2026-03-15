@@ -79,4 +79,9 @@ theorem fc_prefix :
     paradigm.all (fun e => e.freeChoice.startsWith "jeb-") = true := by
   native_decide
 
+/-- Each kaut-series form uses the common prefix "kaut ". -/
+theorem exist_prefix :
+    paradigm.all (fun e => e.existential.startsWith "kaut ") = true := by
+  native_decide
+
 end Fragments.Latvian.IndeterminatePronouns

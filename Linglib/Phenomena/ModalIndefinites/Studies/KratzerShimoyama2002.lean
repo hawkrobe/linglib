@@ -23,26 +23,30 @@ movement.
 
 ## Formalized Contributions
 
-1. **Hamblin operators** (§2-3): The four sentential operators over
+1. **Hamblin operators** (§2): The four sentential operators over
    propositional alternative sets.
 2. **Pointwise FA = Set applicative** (§3): K&S's Hamblin FA is exactly
    the set applicative from @cite{charlow-2020}, already formalized in
-   `SetMonad.lean`.
-3. **Modal–indefinite interaction** (§7): Possibility/necessity modals
+   `Applicative.lean`.
+3. **Singleton collapse**: When alternatives are a singleton (ordinary
+   semantics), Hamblin modals reduce to standard Kripke modals.
+4. **Modal–indefinite interaction** (§7): Possibility/necessity modals
    are sensitive to Hamblin alternatives in their scope.
-4. **Distribution requirement as implicature** (§8): The free choice
+5. **Distribution requirement as implicature** (§6, §8): The free choice
    effect is derived via Gricean reasoning, not semantic entailment.
-5. **Selectivity** (§9): Non-selective (Japanese) vs. selective
+6. **End-to-end FC derivation**: Hamblin T-content + implicature = FC.
+7. **Selectivity** (§9): Non-selective (Japanese) vs. selective
    (Indo-European) indeterminate systems, with Beck effect data.
-6. **Cross-linguistic paradigm** (§1): Latvian indeterminate series.
+8. **Cross-linguistic paradigm** (§1): Latvian indeterminate series.
 
 ## Integration Points
 
-- §3 Hamblin FA bridges to `SetMonad.setAp` (`Composition/SetMonad.lean`)
-- §8 distribution requirement bridges to `free_choice_forward`
+- §3 Hamblin FA bridges to `setAp` (`Composition/Applicative.lean`)
+- Singleton collapse bridges Hamblin modals to Kripke semantics
+- §8 free choice bridges to `free_choice_forward`
   (`Exhaustification/FreeChoice.lean`)
-- Fragment data bridges to `Japanese/Determiners.lean` and
-  `German/ModalIndefinites.lean`
+- Fragment data bridges to `Japanese/Determiners.lean`,
+  `German/ModalIndefinites.lean`, and `Latvian/IndeterminatePronouns.lean`
 -/
 
 set_option autoImplicit false
@@ -128,6 +132,23 @@ theorem opForall_entails_opExists (A : HamblinDen (W → Prop))
   obtain ⟨p, hp⟩ := hne
   exact ⟨p, hp, h p hp⟩
 
+/-- Map from operator tags to their semantic implementations. -/
+inductive QuantOperator where
+  | exists_   -- [∃]: existential closure
+  | forall_   -- [∀]: universal closure
+  | neg       -- [Neg]: negative closure
+  | question  -- [Q]: question formation
+  deriving DecidableEq, BEq, Repr
+
+/-- Semantic interpretation of a propositional quantificational operator.
+    Maps each operator tag to its actual semantics. -/
+def QuantOperator.applyProp (op : QuantOperator) (A : HamblinDen (W → Prop)) : W → Prop :=
+  match op with
+  | .exists_ => opExists A
+  | .forall_ => opForall A
+  | .neg     => opNeg A
+  | .question => opExists A  -- Q returns alternatives; as a proposition, use ∃
+
 end Operators
 
 
@@ -185,7 +206,7 @@ end Derivation
 
 
 -- ════════════════════════════════════════════════════════════════
--- Part III: Modal–Indefinite Interaction (§5, §7)
+-- Part III: Modal–Indefinite Interaction (§7)
 -- ════════════════════════════════════════════════════════════════
 
 /-!
@@ -194,65 +215,85 @@ end Derivation
 The key insight: modals can be sensitive to the propositional alternatives
 introduced by indeterminate phrases in their scope (p. 132-133).
 
-A possibility modal with accessibility relation R and an indeterminate
-creating alternative set A:
+Possibility/necessity modals over an alternative set A:
 
 ```
-⟦kann α⟧^{w,g} = {λw'. ∃w''[R(w',w'') ∧ ∃p[p ∈ ⟦α⟧^{w'',g} ∧ p(w'')=1]]}
-⟦muss α⟧^{w,g} = {λw'. ∀w''[R(w',w'') → ∃p[p ∈ ⟦α⟧^{w'',g} ∧ p(w'')=1]]}
+⟦kann α⟧(w) = ∃w'[R(w,w') ∧ ∃p[p ∈ A ∧ p(w')]]
+⟦muss α⟧(w) = ∀w'[R(w,w') → ∃p[p ∈ A ∧ p(w')]]
 ```
 
 The **distribution requirement** (to be derived as implicature in §8):
 
-`∀p[p ∈ A → ∃w''[R(w,w'') ∧ p(w'')]]`
+`∀p[p ∈ A → ∃w'[R(w,w') ∧ p(w')]]`
 
 distributes alternatives over accessible worlds.
+
+Note: We use `Prop`-valued accessibility here (rather than the `Bool`-valued
+`Core.ModalLogic.AccessRel`) to stay in `Prop` throughout the Hamblin
+semantics. The singleton collapse theorem below shows these Hamblin modals
+reduce to standard Kripke modals when the alternative set is a singleton.
 -/
 
 section ModalInteraction
 
 variable {W : Type}
 
-/-- Accessibility relation between worlds. -/
-abbrev AccessRel (W : Type) := W → W → Prop
+/-- Prop-valued accessibility relation for Hamblin modal semantics.
+    Named distinctly from `Core.ModalLogic.AccessRel` (which is Bool-valued)
+    to avoid shadowing. -/
+abbrev HamblinAccessRel (W : Type) := W → W → Prop
 
-/-- Possibility modal over Hamblin alternatives (p. 133):
+/-- Possibility modal over Hamblin alternatives (§7, p. 133):
     True at w iff some accessible world satisfies some alternative. -/
-def hamblinPoss (R : AccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
+def hamblinPoss (R : HamblinAccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
   ∃ w', R w w' ∧ ∃ p, A p ∧ p w'
 
-/-- Necessity modal over Hamblin alternatives (p. 133):
+/-- Necessity modal over Hamblin alternatives (§7, p. 133):
     True at w iff every accessible world satisfies some alternative. -/
-def hamblinNec (R : AccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
+def hamblinNec (R : HamblinAccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
   ∀ w', R w w' → ∃ p, A p ∧ p w'
 
-/-- The distribution requirement (p. 133): for every alternative p in A,
+/-- The distribution requirement (§7, p. 133): for every alternative p in A,
     there exists an accessible world where p is true. -/
-def distribReq (R : AccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
+def distribReq (R : HamblinAccessRel W) (A : HamblinDen (W → Prop)) (w : W) : Prop :=
   ∀ p, A p → ∃ w', R w w' ∧ p w'
 
+/-- **Singleton collapse**: when the alternative set is a singleton {p},
+    Hamblin possibility reduces to standard Kripke possibility.
+    This is the paper's core architectural claim: ordinary semantics
+    is the special case where all denotations are singletons. -/
+theorem hamblinPoss_singleton (R : HamblinAccessRel W) (p : W → Prop) (w : W) :
+    hamblinPoss R (eta p) w ↔ ∃ w', R w w' ∧ p w' := by
+  constructor
+  · rintro ⟨w', hw', q, rfl, hq⟩; exact ⟨w', hw', hq⟩
+  · rintro ⟨w', hw', hp⟩; exact ⟨w', hw', p, rfl, hp⟩
+
+/-- **Singleton collapse for necessity**: when alternatives are a singleton,
+    Hamblin necessity reduces to standard Kripke necessity. -/
+theorem hamblinNec_singleton (R : HamblinAccessRel W) (p : W → Prop) (w : W) :
+    hamblinNec R (eta p) w ↔ ∀ w', R w w' → p w' := by
+  constructor
+  · intro h w' hw'; obtain ⟨_, rfl, hq⟩ := h w' hw'; exact hq
+  · intro h w' hw'; exact ⟨p, rfl, h w' hw'⟩
+
 /-- Necessity entails possibility (when some accessible world exists). -/
-theorem hamblinNec_entails_hamblinPoss (R : AccessRel W) (A : HamblinDen (W → Prop))
+theorem hamblinNec_entails_hamblinPoss (R : HamblinAccessRel W) (A : HamblinDen (W → Prop))
     (w : W) (h : hamblinNec R A w) (hacc : ∃ w', R w w') : hamblinPoss R A w := by
   obtain ⟨w', hw'⟩ := hacc
   obtain ⟨p, hA, hp⟩ := h w' hw'
   exact ⟨w', hw', p, hA, hp⟩
 
-/-- The distribution requirement is NOT entailed by necessity (p. 131).
+/-- The distribution requirement is NOT entailed by necessity (§6, p. 131).
     Necessity only requires *some* alternative per world, not that *every*
     alternative is witnessed. The distribution requirement is an implicature.
 
-    To show this gap, we construct a model where necessity holds but
-    the distribution requirement fails. -/
+    Countermodel: R reflexive-only, A = {p₁, p₂} where p₁ holds at true,
+    p₂ holds at false. From w = true, only true is accessible: necessity
+    holds (p₁ witnesses true) but distribution fails (p₂ is unwitnessed). -/
 theorem distrib_not_entailed_by_nec :
-    ∃ (R : AccessRel Bool) (A : HamblinDen (Bool → Prop)) (w : Bool),
+    ∃ (R : HamblinAccessRel Bool) (A : HamblinDen (Bool → Prop)) (w : Bool),
       hamblinNec R A w ∧ ¬distribReq R A w := by
-  -- R is reflexive-only: from true, only true is accessible.
-  -- A = {p₁, p₂} where p₁ w ↔ w = true, p₂ w ↔ w = false.
-  -- Necessity holds: the one accessible world (true) satisfies p₁.
-  -- Distribution fails: p₂ needs an accessible world where w = false,
-  -- but only true is accessible from true.
-  let R : AccessRel Bool := fun w w' => w = w'
+  let R : HamblinAccessRel Bool := fun w w' => w = w'
   let p₁ : Bool → Prop := fun w => w = true
   let p₂ : Bool → Prop := fun w => w = false
   let A : HamblinDen (Bool → Prop) := fun p => p = p₁ ∨ p = p₂
@@ -276,8 +317,12 @@ end ModalInteraction
 ## §7: Domain Widening
 
 *ein Mann* denotes a contextually restricted **subset** of men
-(Schwarzschild 2000: singleton indefinites). *irgendein Mann* widens
-to the **full set** (p. 132, following @cite{chierchia-2001}).
+(Schwarzschild 2000: singleton indefinites). *irgendein Mann*
+widens to the **full set** (p. 132).
+
+This is the same mechanism as contextual domain restriction in
+`DomainRestriction.lean`: *ein* selects from a contextually restricted
+domain C ∩ P, while *irgend-* removes the restriction.
 -/
 
 section DomainWidening
@@ -302,41 +347,42 @@ end DomainWidening
 
 
 -- ════════════════════════════════════════════════════════════════
--- Part V: Distribution Requirement as Implicature (§8)
+-- Part V: Distribution Requirement as Implicature (§6, §8)
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-## §8: Pragmatic Derivation of the Free Choice Implicature
+## §6 & §8: Pragmatic Derivation of the Free Choice Implicature
 
-The distribution requirement is a conversational implicature, not a
-semantic entailment. Evidence: cancelable (ex. 11), disappears in DE
-contexts (ex. 12, 14).
+§6 establishes that the distribution requirement is a conversational
+implicature: cancelable (ex. 11), disappears in DE contexts (ex. 12, 14).
 
-K&S derive it via Gricean reasoning about *why the speaker widened*.
+§8 derives it via Gricean reasoning about *why the speaker widened*.
 Widening could serve: (a) strengthening, (b) avoiding a false claim,
 (c) avoiding a false exhaustivity inference (p. 134).
 
 Three cases over alternatives {A, B}:
 
 ### (16) Possibility: *Du kannst dir irgendeins leihen*
-- T-content: P(A ∨ B)
-- Implicature: P(A) ↔ P(B)
-- Total: P(A) ∧ P(B)
+- T-content: ◇(A ∨ B)
+- Implicature: ◇A ↔ ◇B
+- Total: ◇A ∧ ◇B
 
 ### (17) Necessity: *Du musst dir irgendeins leihen*
-- T-content: N(A ∨ B)
-- Implicature: N(A) ↔ N(B)
-- Total: N(A ∨ B) ∧ P(A) ∧ P(B)
+- T-content: □(A ∨ B)
+- Implicature: □A ↔ □B
+- Total: □(A ∨ B) ∧ ◇A ∧ ◇B
 
 ### (18) Negated possibility: *auf keinen Fall*
-- T-content: ¬P(A ∨ B)
+- T-content: ¬◇(A ∨ B)
 - No implicature: canceled (widening adds nothing in DE context)
 -/
 
 section DistributionRequirement
 
+variable {W : Type}
+
 /-- **(16) Possibility: T-content + implicature → FC.**
-    P(A ∨ B) with P(A) ↔ P(B) yields P(A) ∧ P(B). -/
+    ◇(A ∨ B) with ◇A ↔ ◇B yields ◇A ∧ ◇B. -/
 theorem fc_possibility (pA pB : Prop)
     (h_tcontent : pA ∨ pB)
     (h_implic : pA ↔ pB) : pA ∧ pB := by
@@ -345,10 +391,8 @@ theorem fc_possibility (pA pB : Prop)
   | inr hb => exact ⟨h_implic.mpr hb, hb⟩
 
 /-- **(17) Necessity total meaning (p. 135).**
-    N(A∨B) ∧ (N(A) ↔ N(B)) — the T-content plus the biconditional
-    implicature. The paper shows this implies N(A∨B) ∧ P(A) ∧ P(B)
-    because N(A∨B) → ◇(A∨B) → ◇A ∨ ◇B, and the biconditional N(A)↔N(B)
-    propagates to ◇A↔◇B. -/
+    □(A∨B) → ◇(A∨B) → ◇A ∨ ◇B, combined with ◇A↔◇B, gives
+    □(A∨B) ∧ ◇A ∧ ◇B. -/
 theorem fc_necessity_total (nAB : Prop) (pA pB : Prop)
     (h_nAB : nAB)
     (h_nec_to_poss : nAB → pA ∨ pB)
@@ -357,17 +401,35 @@ theorem fc_necessity_total (nAB : Prop) (pA pB : Prop)
   ⟨h_nAB, fc_possibility pA pB (h_nec_to_poss h_nAB) h_poss_implic⟩
 
 /-- **(18) Negated possibility: implicature canceled.**
-    ¬P(A ∨ B) implies ¬P(A) ∧ ¬P(B). Widening adds nothing. -/
+    ¬◇(A ∨ B) implies ¬◇A ∧ ¬◇B. Widening adds nothing. -/
 theorem fc_negated_no_implicature
     (pA pB : Prop)
     (h_neg : ¬(pA ∨ pB)) : ¬pA ∧ ¬pB :=
   ⟨fun ha => h_neg (Or.inl ha), fun hb => h_neg (Or.inr hb)⟩
 
+/-- **End-to-end FC derivation for (16)**: Given two propositional
+    alternatives under a possibility modal, the T-content is exactly
+    `hamblinPoss`, and applying the biconditional implicature yields FC.
+
+    This connects the modal semantics (§7) to the pragmatic derivation
+    (§8) in a single theorem. -/
+theorem fc_end_to_end_possibility (R : HamblinAccessRel W) (p q : W → Prop)
+    (w : W)
+    (h_tcontent : hamblinPoss R (fun r => r = p ∨ r = q) w)
+    (h_implic : (∃ w', R w w' ∧ p w') ↔ (∃ w', R w w' ∧ q w')) :
+    (∃ w', R w w' ∧ p w') ∧ (∃ w', R w w' ∧ q w') := by
+  have h_disj : (∃ w', R w w' ∧ p w') ∨ (∃ w', R w w' ∧ q w') := by
+    obtain ⟨w', hw', r, hr, hrw⟩ := h_tcontent
+    cases hr with
+    | inl h => exact Or.inl ⟨w', hw', h ▸ hrw⟩
+    | inr h => exact Or.inr ⟨w', hw', h ▸ hrw⟩
+  exact fc_possibility _ _ h_disj h_implic
+
 /-- **Bridge to @cite{chierchia-2013}.**
     K&S's pragmatic derivation (Gricean reasoning) and Chierchia's
     grammatical derivation (double exhaustification) both yield
     ◇A ∧ ◇B. Different mechanisms, same empirical prediction. -/
-theorem pragmatic_agrees_with_grammatical {W : Type}
+theorem pragmatic_agrees_with_grammatical
     (a : Exhaustification.FreeChoice.FCAltSet W)
     (h : a.exh2) :
     a.freeChoice :=
@@ -391,7 +453,7 @@ not [∀], [Neg], or [Q]. Explained via uninterpretable features (p. 138):
 selective indeterminates carry uninterpretable [∃] that must be checked
 against an interpretable counterpart via feature movement.
 
-### Beck Effects (p. 139)
+### Beck Effects (§9, p. 139)
 
 When feature movement of uninterpretable [∃] is blocked by an
 intervening scope-bearing element, ungrammaticality results:
@@ -404,14 +466,6 @@ intervening scope-bearing element, ungrammaticality results:
 - (23f) Was hat **der Hans** WEM gezeigt? — OK (definite: no scope feature)
 - (23g) Was hat sie **damals** WEM gezeigt? — OK (adverb: no scope feature)
 -/
-
-/-- Operators that an indeterminate can associate with. -/
-inductive QuantOperator where
-  | exists_   -- [∃]: existential closure
-  | forall_   -- [∀]: universal closure
-  | neg       -- [Neg]: negative closure
-  | question  -- [Q]: question formation
-  deriving DecidableEq, BEq, Repr
 
 /-- An indeterminate pronoun paradigm: which operators it associates with,
     and whether its morphology changes per operator. -/
@@ -438,7 +492,7 @@ def japaneseParadigm : IndeterminateParadigm where
 
 theorem japanese_non_selective : japaneseParadigm.isNonSelective = true := by native_decide
 
-/-- German *irgend-*: selective. Associates only with [∃] (p. 137).
+/-- German *irgend-*: selective. Associates only with [∃] (§9, p. 137).
     Cannot associate with [∀] (ex. 20c), [Neg] (ex. 21), or [Q]. -/
 def germanParadigm : IndeterminateParadigm where
   language := "German"
@@ -448,7 +502,7 @@ def germanParadigm : IndeterminateParadigm where
 
 theorem german_selective : germanParadigm.isSelective = true := by native_decide
 
--- Beck effect intervention data (p. 139, examples 23-24)
+-- Beck effect intervention data (§9, p. 139, examples 23a-g)
 
 /-- An intervention datum: an element between a wh-phrase and its
     in-situ associate, and whether the result is grammatical. -/
@@ -456,6 +510,7 @@ structure InterventionDatum where
   intervener : String
   gloss : String
   grammatical : Bool
+  isScopeBearing : Bool
   deriving Repr, BEq
 
 /-- Beck effect paradigm (examples 23a-g): scope-bearing elements
@@ -463,13 +518,13 @@ structure InterventionDatum where
 
     Pattern: `*Was hat sie [INTERVENER] WEM gezeigt?` -/
 def beckParadigm : List InterventionDatum :=
-  [ ⟨"nicht",           "not",             false⟩   -- (23a) Neg
-  , ⟨"nie",             "never",           false⟩   -- (23b) Neg
-  , ⟨"niemand",         "nobody",          false⟩   -- (23c) ∃+Neg
-  , ⟨"fast jeder",      "almost everyone", false⟩   -- (23d) ∀
-  , ⟨"(irgend)jemand",  "somebody",        false⟩   -- (23e) ∃
-  , ⟨"der Hans",        "Hans (definite)",  true⟩   -- (23f) no scope feature
-  , ⟨"damals",          "then (adverb)",    true⟩ ] -- (23g) no scope feature
+  [ ⟨"nicht",           "not",             false, true⟩    -- (23a) Neg
+  , ⟨"nie",             "never",           false, true⟩    -- (23b) Neg
+  , ⟨"niemand",         "nobody",          false, true⟩    -- (23c) ∃+Neg
+  , ⟨"fast jeder",      "almost everyone", false, true⟩    -- (23d) ∀
+  , ⟨"(irgend)jemand",  "somebody",        false, true⟩    -- (23e) ∃
+  , ⟨"der Hans",        "Hans (definite)",  true, false⟩   -- (23f) no scope feature
+  , ⟨"damals",          "then (adverb)",    true, false⟩ ] -- (23g) no scope feature
 
 /-- Scope-bearing elements block; non-scope-bearing elements don't. -/
 theorem beck_scope_bearing_block :
@@ -477,9 +532,14 @@ theorem beck_scope_bearing_block :
     (beckParadigm.filter (·.grammatical == true)).length = 2 := by
   native_decide
 
+/-- The generalization: scope-bearing = ungrammatical, non-scope-bearing = OK. -/
+theorem beck_generalization :
+    beckParadigm.all (fun d => d.isScopeBearing == !d.grammatical) = true := by
+  native_decide
+
 
 -- ════════════════════════════════════════════════════════════════
--- § 6a. Bridge to Fragment Entries
+-- Bridge to Fragment Entries
 -- ════════════════════════════════════════════════════════════════
 
 open Fragments.Japanese.Determiners (dare_ka dare_mo)
