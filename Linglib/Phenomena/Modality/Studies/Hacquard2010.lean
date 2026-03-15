@@ -1,10 +1,9 @@
 import Linglib.Fragments.Italian.Modals
 import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Event-Relative Modality
-@cite{hacquard-2010} @cite{kratzer-1981} @cite{cinque-2004} @cite{rizzi-1978} @cite{grice-1975}
+@cite{hacquard-2010} @cite{kratzer-1981} @cite{cinque-2004} @cite{rizzi-1978}
 
 ## Part I: Italian Restructuring
 
@@ -25,48 +24,12 @@ This is the key empirical argument for event-relative modality: the same
 lexical modal (*potere*) shows different flavor availability depending
 purely on its syntactic position, explained by content licensing.
 
-## Part II: English Modal Position–Flavor Availability
+## Part II: Position-Based Flavor Availability
 
-Connects the force–flavor cartesian products in `Fragments/English/FunctionWords.lean`
-(the set of POSSIBLE readings for each modal auxiliary) to EventRelativity's
-position-based flavor availability (WHEN each reading is available).
-
-### The Relationship
-
-The fragment lists all readings a modal CAN have across all structural
-positions. EventRelativity explains WHICH readings are available at
-EACH position. The bridge verifies consistency: the fragment's flavor
-set = the union of position-available flavors.
-
-## Part III: Pragmatic Blocking
-
-Formalizes the pragmatic blocking of circumstantial readings for
-high modals. Content licensing does NOT
-rule out circumstantial readings for high modals — `canProjectCircumstantial`
-returns `true` for all event binders. Instead, circumstantial readings of
-high modals are **pragmatically blocked** by more informative epistemic
-readings.
-
-### The Puzzle (@cite{hacquard-2010}, (49b, 49d))
-
-Content licensing predicts:
-- (49a) speech act + epistemic: ✓ attested
-- (49b) speech act + circumstantial: ✓ semantically possible
-- (49c) attitude + epistemic: ✓ attested
-- (49d) attitude + circumstantial: ✓ semantically possible
-- (49e) VP event + epistemic: ✗ ruled out (content licensing)
-- (49f) VP event + circumstantial: ✓ attested
-
-But (49b) and (49d) are generally unattested. WHY?
-
-### Hacquard's Answer: Pragmatic Pre-emption
-
-When a high modal can access BOTH epistemic and circumstantial backgrounds
-(because the binding event is contentful), the epistemic reading is more
-informative: it encodes the speaker's/holder's evidence about the world.
-The circumstantial reading merely states facts about circumstances. A
-pragmatic speaker would choose the more informative reading, pre-empting
-the circumstantial one.
+Derives from EventRelativity which modal flavors are available at each
+structural position. A modal's fragment entry lists its FULL flavor
+inventory across all positions; at any given position, content licensing
+and addressee licensing act as filters.
 -/
 
 namespace Phenomena.Modality.Studies.Hacquard2010
@@ -99,10 +62,10 @@ def nonRestructuredPosition : ModalPosition := .aboveAsp
 epistemic: they are bound to the VP event, which lacks content.
 
 This single theorem explains ALL the restructuring data:
-- (17) potere_high: epistemic ✓ because high modal → speech act → content
-- (18) potere_low_clitic: epistemic ✗ because low modal → VP event → no content
-- (13) dovere_high: epistemic ✓ (same reasoning)
-- (14) dovere_low_aux: epistemic ✗ (same reasoning) -/
+- potere_high: epistemic ✓ because high modal → speech act → content
+- potere_low_clitic: epistemic ✗ because low modal → VP event → no content
+- dovere_high: epistemic ✓ (same reasoning)
+- dovere_low_aux: epistemic ✗ (same reasoning) -/
 theorem content_licensing_explains_restructuring :
     -- Restructured (low): VP event binder, no content → no epistemic
     restructuredPosition.defaultBinder = .vpEvent ∧
@@ -148,9 +111,9 @@ appears high (with epistemic) and low (without epistemic). This rules
 out lexical ambiguity as an explanation — the flavor restriction follows
 from structural position alone.
 
-@cite{hacquard-2010}: "Importantly, in Italian, epistemic and root
-modals are the same lexical items. [...] the availability of epistemic
-readings tracks the syntactic position of the modal." -/
+@cite{hacquard-2010}, §1: Italian *potere* and *dovere* express both
+epistemic and root modality with the same lexical item, and the
+availability of epistemic readings tracks the syntactic position. -/
 theorem same_lexical_items :
     -- potere: same form in both positions
     potere.form = "potere" ∧
@@ -181,7 +144,7 @@ theorem both_modals_restructure :
     potere.canRestructure = true ∧ dovere.canRestructure = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- Part II: English Modal Position–Flavor Availability
+-- Part II: Position-Based Flavor Availability
 -- ============================================================================
 
 -- ============================================================================
@@ -289,132 +252,5 @@ theorem high_subsumes_low :
   intro f hf
   simp [low_position_filters] at hf
   simp [high_position_preserves, hf]
-
--- ============================================================================
--- Part III: Pragmatic Blocking
--- ============================================================================
-
--- ============================================================================
--- § 9: Semantic Availability ≠ Pragmatic Availability
--- ============================================================================
-
-/-- Content licensing allows circumstantial readings for ALL binders
-(including high/contentful ones). This is correct: circumstantial
-readings of high modals are not UNGRAMMATICAL, just pragmatically
-dispreferred. -/
-theorem circumstantial_always_semantically_available :
-    EventBinder.speechAct.canProjectCircumstantial = true ∧
-    EventBinder.attitude.canProjectCircumstantial = true ∧
-    EventBinder.vpEvent.canProjectCircumstantial = true :=
-  ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 10: Competition: Epistemic vs Circumstantial
--- ============================================================================
-
-/-- Informativity ordering on modal flavors.
-
-Epistemic readings encode the speaker's EVIDENCE STATE — a specific
-body of knowledge. Circumstantial readings encode surrounding
-CIRCUMSTANCES — a more general and less constrained background.
-
-When both are available, epistemic is more informative because it
-commits to a specific body of evidence. -/
-def informativity : ModalFlavor → Nat
-  | .epistemic => 2       -- most informative (evidence-based)
-  | .deontic => 1         -- intermediate (norm-based)
-  | .circumstantial => 0  -- least informative (fact-based)
-
-/-- Epistemic is more informative than circumstantial. -/
-theorem epistemic_more_informative :
-    informativity .epistemic > informativity .circumstantial := by decide
-
--- ============================================================================
--- § 11: Pragmatic Blocking Predicate
--- ============================================================================
-
-/-- A reading is pragmatically blocked if a more informative reading
-is available from the same binder. -/
-def isPragmaticallyBlocked (b : EventBinder) (flavor : ModalFlavor) : Bool :=
-  -- A flavor is blocked if there exists a more informative flavor
-  -- available from the same binder
-  let available := b.availableFlavors
-  available.any λ f => f != flavor && informativity f > informativity flavor
-
-/-- Circumstantial readings of speech act binders are pragmatically
-blocked: epistemic is available and more informative. -/
-theorem speechAct_circ_blocked :
-    isPragmaticallyBlocked .speechAct .circumstantial = true := by native_decide
-
-/-- Circumstantial readings of attitude binders are blocked too. -/
-theorem attitude_circ_blocked :
-    isPragmaticallyBlocked .attitude .circumstantial = true := by native_decide
-
-/-- Epistemic readings are NEVER blocked (they're the most informative). -/
-theorem epistemic_never_blocked :
-    isPragmaticallyBlocked .speechAct .epistemic = false ∧
-    isPragmaticallyBlocked .attitude .epistemic = false := by
-  constructor <;> native_decide
-
-/-- VP event binders: circumstantial is NOT blocked because epistemic
-is not available (content licensing prevents it). No competition. -/
-theorem vpEvent_circ_not_blocked :
-    isPragmaticallyBlocked .vpEvent .circumstantial = false := by native_decide
-
--- ============================================================================
--- § 12: The Full (49a–f) Pattern
--- ============================================================================
-
-/-- Two filters determine whether a binder × flavor combination is
-PRAGMATICALLY available:
-1. Content licensing (semantic filter): epistemic requires content
-2. Informativity competition (pragmatic filter): less informative
-   readings are blocked when more informative ones are available -/
-def pragmaticallyAvailable (b : EventBinder) (flavor : ModalFlavor) : Bool :=
-  flavor ∈ b.availableFlavors && !isPragmaticallyBlocked b flavor
-
-/-- The complete (49a–f) pattern from @cite{hacquard-2010}:
-
-| Binder | Flavor | Semantic? | Blocked? | Pragmatic? | Status |
-|--------|--------|-----------|----------|------------|--------|
-| Speech act | Epistemic | ✓ | ✗ | ✓ | (49a) attested |
-| Speech act | Circumstantial | ✓ | ✓ | ✗ | (49b) unattested |
-| Attitude | Epistemic | ✓ | ✗ | ✓ | (49c) attested |
-| Attitude | Circumstantial | ✓ | ✓ | ✗ | (49d) unattested |
-| VP event | Epistemic | ✗ | — | ✗ | (49e) unattested |
-| VP event | Circumstantial | ✓ | ✗ | ✓ | (49f) attested | -/
-theorem hacquard_49_full_pattern :
-    -- (49a) speech act + epistemic: pragmatically available
-    pragmaticallyAvailable .speechAct .epistemic = true ∧
-    -- (49b) speech act + circumstantial: pragmatically blocked
-    pragmaticallyAvailable .speechAct .circumstantial = false ∧
-    -- (49c) attitude + epistemic: pragmatically available
-    pragmaticallyAvailable .attitude .epistemic = true ∧
-    -- (49d) attitude + circumstantial: pragmatically blocked
-    pragmaticallyAvailable .attitude .circumstantial = false ∧
-    -- (49e) VP event + epistemic: semantically unavailable
-    pragmaticallyAvailable .vpEvent .epistemic = false ∧
-    -- (49f) VP event + circumstantial: pragmatically available
-    pragmaticallyAvailable .vpEvent .circumstantial = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
-
--- ============================================================================
--- § 13: Pragmatic vs Semantic Blocking
--- ============================================================================
-
-/-- (49e) and (49b) are both unattested, but for DIFFERENT reasons:
-- (49e) VP event + epistemic: SEMANTICALLY blocked (content licensing)
-- (49b) speech act + circumstantial: PRAGMATICALLY blocked (competition)
-
-This distinction matters: (49b) should be recoverable in special contexts
-where the circumstantial reading is more relevant than the epistemic one.
-(49e) is never recoverable — it's a grammatical restriction. -/
-theorem different_blocking_mechanisms :
-    -- (49e): semantically blocked (canProjectEpistemic = false)
-    EventBinder.vpEvent.canProjectEpistemic = false ∧
-    -- (49b): semantically AVAILABLE but pragmatically blocked
-    EventBinder.speechAct.canProjectCircumstantial = true ∧
-    isPragmaticallyBlocked .speechAct .circumstantial = true :=
-  ⟨rfl, rfl, by native_decide⟩
 
 end Phenomena.Modality.Studies.Hacquard2010
