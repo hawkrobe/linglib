@@ -8,7 +8,6 @@ Reference: Phillips-Brown, M. (2025). Some-things-considered desire. S&P.
 
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
-import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 
 namespace Semantics.Modality.Desire
 
@@ -18,7 +17,7 @@ open Semantics.Questions.Hamblin
 
 /-- p entails q iff every p-world is a q-world. -/
 def propEntails (p q : BProp World) : Bool :=
-  Semantics.Modality.propEntails allWorlds p q
+  allWorlds.all λ w => !p w || q w
 
 /-- Propositions overlap iff they share at least one world. -/
 def propOverlap (p q : BProp World) : Bool :=

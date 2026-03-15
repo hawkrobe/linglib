@@ -24,9 +24,9 @@ def Simple (R : World → World → Bool) : ModalTheory where
     let accessible := allWorlds'.filter (R w)
     match force with
     | .necessity => accessible.all p
-    | .weakNecessity => accessible.all p  -- same ∀; weak necessity differs
-      -- from strong necessity in which R is passed, not in the quantifier
-      -- (von Fintel & Iatridou 2008: domain restriction via refined ordering)
+    | .weakNecessity => accessible.all p  -- same ∀ as necessity; weak necessity
+      -- differs in which R is passed (refined ordering), not in the quantifier.
+      -- Use Directive.weakNecessity for the full von Fintel & Iatridou (2008) semantics.
     | .possibility => accessible.any p
 
 section AccessibilityRelations
@@ -73,6 +73,26 @@ def SimpleEpistemic : ModalTheory := Simple sampleEpistemicR
 def SimpleDeontic : ModalTheory := Simple sampleDeonticR
 
 end InstantiatedTheories
+
+section TestPropositions
+
+/-- Proposition: it is raining. True at w0, w1; false at w2, w3. -/
+def raining : Proposition := λ w =>
+  match w with
+  | .w0 => true | .w1 => true | .w2 => false | .w3 => false
+
+/-- Proposition: John is home. True at w0, w2; false at w1, w3. -/
+def johnHome : Proposition := λ w =>
+  match w with
+  | .w0 => true | .w1 => false | .w2 => true | .w3 => false
+
+/-- A trivially true proposition (true at all worlds). -/
+def triviallyTrue : Proposition := λ _ => true
+
+/-- A trivially false proposition (false at all worlds). -/
+def triviallyFalse : Proposition := λ _ => false
+
+end TestPropositions
 
 section KeyProperties
 

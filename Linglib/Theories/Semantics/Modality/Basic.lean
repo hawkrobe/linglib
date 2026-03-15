@@ -50,7 +50,13 @@ def ModalTheory.necessity (T : ModalTheory) (p : Proposition) (w : World) : Bool
 def ModalTheory.possibility (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
   T.eval .possibility p w
 
-/-- Weak necessity operator: □wφ is true at w. -/
+/-- Weak necessity operator: □wφ is true at w.
+    **Note**: For Kratzer semantics, weak necessity differs from strong necessity
+    in the *ordering source*, not the quantifier. Use `Directive.weakNecessity`
+    (which takes a secondary ordering source) for the proper von Fintel & Iatridou
+    (2008) semantics. Calling `T.eval .weakNecessity` on a `KratzerTheory` returns
+    the same result as `T.eval .necessity` — the distinction lives in which
+    `KratzerParams` you pass, not in the force enum. -/
 def ModalTheory.weakNecessity (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
   T.eval .weakNecessity p w
 
@@ -86,39 +92,5 @@ def ModalTheory.isConsistent (T : ModalTheory) : Prop :=
   ∀ (p : Proposition) (w : World), T.necessityEntailsPossibility p w = true
 
 end Properties
-
-section TestPropositions
-
-/-- Proposition: it is raining. -/
-def raining : Proposition := λ w =>
-  match w with
-  | .w0 => true
-  | .w1 => true
-  | .w2 => false
-  | .w3 => false
-
-/-- Proposition: the ground is wet. -/
-def groundWet : Proposition := λ w =>
-  match w with
-  | .w0 => true
-  | .w1 => true
-  | .w2 => false
-  | .w3 => true
-
-/-- Proposition: John is home. -/
-def johnHome : Proposition := λ w =>
-  match w with
-  | .w0 => true
-  | .w1 => false
-  | .w2 => true
-  | .w3 => false
-
-/-- A trivially true proposition (true at all worlds). -/
-def triviallyTrue : Proposition := λ _ => true
-
-/-- A trivially false proposition (false at all worlds). -/
-def triviallyFalse : Proposition := λ _ => false
-
-end TestPropositions
 
 end Semantics.Modality

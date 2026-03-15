@@ -16,6 +16,34 @@ namespace Semantics.Modality
 open Semantics.Attitudes.Intensional
 open Semantics.Modality.Kratzer
 
+section TestFixtures
+
+/-- Proposition: the ground is wet. True at w0, w1, w3; false at w2. -/
+def groundWet : Proposition := λ w =>
+  match w with
+  | .w0 => true | .w1 => true | .w2 => false | .w3 => true
+
+-- Concrete Kratzer configurations for comparison examples
+
+def concreteEpistemicBase : ModalBase := λ _ => [groundWet]
+
+def concreteEpistemicParams : KratzerParams where
+  base := concreteEpistemicBase
+  ordering := emptyBackground
+
+def KratzerEpistemic : ModalTheory := KratzerTheory concreteEpistemicParams
+
+def concreteCircumstantialBase : ModalBase := λ _ => []
+def concreteDeonticOrdering : OrderingSource := λ _ => [johnHome]
+
+def concreteDeonticParams : KratzerParams where
+  base := concreteCircumstantialBase
+  ordering := concreteDeonticOrdering
+
+def KratzerDeontic : ModalTheory := KratzerTheory concreteDeonticParams
+
+end TestFixtures
+
 section ComparisonFunctions
 
 /-- Do two theories agree on modal force `f` for proposition `p` at world `w`? -/

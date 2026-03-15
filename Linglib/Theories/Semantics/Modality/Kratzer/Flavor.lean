@@ -108,9 +108,10 @@ def KratzerTheory (params : KratzerParams) : ModalTheory where
     let best := bestWorlds params.base params.ordering w
     match force with
     | .necessity => best.all p
-    | .weakNecessity => best.all p  -- same ∀ over best worlds; weak necessity
-      -- is modeled by passing a refined ordering (g ∪ g') that shrinks the
-      -- best-world set — see Directive.lean for the full implementation
+    | .weakNecessity => best.all p  -- same ∀ as necessity; weak necessity is
+      -- modeled by passing a refined ordering (g ∪ g') via KratzerParams, not by
+      -- a different quantifier. Use Directive.weakNecessity for the full
+      -- von Fintel & Iatridou (2008) semantics.
     | .possibility => best.any p
 
 -- Standard parameter configurations
@@ -131,23 +132,6 @@ def deonticParams (circumstances : ModalBase) (norms : OrderingSource) : Kratzer
   ordering := norms
 
 def KratzerMinimal : ModalTheory := KratzerTheory minimalParams
-
-def concreteEpistemicBase : ModalBase := λ _ => [groundWet]
-
-def concreteEpistemicParams : KratzerParams where
-  base := concreteEpistemicBase
-  ordering := emptyBackground
-
-def KratzerEpistemic : ModalTheory := KratzerTheory concreteEpistemicParams
-
-def concreteCircumstantialBase : ModalBase := λ _ => []
-def concreteDeonticOrdering : OrderingSource := λ _ => [johnHome]
-
-def concreteDeonticParams : KratzerParams where
-  base := concreteCircumstantialBase
-  ordering := concreteDeonticOrdering
-
-def KratzerDeontic : ModalTheory := KratzerTheory concreteDeonticParams
 
 -- Duality for ModalTheory Interface
 

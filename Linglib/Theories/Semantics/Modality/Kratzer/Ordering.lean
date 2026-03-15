@@ -10,7 +10,7 @@ Best worlds are those maximal under this ordering among accessible worlds.
 -/
 
 import Linglib.Theories.Semantics.Modality.Kratzer.Background
-import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
+import Linglib.Core.Logic.SatisfactionOrdering
 import Linglib.Core.Semantics.Proposition
 import Mathlib.Order.Basic
 

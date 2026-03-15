@@ -1567,7 +1567,6 @@ import Linglib.Theories.Semantics.Modality.EpistemicLogic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
 import Linglib.Theories.Semantics.Modality.KnowledgeProbability
 import Linglib.Theories.Semantics.Modality.ProbabilityOrdering
-import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 import Linglib.Theories.Semantics.Modality.Ability
 import Linglib.Theories.Semantics.Modality.ActualityEntailments
 import Linglib.Theories.Semantics.Modality.Assert

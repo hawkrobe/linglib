@@ -309,8 +309,9 @@ Conditionals as modal base restrictors.
 def restrictedBase (f : ModalBase) (antecedent : BProp World) : ModalBase :=
   λ w => antecedent :: f w
 
+/-- Material implication, pointwise form of `implies`. -/
 def materialImplication (p q : BProp World) (w : World) : Bool :=
-  !p w || q w
+  implies p q w
 
 def strictImplication (p q : BProp World) : Bool :=
   allWorlds.all λ w => !p w || q w
