@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.283] - 2026-03-15
+
+### Added
+- **Root–MC bridge (B&KG 2020 consensus)**: formalize the relationship between Beavers & Koontz-Garboden root entailments and Levin meaning components in `Core/Lexical/LevinClass.lean` — add `CausationSource` enum (rootExternal/rootNonDetachable/template/none) classifying where each class's event-level causation originates; add `ResultKind` enum (stateChange/locationChange/possessionChange/none) refining B&KG `result` to explain why throw/give have result=true but CoS=false; add `MannerKind` enum (mannerSpec/instrumentSpec/unspecified/none) documenting how B&KG `manner` maps to three distinct Levin-level classifications; add `RootEntailments.structuralMC` conservative derivation; prove 3 universal consistency theorems over all 78 LevinClass constructors (`levin_spec_implies_bkg_manner`, `causativeResult_always_cos`, `root_cause_accounted_for`); 20 per-class verification theorems for canonical examples of each divergence type
+
+## [0.229.282] - 2026-03-15
+
+### Added
+- **Kratzer & Shimoyama (2002) formalization**: new study file `Phenomena/ModalIndefinites/Studies/KratzerShimoyama2002.lean` formalizing the core contributions of "Indeterminate Pronouns: The View from Japanese" — generalized Hamblin operators (∃, ∀, Neg, Q) over alternative sets with bridge theorem `hamblinFA_eq_setAp` connecting pointwise FA to Charlow's set monad applicative; compositional derivation of dare-ka (∃) and dare-mo (∀) from indeterminate base + operator closure; domain widening semantics for *irgend-*; pragmatic derivation of the distribution requirement (free choice implicature) with bridge to Chierchia 2013 double exhaustification; selectivity typology (non-selective Japanese vs selective Indo-European) with bridge theorems to Japanese/German fragment entries; Latvian cross-linguistic indeterminate paradigm data (5 domains × 4 series with prefix verification)
+
+### Fixed
+- **Bibliography**: `kratzer-shimoyama-2002` entry — fix `subfield` from `semantics/focus` to `semantics/quantification`, upgrade `role` from `cited` to `formalized`, add `note` field documenting 2002 circulation / 2017 publication dates
+
 ## [0.229.281] - 2026-03-15
 
 ### Added
