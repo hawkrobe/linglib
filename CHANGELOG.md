@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.261] - 2026-03-15
+
+### Added
+- **KOS Conversational Rules** (`KOS/Rules.lean`): Formalize Ginzburg 2012 Ch. 4 dialogue update rules
+  - `Answerhood` typeclass: abstract resolves-relation between facts and questions
+  - Rules: `IS.ask` (QUD-push), `IS.assertRule` (FACTS + QUD-downdate), `IS.accept`, `IS.qspec`, `IS.acknowledge`
+  - DGB operations: `DGB.pushQud`, `DGB.downdateQud`, `DGB.addFact`, `DGB.assertFact`
+  - `Genre` type: inquiry, examination, deliberation, chat with `answerSource`/`askerKnows`
+  - Worked inquiry cycle example (Ask→Assert→Accept) with 7 verification theorems
+  - Structural theorems: downdate monotonicity, resolved question removal
+
 ## [0.229.260] - 2026-03-15
 
 ### Added

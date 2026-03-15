@@ -1706,6 +1706,7 @@ import Linglib.Theories.Pragmatics.Assertion.Gunlogson
 import Linglib.Theories.Pragmatics.Assertion.Lauer
 -- Theories: Pragmatics: Dialogue
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
+import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
