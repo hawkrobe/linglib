@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.267] - 2026-03-15
+
+### Changed
+- **Franke2011.lean streamlining** (2013→1830 lines, −183):
+  - Dead code removal: `hearerUpdate`, `speakerOptionCount` section, `minAltCountStates`, `r1_containedIn_exhMW`, `trueMessages_injective_of_homogeneous`
+  - Deduplication: `bestResponse_inner_ge_maxU` and `speaker_inner_le_maxU` extracted as shared helpers; `eg_speaker_improvement` simplified from 65→5 lines by calling them
+  - `bestResponse_le_one` factored out of two inline copies in `ibrN_opt_singleton`/`ibrN_respond_pos_iff_strongest`
+  - `exhMW_subset_r1_under_totality` reuses `trueMessages_ssubset_implies_ltALT` instead of re-proving ltALT inline
+  - Added `#guard` checks for `freeChoiceGame` (L0, L2 free choice inference)
+
 ## [0.229.266] - 2026-03-15
 
 ### Added
