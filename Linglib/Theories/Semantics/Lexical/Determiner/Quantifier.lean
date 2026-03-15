@@ -278,6 +278,24 @@ theorem half_conservative : Conservative (half_sem m) := by
   simp only [half_sem]
   simp_rw [bool_and_idem]
 
+/-- `⟦at least n⟧` is conservative: |R ∩ S| = |R ∩ (R ∩ S)|. -/
+theorem at_least_n_conservative (n : Nat) : Conservative (at_least_n_sem m n) := by
+  intro R S
+  simp only [at_least_n_sem]
+  simp_rw [bool_and_idem]
+
+/-- `⟦at most n⟧` is conservative. -/
+theorem at_most_n_conservative (n : Nat) : Conservative (at_most_n_sem m n) := by
+  intro R S
+  simp only [at_most_n_sem]
+  simp_rw [bool_and_idem]
+
+/-- `⟦exactly n⟧` is conservative. -/
+theorem exactly_n_conservative (n : Nat) : Conservative (exactly_n_sem m n) := by
+  intro R S
+  simp only [exactly_n_sem]
+  simp_rw [bool_and_idem]
+
 -- === Scope monotonicity proofs ===
 
 /-- `⟦every⟧` is upward monotone in scope. -/
@@ -368,6 +386,65 @@ theorem most_scope_up : ScopeUpwardMono (most_sem m) := by
       · rfl
       · exact absurd (hSS' x hS) (by simp [hx.2]))
   omega
+
+-- === Counting quantifier identities (@cite{peters-westerstahl-2006} §5) ===
+
+/-- Bridge between `List.any` and `List.filter.length`: existential check ↔ non-empty filter. -/
+private lemma any_eq_decide_filter_ge_one {β : Type*} (l : List β) (p : β → Bool) :
+    l.any p = decide ((l.filter p).length ≥ 1) := by
+  induction l with
+  | nil => simp
+  | cons a t ih =>
+    simp only [List.any_cons, List.filter_cons]
+    cases p a <;> simp [ih]
+
+/-- `⟦some⟧ = ⟦at least 1⟧`: existential quantification is "at least one". -/
+theorem some_eq_at_least_1 : some_sem m = at_least_n_sem m 1 := by
+  funext R S; simp only [some_sem, at_least_n_sem]
+  exact any_eq_decide_filter_ge_one _ _
+
+/-- `outerNeg ⟦some⟧ = ⟦no⟧`: negating existence gives universal negation. -/
+theorem outerNeg_some_eq_no : outerNeg (some_sem m) = no_sem m := by
+  funext R S; simp only [outerNeg, some_sem, no_sem]
+  rw [List.not_any_eq_all_not]; simp_rw [Bool.not_and]
+
+/-- `⟦at most n⟧ = outerNeg ⟦at least n+1⟧`: duality of lower and upper bounds.
+    This is the counting quantifier instance of the Square of Opposition. -/
+theorem at_most_eq_outerNeg_at_least_succ (n : Nat) :
+    at_most_n_sem m n = outerNeg (at_least_n_sem m (n + 1)) := by
+  funext R S
+  simp only [at_most_n_sem, at_least_n_sem, outerNeg]
+  generalize (FiniteModel.elements.filter (fun x => R x && S x)).length = k
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
+  omega
+
+/-- `⟦no⟧ = ⟦at most 0⟧`. Derived algebraically:
+    no = outerNeg(some) = outerNeg(at_least 1) = at_most 0. -/
+theorem no_eq_at_most_0 : no_sem m = at_most_n_sem m 0 := by
+  rw [← outerNeg_some_eq_no, some_eq_at_least_1, at_most_eq_outerNeg_at_least_succ]
+
+/-- `⟦exactly n⟧ = ⟦at least n⟧ ⊓ ⟦at most n⟧` in the GQ lattice.
+    "Exactly n" is the meet of a lower bound and an upper bound. -/
+theorem exactly_eq_meet_at_least_at_most (n : Nat) :
+    exactly_n_sem m n = gqMeet (at_least_n_sem m n) (at_most_n_sem m n) := by
+  funext R S
+  simp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, gqMeet]
+  generalize (FiniteModel.elements.filter (fun x => R x && S x)).length = k
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq]
+  omega
+
+/-- `⟦at least n⟧` is Mon↑ in scope: enlarging B cannot decrease |A ∩ B|. -/
+theorem at_least_n_scope_up (n : Nat) : ScopeUpwardMono (at_least_n_sem m n) := by
+  intro R S S' hSS' h
+  simp only [at_least_n_sem, decide_eq_true_eq] at *
+  exact le_trans h (filter_length_le_of_imp _ _ _ (fun x hx => by
+    simp only [Bool.and_eq_true] at hx ⊢; exact ⟨hx.1, hSS' x hx.2⟩))
+
+/-- `⟦at most n⟧` is Mon↓ in scope. Derived from duality:
+    outerNeg flips Mon↑ to Mon↓ (Prop 8), and `at_most = outerNeg(at_least)`. -/
+theorem at_most_n_scope_down (n : Nat) : ScopeDownwardMono (at_most_n_sem m n) := by
+  rw [at_most_eq_outerNeg_at_least_succ]
+  exact outerNeg_up_to_down _ (at_least_n_scope_up _)
 
 -- === Quantity / Isomorphism Closure (@cite{mostowski-1957}) ===
 
@@ -622,12 +699,6 @@ theorem innerNeg_every_eq_no : innerNeg (every_sem m) = no_sem m := by
     `¬(∀x. R(x) → ¬S(x))` = `∃x. R(x) ∧ S(x)`. -/
 theorem dualQ_every_eq_some : dualQ (every_sem m) = some_sem m := by
   funext R S; simp only [dualQ, outerNeg, innerNeg, every_sem, some_sem]
-  simp [List.all_eq_not_any_not, Bool.not_not]
-
-/-- Outer negation maps `some` to `no`: ~some = no.
-    `¬(∃x. R(x) ∧ S(x))` = `∀x. R(x) → ¬S(x)`. -/
-theorem outerNeg_some_eq_no : outerNeg (some_sem m) = no_sem m := by
-  funext R S; simp only [outerNeg, some_sem, no_sem]
   simp [List.all_eq_not_any_not, Bool.not_not]
 
 -- === Extension (P&W Ch.4): spectator irrelevance ===
@@ -983,6 +1054,201 @@ theorem subcontrariety_i_o (R S : m.Entity → Bool)
     · have hE : no_sem m R S = true := by rw [no_contradicts_some, hS]; rfl
       exact absurd hR (by simp [a_e_contrary R S hA hE])
   · exact Or.inl rfl
+
+-- ============================================================================
+-- Basic Left Monotonicities (@cite{peters-westerstahl-2006} §5.5)
+-- ============================================================================
+
+/-- `⟦some⟧` is ↑_SE Mon: adding elements of B to A preserves some(A,B). -/
+theorem some_upSE : UpSEMon (some_sem m) := by
+  exact restrictorUpMono_to_upSE _ some_restrictor_up
+
+/-- `⟦some⟧` is ↑_SW Mon: adding elements outside B to A preserves some(A,B). -/
+theorem some_upSW : UpSWMon (some_sem m) := by
+  exact restrictorUpMono_to_upSW _ some_restrictor_up
+
+/-- `⟦every⟧` is ↓_NW Mon: removing elements of B from A preserves every(A,B). -/
+theorem every_downNW : DownNWMon (every_sem m) := by
+  exact restrictorDownMono_to_downNW _ every_restrictor_down
+
+/-- `⟦every⟧` is ↓_NE Mon: removing elements outside B from A preserves every(A,B). -/
+theorem every_downNE : DownNEMon (every_sem m) := by
+  exact restrictorDownMono_to_downNE _ every_restrictor_down
+
+/-- `⟦no⟧` is ↓_NW Mon. -/
+theorem no_downNW : DownNWMon (no_sem m) := by
+  exact restrictorDownMono_to_downNW _ no_restrictor_down
+
+/-- `⟦no⟧` is ↓_NE Mon. -/
+theorem no_downNE : DownNEMon (no_sem m) := by
+  exact restrictorDownMono_to_downNE _ no_restrictor_down
+
+-- ============================================================================
+-- Smooth Quantifiers (@cite{peters-westerstahl-2006} §5.6)
+-- ============================================================================
+
+/-- `⟦some⟧` is ↓_NE Mon (direct proof).
+    Removing non-S elements from A preserves ∃x.R(x)∧S(x) since the witness is in S. -/
+theorem some_downNE : DownNEMon (some_sem m) := by
+  intro R S R' hSub hKeep hQ
+  simp only [some_sem] at *
+  rw [List.any_eq_true] at *
+  obtain ⟨x, hx, hpred⟩ := hQ
+  refine ⟨x, hx, ?_⟩
+  rw [Bool.and_eq_true] at hpred
+  have hR'x := hKeep x hpred.1 hpred.2
+  simp [hR'x, hpred.2]
+
+/-- `⟦some⟧` is smooth (↓_NE + ↑_SE).
+    @cite{peters-westerstahl-2006} §5.6: persistence gives ↑_SE;
+    the witness argument gives ↓_NE directly. -/
+theorem some_smooth : Smooth (some_sem m) :=
+  ⟨some_downNE, restrictorUpMono_to_upSE _ some_restrictor_up⟩
+
+/-- `⟦every⟧` is ↑_SE Mon (direct proof).
+    Adding B-elements to A preserves ∀x.R(x)→S(x) since the new elements satisfy S. -/
+theorem every_upSE_direct : UpSEMon (every_sem m) := by
+  intro R S R' hSub hDiff hQ
+  simp only [every_sem] at *
+  rw [List.all_eq_true] at *
+  intro x hx
+  cases hR'x : R' x
+  · simp
+  · cases hSx : S x
+    · have hRx : R x = true := hDiff x hR'x hSx
+      have := hQ x hx; simp [hRx] at this
+      exact absurd hSx (by simp [this])
+    · simp
+
+/-- `⟦every⟧` is smooth (↓_NE + ↑_SE). Anti-persistence gives ↓_NE;
+    adding S-elements to A preserves ∀x.R(x)→S(x) (direct ↑_SE proof). -/
+theorem every_smooth : Smooth (every_sem m) :=
+  ⟨every_downNE, every_upSE_direct⟩
+
+/-- `⟦no⟧` is co-smooth (↓_NW + ↑_SW). Follows from anti-persistence. -/
+theorem no_coSmooth_partial : DownNWMon (no_sem m) ∧ DownNEMon (no_sem m) :=
+  (anti_persistent_iff_downNW_and_downNE _).mp no_restrictor_down
+
+private lemma filter_sublist_of_imp {α : Type*} {l : List α}
+    {p q : α → Bool} (h : ∀ x ∈ l, p x = true → q x = true) :
+    (l.filter p).Sublist (l.filter q) := by
+  induction l with
+  | nil => exact List.Sublist.slnil
+  | cons a t ih =>
+    have ih' := ih (fun x hx => h x (List.mem_cons_of_mem a hx))
+    simp only [List.filter_cons]
+    by_cases hpa : p a = true
+    · rw [if_pos hpa, if_pos (h a List.mem_cons_self hpa)]
+      exact ih'.cons₂ a
+    · rw [if_neg hpa]
+      by_cases hqa : q a = true
+      · rw [if_pos hqa]; exact ih'.cons a
+      · rw [if_neg hqa]; exact ih'
+
+/-- `⟦most⟧` is ↓_NE Mon (direct proof).
+    Removing non-S elements from A preserves |A∩S| > |A\S| since |A∩S| stays
+    the same while |A\S| decreases. -/
+theorem most_downNE : DownNEMon (most_sem m) := by
+  intro R S R' hSub hKeep hQ
+  simp only [most_sem, decide_eq_true_eq] at *
+  have hEq : FiniteModel.elements.filter (fun x => R' x && S x) =
+      FiniteModel.elements.filter (fun x => R x && S x) :=
+    List.filter_congr (fun x _ => by
+      cases hS : S x <;> simp only [hS, Bool.and_false, Bool.and_true]
+      cases hR'x : R' x
+      · cases hRx : R x
+        · rfl
+        · exact absurd (hKeep x hRx hS) (by simp [hR'x])
+      · exact (hSub x hR'x).symm)
+  have hLe : (FiniteModel.elements.filter (fun x => R' x && !S x)).length ≤
+      (FiniteModel.elements.filter (fun x => R x && !S x)).length :=
+    (filter_sublist_of_imp (fun x _ h => by
+      simp only [Bool.and_eq_true, Bool.not_eq_true'] at h ⊢; exact ⟨hSub x h.1, h.2⟩)).length_le
+  rw [hEq]; omega
+
+/-- `⟦most⟧` is ↑_SE Mon (direct proof).
+    Adding S-elements to A preserves |A∩S| > |A\S| since |A∩S| grows
+    while |A\S| stays the same. -/
+theorem most_upSE : UpSEMon (most_sem m) := by
+  intro R S R' hSub hDiff hQ
+  simp only [most_sem, decide_eq_true_eq] at *
+  have hEq : FiniteModel.elements.filter (fun x => R' x && !S x) =
+      FiniteModel.elements.filter (fun x => R x && !S x) :=
+    List.filter_congr (fun x _ => by
+      cases hS : S x <;> simp only [hS, Bool.not_true, Bool.not_false, Bool.and_false, Bool.and_true]
+      cases hR'x : R' x
+      · cases hRx : R x
+        · rfl
+        · exact absurd (hSub x hRx) (by simp [hR'x])
+      · exact (hDiff x hR'x hS).symm)
+  have hLe : (FiniteModel.elements.filter (fun x => R x && S x)).length ≤
+      (FiniteModel.elements.filter (fun x => R' x && S x)).length :=
+    (filter_sublist_of_imp (fun x _ h => by
+      simp only [Bool.and_eq_true] at h ⊢; exact ⟨hSub x h.1, h.2⟩)).length_le
+  rw [hEq]; omega
+
+/-- `⟦most⟧` is smooth. This is a key empirical fact: most natural language
+    Mon↑ determiners are smooth (@cite{peters-westerstahl-2006} §5.6, (5.28)). -/
+theorem most_smooth : Smooth (most_sem m) :=
+  ⟨most_downNE, most_upSE⟩
+
+-- === Counting quantifier smoothness ===
+
+/-- `⟦at least n⟧` is persistent (Mon↑ in restrictor), hence ↑_SE and ↑_SW. -/
+theorem at_least_n_restrictor_up (n : Nat) : RestrictorUpwardMono (at_least_n_sem m n) := by
+  intro R R' S hRR' h
+  simp only [at_least_n_sem, decide_eq_true_eq] at *
+  exact le_trans h ((filter_sublist_of_imp (fun x _ hx => by
+    simp only [Bool.and_eq_true] at hx ⊢; exact ⟨hRR' x hx.1, hx.2⟩)).length_le)
+
+/-- `⟦at least n⟧` is ↓_NE Mon: removing non-S elements from A preserves
+    |A ∩ S| ≥ n since the S-witnesses are retained. -/
+theorem at_least_n_downNE (n : Nat) : DownNEMon (at_least_n_sem m n) := by
+  intro R S R' hSub hKeep hQ
+  simp only [at_least_n_sem, decide_eq_true_eq] at hQ
+  simp only [at_least_n_sem, decide_eq_true_eq]
+  have hEq : FiniteModel.elements.filter (fun x => R' x && S x) =
+      FiniteModel.elements.filter (fun x => R x && S x) :=
+    List.filter_congr (fun x _ => by
+      cases hS : S x <;> simp only [Bool.and_false, Bool.and_true]
+      cases hR'x : R' x
+      · cases hRx : R x
+        · rfl
+        · exact absurd (hKeep x hRx hS) (by simp [hR'x])
+      · exact (hSub x hR'x).symm)
+  exact hEq ▸ hQ
+
+/-- `⟦at least n⟧` is smooth (↓_NE + ↑_SE).
+    Persistence gives ↑_SE; the witness-preservation argument gives ↓_NE. -/
+theorem at_least_n_smooth (n : Nat) : Smooth (at_least_n_sem m n) :=
+  ⟨at_least_n_downNE n, restrictorUpMono_to_upSE _ (at_least_n_restrictor_up n)⟩
+
+/-- `⟦at most n⟧` is anti-persistent (Mon↓ in restrictor). Derived from duality:
+    outerNeg flips Mon↑_restrictor to Mon↓_restrictor. -/
+theorem at_most_n_restrictor_down (n : Nat) : RestrictorDownwardMono (at_most_n_sem m n) := by
+  rw [at_most_eq_outerNeg_at_least_succ]
+  exact outerNeg_restrictorUp_to_down _ (at_least_n_restrictor_up _)
+
+/-- `⟦at most n⟧` is co-smooth (↓_NW + ↑_SW). Derived from duality:
+    Smooth(at_least) ↔ CoSmooth(outerNeg(at_least)) = CoSmooth(at_most). -/
+theorem at_most_n_coSmooth (n : Nat) : CoSmooth (at_most_n_sem m n) := by
+  rw [at_most_eq_outerNeg_at_least_succ]
+  exact (smooth_iff_outerNeg_coSmooth _).mp (at_least_n_smooth _)
+
+-- === Smoothness implies scope monotonicity (Prop 9 verification) ===
+
+/-- Smooth + CONSERV → Mon↑ applied to `⟦some⟧`: an alternative derivation
+    of scope-upward-monotonicity from smoothness. -/
+theorem some_scope_up_from_smooth : ScopeUpwardMono (some_sem m) :=
+  smooth_conservative_scopeUpMono _ some_conservative some_smooth
+
+/-- Smooth + CONSERV → Mon↑ applied to `⟦every⟧`. -/
+theorem every_scope_up_from_smooth : ScopeUpwardMono (every_sem m) :=
+  smooth_conservative_scopeUpMono _ every_conservative every_smooth
+
+/-- Smooth + CONSERV → Mon↑ applied to `⟦at least n⟧`. -/
+theorem at_least_n_scope_up_from_smooth (n : Nat) : ScopeUpwardMono (at_least_n_sem m n) :=
+  smooth_conservative_scopeUpMono _ (at_least_n_conservative n) (at_least_n_smooth n)
 
 end FiniteModelProofs
 

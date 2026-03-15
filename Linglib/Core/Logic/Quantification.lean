@@ -28,6 +28,8 @@ all definitions here apply directly.
 - **§3 Mathlib bridge**: connection to `Monotone`/`Antitone`
 - **§4–§8 Theorems**: duality, symmetry/strength, Boolean closure,
   type ⟨1⟩, van Benthem characterization
+- **§5b Basic left monotonicity**: persistence decomposition (Prop 6),
+  negation rotation (Prop 8), smooth→Mon↑ (Prop 9), symmetry (Prop 7)
 - **§12 Conservative GQ lattice**: `ConsGQ α` bounded distributive lattice
 
 -/
@@ -129,6 +131,54 @@ def CONS2 (q : GQ α) : Prop :=
     Characterizes determiners that are felicitous in there-sentences. -/
 def Existential (q : GQ α) : Prop :=
   ∀ (R S : α → Bool), q R S = q (λ x => R x && S x) (λ _ => true)
+
+/-- ↑_SE Mon (@cite{peters-westerstahl-2006} §5.5): Q(A,B) & A⊆A' & A\B=A'\B → Q(A',B).
+    On the number triangle: if Q(k,m) then Q(k',m) for k' ≥ k.
+    Enlarging A by adding elements of B preserves Q. -/
+def UpSEMon (q : GQ α) : Prop :=
+  ∀ (R S R' : α → Bool),
+    (∀ x, R x = true → R' x = true) →
+    (∀ x, R' x = true → S x = false → R x = true) →
+    q R S = true → q R' S = true
+
+/-- ↑_SW Mon (@cite{peters-westerstahl-2006} §5.5): Q(A,B) & A⊆A' & A∩B=A'∩B → Q(A',B).
+    On the number triangle: if Q(k,m) then Q(k,m') for m' ≥ m.
+    Enlarging A by adding elements outside B preserves Q.
+    This is property (p) from P&W §5.2: half of the EXT condition. -/
+def UpSWMon (q : GQ α) : Prop :=
+  ∀ (R S R' : α → Bool),
+    (∀ x, R x = true → R' x = true) →
+    (∀ x, R' x = true → S x = true → R x = true) →
+    q R S = true → q R' S = true
+
+/-- ↓_NW Mon (@cite{peters-westerstahl-2006} §5.5): Q(A,B) & A'⊆A & A\B=A'\B → Q(A',B).
+    On the number triangle: if Q(k,m) then Q(k',m) for k' ≤ k.
+    Shrinking A by removing elements of B preserves Q. -/
+def DownNWMon (q : GQ α) : Prop :=
+  ∀ (R S R' : α → Bool),
+    (∀ x, R' x = true → R x = true) →
+    (∀ x, R x = true → S x = false → R' x = true) →
+    q R S = true → q R' S = true
+
+/-- ↓_NE Mon (@cite{peters-westerstahl-2006} §5.5): Q(A,B) & A'⊆A & A∩B=A'∩B → Q(A',B).
+    On the number triangle: if Q(k,m) then Q(k,m') for m' ≤ m.
+    Shrinking A by removing elements outside B preserves Q. -/
+def DownNEMon (q : GQ α) : Prop :=
+  ∀ (R S R' : α → Bool),
+    (∀ x, R' x = true → R x = true) →
+    (∀ x, R x = true → S x = true → R' x = true) →
+    q R S = true → q R' S = true
+
+/-- Smooth (@cite{peters-westerstahl-2006} §5.6): Q is ↓_NE Mon and ↑_SE Mon.
+    Smooth quantifiers are Mon↑ (Prop 9). Under ISOM, smooth quantifiers
+    have smooth monotonicity functions f where f(n) ≤ f(n+1) ≤ f(n)+1 (Prop 10).
+    Most natural language Mon↑ determiners are smooth: all proportional
+    quantifiers, "some", "all", "most", etc. -/
+def Smooth (q : GQ α) : Prop := DownNEMon q ∧ UpSEMon q
+
+/-- Co-smooth (@cite{peters-westerstahl-2006} §5.6): Q's inner negation is smooth.
+    Equivalently, ↓_NW Mon and ↑_SW Mon. "no" and "fewer than half" are co-smooth. -/
+def CoSmooth (q : GQ α) : Prop := DownNWMon q ∧ UpSWMon q
 
 /-- Left anti-additive: Q(A∪B, C) ↔ Q(A,C) ∧ Q(B,C). P&W §5.9. -/
 def LeftAntiAdditive (q : GQ α) : Prop :=
@@ -500,6 +550,290 @@ theorem vanBenthem_cons_ext (q : GQ α) :
   λ _ => conservative_iff_livesOn q
 
 -- ============================================================================
+-- §5b Basic Left Monotonicity and Smoothness (@cite{peters-westerstahl-2006} §5.5-5.6)
+-- ============================================================================
+
+-- Prop 6: Persistence decomposes into ↑_SW + ↑_SE
+
+/-- Persistence → ↑_SE Mon (trivial: ↑_SE conditions are a special case of A⊆A'). -/
+theorem restrictorUpMono_to_upSE (q : GQ α)
+    (h : RestrictorUpwardMono q) : UpSEMon q :=
+  λ R S R' hSub _ hQ => h R R' S hSub hQ
+
+/-- Persistence → ↑_SW Mon (trivial: ↑_SW conditions are a special case of A⊆A'). -/
+theorem restrictorUpMono_to_upSW (q : GQ α)
+    (h : RestrictorUpwardMono q) : UpSWMon q :=
+  λ R S R' hSub _ hQ => h R R' S hSub hQ
+
+/-- ↑_SW Mon ∧ ↑_SE Mon → Persistence (@cite{peters-westerstahl-2006} Prop 6).
+
+    Proof: extend A to A' in two steps via A'' = A ∪ (A'\B).
+    Step 1: A⊆A'' with A∩B = A''∩B (new elements are outside B) — apply ↑_SW.
+    Step 2: A''⊆A' with A''\B = A'\B (same elements outside B) — apply ↑_SE. -/
+theorem upSW_upSE_to_restrictorUpMono (q : GQ α)
+    (hSW : UpSWMon q) (hSE : UpSEMon q) : RestrictorUpwardMono q := by
+  intro R R' S hSub hQ
+  -- A'' = A ∪ (A'\B): elements of A, plus elements of A' that are not in B
+  let R'' : α → Bool := λ x => R x || (R' x && !S x)
+  -- Step 1: ↑_SW from R to R'' (A ⊆ A'' and A∩B = A''∩B)
+  have step1 : q R'' S = true := by
+    apply hSW R S R'' _ _ hQ
+    · intro x hRx; simp [R'', hRx]
+    · intro x hR''x hSx
+      simp [R''] at hR''x
+      cases hR''x with
+      | inl h => exact h
+      | inr h => simp [hSx] at h
+  -- Step 2: ↑_SE from R'' to R' (A'' ⊆ A' and A''\B = A'\B)
+  apply hSE R'' S R' _ _ step1
+  · intro x hR''x
+    simp [R''] at hR''x
+    cases hR''x with
+    | inl h => exact hSub x h
+    | inr h => exact h.1
+  · intro x hR'x hSnS
+    simp [R'', hR'x, hSnS]
+
+/-- Persistence ↔ ↑_SW Mon ∧ ↑_SE Mon (@cite{peters-westerstahl-2006} Prop 6). -/
+theorem persistent_iff_upSW_and_upSE (q : GQ α) :
+    RestrictorUpwardMono q ↔ UpSWMon q ∧ UpSEMon q :=
+  ⟨λ h => ⟨restrictorUpMono_to_upSW q h, restrictorUpMono_to_upSE q h⟩,
+   λ ⟨hSW, hSE⟩ => upSW_upSE_to_restrictorUpMono q hSW hSE⟩
+
+-- Analogous decomposition for anti-persistence
+
+/-- Anti-persistence → ↓_NW Mon. -/
+theorem restrictorDownMono_to_downNW (q : GQ α)
+    (h : RestrictorDownwardMono q) : DownNWMon q :=
+  λ R S R' hSub _ hQ => h R' R S hSub hQ
+
+/-- Anti-persistence → ↓_NE Mon. -/
+theorem restrictorDownMono_to_downNE (q : GQ α)
+    (h : RestrictorDownwardMono q) : DownNEMon q :=
+  λ R S R' hSub _ hQ => h R' R S hSub hQ
+
+/-- ↓_NW Mon ∧ ↓_NE Mon → Anti-persistence.
+
+    Proof: shrink A to A' in two steps via A'' = A' ∪ (A∩B) ∩ something.
+    More precisely, A'' = A ∩ (A' ∪ B). Then A' ⊆ A'' ⊆ A,
+    A∩B = A''∩B (removing complement-of-(A'∪B) doesn't touch B-elements),
+    and A'\B = A''\B (A'' outside B = A ∩ A' outside B = A' outside B).
+    Step 1: ↓_NE from A to A''. Step 2: ↓_NW from A'' to A'. -/
+theorem downNW_downNE_to_restrictorDownMono (q : GQ α)
+    (hNW : DownNWMon q) (hNE : DownNEMon q) : RestrictorDownwardMono q := by
+  -- RestrictorDownwardMono: R⊆R' → q R' S → q R S
+  intro R R' S hSub hQ
+  -- A'' = R ∪ (R'∩S): intermediate restrictor with R ⊆ A'' ⊆ R'
+  let R'' : α → Bool := λ x => R x || (R' x && S x)
+  -- Step 1: ↓_NE from R' to R'' (R''⊆R' and R'∩S = R''∩S)
+  have step1 : q R'' S = true := by
+    apply hNE R' S R'' _ _ hQ
+    · intro x hR''x
+      simp only [R'', Bool.or_eq_true, Bool.and_eq_true] at hR''x
+      cases hR''x with
+      | inl h => exact hSub x h
+      | inr h => exact h.1
+    · intro x hR'x hSx
+      simp only [R'', Bool.or_eq_true, Bool.and_eq_true]
+      exact Or.inr ⟨hR'x, hSx⟩
+  -- Step 2: ↓_NW from R'' to R (R⊆R'' and R''\S = R\S)
+  apply hNW R'' S R _ _ step1
+  · intro x hRx
+    simp only [R'', Bool.or_eq_true, Bool.and_eq_true]
+    exact Or.inl hRx
+  · intro x hR''x hSnS
+    simp only [R'', Bool.or_eq_true, Bool.and_eq_true] at hR''x
+    cases hR''x with
+    | inl h => exact h
+    | inr h => exact absurd h.2 (by simp [hSnS])
+
+/-- Anti-persistence ↔ ↓_NW Mon ∧ ↓_NE Mon. -/
+theorem anti_persistent_iff_downNW_and_downNE (q : GQ α) :
+    RestrictorDownwardMono q ↔ DownNWMon q ∧ DownNEMon q :=
+  ⟨λ h => ⟨restrictorDownMono_to_downNW q h, restrictorDownMono_to_downNE q h⟩,
+   λ ⟨hNW, hNE⟩ => downNW_downNE_to_restrictorDownMono q hNW hNE⟩
+
+-- Prop 8: Negation rotates basic monotonicities
+
+/-- Outer negation reverses ↑_SE to ↓_NW (@cite{peters-westerstahl-2006} Prop 8a).
+    Contrapositive: if Q(R',S)→Q(R,S) under ↑_SE conditions,
+    then ¬Q(R,S)→¬Q(R',S), which is ↓_NW for ~Q. -/
+theorem outerNeg_upSE_to_downNW (q : GQ α)
+    (h : UpSEMon q) : DownNWMon (outerNeg q) := by
+  intro R S R' hSub hDiff hQ
+  simp only [outerNeg] at *
+  cases hR'S : q R' S
+  · simp
+  · have := h R' S R hSub hDiff hR'S; simp [this] at hQ
+
+/-- Outer negation reverses ↓_NW to ↑_SE. -/
+theorem outerNeg_downNW_to_upSE (q : GQ α)
+    (h : DownNWMon q) : UpSEMon (outerNeg q) := by
+  intro R S R' hSub hDiff hQ
+  simp only [outerNeg] at *
+  cases hR'S : q R' S
+  · simp
+  · have := h R' S R hSub hDiff hR'S; simp [this] at hQ
+
+/-- Outer negation reverses ↑_SW to ↓_NE. -/
+theorem outerNeg_upSW_to_downNE (q : GQ α)
+    (h : UpSWMon q) : DownNEMon (outerNeg q) := by
+  intro R S R' hSub hDiff hQ
+  simp only [outerNeg] at *
+  cases hR'S : q R' S
+  · simp
+  · have := h R' S R hSub hDiff hR'S; simp [this] at hQ
+
+/-- Outer negation reverses ↓_NE to ↑_SW. -/
+theorem outerNeg_downNE_to_upSW (q : GQ α)
+    (h : DownNEMon q) : UpSWMon (outerNeg q) := by
+  intro R S R' hSub hDiff hQ
+  simp only [outerNeg] at *
+  cases hR'S : q R' S
+  · simp
+  · have := h R' S R hSub hDiff hR'S; simp [this] at hQ
+
+/-- Inner negation switches ↓_NE ↔ ↓_NW (@cite{peters-westerstahl-2006} Prop 8b).
+
+    Proof: if Q is ↓_NE Mon, then Q¬(A,B) = Q(A,¬B), A'⊆A, and
+    A\B = A'\B means A∩(¬B) = A'∩(¬B), so ↓_NE Mon on Q gives Q(A',¬B) = Q¬(A',B).
+    This is the ↓_NW condition for Q¬. -/
+theorem innerNeg_downNE_to_downNW (q : GQ α)
+    (h : DownNEMon q) : DownNWMon (innerNeg q) := by
+  intro R S R' hSub hDiff hQ
+  simp only [innerNeg] at *
+  refine h R (fun x => !S x) R' hSub ?_ hQ
+  intro x hRx hNS
+  exact hDiff x hRx (by cases hS : S x <;> simp [hS] at hNS ⊢)
+
+/-- Inner negation switches ↓_NW ↔ ↓_NE. -/
+theorem innerNeg_downNW_to_downNE (q : GQ α)
+    (h : DownNWMon q) : DownNEMon (innerNeg q) := by
+  intro R S R' hSub hDiff hQ
+  simp only [innerNeg] at *
+  refine h R (fun x => !S x) R' hSub ?_ hQ
+  intro x hRx hNS
+  exact hDiff x hRx (by cases hS : S x <;> simp [hS] at hNS ⊢)
+
+/-- Inner negation switches ↑_SE ↔ ↑_SW. -/
+theorem innerNeg_upSE_to_upSW (q : GQ α)
+    (h : UpSEMon q) : UpSWMon (innerNeg q) := by
+  intro R S R' hSub hDiff hQ
+  simp only [innerNeg] at *
+  refine h R (fun x => !S x) R' hSub ?_ hQ
+  intro x hR'x hNS
+  exact hDiff x hR'x (by cases hS : S x <;> simp [hS] at hNS ⊢)
+
+/-- Inner negation switches ↑_SW ↔ ↑_SE. -/
+theorem innerNeg_upSW_to_upSE (q : GQ α)
+    (h : UpSWMon q) : UpSEMon (innerNeg q) := by
+  intro R S R' hSub hDiff hQ
+  simp only [innerNeg] at *
+  refine h R (fun x => !S x) R' hSub ?_ hQ
+  intro x hR'x hNS
+  exact hDiff x hR'x (by cases hS : S x <;> simp [hS] at hNS ⊢)
+
+/-- Smooth ↔ outer negation is co-smooth (@cite{peters-westerstahl-2006} Prop 8a). -/
+theorem smooth_iff_outerNeg_coSmooth (q : GQ α) :
+    Smooth q ↔ CoSmooth (outerNeg q) :=
+  ⟨λ ⟨hNE, hSE⟩ => ⟨outerNeg_upSE_to_downNW q hSE, outerNeg_downNE_to_upSW q hNE⟩,
+   λ ⟨hNW, hSW⟩ => by
+    rw [show q = outerNeg (outerNeg q) from (outerNeg_involution q).symm]
+    exact ⟨outerNeg_upSW_to_downNE _ hSW, outerNeg_downNW_to_upSE _ hNW⟩⟩
+
+/-- Smooth ↔ inner negation is co-smooth (@cite{peters-westerstahl-2006} Prop 8b). -/
+theorem smooth_iff_innerNeg_coSmooth (q : GQ α) :
+    Smooth q ↔ CoSmooth (innerNeg q) :=
+  ⟨λ ⟨hNE, hSE⟩ => ⟨innerNeg_downNE_to_downNW q hNE, innerNeg_upSE_to_upSW q hSE⟩,
+   λ ⟨hNW, hSW⟩ => by
+    rw [show q = innerNeg (innerNeg q) from (innerNeg_involution q).symm]
+    exact ⟨innerNeg_downNW_to_downNE _ hNW, innerNeg_upSW_to_upSE _ hSW⟩⟩
+
+-- Prop 9: Smooth → Mon↑
+
+/-- CONSERV ∧ Smooth → Mon↑ (@cite{peters-westerstahl-2006} Prop 9).
+
+    Proof: Given Q(A,B) and B ⊆ B'. Let A' = A \ (B'\B). Then:
+    - A'⊆A and A∩B=A'∩B (removing B'\B doesn't touch B since B∩(B'\B)=∅)
+    → ↓_NE gives Q(A',B)
+    - A'∩B = A'∩B' (any x∈A'∩B' must be in B, since elements of B'\B were removed)
+    → CONSERV: Q(A',B) = Q(A',B')
+    - A'⊆A and A'\B'=A\B' (A'\B' = A\(B'\B)\B' = A\B')
+    → ↑_SE gives Q(A,B') -/
+theorem smooth_conservative_scopeUpMono (q : GQ α)
+    (hCons : Conservative q) (hSmooth : Smooth q) : ScopeUpwardMono q := by
+  obtain ⟨hNE, hSE⟩ := hSmooth
+  intro R S S' hSS' hQ
+  -- A' = A \ (B'\B): keep elements of A that are either in B or not in B'
+  let R' : α → Bool := λ x => R x && (S x || !S' x)
+  -- Step 1: ↓_NE from (R,S) to (R',S) — A'⊆A and A∩B = A'∩B
+  have hR'S : q R' S = true := by
+    apply hNE R S R' _ _ hQ
+    · intro x hR'x; simp [R'] at hR'x; exact hR'x.1
+    · intro x hRx hSx; simp [R', hRx, hSx]
+  -- Key: R'∩S = R'∩S' (elements of B'\B were removed from A')
+  have key : (λ x => R' x && S' x) = (λ x => R' x && S x) := by
+    funext x
+    simp only [R']
+    cases hRx : R x <;> simp
+    cases hSx : S x <;> cases hS'x : S' x <;> simp
+    exact absurd (hSS' x hSx) (by simp [hS'x])
+  -- Step 2: CONSERV switches scope from S to S' — Q(R',S) = Q(R',S')
+  have hR'S' : q R' S' = true := by
+    rw [hCons R' S'] ; rw [key] ; rw [← hCons R' S] ; exact hR'S
+  -- Step 3: ↑_SE from (R',S') to (R,S') — R'⊆R and R\S'=R'\S'
+  apply hSE R' S' R _ _ hR'S'
+  · intro x hR'x; simp [R'] at hR'x; exact hR'x.1
+  · intro x hRx hS'nS
+    simp only [R', Bool.and_eq_true, Bool.or_eq_true, Bool.not_eq_true']
+    exact ⟨hRx, Or.inr hS'nS⟩
+
+-- Prop 7: Symmetry ↔ ↑_SW + ↓_NE (under CONSERV)
+
+/-- CONSERV ∧ QSymmetric → ↑_SW Mon ∧ ↓_NE Mon (@cite{peters-westerstahl-2006} Prop 7).
+
+    Under CONSERV, symmetry is equivalent to Q(A,B) ↔ Q(A∩B, A∩B).
+    Both ↑_SW and ↓_NE preserve A∩B, so the truth value is unchanged. -/
+theorem symmetric_to_upSW_downNE (q : GQ α)
+    (hCons : Conservative q) (hSym : QSymmetric q) :
+    UpSWMon q ∧ DownNEMon q := by
+  -- Key helper: under CONSERV+symmetry, Q(A,B) = Q(A∩B, A∩B)
+  have toIntersect : ∀ A B : α → Bool,
+      q A B = q (λ x => A x && B x) (λ x => A x && B x) := by
+    intro A B
+    have h1 : q A B = q A (λ x => A x && B x) := hCons A B
+    have h2 : q A (λ x => A x && B x) = q (λ x => A x && B x) A :=
+      hSym A (λ x => A x && B x)
+    have h3 : q (λ x => A x && B x) A =
+        q (λ x => A x && B x) (λ x => (A x && B x) && A x) :=
+      hCons (λ x => A x && B x) A
+    have h4 : (λ x => (A x && B x) && A x) = (λ x => A x && B x) := by
+      funext x; cases A x <;> cases B x <;> rfl
+    rw [h1, h2, h3, h4]
+  -- Both ↑_SW and ↓_NE preserve A∩B, so Q is invariant
+  have intersect_eq (R S R' : α → Bool)
+      (hFwd : ∀ x, R x = true → S x = true → R' x = true)
+      (hBwd : ∀ x, R' x = true → S x = true → R x = true) :
+      (λ x => R x && S x) = (λ x => R' x && S x) := by
+    funext x; cases hSx : S x <;> simp
+    cases hRx : R x <;> cases hR'x : R' x <;> simp
+    · exact absurd (hBwd x hR'x hSx) (by simp [hRx])
+    · exact absurd (hFwd x hRx hSx) (by simp [hR'x])
+  constructor
+  · -- ↑_SW: A⊆A', A∩B=A'∩B, Q(A,B) → Q(A',B)
+    intro R S R' hSub hInt hQ
+    rw [toIntersect R S] at hQ
+    rw [intersect_eq R S R' (λ x hRx hSx => hSub x hRx) hInt] at hQ
+    rw [← toIntersect R' S] at hQ
+    exact hQ
+  · -- ↓_NE: A'⊆A, A∩B=A'∩B, Q(A,B) → Q(A',B)
+    intro R S R' hSub hInt hQ
+    rw [toIntersect R S] at hQ
+    rw [intersect_eq R S R' hInt (λ x hR'x hSx => hSub x hR'x)] at hQ
+    rw [← toIntersect R' S] at hQ
+    exact hQ
+
+-- ============================================================================
 -- §6 Boolean Closure (@cite{keenan-stavi-1986})
 -- ============================================================================
 
@@ -726,104 +1060,152 @@ theorem scopeUpMono_rightContinuous (q : GQ α)
     (←) If A∩B is non-empty, pick a ∈ A∩B. Then f({a}) must be true
     (otherwise f(C) = false for all singletons, and upward closure +
     A∩B ⊇ {a} gives f(A∩B) = true only if f({a}) = true — contradiction).
-    So q(A,B) = f(A∩B) = true. -/
-theorem vanBenthem_symm_quasiRefl_is_overlap (q : GQ α)
+    that works across models of arbitrary size, ensuring q is non-trivial on singletons.
+    Because `GQ α` is fixed-domain, we explicitly require a singleton witness
+    (`hWitT`) and isomorphism invariance (`hIso`) to ensure all singletons behave identically. -/
+theorem vanBenthem_symm_quasiRefl_is_overlap [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hSym : QSymmetric q)
     (hQR : QuasiReflexive q)
-    (hWitT : ∃ A B, q A B = true)
-    (hWitF : ∃ A, q A A = false) :
+    (hWitT : ∃ x, q (λ y => y == x) (λ y => y == x) = true)
+    (hWitF : ∃ A, q A A = false)
+    (hIso : QuantityInvariant q) :
     ∀ A B, q A B = true ↔ (∃ x, A x = true ∧ B x = true) := by
-  -- Step 1: q is intersective
   have hInt := (conserv_symm_iff_int q hCons).mp hSym
-  -- Step 2: q(A,B) = q(A∩B, A∩B)
   have qAB_eq : ∀ A B, q A B = q (λ x => A x && B x) (λ x => A x && B x) := by
     intro A B
     have h1 := hInt A B (λ x => A x && B x) (λ x => A x && B x)
     exact h1 (λ x => by cases A x <;> cases B x <;> rfl)
-  -- Step 3: upward closure of f(C) := q(C,C)
   have upward : ∀ C D : α → Bool,
       (∀ x, C x = true → D x = true) → q C C = true → q D D = true := by
     intro C D hCD hCC
-    -- q(D,C) = q(D∩C, D∩C) = q(C,C) since D∩C = C (because C ⊆ D)
     have hDC : q D C = q C C := by
       apply hInt; intro x; cases hC : C x
       · simp
       · simp [hCD x hC]
     exact hQR D C (hDC ▸ hCC)
-  -- Step 4: q(∅,∅) = false
   obtain ⟨A₀, hA₀⟩ := hWitF
   have empty_false : q (λ _ => false) (λ _ => false) = false := by
     by_contra h
     rw [Bool.not_eq_false] at h
     have := upward (λ _ => false) A₀ (λ _ _ => by contradiction) h
     rw [hA₀] at this; exact absurd this (by decide)
-  -- Now prove the ↔
   intro A B
   constructor
-  · -- q(A,B) = true → ∃x, A x ∧ B x
-    intro hAB
+  · intro hAB
     rw [qAB_eq] at hAB
     by_contra h
     push_neg at h
-    -- A∩B = ∅, so q(A∩B, A∩B) = q(∅,∅) = false
     have : (λ x => A x && B x) = (λ _ => false) := by
       funext x
       cases hA : A x <;> cases hB : B x <;> simp
       exact absurd hB (h x hA)
     rw [this] at hAB
     rw [empty_false] at hAB; exact absurd hAB (by decide)
-  · -- ∃x, A x ∧ B x → q(A,B) = true
-    intro ⟨a, hAa, hBa⟩
+  · intro ⟨a, hAa, hBa⟩
     rw [qAB_eq]
-    -- A∩B is non-empty (contains a). Need q(A∩B, A∩B) = true.
-    -- First show q(singleton, singleton) = true for any singleton
-    obtain ⟨A₁, B₁, hT⟩ := hWitT
-    rw [qAB_eq] at hT
-    -- q(A₁∩B₁, A₁∩B₁) = true, and A₁∩B₁ is non-empty
-    -- By upward closure from A₁∩B₁ to everything, q(const true, const true) = true
-    have all_true : q (λ _ => true) (λ _ => true) = true :=
-      upward _ _ (λ _ _ => rfl) hT
-    -- Upward closure goes from subsets, but we need downward reasoning.
-    -- Use symmetry + quasi-reflexivity differently:
-    -- q(A∩B, A∩B) = q(A∩B, everything) by CONS + SYMM chain:
-    -- q(A∩B, true) = q(true, A∩B) by SYMM = q(true, true ∩ (A∩B)) by CONS
-    --   = q(true, A∩B) = q(A∩B, true) (circular)
-    -- Instead: q(A∩B, A∩B) via q(true, true) and CONS
-    -- q(true, true) = true. q(true, A∩B): by CONS = q(true, true ∩ (A∩B)) = q(true, A∩B).
-    -- Need scope-monotonicity? Not available without it.
-    -- Alternative: use that A∩B is non-empty. Pick a ∈ A∩B.
-    -- q({a}, {a}): by SYMM+CONS chain, need to show this.
-    -- From all_true and QR: no direct way down.
-    -- Use VAR argument directly: q = "some" is the only option.
-    -- This full uniqueness requires QUANT (isomorphism invariance).
-    sorry
+    obtain ⟨x, hx⟩ := hWitT
+    have h_single : q (λ y => y == a) (λ y => y == a) = true := by
+      let f : α → α := Equiv.swap x a
+      have hf_bij : Function.Bijective f := (Equiv.swap x a).bijective
+      have hf_prop : ∀ y, (f y == a) = (y == x) := by
+        intro y
+        apply Bool.eq_iff_iff.mpr
+        simp only [beq_iff_eq, f]
+        constructor
+        · intro hy
+          have h1 : (Equiv.swap x a).symm a = y := by
+            exact (Equiv.symm_apply_eq (Equiv.swap x a)).mpr hy.symm
+          have h2 : (Equiv.swap x a).symm a = x := by
+            exact Equiv.swap_apply_right x a
+          rw [h2] at h1
+          exact h1.symm
+        · intro hy
+          have hh : y = x := hy
+          rw [hh]
+          exact Equiv.swap_apply_left x a
+      have h_eq : q (λ y => y == a) (λ y => y == a) = q (λ y => y == x) (λ y => y == x) := by
+        apply hIso (λ y => y == a) (λ y => y == a) (λ y => y == x) (λ y => y == x) f hf_bij
+        · intro y; exact hf_prop y
+        · intro y; exact hf_prop y
+      rw [h_eq]
+      exact hx
+    apply upward (λ y => y == a) (λ y => A y && B y)
+    · intro y hy
+      simp only [beq_iff_eq] at hy
+      subst hy
+      simp [hAa, hBa]
+    · exact h_single
 
 /-- @cite{van-benthem-1984} Cor 3.3.3: Under conservativity, the ONLY
     symmetric quasi-universal quantifier is disjointness (= "no").
 
     This follows from the overlap characterization via outer negation:
     no(A,B) = ¬some(A,B) = ¬(A∩B ≠ ∅) = (A∩B = ∅). -/
-theorem vanBenthem_symm_quasiUniv_is_disjointness (q : GQ α)
+theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hSym : QSymmetric q)
     (hQU : QuasiUniversal q)
+    (hWitF : ∃ x, q (λ y => y == x) (λ y => y == x) = false)
     (hWitT : ∃ A, q A A = true)
-    (hWitF : ∃ A B, q A B = false) :
+    (hIso : QuantityInvariant q) :
     ∀ A B, q A B = true ↔ (∀ x, ¬(A x = true ∧ B x = true)) := by
-  -- Symmetric + quasi-universal + CONSERV → q depends only on A∩B
-  -- and is downward-closed. Combined with VAR, q(A,B) iff A∩B = ∅.
   have hInt := (conserv_symm_iff_int q hCons).mp hSym
   have qAB_eq : ∀ A B, q A B = q (λ x => A x && B x) (λ x => A x && B x) := by
     intro A B
     exact hInt A B _ _ (λ x => by cases A x <;> cases B x <;> rfl)
+  have downward : ∀ C D : α → Bool,
+      (∀ x, C x = true → D x = true) → q D D = true → q C C = true := by
+    intro C D hCD hDD
+    have h1 : q D C = true := hQU D C hDD
+    have h2 : q C D = true := by rw [hSym]; exact h1
+    have h3 : q C D = q C C := by
+      rw [hCons C D]
+      have : (λ x => C x && D x) = C := by
+        funext x
+        cases hC : C x
+        · rfl
+        · simp [hCD x hC]
+      rw [this]
+    rw [h3] at h2
+    exact h2
+
+  obtain ⟨A₀, hA₀⟩ := hWitT
+  have empty_true : q (λ _ => false) (λ _ => false) = true := by
+    exact downward (λ _ => false) A₀ (λ _ _ => by contradiction) hA₀
+
   intro A B
   constructor
-  · intro hAB
+  · intro hAB x ⟨hAx, hBx⟩
     rw [qAB_eq] at hAB
-    intro x ⟨hAx, hBx⟩
-    -- If A∩B non-empty, quasi-universal gives q(A∩B, anything) = true
-    -- In particular q(A∩B, A∩B) = true → q(A∩B, ∅) = true (quasi-universal)
-    -- But q should be false for large enough sets (VAR)
-    sorry
+    obtain ⟨x₀, hx₀⟩ := hWitF
+    have h_single_true : q (λ y => y == x) (λ y => y == x) = true := by
+      exact downward (λ y => y == x) (λ y => A y && B y) (λ y hy => by simp only [beq_iff_eq] at hy; subst hy; simp [hAx, hBx]) hAB
+    have h_single_false : q (λ y => y == x) (λ y => y == x) = false := by
+      let f : α → α := Equiv.swap x₀ x
+      have hf_bij : Function.Bijective f := (Equiv.swap x₀ x).bijective
+      have hf_prop : ∀ y, (f y == x) = (y == x₀) := by
+        intro y
+        apply Bool.eq_iff_iff.mpr
+        simp only [beq_iff_eq, f]
+        constructor
+        · intro hy
+          have h1 : (Equiv.swap x₀ x).symm x = y := by
+            exact (Equiv.symm_apply_eq (Equiv.swap x₀ x)).mpr hy.symm
+          have h2 : (Equiv.swap x₀ x).symm x = x₀ := by
+            exact Equiv.swap_apply_right x₀ x
+          rw [h2] at h1
+          exact h1.symm
+        · intro hy
+          have hh : y = x₀ := hy
+          rw [hh]
+          exact Equiv.swap_apply_left x₀ x
+      have h_eq : q (λ y => y == x) (λ y => y == x) = q (λ y => y == x₀) (λ y => y == x₀) := by
+        apply hIso (λ y => y == x) (λ y => y == x) (λ y => y == x₀) (λ y => y == x₀) f hf_bij
+        · intro y; exact hf_prop y
+        · intro y; exact hf_prop y
+      rw [h_eq]
+      exact hx₀
+    rw [h_single_true] at h_single_false
+    contradiction
   · intro hDisj
     rw [qAB_eq]
     have hEmpty : (λ x => A x && B x) = (λ _ => false) :=
@@ -831,14 +1213,7 @@ theorem vanBenthem_symm_quasiUniv_is_disjointness (q : GQ α)
         cases hA : A x <;> cases hB : B x <;> simp
         exact absurd ⟨hA, hB⟩ (hDisj x)
     rw [hEmpty]
-    -- q(∅,∅) = true: from q(C,C)=true, quasi-universality gives q(C,∅)=true,
-    -- symmetry gives q(∅,C)=true, and conservativity reduces to q(∅,∅)=true.
-    obtain ⟨C, hC⟩ := hWitT
-    have h1 : q C (λ _ => false) = true := hQU C _ hC
-    have h2 : q (λ _ => false) C = true := by rw [← hSym]; exact h1
-    rw [hCons] at h2
-    have : (λ x => (false : Bool) && C x) = (λ _ => false) := funext λ _ => rfl
-    rw [this] at h2; exact h2
+    exact empty_true
 
 -- ============================================================================
 -- §9 — Entailment Signature Bridge (@cite{icard-2012})
