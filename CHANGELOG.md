@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.281] - 2026-03-15
+
+### Added
+- **Construction Grammar fusion testing**: formalize that `MeaningComponents.fuse` + `predictedAlternation` derives multiple alternation flips from a single construction — hit-class in resultative flips 4 alternations (CI, middle, instrumentSubject, resultative) while preserving conative; touch-class in caused-motion flips conative + instrumentSubject while preserving BPPA; manner-of-motion in resultative flips CI, middle, instrumentSubject; ditransitive adds nothing (identity fusion verified); cut-class instrumentSpec survives fusion (blocked even in resultative); 11 new theorems in ArgumentStructure.lean demonstrating the architectural payoff of Goldbergian fusion
+
 ## [0.229.280] - 2026-03-15
 
 ### Added

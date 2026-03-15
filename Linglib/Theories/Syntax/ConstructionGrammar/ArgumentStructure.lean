@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Core.Interface
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.DiathesisAlternation
 
 /-!
 # Argument Structure Constructions
@@ -519,5 +519,120 @@ theorem hit_alternates_in_resultative :
 theorem hit_no_alternation_alone :
     MeaningComponents.hit.predictedAlternation .causativeInchoative = false := by
   native_decide
+
+/-! ### Multiple alternation flips from a single construction
+
+The key architectural insight: fusing a construction's components with a verb's
+components can flip *multiple* alternation predictions simultaneously. The
+resultative adds CoS + causation, which unlocks not just causativeInchoative but
+also middle, instrumentSubject, and the resultative alternation itself — all
+from the same mechanism, with no new alternation logic.
+
+This is the formal payoff of Goldbergian fusion (@cite{goldberg-1995}):
+constructions don't just license one new alternation — they systematically
+augment the verb's meaning component profile, and every alternation whose
+required components are now satisfied becomes available. -/
+
+/-- Hit-class verbs alone: no middle, no instrumentSubject, no resultative alternation. -/
+theorem hit_blocked_alone :
+    MeaningComponents.hit.predictedAlternation .middle = false
+    ∧ MeaningComponents.hit.predictedAlternation .instrumentSubject = false
+    ∧ MeaningComponents.hit.predictedAlternation .resultative = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Hit-class in resultative: ALL FOUR component-derived alternations flip.
+    The resultative adds CoS + causation → fused = ⟨true, true, true, true, false, false⟩.
+    This unlocks causativeInchoative, middle, instrumentSubject, AND resultative. -/
+theorem hit_resultative_full_profile :
+    predictedAlternationInConstruction .hit resultative .causativeInchoative = true
+    ∧ predictedAlternationInConstruction .hit resultative .middle = true
+    ∧ predictedAlternationInConstruction .hit resultative .instrumentSubject = true
+    ∧ predictedAlternationInConstruction .hit resultative .resultative = true := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Conative stays true: hit already has contact + motion, and fusing preserves them. -/
+theorem hit_resultative_conative_preserved :
+    MeaningComponents.hit.predictedAlternation .conative = true
+    ∧ predictedAlternationInConstruction .hit resultative .conative = true := ⟨rfl, rfl⟩
+
+/-! ### Caused-motion fusion
+
+The caused-motion construction adds motion + causation. For touch-class verbs
+(pure contact, no motion), this unlocks the conative alternation (requires
+contact + motion) and the instrument subject alternation (requires causation).
+
+Touch alone: `⟨false, true, false, false, false, false⟩` — only BPPA (contact)
+Touch + caused-motion: `⟨false, true, true, true, false, false⟩` — conative + instrumentSubject too -/
+
+/-- Touch verbs alone: no conative, no instrumentSubject. -/
+theorem touch_blocked_alone :
+    MeaningComponents.touch.predictedAlternation .conative = false
+    ∧ MeaningComponents.touch.predictedAlternation .instrumentSubject = false := ⟨rfl, rfl⟩
+
+/-- Touch + caused-motion: conative AND instrumentSubject flip to true.
+    Motion + causation from the construction fill exactly what touch lacks. -/
+theorem touch_causedMotion_flips :
+    predictedAlternationInConstruction .touch causedMotion .conative = true
+    ∧ predictedAlternationInConstruction .touch causedMotion .instrumentSubject = true := ⟨rfl, rfl⟩
+
+/-- Touch + caused-motion: BPPA stays true (contact preserved by fusion). -/
+theorem touch_causedMotion_bppa_preserved :
+    MeaningComponents.touch.predictedAlternation .bodyPartPossessorAscension = true
+    ∧ predictedAlternationInConstruction .touch causedMotion .bodyPartPossessorAscension = true := ⟨rfl, rfl⟩
+
+/-! ### Manner-of-motion verbs in the resultative
+
+Manner-of-motion verbs (`⟨false, false, true, false, false, true⟩`) have motion
+but no CoS or causation. In the resultative, they acquire both — unlocking
+causativeInchoative, middle, instrumentSubject, and resultative. -/
+
+/-- Manner-of-motion verbs alone: no CI, no middle, no instrumentSubject. -/
+theorem mannerOfMotion_blocked_alone :
+    (LevinClass.mannerOfMotion.meaningComponents).predictedAlternation .causativeInchoative = false
+    ∧ (LevinClass.mannerOfMotion.meaningComponents).predictedAlternation .middle = false
+    ∧ (LevinClass.mannerOfMotion.meaningComponents).predictedAlternation .instrumentSubject = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Manner-of-motion + resultative: CI, middle, and instrumentSubject all flip. -/
+theorem mannerOfMotion_resultative_flips :
+    predictedAlternationInConstruction (LevinClass.mannerOfMotion.meaningComponents) resultative .causativeInchoative = true
+    ∧ predictedAlternationInConstruction (LevinClass.mannerOfMotion.meaningComponents) resultative .middle = true
+    ∧ predictedAlternationInConstruction (LevinClass.mannerOfMotion.meaningComponents) resultative .instrumentSubject = true := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-! ### Constructional augmentation summary
+
+Each construction unlocks a characteristic set of alternations by augmenting
+the verb's meaning components. The table below summarizes what each construction
+contributes and which alternations it enables for verbs that lack the relevant
+components:
+
+| Construction | Adds | Unlocks |
+|---|---|---|
+| Resultative | CoS + causation | CI, middle, instrumentSubject, resultative |
+| Caused-motion | motion + causation | conative (if +contact), instrumentSubject |
+| Ditransitive | (nothing) | (nothing) |
+
+These predictions are all derived from the *same* `predictedAlternation` function —
+no construction-specific alternation logic exists. The construction simply changes
+the input to the general prediction function. -/
+
+/-- Ditransitive adds nothing: hit verbs stay blocked in all alternations
+    that are blocked in isolation. -/
+theorem hit_ditransitive_no_change :
+    predictedAlternationInConstruction .hit ditransitive .causativeInchoative = false
+    ∧ predictedAlternationInConstruction .hit ditransitive .middle = false
+    ∧ predictedAlternationInConstruction .hit ditransitive .instrumentSubject = false := by
+  simp [predictedAlternationInConstruction, composedMeaning, ditransitive,
+    MeaningComponents.fuse_none_right, MeaningComponents.hit,
+    MeaningComponents.predictedAlternation]
+
+/-- Instrument specification survives fusion: cut-class verbs remain blocked
+    from causativeInchoative and resultative even inside the resultative
+    construction, because instrumentSpec = true persists through componentwise OR. -/
+theorem cut_blocked_even_in_resultative :
+    predictedAlternationInConstruction .cut resultative .causativeInchoative = false
+    ∧ predictedAlternationInConstruction .cut resultative .resultative = false := by
+  exact ⟨rfl, rfl⟩
 
 end ConstructionGrammar
