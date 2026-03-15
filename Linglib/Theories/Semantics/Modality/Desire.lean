@@ -10,7 +10,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 
-namespace Semantics.Modality.PhillipsBrown
+namespace Semantics.Modality.Desire
 
 open Semantics.Attitudes.Intensional
 open Semantics.Modality.Kratzer
@@ -60,43 +60,6 @@ def wantQuestionBased (belS : BProp World) (GS : List (BProp World))
   let qBelS := questionRelativeBelief answers belS
   let best := bestAnswers GS qBelS
   best.all λ a => propEntails a p
-
-/-- Convenience: extract desires from BouleticFlavor. -/
-def wantBouletic (belS : BProp World) (flavor : BouleticFlavor) (w : World)
-    (answers : List (BProp World)) (p : BProp World) : Bool :=
-  wantQuestionBased belS (flavor.desires w) answers p
-
--- Metasemantic constraints (felicity conditions on Q_c)
-
-/-- Considering: Q must have both p-answers and ¬p-answers. -/
-def considering (answers : List (BProp World)) (p : BProp World) : Bool :=
-  (answers.any λ a => propEntails a p) &&
-  (answers.any λ a => propEntails a (λ w => !p w))
-
-/-- Diversity: |Q-Bel_S| ≥ 2. -/
-def diversity (answers : List (BProp World)) (belS : BProp World) : Bool :=
-  (questionRelativeBelief answers belS).length ≥ 2
-
-/-- Anti-deckstacking: question shouldn't trivially favor p.
-
-This prevents "rigged" questions that make the desire ascription vacuously true.
--/
-def antiDeckstacking (answers : List (BProp World)) (belS : BProp World) (GS : List (BProp World)) (p : BProp World) : Bool :=
-  let qBelS := questionRelativeBelief answers belS
-  let best := bestAnswers GS qBelS
-  (best.any λ a => !propEntails a p) ||
-  (qBelS.any λ a => propEntails a (λ w => !p w) &&
-    qBelS.any λ a' => propEntails a' p && preferAnswer GS a' a)
-
-/--
-**Belief-sensitivity**: S's beliefs affect the truth value.
-
-This is built into the semantics via Q-Bel_S, but we can test whether
-the desire ascription is sensitive to belief changes.
--/
-def beliefSensitive (answers : List (BProp World)) (GS : List (BProp World)) (p : BProp World)
-    (belS belS' : BProp World) : Bool :=
-  wantQuestionBased belS GS answers p != wantQuestionBased belS' GS answers p
 
 -- Key Theorems
 
@@ -154,28 +117,6 @@ theorem empty_desires_belief_only (belS : BProp World) (answers : List (BProp Wo
     trivial
   exact this _
 
--- C-distributivity (Phillips-Brown §4)
-
-/-!
-## C-distributivity
-
-A key diagnostic for question-sensitivity: whether ⟦x V Q⟧ ↔ ∃p ∈ Q. ⟦x V p⟧.
-
-"Want" is NOT c-distributive in Phillips-Brown's analysis, while
-"know" and "wonder" are.
--/
-
-/--
-Test whether a predicate is c-distributive for a given scenario.
-
-Returns true iff semantics(Q, p) = ∃a ∈ Q. semantics({a}, p)
--/
-def isCDistributive (semantics : List (BProp World) → BProp World → Bool)
-    (answers : List (BProp World)) (p : BProp World) : Bool :=
-  let wholeQ := semantics answers p
-  let existsSingle := answers.any λ a => semantics [a] p
-  wholeQ == existsSingle
-
 -- Connection to Core.SatisfactionOrdering
 
 open Core.SatisfactionOrdering
@@ -197,7 +138,7 @@ theorem satisfiedBy_eq_generic (GS : List (BProp World)) (a : BProp World) :
 def propositionPreorder (GS : List (BProp World)) : Preorder (BProp World) :=
   (propositionOrdering GS).toPreorder
 
-end Semantics.Modality.PhillipsBrown
+end Semantics.Modality.Desire
 
 -- BouleticFlavor Extension: Question-Based Desire Semantics
 
@@ -205,7 +146,7 @@ namespace Semantics.Modality.Kratzer.BouleticFlavor
 
 open Semantics.Attitudes.Intensional
 open Semantics.Modality.Kratzer
-open Semantics.Modality.PhillipsBrown
+open Semantics.Modality.Desire
 
 /-- Question-based desire: ⟦S wants p⟧ = all best answers in Q-Bel_S entail p. -/
 def evalWant (self : BouleticFlavor) (w : World)
@@ -215,7 +156,7 @@ def evalWant (self : BouleticFlavor) (w : World)
 /-- Preference ordering on propositions at world w. -/
 def preferenceOrdering (self : BouleticFlavor) (w : World) :
     Core.SatisfactionOrdering.SatisfactionOrdering (BProp World) (BProp World) :=
-  PhillipsBrown.propositionOrdering (self.desires w)
+  Desire.propositionOrdering (self.desires w)
 
 /-- Best answers according to S's desires at world w. -/
 def getBestAnswers (self : BouleticFlavor) (w : World) (answers : List (BProp World)) :
@@ -229,7 +170,7 @@ def liveAnswers (_self : BouleticFlavor) (question : List (BProp World)) (belS :
 
 end Semantics.Modality.Kratzer.BouleticFlavor
 
-namespace Semantics.Modality.PhillipsBrown
+namespace Semantics.Modality.Desire
 
 open Semantics.Attitudes.Intensional
 open Semantics.Modality.Kratzer
@@ -263,18 +204,15 @@ theorem empty_bouletic_indifferent (w : World) (a a' : BProp World) :
 - `bestAnswers GS answers`: optimal answers under preference
 - `questionRelativeBelief answers belS`: Q-Bel_S, live answers
 - `wantQuestionBased belS GS answers p`: main semantics
-- `wantBouletic`: convenience wrapper using BouleticFlavor
-
-### Metasemantic Constraints
-- `considering`: prejacent under consideration
-- `diversity`: multiple live answers
-- `antiDeckstacking`: question not rigged
-- `beliefSensitive`: beliefs affect truth
 
 ### Key Properties
 - Preference is transitive (`prefer_answer_transitive`)
 - Empty desires → indifference (`empty_desires_indifferent`)
 - Automatically inherits from Kratzer's `BouleticFlavor`
+
+### Metasemantic Constraints
+Felicity conditions (Considering, Diversity, Anti-deckstacking) are
+defined in `Phenomena.Modality.Studies.PhillipsBrown2025`.
 
 ### The Unified Framework
 
@@ -287,4 +225,4 @@ theorem empty_bouletic_indifferent (w : World) (a a' : BProp World) :
 | Best | `bestWorlds` | `bestAnswers` | `best` |
 -/
 
-end Semantics.Modality.PhillipsBrown
+end Semantics.Modality.Desire

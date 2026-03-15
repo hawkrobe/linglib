@@ -540,6 +540,7 @@ import Linglib.Fragments.Ukrainian.Case
 import Linglib.Fragments.Ukrainian.QuestionParticles
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Tagalog.Morph
+import Linglib.Fragments.Tagalog.Phonology
 import Linglib.Fragments.Italian.DiscourseParticles
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Morph
@@ -778,6 +779,7 @@ import Linglib.Phenomena.Generics.Data
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Phenomena.Generics.Compare
 import Linglib.Phenomena.Generics.Studies.Cohen1999
+import Linglib.Phenomena.Generics.Studies.Cohen2013
 import Linglib.Phenomena.Generics.Studies.Guerrini2026
 import Linglib.Phenomena.Generics.Studies.Krifka2013
 import Linglib.Phenomena.Generics.Studies.Longobardi2001
@@ -897,6 +899,7 @@ import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
 import Linglib.Theories.Semantics.Dynamic.BSML.Basic
 import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022
+import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Data
@@ -1102,6 +1105,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.Storme2026
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Flemming2021
 import Linglib.Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Jaeger2007
+import Linglib.Phenomena.PhonologicalAlternation.Studies.Magri2025
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -1405,6 +1409,7 @@ import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Montague.Conjunction
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Theories.Semantics.Composition.PredicateTransfer
 import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Theories.Semantics.Lexical.Determiner.Demonstrative.AhnZhu2025
@@ -1529,6 +1534,7 @@ import Linglib.Theories.Semantics.Causation.Builder
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Causation.Examples
 import Linglib.Theories.Semantics.Causation.GradedCausation
+import Linglib.Theories.Semantics.Causation.CausalSelection
 import Linglib.Theories.Semantics.Causation.Integration
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.Sufficiency
@@ -1555,7 +1561,11 @@ import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Modality.Disjunction
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 import Linglib.Theories.Semantics.Modality.Kratzer
-import Linglib.Theories.Semantics.Modality.PhillipsBrown
+import Linglib.Theories.Semantics.Modality.Kratzer.Background
+import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
+import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Linglib.Theories.Semantics.Modality.Desire
 import Linglib.Theories.Semantics.Modality.EpistemicLogic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
 import Linglib.Theories.Semantics.Modality.KnowledgeProbability
@@ -1722,6 +1732,7 @@ import Linglib.Theories.Phonology.HarmonicGrammar.Basic
 import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
+import Linglib.Theories.Phonology.HarmonicGrammar.Separability
 import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.ProsodicWord
 -- Theories: Sociolinguistics
