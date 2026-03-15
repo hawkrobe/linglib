@@ -1,4 +1,4 @@
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.LevinClass
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
 

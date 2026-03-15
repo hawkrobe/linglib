@@ -25,7 +25,7 @@ and distinct syntactic frames.
 
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.LevinClass
 
 namespace Semantics.Lexical.Verb.EventStructure
 

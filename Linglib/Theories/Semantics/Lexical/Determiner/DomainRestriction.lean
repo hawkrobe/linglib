@@ -58,17 +58,17 @@ abbrev DomainRestrictor (E : Type*) := E → Bool
 
 /-- Domain-restricted ⟦every⟧: ∀x. C(x) ∧ R(x) → S(x).
     Restricts the quantifier domain to entities satisfying C. -/
-def every_restricted (m : Model) [FiniteModel m]
+def every_restricted (m : Model) [Fintype m.Entity]
     (C : DomainRestrictor m.Entity) (R S : m.Entity → Bool) : Bool :=
   every_sem m (λ x => C x && R x) S
 
 /-- Domain-restricted ⟦some⟧: ∃x. C(x) ∧ R(x) ∧ S(x). -/
-def some_restricted (m : Model) [FiniteModel m]
+def some_restricted (m : Model) [Fintype m.Entity]
     (C : DomainRestrictor m.Entity) (R S : m.Entity → Bool) : Bool :=
   some_sem m (λ x => C x && R x) S
 
 /-- Domain-restricted ⟦no⟧: ¬∃x. C(x) ∧ R(x) ∧ S(x). -/
-def no_restricted (m : Model) [FiniteModel m]
+def no_restricted (m : Model) [Fintype m.Entity]
     (C : DomainRestrictor m.Entity) (R S : m.Entity → Bool) : Bool :=
   no_sem m (λ x => C x && R x) S
 
@@ -78,19 +78,19 @@ def no_restricted (m : Model) [FiniteModel m]
 
 /-- Unrestricted domain recovers the standard quantifier:
     ⟦every⟧_{λ_.true}(R)(S) = ⟦every⟧(R)(S). -/
-theorem every_unrestricted {m : Model} [FiniteModel m]
+theorem every_unrestricted {m : Model} [Fintype m.Entity]
     (R S : m.Entity → Bool) :
     every_restricted m (λ _ => true) R S = every_sem m R S := by
   unfold every_restricted every_sem; simp [Bool.true_and]
 
 /-- ⟦some⟧_{λ_.true}(R)(S) = ⟦some⟧(R)(S). -/
-theorem some_unrestricted {m : Model} [FiniteModel m]
+theorem some_unrestricted {m : Model} [Fintype m.Entity]
     (R S : m.Entity → Bool) :
     some_restricted m (λ _ => true) R S = some_sem m R S := by
   unfold some_restricted some_sem; simp [Bool.true_and]
 
 /-- ⟦no⟧_{λ_.true}(R)(S) = ⟦no⟧(R)(S). -/
-theorem no_unrestricted {m : Model} [FiniteModel m]
+theorem no_unrestricted {m : Model} [Fintype m.Entity]
     (R S : m.Entity → Bool) :
     no_restricted m (λ _ => true) R S = no_sem m R S := by
   unfold no_restricted no_sem; simp [Bool.true_and]
@@ -102,7 +102,7 @@ theorem no_unrestricted {m : Model} [FiniteModel m]
 /-- Smaller domain makes ⟦every⟧ easier to satisfy (restrictor ↓MON).
     If C ⊆ C' and every_C'(R)(S), then every_C(R)(S): fewer entities
     to check means the universal is weaker. -/
-theorem every_restricted_anti_mono {m : Model} [FiniteModel m]
+theorem every_restricted_anti_mono {m : Model} [Fintype m.Entity]
     {C C' : DomainRestrictor m.Entity} {R S : m.Entity → Bool}
     (hCC' : ∀ x, C x = true → C' x = true)
     (h : every_restricted m C' R S = true) :
@@ -114,7 +114,7 @@ theorem every_restricted_anti_mono {m : Model} [FiniteModel m]
 /-- Larger domain makes ⟦some⟧ easier to satisfy (restrictor ↑MON).
     Dual of `every_restricted_anti_mono`: more entities to check means
     more chances to find a witness. -/
-theorem some_restricted_mono {m : Model} [FiniteModel m]
+theorem some_restricted_mono {m : Model} [Fintype m.Entity]
     {C C' : DomainRestrictor m.Entity} {R S : m.Entity → Bool}
     (hCC' : ∀ x, C x = true → C' x = true)
     (h : some_restricted m C R S = true) :
@@ -126,7 +126,7 @@ theorem some_restricted_mono {m : Model} [FiniteModel m]
 /-- Smaller domain makes ⟦no⟧ easier to satisfy (restrictor ↓MON).
     Like ⟦every⟧, ⟦no⟧ is anti-monotone in the restrictor: fewer entities
     to check means fewer chances for a counterexample. -/
-theorem no_restricted_anti_mono {m : Model} [FiniteModel m]
+theorem no_restricted_anti_mono {m : Model} [Fintype m.Entity]
     {C C' : DomainRestrictor m.Entity} {R S : m.Entity → Bool}
     (hCC' : ∀ x, C x = true → C' x = true)
     (h : no_restricted m C' R S = true) :
@@ -144,24 +144,31 @@ theorem no_restricted_anti_mono {m : Model} [FiniteModel m]
     Domain restriction preserves the fundamental GQ property. This is the formal justification for the `every_restricted` definition:
     conservativity guarantees that restricting the restrictor to C ∩ R preserves
     the quantifier's meaning. -/
-theorem every_restricted_conservative {m : Model} [FiniteModel m]
+theorem every_restricted_conservative {m : Model} [Fintype m.Entity]
     (C : DomainRestrictor m.Entity) (R S : m.Entity → Bool) :
     every_restricted m C R S = every_restricted m C R (λ x => R x && S x) := by
-  simp only [every_restricted, every_sem]
-  congr 1; funext x; cases C x <;> cases R x <;> cases S x <;> rfl
+  unfold every_restricted every_sem
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
+  simp only [Bool.and_eq_true]
+  constructor
+  · intro h x ⟨hC, hR⟩; exact ⟨hR, h x ⟨hC, hR⟩⟩
+  · intro h x ⟨hC, hR⟩; exact (h x ⟨hC, hR⟩).2
 
 /-- Spectator irrelevance for domain restriction: entities outside C ∩ R don't
     affect ⟦every⟧_C(R, S). If S and S' agree on all entities satisfying both
     C and R, the restricted quantifier gives the same result.
     This formalizes the intuition that domain restriction makes irrelevant
     entities invisible to the quantifier. -/
-theorem every_restricted_spectator {m : Model} [FiniteModel m]
+theorem every_restricted_spectator {m : Model} [Fintype m.Entity]
     {C : DomainRestrictor m.Entity} {R S S' : m.Entity → Bool}
     (h : ∀ x, C x = true → R x = true → S x = S' x) :
     every_restricted m C R S = every_restricted m C R S' := by
-  simp only [every_restricted, every_sem]
-  congr 1; funext x
-  cases hC : C x <;> cases hR : R x <;> simp_all
+  unfold every_restricted every_sem
+  rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
+  simp only [Bool.and_eq_true]
+  constructor
+  · intro h1 x ⟨hC, hR⟩; rw [← h x hC hR]; exact h1 x ⟨hC, hR⟩
+  · intro h1 x ⟨hC, hR⟩; rw [h x hC hR]; exact h1 x ⟨hC, hR⟩
 
 open Core.Quantification (Conservative GQ) in
 /-- Conservativity is preserved under domain restriction: if Q is conservative,
@@ -259,7 +266,7 @@ noncomputable def DDRP.candidates {S E : Type*} [Preorder S] [OrderTop S] [Finty
     any smaller scale. Subsumes all specific nesting theorems for ⟦every⟧.
     Follows from restrictor ↓MON of ⟦every⟧ + DDRP monotonicity. -/
 theorem DDRP.every_nesting {S : Type*} [Preorder S] [OrderTop S]
-    {m : Model} [FiniteModel m]
+    {m : Model} [Fintype m.Entity]
     (d : DDRP S m.Entity) (R Sc : m.Entity → Bool)
     {s₁ s₂ : S} (h : s₁ ≤ s₂) :
     every_restricted m (d.region s₂) R Sc = true →
@@ -270,7 +277,7 @@ theorem DDRP.every_nesting {S : Type*} [Preorder S] [OrderTop S]
     entails truth under any larger scale. Dual of `every_nesting`.
     Follows from restrictor ↑MON of ⟦some⟧ + DDRP monotonicity. -/
 theorem DDRP.some_nesting {S : Type*} [Preorder S] [OrderTop S]
-    {m : Model} [FiniteModel m]
+    {m : Model} [Fintype m.Entity]
     (d : DDRP S m.Entity) (R Sc : m.Entity → Bool)
     {s₁ s₂ : S} (h : s₁ ≤ s₂) :
     some_restricted m (d.region s₁) R Sc = true →
@@ -281,7 +288,7 @@ theorem DDRP.some_nesting {S : Type*} [Preorder S] [OrderTop S]
     any smaller scale. Same direction as ⟦every⟧ (both are restrictor ↓MON).
     Follows from restrictor ↓MON of ⟦no⟧ + DDRP monotonicity. -/
 theorem DDRP.no_nesting {S : Type*} [Preorder S] [OrderTop S]
-    {m : Model} [FiniteModel m]
+    {m : Model} [Fintype m.Entity]
     (d : DDRP S m.Entity) (R Sc : m.Entity → Bool)
     {s₁ s₂ : S} (h : s₁ ≤ s₂) :
     no_restricted m (d.region s₂) R Sc = true →

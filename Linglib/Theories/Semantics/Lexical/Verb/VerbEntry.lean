@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.LevinClass
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
@@ -45,7 +45,7 @@ Language-specific fragments extend `VerbCore` with morphological fields:
 namespace Core.Verbs
 
 open Core.Presupposition
--- LevinClass, RootProfile from Core.RootDimensions (root namespace)
+-- LevinClass, RootProfile from Core.Lexical.LevinClass (root namespace)
 open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Probabilistic.Measurement (Dimension)
 open Semantics.Attitudes.Doxastic (Veridicality)

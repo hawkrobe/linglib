@@ -19,7 +19,7 @@ section QuantifierSemantics
 /-! ## Bridge to Canonical GQ Denotations
 
 The 4-element `World` type used in the entailment domain doubles as an
-entity domain. We create a `Model` + `FiniteModel` instance so that the
+entity domain. We create a `Model` + `Fintype` instance so that the
 canonical GQ denotations from `Semantics.Lexical.Determiner.Quantifier`
 (`every_sem`, `some_sem`, `no_sem`) can be instantiated here.
 
@@ -30,7 +30,7 @@ for arbitrary finite models).
 **Relation to general monotonicity theorems.** The `native_decide` proofs
 below verify monotonicity over the 4-element `World` model. The general
 theorems — `every_scope_up`, `no_scope_down`, `every_restrictor_down`,
-`some_scope_up` — are proved for arbitrary `FiniteModel` in
+`some_scope_up` — are proved for arbitrary `Fintype` in
 `Quantifier.lean` and `Core.Logic.Quantification`. The results here are
 consistent instances of those general proofs.
 -/
@@ -39,10 +39,9 @@ consistent instances of those general proofs.
 def entailmentModel : Semantics.Montague.Model :=
   { Entity := World, decEq := inferInstance }
 
-instance : FiniteModel entailmentModel where
-  elements := allWorlds
-  complete := λ x => by cases x <;> simp [allWorlds]
-  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton, allWorlds]
+instance : Fintype entailmentModel.Entity where
+  elems := ({World.w0, World.w1, World.w2, World.w3} : Finset World)
+  complete := fun x => by cases x <;> simp
 
 /-- "Every A is B" — delegates to canonical `every_sem`. -/
 abbrev every (a b : World → Bool) : Bool := every_sem entailmentModel a b

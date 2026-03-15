@@ -43,7 +43,7 @@ inductive ModalComponentStatus where
       conventionally implicated, or conversationally implicated.
       Projects or persists under embedding operators.
       Ex: Sp. *algún* (conv. implicature per @cite{alonso-ovalle-menendez-benito-2010}),
-      Ger. *irgendein* (conv. implicature per @cite{kratzer-shimoyama-2002}). -/
+      Ger. *irgendein* (domain widening per @cite{kratzer-shimoyama-2002}). -/
   | notAtIssue
   deriving DecidableEq, BEq, Repr
 

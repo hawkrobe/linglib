@@ -31,7 +31,7 @@ Comparison/
 │ └── Data.lean — absolute vs. relative, focus
 ├── DegreeQuestion/
 │ └── Data.lean — "how tall", negative islands, modal obviation
-├── CrossCategorial.lean — construction-level Wellwood-style parallels
+├── CrossCategorial.lean — construction-level cross-categorial parallels
 └── Studies/
     ├── Kennedy2007.lean — degree semantics bridge
     └── Kennedy2007Typology.lean — typology–fragment bridge

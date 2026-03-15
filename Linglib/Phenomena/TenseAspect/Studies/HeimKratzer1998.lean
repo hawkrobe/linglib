@@ -322,7 +322,7 @@ open Semantics.Tense.Aspect.Core (perfSimple EventPred PointPred)
 /-- The compositional pipeline from aspect to tense is well-typed. -/
 theorem aspect_tense_pipeline_types {W Time : Type*} [LinearOrder Time]
     (P : EventPred W Time) (s s' : Core.Situation W Time) :
-    PAST (perfSimple P).toSitProp s s' ↔
+    PAST (perfSimple P) s s' ↔
     s.time < s'.time ∧ (perfSimple P) s := by
   rfl
 
@@ -333,17 +333,17 @@ theorem aspect_tense_pipeline_types {W Time : Type*} [LinearOrder Time]
 
 open Semantics.TenseAspectComposition (evalPast evalPres)
 
-/-- `evalPast` agrees with `PAST` via `toSitProp`. -/
+/-- `evalPast` agrees with `PAST`. -/
 theorem evalPast_iff_PAST {W Time : Type*} [LinearOrder Time]
     (p : PointPred W Time) (tc : Time) (w : W) :
     evalPast p tc w ↔
-    ∃ t : Time, PAST p.toSitProp ⟨w, t⟩ ⟨w, tc⟩ := by
+    ∃ t : Time, PAST p ⟨w, t⟩ ⟨w, tc⟩ := by
   rfl
 
-/-- `evalPres` agrees with `toSitProp` at speech time. -/
+/-- `evalPres` agrees with `PointPred` application at speech time. -/
 theorem evalPres_iff_toSitProp {W Time : Type*}
     (p : PointPred W Time) (tc : Time) (w : W) :
-    evalPres p tc w ↔ p.toSitProp ⟨w, tc⟩ := by
+    evalPres p tc w ↔ p ⟨w, tc⟩ := by
   rfl
 
 

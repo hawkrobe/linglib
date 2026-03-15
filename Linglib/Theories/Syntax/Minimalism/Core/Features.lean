@@ -118,6 +118,7 @@ inductive FeatureVal where
   | ellipsis : Bool → FeatureVal   -- [E] feature licensing NP-ellipsis (@cite{lobeck-1995}, @cite{saab-2026})
   | catN : Bool → FeatureVal       -- [N] referentiality (@cite{panagiotidis-2015})
   | catV : Bool → FeatureVal       -- [V] temporal predication (@cite{panagiotidis-2015})
+  | foc : Bool → FeatureVal       -- [±FOC] information structure (@cite{westergaard-2009})
   deriving Repr, DecidableEq
 
 /-- Do two feature values have the same type, ignoring specific values?
@@ -147,6 +148,7 @@ def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
   | .ellipsis _, .ellipsis _ => true
   | .catN _, .catN _ => true
   | .catV _, .catV _ => true
+  | .foc _, .foc _ => true
   | _, _ => false
 
 -- ============================================================================

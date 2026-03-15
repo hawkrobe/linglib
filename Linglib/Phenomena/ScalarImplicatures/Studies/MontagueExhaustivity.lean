@@ -52,10 +52,9 @@ def studentModel : Model where
   Entity := Student
   decEq := inferInstance
 
-instance : FiniteModel studentModel where
-  elements := [.alice, .bob, .carol]
-  complete := λ x => by cases x <;> simp
-  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
+instance : Fintype studentModel.Entity where
+  elems := ({Student.alice, Student.bob, Student.carol} : Finset Student)
+  complete := fun x => by cases x <;> simp
 
 /-- All entities are students in this model -/
 def isStudent : studentModel.interpTy (.e ⇒ .t) := λ _ => true
@@ -113,7 +112,7 @@ example : allPassedMontague ⟨3, by omega⟩ = true := rfl
 
 
 /-- Convert Bool to Prop -/
-def boolToProp (b : Bool) : Prop := b = true
+@[reducible] def boolToProp (b : Bool) : Prop := b = true
 
 /-- "Some students passed" as Prop' (Fin 4) -/
 def somePassed_Prop : Prop' (Fin 4) := λ w => boolToProp (somePassedMontague w)
@@ -141,16 +140,14 @@ def allStudents_handcrafted : Prop' (Fin 4) := λ w => w.val = 3
 /-- Compositional "some" matches hand-crafted definition -/
 theorem somePassed_eq_handcrafted :
     ∀ w : Fin 4, somePassed_Prop w ↔ someStudents_handcrafted w := by
-  intro w
-  simp only [somePassed_Prop, someStudents_handcrafted, boolToProp]
-  fin_cases w <;> simp [somePassedMontague, some_sem, isStudent, passedAt, FiniteModel.elements]
+  intro w; unfold somePassed_Prop someStudents_handcrafted
+  fin_cases w <;> native_decide
 
 /-- Compositional "all" matches hand-crafted definition -/
 theorem allPassed_eq_handcrafted :
     ∀ w : Fin 4, allPassed_Prop w ↔ allStudents_handcrafted w := by
-  intro w
-  simp only [allPassed_Prop, allStudents_handcrafted, boolToProp]
-  fin_cases w <;> simp [allPassedMontague, every_sem, isStudent, passedAt, FiniteModel.elements]
+  intro w; unfold allPassed_Prop allStudents_handcrafted
+  fin_cases w <;> native_decide
 
 
 /-
@@ -168,21 +165,16 @@ def w3_montague : Fin 4 := ⟨3, by omega⟩
 
 /-- At w1, "some passed" holds -/
 theorem w1_somePassed : somePassed_Prop w1_montague := by
-  simp [somePassed_Prop, w1_montague, boolToProp, somePassedMontague,
-        some_sem, isStudent, passedAt, FiniteModel.elements]
+  unfold somePassed_Prop; native_decide
 
 /-- At w1, "all passed" does NOT hold -/
 theorem w1_not_allPassed : ¬(allPassed_Prop w1_montague) := by
-  simp [allPassed_Prop, w1_montague, boolToProp, allPassedMontague,
-        every_sem, isStudent, passedAt, FiniteModel.elements]
+  unfold allPassed_Prop; native_decide
 
 /-- At w3, both "some" and "all" hold -/
 theorem w3_both : somePassed_Prop w3_montague ∧ allPassed_Prop w3_montague := by
-  constructor
-  · simp [somePassed_Prop, w3_montague, boolToProp, somePassedMontague,
-          some_sem, isStudent, passedAt, FiniteModel.elements]
-  · simp [allPassed_Prop, w3_montague, boolToProp, allPassedMontague,
-          every_sem, isStudent, passedAt, FiniteModel.elements]
+  unfold somePassed_Prop allPassed_Prop
+  exact ⟨by native_decide, by native_decide⟩
 
 /--
 **Main Result**: exhMW(some) holds at w1 (compositionally derived).

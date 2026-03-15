@@ -1,5 +1,5 @@
 import Linglib.Core.Alternation
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.RootFeatures
 
 /-!
 # Dargwa (Tanti / Muira) Complex Predicates @cite{sumbatova-2021}
@@ -268,7 +268,7 @@ theorem some_lvs_bound :
 /-- A complex predicate annotated with its NV root position, following
     Marantz (2009a;b, 2013) as applied to Dargwa by @cite{kalyakin-2026} §2.2.
 
-    Uses `RootPosition` from `Core.RootDimensions`:
+    Uses `RootPosition` from `Core.Lexical.RootFeatures`:
     - `.complement`: change-of-state roots — *wana* 'warm', *hark* 'open'
     - `.adjoined`: manner/activity roots — *duc'* 'run', *taˤh* 'jump'
 

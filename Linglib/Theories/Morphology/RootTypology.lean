@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.LevinClass
 
 /-!
 # Root Typology: States and Changes of State (@cite{beavers-etal-2021}, B&@cite{beavers-koontz-garboden-2020}) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}

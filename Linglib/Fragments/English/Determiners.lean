@@ -471,14 +471,14 @@ section CanonicalGQDenotations
 open Semantics.Montague (Model)
 open Semantics.Lexical.Determiner.Quantifier
 
-variable {m : Model} [FiniteModel m]
+variable {m : Model} [Fintype m.Entity]
 
 /-- Map quantity words to their canonical model-theoretic GQ denotation.
     These are the compositional `(e→t) → ((e→t) → t)` meanings from
     Montague/Barwise & Cooper, proved conservative and monotone in
     `Semantics.Lexical.Determiner.Quantifier`. -/
 def QuantityWord.gqDenotation (q : QuantityWord)
-    (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
+    (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
   match q with
   | .none_ => no_sem m
   | .some_ => some_sem m
@@ -606,15 +606,15 @@ theorem every_not_symmetric_bridge : every.strength = .strong ∧
 /-- `⟦both⟧(R)(S)` = `⟦every⟧(R)(S)` when |R|=2.
     For the general case, both = every restricted to exactly-2 restrictors.
     Simplified: on finite models, both(R,S) = every(R,S) ∧ |R|≥2. -/
-def both_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
-  λ R S => every_sem m R S && decide ((FiniteModel.elements.filter R).length ≥ 2)
+def both_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  λ (R : m.Entity → Bool) S => every_sem m R S && decide ((Finset.univ.filter (fun x : m.Entity => R x = true)).card ≥ 2)
 
 /-- `⟦neither⟧` = outer negation of `⟦both⟧` (K&S (83b)).
     "Neither student passed" = "It's not the case that both students passed"
     when exactly 2 students exist. K&S: neither = (not one) of the two. -/
-def neither_sem (m : Model) [FiniteModel m] : m.interpTy Ty.det :=
+def neither_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
   Core.Quantification.gqMeet (no_sem m)
-    (λ R _ => decide ((FiniteModel.elements.filter R).length ≥ 2))
+    (λ (R : m.Entity → Bool) _ => decide ((Finset.univ.filter (fun x : m.Entity => R x = true)).card ≥ 2))
 
 /-- both is conservative (follows from every_conservative + gqMeet closure). -/
 theorem both_conservative : Core.Quantification.Conservative (both_sem m) := by

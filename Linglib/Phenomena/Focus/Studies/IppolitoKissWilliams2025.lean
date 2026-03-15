@@ -114,7 +114,10 @@ def renovated : W → Bool := fun w => w.val % 2 == 0
 def buy : W → Bool := fun w => w.val == 0
 
 /-- Uniform prior: P(w) = 1/8 for each world. -/
-def prior : Prior W := fun _ => 1 / 8
+def prior : Prior W where
+  mass := fun _ => 1 / 8
+  mass_nonneg := by intro _; norm_num
+  mass_sum_one := by native_decide
 
 /-- All worlds for doxastic subset checks. -/
 def worlds : List W := List.finRange 8
@@ -375,16 +378,16 @@ structure DTSDiscourseOnlyWitness (W : Type*) [Fintype W] where
 
 /-- Bridge: DTS `condProb` expressed in terms of `probOfProp`. -/
 private lemma condProb_eq_probOfProp {W : Type*} [Fintype W]
-    (prior : W → ℚ) (e h : W → Bool) (hh : probOfProp prior h ≠ 0) :
-    condProb prior e h =
+    (prior : Prior W) (e h : W → Bool) (hh : probOfProp prior h ≠ 0) :
+    condProb prior.mass e h =
     probOfProp prior (λ w => e w && h w) / probOfProp prior h := by
   unfold condProb
-  simp only [show probSum prior h = probOfProp prior h from rfl, hh, ↓reduceIte,
-    show probSum prior (Decidable.pand W e h) = probOfProp prior (λ w => e w && h w) from rfl]
+  simp only [show probSum prior.mass h = probOfProp prior h from rfl, hh, ↓reduceIte,
+    show probSum prior.mass (Decidable.pand W e h) = probOfProp prior (λ w => e w && h w) from rfl]
 
 /-- Partition: P(E) = P(E∧H) + P(E∧¬H). -/
 private lemma probOfProp_partition {W : Type*} [Fintype W]
-    (prior : W → ℚ) (e h : W → Bool) :
+    (prior : Prior W) (e h : W → Bool) :
     probOfProp prior e =
     probOfProp prior (λ w => e w && h w) +
     probOfProp prior (λ w => e w && !h w) := by
@@ -392,9 +395,9 @@ private lemma probOfProp_partition {W : Type*} [Fintype W]
   congr 1; funext w
   by_cases he : e w = true <;> by_cases hh : h w = true <;> simp [he, hh]
 
-/-- Total partition: ∑ prior = P(H) + P(¬H). -/
+/-- Total partition: P(⊤) = P(H) + P(¬H). -/
 private lemma probOfProp_total_partition {W : Type*} [Fintype W]
-    (prior : W → ℚ) (h : W → Bool) :
+    (prior : Prior W) (h : W → Bool) :
     probOfProp prior (λ _ => true) =
     probOfProp prior h + probOfProp prior (λ w => !h w) := by
   have := probOfProp_partition prior (λ _ => true) h
@@ -402,7 +405,7 @@ private lemma probOfProp_total_partition {W : Type*} [Fintype W]
 
 /-- Non-negativity of probOfProp under non-negative prior. -/
 private lemma probOfProp_nonneg' {W : Type*} [Fintype W]
-    (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0) (f : W → Bool) :
+    (prior : Prior W) (hP : ∀ w, prior w ≥ 0) (f : W → Bool) :
     probOfProp prior f ≥ 0 := by
   unfold probOfProp; apply Finset.sum_nonneg'; intro w; split
   · exact hP w
@@ -427,7 +430,7 @@ theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probOfProp prior (fun _ => true) = 1) :
     probSupports prior evidence topic = true →
-    posRelevant ⟨⟨topic⟩, prior⟩ evidence := by
+    posRelevant ⟨⟨topic⟩, prior.mass⟩ evidence := by
   intro hSupp
   simp only [probSupports, isPositiveEvidence, evidentialBoost, decide_eq_true_eq] at hSupp
   unfold conditionalProb at hSupp
@@ -450,11 +453,11 @@ theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     linarith
   have hpEH_pos : pEH > 0 := by nlinarith [mul_nonneg (le_of_lt hH_pos) (le_of_lt hS_pos)]
   have hpENH_nonneg : pENH ≥ 0 := probOfProp_nonneg' prior hNonneg _
-  have hCondH : condProb prior evidence topic = pEH / pH :=
+  have hCondH : condProb prior.mass evidence topic = pEH / pH :=
     condProb_eq_probOfProp prior evidence topic (ne_of_gt hH_pos)
-  have hCondNH : condProb prior evidence (Decidable.pnot W topic) = pENH / pNH :=
+  have hCondNH : condProb prior.mass evidence (Decidable.pnot W topic) = pENH / pNH :=
     condProb_eq_probOfProp prior evidence (λ w => !(topic w)) (ne_of_gt hNH_pos)
-  show bayesFactor ⟨⟨topic⟩, prior⟩ evidence > 1
+  show bayesFactor ⟨⟨topic⟩, prior.mass⟩ evidence > 1
   simp only [bayesFactor, hCondH, hCondNH]
   by_cases hENH : pENH = 0
   · simp [hENH, show pEH / pH > 0 from div_pos hpEH_pos hH_pos]
@@ -480,7 +483,7 @@ theorem negRelevant_implies_not_probSupports {W : Type*} [Fintype W]
     (hS_pos : probOfProp prior evidence > 0)
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probOfProp prior (fun _ => true) = 1)
-    (hNeg : negRelevant ⟨⟨topic⟩, prior⟩ evidence) :
+    (hNeg : negRelevant ⟨⟨topic⟩, prior.mass⟩ evidence) :
     probSupports prior evidence topic = false := by
   by_contra hContra
   push_neg at hContra
@@ -504,8 +507,8 @@ theorem but_sufficient_for_only {W : Type*} [Fintype W]
     (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
     (_hS_pos : probOfProp prior s > 0)
     (hS'_pos : probOfProp prior s' > 0)
-    (_hSpos : posRelevant ⟨⟨topic⟩, prior⟩ s)
-    (hS'neg : negRelevant ⟨⟨topic⟩, prior⟩ s')
+    (_hSpos : posRelevant ⟨⟨topic⟩, prior.mass⟩ s)
+    (hS'neg : negRelevant ⟨⟨topic⟩, prior.mass⟩ s')
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probOfProp prior (fun _ => true) = 1) :
     probSupports prior s' topic = false :=

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.LevinClass
 
 /-!
 # Levin Class → Entailment Profile Mapping

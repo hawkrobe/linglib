@@ -508,7 +508,8 @@ private def Int.bitLen : ℤ → ℕ
   | .negSucc n => (n + 1).log2 + 1
 
 /-- Round a rational downward (toward -∞) to bounded bit precision.
-    If num or den exceeds `maxBits`, shift both right, rounding num down. -/
+    If num or den exceeds `maxBits`, shift both right. Denominator rounding
+    direction depends on numerator sign to ensure the result ≤ q. -/
 private def truncDown (q : ℚ) (bits : ℕ := maxBits) : ℚ :=
   let numBits := Int.bitLen q.num
   let denBits := Nat.log2 q.den + 1
@@ -516,14 +517,16 @@ private def truncDown (q : ℚ) (bits : ℕ := maxBits) : ℚ :=
   if excess ≤ 0 then q  -- already small enough
   else
     let shift := (2 : ℤ) ^ excess
-    -- Floor divide num, ceil divide den (widen interval downward)
-    let newNum := if q.num ≥ 0 then q.num / shift
-                  else -(-q.num + shift - 1) / shift  -- round toward -∞
-    let newDen := ((q.den : ℤ) + shift - 1) / shift   -- round den up
+    let newNum := q.num / shift  -- floor div (toward -∞) for all signs
+    let newDen := if q.num ≥ 0
+                  then ((q.den : ℤ) + shift - 1) / shift  -- ceil(den) for nonneg q
+                  else (q.den : ℤ) / shift                 -- floor(den) for neg q
     if newDen ≤ 0 then q else  -- safety (shouldn't happen)
     newNum / newDen
 
-/-- Round a rational upward (toward +∞) to bounded bit precision. -/
+/-- Round a rational upward (toward +∞) to bounded bit precision.
+    Denominator rounding direction depends on numerator sign to ensure
+    the result ≥ q. -/
 private def truncUp (q : ℚ) (bits : ℕ := maxBits) : ℚ :=
   let numBits := Int.bitLen q.num
   let denBits := Nat.log2 q.den + 1
@@ -531,20 +534,101 @@ private def truncUp (q : ℚ) (bits : ℕ := maxBits) : ℚ :=
   if excess ≤ 0 then q
   else
     let shift := (2 : ℤ) ^ excess
-    -- Ceil divide num, floor divide den (widen interval upward)
-    let newNum := if q.num ≤ 0 then q.num / shift
-                  else (q.num + shift - 1) / shift  -- round toward +∞
-    let newDen := (q.den : ℤ) / shift  -- round den down (makes fraction larger)
+    let newNum := (q.num + shift - 1) / shift  -- ceil(num/shift) for all signs
+    let newDen := if q.num ≥ 0
+                  then (q.den : ℤ) / shift                 -- floor(den) for nonneg q
+                  else ((q.den : ℤ) + shift - 1) / shift  -- ceil(den) for neg q
     if newDen ≤ 0 then q else
     newNum / newDen
 
 private theorem truncDown_le (q : ℚ) (bits : ℕ) :
     truncDown q bits ≤ q := by
-  sorry  -- floor-shift produces ≤ original
+  unfold truncDown; simp only []
+  split
+  case isTrue => exact le_refl q
+  case isFalse h_excess =>
+    push_neg at h_excess
+    set shift := (2 : ℤ) ^ (max (Int.bitLen q.num) (Nat.log2 q.den + 1) - bits)
+    have hS : (0 : ℤ) < shift := by positivity
+    have hD : (0 : ℤ) < q.den := Int.ofNat_lt.mpr q.den_pos
+    conv_rhs => rw [← Rat.num_div_den q]
+    split
+    case isTrue hnn =>
+      set nd := ((q.den : ℤ) + shift - 1) / shift
+      split
+      case isTrue => exact le_of_eq (Rat.num_div_den q).symm
+      case isFalse hnd =>
+        push_neg at hnd
+        rw [div_le_div_iff₀ (by exact_mod_cast hnd : (0:ℚ) < (↑nd : ℚ))
+                            (by exact_mod_cast hD : (0:ℚ) < (↑↑q.den : ℚ))]
+        suffices h : (q.num / shift) * (q.den : ℤ) ≤ q.num * nd by exact_mod_cast h
+        have h1 := Int.ediv_mul_le q.num (ne_of_gt hS)
+        have h2 : (q.den : ℤ) ≤ nd * shift := by
+          nlinarith [Int.lt_ediv_add_one_mul_self ((q.den : ℤ) + shift - 1) hS]
+        nlinarith [mul_le_mul_of_nonneg_right h1 (show (0:ℤ) ≤ q.den from hD.le),
+                   mul_le_mul_of_nonneg_left h2 hnn]
+    case isFalse hneg =>
+      push_neg at hneg
+      set nd := (q.den : ℤ) / shift
+      split
+      case isTrue => exact le_of_eq (Rat.num_div_den q).symm
+      case isFalse hnd =>
+        push_neg at hnd
+        rw [div_le_div_iff₀ (by exact_mod_cast hnd : (0:ℚ) < (↑nd : ℚ))
+                            (by exact_mod_cast hD : (0:ℚ) < (↑↑q.den : ℚ))]
+        suffices h : (q.num / shift) * (q.den : ℤ) ≤ q.num * nd by exact_mod_cast h
+        have h1 := Int.ediv_mul_le q.num (ne_of_gt hS)
+        have h2 := Int.ediv_mul_le (q.den : ℤ) (ne_of_gt hS)
+        nlinarith [mul_le_mul_of_nonneg_right h1 (show (0:ℤ) ≤ q.den from hD.le),
+                   mul_le_mul_of_nonpos_left h2 hneg.le]
 
 private theorem le_truncUp (q : ℚ) (bits : ℕ) :
     q ≤ truncUp q bits := by
-  sorry  -- ceil-shift produces ≥ original
+  unfold truncUp; simp only []
+  split
+  case isTrue => exact le_refl q
+  case isFalse h_excess =>
+    push_neg at h_excess
+    set shift := (2 : ℤ) ^ (max (Int.bitLen q.num) (Nat.log2 q.den + 1) - bits)
+    have hS : (0 : ℤ) < shift := by positivity
+    have hD : (0 : ℤ) < q.den := Int.ofNat_lt.mpr q.den_pos
+    conv_lhs => rw [← Rat.num_div_den q]
+    set cn := (q.num + shift - 1) / shift
+    split
+    case isTrue hnn =>
+      set nd := (q.den : ℤ) / shift
+      split
+      case isTrue => exact le_of_eq (Rat.num_div_den q)
+      case isFalse hnd =>
+        push_neg at hnd
+        rw [div_le_div_iff₀ (by exact_mod_cast hD : (0:ℚ) < (↑↑q.den : ℚ))
+                            (by exact_mod_cast hnd : (0:ℚ) < (↑nd : ℚ))]
+        suffices h : q.num * nd ≤ cn * (q.den : ℤ) by exact_mod_cast h
+        have h1 : q.num ≤ cn * shift := by
+          nlinarith [Int.lt_ediv_add_one_mul_self (q.num + shift - 1) hS]
+        have h2 := Int.ediv_mul_le (q.den : ℤ) (ne_of_gt hS)
+        have h3 : 0 ≤ cn := Int.ediv_nonneg (by linarith) hS.le
+        nlinarith [mul_le_mul_of_nonneg_right h2 h3,
+                   mul_le_mul_of_nonneg_left h1 hD.le]
+    case isFalse hneg =>
+      push_neg at hneg
+      set nd := ((q.den : ℤ) + shift - 1) / shift
+      split
+      case isTrue => exact le_of_eq (Rat.num_div_den q)
+      case isFalse hnd =>
+        push_neg at hnd
+        rw [div_le_div_iff₀ (by exact_mod_cast hD : (0:ℚ) < (↑↑q.den : ℚ))
+                            (by exact_mod_cast hnd : (0:ℚ) < (↑nd : ℚ))]
+        suffices h : q.num * nd ≤ cn * (q.den : ℤ) by exact_mod_cast h
+        have h1 : q.num ≤ cn * shift := by
+          nlinarith [Int.lt_ediv_add_one_mul_self (q.num + shift - 1) hS]
+        have h2 : (q.den : ℤ) ≤ nd * shift := by
+          nlinarith [Int.lt_ediv_add_one_mul_self ((q.den : ℤ) + shift - 1) hS]
+        have h3 : cn ≤ 0 := by
+          have := Int.ediv_mul_le (q.num + shift - 1) (ne_of_gt hS)
+          nlinarith [Int.le_sub_one_of_lt (show cn * shift < 1 * shift by linarith)]
+        nlinarith [mul_le_mul_of_nonneg_right h1 hnd.le,
+                   mul_le_mul_of_nonpos_left h2 h3]
 
 /-- Widen an interval to bounded-precision rationals.
     Sound: only makes the interval wider, so containment is preserved. -/

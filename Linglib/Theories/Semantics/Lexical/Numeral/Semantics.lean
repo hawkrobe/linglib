@@ -709,31 +709,31 @@ theorem atLeast_eq_lowerBound_three (n : Nat) :
 
 open Semantics.Montague Semantics.Lexical.Determiner in
 /-- GQT "at least n" agrees with `maxMeaning.ge` on intersection cardinality. -/
-theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
-    (n : Nat) (R S : m.Entity → Bool) :
+theorem gqt_atLeast_agrees (m : Model) [Fintype m.Entity]
+    (n : Nat) (R : m.Entity → Bool) (S : m.Entity → Bool) :
     Quantifier.at_least_n_sem m n R S =
-    maxMeaning .ge n (Quantifier.FiniteModel.elements.filter (λ x => R x && S x)).length := by
+    maxMeaning .ge n (Finset.univ.filter (fun x : m.Entity => R x = true ∧ S x = true)).card := by
   rfl
 
 open Semantics.Montague Semantics.Lexical.Determiner in
 /-- GQT "at most n" agrees with `maxMeaning.le` on intersection cardinality. -/
-theorem gqt_atMost_agrees (m : Model) [Quantifier.FiniteModel m]
-    (n : Nat) (R S : m.Entity → Bool) :
+theorem gqt_atMost_agrees (m : Model) [Fintype m.Entity]
+    (n : Nat) (R : m.Entity → Bool) (S : m.Entity → Bool) :
     Quantifier.at_most_n_sem m n R S =
-    maxMeaning .le n (Quantifier.FiniteModel.elements.filter (λ x => R x && S x)).length := by
+    maxMeaning .le n (Finset.univ.filter (fun x : m.Entity => R x = true ∧ S x = true)).card := by
   rfl
 
-private theorem decide_eq_beq (a b : Nat) : decide (a = b) = (a == b) := by
-  by_cases h : a = b <;> simp [h]
+private theorem decide_eq_beq' (a b : Nat) : decide (a = b) = (a == b) := by
+  cases h : a == b <;> simp [beq_iff_eq] at h <;> simp [h]
 
 open Semantics.Montague Semantics.Lexical.Determiner in
 /-- GQT "exactly n" agrees with `maxMeaning.eq` on intersection cardinality. -/
-theorem gqt_exactly_agrees (m : Model) [Quantifier.FiniteModel m]
-    (n : Nat) (R S : m.Entity → Bool) :
+theorem gqt_exactly_agrees (m : Model) [Fintype m.Entity]
+    (n : Nat) (R : m.Entity → Bool) (S : m.Entity → Bool) :
     Quantifier.exactly_n_sem m n R S =
-    maxMeaning .eq n (Quantifier.FiniteModel.elements.filter (λ x => R x && S x)).length := by
+    maxMeaning .eq n (Finset.univ.filter (fun x : m.Entity => R x = true ∧ S x = true)).card := by
   unfold Quantifier.exactly_n_sem maxMeaning
-  exact decide_eq_beq _ _
+  exact decide_eq_beq' _ _
 
 -- ============================================================================
 -- Section 11: CumminsFranke Bridge

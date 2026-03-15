@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Core.Path
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.LevinClass
 
 /-!
 # Spatial Trace Function σ

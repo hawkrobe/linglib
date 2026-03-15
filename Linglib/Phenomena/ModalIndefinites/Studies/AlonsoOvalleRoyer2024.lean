@@ -13,7 +13,7 @@ import Linglib.Fragments.Italian.ModalIndefinites
 # Modal Indefinites: Cross-Linguistic Typology & Kratzer Anchoring
 @cite{alonso-ovalle-royer-2024} @cite{alonso-ovalle-menendez-benito-2010}
 @cite{alonso-ovalle-menendez-benito-2018} @cite{coon-2019} @cite{hacquard-2006}
-@cite{kratzer-shimoyama-2002b} @cite{alonso-ovalle-royer-2021}
+@cite{alonso-ovalle-royer-2021}
 @cite{chierchia-2013} @cite{jayez-tovena-2006} @cite{kratzer-shimoyama-2002}
 
 Cross-linguistic typology of modal indefinites and bridge theorems connecting

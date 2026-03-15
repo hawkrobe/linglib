@@ -62,6 +62,8 @@ theorem theorem8b :
 
 -- ── Completeness (Theorems 6–7) ──────────────────
 
+attribute [local instance] Classical.propDecidable
+
 /-- Count of finsets dominated by A under the ge ordering. -/
 private noncomputable def belowCount {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) (A : Set W) : ℕ :=

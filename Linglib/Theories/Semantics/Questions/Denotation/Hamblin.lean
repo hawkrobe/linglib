@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.Denotation.Basic
 
 /-!
 # Questions/Hamblin.lean
-@cite{hamblin-1973b} @cite{karttunen-1977} @cite{kratzer-shimoyama-2002b} @cite{partee-rooth-1983} @cite{kratzer-shimoyama-2002}
+@cite{hamblin-1973b} @cite{karttunen-1977} @cite{kratzer-shimoyama-2002} @cite{partee-rooth-1983}
 
 Hamblin Semantics for Questions.
 

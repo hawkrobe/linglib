@@ -71,7 +71,7 @@ def licensingStrength : LicensingContext → LicensingStrength
 -- §2. GQ monotonicity → NPI licensing (the Ladusaw bridge)
 -- ============================================================================
 
-variable {m : Model} [FiniteModel m]
+variable {m : Model} [Fintype m.Entity]
 
 /-- The core Ladusaw generalization: scope-DE quantifiers license weak NPIs
     in their scope. Formally: `ScopeDownwardMono q` implies that the scope

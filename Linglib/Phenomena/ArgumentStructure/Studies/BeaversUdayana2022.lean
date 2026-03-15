@@ -1,6 +1,6 @@
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.DiathesisAlternation
 import Linglib.Theories.Semantics.Events.ArgumentRealization
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 

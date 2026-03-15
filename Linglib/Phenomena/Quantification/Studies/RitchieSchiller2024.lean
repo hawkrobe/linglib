@@ -54,7 +54,7 @@ set_option autoImplicit false
 namespace Phenomena.Quantification.Studies.RitchieSchiller2024
 
 open Semantics.Montague (Model)
-open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem FiniteModel)
+open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem)
 open Semantics.Lexical.Determiner.DomainRestriction
 
 -- ============================================================================
@@ -71,10 +71,9 @@ inductive Entity where
 
 def bottleModel : Model := { Entity := Entity, decEq := inferInstance }
 
-instance : FiniteModel bottleModel where
-  elements := [.b1, .b2, .b3, .b4]
-  complete := λ x => by cases x <;> simp
-  nodup := by simp [List.nodup_cons, List.mem_cons]
+instance : Fintype bottleModel.Entity where
+  elems := ({Entity.b1, Entity.b2, Entity.b3, Entity.b4} : Finset Entity)
+  complete := fun x => by cases x <;> simp
 
 -- ============================================================================
 -- §2. Spatial Scene & DDRPs
@@ -117,7 +116,7 @@ inductive World where
   deriving DecidableEq, BEq, Repr, Inhabited
 
 instance : Fintype World where
-  elems := {.nearEmpty, .midEmpty, .allEmpty}
+  elems := ({World.nearEmpty, World.midEmpty, World.allEmpty} : Finset World)
   complete := λ x => by cases x <;> simp
 
 def emptyIn : World → Entity → Bool
@@ -262,7 +261,7 @@ inductive Utterance where
   deriving DecidableEq, BEq, Repr, Inhabited
 
 instance : Fintype Utterance where
-  elems := {.everyEmpty, .someEmpty}
+  elems := ({Utterance.everyEmpty, Utterance.someEmpty} : Finset Utterance)
   complete := λ x => by cases x <;> simp
 
 /-- Literal meaning under a given DDRP scale. -/

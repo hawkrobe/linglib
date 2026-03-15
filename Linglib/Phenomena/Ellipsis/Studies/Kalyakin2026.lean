@@ -273,7 +273,7 @@ open Fragments.Dargwa.ComplexPredicates in
 
 /-- Is a CPr's NV inside vVPE's deletion domain?
     The fragment's `AnnotatedCPr` stores `RootPosition` (from
-    `Core.RootDimensions`); this function bridges to the
+    `Core.Lexical.LevinClass`); this function bridges to the
     Minimalist `rootInVVPEDomain` from `DeletionDomain.lean`. -/
 def cprInVVPEDomain (cpr : Fragments.Dargwa.ComplexPredicates.AnnotatedCPr) : Bool :=
   rootInVVPEDomain cpr.rootPosition

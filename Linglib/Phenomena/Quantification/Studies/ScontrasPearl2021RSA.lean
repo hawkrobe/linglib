@@ -90,7 +90,7 @@ open BigOperators
 open Real (rpow rpow_nonneg)
 open Phenomena.Quantification.Studies.ScontrasPearl2021 (JumpOutcome ScopeReading scopeTruth)
 open Semantics.Montague (Model)
-open Semantics.Lexical.Determiner.Quantifier (every_sem FiniteModel)
+open Semantics.Lexical.Determiner.Quantifier (every_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 
 -- ============================================================================
@@ -190,12 +190,11 @@ def jumpIn : JumpOutcome → Horse → Bool
   | .two, _ => true
 
 /-- Horse model as a Montague `Model`. -/
-def horseModel : Model := { Entity := Horse, decEq := inferInstance }
+abbrev horseModel : Model := { Entity := Horse, decEq := inferInstance }
 
-instance : FiniteModel horseModel where
-  elements := [.h1, .h2]
+instance : Fintype horseModel.Entity where
+  elems := ({Horse.h1, Horse.h2} : Finset Horse)
   complete := fun x => by cases x <;> simp
-  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
 
 /-- Restrictor: all entities are horses (trivial for this model). -/
 def horse_sem : horseModel.interpTy (.e ⇒ .t) := fun _ => true
@@ -216,13 +215,13 @@ def everyNotJumped_inverse (w : JumpOutcome) : Bool :=
     compositional ⟦every⟧(horse)(λx.¬jump(x)), not stipulation. -/
 theorem surface_from_every_sem :
     ∀ w, scopeTruth .surface w = every_sem horseModel horse_sem (fun h => !jumpIn_sem w h) := by
-  intro w; cases w <;> rfl
+  intro w; cases w <;> (unfold every_sem; dsimp [horseModel]; native_decide)
 
 /-- Inverse scope grounding: `scopeTruth.inverse` derives from
     negating the compositional ⟦every⟧(horse)(jump). -/
 theorem inverse_from_every_sem :
     ∀ w, scopeTruth .inverse w = !(every_sem horseModel horse_sem (jumpIn_sem w)) := by
-  intro w; cases w <;> rfl
+  intro w; cases w <;> (unfold every_sem; dsimp [horseModel]; native_decide)
 
 /-- Map Montague `ScopeConfig` to data file's `ScopeReading`. -/
 def scopeConfigToReading : ScopeConfig → ScopeReading
@@ -246,7 +245,9 @@ def everyHorseDidntJump (w : JumpOutcome) : ScopeDerivation horseModel .t where
 theorem scopeDerivation_matches_scopeTruth :
     ∀ (s : ScopeConfig) (w : JumpOutcome),
     (everyHorseDidntJump w).meaningAt s = scopeTruth (scopeConfigToReading s) w := by
-  intro s w; cases s <;> cases w <;> rfl
+  intro s w; cases s <;> cases w <;>
+    (dsimp [everyHorseDidntJump, scopeConfigToReading, scopeTruth];
+     unfold every_sem; dsimp [horseModel, horse_sem, jumpIn_sem, jumpIn]; rfl)
 
 /-- RSA meaning is grounded in `ScopeDerivation`: the meaning function used
     by the RSA config matches the compositional scope derivation. -/
@@ -254,7 +255,9 @@ theorem rsa_meaning_from_scope_derivation :
     ∀ (lat : Latent) (w : JumpOutcome),
     uttMeaning lat.scope .everyNot w =
     (everyHorseDidntJump w).meaningAt (readingToScopeConfig lat.scope) := by
-  intro lat w; cases lat <;> cases w <;> rfl
+  intro lat w; cases lat <;> cases w <;>
+    (dsimp [everyHorseDidntJump, readingToScopeConfig, Latent.scope, uttMeaning, scopeTruth];
+     unfold every_sem; dsimp [horseModel, horse_sem, jumpIn_sem, jumpIn]; rfl)
 
 /-- The every-not scope pair has surface-entails-inverse structure: surface scope (none jumped) is a strict
     subset of inverse scope (not all jumped). This makes universals

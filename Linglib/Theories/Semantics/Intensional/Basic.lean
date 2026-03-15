@@ -144,25 +144,25 @@ open Semantics.Lexical.Determiner.Quantifier in
 /--
 "Some" with world-varying property: ∃x. P(w)(x) ∧ Q(w)(x)
 -/
-def someIntensional {m : IntensionalModel} [FiniteModel m.base]
+def someIntensional {m : IntensionalModel} [Fintype m.base.Entity]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
-  λ w => FiniteModel.elements.any λ x => P w x && Q w x
+  λ w => decide (∃ x : m.base.Entity, P w x = true ∧ Q w x = true)
 
 open Semantics.Lexical.Determiner.Quantifier in
 /--
 "Every" with world-varying property: ∀x. P(w)(x) → Q(w)(x)
 -/
-def everyIntensional {m : IntensionalModel} [FiniteModel m.base]
+def everyIntensional {m : IntensionalModel} [Fintype m.base.Entity]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
-  λ w => FiniteModel.elements.all λ x => !P w x || Q w x
+  λ w => decide (∀ x : m.base.Entity, P w x = true → Q w x = true)
 
 open Semantics.Lexical.Determiner.Quantifier in
 /--
 "No" with world-varying property: ¬∃x. P(w)(x) ∧ Q(w)(x)
 -/
-def noIntensional {m : IntensionalModel} [FiniteModel m.base]
+def noIntensional {m : IntensionalModel} [Fintype m.base.Entity]
     (P : PropertyIntension m) (Q : PropertyIntension m) : Proposition m :=
-  λ w => !FiniteModel.elements.any λ x => P w x && Q w x
+  λ w => decide (¬ ∃ x : m.base.Entity, P w x = true ∧ Q w x = true)
 
 -- Example: Scalar Implicature Scenario
 
@@ -190,11 +190,10 @@ def scalarModel : IntensionalModel := {
   worldDecEq := inferInstance
 }
 
-/-- FiniteModel instance for scalarModel.base -/
-instance scalarModelFinite : Semantics.Lexical.Determiner.Quantifier.FiniteModel scalarModel.base where
-  elements := [.john, .mary, .pizza, .book]
-  complete := λ x => by cases x <;> simp
-  nodup := by simp [List.nodup_cons, List.mem_cons, List.mem_singleton]
+/-- Fintype instance for scalarModel.base -/
+instance scalarModelFinite : Fintype scalarModel.base.Entity where
+  elems := ({ToyEntity.john, ToyEntity.mary, ToyEntity.pizza, ToyEntity.book} : Finset ToyEntity)
+  complete := fun x => by cases x <;> simp
 
 /--
 "Students" is a rigid property (doesn't vary by world).

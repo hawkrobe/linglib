@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Lexical.Verb.AgentivityLattice
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.RootFeatures
 
 /-!
 # Morphological Causation: Causative Construction Typology

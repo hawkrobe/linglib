@@ -4,7 +4,9 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 /-!
 # States-Based Gradable Adjective Semantics
 
-@cite{cariani-santorio-wellwood-2024} @cite{wellwood-2015} @cite{cariani-wellwood-2023} @cite{kennedy-2007}An alternative to Kennedy-style degree semantics (`Theory.lean`). Gradable
+@cite{cariani-santorio-wellwood-2024} @cite{wellwood-2015} @cite{cariani-wellwood-2023} @cite{kennedy-2007}
+
+An alternative to Kennedy-style degree semantics (`Theory.lean`). Gradable
 adjectives denote properties of states (type `⟨v,t⟩`), not measure functions.
 The positive form works via a **background ordering** on states and a
 **contrast point** that carves out the positive region — no covert `pos`

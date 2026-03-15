@@ -210,8 +210,9 @@ theorem modify_assoc {Time : Type*} [LE Time]
     "x is happy" ↦ ∃s. P(s) ∧ Holder(x, s)
 
     Parallel to `intransitiveLogicalForm` but using `holder` instead of
-    `agent`, reflecting that states select for holders, not agents. @cite{wellwood-2015}: gradable adjectives
-    predicate of states with mereological structure.
+    `agent`, reflecting that states select for holders, not agents.
+    @cite{wellwood-2015}: gradable adjectives predicate of states with
+    mereological structure.
 
     Note: `EventModifier` applies to states since states are events
     (of sort `.state`). -/

@@ -31,7 +31,7 @@ with presuppositions:
 namespace Semantics.Lexical.Determiner.Definite
 
 open Semantics.Montague (Model Ty toyModel ToyEntity)
-open Semantics.Lexical.Determiner.Quantifier (FiniteModel every_sem some_sem Ty.det)
+open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
 open Core.Presupposition (PrProp)
 open Core.Definiteness (DefPresupType Definiteness)
@@ -162,49 +162,18 @@ theorem the_uniq_presup_iff_iota {m : Model} (domain : List m.Entity)
 When exactly one entity satisfies the restrictor, "the φ is ψ" and
 "every φ is ψ" have the same truth value. This is the classical
 observation that the definite article is a universal quantifier
-restricted to singletons.
-
-TODO: prove by unfolding `every_sem` and showing that `∀x. R(x) → S(x)`
-reduces to `S(e)` when `R` is the singleton `{e}`. Requires showing that
-`elements.all (λ x => !restrictor x || scope x)` = `scope e` when
-`elements.filter restrictor = [e]`. -/
-theorem the_is_every_on_singletons (m : Model) [FiniteModel m]
-    (restrictor scope : m.interpTy Ty.et)
+restricted to singletons. -/
+theorem the_is_every_on_singletons (m : Model) [Fintype m.Entity]
+    (restrictor scope : m.Entity → Bool)
     (e : m.Entity)
-    (h_singleton : FiniteModel.elements.filter restrictor = [e]) :
+    (h_restr : restrictor e = true)
+    (h_unique : ∀ x, restrictor x = true → x = e) :
     every_sem m restrictor scope = scope e := by
   simp only [every_sem]
-  have h_restr : restrictor e = true := by
-    have : e ∈ FiniteModel.elements.filter restrictor := by
-      rw [h_singleton]; exact .head _
-    exact (List.mem_filter.mp this).2
-  have h_unique : ∀ x ∈ (@FiniteModel.elements m _), restrictor x = true → x = e := by
-    intro x hx hr
-    have hmem : x ∈ FiniteModel.elements.filter restrictor := List.mem_filter.mpr ⟨hx, hr⟩
-    rw [h_singleton] at hmem
-    cases hmem with
-    | head => rfl
-    | tail _ h => nomatch h
-  cases hse : scope e with
-  | false =>
-    -- e ∈ elements and (!restrictor e || scope e) = false, so all must be false
-    cases h : FiniteModel.elements.all (fun x => !restrictor x || scope x) with
-    | false => rfl
-    | true =>
-      exfalso
-      have h1 := List.all_eq_true.mp h e (FiniteModel.complete e)
-      rw [h_restr, hse] at h1
-      exact Bool.noConfusion h1
-  | true =>
-    have hall : FiniteModel.elements.all (fun x => !restrictor x || scope x) = true := by
-      rw [List.all_eq_true]
-      intro x hx
-      cases hr : restrictor x with
-      | false => rfl
-      | true =>
-        have hxe := h_unique x hx hr
-        rw [congrArg scope hxe, hse]; rfl
-    rw [hall]
+  rw [Bool.eq_iff_iff, decide_eq_true_eq]
+  constructor
+  · intro h; exact h e h_restr
+  · intro hse x hRx; rw [h_unique x hRx]; exact hse
 
 -- ============================================================================
 -- §6: Bridge to Fragments/English/Determiners.lean

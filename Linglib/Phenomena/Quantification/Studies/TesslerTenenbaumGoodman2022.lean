@@ -40,7 +40,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
 
-open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem no_sem FiniteModel
+open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem no_sem
   subalternation_a_i)
 open Semantics.Montague (Model)
 
@@ -74,10 +74,9 @@ def hasC : Region → Bool | .C | .AC | .BC | .ABC => true | _ => false
 /-- Regions as a Montague model, enabling reuse of `every_sem`/`some_sem`/`no_sem`. -/
 def regionModel : Model := { Entity := Region, decEq := inferInstance }
 
-instance regionFM : FiniteModel regionModel where
-  elements := [.A, .B, .C, .AB, .AC, .BC, .ABC]
+instance regionFM : Fintype regionModel.Entity where
+  elems := ({Region.A, Region.B, Region.C, Region.AB, Region.AC, Region.BC, Region.ABC} : Finset Region)
   complete := fun x => by cases x <;> simp
-  nodup := by simp [List.nodup_cons, List.mem_cons]
 
 /-- "All Xs are Ys" in state s: every populated X-region also has Y,
     AND there is at least one populated X-region (existential import).
@@ -206,12 +205,14 @@ theorem barbara_valid (s : VennState)
   obtain ⟨h2e, _⟩ := h2
   constructor
   · -- every_sem: every populated A-region has C
-    unfold every_sem at *
-    simp only [FiniteModel.elements] at *
-    rw [List.all_eq_true] at *
+    simp only [every_sem, some_sem] at *
+    rw [decide_eq_true_eq] at *
     intro r hr
     have h1r := h1e r hr
-    have h2r := h2e r hr
+    -- h1r : hasB r = true, so s r && hasB r = true
+    have hrB : (s r && hasB r) = true := by
+      simp only [Bool.and_eq_true] at hr ⊢; exact ⟨hr.1, h1r⟩
+    have h2r := h2e r hrB
     cases r <;> simp_all [hasA, hasB, hasC]
   · -- some_sem: there exists a populated A-region (inherited from h1)
     exact h1s
@@ -231,12 +232,10 @@ theorem barbara_some_valid (s : VennState)
   -- hEvery : every populated A-region has C
   -- hSome : there exists a populated A-region
   unfold syllSome
-  unfold every_sem at hEvery; unfold some_sem at hSome ⊢
-  simp only [FiniteModel.elements] at *
-  rw [List.any_eq_true] at hSome ⊢
-  rw [List.all_eq_true] at hEvery
-  obtain ⟨r, hr, hpop⟩ := hSome
-  exact ⟨r, hr, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
+  simp only [every_sem, some_sem] at *
+  rw [decide_eq_true_eq] at *
+  obtain ⟨r, hr, _⟩ := hSome
+  exact ⟨r, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
 
 -- ============================================================================
 -- §5. Logical Invalidity
@@ -265,11 +264,7 @@ theorem allAB_allCB_invalid :
     concMeaning .someNotAC state_ABC = false ∧
     concMeaning .noCA state_ABC = false ∧
     concMeaning .someNotCA state_ABC = false := by
-  simp only [concMeaning, syllAll, syllSome, syllSomeNot, syllNone,
-    every_sem, some_sem, no_sem, state_AB_BC, state_ABC,
-    FiniteModel.elements, hasA, hasC,
-    List.all_cons, List.all_nil, List.any_cons, List.any_nil]
-  decide
+  native_decide
 
 -- ============================================================================
 -- §6. Noisy Semantics via RSA.Noise.noiseChannel
@@ -420,12 +415,11 @@ theorem all_entails_some_AC (s : VennState)
   obtain ⟨hEvery, hSome⟩ := h
   -- hEvery : every populated A-region has C
   -- hSome : there exists a populated A-region (existential import)
-  unfold syllSome; unfold every_sem at hEvery; unfold some_sem at hSome ⊢
-  simp only [FiniteModel.elements] at *
-  rw [List.any_eq_true] at hSome ⊢
-  rw [List.all_eq_true] at hEvery
-  obtain ⟨r, hr, hpop⟩ := hSome
-  exact ⟨r, hr, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
+  unfold syllSome
+  simp only [every_sem, some_sem] at *
+  rw [decide_eq_true_eq] at *
+  obtain ⟨r, hr, _⟩ := hSome
+  exact ⟨r, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
 
 /-- Strict informativity: "All A-C" is compatible with strictly fewer states.
     Witness: `state_A_AC` has regions .A and .AC populated. Region .A has
@@ -437,10 +431,7 @@ private def state_A_AC : VennState
 theorem all_strictly_stronger_than_some :
     concMeaning .someAC state_A_AC = true ∧
     concMeaning .allAC state_A_AC = false := by
-  simp only [concMeaning, syllAll, syllSome, every_sem, some_sem,
-    state_A_AC, FiniteModel.elements, hasA, hasC,
-    List.all_cons, List.all_nil, List.any_cons, List.any_nil]
-  decide
+  native_decide
 
 -- ============================================================================
 -- §12. Premise Evaluation and Named Syllogisms
@@ -648,10 +639,6 @@ theorem allAB_allCB_l0_does_not_concentrate :
     (premise1Truth allAB_allCB state_AB_BC = true ∧
      premise2Truth allAB_allCB state_AB_BC = true ∧
      concMeaning .allAC state_AB_BC = false) := by
-  simp only [premise1Truth, premise2Truth, allAB_allCB, ↓reduceIte, syllQuantEval,
-    concMeaning, syllAll, every_sem, state_ABC, state_AB_BC,
-    FiniteModel.elements, hasA, hasB, hasC,
-    List.all_cons, List.all_nil]
-  decide
+  native_decide
 
 end Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022

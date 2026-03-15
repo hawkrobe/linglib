@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.LevinClass
 
 /-!
 # Spalek & McNally (forthcoming): The Anatomy of a Verb

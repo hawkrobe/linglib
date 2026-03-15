@@ -4,27 +4,38 @@ import Linglib.Core.Lexical.RootFeatures
 # Levin Verb Classes and Meaning Components
 @cite{levin-1993} @cite{dowty-1991} @cite{beavers-koontz-garboden-2020}
 
-## Meaning components (§ 1)
+## § 1. Meaning components
 
 Binary features that define @cite{levin-1993} verb classes, diagnosed by
 diathesis alternation behavior: change of state, contact, motion, causation,
 instrument specification, manner specification.
 
-## Verb class taxonomy (§ 2)
+## § 2. Verb class taxonomy
 
 The full verb class taxonomy from @cite{levin-1993} Part II: 49 top-level
 classes covering the English verb lexicon. Individual verb entries in
 `Fragments/` are tagged with their Levin class.
 
-## Per-class mappings (§§ 3–5)
+## § 3. Per-class meaning component profiles
 
-Meaning component profiles, root structural entailments
-(@cite{beavers-koontz-garboden-2020}), predicted unaccusativity, and
-cross-layer consistency theorems.
+## § 4. Predicted unaccusativity
+
+Based on @cite{levin-hovav-1995}: unaccusativity correlates with internally
+caused change of state or directed change.
+
+## § 5. Root entailment mapping (@cite{beavers-koontz-garboden-2020})
+
+Root structural entailments, well-formedness verification, and MRC tests.
+
+## § 6. Root–MC bridge
+
+Classification enums (CausationSource, ResultKind, MannerKind) naming the
+systematic divergences between B&KG root features and Levin meaning
+components, plus universal consistency theorems.
 -/
 
 -- ════════════════════════════════════════════════════
--- § 1. @cite{levin-1993} Meaning Components
+-- § 1. Meaning Components
 -- ════════════════════════════════════════════════════
 
 /-- Binary meaning components that define @cite{levin-1993} verb classes.
@@ -126,7 +137,7 @@ theorem fuse_comm (a b : MeaningComponents) : a.fuse b = b.fuse a := by
 end MeaningComponents
 
 -- ════════════════════════════════════════════════════
--- § 4. @cite{levin-1993} Verb Class Taxonomy
+-- § 2. Verb Class Taxonomy
 -- ════════════════════════════════════════════════════
 
 /-- Verb class taxonomy from @cite{levin-1993} Part II.
@@ -325,6 +336,10 @@ def LevinClass.section : LevinClass → String
   | .avoid => "52" | .linger => "53.1" | .rush => "53.2"
   | .measure => "54" | .aspectual => "55" | .weather => "57"
 
+-- ════════════════════════════════════════════════════
+-- § 3. Per-Class Meaning Component Profiles
+-- ════════════════════════════════════════════════════
+
 /-- Meaning components associated with each Levin class.
 
     Profiles are assigned using the diagnostic criteria from @cite{levin-1993}:
@@ -475,7 +490,7 @@ def LevinClass.meaningComponents : LevinClass → MeaningComponents
   | .weather => ⟨false, false, false, false, false, false⟩
 
 -- ════════════════════════════════════════════════════
--- § 6. Predicted Unaccusativity
+-- § 4. Predicted Unaccusativity
 -- ════════════════════════════════════════════════════
 
 /-- Predicted unaccusativity from Levin class membership.
@@ -547,10 +562,8 @@ theorem emission_predicts_unaccusative :
 theorem mos_predicts_unergative :
     LevinClass.predictsUnaccusative .mannerOfSpeaking = false := rfl
 
-
-
 -- ════════════════════════════════════════════════════
--- § 8. Root Entailment Mapping (B&@cite{beavers-koontz-garboden-2020})
+-- § 5. Root Entailment Mapping (@cite{beavers-koontz-garboden-2020})
 -- ════════════════════════════════════════════════════
 
 /-- Root structural entailments for each Levin class.
@@ -753,81 +766,8 @@ theorem break_respects_MRC :
 theorem hit_respects_MRC :
     (LevinClass.rootEntailments .hit).violatesMRC = false := rfl
 
-/-! ### Cross-layer consistency
-
-Template + root entailments predict the event-structural subset of surface
-meaning components (changeOfState, causation, mannerSpec). Uses
-`mc.changeOfState && mc.causation` as a proxy for `Template.hasCause`
-(the accomplishment template is selected when both hold; the actual
-`Template` type lives in `Theories/Semantics/Events/EventStructure.lean`
-and cannot be imported here without creating a circular dependency).
-
-B&KG's "manner" is broader than Levin's `mannerSpec`: B&KG code hit/cut
-as +manner (impact/cutting action), but Levin codes this as contact+motion
-(±instrument), not `mannerSpec`. The prediction holds for classes where
-root manner aligns with Levin's `mannerSpec` (cooking, motion) but
-diverges for contact-manner classes (hit, cut). -/
-
-/-- Predict event-structural meaning components from template causation
-    and root entailments. -/
-def predictEventStructural (templateHasCause : Bool) (r : RootEntailments) :
-    Bool × Bool × Bool :=
-  (templateHasCause || r.result,   -- changeOfState
-   templateHasCause || r.cause,    -- causation
-   r.manner)                       -- mannerSpec (B&KG sense)
-
-/-- Event-structural subset of surface meaning components. -/
-def MeaningComponents.eventStructural (mc : MeaningComponents) : Bool × Bool × Bool :=
-  (mc.changeOfState, mc.causation, mc.mannerSpec)
-
-/-- Predicted event structure for a Levin class.
-    Uses `mc.changeOfState && mc.causation` as a proxy for `Template.hasCause`. -/
-def LevinClass.predictedEventStructural (c : LevinClass) : Bool × Bool × Bool :=
-  let mc := c.meaningComponents
-  predictEventStructural (mc.changeOfState && mc.causation) c.rootEntailments
-
-/-- Break: prediction matches observation (accomplishment + √CRACK). -/
-theorem break_eventStructural_consistent :
-    LevinClass.predictedEventStructural .break_ =
-    (LevinClass.meaningComponents .break_).eventStructural := rfl
-
-/-- Cooking: prediction matches (accomplishment + fullSpec root). -/
-theorem cooking_eventStructural_consistent :
-    LevinClass.predictedEventStructural .cooking =
-    (LevinClass.meaningComponents .cooking).eventStructural := rfl
-
-/-- Manner of motion: prediction matches (activity + √JOG). -/
-theorem mannerOfMotion_eventStructural_consistent :
-    LevinClass.predictedEventStructural .mannerOfMotion =
-    (LevinClass.meaningComponents .mannerOfMotion).eventStructural := rfl
-
-/-- Existence: prediction matches (stative + minimal root). -/
-theorem exist_eventStructural_consistent :
-    LevinClass.predictedEventStructural .exist =
-    (LevinClass.meaningComponents .exist).eventStructural := rfl
-
-/-- Destroy: prediction matches (accomplishment + causativeResult). -/
-theorem destroy_eventStructural_consistent :
-    LevinClass.predictedEventStructural .destroy =
-    (LevinClass.meaningComponents .destroy).eventStructural := rfl
-
-/-- Touch: prediction matches (activity + minimal root). -/
-theorem touch_eventStructural_consistent :
-    LevinClass.predictedEventStructural .touch =
-    (LevinClass.meaningComponents .touch).eventStructural := rfl
-
-/-- Murder: prediction matches (accomplishment + causativeResult). -/
-theorem murder_eventStructural_consistent :
-    LevinClass.predictedEventStructural .murder =
-    (LevinClass.meaningComponents .murder).eventStructural := rfl
-
-/-- Manner of speaking: prediction matches (activity + pureManner root). -/
-theorem mannerOfSpeaking_eventStructural_consistent :
-    LevinClass.predictedEventStructural .mannerOfSpeaking =
-    (LevinClass.meaningComponents .mannerOfSpeaking).eventStructural := rfl
-
 -- ════════════════════════════════════════════════════
--- § 5c. Root–MC Bridge (@cite{beavers-koontz-garboden-2020})
+-- § 6. Root–MC Bridge (@cite{beavers-koontz-garboden-2020})
 -- ════════════════════════════════════════════════════
 
 /-! ### Root–MC correspondence (2026 consensus)
