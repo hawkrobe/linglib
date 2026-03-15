@@ -215,15 +215,21 @@ def applyInternalMerge (w : Workspace) (op : InternalMergeOp) : Option Workspace
 
 -- Part 7: Derivation State
 
-/-- A derivation state captures everything needed to continue a derivation -/
+/-- A derivation state captures everything needed to continue a derivation.
+
+    `features` maps token IDs to their current feature bundles, tracking
+    feature state across Agree operations. Populated by `selectStep`
+    (which registers an LI's features under its token ID) and modified
+    by `agreeStep` (which values the probe's features from the goal). -/
 structure DerivationState where
   numeration : Numeration
   workspace : Workspace
+  features : List (Nat × FeatureBundle) := []
   deriving Repr
 
 /-- Initial state from a numeration -/
 def DerivationState.init (n : Numeration) : DerivationState :=
-  ⟨n, Workspace.empty⟩
+  { numeration := n, workspace := Workspace.empty }
 
 /-- Is the derivation complete?
 
@@ -238,6 +244,27 @@ def DerivationState.getResult (s : DerivationState) : Option SyntacticObject :=
   if s.isComplete then s.workspace.getResult
   else none
 
+-- Part 7b: Agree Operations and Feature State
+
+/-- An Agree operation between a probe and a goal, identified by token ID.
+
+    Records which feature type is being checked, enabling the derivation
+    trace to track feature valuation step by step. -/
+structure AgreeOp where
+  probeId : Nat
+  goalId : Nat
+  feature : FeatureVal
+  deriving Repr
+
+/-- Look up the current feature bundle for a token by ID. -/
+def lookupFeatures (fs : List (Nat × FeatureBundle)) (id : Nat) : Option FeatureBundle :=
+  (fs.find? (fun p => p.1 == id)).map Prod.snd
+
+/-- Update the feature bundle for a token by ID. -/
+def updateFeatures (fs : List (Nat × FeatureBundle)) (id : Nat) (fb : FeatureBundle) :
+    List (Nat × FeatureBundle) :=
+  fs.map (fun p => if p.1 == id then (p.1, fb) else p)
+
 -- Part 8: Derivation Steps
 
 /-- A single step in a derivation -/
@@ -245,7 +272,8 @@ inductive DerivationStep where
   | selectStep : ExtendedLI → DerivationStep
   | externalMergeStep : ExternalMergeOp → DerivationStep
   | internalMergeStep : InternalMergeOp → DerivationStep
-  | transferStep : SyntacticObject → DerivationStep  -- Transfer phase complement
+  | transferStep : SyntacticObject → DerivationStep
+  | agreeStep : AgreeOp → DerivationStep
   deriving Repr
 
 /-- Apply a derivation step to a state -/
@@ -254,21 +282,27 @@ def applyStep (s : DerivationState) (step : DerivationStep) : Option DerivationS
   | .selectStep li =>
     match select s.numeration s.workspace li with
     | none => none
-    | some result => some ⟨result.numeration, result.workspace⟩
+    | some result =>
+      some { numeration := result.numeration
+             workspace := result.workspace
+             features := (s.workspace.nextId, li.features) :: s.features }
   | .externalMergeStep op =>
     match applyExternalMerge s.workspace op with
     | none => none
-    | some w' => some ⟨s.numeration, w'⟩
+    | some w' => some { s with workspace := w' }
   | .internalMergeStep op =>
     match applyInternalMerge s.workspace op with
     | none => none
-    | some w' => some ⟨s.numeration, w'⟩
-  | .transferStep _complement =>
-    -- Transfer ships the complement to PF/LF interfaces.
-    -- The complement is conceptually removed from further narrow-syntactic
-    -- operations, but the workspace structure remains intact for now.
-    -- Full PF/LF separation would require a richer state model.
-    some s
+    | some w' => some { s with workspace := w' }
+  | .transferStep _ => some s
+  | .agreeStep op =>
+    match lookupFeatures s.features op.probeId, lookupFeatures s.features op.goalId with
+    | some probeFeats, some goalFeats =>
+      match applyAgree probeFeats goalFeats op.feature with
+      | some newFeats =>
+        some { s with features := updateFeatures s.features op.probeId newFeats }
+      | none => none
+    | _, _ => none
 
 -- Part 9: Full Derivation
 
@@ -293,6 +327,13 @@ def executeSteps (n : Numeration) (steps : List DerivationStep) : Option Derivat
 def workspaceStageAt (n : Numeration) (steps : List DerivationStep) (k : Nat) :
     Option DerivationState :=
   executeSteps n (steps.take k)
+
+/-- Look up a token's feature state at a given derivation stage. -/
+def featureStateAt (n : Numeration) (steps : List DerivationStep) (k : Nat)
+    (tokenId : Nat) : Option FeatureBundle :=
+  match workspaceStageAt n steps k with
+  | some state => lookupFeatures state.features tokenId
+  | none => none
 
 /-- Extract the final syntactic object from a completed derivation. -/
 def FullDerivation.resultTree (fd : FullDerivation) : Option SyntacticObject :=

@@ -2,7 +2,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Person Feature Geometry @cite{preminger-2014}
-@cite{bjar-rezac-2009} @cite{pancheva-zubizarreta-2018}
+@cite{bejar-rezac-2009} @cite{pancheva-zubizarreta-2018}
 
 @cite{preminger-2014} decomposes phi-features into a
 hierarchical geometry where person sub-features are organized in a

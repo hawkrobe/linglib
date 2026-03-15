@@ -38,7 +38,7 @@ Three independent lines of evidence converge:
    resolved agreement, unlike imposters which trigger 3PL ((31)-(32))
 
 This falsifies morphosyntactic accounts (@cite{deal-2021},
-@cite{coon-keine-2021}, @cite{bjar-rezac-2009}), which predict LEI
+@cite{coon-keine-2021}, @cite{bejar-rezac-2009}), which predict LEI
 should behave like 3rd person for PCC purposes. The data supports a
 syntacticosemantic account such as @cite{pancheva-zubizarreta-2018},
 where the PCC reads *interpretable* person features.
@@ -231,7 +231,7 @@ def italianData : List CliticJudgment :=
 /-- Morphosyntactic prediction: the PCC reads **agreement** person.
 
     Under morphosyntactic accounts (@cite{deal-2021}, @cite{coon-keine-2021},
-    @cite{bjar-rezac-2009}), LEI's agreement features (3rd person) determine
+    @cite{bejar-rezac-2009}), LEI's agreement features (3rd person) determine
     PCC behavior. Since 3>3 is licit, `3.DAT > LEI.ACC` should be licit. -/
 def morphosyntacticPrediction (d : DualPersonFeatures) : Bool :=
   weakPCC .third d.agreementPerson
@@ -450,7 +450,7 @@ theorem pconstraint_allows_imposter :
      then bleeds Agree with the IO.
    - @cite{coon-keine-2021} Feature Gluttony: an articulated probe copies
      features from both goals; crash if the feature sets conflict.
-   - @cite{bjar-rezac-2009} Person Licensing: a π-probe seeks [participant]
+   - @cite{bejar-rezac-2009} Person Licensing: a π-probe seeks [participant]
      on the DO, licensing it. Blocked by the closer IO.
 
    For LEI, agreement person is 3rd = [−participant]. So all three accounts
