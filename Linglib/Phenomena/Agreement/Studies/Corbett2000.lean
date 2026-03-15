@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.Agreement.Typology
-import Linglib.Core.Number.Value
+import Linglib.Core.Number
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
@@ -51,11 +51,11 @@ Formalizes the core typological framework from:
 
 namespace Phenomena.Agreement.Studies.Corbett2000
 
--- Number values, predicates, and UD bridges are in `Core/Number/Value.lean`.
+-- Number categories, predicates, and UD bridges are in `Core/Number.lean`.
 -- We alias `NumberValue` here for backward compatibility within this file.
 open Core.Number
 
-abbrev NumberValue := Value
+abbrev NumberValue := Category
 
 -- ============================================================================
 -- §2: Number Systems (Ch 2, §2.3)

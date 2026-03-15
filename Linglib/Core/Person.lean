@@ -1,21 +1,130 @@
 import Linglib.Core.Lexical.UD
-import Linglib.Core.Person.Features
+import Linglib.Core.Prominence
 
 /-!
-# Person Categories
-@cite{cysouw-2009}
+# Person
+@cite{cysouw-2009} @cite{siewierska-2004}
 
-The 8 referential person categories from Cysouw's paradigmatic framework,
-extracted to Core/ for use by both Phenomena/ (typological data) and
-Fragments/ (person feature decomposition).
+Two components of the person API:
 
-This module contains just the type and its basic predicates. The full
-paradigmatic structure machinery (morpheme classes, homophony types,
+**§ 1–4: Person Features** (@cite{cysouw-2009}, @cite{siewierska-2004}).
+Framework-neutral decomposition of person into binary features:
+- **[±participant]**: whether the referent includes a speech-act participant
+  (speaker or addressee). 1st and 2nd person are [+participant]; 3rd person
+  is [−participant].
+- **[±author]**: whether the referent includes the speaker. 1st person is
+  [+author]; 2nd and 3rd are [−author].
+
+These features form a containment hierarchy: [+author] → [+participant].
+An author (speaker) is necessarily a participant.
+
+This decomposition is shared across theoretical frameworks:
+- Minimalism: @cite{preminger-2014}, @cite{bejar-rezac-2009}
+- Distributed Morphology: @cite{munoz-perez-2026} (Fission)
+- Typology: @cite{cysouw-2009}, @cite{siewierska-2004}
+
+The Minimalist-specific extension [±proximate]
+(@cite{pancheva-zubizarreta-2018}) is added in
+`Theories/Syntax/Minimalism/Core/PersonGeometry.lean`.
+
+**§ 5–9: Person Categories** (@cite{cysouw-2009}). The 8 referential person
+categories from Cysouw's paradigmatic framework. Three singular categories
+(individual speech act roles) and five group categories (attested
+combinations of participants).
+
+The full paradigmatic structure machinery (morpheme classes, homophony types,
 language data) remains in `Phenomena/Agreement/PersonMarkingTypology.lean`.
 
 -/
 
 namespace Core.Person
+
+-- ============================================================================
+-- § 1: Person Features
+-- ============================================================================
+
+/-- Binary person features: [±participant, ±author].
+
+    These two features suffice for the three-way person distinction:
+    - 1st person: [+participant, +author]
+    - 2nd person: [+participant, −author]
+    - 3rd person: [−participant, −author]
+
+    The fourth combination [−participant, +author] is ill-formed:
+    an author (speaker) is necessarily a speech-act participant. -/
+structure Features where
+  /-- [+participant]: referent includes a speech-act participant (1P or 2P). -/
+  hasParticipant : Bool
+  /-- [+author]: referent includes the speaker (1P only for singulars). -/
+  hasAuthor : Bool
+  deriving DecidableEq, BEq, Repr
+
+/-- Well-formedness: [+author] → [+participant].
+    An author (speaker) is necessarily a participant. -/
+def Features.wellFormed (pf : Features) : Bool :=
+  !pf.hasAuthor || pf.hasParticipant
+
+-- ============================================================================
+-- § 2: Canonical Person Feature Bundles
+-- ============================================================================
+
+/-- 1st person features: [+participant, +author]. -/
+def first : Features := ⟨true, true⟩
+
+/-- 2nd person features: [+participant, −author]. -/
+def second : Features := ⟨true, false⟩
+
+/-- 3rd person features: [−participant, −author]. -/
+def third : Features := ⟨false, false⟩
+
+-- ============================================================================
+-- § 3: PersonLevel Bridge
+-- ============================================================================
+
+end Core.Person
+
+namespace Core.Prominence
+
+/-- Decompose `PersonLevel` into binary person features. -/
+def PersonLevel.toFeatures : PersonLevel → Core.Person.Features
+  | .first  => Core.Person.first
+  | .second => Core.Person.second
+  | .third  => Core.Person.third
+
+end Core.Prominence
+
+namespace Core.Person
+
+open Core.Prominence
+
+-- ============================================================================
+-- § 4: Features Verification
+-- ============================================================================
+
+theorem first_wellFormed : first.wellFormed = true := rfl
+theorem second_wellFormed : second.wellFormed = true := rfl
+theorem third_wellFormed : third.wellFormed = true := rfl
+
+/-- The ill-formed combination [−participant, +author] is the only
+    combination that violates well-formedness. -/
+theorem illFormed_only : (⟨false, true⟩ : Features).wellFormed = false := rfl
+
+/-- There are exactly 3 well-formed feature combinations (= 3 persons). -/
+theorem exactly_three_wellFormed :
+    ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
+      Features.wellFormed).length = 3 := by native_decide
+
+/-- All person levels yield well-formed features. -/
+theorem PersonLevel.toFeatures_wellFormed (p : PersonLevel) :
+    p.toFeatures.wellFormed = true := by cases p <;> rfl
+
+/-- PersonLevel.isSAP = Features.hasParticipant. -/
+theorem PersonLevel.isSAP_eq_participant (p : PersonLevel) :
+    p.isSAP = p.toFeatures.hasParticipant := by cases p <;> rfl
+
+-- ============================================================================
+-- § 5: Person Categories
+-- ============================================================================
 
 /-- The 8 referential person categories (@cite{cysouw-2009}, Fig 10.1).
 
@@ -73,7 +182,7 @@ def includesAddressee : Category → Bool
 end Category
 
 -- ============================================================================
--- UD Bridges
+-- § 6: Category UD Bridges
 -- ============================================================================
 
 /-- Map singular Category to UD.Person. -/
@@ -115,7 +224,7 @@ theorem ud_conflates_incl_excl :
     Category.toUDPersonNumber .excl := rfl
 
 -- ============================================================================
--- Features Bridge
+-- § 7: Category ↔ Features Bridge
 -- ============================================================================
 
 /-- Decompose any Category into binary person features.
@@ -151,7 +260,7 @@ theorem toFeatures_wellFormed (p : Category) :
     p.toFeatures.wellFormed = true := by cases p <;> rfl
 
 -- ============================================================================
--- PersonLevel Bridge
+-- § 8: Category ↔ PersonLevel Bridge
 -- ============================================================================
 
 /-- Map singular Category to PersonLevel (the canonical three-way
@@ -197,6 +306,10 @@ theorem singular_sap_match :
     (Category.s2.includesSpeaker || Category.s2.includesAddressee) = true ∧
     (Category.s3.includesSpeaker || Category.s3.includesAddressee) = false :=
   ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 9: Category Consistency
+-- ============================================================================
 
 /-- Singular categories: Category.toFeatures agrees with
     PersonLevel.toFeatures via the PersonLevel bridge. -/

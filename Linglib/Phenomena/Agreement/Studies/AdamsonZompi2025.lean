@@ -5,7 +5,7 @@ import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.German.Pronouns
-import Linglib.Core.Person.Category
+import Linglib.Core.Person
 import Linglib.Phenomena.Agreement.Studies.Deal2024
 
 /-!

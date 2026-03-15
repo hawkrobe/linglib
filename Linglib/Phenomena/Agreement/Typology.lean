@@ -1,4 +1,4 @@
-import Linglib.Core.Person.Category
+import Linglib.Core.Person
 import Linglib.Fragments.Finnish.Negation
 
 /-!

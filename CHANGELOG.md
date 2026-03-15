@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.291] - 2026-03-15
+
+### Changed
+- **Merge `Core/Person/` and `Core/Number/` directories into single files**: `Core/Person.lean` (Features + Category combined), `Core/Number.lean` (Category + Features combined); eliminates unnecessary subdirectories
+- **Rename `Core.Number.Value` → `Core.Number.Category`**: consistent with `Core.Person.Category`; `Features.toValue`/`fromValue` → `Features.toCategory`/`fromCategory`; Corbett2000 `abbrev NumberValue := Category`
+- All downstream imports simplified: `Core.Person.Features`/`Core.Person.Category` → `Core.Person`; `Core.Number.Value`/`Core.Number.Features` → `Core.Number`
+
 ## [0.229.290] - 2026-03-15
 
 ### Added
@@ -13,11 +20,11 @@
 ## [0.229.289] - 2026-03-15
 
 ### Added
-- **`Core/Number/Features.lean`**: framework-neutral `[±atomic, ±minimal]` number feature decomposition from Harbour (2014); well-formedness constraint `[+atomic] → [+minimal]`, canonical bundles (singular/dual/plural), `Features.toValue`/`fromValue` bridges to Corbett's `Value`, `atomic_implies_minimal` theorem
-- **`Core/Number/Value.lean`**: Corbett's 8 analytical number values promoted from `Phenomena/Agreement/Studies/Corbett2000.lean` to `Core/Number/`; `isDeterminate`, `isInSystem` predicates; UD bridges with round-trip theorem
+- **`Core/Number/Features.lean`**: framework-neutral `[±atomic, ±minimal]` number feature decomposition from Harbour (2014); well-formedness constraint `[+atomic] → [+minimal]`, canonical bundles (singular/dual/plural), `Features.toCategory`/`fromCategory` bridges to Corbett's `Category`, `atomic_implies_minimal` theorem
+- **`Core/Number/Value.lean`**: Corbett's 8 analytical number categories promoted from `Phenomena/Agreement/Studies/Corbett2000.lean` to `Core/Number/`; `isDeterminate`, `isInSystem` predicates; UD bridges with round-trip theorem
 
 ### Changed
-- **Corbett2000**: replaced inline `NumberValue` with `abbrev NumberValue := Core.Number.Value`; all system-level types and empirical data stay in study file
+- **Corbett2000**: replaced inline `NumberValue` with `abbrev NumberValue := Core.Number.Category`; all system-level types and empirical data stay in study file
 
 ## [0.229.288] - 2026-03-15
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Person.Features
+import Linglib.Core.Person
 
 /-!
 # Person Feature Geometry @cite{preminger-2014}

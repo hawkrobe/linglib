@@ -136,10 +136,8 @@ import Linglib.Core.Continuation
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.VarAssignment
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
-import Linglib.Core.Person.Features
-import Linglib.Core.Person.Category
-import Linglib.Core.Number.Value
-import Linglib.Core.Number.Features
+import Linglib.Core.Person
+import Linglib.Core.Number
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
 import Linglib.Core.Efficiency
