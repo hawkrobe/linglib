@@ -51,7 +51,7 @@ All parameters from the paper's code (`analysis/model-simulations.Rmd`,
 
 | Property | Stable Beta | φ (mix) | Ref. prev. | Paper endorse |
 |----------|-------------|---------|------------|---------------|
-| bark | Beta(5,1) | 0.4 | 90% | 0.88 |
+| bark | Beta(5,1) | 0.4 | 95% | 0.88 |
 | hasSpots | Beta(5,1) | 0.7 | 10% | 0.02 |
 | dontEatPeople | Beta(10,1)* | 1.0 | 80% | 0.41 |
 | laysEggs | Beta(10,10) | 0.2 | 50% | 0.95 |
@@ -79,7 +79,7 @@ We achieve this without ℚ division by computing:
 
 | # | Finding | Prior | p_ref | Theorem |
 |---|---------|-------|-------|---------|
-| 1 | "Dogs bark" endorsed | bark | 90% | `bark_endorsed` |
+| 1 | "Dogs bark" endorsed | bark | 95% | `bark_endorsed` |
 | 2 | "Kangaroos have spots" NOT endorsed | hasSpots | 10% | `spots_not_endorsed` |
 | 3 | "Sharks don't eat people" NOT endorsed | dontEatPeople | 80% | `dontEatPeople_not_endorsed` |
 | 4 | "Robins lay eggs" endorsed despite 50% | laysEggs | 50% | `laysEggs_endorsed` |
@@ -402,9 +402,9 @@ expected prevalence. This is the paper's central insight: the SAME
 prevalence can produce different endorsement rates depending on the
 prior (Figure 2). -/
 
-/-- "Dogs bark" endorsed at 90% prevalence (Figure 2, column 1: 0.88). -/
+/-- "Dogs bark" endorsed at 95% prevalence (Table 1: 95%; Figure 2, column 1: 0.88). -/
 theorem bark_endorsed :
-    barkCfg.S1 () (prevPct 90) .generic > barkCfg.S1 () (prevPct 90) .silent := by
+    barkCfg.S1 () (prevPct 95) .generic > barkCfg.S1 () (prevPct 95) .silent := by
   rsa_predict
 
 /-- "Robins lay eggs" endorsed at 50% prevalence (Figure 2, column 4: 0.95).
@@ -515,5 +515,274 @@ theorem endorsement_tendsto_zero (prior : Prevalence → ℝ) (p : Prevalence)
   simp only [show Utterance.generic = Utterance.silent ↔ False from by decide,
     ite_false] at hlim
   exact hlim
+
+-- ════════════════════════════════════════════════════════════════════════════════
+-- § 10. Case Study 2: Habitual Language
+-- ════════════════════════════════════════════════════════════════════════════════
+
+/-!
+## Case Study 2: Habitual Language
+
+@cite{tessler-goodman-2019} (Case Study 2) extend the generic endorsement model
+to habituals. The key insight: habituals ("John runs") use the **same** threshold
+semantics as generics ("Birds fly"), with `Prevalence` now interpreted as frequency
+of activity across occasions rather than proportion of a kind with a property.
+
+**Paper's actual prior model (Eq. 4)**: The paper uses a log-normal + delta mixture:
+
+    φ ~ Beta(γ, ξ)
+    ln(frequency) ~ Gaussian(μ, σ)  with probability φ
+    frequency = 0.01               with probability (1 - φ)
+
+The Beta parameters (γ, ξ) and Gaussian parameters (μ, σ) are fit to empirical
+frequency estimates from participants. We approximate the fitted priors with
+Beta mixtures that capture the qualitative predictions:
+
+- **Rare-activity priors** (e.g., "climbs mountains", "writes novels"):
+  most people never do this → low expected frequency
+- **High-frequency priors** (e.g., "drinks coffee", "drives to work"):
+  common daily activity → high expected frequency
+- **Moderate priors** (e.g., "runs", "cooks dinner"):
+  regular but not constant
+
+The paper reports a model fit of r²(93) = 0.894 on habitual endorsement data.
+
+See also: `Semantics.Lexical.Verb.Habituals.hab_reduces_to_threshold` for
+the formal bridge from the traditional HAB operator to threshold semantics,
+completing the pipeline: HAB → threshold → uncertain threshold → RSA endorsement.
+-/
+
+/-- Frequency prior for "runs": moderate expectation.
+    Approximates the paper's fitted log-normal prior with a Beta(5,3) mixture.
+    The paper fits (γ, ξ, μ, σ) to participant frequency estimates;
+    the exact fitted values are in `analysis/model-simulations.Rmd`. -/
+def runsPrior : Prevalence → ℚ := mixturePrior (1/2) 5 3 1 50
+
+/-- Frequency prior for "climbs mountains": rare activity.
+    Approximates the paper's fitted log-normal prior with a Beta(2,6) mixture. -/
+def climbsMountainsPrior : Prevalence → ℚ := mixturePrior (1/10) 2 6 1 50
+
+/-- Frequency prior for "drinks coffee": high-frequency activity.
+    Approximates the paper's fitted log-normal prior with a Beta(7,2) mixture. -/
+def drinksCoffeePrior : Prevalence → ℚ := mixturePrior (4/5) 7 2 1 50
+
+private theorem runsPrior_nonneg : ∀ p : Prevalence, 0 ≤ runsPrior p :=
+  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
+private theorem climbsMountainsPrior_nonneg : ∀ p : Prevalence, 0 ≤ climbsMountainsPrior p :=
+  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
+private theorem drinksCoffeePrior_nonneg : ∀ p : Prevalence, 0 ≤ drinksCoffeePrior p :=
+  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
+
+@[reducible]
+noncomputable def runsCfg : RSA.RSAConfig Utterance Prevalence :=
+  mkGenericCfg (priorR runsPrior) (priorR_nonneg_of _ runsPrior_nonneg)
+
+@[reducible]
+noncomputable def climbsMountainsCfg : RSA.RSAConfig Utterance Prevalence :=
+  mkGenericCfg (priorR climbsMountainsPrior) (priorR_nonneg_of _ climbsMountainsPrior_nonneg)
+
+@[reducible]
+noncomputable def drinksCoffeeCfg : RSA.RSAConfig Utterance Prevalence :=
+  mkGenericCfg (priorR drinksCoffeePrior) (priorR_nonneg_of _ drinksCoffeePrior_nonneg)
+
+/-- "John runs" endorsed at 75% frequency (moderate freq exceeds moderate prior). -/
+theorem runs_endorsed_at_high_freq :
+    runsCfg.S1 () (prevPct 75) .generic > runsCfg.S1 () (prevPct 75) .silent := by
+  rsa_predict
+
+/-- "John climbs mountains" endorsed at 25% frequency (low freq exceeds rare-activity prior). -/
+theorem climbs_mountains_endorsed_at_low_freq :
+    climbsMountainsCfg.S1 () (prevPct 25) .generic >
+    climbsMountainsCfg.S1 () (prevPct 25) .silent := by
+  rsa_predict
+
+/-- "John drinks coffee" NOT endorsed at 25% frequency (low freq below high-frequency prior). -/
+theorem drinks_coffee_not_endorsed_at_low_freq :
+    ¬(drinksCoffeeCfg.S1 () (prevPct 25) .generic >
+      drinksCoffeeCfg.S1 () (prevPct 25) .silent) := by
+  rsa_predict
+
+/-- Habitual prior asymmetry: at the same 25% frequency, "climbs mountains" is endorsed
+    but "drinks coffee" is not — paralleling the generic prevalence asymmetry. -/
+theorem habitual_prior_asymmetry :
+    (climbsMountainsCfg.S1 () (prevPct 25) .generic >
+     climbsMountainsCfg.S1 () (prevPct 25) .silent) ∧
+    ¬(drinksCoffeeCfg.S1 () (prevPct 25) .generic >
+      drinksCoffeeCfg.S1 () (prevPct 25) .silent) :=
+  ⟨climbs_mountains_endorsed_at_low_freq, drinks_coffee_not_endorsed_at_low_freq⟩
+
+-- ════════════════════════════════════════════════════════════════════════════════
+-- § 11. Case Study 3: Causal Language
+-- ════════════════════════════════════════════════════════════════════════════════
+
+/-!
+## Case Study 3: Causal Language
+
+@cite{tessler-goodman-2019} (Case Study 3, Experiment 3A) extend the model to
+causal generics ("Zarpies cause fleas in Grups"). Here `Prevalence` is
+reinterpreted as the causal rate — the proportion of cases where the cause
+produces the effect.
+
+**Experimental design (Experiment 3A)**: 2×2 between-subjects manipulation:
+
+| Condition | Cause prevalence | Effect strength | Referent causal rate |
+|-----------|-----------------|-----------------|---------------------|
+| common-strong | 75% have mechanism | high rate given mechanism | tested at 20% and 70% |
+| common-weak | 75% have mechanism | low rate given mechanism | tested at 20% and 70% |
+| rare-strong | 25% have mechanism | high rate given mechanism | tested at 20% and 70% |
+| rare-weak | 25% have mechanism | low rate given mechanism | tested at 20% and 70% |
+
+The paper's key finding: endorsement depends on the **prior over causal rates**,
+not just the referent rate itself. At the same referent rate, rare-cause conditions
+show higher endorsement than common-cause conditions.
+
+We model the four conditions as different prevalence priors, varying the mixture
+weight φ (cause prevalence: common=high φ, rare=low φ) and the stable Beta
+parameters (effect strength: strong → high-mean Beta, weak → low-mean Beta).
+
+The paper reports a model fit of r²(8) = 0.835 on causal endorsement data.
+-/
+
+/-- Prior for common-strong cause: most categories have the mechanism (φ=0.75),
+    and the mechanism is highly effective (Beta(10,1) peaked near 100%). -/
+def commonStrongPrior : Prevalence → ℚ := mixturePrior (3/4) 10 1 1 50
+
+/-- Prior for common-weak cause: most categories have the mechanism (φ=0.75),
+    but the mechanism is weakly effective (Beta(2,8) peaked near 20%). -/
+def commonWeakPrior : Prevalence → ℚ := mixturePrior (3/4) 2 8 1 50
+
+/-- Prior for rare-strong cause: few categories have the mechanism (φ=0.25),
+    but when present it is highly effective (Beta(10,1)). -/
+def rareStrongPrior : Prevalence → ℚ := mixturePrior (1/4) 10 1 1 50
+
+/-- Prior for rare-weak cause: few categories have the mechanism (φ=0.25),
+    and the mechanism is weakly effective (Beta(2,8)). -/
+def rareWeakPrior : Prevalence → ℚ := mixturePrior (1/4) 2 8 1 50
+
+private theorem commonStrongPrior_nonneg : ∀ p : Prevalence, 0 ≤ commonStrongPrior p :=
+  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
+private theorem commonWeakPrior_nonneg : ∀ p : Prevalence, 0 ≤ commonWeakPrior p :=
+  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
+private theorem rareStrongPrior_nonneg : ∀ p : Prevalence, 0 ≤ rareStrongPrior p :=
+  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
+private theorem rareWeakPrior_nonneg : ∀ p : Prevalence, 0 ≤ rareWeakPrior p :=
+  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
+
+@[reducible]
+noncomputable def commonStrongCfg : RSA.RSAConfig Utterance Prevalence :=
+  mkGenericCfg (priorR commonStrongPrior) (priorR_nonneg_of _ commonStrongPrior_nonneg)
+
+@[reducible]
+noncomputable def commonWeakCfg : RSA.RSAConfig Utterance Prevalence :=
+  mkGenericCfg (priorR commonWeakPrior) (priorR_nonneg_of _ commonWeakPrior_nonneg)
+
+@[reducible]
+noncomputable def rareStrongCfg : RSA.RSAConfig Utterance Prevalence :=
+  mkGenericCfg (priorR rareStrongPrior) (priorR_nonneg_of _ rareStrongPrior_nonneg)
+
+@[reducible]
+noncomputable def rareWeakCfg : RSA.RSAConfig Utterance Prevalence :=
+  mkGenericCfg (priorR rareWeakPrior) (priorR_nonneg_of _ rareWeakPrior_nonneg)
+
+/-- Rare-weak cause endorsed at 20% causal rate: low prior expectation
+    makes even 20% informative. -/
+theorem rareWeak_endorsed_at_20pct :
+    rareWeakCfg.S1 () (prevPct 20) .generic >
+    rareWeakCfg.S1 () (prevPct 20) .silent := by
+  rsa_predict
+
+/-- Common-strong cause NOT endorsed at 20% causal rate: high prior
+    expectation (peaked near 100%) makes 20% uninformative. -/
+theorem commonStrong_not_endorsed_at_20pct :
+    ¬(commonStrongCfg.S1 () (prevPct 20) .generic >
+      commonStrongCfg.S1 () (prevPct 20) .silent) := by
+  rsa_predict
+
+/-- Rare-weak cause endorsed at 70% causal rate. -/
+theorem rareWeak_endorsed_at_70pct :
+    rareWeakCfg.S1 () (prevPct 70) .generic >
+    rareWeakCfg.S1 () (prevPct 70) .silent := by
+  rsa_predict
+
+/-- Common-strong cause NOT endorsed at 50% causal rate: high prior
+    (Beta(10,1), φ=0.75) puts expected rate near 70%, so 50% is uninformative. -/
+theorem commonStrong_not_endorsed_at_50pct :
+    ¬(commonStrongCfg.S1 () (prevPct 50) .generic >
+      commonStrongCfg.S1 () (prevPct 50) .silent) := by
+  rsa_predict
+
+/-- Causal prior asymmetry (Experiment 3A): at the same referent causal rate,
+    rare-cause conditions are endorsed while common-cause conditions are not. -/
+theorem causal_prior_asymmetry :
+    (rareWeakCfg.S1 () (prevPct 20) .generic >
+     rareWeakCfg.S1 () (prevPct 20) .silent) ∧
+    ¬(commonStrongCfg.S1 () (prevPct 20) .generic >
+      commonStrongCfg.S1 () (prevPct 20) .silent) :=
+  ⟨rareWeak_endorsed_at_20pct, commonStrong_not_endorsed_at_20pct⟩
+
+-- ════════════════════════════════════════════════════════════════════════════════
+-- § 12. Cue Validity ↔ Prevalence Prior (Appendix A)
+-- ════════════════════════════════════════════════════════════════════════════════
+
+/-!
+## Cue Validity and Endorsement
+
+@cite{tessler-goodman-2019} (pp. 29-30, Appendix A) show that endorsement in
+the infinite-rationality limit reduces to a cue validity comparison:
+
+    endorsed ⟺ prevalence(f, k_ref) > E_prior[prevalence]
+             ⟺ cue_validity(f, k_ref) > 1
+
+where `cue_validity(f, k) = prevalence(f, k) / E[prevalence]`.
+
+This connects the RSA model to the classical notion from @cite{rosch-mervis-1975}:
+a feature is diagnostic of a category exactly when the feature is more prevalent
+in that category than expected across categories — i.e., when cue validity > 1.
+
+In `mkGenericCfg`, the endorsement condition
+`S1(generic | p_ref) > S1(silent | p_ref)` reduces to
+`p_ref.toNat > E[k | prior]` after L0 normalization cancels the common factor.
+This is exactly the cue validity condition when the expected bin E[k | prior]
+serves as the denominator.
+-/
+
+/-- Cue validity: ratio of referent prevalence to expected prevalence under the prior. -/
+def cueValidity (referentPrevalence expectedPrior : ℚ) : ℚ :=
+  referentPrevalence / expectedPrior
+
+/-- A generic is endorsed (prevalence exceeds prior expectation) iff cue validity > 1. -/
+theorem endorsed_iff_cue_validity_gt_one
+    (referentPrev expectedPrior : ℚ) (hE : 0 < expectedPrior) :
+    expectedPrior < referentPrev ↔ 1 < cueValidity referentPrev expectedPrior := by
+  unfold cueValidity
+  exact (one_lt_div hE).symm
+
+-- ════════════════════════════════════════════════════════════════════════════════
+-- § 13. Unification: All Three Domains Use mkGenericCfg
+-- ════════════════════════════════════════════════════════════════════════════════
+
+/-!
+## Unified Architecture
+
+All three domains — generics, habituals, and causal language — are instances of
+`mkGenericCfg` with different prevalence priors. The threshold semantics, RSA
+inference, and endorsement mechanism are shared; only the prior varies.
+
+This unification is structural (by construction), not proven post hoc.
+The integration pipeline is:
+
+1. **Traditional operator** (GEN/HAB) reduces to threshold semantics
+   (`CompareSemantics.gen_eliminable`, `Habituals.hab_reduces_to_threshold`)
+2. **Threshold semantics** with uncertain threshold → marginalized L0
+3. **RSA endorsement** (`mkGenericCfg`) decides between generic and silence
+4. **Endorsement ≈ cue validity** (`endorsed_iff_cue_validity_gt_one`)
+-/
+
+/-- All three case studies use `mkGenericCfg` — the prior is the only free parameter. -/
+theorem unification :
+    (∃ pr hp, barkCfg = mkGenericCfg pr hp) ∧
+    (∃ pr hp, runsCfg = mkGenericCfg pr hp) ∧
+    (∃ pr hp, rareWeakCfg = mkGenericCfg pr hp) :=
+  ⟨⟨_, _, rfl⟩, ⟨_, _, rfl⟩, ⟨_, _, rfl⟩⟩
 
 end Phenomena.Generics.Studies.TesslerGoodman2019
