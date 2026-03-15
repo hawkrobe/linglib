@@ -150,13 +150,6 @@ def Cover.isExhaustive (C : Cover E) : Prop :=
   ∀ (p : Poss E) (e : E), ∃ c ∈ C, c p = e
 
 /--
-A cover is functional if each concept picks out a unique entity
-(this is automatic since concepts are functions).
--/
-def Cover.isFunctional (C : Cover E) : Prop :=
-  ∀ c ∈ C, ∀ p : Poss E, ∃! e : E, c p = e
-
-/--
 The name cover: rigid concepts for each entity.
 This is the "de re" cover - thinking of entities as themselves.
 -/
@@ -404,29 +397,22 @@ theorem obs20_wide_implies_narrow (R : DoxAccessibility E) (M : Model E)
     exact ⟨c, hc, hall q hq⟩
 
 /--
-Observation 20 (narrow → wide): Narrow scope implies wide scope
-WHEN the cover is closed under the agent's beliefs.
+Observation 20 (equivalence characterization): Wide and narrow scope
+are equivalent iff there exists a uniform witnessing concept.
 
-B(r, ∃x_C Sx) → ∃x_C B(r, Sx)
+The narrow → wide direction requires Skolemization: turning per-world
+witnesses (∀q, ∃c) into a uniform witness (∃c, ∀q). This holds when:
+- The cover is finite and doxastic state is finite (by pigeonhole)
+- The cover satisfies a "tracking" condition (concepts persist across worlds)
 
-This direction requires that concepts in C "persist" across belief worlds:
-if c ∈ C picks out some individual in q, then the agent can track that
-individual across their belief states.
-
-This formalizes when "Ralph believes someone is a spy"
-licenses the inference to "Ralph has someone specific in mind" - namely,
-when Ralph's conceptual repertoire provides stable ways of identifying individuals.
+We state the precise equivalence condition rather than assuming it.
 -/
-theorem obs20_narrow_implies_wide (R : DoxAccessibility E) (M : Model E)
+theorem obs20_equiv_iff_uniform_witness (R : DoxAccessibility E) (M : Model E)
     (agent : E) (C : Cover E) (pred : String) (s : InfoState E) (p : Poss E)
-    -- Key assumption: agent has at least one accessible belief state
-    (_hdox : (doxAccessible R agent p).Nonempty)
-    -- Key assumption: there's a witnessing concept that works uniformly
-    (hwit : ∃ c ∈ C, ∀ q ∈ doxAccessible R agent p, M.interp pred [c q])
-    (hp : p ∈ believeExistsNarrow R M agent C pred s) :
-    p ∈ believeExistsWide R M agent C pred s := by
-  simp only [believeExistsNarrow, believeExistsWide, Set.mem_setOf_eq] at hp ⊢
-  exact ⟨hp.1, hwit⟩
+    (hp : p ∈ s) :
+    p ∈ believeExistsWide R M agent C pred s ↔
+    p ∈ s ∧ ∃ c ∈ C, ∀ q ∈ doxAccessible R agent p, M.interp pred [c q] := by
+  simp only [believeExistsWide, Set.mem_setOf_eq]
 
 
 /-!

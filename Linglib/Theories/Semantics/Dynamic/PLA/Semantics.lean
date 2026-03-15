@@ -190,39 +190,20 @@ theorem Formula.sat_resolve {E : Type*} [Nonempty E]
     rw [h1, h2]
   | exists_ j φ ih =>
     simp only [sat, resolve]
-    constructor
-    · intro ⟨e, he⟩
-      use e
-      have hcompat' : ∀ i ∈ φ.range, ê i = (g[j ↦ e]) (ρ i) := by
-        intro i hi
-        have hne : ρ i ≠ j := by
-          have := hnoCapture i hi
-          simp only [domain] at this
-          exact λ heq => this (by rw [heq]; exact Finset.mem_insert_self j _)
-        simp only [Assignment.update, if_neg hne]
-        exact hcompat i hi
-      have hnoCapture' : ∀ i ∈ φ.range, ρ i ∉ φ.domain := by
-        intro i hi
+    have hcompat' : ∀ e, ∀ i ∈ φ.range, ê i = (g[j ↦ e]) (ρ i) := by
+      intro e i hi
+      have hne : ρ i ≠ j := by
         have := hnoCapture i hi
-        simp only [domain] at this ⊢
-        exact λ hc => this (Finset.mem_insert_of_mem hc)
-      rwa [← ih (g[j ↦ e]) ê hcompat' hnoCapture']
-    · intro ⟨e, he⟩
-      use e
-      have hcompat' : ∀ i ∈ φ.range, ê i = (g[j ↦ e]) (ρ i) := by
-        intro i hi
-        have hne : ρ i ≠ j := by
-          have := hnoCapture i hi
-          simp only [domain] at this
-          exact λ heq => this (by rw [heq]; exact Finset.mem_insert_self j _)
-        simp only [Assignment.update, if_neg hne]
-        exact hcompat i hi
-      have hnoCapture' : ∀ i ∈ φ.range, ρ i ∉ φ.domain := by
-        intro i hi
-        have := hnoCapture i hi
-        simp only [domain] at this ⊢
-        exact λ hc => this (Finset.mem_insert_of_mem hc)
-      rwa [ih (g[j ↦ e]) ê hcompat' hnoCapture']
+        simp only [domain] at this
+        exact λ heq => this (by rw [heq]; exact Finset.mem_insert_self j _)
+      simp only [Assignment.update, if_neg hne]
+      exact hcompat i hi
+    have hnoCapture' : ∀ i ∈ φ.range, ρ i ∉ φ.domain := by
+      intro i hi
+      have := hnoCapture i hi
+      simp only [domain] at this ⊢
+      exact λ hc => this (Finset.mem_insert_of_mem hc)
+    exact exists_congr (λ e => ih (g[j ↦ e]) ê (hcompat' e) hnoCapture')
 
 
 section Examples
@@ -292,5 +273,65 @@ theorem obs4_pla_pl_equivalence {E : Type*} [Nonempty E] (M : Model E)
   | exists_ j φ ih =>
     simp only [Formula.sat]
     exact exists_congr (λ e => ih hfree (g[j ↦ e]))
+
+
+/--
+Observation 5 (@cite{dekker-2012} §2.2): Relevance.
+
+Satisfaction depends only on the values of free variables and pronouns
+that actually occur in the formula. Assignments that agree on freeVars
+and witness sequences that agree on range yield the same satisfaction.
+-/
+theorem obs5_relevance {E : Type*} [Nonempty E] (M : Model E)
+    (φ : Formula) (g₁ g₂ : Assignment E) (ê₁ ê₂ : WitnessSeq E)
+    (hg : ∀ x ∈ φ.freeVars, g₁ x = g₂ x)
+    (hê : ∀ i ∈ φ.range, ê₁ i = ê₂ i) :
+    φ.sat M g₁ ê₁ ↔ φ.sat M g₂ ê₂ := by
+  induction φ generalizing g₁ g₂ ê₁ ê₂ with
+  | atom name ts =>
+    simp only [Formula.sat]
+    have h : ts.map (Term.eval g₁ ê₁) = ts.map (Term.eval g₂ ê₂) := by
+      apply List.map_congr_left
+      intro t ht
+      cases t with
+      | var i =>
+        simp only [Term.eval]
+        apply hg
+        simp only [Formula.freeVars, Finset.mem_biUnion, List.mem_toFinset]
+        exact ⟨.var i, ht, Finset.mem_singleton_self i⟩
+      | pron i =>
+        simp only [Term.eval]
+        apply hê
+        rw [Formula.range_atom, mem_termsPronouns]
+        exact ⟨.pron i, ht, Finset.mem_singleton_self i⟩
+    rw [h]
+  | neg φ ih =>
+    simp only [Formula.sat]
+    exact not_congr (ih g₁ g₂ ê₁ ê₂ hg hê)
+  | conj φ ψ ih₁ ih₂ =>
+    simp only [Formula.sat]
+    have hgφ : ∀ x ∈ φ.freeVars, g₁ x = g₂ x :=
+      λ x hx => hg x (Finset.mem_union_left _ hx)
+    have hgψ : ∀ x ∈ ψ.freeVars, g₁ x = g₂ x :=
+      λ x hx => hg x (Finset.mem_union_right _ hx)
+    have hêφ : ∀ i ∈ φ.range, ê₁ i = ê₂ i :=
+      λ i hi => hê i (Finset.mem_union_left _ hi)
+    have hêψ : ∀ i ∈ ψ.range, ê₁ i = ê₂ i :=
+      λ i hi => hê i (Finset.mem_union_right _ hi)
+    exact and_congr (ih₁ g₁ g₂ ê₁ ê₂ hgφ hêφ) (ih₂ g₁ g₂ ê₁ ê₂ hgψ hêψ)
+  | exists_ j φ ih =>
+    simp only [Formula.sat]
+    apply exists_congr
+    intro e
+    apply ih
+    · intro x hx
+      simp only [Assignment.update]
+      split
+      · rfl
+      · rename_i hne
+        apply hg
+        exact Finset.mem_erase.mpr ⟨hne, hx⟩
+    · intro i hi
+      exact hê i hi
 
 end Semantics.Dynamic.PLA

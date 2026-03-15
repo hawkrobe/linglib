@@ -153,7 +153,7 @@ theorem bathroom_range_has_pronoun :
   simp only [List.toFinset_cons, List.toFinset_nil, Finset.biUnion_insert,
              Finset.biUnion_empty, Finset.union_empty, Term.pronouns]
   simp only [Finset.mem_union, Finset.mem_singleton]
-  right; native_decide
+  right; trivial
 
 /-- Bathroom sentence domain is nonempty despite negated existential. -/
 theorem bathroom_domain_nonempty :

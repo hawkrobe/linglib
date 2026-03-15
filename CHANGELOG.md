@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.276] - 2026-03-15
+
+### Changed
+- **PLA audit & cleanup**: deduplicate `sat_resolve` exists_ case (extract shared helper, halve proof size); add Obs 2 (`resolve_preserves_domain`), label Obs 3 on `resolve_no_pronouns`, add Obs 5 (`obs5_relevance` — satisfaction depends only on relevant vars/pronouns); remove vacuous `Cover.isFunctional` (trivially true for all functions); replace trivially-true `obs20_narrow_implies_wide` with honest `obs20_equiv_iff_uniform_witness`; replace `native_decide` in `bathroom_range_has_pronoun` with structural proof
+
 ## [0.229.275] - 2026-03-15
 
 ### Added

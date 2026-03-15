@@ -172,12 +172,29 @@ def Formula.resolve (ρ : Resolution) : Formula → Formula
   | .conj φ ψ => .conj (φ.resolve ρ) (ψ.resolve ρ)
   | .exists_ i φ => .exists_ i (φ.resolve ρ)
 
+/--
+Observation 2 (@cite{dekker-2012} §2.1): Resolution preserves domain.
+
+n(φ^ρ) = n(φ): resolving pronouns doesn't affect which variables are bound.
+-/
+theorem Formula.resolve_preserves_domain (φ : Formula) (ρ : Resolution) :
+    (φ.resolve ρ).domain = φ.domain := by
+  induction φ with
+  | atom _ _ => rfl
+  | neg φ ih => simp only [resolve, domain, ih]
+  | conj φ ψ ih1 ih2 => simp only [resolve, domain, ih1, ih2]
+  | exists_ i φ ih => simp only [resolve, domain, ih]
+
 /-- Resolution removes all pronouns from a term -/
 theorem Term.resolve_no_pronouns (t : Term) (ρ : Resolution) :
     (t.resolve ρ).pronouns = ∅ := by
   cases t <;> rfl
 
-/-- Resolution removes all pronouns from a formula -/
+/--
+Observation 3 (@cite{dekker-2012} §2.1): Resolution eliminates all pronouns.
+
+r(φ^ρ) = ∅: after resolution, the formula contains no pronouns.
+-/
 theorem Formula.resolve_no_pronouns (φ : Formula) (ρ : Resolution) :
     (φ.resolve ρ).range = ∅ := by
   induction φ with
