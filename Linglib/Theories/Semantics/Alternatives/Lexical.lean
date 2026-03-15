@@ -498,4 +498,41 @@ instance : AlternativeSource Modals.ModalExpr where
 instance : AlternativeSource Number.NumberExpr where
   alternatives _ := Number.numberScale.members
 
+-- ============================================================
+-- Scale Membership (word → scale position)
+-- ============================================================
+
+/-- Which Horn scale a closed-class expression belongs to, and where.
+
+Numerals are excluded: under lower-bound semantics they form an infinite
+scale (not representable as a finite `HornScale`), and under bilateral
+semantics they don't form a scale at all. -/
+inductive ScaleMembership where
+  | quantifier (pos : Quantifiers.QuantExpr)
+  | connective (pos : Connectives.ConnExpr)
+  | modal (pos : Modals.ModalExpr)
+  deriving DecidableEq, BEq, Repr
+
+/-- Look up the scale position of a word form. -/
+def scaleOf : String → Option ScaleMembership
+  | "some" => some (.quantifier .some_)
+  | "every" | "all" => some (.quantifier .all)
+  | "most" => some (.quantifier .most)
+  | "no" | "none" => some (.quantifier .none_)
+  | "or" => some (.connective .or_)
+  | "and" => some (.connective .and_)
+  | "might" | "may" | "possible" => some (.modal .possible)
+  | "must" | "necessary" => some (.modal .necessary)
+  | _ => none
+
+/-- The stronger alternatives of a scale position, as surface forms. -/
+def strongerAlternativeForms (sm : ScaleMembership) : List String :=
+  match sm with
+  | .quantifier pos =>
+    (strongerAlternatives Quantifiers.quantScale pos).map toString
+  | .connective pos =>
+    (strongerAlternatives Connectives.connScale pos).map toString
+  | .modal pos =>
+    (strongerAlternatives Modals.modalScale pos).map toString
+
 end Alternatives

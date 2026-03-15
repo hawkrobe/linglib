@@ -45,7 +45,70 @@ inductive LicensingContext where
   | tooAdjective         -- "too tired to see anyone"
   | doubtVerb            -- "I doubt anyone came"
   | denyVerb             -- "She denied seeing anyone"
+  | adversative          -- "sorry/surprised that anyone" (Strawson-DE)
   deriving DecidableEq, Repr, BEq
+
+-- ============================================================================
+-- LicensingContext Mapping: Phenomena ↔ Core
+-- ============================================================================
+
+/-! Two `LicensingContext` types coexist:
+    - `Core.Lexical.PolarityItem.LicensingContext` (19 constructors) — used by Fragment entries
+    - `Phenomena.Polarity.NPIs.LicensingContext` (15 constructors) — used by empirical data
+
+    The Core type includes FC environments (modals, generics, imperatives);
+    the Phenomena type includes verbal licensors (doubt, deny) and finer-grained
+    negation (sentential vs constituent). The mappings below connect them. -/
+
+/-- Map a Phenomena-level licensing context to its Core equivalent.
+    Partial: `universalRestrictor`, `doubtVerb`, `denyVerb` have no Core counterpart. -/
+def LicensingContext.toCore : LicensingContext → Option Core.Lexical.PolarityItem.LicensingContext
+  | .sententialNegation  => some .negation
+  | .constituentNegation => some .nobody
+  | .withoutClause       => some .without_clause
+  | .beforeClause        => some .before_clause
+  | .onlyFocus           => some .only_focus
+  | .superlative         => some .superlative
+  | .conditional         => some .conditional_ant
+  | .fewNP               => some .few
+  | .question            => some .question
+  | .comparativeThan     => some .comparative
+  | .tooAdjective        => some .too_to
+  | .adversative         => some .adversative
+  | .universalRestrictor => none
+  | .doubtVerb           => none
+  | .denyVerb            => none
+
+/-- Map a Core licensing context to its Phenomena equivalent.
+    Partial: FC contexts (modals, generics, imperatives) and structural contexts
+    (`atMost`, `since_temporal`, `free_relative`) have no Phenomena counterpart. -/
+def LicensingContext.fromCore : Core.Lexical.PolarityItem.LicensingContext → Option LicensingContext
+  | .negation          => some .sententialNegation
+  | .nobody            => some .constituentNegation
+  | .few               => some .fewNP
+  | .conditional_ant   => some .conditional
+  | .before_clause     => some .beforeClause
+  | .without_clause    => some .withoutClause
+  | .only_focus        => some .onlyFocus
+  | .question          => some .question
+  | .comparative       => some .comparativeThan
+  | .superlative       => some .superlative
+  | .too_to            => some .tooAdjective
+  | .adversative       => some .adversative
+  | .atMost            => none
+  | .modal_possibility => none
+  | .modal_necessity   => none
+  | .imperative        => none
+  | .generic           => none
+  | .since_temporal    => none
+  | .free_relative     => none
+
+/-- Round-trip: when a Phenomena context maps to Core, mapping back recovers it. -/
+theorem LicensingContext.fromCore_toCore (ctx : LicensingContext)
+    (c : Core.Lexical.PolarityItem.LicensingContext)
+    (h : ctx.toCore = some c) :
+    LicensingContext.fromCore c = some ctx := by
+  cases ctx <;> simp [toCore] at h <;> subst h <;> rfl
 
 -- Basic Data Structure
 

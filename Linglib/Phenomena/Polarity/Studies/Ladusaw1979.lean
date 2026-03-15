@@ -63,6 +63,7 @@ def licensingStrength : LicensingContext → LicensingStrength
   | .conditional         => .downwardEntailing
   | .onlyFocus           => .downwardEntailing
   | .doubtVerb           => .downwardEntailing
+  | .adversative         => .downwardEntailing  -- Strawson-DE
   | .question            => .nonDE
   | .superlative         => .nonDE
 

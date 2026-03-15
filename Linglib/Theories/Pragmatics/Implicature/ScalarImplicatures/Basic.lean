@@ -30,8 +30,8 @@ exhaustification predictions live in `Alternatives/Lexical.lean` and
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Core.Interface
+import Linglib.Core.Lexical.Word
 
 namespace Implicature.ScalarImplicatures
 
@@ -39,7 +39,7 @@ open Implicature
 open Semantics.Entailment.Polarity (ContextPolarity)
 open Alternatives.Quantifiers (QuantExpr)
 open Alternatives.Connectives (ConnExpr)
-open Semantics.Montague (ScaleMembership)
+open Alternatives (ScaleMembership)
 
 
 -- ============================================================
@@ -379,27 +379,21 @@ theorem some_de_no_implicatures :
 
 
 /-
-## Scalar Implicatures from Lexical Entries
+## Scalar Implicatures from Word Forms
 
-Derives implicatures directly from `SemLexEntry` scalar metadata.
-Any syntax theory that identifies scalar items can feed into these functions.
+Derives implicatures from words by looking up their Horn scale
+positions via `Alternatives.scaleOf`.
 -/
 
-open Semantics.Montague
-
-/--
-Derive scalar implicatures from a list of scalar lexical entries.
-
-For each entry with a scale membership, derives the corresponding
-implicatures based on polarity context.
--/
-def deriveFromScalarItems {m : Model}
-    (items : List (SemLexEntry m)) (ctx : ContextPolarity)
+/-- Derive scalar implicatures from a list of words.
+    Each word is looked up in the scale registry; scalar words
+    produce implicatures based on polarity context. -/
+def deriveFromWords (words : List String) (ctx : ContextPolarity)
     : List ScalarImplicatureResult :=
-  items.filterMap λ entry =>
-    match entry.scaleMembership with
+  words.filterMap λ word =>
+    match Alternatives.scaleOf word with
     | none => none
-    | some sm => some (deriveScalarImplicatures entry.form sm ctx)
+    | some sm => some (deriveScalarImplicatures word sm ctx)
 
 /--
 Check if any implicature in the results negates a given alternative.
@@ -409,7 +403,7 @@ def hasImplicature (results : List ScalarImplicatureResult) (alt : String) : Boo
 
 /-- "some students sleep": scalar item is "some" -/
 def someStudentsSleep_result : List ScalarImplicatureResult :=
-  deriveFromScalarItems [some_entry] .upward
+  deriveFromWords ["some", "students", "sleep"] .upward
 
 /-- "some students sleep" derives "not(all)" -/
 theorem some_students_derives_not_all :
@@ -423,7 +417,7 @@ theorem some_students_derives_not_most :
 
 /-- "every student sleeps": "every" is scale-top, no stronger alternatives -/
 def everyStudentsSleeps_result : List ScalarImplicatureResult :=
-  deriveFromScalarItems [every_entry] .upward
+  deriveFromWords ["every", "student", "sleeps"] .upward
 
 /-- "every student sleeps" has no implicatures -/
 theorem every_students_no_implicatures :
@@ -432,7 +426,7 @@ theorem every_students_no_implicatures :
 
 /-- "some students sleep" in DE: implicature blocked -/
 def someStudentsSleep_DE_result : List ScalarImplicatureResult :=
-  deriveFromScalarItems [some_entry] .downward
+  deriveFromWords ["some", "students", "sleep"] .downward
 
 /-- "some" in DE has no "not all" implicature -/
 theorem some_students_de_no_not_all :

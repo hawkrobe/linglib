@@ -148,7 +148,6 @@ import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Morphology.Core.WordStructure
-import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
 import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Core.Discourse.ReferentialForm
 import Linglib.Core.Discourse.SpeechActs
@@ -1004,6 +1003,7 @@ import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021RSA
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021TwoNot
 import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
 import Linglib.Phenomena.Quantification.Studies.Elliott2025
+import Linglib.Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
 import Linglib.Phenomena.Quantification.Compare
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Phenomena.Questions.Typology
@@ -1398,7 +1398,6 @@ import Linglib.Theories.Semantics.Composition.Effects
 import Linglib.Theories.Semantics.Composition.MaybeMonad
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Montague.Conjunction
-import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Tense.BranchingTime
 import Linglib.Theories.Semantics.Composition.Scope

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.229.254] - 2026-03-14
+
+### Changed
+- **Dissolve SemLexEntry middleman**: Pragmatics consumers (`deriveFromWords`, `hasSomeQuantifier`, `hasAllQuantifier`) now take `List String` and look up scale positions via `Alternatives.scaleOf`, instead of requiring `SemLexEntry` bundles
+- **Move ScaleMembership to Alternatives/Lexical.lean**: `ScaleMembership`, `scaleOf`, `strongerAlternativeForms` now live in `Alternatives` namespace where they belong — composition, morphology, and pragmatics concerns are no longer bundled
+
+### Removed
+- **Delete Montague/Lexicon.lean**: `SemLexEntry`, `SemLexicon`, `toyLexicon` and all toy entries removed — composition uses `LexEntry`/`Lexicon` from `Types.lean`, pragmatics uses `scaleOf` from `Alternatives/Lexical.lean`
+- **Delete StemToLex.lean**: Dead code (zero external consumers), bridged morphological stems to the now-deleted `SemLexEntry`
+
+## [0.229.253] - 2026-03-14
+
+### Added
+- **TesslerTenenbaumGoodman2022.lean**: Formalize syllogistic reasoning as pragmatic communication — Venn diagram ontology (7 regions, 128 states), syllogistic quantifier semantics grounded in `every_sem`/`some_sem`/`no_sem` via region FiniteModel, Barbara validity + subalternation, invalidity witnesses, noisy semantics via `RSA.Noise.noiseChannel`, Belief Alignment speaker model via `Core.Divergence.klDivergence`, NVC as vacuous utterance
+
 ## [0.229.252] - 2026-03-14
 
 ### Changed

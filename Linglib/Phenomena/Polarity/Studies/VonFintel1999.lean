@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Entailment.PolarityBuilder
+import Linglib.Phenomena.Polarity.Studies.Lahiri1998
 /-
 # @cite{von-fintel-1999} — Empirical Data
 
@@ -216,6 +217,32 @@ def notClassicallyDEExamples : List StrawsonDEDatum :=
 -- Pattern: NPI licensed ∧ ¬classically DE
 -- This is the empirical puzzle that Strawson-DE resolves
 #guard npiLicensingExamples.all (λ d => d.grammatical && !d.isClassicallyDE)
+
+-- ============================================================================
+-- Cross-Linguistic: Adversative/Non-Adversative Asymmetry
+-- ============================================================================
+
+/-! @cite{lahiri-1998} §4.5 shows the same adversative/non-adversative asymmetry
+    in Hindi: adversative factives (aaScarya 'surprised') license NPIs, while
+    non-adversative factives (khuS 'glad') do not. This cross-linguistic
+    agreement supports von Fintel's Strawson-DE analysis as a universal
+    licensing mechanism, not an English-specific phenomenon. -/
+
+open Phenomena.Polarity.Studies.Lahiri1998
+  (npi_adversative_surprise_ek npi_adversative_surprise_koii npi_glad_bad)
+
+/-- Cross-linguistic adversative pattern: both Hindi (@cite{lahiri-1998})
+    and English (@cite{von-fintel-1999}) show the same asymmetry —
+    adversative factives license NPIs, non-adversative factives do not. -/
+theorem adversative_crosslinguistic :
+    -- English: sorry/surprised license, glad doesn't
+    sorryAny.grammatical = true ∧
+    surprisedEver.grammatical = true ∧
+    gladNotLicense.grammatical = false ∧
+    -- Hindi: aaScarya (surprised) licenses, khuS (glad) doesn't
+    npi_adversative_surprise_ek.grammatical = true ∧
+    npi_adversative_surprise_koii.grammatical = true ∧
+    npi_glad_bad.grammatical = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Polarity.Studies.VonFintel1999
 
