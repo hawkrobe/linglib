@@ -23,7 +23,7 @@ For the *failure model* (what happens when Agree fails), see
 ## Satisfaction Conditions
 
 Standard Agree assumes a probe is satisfied by finding a matching valued
-feature. @cite{deal-2021} and @cite{keine-2019} argue for richer conditions:
+feature. @cite{deal-2024} and @cite{keine-2019} argue for richer conditions:
 - **Feature match**: the standard case
 - **Head encounter**: probe is satisfied by encountering a head of a
   particular category (e.g., Infl's probe stopped by transitive Voice)
@@ -422,17 +422,17 @@ theorem rel_features_match :
     featuresMatch (.unvalued (.rel true)) (.valued (.rel false)) = true := rfl
 
 -- ============================================================================
--- § 14: Satisfaction Conditions (@cite{deal-2021}; @cite{keine-2019})
+-- § 14: Satisfaction Conditions (@cite{deal-2024}; @cite{keine-2019})
 -- ============================================================================
 
 /-- How a probe's search can be terminated.
 
     Standard Agree assumes a probe is satisfied only by finding a matching
-    valued feature (simple feature match). @cite{deal-2021} argues for richer
+    valued feature (simple feature match). @cite{deal-2024} argues for richer
     conditions to capture e.g. Mam's Infl probe, which is satisfied by
     EITHER matching φ-features OR encountering transitive Voice:
 
-    **Mam example** (@cite{scott-2023}, via @cite{deal-2021}):
+    **Mam example** (@cite{scott-2023}, via @cite{deal-2024}):
     - Infl carries [uφ] with satisfaction [SAT: φ or Voice_TR]
     - Intransitive: probe passes through (no Voice_TR) → finds S → real φ-agreement
     - Transitive: probe encounters Voice_TR → satisfied without copying φ → default "∅"
@@ -447,7 +447,7 @@ inductive SatisfactionCond where
   /-- Standard: probe is satisfied by finding a matching valued feature. -/
   | featureMatch : FeatureVal → SatisfactionCond
   /-- Disjunctive: probe is satisfied by ANY of these conditions.
-      Models @cite{deal-2021}'s interaction-based probes. -/
+      Models @cite{deal-2024}'s interaction-based probes. -/
   | disjunctive : List SatisfactionCond → SatisfactionCond
   /-- Head encounter: probe is satisfied by encountering a head of this
       category, even without feature matching. The probe stops but copies

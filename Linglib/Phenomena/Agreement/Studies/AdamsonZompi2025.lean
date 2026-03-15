@@ -6,6 +6,7 @@ import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.German.Pronouns
 import Linglib.Core.Lexical.PersonCategory
+import Linglib.Phenomena.Agreement.Studies.Deal2024
 
 /-!
 # Adamson & Zompì (2025): Polite Pronouns and the PCC
@@ -37,7 +38,7 @@ Three independent lines of evidence converge:
 3. **Resolved agreement** (§4.3, (30)): LEI in coordination triggers 2PL
    resolved agreement, unlike imposters which trigger 3PL ((31)-(32))
 
-This falsifies morphosyntactic accounts (@cite{deal-2021},
+This falsifies morphosyntactic accounts (@cite{deal-2024},
 @cite{coon-keine-2021}, @cite{bejar-rezac-2009}), which predict LEI
 should behave like 3rd person for PCC purposes. The data supports a
 syntacticosemantic account such as @cite{pancheva-zubizarreta-2018},
@@ -230,7 +231,7 @@ def italianData : List CliticJudgment :=
 
 /-- Morphosyntactic prediction: the PCC reads **agreement** person.
 
-    Under morphosyntactic accounts (@cite{deal-2021}, @cite{coon-keine-2021},
+    Under morphosyntactic accounts (@cite{deal-2024}, @cite{coon-keine-2021},
     @cite{bejar-rezac-2009}), LEI's agreement features (3rd person) determine
     PCC behavior. Since 3>3 is licit, `3.DAT > LEI.ACC` should be licit. -/
 def morphosyntacticPrediction (d : DualPersonFeatures) : Bool :=
@@ -445,7 +446,7 @@ theorem pconstraint_allows_imposter :
 
    All such accounts evaluate the **agreement** features of the goals:
 
-   - @cite{deal-2021} Interaction/Satisfaction: a probe with satisfaction
+   - @cite{deal-2024} Interaction/Satisfaction: a probe with satisfaction
      condition [PART(ICIPANT)] is satisfied by the DO's [+participant],
      then bleeds Agree with the IO.
    - @cite{coon-keine-2021} Feature Gluttony: an articulated probe copies
@@ -488,6 +489,33 @@ theorem morphosyntactic_probe_misses_participant :
     bundle and finds [Person:2nd] — [+participant]. PCC effect predicted. -/
 theorem syntacticosemantic_finds_participant :
     (decomposePerson .second).hasParticipant = true := rfl
+
+-- ============================================================================
+-- § 10a: Direct Test of Deal's isLicit on LEI
+-- ============================================================================
+
+open Phenomena.Agreement.Studies.Deal2024 (isLicit) in
+/-- @cite{deal-2024}'s `isLicit` directly demonstrates the morphosyntactic
+    failure. Under the Weak PCC (Italian), the probe reads agreement person:
+
+    - `isLicit weak .third lei.agreementPerson` = `isLicit weak 3 3` = **true**
+      (wrongly predicts ⟨3.DAT, LEI.ACC⟩ is licit)
+    - `isLicit weak .third lei.interpretablePerson` = `isLicit weak 3 2` = **false**
+      (correctly predicts illicit)
+
+    This is a formal, end-to-end test: @cite{deal-2024}'s own licitness
+    function, applied to LEI's agreement features, gives the wrong answer. -/
+theorem deal_weak_wrong_for_lei :
+    isLicit Deal2024.weak .third lei.agreementPerson = true ∧
+    isLicit Deal2024.weak .third lei.interpretablePerson = false := ⟨rfl, rfl⟩
+
+open Phenomena.Agreement.Studies.Deal2024 (isLicit) in
+/-- The same failure obtains under the Strong PCC variant: Deal's model
+    reads agreement-3P as ⟨3,3⟩ (licit) rather than interpretable-2P as
+    ⟨3,2⟩ (illicit). -/
+theorem deal_strong_wrong_for_lei :
+    isLicit Deal2024.strong .third lei.agreementPerson = true ∧
+    isLicit Deal2024.strong .third lei.interpretablePerson = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 11: Consistency with Italian Clitic Paradigm

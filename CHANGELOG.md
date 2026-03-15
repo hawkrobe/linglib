@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.270] - 2026-03-15
+
+### Changed
+- **Rename `deal-2021` → `deal-2024`**: update bib key, filename (`Deal2023.lean` → `Deal2024.lean`), namespace, and all `@cite` references across 6 files to match the published LI 2024 volume
+- **Deal2024 review fixes**: add §16–§21 (Table 53 absorption, ADDR grammars, reverse PCC, characterization theorems, entailment lattice, feature geometry grounding); fix `aDescending` licit count (4→5)
+- **AdamsonZompi2025 ↔ Deal2024 bridge**: import Deal2024, add `deal_weak_wrong_for_lei` and `deal_strong_wrong_for_lei` — end-to-end proof that Deal's `isLicit` gives wrong predictions when reading LEI's agreement features vs correct predictions when reading interpretable features
+
 ## [0.229.269] - 2026-03-15
 
 ### Changed
@@ -11,7 +18,7 @@
 ## [0.229.268] - 2026-03-15
 
 ### Added
-- **Deal 2023 study file** (`Phenomena/Agreement/Studies/Deal2023.lean`): formalize Interaction/Satisfaction PCC framework
+- **Deal 2024 study file** (`Phenomena/Agreement/Studies/Deal2024.lean`): formalize Interaction/Satisfaction PCC framework
   - `DealGrammar` with `satisfaction` (SAT feature) and `dynInteraction` (dynamic narrowing) parameters
   - `isLicit` derives PCC predictions from probe-goal interaction mechanics
   - 5 grammar instances: `strong`, `meFirst`, `weak`, `strictlyDescending`, `noPCC`
