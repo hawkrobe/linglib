@@ -39,8 +39,11 @@ inductive ModalComponentStatus where
   /-- Modal component is part of assertive content (challengeable
       by direct denial). Ex: Chuj *yalnhej*, Sp. *uno cualquiera*. -/
   | atIssue
-  /-- Modal component is presupposed or conventionally implicated
-      (projects under embedding). Ex: Sp. *algún*, Ger. *irgendein*. -/
+  /-- Modal component is not part of assertive content: presupposed,
+      conventionally implicated, or conversationally implicated.
+      Projects or persists under embedding operators.
+      Ex: Sp. *algún* (conv. implicature per @cite{alonso-ovalle-menendez-benito-2010}),
+      Ger. *irgendein* (conv. implicature per @cite{kratzer-shimoyama-2002}). -/
   | notAtIssue
   deriving DecidableEq, BEq, Repr
 

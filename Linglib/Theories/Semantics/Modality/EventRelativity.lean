@@ -3,7 +3,9 @@ import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Event-Relative Modality
-  @cite{hacquard-2006} @cite{hacquard-2009} @cite{hacquard-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-1981}Modal domains are projected from event arguments, not stipulated at the @cite{heim-1999}
+@cite{hacquard-2006} @cite{hacquard-2009} @cite{hacquard-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-1981}
+
+Modal domains are projected from event arguments, not stipulated at the
 clause level. An **anchoring function** maps events to conversational
 backgrounds: the event type determines the modal flavor.
 

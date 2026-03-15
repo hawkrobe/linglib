@@ -22,7 +22,7 @@ position, which in turn constrains the available modal flavor:
 - v_w (agentive intransitive): agent = external → epistemic only
 - v_j (agentless passive): no agent → internal argument → both flavors
 
-This connection is proved in `Phenomena/ModalIndefinites/Bridge/KratzerAnchoring.lean`.
+This connection is proved in `Phenomena/ModalIndefinites/Studies/AlonsoOvalleRoyer2024.lean`.
 
 -/
 
