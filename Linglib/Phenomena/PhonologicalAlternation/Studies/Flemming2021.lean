@@ -154,7 +154,12 @@ theorem clash_diff_is_one (pair : Fin 4) :
     contexts = −w₂ (\*Clash weight), independent of context. This follows
     from `clash_pairs_identical_except_clash`: since non-\*Clash violations
     are identical in each pair, their weighted contributions cancel,
-    leaving only −w₂ · 1 = −w₂. -/
+    leaving only −w₂ · 1 = −w₂.
+
+    This is a special case of `me_predicts_hz` (Separability.lean):
+    the \*Clash violation differences are column-insensitive (constant
+    across paired contexts), so the weighted sum satisfies the
+    constant-difference identity. -/
 theorem logit_uniformity_clash (w : Fin 6 → ℚ) (pair : Fin 4) :
     (Finset.univ.sum fun j => w j * (schwaDiff (clashPairs pair).2 j : ℚ)) -
     (Finset.univ.sum fun j => w j * (schwaDiff (clashPairs pair).1 j : ℚ)) =

@@ -151,7 +151,11 @@ theorem normalMaxEnt_choiceProb_eq {C : Type}
 
     This property characterizes MaxEnt among stochastic HG variants.
     NHG lacks it because its noise variance σ_d depends on the violation
-    profile (see `nhgSigmaD`). -/
+    profile (see `nhgSigmaD`).
+
+    See also `maxent_logit_as_finsum` (Separability.lean) for the
+    Fin-indexed decomposition, and `me_predicts_hz` for the consequence
+    that independent violation differences yield HZ's generalization. -/
 theorem logit_uniformity {ι : Type} [Fintype ι] [Nonempty ι]
     (s : ι → ℝ) (a b : ι) :
     log (softmax s 1 a / softmax s 1 b) = s a - s b := by

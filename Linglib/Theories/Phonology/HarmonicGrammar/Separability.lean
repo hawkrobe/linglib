@@ -42,11 +42,23 @@ and `maxent_logit_harmony`, which already prove that MaxEnt log-odds
 equal harmony score differences. @cite{magri-2025}'s contribution is
 showing this is *the only* mode of constraint interaction with this
 property (the backward direction).
+
+## Bridge to List-based API (§11)
+
+The bridge theorems connect the Fin-indexed separability theory to the
+List-based MaxEnt API (`harmonyScore`/`harmonyScoreR` from `Basic.lean`):
+
+- `harmonyScoreR_as_finsum`: converts List-based harmony to Fin-indexed sum
+- `exp_harmonyScoreR_eq_me_separable`: `exp(harmonyScoreR) = meSeparable.eval`
+- `maxent_logit_as_finsum`: MaxEnt logit = weighted violation difference sum
+
+These enable applying separability results (independence → HZ, rescaling)
+to any `WeightedConstraint` list without re-proving in Fin-indexed form.
 -/
 
 namespace Theories.Phonology.HarmonicGrammar
 
-open Real Finset
+open Core Real Finset
 
 -- ============================================================================
 -- § 1: The 2×2 Square of Underlying Forms (§2.4)
@@ -390,5 +402,89 @@ theorem inverse_not_always_hz :
     -- LHS cross-product: (1+1)(1+3)(1+2)(1+2) = 2·4·3·3 = 72
     -- RHS cross-product: (1+1)(1+2)(1+1)(1+4) = 2·3·2·5 = 60
     (2 : ℕ) * 4 * 3 * 3 ≠ 2 * 3 * 2 * 5 := by decide
+
+-- ============================================================================
+-- § 11: Bridge — List-Based MaxEnt ↔ Separable Harmony
+-- ============================================================================
+
+-- The List-based MaxEnt API (`harmonyScore`, `harmonyScoreR` from Basic.lean)
+-- and the Fin-indexed separability theory (`SeparableHarmony`, `meSeparable`)
+-- compute the same thing for MaxEnt grammars. These bridge theorems make the
+-- connection formal, enabling separability results (independence → HZ,
+-- constraint rescaling) to be applied to any `WeightedConstraint` list.
+
+private lemma foldl_sub_eq' {α : Type} (l : List α) (f : α → ℚ) (init : ℚ) :
+    l.foldl (fun acc x => acc - f x) init = init - (l.map f).sum := by
+  induction l generalizing init with
+  | nil => simp
+  | cons _ _ ih =>
+    simp only [List.foldl_cons, List.map_cons, List.sum_cons]
+    rw [ih]; ring
+
+private lemma list_map_sum_eq_finsum {α : Type} (l : List α) (f : α → ℚ) :
+    (l.map f).sum = ∑ i : Fin l.length, f (l.get i) := by
+  induction l with
+  | nil => simp
+  | cons _ _ ih =>
+    simp only [List.map_cons, List.sum_cons, List.length_cons,
+      Fin.sum_univ_succ, ih, List.get_cons_zero]
+    congr 1
+
+/-- **`harmonyScoreR` as a Fin-indexed weighted sum**:
+    the List-based harmony score equals a negated Finset.sum over
+    Fin-indexed constraint weights and violations.
+
+    This is the key List→Fin conversion for applying separability
+    theory to concrete `WeightedConstraint` lists. -/
+theorem harmonyScoreR_as_finsum {C : Type}
+    (constraints : List (WeightedConstraint C)) (c : C) :
+    harmonyScoreR constraints c =
+    -(∑ i : Fin constraints.length,
+      ((constraints.get i).weight : ℝ) * ((constraints.get i).eval c : ℝ)) := by
+  simp only [harmonyScoreR, harmonyScore]
+  rw [foldl_sub_eq']
+  push_cast [list_map_sum_eq_finsum]
+  ring
+
+/-- **MaxEnt unnormalized probability is separable harmony**:
+    `exp(harmonyScoreR constraints c) = meSeparable.eval v` where
+    weights and violations are drawn from the constraint list.
+
+    Since `meSeparable.eval v = exp(-∑ wₖvₖ)` (`me_separable_eval`)
+    and `harmonyScoreR c = -∑ wₖvₖ` (`harmonyScoreR_as_finsum`),
+    the exponential of the List-based harmony is exactly the
+    Fin-indexed separable harmony evaluation.
+
+    This makes all separability theory — constraint independence → HZ
+    (`separable_predicts_hz`), constraint rescaling
+    (`separable_eq_me_rescaled`) — directly applicable to any
+    `WeightedConstraint` list. -/
+theorem exp_harmonyScoreR_eq_me_separable {C : Type}
+    (constraints : List (WeightedConstraint C)) (c : C) :
+    exp (harmonyScoreR constraints c) =
+    (meSeparable constraints.length
+      (fun i => ((constraints.get i).weight : ℝ))).eval
+      (fun i => (constraints.get i).eval c) := by
+  rw [me_separable_eval, harmonyScoreR_as_finsum]
+
+/-- **MaxEnt logit rate as Fin-indexed weighted violation differences**:
+    the logit of MaxEnt probabilities is a negated weighted sum of
+    violation differences, expressed as a Finset.sum over Fin indices.
+
+    This bridges `logit_uniformity` (NoisyHG.lean) with `me_predicts_hz`:
+    since the logit is a weighted sum, it satisfies HZ whenever the
+    violation differences satisfy `ViolDiffIndependence`.
+
+    Composition: `logit_uniformity` → `harmonyScoreR_as_finsum` → algebra. -/
+theorem maxent_logit_as_finsum {C : Type} [Fintype C] [Nonempty C]
+    (constraints : List (WeightedConstraint C)) (a b : C) :
+    log (softmax (harmonyScoreR constraints) 1 a /
+         softmax (harmonyScoreR constraints) 1 b) =
+    -(∑ i : Fin constraints.length,
+      ((constraints.get i).weight : ℝ) *
+      (((constraints.get i).eval a : ℝ) - ((constraints.get i).eval b : ℝ))) := by
+  rw [logit_uniformity, harmonyScoreR_as_finsum, harmonyScoreR_as_finsum,
+    neg_sub_neg, ← sum_sub_distrib, ← sum_neg_distrib]
+  apply Finset.sum_congr rfl; intro _ _; ring
 
 end Theories.Phonology.HarmonicGrammar

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.273] - 2026-03-15
+
+### Added
+- **Magri 2025 — close sorrys & deepen integration**:
+  - Close `me_separable_eval` and `separable_eq_me_rescaled` (zero sorrys in Separability.lean)
+  - Add `separable_predicts_hz`: forward direction of Magri's biconditional (separable → HZ)
+  - Add `meSeparable_rescale`: ME rescaling is the identity
+  - Add `constraint_independence` and `me_separable_predicts_hz_tagalog` in Magri2025.lean
+  - **List↔Fin bridge** (§11): `harmonyScoreR_as_finsum`, `exp_harmonyScoreR_eq_me_separable`, `maxent_logit_as_finsum` — connect List-based MaxEnt API to Fin-indexed separability theory
+  - Cross-references between `logit_uniformity` (NoisyHG) and `me_predicts_hz` (Separability)
+
 ## [0.229.272] - 2026-03-15
 
 ### Changed
