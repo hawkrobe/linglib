@@ -17,12 +17,6 @@ inductive Gender where
   | fem   -- Feminine
   deriving DecidableEq, Repr, BEq
 
-/-- Number -/
-inductive Number where
-  | sg  -- Singular
-  | pl  -- Plural
-  deriving DecidableEq, Repr, BEq
-
 /--
 A lexical entry for a French noun.
 
@@ -84,7 +78,7 @@ def defNP (n : NounEntry) (num : Number := .sg) : NP :=
   let det := match num, n.gender with
     | .sg, .masc => Determiner.le
     | .sg, .fem => Determiner.la
-    | .pl, _ => Determiner.les
+    | _, _ => Determiner.les      -- plural (and fallback for non-binary number)
   { noun := n, number := num, isBare := false, determiner := some det }
 
 /-- Create an indefinite singular NP (un/une) -/

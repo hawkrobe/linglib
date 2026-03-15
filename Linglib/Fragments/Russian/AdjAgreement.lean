@@ -21,7 +21,7 @@ open Minimalism.Modification
 
 /-- Russian long-form features: φ (number, gender) + κ (6-case). -/
 def longFormFeatures : List MAGFeatureType :=
-  [ .phi (.number true), .phi (.number false)
+  [ .phi (.number .pl), .phi (.number .sg)
   , .phi (.gender 0), .phi (.gender 1), .phi (.gender 2)
   , .kappa .nom, .kappa .acc, .kappa .dat
   , .kappa .gen, .kappa .abl, .kappa .obl ]

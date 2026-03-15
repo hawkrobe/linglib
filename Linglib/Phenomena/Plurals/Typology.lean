@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Prominence
 import Linglib.Core.WALS.Features.F33A
 import Linglib.Core.WALS.Features.F34A
 import Linglib.Core.WALS.Features.F35A
@@ -594,64 +595,7 @@ theorem all_sample_pronouns_distinguish_number :
     allLanguages.all (·.pronounsDistinguishNumber) = true := by
   native_decide
 
--- ============================================================================
--- The Animacy Hierarchy for Plural Marking
--- ============================================================================
-
-/-- The animacy hierarchy for nominal plural marking (@cite{smith-stark-1974},
-    @cite{corbett-2000}, Haspelmath WALS Ch 34). Languages mark plural on nouns
-    according to an implicational scale:
-
-      speaker > addressee > 3rd person > kin > human > higher animals >
-      lower animals > discrete inanimates > nondiscrete inanimates
-
-    If a language marks plural at a given point on the scale, it marks
-    plural at all higher points. The WALS data captures the coarsest
-    cut: human nouns vs inanimate nouns. -/
-inductive AnimacyRank where
-  | speaker
-  | addressee
-  | thirdPerson
-  | kin
-  | human
-  | higherAnimal
-  | lowerAnimal
-  | discreteInanimate
-  | nondiscreteInanimate
-  deriving DecidableEq, BEq, Repr
-
-/-- Numeric rank for comparison (higher = more likely to be plural-marked). -/
-def AnimacyRank.toNat : AnimacyRank -> Nat
-  | .speaker => 8
-  | .addressee => 7
-  | .thirdPerson => 6
-  | .kin => 5
-  | .human => 4
-  | .higherAnimal => 3
-  | .lowerAnimal => 2
-  | .discreteInanimate => 1
-  | .nondiscreteInanimate => 0
-
-/-- The hierarchy predicts: if a language marks plural at rank r, it marks
-    plural at all ranks above r. -/
-def respectsHierarchy (markedRanks : List AnimacyRank) : Bool :=
-  markedRanks.all fun r =>
-    markedRanks.all fun r' =>
-      -- If r' is ranked higher than r and r is marked, r' should also be marked
-      r'.toNat >= r.toNat || markedRanks.contains r' == false
-
-/-- The hierarchy is consistent: speaker outranks addressee outranks
-    third person, and so forth down the scale. -/
-theorem hierarchy_ordering :
-    AnimacyRank.speaker.toNat > AnimacyRank.addressee.toNat ∧
-    AnimacyRank.addressee.toNat > AnimacyRank.thirdPerson.toNat ∧
-    AnimacyRank.thirdPerson.toNat > AnimacyRank.kin.toNat ∧
-    AnimacyRank.kin.toNat > AnimacyRank.human.toNat ∧
-    AnimacyRank.human.toNat > AnimacyRank.higherAnimal.toNat ∧
-    AnimacyRank.higherAnimal.toNat > AnimacyRank.lowerAnimal.toNat ∧
-    AnimacyRank.lowerAnimal.toNat > AnimacyRank.discreteInanimate.toNat ∧
-    AnimacyRank.discreteInanimate.toNat > AnimacyRank.nondiscreteInanimate.toNat := by
-  native_decide
+open Core.Prominence (AnimacyRank)
 
 -- ============================================================================
 -- WALS Converter Functions

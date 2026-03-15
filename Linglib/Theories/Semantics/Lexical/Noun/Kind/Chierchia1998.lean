@@ -623,29 +623,32 @@ theorem disjointness_condition {Atom : Type} [DecidableEq Atom]
   have hab : kf.rel a b := kf.isEquiv.trans (kf.isEquiv.symm hxa) hxb
   exact h hab
 
-/-- Number taxonomy: NUMBER has subkinds ℕ, ℤ, ℚ, ℝ, etc.
-    TWO has subkinds 2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ (Snyder §4.3). -/
-inductive NumberSystem where
+/-- Mathematical number system taxonomy: NUMBER has subkinds ℕ, ℤ, ℚ, ℝ, etc.
+    TWO has subkinds 2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ (Snyder §4.3).
+
+    Named `MathSystem` to avoid confusion with grammatical number
+    (`UD.Number`, `Word.Number`). -/
+inductive MathSystem where
   | nat | int | rat | real
   deriving DecidableEq, BEq, Repr
 
-instance : Fintype NumberSystem where
+instance : Fintype MathSystem where
   elems := {.nat, .int, .rat, .real}
   complete := by intro x; cases x <;> simp
 
 /-- Two twos from different systems are distinct subkinds of TWO. -/
-def twoSubkinds : NumberSystem → NumberSystem → Prop := (· ≠ ·)
+def twoSubkinds : MathSystem → MathSystem → Prop := (· ≠ ·)
 
-/-- The four number systems. -/
-def NumberSystem.all : List NumberSystem := [.nat, .int, .rat, .real]
+/-- The four mathematical number systems. -/
+def MathSystem.all : List MathSystem := [.nat, .int, .rat, .real]
 
 /-- NUMBER has four subkinds (ℕ, ℤ, ℚ, ℝ).
     This is what makes taxonomic predication ("two comes in several
     varieties") felicitous: the kind TWO has genuinely distinct subkinds. -/
-theorem numberSystem_count : NumberSystem.all.length = 4 := rfl
+theorem mathSystem_count : MathSystem.all.length = 4 := rfl
 
 /-- All pairs of distinct number systems yield distinct subkinds. -/
-theorem twoSubkinds_of_ne (s₁ s₂ : NumberSystem) (h : s₁ ≠ s₂) :
+theorem twoSubkinds_of_ne (s₁ s₂ : MathSystem) (h : s₁ ≠ s₂) :
     twoSubkinds s₁ s₂ := h
 
 end KindFormation

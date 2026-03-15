@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.277] - 2026-03-15
+
+### Changed
+- **Number API cleanup**: unify 7 identical `sg | pl` fragment definitions (Italian ×2, French, Dargwa, K'iche', Mixtec, Jarawara) to use canonical `UD.Number` via `Word.Number` with `@[match_pattern]` `.sg`/`.pl` aliases; upgrade `PhiFeature.number` from `Bool` to `Number` across 10 files (Features, Agree, Spellout, 4 fragment AdjAgreement files, Kaqchikel, Mam, Scott2023, Case/Compare); rename `Chierchia1998.NumberSystem` → `MathSystem` to disambiguate from grammatical number; move `AnimacyRank` from `Phenomena/Plurals/Typology` to `Core/Prominence` with `toAnimacyLevel` bridge + monotonicity proof; add `NumberSystem.toNumberStage` bridge connecting Corbett's typology to Cysouw's N1–N4 hierarchy; add cross-linguistic number validation theorems in AdamsonZompi2025 (Italian LEI sg, Spanish USTED sg, German SIE pl — number irrelevant to PCC)
+
 ## [0.229.276] - 2026-03-15
 
 ### Changed

@@ -1,5 +1,6 @@
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Basic
+import Linglib.Core.Lexical.Word
 
 /-!
 # K'iche' Agreement Fragment @cite{mondloch-2017}
@@ -75,11 +76,6 @@ inductive Person where
   | first | second | third
   deriving DecidableEq, BEq, Repr
 
-/-- Grammatical number in K'iche'. -/
-inductive Number where
-  | sg | pl
-  deriving DecidableEq, BEq, Repr
-
 /-- Formality level for 2nd person. -/
 inductive Formality where
   | informal | formal
@@ -112,7 +108,10 @@ def setBMarker : PhiFeatures → String
   | ⟨.third,  .pl, .informal⟩ => "ee-"
   | ⟨.second, .sg, .formal⟩   => "la"
   | ⟨.second, .pl, .formal⟩   => "alaq"
-  -- Formal forms exist only for 2nd person; others are unreachable
+  -- Non-binary number falls through to plural; formal non-2nd is Ø
+  | ⟨.first,  _, .informal⟩   => "oj-"
+  | ⟨.second, _, .informal⟩   => "ix-"
+  | ⟨.third,  _, .informal⟩   => "ee-"
   | ⟨_, _, .formal⟩            => "Ø"
 
 -- ============================================================================
@@ -132,6 +131,9 @@ def setAPreC : PhiFeatures → String
   | ⟨.third,  .pl, .informal⟩ => "ki-"
   | ⟨.second, .sg, .formal⟩   => "la"
   | ⟨.second, .pl, .formal⟩   => "alaq"
+  | ⟨.first,  _, .informal⟩   => "qa-"
+  | ⟨.second, _, .informal⟩   => "i-"
+  | ⟨.third,  _, .informal⟩   => "ki-"
   | ⟨_, _, .formal⟩            => "Ø"
 
 /-- Set A (ergative) markers before vowel-initial roots.
@@ -145,6 +147,9 @@ def setAPreV : PhiFeatures → String
   | ⟨.third,  .pl, .informal⟩ => "k-"
   | ⟨.second, .sg, .formal⟩   => "la"
   | ⟨.second, .pl, .formal⟩   => "alaq"
+  | ⟨.first,  _, .informal⟩   => "q-"
+  | ⟨.second, _, .informal⟩   => "iw-"
+  | ⟨.third,  _, .informal⟩   => "k-"
   | ⟨_, _, .formal⟩            => "Ø"
 
 -- ============================================================================
@@ -317,6 +322,9 @@ def independentPronoun : PhiFeatures → String
   | ⟨.third,  .pl, .informal⟩ => "a're'"
   | ⟨.second, .sg, .formal⟩   => "laal"
   | ⟨.second, .pl, .formal⟩   => "alaq"
+  | ⟨.first,  _, .informal⟩   => "oj"
+  | ⟨.second, _, .informal⟩   => "ix"
+  | ⟨.third,  _, .informal⟩   => "a're'"
   | ⟨_, _, .formal⟩            => "are'"
 
 /-- Independent pronouns correspond to Set B (absolutive) markers in

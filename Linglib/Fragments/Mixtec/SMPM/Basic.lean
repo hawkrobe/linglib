@@ -1,3 +1,5 @@
+import Linglib.Core.Lexical.Word
+
 /-!
 # San Martín Peras Mixtec (SMPM) Fragment
 @cite{ostrove-2026} @cite{ostrove-2022}
@@ -42,9 +44,6 @@ inductive Aspect where
 -- ════════════════════════════════════════════════════════════════
 
 inductive Person where | first | second | third
-  deriving DecidableEq, BEq, Repr
-
-inductive Number where | sg | pl
   deriving DecidableEq, BEq, Repr
 
 inductive Clusivity where | incl | excl

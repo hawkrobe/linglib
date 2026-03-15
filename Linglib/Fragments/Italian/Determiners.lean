@@ -48,11 +48,6 @@ inductive Gender where
   | masc | fem
   deriving DecidableEq, Repr, BEq
 
-/-- Number for agreement. -/
-inductive Number where
-  | sg | pl
-  deriving DecidableEq, Repr, BEq
-
 -- ============================================================================
 -- § 2: Quantifier Entry
 -- ============================================================================

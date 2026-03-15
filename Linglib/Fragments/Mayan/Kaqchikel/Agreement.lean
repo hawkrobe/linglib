@@ -114,12 +114,12 @@ def PersonNumber.isAuthor (pn : PersonNumber) : Bool :=
 
 /-- Convert to PhiFeature list for the Agree infrastructure. -/
 def PersonNumber.toPhiFeatures : PersonNumber → List PhiFeature
-  | .p1sg => [.person .first, .number false]
-  | .p2sg => [.person .second, .number false]
-  | .p3sg => [.person .third, .number false]
-  | .p1pl => [.person .first, .number true]
-  | .p2pl => [.person .second, .number true]
-  | .p3pl => [.person .third, .number true]
+  | .p1sg => [.person .first, .number .sg]
+  | .p2sg => [.person .second, .number .sg]
+  | .p3sg => [.person .third, .number .sg]
+  | .p1pl => [.person .first, .number .pl]
+  | .p2pl => [.person .second, .number .pl]
+  | .p3pl => [.person .third, .number .pl]
 
 -- ============================================================================
 -- § 3: Set A (ERG) Vocabulary

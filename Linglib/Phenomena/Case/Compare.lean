@@ -167,9 +167,9 @@ theorem dependent_case_ignores_voice :
     every argument position receives case by construction. -/
 theorem case_filter_example :
     -- A DP with valued NOM satisfies the Case Filter
-    satisfiesCaseFilter (DPFeatures.withCase [.person .first, .number false] .nom) = true ∧
+    satisfiesCaseFilter (DPFeatures.withCase [.person .first, .number .sg] .nom) = true ∧
     -- A DP without Case fails the Case Filter
-    satisfiesCaseFilter (DPFeatures.withUnvaluedCase [.person .first, .number false]) = false :=
+    satisfiesCaseFilter (DPFeatures.withUnvaluedCase [.person .first, .number .sg]) = false :=
   ⟨rfl, rfl⟩
 
 /-- Under dependent case, every NP in a domain receives case — the

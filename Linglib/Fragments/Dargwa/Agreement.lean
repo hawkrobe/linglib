@@ -1,4 +1,5 @@
 import Linglib.Core.Prominence
+import Linglib.Core.Lexical.Word
 
 /-!
 # Dargwa (Tanti) Agreement @cite{sumbatova-2021}
@@ -81,11 +82,6 @@ theorem gender_semantically_transparent : True := trivial
 -- § 2: Person Agreement
 -- ============================================================================
 
-/-- Number values. -/
-inductive Number where
-  | sg | pl
-  deriving DecidableEq, BEq, Repr
-
 /-- The three person-marker paradigm sets. -/
 inductive MarkerSet where
   | clitic    -- present, preterite, perfect, propositive
@@ -103,18 +99,18 @@ def personMarker : MarkerSet → PersonLevel → Number → Option String
   -- Clitic set: =da for {1SG, 1PL, 2PL}, =de for {2SG}, none for {3}
   | .clitic,   .first,  _   => some "=da"
   | .clitic,   .second, .sg => some "=de"
-  | .clitic,   .second, .pl => some "=da"    -- 2PL patterns with 1st person
+  | .clitic,   .second, _   => some "=da"    -- 2PL patterns with 1st person
   | .clitic,   .third,  _   => none          -- 3rd unmarked
   -- Irrealis set
   | .irrealis, .first,  .sg => some "-d"
-  | .irrealis, .first,  .pl => some "-haˁ"   -- (> -he)
+  | .irrealis, .first,  _   => some "-haˁ"   -- (> -he)
   | .irrealis, .second, .sg => some "-t:"    -- (> -t)
-  | .irrealis, .second, .pl => some "-t:-a"
+  | .irrealis, .second, _   => some "-t:-a"
   | .irrealis, .third,  _   => none
   -- Optative set
   | .optative, .first,  _   => some "-a"
   | .optative, .second, .sg => some "-e"
-  | .optative, .second, .pl => some "-a"     -- + -ja allocutive
+  | .optative, .second, _   => some "-a"     -- + -ja allocutive
   | .optative, .third,  _   => none
 
 /-- 3rd person is unmarked in all paradigm sets. -/

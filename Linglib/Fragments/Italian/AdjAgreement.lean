@@ -21,7 +21,7 @@ open Minimalism.Modification
 
 /-- Italian adjective φ-features: number and gender only. -/
 def phiFeatures : List MAGFeatureType :=
-  [ .phi (.number true), .phi (.number false)
+  [ .phi (.number .pl), .phi (.number .sg)
   , .phi (.gender 0), .phi (.gender 1) ]
 
 /-- Italian DP features include κ (case is always a DP feature per fn 17,

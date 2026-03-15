@@ -32,9 +32,9 @@ abbrev Number := UD.Number
 
 namespace Number
 /-- Singular (compatibility alias for UD.Number.Sing) -/
-abbrev sg : Number := .Sing
+@[match_pattern] abbrev sg : Number := .Sing
 /-- Plural (compatibility alias for UD.Number.Plur) -/
-abbrev pl : Number := .Plur
+@[match_pattern] abbrev pl : Number := .Plur
 end Number
 
 /-- Grammatical person. Aliased to UD.Person for cross-linguistic compatibility.

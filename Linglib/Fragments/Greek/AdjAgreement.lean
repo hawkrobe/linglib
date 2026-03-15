@@ -21,7 +21,7 @@ open Minimalism.Modification
 
 /-- φ-features realized on Greek adjectives: number and gender. -/
 private def phiFeatures : List MAGFeatureType :=
-  [ .phi (.number true), .phi (.number false)
+  [ .phi (.number .pl), .phi (.number .sg)
   , .phi (.gender 0), .phi (.gender 1), .phi (.gender 2) ]
 
 /-- κ-features realized on Greek adjectives: full 3-case system

@@ -162,10 +162,10 @@ structure TAgree where
   subjFeatures : FeatureBundle
   -- T has unvalued phi
   t_has_uphi : hasUnvaluedFeature tFeatures (.phi (.person .third)) = true ∨
-               hasUnvaluedFeature tFeatures (.phi (.number false)) = true
+               hasUnvaluedFeature tFeatures (.phi (.number .sg)) = true
   -- Subject has valued phi
   subj_has_phi : hasValuedFeature subjFeatures (.phi (.person .third)) = true ∨
-                 hasValuedFeature subjFeatures (.phi (.number false)) = true
+                 hasValuedFeature subjFeatures (.phi (.number .sg)) = true
 
 /-- C-Agree: C probes for [Q] feature
 
@@ -500,7 +500,7 @@ def mamInflSatisfaction : SatisfactionCond :=
     (no Voice_TR in the way). Feature match is satisfied → real agreement. -/
 theorem mam_intransitive_satisfied :
     mamInflSatisfaction.isSatisfied
-      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
       none = true := by native_decide
 
 /-- Transitive environment: the probe encounters Voice_TR (category.v).
@@ -515,7 +515,7 @@ theorem mam_transitive_no_copy :
 /-- In the intransitive case, features ARE copied — yielding real agreement. -/
 theorem mam_intransitive_copies :
     mamInflSatisfaction.copiedFeatures
-      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
       none = true := by native_decide
 
 end Minimalism

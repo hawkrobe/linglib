@@ -1,4 +1,5 @@
 import Linglib.Core.Case.Basic
+import Linglib.Core.Lexical.Word
 import Linglib.Core.Prominence
 
 /-!
@@ -24,10 +25,11 @@ inventory in the same canonical type used across the library:
 - `DifferentialIndexing.IndexingPersonLevel` — @cite{just-2024}'s SAP/3rd
   binary split, bridged to `PersonLevel`
 
-For unvalued (probe) features, the `PersonLevel` value is irrelevant —
-`FeatureVal.sameType` matches any `.person _` against any `.person _`,
-ignoring the specific value. Use `.person.third` as the conventional
-placeholder for probes.
+For unvalued (probe) features, the value is irrelevant —
+`FeatureVal.sameType` matches any `.person _` against any `.person _`
+and any `.number _` against any `.number _`, ignoring specific values.
+Use `.person .third` and `.number .sg` as conventional placeholders
+for probes.
 
 -/
 
@@ -42,7 +44,7 @@ open Core.Prominence
 /-- Phi-features (agreement features). -/
 inductive PhiFeature where
   | person : PersonLevel → PhiFeature
-  | number : Bool → PhiFeature       -- true = plural, false = singular
+  | number : Number → PhiFeature      -- grammatical number (UD.Number)
   | gender : Nat → PhiFeature        -- language-specific encoding
   deriving Repr, DecidableEq
 

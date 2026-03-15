@@ -91,7 +91,7 @@ def specCopula {α β : Type} (actualValue : α → β) (x : α) : β := actualV
     "The von Neumann ordinal two" and "the Zermelo ordinal two" refer to different
     subkinds of TWO, so both can be true without contradiction (Snyder §5.2). -/
 theorem identification_problem_resolved :
-    ∀ (sys₁ sys₂ : Noun.Kind.Chierchia1998.NumberSystem),
+    ∀ (sys₁ sys₂ : Noun.Kind.Chierchia1998.MathSystem),
       sys₁ ≠ sys₂ → Noun.Kind.Chierchia1998.twoSubkinds sys₁ sys₂ := by
   intro s₁ s₂ h; exact h
 
@@ -111,10 +111,10 @@ theorem contextualism_covers_all_nine :
      .specificational, .numeral, .closeAppositive,
      .taxonomic, .tokenRef, .kindRef].length = 9 := rfl
 
-/-- The taxonomic function is supported: NumberSystem has multiple subkinds,
+/-- The taxonomic function is supported: MathSystem has multiple subkinds,
     so "two comes in several varieties" is predicted to be felicitous. -/
 theorem taxonomic_supported :
     contextualistPath .taxonomic = .iotaFromPred ∧
-    Noun.Kind.Chierchia1998.NumberSystem.all.length ≥ 2 := ⟨rfl, by native_decide⟩
+    Noun.Kind.Chierchia1998.MathSystem.all.length ≥ 2 := ⟨rfl, by native_decide⟩
 
 end Semantics.Lexical.Numeral.Polysemy

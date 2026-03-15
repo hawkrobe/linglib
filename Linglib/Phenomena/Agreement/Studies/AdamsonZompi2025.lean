@@ -699,6 +699,33 @@ theorem person_geometry_matches_spanish_features :
 -- § 17: Summary — What the Mismatch Tells Us
 -- ============================================================================
 
+/-- Cross-linguistic number validation: the fragment entries record the
+    **agreement** number of each polite pronoun, matching §3 (Italian),
+    §6.1 (Spanish), §6.2 (German).
+
+    Italian LEI and Spanish USTED trigger 3**sg** agreement.
+    German SIE triggers 3**pl** agreement — the key typological outlier
+    (§6.2, (45)). SIE's formal plurality is why it doubles as a 2PL form
+    and why it can address multiple addressees, unlike LEI/USTED. -/
+theorem cross_linguistic_number :
+    -- LEI is formally singular (§3, (8): "3sg verbal agreement")
+    Fragments.Italian.Pronouns.lei_formal.number = some .sg ∧
+    -- USTED is formally singular
+    Fragments.Spanish.Pronouns.usted.number = some .sg ∧
+    -- SIE is formally PLURAL — the typological outlier (§6.2, (45))
+    Fragments.German.Pronouns.sie_polite.number = some .pl := ⟨rfl, rfl, rfl⟩
+
+/-- Despite different agreement numbers, all three polite pronouns trigger
+    PCC effects identically — confirming that the PCC reads *person*
+    features (specifically interpretable person), not number. -/
+theorem number_irrelevant_to_pcc :
+    -- Different numbers...
+    Fragments.Italian.Pronouns.lei_formal.number ≠
+    Fragments.German.Pronouns.sie_polite.number ∧
+    -- ...same PCC prediction
+    syntacticosemanticPrediction lei = syntacticosemanticPrediction sie := by
+  exact ⟨by decide, rfl⟩
+
 /-- Only mismatch pronouns distinguish the two accounts. For any pronoun
     where agreement and interpretable person coincide, both accounts make
     the same prediction. Polite pronouns are the crucial test case. -/

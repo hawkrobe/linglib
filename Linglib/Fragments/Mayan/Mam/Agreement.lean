@@ -57,22 +57,22 @@ open Minimalism
     Set A markers are prefixes/proclitics that cross-reference the
     transitive agent (@cite{scott-2023}, Table 2.8). -/
 def setAVocab : Vocabulary :=
-  [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number false))]
+  [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
     , exponent := "n-/w-"
     , context := some .v }
-  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number false))]
+  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .sg))]
     , exponent := "t-"
     , context := some .v }
-  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number false))]
+  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .sg))]
     , exponent := "t-"
     , context := some .v }
-  , { features := [.valued (.phi (.person .first)), .valued (.phi (.number true))]
+  , { features := [.valued (.phi (.person .first)), .valued (.phi (.number .pl))]
     , exponent := "q-"
     , context := some .v }
-  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number true))]
+  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .pl))]
     , exponent := "ky-"
     , context := some .v }
-  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number true))]
+  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .pl))]
     , exponent := "ky-"
     , context := some .v } ]
 
@@ -85,16 +85,16 @@ def setAVocab : Vocabulary :=
     agreement with a 2/3SG intransitive S and (b) default Set B in
     transitives when Infl's probe is blocked by VoiceP. -/
 def setBVocab : Vocabulary :=
-  [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number false))]
+  [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
     , exponent := "chin"
     , context := some .T }
-  , { features := [.valued (.phi (.person .first)), .valued (.phi (.number true))]
+  , { features := [.valued (.phi (.person .first)), .valued (.phi (.number .pl))]
     , exponent := "qo"
     , context := some .T }
-  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number true))]
+  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .pl))]
     , exponent := "chi"
     , context := some .T }
-  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number true))]
+  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .pl))]
     , exponent := "chi"
     , context := some .T }
   -- Elsewhere: default 2/3SG (∅/tz'=). No features specified — inserted

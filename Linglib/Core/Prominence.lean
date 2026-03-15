@@ -74,6 +74,80 @@ def AnimacyLevel.all : List AnimacyLevel := [.human, .animate, .inanimate]
 theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by native_decide
 
 -- ============================================================================
+-- § 1b: Fine-Grained Animacy Hierarchy (@cite{corbett-2000}, @cite{smith-stark-1974})
+-- ============================================================================
+
+/-- Fine-grained animacy hierarchy for nominal plural marking and agreement
+    (@cite{smith-stark-1974}, @cite{corbett-2000}).
+
+    Languages mark plural on nouns according to an implicational scale:
+
+      speaker > addressee > 3rd person > kin > human > higher animals >
+      lower animals > discrete inanimates > nondiscrete inanimates
+
+    If a language marks plural at a given point on the scale, it marks
+    plural at all higher points. This refines the coarser `AnimacyLevel`
+    (human/animate/inanimate) used for differential argument marking. -/
+inductive AnimacyRank where
+  | speaker
+  | addressee
+  | thirdPerson
+  | kin
+  | human
+  | higherAnimal
+  | lowerAnimal
+  | discreteInanimate
+  | nondiscreteInanimate
+  deriving DecidableEq, BEq, Repr
+
+/-- Numeric rank for comparison (higher = more likely to be plural-marked). -/
+def AnimacyRank.toNat : AnimacyRank → Nat
+  | .speaker => 8
+  | .addressee => 7
+  | .thirdPerson => 6
+  | .kin => 5
+  | .human => 4
+  | .higherAnimal => 3
+  | .lowerAnimal => 2
+  | .discreteInanimate => 1
+  | .nondiscreteInanimate => 0
+
+/-- Coarsen the 9-level animacy hierarchy to the 3-level scale used for
+    differential argument marking. The mapping:
+    - speaker/addressee/thirdPerson/kin/human → `.human`
+    - higherAnimal/lowerAnimal → `.animate`
+    - discreteInanimate/nondiscreteInanimate → `.inanimate` -/
+def AnimacyRank.toAnimacyLevel : AnimacyRank → AnimacyLevel
+  | .speaker | .addressee | .thirdPerson | .kin | .human => .human
+  | .higherAnimal | .lowerAnimal => .animate
+  | .discreteInanimate | .nondiscreteInanimate => .inanimate
+
+/-- Coarsening is monotone: higher rank implies ≥ level. -/
+theorem AnimacyRank.toAnimacyLevel_monotone (r₁ r₂ : AnimacyRank)
+    (h : r₁.toNat ≥ r₂.toNat) : r₁.toAnimacyLevel.rank ≥ r₂.toAnimacyLevel.rank := by
+  cases r₁ <;> cases r₂ <;> simp only [toNat, toAnimacyLevel, AnimacyLevel.rank] at * <;> omega
+
+/-- The hierarchy is consistent: speaker outranks addressee outranks
+    third person, and so forth down the scale. -/
+theorem AnimacyRank.hierarchy_ordering :
+    AnimacyRank.speaker.toNat > AnimacyRank.addressee.toNat ∧
+    AnimacyRank.addressee.toNat > AnimacyRank.thirdPerson.toNat ∧
+    AnimacyRank.thirdPerson.toNat > AnimacyRank.kin.toNat ∧
+    AnimacyRank.kin.toNat > AnimacyRank.human.toNat ∧
+    AnimacyRank.human.toNat > AnimacyRank.higherAnimal.toNat ∧
+    AnimacyRank.higherAnimal.toNat > AnimacyRank.lowerAnimal.toNat ∧
+    AnimacyRank.lowerAnimal.toNat > AnimacyRank.discreteInanimate.toNat ∧
+    AnimacyRank.discreteInanimate.toNat > AnimacyRank.nondiscreteInanimate.toNat := by
+  native_decide
+
+/-- The hierarchy predicts: if a language marks plural at rank r, it marks
+    plural at all ranks above r. -/
+def AnimacyRank.respectsHierarchy (markedRanks : List AnimacyRank) : Bool :=
+  markedRanks.all fun r =>
+    markedRanks.all fun r' =>
+      r'.toNat >= r.toNat || markedRanks.contains r' == false
+
+-- ============================================================================
 -- § 2: Definiteness Scale (@cite{aissen-2003}, §2)
 -- ============================================================================
 

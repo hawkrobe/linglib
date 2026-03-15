@@ -1,5 +1,6 @@
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Phenomena.Possession.Typology
+import Linglib.Core.Lexical.Word
 
 /-!
 # Jarawara Possessed Nouns @cite{adamson-2024}
@@ -144,7 +145,6 @@ theorem total_ipossessable :
 
 /-- Person–number features of a Jarawara possessor. -/
 inductive Person where | first | second | third deriving DecidableEq, BEq, Repr
-inductive Number where | sg | pl deriving DecidableEq, BEq, Repr
 inductive PossGender where | masc | fem deriving DecidableEq, BEq, Repr
 
 /-- A possessor with full φ-features. Third person distinguishes gender;

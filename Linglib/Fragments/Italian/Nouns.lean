@@ -36,12 +36,6 @@ inductive Gender where
   | fem   -- Feminine
   deriving DecidableEq, Repr, BEq
 
-/-- Number -/
-inductive Number where
-  | sg  -- Singular
-  | pl  -- Plural
-  deriving DecidableEq, Repr, BEq
-
 -- ============================================================================
 -- § 2: Noun Entry
 -- ============================================================================
@@ -122,6 +116,8 @@ def defNP (n : NounEntry) (num : Number := .sg) : NP :=
     | .sg, .fem => Determiner.la
     | .pl, .masc => Determiner.i
     | .pl, .fem => Determiner.le
+    | _, .masc => Determiner.i   -- fallback for non-binary number
+    | _, .fem => Determiner.le
   { noun := n, number := num, isBare := false, determiner := some det }
 
 /-- Create an indefinite singular NP (un/una). -/
@@ -138,6 +134,8 @@ def partNP (n : NounEntry) (num : Number := .sg) : NP :=
     | .sg, .fem => Determiner.della
     | .pl, .masc => Determiner.dei
     | .pl, .fem => Determiner.delle
+    | _, .masc => Determiner.dei   -- fallback for non-binary number
+    | _, .fem => Determiner.delle
   { noun := n, number := num, isBare := false, determiner := some det }
 
 /-- Create a bare NP (restricted in Italian). -/
