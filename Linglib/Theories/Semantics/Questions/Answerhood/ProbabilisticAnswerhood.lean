@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
+import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Probabilistic Answerhood @cite{thomas-2026}
@@ -158,19 +159,193 @@ def probAnswersFull {W : Type*} [Fintype W]
         condA / pA > conditionalProb prior p interA' / pA'
       else true  -- P(∩A') = 0 → ratio undefined, vacuous
 
-/-- The simplified `probAnswers` (condition (a) only) is equivalent to the
-full Thomas (62) `probAnswersFull` for binary QUDs.
+-- ============================================================================
+-- Helpers for probAnswersFull_eq_simple_binary
+-- ============================================================================
 
-For binary {H, ¬H}, raising P(H) necessarily lowers P(¬H), so the Bayes
-factor for H automatically exceeds the Bayes factor for ¬H. The only
-nonempty subsets with non-trivial intersections are {H} and {¬H} (since
-∩{H,¬H} = H ∩ ¬H = ∅ has P(∅) = 0). -/
+private lemma probOfProp_complement_add' {W : Type*} [Fintype W]
+    (prior : Prior W) (f : W → Bool) :
+    probOfProp prior f + probOfProp prior (fun w => !f w) = ∑ w : W, prior w := by
+  unfold probOfProp; rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl; intro w _
+  by_cases hf : f w = true <;> simp [hf]
+
+private lemma probOfProp_nonneg' {W : Type*} [Fintype W]
+    (prior : Prior W) (f : W → Bool)
+    (hNN : ∀ w, 0 ≤ prior w) : 0 ≤ probOfProp prior f := by
+  unfold probOfProp
+  exact Finset.sum_nonneg fun w _ => by
+    by_cases hf : f w = true <;> simp [hf]; exact hNN w
+
+private lemma probOfProp_and_le' {W : Type*} [Fintype W]
+    (prior : Prior W) (f g : W → Bool)
+    (hNN : ∀ w, 0 ≤ prior w) :
+    probOfProp prior (fun w => g w && f w) ≤ probOfProp prior f := by
+  unfold probOfProp; apply Finset.sum_le_sum; intro w _
+  by_cases hg : g w = true <;> by_cases hf : f w = true <;> simp [hg, hf]; exact hNN w
+
+private lemma pp_pos_of_cond_gt' {W : Type*} [Fintype W]
+    (prior : Prior W) (f g : W → Bool)
+    (hNN : ∀ w, 0 ≤ prior w)
+    (hGt : conditionalProb prior g f > probOfProp prior f) :
+    probOfProp prior g > 0 := by
+  by_contra h_le; push_neg at h_le
+  have := le_antisymm h_le (probOfProp_nonneg' prior g hNN)
+  simp only [conditionalProb, this, lt_irrefl, ↓reduceIte] at hGt
+  linarith [probOfProp_nonneg' prior f hNN]
+
+private lemma pf_pos_of_cond_gt' {W : Type*} [Fintype W]
+    (prior : Prior W) (f g : W → Bool)
+    (hNN : ∀ w, 0 ≤ prior w)
+    (hGt : conditionalProb prior g f > probOfProp prior f) :
+    probOfProp prior f > 0 := by
+  have hPg := pp_pos_of_cond_gt' prior f g hNN hGt
+  by_contra h_le; push_neg at h_le
+  have h_eq := le_antisymm h_le (probOfProp_nonneg' prior f hNN)
+  have hAnd_eq : probOfProp prior (fun w => g w && f w) = 0 :=
+    le_antisymm (by linarith [probOfProp_and_le' prior f g hNN])
+               (probOfProp_nonneg' prior _ hNN)
+  simp only [conditionalProb, hPg, ↓reduceIte] at hGt
+  rw [hAnd_eq] at hGt; simp at hGt; linarith
+
+private lemma probOfProp_and_complement_split' {W : Type*} [Fintype W]
+    (prior : Prior W) (g f : W → Bool) :
+    probOfProp prior (fun w => g w && f w) +
+    probOfProp prior (fun w => g w && !f w) = probOfProp prior g := by
+  unfold probOfProp; rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl; intro w _
+  by_cases hg : g w = true <;> simp [hg]
+  by_cases hf : f w = true <;> simp [hf]
+
+private lemma condProb_complement_sum' {W : Type*} [Fintype W]
+    (prior : Prior W) (g f : W → Bool)
+    (hPg : probOfProp prior g > 0) :
+    conditionalProb prior g f + conditionalProb prior g (fun w => !f w) = 1 := by
+  simp only [conditionalProb, hPg, ↓reduceIte]
+  rw [← add_div, probOfProp_and_complement_split', div_self (ne_of_gt hPg)]
+
+private lemma cond_complement_lt' {W : Type*} [Fintype W]
+    (prior : Prior W) (p f : W → Bool)
+    (hNN : ∀ w, 0 ≤ prior w) (hNorm : ∑ w : W, prior w = 1)
+    (hGt : conditionalProb prior p f > probOfProp prior f) :
+    conditionalProb prior p (fun w => !f w) < probOfProp prior (fun w => !f w) := by
+  have hPp := pp_pos_of_cond_gt' prior f p hNN hGt
+  linarith [condProb_complement_sum' prior p f hPp,
+            probOfProp_complement_add' prior f, hNorm]
+
+private lemma bayes_factor_dominates' {W : Type*} [Fintype W]
+    (prior : Prior W) (p f : W → Bool)
+    (hNN : ∀ w, 0 ≤ prior w) (hNorm : ∑ w : W, prior w = 1)
+    (hGt : conditionalProb prior p f > probOfProp prior f)
+    (hNfPos : probOfProp prior (fun w => !f w) > 0) :
+    conditionalProb prior p f / probOfProp prior f >
+    conditionalProb prior p (fun w => !f w) / probOfProp prior (fun w => !f w) := by
+  have hfPos := pf_pos_of_cond_gt' prior f p hNN hGt
+  have hCondLt := cond_complement_lt' prior p f hNN hNorm hGt
+  linarith [(one_lt_div hfPos).mpr hGt, (div_lt_one hNfPos).mpr hCondLt]
+
+private lemma and_and_iff_or {a b x c d y : Bool}
+    (hab : a = true → b = true) (hax : a = true → x = true)
+    (hcd : c = true → d = true) (hcy : c = true → y = true) :
+    ((a && b) && x || (c && d) && y) = (a || c) := by
+  cases a <;> cases c <;> simp_all
+
+/-- The simplified `probAnswers` (condition (a) only) is equivalent to the
+full Thomas (62) `probAnswersFull` for binary QUDs, **under a normalized
+probability distribution**.
+
+For binary {H, ¬H}, raising P(H) necessarily lowers P(¬H) (since
+P(H|p) + P(¬H|p) = 1 = P(H) + P(¬H)), so the Bayes factor for H
+automatically exceeds the Bayes factor for ¬H. The only nonempty subsets
+with non-trivial intersections are {H} and {¬H} (since
+∩{H,¬H} = H ∩ ¬H = ∅ has P(∅) = 0).
+
+Without normalization, the theorem is false: if ∑ prior < 1, both
+alternatives can have their probability raised simultaneously with equal
+Bayes factors, making `probAnswersFull` false while `probAnswers` is true. -/
 theorem probAnswersFull_eq_simple_binary {W : Type*} [Fintype W]
     (p : W → Bool) (h : W → Bool) (prior : Prior W)
-    (hBinary : (Issue.polar h).alternatives.length = 2) :
+    (hNN : ∀ w, 0 ≤ prior w)
+    (hNorm : ∑ w : W, prior w = 1) :
     probAnswersFull p (Issue.polar h) prior =
     probAnswers p (Issue.polar h) prior := by
-  sorry
+  -- Both are Bool; prove they agree by showing true ↔ true
+  -- Step 1: Establish what probAnswers checks
+  -- probAnswers checks: ∃ alt ∈ [h, ¬h], P(alt|p) > P(alt)
+  -- Step 2: Establish what probAnswersFull checks
+  -- sublists [h, ¬h] = [[], [h], [¬h], [h, ¬h]]
+  -- nonempty subsets = [[h], [¬h], [h, ¬h]]
+  -- For each A: intersectAlts A, then check (a)(b)(c)
+  -- [h,¬h] always fails (P(⊥) = 0)
+  -- So: probAnswersFull = check([h]) || check([¬h])
+  -- Under normalization, check([h]) ↔ P(h|p) > P(h)
+  -- Step 3: show equivalence
+
+  -- Convert to ↔ at the Prop level
+  -- Establish the concrete sublists for polar {h, ¬h}
+  -- sublists [h, ¬h] filtered nonempty = [[h], [¬h], [h, ¬h]]
+  have h_subs : ([h, fun w => !h w] : List (W → Bool)).sublists.filter
+      (fun l => !l.isEmpty) = [[h], [fun w => !h w], [h, fun w => !h w]] := rfl
+  unfold probAnswersFull probAnswers
+  dsimp only [Issue.polar]
+  simp only [h_subs, List.any_cons, List.any_nil, Bool.or_false, probOfState]
+  simp only [List.all_cons, List.all_nil, Bool.and_true]
+  simp only [intersectAlts, List.foldl, trivialState, Bool.true_and]
+  -- Key facts about ⊥ = h ∧ ¬h
+  have h_bot : ∀ w : W, (h w && !h w) = false := fun w => by cases h w <;> rfl
+  have pP_bot : probOfProp prior (fun w => h w && !h w) = 0 := by
+    unfold probOfProp; apply Finset.sum_eq_zero; intro w _
+    simp [h_bot]
+  -- Simplify decidable containment checks (self-implications and vacuous implications)
+  have dec_hh : decide (∀ w : W, h w = true → h w = true) = true :=
+    decide_eq_true_eq.mpr fun _ a => a
+  have dec_nhnh : decide (∀ w : W, (!h w) = true → (!h w) = true) = true :=
+    decide_eq_true_eq.mpr fun _ a => a
+  have dec_both : decide (∀ w : W, (h w && !h w) = true → (h w && !h w) = true) = true :=
+    decide_eq_true_eq.mpr fun _ a => a
+  have dec_bot_h : decide (∀ w : W, (h w && !h w) = true → h w = true) = true :=
+    decide_eq_true_eq.mpr fun w hw => absurd (by rw [h_bot] at hw; exact hw) Bool.false_ne_true
+  have dec_bot_nh : decide (∀ w : W, (h w && !h w) = true → (!h w) = true) = true :=
+    decide_eq_true_eq.mpr fun w hw => absurd (by rw [h_bot] at hw; exact hw) Bool.false_ne_true
+  simp only [dec_hh, dec_nhnh, dec_both, dec_bot_h, dec_bot_nh,
+             pP_bot, gt_iff_lt, lt_irrefl, decide_false,
+             Bool.true_and, Bool.and_true, Bool.false_and, Bool.and_false,
+             Bool.or_false, ite_true]
+  -- Eta-normalize: fun w => h w → h (definitionally equal)
+  conv_lhs => simp only [show (fun w : W => h w) = h from rfl]
+  -- Goal: ((dH && dB) && bayesH || (dNH && dD) && bayesNH) = (dH || dNH)
+  -- Apply Bool helper: suffices to show dH → dB ∧ bayesH and dNH → dD ∧ bayesNH
+  apply and_and_iff_or
+  · -- dH = true → dB (prior positivity) = true
+    intro hA; rw [decide_eq_true_eq] at hA ⊢
+    exact pf_pos_of_cond_gt' prior h p hNN hA
+  · -- dH = true → bayesCheck_h = true
+    intro hA; rw [decide_eq_true_eq] at hA
+    split
+    · rfl  -- containment check ¬h ⊆ h passed (vacuous)
+    · split
+      · -- P(¬h) > 0: Bayes factor dominates under normalization
+        rename_i _ hNhPos; rw [decide_eq_true_eq]
+        exact bayes_factor_dominates' prior p h hNN hNorm hA hNhPos
+      · rfl  -- P(¬h) = 0: vacuous
+  · -- dNH = true → dD (prior positivity) = true
+    intro hC; rw [decide_eq_true_eq] at hC ⊢
+    exact pf_pos_of_cond_gt' prior (fun w => !h w) p hNN hC
+  · -- dNH = true → bayesCheck_nh = true
+    intro hC; rw [decide_eq_true_eq] at hC
+    split
+    · rfl  -- containment check h ⊆ ¬h passed (vacuous)
+    · split
+      · -- P(h) > 0: Bayes factor via complement argument
+        rename_i _ hHPos; rw [decide_eq_true_eq]
+        have hPp := pp_pos_of_cond_gt' prior (fun w => !h w) p hNN hC
+        have hComp := condProb_complement_sum' prior p h hPp
+        have hAdd := probOfProp_complement_add' prior h
+        have pos_nh := pf_pos_of_cond_gt' prior (fun w => !h w) p hNN hC
+        have cp_h_lt : conditionalProb prior p h < probOfProp prior h := by
+          linarith [hComp, hAdd, hNorm]
+        linarith [(div_lt_one hHPos).mpr cp_h_lt, (one_lt_div pos_nh).mpr hC]
+      · rfl  -- P(h) = 0: vacuous
 
 /-- Which alternative(s) are supported by P.
 
