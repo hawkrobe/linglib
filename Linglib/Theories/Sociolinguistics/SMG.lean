@@ -1,5 +1,5 @@
 import Linglib.Theories.Sociolinguistics.EckertMontague
-import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
+import Linglib.Theories.Pragmatics.IBR.Core
 
 /-!
 # Social Meaning Games (@cite{burnett-2019}, Definitions 4.1–4.4)

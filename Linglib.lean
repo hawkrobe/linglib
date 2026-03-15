@@ -1560,7 +1560,6 @@ import Linglib.Theories.Semantics.Modality.Compare
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Modality.Disjunction
 import Linglib.Theories.Semantics.Modality.BiasedPQ
-import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Theories.Semantics.Modality.Kratzer.Background
 import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
@@ -1663,6 +1662,10 @@ import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.Implicature.Constraints.NumericalExpressions
 import Linglib.Theories.Pragmatics.Implicature.Constraints.Wang2025
 import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Operations
+-- Theories: IBR
+import Linglib.Theories.Pragmatics.IBR.Core
+import Linglib.Theories.Pragmatics.IBR.Convergence
+import Linglib.Theories.Pragmatics.IBR.ScalarGames
 -- Theories: RSA
 import Linglib.Theories.Pragmatics.RSA.Core.BToMGrounding
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility

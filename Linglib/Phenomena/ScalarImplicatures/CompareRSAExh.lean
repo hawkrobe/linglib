@@ -48,7 +48,7 @@ These are different propositions. Standard RSA gives one answer.
 
 import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
-import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
+import Linglib.Theories.Pragmatics.IBR.ScalarGames
 
 namespace Phenomena.ScalarImplicatures.CompareRSAExh
 
