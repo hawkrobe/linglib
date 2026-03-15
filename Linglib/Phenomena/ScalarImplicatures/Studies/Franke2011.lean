@@ -1717,7 +1717,7 @@ private theorem scalar_fp_argmax_iff_minimal (G : InterpGame) (H : HearerStrateg
       apply scalar_fp_weaker_zero G H hFP hPriorPos hFlatPrior hScalar hDistinct m' s hm'_true
       have hsub := scalar_minimal_messages_weaker G hScalar m s hs hCardMin m' hm'_true
       have hne_ts : G.trueStates m ≠ G.trueStates m' :=
-        fun heq => hne (hDistinct m m' heq)
+        fun heq => hne (hDistinct m m' heq).symm
       exact ⟨m, hs, (Finset.ssubset_iff_subset_ne.mpr ⟨hsub, hne_ts⟩)⟩
     -- Step 2: H(m, s) ≥ 0
     have hFP_nonneg := fp_respond_nonneg G H hFP (fun t => le_of_lt (hPriorPos t)) m s
