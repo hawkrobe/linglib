@@ -1,5 +1,4 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case
 
 /-!
 # Greek Case Inventory @cite{blake-1994}

@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Case.SplitConditions
+import Linglib.Core.Case
 import Linglib.Core.Prominence
 import Linglib.Core.WALS.Features.F98A
 import Linglib.Core.WALS.Features.F99A

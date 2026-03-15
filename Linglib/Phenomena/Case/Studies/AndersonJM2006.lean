@@ -1,6 +1,4 @@
-import Linglib.Core.Case.FeatureDecomposition
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.LocalExtension
+import Linglib.Core.Case
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Fragments.English.Predicates.Verbal

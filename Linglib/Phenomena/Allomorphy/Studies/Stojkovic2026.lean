@@ -1,14 +1,26 @@
 import Linglib.Theories.Phonology.Features
 import Linglib.Core.Logic.OT
-import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 
 /-!
-# Slavic Verbalizer — OT Analysis @cite{stojkovic-2026}
+# Slavic Verbalizer @cite{stojkovic-2026}
 
-OT evaluation connecting constraint rankings to the empirical surface
-forms of the Slavic verbalizer (VBLZ). Stojković (2026) argues the VBLZ
-has a single abstract underlying representation (a defective diphthong)
-across all Slavic; surface alternation is derived by OT constraint ranking.
+Stojković (2026) argues the Slavic verbalizer (VBLZ) suffix used in
+secondary imperfectivisation has a single abstract underlying
+representation (a defective diphthong) across all Slavic; surface
+alternation is derived by OT constraint ranking.
+
+## Empirical Data
+
+Three-way surface alternation across Slavic:
+
+| Group        | INF stem VC | Languages                                  |
+|--------------|-------------|--------------------------------------------|
+| [ov] group   | [ov]        | Polish, Czech, Slovak, U/L Sorbian,...    |
+| [ov]/[ev]    | [ov]∼[ev]   | BCMS, Slovenian, Russian,...              |
+| [uv] group   | [uv]        | Ukrainian, Lemko Rusyn, Bulgarian, Maced.  |
+
+All groups share the present-stem vowel [u] (before /-je-/). The
+variation is confined to the infinitive stem (before /-a-/).
 
 ## Candidates
 
@@ -52,10 +64,86 @@ correspond to attested groups; {[iv]} is unattested.
 
 -/
 
-namespace Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
+namespace Phenomena.Allomorphy.Studies.Stojkovic2026
 
 open Core.OT Core.ConstraintEvaluation
-open Phenomena.Allomorphy.SlavicVerbalizer.Data
+
+-- ============================================================================
+-- § 0: Empirical Data
+-- ============================================================================
+
+/-- Representative Slavic languages exhibiting secondary imperfectivisation. -/
+inductive SlavicLang where
+  | russian
+  | polish
+  | czech
+  | upperSorbian
+  | bcms              -- Bosnian/Croatian/Montenegrin/Serbian
+  | slovenian
+  | slovak
+  | lowerSorbian
+  | ukrainian
+  | lemkoRusyn
+  | bulgarian
+  | macedonian
+  deriving DecidableEq, BEq, Repr
+
+/-- The three surface-form groups for the VBLZ in the infinitive stem. -/
+inductive VBLZGroup where
+  /-- Always [ov], regardless of preceding consonant. -/
+  | ovGroup
+  /-- [ov] after non-palatals, [ev] after palatals. -/
+  | ovEvGroup
+  /-- Always [uv], regardless of preceding consonant. -/
+  | uvGroup
+  deriving DecidableEq, BEq, Repr
+
+/-- Surface VC forms attested in the infinitive stem for each group. -/
+def VBLZGroup.forms : VBLZGroup → List String
+  | .ovGroup   => ["ov"]
+  | .ovEvGroup => ["ov", "ev"]
+  | .uvGroup   => ["uv"]
+
+/-- Group membership for each language. -/
+def SlavicLang.vblzGroup : SlavicLang → VBLZGroup
+  | .polish | .czech | .slovak | .upperSorbian | .lowerSorbian => .ovGroup
+  | .russian | .bcms | .slovenian                              => .ovEvGroup
+  | .ukrainian | .lemkoRusyn | .bulgarian | .macedonian        => .uvGroup
+
+/-- A VBLZ datum: language, infinitive-stem VC, present-stem V. -/
+structure VBLZDatum where
+  lang : SlavicLang
+  infStem : String
+  presStem : String
+  deriving DecidableEq, BEq, Repr
+
+def polishVBLZ : VBLZDatum := ⟨.polish, "ov", "u"⟩
+def czechVBLZ : VBLZDatum := ⟨.czech, "ov", "u"⟩
+def slovakVBLZ : VBLZDatum := ⟨.slovak, "ov", "u"⟩
+def upperSorbianVBLZ : VBLZDatum := ⟨.upperSorbian, "ov", "u"⟩
+def lowerSorbianVBLZ : VBLZDatum := ⟨.lowerSorbian, "ov", "u"⟩
+def russianVBLZ : VBLZDatum := ⟨.russian, "ov", "u"⟩
+def bcmsVBLZ : VBLZDatum := ⟨.bcms, "ov", "u"⟩
+def slovenianVBLZ : VBLZDatum := ⟨.slovenian, "ov", "u"⟩
+def ukrainianVBLZ : VBLZDatum := ⟨.ukrainian, "uv", "u"⟩
+def lemkoRusynVBLZ : VBLZDatum := ⟨.lemkoRusyn, "uv", "u"⟩
+def bulgarianVBLZ : VBLZDatum := ⟨.bulgarian, "uv", "u"⟩
+def macedonianVBLZ : VBLZDatum := ⟨.macedonian, "uv", "u"⟩
+
+def allData : List VBLZDatum :=
+  [polishVBLZ, czechVBLZ, slovakVBLZ, upperSorbianVBLZ, lowerSorbianVBLZ,
+   russianVBLZ, bcmsVBLZ, slovenianVBLZ,
+   ukrainianVBLZ, lemkoRusynVBLZ, bulgarianVBLZ, macedonianVBLZ]
+
+theorem allData_length : allData.length = 12 := rfl
+
+/-- The present-stem vowel is universally [u] across all three groups. -/
+theorem presentStemUniversal :
+    allData.all (fun d => d.presStem == "u") = true := rfl
+
+/-- Each datum's infinitive stem is consistent with its language's group. -/
+theorem infStem_matches_group :
+    allData.all (fun d => d.lang.vblzGroup.forms.contains d.infStem) = true := rfl
 
 -- ============================================================================
 -- § 1: Candidates
@@ -276,4 +364,4 @@ theorem uv_surface_correct :
 theorem ev_surface_correct :
     VBLZCandidate.ev.surfaceForm = "ev" := rfl
 
-end Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
+end Phenomena.Allomorphy.Studies.Stojkovic2026

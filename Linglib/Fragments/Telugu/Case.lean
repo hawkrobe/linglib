@@ -1,6 +1,6 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Containment
+import Linglib.Core.Case
+import Linglib.Theories.Morphology.CaseContainment
+open Theories.Morphology.CaseContainment
 
 /-!
 # Telugu Case Inventory
@@ -18,7 +18,7 @@ form differs from the form used in all nonnominative contexts
 hierarchy (@cite{caha-2009}), where all nonnominative cases include
 the ACC feature in their syntactic representation.
 
-See `Phenomena/Allomorphy/TeluguNounStems/Studies/Aitha2026.lean` for
+See `Phenomena/Allomorphy/Studies/Aitha2026.lean` for
 the full analysis of Telugu stem allomorphy patterns.
 -/
 
@@ -43,16 +43,16 @@ theorem inventory_valid :
 -- ============================================================================
 
 /-- All nonnominative Telugu cases bear the ACC feature. -/
-theorem acc_nonnom : Core.Case.isNonnom .acc = true := rfl
-theorem gen_nonnom : Core.Case.isNonnom .gen = true := rfl
-theorem dat_nonnom : Core.Case.isNonnom .dat = true := rfl
-theorem loc_nonnom : Core.Case.isNonnom .loc = true := rfl
-theorem nom_not_nonnom : Core.Case.isNonnom .nom = false := rfl
+theorem acc_nonnom : isNonnom .acc = true := rfl
+theorem gen_nonnom : isNonnom .gen = true := rfl
+theorem dat_nonnom : isNonnom .dat = true := rfl
+theorem loc_nonnom : isNonnom .loc = true := rfl
+theorem nom_not_nonnom : isNonnom .nom = false := rfl
 
 /-- Telugu's NOM-vs-oblique split is an ABB pattern — contiguous on the
     containment hierarchy, consistent with case-conditioned VI. -/
 theorem nom_vs_oblique_contiguous :
-    (Core.AllomorphyPattern.mk 0 1 1 1).isContiguous = true := by native_decide
+    (AllomorphyPattern.mk 0 1 1 1).isContiguous = true := by native_decide
 
 -- ============================================================================
 -- § 3: Cross-Dravidian Connection

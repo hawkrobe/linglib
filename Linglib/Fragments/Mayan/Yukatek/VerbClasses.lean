@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Fragments.Mayan.Params
-import Linglib.Core.Case.SplitConditions
+import Linglib.Core.Case
 
 /-!
 # Yukatek Maya Verb Classes and Status System

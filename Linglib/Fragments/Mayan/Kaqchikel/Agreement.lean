@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.Spellout
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
-import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case
 
 /-!
 # Kaqchikel Agreement Fragment @cite{preminger-2014}

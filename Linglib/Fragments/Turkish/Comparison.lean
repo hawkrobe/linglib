@@ -1,4 +1,4 @@
-import Linglib.Core.Case.ComparativeEntry
+import Linglib.Core.Case
 
 /-!
 # Turkish Comparative Construction @cite{stassen-1985}

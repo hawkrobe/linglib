@@ -1,6 +1,6 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Syncretism
+import Linglib.Core.Case
+import Linglib.Theories.Morphology.CaseContainment
+open Theories.Morphology.CaseContainment
 
 /-!
 # German Case Inventory @cite{blake-1994}
@@ -29,6 +29,6 @@ theorem inventory_valid :
 
 /-- NOM/ACC syncretism in neuter and feminine.
     Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Syncretism`. -/
-def neuterSyncretism : Core.Syncretism := Core.nomAccSyncretism
+def neuterSyncretism : Syncretism := nomAccSyncretism
 
 end Fragments.German.Case

@@ -1,4 +1,4 @@
-import Linglib.Core.Case.Basic
+import Linglib.Core.Case
 
 /-!
 # Swiss German Case and Verb Subcategorization @cite{shieber-1985}

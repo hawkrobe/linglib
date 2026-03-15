@@ -1,6 +1,6 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Syncretism
+import Linglib.Core.Case
+import Linglib.Theories.Morphology.CaseContainment
+open Theories.Morphology.CaseContainment
 
 /-!
 # Tamil Case Inventory
@@ -28,10 +28,10 @@ theorem inventory_valid :
 
 /-- Tamil COM/INST syncretism (-ōṭu covers both functions).
     Uses the cross-linguistic pattern from `Core.Case.Syncretism`. -/
-def comInstSyncretism : Core.Syncretism := Core.comInstSyncretism
+def tamilComInstSync : Syncretism := comInstSyncretism
 
 /-- COM/INST are strictly adjacent (ranks 1, 2). -/
 theorem com_inst_adjacent :
-    Core.hierarchyAdjacent .com .inst = true := by native_decide
+    hierarchyAdjacent .com .inst = true := by native_decide
 
 end Fragments.Tamil.Case

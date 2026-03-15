@@ -1,10 +1,12 @@
-import Linglib.Core.Case.Containment
+import Linglib.Core.Case
+import Linglib.Theories.Morphology.CaseContainment
 import Linglib.Core.Logic.OT
 import Linglib.Theories.Phonology.Syllable.Foot
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.ProsodicWord
 import Linglib.Theories.Morphology.DM.RichExponent
+open Theories.Morphology.CaseContainment
 
 /-!
 # The Nouns that Say *-ni* @cite{aitha-2026}
@@ -47,7 +49,7 @@ Telugu nouns exhibit two stem alternation patterns:
 - §6: PrWd-based surface form prediction
 -/
 
-namespace Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
+namespace Phenomena.Allomorphy.Studies.Aitha2026
 
 open Core Core.OT Core.ConstraintEvaluation
 open Morphology.DM.VI
@@ -744,7 +746,7 @@ theorem weak_is_outward_sensitive :
     This confirms the study's case-feature assignments are consistent with
     the containment hierarchy infrastructure. -/
 theorem hasACC_eq_isNonnom (c : TeluguCase) :
-    c.hasACC = c.toCore.isNonnom := by
+    c.hasACC = isNonnom c.toCore := by
   cases c <;> rfl
 
 /-- The Telugu 5-case inventory is contiguous on Blake's typological
@@ -779,4 +781,4 @@ theorem central_argument :
     isOutwardSensitive (conditioningPos := 2) (targetPos := 1) = true := by
   exact ⟨by native_decide, by native_decide, rfl⟩
 
-end Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
+end Phenomena.Allomorphy.Studies.Aitha2026

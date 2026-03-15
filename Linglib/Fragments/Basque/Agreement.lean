@@ -1,6 +1,5 @@
 import Linglib.Core.Prominence
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case
 
 /-!
 # Basque Agreement Fragment @cite{just-2024}

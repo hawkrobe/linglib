@@ -942,9 +942,8 @@ import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.Morphology.Studies.Adamson2024
 import Linglib.Phenomena.Morphology.Studies.Bhadra2024
 import Linglib.Phenomena.Morphology.Studies.Benz2025
-import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
-import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
-import Linglib.Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
+import Linglib.Phenomena.Allomorphy.Studies.Stojkovic2026
+import Linglib.Phenomena.Allomorphy.Studies.Aitha2026
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Negation.Studies.Greco2020
 import Linglib.Phenomena.Negation.Studies.Krifka2007

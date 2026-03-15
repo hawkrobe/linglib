@@ -1,7 +1,6 @@
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Syncretism
-import Linglib.Core.Case.LocalExtension
+import Linglib.Core.Case
+import Linglib.Theories.Morphology.CaseContainment
+open Theories.Morphology.CaseContainment
 
 /-!
 # Latin Case Inventory @cite{blake-1994}
@@ -59,24 +58,24 @@ theorem inventory_with_loc_valid :
 
 /-- NOM/ACC syncretism in neuter nouns (2nd, 3rd, 4th declension).
     Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Syncretism`. -/
-def neuterSyncretism : Core.Syncretism := Core.nomAccSyncretism
+def neuterSyncretism : Syncretism := nomAccSyncretism
 
 /-- NOM/ACC is same-tier (both rank 6) — trivially adjacent. -/
 theorem neuter_syncretism_adjacent :
-    Core.hierarchyAdjacent .nom .acc = true := by native_decide
+    hierarchyAdjacent .nom .acc = true := by native_decide
 
 /-- DAT/ABL syncretism in the plural. -/
-def pluralDatAblSyncretism : Core.Syncretism :=
+def pluralDatAblSyncretism : Syncretism :=
   ⟨.dat, .abl, by decide⟩
 
 /-- DAT/ABL are NOT strictly adjacent on the hierarchy (ranks 4, 2) —
     LOC (rank 3) intervenes. But they ARE inventory-adjacent in the
     standard 6-case system that lacks LOC. -/
 theorem dat_abl_not_strictly_adjacent :
-    Core.hierarchyAdjacent .dat .abl = false := by native_decide
+    hierarchyAdjacent .dat .abl = false := by native_decide
 
 theorem dat_abl_inventory_adjacent :
-    Core.inventoryAdjacent coreInventory .dat .abl = true := by native_decide
+    inventoryAdjacent coreInventory .dat .abl = true := by native_decide
 
 -- ============================================================================
 -- § 3: Local Case Extension (@cite{blake-1994}, Ch. 6)

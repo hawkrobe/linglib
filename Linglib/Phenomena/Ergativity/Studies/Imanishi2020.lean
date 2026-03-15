@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Core.Case.SplitConditions
+import Linglib.Core.Case
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
