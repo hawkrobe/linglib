@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.Agreement.Typology
-import Linglib.Core.Lexical.UD
+import Linglib.Core.Number.Value
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
@@ -51,77 +51,11 @@ Formalizes the core typological framework from:
 
 namespace Phenomena.Agreement.Studies.Corbett2000
 
--- ============================================================================
--- §1: Number Values (Ch 2)
--- ============================================================================
+-- Number values, predicates, and UD bridges are in `Core/Number/Value.lean`.
+-- We alias `NumberValue` here for backward compatibility within this file.
+open Core.Number
 
-/-- Number values in Corbett's inventory.
-
-    Two orthogonal classifications:
-    - **System membership**: general is *outside* the number system; all others
-      are within it.
-    - **Determinacy**: values whose cardinality boundary is fixed (singular=1,
-      dual=2, trial=3) vs those whose boundary varies by context (paucal ≈ 2–6,
-      greater plural ≈ all/abundance). -/
-inductive NumberValue where
-  | general        -- non-committal, outside the number system
-  | singular       -- exactly one
-  | dual           -- exactly two
-  | trial          -- exactly three
-  | paucal         -- a few (indeterminate, ~2–6)
-  | plural         -- more than one (residual)
-  | greaterPaucal  -- indeterminate, larger than paucal
-  | greaterPlural  -- abundance / totality (indeterminate)
-  deriving DecidableEq, BEq, Repr
-
-/-- A number value is determinate iff its cardinality boundary is fixed. -/
-def NumberValue.isDeterminate : NumberValue → Bool
-  | .singular | .dual | .trial => true
-  | _ => false
-
-/-- A number value participates in the number system (is not general). -/
-def NumberValue.isInSystem : NumberValue → Bool
-  | .general => false
-  | _ => true
-
-/-- Map Corbett's values to UD.Number (general has no UD equivalent). -/
-def NumberValue.toUD : NumberValue → Option UD.Number
-  | .general       => none
-  | .singular      => some .Sing
-  | .dual          => some .Dual
-  | .trial         => some .Tri
-  | .paucal        => some .Pauc
-  | .plural        => some .Plur
-  | .greaterPaucal => some .Grpa
-  | .greaterPlural => some .Grpl
-
-/-- Map UD.Number to Corbett's analytical categories (partial).
-
-    Seven core values round-trip cleanly. Three UD values have no Corbett
-    equivalent:
-    - `Inv` (inverse number): marks the *unexpected* number for a given noun —
-      plural for some nouns, singular for others. Not a fixed cardinality.
-    - `Coll` (collective): denotes a group-as-unit (Russian *листва* 'foliage'),
-      distinct from general number which is non-committal to cardinality.
-    - `Count` (count form): a special form after numerals (Hungarian, Welsh),
-      not equivalent to singular (exactly one). -/
-def UD.Number.toCorbett : UD.Number → Option NumberValue
-  | .Sing  => some .singular
-  | .Plur  => some .plural
-  | .Dual  => some .dual
-  | .Tri   => some .trial
-  | .Pauc  => some .paucal
-  | .Grpa  => some .greaterPaucal
-  | .Grpl  => some .greaterPlural
-  | .Inv   => none    -- no fixed Corbett equivalent (see docstring)
-  | .Coll  => none    -- collective ≠ general number
-  | .Count => none    -- count form ≠ singular
-
-/-- Round-trip: toCorbett ∘ toUD = id for all in-system values. -/
-theorem roundtrip_toCorbett_toUD :
-    [NumberValue.singular, .dual, .trial, .paucal, .plural,
-     .greaterPaucal, .greaterPlural].all
-      (λ v => v.toUD.bind UD.Number.toCorbett == some v) = true := by native_decide
+abbrev NumberValue := Value
 
 -- ============================================================================
 -- §2: Number Systems (Ch 2, §2.3)
