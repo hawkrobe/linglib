@@ -1115,6 +1115,7 @@ import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Agreement.Studies.Aissen2003
 import Linglib.Phenomena.Agreement.Studies.PrasertsonSmithCulbertson2026
 import Linglib.Phenomena.Agreement.Studies.AdamsonZompi2025
+import Linglib.Phenomena.Agreement.Studies.BejarRezac2009
 import Linglib.Phenomena.Agreement.Studies.PanchevaZubizarreta2018
 import Linglib.Phenomena.Coordination.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
@@ -1300,6 +1301,7 @@ import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 -- Theories: Minimalism
 import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Core.CyclicAgree
 import Linglib.Theories.Syntax.Minimalism.Core.CaseFilter
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
 import Linglib.Theories.Syntax.Minimalism.Core.PConstraint

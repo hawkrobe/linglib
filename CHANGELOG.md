@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.266] - 2026-03-15
+
+### Added
+- **Béjar & Rezac 2009 study file** (`Phenomena/Agreement/Studies/BejarRezac2009.lean`): bridge CyclicAgree theory to Basque/Georgian fragment data
+  - `basque_indexed_iff_always_inverse` / `georgian_indexed_iff_always_inverse`: object is P-indexed iff cyclic agree puts every EA→IA combination into inverse context
+  - Per-cell verification theorems for Basque (p1sg, p2sg, p3sg) and Georgian (1sg prefix, 3sg no prefix)
+  - Georgian m-/v- split derived from `hasSecondCycleEffect` (cycle I vs cycle II)
+  - Table 1 agreement displacement paradigm (5 cells)
+  - Cross-linguistic uniformity theorem: SAP/3P split identical across Basque and Georgian
+
 ## [0.229.265] - 2026-03-15
 
 ### Changed
