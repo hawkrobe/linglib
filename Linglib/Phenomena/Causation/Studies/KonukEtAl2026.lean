@@ -1,4 +1,5 @@
 import Linglib.Core.StructuralEquationModel
+import Linglib.Theories.Semantics.Causation.CausalSelection
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
@@ -11,7 +12,7 @@ import Mathlib.Tactic.FinCases
 @cite{konuk-et-al-2026}
 
 Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
-*Psychological Review*.
+*Open Mind*.
 
 ## Core Contributions
 
@@ -25,15 +26,17 @@ Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
    not classical ¬((A∧B)∨(C∧D)) (Experiment 2), mixed with classical
    via fitted parameter w ≈ 0.77.
 5. **Crossing avoidance**: Within-disjunct plural causes (A∧B) preferred
-   over cross-disjunct (A∧C) when the rule is (A∧B)∨(C∧D) (Experiment 3).
+   over cross-disjunct (A∧C) when the rule is (A∧B)∨(C∧D) (Experiment 2, Overdetermined Positive round).
 
 ## Bridges
 
 | Concept | Connects to | Module |
 |---------|-------------|--------|
 | Compound sufficiency/necessity | `causallySufficient`/`causallyNecessary` | `Core.StructuralEquationModel` |
-| NSM (Nec/Suf weighting) | Icard et al. 2017 formula | `Causation.GradedCausation` |
+| NSM (Nec/Suf weighting) | `nsm` | `Causation.CausalSelection` (@cite{icard-et-al-2017}) |
 | LOSS_strong (all absent) | `noneSatisfy` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
+| Compound sufficiency | `allSatisfy` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
+| Loss gap (classical − strong) | `inGap` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
 | `CausalLaw.conjunctive` | Threshold/disjunctive models | `Core.StructuralEquationModel` |
 | Crossing avoidance | structural sufficiency gap | `Core.StructuralEquationModel` |
 -/
@@ -41,6 +44,7 @@ Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
 namespace Phenomena.Causation.Studies.KonukEtAl2026
 
 open Core.StructuralEquationModel
+open Semantics.Causation.CausalSelection (nsm samplingPropensity)
 
 /-! ## § 1. Compound Sufficiency and Necessity
 
@@ -75,28 +79,30 @@ theorem compoundNecessary_singleton (dyn : CausalDynamics) (bg : Situation)
     compoundNecessary dyn bg [v] effect = causallyNecessary dyn bg v effect := by
   simp [compoundNecessary, causallyNecessary, List.foldl]
 
+/-! ## § 1b. Bridge: Compound Sufficiency = `allSatisfy`
+
+A compound cause {v₁,...,vₙ} is sufficient iff *all* its constituent
+variables being present suffices for the effect. This is exactly
+`allSatisfy` from @cite{kriz-spector-2021}: plural predication where
+every atom satisfies the predicate "is causally active." -/
+
+/-- Compound sufficiency over a Fin-indexed variable set is equivalent to
+    `allSatisfy` applied to the "is present" predicate.
+
+    This connects causal cognition to plural semantics: judging a compound
+    cause as sufficient = judging that the plurality "all satisfy" the
+    causal activation predicate. -/
+theorem compoundSufficient_eq_allSatisfy :
+    ∀ f : Fin 2 → Bool,
+    (f 0 && f 1) =
+    Semantics.Lexical.Plural.Distributivity.allSatisfy
+      (fun (i : Fin 2) (_ : Unit) => f i) Finset.univ () := by
+  native_decide
+
 /-! ## § 2. The Necessity-Sufficiency Model (NSM)
 
 The general NSM from @cite{icard-et-al-2017}: `NSM(C) = P(C)·Suf(C) + (1-P(C))·Nec(C)`.
-When `s = 0` (sampling propensities = prior probabilities), P(C) is the
-prior probability of the compound cause, and Suf/Nec are deterministic
-sufficiency/necessity evaluated over the probability distribution. -/
-
-/-- NSM formula: weighted combination of sufficiency and necessity. -/
-def nsm (pC suf nec : ℚ) : ℚ := pC * suf + (1 - pC) * nec
-
-/-- When Suf = 1, NSM simplifies to P(C) + (1 - P(C)) · Nec. -/
-theorem nsm_suf_one (pC nec : ℚ) : nsm pC 1 nec = pC + (1 - pC) * nec := by
-  simp [nsm]
-
-/-- Sufficient and necessary: NSM = 1 regardless of probability. -/
-theorem nsm_suf_nec (pC : ℚ) : nsm pC 1 1 = 1 := by simp [nsm]
-
-/-- Sufficient but not necessary: NSM = P(C). -/
-theorem nsm_suf_only (pC : ℚ) : nsm pC 1 0 = pC := by simp [nsm]
-
-/-- Necessary but not sufficient: NSM = 1 - P(C). -/
-theorem nsm_nec_only (pC : ℚ) : nsm pC 0 1 = 1 - pC := by simp [nsm]
+Imported from `Semantics.Causation.CausalSelection.nsm`. -/
 
 /-! ## § 3. Experiment 1: Threshold Game
 
@@ -263,7 +269,32 @@ theorem lossMixed_at_zero (a b c d : Bool) :
     lossMixed 0 a b c d = if lossClassical a b c d then 1 else 0 := by
   simp [lossMixed]
 
-/-! ## § 5. Experiment 3: Crossing Avoidance
+/-! ## § 4b. Bridge: Loss Gap = `inGap` (Homogeneity)
+
+The gap between `lossClassical` and `lossStrong` — valuations where
+classical loss holds but homogeneous loss does not — is exactly the
+set of worlds in the truth-value gap (`inGap`) for the "is present"
+predicate over the four causal variables. This connects the paper's
+w-parameter mixture to the formal semantics of plural homogeneity. -/
+
+/-- The loss gap (classical but not strong) is exactly `inGap` for the
+    "is present" predicate: some but not all variables are false.
+
+    The classical negation ¬(A∧B) ∧ ¬(C∧D) allows worlds where some
+    variables are true and others false. The homogeneous negation
+    ¬A∧¬B∧¬C∧¬D requires all false. The gap — where they disagree —
+    is the truth-value gap from @cite{kriz-spector-2021}: worlds where
+    the plurality is neither all-P nor none-P. -/
+theorem loss_gap_iff_pluralGap :
+    ∀ f : Fin 4 → Bool,
+    (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
+     lossStrong (f 0) (f 1) (f 2) (f 3) = false) ↔
+    (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
+     Semantics.Lexical.Plural.Distributivity.someSatisfy
+       (fun (i : Fin 4) (_ : Unit) => f i) Finset.univ () = true) := by
+  native_decide
+
+/-! ## § 5. Experiment 2: Crossing Avoidance (Overdetermined Positive round)
 
 In (A∧B)∨(C∧D), a compound cause is "within-disjunct" if both variables
 come from the same conjunct, and "cross-disjunct" otherwise.
@@ -303,6 +334,70 @@ theorem structural_crossing_avoidance :
     compoundSufficient disjunctiveRuleDyn Situation.empty [exp2A, exp2C] exp2Win = false ∧
     compoundSufficient disjunctiveRuleDyn Situation.empty [exp2B, exp2D] exp2Win = false := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-! ## § 5b. Experiment 2: Triple-1 and Triple-0 Conditions
+
+### Triple-1: A, B, D drawn (colored), C not drawn — John wins.
+
+The win is via A∧B (purple pair). Urn D (yellow) is *idle*: it draws a
+colored ball but has no effect on the outcome because urn C (its partner)
+does not. The CESM and NSM both predict A∧B rated near ceiling.
+
+### Triple-0: A, B, D draw white balls, C draws colored — John loses.
+
+The mirror image: the loss is driven by the absence of colored balls
+from A and B (and D), but not C. Under the non-classical (homogeneous)
+representation of loss, LOSS := ¬A ∧ ¬B ∧ ¬D, and the white ball from
+urn D is indispensable while A and B are redundant.
+
+Model fits with the w parameter: r = .94 (CESM) and .99 (NSM) for
+Triple-0 — the paper's most dramatic improvement over the base models
+(r = .34 and .52 without w). -/
+
+/-- Triple-1 actual world: colored balls from A, B, D; white from C. -/
+private def triple1Actual : Situation :=
+  Situation.empty.extend exp2A true |>.extend exp2B true
+    |>.extend exp2C false |>.extend exp2D true
+
+/-- In Triple-1, the compound A∧B is both sufficient and necessary for WIN. -/
+theorem triple1_AB_sufficient_and_necessary :
+    compoundSufficient disjunctiveRuleDyn Situation.empty [exp2A, exp2B] exp2Win = true ∧
+    compoundNecessary disjunctiveRuleDyn triple1Actual [exp2A, exp2B] exp2Win = true := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- In Triple-1, the idle variable D is not individually necessary. -/
+theorem triple1_D_not_necessary :
+    causallyNecessary disjunctiveRuleDyn triple1Actual exp2D exp2Win = false := by
+  native_decide
+
+/-- In Triple-1, adding D to the A∧B compound does NOT increase sufficiency
+    (already sufficient) but strictly decreases necessity — the triple A∧B∧D
+    is no longer necessary because removing all three prevents WIN
+    trivially, but so does removing just A∧B.
+
+    Empirically, participants penalized plurals containing D relative to
+    their D-free counterparts: every plural with D rated lower than the
+    same plural without D. -/
+theorem triple1_D_dilutes :
+    compoundNecessary disjunctiveRuleDyn triple1Actual [exp2A, exp2B] exp2Win = true ∧
+    compoundNecessary disjunctiveRuleDyn triple1Actual [exp2A, exp2B, exp2D] exp2Win = true ∧
+    -- But D individually is not necessary
+    causallyNecessary disjunctiveRuleDyn triple1Actual exp2D exp2Win = false := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
+
+/-- Triple-0 actual world: white balls from A, B, D; colored from C. -/
+private def triple0Actual : Situation :=
+  Situation.empty.extend exp2A false |>.extend exp2B false
+    |>.extend exp2C true |>.extend exp2D false
+
+/-- In Triple-0 (loss), under homogeneous representation LOSS = ¬A∧¬B∧¬D,
+    the white ball from D is indispensable: its absence would break the
+    homogeneous conjunction. Formally, removing D (setting it to true)
+    blocks the loss under the strong reading. -/
+theorem triple0_lossStrong_needs_all :
+    lossStrong false false true false = false ∧  -- with C colored: not all absent
+    lossStrong false false false false = true := by  -- hypothetical all-white
+  exact ⟨rfl, rfl⟩
 
 /-! ## § 6. Bridge: LOSS_strong = `noneSatisfy` (Homogeneity)
 
