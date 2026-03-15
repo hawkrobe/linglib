@@ -87,6 +87,9 @@ We achieve this without ℚ division by computing:
 | 6 | "Mosquitos carry malaria" endorsed at 10% | carriesMalaria | 10% | `malaria_endorsed` |
 | 7 | Max prevalence satisfies all thresholds | — | — | `generic_top_true` |
 | 8 | Zero prevalence fails all thresholds | — | — | `generic_zero_false` |
+| 9 | Only rareWeak endorsed at 20% | all four causal | 20% | `causal_20pct_pattern` |
+| 10 | 3/4 causal conditions endorsed at 70% | all four causal | 70% | `causal_70pct_pattern` |
+| 11 | Endorsement ⟺ exceeds E[k|prior] | — | — | `endorsement_iff_exceeds_expected` |
 -/
 
 set_option autoImplicit false
@@ -179,13 +182,7 @@ def betaWeight (a b k : Nat) : Nat :=
 
 /-- Sum of Beta(a,b) weights across all 21 bins. -/
 def betaTotal (a b : Nat) : Nat :=
-  betaWeight a b 0 + betaWeight a b 1 + betaWeight a b 2 +
-  betaWeight a b 3 + betaWeight a b 4 + betaWeight a b 5 +
-  betaWeight a b 6 + betaWeight a b 7 + betaWeight a b 8 +
-  betaWeight a b 9 + betaWeight a b 10 + betaWeight a b 11 +
-  betaWeight a b 12 + betaWeight a b 13 + betaWeight a b 14 +
-  betaWeight a b 15 + betaWeight a b 16 + betaWeight a b 17 +
-  betaWeight a b 18 + betaWeight a b 19 + betaWeight a b 20
+  (List.range 21).foldl (fun acc k => acc + betaWeight a b k) 0
 
 /-- Normalized mixture-of-Betas prevalence prior, discretized to 21 bins.
 
@@ -313,53 +310,41 @@ noncomputable def mkGenericCfg
 -- § 5a. Concrete Configs per Property
 -- ============================================================================
 
-private theorem barkPrior_nonneg : ∀ p : Prevalence, 0 ≤ barkPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-
-private theorem haveSpotsPrior_nonneg : ∀ p : Prevalence, 0 ≤ haveSpotsPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-
-private theorem dontEatPeoplePrior_nonneg : ∀ p : Prevalence, 0 ≤ dontEatPeoplePrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-
-private theorem laysEggsPrior_nonneg : ∀ p : Prevalence, 0 ≤ laysEggsPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-
-private theorem isFemalePrior_nonneg : ∀ p : Prevalence, 0 ≤ isFemalePrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-
-private theorem carriesMalariaPrior_nonneg : ∀ p : Prevalence, 0 ≤ carriesMalariaPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-
 /-- "Bark" config: peaked high prior (Figure 2, column 1). -/
 @[reducible]
 noncomputable def barkCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR barkPrior) (priorR_nonneg_of _ barkPrior_nonneg)
+  mkGenericCfg (priorR barkPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 /-- "Have spots" config: peaked high prior (Figure 2, column 2). -/
 @[reducible]
 noncomputable def haveSpotsCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR haveSpotsPrior) (priorR_nonneg_of _ haveSpotsPrior_nonneg)
+  mkGenericCfg (priorR haveSpotsPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 /-- "Don't eat people" config: peaked very high prior (Figure 2, column 3). -/
 @[reducible]
 noncomputable def dontEatPeopleCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR dontEatPeoplePrior) (priorR_nonneg_of _ dontEatPeoplePrior_nonneg)
+  mkGenericCfg (priorR dontEatPeoplePrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 /-- "Lays eggs" config: bimodal prior (Figure 2, column 4). -/
 @[reducible]
 noncomputable def laysEggsCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR laysEggsPrior) (priorR_nonneg_of _ laysEggsPrior_nonneg)
+  mkGenericCfg (priorR laysEggsPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 /-- "Is female" config: unimodal prior at 50% (Figure 2, column 5). -/
 @[reducible]
 noncomputable def isFemaleCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR isFemalePrior) (priorR_nonneg_of _ isFemalePrior_nonneg)
+  mkGenericCfg (priorR isFemalePrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 /-- "Carries malaria" config: extreme low prior (Figure 2, column 6). -/
 @[reducible]
 noncomputable def malariaCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR carriesMalariaPrior) (priorR_nonneg_of _ carriesMalariaPrior_nonneg)
+  mkGenericCfg (priorR carriesMalariaPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 -- ============================================================================
 -- § 6. Semantic Properties
@@ -445,6 +430,51 @@ theorem dontEatPeople_not_endorsed :
 theorem isFemale_borderline :
     ¬(isFemaleCfg.S1 () (prevPct 50) .generic > isFemaleCfg.S1 () (prevPct 50) .silent) := by
   rsa_predict
+
+-- ============================================================================
+-- § 7a. Endorsement Condition Simplification (Appendix A)
+-- ============================================================================
+
+/-! ### Analytical endorsement condition
+
+The paper's central analytical result (Appendix A) is that the endorsement
+comparison reduces to a cue validity test:
+
+    S1(generic | p) > S1(silent | p) ⟺ p.toNat > E[k | prior]
+
+i.e., the referent prevalence bin exceeds the prior expected bin.
+
+**Proof sketch**: S1(u|p) ∝ rpow(L0(p|u), α). Since rpow is monotone for α > 0,
+the comparison reduces to L0(p|generic) > L0(p|silent). Expanding:
+
+    L0(p|u) = meaning(u,p) / Z_u = prior(p) · tc(u,p) / Z_u
+
+For the generic, Z_gen = Σ_w prior(w) · w.toNat; for silence, Z_sil = 20 · Z_prior.
+Dividing by prior(p) > 0 and cross-multiplying:
+
+    p.toNat / Z_gen > 20 / Z_sil ⟺ p.toNat > Z_gen / Z_prior = E[k | prior]
+-/
+
+/-- Expected prevalence bin under a prior: E[k | prior] = Σ_k k·P(k) / Σ_k P(k). -/
+noncomputable def expectedBin (prior : Prevalence → ℝ) : ℝ :=
+  (∑ w : Prevalence, prior w * (w.toNat : ℝ)) / (∑ w : Prevalence, prior w)
+
+/-- The endorsement condition reduces to a cue validity comparison:
+    a generic is endorsed iff the referent prevalence bin exceeds
+    the prior expected bin. This is the paper's central analytical
+    result (Appendix A).
+
+    TODO: Prove by unfolding S1 through RationalAction.policy, showing
+    rpow monotonicity preserves the L0 comparison, cancelling common
+    prior(p) factors, and cross-multiplying the normalizers. -/
+theorem endorsement_iff_exceeds_expected
+    (prior : Prevalence → ℝ) (hp : ∀ p, 0 ≤ prior p)
+    (p : Prevalence)
+    (hp_pos : 0 < prior p)
+    (hZ : 0 < ∑ w : Prevalence, prior w) :
+    (mkGenericCfg prior hp).S1 () p .generic > (mkGenericCfg prior hp).S1 () p .silent ↔
+    (p.toNat : ℝ) > expectedBin prior := by
+  sorry
 
 -- ============================================================================
 -- § 8. Connection to Phenomena.Generics.Data
@@ -566,24 +596,20 @@ def climbsMountainsPrior : Prevalence → ℚ := mixturePrior (1/10) 2 6 1 50
     Approximates the paper's fitted log-normal prior with a Beta(7,2) mixture. -/
 def drinksCoffeePrior : Prevalence → ℚ := mixturePrior (4/5) 7 2 1 50
 
-private theorem runsPrior_nonneg : ∀ p : Prevalence, 0 ≤ runsPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-private theorem climbsMountainsPrior_nonneg : ∀ p : Prevalence, 0 ≤ climbsMountainsPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-private theorem drinksCoffeePrior_nonneg : ∀ p : Prevalence, 0 ≤ drinksCoffeePrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-
 @[reducible]
 noncomputable def runsCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR runsPrior) (priorR_nonneg_of _ runsPrior_nonneg)
+  mkGenericCfg (priorR runsPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 @[reducible]
 noncomputable def climbsMountainsCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR climbsMountainsPrior) (priorR_nonneg_of _ climbsMountainsPrior_nonneg)
+  mkGenericCfg (priorR climbsMountainsPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 @[reducible]
 noncomputable def drinksCoffeeCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR drinksCoffeePrior) (priorR_nonneg_of _ drinksCoffeePrior_nonneg)
+  mkGenericCfg (priorR drinksCoffeePrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 /-- "John runs" endorsed at 75% frequency (moderate freq exceeds moderate prior). -/
 theorem runs_endorsed_at_high_freq :
@@ -618,29 +644,31 @@ theorem habitual_prior_asymmetry :
 /-!
 ## Case Study 3: Causal Language
 
-@cite{tessler-goodman-2019} (Case Study 3, Experiment 3A) extend the model to
-causal generics ("Zarpies cause fleas in Grups"). Here `Prevalence` is
+@cite{tessler-goodman-2019} (Case Study 3, Experiments 3A–3B) extend the model to
+causal generics ("Herb X makes cheebas sleepy"). Here `Prevalence` is
 reinterpreted as the causal rate — the proportion of cases where the cause
 produces the effect.
 
-**Experimental design (Experiment 3A)**: 2×2 between-subjects manipulation:
+**Experimental design**: In Experiment 3A, participants see "previous experimental
+results" (a table of substances tested on 100 subjects) that follow one of four
+distributions, manipulated between subjects:
 
-| Condition | Cause prevalence | Effect strength | Referent causal rate |
-|-----------|-----------------|-----------------|---------------------|
-| common-strong | 75% have mechanism | high rate given mechanism | tested at 20% and 70% |
-| common-weak | 75% have mechanism | low rate given mechanism | tested at 20% and 70% |
-| rare-strong | 25% have mechanism | high rate given mechanism | tested at 20% and 70% |
-| rare-weak | 25% have mechanism | low rate given mechanism | tested at 20% and 70% |
+- **common**: all substances show similar efficacy (unimodal distribution)
+- **rare**: some substances show no efficacy, others show high (bimodal distribution)
+- **strong**: effective substances produce strong effects (avg ~98%)
+- **weak**: effective substances produce weak effects (avg ~20%)
 
-The paper's key finding: endorsement depends on the **prior over causal rates**,
-not just the referent rate itself. At the same referent rate, rare-cause conditions
-show higher endorsement than common-cause conditions.
+In Experiment 3B, participants see one of two referent causal rates (**20%** or
+**70%**) and judge whether the causal generalization holds ("Herb C makes cheebas
+sleepy").
 
 We model the four conditions as different prevalence priors, varying the mixture
-weight φ (cause prevalence: common=high φ, rare=low φ) and the stable Beta
-parameters (effect strength: strong → high-mean Beta, weak → low-mean Beta).
+weight φ (common → high φ, rare → low φ) and the stable Beta parameters
+(strong → high-mean Beta, weak → low-mean Beta). These are approximations of
+the empirically elicited priors from Experiment 3A, not exact replications.
 
-The paper reports a model fit of r²(8) = 0.835 on causal endorsement data.
+The paper reports a model fit of r²(8) = 0.835 on causal endorsement data
+(Figure 11B).
 -/
 
 /-- Prior for common-strong cause: most categories have the mechanism (φ=0.75),
@@ -659,30 +687,25 @@ def rareStrongPrior : Prevalence → ℚ := mixturePrior (1/4) 10 1 1 50
     and the mechanism is weakly effective (Beta(2,8)). -/
 def rareWeakPrior : Prevalence → ℚ := mixturePrior (1/4) 2 8 1 50
 
-private theorem commonStrongPrior_nonneg : ∀ p : Prevalence, 0 ≤ commonStrongPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-private theorem commonWeakPrior_nonneg : ∀ p : Prevalence, 0 ≤ commonWeakPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-private theorem rareStrongPrior_nonneg : ∀ p : Prevalence, 0 ≤ rareStrongPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-private theorem rareWeakPrior_nonneg : ∀ p : Prevalence, 0 ≤ rareWeakPrior p :=
-  mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _
-
 @[reducible]
 noncomputable def commonStrongCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR commonStrongPrior) (priorR_nonneg_of _ commonStrongPrior_nonneg)
+  mkGenericCfg (priorR commonStrongPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 @[reducible]
 noncomputable def commonWeakCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR commonWeakPrior) (priorR_nonneg_of _ commonWeakPrior_nonneg)
+  mkGenericCfg (priorR commonWeakPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 @[reducible]
 noncomputable def rareStrongCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR rareStrongPrior) (priorR_nonneg_of _ rareStrongPrior_nonneg)
+  mkGenericCfg (priorR rareStrongPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 @[reducible]
 noncomputable def rareWeakCfg : RSA.RSAConfig Utterance Prevalence :=
-  mkGenericCfg (priorR rareWeakPrior) (priorR_nonneg_of _ rareWeakPrior_nonneg)
+  mkGenericCfg (priorR rareWeakPrior) (priorR_nonneg_of _ <|
+    mixturePrior_nonneg _ (by norm_num) (by norm_num) _ _ _ _)
 
 /-- Rare-weak cause endorsed at 20% causal rate: low prior expectation
     makes even 20% informative. -/
@@ -705,20 +728,61 @@ theorem rareWeak_endorsed_at_70pct :
   rsa_predict
 
 /-- Common-strong cause NOT endorsed at 50% causal rate: high prior
-    (Beta(10,1), φ=0.75) puts expected rate near 70%, so 50% is uninformative. -/
+    (Beta(10,1), φ=0.75) puts expected rate near 70%, so 50% is uninformative.
+    Note: the paper tests at 20% and 70%. At 70%, the comparison is borderline
+    (E[k|prior] ≈ 14 ≈ bin(70%)), matching the paper's ~50% endorsement rate
+    at referent prevalence 0.7 for common-strong (Figure 11B). -/
 theorem commonStrong_not_endorsed_at_50pct :
     ¬(commonStrongCfg.S1 () (prevPct 50) .generic >
       commonStrongCfg.S1 () (prevPct 50) .silent) := by
   rsa_predict
 
-/-- Causal prior asymmetry (Experiment 3A): at the same referent causal rate,
-    rare-cause conditions are endorsed while common-cause conditions are not. -/
-theorem causal_prior_asymmetry :
+/-- Rare-strong cause NOT endorsed at 20% causal rate (Figure 11B: ~35% endorsement).
+    Despite fewer competing causes than common-strong, the prior still
+    concentrates enough mass above 20% (via Beta(10,1)) to make 20% uninformative. -/
+theorem rareStrong_not_endorsed_at_20pct :
+    ¬(rareStrongCfg.S1 () (prevPct 20) .generic >
+      rareStrongCfg.S1 () (prevPct 20) .silent) := by
+  rsa_predict
+
+/-- Rare-strong cause endorsed at 70% causal rate (Figure 11B: ~90% endorsement). -/
+theorem rareStrong_endorsed_at_70pct :
+    rareStrongCfg.S1 () (prevPct 70) .generic >
+    rareStrongCfg.S1 () (prevPct 70) .silent := by
+  rsa_predict
+
+/-- Common-weak cause endorsed at 70% causal rate (Figure 11B: ~75% endorsement).
+    With Beta(2,8) peaked near 20%, a referent rate of 70% far exceeds
+    the prior expectation. -/
+theorem commonWeak_endorsed_at_70pct :
+    commonWeakCfg.S1 () (prevPct 70) .generic >
+    commonWeakCfg.S1 () (prevPct 70) .silent := by
+  rsa_predict
+
+/-- Causal prior asymmetry (Experiment 3B): at 20% referent rate, only
+    rare-weak is endorsed; the other three conditions are not.
+    This matches the paper's Figure 11B (left panel). -/
+theorem causal_20pct_pattern :
     (rareWeakCfg.S1 () (prevPct 20) .generic >
      rareWeakCfg.S1 () (prevPct 20) .silent) ∧
+    ¬(rareStrongCfg.S1 () (prevPct 20) .generic >
+      rareStrongCfg.S1 () (prevPct 20) .silent) ∧
     ¬(commonStrongCfg.S1 () (prevPct 20) .generic >
       commonStrongCfg.S1 () (prevPct 20) .silent) :=
-  ⟨rareWeak_endorsed_at_20pct, commonStrong_not_endorsed_at_20pct⟩
+  ⟨rareWeak_endorsed_at_20pct, rareStrong_not_endorsed_at_20pct,
+   commonStrong_not_endorsed_at_20pct⟩
+
+/-- At 70% referent rate, all conditions except common-strong are endorsed
+    (Figure 11B). Common-strong is borderline (~50% endorsement in the paper),
+    matching our model's E[k|prior] ≈ bin(70%). -/
+theorem causal_70pct_pattern :
+    (rareWeakCfg.S1 () (prevPct 70) .generic >
+     rareWeakCfg.S1 () (prevPct 70) .silent) ∧
+    (rareStrongCfg.S1 () (prevPct 70) .generic >
+     rareStrongCfg.S1 () (prevPct 70) .silent) ∧
+    (commonWeakCfg.S1 () (prevPct 70) .generic >
+     commonWeakCfg.S1 () (prevPct 70) .silent) :=
+  ⟨rareWeak_endorsed_at_70pct, rareStrong_endorsed_at_70pct, commonWeak_endorsed_at_70pct⟩
 
 -- ════════════════════════════════════════════════════════════════════════════════
 -- § 12. Cue Validity ↔ Prevalence Prior (Appendix A)
