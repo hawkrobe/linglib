@@ -529,4 +529,59 @@ theorem dynamicEntails_weakening {E : Type*} [Nonempty E] (M : Model E)
   hent s
 
 
+/--
+Observation 10 (@cite{dekker-2012} §2.3, p.33): Conservative Entailment.
+
+Dynamic entailment coincides with classical pointwise entailment:
+φ ⊨_dyn ψ iff for all g, ê, M,g,ê ⊨ φ implies M,g,ê ⊨ ψ.
+
+This shows that PLA's dynamic consequence relation is conservative
+over classical PL consequence. -/
+theorem obs10_dynamic_eq_classical_entailment {E : Type*} [Nonempty E] (M : Model E)
+    (φ ψ : Formula) :
+    (φ ⊨[M]_dyn ψ) ↔ (∀ (g : Assignment E) (ê : WitnessSeq E), φ.sat M g ê → ψ.sat M g ê) := by
+  constructor
+  · -- Dynamic → Classical: use s = Set.univ
+    intro hdyn g ê hsat
+    have hmem : (g, ê) ∈ φ.update M Set.univ := by
+      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Set.mem_univ, true_and]
+      exact hsat
+    exact hdyn Set.univ (g, ê) hmem
+  · -- Classical → Dynamic: unfold update membership
+    intro hclass s p hp
+    simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
+    exact hclass p.1 p.2 hp.2
+
+/--
+Observation 11 (@cite{dekker-2012} §2.3, p.34): Deduction Theorem.
+
+φ ∧ χ ⊨_dyn ψ  ↔  φ ⊨_dyn χ → ψ
+
+The classical deduction theorem holds in PLA's dynamic system. -/
+theorem obs11_deduction_theorem {E : Type*} [Nonempty E] (M : Model E)
+    (φ χ ψ : Formula) :
+    ((φ ⋀ χ) ⊨[M]_dyn ψ) ↔ (φ ⊨[M]_dyn (χ ⟶ ψ)) := by
+  constructor
+  · -- (→) If φ∧χ ⊨ ψ, then φ ⊨ χ→ψ
+    intro h s p hp
+    simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq] at hp
+    show (χ ⟶ ψ).sat M p.1 p.2
+    simp only [Formula.impl, Formula.sat]
+    intro ⟨hχ, hnψ⟩
+    have hmem : p ∈ (φ ⋀ χ).update M s := by
+      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat]
+      exact ⟨hp.1, hp.2, hχ⟩
+    exact hnψ (h s p hmem)
+  · -- (←) If φ ⊨ χ→ψ, then φ∧χ ⊨ ψ
+    intro h s p hp
+    simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq, Formula.sat] at hp
+    have hp_φ : p ∈ φ.update M s := by
+      simp only [Formula.update, InfoState.restrict, Set.mem_setOf_eq]
+      exact ⟨hp.1, hp.2.1⟩
+    have himpl := h s p hp_φ
+    simp only [Formula.impl, Formula.sat] at himpl
+    by_contra hnψ
+    exact himpl ⟨hp.2.2, hnψ⟩
+
+
 end Semantics.Dynamic.PLA

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.275] - 2026-03-15
+
+### Added
+- **Dekker 2012 missing observations**: formalize Observation 4 (PLA/PL equivalence — `obs4_pla_pl_equivalence`, `Term.eval_witness_irrelevant`), Observation 10 (Conservative Entailment — `obs10_dynamic_eq_classical_entailment`), Observation 11 (Deduction Theorem — `obs11_deduction_theorem`); all fully proved, zero sorrys
+
 ## [0.229.274] - 2026-03-15
 
 ### Changed

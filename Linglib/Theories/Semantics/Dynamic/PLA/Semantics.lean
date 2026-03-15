@@ -241,4 +241,56 @@ example : (exManWalkedIn.resolve exResolution).range = ∅ :=
 
 end Examples
 
+
+/-- For pronoun-free terms, evaluation doesn't depend on the witness sequence. -/
+theorem Term.eval_witness_irrelevant {E : Type*} (t : Term) (ht : t.pronouns = ∅)
+    (g : Assignment E) (ê₁ ê₂ : WitnessSeq E) :
+    t.eval g ê₁ = t.eval g ê₂ := by
+  cases t with
+  | var _ => rfl
+  | pron i => simp [Term.pronouns] at ht
+
+
+/-- Observation 4 (@cite{dekker-2012} §2.2, p.25): PLA and PL equivalence.
+
+For pronoun-free formulas, satisfaction is independent of the witness sequence.
+This shows PLA conservatively extends PL: standard predicate logic formulas have
+the same truth conditions in PLA as in PL. -/
+theorem obs4_pla_pl_equivalence {E : Type*} [Nonempty E] (M : Model E)
+    (φ : Formula) (hfree : φ.range = ∅)
+    (g : Assignment E) (ê₁ ê₂ : WitnessSeq E) :
+    φ.sat M g ê₁ ↔ φ.sat M g ê₂ := by
+  induction φ generalizing g with
+  | atom name ts =>
+    simp only [Formula.sat]
+    have h : ts.map (Term.eval g ê₁) = ts.map (Term.eval g ê₂) := by
+      apply List.map_congr_left
+      intro t ht
+      cases t with
+      | var _ => rfl
+      | pron i =>
+        exfalso
+        have : i ∈ (Formula.atom name ts).range := by
+          rw [Formula.range_atom, mem_termsPronouns]
+          exact ⟨.pron i, ht, Finset.mem_singleton_self i⟩
+        simp [hfree] at this
+    rw [h]
+  | neg φ ih =>
+    simp only [Formula.sat]
+    exact not_congr (ih hfree g)
+  | conj φ ψ ih₁ ih₂ =>
+    simp only [Formula.sat]
+    have hφ : φ.range = ∅ := by
+      apply Finset.subset_empty.mp
+      calc φ.range ⊆ (φ ⋀ ψ).range := Formula.range_conj_left φ ψ
+        _ = ∅ := hfree
+    have hψ : ψ.range = ∅ := by
+      apply Finset.subset_empty.mp
+      calc ψ.range ⊆ (φ ⋀ ψ).range := Formula.range_conj_right φ ψ
+        _ = ∅ := hfree
+    exact and_congr (ih₁ hφ g) (ih₂ hψ g)
+  | exists_ j φ ih =>
+    simp only [Formula.sat]
+    exact exists_congr (λ e => ih hfree (g[j ↦ e]))
+
 end Semantics.Dynamic.PLA
