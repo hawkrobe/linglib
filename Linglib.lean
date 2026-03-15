@@ -1686,6 +1686,7 @@ import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021
 import Linglib.Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024
 import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
 import Linglib.Phenomena.Dialogue.Studies.HardingGerstenbergIcard2025
+import Linglib.Phenomena.Dialogue.Studies.Ginzburg2012
 -- Nouwen2024RSA merged into Nouwen2024
 import Linglib.Phenomena.Quantification.Studies.ScopeFreezing
 import Linglib.Phenomena.Negation.Studies.TesslerFranke2020
@@ -1707,6 +1708,7 @@ import Linglib.Theories.Pragmatics.Assertion.Lauer
 -- Theories: Pragmatics: Dialogue
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
+import Linglib.Theories.Pragmatics.Dialogue.KOS.TTRBridge
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry

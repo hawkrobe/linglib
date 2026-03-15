@@ -1,4 +1,5 @@
 import Linglib.Core.Semantics.CommonGround
+import Linglib.Core.Discourse.SpeechActs
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 
 /-!
@@ -89,6 +90,43 @@ def IllocMove.questionContent {Fact QContent : Type} : IllocMove Fact QContent �
   | _ => none
 
 -- ════════════════════════════════════════════════════
+-- § 1b. IllocMove ↔ Searle Bridge
+-- ════════════════════════════════════════════════════
+
+/-- Map an illocutionary move to @cite{searle-1979}'s five-class taxonomy.
+
+Assert/accept/confirm are assertives (mind-to-world fit). Ask is a directive
+(world-to-mind: the speaker tries to get the addressee to provide information).
+Check is a directive (requesting confirmation). Greet/counterGreet are
+expressives (null fit). -/
+def IllocMove.toSearleClass {Fact QContent : Type} :
+    IllocMove Fact QContent → Core.Discourse.SearleClass
+  | .assert _   => .assertive
+  | .accept _   => .assertive
+  | .confirm _  => .assertive
+  | .ask _      => .directive
+  | .check _    => .directive
+  | .greet      => .expressive
+  | .counterGreet => .expressive
+
+/-- Direction of fit for an illocutionary move, derived via Searle class. -/
+def IllocMove.directionOfFit {Fact QContent : Type}
+    (m : IllocMove Fact QContent) : Core.Discourse.DirectionOfFit :=
+  m.toSearleClass.directionOfFit
+
+/-- Assertions have mind-to-world fit: the speaker is responsible if p is false. -/
+theorem IllocMove.assert_mind_to_world {Fact QContent : Type} (p : Fact) :
+    (IllocMove.assert (QContent := QContent) p).directionOfFit = .mindToWorld := rfl
+
+/-- Queries have world-to-mind fit: the speaker wants the addressee to act. -/
+theorem IllocMove.ask_world_to_mind {Fact QContent : Type} (q : QContent) :
+    (IllocMove.ask (Fact := Fact) q).directionOfFit = .worldToMind := rfl
+
+/-- Greetings have null fit: they express social acknowledgement. -/
+theorem IllocMove.greet_null_fit {Fact QContent : Type} :
+    (IllocMove.greet : IllocMove Fact QContent).directionOfFit = .null := rfl
+
+-- ════════════════════════════════════════════════════
 -- § 2. Dialogue Gameboard (@cite{ginzburg-2012} ex. 100/113)
 -- ════════════════════════════════════════════════════
 
@@ -172,6 +210,25 @@ def GenreType.generic {QContent : Type} : GenreType QContent where
 -- § 4. Total Information State (@cite{ginzburg-2012} ex. 93, p. 107)
 -- ════════════════════════════════════════════════════
 
+/-- A turn under construction: an incomplete utterance being built incrementally.
+
+@cite{ginzburg-2012} Ch. 6–7: the TuC tracks the unfolding utterance as it is
+produced word-by-word. Participants can intervene mid-turn (completions,
+collaborative finishes, self-repairs). The TuC is part of the private state
+because each participant may have a different parse of the emerging turn.
+
+The `pending` field on the DGB tracks ungrounded *complete* utterances;
+TuC tracks *incomplete* ones. When the turn is complete, its content
+moves from TuC to Pending (if unresolved) or Facts (if grounded). -/
+structure TurnUnderConstr where
+  /-- Phonological material produced so far -/
+  phonSoFar : String := ""
+  /-- Syntactic category of the emerging constituent -/
+  cat : Option String := none
+  /-- Partial content accumulated -/
+  partialContent : Option String := none
+  deriving Repr, DecidableEq, BEq
+
 /-- The private component of an information state.
 
 @cite{ginzburg-2012} ex. 93 (p. 107): PRType has genre, beliefs, and agenda.
@@ -182,6 +239,9 @@ structure PrivateState (Fact QContent : Type) where
   genre : Option (GenreType QContent) := none
   /-- The participant's agenda: planned illocutionary moves. -/
   agenda : List (IllocMove Fact QContent) := []
+  /-- The turn currently under construction (if any).
+      @cite{ginzburg-2012} Ch. 7: enables self-repair and collaborative completion. -/
+  turnUnderConstr : Option TurnUnderConstr := none
 
 /-- Total Information State (TIS).
 

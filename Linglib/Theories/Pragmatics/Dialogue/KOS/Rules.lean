@@ -113,14 +113,32 @@ def TIS.ask {P Fact QContent : Type}
   { tis with
     dgb := (tis.dgb.pushQud q).recordMove (.ask q) }
 
-/-- **Assert rule**: assertion adds to FACTS, pushes onto QUD, and downdates.
+/-- **Assert rule** (simplified): assertion adds to FACTS and downdates.
 
-@cite{ginzburg-2012} Ch. 4, "Assert QUD-incrementation" (p. 95, ex. 66). -/
+This version does not push About(p) onto QUD. For the full
+@cite{ginzburg-2012} Assert protocol with QUD-incrementation,
+use `TIS.assertWithQUD`. -/
 def TIS.assertRule {P Fact QContent : Type} [Answerhood Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) :
     TIS P Fact QContent :=
   { tis with
     dgb := (tis.dgb.assertFact p).recordMove (.assert p) }
+
+/-- **Assert QUD-incrementation**: the full @cite{ginzburg-2012} Assert protocol.
+
+@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 66): when A asserts p:
+1. p is added to FACTS
+2. About(p) — a polar question "whether p" — is pushed onto QUD
+3. QUD is downdated (resolved questions removed)
+
+The `aboutP` parameter converts the asserted fact to its corresponding
+question, since this conversion is domain-specific. -/
+def TIS.assertWithQUD {P Fact QContent : Type} [Answerhood Fact QContent]
+    (tis : TIS P Fact QContent) (p : Fact) (aboutP : QContent) :
+    TIS P Fact QContent :=
+  { tis with
+    dgb := ((tis.dgb.addFact p).pushQud aboutP).downdateQud
+            |>.recordMove (.assert p) }
 
 /-- **Accept rule**: addressee grounds an assertion — adds fact to own FACTS.
 
@@ -211,6 +229,12 @@ theorem assert_adds_fact {P Fact QContent : Type} [Answerhood Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) :
     p ∈ (tis.assertRule p).dgb.facts := by
   simp [TIS.assertRule, DGB.assertFact, DGB.downdateQud, DGB.addFact, DGB.recordMove]
+
+/-- assertWithQUD adds the fact to FACTS. -/
+theorem assertWithQUD_adds_fact {P Fact QContent : Type} [Answerhood Fact QContent]
+    (tis : TIS P Fact QContent) (p : Fact) (aboutP : QContent) :
+    p ∈ (tis.assertWithQUD p aboutP).dgb.facts := by
+  simp [TIS.assertWithQUD, DGB.downdateQud, DGB.pushQud, DGB.addFact, DGB.recordMove]
 
 /-- Accept adds a fact without changing QUD. -/
 theorem accept_preserves_qud {P Fact QContent : Type}
@@ -488,5 +512,53 @@ private def rainTIS₂ : TIS String (Core.Proposition.BProp RainWorld) (QUD Rain
 theorem rain_assert_resolves : rainTIS₂.dgb.qud = [] := by native_decide
 
 end PartitionExample
+
+-- ════════════════════════════════════════════════════
+-- § 12. assertWithQUD Inquiry Cycle
+-- ════════════════════════════════════════════════════
+
+section AssertWithQUDExample
+
+instance : Answerhood String String where
+  resolves fact question := fact == question
+
+/-- Full inquiry cycle using the Ginzburg 2012 Assert protocol.
+
+A: "Is Bo here?"  (Ask)
+B: "Bo is here."  (AssertWithQUD — pushes About("Bo is here") onto QUD)
+A: accepts         (Accept + factUpdateQudDowndate) -/
+private def awq₀ : TIS String String String := TIS.initial
+private def awq₁ := awq₀.ask "Bo is here"
+private def awq₂ := awq₁.assertWithQUD "Bo is here" "Bo is here"
+
+/-- After assertWithQUD, the question from Ask is resolved (fact matches). -/
+theorem awq_resolves_original_question : awq₂.dgb.qud = [] := by native_decide
+
+/-- The fact is in FACTS after assertWithQUD. -/
+theorem awq_has_fact : "Bo is here" ∈ awq₂.dgb.facts := by
+  simp [awq₂, awq₁, awq₀, TIS.assertWithQUD, TIS.ask, DGB.addFact, DGB.pushQud,
+    DGB.downdateQud, DGB.recordMove]
+
+end AssertWithQUDExample
+
+-- ════════════════════════════════════════════════════
+-- § 13. Searle–KOS Direction-of-Fit Coherence
+-- ════════════════════════════════════════════════════
+
+/-- All assertive-class moves (assert, accept, confirm) share mind-to-world fit:
+the speaker takes responsibility for truth. -/
+theorem assertive_moves_mind_to_world {Fact QContent : Type} (p : Fact) :
+    (IllocMove.assert (QContent := QContent) p).directionOfFit = .mindToWorld ∧
+    (IllocMove.accept (QContent := QContent) p).directionOfFit = .mindToWorld ∧
+    (IllocMove.confirm (QContent := QContent) p).directionOfFit = .mindToWorld :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Directive moves (ask, check) share world-to-mind fit:
+the speaker wants the addressee to act. -/
+theorem directive_moves_world_to_mind {Fact QContent : Type}
+    (q : QContent) (p : Fact) :
+    (IllocMove.ask (Fact := Fact) q).directionOfFit = .worldToMind ∧
+    (IllocMove.check (QContent := QContent) p).directionOfFit = .worldToMind :=
+  ⟨rfl, rfl⟩
 
 end Theories.Pragmatics.Dialogue.KOS
