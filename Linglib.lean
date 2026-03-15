@@ -85,6 +85,7 @@ import Linglib.Core.Agent.PsychophysicalChoice
 import Linglib.Core.Agent.Learning
 import Linglib.Core.Discourse.Evidence
 import Linglib.Core.Discourse.Epistemicity
+import Linglib.Core.Discourse.Logophoricity
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Temporal.Time
 import Linglib.Core.Temporal.Reichenbach
@@ -1113,6 +1114,7 @@ import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Agreement.Studies.Aissen2003
 import Linglib.Phenomena.Agreement.Studies.PrasertsonSmithCulbertson2026
 import Linglib.Phenomena.Agreement.Studies.AdamsonZompi2025
+import Linglib.Phenomena.Agreement.Studies.PanchevaZubizarreta2018
 import Linglib.Phenomena.Coordination.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
@@ -1639,6 +1641,7 @@ import Linglib.Phenomena.Plurals.Studies.Magri2014
 import Linglib.Phenomena.ScalarImplicatures.Studies.Chierchia2004
 import Linglib.Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity
 import Linglib.Phenomena.ScalarImplicatures.Studies.Spector2007
+import Linglib.Phenomena.Polarity.Studies.Israel2001
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025Closure
 import Linglib.Theories.Pragmatics.Implicature.NegationScope

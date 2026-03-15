@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
 /-!
 # Type Theory with Records — Discourse State & Pragmatics
-@cite{cooper-2023} @cite{ginzburg-2012} @cite{kripke-1979} @cite{partee-1973}
+@cite{cooper-2023} @cite{kripke-1979} @cite{partee-1973}
 
 Discourse-level infrastructure for TTR (@cite{cooper-2023}, Chapters 2, 4, 5):
 

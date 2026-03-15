@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.229.258] - 2026-03-15
+
+### Changed
+- **CremersWilcoxSpector2023 quality pass**: Fix svRSA encoding to match paper's categorical blocking (Appendix A.3); bake prior into `meaning` for baseline/EXH-LU/wRSA/FREE-LU (prior-in-L0); add `utteranceCost` and `antiExhaustivityCondition`; import `Core/Discourse/QUD`; rewrite all docstrings with precise equation references; all 6 `rsa_predict` theorems verified
+
+## [0.229.257] - 2026-03-14
+
+### Added
+- **Pancheva & Zubizarreta 2018 — full PCC typology**: Extend `PConstraint.lean` with all four P-Constraint parameters (P-Prominence, P-Uniqueness, P-Primacy, Domain of application), deriving 5 attested PCC varieties (strong, ultra-strong, weak, super-strong, me-first) + 3 predicted grammars (PG1–PG3)
+  - `PersonGeometry.DecomposedPerson`: add `[±proximate]` feature extending the `[±participant, ±author]` hierarchy with contextual proximate marking for 3P
+  - `Core/Discourse/Logophoricity.lean`: logophoric roles (pivot, self, source) from Sells 1987, isomorphism bridge to `PProminence` settings, Point-of-View Principle
+  - `Phenomena/Agreement/Studies/PanchevaZubizarreta2018.lean`: study file with per-variety verification theorems, cross-linguistic data (French, Catalan, Spanish, Kambera, Bulgarian), markedness via parameter departures, CLR predictions, spurious SE compatibility, direct/inverse parallel
+  - All 45 per-combination `rfl` proofs across 5 grammar types; entailment theorems (strong⊂weak, strong⊂ultra); licit counts verified by `native_decide`
+
+## [0.229.256] - 2026-03-14
+
+### Added
+- **Israel 2001 Scalar Model of Polarity**: Formalize minimizers/maximizers and the rhetoric of scalar reasoning
+  - `ScalarValue` (high/low), `Canonicity` (canonical/inverted), `LikelihoodEffect` (facilitating/impeding) types in `Core/Lexical/PolarityItem.lean`
+  - New fields on `PolarityItemEntry`: `scalarValue`, `canonicity`, `likelihoodEffect`
+  - `predictCanonicity`: derives canonicity from likelihood effect + polarity type + scalar value
+  - 8 inverted polarity items in English fragment: maximizer NPIs (`wildHorses`, `allTheTeaInChina`, `aTenFootPole`, `inAMillionYears`) and minimizer PPIs (`atTheDropOfAHat`, `inAJiffy`, `forAPittance`, `forASong`)
+  - Study file `Phenomena/Polarity/Studies/Israel2001.lean`: data for canonical/inverted items, pecuniary paradox, ambiguous superlatives, proto-role bridge heuristic
+  - Enriched existing English polarity items with scalar value + canonicity tags
+
 ## [0.229.255] - 2026-03-14
 
 ### Changed

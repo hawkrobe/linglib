@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Core.Discourse.QUD
 import Linglib.Tactics.RSAPredict
 
 /-!
@@ -34,56 +35,67 @@ RSA-LI, svRSA) over baseline RSA and wRSA.
 - **Utterances**: A (cost 0), A∧B (cost c), A∧¬B (cost c)
 - **Parses** (EXH-LU): literal (A true in both worlds) vs exh (A true only in w_a)
 
-## Prior Convention
+## Prior Placement
 
-The paper defines anti-exhaustivity as `L1(w_ab|A) > P(w_ab)`: the
-posterior exceeds the prior. This requires S1 to be *asymmetric* across
-worlds for utterance A, which happens when the prior enters L0:
-`L0(w|u) ∝ P(w) · ⟦u⟧(w)`.
+The paper's L0 includes the prior (eq. 1): L0(w|u) ∝ P(w) · ⟦u⟧(w).
+The paper also has P(w) at L1 (eq. 3): L1(w|u) ∝ P(w) · S1(u|w).
+So P(w) enters twice — in L0 and L1.
 
-`RSAConfig` places the prior at L1 only: `L0(w|u) ∝ ⟦u⟧(w)`. For
-utterances true in both worlds (like bare A), L0 = 1/2 in both worlds
-and S1 is symmetric: S1(A|w_a) = S1(A|w_ab). This means
-`L1(w_ab|A) = P(w_ab)` exactly — the posterior merely reproduces the
-prior with no amplification. Baseline RSA under our encoding is
-**prior-following**, not prior-amplifying.
+For models where prior biases L0 (baseline, EXH-LU, wRSA, FREE-LU), we
+bake P(w) into `meaning` and set `worldPrior = 1`. This is equivalent to
+double-counting for anti-exhaustivity classification (Appendix A.1, eq. A.4):
+L1(w_ab|A) > P(w_ab) ⟺ T(w_ab) > T(w_a) where T(w) = Σ_l P(l)·S1(A|w,l),
+regardless of worldPrior. With worldPrior = 1, L1_score(w) = T(w), so
+the comparison `L1(.A, .w_ab) > L1(.A, .w_a)` IS the anti-exhaustivity test.
 
-For models that need prior-in-L0 (wRSA), we bake it into `meaning`:
-the meaning for A under the default background weights worlds by
-P(w|b), so L0 already reflects the bias and S1 becomes asymmetric.
+For svRSA, the prior does NOT enter meaning. Under Q_A (coarse QUD), QUD
+projection aggregates all A-true worlds into one cell, making
+L0(Q_A(w)|A) = 1 for all w. This neutralizes the prior's effect on S1,
+giving world-independent S1 under Q_A (Appendix A.3). Our encoding
+captures this by using uniform weights in meaning under both QUDs:
+L0(w|A, coarse) = 1/2 for both worlds.
 
 ## Anti-Exhaustivity Definition
 
-The paper's definition (Eq. 6b, equal costs): `L1(w_ab|A) > P(w_ab)`.
-Our theorems instead prove **world comparison**: `L1(w_ab|A) > L1(w_a|A)`.
-These are equivalent for the baseline model (Appendix A.1, eq. A.4)
-but diverge for models with latent variables. For the exhaustive group,
-both definitions agree: if L1(w_a|A) > L1(w_ab|A) despite P(w_ab) > P(w_a),
-then certainly L1(w_ab|A) < P(w_ab).
+The paper's definition (Eq. 6b, equal costs): L1(w_ab|A) > P(w_ab),
+equivalently T(w_ab) > T(w_a) (Appendix A.1, eq. A.4). With our encoding
+(worldPrior = 1), this reduces to `L1(.A, .w_ab) > L1(.A, .w_a)`.
+
+## Utterance Costs
+
+The paper includes costs c(A) = 0, c(A∧B) = c(A∧¬B) = c (eq. 2):
+S1(u|w) ∝ exp(λ(log L0(w|u) - c(u))) = L0(w|u)^λ · exp(-λc(u)).
+With equal costs for A∧B and A∧¬B, the cost terms cancel in the
+anti-exhaustivity condition (eq. 6b): the classification depends only on
+the log-prior ratio. We set all costs to 0 in our configs; the analytic
+condition in `antiExhaustivityCondition` handles the general case.
 
 ## Model Classification
 
-The paper's 9 models fall into three groups by anti-exhaustivity behavior:
+The paper's 9 models fall into two groups by anti-exhaustivity behavior:
 
-| # | Model | Mechanism | L1(w_ab) > L1(w_a)? | Config |
-|---|-------|-----------|---------------------|--------|
-| 1 | Baseline RSA | — | Yes (prior-following) | `baselineBiased` |
-| 2 | wRSA | Prior-in-L0 via background | Yes (genuine) | `wRSABiased` |
+| # | Model | Mechanism | Anti-exhaustive? | Config |
+|---|-------|-----------|-----------------|--------|
+| 1 | Baseline RSA | — | Yes | `baselineBiased` |
+| 2 | wRSA | Prior-in-L0 via background | Yes | `wRSABiased` |
 | 3 | BwRSA | Bayesian wRSA | Yes (= wRSA at L1) | `wRSABiased` |
 | 4 | svRSA1 | QUD blocks at S1 | No | `svRSABiased` |
 | 5 | svRSA2 | QUD blocks at S1 | No | `svRSABiased` |
-| 6 | FREE-LU | Free parse choice | Yes (prior-following) | `freeLUBiased` |
+| 6 | FREE-LU | Free parse choice | Yes | `freeLUBiased` |
 | 7 | EXH-LU | EXH blocks at L0 | No | `exhLUBiased` |
 | 8 | RSA-LI1 | EXH blocks at L0 | No (= EXH-LU at L1) | `rsaLIBiased` |
 | 9 | RSA-LI2 | EXH blocks at L0 | No (= EXH-LU at L1) | `rsaLIBiased` |
 
-All 9 models are encoded as `RSAConfig` instances. The key insight is that
-each model's distinctive mechanism maps to a different combination of
-`Latent` type, `meaning` function, and `s1Score` rule.
+All 9 models are encoded as `RSAConfig` instances. Each model's
+distinctive mechanism maps to a different `Latent` type and `meaning`.
+Costs enter S1 via `utteranceCost` (= 0, so exp(-λ·0) = 1 is implicit);
+the analytic condition `antiExhaustivityCondition` handles general costs.
 
-RSA-LI (Models 8–9) is essentially GI-RSA from @cite{franke-bergen-2020},
-formalized in `FrankeBergen2020.lean` using the same IE infrastructure.
-wRSA and BwRSA are identical at L1 level (BwRSA adds a Bayesian S2 layer).
+RSA-LI (Models 8–9) is @cite{franke-bergen-2020}'s Lexical Intentions model;
+at L1 with uniform P(i) and equal costs it equals EXH-LU (Table 1).
+wRSA and BwRSA are identical at L1 (BwRSA adds a Bayesian S2 layer).
+svRSA uses no prior in L0 meaning — QUD projection neutralizes it
+(Appendix A.3), giving categorical blocking.
 
 ## Connection to Other Formalizations
 
@@ -207,7 +219,29 @@ def parseMeaning : CWSParse → CWSWorld → CWSUtterance → Bool
   | .exh, w, u => exhMeaning w u
 
 -- ============================================================================
--- §5. Anti-Exhaustivity Condition (Eq. 6b)
+-- §5. Prior Weight
+-- ============================================================================
+
+/-- Prior weight for each world: 1:3 bias toward w_ab.
+
+    Baked into `meaning` so that L0(w|u) ∝ P(w) · ⟦u⟧(w), matching
+    the paper's eq. (1). This makes S1 asymmetric for utterances
+    true in both worlds, which is the source of anti-exhaustivity. -/
+def priorWeight : CWSWorld → ℝ
+  | .w_a => 1
+  | .w_ab => 3
+
+/-- Utterance cost (Appendix A.1, eq. A.1). The paper uses c(A) = 0 and
+    positive c for A∧B and A∧¬B, but with equal costs the classification
+    is prior-determined (eq. 6b). We set all costs to 0; the general case
+    is handled analytically by `antiExhaustivityCondition`. -/
+def utteranceCost : CWSUtterance → ℝ
+  | .A => 0
+  | .AandB => 0
+  | .AandNotB => 0
+
+-- ============================================================================
+-- §6. Anti-Exhaustivity Condition (Eq. 6b)
 -- ============================================================================
 
 /-- The paper's analytic condition for when baseline RSA is anti-exhaustive.
@@ -229,8 +263,7 @@ theorem equal_costs_reduces_to_prior (log_wab log_wa c : ℚ) :
 theorem uniform_no_antiexh :
     antiExhaustivityCondition 0 0 1 1 = false := by native_decide
 
-/-- Biased prior with equal costs: anti-exhaustivity triggered.
-    log(3/4) - log(1/4) > 0 (encoded as log ratio = 1 > 0). -/
+/-- Biased prior with equal costs: anti-exhaustivity triggered. -/
 theorem biased_triggers_antiexh :
     antiExhaustivityCondition 3 1 1 1 = true := by native_decide
 
@@ -241,63 +274,69 @@ theorem cost_asymmetry_can_block :
     antiExhaustivityCondition 3 1 10 0 = false := by native_decide
 
 -- ============================================================================
--- §6. RSA Configurations
+-- §7. RSA Configurations
 -- ============================================================================
 
 open Real (rpow rpow_nonneg)
 
 /-- Baseline RSA (Model 1) with biased prior (1:3 toward w_ab).
-    Literal semantics only, no exhaustification, `Latent = Unit`. -/
+
+    Prior enters L0 via `meaning`: `meaning(u,w) = P(w) · ⟦u⟧(w)`.
+    Since A is true in both worlds, L0(w_a|A) = 1/4, L0(w_ab|A) = 3/4.
+    S1 is asymmetric: S1(A|w_ab) = 9/25 > S1(A|w_a) = 1/17 (at α=2).
+    This drives genuine anti-exhaustivity: the speaker preferentially
+    uses A when w_ab is true (because L0 already favors w_ab given A). -/
 noncomputable def baselineBiased : RSA.RSAConfig CWSUtterance CWSWorld where
-  meaning _ _ u w := if literalTruth w u then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
+  meaning _ _ u w := if literalTruth w u then priorWeight w else 0
+  meaning_nonneg _ _ _ w := by split <;> (try cases w) <;> simp [priorWeight]
   s1Score l0 α _ w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2
   α_pos := by positivity
-  worldPrior := fun | .w_a => 1 | .w_ab => 3
-  worldPrior_nonneg := fun w => by cases w <;> positivity
+  worldPrior := fun _ => 1
+  worldPrior_nonneg := fun _ => le_of_lt one_pos
   latentPrior_nonneg := fun _ _ => le_of_lt one_pos
 
 /-- EXH-LU RSA (Model 7) with biased prior.
-    Parse is a latent variable; meaning under each parse is determined
-    by Innocent Exclusion. Under the exh parse, EXH(A) = A ∧ ¬B is
-    false in w_ab, blocking anti-exhaustivity. -/
+
+    Parse is a latent variable; meaning under each parse includes the
+    prior: `meaning(p,u,w) = P(w) · ⟦u⟧_p(w)`. Under the exh parse,
+    EXH(A) is false at w_ab, so meaning = P(w_ab) · 0 = 0 and
+    S1(A|w_ab, exh) = 0. The exh parse's blocking contribution
+    (S1(A|w_a, exh) = 1/2) outweighs the literal parse's prior
+    amplification, giving T(w_a) > T(w_ab) despite the 3:1 bias. -/
 noncomputable def exhLUBiased : RSA.RSAConfig CWSUtterance CWSWorld where
   Latent := CWSParse
-  meaning _ p u w := if parseMeaning p w u then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
+  meaning _ p u w := if parseMeaning p w u then priorWeight w else 0
+  meaning_nonneg _ _ _ w := by split <;> (try cases w) <;> simp [priorWeight]
   s1Score l0 α _ w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2
   α_pos := by positivity
-  worldPrior := fun | .w_a => 1 | .w_ab => 3
-  worldPrior_nonneg := fun w => by cases w <;> positivity
+  worldPrior := fun _ => 1
+  worldPrior_nonneg := fun _ => le_of_lt one_pos
   latentPrior_nonneg := fun _ _ => le_of_lt one_pos
 
 -- ============================================================================
--- §7. Predictions
+-- §8. Predictions (Models 1, 7)
 -- ============================================================================
 
-/-- Baseline RSA with biased prior: L1(w_ab|A) > L1(w_a|A).
+/-- Baseline RSA is genuinely anti-exhaustive: L1(w_ab|A) > L1(w_a|A).
 
-    Since A is true in both worlds and RSAConfig puts the prior at L1 only,
-    L0 = 1/2 in both worlds and S1 is symmetric: S1(A|w_a) = S1(A|w_ab).
-    So L1 merely reproduces the 3:1 prior — this is **prior-following**,
-    not anti-exhaustivity. L1(w_ab|A) = P(w_ab) = 3/4 exactly, not > 3/4.
-
-    The paper's version (prior inside L0) gives genuine anti-exhaustivity:
-    S1 amplifies the prior bias, making L1(w_ab|A) > P(w_ab). This
-    amplification requires prior-in-L0, which our encoding reserves for
-    models that explicitly need it (wRSA). -/
-theorem baseline_prior_following :
+    With prior-in-L0, S1 is asymmetric: S1(A|w_ab) = 9/25 > 1/17 = S1(A|w_a)
+    because L0(w_ab|A) = 3/4 > 1/4 = L0(w_a|A). The speaker preferentially
+    uses the cheap utterance A when w_ab is true, since L0 already assigns
+    high probability to w_ab. This is the paper's central problematic
+    prediction (Eq. 6b, Fig. 1). -/
+theorem baseline_antiexhaustive :
     baselineBiased.L1 .A .w_ab > baselineBiased.L1 .A .w_a := by
   rsa_predict
 
-/-- EXH-LU blocks anti-exhaustivity: even with 3:1 biased prior,
-    L1 correctly infers w_a from "A" because the exhaustified parse
-    (EXH(A) = A ∧ ¬B) kills w_ab. The EXH parse contributes zero
-    speaker probability for A in w_ab, overriding the prior bias. -/
+/-- EXH-LU blocks anti-exhaustivity: even with prior-in-L0 and 3:1 bias,
+    L1 correctly infers w_a from "A". The exh parse contributes
+    S1(A|w_a, exh) = 1/2 but S1(A|w_ab, exh) = 0, which outweighs
+    the literal parse's prior amplification (S1(A|w_ab, lit) = 9/25
+    vs S1(A|w_a, lit) = 1/17). Total: T(w_a) = 19/34 > 9/25 = T(w_ab). -/
 theorem exhlu_blocks_antiexhaustivity :
     exhLUBiased.L1 .A .w_a > exhLUBiased.L1 .A .w_ab := by
   rsa_predict
@@ -307,7 +346,7 @@ theorem exh_meaning_blocks_wab :
     exhMeaning .w_ab .A = false := by rfl
 
 -- ============================================================================
--- §8. Additional Domain Types (Models 2–6, 8–9)
+-- §9. Additional Domain Types (Models 2–6, 8–9)
 -- ============================================================================
 
 /-- Background assumption for wRSA (@cite{degen-etal-2015}).
@@ -322,9 +361,11 @@ instance : Fintype CWSBackground where
   elems := {.wonky, .default_}
   complete := fun x => by cases x <;> simp
 
-/-- QUD for svRSA (@cite{spector-2017-svRSA}).
-    - `coarse`: is A true? (trivial in this domain — A is always true)
-    - `fine`: which world? (distinguishes w_a from w_ab) -/
+/-- QUD for svRSA (@cite{spector-2017}).
+    - `coarse`: Q_A — is A true? Corresponds to `Discourse.QUD.trivial`.
+      All A-true worlds are equivalent; QUD projection gives L0 = 1.
+    - `fine`: Q_fine — which world? Corresponds to `Discourse.QUD.exact`.
+      Each world is its own cell; S1(A|w_ab) = 0 under exh interpretation. -/
 inductive CWSQUD where
   | coarse : CWSQUD
   | fine : CWSQUD
@@ -362,26 +403,26 @@ def interpMeaning : CWSInterpretation → CWSWorld → CWSUtterance → Bool
   | .antiExh => antiExhMeaning
 
 -- ============================================================================
--- §9. RSA Configurations (Models 2–6, 8–9)
+-- §10. RSA Configurations (Models 2–6, 8–9)
 -- ============================================================================
 
 /-- wRSA (Models 2–3) with biased prior. BwRSA is identical at L1.
 
     Background is a latent variable. Under the default background, the
-    prior is baked into L0 (matching the paper's convention for wRSA).
-    Under the wonky background, L0 uses uniform weights.
+    prior P(w|default) = P(w) is baked into meaning (matching the paper's
+    eq. 1 in §4.1: L0(w|u,b) ∝ P(w|b) · ⟦u⟧(w)). Under the wonky
+    background, P(w|wonky) = uniform, so meaning uses unit weights.
 
     The world-dependent `latentPrior` encodes P(w|b) × P(b): under
     `default_`, w_ab gets 3× the weight of w_a; under `wonky`, both
     worlds get equal weight. `worldPrior` is uniform since the prior
-    already enters through `meaning` and `latentPrior`. -/
+    enters through `meaning` (for L0) and `latentPrior` (for L1). -/
 noncomputable def wRSABiased : RSA.RSAConfig CWSUtterance CWSWorld where
   Latent := CWSBackground
   meaning _ b u w := match b with
     | .wonky => if literalTruth w u then 1 else 0
-    | .default_ => if literalTruth w u then
-        (match w with | .w_a => 1 | .w_ab => 3) else 0
-  meaning_nonneg _ b _ w := by cases b <;> simp only [] <;> split <;> (try cases w) <;> positivity
+    | .default_ => if literalTruth w u then priorWeight w else 0
+  meaning_nonneg _ b _ w := by cases b <;> simp only [] <;> split <;> (try cases w) <;> simp [priorWeight]
   s1Score l0 α _ w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2
@@ -394,73 +435,86 @@ noncomputable def wRSABiased : RSA.RSAConfig CWSUtterance CWSWorld where
     | .w_ab, .default_ => 3
   latentPrior_nonneg := fun w b => by cases w <;> cases b <;> positivity
 
-/-- svRSA (Models 4–5) with biased (3:1) prior.
+/-- svRSA (Models 4–5) — @cite{spector-2017} supervaluationist RSA.
 
-    QUD is a latent variable. Under the fine QUD, `meaning` uses
-    `exhMeaning`: exh(A) is false at w_ab, so L0 assigns 0 there,
-    and rpow(0, α) = 0 in S1 — the speaker cannot use A to convey
-    w_ab under Q_fine. Under the coarse QUD, literal meaning applies
-    and S1 is symmetric (A is uninformative about worlds under Q_A).
+    The paper's svRSA (§4.2, eqs 3–8) has S1 compute expected utility over
+    interpretations i, parameterized by QUD Q. The key structural properties
+    (Appendix A.3, B.3) are:
 
-    The paper proves svRSA blocks anti-exhaustivity **categorically**
-    for any prior (Appendix A.3: L1(w_ab|A) ≤ P(w_ab) always). Our
-    encoding captures the mechanism: S1(A|w_ab, fine) = 0 zeros out
-    the fine QUD contribution, leaving only the symmetric coarse
-    contribution for w_ab. This suffices to overcome a 3:1 prior.
+    1. Under Q_A (coarse): QUD projection makes L0(Q_A(w)|A) = 1 for all w
+       (all A-true worlds are in one cell). So S1(A|w, Q_A) is the same at
+       both worlds — the prior's effect on S1 is neutralized.
 
-    svRSA1 and svRSA2 differ only at S2 (production); both block
-    anti-exhaustivity at L1 (comprehension). -/
+    2. Under Q_fine: the exh interpretation makes A false at w_ab, so
+       S1(A|w_ab, Q_fine) = 0 (log(0) = -∞ kills the expected utility).
+
+    Our encoding approximates this by NOT including the prior in L0 meaning.
+    Under coarse QUD, L0(w|A) = 1/2 for both worlds → S1 world-independent.
+    Under fine QUD, exhMeaning makes A false at w_ab → S1(A|w_ab) = 0.
+
+    This gives **categorical blocking**: T(w_a) = T(w_ab) + S1(A|w_a, fine)
+    > T(w_ab) for any positive S1(A|w_a, fine), matching Appendix A.3.
+    Concretely: T(w_a) = 1/5 + 1/2 = 7/10 > 1/5 = T(w_ab).
+
+    The QUD values correspond to `Discourse.QUD.trivial` (coarse, Q_A) and
+    `Discourse.QUD.exact` (fine, Q_fine) from `Core/Discourse/QUD.lean`.
+
+    svRSA1 and svRSA2 differ only at S2 (production); both block at L1. -/
 noncomputable def svRSABiased : RSA.RSAConfig CWSUtterance CWSWorld where
   Latent := CWSQUD
   meaning _ q u w :=
-    if (match q with | .coarse => literalTruth w u | .fine => exhMeaning w u)
-    then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
+    match q with
+    | .coarse => if literalTruth w u then (1 : ℝ) else 0
+    | .fine => if exhMeaning w u then (1 : ℝ) else 0
+  meaning_nonneg _ q _ _ := by cases q <;> simp only [] <;> split <;> norm_num
   s1Score l0 α _ w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2
   α_pos := by positivity
-  worldPrior := fun | .w_a => 1 | .w_ab => 3
-  worldPrior_nonneg := fun w => by cases w <;> positivity
+  worldPrior := fun _ => 1
+  worldPrior_nonneg := fun _ => le_of_lt one_pos
   latentPrior_nonneg := fun _ _ => le_of_lt one_pos
 
-/-- FREE-LU (Model 6) with biased prior.
+/-- FREE-LU (Model 6) with biased prior, prior-in-L0.
 
     Three interpretations as latent variables: literal, exhaustive,
-    and anti-exhaustive. The exh and anti-exh interpretations
-    symmetrically cancel (each singles out one world for A), leaving
-    only the literal interpretation plus the prior to break the tie.
-
-    **Encoding note**: The paper predicts genuine anti-exhaustivity for
-    FREE-LU (L1(w_ab|A) > P(w_ab)) because its L0 includes the prior,
-    amplifying the bias. Our encoding (prior at L1 only) gives
-    prior-following instead. The qualitative group membership (same
-    group as baseline) is preserved either way. -/
+    and anti-exhaustive. With prior-in-L0, the literal parse is
+    asymmetric (S1(A|w_ab, lit) = 9/25 > 1/17 = S1(A|w_a, lit)),
+    making the anti-exh contribution dominant at w_ab.
+    Total: T(w_ab) = 9/25 + 0 + 1/2 = 43/50 > 19/34 = T(w_a).
+    This is genuine anti-exhaustivity, matching the paper's prediction. -/
 noncomputable def freeLUBiased : RSA.RSAConfig CWSUtterance CWSWorld where
   Latent := CWSInterpretation
-  meaning _ i u w := if interpMeaning i w u then 1 else 0
-  meaning_nonneg _ _ _ _ := by split <;> positivity
+  meaning _ i u w := if interpMeaning i w u then priorWeight w else 0
+  meaning_nonneg _ _ _ w := by split <;> (try cases w) <;> simp [priorWeight]
   s1Score l0 α _ w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2
   α_pos := by positivity
-  worldPrior := fun | .w_a => 1 | .w_ab => 3
-  worldPrior_nonneg := fun w => by cases w <;> positivity
+  worldPrior := fun _ => 1
+  worldPrior_nonneg := fun _ => le_of_lt one_pos
   latentPrior_nonneg := fun _ _ => le_of_lt one_pos
 
-/-- RSA-LI (Models 8–9) is structurally identical to EXH-LU at L1.
+/-- RSA-LI (Models 8–9) — @cite{franke-bergen-2020} Lexical Intentions.
 
-    The difference is at production: RSA-LI's S1 jointly chooses
-    (utterance, interpretation), while EXH-LU's S1 is per-interpretation.
-    At L1, both marginalize over interpretations with the same literal
-    and exhaustified meanings. With uniform interpretation priors and
-    zero costs, RSA-LI2 = EXH-LU exactly (noted in the paper, Table 1).
+    The paper's RSA-LI (§4.4, eqs 1–6 on p.18) has S1 jointly choose
+    (utterance, interpretation): S1(u,i|w) ∝ exp(λ·U1(u,i|w)), normalized
+    over all (u',i') pairs. EXH-LU instead has S1(u|w,i) normalized per-i.
 
-    We alias `rsaLIBiased := exhLUBiased` rather than duplicating. -/
+    At L1, both give L1(w|u) ∝ P(w)·Σ_i S1(A|w,i) — the difference is
+    only in how S1 is normalized. With uniform P(i) and equal costs
+    (c(A∧B) ≤ c(A∧¬B)), both block anti-exhaustivity at L1 (Appendix B.5).
+
+    The structural reason (same for both): S1 never prefers A over A∧¬B
+    at w_a (A∧¬B is at least as informative and has exh-compatible meaning),
+    so S1(A|w_ab) ≤ S1(A|w_a) under both normalizations.
+
+    We alias `rsaLIBiased := exhLUBiased`. The models differ at S2
+    (RSA-LI's S2 cannot select a specific meaning, unlike EXH-LU's). -/
 noncomputable def rsaLIBiased : RSA.RSAConfig CWSUtterance CWSWorld := exhLUBiased
 
 -- ============================================================================
--- §10. Predictions (Models 2–6, 8–9)
+-- §11. Predictions (Models 2–6, 8–9)
 -- ============================================================================
 
 /-- wRSA is anti-exhaustive: the default background bakes the biased prior
@@ -470,20 +524,21 @@ theorem wRSA_biased_antiexhaustive :
     wRSABiased.L1 .A .w_ab > wRSABiased.L1 .A .w_a := by
   rsa_predict
 
-/-- svRSA blocks anti-exhaustivity: the fine QUD zeros out S1(A|w_ab)
-    because exh(A) is false at w_ab. The coarse QUD is symmetric (A is
-    uninformative about worlds under Q_A). Despite the 3:1 prior bias,
-    the fine QUD's contribution to w_a (S1(A|w_a, fine) = 1/2) outweighs
-    the prior's pull toward w_ab. -/
+/-- svRSA blocks anti-exhaustivity **categorically** (Appendix A.3).
+
+    Under Q_A (coarse), S1(A|w, coarse) = 1/5 for both worlds (L0 is
+    uniform since no prior in meaning). Under Q_fine, S1(A|w_ab, fine) = 0
+    (exh(A) false at w_ab) while S1(A|w_a, fine) = 1/2. So
+    T(w_a) = 1/5 + 1/2 = 7/10 > 1/5 = T(w_ab). The blocking is structural:
+    T(w_a) = T(w_ab) + S1(A|w_a, fine) > T(w_ab) for any parameters. -/
 theorem svRSA_biased_exhaustive :
     svRSABiased.L1 .A .w_a > svRSABiased.L1 .A .w_ab := by
   rsa_predict
 
-/-- FREE-LU is prior-following: the anti-exhaustive interpretation
-    (A means A ∧ B) symmetrically counterbalances the exhaustive
-    interpretation. With S1 symmetric for A across worlds (exh and
-    anti-exh cancel out), L1 merely follows the 3:1 prior. -/
-theorem freelu_biased_prior_following :
+/-- FREE-LU is genuinely anti-exhaustive: with prior-in-L0, the literal
+    parse's S1 asymmetry makes the anti-exh interpretation dominant at w_ab.
+    T(w_ab) = 9/25 + 0 + 1/2 = 43/50 > 19/34 = 1/17 + 1/2 + 0 = T(w_a). -/
+theorem freelu_biased_antiexhaustive :
     freeLUBiased.L1 .A .w_ab > freeLUBiased.L1 .A .w_a := by
   rsa_predict
 
@@ -493,29 +548,26 @@ theorem rsali_blocks_antiexhaustivity :
   rsa_predict
 
 -- ============================================================================
--- §11. Classification
+-- §12. Classification
 -- ============================================================================
 
 /-- The paper's central result: 9 RSA models fall into two groups.
 
-    **Prior-following / anti-exhaustive** (L1(w_ab|A) > L1(w_a|A)):
-    baseline (prior-following only), wRSA (genuinely anti-exhaustive
-    via prior-in-L0), BwRSA (= wRSA at L1), FREE-LU (prior-following,
-    exh and anti-exh interpretations cancel).
+    **Anti-exhaustive** (L1(w_ab|A) > L1(w_a|A), i.e., L1(w_ab|A) > P(w_ab)):
+    baseline RSA, wRSA (+ BwRSA at L1), FREE-LU. These models allow
+    the prior bias to amplify through S1, predicting that listeners
+    hearing "A" will infer w_ab — contradicting experimental data.
 
     **Exhaustive** (L1(w_a|A) > L1(w_ab|A) despite biased prior):
-    EXH-LU, RSA-LI1/2 (= EXH-LU at L1), svRSA1/2.
-
-    Models with grammatical exhaustification (EXH-LU, RSA-LI) or
-    QUD-based gating (svRSA) block anti-exhaustivity. Models that
-    rely only on informativity-cost tradeoffs (baseline, wRSA) or
-    allow unconstrained strengthening (FREE-LU) do not. -/
-theorem prior_following_group :
+    EXH-LU, RSA-LI1/2 (= EXH-LU at L1), svRSA1/2. These models have
+    grammatical exhaustification or QUD-based gating that blocks
+    anti-exhaustivity, correctly predicting the experimental data. -/
+theorem antiexhaustive_group :
     baselineBiased.L1 .A .w_ab > baselineBiased.L1 .A .w_a ∧
     wRSABiased.L1 .A .w_ab > wRSABiased.L1 .A .w_a ∧
     freeLUBiased.L1 .A .w_ab > freeLUBiased.L1 .A .w_a :=
-  ⟨baseline_prior_following, wRSA_biased_antiexhaustive,
-   freelu_biased_prior_following⟩
+  ⟨baseline_antiexhaustive, wRSA_biased_antiexhaustive,
+   freelu_biased_antiexhaustive⟩
 
 theorem exhaustive_group :
     exhLUBiased.L1 .A .w_a > exhLUBiased.L1 .A .w_ab ∧
