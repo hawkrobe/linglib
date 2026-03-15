@@ -810,6 +810,71 @@ theorem passenger_individuation :
 end FramePhenomena
 
 -- ============================================================================
+-- TTR Questions — Ginzburg 2012 Ch. 4
+-- ============================================================================
+
+/-! ## Questions as Dependent Types
+@cite{ginzburg-2012} @cite{cooper-2023}
+
+In TTR, a question is a function from a record type to a type — essentially
+a dependent function `(x : R) → T(x)`. A *polar* question is a proposition
+(0-ary: no open parameters). A *wh-question* has open parameters: "Who runs?"
+is `λ (x : Ind) => Run(x)`.
+
+An *answer* to a question `Q : R → Type` is a witness `⟨r, Q r⟩` — a record
+`r` together with evidence that `Q r` is inhabited.
+
+This connects to KOS: the DGB's QUD can be typed as `TTRQuestion E`, and
+`Answerhood` can be instantiated so that a fact resolves a question when
+it provides a witness. -/
+
+/-- A TTR question: a dependent type over a domain.
+
+@cite{ginzburg-2012} Ch. 4: "A question is a function from a (possibly
+empty) record type to a type." Polar questions have `R = Unit`;
+wh-questions have `R` = the domain of quantification. -/
+structure TTRQuestion (R : Type) where
+  /-- The body of the question: maps each possible answer to its content type -/
+  body : R → Type
+
+/-- A complete answer to a TTR question: a witness. -/
+structure TTRAnswer (R : Type) (q : TTRQuestion R) where
+  /-- The answer value -/
+  witness : R
+  /-- Evidence that the answer satisfies the question body -/
+  evidence : q.body witness
+
+/-- A polar question: no open parameters, just a proposition. -/
+def TTRQuestion.polar (P : Type) : TTRQuestion Unit where
+  body := fun _ => P
+
+/-- A wh-question: "Which x satisfies P?" -/
+def TTRQuestion.wh {E : Type} (P : E → Type) : TTRQuestion E where
+  body := P
+
+/-- A question is resolved when a witness exists. -/
+def TTRQuestion.isResolved {R : Type} (q : TTRQuestion R) : Prop :=
+  ∃ r : R, Nonempty (q.body r)
+
+/-- A polar question is resolved iff the proposition is inhabited. -/
+theorem TTRQuestion.polar_resolved_iff (P : Type) :
+    (TTRQuestion.polar P).isResolved ↔ Nonempty P :=
+  ⟨fun ⟨_, h⟩ => h, fun h => ⟨(), h⟩⟩
+
+/-- A wh-question is resolved iff some entity satisfies the predicate. -/
+theorem TTRQuestion.wh_resolved_iff {E : Type} (P : E → Type) :
+    (TTRQuestion.wh P).isResolved ↔ ∃ e : E, Nonempty (P e) :=
+  Iff.rfl
+
+/-- Bridge: TTR parametric content (`Parametric`) as a question.
+
+A `Parametric T` has background type `Bg` and foreground `Bg → T`.
+When `T = Type`, this IS a TTR question: each background value
+determines a type (the question's content at that resolution). -/
+def Parametric.toTTRQuestion (p : Parametric Type) : TTRQuestion p.Bg where
+  body := p.fg
+
+-- ============================================================================
 -- Austinian Propositions — Ginzburg's checkable version (§6.5 + Ch. 4)
 -- ============================================================================
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.264] - 2026-03-15
+
+### Added
+- **TTR Questions** in `Discourse.lean`: `TTRQuestion R` as dependent types over a domain (Ginzburg 2012 Ch. 4)
+  - Polar questions (`TTRQuestion.polar`), wh-questions (`TTRQuestion.wh`), `TTRAnswer` witnesses
+  - `Parametric.toTTRQuestion` bridge connecting TTR parametric content to question types
+  - Resolution theorems: `polar_resolved_iff`, `wh_resolved_iff`
+
 ## [0.229.263] - 2026-03-15
 
 ### Added
