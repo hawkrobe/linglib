@@ -518,6 +518,13 @@ def β_fit : ℚ := 201 / 100
 -- §16. Float-Based Numerical Evaluation
 -- ============================================================================
 
+/-- Convert ℚ to Float for numerical evaluation. -/
+private def ratToFloat (q : ℚ) : Float :=
+  let num : Float := match q.num with
+    | .ofNat n => n.toFloat
+    | .negSucc n => -(n + 1).toFloat
+  num / q.den.toFloat
+
 /-- KL divergence over `allStates` in Float arithmetic.
     Skips states with P(s) = 0 (contributes 0 to KL by convention). -/
 def klFloat (P Q : VennState → Float) : Float :=
@@ -538,31 +545,43 @@ def allConclusions : List Conclusion :=
 def predictFloat (α : Float) (φ β : ℚ) (syl : Syllogism) :
     List (Conclusion × Float) :=
   -- L₀ posterior (exact in ℚ, converted to Float)
-  let postFloat : VennState → Float := fun s =>
-    (l0Post φ syl s).num.toFloat / (l0Post φ syl s).den.toFloat
+  let postFloat : VennState → Float := fun s => ratToFloat (l0Post φ syl s)
   -- For each conclusion, compute BA score
   let scores := allConclusions.map fun c =>
-    let naiveFloat : VennState → Float := fun s =>
-      (naiveL0Post φ c s).num.toFloat / (naiveL0Post φ c s).den.toFloat
+    let naiveFloat : VennState → Float := fun s => ratToFloat (naiveL0Post φ c s)
     let kl := klFloat postFloat naiveFloat
-    let figural := (figuralWeight β syl.order1AB c).num.toFloat /
-                   (figuralWeight β syl.order1AB c).den.toFloat
+    let figural := ratToFloat (figuralWeight β syl.order1AB c)
     (c, figural * Float.exp (α * (-kl)))
   -- Normalize
   let total := (scores.map Prod.snd).foldl (· + ·) 0.0
   scores.map fun (c, v) => (c, v / total)
+
+/-- Short name for display. -/
+def Conclusion.short : Conclusion → String
+  | .allAC => "Aac" | .allCA => "Aca"
+  | .someAC => "Iac" | .someCA => "Ica"
+  | .someNotAC => "Oac" | .someNotCA => "Oca"
+  | .noAC => "Eac" | .noCA => "Eca"
+  | .nvc => "NVC"
 
 /-- Compact string output for a syllogism's predicted distribution,
     showing conclusions sorted by predicted probability. -/
 def showPrediction (α : Float) (φ β : ℚ) (syl : Syllogism) : String :=
   let preds := predictFloat α φ β syl
   let sorted := preds.toArray.qsort (fun a b => a.2 > b.2) |>.toList
-  String.intercalate "\n" <| sorted.map fun (c, p) =>
-    s!"  {repr c}: {Float.toString (p * 100) |>.take 5}%"
+  String.intercalate ", " <| sorted.filterMap fun (c, p) =>
+    let pct := Float.toString (p * 100) |>.take 5
+    if p > 0.005 then some s!"{c.short}:{pct}%" else none
 
--- Key syllogism predictions with fitted parameters:
+-- Verified numerical predictions (α=6.88, φ=0.06, β=2.01):
+--
+-- Barbara (All A-B, All B-C):  Aac:99.21% — the paradigmatic valid syllogism
 -- #eval showPrediction 6.88 φ_fit β_fit barbara
+--
+-- All A-B, All C-B (invalid):  NVC:42.19%, Eac:23.88%, Aac:14.59%
 -- #eval showPrediction 6.88 φ_fit β_fit allAB_allCB
+--
+-- Some-Some (Some A-B, Some B-C):  Iac:41.54%, NVC:26.61%, Ica:20.66%
 -- #eval showPrediction 6.88 φ_fit β_fit someSome
 
 -- ============================================================================
