@@ -1097,7 +1097,6 @@ import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
-import Linglib.Phenomena.WordOrder.V2
 import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.TenseAspect.Studies.Rouillard2026
@@ -1133,6 +1132,7 @@ import Linglib.Phenomena.Agreement.Studies.AdamsonZompi2025
 import Linglib.Phenomena.Agreement.Studies.BejarRezac2009
 import Linglib.Phenomena.Agreement.Studies.Deal2024
 import Linglib.Phenomena.Agreement.Studies.PanchevaZubizarreta2018
+import Linglib.Phenomena.Agreement.Studies.Corbett2000
 import Linglib.Phenomena.Coordination.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000

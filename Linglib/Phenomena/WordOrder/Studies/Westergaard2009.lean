@@ -1,4 +1,4 @@
-import Linglib.Phenomena.WordOrder.V2
+import Linglib.Core.Grammar
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
@@ -53,7 +53,43 @@ namespace Phenomena.WordOrder.Studies.Westergaard2009
 
 open Minimalism (Cat fValue)
 open Core.InformationStructure (DiscourseStatus)
-open Phenomena.WordOrder.V2 (ClauseType V2Status)
+
+-- ============================================================================
+-- § 0  V2 Types
+-- ============================================================================
+
+/-! Shared types for describing V2 word order variation. -/
+
+/-- Clause types relevant to V2 variation. -/
+inductive ClauseType where
+  | declarative
+  | whQuestion
+  | yesNoQuestion
+  | exclamative
+  | imperative
+  | embeddedDecl
+  | embeddedQuestion
+  deriving DecidableEq, Repr, BEq
+
+/-- V2 status of a clause type in a given language/dialect. -/
+inductive V2Status where
+  /-- V2 is obligatory -/
+  | obligatory
+  /-- V2 is impossible (verb stays low or appears finally) -/
+  | impossible
+  /-- V2 alternates with non-V2, conditioned by other factors -/
+  | optional
+  deriving DecidableEq, Repr, BEq
+
+/-- A single V2 observation: what happens in a given clause type. -/
+structure V2Datum where
+  sentence : String
+  language : String
+  clauseType : ClauseType
+  v2Status : V2Status
+  description : String := ""
+  citation : String := ""
+  deriving Repr, BEq
 
 -- ============================================================================
 -- § 1  ForceHead and V2 Profiles (Table 3.1, p. 41)
@@ -308,7 +344,140 @@ def cueExpressed (lang : V2Profile) (c : MicroCue) : Bool :=
 #guard cueExpressed danish cueWhV2   == false
 
 -- ============================================================================
--- § 5  Cross-Language Comparison Theorems
+-- § 5  V2 Data from the Book
+-- ============================================================================
+
+/-! V2 observations from across the book, organized by language. These
+    were originally in `V2.lean` but belong here since all are introduced
+    by @cite{westergaard-2009}. -/
+
+-- Norwegian V2 Variation (Tromsø dialect, Ch. 2 Table 2.3)
+
+/-- Non-subject-initial declaratives: V2 obligatory. -/
+def no_decl_nonsubj : V2Datum :=
+  { sentence := "Av og til snakker vi tysk"
+    language := "Norwegian (Tromsø)"
+    clauseType := .declarative
+    v2Status := .obligatory
+    description := "Non-subject-initial declarative: V2 obligatory"
+    citation := "@cite{westergaard-2009} Ch. 2 Table 2.3" }
+
+/-- Yes/no-questions: V2 obligatory. -/
+def no_yesno : V2Datum :=
+  { sentence := "Snakker dere norsk?"
+    language := "Norwegian (Tromsø)"
+    clauseType := .yesNoQuestion
+    v2Status := .obligatory
+    description := "Yes/no-question: V2 obligatory"
+    citation := "@cite{westergaard-2009} Ch. 1 (3)" }
+
+/-- Wh-questions with long (polysyllabic) wh-phrases: V2 obligatory. -/
+def no_wh_long : V2Datum :=
+  { sentence := "Korfor gikk ho?"
+    language := "Norwegian (Tromsø)"
+    clauseType := .whQuestion
+    v2Status := .obligatory
+    description := "Wh-question with disyllabic korfor 'why': V2 obligatory"
+    citation := "@cite{westergaard-2009} Ch. 2 (40)" }
+
+/-- Wh-questions with short (monosyllabic) wh-words: V2 optional,
+    conditioned by information structure. -/
+def no_wh_short : V2Datum :=
+  { sentence := "Ka legen sa? / Ka sa legen?"
+    language := "Norwegian (Tromsø)"
+    clauseType := .whQuestion
+    v2Status := .optional
+    description := "Wh-question with monosyllabic ka 'what': V2/non-V2 depends on subject givenness"
+    citation := "@cite{westergaard-2009} Ch. 2 (43)–(45)" }
+
+/-- Exclamatives: non-V2 obligatory. -/
+def no_excl : V2Datum :=
+  { sentence := "Kor rart han snakke!"
+    language := "Norwegian (Tromsø)"
+    clauseType := .exclamative
+    v2Status := .impossible
+    description := "Exclamative: non-V2 obligatory"
+    citation := "@cite{westergaard-2009} Ch. 1 (5)" }
+
+/-- Embedded declaratives: non-V2 (mostly). -/
+def no_emb_decl : V2Datum :=
+  { sentence := "Han sa (at) han ikke kommer"
+    language := "Norwegian (Tromsø)"
+    clauseType := .embeddedDecl
+    v2Status := .impossible
+    description := "Embedded declarative: non-V2 (verb below negation)"
+    citation := "@cite{westergaard-2009} Ch. 2 (36)" }
+
+-- Cross-Germanic Contrasts
+
+/-- Standard English: no V2 in declaratives (SVO base order). -/
+def en_decl : V2Datum :=
+  { sentence := "The children have seen this film"
+    language := "English"
+    clauseType := .declarative
+    v2Status := .impossible
+    description := "English declarative: no V2 (SVO base order)"
+    citation := "@cite{westergaard-2009} Ch. 3 Table 3.1" }
+
+/-- Standard English: V2 in wh-questions (via SAI). -/
+def en_wh : V2Datum :=
+  { sentence := "What will you wear tonight?"
+    language := "English"
+    clauseType := .whQuestion
+    v2Status := .obligatory
+    description := "English wh-question: V2 (subject-auxiliary inversion)"
+    citation := "@cite{westergaard-2009} Ch. 3 Table 3.1" }
+
+/-- Belfast English: V2 in embedded questions too. -/
+def belfast_emb_q : V2Datum :=
+  { sentence := "I wonder could he come"
+    language := "English (Belfast)"
+    clauseType := .embeddedQuestion
+    v2Status := .obligatory
+    description := "Belfast English: V2 in embedded questions"
+    citation := "@cite{westergaard-2009} Ch. 3 Table 3.1; @cite{henry-1995}" }
+
+/-- Danish: V2 in exclamatives (unlike Norwegian and English). -/
+def da_excl : V2Datum :=
+  { sentence := "Hvor er han sød!"
+    language := "Danish"
+    clauseType := .exclamative
+    v2Status := .obligatory
+    description := "Danish exclamative: V2 (unlike Norwegian/English)"
+    citation := "@cite{westergaard-2009} Ch. 2 (19)" }
+
+/-- German root declaratives: V2 obligatory. -/
+def de_decl : V2Datum :=
+  { sentence := "Diesen Film haben die Kinder gesehen"
+    language := "German"
+    clauseType := .declarative
+    v2Status := .obligatory
+    description := "German root declarative: V2"
+    citation := "@cite{vikner-1995}" }
+
+/-- German embedded clauses with complementizer: verb-final (no V2).
+    The verb raises to I/Fin (hence +Fin° in Table 3.1) but not to C,
+    so it appears clause-finally due to SOV base order. -/
+def de_emb : V2Datum :=
+  { sentence := "... dass die Kinder diesen Film gesehen haben"
+    language := "German"
+    clauseType := .embeddedDecl
+    v2Status := .impossible
+    description := "German embedded clause with dass: verb-final (V-to-I only, not V-to-C)"
+    citation := "@cite{vikner-1995}" }
+
+-- Empirical Generalizations
+#guard no_yesno.v2Status == .obligatory
+#guard no_excl.v2Status == .impossible
+#guard no_wh_short.v2Status == .optional
+#guard en_decl.v2Status == .impossible
+#guard en_wh.v2Status == .obligatory
+#guard da_excl.v2Status == .obligatory
+#guard de_decl.v2Status == .obligatory
+#guard de_emb.v2Status == .impossible
+
+-- ============================================================================
+-- § 6  Cross-Language Comparison Theorems
 -- ============================================================================
 
 /-- Standard Norwegian and Standard English differ only on Decl°.
@@ -366,7 +535,7 @@ theorem german_unique_fin :
   decide
 
 -- ============================================================================
--- § 6  Bridge to SAI Data
+-- § 7  Bridge to SAI Data
 -- ============================================================================
 
 /-! English SAI (from `SubjectAuxInversion.lean`) is exactly the surface
@@ -404,31 +573,27 @@ theorem belfast_embedded_inv_consistent :
   decide
 
 -- ============================================================================
--- § 7  Bridge to V2 Data
+-- § 8  Bridge to V2 Data
 -- ============================================================================
 
-open Phenomena.WordOrder.V2 in
 /-- Norwegian yes/no-questions are obligatorily V2, consistent with +Pol°. -/
 theorem no_yesno_consistent :
     no_yesno.v2Status = .obligatory ∧
     stdNorwegian.verbMovement .Pol = true := by
   decide
 
-open Phenomena.WordOrder.V2 in
 /-- Norwegian exclamatives are non-V2, consistent with −Excl°. -/
 theorem no_excl_consistent :
     no_excl.v2Status = .impossible ∧
     stdNorwegian.verbMovement .Excl = false := by
   decide
 
-open Phenomena.WordOrder.V2 in
 /-- Danish exclamatives are V2, consistent with +Excl°. -/
 theorem da_excl_consistent :
     da_excl.v2Status = .obligatory ∧
     danish.verbMovement .Excl = true := by
   decide
 
-open Phenomena.WordOrder.V2 in
 /-- German embedded clauses are verb-final (no V2), even though German
     has +Fin° (V-to-I). V2 = verb-to-C, which requires +Decl°/+Int° etc.
     Verb-final is consistent with −Wh° (no V-to-C in embedded contexts). -/
@@ -438,7 +603,7 @@ theorem de_emb_no_v2 :
   decide
 
 -- ============================================================================
--- § 8  Bridge to GermanicV2.lean
+-- § 9  Bridge to GermanicV2.lean
 -- ============================================================================
 
 /-! `GermanicV2.lean` proves that German V2 involves head-to-head movement
@@ -461,7 +626,7 @@ theorem german_decl_v2_bridge :
     german.verbMovement .Decl = true := by decide
 
 -- ============================================================================
--- § 9  Bridge to Typology
+-- § 10  Bridge to Typology
 -- ============================================================================
 
 /-! WALS classifies German as having "no dominant order" (`Typology.lean`).
@@ -490,7 +655,7 @@ theorem english_svo_explained :
     stdEnglish.verbMovement .Fin  = false := by decide
 
 -- ============================================================================
--- § 10  Information Structure and "Optional" V2
+-- § 11  Information Structure and "Optional" V2
 -- ============================================================================
 
 /-! In Tromsø *wh*-questions with monosyllabic *wh*-words, V2 vs. non-V2
@@ -520,7 +685,7 @@ theorem given_predicts_nonV2 : tromsøWhV2Preference .given = .impossible := rfl
 theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
 
 -- ============================================================================
--- § 11  Economy
+-- § 12  Economy
 -- ============================================================================
 
 /-! @cite{westergaard-2009}'s structural economy (p. 4):

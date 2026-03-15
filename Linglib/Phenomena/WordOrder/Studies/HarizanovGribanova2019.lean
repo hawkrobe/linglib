@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
-import Linglib.Phenomena.WordOrder.V2
+import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 
 /-!
 # Head Movement in Bulgarian LHM and Germanic V2
@@ -66,7 +66,7 @@ theorem captures_alternation :
 -- Germanic V2 (@cite{vikner-1995})
 -- ============================================================================
 
-open Phenomena.WordOrder.V2
+open Phenomena.WordOrder.Studies.Westergaard2009
 
 /-- German root declaratives are V2 — consistent with V-to-C head movement. -/
 theorem models_root_v2 :
