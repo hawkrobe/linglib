@@ -103,14 +103,8 @@ import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Core.Genericity
 import Linglib.Core.FormalLanguage
-import Linglib.Core.Case.Basic
-import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Case.Containment
-import Linglib.Core.Case.Syncretism
-import Linglib.Core.Case.SplitConditions
-import Linglib.Core.Case.LocalExtension
-import Linglib.Core.Case.ComparativeEntry
-import Linglib.Core.Case.FeatureDecomposition
+import Linglib.Core.Case
+import Linglib.Theories.Morphology.CaseContainment
 import Linglib.Core.Relativization.Basic
 import Linglib.Core.Relativization.Extraction
 import Linglib.Core.Relativization.Hierarchy
@@ -643,6 +637,7 @@ import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Studies.Haspelmath2021
 import Linglib.Phenomena.Case.Studies.Karlsson2017
 import Linglib.Phenomena.Case.Studies.AndersonJM2006
+import Linglib.Phenomena.Case.Studies.Woolford1997
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
@@ -1173,7 +1168,6 @@ import Linglib.Phenomena.Case.Compare
 import Linglib.Phenomena.Generics.CompareModality
 import Linglib.Phenomena.Generics.CompareSemantics
 import Linglib.Phenomena.Gradability.Compare
-import Linglib.Phenomena.Modality.CompareKratzerRSA
 import Linglib.Phenomena.Modality.ComparePosition
 import Linglib.Phenomena.Presupposition.Compare
 import Linglib.Phenomena.ScalarImplicatures.Compare

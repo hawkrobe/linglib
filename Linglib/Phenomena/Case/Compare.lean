@@ -19,12 +19,15 @@ Three competing theories of abstract case assignment in Minimalism:
    another caseless NP gets ACC (in accusative languages); unmarked NPs
    get NOM. No specific head is needed.
 
-3. **Inherent/Voice-based case**:
-   ERG is inherent case assigned by Voice (tied to the agent θ-role),
-   ACC is structural from Voice (object licensing), ABS is structural
-   from Infl. Case is directly determined by argument structure, not by
-   configuration or feature checking. This gives a tripartite underlying
-   system (ERG ≠ ACC ≠ ABS) visible through agreement patterns.
+3. **Voice-based case** (@cite{scott-2023}, building on @cite{woolford-1997}):
+   @cite{woolford-1997} argues that ERG is a lexical/inherent Case (like
+   dative), assigned at D-structure in conjunction with θ-role assignment.
+   @cite{scott-2023} reframes this in a modern Voice-based architecture:
+   ERG is inherent case from Voice (tied to the agent θ-role), ACC is
+   structural from Voice (object licensing), ABS is structural from Infl.
+   Case is directly determined by argument structure, not by configuration
+   or feature checking. This gives a tripartite underlying system
+   (ERG ≠ ACC ≠ ABS) visible through agreement patterns.
 
 ## Key Divergences
 
@@ -91,7 +94,7 @@ theorem transitive_acc :
   native_decide
 
 -- ============================================================================
--- § 3: Voice-Based Case (Woolford / Scott)
+-- § 3: Voice-Based Case (@cite{scott-2023}, building on @cite{woolford-1997})
 -- ============================================================================
 
 /-! @cite{scott-2023} argues for Mam that case is assigned by three different
