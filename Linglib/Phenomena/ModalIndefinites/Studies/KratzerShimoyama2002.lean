@@ -28,16 +28,18 @@ movement.
 2. **Pointwise FA = Set applicative** (§3): K&S's Hamblin FA is exactly
    the set applicative from @cite{charlow-2020}, already formalized in
    `Applicative.lean`.
-3. **Singleton collapse**: When alternatives are a singleton (ordinary
+3. **GQ as special case** (§2): Determiner quantification falls out
+   when alternatives are individuals — `[∃]({P(x) : x ∈ A}) ↔ ∃x∈A, P(x)`.
+4. **Singleton collapse**: When alternatives are a singleton (ordinary
    semantics), Hamblin modals reduce to standard Kripke modals.
-4. **Modal–indefinite interaction** (§7): Possibility/necessity modals
+5. **Modal–indefinite interaction** (§7): Possibility/necessity modals
    are sensitive to Hamblin alternatives in their scope.
-5. **Distribution requirement as implicature** (§6, §8): The free choice
+6. **Distribution requirement as implicature** (§6, §8): The free choice
    effect is derived via Gricean reasoning, not semantic entailment.
-6. **End-to-end FC derivation**: Hamblin T-content + implicature = FC.
-7. **Selectivity** (§9): Non-selective (Japanese) vs. selective
+7. **End-to-end FC derivation**: Hamblin T-content + implicature = FC.
+8. **Selectivity** (§9): Non-selective (Japanese) vs. selective
    (Indo-European) indeterminate systems, with Beck effect data.
-8. **Cross-linguistic paradigm** (§1): Latvian indeterminate series.
+9. **Cross-linguistic paradigm** (§1): Latvian indeterminate series.
 
 ## Integration Points
 
@@ -53,8 +55,8 @@ set_option autoImplicit false
 
 namespace Phenomena.ModalIndefinites.Studies.KratzerShimoyama2002
 
-open Semantics.Composition.SetMonad (eta setBind)
-open Semantics.Composition.Applicative (setPure setAp)
+open Semantics.Composition.SetMonad (eta)
+open Semantics.Composition.Applicative (setAp)
 
 -- ════════════════════════════════════════════════════════════════
 -- Part I: Hamblin Alternative Semantics Generalized (§2-3)
@@ -141,13 +143,45 @@ inductive QuantOperator where
   deriving DecidableEq, BEq, Repr
 
 /-- Semantic interpretation of a propositional quantificational operator.
-    Maps each operator tag to its actual semantics. -/
-def QuantOperator.applyProp (op : QuantOperator) (A : HamblinDen (W → Prop)) : W → Prop :=
+    Returns `none` for `.question`, which produces an alternative set rather
+    than a proposition. -/
+def QuantOperator.applyProp (op : QuantOperator) (A : HamblinDen (W → Prop)) : Option (W → Prop) :=
   match op with
-  | .exists_ => opExists A
-  | .forall_ => opForall A
-  | .neg     => opNeg A
-  | .question => opExists A  -- Q returns alternatives; as a proposition, use ∃
+  | .exists_  => some (opExists A)
+  | .forall_  => some (opForall A)
+  | .neg      => some (opNeg A)
+  | .question => none
+
+/-- The question operator returns the alternative set unchanged:
+    `[Q](A) = A`. This is distinct from the propositional operators
+    because it does not collapse alternatives to a truth value. -/
+theorem question_returns_alternatives (A : HamblinDen (W → Prop)) :
+    QuantOperator.applyProp .question A = none ∧ opQ A = A :=
+  ⟨rfl, rfl⟩
+
+/-- **Determiner quantification as special case** (p. 126):
+    "Determiner quantification falls out as a special case, the case where
+    the alternatives are individuals."
+
+    When an indeterminate denotes a set of individuals A and a predicate
+    lifts each individual to a proposition, sentential `[∃]` over the
+    resulting propositional alternatives equals the standard GQ existential:
+    `[∃]({P(x) : x ∈ A})(w) ↔ ∃ x ∈ A, P(x)(w)`. -/
+theorem opExists_gq_special_case {E W : Type}
+    (A : HamblinDen E) (P : E → W → Prop) (w : W) :
+    opExists (fun p => ∃ x, A x ∧ p = P x) w ↔ ∃ x, A x ∧ P x w := by
+  constructor
+  · rintro ⟨_, ⟨x, hA, rfl⟩, hp⟩; exact ⟨x, hA, hp⟩
+  · rintro ⟨x, hA, hp⟩; exact ⟨P x, ⟨x, hA, rfl⟩, hp⟩
+
+/-- Universal counterpart: `[∀]` over individual alternatives = standard ∀.
+    `[∀]({P(x) : x ∈ A})(w) ↔ ∀ x ∈ A, P(x)(w)`. -/
+theorem opForall_gq_special_case {E W : Type}
+    (A : HamblinDen E) (P : E → W → Prop) (w : W) :
+    opForall (fun p => ∃ x, A x ∧ p = P x) w ↔ ∀ x, A x → P x w := by
+  constructor
+  · intro h x hA; exact h (P x) ⟨x, hA, rfl⟩
+  · rintro h _ ⟨x, hA, rfl⟩; exact h x hA
 
 end Operators
 
