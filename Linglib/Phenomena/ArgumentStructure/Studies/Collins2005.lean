@@ -14,7 +14,7 @@ and the Voice/phase infrastructure in `Theories.Syntax.Minimalism.Core.Voice`.
 @cite{collins-2005} argues that passive involves **smuggling**: PartP (= [Part V DP])
 is the complement of v. In passive, PartP moves to Spec-VoiceP, carrying the
 object past the external argument in Spec-vP. The object can then raise to
-Spec-TP without violating Relativized Minimality.
+Spec-TP without violating Relativized Minimality (@cite{rizzi-1990}).
 
 ### Key structural claims:
 

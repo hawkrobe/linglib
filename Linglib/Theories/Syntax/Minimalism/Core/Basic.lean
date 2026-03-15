@@ -45,7 +45,7 @@ inductive Cat where
   | Force -- force (@cite{rizzi-1997} split-CP; clause-typing [decl]/[interrog])
   | Neg   -- negation (@cite{pollock-1989}; @cite{zanuttini-1997}; hosts [±neg])
   | Mod   -- modality (@cite{cinque-1999}; modal auxiliaries)
-  | Rel   -- relative (@cite{rizzi-2001}; relativization feature)
+  | Rel   -- relative (cartographic left periphery, @cite{rizzi-1997})
   | Pol   -- polarity (@cite{laka-1990}; ΣP for affirmation/negation)
   | Asp   -- aspect (@cite{cinque-1999}; inner inflectional, between Voice and T)
   | Evid  -- evidential (@cite{cinque-1999}; outer inflectional, above T below Fin)

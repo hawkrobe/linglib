@@ -61,7 +61,7 @@ def catFeatures : Cat → CatFeatures
   | .Force => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
   | .Neg   => ⟨true,  false⟩   -- [+V, -N] (@cite{pollock-1989})
   | .Mod   => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
-  | .Rel   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-2001})
+  | .Rel   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997})
   | .Pol   => ⟨true,  false⟩   -- [+V, -N] (@cite{laka-1990})
   | .Asp   => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
   | .Evid  => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})

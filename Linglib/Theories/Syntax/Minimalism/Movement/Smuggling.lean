@@ -7,12 +7,12 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 
 > Suppose a constituent YP contains XP. Furthermore, suppose XP is
 > inaccessible to Z because of the presence of W (a barrier, phase boundary,
-> or intervener for the MLC / Relativized Minimality). If YP moves to a
+> or intervener for the MLC / Relativized Minimality (@cite{rizzi-1990})). If YP moves to a
 > position c-commanding W, we say that YP **smuggles** XP past W.
 
 The canonical application is passive: PartP (containing the object) moves
 to Spec-VoiceP, smuggling the object past the external argument in Spec-vP.
-The object can then raise to Spec-TP without violating Relativized Minimality,
+The object can then raise to Spec-TP without violating Relativized Minimality (@cite{rizzi-1990}),
 because the intervening external argument no longer c-commands it.
 
 @cite{storment-2026} extends this to quotative inversion (QI): VP moves
@@ -155,7 +155,7 @@ theorem nonthematic_without_complement_no_qi :
     @cite{collins-2005}: PartP (= [Part V DP_object]) is complement of v.
     In passive, PartP moves to Spec-VoiceP, smuggling the object DP past
     the external argument in Spec-vP. The object can then raise to
-    Spec-TP without violating Relativized Minimality.
+    Spec-TP without violating Relativized Minimality (@cite{rizzi-1990}).
 
     The structural parallel with QI is exact:
     - QI: VP smuggles theme past agent

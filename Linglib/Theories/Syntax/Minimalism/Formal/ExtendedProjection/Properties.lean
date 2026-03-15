@@ -56,7 +56,7 @@ def epSemanticType : Cat → EPSemanticType
   | .Evid              => .intermediate   -- F2: evidential (@cite{cinque-1999})
   | .Foc               => .intermediate   -- F4: focus (@cite{rizzi-1997} split-CP)
   | .Top               => .intermediate   -- F5: topic (@cite{rizzi-1997} split-CP)
-  | .Rel               => .intermediate   -- F5: relative (@cite{rizzi-2001})
+  | .Rel               => .intermediate   -- F5: relative (@cite{rizzi-1997})
   | .Fin               => .intermediate   -- F3: finiteness (@cite{rizzi-1997})
   | .C                 => .proposition    -- F6: proposition (force)
   | .Force             => .proposition    -- F6: force (@cite{rizzi-1997} split-CP)

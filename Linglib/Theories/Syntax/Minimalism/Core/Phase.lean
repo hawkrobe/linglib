@@ -240,7 +240,7 @@ def isPhaseBounded (mover target : SyntacticObject)
   ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head mover ∧
     contains target ph.head
 
-/-- Phase-bounded locality subsumes Relativized Minimality for Agree:
+/-- Phase-bounded locality subsumes Relativized Minimality (@cite{rizzi-1990}) for Agree:
     if a goal is inside a phase complement, no probe outside can reach it. -/
 theorem pic_blocks_agree (strength : PICStrength) (phase _probe goal : SyntacticObject)
     (h_impenetrable : phaseImpenetrable strength phase goal)

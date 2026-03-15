@@ -111,7 +111,7 @@ inductive FeatureVal where
   | finite : Bool → FeatureVal       -- [±finite] (Fin head, @cite{rizzi-1997})
   | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
   | neg : Bool → FeatureVal          -- [±neg] (NegP, @cite{pollock-1989})
-  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, @cite{rizzi-2001})
+  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, @cite{rizzi-1997})
   | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, @cite{elkins-torrence-brown-2026})
   | ellipsis : Bool → FeatureVal   -- [E] feature licensing NP-ellipsis (@cite{lobeck-1995}, @cite{saab-2026})
   | catN : Bool → FeatureVal       -- [N] referentiality (@cite{panagiotidis-2015})
