@@ -79,10 +79,15 @@ instance regionFM : FiniteModel regionModel where
   complete := fun x => by cases x <;> simp
   nodup := by simp [List.nodup_cons, List.mem_cons]
 
-/-- "All Xs are Ys" in state s: every populated X-region also has Y.
-    Grounded in `every_sem` from `Quantifier.lean`. -/
+/-- "All Xs are Ys" in state s: every populated X-region also has Y,
+    AND there is at least one populated X-region (existential import).
+
+    Per @cite{tessler-tenenbaum-goodman-2022} footnote 4: "All As are Bs
+    is false if there are no As." This ensures All entails Some.
+    Grounded in `every_sem` and `some_sem` from `Quantifier.lean`. -/
 def syllAll (s : VennState) (X Y : Region → Bool) : Bool :=
-  every_sem regionModel (fun r => s r && X r) Y
+  every_sem regionModel (fun r => s r && X r) Y &&
+  some_sem regionModel (fun r => s r && X r) (fun _ => true)
 
 /-- "Some Xs are Ys": some populated X-region also has Y. -/
 def syllSome (s : VennState) (X Y : Region → Bool) : Bool :=
@@ -195,34 +200,43 @@ theorem barbara_valid (s : VennState)
     (h1 : syllAll s hasA hasB = true)
     (h2 : syllAll s hasB hasC = true) :
     syllAll s hasA hasC = true := by
-  unfold syllAll every_sem at *
-  simp only [FiniteModel.elements] at *
-  rw [List.all_eq_true] at *
-  intro r hr
-  have h1r := h1 r hr
-  have h2r := h2 r hr
-  cases r <;> simp_all [hasA, hasB, hasC]
+  unfold syllAll at *
+  simp only [Bool.and_eq_true] at *
+  obtain ⟨h1e, h1s⟩ := h1
+  obtain ⟨h2e, _⟩ := h2
+  constructor
+  · -- every_sem: every populated A-region has C
+    unfold every_sem at *
+    simp only [FiniteModel.elements] at *
+    rw [List.all_eq_true] at *
+    intro r hr
+    have h1r := h1e r hr
+    have h2r := h2e r hr
+    cases r <;> simp_all [hasA, hasB, hasC]
+  · -- some_sem: there exists a populated A-region (inherited from h1)
+    exact h1s
 
 /-- Barbara also validates "Some A are C" (by subalternation: All → Some).
-    Uses `barbara_valid` for the All A-C premise, then
-    `subalternation_a_i` from `Quantifier.lean` to step from A-form
-    to I-form — genuine structural coupling with the GQ infrastructure. -/
+    Uses `barbara_valid` for the All A-C premise, then extracts the
+    existential import — with existential import in `syllAll`, the
+    non-emptiness hypothesis is built in, so no separate witness needed. -/
 theorem barbara_some_valid (s : VennState)
     (h1 : syllAll s hasA hasB = true)
-    (h2 : syllAll s hasB hasC = true)
-    (hA : syllSome s hasA hasA = true) :
+    (h2 : syllAll s hasB hasC = true) :
     syllSome s hasA hasC = true := by
-  -- Step 1: derive All A-C from Barbara
   have hAllAC := barbara_valid s h1 h2
-  -- Step 2: apply subalternation (All → Some when restrictor non-empty)
-  unfold syllAll at hAllAC; unfold syllSome
-  apply subalternation_a_i _ _ _ hAllAC
-  -- Step 3: derive restrictor non-emptiness from hA
-  unfold syllSome some_sem at hA
-  simp only [FiniteModel.elements] at hA ⊢
-  rw [List.any_eq_true] at hA ⊢
-  obtain ⟨r, hr, hpred⟩ := hA
-  exact ⟨r, hr, by cases r <;> simp_all [hasA]⟩
+  unfold syllAll at hAllAC
+  simp only [Bool.and_eq_true] at hAllAC
+  obtain ⟨hEvery, hSome⟩ := hAllAC
+  -- hEvery : every populated A-region has C
+  -- hSome : there exists a populated A-region
+  unfold syllSome
+  unfold every_sem at hEvery; unfold some_sem at hSome ⊢
+  simp only [FiniteModel.elements] at *
+  rw [List.any_eq_true] at hSome ⊢
+  rw [List.all_eq_true] at hEvery
+  obtain ⟨r, hr, hpop⟩ := hSome
+  exact ⟨r, hr, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
 
 -- ============================================================================
 -- §5. Logical Invalidity
@@ -389,27 +403,29 @@ theorem beliefAlignment_nvc_uninformative
 -- §11. Informativity: "All" More Informative Than "Some"
 -- ============================================================================
 
-/-- Subalternation in the region model: "All A are C" entails "Some A are C"
-    (when there are As). Proved by applying `subalternation_a_i` from
-    `Quantifier.lean` — the generic A→I entailment for any `FiniteModel`.
+/-- Subalternation in the region model: "All A are C" entails "Some A are C".
+    With existential import built into `syllAll`, no separate non-emptiness
+    hypothesis is needed — `syllAll` guarantees at least one A exists.
 
     For the Belief Alignment model, this means "All A-C" produces a
     more peaked L₀ posterior than "Some A-C", yielding lower KL
     divergence and hence higher speaker utility — explaining why
     Barbara participants prefer "All" over the also-valid "Some". -/
 theorem all_entails_some_AC (s : VennState)
-    (hA : syllSome s hasA hasA = true)
     (h : concMeaning .allAC s = true) :
     concMeaning .someAC s = true := by
   simp only [concMeaning] at *
-  unfold syllAll at h; unfold syllSome
-  apply subalternation_a_i _ _ _ h
-  -- Derive restrictor non-emptiness from hA
-  unfold syllSome some_sem at hA
-  simp only [FiniteModel.elements] at hA ⊢
-  rw [List.any_eq_true] at hA ⊢
-  obtain ⟨r, hr, hpred⟩ := hA
-  exact ⟨r, hr, by cases r <;> simp_all [hasA]⟩
+  unfold syllAll at h
+  simp only [Bool.and_eq_true] at h
+  obtain ⟨hEvery, hSome⟩ := h
+  -- hEvery : every populated A-region has C
+  -- hSome : there exists a populated A-region (existential import)
+  unfold syllSome; unfold every_sem at hEvery; unfold some_sem at hSome ⊢
+  simp only [FiniteModel.elements] at *
+  rw [List.any_eq_true] at hSome ⊢
+  rw [List.all_eq_true] at hEvery
+  obtain ⟨r, hr, hpop⟩ := hSome
+  exact ⟨r, hr, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
 
 /-- Strict informativity: "All A-C" is compatible with strictly fewer states.
     Witness: `state_A_AC` has regions .A and .AC populated. Region .A has
@@ -585,12 +601,13 @@ def showPrediction (α : Float) (φ β : ℚ) (syl : Syllogism) : String :=
     if p > 0.005 then some s!"{c.short}:{pct}%" else none
 
 -- Verified numerical predictions (α=6.88, φ=0.06, β=2.01):
+-- (with existential import: "All Xs are Ys" requires Xs to exist)
 --
--- Fig 1: Barbara (All A-B, All B-C)   → Aac:99.21%  (A-C bias)
--- Fig 3: All A-B, All C-B (invalid)   → NVC:52.35%, Eac=Eca:14.74%  (no bias)
--- Fig 1: Some A-B, Some B-C           → Iac:41.54%, NVC:26.61%, Ica:20.66%
--- Fig 4: All B-A, All C-B             → Aca:99.21%  (C-A bias, mirror of Fig 1)
--- Fig 2: All B-A, All B-C             → NVC:68.40%, Aca=Aac:11.76%  (no bias)
+-- Fig 1: Barbara (All A-B, All B-C)   → Aac:96.69%  (A-C bias)
+-- Fig 3: All A-B, All C-B (invalid)   → NVC:73.83%, Aac=Aca:6.94%  (no bias)
+-- Fig 1: Some A-B, Some B-C           → Iac:41.42%, NVC:26.54%, Ica:20.60%
+-- Fig 4: All B-A, All C-B             → Aca:96.69%  (C-A bias, mirror of Fig 1)
+-- Fig 2: All B-A, All B-C             → Ica=Iac:35.26%, NVC:17.04%  (no bias)
 --
 -- #eval showPrediction 6.88 φ_fit β_fit barbara
 -- #eval showPrediction 6.88 φ_fit β_fit allAB_allCB
