@@ -14,18 +14,25 @@ with Nez Perce as the primary case study.
    in conjunction with θ-role assignment. This contrasts with NOM/ACC/ABS,
    which are structural cases assigned at S-structure.
 
-2. **Two structural object Cases**: OBJ (structural, assigned by Agr-O in
-   intransitives and some transitives) and ACC (structural, assigned by
-   Agr-O in transitives). These are distinct cases, not allomorphs.
+2. **Two structural object Cases**: OBJ (assigned/checked by Agr-O,
+   associated with object agreement) and ACC (assigned/checked by V/P,
+   not associated with object agreement). These are distinct cases.
 
 3. **Maximum Accusatives formula**: The number of structural accusative
    cases in a clause = #arguments − #lexical cases − 1 (the −1 accounts
    for the subject, which receives NOM).
 
-4. **Subject-object agreement** (not ergative): All subjects (NOM) trigger
-   subject agreement; only OBJ (not ACC) triggers object agreement. ERG
-   subjects do NOT trigger ergative agreement — they trigger the same
+4. **Subject-object agreement** (not ergative): All subjects (NOM and ERG)
+   trigger subject agreement; only OBJ (not ACC) triggers object agreement.
+   ERG subjects do NOT trigger ergative agreement — they trigger the same
    subject agreement as NOM subjects.
+
+5. **Generalization (19)**: lexically Cased subject → *structural accusative
+   object. In a clause with a lexically Cased subject (e.g., ergative or
+   dative), the highest object cannot have structural accusative Case
+   (although that object can have objective Case). This is subsumed by
+   the Max. Acc. formula for the highest object and derives the prohibited
+   transitive and ditransitive patterns.
 
 ## Nez Perce Patterns
 
@@ -34,11 +41,12 @@ with Nez Perce as the primary case study.
 - Allowed: NOM-ACC, ERG-OBJ
 - Prohibited: *NOM-OBJ, *ERG-ACC
 
-**Ditransitive** (3 args, 0 or 1 lexical):
-- ERG subject: max ACC = 3 − 1 − 1 = 1 → one ACC, one OBJ
-- NOM subject: max ACC = 3 − 0 − 1 = 2 → two ACC
-- NOM + DAT: max ACC = 3 − 1 − 1 = 1 → one ACC
-- 5 allowed patterns, 7 prohibited
+**Ditransitive** (3 args: agent, goal, theme):
+- NOM subject (0 lexical): max ACC = 3 − 0 − 1 = 2 → two ACC
+- NOM + DAT goal (1 lexical): max ACC = 3 − 1 − 1 = 1 → one ACC
+- ERG subject (1 lexical): max ACC = 3 − 1 − 1 = 1 → one ACC (theme only; gen. (19) blocks ACC for goal)
+- ERG + DAT goal (2 lexical): max ACC = 3 − 2 − 1 = 0
+- 4 allowed patterns, 8 prohibited (paper's (22))
 
 ## Integration
 
@@ -53,7 +61,7 @@ namespace Phenomena.Case.Studies.Woolford1997
 open Minimalism
 
 -- ============================================================================
--- § 1: Case Inventory
+-- § 1: Case Inventory (paper's (1)–(2))
 -- ============================================================================
 
 /-- Woolford's five-way case inventory for Nez Perce.
@@ -62,7 +70,7 @@ open Minimalism
 inductive WCase where
   | nom   -- structural subject case (from Agr-S)
   | obj   -- structural object case (from Agr-O; triggers obj agreement)
-  | acc   -- structural accusative (from Agr-O; does NOT trigger obj agreement)
+  | acc   -- structural accusative (from V/P; does NOT trigger obj agreement)
   | erg   -- lexical/inherent case (assigned with θ-role)
   | dat   -- lexical case (e.g., applied arguments)
   deriving DecidableEq, BEq, Repr
@@ -70,6 +78,7 @@ inductive WCase where
 /-- Structural vs lexical classification. -/
 inductive CaseKind where
   | structural  -- assigned at S-structure by functional heads (Agr-S, Agr-O)
+                -- or by lexical heads (V, P) for ACC
   | lexical     -- assigned at D-structure with θ-role (inherent)
   deriving DecidableEq, BEq, Repr
 
@@ -95,13 +104,15 @@ def WCase.triggersSubjAgr : WCase → Bool
   | _    => false
 
 /-- Object agreement: triggered ONLY by OBJ, not by ACC.
-    This asymmetry is evidence that OBJ and ACC are distinct cases. -/
+    This asymmetry is evidence that OBJ and ACC are distinct cases:
+    OBJ is assigned by Agr-O (associated with agreement), while
+    ACC is assigned by V/P (no agreement). -/
 def WCase.triggersObjAgr : WCase → Bool
   | .obj => true
   | _    => false
 
 -- ============================================================================
--- § 3: Maximum Accusatives Formula
+-- § 3: Maximum Accusatives Formula (paper's (27))
 -- ============================================================================
 
 /-- The maximum number of structural accusative cases assignable in a clause.
@@ -122,7 +133,25 @@ def countLexIn (cases : List WCase) : Nat :=
   cases.filter (λ c => c.kind == .lexical) |>.length
 
 -- ============================================================================
--- § 5: Transitive Patterns
+-- § 5: Generalization (19)
+-- ============================================================================
+
+/-- Generalization (19): a lexically Cased subject cannot be followed by a
+    structural accusative object. Under the weak interpretation, this
+    applies to the thematically highest object (goal > theme). -/
+def generalization19 (subject goal : WCase) : Bool :=
+  -- If subject is lexical, goal must not be ACC
+  subject.kind != .lexical || goal != .acc
+
+/-- Generalization (19) holds for all allowed transitive patterns:
+    ERG (lexical) subject → object is OBJ, not ACC. -/
+theorem gen19_transitive_erg : generalization19 .erg .obj = true := rfl
+
+/-- Generalization (19) is vacuously satisfied for NOM subjects. -/
+theorem gen19_transitive_nom : generalization19 .nom .acc = true := rfl
+
+-- ============================================================================
+-- § 6: Transitive Patterns (paper's (16))
 -- ============================================================================
 
 /-- A transitive pattern: subject case + object case. -/
@@ -131,24 +160,23 @@ structure TransPattern where
   object  : WCase
   deriving DecidableEq, BEq, Repr
 
-/-- The two allowed transitive patterns in Nez Perce.
+/-- The two allowed transitive patterns in Nez Perce (paper's (16A)).
     - NOM subject + ACC object (structural subject, structural object)
     - ERG subject + OBJ object (lexical subject, structural object) -/
 def npTransAllowed : List TransPattern :=
   [ ⟨.nom, .acc⟩, ⟨.erg, .obj⟩ ]
 
-/-- The two prohibited transitive patterns.
+/-- The two prohibited transitive patterns (paper's (16B)).
     - *NOM + OBJ: NOM subject should pair with ACC, not OBJ
-    - *ERG + ACC: ERG subject leaves room for OBJ (maxAcc = 0) -/
+    - *ERG + ACC: blocked by generalization (19) -/
 def npTransProhibited : List TransPattern :=
   [ ⟨.nom, .obj⟩, ⟨.erg, .acc⟩ ]
 
 /-- Predict whether a transitive pattern is allowed.
     Structural subject (NOM) → object is ACC.
-    Lexical subject (ERG) → object is OBJ (maxAcc = 0). -/
+    Lexical subject (ERG) → object is OBJ (generalization (19) blocks ACC). -/
 def predictTransitive (p : TransPattern) : Bool :=
   let nArgs := 2
-  let nLex := countLexIn [p.subject, p.object]
   let mAcc := maxAcc nArgs (countLexIn [p.subject])
   -- The number of ACC in the object list must equal maxAcc
   countAccIn [p.object] == mAcc &&
@@ -156,61 +184,65 @@ def predictTransitive (p : TransPattern) : Bool :=
   (p.subject == .nom || p.subject == .erg) &&
   -- Object must be ACC or OBJ (structural)
   (p.object == .acc || p.object == .obj) &&
-  -- If subject is lexical (ERG), no room for ACC → object must be OBJ
-  -- If subject is structural (NOM), one ACC slot → object must be ACC
-  nLex + countAccIn [p.object] + 1 ≤ nArgs
+  -- OBJ only appears with lexical (ERG) subject
+  (p.object != .obj || p.subject == .erg) &&
+  -- Generalization (19)
+  generalization19 p.subject p.object
 
 -- ============================================================================
--- § 6: Ditransitive Patterns
+-- § 7: Ditransitive Patterns (paper's (22))
 -- ============================================================================
 
-/-- A ditransitive pattern: subject + two objects. -/
+/-- A ditransitive pattern: subject + goal (higher object) + theme (lower object).
+    The thematic hierarchy (goal > theme) matters for generalization (19):
+    a lexical subject blocks structural accusative on the goal (highest
+    object), not the theme. -/
 structure DitransPattern where
   subject : WCase
-  obj1    : WCase
-  obj2    : WCase
+  goal    : WCase  -- thematically higher object
+  theme   : WCase  -- thematically lower object
   deriving DecidableEq, BEq, Repr
 
-/-- The four allowed ditransitive patterns in Nez Perce.
-    ERG subject (1 lexical): maxAcc = 3 − 1 − 1 = 1 → one ACC, one OBJ.
-    NOM subject (0 lexical): maxAcc = 3 − 0 − 1 = 2 → two ACC.
-    DAT in either object slot absorbs a lexical case. -/
+/-- The four allowed ditransitive patterns in Nez Perce (paper's (22A)).
+    Columns are Agent, Goal, Theme following the paper's labels. -/
 def npDitransAllowed : List DitransPattern :=
-  [ ⟨.erg, .obj, .acc⟩     -- ERG subj, 1 ACC (maxAcc = 1)
-  , ⟨.erg, .acc, .obj⟩     -- ERG subj, 1 ACC (order variant)
-  , ⟨.nom, .acc, .acc⟩     -- NOM subj, 2 ACC (maxAcc = 2)
-  , ⟨.erg, .dat, .obj⟩     -- ERG+DAT = 2 lexical; maxAcc = 3−2−1 = 0
-  , ⟨.nom, .dat, .acc⟩ ]   -- NOM+DAT = 1 lexical; maxAcc = 3−1−1 = 1
+  [ ⟨.nom, .acc, .acc⟩     -- (22A.1) NOM subj, 2 ACC (maxAcc = 2)
+  , ⟨.nom, .dat, .acc⟩     -- (22A.2) NOM+DAT = 1 lexical; maxAcc = 1
+  , ⟨.erg, .obj, .acc⟩     -- (22A.3) ERG subj; goal=OBJ (gen 19), theme=ACC
+  , ⟨.erg, .dat, .obj⟩ ]   -- (22A.4) ERG+DAT = 2 lexical; maxAcc = 0
 
-/-- The seven prohibited ditransitive patterns. -/
+/-- The eight prohibited ditransitive patterns (paper's (22B)). -/
 def npDitransProhibited : List DitransPattern :=
-  [ ⟨.erg, .obj, .obj⟩     -- 0 ACC but maxAcc = 1
-  , ⟨.erg, .acc, .acc⟩     -- 2 ACC but maxAcc = 1
-  , ⟨.nom, .obj, .acc⟩     -- OBJ not expected with NOM subj
-  , ⟨.nom, .acc, .obj⟩     -- OBJ not expected with NOM subj
-  , ⟨.nom, .obj, .obj⟩     -- OBJ not expected with NOM subj
-  , ⟨.erg, .dat, .acc⟩     -- ACC but maxAcc = 0 (2 lexical)
-  , ⟨.nom, .dat, .obj⟩ ]   -- OBJ not expected with NOM subj
+  [ ⟨.nom, .obj, .obj⟩     -- (22B.1) OBJ not expected with NOM subj
+  , ⟨.nom, .obj, .acc⟩     -- (22B.2) OBJ not expected with NOM subj
+  , ⟨.nom, .acc, .obj⟩     -- (22B.3) OBJ not expected with NOM subj
+  , ⟨.nom, .dat, .obj⟩     -- (22B.4) OBJ not expected with NOM subj
+  , ⟨.erg, .acc, .acc⟩     -- (22B.5) 2 ACC but maxAcc = 1
+  , ⟨.erg, .acc, .obj⟩     -- (22B.6) gen (19): goal=ACC with lexical subj
+  , ⟨.erg, .obj, .obj⟩     -- (22B.7) 0 ACC but maxAcc = 1
+  , ⟨.erg, .dat, .acc⟩ ]   -- (22B.8) ACC but maxAcc = 0 (2 lexical)
 
-/-- Predict whether a ditransitive pattern is allowed. -/
+/-- Predict whether a ditransitive pattern is allowed.
+    Encodes the Max. Acc. formula, structural constraints on OBJ,
+    and generalization (19). -/
 def predictDitransitive (p : DitransPattern) : Bool :=
   let nArgs := 3
-  let subjectLex := countLexIn [p.subject]
-  let objectLex := countLexIn [p.obj1, p.obj2]
-  let totalLex := subjectLex + objectLex
+  let totalLex := countLexIn [p.subject] + countLexIn [p.goal, p.theme]
   let mAcc := maxAcc nArgs totalLex
   -- Subject is NOM or ERG
   (p.subject == .nom || p.subject == .erg) &&
   -- Objects are structural (ACC/OBJ) or DAT
-  (p.obj1 == .acc || p.obj1 == .obj || p.obj1 == .dat) &&
-  (p.obj2 == .acc || p.obj2 == .obj || p.obj2 == .dat) &&
+  (p.goal == .acc || p.goal == .obj || p.goal == .dat) &&
+  (p.theme == .acc || p.theme == .obj || p.theme == .dat) &&
   -- ACC count matches maxAcc
-  countAccIn [p.obj1, p.obj2] == mAcc &&
-  -- OBJ only appears when there is a lexical subject (ERG)
-  (!(p.obj1 == .obj || p.obj2 == .obj) || p.subject == .erg)
+  countAccIn [p.goal, p.theme] == mAcc &&
+  -- OBJ only appears when subject is ERG (lexical)
+  (!(p.goal == .obj || p.theme == .obj) || p.subject == .erg) &&
+  -- Generalization (19): lexical subject → goal ≠ ACC
+  generalization19 p.subject p.goal
 
 -- ============================================================================
--- § 7: Transitive Verification
+-- § 8: Transitive Verification
 -- ============================================================================
 
 /-- All allowed transitive patterns are predicted as allowed. -/
@@ -236,7 +268,7 @@ theorem trans_nom_maxAcc : maxAcc 2 0 = 1 := rfl
 theorem trans_erg_maxAcc : maxAcc 2 1 = 0 := rfl
 
 -- ============================================================================
--- § 8: Ditransitive Verification
+-- § 9: Ditransitive Verification
 -- ============================================================================
 
 /-- All allowed ditransitive patterns are predicted. -/
@@ -252,6 +284,11 @@ theorem ditrans_disjoint :
     npDitransAllowed.all (λ p => npDitransProhibited.all (· != p)) = true := by
   native_decide
 
+/-- The allowed/prohibited lists cover all 12 NOM/ERG × {ACC,OBJ,DAT}² patterns
+    (excluding DAT-DAT which never arises). -/
+theorem ditrans_complete :
+    npDitransAllowed.length + npDitransProhibited.length = 12 := by native_decide
+
 /-- maxAcc for ditransitives: ERG subject, no DAT → 1 ACC slot. -/
 theorem ditrans_erg_maxAcc : maxAcc 3 1 = 1 := rfl
 
@@ -262,7 +299,7 @@ theorem ditrans_nom_maxAcc : maxAcc 3 0 = 2 := rfl
 theorem ditrans_erg_dat_maxAcc : maxAcc 3 2 = 0 := rfl
 
 -- ============================================================================
--- § 9: Agreement Verification
+-- § 10: Agreement Verification
 -- ============================================================================
 
 /-- ERG is lexical (inherent), not structural. -/
@@ -289,12 +326,13 @@ theorem agreement_is_nom_acc :
     WCase.nom.triggersSubjAgr = WCase.erg.triggersSubjAgr := rfl
 
 /-- OBJ and ACC differ in agreement properties: OBJ triggers object
-    agreement, ACC does not. This justifies treating them as distinct cases. -/
+    agreement, ACC does not. This justifies treating them as distinct cases
+    and reflects their different structural sources (Agr-O vs V/P). -/
 theorem obj_acc_agreement_differ :
     WCase.obj.triggersObjAgr ≠ WCase.acc.triggersObjAgr := by decide
 
 -- ============================================================================
--- § 10: Intransitive
+-- § 11: Intransitive
 -- ============================================================================
 
 /-- Intransitives: 1 argument, 0 lexical → maxAcc = 0.
@@ -302,29 +340,35 @@ theorem obj_acc_agreement_differ :
 theorem intransitive_maxAcc : maxAcc 1 0 = 0 := rfl
 
 -- ============================================================================
--- § 11: Typological Variation
+-- § 12: Typological Variation (paper's (60))
 -- ============================================================================
 
 /-- Whether a language assigns ERG obligatorily or optionally. -/
 inductive LexAssignment where
   | obligatory  -- ERG required on transitive subjects
-  | optional    -- ERG optional (e.g., Thangu: some transitives lack ERG)
+  | optional    -- ERG optional (e.g., Nez Perce: some transitives lack ERG)
   deriving DecidableEq, BEq, Repr
 
-/-- Language parameters for a four-way system. -/
+/-- Language parameters for a three- or four-way system.
+    The range of Case patterns a language allows follows from whether
+    verbs assign ERG and DAT obligatorily or optionally. -/
 structure LexParams where
   ergAssignment : LexAssignment
-  hasDat : Bool
+  datAssignment : LexAssignment
   deriving Repr
 
-/-- Nez Perce: obligatory ERG, has DAT. -/
-def nezPerce : LexParams := ⟨.obligatory, true⟩
+/-- Nez Perce: optional ERG, optional DAT. -/
+def nezPerce : LexParams := ⟨.optional, .optional⟩
 
-/-- Thangu: optional ERG (some transitives use NOM-ACC). -/
-def thangu : LexParams := ⟨.optional, false⟩
+/-- Thangu: obligatory ERG, obligatory DAT (three-way system: no ACC surfaces). -/
+def thangu : LexParams := ⟨.obligatory, .obligatory⟩
+
+/-- Kalkatungu: obligatory ERG, optional DAT (four-way system like Nez Perce,
+    but no nominative-accusative pattern since ERG is always assigned). -/
+def kalkatungu : LexParams := ⟨.obligatory, .optional⟩
 
 -- ============================================================================
--- § 12: Mapping to Core.Case
+-- § 13: Mapping to Core.Case
 -- ============================================================================
 
 /-- Map Woolford's cases to `Core.Case` for hierarchy validation.
@@ -351,7 +395,7 @@ def npFullInventory : List Core.Case := [.nom, .acc, .erg, .gen, .dat]
 theorem np_full_valid : Core.validInventory npFullInventory = true := by native_decide
 
 -- ============================================================================
--- § 13: Bridge to Dependent Case Theory
+-- § 14: Bridge to Dependent Case Theory
 -- ============================================================================
 
 /-! ## Woolford vs. Baker/Marantz
@@ -391,7 +435,7 @@ theorem diverge_on_obj_vs_acc :
 /-- Dependent case has no analogue of Woolford's agreement asymmetry:
     under dependent case, there is one ACC — it either triggers agreement
     or not. Woolford's two structural object cases explain why some
-    objects trigger agreement (OBJ) and others don't (ACC). -/
+    objects trigger agreement (OBJ from Agr-O) and others don't (ACC from V/P). -/
 theorem agreement_asymmetry_is_woolford_specific :
     WCase.obj.triggersObjAgr = true ∧
     WCase.acc.triggersObjAgr = false := ⟨rfl, rfl⟩
