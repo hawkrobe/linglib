@@ -1,5 +1,5 @@
 import Linglib.Core.Prominence
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.DiathesisAlternation
 
 /-!
 # Valency Alternation Typology
@@ -526,6 +526,7 @@ theorem portative_increases :
     Tswana *-eχ* decausativization, but English uses no verbal morphology. -/
 def toValencyAlternation : DiathesisAlternation → ValencyAlternation
   | .causativeInchoative => decausativization  -- the intransitive direction
+  | .inducedAction => causativization  -- intransitive → transitive causative
   | .middle =>
     { name := "middle"
     , fateOfA := .denucleativized
@@ -558,6 +559,14 @@ def toValencyAlternation : DiathesisAlternation → ValencyAlternation
     , newParticipant := none  -- no new participant; P↔X alternation
     , initialTransitive := some true
     , derivedTransitive := some true }
+  | .benefactive =>
+    { name := "benefactive"
+    , fateOfA := .maintained
+    , fateOfP := .maintained
+    , fateOfS := .na
+    , newParticipant := none  -- beneficiary alternates between PP and NP2
+    , initialTransitive := some true
+    , derivedTransitive := some true }
   | .locative =>
     { name := "locative"
     , fateOfA := .maintained
@@ -565,6 +574,119 @@ def toValencyAlternation : DiathesisAlternation → ValencyAlternation
     , fateOfS := .na
     , newParticipant := none  -- no new participant; P↔X alternation
     , initialTransitive := some true
+    , derivedTransitive := some true }
+  | .substanceSource =>
+    { name := "substance/source"
+    , fateOfA := .na
+    , fateOfP := .maintained  -- substance alternates between S and P
+    , fateOfS := .maintained
+    , newParticipant := none
+    , initialTransitive := none  -- both forms exist
+    , derivedTransitive := none }
+  | .materialProduct =>
+    { name := "material/product"
+    , fateOfA := .maintained
+    , fateOfP := .maintained  -- material↔product alternate as direct object
+    , fateOfS := .na
+    , newParticipant := none
+    , initialTransitive := some true
+    , derivedTransitive := some true }
+  | .unspecifiedObject =>
+    { name := "unspecified object"
+    , fateOfA := .maintained  -- A becomes S
+    , fateOfP := .suppressed  -- object unexpressed
+    , fateOfS := .na
+    , newParticipant := none
+    , initialTransitive := some true
+    , derivedTransitive := some false }
+  | .understoodBodyPartObject =>
+    { name := "understood body-part object"
+    , fateOfA := .maintained  -- A becomes S
+    , fateOfP := .suppressed  -- body-part object unexpressed
+    , fateOfS := .na
+    , newParticipant := none
+    , initialTransitive := some true
+    , derivedTransitive := some false }
+  | .understoodReflexiveObject =>
+    { name := "understood reflexive object"
+    , fateOfA := .cumulated   -- A and P collapse (self-directed)
+    , fateOfP := .cumulated
+    , fateOfS := .na
+    , newParticipant := none
+    , initialTransitive := some true
+    , derivedTransitive := some false }
+  | .understoodReciprocalObject =>
+    { name := "understood reciprocal object"
+    , fateOfA := .cumulated   -- A and P merged into plural S
+    , fateOfP := .cumulated
+    , fateOfS := .na
+    , newParticipant := none
+    , initialTransitive := some true
+    , derivedTransitive := some false }
+  | .swarm =>
+    { name := "swarm"
+    , fateOfA := .na
+    , fateOfP := .na
+    , fateOfS := .maintained  -- S maintained, locative becomes S
+    , newParticipant := none
+    , initialTransitive := some false
+    , derivedTransitive := some false }
+  | .totalTransformation =>
+    { name := "total transformation"
+    , fateOfA := .maintained
+    , fateOfP := .maintained  -- P undergoes complete change
+    , fateOfS := .na
+    , newParticipant := none
+    , initialTransitive := some true
+    , derivedTransitive := some true }
+  | .thereInsertion =>
+    { name := "there-insertion"
+    , fateOfA := .na
+    , fateOfP := .na
+    , fateOfS := .maintained  -- S moves to postverbal position
+    , newParticipant := none
+    , initialTransitive := some false
+    , derivedTransitive := some false }
+  | .locativeInversion =>
+    { name := "locative inversion"
+    , fateOfA := .na
+    , fateOfP := .na
+    , fateOfS := .maintained  -- S moves to postverbal position
+    , newParticipant := none
+    , initialTransitive := some false
+    , derivedTransitive := some false }
+  | .instrumentSubject =>
+    { name := "instrument subject"
+    , fateOfA := .denucleativized  -- agent optionally suppressed
+    , fateOfP := .maintained
+    , fateOfS := .na
+    , newParticipant := some .A  -- instrument promoted to A
+    , initialTransitive := some true
+    , derivedTransitive := some true }
+  | .verbalPassive => passivization  -- fundamental voice alternation
+  | .prepositionalPassive =>
+    { name := "prepositional passive"
+    , fateOfA := .na
+    , fateOfP := .na
+    , fateOfS := .denucleativized  -- S demoted, oblique promoted
+    , newParticipant := none
+    , initialTransitive := some false
+    , derivedTransitive := some false }
+  | .cognateObject =>
+    { name := "cognate object"
+    , fateOfA := .na
+    , fateOfP := .na
+    , fateOfS := .maintained  -- S becomes A
+    , newParticipant := some .P  -- cognate NP added
+    , initialTransitive := some false
+    , derivedTransitive := some true }
+  | .wayConstruction =>
+    { name := "way construction"
+    , fateOfA := .na
+    , fateOfP := .na
+    , fateOfS := .maintained  -- S becomes A
+    , newParticipant := some .P  -- reflexive possessive NP added
+    , initialTransitive := some false
     , derivedTransitive := some true }
   | .resultative =>
     { name := "resultative"
@@ -574,6 +696,14 @@ def toValencyAlternation : DiathesisAlternation → ValencyAlternation
     , newParticipant := none
     , initialTransitive := some true
     , derivedTransitive := some true }
+  | .directionalPhrase =>
+    { name := "directional phrase"
+    , fateOfA := .na
+    , fateOfP := .na
+    , fateOfS := .maintained  -- S maintained, directional PP added
+    , newParticipant := none
+    , initialTransitive := some false
+    , derivedTransitive := some false }
 
 /-- The causative/inchoative alternation maps to decausativization
     (viewed from the transitive direction, the intransitive variant removes
@@ -592,6 +722,55 @@ theorem conative_is_antipassive_like :
     (like applicativization): a possessor is promoted to core-term status. -/
 theorem bppa_is_applicative_like :
     (toValencyAlternation .bodyPartPossessorAscension).involvesNucleativization = true := rfl
+
+/-- The understood reciprocal object alternation involves cumulation,
+    just like reflexivization and reciprocalization in @cite{creissels-2025}. -/
+theorem understoodReciprocal_cumulates :
+    (toValencyAlternation .understoodReciprocalObject).involvesCumulation = true := rfl
+
+/-- The unspecified object alternation is valency-decreasing:
+    P is suppressed (removed from participant structure). -/
+theorem unspecifiedObject_decreases :
+    (toValencyAlternation .unspecifiedObject).isValencyDecreasing = true := rfl
+
+/-- The instrument subject alternation involves both nucleativization (instrument → A)
+    and denucleativization (original A demoted), so it is neither strictly
+    valency-increasing nor valency-decreasing — it is a restructuring. -/
+theorem instrumentSubject_restructures :
+    (toValencyAlternation .instrumentSubject).involvesNucleativization = true
+    ∧ (toValencyAlternation .instrumentSubject).involvesDenucleativization = true
+    ∧ (toValencyAlternation .instrumentSubject).isValencyIncreasing = false
+    ∧ (toValencyAlternation .instrumentSubject).isValencyDecreasing = false := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The induced action alternation maps to causativization:
+    *Bill ran* → *Bill ran the horse* (intransitive S becomes P,
+    new causer becomes A). -/
+theorem inducedAction_is_causativization :
+    toValencyAlternation .inducedAction = causativization := rfl
+
+/-- The verbal passive maps to passivization. -/
+theorem verbalPassive_is_passivization :
+    toValencyAlternation .verbalPassive = passivization := rfl
+
+/-- The understood reflexive object alternation involves cumulation,
+    like reflexivization in @cite{creissels-2025}. -/
+theorem understoodReflexive_cumulates :
+    (toValencyAlternation .understoodReflexiveObject).involvesCumulation = true := rfl
+
+/-- The cognate object alternation is valency-increasing:
+    adds a P to an intransitive verb (*she laughed* → *she laughed a bitter laugh*). -/
+theorem cognateObject_increases :
+    (toValencyAlternation .cognateObject).isValencyIncreasing = true := rfl
+
+/-- The way construction is valency-increasing:
+    adds a possessive P (*she elbowed* → *she elbowed her way through*). -/
+theorem wayConstruction_increases :
+    (toValencyAlternation .wayConstruction).isValencyIncreasing = true := rfl
+
+/-- The understood body-part object alternation is valency-decreasing:
+    P is suppressed (*Bill waved his hand* → *Bill waved*). -/
+theorem understoodBodyPartObject_decreases :
+    (toValencyAlternation .understoodBodyPartObject).isValencyDecreasing = true := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 12. Flexivalency / Ambitransitivity (@cite{creissels-2025} Ch 15)

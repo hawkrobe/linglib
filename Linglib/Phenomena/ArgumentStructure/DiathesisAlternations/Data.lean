@@ -1,4 +1,4 @@
-import Linglib.Core.RootDimensions
+import Linglib.Core.Lexical.DiathesisAlternation
 
 /-!
 # Diathesis Alternation Data
@@ -239,6 +239,230 @@ def dat_send : AlternationDatum :=
   , variant := some "She sent him a package." }
 
 -- ════════════════════════════════════════════════════
+-- § Benefactive (2.2) — Build/Create ✓
+-- ════════════════════════════════════════════════════
+
+def ben_carve : AlternationDatum :=
+  { verbForm := "carve"
+  , verbClass := .build
+  , alternation := .benefactive
+  , result := .participates
+  , sentence := "Martha carved a toy for the baby."
+  , variant := some "Martha carved the baby a toy."
+  , note := "Levin p. 49, ex. (121)" }
+
+-- ════════════════════════════════════════════════════
+-- § Substance/Source (1.1.3) — Emission ✓
+-- ════════════════════════════════════════════════════
+
+def ss_radiate : AlternationDatum :=
+  { verbForm := "radiate"
+  , verbClass := .substanceEmission
+  , alternation := .substanceSource
+  , result := .participates
+  , sentence := "Heat radiates from the sun."
+  , variant := some "The sun radiates heat."
+  , note := "Levin p. 32, ex. (36)" }
+
+-- ════════════════════════════════════════════════════
+-- § Material/Product (2.4.1) — Build ✓
+-- ════════════════════════════════════════════════════
+
+def mp_carve : AlternationDatum :=
+  { verbForm := "carve"
+  , verbClass := .build
+  , alternation := .materialProduct
+  , result := .participates
+  , sentence := "Martha carved a toy out of the piece of wood."
+  , variant := some "Martha carved the piece of wood into a toy."
+  , note := "Levin p. 56, ex. (147)" }
+
+-- ════════════════════════════════════════════════════
+-- § Unspecified Object (1.2.1) — Eat ✓, Devour ✗
+-- ════════════════════════════════════════════════════
+
+def uo_eat : AlternationDatum :=
+  { verbForm := "eat"
+  , verbClass := .eat
+  , alternation := .unspecifiedObject
+  , result := .participates
+  , sentence := "Mike ate the cake."
+  , variant := some "Mike ate."
+  , note := "Levin p. 33, ex. (38)" }
+
+def uo_devour : AlternationDatum :=
+  { verbForm := "devour"
+  , verbClass := .devour
+  , alternation := .unspecifiedObject
+  , result := .blocked
+  , sentence := "*Mike devoured."
+  , note := "Devour requires an expressed object (not listed in §1.2.1)" }
+
+-- ════════════════════════════════════════════════════
+-- § Understood Reciprocal Object (1.2.4) — Social Interaction ✓
+-- ════════════════════════════════════════════════════
+
+def uro_meet : AlternationDatum :=
+  { verbForm := "meet"
+  , verbClass := .socialInteraction
+  , alternation := .understoodReciprocalObject
+  , result := .participates
+  , sentence := "Anne met Cathy."
+  , variant := some "Anne and Cathy met."
+  , note := "Levin p. 36, ex. (59)" }
+
+-- ════════════════════════════════════════════════════
+-- § There-Insertion (6.1) — Exist ✓, Appear ✓
+-- ════════════════════════════════════════════════════
+
+def ti_develop : AlternationDatum :=
+  { verbForm := "develop"
+  , verbClass := .appear
+  , alternation := .thereInsertion
+  , result := .participates
+  , sentence := "A problem developed."
+  , variant := some "There developed a problem."
+  , note := "Levin p. 89, ex. (321)" }
+
+def ti_appear : AlternationDatum :=
+  { verbForm := "appear"
+  , verbClass := .appear
+  , alternation := .thereInsertion
+  , result := .participates
+  , sentence := "A ship appeared on the horizon."
+  , variant := some "There appeared a ship on the horizon."
+  , note := "Levin p. 89, ex. (322)" }
+
+-- ════════════════════════════════════════════════════
+-- § Locative Inversion (6.2) — Exist ✓
+-- ════════════════════════════════════════════════════
+
+def li_live : AlternationDatum :=
+  { verbForm := "live"
+  , verbClass := .exist
+  , alternation := .locativeInversion
+  , result := .participates
+  , sentence := "An old woman lives in the woods."
+  , variant := some "In the woods lives an old woman."
+  , note := "Levin p. 92, ex. (335)" }
+
+-- ════════════════════════════════════════════════════
+-- § Instrument Subject (3.3) — Break ✓, Cut ✗
+-- ════════════════════════════════════════════════════
+
+def is_break : AlternationDatum :=
+  { verbForm := "break"
+  , verbClass := .break_
+  , alternation := .instrumentSubject
+  , result := .participates
+  , sentence := "David broke the window with a hammer."
+  , variant := some "The hammer broke the window."
+  , note := "Levin p. 80, ex. (275)" }
+
+def is_eat : AlternationDatum :=
+  { verbForm := "eat"
+  , verbClass := .eat
+  , alternation := .instrumentSubject
+  , result := .blocked
+  , sentence := "*The spoon ate the ice cream."
+  , note := "Enabling instrument, not intermediary (Levin p. 80, ex. 276)" }
+
+-- ════════════════════════════════════════════════════
+-- § Induced Action (1.1.2.2) — Manner of Motion ✓
+-- ════════════════════════════════════════════════════
+
+def ia_run : AlternationDatum :=
+  { verbForm := "run"
+  , verbClass := .mannerOfMotion
+  , alternation := .inducedAction
+  , result := .participates
+  , sentence := "The horse ran."
+  , variant := some "Bill ran the horse."
+  , note := "Levin §1.1.2.2" }
+
+-- ════════════════════════════════════════════════════
+-- § Understood Body-Part Object (1.2.2) — Body ✓
+-- ════════════════════════════════════════════════════
+
+def ubpo_wave : AlternationDatum :=
+  { verbForm := "wave"
+  , verbClass := .bodyProcess
+  , alternation := .understoodBodyPartObject
+  , result := .participates
+  , sentence := "Bill waved his hand."
+  , variant := some "Bill waved."
+  , note := "Levin §1.2.2" }
+
+-- ════════════════════════════════════════════════════
+-- § Understood Reflexive Object (1.2.3) — Grooming ✓
+-- ════════════════════════════════════════════════════
+
+def uro_wash : AlternationDatum :=
+  { verbForm := "wash"
+  , verbClass := .dress
+  , alternation := .understoodReflexiveObject
+  , result := .participates
+  , sentence := "Bill washed himself."
+  , variant := some "Bill washed."
+  , note := "Levin §1.2.3" }
+
+-- ════════════════════════════════════════════════════
+-- § Total Transformation (2.4.3) — Turn ✓
+-- ════════════════════════════════════════════════════
+
+def tt_turn : AlternationDatum :=
+  { verbForm := "turn"
+  , verbClass := .turn
+  , alternation := .totalTransformation
+  , result := .participates
+  , sentence := "The witch turned the prince into a frog."
+  , note := "Levin §2.4.3" }
+
+-- ════════════════════════════════════════════════════
+-- § Way Construction (7.4) — Manner of Motion ✓
+-- ════════════════════════════════════════════════════
+
+def way_elbow : AlternationDatum :=
+  { verbForm := "elbow"
+  , verbClass := .mannerOfMotion
+  , alternation := .wayConstruction
+  , result := .participates
+  , sentence := "She elbowed her way through the crowd."
+  , note := "Levin §7.4" }
+
+-- ════════════════════════════════════════════════════
+-- § Cognate Object (7.1) — Manner of Speaking ✓, Manner of Motion ✓
+-- ════════════════════════════════════════════════════
+
+def co_laugh : AlternationDatum :=
+  { verbForm := "laugh"
+  , verbClass := .mannerOfSpeaking
+  , alternation := .cognateObject
+  , result := .participates
+  , sentence := "She laughed a bitter laugh."
+  , note := "Levin §7.1" }
+
+def co_run : AlternationDatum :=
+  { verbForm := "run"
+  , verbClass := .mannerOfMotion
+  , alternation := .cognateObject
+  , result := .participates
+  , sentence := "He ran a good race."
+  , note := "Levin §7.1" }
+
+-- ════════════════════════════════════════════════════
+-- § Directional Phrase (7.8) — Manner of Motion ✓
+-- ════════════════════════════════════════════════════
+
+def dp_run : AlternationDatum :=
+  { verbForm := "run"
+  , verbClass := .mannerOfMotion
+  , alternation := .directionalPhrase
+  , result := .participates
+  , sentence := "She ran to the store."
+  , note := "Levin §7.8" }
+
+-- ════════════════════════════════════════════════════
 -- § Collections
 -- ════════════════════════════════════════════════════
 
@@ -254,6 +478,21 @@ def allData : List AlternationDatum :=
   canonicalData ++
   [ con_push
   , loc_spray, loc_load
-  , dat_give, dat_send ]
+  , dat_give, dat_send
+  , ben_carve
+  , ss_radiate
+  , mp_carve
+  , uo_eat, uo_devour
+  , uro_meet
+  , ti_develop, ti_appear
+  , li_live
+  , is_break, is_eat
+  , ia_run
+  , ubpo_wave
+  , uro_wash
+  , tt_turn
+  , way_elbow
+  , co_laugh, co_run
+  , dp_run ]
 
 end Phenomena.ArgumentStructure.DiathesisAlternations.Data

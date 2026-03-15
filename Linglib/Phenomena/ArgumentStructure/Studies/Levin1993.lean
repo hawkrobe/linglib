@@ -9,7 +9,7 @@ Connects empirical alternation data to the
 
 ## Agreement
 
-All 21 data points agree with the `LevinClass.participatesIn` prediction
+All 29 data points agree with the `LevinClass.participatesIn` prediction
 function. The CI rule correctly blocks *cut* via `!instrumentSpec`
 (Levin p. 9–10: instrument specification requires an agent, blocking
 the agentless inchoative).
@@ -156,5 +156,119 @@ theorem con_cut_agrees :
 theorem bppa_cut_agrees :
     bppa_cut.result = .participates ∧
     LevinClass.cut.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 3. New Alternation Agreement
+-- ════════════════════════════════════════════════════
+
+-- Benefactive (§2.2)
+
+theorem ben_carve_agrees :
+    ben_carve.result = .participates ∧
+    LevinClass.build.participatesIn .benefactive = true := ⟨rfl, rfl⟩
+
+-- Substance/Source (§1.1.3)
+
+theorem ss_radiate_agrees :
+    ss_radiate.result = .participates ∧
+    LevinClass.substanceEmission.participatesIn .substanceSource = true := ⟨rfl, rfl⟩
+
+-- Material/Product (§2.4.1)
+
+theorem mp_carve_agrees :
+    mp_carve.result = .participates ∧
+    LevinClass.build.participatesIn .materialProduct = true := ⟨rfl, rfl⟩
+
+-- Unspecified Object (§1.2.1)
+
+theorem uo_eat_agrees :
+    uo_eat.result = .participates ∧
+    LevinClass.eat.participatesIn .unspecifiedObject = true := ⟨rfl, rfl⟩
+
+theorem uo_devour_agrees :
+    uo_devour.result = .blocked ∧
+    LevinClass.devour.participatesIn .unspecifiedObject = false := ⟨rfl, rfl⟩
+
+-- Understood Reciprocal Object (§1.2.4)
+
+theorem uro_meet_agrees :
+    uro_meet.result = .participates ∧
+    LevinClass.socialInteraction.participatesIn .understoodReciprocalObject = true := ⟨rfl, rfl⟩
+
+-- There-Insertion (§6.1)
+
+theorem ti_develop_agrees :
+    ti_develop.result = .participates ∧
+    LevinClass.appear.participatesIn .thereInsertion = true := ⟨rfl, rfl⟩
+
+theorem ti_appear_agrees :
+    ti_appear.result = .participates ∧
+    LevinClass.appear.participatesIn .thereInsertion = true := ⟨rfl, rfl⟩
+
+-- Locative Inversion (§6.2)
+
+theorem li_live_agrees :
+    li_live.result = .participates ∧
+    LevinClass.exist.participatesIn .locativeInversion = true := ⟨rfl, rfl⟩
+
+-- Instrument Subject (§3.3)
+
+theorem is_break_agrees :
+    is_break.result = .participates ∧
+    LevinClass.break_.participatesIn .instrumentSubject = true := ⟨rfl, rfl⟩
+
+theorem is_eat_agrees :
+    is_eat.result = .blocked ∧
+    LevinClass.eat.participatesIn .instrumentSubject = false := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 4. New Alternation Type Agreement
+-- ════════════════════════════════════════════════════
+
+-- Induced Action (§1.1.2.2)
+
+theorem ia_run_agrees :
+    ia_run.result = .participates ∧
+    LevinClass.mannerOfMotion.participatesIn .inducedAction = true := ⟨rfl, rfl⟩
+
+-- Understood Body-Part Object (§1.2.2)
+
+theorem ubpo_wave_agrees :
+    ubpo_wave.result = .participates ∧
+    LevinClass.bodyProcess.participatesIn .understoodBodyPartObject = true := ⟨rfl, rfl⟩
+
+-- Understood Reflexive Object (§1.2.3)
+
+theorem uro_wash_agrees :
+    uro_wash.result = .participates ∧
+    LevinClass.dress.participatesIn .understoodReflexiveObject = true := ⟨rfl, rfl⟩
+
+-- Total Transformation (§2.4.3)
+
+theorem tt_turn_agrees :
+    tt_turn.result = .participates ∧
+    LevinClass.turn.participatesIn .totalTransformation = true := ⟨rfl, rfl⟩
+
+-- Way Construction (§7.4)
+
+theorem way_elbow_agrees :
+    way_elbow.result = .participates ∧
+    LevinClass.mannerOfMotion.participatesIn .wayConstruction = true := ⟨rfl, rfl⟩
+
+-- Cognate Object (§7.1)
+
+theorem co_laugh_agrees :
+    co_laugh.result = .participates ∧
+    LevinClass.mannerOfSpeaking.participatesIn .cognateObject = true := ⟨rfl, rfl⟩
+
+theorem co_run_agrees :
+    co_run.result = .participates ∧
+    LevinClass.mannerOfMotion.participatesIn .cognateObject = true := ⟨rfl, rfl⟩
+
+-- Directional Phrase (§7.8)
+
+theorem dp_run_agrees :
+    dp_run.result = .participates ∧
+    LevinClass.mannerOfMotion.participatesIn .directionalPhrase = true := ⟨rfl, rfl⟩
 
 end Phenomena.ArgumentStructure.DiathesisAlternations.Bridge

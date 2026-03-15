@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.279] - 2026-03-15
+
+### Added
+- **Alternation architecture (Option D)**: expand `DiathesisAlternation` from 15 to 25 curated constructors covering diagnostically active alternations from @cite{levin-1993} Part One; add `AlternationFamily` enum (6 families: transitivity, vpInternal, obliqueSubject, passive, postverbalSubject, otherConstructions) with `DiathesisAlternation.family` classifier; new alternation types: inducedAction (§1.1.2.2), understoodBodyPartObject (§1.2.2), understoodReflexiveObject (§1.2.3), swarm (§2.3.4), totalTransformation (§2.4.3), verbalPassive (§5.1), prepositionalPassive (§5.2), cognateObject (§7.1), wayConstruction (§7.4), directionalPhrase (§7.8); add class-specific participation overrides for 18 new class×alternation pairs; extend `toValencyAlternation` bridge for all 10 new types; add 8 new empirical data points (41 total) with bridge theorems (29 total); add manner-of-motion breadth theorem (6 alternations from 4 families)
+
+## [0.229.278] - 2026-03-15
+
+### Added
+- **Levin 1993 alternation expansion**: extend `DiathesisAlternation` from 7 to 15 types — add benefactive (§2.2), substanceSource (§1.1.3), materialProduct (§2.4.1), unspecifiedObject (§1.2.1), understoodReciprocalObject (§1.2.4), thereInsertion (§6.1), locativeInversion (§6.2), instrumentSubject (§3.3); add component-derived prediction for instrumentSubject (causation ∧ ¬instrumentSpec); add class-specific participation overrides for 28 class×alternation pairs in `participatesIn`; add 12 new empirical data points in Data.lean with bridge theorems in Levin1993.lean; extend `toValencyAlternation` bridge in Core/Alternation.lean for all 8 new types; add 10 new cross-class prediction theorems including unaccusative diagnostic alignment
+
 ## [0.229.277] - 2026-03-15
 
 ### Changed
