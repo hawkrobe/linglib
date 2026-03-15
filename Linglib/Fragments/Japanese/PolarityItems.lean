@@ -1,11 +1,11 @@
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # Japanese Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Japanese indefinite pronoun polarity items, typed by the categories from
-`Fragments.English.PolarityItems`.
+`Core.Lexical.PolarityItem`.
 
 Japanese builds polarity items compositionally from wh-words + particles:
 - **dare-mo** (neg): wh + mo under negation → NPI (nobody)
@@ -14,7 +14,7 @@ Japanese builds polarity items compositionally from wh-words + particles:
 
 namespace Fragments.Japanese.PolarityItems
 
-open Fragments.English.PolarityItems
+open Core.Lexical.PolarityItem
 
 -- ============================================================================
 -- NPI

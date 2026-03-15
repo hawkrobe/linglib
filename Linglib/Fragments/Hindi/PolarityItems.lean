@@ -1,11 +1,11 @@
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # Hindi Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Hindi indefinite pronoun polarity items, typed by the categories from
-`Fragments.English.PolarityItems`.
+`Core.Lexical.PolarityItem`.
 
 Hindi builds polarity items from the general indefinite *koii* + particles:
 - **koii nahiiN**: koii + negation → NPI (nobody)
@@ -14,7 +14,7 @@ Hindi builds polarity items from the general indefinite *koii* + particles:
 
 namespace Fragments.Hindi.PolarityItems
 
-open Fragments.English.PolarityItems
+open Core.Lexical.PolarityItem
 
 -- ============================================================================
 -- NPI
@@ -28,6 +28,8 @@ def koiiNahiin : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts := [.negation, .nobody]
   , scalarDirection := .strengthening
+  , morphology := .indefPlusNeg
+  , alternativeType := .contextualProperty
   , notes := "koii + negation: nobody" }
 
 -- ============================================================================
@@ -36,12 +38,14 @@ def koiiNahiin : PolarityItemEntry :=
 
 /-- *koii bhii* — Free choice item.
     koii + bhii (even/also): 'koii bhii yah kar saktaa hai'
-    (anyone can do this). -/
+    (anyone can do this). @cite{lahiri-1998} -/
 def koiiBhii : PolarityItemEntry :=
   { form := "koii bhii"
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , morphology := .indefPlusEven
+  , alternativeType := .contextualProperty
   , notes := "koii + bhii (even/also): anyone at all (FC)" }
 
 -- ============================================================================

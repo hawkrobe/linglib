@@ -6,6 +6,7 @@ and their interfaces. See README.md for documentation links.
 -/
 -- Core
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.PolarityItem
 import Linglib.Core.Grammar
 import Linglib.Core.Lexical.Pronouns
 import Linglib.Core.Logic.Truth3
@@ -678,6 +679,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Beavers2010
 import Linglib.Phenomena.ArgumentStructure.Studies.BeaversUdayana2022
 import Linglib.Phenomena.ArgumentStructure.Studies.Everdell2024
 import Linglib.Phenomena.ArgumentStructure.Studies.Creissels2025
+import Linglib.Phenomena.ArgumentStructure.Studies.Siloni2012
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025
@@ -890,6 +892,7 @@ import Linglib.Phenomena.Modality.Studies.AghaJeretic2022
 import Linglib.Phenomena.Modality.Studies.AghaJeretic2026
 import Linglib.Phenomena.Modality.Studies.Rubinstein2014
 import Linglib.Phenomena.Modality.Studies.Narrog2010
+import Linglib.Phenomena.Modality.Studies.Narrog2012
 import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
 import Linglib.Theories.Semantics.Dynamic.BSML.Basic
 import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
@@ -946,6 +949,7 @@ import Linglib.Phenomena.Polarity.Studies.DenicEtAl2021
 import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
 import Linglib.Phenomena.Polarity.Studies.Schwab2022
 import Linglib.Phenomena.Polarity.Studies.Chierchia2006
+import Linglib.Phenomena.Polarity.Studies.Lahiri1998
 import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 import Linglib.Phenomena.Polarity.Typology
 import Linglib.Phenomena.Politeness.Honorifics
@@ -1383,7 +1387,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
-import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Composition.Glue
@@ -1393,11 +1397,11 @@ import Linglib.Theories.Semantics.Composition.Applicative
 import Linglib.Theories.Semantics.Composition.Effects
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Montague.Conjunction
-import Linglib.Theories.Semantics.Montague.Derivation
+import Linglib.Theories.Semantics.Composition.Derivation
 import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Tense.BranchingTime
-import Linglib.Theories.Semantics.Montague.Scope
+import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Theories.Semantics.Lexical.Determiner.Demonstrative.AhnZhu2025
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
@@ -1435,7 +1439,7 @@ import Linglib.Theories.Semantics.Lexical.Plural.Cumulativity
 import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Theories.Semantics.Lexical.Plural.Link1983
-import Linglib.Theories.Semantics.Montague.PTQ
+import Linglib.Phenomena.Quantification.Studies.Montague1973
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Monotonicity

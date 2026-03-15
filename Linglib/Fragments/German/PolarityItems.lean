@@ -1,11 +1,11 @@
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # German Polarity-Sensitive Items
 @cite{haspelmath-1997} @cite{chierchia-2006}
 
 German indefinite pronoun polarity items, typed by the categories from
-`Fragments.English.PolarityItems`.
+`Core.Lexical.PolarityItem`.
 
 German's *irgendein* is a key example in @cite{chierchia-2006}'s typology
 as an existential FCI with both NPI and FCI uses:
@@ -16,7 +16,7 @@ as an existential FCI with both NPI and FCI uses:
 
 namespace Fragments.German.PolarityItems
 
-open Fragments.English.PolarityItems
+open Core.Lexical.PolarityItem
 
 -- ============================================================================
 -- NPIs

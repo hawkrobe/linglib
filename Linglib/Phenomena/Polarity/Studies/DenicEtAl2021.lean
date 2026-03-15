@@ -1,4 +1,5 @@
 import Linglib.Core.Logic.NaturalLogic
+import Linglib.Core.Lexical.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 
 /-!
@@ -240,6 +241,7 @@ def ppiItemTested : String := "some"
 -- ============================================================================
 
 open Core.NaturalLogic
+open Core.Lexical.PolarityItem
 open Fragments.English.PolarityItems
 
 /-- Map the paper's environments to canonical entailment signatures. -/

@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.WALS.Features.F46A
+import Linglib.Core.Lexical.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.Russian.PolarityItems
@@ -512,7 +513,7 @@ def hindi : IndefinitePronounProfile :=
       , functions := [.comparative, .freeChoice]
       , notes := "koii + bhii (even/also): anyone at all (FC)" }
     ]
-  , notes := "3 series; bhii particle creates FC reading (Lahiri 1998)" }
+  , notes := "3 series; bhii particle creates FC reading (@cite{lahiri-1998})" }
 
 /-! ### Italian (Indo-European, Romance)
 

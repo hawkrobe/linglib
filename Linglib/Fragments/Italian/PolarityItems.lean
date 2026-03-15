@@ -1,11 +1,11 @@
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # Italian Polarity-Sensitive Items
 @cite{chierchia-2006} @cite{chierchia-2013}
 
 Lexical entries for Italian PSIs, typed by the theory-neutral categories
-from `Fragments.English.PolarityItems`.
+from `Core.Lexical.PolarityItem`.
 
 ## The Italian PSI system
 
@@ -17,7 +17,7 @@ Italian lexicalizes the NPI/FCI distinction that English *any* collapses:
 
 namespace Fragments.Italian.PolarityItems
 
-open Fragments.English.PolarityItems
+open Core.Lexical.PolarityItem
 
 -- ============================================================================
 -- Pure NPIs

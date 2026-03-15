@@ -21,11 +21,11 @@ Theory-neutral data about NPI licensing and distribution.
 
 -/
 
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 namespace Phenomena.Polarity.NPIs
 
-open Fragments.English.PolarityItems (ScalarDirection)
+open Core.Lexical.PolarityItem (ScalarDirection)
 
 -- Licensing Context Classification
 
@@ -430,7 +430,7 @@ def hindiKoii : CrossLingNPI :=
   , npiItem := "koii bhii"
   , gloss := "anyone at all"
   , licensingContexts := ["negation", "questions", "conditionals"]
-  , notes := "Lahiri (1998): licensed by covert EVEN"
+  , notes := "@cite{lahiri-1998}: licensed by overt EVEN particle bhii"
   }
 
 def greekKanenas : CrossLingNPI :=

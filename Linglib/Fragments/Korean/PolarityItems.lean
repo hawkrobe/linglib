@@ -1,11 +1,11 @@
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # Korean Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Korean indefinite pronoun polarity items, typed by the categories from
-`Fragments.English.PolarityItems`.
+`Core.Lexical.PolarityItem`.
 
 Korean, like Japanese, builds polarity items from wh-words + particles:
 - **nwukwu** (bare): Weak NPI in non-interrogative uses
@@ -15,7 +15,7 @@ Korean, like Japanese, builds polarity items from wh-words + particles:
 
 namespace Fragments.Korean.PolarityItems
 
-open Fragments.English.PolarityItems
+open Core.Lexical.PolarityItem
 
 -- ============================================================================
 -- NPIs

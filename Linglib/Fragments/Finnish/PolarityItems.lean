@@ -1,11 +1,11 @@
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # Finnish Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Finnish indefinite pronoun polarity items, typed by the categories from
-`Fragments.English.PolarityItems`.
+`Core.Lexical.PolarityItem`.
 
 Finnish has a differentiated system with dedicated NPI and FCI forms:
 - **kukaan**: Weak NPI (questions, conditionals, indirect negation)
@@ -15,7 +15,7 @@ Finnish has a differentiated system with dedicated NPI and FCI forms:
 
 namespace Fragments.Finnish.PolarityItems
 
-open Fragments.English.PolarityItems
+open Core.Lexical.PolarityItem
 
 -- ============================================================================
 -- NPIs

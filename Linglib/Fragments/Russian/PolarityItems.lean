@@ -1,11 +1,11 @@
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # Russian Polarity-Sensitive Items
 @cite{haspelmath-1997}
 
 Russian indefinite pronoun polarity items, typed by the categories from
-`Fragments.English.PolarityItems`.
+`Core.Lexical.PolarityItem`.
 
 - **кто-либо** (kto-libo): Weak NPI (questions, conditionals, indirect negation)
 - **никто** (nikto): N-word, negative concord
@@ -14,7 +14,7 @@ Russian indefinite pronoun polarity items, typed by the categories from
 
 namespace Fragments.Russian.PolarityItems
 
-open Fragments.English.PolarityItems
+open Core.Lexical.PolarityItem
 
 -- ============================================================================
 -- NPIs

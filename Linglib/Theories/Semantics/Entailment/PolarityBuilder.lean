@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Core.Logic.NaturalLogic
+import Linglib.Core.Lexical.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 
 /-!
@@ -31,6 +32,7 @@ open Semantics.Entailment.AntiAdditivity
 open Semantics.Entailment.StrawsonEntailment
 open Semantics.Entailment.Polarity
 open Core.NaturalLogic (EntailmentSig DEStrength strengthSufficient)
+open Core.Lexical.PolarityItem
 open Fragments.English.PolarityItems
 
 -- ============================================================================

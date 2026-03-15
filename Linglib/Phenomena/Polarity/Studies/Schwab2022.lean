@@ -31,11 +31,11 @@ illusion arises.
 
 -/
 
-import Linglib.Fragments.English.PolarityItems
+import Linglib.Core.Lexical.PolarityItem
 
 namespace Phenomena.Polarity.Studies.Schwab2022
 
-open Fragments.English.PolarityItems (ScalarDirection)
+open Core.Lexical.PolarityItem (ScalarDirection)
 
 -- ============================================================================
 -- Experimental Data

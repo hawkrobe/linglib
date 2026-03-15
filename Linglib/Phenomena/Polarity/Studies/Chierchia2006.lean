@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Polarity.Typology
+import Linglib.Core.Lexical.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
@@ -399,6 +400,7 @@ licensingContexts); PSI profiles encode theoretical parameters
 consistency between the two layers via polarityType.
 -/
 
+open Core.Lexical.PolarityItem
 open Fragments.English.PolarityItems (any ever)
 open Fragments.Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)

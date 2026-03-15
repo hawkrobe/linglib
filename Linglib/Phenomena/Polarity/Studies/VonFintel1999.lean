@@ -241,6 +241,7 @@ context–item pairs.
 namespace Phenomena.Polarity.PolarityBuilderBridge
 
 open Semantics.Entailment.PolarityBuilder
+open Core.Lexical.PolarityItem
 open Fragments.English.PolarityItems
 open Phenomena.Polarity.Studies.VonFintel1999 (onlyNotDE)
 
