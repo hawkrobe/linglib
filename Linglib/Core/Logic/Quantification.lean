@@ -6,7 +6,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Generalized Quantifier Properties
-@cite{barwise-cooper-1981} @cite{elliott-2025} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-benthem-1984}
+@cite{barwise-cooper-1981} @cite{elliott-2025} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-benthem-1984} @cite{van-benthem-1986}
 
 Model-agnostic properties of generalized quantifier denotations.
 
@@ -27,7 +27,7 @@ all definitions here apply directly.
 - **§2 Operations**: duality, Boolean algebra, type shifts
 - **§3 Mathlib bridge**: connection to `Monotone`/`Antitone`
 - **§4–§8 Theorems**: duality, symmetry/strength, Boolean closure,
-  type ⟨1⟩, van Benthem characterization
+  type ⟨1⟩, @cite{van-benthem-1986} characterization
 - **§5b Basic left monotonicity**: persistence decomposition (Prop 6),
   negation rotation (Prop 8), smooth→Mon↑ (Prop 9), symmetry (Prop 7)
 - **§12 Conservative GQ lattice**: `ConsGQ α` bounded distributive lattice
@@ -1703,6 +1703,7 @@ structure SixPostulates (q : NumberTreeGQ) : Prop where
   plus    : q.Plus
   uniform : q.Uniform
 
+set_option maxHeartbeats 800000 in
 /-- @cite{van-benthem-1984} Thm 7.1: On the finite sets, the only
     CONSERV+QUANT quantifiers satisfying VAR, CONT, PLUS, and UNIF are
     precisely the four corners of the logical Square of Opposition:
@@ -1716,10 +1717,222 @@ structure SixPostulates (q : NumberTreeGQ) : Prop where
     combinatorial argument. -/
 theorem square_uniqueness (q : NumberTreeGQ) (h : SixPostulates q) :
     q = allNT ∨ q = someNT ∨ q = noNT ∨ q = notAllNT := by
-  -- The proof proceeds by case analysis on q(0,0) and the
-  -- UNIF experiment patterns. Each branch is forced to one of
-  -- the four quantifiers by CONT + PLUS + UNIF + VAR.
-  sorry
+  obtain ⟨⟨at_, bt, habt⟩, ⟨af, bf, habf⟩⟩ := h.variety
+  have hTR (a b : ℕ) (hq : q a b = true) : q (a + 1) b = q (at_ + 1) bt :=
+    (h.uniform.1 a b at_ bt hq habt).1
+  have hTU (a b : ℕ) (hq : q a b = true) : q a (b + 1) = q at_ (bt + 1) :=
+    (h.uniform.1 a b at_ bt hq habt).2
+  have hFR (a b : ℕ) (hq : q a b = false) : q (a + 1) b = q (af + 1) bf :=
+    (h.uniform.2 a b af bf hq habf).1
+  have hFU (a b : ℕ) (hq : q a b = false) : q a (b + 1) = q af (bf + 1) :=
+    (h.uniform.2 a b af bf hq habf).2
+  have hPT := h.plus.1 at_ bt habt
+  have hPF := h.plus.2 af bf habf
+  have variety_contra_false (hall : ∀ a b, q a b = false) : False := by
+    have := hall at_ bt; rw [habt] at this; exact absurd this (by decide)
+  have variety_contra_true (hall : ∀ a b, q a b = true) : False := by
+    have := hall af bf; rw [habf] at this; exact absurd this (by decide)
+  have prop_true (h0 : q 0 0 = true)
+      (hr : q (at_ + 1) bt = true) (hu : q at_ (bt + 1) = true) :
+      ∀ a b, q a b = true := by
+    intro a; induction a with
+    | zero => intro b; induction b with
+      | zero => exact h0
+      | succ _ ihb => rw [hTU 0 _ ihb]; exact hu
+    | succ a iha => intro b; induction b with
+      | zero => rw [hTR a 0 (iha 0)]; exact hr
+      | succ _ ihb => rw [hTU _ _ ihb]; exact hu
+  have prop_false (h0 : q 0 0 = false)
+      (hr : q (af + 1) bf = false) (hu : q af (bf + 1) = false) :
+      ∀ a b, q a b = false := by
+    intro a; induction a with
+    | zero => intro b; induction b with
+      | zero => exact h0
+      | succ _ ihb => rw [hFU 0 _ ihb]; exact hu
+    | succ a iha => intro b; induction b with
+      | zero => rw [hFR a 0 (iha 0)]; exact hr
+      | succ _ ihb => rw [hFU _ _ ihb]; exact hu
+  -- Case analysis on UNIF experiment booleans (Bool.eq_false_or_eq_true
+  -- gives b = true ∨ b = false). Each of the 16 combinations of
+  -- (tr, tu, fr, fu) is either contradicted by PLUS/CONT/VAR or forced
+  -- to one of the four quantifiers.
+  rcases Bool.eq_false_or_eq_true (q (at_ + 1) bt) with htr | htr
+  · -- tr = TRUE
+    rcases Bool.eq_false_or_eq_true (q at_ (bt + 1)) with htu | htu
+    · -- (T, T, *, *)
+      rcases Bool.eq_false_or_eq_true (q (af + 1) bf) with hfr | hfr
+      · rcases Bool.eq_false_or_eq_true (q af (bf + 1)) with hfu | hfu
+        · -- (T,T,T,T) → Plus-F violation
+          exfalso
+          rcases hPF with h | h
+          · exact absurd hfr (by rw [h]; decide)
+          · exact absurd hfu (by rw [h]; decide)
+        · -- (T,T,T,F) → someNT
+          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+          · exact absurd (variety_contra_true (prop_true hv htr htu)) (by decide)
+          · right; left; funext a b
+            suffices ∀ a, ∀ b, q a b = someNT a b from this a b
+            intro a; induction a with
+            | zero => intro b; induction b with
+              | zero => exact hv
+              | succ b ihb =>
+                have : q 0 b = false := by rw [ihb]; simp [someNT]
+                rw [hFU 0 b this, hfu]; rfl
+            | succ a iha =>
+              have ha0 : q (a + 1) 0 = true := by
+                cases hq : q a 0
+                · rw [hFR a 0 hq, hfr]
+                · rw [hTR a 0 hq, htr]
+              intro b; induction b with
+              | zero => rw [ha0]; rfl
+              | succ b ihb =>
+                have : q (a + 1) b = true := by rw [ihb]; simp [someNT]
+                rw [hTU _ b this, htu]; rfl
+      · rcases Bool.eq_false_or_eq_true (q af (bf + 1)) with hfu | hfu
+        · -- (T,T,F,T) → notAllNT
+          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+          · exact absurd (variety_contra_true (prop_true hv htr htu)) (by decide)
+          · right; right; right; funext a b
+            suffices ∀ a, ∀ b, q a b = notAllNT a b from this a b
+            intro a; induction a with
+            | zero => intro b; induction b with
+              | zero => exact hv
+              | succ b ihb =>
+                cases hq : q 0 b
+                · rw [hFU 0 b hq, hfu]; rfl
+                · rw [hTU 0 b hq, htu]; rfl
+            | succ a iha =>
+              have ha0 : q (a + 1) 0 = false := by
+                cases hq : q a 0
+                · rw [hFR a 0 hq, hfr]
+                · rw [iha 0] at hq; simp [notAllNT] at hq
+              intro b; induction b with
+              | zero => rw [ha0]; rfl
+              | succ b ihb =>
+                cases hq : q (a + 1) b
+                · rw [hFU _ b hq, hfu]; rfl
+                · rw [hTU _ b hq, htu]; rfl
+        · -- (T,T,F,F) → Variety contradiction
+          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+          · exact absurd (variety_contra_true (prop_true hv htr htu)) (by decide)
+          · exact absurd (variety_contra_false (prop_false hv hfr hfu)) (by decide)
+    · -- (T, F, *, *)
+      rcases Bool.eq_false_or_eq_true (q (af + 1) bf) with hfr | hfr
+      · -- Plus-F forces fu = F
+        have hfu : q af (bf + 1) = false := by
+          rcases hPF with h | h
+          · exact absurd hfr (by rw [h]; decide)
+          · exact h
+        -- (T,F,T,F) → path inconsistency
+        exfalso
+        rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+        · have h10 : q 1 0 = true := by rw [hTR 0 0 hv, htr]
+          have h01 : q 0 1 = false := by rw [hTU 0 0 hv, htu]
+          have h11a : q 1 1 = false := by rw [hTU 1 0 h10, htu]
+          have h11b : q 1 1 = true := by rw [hFR 0 1 h01, hfr]
+          rw [h11a] at h11b; exact absurd h11b (by decide)
+        · have h10 : q 1 0 = true := by rw [hFR 0 0 hv, hfr]
+          have h01 : q 0 1 = false := by rw [hFU 0 0 hv, hfu]
+          have h11a : q 1 1 = false := by rw [hTU 1 0 h10, htu]
+          have h11b : q 1 1 = true := by rw [hFR 0 1 h01, hfr]
+          rw [h11a] at h11b; exact absurd h11b (by decide)
+      · rcases Bool.eq_false_or_eq_true (q af (bf + 1)) with hfu | hfu
+        · -- (T,F,F,T) → Cont contradiction
+          exfalso
+          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+          · have h10 : q 1 0 = true := by rw [hTR 0 0 hv, htr]
+            have h01 : q 0 1 = false := by rw [hTU 0 0 hv, htu]
+            have h11 : q 1 1 = false := by rw [hTU 1 0 h10, htu]
+            have h02 : q 0 2 = true := by rw [hFU 0 1 h01, hfu]
+            have h20 : q 2 0 = true := by rw [hTR 1 0 h10, htr]
+            exact absurd (h.cont 2 0 2 1 (by omega) (by omega) (by omega) h02 h20)
+              (by rw [h11]; decide)
+          · have h10 : q 1 0 = false := by rw [hFR 0 0 hv, hfr]
+            have h01 : q 0 1 = true := by rw [hFU 0 0 hv, hfu]
+            have h11 : q 1 1 = true := by rw [hFU 1 0 h10, hfu]
+            have h02 : q 0 2 = false := by rw [hTU 0 1 h01, htu]
+            have h20 : q 2 0 = false := by rw [hFR 1 0 h10, hfr]
+            exact absurd h11 (Bool.eq_false_iff.mp
+              (h.lcont 2 0 2 1 (by omega) (by omega) (by omega) h02 h20))
+        · -- (T,F,F,F) → allNT
+          rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+          · left; funext a b
+            suffices ∀ a, ∀ b, q a b = allNT a b from this a b
+            intro a; induction a with
+            | zero => intro b; induction b with
+              | zero => exact hv
+              | succ b ihb =>
+                cases hq : q 0 b
+                · rw [hFU 0 b hq, hfu]; rfl
+                · rw [hTU 0 b hq, htu]; rfl
+            | succ a iha => intro b; induction b with
+              | zero =>
+                have : q a 0 = true := by rw [iha 0]; rfl
+                rw [hTR a 0 this, htr]; rfl
+              | succ b ihb =>
+                cases hq : q (a + 1) b
+                · rw [hFU _ b hq, hfu]; rfl
+                · rw [hTU _ b hq, htu]; rfl
+          · exact absurd (variety_contra_false (prop_false hv hfr hfu)) (by decide)
+  · -- tr = FALSE → Plus forces tu = TRUE
+    have htu : q at_ (bt + 1) = true := by
+      rcases hPT with h | h
+      · exact absurd htr (by rw [h]; decide)
+      · exact h
+    rcases Bool.eq_false_or_eq_true (q (af + 1) bf) with hfr | hfr
+    · -- Plus-F forces fu = F
+      have hfu : q af (bf + 1) = false := by
+        rcases hPF with h | h
+        · exact absurd hfr (by rw [h]; decide)
+        · exact h
+      -- (F,T,T,F) → Cont contradiction
+      exfalso
+      rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+      · have h10 : q 1 0 = false := by rw [hTR 0 0 hv, htr]
+        have h01 : q 0 1 = true := by rw [hTU 0 0 hv, htu]
+        have h11 : q 1 1 = false := by rw [hFU 1 0 h10, hfu]
+        have h02 : q 0 2 = true := by rw [hTU 0 1 h01, htu]
+        have h20 : q 2 0 = true := by rw [hFR 1 0 h10, hfr]
+        exact absurd (h.cont 2 0 2 1 (by omega) (by omega) (by omega) h02 h20)
+          (by rw [h11]; decide)
+      · have h10 : q 1 0 = true := by rw [hFR 0 0 hv, hfr]
+        have h01 : q 0 1 = false := by rw [hFU 0 0 hv, hfu]
+        have h11 : q 1 1 = true := by rw [hTU 1 0 h10, htu]
+        have h02 : q 0 2 = false := by rw [hFU 0 1 h01, hfu]
+        have h20 : q 2 0 = false := by rw [hTR 1 0 h10, htr]
+        exact absurd h11 (Bool.eq_false_iff.mp
+          (h.lcont 2 0 2 1 (by omega) (by omega) (by omega) h02 h20))
+    · rcases Bool.eq_false_or_eq_true (q af (bf + 1)) with hfu | hfu
+      · -- (F,T,F,T) → path inconsistency
+        exfalso
+        rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+        · have h10 : q 1 0 = false := by rw [hTR 0 0 hv, htr]
+          have h01 : q 0 1 = true := by rw [hTU 0 0 hv, htu]
+          have h11a : q 1 1 = true := by rw [hFU 1 0 h10, hfu]
+          have h11b : q 1 1 = false := by rw [hTR 0 1 h01, htr]
+          rw [h11a] at h11b; exact absurd h11b (by decide)
+        · have h10 : q 1 0 = false := by rw [hFR 0 0 hv, hfr]
+          have h01 : q 0 1 = true := by rw [hFU 0 0 hv, hfu]
+          have h11a : q 1 1 = true := by rw [hFU 1 0 h10, hfu]
+          have h11b : q 1 1 = false := by rw [hTR 0 1 h01, htr]
+          rw [h11a] at h11b; exact absurd h11b (by decide)
+      · -- (F,T,F,F) → noNT
+        rcases Bool.eq_false_or_eq_true (q 0 0) with hv | hv
+        · right; right; left; funext a b
+          suffices ∀ a, ∀ b, q a b = noNT a b from this a b
+          intro a; induction a with
+          | zero => intro b; induction b with
+            | zero => exact hv
+            | succ _ ihb => rw [hTU 0 _ ihb, htu]; rfl
+          | succ a iha =>
+            have ha0 : q (a + 1) 0 = false := by
+              cases hq : q a 0
+              · rw [hFR a 0 hq, hfr]
+              · rw [hTR a 0 hq, htr]
+            intro b; induction b with
+            | zero => rw [ha0]; rfl
+            | succ _ ihb => rw [hFU _ _ ihb, hfu]; rfl
+        · exact absurd (variety_contra_false (prop_false hv hfr hfu)) (by decide)
 
 end NumberTreeGQ
 
