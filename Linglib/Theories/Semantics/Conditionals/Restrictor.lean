@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!

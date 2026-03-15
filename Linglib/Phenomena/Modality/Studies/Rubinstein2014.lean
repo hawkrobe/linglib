@@ -1,5 +1,5 @@
 import Linglib.Core.Modality.DeonticNecessity
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Fragments.English.FunctionWords
 

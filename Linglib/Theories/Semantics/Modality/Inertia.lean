@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Inertial Modality @cite{dowty-1979}

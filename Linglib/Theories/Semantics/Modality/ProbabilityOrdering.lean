@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Probability-Ordering Bridge — @cite{kratzer-2012} §2.4

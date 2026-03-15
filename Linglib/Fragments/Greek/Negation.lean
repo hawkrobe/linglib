@@ -1,5 +1,4 @@
-import Linglib.Theories.Semantics.Modality.Kratzer
-
+import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 /-!
 # Greek Negation Fragment
 @cite{holton-et-al-2012} @cite{tsiakmakis-2025}

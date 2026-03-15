@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.Evidence
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Fragments.Bulgarian.Evidentials

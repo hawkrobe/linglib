@@ -8,7 +8,7 @@ when the ordering source is non-empty.
 - Portner, P. (2009). Modality. Oxford University Press.
 -/
 
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Simple
 
 namespace Semantics.Modality

@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Semantics.Proposition
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Neo-Stalnakerian Formalization of Assertion

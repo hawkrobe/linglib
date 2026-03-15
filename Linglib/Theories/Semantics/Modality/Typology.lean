@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.ModalLogic
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Modal Semantic Universals

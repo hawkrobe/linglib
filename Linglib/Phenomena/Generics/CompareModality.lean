@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 
 /-!
@@ -29,9 +29,16 @@ the ordering source in Kratzer's semantics: it selects the "best" or
 
 Ariel Cohen (ch. 13 of the Genericity book) argues that GEN is not a
 phonologically null version of an overt quantifier — it is introduced
-by the hearer through reinterpretation. This connects to the modal
-analysis: the "generic quantifier" is not a syntactic object but an
-interpretive strategy that has the structure of modal quantification.
+by the hearer through reinterpretation. Cohen identifies two devices:
+Predicate Transfer (pragmatic, for generics — yields scope ambiguities
+except in opaque contexts) and type-shifting (semantic, for habituals —
+yields narrow scope only). See `Theories/Semantics/Composition/PredicateTransfer.lean`
+for the formal definitions (T_g, γ, `QuantifierSource`) and
+`Phenomena/Generics/Studies/Cohen2013.lean` for the scope predictions
+verified on finite models. The present module draws a further connection
+not made by Cohen: the resulting generic quantifier has the structure
+of modal quantification (restricted universal over a contextually
+filtered domain).
 
 ## Asher & Pelletier (@cite{asher-pelletier-2013})
 
@@ -39,14 +46,12 @@ Asher & Pelletier (ch. 12) analyze generics as modal quantification over
 circumstances, with the restrictor providing the modal base and normalcy
 providing the ordering source.
 -/
--- UNVERIFIED: chapter number and specific claim about modal base/ordering source mapping
+-- UNVERIFIED: Asher & Pelletier chapter number ("ch. 12") and specific claim about modal base/ordering source mapping
 
 namespace Phenomena.Generics.CompareModality
 
 open Semantics.Lexical.Noun.Kind.Generics
-open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional (World allWorlds)
-open Semantics.Modality (ModalForce)
 
 -- Structural Correspondence
 

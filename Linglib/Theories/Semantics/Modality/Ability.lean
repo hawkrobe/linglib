@@ -1,7 +1,7 @@
 import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Implicative
-import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 /-!
