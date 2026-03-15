@@ -9,7 +9,7 @@ adjectival domains, sharing the same DegP template.
 This file focuses on the **construction-level** parallels: all three
 domains use the same morphosyntactic template (`much`/`more` + comparative
 morphology). The measured-domain-level predictions (mereological status,
-dimensional restriction) are in `Studies/Wellwood2015/`.
+dimensional restriction) are in `Studies/Wellwood2015.lean`.
 
 -/
 

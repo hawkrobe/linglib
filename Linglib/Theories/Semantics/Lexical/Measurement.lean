@@ -7,13 +7,15 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
 /-!
 # Cross-Categorial Measurement Semantics
 
-@cite{wellwood-2015} @cite{schwarzschild-2006}@cite{wellwood-2015} argues that all comparative sentences contain a covert `much` @cite{kennedy-2007}
+@cite{wellwood-2015} @cite{schwarzschild-2006} @cite{kennedy-2007}
+
+@cite{wellwood-2015} argues that all comparative sentences contain a covert `much`
 morpheme whose semantics is a measure function μ assigned by a variable
-assignment A (eq. 28):
+assignment A:
 
     ⟦much_μ⟧^A = A(μ)
 
-The measure function must be **monotonic** (eq. 26): for all α, β in a
+The measure function must be **monotonic**: for all α, β in a
 part-whole ordered domain, if α ≺^Part β then μ(α) ≺^Deg μ(β). This is
 @cite{schwarzschild-wilkinson-2002}'s monotonicity condition, and corresponds exactly
 to `StrictMono` / `MereoDim` / CSW's `admissibleMeasure` in linglib.
@@ -36,17 +38,17 @@ agree on the comparative ordering — which holds exactly for linear orders
 
 ## Key Identifications
 
-- Wellwood's monotonicity (eq. 26) = `StrictMono` = `MereoDim` = CSW's `admissibleMeasure`
-- Wellwood's measurability condition = `CUM` (mereological structure)
-- Wellwood's counting condition = `QUA` (quantized reference)
-- Wellwood's dimensional restriction = `LinearOrder` on the measured domain
-- Wellwood's comparative = CSW's `statesComparativeSem` = `μ b < μ a`
+- @cite{wellwood-2015}'s monotonicity condition = `StrictMono` = `MereoDim` = CSW's `admissibleMeasure`
+- @cite{wellwood-2015}'s measurability condition = `CUM` (mereological structure)
+- @cite{wellwood-2015}'s counting condition = `QUA` (quantized reference)
+- @cite{wellwood-2015}'s dimensional restriction = `LinearOrder` on the measured domain
+- @cite{wellwood-2015}'s comparative = CSW's `statesComparativeSem` = `μ b < μ a`
 
 ## Interpretive Note
 
-Wellwood does not explicitly label GA state domains as "cumulative" in
+@cite{wellwood-2015} does not explicitly label GA state domains as "cumulative" in
 Krifka's technical sense (closure under join). She argues they "form
-mereologies" (p. 81) — ordered domains with proper parts. We classify
+mereologies" — ordered domains with proper parts. We classify
 them as `.cumulative` because the structural consequence is the same:
 mereological structure enables monotonic measurement by `much`.
 
@@ -70,10 +72,10 @@ open Semantics.Lexical.Noun.Kind.Dayal2004 (NumberFeature)
     - `cumulative`: domain has mereological structure with proper parts,
       enabling monotonic measurement by `much`. Includes mass nouns
       (CUM), atelic VPs (CUM), and gradable adjectives (states form
-      mereologies — §3.2, p. 81).
+      mereologies).
     - `quantized`: domain lacks non-trivial part-whole structure for
       measurement. Count nouns (QUA), telic VPs (QUA), and non-gradable
-      adjectives (atomic, unordered states — §3.1, p. 80). -/
+      adjectives (atomic, unordered states). -/
 inductive MereologicalStatus where
   | cumulative
   | quantized
@@ -84,7 +86,7 @@ inductive MereologicalStatus where
     CUM → no inherent endpoint → open scale (→ blocked degree modifiers)
     QUA → inherent endpoint → closed scale (→ licensed degree modifiers)
 
-    This connects Wellwood's cross-categorial classification to Kennedy's
+    This connects @cite{wellwood-2015}'s cross-categorial classification to Kennedy's
     scale structure, via the existing `cumBoundedness`/`quaBoundedness`
     annotations in `Core.MereoDim`. -/
 def MereologicalStatus.toBoundedness : MereologicalStatus → Core.Scale.Boundedness
@@ -101,21 +103,24 @@ theorem toBoundedness_coherent :
 -- § 2. `much` as Structure-Preserving Map
 -- ════════════════════════════════════════════════════
 
-/-- Wellwood's `much` (eq. 28): ⟦much_μ⟧^A = A(μ), where μ is a
-    monotonic measure function. The monotonicity condition (eq. 26)
-    requires strict order preservation:
+/-- Admissibility constraint on measure functions introduced by `much`.
+
+    @cite{wellwood-2015}'s `much_μ` has the denotation ⟦much_μ⟧^A = A(μ) —
+    simply a variable-assignment lookup returning a measure function μ.
+    The *admissibility condition* on that measure function requires
+    strict monotonicity (order preservation):
 
       for all α, β ∈ D_≤Part, if α ≺^Part β then μ(α) ≺^Deg μ(β)
 
-    This is `StrictMono`, equivalently `MereoDim.toStrictMono` or
-    CSW's `admissibleMeasure`. The comparative across all categories
-    is the existing `statesComparativeSem`: μ(b) < μ(a). -/
+    `MuchSem μ` captures this felicity condition, not `much`'s denotation
+    itself. It is `StrictMono`, equivalently `MereoDim.toStrictMono` or
+    CSW's `admissibleMeasure`. -/
 abbrev MuchSem {A D : Type*} [Preorder A] [Preorder D] (μ : A → D) : Prop :=
   StrictMono μ
 
 /-- `MuchSem` is definitionally equal to CSW's admissible measure
-    constraint (CSW eq. 21). Both require strict order preservation.
-    This makes the Wellwood–CSW identification explicit: changing
+    constraint. Both require strict order preservation.
+    This makes the @cite{wellwood-2015}–CSW identification explicit: changing
     either definition breaks this theorem. -/
 theorem muchSem_eq_admissibleMeasure
     {S D : Type*} [Preorder S] [Preorder D] (μ : S → D) :
@@ -144,8 +149,8 @@ def telicityToStatus : Telicity → MereologicalStatus
 /-- Number feature determines mereological status:
     mass nouns have CUM domains; count nouns (sg/pl) have QUA domains.
 
-    Note: plural count nouns are CUM at the plurality level (p. 92:
-    "Plural predicates are cumulative"), but their measurement is restricted
+    Note: plural count nouns are CUM at the plurality level
+    ("Plural predicates are cumulative"), but their measurement is restricted
     to NUMBER (counting atoms). At the lexical level, count nouns are QUA. -/
 def numberToStatus : NumberFeature → MereologicalStatus
   | .mass => .cumulative
@@ -154,7 +159,7 @@ def numberToStatus : NumberFeature → MereologicalStatus
 
 /-- Gradable adjectives predicate of states that "form mereologies", enabling monotonic measurement by `much`.
 
-    Interpretive note: Wellwood does not explicitly use the label CUM for
+    Interpretive note: @cite{wellwood-2015} does not explicitly use the label CUM for
     GA state domains. She argues they have mereological structure (ordered
     domains with proper parts). We classify them as `.cumulative` because
     the structural consequence is identical: mereological structure enables
@@ -192,7 +197,7 @@ theorem accomplishment_is_quantized : vendlerToStatus .accomplishment = .quantiz
     Adding a goal PP to an atelic VP ("ran" → "ran to the park") changes
     the predicate's mereological status, blocking extensive dimensions
     (DURATION, DISTANCE) and restricting to NUMBER. This connects
-    Wellwood's grammar-shifts-measurement claim to the existing
+    @cite{wellwood-2015}'s grammar-shifts-measurement claim to the existing
     `AspectualProfile.telicize` operation. -/
 theorem telicize_shifts_status (p : AspectualProfile) (h : p.telicity = .atelic) :
     telicityToStatus p.telicity = .cumulative ∧
@@ -218,7 +223,7 @@ theorem atelicize_shifts_status (p : AspectualProfile) (h : p.telicity = .telic)
     functions (StrictMono maps to ℚ) agree on the comparative ordering
     of all elements.
 
-    This captures Wellwood's claim that GAs lexically fix a single
+    This captures @cite{wellwood-2015}'s claim that GAs lexically fix a single
     dimension while nouns/verbs allow contextual dimension selection:
 
     - GA state domains: linearly ordered → any two StrictMono μ₁, μ₂
