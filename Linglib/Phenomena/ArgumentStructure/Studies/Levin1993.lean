@@ -9,7 +9,7 @@ Connects empirical alternation data to the
 
 ## Agreement
 
-All 29 data points agree with the `LevinClass.participatesIn` prediction
+All 40 data points agree with the `LevinClass.participatesIn` prediction
 function. The CI rule correctly blocks *cut* via `!instrumentSpec`
 (Levin p. 9–10: instrument specification requires an agent, blocking
 the agentless inchoative).
@@ -270,5 +270,61 @@ theorem co_run_agrees :
 theorem dp_run_agrees :
     dp_run.result = .participates ∧
     LevinClass.mannerOfMotion.participatesIn .directionalPhrase = true := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 5. Verbal Passive, Prepositional Passive, Swarm Agreement
+-- ════════════════════════════════════════════════════
+
+-- Verbal Passive (§5.1)
+
+theorem vp_break_agrees :
+    vp_break.result = .participates ∧
+    LevinClass.break_.participatesIn .verbalPassive = true := ⟨rfl, rfl⟩
+
+theorem vp_give_agrees :
+    vp_give.result = .participates ∧
+    LevinClass.give.participatesIn .verbalPassive = true := ⟨rfl, rfl⟩
+
+theorem vp_eat_agrees :
+    vp_eat.result = .participates ∧
+    LevinClass.eat.participatesIn .verbalPassive = true := ⟨rfl, rfl⟩
+
+theorem vp_see_agrees :
+    vp_see.result = .participates ∧
+    LevinClass.see.participatesIn .verbalPassive = true := ⟨rfl, rfl⟩
+
+theorem vp_measure_agrees :
+    vp_measure.result = .blocked ∧
+    LevinClass.measure.participatesIn .verbalPassive = false := ⟨rfl, rfl⟩
+
+-- Prepositional Passive (§5.2)
+
+theorem pp_sleep_agrees :
+    pp_sleep.result = .participates ∧
+    LevinClass.assumePosition.participatesIn .prepositionalPassive = true := ⟨rfl, rfl⟩
+
+theorem pp_talk_agrees :
+    pp_talk.result = .participates ∧
+    LevinClass.mannerOfSpeaking.participatesIn .prepositionalPassive = true := ⟨rfl, rfl⟩
+
+-- Swarm (§2.3.4)
+
+theorem sw_swarm_agrees :
+    sw_swarm.result = .participates ∧
+    LevinClass.exist.participatesIn .swarm = true := ⟨rfl, rfl⟩
+
+theorem sw_crawl_agrees :
+    sw_crawl.result = .participates ∧
+    LevinClass.mannerOfMotion.participatesIn .swarm = true := ⟨rfl, rfl⟩
+
+-- Induced Action (§1.1.2.2) — additional
+
+theorem ia_walk_agrees :
+    ia_walk.result = .participates ∧
+    LevinClass.mannerOfMotion.participatesIn .inducedAction = true := ⟨rfl, rfl⟩
+
+theorem ia_appear_agrees :
+    ia_appear.result = .blocked ∧
+    LevinClass.appear.participatesIn .inducedAction = false := ⟨rfl, rfl⟩
 
 end Phenomena.ArgumentStructure.DiathesisAlternations.Bridge

@@ -255,12 +255,51 @@ def LevinClass.participatesIn (c : LevinClass) (alt : DiathesisAlternation) : Bo
   -- §2.4.1 Material/product: build verbs
   | .build, .materialProduct | .knead, .materialProduct
   | .turn, .materialProduct => true
+  -- §2.3.4 Swarm: intransitive locative alternation
+  | .exist, .swarm | .mannerOfMotion, .swarm
+  | .bodyInternalMotion, .swarm => true
   -- §2.4.3 Total transformation: turn/convert verbs
   | .turn, .totalTransformation => true
+  -- §5.1 Verbal passive: available to most transitive verbs
+  -- CoS / causative classes (§§44–45)
+  | .break_, .verbalPassive | .bend, .verbalPassive
+  | .cooking, .verbalPassive | .otherCoS, .verbalPassive
+  | .destroy, .verbalPassive => true
+  -- Contact / cutting (§§18–21)
+  | .hit, .verbalPassive | .swat, .verbalPassive
+  | .poke, .verbalPassive | .touch, .verbalPassive
+  | .cut, .verbalPassive | .carve, .verbalPassive => true
+  -- Putting / removing / sending (§§9–11)
+  | .put, .verbalPassive | .sprayLoad, .verbalPassive
+  | .remove, .verbalPassive | .clear, .verbalPassive
+  | .wipe, .verbalPassive | .steal, .verbalPassive
+  | .send, .verbalPassive | .carry, .verbalPassive => true
+  -- Transfer / ingesting (§§13, 39)
+  | .give, .verbalPassive | .eat, .verbalPassive
+  | .devour, .verbalPassive => true
+  -- Creation / transformation (§26)
+  | .build, .verbalPassive | .create, .verbalPassive
+  | .knead, .verbalPassive | .turn, .verbalPassive => true
+  -- Killing (§42)
+  | .murder, .verbalPassive | .poison, .verbalPassive => true
+  -- Perception / psych (§§30–31)
+  | .see, .verbalPassive | .amuse, .verbalPassive
+  | .admire, .verbalPassive => true
+  -- Communication (§37)
+  | .tell, .verbalPassive | .say, .verbalPassive => true
+  -- Combining / separating (§§22–23)
+  | .mix, .verbalPassive | .separate, .verbalPassive => true
+  -- Other transitive classes
+  | .throw, .verbalPassive | .conceal, .verbalPassive
+  | .color, .verbalPassive | .imageCreation, .verbalPassive
+  | .hold, .verbalPassive | .pushPull, .verbalPassive
+  | .appoint, .verbalPassive | .dress, .verbalPassive => true
   -- §5.2 Prepositional passive: unergative diagnostic
   | .mannerOfMotion, .prepositionalPassive
   | .exist, .prepositionalPassive
-  | .assumePosition, .prepositionalPassive => true
+  | .assumePosition, .prepositionalPassive
+  | .bodyProcess, .prepositionalPassive
+  | .mannerOfSpeaking, .prepositionalPassive => true
   -- §6.1 There-insertion: existence/appearance verbs
   | .exist, .thereInsertion | .appear, .thereInsertion
   | .soundEmission, .thereInsertion | .lightEmission, .thereInsertion
@@ -503,4 +542,49 @@ theorem mannerOfMotion_breadth :
     ∧ LevinClass.mannerOfMotion.participatesIn .prepositionalPassive = true
     ∧ LevinClass.mannerOfMotion.participatesIn .locativeInversion = true :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-! ### Verbal passive coverage -/
+
+/-- Verbal passive is available across all major transitive class families:
+    CoS, contact, putting, transfer, creation, killing, perception, psych. -/
+theorem verbalPassive_coverage :
+    LevinClass.break_.participatesIn .verbalPassive = true
+    ∧ LevinClass.hit.participatesIn .verbalPassive = true
+    ∧ LevinClass.put.participatesIn .verbalPassive = true
+    ∧ LevinClass.give.participatesIn .verbalPassive = true
+    ∧ LevinClass.build.participatesIn .verbalPassive = true
+    ∧ LevinClass.murder.participatesIn .verbalPassive = true
+    ∧ LevinClass.see.participatesIn .verbalPassive = true
+    ∧ LevinClass.amuse.participatesIn .verbalPassive = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Measure verbs (§54) do NOT participate in verbal passive.
+    *This box weighs five pounds* → *?Five pounds are weighed by this box*.
+    Stative relations between a measurer and a measure resist passivization. -/
+theorem measure_no_verbalPassive :
+    LevinClass.measure.participatesIn .verbalPassive = false := rfl
+
+/-- Weather verbs (§57) do NOT participate in verbal passive (no object to promote). -/
+theorem weather_no_verbalPassive :
+    LevinClass.weather.participatesIn .verbalPassive = false := rfl
+
+/-! ### Prepositional passive and swarm coverage -/
+
+/-- Prepositional passive aligns with unergativity: classes predicted
+    unergative (manner-of-motion, body process) participate, while
+    classes predicted unaccusative (exist, appear) generally don't.
+    Note: exist verbs are exceptional — *the house was lived in*
+    participates despite predict-unaccusative status. -/
+theorem prepositionalPassive_unergatives :
+    LevinClass.mannerOfMotion.participatesIn .prepositionalPassive = true
+    ∧ LevinClass.bodyProcess.participatesIn .prepositionalPassive = true
+    ∧ LevinClass.mannerOfSpeaking.participatesIn .prepositionalPassive = true
+    ∧ LevinClass.assumePosition.participatesIn .prepositionalPassive = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The swarm alternation applies to existence and manner-of-motion verbs
+    (§2.3.4: *bees swarmed in the garden* / *the garden swarmed with bees*). -/
+theorem swarm_classes :
+    LevinClass.exist.participatesIn .swarm = true
+    ∧ LevinClass.mannerOfMotion.participatesIn .swarm = true
+    ∧ LevinClass.bodyInternalMotion.participatesIn .swarm = true := ⟨rfl, rfl, rfl⟩
 

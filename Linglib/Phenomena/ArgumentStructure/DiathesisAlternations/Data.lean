@@ -463,6 +463,113 @@ def dp_run : AlternationDatum :=
   , note := "Levin §7.8" }
 
 -- ════════════════════════════════════════════════════
+-- § Verbal Passive (5.1) — Most Transitive ✓, Measure ✗
+-- ════════════════════════════════════════════════════
+
+def vp_break : AlternationDatum :=
+  { verbForm := "break"
+  , verbClass := .break_
+  , alternation := .verbalPassive
+  , result := .participates
+  , sentence := "The window was broken by the boy."
+  , note := "Levin §5.1" }
+
+def vp_give : AlternationDatum :=
+  { verbForm := "give"
+  , verbClass := .give
+  , alternation := .verbalPassive
+  , result := .participates
+  , sentence := "The book was given to her."
+  , note := "Levin §5.1" }
+
+def vp_eat : AlternationDatum :=
+  { verbForm := "eat"
+  , verbClass := .eat
+  , alternation := .verbalPassive
+  , result := .participates
+  , sentence := "The cake was eaten."
+  , note := "Levin §5.1" }
+
+def vp_see : AlternationDatum :=
+  { verbForm := "see"
+  , verbClass := .see
+  , alternation := .verbalPassive
+  , result := .participates
+  , sentence := "The ship was seen on the horizon."
+  , note := "Levin §5.1" }
+
+def vp_measure : AlternationDatum :=
+  { verbForm := "weigh"
+  , verbClass := .measure
+  , alternation := .verbalPassive
+  , result := .blocked
+  , sentence := "*Five pounds are weighed by this box."
+  , note := "Stative measure verbs resist passivization (Levin §5.1)" }
+
+-- ════════════════════════════════════════════════════
+-- § Prepositional Passive (5.2) — Unergative ✓
+-- ════════════════════════════════════════════════════
+
+def pp_sleep : AlternationDatum :=
+  { verbForm := "sleep"
+  , verbClass := .assumePosition
+  , alternation := .prepositionalPassive
+  , result := .participates
+  , sentence := "The bed was slept in."
+  , note := "Levin §5.2 — classic unergative diagnostic" }
+
+def pp_talk : AlternationDatum :=
+  { verbForm := "talk"
+  , verbClass := .mannerOfSpeaking
+  , alternation := .prepositionalPassive
+  , result := .participates
+  , sentence := "The matter was talked about."
+  , note := "Levin §5.2" }
+
+-- ════════════════════════════════════════════════════
+-- § Swarm (2.3.4) — Existence/Motion ✓
+-- ════════════════════════════════════════════════════
+
+def sw_swarm : AlternationDatum :=
+  { verbForm := "swarm"
+  , verbClass := .exist
+  , alternation := .swarm
+  , result := .participates
+  , sentence := "Bees swarmed in the garden."
+  , variant := some "The garden swarmed with bees."
+  , note := "Levin §2.3.4" }
+
+def sw_crawl : AlternationDatum :=
+  { verbForm := "crawl"
+  , verbClass := .mannerOfMotion
+  , alternation := .swarm
+  , result := .participates
+  , sentence := "Ants crawled on the counter."
+  , variant := some "The counter crawled with ants."
+  , note := "Levin §2.3.4" }
+
+-- ════════════════════════════════════════════════════
+-- § Induced Action (1.1.2.2) — additional
+-- ════════════════════════════════════════════════════
+
+def ia_walk : AlternationDatum :=
+  { verbForm := "walk"
+  , verbClass := .mannerOfMotion
+  , alternation := .inducedAction
+  , result := .participates
+  , sentence := "The dog walked."
+  , variant := some "She walked the dog."
+  , note := "Levin §1.1.2.2" }
+
+def ia_appear : AlternationDatum :=
+  { verbForm := "appear"
+  , verbClass := .appear
+  , alternation := .inducedAction
+  , result := .blocked
+  , sentence := "*She appeared the ghost."
+  , note := "Unaccusative verbs resist induced action (no agentive S)" }
+
+-- ════════════════════════════════════════════════════
 -- § Collections
 -- ════════════════════════════════════════════════════
 
@@ -487,12 +594,15 @@ def allData : List AlternationDatum :=
   , ti_develop, ti_appear
   , li_live
   , is_break, is_eat
-  , ia_run
+  , ia_run, ia_walk, ia_appear
   , ubpo_wave
   , uro_wash
   , tt_turn
   , way_elbow
   , co_laugh, co_run
-  , dp_run ]
+  , dp_run
+  , vp_break, vp_give, vp_eat, vp_see, vp_measure
+  , pp_sleep, pp_talk
+  , sw_swarm, sw_crawl ]
 
 end Phenomena.ArgumentStructure.DiathesisAlternations.Data

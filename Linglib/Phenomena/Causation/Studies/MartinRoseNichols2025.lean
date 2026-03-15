@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Causation.ProductionDependence
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Core.Lexical.DiathesisAlternation
 
 /-!
 # Thick vs Thin Causative Verb Data

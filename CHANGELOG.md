@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.280] - 2026-03-15
+
+### Added
+- **Levin integration deepening**: fix broken `participatesIn` imports in Storment2026 and MartinRoseNichols2025; expand `participatesIn` with verbal passive coverage (30+ transitive classes), prepositional passive (5 unergative classes), swarm (3 classes); add 12 new data points (53 total) covering verbal passive (4 positive + 1 negative: measure verbs blocked), prepositional passive (2), swarm (2), induced action (1 positive + 1 negative: appear blocked); add 11 new bridge theorems (40 total); add coverage/diagnostic theorems: `verbalPassive_coverage` (8 class families), `measure_no_verbalPassive`, `prepositionalPassive_unergatives`, `swarm_classes`
+
 ## [0.229.279] - 2026-03-15
 
 ### Added
