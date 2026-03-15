@@ -14,6 +14,24 @@ Defines:
 -/
 
 -- ============================================================================
+-- V2 Data (Theory-Neutral)
+-- ============================================================================
+
+/-- Theory-neutral V2 data: for each clause type, whether verb movement
+    to second position is observed. Used by Fragment V2 files for
+    descriptive encoding of cross-Germanic V2 variation. -/
+structure V2Data where
+  name : String
+  declV2 : Bool      -- V2 in root declaratives
+  whQV2 : Bool       -- V2 in wh-questions
+  ynQV2 : Bool       -- V2 in yes/no-questions
+  exclV2 : Bool      -- V2 in exclamatives
+  impV2 : Bool       -- V2 in imperatives
+  embFinV2 : Bool    -- V-to-I in embedded finite clauses
+  embQV2 : Bool      -- V2 in embedded questions
+  deriving Repr, BEq, DecidableEq
+
+-- ============================================================================
 -- Clause Types
 -- ============================================================================
 

@@ -4,6 +4,10 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
 import Linglib.Core.Discourse.InformationStructure
+import Linglib.Fragments.Norwegian.V2
+import Linglib.Fragments.English.V2
+import Linglib.Fragments.German.V2
+import Linglib.Fragments.Danish.V2
 
 /-!
 # Westergaard (2009): Micro-Cues, Information Structure, and Economy
@@ -23,16 +27,17 @@ are characterized by different profiles of + and − across these heads.
 
 The book distinguishes two levels:
 - **Micro-parameters** (Table 3.1): settings in the adult grammar
-- **Micro-cues** (Table 3.2): observable input patterns that trigger
-  each parameter setting in acquisition
+- **Micro-cues** (Ch. 3 §4, Ch. 10 §3): observable input patterns that
+  trigger each parameter setting in acquisition
 
 ## Formalization
 
-1. **`ForceHead`**: the seven clause-type heads in the split-ForceP model
-2. **`V2Profile`**: a function `ForceHead → Bool` — Table 3.1 data
-3. **`MicroCue`**: syntactic templates from Table 3.2
-4. **Six language profiles** verified against Table 3.1
+1. **`ForceHead`**: the seven clause-type heads (theory layer)
+2. **`V2Profile`**: a function `ForceHead → Bool` (theory layer)
+3. **Language profiles**: per-language Fragment files
+4. **`MicroCue`**: syntactic templates from Ch. 3 §4
 5. **Bridge theorems** to SAI data, V2 data, and GermanicV2
+6. **Information Structure**: [±FOC] conditioning of "optional" V2
 
 ## The Split-ForceP Model
 
@@ -49,10 +54,37 @@ follows @cite{holmberg-2003} and is a CP-domain head for yes/no-questions,
 NOT @cite{laka-1990}'s ΣP (which is `Cat.Pol` in linglib at F-value 2).
 -/
 
+-- ============================================================================
+-- Theory Bridge (before namespace, so V2Data.toProfile is at root level)
+-- ============================================================================
+
+open Minimalism (ForceHead V2Profile) in
+/-- Map theory-neutral V2 observations to @cite{westergaard-2009}'s
+    split-ForceP micro-parameter representation. The mapping:
+    - `declV2`   → Decl° (verb movement in declaratives)
+    - `whQV2`    → Int°  (verb movement in wh-questions)
+    - `ynQV2`    → Pol°  (verb movement in yes/no-questions)
+    - `exclV2`   → Excl° (verb movement in exclamatives)
+    - `impV2`    → Imp°  (verb movement in imperatives)
+    - `embFinV2` → Fin°  (V-to-I in embedded finite clauses)
+    - `embQV2`   → Wh°   (verb movement in embedded questions) -/
+def V2Data.toProfile (d : V2Data) : V2Profile where
+  name := d.name
+  verbMovement
+    | .Decl => d.declV2  | .Int  => d.whQV2   | .Pol  => d.ynQV2
+    | .Excl => d.exclV2  | .Imp  => d.impV2   | .Fin  => d.embFinV2
+    | .Wh   => d.embQV2
+
 namespace Phenomena.WordOrder.Studies.Westergaard2009
 
-open Minimalism (Cat fValue)
+open Minimalism (ForceHead V2Profile WhElementStatus whBlocksVerbMovement)
 open Core.InformationStructure (DiscourseStatus)
+
+-- Fragment data (theory-neutral)
+open Fragments.Norwegian (stdNorwegian nordmoreNorwegian)
+open Fragments.English (stdEnglish belfastEnglish)
+open Fragments.German (german)
+open Fragments.Danish (danish)
 
 -- ============================================================================
 -- § 0  V2 Types
@@ -92,169 +124,92 @@ structure V2Datum where
   deriving Repr, BEq
 
 -- ============================================================================
--- § 1  ForceHead and V2 Profiles (Table 3.1, p. 41)
+-- § 1  Table 3.1 Verification (all 42 cells)
 -- ============================================================================
 
-/-- The seven clause-type heads in @cite{westergaard-2009}'s split-ForceP.
-    Each represents a possible target for verb movement.
-
-    These are all in the CP domain (at or above FinP). The five root-clause
-    heads (Decl, Int, Pol, Excl, Imp) are all "flavors of Force" —
-    finer-grained than @cite{rizzi-1997}'s single Force head. -/
-inductive ForceHead where
-  | Decl   -- declaratives (DeclP)
-  | Int    -- wh-questions (IntP)
-  | Pol    -- yes/no-questions (PolP, @cite{holmberg-2003})
-  | Excl   -- exclamatives (ExclP)
-  | Imp    -- imperatives (ImpP)
-  | Fin    -- embedded clauses (FinP = V-to-I)
-  | Wh     -- embedded questions (WhP)
-  deriving DecidableEq, Repr, BEq
-
-/-- Whether a ForceHead is a root-clause head (in the Force domain)
-    or a lower/embedded head. -/
-def ForceHead.isRootClause : ForceHead → Bool
-  | .Decl | .Int | .Pol | .Excl | .Imp => true
-  | .Fin  | .Wh                        => false
-
-/-- A V2 profile: for each clause-type head, whether verb movement
-    to that head is required (+) or absent (−) in a given language/dialect.
-
-    This is the formalization of **Table 3.1** (p. 41) — the
-    *micro-parameter* settings, not the micro-cues (input evidence).
-    For cues, see `MicroCue` below. -/
-structure V2Profile where
-  name : String
-  verbMovement : ForceHead → Bool
-
-/-- Count how many heads trigger verb movement in a profile. -/
-def V2Profile.activeCount (p : V2Profile) : Nat :=
-  [ForceHead.Decl, .Int, .Pol, .Excl, .Imp, .Fin, .Wh].countP p.verbMovement
-
--- ============================================================================
--- § 2  Language Profiles (Table 3.1, p. 41)
--- ============================================================================
-
-/-- Standard Norwegian: +Decl°, +Int°, +Pol°, −Excl°, −Imp°, −Fin°, −Wh°. -/
-def stdNorwegian : V2Profile where
-  name := "Standard Norwegian"
-  verbMovement
-    | .Decl => true  | .Int  => true  | .Pol  => true
-    | .Excl => false | .Imp  => false | .Fin  => false | .Wh => false
-
-/-- Standard English: −Decl°, +Int°, +Pol°, −Excl°, −Imp°, −Fin°, −Wh°. -/
-def stdEnglish : V2Profile where
-  name := "Standard English"
-  verbMovement
-    | .Decl => false | .Int  => true  | .Pol  => true
-    | .Excl => false | .Imp  => false | .Fin  => false | .Wh => false
-
-/-- Nordmøre Norwegian: +Decl°, −Int°, +Pol°, −Excl°, −Imp°, −Fin°, −Wh°. -/
-def nordmoreNorwegian : V2Profile where
-  name := "Nordmøre Norwegian"
-  verbMovement
-    | .Decl => true  | .Int  => false | .Pol  => true
-    | .Excl => false | .Imp  => false | .Fin  => false | .Wh => false
-
-/-- Belfast English: −Decl°, +Int°, +Pol°, −Excl°, +Imp°, −Fin°, +Wh°. -/
-def belfastEnglish : V2Profile where
-  name := "Belfast English"
-  verbMovement
-    | .Decl => false | .Int  => true  | .Pol  => true
-    | .Excl => false | .Imp  => true  | .Fin  => false | .Wh => true
-
-/-- German: +Decl°, +Int°, +Pol°, −Excl°, −Imp°, +Fin°, −Wh°. -/
-def german : V2Profile where
-  name := "German"
-  verbMovement
-    | .Decl => true  | .Int  => true  | .Pol  => true
-    | .Excl => false | .Imp  => false | .Fin  => true  | .Wh => false
-
-/-- Danish: +Decl°, +Int°, +Pol°, +Excl°, −Imp°, −Fin°, −Wh°. -/
-def danish : V2Profile where
-  name := "Danish"
-  verbMovement
-    | .Decl => true  | .Int  => true  | .Pol  => true
-    | .Excl => true  | .Imp  => false | .Fin  => false | .Wh => false
-
--- ============================================================================
--- § 3  Complete Table 3.1 Verification (all 42 cells)
--- ============================================================================
-
-/-! Every cell of Table 3.1 is verified, so changing a single field
-    breaks exactly one guard. -/
+/-! Table 3.1 (p. 41) has exactly **6** language varieties. Every cell
+    (6 × 7 = 42) is verified, so changing a single field in a Fragment
+    file breaks exactly one guard. -/
 
 -- Standard Norwegian: + + + − − − −
-#guard stdNorwegian.verbMovement .Decl == true
-#guard stdNorwegian.verbMovement .Int  == true
-#guard stdNorwegian.verbMovement .Pol  == true
-#guard stdNorwegian.verbMovement .Excl == false
-#guard stdNorwegian.verbMovement .Imp  == false
-#guard stdNorwegian.verbMovement .Fin  == false
-#guard stdNorwegian.verbMovement .Wh   == false
+#guard stdNorwegian.toProfile.verbMovement .Decl == true
+#guard stdNorwegian.toProfile.verbMovement .Int  == true
+#guard stdNorwegian.toProfile.verbMovement .Pol  == true
+#guard stdNorwegian.toProfile.verbMovement .Excl == false
+#guard stdNorwegian.toProfile.verbMovement .Imp  == false
+#guard stdNorwegian.toProfile.verbMovement .Fin  == false
+#guard stdNorwegian.toProfile.verbMovement .Wh   == false
 
 -- Standard English: − + + − − − −
-#guard stdEnglish.verbMovement .Decl == false
-#guard stdEnglish.verbMovement .Int  == true
-#guard stdEnglish.verbMovement .Pol  == true
-#guard stdEnglish.verbMovement .Excl == false
-#guard stdEnglish.verbMovement .Imp  == false
-#guard stdEnglish.verbMovement .Fin  == false
-#guard stdEnglish.verbMovement .Wh   == false
+#guard stdEnglish.toProfile.verbMovement .Decl == false
+#guard stdEnglish.toProfile.verbMovement .Int  == true
+#guard stdEnglish.toProfile.verbMovement .Pol  == true
+#guard stdEnglish.toProfile.verbMovement .Excl == false
+#guard stdEnglish.toProfile.verbMovement .Imp  == false
+#guard stdEnglish.toProfile.verbMovement .Fin  == false
+#guard stdEnglish.toProfile.verbMovement .Wh   == false
 
 -- Nordmøre Norwegian: + − + − − − −
-#guard nordmoreNorwegian.verbMovement .Decl == true
-#guard nordmoreNorwegian.verbMovement .Int  == false
-#guard nordmoreNorwegian.verbMovement .Pol  == true
-#guard nordmoreNorwegian.verbMovement .Excl == false
-#guard nordmoreNorwegian.verbMovement .Imp  == false
-#guard nordmoreNorwegian.verbMovement .Fin  == false
-#guard nordmoreNorwegian.verbMovement .Wh   == false
+#guard nordmoreNorwegian.toProfile.verbMovement .Decl == true
+#guard nordmoreNorwegian.toProfile.verbMovement .Int  == false
+#guard nordmoreNorwegian.toProfile.verbMovement .Pol  == true
+#guard nordmoreNorwegian.toProfile.verbMovement .Excl == false
+#guard nordmoreNorwegian.toProfile.verbMovement .Imp  == false
+#guard nordmoreNorwegian.toProfile.verbMovement .Fin  == false
+#guard nordmoreNorwegian.toProfile.verbMovement .Wh   == false
 
 -- Belfast English: − + + − + − +
-#guard belfastEnglish.verbMovement .Decl == false
-#guard belfastEnglish.verbMovement .Int  == true
-#guard belfastEnglish.verbMovement .Pol  == true
-#guard belfastEnglish.verbMovement .Excl == false
-#guard belfastEnglish.verbMovement .Imp  == true
-#guard belfastEnglish.verbMovement .Fin  == false
-#guard belfastEnglish.verbMovement .Wh   == true
+#guard belfastEnglish.toProfile.verbMovement .Decl == false
+#guard belfastEnglish.toProfile.verbMovement .Int  == true
+#guard belfastEnglish.toProfile.verbMovement .Pol  == true
+#guard belfastEnglish.toProfile.verbMovement .Excl == false
+#guard belfastEnglish.toProfile.verbMovement .Imp  == true
+#guard belfastEnglish.toProfile.verbMovement .Fin  == false
+#guard belfastEnglish.toProfile.verbMovement .Wh   == true
 
 -- German: + + + − − + −
-#guard german.verbMovement .Decl == true
-#guard german.verbMovement .Int  == true
-#guard german.verbMovement .Pol  == true
-#guard german.verbMovement .Excl == false
-#guard german.verbMovement .Imp  == false
-#guard german.verbMovement .Fin  == true
-#guard german.verbMovement .Wh   == false
+#guard german.toProfile.verbMovement .Decl == true
+#guard german.toProfile.verbMovement .Int  == true
+#guard german.toProfile.verbMovement .Pol  == true
+#guard german.toProfile.verbMovement .Excl == false
+#guard german.toProfile.verbMovement .Imp  == false
+#guard german.toProfile.verbMovement .Fin  == true
+#guard german.toProfile.verbMovement .Wh   == false
 
 -- Danish: + + + + − − −
-#guard danish.verbMovement .Decl == true
-#guard danish.verbMovement .Int  == true
-#guard danish.verbMovement .Pol  == true
-#guard danish.verbMovement .Excl == true
-#guard danish.verbMovement .Imp  == false
-#guard danish.verbMovement .Fin  == false
-#guard danish.verbMovement .Wh   == false
+#guard danish.toProfile.verbMovement .Decl == true
+#guard danish.toProfile.verbMovement .Int  == true
+#guard danish.toProfile.verbMovement .Pol  == true
+#guard danish.toProfile.verbMovement .Excl == true
+#guard danish.toProfile.verbMovement .Imp  == false
+#guard danish.toProfile.verbMovement .Fin  == false
+#guard danish.toProfile.verbMovement .Wh   == false
 
 -- ============================================================================
--- § 4  Micro-Cues (Table 3.2, p. 56)
+-- § 2  Micro-Cues (Ch. 3 §4, Ch. 10 §3)
 -- ============================================================================
 
-/-! Table 3.2 formalizes the *cues* — the syntactic templates in the input
-    that trigger each micro-parameter. A micro-cue is a piece of I-language
-    structure that children produce on exposure to the relevant input.
+/-! @cite{westergaard-2009} Ch. 3 §4 introduces the *cues* — the syntactic
+    templates in the input that trigger each micro-parameter. A micro-cue
+    is a piece of I-language structure that children produce on exposure
+    to the relevant input. Ch. 10 §3 (34)–(37) gives the final formulations.
 
     The distinction from Table 3.1: micro-parameters are the *grammar's*
     settings; micro-cues are the *observable evidence* in the input that
     leads children to set each parameter.
 
-    Notation (from Westergaard Ch. 3 §4):
-    - IntP[wh Int°V] = wh-element in SpecIntP, finite verb in Int° head
-    - DeclP[XP Decl°V] = non-subject XP in SpecDeclP, verb in Decl°
-    - ExclP[wh Excl°V] = wh-exclamative with verb in Excl°
-    - WhP[wh Wh°V] = embedded question with verb in Wh° -/
+    Final micro-cue formulations (Ch. 10 (34)–(37)):
+    - (34) DeclP[XP Decl°[+V] ...] — V2 in declaratives
+    - (35) IntP[wh Int°[+V] ...] — V2 in wh-questions (wh-phrase in SpecIntP)
+    - (36) IntP[wh[Int°] ...] — non-V2 in wh-questions (wh-head *in* Int°)
+    - (37) TopP[DP[−FOC] Top° IntP[wh[Int°] ...]] — given subject → non-V2
+
+    NOTE: (36) and (37) are the two key innovations. (36) captures the
+    wh-head/phrase distinction: monosyllabic wh-words are heads that
+    occupy Int° directly, blocking verb movement. (37) captures the
+    TopP/[±FOC] mechanism: given subjects ([−FOC]) move to SpecTopP,
+    which is the structural basis for the information-structure
+    conditioning of V2 in § 10 below. -/
 
 /-- A micro-cue: a syntactic template that serves as evidence for
     a particular micro-parameter setting in acquisition. -/
@@ -303,18 +258,32 @@ def cueWhNonV2 : MicroCue :=
     template := "WhP[wh ... VP[V]]"
     description := "Embedded question with verb remaining in VP" }
 
-/-- Cue for non-V2 in embedded declaratives. -/
-def cueFinNonV2 : MicroCue :=
-  { target := .Fin
-    template := "IP[XP ... VP[V]]"
-    description := "Embedded declarative with verb remaining in VP" }
+/-- Cue for V2 in yes/no-questions. -/
+def cuePolV2 : MicroCue :=
+  { target := .Pol
+    template := "PolP[Pol°V ...]"
+    description := "Finite verb raised to Pol° in yes/no-questions" }
 
-/-- Table 3.2: which cues are expressed (+) in each language's input.
+/-- Cue for V2 in imperatives. -/
+def cueImpV2 : MicroCue :=
+  { target := .Imp
+    template := "ImpP[Imp°V ...]"
+    description := "Finite verb raised to Imp° in imperatives" }
+
+/-- Cue for wh-head-in-Int° (non-V2 in wh-questions).
+    Ch. 10 (36): IntP[wh[Int°] ...] — the monosyllabic wh-word
+    occupies Int° itself, blocking verb movement to that position. -/
+def cueWhHeadInInt : MicroCue :=
+  { target := .Int
+    template := "IntP[wh[Int°] ...]"
+    description := "Wh-head occupies Int°, blocking verb movement (Ch. 10 (36))" }
+
+/-- Whether a cue is expressed (+) in a given language's input.
     Children exposed to a + cue will set the corresponding parameter. -/
-def cueExpressed (lang : V2Profile) (c : MicroCue) : Bool :=
-  lang.verbMovement c.target
+def cueExpressed (lang : V2Data) (c : MicroCue) : Bool :=
+  lang.toProfile.verbMovement c.target
 
--- Table 3.2 verification (4 cues × 5 languages)
+-- Cue verification (4 cues × selected languages)
 
 -- Standard Norwegian: + for IntP and DeclP cues, − for ExclP and WhP
 #guard cueExpressed stdNorwegian cueIntV2  == true
@@ -344,12 +313,10 @@ def cueExpressed (lang : V2Profile) (c : MicroCue) : Bool :=
 #guard cueExpressed danish cueWhV2   == false
 
 -- ============================================================================
--- § 5  V2 Data from the Book
+-- § 3  V2 Data from the Book
 -- ============================================================================
 
-/-! V2 observations from across the book, organized by language. These
-    were originally in `V2.lean` but belong here since all are introduced
-    by @cite{westergaard-2009}. -/
+/-! V2 observations from across the book, organized by language. -/
 
 -- Norwegian V2 Variation (Tromsø dialect, Ch. 2 Table 2.3)
 
@@ -477,65 +444,111 @@ def de_emb : V2Datum :=
 #guard de_emb.v2Status == .impossible
 
 -- ============================================================================
--- § 6  Cross-Language Comparison Theorems
+-- § 4  Cross-Language Comparison Theorems
 -- ============================================================================
 
 /-- Standard Norwegian and Standard English differ only on Decl°.
     This captures the classic observation that English lost V2 in
     declaratives but retained it in questions. -/
 theorem no_en_differ_only_on_decl :
-    stdNorwegian.verbMovement .Int  = stdEnglish.verbMovement .Int  ∧
-    stdNorwegian.verbMovement .Pol  = stdEnglish.verbMovement .Pol  ∧
-    stdNorwegian.verbMovement .Excl = stdEnglish.verbMovement .Excl ∧
-    stdNorwegian.verbMovement .Imp  = stdEnglish.verbMovement .Imp  ∧
-    stdNorwegian.verbMovement .Fin  = stdEnglish.verbMovement .Fin  ∧
-    stdNorwegian.verbMovement .Wh   = stdEnglish.verbMovement .Wh   ∧
-    stdNorwegian.verbMovement .Decl ≠ stdEnglish.verbMovement .Decl := by
+    stdNorwegian.toProfile.verbMovement .Int  = stdEnglish.toProfile.verbMovement .Int  ∧
+    stdNorwegian.toProfile.verbMovement .Pol  = stdEnglish.toProfile.verbMovement .Pol  ∧
+    stdNorwegian.toProfile.verbMovement .Excl = stdEnglish.toProfile.verbMovement .Excl ∧
+    stdNorwegian.toProfile.verbMovement .Imp  = stdEnglish.toProfile.verbMovement .Imp  ∧
+    stdNorwegian.toProfile.verbMovement .Fin  = stdEnglish.toProfile.verbMovement .Fin  ∧
+    stdNorwegian.toProfile.verbMovement .Wh   = stdEnglish.toProfile.verbMovement .Wh   ∧
+    stdNorwegian.toProfile.verbMovement .Decl ≠ stdEnglish.toProfile.verbMovement .Decl := by
   decide
 
 /-- Nordmøre Norwegian is the mirror image of English on Decl° vs. Int°:
     Nordmøre has +Decl° −Int°, English has −Decl° +Int°. -/
 theorem nordmore_en_mirror_decl_int :
-    nordmoreNorwegian.verbMovement .Decl = true  ∧
-    nordmoreNorwegian.verbMovement .Int  = false ∧
-    stdEnglish.verbMovement .Decl         = false ∧
-    stdEnglish.verbMovement .Int          = true  := by
+    nordmoreNorwegian.toProfile.verbMovement .Decl = true  ∧
+    nordmoreNorwegian.toProfile.verbMovement .Int  = false ∧
+    stdEnglish.toProfile.verbMovement .Decl         = false ∧
+    stdEnglish.toProfile.verbMovement .Int          = true  := by
   decide
 
 /-- Danish differs from Standard Norwegian only on Excl°. -/
 theorem danish_no_differ_only_on_excl :
-    danish.verbMovement .Decl = stdNorwegian.verbMovement .Decl ∧
-    danish.verbMovement .Int  = stdNorwegian.verbMovement .Int  ∧
-    danish.verbMovement .Pol  = stdNorwegian.verbMovement .Pol  ∧
-    danish.verbMovement .Imp  = stdNorwegian.verbMovement .Imp  ∧
-    danish.verbMovement .Fin  = stdNorwegian.verbMovement .Fin  ∧
-    danish.verbMovement .Wh   = stdNorwegian.verbMovement .Wh   ∧
-    danish.verbMovement .Excl ≠ stdNorwegian.verbMovement .Excl := by
+    danish.toProfile.verbMovement .Decl = stdNorwegian.toProfile.verbMovement .Decl ∧
+    danish.toProfile.verbMovement .Int  = stdNorwegian.toProfile.verbMovement .Int  ∧
+    danish.toProfile.verbMovement .Pol  = stdNorwegian.toProfile.verbMovement .Pol  ∧
+    danish.toProfile.verbMovement .Imp  = stdNorwegian.toProfile.verbMovement .Imp  ∧
+    danish.toProfile.verbMovement .Fin  = stdNorwegian.toProfile.verbMovement .Fin  ∧
+    danish.toProfile.verbMovement .Wh   = stdNorwegian.toProfile.verbMovement .Wh   ∧
+    danish.toProfile.verbMovement .Excl ≠ stdNorwegian.toProfile.verbMovement .Excl := by
   decide
 
-/-- All six languages agree on +Pol° (V2 in yes/no-questions is universal
-    across these Germanic varieties). -/
+/-- All six Table 3.1 languages agree on +Pol° (V2 in yes/no-questions is
+    universal across these Germanic varieties). -/
 theorem pol_universal :
-    stdNorwegian.verbMovement .Pol      = true ∧
-    stdEnglish.verbMovement .Pol        = true ∧
-    nordmoreNorwegian.verbMovement .Pol = true ∧
-    belfastEnglish.verbMovement .Pol    = true ∧
-    german.verbMovement .Pol            = true ∧
-    danish.verbMovement .Pol            = true := by
+    stdNorwegian.toProfile.verbMovement .Pol      = true ∧
+    stdEnglish.toProfile.verbMovement .Pol        = true ∧
+    nordmoreNorwegian.toProfile.verbMovement .Pol = true ∧
+    belfastEnglish.toProfile.verbMovement .Pol    = true ∧
+    german.toProfile.verbMovement .Pol            = true ∧
+    danish.toProfile.verbMovement .Pol            = true := by
   decide
 
-/-- German is the only language with +Fin° (V-to-I in embedded clauses). -/
-theorem german_unique_fin :
-    german.verbMovement .Fin            = true  ∧
-    stdNorwegian.verbMovement .Fin      = false ∧
-    stdEnglish.verbMovement .Fin        = false ∧
-    nordmoreNorwegian.verbMovement .Fin = false ∧
-    belfastEnglish.verbMovement .Fin    = false ∧
-    danish.verbMovement .Fin            = false := by
+/-- German is the only Table 3.1 language with +Fin° (V-to-I in
+    embedded clauses). -/
+theorem fin_only_german :
+    german.toProfile.verbMovement .Fin            = true  ∧
+    stdNorwegian.toProfile.verbMovement .Fin      = false ∧
+    stdEnglish.toProfile.verbMovement .Fin        = false ∧
+    nordmoreNorwegian.toProfile.verbMovement .Fin = false ∧
+    belfastEnglish.toProfile.verbMovement .Fin    = false ∧
+    danish.toProfile.verbMovement .Fin            = false := by
   decide
+
+/-- Active parameter counts form a monotone chain from English (fewest)
+    to Danish (most) among the Table 3.1 languages. -/
+theorem active_count_ordering :
+    stdEnglish.toProfile.activeCount ≤ nordmoreNorwegian.toProfile.activeCount ∧
+    nordmoreNorwegian.toProfile.activeCount ≤ stdNorwegian.toProfile.activeCount ∧
+    stdNorwegian.toProfile.activeCount ≤ german.toProfile.activeCount ∧
+    german.toProfile.activeCount ≤ danish.toProfile.activeCount := by
+  native_decide
 
 -- ============================================================================
--- § 7  Bridge to SAI Data
+-- § 5  Wh Head/Phrase Distinction
+-- ============================================================================
+
+/-! @cite{westergaard-2009} Ch. 7 argues that monosyllabic wh-words
+    are syntactic heads (X°) while polysyllabic wh-constituents are
+    phrases (XP). When a wh-head occupies Int°, it blocks verb movement,
+    making non-V2 possible. When a wh-phrase is in SpecIntP, Int° is
+    free for the verb → V2 obligatory.
+
+    Tromsø Norwegian wh-words:
+    - Monosyllabic (heads): *ka* 'what' (1σ), *kem* 'who' (1σ),
+      *kor* 'where' (1σ)
+    - Polysyllabic (phrases): *korfor* 'why' (2σ), *korsen* 'how' (2σ),
+      *katti* 'when' (2σ) -/
+
+/-- Tromsø wh-word data: (form, gloss, syllable count). -/
+def tromsøWhWords : List (String × String × Nat) :=
+  [("ka", "what", 1), ("kem", "who", 1), ("kor", "where", 1),
+   ("korfor", "why", 2), ("korsen", "how", 2), ("katti", "when", 2)]
+
+/-- All monosyllabic Tromsø wh-words classify as heads. -/
+theorem tromsø_mono_are_heads :
+    tromsøWhWords.filter (·.2.2 ≤ 1) |>.all
+      (WhElementStatus.fromSyllableCount ·.2.2 == .head) := by native_decide
+
+/-- All polysyllabic Tromsø wh-words classify as phrases. -/
+theorem tromsø_poly_are_phrases :
+    tromsøWhWords.filter (·.2.2 > 1) |>.all
+      (WhElementStatus.fromSyllableCount ·.2.2 == .phrase) := by native_decide
+
+/-- Head wh-words block verb movement; phrase wh-words do not. -/
+theorem wh_blocking :
+    whBlocksVerbMovement .head = true ∧
+    whBlocksVerbMovement .phrase = false := by decide
+
+-- ============================================================================
+-- § 6  Bridge to SAI Data
 -- ============================================================================
 
 /-! English SAI (from `SubjectAuxInversion.lean`) is exactly the surface
@@ -547,7 +560,7 @@ open Phenomena.WordOrder.SubjectAuxInversion in
 theorem english_wh_sai_consistent :
     ex01.inverted = true ∧
     ex01.acceptability = .grammatical ∧
-    stdEnglish.verbMovement .Int = true := by
+    stdEnglish.toProfile.verbMovement .Int = true := by
   decide
 
 open Phenomena.WordOrder.SubjectAuxInversion in
@@ -556,42 +569,42 @@ open Phenomena.WordOrder.SubjectAuxInversion in
 theorem english_yn_sai_consistent :
     ex04.inverted = true ∧
     ex04.acceptability = .grammatical ∧
-    stdEnglish.verbMovement .Pol = true := by
+    stdEnglish.toProfile.verbMovement .Pol = true := by
   decide
 
 open Phenomena.WordOrder.SubjectAuxInversion in
 /-- English declaratives lack V2 — consistent with −Decl°. -/
 theorem english_decl_no_v2_consistent :
-    stdEnglish.verbMovement .Decl = false := by decide
+    stdEnglish.toProfile.verbMovement .Decl = false := by decide
 
 open Phenomena.WordOrder.SubjectAuxInversion in
 /-- Belfast English embedded inversion (ex23, ex24) is consistent with +Wh°. -/
 theorem belfast_embedded_inv_consistent :
     ex23.acceptability = .dialectal ∧
     ex24.acceptability = .dialectal ∧
-    belfastEnglish.verbMovement .Wh = true := by
+    belfastEnglish.toProfile.verbMovement .Wh = true := by
   decide
 
 -- ============================================================================
--- § 8  Bridge to V2 Data
+-- § 7  Bridge to V2 Data
 -- ============================================================================
 
 /-- Norwegian yes/no-questions are obligatorily V2, consistent with +Pol°. -/
 theorem no_yesno_consistent :
     no_yesno.v2Status = .obligatory ∧
-    stdNorwegian.verbMovement .Pol = true := by
+    stdNorwegian.toProfile.verbMovement .Pol = true := by
   decide
 
 /-- Norwegian exclamatives are non-V2, consistent with −Excl°. -/
 theorem no_excl_consistent :
     no_excl.v2Status = .impossible ∧
-    stdNorwegian.verbMovement .Excl = false := by
+    stdNorwegian.toProfile.verbMovement .Excl = false := by
   decide
 
 /-- Danish exclamatives are V2, consistent with +Excl°. -/
 theorem da_excl_consistent :
     da_excl.v2Status = .obligatory ∧
-    danish.verbMovement .Excl = true := by
+    danish.toProfile.verbMovement .Excl = true := by
   decide
 
 /-- German embedded clauses are verb-final (no V2), even though German
@@ -599,11 +612,11 @@ theorem da_excl_consistent :
     Verb-final is consistent with −Wh° (no V-to-C in embedded contexts). -/
 theorem de_emb_no_v2 :
     de_emb.v2Status = .impossible ∧
-    german.verbMovement .Wh = false := by
+    german.toProfile.verbMovement .Wh = false := by
   decide
 
 -- ============================================================================
--- § 9  Bridge to GermanicV2.lean
+-- § 8  Bridge to GermanicV2.lean
 -- ============================================================================
 
 /-! `GermanicV2.lean` proves that German V2 involves head-to-head movement
@@ -623,10 +636,10 @@ theorem de_emb_no_v2 :
     - V skips T to reach C (`t_intervenes_in_v2`)
     - The mover was a head in the target (`verb_was_head_in_target`) -/
 theorem german_decl_v2_bridge :
-    german.verbMovement .Decl = true := by decide
+    german.toProfile.verbMovement .Decl = true := by decide
 
 -- ============================================================================
--- § 10  Bridge to Typology
+-- § 9  Bridge to Typology
 -- ============================================================================
 
 /-! WALS classifies German as having "no dominant order" (`Typology.lean`).
@@ -642,8 +655,8 @@ open Phenomena.WordOrder.Typology in
     AND +Fin° (V-to-I in embedded → surface SOV). -/
 theorem german_noDominant_explained :
     germanV2.basicOrder = .noDominant ∧
-    german.verbMovement .Decl = true ∧
-    german.verbMovement .Fin  = true := by decide
+    german.toProfile.verbMovement .Decl = true ∧
+    german.toProfile.verbMovement .Fin  = true := by decide
 
 open Phenomena.WordOrder.Typology in
 /-- English is classified as SVO in WALS. This is consistent with −Decl°
@@ -651,11 +664,11 @@ open Phenomena.WordOrder.Typology in
     and −Fin° (no V-to-I in embedded clauses → embedded order also SVO). -/
 theorem english_svo_explained :
     english.basicOrder = .svo ∧
-    stdEnglish.verbMovement .Decl = false ∧
-    stdEnglish.verbMovement .Fin  = false := by decide
+    stdEnglish.toProfile.verbMovement .Decl = false ∧
+    stdEnglish.toProfile.verbMovement .Fin  = false := by decide
 
 -- ============================================================================
--- § 11  Information Structure and "Optional" V2
+-- § 10  Information Structure and "Optional" V2
 -- ============================================================================
 
 /-! In Tromsø *wh*-questions with monosyllabic *wh*-words, V2 vs. non-V2
@@ -666,13 +679,23 @@ theorem english_svo_explained :
     - **[+FOC] / new subject** (full DP) → V2 preferred.
       Subject stays in SpecIP; verb moves to Top° to check [−FOC].
 
-    This is formalized as a function from `DiscourseStatus` to the
-    *preferred* word order. These are the grammar's predictions for each
-    discourse context; the overall clause type is "optional" (see V2.lean
-    `no_wh_short`) with information structure resolving the choice. -/
+    The book *derives* this from TopP structure (pp. 46–47): given subjects
+    carry [−FOC], which triggers movement to SpecTopP, leaving Int° empty
+    (verb stays low). New subjects lack [−FOC], so they stay in SpecIP and
+    the verb moves to Top°/Int° → V2. The [±FOC] feature already exists in
+    `Features.lean` (`foc : Bool → FeatureVal`) but is not yet connected
+    to an Agree-based derivation.
+
+    TODO: Replace this stipulative pattern match with a derivation from
+    [±FOC] feature checking on subjects + TopP Agree/movement. The
+    current version captures the correct *empirical mapping* but does not
+    explain *why* the mapping holds — the TopP mechanism does. -/
 
 /-- Preferred V2 status given subject discourse status in Tromsø
-    monosyllabic *wh*-questions. -/
+    monosyllabic *wh*-questions.
+
+    STIPULATIVE: this pattern-matches on discourse status directly.
+    The book derives this from [±FOC]/TopP (see § 10 docstring). -/
 def tromsøWhV2Preference : DiscourseStatus → V2Status
   | .given   => .impossible  -- given/pronominal subject → non-V2 preferred
   | .new     => .obligatory  -- new/full-DP subject → V2 preferred
@@ -685,7 +708,7 @@ theorem given_predicts_nonV2 : tromsøWhV2Preference .given = .impossible := rfl
 theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
 
 -- ============================================================================
--- § 12  Economy
+-- § 11  Economy
 -- ============================================================================
 
 /-! @cite{westergaard-2009}'s structural economy (p. 4):
@@ -703,10 +726,10 @@ theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
 
 /-- English activates fewer micro-parameters than Standard Norwegian. -/
 theorem english_fewer_active :
-    stdEnglish.activeCount < stdNorwegian.activeCount := by native_decide
+    stdEnglish.toProfile.activeCount < stdNorwegian.toProfile.activeCount := by native_decide
 
 /-- Nordmøre activates fewer micro-parameters than Standard Norwegian. -/
 theorem nordmore_fewer_active :
-    nordmoreNorwegian.activeCount < stdNorwegian.activeCount := by native_decide
+    nordmoreNorwegian.toProfile.activeCount < stdNorwegian.toProfile.activeCount := by native_decide
 
 end Phenomena.WordOrder.Studies.Westergaard2009

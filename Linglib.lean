@@ -554,7 +554,6 @@ import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Icelandic.Reciprocals
-import Linglib.Fragments.Icelandic.V2
 import Linglib.Fragments.Chichewa.Reciprocals
 import Linglib.Fragments.Italian.Predicates
 import Linglib.Fragments.Italian.Binominals
@@ -1021,7 +1020,6 @@ import Linglib.Phenomena.Classifiers.Studies.Downing1996
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Data
-import Linglib.Phenomena.Quantification.Examples
 import Linglib.Phenomena.Quantification.Typology
 import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021

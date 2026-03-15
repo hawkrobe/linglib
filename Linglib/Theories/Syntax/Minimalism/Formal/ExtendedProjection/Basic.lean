@@ -573,4 +573,106 @@ theorem complement_size_ordering :
     ComplementSize.tP.fLevel < ComplementSize.finP.fLevel ∧
     ComplementSize.finP.fLevel < ComplementSize.cP.fLevel := by decide
 
+-- ═══════════════════════════════════════════════════════════════
+-- Part 10: Split ForceP (@cite{westergaard-2009})
+-- ═══════════════════════════════════════════════════════════════
+
+/-- The seven clause-type heads in @cite{westergaard-2009}'s split-ForceP.
+    Each represents a possible target for verb movement.
+
+    @cite{westergaard-2009} splits @cite{rizzi-1997}'s ForceP into
+    clause-type-specific projections: DeclP, IntP, PolP, ExclP, ImpP
+    are all "flavors of Force" in the CP domain, while FinP and WhP
+    handle embedded contexts. This decomposition allows V2 to be treated
+    as multiple independent micro-parameters rather than a single macro-parameter.
+
+    All seven heads are at or above FinP. The five root-clause heads
+    (Decl, Int, Pol, Excl, Imp) are finer-grained than @cite{rizzi-1997}'s
+    single Force head — they are all at the Force level (F6).
+    Fin° corresponds to `Cat.Fin` (F3); Wh° is at the Force level (F6). -/
+inductive ForceHead where
+  | Decl   -- declaratives (DeclP)
+  | Int    -- wh-questions (IntP)
+  | Pol    -- yes/no-questions (PolP, @cite{holmberg-2003})
+  | Excl   -- exclamatives (ExclP)
+  | Imp    -- imperatives (ImpP)
+  | Fin    -- embedded clauses (FinP = V-to-I)
+  | Wh     -- embedded questions (WhP)
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+/-- Whether a ForceHead is a root-clause head (in the Force domain)
+    or a lower/embedded head. -/
+def ForceHead.isRootClause : ForceHead → Bool
+  | .Decl | .Int | .Pol | .Excl | .Imp => true
+  | .Fin  | .Wh                        => false
+
+/-- Map a ForceHead to the corresponding `Cat`. The five root-clause
+    heads all map to `Cat.Force` (they are flavors of Force); `Fin` maps
+    to `Cat.Fin`; `Wh` maps to `Cat.C` (embedded complementizer domain). -/
+def ForceHead.toCat : ForceHead → Cat
+  | .Decl | .Int | .Pol | .Excl | .Imp => .Force
+  | .Fin => .Fin
+  | .Wh  => .C
+
+/-- All ForceHead values are in the verbal EP family. -/
+theorem forceHead_verbal (fh : ForceHead) :
+    catFamily fh.toCat = .verbal := by
+  cases fh <;> decide
+
+/-- A V2 profile: for each clause-type head, whether verb movement
+    to that head is required (+) or absent (−) in a given language/dialect.
+
+    This is the formalization of @cite{westergaard-2009}'s micro-parameter
+    model: V2 is not one parameter but seven independent ones. -/
+structure V2Profile where
+  name : String
+  verbMovement : ForceHead → Bool
+
+/-- Count how many heads trigger verb movement in a profile. -/
+def V2Profile.activeCount (p : V2Profile) : Nat :=
+  [ForceHead.Decl, .Int, .Pol, .Excl, .Imp, .Fin, .Wh].countP p.verbMovement
+
+/-- Whether two profiles differ on exactly one head. -/
+def V2Profile.differOnExactlyOne (p q : V2Profile) (fh : ForceHead) : Prop :=
+  p.verbMovement fh ≠ q.verbMovement fh ∧
+  ∀ fh', fh' ≠ fh → p.verbMovement fh' = q.verbMovement fh'
+
+-- ═══════════════════════════════════════════════════════════════
+-- Part 11: Wh-Element Head/Phrase Status (@cite{westergaard-2009})
+-- ═══════════════════════════════════════════════════════════════
+
+/-- The syntactic status of a *wh*-element: head (X°) or phrase (XP).
+
+    @cite{westergaard-2009} argues that monosyllabic *wh*-words (*ka* 'what',
+    *kem* 'who', *kor* 'where' in the Tromsø dialect) are syntactic **heads**,
+    while polysyllabic *wh*-constituents (*korfor* 'why', *korsen* 'how',
+    *katti* 'when') are **phrases**. This distinction is supported by
+    similar patterns in Italian dialects (@cite{poletto-pollock-2004}).
+
+    The distinction matters for V2: when a *wh*-head occupies Int°, it
+    blocks verb movement to that position, making non-V2 possible. When
+    a *wh*-phrase is in SpecIntP, Int° is free for the verb → V2 obligatory. -/
+inductive WhElementStatus where
+  | head    -- monosyllabic, occupies head position (Int°)
+  | phrase  -- polysyllabic, occupies specifier position (SpecIntP)
+  deriving DecidableEq, Repr, BEq
+
+/-- Determine wh-element status from syllable count.
+    Monosyllabic → head; polysyllabic → phrase. -/
+def WhElementStatus.fromSyllableCount (n : Nat) : WhElementStatus :=
+  if n ≤ 1 then .head else .phrase
+
+/-- Monosyllabic wh-words are heads. -/
+theorem wh_mono_is_head : WhElementStatus.fromSyllableCount 1 = .head := rfl
+
+/-- Polysyllabic wh-words are phrases. -/
+theorem wh_poly_is_phrase : WhElementStatus.fromSyllableCount 2 = .phrase := rfl
+
+/-- When a wh-element is a head in Int°, verb movement to Int° is blocked,
+    making non-V2 possible. When it's a phrase in SpecIntP, Int° is free
+    for the verb → V2 obligatory. -/
+def whBlocksVerbMovement : WhElementStatus → Bool
+  | .head   => true   -- wh occupies Int°, verb can't move there
+  | .phrase => false  -- wh in SpecIntP, Int° available for verb
+
 end Minimalism
