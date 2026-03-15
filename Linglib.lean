@@ -366,6 +366,8 @@ import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.Dutch.Binominals
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
+import Linglib.Fragments.Danish.V2
+import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
@@ -389,6 +391,7 @@ import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.Morph
 import Linglib.Fragments.English.Negation
+import Linglib.Fragments.English.V2
 import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Case
 import Linglib.Fragments.Czech.Determiners
@@ -413,6 +416,7 @@ import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Morph
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.AdjAgreement
+import Linglib.Fragments.German.V2
 import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
@@ -550,6 +554,7 @@ import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Icelandic.Reciprocals
+import Linglib.Fragments.Icelandic.V2
 import Linglib.Fragments.Chichewa.Reciprocals
 import Linglib.Fragments.Italian.Predicates
 import Linglib.Fragments.Italian.Binominals
@@ -918,6 +923,7 @@ import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Linglib.Phenomena.Modality.Studies.Kratzer1981
 import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.Modality.EpistemicContradictions
+import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
