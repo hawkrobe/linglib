@@ -23,6 +23,19 @@ The function `f` maps a predicate `P` to a contextually relevant subset
 The sole lexical difference: *algún* presupposes that `f` is
 anti-singleton (`|f(P)| > 1`). *Un* allows singleton `f`.
 
+## Two Derivation Paths (§§4.2, 4.3)
+
+The Modal Variation effect is derived by scalar competition.
+The paper presents two parallel derivations:
+
+- **§4.2 (Necessity/ASSERT)**: Singleton competitors □(bedroom), □(living room),
+  □(bathroom) are too strong — the speaker would have used one if she could.
+  Negating them yields: the speaker doesn't know which room.
+- **§4.3 (Possibility/◇)**: Anti-exhaustivity implicatures — if ◇(bedroom),
+  then also ◇(other rooms). Rules out singleton epistemic states.
+
+Both paths derive the same Modal Variation effect.
+
 ## Modal Variation vs Free Choice (§§2, 4.4)
 
 The anti-singleton constraint derives a WEAKER modal effect than the
@@ -207,7 +220,7 @@ theorem algún_accepts_antisingleton :
 
 
 -- ════════════════════════════════════════════════════
--- § 5. The ASSERT Operator ((20)) and Modal Variation
+-- § 5. The ASSERT Operator ((20)) and Necessity Derivation (§4.2)
 -- ════════════════════════════════════════════════════
 
 /-- The covert assertoric operator ((20)):
@@ -244,7 +257,7 @@ theorem assert_antisingleton_holds :
 
 
 -- ════════════════════════════════════════════════════
--- § 6. Deriving Modal Variation by Scalar Competition (§4.2)
+-- § 6. Deriving MV by Scalar Competition under □ (§4.2)
 -- ════════════════════════════════════════════════════
 
 /-! The Modal Variation effect is NOT stipulated — it is DERIVED:
@@ -298,6 +311,68 @@ theorem singleton_epist_fails_strengthened :
 
 
 -- ════════════════════════════════════════════════════
+-- § 6b. Deriving MV under ◇: Anti-Exhaustivity (§4.3)
+-- ════════════════════════════════════════════════════
+
+/-! The paper gives a SECOND derivation path when *algún* is under a
+possibility modal (§4.3, (60)–(68)). The reasoning:
+
+1. Speaker uses ◇(algún room) rather than a singleton ◇(bedroom).
+2. The hearer infers anti-exhaustivity: if one room is possible,
+   some other room must also be possible.
+3. This rules out singleton epistemic states → Modal Variation.
+
+The anti-exhaustivity implicatures ((68b)):
+  ◇(bedroom)     → ◇(living room ∨ bathroom)
+  ◇(living room)  → ◇(bedroom ∨ bathroom)
+  ◇(bathroom)     → ◇(bedroom ∨ living room) -/
+
+/-- Possibility modal ◇ ((60b)):
+    ◇(p) = ∃w' ∈ Epistemic. p(w') -/
+def possOp (epist : List HideWorld) (p : HideWorld → Bool) : Bool :=
+  epist.any p
+
+/-- Sentence under ◇ ((60b)):
+    ◇[∃r ∈ f(room). Juan is in r] -/
+def sentenceUnderPoss (f : SubsetSelFn Room) (epist : List HideWorld) : Bool :=
+  possOp epist λ w => allRooms.any λ r => f isRoom r && juanIn r w
+
+/-- Anti-exhaustivity implicature for room `r` ((68b)):
+    ◇(Juan is in r) → ◇(Juan is in some OTHER room).
+    As a Boolean: `¬◇(r) ∨ ◇(other rooms)`.
+    Blocks exhaustive readings where only one room is possible. -/
+def antiExhaustImplicature (r : Room) (epist : List HideWorld) : Bool :=
+  !possOp epist (juanIn r) ||
+    (allRooms.filter (· != r)).any λ r' => possOp epist (juanIn r')
+
+/-- Strengthened meaning under ◇ ((68)):
+    assertion + anti-exhaustivity implicatures for all singleton competitors.
+
+    This is the §4.3 analog of `strengthenedMeaning` (§4.2). -/
+def strengthenedMeaningPoss (f : SubsetSelFn Room) (epist : List HideWorld) : Bool :=
+  sentenceUnderPoss f epist &&
+    antiExhaustImplicature .bedroom epist &&
+    antiExhaustImplicature .livingRoom epist &&
+    antiExhaustImplicature .bathroom epist
+
+/-- Under ◇, the strengthened meaning holds for Pedro. -/
+theorem strengthened_poss_holds :
+    strengthenedMeaningPoss fAntiSingleton pedroEpist = true := by native_decide
+
+/-- Under ◇, singleton epistemic states are ruled out: if Pedro only
+    considers the bedroom, the anti-exhaustivity implicature for
+    bedroom fails (there's no other room that's possible). -/
+theorem singleton_epist_fails_poss :
+    strengthenedMeaningPoss fFull [.inBedroom] = false := by native_decide
+
+/-- Both derivation paths (§4.2 under □, §4.3 under ◇) agree:
+    they accept the same epistemic states for Pedro. -/
+theorem necessity_poss_agree :
+    strengthenedMeaning fAntiSingleton pedroEpist =
+    strengthenedMeaningPoss fAntiSingleton pedroEpist := by native_decide
+
+
+-- ════════════════════════════════════════════════════
 -- § 7. Modal Variation ≠ Free Choice (§§2, 4.4)
 -- ════════════════════════════════════════════════════
 
@@ -312,13 +387,36 @@ Scenario (27)–(30): Pedro knows Juan is NOT in the bathroom.
 *Cualquiera* (FC) is ruled out: not ALL rooms are possibilities.
 *Algún* (MV) is felicitous: at least two rooms are. -/
 
-/-- Free Choice: every room is an epistemic possibility for Juan. -/
+/-- Free Choice ((13c)): every room is an epistemic possibility for Juan. -/
 def freeChoice (epist : List HideWorld) : Bool :=
   allRooms.all λ r => epist.any (juanIn r)
 
-/-- Modal Variation: at least two rooms are epistemic possibilities. -/
+/-- Modal Variation (counting version): at least two rooms are
+    epistemic possibilities. -/
 def modalVariation (epist : List HideWorld) : Bool :=
   (allRooms.filter λ r => epist.any (juanIn r)).length > 1
+
+/-- The witness set at world w: {r : isRoom(r) ∧ juanIn(r)(w)}.
+    Under uniqueness (one room per world), this is always a singleton.
+    MV requires that DIFFERENT worlds yield different singletons. -/
+private def witnessSet (w : HideWorld) : List Room :=
+  allRooms.filter (juanIn · w)
+
+/-- Modal Variation ((18), formal definition):
+    ∃w', w'' ∈ 𝒟_w [{x : P(w')(x) & Q(w')(x)} ≠ {x : P(w'')(x) & Q(w'')(x)}]
+
+    There exist two epistemic alternatives where the sets of individuals
+    satisfying both the restrictor and the scope differ. -/
+def modalVariation18 (epist : List HideWorld) : Bool :=
+  epist.any λ w' => epist.any λ w'' => witnessSet w' != witnessSet w''
+
+/-- The formal definition (18) and the counting definition agree
+    in the hide-and-seek model. -/
+theorem mv_eq_mv18_pedro :
+    modalVariation pedroEpist = modalVariation18 pedroEpist := by native_decide
+
+theorem mv_eq_mv18_full :
+    modalVariation allHW = modalVariation18 allHW := by native_decide
 
 /-- Pedro's situation ((27)–(30)): MV holds but FC doesn't.
     *Algún* is appropriate; *cualquiera* is not. -/
@@ -342,7 +440,7 @@ theorem fc_strictly_stronger :
 
 
 -- ════════════════════════════════════════════════════════════════
--- Part III: Typology (§§4.4, 6)
+-- Part III: Typology (§§4.4, 5, 6)
 -- ════════════════════════════════════════════════════════════════
 
 
@@ -377,18 +475,21 @@ theorem different_constraints_different_effects :
 
 
 -- ════════════════════════════════════════════════════
--- § 9. Competitor Sets (§4.4, (69)–(72))
+-- § 9. Competitor Sets (§4.4, (58), (70))
 -- ════════════════════════════════════════════════════
 
 /-! The critical mechanism: different constraints generate different
 competitor sets for exhaustification.
 
-For *irgendein* (domain widener, (69)–(70)): competitors = ALL subdomains:
+For *irgendein* (domain widener, (70)): competitors = ALL proper subdomains:
   ◇(bedroom), ◇(living room), ◇(bathroom),
-  ◇(bedroom ∨ living room), ◇(bedroom ∨ bathroom), …
+  ◇(bedroom ∨ living room), ◇(bedroom ∨ bathroom), ◇(living room ∨ bathroom)
 
-For *algún* (anti-singleton, (68)): competitors = SINGLETON subdomains:
-  ◇(bedroom), ◇(living room), ◇(bathroom)
+The full domain ◇(bedroom ∨ living room ∨ bathroom) is the assertion (69)
+itself, NOT a competitor.
+
+For *algún* (anti-singleton, (58)): competitors = SINGLETON subdomains:
+  □(bedroom), □(living room), □(bathroom)
 
 Exhaustifying over all subdomains → Free Choice (every room possible).
 Exhaustifying over singletons only → Modal Variation (≥2 rooms possible). -/
@@ -397,11 +498,12 @@ Exhaustifying over singletons only → Modal Variation (≥2 rooms possible). -/
 def singletonSubdomains : List (List Room) :=
   [[.bedroom], [.livingRoom], [.bathroom]]
 
-/-- Full competitor set (for domain wideners like *irgendein*). -/
+/-- Proper subdomain competitors ((70a–f), for domain wideners like
+    *irgendein*). Excludes the full domain, which is the assertion
+    itself ((69)), not a competitor. -/
 def allSubdomains : List (List Room) :=
   [[.bedroom], [.livingRoom], [.bathroom],
-   [.bedroom, .livingRoom], [.bedroom, .bathroom], [.livingRoom, .bathroom],
-   [.bedroom, .livingRoom, .bathroom]]
+   [.bedroom, .livingRoom], [.bedroom, .bathroom], [.livingRoom, .bathroom]]
 
 /-- Anti-singleton items have strictly fewer competitors. This is WHY
     their modal effect is weaker: fewer negated competitors = weaker
@@ -467,8 +569,7 @@ def cell2_predicted : TypologyCell where
   exemplars := []
 
 /-- Cell 3: Widening + Non-uniqueness (predicted, unattested in 2010).
-    Would show FC with number ignorance. Possibly Italian *qualche*
-    (footnote 30). -/
+    Would show FC with number ignorance. -/
 def cell3_predicted : TypologyCell where
   uniqueness := .nonUniqueness
   constraint := .widening
