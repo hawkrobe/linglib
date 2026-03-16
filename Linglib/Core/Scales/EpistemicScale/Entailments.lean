@@ -1,6 +1,5 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Mathlib.Data.Set.Card
-import Mathlib.Combinatorics.Hall.Basic
 
 /-!
 # Epistemic Entailment Patterns (@cite{holliday-icard-2013}, Figure 1)
@@ -770,56 +769,203 @@ theorem mLift_V7 {W : Type*} (ge_w : W → W → Prop) :
     rw [hne, Set.compl_empty] at hAnot
     exact hAnot ⟨id, fun b hb => hb.elim, fun _ _ h1 => h1.elim⟩
 
--- TODO: V11–V13 require [Finite W] and reflexivity (and V11/V12 likely
+-- V11–V13 require [Finite W] and reflexivity (and V11/V12 additionally
 -- need transitivity). The paper (@cite{holliday-icard-2013}) assumes a
--- finite poset (W, ≥). Without finiteness, V13 is provably false:
--- take W = ℕ, ge_w = (≥), A = ℕ, B = {n | n ≥ 1} — then f(n) = n+1
--- gives an injection ℕ → {n ≥ 1} with dominance, so ¬strict. Without
--- transitivity, V12 requires composing dominance chains f∘g which
--- doesn't preserve ge_w.
+-- finite poset (W, ≥). The proofs of V11 and V12 follow the companion
+-- paper @cite{harrison-trainor-holliday-icard-2018} (Definition 3.1,
+-- Lemma 3.7): the injection extension ≥ⁱ (= mLift) is a GFC order,
+-- which implies V12 directly. The key lemma is *complement reversal*:
+-- mLift ge_w B A → mLift ge_w Aᶜ Bᶜ (via an f-chain construction on
+-- elements of A ∩ Bᶜ). V12 then follows from complement reversal +
+-- two applications of mLift transitivity.
 
-/-- V11 is valid for the m-lifting on finite posets (Fact 5 in
-    @cite{holliday-icard-2013}). Composition of injections f∘g builds
-    Bᶜ ↪ B from Aᶜ ↪ A and A ↪ B; finiteness gives the pigeonhole
-    for the strict half; transitivity preserves dominance through the
-    composition. -/
-theorem mLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
-    (_hRefl : ∀ w, ge_w w w)
-    (_hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
-    patternV11 (mLift ge_w) := by
-  sorry
+-- ── Helper: mLift transitivity ──
+
+private theorem mLift_trans {W : Type*} {ge_w : W → W → Prop}
+    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w)
+    {A B C : Set W} (hAB : mLift ge_w A B) (hBC : mLift ge_w B C) :
+    mLift ge_w A C := by
+  obtain ⟨f, hf, hinj_f⟩ := hAB
+  obtain ⟨g, hg, hinj_g⟩ := hBC
+  exact ⟨f ∘ g, fun c hc =>
+    ⟨(hf (g c) (hg c hc).1).1, hTrans _ _ _ (hf (g c) (hg c hc).1).2 (hg c hc).2⟩,
+    fun c₁ c₂ hc1 hc2 heq =>
+    hinj_g c₁ c₂ hc1 hc2 (hinj_f (g c₁) (g c₂) (hg c₁ hc1).1 (hg c₂ hc2).1 heq)⟩
+
+-- ── Helper lemmas for the f-chain construction ──
+
+/-- If iterates f^[0],...,f^[n-1] of p stay in A, then f^[n] p ∈ B for n ≥ 1. -/
+private theorem mLift_iter_in_B {W : Type*} {A B : Set W} {f : W → W}
+    (hfmem : ∀ a, a ∈ A → f a ∈ B) {p : W}
+    (n : ℕ) (hn : n ≥ 1) (hA : ∀ m, m < n → f^[m] p ∈ A) :
+    f^[n] p ∈ B := by
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 1 := ⟨n - 1, by omega⟩
+  simp only [Function.iterate_succ', Function.comp_apply]
+  exact hfmem _ (hA m (by omega))
+
+/-- Iterates of p ∈ A \ B are pairwise distinct while staying in A. -/
+private theorem mLift_iter_ne_of_lt {W : Type*} {A B : Set W} {f : W → W}
+    (hfmem : ∀ a, a ∈ A → f a ∈ B)
+    (hfinj : ∀ a₁ a₂, a₁ ∈ A → a₂ ∈ A → f a₁ = f a₂ → a₁ = a₂)
+    {p : W} (hpB : p ∉ B) (hall : ∀ m, f^[m] p ∈ A) :
+    ∀ i j, i < j → f^[i] p ≠ f^[j] p := by
+  intro i
+  induction i with
+  | zero =>
+    intro j hj heq
+    have : f^[j] p ∈ B := mLift_iter_in_B hfmem j (by omega) (fun m _ => hall m)
+    simp only [Function.iterate_zero, id_eq] at heq
+    exact hpB (heq ▸ this)
+  | succ i' ih =>
+    intro j hj heq
+    obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
+    simp only [Function.iterate_succ', Function.comp_apply] at heq
+    exact ih j' (by omega) (hfinj _ _ (hall i') (hall j') heq)
+
+/-- The f-chain starting at p ∈ A \ B must eventually exit A. -/
+private theorem mLift_chain_exits {W : Type*} [Finite W] {A B : Set W} {f : W → W}
+    (hfmem : ∀ a, a ∈ A → f a ∈ B)
+    (hfinj : ∀ a₁ a₂, a₁ ∈ A → a₂ ∈ A → f a₁ = f a₂ → a₁ = a₂)
+    {p : W} (hp : p ∈ A) (hpB : p ∉ B) :
+    ∃ n, f^[n] p ∉ A := by
+  by_contra h; push_neg at h
+  have hall : ∀ m, f^[m] p ∈ A := by
+    intro m; cases m with
+    | zero => simpa
+    | succ m => exact h (m + 1)
+  have hdist := mLift_iter_ne_of_lt hfmem hfinj hpB hall
+  have hinj : Function.Injective (fun n : ℕ => (⟨f^[n] p, hall n⟩ : ↥A)) := by
+    intro i j heq; simp only [Subtype.mk.injEq] at heq
+    rcases lt_trichotomy i j with h | h | h
+    · exact absurd heq (hdist i j h)
+    · exact h
+    · exact absurd heq.symm (hdist j i h)
+  haveI : Infinite ↥A := Infinite.of_injective _ hinj
+  exact not_finite ↥A
+
+/-- If both chains stay in A for n steps and f^[n] x = f^[n] y, then x = y. -/
+private theorem mLift_iterate_inj_of_mem {W : Type*} {A : Set W} {f : W → W}
+    (hfinj : ∀ a₁ a₂, a₁ ∈ A → a₂ ∈ A → f a₁ = f a₂ → a₁ = a₂)
+    {x y : W} {n : ℕ}
+    (hx : ∀ m, m < n → f^[m] x ∈ A) (hy : ∀ m, m < n → f^[m] y ∈ A)
+    (heq : f^[n] x = f^[n] y) : x = y := by
+  induction n with
+  | zero => simpa using heq
+  | succ n ih =>
+    simp only [Function.iterate_succ', Function.comp_apply] at heq
+    exact ih (fun m hm => hx m (by omega)) (fun m hm => hy m (by omega))
+      (hfinj _ _ (hx n (by omega)) (hy n (by omega)) heq)
+
+/-- Two f-chains landing at the same point must have started at the same point.
+    Handles all four injectivity cases uniformly via `wlog`. -/
+private theorem mLift_chain_origin_eq {W : Type*} {A B : Set W} {f : W → W}
+    (hfmem : ∀ a, a ∈ A → f a ∈ B)
+    (hfinj : ∀ a₁ a₂, a₁ ∈ A → a₂ ∈ A → f a₁ = f a₂ → a₁ = a₂)
+    {p₁ p₂ : W} {k₁ k₂ : ℕ}
+    (hp1 : p₁ ∉ B) (hp2 : p₂ ∉ B)
+    (hk1 : ∀ m, m < k₁ → f^[m] p₁ ∈ A)
+    (hk2 : ∀ m, m < k₂ → f^[m] p₂ ∈ A)
+    (heq : f^[k₁] p₁ = f^[k₂] p₂) : p₁ = p₂ := by
+  wlog hle : k₁ ≤ k₂ with H
+  · exact (H hfmem hfinj hp2 hp1 hk2 hk1 heq.symm (by omega)).symm
+  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hle
+  rw [Function.iterate_add_apply] at heq
+  have hpeeled := mLift_iterate_inj_of_mem hfinj hk1
+    (fun m hm => by rw [← Function.iterate_add_apply]; exact hk2 (m + d) (by omega)) heq
+  cases d with
+  | zero => simpa using hpeeled
+  | succ d => exact absurd (hpeeled ▸ mLift_iter_in_B hfmem (d + 1) (by omega)
+      fun m hm => hk2 m (by omega)) hp1
+
+/-- Dominance through a chain: ge_w (f^[n] p) p (including n = 0 by reflexivity). -/
+private theorem mLift_chain_dominance {W : Type*} {A : Set W}
+    {ge_w : W → W → Prop} {f : W → W}
+    (hRefl : ∀ w, ge_w w w)
+    (hfge : ∀ a, a ∈ A → ge_w (f a) a)
+    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w)
+    {p : W} (n : ℕ) (hp : ∀ m, m < n → f^[m] p ∈ A) :
+    ge_w (f^[n] p) p := by
+  induction n with
+  | zero => simpa using hRefl p
+  | succ n ih =>
+    rw [Function.iterate_succ', Function.comp_apply]
+    exact hTrans _ _ _ (hfge _ (hp n (by omega))) (ih fun m hm => hp m (by omega))
+
+-- ── Complement reversal ──
+
+/-- Complement reversal: mLift ge_w B A → mLift ge_w Aᶜ Bᶜ.
+    Maps p ∈ A ∩ Bᶜ to f^[k](p) (first exit from A) and
+    q ∈ Aᶜ ∩ Bᶜ to q (reflexivity). Injectivity of all four
+    cross-cases follows from `chain_origin_eq`
+    (@cite{harrison-trainor-holliday-icard-2018}, Lemma 3.7). -/
+private theorem mLift_complement_reversal {W : Type*} [Finite W]
+    {ge_w : W → W → Prop}
+    (hRefl : ∀ w, ge_w w w) (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w)
+    {A B : Set W} (h : mLift ge_w B A) : mLift ge_w Aᶜ Bᶜ := by
+  obtain ⟨f, hf, hinj_f⟩ := h
+  have hfmem : ∀ a, a ∈ A → f a ∈ B := fun a ha => (hf a ha).1
+  have hfge : ∀ a, a ∈ A → ge_w (f a) a := fun a ha => (hf a ha).2
+  classical
+  have hExits : ∀ p, p ∈ A → p ∉ B → ∃ n, f^[n] p ∉ A :=
+    fun p hp hpB => mLift_chain_exits hfmem hinj_f hp hpB
+  let ei (w : W) (hwA : w ∈ A) (hwB : w ∉ B) := Nat.find (hExits w hwA hwB)
+  have ei_spec : ∀ w hwA hwB, f^[ei w hwA hwB] w ∉ A :=
+    fun w hwA hwB => Nat.find_spec (hExits w hwA hwB)
+  have ei_min : ∀ w hwA hwB m, m < ei w hwA hwB → f^[m] w ∈ A :=
+    fun w hwA hwB m hm => by_contra fun h => Nat.find_min (hExits w hwA hwB) hm h
+  -- The witness: f^[k] for A ∩ Bᶜ (chain exit), identity for Aᶜ ∩ Bᶜ
+  let g : W → W := fun w =>
+    if hwA : w ∈ A then if hwB : w ∈ B then w else f^[ei w hwA hwB] w else w
+  -- Express g(b') as f^[k] b' uniformly for all b' ∈ Bᶜ
+  have g_iter : ∀ b' (_ : b' ∉ B), ∃ k,
+      g b' = f^[k] b' ∧ f^[k] b' ∉ A ∧ ∀ m, m < k → f^[m] b' ∈ A := by
+    intro b' hb'
+    by_cases hbA : b' ∈ A
+    · exact ⟨ei b' hbA hb', by simp [g, dif_pos hbA, dif_neg hb'],
+        ei_spec b' hbA hb', ei_min b' hbA hb'⟩
+    · exact ⟨0, by simp [g, dif_neg hbA], hbA, fun _ hm => absurd hm (by omega)⟩
+  refine ⟨g, fun b' hb' => ?_, fun b₁ b₂ hb1 hb2 heq => ?_⟩
+  · -- Membership in Aᶜ and dominance
+    obtain ⟨k, hgk, hnotA, hkA⟩ := g_iter b' hb'
+    exact ⟨hgk ▸ hnotA, hgk ▸ mLift_chain_dominance hRefl hfge hTrans k hkA⟩
+  · -- Injectivity: all four cases via chain_origin_eq
+    obtain ⟨k₁, hgk1, -, hk1A⟩ := g_iter b₁ hb1
+    obtain ⟨k₂, hgk2, -, hk2A⟩ := g_iter b₂ hb2
+    rw [hgk1, hgk2] at heq
+    exact mLift_chain_origin_eq hfmem hinj_f hb1 hb2 hk1A hk2A heq
+
+-- ── V12 and V11 ──
 
 /-- V12 is valid for the m-lifting on finite posets (Fact 5 in
-    @cite{holliday-icard-2013}). The proof uses Hall's marriage theorem
-    from Mathlib: we exhibit a bipartite graph (Bᶜ, B) where b' is
-    related to b iff ge_w b b', and verify the Hall condition using
-    the witness injections f and f∘g. -/
+    @cite{holliday-icard-2013}; proof via @cite{harrison-trainor-holliday-icard-2018},
+    Lemma 3.7). The proof decomposes into complement reversal
+    (mLift ge_w B A → mLift ge_w Aᶜ Bᶜ) and two applications of
+    mLift transitivity: B ≿ A ≿ Aᶜ ≿ Bᶜ. -/
 theorem mLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
-    (_hRefl : ∀ w, ge_w w w)
+    (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV12 (mLift ge_w) := by
-  classical
-  intro A B ⟨f, hf, hinj_f⟩ ⟨g, hg, hinj_g⟩
-  cases nonempty_fintype W
-  -- Use Hall's theorem on subtypes: find injection ↥Bᶜ → ↥B with dominance
-  have hExist : ∃ (h : ↥Bᶜ → ↥B), Function.Injective h ∧
-      ∀ x, ge_w (h x).val x.val := by
-    rw [← @Fintype.all_card_le_filter_rel_iff_exists_injective ↥Bᶜ ↥B _
-          (fun b' b => ge_w b.val b'.val)]
-    -- Hall condition: ∀ S ⊆ Bᶜ, |{b ∈ B | ∃ s ∈ S, ge_w b s}| ≥ |S|
-    -- The map s ↦ f(s) (s ∈ A) or f(g(s)) (s ∈ Aᶜ) maps S into the
-    -- neighborhood; the image through f has size ≥ |S| by an augmenting-
-    -- chain argument (see companion paper @cite{holliday-icard-2013a}).
-    -- TODO: close this sorry with the full Hall condition proof.
-    intro S; sorry
-  obtain ⟨h, hinj_h, hrel⟩ := hExist
-  refine ⟨fun w => if hw : w ∈ Bᶜ then (h ⟨w, hw⟩).val else w, ?_, ?_⟩
-  · intro b' hb'
-    simp only [dif_pos hb']
-    exact ⟨(h ⟨b', hb'⟩).prop, hrel ⟨b', hb'⟩⟩
-  · intro b₁ b₂ hb1 hb2 heq
-    simp only [dif_pos hb1, dif_pos hb2] at heq
-    exact congrArg Subtype.val (hinj_h (Subtype.val_injective heq))
+  intro A B hBA hAAc
+  have hAcBc := mLift_complement_reversal hRefl hTrans hBA
+  exact mLift_trans hTrans hBA (mLift_trans hTrans hAAc hAcBc)
+
+/-- V11 is valid for the m-lifting on finite posets (Fact 5 in
+    @cite{holliday-icard-2013}). The ge half follows from V12; the strict
+    half uses complement reversal + transitivity to derive a contradiction
+    with the "probably A" hypothesis. -/
+theorem mLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
+    (hRefl : ∀ w, ge_w w w)
+    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
+    patternV11 (mLift ge_w) := by
+  intro A B hBA ⟨hAAc, hNotAcA⟩
+  constructor
+  · exact mLift_V12 ge_w hRefl hTrans A B hBA hAAc
+  · intro hBcB
+    apply hNotAcA
+    have hBcA := mLift_trans hTrans hBcB hBA
+    have hAcBcc := mLift_complement_reversal hRefl hTrans hBcA
+    rw [compl_compl] at hAcBcc
+    exact mLift_trans hTrans hAcBcc hBA
 
 /-- V13 is valid for the m-lifting on finite posets (Fact 5 in
     @cite{holliday-icard-2013}). The ge half uses id on B (reflexivity);
