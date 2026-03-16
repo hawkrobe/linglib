@@ -77,6 +77,12 @@ structure Synsem where
   head : HeadFeatures := {}
   val : Valence := {}
   cont : ContentFeatures := {}
+  /-- MOD feature: what this sign modifies (none = not a modifier).
+
+      Per @cite{pollard-sag-1994} Ch. 1, MOD is a HEAD feature that
+      restricts what a modifier can combine with. Relative clauses
+      have `[MOD NP]`; adjectives have `[MOD N]`. -/
+  mod : Option UD.UPOS := none
   deriving Repr
 
 /-- ARG-ST: the ordered list of a word's arguments, per @cite{sag-wasow-bender-2003} Ch. 7.
@@ -139,6 +145,21 @@ structure HeadSubjRule where
   subjMatch : (headPhrase.synsem.val.subj = [subj.synsem.cat])
   /-- Head Feature Principle: result category = head phrase category -/
   hfp : result.synsem.cat = headPhrase.synsem.cat
+
+/-- Head-Modifier Schema: head combines with a modifier.
+
+Per @cite{sag-wasow-bender-2003} (46), a saturated head combines with
+a modifier whose MOD value matches the head's category. Used for
+adjective modification ("tall boy"), PP modification ("book on the table"),
+and relative clauses ("book that John read"). -/
+structure HeadModRule where
+  headSign : Sign
+  modifier : Sign
+  result : Sign
+  /-- The modifier's MOD value must match the head's category -/
+  modMatch : modifier.synsem.mod = some (headSign.synsem.cat)
+  /-- Head Feature Principle: result category = head category -/
+  hfp : result.synsem.cat = headSign.synsem.cat
 
 end Schemata
 

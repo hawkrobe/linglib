@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.304] - 2026-03-15
+
+### Fixed
+- **Close V11 and V12 sorrys** in `EpistemicScale/Entailments.lean`: complete proofs for `mLift_V11` and `mLift_V12` using complement reversal + transitivity from @cite{harrison-trainor-holliday-icard-2018}. Key lemma `mLift_complement_reversal` (mLift ge_w B A → mLift ge_w Aᶜ Bᶜ) uses f-chain construction on A ∩ Bᶜ elements; removes Hall's marriage theorem import
+- **Add bib entry** `harrison-trainor-holliday-icard-2018` ("Inferring probability comparisons", Mathematical Social Sciences 91, 2018)
+
+## [0.229.303] - 2026-03-15
+
+### Added
+- **HPSG relative clauses**: MOD feature on `Synsem`, `HeadModRule` (Head-Modifier Schema), `RelativeClauses.lean` with `Relativizer`, `RelClauseDerivation`, end-to-end object/subject relative clause derivations, `headMod_preserves_cat` theorem
+- **HPSGRelativeClauses bridge** (`Phenomena/FillerGap/Studies/HPSGRelativeClauses.lean`): proves `object_relative_licensed`, `subject_relative_licensed`, `relClause_always_modifies`, `modification_preserves_head_cat`
+- **`HeadModRule` added to `HPSGSchema`**: four-way schema (Head-Comp, Head-Subj, Head-Filler, Head-Mod)
+
 ## [0.229.302] - 2026-03-15
 
 ### Added

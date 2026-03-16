@@ -131,11 +131,12 @@ structure HeadFillerRule where
 
 /-! ## Unified schema type -/
 
-/-- All three HPSG immediate dominance schemata, unified.
+/-- All four HPSG immediate dominance schemata, unified.
 
 This inductive covers the complete set of phrase structure schemata
-needed for HPSG phrase building. @cite{mueller-2013} argues these three
-correspond to the three universal combination modes. -/
+needed for HPSG phrase building. @cite{mueller-2013} argues the first three
+correspond to three universal combination modes; Head-Modifier handles
+adjunction (relative clauses, adjective/PP modification). -/
 inductive HPSGSchema where
   /-- Head-Complement: head combines with complements (Schema 1) -/
   | headComp : HeadCompRule → HPSGSchema
@@ -143,18 +144,22 @@ inductive HPSGSchema where
   | headSubj : HeadSubjRule → HPSGSchema
   /-- Head-Filler: filler combines with gapped clause (Schema 3) -/
   | headFiller : HeadFillerRule → HPSGSchema
+  /-- Head-Modifier: head combines with a modifier (Schema 4) -/
+  | headMod : HeadModRule → HPSGSchema
 
 /-- Get the result sign from any schema application. -/
 def HPSGSchema.result : HPSGSchema → Sign
   | .headComp r => r.result
   | .headSubj r => r.result
   | .headFiller r => r.result
+  | .headMod r => r.result
 
 /-- Get the head sign from any schema application. -/
 def HPSGSchema.head : HPSGSchema → Sign
   | .headComp r => r.head
   | .headSubj r => r.headPhrase
   | .headFiller r => r.headPhrase
+  | .headMod r => r.headSign
 
 /-! ## Gap Introduction (Argument Realization Principle)
 
