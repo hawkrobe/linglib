@@ -18,6 +18,10 @@ import Linglib.Core.Lexical.UD
 import Linglib.Core.Tree
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Quantification
+import Linglib.Core.Logic.Quantification.Defs
+import Linglib.Core.Logic.Quantification.Properties
+import Linglib.Core.Logic.Quantification.NumberTree
+import Linglib.Core.Logic.Quantification.Lattice
 import Linglib.Core.Logic.PolarizedIndividuals
 import Linglib.Core.Logic.SquareOfOpposition
 import Linglib.Core.Scales.Extent
