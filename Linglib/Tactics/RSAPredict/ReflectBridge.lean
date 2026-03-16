@@ -1,10 +1,8 @@
 import Lean
-import Linglib.Core.Interval.RSAVerify
 import Linglib.Core.Interval.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Tactics.RSAPredict.GoalParsing
-import Linglib.Tactics.RSAPredict.AlgebraicReify
 import Linglib.Tactics.RSAPredict.RSABuilder
 
 set_option autoImplicit false

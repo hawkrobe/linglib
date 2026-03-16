@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.309] - 2026-03-15
+
+### Removed
+- **Dead RSA verification files**: delete `RSAEval.lean` (3 sorrys, orphaned), `AutoDetect.lean` (dead since tactic deprecation), `ProofBuilder.lean` (orphaned CProof path), `AlgebraicReify.lean` (preseed disabled, never called)
+- **RSAVerify dead soundness theorems**: delete 6 sorry'd theorems (`s1_gt/not_gt_of_check`, `l1_gt/score_gt/not_gt_of_checkOpt`, `s2_utility_gt_of_check`) plus 8 `_ext` wrappers — all unreachable after AutoDetect removal
+- **Vestigial imports**: remove `RSAVerify` from ReflectBridge, `AlgebraicReify` from RSABuilder/ReflectBridge
+
+### Changed
+- **`findL1AgentCfg` moved to RSABuilder.lean** from deleted AlgebraicReify — sole consumer
+
 ## [0.229.308] - 2026-03-15
 
 ### Added

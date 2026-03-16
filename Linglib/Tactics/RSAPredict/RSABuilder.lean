@@ -1,7 +1,6 @@
 import Lean
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Tactics.RSAPredict.Helpers
-import Linglib.Tactics.RSAPredict.AlgebraicReify
 
 set_option autoImplicit false
 
@@ -272,6 +271,58 @@ private def buildRSALayers (cache : ReifyCache) (cfg : Expr)
     l1Totals := l1Totals.push (rexprSum items)
 
   return { nU, nW, nL, l1Scores, l1Totals }
+
+-- ============================================================================
+-- Config Detection (moved from AlgebraicReify)
+-- ============================================================================
+
+/-- Scan an expression tree for RSA.RSAConfig.L1agent applied to a cfg argument.
+    Returns the cfg Expr if found. -/
+partial def findL1AgentCfg (e : Expr) (depth : ℕ := 20) : MetaM (Option Expr) := do
+  if depth == 0 then return none
+  let mut current := e
+  for _ in List.range 10 do
+    let fn := current.getAppFn
+    let args := current.getAppArgs
+    if fn.isConstOf ``RSA.RSAConfig.L1agent then
+      if args.size ≥ 3 then
+        return some args[args.size - 1]!
+    if fn.isConstOf ``Core.RationalAction.score then
+      if args.size ≥ 4 then
+        let ra := args[3]!
+        if let some cfg ← findL1AgentCfg ra (depth - 1) then
+          return some cfg
+    if fn.isConstOf ``HMul.hMul && args.size ≥ 6 then
+      if let some cfg ← findL1AgentCfg args[4]! (depth - 1) then
+        return some cfg
+      if let some cfg ← findL1AgentCfg args[5]! (depth - 1) then
+        return some cfg
+    if fn.isConstOf ``Finset.sum && args.size ≥ 5 then
+      let fBody := args[args.size - 1]!
+      if fBody.isLambda then
+        let bodyInst := fBody.bindingBody!
+        if let some cfg ← findL1AgentCfgInBody bodyInst (depth - 1) then
+          return some cfg
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+where
+  findL1AgentCfgInBody (body : Expr) (depth : ℕ) : MetaM (Option Expr) := do
+    if depth == 0 then return none
+    let fn := body.getAppFn
+    let args := body.getAppArgs
+    if fn.isConstOf ``RSA.RSAConfig.L1agent then
+      if args.size ≥ 3 then
+        return some args[args.size - 1]!
+    if fn.isConstOf ``Core.RationalAction.score then
+      if args.size ≥ 4 then
+        let ra := args[3]!
+        return ← findL1AgentCfgInBody ra (depth - 1)
+    for arg in args do
+      if let some cfg ← findL1AgentCfgInBody arg (depth - 1) then
+        return some cfg
+    return none
 
 /-- Try to build RExpr trees for an RSA comparison, bypassing the generic reifier.
     Returns `(lhsRExpr, lhsBounds, rhsRExpr, rhsBounds)` on success. -/
