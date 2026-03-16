@@ -37,7 +37,7 @@ inductive Cat where
   | Num   -- number (@cite{ritter-1991}; NumP between nP and QP/DP)
   | Q     -- quantity / classifier (@cite{borer-2005}; QP between NumP and DP)
   | Voice -- Voice head (@cite{kratzer-1996}; @cite{schfer-2008})
-  | Appl  -- Applicative head (@cite{brennan-pylkkanen-2008}; @cite{cuervo-2003})
+  | Appl  -- Applicative head (@cite{pylkknen-2008}; @cite{cuervo-2003})
   | Foc   -- focus (@cite{rizzi-1997} split-CP; hosts [FoC] feature, triggers A-bar movement)
   | Top   -- topic (@cite{rizzi-1997} split-CP; hosts [G]/givenness, topic fronting)
   | Fin   -- finiteness (@cite{rizzi-1997} split-CP; allocutive probe in Magahi/Galician)

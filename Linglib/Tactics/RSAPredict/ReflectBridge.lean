@@ -20,8 +20,8 @@ of `denote` (structural recursion, O(1) per node).
 
 1. **Reify**: Convert both sides of the comparison to `RExpr` AST + meta-level bounds.
    No congruence proof trees — the kernel handles definitional equality.
-2. **Check**: `native_decide` on batched `checkGt`/`checkNotGt` (evalValid + separation).
-3. **Assign**: Directly assign `gt_of_checkGt lhsRExpr rhsRExpr hcheck` — the kernel
+2. **Check**: `native_decide` on `checkGtOpt`/`checkNotGtOpt` (evalValid + separation).
+3. **Assign**: Directly assign `gt_of_checkGtOpt lhsRExpr rhsRExpr hcheck` — the kernel
    verifies `denote(lhsRExpr) ≡ lhsExpr` and `denote(rhsRExpr) ≡ rhsExpr`.
 
 This eliminates the congruence proof tree (O(n) nodes → O(1) proof term) and the
@@ -43,188 +43,6 @@ open Linglib.Interval
     (L0 policies, S1 scores, belief distributions, etc.). -/
 initialize persistentReifyCache : IO.Ref (Std.HashMap Expr (Expr × MetaBounds)) ←
   IO.mkRef ∅
-
--- ============================================================================
--- Meta-Level DAG Builder
--- ============================================================================
-
-/-- Meta-level DAG state: array of DAGNode Exprs + dedup map keyed on Expr hash.
-    Walking the RExpr `Expr` at meta-time avoids the 28M-node tree traversal that
-    would happen at `native_decide` time. `Expr.hash` is O(1) (cached in the Expr
-    representation), and the reifier returns the same `Expr` object for cached
-    sub-expressions, so shared sub-trees dedup immediately. -/
-private abbrev DAGMetaState := Array Expr × Std.HashMap UInt64 ℕ
-
-/-- Walk an RExpr `Expr` to build a DAG at meta-time. On cache hit (same
-    `Expr.hash`), returns the existing DAG index without recursing — this is
-    where the 28.8M → 1,245 reduction happens.
-
-    The `boundsMap` maps RExpr `Expr` hashes to their meta-level bounds from
-    the reifier. Used to eliminate dead `iteZero` branches: when bounds prove
-    the condition is definitely nonzero (or zero), we skip recursing into the
-    dead branch, avoiding adding its unique sub-nodes to the DAG. -/
-private partial def rexprExprToDAGAux (ref : IO.Ref DAGMetaState)
-    (boundsMap : Std.HashMap UInt64 MetaBounds) (e : Expr) : MetaM ℕ := do
-  let key := e.hash
-  let (_, seen) ← ref.get
-  if let some idx := seen.get? key then return idx
-
-  let fn := e.getAppFn
-  let args := e.getAppArgs
-  let some name := fn.constName?
-    | throwError "rsa_predict: DAG builder: non-const head in RExpr: {fn}"
-
-  let rec go := rexprExprToDAGAux ref boundsMap
-  let getBounds (e : Expr) : Option MetaBounds := boundsMap.get? e.hash
-  let isZero (e : Expr) : Bool := match getBounds e with
-    | some b => b.lo == 0 && b.hi == 0
-    | none => false
-
-  -- Dead-expression elimination using meta-level bounds.
-  -- The RExpr tree is unchanged (kernel proof still works); only the DAG
-  -- used for interval evaluation is simplified. Each optimization is sound
-  -- because the simplified DAG produces the same interval as the full one.
-
-  -- iteZero: when bounds resolve the condition, skip the dead branch
-  if name == ``RExpr.iteZero then
-    if let some bc := getBounds args[0]! then
-      if bc.lo > 0 then return ← go args[2]!       -- condition ≠ 0 → else
-      else if bc.lo == 0 && bc.hi == 0 then return ← go args[1]!  -- condition = 0 → then
-
-  -- mul-by-zero: 0 * y = 0, x * 0 = 0 — skip recursing into the non-zero operand
-  if name == ``RExpr.mul then
-    if isZero args[0]! || isZero args[1]! then
-      let zeroExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
-      return ← go zeroExpr
-
-  -- add-of-zero: 0 + y = y, x + 0 = x — skip the add node entirely
-  if name == ``RExpr.add then
-    if isZero args[0]! then return ← go args[1]!
-    if isZero args[1]! then return ← go args[0]!
-
-  -- div-with-zero-numerator: 0 / y = 0
-  if name == ``RExpr.div then
-    if isZero args[0]! then
-      let zeroExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
-      return ← go zeroExpr
-
-  -- expMulLogSub-with-zero-base: x^α * exp(-α*c) = 0 when x = 0
-  if name == ``RExpr.expMulLogSub then
-    if isZero args[1]! then
-      let zeroExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
-      return ← go zeroExpr
-
-  let dagNodeExpr ← match name with
-    | ``RExpr.nat => pure (mkApp (mkConst ``DAGNode.nat) args[0]!)
-    | ``RExpr.ratCast => pure (mkApp (mkConst ``DAGNode.ratCast) args[0]!)
-    | ``RExpr.add => do
-      pure (mkApp2 (mkConst ``DAGNode.add)
-        (mkRawNatLit (← go args[0]!))
-        (mkRawNatLit (← go args[1]!)))
-    | ``RExpr.mul => do
-      pure (mkApp2 (mkConst ``DAGNode.mul)
-        (mkRawNatLit (← go args[0]!))
-        (mkRawNatLit (← go args[1]!)))
-    | ``RExpr.div => do
-      pure (mkApp2 (mkConst ``DAGNode.div)
-        (mkRawNatLit (← go args[0]!))
-        (mkRawNatLit (← go args[1]!)))
-    | ``RExpr.neg => do
-      pure (mkApp (mkConst ``DAGNode.neg)
-        (mkRawNatLit (← go args[0]!)))
-    | ``RExpr.sub => do
-      pure (mkApp2 (mkConst ``DAGNode.sub)
-        (mkRawNatLit (← go args[0]!))
-        (mkRawNatLit (← go args[1]!)))
-    | ``RExpr.rexp => do
-      pure (mkApp (mkConst ``DAGNode.rexp)
-        (mkRawNatLit (← go args[0]!)))
-    | ``RExpr.rlog => do
-      pure (mkApp (mkConst ``DAGNode.rlog)
-        (mkRawNatLit (← go args[0]!)))
-    | ``RExpr.rpow => do
-      pure (mkApp2 (mkConst ``DAGNode.rpow)
-        (mkRawNatLit (← go args[0]!))
-        args[1]!)  -- exponent is a ℕ literal, not a sub-expression
-    | ``RExpr.inv => do
-      pure (mkApp (mkConst ``DAGNode.inv)
-        (mkRawNatLit (← go args[0]!)))
-    | ``RExpr.iteZero => do
-      -- Reached here = bounds didn't resolve the branch, keep full node
-      pure (mkApp3 (mkConst ``DAGNode.iteZero)
-        (mkRawNatLit (← go args[0]!))
-        (mkRawNatLit (← go args[1]!))
-        (mkRawNatLit (← go args[2]!)))
-    | ``RExpr.expMulLogSub => do
-      pure (mkApp3 (mkConst ``DAGNode.expMulLogSub)
-        (mkRawNatLit (← go args[0]!))
-        (mkRawNatLit (← go args[1]!))
-        (mkRawNatLit (← go args[2]!)))
-    | _ => throwError "rsa_predict: DAG builder: unknown RExpr constructor: {name}"
-
-  let (dagNodes, seen) ← ref.get
-  let idx := dagNodes.size
-  ref.set (dagNodes.push dagNodeExpr, seen.insert key idx)
-  return idx
-
-/-- Build a Lean `Expr` representing `Array DAGNode` from the DAG node Exprs.
-    For large arrays (>1000 nodes), chunks the List into segments of 64 elements
-    concatenated with `List.append` to avoid stack overflow in `native_decide`.
-    A flat 7169-element List.cons chain has Expr depth 7169, which overflows the
-    native code compiler's stack. Chunking reduces max depth to ~176. -/
-private def buildDAGArrayExpr (dagNodes : Array Expr) : Expr := Id.run do
-  let dagNodeType := mkConst ``DAGNode
-  let nil := mkApp (mkConst ``List.nil [Level.zero]) dagNodeType
-  let n := dagNodes.size
-  -- For small DAGs, use a flat list (no overhead)
-  if n ≤ 1000 then
-    let listExpr := dagNodes.foldr
-      (fun elem rest => mkApp3 (mkConst ``List.cons [Level.zero]) dagNodeType elem rest)
-      nil
-    return mkApp2 (mkConst ``Array.mk [Level.zero]) dagNodeType listExpr
-  -- Chunk into segments of 64 elements, then concatenate right-to-left.
-  -- Each chunk: List.cons depth ≤ 64. Append chain: depth ≤ numChunks.
-  -- Total max evaluation depth: ~64 + numChunks ≈ 176 for 7169 nodes.
-  let chunkSize := 64
-  let numChunks := (n + chunkSize - 1) / chunkSize
-  let mut chunks : Array Expr := #[]
-  for ci in List.range numChunks do
-    let start := ci * chunkSize
-    let stop := min ((ci + 1) * chunkSize) n
-    let mut chunkList := nil
-    -- Build chunk list right-to-left (foldr order)
-    let mut j := stop
-    while j > start do
-      j := j - 1
-      chunkList := mkApp3 (mkConst ``List.cons [Level.zero]) dagNodeType dagNodes[j]! chunkList
-    chunks := chunks.push chunkList
-  -- Right-fold: c₁ ++ (c₂ ++ (... ++ cN))
-  let combinedList := chunks.foldr
-    (fun chunk rest => mkApp3 (mkConst ``List.append [Level.zero]) dagNodeType chunk rest)
-    nil
-  return mkApp2 (mkConst ``Array.mk [Level.zero]) dagNodeType combinedList
-
-/-- Build a shared DAG from two RExpr Exprs. The second call inherits the
-    dedup state from the first, so cross-side sharing is captured.
-
-    The `reifyCache` provides meta-level bounds for iteZero dead-branch
-    elimination: when the condition's bounds definitively resolve the branch,
-    the dead sub-tree is never added to the DAG.
-
-    Returns `(dagArrayExpr, lhsIdx, rhsIdx, nodeCount)`. -/
-private def buildSharedDAG (lhsRExpr rhsRExpr : Expr)
-    (reifyCache : Std.HashMap Expr (Expr × MetaBounds)) :
-    MetaM (Expr × ℕ × ℕ × ℕ) := do
-  -- Build reverse map: RExpr Expr hash → MetaBounds
-  -- This lets the DAG builder look up bounds for iteZero conditions
-  let mut boundsMap : Std.HashMap UInt64 MetaBounds := {}
-  for (_, (rexpr, bounds)) in reifyCache.toList do
-    boundsMap := boundsMap.insert rexpr.hash bounds
-  let ref ← IO.mkRef ((#[], {}) : DAGMetaState)
-  let lhsIdx ← rexprExprToDAGAux ref boundsMap lhsRExpr
-  let rhsIdx ← rexprExprToDAGAux ref boundsMap rhsRExpr
-  let (dagNodes, _) ← ref.get
-  return (buildDAGArrayExpr dagNodes, lhsIdx, rhsIdx, dagNodes.size)
 
 -- ============================================================================
 -- Direct RExpr Pipeline
@@ -381,10 +199,7 @@ private def tryDenominatorCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
   return none
 
 /-- Direct RExpr reification for `lhs > rhs` goals.
-    Builds a shared DAG at meta-time from the RExpr `Expr` structure,
-    then runs `native_decide` on the compact `checkGtDAG` (O(unique nodes)
-    instead of O(tree nodes)). Falls back to tree-based `checkGtOpt`
-    if DAG construction fails.
+    Runs `native_decide` on tree-based `checkGtOpt` (sorry-free soundness).
 
     When both sides are `policy ra s a₁/a₂` with the same `ra` and `s`,
     applies denominator cancellation first via `policy_gt_of_score_gt`,
@@ -449,55 +264,21 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   if exactOk then return true
 
   unless lhsBounds.lo > rhsBounds.hi do
-    logInfo m!"rsa_predict: [direct] bounds don't separate at meta-level, trying DAG"
+    logInfo m!"rsa_predict: [direct] bounds don't separate at meta-level, trying tree check"
 
-  -- Build shared DAG at meta-time (O(unique sub-expressions), not O(tree nodes)).
-  -- Dead-expression elimination (iteZero resolution, mul-by-zero, add-of-zero,
-  -- div/expMulLogSub-with-zero) prunes unreachable sub-trees from the DAG using
-  -- meta-level bounds, without changing the RExpr tree used by the kernel proof.
-  let (dagArrayExpr, lhsIdx, rhsIdx, dagSize) ←
-    buildSharedDAG lhsRExpr rhsRExpr cacheAfter
-  let t1b ← IO.monoMsNow
-  logInfo m!"rsa_predict: [direct] DAG built ({dagSize} nodes, {t1b - t1}ms)"
-
+  -- Tree-based proof: native_decide on checkGtOpt (sorry-free soundness)
   try
-    -- Skip native_decide on large DAGs (>5K nodes) — native_decide fails
-    -- on large inline array literals (stack overflow in the native code
-    -- compiler). The tree fallback handles these via checkGtOpt.
-    if dagSize > 5000 then
-      throw (Exception.error Syntax.missing m!"DAG too large ({dagSize} nodes)")
-
-    let checkExpr := mkApp3 (mkConst ``checkGtDAG) dagArrayExpr
-      (mkRawNatLit lhsIdx) (mkRawNatLit rhsIdx)
+    let checkExpr ← mkAppM ``RExpr.checkGtOpt #[lhsRExpr, rhsRExpr]
     let checkType ← mkEq checkExpr (mkConst ``Bool.true)
     let hcheck ← nativeDecideProof checkType
-
-    let t2 ← IO.monoMsNow
-    logInfo m!"rsa_predict: [direct] DAG ({dagSize} nodes, {t1b - t1}ms build, {t2 - t1b}ms native_decide)"
-
-    let proof := mkAppN (mkConst ``gt_of_checkGtDAG)
-      #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
-
+    let proof := mkApp3 (mkConst ``RExpr.gt_of_checkGtOpt) lhsRExpr rhsRExpr hcheck
     activeGoal.assign proof
-
-    let t3 ← IO.monoMsNow
-    logInfo m!"rsa_predict: [direct] assigned ({t3 - t0}ms)"
+    let t2 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [direct] assigned ({t2 - t0}ms)"
     return true
   catch e =>
-    -- Fallback to tree-based checkGtOpt (for small models or DAG builder failures)
-    logInfo m!"rsa_predict: [direct] DAG path failed: {e.toMessageData}, trying tree fallback"
-    try
-      let checkExpr ← mkAppM ``RExpr.checkGtOpt #[lhsRExpr, rhsRExpr]
-      let checkType ← mkEq checkExpr (mkConst ``Bool.true)
-      let hcheck ← nativeDecideProof checkType
-      let proof := mkApp3 (mkConst ``RExpr.gt_of_checkGtOpt) lhsRExpr rhsRExpr hcheck
-      activeGoal.assign proof
-      let t3 ← IO.monoMsNow
-      logInfo m!"rsa_predict: [direct] assigned via tree fallback ({t3 - t0}ms)"
-      return true
-    catch e2 =>
-      logInfo m!"rsa_predict: [direct] tree fallback also failed: {e2.toMessageData}"
-      return false
+    logInfo m!"rsa_predict: [direct] tree check failed: {e.toMessageData}"
+    return false
 
 /-- Direct RExpr reification for `not (lhs > rhs)` goals.
     Assigns proofs directly — the kernel verifies denote ≡ original. -/
@@ -522,8 +303,7 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
       logInfo m!"rsa_predict: [direct/not-gt] assigned via structural equality ({t2 - t0}ms)"
       return true
 
-    -- Exact ℚ evaluation path: for pure arithmetic RExpr (no exp/log),
-    -- evaluate both to exact ℚ and check ¬(>).
+    -- Exact ℚ evaluation path
     let exactCheckExpr ← mkAppM ``RExpr.checkExactNotGt #[lhsRExpr, rhsRExpr]
     let exactCheckType ← mkEq exactCheckExpr (mkConst ``Bool.true)
     if let some hexact ← try? (nativeDecideProof exactCheckType) then
@@ -534,8 +314,7 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
       logInfo m!"rsa_predict: [direct/not-gt] assigned via exact ℚ ({t2 - t0}ms)"
       return true
 
-    -- Semantic equality path: handles exp/log cases by structural match
-    -- with recursive evalExact on arithmetic subtrees
+    -- Semantic equality path
     let semCheckExpr ← mkAppM ``RExpr.checkSemanticEq #[lhsRExpr, rhsRExpr]
     let semCheckType ← mkEq semCheckExpr (mkConst ``Bool.true)
     if let some hsem ← try? (nativeDecideProof semCheckType) then
@@ -545,41 +324,29 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
       let t2 ← IO.monoMsNow
       logInfo m!"rsa_predict: [direct/not-gt] assigned via semantic equality ({t2 - t0}ms)"
       return true
-
-    -- Interval separation: try kernel-level checks (DAG then tree).
-    -- The kernel evaluator has exp-log product grouping that can give exact
-    -- intervals even when meta-level bounds (from expPoint/logPoint) have width.
-    -- native_decide on false=true fails instantly, so trying is cheap.
-
-    -- Try DAG-based interval check first (skip for large DAGs)
-    let dagOk ← try
-      let notGtCache ← persistentReifyCache.get
-      let (dagArrayExpr, lhsIdx, rhsIdx, dagSize) ←
-        buildSharedDAG lhsRExpr rhsRExpr notGtCache
-      if dagSize > 20000 then pure false
-      else do
-        let checkExpr := mkApp3 (mkConst ``checkNotGtDAG) dagArrayExpr
-          (mkRawNatLit lhsIdx) (mkRawNatLit rhsIdx)
-        let checkType ← mkEq checkExpr (mkConst ``Bool.true)
-        let hcheck ← nativeDecideProof checkType
-        let proof := mkAppN (mkConst ``not_gt_of_checkNotGtDAG)
-          #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
-        goal.assign proof
-        let t2 ← IO.monoMsNow
-        logInfo m!"rsa_predict: [direct/not-gt] assigned via DAG interval ({t2 - t0}ms)"
-        pure true
-    catch _ => pure false
-    if dagOk then return true
-
-    -- Fallback to tree-based checkNotGtOpt
+    -- Interval separation: tree-based check (fast — O(n) via evalBothOpt)
     let checkExpr ← mkAppM ``RExpr.checkNotGtOpt #[lhsRExpr, rhsRExpr]
     let checkType ← mkEq checkExpr (mkConst ``Bool.true)
-    let hcheck ← nativeDecideProof checkType
-    let proof := mkApp3 (mkConst ``RExpr.not_gt_of_checkNotGtOpt)
-      lhsRExpr rhsRExpr hcheck
+    if let some hcheck ← try? (nativeDecideProof checkType) then
+      let proof := mkApp3 (mkConst ``RExpr.not_gt_of_checkNotGtOpt)
+        lhsRExpr rhsRExpr hcheck
+      goal.assign proof
+      let t2 ← IO.monoMsNow
+      logInfo m!"rsa_predict: [direct/not-gt] assigned via interval ({t2 - t0}ms)"
+      return true
+
+    -- Normalize both sides (dead-branch elimination) then check structural equality.
+    -- After normalization, symmetric RSA expressions collapse to identical trees.
+    -- This is O(n²) so only tried after faster paths fail.
+    let normLhs ← mkAppM ``RExpr.normalize #[lhsRExpr]
+    let normRhs ← mkAppM ``RExpr.normalize #[rhsRExpr]
+    let normEqType ← mkEq normLhs normRhs
+    let heq ← nativeDecideProof normEqType
+    let proof := mkApp3 (mkConst ``RExpr.not_gt_of_normalize_eq)
+      lhsRExpr rhsRExpr heq
     goal.assign proof
     let t2 ← IO.monoMsNow
-    logInfo m!"rsa_predict: [direct/not-gt] assigned via interval fallback ({t2 - t0}ms)"
+    logInfo m!"rsa_predict: [direct/not-gt] assigned via normalize equality ({t2 - t0}ms)"
     return true
   catch e =>
     logInfo m!"rsa_predict: [direct/not-gt] failed: {e.toMessageData}"

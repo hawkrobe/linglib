@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Phenomena.Gradability.ComparisonClass
-import Linglib.Phenomena.Imprecision.Studies.LassiterGoodman2017
+import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
 import Linglib.Core.NestedRestriction
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 

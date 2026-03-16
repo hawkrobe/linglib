@@ -130,7 +130,7 @@ theorem bounded_eq_closedBoundary :
 -- § 5. Epistemic Modal Domain (@cite{lassiter-goodman-2017})
 -- ════════════════════════════════════════════════════
 
-/-! @cite{lassiter-goodman-2017} Ch. 4: the epistemic probability scale is closed [0,1],
+/-! The epistemic probability scale is closed [0,1] (@cite{kennedy-2007}),
 so epistemic adjectives like "certain" license degree modification ("completely
 certain") for the same structural reason that "full" does — closed-scale
 boundedness routes through `Boundedness.closed → isLicensed = true`.

@@ -414,8 +414,6 @@ Island effects arise from (at least) three distinct mechanisms:
 - **Processing**: gradient difficulty from memory load (CNPC, wh-islands — @cite{hofmeister-sag-2010})
 - **Discourse**: information-structural backgroundedness (MoS — @cite{lu-degen-2025})
 
-This parallels the scope-freezing comparison (`Phenomena.Quantification.Compare`),
-where processing also outperforms grammar-only accounts on gradient data.
 Both domains use `ProcessingModel.ProcessingProfile` with Pareto dominance
 for weight-free ordinal comparison.
 

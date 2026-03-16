@@ -15,7 +15,7 @@ The `rsa_predict` tactic proves ℝ comparison goals on RSA models by:
 
 1. Trying `native_decide` (handles ℚ, Bool, finite types directly)
 2. Reifying both sides to `RExpr` (rational expression trees)
-3. Evaluating via exact ℚ arithmetic, DAG-based intervals, or tree-based intervals
+3. Evaluating via exact ℚ arithmetic or tree-based intervals
 4. Building kernel-verifiable proofs from the interval separation
 
 All ~400 invocations across 38 study files use this reflection path exclusively.
@@ -57,9 +57,9 @@ open Linglib.Tactics.RSAPredict
 /-- `rsa_predict` proves RSA prediction goals by RExpr reflection.
 
     The tactic reifies both sides of a comparison to `RExpr` (rational expression
-    trees), then proves the comparison via exact ℚ evaluation, DAG-based interval
-    arithmetic, or tree-based interval arithmetic. The kernel verifies that
-    `RExpr.denote` matches the original ℝ expression via iota-reduction. -/
+    trees), then proves the comparison via exact ℚ evaluation or tree-based interval
+    arithmetic. The kernel verifies that `RExpr.denote` matches the original ℝ
+    expression via iota-reduction. -/
 elab "rsa_predict" : tactic => do
   let goal ← getMainGoal
   let goalType ← goal.getType
@@ -84,6 +84,29 @@ elab "rsa_predict" : tactic => do
     if ← tryDirectRExprNotGt goal lhs rhs then
       logInfo m!"rsa_predict: ✓ proved via reflection (¬gt, generic)"
       return
+
+    -- Fallback: try proving equality (lhs = rhs), then derive ¬(lhs > rhs).
+    -- This handles symmetric cases where interval arithmetic can't prove ¬(>)
+    -- because exp/log intervals have width, but the values are actually equal.
+    -- L1 equality via score equality
+    if let some (cfg, u, w₁) ← try parseL1Policy lhs catch _ => pure none then
+      if let some (cfg₂, _u₂, w₂) ← try parseL1Policy rhs catch _ => pure none then
+        if ← isDefEq cfg cfg₂ then
+          let scoreOk ← try
+            let l1Agent ← mkAppM ``RSA.RSAConfig.L1agent #[cfg]
+            let scoreExpr1 ← mkAppM ``Core.RationalAction.score #[l1Agent, u, w₁]
+            let scoreExpr2 ← mkAppM ``Core.RationalAction.score #[l1Agent, u, w₂]
+            let scoreEqGoal ← mkFreshExprMVar (← mkEq scoreExpr1 scoreExpr2)
+            if ← tryDirectRExprEq scoreEqGoal.mvarId! scoreExpr1 scoreExpr2 then
+              let policyEq ← mkAppM ``Core.RationalAction.policy_eq_of_score_eq
+                #[l1Agent, u, w₁, w₂, scoreEqGoal]
+              let notGtProof ← mkAppM ``not_lt_of_ge #[← mkAppM ``le_of_eq #[policyEq]]
+              goal.assign notGtProof
+              logInfo m!"rsa_predict: ✓ proved ¬(>) via L1 score equality"
+              pure true
+            else pure false
+          catch _ => pure false
+          if scoreOk then return
 
     throwError "rsa_predict: reflection failed for ¬(_ > _) goal: {← ppExpr goalType}"
 

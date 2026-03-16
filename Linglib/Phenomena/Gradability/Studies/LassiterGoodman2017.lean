@@ -164,10 +164,10 @@ def basketballPrior (h : Height) : ℚ :=
   | _ => 5
 
 -- ============================================================================
--- Utterance Costs (Section 4.2, Eq. 23; Section 4.4)
+-- Utterance Costs (§3; §4.4)
 -- ============================================================================
 
-/-- Utterance cost function (Eq. 23).
+/-- Utterance cost function.
 
     C(u) = 2/3 × length(u) in words.
     C("Sam is tall") = C("Sam is short") = 2/3 × 3 = 2.
@@ -207,7 +207,7 @@ theorem basketballPriorR_nonneg : ∀ h : Height, 0 ≤ basketballPriorR h := by
 /-- Utterance cost as ℝ. -/
 noncomputable def utteranceCostR (u : Utterance) : ℝ := utteranceCost paperCost u
 
-/-- S1 belief-based score with utterance costs (Eq. 23):
+/-- S1 belief-based score with utterance costs (Eq. 28):
 
     S1(u|s,V) ∝ exp(α · (log P_{L0}(s|u,V) − C(u)))
 
@@ -329,6 +329,59 @@ prior (5 vs 1), which dominates the normalization penalty. -/
 
 theorem basketball_tall_favors_taller :
     basketballCfg.L1 .tall (deg 10) > defaultCfg.L1 .tall (deg 10) := by
+  rsa_predict
+
+-- ============================================================================
+-- Short Threshold Inference (§4.4, Figure 6)
+-- ============================================================================
+
+/-! ### Threshold posterior for "short"
+
+Mirror of the "tall" threshold peak: given "short," the threshold posterior
+peaks at an intermediate value too. Very high thresholds (θ ≈ 9) make "short"
+nearly always true (uninformative, penalized by cost), very low thresholds
+(θ ≈ 0) make "short" nearly always false (implausible). -/
+
+theorem short_threshold_peak_gt_low :
+    defaultCfg.L1_latent .short (thr 3) > defaultCfg.L1_latent .short (thr 7) := by
+  rsa_predict
+
+theorem short_threshold_peak_gt_high :
+    defaultCfg.L1_latent .short (thr 3) > defaultCfg.L1_latent .short (thr 0) := by
+  rsa_predict
+
+-- ============================================================================
+-- Prior Symmetry (§4.4, p. 3821)
+-- ============================================================================
+
+/-! ### Symmetry of "tall" and "short" posteriors
+
+The paper predicts (p. 3821): "since the lexical entries of tall and short
+in (22) and (23) differ only in the direction of the comparison with their
+estimated threshold, and since the prior is symmetric, we should expect the
+interpretation of Al is short to be symmetric along the prior mean."
+
+We verify the precondition: the height prior is symmetric around h5. -/
+
+/-- The height prior is symmetric around the mean h5:
+    heightPrior(k) = heightPrior(10−k) for all k. -/
+theorem heightPrior_symmetric :
+    ∀ h : Height, heightPrior h = heightPrior (deg (10 - h.toNat)) := by
+  native_decide
+
+-- ============================================================================
+-- Additional Context Sensitivity (§4.4, Figure 7)
+-- ============================================================================
+
+/-! ### Basketball context shifts short inference
+
+The paper uses "two input priors with different means" for "tall." The same
+mechanism should work for "short": when the reference class shifts rightward
+(basketball players), hearing "short" should shift inference *less* toward
+the low end (since basketball players are less likely to be short). -/
+
+theorem basketball_short_less_extreme :
+    defaultCfg.L1 .short (deg 0) > basketballCfg.L1 .short (deg 0) := by
   rsa_predict
 
 end RSA.LassiterGoodman2017

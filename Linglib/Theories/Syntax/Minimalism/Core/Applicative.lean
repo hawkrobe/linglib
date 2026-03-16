@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
 # Applicative Heads
-@cite{cuervo-2003} @cite{pylkknen-2008} @cite{brennan-pylkkanen-2008}
+@cite{cuervo-2003} @cite{pylkknen-2008}
 
 Applicative heads introduce applied arguments (benefactives, goals,
 sources) into the verbal structure. The high/low distinction determines
@@ -26,8 +26,8 @@ namespace Minimalism
       applied argument (Korean, Hebrew possessor datives, Japanese
       adversity passives) -/
 inductive ApplType where
-  | high          -- Above VP: individual-event relation (@cite{brennan-pylkkanen-2008})
-  | lowRecipient  -- Below VP: transfer TO applied arg (@cite{brennan-pylkkanen-2008})
+  | high          -- Above VP: individual-event relation (@cite{pylkknen-2008})
+  | lowRecipient  -- Below VP: transfer TO applied arg (@cite{pylkknen-2008})
   | lowSource     -- Below VP: transfer FROM applied arg (@cite{pylkknen-2008} §2.2, §2.3)
   deriving DecidableEq, BEq, Repr
 

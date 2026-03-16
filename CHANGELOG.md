@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.311] - 2026-03-16
+
+### Changed
+- **Lassiter & Goodman 2017 audit**: move `LassiterGoodman2017.lean` from `Phenomena/Imprecision/Studies/` to `Phenomena/Gradability/Studies/` (paper is about adjectival vagueness, not number-word imprecision)
+- **Fix 3 equation misattributions**: cost function is not Eq. 23 (that's ⟦short⟧); S1 score is Eq. 28; cost formula appears in §3 and §4.4, not §4.2
+- **Fix 5 epistemic modal misattributions**: L&G 2017 does not discuss epistemic modals — remove false `§4.2`, `§4.3`, `Ch. 4` section citations from `EpistemicThreshold.lean` and `Rouillard2026.lean`; re-attribute degree-semantic bridges to Kennedy 2007
+
+### Added
+- **4 new verified predictions**: `short_threshold_peak_gt_low/high` (short threshold posterior peaks at intermediate value), `heightPrior_symmetric` (prior symmetric around h5), `basketball_short_less_extreme` (basketball context attenuates short inference)
+
 ## [0.229.310] - 2026-03-15
 
 ### Changed

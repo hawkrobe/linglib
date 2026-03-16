@@ -224,7 +224,7 @@ def till_conn : TemporalExprEntry :=
 
 /-- *within* + duration: relevant to INCHOAT debate.
     Alstott & Aravind Exps 1a, 3: "within an hour" + activity verb.
-    @cite{brennan-pylkkanen-2008} claimed INCHOAT cost; not replicated. -/
+    Alstott & Aravind found no INCHOAT cost here. -/
 def within_ : TemporalExprEntry :=
   { form := "within"
   , complementType := .nominal

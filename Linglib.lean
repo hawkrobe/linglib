@@ -859,7 +859,7 @@ import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
-import Linglib.Phenomena.Imprecision.Studies.LassiterGoodman2017
+import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Imprecision.Projection
 -- Phenomena: Iconicity (sign language classifier predicates, viewpoints)
 import Linglib.Phenomena.Iconicity.Basic
@@ -1040,7 +1040,6 @@ import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021TwoNot
 import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
 import Linglib.Phenomena.Quantification.Studies.Elliott2025
 import Linglib.Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
-import Linglib.Phenomena.Quantification.Compare
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Phenomena.Questions.Typology
 import Linglib.Phenomena.Questions.Studies.BhattDayal2020

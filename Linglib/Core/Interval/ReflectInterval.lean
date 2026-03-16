@@ -1210,142 +1210,167 @@ theorem RExpr.not_gt_of_checkNotGt (lhs rhs : RExpr) (h : lhs.checkNotGt rhs = t
   exact not_lt.mpr (QInterval.le_of_separated (evalBoth_sound lhs h.1.1) (evalBoth_sound rhs h.1.2) h.2)
 
 -- ============================================================================
--- DAG-based memoized evaluation
+-- RExpr normalization: dead-branch elimination for iteZero/mul
 -- ============================================================================
 
-/-- Flat DAG node: children referenced by array index into the shared node
-    array. Mirrors the `RExpr` constructors but replaces recursive children
-    with `ℕ` indices. Built bottom-up so children always have lower indices
-    than parents.
+/-- Check if an RExpr is provably zero via interval arithmetic. -/
+def RExpr.isZero (e : RExpr) : Bool :=
+  let (iv, valid) := e.evalBothOpt
+  valid && iv.lo == 0 && iv.hi == 0
 
-    Deduplication during construction ensures structurally equal sub-trees
-    map to the same index — each unique computation is evaluated exactly once. -/
-inductive DAGNode where
-  | nat : ℕ → DAGNode
-  | ratCast : ℚ → DAGNode
-  | add : ℕ → ℕ → DAGNode
-  | mul : ℕ → ℕ → DAGNode
-  | div : ℕ → ℕ → DAGNode
-  | neg : ℕ → DAGNode
-  | sub : ℕ → ℕ → DAGNode
-  | rexp : ℕ → DAGNode
-  | rlog : ℕ → DAGNode
-  | rpow : ℕ → ℕ → DAGNode          -- child index, exponent value
-  | inv : ℕ → DAGNode
-  | iteZero : ℕ → ℕ → ℕ → DAGNode
-  | expMulLogSub : ℕ → ℕ → ℕ → DAGNode
-  deriving BEq, Hashable
+/-- Check if an RExpr is provably positive via interval arithmetic. -/
+def RExpr.isPos (e : RExpr) : Bool :=
+  let (iv, valid) := e.evalBothOpt
+  valid && decide (0 < iv.lo)
 
-private abbrev IVB := QInterval × Bool
-private def ivbDefault : IVB := (⟨0, 0, le_refl 0⟩, false)
+/-- If `isZero` succeeds, the denotation is 0. -/
+theorem RExpr.denote_eq_zero (e : RExpr) (h : e.isZero = true) : e.denote = 0 := by
+  simp only [isZero, Bool.and_eq_true, beq_iff_eq] at h
+  obtain ⟨⟨hv, hlo⟩, hhi⟩ := h
+  have hmem := evalBothOpt_sound e hv
+  simp only [QInterval.containsReal] at hmem
+  rw [hlo, hhi] at hmem
+  simp only [Rat.cast_zero] at hmem
+  linarith [hmem.1, hmem.2]
 
-/-- Evaluate a single DAG node given the already-computed results of all
-    children. Mirrors `evalBothOpt` logic: coarsening, zero short-circuit,
-    nonneg fast paths, and the `expMulLogSub` algebraic identity. -/
-private def evalOneNode (results : Array IVB) (node : DAGNode) : IVB :=
-  let get (i : ℕ) : IVB := results.getD i ivbDefault
-  match node with
-  | .nat n => (QInterval.exact n, true)
-  | .ratCast q => (QInterval.exact q, true)
-  | .add ai bi =>
-    let (ra, va) := get ai
-    let (rb, vb) := get bi
-    (c (ra.add rb), va && vb)
-  | .mul ai bi =>
-    let (ra, va) := get ai
-    if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
-    else
-      let (rb, vb) := get bi
-      let v := va && vb
-      if rb.lo == 0 && rb.hi == 0 then (QInterval.exact 0, v)
-      else if h₁ : 0 ≤ ra.lo then
-        if h₂ : 0 ≤ rb.lo then (c (ra.mulNonneg rb h₁ h₂), v)
-        else (c (ra.mul rb), v)
-      else (c (ra.mul rb), v)
-  | .div ai bi =>
-    let (ra, va) := get ai
-    let (rb, vb) := get bi
-    if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va && vb)
-    else if h₁ : 0 ≤ ra.lo then
-      if h₂ : 0 < rb.lo then (c (ra.divPos rb h₁ h₂), va && vb)
-      else (⟨-1, 1, by norm_num⟩, false)
-    else (⟨-1, 1, by norm_num⟩, false)
-  | .neg ai =>
-    let (ra, va) := get ai
-    (ra.neg, va)
-  | .sub ai bi =>
-    let (ra, va) := get ai
-    let (rb, vb) := get bi
-    (c (ra.sub rb), va && vb)
-  | .rexp ai =>
-    let (ra, va) := get ai
-    (c (expInterval ra), va)
-  | .rlog ai =>
-    let (ra, va) := get ai
-    if h : 0 < ra.lo then (c (logInterval ra h), va)
-    else if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
-    else (⟨-1000, 1000, by norm_num⟩, false)
-  | .rpow ai n =>
-    let (ra, va) := get ai
-    if n == 0 then (Linglib.Interval.rpowZero, va)
-    else if h : 0 ≤ ra.lo then (c (Linglib.Interval.rpowNat ra n h), va)
-    else (⟨0, 1, by norm_num⟩, false)
-  | .inv ai =>
-    let (ra, va) := get ai
-    if h : 0 < ra.lo then (c (ra.invPos h), va)
-    else (⟨-1, 1, by norm_num⟩, false)
-  | .iteZero ci ti ei =>
-    let (rc, vc) := get ci
-    if rc.lo == 0 && rc.hi == 0 then
-      let (rt, vt) := get ti
-      (rt, vc && vt)
-    else if h : (0 : ℚ) < rc.lo then
-      let (re, ve) := get ei
-      (re, vc && ve)
-    else
-      let (rt, vt) := get ti
-      let (re, ve) := get ei
-      (⟨min rt.lo re.lo, max rt.hi re.hi,
-       le_trans (min_le_left _ _) (le_trans rt.valid (le_max_left _ _))⟩,
-       vc && vt && ve)
-  | .expMulLogSub αi xi ci =>
-    let (rα, vα) := get αi
-    let (rx, vx) := get xi
-    let (rc, vc) := get ci
-    let vbase := vα && vx && vc
-    if hx : 0 < rx.lo then
-      if rα.lo == rα.hi && rα.lo.den == 1 && decide (0 ≤ rα.lo.num) then
-        let n := rα.lo.num.toNat
-        let xpow :=
-          if n == 0 then QInterval.exact 1
-          else if n == 1 then rx
-          else Linglib.Interval.rpowNat rx n (le_of_lt hx)
-        let negαc := (rα.mul rc).neg
-        let expFactor := c (expInterval negαc)
-        if h₁ : 0 ≤ xpow.lo then
-          if h₂ : 0 ≤ expFactor.lo then (c (xpow.mulNonneg expFactor h₁ h₂), vbase)
-          else (c (xpow.mul expFactor), vbase)
-        else (c (xpow.mul expFactor), vbase)
-      else
-        let logx := c (logInterval rx hx)
-        let diff := c (logx.sub rc)
-        let prod := c (rα.mul diff)
-        (c (expInterval prod), vbase)
-    else (⟨0, 1, by norm_num⟩, false)
+/-- If `isPos` succeeds, the denotation is nonzero. -/
+theorem RExpr.denote_ne_zero (e : RExpr) (h : e.isPos = true) : e.denote ≠ 0 := by
+  simp only [isPos, Bool.and_eq_true, decide_eq_true_eq] at h
+  obtain ⟨hv, hlo⟩ := h
+  have hmem := evalBothOpt_sound e hv
+  simp only [QInterval.containsReal] at hmem
+  have hlo_real : (0 : ℝ) < ↑e.evalBothOpt.1.lo := by exact_mod_cast hlo
+  intro heq; linarith [hmem.1]
 
-/-- Evaluate all DAG nodes bottom-up. Each unique node is computed exactly once.
-    Returns the results array indexed by node ID. -/
-private def evalDAG (nodes : Array DAGNode) : Array IVB :=
-  nodes.foldl (fun results node => results.push (evalOneNode results node)) #[]
+/-- Normalize an RExpr by:
+    1. Resolving `iteZero` with constant conditions (dead-branch elimination)
+    2. Eliminating `mul` with provably-zero operands
+    3. Rewriting `rexp(mul(α, sub(rlog(x), c)))` → `expMulLogSub(α, x, c)`
+    All transformations preserve denotation. Dead-branch elimination is
+    critical for proving ¬(>) on symmetric models, where two expressions
+    become structurally identical after resolving iteZero branches. -/
+def RExpr.normalize : RExpr → RExpr
+  | .rexp (.mul α (.sub (.rlog x) cost)) =>
+    .expMulLogSub α.normalize x.normalize cost.normalize
+  | .nat n => .nat n
+  | .ratCast q => .ratCast q
+  | .add a b => .add a.normalize b.normalize
+  | .mul a b =>
+    let na := a.normalize
+    let nb := b.normalize
+    if na.isZero then .nat 0
+    else if nb.isZero then .nat 0
+    else .mul na nb
+  | .div a b => .div a.normalize b.normalize
+  | .neg a => .neg a.normalize
+  | .sub a b => .sub a.normalize b.normalize
+  | .rexp a => .rexp a.normalize
+  | .rlog a => .rlog a.normalize
+  | .rpow a n => .rpow a.normalize n
+  | .inv a => .inv a.normalize
+  | .iteZero c t e =>
+    let nc := c.normalize
+    if nc.isZero then t.normalize
+    else if nc.isPos then e.normalize
+    else .iteZero nc t.normalize e.normalize
+  | .expMulLogSub α x cost =>
+    .expMulLogSub α.normalize x.normalize cost.normalize
 
-/-- Fallback tree-based comparison using `evalBothOpt`.
-    Used for small models where DAG overhead isn't worth it. -/
+/-- Normalization preserves denotation. -/
+def RExpr.normalize_denote : ∀ (e : RExpr), e.normalize.denote = e.denote
+  | .nat _ | .ratCast _ => rfl
+  | .add a b => congrArg₂ (· + ·) a.normalize_denote b.normalize_denote
+  | .mul a b => by
+    simp only [normalize]
+    split_ifs with h1 h2
+    · -- a.normalize is zero
+      simp only [denote]
+      rw [← a.normalize_denote, a.normalize.denote_eq_zero h1, zero_mul]
+    · -- b.normalize is zero
+      simp only [denote]
+      rw [← b.normalize_denote, b.normalize.denote_eq_zero h2, mul_zero]
+    · exact congrArg₂ (· * ·) a.normalize_denote b.normalize_denote
+  | .div a b => congrArg₂ (· / ·) a.normalize_denote b.normalize_denote
+  | .neg a => congrArg (- ·) a.normalize_denote
+  | .sub a b => congrArg₂ (· - ·) a.normalize_denote b.normalize_denote
+  | .rlog a => congrArg Real.log a.normalize_denote
+  | .rpow a 0 => congrArg (Real.rpow · 0) a.normalize_denote
+  | .rpow a 1 => congrArg (Real.rpow · 1) a.normalize_denote
+  | .rpow a (n + 2) => congrArg (Real.rpow · ↑(n + 2)) a.normalize_denote
+  | .inv a => congrArg (·⁻¹) a.normalize_denote
+  | .iteZero c t e => by
+    simp only [normalize]
+    split_ifs with h1 h2
+    · -- c.normalize is zero → c.denote = 0 → then branch
+      have hc : c.denote = 0 := by rw [← c.normalize_denote]; exact c.normalize.denote_eq_zero h1
+      simp only [denote, hc, ↓reduceIte]
+      exact t.normalize_denote
+    · -- c.normalize is positive → c.denote ≠ 0 → else branch
+      have hc : c.denote ≠ 0 := by
+        rw [← c.normalize_denote]; exact c.normalize.denote_ne_zero h2
+      simp only [denote, if_neg hc]
+      exact e.normalize_denote
+    · -- unknown → keep iteZero
+      simp only [denote, c.normalize_denote, t.normalize_denote, e.normalize_denote]
+  | .expMulLogSub α x cost =>
+    congrArg Real.exp (congrArg₂ (· * ·) α.normalize_denote
+      (congrArg₂ (· - ·) (congrArg Real.log x.normalize_denote) cost.normalize_denote))
+  | .rexp (.mul α (.sub (.rlog x) cost)) =>
+    congrArg Real.exp (congrArg₂ (· * ·) α.normalize_denote
+      (congrArg₂ (· - ·) (congrArg Real.log x.normalize_denote) cost.normalize_denote))
+  | .rexp (.nat n) => congrArg Real.exp (normalize_denote (.nat n))
+  | .rexp (.ratCast q) => congrArg Real.exp (normalize_denote (.ratCast q))
+  | .rexp (.add a b) => congrArg Real.exp (normalize_denote (.add a b))
+  | .rexp (.mul a (.nat n)) => congrArg Real.exp (normalize_denote (.mul a (.nat n)))
+  | .rexp (.mul a (.ratCast q)) => congrArg Real.exp (normalize_denote (.mul a (.ratCast q)))
+  | .rexp (.mul a (.add b c)) => congrArg Real.exp (normalize_denote (.mul a (.add b c)))
+  | .rexp (.mul a (.mul b c)) => congrArg Real.exp (normalize_denote (.mul a (.mul b c)))
+  | .rexp (.mul a (.div b c)) => congrArg Real.exp (normalize_denote (.mul a (.div b c)))
+  | .rexp (.mul a (.neg b)) => congrArg Real.exp (normalize_denote (.mul a (.neg b)))
+  | .rexp (.mul a (.sub (.nat _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.ratCast _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.add _ _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.mul _ _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.div _ _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.neg _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.sub _ _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.rexp _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.rpow _ _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.inv _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.iteZero _ _ _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.sub (.expMulLogSub _ _ _) c)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.rexp b)) => congrArg Real.exp (normalize_denote (.mul a (.rexp b)))
+  | .rexp (.mul a (.rlog b)) => congrArg Real.exp (normalize_denote (.mul a (.rlog b)))
+  | .rexp (.mul a (.rpow b n)) => congrArg Real.exp (normalize_denote (.mul a (.rpow b n)))
+  | .rexp (.mul a (.inv b)) => congrArg Real.exp (normalize_denote (.mul a (.inv b)))
+  | .rexp (.mul a (.iteZero b c d)) => congrArg Real.exp (normalize_denote (.mul a (.iteZero b c d)))
+  | .rexp (.mul a (.expMulLogSub b c d)) => congrArg Real.exp (normalize_denote (.mul a (.expMulLogSub b c d)))
+  | .rexp (.div a b) => congrArg Real.exp (normalize_denote (.div a b))
+  | .rexp (.neg a) => congrArg Real.exp (normalize_denote (.neg a))
+  | .rexp (.sub a b) => congrArg Real.exp (normalize_denote (.sub a b))
+  | .rexp (.rexp a) => congrArg Real.exp (normalize_denote (.rexp a))
+  | .rexp (.rlog a) => congrArg Real.exp (normalize_denote (.rlog a))
+  | .rexp (.rpow a n) => congrArg Real.exp (normalize_denote (.rpow a n))
+  | .rexp (.inv a) => congrArg Real.exp (normalize_denote (.inv a))
+  | .rexp (.iteZero a b c) => congrArg Real.exp (normalize_denote (.iteZero a b c))
+  | .rexp (.expMulLogSub a b c) => congrArg Real.exp (normalize_denote (.expMulLogSub a b c))
+
+/-- If two RExprs normalize to the same tree, their denotations are equal,
+    so neither is greater than the other. -/
+theorem RExpr.not_gt_of_normalize_eq (lhs rhs : RExpr)
+    (h : lhs.normalize = rhs.normalize) : ¬(lhs.denote > rhs.denote) := by
+  have h1 : lhs.denote = rhs.denote := by
+    rw [← normalize_denote lhs, ← normalize_denote rhs, h]
+  rw [h1]; exact lt_irrefl _
+
+/-- Tree-based comparison using `evalBothOpt`.
+    Used by `rsa_predict` for sorry-free soundness proofs. -/
 def RExpr.checkGtOpt (lhs rhs : RExpr) : Bool :=
   let (l_iv, l_valid) := lhs.evalBothOpt
   let (r_iv, r_valid) := rhs.evalBothOpt
   l_valid && r_valid && decide (r_iv.hi < l_iv.lo)
 
-/-- Fallback tree-based comparison for ¬(>). -/
+/-- Tree-based comparison for ¬(>). -/
 def RExpr.checkNotGtOpt (lhs rhs : RExpr) : Bool :=
   let (l_iv, l_valid) := lhs.evalBothOpt
   let (r_iv, r_valid) := rhs.evalBothOpt
@@ -1355,47 +1380,13 @@ def RExpr.checkNotGtOpt (lhs rhs : RExpr) : Bool :=
 theorem RExpr.gt_of_checkGtOpt (lhs rhs : RExpr)
     (h : lhs.checkGtOpt rhs = true) : lhs.denote > rhs.denote := by
   simp only [checkGtOpt, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact QInterval.gt_of_separated (evalBothOpt_sound lhs h.1.1) (evalBothOpt_sound rhs h.1.2) h.2
+  exact QInterval.gt_of_separated (evalBothOpt_sound _ h.1.1) (evalBothOpt_sound _ h.1.2) h.2
 
 /-- If `checkNotGtOpt` succeeds, ¬(lhs > rhs). -/
 theorem RExpr.not_gt_of_checkNotGtOpt (lhs rhs : RExpr)
     (h : lhs.checkNotGtOpt rhs = true) : ¬(lhs.denote > rhs.denote) := by
   simp only [checkNotGtOpt, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact not_lt.mpr (QInterval.le_of_separated (evalBothOpt_sound lhs h.1.1) (evalBothOpt_sound rhs h.1.2) h.2)
-
--- ============================================================================
--- DAG-based comparison (pre-built DAG from reifier)
--- ============================================================================
-
-/-- Check `lhs > rhs` using a pre-built DAG. The DAG is constructed at
-    meta-time from the RExpr `Expr` structure, exploiting the reifier's
-    sharing information. `native_decide` evaluates only the unique DAG nodes
-    (~1K for Kao), not the full tree (~28M). -/
-def checkGtDAG (dag : Array DAGNode) (lhsIdx rhsIdx : ℕ) : Bool :=
-  let results := evalDAG dag
-  let (l_iv, l_valid) := results.getD lhsIdx ivbDefault
-  let (r_iv, r_valid) := results.getD rhsIdx ivbDefault
-  l_valid && r_valid && decide (r_iv.hi < l_iv.lo)
-
-/-- Check `¬(lhs > rhs)` using a pre-built DAG. -/
-def checkNotGtDAG (dag : Array DAGNode) (lhsIdx rhsIdx : ℕ) : Bool :=
-  let results := evalDAG dag
-  let (l_iv, l_valid) := results.getD lhsIdx ivbDefault
-  let (r_iv, r_valid) := results.getD rhsIdx ivbDefault
-  l_valid && r_valid && decide (l_iv.hi ≤ r_iv.lo)
-
-/-- If DAG-based `checkGtDAG` succeeds, the original RExpr denotations are
-    ordered. The `lhs rhs` parameters are phantom — present so the kernel
-    can verify `lhs.denote ≡ lhsExpr` via iota-reduction. The actual
-    comparison uses the pre-built DAG. -/
-theorem gt_of_checkGtDAG (lhs rhs : RExpr) (dag : Array DAGNode) (li ri : ℕ)
-    (h : checkGtDAG dag li ri = true) : lhs.denote > rhs.denote := by
-  sorry
-
-/-- If DAG-based `checkNotGtDAG` succeeds, ¬(lhs.denote > rhs.denote). -/
-theorem not_gt_of_checkNotGtDAG (lhs rhs : RExpr) (dag : Array DAGNode) (li ri : ℕ)
-    (h : checkNotGtDAG dag li ri = true) : ¬(lhs.denote > rhs.denote) := by
-  sorry
+  exact not_lt.mpr (QInterval.le_of_separated (evalBothOpt_sound _ h.1.1) (evalBothOpt_sound _ h.1.2) h.2)
 
 -- ============================================================================
 -- Exact ℚ evaluation (for ¬(>) goals where intervals overlap)

@@ -532,8 +532,9 @@ end IdentityPerception
 /-!
 ### Epistemic Expressions as Gradable Predicates
 
-@cite{lassiter-goodman-2017} argues that epistemic modals are gradable expressions on
-a probability scale. The threshold semantics makes this precise:
+The structural analogy between adjective degree semantics (@cite{kennedy-2007},
+@cite{lassiter-goodman-2017}) and epistemic threshold semantics: both are
+instances of `μ(entity) ≥ θ`. The threshold semantics makes this precise:
 
     ⟦tall⟧(x) = height(x) ≥ θ_tall (Degree.positiveSem)
     ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel (meetsThreshold)
@@ -675,14 +676,14 @@ theorem moreCredent_iff_degree (cr : AgentCredence E W)
   rfl
 
 -- ============================================================================
--- §10. @cite{lassiter-goodman-2017} Degree-Semantic Bridges
+-- §10. Degree-Semantic Bridges (@cite{kennedy-2007})
 -- ============================================================================
 
 /-!
 ### Kennedy's Reduction: Comparative from Positive
 
-The central formal insight of @cite{kennedy-2007} — applied to epistemic modality
-by @cite{lassiter-goodman-2017} Ch. 4 — is that the comparative is not an independent
+The central formal insight of @cite{kennedy-2007} — extended here to epistemic
+modality — is that the comparative is not an independent
 primitive but *reduces to* the positive form via existential quantification
 over thresholds:
 
@@ -712,8 +713,8 @@ the structure of threshold semantics on a linear order.
     - Forward: if cr(a,ψ) < cr(a,φ), witness θ = cr(a,φ).
     - Backward: if θ separates, then cr(a,ψ) < θ ≤ cr(a,φ).
 
-    @cite{kennedy-2007} §3; @cite{lassiter-goodman-2017} §4.2: the same reduction applies
-    to epistemic modals because credence IS a measure function. -/
+    @cite{kennedy-2007} §3: the same reduction applies to epistemic
+    modals because credence IS a measure function. -/
 theorem comparative_from_positive (cr : AgentCredence E W)
     (a : E) (φ ψ : BProp W) :
     moreCredent cr a φ ψ ↔
@@ -729,9 +730,10 @@ theorem comparative_from_positive (cr : AgentCredence E W)
     On a linear order, cr(a,φ) ≥ θ iff ¬(cr(a,φ) < θ). This is not
     `rfl` — it requires `not_lt` on `ℚ`'s linear order.
 
-    @cite{lassiter-goodman-2017}: positive and negative epistemic modals are
-    contradictories on the probability scale, not contraries. The
-    same threshold θ separates "likely" from "unlikely." -/
+    On a probability scale, positive and negative epistemic modals are
+    contradictories, not contraries — the same threshold θ separates
+    "likely" from "unlikely" (cf. @cite{lassiter-goodman-2017} fn. 8
+    for the analogous tall/short case). -/
 theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
     (θ : ℚ) (a : E) (φ : BProp W) :
     meetsThreshold cr θ a φ ↔ ¬failsThreshold cr θ a φ := by
@@ -748,7 +750,8 @@ theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
     this *derives* the antonymy connection from `comparative_from_positive`
     + `meetsThreshold_iff_not_failsThreshold`.
 
-    @cite{lassiter-goodman-2017} §4.3: likely/unlikely parallel tall/short. -/
+    The likely/unlikely pattern parallels @cite{lassiter-goodman-2017}'s
+    tall/short (Eqs. 22–23): same scale, reversed polarity. -/
 theorem antonymy_from_polarity (cr : AgentCredence E W)
     (a : E) (φ ψ : BProp W) :
     moreCredent cr a φ ψ ↔
