@@ -93,7 +93,7 @@ theorem subject_oriented_count :
 theorem english_subject_result_requires_reflexive :
     (Phenomena.Constructions.Resultatives.allExamples.filter
       (·.resType == .fakeReflexive)).all
-      (·.judgment == .grammatical) = true := by
+      (·.judgment == .ok) = true := by
   native_decide
 
 -- ════════════════════════════════════════════════════
