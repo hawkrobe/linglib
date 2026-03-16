@@ -13,7 +13,7 @@ import Linglib.Core.AssertionTypes
 
 Re-exports theory-neutral data types:
 
-- `CombinationKind`: Mueller's three universal schemata
+- `CombinationKind`: Three universal combination schemata
 - `BindingSemantics`: H&K binding data types (Position, BindingConfig)
 - `ScopeTypes`: Scope readings (AvailableScopes, BinaryScopeAvailability)
 - `ImplicatureTypes`: Scalar implicature data types

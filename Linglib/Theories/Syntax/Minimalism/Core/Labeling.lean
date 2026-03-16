@@ -444,4 +444,114 @@ def findPositions (x root : SyntacticObject) : List TreePos :=
     In {X, Y} where Y is the target (projects), X is at the LEFT (Spec) position -/
 def derivedSpecPosition : TreePos := .left .here
 
+/-! ## Free Relative Labeling Conflict (@cite{mueller-2013} §2.1)
+
+Müller argues that Chomsky's labeling rules (2008:145) yield contradictory
+results for free relative clauses like "what you wrote":
+
+- Rule 14a: In {H, α}, H an LI, H is the label → label = D (the pronoun)
+- The selection-based algorithm (implementing 14b logic) → label = V (the clause)
+
+This is underdetermined: the same structure is labeled DP when used as
+an object ("I read what you wrote") and CP when used as a complement
+of *wonder* ("I wonder what you wrote"). Chomsky (2013:47) acknowledges
+"many open questions" about free relative labeling.
+
+**Simplification**: The SO `freeRelSO` models the surface structure without
+explicitly representing Internal Merge. The gap `gapFR` has a different token
+ID from `whatFR` rather than being a literal copy. The labeling conflict is
+independent of how the gap is represented. -/
+
+section FreeRelativeLabelingConflict
+
+/-- Chomsky (2008:145) rule 14a: In {H, α} where H is a lexical item,
+    H is the label. When one daughter is an LI, its category is the label. -/
+def labelRule14a : SyntacticObject → Option Cat
+  | .leaf tok => some tok.item.outerCat
+  | .node a b =>
+    match a.getLIToken with
+    | some tok => some tok.item.outerCat
+    | none =>
+      match b.getLIToken with
+      | some tok => some tok.item.outerCat
+      | none => none
+
+/-- "what" — a wh-pronoun (category D, no selectional features). -/
+def whatFR : LIToken := ⟨.simple .D [], 100⟩
+
+/-- "wrote" — a transitive verb (category V, selects D). -/
+def wroteFR : LIToken := ⟨.simple .V [.D], 101⟩
+
+/-- Object gap in D position (trace of "what"). -/
+def gapFR : SyntacticObject := .leaf ⟨.simple .D [], 10100⟩
+
+/-- VP with gap: [wrote ___]. -/
+def wroteGapFR : SyntacticObject := .node (.leaf wroteFR) gapFR
+
+/-- Free relative SO: {what, [wrote ___]}.
+    "what" has been internally merged (moved from object position). -/
+def freeRelSO : SyntacticObject := .node (.leaf whatFR) wroteGapFR
+
+/-- Rule 14a labels the free relative as D (the pronoun "what" is an LI). -/
+theorem freeRel_rule14a_gives_D :
+    labelRule14a freeRelSO = some .D := by native_decide
+
+/-- The selection-based labeling (implementing rule 14b's logic) labels it as V
+    (the clause projects because "what" doesn't select the VP). -/
+theorem freeRel_labelCat_gives_V :
+    labelCat freeRelSO = some .V := by native_decide
+
+/-- Rules 14a and 14b conflict for free relatives: one gives D, the other V.
+
+    This is Müller's central argument against Chomsky's labeling algorithm.
+    Free relatives like "what you wrote" function as DPs in object position
+    ("I read what you wrote") and as CPs in complement-of-*wonder* position
+    ("I wonder what you wrote") — but neither labeling rule can derive both
+    labels from the same structure. -/
+theorem freeRel_labeling_conflict :
+    labelRule14a freeRelSO ≠ labelCat freeRelSO := by native_decide
+
+end FreeRelativeLabelingConflict
+
+/-! ## Coordination Labeling Failure (@cite{mueller-2013} §2.1)
+
+When two phrases are coordinated ({DP₁, DP₂}), neither daughter is an LI
+(rule 14a fails) and neither selects the other (rule 14b fails). Chomsky
+(2013:46) stipulates a special case: when both daughters share a label,
+that shared label is the result. Müller argues this is an ad hoc fix that
+undermines the generality of the labeling algorithm. -/
+
+section CoordinationLabelingFailure
+
+/-- A second determiner "a" (category D, selects N). -/
+def detA_coord : LIToken := ⟨.simple .D [.N], 102⟩
+
+/-- "book" (category N, no selectional features). -/
+def nounBook : LIToken := ⟨.simple .N [], 103⟩
+
+/-- Second DP: {a, book}. -/
+def aBookDP : SyntacticObject := .node (.leaf detA_coord) (.leaf nounBook)
+
+/-- Coordinated structure: {theDP, aBookDP} — two phrases, neither is an LI. -/
+def coordDP : SyntacticObject := .node theDP aBookDP
+
+/-- Rule 14a fails for coordination: neither daughter is an LI. -/
+theorem coord_rule14a_fails :
+    labelRule14a coordDP = none := by native_decide
+
+/-- The selection-based algorithm gives D, but only because it falls through
+    to the "both phrases" tie-breaking case — not because of a principled
+    labeling mechanism. Neither phrase selects the other. -/
+theorem coord_neither_selects :
+    selectsB theDP aBookDP = false ∧
+    selectsB aBookDP theDP = false := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- The selection-based label of the coordinated structure.
+    Gives D, but this is an artifact of tie-breaking, not selection. -/
+theorem coord_labelCat_artifact :
+    labelCat coordDP = some .D := by native_decide
+
+end CoordinationLabelingFailure
+
 end Minimalism

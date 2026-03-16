@@ -141,4 +141,43 @@ theorem same_rule_same_cat (rule : LexicalRule) (s1 s2 : Sign)
     | word w2 ss2 => simp [applyLexRule, Sign.synsem] at h ⊢; exact h
     | phrase ch2 ss2 => simp [applyLexRule, Sign.synsem] at h ⊢; exact h
 
+/-! ## Iterable Lexical Rules (@cite{mueller-2013} §1)
+
+Müller argues that valence-changing operations must be iterable: Turkish
+and Lithuanian allow double passivization (personal passive of an
+impersonal passive). Lexical rules handle this naturally — each
+application independently transforms valence while preserving head features.
+Phrasal approaches that unify a core representation with a passive-specific
+structure cannot iterate this way (§1, pp. 926–927). -/
+
+/-- Double passivization preserves head features.
+
+    Applying the passive rule twice (as in Turkish double passives,
+    e.g., "Bu şato-da bo-ul-un-ur" = 'One is strangled in this chateau')
+    still preserves the verb's head features. -/
+theorem double_passive_preserves_head (s : Sign) :
+    (applyLexRule passiveRule (applyLexRule passiveRule s)).synsem.head =
+    s.synsem.head := by
+  cases s with
+  | word w ss => simp [applyLexRule, Sign.synsem]
+  | phrase children ss => simp [applyLexRule, Sign.synsem]
+
+/-- Any finite chain of lexical rule applications preserves head features.
+
+    Each rule independently transforms valence while leaving head features
+    untouched — so the composition of any sequence of rules also preserves
+    head features. This generalizes double passivization to arbitrary
+    combinations of passive, resultative, dative shift, etc. -/
+theorem lexrule_chain_preserves_head (rules : List LexicalRule) (s : Sign) :
+    (rules.foldl (λ s' r => applyLexRule r s') s).synsem.head = s.synsem.head := by
+  induction rules generalizing s with
+  | nil => rfl
+  | cons r rest ih =>
+    simp only [List.foldl_cons]
+    have := ih (applyLexRule r s)
+    rw [this]
+    cases s with
+    | word w ss => simp [applyLexRule, Sign.synsem]
+    | phrase ch ss => simp [applyLexRule, Sign.synsem]
+
 end HPSG

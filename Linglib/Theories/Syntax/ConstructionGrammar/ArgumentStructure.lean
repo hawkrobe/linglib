@@ -28,7 +28,7 @@ phrasal patterns that only CxG can capture.
 
 namespace ConstructionGrammar
 
-open Core.Interfaces
+open Core
 
 /-! ## Construction slots and argument frames -/
 
@@ -174,10 +174,15 @@ def decompose (asc : ArgStructureConstruction) : List CombinationKind :=
     if i == 0 then .headSpecifier  -- first non-head = specifier (subject)
     else .headComplement           -- later non-heads = complements
 
-/-- A construction is decomposable if it has specificity `fullyAbstract`
-and no construction-specific pragmatic function — i.e., its meaning is
-fully compositional from the three universal schemata. -/
-def isDecomposable (c : Construction) : Bool :=
+/-- A construction is fully compositional if it has specificity `fullyAbstract`
+and no construction-specific pragmatic function.
+
+This is a proxy for @cite{mueller-2013}'s structural criterion (whether the
+construction can be analyzed as a sequence of headed binary combinations).
+The proxy works because fully abstract constructions without pragmatic
+functions have no idiosyncratic form–meaning pairings that would resist
+decomposition into the three universal schemata. -/
+def isFullyCompositional (c : Construction) : Bool :=
   c.specificity == .fullyAbstract && c.pragmaticFunction.isNone
 
 /-! ## Core theorems -/
@@ -202,49 +207,49 @@ theorem resultative_decomposes :
     decompose resultative = [.headSpecifier, .headComplement, .headComplement] := by
   native_decide
 
-/-- Fully abstract constructions without pragmatic functions are decomposable. -/
-theorem fullyAbstract_is_decomposable (c : Construction)
+/-- Fully abstract constructions without pragmatic functions are fully compositional. -/
+theorem fullyAbstract_isFullyCompositional (c : Construction)
     (h₁ : c.specificity = .fullyAbstract)
     (h₂ : c.pragmaticFunction = none) :
-    isDecomposable c = true := by
-  unfold isDecomposable
+    isFullyCompositional c = true := by
+  unfold isFullyCompositional
   rw [h₁, h₂]
   native_decide
 
-/-- PAL construction is NOT decomposable.
+/-- PAL construction is NOT fully compositional.
 
 PAL is a phrasal construction where a phrase fills a word-level slot.
 This form-function pairing cannot be captured by the three schemata alone —
 it requires construction-specific knowledge. -/
 theorem pal_irreducible :
-    isDecomposable Studies.GoldbergShirtz2025.palConstruction = false := by
+    isFullyCompositional Studies.GoldbergShirtz2025.palConstruction = false := by
   native_decide
 
-/-- *Let alone* construction is NOT decomposable.
+/-- *Let alone* construction is NOT fully compositional.
 
 *Let alone* is a formal idiom with paired focus, scalar entailment, and
 NPI licensing requirements. These semantic/pragmatic properties cannot
 be derived from Head-Complement + Head-Specifier + Head-Filler. -/
 theorem let_alone_irreducible :
-    isDecomposable Studies.FillmoreKayOConnor1988.letAloneConstruction = false := by
+    isFullyCompositional Studies.FillmoreKayOConnor1988.letAloneConstruction = false := by
   native_decide
 
 /-- Müller's "both directions right" (§3): the three schemata handle
 fully abstract constructions, but CxG's phrasal constructions are irreducible.
 
 This formalizes the biconditional:
-- Fully abstract → decomposable (covered by universal schemata)
-- Non-fully-abstract → not decomposable (requires CxG) -/
+- Fully abstract → fully compositional (covered by universal schemata)
+- There exist constructions that are not fully compositional (requires CxG) -/
 theorem both_directions_right :
-    -- Fully abstract constructions without pragmatic functions are decomposable
+    -- Fully abstract constructions without pragmatic functions are fully compositional
     (∀ c : Construction, c.specificity = .fullyAbstract →
       c.pragmaticFunction = none →
-      isDecomposable c = true) ∧
-    -- There exist non-abstract constructions that are irreducible
-    (∃ c : Construction, isDecomposable c = false) := by
+      isFullyCompositional c = true) ∧
+    -- There exist constructions that are not fully compositional
+    (∃ c : Construction, isFullyCompositional c = false) := by
   constructor
   · intro c hspec hprag
-    exact fullyAbstract_is_decomposable c hspec hprag
+    exact fullyAbstract_isFullyCompositional c hspec hprag
   · exact ⟨Studies.GoldbergShirtz2025.palConstruction, pal_irreducible⟩
 
 /-- Conative decomposes into Head-Specifier + Head-Complement. -/

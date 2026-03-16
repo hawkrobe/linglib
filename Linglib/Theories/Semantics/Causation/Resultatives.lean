@@ -34,7 +34,7 @@ open ConstructionGrammar
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
 open Semantics.Tense.Aspect.LexicalAspect
 open Semantics.Lexical.Verb.ChangeOfState
-open Core.Interfaces
+open Core
 open Core.StructuralEquationModel
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
@@ -595,10 +595,10 @@ decomposable into Müller's universal schemata.
 Causative subconstructions → [HS, HC, HC] (same as parent resultative)
 Noncausative subconstructions → [HS, HC] (intransitive, fewer complements) -/
 
-/-- All four subconstructions are decomposable. -/
-theorem allResultativesDecomposable :
+/-- All four subconstructions are fully compositional. -/
+theorem allResultativesFullyCompositional :
     resultativeFamily.all (λ c =>
-      isDecomposable c.construction) = true := by
+      isFullyCompositional c.construction) = true := by
   native_decide
 
 /-- Causative subconstructions decompose like the parent resultative

@@ -726,7 +726,7 @@ theorem resolve_const (R : E → E → Type) (y : E) (x : E) :
 -- with locality) are defined below in the "Full Ch8 Context" sections using
 -- `Cntxt₈`. The simplified definitions here (`reflexivize`, `anaphoricResolve`)
 -- serve as the clean semantic interface for bridge theorems to Phenomena and
--- Core.Interfaces; `reflexivize₈_agrees_with_simple` connects the two layers.
+-- Core; `reflexivize₈_agrees_with_simple` connects the two layers.
 
 end BindingTheory
 
@@ -826,7 +826,7 @@ end BindingPhenomenon
 /-! ### Bridge to positional binding interface
 
 Connect TTR's semantic binding (ℜ / @_{i,j}) to the syntactic binding
-interface in `Core.Interfaces.BindingSemantics`.
+interface in `Core.BindingSemantics`.
 
 TTR's binding theory is *semantic* (argument identification via types),
 while `BindingSemantics` is *syntactic* (position-based binder–bindee

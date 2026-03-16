@@ -24,12 +24,16 @@ combination schemata (Head-Complement, Head-Specifier, Head-Filler).
 - §5. Coordination diagnostic: same category required
 - §6. Directional MG ≈ CCG (placeholder)
 - §7. Both directions right: need Merge AND phrasal constructions
+- §8. Concrete cross-theory examples
+- §9. Labeling failures: free relatives + coordination
+- §10. Monovalent verb serialization problem
+- §11. Iterable valence operations
 
 -/
 
 namespace Comparisons.Mueller2013
 
-open Core.Interfaces
+open Core
 
 /-! ## §1. Classification Functions
 
@@ -41,9 +45,11 @@ theory-neutral `CombinationKind`. -/
 /-- Classify a CCG derivation step as one of the three schemata.
 
 - Forward/backward application → Head-Complement (functor selects argument)
-- Forward/backward composition → Head-Filler (enables extraction)
-- Type-raising → none (not a combination, just category change)
-- Coordination → none (not one of the three schemata) -/
+- Forward/backward composition → Head-Filler (enables extraction;
+  this is an approximation — composition also serves non-extraction
+  functions like heavy NP shift and right-node raising)
+- Type-raising → none (unary operation, not a binary combination)
+- Coordination → none (symmetric, not one of the three headed schemata) -/
 def classifyCCGDerivStep : CCG.DerivStep → Option CombinationKind
   | .fapp _ _ => some .headComplement
   | .bapp _ _ => some .headComplement
@@ -56,11 +62,17 @@ def classifyCCGDerivStep : CCG.DerivStep → Option CombinationKind
 
 /-! ### HPSG classification -/
 
-/-- Classify an HPSG schema application as one of the three schemata. -/
-def classifyHPSGSchema : HPSG.HPSGSchema → CombinationKind
-  | .headComp _ => .headComplement
-  | .headSubj _ => .headSpecifier
-  | .headFiller _ => .headFiller
+/-- Classify an HPSG schema application as one of the three schemata.
+
+    @cite{mueller-2013}'s three universal schemata are Head-Complement,
+    Head-Subject, and Head-Filler. HPSG's fourth schema, Head-Modifier
+    (adjunction), falls outside this classification — Müller does not
+    include adjunction in the convergence claim. -/
+def classifyHPSGSchema : HPSG.HPSGSchema → Option CombinationKind
+  | .headComp _ => some .headComplement
+  | .headSubj _ => some .headSpecifier
+  | .headFiller _ => some .headFiller
+  | .headMod _ => none
 
 /-! ### Dependency Grammar classification -/
 
@@ -76,13 +88,13 @@ def classifyDepType : UD.DepRel → CombinationKind
 
 /-! ### CxG classification -/
 
-/-- Classify a CxG construction's decomposability.
+/-- Classify whether a CxG construction is fully compositional.
 
 Fully abstract constructions without pragmatic function decompose into
 sequences of Head-Complement and Head-Specifier steps. Other constructions
 are irreducible phrasal patterns. -/
-def classifyCxGDecomposable (c : ConstructionGrammar.Construction) : Bool :=
-  ConstructionGrammar.isDecomposable c
+def classifyCxGFullyCompositional (c : ConstructionGrammar.Construction) : Bool :=
+  ConstructionGrammar.isFullyCompositional c
 
 /-! ## §2. Labeling Convergence (Müller §2.1)
 
@@ -147,7 +159,7 @@ theorem external_merge_is_head_complement :
       Minimalism.classifyExternalMerge a b = .headComplement) ∧
     -- HPSG: HeadCompRule = headComplement
     (∀ r : HPSG.HeadCompRule,
-      classifyHPSGSchema (.headComp r) = .headComplement) ∧
+      classifyHPSGSchema (.headComp r) = some .headComplement) ∧
     -- CCG: fapp = headComplement
     (∀ d1 d2 : CCG.DerivStep,
       classifyCCGDerivStep (.fapp d1 d2) = some .headComplement) ∧
@@ -167,7 +179,7 @@ theorem external_merge_is_head_specifier :
       Minimalism.classifyExternalMerge a b = .headSpecifier) ∧
     -- HPSG: HeadSubjRule = headSpecifier
     (∀ r : HPSG.HeadSubjRule,
-      classifyHPSGSchema (.headSubj r) = .headSpecifier) ∧
+      classifyHPSGSchema (.headSubj r) = some .headSpecifier) ∧
     -- DG: subj dep = headSpecifier
     (classifyDepType .nsubj = .headSpecifier) := by
   refine ⟨?_, ?_, ?_⟩
@@ -189,7 +201,7 @@ theorem internal_merge_is_head_filler :
     (Minimalism.classifyInternalMerge = .headFiller) ∧
     -- HPSG: HeadFillerRule = headFiller
     (∀ r : HPSG.HeadFillerRule,
-      classifyHPSGSchema (.headFiller r) = .headFiller) ∧
+      classifyHPSGSchema (.headFiller r) = some .headFiller) ∧
     -- CCG: forward composition = headFiller
     (∀ d1 d2 : CCG.DerivStep,
       classifyCCGDerivStep (.fcomp d1 d2) = some .headFiller) ∧
@@ -275,30 +287,30 @@ theorem causedMotion_decomposes :
 
 /-- Concrete examples: phrasal constructions are irreducible. -/
 theorem pal_irreducible :
-    ConstructionGrammar.isDecomposable
+    ConstructionGrammar.isFullyCompositional
       ConstructionGrammar.Studies.GoldbergShirtz2025.palConstruction = false :=
   ConstructionGrammar.pal_irreducible
 
 theorem let_alone_irreducible :
-    ConstructionGrammar.isDecomposable
+    ConstructionGrammar.isFullyCompositional
       ConstructionGrammar.Studies.FillmoreKayOConnor1988.letAloneConstruction = false :=
   ConstructionGrammar.let_alone_irreducible
 
 /-- Both directions right: the three schemata AND phrasal constructions are needed.
 
-1. Fully abstract constructions without pragmatic functions are decomposable
-   into sequences of Head-Complement and Head-Specifier steps.
-2. There exist constructions that are irreducible — they cannot be captured
-   by the three schemata alone, requiring CxG's phrasal patterns. -/
+1. Fully abstract constructions without pragmatic functions are fully
+   compositional — decomposable into Head-Complement and Head-Specifier steps.
+2. There exist constructions that are not fully compositional — they cannot
+   be captured by the three schemata alone, requiring CxG's phrasal patterns. -/
 theorem both_directions_right :
-    -- Direction 1: fully abstract constructions are decomposable
+    -- Direction 1: fully abstract constructions are fully compositional
     (∀ c : ConstructionGrammar.Construction,
       c.specificity = .fullyAbstract →
       c.pragmaticFunction = none →
-      ConstructionGrammar.isDecomposable c = true) ∧
-    -- Direction 2: there exist irreducible constructions
+      ConstructionGrammar.isFullyCompositional c = true) ∧
+    -- Direction 2: there exist non-fully-compositional constructions
     (∃ c : ConstructionGrammar.Construction,
-      ConstructionGrammar.isDecomposable c = false) :=
+      ConstructionGrammar.isFullyCompositional c = false) :=
   ConstructionGrammar.both_directions_right
 
 /-! ## §8. Concrete Cross-Theory Examples
@@ -327,27 +339,101 @@ theorem min_external_exhaustive (a b : Minimalism.SyntacticObject) :
     Minimalism.classifyExternalMerge a b = .headSpecifier :=
   Minimalism.classify_external_exhaustive a b
 
-/-- The three schemata are exhaustive for HPSG. -/
-theorem hpsg_schemata_exhaustive (s : HPSG.HPSGSchema) :
-    classifyHPSGSchema s = .headComplement ∨
-    classifyHPSGSchema s = .headSpecifier ∨
-    classifyHPSGSchema s = .headFiller := by
+/-- The three primary HPSG schemata map to the three universal schemata;
+    Head-Modifier (adjunction) falls outside the classification. -/
+theorem hpsg_schemata_classified (s : HPSG.HPSGSchema) :
+    classifyHPSGSchema s = some .headComplement ∨
+    classifyHPSGSchema s = some .headSpecifier ∨
+    classifyHPSGSchema s = some .headFiller ∨
+    classifyHPSGSchema s = none := by
   cases s with
   | headComp _ => left; rfl
   | headSubj _ => right; left; rfl
-  | headFiller _ => right; right; rfl
+  | headFiller _ => right; right; left; rfl
+  | headMod _ => right; right; right; rfl
+
+/-- Head-Modifier falls outside Müller's three schemata.
+    Adjunction is HPSG-specific and not part of the universal convergence claim. -/
+theorem hpsg_headMod_not_classified (r : HPSG.HeadModRule) :
+    classifyHPSGSchema (.headMod r) = none := rfl
+
+/-! ## §9. Labeling Failures (§2.1)
+
+Müller shows that Chomsky's labeling algorithm fails in two ways:
+
+1. **Free relatives**: rules 14a and 14b give contradictory labels (D vs V)
+2. **Coordination of phrases**: neither rule applies (neither daughter is
+   an LI, neither selects the other)
+
+Note: The free relative SO `freeRelSO` models the surface structure
+{what, [wrote ___]} without explicitly modeling Internal Merge — "what"
+and the gap have different token IDs rather than being literal copies.
+The labeling conflict holds regardless of how the gap is represented. -/
+
+/-- Free relatives expose a labeling conflict between Chomsky's two rules. -/
+theorem free_relative_labeling_conflict :
+    Minimalism.labelRule14a Minimalism.freeRelSO = some .D ∧
+    Minimalism.labelCat Minimalism.freeRelSO = some .V :=
+  ⟨Minimalism.freeRel_rule14a_gives_D, Minimalism.freeRel_labelCat_gives_V⟩
+
+/-- Coordination of two phrases: rule 14a fails (no LI daughter) and
+    neither phrase selects the other. -/
+theorem coordination_labeling_failure :
+    Minimalism.labelRule14a Minimalism.coordDP = none ∧
+    Minimalism.selectsB Minimalism.theDP Minimalism.aBookDP = false ∧
+    Minimalism.selectsB Minimalism.aBookDP Minimalism.theDP = false :=
+  ⟨Minimalism.coord_rule14a_fails,
+   Minimalism.coord_neither_selects.1,
+   Minimalism.coord_neither_selects.2⟩
+
+/-! ## §10. Monovalent Verb Serialization Problem (§2.3)
+
+Merge classifies a monovalent verb's sole argument as a complement,
+yielding wrong linearization ("*Sleeps Max" instead of "Max sleeps"). -/
+
+/-- Monovalent verbs: sole argument classified as complement → wrong order. -/
+theorem monovalent_verb_serialization_problem :
+    Minimalism.classifyExternalMerge
+      (.leaf Minimalism.sleepsToken) (.leaf Minimalism.maxToken) = .headComplement ∧
+    (Minimalism.merge (.leaf Minimalism.sleepsToken)
+      (.leaf Minimalism.maxToken)).phonYield = ["sleeps", "Max"] :=
+  ⟨Minimalism.monovalent_classified_as_complement,
+   Minimalism.monovalent_wrong_linearization⟩
+
+/-! ## §11. Iterable Valence Operations (§1)
+
+Lexical rules compose freely, capturing double passivization (Turkish,
+Lithuanian) without phrasal machinery. -/
+
+/-- Any chain of lexical rules preserves head features. -/
+theorem valence_iteration_works :
+    ∀ s : HPSG.Sign,
+      (HPSG.applyLexRule HPSG.passiveRule
+        (HPSG.applyLexRule HPSG.passiveRule s)).synsem.head =
+      s.synsem.head :=
+  HPSG.double_passive_preserves_head
 
 /-! ## Summary Table
 
 | Claim | Min | HPSG | CCG | DG | CxG | Status |
 |-------|-----|------|-----|-----|-----|--------|
 | Head-Complement | Ext Merge + sel | HeadComp | fapp/bapp | obj/det/... | slot decomp | Proved |
-| Head-Specifier | Ext Merge − sel | HeadSubj | T+bapp | subj | slot decomp | Proved |
+| Head-Specifier | Ext Merge − sel | HeadSubj | (= bapp) | subj | slot decomp | Proved |
 | Head-Filler | Int Merge | HeadFiller | fcomp/bcomp | nonproj | irreducible | Proved |
+| Head-Modifier | — | HeadMod | — | — | — | Not in 3 schemata |
 | Labeling | selector proj | HFP | functor result | head | — | Proved |
 | Coordination | same cat | same cat | same cat | — | — | Proved |
+| Labeling failure (FR) | 14a≠14b | — | — | — | — | Proved |
+| Labeling failure (coord) | no rule applies | — | — | — | — | Proved |
+| Monovalent verb | *Sleeps Max | — | — | — | — | Proved |
+| Valence iteration | — | double passive | — | — | — | Proved |
 | Directional MG ≈ CCG | =x ≈ X/Y | — | — | — | — | Sorry |
 | Both directions right | — | — | — | — | abstract ∨ phrasal | Proved |
+
+Note: CCG has no separate Head-Specifier mechanism. Subject combination uses
+backward application (the verb S\NP is the functor), which is Head-Complement
+in the classification. The subject/complement distinction is syntactic, not
+combinatory, in CCG.
 -/
 
 end Comparisons.Mueller2013

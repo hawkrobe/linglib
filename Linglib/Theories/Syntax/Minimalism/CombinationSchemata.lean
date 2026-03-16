@@ -26,7 +26,7 @@ are the same operation. This file further classifies Merge by *combination kind*
 
 namespace Minimalism
 
-open Core.Interfaces
+open Core
 
 /-! ## Classification of Merge -/
 
@@ -107,5 +107,42 @@ example : classifyExternalMerge (.leaf verbEat) theDP = .headComplement := by
 /-- Concrete example: label of {D, N} = D (head feature principle). -/
 example : labelCat (.node (.leaf detThe) (.leaf nounPizza)) = some .D := by
   native_decide
+
+/-! ## Monovalent Verb Serialization Problem (@cite{mueller-2013} §2.3)
+
+In Stabler's non-directional MG, a monovalent verb's only argument is
+classified as a complement (Head-Complement, since the verb selects it).
+Left-to-right linearization places the complement after the head, yielding
+"*Sleeps Max" instead of "Max sleeps".
+
+Stabler's fix — positing an ad hoc empty object — is "entirely stipulative
+and entirely ad hoc, being motivated only by the wish to have uniform
+structures" (Müller, p. 937). -/
+
+section MonovalentVerbProblem
+
+/-- "sleeps" — a monovalent verb (category V, selects D). -/
+def sleepsToken : LIToken := ⟨.simple .V [.D] (phonForm := "sleeps"), 200⟩
+
+/-- "Max" — a proper name (category D, no selectional features). -/
+def maxToken : LIToken := ⟨.simple .D [] (phonForm := "Max"), 201⟩
+
+/-- Merge classifies the sole argument as a complement (the verb selects it). -/
+theorem monovalent_classified_as_complement :
+    classifyExternalMerge (.leaf sleepsToken) (.leaf maxToken) = .headComplement := by
+  native_decide
+
+/-- Left-to-right linearization of merge(sleeps, Max) gives "sleeps Max".
+    This is the wrong order for English — it should be "Max sleeps". -/
+theorem monovalent_wrong_linearization :
+    (merge (.leaf sleepsToken) (.leaf maxToken)).phonYield = ["sleeps", "Max"] := by
+  native_decide
+
+/-- The desired order differs from the linearization. -/
+theorem monovalent_desired_order_differs :
+    ["Max", "sleeps"] ≠ (merge (.leaf sleepsToken) (.leaf maxToken)).phonYield := by
+  native_decide
+
+end MonovalentVerbProblem
 
 end Minimalism
