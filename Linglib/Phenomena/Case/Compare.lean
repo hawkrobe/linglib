@@ -5,7 +5,7 @@ import Linglib.Fragments.Mayan.Mam.Agreement
 
 /-!
 # Case Theories: Agree vs. Dependent Case vs. Voice-Based
-@cite{baker-2015} @cite{chomsky-2000} @cite{chomsky-2001} @cite{marantz-1991} @cite{ozaki-2025} @cite{scott-2023} @cite{woolford-1997} @cite{woolford-2006}
+@cite{baker-2015} @cite{chomsky-2000} @cite{chomsky-2001} @cite{marantz-1991} @cite{ozaki-2026} @cite{scott-2023} @cite{woolford-1997} @cite{woolford-2006}
 
 Three competing theories of abstract case assignment in Minimalism:
 

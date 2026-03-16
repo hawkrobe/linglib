@@ -3,10 +3,10 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Fragments.Japanese.Predicates
 
 /-!
-# @cite{ozaki-2025} — Japanese Accusative/Ablative Alternation: Data
-@cite{ozaki-2025}
+# @cite{ozaki-2026} — Japanese Accusative/Ablative Alternation: Data
+@cite{ozaki-2026}
 
-Empirical data from @cite{ozaki-2025} on Japanese departure verbs
+Empirical data from @cite{ozaki-2026} on Japanese departure verbs
 that alternate between accusative *-o* and ablative *kara* marking
 on the source argument.
 
@@ -31,7 +31,7 @@ connection to dependent case theory and Minimalist syntax.
 
 -/
 
-namespace Phenomena.Case.Ozaki2025.Data
+namespace Phenomena.Case.Ozaki2026.Data
 
 -- ============================================================================
 -- § 1: Data Types
@@ -279,7 +279,7 @@ open Minimalism
 open Fragments.Japanese.Predicates
 
 /-- Departure verbs predict no external argument: non-thematic Voice
-    does not assign a θ-role (@cite{kratzer-1996}, @cite{schfer-2008}). -/
+    does not assign a θ-role (@cite{kratzer-1996}, @cite{schfer-2025}). -/
 theorem departure_no_external :
     voiceAnticausative.assignsTheta = false := rfl
 
@@ -364,4 +364,4 @@ theorem deru_form_matches :
 theorem source_is_argument_both_frames :
     argumenthoodData.all (·.grammatical) = true := by native_decide
 
-end Phenomena.Case.Ozaki2025.Data
+end Phenomena.Case.Ozaki2026.Data

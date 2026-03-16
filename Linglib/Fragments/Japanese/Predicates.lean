@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Japanese Predicate Lexicon Fragment
-@cite{qing-uegaki-2025} @cite{ozaki-2025}
+@cite{qing-uegaki-2025} @cite{ozaki-2026}
 
 Japanese predicates relevant to @cite{qing-uegaki-2025}. Properties like
 C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
