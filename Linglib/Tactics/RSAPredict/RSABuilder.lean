@@ -454,6 +454,27 @@ def tryRSABuild (cache : ReifyCache) (activeLhs activeRhs : Expr)
   return some (lhsResult.1, lhsResult.2, rhsResult.1, rhsResult.2)
 
 -- ============================================================================
+-- Nested Config Detection
+-- ============================================================================
+
+/-- Scan an expression for RSA.RSAConfig.L1 or L1_latent function heads.
+    Returns the config from the first match, or none. -/
+private partial def findL1Config (e : Expr) (depth : ℕ := 20) : Option Expr :=
+  if depth == 0 then none
+  else
+    let fn := e.getAppFn
+    let args := e.getAppArgs
+    -- Direct L1 or L1_latent reference
+    if (fn.isConstOf ``RSA.RSAConfig.L1 || fn.isConstOf ``RSA.RSAConfig.L1_latent) then
+      -- cfg is the first explicit arg (after implicit type/instance args)
+      -- L1: {U} {W} [DecEq U] [Fin U] [DecEq W] [Fin W] cfg u w → cfg at args.size - 3
+      if args.size ≥ 3 then some args[args.size - 3]!
+      else none
+    else
+      -- Recurse into sub-expressions
+      args.findSome? (findL1Config · (depth - 1))
+
+-- ============================================================================
 -- Generic L1 Builder (for S2 and other composite goals)
 -- ============================================================================
 
@@ -468,8 +489,11 @@ def tryRSABuild (cache : ReifyCache) (activeLhs activeRhs : Expr)
     and reify the resulting simple arithmetic expression (ite/exp/log/Finset.sum).
 
     Seeds the reification cache with L1/L1_latent values so the generic reifier
-    finds them immediately when processing S2Utility or similar composite expressions. -/
-def buildAndSeedL1 (cache : ReifyCache) (cfg : Expr) : TacticM Unit := do
+    finds them immediately when processing S2Utility or similar composite expressions.
+
+    Recursively detects nested RSA configs in worldPrior/meaning (e.g.,
+    `seqAdjCfg`'s worldPrior is `(evalCfg mu).L1`) and builds them first. -/
+partial def buildAndSeedL1 (cache : ReifyCache) (cfg : Expr) : TacticM Unit := do
   let t0 ← IO.monoMsNow
 
   -- Check persistent build cache (reuse if same config was already built)
@@ -494,10 +518,16 @@ def buildAndSeedL1 (cache : ReifyCache) (cfg : Expr) : TacticM Unit := do
   let nW := allW.size
   let nL := allL.size
 
-  -- Only for models large enough to benefit
-  if nL * nU * nW < 500 then return
-
   logInfo m!"rsa_predict: [generic-L1] building, |U|={nU} |W|={nW} |L|={nL}"
+
+  -- Recursively pre-seed nested RSA configs found in worldPrior/meaning.
+  -- Example: seqAdjCfg's worldPrior is (evalCfg mu).L1 .eval_pos h —
+  -- we need to build evalCfg first so its L1 values are in the cache.
+  if allW.size > 0 then
+    let wpSample ← whnf (← mkAppM ``RSA.RSAConfig.worldPrior #[cfg, allW[0]!])
+    if let some innerCfg := findL1Config wpSample then
+      logInfo m!"rsa_predict: [generic-L1] detected nested RSA config in worldPrior"
+      buildAndSeedL1 cache innerCfg
 
   -- Get s1Score lambda body (whnf once to expose the lambda)
   let s1ScoreLambda ← whnf (← mkAppM ``RSA.RSAConfig.s1Score #[cfg])
@@ -606,23 +636,6 @@ def buildAndSeedL1 (cache : ReifyCache) (cfg : Expr) : TacticM Unit := do
 
   let t3 ← IO.monoMsNow
   logInfo m!"rsa_predict: [generic-L1] complete ({t3-t0}ms, {nU*nW} L1 + {nU*nL} L1_latent values seeded)"
-
-/-- Scan an expression for RSA.RSAConfig.L1 or L1_latent function heads.
-    Returns the config from the first match, or none. -/
-private partial def findL1Config (e : Expr) (depth : ℕ := 20) : Option Expr :=
-  if depth == 0 then none
-  else
-    let fn := e.getAppFn
-    let args := e.getAppArgs
-    -- Direct L1 or L1_latent reference
-    if (fn.isConstOf ``RSA.RSAConfig.L1 || fn.isConstOf ``RSA.RSAConfig.L1_latent) then
-      -- cfg is the first explicit arg (after implicit type/instance args)
-      -- L1: {U} {W} [DecEq U] [Fin U] [DecEq W] [Fin W] cfg u w → cfg at args.size - 3
-      if args.size ≥ 3 then some args[args.size - 3]!
-      else none
-    else
-      -- Recurse into sub-expressions
-      args.findSome? (findL1Config · (depth - 1))
 
 /-- Pre-seed the reification cache with L1/L1_latent values for RSAConfig
     references found in the expression. Call before reifyToRExpr to avoid

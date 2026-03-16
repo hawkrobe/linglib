@@ -1389,6 +1389,140 @@ theorem RExpr.not_gt_of_checkNotGtOpt (lhs rhs : RExpr)
   exact not_lt.mpr (QInterval.le_of_separated (evalBothOpt_sound _ h.1.1) (evalBothOpt_sound _ h.1.2) h.2)
 
 -- ============================================================================
+-- Memoized evaluation (for large trees with shared sub-expressions)
+-- ============================================================================
+
+/-- Memoized `evalBothOpt` using pointer-based identity for O(unique-node)
+    evaluation of trees with structural sharing. Falls through to
+    `evalRexpOpt` for `.rexp` nodes (which internally uses `evalBoth`
+    on small sub-expressions — no memoization needed there). -/
+private unsafe def RExpr.evalBothOptCached (e : @& RExpr)
+    (cache : IO.Ref (Std.HashMap USize (QInterval × Bool))) : BaseIO (QInterval × Bool) := do
+  let addr := ptrAddrUnsafe e
+  if let some cached := (← cache.get)[addr]? then return cached
+  let result ← match e with
+    | .nat n => pure (QInterval.exact n, true)
+    | .ratCast q => pure (QInterval.exact q, true)
+    | .add a b => do
+      let (ra, va) ← a.evalBothOptCached cache
+      let (rb, vb) ← b.evalBothOptCached cache
+      pure (c (ra.add rb), va && vb)
+    | .mul a b => do
+      let (ra, va) ← a.evalBothOptCached cache
+      if ra.lo == 0 && ra.hi == 0 then pure (QInterval.exact 0, va)
+      else do
+        let (rb, vb) ← b.evalBothOptCached cache
+        let v := va && vb
+        if rb.lo == 0 && rb.hi == 0 then pure (QInterval.exact 0, v)
+        else if h₁ : 0 ≤ ra.lo then
+          if h₂ : 0 ≤ rb.lo then pure (c (ra.mulNonneg rb h₁ h₂), v)
+          else pure (c (ra.mul rb), v)
+        else pure (c (ra.mul rb), v)
+    | .div a b => do
+      let (ra, va) ← a.evalBothOptCached cache
+      let (rb, vb) ← b.evalBothOptCached cache
+      if ra.lo == 0 && ra.hi == 0 then pure (QInterval.exact 0, va && vb)
+      else if h₁ : 0 ≤ ra.lo then
+        if h₂ : 0 < rb.lo then pure (c (ra.divPos rb h₁ h₂), va && vb)
+        else pure (⟨-1, 1, by norm_num⟩, false)
+      else pure (⟨-1, 1, by norm_num⟩, false)
+    | .neg a => do
+      let (ra, va) ← a.evalBothOptCached cache
+      pure (ra.neg, va)
+    | .sub a b => do
+      let (ra, va) ← a.evalBothOptCached cache
+      let (rb, vb) ← b.evalBothOptCached cache
+      pure (c (ra.sub rb), va && vb)
+    | .rexp a => pure a.evalRexpOpt  -- delegate to factor optimization
+    | .rlog a => do
+      let (ra, va) ← a.evalBothOptCached cache
+      if h : 0 < ra.lo then pure (c (logInterval ra h), va)
+      else if ra.lo == 0 && ra.hi == 0 then pure (QInterval.exact 0, va)
+      else pure (⟨-1000, 1000, by norm_num⟩, false)
+    | .rpow a n => do
+      let (ra, va) ← a.evalBothOptCached cache
+      if n == 0 then pure (Linglib.Interval.rpowZero, va)
+      else if h : 0 ≤ ra.lo then pure (c (Linglib.Interval.rpowNat ra n h), va)
+      else pure (⟨0, 1, by norm_num⟩, false)
+    | .inv a => do
+      let (ra, va) ← a.evalBothOptCached cache
+      if h : 0 < ra.lo then pure (c (ra.invPos h), va)
+      else pure (⟨-1, 1, by norm_num⟩, false)
+    | .iteZero c' t e => do
+      let (rc, vc) ← c'.evalBothOptCached cache
+      if rc.lo == 0 && rc.hi == 0 then do
+        let (rt, vt) ← t.evalBothOptCached cache
+        pure (rt, vc && vt)
+      else if h : (0 : ℚ) < rc.lo then do
+        let (re, ve) ← e.evalBothOptCached cache
+        pure (re, vc && ve)
+      else do
+        let (rt, vt) ← t.evalBothOptCached cache
+        let (re, ve) ← e.evalBothOptCached cache
+        pure (⟨min rt.lo re.lo, max rt.hi re.hi,
+         le_trans (min_le_left _ _) (le_trans rt.valid (le_max_left _ _))⟩,
+         vc && vt && ve)
+    | .expMulLogSub α x cost => do
+      let (rα, vα) ← α.evalBothOptCached cache
+      let (rx, vx) ← x.evalBothOptCached cache
+      let (rc, vc) ← cost.evalBothOptCached cache
+      let vbase := vα && vx && vc
+      if hx : 0 < rx.lo then
+        if rα.lo == rα.hi && rα.lo.den == 1 && decide (0 ≤ rα.lo.num) then
+          let n := rα.lo.num.toNat
+          let xpow :=
+            if n == 0 then QInterval.exact 1
+            else if n == 1 then rx
+            else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+          let negαc := (rα.mul rc).neg
+          let expFactor := c (expInterval negαc)
+          if h₁ : 0 ≤ xpow.lo then
+            if h₂ : 0 ≤ expFactor.lo then pure (c (xpow.mulNonneg expFactor h₁ h₂), vbase)
+            else pure (c (xpow.mul expFactor), vbase)
+          else pure (c (xpow.mul expFactor), vbase)
+        else
+          let logx := c (logInterval rx hx)
+          let diff := c (logx.sub rc)
+          let prod := c (rα.mul diff)
+          pure (c (expInterval prod), vbase)
+      else pure (⟨0, 1, by norm_num⟩, false)
+  cache.modify (·.insert addr result)
+  return result
+
+private unsafe def RExpr.checkGtOptCachedImpl (lhs rhs : RExpr) : Bool :=
+  unsafeBaseIO do
+    let cache ← IO.mkRef (∅ : Std.HashMap USize (QInterval × Bool))
+    let (l_iv, l_valid) ← lhs.evalBothOptCached cache
+    let (r_iv, r_valid) ← rhs.evalBothOptCached cache
+    return (l_valid && r_valid && decide (r_iv.hi < l_iv.lo))
+
+private unsafe def RExpr.checkNotGtOptCachedImpl (lhs rhs : RExpr) : Bool :=
+  unsafeBaseIO do
+    let cache ← IO.mkRef (∅ : Std.HashMap USize (QInterval × Bool))
+    let (l_iv, l_valid) ← lhs.evalBothOptCached cache
+    let (r_iv, r_valid) ← rhs.evalBothOptCached cache
+    return (l_valid && r_valid && decide (l_iv.hi ≤ r_iv.lo))
+
+/-- Memoized gt check. The `@[implemented_by]` annotation makes `native_decide`
+    use the fast memoized implementation while the reference implementation
+    (identical to `checkGtOpt`) is used for kernel verification. -/
+@[implemented_by RExpr.checkGtOptCachedImpl]
+def RExpr.checkGtOptMemo (lhs rhs : RExpr) : Bool :=
+  lhs.checkGtOpt rhs
+
+@[implemented_by RExpr.checkNotGtOptCachedImpl]
+def RExpr.checkNotGtOptMemo (lhs rhs : RExpr) : Bool :=
+  lhs.checkNotGtOpt rhs
+
+theorem RExpr.gt_of_checkGtOptMemo (lhs rhs : RExpr)
+    (h : lhs.checkGtOptMemo rhs = true) : lhs.denote > rhs.denote :=
+  gt_of_checkGtOpt lhs rhs h
+
+theorem RExpr.not_gt_of_checkNotGtOptMemo (lhs rhs : RExpr)
+    (h : lhs.checkNotGtOptMemo rhs = true) : ¬(lhs.denote > rhs.denote) :=
+  not_gt_of_checkNotGtOpt lhs rhs h
+
+-- ============================================================================
 -- Exact ℚ evaluation (for ¬(>) goals where intervals overlap)
 -- ============================================================================
 

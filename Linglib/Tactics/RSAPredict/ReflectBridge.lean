@@ -20,8 +20,8 @@ of `denote` (structural recursion, O(1) per node).
 
 1. **Reify**: Convert both sides of the comparison to `RExpr` AST + meta-level bounds.
    No congruence proof trees — the kernel handles definitional equality.
-2. **Check**: `native_decide` on `checkGtOpt`/`checkNotGtOpt` (evalValid + separation).
-3. **Assign**: Directly assign `gt_of_checkGtOpt lhsRExpr rhsRExpr hcheck` — the kernel
+2. **Check**: `native_decide` on `checkGtOptMemo`/`checkNotGtOpt` (evalValid + separation).
+3. **Assign**: Directly assign `gt_of_checkGtOptMemo lhsRExpr rhsRExpr hcheck` — the kernel
    verifies `denote(lhsRExpr) ≡ lhsExpr` and `denote(rhsRExpr) ≡ rhsExpr`.
 
 This eliminates the congruence proof tree (O(n) nodes → O(1) proof term) and the
@@ -199,7 +199,7 @@ private def tryDenominatorCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
   return none
 
 /-- Direct RExpr reification for `lhs > rhs` goals.
-    Runs `native_decide` on tree-based `checkGtOpt` (sorry-free soundness).
+    Runs `native_decide` on tree-based `checkGtOptMemo` (sorry-free soundness).
 
     When both sides are `policy ra s a₁/a₂` with the same `ra` and `s`,
     applies denominator cancellation first via `policy_gt_of_score_gt`,
@@ -230,7 +230,9 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   -- Try the RSA builder first (bottom-up construction, bypasses unfoldDefinition? chain)
   let builderResult ← try
     tryRSABuild persistentReifyCache activeLhs activeRhs
-  catch _ => pure none
+  catch ex =>
+    logInfo m!"rsa_predict: [builder] failed: {ex.toMessageData}"
+    pure none
 
   let (lhsRExpr, lhsBounds, rhsRExpr, rhsBounds) ← match builderResult with
     | some (lr, lb, rr, rb) => pure (lr, lb, rr, rb)
@@ -266,12 +268,12 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   unless lhsBounds.lo > rhsBounds.hi do
     logInfo m!"rsa_predict: [direct] bounds don't separate at meta-level, trying tree check"
 
-  -- Tree-based proof: native_decide on checkGtOpt (sorry-free soundness)
+  -- Tree-based proof: native_decide on checkGtOptMemo (sorry-free soundness)
   try
-    let checkExpr ← mkAppM ``RExpr.checkGtOpt #[lhsRExpr, rhsRExpr]
+    let checkExpr ← mkAppM ``RExpr.checkGtOptMemo #[lhsRExpr, rhsRExpr]
     let checkType ← mkEq checkExpr (mkConst ``Bool.true)
     let hcheck ← nativeDecideProof checkType
-    let proof := mkApp3 (mkConst ``RExpr.gt_of_checkGtOpt) lhsRExpr rhsRExpr hcheck
+    let proof := mkApp3 (mkConst ``RExpr.gt_of_checkGtOptMemo) lhsRExpr rhsRExpr hcheck
     activeGoal.assign proof
     let t2 ← IO.monoMsNow
     logInfo m!"rsa_predict: [direct] assigned ({t2 - t0}ms)"
@@ -325,10 +327,10 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
       logInfo m!"rsa_predict: [direct/not-gt] assigned via semantic equality ({t2 - t0}ms)"
       return true
     -- Interval separation: tree-based check (fast — O(n) via evalBothOpt)
-    let checkExpr ← mkAppM ``RExpr.checkNotGtOpt #[lhsRExpr, rhsRExpr]
+    let checkExpr ← mkAppM ``RExpr.checkNotGtOptMemo #[lhsRExpr, rhsRExpr]
     let checkType ← mkEq checkExpr (mkConst ``Bool.true)
     if let some hcheck ← try? (nativeDecideProof checkType) then
-      let proof := mkApp3 (mkConst ``RExpr.not_gt_of_checkNotGtOpt)
+      let proof := mkApp3 (mkConst ``RExpr.not_gt_of_checkNotGtOptMemo)
         lhsRExpr rhsRExpr hcheck
       goal.assign proof
       let t2 ← IO.monoMsNow
