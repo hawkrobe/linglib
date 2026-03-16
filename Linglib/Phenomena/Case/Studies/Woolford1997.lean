@@ -150,6 +150,23 @@ theorem gen19_transitive_erg : generalization19 .erg .obj = true := rfl
 /-- Generalization (19) is vacuously satisfied for NOM subjects. -/
 theorem gen19_transitive_nom : generalization19 .nom .acc = true := rfl
 
+/-- The strong interpretation of generalization (19) would block ACC
+    on ALL objects when the subject is lexical. -/
+def generalization19_strong (subject : WCase) (objects : List WCase) : Bool :=
+  subject.kind != .lexical || objects.all (· != .acc)
+
+/-- The strong interpretation incorrectly prohibits ERG-OBJ-ACC (paper's
+    (22A.3)), which is an attested Nez Perce ditransitive pattern. The goal
+    gets OBJ (per weak gen (19)), but the theme can still get ACC.
+    The paper argues for the weak interpretation on these grounds. -/
+theorem strong_interpretation_too_restrictive :
+    generalization19_strong .erg [.obj, .acc] = false := rfl
+
+/-- The weak interpretation correctly allows ERG-OBJ-ACC: it only checks
+    the goal (highest object), which is OBJ, not ACC. -/
+theorem weak_allows_erg_obj_acc :
+    generalization19 .erg .obj = true := rfl
+
 -- ============================================================================
 -- § 6: Transitive Patterns (paper's (16))
 -- ============================================================================
@@ -339,6 +356,23 @@ theorem obj_acc_agreement_differ :
     The sole argument gets NOM (structural from Agr-S). -/
 theorem intransitive_maxAcc : maxAcc 1 0 = 0 := rfl
 
+/-- Burzio's generalization as a corollary of the Max. Acc. formula.
+    @cite{woolford-1997} argues that three apparently separate generalizations
+    are all instances of the Max. Acc. formula:
+    (i) No verb assigns structural ACC to its subject (the −1 term).
+    (ii) A verb without an external subject cannot assign ACC
+         (Burzio's generalization): 1 arg, 0 lexical → maxAcc = 0.
+    (iii) A lexically Cased subject blocks ACC on the highest object
+          (generalization (19)): 2 args, 1 lexical → maxAcc = 0.
+    The Max. Acc. formula unifies all three. -/
+theorem burzio_from_maxAcc :
+    -- (ii) Unaccusative: 1 arg, 0 lexical → maxAcc = 0 (Burzio)
+    maxAcc 1 0 = 0 ∧
+    -- (iii) Transitive with lexical subj: 2 args, 1 lexical → maxAcc = 0 (gen 19)
+    maxAcc 2 1 = 0 ∧
+    -- Normal transitive: 2 args, 0 lexical → maxAcc = 1
+    maxAcc 2 0 = 1 := ⟨rfl, rfl, rfl⟩
+
 -- ============================================================================
 -- § 12: Typological Variation (paper's (60))
 -- ============================================================================
@@ -366,6 +400,71 @@ def thangu : LexParams := ⟨.obligatory, .obligatory⟩
 /-- Kalkatungu: obligatory ERG, optional DAT (four-way system like Nez Perce,
     but no nominative-accusative pattern since ERG is always assigned). -/
 def kalkatungu : LexParams := ⟨.obligatory, .optional⟩
+
+/-- Predict which transitive patterns are available given language parameters.
+    Obligatory ERG → only ERG-OBJ (no NOM-ACC).
+    Optional ERG → both NOM-ACC and ERG-OBJ. -/
+def availableTransPatterns (params : LexParams) : List TransPattern :=
+  match params.ergAssignment with
+  | .obligatory => [⟨.erg, .obj⟩]
+  | .optional   => [⟨.nom, .acc⟩, ⟨.erg, .obj⟩]
+
+/-- Predict which ditransitive patterns are available given language parameters.
+    The interaction of ERG and DAT optionality determines the full set. -/
+def availableDitransPatterns (params : LexParams) : List DitransPattern :=
+  match params.ergAssignment, params.datAssignment with
+  | .optional, .optional =>
+    -- Nez Perce: full four-way
+    [⟨.nom, .acc, .acc⟩, ⟨.nom, .dat, .acc⟩, ⟨.erg, .obj, .acc⟩, ⟨.erg, .dat, .obj⟩]
+  | .optional, .obligatory =>
+    -- Optional ERG, obligatory DAT: goal always DAT
+    [⟨.nom, .dat, .acc⟩, ⟨.erg, .dat, .obj⟩]
+  | .obligatory, .optional =>
+    -- Kalkatungu: obligatory ERG, optional DAT
+    [⟨.erg, .obj, .acc⟩, ⟨.erg, .dat, .obj⟩]
+  | .obligatory, .obligatory =>
+    -- Thangu: both obligatory → only ERG-DAT-OBJ
+    [⟨.erg, .dat, .obj⟩]
+
+/-- Nez Perce (optional ERG): both transitive patterns available.
+    The predicted patterns match the attested data exactly. -/
+theorem np_trans_from_params :
+    availableTransPatterns nezPerce = npTransAllowed := rfl
+
+/-- Nez Perce ditransitive predictions match the attested patterns. -/
+theorem np_ditrans_from_params :
+    availableDitransPatterns nezPerce = npDitransAllowed := rfl
+
+/-- Thangu (obligatory ERG): only ERG-OBJ in transitives. -/
+theorem thangu_trans_erg_only :
+    availableTransPatterns thangu = [⟨.erg, .obj⟩] := rfl
+
+/-- Thangu (obligatory ERG + DAT): only ERG-DAT-OBJ in ditransitives.
+    With 2 lexical cases, maxAcc = 3 − 2 − 1 = 0 — no ACC at all. -/
+theorem thangu_ditrans_no_acc :
+    availableDitransPatterns thangu = [⟨.erg, .dat, .obj⟩] := rfl
+
+/-- Kalkatungu (obligatory ERG, optional DAT): ERG-OBJ only in transitives
+    (no NOM-ACC pattern since ERG is always assigned). -/
+theorem kalkatungu_trans_erg_only :
+    availableTransPatterns kalkatungu = [⟨.erg, .obj⟩] := rfl
+
+/-- Kalkatungu ditransitives: ERG-OBJ-ACC (without DAT) and ERG-DAT-OBJ
+    (with DAT). Unlike Thangu, Kalkatungu's optional DAT allows ACC to
+    appear in ditransitives. -/
+theorem kalkatungu_ditrans :
+    availableDitransPatterns kalkatungu = [⟨.erg, .obj, .acc⟩, ⟨.erg, .dat, .obj⟩] := rfl
+
+/-- All predicted patterns are valid: every predicted transitive pattern
+    passes the prediction function. -/
+theorem all_predicted_trans_valid :
+    [nezPerce, thangu, kalkatungu].all (λ params =>
+      (availableTransPatterns params).all predictTransitive) = true := by native_decide
+
+/-- All predicted ditransitive patterns pass the prediction function. -/
+theorem all_predicted_ditrans_valid :
+    [nezPerce, thangu, kalkatungu].all (λ params =>
+      (availableDitransPatterns params).all predictDitransitive) = true := by native_decide
 
 -- ============================================================================
 -- § 13: Mapping to Core.Case
