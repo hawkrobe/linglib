@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.301] - 2026-03-15
+
+### Fixed
+- **Bib audit: von-fintel-iatridou-2003/2019**: delete ghost `von-fintel-iatridou-2003` entry (manuscript superseded by 2019 publication), fix `von-fintel-iatridou-2019` (`@misc`→`@incollection`, add booktitle/editor/publisher/pages, fix subfield `morphology`→`semantics/tense`, add PTS.lean + Rouillard2026.lean to sources)
+- **Verify Rouillard2026.lean citations against paper**: all 13 equation/section/page/table references confirmed against Rouillard (2026) L&P 49:1–56
+- **Fix `@cite{von-fintel-iatridou-2003}`→`@cite{von-fintel-iatridou-2019}`** in Rouillard2026.lean line 345
+
 ## [0.229.300] - 2026-03-15
 
 ### Changed

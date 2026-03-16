@@ -2706,10 +2706,13 @@
   sources   = {Theories/Semantics/Intensional/Situations/Elbourne.lean;Theories/Semantics/TypeTheoretic/Core.lean}
 }
 % REF: Hoeksema, J. (1983). Negative polarity and the comparative.
-@misc{hoeksema-1983,
-  author    = {Hoeksema, J},
+@article{hoeksema-1983,
+  author    = {Hoeksema, Jack},
   year      = {1983},
   title     = {Negative polarity and the comparative},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {1},
+  pages     = {403--434},
   doi       = {10.1007/bf00142472},
   subfield  = {semantics/compositional},
   role      = {cited},
@@ -6569,10 +6572,11 @@
   year      = {2015},
   title     = {A Two-Tiered Theory of Control},
   publisher = {MIT Press},
+  series    = {Linguistic Inquiry Monographs},
   subfield  = {semantics/reference},
-  validated = {false},
+  validated = {true},
   role      = {formalized},
-  sources   = {Theories/Syntax/Minimalism/MinimalPronoun.lean}
+  sources   = {Theories/Syntax/Minimalism/MinimalPronoun.lean, Phenomena/Control/Studies/Ostrove2026.lean}
 }
 
 @incollection{landau-2018,
@@ -10039,7 +10043,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {cited},
-  sources   = {Theories/Semantics/Questions/Exhaustivity.lean}
+  sources   = {Theories/Semantics/Questions/Answerhood/Exhaustivity.lean}
 }
 
 @article{shannon-1948,
@@ -11314,7 +11318,7 @@
 }
 % REF: Rudin, D. (2025). Asserting epistemic modals. *L&P* 48, 43–88.
 @article{rudin-2025,
-  author    = {Rudin, D},
+  author    = {Rudin, Deniz},
   year      = {2025},
   title     = {Asserting epistemic modals},
   journal   = {Linguistics and Philosophy},
@@ -11324,7 +11328,7 @@
   subfield  = {semantics/dynamic},
   role      = {cited},
   validated = {true},
-  sources   = {Theories/Semantics/Dynamic/Effects/Epistemic/Basic.lean}
+  sources   = {Theories/Semantics/Dynamic/Epistemic/Basic.lean}
 }
 
 @article{ruytenbeek-etal-2017,
@@ -12635,7 +12639,7 @@
   subfield  = {syntax},
   validated = {true},
   role      = {foundational},
-  sources   = {Phenomena/WordOrder/SubjectAuxInversion.lean;Theories/Syntax/HPSG/Inversion.lean}
+  sources   = {Phenomena/WordOrder/SubjectAuxInversion.lean;Theories/Syntax/HPSG/Inversion.lean;Theories/Syntax/HPSG/Core/Basic.lean;Theories/Syntax/HPSG/Coreference.lean;Theories/Syntax/HPSG/Core/FromFragments.lean}
 }
 
 @phdthesis{sailor-2014,
@@ -15201,16 +15205,21 @@
   validated = {true},
   sources   = {Fragments/Japanese/Particles.lean;Phenomena/Questions/TypologyBridge.lean}
 }
-% REF: von Fintel, K. & Iatridou, S. (2019). Since since.
-@misc{von-fintel-iatridou-2019,
-  author    = {von Fintel, K. and Iatridou, S},
+% REF: von Fintel, K. & Iatridou, S. (2019). Since since. In Altshuler & Rett (eds.),
+%      The Semantics of Plurals, Focus, Degrees, and Times, pp. 305–333. Springer.
+@incollection{von-fintel-iatridou-2019,
+  author    = {von Fintel, Kai and Iatridou, Sabine},
   year      = {2019},
-  title     = {Since since},
+  title     = {Since \emph{since}},
+  booktitle = {The Semantics of Plurals, Focus, Degrees, and Times},
+  editor    = {Altshuler, Daniel and Rett, Jessica},
+  publisher = {Springer},
+  pages     = {305--333},
   doi       = {10.1007/978-3-030-04438-1_15},
-  subfield  = {morphology},
+  subfield  = {semantics/tense},
   role      = {cited},
   validated = {true},
-  sources   = {Fragments/English/TemporalAdverbials.lean}
+  sources   = {Fragments/English/TemporalAdverbials.lean;Theories/Semantics/Tense/PTS.lean;Phenomena/TenseAspect/Studies/Rouillard2026.lean}
 }
 % REF: Coon, J., Mateo Pedro, P. & Preminger, O. (2014). The role of Case in A-bar extraction asymmetries.
 @article{coon-mateo-pedro-preminger-2014,
@@ -18247,15 +18256,6 @@
   sources   = {manual}
 }
 
-@misc{von-fintel-iatridou-2003,
-  author    = {von Fintel, Kai and Iatridou, Sabine},
-  year      = {2003},
-  title     = {Since Since},
-  note      = {MIT Working Papers},
-  subfield  = {semantics/tense},
-  role      = {cited},
-  sources   = {manual}
-}
 
 % REF: Prasertsom, P., Smith, K. & Culbertson, J. (2026). Domain-general categorisation
 %      explains constrained cross-linguistic variation in noun classification. Cognition 271, 106411.

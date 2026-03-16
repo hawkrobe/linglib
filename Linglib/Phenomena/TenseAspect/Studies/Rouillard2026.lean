@@ -218,7 +218,7 @@ structure Table1Entry where
   mipBlocks : Bool   -- true = MIP blocks this reading
   deriving Repr, DecidableEq, BEq
 
-/-- All 8 cells of Table 1 (sentence (112) "*Mary has been sick in 3 days"). -/
+/-- All 8 cells of Table 1 (sentence (112)) "*Mary has been sick in 3 days"). -/
 def table1 : List Table1Entry :=
   [ -- Positive readings (all blocked)
     { polarity := true, tiaType := true,  aspect := true,  mipBlocks := true }   -- POS, E-TIA, PFV
@@ -267,7 +267,7 @@ theorem nonhomogeneous_implies_closed_scale (p : AspectualProfile)
 -- § 8. NPI Bridge: G-TIAs as NPIs Licensed by MIP
 -- ════════════════════════════════════════════════════
 
-/-! @cite{rouillard-2026} §6.1 argues that G-TIAs are NPIs licensed by maximal
+/-! @cite{rouillard-2026} §6.1 — argues that G-TIAs are NPIs licensed by maximal
     informativity, NOT by downward entailment. The key evidence:
 
     1. DE-based accounts (@cite{hoeksema-2006}, @cite{gajewski-2005}/2007) incorrectly predict
@@ -342,7 +342,7 @@ structure SinceWhenDatum where
   deriving Repr
 
 /-- (131) "Since when has Mary been sick?" -- U-perfect only.
-    @cite{von-fintel-iatridou-2003}: since-when Qs lack E- vs U-perfect ambiguity. -/
+    @cite{von-fintel-iatridou-2019}: since-when Qs lack E- vs U-perfect ambiguity. -/
 def sinceWhen_131 : SinceWhenDatum :=
   { sentence := "Since when has Mary been sick?"
     uPerfect := true
@@ -366,7 +366,7 @@ theorem since_fragment_bridge :
 -- § 10. TIA Stacking Constraint (§3.2, ex. 60)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{rouillard-2026} §3.2, ex. (60): when two TIAs are stacked, the inner
+/-! @cite{rouillard-2026} §3.2, ex. (60) — when two TIAs are stacked, the inner
     (VP-adjacent) one must be an E-TIA and the outer one a G-TIA. The reverse
     order is ungrammatical.
 
