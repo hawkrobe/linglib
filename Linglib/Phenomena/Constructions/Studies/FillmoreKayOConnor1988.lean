@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Empirical
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Polarity.NPIs
 
@@ -23,15 +24,7 @@ Idiomaticity in Grammatical Constructions: The Case of *Let Alone*"
 
 namespace Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 
-/-! ## Judgment data structure -/
-
-/-- Acceptability judgment for a single example. -/
-inductive Judgment where
-  | grammatical      -- fully acceptable
-  | marginal         -- "?" — degraded but not out
-  | ungrammatical    -- "*" — clearly unacceptable
-  | anomalous        -- "#" — semantically/pragmatically odd
-  deriving Repr, DecidableEq, BEq
+open Core.Empirical
 
 /-- A single attested or judged example. -/
 structure ExampleDatum where
@@ -40,7 +33,7 @@ structure ExampleDatum where
   /-- The sentence -/
   sentence : String
   /-- Acceptability judgment -/
-  judgment : Judgment
+  judgment : Acceptability
   /-- What phenomenon this illustrates -/
   phenomenon : String
   deriving Repr, BEq
@@ -50,13 +43,13 @@ structure ExampleDatum where
 def ex15b : ExampleDatum :=
   { exNumber := "15b"
   , sentence := "I barely got up in time to eat lunch, let alone cook breakfast"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "basic let alone with barely" }
 
 def ex16b : ExampleDatum :=
   { exNumber := "16b"
   , sentence := "I doubt you could get Fred to eat shrimp, let alone Louise squid"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "let alone with multiple paired foci" }
 
 /-! ## 2. NPI trigger contrasts (§2.2.4, exx.62–70, 113–115)
@@ -66,37 +59,37 @@ def ex16b : ExampleDatum :=
 def ex62 : ExampleDatum :=
   { exNumber := "62"
   , sentence := "He didn't reach Denver, let alone Chicago"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "let alone licensed by simple negation" }
 
 def ex63 : ExampleDatum :=
   { exNumber := "63"
   , sentence := "I'm too tired to get up, let alone go running with you"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "let alone licensed by too-complementation" }
 
 def ex66 : ExampleDatum :=
   { exNumber := "66"
   , sentence := "I barely got up in time for lunch, let alone breakfast"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "let alone licensed by barely" }
 
 def ex113 : ExampleDatum :=
   { exNumber := "113"
   , sentence := "*He almost reached Denver let alone Chicago"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , phenomenon := "let alone NOT licensed by almost" }
 
 def ex114 : ExampleDatum :=
   { exNumber := "114"
   , sentence := "*He only reached Denver let alone Chicago"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , phenomenon := "let alone NOT licensed by non-subject only" }
 
 def ex115 : ExampleDatum :=
   { exNumber := "115"
   , sentence := "He barely reached Denver let alone Chicago"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "let alone licensed by barely (contrast with almost/only)" }
 
 /-- NPI licensing contrasts: barely licenses, almost and only do not. -/
@@ -111,25 +104,25 @@ This shows *let alone* is not a standard coordinating conjunction. -/
 def ex31a : ExampleDatum :=
   { exNumber := "31a"
   , sentence := "Shrimp and squid Moishe won't eat"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "and-coordination permits topicalization" }
 
 def ex31b : ExampleDatum :=
   { exNumber := "31b"
   , sentence := "*Shrimp let alone squid Moishe won't eat"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , phenomenon := "let alone blocks topicalization" }
 
 def ex31c : ExampleDatum :=
   { exNumber := "31c"
   , sentence := "*Shrimp Moishe won't eat and squid"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , phenomenon := "and-coordination: can't split" }
 
 def ex31d : ExampleDatum :=
   { exNumber := "31d"
   , sentence := "Shrimp Moishe won't eat, let alone squid"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "let alone permits parenthetical-like extraposition" }
 
 /-- Topicalization asymmetry: *and* allows full topicalization,
@@ -144,19 +137,19 @@ def topicalizationContrasts : List ExampleDatum :=
 def ex39 : ExampleDatum :=
   { exNumber := "39"
   , sentence := "Max will eat shrimp more willingly than Minnie will"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "comparative permits VP ellipsis" }
 
 def ex40 : ExampleDatum :=
   { exNumber := "40"
   , sentence := "Max won't eat shrimp but Minnie will"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "but-coordination permits VP ellipsis" }
 
 def ex41 : ExampleDatum :=
   { exNumber := "41"
   , sentence := "*Max won't eat shrimp let alone Minnie will"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , phenomenon := "let alone blocks VP ellipsis" }
 
 /-- VP ellipsis contrast: *and*/*but* allow it, *let alone* does not. -/
@@ -171,7 +164,7 @@ than from a corresponding *and*-coordination. -/
 def ex32a : ExampleDatum :=
   { exNumber := "32a"
   , sentence := "*a man who Mary hasn't met or ridden in his car"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , phenomenon := "wh-extraction from and-coordination blocked" }
 
 def ex32b : ExampleDatum :=
@@ -194,7 +187,7 @@ def ex104 : ExampleDatum :=
 def ex121 : ExampleDatum :=
   { exNumber := "121"
   , sentence := "You couldn't get a poor man to wash your car for $2, let alone a rich man to wax your truck for $1"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "multi-dimensional scalar model (5 dimensions)" }
 
 def ex122a : ExampleDatum :=
@@ -221,16 +214,38 @@ but not with *let alone*. -/
 def ex33 : ExampleDatum :=
   { exNumber := "33"
   , sentence := "*It's shrimp let alone squid that Max won't eat"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , phenomenon := "IT-clefting blocked with let alone" }
 
 def ex34 : ExampleDatum :=
   { exNumber := "34"
   , sentence := "It's shrimp and squid that Max won't eat"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "IT-clefting fine with and-coordination" }
 
-/-! ## 8. Positive polarity examples (§2.2.4, exx.71–72)
+/-! ## 8. Lowest-point anomaly (§2.3.2, exx.106–107)
+
+When the B focus names the LOWEST point on the scale, the sentence is
+anomalous. "He wasn't even a commissioned officer, let alone a colonel"
+is fine (colonel is higher than commissioned officer). But
+"#He wasn't even a commissioned officer, let alone a second lieutenant"
+is anomalous because second lieutenant IS the lowest commissioned rank:
+negating attainment of a non-lowest point does not a fortiori imply
+negating attainment of the lowest point — it IS the lowest. -/
+
+def ex106 : ExampleDatum :=
+  { exNumber := "106"
+  , sentence := "He wasn't even a commissioned officer, let alone a colonel"
+  , judgment := .ok
+  , phenomenon := "let alone with B higher on the scale" }
+
+def ex107 : ExampleDatum :=
+  { exNumber := "107"
+  , sentence := "#He wasn't even a commissioned officer, let alone a second lieutenant"
+  , judgment := .anomalous
+  , phenomenon := "scalar anomaly: B is the lowest point on the scale" }
+
+/-! ## 9. Positive polarity examples (§2.2.4, exx.71–72)
 
 Rare but attested: *let alone* in non-negative contexts.
 These challenge a purely syntactic NPI account. -/
@@ -238,13 +253,13 @@ These challenge a purely syntactic NPI account. -/
 def ex71 : ExampleDatum :=
   { exNumber := "71"
   , sentence := "You've got enough material there for a whole semester, let alone a week"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "let alone in positive polarity context (attested)" }
 
 def ex72 : ExampleDatum :=
   { exNumber := "72"
   , sentence := "Penutian has been broken up, let alone Macro-Penutian"
-  , judgment := .grammatical
+  , judgment := .ok
   , phenomenon := "let alone in positive polarity context (attested)" }
 
 /-- Positive polarity *let alone* examples challenge pure NPI analysis. -/
@@ -262,20 +277,21 @@ def allExamples : List ExampleDatum :=
   , ex32a, ex32b
   , ex104, ex121, ex122a, ex122b
   , ex33, ex34
+  , ex106, ex107
   , ex71, ex72 ]
 
 /-- All grammatical examples. -/
 def grammaticalExamples : List ExampleDatum :=
-  allExamples.filter (·.judgment == .grammatical)
+  allExamples.filter (·.judgment == .ok)
 
 /-- All ungrammatical examples. -/
 def ungrammaticalExamples : List ExampleDatum :=
-  allExamples.filter (·.judgment == .ungrammatical)
+  allExamples.filter (·.judgment == .unacceptable)
 
 /-- Verification: we have examples of all judgment types. -/
 theorem has_all_judgment_types :
-    (allExamples.any (·.judgment == .grammatical)) = true ∧
-    (allExamples.any (·.judgment == .ungrammatical)) = true ∧
+    (allExamples.any (·.judgment == .ok)) = true ∧
+    (allExamples.any (·.judgment == .unacceptable)) = true ∧
     (allExamples.any (·.judgment == .marginal)) = true ∧
     (allExamples.any (·.judgment == .anomalous)) = true := by
   constructor; native_decide
@@ -323,14 +339,6 @@ def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
   | .failureVerb            => .sententialNegation   -- "fail" ≈ implicit negation
   | .anyoneWhod             => .universalRestrictor
 
-open Phenomena.Polarity.NPIs in
-/-- Every FKO trigger maps to a known NPI licensing context.
-This verifies that FKO's *let alone* data is consistent with Ladusaw's
-generalization: *let alone* appears in DE environments. -/
-theorem all_triggers_are_known_contexts :
-    ∀ t : LetAloneNPITrigger, ∃ c : LicensingContext, npiTriggerToContext t = c :=
-  λ t => ⟨npiTriggerToContext t, rfl⟩
-
 /-! ### Bridge 2: FKO Phenomena data ↔ NPI theory
 
 The phenomena file records that *barely* licenses *let alone* (ex.115)
@@ -339,13 +347,15 @@ classification: *barely* is a syntactic negative polarity trigger,
 *almost* is not. -/
 
 open _root_.Phenomena.Constructions.Studies.FillmoreKayOConnor1988 in
+open Core.Empirical in
 /-- *barely* licenses *let alone* in the phenomena data. -/
 theorem barely_licenses_let_alone :
-    ex115.judgment = Judgment.grammatical := rfl
+    ex115.judgment = Acceptability.ok := rfl
 
 open _root_.Phenomena.Constructions.Studies.FillmoreKayOConnor1988 in
+open Core.Empirical in
 /-- *almost* does NOT license *let alone* in the phenomena data. -/
 theorem almost_blocks_let_alone :
-    ex113.judgment = Judgment.ungrammatical := rfl
+    ex113.judgment = Acceptability.unacceptable := rfl
 
 end ConstructionGrammar.Studies.FillmoreKayOConnor1988.Bridge

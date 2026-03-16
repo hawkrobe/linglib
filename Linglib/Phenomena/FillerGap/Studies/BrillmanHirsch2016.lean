@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Position
+import Linglib.Core.Empirical
 
 /-!
 # Brillman & Hirsch (2016) @cite{brillman-hirsch-2016}
@@ -47,6 +48,7 @@ strategies falsifies one hypothesis, vacuously satisfying SSAL:
 namespace Phenomena.FillerGap.Studies.BrillmanHirsch2016
 
 open Minimalism
+open Core.Empirical
 
 -- ============================================================================
 -- § 1: Data Types
@@ -58,23 +60,14 @@ inductive GapPosition where
   | object
   deriving DecidableEq, BEq, Repr
 
-/-- Grammaticality judgment. -/
-inductive Judgment where
-  | grammatical
-  | ungrammatical
-  /-- Degraded but improved over the fully ungrammatical baseline
-      (e.g., parasitic gaps in GDPs, paper §4 ex. 29a). -/
-  | marginal
-  /-- Structurally ambiguous between two derivations
-      (e.g., TC/GDP, paper §4.1 ex. 30). -/
-  | ambiguous
-  deriving DecidableEq, BEq, Repr
-
 /-- An extraction datum: a sentence with a filler-gap dependency. -/
 structure ExtractionDatum where
   sentence : String
   gap : GapPosition
-  judgment : Judgment
+  judgment : Acceptability
+  /-- True when the sentence is structurally ambiguous between two
+      derivations (e.g., TC/GDP, paper §4.1 ex. 30). -/
+  structurallyAmbiguous : Bool := false
   description : String := ""
   deriving Repr
 
@@ -92,13 +85,13 @@ SSAL never applies (see `ssal_vacuous_not_in_spec`). -/
 /-- (12a) Subject extraction across *that* — SSAL violation. -/
 def thatTrace_subj : ExtractionDatum :=
   { sentence := "*Who does Bill think that _ saw John?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "Spec,TP → Spec,CP crosses only TP — too local" }
 
 /-- (12b) Object extraction across *that* — no SSAL issue. -/
 def thatTrace_obj : ExtractionDatum :=
   { sentence := "Who does Bill think that John saw _?"
-    gap := .object, judgment := .grammatical
+    gap := .object, judgment := .ok
     description := "Object starts in Comp,VP — not spec-to-spec" }
 
 /-! ### Neutralization 1: Intervening AdvP (anti-that-trace, §3.2.1)
@@ -111,19 +104,19 @@ inside vP) do NOT rescue: they don't break TP–CP adjacency. -/
 /-- (15a) Baseline that-trace — no intervener. -/
 def antiThatTrace_baseline : ExtractionDatum :=
   { sentence := "*Who does John think that _ served as president?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "No intervener — SSAL blocks" }
 
 /-- (15b) *For all intents and purposes* between TP and CP rescues. -/
 def antiThatTrace_advp : ExtractionDatum :=
   { sentence := "Who does John think that for all intents and purposes _ served as president?"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "AdvP breaks TP–CP adjacency" }
 
 /-- (16b) Speaker-oriented *fortunately* (high attachment) rescues. -/
 def antiThatTrace_fortunately : ExtractionDatum :=
   { sentence := "Who did John say that fortunately _ ran to the store?"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "High adverb between TP and CP" }
 
 /-- (16c) Manner adverb *quickly* (low attachment) does NOT rescue.
@@ -132,7 +125,7 @@ def antiThatTrace_fortunately : ExtractionDatum :=
     intervention. -/
 def antiThatTrace_quickly : ExtractionDatum :=
   { sentence := "*Who did John say that quickly _ ran to the store?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "Low adverb inside vP — TP–CP still adjacent" }
 
 /-! ### Neutralization 2: Movement from lower (§3.2.2)
@@ -145,13 +138,13 @@ Spec,vP directly to Spec,CP (@cite{erlewine-2016}). -/
 /-- (17a) Subject extraction from Spec,TP — blocked. -/
 def there_baseline : ExtractionDatum :=
   { sentence := "*How many horses does John think that _ are in the barn?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "Subject in Spec,TP — SSAL violation" }
 
 /-- (17b) *There* in Spec,TP; subject extracts from lower — rescued. -/
 def there_insertion : ExtractionDatum :=
   { sentence := "How many horses does John think that there are _ in the barn?"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "Subject extracts from below Spec,TP" }
 
 /-! ### Neutralization 3: No embedded spec-CP (§3.2.3)
@@ -165,7 +158,7 @@ spec-TP → spec-CP step occurs. -/
 /-- (18) Null *that* — subject extraction is grammatical. -/
 def null_that : ExtractionDatum :=
   { sentence := "Who does Bill think _ saw John?"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "No 'that' — no intermediate spec-CP step" }
 
 -- ============================================================================
@@ -186,13 +179,13 @@ involves spec-TP → spec-CP in the embedded clause, violating SSAL. -/
 /-- (20a) Subject of infinitive resists extraction. -/
 def inf_subj : ExtractionDatum :=
   { sentence := "*Who is it possible _ to see Mary?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "OP in Spec,TP → Spec,CP violates SSAL" }
 
 /-- (20b) Object of infinitive extracts freely. -/
 def inf_obj : ExtractionDatum :=
   { sentence := "Who is it possible for Mary to see _?"
-    gap := .object, judgment := .grammatical
+    gap := .object, judgment := .ok
     description := "Object starts in Comp,VP — not spec-to-spec" }
 
 /-- (21) Case-assigning *for* does NOT rescue subject extraction.
@@ -202,7 +195,7 @@ def inf_obj : ExtractionDatum :=
     whether the embedded C assigns case. -/
 def inf_subj_for : ExtractionDatum :=
   { sentence := "*Who is it possible for _ to see Mary?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "Case-assigning 'for' doesn't help — SSAL still blocks" }
 
 /-! ### Tough-constructions (TCs)
@@ -214,13 +207,13 @@ spec-TP must move to spec-CP — violating SSAL. -/
 /-- (23a) Subject gap TC. -/
 def tc_subj : ExtractionDatum :=
   { sentence := "*Anneke is tough _ to talk to Ian"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "Subject TC — OP: Spec,TP → Spec,CP violates SSAL" }
 
 /-- (23b) Object gap TC. -/
 def tc_obj : ExtractionDatum :=
   { sentence := "Ian is tough for Anneke to talk to _"
-    gap := .object, judgment := .grammatical
+    gap := .object, judgment := .ok
     description := "Object TC — OP from Comp,VP" }
 
 /-! ### Gapped degree phrases (GDPs)
@@ -236,13 +229,13 @@ license parasitic gaps, unlike control constructions (29a vs 29b). -/
 /-- (24a) Subject GDP with *too* — grammatical. -/
 def gdp_subj : ExtractionDatum :=
   { sentence := "Anneke is too smart _ to talk to Ian"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "DegP above CP — Spec,TP → Spec,DegP crosses CP" }
 
 /-- (24b) Object GDP with *too* — grammatical. -/
 def gdp_obj : ExtractionDatum :=
   { sentence := "Ian is too smart for Anneke to talk to _"
-    gap := .object, judgment := .grammatical
+    gap := .object, judgment := .ok
     description := "Object GDP — OP from Comp,VP" }
 
 /-- (29a) GDP licenses parasitic gap (marginal but clearly improved
@@ -257,13 +250,13 @@ def gdp_parasitic_gap : ExtractionDatum :=
 /-- (29b) Control construction does NOT license parasitic gap. -/
 def control_no_parasitic_gap : ExtractionDatum :=
   { sentence := "*This student is eager PRO to take the bar exam [without us talking to pg]"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "Control (no Ā-movement) — pg not licensed" }
 
 /-- (29c) Baseline: unlicensed parasitic gap. -/
 def pg_baseline : ExtractionDatum :=
   { sentence := "*This student took the bar exam [without us talking to pg]"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "No Ā-movement at all — pg not licensed" }
 
 /-! ### TC/GDP structural contrast (§4.1)
@@ -281,7 +274,8 @@ structure requires spec-TP → spec-CP (SSAL violation). -/
     ("it's difficult") and GDP reading ("Anneke herself is tough"). -/
 def tough_enough_ambig : ExtractionDatum :=
   { sentence := "Anneke is tough enough for Ian to talk to _"
-    gap := .object, judgment := .ambiguous
+    gap := .object, judgment := .ok
+    structurallyAmbiguous := true
     description := "TC/GDP structural ambiguity — DegP attachment varies" }
 
 /-- (33a) Subject gap with *tough enough* — only GDP reading available.
@@ -293,7 +287,7 @@ def tough_enough_ambig : ExtractionDatum :=
     signature of anti-locality. -/
 def tough_enough_subj_gdp_only : ExtractionDatum :=
   { sentence := "Ian is tough enough _ to talk to Anneke"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "Only GDP reading — TC reading blocked by SSAL" }
 
 -- ============================================================================
@@ -316,7 +310,7 @@ properties of subject questions:
 /-- (36a) Subject question — no *do*-support. -/
 def subj_wh : ExtractionDatum :=
   { sentence := "Who saw John?"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "Subject wh in situ — no T-to-C, no do-support" }
 
 /-- (36b) Subject question with *do*-support — ungrammatical on the
@@ -324,25 +318,25 @@ def subj_wh : ExtractionDatum :=
     T-to-C movement is not triggered and *do* is not inserted. -/
 def subj_wh_do_blocked : ExtractionDatum :=
   { sentence := "*Who did _ see John?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "No wh-movement → no T-to-C → no do-support" }
 
 /-- (37b) Object question — *do*-support required. -/
 def obj_wh : ExtractionDatum :=
   { sentence := "Who did John see _?"
-    gap := .object, judgment := .grammatical
+    gap := .object, judgment := .ok
     description := "Object wh moves to Spec,CP → T-to-C → do-support" }
 
 /-- (38a) Subject question does NOT license parasitic gap. -/
 def subj_wh_no_pg : ExtractionDatum :=
   { sentence := "*Who _ hired Mary without us talking to pg?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "No Ā-movement → no parasitic gap licensing" }
 
 /-- (38b) Object question licenses parasitic gap. -/
 def obj_wh_pg : ExtractionDatum :=
   { sentence := "Who did Mary hire _ without talking to pg?"
-    gap := .object, judgment := .grammatical
+    gap := .object, judgment := .ok
     description := "Ā-movement to Spec,CP → parasitic gap licensed" }
 
 /-! ### Wh-island contrast (§5, ex. 39–40)
@@ -357,7 +351,7 @@ wh-island as expected. -/
     wh-island because *who* is in situ (in Spec,TP, not Spec,CP). -/
 def subj_rel_no_island : ExtractionDatum :=
   { sentence := "Isn't that the song which Paul and Stevie were the only ones [who wanted to record _]?"
-    gap := .object, judgment := .grammatical
+    gap := .object, judgment := .ok
     description := "Subject relative — no wh-island (who in situ)" }
 
 /-- (40b) Extraction from a non-subject relative — blocked.
@@ -365,7 +359,7 @@ def subj_rel_no_island : ExtractionDatum :=
     a lower position), creating a wh-island. -/
 def nonsubj_rel_island : ExtractionDatum :=
   { sentence := "*Isn't that the song which Paul and Stevie were the only ones [who George would let _ record _]?"
-    gap := .object, judgment := .ungrammatical
+    gap := .object, judgment := .unacceptable
     description := "Non-subject relative — wh-island (who in Spec,CP)" }
 
 /-! ### Neutralization: intervener enables subject wh-movement (§5.2)
@@ -377,7 +371,7 @@ move to Spec,CP, triggering T-to-C and *do*-support. -/
     on the non-emphatic reading. -/
 def subj_wh_do_baseline : ExtractionDatum :=
   { sentence := "*Who does _ serve as president?"
-    gap := .subject, judgment := .ungrammatical
+    gap := .subject, judgment := .unacceptable
     description := "No intervener — subject wh can't move to Spec,CP" }
 
 /-- (42b) AdvP between TP and CP — subject *wh* moves, *do*-support
@@ -385,7 +379,7 @@ def subj_wh_do_baseline : ExtractionDatum :=
     is available, unlike in (42a). -/
 def subj_wh_do_intervener : ExtractionDatum :=
   { sentence := "Who does for all intents and purposes _ serve as president?"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "AdvP enables Spec,TP → Spec,CP + do-support" }
 
 /-- (43) Adjunct between TP and CP — parasitic gap licensed.
@@ -394,7 +388,7 @@ def subj_wh_do_intervener : ExtractionDatum :=
     Spec,CP, and with Ā-movement, the parasitic gap is licensed. -/
 def subj_wh_pg_rescued : ExtractionDatum :=
   { sentence := "Who without Mary talking to pg _ hired Jill nonetheless?"
-    gap := .subject, judgment := .grammatical
+    gap := .subject, judgment := .ok
     description := "Adjunct intervenes — Ā-movement + pg licensing" }
 
 -- ============================================================================
@@ -535,57 +529,57 @@ theorem gdp_subj_gap_permitted
 
 /-! Subject extraction is ungrammatical in all three baseline phenomena. -/
 
-#guard thatTrace_subj.judgment == .ungrammatical
-#guard thatTrace_obj.judgment == .grammatical
+#guard thatTrace_subj.judgment == .unacceptable
+#guard thatTrace_obj.judgment == .ok
 
-#guard tc_subj.judgment == .ungrammatical
-#guard tc_obj.judgment == .grammatical
+#guard tc_subj.judgment == .unacceptable
+#guard tc_obj.judgment == .ok
 
-#guard subj_wh_no_pg.judgment == .ungrammatical
-#guard obj_wh_pg.judgment == .grammatical
+#guard subj_wh_no_pg.judgment == .unacceptable
+#guard obj_wh_pg.judgment == .ok
 
 /-! Case-assigning *for* doesn't rescue infinitival subject extraction. -/
 
-#guard inf_subj.judgment == .ungrammatical
-#guard inf_subj_for.judgment == .ungrammatical
-#guard inf_obj.judgment == .grammatical
+#guard inf_subj.judgment == .unacceptable
+#guard inf_subj_for.judgment == .unacceptable
+#guard inf_obj.judgment == .ok
 
 /-! All four obviation strategies yield grammatical subject extraction. -/
 
-#guard antiThatTrace_advp.judgment == .grammatical       -- intervening AdvP
-#guard there_insertion.judgment == .grammatical           -- movement from lower
-#guard null_that.judgment == .grammatical                 -- no embedded spec-CP
-#guard subj_wh.judgment == .grammatical                   -- in situ
+#guard antiThatTrace_advp.judgment == .ok       -- intervening AdvP
+#guard there_insertion.judgment == .ok           -- movement from lower
+#guard null_that.judgment == .ok                 -- no embedded spec-CP
+#guard subj_wh.judgment == .ok                   -- in situ
 
 /-! High adverbs rescue; low adverbs do not. -/
 
-#guard antiThatTrace_fortunately.judgment == .grammatical
-#guard antiThatTrace_quickly.judgment == .ungrammatical
+#guard antiThatTrace_fortunately.judgment == .ok
+#guard antiThatTrace_quickly.judgment == .unacceptable
 
 /-! GDPs rescue subject gaps that TCs block. -/
 
-#guard gdp_subj.judgment == .grammatical
-#guard tc_subj.judgment == .ungrammatical
-#guard tough_enough_subj_gdp_only.judgment == .grammatical
+#guard gdp_subj.judgment == .ok
+#guard tc_subj.judgment == .unacceptable
+#guard tough_enough_subj_gdp_only.judgment == .ok
 
 /-! GDPs license parasitic gaps; control does not. -/
 
 #guard gdp_parasitic_gap.judgment == .marginal
-#guard control_no_parasitic_gap.judgment == .ungrammatical
-#guard pg_baseline.judgment == .ungrammatical
+#guard control_no_parasitic_gap.judgment == .unacceptable
+#guard pg_baseline.judgment == .unacceptable
 
 /-! Subject questions: no do-support, no parasitic gaps, no wh-islands. -/
 
-#guard subj_wh.judgment == .grammatical
-#guard subj_wh_do_blocked.judgment == .ungrammatical
-#guard subj_wh_no_pg.judgment == .ungrammatical
-#guard subj_rel_no_island.judgment == .grammatical
-#guard nonsubj_rel_island.judgment == .ungrammatical
+#guard subj_wh.judgment == .ok
+#guard subj_wh_do_blocked.judgment == .unacceptable
+#guard subj_wh_no_pg.judgment == .unacceptable
+#guard subj_rel_no_island.judgment == .ok
+#guard nonsubj_rel_island.judgment == .unacceptable
 
 /-! Intervener enables subject wh-movement + do-support + pg licensing. -/
 
-#guard subj_wh_do_baseline.judgment == .ungrammatical
-#guard subj_wh_do_intervener.judgment == .grammatical
-#guard subj_wh_pg_rescued.judgment == .grammatical
+#guard subj_wh_do_baseline.judgment == .unacceptable
+#guard subj_wh_do_intervener.judgment == .ok
+#guard subj_wh_pg_rescued.judgment == .ok
 
 end Phenomena.FillerGap.Studies.BrillmanHirsch2016

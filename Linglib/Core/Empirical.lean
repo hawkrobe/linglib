@@ -8,6 +8,24 @@ import Linglib.Core.Lexical.Word
 
 namespace Core.Empirical
 
+/-- Standard acceptability diacritics used in linguistic papers.
+
+These correspond to the conventional marks placed before example sentences:
+- (unmarked) = fully acceptable
+- `?` = degraded/marginal
+- `??` = quite degraded
+- `*` = clearly unacceptable
+- `#` = semantically/pragmatically anomalous (syntactically well-formed)
+- `%` = dialectally variable / speaker-dependent -/
+inductive Acceptability where
+  | ok           -- (unmarked) fully acceptable
+  | marginal     -- ? degraded but not out
+  | degraded     -- ?? quite degraded
+  | unacceptable -- * clearly unacceptable
+  | anomalous    -- # semantically/pragmatically odd
+  | variable     -- % dialectally variable
+  deriving Repr, DecidableEq, BEq
+
 /-- Scale type for empirical measures. -/
 inductive ScaleType where
   | binary

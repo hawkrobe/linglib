@@ -32,18 +32,11 @@ These tests identify what's presupposed vs. what's asserted.
 -/
 
 import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Empirical
 
 namespace Phenomena.Presupposition.Diagnostics
 
-
-/--
-Acceptability judgment for a diagnostic sentence.
--/
-inductive Judgment where
-  | acceptable      -- ✓ Natural, felicitous
-  | marginal        -- ? Somewhat odd but interpretable
-  | unacceptable    -- ✗ Infelicitous, odd
-  deriving DecidableEq, Repr, BEq
+open Core.Empirical
 
 /--
 A diagnostic test result: sentence + judgment.
@@ -58,7 +51,7 @@ structure DiagnosticResult where
   /-- Full sentence -/
   sentence : String
   /-- Native speaker judgment -/
-  judgment : Judgment
+  judgment : Acceptability
   /-- What the judgment indicates -/
   interpretation : String
   deriving Repr
@@ -81,7 +74,7 @@ def allowsFor_stop_priorHeavySmoker : DiagnosticResult :=
   , trigger := "stop"
   , content := "prior state (was smoking)"
   , sentence := "John stopped smoking allows for him to have been a heavy smoker"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "Prior smoking is a precondition (can be elaborated)" }
 
 /-- "John stopped smoking allows for him to have smoked for years" -/
@@ -90,7 +83,7 @@ def allowsFor_stop_priorDuration : DiagnosticResult :=
   , trigger := "stop"
   , content := "prior state duration"
   , sentence := "John stopped smoking allows for him to have smoked for 20 years"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "Duration of prior state is compatible (precondition territory)" }
 
 /-- "John started smoking allows for him to have never smoked before" -/
@@ -99,7 +92,7 @@ def allowsFor_start_priorNonSmoker : DiagnosticResult :=
   , trigger := "start"
   , content := "prior state (wasn't smoking)"
   , sentence := "John started smoking allows for him to have never smoked before"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "Prior non-smoking is a precondition" }
 
 /-- "John won the race allows for him to have been a participant" -/
@@ -108,7 +101,7 @@ def allowsFor_win_participant : DiagnosticResult :=
   , trigger := "win"
   , content := "participation"
   , sentence := "John won the race allows for him to have been a participant"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "Being a participant is a precondition for winning" }
 
 /-- "John stopped smoking allows for him to no longer smoke" — ODD -/
@@ -137,7 +130,7 @@ def resultsIn_stop_noLongerSmoking : DiagnosticResult :=
   , trigger := "stop"
   , content := "result state (no longer smoking)"
   , sentence := "John stopped smoking results in him no longer smoking"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "No longer smoking is a consequence (asserted content)" }
 
 /-- "John started smoking results in him now being a smoker" -/
@@ -146,7 +139,7 @@ def resultsIn_start_nowSmoking : DiagnosticResult :=
   , trigger := "start"
   , content := "result state (now smoking)"
   , sentence := "John started smoking results in him now being a smoker"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "Now smoking is a consequence" }
 
 /-- "John won the race results in him being the winner" -/
@@ -155,7 +148,7 @@ def resultsIn_win_winner : DiagnosticResult :=
   , trigger := "win"
   , content := "winner status"
   , sentence := "John won the race results in him being the winner"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "Being the winner is a consequence of winning" }
 
 /-- "John stopped smoking results in him having been a smoker" — ODD -/
@@ -289,7 +282,7 @@ def negationTest_stop : DiagnosticResult :=
   , trigger := "stop"
   , content := "prior state (was smoking)"
   , sentence := "It's not the case that John stopped smoking"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "Still implies John was smoking → prior state is presupposed" }
 
 /--
@@ -307,7 +300,7 @@ def questionTest_stop : DiagnosticResult :=
   , trigger := "stop"
   , content := "prior state (was smoking)"
   , sentence := "Did John stop smoking?"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "Still implies John was smoking → prior state is presupposed" }
 
 /--
@@ -326,7 +319,7 @@ def conditionalTest_stop_filter : DiagnosticResult :=
   , trigger := "stop"
   , content := "prior state (was smoking)"
   , sentence := "If John was smoking, he stopped"
-  , judgment := .acceptable
+  , judgment := .ok
   , interpretation := "No global presupposition → filtered by antecedent" }
 
 

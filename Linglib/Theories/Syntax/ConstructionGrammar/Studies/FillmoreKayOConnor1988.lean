@@ -1,6 +1,5 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Alternatives.Lexical
 
 /-!
 # @cite{fillmore-kay-oconnor-1988}: Let Alone
@@ -92,21 +91,13 @@ Where "lower" means: d_i is lower than d_j iff no coordinate of d_i
 has a higher value than the corresponding coordinate of d_j, and at
 least one coordinate of d_i has a lower value (Definition A2). -/
 
-/-- A semantic dimension with a finite linear order.
-Each dimension D^i is a linearly ordered set (e.g., linguists ordered
-by erudition, languages ordered by accessibility). -/
-structure SemanticDimension (α : Type*) where
-  /-- Values along this dimension -/
-  values : List α
-  /-- Linear ordering (index comparison) -/
-  le : α → α → Prop
-
 /-- An argument point in the n-dimensional argument space D^x.
 In the paper's example: (Apotheosis, English) is an argument point
 in the 2D space of linguists × languages. -/
 structure ArgumentPoint (α : Type*) where
   /-- Coordinates, one per dimension -/
   coordinates : List α
+  deriving DecidableEq, BEq, Repr
 
 /-- A scalar model (Definition A3 from the Appendix).
 
@@ -135,7 +126,7 @@ def ArgumentPoint.isLower {α : Type*} (le : α → α → Bool)
 
 /-- Scalar entailment: P(d_j) entails P(d_i) iff {s | P(d_j)(s)} ⊆ {s | P(d_i)(s)}.
 
-In a scalar model, this holds exactly when d_i is lower than d_j. -/
+In a valid scalar model, this holds exactly when d_i is lower than d_j. -/
 def ScalarModel.entails {S α : Type*} (sm : ScalarModel S α)
     (dj di : ArgumentPoint α) : Prop :=
   ∀ s, sm.propFn dj s = true → sm.propFn di s = true
@@ -146,6 +137,21 @@ iff p entails q in SM and q does not entail p in SM. -/
 def ScalarModel.strongerThan {S α : Type*} (sm : ScalarModel S α)
     (dj di : ArgumentPoint α) : Prop :=
   sm.entails dj di ∧ ¬sm.entails di dj
+
+/-- Definition A3 validity: a scalar model satisfies the monotonicity
+constraint iff for all distinct argument points d_i, d_j in D^x,
+P(d_j) entails P(d_i) exactly when d_i is lower than d_j.
+
+We check the forward direction (lower → entails) for all point pairs.
+This is the computable check used by `native_decide`. -/
+def ScalarModel.satisfiesA3 {S α : Type*} [BEq α]
+    (sm : ScalarModel S α) (states : List S) : Bool :=
+  sm.points.all λ di =>
+    sm.points.all λ dj =>
+      -- If di is lower than dj, then P(dj) entails P(di)
+      if di.isLower sm.dimLe dj then
+        states.all λ s => !(sm.propFn dj s) || sm.propFn di s
+      else true
 
 /-! ## Section 3: The *Let Alone* Construction (§2.1–2.4) -/
 
@@ -202,31 +208,7 @@ def presentsStrongerFirst : LetAloneFamily → Bool
   | .ifNot        => false
   | .inFact       => false
 
-/-! ## Section 4: Pragmatic conditions (§2.4)
-
-The pragmatic function of *let alone* resolves a conflict between
-two Gricean maxims: Quantity (informativeness) and Relevance.
-
-- The B clause (weaker) answers to Relevance: it addresses the context proposition
-- The A clause (stronger) answers to Quantity: it's the most informative thing
-  the speaker can assert
-- The construction presents both, emphasizing commitment to B via A -/
-
-/-- The context proposition that *let alone* responds to.
-
-A *let alone* utterance is felicitous when:
-(a) The context proposition makes the B clause relevant
-(b) The A clause is more informative than the B clause
-(c) In asserting A, the speaker a fortiori asserts B -/
-structure LetAlonePragmatics where
-  /-- Description of the context proposition -/
-  contextProposition : String
-  /-- The B clause addresses relevance -/
-  bClauseIsRelevant : Bool
-  /-- The A clause is more informative -/
-  aClauseIsMoreInformative : Bool
-
-/-! ## Section 5: NPI status (§2.2.4)
+/-! ## Section 4: NPI status (§2.2.4)
 
 *Let alone* is a negative polarity item, but with nuances:
 - It occurs in standard NPI environments (negation, doubt, barely, etc.)
@@ -245,24 +227,28 @@ inductive LetAloneNPITrigger where
   | anyoneWhod            -- "Anyone who'd been to high school, let alone grad school..."
   deriving Repr, DecidableEq, BEq
 
-/-! ## Section 6: Construction definitions for the constructicon -/
+/-! ## Section 5: Construction definitions for the constructicon -/
 
 /-- The X-er the Y-er comparative correlative (§1.2.1, exx.1-2).
 
-Another formal idiom discussed in the paper. Unfamiliar pieces
-unfamiliarly arranged: the definite article is unique to this
-construction, and the two-part structure has no parallel elsewhere. -/
+A formal idiom with unfamiliar pieces unfamiliarly arranged. The
+definite article "the" is unique to this construction (p.507) —
+a fixed element — and the two-part structure has no parallel
+elsewhere in English. The open comparative phrases make it
+partially open (mix of fixed "the" and open comparatives). -/
 def comparativeCorrelative : Construction :=
   { name := "the X-er the Y-er"
   , form := "[S [AdvP the+Compar] [S ...], [AP the+Compar] [S ...]]"
   , meaning := "The degree to which X correlates with the degree to which Y"
-  , specificity := .fullyAbstract
+  , specificity := .partiallyOpen
   , pragmaticFunction := none }
 
-/-- The Incredulity Response construction (§2, ex.14h).
+/-- The Incredulity Response construction (§1.1.4, ex.14h).
 
 "Him be a doctor?" — non-nominative subject + bare stem verb,
-expressing incredulity. -/
+expressing incredulity. A formal idiom: the pattern (NP[acc] VP[bare])
+is productive and dedicated to a rhetorical/evaluative pragmatic function
+not derivable from its component meanings. -/
 def incredulityResponse : Construction :=
   { name := "Incredulity Response"
   , form := "[S NP[acc] VP[bare]]"
@@ -287,50 +273,19 @@ def letAloneInheritance : InheritanceLink :=
       , "requires scalar relationship between conjuncts"
       , "is a negative polarity item" ] }
 
-/-! ## Section 7: Key claims -/
+/-! ## Section 6: 1D Scalar Model — Military Ranks (§2.1, ex.21)
 
-/-- **Claim 1**: *let alone* is a formal idiom — a productive syntactic
-pattern with non-compositional semantics (p.511).
-
-It cannot be derived from the regular grammar + lexicon + compositional
-semantics. Its meaning involves scalar entailment, NPI licensing, and
-paired focus, none of which follow from combining "let" and "alone". -/
-def claim_let_alone_is_formal_idiom : Prop :=
-  letAloneConstruction.specificity = .partiallyOpen ∧
-  letAloneConstruction.pragmaticFunction.isSome
-
-theorem claim_let_alone_is_formal_idiom_holds :
-    claim_let_alone_is_formal_idiom := ⟨rfl, rfl⟩
-
-/-- **Claim 3**: *Let alone* resolves a conflict between Gricean
-Quantity and Relevance (§2.4, p.532).
-
-The B clause satisfies Relevance (addresses context proposition);
-the A clause satisfies Quantity (most informative thing speaker knows).
-The construction presents both simultaneously. -/
-def claim_quantity_relevance_conflict : Prop :=
-  letAloneConstruction.pragmaticFunction =
-    some "presupposes scalar model; A clause = informative (Quantity), B clause = relevant (Relevance)"
-
-theorem claim_quantity_relevance_conflict_holds :
-    claim_quantity_relevance_conflict := rfl
-
-/-! ### Scalar model generalizes HornScale
-
-FKO1988's `ScalarModel` (n-dimensional, with monotonicity constraint)
-is a generalization of `Alternatives.HornScale` (1-dimensional, linear).
-A 1D scalar model with a propositional function that respects the
-linear order is exactly a HornScale.
-
-We show this by constructing a scalar model from the military rank
-example in the paper (§2.1, ex.21): the scale
-⟨second lieutenant,..., colonel, general⟩. -/
+The running example: ⟨second lieutenant,..., colonel, general⟩. -/
 
 /-- Military ranks from the paper's running example. -/
 inductive Rank where
   | secondLieutenant | lieutenant | captain | major
   | colonel | general
   deriving Repr, DecidableEq, BEq
+
+instance : Fintype Rank where
+  elems := {.secondLieutenant, .lieutenant, .captain, .major, .colonel, .general}
+  complete := λ x => by cases x <;> decide
 
 /-- Rank ordering (lower index = lower rank). -/
 def rankLe : Rank → Rank → Bool
@@ -354,6 +309,10 @@ def rankLe : Rank → Rank → Bool
 inductive AchievementState where
   | achievedNone | achievedUpToLt | achievedUpToCol | achievedUpToGen
   deriving Repr, DecidableEq, BEq
+
+instance : Fintype AchievementState where
+  elems := {.achievedNone, .achievedUpToLt, .achievedUpToCol, .achievedUpToGen}
+  complete := λ x => by cases x <;> decide
 
 /-- "He made rank R" is true in a state iff the state includes R. -/
 def madeRank : Rank → AchievementState → Bool
@@ -382,6 +341,20 @@ def rankScalarModel : ScalarModel AchievementState Rank :=
       | none => λ _ => false
   , dimLe := rankLe }
 
+/-- The rank scalar model satisfies Definition A3: for every pair
+of points where d_i is lower than d_j, P(d_j) entails P(d_i). -/
+theorem rank_model_valid :
+    rankScalarModel.satisfiesA3
+      [.achievedNone, .achievedUpToLt, .achievedUpToCol, .achievedUpToGen] = true := by
+  native_decide
+
+/-- The rank scalar model is one-dimensional: every argument point
+has exactly one coordinate. The paper argues (fn.16, p.535) that
+some examples require ≥2 dimensions. -/
+theorem rank_model_is_1d :
+    rankScalarModel.points.all (λ p => p.coordinates.length == 1) = true := by
+  native_decide
+
 /-- Scalar entailment: "He made general" entails "He made colonel".
 This is the core semantic condition on *let alone* (p.523, 528):
 the stronger (A) proposition entails the weaker (B) proposition. -/
@@ -405,37 +378,208 @@ theorem colonel_does_not_entail_general :
   have := h .achievedUpToCol rfl
   simp [rankScalarModel, madeRank] at this
 
-/-- Scalar entailment: "He made general" entails "He made colonel"
-(but not vice versa — proved above). Thus making general is STRONGER
-than making colonel: the extension of "made general" is a proper
-subset of the extension of "made colonel". -/
+/-- Making general is STRONGER than making colonel: the extension of
+"made general" is a proper subset of "made colonel" (Definition A5). -/
 theorem general_stronger_than_colonel :
     rankScalarModel.strongerThan ⟨[.general]⟩ ⟨[.colonel]⟩ :=
   ⟨general_entails_colonel, colonel_does_not_entail_general⟩
 
-/-- The rank scalar model is one-dimensional: every argument point
-has exactly one coordinate. This suffices for simple *let alone*
-examples (ex.21: "He didn't make colonel, let alone general"),
-but the paper argues (fn.16, p.535) that some examples require
-≥2 dimensions — e.g., ex.104 vs. 105 (odd-number/seventy-five
-anomaly resolved by a second prize-size dimension). -/
-theorem rank_model_is_1d :
-    rankScalarModel.points.all (λ p => p.coordinates.length == 1) = true := by
-  native_decide
+/-- Second lieutenant is the LOWEST point: no other rank is lower.
+This explains the anomaly in ex.107: "let alone a second lieutenant"
+is anomalous because you cannot scalar-entail the negation of the
+lowest point from the negation of a non-lowest point (p.526). -/
+theorem secondLieutenant_is_lowest :
+    ∀ pt ∈ rankScalarModel.points,
+      ¬ pt.isLower rankLe ⟨[.secondLieutenant]⟩ = true := by
+  intro pt hpt h
+  simp [rankScalarModel] at hpt
+  rcases hpt with rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp [ArgumentPoint.isLower, rankLe] at h
 
 /-- The rank scalar model validates FKO's ex.21:
 "He didn't make colonel, let alone general."
 
-Under negation, the scalar direction REVERSES: "didn't make colonel"
-is stronger than "didn't make general" because making colonel is
-easier (more states satisfy it). The *let alone* B focus (general)
-names the STRONGER positive proposition, whose negation is WEAKER.
-
-FKO's condition: A focus yields a stronger proposition than B focus.
-Under negation of "make R", "not make colonel" entails "not make general"
-(if you can't do the easier thing, you can't do the harder thing). -/
+Under negation, the scalar direction reverses: "not make colonel"
+entails "not make general" (if you can't do the easier thing, you
+can't do the harder thing). -/
 theorem ex21_scalar_condition_neg :
     ∀ s, madeRank .general s = true → madeRank .colonel s = true :=
   general_entails_colonel
+
+/-! ## Section 7: 2D Scalar Model — Linguists × Languages (§2.3.2, Tables 1–4)
+
+The paper's most carefully developed example: four professors
+(Apotheosis, Brilliant, Competent, Dimm) and four languages
+(English, French, Greek, Hittite), ordered by erudition and
+accessibility respectively.
+
+The propositional function P: "professor X can read language L"
+is monotone: if X is more erudite and L is more accessible, P
+is more likely to be true.
+
+This 2D model is the basis for the Appendix definitions (A1–A5). -/
+
+/-- Linguists ordered by erudition (most → least). -/
+inductive Linguist where
+  | apotheosis | brilliant | competent | dimm
+  deriving Repr, DecidableEq, BEq
+
+instance : Fintype Linguist where
+  elems := {.apotheosis, .brilliant, .competent, .dimm}
+  complete := λ x => by cases x <;> decide
+
+/-- Languages ordered by accessibility (most → least). -/
+inductive Lang where
+  | english | french | greek | hittite
+  deriving Repr, DecidableEq, BEq
+
+instance : Fintype Lang where
+  elems := {.english, .french, .greek, .hittite}
+  complete := λ x => by cases x <;> decide
+
+/-- Dimension value: either a linguist or a language.
+The argument space D^x = Linguist × Lang, encoded as 2-element
+coordinate lists of `LingLangVal`. -/
+inductive LingLangVal where
+  | ling : Linguist → LingLangVal
+  | lang : Lang → LingLangVal
+  deriving Repr, DecidableEq, BEq
+
+/-- Dimension ordering (≤) for the linguist/language scalar model.
+
+From Definition A2 (p.536) and the worked example on p.537: d_i is LOWER
+than d_j when d_i has coordinatewise ≤ values with at least one strict.
+A LOWER argument point yields a WEAKER proposition (true in more states).
+
+- Linguist: Apotheosis ≤ Brilliant ≤ Competent ≤ Dimm
+  (more erudite = LOWER = weaker — "Apotheosis reads L" is easiest to satisfy)
+- Language: English ≤ French ≤ Greek ≤ Hittite
+  (more accessible = LOWER = weaker — "X reads English" is easiest to satisfy)
+
+The paper confirms (p.537): "(B, E) is lower than (B, G)" — Brilliant with
+English is lower than Brilliant with Greek. Cross-type comparisons return
+false (dimensions are independent). -/
+def lingLangLe : LingLangVal → LingLangVal → Bool
+  -- Linguist dimension: Apotheosis ≤ Brilliant ≤ Competent ≤ Dimm
+  | .ling .apotheosis, .ling _ => true
+  | .ling .brilliant,  .ling .apotheosis => false
+  | .ling .brilliant,  .ling _ => true
+  | .ling .competent,  .ling .apotheosis => false
+  | .ling .competent,  .ling .brilliant => false
+  | .ling .competent,  .ling _ => true
+  | .ling .dimm,       .ling .dimm => true
+  | .ling .dimm,       .ling _ => false
+  -- Language dimension: English ≤ French ≤ Greek ≤ Hittite
+  | .lang .english, .lang _ => true
+  | .lang .french,  .lang .english => false
+  | .lang .french,  .lang _ => true
+  | .lang .greek,   .lang .english => false
+  | .lang .greek,   .lang .french => false
+  | .lang .greek,   .lang _ => true
+  | .lang .hittite, .lang .hittite => true
+  | .lang .hittite, .lang _ => false
+  -- Cross-dimension: incomparable
+  | .ling _, .lang _ => false
+  | .lang _, .ling _ => false
+
+/-- States of affairs for the linguist/language model.
+Each state specifies which (linguist, language) pairs satisfy
+"X can read L". We use a few representative states from Table 2
+in the paper (p.527). -/
+inductive LLState where
+  | allFalse    -- Table 2a: nobody reads anything
+  | topLeft     -- Table 2b: only Apotheosis reads English
+  | twoTrue     -- Table 2c: Apotheosis reads English & French, Brilliant reads English
+  | allTrue     -- Table 2d: everybody reads everything
+  | diagonal    -- Apotheosis reads all, Brilliant reads Eng/Fr/Gr, Competent reads Eng/Fr, Dimm reads Eng
+  deriving Repr, DecidableEq, BEq
+
+instance : Fintype LLState where
+  elems := {.allFalse, .topLeft, .twoTrue, .allTrue, .diagonal}
+  complete := λ x => by cases x <;> decide
+
+/-- "Professor X can read language L" in each state.
+The diagonal state is the paper's primary example: knowledge
+forms a staircase from the 1-corner (Apotheosis, English) outward. -/
+def canRead : Linguist → Lang → LLState → Bool
+  | _, _, .allFalse => false
+  | _, _, .allTrue  => true
+  | .apotheosis, .english, .topLeft => true
+  | _, _, .topLeft => false
+  | .apotheosis, .english, .twoTrue => true
+  | .apotheosis, .french, .twoTrue  => true
+  | .brilliant, .english, .twoTrue  => true
+  | _, _, .twoTrue => false
+  -- Diagonal: staircase pattern
+  | .apotheosis, _, .diagonal => true
+  | .brilliant, .hittite, .diagonal => false
+  | .brilliant, _, .diagonal => true
+  | .competent, .english, .diagonal => true
+  | .competent, .french, .diagonal  => true
+  | .competent, _, .diagonal => false
+  | .dimm, .english, .diagonal => true
+  | .dimm, _, .diagonal => false
+
+/-- Convenience constructor for 2D argument points. -/
+def llPoint (l : Linguist) (lang : Lang) : ArgumentPoint LingLangVal :=
+  ⟨[.ling l, .lang lang]⟩
+
+/-- The linguist/language scalar model from §2.3.2 (Tables 1–4, p.526–527). -/
+def linguistLangModel : ScalarModel LLState LingLangVal :=
+  { points := do
+      let l ← [Linguist.apotheosis, .brilliant, .competent, .dimm]
+      let lang ← [Lang.english, .french, .greek, .hittite]
+      return llPoint l lang
+  , propFn := λ pt =>
+      match pt.coordinates with
+      | [.ling l, .lang lang] => canRead l lang
+      | _ => λ _ => false
+  , dimLe := lingLangLe }
+
+/-- The linguist/language model is two-dimensional. -/
+theorem ll_model_is_2d :
+    linguistLangModel.points.all (λ p => p.coordinates.length == 2) = true := by
+  native_decide
+
+/-- The 2D model satisfies Definition A3. -/
+theorem ll_model_valid :
+    linguistLangModel.satisfiesA3
+      [.allFalse, .topLeft, .twoTrue, .allTrue, .diagonal] = true := by
+  native_decide
+
+/-- In the 2D model, "Brilliant can read Hittite" entails
+"Brilliant can read English" — Hittite is less accessible,
+so knowing it is stronger (p.528, exx.109–112). -/
+theorem brilliant_hittite_entails_english :
+    linguistLangModel.entails (llPoint .brilliant .hittite) (llPoint .brilliant .english) := by
+  intro s h; cases s <;> simp_all [linguistLangModel, llPoint, canRead]
+
+/-- "Brilliant can read Hittite" is stronger than
+"Competent can read French" (Definition A5). Note: these
+points are INCOMPARABLE in the partial order (Brilliant < Competent
+on linguist, Hittite > French on language), but the entailment
+holds empirically — the scalar model constrains more than just
+comparable pairs. -/
+theorem brilliant_hittite_stronger_than_competent_french :
+    linguistLangModel.strongerThan
+      (llPoint .brilliant .hittite) (llPoint .competent .french) := by
+  constructor
+  · intro s h; cases s <;> simp_all [linguistLangModel, llPoint, canRead]
+  · intro h; have := h .diagonal; simp [linguistLangModel, llPoint, canRead] at this
+
+/-- (Brilliant, English) is lower than (Brilliant, Greek): the paper's
+own worked example (p.537). Same linguist, but English is more
+accessible (lower) than Greek. -/
+theorem brilliant_english_lower_than_brilliant_greek :
+    (llPoint .brilliant .english).isLower lingLangLe (llPoint .brilliant .greek) = true := by
+  native_decide
+
+/-- (Competent, French) and (Brilliant, Hittite) are INCOMPARABLE:
+Competent > Brilliant on linguist but French < Hittite on language.
+Neither is uniformly ≤ the other (Definition A2). -/
+theorem competent_french_incomparable_brilliant_hittite :
+    (llPoint .competent .french).isLower lingLangLe (llPoint .brilliant .hittite) = false ∧
+    (llPoint .brilliant .hittite).isLower lingLangLe (llPoint .competent .french) = false := by
+  constructor <;> native_decide
 
 end ConstructionGrammar.Studies.FillmoreKayOConnor1988

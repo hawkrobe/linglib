@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Logic.Equiv.Basic
+import Linglib.Core.Empirical
 
 /-!
 # L-Analyticity in Natural Language
@@ -269,16 +270,12 @@ theorem everyBut_not_LAnalytic [Inhabited Entity] [DecidableEq Entity]
       by_contra hns
       exact absurd hxa (hS x ⟨trivial, hns⟩)
 
-/-- Grammatical status for L-analyticity predictions. -/
-inductive GrammaticalStatus where
-  | grammatical
-  | ungrammatical
-  deriving DecidableEq, Repr, BEq
+open Core.Empirical
 
-/-- Predict grammatical status from logical skeleton. -/
+/-- Predict acceptability from logical skeleton: L-analytic → unacceptable. -/
 def predictGrammaticality (skel : LogicalSkeleton Entity)
-    (hDec : Decidable skel.isLAnalytic) : GrammaticalStatus :=
-  if skel.isLAnalytic then .ungrammatical else .grammatical
+    (hDec : Decidable skel.isLAnalytic) : Acceptability :=
+  if skel.isLAnalytic then .unacceptable else .ok
 
 /-- An L-analyticity example with empirical judgment. -/
 structure LAnalyticityExample where
@@ -288,8 +285,8 @@ structure LAnalyticityExample where
   isLAnalytic : Bool
   /-- Why (tautology, contradiction, or neither) -/
   analyticityType : String
-  /-- Empirical grammaticality judgment -/
-  empiricalJudgment : GrammaticalStatus
+  /-- Empirical acceptability judgment -/
+  empiricalJudgment : Acceptability
   /-- Does prediction match? -/
   predictionMatches : Bool
   /-- Notes -/
@@ -301,7 +298,7 @@ def thereEveryStudent : LAnalyticityExample :=
   { sentence := "*There is every student"
   , isLAnalytic := true
   , analyticityType := "L-tautology"
-  , empiricalJudgment := .ungrammatical
+  , empiricalJudgment := .unacceptable
   , predictionMatches := true
   , notes := "Barwise & Cooper 1981: strong quantifiers in there-sentences"
   }
@@ -310,7 +307,7 @@ def thereSomeStudents : LAnalyticityExample :=
   { sentence := "There are some students"
   , isLAnalytic := false
   , analyticityType := "contingent"
-  , empiricalJudgment := .grammatical
+  , empiricalJudgment := .ok
   , predictionMatches := true
   , notes := "Weak quantifiers allowed in there-sentences"
   }
@@ -320,7 +317,7 @@ def someButBill : LAnalyticityExample :=
   { sentence := "*Some student but Bill passed"
   , isLAnalytic := true
   , analyticityType := "L-contradiction"
-  , empiricalJudgment := .ungrammatical
+  , empiricalJudgment := .unacceptable
   , predictionMatches := true
   , notes := "von Fintel 1993: ↑mon determiners can't have least exceptions"
   }
@@ -329,7 +326,7 @@ def everyButBill : LAnalyticityExample :=
   { sentence := "Every student but Bill passed"
   , isLAnalytic := false
   , analyticityType := "contingent"
-  , empiricalJudgment := .grammatical
+  , empiricalJudgment := .ok
   , predictionMatches := true
   , notes := "Universal quantifiers can have least exceptions"
   }
@@ -338,7 +335,7 @@ def noOneButBill : LAnalyticityExample :=
   { sentence := "No one but Bill passed"
   , isLAnalytic := false
   , analyticityType := "contingent"
-  , empiricalJudgment := .grammatical
+  , empiricalJudgment := .ok
   , predictionMatches := true
   , notes := "Negative universals also work with exceptives"
   }
@@ -348,7 +345,7 @@ def everyWomanIsWoman : LAnalyticityExample :=
   { sentence := "Every woman is a woman"
   , isLAnalytic := false
   , analyticityType := "contingent (skeleton)"
-  , empiricalJudgment := .grammatical
+  , empiricalJudgment := .ok
   , predictionMatches := true
   , notes := "Two occurrences → distinct variables → not L-analytic"
   }
@@ -357,7 +354,7 @@ def johnSmokesAndDoesnt : LAnalyticityExample :=
   { sentence := "John smokes and doesn't smoke"
   , isLAnalytic := false
   , analyticityType := "contingent (skeleton)"
-  , empiricalJudgment := .grammatical
+  , empiricalJudgment := .ok
   , predictionMatches := true
   , notes := "Two occurrences → distinct variables → not L-analytic"
   }

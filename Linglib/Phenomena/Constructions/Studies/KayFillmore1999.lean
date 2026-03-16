@@ -34,6 +34,7 @@ Generalizations: The *What's X doing Y?* Construction" (Language 75(1):1–33).
 namespace Phenomena.Constructions.Studies.KayFillmore1999
 
 open Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+open Core.Empirical
 
 /-- Check if a string contains a substring. -/
 def containsSubstr (s : String) (sub : String) : Bool :=
@@ -57,7 +58,7 @@ structure WXDYDatum where
   /-- The sentence -/
   sentence : String
   /-- Acceptability judgment -/
-  judgment : Judgment
+  judgment : Acceptability
   /-- Available reading(s) -/
   reading : WXDYReading
   /-- What phenomenon this illustrates -/
@@ -69,21 +70,21 @@ structure WXDYDatum where
 def fly_in_soup : WXDYDatum :=
   { exId := "1"
   , sentence := "What's this fly doing in my soup?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "canonical incredulity: speaker sees the fly" }
 
 def cat_on_table : WXDYDatum :=
   { exId := "2"
   , sentence := "What's the cat doing on the dinner table?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "incredulity: speaker disapproves of cat's location" }
 
 def car_in_driveway : WXDYDatum :=
   { exId := "3"
   , sentence := "What's that car doing in my driveway?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "incredulity: referential subject + locative PP" }
 
@@ -92,14 +93,14 @@ def car_in_driveway : WXDYDatum :=
 def john_in_kitchen_literal : WXDYDatum :=
   { exId := "4"
   , sentence := "What's John doing in the kitchen?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .literal
   , phenomenon := "literal question: speaker genuinely asks about activity" }
 
 def mary_with_scissors : WXDYDatum :=
   { exId := "5"
   , sentence := "What's Mary doing with those scissors?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .literal
   , phenomenon := "literal question: instrumental PP complement" }
 
@@ -111,21 +112,21 @@ standard wh-question remains; the incredulity reading disappears. -/
 def no_progressive : WXDYDatum :=
   { exId := "6"
   , sentence := "*What does this fly do in my soup?"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , reading := .incredulity
   , phenomenon := "incredulity lost without progressive" }
 
 def habitual_do : WXDYDatum :=
   { exId := "7"
   , sentence := "What does John do in the kitchen?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .literal
   , phenomenon := "habitual reading OK, but no incredulity" }
 
 def bare_infinitive : WXDYDatum :=
   { exId := "8"
   , sentence := "*What's this fly do in my soup?"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , reading := .incredulity
   , phenomenon := "bare infinitive blocks WXDY construction" }
 
@@ -137,7 +138,7 @@ are degraded on the incredulity reading. -/
 def referential_subject : WXDYDatum :=
   { exId := "9"
   , sentence := "What's this book doing on the floor?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "demonstrative subject: fully referential" }
 
@@ -156,21 +157,21 @@ and instrumental PPs. -/
 def locative_pp : WXDYDatum :=
   { exId := "11"
   , sentence := "What's my coat doing on the floor?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "locative PP complement" }
 
 def participial_vp : WXDYDatum :=
   { exId := "12"
   , sentence := "What's John doing reading my diary?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "participial VP complement" }
 
 def instrumental_pp : WXDYDatum :=
   { exId := "13"
   , sentence := "What are you doing with my car keys?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "instrumental PP complement" }
 
@@ -179,14 +180,14 @@ def instrumental_pp : WXDYDatum :=
 def john_in_kitchen_ambig : WXDYDatum :=
   { exId := "14"
   , sentence := "What's John doing in the garden?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .ambiguous
   , phenomenon := "ambiguous: genuine Q or incredulity depending on context" }
 
 def dog_on_couch : WXDYDatum :=
   { exId := "15"
   , sentence := "What's the dog doing on the couch?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .ambiguous
   , phenomenon := "ambiguous: activity Q or disapproval" }
 
@@ -197,14 +198,14 @@ Under embedding, the incredulity component projects like a CI. -/
 def embedded_wonder : WXDYDatum :=
   { exId := "16"
   , sentence := "I wonder what this fly is doing in my soup"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "embedded: incredulity projects through wonder" }
 
 def embedded_tell : WXDYDatum :=
   { exId := "17"
   , sentence := "Tell me what your shoes are doing on the table"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "embedded: incredulity projects through imperative" }
 
@@ -217,7 +218,7 @@ question form. -/
 def fko_comparison : WXDYDatum :=
   { exId := "18"
   , sentence := "What's HIM doing being a doctor?"
-  , judgment := .grammatical
+  , judgment := .ok
   , reading := .incredulity
   , phenomenon := "WXDY with accusative subject: cf. FKO1988 Incredulity Response" }
 
@@ -246,8 +247,8 @@ theorem has_both_readings :
 
 /-- All judgment types are represented. -/
 theorem has_all_judgment_types :
-    (allExamples.any (·.judgment == .grammatical)) = true ∧
-    (allExamples.any (·.judgment == .ungrammatical)) = true ∧
+    (allExamples.any (·.judgment == .ok)) = true ∧
+    (allExamples.any (·.judgment == .unacceptable)) = true ∧
     (allExamples.any (·.judgment == .marginal)) = true := by
   constructor; native_decide
   constructor; native_decide
@@ -256,7 +257,7 @@ theorem has_all_judgment_types :
 /-- All grammatical WXDY examples with incredulity reading have progressive. -/
 theorem progressive_is_required :
     (allExamples.filter (λ d =>
-      d.judgment == .grammatical && d.reading != .literal
+      d.judgment == .ok && d.reading != .literal
     )).all (λ d => containsSubstr d.sentence "doing" || containsSubstr d.sentence "is doing") = true := by
   native_decide
 
@@ -623,7 +624,7 @@ theorem wxdy_rhetorical_requires_polar {W : Type*} (prop : W → Bool) :
 /-- All grammatical WXDY examples use progressive *doing*. -/
 theorem progressive_required_all :
     (allExamples.filter (λ d : WXDYDatum =>
-      d.judgment == .grammatical && d.reading != .literal
+      d.judgment == .ok && d.reading != .literal
     )).all (λ d : WXDYDatum => containsSubstr d.sentence "doing" || containsSubstr d.sentence "is doing") = true := by
   native_decide
 

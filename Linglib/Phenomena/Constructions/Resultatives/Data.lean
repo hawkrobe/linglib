@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+import Linglib.Core.Empirical
 
 /-!
 # Resultative Construction — Empirical Data
@@ -22,7 +22,7 @@ English resultative constructions, drawn from @cite{goldberg-jackendoff-2004}
 
 namespace Phenomena.Constructions.Resultatives
 
-open Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+open Core.Empirical
 
 /-! ## Datum structure -/
 
@@ -42,7 +42,7 @@ structure ResultativeDatum where
   /-- The sentence -/
   sentence : String
   /-- Acceptability judgment -/
-  judgment : Judgment
+  judgment : Acceptability
   /-- Which resultative subtype -/
   resType : ResultativeType
   /-- What phenomenon this illustrates -/
@@ -54,21 +54,21 @@ structure ResultativeDatum where
 def hammer_flat : ResultativeDatum :=
   { exId := "1a"
   , sentence := "She hammered the metal flat"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .causativeProperty
   , phenomenon := "causative + property RP: agent causes patient to become flat" }
 
 def wipe_clean : ResultativeDatum :=
   { exId := "1b"
   , sentence := "He wiped the table clean"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .causativeProperty
   , phenomenon := "causative + property RP: agent causes patient to become clean" }
 
 def paint_red : ResultativeDatum :=
   { exId := "1c"
   , sentence := "They painted the house red"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .causativeProperty
   , phenomenon := "causative + property RP: agent causes patient to become red" }
 
@@ -77,14 +77,14 @@ def paint_red : ResultativeDatum :=
 def kick_into_field : ResultativeDatum :=
   { exId := "2a"
   , sentence := "She kicked the ball into the field"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .causativePath
   , phenomenon := "causative + path RP: agent causes theme to go to goal" }
 
 def push_off_table : ResultativeDatum :=
   { exId := "2b"
   , sentence := "He pushed the glass off the table"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .causativePath
   , phenomenon := "causative + path RP: agent causes theme to move from source" }
 
@@ -93,14 +93,14 @@ def push_off_table : ResultativeDatum :=
 def freeze_solid : ResultativeDatum :=
   { exId := "3a"
   , sentence := "The river froze solid"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .noncausativeProperty
   , phenomenon := "noncausative + property RP: theme becomes result state" }
 
 def swing_shut : ResultativeDatum :=
   { exId := "3b"
   , sentence := "The gate swung shut"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .noncausativeProperty
   , phenomenon := "noncausative + property RP: unaccusative verb + result state" }
 
@@ -109,14 +109,14 @@ def swing_shut : ResultativeDatum :=
 def roll_into_field : ResultativeDatum :=
   { exId := "4a"
   , sentence := "The ball rolled into the field"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .noncausativePath
   , phenomenon := "noncausative + path RP: theme moves along path" }
 
 def slide_off_table : ResultativeDatum :=
   { exId := "4b"
   , sentence := "The book slid off the table"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .noncausativePath
   , phenomenon := "noncausative + path RP: theme moves from source" }
 
@@ -125,21 +125,21 @@ def slide_off_table : ResultativeDatum :=
 def laugh_silly : ResultativeDatum :=
   { exId := "5a"
   , sentence := "She laughed herself silly"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .fakeReflexive
   , phenomenon := "fake reflexive: intransitive verb + reflexive + result" }
 
 def drink_sick : ResultativeDatum :=
   { exId := "5b"
   , sentence := "He drank himself sick"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .fakeReflexive
   , phenomenon := "fake reflexive: verb lacks patient; construction adds it" }
 
 def run_ragged : ResultativeDatum :=
   { exId := "5c"
   , sentence := "She ran herself ragged"
-  , judgment := .grammatical
+  , judgment := .ok
   , resType := .fakeReflexive
   , phenomenon := "fake reflexive: unergative verb + reflexive + result" }
 
@@ -152,8 +152,8 @@ Bare activity verbs are atelic: they accept *for* and reject *in*. -/
 structure AspectualContrast where
   /-- Sentence with temporal adverbial -/
   sentence : String
-  /-- Judgment -/
-  judgment : Judgment
+  /-- Acceptability -/
+  judgment : Acceptability
   /-- Which adverbial type -/
   adverbialType : String
   /-- Description -/
@@ -162,19 +162,19 @@ structure AspectualContrast where
 
 def hammer_flat_in : AspectualContrast :=
   { sentence := "She hammered the metal flat in an hour"
-  , judgment := .grammatical
+  , judgment := .ok
   , adverbialType := "in-adverbial"
   , description := "resultative is telic: in-adverbial OK" }
 
 def hammer_flat_for : AspectualContrast :=
   { sentence := "*She hammered the metal flat for an hour"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , adverbialType := "for-adverbial"
   , description := "resultative is telic: for-adverbial bad" }
 
 def hammer_bare_for : AspectualContrast :=
   { sentence := "She hammered the metal for an hour"
-  , judgment := .grammatical
+  , judgment := .ok
   , adverbialType := "for-adverbial"
   , description := "bare activity is atelic: for-adverbial OK" }
 
@@ -189,14 +189,14 @@ def hammer_bare_in : AspectualContrast :=
 def eat_full : ResultativeDatum :=
   { exId := "7a"
   , sentence := "*She ate the food full"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , resType := .causativeProperty
   , phenomenon := "semantic incoherence: patient of eat ≠ entity that becomes full" }
 
 def sleep_flat : ResultativeDatum :=
   { exId := "7b"
   , sentence := "*She slept the bed flat"
-  , judgment := .ungrammatical
+  , judgment := .unacceptable
   , resType := .causativeProperty
   , phenomenon := "semantic incoherence: sleep cannot cause flatness" }
 
@@ -230,8 +230,8 @@ theorem has_all_resultative_types :
 
 /-- Both grammatical and ungrammatical examples are represented. -/
 theorem has_both_judgments :
-    (allExamples.any (·.judgment == .grammatical)) = true ∧
-    (allExamples.any (·.judgment == .ungrammatical)) = true := by
+    (allExamples.any (·.judgment == .ok)) = true ∧
+    (allExamples.any (·.judgment == .unacceptable)) = true := by
   constructor; native_decide
   native_decide
 
@@ -244,13 +244,13 @@ theorem aspectual_both_adverbials :
 
 /-- Telic resultatives accept in-adverbials and reject for-adverbials. -/
 theorem telic_adverbial_pattern :
-    hammer_flat_in.judgment == .grammatical ∧
-    hammer_flat_for.judgment == .ungrammatical := by
+    hammer_flat_in.judgment == .ok ∧
+    hammer_flat_for.judgment == .unacceptable := by
   constructor <;> native_decide
 
 /-- Atelic bare activities accept for-adverbials. -/
 theorem atelic_adverbial_pattern :
-    hammer_bare_for.judgment == .grammatical := by
+    hammer_bare_for.judgment == .ok := by
   native_decide
 
 end Phenomena.Constructions.Resultatives

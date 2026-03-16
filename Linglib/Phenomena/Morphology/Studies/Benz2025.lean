@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.DM.Allosemy
-import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+import Linglib.Core.Empirical
 import Linglib.Fragments.German.Predicates
 
 /-!
@@ -29,13 +29,13 @@ This file formalizes three interconnected contributions from @cite{benz-2025}:
 ## Architecture
 
 - `Theories.Morphology.DM.Allosemy`: general framework + v/n/Voice allosemy
-- `Phenomena.Constructions.Studies.FillmoreKayOConnor1988`: Judgment type
+- `Core.Empirical`: Acceptability type
 -/
 
 namespace Phenomena.Morphology.Studies.Benz2025
 
 open Morphology.DM.Allosemy
-open Phenomena.Constructions.Studies.FillmoreKayOConnor1988 (Judgment)
+open Core.Empirical
 open Fragments.German.Predicates
 open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 
@@ -384,7 +384,7 @@ structure GermanResultativeDatum where
   sentence : String
   gloss : String
   translation : String
-  judgment : Judgment
+  judgment : Acceptability
   verbClass : String
   deriving Repr, BEq
 
@@ -396,27 +396,27 @@ def germanRSPData : List GermanResultativeDatum := [
   { sentence := "Er hämmerte das Metall platt"
   , gloss := "he hammered the.ACC metal flat"
   , translation := "He hammered the metal flat"
-  , judgment := .grammatical
+  , judgment := .ok
   , verbClass := "transitive" },
   { sentence := "Er schießt seinen Gegner tot"
   , gloss := "he shoots his.ACC opponent dead"
   , translation := "He shoots his opponent dead"
-  , judgment := .grammatical
+  , judgment := .ok
   , verbClass := "transitive" },
   { sentence := "Hans hat den Stock kaputt gebrochen"
   , gloss := "Hans has the.ACC stick broken broken.PTCP"
   , translation := "Hans broke the stick"
-  , judgment := .grammatical
+  , judgment := .ok
   , verbClass := "obligatorily transitive" },
   { sentence := "Das Wasser fror fest"
   , gloss := "the.NOM water froze solid"
   , translation := "The water froze solid"
-  , judgment := .grammatical
+  , judgment := .ok
   , verbClass := "unaccusative" },
   { sentence := "Sie haben sich krank/tot geschämt"
   , gloss := "they have REFL sick/dead shamed.PTCP"
   , translation := "They were embarrassed sick/dead"
-  , judgment := .grammatical
+  , judgment := .ok
   , verbClass := "inherently reflexive" }
 ]
 
@@ -438,39 +438,39 @@ def rsp_pfx_contrasts : List (GermanResultativeDatum × GermanResultativeDatum) 
   ( { sentence := "*Sie haben uns arm be-raubt"
     , gloss := "they have us.ACC poor BE-robbed.PTCP"
     , translation := "They robbed us poor"
-    , judgment := .ungrammatical
+    , judgment := .unacceptable
     , verbClass := "prefix verb (be-)" },
     { sentence := "Sie haben uns arm geraubt"
     , gloss := "they have us.ACC poor robbed.PTCP"
     , translation := "They robbed us poor"
-    , judgment := .grammatical
+    , judgment := .ok
     , verbClass := "simplex verb" } ),
   ( { sentence := "*Sie haben ihn tot er-schossen"
     , gloss := "they have him.ACC dead ER-shot.PTCP"
     , translation := "They shot him dead"
-    , judgment := .ungrammatical
+    , judgment := .unacceptable
     , verbClass := "prefix verb (er-)" },
     { sentence := "Sie haben ihn tot geschossen"
     , gloss := "they have him.ACC dead shot.PTCP"
     , translation := "They shot him dead"
-    , judgment := .grammatical
+    , judgment := .ok
     , verbClass := "simplex verb" } ),
   ( { sentence := "*Hans hat den Stock kaputt zer-brochen"
     , gloss := "Hans has the.ACC stick broken ZER-broken.PTCP"
     , translation := "Hans broke the stick broken"
-    , judgment := .ungrammatical
+    , judgment := .unacceptable
     , verbClass := "prefix verb (zer-)" },
     { sentence := "Hans hat den Stock kaputt gebrochen"
     , gloss := "Hans has the.ACC stick broken.ADJ broken.PTCP"
     , translation := "Hans broke the stick broken"
-    , judgment := .grammatical
+    , judgment := .ok
     , verbClass := "simplex verb" } )
 ]
 
 /-- Every RSP+pfx-verb contrast: pfx-verb ungrammatical, simplex OK. -/
 theorem rsp_pfx_contrast_pattern :
     rsp_pfx_contrasts.all (fun (bad, good) =>
-      bad.judgment == .ungrammatical && good.judgment == .grammatical) = true := by
+      bad.judgment == .unacceptable && good.judgment == .ok) = true := by
   native_decide
 
 /-- RSPs are also incompatible with particles.
@@ -480,29 +480,29 @@ def rsp_prt_contrasts : List (GermanResultativeDatum × GermanResultativeDatum) 
   ( { sentence := "*Sie hat den Tisch trocken ab-gewischt"
     , gloss := "she has the.ACC table dry AB-wiped.PTCP"
     , translation := "She wiped the table off dry"
-    , judgment := .ungrammatical
+    , judgment := .unacceptable
     , verbClass := "particle verb (ab-)" },
     { sentence := "Sie hat den Tisch trocken gewischt"
     , gloss := "she has the.ACC table dry wiped.PTCP"
     , translation := "She wiped the table dry"
-    , judgment := .grammatical
+    , judgment := .ok
     , verbClass := "simplex verb" } ),
   ( { sentence := "*Das Baby hat mich nass an-gespuckt"
     , gloss := "the baby has me.ACC wet AN-spit.PTCP"
     , translation := "The baby spat up on me and I was wet"
-    , judgment := .ungrammatical
+    , judgment := .unacceptable
     , verbClass := "particle verb (an-)" },
     { sentence := "Das Baby hat mich nass gespuckt"
     , gloss := "the baby has me.ACC wet spit.PTCP"
     , translation := "The baby spat up on me"
-    , judgment := .grammatical
+    , judgment := .ok
     , verbClass := "simplex verb" } )
 ]
 
 /-- Every RSP+PRT-verb contrast: PRT-verb ungrammatical, simplex OK. -/
 theorem rsp_prt_contrast_pattern :
     rsp_prt_contrasts.all (fun (bad, good) =>
-      bad.judgment == .ungrammatical && good.judgment == .grammatical) = true := by
+      bad.judgment == .unacceptable && good.judgment == .ok) = true := by
   native_decide
 
 -- ════════════════════════════════════════════════════════════════════
