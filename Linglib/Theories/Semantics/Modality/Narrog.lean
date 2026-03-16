@@ -4,7 +4,7 @@ import Linglib.Core.Subjectivity
 
 /-!
 # Narrog's Semantic Map of Modality and Mood
-@cite{narrog-2010} @cite{narrog-2012}
+@cite{narrog-2010} @cite{narrog-2012} @cite{heine-1995}
 
 @cite{narrog-2010}'s two-dimensional semantic map classifies modal meanings along
 two orthogonal axes:
@@ -54,7 +54,7 @@ open Core.Subjectivity (SubjectivityLevel Performativity)
 /-- Whether a modal meaning involves the will of the speaker or subject.
 
     @cite{narrog-2010} §3.1, building on Jespersen ([1924] 1992) and
-    Heine (1995a): "the element of will" is the most fundamental
+    @cite{heine-1995}: "the element of will" is the most fundamental
     distinguishing element between different kinds of mood. -/
 inductive Volitivity where
   | volitive     -- involves will/desire (deontic, boulomaic)

@@ -1404,7 +1404,7 @@ theorem inalienability_ordering :
     - topic constructions arise from topic-comment structure (Topic)
     - comitative constructions arise from 'be with' (Companion schema)
 
-    Heine identifies eight source schemas; we encode the four most common. -/
+    @cite{heine-1997} identifies eight source schemas; we encode the four most common. -/
 inductive PossessionSource where
   /-- Action schema: possession from 'take/hold/seize' → 'have'.
       (e.g., English `have` < OE `habban` 'to hold/seize') -/

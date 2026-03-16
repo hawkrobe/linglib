@@ -37,9 +37,10 @@ probability operators (`EpistemicProbability.lean`) by defining
 6. **UNIF and introspection**: uniformity yields both positive and
    negative introspection for probabilistic beliefs (axiom W9).
 
-## Connection to the Kratzer Pipeline
+## Connection to the Epistemic Scale Hierarchy
 
-`KratzerEpistemicRSA.lean` traces the indirect path:
+The indirect path from Kratzer ordering to RSA worldPrior goes through
+@cite{holliday-icard-2013}'s epistemic likelihood hierarchy:
 
     Kratzer ordering → l-lifting → EpistemicSystemW → ... → RSA worldPrior
 
