@@ -47,7 +47,7 @@ theorem strategy_matches_schema :
 
 /-- Components of the Finnish possessive construction. -/
 structure FiPossessive where
-  /-- Possessor case: adessive (-lla / -llä, vowel harmony). -/
+  /-- Possessor case: adessive (`-lla`, `-llä`; vowel harmony). -/
   possessorCase : String := "ADESS"
   /-- Possessee case: nominative (subject of existential). -/
   possesseeCase : String := "NOM"

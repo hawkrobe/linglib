@@ -155,15 +155,42 @@ def violDiffProfile : Fin 6 → NasalSubInput → ℤ
   | ⟨5, _⟩, _ => 0
 
 -- ============================================================================
--- § 5: Empirical Rates (eq. 6)
+-- § 5: Empirical Rates
 -- ============================================================================
 
 /-- Empirical rates of nasal substitution from @cite{zuraw-2010} type
-    frequencies, as reported in @cite{magri-2025} eq. (6). -/
+    frequencies (@cite{zuraw-hayes-2017} Figure 4, @cite{magri-2025}).
+    The four cells correspond to the two extreme prefixes (maŋ-other =
+    highest rate, paŋ-res = lowest) crossed with /b/ (voiced) and /k/
+    (voiceless). -/
 def nasalSubRate : NasalSubInput → ℚ
   | .mang_b => 916 / 1000  -- 0.916
   | .mang_k => 993 / 1000  -- 0.993
   | .pang_b => 434 / 1000  -- 0.434
   | .pang_k => 909 / 1000  -- 0.909
+
+-- ============================================================================
+-- § 6: Violation Difference Independence
+-- ============================================================================
+
+/-- The violation differences cast to ℝ, for use with `me_predicts_hz`. -/
+def deltaR : Fin 6 → NasalSubInput → ℝ :=
+  fun k x => (violDiffProfile k x : ℝ)
+
+/-- **Violation difference independence**: the violation differences Δₖ
+    satisfy `ViolDiffIndependence` on the nasal substitution square.
+
+    - C₁–C₄ (markedness): Δₖ is the same for /maŋ+X/ and /paŋ+X/
+      (insensitive to prefix = row)
+    - C₅–C₆ (faithfulness): Δₖ is the same for /X+b/ and /X+k/
+      (insensitive to stem = column)
+
+    This is a data-level property of the constraint violation profiles,
+    used by both @cite{zuraw-hayes-2017} and @cite{magri-2025}. -/
+theorem violDiff_independence :
+    ViolDiffIndependence deltaR nasalSubSquare := by
+  intro k
+  simp only [deltaR, violDiffProfile, nasalSubSquare]
+  fin_cases k <;> simp
 
 end Fragments.Tagalog.Phonology

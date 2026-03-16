@@ -459,6 +459,7 @@ import Linglib.Fragments.Finnish.TemporalConnectives
 import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.Finnish.Relativization
 import Linglib.Fragments.Finnish.Morph
+import Linglib.Fragments.Finnish.Possession
 import Linglib.Fragments.French.Binominals
 import Linglib.Fragments.French.Modals
 import Linglib.Fragments.French.Nouns
@@ -510,6 +511,7 @@ import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Turkish.Morph
 import Linglib.Fragments.Turkish.Anaphors
 import Linglib.Fragments.Turkish.Negation
+import Linglib.Fragments.Turkish.Possession
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Burmese.Negation
@@ -538,6 +540,7 @@ import Linglib.Fragments.Russian.Reciprocals
 import Linglib.Fragments.Russian.Morph
 import Linglib.Fragments.Russian.Negation
 import Linglib.Fragments.Russian.AdjAgreement
+import Linglib.Fragments.Russian.Possession
 import Linglib.Fragments.Serbian.Case
 import Linglib.Fragments.Serbian.TemporalConnectives
 import Linglib.Fragments.Slovenian.Case
@@ -552,6 +555,7 @@ import Linglib.Fragments.Tagalog.Morph
 import Linglib.Fragments.Tagalog.Phonology
 import Linglib.Fragments.Italian.DiscourseParticles
 import Linglib.Fragments.Swahili.Reciprocals
+import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Icelandic.Reciprocals
@@ -993,6 +997,7 @@ import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
 import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024
 import Linglib.Phenomena.Possession.Typology
+import Linglib.Phenomena.Possession.Studies.Heine1997
 import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Phenomena.PsychVerbs.Studies.BellettiRizzi1988
@@ -1132,6 +1137,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.Flemming2021
 import Linglib.Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Jaeger2007
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Magri2025
+import Linglib.Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic

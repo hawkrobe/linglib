@@ -9,9 +9,9 @@ Generalization" (Linguistic Inquiry, Early Access).
 
 ## Overview
 
-@cite{hayes-2022} observe that the rates of application of variable
-phonological processes governed by independent factors can be fit onto
-shifted sigmoids at shared abscissas. @cite{magri-2025} reformulates this
+Hayes and Zuraw (@cite{zuraw-hayes-2017}; @cite{hayes-2022}) observe that
+the rates of application of variable phonological processes governed by
+independent factors can be fit onto shifted sigmoids at shared abscissas. @cite{magri-2025} reformulates this
 as a **constant logit-rate difference** condition and proves a
 biconditional: within harmony-based probabilistic phonology, a harmony
 function predicts HZ's generalization **if and only if** it is *separable*

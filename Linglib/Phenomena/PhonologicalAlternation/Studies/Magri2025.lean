@@ -11,7 +11,8 @@ Sigmoids Generalization" (Linguistic Inquiry, Early Access).
 ## Main result
 
 Within harmony-based probabilistic phonology, an n-ary harmony function
-predicts @cite{hayes-2022}'s shifted-sigmoids generalization **if and only
+predicts the shifted-sigmoids generalization of Hayes and Zuraw
+(@cite{zuraw-hayes-2017}; @cite{hayes-2022}) **if and only
 if** the harmony is *separable* — it decomposes as `∏ₖ hₖ(Cₖ)^{wₖ}`.
 Since MaxEnt harmony is separable (each `hₖ = exp(−·)`), ME predicts HZ
 as a corollary. And since any separable harmony can be construed as ME
@@ -111,23 +112,8 @@ theorem violDiff_consistent (k : Fin 6) (x : NasalSubInput) :
 -- § 3: Violation Difference Independence
 -- ============================================================================
 
-/-- The violation differences cast to ℝ, for use with `me_predicts_hz`. -/
-def deltaR : Fin 6 → NasalSubInput → ℝ :=
-  fun k x => (violDiffProfile k x : ℝ)
-
-/-- **Violation difference independence** (§2.3–2.4): the violation
-    differences Δₖ satisfy `ViolDiffIndependence` on the nasal
-    substitution square.
-
-    - C₁–C₄ (markedness): Δₖ is the same for /maŋ+X/ and /paŋ+X/
-      (insensitive to prefix = row)
-    - C₅–C₆ (faithfulness): Δₖ is the same for /X+b/ and /X+k/
-      (insensitive to stem = column) -/
-theorem violDiff_independence :
-    ViolDiffIndependence deltaR nasalSubSquare := by
-  intro k
-  simp only [deltaR, violDiffProfile, nasalSubSquare]
-  fin_cases k <;> simp
+-- `deltaR` and `violDiff_independence` are data-level properties of the
+-- Tagalog constraint profiles, now defined in `Fragments.Tagalog.Phonology`.
 
 -- ============================================================================
 -- § 4: ME Predicts HZ (§3.6, eq. 22)
@@ -179,7 +165,8 @@ theorem logitRate_pang_k (w : Fin 6 → ℚ) :
   simp only [Fin.sum_univ_six, violDiffProfile]; ring
 
 /-- The constant logit-rate difference equals `−w₂ + w₃ + w₄`
-    for both rows (eq. 18d), regardless of weights. -/
+    for both rows, regardless of weights. This follows from the
+    insensitivity structure of the six constraints (§2.3). -/
 theorem hz_constant_value (w : Fin 6 → ℚ) :
     (∑ k : Fin 6, w k * violDiffProfile k .mang_b : ℚ) -
     (∑ k : Fin 6, w k * violDiffProfile k .mang_k : ℚ) =

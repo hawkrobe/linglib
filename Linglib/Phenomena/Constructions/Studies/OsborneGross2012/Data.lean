@@ -554,7 +554,7 @@ theorem fko1988_idiom_types_are_catenae :
     provide the DG catena analysis. -/
 theorem cc_matches_fko1988 :
     comparativeCorrelative.name = "the X-er the Y-er" ∧
-    comparativeCorrelative.specificity = .fullyAbstract ∧
+    comparativeCorrelative.specificity = .partiallyOpen ∧
     isCatena theMoreTheFatter.deps [0, 1, 2, 3] = true ∧
     isCatena theMoreTheFatter.deps [4, 5, 6, 7] = true := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> native_decide

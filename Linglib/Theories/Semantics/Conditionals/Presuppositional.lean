@@ -4,7 +4,10 @@ import Linglib.Core.Semantics.Presupposition
 /-!
 # Presuppositional Conditionals: K/P vs K/P*
 
-@cite{sharvit-2025} @cite{heim-1992} @cite{rooth-partee-1982} @cite{perez-carballo-2009}Formalizes the contrast between Karttunen/Peters (K/P) and Sharvit's K/P*
+@cite{sharvit-2025} @cite{heim-1992} @cite{rooth-partee-1982} @cite{perez-carballo-2009}
+@cite{karttunen-peters-1979}
+
+Formalizes the contrast between Karttunen/Peters (K/P) and Sharvit's K/P*
 conditionals from "Rooth-Partee Conditionals" (Linguistics & Philosophy, 2025).
 
 ## The problem

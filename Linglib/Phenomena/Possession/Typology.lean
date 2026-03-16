@@ -1347,6 +1347,58 @@ theorem all_adnominal_strategies_attested :
   native_decide
 
 -- ============================================================================
+-- Possessive Notions (@cite{heine-1997} §2.3)
+-- ============================================================================
+
+/-- The semantic *targets* of possessive constructions: what kind of possessive
+    relationship is expressed. Distinct from `PossessionSource`, which encodes
+    the *cognitive source* (how the construction arose diachronically).
+
+    @cite{heine-1997} §2.3 identifies seven notions ordered by increasing
+    abstractness:
+
+      physical < temporary < permanent < inalienable < abstract
+
+    with two additional notions for inanimate possessors (inanimate inalienable,
+    inanimate alienable). These notions form the target meanings that
+    source schemas grammaticalize into. -/
+inductive PossessiveNotion where
+  /-- Physical possession: possessor has physical control over possessee.
+      (e.g., "I have a pen (in my hand)") -/
+  | physical
+  /-- Temporary possession: possessor controls possessee for a limited time.
+      (e.g., "I have a rental car") -/
+  | temporary
+  /-- Permanent possession: possessor owns possessee.
+      (e.g., "I have a house") -/
+  | permanent
+  /-- Inalienable possession: possessee is inherently associated with possessor.
+      (e.g., "I have two sisters", "I have blue eyes") -/
+  | inalienable
+  /-- Abstract possession: possessee is non-concrete.
+      (e.g., "I have a headache", "I have an idea") -/
+  | abstract
+  /-- Inanimate inalienable: inanimate possessor, inherent relation.
+      (e.g., "The tree has branches", "The table has four legs") -/
+  | inanimateInalienable
+  /-- Inanimate alienable: inanimate possessor, non-inherent relation.
+      (e.g., "The room has a window" -- contingent, not body-part-like) -/
+  | inanimateAlienable
+  deriving DecidableEq, BEq, Repr
+
+/-- Abstractness ordering: higher = more abstract possessive notion.
+    Physical possession is the most concrete; abstract the most abstract.
+    Inanimate notions are ranked by extending the animacy dimension. -/
+def PossessiveNotion.abstractness : PossessiveNotion → Nat
+  | .physical             => 0
+  | .temporary             => 1
+  | .permanent             => 2
+  | .inalienable           => 3
+  | .abstract              => 4
+  | .inanimateInalienable  => 5
+  | .inanimateAlienable    => 6
+
+-- ============================================================================
 -- The Inalienability Hierarchy
 -- ============================================================================
 
@@ -1396,31 +1448,37 @@ theorem inalienability_ordering :
 
 /-- Diachronic sources of predicative possession constructions.
 
-    Predicative possession verbs and constructions arise from different
-    semantic sources via grammaticalization:
-    - have-verbs often arise from 'take', 'hold', 'seize' (Action schema)
-    - locational constructions arise from existential + locative (Location)
-    - genitive/dative constructions arise from copula + oblique (Goal/Companion)
-    - topic constructions arise from topic-comment structure (Topic)
-    - comitative constructions arise from 'be with' (Companion schema)
-
-    @cite{heine-1997} identifies eight source schemas; we encode the four most common.
-    The same schemas appear in @cite{heine-2009} Table 29.5 for possessive case
-    grammaticalization; see also `Core.caseExtension` for the broader case
-    extension paths from @cite{heine-2009} Table 29.6. -/
+    @cite{heine-1997} Table 2.1 identifies eight event schemas from which
+    predicative possession constructions arise via grammaticalization.
+    The same schemas appear in @cite{heine-2009} Table 29.5 for possessive
+    case grammaticalization; see also `Core.caseExtension` for the broader
+    case extension paths from @cite{heine-2009} Table 29.6. -/
 inductive PossessionSource where
-  /-- Action schema: possession from 'take/hold/seize' → 'have'.
+  /-- Action schema: "X takes Y" → 'X has Y'.
       (e.g., English `have` < OE `habban` 'to hold/seize') -/
   | action
-  /-- Location schema: possession from 'X is at possessor' → 'possessor has X'.
+  /-- Location schema: "Y is located at X" → 'X has Y'.
       (e.g., Finnish adessive, Russian `u` + GEN) -/
   | location
-  /-- Goal schema: possession from 'X exists to/for possessor'.
-      (e.g., Hindi `mere paas`, Irish `agam`) -/
-  | goal
-  /-- Companion schema: possession from 'possessor is with X'.
-      (e.g., Swahili `na-`, Portuguese `ter` < Latin `tenere` 'hold') -/
+  /-- Companion schema: "X is with Y" → 'X has Y'.
+      (e.g., Swahili `-na` < copula `-wa` + comitative `na` 'with',
+       Venda `na` 'with') -/
   | companion
+  /-- Genitive schema: "X's Y exists" → 'X has Y'.
+      (e.g., Turkish `Hasan-ın inek-i var` 'Hasan-GEN cow-POSS exists') -/
+  | genitive
+  /-- Goal schema: "Y exists for/to X" → 'X has Y'.
+      (e.g., Hindi `mere paas kitaab hai`, Irish `tá leabhar agam`) -/
+  | goal
+  /-- Source schema: "Y exists from X" → 'X has Y'.
+      (e.g., some West African languages with ablative possessors) -/
+  | source
+  /-- Topic schema: "As for X, Y exists" → 'X has Y'.
+      (e.g., Japanese `watashi-ni-wa hon-ga aru` 'I-DAT-TOP book-NOM exists') -/
+  | topic
+  /-- Equation schema: "Y is X's (property)" → 'X has Y'.
+      (e.g., Scots Gaelic `is leam an leabhar` 'is mine the book') -/
+  | equation
   deriving DecidableEq, BEq, Repr
 
 /-- Map predicative strategies to their likely grammaticalization source. -/
@@ -1428,12 +1486,11 @@ def predicativeSource : PredicativePossession -> PossessionSource
   | .haveVerb => .action
   | .locational => .location
   | .genitiveDative => .goal
-  | .topic => .location
+  | .topic => .topic
   | .comitative => .companion
 
 /-- In our sample, the two most common grammaticalization sources for
-    predicative possession are location (locational + topic = 8) and
-    action (have-verb = 4). -/
+    predicative possession are location and action. -/
 theorem location_source_dominates :
     let locationCount := (allLanguages.filter (λ p =>
       predicativeSource p.predicativeStrategy == .location)).length
@@ -1442,12 +1499,13 @@ theorem location_source_dominates :
     locationCount > actionCount := by
   native_decide
 
-/-- All four grammaticalization sources are attested in our sample. -/
-theorem all_sources_attested :
+/-- Five of the eight schemas are attested in our sample via `predicativeSource`. -/
+theorem attested_sources :
     allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .action) &&
     allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .location) &&
     allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .goal) &&
-    allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .companion)
+    allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .companion) &&
+    allLanguages.any (λ p => predicativeSource p.predicativeStrategy == .topic)
     = true := by
   native_decide
 

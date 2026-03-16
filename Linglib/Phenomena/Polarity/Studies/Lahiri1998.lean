@@ -16,9 +16,9 @@ compositional semantics of these parts.
 
 ## The implicature clash mechanism
 
-1. *bhii* in focused contexts contributes a scalar implicature (following
-   @cite{karttunen-peters-1979}) that the assertion is the LEAST LIKELY
-   among focus-induced alternatives
+1. *bhii* in focused contexts contributes a conventional implicature
+   (@cite{karttunen-peters-1979}), reanalyzed by Lahiri as scalar, that
+   the assertion is the LEAST LIKELY among focus-induced alternatives
 2. Weak indefinites as bottom of scale: *ek* ('one') denotes the weakest
    cardinality predicate — true of everything that exists
 3. In UE contexts: every alternative entails the assertion (because 'one'
