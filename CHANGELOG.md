@@ -8,7 +8,7 @@
 - **`skipReflection` workaround**: remove all 11 `set_option rsa_predict.skipReflection true` + `maxHeartbeats 800000` from `ScontrasPearl2021RSA.lean` — reflection now handles all goals in <250ms (was using slow CProof path)
 
 ### Changed
-- **All rsa_predict invocations now use reflection**: confirmed across 400 invocations in 38 study files — zero AutoDetect, zero CProof fallback
+- **rsa_predict tactic simplified**: remove AutoDetect and CProof fallback paths from main tactic dispatch (~1060 → ~160 lines). All ~400 invocations across 38 study files use reflection exclusively; the old paths were unreachable dead code. AutoDetect.lean and ProofBuilder.lean still compile but are no longer imported by the tactic
 
 ## [0.229.305] - 2026-03-15
 
