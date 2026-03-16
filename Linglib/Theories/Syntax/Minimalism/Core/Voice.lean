@@ -323,7 +323,7 @@ theorem phase_iff_theta (v : VoiceHead)
   rcases h with rfl | rfl | rfl | rfl <;> rfl
 
 -- ============================================================================
--- § 9: Parametric Voice Decomposition (@cite{alexiadou-schfer-2015}, @cite{schfer-2017})
+-- § 9: Parametric Voice Decomposition (@cite{alexiadou-schaefer-2015}, @cite{schaefer-2017})
 -- ============================================================================
 
 /-- How a Voice head introduces (or fails to introduce) an external
@@ -333,7 +333,7 @@ theorem phase_iff_theta (v : VoiceHead)
       the external argument occupies Spec,VoiceP
     - `thematicExistential`: [+∃x] — introduces agent/causer via ∃-binding;
       agent is semantically present but syntactically implicit
-      (Finnish impersonal "passive"; @cite{schfer-2017}: 143–144)
+      (@cite{schaefer-2017} (31b)/(31e): "medio-passive Voice" {λe∃x[agent(e,x)]})
     - `expletive`: [−λx] — no semantic contribution; Voice is semantically
       vacuous (anticausative SE, middles) -/
 inductive ExternalArgSemantics where
@@ -344,12 +344,12 @@ inductive ExternalArgSemantics where
 
 /-- The ±D / ±λx parametric decomposition of Voice heads.
 
-    From @cite{alexiadou-schfer-2015} (especially p. 109ff), extended by
-    @cite{schfer-2017}: 143–144. Two binary parameters generate the core
+    From @cite{alexiadou-schaefer-2015} (p. 109, ex. (12)), extended by
+    @cite{schaefer-2017}. Two binary parameters generate the core
     cross-linguistic typology of Voice:
 
     - **±D** (`selectsSpecifier`): does Voice select a syntactic specifier?
-    - **±λx** (`extArgSemantics`): does Voice introduce semantic agentivity?
+    - **±λx** (`extArgSemantics`): does Voice introduce an external argument variable?
 
     `none` values represent **underspecification**: the morpheme is compatible
     with multiple parameter settings, with the actual setting determined by

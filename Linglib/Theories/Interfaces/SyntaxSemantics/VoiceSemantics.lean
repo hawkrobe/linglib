@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Montague.Variables
 /-!
 # Voice Semantics: Compositional Operations on Argument Structure
 
-@cite{beavers-udayana-2022} @cite{kratzer-1996} @cite{alexiadou-schfer-2015}
+@cite{beavers-udayana-2022} @cite{kratzer-1996} @cite{alexiadou-schaefer-2015}
 
 Voice heads are type-changing compositional functions: they take a VP
 denotation and return a clause-level meaning with modified argument

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.298] - 2026-03-15
+
+### Fixed
+- **Bib audit: `alexiadou-schaefer-2015`**: fix key typo (`schfer` → `schaefer`), entry type (`@article` → `@book`), malformed author field, missing subtitle, `journal` → `publisher`/`series`; update all 4 Lean cite sites
+- **Add verified `schaefer-2017` bib entry**: "Romance and Greek Medio-Passives and the Typology of Voice" in *The Verbal Domain* (OUP), pp. 129–152; fix key typo in 3 Voice.lean cite sites; flag unverified page refs
+- **Fix `di-` parameter table** in `VoiceSystem.lean`: table said `−λx` but code and docstring say `+∃x` (thematicExistential); fix table to match
+- **Fix Voice.lean docstring**: "semantic agentivity" → "external argument variable" to match Alexiadou et al. 2015 p. 109
+
 ## [0.229.297] - 2026-03-15
 
 ### Changed

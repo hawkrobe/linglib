@@ -4476,16 +4476,19 @@
   validated = {true},
   sources   = {Core/Logic/NaturalLogic.lean}
 }
-% REF: Morzycki, M. (2009). Degree modification of gradable nouns.
-@misc{morzycki-2009,
-  author    = {Morzycki, M},
+% REF: Morzycki, M. (2009). Degree modification of gradable nouns: size adjectives and adnominal degree morphemes. *Natural Language Semantics* 17:175–203.
+@article{morzycki-2009,
+  author    = {Morzycki, Marcin},
   year      = {2009},
-  title     = {Degree modification of gradable nouns},
+  title     = {Degree modification of gradable nouns: size adjectives and adnominal degree morphemes},
+  journal   = {Natural Language Semantics},
+  volume    = {17},
+  pages     = {175--203},
   subfield  = {semantics/compositional},
   role      = {cited},
   doi       = {10.1007/s11050-009-9045-7},
   validated = {true},
-  sources   = {Phenomena/Gradability/Data.lean;Theories/Semantics/Probabilistic/SDS/ThresholdInstances.lean;Theories/Semantics/Probabilistic/SDS/ThresholdSemantics.lean}
+  sources   = {Phenomena/Gradability/Studies/Morzycki2009.lean;Theories/Semantics/Lexical/Noun/GradableNouns.lean;Theories/Semantics/Lexical/Noun/Binominal.lean;Theories/Semantics/Probabilistic/SDS/ThresholdInstances.lean;Theories/Semantics/Probabilistic/SDS/ThresholdSemantics.lean;Theories/Semantics/Probabilistic/SDS/Marginalization.lean}
 }
 % REF: Myung, J. I. & Pitt, M. A. (2009). Optimal Experimental Design for Model Discrimination. *Psychological Review* 116(3): 
 @article{myung-pitt-2009,
@@ -4918,17 +4921,19 @@
   validated = {true},
   sources   = {Fragments/English/MeasurePhrases.lean;Phenomena/Quantification/Scontras2014Bridge.lean;Theories/Semantics/Events/Krifka1989.lean;Theories/Semantics/Probabilistic/Measurement/Basic.lean}
 }
-% REF: Alexiadou, A., E. Anagnostopoulou & F. Schäfer (2015). *External Arguments in Transitivity Alternations*. Oxford.
-@article{alexiadou-schfer-2015,
-  author    = {Alexiadou, A., E. Anagnostopoulou and F. Schäfer},
+% REF: Alexiadou, Artemis, Elena Anagnostopoulou & Florian Schäfer (2015). *External Arguments in Transitivity Alternations: A Layering Approach*. OUP.
+@book{alexiadou-schaefer-2015,
+  author    = {Alexiadou, Artemis and Anagnostopoulou, Elena and Sch\"{a}fer, Florian},
   year      = {2015},
-  title     = {External Arguments in Transitivity Alternations},
-  journal   = {Oxford.},
+  title     = {External Arguments in Transitivity Alternations: A Layering Approach},
+  publisher = {Oxford University Press},
+  series    = {Oxford Studies in Theoretical Linguistics},
+  number    = {55},
   doi       = {10.1093/acprof:oso/9780199571949.001.0001},
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {true},
-  sources   = {Theories/Interfaces/SyntaxSemantics/Minimalism/VoiceTheta.lean}
+  sources   = {Theories/Interfaces/SyntaxSemantics/VoiceSemantics.lean;Theories/Interfaces/SyntaxSemantics/Minimalism/VoiceTheta.lean;Theories/Syntax/Minimalism/Core/Voice.lean;Fragments/Indonesian/VoiceSystem.lean}
 }
 % REF: Antonyuk (2015). Quantifier scope and scope freezing in Russian.
 @phdthesis{antonyuk-2015,
@@ -11515,6 +11520,20 @@
   role      = {formalized},
   sources   = {Theories/Interfaces/SyntaxSemantics/Minimalism/VoiceTheta.lean}
 }
+% REF: Schäfer, Florian (2017). Romance and Greek medio-passives and the typology of Voice.
+@incollection{schaefer-2017,
+  author    = {Sch\"{a}fer, Florian},
+  year      = {2017},
+  title     = {Romance and Greek Medio-Passives and the Typology of Voice},
+  booktitle = {The Verbal Domain},
+  editor    = {D'Alessandro, Roberta and Franco, Irene and Gallego, \'{A}ngel J.},
+  pages     = {129--152},
+  publisher = {Oxford University Press},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Theories/Syntax/Minimalism/Core/Voice.lean}
+}
 
 @phdthesis{scott-2023,
   author    = {Scott, Tessa},
@@ -11719,7 +11738,7 @@
   subfield  = {syntax},
   validated = {true},
   role      = {foundational},
-  sources   = {Comparisons/CommandRelations.lean;Phenomena/Anaphora/Coreference.lean}
+  sources   = {Phenomena/Anaphora/Compare.lean;Phenomena/Anaphora/Coreference.lean}
 }
 
 @book{chomsky-1957,
@@ -11883,7 +11902,7 @@
   subfield  = {syntax},
   validated = {true},
   role      = {cited},
-  sources   = {Comparisons/CommandRelations.lean;Comparisons/Mueller2013.lean}
+  sources   = {Phenomena/Anaphora/Compare.lean;Comparisons/Mueller2013.lean}
 }
 
 @book{baker-2015,
@@ -13533,7 +13552,7 @@
   subfield  = {syntax},
   role      = {formalized},
   validated = {true},
-  sources   = {Theories/Syntax/Minimalism/Core/CyclicAgree.lean;Theories/Syntax/Minimalism/Core/PersonGeometry.lean}
+  sources   = {Theories/Syntax/Minimalism/Core/CyclicAgree.lean;Theories/Syntax/Minimalism/Core/PersonGeometry.lean;Phenomena/Agreement/Studies/BejarRezac2009.lean}
 }
 % REF: Cysouw, M. (2009). *The Paradigmatic Structure of Person Marking*. OUP.
 @book{cysouw-2009,
@@ -15532,7 +15551,7 @@
   validated = {true},
   subfield  = {comparative},
   role      = {cited},
-  sources   = {Comparisons/CommandRelations.lean}
+  sources   = {Phenomena/Anaphora/Compare.lean}
 }
 % REF: Hale (1983). Warlpiri and the grammar of non-configurational languages.
 @misc{hale-1983,
@@ -15543,7 +15562,7 @@
   subfield  = {comparative},
   role      = {cited},
   validated = {true},
-  sources   = {Comparisons/CommandRelations.lean}
+  sources   = {Phenomena/Anaphora/Compare.lean}
 }
 % REF: Barker, C. & G. Pullum (1990). "A Theory of Command Relations." Linguistics and Philosophy 13:1-34.
 @article{barker-pullum-1990,
@@ -15557,7 +15576,7 @@
   subfield  = {comparative},
   role      = {cited},
   validated = {true},
-  sources   = {Comparisons/CommandRelations.lean;Theories/Syntax/Minimalism/Formal/Amalgamation.lean}
+  sources   = {Phenomena/Anaphora/Compare.lean;Theories/Syntax/Minimalism/Formal/Amalgamation.lean}
 }
 % REF: Hudson (1990). English Word Grammar. (DG with grammatical functions as primitive)
 @book{hudson-1990,
@@ -15569,7 +15588,7 @@
   subfield  = {comparative},
   role      = {cited},
   validated = {true},
-  sources   = {Comparisons/CommandRelations.lean;Theories/Syntax/DependencyGrammar/Formal/HeadCriteria.lean}
+  sources   = {Phenomena/Anaphora/Compare.lean;Theories/Syntax/DependencyGrammar/Formal/HeadCriteria.lean}
 }
 % REF: Williamson, T. (1994). Vagueness.
 @misc{williamson-1994,
@@ -15656,7 +15675,7 @@
   subfield  = {comparative},
   role      = {cited},
   validated = {true},
-  sources   = {Comparisons/CommandRelations.lean;Theories/Syntax/DependencyGrammar/CRDC.lean}
+  sources   = {Phenomena/Anaphora/Compare.lean;Theories/Syntax/DependencyGrammar/CRDC.lean}
 }
 % REF: Sumers, T.R., Ho, M.K., Griffiths, T.L., & Hawkins, R.D. (2023). Reconciling truthfulness and relevance as epistemic and
 @misc{sumers-hawkins-2023,

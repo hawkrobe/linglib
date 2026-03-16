@@ -30,13 +30,13 @@ Indonesian has two structurally distinct passive constructions:
 
 ## Parametric decomposition
 
-Under the Minimalist analysis of @cite{alexiadou-schfer-2015}, the three
+Under the Minimalist analysis of @cite{alexiadou-schaefer-2015}, the three
 voices occupy distinct positions in the ±D / ±λx parameter space:
 
 | Voice | ±D | ±λx | Notes |
 |-------|----|-----|-------|
 | meN-  | +D | +λx (arg) | Active: projects agent specifier |
-| di-   | +D | −λx | Passive: specifier is weak implicit *e*[−D] |
+| di-   | +D | +∃x | Passive: agent existentially bound but semantically active |
 | ber-  | ? | ? | Underspecified: both params determined by context |
 
 The key property of *ber-* is underspecification: the same morpheme
@@ -92,7 +92,7 @@ def menParams : VoiceParams :=
     syntactically defective (lacking [+D]).
 
     Unlike English passive Voice (which is [+D, −λx] in the
-    @cite{alexiadou-schfer-2015} typology), *di-*'s implicit argument is
+    @cite{alexiadou-schaefer-2015} typology), *di-*'s implicit argument is
     semantically active: it licenses *oleh* 'by' phrases and controls
     rationale clause PRO (@cite{beavers-udayana-2022}: §2.1). This places
     *di-* in the [+D, +∃x] cell — specifier selected, agent existentially
