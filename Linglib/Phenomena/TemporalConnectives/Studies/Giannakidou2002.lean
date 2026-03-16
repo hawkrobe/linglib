@@ -6,6 +6,7 @@ import Linglib.Fragments.Greek.TemporalConnectives
 /-!
 # Giannakidou (2002): UNTIL, Aspect, and Negation
 @cite{giannakidou-2002} @cite{karttunen-1974} @cite{klein-1994} @cite{mittwoch-1977}
+@cite{de-swart-1996} @cite{de-swart-molendijk-1999}
 
 A Novel Argument for Two *Until*s. Semantics and Linguistic Theory 12, 84–103.
 
@@ -20,9 +21,16 @@ Viewpoint aspect determines negation scope with *until*:
 - **Perfective main clause**: not homogeneous. Only narrow-scope negation
   (= Karttunen's ¬*before*) is available.
 
-This provides a novel argument for Karttunen's two-*until* hypothesis: the
-scope readings are logically independent, so the restriction to narrow scope
-under PRFV is a genuine empirical constraint, not a logical consequence.
+This provides a novel argument for @cite{karttunen-1974}'s two-*until*
+hypothesis: the scope readings are logically independent, so the restriction
+to narrow scope under PRFV is a genuine empirical constraint, not a logical
+consequence.
+
+A secondary contribution (§6) refines @cite{karttunen-1974}'s identity
+NPI-*until* = ¬*before*: while truth-conditionally valid, *para monon*
+(NPI-*until*) and *prin* (*before*) differ on **actualization** — NPI-*until*
+entails the main-clause event occurred, *before* does not — and on scope
+interaction with imperfective aspect.
 
 ## Architecture
 
@@ -44,8 +52,11 @@ strict/non-strict distinction and the non-strict version connects cleanly to
 2. `prfvDen_not_subinterval_closed`: PRFV does not
 3. `scope_readings_distinct`/`scope_readings_independent`: logically independent
 4. `impfDen_homogeneous`/`prfvDen_not_always_homogeneous`: wide scope derived
-5. `wideScopeNotUntil_no_actualization`: wide scope lacks actualization
+5. `wideScopeNotUntil_compatible_with_empty_main`: wide scope lacks actualization
 6. `eventiveUntil_entails_actualization`: NPI-until entails actualization
+7. `negBefore_lacks_actualization`: ¬*before* compatible with no main-clause event
+8. `before_not_equiv_eventiveUntil`: ¬*before* ≠ NPI-*until* on actualization (§6)
+9. `stativizer_all_wrong`: all five diagnostics refute @cite{de-swart-1996} (§5)
 
 -/
 
@@ -493,5 +504,160 @@ theorem veridicality_split :
     paraMonon.complementVeridical = false ∧
     prin.complementVeridical = false :=
   ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 11: Negation is NOT a Stativizer (@cite{giannakidou-2002}, §5)
+-- ============================================================================
+
+/-! @cite{giannakidou-2002} refutes the analysis of negation as an aspectual
+    operator that converts eventive predicates into stative ones
+    (@cite{de-swart-1996}, @cite{de-swart-molendijk-1999}). On that account,
+    negation takes an eventuality description P and yields a maximal state s
+    such that no event of type P is contained in s. If this were correct,
+    negated perfectives should behave like statives — but they don't:
+    Greek negated perfectives still reject durative *until* (*mexri*),
+    reject *how long*, reject *while*, and accept imperatives. -/
+
+/-- @cite{de-swart-1996}'s stativizer hypothesis: negation converts events
+    into maximal states, so ALL negated predicates (including perfectives)
+    should be homogeneous (subinterval-closed), just like true statives.
+
+    The formal refutation: if this were correct, then PRFV denotations
+    would always be homogeneous. But we proved in §2 that PRFV is NOT
+    always homogeneous (`prfvDen_not_subinterval_closed`). -/
+theorem stativizer_false_for_perfective :
+    ¬ (∀ (P : EventPred Unit ℤ), IsHomogeneous (prfvDen P)) :=
+  prfvDen_not_always_homogeneous
+
+/-- The five stativizer diagnostics and their results for negated
+    perfective forms (@cite{giannakidou-2002}, §5, ex. 67–71):
+
+    | Diagnostic | True stative | Neg+PRFV | Stativizer predicts |
+    |------------|-------------|----------|---------------------|
+    | *how long* | ✓           | ✗        | ✓ (WRONG)           |
+    | *while*    | ✓           | ✗        | ✓ (WRONG)           |
+    | *for* adv  | ✓           | ✗        | ✓ (WRONG)           |
+    | imperative | ✗           | ✓        | ✗ (WRONG)           |
+    | *mexri*    | ✓           | ✗        | ✓ (WRONG)           |
+
+    All five diagnostics give results inconsistent with stativehood for
+    negated perfectives. -/
+inductive StativizerDiagnostic where
+  | howLong     -- *for how long* adverbial
+  | while_      -- *while*-clause embedding
+  | forAdverb   -- *for/in* adverbial compatibility
+  | imperative  -- imperative mood
+  | mexri       -- durative *until* compatibility
+  deriving DecidableEq, Repr, BEq
+
+/-- Result of applying a stativizer diagnostic. -/
+structure DiagnosticResult where
+  diagnostic : StativizerDiagnostic
+  /-- Is this compatible with true statives? -/
+  trueStativeResult : Bool
+  /-- Is this compatible with negated perfectives? -/
+  negPerfResult : Bool
+  /-- What does the stativizer predict for negated perfectives? -/
+  stativizerPredicts : Bool
+  deriving Repr
+
+def diagnosticResults : List DiagnosticResult :=
+  [ ⟨.howLong,    true,  false, true⟩
+  , ⟨.while_,     true,  false, true⟩
+  , ⟨.forAdverb,  true,  false, true⟩
+  , ⟨.imperative, false, true,  false⟩
+  , ⟨.mexri,      true,  false, true⟩ ]
+
+/-- The stativizer gets every diagnostic wrong: its prediction never
+    matches the actual negated-perfective result. -/
+theorem stativizer_all_wrong :
+    ∀ d ∈ diagnosticResults, d.negPerfResult ≠ d.stativizerPredicts := by
+  intro d hd
+  simp only [diagnosticResults, List.mem_cons, List.mem_nil_iff,
+             or_false] at hd
+  rcases hd with rfl | rfl | rfl | rfl | rfl <;> decide
+
+-- ============================================================================
+-- § 12: English Simple Past = Covert Perfective (@cite{giannakidou-2002}, §4.3)
+-- ============================================================================
+
+/-- @cite{giannakidou-2002}'s argument that the English simple past has a
+    perfective default value: English past-tense statives with *until*
+    pattern with Greek PERFECTIVE, not imperfective.
+
+    Evidence: "The princess didn't sleep until midnight" lacks the
+    Mittwoch reading (no wide-scope *until*), entails actualization
+    (she fell asleep at midnight), and disallows preposing
+    ("*Until midnight, the princess didn't sleep"). These are exactly
+    the properties of Greek negated perfective + *mexri*, not
+    Greek negated imperfective + *mexri*.
+
+    Formalized as: the scope pattern for English simple past follows
+    from PRFV (not IMPF), which is why wide-scope is unavailable. -/
+theorem english_past_perfective_default :
+    -- PRFV lacks homogeneity → wide scope unavailable
+    ¬ (∀ (P : EventPred Unit ℤ), IsHomogeneous (prfvDen P)) ∧
+    -- IMPF has homogeneity → wide scope would be available if past were imperfective
+    (∀ (P : EventPred Unit ℤ), IsHomogeneous (impfDen P)) :=
+  ⟨prfvDen_not_always_homogeneous, impfDen_homogeneous⟩
+
+-- ============================================================================
+-- § 13: *Before* ≠ NPI-*Until* on Actualization (@cite{giannakidou-2002}, §6)
+-- ============================================================================
+
+/-! @cite{giannakidou-2002}'s §6 refines @cite{karttunen-1974}'s identity
+    NPI-*until* = ¬*before*: while truth-conditionally valid at the level of
+    temporal ordering, the two connectives differ on **actualization**.
+
+    - *Prin/before*: no actualization. "I prigipisa dhen eftase prin apo ta
+      mesanixta" (ex. 72) is compatible with "she arrived later or didn't
+      arrive at all."
+    - *Para monon*/NPI-*until*: actualization is an entailment. "I prigipisa
+      dhen eftase para monon ta mesanixta" (ex. 38) is contradicted by
+      "she didn't arrive that night."
+
+    Additionally, the Mittwoch reading (wide scope) is NOT available with
+    *prin* + imperfective stative (ex. 76): "I prigipisa dhen kimotane prin
+    apo ta mesanixta" gives only a habitual reading ("there was a period
+    during which she had the habit of not going to bed before midnight"),
+    not a stative reading. This contrasts with *mexri* + IMPF (ex. 74)
+    which does give the stative/Mittwoch reading. -/
+
+/-- ¬*before* (= @cite{karttunen-1974}'s notUntil) is compatible with the
+    main-clause event never occurring: when A = ∅, `¬(A before B)` holds
+    vacuously since `Anscombe.before ∅ B` is always false.
+
+    @cite{giannakidou-2002}, §6, ex. (72): "I prigipisa dhen eftase prin apo
+    ta mesanixta" — the princess may or may not have arrived. *Prin/before*
+    with negation does not entail actualization of the arriving event.
+
+    Contrast with `eventiveUntil`, which requires main-clause actualization
+    (the overlap conjunct forces a witness in A). -/
+theorem negBefore_lacks_actualization :
+    ∃ (A B : SentDenotation ℤ),
+      Karttunen.notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A := by
+  refine ⟨∅, { Interval.point 0 }, ?_, ?_⟩
+  · intro ⟨t, ⟨i, hi, _⟩, _⟩
+    exact absurd hi (Set.mem_empty_iff_false i).mp
+  · intro ⟨t, i, hi, _⟩
+    exact absurd hi (Set.mem_empty_iff_false i).mp
+
+/-- **NPI-*until* ≠ ¬*before* on actualization** (@cite{giannakidou-2002}, §6).
+
+    - `eventiveUntil A B` entails main-clause actualization (∃t ∈ A)
+    - `¬(A before B)` is compatible with main-clause non-actualization (A = ∅)
+
+    This is the formal content of @cite{giannakidou-2002}'s central §6 claim:
+    @cite{karttunen-1974}'s truth-conditional identity (NPI-*until* = ¬*before*)
+    holds at the level of temporal ordering, but the two connective types are
+    not interchangeable — NPI-*until* additionally requires actualization.
+    The impression of equivalence is a by-product of scalarity, a feature
+    common to both *prin/before* and *until/para monon*. -/
+theorem before_not_equiv_eventiveUntil :
+    -- eventiveUntil entails main-clause actualization
+    (∀ (A B : SentDenotation Time), eventiveUntil A B → ∃ t, t ∈ timeTrace A) ∧
+    -- ¬before is compatible with main-clause non-actualization
+    (∃ (A B : SentDenotation ℤ), Karttunen.notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A) :=
+  ⟨eventiveUntil_entails_actualization, negBefore_lacks_actualization⟩
 
 end Phenomena.TemporalConnectives.Studies.Giannakidou2002

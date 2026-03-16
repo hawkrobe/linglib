@@ -8,8 +8,8 @@ Greek lexicalizes the two-*until* distinction and the veridicality asymmetry
 through mood selection:
 
 - **πριν / prin** ('before'): requires subjunctive (in modern Greek),
-  patterns with English *before* and NPI-*until*. Non-veridical complement,
-  licenses NPIs.
+  patterns with English *before*. Non-veridical complement, licenses NPIs.
+  Differs from NPI-*until* on actualization (@cite{giannakidou-2002}, §6).
 
 - **μέχρι / mexri** ('until'): requires indicative, patterns with English
   durative *until*. Veridical complement, requires imperfective/stative

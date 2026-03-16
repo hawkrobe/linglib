@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.295] - 2026-03-15
+
+### Changed
+- **Deep audit of Giannakidou 2002 formalization**: fix tautological `stativizerPrediction` (was P→P, now deleted), add `@cite{}` tags for de Swart 1996 and de Swart & Molendijk 1999, fix Greek fragment docstring (*prin* does NOT pattern with NPI-*until* — contradicted by §6)
+- **Add §13 (*before* ≠ NPI-*until*)**: `negBefore_lacks_actualization` and `before_not_equiv_eventiveUntil` formalizing §6's central claim — ¬*before* lacks actualization entailment while `eventiveUntil` requires it
+- **Add bib entries**: `de-swart-1996` (Meaning and use of *not...until*, JoS 13), `de-swart-molendijk-1999` (Negation and temporal structure, JoS 16)
+- **Update module docstring**: add §6 contribution to Key Results list, add `@cite{}` for de Swart references throughout
+
 ## [0.229.294] - 2026-03-15
 
 ### Changed

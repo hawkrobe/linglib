@@ -127,17 +127,22 @@ def greek_mexri : TwoUntilDatum where
   example_ := "I Maria perimine mexri irthi o Janis (Maria waited until Janis came)"
   actualizationStatus := .implicature
 
-/-- English NPI-*until*: before-type (Karttunen: NPI-*until* = ¬*before*).
+/-- English NPI-*until*: eventive-type (@cite{giannakidou-2002}).
     Requires DE licensor (negation). Unlike Greek *prin*, English collapses
     both types under the single lexeme *until*, disambiguated by context.
-    The actualization entailment of "not...until" comes from the presupposition
-    (A BEFORE T ∨ A WHEN T) + assertion ¬(A BEFORE T) → A WHEN T, not from
-    *until* itself being veridical.
+
+    Classified as "eventive" (not "before") because English NPI-*until*
+    patterns with Greek *para monon* on all diagnostics: actualization is
+    an entailment, a DE trigger is required, and there is no durative
+    restriction on the main clause. Karttunen's logical form (NPI-*until*
+    = ¬*before*) captures the truth conditions, but the phenomenological
+    classification tracks the same semantic type as *para monon*.
+
     "The princess didn't wake up until the prince kissed her." -/
 def english_npi_until : TwoUntilDatum where
   language := "English"
   form := "until (NPI)"
-  semanticType := "before"
+  semanticType := "eventive"
   moodRestriction := none
   requiresDE := true
   complementVeridical := false
