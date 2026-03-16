@@ -175,10 +175,30 @@ def landauToSMPM : LandauClauseClass → ClauseType
   | .fSubjunctive => .tensedSubjunctive
   | .finite       => .finiteEmbedded
 
+/-- SMPM Agr status for each Landau clause class.
+
+    - C-subjunctive (untensed): [−Agr] — no independent subject agreement
+    - F-subjunctive (tensed): [+Agr] — allows noncoreferential subjects,
+      which indicates independent agreement capability
+    - Finite: [+Agr] — full agreement
+
+    Under the TTC's OC-NC generalization ((70) in @cite{landau-2015}),
+    [+Agr] blocks logophoric control. This is why SMPM tensed subjunctives
+    (F-subjunctives with [+Agr]) show no OC despite structurally permitting
+    logophoric control. -/
+def smpmLandauAgr : LandauClauseClass → Bool
+  | .cSubjunctive => false
+  | .fSubjunctive => true
+  | .finite       => true
+
 /-- The Landau classification predicts control properties for all
-    three SMPM clause types. -/
+    three SMPM clause types, taking Agr status into account.
+
+    - C-subjunctive [−Agr]: predicative OC (Agr-independent) → OC ✓
+    - F-subjunctive [+Agr]: logophoric OC blocked by Agr → no OC ✓
+    - Finite [+Agr]: no control tier → no OC ✓ -/
 theorem landau_predicts_control (c : LandauClauseClass) :
-    (smpmOCSignature (landauToSMPM c)).isOC = c.hasOC := by
+    (smpmOCSignature (landauToSMPM c)).isOC = c.hasOCWithAgr (smpmLandauAgr c) := by
   cases c <;> rfl
 
 -- ════════════════════════════════════════════════════════════════

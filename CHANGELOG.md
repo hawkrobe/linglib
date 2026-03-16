@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.307] - 2026-03-15
+
+### Changed
+- **Landau2015 audit refactor**: collapse 5 redundant `ControlTier` properties (`allowsPartialControl`, `obligatoryDeSe`, `allowsControlShift`, `allowsImplicitControl`, `allowsSplitControl`) to `= isAttitude`; add `requiresSyntacticController` for condition (90); add `ttcContrasts_consistent` bridge theorem connecting table (80) data to tier functions; add `ec_resists_impersonal_passives` theorem (98); add `implicit_control_from_predication_condition` and `nonhuman_pro_from_attitude` derivation theorems
+- **Fragment verb fixes**: add `attitudeBuilder` and `opaqueContext` to `persuade` and `promise` so `derivedLandauClass` correctly classifies them as desiderative → logophoric (was falling to predicative via fallback)
+
 ## [0.229.306] - 2026-03-15
 
 ### Removed

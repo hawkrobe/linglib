@@ -468,19 +468,27 @@ def try_ : VerbEntry where
   controlType := .subjectControl
   passivizable := false
 
-/-- "persuade" — object control: "persuade X to VP" (X = agent of VP) -/
+/-- "persuade" — object control: "persuade X to VP" (X = agent of VP).
+    Psychological attitude verb: causes the object to form an intention.
+    Projects AUTHOR coordinate → obligatory *de se* (@cite{landau-2015} table (36)). -/
 def persuade : VerbEntry := .mkRegular {
   form := "persuade"
   complementType := .infinitival
   vendlerClass := some .accomplishment
-  controlType := .objectControl }
+  controlType := .objectControl
+  opaqueContext := true
+  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
-/-- "promise" — subject control with object: "promise X to VP" -/
+/-- "promise" — subject control with object: "promise X to VP".
+    Desiderative attitude verb: the subject commits to a future action.
+    @cite{landau-2015} (5c) classifies it as desiderative → logophoric control. -/
 def promise : VerbEntry := .mkRegular {
   form := "promise"
   complementType := .infinitival
   vendlerClass := some .achievement
-  controlType := .subjectControl }
+  controlType := .subjectControl
+  opaqueContext := true
+  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
 /-- "remember" — implicative with infinitival ("remember to call") -/
 def remember : VerbEntry := .mkRegular {
