@@ -2909,19 +2909,19 @@
   sources   = {Phenomena/Constructions/ParticleVerbs/Bridge/MinimalismParticleSC.lean;Theories/Syntax/Minimalism/Core/SmallClause.lean}
 }
 % REF: Fillmore, C. J., Kay, P. & O'Connor, M. C. (1988). Regularity and Idiomaticity in Grammatical Constructions. Language 64
-@article{fillmore-oconnor-1988,
-  author    = {Fillmore, C. J., Kay, P. and O'Connor, M. C},
+@article{fillmore-kay-oconnor-1988,
+  author    = {Fillmore, Charles J. and Kay, Paul and O'Connor, Mary Catherine},
   year      = {1988},
-  title     = {Regularity and Idiomaticity in Grammatical Constructions},
+  title     = {Regularity and Idiomaticity in Grammatical Constructions: {The} Case of \emph{Let Alone}},
   journal   = {Language},
   volume    = {64},
   number    = {3},
   pages     = {501--538},
-  subfield  = {semantics/compositional},
-  role      = {cited},
+  subfield  = {syntax/constructiongrammar},
+  role      = {formalized},
   doi       = {10.2307/414531},
   validated = {true},
-  sources   = {Phenomena/Constructions/DG_OsborneGross2012Bridge.lean;Theories/Syntax/ConstructionGrammar/Slot.lean}
+  sources   = {Theories/Syntax/ConstructionGrammar/Studies/FillmoreKayOConnor1988.lean;Theories/Syntax/ConstructionGrammar/Slot.lean;Theories/Syntax/ConstructionGrammar/ArgumentStructure.lean;Phenomena/Constructions/Studies/FillmoreKayOConnor1988.lean;Phenomena/Constructions/Studies/OsborneGross2012/Data.lean;Phenomena/Constructions/Studies/KayFillmore1999.lean;Phenomena/Constructions/Studies/Dunn2026.lean;Phenomena/Constructions/Resultatives/Data.lean;Phenomena/Morphology/Studies/Benz2025.lean;Comparisons/Mueller2013.lean}
 }
 % REF: Barss & Lasnik (1986). A note on anaphora and double objects.
 @article{barss-lasnik-1986,
@@ -11906,7 +11906,7 @@
   subfield  = {syntax},
   validated = {true},
   role      = {cited},
-  sources   = {Phenomena/Anaphora/Compare.lean;Comparisons/Mueller2013.lean}
+  sources   = {Comparisons/Mueller2013.lean;Core/CombinationKind.lean;Theories/Syntax/Minimalism/CombinationSchemata.lean;Theories/Syntax/ConstructionGrammar/ArgumentStructure.lean;Theories/Syntax/DependencyGrammar/Formal/NonProjective.lean;Theories/Syntax/HPSG/Core/HeadFiller.lean;Theories/Syntax/HPSG/Core/LexicalRules.lean}
 }
 
 @book{baker-2015,
@@ -12257,6 +12257,20 @@
   validated = {true},
   role      = {foundational},
   sources   = {Theories/Syntax/HPSG/Core/Basic.lean}
+}
+
+@article{pollard-sag-1992,
+  author    = {Pollard, Carl and Sag, Ivan A.},
+  year      = {1992},
+  title     = {Anaphors in {English} and the Scope of Binding Theory},
+  journal   = {Linguistic Inquiry},
+  volume    = {23},
+  number    = {2},
+  pages     = {261--303},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {foundational},
+  sources   = {Phenomena/Control/Studies/Landau2015.lean}
 }
 
 @article{anand-hardt-mccloskey-2021,

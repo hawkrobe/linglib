@@ -29,6 +29,8 @@ inductive Diagnostic where
   | locativeInversion        -- "into the room walked a man"
   | resultativePredication   -- "the river froze solid"
   | auxiliarySelection       -- Italian essere/avere split
+  | passiveType             -- Japanese: only indirect passive (no *-niyotte*)
+  | whAdjunctBlocking       -- Japanese: *nani-o* 'what-ACC' = 'why' blocked
   deriving DecidableEq, Repr, BEq
 
 /-- Result of applying a diagnostic to a verb. -/
@@ -470,6 +472,55 @@ def loc_whisper : DiagnosticDatum :=
   , sentence := "?From the back of the room whispered a voice."
   , note := "MoS verbs show variable acceptability in locative inversion" }
 
+-- ════════════════════════════════════════════════════
+-- § Japanese Passive Type (@cite{ozaki-2026}, @cite{jo-seo-2023})
+-- ════════════════════════════════════════════════════
+
+/-! Japanese distinguishes direct and indirect passives. Direct passives
+    (allowing *-niyotte* agent) require thematic Voice; indirect passives
+    (*-rare-* adversative) are available for all verbs including unaccusatives.
+    If a verb allows only the indirect passive, it is unaccusative. -/
+
+def jp_hanareru_indirect : DiagnosticDatum :=
+  { verbForm := "hanareru"
+  , diagnostic := .passiveType
+  , result := .passes
+  , sentence := "Sono mura-ga Taro-ni hanare-rare-ta."
+  , language := "Japanese"
+  , note := "Indirect passive OK — available for all verbs (Ozaki 2026, ex. 14)" }
+
+def jp_hanareru_direct : DiagnosticDatum :=
+  { verbForm := "hanareru"
+  , diagnostic := .passiveType
+  , result := .fails
+  , sentence := "*Sono mura-ga Taro-niyotte hanare-rare-ta."
+  , language := "Japanese"
+  , note := "*niyotte blocked — no thematic Voice, therefore unaccusative (Ozaki 2026, ex. 20)" }
+
+-- ════════════════════════════════════════════════════
+-- § Japanese *nani-o* Wh-Adjunct (@cite{kurafuji-1997}, @cite{ozaki-2026})
+-- ════════════════════════════════════════════════════
+
+/-! *Nani-o* 'what-ACC' can mean 'why' with unergatives and transitives
+    (@cite{kurafuji-1997}), but not with unaccusatives. If a verb blocks
+    the 'why' reading of *nani-o*, it is unaccusative. -/
+
+def jp_hanareru_nanio : DiagnosticDatum :=
+  { verbForm := "hanareru"
+  , diagnostic := .whAdjunctBlocking
+  , result := .passes
+  , sentence := "*Nani-o Taro-wa mura-o hanare-teiru no?"
+  , language := "Japanese"
+  , note := "*nani-o 'why' blocked — patterns with unaccusatives (Ozaki 2026, ex. 26)" }
+
+def jp_densya_nanio : DiagnosticDatum :=
+  { verbForm := "kuru"
+  , diagnostic := .whAdjunctBlocking
+  , result := .passes
+  , sentence := "*Nani-o densya-wa itumo okurete kuru no?"
+  , language := "Japanese"
+  , note := "Baseline unaccusative: *nani-o blocked with 'arrive' (Ozaki 2026, ex. 25)" }
+
 /-- All diagnostic data points. -/
 def allData : List DiagnosticDatum :=
   [ qi_whisper, qi_murmur, qi_shout, qi_cry, qi_scream
@@ -481,7 +532,9 @@ def allData : List DiagnosticDatum :=
   , qi_setswana_botsa, qi_setswana_bua, qi_setswana_transitivity
   , there_arrive, there_run, there_sleep
   , loc_arrive, loc_whisper
-  , li_kick, li_arrive_pronoun ]
+  , li_kick, li_arrive_pronoun
+  , jp_hanareru_indirect, jp_hanareru_direct
+  , jp_hanareru_nanio, jp_densya_nanio ]
 
 /-- QI data only. -/
 def qiData : List DiagnosticDatum :=

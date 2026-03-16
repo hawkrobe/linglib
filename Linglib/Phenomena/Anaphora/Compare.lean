@@ -567,7 +567,7 @@ def branchingNodes {Node : Type} (T : AbstractTree Node) : Set Node :=
 def maximalProjections {Node : Type} (T : LabeledTree Node) : Set Node :=
   {n | T.label n = .S ∨ T.label n = .NP ∨ T.label n = .VP ∨ T.label n = .PP}
 
-/-- **S-command** (Reinhart's original c-command) -/
+/-- **S-command** (@cite{reinhart-1976}'s original c-command) -/
 def sCommand {Node : Type} (T : LabeledTree Node) := commandRelation T.toAbstractTree (sNodes T)
 
 /-- **NP-command** -/

@@ -217,7 +217,7 @@ end Phenomena.Constructions.Studies.OsborneGross2012
 
 /-!
 # Bridge: Osborne & Groß (2012) DG Catenae → CxG Constructions
-@cite{fillmore-oconnor-1988} @cite{osborne-gross-2012}
+@cite{fillmore-kay-oconnor-1988} @cite{osborne-gross-2012}
 
 Connects the dependency trees from `Studies/OsborneGross2012/Data.lean`
 to the catena theory from `Catena.lean` and the CxG types from

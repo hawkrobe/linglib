@@ -40,7 +40,7 @@ inductive ModifierType where
   | interval     -- "between ... and ..."
   | exactifier   -- "exactly", "precisely"
   | bound        -- "at least", "at most", "more than", "fewer than", "up to", "from...on"
-  | approximator -- "almost", "nearly": proximal + polar (@cite{nouwen-2006})
+  | approximator -- "almost", "nearly": proximal + polar (@cite{nouwen-2006} @cite{penka-2006})
   deriving Repr, DecidableEq, BEq
 
 /--
@@ -341,7 +341,7 @@ def fromOn : NumeralModifierEntry :=
   }
 
 -- ============================================================================
--- Approximators (@cite{nouwen-2006})
+-- Approximators (@cite{penka-2006} @cite{nouwen-2006})
 -- ============================================================================
 
 /--
@@ -350,14 +350,18 @@ def fromOn : NumeralModifierEntry :=
 ⟦almost n⟧ = λx. close(x, n) ∧ ¬(x = n) [or ¬(x ≥ n) under LB]
 
 Unlike tolerance modifiers ("around"), "almost" EXCLUDES the target value
-(the polar component). This creates a key LB/BL divergence:
+(the polar component). @cite{nouwen-2006} decomposes "almost" into proximal
+(close to p) and polar (¬p) components. This creates a key LB/BL divergence:
 - Under LB: "almost three" = close to 3 AND <3 → only values below 3
 - Under BL: "almost three" = close to 3 AND ≠3 → values above OR below 3
 
-Empirically, "almost three" means ~2 (below only), favoring LB.
+The empirical asymmetry (below only) is argued by @cite{penka-2006} to
+favor LB. @cite{nouwen-2006} shows that polar orientation is in general
+context-dependent (e.g., "almost that warm" vs "almost that cold" orient
+in opposite directions depending on the scale).
 
-Source: @cite{nouwen-2006} "Remarks on the Polar Orientation of Almost";
-  @cite{penka-2006}.
+Source: @cite{penka-2006} "Almost there: The meaning of almost";
+  @cite{nouwen-2006} "Remarks on the Polar Orientation of Almost".
 -/
 def almost : NumeralModifierEntry :=
   { form := "almost"
@@ -366,7 +370,7 @@ def almost : NumeralModifierEntry :=
   , isVague := true
   , conveysShape := true
   , soritesSusceptible := false
-  , notes := "Polar component excludes target value (Nouwen 2006)"
+  , notes := "Polar component excludes target value; LB/BL divergence from Penka 2006"
   }
 
 /--

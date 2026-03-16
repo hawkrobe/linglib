@@ -486,6 +486,7 @@ import Linglib.Fragments.Korean.Phonology
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Fragments.Japanese.TemporalDeictic
 import Linglib.Fragments.Japanese.Particles
+import Linglib.Fragments.Japanese.Passive
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Japanese.Morph
@@ -737,6 +738,7 @@ import Linglib.Phenomena.Complementation.Studies.Noonan2007
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Complementation.Studies.Cacchioli2025
 import Linglib.Phenomena.Complementation.Studies.Osborne2019Control
+import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Control.Studies.Ostrove2026
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
@@ -776,6 +778,7 @@ import Linglib.Phenomena.Ellipsis.Studies.GinzburgCooper2004
 import Linglib.Phenomena.Ellipsis.Studies.Landau2026
 import Linglib.Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025
 import Linglib.Phenomena.Ellipsis.Studies.Kalyakin2026
+import Linglib.Phenomena.Ellipsis.Studies.Funakoshi2016
 import Linglib.Phenomena.Ellipsis.Studies.Merchant2013
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
@@ -877,6 +880,7 @@ import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
 import Linglib.Phenomena.FillerGap.Studies.Charlow2020
 import Linglib.Phenomena.FillerGap.Studies.LuDegen2025
 import Linglib.Phenomena.FillerGap.Studies.Osborne2019Islands
+import Linglib.Phenomena.FillerGap.Studies.HPSGExtraction
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
@@ -1642,6 +1646,7 @@ import Linglib.Theories.Semantics.Questions.Answerhood.Answerhood
 import Linglib.Theories.Semantics.Questions.Answerhood.PragmaticAnswerhood
 import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
 import Linglib.Theories.Semantics.Questions.Answerhood.Exhaustivity
+import Linglib.Theories.Semantics.Questions.Answerhood.FoxExhaustification
 import Linglib.Theories.Semantics.Questions.Answerhood.ProbabilisticAnswerhood
 import Linglib.Theories.Semantics.Questions.Answerhood.Support
 import Linglib.Theories.Semantics.Questions.Utility.GSVanRooyBridge
@@ -1747,6 +1752,7 @@ import Linglib.Phenomena.Gradability.Studies.TesslerGoodman2022
 import Linglib.Phenomena.Gradability.Studies.Horn1984
 import Linglib.Phenomena.Gradability.Studies.Kennedy2007Licensing
 import Linglib.Phenomena.Gradability.Studies.Rett2015Implicature
+import Linglib.Phenomena.Gradability.Studies.Morzycki2009
 import Linglib.Phenomena.Gradability.Studies.Rouillard2026
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.Elbourne2013

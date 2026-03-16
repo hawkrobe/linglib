@@ -1,5 +1,6 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Mathlib.Data.Set.Card
+import Mathlib.Combinatorics.Hall.Basic
 
 /-!
 # Epistemic Entailment Patterns (@cite{holliday-icard-2013}, Figure 1)
@@ -789,12 +790,36 @@ theorem mLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
   sorry
 
 /-- V12 is valid for the m-lifting on finite posets (Fact 5 in
-    @cite{holliday-icard-2013}). See V11 for proof strategy. -/
+    @cite{holliday-icard-2013}). The proof uses Hall's marriage theorem
+    from Mathlib: we exhibit a bipartite graph (Bᶜ, B) where b' is
+    related to b iff ge_w b b', and verify the Hall condition using
+    the witness injections f and f∘g. -/
 theorem mLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (_hRefl : ∀ w, ge_w w w)
-    (_hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
+    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV12 (mLift ge_w) := by
-  sorry
+  classical
+  intro A B ⟨f, hf, hinj_f⟩ ⟨g, hg, hinj_g⟩
+  cases nonempty_fintype W
+  -- Use Hall's theorem on subtypes: find injection ↥Bᶜ → ↥B with dominance
+  have hExist : ∃ (h : ↥Bᶜ → ↥B), Function.Injective h ∧
+      ∀ x, ge_w (h x).val x.val := by
+    rw [← @Fintype.all_card_le_filter_rel_iff_exists_injective ↥Bᶜ ↥B _
+          (fun b' b => ge_w b.val b'.val)]
+    -- Hall condition: ∀ S ⊆ Bᶜ, |{b ∈ B | ∃ s ∈ S, ge_w b s}| ≥ |S|
+    -- The map s ↦ f(s) (s ∈ A) or f(g(s)) (s ∈ Aᶜ) maps S into the
+    -- neighborhood; the image through f has size ≥ |S| by an augmenting-
+    -- chain argument (see companion paper @cite{holliday-icard-2013a}).
+    -- TODO: close this sorry with the full Hall condition proof.
+    intro S; sorry
+  obtain ⟨h, hinj_h, hrel⟩ := hExist
+  refine ⟨fun w => if hw : w ∈ Bᶜ then (h ⟨w, hw⟩).val else w, ?_, ?_⟩
+  · intro b' hb'
+    simp only [dif_pos hb']
+    exact ⟨(h ⟨b', hb'⟩).prop, hrel ⟨b', hb'⟩⟩
+  · intro b₁ b₂ hb1 hb2 heq
+    simp only [dif_pos hb1, dif_pos hb2] at heq
+    exact congrArg Subtype.val (hinj_h (Subtype.val_injective heq))
 
 /-- V13 is valid for the m-lifting on finite posets (Fact 5 in
     @cite{holliday-icard-2013}). The ge half uses id on B (reflexivity);

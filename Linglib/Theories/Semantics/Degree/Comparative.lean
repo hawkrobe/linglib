@@ -100,8 +100,8 @@ theorem equative_boundary {α : Type*} [LinearOrder α]
 -- § 5. NPI Licensing in Comparatives
 -- ════════════════════════════════════════════════════
 
-/-- The *than*-clause argument of a comparative is DE: universal
-    quantification over a domain is anti-monotone in the domain. -/
+/-- The *than*-clause argument of a comparative is DE (@cite{hoeksema-1983}):
+    universal quantification over a domain is anti-monotone in the domain. -/
 theorem comparative_than_DE {α : Type*} (R : α → α → Prop)
     (μ_a : α) (D₁ D₂ : Set α) (h_sub : D₁ ⊆ D₂)
     (h : ∀ d ∈ D₂, R μ_a d) : ∀ d ∈ D₁, R μ_a d :=

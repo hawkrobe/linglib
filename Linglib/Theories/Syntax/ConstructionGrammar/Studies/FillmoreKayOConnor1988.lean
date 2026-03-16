@@ -3,7 +3,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Alternatives.Lexical
 
 /-!
-# @cite{fillmore-oconnor-1988}: Let Alone
+# @cite{fillmore-kay-oconnor-1988}: Let Alone
 
 Formalization of "Regularity and Idiomaticity in Grammatical Constructions:
 The Case of *Let Alone*" (Language 64(3):501–538).
@@ -302,19 +302,6 @@ def claim_let_alone_is_formal_idiom : Prop :=
 theorem claim_let_alone_is_formal_idiom_holds :
     claim_let_alone_is_formal_idiom := ⟨rfl, rfl⟩
 
-/-- **Claim 2**: The scalar model requires at least 2 dimensions (fn.16, p.535).
-
-One-dimensional models cannot distinguish ex.104 (bad: "Fred doesn't
-have an odd number of books, let alone seventy-five") from ex.105
-(good: "He didn't even have an odd number, let alone seventy-five"
-in a lottery context). The second dimension (prize size) rescues 105. -/
-def claim_scalar_model_min_2d : Prop :=
-  ∀ (S α : Type*) (_ : ScalarModel S α) (d : ArgumentPoint α),
-    d.coordinates.length ≥ 2 → True
-
-theorem claim_scalar_model_min_2d_holds : claim_scalar_model_min_2d :=
-  λ _ _ _ _ _ => trivial
-
 /-- **Claim 3**: *Let alone* resolves a conflict between Gricean
 Quantity and Relevance (§2.4, p.532).
 
@@ -425,6 +412,16 @@ subset of the extension of "made colonel". -/
 theorem general_stronger_than_colonel :
     rankScalarModel.strongerThan ⟨[.general]⟩ ⟨[.colonel]⟩ :=
   ⟨general_entails_colonel, colonel_does_not_entail_general⟩
+
+/-- The rank scalar model is one-dimensional: every argument point
+has exactly one coordinate. This suffices for simple *let alone*
+examples (ex.21: "He didn't make colonel, let alone general"),
+but the paper argues (fn.16, p.535) that some examples require
+≥2 dimensions — e.g., ex.104 vs. 105 (odd-number/seventy-five
+anomaly resolved by a second prize-size dimension). -/
+theorem rank_model_is_1d :
+    rankScalarModel.points.all (λ p => p.coordinates.length == 1) = true := by
+  native_decide
 
 /-- The rank scalar model validates FKO's ex.21:
 "He didn't make colonel, let alone general."

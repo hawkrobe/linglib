@@ -1,8 +1,9 @@
 /-!
 # Combination Schemata
 
-Theory-neutral combination kinds from @cite{mueller-2013}'s three universal
-combination schemata.
+Theory-neutral combination kinds based on HPSG's three immediate dominance
+schemata (@cite{pollard-sag-1994}), which @cite{mueller-2013} argues are
+universal across Minimalism, CCG, DG, and Construction Grammar.
 -/
 
 namespace Core.Interfaces

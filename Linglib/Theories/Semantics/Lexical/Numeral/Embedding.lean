@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
 /-!
 # Numeral Embedding Semantics
-@cite{bylinina-nouwen-2020} @cite{coppock-beaver-2014} @cite{gajewski-2007} @cite{horn-1972} @cite{kaufmann-2012} @cite{kennedy-2015} @cite{meier-2003} @cite{musolino-2004} @cite{nouwen-2006} @cite{solt-waldon-2019} @cite{kiparsky-kiparsky-1970} @cite{heim-2000}
+@cite{bylinina-nouwen-2020} @cite{coppock-beaver-2014} @cite{gajewski-2007} @cite{horn-1972} @cite{kaufmann-2012} @cite{kennedy-2015} @cite{meier-2003} @cite{musolino-2004} @cite{nouwen-2006} @cite{penka-2006} @cite{solt-waldon-2019} @cite{kiparsky-kiparsky-1970} @cite{heim-2000}
 
 Formal predictions of lower-bound vs exact numeral theories under embedding:
 negation, modals, "exactly" modification, conditionals, exhaustification,
@@ -278,7 +278,7 @@ theorem exh_scope_diverges_exact :
     exhOverPossibility Exact .two [2, 3] = false := by native_decide
 
 -- ============================================================================
--- Section 9: "Almost" / Approximators (@cite{nouwen-2006})
+-- Section 9: "Almost" / Approximators (@cite{penka-2006} @cite{nouwen-2006})
 -- ============================================================================
 
 /-- Proximity to numeral value: within distance 1. -/
@@ -286,9 +286,14 @@ def isProximal (m n : Nat) : Bool :=
   n + 1 == m || n == m || n == m + 1
 
 /-- "Almost n": proximal to n but the numeral's meaning is false.
+Proximal/polar decomposition from @cite{nouwen-2006}.
 
 Under LB: close to n AND ¬(≥n) → only values below n
-Under BL: close to n AND ¬(=n) → values above OR below n -/
+Under BL: close to n AND ¬(=n) → values above OR below n
+
+The LB/BL divergence argument is from @cite{penka-2006}. @cite{nouwen-2006}
+shows that polar orientation is context-dependent in general (e.g.,
+"almost that warm" vs "almost that cold" orient in opposite directions). -/
 def almostMeaning (T : NumeralTheory) (w : BareNumeral) (n : Nat) : Bool :=
   isProximal w.toNat n && !T.meaning w n
 

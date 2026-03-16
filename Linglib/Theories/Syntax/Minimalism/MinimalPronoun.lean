@@ -1,6 +1,8 @@
+import Linglib.Theories.Morphology.DM.VocabularyInsertion
+
 /-!
 # Minimal Pronoun Theory
-@cite{kratzer-1998} @cite{kratzer-2009} @cite{safir-2014} @cite{landau-2015} @cite{landau-2018}
+@cite{kratzer-1998} @cite{kratzer-2009} @cite{safir-2014} @cite{landau-2015}
 
 All instances of bound variable anaphora — reflexives, PRO, bound variable
 pronouns — are syntactically identical: bare D heads with unvalued φ-features
@@ -8,17 +10,23 @@ pronouns — are syntactically identical: bare D heads with unvalued φ-features
 (null, reflexive, pronoun) reduces entirely to variation in **vocabulary items**,
 language-specific contextual allomorphs applied postsyntactically.
 
+Definition (28) of @cite{landau-2015}: X is a minimal pronoun iff X = [D,uφ].
+Within different derivations, X can become a reflexive, a bound lexical pronoun,
+a resumptive pronoun, a *pro* element, a relative pronoun, or controlled PRO.
+The choice is determined by the syntactic context and the language's vocabulary
+item inventory.
+
 ## Key Definitions
 
 - `BVAContext`: The four licensing contexts for bound variable anaphora
-- `VocabItem`: A context-sensitive realization rule (D[πφ] → Form / context)
+- `VocabItem`: A context-sensitive realization rule (D[uφ] → Form / context)
 - `MinPronInventory`: A language's vocabulary item inventory + elsewhere default
+- `PronForm`: Standard surface form categories (null, pronoun, reflexive)
 - `OCSignature`: @cite{landau-2013}'s Obligatory Control diagnostic package
-- `BVASyncretism`: Cross-linguistic syncretism patterns across BVA contexts
 
 ## Core Claims
 
-1. Minimal pronouns are D heads with unvalued φ-features
+1. Minimal pronouns are D heads with unvalued φ-features (28)
 2. φ-values are transmitted from the antecedent (via Agree or variable binding)
 3. Vocabulary items map valued feature bundles to surface forms, conditioned
    by syntactic context (locally bound, controlled subject, etc.)
@@ -27,6 +35,9 @@ language-specific contextual allomorphs applied postsyntactically.
    is morphological")
 5. Cross-linguistic variation in anaphoric exponence reduces to variation
    in vocabulary item inventories
+
+Landau-specific theory (the Two-Tiered Theory of Control, predicate
+classification, clause classes) is in `Phenomena/Control/Studies/Landau2015.lean`.
 -/
 
 namespace Syntax.Minimalism.MinimalPronoun
@@ -36,7 +47,13 @@ namespace Syntax.Minimalism.MinimalPronoun
 -- ════════════════════════════════════════════════════════════════
 
 /-- The four syntactic contexts in which a minimal pronoun can occur.
-    Each context may trigger a different vocabulary item (surface form). -/
+    Each context may trigger a different vocabulary item (surface form).
+
+    These correspond to the traditional binding domains:
+    - `controlledSubject`: PRO position (subject of controlled clause)
+    - `locallyBound`: Condition A domain (reflexives)
+    - `boundVariable`: Condition B domain (bound pronoun, non-local)
+    - `free`: Condition C / referential (unbound) -/
 inductive BVAContext where
   /-- Subject of a controlled clause — PRO in English -/
   | controlledSubject
@@ -54,10 +71,14 @@ inductive BVAContext where
 
 /-- A vocabulary item: a context-specific realization rule for a minimal pronoun.
 
-    In DM terms: D[πφ] → `form` / `context` ...
+    In DM terms: D[uφ] → `form` / `context` ...
 
     Vocabulary items are ordered by specificity. When multiple items could
-    apply, the most specific (first in the list) wins. -/
+    apply, the most specific (first in the list) wins.
+
+    This is a specialization of the general DM `Morphology.DM.VI.VocabItem`
+    in `Theories/Morphology/DM/VocabularyInsertion.lean`, restricted to
+    `BVAContext` matching with a parameterized `Form` type. -/
 structure VocabItem (Form : Type) where
   /-- The syntactic context this item is restricted to -/
   context : BVAContext
@@ -93,95 +114,7 @@ def MinPronInventory.controlForm {Form : Type}
   inv.realize .controlledSubject
 
 -- ════════════════════════════════════════════════════════════════
--- § 3: Obligatory Control Signature
--- ════════════════════════════════════════════════════════════════
-
-/-- @cite{landau-2013}'s Obligatory Control signature.
-
-    A clause S exhibits OC iff its subject satisfies both conditions:
-    (a) the controller(s) X must be codependent(s) of S
-    (b) PRO (or part of it) must be interpreted as a bound variable
-
-    Additional diagnostics derived from (a)-(b):
-    - Under VPE, only sloppy readings available (from (b))
-    - Exhaustive binding required — no partial control (from (b))
-    - Local c-commanding antecedent required (from (a)) -/
-structure OCSignature where
-  /-- (a): Controller must be argument of the matrix predicate -/
-  controllerCodependent : Bool
-  /-- (b): Embedded subject interpreted as bound variable -/
-  boundVariable : Bool
-  /-- Derived from (b): VPE allows only sloppy, not strict readings -/
-  sloppyOnly : Bool
-  /-- Derived from (b): No partial control (subset/superset antecedent) -/
-  exhaustive : Bool
-  /-- Derived from (a): Antecedent must locally c-command -/
-  localCCommand : Bool
-  deriving DecidableEq, BEq, Repr
-
-/-- The full OC signature: all diagnostics positive. -/
-def ocFull : OCSignature where
-  controllerCodependent := true
-  boundVariable := true
-  sloppyOnly := true
-  exhaustive := true
-  localCCommand := true
-
-/-- No OC: none of the diagnostics hold. -/
-def ocNone : OCSignature where
-  controllerCodependent := false
-  boundVariable := false
-  sloppyOnly := false
-  exhaustive := false
-  localCCommand := false
-
-/-- Does a clause type show obligatory control? -/
-def OCSignature.isOC (sig : OCSignature) : Bool :=
-  sig.controllerCodependent && sig.boundVariable
-
--- ════════════════════════════════════════════════════════════════
--- § 4: Cross-Linguistic Syncretism Typology
--- ════════════════════════════════════════════════════════════════
-
-/-- Cross-linguistic syncretism among BVA forms.
-
-    Records whether each BVA context uses the same form as the
-    referential (free) pronoun. "=" means syncretic with the referential
-    pronoun; "×" means a distinct form is used.
-
-    Table 92 in @cite{ostrove-2026}:
-    ```
-                      Reflexive  Controlled subj  Bound var pronoun
-    English              ×            ×                 =
-    Quiegolani Zap.      =            =                 =
-    Haitian              =            ×                 =
-    SMPM                 ×            =                 =
-    ```
--/
-structure BVASyncretism where
-  language : String
-  /-- Is the reflexive form identical to the referential pronoun? -/
-  reflexiveEqReferential : Bool
-  /-- Is the controlled subject form identical to the referential pronoun? -/
-  controlledEqReferential : Bool
-  /-- Is the bound variable pronoun identical to the referential pronoun? -/
-  boundVarEqReferential : Bool
-  deriving DecidableEq, BEq, Repr
-
-/-- Derive syncretism from a vocabulary item inventory.
-
-    A context is syncretic with the referential pronoun iff its
-    realized form equals the elsewhere (pronoun) form — i.e., no
-    context-specific vocabulary item overrides the default. -/
-def syncretismFromInventory {Form : Type} [BEq Form]
-    (inv : MinPronInventory Form) (lang : String := "") : BVASyncretism where
-  language := lang
-  reflexiveEqReferential := inv.realize .locallyBound == inv.elsewhere
-  controlledEqReferential := inv.realize .controlledSubject == inv.elsewhere
-  boundVarEqReferential := inv.realize .boundVariable == inv.elsewhere
-
--- ════════════════════════════════════════════════════════════════
--- § 5: Standard Surface Forms
+-- § 3: Standard Surface Forms
 -- ════════════════════════════════════════════════════════════════
 
 /-- Standard surface form categories for bound variable anaphora.
@@ -199,88 +132,73 @@ inductive PronForm where
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
--- § 6: Copy Control Typology
+-- § 4: Obligatory Control Signature
 -- ════════════════════════════════════════════════════════════════
 
-/-- Types of copy control (@cite{polinsky-potsdam-2006},
-    @cite{ostrove-2026} §5).
+/-- @cite{landau-2013}'s Obligatory Control signature (simplified).
 
-    Copy control: the subject of a control clause is a phonologically
-    overt copy of its controller. Four subtypes are distinguished by
-    the nature of the copy and its distribution. -/
-inductive CopyControlType where
-  /-- Full copy: PRO is a full DP copy of the controller.
-      Attested in San Lucas Quievaní Zapotec, Copala Triqui. -/
-  | fullCopy
-  /-- Logophoric pronominal: PRO is a pronoun, occurs only in
-      attitude reports. Attested in Gengbe, Mandarin. -/
-  | logophoricPronominal
-  /-- Scope-sensitive pronominal: PRO is a pronoun, triggered by
-      scope-taking operators (focus). Attested in Italian, Hungarian,
-      European Portuguese. -/
-  | scopeSensitivePronominal
-  /-- Obligatory pronominal: PRO is an overt clitic pronoun in all
-      control contexts, showing the full OC signature. Attested in
-      SMPM, Gã, Büli. -/
-  | obligatoryPronominal
+    A clause S exhibits OC iff its subject satisfies two core conditions:
+    (a) the controller(s) must be codependent(s) of S
+    (b) PRO (or part of it) must be interpreted as a bound variable
+
+    Three additional diagnostics are **derived** from (a)–(b):
+    - Sloppy-only under VPE (from (b): bound variables force sloppy)
+    - Exhaustive binding — no partial control (from (b))
+    - Local c-commanding antecedent required (from (a)) -/
+structure OCSignature where
+  /-- (a): Controller must be argument of the matrix predicate -/
+  controllerCodependent : Bool
+  /-- (b): Embedded subject interpreted as bound variable -/
+  boundVariable : Bool
   deriving DecidableEq, BEq, Repr
 
-/-- Properties distinguishing copy control types. -/
-structure CopyControlProfile where
-  controlType : CopyControlType
-  /-- Does the copy show the full OC signature (bound variable, exhaustive)? -/
-  showsOC : Bool
-  /-- Is the copy restricted to attitude report contexts? -/
-  attitudeOnly : Bool
-  /-- Does the copy require a scope-taking operator (focus, only)? -/
-  requiresScopeOperator : Bool
-  /-- Can the copy bear focus? -/
-  copyCanBearFocus : Bool
-  deriving DecidableEq, BEq, Repr
+/-- Derived: VPE allows only sloppy, not strict readings (from bound variable). -/
+def OCSignature.sloppyOnly (sig : OCSignature) : Bool := sig.boundVariable
 
-/-- Profile for each copy control type. -/
-def copyControlProfile : CopyControlType → CopyControlProfile
-  | .fullCopy => ⟨.fullCopy, false, false, false, true⟩
-  | .logophoricPronominal => ⟨.logophoricPronominal, false, true, false, true⟩
-  | .scopeSensitivePronominal => ⟨.scopeSensitivePronominal, false, false, true, true⟩
-  | .obligatoryPronominal => ⟨.obligatoryPronominal, true, false, false, false⟩
+/-- Derived: No partial control — subset/superset antecedent blocked (from bound variable). -/
+def OCSignature.exhaustive (sig : OCSignature) : Bool := sig.boundVariable
+
+/-- Derived: Antecedent must locally c-command (from codependency). -/
+def OCSignature.localCCommand (sig : OCSignature) : Bool := sig.controllerCodependent
+
+/-- The full OC signature: both core diagnostics positive. -/
+def ocFull : OCSignature where
+  controllerCodependent := true
+  boundVariable := true
+
+/-- No OC: neither core diagnostic holds. -/
+def ocNone : OCSignature where
+  controllerCodependent := false
+  boundVariable := false
+
+/-- Does a clause type show obligatory control? -/
+def OCSignature.isOC (sig : OCSignature) : Bool :=
+  sig.controllerCodependent && sig.boundVariable
 
 -- ════════════════════════════════════════════════════════════════
--- § 7: Exempt Anaphors
+-- § 5: DM Vocabulary Insertion Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- Exempt anaphors (@cite{pollard-sag-1994}): reflexive forms used
-    outside their canonical binding domain (Condition A domain).
+/-- Convert a `MinPronInventory` to a list of DM `VocabItem`s.
 
-    Key constraint: exempt anaphors cannot have quantified antecedents.
-    This is used in @cite{ostrove-2026} §6 to argue for base-generation
-    over movement in control. -/
-structure ExemptAnaphorProfile where
-  /-- Exempt anaphors available in this language -/
-  hasExemptAnaphors : Bool
-  /-- Can exempt anaphors have quantified antecedents? -/
-  allowsQuantifiedAntecedent : Bool
-  deriving DecidableEq, BEq, Repr
+    Each context-specific item becomes a DM rule with `specificity = 1`,
+    and the elsewhere form becomes a DM rule with `specificity = 0`.
+    This preserves the Elsewhere Condition: DM's specificity-sorted
+    insertion will select the context-specific rule when it matches,
+    falling back to the elsewhere rule otherwise.
 
-/-- The two analyses of obligatory control derivation. -/
-inductive ControlDerivation where
-  /-- Controller base-generated in matrix; PRO base-generated in
-      embedded clause. Two distinct syntactic positions, linked by
-      variable binding. -/
-  | baseGeneration
-  /-- Controller enters derivation in embedded subject position and
-      moves to matrix position. One DP, two copies. -/
-  | movement
-  deriving DecidableEq, BEq, Repr
-
-/-- Movement predicts exempt anaphors are UNAVAILABLE with quantified
-    controllers (because the copy in embedded position would be a QP,
-    violating the exempt anaphor constraint).
-
-    Base-generation predicts exempt anaphors ARE available (the pronoun
-    in embedded position is a genuine pronoun, not a copy of the QP). -/
-def predictsExemptWithQuantifiedController : ControlDerivation → Bool
-  | .baseGeneration => true
-  | .movement       => false
+    The `Form` type is rendered to `String` via the supplied function. -/
+def MinPronInventory.toDMRules {Form : Type}
+    (inv : MinPronInventory Form) (render : Form → String)
+    : List (Morphology.DM.VI.VocabItem BVAContext Unit) :=
+  let contextRules := inv.items.map fun item =>
+    { exponent := render item.form
+      contextMatch := fun ctx => ctx == item.context
+      specificity := 1 }
+  let elsewhereRule : Morphology.DM.VI.VocabItem BVAContext Unit :=
+    { exponent := render inv.elsewhere
+      contextMatch := fun _ => true
+      specificity := 0 }
+  contextRules ++ [elsewhereRule]
 
 end Syntax.Minimalism.MinimalPronoun

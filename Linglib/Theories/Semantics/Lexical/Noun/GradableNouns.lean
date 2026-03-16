@@ -1,16 +1,25 @@
-/-
-Gradable nouns as measure functions with degree arguments.
-
-Size adjectives in degree readings use MEASN; the Bigness Generalization
-follows from scale structure (min{d : small(d)} = d0, making "small" vacuous).
-
-- @cite{morzycki-2009}. Degree modification of gradable nouns. NLS 17:175-203.
-- @cite{kennedy-mcnally-2005}. Scale structure, degree modification. Language 81(2).
--/
-
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Linglib.Core.Scales.Scale
+
+/-!
+# Gradable Nouns as Measure Functions
+
+@cite{morzycki-2009} @cite{kennedy-mcnally-2005}
+
+Gradable nouns denote measure functions from individuals to degrees (eq. 48b):
+⟦idiot⟧ = λx . ιd[x is d-idiotic] = *idiot*.
+
+Size adjectives in degree readings are introduced by MEAS_N (eq. 76),
+the nominal counterpart of the adjectival MEAS morpheme. The Bigness
+Generalization (§2.2) follows from scale structure: min{d : small(d)} = d₀,
+making "small" vacuous.
+
+**Simplification**: Our `measN` omits the `d ∈ scale(g)` restriction from
+Morzycki's full MEAS_N (eq. 76), since all examples here use a single shared
+degree scale. The full denotation is:
+  ⟦MEAS_N⟧ = λg.λm.λx . [min{d : d ∈ scale(g) ∧ m(d)} ≤ g(x)] ∧ [standard(g) ≤ g(x)]
+-/
 
 namespace Semantics.Lexical.Noun.GradableNouns
 
@@ -69,7 +78,8 @@ section MEASN
 def minDegree (p : Degree → Bool) : Option Degree :=
   allDegrees.find? p
 
-/-- ⟦MEASN⟧ = λg.λm.λx. [min{d : m(d)} ≤ g(x)] ∧ [standard(g) ≤ g(x)]. -/
+/-- Simplified MEAS_N: ⟦MEAS_N⟧(g)(m)(x) = [min{d : m(d)} ≤ g(x)] ∧ [standard(g) ≤ g(x)].
+    Full version (Morzycki eq. 76) has min over {d : d ∈ scale(g) ∧ m(d)}. -/
 def measN {E : Type}
     (noun : GradableNoun E)
     (sizeAdj : Degree → Bool)  -- The [POS size-adj] predicate on degrees
@@ -125,7 +135,7 @@ theorem small_idiot_vacuous {E : Type} (noun : GradableNoun E) (x : E) :
 
 /-- "big idiot" is more restrictive than just "idiot". -/
 theorem big_idiot_restrictive {E : Type} (noun : GradableNoun E)
-    (h : noun.standard < deg 5) :
+    (_h : noun.standard < deg 5) :
     ∀ x, bigIdiot noun x → noun.pos x := by
   intro x hbig
   simp only [bigIdiot, measN, min_big_is_d5, GradableNoun.pos] at *
@@ -174,36 +184,5 @@ theorem small_idiot_same_as_idiot :
 
 
 end Examples
-
-section ThresholdPattern
-
-/-- Abstract threshold predicate unifying adjectives, generics, and gradable nouns. -/
-structure ThresholdPredicate (Entity : Type) where
-  /-- Name of the predicate. -/
-  name : String
-  /-- Measure function: entity -> degree. -/
-  measure : Entity → Degree
-  /-- The threshold degree. -/
-  threshold : Degree
-
-/-- Threshold predicate semantics: true iff measure(x) >= threshold. -/
-def ThresholdPredicate.apply {E : Type} (p : ThresholdPredicate E) (x : E) : Bool :=
-  p.threshold ≤ p.measure x
-
-/-- "big idiot" as a threshold predicate with theta = d5. -/
-def bigIdiotAsThreshold {E : Type} (measure : E → Degree) : ThresholdPredicate E :=
-  { name := "big idiot"
-  , measure := measure
-  , threshold := deg 5
-  }
-
-/-- bigIdiot = threshold predicate with theta = d5 (when standard <= d5). -/
-theorem bigIdiot_is_threshold_example :
-    bigIdiot exampleIdiot .george = (bigIdiotAsThreshold idiocyMeasure).apply .george ∧
-    bigIdiot exampleIdiot .sarah = (bigIdiotAsThreshold idiocyMeasure).apply .sarah ∧
-    bigIdiot exampleIdiot .floyd = (bigIdiotAsThreshold idiocyMeasure).apply .floyd := by
-  constructor <;> [native_decide; constructor <;> native_decide]
-
-end ThresholdPattern
 
 end Semantics.Lexical.Noun.GradableNouns

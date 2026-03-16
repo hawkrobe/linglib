@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Fragments.Japanese.Predicates
+import Linglib.Fragments.Japanese.Passive
 
 /-!
 # @cite{ozaki-2026} — Japanese Accusative/Ablative Alternation: Data
@@ -45,11 +46,7 @@ inductive CaseMarking where
   | dative       -- *-ni*
   deriving DecidableEq, BEq, Repr
 
-/-- Types of passive in Japanese. -/
-inductive PassiveType where
-  | direct    -- *-niyotte* agent, agentive verbs only
-  | indirect  -- *-rare* adversative, available for unaccusatives
-  deriving DecidableEq, BEq, Repr
+open Fragments.Japanese.Passive (PassiveType)
 
 /-- Diagnostics for argumenthood (vs. adjuncthood). -/
 inductive ArgumenthoodDiagnostic where
@@ -363,5 +360,35 @@ theorem deru_form_matches :
 /-- All argumenthood diagnostics succeed. -/
 theorem source_is_argument_both_frames :
     argumenthoodData.all (·.grammatical) = true := by native_decide
+
+-- ============================================================================
+-- § Voice Derivation Bridge
+-- ============================================================================
+
+/-- Hanareru's unaccusativity is DERIVED from its voice type, not stipulated.
+    `derivedUnaccusative` uses the `voiceType` field to compute unaccusativity
+    via `VoiceType.assignsTheta`. -/
+theorem hanareru_unaccusative_derived :
+    Fragments.Japanese.Predicates.hanareru.toVerbCore.derivedUnaccusative = true := rfl
+
+/-- Deru's unaccusativity is DERIVED from its voice type. -/
+theorem deru_unaccusative_derived :
+    Fragments.Japanese.Predicates.deru.toVerbCore.derivedUnaccusative = true := rfl
+
+/-- The stored `unaccusative` flag agrees with the derived value.
+    This consistency check ensures that the stipulated field and the
+    Voice-based derivation produce the same answer. -/
+theorem hanareru_stored_matches_derived :
+    Fragments.Japanese.Predicates.hanareru.unaccusative =
+    Fragments.Japanese.Predicates.hanareru.toVerbCore.derivedUnaccusative := rfl
+
+theorem deru_stored_matches_derived :
+    Fragments.Japanese.Predicates.deru.unaccusative =
+    Fragments.Japanese.Predicates.deru.toVerbCore.derivedUnaccusative := rfl
+
+/-- Direct passive requires thematic Voice, which departure verbs lack. -/
+theorem direct_passive_requires_voice :
+    PassiveType.requiresThematicVoice .direct = true ∧
+    voiceAnticausative.assignsTheta = false := ⟨rfl, rfl⟩
 
 end Phenomena.Case.Ozaki2026.Data

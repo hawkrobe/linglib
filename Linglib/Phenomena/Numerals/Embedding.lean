@@ -1,6 +1,6 @@
 /-!
 # Numeral Embedding Test Cases
-@cite{bylinina-nouwen-2020} @cite{coppock-beaver-2014} @cite{gajewski-2007} @cite{horn-1972} @cite{kaufmann-2012} @cite{kennedy-2015} @cite{kiparsky-kiparsky-1970} @cite{meier-2003} @cite{musolino-2004} @cite{nouwen-2006} @cite{solt-waldon-2019}
+@cite{bylinina-nouwen-2020} @cite{coppock-beaver-2014} @cite{gajewski-2007} @cite{horn-1972} @cite{kaufmann-2012} @cite{kennedy-2015} @cite{kiparsky-kiparsky-1970} @cite{meier-2003} @cite{musolino-2004} @cite{nouwen-2006} @cite{penka-2006} @cite{solt-waldon-2019}
 
 Theory-neutral empirical test cases for bare numerals in embedding environments
 (negation, modals, attitudes, conditionals, DE contexts). These environments are
@@ -221,13 +221,17 @@ def collective_dots : NumeralEmbeddingDatum where
   source := "Bylinina & Nouwen 2020 §3"
 
 -- ============================================================================
--- "Almost" / Approximators (@cite{nouwen-2006})
+-- "Almost" / Approximators (@cite{penka-2006} @cite{nouwen-2006})
 -- ============================================================================
 
 /-- "Almost three students passed" — the polar orientation diagnostic.
-Under LB, "almost ≥3" admits only values below 3 (polar blocks ≥3).
-Under BL, "almost =3" admits values above AND below (2 or 4).
-Empirically, "almost three" means ~2, favoring LB for the polar component. -/
+"Almost" has a proximal component (close to p) and a polar component (¬p)
+(@cite{nouwen-2006}). Under LB, the polar component ¬(≥3) restricts to <3
+(below only). Under BL, ¬(=3) admits values above AND below (2 or 4).
+The empirical asymmetry (below only) is argued by @cite{penka-2006} to
+favor LB. @cite{nouwen-2006} shows that polar orientation is in general
+context-dependent (e.g., "almost that warm" vs "almost that cold"
+orient in opposite directions). -/
 def almost_passed : NumeralEmbeddingDatum where
   sentence := "Almost three students passed"
   embedding := .approximator
@@ -235,7 +239,7 @@ def almost_passed : NumeralEmbeddingDatum where
   lowerBoundReading := "Close to ≥3 but not ≥3: approximately 2 passed (below only)"
   bilateralReading := "Close to =3 but not =3: approximately 2 or 4 passed (above or below)"
   preferredReading := some "approximately 2 (below only)"
-  source := "Nouwen 2006; Penka 2006"
+  source := "Penka 2006; Nouwen 2006"
 
 -- ============================================================================
 -- "Only" + Focus (@cite{coppock-beaver-2014})
@@ -404,7 +408,7 @@ def generalizations : List EmbeddingGeneralization :=
   , { name := "Collective predicates favor bilateral"
     , description := "Collective predicates like 'surround' require the group to be exactly n, not at-least-n. This favors the BL reading without pragmatic enrichment." }
   , { name := "\"Almost\" polar orientation favors lower-bound"
-    , description := "\"Almost n\" admits only values below n, not above. Under LB, the polar component ¬(≥n) restricts to <n (below only). Under BL, ¬(=n) admits both above and below. The empirical asymmetry (below only) favors LB (Nouwen 2006)." }
+    , description := "\"Almost n\" admits only values below n, not above. Under LB, the polar component ¬(≥n) restricts to <n (below only). Under BL, ¬(=n) admits both above and below. The empirical asymmetry (below only) is argued by Penka (2006) to favor LB. Nouwen (2006) shows that polar orientation is context-dependent in general." }
   , { name := "QUD-convexity constrains negated numerals"
     , description := "Under BL, ¬(=n) denotes a non-convex set (gap at n), predicting infelicity in neutral 'how many?' contexts. Under LB, ¬(≥n) = <n is convex, incorrectly predicting felicity (Solt & Waldon 2019)." }
   , { name := "Acquisition data supports bilateral"

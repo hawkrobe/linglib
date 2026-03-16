@@ -117,7 +117,9 @@ These are dyadic unaccusatives: two internal arguments, no thematic Voice.
 -/
 
 /-- 離れる "hanareru" — leave (dyadic unaccusative, ACC/ABL alternation).
-    Leaver = theme (raised to subject), Source = source of departure. -/
+    Leaver = theme (raised to subject), Source = source of departure.
+    `voiceType := .nonThematic` — unaccusativity is derived from Voice
+    selection, not stipulated (@cite{kratzer-1996}, @cite{ozaki-2026}). -/
 def hanareru : JapaneseVerbEntry where
   form := "hanareru"
   form3sg := "hanareru"
@@ -126,10 +128,13 @@ def hanareru : JapaneseVerbEntry where
   formProgressive := "hanareteiru"
   complementType := .np
   unaccusative := true
+  voiceType := some .nonThematic
   passivizable := false
 
 /-- 出る "deru" — exit (dyadic unaccusative, ACC/ABL alternation).
-    Leaver = theme (raised to subject), Source = source of departure. -/
+    Leaver = theme (raised to subject), Source = source of departure.
+    `voiceType := .nonThematic` — unaccusativity is derived from Voice
+    selection, not stipulated (@cite{kratzer-1996}, @cite{ozaki-2026}). -/
 def deru : JapaneseVerbEntry where
   form := "deru"
   form3sg := "deru"
@@ -138,6 +143,7 @@ def deru : JapaneseVerbEntry where
   formProgressive := "deteiru"
   complementType := .np
   unaccusative := true
+  voiceType := some .nonThematic
   passivizable := false
 
 def allVerbs : List JapaneseVerbEntry :=

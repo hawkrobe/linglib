@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
 import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
 import Linglib.Fragments.Mixtec.SMPM.Basic
+import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Complementation.Typology
 
 /-!
@@ -56,6 +57,7 @@ infinitival classification.
 namespace Phenomena.Control.Studies.Ostrove2026
 
 open Syntax.Minimalism.MinimalPronoun
+open Phenomena.Control.Studies.Landau2015
 open Minimalism.Tense.InfinitivalTense (InfinitivalTenseClass)
 open Fragments.Mixtec.SMPM (ClauseType clauseProperties)
 
@@ -160,8 +162,7 @@ theorem wurmbrand_propositional_no_correspondent :
 -- § 4: Landau (2004) Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{landau-2004}'s finiteness scale distinguishes C-subjunctives
-    (untensed, obligatory control) from F-subjunctives (tensed, non-OC).
+/-- SMPM clause types map onto @cite{landau-2004}'s finiteness scale.
     This is the framework the paper explicitly uses (p.8).
 
     | Landau class    | SMPM clause type       | OC? |
@@ -169,26 +170,15 @@ theorem wurmbrand_propositional_no_correspondent :
     | C-subjunctive   | untensed subjunctive   | Yes |
     | F-subjunctive   | tensed subjunctive     | No  |
     | finite          | finite embedded        | No  | -/
-inductive LandauClauseClass where
-  | cSubjunctive   -- Untensed nonfinite, OC
-  | fSubjunctive   -- Tensed nonfinite, non-OC
-  | finite         -- Fully finite
-  deriving DecidableEq, BEq, Repr
-
 def landauToSMPM : LandauClauseClass → ClauseType
   | .cSubjunctive => .untensedSubjunctive
   | .fSubjunctive => .tensedSubjunctive
   | .finite       => .finiteEmbedded
 
-def landauHasOC : LandauClauseClass → Bool
-  | .cSubjunctive => true
-  | .fSubjunctive => false
-  | .finite       => false
-
 /-- The Landau classification predicts control properties for all
     three SMPM clause types. -/
 theorem landau_predicts_control (c : LandauClauseClass) :
-    (smpmOCSignature (landauToSMPM c)).isOC = landauHasOC c := by
+    (smpmOCSignature (landauToSMPM c)).isOC = c.hasOC := by
   cases c <;> rfl
 
 -- ════════════════════════════════════════════════════════════════
@@ -317,10 +307,12 @@ theorem english_boundvar_syncretic :
     englishSyncretism.boundVarEqReferential = true := rfl
 
 -- Quiegolani Zapotec: total syncretism (all =)
-theorem quiegolani_all_syncretic :
-    quiegolaniSyncretism.reflexiveEqReferential = true
-    ∧ quiegolaniSyncretism.controlledEqReferential = true
-    ∧ quiegolaniSyncretism.boundVarEqReferential = true := ⟨rfl, rfl, rfl⟩
+theorem quiegolani_reflexive_syncretic :
+    quiegolaniSyncretism.reflexiveEqReferential = true := rfl
+theorem quiegolani_controlled_syncretic :
+    quiegolaniSyncretism.controlledEqReferential = true := rfl
+theorem quiegolani_boundvar_syncretic :
+    quiegolaniSyncretism.boundVarEqReferential = true := rfl
 
 -- Haitian: reflexive =, controlled ×, bound var =
 theorem haitian_reflexive_syncretic :
@@ -457,20 +449,42 @@ def smpmProfile : ProDropProfile :=
 def englishProfile : ProDropProfile :=
   { language := "English", allowsProDrop := false, hasOvertPRO := hasOvertPRO englishInventory }
 
+/-- The universal is satisfied when overt PRO + non-*pro*-drop (consequent true). -/
+theorem overt_pro_non_prodrop_satisfies
+    (p : ProDropProfile)
+    (h_overt : p.hasOvertPRO = true)
+    (h_prodrop : p.allowsProDrop = false) :
+    satisfiesImplicational p = true := by
+  simp [satisfiesImplicational, h_overt, h_prodrop]
+
+/-- The universal is trivially satisfied when PRO is null (antecedent false). -/
+theorem null_pro_satisfies
+    (p : ProDropProfile)
+    (h_null : p.hasOvertPRO = false) :
+    satisfiesImplicational p = true := by
+  simp [satisfiesImplicational, h_null]
+
+-- SMPM: overt PRO + non-pro-drop → universal (consequent true)
 theorem smpm_satisfies_universal :
-    satisfiesImplicational smpmProfile = true := rfl
+    satisfiesImplicational smpmProfile = true :=
+  overt_pro_non_prodrop_satisfies smpmProfile rfl rfl
 
+-- English: null PRO → universal trivially (antecedent false)
 theorem english_satisfies_universal :
-    satisfiesImplicational englishProfile = true := rfl
+    satisfiesImplicational englishProfile = true :=
+  null_pro_satisfies englishProfile rfl
 
--- All overt-PRO languages satisfy the universal
+-- Gã: overt PRO + non-pro-drop → universal
 theorem ga_satisfies_universal :
     satisfiesImplicational { language := "Gã", allowsProDrop := false
-                           , hasOvertPRO := hasOvertPRO gaInventory } = true := rfl
+                           , hasOvertPRO := hasOvertPRO gaInventory } = true :=
+  overt_pro_non_prodrop_satisfies _ rfl rfl
 
+-- Büli: overt PRO + non-pro-drop → universal
 theorem buli_satisfies_universal :
     satisfiesImplicational { language := "Büli", allowsProDrop := false
-                           , hasOvertPRO := hasOvertPRO buliInventory } = true := rfl
+                           , hasOvertPRO := hasOvertPRO buliInventory } = true :=
+  overt_pro_non_prodrop_satisfies _ rfl rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 11: Complementation Typology Bridge
@@ -496,15 +510,31 @@ def smpmToNoonan : ClauseType → NoonanCompType
 
     The paper's predicate lists (27a–c) align with Noonan's semantic
     classification:
-    - Finite embedded predicates: utterance (say), propAttitude (think,
-      believe), commentative (be happy, be sad, regret), knowledge (know)
-    - Tensed subjunctive predicates: desiderative (want, hope)
-    - Untensed subjunctive predicates: phasal (start, finish, stop,
-      continue), achievement (try), knowledge (know how to, learn) -/
+
+    Finite embedded (27a):
+    - utterance: say (kà'àn), said (káchi), chat (ntatǔ'un)
+    - propAttitude: think (ka'án), believe (nakanini)
+    - commentative: be happy (kusijǐ ini), be sad (ntsi'i ini), regret (ntsiko ini)
+    - knowledge: know (kòni), wonder (kuntàà ini)
+
+    Tensed subjunctive (27b):
+    - desiderative: want (kòni), hope (ntatu), pray (nakwatu), agree (xiinka),
+      refuse (xǐunka). 'Hate' (sǐso ini), 'be afraid' (iyì'bí), 'be scared'
+      (kuntasí) are emotive predicates but select irrealis complements in SMPM,
+      functioning like desideratives. 'Get the idea' (chikàà ini) is cognitive.
+
+    Untensed subjunctive (27c):
+    - phasal: start (kìxà), finish (ntsi'i), stop (xikwīn), continue (kò xikwīn)
+    - achievement: try (ntùkú), remember (nàkú'ún), forget (nantōso)
+    - modal: need (xiniñu'u)
+    - desiderative: like to (kutō)
+    - knowledge: know how to (kòni xá kasa), learn how to (sakwā'a)
+    - negative: not bother (kò ntaa) -/
 def smpmCTPClass : ClauseType → List CTPClass
   | .finiteEmbedded      => [.utterance, .propAttitude, .commentative, .knowledge]
   | .tensedSubjunctive   => [.desiderative]
-  | .untensedSubjunctive => [.phasal, .achievement]
+  | .untensedSubjunctive => [.phasal, .achievement, .modal, .desiderative,
+                              .knowledge, .negative]
 
 /-- Noonan's reality status predicts SMPM clause type selection.
 
@@ -526,50 +556,5 @@ theorem utterance_is_realis :
 
 theorem propAttitude_is_realis :
     ctpRealityStatus .propAttitude = .realis := rfl
-
--- ════════════════════════════════════════════════════════════════
--- § 12: End-to-End Chain
--- ════════════════════════════════════════════════════════════════
-
-/-- End-to-end: SMPM's vocabulary inventory lacks a null allomorph,
-    so the elsewhere form (pronoun) surfaces in controlled position,
-    which produces overt PRO, which (given non-*pro*-drop from the
-    fragment) satisfies the implicational universal.
-
-    This chains §5–§10: inventory → controlForm → overt PRO → universal. -/
-theorem smpm_inventory_to_universal :
-    satisfiesImplicational
-      { language := "SMPM"
-      , allowsProDrop := Fragments.Mixtec.SMPM.allowsProDrop
-      , hasOvertPRO := hasOvertPRO smpmInventory } = true := rfl
-
-/-- Conversely, English's inventory HAS a null allomorph for controlled
-    subjects, so PRO is null — it trivially satisfies the universal
-    (the antecedent of the implication is false). -/
-theorem english_inventory_to_universal :
-    satisfiesImplicational
-      { language := "English"
-      , allowsProDrop := false
-      , hasOvertPRO := hasOvertPRO englishInventory } = true := rfl
-
-/-- Full derivation chain for SMPM: from exempt anaphors through
-    base-generation to inventory to overt PRO to the universal.
-
-    1. Exempt anaphors available with quantified controllers (§6) →
-    2. Base-generation, not movement (§6) →
-    3. Minimal pronoun lacks null allomorph (§7) →
-    4. Controlled subjects surface as overt pronouns (§7) →
-    5. SMPM is non-pro-drop (§2) →
-    6. Implicational universal satisfied (§8) -/
-theorem full_chain :
-    -- §6: base-generation correctly predicts exempt anaphor data
-    smpmExemptAvailableWithQuantifiedController
-      = predictsExemptWithQuantifiedController .baseGeneration
-    -- §7: inventory produces overt PRO
-    ∧ smpmInventory.controlForm = .pronoun
-    -- §7: this constitutes obligatory pronominal copy control
-    ∧ (copyControlProfile smpmCopyControlType).showsOC = true
-    -- §10: implicational universal satisfied
-    ∧ satisfiesImplicational smpmProfile = true := ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Control.Studies.Ostrove2026

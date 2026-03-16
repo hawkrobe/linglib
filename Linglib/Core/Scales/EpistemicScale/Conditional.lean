@@ -236,39 +236,21 @@ def CondMeasure.inducedCondGe {W : Type*} (m : CondMeasure W)
   m.condMu A B ≥ m.condMu C B
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 6. Conditioning Mode Bridges
+-- § 6. Conditioning Mode Relationships
 -- ══════════════════════════════════════════════════════════════════════
 
-/-- The ratio construction is Bayesian conditioning. -/
-theorem ratio_is_bayesian : ConditioningMode.bayesian = .bayesian := rfl
-
-/-- **Bridge to FinitePMF** (BayesianSemantics.lean):
-    `FinitePMF.prob pmf event` computes P(event) = Σ_θ mass(θ) · 1[event(θ)].
-    Conditioning a FinitePMF on evidence B corresponds to the ratio
-    construction: P(A|B) = P(A ∩ B)/P(B).
-
-    The FinitePMF's `mass` function induces a `FinAddMeasure` on `Θ`,
-    and `FinitePMF.prob pmf (A ∧ B) / FinitePMF.prob pmf B` equals
-    `(toCondMeasure m).condMu A B` where m is the induced measure. -/
-theorem finitePMF_conditioning_is_ratio : ConditioningMode.bayesian = .bayesian := rfl
-
-/-- **Bridge to InfoState.update** (Dynamic/Core/Update.lean):
-    `InfoState.update s φ = {p ∈ s | φ p.world}` is eliminative
-    conditioning: each possibility either survives (P = 1) or is
-    removed (P = 0).
-
-    Under a uniform distribution over the info state, this is equivalent
-    to Bayesian conditioning: P(A|φ) = |A ∩ {w | φ w}| / |{w | φ w}|.
-    Eliminative conditioning is the limit of Bayesian conditioning as
-    the prior concentrates on the evidence set. -/
-theorem eliminative_is_limit_bayesian : ConditioningMode.eliminative ≠ .bayesian := by
-  decide
-
-/-- **Bridge to Jeffrey conditioning**:
-    Jeffrey's rule generalizes Bayesian conditioning. Bayesian conditioning
-    on B is Jeffrey conditioning with the point partition {B} and weight 1.
-    See `bayesian_is_jeffrey` above. -/
-theorem jeffrey_generalizes_bayesian : ConditioningMode.jeffrey ≠ .bayesian := by
-  decide
+-- **FinitePMF** (BayesianSemantics.lean): `FinitePMF.prob pmf event`
+-- computes P(event) = Σ_θ mass(θ) · 1[event(θ)]. Conditioning a
+-- FinitePMF on evidence B corresponds to the ratio construction
+-- P(A|B) = P(A ∩ B)/P(B), i.e., `(toCondMeasure m).condMu A B`.
+--
+-- **InfoState.update** (Dynamic/Core/Update.lean): eliminative
+-- conditioning — each possibility either survives (P = 1) or is
+-- removed (P = 0). Under a uniform distribution, this equals Bayesian
+-- conditioning: P(A|φ) = |A ∩ {w | φ w}| / |{w | φ w}|.
+--
+-- **Jeffrey conditioning**: generalizes Bayesian conditioning.
+-- Bayesian conditioning on B is Jeffrey conditioning with the point
+-- partition {B} and weight 1 (see `bayesian_is_jeffrey` above).
 
 end Core.Scale

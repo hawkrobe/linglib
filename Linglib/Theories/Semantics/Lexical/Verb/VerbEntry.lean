@@ -58,6 +58,26 @@ open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Events.Krifka1998 (VerbIncClass)
 open Semantics.Lexical.Verb.LevinClassProfiles
 
+/-- Framework-neutral voice type for deriving argument structure properties.
+
+    Captures the external-argument dimension of the verb's syntactic frame
+    without committing to a specific syntactic framework. Maps to
+    `Minimalism.VoiceFlavor` via bridge theorems in interface files.
+
+    - `agentive`: External argument introduced (transitive/unergative)
+    - `nonThematic`: No external argument (unaccusative/anticausative)
+    - `expletive`: No specifier, no semantics (middle voice) -/
+inductive VoiceType where
+  | agentive     -- External argument introduced
+  | nonThematic  -- No external argument (unaccusative)
+  | expletive    -- No specifier, no semantics (middle)
+  deriving DecidableEq, BEq, Repr
+
+/-- Does this voice type introduce an external argument? -/
+def VoiceType.assignsTheta : VoiceType → Bool
+  | .agentive => true
+  | .nonThematic | .expletive => false
+
 /--
 Which Montague predicate builder this verb uses.
 
@@ -247,8 +267,14 @@ structure VerbCore where
   altComplementType : Option ComplementType := none
   /-- Control type for the alternate complement frame. -/
   altControlType : ControlType := .none
-  /-- Is the verb unaccusative? (subject is underlying object) -/
+  /-- Is the verb unaccusative? (subject is underlying object)
+      When `voiceType` is present, prefer `derivedUnaccusative` which
+      derives this from Voice selection (@cite{kratzer-1996}). -/
   unaccusative : Bool := false
+  /-- Framework-neutral voice type: determines whether an external argument
+      is introduced. When set, `derivedUnaccusative` derives unaccusativity
+      from this field, connecting the Fragment entry to Voice theory. -/
+  voiceType : Option VoiceType := none
   /-- Can the verb passivize? -/
   passivizable : Bool := true
 
@@ -320,6 +346,14 @@ structure VerbCore where
   /-- Root-specific quality dimensions (within-class variation). -/
   rootProfile : Option RootProfile := none
   deriving Repr, BEq
+
+/-- Derive unaccusativity from voice type when present, falling back
+    to the stored `unaccusative` field. A verb is unaccusative iff its
+    Voice does not introduce an external argument (@cite{kratzer-1996}). -/
+def VerbCore.derivedUnaccusative (v : VerbCore) : Bool :=
+  match v.voiceType with
+  | some vt => !vt.assignsTheta
+  | none => v.unaccusative
 
 /-- Derive vendlerClass from degreeAchievementScale if present.
     Falls back to the stipulated vendlerClass field. -/
