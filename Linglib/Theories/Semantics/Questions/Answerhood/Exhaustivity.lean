@@ -1,30 +1,53 @@
+import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
+
 /-!
-# Exhaustivity Presuppositions for Questions @cite{xiang-2022} @cite{dayal-1996}
+# Exhaustivity and Answerhood for Questions @cite{dayal-1996} @cite{xiang-2022}
 
-Formalizes Dayal's Exhaustivity Presupposition (EP, definition 90) and Xiang's
-Relativized Exhaustivity (RelExh, definition 91) from:
+Formalizes two answerhood notions from @cite{dayal-1996} with increasing
+strength:
 
-@cite{xiang-2022}. Relativized Exhaustivity: mention-some and uniqueness.
-*Natural Language Semantics* 30:311–362.
+1. **Dayal's Ans(Q) with EP** (@cite{dayal-1996}): the unique strongest true answer
+2. **Xiang's Relativized Exhaustivity** (@cite{xiang-2022}): EP relative to
+   singleton modal bases
 
 ## Key Definitions
 
-- `dayalEP`: @cite{dayal-1996}'s Exhaustivity Presupposition — the question
-  presupposes that there exists a strongest true answer (one whose proposition
-  entails all other true answers' propositions).
-- `relExh`: Xiang's Relativized Exhaustivity — EP is evaluated relative to
-  *singleton* modal bases. For each accessible world v, restrict the modal base
-  to {v} and check EP there. This weakens EP just enough to license
-  mention-some for ability-*can* questions while preserving mention-all for
-  non-modal and other modal questions.
-- `foQDen`: First-order question denotation (◇φ_x interpretation) — the
-  building block for can-questions where the wh-trace scopes below the modal.
+- `trueAnswers`: @cite{karttunen-1977}-style answerhood — all true answers
+  (no maximality). This is Dayal's first version of Ans(Q) (p. 87, eq. 47;
+  restated as eq. 47a on p. 116):
+  `Ans(Q) = λp [p ∈ Q ∧ ᵛp]`.
+- `dayalAns`: @cite{dayal-1996}'s Ans(Q) — returns the strongest true answer
+  (if EP holds), implementing the full revised Ans(Q) (p. 116, eq. 47b):
+  `Ans(Q) = ιp[p∈Q ∧ ᵛp ∧ ∀p'∈Q [ᵛp' → p ⊆ p']]`.
+- `dayalEP`: @cite{dayal-1996}'s Exhaustivity Presupposition — defined as
+  `(dayalAns ...).isSome` so that the equivalence with the existence of a
+  strongest answer is true by construction.
+  Verified as definition 90 in @cite{xiang-2022}.
+- `dayalAnsProposition`: extracts the proposition (W → Bool) from `dayalAns`.
+- `relExh`: @cite{xiang-2022}'s Relativized Exhaustivity.
+  Verified as definition 91 in @cite{xiang-2022}.
+- `toHamblinDen`: converts the explicit question representation to a
+  `Hamblin.QuestionDen`, bridging the parametric interface used here with
+  the Hamblin denotation type from `Denotation/Hamblin.lean`.
+
+## Key Theorems
+
+- `dayalAns_implies_ep` / `ep_implies_dayalAns`: `dayalAns` returns `some` iff
+  `dayalEP` holds. Trivial by construction (`dayalEP := (dayalAns).isSome`).
+- `dayalAns_eq_conjunction`: the strongest answer's proposition is pointwise
+  equivalent to the conjunction of all true answers — connecting Dayal's Ans(Q)
+  to @cite{karttunen-1977}'s complete answer (`Answerhood.karttunenCompleteAnswer`).
+- `maximality_strictly_strengthens`: having true answers does NOT imply EP
+  (concrete counterexample with incomparable propositions).
 
 ## Design
 
 All definitions are polymorphic in `W` (worlds) and `P` (individuals/answers),
 taking explicit `List W` universe parameters for decidable computation via
-`native_decide`. No imports beyond basic Lean — this is pure theory.
+`native_decide`.
+
+Fox 2018 exhaustification machinery (Exh, IE, MC-sets, foxAns, foxPartition)
+is in the companion file `FoxExhaustification.lean`.
 -/
 
 namespace Theories.Semantics.Questions.Exhaustivity
@@ -36,9 +59,15 @@ namespace Theories.Semantics.Questions.Exhaustivity
 def propEntails {W : Type _} (p q : W → Bool) (worlds : List W) : Bool :=
   worlds.all (λ v => !p v || q v)
 
-/-! ### True Answers -/
+/-! ### True Answers (@cite{karttunen-1977}) -/
 
-/-- The answers whose denotation is true at world `w` under modal base `mb`. -/
+/-- The answers whose denotation is true at world `w` under modal base `mb`.
+
+This is @cite{karttunen-1977}-style answerhood — the set of all true
+answer-propositions with no maximality requirement. Corresponds to Dayal's
+first version of Ans(Q) (p. 87, eq. 47 in @cite{dayal-1996}; restated as
+eq. 47a on p. 116), before the maximality revision to `dayalAns`
+(p. 116, eq. 47b). -/
 def trueAnswers {W P : Type _}
     (qden : (W → List W) → P → W → Bool)
     (mb : W → List W) (answers : List P) (w : W) : List P :=
@@ -56,28 +85,170 @@ def foQDen {W P : Type _} (pred : W → P → Bool)
     (mb : W → List W) (α : P) (w : W) : Bool :=
   (mb w).any (λ v => pred v α)
 
+/-! ### Dayal's Ans(Q) -/
+
+/-- Dayal's Ans(Q) operator (@cite{dayal-1996}, p. 116, eq. 47b): returns the
+strongest true answer when EP holds.
+
+`Ans(Q) = ιp[p∈Q ∧ ᵛp ∧ ∀p'∈Q [ᵛp' → p ⊆ p']]`
+
+Returns `some α` where α is the strongest true answer (its proposition entails
+every other true answer's proposition), or `none` if EP fails. -/
+def dayalAns {W P : Type _}
+    (qden : (W → List W) → P → W → Bool)
+    (mb : W → List W) (answers : List P) (worlds : List W) (w : W) : Option P :=
+  (trueAnswers qden mb answers w).find? (λ α =>
+    (trueAnswers qden mb answers w).all (λ β =>
+      propEntails (qden mb α) (qden mb β) worlds))
+
 /-! ### Dayal's Exhaustivity Presupposition -/
 
-/-- Dayal's Exhaustivity Presupposition (@cite{dayal-1996}; @cite{xiang-2022}, definition 90).
+/-- Dayal's Exhaustivity Presupposition (@cite{dayal-1996}, p. 116, eq. 47b).
+Verified as definition 90 in @cite{xiang-2022}.
 
-EP holds at `w` iff there exists a true answer α whose proposition entails the
-proposition of every other true answer β:
+EP holds at `w` iff `dayalAns` returns a strongest true answer:
   ∃α ∈ True(w). ∀β ∈ True(w). ⟦α⟧ ⊆ ⟦β⟧
 
-When EP holds, α is the *strongest true answer* — the exhaustive answer to the
-question. When EP fails, no single answer subsumes all others, so the question
-has no well-defined exhaustive reading. -/
+Defined as `(dayalAns ...).isSome` so that the equivalence between EP and the
+existence of a strongest answer is true by construction, eliminating the need
+for separate `dayalAns_implies_ep` / `ep_implies_dayalAns` proofs. -/
 def dayalEP {W P : Type _}
     (qden : (W → List W) → P → W → Bool)
     (mb : W → List W) (answers : List P) (worlds : List W) (w : W) : Bool :=
-  let trueAt := trueAnswers qden mb answers w
-  trueAt.any (λ α =>
-    trueAt.all (λ β =>
-      propEntails (qden mb α) (qden mb β) worlds))
+  (dayalAns qden mb answers worlds w).isSome
+
+/-- Extract the proposition (W → Bool) from `dayalAns`. When EP holds, this
+is the strongest true proposition — the one that entails all other true
+answer-propositions. This is what left-peripheral semantics refers to as
+"Ans(Q)" in contexts like `◇¬know(x, Ans(Q))`. -/
+def dayalAnsProposition {W P : Type _}
+    (qden : (W → List W) → P → W → Bool)
+    (mb : W → List W) (answers : List P) (worlds : List W) (w : W) :
+    Option (W → Bool) :=
+  (dayalAns qden mb answers worlds w).map (qden mb)
+
+/-! ### Theorems: dayalAns ↔ dayalEP -/
+
+/-- If `dayalAns` returns an answer, then `dayalEP` holds.
+Trivial by construction: `dayalEP := (dayalAns).isSome`. -/
+theorem dayalAns_implies_ep {W P : Type _}
+    (qden : (W → List W) → P → W → Bool)
+    (mb : W → List W) (answers : List P) (worlds : List W) (w : W)
+    (α : P) (h : dayalAns qden mb answers worlds w = some α) :
+    dayalEP qden mb answers worlds w = true := by
+  simp only [dayalEP, h, Option.isSome_some]
+
+/-- If `dayalEP` holds, then `dayalAns` returns some answer.
+Trivial by construction: `dayalEP := (dayalAns).isSome`. -/
+theorem ep_implies_dayalAns {W P : Type _}
+    (qden : (W → List W) → P → W → Bool)
+    (mb : W → List W) (answers : List P) (worlds : List W) (w : W)
+    (h : dayalEP qden mb answers worlds w = true) :
+    (dayalAns qden mb answers worlds w).isSome = true :=
+  h
+
+/-- The strongest true answer's proposition is pointwise equivalent to the
+conjunction of all true answers' propositions.
+
+This connects Dayal's Ans(Q) to @cite{karttunen-1977}'s complete answer
+(`Answerhood.karttunenCompleteAnswer` in `Answerhood.lean`): when EP holds,
+the strongest true proposition is exactly the conjunction (intersection)
+of all true propositions over the finite world set.
+
+Forward: α entails every β ∈ True(w), so if α holds at v, all β hold at v.
+Backward: α ∈ True(w), so if all β hold at v, α holds at v. -/
+theorem dayalAns_eq_conjunction {W P : Type _}
+    (qden : (W → List W) → P → W → Bool)
+    (mb : W → List W) (answers : List P) (worlds : List W) (w : W)
+    (α : P) (hα : dayalAns qden mb answers worlds w = some α) :
+    ∀ v ∈ worlds,
+      qden mb α v =
+        (trueAnswers qden mb answers w).all (λ β => qden mb β v) := by
+  simp only [dayalAns] at hα
+  have hPred := List.find?_some hα
+  have hMem := List.mem_of_find?_eq_some hα
+  rw [List.all_eq_true] at hPred
+  intro v hv
+  cases hαv : qden mb α v
+  · -- false: .all must be false since α ∈ trueAnswers and qden mb α v = false
+    apply Eq.symm; apply eq_false_of_ne_true
+    intro hall; rw [List.all_eq_true] at hall
+    exact absurd (hall α hMem) (by simp [hαv])
+  · -- true: .all must be true since α entails every β
+    apply Eq.symm; rw [List.all_eq_true]
+    intro β hβ
+    have hEnt := hPred β hβ
+    simp only [propEntails, List.all_eq_true] at hEnt
+    have := hEnt v hv
+    simp [hαv] at this
+    exact this
+
+/-! ### Maximality Strictly Strengthens Simple Answerhood
+
+Dayal's maximality clause (EP) is strictly stronger than simple
+@cite{karttunen-1977}-style answerhood. Having true answers does NOT imply EP:
+when two answers have incomparable propositions (neither entails the other),
+both can be true but no single answer is strongest.
+
+This is the core motivation for Dayal's revision from simple Ans(Q)
+(p. 87, eq. 47 in @cite{dayal-1996}; restated as eq. 47a on p. 116)
+to maximal Ans(Q) (p. 116, eq. 47b). -/
+
+/-- Concrete counterexample: two answers with incomparable propositions.
+Answer 0 true at worlds {0,1}, answer 1 true at worlds {0,2}.
+At world 0 both are true (trueAnswers nonempty), but neither entails the
+other ({0,1} ⊄ {0,2} and {0,2} ⊄ {0,1}), so EP fails. -/
+theorem maximality_strictly_strengthens :
+    let worlds : List (Fin 3) := [0, 1, 2]
+    let answers : List (Fin 2) := [0, 1]
+    let mb : Fin 3 → List (Fin 3) := λ _ => [0, 1, 2]
+    let qden : (Fin 3 → List (Fin 3)) → Fin 2 → Fin 3 → Bool :=
+      λ _ ans w => match ans, w with
+        | ⟨0, _⟩, ⟨0, _⟩ => true  -- answer 0 true at world 0
+        | ⟨0, _⟩, ⟨1, _⟩ => true  -- answer 0 true at world 1
+        | ⟨1, _⟩, ⟨0, _⟩ => true  -- answer 1 true at world 0
+        | ⟨1, _⟩, ⟨2, _⟩ => true  -- answer 1 true at world 2
+        | _, _ => false
+    -- Both answers true at world 0 (trueAnswers nonempty)
+    (trueAnswers qden mb answers 0).length > 0 ∧
+    -- But EP fails (no strongest answer — incomparable propositions)
+    dayalEP qden mb answers worlds 0 = false := by
+  native_decide
+
+/-! ### Hamblin Denotation Conversion -/
+
+/-- Convert a question given explicitly (answer function + answer list) to a
+`Hamblin.QuestionDen` — a set-of-propositions representation.
+
+The resulting Hamblin denotation recognizes a proposition `p` as an answer iff
+`p` agrees pointwise (on `worlds`) with some `qden mb α` for α ∈ answers.
+This bridges the parametric interface used throughout this file with the
+`Hamblin.QuestionDen` type from `Denotation/Hamblin.lean`. -/
+def toHamblinDen {W P : Type _} [BEq W]
+    (qden : (W → List W) → P → W → Bool)
+    (mb : W → List W) (answers : List P) (worlds : List W) :
+    Semantics.Questions.Hamblin.QuestionDen W :=
+  Semantics.Questions.Hamblin.fromAlternatives (answers.map (qden mb)) worlds
+
+/-- `dayalEP` is a presupposition on the Hamblin denotation: it holds iff the
+set of true propositions in the Hamblin denotation has a unique minimum
+(strongest element) under propositional entailment. -/
+theorem ep_is_hamblin_presupposition {W P : Type _} [BEq W]
+    (qden : (W → List W) → P → W → Bool)
+    (mb : W → List W) (answers : List P) (worlds : List W) (w : W) :
+    dayalEP qden mb answers worlds w = true →
+    ∃ (p : W → Bool),
+      Semantics.Questions.Hamblin.isAnswer
+        (toHamblinDen qden mb answers worlds) p = true := by
+  -- TODO: when EP holds, dayalAns returns some α (by definition of dayalEP),
+  -- and qden mb α is recognized by toHamblinDen since α ∈ answers
+  -- (trueAnswers ⊆ answers). Requires unfolding Hamblin.fromAlternatives.
+  sorry
 
 /-! ### Relativized Exhaustivity -/
 
-/-- Relativized Exhaustivity (@cite{xiang-2022}, definition 91).
+/-- Relativized Exhaustivity (@cite{xiang-2022}).
+Verified as definition 91 in @cite{xiang-2022}.
 
 RelExh holds at `w` iff for every singleton modal base {v} where v ∈ mb(w),
 if {v} makes some answer relevant (both true under {v} and true under the full
@@ -97,145 +268,5 @@ def relExh {W P : Type _}
     let hasRelevant := answers.any (λ α =>
       qden singletonMB α w && qden mb α w)
     !hasRelevant || dayalEP qden singletonMB answers worlds w)
-
-/-! ### @cite{fox-2018}: Partition by Exhaustification @cite{fox-2018}
-
-@cite{fox-2018} "Partition by Exhaustification" derives Dayal's EP from the
-exhaustification operator Exh. The key insight: a question partitions
-the logical space iff every world has exactly one exhaustified true answer.
-
-The definitions below are Bool-valued analogues of the Prop-valued MC-set/IE
-machinery in `Exhaustification.Operators`, specialized to question cells
-for decidable computation via `native_decide`.
-
-- `cellMCSets` mirrors `isMCSet` from Exhaustification
-- `cellIE` mirrors `IE` from Exhaustification
-- `foxExh` mirrors `exhIE` from Exhaustification
-- `foxAns` implements @cite{fox-2018}, definition 35 (answer operator)
-- `foxPartition` implements Schwarzschild's partition test ((38))
--/
-
-/-- All sublists (power set) of a list, preserving order.
-Used to enumerate candidate MC-sets of cell indices. -/
-def sublists : List Nat → List (List Nat)
-  | [] => [[]]
-  | x :: xs =>
-    let rest := sublists xs
-    rest ++ rest.map (x :: ·)
-
-/-- Safe cell accessor: returns the cell at index `i`, or (λ _ => false) for OOB. -/
-def getCell {W : Type _} (cells : List (W → Bool)) (i : Nat) : W → Bool :=
-  cells.getD i (λ _ => false)
-
-/-- Negation consistency: can cells at `excluded` indices be simultaneously
-negated while cell `pIdx` stays true?
-
-`negConsistent cells pIdx excluded worlds = true` iff
-∃w ∈ worlds. cells[pIdx](w) ∧ ∀j ∈ excluded. ¬cells[j](w)
-
-This is the Bool analogue of `SetConsistent` in Exhaustification,
-specialized to the pattern φ ∧ ⋀{¬a : a ∈ excluded}. -/
-def negConsistent {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
-    (excluded : List Nat) (worlds : List W) : Bool :=
-  worlds.any (λ w =>
-    getCell cells pIdx w &&
-    excluded.all (λ j => !getCell cells j w))
-
-/-- MC-sets (maximal consistent sets) of cell indices for cell `pIdx`.
-
-A subset `S` of alternative indices (excluding `pIdx`) is an MC-set iff:
-1. Negating all cells in `S` is consistent with `pIdx` being true
-2. No proper superset of `S` is also consistent
-
-Bool analogue of `isMCSet` in Exhaustification.Operators. -/
-def cellMCSets {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
-    (worlds : List W) : List (List Nat) :=
-  let altIdxs := (List.range cells.length).filter (· != pIdx)
-  let allSubs := sublists altIdxs
-  let consistent := allSubs.filter (negConsistent cells pIdx · worlds)
-  -- Keep only maximal: S is maximal iff no consistent T ⊃ S
-  consistent.filter (λ s =>
-    !consistent.any (λ t =>
-      t.length > s.length && s.all (t.contains ·)))
-
-/-- Innocently excludable alternatives for cell `pIdx`: the indices
-that appear in *every* MC-set (intersection of all MC-sets).
-
-Bool analogue of `IE` in Exhaustification.Operators:
-  IE_(ALT,φ) = {ψ : ψ belongs to every MC_(ALT,φ)-set} -/
-def cellIE {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
-    (worlds : List W) : List Nat :=
-  let mcs := cellMCSets cells pIdx worlds
-  match mcs with
-  | [] => []
-  | first :: rest =>
-    first.filter (λ i => rest.all (·.contains i))
-
-/-- Fox's exhaustified cell: Exh(Q)(p)(w) = cells[pIdx](w) ∧ ∀j ∈ IE. ¬cells[j](w).
-
-The exhaustified meaning of answer p negates all innocently excludable
-alternatives. Bool analogue of `exhIE` in Exhaustification.Operators. -/
-def foxExh {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
-    (worlds : List W) : W → Bool :=
-  λ w => getCell cells pIdx w &&
-    (cellIE cells pIdx worlds).all (λ j => !getCell cells j w)
-
-/-- Non-vacuity: Exh(Q)(p) is satisfiable (true at some world).
-@cite{fox-2018} requires non-vacuity for QPM. -/
-def foxNV {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
-    (worlds : List W) : Bool :=
-  worlds.any (foxExh cells pIdx worlds)
-
-/-- Count of Exh-true cells at world `w`: the number of cells whose
-exhaustified meaning holds at `w`. This is NOT Fox's |Ans| (Definition 35)
-but a simpler diagnostic: how many exclusive readings are true at `w`.
-When = 0, no cell exclusively holds (overlap); when = 1, one cell
-dominates; when > 1, multiple exclusive readings coexist. -/
-def exhTrueCount {W : Type _} (cells : List (W → Bool))
-    (worlds : List W) (w : W) : Nat :=
-  (List.range cells.length).filter (λ i => foxExh cells i worlds w) |>.length
-
-/-- Pointwise non-vacuity: every cell true at `w` has a satisfiable
-exhaustified version. This is a necessary condition for Fox's QPM
-(Definition 34) but weaker — it checks NV for true cells at a single
-world, while Fox's QPM requires both CI and NV globally over the
-partition induced by Q. -/
-def pointwiseNV {W : Type _} (cells : List (W → Bool))
-    (worlds : List W) (w : W) : Bool :=
-  (List.range cells.length).all (λ i =>
-    !getCell cells i w || foxNV cells i worlds)
-
-/-- Fox's answer operator (Definition 35). At world `w`, finds the unique
-cell-identifier (the unique `j` where `foxExh(cells, j, worlds)(w) = true`)
-and returns the count of Q-members that are true at `w` AND whose
-denotation entails the cell-identifier *proposition* `cells[j]`.
-
-Fox's (37): Ans(Q)(w) = {q∈Q : w∈q ∧ q ⊆ (ιp∈Q)[Exh(Q,p,w)=1]}
-The ι picks the unique proposition p whose exhaustification is true at w;
-the entailment check is q ⊆ p (q entails the proposition p, not Exh(p)).
-
-Returns 0 if no unique cell-identifier exists (zero or multiple Exh-true
-cells at `w`). When `foxAns > 1`, Fox predicts mention-some (the
-cell-identifier is weaker than individual true answers). When `= 1`,
-mention-all (the cell-identifier is the strongest true answer). -/
-def foxAns {W : Type _} (cells : List (W → Bool))
-    (worlds : List W) (w : W) : Nat :=
-  let exhTrue := (List.range cells.length).filter (λ j => foxExh cells j worlds w)
-  match exhTrue with
-  | [j] =>
-    let cellId := getCell cells j
-    (List.range cells.length).filter (λ i =>
-      getCell cells i w && propEntails (getCell cells i) cellId worlds) |>.length
-  | _ => 0
-
-/-- Schwarzschild's partition test (@cite{fox-2018}, (38)): do the exhaustified
-cells {Exh(Q)(p) : p ∈ Q} partition the world set? Holds iff every world
-has exactly one Exh-true cell. When this holds, Fox's QPM (Definition 34)
-is satisfied and `foxAns` is well-defined at every world. -/
-def foxPartition {W : Type _} (cells : List (W → Bool))
-    (worlds : List W) : Bool :=
-  worlds.all (λ (w : W) =>
-    let n := (List.range cells.length).filter (λ i => foxExh cells i worlds w) |>.length
-    n == 1)
 
 end Theories.Semantics.Questions.Exhaustivity

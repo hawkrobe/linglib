@@ -18,6 +18,7 @@ This is DERIVED, not stipulated.
 
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Questions.Answerhood.Answerhood
+import Linglib.Theories.Semantics.Questions.Answerhood.Exhaustivity
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -551,5 +552,40 @@ theorem veridical_model_blocks_perspP {W E : Type*}
     (hHolds : V.holdsAt agent (Answerhood.ans Q w) w worlds = true) :
     perspPPresupComp (doxasticToEpistemicModel V agent w worlds) Q w = false := by
   simp [perspPPresupComp, doxasticToEpistemicModel, hHolds]
+
+-- ============================================================================
+-- J. Connection to Dayal's answerhood theory
+-- ============================================================================
+
+/-! ### Connection to @cite{dayal-1996}'s answerhood theory
+
+The `Ans(Q)` referenced throughout this module — in PerspP's
+`◇¬know(x, Ans(Q))` and SAP's obligation to assert `Ans(Q)` — corresponds to
+@cite{dayal-1996}'s strongest true answer when the question's Exhaustivity
+Presupposition (EP) is satisfied. See `Exhaustivity.dayalAns` for the formal
+operator and `Exhaustivity.dayalAnsProposition` for the extracted proposition.
+
+When EP fails (e.g., ability-*can* questions under first-order scope), there
+is no unique strongest answer, and the question licenses mention-some readings.
+In such cases, `Ans(Q)` is not well-defined in Dayal's sense, though
+@cite{xiang-2022}'s Relativized Exhaustivity (`Exhaustivity.relExh`) may still
+hold. -/
+
+/-- For a question where @cite{dayal-1996}'s EP holds, there exists a definite
+proposition serving as Ans(Q) in the left-peripheral semantics. Responsive
+predicates' knowledge entailment (`entailsKnowledge`) targets this proposition;
+PerspP's ignorance presupposition (`◇¬know(x, Ans(Q))`) presupposes it exists.
+
+When EP fails, there is no definite Ans(Q), and the structural conflict between
+responsive predicates and PerspP is weakened. -/
+theorem ep_gives_definite_ans {W P : Type _}
+    (qden : (W → List W) → P → W → Bool)
+    (mb : W → List W) (answers : List P) (worlds : List W) (w : W)
+    (α : P) (hα : Theories.Semantics.Questions.Exhaustivity.dayalAns
+      qden mb answers worlds w = some α) :
+    (Theories.Semantics.Questions.Exhaustivity.dayalAnsProposition
+      qden mb answers worlds w).isSome = true := by
+  simp only [Theories.Semantics.Questions.Exhaustivity.dayalAnsProposition, hα]
+  rfl
 
 end Semantics.Questions.LeftPeriphery

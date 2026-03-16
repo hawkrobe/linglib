@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.229.300] - 2026-03-15
+
+### Changed
+- **Redefine `dayalEP` as `(dayalAns ...).isSome`**: eliminates redundant `.any`/`.find?` duplication; closes `dayalAns_implies_ep` and `ep_implies_dayalAns` (were sorry'd)
+- **Close `dayalAns_eq_conjunction`**: structured proof via `List.find?_some` / `List.mem_of_find?_eq_some` (was sorry'd)
+- **Remove `simpleAns`**: was a zero-value alias for `trueAnswers`; inlined in `maximality_strictly_strengthens`
+- **Remove `let`-binding from `dayalAns`**: enables clean `find?` lemma application in proofs
+
+### Fixed
+- **Verify UNVERIFIED claims against papers**: dayalEP = def. 90 in Xiang 2022 ✓, relExh = def. 91 ✓, foxAns = def. 35 in Fox 2018 ✓, foxPartition = presupposition of (38) ✓
+- **Fix equation number inaccuracy**: "p. 87, eq. 47a" → "p. 87, eq. 47" (the letter suffixes only appear on p. 116)
+- **Add `@cite{karttunen-1977}`**: replace 6 bare "Karttunen 1977" references with proper @cite tags
+- **Clarify `foxPartition` docstring**: (38) is the full Ans operator; `foxPartition` implements the partition presupposition condition
+
+## [0.229.299] - 2026-03-15
+
+### Added
+- **`dayalAns` operator** in `Exhaustivity.lean`: returns the strongest true answer when EP holds (`Option P`), implementing Dayal 1996 eq. 47b's ι-operator
+- **`dayalAnsProposition`**: extracts the proposition (`W → Bool`) from `dayalAns` for use in left-peripheral semantics (`◇¬know(x, Ans(Q))`)
+- **`simpleAns`**: Karttunen 1977 / Dayal eq. 47a simple answerhood (all true answers, no maximality)
+- **`toHamblinDen`**: bridge from parametric question representation to `Hamblin.QuestionDen`
+- **`FoxExhaustification.lean`**: extracted Fox 2018 material (Exh, IE, MC-sets, `foxAns`, `foxPartition`) into dedicated file
+- **`maximality_strictly_strengthens`**: concrete counterexample (Fin 3 × Fin 2) proving EP is strictly stronger than having true answers
+- **`dayalAns_implies_ep` / `ep_implies_dayalAns`**: equivalence theorems (sorry, with proof sketches)
+- **`dayalAns_eq_conjunction`**: strongest answer = conjunction of all true answers (sorry, with proof sketch)
+- **`ep_is_hamblin_presupposition`**: EP implies answer recognized by Hamblin denotation (sorry)
+- **`ep_gives_definite_ans`** in `LeftPeriphery.lean`: connects `dayalAns` to left-peripheral `Ans(Q)` references
+
+### Fixed
+- **`dayal-1996` bib entry**: fix stale `sources` path (`Theories/Semantics/Questions/Exhaustivity.lean` → `Theories/Semantics/Questions/Answerhood/Exhaustivity.lean`)
+- **UNVERIFIED flags**: mark "definition 90" and "definition 91" Xiang 2022 references as `-- UNVERIFIED` in Exhaustivity.lean docstrings
+- **UNVERIFIED flags**: mark Fox 2018 "definition 35" and "(38)" as `-- UNVERIFIED` in FoxExhaustification.lean
+
 ## [0.229.298] - 2026-03-15
 
 ### Fixed
