@@ -520,7 +520,129 @@ end NumberTreeGQ
 -- ============================================================================
 
 section NumberTreeBridge
-open Classical
+open Classical Finset
+
+/-- Decompose α into 4 cells based on two Boolean predicates (A, B).
+    Each element x lands in cell (A x, B x). -/
+private def cellEquiv (A B : α → Bool) :
+    α ≃ Σ (b₁ : Bool) (b₂ : Bool), {x : α // A x == b₁ && B x == b₂} where
+  toFun x := ⟨A x, B x, ⟨x, by simp⟩⟩
+  invFun := fun ⟨_, _, ⟨x, _⟩⟩ => x
+  left_inv _ := rfl
+  right_inv := fun ⟨b₁, b₂, ⟨x, h⟩⟩ => by
+    simp only [Bool.and_eq_true, beq_iff_eq] at h
+    rcases h with ⟨h₁, h₂⟩; subst h₁; subst h₂; rfl
+
+/-- Build a cell-preserving bijection from matching 4-cell cardinalities. -/
+private noncomputable def cellBijection [Fintype α] [DecidableEq α]
+    (A₁ B₁ A₂ B₂ : α → Bool)
+    (h_card : ∀ b₁ b₂, Fintype.card {x : α // A₁ x == b₁ && B₁ x == b₂} =
+                         Fintype.card {x : α // A₂ x == b₁ && B₂ x == b₂}) :
+    α ≃ α :=
+  (cellEquiv A₂ B₂).trans
+    ((Equiv.sigmaCongrRight fun b₁ => Equiv.sigmaCongrRight fun b₂ =>
+        Fintype.equivOfCardEq (h_card b₁ b₂).symm).trans
+      (cellEquiv A₁ B₁).symm)
+
+/-- The cell bijection preserves both predicates pointwise. -/
+private lemma cellBijection_spec [Fintype α] [DecidableEq α]
+    (A₁ B₁ A₂ B₂ : α → Bool)
+    (h_card : ∀ b₁ b₂, Fintype.card {x : α // A₁ x == b₁ && B₁ x == b₂} =
+                         Fintype.card {x : α // A₂ x == b₁ && B₂ x == b₂})
+    (x : α) :
+    A₁ (cellBijection A₁ B₁ A₂ B₂ h_card x) = A₂ x ∧
+    B₁ (cellBijection A₁ B₁ A₂ B₂ h_card x) = B₂ x := by
+  unfold cellBijection
+  simp only [Equiv.trans_apply, Equiv.sigmaCongrRight_apply, cellEquiv]
+  have h := (Fintype.equivOfCardEq (h_card (A₂ x) (B₂ x)).symm ⟨x, by simp⟩).property
+  simp only [Bool.and_eq_true, beq_iff_eq] at h
+  exact h
+
+/-- Bool complement partition: |{f}| + |{¬f}| = |α|. -/
+private lemma bool_filter_partition [Fintype α] [DecidableEq α] (f : α → Bool) :
+    (univ.filter fun x => f x).card + (univ.filter fun x => !(f x)).card =
+    Fintype.card α := by
+  have hunion : (univ.filter fun x => f x) ∪ (univ.filter fun x => !(f x)) = univ := by
+    ext x; simp only [mem_union, mem_filter, mem_univ, true_and]
+    cases f x <;> simp
+  have hdisj : Disjoint (univ.filter fun x => f x) (univ.filter fun x => !(f x)) :=
+    disjoint_filter.mpr fun x _ h1 h2 => by cases f x <;> simp_all
+  rw [← card_union_of_disjoint hdisj, hunion, card_univ]
+
+/-- |A| = |A∩B| + |A\B| for Bool predicates. -/
+private lemma bool_filter_split [Fintype α] [DecidableEq α] (A B : α → Bool) :
+    (univ.filter fun x => A x).card =
+    (univ.filter fun x => A x && B x).card +
+    (univ.filter fun x => A x && !(B x)).card := by
+  have hunion : (univ.filter fun x => A x && B x) ∪ (univ.filter fun x => A x && !(B x)) =
+                univ.filter fun x => A x := by
+    ext x; simp only [mem_union, mem_filter, mem_univ, true_and]
+    cases A x <;> cases B x <;> simp
+  have hdisj : Disjoint (univ.filter fun x => A x && B x)
+      (univ.filter fun x => A x && !(B x)) :=
+    disjoint_filter.mpr fun x _ h1 h2 => by cases A x <;> cases B x <;> simp_all
+  rw [← card_union_of_disjoint hdisj, hunion]
+
+/-- Relate Fintype.card of a Bool-predicate subtype to Finset.filter card. -/
+private lemma card_subtype_bool [Fintype α] (f : α → Bool) :
+    Fintype.card {x : α // f x} = (univ.filter fun x => f x).card := by
+  rw [Fintype.card_subtype]
+
+/-- CONSERV + QUANT GQs agree on any two pairs (A, B) and (A', B') with
+    matching `|A∩B|` and `|A\B|` cardinalities. The proof decomposes the
+    domain into 4 cells via conservativity (collapsing B to A∧B),
+    builds a cell-preserving bijection from `Fintype.equivOfCardEq`,
+    then applies `QuantityInvariant`. -/
+private theorem gq_depends_on_card [Fintype α] [DecidableEq α]
+    (q : GQ α) (hCons : Conservative q) (hQ : QuantityInvariant q)
+    (A B A' B' : α → Bool)
+    (h_ab : (univ.filter (fun x => A x && B x)).card =
+            (univ.filter (fun x => A' x && B' x)).card)
+    (h_anb : (univ.filter (fun x => A x && !(B x))).card =
+             (univ.filter (fun x => A' x && !(B' x))).card) :
+    q A B = q A' B' := by
+  rw [hCons A B, hCons A' B']
+  -- Cell simplification: relate each (b₁, b₂) cell to a simple filter
+  have cell_TT (R S : α → Bool) :
+      (univ.filter fun x => R x == true && (R x && S x) == true).card =
+      (univ.filter fun x => R x && S x).card := by
+    congr 1; ext x; simp only [mem_filter, mem_univ, true_and]
+    cases R x <;> cases S x <;> simp
+  have cell_TF (R S : α → Bool) :
+      (univ.filter fun x => R x == true && (R x && S x) == false).card =
+      (univ.filter fun x => R x && !(S x)).card := by
+    congr 1; ext x; simp only [mem_filter, mem_univ, true_and]
+    cases R x <;> cases S x <;> simp
+  have cell_FT (R S : α → Bool) :
+      (univ.filter fun x => R x == false && (R x && S x) == true).card = 0 := by
+    rw [card_eq_zero, filter_eq_empty_iff]
+    intro x _; simp only [Bool.and_eq_true, beq_iff_eq, not_and]
+    intro h1 h2; rw [h1] at h2; exact absurd h2 (by decide)
+  have cell_FF (R S : α → Bool) :
+      (univ.filter fun x => R x == false && (R x && S x) == false).card =
+      (univ.filter fun x => !(R x)).card := by
+    congr 1; ext x; simp only [mem_filter, mem_univ, true_and]
+    cases R x <;> cases S x <;> simp
+  -- Build 4-cell cardinality match
+  have h_card : ∀ b₁ b₂,
+      Fintype.card {x : α // A x == b₁ && (A x && B x) == b₂} =
+      Fintype.card {x : α // A' x == b₁ && (A' x && B' x) == b₂} := by
+    intro b₁ b₂
+    rw [card_subtype_bool, card_subtype_bool]
+    cases b₁ <;> cases b₂
+    · rw [cell_FF, cell_FF]
+      have hA : (univ.filter fun x => A x).card = (univ.filter fun x => A' x).card := by
+        rw [bool_filter_split A B, bool_filter_split A' B', h_ab, h_anb]
+      have p1 := bool_filter_partition A
+      have p2 := bool_filter_partition A'
+      omega
+    · rw [cell_FT, cell_FT]
+    · rw [cell_TF, cell_TF, h_anb]
+    · rw [cell_TT, cell_TT, h_ab]
+  let f := cellBijection A (fun x => A x && B x) A' (fun x => A' x && B' x) h_card
+  exact hQ A (fun x => A x && B x) A' (fun x => A' x && B' x) f f.bijective
+    (fun x => (cellBijection_spec _ _ _ _ h_card x).1)
+    (fun x => (cellBijection_spec _ _ _ _ h_card x).2)
 
 /-- Extract the number-tree representation of a CONSERV+QUANT quantifier.
     Under conservativity and quantity-invariance, Q(A,B) depends only on
@@ -541,21 +663,27 @@ noncomputable def toNumberTree [Fintype α] (q : GQ α) : NumberTreeGQ :=
     realizable coordinates: for any A, B, the GQ's truth value equals
     the number-tree value at (|A∩B|, |A\B|).
 
-    Requires `QuantityInvariant` so that the choice of witness doesn't
-    matter — any pair with the same cell cardinalities gives the same
-    truth value.
-
-    TODO: the proof requires constructing a cell-preserving bijection
-    from matching cardinalities. The machinery exists in
-    `Semantics.Lexical.Determiner.Quantifier.build_bijection` but
-    uses `FiniteModel` rather than `Fintype`. -/
+    Proof: A and B themselves witness the existential in `toNumberTree`,
+    so the `dite` takes the positive branch. The chosen witness pair has
+    matching `|A∩B|` and `|A\B|` cardinalities, so `gq_depends_on_card`
+    (via cell-preserving bijection) gives `q A B = q A_chosen B_chosen`. -/
 theorem toNumberTree_spec [Fintype α] [DecidableEq α] (q : GQ α)
-    (_hCons : Conservative q) (_hQ : QuantityInvariant q) :
+    (hCons : Conservative q) (hQ : QuantityInvariant q) :
     ∀ (A B : α → Bool),
       q A B = toNumberTree q
         (Finset.univ.filter (λ x => A x && B x)).card
         (Finset.univ.filter (λ x => A x && !(B x))).card := by
-  sorry
+  intro A B
+  have hexists : ∃ (A' B' : α → Bool),
+      (univ.filter (fun x => A' x && B' x)).card =
+        (univ.filter (fun x => A x && B x)).card ∧
+      (univ.filter (fun x => A' x && !(B' x))).card =
+        (univ.filter (fun x => A x && !(B x))).card :=
+    ⟨A, B, rfl, rfl⟩
+  unfold toNumberTree
+  rw [dif_pos hexists]
+  have hspec := hexists.choose_spec.choose_spec
+  exact gq_depends_on_card q hCons hQ A B _ _ hspec.1.symm hspec.2.symm
 
 end NumberTreeBridge
 

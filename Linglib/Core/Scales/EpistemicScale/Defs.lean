@@ -11,21 +11,20 @@ import Mathlib.Tactic.IntervalCases
 @cite{holliday-icard-2013} @cite{halpern-2003} @cite{van-der-hoek-1996}
 
 Epistemic likelihood scales: the `EpistemicScale` arm of the categorical
-diagram in `Core/Scale.lean`. Extracted here because this domain-specific
-theory has a single downstream consumer (`Comparisons/KratzerEpistemicRSA.lean`).
+diagram in `Core/Scale.lean`.
 
 @cite{holliday-icard-2013} study the logic of "at least as likely as" (≿) on
 propositions, defining a hierarchy of axiom systems (W ⊂ F ⊂ FA) whose
 qualitative additivity axiom is the epistemic counterpart of `AdditiveScale.fa`.
 
-**Axiom hierarchy** (Table 1):
+**Axiom hierarchy** (@cite{holliday-icard-2013}, Figure 3; axioms in Figures 4–6):
 
-| System | Axioms         | Semantics                          |
-|--------|----------------|------------------------------------|
-| W      | R, T           | World-ordering + Halpern lift      |
-| F      | R, T, F        | + bottom element                   |
-| FA     | R, T, F, A     | Qualitatively additive measures    |
-| FP∞    | R, T, F, A, Sc | Finitely additive measures         |
+| System | Axioms                  | Semantics                          |
+|--------|-------------------------|------------------------------------|
+| W      | R, T                   | World-ordering + l-lifting         |
+| F      | W + Bot, BT            | + bottom, non-triviality           |
+| FA     | F + Tot, Tran, A       | Qualitatively additive measures    |
+| FP∞    | FA + Scott cancellation | Finitely additive measures         |
 
 **Bridge**: Axiom A (epistemic qualitative additivity) and `AdditiveScale.fa`
 (mereological finite additivity) are algebraically equivalent — both express
@@ -40,7 +39,7 @@ References:
 
 namespace Core.Scale
 
--- ── Axioms (Table 1) ────────────────────────────
+-- ── Axioms (Figures 4–6) ────────────────────────
 
 namespace EpistemicAxiom
 
@@ -64,10 +63,6 @@ def F {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
 def BT {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ¬ge ∅ Set.univ
 
-/-- Axiom S: supplementation — A ≿ B → Bᶜ ≿ Aᶜ. -/
-def S {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
-  ∀ A B, ge A B → ge Bᶜ Aᶜ
-
 /-- Axiom A: qualitative additivity — A ≿ B ↔ (A \ B) ≿ (B \ A).
     The comparative likelihood factors through disjoint parts. -/
 def A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
@@ -78,7 +73,7 @@ def A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
 def J {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B C, ge A B → ge A C → ge A (B ∪ C)
 
-/-- Axiom DS: determination by singletons (@cite{halpern-2003}, Theorem 2.7.2) —
+/-- Axiom DS: determination by singletons (@cite{halpern-2003}, Thm. 7.5.1a) —
     A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}. The comparison can be witnessed
     by a single element of the dominating set. -/
 def DS {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
@@ -151,30 +146,28 @@ theorem inducedGe_axiomT (m : FinAddMeasure W) :
   rw [hdecomp, m.additive A (B \ A) hdisj]
   exact le_add_of_nonneg_right (m.nonneg (B \ A))
 
-/-- A finitely additive measure induces System FA.
-    This is the soundness direction of **Theorem 6**. -/
+/-- μ(∅) = 0 for any finitely additive measure.
+    Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
+theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
+  have hempty : m.mu (∅ ∪ ∅) = m.mu ∅ + m.mu ∅ :=
+    m.additive ∅ ∅ (fun x hx => hx.elim)
+  simp only [Set.empty_union] at hempty
+  have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
+  exact add_left_cancel h
+
+/-- Every finitely additive measure satisfies the FA axioms.
+    A fortiori from @cite{holliday-icard-2013} Theorem 6 soundness,
+    since every finitely additive measure is qualitatively additive. -/
 def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := m.inducedGe_axiomR
   mono := m.inducedGe_axiomT
   bottom := by
     show m.mu Set.univ ≥ m.mu ∅
-    have hempty : m.mu (∅ ∪ ∅) = m.mu ∅ + m.mu ∅ :=
-      m.additive ∅ ∅ (fun x hx => hx.elim)
-    simp only [Set.empty_union] at hempty
-    have hzero : m.mu ∅ = 0 := by
-      have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
-      exact add_left_cancel h
-    rw [hzero]; exact m.nonneg Set.univ
+    rw [m.mu_empty]; exact m.nonneg Set.univ
   nonTrivial := by
     show ¬(m.mu ∅ ≥ m.mu Set.univ)
-    have hempty : m.mu (∅ ∪ ∅) = m.mu ∅ + m.mu ∅ :=
-      m.additive ∅ ∅ (fun x hx => hx.elim)
-    simp only [Set.empty_union] at hempty
-    have hzero : m.mu ∅ = 0 := by
-      have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
-      exact add_left_cancel h
-    rw [hzero, m.total]; exact not_le.mpr one_pos
+    rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := by
@@ -217,7 +210,12 @@ end FinAddMeasure
     condition: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A).
 
     @cite{holliday-icard-2013} Theorem 6: System FA is sound and complete
-    with respect to qualitatively additive measure models. -/
+    with respect to qualitatively additive measure models.
+
+    Note: the paper's definition of qualitatively additive measures includes μ(∅) = 0, but we omit it here
+    because the completeness proof (Theorem 6) constructs a measure with
+    μ(∅) > 0 (belowCount counts ∅ itself via reflexivity). The soundness
+    direction (`toSystemFA`) takes `mu_empty` as an explicit hypothesis. -/
 structure QualAddMeasure (W : Type*) where
   /-- The measure function -/
   mu : Set W → ℚ
@@ -235,6 +233,42 @@ variable {W : Type*}
 /-- Measure-induced comparative likelihood: A ≿ B ↔ μ(A) ≥ μ(B). -/
 def inducedGe (m : QualAddMeasure W) (A B : Set W) : Prop :=
   m.mu A ≥ m.mu B
+
+/-- Monotonicity for qualitatively additive measures with μ(∅) = 0:
+    A ⊆ B → μ(B) ≥ μ(A). Follows from qualAdd + μ(∅) = 0 + nonneg. -/
+theorem inducedGe_axiomT (m : QualAddMeasure W) (h_empty : m.mu ∅ = 0) :
+    EpistemicAxiom.T m.inducedGe := by
+  intro A B hAB
+  show m.mu B ≥ m.mu A
+  have hAB_diff : A \ B = ∅ := Set.diff_eq_empty.mpr hAB
+  rw [m.qualAdd B A]
+  rw [hAB_diff, h_empty]
+  exact m.nonneg (B \ A)
+
+/-- A qualitatively additive measure with μ(∅) = 0 induces System FA.
+    Soundness direction of @cite{holliday-icard-2013} Theorem 6:
+    every qualitatively additive measure model (with μ(∅) = 0) satisfies
+    the FA axioms.
+
+    The `h_empty` hypothesis is needed for monotonicity and non-triviality;
+    it is NOT a field on `QualAddMeasure` because the completeness proof
+    constructs a measure where μ(∅) > 0. -/
+def toSystemFA (m : QualAddMeasure W) (h_empty : m.mu ∅ = 0) :
+    EpistemicSystemFA W where
+  ge := m.inducedGe
+  refl := fun _ => le_refl _
+  mono := m.inducedGe_axiomT h_empty
+  bottom := by
+    show m.mu Set.univ ≥ m.mu ∅
+    rw [h_empty]; exact m.nonneg Set.univ
+  nonTrivial := by
+    show ¬(m.mu ∅ ≥ m.mu Set.univ)
+    rw [h_empty, m.total]; exact not_le.mpr one_pos
+  total := fun A B => le_total (m.mu B) (m.mu A)
+  trans := fun _ _ _ hab hbc => le_trans hbc hab
+  additive := by
+    intro A B; show m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A)
+    exact m.qualAdd A B
 
 end QualAddMeasure
 
@@ -264,7 +298,7 @@ noncomputable def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : Qu
 
 /-- Lewis's *l*-lifting: a preorder on worlds induces a comparison on
     propositions. A ≿ B iff for every b ∈ B, ∃ a ∈ A with a ≥_w b.
-    @cite{holliday-icard-2013} §3; see also their injection-based *m*-lifting
+    @cite{holliday-icard-2013} §5; see also their injection-based *m*-lifting
     (Theorem 7), which yields a complete logic for world-ordering models. -/
 def halpernLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
   ∀ b, b ∈ B → ∃ a, a ∈ A ∧ ge_w a b
@@ -284,7 +318,7 @@ theorem halpernLift_axiomT {W : Type*} {ge_w : W → W → Prop}
 
 /-- Lewis's *l*-lifting from a reflexive preorder yields System W.
     Soundness direction: world-ordering models with the l-lifting
-    validate System W (@cite{halpern-2003}; @cite{holliday-icard-2013} §3). -/
+    validate System W (@cite{halpern-2003}; @cite{holliday-icard-2013} §5). -/
 def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
@@ -307,5 +341,40 @@ theorem halpernLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
     let ⟨a, ha, hab⟩ := hAb b rfl
     ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
 
+-- ── m-Lifting (@cite{holliday-icard-2013} §9) ──
+
+/-- The *m*-lifting (@cite{holliday-icard-2013}, §9): an injection-based
+    alternative to `halpernLift`. A ≿ B iff there exists an injection
+    f : B ↪ A such that f(b) ≥_w b for all b ∈ B.
+
+    The key difference from `halpernLift` (l-lifting) is that dominators
+    must be **distinct**: each element of B is matched to a unique element
+    of A. This avoids the "disjunction problem" (I1–I3 become invalid),
+    while validating all 13 validity patterns V1–V13 (Fact 5). -/
+def mLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
+  ∃ (f : W → W),
+    (∀ b, b ∈ B → f b ∈ A ∧ ge_w (f b) b) ∧
+    (∀ b₁ b₂, b₁ ∈ B → b₂ ∈ B → f b₁ = f b₂ → b₁ = b₂)
+
+/-- m-lift from a reflexive relation satisfies Axiom R. -/
+theorem mLift_axiomR {W : Type*} {ge_w : W → W → Prop}
+    (hRefl : ∀ w, ge_w w w) :
+    EpistemicAxiom.R (mLift ge_w) :=
+  fun _ => ⟨id, fun b hb => ⟨hb, hRefl b⟩, fun _ _ _ _ h => h⟩
+
+/-- m-lift from a reflexive relation satisfies Axiom T.
+    If A ⊆ B and b ∈ A, then b ∈ B, so take f = id. -/
+theorem mLift_axiomT {W : Type*} {ge_w : W → W → Prop}
+    (hRefl : ∀ w, ge_w w w) :
+    EpistemicAxiom.T (mLift ge_w) :=
+  fun _ _ hAB => ⟨id, fun b hbA => ⟨hAB hbA, hRefl b⟩, fun _ _ _ _ h => h⟩
+
+/-- m-lifting from a reflexive preorder yields System W. -/
+def mLiftSystemW {W : Type*} (ge_w : W → W → Prop)
+    (hRefl : ∀ w, ge_w w w) :
+    EpistemicSystemW W where
+  ge := mLift ge_w
+  refl := mLift_axiomR hRefl
+  mono := mLift_axiomT hRefl
 
 end Core.Scale

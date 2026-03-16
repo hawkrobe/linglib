@@ -5,30 +5,32 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 
 @cite{holliday-icard-2013}
 
-@cite{holliday-icard-2013} Figure 1 lists 13 validity patterns (V1–V13) and
-3 invalidity patterns (I1–I3) for epistemic comparatives. This file defines
+@cite{holliday-icard-2013} Figure 1 lists 10 validity patterns (V1–V7, V11–V13)
+and 3 invalidity patterns (I1–I3) for epistemic comparatives. (V8–V10 are from
+Yalcin (2010) and omitted from H&I's condensed figure.) This file defines
 each pattern as a `Prop`-valued predicate on a comparison relation `ge`, then
 proves which patterns hold (or fail) in each of three semantic classes:
 
-| Pattern | Measure (FP∞) | Qualitative (FA) | World-ordering (W) |
-|---------|:-------------:|:----------------:|:-------------------:|
-| V1      | ✓             | ✓                | ✓                   |
-| V2      | ✓             | ✓                | ✓                   |
-| V3      | ✓             | ✓                | ✓                   |
-| V4      | ✓             | ✓                | ✓                   |
-| V5      | ✓             | ✓                | ✓                   |
-| V6      | ✓             | ✓                | ✓                   |
-| V7      | ✓             | ✓                | ✓                   |
-| V11     | ✓             | ✓                | ✓                   |
-| V12     | ✓             | ✓                | ✓                   |
-| V13     | ✓             | ✓                | ✗                   |
-| I1      | ✗             | ✗                | ✓ (disjunction bug) |
-| I2      | ✗             | ✗                | ✓ (disjunction bug) |
-| I3      | ✗             | ✗                | ✓ (disjunction bug) |
+| Pattern | Measure (FP∞) | Qualitative (FA) | l-lifting (W) | m-lifting     |
+|---------|:-------------:|:----------------:|:-------------:|:-------------:|
+| V1      | ✓             | ✓                | ✓             | ✓             |
+| V2      | ✓             | ✓                | ✓             | ✓             |
+| V3      | ✓             | ✓                | ✓             | ✓             |
+| V4      | ✓             | ✓                | ✓             | ✓             |
+| V5      | ✓             | ✓                | ✓             | ✓             |
+| V6      | ✓             | ✓                | ✓             | ✓             |
+| V7      | ✓             | ✓                | ✓             | ✓             |
+| V11     | ✓             | ✓                | ✗             | ✓             |
+| V12     | ✓             | ✓                | ✓ (preorder)  | ✓             |
+| V13     | ✓             | ✓                | ✗             | ✓             |
+| I1      | ✗             | ✗                | ✓ (disj. bug) | ✗             |
+| I2      | ✗             | ✗                | ✓ (disj. bug) | ✗             |
+| I3      | ✗             | ✗                | ✓ (disj. bug) | ✗             |
 
 The world-ordering column illustrates the "disjunction problem": Halpern's
 l-lifting validates patterns (I1–I3) that are invalid under measure semantics,
 showing that world-ordering semantics is strictly stronger than intended.
+V11 and V13 are invalid for l-lifting (Fact 1 in the paper).
 -/
 
 namespace Core.Scale
@@ -87,14 +89,17 @@ def patternV6 : Prop :=
 def patternV7 : Prop :=
   ∀ A : Set W, probably ge A → possibly ge A
 
-/-- V11: B ⊇ A → △A → △B (superset of a probable set is probable). -/
+/-- V11: B ≿ A → △A → △B (if B is at least as likely as a probable set,
+    then B is probable). Uses the comparative ≿, not set inclusion ⊆.
+    Invalid for l-lifting (Fact 1 in @cite{holliday-icard-2013}). -/
 def patternV11 : Prop :=
-  ∀ A B : Set W, A ⊆ B → probably ge A → probably ge B
+  ∀ A B : Set W, ge B A → probably ge A → probably ge B
 
-/-- V12: B ⊇ A → A ≿ Aᶜ → B ≿ Bᶜ (superset of a "more likely than not"
-    set is also "more likely than not"). -/
+/-- V12: B ≿ A → A ≿ Aᶜ → B ≿ Bᶜ (if B is at least as likely as a set
+    that is more likely than not, then B is more likely than not).
+    Uses the comparative ≿, not set inclusion ⊆. -/
 def patternV12 : Prop :=
-  ∀ A B : Set W, A ⊆ B → ge A Aᶜ → ge B Bᶜ
+  ∀ A B : Set W, ge B A → ge A Aᶜ → ge B Bᶜ
 
 /-- V13: (A \ B) ≻ ∅ → (A ∪ B) ≻ B (positive excess implies strict increase). -/
 def patternV13 : Prop :=
@@ -196,7 +201,7 @@ theorem measure_V11 (m : FinAddMeasure W) : patternV11 m.inducedGe := by
   intro A B hAB ⟨hA, hAnot⟩
   unfold FinAddMeasure.inducedGe at *
   rw [mu_compl] at hA
-  have hmuAB := mu_mono m hAB
+  -- hAB : m.mu B ≥ m.mu A (from ge B A after unfolding)
   constructor
   · show m.mu B ≥ m.mu Bᶜ; rw [mu_compl]; linarith
   · intro hBc; apply hAnot; rw [mu_compl]
@@ -205,7 +210,8 @@ theorem measure_V11 (m : FinAddMeasure W) : patternV11 m.inducedGe := by
 theorem measure_V12 (m : FinAddMeasure W) : patternV12 m.inducedGe := by
   intro A B hAB hA
   unfold FinAddMeasure.inducedGe at *
-  rw [mu_compl] at *; linarith [mu_mono m hAB]
+  -- hAB : m.mu B ≥ m.mu A; hA : m.mu A ≥ m.mu Aᶜ
+  rw [mu_compl] at *; linarith
 
 theorem measure_V13 (m : FinAddMeasure W) : patternV13 m.inducedGe := by
   intro A B ⟨hAB, hABnot⟩
@@ -394,19 +400,31 @@ theorem fa_V7 (sys : EpistemicSystemFA W) : patternV7 sys.ge := by
   intro A ⟨_, hAnot⟩ hempty
   exact hAnot (sys.trans Aᶜ ∅ A (sys.mono ∅ Aᶜ (Set.empty_subset Aᶜ)) hempty)
 
+private theorem fa_compl_ge (sys : EpistemicSystemFA W) {A B : Set W}
+    (h : sys.ge B A) : sys.ge Aᶜ Bᶜ := by
+  -- From ge B A, by Axiom A: ge (B \ A) (A \ B).
+  -- Since Aᶜ \ Bᶜ = B \ A and Bᶜ \ Aᶜ = A \ B, Axiom A gives ge Aᶜ Bᶜ.
+  have hd1 : Aᶜ \ Bᶜ = B \ A := by
+    ext x; simp only [Set.mem_diff, Set.mem_compl_iff, not_not]; exact ⟨fun ⟨h1, h2⟩ => ⟨h2, h1⟩, fun ⟨h1, h2⟩ => ⟨h2, h1⟩⟩
+  have hd2 : Bᶜ \ Aᶜ = A \ B := by
+    ext x; simp only [Set.mem_diff, Set.mem_compl_iff, not_not]; exact ⟨fun ⟨h1, h2⟩ => ⟨h2, h1⟩, fun ⟨h1, h2⟩ => ⟨h2, h1⟩⟩
+  rw [sys.additive Aᶜ Bᶜ, hd1, hd2]
+  exact (sys.additive B A).mp h
+
 theorem fa_V11 (sys : EpistemicSystemFA W) : patternV11 sys.ge := by
   intro A B hAB ⟨hA, hAnot⟩
-  have h1 : sys.ge B A := sys.mono A B hAB
-  have h2 : sys.ge Aᶜ Bᶜ := sys.mono Bᶜ Aᶜ (Set.compl_subset_compl.mpr hAB)
+  -- hAB : sys.ge B A
+  have h2 : sys.ge Aᶜ Bᶜ := fa_compl_ge sys hAB
   constructor
-  · exact sys.trans B Aᶜ Bᶜ (sys.trans B A Aᶜ h1 hA) h2
-  · intro hc; exact hAnot (sys.trans Aᶜ B A (sys.trans Aᶜ Bᶜ B h2 hc) h1)
+  · exact sys.trans B Aᶜ Bᶜ (sys.trans B A Aᶜ hAB hA) h2
+  · intro hc; exact hAnot (sys.trans Aᶜ B A (sys.trans Aᶜ Bᶜ B h2 hc) hAB)
 
 theorem fa_V12 (sys : EpistemicSystemFA W) : patternV12 sys.ge := by
   intro A B hAB hA
+  -- hAB : sys.ge B A; hA : sys.ge A Aᶜ
   exact sys.trans B Aᶜ Bᶜ
-    (sys.trans B A Aᶜ (sys.mono A B hAB) hA)
-    (sys.mono Bᶜ Aᶜ (Set.compl_subset_compl.mpr hAB))
+    (sys.trans B A Aᶜ hAB hA)
+    (fa_compl_ge sys hAB)
 
 theorem fa_V13 (sys : EpistemicSystemFA W) : patternV13 sys.ge := by
   intro A B ⟨_, hABnot⟩
@@ -534,24 +552,46 @@ theorem halpern_V7 {W : Type*} (ge_w : W → W → Prop) :
     rw [hne, Set.compl_empty] at hAnot
     exact hAnot (fun b hb => hb.elim)
 
-theorem halpern_V11 {W : Type*} (ge_w : W → W → Prop) :
-    patternV11 (halpernLift ge_w) := by
-  intro A B hAB ⟨hA, hAnot⟩
-  constructor
-  · -- ge B Bᶜ: b ∈ Bᶜ → b ∈ Aᶜ (since A ⊆ B) → use hA to get a ∈ A ⊆ B.
-    intro b hbBc
-    obtain ⟨a, haA, hge⟩ := hA b (fun hbA => hbBc (hAB hbA))
-    exact ⟨a, hAB haA, hge⟩
-  · -- ¬ge Bᶜ B: if so, restricting to A ⊆ B gives dominators in Bᶜ ⊆ Aᶜ.
-    intro hc; apply hAnot; intro b hbA
-    obtain ⟨a, haBc, hge⟩ := hc b (hAB hbA)
-    exact ⟨a, fun haA => haBc (hAB haA), hge⟩
+/-- V11 is **invalid** for world-ordering semantics (Fact 1 in
+    @cite{holliday-icard-2013}). Counterexample: W = Fin 2, ge_w total.
+    A = W (probably, since W ≿ ∅ and ¬(∅ ≿ W)). B = {0} (B ≿ A since
+    ge_w is total, but Bᶜ = {1} ≿ B since ge_w is total — not strictly). -/
+theorem halpern_not_V11 :
+    ∃ (W : Type) (ge_w : W → W → Prop),
+      (∀ w, ge_w w w) ∧ ¬patternV11 (halpernLift ge_w) := by
+  refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, ?_⟩
+  intro h
+  -- B = {0}, A = Set.univ
+  have hBA : halpernLift (fun (_ _ : Fin 2) => True) {(0 : Fin 2)} Set.univ :=
+    fun _ _ => ⟨0, rfl, trivial⟩
+  have hprobA : probably (halpernLift (fun (_ _ : Fin 2) => True)) Set.univ := by
+    refine ⟨fun b hb => absurd (Set.mem_univ b) hb, ?_⟩
+    intro hge
+    obtain ⟨a, ha, _⟩ := hge (0 : Fin 2) (Set.mem_univ _)
+    exact absurd (Set.mem_univ a) ha
+  have hresult := h Set.univ {(0 : Fin 2)} hBA hprobA
+  -- hresult : probably {0}, i.e., {0} ≿ {1} and ¬({1} ≿ {0})
+  -- But {1} ≿ {0} since ge_w is total: 1 ≥ 0.
+  apply hresult.2
+  intro b _
+  exact ⟨1, fun h1 => absurd (Set.mem_singleton_iff.mp h1) (by omega), trivial⟩
 
-theorem halpern_V12 {W : Type*} (ge_w : W → W → Prop) :
+/-- V12 is valid for world-ordering semantics with a preorder (Fact 1 in
+    @cite{holliday-icard-2013}). Requires transitivity for the case where
+    y ∈ Bᶜ ∩ Aᶜ: chain through A via ge A Aᶜ, then through B via ge B A. -/
+theorem halpern_V12 {W : Type*} (ge_w : W → W → Prop)
+    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV12 (halpernLift ge_w) := by
-  intro A B hAB hA b hbBc
-  obtain ⟨a, haA, hge⟩ := hA b (fun hbA => hbBc (hAB hbA))
-  exact ⟨a, hAB haA, hge⟩
+  intro A B hBA hA y hyBc
+  by_cases hyA : y ∈ A
+  · -- y ∈ A: from ge B A, get b ∈ B with b ≥ y.
+    exact hBA y hyA
+  · -- y ∈ Aᶜ: from ge A Aᶜ, get a ∈ A with a ≥ y.
+    --          from ge B A, get b ∈ B with b ≥ a.
+    --          transitivity: b ≥ a ≥ y → b ≥ y.
+    obtain ⟨a, haA, hge_ay⟩ := hA y hyA
+    obtain ⟨b, hbB, hge_ba⟩ := hBA a haA
+    exact ⟨b, hbB, hTrans b a y hge_ba hge_ay⟩
 
 /-- V13 is invalid for world-ordering semantics. Counterexample:
     W = Fin 2, ge_w = total (everything related). A = {0}, B = {1}.
@@ -592,5 +632,258 @@ theorem halpern_I3 {W : Type*} (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w 
   intro A B ⟨hA, _⟩; exact halpern_I2 ge_w hRefl A B hA
 
 end WorldOrdering
+
+-- ══════════════════════════════════════════════════════════════════
+-- § 6. m-Lifting (@cite{holliday-icard-2013}, §9, Fact 5)
+-- ══════════════════════════════════════════════════════════════════
+
+/-! The m-lifting validates all 13 validity patterns V1–V13 and invalidates
+    I1–I3 (Fact 5 in @cite{holliday-icard-2013}). This avoids the
+    "disjunction problem" that plagues the l-lifting.
+
+    The proofs for V1, V3–V7 follow from the l-lifting proofs with minor
+    adaptation (since m-lifting implies l-lifting). V2, V11–V13 require
+    the injection structure and are left as sorry for now. -/
+
+section MLift
+
+/-- Every m-lift entails an l-lift: if there is an injection from B to A
+    with each image dominating its preimage, then in particular every
+    element of B is dominated by some element of A. -/
+theorem mLift_implies_halpernLift {W : Type*} {ge_w : W → W → Prop}
+    {A B : Set W} (h : mLift ge_w A B) : halpernLift ge_w A B := by
+  obtain ⟨f, hf, _⟩ := h
+  intro b hbB
+  obtain ⟨ha, hge⟩ := hf b hbB
+  exact ⟨f b, ha, hge⟩
+
+theorem mLift_V1 {W : Type*} (ge_w : W → W → Prop) :
+    patternV1 (mLift ge_w) := by
+  intro A ⟨_, hAnot⟩ ⟨hAc, _⟩
+  rw [compl_compl] at hAc; exact hAnot hAc
+
+/-- V2 is valid for the m-lifting: △(A ∩ B) → △A ∧ △B.
+
+    Proof: restrict the injection f : (A∩B)ᶜ ↪ A∩B to Aᶜ ⊆ (A∩B)ᶜ to get
+    the ge half. For the strict half, any reverse injection g : A ↪ Aᶜ
+    restricts to A∩B ↪ (A∩B)ᶜ (since Aᶜ ⊆ (A∩B)ᶜ), contradicting the
+    hypothesis ¬mLift (A∩B)ᶜ (A∩B). Symmetric for B. -/
+theorem mLift_V2 {W : Type*} (ge_w : W → W → Prop)
+    (_hRefl : ∀ w, ge_w w w) :
+    patternV2 (mLift ge_w) := by
+  intro A B ⟨⟨f, hf, hinj⟩, hABnot⟩
+  refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
+  · -- mLift ge_w A Aᶜ: restrict f from (A∩B)ᶜ to Aᶜ
+    exact ⟨f,
+      fun b hb => ⟨(hf b (fun h => hb h.1)).1.1, (hf b (fun h => hb h.1)).2⟩,
+      fun b₁ b₂ h1 h2 => hinj b₁ b₂ (fun h => h1 h.1) (fun h => h2 h.1)⟩
+  · -- ¬mLift ge_w Aᶜ A: any g : A → Aᶜ restricts to A∩B → (A∩B)ᶜ
+    intro ⟨g, hg, ginj⟩
+    exact hABnot ⟨g,
+      fun b hb => ⟨fun h => (hg b hb.1).1 h.1, (hg b hb.1).2⟩,
+      fun b₁ b₂ h1 h2 => ginj b₁ b₂ h1.1 h2.1⟩
+  · -- mLift ge_w B Bᶜ: restrict f from (A∩B)ᶜ to Bᶜ
+    exact ⟨f,
+      fun b hb => ⟨(hf b (fun h => hb h.2)).1.2, (hf b (fun h => hb h.2)).2⟩,
+      fun b₁ b₂ h1 h2 => hinj b₁ b₂ (fun h => h1 h.2) (fun h => h2 h.2)⟩
+  · -- ¬mLift ge_w Bᶜ B: any g : B → Bᶜ restricts to A∩B → (A∩B)ᶜ
+    intro ⟨g, hg, ginj⟩
+    exact hABnot ⟨g,
+      fun b hb => ⟨fun h => (hg b hb.2).1 h.2, (hg b hb.2).2⟩,
+      fun b₁ b₂ h1 h2 => ginj b₁ b₂ h1.2 h2.2⟩
+
+theorem mLift_V3 {W : Type*} (ge_w : W → W → Prop) :
+    patternV3 (mLift ge_w) := by
+  intro A B ⟨hA, hAnot⟩
+  obtain ⟨f, hf, hinj⟩ := hA
+  constructor
+  · -- ge (A ∪ B) (A ∪ B)ᶜ: f maps Aᶜ ↪ A, and (A ∪ B)ᶜ ⊆ Aᶜ,
+    -- so restriction to (A ∪ B)ᶜ still injective, images land in A ⊆ A ∪ B.
+    rw [Set.compl_union]
+    exact ⟨f,
+      fun b ⟨hbAc, _⟩ =>
+        let ⟨ha, hge⟩ := hf b hbAc
+        ⟨Set.mem_union_left B ha, hge⟩,
+      fun b₁ b₂ ⟨h1, _⟩ ⟨h2, _⟩ => hinj b₁ b₂ h1 h2⟩
+  · -- ¬ge (A ∪ B)ᶜ (A ∪ B): if so, restricting g to A ⊆ A ∪ B
+    -- gives an injection A → Aᶜ (since (A ∪ B)ᶜ ⊆ Aᶜ), contradicting hAnot.
+    intro ⟨g, hg, ginj⟩
+    apply hAnot
+    exact ⟨g,
+      fun b hbA => by
+        obtain ⟨hgc, hge⟩ := hg b (Set.mem_union_left B hbA)
+        exact ⟨fun hga => hgc (Set.mem_union_left B hga), hge⟩,
+      fun b₁ b₂ h1 h2 =>
+        ginj b₁ b₂ (Set.mem_union_left B h1) (Set.mem_union_left B h2)⟩
+
+theorem mLift_V4 {W : Type*} (ge_w : W → W → Prop) :
+    patternV4 (mLift ge_w) := by
+  intro A; exact ⟨id, fun b hb => hb.elim, fun _ _ h1 => h1.elim⟩
+
+theorem mLift_V5 {W : Type*} (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w w) :
+    patternV5 (mLift ge_w) := by
+  intro A; exact ⟨id, fun b hb => ⟨Set.mem_univ b, hRefl b⟩, fun _ _ _ _ h => h⟩
+
+theorem mLift_V6 {W : Type*} [Nonempty W] (ge_w : W → W → Prop) :
+    patternV6 (mLift ge_w) := by
+  show strict (mLift ge_w) Set.univ Set.univᶜ
+  rw [Set.compl_univ]
+  exact ⟨⟨id, fun b hb => hb.elim, fun _ _ h1 => h1.elim⟩,
+    fun ⟨f, hf, _⟩ => by
+      obtain ⟨w⟩ := ‹Nonempty W›
+      obtain ⟨ha, _⟩ := hf w (Set.mem_univ w)
+      exact ha.elim⟩
+
+theorem mLift_V7 {W : Type*} (ge_w : W → W → Prop) :
+    patternV7 (mLift ge_w) := by
+  intro A ⟨_, hAnot⟩ hempty
+  -- hempty : mLift ge_w ∅ A, i.e. ∃ f, ∀ b ∈ A, f b ∈ ∅ — impossible if A nonempty
+  obtain ⟨f, hf, _⟩ := hempty
+  by_cases hne : (A : Set W).Nonempty
+  · obtain ⟨x, hx⟩ := hne
+    obtain ⟨ha, _⟩ := hf x hx; exact ha.elim
+  · rw [Set.not_nonempty_iff_eq_empty] at hne
+    rw [hne, Set.compl_empty] at hAnot
+    exact hAnot ⟨id, fun b hb => hb.elim, fun _ _ h1 => h1.elim⟩
+
+-- TODO: V11–V13 require [Finite W] and reflexivity (and V11/V12 likely
+-- need transitivity). The paper (@cite{holliday-icard-2013}) assumes a
+-- finite poset (W, ≥). Without finiteness, V13 is provably false:
+-- take W = ℕ, ge_w = (≥), A = ℕ, B = {n | n ≥ 1} — then f(n) = n+1
+-- gives an injection ℕ → {n ≥ 1} with dominance, so ¬strict. Without
+-- transitivity, V12 requires composing dominance chains f∘g which
+-- doesn't preserve ge_w.
+
+/-- V11 is valid for the m-lifting on finite posets (Fact 5 in
+    @cite{holliday-icard-2013}). Composition of injections f∘g builds
+    Bᶜ ↪ B from Aᶜ ↪ A and A ↪ B; finiteness gives the pigeonhole
+    for the strict half; transitivity preserves dominance through the
+    composition. -/
+theorem mLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
+    (_hRefl : ∀ w, ge_w w w)
+    (_hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
+    patternV11 (mLift ge_w) := by
+  sorry
+
+/-- V12 is valid for the m-lifting on finite posets (Fact 5 in
+    @cite{holliday-icard-2013}). See V11 for proof strategy. -/
+theorem mLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
+    (_hRefl : ∀ w, ge_w w w)
+    (_hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
+    patternV12 (mLift ge_w) := by
+  sorry
+
+/-- V13 is valid for the m-lifting on finite posets (Fact 5 in
+    @cite{holliday-icard-2013}). The ge half uses id on B (reflexivity);
+    the strict half uses pigeonhole (|A∪B| > |B| since A\B nonempty,
+    finiteness). -/
+theorem mLift_V13 {W : Type*} [Finite W] (ge_w : W → W → Prop)
+    (_hRefl : ∀ w, ge_w w w) :
+    patternV13 (mLift ge_w) := by
+  sorry
+
+/-- I1 is **invalid** for the m-lifting (Fact 5 in @cite{holliday-icard-2013}).
+    Counterexample: W = Fin 2, ge_w total. A = {0}, B = {0}, C = {1}.
+    mLift A B and mLift A C both hold (singleton ↪ singleton), but
+    ¬mLift A (B ∪ C) since |A| = 1 < 2 = |B ∪ C| (no injection). -/
+theorem mLift_not_I1 :
+    ∃ (W : Type) (ge_w : W → W → Prop),
+      (∀ w, ge_w w w) ∧ ¬patternI1 (mLift ge_w) := by
+  refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, ?_⟩
+  intro h
+  -- I1 says: A ≿ B → A ≿ C → A ≿ (B ∪ C)
+  -- Take A = {0}, B = {0}, C = {1}
+  have hAB : mLift (fun (_ _ : Fin 2) => True) {(0 : Fin 2)} {0} :=
+    ⟨id, fun b hb => ⟨hb, trivial⟩, fun _ _ _ _ h => h⟩
+  have hAC : mLift (fun (_ _ : Fin 2) => True) {(0 : Fin 2)} {1} :=
+    ⟨fun _ => 0, fun _ hb => ⟨rfl, trivial⟩,
+     fun b₁ b₂ h1 h2 _ => by
+       rw [Set.mem_singleton_iff] at h1 h2; rw [h1, h2]⟩
+  have hresult := h {(0 : Fin 2)} {0} {1} hAB hAC
+  -- hresult : mLift {0} ({0} ∪ {1}) = mLift {0} univ
+  have huniv : ({0} : Set (Fin 2)) ∪ {1} = Set.univ := by
+    ext x; simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_univ, iff_true]; omega
+  rw [huniv] at hresult
+  obtain ⟨f, hf, hinj⟩ := hresult
+  -- f : Fin 2 → Fin 2 with f(b) ∈ {0} for all b, i.e. f = const 0
+  have hf0 : f 0 ∈ ({0} : Set (Fin 2)) := (hf 0 (Set.mem_univ _)).1
+  have hf1 : f 1 ∈ ({0} : Set (Fin 2)) := (hf 1 (Set.mem_univ _)).1
+  rw [Set.mem_singleton_iff] at hf0 hf1
+  -- f 0 = 0 and f 1 = 0, but f is injective on univ → 0 = 1, contradiction
+  have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by rw [hf0, hf1])
+  exact absurd this (by omega)
+
+/-- I2 is **invalid** for the m-lifting (Fact 5 in @cite{holliday-icard-2013}).
+    Counterexample: W = Fin 3, ge_w total. A = {0,1}, B = univ.
+    mLift A Aᶜ holds (|Aᶜ| = 1 ≤ 2 = |A|), but ¬mLift A univ
+    since |A| = 2 < 3 = |univ|. -/
+theorem mLift_not_I2 :
+    ∃ (W : Type) (ge_w : W → W → Prop),
+      (∀ w, ge_w w w) ∧ ¬patternI2 (mLift ge_w) := by
+  refine ⟨Fin 3, fun _ _ => True, fun _ => trivial, ?_⟩
+  intro h
+  -- A = {0,1}, B = univ
+  -- A ≿ Aᶜ: Aᶜ = {2}, need injection {2} → {0,1}, e.g. f(2) = 0
+  have hAAc : mLift (fun (_ _ : Fin 3) => True) ({0, 1} : Set (Fin 3)) ({0, 1} : Set (Fin 3))ᶜ := by
+    refine ⟨fun _ => 0, fun b hb => ⟨Set.mem_insert 0 {1}, trivial⟩, ?_⟩
+    intro b₁ b₂ hb1 hb2 _
+    -- b₁, b₂ ∈ {0,1}ᶜ = {2}
+    have : b₁ ∈ ({0, 1} : Set (Fin 3))ᶜ := hb1
+    have : b₂ ∈ ({0, 1} : Set (Fin 3))ᶜ := hb2
+    simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at *
+    omega
+  -- I2 gives: mLift A univ
+  have hresult := h ({0, 1} : Set (Fin 3)) Set.univ hAAc
+  obtain ⟨f, hf, hinj⟩ := hresult
+  -- f : Fin 3 → Fin 3 with f(b) ∈ {0,1} for all b ∈ univ
+  -- So f maps {0,1,2} → {0,1}: pigeonhole, not injective
+  have h0 := (hf 0 (Set.mem_univ _)).1
+  have h1 := (hf 1 (Set.mem_univ _)).1
+  have h2 := (hf 2 (Set.mem_univ _)).1
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h0 h1 h2
+  -- f maps 3 elements to {0,1} — pigeonhole
+  rcases h0 with h0 | h0 <;> rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
+    first
+    | (have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+    | (have := hinj 0 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+    | (have := hinj 1 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+
+/-- I3 is **invalid** for the m-lifting (Fact 5 in @cite{holliday-icard-2013}).
+    Same counterexample as I2: W = Fin 3, ge_w total, A = {0,1}, B = univ.
+    A ≿ Aᶜ (injection {2} → {0,1}) and ¬(Aᶜ ≿ A) (no injection {0,1} → {2}),
+    so probably A. But ¬(A ≿ univ) by cardinality. -/
+theorem mLift_not_I3 :
+    ∃ (W : Type) (ge_w : W → W → Prop),
+      (∀ w, ge_w w w) ∧ ¬patternI3 (mLift ge_w) := by
+  refine ⟨Fin 3, fun _ _ => True, fun _ => trivial, ?_⟩
+  intro h
+  -- A = {0,1}, B = univ. probably A holds, but ¬mLift A univ.
+  have hprob : probably (mLift (fun (_ _ : Fin 3) => True)) ({0, 1} : Set (Fin 3)) := by
+    constructor
+    · -- mLift A Aᶜ: Aᶜ = {2}, inject f(2) = 0
+      refine ⟨fun _ => 0, fun b hb => ⟨Set.mem_insert 0 {1}, trivial⟩, ?_⟩
+      intro b₁ b₂ hb1 hb2 _
+      simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hb1 hb2
+      omega
+    · -- ¬mLift Aᶜ A: Aᶜ = {2}, need injection {0,1} → {2}, impossible
+      intro ⟨f, hf, hinj⟩
+      have h0 := (hf 0 (Set.mem_insert 0 {1})).1
+      have h1 := (hf 1 (Or.inr rfl : (1 : Fin 3) ∈ ({0, 1} : Set (Fin 3)))).1
+      simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at h0 h1
+      have := hinj 0 1 (Set.mem_insert 0 {1}) (Or.inr rfl) (by omega)
+      omega
+  have hresult := h ({0, 1} : Set (Fin 3)) Set.univ hprob
+  obtain ⟨f, hf, hinj⟩ := hresult
+  have h0 := (hf 0 (Set.mem_univ _)).1
+  have h1 := (hf 1 (Set.mem_univ _)).1
+  have h2 := (hf 2 (Set.mem_univ _)).1
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h0 h1 h2
+  rcases h0 with h0 | h0 <;> rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
+    first
+    | (have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+    | (have := hinj 0 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+    | (have := hinj 1 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+
+end MLift
 
 end Core.Scale

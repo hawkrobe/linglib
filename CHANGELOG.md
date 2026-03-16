@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.292] - 2026-03-15
+
+### Changed
+- **Close `toNumberTree_spec` sorry** in `Core/Logic/Quantification/NumberTree.lean`: van Benthem's GQ→NumberTreeGQ bridge now fully proved via cell-preserving bijection from matching `|A∩B|` and `|A\B|` cardinalities; adds `cellEquiv`/`cellBijection`/`cellBijection_spec` infrastructure, `gq_depends_on_card` helper theorem
+- **Close `mLift_V2` sorry** in `Core/Scales/EpistemicScale/Entailments.lean`: proved by restricting injection from (A∩B)ᶜ to Aᶜ and Bᶜ separately
+- **Fix `nonneg` bug** in `Core/Scales/EpistemicScale/Defs.lean`: `m.nonneg (A \ B)` → `m.nonneg (B \ A)` (wrong set difference direction)
+- **Strengthen V11/V12/V13 hypotheses** in EpistemicScale: add `[Finite W]`, reflexivity, and transitivity — valid only for finite posets per Holliday & Icard 2013
+
 ## [0.229.291] - 2026-03-15
 
 ### Changed

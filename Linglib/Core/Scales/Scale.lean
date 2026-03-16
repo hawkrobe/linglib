@@ -45,7 +45,7 @@ MereoScale EpistemicScale (†) │
 **Enriched subcategory**: `AdditiveScale α` — comparative scale with join and
   finite additivity (FA). Two independent instances:
   - Mereological: `ExtMeasure.additive`
-  - Epistemic: `EpistemicSystemFA` + `FinAddMeasure` (@cite{holliday-icard-2013}, § 14)
+  - Epistemic: `EpistemicSystemFA` + `FinAddMeasure` (@cite{holliday-icard-2013}, §7)
 
 **Linear specialization**: `DirectedMeasure` — comparative scale with a linear
   order, measure function, and direction. Instances: Kennedy adjectives,

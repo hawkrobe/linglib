@@ -60,7 +60,7 @@ theorem theorem8b :
       ¬∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
   ⟨Fin 5, inferInstance, kpsSystemFA, Fintype.card_fin 5, kps_not_representable⟩
 
--- ── Completeness (Theorems 6–7) ──────────────────
+-- ── Completeness (Theorems 2 and 6) ─────────────
 
 attribute [local instance] Classical.propDecidable
 
@@ -178,13 +178,19 @@ private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
     exact hJ A _ _ (hsub _ (Finset.mem_insert_self _ _))
       (ih (fun c hc => hsub c (Finset.mem_insert_of_mem hc)))
 
-/-- **Theorem 2 completeness** (@cite{halpern-2003}, Thm 2.7.2; @cite{holliday-icard-2013},
-    Thm 2, Figure 4): an epistemic system satisfying R, T, Tran, J (right-union),
+/-- **Theorem 2** (@cite{halpern-2003}, Thm. 7.5.1a; @cite{holliday-icard-2013}):
+    an epistemic system satisfying R, T, Tran, J (right-union),
     and DS (determination by singletons) is representable by Lewis's l-lifting
     from a reflexive preorder on worlds.
 
+    The paper states this as a *logic* completeness theorem for **WJR**
+    (K + BT + Tran + J + Mon + R). We prove the underlying per-model
+    *representation* result, which is the model-theoretic core: the semantic
+    hypotheses (R, T, Tran, J, DS) correspond to WJR's axioms evaluated
+    on a single model, without formalizing the syntax or proof system.
+
     Construction: `ge_w u v := sys.ge {u} {v}`. -/
-theorem theorem7_completeness {W : Type*} [Fintype W]
+theorem theorem2_completeness {W : Type*} [Fintype W]
     (sys : EpistemicSystemW W)
     (hTran : ∀ A B C : Set W, sys.ge A B → sys.ge B C → sys.ge A C)
     (hJ : EpistemicAxiom.J sys.ge)
