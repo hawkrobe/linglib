@@ -997,6 +997,22 @@ def RExpr.evalBothOpt : RExpr → QInterval × Bool
         (c (expInterval prod), vbase)
     else (⟨0, 1, by norm_num⟩, false)
 
+private theorem evalRexpOpt_sound (inner : RExpr) :
+    inner.evalRexpOpt.2 = true → inner.evalRexpOpt.1.containsReal (Real.exp inner.denote) := by
+  simp only [RExpr.evalRexpOpt]
+  generalize (match inner with | .mul (.nat _) b => b | _ => inner) = body
+  generalize (match inner with | .mul (.nat α) _ => some α | _ => none) = αOpt
+  split
+  · -- body.tryExtractLogProduct = some factors (factor path)
+    -- TODO: prove soundness of the foldl product computation.
+    -- Requires: tryExtractLogProduct correctness, groupLogFactors soundness,
+    -- and per-factor interval arithmetic (powNat/expInterval soundness).
+    sorry
+  · -- body.tryExtractLogProduct = none (fallback path)
+    intro hv
+    exact QInterval.coarsen_containsReal _
+      (expInterval_containsReal (RExpr.evalBoth_sound inner hv))
+
 set_option maxHeartbeats 800000 in
 /-- Soundness of evalBothOpt. Mirrors `evalBoth_sound` — all cases except
     `.rexp` are structurally identical; `.rexp` delegates to `evalRexpOpt`
@@ -1047,11 +1063,8 @@ theorem RExpr.evalBothOpt_sound : ∀ (e : RExpr),
     intro hv; dsimp only [evalBothOpt] at hv ⊢; simp only [Bool.and_eq_true] at hv
     exact QInterval.coarsen_containsReal _
       (QInterval.sub_containsReal (iha hv.1) (ihb hv.2))
-  | rexp a iha =>
-    -- evalBothOpt.rexp delegates to evalRexpOpt, which either uses a factor
-    -- decomposition (exp-log product rewrite) or falls back to evalBoth.
-    -- TODO: Prove evalRexpOpt_sound (factor path + fallback path)
-    intro hv; sorry
+  | rexp a _iha =>
+    intro hv; exact evalRexpOpt_sound a hv
   | rlog a iha =>
     intro hv; dsimp only [evalBothOpt, denote] at hv ⊢
     split_ifs at hv ⊢ with h1 h2 <;>
