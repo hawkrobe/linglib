@@ -240,10 +240,27 @@ theorem ep_is_hamblin_presupposition {W P : Type _} [BEq W]
     ∃ (p : W → Bool),
       Semantics.Questions.Hamblin.isAnswer
         (toHamblinDen qden mb answers worlds) p = true := by
-  -- TODO: when EP holds, dayalAns returns some α (by definition of dayalEP),
-  -- and qden mb α is recognized by toHamblinDen since α ∈ answers
-  -- (trueAnswers ⊆ answers). Requires unfolding Hamblin.fromAlternatives.
-  sorry
+  intro hEP
+  -- Extract α from dayalAns being some
+  have ⟨α, hα⟩ : ∃ α, dayalAns qden mb answers worlds w = some α := by
+    cases h : dayalAns qden mb answers worlds w with
+    | none => simp [dayalEP, h] at hEP
+    | some a => exact ⟨a, rfl⟩
+  -- α ∈ trueAnswers (from find? returning some)
+  have hMem : α ∈ trueAnswers qden mb answers w := by
+    simp only [dayalAns] at hα
+    exact List.mem_of_find?_eq_some hα
+  -- trueAnswers filters answers, so α ∈ answers
+  have hAns : α ∈ answers := by
+    simp only [trueAnswers] at hMem
+    exact (List.mem_filter.mp hMem).1
+  -- Witness: qden mb α agrees with itself on all worlds
+  exact ⟨qden mb α, by
+    simp only [Semantics.Questions.Hamblin.isAnswer, toHamblinDen,
+      Semantics.Questions.Hamblin.fromAlternatives]
+    rw [List.any_eq_true]
+    exact ⟨qden mb α, List.mem_map.mpr ⟨α, hAns, rfl⟩, by
+      rw [List.all_eq_true]; intro v _; exact beq_self_eq_true _⟩⟩
 
 /-! ### Relativized Exhaustivity -/
 
