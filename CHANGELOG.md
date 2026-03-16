@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.308] - 2026-03-15
+
+### Added
+- **`GFCPreorder` structure** (`EpistemicScale/Defs.lean`): formalize @cite{harrison-trainor-holliday-icard-2018} Definition 2.7 — preorder on propositions with monotonicity (F) and complement reversal (C)
+- **`mLift_toGFCPreorder`** (`EpistemicScale/Entailments.lean`): the m-lifting of a reflexive transitive world ordering on finite W yields a `GFCPreorder` (Theorem 3.2), sorry-free
+- **`mLift_not_total`** (`EpistemicScale/Entailments.lean`): counterexample (Fin 4, A = {3,0}, B = {2,1}) proving the m-lifting is NOT total even for total preorders on worlds
+- **`yalcin-2010` bib entry**: Yalcin (2010) "Probability Operators" (Philosophy Compass), referenced for V8–V10 patterns
+
+### Fixed
+- **Stale docstring**: remove "left as sorry" from m-lifting section header (all V1–V13 proofs are complete)
+- **Hallucinated section numbers**: replace 3 occurrences of "§9" (nonexistent) with correct "Definition 7" / "Fact 5" references to @cite{holliday-icard-2013}
+- **Inconsistent attribution**: change "Lewis's *l*-lifting" to "The *l*-lifting" in 2 docstrings — the l-lifting is from @cite{holliday-icard-2013}, not Lewis specifically
+- **Raw citation**: convert bare "Yalcin (2010)" to `@cite{yalcin-2010}` in module docstring
+
 ## [0.229.307] - 2026-03-15
 
 ### Changed

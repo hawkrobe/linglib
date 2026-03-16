@@ -109,6 +109,32 @@ structure EpistemicSystemFA (W : Type*) extends EpistemicSystemF W where
   trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
   additive : EpistemicAxiom.A ge
 
+-- ── GFC Order (@cite{harrison-trainor-holliday-icard-2018} Definition 2.7) ──
+
+/-- A **GFC preorder** on propositions: a preorder on `Set W` that is
+    monotone (supersets are at least as likely) and complement-reversing
+    (A ≿ B → Bᶜ ≿ Aᶜ).
+
+    @cite{harrison-trainor-holliday-icard-2018} Definition 2.7. The acronym
+    "GFC" reflects the three axiom groups: (G) preorder, (F) faithfulness
+    (monotonicity), (C) complement reversal.
+
+    The m-lifting (≿ⁱ) of any reflexive, transitive world ordering is a
+    GFC preorder (Theorem 3.2). Note that GFC preorders are NOT necessarily
+    total — `mLift_not_total` gives a counterexample. -/
+structure GFCPreorder (W : Type*) where
+  ge : Set W → Set W → Prop
+  refl : EpistemicAxiom.R ge
+  trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
+  mono : EpistemicAxiom.T ge
+  complRev : ∀ A B : Set W, ge A B → ge Bᶜ Aᶜ
+
+/-- Every GFC preorder yields System W (the weakest epistemic logic). -/
+def GFCPreorder.toSystemW {W : Type*} (g : GFCPreorder W) : EpistemicSystemW W where
+  ge := g.ge
+  refl := g.refl
+  mono := g.mono
+
 -- ── Measure Semantics ───────────────────────────
 
 /-- A finitely additive probability measure on subsets of W. -/
@@ -296,10 +322,11 @@ noncomputable def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : Qu
 
 -- ── World-Ordering Semantics ────────────────────
 
-/-- Lewis's *l*-lifting: a preorder on worlds induces a comparison on
+/-- The *l*-lifting: a preorder on worlds induces a comparison on
     propositions. A ≿ B iff for every b ∈ B, ∃ a ∈ A with a ≥_w b.
-    @cite{holliday-icard-2013} §5; see also their injection-based *m*-lifting
-    (Theorem 7), which yields a complete logic for world-ordering models. -/
+    @cite{holliday-icard-2013} Definition 6; see also their injection-based
+    *m*-lifting (Definition 7), which yields a complete logic for
+    world-ordering models. -/
 def halpernLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
   ∀ b, b ∈ B → ∃ a, a ∈ A ∧ ge_w a b
 
@@ -316,9 +343,9 @@ theorem halpernLift_axiomT {W : Type*} {ge_w : W → W → Prop}
     EpistemicAxiom.T (halpernLift ge_w) :=
   fun _ _ hAB b hbA => ⟨b, hAB hbA, hRefl b⟩
 
-/-- Lewis's *l*-lifting from a reflexive preorder yields System W.
+/-- The *l*-lifting from a reflexive preorder yields System W.
     Soundness direction: world-ordering models with the l-lifting
-    validate System W (@cite{halpern-2003}; @cite{holliday-icard-2013} §5). -/
+    validate System W (@cite{halpern-2003}; @cite{holliday-icard-2013}). -/
 def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
@@ -341,9 +368,9 @@ theorem halpernLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
     let ⟨a, ha, hab⟩ := hAb b rfl
     ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
 
--- ── m-Lifting (@cite{holliday-icard-2013} §9) ──
+-- ── m-Lifting (@cite{holliday-icard-2013} Definition 7) ──
 
-/-- The *m*-lifting (@cite{holliday-icard-2013}, §9): an injection-based
+/-- The *m*-lifting (@cite{holliday-icard-2013}, Definition 7): an injection-based
     alternative to `halpernLift`. A ≿ B iff there exists an injection
     f : B ↪ A such that f(b) ≥_w b for all b ∈ B.
 

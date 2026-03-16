@@ -4,11 +4,11 @@ import Mathlib.Data.Set.Card
 /-!
 # Epistemic Entailment Patterns (@cite{holliday-icard-2013}, Figure 1)
 
-@cite{holliday-icard-2013}
+@cite{holliday-icard-2013} @cite{harrison-trainor-holliday-icard-2018} @cite{yalcin-2010}
 
 @cite{holliday-icard-2013} Figure 1 lists 10 validity patterns (V1–V7, V11–V13)
 and 3 invalidity patterns (I1–I3) for epistemic comparatives. (V8–V10 are from
-Yalcin (2010) and omitted from H&I's condensed figure.) This file defines
+@cite{yalcin-2010} and omitted from H&I's condensed figure.) This file defines
 each pattern as a `Prop`-valued predicate on a comparison relation `ge`, then
 proves which patterns hold (or fail) in each of three semantic classes:
 
@@ -651,16 +651,16 @@ theorem halpern_I3 {W : Type*} (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w 
 end WorldOrdering
 
 -- ══════════════════════════════════════════════════════════════════
--- § 6. m-Lifting (@cite{holliday-icard-2013}, §9, Fact 5)
+-- § 6. m-Lifting (@cite{holliday-icard-2013}, Fact 5)
 -- ══════════════════════════════════════════════════════════════════
 
 /-! The m-lifting validates all 13 validity patterns V1–V13 and invalidates
     I1–I3 (Fact 5 in @cite{holliday-icard-2013}). This avoids the
     "disjunction problem" that plagues the l-lifting.
 
-    The proofs for V1, V3–V7 follow from the l-lifting proofs with minor
-    adaptation (since m-lifting implies l-lifting). V2, V11–V13 require
-    the injection structure and are left as sorry for now. -/
+    V1, V3–V7 follow from the l-lifting proofs (since m-lifting implies
+    l-lifting). V2, V11–V13 use the injection structure directly;
+    V11–V12 rely on complement reversal (`mLift_complement_reversal`). -/
 
 section MLift
 
@@ -1097,6 +1097,49 @@ theorem mLift_not_I3 :
     | (have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
     | (have := hinj 0 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
     | (have := hinj 1 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+
+-- ── GFC Preorder (Definition 2.7 / Theorem 3.2) ──
+
+/-- The m-lifting is NOT total, even for total preorders on worlds.
+    Counterexample: W = Fin 4, ge_w = (· ≥ ·), A = {3, 0}, B = {2, 1}.
+    Neither A ≿ⁱ B (only 3 dominates 2, leaving nothing for 1) nor
+    B ≿ⁱ A (nothing in B dominates 3). -/
+theorem mLift_not_total :
+    ∃ (W : Type) (ge_w : W → W → Prop),
+      (∀ w, ge_w w w) ∧
+      (∀ u v w, ge_w u v → ge_w v w → ge_w u w) ∧
+      (∀ u v, ge_w u v ∨ ge_w v u) ∧
+      ∃ A B : Set W, ¬mLift ge_w A B ∧ ¬mLift ge_w B A := by
+  refine ⟨Fin 4, (· ≥ ·), fun w => le_refl w, fun u v w huv hvw => le_trans hvw huv,
+    fun u v => le_total v u, {3, 0}, {2, 1}, ?_, ?_⟩
+  · intro ⟨f, hf, hinj⟩
+    have h2 := hf 2 (by simp [Set.mem_insert_iff, Set.mem_singleton_iff])
+    have h1 := hf 1 (by simp [Set.mem_insert_iff, Set.mem_singleton_iff])
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h2 h1
+    have hf2 : f 2 = 3 := by omega
+    have hf1 : f 1 = 3 := by omega
+    exact absurd (hinj 2 1 (by simp) (by simp) (by rw [hf2, hf1])) (by omega)
+  · intro ⟨f, hf, _⟩
+    have h3 := hf 3 (by simp [Set.mem_insert_iff, Set.mem_singleton_iff])
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h3
+    omega
+
+/-- The m-lifting of a reflexive, transitive world ordering on finite W
+    is a GFC preorder (@cite{harrison-trainor-holliday-icard-2018}, Theorem 3.2).
+
+    This is the key structural result connecting world-ordering semantics
+    to the axiomatic hierarchy: the injection extension ≿ⁱ (= mLift)
+    satisfies all three GFC axiom groups — preorder (G), monotonicity (F),
+    and complement reversal (C). -/
+def mLift_toGFCPreorder {W : Type*} [Finite W] (ge_w : W → W → Prop)
+    (hRefl : ∀ w, ge_w w w)
+    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
+    GFCPreorder W where
+  ge := mLift ge_w
+  refl := mLift_axiomR hRefl
+  trans := fun _ _ _ => mLift_trans hTrans
+  mono := mLift_axiomT hRefl
+  complRev := fun _ _ h => mLift_complement_reversal hRefl hTrans h
 
 end MLift
 
