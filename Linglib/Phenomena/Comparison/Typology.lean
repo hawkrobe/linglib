@@ -4,7 +4,7 @@ import Linglib.Core.WALS.Features.F121A
 
 /-!
 # Comparative Construction Typology (WALS Chapter 121)
-@cite{beck-2009} @cite{dixon-2012} @cite{haspelmath-2001} @cite{kennedy-2007} @cite{stassen-1985} @cite{stassen-2013}
+@cite{beck-2009} @cite{haspelmath-2001} @cite{kennedy-2007} @cite{stassen-1985} @cite{stassen-2013}
 
 Cross-linguistic data on how languages express comparison of inequality
 ("X is taller than Y"), based on @cite{stassen-2013} in WALS Online. Stassen
