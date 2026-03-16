@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.297] - 2026-03-15
+
+### Changed
+- **Prove `mLift_V13`** in `EpistemicScale/Entailments.lean`: close sorry for V13 entailment pattern (strict(A\B, ∅) → strict(A∪B, B)) via pigeonhole — injection from B into A∪B forces |A∪B| ≤ |B|, contradicting strict subset
+- **Fix `patternV6` definition**: was `probably(⊤)`, now `□A → △A` (necessarily implies probably) matching @cite{holliday-icard-2013} Figure 1; update all V6 proofs (measure, FA, Halpern, mLift)
+- **Replace private `mu_empty'`** with `m.mu_empty` from `FinAddMeasure` API
+
+## [0.229.296] - 2026-03-15
+
+### Added
+- **`VoiceType` enum in VerbEntry.lean**: Framework-neutral voice type (agentive/nonThematic/expletive) with `assignsTheta` and `VerbCore.derivedUnaccusative` — derives unaccusativity from Voice selection (@cite{kratzer-1996}) instead of stipulating it
+- **`Fragments/Japanese/Passive.lean`**: Extract `PassiveType` (direct/indirect) with `requiresThematicVoice` — shared infrastructure for Japanese passive diagnostics (@cite{jo-seo-2023})
+- **`Phenomena/Ellipsis/Studies/Funakoshi2016.lean`**: VP ellipsis argumenthood diagnostic — Funakoshi's generalization (adjunct elision blocked when VP-internal elements present) with verification theorems
+- **Japanese unaccusativity diagnostics** in `Unaccusativity/Data.lean`: passive type (*niyotte* blocking) and *nani-o* wh-adjunct blocking, with 4 new data points connecting Ozaki 2026 to the cross-linguistic diagnostic inventory
+- **`jo-seo-2023` bib entry**: Japanese RARE-constructions and the nature of the passive (JEAL 32.1)
+
+### Changed
+- **`VerbCore.voiceType` field** (optional, default `none`): backward-compatible addition connecting Fragment entries to Voice theory; `hanareru` and `deru` now set `voiceType := some .nonThematic`
+- **Ozaki2026 bridge**: import shared `PassiveType`, add voice derivation theorems (`hanareru_unaccusative_derived`, `deru_unaccusative_derived`, `*_stored_matches_derived`, `direct_passive_requires_voice`)
+
 ## [0.229.295] - 2026-03-15
 
 ### Changed

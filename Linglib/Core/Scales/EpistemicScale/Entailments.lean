@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
+import Mathlib.Data.Set.Card
 
 /-!
 # Epistemic Entailment Patterns (@cite{holliday-icard-2013}, Figure 1)
@@ -81,9 +82,11 @@ def patternV4 : Prop :=
 def patternV5 : Prop :=
   ∀ A : Set W, ge Set.univ A
 
-/-- V6: △⊤ (tautology is probably true). -/
+/-- V6: □A → △A (necessarily A implies probably A).
+    □A is ¬◇¬A = ge ∅ Aᶜ in the set-theoretic framework
+    (@cite{holliday-icard-2013}, Figure 1). -/
 def patternV6 : Prop :=
-  probably ge Set.univ
+  ∀ A : Set W, ge ∅ Aᶜ → probably ge A
 
 /-- V7: △A → ◇A (probably implies possibly). -/
 def patternV7 : Prop :=
@@ -126,11 +129,6 @@ end PatternDefs
 -- ══════════════════════════════════════════════════════════════════
 
 section MeasureSemantics
-
-private theorem mu_empty' (m : FinAddMeasure W) : m.mu ∅ = 0 := by
-  have h : m.mu (∅ ∪ ∅) = m.mu ∅ + m.mu ∅ :=
-    m.additive ∅ ∅ (fun x hx => hx.elim)
-  simp only [Set.empty_union] at h; linarith
 
 private theorem mu_compl (m : FinAddMeasure W) (A : Set W) :
     m.mu Aᶜ = 1 - m.mu A := by
@@ -179,22 +177,25 @@ theorem measure_V3 (m : FinAddMeasure W) : patternV3 m.inducedGe := by
   · intro hc; apply hAnot; rw [mu_compl]; rw [mu_compl] at hc; linarith
 
 theorem measure_V4 (m : FinAddMeasure W) : patternV4 m.inducedGe := by
-  intro A; show m.mu A ≥ m.mu ∅; rw [mu_empty']; exact m.nonneg A
+  intro A; show m.mu A ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg A
 
 theorem measure_V5 (m : FinAddMeasure W) : patternV5 m.inducedGe := by
   intro A; exact mu_mono m (Set.subset_univ A)
 
 theorem measure_V6 (m : FinAddMeasure W) : patternV6 m.inducedGe := by
+  intro A h
+  unfold FinAddMeasure.inducedGe at h
+  rw [m.mu_empty] at h
+  have hAc0 : m.mu Aᶜ = 0 := le_antisymm h (m.nonneg Aᶜ)
   constructor
-  · show m.mu Set.univ ≥ m.mu Set.univᶜ
-    rw [Set.compl_univ, mu_empty', m.total]; linarith
-  · intro h; unfold FinAddMeasure.inducedGe at h
-    rw [Set.compl_univ, mu_empty', m.total] at h; linarith
+  · show m.mu A ≥ m.mu Aᶜ; rw [hAc0]; exact m.nonneg A
+  · intro hc; unfold FinAddMeasure.inducedGe at hc
+    linarith [mu_compl m A]
 
 theorem measure_V7 (m : FinAddMeasure W) : patternV7 m.inducedGe := by
   intro A ⟨hA, _⟩ hposs
   unfold FinAddMeasure.inducedGe at *
-  rw [mu_empty'] at hposs; rw [mu_compl] at hA
+  rw [m.mu_empty] at hposs; rw [mu_compl] at hA
   linarith [m.nonneg A]
 
 theorem measure_V11 (m : FinAddMeasure W) : patternV11 m.inducedGe := by
@@ -216,7 +217,7 @@ theorem measure_V12 (m : FinAddMeasure W) : patternV12 m.inducedGe := by
 theorem measure_V13 (m : FinAddMeasure W) : patternV13 m.inducedGe := by
   intro A B ⟨hAB, hABnot⟩
   unfold FinAddMeasure.inducedGe at *
-  rw [mu_empty'] at *
+  rw [m.mu_empty] at *
   have hd : ∀ x, x ∈ A \ B → x ∉ B := fun x ⟨_, hna⟩ hxB => hna hxB
   have hdecomp : A ∪ B = (A \ B) ∪ B := by rw [Set.diff_union_self]
   constructor
@@ -392,9 +393,19 @@ theorem fa_V5 (sys : EpistemicSystemFA W) : patternV5 sys.ge := by
   intro A; exact sys.mono A Set.univ (Set.subset_univ A)
 
 theorem fa_V6 (sys : EpistemicSystemFA W) : patternV6 sys.ge := by
+  intro A h0Ac
+  have hA0 : sys.ge A ∅ := sys.mono ∅ A (Set.empty_subset A)
   constructor
-  · rw [Set.compl_univ]; exact sys.bottom
-  · intro h; rw [Set.compl_univ] at h; exact sys.nonTrivial h
+  · exact sys.trans A ∅ Aᶜ hA0 h0Ac
+  · intro hAcA
+    -- ge ∅ A by transitivity, then ge A Set.univ by axiom A
+    have h0A : sys.ge ∅ A := sys.trans ∅ Aᶜ A h0Ac hAcA
+    have hAU : sys.ge A Set.univ := by
+      rw [sys.additive A Set.univ]
+      have h1 : A \ Set.univ = ∅ := Set.diff_eq_empty.mpr (Set.subset_univ A)
+      have h2 : Set.univ \ A = Aᶜ := by ext x; simp [Set.mem_diff, Set.mem_compl_iff]
+      rw [h1, h2]; exact h0Ac
+    exact sys.nonTrivial (sys.trans ∅ A Set.univ h0A hAU)
 
 theorem fa_V7 (sys : EpistemicSystemFA W) : patternV7 sys.ge := by
   intro A ⟨_, hAnot⟩ hempty
@@ -537,7 +548,13 @@ theorem halpern_V5 {W : Type*} (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w 
 
 theorem halpern_V6 {W : Type*} [Nonempty W] (ge_w : W → W → Prop) :
     patternV6 (halpernLift ge_w) := by
-  show strict (halpernLift ge_w) Set.univ Set.univᶜ
+  intro A hAc
+  -- halpernLift ge_w ∅ Aᶜ forces Aᶜ = ∅ (no function from Aᶜ to ∅)
+  have hAuniv : A = Set.univ := by
+    ext x; simp only [Set.mem_univ, iff_true]
+    by_contra hx; obtain ⟨a, ha, _⟩ := hAc x hx; exact ha.elim
+  subst hAuniv
+  show halpernLift ge_w Set.univ Set.univᶜ ∧ ¬halpernLift ge_w Set.univᶜ Set.univ
   rw [Set.compl_univ]
   exact ⟨fun b hb => hb.elim,
     fun h => by obtain ⟨w⟩ := ‹Nonempty W›; obtain ⟨a, ha, _⟩ := h w (Set.mem_univ w); exact ha.elim⟩
@@ -726,7 +743,13 @@ theorem mLift_V5 {W : Type*} (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w w)
 
 theorem mLift_V6 {W : Type*} [Nonempty W] (ge_w : W → W → Prop) :
     patternV6 (mLift ge_w) := by
-  show strict (mLift ge_w) Set.univ Set.univᶜ
+  intro A hAc
+  -- mLift ge_w ∅ Aᶜ forces Aᶜ = ∅ (no injection from Aᶜ to ∅)
+  have hAuniv : A = Set.univ := by
+    ext x; simp only [Set.mem_univ, iff_true]
+    by_contra hx; obtain ⟨f, hf, _⟩ := hAc; obtain ⟨ha, _⟩ := hf x hx; exact ha.elim
+  subst hAuniv
+  show mLift ge_w Set.univ Set.univᶜ ∧ ¬mLift ge_w Set.univᶜ Set.univ
   rw [Set.compl_univ]
   exact ⟨⟨id, fun b hb => hb.elim, fun _ _ h1 => h1.elim⟩,
     fun ⟨f, hf, _⟩ => by
@@ -780,7 +803,27 @@ theorem mLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
 theorem mLift_V13 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (_hRefl : ∀ w, ge_w w w) :
     patternV13 (mLift ge_w) := by
-  sorry
+  intro A B ⟨_, hNotEmpty⟩
+  have hABne : (A \ B).Nonempty := by
+    by_contra h
+    rw [Set.not_nonempty_iff_eq_empty] at h
+    apply hNotEmpty; rw [h]
+    exact ⟨id, fun b hb => hb.elim, fun _ _ _ _ h => h⟩
+  constructor
+  · exact ⟨id, fun b hb => ⟨Set.mem_union_right A hb, _hRefl b⟩,
+           fun _ _ _ _ h => h⟩
+  · intro ⟨f, hf, hinj⟩
+    have hle : (A ∪ B).ncard ≤ B.ncard :=
+      Set.ncard_le_ncard_of_injOn f (fun b hb => (hf b hb).1)
+        (fun b₁ hb₁ b₂ hb₂ heq => hinj b₁ b₂ hb₁ hb₂ heq) (Set.toFinite _)
+    have hsub : B ⊂ A ∪ B := by
+      constructor
+      · exact Set.subset_union_right
+      · intro h; obtain ⟨x, hx⟩ := hABne
+        exact hx.2 (h (Set.mem_union_left B hx.1))
+    have hlt : B.ncard < (A ∪ B).ncard :=
+      Set.ncard_lt_ncard hsub (Set.toFinite _)
+    omega
 
 /-- I1 is **invalid** for the m-lifting (Fact 5 in @cite{holliday-icard-2013}).
     Counterexample: W = Fin 2, ge_w total. A = {0}, B = {0}, C = {1}.
