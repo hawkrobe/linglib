@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.310] - 2026-03-15
+
+### Changed
+- **Heine 1997 audit**: replace thin `schemaIsTransitiveLike` bridge with `schemaArity` mapping to Barker 2011 `SemType` (Pred1/Pred2), with `possessor_subject_iff_pred2`, `pred2_action_companion_only`, `pred1_possessee_subject` theorems
+- **Heine 1997 overlap-cline theorem**: replace `stage_III_implies_decategorialized` (redundant ≥ check) with `action_overlap_cline_covary` (strict ordering of both overlap stages and boundedness cline)
+- **Heine 1997 docstring fixes**: correct `action_not_dominant` denominator explanation (15/110), fix `schemaTypicalNotions` source reference (§2.3 generalizations i-iv)
+
+### Added
+- **Heine 1997 §7 SchemaPrediction**: `predictionsFor` bundles yieldsHave/yieldsBelong/possessorIsSubject/arity per schema; `location_predictions`, `companion_predictions`, `genitive_predictions` theorems
+- **Heine 1997 §8 WALS F117A bridge**: `walsToSchema` mapping Stassen's 5 WALS categories to Heine's schemas; `wals_agrees_with_predicativeSource` consistency theorem
+- **Fragment §6 prediction verification**: each of Finnish, Russian, Turkish, Swahili fragments now imports Heine1997 and verifies schema predictions + WALS consistency (`matches_heine_predictions`, `wals_consistent`, etc.)
+
 ## [0.229.309] - 2026-03-15
 
 ### Removed
