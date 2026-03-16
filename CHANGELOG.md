@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.302] - 2026-03-15
+
+### Added
+- **Head-Filler Schema + SLASH unbounded dependencies** in `HPSG/Core/HeadFiller.lean`: gap introduction (`gapComplement`), SLASH amalgamation (`amalgamateHeadComp`/`amalgamateHeadSubj`), `TrackedSign`, nominal category compatibility (`categoriesMatch`), GAP restrictions / island constraints (`GapRestriction`, `propagateSlash`), end-to-end object extraction derivation
+- **HPSGExtraction bridge** (`Phenomena/FillerGap/Studies/HPSGExtraction.lean`): connects HPSG SLASH mechanism to filler-gap phenomena data; `islandToGapRestriction` maps `ConstraintType` to `GapRestriction`; proves `absolute_islands_block`, `gap_removes_complement`, `extraction_and_island_complementary`
+
 ## [0.229.301] - 2026-03-15
 
 ### Fixed
