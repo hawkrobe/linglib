@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Lexicon
 
 /-!
 # HPSG Interpretation of Fragment Entries
-@cite{pollard-sag-1994}
+@cite{pollard-sag-1994}, @cite{sag-wasow-bender-2003}
 
 Maps Fragment lexical entries to HPSG Signs (words with appropriate Synsem).
 
@@ -16,17 +16,15 @@ and this module provides the HPSG-specific interpretation.
 ## Design
 
 - `VerbEntry → Sign`: based on complement type, sets HEAD and VAL
-- `PronounEntry → Sign`: NP-like signs with appropriate features
-- `NounEntry → Sign`: N or NP depending on proper/common
+- `PronounEntry → Sign`: NP-like signs with MODE content feature
+- `NounEntry → Sign`: N or NP depending on proper/common; [MODE ref]
 - `QuantifierEntry → Sign`: determiners
 
-## Example
+## MODE Mapping (per @cite{sag-wasow-bender-2003} Ch. 7)
 
-```
-VerbEntry.sleep (intransitive) → word "sleeps" { cat := VERB, val := { subj := [NOUN] } }
-VerbEntry.eat (transitive) → word "eats" { cat := VERB, val := { subj := [NOUN], comps := [NOUN] } }
-VerbEntry.give (ditransitive) → word "gives" { cat := VERB, val := { subj := [NOUN], comps := [NOUN, NOUN] } }
-```
+- Reflexives/reciprocals → [MODE ana]
+- Personal pronouns → [MODE ref]
+- R-expressions (names) → [MODE ref]
 -/
 
 namespace HPSG.FromFragments
@@ -69,19 +67,32 @@ def verbToSign (v : VerbEntry) : Sign :=
 Map a NounEntry to an HPSG Sign.
 
 Proper names are NP (saturated); common nouns are N (unsaturated,
-needing a determiner).
+needing a determiner). All nouns are [MODE ref].
 -/
 def nounToSign (n : NounEntry) : Sign :=
   if n.proper then
-    .word (n.toWordSg) { cat := .PROPN }
+    .word (n.toWordSg) { cat := .PROPN, cont := { mode := .ref } }
   else
-    .word (n.toWordSg) { cat := .NOUN }
+    .word (n.toWordSg) { cat := .NOUN, cont := { mode := .ref } }
 
 /--
-Map a PronounEntry to an HPSG Sign.
+Derive HPSG content features from a PronounType.
+
+Per @cite{sag-wasow-bender-2003} Ch. 7:
+- reflexive/reciprocal → [MODE ana]
+- personal and all others → [MODE ref]
+-/
+def pronounTypeToContent (pt : PronounType) : ContentFeatures :=
+  match pt with
+  | .reflexive   => { mode := .ana }
+  | .reciprocal  => { mode := .ana }
+  | _            => { mode := .ref }
+
+/--
+Map a PronounEntry to an HPSG Sign with MODE content feature.
 -/
 def pronounToSign (p : PronounEntry) : Sign :=
-  .word (p.toWord) { cat := .PRON }
+  .word (p.toWord) { cat := .PRON, cont := pronounTypeToContent p.pronounType }
 
 /--
 Map a QuantifierEntry to an HPSG Sign.
@@ -150,5 +161,23 @@ example : (nounToSign Fragments.English.Nouns.cat).synsem.cat = .NOUN := rfl
 -- Verify all verbs have a subject requirement
 example : (verbToSign Fragments.English.Predicates.Verbal.sleep).synsem.val.subj = [.NOUN] := rfl
 example : (verbToSign Fragments.English.Predicates.Verbal.give).synsem.val.subj = [.NOUN] := rfl
+
+-- Verify MODE on pronouns
+example : (pronounToSign Fragments.English.Pronouns.himself).synsem.cont.mode = .ana := rfl
+example : (pronounToSign Fragments.English.Pronouns.eachOther).synsem.cont.mode = .ana := rfl
+example : (pronounToSign Fragments.English.Pronouns.him).synsem.cont.mode = .ref := rfl
+
+-- Verify R-expressions are [MODE ref]
+example : (nounToSign Fragments.English.Nouns.john).synsem.cont.mode = .ref := rfl
+
+-- Verify ARG-ST derived from valence
+example : (verbToValence Fragments.English.Predicates.Verbal.eat).toArgSt.args.length = 2 := rfl
+example : (verbToValence Fragments.English.Predicates.Verbal.give).toArgSt.args.length = 3 := rfl
+example : (verbToValence Fragments.English.Predicates.Verbal.sleep).toArgSt.args.length = 1 := rfl
+
+-- Subject outranks object on transitive ARG-ST
+example : (verbToValence Fragments.English.Predicates.Verbal.eat).toArgSt.outranks 0 1 = true := rfl
+-- Object does not outrank subject
+example : (verbToValence Fragments.English.Predicates.Verbal.eat).toArgSt.outranks 1 0 = false := rfl
 
 end HPSG.FromFragments

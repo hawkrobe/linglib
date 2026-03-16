@@ -1,10 +1,18 @@
 /-
 HPSG Coreference (Binding).
 
-O-command-based binding using obliqueness hierarchy and LOCAL feature domains.
-@cite{pollard-sag-1994} Ch. 6, @cite{sag-wasow-bender-2003} Ch. 5.
+Binding theory using MODE and ARG-ST outranking,
+per @cite{sag-wasow-bender-2003} Ch. 7 and @cite{pollard-sag-1994} (binding theory).
+
+SWB2003 has two binding principles (not three):
+- **Principle A**: [MODE ana] must be outranked by a coindexed element
+- **Principle B**: [MODE ref] must NOT be outranked by a coindexed element
+
+Both pronouns and R-expressions are [MODE ref], so Principle B subsumes
+the Chomskyan Principle C. No separate "Principle C" is needed.
 -/
 
+import Linglib.Theories.Syntax.HPSG.Core.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
@@ -26,9 +34,47 @@ private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
 namespace HPSG.Coreference
 
-section NominalTypes
+-- ============================================================================
+-- MODE Classification
+-- ============================================================================
 
-/-- Types of nominal expressions for coreference. -/
+section ModeClassification
+
+/-- Is this a nominal category? -/
+def isNominalCat (c : UD.UPOS) : Bool :=
+  c == .PROPN || c == .NOUN || c == .PRON
+
+/-- Derive MODE feature from a word.
+
+    Per @cite{sag-wasow-bender-2003} Ch. 7:
+    - Reflexives and reciprocals → [MODE ana]
+    - Personal pronouns and R-expressions → [MODE ref] -/
+def classifyMode (w : Word) : Option HPSG.Mode :=
+  if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
+    some .ana
+  else if w.form ∈ ["each other", "one another"] then
+    some .ana
+  else if isNominalCat w.cat then
+    some .ref
+  else
+    none
+
+/-- Is this word an anaphor ([MODE ana])? -/
+def isAnaphor (w : Word) : Bool :=
+  classifyMode w == some .ana
+
+/-- Is this word a reflexive specifically? -/
+def isReflexive (w : Word) : Bool :=
+  w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"]
+
+/-- Is this word a reciprocal? -/
+def isReciprocal (w : Word) : Bool :=
+  w.form ∈ ["each other", "one another"]
+
+/-- Types of nominal expressions for coreference.
+
+    Implementation convenience for dispatching agreement checks.
+    Both `pronoun` and `rExpression` map to [MODE ref] in SWB2003. -/
 inductive NominalType where
   | reflexive   -- himself, herself, themselves
   | reciprocal  -- each other, one another
@@ -36,11 +82,14 @@ inductive NominalType where
   | rExpression -- John, Mary, the cat
   deriving Repr, DecidableEq
 
-/-- Is this a nominal category? -/
-def isNominalCat (c : UD.UPOS) : Bool :=
-  c == .PROPN || c == .NOUN || c == .PRON
+/-- Classify a word as a nominal type.
 
-/-- Classify a word as a nominal type. -/
+    This maps to MODE as follows:
+    - reflexive, reciprocal → [MODE ana]
+    - pronoun, rExpression → [MODE ref]
+
+    The pronoun/rExpression distinction is useful for implementation
+    (e.g., agreement checks) but both are [MODE ref] in SWB2003. -/
 def classifyNominal (w : Word) : Option NominalType :=
   if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
     some .reflexive
@@ -53,38 +102,18 @@ def classifyNominal (w : Word) : Option NominalType :=
   else
     none
 
-end NominalTypes
+end ModeClassification
 
-section Obliqueness
+-- ============================================================================
+-- ARG-ST and Outranking
+-- ============================================================================
 
-/-- Position in argument structure (obliqueness ranking). -/
-inductive ArgPosition where
-  | subject : ArgPosition       -- Most prominent
-  | directObject : ArgPosition  -- Less prominent
-  | indirectObject : ArgPosition
-  | oblique : ArgPosition       -- Least prominent
-  deriving Repr, DecidableEq
+section ArgStOutranking
 
-/-- Obliqueness ordering: is pos1 less oblique (more prominent) than pos2? -/
-def lessOblique (pos1 pos2 : ArgPosition) : Bool :=
-  match pos1, pos2 with
-  | .subject, .directObject => true
-  | .subject, .indirectObject => true
-  | .subject, .oblique => true
-  | .directObject, .indirectObject => true
-  | .directObject, .oblique => true
-  | .indirectObject, .oblique => true
-  | _, _ => false
+/-- Simple clause structure with ARG-ST for binding.
 
-/-- O-command: A o-commands B iff A is less oblique than B. -/
-def oCommands (pos1 pos2 : ArgPosition) : Bool :=
-  lessOblique pos1 pos2
-
-end Obliqueness
-
-section LocalFeatureStructure
-
-/-- Simple clause structure for HPSG coreference checking. -/
+    ARG-ST is implicitly [subject, object] — subject at position 0
+    outranks object at position 1. -/
 structure SimpleClause where
   subject : Word
   verb : Word
@@ -104,14 +133,26 @@ def parseSimpleClause (ws : List Word) : Option SimpleClause :=
     else none
   | _ => none
 
-/-- In a simple clause, subject and object are in the same LOCAL domain. -/
-def sameLocalDomain (_clause : SimpleClause) : Bool := true
+/-- Does the subject outrank the object on ARG-ST?
 
-end LocalFeatureStructure
+    In a simple clause, ARG-ST = [subject, object], so the subject
+    at position 0 always outranks the object at position 1. -/
+def subjectOutranksObject (_clause : SimpleClause) : Bool := true
+
+/-- In a simple clause, subject and object are on the same ARG-ST list. -/
+def sameArgSt (_clause : SimpleClause) : Bool := true
+
+end ArgStOutranking
+
+-- ============================================================================
+-- Anaphoric Agreement Principle
+-- ============================================================================
 
 section Agreement
 
-/-- Do two nominals agree in phi-features? -/
+/-- Anaphoric Agreement Principle (AAP): coindexed elements must agree.
+
+    Per @cite{sag-wasow-bender-2003} Ch. 7: "Coindexed NPs agree." -/
 def phiAgree (w1 w2 : Word) : Bool :=
   let personMatch := match w1.features.person, w2.features.person with
     | some p1, some p2 => p1 == p2
@@ -132,63 +173,81 @@ def phiAgree (w1 w2 : Word) : Bool :=
 
 end Agreement
 
+-- ============================================================================
+-- Binding Principles
+-- ============================================================================
+
 section BindingConstraints
 
-/-- Principle A (HPSG): a reflexive must be locally o-commanded by a coindexed element. -/
+/-- Principle A (SWB2003): An anaphor ([MODE ana]) must be outranked by a
+    coindexed element on the same ARG-ST list.
+
+    For reflexives, the coindexed antecedent must also satisfy the AAP. -/
 def reflexiveLicensed (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
   | some obj =>
     match classifyNominal obj with
     | some .reflexive =>
-      oCommands .subject .directObject &&
-      sameLocalDomain clause &&
+      subjectOutranksObject clause &&
+      sameArgSt clause &&
       phiAgree clause.subject obj
     | _ => true
 
-/-- Reciprocals must be locally o-commanded by a plural antecedent. -/
+/-- Principle A for reciprocals: a reciprocal ([MODE ana]) must be outranked
+    by a plural coindexed element. -/
 def reciprocalLicensed (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
   | some obj =>
     match classifyNominal obj with
     | some .reciprocal =>
-      oCommands .subject .directObject &&
-      sameLocalDomain clause &&
+      subjectOutranksObject clause &&
+      sameArgSt clause &&
       clause.subject.features.number == some .pl
     | _ => true
 
-/-- Principle B (HPSG): a pronoun must NOT be locally o-commanded by a coindexed element. -/
-def pronounLocallyFree (clause : SimpleClause) : Bool :=
+/-- Principle B (SWB2003): A [MODE ref] element must NOT be outranked
+    by a coindexed element on the same ARG-ST list.
+
+    This applies to both pronouns and R-expressions (both are [MODE ref]).
+    In a simple clause, the subject outranks the object, so any [MODE ref]
+    object that is coindexed with the subject violates Principle B.
+
+    Note: `grammaticalForCoreference` only tests this for pronouns, since
+    R-expression objects are typically not coindexed with the subject.
+    `computeCoreferenceStatus` applies Principle B to all [MODE ref] elements
+    for explicit coindexation queries. -/
+def refLocallyFree (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => true
   | some obj =>
-    match classifyNominal obj with
-    | some .pronoun =>
-      !(oCommands .subject .directObject && sameLocalDomain clause)
+    match classifyMode obj with
+    | some .ref =>
+      !(subjectOutranksObject clause && sameArgSt clause)
     | _ => true
-
-/-- Principle C (HPSG): an R-expression must not be o-commanded by a coreferent pronoun. -/
-def rExpressionFree (clause : SimpleClause) : Bool :=
-  match classifyNominal clause.subject with
-  | some .pronoun =>
-    match clause.object with
-    | some obj =>
-      match classifyNominal obj with
-      | some .rExpression => true
-      | _ => true
-    | none => true
-  | _ => true
 
 end BindingConstraints
 
+-- ============================================================================
+-- Combined Check
+-- ============================================================================
+
 section CombinedCheck
 
-/-- Is a sentence grammatical for coreference under HPSG binding? -/
+/-- Is a sentence free of binding violations under HPSG binding theory?
+
+    Checks Principle A (anaphors must be outranked) and
+    Principle B (pronouns must not be locally bound).
+
+    For R-expression objects, no binding violation arises because
+    coindexation with the subject is not assumed. Use
+    `computeCoreferenceStatus` for explicit coindexation queries. -/
 def grammaticalForCoreference (ws : List Word) : Bool :=
   match parseSimpleClause ws with
   | none => false
   | some clause =>
+    -- Anaphors cannot be subjects (no outranker available)
     match classifyNominal clause.subject with
     | some .reflexive => false
     | some .reciprocal => false
@@ -199,8 +258,8 @@ def grammaticalForCoreference (ws : List Word) : Bool :=
         match classifyNominal obj with
         | some .reflexive => reflexiveLicensed clause
         | some .reciprocal => reciprocalLicensed clause
-        | some .pronoun => false
-        | _ => true
+        | some .pronoun => false  -- Principle B: [MODE ref] locally bound → blocked
+        | _ => true  -- R-expressions: no coindexation assumed, no violation
 
 /-- Check if reflexive is licensed in a sentence -/
 def reflexiveLicensedInSentence (ws : List Word) : Bool :=
@@ -208,36 +267,39 @@ def reflexiveLicensedInSentence (ws : List Word) : Bool :=
   | none => false
   | some clause => reflexiveLicensed clause
 
-/-- Check if pronoun coreference is blocked -/
-def pronounCoreferenceBlocked (ws : List Word) : Bool :=
+/-- Check if local coreference is blocked by Principle B ([MODE ref]).
+
+    Applies to both pronouns and R-expressions. -/
+def localCoreferenceBlocked (ws : List Word) : Bool :=
   match parseSimpleClause ws with
   | none => false
-  | some clause => !pronounLocallyFree clause
+  | some clause => !refLocallyFree clause
 
 -- ============================================================================
 -- Tests
 -- ============================================================================
 
--- Reflexive coreference: licensed when c-commanded, agreement matches
+-- Principle A: reflexives licensed when outranked with agreement
 #guard reflexiveLicensedInSentence [john, sees, himself]     -- ✓
-#guard !grammaticalForCoreference [himself, sees, john]      -- ✗ reflexive in subject
+#guard !grammaticalForCoreference [himself, sees, john]      -- ✗ anaphor in subject
 #guard reflexiveLicensedInSentence [mary, sees, herself]     -- ✓
 #guard !grammaticalForCoreference [herself, sees, mary]      -- ✗
 #guard reflexiveLicensedInSentence [they, see, themselves]   -- ✓
 #guard !grammaticalForCoreference [themselves, see, them]    -- ✗
 
--- Agreement mismatches
+-- AAP violations (agreement mismatches)
 #guard !reflexiveLicensedInSentence [john, sees, herself]    -- ✗ gender mismatch
 #guard !reflexiveLicensedInSentence [they, see, himself]     -- ✗ number mismatch
 
--- Reciprocal coreference: requires plural antecedent
+-- Principle A: reciprocals require plural antecedent
 #guard grammaticalForCoreference [they, see, eachOther]      -- ✓ plural antecedent
-#guard !grammaticalForCoreference [eachOther, see, them]     -- ✗ reciprocal in subject
+#guard !grammaticalForCoreference [eachOther, see, them]     -- ✗ anaphor in subject
 #guard !grammaticalForCoreference [john, sees, eachOther]    -- ✗ singular antecedent
 
--- Pronominal disjoint reference (Principle B)
-#guard pronounCoreferenceBlocked [john, sees, him]           -- ✓
-#guard pronounCoreferenceBlocked [mary, sees, her]           -- ✓
+-- Principle B: [MODE ref] must be locally free
+#guard localCoreferenceBlocked [john, sees, him]             -- ✓ pronoun
+#guard localCoreferenceBlocked [mary, sees, her]             -- ✓ pronoun
+#guard localCoreferenceBlocked [john, sees, mary]            -- ✓ R-expression
 
 -- ============================================================================
 -- Capturing Phenomena Data
@@ -284,90 +346,104 @@ theorem reflexive_pairs_captured :
   native_decide
 
 -- ============================================================================
--- HPSG Grammar Configuration
+-- CoreferenceTheory Interface Implementation
 -- ============================================================================
 
-/-- HPSG coreference configuration -/
-structure HPSGCoreferenceGrammar where
-  /-- Whether to use strict obliqueness (no exceptions) -/
-  strictObliqueness : Bool := true
+/-- Compute coreference status for positions i and j using ARG-ST outranking.
 
-/-- Default HPSG grammar for coreference -/
-def defaultGrammar : HPSGCoreferenceGrammar := {}
+    Position 0 = subject, position 2 = object.
+
+    Applies both binding principles uniformly:
+    - Principle A: [MODE ana] at j outranked by coindexed i → obligatory
+    - Principle B: [MODE ref] at j outranked by coindexed i → blocked -/
+def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
+  if i == 0 && j == 2 then
+    -- Subject outranks object on ARG-ST
+    match clause.object with
+    | none => .unspecified
+    | some obj =>
+      match classifyMode obj with
+      | some .ana =>
+        -- Principle A: anaphor must be outranked — check agreement
+        if subjectOutranksObject clause && sameArgSt clause && phiAgree clause.subject obj
+        then .obligatory
+        else .blocked
+      | some .ref =>
+        -- Principle B: [MODE ref] must NOT be outranked by coindexed element
+        -- Applies to both pronouns and R-expressions
+        if subjectOutranksObject clause && sameArgSt clause
+        then .blocked
+        else .possible
+      | _ => .unspecified
+  else if i == 2 && j == 0 then
+    -- Object does not outrank subject
+    match classifyMode clause.subject with
+    | some .ana => .blocked      -- Anaphor with no outranker
+    | some .ref => .possible     -- Not outranked, no constraint
+    | _ => .unspecified
+  else
+    .unspecified
+
+-- Principle B applies uniformly to [MODE ref] — both pronouns and R-expressions
+private def johnSeesHim : SimpleClause := ⟨john, sees, some him⟩
+private def johnSeesMary : SimpleClause := ⟨john, sees, some mary⟩
+private def johnSeesHimself : SimpleClause := ⟨john, sees, some himself⟩
+
+-- Principle A: anaphor must be outranked → obligatory coreference
+#guard computeCoreferenceStatus johnSeesHimself 0 2 == .obligatory
+-- Principle B: pronoun outranked → blocked
+#guard computeCoreferenceStatus johnSeesHim 0 2 == .blocked
+-- Principle B: R-expression outranked → also blocked (subsumes Principle C)
+#guard computeCoreferenceStatus johnSeesMary 0 2 == .blocked
+
+end CombinedCheck
 
 -- ============================================================================
 -- Theoretical Notes
 -- ============================================================================
 
 /-
-## HPSG Binding Theory Details
+## SWB2003 Binding Theory
 
-### The Obliqueness Hierarchy
+### MODE (not PPRO)
 
-HPSG defines binding in terms of obliqueness:
-- ARG-ST (argument structure) orders arguments by obliqueness
-- Subject < Direct Object < Indirect Object < Obliques
-- "Less oblique" elements can bind "more oblique" ones
+SWB2003 replaces the Chomskyan three-way classification
+(anaphor / pronoun / R-expression → Principles A/B/C) with a
+single-feature system based on MODE:
 
-### LOCAL vs NONLOCAL
+- [MODE ana]: anaphors (reflexives, reciprocals)
+- [MODE ref]: both personal pronouns AND R-expressions
 
-- **LOCAL**: Contains CAT and CONT; binding domain is LOCAL
-- **NONLOCAL**: Contains SLASH, REL, QUE; for unbounded dependencies
+This yields exactly two binding principles:
+- **Principle A**: [MODE ana] must be outranked by a coindexed element
+- **Principle B**: [MODE ref] must NOT be outranked by a coindexed element
 
-Reflexives require their antecedent to be LOCAL.
-Pronouns can have antecedents that are NONLOCAL.
+There is no "Principle C" — Principle B subsumes it, since both pronouns
+and R-expressions are [MODE ref]. Both are blocked from being locally
+bound by a coindexed element.
+
+Note: Some secondary sources incorrectly attribute a PPRO feature to
+SWB2003. The textbook's binding theory uses only MODE and ARG-ST.
+
+### ARG-ST and Outranking
+
+Binding is defined over the ARG-ST (argument structure) list, not over
+tree geometry:
+
+    ARG-ST = SPR ⊕ COMPS
+
+"X outranks Y" iff X precedes Y on some ARG-ST list.
 
 ### Comparison with Minimalism
 
-Both theories make the same predictions for simple cases because:
-1. Subject c-commands object ↔ Subject is less oblique than object
-2. Local domain (clause) ↔ Same LOCAL feature structure
-3. Agreement required ↔ Feature unification succeeds
+Both theories make the same predictions for simple cases:
+1. Subject outranks object ↔ Subject c-commands object
+2. Same ARG-ST list ↔ Same binding domain (local clause)
+3. AAP (agreement) ↔ Feature checking
 
-The difference is in the mechanism:
-- Minimalism: Structural (tree geometry)
-- HPSG: Feature-based (constraint satisfaction)
+The difference is in mechanism:
+- Minimalism: structural (tree geometry, c-command)
+- HPSG: feature-based (ARG-ST ordering, constraint satisfaction)
 -/
-
--- ============================================================================
--- CoreferenceTheory Interface Implementation
--- ============================================================================
-
-/-- Compute coreference status for positions i and j using o-command.
-
-    Position 0 = subject, position 2 = object -/
-def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.CoreferenceStatus :=
-  if i == 0 && j == 2 then
-    -- Subject-object configuration: subject o-commands object
-    match clause.object with
-    | none => .unspecified
-    | some obj =>
-      match classifyNominal obj with
-      | some .reflexive =>
-        if oCommands .subject .directObject && sameLocalDomain clause && phiAgree clause.subject obj
-        then .obligatory
-        else .blocked
-      | some .reciprocal =>
-        if oCommands .subject .directObject && sameLocalDomain clause &&
-           clause.subject.features.number == some .pl
-        then .obligatory
-        else .blocked
-      | some .pronoun =>
-        if oCommands .subject .directObject && sameLocalDomain clause
-        then .blocked
-        else .possible
-      | some .rExpression => .possible
-      | none => .unspecified
-  else if i == 2 && j == 0 then
-    -- Object-subject: object doesn't o-command subject
-    match classifyNominal clause.subject with
-    | some .reflexive => .blocked
-    | some .reciprocal => .blocked
-    | some .pronoun => .possible
-    | _ => .possible
-  else
-    .unspecified
-
-end CombinedCheck
 
 end HPSG.Coreference

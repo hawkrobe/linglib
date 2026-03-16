@@ -148,5 +148,4 @@ example : licenses [john, can, eat] .embeddedQuestion :=
 example : ¬ licenses [can, john, eat] .embeddedQuestion :=
   not_licenses_embedded_aux_first _ rfl
 
-
 end HPSG
