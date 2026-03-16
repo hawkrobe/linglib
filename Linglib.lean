@@ -1623,7 +1623,7 @@ import Linglib.Theories.Semantics.Tense.ZeroTense
 import Linglib.Theories.Semantics.Tense.ModalTense
 import Linglib.Theories.Semantics.Tense.CounterfactualTense
 import Linglib.Theories.Semantics.Tense.SimultaneousTense
-import Linglib.Theories.Semantics.Tense.TemporalConnectives.Giannakidou
+import Linglib.Phenomena.TemporalConnectives.Studies.Giannakidou2002
 import Linglib.Theories.Syntax.Minimalism.Tense.AgreeSOT
 import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
 -- Theories: Semantics.Questions

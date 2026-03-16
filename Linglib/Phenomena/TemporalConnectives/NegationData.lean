@@ -91,8 +91,10 @@ structure TwoUntilDatum where
 /-- Greek *prin* (πριν): before-type.
     Requires subjunctive, does not require DE context (unlike English
     NPI-*until* or Greek *para monon*), non-veridical complement, licenses NPIs.
-    No actualization entailment: "Efije prin na erthi o Janis" is compatible
-    with Janis never coming (@cite{giannakidou-2002}, §6, ex. 72).
+    No actualization entailment: *prin* is compatible with the complement
+    event never occurring (@cite{giannakidou-2002}, §6, ex. (72):
+    "I prigipisa dhen eftase prin apo ta mesanixta" — the princess may or
+    may not have arrived).
     "Efije prin na erthi o Janis."
     'She left before Janis came.' -/
 def greek_prin : TwoUntilDatum where
