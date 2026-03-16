@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Possession.Typology
+import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
 # Swahili Possessive Constructions
@@ -144,5 +145,34 @@ def expressibleNotions : List PossessiveNotion :=
 /-- All seven notions are expressible. -/
 theorem covers_all_notions :
     expressibleNotions.length = 7 := rfl
+
+-- ============================================================================
+-- §6. Heine 1997 Prediction Verification
+-- ============================================================================
+
+open Phenomena.Possession.Studies.Heine1997
+
+/-- Swahili's Companion Schema matches Heine's predictions:
+    have-construction (not belong), possessor as subject, Pred2. -/
+theorem companion_matches_heine :
+    let p := predictionsFor sourceSchema
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = true ∧ p.arity = .pred2 := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Swahili is at Stage III: the `-na` marker is no longer decomposable
+    into copula + comitative, so the source meaning (accompaniment) is
+    no longer available. All seven notions expressible confirms full
+    grammaticalization. -/
+theorem full_grammaticalization :
+    expressibleNotions.length = 7 ∧
+    OverlapStage.targetOnly.degree = 2 := by
+  exact ⟨rfl, rfl⟩
+
+/-- WALS F117A classifies Swahili as `conjunctional` (Stassen's term
+    for comitative-based possession), which maps to Heine's Companion
+    Schema via `walsToSchema`. -/
+theorem wals_consistent :
+    walsToSchema .conjunctional = sourceSchema := rfl
 
 end Fragments.Swahili.Possession

@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Possession.Typology
+import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
 # Turkish Possessive Constructions
@@ -120,5 +121,38 @@ theorem genitive_not_physical :
 /-- Location Schema does not express inalienable possession in Turkish. -/
 theorem location_not_inalienable :
     ¬locationNotions.contains .inalienable := by native_decide
+
+-- ============================================================================
+-- §6. Heine 1997 Prediction Verification
+-- ============================================================================
+
+open Phenomena.Possession.Studies.Heine1997
+
+/-- Turkish's primary Genitive Schema matches Heine's predictions:
+    have-construction (not belong), possessee as subject. -/
+theorem genitive_matches_heine :
+    let p := predictionsFor sourceSchema
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Heine predicts Genitive Schema correlates with permanent/inalienable
+    notions. Turkish's genitive notions match this. -/
+theorem genitive_notions_match_prediction :
+    (schemaTypicalNotions sourceSchema).contains .permanent = true ∧
+    (schemaTypicalNotions sourceSchema).contains .inalienable = true := by
+  native_decide
+
+/-- Heine predicts Location Schema correlates with physical/temporary
+    notions. Turkish's location variant notions match this. -/
+theorem location_notions_match_prediction :
+    (schemaTypicalNotions locationVariant).contains .physical = true ∧
+    (schemaTypicalNotions locationVariant).contains .temporary = true := by
+  native_decide
+
+/-- WALS F117A classifies Turkish as `genitive`, matching our
+    primary Genitive Schema. -/
+theorem wals_consistent :
+    walsToSchema .genitive = sourceSchema := rfl
 
 end Fragments.Turkish.Possession

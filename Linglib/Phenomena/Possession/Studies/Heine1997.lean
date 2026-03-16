@@ -1,5 +1,7 @@
 import Linglib.Phenomena.Possession.Typology
 import Linglib.Theories.Diachronic.Grammaticalization
+import Linglib.Theories.Semantics.Lexical.Noun.Relational.Barker2011
+import Linglib.Core.WALS.Features.F117A
 
 /-!
 # Heine (1997): Possession — Cognitive Sources, Forces, and Grammaticalization
@@ -43,6 +45,7 @@ Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
 
 open Phenomena.Possession.Typology
 open Diachronic.Grammaticalization
+open Semantics.Lexical.Noun.Relational.Barker2011 (Pred1 Pred2 SemType)
 
 namespace Phenomena.Possession.Studies.Heine1997
 
@@ -98,7 +101,7 @@ def schemaSubject : PossessionSource → SubjectParticipant
 /-- Only Action has a lexical predicate nucleus. -/
 theorem action_unique_lexical :
     (∀ s : PossessionSource, schemaHasLexicalNucleus s = true → s = .action) := by
-  intro s h; cases s <;> simp [schemaHasLexicalNucleus] at h <;> rfl
+  intro s h; cases s <;> simp_all [schemaHasLexicalNucleus]
 
 /-- Only Action and Companion have possessor-as-subject. -/
 theorem possessor_subject_iff_action_or_companion :
@@ -192,12 +195,18 @@ theorem overlap_ordered :
     OverlapStage.overlap.degree < OverlapStage.targetOnly.degree :=
   ⟨by decide, by decide⟩
 
-/-- The Overlap Model connects to the verbal grammaticalization cline:
-    reaching Stage III (target only) correlates with increasing boundedness
-    of the verbal element. -/
-theorem stage_III_implies_decategorialized :
-    OverlapStage.targetOnly.degree ≥ OverlapStage.overlap.degree ∧
-    GramStage.auxiliary.boundedness > GramStage.fullVerb.boundedness :=
+/-- The Action Schema's grammaticalization path through the Overlap Model:
+    a full lexical verb ('take', 'seize') at Stage I becomes a possessive
+    auxiliary ('have') at Stage III. Both the Overlap Model and the verbal
+    cline are monotonic, and they co-vary: advancing through overlap stages
+    corresponds to advancing along the boundedness cline.
+
+    This parallels the general unidirectionality of grammaticalization:
+    fullVerb → auxiliary is the path from source schema (action verb)
+    to target schema (possessive marker). -/
+theorem action_overlap_cline_covary :
+    OverlapStage.sourceOnly.degree < OverlapStage.targetOnly.degree ∧
+    GramStage.fullVerb < GramStage.auxiliary :=
   ⟨by decide, by decide⟩
 
 -- ============================================================================
@@ -244,8 +253,9 @@ theorem location_and_goal_most_frequent :
     locationDist.total ≥ goalDist.total ∧
     goalDist.total > actionDist.total := by native_decide
 
-/-- Action accounts for only ~14% of the sample — less common than often
-    assumed for European-centric linguistics. -/
+/-- Action accounts for only 13.6% of major schema attestations (15 out
+    of 110 total) — less common than often assumed for European-centric
+    linguistics. The denominator 110 includes opaque/other schemas. -/
 theorem action_not_dominant :
     actionDist.total * 100 / 110 < 15 := by native_decide
 
@@ -265,7 +275,7 @@ theorem africa_location_action_tie :
 -- ============================================================================
 
 /-- Probabilistic correlations between source schemas and the possessive
-    notions they are most likely to express (Table 2.4, §2.3).
+    notions they are most likely to express (§2.3, generalizations i-iv).
 
     - Location: most likely physical/temporary possession
     - Existence (Genitive, Goal, Topic): permanent/inalienable possession
@@ -300,27 +310,51 @@ theorem location_not_permanent :
 -- §6. Bridge to Barker 2011: Subject Encoding and Arity
 -- ============================================================================
 
-/-- The possessor-as-subject schemas (Action, Companion) correspond to
-    transitive constructions — the possessive verb takes two core arguments,
-    analogous to Barker's Pred2 (two-place predicate).
+/-- Map each schema to its Barker 2011 semantic type, based on the
+    argument structure of the resulting possessive predicate.
 
-    The possessee-as-subject schemas correspond to intransitive/existential
-    constructions where the possessor is an oblique adjunct, analogous to
-    Barker's Pred1 with Ex closure.
+    Possessor-as-subject schemas (Action, Companion) produce transitive
+    constructions: the possessive verb takes two core arguments (possessor
+    and possessee), corresponding to @cite{barker-2011}'s Pred2.
 
-    This connects Heine's diachronic structural predictions to Barker's
-    synchronic type-theoretic analysis. -/
-def schemaIsTransitiveLike : PossessionSource → Bool
-  | .action    => true
-  | .companion => true
-  | _          => false
+    Possessee-as-subject schemas produce intransitive/existential
+    constructions: the possessee is the sole core argument, and the
+    possessor is an oblique adjunct. The possessive predicate is Pred1,
+    with the possessor introduced by Ex closure or case marking. -/
+def schemaArity : PossessionSource → SemType
+  | .action    => .pred2  -- X takes Y: two core arguments
+  | .companion => .pred2  -- X is with Y: two core arguments
+  | _          => .pred1  -- Y exists/is-at/...: one core argument + oblique
 
-/-- Transitivity correlates exactly with possessor-as-subject. -/
-theorem transitive_iff_possessor_subject :
+/-- Possessor-as-subject correlates exactly with Pred2 (transitive). -/
+theorem possessor_subject_iff_pred2 :
     ∀ s : PossessionSource,
-      schemaIsTransitiveLike s = true ↔
-      schemaSubject s = .possessor := by
-  intro s; cases s <;> simp [schemaIsTransitiveLike, schemaSubject]
+      schemaSubject s = .possessor ↔ schemaArity s = .pred2 := by
+  intro s; cases s <;> simp [schemaSubject, schemaArity]
+
+/-- Pred2 schemas are exactly the basic-structure schemas where the
+    possessor is a core argument (not grafted on). Companion is the
+    exception: extended structure but still Pred2, because the comitative
+    complement is reanalyzed as a core argument. -/
+theorem pred2_action_companion_only :
+    ∀ s : PossessionSource,
+      schemaArity s = .pred2 ↔ (s = .action ∨ s = .companion) := by
+  intro s; cases s <;> simp [schemaArity]
+
+/-- The Pred1 schemas (Location, Genitive, Goal, Source, Topic, Equation)
+    express possession via an existential predicate + oblique possessor.
+    This matches Barker's ExProp closure: the possessor is introduced
+    by existential quantification over a relation, not as a direct argument
+    of the predicate.
+
+    Structural consequence: in these schemas, the possessor does NOT
+    fill a relatum slot directly (as it would in Pred2). Instead, it is
+    introduced via case morphology (locative, dative, genitive, etc.) —
+    the morphological reflex of the oblique adjunct position. -/
+theorem pred1_possessee_subject :
+    ∀ s : PossessionSource,
+      schemaArity s = .pred1 → schemaSubject s = .possessee := by
+  intro s h; cases s <;> simp [schemaArity] at h <;> simp [schemaSubject]
 
 /-- The Action Schema's grammaticalization path:
     full lexical verb ('take', 'seize') → have-verb (auxiliary-like).
@@ -328,5 +362,80 @@ theorem transitive_iff_possessor_subject :
     from fullVerb toward auxiliary. -/
 theorem action_schema_on_cline :
     GramStage.fullVerb < GramStage.auxiliary := by decide
+
+-- ============================================================================
+-- §7. Fragment Prediction Verification
+-- ============================================================================
+
+/-- A schema prediction bundle: the testable predictions Heine makes for
+    any language that draws on a given source schema. -/
+structure SchemaPrediction where
+  schema : PossessionSource
+  yieldsHave : Bool
+  yieldsBelong : Bool
+  possessorIsSubject : Bool
+  arity : SemType
+
+/-- Derive predictions from a schema. -/
+def predictionsFor (s : PossessionSource) : SchemaPrediction :=
+  { schema := s
+    yieldsHave := schemaYieldsHave s
+    yieldsBelong := schemaYieldsBelong s
+    possessorIsSubject := schemaSubject s == .possessor
+    arity := schemaArity s }
+
+/-- Location Schema predictions: have-only, possessee-as-subject, Pred1. -/
+theorem location_predictions :
+    let p := predictionsFor .location
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = false ∧ p.arity = .pred1 := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Companion Schema predictions: have-only, possessor-as-subject, Pred2. -/
+theorem companion_predictions :
+    let p := predictionsFor .companion
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = true ∧ p.arity = .pred2 := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Genitive Schema predictions: have-only, possessee-as-subject, Pred1. -/
+theorem genitive_predictions :
+    let p := predictionsFor .genitive
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = false ∧ p.arity = .pred1 := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- §8. Bridge to WALS F117A (Stassen 2013)
+-- ============================================================================
+
+/-- @cite{stassen-2013b}'s WALS Ch 117 uses five categories for predicative
+    possession that correspond to Heine's schemas:
+
+    - WALS `locational` ↔ Heine Location Schema
+    - WALS `genitive`   ↔ Heine Genitive Schema
+    - WALS `topic`      ↔ Heine Topic Schema
+    - WALS `conjunctional` ↔ Heine Companion Schema
+    - WALS `have`       ↔ Heine Action Schema
+
+    Note: Stassen's "conjunctional" is his term for comitative-based
+    possession (Heine's Companion Schema). Goal Schema languages are
+    typically classified under WALS `locational` (since both use oblique
+    possessors with existential predicates). -/
+def walsToSchema : Core.WALS.F117A.PredicativePossession → PossessionSource
+  | .locational    => .location
+  | .genitive      => .genitive
+  | .topic         => .topic
+  | .conjunctional => .companion
+  | .have          => .action
+
+/-- The WALS-to-Heine mapping agrees with `predicativeSource` from
+    Typology.lean for the five strategies they share. -/
+theorem wals_agrees_with_predicativeSource :
+    walsToSchema .have = predicativeSource .haveVerb ∧
+    walsToSchema .locational = predicativeSource .locational ∧
+    walsToSchema .topic = predicativeSource .topic ∧
+    walsToSchema .conjunctional = predicativeSource .comitative := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Possession.Studies.Heine1997

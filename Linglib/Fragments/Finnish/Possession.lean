@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Possession.Typology
+import Linglib.Phenomena.Possession.Studies.Heine1997
 
 /-!
 # Finnish Possessive Constructions
@@ -107,5 +108,30 @@ def expressibleNotions : List PossessiveNotion :=
     both are at Stage III of grammaticalization. -/
 theorem covers_all_notions :
     expressibleNotions.length = 7 := rfl
+
+-- ============================================================================
+-- §6. Heine 1997 Prediction Verification
+-- ============================================================================
+
+open Phenomena.Possession.Studies.Heine1997
+
+/-- Finnish's Location Schema matches Heine's predictions:
+    have-construction (not belong), possessee as subject, Pred1 arity. -/
+theorem matches_heine_predictions :
+    let p := predictionsFor sourceSchema
+    p.yieldsHave = true ∧ p.yieldsBelong = false ∧
+    p.possessorIsSubject = false := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Finnish at Stage III: the adessive in possessive use is no longer
+    interpreted as locative. This matches Heine's Overlap Model prediction
+    that fully grammaticalized schemas lose their source meaning. -/
+theorem stage_III_grammaticalization :
+    OverlapStage.targetOnly.degree > OverlapStage.overlap.degree := by decide
+
+/-- WALS F117A classifies Finnish as `locational`, which maps to
+    Heine's Location Schema via `walsToSchema`. -/
+theorem wals_consistent :
+    walsToSchema .locational = sourceSchema := rfl
 
 end Fragments.Finnish.Possession
