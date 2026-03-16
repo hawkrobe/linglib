@@ -6,7 +6,7 @@ import Linglib.Core.WALS.Features.F59A
 
 /-!
 # Cross-Linguistic Typology of Possession (WALS Chapters 57--59)
-@cite{aikhenvald-2013} @cite{heine-1997} @cite{nichols-1986} @cite{nichols-bickel-2013} @cite{stassen-2009}
+@cite{aikhenvald-2013} @cite{heine-1997} @cite{heine-2009} @cite{nichols-1986} @cite{nichols-bickel-2013} @cite{stassen-2009}
 
 Typological data on possessive constructions across languages, drawn from
 two WALS chapters by @cite{nichols-bickel-2013} and supplemented with data on
@@ -1404,7 +1404,10 @@ theorem inalienability_ordering :
     - topic constructions arise from topic-comment structure (Topic)
     - comitative constructions arise from 'be with' (Companion schema)
 
-    @cite{heine-1997} identifies eight source schemas; we encode the four most common. -/
+    @cite{heine-1997} identifies eight source schemas; we encode the four most common.
+    The same schemas appear in @cite{heine-2009} Table 29.5 for possessive case
+    grammaticalization; see also `Core.caseExtension` for the broader case
+    extension paths from @cite{heine-2009} Table 29.6. -/
 inductive PossessionSource where
   /-- Action schema: possession from 'take/hold/seize' → 'have'.
       (e.g., English `have` < OE `habban` 'to hold/seize') -/

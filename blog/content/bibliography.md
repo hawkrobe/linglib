@@ -3283,7 +3283,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 
 <div class="bib-entry" data-key="heine-2009" data-role="cited" data-tag="Semantics" data-year="2009">
 <p class="bib-citation"><strong>Heine, B.</strong> (2009). <a href="https://doi.org/10.1093/oxfordhb/9780199206476.013.0030" class="bib-title-link">Grammaticalization of cases</a>. <em>The Oxford Handbook of Case</em>.</p>
-<p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case.lean">Case</a></p>
+<p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case.lean">Case</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/Case.lean">Case</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Latin/Case.lean">Case</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Possession/Typology.lean">Typology</a></p>
 </div>
 
 <div class="bib-entry" data-key="heine-1995" data-role="cited" data-tag="Semantics" data-year="1995">
@@ -3293,7 +3293,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 
 <div class="bib-entry" data-key="heine-1997" data-role="cited" data-tag="Semantics" data-year="1997">
 <p class="bib-citation"><strong>Heine, B.</strong> (1997). <a href="https://doi.org/10.1017/cbo9780511581908" class="bib-title-link">Possession: Cognitive Sources, Forces, and Grammaticalization</a>. <em>Cambridge University Press</em>.</p>
-<p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Possession/Typology.lean">Typology</a></p>
+<p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Possession/Typology.lean">Typology</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case.lean">Case</a></p>
 </div>
 
 <div class="bib-entry" data-key="heinamaki-1974" data-role="formalized" data-tag="Semantics" data-year="1974">

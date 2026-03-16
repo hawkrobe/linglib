@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.229.294] - 2026-03-15
+
+### Changed
+- **Audit `heine-2009` formalization** in `Core/Case.lean` §13: replace hallucinated `localExtension` (2 fabricated paths, 5 missing source cases) with faithful `caseExtension` encoding Heine 2009 Table 29.6 — all 7 source cases, 16 extension targets, 3 grammaticalization chains (2a–c), two-step reachability
+- **Add `GramPrinciple`** (extension, desemanticization, decategorialization, erosion) and **`CaseGramStage`** (lexical > adposition > case affix > loss) from Heine 2009 §29.1
+- **Add `BeyondCaseTarget`** (clause subordinator, modal marker, conjunction, tense marker) from Heine 2009 §29.4
+- **Add `heine-1995` bib entry** (verified via Crossref DOI `10.1075/tsl.32.03hei`); replace bare citations in `Narrog.lean` and `Possession/Typology.lean` with `@cite` tags
+- **Fix stale `sources` path** in `heine-2009` bib entry; enrich `heine-1997` with publisher/address
+- **Cross-reference** `PossessionSource` to Heine 2009 Table 29.5 and `Core.caseExtension`
+
+## [0.229.293] - 2026-03-15
+
+### Added
+- **`Fragments/Icelandic/TemporalConnectives.lean`**: `flangaTil` (durative) and `fyrrEn` (eventive NPI, morphologically *before*-based) entries with cross-linguistic agreement theorems to Greek and English
+- **`Fragments/Dutch/TemporalConnectives.lean`**: `tot` (durative *until*, blocked under negation) and `pas` (PPI replacement) entries formalizing the Dutch/German PPI-replacement strategy
+- **`Phenomena/TemporalConnectives/Typology.lean`**: four-way `UntilStrategy` classification (threeWay/twoWay/ambiguous/ppiReplacement) with entries for 6 languages, bridge theorems to all fragment data and `NegationData`
+- **`Studies/Giannakidou2002.lean` §11**: stativizer refutation — formalizes de Swart 1996's prediction and proves all 5 diagnostics (*how long*, *while*, *for*, imperative, *mexri*) are inconsistent with negated-perfective data
+- **`Studies/Giannakidou2002.lean` §12**: English perfective default bridge — derives unavailability of wide-scope *until* in English simple past from `prfvDen_not_always_homogeneous`
+
+### Changed
+- **Fix `english_npi_until.semanticType`**: `"before"` → `"eventive"` — aligns with Giannakidou 2002's classification; English NPI-*until* patterns with Greek *para monon* on all diagnostics (actualization, DE-requirement, durative restriction), so should share the same semantic type label
+
 ## [0.229.292] - 2026-03-15
 
 ### Changed

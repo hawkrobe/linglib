@@ -56,14 +56,14 @@ def caseInventory : List Core.Case :=
 
     This illustrates Blake's hedge: the hierarchy holds "usually" but
     languages like Finnish fill the dative slot with a local case
-    extension (ALL → DAT, formalized in `LocalExtension.lean`). -/
+    extension (ALL → DAT, formalized in `Core.caseExtension`). -/
 theorem inventory_fails_strict :
     Core.validInventory caseInventory = false := by native_decide
 
 /-- The allative-for-dative substitution is exactly the extension path
-    formalized in `Core.localExtension`. -/
+    in @cite{heine-2009} Table 29.6, formalized in `Core.caseExtension`. -/
 theorem allative_extends_to_dative :
-    Core.Case.dat ∈ Core.localExtension .all := by simp [Core.localExtension]
+    Core.Case.dat ∈ Core.caseExtension .all := by simp [Core.caseExtension]
 
 -- ============================================================================
 -- § 2: Syncretism

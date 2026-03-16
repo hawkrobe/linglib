@@ -78,18 +78,18 @@ theorem dat_abl_inventory_adjacent :
     inventoryAdjacent coreInventory .dat .abl = true := by native_decide
 
 -- ============================================================================
--- § 3: Local Case Extension (@cite{blake-1994}, Ch. 6)
+-- § 3: Case Extension (@cite{heine-2009}, Table 29.6)
 -- ============================================================================
 
-/-- Latin ABL is the textbook case of local case extension: a single
+/-- Latin ABL is the textbook case of case extension: a single
     morphological form covers source (ablativus separativus), instrumental
     (ablativus instrumenti), and causal (ablativus causae) functions.
-    This is exactly the ABL → INST → CAUS grammaticalization path
-    formalized in `Core.Case.LocalExtension`. -/
+    These are exactly the ablative extension targets in @cite{heine-2009}
+    Table 29.6, formalized in `Core.caseExtension`. -/
 theorem abl_extends_to_inst :
-    Core.Case.inst ∈ Core.localExtension .abl := by simp [Core.localExtension]
+    Core.Case.inst ∈ Core.caseExtension .abl := by simp [Core.caseExtension]
 
 theorem abl_extends_to_caus :
-    Core.Case.caus ∈ Core.localExtension .abl := by simp [Core.localExtension]
+    Core.Case.caus ∈ Core.caseExtension .abl := by simp [Core.caseExtension]
 
 end Fragments.Latin.Case

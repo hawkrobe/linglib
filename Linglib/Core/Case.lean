@@ -19,8 +19,9 @@ scenarios, and morphological case mapping.
 **§ 12: Split Ergativity** (@cite{blake-1994}, @cite{dixon-1994}). Parameterized
 split-ergative conditioning.
 
-**§ 13: Local Extension** (@cite{blake-1994}, @cite{heine-2009}).
-Grammaticalization chains from spatial to grammatical cases.
+**§ 13: Case Extension** (@cite{heine-2009}).
+Grammaticalization of case functions: source categories, extension paths
+(Table 29.6), chains, principles, and beyond-case targets.
 
 **§ 14: Comparative Entry** (@cite{stassen-1985}). Typed record for
 comparative construction parameters.
@@ -401,32 +402,178 @@ theorem hindi_imperfective_acc :
     hindiSplit.alignment .imperfective = .accusative := rfl
 
 -- ============================================================================
--- § 13: Local Extension Paths
+-- § 13: Case Grammaticalization (@cite{heine-2009})
 -- ============================================================================
 
-/-- Grammaticalization paths for spatial cases (@cite{blake-1994}, pp. 172–175,
-    @cite{heine-2009}). Direction is always concrete → abstract. -/
-def localExtension : Case → List Case
-  | .abl  => [.inst, .caus]
-  | .loc  => [.dat]
-  | .all  => [.dat, .ben]
-  | .inst => [.caus]
+-- § 13.1: Four Principles of Case Grammaticalization
+-- (@cite{heine-2009} §29.1, following Heine and Kuteva 2002, 2005)
+
+/-- The four principles governing grammaticalization of case markers.
+    Development from lexical item to case marker is unidirectional and
+    involves all or a subset of these principles. -/
+inductive GramPrinciple where
+  /-- Use extended to wider range of complement nouns; meaning generalizes. -/
+  | extension
+  /-- Lexical meaning lost; schematic case function acquired. -/
+  | desemanticization
+  /-- Morphosyntactic properties lost: becomes invariable clitic/affix,
+      positionally restricted, paradigm shrinks. -/
+  | decategorialization
+  /-- Phonetic substance lost: loses stress, assimilates to host,
+      may reduce to zero. -/
+  | erosion
+  deriving DecidableEq, BEq, Repr
+
+/-- Source category of a case marker on the grammaticalization cline
+    (@cite{heine-2009} §29.1 eq. (1), §29.2).
+
+    noun, verb (> adverb) > adposition > case affix > loss
+
+    Parallel to `Diachronic.Grammaticalization.GramStage` (for verbal
+    elements), but specific to case-marker development. -/
+inductive CaseGramStage where
+  /-- Lexical noun or verb source (§29.2.1–29.2.2). -/
+  | lexical
+  /-- Free adposition: preposition or postposition (§29.2.3). -/
+  | adposition
+  /-- Bound case affix: suffix or prefix (§29.2.3 endpoint). -/
+  | caseAffix
+  /-- Case marker lost: erosion endpoint or merger. -/
+  | lost
+  deriving DecidableEq, BEq, Repr
+
+/-- Boundedness increases monotonically along the case cline. -/
+def CaseGramStage.boundedness : CaseGramStage → Nat
+  | .lexical    => 0
+  | .adposition => 1
+  | .caseAffix  => 2
+  | .lost       => 3
+
+instance : LE CaseGramStage where
+  le a b := a.boundedness ≤ b.boundedness
+
+instance : LT CaseGramStage where
+  lt a b := a.boundedness < b.boundedness
+
+instance (a b : CaseGramStage) : Decidable (a ≤ b) :=
+  inferInstanceAs (Decidable (a.boundedness ≤ b.boundedness))
+
+instance (a b : CaseGramStage) : Decidable (a < b) :=
+  inferInstanceAs (Decidable (a.boundedness < b.boundedness))
+
+theorem caseGramCline_ordered :
+    CaseGramStage.lexical < CaseGramStage.adposition ∧
+    CaseGramStage.adposition < CaseGramStage.caseAffix ∧
+    CaseGramStage.caseAffix < CaseGramStage.lost :=
+  ⟨by decide, by decide, by decide⟩
+
+-- § 13.2: Case Extension Paths
+-- (@cite{heine-2009} §29.3, Table 29.6)
+
+/-- Extension from one case function to another (@cite{heine-2009} Table 29.6).
+
+    When a case marker's use is extended from one syntactic context to another,
+    the source function is less grammaticalized than the target. Direction is
+    always concrete/peripheral → abstract/core.
+
+    Three Table 29.6 targets are not representable as `Case` values and are
+    omitted: **purposive** (from allative, benefactive), **manner** (from
+    comitative, instrumental), **agent** (from locative; collapses with
+    ergative in our system). The A → S core realignment is also omitted
+    (it concerns grammatical roles, not morphological cases).
+
+    See also `Phenomena.Possession.Typology.PossessionSource` for
+    @cite{heine-2009} Table 29.5 (possessive case sources, adapted from
+    @cite{heine-1997}). -/
+def caseExtension : Case → List Case
+  | .abl  => [.caus, .gen, .part, .inst]  -- cause, possessive, partitive, instrumental
+  | .all  => [.ben, .dat, .acc]           -- benefactive, dative, accusative/O
+  | .com  => [.inst, .erg, .gen]          -- instrumental, ergative, possessive
+  | .dat  => [.acc]                       -- accusative/O
+  | .inst => [.erg]                       -- ergative
+  | .loc  => [.com, .erg, .inst]          -- comitative, ergative, instrumental
   | _     => []
 
-theorem abl_extends_inst : Case.inst ∈ localExtension .abl := by simp [localExtension]
-theorem abl_extends_caus : Case.caus ∈ localExtension .abl := by simp [localExtension]
-theorem all_extends_dat : Case.dat ∈ localExtension .all := by simp [localExtension]
-theorem all_extends_ben : Case.ben ∈ localExtension .all := by simp [localExtension]
-theorem loc_extends_dat : Case.dat ∈ localExtension .loc := by simp [localExtension]
+-- Per-entry verification (one theorem per Table 29.6 row)
 
-theorem nom_no_extension : localExtension .nom = [] := rfl
-theorem acc_no_extension : localExtension .acc = [] := rfl
-theorem erg_no_extension : localExtension .erg = [] := rfl
-theorem abs_no_extension : localExtension .abs = [] := rfl
+theorem abl_extends_inst : Case.inst ∈ caseExtension .abl := by simp [caseExtension]
+theorem abl_extends_caus : Case.caus ∈ caseExtension .abl := by simp [caseExtension]
+theorem abl_extends_gen  : Case.gen  ∈ caseExtension .abl := by simp [caseExtension]
+theorem abl_extends_part : Case.part ∈ caseExtension .abl := by simp [caseExtension]
 
-theorem abl_chain_ordered :
-    Case.hierarchyRank .abl ≥ Case.hierarchyRank .inst ∧
-    Case.hierarchyRank .inst ≥ Case.hierarchyRank .caus := by decide
+theorem all_extends_ben : Case.ben ∈ caseExtension .all := by simp [caseExtension]
+theorem all_extends_dat : Case.dat ∈ caseExtension .all := by simp [caseExtension]
+theorem all_extends_acc : Case.acc ∈ caseExtension .all := by simp [caseExtension]
+
+theorem com_extends_inst : Case.inst ∈ caseExtension .com := by simp [caseExtension]
+theorem com_extends_erg  : Case.erg  ∈ caseExtension .com := by simp [caseExtension]
+theorem com_extends_gen  : Case.gen  ∈ caseExtension .com := by simp [caseExtension]
+
+theorem dat_extends_acc : Case.acc ∈ caseExtension .dat := by simp [caseExtension]
+
+theorem inst_extends_erg : Case.erg ∈ caseExtension .inst := by simp [caseExtension]
+
+theorem loc_extends_com  : Case.com  ∈ caseExtension .loc := by simp [caseExtension]
+theorem loc_extends_erg  : Case.erg  ∈ caseExtension .loc := by simp [caseExtension]
+theorem loc_extends_inst : Case.inst ∈ caseExtension .loc := by simp [caseExtension]
+
+-- Core grammatical cases are never sources of extension
+theorem nom_no_extension : caseExtension .nom = [] := rfl
+theorem acc_no_extension : caseExtension .acc = [] := rfl
+theorem erg_no_extension : caseExtension .erg = [] := rfl
+theorem abs_no_extension : caseExtension .abs = [] := rfl
+
+-- § 13.3: Grammaticalization Chains
+-- (@cite{heine-2009} §29.3, eq. (2))
+
+/-- Chain (2a): allative > benefactive > purposive.
+    Only the first step is representable as Case → Case. -/
+theorem chain_all_ben : Case.ben ∈ caseExtension .all := all_extends_ben
+
+/-- Chain (2b): allative > dative > accusative/O.
+    Both steps are in `caseExtension`. -/
+theorem chain_all_dat_acc :
+    Case.dat ∈ caseExtension .all ∧
+    Case.acc ∈ caseExtension .dat :=
+  ⟨all_extends_dat, dat_extends_acc⟩
+
+/-- Chain (2c): locative > comitative > instrumental > manner.
+    The first two steps are representable as Case → Case. -/
+theorem chain_loc_com_inst :
+    Case.com ∈ caseExtension .loc ∧
+    Case.inst ∈ caseExtension .com :=
+  ⟨loc_extends_com, com_extends_inst⟩
+
+/-- Transitivity: if c₁ extends to c₂ and c₂ extends to c₃, then c₃ is
+    reachable from c₁ via a two-step grammaticalization chain. -/
+def caseExtensionReachable2 (c₁ c₃ : Case) : Bool :=
+  (caseExtension c₁).any fun c₂ => (caseExtension c₂).any (· == c₃)
+
+/-- Accusative is reachable from allative in two steps (via dative). -/
+theorem acc_reachable_from_all :
+    caseExtensionReachable2 .all .acc = true := by native_decide
+
+/-- Instrumental is reachable from locative in two steps (via comitative). -/
+theorem inst_reachable_from_loc :
+    caseExtensionReachable2 .loc .inst = true := by native_decide
+
+-- § 13.4: Beyond-Case Grammaticalization
+-- (@cite{heine-2009} §29.4)
+
+/-- Case markers can further grammaticalize into non-case functions.
+    These are the four main directions (@cite{heine-2009} §29.4). -/
+inductive BeyondCaseTarget where
+  /-- Case → clause subordinator (e.g., Newari instrumental *-na* →
+      temporal subordinator). -/
+  | clauseSubordinator
+  /-- Case → modality marker: subordinate clauses acquire subjunctive/
+      irrealis readings (connects to `Semantics.Modality.Narrog`). -/
+  | modalMarker
+  /-- Comitative → NP conjunction 'and' (e.g., *X with Y* → *X and Y*). -/
+  | conjunction
+  /-- Purposive → future tense marker. -/
+  | tenseMarker
+  deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
 -- § 14: Comparative Entry
