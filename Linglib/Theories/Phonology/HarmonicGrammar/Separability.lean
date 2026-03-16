@@ -487,4 +487,31 @@ theorem maxent_logit_as_finsum {C : Type} [Fintype C] [Nonempty C]
     neg_sub_neg, ← sum_sub_distrib, ← sum_neg_distrib]
   apply Finset.sum_congr rfl; intro _ _; ring
 
+-- ============================================================================
+-- § 12: Consistent Ordering from Monotone Transforms
+-- ============================================================================
+
+/-- **Consistent ordering from constant logit-rate differences**: if a score
+    function `d` satisfies `ConstantLogitDiff` and `f` is strictly monotone,
+    then the f-transformed scores exhibit across-the-board consistency —
+    the product of same-column differences is positive.
+
+    This is the mathematical core of why HG produces sigmoid families
+    (@cite{zuraw-hayes-2017} §2.5): any strictly monotone probability
+    transform (MaxEnt's softmax, NHG's normal CDF, Normal MaxEnt's
+    probit) applied to scores with constant logit-rate differences
+    preserves the "across-the-board" ordering pattern. Differences
+    may compress at floor and ceiling (producing sigmoids rather than
+    claws), but they never change sign. -/
+theorem constantLogitDiff_mono_consistent {X : Type} (d : X → ℝ) (f : ℝ → ℝ)
+    (hf : StrictMono f) (sq : Square X)
+    (hcld : ConstantLogitDiff d sq)
+    (hne : d sq.tl ≠ d sq.bl) :
+    (f (d sq.tl) - f (d sq.bl)) * (f (d sq.tr) - f (d sq.br)) > 0 := by
+  have heq : d sq.tl - d sq.bl = d sq.tr - d sq.br := by
+    simp only [ConstantLogitDiff] at hcld; linarith
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · exact mul_pos_of_neg_of_neg (sub_neg.mpr (hf hlt)) (sub_neg.mpr (hf (by linarith)))
+  · exact mul_pos (sub_pos.mpr (hf hgt)) (sub_pos.mpr (hf (by linarith)))
+
 end Theories.Phonology.HarmonicGrammar

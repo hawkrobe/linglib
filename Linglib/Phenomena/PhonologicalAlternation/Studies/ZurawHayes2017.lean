@@ -210,4 +210,46 @@ theorem hz_identity_concrete (w : Fin 6 → ℚ) :
     (∑ k : Fin 6, w k * violDiffProfile k .pang_k : ℚ) := by
   rw [hz_constant_value_tagalog, hz_constant_value_tagalog']
 
+-- ============================================================================
+-- § 6: NHG Produces Consistent Ordering (§2.5, Figure 8)
+-- ============================================================================
+
+/-- **NHG produces consistent ordering** (@cite{zuraw-hayes-2017} §2.5,
+    Figure 8): when the harmony scores satisfy `ConstantLogitDiff`, NHG
+    probabilities `Φ(d(x)/σ)` exhibit across-the-board consistency.
+
+    Composes `constantLogitDiff_mono_consistent` (CLD + strict monotonicity
+    ⟹ consistent ordering) with `normalCDF_strictMono`. Since
+    `x ↦ Φ(x/σ)` is strictly monotone for `σ > 0`, the result follows.
+    This is the formal version of Z&H's argument that NHG produces sigmoid
+    families (not claws) because the normal CDF compresses at both
+    extremes. -/
+theorem nhg_consistent_ordering {X : Type} (d : X → ℝ) (σ : ℝ) (hσ : 0 < σ)
+    (sq : Square X)
+    (hcld : ConstantLogitDiff d sq)
+    (hne : d sq.tl ≠ d sq.bl) :
+    (Core.normalCDF (d sq.tl / σ) - Core.normalCDF (d sq.bl / σ)) *
+    (Core.normalCDF (d sq.tr / σ) - Core.normalCDF (d sq.br / σ)) > 0 :=
+  constantLogitDiff_mono_consistent d (fun x => Core.normalCDF (x / σ))
+    (Core.normalCDF_strictMono.comp (fun _ _ h => (div_lt_div_iff_of_pos_right hσ).mpr h))
+    sq hcld hne
+
+/-- **NHG predicts consistent ordering for Tagalog nasal substitution**:
+    for any weight assignment and noise level, the NHG probabilities of
+    nasal substitution exhibit across-the-board consistency whenever the
+    mang- and pang- prefixes have different logit rates for b-initial stems.
+
+    End-to-end chain: Tagalog violation differences (fragment) →
+    `violDiff_independence` → `maxent_predicts_hz_tagalog` (CLD) →
+    `nhg_consistent_ordering` (CDF monotonicity) → consistent ordering. -/
+theorem nhg_tagalog_consistent (w : Fin 6 → ℝ) (σ : ℝ) (hσ : 0 < σ)
+    (hne : (∑ k : Fin 6, w k * deltaR k .mang_b) ≠
+           (∑ k : Fin 6, w k * deltaR k .pang_b)) :
+    (Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .mang_b) / σ) -
+     Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .pang_b) / σ)) *
+    (Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .mang_k) / σ) -
+     Core.normalCDF ((∑ k : Fin 6, w k * deltaR k .pang_k) / σ)) > 0 :=
+  nhg_consistent_ordering (fun x => ∑ k : Fin 6, w k * deltaR k x)
+    σ hσ nasalSubSquare (maxent_predicts_hz_tagalog w) hne
+
 end Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
