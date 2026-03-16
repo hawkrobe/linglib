@@ -400,24 +400,18 @@ noncomputable abbrev surfaceOnlyCfg :=
 -- This holds because L1(w|u) ∝ P(w) · Σ_l P(l) · S1(u|w,l), and at
 -- b_suc=0.1 the high prior for w0 (81) dominates.
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- Baseline L1: 0-jumped > 1-jumped. Both scopes agree w=0 is true;
     high prior weight (81 vs 18). -/
 theorem baseline_L1_w0_gt_w1 :
     baselineCfg.L1 .everyNot .zero > baselineCfg.L1 .everyNot .one := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- Baseline L1: 1-jumped > 2-jumped. Inverse scope makes w=1 true;
     moderate prior advantage (18 vs 1). -/
 theorem baseline_L1_w1_gt_w2 :
     baselineCfg.L1 .everyNot .one > baselineCfg.L1 .everyNot .two := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- Scope ambiguity boosts partial-world endorsement.
     With both scopes active, L1(w=1) is higher than surface-only,
     because inverse scope directly makes w=1 true. -/
@@ -437,11 +431,7 @@ theorem ambiguity_boosts_partial :
 -- S2 compares L1(u,w) / Σ_{u'} L1(u',w) across different worlds
 -- (different denominators). worldPrior enters through L1's normalization
 -- denominator, so different worldPriors produce different S2 values.
--- The `rsa_predict` tactic handles S2 cross-world goals via
--- `policy_gt_cross`, building compositional QInterval proofs.
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- Baseline S2: w0 > w1. The model predicts higher endorsement of
     "every horse didn't jump" when no horses jumped (none-scenario)
     than when one horse jumped (not-all scenario). -/
@@ -449,51 +439,37 @@ theorem baseline_S2_w0_gt_w1 :
     baselineCfg.S2 .zero .everyNot > baselineCfg.S2 .one .everyNot := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- Baseline S2: w1 > w2. Endorsement in the not-all scenario
     exceeds the all scenario. -/
 theorem baseline_S2_w1_gt_w2 :
     baselineCfg.S2 .one .everyNot > baselineCfg.S2 .two .everyNot := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- S2 ordering robust to high base rate (b_suc = 0.9).
     Even when L1 reverses (w1 > w2 > w0 at L1), S2 still orders w0 > w1. -/
 theorem highBase_S2_w0_gt_w1 :
     highBaseCfg.S2 .zero .everyNot > highBaseCfg.S2 .one .everyNot := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- S2 ordering robust to high base rate: w1 > w2. -/
 theorem highBase_S2_w1_gt_w2 :
     highBaseCfg.S2 .one .everyNot > highBaseCfg.S2 .two .everyNot := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- S2 ordering robust to symmetric prior (b_suc = 0.5). -/
 theorem default_S2_w0_gt_w1 :
     defaultCfg.S2 .zero .everyNot > defaultCfg.S2 .one .everyNot := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 theorem default_S2_w1_gt_w2 :
     defaultCfg.S2 .one .everyNot > defaultCfg.S2 .two .everyNot := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 /-- S2 ordering robust under supportive context (b_suc = 0.9, all?-biased QUD). -/
 theorem supportive_S2_w0_gt_w1 :
     supportiveCfg.S2 .zero .everyNot > supportiveCfg.S2 .one .everyNot := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
-set_option maxHeartbeats 800000 in
 theorem supportive_S2_w1_gt_w2 :
     supportiveCfg.S2 .one .everyNot > supportiveCfg.S2 .two .everyNot := by
   rsa_predict

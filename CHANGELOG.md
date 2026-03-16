@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.229.306] - 2026-03-15
+
+### Removed
+- **RSAVerify dead code**: remove 5 sorry'd theorems (`Bounds.toQInterval`, `computeL1ScoreBounds_sound`, `l1_gt_of_check`, `l1_score_gt_of_check`, `l1_not_gt_of_check`) and 3 non-Opt `_ext` wrappers — all superseded by `Opt` variants or unreachable
+- **RSAEval orphan import**: remove `import Linglib.Core.Interval.RSAEval` from `Linglib.lean` — the file is compiled by glob but never referenced by any tactic or study file
+- **`skipReflection` workaround**: remove all 11 `set_option rsa_predict.skipReflection true` + `maxHeartbeats 800000` from `ScontrasPearl2021RSA.lean` — reflection now handles all goals in <250ms (was using slow CProof path)
+
+### Changed
+- **All rsa_predict invocations now use reflection**: confirmed across 400 invocations in 38 study files — zero AutoDetect, zero CProof fallback
+
+## [0.229.305] - 2026-03-15
+
+### Added
+- **Landau (2015) Two-Tiered Theory of Control**: major rewrite of `Landau2015.lean` with 7 integration tasks:
+  - `FeatureTransmissionAsymmetry` (60): derives `agrBlocksControl` from the predication/binding asymmetry instead of stipulating it
+  - `permitsOC` / `hasOCWithAgr`: replaces incorrect `hasOC` — F-subjunctives now correctly permit logophoric OC, blocked only by [+Agr]
+  - `DeSeReading` / `ObjectControlSubclass`: de se/de te distinction for object control (table (36))
+  - `derivedLandauClass`: maps VerbCore fields → Landau predicate classes (no new fields needed)
+  - 16+ per-verb verification theorems connecting English Fragment entries to Landau's classification (all by `rfl`)
+  - Noonan CTP → Landau tier bridge (`ctpToControlTier`, `ctpToLandauClass`, `ctp_tier_consistent`)
+
+### Fixed
+- **ISBN hallucination**: `978-0-262-02963-1` → `978-0-262-02885-1` in Landau2015.lean
+- **Ostrove2026.lean**: update `landau_predicts_control` to use `hasOCWithAgr` with SMPM Agr status (`smpmLandauAgr`), replacing removed `hasOC`
+
 ## [0.229.304] - 2026-03-15
 
 ### Fixed

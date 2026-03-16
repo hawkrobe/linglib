@@ -157,7 +157,6 @@ import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
 import Linglib.Core.Interval.LogInterval
-import Linglib.Core.Interval.RSAEval
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Core.Subjectivity
 import Linglib.Core.WALS.Languages
@@ -881,6 +880,7 @@ import Linglib.Phenomena.FillerGap.Studies.Charlow2020
 import Linglib.Phenomena.FillerGap.Studies.LuDegen2025
 import Linglib.Phenomena.FillerGap.Studies.Osborne2019Islands
 import Linglib.Phenomena.FillerGap.Studies.HPSGExtraction
+import Linglib.Phenomena.FillerGap.Studies.HPSGRelativeClauses
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
@@ -1329,6 +1329,7 @@ import Linglib.Theories.Syntax.HPSG.Core.Basic
 import Linglib.Theories.Syntax.HPSG.Core.FromFragments
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
+import Linglib.Theories.Syntax.HPSG.Core.RelativeClauses
 import Linglib.Theories.Syntax.HPSG.Coreference
 import Linglib.Theories.Syntax.HPSG.Inversion
 -- Theories: Information Structure (now in Focus/)

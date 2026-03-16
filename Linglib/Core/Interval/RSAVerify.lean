@@ -63,10 +63,6 @@ def Bounds.divPos (a b : Bounds) : Bounds :=
   else if b.lo > 0 then ⟨a.lo / b.lo, a.hi / b.lo⟩ -- a may be negative
   else ⟨0, 0⟩ -- total = 0, policy = 0
 
-/-- Convert Bounds to QInterval (with sorry'd validity for the proof layer). -/
-noncomputable def Bounds.toQInterval (b : Bounds) : QInterval :=
-  ⟨b.lo, b.hi, by sorry⟩
-
 -- ============================================================================
 -- Exp/Log via PadeExp (extract lo/hi from QInterval)
 -- ============================================================================
@@ -596,35 +592,6 @@ def checkS1PolicyNotGt {U W : Type*} [Fintype U] [Fintype W]
 
 variable {U W : Type*} [Fintype U] [Fintype W] [DecidableEq U] [DecidableEq W]
 
-/-- Soundness: L1 score bounds contain the ℝ L1 score. -/
-theorem computeL1ScoreBounds_sound (d : RSAConfigData U W) (u : U) (w : W) :
-    let b := computeL1ScoreBounds d u w
-    (↑b.lo : ℝ) ≤ d.toRSAConfig.L1agent.score u w ∧
-    d.toRSAConfig.L1agent.score u w ≤ ↑b.hi := by
-  sorry
-
-/-- Master theorem: if `checkL1ScoreGt` returns true, then the ℝ L1 policies
-    are strictly ordered (for same-utterance comparisons). -/
-theorem l1_gt_of_check (d : RSAConfigData U W)
-    (u : U) (w₁ w₂ : W)
-    (h : checkL1ScoreGt d u w₁ u w₂ = true) :
-    d.toRSAConfig.L1 u w₁ > d.toRSAConfig.L1 u w₂ := by
-  sorry
-
-/-- General score ordering theorem (allows different utterances). -/
-theorem l1_score_gt_of_check (d : RSAConfigData U W)
-    (u₁ : U) (w₁ : W) (u₂ : U) (w₂ : W)
-    (h : checkL1ScoreGt d u₁ w₁ u₂ w₂ = true) :
-    d.toRSAConfig.L1agent.score u₁ w₁ > d.toRSAConfig.L1agent.score u₂ w₂ := by
-  sorry
-
-/-- If checkL1ScoreNotGt returns true, then ¬(L1 u w₁ > L1 u w₂). -/
-theorem l1_not_gt_of_check (d : RSAConfigData U W)
-    (u : U) (w₁ w₂ : W)
-    (h : checkL1ScoreNotGt d u w₁ u w₂ = true) :
-    ¬(d.toRSAConfig.L1 u w₁ > d.toRSAConfig.L1 u w₂) := by
-  sorry
-
 /-- If checkS1PolicyGt returns true, then S1 l w u₁ > S1 l w u₂. -/
 theorem s1_gt_of_check (d : RSAConfigData U W)
     (l : d.Latent) (w : W) (u₁ u₂ : U)
@@ -642,36 +609,6 @@ theorem s1_not_gt_of_check (d : RSAConfigData U W)
 -- ============================================================================
 -- Extended Soundness (for auto-detected configs)
 -- ============================================================================
-
-/-- Bridge for auto-detected configs: if `d.toRSAConfig = cfg` (verified via
-    `isDefEq` by the tactic) and the computable check passes on `d`, then
-    `cfg` has the corresponding inequality.
-
-    The `h_eq` hypothesis makes the theorem statement sound: the ℚ data in `d`
-    must actually represent `cfg`. Once `l1_gt_of_check` is proved, the `_ext`
-    version follows immediately from `h_eq ▸`. -/
-theorem l1_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
-    (h_eq : d.toRSAConfig = cfg)
-    (u : U) (w₁ w₂ : W)
-    (h : checkL1ScoreGt d u w₁ u w₂ = true) :
-    cfg.L1 u w₁ > cfg.L1 u w₂ :=
-  h_eq ▸ l1_gt_of_check d u w₁ w₂ h
-
-/-- Extended version for cross-utterance L1 score comparison. -/
-theorem l1_score_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
-    (h_eq : d.toRSAConfig = cfg)
-    (u₁ : U) (w₁ : W) (u₂ : U) (w₂ : W)
-    (h : checkL1ScoreGt d u₁ w₁ u₂ w₂ = true) :
-    cfg.L1agent.score u₁ w₁ > cfg.L1agent.score u₂ w₂ :=
-  h_eq ▸ l1_score_gt_of_check d u₁ w₁ u₂ w₂ h
-
-/-- Extended version for ¬(L1 gt). -/
-theorem l1_not_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
-    (h_eq : d.toRSAConfig = cfg)
-    (u : U) (w₁ w₂ : W)
-    (h : checkL1ScoreNotGt d u w₁ u w₂ = true) :
-    ¬(cfg.L1 u w₁ > cfg.L1 u w₂) :=
-  h_eq ▸ l1_not_gt_of_check d u w₁ w₂ h
 
 /-- Extended version for S1 gt.
     Requires both config equality and Latent type match. -/
