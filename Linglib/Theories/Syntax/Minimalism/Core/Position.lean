@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Features
 
 /-!
 # Derivational Positions
-@cite{abels-2012} @cite{brillman-hirsch-2016} @cite{erlewine-2016} @cite{erlewine-2018} @cite{chomsky-1995}
+@cite{abels-2012} @cite{erlewine-2016} @cite{erlewine-2018} @cite{chomsky-1995}
 
 Derives positional information (specifier vs. complement) from merge
 history, following the Minimalist view that position is derivational,
@@ -27,12 +27,10 @@ Two variants are formalized:
    cannot move to Spec,HP. Restated positionally here; the original
    formulation is in `Phase.lean`.
 
-2. **Spec-to-Spec** (@cite{brillman-hirsch-2016}): movement
+2. **Spec-to-Spec** (@cite{erlewine-2016}): movement
    from Spec,XP to Spec,YP is blocked when YP immediately dominates XP
    (no intervening maximal projection). Originally proposed for Agent Focus
-   in Kaqchikel (Erlewine), extended by @cite{brillman-hirsch-2016} to
-   English subject/non-subject asymmetries (*that*-trace effects,
-   *tough*-constructions, matrix *wh*-questions). Also interacts with
+   in Kaqchikel (@cite{erlewine-2016}). Also interacts with
    Toba Batak clause structure (@cite{erlewine-2018}).
 
 -/
