@@ -335,22 +335,7 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
             all_links.append(lean_file_link(rel))
 
     if all_links:
-        MAX_SHOW = 6
-        if len(all_links) > MAX_SHOW:
-            visible = ", ".join(all_links[:MAX_SHOW])
-            hidden = ", ".join(all_links[MAX_SHOW:])
-            n_more = len(all_links) - MAX_SHOW
-            citation += (
-                f' <span class="bib-meta">{visible}'
-                f'<span class="bib-more-links" style="display:none">, {hidden}</span> '
-                f'<a class="bib-expand" href="javascript:void(0)" '
-                f'onclick="var s=this.previousElementSibling;'
-                f's.style.display=s.style.display===\'none\'?\'inline\':\'none\';'
-                f'this.textContent=s.style.display===\'none\'?\'(+{n_more} more)\':\'(less)\'">'
-                f'(+{n_more} more)</a></span>'
-            )
-        else:
-            citation += f' <span class="bib-meta">{", ".join(all_links)}</span>'
+        citation += f'<span class="bib-meta">{" ".join(all_links)}</span>'
     parts.append(f'<p class="bib-citation">{citation}</p>')
     parts.append('</div>')
     return "\n".join(parts)
@@ -432,7 +417,7 @@ SEARCH_HTML = """\
   min-height: 1.4em;
 }
 .bib-entry {
-  margin-bottom: 0.75em;
+  margin-bottom: 1.5em;
   padding: 0 0 0 12px;
   border-left: 3px solid transparent;
 }
@@ -454,11 +439,58 @@ SEARCH_HTML = """\
   line-height: 1.5;
 }
 .bib-meta {
-  font-size: 0.82em;
+  font-size: 0.78em;
   color: var(--secondary);
+  margin-top: 4px;
+  display: block;
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  max-height: 1.8em;
+}
+.bib-meta.expanded {
+  white-space: normal;
+  overflow: visible;
+  max-height: none;
 }
 .bib-meta a {
   color: var(--secondary);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 7px;
+  margin-right: 2px;
+  transition: all 0.15s;
+  white-space: nowrap;
+  display: inline-block;
+  line-height: 1.8;
+}
+.bib-meta a:hover {
+  border-color: var(--secondary);
+  color: var(--primary);
+}
+.bib-meta .bib-expand {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding-left: 60px;
+  padding-right: 0;
+  right: -2px;
+  background: linear-gradient(to right, transparent 0%, var(--theme) 35%, var(--theme) 100%);
+  border: none;
+  cursor: pointer;
+}
+.bib-meta .bib-expand:hover {
+  border: none;
+  color: var(--primary);
+}
+.bib-meta.expanded .bib-expand {
+  position: static;
+  background: none;
+  padding-left: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 7px;
 }
 .bib-tag-filters {
   display: flex;
@@ -562,6 +594,21 @@ def search_script(
   var allEntries = Array.from(document.querySelectorAll(".bib-entry"));
   var roleButtons = document.querySelectorAll(".bib-role-btn");
   var tagContainer = document.getElementById("bibTagFilters");
+
+  // --- "more" buttons for overflowing source chips ---
+  document.querySelectorAll(".bib-meta").forEach(function(meta) {{
+    if (meta.scrollWidth > meta.clientWidth) {{
+      var btn = document.createElement("a");
+      btn.className = "bib-expand";
+      btn.href = "javascript:void(0)";
+      btn.textContent = "more\u2026";
+      btn.addEventListener("click", function() {{
+        var isExpanded = meta.classList.toggle("expanded");
+        btn.textContent = isExpanded ? "less" : "more\u2026";
+      }});
+      meta.appendChild(btn);
+    }}
+  }});
 
   // --- State ---
   var activeRoles = new Set(["formalized", "foundational"]);
