@@ -372,8 +372,8 @@ SEARCH_HTML = """\
   min-height: 1.4em;
 }
 .bib-entry {
-  margin-bottom: 1em;
-  padding-left: 12px;
+  margin-bottom: 0.4em;
+  padding: 4px 0 4px 12px;
   border-left: 3px solid transparent;
 }
 .bib-entry[data-role="formalized"] {
