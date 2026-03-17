@@ -188,6 +188,10 @@ def format_venue(entry: dict) -> str:
                 bt += f", {entry['volume']}"
             if "pages" in entry:
                 bt += f", {entry['pages']}"
+            if etype == "incollection" and not bt.startswith("Proceedings"):
+                bt = "In " + bt
+                if "publisher" in entry:
+                    bt += f". {entry['publisher']}"
             parts.append(bt)
     elif etype == "book":
         if "publisher" in entry:
@@ -213,8 +217,31 @@ def strip_latex(text: str) -> str:
     text = text.replace(r"\&", "&")
     text = text.replace(r"\_", "_")
     text = text.replace(r"\~", "~")
+    text = text.replace("\\ ", " ")  # backslash-space → space
     text = re.sub(r"\\emph\{([^}]*)\}", r"\1", text)
     text = re.sub(r"\{\\(?:em|it|bf|sc)\s+([^}]*)\}", r"\1", text)
+    # LaTeX accents: \^{o} → ô, \'{e} → é, \"{u} → ü, \v{c} → č, etc.
+    _accent_map = {
+        "^": {"o": "ô", "u": "û", "a": "â", "e": "ê", "i": "î",
+              "O": "Ô", "U": "Û", "A": "Â", "E": "Ê", "I": "Î"},
+        "'": {"e": "é", "a": "á", "i": "í", "o": "ó", "u": "ú",
+              "E": "É", "A": "Á", "I": "Í", "O": "Ó", "U": "Ú"},
+        '"': {"u": "ü", "o": "ö", "a": "ä", "e": "ë", "i": "ï",
+              "U": "Ü", "O": "Ö", "A": "Ä", "E": "Ë", "I": "Ï"},
+        "v": {"c": "č", "s": "š", "z": "ž", "r": "ř", "n": "ň",
+              "C": "Č", "S": "Š", "Z": "Ž", "R": "Ř", "N": "Ň"},
+        "`": {"a": "à", "e": "è", "i": "ì", "o": "ò", "u": "ù",
+              "A": "À", "E": "È", "I": "Ì", "O": "Ò", "U": "Ù"},
+        "~": {"n": "ñ", "a": "ã", "o": "õ", "N": "Ñ", "A": "Ã", "O": "Õ"},
+        "c": {"c": "ç", "C": "Ç"},
+    }
+    def _replace_accent(m):
+        cmd, letter = m.group(1), m.group(2)
+        return _accent_map.get(cmd, {}).get(letter, letter)
+    # \x{y} form (e.g., \^{o}, \'{e}, \v{c})
+    text = re.sub(r"""\\(['\"`^~vc])\{([A-Za-z])\}""", _replace_accent, text)
+    # \xy form without braces (e.g., \^o, \'e)
+    text = re.sub(r"""\\(['\"`^~])([A-Za-z])""", _replace_accent, text)
     # Remove protective braces: {T}igrinya → Tigrinya
     text = re.sub(r"\{([A-Za-z])\}", r"\1", text)
     return text
@@ -285,7 +312,11 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
         title_html = title_escaped
     citation = f'<strong>{html_escape(authors)}</strong> ({html_escape(year)}). {title_html}.'
     if venue:
-        citation += f' <em>{html_escape(venue)}</em>.'
+        escaped_venue = html_escape(venue)
+        if escaped_venue.startswith("In "):
+            citation += f' In <em>{escaped_venue[3:]}</em>.'
+        else:
+            citation += f' <em>{escaped_venue}</em>.'
     parts.append(f'<p class="bib-citation">{citation}</p>')
 
     # Deduplicated file links (by display name to avoid visual duplicates)

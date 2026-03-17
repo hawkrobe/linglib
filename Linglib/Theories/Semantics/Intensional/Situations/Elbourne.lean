@@ -278,7 +278,7 @@ theorem donkey_uniqueness_from_minimality
   where s* refers to actual world → the actual president
 
 This analysis is empirically superior to scope-based approaches because
-it handles @cite{bauerle-1983}'s puzzle (Ch 7 §7.2) where the indefinite takes
+it handles Bäuerle's (1983) puzzle where the indefinite takes
 narrow scope but the situation pronoun scopes out. -/
 inductive SitVarStatus where
   /-- Free: mapped to a contextually salient situation (→ de re) -/
