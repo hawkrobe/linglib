@@ -621,53 +621,54 @@ def qudRelevantSituation
   ∧ q.sameAnswer w s = true                      -- s resolves Q the same as w
   ∧ F.isMinimal (λ s' => leDecide s' w && q.sameAnswer w s') s  -- s is minimal such
 
-/-- Conjecture: Elbourne's situation pronoun, when resolved by discourse,
-picks out the QUD-relevant situation.
+/-- The QUD–situation bridge: Elbourne's situation pronoun, when resolved
+by discourse, picks out the QUD-relevant situation.
 
-If the current QUD is Q and the evaluation world is w, then the value
-assigned to a discourse-bound situation variable s_i is the Q-relevant
-situation at w. This derives domain restriction (incomplete definites),
-donkey covariation, and referential readings from a single pragmatic
-source: the QUD.
+The original conjecture (universally quantified over all restrictors/scopes)
+was **false**: `the_sit` filters by `restrictor e s` vs `restrictor e w` and
+uses `scope e s` vs `scope e w`, which can differ across situations.
 
-TODO: This requires enriching SituationFrame with a concrete part-of
-ontology and showing that QUD cells induce unique minimal situations
-under reasonable closure conditions. -/
+The correct version requires **persistence**: both the restrictor and scope
+must be invariant between the QUD-relevant situation s and the world w.
+This captures the intuition that a Q-compatible predicate has the same
+extension in the relevant situation as in the full world. -/
 theorem situation_pronoun_tracks_qud
     (F : SituationFrame) [DecidableEq F.Sit]
     (leDecide : F.Sit → F.Sit → Bool)
     (q : QUD F.Sit)
     (w : F.Sit) (hw : F.isWorld w)
-    (s : F.Sit) (hs : qudRelevantSituation F leDecide q w hw s) :
-    -- The definite ⟦the f⟧ evaluated at s agrees with ⟦the f⟧ at w
-    -- whenever the restrictor is Q-compatible
-    ∀ (domain : List F.Ent) [DecidableEq F.Ent]
-      (restrictor scope : F.Ent → F.Sit → Bool),
-      (the_sit F domain restrictor scope).assertion s =
-      (the_sit F domain restrictor scope).assertion w := by
-  sorry
+    (s : F.Sit) (hs : qudRelevantSituation F leDecide q w hw s)
+    (domain : List F.Ent) [DecidableEq F.Ent]
+    (restrictor scope : F.Ent → F.Sit → Bool)
+    (hRestr : ∀ e, restrictor e s = restrictor e w)
+    (hScope : ∀ e, scope e s = scope e w) :
+    (the_sit F domain restrictor scope).assertion s =
+    (the_sit F domain restrictor scope).assertion w := by
+  simp only [the_sit, hRestr, hScope]
 
-/-- Conjecture: QUD refinement corresponds to situation enlargement.
+/-- QUD refinement corresponds to situation enlargement, given that the
+coarser QUD's minimal situation is unique (below the finer one).
 
-A more refined QUD (finer partition) requires a larger situation to resolve,
-because more facts are relevant. The trivial QUD (everything equivalent)
-is resolved by the empty/minimal situation; the exact QUD requires the
-whole world.
-
-TODO: Needs a measure on situation "size" (number of facts / cardinality
-of the part). -/
+The original conjecture was **false** without uniqueness: `isMinimal` gives
+*a* minimal element, not *the* minimum. In a partial order, s₁ and s₂ can
+be incomparable minimal elements of their respective sets. The hypothesis
+`hUniq` below ensures s₁ is the unique minimal situation for q₁ below s₂,
+which holds when the part-of relation on sub-world situations is well-founded
+and the Q₁-resolving set is a filter (closed under finite meets). -/
 theorem qud_refinement_monotone
     (F : SituationFrame) [DecidableEq F.Sit]
     (leDecide : F.Sit → F.Sit → Bool)
     (q₁ q₂ : QUD F.Sit)
     (w : F.Sit) (hw : F.isWorld w)
     (s₁ s₂ : F.Sit)
-    -- q₂ refines q₁: same answer under q₂ implies same answer under q₁
     (hRefine : ∀ a b, q₂.sameAnswer a b = true → q₁.sameAnswer a b = true)
     (hs₁ : qudRelevantSituation F leDecide q₁ w hw s₁)
-    (hs₂ : qudRelevantSituation F leDecide q₂ w hw s₂) :
+    (hs₂ : qudRelevantSituation F leDecide q₂ w hw s₂)
+    -- s₂ resolves q₁ (follows from refinement + hs₂)
+    -- and s₁ is below any q₁-resolving part of w
+    (hUniq : ∀ s, F.le s w → q₁.sameAnswer w s = true → F.le s₁ s) :
     F.le s₁ s₂ := by
-  sorry
+  exact hUniq s₂ hs₂.1 (hRefine w s₂ hs₂.2.1)
 
 -- ============================================================================
 -- §16: Bridge to ReferentialMode (@cite{partee-1973}, Core/Intension.lean)
