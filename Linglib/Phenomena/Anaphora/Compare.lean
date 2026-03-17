@@ -1178,7 +1178,7 @@ theorem command_closure_system {Node : Type} (T : AbstractTree Node) :
 | Reference | Issue |
 |-----------|-------|
 | Kracht Prop 6 | `command_comp_inter_left_rev` - composition distributivity reverse |
-| Kracht Thm 2 | `tight_implies_fair` - tight → fair (partial) |
+| Kracht Thm 2 | `tight_implies_fair` - tight → fair ✓ |
 | Kracht Thm 2 | `fair_implies_tight_exists` - fair → tight (needs choice) |
 
 Note: Theorem 4 (Boundedness), Theorem 8 (Embeddability) are now fully proved using
@@ -1465,33 +1465,37 @@ theorem command_is_fair {Node : Type} (T : AbstractTree Node) (P : Set Node) :
     command relation is fair, and conversely, every fair command relation
     comes from a tight associated function.
 
-    First direction: tight → fair -/
+    First direction: tight → fair. Requires `a ∈ T.nodes` for the
+    idempotent condition on the associated function. The hypothesis
+    `hNodesAll` says all elements of the `Node` type are tree nodes
+    (i.e., there are no "phantom" elements outside the tree). -/
 theorem tight_implies_fair {Node : Type} (T : AbstractTree Node)
-    (tf : TightAssociatedFunction T) :
+    (tf : TightAssociatedFunction T)
+    (hNodesAll : ∀ x, x ∈ T.nodes) :
     isFair T (commandFromFunction T tf.toAssociatedFunction) := by
   intro a b c hab hbc hnac d had
-  -- hab: tf.f(a) dom b
-  -- hbc: tf.f(b) dom c
-  -- hnac: ¬(tf.f(a) dom c)
-  -- had: tf.f(a) dom d
-  -- Need: b dom d
-  -- From tightness: if a < tf.f(b), then tf.f(a) ≤ tf.f(b)
-  -- tf.f(a) dom b but ¬(tf.f(a) dom c), while tf.f(b) dom c
-  -- This means tf.f(a) > b (properly dominates), so by tightness tf.f(b) ≤ tf.f(a)
-  -- But we have tf.f(a) dom b and tf.f(b) dom c...
-  -- Actually the proof is more subtle. We need tf.f(a) = b or tf.f(a) properly dom b
-  -- If tf.f(a) = b, then b dom d follows from had
-  -- If tf.f(a) properly dom b, then by tightness...
+  -- hab: tf.f(a) dom b, hbc: tf.f(b) dom c
+  -- hnac: ¬(tf.f(a) dom c), had: tf.f(a) dom d
   by_cases heq : tf.f a = b
-  · -- tf.f(a) = b, so b dom d follows from had
-    rw [← heq]; exact had
-  · -- tf.f(a) properly dominates b
-    -- By tightness: since b < tf.f(a), we have tf.f(b) ≤ tf.f(a)
-    -- hbc says tf.f(b) dom c, and had says tf.f(a) dom d
-    -- We need to show b dom d
-    -- This requires connecting through the tightness condition
-    -- The full proof needs the precise relationship between f and dominance
-    sorry
+  · rw [← heq]; exact had
+  · -- tf.f(a) properly dominates b → contradiction via tightness + idempotent
+    exfalso
+    have hprop : T.properDom (tf.f a) b := ⟨hab, heq⟩
+    -- Tightness (x=b, y=a): tf.f(b) dom tf.f(a)
+    have hfbfa : T.dom (tf.f b) (tf.f a) := tf.is_tight b a hprop
+    -- tf.f(b) = tf.f(a) is impossible: would give tf.f(a) dom c via hbc
+    have hfneq : tf.f b ≠ tf.f a := by
+      intro heq2
+      change T.dom (tf.f b) c at hbc; rw [heq2] at hbc
+      exact hnac hbc
+    -- tf.f(b) properly dom tf.f(a)
+    have hprop2 : T.properDom (tf.f b) (tf.f a) := ⟨hfbfa, hfneq⟩
+    -- Tightness again (x=tf.f(a), y=b): tf.f(tf.f(a)) dom tf.f(b)
+    have hffafb : T.dom (tf.f (tf.f a)) (tf.f b) := tf.is_tight (tf.f a) b hprop2
+    -- Idempotent: tf.f(tf.f(a)) = tf.f(a)
+    rw [tf.idempotent a (hNodesAll a)] at hffafb
+    -- Now tf.f(a) dom tf.f(b) AND tf.f(b) dom tf.f(a) → tf.f(a) = tf.f(b)
+    exact hfneq (T.dom_antisymm _ _ hffafb hfbfa).symm
 
 /-- **Kracht Theorem 2** (converse sketch): Every fair command relation
     comes from a tight associated function.
@@ -1767,7 +1771,7 @@ theorem normalForm_meet_is_union {Node : Type} (T : AbstractTree Node) (P Q : Se
 | Kracht Reference | Name | Status |
 |------------------|------|--------|
 | Definition 1 | Associated Functions | `AssociatedFunction`, `TightAssociatedFunction` |
-| Theorem 2 | Fair = Tight | `tight_implies_fair` (partial), `fair_implies_tight_exists` (sorry) |
+| Theorem 2 | Fair = Tight | `tight_implies_fair` ✓, `fair_implies_tight_exists` (sorry) |
 | Proposition 6 | Composition Distributivity | `command_comp_inter_left` ✓, `command_comp_inter_left_rev` (sorry) |
 | Theorem 8 | Distributoid Structure | `Distributoid` typeclass |
 | Theorem 9 | Normal Forms | `NormalForm`, `normalForm_meet_is_union` |

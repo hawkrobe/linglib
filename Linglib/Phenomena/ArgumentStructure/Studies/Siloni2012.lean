@@ -234,7 +234,7 @@ def BundledRole.componentCount (_b : BundledRole) : Nat := 2
 -- § 5. The "I" Reading (§2.1, §4.3)
 -- ════════════════════════════════════════════════════
 
-/-! The "I" reading of embedded reciprocals (Higginbotham 1980):
+/-! The "I" reading of embedded reciprocals (@cite{higginbotham-1980}):
 
     "John and Paul said they defeated each other in the final."
 

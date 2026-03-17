@@ -17,7 +17,8 @@ import Linglib.Core.Lexical.MorphRule
 @cite{haspelmath-2013}
 @cite{nordlinger-2023} @cite{evans-2008} @cite{evans-et-al-2011}
 @cite{dalrymple-et-al-1998} @cite{siloni-2008} @cite{siloni-2012}
-@cite{konig-kokutani-2006} @cite{hurst-2012}
+@cite{konig-kokutani-2006} @cite{hurst-2012} @cite{dixon-1972} @cite{ryding-2005}
+@cite{kimenyi-1980} @cite{galloway-1993}
 
 Typological data on valence-changing and voice constructions, drawn from
 WALS (World Atlas of Language Structures) chapters 105--111:
@@ -521,15 +522,17 @@ def swahili : ValenceProfile :=
   , applicative := .applicative .bothBases .benefactiveAndOther
   , causative := .morphologicalOnly }
 
-/-- Dyirbal (Pama-Nyungan, Australia): no non-iconic reciprocal,
-    no passive, dedicated antipassive with oblique patient,
+/-- Dyirbal (Pama-Nyungan, Australia): reciprocal distinct from reflexive.
+    Reflexive: stem + *-riy* (@cite{dixon-1972} §4.8.1).
+    Reciprocal: reduplicated stem + *-(n)bariy* (@cite{dixon-1972} §4.8.2).
+    The reciprocal "functions like an intransitive stem" (monovalent).
+    No passive, dedicated antipassive with oblique patient,
     ergative alignment, no applicative, morphological causative.
-    NOTE: Dyirbal is NOT in WALS Ch 106 sample (175 languages).
-    Reciprocal type inferred from descriptive grammar — UNVERIFIED. -/
+    NOTE: Dyirbal is NOT in WALS Ch 106 sample (175 languages). -/
 def dyirbal : ValenceProfile :=
   { language := "Dyirbal"
   , iso := "dbl"
-  , reciprocal := .noDedicated
+  , reciprocal := .distinctFromReflexive
   , passive := .absent
   , antipassive := .obliquePatient
   , alignment := .ergative
@@ -596,12 +599,16 @@ def russian : ValenceProfile :=
   , applicative := .noApplicative
   , causative := .morphologicalOnly }
 
-/-- Arabic (Modern Standard): reciprocal via Form VI (tafaa`ala),
-    passive via internal vowel change (kutiba), no antipassive,
-    no applicative, morphological causative (Form IV 'af`ala).
+/-- Arabic (Modern Standard): reciprocal via Form VI (*tafaaʿal-a*),
+    formally distinct from Form V reflexive (*tafaʿʿal-a*):
+    Form VI inserts long *-aa-* after the first root consonant,
+    Form V doubles the medial consonant (@cite{ryding-2005} Ch 27 §1).
+    Example: *taʿaanaq-a* 'to embrace one another' (Form VI, reciprocal)
+    vs. *takallam-a* 'to speak' (Form V, reflexive/mediopassive).
+    Passive via internal vowel change (*kutiba*), no antipassive,
+    no applicative, morphological causative (Form IV *ʾafʿala*).
     NOTE: MSA is NOT in WALS Ch 106 sample; Arabic (Egyptian) is
-    listed as Value 2 (distinct from reflexive). Coding inferred
-    from MSA grammar — UNVERIFIED against WALS. -/
+    listed as Value 2 (distinct from reflexive). -/
 def arabic : ValenceProfile :=
   { language := "Arabic"
   , iso := "arb"
@@ -638,12 +645,13 @@ def westGreenlandic : ValenceProfile :=
   , applicative := .noApplicative
   , causative := .morphologicalOnly }
 
-/-- Kinyarwanda (Bantu, Rwanda): reciprocal distinct ("-ana"),
-    passive ("-w-"), no antipassive, applicative ("-ir-" / "-er-"
-    benefactive + other from both bases), morphological causative.
-    NOTE: Kinyarwanda is NOT in WALS Ch 106 sample. Reciprocal type
-    inferred from Bantu morphology (cf. Swahili, Zulu = Value 2) —
-    UNVERIFIED against WALS. -/
+/-- Kinyarwanda (Bantu, Rwanda): reciprocal suffix *-an-*
+    (e.g., *-saban-* 'ask each other'), formally distinct from
+    reflexive prefix *-ii-*/*-iiy-* (e.g., *á-r-íi-reeb-a*
+    'she watches herself') (@cite{kimenyi-1980} §4.2.1, p. 5).
+    Passive *-w-*, no antipassive, applicative *-ir-*/*-er-*
+    (benefactive + other from both bases), morphological causative.
+    NOTE: Kinyarwanda is NOT in WALS Ch 106 sample. -/
 def kinyarwanda : ValenceProfile :=
   { language := "Kinyarwanda"
   , iso := "kin"
@@ -683,12 +691,14 @@ def chamorro : ValenceProfile :=
   , applicative := .applicative .bothBases .benefactiveAndOther
   , causative := .morphologicalOnly }
 
-/-- Halkomelem (Salishan, Canada): reciprocal distinct,
-    passive present, antipassive with oblique patient,
+/-- Halkomelem (Salishan, Canada): reciprocal suffix *-təl*
+    (e.g., *ʔiyá·təl* 'fight', *yéyətəl* 'make friends'),
+    formally distinct from reflexive suffixes *-lá·mət* 'oneself'
+    and *-(ə)θət* 'oneself, itself' (@cite{galloway-1993} §6.1.3,
+    §11.2.1.14–15). Passive present, antipassive with oblique patient,
     ergative alignment, applicative (benefactive + other,
     both bases), morphological causative.
-    NOTE: Halkomelem is NOT in WALS Ch 106 sample.
-    Reciprocal type inferred from Salishan grammar — UNVERIFIED. -/
+    NOTE: Halkomelem is NOT in WALS Ch 106 sample. -/
 def halkomelem : ValenceProfile :=
   { language := "Halkomelem"
   , iso := "hur"
@@ -1486,6 +1496,14 @@ theorem verbal_affix_monovalent :
     (allRecipProfiles.filter fun p => p.primaryStrategy == .verbalAffix).all
       fun p => p.valency == .monovalent := by native_decide
 
+/-- Converse of `nominal_strategy_bivalent`: monovalent reciprocal
+    strategies are never nominal (NP/argument). This captures Nedjalkov
+    (2007a, p. 21): morphological reciprocal markers "reduce the valency
+    of the underlying verb." @cite{nordlinger-2023} §3.2. -/
+theorem monovalent_implies_verbal :
+    (allRecipProfiles.filter fun p => p.valency == .monovalent).all
+      fun p => !p.primaryStrategy.isNominal := by native_decide
+
 /-- Clitics (French/Czech "se") are also monovalent — the clitic
     absorbs the object argument. Wambaya "-ngg-" is the exception:
     bivalent despite being a clitic (ergative case preserves transitivity).
@@ -1735,12 +1753,6 @@ def polysemy_french : RecipPolysemyPattern :=
 /-- Wambaya "-ngg-" (RR): reciprocal + reflexive (identical forms). -/
 def polysemy_wambaya : RecipPolysemyPattern :=
   { language := "Wambaya", readings := [.reciprocal, .reflexive] }
-
-/-- Swahili "-an-": reciprocal + sociative + collective.
-    UNVERIFIED: sociative/collective readings inferred from Bantu
-    literature; not specifically discussed in @cite{nordlinger-2023}. -/
-def polysemy_swahili : RecipPolysemyPattern :=
-  { language := "Swahili", readings := [.reciprocal, .sociative, .collective] }
 
 /-- Languages with reciprocal-reflexive identity show reflexive polysemy. -/
 theorem reflexive_polysemy_tracks_wals :

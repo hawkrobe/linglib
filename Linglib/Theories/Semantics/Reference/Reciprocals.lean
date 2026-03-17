@@ -12,15 +12,16 @@ Two competing analyses of reciprocal expressions like *each other*:
    wide-scope (I-)reading. The local antecedent is bound by the raised
    quantifier part.
 
-2. **Relational** (@cite{dalrymple-haug-2024}, Sternenfeld 1998, Beck 2001,
-   Dotlačil 2013, @cite{haug-dalrymple-2020}): the reciprocal is a pronoun
+2. **Relational** (@cite{dalrymple-haug-2024}, @cite{sternenfeld-1998},
+   @cite{beck-2001}, @cite{dotlacil-2013}, @cite{haug-dalrymple-2020}):
+   the reciprocal is a pronoun
    bearing an anaphoric relation to its antecedent. The narrow/wide scope
    ambiguity reduces to the choice of anaphoric relation: group identity (∪)
    for narrow scope vs. binding (=) for wide scope.
 
 ## Three Anaphoric Relations
 
-Following Higginbotham (1985) and Williams (1991), anaphoric dependencies
+Following @cite{higginbotham-1985} and @cite{williams-1991}, anaphoric dependencies
 between a pronoun and its antecedent come in three types:
 
 - **Binding (=)**: the pronoun is a bound variable; the antecedent denotes
@@ -47,7 +48,7 @@ the local antecedent.
 namespace Semantics.Reference.Reciprocals
 
 -- ════════════════════════════════════════════════════════════════
--- § 1: Anaphoric Relations (Higginbotham 1985, Williams 1991)
+-- § 1: Anaphoric Relations (@cite{higginbotham-1985}, @cite{williams-1991})
 -- ════════════════════════════════════════════════════════════════
 
 /-- The three types of anaphoric relation between a pronoun and its
@@ -89,13 +90,13 @@ inductive RecipScope where
 /-- The two families of reciprocal analysis. -/
 inductive RecipAnalysis where
   /-- Reciprocal is/contains a quantifier that can QR to the matrix clause.
-      @cite{heim-lasnik-may-1991}, Sigurðsson et al. 2022, Atlamaz & Öztürk
-      2023, Paparounas & Salzmann 2023. -/
+      @cite{heim-lasnik-may-1991}, @cite{sigurdsson-et-al-2022},
+      @cite{atlamaz-ozturk-2023}, @cite{paparounas-salzmann-2023}. -/
   | quantificational
   /-- Reciprocal is a pronoun bearing an anaphoric relation on its
       antecedent. Scope ambiguity reduces to binding (=) vs. group
-      identity (∪). Sternenfeld 1998, Beck 2001, Dotlačil 2013,
-      @cite{haug-dalrymple-2020}. -/
+      identity (∪). @cite{sternenfeld-1998}, @cite{beck-2001},
+      @cite{dotlacil-2013}, @cite{haug-dalrymple-2020}. -/
   | relational
   deriving DecidableEq, BEq, Repr
 
@@ -121,6 +122,12 @@ structure AntecedentProperties where
   isExhaustiveControl : Bool
   /-- Whether the controller is interpreted collectively. -/
   controllerIsCollective : Bool
+  /-- Whether the pronoun type forces group identity (∪) with the matrix
+      subject, excluding the binding (=) option. Japanese *zibun-tati*
+      (plural reflexive) resists bound readings, forcing group identity
+      and thus narrow scope only (@cite{dalrymple-haug-2024} §2,
+      @cite{nishigauchi-1992}). -/
+  forcesGroupIdentity : Bool
   /-- Whether the antecedent is a logophoric pronoun. Logophoric pronouns
       are interpreted inside the report context, and the reciprocal cannot
       "drag" them out to the matrix clause. -/
@@ -150,14 +157,17 @@ structure AntecedentProperties where
        report context)
     2. Collective conjunct → only narrow scope (wide gives individual,
        can't satisfy collectivity)
-    3. Exhaustive control + non-collective → wide only
-    4. Exhaustive control + collective → narrow only
-    5. Bound antecedent → only wide scope (binding forces individual)
-    6. Distributive operator → BOTH readings (no constraint; *each other*
+    3. Forces group identity → only narrow scope (pronoun type excludes
+       binding; e.g., Japanese *zibun-tati*)
+    4. Exhaustive control + non-collective → wide only
+    5. Exhaustive control + collective → narrow only
+    6. Bound antecedent → only wide scope (binding forces individual)
+    7. Distributive operator → BOTH readings (no constraint; *each other*
        is a pronoun, not a quantified NP, so distribution is orthogonal) -/
 def relationalPrediction (props : AntecedentProperties) : List RecipScope :=
   if props.isLogophoric then [.narrow]
   else if props.hasCollectiveConjunct then [.narrow]
+  else if props.forcesGroupIdentity then [.narrow]
   else if props.isExhaustiveControl && !props.controllerIsCollective then [.wide]
   else if props.isExhaustiveControl && props.controllerIsCollective then [.narrow]
   else if props.isBound then [.wide]
@@ -185,6 +195,7 @@ def relationalPrediction (props : AntecedentProperties) : List RecipScope :=
 def quantificationalPrediction (props : AntecedentProperties) : List RecipScope :=
   if props.hasDistributiveOperator then [.narrow]
   else if props.hasCollectiveConjunct then [.narrow]
+  else if props.forcesGroupIdentity then [.narrow]
   else if props.isExhaustiveControl && !props.controllerIsCollective then [.wide]
   else if props.isExhaustiveControl && props.controllerIsCollective then [.narrow]
   else if props.isBound then [.wide]
@@ -226,5 +237,77 @@ theorem readings_differ_on_antecedent_relation :
 theorem both_use_reciprocity :
     narrowScopeRelations.2 = .reciprocity ∧
     wideScopeRelations.2 = .reciprocity := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 7: Formal Semantics of Anaphoric Relations
+-- (@cite{haug-dalrymple-2020} §§2.2–2.4, 4.2)
+-- ════════════════════════════════════════════════════════════════
+
+section FormalSemantics
+
+variable {S E : Type*}
+
+/-- **Binding (=)**: the pronoun's value is identical to the antecedent's
+    in every situation. @cite{haug-dalrymple-2020} §2.2. -/
+def bindingSem (u_ant u_pro : S → E) : Prop :=
+  ∀ s, u_pro s = u_ant s
+
+/-- **Group identity (∪)**: the set of values taken by the pronoun across
+    all situations equals the set taken by the antecedent.
+    @cite{haug-dalrymple-2020} §2.3: `∪u₂ → ∪u₁`.
+
+    Structurally parallel to `cumulativeOp` in
+    `Theories.Semantics.Lexical.Plural.Cumulativity`:
+    both express bidirectional existential coverage over a domain. -/
+def groupIdentitySem (u_ant u_pro : S → E) : Prop :=
+  (∀ s, ∃ s', u_pro s = u_ant s') ∧ (∀ s, ∃ s', u_ant s = u_pro s')
+
+/-- **Reciprocity (R)**: cumulative identity plus per-situation distinctness.
+    @cite{haug-dalrymple-2020} §2.4. -/
+def reciprocitySem (u_ant u_pro : S → E) : Prop :=
+  groupIdentitySem u_ant u_pro ∧ ∀ s, u_ant s ≠ u_pro s
+
+/-- The underspecified reflexive/reciprocal meaning (German *sich*, Czech *se*,
+    Cheyenne REFL/RECIP affix). Group identity without distinctness.
+    Permits reflexive, reciprocal, and mixed readings
+    (@cite{haug-dalrymple-2020} §4.2, @cite{murray-2008}). -/
+def underspecifiedSem (u_ant u_pro : S → E) : Prop :=
+  groupIdentitySem u_ant u_pro
+
+/-- Binding implies group identity: pointwise equality entails range equality. -/
+theorem binding_implies_groupIdentity {u_ant u_pro : S → E}
+    (h : bindingSem u_ant u_pro) : groupIdentitySem u_ant u_pro :=
+  ⟨fun s => ⟨s, h s⟩, fun s => ⟨s, (h s).symm⟩⟩
+
+/-- Reciprocity excludes binding: per-situation distinctness
+    contradicts pointwise identity. -/
+theorem reciprocity_excludes_binding {u_ant u_pro : S → E} (s : S)
+    (h : reciprocitySem u_ant u_pro) : ¬bindingSem u_ant u_pro :=
+  fun hb => h.2 s (hb s).symm
+
+/-- The full reciprocal meaning strengthens the underspecified form
+    by adding distinctness. -/
+theorem reciprocity_strengthens_underspecified {u_ant u_pro : S → E} :
+    reciprocitySem u_ant u_pro → underspecifiedSem u_ant u_pro :=
+  And.left
+
+end FormalSemantics
+
+-- ════════════════════════════════════════════════════════════════
+-- § 8: Dispatch — Connecting AnaphoricRelation to Formal Semantics
+-- ════════════════════════════════════════════════════════════════
+
+/-- Maps each `AnaphoricRelation` constructor to its formal semantics
+    over discourse referent functions `S → E`.
+
+    This connects the enum-level scope decomposition
+    (`narrowScopeRelations`, `wideScopeRelations`) to the `Prop`-valued
+    definitions (`bindingSem`, `groupIdentitySem`, `reciprocitySem`). -/
+def AnaphoricRelation.denotes (r : AnaphoricRelation) {S E : Type*}
+    (u_ant u_pro : S → E) : Prop :=
+  match r with
+  | .binding       => bindingSem u_ant u_pro
+  | .groupIdentity => groupIdentitySem u_ant u_pro
+  | .reciprocity   => reciprocitySem u_ant u_pro
 
 end Semantics.Reference.Reciprocals

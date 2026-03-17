@@ -1,12 +1,35 @@
 # Changelog
 
+## [0.229.315] - 2026-03-16
+
+### Added
+- **Haug & Dalrymple (2020) formalization**: "Reciprocity: Anaphora, scope, and quantification" (*Semantics & Pragmatics* 13)
+  - Formal semantics of anaphoric relations in `Theories/Semantics/Reference/Reciprocals.lean` — `bindingSem`, `groupIdentitySem`, `reciprocitySem`, `underspecifiedSem` over `S → E` discourse referent functions
+  - `AnaphoricRelation.denotes` dispatch function connecting enum to formal semantics
+  - Three key theorems: `binding_implies_groupIdentity`, `reciprocity_excludes_binding`, `reciprocity_strengthens_underspecified`
+  - `Phenomena/Anaphora/Studies/HaugDalrymple2020.lean` — crossed readings, scope-from-relation constraint, `groupIdentity_not_implies_binding` Bool counterexample, `denotes` bridge theorems, Maximize Anaphora orthogonality
+  - D&H 2024 cross-reference: `bound_implies_wide_via_formal_semantics`, `logophoric_forces_groupIdentity_relation`
+  - 2 new bib entries: `langendoen-1978`, `murray-2008`
+  - Fixed bib entry: added pages (1--62), number (10), corrected journal and title casing
+
+## [0.229.314] - 2026-03-16
+
+### Fixed
+- **Wan `ordinaryPl` form corrected**: `"tú"` → `"à"` — the paper's interlinear gloss for (32) shows *tú* = 'completely' (adverb) and *à* = 3PL (pronoun); the 3PL pronoun is *à* (grave accent), tonally distinct from copula *á* (acute accent)
+- **Japanese prediction mismatch fixed**: added `forcesGroupIdentity : Bool` to `AntecedentProperties` — Japanese *zibun-tati* resists bound readings, forcing group identity (∪) and thus narrow scope only; `relationalPrediction japaneseProps` now correctly returns `[.narrow]` instead of `[.narrow, .wide]`
+- **Raw citation violations**: converted all inline citations to `@cite{}` format in Reciprocals.lean, DalrympleHaug2024.lean, Hungarian/Reciprocals.lean, Coreference.lean, Siloni2012.lean
+
+### Added
+- 13 bib entries for references cited in the reciprocal formalization: `higginbotham-1980`, `higginbotham-1985`, `williams-1991`, `sternenfeld-1998`, `beck-2001`, `dotlacil-2013`, `champollion-2016`, `nishigauchi-1992`, `rakosi-2019`, `sigurdsson-et-al-2022`, `atlamaz-ozturk-2023`, `paparounas-salzmann-2023`
+- `quant_agrees_japanese` theorem confirming both analyses agree on Japanese narrow-only
+
 ## [0.229.313] - 2026-03-16
 
 ### Added
 - **Dalrymple & Haug (2024) formalization**: "Constraints on Reciprocal Scope" (*Linguistic Inquiry*, Early Access)
   - `Theories/Semantics/Reference/Reciprocals.lean` — three anaphoric relations (binding =, group identity ∪, reciprocity R), two competing analyses (quantificational vs. relational), prediction functions with `AntecedentProperties`
   - `Phenomena/Anaphora/Studies/DalrympleHaug2024.lean` — 12 scope judgments across 5 construction types, end-to-end argumentation chain proving relational analysis superior (`relational_superior`), refutation of HLM's distributor claim
-  - `Fragments/Wan/Reciprocals.lean` — Wan (Mande) logophoric pronoun *mɔ̄*, reflexive *ē*, reciprocal *ɔ̄ŋ*, ordinary 3pl *tú*; connection to Sells (1987) `LogophoricRole`
+  - `Fragments/Wan/Reciprocals.lean` — Wan (Mande) logophoric pronoun *mɔ̄*, reflexive *ē*, reciprocal *ɔ̄ŋ*, ordinary 3pl *à*; connection to Sells (1987) `LogophoricRole`
   - Extended `Fragments/Hungarian/Reciprocals.lean` — singular antecedent data (Rákosi 2019), `allowsSingularAntecedent` / `singularAntecedentForcesWideScope`
   - 3 bib entries: `dalrymple-haug-2024`, `haug-dalrymple-2020`, `heim-lasnik-may-1991`
 

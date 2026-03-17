@@ -203,7 +203,7 @@ def namePattern : CoreferencePattern := {
 /-- Reciprocal coreference pattern: requires a c-commanding antecedent
     that denotes a plurality. The antecedent can be syntactically singular
     in some languages (e.g., Hungarian null pronouns bound by a plural
-    matrix subject; Rákosi 2019, @cite{dalrymple-haug-2024} §2).
+    matrix subject; @cite{rakosi-2019}, @cite{dalrymple-haug-2024} §2).
     The domain is local for the pronoun antecedent, but the reciprocal's
     semantic contribution can scope wider (I-reading). -/
 def reciprocalPattern : CoreferencePattern := {

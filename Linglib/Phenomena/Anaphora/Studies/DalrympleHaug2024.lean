@@ -37,7 +37,7 @@ cases, while the quantificational analysis fails for distributive operators
   operators (§5 shows *each* does NOT block wide scope, contra
   @cite{heim-lasnik-may-1991})
 - `Fragments/Hungarian/Reciprocals.lean` — Hungarian *egymás* with
-  singular null pronoun antecedent (§2, Rákosi 2019)
+  singular null pronoun antecedent (§2, @cite{rakosi-2019})
 - `Fragments/Wan/Reciprocals.lean` — Wan logophoric reciprocal data (§6)
 - `Core/Discourse/Logophoricity.lean` — Sells (1987) logophoric roles
 - `Phenomena/Control/Studies/Landau2015.lean` — control tier distinction
@@ -117,17 +117,17 @@ def collectiveConjunct : ScopeJudgment :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- The canonical wide-scope-only case in control constructions
-    (Higginbotham 1980).
+    (@cite{higginbotham-1980}).
 
     (13) They wanted to visit each other.
     → Wide scope only (I-reading)
 
-    This has been "generally accepted" since Higginbotham 1980. Note
+    This has been "generally accepted" since @cite{higginbotham-1980}. Note
     that *want* is actually partial control per @cite{landau-2015}, so
     the scope fixing here may be due to pragmatic factors rather than
     syntactic constraints on control type. -/
 def wantControl : ScopeJudgment :=
-  { construction := "Control with 'want' (Higginbotham 1980)"
+  { construction := "Control with 'want' (@cite{higginbotham-1980})"
     example_ := "They wanted to visit each other."
     available := [.wide]
     section_ := 4 }
@@ -196,7 +196,7 @@ def exhaustiveControlNonCollective : ScopeJudgment :=
     Their reasoning: on the quantificational analysis, distributive *each*
     cannot apply to the already-distributed NP *each* inside *each other*.
     This is "a commonplace in the literature on distributivity"
-    (Champollion 2016).
+    (@cite{champollion-2016}).
 
     However, corpus examples with *each of them* / *each* and a reciprocal
     antecedent are plentiful (19-20, 23-26), and both readings are
@@ -309,36 +309,45 @@ def allJudgments : List ScopeJudgment :=
 
 def hungarianProps : AntecedentProperties :=
   { isBound := true, hasCollectiveConjunct := false
+    forcesGroupIdentity := false
     isExhaustiveControl := false, controllerIsCollective := false
     isLogophoric := false, hasDistributiveOperator := false }
 
+/-- Japanese *zibun-tati* resists bound readings (@cite{nishigauchi-1992}),
+    forcing group identity (∪) and thus narrow scope only. -/
 def japaneseProps : AntecedentProperties :=
   { isBound := false, hasCollectiveConjunct := false
+    forcesGroupIdentity := true
     isExhaustiveControl := false, controllerIsCollective := false
     isLogophoric := false, hasDistributiveOperator := false }
 
 def collectiveProps : AntecedentProperties :=
   { isBound := false, hasCollectiveConjunct := true
+    forcesGroupIdentity := false
     isExhaustiveControl := false, controllerIsCollective := false
     isLogophoric := false, hasDistributiveOperator := false }
 
 def ecCollectiveProps : AntecedentProperties :=
   { isBound := false, hasCollectiveConjunct := false
+    forcesGroupIdentity := false
     isExhaustiveControl := true, controllerIsCollective := true
     isLogophoric := false, hasDistributiveOperator := false }
 
 def ecNonCollectiveProps : AntecedentProperties :=
   { isBound := false, hasCollectiveConjunct := false
+    forcesGroupIdentity := false
     isExhaustiveControl := true, controllerIsCollective := false
     isLogophoric := false, hasDistributiveOperator := false }
 
 def distributiveProps : AntecedentProperties :=
   { isBound := false, hasCollectiveConjunct := false
+    forcesGroupIdentity := false
     isExhaustiveControl := false, controllerIsCollective := false
     isLogophoric := false, hasDistributiveOperator := true }
 
 def logophoricProps : AntecedentProperties :=
   { isBound := false, hasCollectiveConjunct := false
+    forcesGroupIdentity := false
     isExhaustiveControl := false, controllerIsCollective := false
     isLogophoric := true, hasDistributiveOperator := false }
 
@@ -346,11 +355,10 @@ def logophoricProps : AntecedentProperties :=
 theorem relational_hungarian :
     relationalPrediction hungarianProps = [.wide] := rfl
 
-/-- Japanese nonbound antecedent: relational predicts both (empirically
-    narrow preferred, but the prediction function gives both when not
-    constrained by other factors). -/
+/-- Japanese *zibun-tati* forces group identity (∪), yielding narrow
+    scope only. Both analyses agree on this. -/
 theorem relational_japanese :
-    relationalPrediction japaneseProps = [.narrow, .wide] := rfl
+    relationalPrediction japaneseProps = [.narrow] := rfl
 
 /-- Collective conjunct: relational predicts narrow only. -/
 theorem relational_collective :
@@ -376,6 +384,10 @@ theorem relational_logophoric :
 -- ════════════════════════════════════════════════════════════════
 -- § 8: Quantificational Analysis — Where It Agrees
 -- ════════════════════════════════════════════════════════════════
+
+/-- Both analyses agree on Japanese *zibun-tati*: narrow only. -/
+theorem quant_agrees_japanese :
+    quantificationalPrediction japaneseProps = [.narrow] := rfl
 
 /-- The quantificational analysis makes the SAME prediction as the
     relational analysis for bound antecedents. -/
@@ -477,5 +489,28 @@ theorem wan_refl_distinct_from_log :
 theorem wan_log_is_at_least_pivot :
     Fragments.Wan.Reciprocals.logophoricRole.rank ≥
     Core.Logophoricity.LogophoricRole.pivot.rank := by decide
+
+-- ════════════════════════════════════════════════════════════════
+-- § 11: Connection to Formal Semantics (@cite{haug-dalrymple-2020})
+-- ════════════════════════════════════════════════════════════════
+
+/-- The bound antecedent case (Hungarian) uses the `bindingSem` relation,
+    which implies `groupIdentitySem`. Since binding forces an individual
+    denotation for the local antecedent, only wide scope is possible.
+    This connects the scope predictions to the formal semantics
+    of @cite{haug-dalrymple-2020} §§2.2--3. -/
+theorem bound_implies_wide_via_formal_semantics {S E : Type*}
+    {u_ant u_pro : S → E}
+    (h : bindingSem u_ant u_pro) : groupIdentitySem u_ant u_pro :=
+  binding_implies_groupIdentity h
+
+/-- The logophoric restriction (Wan) is modeled at the enum level:
+    `isLogophoric = true` restricts to narrow scope, which corresponds to
+    the `groupIdentitySem` relation. The logophor's discourse referent is
+    confined to the report context, preventing the `bindingSem` relation
+    that would yield wide scope. -/
+theorem logophoric_forces_groupIdentity_relation :
+    relationalPrediction logophoricProps = [.narrow] ∧
+    narrowScopeRelations.1 = .groupIdentity := ⟨rfl, rfl⟩
 
 end Phenomena.Anaphora.Studies.DalrympleHaug2024

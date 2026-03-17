@@ -63,12 +63,17 @@ def refl : PronounEntry :=
 def recip : PronounEntry :=
   { form := "ɔ̄ŋ", person := some .third, number := some .pl }
 
-/-- Wan 3pl ordinary (non-logophoric) pronoun.
-    In (32): "wì mù tēŋ tú gé à ɔ̄ŋ lɔ̄ lé"
+/-- Wan 3pl ordinary (non-logophoric) pronoun *à* (low tone).
+    In (32): "wì mù tēŋ tú gé **à** ɔ̄ŋ lɔ̄ lé"
+    Gloss: animal PL all completely say **3PL** RECIP eat PROG
     'They all say they-3PL are going to eat each other.'
-    (reciprocal, no logophor — wide scope IS available) -/
+    (reciprocal, no logophor — wide scope IS available)
+
+    Note: *tú* in the same example is an adverb 'completely', not a
+    pronoun. The 3PL pronoun is *à* (grave accent), tonally distinct
+    from copula *á* (acute accent) in (28). -/
 def ordinaryPl : PronounEntry :=
-  { form := "tú", person := some .third, number := some .pl }
+  { form := "à", person := some .third, number := some .pl }
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Logophoric Properties

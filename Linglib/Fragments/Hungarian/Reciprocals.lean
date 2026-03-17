@@ -14,7 +14,7 @@ CAN form discontinuous reciprocals with the comitative "egymással".
 
 ## Singular Antecedents and Reciprocal Scope
 
-@cite{dalrymple-haug-2024} §2 (citing Rákosi 2019) shows that the
+@cite{dalrymple-haug-2024} §2 (citing @cite{rakosi-2019}) shows that the
 antecedent of *egymás* in Hungarian can be a syntactically singular
 null pronoun. When the matrix subject is a coordination of singulars
 (e.g., "Péter és Éva"), singular agreement is optionally available in
@@ -43,7 +43,7 @@ def maga : PronounEntry :=
     of the reciprocal. In Hungarian, coordinated singular subjects
     can trigger singular agreement, making the embedded null pronoun
     syntactically singular but semantically bound to a plural subject.
-    @cite{dalrymple-haug-2024} §2, Rákosi 2019. -/
+    @cite{dalrymple-haug-2024} §2, @cite{rakosi-2019}. -/
 def allowsSingularAntecedent : Bool := true
 
 /-- When the local antecedent is a singular bound pronoun, only the
