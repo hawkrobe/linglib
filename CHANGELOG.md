@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.320] - 2026-03-17
+
+### Fixed
+- **BarLev2021 round-2 audit**: 4 corrections against verified paper text
+  - **C→D revert**: the paper uses `D` (domain variable), not `C`; reverted parameter name and all docstrings in `ExistentialPL.lean` and `BarLev2021.lean`
+  - **"prejudicant" typo**: fixed to "prejacent" in `all_exh_vacuous` docstring
+  - **§6.1.3 hallucinated section number**: corrected to §8.3 (where "all" removing homogeneity is actually discussed)
+  - **§4.1 wrong section reference**: corrected to §4.2 (where ∃-PL is defined) in `ExistentialPL.lean`
+
 ## [0.229.319] - 2026-03-17
 
 ### Added
