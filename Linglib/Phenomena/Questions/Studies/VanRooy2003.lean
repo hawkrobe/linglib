@@ -486,8 +486,7 @@ partitions achieve the maximal value, regardless of their granularity.
 
 Combined: equality.
 
-TODO: Full Lean proof. The per-cell step requires showing foldl-max
-achieves f(a_dom) when a_dom is the greatest element. -/
+Delegates to `QUD.resolution_value_eq_exact` (proved in `Core.Partition`). -/
 theorem resolution_value_saturation
     {W : Type*} [Fintype W] [DecidableEq W]
     {A : Type*} [DecidableEq A]
@@ -495,11 +494,10 @@ theorem resolution_value_saturation
     (hResolves : ∀ cell ∈ q.toCellsFinset Finset.univ,
       ∃ a ∈ actions, ∀ b ∈ actions, ∀ w ∈ cell,
         dp.utility w a ≥ dp.utility w b)
-    (hPrior : ∀ w, dp.prior w ≥ 0)
-    (hUtil : ∀ w a, dp.utility w a ≥ 0) :
+    (hPrior : ∀ w, dp.prior w ≥ 0) :
     QUD.partitionValue dp q Finset.univ actions =
-    QUD.partitionValue dp QUD.exact Finset.univ actions := by
-  sorry
+    QUD.partitionValue dp QUD.exact Finset.univ actions :=
+  QUD.resolution_value_eq_exact dp q actions hResolves hPrior
 
 /-- **Corollary**: For a mention-some DP, the underspecified denotation
 (coarsened to a partition) achieves the same value as the full G&S

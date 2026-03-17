@@ -830,6 +830,85 @@ theorem blackwell_refinement_value [DecidableEq M] {A : Type*}
         (hc₁.2 hv) (hc₂.2 hv)
   linarith [hregroup]
 
+/-! #### Resolution–Value Saturation -/
+
+open Core.DecisionTheory in
+/-- Resolution–Value Saturation: when every cell of partition Q has a
+dominant action, Q's partition value equals the exact partition's value.
+
+This is the mathematical core of @cite{van-rooy-2003}: resolving
+partitions achieve the same value as the finest partition, so
+coarsening from G&S exhaustive answers to mention-some answers
+is decision-theoretically free.
+
+**Proof**: Blackwell gives ≤ (exact refines all). For ≥, the dominant
+action achieves the pointwise maximum at every world in the cell,
+making the sub-additivity inequality tight. -/
+theorem resolution_value_eq_exact [Fintype M] [DecidableEq M]
+    {A : Type*} [DecidableEq A]
+    (dp : DecisionProblem M A) (q : QUD M) (actions : Finset A)
+    (hResolves : ∀ cell ∈ q.toCellsFinset Finset.univ,
+      ∃ a ∈ actions, ∀ b ∈ actions, ∀ w ∈ cell,
+        dp.utility w a ≥ dp.utility w b)
+    (hPrior : ∀ w, dp.prior w ≥ 0) :
+    partitionValue dp q Finset.univ actions =
+    partitionValue dp QUD.exact Finset.univ actions := by
+  apply le_antisymm
+  · -- ≤: Blackwell (exact refines q, so partitionValue exact ≥ partitionValue q)
+    exact blackwell_refinement_value dp exact q Finset.univ actions
+      (exact_refines_all q) hPrior
+  · -- ≥: resolution makes Blackwell's sub-additivity tight
+    unfold partitionValue
+    by_cases hne : actions.Nonempty
+    · simp only [dif_pos hne]
+      -- Abbreviation
+      set f : M → A → ℚ := fun w a => dp.prior w * dp.utility w a with hf_def
+      -- Step 1: Exact partition value = sum over worlds of pointwise max
+      -- (exact cells are singletons)
+      have h_filter_singleton : ∀ w : M,
+          (Finset.univ : Finset M).filter (fun v => QUD.exact.sameAnswer w v) = {w} := by
+        intro w; ext v
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton,
+          QUD.exact, beq_iff_eq]
+        exact ⟨fun h => h.symm, fun h => h.symm⟩
+      have h_exact_rw :
+          (QUD.exact.toCellsFinset Finset.univ).sum
+            (fun cell => actions.sup' hne (fun a => cell.sum (fun w => f w a))) =
+          Finset.univ.sum (fun w => actions.sup' hne (f w)) := by
+        unfold toCellsFinset
+        rw [Finset.sum_image (fun w₁ _ w₂ _ h => by
+          have hw₁ : w₁ ∈ Finset.univ.filter (fun v => exact.sameAnswer w₁ v) :=
+            Finset.mem_filter.mpr ⟨Finset.mem_univ _, exact.refl w₁⟩
+          rw [h] at hw₁; rw [h_filter_singleton] at hw₁
+          exact Finset.mem_singleton.mp hw₁)]
+        apply Finset.sum_congr rfl; intro w _
+        congr 1; ext a; rw [h_filter_singleton, Finset.sum_singleton]
+      rw [h_exact_rw]
+      -- Step 2: Decompose sum over worlds into sum over q-cells
+      conv_lhs => rw [← toCellsFinset_covers q Finset.univ]
+      rw [Finset.sum_biUnion (toCellsFinset_pairwiseDisjoint q Finset.univ)]
+      -- Goal: (q cells).sum (cell.sum pointwiseMax) ≤ (q cells).sum (sup' cellSum)
+      apply Finset.sum_le_sum
+      intro cell hcell
+      obtain ⟨a_dom, ha_dom, h_dom⟩ := hResolves cell hcell
+      -- Dominant action achieves pointwise max: sup'_a [f w a] = f w a_dom
+      have h_ptwise : ∀ w ∈ cell,
+          actions.sup' hne (f w) = f w a_dom := by
+        intro w hw
+        apply le_antisymm
+        · exact Finset.sup'_le hne _ (fun a ha => by
+            simp only [hf_def]
+            exact mul_le_mul_of_nonneg_left (h_dom a ha w hw) (hPrior w))
+        · exact Finset.le_sup' _ ha_dom
+      -- cell.sum pointwiseMax = cell.sum (f · a_dom) ≤ sup' (cell.sum (f · ·))
+      calc cell.sum (fun w => actions.sup' hne (f w))
+          = cell.sum (fun w => f w a_dom) :=
+            Finset.sum_congr rfl (fun w hw => h_ptwise w hw)
+        _ ≤ actions.sup' hne (fun a => cell.sum (fun w => f w a)) :=
+            Finset.le_sup' (f := fun a => cell.sum (fun w => f w a)) ha_dom
+    · -- Empty actions: both sides are 0
+      simp [dif_neg hne]
+
 /-! #### Blackwell characterization -/
 
 set_option maxHeartbeats 1600000 in
