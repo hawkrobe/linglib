@@ -261,10 +261,13 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
     parts = []
     parts.append(f'<div class="bib-entry" data-key="{html_escape(key)}" data-role="{html_escape(role)}" data-tag="{html_escape(tag)}" data-year="{html_escape(year)}">')
 
-    # Main citation line — hyperlink title to DOI if available
+    # Main citation line — hyperlink title to DOI if available, else URL
     title_escaped = html_escape(title)
+    url = entry.get("url", "")
     if doi:
         title_html = f'<a href="https://doi.org/{html_escape(doi)}" class="bib-title-link">{title_escaped}</a>'
+    elif url:
+        title_html = f'<a href="{html_escape(url)}" class="bib-title-link">{title_escaped}</a>'
     else:
         title_html = title_escaped
     citation = f'<strong>{html_escape(authors)}</strong> ({html_escape(year)}). {title_html}.'
