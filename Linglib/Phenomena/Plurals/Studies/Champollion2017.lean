@@ -16,7 +16,7 @@ empirical distributivity/atelicity data.
 - `VerbDistributivity` (per-verb distributivity postulates)
 - `SSR`, `SSR_univ` (stratified subinterval reference)
 - `forAdverbial_requires_ssr` (for-adverbials require SSR)
-- `ssr_univ_implies_cum` (SSR → CUM)
+- `qua_incompatible_with_ssr` (QUA + SSR → ⊥)
 - `in_adverbial_incompatible_with_ssr` (in-adverbials vs SSR)
 - `sdr_mono` (SDR monotonicity)
 
@@ -154,9 +154,9 @@ theorem verb_vendler_for_sdr :
 -- ════════════════════════════════════════════════════
 
 /-! SSR (Stratified Subinterval Reference) connects to atelicity via
-    `ssr_univ_implies_cum` and `forAdverbial_requires_ssr`.
-    The chain: SSR_univ(P) → CUM(P) → atelic → "for X" ✓
-    Conversely: QUA(P) → telic → ¬SSR_univ(P) → "for X" ✗
+    `qua_incompatible_with_ssr` and `forAdverbial_requires_ssr`.
+    QUA(P) + SSR(P)(e) + P(e) → ⊥, so telic predicates can't have SSR.
+    Atelic predicates (states/activities) have SSR → accept "for X".
 
     We verify this through the Vendler classification of fragment verbs. -/
 

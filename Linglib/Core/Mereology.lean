@@ -97,6 +97,18 @@ theorem subset_algClosure {α : Type*} [SemilatticeSup α]
     AlgClosure P x :=
   AlgClosure.base h
 
+/-- Every element of *P has a base element below it:
+    if x ∈ *P, then ∃ a ∈ P, a ≤ x.
+    Useful for extracting witnesses from algebraic closures. -/
+theorem algClosure_has_base {α : Type*} [SemilatticeSup α]
+    {P : α → Prop} {x : α} (h : AlgClosure P x) :
+    ∃ a, P a ∧ a ≤ x := by
+  induction h with
+  | base hp => exact ⟨_, hp, le_refl _⟩
+  | sum _ _ ih₁ _ =>
+    obtain ⟨a, ha, hle⟩ := ih₁
+    exact ⟨a, ha, le_trans hle le_sup_left⟩
+
 /-- Closure of a cumulative predicate is itself: *P = P when CUM(P).
     Mass nouns and bare plurals are already cumulative, so
     closure is a no-op — the key to Krifka's absorption rule ⊔⊔S = ⊔S. -/

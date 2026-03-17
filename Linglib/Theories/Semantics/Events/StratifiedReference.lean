@@ -231,18 +231,27 @@ theorem forAdverbial_requires_ssr
     ∀ e, P e → SSR P e :=
   h_for_ok
 
-/-- SSR implies CUM: if P has universal SSR, then P is cumulative.
-    @cite{champollion-2017} §4.4: SSR is strictly stronger than CUM. -/
-theorem ssr_univ_implies_cum
+/-- QUA and SSR are directly incompatible: if P(e) and SSR(P)(e) hold,
+    then P cannot be quantized. The AlgClosure decomposition yields a
+    base element a with P(a) and a.runtime ⊂ e.runtime. Since a ≤ e
+    (from the join structure) and a ≠ e (properSubinterval is irreflexive),
+    we get a < e, contradicting QUA.
+
+    This is strictly stronger than the route through CUM
+    (@cite{champollion-2017} §4.4), which would require additional
+    mereological axioms (SSR_univ → CUM is false in general: P = "events
+    with runtime length ≤ 1" has SSR_univ but not CUM over dense time). -/
+theorem qua_incompatible_with_ssr
     {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
     {P : Ev Time → Prop}
-    (h_ssr : SSR_univ P) :
-    CUM P := by
-  -- TODO: The proof requires showing that if e₁ and e₂ both have SSR
-  -- decompositions, then e₁ ⊔ e₂ also satisfies P. This needs the
-  -- subinterval property or specific mereological axioms about how
-  -- event sums interact with runtimes.
-  sorry
+    (hQua : QUA P)
+    {e : Ev Time} (he : P e) (hSSR : SSR P e) :
+    False := by
+  obtain ⟨a, ⟨hPa, hGran⟩, hle⟩ := algClosure_has_base hSSR
+  have hne : a ≠ e := by
+    intro heq; rw [heq] at hGran
+    exact Interval.properSubinterval_irrefl _ hGran
+  exact hQua e a he (lt_of_le_of_ne hle hne) hPa
 
 -- ════════════════════════════════════════════════════
 -- § 11. for-Adverbial Compatibility
@@ -258,14 +267,14 @@ def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
 
 /-- "in"-adverbials are incompatible with SSR (they require telicity).
     @cite{champollion-2017} §5.4: "V in δ" requires QUA, which is incompatible
-    with SSR for non-trivial predicates. -/
+    with SSR. Any P-event with SSR has a strict P-part, contradicting QUA. -/
 theorem in_adverbial_incompatible_with_ssr
     {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
     {P : Ev Time → Prop}
     (hQua : QUA P)
-    {e₁ e₂ : Ev Time} (he₁ : P e₁) (he₂ : P e₂) (hne : e₁ ≠ e₂) :
+    {e₁ e₂ : Ev Time} (he₁ : P e₁) (_he₂ : P e₂) (_hne : e₁ ≠ e₂) :
     ¬ SSR_univ P := by
   intro hSSR
-  exact qua_cum_incompatible hQua he₁ he₂ hne (ssr_univ_implies_cum hSSR)
+  exact qua_incompatible_with_ssr hQua he₁ (hSSR e₁ he₁)
 
 end Semantics.Events.StratifiedReference
