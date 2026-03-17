@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.316] - 2026-03-17
+
+### Fixed
+- **Amalgamation.lean sorry eliminated**: replaced false conjecture (`immediatelyCCommands ↔ coversProjection`) with sorry-free `coversAmongHeads_iff_coversProjection` theorem
+- **Broken `containsAmongHeads` definition**: was `contains x y` on heads (always false since heads are leaves); now lifted to maximal projections via `isMaximalProjectionOf`
+- **`coversAmongHeads` fixed**: similarly lifted to projections, moved after projection definitions to avoid forward references
+- Added `maxProj_unique` helper leveraging `∃!` uniqueness from `hasMaximalProjection`
+- Removed stale DEFERRED section and 5 TODOs now resolved by projection-based definitions
+
 ## [0.229.315] - 2026-03-16
 
 ### Added

@@ -66,27 +66,6 @@ theorem covers_asymm {x y root : SyntacticObject}
 def headsIn (root : SyntacticObject) : Set SyntacticObject :=
   {x | isHeadIn x root}
 
-/-- Dominance restricted to heads -/
-def containsAmongHeads (root : SyntacticObject) (x y : SyntacticObject) : Prop :=
-  contains x y ∧ isHeadIn x root ∧ isHeadIn y root
-
-/-- Covering restricted to heads.
-
-    This is the key relation for amalgamation locality:
-    x covers y among heads iff x is the nearest head above y. -/
-def coversAmongHeads (root : SyntacticObject) (x y : SyntacticObject) : Prop :=
-  containsAmongHeads root x y ∧
-  ¬∃ z, z ≠ x ∧ z ≠ y ∧ containsAmongHeads root x z ∧ containsAmongHeads root z y
-
-/-- Covering among heads implies no intervening head -/
-theorem covers_among_heads_no_intervener
-    {x y root : SyntacticObject} (h : coversAmongHeads root x y) :
-    ¬∃ z, isHeadIn z root ∧ z ≠ x ∧ z ≠ y ∧ contains x z ∧ contains z y := by
-  intro ⟨z, hz_head, hne_x, hne_y, hxz, hzy⟩
-  apply h.2
-  use z
-  exact ⟨hne_x, hne_y, ⟨hxz, h.1.2.1, hz_head⟩, ⟨hzy, hz_head, h.1.2.2⟩⟩
-
 -- Part 3: Amalgamation Locality = Covering
 
 /-
@@ -134,6 +113,37 @@ def isMaximalProjectionOf (x h root : SyntacticObject) : Prop :=
 def hasMaximalProjection (h root : SyntacticObject) : Prop :=
   ∃! x, isMaximalProjectionOf x h root
 
+/-- Dominance restricted to heads, lifted to projections.
+
+    Heads are leaves (`isMinimalIn`), so `contains x y` is always false
+    when both x and y are heads. The correct formulation lifts dominance
+    to maximal projections: head x dominates head y iff x's maximal
+    projection contains y's maximal projection. -/
+def containsAmongHeads (root x y : SyntacticObject) : Prop :=
+  isHeadIn x root ∧ isHeadIn y root ∧
+  ∃ xProj yProj, isMaximalProjectionOf xProj x root ∧
+                  isMaximalProjectionOf yProj y root ∧
+                  contains xProj yProj
+
+/-- Covering restricted to heads (lifted to projections).
+
+    x covers y among heads iff x's maximal projection contains y's
+    maximal projection with no intervening head's projection between them.
+
+    This is the correct characterization of amalgamation locality
+    (@cite{harizanov-gribanova-2019} §3.3). -/
+def coversAmongHeads (root x y : SyntacticObject) : Prop :=
+  containsAmongHeads root x y ∧
+  ¬∃ z, z ≠ x ∧ z ≠ y ∧ containsAmongHeads root x z ∧ containsAmongHeads root z y
+
+/-- Covering among heads implies no intervening head's projection -/
+theorem covers_among_heads_no_intervener
+    {x y root : SyntacticObject} (h : coversAmongHeads root x y) :
+    ¬∃ z, isHeadIn z root ∧ z ≠ x ∧ z ≠ y ∧
+      containsAmongHeads root x z ∧ containsAmongHeads root z y := by
+  intro ⟨z, _, hne_x, hne_y, hxz, hzy⟩
+  exact h.2 ⟨z, hne_x, hne_y, hxz, hzy⟩
+
 /-- Covering relation on projections.
 
     X's projection covers Y's projection iff:
@@ -151,71 +161,77 @@ def coversProjection (root x y : SyntacticObject) : Prop :=
       isMaximalProjectionOf zProj z root ∧
       contains xProj zProj ∧ contains zProj yProj
 
-/-- **CONJECTURE (Covering ↔ Immediate C-Command)**
+/-! ### `coversAmongHeads` ↔ `coversProjection`
 
-    For heads X and Y in a well-formed tree:
-    X immediately c-commands Y ↔ X's projection covers Y's projection
+Both definitions restrict the covering relation to heads, lifted to maximal
+projections. They differ only in how the "no intervening head" clause is
+packaged:
 
-    This is the corrected lattice-theoretic characterization of HMC locality.
+- `coversAmongHeads` uses `containsAmongHeads` (which bundles head-ness and
+  projection existence together)
+- `coversProjection` existentially quantifies over projections at the top level
+  and blocks on intervening heads with their projections
 
-    ## Proof Sketch
+Given unique maximal projections (`hasMaximalProjection`), the existential
+witnesses can be identified across the two definitions, making them equivalent.
 
-    **Forward direction** (immediate c-command ⟹ covering):
-    1. x c-commands y means x's sister S contains y
-    2. x's maximal projection xProj contains both x and S (since x projects)
-    3. Therefore xProj contains y, hence contains y's maximal projection yProj
-    4. "Immediate" (no intervening c-commander) translates to "no intervening head projection"
-       because intervening heads would create intervening c-commanders
+### Why `immediatelyCCommands` ≠ `coversProjection`
 
-    **Backward direction** (covering ⟹ immediate c-command):
-    1. xProj contains yProj means y is in x's "projection domain"
-    2. Since x is the head of xProj, x c-commands everything in xProj except x itself
-    3. In particular, x c-commands y
-    4. No intervening projection means no intervening head, hence immediate
+`immediatelyCCommands x y root` blocks on ANY z that c-commands between x and y,
+while `coversProjection` only blocks on intervening **heads**. In a standard
+X-bar tree `[TP T [vP v [VP V DP]]]`, the phrase VP c-commands v (VP's sister
+is v), and T c-commands VP (T's sister vP contains VP). So VP intervenes
+between T and v for `immediatelyCCommands`, making it false — even though VP
+is not a head and `coversProjection root T v` holds.
 
-    ## Missing Infrastructure
+Additionally, c-command (sister-based) only reaches complement-internal heads,
+while covering reaches specifier-internal heads too. In
+`[TP T [vP [DP D NP] [v' v VP]]]`, TP covers DP's projection (D is in Spec-vP),
+but T does not c-command D because T's sister is vP, not DP.
 
-    A complete proof requires lemmas connecting projections to tree structure:
-    - `maximal_projection_contains_sister`: If x projects to xProj, then xProj contains x's sister
-    - `ccommand_domain_equals_sister`: x c-commands exactly the elements in x's sister's domain
-    - `projection_chain_lemma`: How intermediate projections relate to the maximal one
+The relationship between c-command-among-heads and covering-among-projections
+remains an open question requiring infrastructure connecting projections to
+tree structure (sister domains, projection chains). -/
 
-    These foundational lemmas would formalize the relationship between the sister-based
-    definition of c-command and the containment-based definition of covering.
--/
-theorem immediate_ccommand_iff_covers_projection
+private theorem maxProj_unique {x root p1 p2 : SyntacticObject}
+    (h : hasMaximalProjection x root)
+    (h1 : isMaximalProjectionOf p1 x root) (h2 : isMaximalProjectionOf p2 x root) :
+    p1 = p2 := by
+  obtain ⟨_, _, hu⟩ := h
+  exact (hu p1 h1).trans (hu p2 h2).symm
+
+/-- **Covering among heads = Covering on projections**
+
+    `coversAmongHeads` and `coversProjection` are equivalent given unique maximal
+    projections for all heads. The proof identifies existential witnesses using
+    the uniqueness from `hasMaximalProjection`.
+
+    This replaces the earlier false conjecture (`cCommandsIn ↔ coversProjection`),
+    which fails because c-command and covering differ on specifier-internal heads
+    and on phrasal interveners. -/
+theorem coversAmongHeads_iff_coversProjection
     (x y root : SyntacticObject)
     (hx : isHeadIn x root) (hy : isHeadIn y root)
     (hx_proj : hasMaximalProjection x root)
-    (hy_proj : hasMaximalProjection y root) :
-    immediatelyCCommands x y root ↔ coversProjection root x y := by
-  sorry -- See proof sketch above; requires additional infrastructure
-
-/-
-## Covering Characterization - DEFERRED
-
-The following theorems were intended to show:
-- Amalgamation locality = covering among heads
-- HMC = covering requirement
-- Syntactic movement can violate covering
-
-However, `coversAmongHeads` as defined requires `contains x y` where x, y are heads.
-Since heads are LEAVES (by `isMinimalIn`), they cannot contain anything!
-
-The correct formulation requires:
-1. Define `maximalProjectionOf : head → root → SyntacticObject`
-2. Define covering on PROJECTIONS, not heads
-3. Prove: immediate c-command ↔ projection covering
-
-See the NOTE above for details. These theorems are deferred until
-the projection machinery is properly defined.
--/
-
--- TODO: amalgamation_locality_is_covering (requires projection-based covering)
--- TODO: hmc_is_covering (requires projection-based covering)
--- TODO: hmc_violation_iff_not_covering (depends on hmc_is_covering)
--- TODO: syntactic_movement_can_skip_heads (requires projection-based covering)
--- TODO: amalgamation_vs_syntactic_locality (depends on above)
+    (hy_proj : hasMaximalProjection y root)
+    (h_all_proj : ∀ z, isHeadIn z root → hasMaximalProjection z root) :
+    coversAmongHeads root x y ↔ coversProjection root x y := by
+  constructor
+  · -- Forward: coversAmongHeads → coversProjection
+    intro ⟨⟨_, _, xP, yP, hxP, hyP, hc⟩, hno⟩
+    exact ⟨xP, yP, hxP, hyP, hc, fun ⟨z, zP, hz, hnx, hny, hzP, hxz, hzy⟩ =>
+      hno ⟨z, hnx, hny,
+        ⟨hx, hz, xP, zP, hxP, hzP, hxz⟩,
+        ⟨hz, hy, zP, yP, hzP, hyP, hzy⟩⟩⟩
+  · -- Backward: coversProjection → coversAmongHeads
+    intro ⟨xP, yP, hxP, hyP, hc, hno⟩
+    refine ⟨⟨hx, hy, xP, yP, hxP, hyP, hc⟩, ?_⟩
+    intro ⟨z, hne_x, hne_y, ⟨_, hz, xP', zP, hxP', hzP, hxz⟩,
+           ⟨_, _, zP', yP', hzP', hyP', hzy⟩⟩
+    have := maxProj_unique hx_proj hxP hxP'; subst this
+    have := maxProj_unique (h_all_proj z hz) hzP hzP'; subst this
+    have := maxProj_unique hy_proj hyP hyP'; subst this
+    exact hno ⟨z, zP, hz, hne_x, hne_y, hzP, hxz, hzy⟩
 
 -- Part 6: The Exhaustivity Theorem
 
