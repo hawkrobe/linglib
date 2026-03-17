@@ -1177,7 +1177,6 @@ theorem command_closure_system {Node : Type} (T : AbstractTree Node) :
 
 | Reference | Issue |
 |-----------|-------|
-| Kracht Prop 6 | `command_comp_inter_left_rev` - composition distributivity reverse |
 | Kracht Thm 2 | `tight_implies_fair` - tight → fair ✓ |
 | Kracht Thm 2 | `fair_implies_tight_exists` - fair → tight (needs choice) |
 
@@ -1391,59 +1390,55 @@ theorem command_comp_inter_left {Node : Type} (T : AbstractTree Node) (P Q R : S
 
 /-- Composition distributes over intersection (reverse direction).
 
-    This direction is more subtle: we have potentially different witnesses b1, b2.
-    The proof uses the fact that if one witness properly dominates the other,
-    the upper bounds are nested, allowing us to transfer the command relation.
+    This direction requires finding a *common* witness from potentially
+    different witnesses b₁ (for C_Q) and b₂ (for C_R). The key idea:
+    use p₀ = the minimal P-upper-bound of a. Since UB(a, P) is a chain
+    (by CAC), p₀ is dominated by every other P-upper-bound, making
+    C_P(a, p₀) hold. Any Q-upper-bound (or R-upper-bound) of p₀ is also
+    a Q-upper-bound (resp. R-upper-bound) of b₁ (resp. b₂), because
+    p₀ dominates both b₁ and b₂.
 
-    Key insight: If b1 properly dominates b2 (b1 dom b2, b1 ≠ b2), then
-    UB(b1, R) ⊆ UB(b2, R), so (b2, c) ∈ C_R implies (b1, c) ∈ C_R.
-
-    The general case when b1 and b2 are incomparable requires additional
-    structure (e.g., using CAC to find a common dominator). -/
-theorem command_comp_inter_left_rev {Node : Type} (T : AbstractTree Node) (P Q R : Set Node) :
+    When UB(a, P) = ∅, root serves as witness: all command relations
+    hold vacuously since root has no proper dominator. -/
+theorem command_comp_inter_left_rev {Node : Type} (T : AbstractTree Node) (P Q R : Set Node)
+    (hNodesAll : ∀ x, x ∈ T.nodes)
+    (hMinUB : ∀ a, (upperBounds T a P).Nonempty →
+      ∃ p₀ ∈ upperBounds T a P, ∀ p ∈ upperBounds T a P, T.dom p p₀) :
     composeRel (commandRelation T P) (commandRelation T Q) ∩
     composeRel (commandRelation T P) (commandRelation T R) ⊆
     composeRel (commandRelation T P) (commandRelation T Q ∩ commandRelation T R) := by
   intro ⟨a, c⟩ ⟨⟨b1, hab1, hb1cQ⟩, ⟨b2, hab2, hb2cR⟩⟩
-  -- We have witnesses b1 (for C_Q) and b2 (for C_R)
-  -- Need to find a common witness b with (a,b) ∈ C_P and (b,c) ∈ C_Q ∩ C_R
-  -- Strategy: check if b1 works for both (i.e., (b1, c) ∈ C_R)
-  -- By descent principle: if b1 dom b2 (strictly), then UB(b1, R) ⊆ UB(b2, R)
-  -- so (b2, c) ∈ C_R implies (b1, c) ∈ C_R
-  by_cases heq : b1 = b2
-  · -- b1 = b2, so we have a common witness
-    subst heq
-    exact ⟨b1, hab1, hb1cQ, hb2cR⟩
-  · -- b1 ≠ b2: need to show one dominates the other and use that witness
-    -- This requires additional infrastructure (CAC application to find
-    -- the relationship between b1 and b2 via their common P-upper-bounds)
-    -- For now, we note that this holds when b1 properly dominates b2
-    -- (symmetric case when b2 properly dominates b1)
-    -- The general case requires the minimal P-upper-bound to exist
-    -- Use b1 as witness and show (b1, c) ∈ C_R
-    use b1, hab1
-    constructor
-    · exact hb1cQ
-    · -- Need: (b1, c) ∈ C_R, i.e., every R-upper-bound of b1 dominates c
-      -- We know: (b2, c) ∈ C_R, i.e., every R-upper-bound of b2 dominates c
-      -- If b1 properly dominates b2, then UB(b1, R) ⊆ UB(b2, R), done.
-      -- Otherwise, we need more structure
-      intro x ⟨hxb1, hxR⟩
-      -- hxb1: x properly dominates b1
-      -- hxR: x ∈ R
-      -- Need: x dom c
-      -- From hab2: every P-upper-bound of a dominates b2
-      -- From hb2cR: every R-upper-bound of b2 dominates c
-      -- Key: if x also properly dominates b2, then x ∈ UB(b2, R), so x dom c
-      -- x properly dominates b1. Does x properly dominate b2?
-      -- We need: x dom b2 and x ≠ b2
-      -- From hab1: every P-upper-bound of a dominates b1
-      -- From hab2: every P-upper-bound of a dominates b2
-      -- If x ∈ P, then x might be in UB(a, P), which would give x dom b2
-      -- But x is in R, not necessarily P
-      -- The proof requires connecting the P and R upper bounds
-      -- This needs the full associated function machinery
-      sorry
+  by_cases hUB : (upperBounds T a P).Nonempty
+  · -- UB(a, P) nonempty: use p₀ = min UB(a, P)
+    obtain ⟨p₀, hp₀mem, hp₀min⟩ := hMinUB a hUB
+    refine ⟨p₀, hp₀min, ?_, ?_⟩
+    · -- C_Q(p₀, c): every Q-upper-bound of p₀ dominates c
+      intro x ⟨hxp₀, hxQ⟩
+      have hp₀b1 : T.dom p₀ b1 := hab1 p₀ hp₀mem
+      have hxb1 : T.dom x b1 := T.dom_trans x p₀ b1 hxp₀.1 hp₀b1
+      have hxneb1 : x ≠ b1 := by
+        intro heq; apply hxp₀.2; apply T.dom_antisymm
+        · exact hxp₀.1
+        · rw [heq]; exact hp₀b1
+      exact hb1cQ x ⟨⟨hxb1, hxneb1⟩, hxQ⟩
+    · -- C_R(p₀, c): every R-upper-bound of p₀ dominates c
+      intro x ⟨hxp₀, hxR⟩
+      have hp₀b2 : T.dom p₀ b2 := hab2 p₀ hp₀mem
+      have hxb2 : T.dom x b2 := T.dom_trans x p₀ b2 hxp₀.1 hp₀b2
+      have hxneb2 : x ≠ b2 := by
+        intro heq; apply hxp₀.2; apply T.dom_antisymm
+        · exact hxp₀.1
+        · rw [heq]; exact hp₀b2
+      exact hb2cR x ⟨⟨hxb2, hxneb2⟩, hxR⟩
+  · -- UB(a, P) empty: root works (all command relations hold vacuously)
+    refine ⟨T.root, ?_, ?_, ?_⟩
+    · intro x hx; exact absurd ⟨x, hx⟩ hUB
+    · intro x ⟨hxroot, _⟩
+      exact absurd (T.dom_antisymm x T.root hxroot.1
+        (T.root_dom_all x (hNodesAll x))) hxroot.2
+    · intro x ⟨hxroot, _⟩
+      exact absurd (T.dom_antisymm x T.root hxroot.1
+        (T.root_dom_all x (hNodesAll x))) hxroot.2
 
 -- J.5: Fair = Tight (Kracht Theorem 2)
 
@@ -1772,7 +1767,7 @@ theorem normalForm_meet_is_union {Node : Type} (T : AbstractTree Node) (P Q : Se
 |------------------|------|--------|
 | Definition 1 | Associated Functions | `AssociatedFunction`, `TightAssociatedFunction` |
 | Theorem 2 | Fair = Tight | `tight_implies_fair` ✓, `fair_implies_tight_exists` (sorry) |
-| Proposition 6 | Composition Distributivity | `command_comp_inter_left` ✓, `command_comp_inter_left_rev` (sorry) |
+| Proposition 6 | Composition Distributivity | `command_comp_inter_left` ✓, `command_comp_inter_left_rev` ✓ |
 | Theorem 8 | Distributoid Structure | `Distributoid` typeclass |
 | Theorem 9 | Normal Forms | `NormalForm`, `normalForm_meet_is_union` |
 | Lemma 10-11 | Union Elimination | `union_elimination_forward` ✓, `union_elimination_reverse` ✓ |
