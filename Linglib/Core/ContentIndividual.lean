@@ -3,7 +3,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Content Individuals (@cite{kratzer-2006}; @cite{liefke-2024} §4.3) @cite{kratzer-2006}
-@cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{chandra-2025} @cite{liefke-2024} @cite{moulton-2015} @cite{hintikka-1969} @cite{hintikka-1962}
+@cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{chandra-2025} @cite{liefke-2024} @cite{moulton-2015} @cite{hintikka-1962} @cite{hintikka-1962}
 
 A content individual is a first-class mental state carrying propositional
 content — the denotation of content DPs like *John's belief that p*,
@@ -27,7 +27,7 @@ Two ways to relate a content individual x_c to a proposition p:
 | Relation    | Definition           | Gloss                  | Source              |
 |-------------|----------------------|------------------------|---------------------|
 | Identity    | CONT(x_c) = p       | p IS the content       | @cite{kratzer-2006}        |
-| Entailment  | CONT(x_c) ⊆ p       | p FOLLOWS from content | @cite{hintikka-1969}       |
+| Entailment  | CONT(x_c) ⊆ p       | p FOLLOWS from content | @cite{hintikka-1962}       |
 
 Identity is strictly stronger (§3 below).
 

@@ -1,7 +1,9 @@
 import Linglib.Core.Polarity
 
-/-
+/-!
 # Homogeneity: Empirical Data
+
+@cite{kriz-2015} @cite{kriz-spector-2021} @cite{lobner-2000}
 
 Theory-neutral empirical patterns for homogeneity gaps in natural language.
 
@@ -19,7 +21,6 @@ Homogeneity is characterized by non-complementary truth conditions:
 - Positive: requires universal (or near-universal) satisfaction
 - Negative: requires existential denial (none satisfy)
 - Gap: some but not all satisfy → neither clearly true nor false
-
 -/
 
 namespace Phenomena.Plurals.Homogeneity
@@ -73,7 +74,7 @@ In a scenario with 10 switches:
 - None on: positive false, negative true
 - 5 on: neither clearly true nor false
 
-Source: Križ (2015), Križ & @cite{kriz-chemla-2015}
+Source: @cite{kriz-2015}, @cite{kriz-chemla-2015}
 -/
 def switchesExample : HomogeneityDatum :=
   { positiveSentence := "The switches are on."
@@ -90,9 +91,7 @@ def switchesExample : HomogeneityDatum :=
   }
 
 /--
-Books example from Križ & @cite{kriz-chemla-2015} experimental design.
-
-Source: Križ & @cite{kriz-chemla-2015}
+Books example from @cite{kriz-chemla-2015} experimental design.
 -/
 def booksExample : HomogeneityDatum :=
   { positiveSentence := "Ann liked the books."
@@ -115,7 +114,7 @@ Conjunctions exhibit homogeneity but resist non-maximal readings.
 "Ann and Bert have red hair" behaves like a plural definite
 for homogeneity, but unlike plural definites, it resists non-maximal readings.
 
-Source: @cite{schwarzschild-1996}, @cite{kriz-2015}, dissertation Chapter 7
+Source: @cite{schwarzschild-1996}, @cite{kriz-2015}
 -/
 def conjunctionExample : HomogeneityDatum :=
   { positiveSentence := "Ann and Bert have red hair."
@@ -134,7 +133,7 @@ def conjunctionExample : HomogeneityDatum :=
 /--
 The contrast between conjunctions and plural definites for non-maximality.
 
-Source: @cite{brisson-1998}, Križ (2015), dissertation (18)
+Source: @cite{brisson-1998}, @cite{kriz-2015}
 -/
 structure ConjunctionVsPluralDatum where
   /-- The conjunction sentence -/
@@ -206,7 +205,7 @@ Collective predicates: "The teachers met."
 Homogeneity concerns whether all teachers participated in a meeting,
 or just some subgroup.
 
-Source: Križ (2015, 2019)
+Source: @cite{kriz-2015}, @cite{kriz-2016}
 -/
 def collectiveExample : HomogeneityDatum :=
   { positiveSentence := "The teachers met last week."
@@ -228,7 +227,7 @@ def collectiveExample : HomogeneityDatum :=
 When a plurality is part of a larger group that satisfies a collective predicate,
 the smaller plurality is neither clearly a satisfier nor clearly not.
 
-Source: Križ (2015, 2019), @cite{chatain-2021}
+Source: @cite{kriz-2015}, @cite{kriz-2016}, @cite{chatain-2021}
 -/
 structure UpwardHomogeneityDatum where
   /-- The sentence -/
@@ -265,7 +264,6 @@ inductive HomogeneityRemover where
   | every         -- "every door" (nominal domain)
   | each          -- "each door" (nominal domain)
   | completely    -- "completely blue" (degree domain)
-  | necessarily   -- "necessarily" (modal domain; @cite{agha-jeretic-2022})
   deriving Repr, DecidableEq
 
 /--
@@ -319,7 +317,7 @@ Responses to questions in gap scenarios.
 
 Neither "yes" nor "no" is fully appropriate.
 
-Source: Križ (2015)
+Source: @cite{kriz-2015}
 -/
 structure QuestionAnswerDatum where
   /-- The question -/

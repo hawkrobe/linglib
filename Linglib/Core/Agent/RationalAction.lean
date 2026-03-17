@@ -8,7 +8,7 @@ import Mathlib.Analysis.Convex.Mul
 
 /-!
 # Rational Action @cite{luce-1959}
-@cite{cover-thomas-2006} @cite{zaslavsky-hu-levy-2020} @cite{adams-messick-1957}The mathematical foundation for all soft-rational agents: RSA speakers/listeners,
+@cite{cover-thomas-2006} @cite{zaslavsky-hu-levy-2020} @cite{adams-messick-1958}The mathematical foundation for all soft-rational agents: RSA speakers/listeners,
 BToM agents, and decision-theoretic actors.
 
 ## Architecture
@@ -651,7 +651,7 @@ end SoftmaxBasic
 
 The exponential parameterization `score = exp(α · utility)` is not a design
 choice — it is the **unique** transformation connecting Luce's ratio scale to
-a utility (interval) scale (@cite{luce-1959}, §2.A; @cite{adams-messick-1957}).
+a utility (interval) scale (@cite{luce-1959}, §2.A; @cite{adams-messick-1958}).
 
 **Ratio vs interval scales.** Luce's Axiom 1 (IIA) yields a **ratio scale**
 `v`: only ratios `v(a)/v(b)` are meaningful (Theorem 4). Fechner's
@@ -791,7 +791,7 @@ theorem cauchy_mul_exp (g : ℝ → ℝ)
   simp only [h] at this
   rw [← exp_log (hg_pos s), this, mul_comm]
 
-/-- **Fechnerian uniqueness** (@cite{luce-1959}, §2.A; @cite{adams-messick-1957}):
+/-- **Fechnerian uniqueness** (@cite{luce-1959}, §2.A; @cite{adams-messick-1958}):
     If a ratio scale `v` and interval scale `u` represent the same
     ordering via `v(x)/v(y) = g(u(x) - u(y))` for a strictly monotone
     multiplicative `g`, then `v` is the exponential of `u`.

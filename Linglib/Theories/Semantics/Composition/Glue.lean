@@ -485,7 +485,7 @@ inductive ResourceCondition where
   | thetaCriterion          -- @cite{chomsky-1981}: each arg ↔ one θ-role
   | projectionPrinciple     -- @cite{chomsky-1981}: lexical requirements projected
   | noVacuousQuantification -- every binder binds something
-  | fullInterpretation      -- @cite{chomsky-1986}: every LF element licensed
+  | fullInterpretation      -- @cite{chomsky-1982}: every LF element licensed
   | inclusivenessCondition  -- @cite{chomsky-1995}: no new objects in derivation
   deriving DecidableEq, Repr
 

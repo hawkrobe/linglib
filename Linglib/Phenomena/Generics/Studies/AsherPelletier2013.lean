@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 
 /-!
-# @cite{asher-pelletier-2013} — More Truths about Generic Truth
+# @cite{asher-pelletier-2012} — More Truths about Generic Truth
 
 Nicholas Asher and Francis Jeffry Pelletier, ch. 12 of
 *Genericity* (Mari, Beyssade, Del Prete eds.), OUP, Oxford Studies in

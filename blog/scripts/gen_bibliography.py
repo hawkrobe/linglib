@@ -317,8 +317,6 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
             citation += f' In <em>{escaped_venue[3:]}</em>.'
         else:
             citation += f' <em>{escaped_venue}</em>.'
-    parts.append(f'<p class="bib-citation">{citation}</p>')
-
     # Deduplicated file links (by display name to avoid visual duplicates)
     seen_names: set[str] = set()
     all_links: list[str] = []
@@ -342,17 +340,18 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
             visible = ", ".join(all_links[:MAX_SHOW])
             hidden = ", ".join(all_links[MAX_SHOW:])
             n_more = len(all_links) - MAX_SHOW
-            parts.append(
-                f'<p class="bib-meta">{visible}'
+            citation += (
+                f' <span class="bib-meta">{visible}'
                 f'<span class="bib-more-links" style="display:none">, {hidden}</span> '
                 f'<a class="bib-expand" href="javascript:void(0)" '
                 f'onclick="var s=this.previousElementSibling;'
                 f's.style.display=s.style.display===\'none\'?\'inline\':\'none\';'
                 f'this.textContent=s.style.display===\'none\'?\'(+{n_more} more)\':\'(less)\'">'
-                f'(+{n_more} more)</a></p>'
+                f'(+{n_more} more)</a></span>'
             )
         else:
-            parts.append(f'<p class="bib-meta">{", ".join(all_links)}</p>')
+            citation += f' <span class="bib-meta">{", ".join(all_links)}</span>'
+    parts.append(f'<p class="bib-citation">{citation}</p>')
     parts.append('</div>')
     return "\n".join(parts)
 
@@ -449,15 +448,14 @@ SEARCH_HTML = """\
 .bib-entry.bib-hidden {
   display: none;
 }
-.bib-citation {
-  margin: 0 0 -4px 0;
+.bib-entry p.bib-citation {
+  margin: 0;
+  padding: 0;
   line-height: 1.5;
 }
 .bib-meta {
-  margin: 0;
   font-size: 0.82em;
   color: var(--secondary);
-  line-height: 1.3;
 }
 .bib-meta a {
   color: var(--secondary);

@@ -298,7 +298,7 @@ surface form may instantiate either type depending on context.
 
 Cross-linguistic evidence from §5:
 - **French**: *ne* is NEG₁ in temporals/comparatives, NEG₂ in
-  fear-predicate complements (@cite{tahar-2022})
+  fear-predicate complements (@cite{tahar-2021})
 - **Italian**: *non* is NEG₁ in *finché*-clauses (§5.4) and
   comparatives (§5.7), NEG₂ tentatively in fear contexts
 - **Spanish**: *no* is NEG₁ in comparatives, NEG₂ in *dudar* complements

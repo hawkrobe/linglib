@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Yorùbá Focus Particles @cite{aremu-2026}
-@cite{aboh-2004} @cite{biberauer-roberts-2014}
+@cite{aboh-2003} @cite{biberauer-roberts-2014}
 
 Focus-marking morphemes across Yorùbá dialects. Standard Yorùbá uses
 clause-initial *ni* for ex-situ focus; south-eastern dialects (Ìkálẹ̀,

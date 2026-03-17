@@ -4,7 +4,7 @@ import Linglib.Core.Scales.EpistemicScale.Conditional
 /-!
 # Belief Revision and Preferential Reasoning
 
-@cite{halpern-2003} @cite{alchourrn-makinson-1985} @cite{kraus-magidor-1990}
+@cite{halpern-2003} @cite{alchouron-gardenfors-makinson-1985} @cite{kraus-magidor-1990}
 
 @cite{halpern-2003} connects three frameworks — default reasoning @cite{kratzer-1981} @cite{kratzer-2012}
 (System P), AGM belief revision, and conditional plausibility measures —
@@ -40,7 +40,7 @@ open Core.Proposition (Prop' BProp)
 open Core.Order (PlausibilityOrder PreferentialConsequence NormalityOrder)
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 1. AGM Belief Revision (Alchourrón, @cite{alchourrn-makinson-1985})
+-- § 1. AGM Belief Revision (Alchourrón, @cite{alchouron-gardenfors-makinson-1985})
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- A belief set: a deductively closed set of propositions.

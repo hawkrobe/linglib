@@ -91,7 +91,7 @@ theorem fillerIS_varies :
 -- §2. The Focus Background Constraint (@cite{abeille-et-al-2020})
 -- ============================================================================
 
-/-- The FBC (formulation (10) of @cite{abeille-et-al-2020}):
+/-- The FBC (constraint (8) of @cite{abeille-et-al-2020}):
 
     "A focused element should not be part of a backgrounded constituent."
 

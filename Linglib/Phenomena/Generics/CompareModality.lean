@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 /-!
 # Generic Quantification as Modal Necessity
 
-@cite{krifka-etal-1995} @cite{cohen-2013} @cite{asher-pelletier-2013}
+@cite{krifka-etal-1995} @cite{cohen-2013} @cite{asher-pelletier-2012}
 
 This module makes explicit the structural parallel between the GEN operator
 and Kratzer's modal necessity.
@@ -40,7 +40,7 @@ not made by Cohen: the resulting generic quantifier has the structure
 of modal quantification (restricted universal over a contextually
 filtered domain).
 
-## Asher & Pelletier (@cite{asher-pelletier-2013})
+## Asher & Pelletier (@cite{asher-pelletier-2012})
 
 Asher & Pelletier (ch. 12) analyze generics as modal quantification over
 circumstances, with the restrictor providing the modal base and normalcy

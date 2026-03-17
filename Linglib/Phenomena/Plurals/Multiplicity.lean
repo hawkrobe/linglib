@@ -25,7 +25,7 @@ Three main accounts:
 2. **Implicature** (@cite{sauerland-2003}, @cite{spector-2007},
    @cite{zweig-2009}): Plural literally means "one or more," multiplicity
    arises as a scalar implicature with the singular as alternative.
-3. **Homogeneity** (@cite{kriz-2017}): Plural interpretation via
+3. **Homogeneity** (@cite{kriz-2015}): Plural interpretation via
    homogeneity presupposition.
 
 ## Key References

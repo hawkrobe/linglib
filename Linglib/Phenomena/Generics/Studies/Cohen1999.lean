@@ -5,7 +5,7 @@ import Linglib.Phenomena.Generics.Data
 /-!
 # @cite{cohen-1999a}: Probability-Based Generic Quantification
 
-Ariel Cohen, *Think of a Typical...*, 1999.
+Ariel Cohen, *Think Generic! The Meaning and Use of Generic Sentences*, 1999.
 
 ## Core Proposal
 

@@ -99,7 +99,7 @@ theorem causativization_decausativization_inverse :
     decausativization.fateOfA = .suppressed :=
   ⟨rfl, rfl⟩
 
-/-- The three morphological complexity levels of @cite{comrie-1981} map to
+/-- The three morphological complexity levels of @cite{comrie-1989} map to
     @cite{creissels-2025} §12.1.4's synthetic/analytic/periphrastic
     distinction. Lexical = synthetic (most compact). -/
 theorem complexity_alignment :

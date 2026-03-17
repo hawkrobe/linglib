@@ -2,7 +2,8 @@ import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # Information-Theoretic Primitives (ℚ-valued)
-@cite{ackerman-malouf-2013} @cite{cover-thomas-2006} @cite{dunn-2025} @cite{ellis-2006}
+@cite{ackerman-malouf-2013} @cite{cheng-holyoak-1995} @cite{cover-thomas-2006}
+@cite{dunn-2025} @cite{ellis-2006}
 
 Domain-agnostic information-theoretic functions over rational numbers, suitable
 for decidable computation. These are used by both pragmatic models (RSA) and
@@ -87,13 +88,15 @@ def jsdOf {α : Type} [BEq α] (xs : List α) (p q : α → ℚ) : ℚ :=
   let distM := xs.map fun x => (x, (p x + q x) / 2)
   entropy distM - (entropy distP + entropy distQ) / 2
 
-/-- ΔP: directional association measure.
+/-- ΔP: directional association measure (@cite{ellis-2006}, Table 1;
+via @cite{cheng-holyoak-1995} Probabilistic Contrast Model).
 
 ΔP(x → y) = P(y | x) - P(y | ¬x)
 
-Measures how much knowing x changes the probability of y. Used by
-@cite{dunn-2025} to identify constructions from corpus data: a slot-filler
-pair (x, y) is constructional when ΔP is high in both directions.
+Measures how much knowing x changes the probability of y.
+@cite{ellis-2006} uses ΔP to explain L2 morpheme acquisition: grammatical
+functors with low ΔP (many cue-outcome competitors) are acquired late.
+@cite{dunn-2025} uses ΔP to identify constructions from corpus data.
 
 Properties:
 - Bounded: ΔP ∈ [-1, 1] for valid probability inputs
@@ -107,7 +110,7 @@ def deltaP (pXY pX pY : ℚ) : ℚ :=
   let pYgivenNotX := if pX ≥ 1 then 0 else (pY - pXY) / (1 - pX)
   pYgivenX - pYgivenNotX
 
-/-- ΔP from a 2×2 contingency table.
+/-- ΔP from a 2×2 contingency table (@cite{ellis-2006}, Table 1).
 
 Given observed counts:
 
@@ -118,9 +121,10 @@ Given observed counts:
 
 ΔP(x → y) = a/(a+b) - c/(c+d)
 
-This is the form used in corpus-based CxG: count how often
-a filler appears in a slot (a) vs not (b), and how often it appears
-elsewhere (c) vs not (d). -/
+This is the standard form for contingency learning: `a` is the frequency of
+cue-outcome co-occurrence, `b` is cue without outcome, `c` is outcome
+without cue, `d` is neither. Also used in corpus-based CxG (@cite{dunn-2025})
+for slot-filler association strength. -/
 def deltaPCounts (a b c d : ℕ) : ℚ :=
   let ab : ℚ := ↑a + ↑b
   let cd : ℚ := ↑c + ↑d

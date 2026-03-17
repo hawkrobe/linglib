@@ -3,15 +3,17 @@ import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Rett
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Serbian.TemporalConnectives
+import Linglib.Phenomena.TemporalConnectives.Compare
 
 open Core.Empirical
 
 /-!
-# @cite{alstott-aravind-2026}: Aspectual Coercion in *before*/*after*-Clauses
+# @cite{alstott-aravind-2026}: On aspectual coercion in *before*- and *after*-clauses
 @cite{alstott-aravind-2026} @cite{rett-2020}
 
 Self-paced reading data from 4 experiments testing @cite{rett-2020}'s prediction
 that aspectual coercion (INCHOAT, COMPLET) incurs measurable processing cost.
+Under-specification theories (e.g. @cite{anscombe-1964}) do not predict such costs.
 
 ## Results Summary
 
@@ -19,15 +21,19 @@ that aspectual coercion (INCHOAT, COMPLET) incurs measurable processing cost.
 |-----|--------------|-----------|-------------|----------------|
 | 1a  | INCHOAT (within-modifier) | null | null | No |
 | 1b  | COMPLET (at-modifier) | **sig** verb+1 | **sig** lower | Yes |
-| 2   | COMPLET (before-clause) | **sig** verb+2 | **sig** lower | Yes |
+| 2   | COMPLET (before-clause) | **sig** verb+2† | **sig** lower | Yes |
 | 3   | INCHOAT (subj-experiencer) | null | null | No |
-| 4   | INCHOAT (after-clause) | **sig** verb+2 | **sig** lower | Yes |
+| 4   | INCHOAT (after-clause) | **sig** verb+2† | **sig** lower | Yes |
+
+† = exploratory analysis (pre-registered verb/verb+1 regions were null)
 
 Key findings:
 - Completive coercion consistently shows processing cost (Exps 1b, 2)
 - Inchoative coercion in *after*-clauses shows delayed cost (Exp 4)
 - Inchoative coercion in *within*-modifier contexts shows no cost (Exps 1a, 3)
 - Complement coercion (sanity check) replicates across all experiments
+- Delayed spillover (verb+2) in connective contexts vs verb+1 in modifier contexts
+  may reflect pragmatic vs semantic coercion (§5.3, §7.3)
 
 -/
 
@@ -41,18 +47,18 @@ open Phenomena
 
 /-- Experiment identifiers. Exp 1 has two sub-experiments (a and b). -/
 inductive Experiment where
-  | exp1a  -- within-modifier + activity (inchoative)
+  | exp1a  -- within-modifier + be-stative (inchoative)
   | exp1b  -- at-modifier + accomplishment (completive)
   | exp2   -- before-clause + accomplishment (completive)
-  | exp3   -- subject-experiencer verb (inchoative)
-  | exp4   -- after-clause + stative (inchoative)
+  | exp3   -- within-modifier + subject-experiencer (inchoative)
+  | exp4   -- after-clause + subject-experiencer (inchoative)
   deriving DecidableEq, Repr, BEq, Inhabited
 
 /-- Types of aspectual coercion tested across experiments. -/
 inductive CoercionType where
   | inchoative   -- INCHOAT: atelic → onset point (GLB)
   | completive   -- COMPLET: telic → telos point (LUB)
-  | complement   -- Complement coercion (sanity check; @cite{traxler-etal-2002})
+  | complement   -- Complement coercion (sanity check)
   deriving DecidableEq, Repr, BEq, Inhabited
 
 /-- Spillover region where an effect was measured. -/
@@ -75,16 +81,20 @@ structure ExperimentResult where
   pValue : Rat
   /-- Spillover region where effect was measured -/
   region : SpilloverRegion
-  /-- Whether the effect reached significance (p < 0.05) -/
+  /-- Whether the effect reached significance (Bonferroni-corrected α = 0.025) -/
   significant : Bool
+  /-- Whether the analysis was exploratory (not pre-registered) -/
+  exploratory : Bool := false
   deriving Repr
 
-/-- Naturalness rating result. -/
+/-- Naturalness rating result (ordinal logistic regression). -/
 structure NaturalnessResult where
   experiment : Experiment
   coercionType : CoercionType
   /-- Regression coefficient for coercion vs control -/
   ratingBeta : Rat
+  /-- Standard error of the coefficient -/
+  se : Rat
   /-- p-value -/
   pValue : Rat
   /-- Significant difference? -/
@@ -95,14 +105,15 @@ structure NaturalnessResult where
 -- § 2: Experiment 1a — Inchoative (within-modifier)
 -- ============================================================================
 
-/-- Exp 1a: INCHOAT with *within*-modifier + activity verb.
+/-- Exp 1a: INCHOAT with *within*-modifier + be-stative verb.
+    E.g. "Within fifteen minutes Jessica was mad in office hours."
     No significant RT slowdown; no naturalness difference. -/
 def exp1a_rt : ExperimentResult :=
   { experiment := .exp1a
-  , condition := "within-modifier + activity (inchoative coercion)"
+  , condition := "within-modifier + be-stative (inchoative coercion)"
   , coercionType := .inchoative
   , effectBeta := -23/1000   -- β = -0.023
-  , se := 15/1000
+  , se := 1/100              -- SE = 0.01
   , pValue := 12/100         -- p = 0.12
   , region := .verbPlus1
   , significant := false }
@@ -110,8 +121,9 @@ def exp1a_rt : ExperimentResult :=
 def exp1a_naturalness : NaturalnessResult :=
   { experiment := .exp1a
   , coercionType := .inchoative
-  , ratingBeta := -8/100     -- β = -0.08
-  , pValue := 35/100
+  , ratingBeta := -6/100     -- β = -0.06
+  , se := 8/100              -- SE = 0.08
+  , pValue := 4/10           -- p = 0.4
   , significant := false }
 
 -- ============================================================================
@@ -119,6 +131,7 @@ def exp1a_naturalness : NaturalnessResult :=
 -- ============================================================================
 
 /-- Exp 1b: COMPLET with *at*-modifier + accomplishment verb.
+    E.g. "At 9pm sharp Hector built the humble tent."
     Significant slowdown at verb+1; lower naturalness.
     Supports Rett's COMPLET operator. -/
 def exp1b_rt : ExperimentResult :=
@@ -135,6 +148,7 @@ def exp1b_naturalness : NaturalnessResult :=
   { experiment := .exp1b
   , coercionType := .completive
   , ratingBeta := -53/100    -- β = -0.53
+  , se := 8/100              -- SE = 0.08
   , pValue := 1/10000        -- p < 0.0001
   , significant := true }
 
@@ -143,8 +157,9 @@ def exp1b_naturalness : NaturalnessResult :=
 -- ============================================================================
 
 /-- Exp 2: COMPLET in *before*-clause with accomplishment EE.
-    "John met Mary before she climbed the mountain" (before-finish reading).
-    Significant slowdown at verb+2; lower naturalness.
+    E.g. "Emma was irritable before Hector built the tent in the woods."
+    Pre-registered regions (verb, verb+1) showed null effects.
+    Exploratory verb+2 analysis found significant slowdown; lower naturalness.
     Delayed effect consistent with pragmatic (vs semantic) coercion. -/
 def exp2_rt : ExperimentResult :=
   { experiment := .exp2
@@ -154,12 +169,14 @@ def exp2_rt : ExperimentResult :=
   , se := 2/100
   , pValue := 3/1000         -- p = 0.003
   , region := .verbPlus2
-  , significant := true }
+  , significant := true
+  , exploratory := true }
 
 def exp2_naturalness : NaturalnessResult :=
   { experiment := .exp2
   , coercionType := .completive
   , ratingBeta := -72/100    -- β = -0.72
+  , se := 23/100             -- SE = 0.23
   , pValue := 1/1000         -- p = 0.001
   , significant := true }
 
@@ -167,47 +184,52 @@ def exp2_naturalness : NaturalnessResult :=
 -- § 5: Experiment 3 — Inchoative (subject-experiencer)
 -- ============================================================================
 
-/-- Exp 3: INCHOAT with subject-experiencer verbs (stative reading).
+/-- Exp 3: INCHOAT with subject-experiencer verbs in *within*-modifier context.
+    E.g. "Within fifteen minutes Jessica tolerated the unhelpful professor."
     No significant RT effect; no naturalness difference. -/
 def exp3_rt : ExperimentResult :=
   { experiment := .exp3
   , condition := "subject-experiencer verb (inchoative coercion)"
   , coercionType := .inchoative
-  , effectBeta := -11/1000   -- β = -0.011
-  , se := 14/1000
-  , pValue := 42/100         -- p = 0.42
+  , effectBeta := -3/1000    -- β = -0.003
+  , se := 13/1000            -- SE = 0.013
+  , pValue := 78/100         -- p = 0.78
   , region := .verbPlus1
   , significant := false }
 
 def exp3_naturalness : NaturalnessResult :=
   { experiment := .exp3
   , coercionType := .inchoative
-  , ratingBeta := -5/100     -- β = -0.05
-  , pValue := 51/100
+  , ratingBeta := -35/1000   -- β = -0.035
+  , se := 7/100              -- SE = 0.07
+  , pValue := 63/100         -- p = 0.63
   , significant := false }
 
 -- ============================================================================
 -- § 6: Experiment 4 — Inchoative (after-clause)
 -- ============================================================================
 
-/-- Exp 4: INCHOAT in *after*-clause with stative/activity EE.
-    "John met Mary after she was president" (after-start reading).
-    Significant slowdown at verb+2; lower naturalness.
+/-- Exp 4: INCHOAT in *after*-clause with subject-experiencer EE.
+    E.g. "Dave was regretful after Lara feared the large dog."
+    Pre-registered regions (verb, verb+1) showed null effects.
+    Exploratory verb+2 analysis found significant slowdown; lower naturalness.
     INCHOAT cost detected in after-clauses but not within-modifier contexts. -/
 def exp4_rt : ExperimentResult :=
   { experiment := .exp4
-  , condition := "after-clause + stative EE (inchoative coercion)"
+  , condition := "after-clause + subject-experiencer EE (inchoative coercion)"
   , coercionType := .inchoative
   , effectBeta := 66/1000    -- β = 0.066
-  , se := 25/1000
+  , se := 24/1000            -- SE = 0.024
   , pValue := 8/1000         -- p = 0.008
   , region := .verbPlus2
-  , significant := true }
+  , significant := true
+  , exploratory := true }
 
 def exp4_naturalness : NaturalnessResult :=
   { experiment := .exp4
   , coercionType := .inchoative
   , ratingBeta := -16/100    -- β = -0.16
+  , se := 7/100              -- SE = 0.07
   , pValue := 1/100          -- p = 0.01
   , significant := true }
 
@@ -215,20 +237,42 @@ def exp4_naturalness : NaturalnessResult :=
 -- § 7: Complement Coercion Sanity Check
 -- ============================================================================
 
-/-- Complement coercion (e.g., "began the book") replicates across all experiments.
-    This confirms the experimental paradigm is sensitive to coercion effects. -/
-def complement_coercion_exp1 : ExperimentResult :=
+/-- Complement coercion (e.g., "continued his article") in Exp 1a at noun+1.
+    This replicates across all experiments, confirming paradigm sensitivity. -/
+def complement_coercion_exp1a : ExperimentResult :=
   { experiment := .exp1a
   , condition := "complement coercion (sanity check)"
   , coercionType := .complement
-  , effectBeta := 45/1000    -- β = 0.045
-  , se := 12/1000
-  , pValue := 2/10000        -- p = 0.0002
+  , effectBeta := 38/1000    -- β = 0.038 (noun+1)
+  , se := 15/1000            -- SE = 0.015
+  , pValue := 1/100          -- p = 0.01
+  , region := .verbPlus1     -- noun+1 in complement trials
+  , significant := true }
+
+/-- Complement coercion in Exp 1b at noun+1. -/
+def complement_coercion_exp1b : ExperimentResult :=
+  { experiment := .exp1b
+  , condition := "complement coercion (sanity check)"
+  , coercionType := .complement
+  , effectBeta := 35/1000    -- β = 0.035
+  , se := 13/1000            -- SE = 0.013
+  , pValue := 9/1000         -- p = 0.009
+  , region := .verbPlus1
+  , significant := true }
+
+/-- Complement coercion in Exp 3 at noun+1. -/
+def complement_coercion_exp3 : ExperimentResult :=
+  { experiment := .exp3
+  , condition := "complement coercion (sanity check)"
+  , coercionType := .complement
+  , effectBeta := 35/1000    -- β = 0.035
+  , se := 13/1000            -- SE = 0.013
+  , pValue := 9/1000         -- p = 0.009
   , region := .verbPlus1
   , significant := true }
 
 -- ============================================================================
--- § 8: Bridge Theorems
+-- § 8: Bridge Theorems — Experiment × Fragment × Theory
 -- ============================================================================
 
 /-- Rett's theory correctly predicts completive coercion costs where they occur.
@@ -243,16 +287,21 @@ theorem rett_predicts_inchoative_in_after :
     exp4_rt.significant = true ∧ exp4_rt.coercionType = .inchoative :=
   ⟨rfl, rfl⟩
 
-/-- Within-modifier INCHOAT fails to replicate: Exps 1a and 3 show null results.
+/-- Within-modifier INCHOAT shows no cost: Exps 1a and 3 show null results.
     This dissociation (null in within-modifier, significant in after-clause)
-    suggests INCHOAT cost is construction-specific, not universal. -/
+    suggests INCHOAT cost is construction-specific, not universal.
+    The paper's §8.2 proposes a non-coercive, Krifka-style scalar implicature
+    analysis for atelic *within*-modifier sentences. -/
 theorem within_modifier_not_replicated :
     exp1a_rt.significant = false ∧ exp3_rt.significant = false :=
   ⟨rfl, rfl⟩
 
-/-- Complement coercion sanity check passes — confirms paradigm sensitivity. -/
+/-- Complement coercion sanity check passes in both sub-experiments. -/
 theorem complement_coercion_replicates :
-    complement_coercion_exp1.significant = true := rfl
+    complement_coercion_exp1a.significant = true ∧
+    complement_coercion_exp1b.significant = true ∧
+    complement_coercion_exp3.significant = true :=
+  ⟨rfl, rfl, rfl⟩
 
 /-- Processing measure: all experiments use self-paced reading. -/
 def processingMeasure : MeasureSpec :=
@@ -260,23 +309,32 @@ def processingMeasure : MeasureSpec :=
   , task := .selfPacedReading
   , unit := "log-transformed reading time (ms)" }
 
-/-- Delayed effect in Exp 2: cost at verb+2 (not verb+1) is consistent with
-    pragmatic coercion (contextual inference after semantic processing). -/
-theorem pragmatic_vs_semantic_delay :
-    exp2_rt.region = .verbPlus2 ∧ exp1b_rt.region = .verbPlus1 :=
-  ⟨rfl, rfl⟩
+/-- Delayed effect in connective contexts: cost at verb+2 (not verb+1).
+    Both connective experiments (2, 4) show verb+2 spillover, while the
+    modifier experiment (1b) shows verb+1. Consistent with pragmatic
+    coercion in connectives being slower to detect than semantic coercion
+    in modifier contexts. Both connective results are exploratory. -/
+theorem connective_vs_modifier_spillover :
+    exp2_rt.region = .verbPlus2 ∧ exp2_rt.exploratory = true ∧
+    exp4_rt.region = .verbPlus2 ∧ exp4_rt.exploratory = true ∧
+    exp1b_rt.region = .verbPlus1 ∧ exp1b_rt.exploratory = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § Bridge: Fragment–Experiment and Cross-Linguistic Connections
+-- § 9: Fragment–Experiment Connections
 -- ============================================================================
 
 open Fragments.English.TemporalExpressions
 
+/-- Exp 2 tests the Fragment's `coercedReading` for *before*:
+    COMPLET triggers the before-finish reading. -/
 theorem exp2_tests_before_coercion :
     exp2_rt.coercionType = .completive ∧
     before_.coercedReading = some .beforeFinish :=
   ⟨rfl, rfl⟩
 
+/-- Exp 4 tests the Fragment's `coercedReading` for *after*:
+    INCHOAT triggers the after-start reading. -/
 theorem exp4_tests_after_coercion :
     exp4_rt.coercionType = .inchoative ∧
     after_.coercedReading = some .afterStart :=
@@ -292,6 +350,7 @@ theorem exp1a_tests_within_modifier_coercion :
     within_.triggeredCoercion = some "INCHOAT" :=
   ⟨rfl, rfl⟩
 
+/-- COMPLET is consistently costly across both completive experiments. -/
 theorem complet_consistently_costly :
     exp1b_rt.significant = true ∧
     exp2_rt.significant = true ∧
@@ -299,6 +358,8 @@ theorem complet_consistently_costly :
     exp2_rt.coercionType = .completive :=
   ⟨rfl, rfl, rfl, rfl⟩
 
+/-- INCHOAT cost is construction-specific: present in after-clauses (Exp 4),
+    absent in within-modifier contexts (Exps 1a, 3). -/
 theorem inchoat_construction_specific :
     exp4_rt.significant = true ∧
     exp1a_rt.significant = false ∧
@@ -308,10 +369,14 @@ theorem inchoat_construction_specific :
     exp3_rt.coercionType = .inchoative :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
+/-- Completive effect size exceeds inchoative in modifier contexts. -/
 theorem complet_effect_exceeds_inchoat :
     exp1b_rt.effectBeta > exp1a_rt.effectBeta :=
   by native_decide
 
+/-- RT significance and naturalness significance converge in all 5 experiments:
+    every experiment that shows an RT effect also shows a naturalness effect,
+    and every null RT result has a null naturalness result. -/
 theorem rt_naturalness_converge :
     (exp1b_rt.significant = exp1b_naturalness.significant) ∧
     (exp2_rt.significant = exp2_naturalness.significant) ∧
@@ -320,6 +385,13 @@ theorem rt_naturalness_converge :
     (exp3_rt.significant = exp3_naturalness.significant) :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
+-- ============================================================================
+-- § 10: Cross-Linguistic Connections
+-- ============================================================================
+
+/-- Tagalog overtly marks what English coerces covertly:
+    PFV.AIA (ability/involuntary action) → before-finish (COMPLET);
+    PFV.NEUT (neutral) → before-start (no coercion). -/
 theorem tagalog_overt_coercion :
     Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
     Fragments.Tagalog.TemporalConnectives.bago_aia.reading = .beforeFinish ∧
@@ -327,6 +399,9 @@ theorem tagalog_overt_coercion :
     Fragments.Tagalog.TemporalConnectives.bago_neut.reading = .beforeStart :=
   ⟨rfl, rfl, rfl, rfl⟩
 
+/-- Serbian overtly marks what English coerces covertly:
+    perfective → before-finish (COMPLET);
+    imperfective → before-start (no coercion). -/
 theorem serbian_overt_coercion :
     Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true ∧
     Fragments.Serbian.TemporalConnectives.pre_pfv.reading = .beforeFinish ∧
@@ -334,6 +409,8 @@ theorem serbian_overt_coercion :
     Fragments.Serbian.TemporalConnectives.pre_impf.reading = .beforeStart :=
   ⟨rfl, rfl, rfl, rfl⟩
 
+/-- Triple convergence: English processing data (Exp 2), Tagalog morphology,
+    and Serbian morphology all independently support covert COMPLET. -/
 theorem complet_triple_convergence :
     exp2_rt.significant = true ∧
     exp2_rt.coercionType = .completive ∧
@@ -341,10 +418,39 @@ theorem complet_triple_convergence :
     Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-theorem connective_later_spillover :
-    exp2_rt.region = .verbPlus2 ∧
-    exp4_rt.region = .verbPlus2 ∧
-    exp1b_rt.region = .verbPlus1 :=
+-- ============================================================================
+-- § 11: Theory Comparison — Rett vs Under-specification
+-- ============================================================================
+
+open Phenomena.TemporalConnectives.Compare
+
+/-- The paper's central finding: Rett's ambiguity theory predicts processing
+    asymmetries between readings, and this prediction is confirmed by the data.
+    Under-specification theories (Anscombe, B&C, O&ST) do not predict such costs. -/
+theorem rett_uniquely_predicts_processing_cost :
+    rettProfile.predictsProcessingCost = true ∧
+    anscombeProfile.predictsProcessingCost = false ∧
+    ostProfile.predictsProcessingCost = false ∧
+    bcProfile.predictsProcessingCost = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- The data confirms the prediction: significant processing costs exist
+    for coerced readings (Exps 1b, 2, 4). The only theory that predicts
+    this is Rett's, which posits covert coercion operators. -/
+theorem data_supports_rett :
+    rettProfile.positsCoercion = true ∧
+    exp1b_rt.significant = true ∧
+    exp2_rt.significant = true ∧
+    exp4_rt.significant = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Rett's coercion operators have overt cross-linguistic reflexes:
+    the theory posits coercion, and languages like Tagalog and Serbian
+    realize it morphologically. -/
+theorem coercion_has_crosslinguistic_reflexes :
+    rettProfile.positsCoercion = true ∧
+    Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
+    Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
   ⟨rfl, rfl, rfl⟩
 
 end Phenomena.TenseAspect.Studies.AlstottAravind2026

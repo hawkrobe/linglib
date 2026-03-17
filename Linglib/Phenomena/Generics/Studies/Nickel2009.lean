@@ -252,7 +252,7 @@ theorem nickel_single_way_is_traditional
 | View | Normality | GEN formula | Handles elephants? |
 |------|-----------|-------------|-------------------|
 | @cite{cohen-1999a} | Probability > 0.5 | P(Q\|P) > 0.5 | No |
-| @cite{asher-pelletier-2013} | Modal ordering | ∀w ≤ w₀. P(x,w) → Q(x,w) | Partially |
+| @cite{asher-pelletier-2012} | Modal ordering | ∀w ≤ w₀. P(x,w) → Q(x,w) | Partially |
 | @cite{nickel-2009} | Ways of being normal | ∃w. ∀x. normal(x,w) → Q(x) | Yes |
 
 The three views are formalized in:

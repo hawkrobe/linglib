@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.317] - 2026-03-17
+
+### Fixed
+- **Bibliography audit**: removed 104 redundant publisher fields from @article entries, 4 duplicate publisher fields within entries, 3 duplicate bib entries (comrie-1981→comrie-1989, hintikka-1969→hintikka-1962, kriz-2017→kriz-2015), 5 wrong entry types (frank-1997, sauerland-2003, van-valin-wilkins-1996, zu-2018, krejci-2012), 5 hallucinated titles (chatain-2021, degen-2023, halm-huszr-2021, wiegand-2018, sulemana-2021), fixed hayes-2009 year/publisher, added ~85 URLs/DOIs, added missing school/booktitle fields to 8 entries, cleaned empty sources fields
+- **`@cite` redirects**: updated 6 Lean files referencing removed duplicate bib entries
+- **gen_bibliography.py**: inline source links CSS
+
+### Added
+- **Learning.lean**: +324 lines of Bayesian learning formalization
+- **AlstottAravind2026.lean**: +206 lines of tense/aspect study
+- **Homogeneity.lean**, **MorphologicalCausation.lean**, **MinimalPronoun.lean**, **InformationTheory.lean**, **CCG Equivalence.lean**: various extensions
+- **CompareModality.lean**, **Glue.lean**, other Lean files: minor refinements and @cite fixes
+
 ## [0.229.316] - 2026-03-17
 
 ### Fixed

@@ -6,11 +6,11 @@ import Linglib.Core.Lexical.RootFeatures
 /-!
 # Morphological Causation: Causative Construction Typology
 
-@cite{comrie-1981} @cite{song-1996} @cite{shibatani-1976} @cite{dixon-2000} @cite{krejci-2012}
+@cite{comrie-1989} @cite{song-1996} @cite{shibatani-1976} @cite{dixon-2000} @cite{krejci-2012}
 
 Causative constructions cross-linguistically vary along two orthogonal
 axes: **morphological complexity** (compact → analytic) and **semantic
-directness** (direct → indirect mediation). @cite{comrie-1981}'s central
+directness** (direct → indirect mediation). @cite{comrie-1989}'s central
 generalization: more complex morphology correlates with more indirect
 causation.
 
@@ -76,7 +76,7 @@ open Semantics.Causation.PsychCausation (CausalSource)
 open Semantics.Lexical.Verb.AgentivityLattice (AgentivityNode)
 
 -- ════════════════════════════════════════════════════
--- § 1. Causer Type (@cite{hafeez-2025}, @cite{comrie-1981})
+-- § 1. Causer Type (@cite{hafeez-2025}, @cite{comrie-1989})
 -- ════════════════════════════════════════════════════
 
 /-- Causer type distinguished by intentionality and ontological category.
@@ -135,12 +135,12 @@ def CauseeAffecteeType.hasInducedAgentivity : CauseeAffecteeType → Bool
   | _                 => false
 
 -- ════════════════════════════════════════════════════
--- § 3. Mediation (@cite{comrie-1981} §8.1)
+-- § 3. Mediation (@cite{comrie-1989} §8.1)
 -- ════════════════════════════════════════════════════
 
 /-- Directness of causal mediation between causer and result.
 
-    @cite{comrie-1981}: direct causation involves no intermediary — the
+    @cite{comrie-1989}: direct causation involves no intermediary — the
     causer brings about the result without an intervening causee
     decision or action. Indirect causation involves a mediating causee
     who retains some autonomy over the caused event. -/
@@ -150,12 +150,12 @@ inductive Mediation where
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 4. Causative Complexity (@cite{comrie-1981} §8.2)
+-- § 4. Causative Complexity (@cite{comrie-1989} §8.2)
 -- ════════════════════════════════════════════════════
 
 /-- Morphological complexity of a causative construction.
 
-    @cite{comrie-1981}'s compact-to-analytic continuum:
+    @cite{comrie-1989}'s compact-to-analytic continuum:
     - **lexical**: suppletive or idiosyncratic (kill/die, fell/fall)
     - **morphological**: productive affix (Urdu -aa, Japanese -(s)ase)
     - **periphrastic**: analytic multi-word (English "make X do Y")
@@ -241,7 +241,7 @@ structure SemanticPrototype where
 -- § 7. Comrie's Generalization
 -- ════════════════════════════════════════════════════
 
-/-- **Comrie's monotonicity** (@cite{comrie-1981} §8.4): within a single
+/-- **Comrie's monotonicity** (@cite{comrie-1989} §8.4): within a single
     language, if construction A is morphologically more compact than
     construction B, then A encodes more direct causation than B.
 

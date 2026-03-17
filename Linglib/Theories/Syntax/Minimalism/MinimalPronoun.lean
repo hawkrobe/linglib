@@ -30,11 +30,13 @@ item inventory.
 2. φ-values are transmitted from the antecedent (via Agree or variable binding)
 3. Vocabulary items map valued feature bundles to surface forms, conditioned
    by syntactic context (locally bound, controlled subject, etc.)
-4. The **Elsewhere Condition**: if no context-specific item matches, the
-   default (pronoun) applies (@cite{safir-2014}: "all anaphoric diversity
-   is morphological")
-5. Cross-linguistic variation in anaphoric exponence reduces to variation
-   in vocabulary item inventories
+4. The **Elsewhere Condition** (DM; Halle & Marantz 1993): if no
+   context-specific item matches, the default (pronoun) applies
+5. Cross-linguistic variation in anaphoric form is morphological, not
+   syntactic (@cite{safir-2014}: "all anaphoric diversity is morphological").
+   The DM vocabulary-item implementation used here follows @cite{landau-2015}
+   and @cite{ostrove-2026}; Safir's own mechanism is morphological shape
+   conditions at Spell-Out, not Vocabulary Insertion per se.
 
 Landau-specific theory (the Two-Tiered Theory of Control, predicate
 classification, clause classes) is in `Phenomena/Control/Studies/Landau2015.lean`.
@@ -141,10 +143,14 @@ inductive PronForm where
     (a) the controller(s) must be codependent(s) of S
     (b) PRO (or part of it) must be interpreted as a bound variable
 
-    Three additional diagnostics are **derived** from (a)–(b):
-    - Sloppy-only under VPE (from (b): bound variables force sloppy)
-    - Exhaustive binding — no partial control (from (b))
-    - Local c-commanding antecedent required (from (a)) -/
+    Two additional diagnostics are **derived** from (a):
+    - Sloppy-only under VPE (from (a): controller must be local codependent
+      of the elided clause, forcing sloppy construal; Morgan 1970)
+    - Local c-commanding antecedent required (from (a): codependency
+      excludes arbitrary, long-distance, and non-c-commanding control)
+
+    Note: partial control IS a subspecies of OC per @cite{landau-2013} —
+    (74b) says "PRO (or part of it)", explicitly accommodating it. -/
 structure OCSignature where
   /-- (a): Controller must be argument of the matrix predicate -/
   controllerCodependent : Bool
@@ -152,11 +158,9 @@ structure OCSignature where
   boundVariable : Bool
   deriving DecidableEq, BEq, Repr
 
-/-- Derived: VPE allows only sloppy, not strict readings (from bound variable). -/
-def OCSignature.sloppyOnly (sig : OCSignature) : Bool := sig.boundVariable
-
-/-- Derived: No partial control — subset/superset antecedent blocked (from bound variable). -/
-def OCSignature.exhaustive (sig : OCSignature) : Bool := sig.boundVariable
+/-- Derived: VPE allows only sloppy, not strict readings (from codependency:
+    controller must be local codependent of elided clause). -/
+def OCSignature.sloppyOnly (sig : OCSignature) : Bool := sig.controllerCodependent
 
 /-- Derived: Antecedent must locally c-command (from codependency). -/
 def OCSignature.localCCommand (sig : OCSignature) : Bool := sig.controllerCodependent

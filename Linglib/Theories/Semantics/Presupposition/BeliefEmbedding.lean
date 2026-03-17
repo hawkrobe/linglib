@@ -285,7 +285,7 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
 
 /-!
 ### Bridging Bool-valued and Prop-valued Accessibility
-@cite{hintikka-1969}
+@cite{hintikka-1962}
 
 `EpistemicLogic` uses Bool-valued `AgentAccessRel W E = E → W → W → Bool`.
 `BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`

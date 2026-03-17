@@ -352,9 +352,12 @@ theorem strategy_irrelevant {α : Type}
 In chart parsing for CCG, when we build a new constituent, we check if an
 equivalent entry already exists in the chart. If so, we don't add it.
 
-This is the "matching entry test" from @cite{karttunen-1989} and @cite{pareschi-1989}.
+@cite{karttunen-1989} proposes a subsumption strategy: every potential new edge
+is tested against existing chart entries spanning the same region.
+@cite{pareschi-steedman-1987} propose a "lazy chart parser" that avoids computing
+equivalent analyses by adopting a reduce-first parsing strategy.
 
-The test:
+The matching entry test checks:
 1. Same span (positions i, j in the string)
 2. Same category
 3. Same predicate-argument structure (meaning)
