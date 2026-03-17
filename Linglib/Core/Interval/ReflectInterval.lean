@@ -852,53 +852,47 @@ private def groupLogFactors (factors : List (RExpr × ℚ)) :
     else
       acc ++ [(x, b)]
 
-/-- Optimized evaluation for `rexp` nodes: detects `exp(α · Σ bᵢ·log(xᵢ))`
-    and computes `Π xᵢ^(α·bᵢ)` using exact rational arithmetic when possible,
-    avoiding Padé exp/log approximations that produce enormous rationals.
-    Groups factors with equal log arguments and sums their coefficients,
-    so `exp(1/3·log(x) + 1/3·log(x) + 1/3·log(x))` becomes `x^1` exactly. -/
-def RExpr.evalRexpOpt (inner : RExpr) : QInterval × Bool :=
-  let αOpt : Option ℕ := match inner with
-    | .mul (.nat α) _ => some α
-    | _ => none
-  let body : RExpr := match inner with
-    | .mul (.nat _) b => b
-    | _ => inner
-  match body.tryExtractLogProduct with
-  | some factors =>
-    let α : ℚ := αOpt.getD 1
-    -- Group factors by log argument value, summing coefficients
-    let grouped := groupLogFactors factors
-    grouped.foldl (fun (acc_iv, acc_valid) (x_rexpr, totalCoeff) =>
-      let (x_iv, x_valid) := x_rexpr.evalBoth
-      let exp := α * totalCoeff
-      -- If total exponent is a nonneg integer, use exact powNat
-      if exp.den == 1 && decide (0 ≤ exp) then
-        let n := exp.num.toNat
-        let powered := x_iv.powNat n
-        let combined :=
-          if h₁ : 0 ≤ acc_iv.lo then
-            if h₂ : 0 ≤ powered.lo then c (acc_iv.mulNonneg powered h₁ h₂)
-            else c (acc_iv.mul powered)
-          else c (acc_iv.mul powered)
-        (combined, acc_valid && x_valid && (n == 0 || decide (0 ≤ x_iv.lo)))
+private theorem nat_denote (n : ℕ) : (RExpr.nat n).denote = (↑n : ℝ) := by
+  match n with
+  | 0 => exact_mod_cast RExpr.denote.eq_1
+  | 1 => exact_mod_cast RExpr.denote.eq_2
+  | n + 2 => exact RExpr.denote.eq_3 _ (by omega) (by omega)
+
+/-- Optimized evaluation for `rexp` nodes: recursively decomposes the inner
+    expression using exp identities:
+    - exp(a + b) = exp(a) · exp(b) — splits sums
+    - exp(n · log(x)) = x^n when n ∈ ℕ, x > 0 — exact power
+    - exp(n · body) = exp(body)^n when n ∈ ℕ — factors out nat multiplier
+    - exp(other) via Padé — fallback -/
+def RExpr.evalRexpOpt : RExpr → QInterval × Bool
+  | .add a b =>
+    let (ra, va) := a.evalRexpOpt
+    let (rb, vb) := b.evalRexpOpt
+    let v := va && vb
+    if h₁ : 0 ≤ ra.lo then
+      if h₂ : 0 ≤ rb.lo then (c (ra.mulNonneg rb h₁ h₂), v)
+      else (c (ra.mul rb), v)
+    else (c (ra.mul rb), v)
+  | .mul (.nat α) (.rlog x) =>
+    let (xiv, xv) := x.evalBoth
+    if α == 0 then (QInterval.exact 1, xv)
+    else if h : 0 < xiv.lo then
+      (c (Linglib.Interval.rpowNat xiv α (le_of_lt h)), xv)
+    else
+      let (iv, valid) := RExpr.evalBoth (.mul (.nat α) (.rlog x))
+      (c (expInterval iv), valid)
+  | .mul (.nat α) body =>
+    if α == 0 then (QInterval.exact 1, true)
+    else if α == 1 then body.evalRexpOpt
+    else
+      let (base, bv) := body.evalRexpOpt
+      if h : 0 ≤ base.lo then
+        (c (Linglib.Interval.rpowNat base α h), bv)
       else
-        -- Non-integer exponent: fall back to expInterval on this factor
-        let logIv :=
-          if h : 0 < x_iv.lo then c (logInterval x_iv h)
-          else ⟨-1000, 1000, by norm_num⟩
-        let expQ := QInterval.exact exp
-        let inner := c (expQ.mul logIv)
-        let factorIv := c (expInterval inner)
-        let combined :=
-          if h₁ : 0 ≤ acc_iv.lo then
-            if h₂ : 0 ≤ factorIv.lo then c (acc_iv.mulNonneg factorIv h₁ h₂)
-            else c (acc_iv.mul factorIv)
-          else c (acc_iv.mul factorIv)
-        (combined, acc_valid && x_valid && decide (0 < x_iv.lo))
-    ) (QInterval.exact 1, true)
-  | none =>
-    let (iv, valid) := inner.evalBoth
+        let (iv, valid) := RExpr.evalBoth (.mul (.nat α) body)
+        (c (expInterval iv), valid)
+  | other =>
+    let (iv, valid) := other.evalBoth
     (c (expInterval iv), valid)
 
 -- ============================================================================
@@ -997,21 +991,139 @@ def RExpr.evalBothOpt : RExpr → QInterval × Bool
         (c (expInterval prod), vbase)
     else (⟨0, 1, by norm_num⟩, false)
 
-private theorem evalRexpOpt_sound (inner : RExpr) :
-    inner.evalRexpOpt.2 = true → inner.evalRexpOpt.1.containsReal (Real.exp inner.denote) := by
-  simp only [RExpr.evalRexpOpt]
-  generalize (match inner with | .mul (.nat _) b => b | _ => inner) = body
-  generalize (match inner with | .mul (.nat α) _ => some α | _ => none) = αOpt
-  split
-  · -- body.tryExtractLogProduct = some factors (factor path)
-    -- TODO: prove soundness of the foldl product computation.
-    -- Requires: tryExtractLogProduct correctness, groupLogFactors soundness,
-    -- and per-factor interval arithmetic (powNat/expInterval soundness).
-    sorry
-  · -- body.tryExtractLogProduct = none (fallback path)
-    intro hv
+-- `unfold evalRexpOpt` expands exactly one level when the scrutinee has a
+-- specific constructor head, leaving recursive `evalRexpOpt` calls opaque.
+-- For `.mul (.nat α) body` where body is generic, we `cases body` first.
+set_option maxHeartbeats 3200000 in
+private theorem evalRexpOpt_sound : ∀ (inner : RExpr),
+    inner.evalRexpOpt.2 = true → inner.evalRexpOpt.1.containsReal (Real.exp inner.denote)
+  -- ══════════════════════════════════════════════════════════════════════
+  -- Case 1: exp(a + b) = exp(a) · exp(b)
+  -- ══════════════════════════════════════════════════════════════════════
+  | .add a b => fun hv => by
+    unfold RExpr.evalRexpOpt at hv ⊢
+    rcases ha : a.evalRexpOpt with ⟨ra, va⟩
+    rcases hb : b.evalRexpOpt with ⟨rb, vb⟩
+    simp only [ha, hb] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2
+    all_goals simp only [Bool.and_eq_true] at hv
+    all_goals (
+      have iha := evalRexpOpt_sound a (by rw [ha]; exact hv.1)
+      have ihb := evalRexpOpt_sound b (by rw [hb]; exact hv.2)
+      rw [ha] at iha; rw [hb] at ihb
+      simp only [RExpr.denote.eq_5, Real.exp_add])
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mulNonneg_containsReal h1 h2 iha ihb)
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mul_containsReal iha ihb)
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mul_containsReal iha ihb)
+  -- ══════════════════════════════════════════════════════════════════════
+  -- Case 2: exp(α · log(x)) = x^α  (when x > 0)
+  -- ══════════════════════════════════════════════════════════════════════
+  | .mul (.nat α) (.rlog x) => fun hv => by
+    unfold RExpr.evalRexpOpt at hv ⊢
+    rcases hx : x.evalBoth with ⟨xiv, xv⟩
+    simp only [hx] at hv ⊢
+    split_ifs at hv ⊢ with h0 hpos
+    · -- α = 0: exp(0 · log x) = exp(0) = 1
+      simp only [beq_iff_eq] at h0; subst h0
+      simp only [RExpr.denote.eq_6, RExpr.denote.eq_11, RExpr.denote.eq_1, zero_mul, Real.exp_zero]
+      exact_mod_cast QInterval.exact_containsReal (1 : ℚ)
+    · -- α ≠ 0, xiv.lo > 0: exp(α·log x) = x^α via rpow
+      have hxval : xiv.containsReal x.denote := by
+        have h := RExpr.evalBoth_sound x; rw [hx] at h; exact h hv
+      have hxpos : 0 < x.denote := interval_pos hxval hpos
+      rw [RExpr.denote.eq_6, RExpr.denote.eq_11, nat_denote, mul_comm,
+          ← Real.rpow_def_of_pos hxpos]
+      exact QInterval.coarsen_containsReal _ (rpowNat_containsReal (le_of_lt hpos) hxval)
+    · -- fallback: evalBoth + expInterval
+      rcases he : ((RExpr.nat α).mul (.rlog x)).evalBoth with ⟨iv, valid⟩
+      simp only [he] at hv ⊢
+      have hv' : ((RExpr.nat α).mul (.rlog x)).evalBoth.2 = true := by rw [he]; exact hv
+      have heb := RExpr.evalBoth_sound _ hv'; rw [he] at heb
+      exact QInterval.coarsen_containsReal _ (expInterval_containsReal heb)
+  -- ══════════════════════════════════════════════════════════════════════
+  -- Case 3: exp(α · body) — use `split` to decompose the match on body
+  -- ══════════════════════════════════════════════════════════════════════
+  | .mul (.nat α) body => fun hv => by
+    unfold RExpr.evalRexpOpt at hv ⊢
+    -- `unfold` produces the full match on (.nat α).mul body; `split` decomposes it
+    split at *
+    · -- .add case: contradictory (mul ≠ add)
+      rename_i heq; exact absurd heq (by simp)
+    · -- .mul (.nat _) (.rlog x) subcase (overlap with case 2)
+      rename_i _x α' x' heq
+      simp only [RExpr.mul.injEq, RExpr.nat.injEq] at heq
+      obtain ⟨rfl, rfl⟩ := heq
+      -- Same proof as case 2: exp(α·log x) = x^α
+      rcases hx : x'.evalBoth with ⟨xiv, xv⟩
+      simp only [hx] at hv ⊢
+      split_ifs at hv ⊢ with h0 hpos
+      · simp only [beq_iff_eq] at h0; subst h0
+        simp only [RExpr.denote.eq_6, RExpr.denote.eq_11, RExpr.denote.eq_1,
+                    zero_mul, Real.exp_zero]
+        exact_mod_cast QInterval.exact_containsReal (1 : ℚ)
+      · have hxval : xiv.containsReal x'.denote := by
+          have h := RExpr.evalBoth_sound x'; rw [hx] at h; exact h hv
+        rw [RExpr.denote.eq_6, RExpr.denote.eq_11, nat_denote, mul_comm,
+            ← Real.rpow_def_of_pos (interval_pos hxval hpos)]
+        exact QInterval.coarsen_containsReal _ (rpowNat_containsReal (le_of_lt hpos) hxval)
+      · rcases he : ((RExpr.nat α).mul (.rlog x')).evalBoth with ⟨iv, valid⟩
+        simp only [he] at hv ⊢
+        have hv' : ((RExpr.nat α).mul (.rlog x')).evalBoth.2 = true := by rw [he]; exact hv
+        have heb := RExpr.evalBoth_sound _ hv'; rw [he] at heb
+        exact QInterval.coarsen_containsReal _ (expInterval_containsReal heb)
+    · -- .mul (.nat α) body subcase (body ≠ .rlog)
+      rename_i _x α' body' _hnotlog heq
+      simp only [RExpr.mul.injEq, RExpr.nat.injEq] at heq
+      obtain ⟨rfl, rfl⟩ := heq
+      -- Now: if/then/else on α for non-rlog body
+      split_ifs at hv ⊢ with h0 h1
+      · -- α = 0: exp(0 · body) = 1
+        simp only [beq_iff_eq] at h0; subst h0
+        simp only [RExpr.denote.eq_6, RExpr.denote.eq_1, zero_mul, Real.exp_zero]
+        exact_mod_cast QInterval.exact_containsReal (1 : ℚ)
+      · -- α = 1: exp(1 · body) = exp(body), delegate to IH
+        simp only [beq_iff_eq] at h1
+        have h1n : α = 1 := by omega
+        subst h1n
+        have hden : Real.exp ((RExpr.mul (.nat 1) body).denote) = Real.exp body.denote := by
+          congr 1; simp only [RExpr.denote.eq_6, nat_denote, Nat.cast_one, one_mul]
+        rw [hden]
+        exact evalRexpOpt_sound _ hv
+      · -- α ≥ 2: exp(α · body) = exp(body)^α
+        rcases hb : body.evalRexpOpt with ⟨base, bv⟩
+        simp only [hb] at hv ⊢
+        split_ifs at hv ⊢ with hnn
+        · -- rpowNat path: base.lo ≥ 0
+          have ihb := evalRexpOpt_sound body (by rw [hb]; exact hv)
+          rw [hb] at ihb
+          have hden : Real.exp ((RExpr.mul (.nat α) body).denote) =
+              Real.exp body.denote ^ (↑α : ℝ) := by
+            rw [RExpr.denote.eq_6, nat_denote, Real.exp_nat_mul, ← Real.rpow_natCast]
+          rw [hden]
+          exact QInterval.coarsen_containsReal _ (rpowNat_containsReal hnn ihb)
+        · -- fallback: evalBoth + expInterval
+          rcases he : ((RExpr.nat α).mul body).evalBoth with ⟨iv, valid⟩
+          simp only [he] at hv ⊢
+          have hv' : ((RExpr.nat α).mul body).evalBoth.2 = true := by rw [he]; exact hv
+          have heb := RExpr.evalBoth_sound _ hv'; rw [he] at heb
+          exact QInterval.coarsen_containsReal _ (expInterval_containsReal heb)
+    · -- catch-all: contradictory (mul (.nat α) body matches case 3)
+      rename_i heq; exact absurd heq (by simp)
+  -- ══════════════════════════════════════════════════════════════════════
+  -- Case 4: catch-all — evalBoth + expInterval fallback
+  -- ══════════════════════════════════════════════════════════════════════
+  | .nat _ | .ratCast _ | .div _ _ | .neg _ | .sub _ _ | .rexp _
+  | .rlog _ | .rpow _ _ | .inv _ | .iteZero _ _ _ | .expMulLogSub _ _ _
+  | .mul (.ratCast _) _ | .mul (.add _ _) _ | .mul (.mul _ _) _
+  | .mul (.div _ _) _ | .mul (.neg _) _ | .mul (.sub _ _) _
+  | .mul (.rexp _) _ | .mul (.rlog _) _ | .mul (.rpow _ _) _
+  | .mul (.inv _) _ | .mul (.iteZero _ _ _) _ | .mul (.expMulLogSub _ _ _) _ => fun hv => by
+    unfold RExpr.evalRexpOpt at hv ⊢
     exact QInterval.coarsen_containsReal _
-      (expInterval_containsReal (RExpr.evalBoth_sound inner hv))
+      (expInterval_containsReal (RExpr.evalBoth_sound _ hv))
 
 set_option maxHeartbeats 800000 in
 /-- Soundness of evalBothOpt. Mirrors `evalBoth_sound` — all cases except
@@ -1523,12 +1635,333 @@ theorem RExpr.not_gt_of_checkNotGtOptMemo (lhs rhs : RExpr)
   not_gt_of_checkNotGtOpt lhs rhs h
 
 -- ============================================================================
+-- Exact exp evaluation via log factor grouping
+-- ============================================================================
+
+/-- Evaluate a simple rational expression (no exp/log/expMulLogSub).
+    Used by log factor collection to evaluate coefficients and bases,
+    avoiding mutual recursion with `evalExact`. -/
+private def RExpr.asRat : RExpr → Option ℚ
+  | .nat n => some n
+  | .ratCast q => some q
+  | .add a b => do return (← a.asRat) + (← b.asRat)
+  | .mul a b => do return (← a.asRat) * (← b.asRat)
+  | .div a b => do let vb ← b.asRat; guard (vb ≠ 0); return (← a.asRat) / vb
+  | .sub a b => do return (← a.asRat) - (← b.asRat)
+  | .neg a => do return -(← a.asRat)
+  | .inv a => do let va ← a.asRat; guard (va ≠ 0); return 1 / va
+  | .rpow a n => do let va ← a.asRat; guard (0 ≤ va); return va ^ n
+  | .iteZero c t e => do let vc ← c.asRat; if vc = 0 then t.asRat else e.asRat
+  | .rexp _ | .rlog _ | .expMulLogSub _ _ _ => none
+
+set_option maxHeartbeats 400000 in
+private theorem RExpr.asRat_sound (e : RExpr) (q : ℚ)
+    (h : e.asRat = some q) : e.denote = (q : ℝ) := by
+  induction e generalizing q with
+  | nat n =>
+    simp [asRat] at h
+    cases n with
+    | zero => unfold denote; simp [← h]
+    | succ m => cases m with
+      | zero => unfold denote; simp [← h]
+      | succ k => unfold denote; rw [← h]; push_cast; rfl
+  | ratCast q' => simp [asRat] at h; subst h; rfl
+  | add a b iha ihb =>
+    cases ha : a.asRat with
+    | none => simp [asRat, ha] at h
+    | some va =>
+      cases hb : b.asRat with
+      | none => simp [asRat, ha, hb] at h
+      | some vb =>
+        have hq : q = va + vb := by simp [asRat, ha, hb] at h; exact h.symm
+        subst hq; unfold denote; rw [iha va ha, ihb vb hb]; push_cast; ring
+  | mul a b iha ihb =>
+    cases ha : a.asRat with
+    | none => simp [asRat, ha] at h
+    | some va =>
+      cases hb : b.asRat with
+      | none => simp [asRat, ha, hb] at h
+      | some vb =>
+        have hq : q = va * vb := by simp [asRat, ha, hb] at h; exact h.symm
+        subst hq; unfold denote; rw [iha va ha, ihb vb hb]; push_cast; ring
+  | div a b iha ihb =>
+    cases hb : b.asRat with
+    | none => simp [asRat, hb] at h
+    | some vb =>
+      by_cases hvb : vb = 0
+      · simp [asRat, hb, hvb] at h
+      · cases ha : a.asRat with
+        | none => simp [asRat, ha, hb] at h
+        | some va =>
+          have hq : q = va / vb := by simp [asRat, ha, hb, hvb] at h; exact h.symm
+          subst hq; unfold denote; rw [iha va ha, ihb vb hb]; push_cast; ring
+  | neg a iha =>
+    cases ha : a.asRat with
+    | none => simp [asRat, ha] at h
+    | some va =>
+      have hq : q = -va := by simp [asRat, ha] at h; exact h.symm
+      subst hq; unfold denote; rw [iha va ha]; push_cast; ring
+  | sub a b iha ihb =>
+    cases ha : a.asRat with
+    | none => simp [asRat, ha] at h
+    | some va =>
+      cases hb : b.asRat with
+      | none => simp [asRat, ha, hb] at h
+      | some vb =>
+        have hq : q = va - vb := by simp [asRat, ha, hb] at h; exact h.symm
+        subst hq; unfold denote; rw [iha va ha, ihb vb hb]; push_cast; ring
+  | inv a iha =>
+    cases ha : a.asRat with
+    | none => simp [asRat, ha] at h
+    | some va =>
+      by_cases hva : va = 0
+      · simp [asRat, ha, hva] at h
+      · have hq : q = va⁻¹ := by simp [asRat, ha, hva] at h; exact h.symm
+        subst hq; unfold denote; rw [iha va ha]; push_cast; rfl
+  | rpow a n iha =>
+    cases ha : a.asRat with
+    | none => simp [asRat, ha] at h
+    | some va =>
+      by_cases hva : 0 ≤ va
+      · have hq : q = va ^ n := by simp [asRat, ha, hva] at h; exact h.symm
+        subst hq; rw [rpow_denote_eq, iha va ha, Real.rpow_natCast]; push_cast; ring
+      · simp [asRat, ha, hva] at h
+  | iteZero c t e ihc iht ihe =>
+    cases hc : c.asRat with
+    | none => simp [asRat, hc] at h
+    | some vc =>
+      unfold denote
+      by_cases hvc : vc = 0
+      · have hcd : c.denote = 0 := by rw [ihc vc hc, hvc]; simp
+        simp [hcd]
+        exact iht q (by simp [asRat, hc, hvc] at h; exact h)
+      · have hcd : c.denote ≠ 0 := by rw [ihc vc hc]; exact_mod_cast hvc
+        simp [hcd]
+        exact ihe q (by simp [asRat, hc, hvc] at h; exact h)
+  | rexp _ | rlog _ | expMulLogSub _ _ _ => simp [asRat] at h
+
+/-- Weighted log sum interpretation: Σ cᵢ · log(xvᵢ). -/
+private noncomputable def logFactorSum (fs : List (ℚ × ℚ)) : ℝ :=
+  (fs.map fun p => (↑p.2 : ℝ) * Real.log (↑p.1 : ℝ)).sum
+
+/-- Insert-or-merge into grouped factor list: if `base` already exists as a key,
+    add `coeff` to the existing coefficient; otherwise append a new entry. -/
+private def addLogFactor : List (ℚ × ℚ) → ℚ → ℚ → List (ℚ × ℚ)
+  | [], base, coeff => [(base, coeff)]
+  | (k, v) :: rest, base, coeff =>
+    if k == base then (k, v + coeff) :: rest
+    else (k, v) :: addLogFactor rest base coeff
+
+private theorem addLogFactor_sound (acc : List (ℚ × ℚ)) (base coeff : ℚ) :
+    logFactorSum (addLogFactor acc base coeff) =
+    logFactorSum acc + (↑coeff : ℝ) * Real.log (↑base : ℝ) := by
+  induction acc with
+  | nil => simp [addLogFactor, logFactorSum]
+  | cons hd tl ih =>
+    obtain ⟨k, v⟩ := hd
+    simp only [addLogFactor]
+    split
+    · rename_i heq
+      simp only [beq_iff_eq] at heq; subst heq
+      simp only [logFactorSum, List.map_cons, List.sum_cons]
+      push_cast; ring
+    · simp only [logFactorSum, List.map_cons, List.sum_cons] at ih ⊢
+      linarith
+
+private theorem foldl_addLogFactor_sound (acc extras : List (ℚ × ℚ)) :
+    logFactorSum (extras.foldl (fun a p => addLogFactor a p.1 p.2) acc) =
+    logFactorSum acc + logFactorSum extras := by
+  induction extras generalizing acc with
+  | nil => simp [logFactorSum]
+  | cons hd tl ih =>
+    simp only [List.foldl_cons]
+    rw [ih, addLogFactor_sound]
+    simp only [logFactorSum, List.map_cons, List.sum_cons]
+    ring
+
+private theorem logFactorSum_map_scale (c : ℚ) (fs : List (ℚ × ℚ)) :
+    logFactorSum (fs.map (fun p => (p.1, c * p.2))) =
+    (↑c : ℝ) * logFactorSum fs := by
+  induction fs with
+  | nil => simp [logFactorSum]
+  | cons hd tl ih =>
+    simp only [logFactorSum, List.map_cons, List.map, List.sum_cons] at ih ⊢
+    rw [ih]; push_cast; ring
+
+/-- Collect (base_value, coefficient) pairs from a sum-of-weighted-logs
+    expression, grouping by exact base value during collection. -/
+private def collectAndGroupLogFactors : RExpr → Option (List (ℚ × ℚ))
+  | .add a b => do
+    let la ← collectAndGroupLogFactors a
+    let lb ← collectAndGroupLogFactors b
+    return lb.foldl (fun acc p => addLogFactor acc p.1 p.2) la
+  | .mul coeff (.rlog x) => do return [(← x.asRat, ← coeff.asRat)]
+  | .mul coeff body => do
+    let c ← coeff.asRat
+    let factors ← collectAndGroupLogFactors body
+    return factors.map (fun p => (p.1, c * p.2))
+  | .rlog x => do return [(← x.asRat, 1)]
+  | other => do guard ((← other.asRat) == 0); return []
+
+private theorem logFactorSum_cons (xv c : ℚ) (rest : List (ℚ × ℚ)) :
+    logFactorSum ((xv, c) :: rest) =
+    (↑c : ℝ) * Real.log (↑xv : ℝ) + logFactorSum rest := by
+  simp [logFactorSum]
+
+private theorem collectLogFactors_asRat_zero {e : RExpr} {fs : List (ℚ × ℚ)}
+    (h : (do let v ← e.asRat; guard ((v == 0) = true);
+             pure ([] : List (ℚ × ℚ))) = some fs) :
+    e.denote = logFactorSum fs := by
+  cases hasRat : e.asRat with
+  | none => simp [hasRat] at h
+  | some v =>
+    simp only [hasRat] at h
+    by_cases hv0 : v = 0
+    · subst hv0; simp at h; subst h
+      rw [RExpr.asRat_sound _ _ hasRat]
+      simp [logFactorSum]
+    · exfalso; revert h; simp [hv0, beq_iff_eq, guard]
+
+private theorem collectLogFactors_mul_body {a b : RExpr} {fs : List (ℚ × ℚ)}
+    (h : (do let c ← a.asRat
+             let factors ← collectAndGroupLogFactors b
+             return factors.map (fun p => (p.1, c * p.2))) = some fs)
+    (ihb : ∀ fs, collectAndGroupLogFactors b = some fs → b.denote = logFactorSum fs) :
+    (RExpr.mul a b).denote = logFactorSum fs := by
+  cases hc : a.asRat with
+  | none => simp [hc] at h
+  | some c =>
+    cases hfact : collectAndGroupLogFactors b with
+    | none => simp [hc, hfact] at h
+    | some factors =>
+      simp [hc, hfact] at h; subst h
+      simp only [RExpr.denote]
+      rw [RExpr.asRat_sound _ _ hc, ihb factors hfact, logFactorSum_map_scale]
+
+set_option maxHeartbeats 800000 in
+private def collectAndGroupLogFactors_sound :
+    ∀ (e : RExpr) (fs : List (ℚ × ℚ)),
+    collectAndGroupLogFactors e = some fs →
+    e.denote = logFactorSum fs
+  | .add a b, fs, h => by
+    simp only [collectAndGroupLogFactors] at h
+    cases hla : collectAndGroupLogFactors a with
+    | none => simp [hla] at h
+    | some la =>
+      cases hlb : collectAndGroupLogFactors b with
+      | none => simp [hla, hlb] at h
+      | some lb =>
+        simp [hla, hlb] at h; subst h
+        simp only [RExpr.denote]
+        rw [collectAndGroupLogFactors_sound a la hla,
+            collectAndGroupLogFactors_sound b lb hlb,
+            foldl_addLogFactor_sound]
+  | .mul a b, fs, h => by
+    cases b with
+    | rlog x =>
+      simp only [collectAndGroupLogFactors] at h
+      cases hxv : x.asRat with
+      | none => simp [hxv] at h
+      | some xv =>
+        cases hcv : a.asRat with
+        | none => simp [hxv, hcv] at h
+        | some cv =>
+          simp [hxv, hcv] at h; subst h
+          simp only [RExpr.denote]
+          rw [RExpr.asRat_sound _ _ hcv, RExpr.asRat_sound _ _ hxv]
+          simp [logFactorSum]
+    | _ =>
+      exact collectLogFactors_mul_body h
+        (fun fs h => collectAndGroupLogFactors_sound _ fs h)
+  | .rlog x, fs, h => by
+    simp only [collectAndGroupLogFactors] at h
+    cases hxv : x.asRat with
+    | none => simp [hxv] at h
+    | some xv =>
+      simp [hxv] at h; subst h
+      simp only [RExpr.denote]
+      rw [RExpr.asRat_sound _ _ hxv]
+      simp [logFactorSum]
+  | .nat _, fs, h | .ratCast _, fs, h | .div _ _, fs, h | .neg _, fs, h
+  | .sub _ _, fs, h | .rexp _, fs, h | .rpow _ _, fs, h | .inv _, fs, h
+  | .iteZero _ _ _, fs, h | .expMulLogSub _ _ _, fs, h => by
+    simp only [collectAndGroupLogFactors] at h
+    exact collectLogFactors_asRat_zero h
+
+/-- Compute ∏ᵢ xvᵢ^nᵢ from grouped factor list, where each coefficient
+    must be a non-negative integer and each base must be positive. -/
+private def evalGroupedProduct : List (ℚ × ℚ) → Option ℚ
+  | [] => some 1
+  | (xv, c) :: rest =>
+    if c == 0 then evalGroupedProduct rest
+    else if c.den == 1 && decide (0 ≤ c.num) && decide ((0 : ℚ) < xv) then do
+      return xv ^ c.num.toNat * (← evalGroupedProduct rest)
+    else none
+
+private theorem rat_den_one_cast (c : ℚ) (hden : c.den = 1) (hnum : 0 ≤ c.num) :
+    (↑c : ℝ) = ↑(c.num.toNat : ℕ) := by
+  have h1 := (Rat.num_div_den c).symm
+  have : (↑c : ℝ) = (↑c.num : ℝ) / (↑(c.den : ℕ) : ℝ) := by exact_mod_cast h1
+  rw [this, hden, Nat.cast_one, div_one]
+  exact_mod_cast (Int.toNat_of_nonneg hnum).symm
+
+set_option maxHeartbeats 800000 in
+private theorem evalGroupedProduct_sound (gs : List (ℚ × ℚ)) (q : ℚ)
+    (h : evalGroupedProduct gs = some q) :
+    Real.exp (logFactorSum gs) = (↑q : ℝ) := by
+  induction gs generalizing q with
+  | nil =>
+    simp [evalGroupedProduct] at h; subst h
+    simp [logFactorSum, Real.exp_zero]
+  | cons p rest ih =>
+    obtain ⟨xv, c⟩ := p
+    simp only [evalGroupedProduct] at h
+    split_ifs at h with hc hcond
+    · -- c == 0
+      simp only [beq_iff_eq] at hc
+      have : logFactorSum ((xv, c) :: rest) = logFactorSum rest := by
+        rw [logFactorSum_cons, hc, Rat.cast_zero, zero_mul, zero_add]
+      rw [this]; exact ih q h
+    · -- natural coeff with positive base
+      simp only [Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at hcond
+      obtain ⟨⟨hden, hnum⟩, hxv_pos⟩ := hcond
+      cases hrest : evalGroupedProduct rest with
+      | none => simp [hrest] at h
+      | some restQ =>
+        simp [hrest] at h; subst h
+        rw [logFactorSum_cons, Real.exp_add, ih restQ hrest]
+        -- Show: exp(c * log(xv)) = xv ^ c.num.toNat
+        have hxv_pos_real : (0 : ℝ) < (↑xv : ℝ) := by exact_mod_cast hxv_pos
+        rw [rat_den_one_cast c hden hnum, Real.exp_nat_mul,
+            Real.exp_log hxv_pos_real]
+        push_cast; ring
+
+/-- Evaluate exp(body) exactly when body decomposes as a sum of coeff * log(base)
+    terms where grouped coefficients are non-negative integers and bases are
+    positive rationals. Returns the exact ℚ value of exp(body). -/
+private def evalExpExact (body : RExpr) : Option ℚ := do
+  let factors ← collectAndGroupLogFactors body
+  evalGroupedProduct factors
+
+private theorem evalExpExact_sound (body : RExpr) (q : ℚ)
+    (h : evalExpExact body = some q) :
+    Real.exp body.denote = (↑q : ℝ) := by
+  simp only [evalExpExact] at h
+  cases hf : collectAndGroupLogFactors body with
+  | none => simp [hf] at h
+  | some factors =>
+    simp [hf] at h
+    rw [collectAndGroupLogFactors_sound body factors hf]
+    exact evalGroupedProduct_sound factors q h
+
+-- ============================================================================
 -- Exact ℚ evaluation (for ¬(>) goals where intervals overlap)
 -- ============================================================================
 
 /-- Evaluate an RExpr to an exact ℚ value, if possible.
-    Returns `none` for exp, log, expMulLogSub (irrational operations).
-    Returns `none` if division by zero or rpow of negative base.
+    Handles exp nodes via log factor grouping (e.g., exp(1/2·log(x) + 1/2·log(x))
+    groups to exp(1·log(x)) = x). Returns `none` for log, expMulLogSub, or when
+    log factor coefficients don't sum to natural numbers.
     Used for `¬(>)` goals where interval arithmetic is too imprecise. -/
 def RExpr.evalExact : RExpr → Option ℚ
   | .nat n => some n
@@ -1552,7 +1985,7 @@ def RExpr.evalExact : RExpr → Option ℚ
   | .iteZero c t e => do
     let vc ← c.evalExact
     if vc = 0 then t.evalExact else e.evalExact
-  | .rexp _ => none
+  | .rexp body => evalExpExact body
   | .rlog _ => none
   | .expMulLogSub _ _ _ => none
 
@@ -1641,7 +2074,10 @@ theorem RExpr.evalExact_sound (e : RExpr) (q : ℚ)
       · have hcd : c.denote ≠ 0 := by rw [ihc vc hc]; exact_mod_cast hvc
         simp [hcd]
         exact ihe q (by simp [evalExact, hc, hvc] at h; exact h)
-  | rexp _ => simp [evalExact] at h
+  | rexp body _ =>
+    simp only [evalExact] at h
+    unfold denote
+    exact evalExpExact_sound body q h
   | rlog _ => simp [evalExact] at h
   | expMulLogSub _ _ _ => simp [evalExact] at h
 
