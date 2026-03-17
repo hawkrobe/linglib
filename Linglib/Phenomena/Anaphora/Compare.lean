@@ -1173,12 +1173,12 @@ theorem command_closure_system {Node : Type} (T : AbstractTree Node) :
 | G.9 | Union Theorem (both directions) | `relation_union_theorem`, `relation_union_theorem_reverse` |
 | G.9 | Non-minimal Upper Bounds | `nonminimal_in_maximalGenerator` |
 
-### Theorems with `sorry` (Kracht Infrastructure)
+### Kracht Infrastructure — Status
 
-| Reference | Issue |
-|-----------|-------|
-| Kracht Thm 2 | `tight_implies_fair` - tight → fair ✓ |
-| Kracht Thm 2 | `fair_implies_tight_exists` - fair → tight (needs choice) |
+| Reference | Status |
+|-----------|--------|
+| Kracht Thm 2 (→) | `tight_implies_fair` ✓ |
+| Kracht Thm 2 (←) | `fair_implies_tight_exists` — FALSE as stated (see counterexample in docstring). Replaced with `commandFromFunction_sub_commandRelation` ✓ |
 
 Note: Theorem 4 (Boundedness), Theorem 8 (Embeddability) are now fully proved using
 the Connected Ancestor Condition (CAC) added to AbstractTree.
@@ -1492,21 +1492,44 @@ theorem tight_implies_fair {Node : Type} (T : AbstractTree Node)
     -- Now tf.f(a) dom tf.f(b) AND tf.f(b) dom tf.f(a) → tf.f(a) = tf.f(b)
     exact hfneq (T.dom_antisymm _ _ hffafb hfbfa).symm
 
-/-- **Kracht Theorem 2** (converse sketch): Every fair command relation
-    comes from a tight associated function.
+/-! ### Kracht Theorem 2 converse — FALSE as originally stated
 
-    Proof idea: Given a fair relation C, define f(x) = minimal y s.t. (x,y) ∈ C.
-    The fairness condition ensures this f is well-defined and tight. -/
-theorem fair_implies_tight_exists {Node : Type} (T : AbstractTree Node)
-    (C : Set (Node × Node))
-    (hC_refl : ∀ a ∈ T.nodes, (a, a) ∈ C)
-    (hC_desc : ∀ a b c, (a, b) ∈ C → T.dom b c → (a, c) ∈ C)
-    (hC_fair : isFair T C)
-    (hC_from_prop : ∃ P, C = commandRelation T P) :
-    ∃ tf : TightAssociatedFunction T, commandFromFunction T tf.toAssociatedFunction = C := by
-  -- Construction: f(x) = minimal y ∈ UB(x, P)
-  -- This requires choice and well-foundedness of the dominance order
-  sorry
+The theorem `fair_implies_tight_exists` claimed: every fair `commandRelation T P`
+equals `commandFromFunction T tf` for some tight associated function tf.
+This is **false** because the two notions have different transitivity:
+
+- `commandFromFunction T af` is always transitive (via monotonicity + idempotence).
+- `commandRelation T P` can be non-transitive: at P-nodes with no P-ancestor,
+  `UB(a, P) = ∅` makes command vacuously universal.
+
+**Counterexample**: tree `root → p → a`, P = {p}.
+- (a, p) ∈ C_P and (p, root) ∈ C_P (UB(p,{p}) = ∅, vacuous).
+- But (a, root) ∉ C_P (UB(a,{p}) = {p}, and p does not dominate root).
+- No transitive relation equals C_P, hence no `commandFromFunction`.
+
+The correct relationship is `commandFromFunction ⊆ commandRelation` for the
+fixed-point property, proved below. -/
+
+/-- An associated function's command relation refines the property-based
+    command relation for its fixed-point set P = {x | f(x) = x}.
+
+    Forward direction: if f(a) dom b, then every P-upper-bound of a also
+    dominates b (via monotonicity: x dom a → f(x) dom f(a) → x dom f(a)). -/
+theorem commandFromFunction_sub_commandRelation {Node : Type} (T : AbstractTree Node)
+    (af : AssociatedFunction T) :
+    commandFromFunction T af ⊆
+    commandRelation T {x | af.f x = x} := by
+  intro ⟨a, b⟩ hab x ⟨hxa, hxP⟩
+  -- hab : f(a) dom b
+  -- hxa : x properly dom a (x dom a ∧ x ≠ a)
+  -- hxP : f(x) = x
+  -- Need: x dom b
+  -- By monotonicity: x dom a → f(x) dom f(a), so x dom f(a)
+  have hfxfa : T.dom (af.f x) (af.f a) := af.monotone x a hxa.1
+  rw [hxP] at hfxfa
+  -- hfxfa : x dom f(a)
+  -- hab : f(a) dom b
+  exact T.dom_trans x (af.f a) b hfxfa hab
 
 -- J.6: Union Elimination (Kracht Lemma 10-11)
 
@@ -1766,7 +1789,7 @@ theorem normalForm_meet_is_union {Node : Type} (T : AbstractTree Node) (P Q : Se
 | Kracht Reference | Name | Status |
 |------------------|------|--------|
 | Definition 1 | Associated Functions | `AssociatedFunction`, `TightAssociatedFunction` |
-| Theorem 2 | Fair = Tight | `tight_implies_fair` ✓, `fair_implies_tight_exists` (sorry) |
+| Theorem 2 | Fair = Tight | `tight_implies_fair` ✓, `fair_implies_tight_exists` FALSE → `commandFromFunction_sub_commandRelation` ✓ |
 | Proposition 6 | Composition Distributivity | `command_comp_inter_left` ✓, `command_comp_inter_left_rev` ✓ |
 | Theorem 8 | Distributoid Structure | `Distributoid` typeclass |
 | Theorem 9 | Normal Forms | `NormalForm`, `normalForm_meet_is_union` |
