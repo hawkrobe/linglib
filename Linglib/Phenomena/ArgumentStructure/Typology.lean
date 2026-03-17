@@ -1281,7 +1281,7 @@ example : sampleApplicativeCount = 4 := by native_decide
 -- Polysemy Cross-Validation (@cite{nordlinger-2023})
 -- ============================================================================
 
-/-- @cite{nordlinger-2023} (p. 88) reports that of the 175 languages in
+/-- @cite{nordlinger-2023} reports that of the 175 languages in
     @cite{maslova-nedjalkov-2013}'s sample, polysemous reflexive/reciprocal
     constructions are present in 60 (34%). In WALS terms, polysemy corresponds
     to Values 3 (mixed) and 4 (identical to reflexive). -/
