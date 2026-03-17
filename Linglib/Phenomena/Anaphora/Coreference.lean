@@ -200,8 +200,12 @@ def namePattern : CoreferencePattern := {
   antecedentDomain := none
 }
 
-/-- Reciprocal coreference pattern: requires a local, plural,
-    c-commanding antecedent (coordinated NP or plural NP). -/
+/-- Reciprocal coreference pattern: requires a c-commanding antecedent
+    that denotes a plurality. The antecedent can be syntactically singular
+    in some languages (e.g., Hungarian null pronouns bound by a plural
+    matrix subject; Rákosi 2019, @cite{dalrymple-haug-2024} §2).
+    The domain is local for the pronoun antecedent, but the reciprocal's
+    semantic contribution can scope wider (I-reading). -/
 def reciprocalPattern : CoreferencePattern := {
   anaphorType := .reciprocal
   requiresAntecedent := true

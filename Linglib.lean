@@ -449,6 +449,7 @@ import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.DiscourseParticles
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Hungarian.Morph
+import Linglib.Fragments.Wan.Reciprocals
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.ConsonantGradation
@@ -675,6 +676,7 @@ import Linglib.Phenomena.Anaphora.Typology
 import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.Anaphora.Studies.Spector2025
 import Linglib.Phenomena.Anaphora.Studies.Charlow2018
+import Linglib.Phenomena.Anaphora.Studies.DalrympleHaug2024
 import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
@@ -1628,6 +1630,7 @@ import Linglib.Theories.Semantics.Reference.Monsters
 import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
 import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke
+import Linglib.Theories.Semantics.Reference.Reciprocals
 import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
 import Linglib.Theories.Semantics.Intensional.Situations.Percus
 import Linglib.Theories.Semantics.Tense.Basic

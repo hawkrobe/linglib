@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.313] - 2026-03-16
+
+### Added
+- **Dalrymple & Haug (2024) formalization**: "Constraints on Reciprocal Scope" (*Linguistic Inquiry*, Early Access)
+  - `Theories/Semantics/Reference/Reciprocals.lean` — three anaphoric relations (binding =, group identity ∪, reciprocity R), two competing analyses (quantificational vs. relational), prediction functions with `AntecedentProperties`
+  - `Phenomena/Anaphora/Studies/DalrympleHaug2024.lean` — 12 scope judgments across 5 construction types, end-to-end argumentation chain proving relational analysis superior (`relational_superior`), refutation of HLM's distributor claim
+  - `Fragments/Wan/Reciprocals.lean` — Wan (Mande) logophoric pronoun *mɔ̄*, reflexive *ē*, reciprocal *ɔ̄ŋ*, ordinary 3pl *tú*; connection to Sells (1987) `LogophoricRole`
+  - Extended `Fragments/Hungarian/Reciprocals.lean` — singular antecedent data (Rákosi 2019), `allowsSingularAntecedent` / `singularAntecedentForcesWideScope`
+  - 3 bib entries: `dalrymple-haug-2024`, `haug-dalrymple-2020`, `heim-lasnik-may-1991`
+
+### Fixed
+- `Phenomena/Anaphora/Coreference.lean` — `reciprocalPattern` docstring corrected: antecedent can be syntactically singular in Hungarian (was incorrectly claiming plural antecedent universally required)
+
 ## [0.229.312] - 2026-03-16
 
 ### Changed
