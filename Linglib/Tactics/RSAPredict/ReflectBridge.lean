@@ -2,7 +2,6 @@ import Lean
 import Linglib.Core.Interval.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Tactics.RSAPredict.GoalParsing
 import Linglib.Tactics.RSAPredict.RSABuilder
 
 set_option autoImplicit false
@@ -34,6 +33,56 @@ open Lean Meta Elab Tactic
 open Linglib.Interval
 
 -- ============================================================================
+-- Policy Expression Parsing
+-- ============================================================================
+
+/-- Try to unfold an expression to `RationalAction.policy ra s a`. -/
+def unfoldToPolicy (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
+  let mut current := e
+  for _ in List.range 10 do
+    let fn := current.getAppFn
+    let args := current.getAppArgs
+    if fn.isConstOf ``Core.RationalAction.policy && args.size ≥ 6 then
+      return some (args[3]!, args[4]!, args[5]!)  -- ra, s, a
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
+/-- Extract RSA config and arguments from a policy expression.
+    Returns (cfg, u, w) where the expression is `cfg.L1 u w`. -/
+def parseL1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
+  if let some (ra, u, w) := ← unfoldToPolicy e then
+    let mut raC := ra
+    for _ in List.range 5 do
+      let fn := raC.getAppFn
+      let args := raC.getAppArgs
+      if fn.isConstOf ``RSA.RSAConfig.L1agent && args.size ≥ 5 then
+        let cfg := args[4]!
+        return some (cfg, u, w)
+      if let some ra' ← unfoldDefinition? raC then
+        raC := ra'.headBeta
+      else break
+  return none
+
+/-- Extract RSA config and arguments from a policy expression.
+    Returns (cfg, l, w, u) where the expression is `cfg.S1 l w u`. -/
+def parseS1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr × Expr)) := do
+  if let some (ra, w, u) := ← unfoldToPolicy e then
+    let mut raC := ra
+    for _ in List.range 5 do
+      let fn := raC.getAppFn
+      let args := raC.getAppArgs
+      if fn.isConstOf ``RSA.RSAConfig.S1agent && args.size ≥ 6 then
+        let cfg := args[4]!
+        let l := args[5]!
+        return some (cfg, l, w, u)
+      if let some ra' ← unfoldDefinition? raC then
+        raC := ra'.headBeta
+      else break
+  return none
+
+-- ============================================================================
 -- Persistent Reification Cache
 -- ============================================================================
 
@@ -58,7 +107,7 @@ private def nativeDecideProof (propType : Expr) : TacticM Expr := do
   return mvar
 
 /-- Detect L1_marginal in an expression, returning (cfg, u, P) without
-    evaluating the predicate. Lighter than `parseL1Marginal`. -/
+    evaluating the predicate. -/
 private def detectL1Marginal (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
   let mut current := e
   for _ in List.range 5 do
@@ -405,42 +454,5 @@ def tryDirectRExprEq (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := 
   catch e =>
     logInfo m!"rsa_predict: [direct/eq] failed: {e.toMessageData}"
     return false
-
--- ============================================================================
--- Reflection-Based Proof Builders (unified direct RExpr strategy)
--- ============================================================================
-
-/-- Try to prove `cfg.L1 u w1 > cfg.L1 u w2` via direct RExpr reification.
-    Returns true if successful, false to fall back to CProof. -/
-def tryReflectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool := do
-  let lhs ← mkAppM ``RSA.RSAConfig.L1 #[cfg, u, w₁]
-  let rhs ← mkAppM ``RSA.RSAConfig.L1 #[cfg, u, w₂]
-  tryDirectRExprCompare goal lhs rhs
-
-/-- Try to prove `cfg.L1agent.score u1 w1 > cfg.L1agent.score u2 w2` via reflection.
-    Used for marginal/cross-utterance comparisons at the score level. -/
-def tryReflectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : TacticM Bool := do
-  let l1agent ← mkAppM ``RSA.RSAConfig.L1agent #[cfg]
-  let lhs ← mkAppM ``Core.RationalAction.score #[l1agent, u₁, w₁]
-  let rhs ← mkAppM ``Core.RationalAction.score #[l1agent, u₂, w₂]
-  tryDirectRExprCompare goal lhs rhs
-
-/-- Try to prove `not (cfg.L1 u w1 > cfg.L1 u w2)` via reflection. -/
-def tryReflectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool := do
-  let lhs ← mkAppM ``RSA.RSAConfig.L1 #[cfg, u, w₁]
-  let rhs ← mkAppM ``RSA.RSAConfig.L1 #[cfg, u, w₂]
-  tryDirectRExprNotGt goal lhs rhs
-
-/-- Try to prove `cfg.S1 l w u1 > cfg.S1 l w u2` via reflection. -/
-def tryReflectS1Compare (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM Bool := do
-  let lhs ← mkAppM ``RSA.RSAConfig.S1 #[cfg, l, w, u₁]
-  let rhs ← mkAppM ``RSA.RSAConfig.S1 #[cfg, l, w, u₂]
-  tryDirectRExprCompare goal lhs rhs
-
-/-- Try to prove `not (cfg.S1 l w u1 > cfg.S1 l w u2)` via reflection. -/
-def tryReflectS1NotGt (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM Bool := do
-  let lhs ← mkAppM ``RSA.RSAConfig.S1 #[cfg, l, w, u₁]
-  let rhs ← mkAppM ``RSA.RSAConfig.S1 #[cfg, l, w, u₂]
-  tryDirectRExprNotGt goal lhs rhs
 
 end Linglib.Tactics.RSAPredict

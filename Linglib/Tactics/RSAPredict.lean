@@ -3,7 +3,6 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Core.Interval.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Tactics.RSAPredict.GoalParsing
 import Linglib.Tactics.RSAPredict.ReflectBridge
 
 set_option autoImplicit false

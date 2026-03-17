@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.312] - 2026-03-16
+
+### Changed
+- **`rsa_predict` tactic cleanup**: delete `GoalParsing.lean` (444 lines), consolidate surviving parsers (`unfoldToPolicy`, `parseL1Policy`, `parseS1Policy`) into `ReflectBridge.lean`, remove 5 unused wrapper functions (`tryReflectL1Compare`, `tryReflectL1ScoreGt`, `tryReflectL1NotGt`, `tryReflectS1Compare`, `tryReflectS1NotGt`)
+- Net reduction: ~415 lines of dead code removed across 3 files
+
 ## [0.229.311] - 2026-03-16
 
 ### Changed
