@@ -24,7 +24,7 @@ any two candidates equals their harmony score difference:
 
   `log(P(a)/P(b)) = H(a) − H(b)`
 
-This implies **logit uniformity** (@cite{flemming-2021} §3): adding one
+This implies **logit uniformity** (@cite{flemming-2021} §5.1, eq (10)): adding one
 violation of constraint j changes the logit by exactly −wⱼ, regardless
 of the violation profile elsewhere. NHG lacks this property because its
 noise variance σ_d depends on the violation profile.
@@ -144,7 +144,7 @@ theorem normalMaxEnt_choiceProb_eq {C : Type}
 -- § 4: MaxEnt Logit-Harmony Identity
 -- ============================================================================
 
-/-- **Logit uniformity** (MaxEnt diagnostic; @cite{flemming-2021} §3):
+/-- **Logit uniformity** (MaxEnt diagnostic; @cite{flemming-2021} §5.1):
     for softmax with α = 1, the log-odds between any two alternatives
     equals their score difference. Hence changing one score by −w
     changes the log-odds by exactly −w, regardless of context.
@@ -230,5 +230,78 @@ theorem harmonyScoreR_diff {C : Type}
     -((constraints.map (fun con =>
         con.weight * ((con.eval a : ℚ) - (con.eval b : ℚ)))).sum : ℝ) := by
   simp only [harmonyScoreR, ← Rat.cast_sub, harmonyScore_diff, Rat.cast_neg]
+
+-- ============================================================================
+-- § 6: Censored NHG (@cite{flemming-2021} §7.3)
+-- ============================================================================
+
+/-- Censored weight: noise is clamped so weights never go negative.
+
+    In censored NHG, the noisy weight is `max(0, w + n)` where `n ~ N(0,σ²)`.
+    This prevents negative weights (which would reverse constraint preferences)
+    and makes the effective noise variance depend on the weight magnitude:
+    constraints with larger weights are less affected by censoring. -/
+noncomputable def censoredWeight (w n : ℝ) : ℝ := max 0 (w + n)
+
+/-- Censored weights are non-negative by construction. -/
+theorem censoredWeight_nonneg (w n : ℝ) : 0 ≤ censoredWeight w n :=
+  le_max_left 0 _
+
+/-- Censored weights are monotone in the underlying weight. -/
+theorem censoredWeight_mono_weight {w₁ w₂ n : ℝ} (hw : w₁ ≤ w₂) :
+    censoredWeight w₁ n ≤ censoredWeight w₂ n :=
+  max_le_max_left 0 (by linarith)
+
+/-- **Weight sensitivity** (@cite{flemming-2021} §7.3): censoring is
+    non-trivial — different weights produce different censored values
+    for some noise realization.
+
+    The witness is `n = -w₁`: this zeroes out `w₁` but leaves `w₂ > 0`. -/
+theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
+    ∃ n : ℝ, censoredWeight w₁ n ≠ censoredWeight w₂ n := by
+  use -w₁
+  simp only [censoredWeight, add_neg_cancel, max_self]
+  rw [show w₂ + -w₁ = w₂ - w₁ from rfl]
+  have h_pos : 0 < w₂ - w₁ := sub_pos.mpr hw
+  rw [max_eq_right (le_of_lt h_pos)]
+  exact ne_of_lt h_pos
+
+-- ============================================================================
+-- § 7: Multi-Candidate NHG Covariance
+-- ============================================================================
+
+/-- NHG noise covariance between two score differences relative to a
+    reference candidate `a`:
+
+    `Cov(ε_b − ε_a, ε_c − ε_a) = σ² · Σₖ (cₖ(b) − cₖ(a)) · (cₖ(c) − cₖ(a))`
+
+    When this is non-zero, the score differences are correlated, and the
+    joint distribution over 3+ candidates is multivariate normal with
+    non-diagonal covariance — not reducible to independent binary
+    comparisons. This is why NHG violates IIA for 3+ candidates
+    (@cite{flemming-2021} §9). -/
+noncomputable def nhgCovariance {C : Type}
+    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b c : C) : ℝ :=
+  sigma ^ 2 * constraints.foldl (λ acc con =>
+    acc + ((con.eval b : ℝ) - (con.eval a : ℝ)) *
+          ((con.eval c : ℝ) - (con.eval a : ℝ))) 0
+
+/-- NHG covariance (ℚ, computable). -/
+def nhgCovarianceQ {C : Type}
+    (constraints : List (WeightedConstraint C)) (a b c : C) : ℚ :=
+  constraints.foldl (λ acc con =>
+    acc + ((con.eval b : ℚ) - (con.eval a : ℚ)) *
+          ((con.eval c : ℚ) - (con.eval a : ℚ))) 0
+
+/-- The NHG self-covariance `Cov(ε_b − ε_a, ε_b − ε_a)` equals
+    the variance `σ² · violationDiffSqSum`, recovering the binary case. -/
+theorem nhgCovariance_self {C : Type}
+    (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b : C) :
+    nhgCovariance constraints sigma a b b =
+    sigma ^ 2 * violationDiffSqSum constraints b a := by
+  simp only [nhgCovariance, violationDiffSqSum]
+  congr 1
+  congr 1 with acc con
+  ring
 
 end Theories.Phonology.HarmonicGrammar
