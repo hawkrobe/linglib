@@ -12,7 +12,8 @@ CAN form discontinuous reciprocals with "me" ('with'):
 "O Giannis filithike me ti Maria" ('John kissed with Maria')
 @cite{nordlinger-2023} ex. 27b, 36.
 
-Lexically formed per @cite{siloni-2008}'s analysis.
+Greek allows discontinuous reciprocals (@cite{nordlinger-2023} ex. 27b),
+which per Siloni's analysis implies lexical formation (Dimitriadis 2004, 2008).
 -/
 
 namespace Fragments.Greek.Reciprocals

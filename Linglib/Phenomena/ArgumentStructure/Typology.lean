@@ -90,8 +90,10 @@ inductive ReciprocalType where
       Icelandic "hvor...annad" (two independently inflected parts).
     - `recipPronoun`: Reciprocal pronoun — Russian "drug druga",
       Hausa "jùnan-mù". Free-standing pronominal form in object position.
-    - `recipClitic`: Reciprocal clitic — Wambaya "nyurrunyurru"
-      (bound pronominal). Intermediate between pronoun and affix.
+    - `recipClitic`: Reciprocal clitic — French/Czech "se",
+      Wambaya "-ngg-" (RR morpheme in auxiliary). Intermediate between
+      pronoun and affix; functionally verbal (valence-reducing in most
+      cases, though Wambaya retains bivalent syntax via ergative case).
     - `verbalAffix`: Morphological marking on the verb — Swahili "-ana",
       Hungarian "-oz-", Chicheŵa "-an-". Derives an intransitive
       (monovalent) verb from a transitive base.
@@ -113,11 +115,16 @@ inductive RecipStrategy where
 
 /-- Whether the strategy marks the NP/argument position (nominal strategy)
     or the verb/predicate (verbal strategy).
-    König & Kokutani (2006)'s primary typological distinction. -/
+    König & Kokutani (2006)'s primary typological distinction.
+
+    Clitics are classified as non-nominal: Evans (2008) treats them as
+    intermediate, but their valence behavior is typically verbal —
+    French/Czech "se" reduces valence (monovalent), and even Wambaya
+    "-ngg-" is morphologically bound to the auxiliary. -/
 def RecipStrategy.isNominal : RecipStrategy → Bool
   | .bipartiteNP     => true
   | .recipPronoun    => true
-  | .recipClitic     => true
+  | .recipClitic     => false
   | .verbalAffix     => false
   | .verbalAuxiliary => false
   | .lexical         => false
@@ -1335,7 +1342,9 @@ def rp_english : RecipProfile :=
   , reflexiveRelation := .distinctFromReflexive }
 
 /-- Russian: reciprocal pronoun "drug druga" (bivalent, distinct) plus
-    reflexive-identical verbal clitic "-sja"/"-s'" (monovalent, identical).
+    reflexive-identical verbal postfix "-sja"/"-s'" (monovalent, identical).
+    Unlike French "se" (a separable clitic), Russian "-sja" is a bound
+    suffix — classified as `.verbalAffix` per Evans (2008).
     @cite{nordlinger-2023} ex. 9, 31. -/
 def rp_russian : RecipProfile :=
   { language := "Russian", iso := "rus"
@@ -1370,10 +1379,12 @@ def rp_hungarian : RecipProfile :=
     distinct "l'un l'autre" (bivalent, bipartite NP).
     "se" reciprocals are syntactically formed per Siloni (2008) and
     CANNOT form discontinuous reciprocals (@cite{nordlinger-2023} ex. 39).
-    @cite{nordlinger-2023} ex. 28, 35, 39, 47. -/
+    @cite{nordlinger-2023} ex. 28, 35, 39, 47.
+    "se" is a clitic, not an affix — @cite{nordlinger-2023} p. 83:
+    "the clitics *se* in French and Czech." -/
 def rp_french : RecipProfile :=
   { language := "French", iso := "fra"
-  , primaryStrategy := .verbalAffix
+  , primaryStrategy := .recipClitic
   , secondaryStrategy := some .bipartiteNP
   , valency := .monovalent
   , formation := some .syntactic
@@ -1392,14 +1403,14 @@ def rp_greek : RecipProfile :=
   , reflexiveRelation := .mixed }
 
 /-- German: reflexive pronoun "sich" (bivalent — fills object position,
-    identical to reflexive) plus distinct reciprocal "einander"
-    (bivalent, bipartite NP). Both strategies preserve transitivity
+    identical to reflexive) plus distinct reciprocal pronoun "einander"
+    (bivalent, single-word pronoun). Both strategies preserve transitivity
     because the reciprocal form occupies the object slot.
     @cite{nordlinger-2023} via WALS Ch 106. -/
 def rp_german : RecipProfile :=
   { language := "German", iso := "deu"
   , primaryStrategy := .recipPronoun
-  , secondaryStrategy := some .bipartiteNP
+  , secondaryStrategy := some .recipPronoun
   , valency := .bivalent
   , reflexiveRelation := .mixed }
 
@@ -1412,8 +1423,9 @@ def rp_mandarin : RecipProfile :=
   , valency := .monovalent
   , reflexiveRelation := .distinctFromReflexive }
 
-/-- Wambaya: reciprocal clitic "nyurrunyurru". Identical to reflexive.
-    @cite{nordlinger-2023} ex. 11 (citing Nordlinger 1998). -/
+/-- Wambaya: reciprocal clitic "-ngg-" (RR morpheme in auxiliary).
+    Identical to reflexive.
+    @cite{nordlinger-2023} ex. 11 (citing Nordlinger 1998, p. 142). -/
 def rp_wambaya : RecipProfile :=
   { language := "Wambaya", iso := "wmb"
   , primaryStrategy := .recipClitic
@@ -1439,10 +1451,11 @@ def rp_chichewa : RecipProfile :=
 
 /-- Czech: reflexive clitic "se" (monovalent, identical to reflexive).
     Syntactically formed per Siloni — cannot form discontinuous reciprocals.
-    @cite{nordlinger-2023} ex. 29; Siloni (2008). -/
+    @cite{nordlinger-2023} ex. 29; Siloni (2008).
+    "se" is a clitic — @cite{nordlinger-2023} p. 83. -/
 def rp_czech : RecipProfile :=
   { language := "Czech", iso := "ces"
-  , primaryStrategy := .verbalAffix
+  , primaryStrategy := .recipClitic
   , valency := .monovalent
   , formation := some .syntactic
   , reflexiveRelation := .identicalToReflexive }
@@ -1467,11 +1480,21 @@ theorem nominal_strategy_bivalent :
     (allRecipProfiles.filter fun p => p.primaryStrategy.isNominal).all
       fun p => p.valency == .bivalent := by native_decide
 
-/-- Conversely, all verbal-strategy profiles where the primary strategy
-    is a verbal affix are monovalent (in our sample). -/
+/-- Verbal affixes (Swahili "-ana", Hungarian "-oz-", Greek nonactive,
+    Chicheŵa "-an-") are uniformly monovalent in our sample. -/
 theorem verbal_affix_monovalent :
     (allRecipProfiles.filter fun p => p.primaryStrategy == .verbalAffix).all
       fun p => p.valency == .monovalent := by native_decide
+
+/-- Clitics (French/Czech "se") are also monovalent — the clitic
+    absorbs the object argument. Wambaya "-ngg-" is the exception:
+    bivalent despite being a clitic (ergative case preserves transitivity).
+    @cite{nordlinger-2023} §3.2; Evans et al. (2007). -/
+theorem clitic_mostly_monovalent :
+    let clitics := allRecipProfiles.filter fun p => p.primaryStrategy == .recipClitic
+    -- 2 of 3 clitics are monovalent (French, Czech); Wambaya is bivalent
+    (clitics.filter fun p => p.valency == .monovalent).length = 2 ∧
+    (clitics.filter fun p => p.valency == .bivalent).length = 1 := by native_decide
 
 -- ============================================================================
 -- Siloni's Discontinuity Prediction (@cite{nordlinger-2023}, §3.3)
@@ -1655,7 +1678,7 @@ open Core.Morphology in
     (the participants are encoded in a plural subject).
 
     Example: "pend-" (love) → "pend-an-" (love each other)
-    @cite{nordlinger-2023} ex. 3. -/
+    @cite{nordlinger-2023} ex. 40 (citing Dimitriadis 2004). -/
 def swahiliReciprocalRule : MorphRule Bool :=
   { category := .valence
   , value := "reciprocal"
@@ -1709,11 +1732,13 @@ def polysemy_russian : RecipPolysemyPattern :=
 def polysemy_french : RecipPolysemyPattern :=
   { language := "French", readings := [.reciprocal, .reflexive, .collective] }
 
-/-- Wambaya "nyurrunyurru": reciprocal + reflexive (identical forms). -/
+/-- Wambaya "-ngg-" (RR): reciprocal + reflexive (identical forms). -/
 def polysemy_wambaya : RecipPolysemyPattern :=
   { language := "Wambaya", readings := [.reciprocal, .reflexive] }
 
-/-- Swahili "-an-": reciprocal + sociative + collective. -/
+/-- Swahili "-an-": reciprocal + sociative + collective.
+    UNVERIFIED: sociative/collective readings inferred from Bantu
+    literature; not specifically discussed in @cite{nordlinger-2023}. -/
 def polysemy_swahili : RecipPolysemyPattern :=
   { language := "Swahili", readings := [.reciprocal, .sociative, .collective] }
 

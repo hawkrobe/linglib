@@ -10,7 +10,7 @@ it reduces valency by removing the object argument. The reciprocal
 participants are encoded as a plural subject.
 
 Example: "pend-" (love) → "pend-an-a" (love each other)
-@cite{nordlinger-2023} ex. 3.
+@cite{nordlinger-2023} ex. 40 (citing Dimitriadis 2004).
 
 The reciprocal affix is distinct from the reflexive prefix "ji-".
 -/

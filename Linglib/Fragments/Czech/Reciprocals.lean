@@ -10,7 +10,8 @@ CANNOT form discontinuous reciprocals.
 
 @cite{nordlinger-2023} ex. 29.
 
-WALS Ch 106 classifies Czech as "identical to reflexive."
+Czech is not in the WALS Ch 106 sample, but "se" is shared between
+reflexive and reciprocal uses, consistent with "identical to reflexive."
 -/
 
 namespace Fragments.Czech.Reciprocals

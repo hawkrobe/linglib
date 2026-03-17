@@ -9,8 +9,10 @@ German has two reciprocal strategies:
 1. **"sich"** — reflexive pronoun, also used for reciprocal (bivalent).
    Occupies the object position; both "sich" uses preserve transitivity.
 
-2. **"einander"** — dedicated reciprocal pronoun (bivalent, bipartite NP).
-   Unambiguously reciprocal, used to disambiguate from reflexive reading.
+2. **"einander"** — dedicated reciprocal pronoun (bivalent).
+   A single-word pronoun (not a bipartite NP like English "each other"
+   or Icelandic "hvor...annad"). Unambiguously reciprocal, used to
+   disambiguate from reflexive reading.
 
 WALS Ch 106 classifies German as "mixed" because "sich" is shared
 between reflexive and reciprocal uses.
