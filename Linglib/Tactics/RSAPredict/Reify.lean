@@ -466,6 +466,21 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                   else ⟨-1000, 1000⟩
     return ← cacheReturn cache key (rexpr, bounds)
 
+  -- Real.sqrt
+  if fn.isConstOf ``Real.sqrt && args.size ≥ 1 then
+    let (ra, ba) ← reifyToRExpr cache args[0]! (depth - 1)
+    let rexpr := mkApp (mkConst ``RExpr.rsqrt) ra
+    -- √[lo,hi] ⊆ [√lo, √hi] for nonneg; conservative [0,√hi] otherwise
+    let bounds : MetaBounds :=
+      if ba.lo > 0 then
+        let sqLo := (Linglib.Interval.expPoint ((safeLogBounds ba.lo).1 / 2)).lo
+        let sqHi := (Linglib.Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
+        ⟨sqLo, sqHi⟩
+      else ⟨0, if ba.hi > 0 then
+        (Linglib.Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
+      else 1⟩
+    return ← cacheReturn cache key (rexpr, bounds)
+
   -- If-then-else (iteZero for x=0 conditions)
   if fn.isConstOf ``ite && args.size ≥ 5 then
     let cond := args[1]!
@@ -487,19 +502,12 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                         else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
           return ← cacheReturn cache key (rexpr, bounds)
       -- Bool condition: ite ((expr) = true) or ite ((expr) = false)
-      -- Try native evaluation first (fast, bypasses maxRecDepth), then whnf fallback
+      -- Evaluate the Bool LHS to resolve the branch.
       if cArgs[0]!.isConstOf ``Bool then
         let rhsVal ← whnf cArgs[2]!
         let rhsIsTrue := rhsVal.isConstOf ``Bool.true
         let rhsIsFalse := rhsVal.isConstOf ``Bool.false
-        -- Try native Bool evaluation (handles complex meaning functions like IE)
-        if let some boolResult ← tryEvalBool cArgs[1]! then
-          let lhsMatchesRhs := (boolResult && rhsIsTrue) || (!boolResult && rhsIsFalse)
-          if lhsMatchesRhs then
-            return ← reifyToRExpr cache thenBr (depth - 1)
-          else
-            return ← reifyToRExpr cache elseBr (depth - 1)
-        -- Fallback: whnf (for expressions that can't be natively evaluated)
+        -- Try whnf first (fast for simple Bools)
         let boolVal ← whnf cArgs[1]!
         let lhsIsTrue := boolVal.isConstOf ``Bool.true
         let lhsIsFalse := boolVal.isConstOf ``Bool.false
@@ -507,6 +515,21 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
           return ← reifyToRExpr cache thenBr (depth - 1)
         else if (lhsIsTrue && rhsIsFalse) || (lhsIsFalse && rhsIsTrue) then
           return ← reifyToRExpr cache elseBr (depth - 1)
+        -- Fallback: full-transparency whnf (for decide-based meaning functions)
+        let boolAll ← withTransparency .all <| whnf cArgs[1]!
+        let lhsIsTrue2 := boolAll.isConstOf ``Bool.true
+        let lhsIsFalse2 := boolAll.isConstOf ``Bool.false
+        if (lhsIsTrue2 && rhsIsTrue) || (lhsIsFalse2 && rhsIsFalse) then
+          return ← reifyToRExpr cache thenBr (depth - 1)
+        else if (lhsIsTrue2 && rhsIsFalse) || (lhsIsFalse2 && rhsIsTrue) then
+          return ← reifyToRExpr cache elseBr (depth - 1)
+        -- Last resort: native evaluation (slow, compiles the expression)
+        if let some boolResult ← tryEvalBool cArgs[1]! then
+          let lhsMatchesRhs := (boolResult && rhsIsTrue) || (!boolResult && rhsIsFalse)
+          if lhsMatchesRhs then
+            return ← reifyToRExpr cache thenBr (depth - 1)
+          else
+            return ← reifyToRExpr cache elseBr (depth - 1)
     -- Transparent: whnf fallback
     let e' ← whnf e
     if !e.equal e' then
@@ -543,6 +566,38 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
           let e' ← whnf e
           if !e.equal e' then
             return ← reifyToRExpr cache e' (depth - 1)
+    -- Decidable.rec with Bool equality prop (e.g., `if b then 1 else 0`):
+    -- Evaluate the Bool LHS with full-transparency whnf to determine the branch.
+    if prop.isAppOfArity ``Eq 3 then
+      let propArgs := prop.getAppArgs
+      if propArgs[0]!.isConstOf ``Bool then
+        let lhs := propArgs[1]!
+        let rhs := propArgs[2]!
+        let rhsWhnf ← whnf rhs
+        let rhsIsTrue := rhsWhnf.isConstOf ``Bool.true
+        let rhsIsFalse := rhsWhnf.isConstOf ``Bool.false
+        let boolVal ← withTransparency .all <| whnf lhs
+        let lhsIsTrue := boolVal.isConstOf ``Bool.true
+        let lhsIsFalse := boolVal.isConstOf ``Bool.false
+        if (lhsIsTrue && rhsIsTrue) || (lhsIsFalse && rhsIsFalse) then
+          let dummyProof := mkApp2 (mkConst ``sorryAx [levelZero]) prop (toExpr true)
+          let body := (Expr.app isTrueBr dummyProof).headBeta
+          return ← reifyToRExpr cache body (depth - 1)
+        else if (lhsIsTrue && rhsIsFalse) || (lhsIsFalse && rhsIsTrue) then
+          let negProp ← mkAppM ``Not #[prop]
+          let dummyProof := mkApp2 (mkConst ``sorryAx [levelZero]) negProp (toExpr true)
+          let body := (Expr.app isFalseBr dummyProof).headBeta
+          return ← reifyToRExpr cache body (depth - 1)
+    -- Last resort: try whnf on the full Decidable instance
+    let decInst := args[4]!
+    let reduced ← withTransparency .all <| whnf decInst
+    let reducedFn := reduced.getAppFn
+    if reducedFn.isConstOf ``isTrue || reducedFn.isConstOf ``Decidable.isTrue then
+      let body := (Expr.app isTrueBr reduced.getAppArgs.back!).headBeta
+      return ← reifyToRExpr cache body (depth - 1)
+    else if reducedFn.isConstOf ``isFalse || reducedFn.isConstOf ``Decidable.isFalse then
+      let body := (Expr.app isFalseBr reduced.getAppArgs.back!).headBeta
+      return ← reifyToRExpr cache body (depth - 1)
 
   -- Structural sum unfolding: Finset.sum Finset.univ f  and
   -- Finset.sum (Finset.filter p Finset.univ) f
@@ -798,6 +853,25 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
       let bounds := if ba.lo > 0 then
                       ⟨(safeLogBounds ba.lo).1, (safeLogBounds ba.hi).2⟩
                     else ⟨-1000, 1000⟩
+      return ← cacheReturn cache key (rexpr, bounds)
+    let sqrtMatch ← withNewMCtxDepth do
+      try
+        let argM ← mkFreshExprMVar (mkConst ``Real)
+        if ← isDefEq e (← mkAppM ``Real.sqrt #[argM]) then
+          return some (← instantiateMVars argM)
+        else return none
+      catch _ => return none
+    if let some arg := sqrtMatch then
+      let (ra, ba) ← reifyToRExpr cache arg (depth - 1)
+      let rexpr := mkApp (mkConst ``RExpr.rsqrt) ra
+      let bounds : MetaBounds :=
+        if ba.lo > 0 then
+          let sqLo := (Linglib.Interval.expPoint ((safeLogBounds ba.lo).1 / 2)).lo
+          let sqHi := (Linglib.Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
+          ⟨sqLo, sqHi⟩
+        else ⟨0, if ba.hi > 0 then
+          (Linglib.Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
+        else 1⟩
       return ← cacheReturn cache key (rexpr, bounds)
     let invMatch ← withNewMCtxDepth do
       try

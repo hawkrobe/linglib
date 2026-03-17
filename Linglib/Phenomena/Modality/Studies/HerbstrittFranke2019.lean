@@ -1,7 +1,6 @@
 import Linglib.Core.Distributions
 import Linglib.Core.Divergence
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
 
 /-!
@@ -377,120 +376,33 @@ noncomputable def hfCfg (access : ℕ) : RSAConfig SimpleExpr UrnState where
     · exact le_refl 0
   worldPrior_nonneg _ := by positivity
 
--- ============================================================================
--- §6. Predictions
--- ============================================================================
+-- ── §6. Qualitative predictions (documented, not proved) ──
 
 /-!
-### `rsa_predict` Limitation: `Real.sqrt` Not Supported
+### Model Predictions
 
-The following predictions document the model's expected behavior. All use
-`sorry` because the `s1Score` in `hfCfg` contains `Core.Divergence.negHellingerDist`,
-which unfolds to `-(√(1 - Σ_s √(bel_s · l0_s)))` — involving `Real.sqrt`.
+The model's qualitative predictions are documented here but not proved via
+`rsa_predict` because the Hellinger distance S1 score creates three nested
+`Finset.sum` expansions (11 terms each), making reification too slow for
+the generic reifier. The model's correctness is established by the
+computable ℚ-level verifications above (belief formation, threshold
+semantics, complex expressions).
 
-The `rsa_predict` tactic reifies ℝ expressions into `RExpr` (see
-`Core.Interval.ReflectInterval`), which has constructors for `exp`, `log`,
-`rpow` (ℕ exponent), `add`, `mul`, `div`, `sub`, `neg`, `inv`, and
-`expMulLogSub` — but **no `sqrt` constructor**. This makes it impossible
-to evaluate Hellinger distance via interval arithmetic.
+**Production (S1)**:
+- Full access (a=10), 8/10 red: S1 prefers "probably" over "certainly"
+  (s=8 is outside "certainly"'s extension, so HD(δ₈, L0("certainly")) = 1)
+- Partial access (a=8), 8/8 red: S1 prefers "certainly" over "probably"
+  (belief concentrates on s=9–10, close to L0("certainly") = δ₁₀)
+- Full access, 5/10 red: S1 prefers "possibly" over "probably"
+- Low uncertainty (a=8), 6/8 red: S1 prefers "probably" over "possibly"
+- High uncertainty (a=4), 3/4 red: S1 prefers "probably" over "certainly"
 
-Contrast with @cite{goodman-stuhlmuller-2013}, whose s1Score uses
-`exp(α * Σ bel * log(l0))` — all operations in `RExpr`'s language,
-enabling `rsa_predict` to close all 11 findings.
-
-To support Hellinger-based models, `RExpr` would need:
-1. A `.rsqrt : RExpr → RExpr` constructor
-2. `QInterval.sqrt` with containment proof: `x ∈ [a, b] → √x ∈ [√a, √b]`
-3. Integration into `RExpr.eval` and `RExpr.eval_sound`
+**Interpretation (L1)**:
+- After "certainly" (a=10): L1 concentrates mass on s=10
+- After "probably" (a=8): L1 assigns more mass to s=8 than s=4
+- After "possibly" (a=10): scalar implicature — L1 assigns more mass to
+  s=5 than s=9 (parallels "some" implicature in @cite{goodman-stuhlmuller-2013})
 -/
-
--- ── §6a. Production predictions (S1 level) ──
-
-/-- Full access (a=10), 8/10 red: S1 prefers "probably" over "certainly".
-    The speaker knows s = 8. "certainly" is FALSE at s=8 (requires s=10),
-    while "probably" is TRUE (requires s ≥ 6). L0("certainly") = δ₁₀
-    (point mass at s=10), so HD(δ₈, δ₁₀) = 1 (maximal distance —
-    disjoint support). L0("probably") = Uniform{6..10}, giving
-    HD(δ₈, Uniform{6..10}) ≈ 0.744. The speaker rationally avoids
-    "certainly" even though 8/10 is a high proportion.
-
-    **sorry**: rsa_predict cannot reify `Real.sqrt` in `negHellingerDist`. -/
-theorem production_probably_over_certainly_at_8_10 :
-    (hfCfg 10).S1 ⟨8, by omega⟩ ⟨8, by omega⟩ .probably >
-    (hfCfg 10).S1 ⟨8, by omega⟩ ⟨8, by omega⟩ .certainly := by
-  sorry
-
-/-- Partial access (a=8), 8/8 red: S1 prefers "certainly" over "probably".
-    With access 8, the speaker drew 8 balls and saw all red. Her belief
-    concentrates on high states: P(s=10) = 45/55, P(s=9) = 9/55,
-    P(s=8) = 1/55. This belief is close to L0("certainly") = δ₁₀
-    (HD ≈ 0.31) but far from L0("probably") = Uniform{6..10} (HD ≈ 0.60).
-
-    This contrasts with full access (a=10, obs=8): there the speaker KNOWS
-    s=8 and "certainly" is false, so she prefers "probably". Here the
-    speaker's uncertainty about whether s=9 or s=10 makes "certainly" the
-    pragmatically appropriate choice — exactly the phenomenon that Hellinger
-    distance (vs KL divergence) is designed to capture. -/
-theorem production_certainly_at_8_8 :
-    (hfCfg 8).S1 ⟨8, by omega⟩ ⟨10, by omega⟩ .certainly >
-    (hfCfg 8).S1 ⟨8, by omega⟩ ⟨10, by omega⟩ .probably := by
-  sorry
-
-/-- Full access (a=10), 5/10 red: S1 prefers "possibly" over "probably".
-    "probably" requires s ≥ 6, so it is FALSE at s=5. "possibly" (s ≥ 3)
-    is true, and its L0 posterior is closer to the speaker's belief (point
-    mass at s=5) than "probably not" (s=0..4). -/
-theorem production_possibly_at_5_10 :
-    (hfCfg 10).S1 ⟨5, by omega⟩ ⟨5, by omega⟩ .possibly >
-    (hfCfg 10).S1 ⟨5, by omega⟩ ⟨5, by omega⟩ .probably := by
-  sorry
-
-/-- Low uncertainty (a=8), 6/8 red: S1 prefers "probably" over "possibly".
-    The speaker's belief (concentrated around s=7–8) is closer to L0 given
-    "probably" (s=6..10) than L0 given "possibly" (s=3..10). -/
-theorem production_probably_at_6_8 :
-    (hfCfg 8).S1 ⟨6, by omega⟩ ⟨7, by omega⟩ .probably >
-    (hfCfg 8).S1 ⟨6, by omega⟩ ⟨7, by omega⟩ .possibly := by
-  sorry
-
-/-- High uncertainty (a=4), 3/4 red: S1 prefers "probably" over "certainly".
-    The speaker's diffuse belief (spread over s=3..9, peaking at s=8) is
-    far from L0 given "certainly" (only s=10, where bel=0 → HD=1).
-    "probably" (s=6..10) captures the high-probability states, giving a
-    much closer match (HD ≈ 0.44). -/
-theorem production_probably_over_certainly_at_3_4 :
-    (hfCfg 4).S1 ⟨3, by omega⟩ ⟨7, by omega⟩ .probably >
-    (hfCfg 4).S1 ⟨3, by omega⟩ ⟨7, by omega⟩ .certainly := by
-  sorry
-
--- ── §6b. Interpretation predictions (L1 level) ──
-
-/-- After "certainly" with access = 10, L1 assigns all mass to s = 10.
-    With full access, "certainly" is literally true only at s=10, and the
-    speaker would only say "certainly" if she observed 10/10 red. -/
-theorem interp_certainly_a10 :
-    (hfCfg 10).L1 .certainly ⟨10, by omega⟩ >
-    (hfCfg 10).L1 .certainly ⟨9, by omega⟩ := by
-  sorry
-
-/-- After "probably" with access = 8, L1 assigns more mass to s=8 than s=4.
-    "probably" is true at s=6..10, and the speaker with access 8 who says
-    "probably" likely observed a high proportion of red balls. -/
-theorem interp_probably_a8 :
-    (hfCfg 8).L1 .probably ⟨8, by omega⟩ >
-    (hfCfg 8).L1 .probably ⟨4, by omega⟩ := by
-  sorry
-
-/-- After "possibly" with access = 10, L1 assigns more mass to s=5 than s=9.
-    The speaker with full access who says "possibly" (rather than "probably"
-    or "certainly") reveals that the proportion is moderate — in the
-    "possibly but not probably" range (s=3..5). This is a scalar implicature
-    driven by Hellinger distance, paralleling the "some" implicature in
-    @cite{goodman-stuhlmuller-2013}. -/
-theorem interp_possibly_implicature_a10 :
-    (hfCfg 10).L1 .possibly ⟨5, by omega⟩ >
-    (hfCfg 10).L1 .possibly ⟨9, by omega⟩ := by
-  sorry
 
 -- ============================================================================
 -- §7. Empirical Data
@@ -572,12 +484,12 @@ architecture formalized in `ScalarImplicatures/Studies/GoodmanStuhlmuller2013.le
 | Meaning | Boolean (some, all) | threshold (probably, certainly) |
 | Utility | KL divergence | **Hellinger distance** |
 | RSAConfig.s1Score | `exp(α * Σ bel * log(l0))` | `exp(α * negHellingerDist bel l0)` |
-| `rsa_predict` | all 11 findings proved | **blocked by `Real.sqrt`** |
+| `rsa_predict` | all 11 findings proved | too slow (3 nested Σ₁₁) |
 | Higher-order | access modulates implicature | access modulates expression choice |
 
 The key structural difference is the speaker utility:
 - G&S 2013: expected log-likelihood ∝ −D_KL, uses `Real.log` (in `RExpr`)
-- H&F 2019: negative Hellinger distance, uses `Real.sqrt` (NOT in `RExpr`)
+- H&F 2019: negative Hellinger distance, uses `Real.sqrt` (in `RExpr` via `.rsqrt`)
 
 Both models use `Core.Distributions.hypergeometric` for the observation model
 and share the same RSAConfig pattern (access-parametric, Latent = Obs).

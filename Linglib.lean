@@ -157,6 +157,7 @@ import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
 import Linglib.Core.Interval.LogInterval
+import Linglib.Core.Interval.SqrtInterval
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Core.Subjectivity
 import Linglib.Core.WALS.Languages

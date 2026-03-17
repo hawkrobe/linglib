@@ -2,6 +2,7 @@ import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.LogInterval
 import Linglib.Core.Interval.RpowInterval
+import Linglib.Core.Interval.SqrtInterval
 
 set_option autoImplicit false
 
@@ -56,6 +57,9 @@ inductive RExpr where
       `eval` uses algebraic identity x^α * exp(-α*c) when α is a concrete natural,
       avoiding Padé log+exp calls that produce enormous rationals. -/
   | expMulLogSub : RExpr → RExpr → RExpr → RExpr
+  /-- `rsqrt x` = √x (Real.sqrt). `denote` uses `Real.sqrt`, `eval` uses
+      `sqrtInterval` (= exp(log/2)) for positive intervals, exact 0 for [0,0]. -/
+  | rsqrt : RExpr → RExpr
   deriving Repr, Inhabited, BEq, DecidableEq
 
 -- ============================================================================
@@ -81,6 +85,7 @@ noncomputable def RExpr.denote : RExpr → ℝ
   | .inv a => a.denote⁻¹
   | .iteZero c t e => if c.denote = 0 then t.denote else e.denote
   | .expMulLogSub α x cost => Real.exp (α.denote * (Real.log x.denote - cost.denote))
+  | .rsqrt a => Real.sqrt a.denote
 
 -- ============================================================================
 -- Evaluation: RExpr → QInterval (computable)
@@ -169,6 +174,11 @@ def RExpr.eval : RExpr → QInterval
         let prod := c (rα.mul diff)
         c (expInterval prod)
     else ⟨0, 1, by norm_num⟩
+  | .rsqrt a =>
+    let ra := a.eval
+    if h : 0 < ra.lo then c (sqrtInterval ra h)
+    else if ra.lo == 0 && ra.hi == 0 then QInterval.exact 0  -- sqrt(0) = 0
+    else ⟨0, 1, by norm_num⟩  -- fallback (guarded by evalValid)
 
 -- ============================================================================
 -- Validity: eval avoids unsound fallback branches
@@ -209,6 +219,8 @@ def RExpr.evalValid : RExpr → Bool
      else t.evalValid && e.evalValid)
   | .expMulLogSub α x cost =>
     α.evalValid && x.evalValid && cost.evalValid && decide (0 < x.eval.lo)
+  | .rsqrt a => a.evalValid && (decide (0 < a.eval.lo) ||
+    (a.eval.lo == 0 && a.eval.hi == 0))  -- sqrt(0) = 0
 
 -- ============================================================================
 -- tryExtractLogProduct: pattern-match sum-of-integer-logs
@@ -333,6 +345,11 @@ def RExpr.evalBoth : RExpr → QInterval × Bool
         let diff := c (logx.sub rc)
         let prod := c (rα.mul diff)
         (c (expInterval prod), vbase)
+    else (⟨0, 1, by norm_num⟩, false)
+  | .rsqrt a =>
+    let (ra, va) := a.evalBoth
+    if h : 0 < ra.lo then (c (sqrtInterval ra h), va)
+    else if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
     else (⟨0, 1, by norm_num⟩, false)
 
 -- ============================================================================
@@ -548,6 +565,15 @@ theorem RExpr.evalBoth_sound : ∀ (e : RExpr),
           rw [show ((α.evalBoth.1).lo.num.toNat : ℝ) = 0 from by exact_mod_cast h_n0]
           rw [Real.rpow_zero]; exact_mod_cast QInterval.exact_containsReal 1
         exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal h_xpow h_expF)
+  | rsqrt a iha =>
+    intro hv; dsimp only [evalBoth, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 <;>
+      try exact absurd rfl hv
+    · exact QInterval.coarsen_containsReal _ (sqrtInterval_containsReal h1 (iha hv))
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h2
+      have haz := interval_eq_zero (iha hv) h2.1 h2.2
+      rw [haz, Real.sqrt_zero]
+      exact_mod_cast QInterval.exact_containsReal (0 : ℚ)
 
 -- ============================================================================
 -- Soundness: eval_sound
@@ -795,6 +821,27 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
             (QInterval.coarsen_containsReal _ (QInterval.sub_containsReal
               (QInterval.coarsen_containsReal _ (logInterval_containsReal hx ihx)) ihc)))))
     · exact absurd hxpos ‹_›
+  | .rsqrt a => by
+    intro hv
+    simp only [evalValid, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq,
+               decide_eq_true_eq] at hv
+    have iha := eval_sound a hv.1
+    simp only [eval, denote]
+    split
+    · exact QInterval.coarsen_containsReal _ (sqrtInterval_containsReal ‹_› iha)
+    · split
+      · rename_i _ hzero
+        simp only [Bool.and_eq_true, beq_iff_eq] at hzero
+        have haz := interval_eq_zero iha hzero.1 hzero.2
+        rw [haz, Real.sqrt_zero]
+        exact_mod_cast QInterval.exact_containsReal (0 : ℚ)
+      · -- fallback: contradiction with evalValid
+        rename_i hnotpos hnotzero
+        exfalso
+        rcases hv.2 with hpos | hboth
+        · exact hnotpos hpos
+        · simp only [Bool.and_eq_true, beq_iff_eq] at hboth hnotzero
+          exact hnotzero hboth
 
 -- ============================================================================
 -- Separation theorem for reflected expressions
@@ -990,6 +1037,11 @@ def RExpr.evalBothOpt : RExpr → QInterval × Bool
         let prod := c (rα.mul diff)
         (c (expInterval prod), vbase)
     else (⟨0, 1, by norm_num⟩, false)
+  | .rsqrt a =>
+    let (ra, va) := a.evalBothOpt
+    if h : 0 < ra.lo then (c (sqrtInterval ra h), va)
+    else if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
+    else (⟨0, 1, by norm_num⟩, false)
 
 -- `unfold evalRexpOpt` expands exactly one level when the scrutinee has a
 -- specific constructor head, leaving recursive `evalRexpOpt` calls opaque.
@@ -1117,10 +1169,12 @@ private theorem evalRexpOpt_sound : ∀ (inner : RExpr),
   -- ══════════════════════════════════════════════════════════════════════
   | .nat _ | .ratCast _ | .div _ _ | .neg _ | .sub _ _ | .rexp _
   | .rlog _ | .rpow _ _ | .inv _ | .iteZero _ _ _ | .expMulLogSub _ _ _
+  | .rsqrt _
   | .mul (.ratCast _) _ | .mul (.add _ _) _ | .mul (.mul _ _) _
   | .mul (.div _ _) _ | .mul (.neg _) _ | .mul (.sub _ _) _
   | .mul (.rexp _) _ | .mul (.rlog _) _ | .mul (.rpow _ _) _
-  | .mul (.inv _) _ | .mul (.iteZero _ _ _) _ | .mul (.expMulLogSub _ _ _) _ => fun hv => by
+  | .mul (.inv _) _ | .mul (.iteZero _ _ _) _ | .mul (.expMulLogSub _ _ _) _
+  | .mul (.rsqrt _) _ => fun hv => by
     unfold RExpr.evalRexpOpt at hv ⊢
     exact QInterval.coarsen_containsReal _
       (expInterval_containsReal (RExpr.evalBoth_sound _ hv))
@@ -1295,6 +1349,15 @@ theorem RExpr.evalBothOpt_sound : ∀ (e : RExpr),
           rw [show ((α.evalBothOpt.1).lo.num.toNat : ℝ) = 0 from by exact_mod_cast h_n0]
           rw [Real.rpow_zero]; exact_mod_cast QInterval.exact_containsReal 1
         exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal h_xpow h_expF)
+  | rsqrt a iha =>
+    intro hv; dsimp only [evalBothOpt, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 <;>
+      try exact absurd rfl hv
+    · exact QInterval.coarsen_containsReal _ (sqrtInterval_containsReal h1 (iha hv))
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h2
+      have haz := interval_eq_zero (iha hv) h2.1 h2.2
+      rw [haz, Real.sqrt_zero]
+      exact_mod_cast QInterval.exact_containsReal (0 : ℚ)
 
 /-- Combined check: eval + validity + separation in a single pass via `evalBoth`.
     Each subexpression is evaluated exactly once. -/
@@ -1385,6 +1448,7 @@ def RExpr.normalize : RExpr → RExpr
     if nc.isZero then t.normalize
     else if nc.isPos then e.normalize
     else .iteZero nc t.normalize e.normalize
+  | .rsqrt a => .rsqrt a.normalize
   | .expMulLogSub α x cost =>
     .expMulLogSub α.normalize x.normalize cost.normalize
 
@@ -1424,9 +1488,13 @@ def RExpr.normalize_denote : ∀ (e : RExpr), e.normalize.denote = e.denote
       exact e.normalize_denote
     · -- unknown → keep iteZero
       simp only [denote, c.normalize_denote, t.normalize_denote, e.normalize_denote]
+  | .rsqrt a => congrArg Real.sqrt a.normalize_denote
   | .expMulLogSub α x cost =>
     congrArg Real.exp (congrArg₂ (· * ·) α.normalize_denote
       (congrArg₂ (· - ·) (congrArg Real.log x.normalize_denote) cost.normalize_denote))
+  | .rexp (.rsqrt a) => congrArg Real.exp (normalize_denote (.rsqrt a))
+  | .rexp (.mul α (.sub (.rsqrt x) cost)) => congrArg Real.exp (normalize_denote _)
+  | .rexp (.mul a (.rsqrt b)) => congrArg Real.exp (normalize_denote (.mul a (.rsqrt b)))
   | .rexp (.mul α (.sub (.rlog x) cost)) =>
     congrArg Real.exp (congrArg₂ (· * ·) α.normalize_denote
       (congrArg₂ (· - ·) (congrArg Real.log x.normalize_denote) cost.normalize_denote))
@@ -1545,6 +1613,11 @@ private unsafe def RExpr.evalBothOptCached (e : @& RExpr)
       let (ra, va) ← a.evalBothOptCached cache
       let (rb, vb) ← b.evalBothOptCached cache
       pure (c (ra.sub rb), va && vb)
+    | .rsqrt a => do
+      let (ra, va) ← a.evalBothOptCached cache
+      if h : 0 < ra.lo then pure (c (sqrtInterval ra h), va)
+      else if ra.lo == 0 && ra.hi == 0 then pure (QInterval.exact 0, va)
+      else pure (⟨0, 1, by norm_num⟩, false)
     | .rexp a => pure a.evalRexpOpt  -- delegate to factor optimization
     | .rlog a => do
       let (ra, va) ← a.evalBothOptCached cache
@@ -1652,7 +1725,7 @@ private def RExpr.asRat : RExpr → Option ℚ
   | .inv a => do let va ← a.asRat; guard (va ≠ 0); return 1 / va
   | .rpow a n => do let va ← a.asRat; guard (0 ≤ va); return va ^ n
   | .iteZero c t e => do let vc ← c.asRat; if vc = 0 then t.asRat else e.asRat
-  | .rexp _ | .rlog _ | .expMulLogSub _ _ _ => none
+  | .rexp _ | .rlog _ | .rsqrt _ | .expMulLogSub _ _ _ => none
 
 set_option maxHeartbeats 400000 in
 private theorem RExpr.asRat_sound (e : RExpr) (q : ℚ)
@@ -1738,7 +1811,7 @@ private theorem RExpr.asRat_sound (e : RExpr) (q : ℚ)
       · have hcd : c.denote ≠ 0 := by rw [ihc vc hc]; exact_mod_cast hvc
         simp [hcd]
         exact ihe q (by simp [asRat, hc, hvc] at h; exact h)
-  | rexp _ | rlog _ | expMulLogSub _ _ _ => simp [asRat] at h
+  | rexp _ | rlog _ | rsqrt _ | expMulLogSub _ _ _ => simp [asRat] at h
 
 /-- Weighted log sum interpretation: Σ cᵢ · log(xvᵢ). -/
 private noncomputable def logFactorSum (fs : List (ℚ × ℚ)) : ℝ :=
@@ -1883,7 +1956,7 @@ private def collectAndGroupLogFactors_sound :
       rw [RExpr.asRat_sound _ _ hxv]
       simp [logFactorSum]
   | .nat _, fs, h | .ratCast _, fs, h | .div _ _, fs, h | .neg _, fs, h
-  | .sub _ _, fs, h | .rexp _, fs, h | .rpow _ _, fs, h | .inv _, fs, h
+  | .sub _ _, fs, h | .rexp _, fs, h | .rsqrt _, fs, h | .rpow _ _, fs, h | .inv _, fs, h
   | .iteZero _ _ _, fs, h | .expMulLogSub _ _ _, fs, h => by
     simp only [collectAndGroupLogFactors] at h
     exact collectLogFactors_asRat_zero h
@@ -1987,6 +2060,7 @@ def RExpr.evalExact : RExpr → Option ℚ
     if vc = 0 then t.evalExact else e.evalExact
   | .rexp body => evalExpExact body
   | .rlog _ => none
+  | .rsqrt _ => none
   | .expMulLogSub _ _ _ => none
 
 set_option maxHeartbeats 400000 in
@@ -2079,6 +2153,7 @@ theorem RExpr.evalExact_sound (e : RExpr) (q : ℚ)
     unfold denote
     exact evalExpExact_sound body q h
   | rlog _ => simp [evalExact] at h
+  | rsqrt _ => simp [evalExact] at h
   | expMulLogSub _ _ _ => simp [evalExact] at h
 
 /-- If both sides have the same exact ℚ value, ¬(lhs > rhs). -/
@@ -2157,6 +2232,7 @@ def RExpr.checkSemanticEq (a b : RExpr) : Bool :=
     | .iteZero c₁ t₁ e₁, .iteZero c₂ t₂ e₂ =>
       c₁.checkSemanticEq c₂ && t₁.checkSemanticEq t₂ && e₁.checkSemanticEq e₂
     | .rexp a₁, .rexp b₁ => a₁.checkSemanticEq b₁
+    | .rsqrt a₁, .rsqrt b₁ => a₁.checkSemanticEq b₁
     | .rlog a₁, .rlog b₁ => a₁.checkSemanticEq b₁
     | .expMulLogSub a₁ b₁ c₁, .expMulLogSub a₂ b₂ c₂ =>
       a₁.checkSemanticEq a₂ && b₁.checkSemanticEq b₂ && c₁.checkSemanticEq c₂
@@ -2257,6 +2333,13 @@ theorem RExpr.eq_of_checkSemanticEq (lhs rhs : RExpr)
       rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
     · cases rhs with
       | rexp b₁ => exact congrArg Real.exp (ih₁ _ h)
+      | _ => simp at h
+  | rsqrt a₁ ih₁ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | rsqrt b₁ => exact congrArg Real.sqrt (ih₁ _ h)
       | _ => simp at h
   | rlog a₁ ih₁ =>
     rw [RExpr.checkSemanticEq.eq_def] at h; split at h
