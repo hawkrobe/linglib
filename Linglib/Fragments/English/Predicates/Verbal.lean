@@ -556,6 +556,37 @@ def want : VerbEntry := .mkRegular {
   complementSig := some .mono
   levinClass := some .want }
 
+/-- "intend" — intention-reporting attitude verb (@cite{grano-2024}).
+    Primary frame: infinitival with subject control ("intend to leave").
+    Alternate frame: for-to non-control ("intend for Ben to come along").
+    Rejects indicative complements cross-linguistically: *"Kim intends
+    that Sandy leaves." Requires eventuality abstraction (CAUSE* binds
+    the complement's event argument). -/
+def intend : VerbEntry := .mkRegular {
+  form := "intend"
+  complementType := .infinitival
+  vendlerClass := some .state
+  controlType := .subjectControl
+  passivizable := false
+  opaqueContext := true
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  levinClass := some .want }
+
+/-- "decide" — belief/intention hybrid attitude verb (@cite{grano-2024}, §6.2).
+    Nonfinite complement → intention formation: "Kim decided to quit smoking"
+    Finite complement → belief formation: "Kim decided that smoking is harmful"
+    The complement type determines the reading, as with Italian *convincere*
+    (@cite{fusco-sgrizzi-2026}). -/
+def decide_ : VerbEntry := .mkRegular {
+  form := "decide"
+  complementType := .infinitival
+  vendlerClass := some .achievement
+  controlType := .subjectControl
+  altComplementType := some .finiteClause
+  opaqueContext := true
+  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  levinClass := some .want }
+
 /-- "hope" — preferential attitude verb (Class 3: anti-rogative).
     Primary frame: finite clause ("hope that John leaves").
     Alternate frame: infinitival with subject control ("hope to leave"). -/

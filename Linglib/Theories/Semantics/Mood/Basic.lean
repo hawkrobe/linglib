@@ -1,31 +1,32 @@
 /-
 # Mood Semantics
 
-Semantic operators for grammatical mood (IND, SUBJ).
+Semantic operators for grammatical mood (IND, SUBJ), operating at two
+independent levels:
 
-## Core Idea
+## Two Dimensions of Mood
 
-Mood operators function like determiners for situations:
-- **SUBJ** (Subjunctive): Introduces a new situation dref (like indefinite "a")
-- **IND** (Indicative): Retrieves/uses an existing situation (like definite "the")
+**Situation-level** (@cite{mendes-2025}): Mood operators function like
+determiners for situations:
+- **SUBJ**: Introduces a new situation dref (like indefinite "a")
+- **IND**: Retrieves/uses an existing situation (like definite "the")
 
-This parallels the indefinite/definite distinction:
-- Indefinites introduce discourse referents
-- Definites retrieve existing referents
+**Eventuality-level** (@cite{grano-2024}): Mood morphemes existentially close
+or leave open the complement clause's eventuality argument:
+- **IND**: ∃e.P(e) — existentially closes, yielding a proposition
+- **SBJV₁**: P — leaves open, enabling eventuality abstraction
+- **SBJV₂**: P + CAUSE* — leaves open with causal self-reference (intentions)
 
-## Insight
+These dimensions are complementary: situation introduction enables temporal
+anchoring, while eventuality openness enables abstraction (required by
+causatives, intention reports, aspectual predicates, memory/perception reports).
+
+## Subordinate Future
 
 The "Subordinate Future" (SF) in Portuguese/Spanish:
 - Uses present morphology for future reference in subordinate contexts
 - Is actually **subjunctive** - introduces a situation dref
 - This dref is retrieved by the main clause for temporal anchoring
-
-Example (Portuguese):
-  "Se Maria estiver em casa, ela vai atender."
-  "If Maria be.SF at home, she will answer."
-
-The SF "estiver" introduces a future situation s₁ ∈ hist(s₀).
-The main clause "vai atender" is evaluated relative to s₁'s time.
 
 ## CDRT Connection
 
@@ -73,6 +74,48 @@ inductive SubjunctiveType where
   | potential       -- possibility
   | subordinateFuture  -- Mendes' SF (present morphology, future reference)
   deriving DecidableEq, Repr, BEq
+
+
+/--
+The semantic effects of grammatical mood, connecting two independent dimensions:
+
+- **Situation-level** (@cite{mendes-2025}): SUBJ introduces a new situation dref;
+  IND retrieves an existing one
+- **Eventuality-level** (@cite{grano-2024}): SBJV leaves the complement's eventuality
+  argument open for abstraction; IND existentially closes it
+
+These dimensions are complementary: situation introduction enables temporal
+anchoring (SF in Portuguese/Spanish), while eventuality openness enables
+abstraction over the event argument (required by causatives, intention reports,
+aspectual predicates, and memory/perception reports).
+-/
+structure MoodEffect where
+  /-- SUBJ introduces a new situation dref (@cite{mendes-2025}) -/
+  introducesSituation : Bool
+  /-- SBJV leaves the eventuality argument open for abstraction (@cite{grano-2024}) -/
+  eventualityOpen : Bool
+  deriving DecidableEq, Repr, BEq
+
+/-- Map grammatical mood to its semantic effects.
+
+    Indicative mood does neither: it retrieves an existing situation and
+    existentially closes the eventuality argument.
+
+    Subjunctive mood does both: it introduces a new situation dref and
+    leaves the eventuality argument open for abstraction. -/
+def GramMood.effect : GramMood → MoodEffect
+  | .indicative  => { introducesSituation := false, eventualityOpen := false }
+  | .subjunctive => { introducesSituation := true,  eventualityOpen := true }
+
+/-- Indicative mood closes the eventuality argument. -/
+theorem ind_closes_eventuality : GramMood.indicative.effect.eventualityOpen = false := rfl
+
+/-- Subjunctive mood leaves the eventuality argument open. -/
+theorem subj_opens_eventuality : GramMood.subjunctive.effect.eventualityOpen = true := rfl
+
+/-- Indicative and subjunctive differ on both dimensions. -/
+theorem mood_effects_differ :
+    GramMood.indicative.effect ≠ GramMood.subjunctive.effect := by decide
 
 
 /--
@@ -177,18 +220,92 @@ def INDdyn {W Time : Type*}
   | s :: _ => c.current.world = s.world ∧ P c c
 
 
+-- ════════════════════════════════════════════════════════════════
+-- § Eventuality-Level Mood Operators (@cite{grano-2024})
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Mood as Eventuality Closure
+
+@cite{grano-2024} proposes that mood morphemes operate on the eventuality
+argument of the complement clause:
+
+- **IND**: existentially closes the eventuality argument (87),
+  yielding a proposition
+- **SBJV₁**: leaves the eventuality argument open (88a),
+  yielding an event predicate (identity function)
+- **SBJV₂**: leaves the eventuality argument open AND requires
+  causal self-reference (134), for intention reports
+
+This is independent of — and complementary to — the situation-level
+SUBJ/IND operators defined above.
+-/
+
+/-- IND existentially closes the eventuality argument (@cite{grano-2024}, (87)).
+
+    ⟦INDIC⟧ = λP_(⟨vt⟩).∃e.P(e)
+
+    The eventuality variable is bound; the complement denotes a proposition. -/
+def INDev {Ev : Type*} (P : Ev → Prop) : Prop := ∃ e, P e
+
+/-- SBJV₁ leaves the eventuality argument open (@cite{grano-2024}, (88a);
+    §7 Subjunctive₃ (135)).
+
+    ⟦SBJV₁⟧ = λP_(⟨vt⟩).P
+
+    The complement retains type ⟨vt⟩ — an event predicate, not a proposition.
+    In the core proposal (§5, (88a)), this is the general non-closing mood
+    operator. In the §7 unified theory, it becomes specifically Subjunctive₃
+    (135) — the identity variant for perception predicates ('see'), causative
+    predicates ('make'), and aspectual predicates ('begin'). These predicates
+    require or are compatible with eventuality abstraction but do not involve
+    causal self-reference or ordering semantics. Distinct from the 'want'
+    variant (§7, Subjunctive₁ (133)), which uses Portner & Rubinstein's `ln`
+    (local necessity), and the 'intend' variant (Subjunctive₂ (134) =
+    `SBJVev₂`), which incorporates CAUSE*. -/
+def SBJVev₁ {Ev : Type*} (P : Ev → Prop) : Ev → Prop := P
+
+/-- SBJV₂ leaves the eventuality argument open AND requires causal
+    self-reference (@cite{grano-2024}, (134); unified theory §7).
+
+    ⟦Subjunctive₂⟧ = λPλe[sn({λw.∃e'.CAUSE*(e,e',w) & P(w)(e')}, content(e), e)]
+
+    This is the variant operative with 'intend' in the §7 unified theory,
+    which integrates CAUSE* from the core proposal (§4, (79)) with Portner
+    & Rubinstein's (@cite{portner-rubinstein-2020}) modal quantification
+    framework. The attitude state e must causally bring about the described
+    event e' "in the right way" (@cite{searle-1983}; Harman 1976). -/
+def SBJVev₂ {Ev W : Type*}
+    (causeStar : Ev → Ev → W → Prop)  -- CAUSE*(state, event, world)
+    (content : Ev → W → Prop)          -- content of the attitude state
+    (P : W → Ev → Prop)               -- world-indexed event predicate
+    (e : Ev) : Prop :=
+  ∀ w, content e w → ∃ e', causeStar e e' w ∧ P w e'
+
+/-- IND closure yields a proposition (no free eventuality variable). -/
+theorem INDev_is_propositional {Ev : Type*} (P : Ev → Prop) :
+    (INDev P) = (∃ e, P e) := rfl
+
+/-- SBJV₁ is the identity on event predicates. -/
+theorem SBJVev₁_is_identity {Ev : Type*} (P : Ev → Prop) :
+    SBJVev₁ P = P := rfl
+
+
 /--
 Mood selection by embedding predicates.
 
 Certain predicates select for specific moods in their complement:
 - "know", "see" → typically indicative
-- "want", "wish" → typically subjunctive
-- "doubt", "deny" → subjunctive in many languages
+- "want", "wish" → robustly subjunctive cross-linguistically
+- "hope" → cross-linguistically variable (@cite{grano-2024}, Table 1)
+- "say", "think" → mood-neutral (pragmatically flexible)
 -/
 inductive MoodSelector where
-  | indicativeSelecting   -- "know", "see", "believe"
-  | subjunctiveSelecting  -- "want", "wish", "demand"
-  | moodNeutral           -- "say", "think" (varies by language)
+  | indicativeSelecting          -- "know", "see", "believe"
+  | subjunctiveSelecting         -- "want", "wish", "demand", "intend"
+  | crossLinguisticallyVariable  -- "hope", "expect": SBJV in some languages,
+                                 -- IND in others (@cite{grano-2024}, Table 1)
+  | moodNeutral                  -- "say", "think" (pragmatically flexible)
   deriving DecidableEq, Repr, BEq
 
 /--
@@ -197,7 +314,15 @@ Does the selector prefer subjunctive?
 def prefersSubjunctive : MoodSelector → Bool
   | .indicativeSelecting => false
   | .subjunctiveSelecting => true
+  | .crossLinguisticallyVariable => false  -- default: variable, not robust SBJV
   | .moodNeutral => false  -- default to indicative
+
+/-- Cross-linguistically variable selectors are distinct from both robust
+    indicative-selecting and robust subjunctive-selecting. -/
+theorem variable_ne_robust :
+    MoodSelector.crossLinguisticallyVariable ≠ .indicativeSelecting ∧
+    MoodSelector.crossLinguisticallyVariable ≠ .subjunctiveSelecting := by
+  exact ⟨nofun, nofun⟩
 
 
 /--

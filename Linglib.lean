@@ -430,6 +430,7 @@ import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Greek.Reciprocals
 import Linglib.Fragments.Greek.AdjAgreement
+import Linglib.Fragments.Greek.MoodChoice
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.HindiUrdu.Particles
@@ -584,6 +585,9 @@ import Linglib.Fragments.Spanish.Morph
 import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.Spanish.Negation
+import Linglib.Fragments.Spanish.MoodChoice
+import Linglib.Fragments.Portuguese.MoodChoice
+import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Mam.Agreement
@@ -744,6 +748,7 @@ import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Complementation.Studies.Cacchioli2025
+import Linglib.Phenomena.Complementation.Studies.Grano2024
 import Linglib.Phenomena.Complementation.Studies.Osborne2019Control
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Control.Studies.Ostrove2026
@@ -1487,6 +1492,7 @@ import Linglib.Theories.Semantics.Lexical.Plural.Cumulativity
 import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Theories.Semantics.Lexical.Plural.Link1983
+import Linglib.Theories.Semantics.Lexical.Plural.ExistentialPL
 import Linglib.Phenomena.Quantification.Studies.Montague1973
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Basic
@@ -1695,6 +1701,7 @@ import Linglib.Theories.Semantics.Exhaustification.ScalePredictions
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018
 import Linglib.Phenomena.Plurals.Studies.Magri2014
+import Linglib.Phenomena.Plurals.Studies.BarLev2021
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.ScalarImplicatures.Studies.Chierchia2004
 import Linglib.Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity

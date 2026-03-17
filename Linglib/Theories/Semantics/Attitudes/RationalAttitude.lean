@@ -166,11 +166,82 @@ theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LE Time]
     v.intentionReading VP = v.denote VP :=
   ⟨rfl, rfl⟩
 
--- TODO: Formalize CAUSE*(s, e, w') — causal self-referentiality (@cite{searle-1983};
--- @cite{grano-2024}). In the paper's (25), *a* contributes CAUSE*(s, e, w') requiring
--- the attitude state s to causally bring about event e in inertia world w'.
--- This distinguishes intentions (world-to-mind fit) from beliefs (mind-to-world).
--- Requires world-parameterized events; deferred until Events/ supports this.
+-- ════════════════════════════════════════════════════════════════
+-- § 3b. CAUSE* — Causal Self-Reference (@cite{grano-2024})
+-- ════════════════════════════════════════════════════════════════
+
+/-- CAUSE*(s, e, w): causal self-reference relation (@cite{grano-2024}, (79);
+    @cite{searle-1983}).
+
+    The attitude state `s` causally brings about event `e` in world `w`
+    "in the right way." Distinguished from plain CAUSE by requiring that
+    the causation proceed via the agent's intention-in-action, not via
+    a deviant causal chain (Harman 1976; Chisholm 1966).
+
+    Example (Harman): Betty aims her gun intending to kill the target.
+    Her intention makes her nervous; nervousness causes her to pull the
+    trigger; the target is killed. The outcome was caused by the intention,
+    but not "in the right way" — the causal chain was deviant. CAUSE*
+    would not hold, correctly predicting that Betty did not carry out
+    her intention. -/
+abbrev CauseStar (W Time : Type*) [LE Time] := Ev Time → Ev Time → W → Prop
+
+/-- Semantics for intention reports with causal self-reference
+    (@cite{grano-2024}, version 4, (79)).
+
+    ⟦Kim intends to leave⟧ᵂ·ᵗ =
+      ∃s. INTENTION(s,w) ∧ HOLDER(k,s,w)
+        ∧ ∀⟨w',x⟩ ∈ CONTENT(s):
+            ∃e. CAUSE*(s,e,w') ∧ P(x,w',e)
+
+    The complement `P` has type `(E → W → Ev Time → Prop)` — an event
+    predicate with an open eventuality argument. This is the formal
+    correlate of @cite{grano-2024}'s Premise 3: IND would existentially
+    close the event argument, yielding `(E → W → Prop)`, which is
+    type-incompatible with CAUSE*. The type system enforces that
+    intention reports require eventuality abstraction. -/
+def intentionHolds {E W Time : Type*} [LE Time]
+    (isIntention : Ev Time → W → Prop)
+    (holder : E → Ev Time → W → Prop)
+    (content : Ev Time → Set (W × E))
+    (causeStar : CauseStar W Time)
+    (agent : E) (P : E → W → Ev Time → Prop) (w : W) : Prop :=
+  ∃ s : Ev Time,
+    s.sort = .state ∧
+    isIntention s w ∧
+    holder agent s w ∧
+    ∀ p ∈ content s, ∃ e : Ev Time, causeStar s e p.1 ∧ P p.2 p.1 e
+
+/-- Plain belief reports do NOT require CAUSE*: the complement is a
+    proposition (event argument already closed by IND), so there is no
+    event for CAUSE* to bind.
+
+    ⟦Kim believes that Sandy left⟧ᵂ =
+      ∀w' ∈ DOX(k,w): P(w')
+
+    The contrast in complement type — `(W → Prop)` for belief vs
+    `(E → W → Ev Time → Prop)` for intention — is what makes 'believe'
+    indicative-selecting and 'intend' subjunctive-selecting. -/
+def beliefHolds {E W : Type*}
+    (dox : E → W → Set W)
+    (agent : E) (P : W → Prop) (w : W) : Prop :=
+  ∀ w' ∈ dox agent w, P w'
+
+/-! ### Premise 3: Type-Level Enforcement (@cite{grano-2024}, §4.3)
+
+Intention reports require eventuality abstraction: `intentionHolds`
+demands a complement with an open event argument (`P : E → W → Ev Time → Prop`),
+while `beliefHolds` takes a closed proposition (`P : W → Prop`).
+
+Indicative mood existentially closes the event argument ((87)),
+yielding `W → Prop`, which is type-incompatible with `intentionHolds`.
+Only subjunctive/nonfinite clauses leave the event argument open,
+enabling the `E → W → Ev Time → Prop` type that CAUSE* requires.
+
+The distinction is enforced by construction — no theorem is needed
+because you literally cannot pass a `W → Prop` where
+`E → W → Ev Time → Prop` is expected. The Lean type checker is the proof.
+-/
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Diagnostics

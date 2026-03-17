@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.229.319] - 2026-03-17
+
+### Added
+- **Grano 2024 formalization**: full study file for "Intention reports and eventuality abstraction in a theory of mood choice" (@cite{grano-2024})
+  - Cross-linguistic mood choice data (Table 1): 26 data points across 7 languages × 4 predicate classes
+  - `DepartureKind` enum modeling §7 unified theory (comparison vs eventuality abstraction)
+  - End-to-end argumentation chain: complement size → reading → departure kind → mood prediction
+  - §6 independent support: theorems for intention-rigid ('try'), hybrid ('decide', 'persuade', 'promise'), phasal ('start', 'stop', 'begin', 'continue'), perception ('see'), and memory ('remember') predicates
+  - Cross-linguistic fragment bridge theorems (§9): 11 theorems connecting Greek/Romanian/Spanish/Portuguese fragment entries to mood choice data
+- **Cross-linguistic verb fragments**: Greek, Romanian, Spanish, Portuguese mood-choice entries from Grano 2024 Table 1
+- **`decide_` verb entry** in English fragment (belief/intention hybrid, §6.2)
+- **`decide_` bridge theorems** in Noonan2007 (CTP class + mood selector)
+- **`SBJVev₁` docstring**: cross-references both §5 (88a) and §7 Subjunctive₃ (135)
+
+### Fixed
+- **Hallucinated bib entry**: `portner-rubinstein-2020` had wrong journal (Mind and Language → Natural Language Semantics), volume (35 → 28), pages (230–264 → 343–393); DOI added (10.1007/s11050-020-09167-7), verified via Crossref
+- **Missing bib entry**: added `giannakidou-mari-2021` (Truth and Veridicality, U Chicago Press)
+- **Greek causative datum**: `"évala"` (past tense) → `"vázo"` (citation form) matching fragment entry
+
+## [0.229.318] - 2026-03-17
+
+### Added
+- **BarLev2021 audit**: 6 improvements to Bar-Lev 2021 formalization
+  - **∃-PL grounding**: `someLaughed_eq_existPL`, `kellyLaughed_eq_existPL`, `janeLaughed_eq_existPL` bridge theorems connecting study-file propositions to `ExistentialPL.existPL` by construction
+  - **Partial pruning**: `pruning_weakens` theorem (full ALT → existential entailment, not vice versa), `partialPrunedAlt` definition with docstring explaining 2-atom limitations
+  - **"All" removal bridge**: `all_removes_homogeneity_prediction` connecting to `Homogeneity.lean` data, `all_exh_vacuous` showing exhaustification is vacuous without subdomain alternatives
+  - **Križ 2016 comparison**: new Section 11 with comparison table, asymmetry analysis, `positive_negative_asymmetry` distinguishing-prediction theorem
+  - **IE docstring fix**: clarified that IE = ∅ means no *non-prejacent* alternative is IE-excludable
+  - **D→C terminology**: renamed domain variable to context variable throughout ExistentialPL.lean and BarLev2021.lean to match paper's §4.1
+- **ExistentialPL design note**: added mereological design rationale in module docstring
+
 ## [0.229.317] - 2026-03-17
 
 ### Fixed
@@ -3586,7 +3617,7 @@
 ## [0.227.82] - 2026-03-02
 
 ### Changed
-- **Citation cleanup round 2**: Replace 650+ in-text citations with `@cite{key}` tags across 147 Lean files. Add 68 new bib entries to `references.bib` (1106 total). Reduce unmatched citations from 101 to 12 (4 false positives, 4 Czech diacritics, 4 Dieuleveut misattribution). Fix wrong DOIs: mayr-sudo-2022 (resolved to Chierchia), barnes-1984 (465836→465835), wood-marantz-2017 (ch.0010→0011), bar-lev-2021a. Fix entry types: barnes-1984 (@book→@article), collins-1997 (@article→@book), wood-marantz-2017 (@article→@incollection). Add Henderson year fix (2017→2019 manuscript→published). 2696 valid @cite references across codebase.
+- **Citation cleanup round 2**: Replace 650+ in-text citations with `@cite{key}` tags across 147 Lean files. Add 68 new bib entries to `references.bib` (1106 total). Reduce unmatched citations from 101 to 12 (4 false positives, 4 Czech diacritics, 4 Dieuleveut misattribution). Fix wrong DOIs: mayr-sudo-2022 (resolved to Chierchia), barnes-1984 (465836→465835), wood-marantz-2017 (ch.0010→0011), bar-lev-2021. Fix entry types: barnes-1984 (@book→@article), collins-1997 (@article→@book), wood-marantz-2017 (@article→@incollection). Add Henderson year fix (2017→2019 manuscript→published). 2696 valid @cite references across codebase.
 
 ## [0.227.81] - 2026-03-02
 

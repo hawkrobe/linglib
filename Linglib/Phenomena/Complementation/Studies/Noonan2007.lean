@@ -109,6 +109,8 @@ theorem expect_is_desiderative :
     deriveCTPClass expect = some .desiderative := by native_decide
 theorem wish_is_desiderative :
     deriveCTPClass wish = some .desiderative := by native_decide
+theorem decide_is_desiderative :
+    deriveCTPClass decide_ = some .desiderative := by native_decide
 
 -- PropAttitude via negative preferential (fear, dread react to rather than desire)
 theorem fear_is_propAttitude :
@@ -306,7 +308,10 @@ it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern.
 /-- Derive mood selection from a VerbEntry's primitive fields.
 
     The logic:
-    - Preferential positive attitude → subjunctive (want, hope)
+    - Preferential positive + Levin want-class → subjunctive (want, wish)
+    - Preferential positive + non-want-class → crossLinguisticallyVariable
+      (hope, expect: SBJV in some languages, IND in others;
+      @cite{grano-2024} Table 1)
     - Preferential negative/uncertainty attitude → indicative (fear, worry)
     - Doxastic attitude → indicative (believe, think)
     - Factive → indicative (know: presupposes truth)
@@ -318,7 +323,9 @@ it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern.
     - Otherwise → moodNeutral -/
 def deriveMoodSelector (v : VerbEntry) : MoodSelector :=
   match v.attitudeBuilder with
-  | some (.preferential (.degreeComparison .positive)) => .subjunctiveSelecting
+  | some (.preferential (.degreeComparison .positive)) =>
+    if v.levinClass == some .want then .subjunctiveSelecting
+    else .crossLinguisticallyVariable
   | some (.preferential _) => .indicativeSelecting
   | some (.doxastic _) => .indicativeSelecting
   | none =>
@@ -348,19 +355,27 @@ theorem fear_selects_indicative :
 theorem worry_selects_indicative :
     deriveMoodSelector worry = .indicativeSelecting := by native_decide
 
--- Subjunctive-selecting verbs
+-- Subjunctive-selecting verbs (robustly SBJV cross-linguistically)
 theorem want_selects_subjunctive :
     deriveMoodSelector want = .subjunctiveSelecting := by native_decide
-theorem hope_selects_subjunctive :
-    deriveMoodSelector hope = .subjunctiveSelecting := by native_decide
 theorem wish_selects_subjunctive :
     deriveMoodSelector wish = .subjunctiveSelecting := by native_decide
-theorem expect_selects_subjunctive :
-    deriveMoodSelector expect = .subjunctiveSelecting := by native_decide
+theorem intend_selects_subjunctive :
+    deriveMoodSelector intend = .subjunctiveSelecting := by native_decide
 theorem cause_selects_subjunctive :
     deriveMoodSelector cause = .subjunctiveSelecting := by native_decide
 theorem make_selects_subjunctive :
     deriveMoodSelector make = .subjunctiveSelecting := by native_decide
+theorem decide_selects_subjunctive :
+    deriveMoodSelector decide_ = .subjunctiveSelecting := by native_decide
+
+-- Cross-linguistically variable verbs (@cite{grano-2024}, Table 1:
+-- 'hope' is SBJV in Spanish, IND/%SBJV in French, IND/SBJV in Portuguese,
+-- %IND in Italian, IND/SBJV in Greek/Romanian, IND/for-to in English)
+theorem hope_mood_variable :
+    deriveMoodSelector hope = .crossLinguisticallyVariable := by native_decide
+theorem expect_mood_variable :
+    deriveMoodSelector expect = .crossLinguisticallyVariable := by native_decide
 
 -- Mood-neutral verbs
 theorem say_mood_neutral :
