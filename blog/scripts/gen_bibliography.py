@@ -207,8 +207,21 @@ def format_venue(entry: dict) -> str:
     return venue
 
 
+def strip_latex(text: str) -> str:
+    """Strip common LaTeX markup from BibTeX values."""
+    import re
+    text = text.replace(r"\&", "&")
+    text = text.replace(r"\_", "_")
+    text = text.replace(r"\~", "~")
+    text = re.sub(r"\\emph\{([^}]*)\}", r"\1", text)
+    text = re.sub(r"\{\\(?:em|it|bf|sc)\s+([^}]*)\}", r"\1", text)
+    # Remove protective braces: {T}igrinya → Tigrinya
+    text = re.sub(r"\{([A-Za-z])\}", r"\1", text)
+    return text
+
 def html_escape(text: str) -> str:
-    """Escape HTML special characters."""
+    """Strip LaTeX markup then escape HTML special characters."""
+    text = strip_latex(text)
     return (text
             .replace("&", "&amp;")
             .replace("<", "&lt;")
@@ -275,23 +288,40 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
         citation += f' <em>{html_escape(venue)}</em>.'
     parts.append(f'<p class="bib-citation">{citation}</p>')
 
-    # Deduplicated file links (role is indicated by left border, not a badge)
-    seen_paths: set[str] = set()
+    # Deduplicated file links (by display name to avoid visual duplicates)
+    seen_names: set[str] = set()
     all_links: list[str] = []
     for s in sources:
         rel = s.strip().removeprefix("Linglib/")
-        if rel and rel != "crossref" and rel not in seen_paths:
-            seen_paths.add(rel)
+        short = rel.removesuffix(".lean").rsplit("/", 1)[-1]
+        if rel and rel != "crossref" and short not in seen_names:
+            seen_names.add(short)
             all_links.append(lean_file_link(rel))
     cite_files = cited_by.get(key, [])
     for f in sorted(cite_files):
         rel = f.removeprefix("Linglib/")
-        if rel not in seen_paths:
-            seen_paths.add(rel)
+        short = rel.removesuffix(".lean").rsplit("/", 1)[-1]
+        if short not in seen_names:
+            seen_names.add(short)
             all_links.append(lean_file_link(rel))
 
     if all_links:
-        parts.append(f'<p class="bib-meta">{", ".join(all_links)}</p>')
+        MAX_SHOW = 6
+        if len(all_links) > MAX_SHOW:
+            visible = ", ".join(all_links[:MAX_SHOW])
+            hidden = ", ".join(all_links[MAX_SHOW:])
+            n_more = len(all_links) - MAX_SHOW
+            parts.append(
+                f'<p class="bib-meta">{visible}'
+                f'<span class="bib-more-links" style="display:none">, {hidden}</span> '
+                f'<a class="bib-expand" href="javascript:void(0)" '
+                f'onclick="var s=this.previousElementSibling;'
+                f's.style.display=s.style.display===\'none\'?\'inline\':\'none\';'
+                f'this.textContent=s.style.display===\'none\'?\'(+{n_more} more)\':\'(less)\'">'
+                f'(+{n_more} more)</a></p>'
+            )
+        else:
+            parts.append(f'<p class="bib-meta">{", ".join(all_links)}</p>')
     parts.append('</div>')
     return "\n".join(parts)
 
@@ -372,8 +402,8 @@ SEARCH_HTML = """\
   min-height: 1.4em;
 }
 .bib-entry {
-  margin-bottom: 0.4em;
-  padding: 4px 0 4px 12px;
+  margin-bottom: 0.75em;
+  padding: 0 0 0 12px;
   border-left: 3px solid transparent;
 }
 .bib-entry[data-role="formalized"] {
@@ -382,18 +412,21 @@ SEARCH_HTML = """\
 .bib-entry[data-role="foundational"] {
   border-left-color: #a78bfa;
 }
+.bib-entry[data-role="cited"] {
+  border-left-color: #666;
+}
 .bib-entry.bib-hidden {
   display: none;
 }
 .bib-citation {
-  margin: 0;
+  margin: 0 0 -4px 0;
   line-height: 1.5;
 }
 .bib-meta {
-  margin: 2px 0 0;
-  font-size: 0.85em;
+  margin: 0;
+  font-size: 0.82em;
   color: var(--secondary);
-  line-height: 1.4;
+  line-height: 1.3;
 }
 .bib-meta a {
   color: var(--secondary);
