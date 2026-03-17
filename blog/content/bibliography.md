@@ -242,7 +242,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="agha-jeretic-2022" data-role="formalized" data-tag="Semantics" data-year="2022">
-<p class="bib-citation"><strong>Agha, O. &amp; Jeretič, P.</strong> (2022). Weak Necessity Modals as Homogeneous Pluralities of Worlds. <em>Proceedings of SALT 32, 32, 831–851</em>.</p>
+<p class="bib-citation"><strong>Agha, O. &amp; Jeretič, P.</strong> (2022). <a href="https://doi.org/10.3765/salt.v1i0.5352" class="bib-title-link">Weak Necessity Modals as Homogeneous Pluralities of Worlds</a>. <em>Proceedings of SALT 32, 32, 831–851</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/ModalLogic.lean">ModalLogic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/AghaJeretic2022.lean">AghaJeretic2022</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/AghaJeretic2026.lean">AghaJeretic2026</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Modality/ModalTypes.lean">ModalTypes</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/Rubinstein2014.lean">Rubinstein2014</a></p>
 </div>
 
@@ -252,7 +252,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="ahn-2015" data-role="formalized" data-tag="Semantics" data-year="2015">
-<p class="bib-citation"><strong>Ahn, D.</strong> (2015). The Semantics of Additive Either. <em>Proceedings of Sinn und Bedeutung 19</em>.</p>
+<p class="bib-citation"><strong>Ahn, D.</strong> (2015). <a href="https://ojs.ub.uni-konstanz.de/sub/index.php/sub/article/view/219" class="bib-title-link">The Semantics of Additive Either</a>. <em>Proceedings of Sinn und Bedeutung 19, 20–35</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/AdditiveParticles/Studies/Ahn2015.lean">Ahn2015</a></p>
 </div>
 
@@ -277,7 +277,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="aikhenvald-2010" data-role="cited" data-tag="Semantics" data-year="2010">
-<p class="bib-citation"><strong>Aikhenvald, A. Y.</strong> (2010). Imperatives and Commands. <em>Oxford University Press</em>.</p>
+<p class="bib-citation"><strong>Aikhenvald, A. Y.</strong> (2010). <a href="https://global.oup.com/academic/product/imperatives-and-commands-9780199207909" class="bib-title-link">Imperatives and Commands</a>. <em>Oxford University Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imperatives/Typology.lean">Typology</a></p>
 </div>
 
@@ -467,7 +467,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="anderson-jm-2006" data-role="formalized" data-tag="Syntax" data-year="2006">
-<p class="bib-citation"><strong>Anderson, J. M.</strong> (2006). Modern Grammars of Case: A Retrospective. <em>Oxford University Press</em>.</p>
+<p class="bib-citation"><strong>Anderson, J. M.</strong> (2006). <a href="https://doi.org/10.1093/acprof:oso/9780199297078.001.0001" class="bib-title-link">Modern Grammars of Case: A Retrospective</a>. <em>Oxford University Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/FeatureDecomposition.lean">FeatureDecomposition</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/AndersonJM2006.lean">AndersonJM2006</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case.lean">Case</a></p>
 </div>
 
@@ -527,7 +527,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="asher-pelletier-2012" data-role="cited" data-tag="Semantics" data-year="2012">
-<p class="bib-citation"><strong>Asher, N. &amp; Pelletier, F. J.</strong> (2012). More Truths about Generic Truth. <em>Genericity, 312–333</em>.</p>
+<p class="bib-citation"><strong>Asher, N. &amp; Pelletier, F. J.</strong> (2012). <a href="https://doi.org/10.1093/acprof:oso/9780199691807.003.0012" class="bib-title-link">More Truths about Generic Truth</a>. <em>Genericity, 312–333</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/GenericModality.lean">GenericModality</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/CompareModality.lean">CompareModality</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/AsherPelletier2013.lean">AsherPelletier2013</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/Krifka2013.lean">Krifka2013</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/Nickel2009.lean">Nickel2009</a></p>
 </div>
 
@@ -677,7 +677,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="barss-lasnik-1986" data-role="cited" data-tag="Syntax" data-year="1986">
-<p class="bib-citation"><strong>Barss, A. &amp; Lasnik, H.</strong> (1986). A Note on Anaphora and Double Objects. <em>Linguistic Inquiry, 17(2), 347–354</em>.</p>
+<p class="bib-citation"><strong>Barss, A. &amp; Lasnik, H.</strong> (1986). <a href="https://doi.org/10.1007/978-94-009-2542-7_8" class="bib-title-link">A Note on Anaphora and Double Objects</a>. <em>Linguistic Inquiry, 17(2), 347–354</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Studies/Larson1988.lean">Larson1988</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Studies/Pylkkanen2008.lean">Pylkkanen2008</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean">Data</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/DativeAlternation.lean">DativeAlternation</a></p>
 </div>
 
@@ -697,7 +697,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="barwise-perry-1983" data-role="cited" data-tag="Semantics" data-year="1983">
-<p class="bib-citation"><strong>Barwise, J. &amp; Perry, J.</strong> (1983). Situations and Attitudes. <em>MIT Press</em>.</p>
+<p class="bib-citation"><strong>Barwise, J. &amp; Perry, J.</strong> (1983). <a href="https://doi.org/10.1093/oso/9780195136975.003.0015" class="bib-title-link">Situations and Attitudes</a>. <em>MIT Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Situations/Elbourne.lean">Elbourne</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/TypeTheoretic/Core.lean">Core</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/TypeTheoretic/Discourse.lean">Discourse</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/TypeTheoretic/Modality.lean">Modality</a></p>
 </div>
 
@@ -767,7 +767,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="beck-2001" data-role="cited" data-tag="Semantics" data-year="2001">
-<p class="bib-citation"><strong>Beck, S.</strong> (2001). Reciprocals Are Definites. <em>Natural Language Semantics, 9(1), 69–138</em>.</p>
+<p class="bib-citation"><strong>Beck, S.</strong> (2001). <a href="https://doi.org/10.1023/a:1012203407127" class="bib-title-link">Reciprocals Are Definites</a>. <em>Natural Language Semantics, 9(1), 69–138</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Reference/Reciprocals.lean">Reciprocals</a></p>
 </div>
 
@@ -807,7 +807,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="belnap-1972" data-role="cited" data-tag="Semantics" data-year="1972">
-<p class="bib-citation"><strong>Belnap, N. D.</strong> (1972). S-P Interrogatives. <em>Journal of Philosophical Logic, 1, 331–346</em>.</p>
+<p class="bib-citation"><strong>Belnap, N. D.</strong> (1972). <a href="https://doi.org/10.1007/978-94-010-2516-4_5" class="bib-title-link">S-P Interrogatives</a>. <em>Journal of Philosophical Logic, 1, 331–346</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Answerhood.lean">Answerhood</a></p>
 </div>
 
@@ -832,7 +832,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="bennett-1982" data-role="cited" data-tag="Pragmatics" data-year="1982">
-<p class="bib-citation"><strong>Bennett, J.</strong> (1982). Even If. <em>Linguistics and Philosophy, 5, 403–418</em>.</p>
+<p class="bib-citation"><strong>Bennett, J.</strong> (1982). <a href="https://doi.org/10.1093/0199258872.003.0017" class="bib-title-link">Even If</a>. <em>Linguistics and Philosophy, 5, 403–418</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Particles.lean">Particles</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Studies/Francescotti1995.lean">Francescotti1995</a></p>
 </div>
 
@@ -857,7 +857,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="bergen-grodner-2012" data-role="cited" data-tag="Pragmatics" data-year="2012">
-<p class="bib-citation"><strong>Bergen, L. &amp; Grodner, D. J.</strong> (2012). Speaker knowledge influences the comprehension of pragmatic inferences. <em>Journal of Experimental Psychology: Learning, Memory, and Cognition, 38(5), 1450</em>.</p>
+<p class="bib-citation"><strong>Bergen, L. &amp; Grodner, D. J.</strong> (2012). <a href="https://doi.org/10.1037/a0027850" class="bib-title-link">Speaker knowledge influences the comprehension of pragmatic inferences</a>. <em>Journal of Experimental Psychology: Learning, Memory, and Cognition, 38(5), 1450</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/ReesReksnesRohde2026.lean">ReesReksnesRohde2026</a></p>
 </div>
 
@@ -967,7 +967,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="blake-1994" data-role="foundational" data-tag="Syntax" data-year="1994">
-<p class="bib-citation"><strong>Blake, B. J.</strong> (1994). Case. <em>Cambridge University Press</em>.</p>
+<p class="bib-citation"><strong>Blake, B. J.</strong> (1994). <a href="https://doi.org/10.1017/cbo9781139164894" class="bib-title-link">Case</a>. <em>Cambridge University Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Basic.lean">Basic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Hierarchy.lean">Hierarchy</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Syncretism.lean">Syncretism</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/SplitConditions.lean">SplitConditions</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/LocalExtension.lean">LocalExtension</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case.lean">Case</a><span class="bib-more-links" style="display:none">, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Basque/Agreement.lean">Agreement</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Alignment/Typology.lean">Typology</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Allomorphy/Studies/Aitha2026.lean">Aitha2026</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/CaseContainment.lean">CaseContainment</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Features.lean">Features</a></span> <a class="bib-expand" href="javascript:void(0)" onclick="var s=this.previousElementSibling;s.style.display=s.style.display==='none'?'inline':'none';this.textContent=s.style.display==='none'?'(+5 more)':'(less)'">(+5 more)</a></p>
 </div>
 
@@ -997,7 +997,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="bobaljik-2012" data-role="cited" data-tag="Morphology" data-year="2012">
-<p class="bib-citation"><strong>Bobaljik, J. D.</strong> (2012). Universals in comparative morphology: Suppletion, superlatives, and the structure of words. <em>MIT Press</em>.</p>
+<p class="bib-citation"><strong>Bobaljik, J. D.</strong> (2012). <a href="https://doi.org/10.7551/mitpress/9069.001.0001" class="bib-title-link">Universals in comparative morphology: Suppletion, superlatives, and the structure of words</a>. <em>MIT Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Containment.lean">Containment</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/CaseContainment.lean">CaseContainment</a></p>
 </div>
 
@@ -1052,7 +1052,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="bott-noveck-2004" data-role="cited" data-tag="Pragmatics" data-year="2004">
-<p class="bib-citation"><strong>Bott, L. &amp; Noveck, I. A.</strong> (2004). Some utterances are underinformative: The onset and time course of scalar inferences. <em>Journal of Memory and Language, 51(3), 437–457</em>.</p>
+<p class="bib-citation"><strong>Bott, L. &amp; Noveck, I. A.</strong> (2004). <a href="https://doi.org/10.1016/j.jml.2004.05.006" class="bib-title-link">Some utterances are underinformative: The onset and time course of scalar inferences</a>. <em>Journal of Memory and Language, 51(3), 437–457</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/ReesReksnesRohde2026.lean">ReesReksnesRohde2026</a></p>
 </div>
 
@@ -1252,7 +1252,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="cattell-1976" data-role="cited" data-tag="Syntax" data-year="1976">
-<p class="bib-citation"><strong>Cattell, R.</strong> (1976). Constraints on movement rules. <em>Language, 52(1), 18–50</em>.</p>
+<p class="bib-citation"><strong>Cattell, R.</strong> (1976). <a href="https://doi.org/10.2307/413206" class="bib-title-link">Constraints on movement rules</a>. <em>Language, 52(1), 18–50</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Islands/Data.lean">Data</a></p>
 </div>
 
@@ -1267,7 +1267,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="champollion-2016" data-role="cited" data-tag="Semantics" data-year="2016">
-<p class="bib-citation"><strong>Champollion, L.</strong> (2016). Overt Distributivity in Algebraic Event Semantics. <em>Semantics and Pragmatics, 9</em>.</p>
+<p class="bib-citation"><strong>Champollion, L.</strong> (2016). <a href="https://doi.org/10.3765/sp.9.16" class="bib-title-link">Overt Distributivity in Algebraic Event Semantics</a>. <em>Semantics and Pragmatics, 9</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Studies/DalrympleHaug2024.lean">DalrympleHaug2024</a></p>
 </div>
 
@@ -1347,7 +1347,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="chierchia-1984" data-role="cited" data-tag="Semantics" data-year="1984">
-<p class="bib-citation"><strong>Chierchia, G.</strong> (1984). Topics in the Syntax and Semantics of Infinitives and Gerunds. <em>PhD dissertation, University of Massachusetts Amherst</em>.</p>
+<p class="bib-citation"><strong>Chierchia, G.</strong> (1984). <a href="https://doi.org/10.4324/9781315459097" class="bib-title-link">Topics in the Syntax and Semantics of Infinitives and Gerunds</a>. <em>PhD dissertation, University of Massachusetts Amherst</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Composition/TypeShifting.lean">TypeShifting</a></p>
 </div>
 
@@ -1392,7 +1392,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="chomsky-1970" data-role="foundational" data-tag="Syntax" data-year="1970">
-<p class="bib-citation"><strong>Chomsky, N.</strong> (1970). Remarks on Nominalization. <em>Readings in English Transformational Grammar, 184–221</em>.</p>
+<p class="bib-citation"><strong>Chomsky, N.</strong> (1970). <a href="https://doi.org/10.1093/oso/9780198865544.003.0002" class="bib-title-link">Remarks on Nominalization</a>. <em>Readings in English Transformational Grammar, 184–221</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CategorialFeatures.lean">CategorialFeatures</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean">Basic</a></p>
 </div>
 
@@ -1452,7 +1452,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="chow-erlewine-2022" data-role="formalized" data-tag="Semantics" data-year="2022">
-<p class="bib-citation"><strong>Chow, K. J. &amp; Erlewine, M. Y.</strong> (2022). Restrictions on the Position of exh. <em>Proceedings of SALT 32, 522–542</em>.</p>
+<p class="bib-citation"><strong>Chow, K. J. &amp; Erlewine, M. Y.</strong> (2022). <a href="https://doi.org/10.3765/salt.v1i0.5403" class="bib-title-link">Restrictions on the Position of exh</a>. <em>Proceedings of SALT 32, 522–542</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/ChowErlewine2022.lean">ChowErlewine2022</a></p>
 </div>
 
@@ -1507,7 +1507,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="clark-2017" data-role="cited" data-tag="Other" data-year="2017">
-<p class="bib-citation"><strong>Clark, E. V.</strong> (2017). Language in Children. <em>Routledge</em>.</p>
+<p class="bib-citation"><strong>Clark, E. V.</strong> (2017). <a href="https://doi.org/10.4324/9781315537405" class="bib-title-link">Language in Children</a>. <em>Routledge</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Studies/BillEtAl2025.lean">BillEtAl2025</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean">Typology</a></p>
 </div>
 
@@ -1587,7 +1587,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="comrie-1976" data-role="cited" data-tag="Morphology" data-year="1976">
-<p class="bib-citation"><strong>Comrie, B.</strong> (1976). Aspect. <em>Cambridge University Press</em>.</p>
+<p class="bib-citation"><strong>Comrie, B.</strong> (1976). <a href="https://doi.org/10.1163/9789004373112_005" class="bib-title-link">Aspect</a>. <em>Cambridge University Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/Core/Exponence.lean">Exponence</a></p>
 </div>
 
@@ -1727,7 +1727,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="crystal-1991" data-role="cited" data-tag="Other" data-year="1991">
-<p class="bib-citation"><strong>Crystal, D.</strong> (1991). A Dictionary of Linguistics and Phonetics. <em>Blackwell</em>.</p>
+<p class="bib-citation"><strong>Crystal, D.</strong> (1991). <a href="https://doi.org/10.1002/9781444302776" class="bib-title-link">A Dictionary of Linguistics and Phonetics</a>. <em>Blackwell</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/ReesReksnesRohde2026.lean">ReesReksnesRohde2026</a></p>
 </div>
 
@@ -1762,7 +1762,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="curry-feys-1958" data-role="cited" data-tag="Syntax" data-year="1958">
-<p class="bib-citation"><strong>Curry, H. B. &amp; Feys, R.</strong> (1958). Combinatory Logic. <em>North-Holland</em>.</p>
+<p class="bib-citation"><strong>Curry, H. B. &amp; Feys, R.</strong> (1958). <a href="https://doi.org/10.1111/j.1746-8361.1969.tb01183.x" class="bib-title-link">Combinatory Logic</a>. <em>North-Holland</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Core/Combinators.lean">Combinators</a></p>
 </div>
 
@@ -1802,7 +1802,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="dalrymple-etal-1993" data-role="primary" data-tag="Semantics" data-year="1993">
-<p class="bib-citation"><strong>Dalrymple, M., Lamping, J. &amp; Saraswat, V.</strong> (1993). LFG semantics via constraints. <em>Proceedings of the Sixth Conference of the European Chapter of the Association for Computational Linguistics, 97–105</em>.</p>
+<p class="bib-citation"><strong>Dalrymple, M., Lamping, J. &amp; Saraswat, V.</strong> (1993). <a href="https://doi.org/10.3115/976744.976757" class="bib-title-link">LFG semantics via constraints</a>. <em>Proceedings of the Sixth Conference of the European Chapter of the Association for Computational Linguistics, 97–105</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/formal">formal</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Composition/Glue.lean">Glue</a></p>
 </div>
 
@@ -1977,7 +1977,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="del-prete-2013" data-role="cited" data-tag="Semantics" data-year="2013">
-<p class="bib-citation"><strong>Del Prete, F.</strong> (2013). Imperfectivity and Habituality in Italian. <em>Genericity</em>.</p>
+<p class="bib-citation"><strong>Del Prete, F.</strong> (2013). <a href="https://doi.org/10.1093/acprof:oso/9780199691807.003.0008" class="bib-title-link">Imperfectivity and Habituality in Italian</a>. <em>Genericity</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/DelPrete2013.lean">DelPrete2013</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/BonehDoron2013.lean">BonehDoron2013</a></p>
 </div>
 
@@ -2007,7 +2007,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="dendikken-2006" data-role="cited" data-tag="Syntax" data-year="2006">
-<p class="bib-citation"><strong>den Dikken, M.</strong> (2006). Relators and Linkers: The Syntax of Predication, Predicate Inversion, and Copulas. <em>MIT Press</em>.</p>
+<p class="bib-citation"><strong>den Dikken, M.</strong> (2006). <a href="https://doi.org/10.7551/mitpress/5873.001.0001" class="bib-title-link">Relators and Linkers: The Syntax of Predication, Predicate Inversion, and Copulas</a>. <em>MIT Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/NPEllipsis.lean">NPEllipsis</a></p>
 </div>
 
@@ -2062,7 +2062,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="dinis-jacinto-2026" data-role="cited" data-tag="Semantics" data-year="2026">
-<p class="bib-citation"><strong>Dinis, B. &amp; Jacinto, B.</strong> (2026). Marginality Scales for Gradable Adjectives. <em>Linguistics and Philosophy, 49(1), 1–56</em>.</p>
+<p class="bib-citation"><strong>Dinis, B. &amp; Jacinto, B.</strong> (2026). <a href="https://doi.org/10.1007/s10988-025-09448-6" class="bib-title-link">Marginality Scales for Gradable Adjectives</a>. <em>Linguistics and Philosophy, 49(1), 1–56</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Vagueness.lean">Vagueness</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/MLScale.lean">MLScale</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Adjective/Theory.lean">Theory</a></p>
 </div>
 
@@ -2097,7 +2097,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="dixon-1979" data-role="cited" data-tag="Typology" data-year="1979">
-<p class="bib-citation"><strong>Dixon, R. M. W.</strong> (1979). Ergativity. <em>Language, 55(1), 59–138</em>.</p>
+<p class="bib-citation"><strong>Dixon, R. M. W.</strong> (1979). <a href="https://doi.org/10.1017/cbo9780511611896" class="bib-title-link">Ergativity</a>. <em>Language, 55(1), 59–138</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Typology.lean">Typology</a></p>
 </div>
 
@@ -2212,7 +2212,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="edgington-1997" data-role="cited" data-tag="Semantics" data-year="1997">
-<p class="bib-citation"><strong>Edgington, D.</strong> (1997). Vagueness by Degrees. <em>Vagueness: A Reader</em>.</p>
+<p class="bib-citation"><strong>Edgington, D.</strong> (1997). <a href="https://doi.org/10.7551/mitpress/7064.003.0018" class="bib-title-link">Vagueness by Degrees</a>. <em>Vagueness: A Reader</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Vagueness.lean">Vagueness</a></p>
 </div>
 
@@ -2277,7 +2277,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="embick-2010" data-role="cited" data-tag="Morphology" data-year="2010">
-<p class="bib-citation"><strong>Embick, D.</strong> (2010). Localism versus globalism in morphology and phonology. <em>MIT Press</em>.</p>
+<p class="bib-citation"><strong>Embick, D.</strong> (2010). <a href="https://doi.org/10.7551/mitpress/9780262014229.001.0001" class="bib-title-link">Localism versus globalism in morphology and phonology</a>. <em>MIT Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/DM/VocabularyInsertion.lean">VocabularyInsertion</a></p>
 </div>
 
@@ -2317,7 +2317,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="escribano-2004" data-role="cited" data-tag="Syntax" data-year="2004">
-<p class="bib-citation"><strong>Escribano, J. L. G.</strong> (2004). Head-Final Effects and the Nature of Modification. <em>PhD dissertation, University of Oviedo</em>.</p>
+<p class="bib-citation"><strong>Escribano, J. L. G.</strong> (2004). <a href="https://doi.org/10.1017/s0022226703002317" class="bib-title-link">Head-Final Effects and the Nature of Modification</a>. <em>PhD dissertation, University of Oviedo</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Modification.lean">Modification</a></p>
 </div>
 
@@ -2332,7 +2332,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="evans-2008" data-role="cited" data-tag="Syntax" data-year="2008">
-<p class="bib-citation"><strong>Evans, N.</strong> (2008). Reciprocal Constructions: Towards a Structural Typology. <em>Reciprocals and Reflexives: Theoretical and Typological Explorations, 33–104</em>.</p>
+<p class="bib-citation"><strong>Evans, N.</strong> (2008). <a href="https://doi.org/10.1515/9783110199147.33" class="bib-title-link">Reciprocal Constructions: Towards a Structural Typology</a>. <em>Reciprocals and Reflexives: Theoretical and Typological Explorations, 33–104</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Typology.lean">Typology</a></p>
 </div>
 
@@ -2492,7 +2492,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="francik-clark-1985" data-role="formalized" data-tag="Pragmatics" data-year="1985">
-<p class="bib-citation"><strong>Francik, E. P. &amp; Clark, H. H.</strong> (1985). How to Make Requests That Overcome Obstacles to Compliance. <em>Journal of Memory and Language, 24(5), 560–568</em>.</p>
+<p class="bib-citation"><strong>Francik, E. P. &amp; Clark, H. H.</strong> (1985). <a href="https://doi.org/10.1016/0749-596x(85)90046-4" class="bib-title-link">How to Make Requests That Overcome Obstacles to Compliance</a>. <em>Journal of Memory and Language, 24(5), 560–568</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Studies/FrancikClark1985.lean">FrancikClark1985</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Discourse/SpeechActs.lean">SpeechActs</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Directives/Studies/RuytenbeekEtAl2017.lean">RuytenbeekEtAl2017</a></p>
 </div>
 
@@ -2577,7 +2577,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="gajewski-2005" data-role="cited" data-tag="Semantics" data-year="2005">
-<p class="bib-citation"><strong>Gajewski, J. R.</strong> (2005). Neg-Raising: Polarity and Presupposition. <em>PhD dissertation, Massachusetts Institute of Technology</em>.</p>
+<p class="bib-citation"><strong>Gajewski, J. R.</strong> (2005). <a href="https://doi.org/10.1007/s10988-007-9020-z" class="bib-title-link">Neg-Raising: Polarity and Presupposition</a>. <em>PhD dissertation, Massachusetts Institute of Technology</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Homogeneity.lean">Homogeneity</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Studies/Magri2014.lean">Magri2014</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Rouillard2026.lean">Rouillard2026</a></p>
 </div>
 
@@ -2622,7 +2622,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="gerstner-krifka-1987" data-role="cited" data-tag="Semantics" data-year="1987">
-<p class="bib-citation"><strong>Gerstner, C. &amp; Krifka, M.</strong> (1987). An Outline of Genericity. <em>SNS-Bericht 87-23, Universität Tübingen</em>.</p>
+<p class="bib-citation"><strong>Gerstner, C. &amp; Krifka, M.</strong> (1987). <a href="https://doi.org/10.1515/9783110095869.1.14.966" class="bib-title-link">An Outline of Genericity</a>. <em>SNS-Bericht 87-23, Universität Tübingen</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/Longobardi2001.lean">Longobardi2001</a></p>
 </div>
 
@@ -2806,12 +2806,12 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="fara-2000" data-role="cited" data-tag="Semantics" data-year="2000">
-<p class="bib-citation"><strong>Graff, D.</strong> (2000). Shifting Sands: An Interest-Relative Theory of Vagueness. <em>Philosophical Topics, 28(1), 45–81</em>.</p>
+<p class="bib-citation"><strong>Graff, D.</strong> (2000). <a href="https://doi.org/10.5840/philtopics20002816" class="bib-title-link">Shifting Sands: An Interest-Relative Theory of Vagueness</a>. <em>Philosophical Topics, 28(1), 45–81</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Data.lean">Data</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Vagueness.lean">Vagueness</a></p>
 </div>
 
 <div class="bib-entry" data-key="grano-2024" data-role="cited" data-tag="Semantics" data-year="2024">
-<p class="bib-citation"><strong>Grano, T.</strong> (2024). Intention Reports and Eventuality Abstraction in a Theory of Mood Choice. <em>Linguistics and Philosophy, 47, 265–315</em>.</p>
+<p class="bib-citation"><strong>Grano, T.</strong> (2024). <a href="https://doi.org/10.1007/s10988-023-09397-y" class="bib-title-link">Intention Reports and Eventuality Abstraction in a Theory of Mood Choice</a>. <em>Linguistics and Philosophy, 47, 265–315</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/RationalAttitude.lean">RationalAttitude</a></p>
 </div>
 
@@ -2931,7 +2931,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="gundel-hedberg-zacharski-1993" data-role="cited" data-tag="Semantics" data-year="1993">
-<p class="bib-citation"><strong>Gundel, J. K., Hedberg, N. &amp; Zacharski, R.</strong> (1993). Cognitive Status and the Form of Referring Expressions in Discourse. <em>Language, 69(2), 274–307</em>.</p>
+<p class="bib-citation"><strong>Gundel, J. K., Hedberg, N. &amp; Zacharski, R.</strong> (1993). <a href="https://doi.org/10.1093/oxfordhb/9780199687305.013.5" class="bib-title-link">Cognitive Status and the Form of Referring Expressions in Discourse</a>. <em>Language, 69(2), 274–307</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/Ariel2001.lean">Ariel2001</a></p>
 </div>
 
@@ -2946,7 +2946,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="gunlogson-2004" data-role="formalized" data-tag="Pragmatics" data-year="2004">
-<p class="bib-citation"><strong>Gunlogson, C.</strong> (2004). True to Form: Rising and Falling Declaratives as Questions in English. <em>Routledge</em>.</p>
+<p class="bib-citation"><strong>Gunlogson, C.</strong> (2004). <a href="https://doi.org/10.4324/9780203502013" class="bib-title-link">True to Form: Rising and Falling Declaratives as Questions in English</a>. <em>Routledge</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/Assertion/Gunlogson.lean">Gunlogson</a></p>
 </div>
 
@@ -3155,7 +3155,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="haspelmath-2005" data-role="cited" data-tag="Typology" data-year="2005">
-<p class="bib-citation"><strong>Haspelmath, M.</strong> (2005). Argument Marking in Ditransitive Alignment. <em>Studies in Ditransitive Constructions</em>.</p>
+<p class="bib-citation"><strong>Haspelmath, M.</strong> (2005). <a href="https://doi.org/10.1349/ps1.1537-0852.a.280" class="bib-title-link">Argument Marking in Ditransitive Alignment</a>. <em>Studies in Ditransitive Constructions</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Alignment/Typology.lean">Typology</a></p>
 </div>
 
@@ -3200,12 +3200,12 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="hawkins-1994" data-role="cited" data-tag="Typology" data-year="1994">
-<p class="bib-citation"><strong>Hawkins, J. A.</strong> (1994). A Performance Theory of Order and Constituency. <em>Cambridge University Press</em>.</p>
+<p class="bib-citation"><strong>Hawkins, J. A.</strong> (1994). <a href="https://doi.org/10.1017/cbo9780511554285" class="bib-title-link">A Performance Theory of Order and Constituency</a>. <em>Cambridge University Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a></p>
 </div>
 
 <div class="bib-entry" data-key="hawkins-1999" data-role="cited" data-tag="Other" data-year="1999">
-<p class="bib-citation"><strong>Hawkins, J. A.</strong> (1999). Processing Complexity and Filler-Gap Dependencies Across Grammars. <em>Language, 75(2), 244–285</em>.</p>
+<p class="bib-citation"><strong>Hawkins, J. A.</strong> (1999). <a href="https://doi.org/10.2307/417261" class="bib-title-link">Processing Complexity and Filler-Gap Dependencies Across Grammars</a>. <em>Language, 75(2), 244–285</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Islands/Data.lean">Data</a></p>
 </div>
 
@@ -3290,7 +3290,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="heim-2000" data-role="cited" data-tag="Semantics" data-year="2000">
-<p class="bib-citation"><strong>Heim, I.</strong> (2000). Degree Operators and Scope. <em>Proceedings of SALT 10, 40–64</em>.</p>
+<p class="bib-citation"><strong>Heim, I.</strong> (2000). <a href="https://doi.org/10.3765/salt.v10i0.3102" class="bib-title-link">Degree Operators and Scope</a>. <em>Proceedings of SALT 10, 40–64</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Numeral/Embedding.lean">Embedding</a></p>
 </div>
 
@@ -3360,7 +3360,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="hepple-morrill-1989" data-role="cited" data-tag="Syntax" data-year="1989">
-<p class="bib-citation"><strong>Hepple, M. &amp; Morrill, G.</strong> (1989). Parsing and Derivational Equivalence. <em>Proceedings of the Fourth Conference of the European Chapter of the Association for Computational Linguistics, 10–18</em>.</p>
+<p class="bib-citation"><strong>Hepple, M. &amp; Morrill, G.</strong> (1989). <a href="https://doi.org/10.3115/976815.976817" class="bib-title-link">Parsing and Derivational Equivalence</a>. <em>Proceedings of the Fourth Conference of the European Chapter of the Association for Computational Linguistics, 10–18</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Formal/Equivalence.lean">Equivalence</a></p>
 </div>
 
@@ -3380,7 +3380,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="hinterwimmer-2009" data-role="cited" data-tag="Semantics" data-year="2009">
-<p class="bib-citation"><strong>Hinterwimmer, S.</strong> (2009). Q}-Adverbs as Selective Binders: The Quantificational Variability of Free Relatives and Definite {DPs. <em>De Gruyter Mouton</em>.</p>
+<p class="bib-citation"><strong>Hinterwimmer, S.</strong> (2009). <a href="https://doi.org/10.1515/9783110199208" class="bib-title-link">Q}-Adverbs as Selective Binders: The Quantificational Variability of Free Relatives and Definite {DPs</a>. <em>De Gruyter Mouton</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Typology.lean">Typology</a></p>
 </div>
 
@@ -3520,7 +3520,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="hudson-1984" data-role="cited" data-tag="Syntax" data-year="1984">
-<p class="bib-citation"><strong>Hudson, R.</strong> (1984). Word Grammar. <em>Basil Blackwell</em>.</p>
+<p class="bib-citation"><strong>Hudson, R.</strong> (1984). <a href="https://doi.org/10.1093/oxfordhb/9780199738632.013.0019" class="bib-title-link">Word Grammar</a>. <em>Basil Blackwell</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/Hudson1984.lean">Hudson1984</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coordination.lean">Coordination</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Core/Basic.lean">Basic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Core/LexicalRules.lean">LexicalRules</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Core/NetworkIntegration.lean">NetworkIntegration</a><span class="bib-more-links" style="display:none">, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/NonProjective.lean">NonProjective</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/LongDistance.lean">LongDistance</a></span> <a class="bib-expand" href="javascript:void(0)" onclick="var s=this.previousElementSibling;s.style.display=s.style.display==='none'?'inline':'none';this.textContent=s.style.display==='none'?'(+2 more)':'(less)'">(+2 more)</a></p>
 </div>
 
@@ -3530,12 +3530,12 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="hudson-2010" data-role="cited" data-tag="Syntax" data-year="2010">
-<p class="bib-citation"><strong>Hudson, R.</strong> (2010). An Introduction to Word Grammar. <em>Cambridge University Press</em>.</p>
+<p class="bib-citation"><strong>Hudson, R.</strong> (2010). <a href="https://doi.org/10.1017/cbo9780511781964" class="bib-title-link">An Introduction to Word Grammar</a>. <em>Cambridge University Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Inheritance.lean">Inheritance</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Core/NetworkIntegration.lean">NetworkIntegration</a></p>
 </div>
 
 <div class="bib-entry" data-key="hume-1748" data-role="cited" data-tag="Other" data-year="1748">
-<p class="bib-citation"><strong>Hume, D.</strong> (1748). An Enquiry Concerning Human Understanding.</p>
+<p class="bib-citation"><strong>Hume, D.</strong> (1748). <a href="https://doi.org/10.1093/owc/9780199549900.001.0001" class="bib-title-link">An Enquiry Concerning Human Understanding</a>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Discourse/CoherenceRelation.lean">CoherenceRelation</a></p>
 </div>
 
@@ -3680,7 +3680,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="jo-seo-2023" data-role="cited" data-tag="Syntax" data-year="2023">
-<p class="bib-citation"><strong>Jo, J. &amp; Seo, Y. A.</strong> (2023). Japanese rare-constructions and the nature of the passive. <em>Journal of East Asian Linguistics, 32(1), 91–132</em>.</p>
+<p class="bib-citation"><strong>Jo, J. &amp; Seo, Y. A.</strong> (2023). <a href="https://doi.org/10.1007/s10831-023-09253-x" class="bib-title-link">Japanese rare-constructions and the nature of the passive</a>. <em>Journal of East Asian Linguistics, 32(1), 91–132</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Japanese/Passive.lean">Passive</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Unaccusativity/Data.lean">Data</a></p>
 </div>
 
@@ -3720,7 +3720,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="kager-2007" data-role="cited" data-tag="Phonology" data-year="2007">
-<p class="bib-citation"><strong>Kager, R.</strong> (2007). Feet and metrical stress. <em>The Cambridge Handbook of Phonology, 195–228</em>.</p>
+<p class="bib-citation"><strong>Kager, R.</strong> (2007). <a href="https://doi.org/10.1017/cbo9780511486371.010" class="bib-title-link">Feet and metrical stress</a>. <em>The Cambridge Handbook of Phonology, 195–228</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Phonology/Syllable/Foot.lean">Foot</a></p>
 </div>
 
@@ -3999,7 +3999,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="kiparsky-2000" data-role="cited" data-tag="Phonology" data-year="2000">
-<p class="bib-citation"><strong>Kiparsky, P.</strong> (2000). Opacity and cyclicity. <em>The Linguistic Review, 17, 351–365</em>.</p>
+<p class="bib-citation"><strong>Kiparsky, P.</strong> (2000). <a href="https://doi.org/10.1515/tlir.2000.17.2-4.351" class="bib-title-link">Opacity and cyclicity</a>. <em>The Linguistic Review, 17, 351–365</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Allomorphy/TeluguNounStems/Studies/Aitha2026.lean">Aitha2026</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Phonology/StratalOT.lean">StratalOT</a></p>
 </div>
 
@@ -4204,7 +4204,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="kravtchenko-demberg-2022" data-role="cited" data-tag="Pragmatics" data-year="2022">
-<p class="bib-citation"><strong>Kravtchenko, E. &amp; Demberg, V.</strong> (2022). Informationally redundant utterances elicit pragmatic inferences. <em>Cognition, 225, 105159</em>.</p>
+<p class="bib-citation"><strong>Kravtchenko, E. &amp; Demberg, V.</strong> (2022). <a href="https://doi.org/10.1016/j.cognition.2022.105159" class="bib-title-link">Informationally redundant utterances elicit pragmatic inferences</a>. <em>Cognition, 225, 105159</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/ReesReksnesRohde2026.lean">ReesReksnesRohde2026</a></p>
 </div>
 
@@ -4269,7 +4269,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="krifka-2013" data-role="formalized" data-tag="Semantics" data-year="2013">
-<p class="bib-citation"><strong>Krifka, M.</strong> (2013). Definitional Generics. <em>Genericity, 372–389</em>.</p>
+<p class="bib-citation"><strong>Krifka, M.</strong> (2013). <a href="https://doi.org/10.1093/acprof:oso/9780199691807.003.0015" class="bib-title-link">Definitional Generics</a>. <em>Genericity, 372–389</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/Krifka2013.lean">Krifka2013</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/GenericSemantics.lean">GenericSemantics</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Generics.lean">Generics</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Genericity.lean">Genericity</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/CompareSemantics.lean">CompareSemantics</a></p>
 </div>
 
@@ -4299,7 +4299,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="kripke-1963" data-role="cited" data-tag="Semantics" data-year="1963">
-<p class="bib-citation"><strong>Kripke, S. A.</strong> (1963). Semantical Considerations on Modal Logic. <em>Acta Philosophica Fennica, 16, 83–94</em>.</p>
+<p class="bib-citation"><strong>Kripke, S. A.</strong> (1963). <a href="https://doi.org/10.1007/978-3-0346-0145-0_16" class="bib-title-link">Semantical Considerations on Modal Logic</a>. <em>Acta Philosophica Fennica, 16, 83–94</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Basic.lean">Basic</a></p>
 </div>
 
@@ -4394,7 +4394,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="labov-1966" data-role="cited" data-tag="Other" data-year="1966">
-<p class="bib-citation"><strong>Labov, W.</strong> (1966). The Social Stratification of English in New York City. <em>Center for Applied Linguistics</em>.</p>
+<p class="bib-citation"><strong>Labov, W.</strong> (1966). <a href="https://doi.org/10.1017/cbo9780511618208" class="bib-title-link">The Social Stratification of English in New York City</a>. <em>Center for Applied Linguistics</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/SocialMeaning/Basic.lean">Basic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/SocialMeaning/Studies/Burnett2019.lean">Burnett2019</a></p>
 </div>
 
@@ -4429,7 +4429,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="laka-1990" data-role="cited" data-tag="Syntax" data-year="1990">
-<p class="bib-citation"><strong>Laka, I.</strong> (1990). Negation in Syntax: On the Nature of Functional Categories and Projections. <em>PhD dissertation, Massachusetts Institute of Technology</em>.</p>
+<p class="bib-citation"><strong>Laka, I.</strong> (1990). <a href="https://doi.org/10.1387/asju.8211" class="bib-title-link">Negation in Syntax: On the Nature of Functional Categories and Projections</a>. <em>PhD dissertation, Massachusetts Institute of Technology</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/Westergaard2009.lean">Westergaard2009</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean">Basic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/ExtendedProjection/Properties.lean">Properties</a></p>
 </div>
 
@@ -4568,7 +4568,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="levinson-2000" data-role="cited" data-tag="Pragmatics" data-year="2000">
-<p class="bib-citation"><strong>Levinson, S. C.</strong> (2000). Presumptive Meanings: The Theory of Generalized Conversational Implicature. <em>MIT Press</em>.</p>
+<p class="bib-citation"><strong>Levinson, S. C.</strong> (2000). <a href="https://doi.org/10.7551/mitpress/5526.001.0001" class="bib-title-link">Presumptive Meanings: The Theory of Generalized Conversational Implicature</a>. <em>MIT Press</em>.</p>
 </div>
 
 <div class="bib-entry" data-key="namboodiripad-etal-2023" data-role="cited" data-tag="Typology" data-year="2023">
@@ -4627,7 +4627,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="liptak-saab-2014" data-role="cited" data-tag="Syntax" data-year="2014">
-<p class="bib-citation"><strong>Lipták, A. &amp; Saab, A.</strong> (2014). No N-raising out of NPs in Spanish: ellipsis as a diagnostic of head movement. <em>Natural Language &amp; Linguistic Theory, 32, 1247–1271</em>.</p>
+<p class="bib-citation"><strong>Lipták, A. &amp; Saab, A.</strong> (2014). <a href="https://doi.org/10.1007/s11049-014-9247-7" class="bib-title-link">No N-raising out of NPs in Spanish: ellipsis as a diagnostic of head movement</a>. <em>Natural Language &amp; Linguistic Theory, 32, 1247–1271</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Ellipsis/DeletionDomain.lean">DeletionDomain</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/BenzSalzmann2025.lean">BenzSalzmann2025</a></p>
 </div>
 
@@ -4657,7 +4657,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="longobardi-2001" data-role="formalized" data-tag="Semantics" data-year="2001">
-<p class="bib-citation"><strong>Longobardi, G.</strong> (2001). How Comparative is Semantics? A Unified Parametric Theory of Bare Nouns and Proper Names. <em>Natural Language Semantics, 9(4), 335–369</em>.</p>
+<p class="bib-citation"><strong>Longobardi, G.</strong> (2001). <a href="https://doi.org/10.1023/a:1014861111123" class="bib-title-link">How Comparative is Semantics? A Unified Parametric Theory of Bare Nouns and Proper Names</a>. <em>Natural Language Semantics, 9(4), 335–369</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/Guerrini2026.lean">Guerrini2026</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Studies/Longobardi2001.lean">Longobardi2001</a></p>
 </div>
 
@@ -4732,7 +4732,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="magri-2014" data-role="formalized" data-tag="Semantics" data-year="2014">
-<p class="bib-citation"><strong>Magri, G.</strong> (2014). An account for the homogeneity effects triggered by plural definites and conjunction based on double strengthening. <em>Pragmatics, Semantics and the Case of Scalar Implicatures, 99–145</em>.</p>
+<p class="bib-citation"><strong>Magri, G.</strong> (2014). <a href="https://doi.org/10.1057/9781137333285.0009" class="bib-title-link">An account for the homogeneity effects triggered by plural definites and conjunction based on double strengthening</a>. <em>Pragmatics, Semantics and the Case of Scalar Implicatures, 99–145</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Implementations/Magri2014.lean">Magri2014</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/AghaJeretic2022.lean">AghaJeretic2022</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Studies/TieuKrizChemla2019.lean">TieuKrizChemla2019</a></p>
 </div>
 
@@ -4857,7 +4857,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="mcfadden-2018" data-role="cited" data-tag="Morphology" data-year="2018">
-<p class="bib-citation"><strong>McFadden, T.</strong> (2018). *ABA in stem-allomorphy and the emptiness of the nominative. <em>Glossa, 3(1), 8</em>.</p>
+<p class="bib-citation"><strong>McFadden, T.</strong> (2018). <a href="https://doi.org/10.5334/gjgl.373" class="bib-title-link">*ABA in stem-allomorphy and the emptiness of the nominative</a>. <em>Glossa, 3(1), 8</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Containment.lean, Phenomena/Allomorphy/TeluguNounStems/Studies/Aitha2026.lean">Aitha2026</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Telugu/Case.lean">Case</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/CaseContainment.lean">CaseContainment</a></p>
 </div>
 
@@ -4992,7 +4992,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="mondloch-2017" data-role="formalized" data-tag="Morphology" data-year="2017">
-<p class="bib-citation"><strong>Mondloch, J. L.</strong> (2017). Basic K'ichee' Grammar: Thirty-Eight Lessons. <em>University Press of Colorado</em>.</p>
+<p class="bib-citation"><strong>Mondloch, J. L.</strong> (2017). <a href="https://doi.org/10.5876/9781607324515" class="bib-title-link">Basic K'ichee' Grammar: Thirty-Eight Lessons</a>. <em>University Press of Colorado</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kiche/ExtractionMorphology.lean, Fragments/Kiche/Agreement.lean, Fragments/Kiche/VoiceSystem.lean">VoiceSystem</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mayan/Kiche/Agreement.lean">Agreement</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mayan/Kiche/ExtractionMorphology.lean">ExtractionMorphology</a></p>
 </div>
 
@@ -5032,7 +5032,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="musan-1995" data-role="cited" data-tag="Semantics" data-year="1995">
-<p class="bib-citation"><strong>Musan, R.</strong> (1995). On the Temporal Interpretation of Noun Phrases. <em>PhD dissertation, Massachusetts Institute of Technology</em>.</p>
+<p class="bib-citation"><strong>Musan, R.</strong> (1995). <a href="https://doi.org/10.4324/9781003249658" class="bib-title-link">On the Temporal Interpretation of Noun Phrases</a>. <em>PhD dissertation, Massachusetts Institute of Technology</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Data.lean">Data</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Basic.lean">Basic</a></p>
 </div>
 
@@ -5157,7 +5157,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="nishigauchi-1992" data-role="cited" data-tag="Syntax" data-year="1992">
-<p class="bib-citation"><strong>Nishigauchi, T.</strong> (1992). Syntax of Reciprocals in Japanese. <em>Journal of East Asian Linguistics, 1(2), 157–196</em>.</p>
+<p class="bib-citation"><strong>Nishigauchi, T.</strong> (1992). <a href="https://doi.org/10.1007/bf00130235" class="bib-title-link">Syntax of Reciprocals in Japanese</a>. <em>Journal of East Asian Linguistics, 1(2), 157–196</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Reference/Reciprocals.lean, Phenomena/Anaphora/Studies/DalrympleHaug2024.lean">DalrympleHaug2024</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Reference/Reciprocals.lean">Reciprocals</a></p>
 </div>
 
@@ -5312,7 +5312,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="pareschi-steedman-1987" data-role="cited" data-tag="Syntax" data-year="1987">
-<p class="bib-citation"><strong>Pareschi, R. &amp; Steedman, M. J.</strong> (1987). A Lazy Way to Chart-Parse with Extended Categorial Grammars. <em>Proceedings of the 25th Annual Meeting of the Association for Computational Linguistics</em>.</p>
+<p class="bib-citation"><strong>Pareschi, R. &amp; Steedman, M. J.</strong> (1987). <a href="https://doi.org/10.3115/981175.981187" class="bib-title-link">A Lazy Way to Chart-Parse with Extended Categorial Grammars</a>. <em>Proceedings of the 25th Annual Meeting of the Association for Computational Linguistics</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Formal/Equivalence.lean">Equivalence</a></p>
 </div>
 
@@ -5542,7 +5542,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="prince-smolensky-1993" data-role="cited" data-tag="Phonology" data-year="1993">
-<p class="bib-citation"><strong>Prince, A. &amp; Smolensky, P.</strong> (1993). Optimality Theory: Constraint Interaction in Generative Grammar. <em>Rutgers University Center for Cognitive Science</em>.</p>
+<p class="bib-citation"><strong>Prince, A. &amp; Smolensky, P.</strong> (1993). <a href="https://doi.org/10.1002/9780470759400" class="bib-title-link">Optimality Theory: Constraint Interaction in Generative Grammar</a>. <em>Rutgers University Center for Cognitive Science</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/ConstraintEvaluation.lean">ConstraintEvaluation</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Phonology/HarmonicGrammar/OTLimit.lean">OTLimit</a></p>
 </div>
 
@@ -5722,7 +5722,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="rizzi-1990" data-role="cited" data-tag="Syntax" data-year="1990">
-<p class="bib-citation"><strong>Rizzi, L.</strong> (1990). Relativized Minimality. <em>MIT Press</em>.</p>
+<p class="bib-citation"><strong>Rizzi, L.</strong> (1990). <a href="https://doi.org/10.1002/9780470756416.ch4" class="bib-title-link">Relativized Minimality</a>. <em>MIT Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Studies/Collins2005.lean">Collins2005</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Phase.lean">Phase</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Movement/Smuggling.lean">Smuggling</a></p>
 </div>
 
@@ -5746,7 +5746,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="roberts-1996" data-role="cited" data-tag="Pragmatics" data-year="1996">
-<p class="bib-citation"><strong>Roberts, C.</strong> (1996). Information Structure in Discourse: Towards an Integrated Formal Theory of Pragmatics. <em>OSU Working Papers in Linguistics No.\ 49: Papers in Semantics, 91–136</em>.</p>
+<p class="bib-citation"><strong>Roberts, C.</strong> (1996). <a href="https://doi.org/10.3765/sp.5.6" class="bib-title-link">Information Structure in Discourse: Towards an Integrated Formal Theory of Pragmatics</a>. <em>OSU Working Papers in Linguistics No.\ 49: Papers in Semantics, 91–136</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/BackgroundedIslands.lean">BackgroundedIslands</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Situations/Elbourne.lean">Elbourne</a></p>
 </div>
 
@@ -5931,7 +5931,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="sag-wasow-bender-2003" data-role="foundational" data-tag="Syntax" data-year="2003">
-<p class="bib-citation"><strong>Sag, I. A., Wasow, T. &amp; Bender, E. M.</strong> (2003). Syntactic Theory: A Formal Introduction. <em>CSLI Publications</em>.</p>
+<p class="bib-citation"><strong>Sag, I. A., Wasow, T. &amp; Bender, E. M.</strong> (2003). <a href="https://doi.org/10.1162/coli.2000.26.2.295a" class="bib-title-link">Syntactic Theory: A Formal Introduction</a>. <em>CSLI Publications</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean">SubjectAuxInversion</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Inversion.lean">Inversion</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Core/Basic.lean">Basic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Coreference.lean">Coreference</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Core/FromFragments.lean">FromFragments</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Studies/HPSGExtraction.lean">HPSGExtraction</a><span class="bib-more-links" style="display:none">, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Studies/HPSGRelativeClauses.lean">HPSGRelativeClauses</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/SagWasowBender2003.lean">SagWasowBender2003</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Core/HeadFiller.lean">HeadFiller</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Core/RelativeClauses.lean">RelativeClauses</a></span> <a class="bib-expand" href="javascript:void(0)" onclick="var s=this.previousElementSibling;s.style.display=s.style.display==='none'?'inline':'none';this.textContent=s.style.display==='none'?'(+4 more)':'(less)'">(+4 more)</a></p>
 </div>
 
@@ -5981,7 +5981,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="sauerland-2003" data-role="cited" data-tag="Semantics" data-year="2003">
-<p class="bib-citation"><strong>Sauerland, U.</strong> (2003). A new semantics for number.</p>
+<p class="bib-citation"><strong>Sauerland, U.</strong> (2003). <a href="https://doi.org/10.3765/salt.v0i0.2898" class="bib-title-link">A new semantics for number</a>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Multiplicity.lean">Multiplicity</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Alternatives/Lexical.lean">Lexical</a></p>
 </div>
 
@@ -6066,7 +6066,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="schlenker-lamberton-2024" data-role="formalized" data-tag="Semantics" data-year="2024">
-<p class="bib-citation"><strong>Schlenker, P. &amp; Lamberton, J.</strong> (2024). Iconological Semantics. <em>Linguistics &amp; Philosophy, 47(5), 77–838</em>.</p>
+<p class="bib-citation"><strong>Schlenker, P. &amp; Lamberton, J.</strong> (2024). <a href="https://doi.org/10.1007/s10988-024-09411-x" class="bib-title-link">Iconological Semantics</a>. <em>Linguistics &amp; Philosophy, 47(5), 77–838</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Iconic/Basic.lean">Basic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/ASL/Classifiers.lean">Classifiers</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Iconicity/Studies/SchlenkerEtAl2026.lean">SchlenkerEtAl2026</a></p>
 </div>
 
@@ -6151,7 +6151,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="schfer-2025" data-role="cited" data-tag="Syntax" data-year="2025">
-<p class="bib-citation"><strong>Schäfer, F.</strong> (2025). Anticausatives in transitive guise. <em>Natural Language &amp; Linguistic Theory, 43(1), 421–475</em>.</p>
+<p class="bib-citation"><strong>Schäfer, F.</strong> (2025). <a href="https://doi.org/10.1007/s11049-024-09612-w" class="bib-title-link">Anticausatives in transitive guise</a>. <em>Natural Language &amp; Linguistic Theory, 43(1), 421–475</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/Ozaki2026.lean">Ozaki2026</a></p>
 </div>
 
@@ -6196,7 +6196,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="searle-1983" data-role="cited" data-tag="Other" data-year="1983">
-<p class="bib-citation"><strong>Searle, J. R.</strong> (1983). Intentionality: An Essay in the Philosophy of Mind. <em>Cambridge University Press</em>.</p>
+<p class="bib-citation"><strong>Searle, J. R.</strong> (1983). <a href="https://doi.org/10.1017/cbo9781139173452" class="bib-title-link">Intentionality: An Essay in the Philosophy of Mind</a>. <em>Cambridge University Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Discourse/SpeechActs.lean">SpeechActs</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean">Doxastic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/RationalAttitude.lean">RationalAttitude</a></p>
 </div>
 
@@ -6221,7 +6221,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="shan-2005" data-role="cited" data-tag="Semantics" data-year="2005">
-<p class="bib-citation"><strong>Shan, C.</strong> (2005). Linguistic Side Effects. <em>PhD dissertation, Harvard University</em>.</p>
+<p class="bib-citation"><strong>Shan, C.</strong> (2005). <a href="https://doi.org/10.1093/oso/9780199204373.003.0004" class="bib-title-link">Linguistic Side Effects</a>. <em>PhD dissertation, Harvard University</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Continuation/Basic.lean">Basic</a></p>
 </div>
 
@@ -6251,7 +6251,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="shibatani-1976" data-role="cited" data-tag="Semantics" data-year="1976">
-<p class="bib-citation"><strong>Shibatani, M.</strong> (1976). The Grammar of Causative Constructions: A Conspectus. <em>Syntax and Semantics, 6: The Grammar of Causative Constructions, 1–40</em>.</p>
+<p class="bib-citation"><strong>Shibatani, M.</strong> (1976). <a href="https://doi.org/10.1163/9789004368842_002" class="bib-title-link">The Grammar of Causative Constructions: A Conspectus</a>. <em>Syntax and Semantics, 6: The Grammar of Causative Constructions, 1–40</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Causation/MorphologicalCausation.lean">MorphologicalCausation</a></p>
 </div>
 
@@ -6291,7 +6291,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="sigurdsson-et-al-2022" data-role="cited" data-tag="Syntax" data-year="2022">
-<p class="bib-citation"><strong>Sigurðsson, H. Á., Wood, J. &amp; Sigurðsson, E. F.</strong> (2022). Hvor `Each' Reciprocals and Distributives in Icelandic: E-raising + Short Main Verb Movement. <em>Linguistic Inquiry, 53(3), 571–588</em>.</p>
+<p class="bib-citation"><strong>Sigurðsson, H. Á., Wood, J. &amp; Sigurðsson, E. F.</strong> (2022). <a href="https://doi.org/10.1162/ling_a_00411" class="bib-title-link">Hvor `Each' Reciprocals and Distributives in Icelandic: E-raising + Short Main Verb Movement</a>. <em>Linguistic Inquiry, 53(3), 571–588</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Reference/Reciprocals.lean">Reciprocals</a></p>
 </div>
 
@@ -6301,7 +6301,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="siloni-2008" data-role="cited" data-tag="Syntax" data-year="2008">
-<p class="bib-citation"><strong>Siloni, T.</strong> (2008). The Syntax of Reciprocal Verbs: An Overview. <em>Reciprocals and Reflexives: Theoretical and Typological Explorations, 451–498</em>.</p>
+<p class="bib-citation"><strong>Siloni, T.</strong> (2008). <a href="https://doi.org/10.1515/9783110199147.451" class="bib-title-link">The Syntax of Reciprocal Verbs: An Overview</a>. <em>Reciprocals and Reflexives: Theoretical and Typological Explorations, 451–498</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Typology.lean">Typology</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Czech/Reciprocals.lean">Reciprocals</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Studies/Siloni2012.lean">Siloni2012</a></p>
 </div>
 
@@ -6311,7 +6311,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="silverstein-1976" data-role="cited" data-tag="Typology" data-year="1976">
-<p class="bib-citation"><strong>Silverstein, M.</strong> (1976). Hierarchy of Features and Ergativity. <em>Grammatical Categories in Australian Languages, 112–171</em>.</p>
+<p class="bib-citation"><strong>Silverstein, M.</strong> (1976). <a href="https://doi.org/10.1515/9783110871661-008" class="bib-title-link">Hierarchy of Features and Ergativity</a>. <em>Grammatical Categories in Australian Languages, 112–171</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/Studies/PrasertsonSmithCulbertson2026.lean">PrasertsonSmithCulbertson2026</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Alignment/Typology.lean">Typology</a></p>
 </div>
 
@@ -6341,7 +6341,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="smith-1978" data-role="cited" data-tag="Semantics" data-year="1978">
-<p class="bib-citation"><strong>Smith, C. S.</strong> (1978). Jespersen's “move and change” class and causative verbs in English. <em>Linguistic and Literary Studies in Honor of Archibald A. Hill, 2, 101–109</em>.</p>
+<p class="bib-citation"><strong>Smith, C. S.</strong> (1978). <a href="https://doi.org/10.1515/9783110800432.101" class="bib-title-link">Jespersen's “move and change” class and causative verbs in English</a>. <em>Linguistic and Literary Studies in Honor of Archibald A. Hill, 2, 101–109</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/EventStructure.lean">EventStructure</a></p>
 </div>
 
@@ -6381,7 +6381,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="sneddon-1996" data-role="cited" data-tag="Other" data-year="1996">
-<p class="bib-citation"><strong>Sneddon, J. N.</strong> (1996). Indonesian: A comprehensive grammar. <em>Routledge</em>.</p>
+<p class="bib-citation"><strong>Sneddon, J. N.</strong> (1996). <a href="https://doi.org/10.4324/9780203720882" class="bib-title-link">Indonesian: A comprehensive grammar</a>. <em>Routledge</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Indonesian/Morphophonology.lean">Morphophonology</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Indonesian/Predicates.lean">Predicates</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Indonesian/VoiceSystem.lean">VoiceSystem</a></p>
 </div>
 
@@ -6531,7 +6531,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="sridhar-1990" data-role="cited" data-tag="Typology" data-year="1990">
-<p class="bib-citation"><strong>Sridhar, S. N.</strong> (1990). Kannada. <em>Routledge</em>.</p>
+<p class="bib-citation"><strong>Sridhar, S. N.</strong> (1990). <a href="https://doi.org/10.1016/b0-08-044854-2/02148-9" class="bib-title-link">Kannada</a>. <em>Routledge</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean">Typology</a></p>
 </div>
 
@@ -6721,7 +6721,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="swanson-2010" data-role="cited" data-tag="Pragmatics" data-year="2010">
-<p class="bib-citation"><strong>Swanson, E.</strong> (2010). Structurally Defined Alternatives and Lexicalizations of XOR. <em>Linguistics and Philosophy, 33(1), 31–36</em>.</p>
+<p class="bib-citation"><strong>Swanson, E.</strong> (2010). <a href="https://doi.org/10.1007/s10988-010-9074-1" class="bib-title-link">Structurally Defined Alternatives and Lexicalizations of XOR</a>. <em>Linguistics and Philosophy, 33(1), 31–36</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/BrehenyEtAl2018.lean">BrehenyEtAl2018</a></p>
 </div>
 
@@ -6851,7 +6851,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="tieu-kriz-chemla-2019" data-role="cited" data-tag="Semantics" data-year="2019">
-<p class="bib-citation"><strong>Tieu, L., Križ, M. &amp; Chemla, E.</strong> (2019). Children's acquisition of homogeneity in plural definite descriptions. <em>Frontiers in Psychology</em>.</p>
+<p class="bib-citation"><strong>Tieu, L., Križ, M. &amp; Chemla, E.</strong> (2019). <a href="https://doi.org/10.3389/fpsyg.2019.02329" class="bib-title-link">Children's acquisition of homogeneity in plural definite descriptions</a>. <em>Frontiers in Psychology</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/ZaniCiardelliSanfelici2026.lean">ZaniCiardelliSanfelici2026</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Basic.lean">Basic</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/AghaJeretic2022.lean">AghaJeretic2022</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/NonMaximality.lean">NonMaximality</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Studies/TieuKrizChemla2019.lean">TieuKrizChemla2019</a><span class="bib-more-links" style="display:none">, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/AlternativeSensitive.lean">AlternativeSensitive</a></span> <a class="bib-expand" href="javascript:void(0)" onclick="var s=this.previousElementSibling;s.style.display=s.style.display==='none'?'inline':'none';this.textContent=s.style.display==='none'?'(+1 more)':'(less)'">(+1 more)</a></p>
 </div>
 
@@ -6916,12 +6916,12 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="traxler-etal-2002" data-role="cited" data-tag="Other" data-year="2002">
-<p class="bib-citation"><strong>Traxler, M. J., Pickering, M. J. &amp; Clifton, C.</strong> (2002). Adjunct Attachment is Not a Form of Lexical Ambiguity Resolution. <em>Journal of Memory and Language, 47, 74–93</em>.</p>
+<p class="bib-citation"><strong>Traxler, M. J., Pickering, M. J. &amp; Clifton, C.</strong> (2002). <a href="https://doi.org/10.1006/jmla.1998.2600" class="bib-title-link">Adjunct Attachment is Not a Form of Lexical Ambiguity Resolution</a>. <em>Journal of Memory and Language, 47, 74–93</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a></p>
 </div>
 
 <div class="bib-entry" data-key="trinh-haida-2015" data-role="cited" data-tag="Pragmatics" data-year="2015">
-<p class="bib-citation"><strong>Trinh, T. &amp; Haida, A.</strong> (2015). Constraining the Derivation of Alternatives. <em>Natural Language Semantics, 25(4), 249–270</em>.</p>
+<p class="bib-citation"><strong>Trinh, T. &amp; Haida, A.</strong> (2015). <a href="https://doi.org/10.1007/s11050-015-9115-y" class="bib-title-link">Constraining the Derivation of Alternatives</a>. <em>Natural Language Semantics, 25(4), 249–270</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/BrehenyEtAl2018.lean">BrehenyEtAl2018</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Alternatives/AtomicConstraint.lean">AtomicConstraint</a></p>
 </div>
 
@@ -6956,7 +6956,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="tversky-kahneman-1983" data-role="cited" data-tag="Other" data-year="1983">
-<p class="bib-citation"><strong>Tversky, A. &amp; Kahneman, D.</strong> (1983). Extensional Versus Intuitive Reasoning: The Conjunction Fallacy in Probability Judgment. <em>Psychological Review, 90(4), 293–315</em>.</p>
+<p class="bib-citation"><strong>Tversky, A. &amp; Kahneman, D.</strong> (1983). <a href="https://doi.org/10.1017/cbo9780511808098.003" class="bib-title-link">Extensional Versus Intuitive Reasoning: The Conjunction Fallacy in Probability Judgment</a>. <em>Psychological Review, 90(4), 293–315</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Confidence.lean">Confidence</a></p>
 </div>
 
@@ -7071,7 +7071,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="van-valin-wilkins-1996" data-role="cited" data-tag="Semantics" data-year="1996">
-<p class="bib-citation"><strong>Van Valin, R. D. &amp; Wilkins, D. P.</strong> (1996). The case for “effector”: Case roles, agents, and agency revisited.</p>
+<p class="bib-citation"><strong>Van Valin, R. D. &amp; Wilkins, D. P.</strong> (1996). <a href="https://doi.org/10.1093/oso/9780198235392.003.0011" class="bib-title-link">The case for “effector”: Case roles, agents, and agency revisited</a>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Causation/MorphologicalCausation.lean">MorphologicalCausation</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/EntailmentProfile.lean">EntailmentProfile</a></p>
 </div>
 
@@ -7315,7 +7315,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="wright-1976" data-role="cited" data-tag="Other" data-year="1976">
-<p class="bib-citation"><strong>Wright, C.</strong> (1976). Language-Mastery and the Sorites Paradox. <em>Truth and Meaning</em>.</p>
+<p class="bib-citation"><strong>Wright, C.</strong> (1976). <a href="https://doi.org/10.7551/mitpress/7064.003.0012" class="bib-title-link">Language-Mastery and the Sorites Paradox</a>. <em>Truth and Meaning</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Vagueness.lean">Vagueness</a></p>
 </div>
 
@@ -7390,7 +7390,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="zanuttini-1997" data-role="cited" data-tag="Syntax" data-year="1997">
-<p class="bib-citation"><strong>Zanuttini, R.</strong> (1997). Negation and Clausal Structure: A Comparative Study of Romance Languages. <em>Oxford University Press</em>.</p>
+<p class="bib-citation"><strong>Zanuttini, R.</strong> (1997). <a href="https://doi.org/10.1093/oso/9780195080544.001.0001" class="bib-title-link">Negation and Clausal Structure: A Comparative Study of Romance Languages</a>. <em>Oxford University Press</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/manual">manual</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean">Basic</a></p>
 </div>
 
@@ -7415,12 +7415,12 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="zeijlstra-2004" data-role="cited" data-tag="Syntax" data-year="2004">
-<p class="bib-citation"><strong>Zeijlstra, H.</strong> (2004). Sentential Negation and Negative Concord. <em>PhD dissertation, University of Amsterdam</em>.</p>
+<p class="bib-citation"><strong>Zeijlstra, H.</strong> (2004). <a href="https://doi.org/10.53846/goediss-10298" class="bib-title-link">Sentential Negation and Negative Concord</a>. <em>PhD dissertation, University of Amsterdam</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/CzechThreeWayNegBridge.lean">CzechThreeWayNegBridge</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Data.lean">Data</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Czech/Determiners.lean">Determiners</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/Studies/Stakov2026.lean">Stakov2026</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/Studies/Stakov2026Typology.lean">Stakov2026Typology</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Negation/CzechNegation.lean">CzechNegation</a></p>
 </div>
 
 <div class="bib-entry" data-key="zeijlstra-2007" data-role="cited" data-tag="Semantics" data-year="2007">
-<p class="bib-citation"><strong>Zeijlstra, H.</strong> (2007). Modal Concord. <em>Proceedings of SALT 17, 317–332</em>.</p>
+<p class="bib-citation"><strong>Zeijlstra, H.</strong> (2007). <a href="https://doi.org/10.3765/salt.v0i0.2961" class="bib-title-link">Modal Concord</a>. <em>Proceedings of SALT 17, 317–332</em>.</p>
 <p class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Data.lean">Data</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/LiuRotter2025.lean">LiuRotter2025</a>, <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/RotterLiu2025Concord.lean">RotterLiu2025Concord</a></p>
 </div>
 
