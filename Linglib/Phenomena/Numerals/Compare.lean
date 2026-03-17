@@ -12,7 +12,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
 # Bridge Theorems: Numeral Salience across Frameworks
-@cite{blok-2015} @cite{claus-walch-2024} @cite{cummins-2015} @cite{cummins-franke-2021} @cite{lasersohn-1999} @cite{woodin-winter-bhatt-2024}
+@cite{blok-2015} @cite{claus-walch-2024} @cite{cummins-2015} @cite{cummins-franke-2021} @cite{lasersohn-1999} @cite{woodin-etal-2023}
 
 Connects the graded roundness model (k-ness) to ten existing modules:
 

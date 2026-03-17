@@ -1,14 +1,14 @@
 /-!
 # Graded Numeral Roundness (k-ness Model)
-@cite{krifka-2007} @cite{sigurd-1988} @cite{woodin-winter-bhatt-2024} @cite{jansen-pollmann-2001} @cite{cummins-2015}
+@cite{krifka-2007} @cite{sigurd-1988} @cite{woodin-etal-2023} @cite{jansen-pollmann-2001} @cite{cummins-2015}
 
 Framework-agnostic infrastructure for graded numeral roundness,
-following @cite{sigurd-1988}, @cite{jansen-pollmann-2001}, and @cite{woodin-winter-bhatt-2024}.
+following @cite{sigurd-1988}, @cite{jansen-pollmann-2001}, and @cite{woodin-etal-2023}.
 
 A number n has **k-ness** (for k ∈ {2, 2.5, 5, 10}) if n = m × k × 10^b
 for some b ≥ 1 and 1 ≤ m ≤ 9.
 
-The 6 properties (ordered by frequency effect, @cite{woodin-winter-bhatt-2024}):
+The 6 properties (ordered by frequency effect, @cite{woodin-etal-2023}):
 1. 10-ness (β = 4.46) — strongest predictor of frequency
 2. 2.5-ness (β = 3.84)
 3. 5-ness (β = 2.61)

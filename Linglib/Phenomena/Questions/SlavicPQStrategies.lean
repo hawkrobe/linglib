@@ -264,7 +264,7 @@ theorem razve_both_negations :
     razve.outerNeg = true ∧ razve.innerNeg = true := ⟨rfl, rfl⟩
 
 /-- Czech *náhodou* is restricted to outer negation only, unlike *razve*
-(@cite{stakov-2026}, @cite{simik-2024} §5). -/
+(@cite{stankova-2025}, @cite{simik-2024} §5). -/
 theorem nahodou_outer_only :
     nahodou.outerNeg = true ∧ nahodou.innerNeg = false := ⟨rfl, rfl⟩
 

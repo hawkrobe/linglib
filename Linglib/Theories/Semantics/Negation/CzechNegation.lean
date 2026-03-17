@@ -1,6 +1,6 @@
 /-!
 # Czech Three-Way Negation: Core Types
-@cite{stakov-2026} @cite{zeijlstra-2004}
+@cite{stankova-2025} @cite{zeijlstra-2004}
 
 Pure type definitions for the three-way negation distinction in Czech polar
 questions (Staňková 2026). Extracted from `Phenomena.Negation.CzechThreeWayNeg`

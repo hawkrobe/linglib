@@ -2,8 +2,8 @@ import Linglib.Core.Scales.Roundness
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{woodin-winter-bhatt-2024}: Numeral Frequency and Roundness
-@cite{sigurd-1988} @cite{woodin-winter-bhatt-2024}
+# @cite{woodin-etal-2023}: Numeral Frequency and Roundness
+@cite{sigurd-1988} @cite{woodin-etal-2023}
 
 Corpus study showing number frequency is predicted by:
 (a) log magnitude, and
@@ -25,7 +25,7 @@ namespace Phenomena.Numerals.Studies.WoodinEtAl2024
 open Core.Roundness
 
 -- ============================================================================
--- β coefficients from regression model (Table 3, @cite{woodin-winter-bhatt-2024})
+-- β coefficients from regression model (Table 3, @cite{woodin-etal-2023})
 -- ============================================================================
 
 /--

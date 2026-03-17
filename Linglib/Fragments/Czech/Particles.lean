@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Negation.CzechNegation
 
 /-!
 # Czech Diagnostic Particles
-@cite{stakov-2026} @cite{stankova-simik-2024} @cite{simik-2024} @cite{romero-2015}
+@cite{stankova-2025} @cite{stankova-simik-2024} @cite{simik-2024} @cite{romero-2015}
 
 Particles and adverbs used as diagnostics for the three-way negation distinction
 in Czech polar questions (Table 1).
@@ -85,7 +85,7 @@ ordering source of the epistemic possibility component in FALSUM, including
 less stereotypical worlds in the modal base. This is why it's incompatible
 with inner/medial negation: those don't involve FALSUM's modal component.
 
-@cite{stakov-2026} (§2.2.1): "náhodou, which I translate as 'by any chance',
+@cite{stankova-2025} (§2.2.1): "náhodou, which I translate as 'by any chance',
 is only compatible with outer negation." -/
 def nahodou : ParticleEntry :=
   { form := "náhodou"
@@ -102,7 +102,7 @@ eventually hold. Combined with inner negation, it yields "not yet p" = the
 expected state hasn't been reached. This requires propositional negation,
 which only inner negation provides.
 
-@cite{stakov-2026} (§2.2.2): "ještě is only compatible with inner negation." -/
+@cite{stankova-2025} (§2.2.2): "ještě is only compatible with inner negation." -/
 def jeste : ParticleEntry :=
   { form := "ještě"
   , gloss := "yet/still"
@@ -118,7 +118,7 @@ Licensed by inner and medial negation, but blocked by outer negation.
 It's incompatible with outer negation because outer negation is FALSUM —
 combining VERUM emphasis with FALSUM creates a pragmatic contradiction.
 
-@cite{stakov-2026} (§2.2.3): "fakt is compatible with inner and medial negation
+@cite{stankova-2025} (§2.2.3): "fakt is compatible with inner and medial negation
 but incompatible with outer negation." -/
 def fakt : ParticleEntry :=
   { form := "fakt"

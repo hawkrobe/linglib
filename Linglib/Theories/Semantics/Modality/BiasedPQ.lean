@@ -5,7 +5,7 @@ import Linglib.Core.Discourse.SpeechActs
 
 /-!
 # Biased Polar Questions
-@cite{anderbois-2019} @cite{bring-gunlogson-2000} @cite{domaneschi-2017} @cite{frana-rawlins-2019} @cite{goodhue-2022} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2015} @cite{romero-2024} @cite{romero-han-2004} @cite{simik-2024} @cite{stakov-2026}
+@cite{anderbois-2019} @cite{bring-gunlogson-2000} @cite{domaneschi-2017} @cite{frana-rawlins-2019} @cite{goodhue-2022} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2015} @cite{romero-2024} @cite{romero-han-2004} @cite{simik-2024} @cite{stankova-2025}
 
 Cross-linguistic framework for polar question bias, following @cite{romero-2024}.
 Polar questions come in three forms — PosQ, LoNQ, HiNQ — which differ in

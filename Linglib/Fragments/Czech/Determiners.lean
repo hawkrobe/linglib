@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Negation.CzechNegation
 
 /-!
 # Czech Determiners
-@cite{giannakidou-1998} @cite{stakov-2026} @cite{zeijlstra-2004}
+@cite{giannakidou-1998} @cite{stankova-2025} @cite{zeijlstra-2004}
 
 Polarity-sensitive determiners central to Staňková's (2026) three-way negation
 diagnostic. Czech lacks articles (`ArticleType.none_`), so the NCI/PPI contrast

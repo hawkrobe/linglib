@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Modality.BiasedPQ
 
 /-!
 # Czech Three-Way Negation: Cross-Linguistic Typology
-@cite{repp-2013} @cite{romero-2024} @cite{stakov-2026} @cite{stankova-simik-2024} @cite{gartner-gyuris-2017} @cite{simik-2024}
+@cite{repp-2013} @cite{romero-2024} @cite{stankova-2025} @cite{stankova-simik-2024} @cite{gartner-gyuris-2017} @cite{simik-2024}
 
 Bridges between the core three-way negation distinction (CzechThreeWayNeg.lean)
 and cross-linguistic frameworks: @cite{romero-2024} PQ typology, @cite{simik-2024} Czech

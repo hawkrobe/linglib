@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
-# Rational Attitude Semantics @cite{fusco-sgrizzi-2025}
+# Rational Attitude Semantics @cite{fusco-sgrizzi-2026}
 @cite{dowty-1979}
 
 Unified semantics for attitude verbs that support both belief and intention
@@ -22,7 +22,7 @@ The difference is determined by **complement size**:
 - CP complement → CLOSURE applies → propositional content → belief
 - Sub-CP complement → event variable open → intention
 
-## Denotation (@cite{fusco-sgrizzi-2025}, ex. 24)
+## Denotation (@cite{fusco-sgrizzi-2026}, ex. 24)
 
 ⟦convincere⟧ = λP.λx.λy.λe. ∃e'. Convince(e) ∧ Agent(e,y) ∧ Patient(e,x)
                                    ∧ CAUSE(e,e') ∧ RATIONAL-ATTITUDE(e')
@@ -95,7 +95,7 @@ theorem size_determines_reading (cs : ComplementSize) :
     proposition ∃e. P(e), yielding a belief-compatible propositional content.
 
     This is `existsClosureW` from event semantics, re-exported under the
-    name used in @cite{fusco-sgrizzi-2025}. -/
+    name used in @cite{fusco-sgrizzi-2026}. -/
 abbrev closure {W Time : Type*} [LE Time] := @existsClosureW W Time _
 
 -- ════════════════════════════════════════════════════════════════
@@ -231,7 +231,7 @@ def Reading.directionOfFit : Reading → DirectionOfFit
 
 /-- Map rational attitude readings to @cite{searle-1983}'s psychological mode.
 
-    This connects @cite{fusco-sgrizzi-2025}'s complement-size analysis to
+    This connects @cite{fusco-sgrizzi-2026}'s complement-size analysis to
     Searle's theory of Intentional states: the same verb produces different
     psychological modes depending on syntactic complement structure. -/
 def Reading.psychMode : Reading → PsychMode
@@ -245,7 +245,7 @@ theorem reading_direction_matches_psychMode :
   intro r; cases r <;> rfl
 
 /-- Belief readings are not causally self-referential; intention readings are.
-    This is the formal correlate of @cite{fusco-sgrizzi-2025}'s CONTENT vs
+    This is the formal correlate of @cite{fusco-sgrizzi-2026}'s CONTENT vs
     INERTIA modal base distinction: INERTIA worlds are those where the agent's
     intentions *cause* the events to come about. -/
 theorem intention_self_referential_belief_not :

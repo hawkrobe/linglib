@@ -3,7 +3,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Pragmatic Halo and Precision Modes
-@cite{krifka-2007} @cite{lasersohn-1999} @cite{woodin-winter-bhatt-2024} @cite{kao-etal-2014-hyperbole}
+@cite{krifka-2007} @cite{lasersohn-1999} @cite{woodin-etal-2023} @cite{kao-etal-2014-hyperbole}
 
 Rounding semantics for numeral imprecision.
 Round numbers (100, 1000) are interpreted imprecisely; sharp numbers (103, 1001)
@@ -46,7 +46,7 @@ def matchesPrecision (mode : PrecisionMode) (stated actual : ℚ) (base : ℚ :=
   projectPrecision mode stated base == projectPrecision mode actual base
 
 -- ════════════════════════════════════════════════════
--- Adaptive Pragmatic Halo (@cite{woodin-winter-bhatt-2024}, @cite{krifka-2007}, @cite{lasersohn-1999})
+-- Adaptive Pragmatic Halo (@cite{woodin-etal-2023}, @cite{krifka-2007}, @cite{lasersohn-1999})
 -- ════════════════════════════════════════════════════
 
 open Core.Roundness in

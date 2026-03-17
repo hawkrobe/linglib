@@ -170,7 +170,7 @@ theorem nonV1_nci_preferred :
 /-- The key asymmetry: V1 is CONTEXT-insensitive (FALSUM = epistemic bias),
 nonV1 is CONTEXT-sensitive (inner neg = evidential bias).
 
-This matches @cite{stakov-2026}'s claim that inner negation requires
+This matches @cite{stankova-2025}'s claim that inner negation requires
 contextual evidence while outer negation (FALSUM) does not, and
 confirms the VerbPosition.requiresContextualEvidence classification. -/
 theorem context_asymmetry :
