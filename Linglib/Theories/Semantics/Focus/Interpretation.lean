@@ -100,6 +100,96 @@ def FIPApplication.description : FIPApplication → String
   | .scalarImplicature => "Focus alternatives feed into scalar implicature computation"
   | .qaCongruence => "Answer focus must match question (see Questions/FocusAnswer.lean)"
 
+-- ============================================================================
+-- Focus Resolution (Extended ~ Semantics)
+-- ============================================================================
+
+/-!
+## Full ~ Operator: Focus Resolution
+
+@cite{rooth-1992} §2: α ~ introduces an anaphoric variable C (the
+comparison class / contrast set) constrained by TWO conditions:
+
+1. **FIP**: C ⊆ ⟦α⟧f — every proposition in C is a focus alternative
+2. **Ordinary inclusion**: ⟦α⟧o ∈ C — the ordinary value is in C
+
+The existing `fip` function captures constraint 1 alone. `FocusResolution`
+bundles both constraints, making the full ~ semantics explicit.
+
+This is the entry point for the compositional chain that derives TSP:
+~ resolves C → degree predicate uses C → significance falls out.
+See `Focus/Sensitivity.lean` for the downstream derivation.
+-/
+
+/-- The full ~ operator resolves focus alternatives to a comparison class C.
+
+    Bundles @cite{rooth-1992}'s two constraints:
+    1. C ⊆ ⟦α⟧f (FIP — comparison class bounded by focus alternatives)
+    2. ⟦α⟧o ∈ C (ordinary value is in the comparison class)
+
+    The comparison class is extensional (`List (W → Bool)`) for compatibility
+    with `Attitudes.Preferential.QuestionDen`. -/
+structure FocusResolution (W : Type*) where
+  /-- ⟦α⟧o — the ordinary semantic value of the focused constituent -/
+  ordinary : W → Bool
+  /-- ⟦α⟧f — the focus semantic value (set of alternative propositions) -/
+  focusValue : PropFocusValue W
+  /-- C — the comparison class, resolved from context -/
+  comparisonClass : List (W → Bool)
+  /-- FIP: C ⊆ ⟦α⟧f — every proposition in C is a focus alternative -/
+  fip_subset : ∀ p ∈ comparisonClass, focusValue p
+  /-- ⟦α⟧o ∈ C — the ordinary value is in the comparison class -/
+  ordinary_in_C : ordinary ∈ comparisonClass
+
+-- ============================================================================
+-- Clause-Embedding Predicates with Focus (@cite{ozyildiz-etal-2025})
+-- ============================================================================
+
+/-- A clause-embedding predicate with explicit access to focus alternatives.
+
+    Takes: agent, ordinary proposition, focus alternatives, world → truth value.
+
+    Non-focus-sensitive predicates (believe, know) ignore the focus alternatives.
+    Focus-sensitive predicates (want, be glad, be surprised) use them to
+    determine the comparison class for degree semantics.
+
+    @cite{ozyildiz-etal-2025} def 2/58. -/
+abbrev ClauseEmbedPred (W E : Type*) := E → (W → Bool) → PropFocusValue W → W → Bool
+
+/-- A clause-embedding predicate V is **focus-sensitive** iff its truth value
+    can depend on the focus alternatives, not just the ordinary proposition.
+
+    @cite{ozyildiz-etal-2025} def 2/58: there exist context, agent, proposition,
+    and two different focus-alternative sets such that V yields different truth
+    values. -/
+def IsFocusSensitive {W E : Type*} (V : ClauseEmbedPred W E) : Prop :=
+  ∃ (x : E) (p : W → Bool) (f₁ f₂ : PropFocusValue W) (w : W),
+    V x p f₁ w ≠ V x p f₂ w
+
+/-- A predicate is **not** focus-sensitive iff it ignores focus alternatives
+    entirely. -/
+def IsNotFocusSensitive {W E : Type*} (V : ClauseEmbedPred W E) : Prop :=
+  ∀ (x : E) (p : W → Bool) (f₁ f₂ : PropFocusValue W) (w : W),
+    V x p f₁ w = V x p f₂ w
+
+theorem not_fs_iff_ignores_focus {W E : Type*} (V : ClauseEmbedPred W E) :
+    IsNotFocusSensitive V ↔ ¬ IsFocusSensitive V := by
+  constructor
+  · intro h ⟨x, p, f₁, f₂, w, hne⟩; exact hne (h x p f₁ f₂ w)
+  · intro h x p f₁ f₂ w
+    by_contra hne
+    exact h ⟨x, p, f₁, f₂, w, hne⟩
+
+/-- Lift a non-focus-sensitive predicate to the `ClauseEmbedPred` type
+    by ignoring focus alternatives. -/
+def liftNonFS {W E : Type*} (V : E → (W → Bool) → W → Bool) : ClauseEmbedPred W E :=
+  λ x p _f w => V x p w
+
+/-- Any lifted non-focus-sensitive predicate is indeed not focus-sensitive. -/
+theorem liftNonFS_not_fs {W E : Type*} (V : E → (W → Bool) → W → Bool) :
+    IsNotFocusSensitive (liftNonFS V) := by
+  intro _ _ _ _ _; rfl
+
 -- Connection to Additive Particles
 
 /-!

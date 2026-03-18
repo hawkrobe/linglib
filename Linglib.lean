@@ -1484,7 +1484,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 import Linglib.Theories.Semantics.Montague.Modification
-import Linglib.Theories.Semantics.Lexical.CovertOperator
+import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 import Linglib.Theories.Semantics.Lexical.Noun.Binominal
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
@@ -1516,6 +1516,7 @@ import Linglib.Phenomena.Focus.Studies.DeoThomas2025
 import Linglib.Phenomena.Focus.Studies.Francescotti1995
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014
 import Linglib.Theories.Semantics.Focus.Interpretation
+import Linglib.Theories.Semantics.Focus.Sensitivity
 import Linglib.Theories.Semantics.Focus.Particles
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.LocalContext

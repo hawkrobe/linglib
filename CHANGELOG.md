@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.327] - 2026-03-18
+
+### Added
+- **`Focus/Sensitivity.lean`** (new theory file): structural bridge from Rooth's focus alternatives to Villalta's degree semantics to Kennedy's significance presuppositions — `liftDegreeFS` lifts degree predicates to `ClauseEmbedPred`, `focusSignificance` derives significance presupposition from ~ + degree predicate, `tsp_from_focus` proves TSP = focus significance for positive valence, `assertion_entails_tsp` shows TSP is entailed by assertion (ordinary value ∈ C by ~ guarantees witness)
+- **`FocusResolution`** (in `Focus/Interpretation.lean`): extends ~ operator with both constraints — C ⊆ ⟦α⟧f (FIP) and ⟦α⟧o ∈ C (ordinary value inclusion); `ClauseEmbedPred`, `IsFocusSensitive`, `IsNotFocusSensitive`, `liftNonFS` promoted from OzyildizEtAl2025 study file to theory layer
+
+### Changed
+- **`OzyildizEtAl2025.lean`**: now imports `Focus/Sensitivity` instead of defining its own `ClauseEmbedPred`, `IsFocusSensitive`, `liftNonFS`, `liftDegreeFS` — study file uses theory-layer definitions by construction
+- **`Preferential.lean`**: "TODO: Full Rooth Integration" replaced with cross-reference to `Focus/Sensitivity.lean` documenting the completed compositional chain
+
 ## [0.229.326] - 2026-03-18
 
 ### Added

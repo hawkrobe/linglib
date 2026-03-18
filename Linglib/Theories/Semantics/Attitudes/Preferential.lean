@@ -2,7 +2,7 @@
 # Preferential Attitude Semantics
 
 Degree-based semantics for preferential attitude verbs like `hope`, `fear`,
-`worry`, `wish`, `expect`, following @cite{villalta-2008} and @cite{romero-2015}.
+`worry`, `wish`, `expect`, following @cite{villalta-2008} and @cite{romero-2015-salt}.
 
 ## Semantic Mechanism
 
@@ -104,16 +104,17 @@ Focus triggers significance presup [@cite{kennedy-2007}]
 For positive valence: significance = ∃p ∈ C. μ(x,p) > θ = TSP
 ```
 
-### TODO: Full Rooth Integration
+### Rooth Integration (see `Focus/Sensitivity.lean`)
 
-For complete grounding, we would add:
-- Rooth's ~ operator relating focus value to ordinary value
-- Explicit focus-induced presupposition projection
-- Show TSP = instance of focus significance presupposition
+The compositional chain from focus marking to TSP is now explicit:
 
-For now, we derive TSP from degree semantics + valence, which captures
-the empirical generalization. The Hamblin connection shows WHY questions
-(but not declaratives) trigger the TSP → triviality derivation.
+- `Focus/Interpretation.lean`: `FocusResolution` bundles ~'s two constraints
+  (C ⊆ ⟦α⟧f, ⟦α⟧o ∈ C)
+- `Focus/Sensitivity.lean`: `focusSignificance` derives the significance
+  presupposition from a degree predicate + FocusResolution;
+  `tsp_from_focus` proves significance = TSP for positive valence;
+  `assertion_entails_tsp` shows TSP is entailed by the assertion
+  (because ⟦α⟧o ∈ C guarantees a witness)
 -/
 
 /--
