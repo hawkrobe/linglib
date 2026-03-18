@@ -4,17 +4,24 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 
 /-! # Mandarin Chinese Quantifier Fragment
+@cite{kuo-yu-2012} @cite{tsai-2015}
 
-Mandarin has no articles. Quantification is expressed through:
-- Pre-nominal quantifiers: měi 每 (every), suǒyǒu 所有 (all), yǒu-de 有的 (some)
-- Bare nouns in argument position (generic/existential/universal by context)
-- Classifiers required for counting: sān-gè xuéshēng 三个学生 (three-CL students)
+Quantifier phrases in Mandarin, following @cite{kuo-yu-2012}'s GQ-theoretic
+inventory (§12.1) and @cite{tsai-2015}'s strong/weak classification (§5.3).
+
+Existential (intersective) quantifiers — weak (@cite{kuo-yu-2012} §12.1.1):
+- hěnduō 很多 (many)
+
+Universal (co-intersective) quantifiers — strong (@cite{kuo-yu-2012} §12.1.2):
+- měi 每 (every), suǒyǒu 所有 (all), quánbù 全部 (all)
+
+Proportional quantifiers (@cite{kuo-yu-2012} §12.1.5):
+- dà-bùfèn 大部分 (most)
 
 Key typological properties:
 - No definiteness-marked quantifiers (no "the")
 - Conservativity expected to hold (universal)
-- měi requires classifiers; suǒyǒu does not
-- yǒu-de is proportional-weak, not pure existential
+- měi requires classifiers; suǒyǒu and quánbù do not (@cite{kuo-yu-2012} §12.1.6)
 
 -/
 
@@ -71,37 +78,27 @@ def suoyou : MandarinQuantEntry :=
   , monotonicity := .increasing
   , strength := .strong }
 
-/-- 有的 yǒu-de "some" — proportional-weak, increasing.
-    yǒu-de xuéshēng 有的学生 "some students" -/
-def youde : MandarinQuantEntry :=
-  { hanzi := "有的"
-  , pinyin := "yǒu-de"
-  , gloss := "some"
+/-- 全部 quánbù "all" — universal, increasing, strong.
+    quánbù xuéshēng 全部学生 "all students".
+    Synonym of suǒyǒu; does not require a classifier. -/
+def quanbu : MandarinQuantEntry :=
+  { hanzi := "全部"
+  , pinyin := "quánbù"
+  , gloss := "all"
+  , qforce := .universal
+  , monotonicity := .increasing
+  , strength := .strong }
+
+/-- 很多 hěnduō "many" — existential/proportional, increasing, weak.
+    hěnduō xuéshēng 很多学生 "many students".
+    Can optionally co-occur with dōu but does not require it. -/
+def henduo : MandarinQuantEntry :=
+  { hanzi := "很多"
+  , pinyin := "hěnduō"
+  , gloss := "many"
   , qforce := .existential
   , monotonicity := .increasing
   , strength := .weak }
-
-/-- 没有 méi-yǒu "no/not-have" — negative, decreasing, weak.
-    méi-yǒu xuéshēng 没有学生 "no students" -/
-def meiyou : MandarinQuantEntry :=
-  { hanzi := "没有"
-  , pinyin := "méi-yǒu"
-  , gloss := "no"
-  , qforce := .negative
-  , monotonicity := .decreasing
-  , strength := .weak }
-
-/-- 几 jǐ "several/how-many" — existential, increasing, requires classifier.
-    jǐ-gè xuéshēng 几个学生 "several-CL students" -/
-def ji : MandarinQuantEntry :=
-  { hanzi := "几"
-  , pinyin := "jǐ"
-  , gloss := "several"
-  , qforce := .existential
-  , monotonicity := .increasing
-  , strength := .weak
-  , requiresClassifier := true
-  , typicalClassifier := some ge }
 
 /-- 大部分 dà-bùfèn "most/the greater part" — proportional, increasing, strong.
     dà-bùfèn xuéshēng 大部分学生 "most students" -/
@@ -113,27 +110,12 @@ def dabufen : MandarinQuantEntry :=
   , monotonicity := .increasing
   , strength := .strong }
 
-/-- 两个都 liǎng-gè-dōu "both" — universal dual, strong.
-    两个学生都来了 liǎng-gè xuéshēng dōu lái le "both students came".
-    Requires classifier 个; 都 dōu is the universal adverb.
-    Presupposes exactly two referents.
-    K&S: both = every restricted to dual sets. -/
-def liang_dou : MandarinQuantEntry :=
-  { hanzi := "两…都"
-  , pinyin := "liǎng…dōu"
-  , gloss := "both"
-  , qforce := .universal
-  , monotonicity := .increasing
-  , strength := .strong
-  , requiresClassifier := true
-  , typicalClassifier := some ge }
-
 -- ============================================================================
 -- Lexicon
 -- ============================================================================
 
 def allQuantifiers : List MandarinQuantEntry :=
-  [mei, suoyou, youde, meiyou, ji, dabufen, liang_dou]
+  [mei, suoyou, quanbu, henduo, dabufen]
 
 def lookup (pinyin : String) : Option MandarinQuantEntry :=
   allQuantifiers.find? λ e => e.pinyin == pinyin
@@ -145,22 +127,18 @@ def lookup (pinyin : String) : Option MandarinQuantEntry :=
 /-- měi is strong (no existential yǒu sentence). -/
 theorem mei_strong : mei.strength = .strong := rfl
 
-/-- yǒu-de is weak (OK in existential yǒu sentence). -/
-theorem youde_weak : youde.strength = .weak := rfl
-
 /-- měi requires a classifier. -/
 theorem mei_requires_cl : mei.requiresClassifier = true := rfl
 
 /-- suǒyǒu does not require a classifier. -/
 theorem suoyou_no_cl : suoyou.requiresClassifier = false := rfl
 
-/-- 两…都 is universal and strong (like English "both"). -/
-theorem liang_dou_universal_strong :
-    liang_dou.qforce = .universal ∧ liang_dou.strength = .strong :=
-  ⟨rfl, rfl⟩
+/-- hěnduō is weak; all others are strong QPs (@cite{tsai-2015} §5.3). -/
+theorem henduo_weak : henduo.strength = .weak := rfl
 
-/-- 两…都 requires a classifier. -/
-theorem liang_dou_requires_cl : liang_dou.requiresClassifier = true := rfl
+theorem strong_qps_are_strong :
+    (allQuantifiers.filter (·.pinyin != "hěnduō")).all
+      (·.strength == .strong) = true := by native_decide
 
 /-- All quantifiers that require a classifier have a typicalClassifier set. -/
 theorem requires_cl_has_typical :

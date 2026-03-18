@@ -4,7 +4,7 @@ import Linglib.Fragments.Japanese.Determiners
 
 /-!
 # Cross-Linguistic Quantifier Typology
-@cite{barwise-cooper-1981} @cite{peters-westerstahl-2006} @cite{shimoyama-2006} @cite{nakanishi-2007}
+@cite{barwise-cooper-1981} @cite{peters-westerstahl-2006} @cite{shimoyama-2006} @cite{nakanishi-2007} @cite{kuo-yu-2012} @cite{tsai-2015}
 
 Empirical quantifier inventories from three languages (three families) mapped to
 a common `QuantifierInventory` structure, following the pattern established in
@@ -19,7 +19,7 @@ a common `QuantifierInventory` structure, following the pattern established in
 ## Data sources
 
 - English: @cite{barwise-cooper-1981}
-- Mandarin: general knowledge (no single source)
+- Mandarin: @cite{kuo-yu-2012}, @cite{tsai-2015} (GQ inventory + strong/weak classification)
 - Japanese: @cite{shimoyama-2006}, @cite{nakanishi-2007}
 
 -/
@@ -79,18 +79,18 @@ theorem english_has_strong :
 
 open Fragments.Mandarin.Determiners in
 /-- Mandarin quantifier inventory, derived from the MandarinQuantEntry fragment.
-    7 entries: měi, suǒyǒu, yǒu-de, méi-yǒu, jǐ, dà-bùfèn, liǎng…dōu. -/
+    5 entries per @cite{tsai-2015} §5.3: měi, suǒyǒu, quánbù, hěnduō, dà-bùfèn. -/
 def mandarin : QuantifierInventory :=
   { language := "Mandarin"
   , family := "Sino-Tibetan"
-  , source := "general knowledge"
+  , source := "Kuo & Yu (2012), Tsai (2015)"
   , entries := Fragments.Mandarin.Determiners.allQuantifiers.map λ q =>
       { form := q.pinyin
       , qforce := q.qforce
       , monotonicity := q.monotonicity
       , strength := q.strength } }
 
-theorem mandarin_size : mandarin.entries.length = 7 := by native_decide
+theorem mandarin_size : mandarin.entries.length = 5 := by native_decide
 theorem mandarin_no_definiteness :
     mandarin.entries.all (·.qforce != .definite) = true := by native_decide
 theorem mandarin_has_weak :
@@ -136,7 +136,7 @@ theorem all_have_weak_strong :
       inv.entries.any (·.strength == .weak) &&
       inv.entries.any (·.strength == .strong)) = true := by native_decide
 
-/-- No language in sample lacks universal quantifiers. -/
+/-- All three languages have universal quantifiers. -/
 theorem all_have_universals :
     allInventories.all (λ inv =>
       inv.entries.any (·.qforce == .universal)) = true := by native_decide
@@ -145,13 +145,6 @@ theorem all_have_universals :
 theorem no_articles_east_asian :
     [mandarin, japanese].all (λ inv =>
       inv.entries.all (·.qforce != .definite)) = true := by native_decide
-
-/-- Mandarin and Japanese both have dual universal ("both") quantifiers.
-    English "both" is in the full allDeterminers lexicon but not the 6-word
-    quantity scale (which is scalar, not dual). -/
-theorem east_asian_have_dual_universal :
-    [mandarin, japanese].all (λ inv =>
-      inv.entries.any (·.qforce == .universal)) = true := by native_decide
 
 /- Conservativity holds across all three languages (B&C Universal 1).
    Proved for English in Quantifier.lean; conjectured universal.
