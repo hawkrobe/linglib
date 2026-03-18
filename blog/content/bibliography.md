@@ -1234,7 +1234,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="curry-feys-1958" data-role="cited" data-tag="Syntax" data-year="1958">
-<p class="bib-citation"><strong>Curry, H. B. &amp; Feys, R.</strong> (1958). Combinatory Logic. <em>North-Holland</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Core/Combinators.lean">Combinators</a></span></p>
+<p class="bib-citation"><strong>Curry, H. B. &amp; Feys, R.</strong> (1958). <a href="https://www.google.com/books/edition/Combinatory_Logic/yQf5zQEACAAJ" class="bib-title-link">Combinatory Logic</a>. <em>North-Holland</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Core/Combinators.lean">Combinators</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="cutting-vishton-1995" data-role="cited" data-tag="Semantics" data-year="1995">
