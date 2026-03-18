@@ -4526,7 +4526,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="tesnire-1959" data-role="cited" data-tag="Syntax" data-year="1959">
-<p class="bib-citation"><strong>Tesnière, L.</strong> (1959). Éléments de syntaxe structurale. <em>Klincksieck</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/DGValency.lean">DGValency</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/CRDC.lean">CRDC</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Studies/Osborne2019.lean">Osborne2019</a></span></p>
+<p class="bib-citation"><strong>Tesnière, L.</strong> (1959). <a href="https://doi.org/10.1075/z.185" class="bib-title-link">Éléments de syntaxe structurale</a>. <em>Klincksieck</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/DGValency.lean">DGValency</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/CRDC.lean">CRDC</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Studies/Osborne2019.lean">Osborne2019</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="tessler-franke-2019" data-role="formalized" data-tag="Pragmatics" data-year="2019">
