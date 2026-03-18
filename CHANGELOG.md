@@ -1,5 +1,57 @@
 # Changelog
 
+## [0.229.335] - 2026-03-18
+
+### Added
+- **`OntologicalPreconditions.lean`**: Add `negation_preserves_precondition_denies_consequence` and `affirmation_preserves_precondition_asserts_consequence` — formalize the structural asymmetry that explains why preconditions are the default accommodation target (R&S p. 721)
+- **`RobertsSimons2024.lean`**: Add §8 End-to-End Argumentation Chain with `stop_end_to_end`, `know_end_to_end`, `selectional_end_to_end` — each chains event structure → aboutness → polarity invariance → projection prediction in a single theorem
+- **`Diagnostics.lean`**: Add `allowsFor_kick_hasFeet` and `allowsFor_kick_touchedTree` formalizing R&S ex. 13a/13b (selectional restriction passes, concomitant fails)
+
+### Changed
+- **`Diagnostics.lean`**: Rewrite "allows for" frame and all diagnostic sentences to use R&S's actual frame "ψ, which is part of what allowed for φ" (previous sentences were ungrammatical and semantically inverted); add atelic→inceptive caveat from R&S p. 711–712; upgrade `patternIsUniform` from Bool def to theorem
+- **`OntologicalPreconditions.lean`**: Improve `assertionOnly_stop` docstring to explain temporal index collapse; restore `isTelic` docstring lost in prior edit
+- **`VerbEntry.lean`**: Add note to `derivedPresupType` docstring that R&S (p. 705) argue the soft/hard trigger distinction is not well-operationalized
+
+## [0.229.334] - 2026-03-18
+
+### Added
+- **`Bruening2021.lean`**: Formalize Bruening 2021 implicit arguments in English DOC — per-verb verification theorems for 31 ditransitive verbs, generalizations (DOC-only implicit goals always definite, implicit themes vary, base transitivity constraint), Larson–Bruening divergence theorem
+- **`VerbEntry.lean`**: Add cross-linguistic `ImplicitInterp` enum (indef/def) and `implicitObj`/`implicitGoal` fields to `VerbCore` for tracking argument optionality
+- **`Verbal.lean`**: Add 25 new ditransitive verb entries (charge, cost, fine, tip, pay, strike_, forgive, spare, deny, permit, assign, begrudge, bet, serve, teach, feed, show_, award, forward_, grant, offer, reserve, pass, hand, lend)
+- **`references.bib`**: Add `fillmore-1986`
+
+### Changed
+- **`Verbal.lean`**: Update existing entries with implicit argument fields and dative alternation frames: eat (implicitObj indef), give (implicitGoal def, altComplementType np_pp), sell, send, throw, write, build, melt (implicitObj), envy (np_np alt, implicit fields), tell (np_np alt, implicit fields)
+
+### Fixed
+- **`AndersonJM2006.lean`**: Update `anderson_linking_accuracy` count 208 → 233 (25 new verbs)
+- **`AspectualConsistency.lean`**: Update `vendler_coverage_count` 208 → 233
+
+## [0.229.333] - 2026-03-18
+
+### Added
+- **`RobertsSimons2024.lean`**: Add §5 Filtering section formalizing R&S §4 — conjunction/conditional filtering theorems, symmetric disjunction filtering prediction (contra Heim 1983); add RSA cross-reference to QGL2016 and Warstadt2022 study files
+- **`Diagnostics.lean`**: Add counterfactual diagnostic frame ("If not-ψ, it would not have been possible for [agent] to VP") — R&S's second precondition test (§2.1), with examples for kick/discover/continue
+
+### Changed
+- **`OntologicalPreconditions.lean`**: Fix stale "PART 4b" comment → proper section header; improve `regretAsEventPhase` docstring to note R&S's argument that emotive factive factivity is a pragmatic default to veridicality, not a direct ontological precondition on truth
+- **`RobertsSimons2024.lean`**: Upgrade `theoryPredictsPattern` from Bool def to theorem; upgrade `selectionalRestrictionsAreClassC` from Bool def to proper `example` using `classFromProperties`; replace trivial `presupposesFromEventStructure` helper with `presupposition_derivable_from_event_structure` theorem; fix stop/continue docstring to accurately describe R&S's "familiar start-date" hypothesis (p. 736) rather than vague "anaphoric-like" phrasing
+
+## [0.229.332] - 2026-03-18
+
+### Added
+- **`OntologicalPreconditions.lean`**: Extend event phase framework per @cite{roberts-simons-2024} — factive event phases (`knowAsEventPhase`, `discoverAsEventPhase`, `regretAsEventPhase`), selectional restriction event phases (`selectionalEventPhase`), `EntailmentRelation` enum (precondition/consequence/concomitant), `SuppressionCondition` enum (three pragmatic contexts where projection is suppressed); prove `know_is_atelic`, `discover_is_telic`, `factive_precondition_entails_complement`, `discover_precondition_requires_ignorance`, `continue_has_precondition_without_state_change`, `selectional_projects`
+- **`RobertsSimons2024.lean`**: Expand study file from 33 to ~200 lines — verb pair contrasts (know/discover telicity, stop/continue CoS status), selectional restrictions as Class C triggers, bridge theorems connecting EventPhase to PrProp and CoS semantics, suppression condition verification
+
+### Changed
+- **`OntologicalPreconditions.lean`**: Remove dead `EventPhase.telicity` stub (always returned `.telic`); remove redundant `stopTelicity`/`continueTelicity`/`startTelicity` constant defs; update module docstring to properly attribute @cite{roberts-simons-2024} and document the three verb classes
+- **`VerbEntry.lean`**: Add `VerbCore.derivedPresupType` — derives presupposition trigger type from event structure (factivity + CoS) rather than reading the stipulated `presupType` field, per @cite{roberts-simons-2024}'s argument that projection follows from event structure
+- **`references.bib`**: Update `roberts-simons-2024` sources field to include study file
+
+### Fixed
+- **`AndersonJM2006.lean`**: Update `anderson_linking_accuracy` count from 196 to 208 (stale after verb list growth)
+- **`AspectualConsistency.lean`**: Update `vendler_coverage_count` from 196 to 208
+
 ## [0.229.331] - 2026-03-18
 
 ### Changed

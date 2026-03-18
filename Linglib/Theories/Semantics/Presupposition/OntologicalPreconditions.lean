@@ -1,37 +1,36 @@
 /-
-# Ontological Preconditions and Projection
+# Ontological Preconditions and Projection @cite{roberts-simons-2024}
 
-Theory of presupposition projection based on event structure.
+Presupposition projection based on event structure and ontological dependence.
 
-## Core Claim
+## Core Claim (@cite{roberts-simons-2024} §2)
 
-Projective contents are ontological preconditions of events:
-- Preconditions: States necessary for the event to exist/occur -- project
-- Consequences: States resulting from the event -- at-issue (don't project)
+The projective contents of three verb classes — CoS predicates, factives, and
+predicates with selectional restrictions — are NOT semantically encoded
+presuppositions. They are entailments characterizing *ontological preconditions*
+of the associated event type. Their projectivity follows from pragmatics
+(informativity), not from lexically specified contextual constraints.
 
-## Theoretical Explanation
+## Entailment Classification
 
-Why do preconditions project through negation?
+Not all entailments are preconditions. Three relations obtain:
+- **Precondition**: State that must hold *before* for the event to be possible.
+  Projects by pragmatic default. Diagnosed by "allows for" test.
+- **Consequence**: State resulting *from* the event. At-issue, doesn't project.
+- **Concomitant**: Mereological part or co-occurring state (e.g., "Jane shouted"
+  entails "Jane made sound"). At-issue, doesn't project.
 
-Consider: "John didn't stop smoking"
+## Three Verb Classes
 
-For this sentence to be evaluable:
-1. The stopping event must be the kind of thing that could have happened
-2. For stopping to be possible, John must have been smoking
-3. The sentence asserts that this possible stopping didn't actually occur
+1. **CoS predicates** (stop, start): precondition = prior state
+2. **Factives** (know, discover, regret): precondition = complement truth
+3. **Selectional restrictions** (kick → has feet): precondition = enabling property
 
-Therefore, even though we're negating the event, we're still presupposing
-that the event was possible, and possibility requires the precondition.
+## Diagnostics
 
-## Connection to Diagnostics
-
-The empirical diagnostics in `Phenomena.Presupposition.Diagnostics`:
-- "allows for" test → identifies preconditions
-- "results in" test → identifies consequences
-
-This theory predicts that pattern: preconditions can be elaborated because
-they're independent facts about the world; consequences follow from the event
-and thus can't be "allowed for" independently.
+Two tests from @cite{roberts-simons-2024} §2.1:
+- "ψ, which is part of what allows/allowed for φ" — true iff ψ is precondition
+- "If not-ψ, it would not have been possible for [agent] to VP" — counterfactual
 
 -/
 
@@ -220,7 +219,9 @@ what we're talking about, not what we're saying about it.
 theorem presupposition_independent_of_assertion (s : EventSentence W) :
     s.presupposition = s.eventType.precondition := rfl
 
--- PART 4b: Contrast with Assertion-Only View
+-- ═══════════════════════════════════════════════════════════════════════
+-- Contrast with Assertion-Only View
+-- ═══════════════════════════════════════════════════════════════════════
 
 /-
 ## The Assertion-Only View (for contrast)
@@ -241,10 +242,15 @@ structure AssertionOnlyMeaning (W : Type*) where
 
 /--
 Under assertion-only, "stop P" just means: was P and now ¬P.
+
+Without temporal indices, this collapses to `P w ∧ ¬P w` at a single
+world — always false. This demonstrates that purely extensional
+(single-index) semantics cannot represent CoS verbs: the pre-state
+and post-state refer to different temporal indices, and flattening
+them into one evaluation point produces a contradiction.
 -/
 def assertionOnly_stop (P : W → Bool) : AssertionOnlyMeaning W :=
   { truthConditions := λ w => P w && !P w }
-  -- Always false: reveals the inadequacy of purely extensional semantics for CoS verbs.
 
 /--
 Under assertion-only, "not stop P" just means: ¬(was P and now ¬P).
@@ -353,15 +359,34 @@ theorem presupposition_constant_assertion_varies (e : EventPhase W) (w : W) :
 
 
 /--
-Get the telicity of an event phase.
+The precondition/consequence asymmetry under negation.
 
-An event is telic if its consequence differs from its precondition,
-meaning a state change occurs. Uses `Telicity` from the Aspect module.
+Under negation, precondition content survives (via presupposition) but
+consequence content is denied (via assertion). This is the structural
+basis for why preconditions are the default accommodation target
+(@cite{roberts-simons-2024} p. 721): accommodating preconditions is
+consistent with both affirming and denying the event, while
+accommodating consequences is only consistent with affirmation.
 -/
-def EventPhase.telicity (_e : EventPhase W) : Telicity :=
-  -- We check if there could be any world where they differ
-  -- For a specific event phase, this is determined by structure
-  .telic  -- Default; specific instances override
+theorem negation_preserves_precondition_denies_consequence
+    (e : EventPhase W) (w : W) :
+    -- Precondition survives negation (it IS the presupposition)
+    (negative e).presupposition w = e.precondition w ∧
+    -- Consequence is denied under negation
+    (negative e).assertion w = !e.consequence w := by
+  constructor <;> rfl
+
+/--
+The converse: under affirmation, precondition survives AND consequence
+is asserted. Preconditions are consistent with BOTH polarities;
+consequences are consistent with only one.
+-/
+theorem affirmation_preserves_precondition_asserts_consequence
+    (e : EventPhase W) (w : W) :
+    (affirmative e).presupposition w = e.precondition w ∧
+    (affirmative e).assertion w = e.consequence w := by
+  constructor <;> rfl
+
 
 /--
 An event is telic if its consequence differs from its precondition.
@@ -379,27 +404,6 @@ This is the universal property: in all worlds, the state persists.
 -/
 def EventPhase.isAtelic (e : EventPhase W) : Prop :=
   ∀ w, e.precondition w = e.consequence w
-
-/--
-The telicity of the "stop P" event phase.
-
-"Stop P" is telic: the state changes from P to ¬P.
--/
-def stopTelicity : Telicity := .telic
-
-/--
-The telicity of the "continue P" event phase.
-
-"Continue P" is atelic: no state change, P persists.
--/
-def continueTelicity : Telicity := .atelic
-
-/--
-The telicity of the "start P" event phase.
-
-"Start P" is telic: the state changes from ¬P to P.
--/
-def startTelicity : Telicity := .telic
 
 /-- "Stop P" is telic: state changes from P to ¬P -/
 theorem stop_is_telic (P : W → Bool) (w : W) (hP : P w) :
@@ -455,5 +459,186 @@ theorem cos_vendler_telicity_correct (t : CoSType) :
       | .inception => .telic
       | .continuation => .atelic := by
   cases t <;> rfl
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §5. Entailment Classification
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-- Classification of entailment relations between a sentence and its
+    implied content (@cite{roberts-simons-2024} §2.1). -/
+inductive EntailmentRelation where
+  /-- Temporally prior, enables the event. Projects by pragmatic default. -/
+  | precondition
+  /-- Temporally posterior, results from the event. At-issue. -/
+  | consequence
+  /-- Mereological part or co-occurring state. At-issue.
+      Example: "Jane shouted" entails "Jane made sound" — the sound-making
+      is part of the shouting, not a precondition for it. -/
+  | concomitant
+  deriving DecidableEq, Repr, BEq
+
+/-- Only precondition entailments project by pragmatic default. -/
+def EntailmentRelation.projects : EntailmentRelation → Bool
+  | .precondition => true
+  | .consequence  => false
+  | .concomitant  => false
+
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §6. Factive Verbs as Event Phases
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-
+## Factive Verbs as Event Phases (@cite{roberts-simons-2024} §2, §3.2.2)
+
+R&S extend event phase analysis beyond CoS verbs to factives.
+The complement truth of a factive verb is an ontological precondition
+of the associated eventuality — not a semantically encoded presupposition.
+-/
+
+/-- "Know C" as an event phase: stative, atelic.
+    Precondition: C is true. The knowing state cannot exist without its object.
+    The state persists without change, so consequence = precondition = C. -/
+def knowAsEventPhase (BEL C : W → Bool) : EventPhase W where
+  precondition := C
+  eventOccurs := λ w => BEL w && C w
+  consequence := C  -- stative: no state change
+
+/-- "Discover C" as an event phase: telic, achievement.
+    Two preconditions: C is true AND the agent was previously ignorant.
+    The discovery transitions from ignorance to knowledge.
+    Consequence: C is (still) true and the agent is no longer ignorant. -/
+def discoverAsEventPhase (IGNORANT C : W → Bool) : EventPhase W where
+  precondition := λ w => C w && IGNORANT w
+  eventOccurs := λ w => C w && !IGNORANT w
+  consequence := λ w => C w && !IGNORANT w  -- post-state: knows C
+
+/-- "Regret p" as an event phase: emotive factive.
+    Precondition: agent believes p (the emotion ontologically
+    depends on the belief, not on truth directly).
+
+    @cite{roberts-simons-2024} (p. 731): regret's factivity arises from
+    a *pragmatic default to veridicality* — in the absence of an explicit
+    claim that the agent is mistaken, emotive attitudes are taken to be
+    veridical. The ontological precondition is belief, not truth. -/
+def regretAsEventPhase (BEL : W → Bool) : EventPhase W where
+  precondition := BEL
+  eventOccurs := BEL
+  consequence := BEL
+
+/-- Know is atelic: no state change (precondition = consequence). -/
+theorem know_is_atelic (BEL C : W → Bool) : (knowAsEventPhase BEL C).isAtelic := by
+  intro w; simp [knowAsEventPhase]
+
+/-- Discover is telic: state change from ignorant to knowing. -/
+theorem discover_is_telic (IGNORANT C : W → Bool) (w : W)
+    (hC : C w = true) (hIgn : IGNORANT w = true) :
+    (discoverAsEventPhase IGNORANT C).precondition w ≠
+    (discoverAsEventPhase IGNORANT C).consequence w := by
+  simp [discoverAsEventPhase, hC, hIgn]
+
+/-- Both know and discover have C as (part of) their precondition.
+    This is the shared factivity: complement truth is ontologically required. -/
+theorem factive_precondition_entails_complement (IGNORANT C : W → Bool) (w : W) :
+    (discoverAsEventPhase IGNORANT C).precondition w = true → C w = true := by
+  simp [discoverAsEventPhase]; intro h _; exact h
+
+/-- Discover's precondition additionally requires prior ignorance.
+    This extra precondition (ignorance of C) explains why discover
+    has weaker projection than know in conditional antecedents:
+    in "If I discover p", the speaker's ignorance of p is salient,
+    suppressing projection of C (@cite{roberts-simons-2024} §3.2.2). -/
+theorem discover_precondition_requires_ignorance (IGNORANT C : W → Bool) (w : W) :
+    (discoverAsEventPhase IGNORANT C).precondition w = true → IGNORANT w = true := by
+  simp [discoverAsEventPhase]
+
+/-- Continue has a precondition (prior activity) but involves NO state change.
+    @cite{roberts-simons-2024} (p. 734): "continue V-ing is atelic, without a
+    pre-state" in the CoS sense. The `CoSType.continuation` classification is
+    a convenience; the key structural fact is `isAtelic`. -/
+theorem continue_has_precondition_without_state_change (P : W → Bool) :
+    (continueAsEventPhase P).precondition = P ∧
+    (continueAsEventPhase P).isAtelic := by
+  constructor
+  · rfl
+  · intro w; simp [continueAsEventPhase]
+
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §7. Selectional Restrictions as Preconditions
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-
+## Selectional Restrictions (@cite{roberts-simons-2024} §2.1)
+
+Selectional restrictions are ontological preconditions of the same kind
+as factive and CoS projections. "The robot kicked the tree" implies
+"the robot has feet" — this is a precondition, confirmed by both
+diagnostics:
+
+(13a) "The robot has feet, which is part of what allowed for the robot
+       to kick the tree." (T)
+(14a) "If the robot did not have feet, it would not have been possible
+       for the robot to kick the tree." (T — counterfactual)
+
+This unifies selectional restrictions with the other two verb classes
+under a single mechanism: ontological precondition → pragmatic projection.
+-/
+
+/-- A selectional restriction as an event phase.
+    The `requirement` is an ontological precondition of the event. -/
+def selectionalEventPhase (requirement event : W → Bool) : EventPhase W where
+  precondition := requirement
+  eventOccurs := event
+  consequence := event
+
+/-- Selectional restrictions are well-formed: the event entails the requirement. -/
+theorem selectional_wellFormed (requirement event : W → Bool)
+    (h : ∀ w, event w = true → requirement w = true) :
+    (selectionalEventPhase requirement event).wellFormed := h
+
+/-- Selectional restrictions project through negation (same aboutness mechanism). -/
+theorem selectional_projects (requirement event : W → Bool) :
+    (affirmative (selectionalEventPhase requirement event)).presupposition =
+    (negative (selectionalEventPhase requirement event)).presupposition := rfl
+
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §8. Pragmatic Suppression Conditions
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-
+## Suppression Conditions (@cite{roberts-simons-2024} §3.2.1)
+
+Projection of preconditions is a pragmatic *default*, not an invariant.
+Three contexts suppress projection — in each, pragmatic reasoning makes
+it implausible that the speaker presumes the precondition true.
+-/
+
+/-- Conditions under which projection of a precondition is suppressed.
+    When any of these obtains, the hearer does not accommodate the
+    precondition into the global context. -/
+inductive SuppressionCondition where
+  /-- Interlocutors know or believe the precondition is false or controversial.
+      Example: discussing politics with someone who denies the premise.
+      (@cite{roberts-simons-2024} ex. 23) -/
+  | preconditionKnownFalse
+  /-- Evidence that the speaker does not believe the precondition.
+      Example: "I doubt that. Mary would divorce him if she discovered
+      he was drinking." — speaker explicitly doubts the drinking.
+      (@cite{roberts-simons-2024} ex. 24) -/
+  | speakerNonCommitment
+  /-- The precondition is at-issue (currently under discussion).
+      Example: "Is there a decision on Jane's tenure case?" "She isn't
+      aware that there's been a decision." — decision existence is QUD.
+      (@cite{roberts-simons-2024} ex. 25) -/
+  | preconditionAtIssue
+  deriving DecidableEq, Repr, BEq
+
+/-- When suppression applies, precondition content is merely locally entailed,
+    not globally accommodated. The content is still an entailment of the
+    trigger — it simply isn't taken to be part of the speaker's presumptions. -/
+def SuppressionCondition.globalProjection : SuppressionCondition → Bool
+  | _ => false
 
 end Semantics.Presupposition.OntologicalPreconditions

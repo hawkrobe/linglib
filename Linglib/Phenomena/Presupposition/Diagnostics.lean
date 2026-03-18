@@ -58,60 +58,106 @@ structure DiagnosticResult where
 
 
 /--
-The "allows for" test identifies preconditions.
+The "allows for" test identifies preconditions (@cite{roberts-simons-2024} §2.1).
 
-Frame: "S allows for C"
+Frame: "ψ, which is part of what allows/allowed for φ"
 
-If acceptable, C is a precondition of the event described by S.
-Preconditions are states that must hold for the event to be possible,
-but are not entailed to have caused the event.
+If acceptable, ψ is an ontological precondition of the event in φ.
+Preconditions are states that must hold for the event to be possible.
+
+**Atelic caveat** (@cite{roberts-simons-2024} p. 711–712): For atelic target
+verbs (e.g., *know*), the "allows for" frame can yield true readings for
+concomitants due to a "definitional" sense of possibility. Fix: substitute
+"come to V" to force a telic, inceptive interpretation. Example: use
+"come to know" rather than "know" in the frame.
 -/
-def allowsForFrame : String := "_ allows for _"
+def allowsForFrame : String := "_, which is part of what allowed for _"
 
-/-- "John stopped smoking allows for him to have been a heavy smoker" -/
-def allowsFor_stop_priorHeavySmoker : DiagnosticResult :=
+/-- @cite{roberts-simons-2024} ex. 5a adapted to *stop*. -/
+def allowsFor_stop_priorState : DiagnosticResult :=
   { frame := allowsForFrame
   , trigger := "stop"
   , content := "prior state (was smoking)"
-  , sentence := "John stopped smoking allows for him to have been a heavy smoker"
+  , sentence := "John was smoking, which is part of what allowed for John to stop smoking"
   , judgment := .ok
-  , interpretation := "Prior smoking is a precondition (can be elaborated)" }
+  , interpretation := "Prior smoking is a precondition of stopping" }
 
-/-- "John stopped smoking allows for him to have smoked for years" -/
-def allowsFor_stop_priorDuration : DiagnosticResult :=
-  { frame := allowsForFrame
-  , trigger := "stop"
-  , content := "prior state duration"
-  , sentence := "John stopped smoking allows for him to have smoked for 20 years"
-  , judgment := .ok
-  , interpretation := "Duration of prior state is compatible (precondition territory)" }
-
-/-- "John started smoking allows for him to have never smoked before" -/
+/-- @cite{roberts-simons-2024} ex. 5a adapted to *start*. -/
 def allowsFor_start_priorNonSmoker : DiagnosticResult :=
   { frame := allowsForFrame
   , trigger := "start"
   , content := "prior state (wasn't smoking)"
-  , sentence := "John started smoking allows for him to have never smoked before"
+  , sentence := "John had never smoked, which is part of what allowed for John to start smoking"
   , judgment := .ok
-  , interpretation := "Prior non-smoking is a precondition" }
+  , interpretation := "Prior non-smoking is a precondition of starting" }
 
-/-- "John won the race allows for him to have been a participant" -/
-def allowsFor_win_participant : DiagnosticResult :=
+/-- @cite{roberts-simons-2024} ex. 13a: selectional restriction passes. -/
+def allowsFor_kick_hasFeet : DiagnosticResult :=
   { frame := allowsForFrame
-  , trigger := "win"
-  , content := "participation"
-  , sentence := "John won the race allows for him to have been a participant"
+  , trigger := "kick"
+  , content := "selectional restriction (has feet)"
+  , sentence := "The robot has feet, which is part of what allowed for the robot to kick the tree"
   , judgment := .ok
-  , interpretation := "Being a participant is a precondition for winning" }
+  , interpretation := "Having feet is a precondition of kicking" }
 
-/-- "John stopped smoking allows for him to no longer smoke" — ODD -/
+/-- @cite{roberts-simons-2024} ex. 13b: concomitant fails. -/
+def allowsFor_kick_touchedTree : DiagnosticResult :=
+  { frame := allowsForFrame
+  , trigger := "kick"
+  , content := "concomitant (touched the tree)"
+  , sentence := "The robot touched the tree, which is part of what allowed for the robot to kick the tree"
+  , judgment := .unacceptable
+  , interpretation := "Touching is a concomitant (mereological part), not a precondition" }
+
+/-- @cite{roberts-simons-2024} ex. 5b adapted: consequence fails "allows for". -/
 def allowsFor_stop_consequence : DiagnosticResult :=
   { frame := allowsForFrame
   , trigger := "stop"
   , content := "result state (no longer smoking)"
-  , sentence := "John stopped smoking allows for him to no longer smoke"
+  , sentence := "John no longer smokes, which is part of what allowed for John to stop smoking"
   , judgment := .unacceptable
-  , interpretation := "Consequence doesn't 'allow for' — it's entailed" }
+  , interpretation := "Consequence doesn't 'allow for' — it temporally follows the event" }
+
+
+/--
+The counterfactual test confirms preconditions (@cite{roberts-simons-2024} §2.1).
+
+Frame: "If not-ψ, it would not have been possible for [agent] to VP"
+
+If acceptable, ψ is an ontological precondition: without it, the event
+couldn't have occurred.
+-/
+def counterfactualFrame : String := "If not _, it would not have been possible for _ to _"
+
+/-- "If the robot did not have feet, it would not have been possible
+    for the robot to kick the tree." (T) -/
+def counterfactual_kick_hasFeet : DiagnosticResult :=
+  { frame := counterfactualFrame
+  , trigger := "kick"
+  , content := "selectional restriction (has feet)"
+  , sentence := "If the robot did not have feet, it would not have been possible for the robot to kick the tree"
+  , judgment := .ok
+  , interpretation := "Having feet is a precondition of kicking (selectional restriction)" }
+
+/-- "If John hadn't been ignorant of whether the jewels had been stolen,
+    he couldn't have discovered that the jewels had been stolen." (T) -/
+def counterfactual_discover_ignorance : DiagnosticResult :=
+  { frame := counterfactualFrame
+  , trigger := "discover"
+  , content := "prior ignorance"
+  , sentence := "If John hadn't been ignorant of whether the jewels had been stolen, he couldn't have discovered that the jewels had been stolen"
+  , judgment := .ok
+  , interpretation := "Prior ignorance is a precondition of discovering" }
+
+/-- "If Yasmin had not been smoking, it would not have been possible
+    for Yasmin to continue to smoke." (T) -/
+def counterfactual_continue_priorActivity : DiagnosticResult :=
+  { frame := counterfactualFrame
+  , trigger := "continue"
+  , content := "prior activity"
+  , sentence := "If Yasmin had not been smoking, it would not have been possible for Yasmin to continue to smoke"
+  , judgment := .ok
+  , interpretation := "Prior activity is a precondition of continuing" }
 
 
 /--
@@ -195,28 +241,28 @@ structure PreconditionConsequencePattern where
 /-- Pattern for "stop" -/
 def stopPattern : PreconditionConsequencePattern :=
   { predicate := "stop"
-  , priorPassesAllowsFor := true   -- "stop smoking allows for heavy smoker" ✓
-  , priorFailsResultsIn := true    -- "stop smoking results in was smoker" ✗
-  , resultPassesResultsIn := true  -- "stop smoking results in no longer smokes" ✓
-  , resultFailsAllowsFor := true   -- "stop smoking allows for no longer smokes" ✗
+  , priorPassesAllowsFor := true   -- "was smoking, which allowed for stopping" ✓
+  , priorFailsResultsIn := true    -- "stopping results in was smoker" ✗
+  , resultPassesResultsIn := true  -- "stopping results in no longer smokes" ✓
+  , resultFailsAllowsFor := true   -- "no longer smokes, which allowed for stopping" ✗
   }
 
 /-- Pattern for "start" -/
 def startPattern : PreconditionConsequencePattern :=
   { predicate := "start"
-  , priorPassesAllowsFor := true   -- "start smoking allows for never smoked" ✓
-  , priorFailsResultsIn := true    -- "start smoking results in never smoked" ✗
-  , resultPassesResultsIn := true  -- "start smoking results in now smokes" ✓
-  , resultFailsAllowsFor := true   -- "start smoking allows for now smokes" ✗
+  , priorPassesAllowsFor := true   -- "never smoked, which allowed for starting" ✓
+  , priorFailsResultsIn := true    -- "starting results in never smoked" ✗
+  , resultPassesResultsIn := true  -- "starting results in now smokes" ✓
+  , resultFailsAllowsFor := true   -- "now smokes, which allowed for starting" ✗
   }
 
 /-- Pattern for "win" -/
 def winPattern : PreconditionConsequencePattern :=
   { predicate := "win"
-  , priorPassesAllowsFor := true   -- "win race allows for participant" ✓
-  , priorFailsResultsIn := true    -- "win race results in participant" ✗
-  , resultPassesResultsIn := true  -- "win race results in winner" ✓
-  , resultFailsAllowsFor := true   -- "win race allows for winner" ✗
+  , priorPassesAllowsFor := true   -- "was participant, which allowed for winning" ✓
+  , priorFailsResultsIn := true    -- "winning results in participant" ✗
+  , resultPassesResultsIn := true  -- "winning results in being winner" ✓
+  , resultFailsAllowsFor := true   -- "being winner, which allowed for winning" ✗
   }
 
 /--
@@ -225,11 +271,12 @@ The diagnostic pattern is uniform across predicates.
 This suggests a systematic distinction between preconditions and consequences,
 not an idiosyncratic property of individual lexical items.
 -/
-def patternIsUniform : Bool :=
-  stopPattern.priorPassesAllowsFor == startPattern.priorPassesAllowsFor &&
-  stopPattern.priorPassesAllowsFor == winPattern.priorPassesAllowsFor &&
-  stopPattern.resultPassesResultsIn == startPattern.resultPassesResultsIn &&
-  stopPattern.resultPassesResultsIn == winPattern.resultPassesResultsIn
+theorem patternIsUniform :
+    stopPattern.priorPassesAllowsFor = startPattern.priorPassesAllowsFor ∧
+    stopPattern.priorPassesAllowsFor = winPattern.priorPassesAllowsFor ∧
+    stopPattern.resultPassesResultsIn = startPattern.resultPassesResultsIn ∧
+    stopPattern.resultPassesResultsIn = winPattern.resultPassesResultsIn :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 
 /--
@@ -348,6 +395,9 @@ def diagnosticTests : List DiagnosticSummary := [
   { name := "'Allows for' test"
   , testsFor := "Precondition status"
   , positiveIndicates := "Content is a precondition (projects)" },
+  { name := "Counterfactual test"
+  , testsFor := "Precondition status"
+  , positiveIndicates := "Content is a precondition (event impossible without it)" },
   { name := "'Results in' test"
   , testsFor := "Consequence status"
   , positiveIndicates := "Content is a consequence (at-issue, doesn't project)" },

@@ -236,6 +236,17 @@ inductive ControlType where
   | none            -- Not applicable
   deriving DecidableEq, Repr, BEq
 
+/-- Interpretation of an implicit (unexpressed) argument.
+
+    Cross-linguistic: applies to any argument position where the verb allows
+    the argument to be absent. The distinction captures whether the missing
+    referent must be pragmatically recoverable (definite) or can be
+    unspecified (indefinite). @cite{bruening-2021}, @cite{fillmore-1986}. -/
+inductive ImplicitInterp where
+  | indef   -- Existentially bound: unspecified "someone/something"
+  | def     -- Pragmatically recoverable definite
+  deriving DecidableEq, BEq, Repr
+
 /--
 Cross-linguistic verb core: all semantic fields shared across languages.
 
@@ -277,6 +288,16 @@ structure VerbCore where
   voiceType : Option VoiceType := none
   /-- Can the verb passivize? -/
   passivizable : Bool := true
+
+  -- === Implicit Arguments (@cite{bruening-2021}) ===
+  /-- Can the direct object (theme/patient) be left unexpressed?
+      Applies to monotransitives (*eat* vs *devour*) and the theme of
+      ditransitives. `none` = object always required. -/
+  implicitObj : Option ImplicitInterp := none
+  /-- Can the goal/recipient argument be left unexpressed?
+      Applies to the IO of double object constructions and the PP
+      of dative frames. `none` = goal always required. -/
+  implicitGoal : Option ImplicitInterp := none
 
   -- === Semantic Class ===
   /-- Does the verb denote the performance of an illocutionary act?
@@ -423,6 +444,18 @@ def VerbCore.presupposesComplement (v : VerbCore) : Bool :=
 /-- Is this verb a presupposition trigger? -/
 def VerbCore.isPresupTrigger (v : VerbCore) : Bool :=
   v.presupType.isSome
+
+/-- Presupposition trigger type DERIVED from event structure rather than
+    stipulated. @cite{roberts-simons-2024} argue that presupposition status
+    follows from a verb's event structure (factivity, CoS type), not from
+    a lexically specified trigger type. This accessor derives the prediction:
+    verbs with factive or CoS event structure are presupposition triggers.
+
+    Note: R&S (p. 705) argue that the soft/hard trigger distinction "has
+    never been clearly operationalized." We use `.softTrigger` here as a
+    placeholder, not as an endorsement of a binary soft/hard taxonomy. -/
+def VerbCore.derivedPresupType (v : VerbCore) : Option PresupTriggerType :=
+  if v.presupposesComplement then some .softTrigger else none
 
 /-- Is this verb a causative? DERIVED from causativeBuilder. -/
 def VerbCore.isCausative (v : VerbCore) : Bool :=
