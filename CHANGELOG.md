@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.229.322] - 2026-03-17
+
+### Added
+- **CnstrIsA construction** (Cooper 2023 §3.4, ex 85–92): `cnstrIsA` formalizes the construction-based "is a" reading where content is direct predication (`conductor(d)`) rather than existential quantification (`∃y. conductor(y) ∧ y = d`). Key theorems: `cnstrIsA_equiv_compositional` (truth-conditional equivalence), `cnstrIsA_intensionally_distinct` (IType-level distinction), `reversed_equiv_compositional` ("A conductor is Dudamel" ↔ "Dudamel is a conductor" compositionally, but only the latter has a CnstrIsA reading)
+- **Topos ↔ ModalSystem bridge**: `Topos.toModalSystem` converts a topos to a single-type modal system; `inducedNec_iff_nec_r`/`inducedPoss_iff_poss_r` prove topos necessity/possibility = restrictive modal system necessity/possibility; `nec_r_iff_nec_i` proves restrictive = inclusive for topos-derived systems (since all types are always available); `accessRel_characterization` characterizes the induced accessibility relation
+
+### Fixed
+- **Beaver2001 build failures**: replaced fragile `show` tactics with `simp only` for `PrProp.and`/`andFilter` presupposition proofs
+- **AghaJeretic2022 build failure**: restored `HomogeneityRemover.necessarily` constructor accidentally removed in bib audit
+
+## [0.229.321] - 2026-03-17
+
+### Fixed
+- **TTR inclusive modal notions bug**: `nec_i`, `nec_equiv_i`, `nec_subtype_i`, `poss_i` all used "has witnesses" as the guard condition, making `nec_i` a tautology (`∀ p, P p → P p`). Fixed by adding an `available` field to `Possibility` that tracks which types are recognized in each possibility, distinct from having witnesses. Inclusive notions now correctly quantify over availability (Cooper 2023 §6.3, definitions 2a–d)
+- **`AustinianProp` always true by construction**: renamed to `TrueAustinianProp`; new `AustinianProp` is an alias for `CheckableAustinian` (can be false), matching Cooper 2023 §6.5
+
+### Added
+- `Possibility.available` field distinguishing type availability from witnessing
+- `ModalSystem.hasType` accessor for type availability
+- `twoModalRestricted` example demonstrating the restrictive/inclusive distinction: snow is inclusively necessary (available only where witnessed) but not restrictively necessary
+- `restricted_snow_nec_i`, `restricted_snow_not_nec_r`, `nec_i_not_implies_nec_r` theorems proving inclusive necessity is strictly weaker than restrictive
+- `snow_not_nec_i` theorem for the all-types-available case
+- `TrueAustinianProp.toAustinian` embedding into falsifiable `AustinianProp`
+- `poss_i_implies_poss_r`, `poss_r_implies_poss_i` replacing the false `poss_i_iff_poss_r`
+- `DiamondI_implies_DiamondR`, `DiamondR_implies_DiamondI` replacing the false `DiamondR_iff_DiamondI`
+
+### Removed
+- `poss_i_iff_poss_r` (was `Iff.rfl` — trivially true due to the bug, now the two notions genuinely differ)
+- `DiamondR_iff_DiamondI` (replaced by two one-directional theorems)
+
 ## [0.229.320] - 2026-03-17
 
 ### Fixed

@@ -42,8 +42,16 @@ assignments vary. §6.3, (1)–(4). -/
 
 /-- A possibility in a modal type system: an assignment of witnesses to types.
 Each possibility maps types (represented as `Ty`) to their set of witnesses.
-§6.3: possibilities differ in which objects witness which types. -/
+§6.3: possibilities differ in which objects witness which types.
+
+The `available` field tracks which types are recognized in this possibility.
+Not every type need exist in every possibility — a type can be absent from
+a possibility entirely, which is distinct from being present but unwitnessed.
+This distinction is what separates inclusive from restrictive modal notions. -/
 structure Possibility (Ty Obj : Type) where
+  /-- Which types are recognized (available) in this possibility.
+  A type may be available without having witnesses (empty extension). -/
+  available : Ty → Prop
   /-- Whether object `a` witnesses type `T` in this possibility -/
   witnesses : Ty → Obj → Prop
 
@@ -55,6 +63,12 @@ structure ModalSystem (Ty Obj : Type) where
   Poss : Type
   /-- The family of possibilities -/
   poss : Poss → Possibility Ty Obj
+
+/-- Whether type `T` is available (recognized) in possibility `p`.
+§6.3: T ∈ Type_M means T is a type in the system associated with M. -/
+def ModalSystem.hasType {Ty Obj : Type} (ms : ModalSystem Ty Obj)
+    (p : ms.Poss) (T : Ty) : Prop :=
+  (ms.poss p).available T
 
 /-- Extension of a type in a possibility: the set of witnesses.
 §6.3, (1a): {a | a :_{TYPE_{M_i}} T}. -/
@@ -92,29 +106,39 @@ def poss_r (T : Ty) : Prop :=
 
 /-! ### Inclusive modal notions (§6.3, (2)/(4))
 
-These quantify over types that occur in at least one possibility. -/
+These quantify over possibilities where the type is *available* (recognized
+in the type system), not merely over those where it has witnesses. This
+distinction is the key difference from the previous (buggy) version, which
+used "has witnesses" as the guard — making `nec_i` a tautology.
+
+§6.3, (2): "T ∈ Type_M" means the type is available in possibility M,
+which is strictly weaker than having witnesses there. -/
 
 /-- Inclusive necessary equivalence: T₁ ≈_i T₂ iff for all possibilities
-containing both, they have the same extension. §6.3, (2a). -/
+where both types are available, they have the same extension. §6.3, (2a). -/
 def nec_equiv_i (T₁ T₂ : Ty) : Prop :=
-  ∀ p, (∃ a, ms.ext p T₁ a) → (∃ a, ms.ext p T₂ a) →
+  ∀ p, ms.hasType p T₁ → ms.hasType p T₂ →
     ms.ext p T₁ = ms.ext p T₂
 
-/-- Inclusive subtype: T₁ ⊑_i T₂ iff for all possibilities containing both,
-T₁'s extension ⊆ T₂'s. §6.3, (2b). -/
+/-- Inclusive subtype: T₁ ⊑_i T₂ iff for all possibilities where both
+are available, T₁'s extension ⊆ T₂'s. §6.3, (2b). -/
 def nec_subtype_i (T₁ T₂ : Ty) : Prop :=
-  ∀ p, (∃ a, ms.ext p T₁ a) → (∃ a, ms.ext p T₂ a) →
+  ∀ p, ms.hasType p T₁ → ms.hasType p T₂ →
     ∀ a, ms.ext p T₁ a → ms.ext p T₂ a
 
 /-- Inclusive necessity: T is necessary iff it has witnesses in all
-possibilities that contain T. §6.3, (2c). -/
-def nec_i (T : Ty) : Prop :=
-  ∀ p, (∃ a, ms.ext p T a) → ∃ a, ms.ext p T a
+possibilities where T is available. §6.3, (2c).
 
-/-- Inclusive possibility: T is possible iff some possibility has T.
-§6.3, (2d). -/
+This is strictly weaker than `nec_r`: a type can be inclusively
+necessary without being restrictively necessary, if there are
+possibilities where the type is simply not available. -/
+def nec_i (T : Ty) : Prop :=
+  ∀ p, ms.hasType p T → ∃ a, ms.ext p T a
+
+/-- Inclusive possibility: T is possible iff some possibility both
+has T available and has a witness. §6.3, (2d). -/
 def poss_i (T : Ty) : Prop :=
-  ∃ p, ∃ a, ms.ext p T a
+  ∃ p, ms.hasType p T ∧ ∃ a, ms.ext p T a
 
 /-- Restrictive ⊑_r entails inclusive ⊑_i. §6.3, paragraph
 after (2): "if any of the restrictive definitions holds... then the
@@ -128,9 +152,18 @@ theorem restrictive_nec_implies_inclusive (T : Ty) :
     nec_r ms T → nec_i ms T :=
   λ hr p _ => hr p
 
-/-- Inclusive possibility = restrictive possibility (they coincide). -/
-theorem poss_i_iff_poss_r (T : Ty) :
-    poss_i ms T ↔ poss_r ms T := Iff.rfl
+/-- Inclusive possibility implies restrictive possibility
+(drop the availability condition). -/
+theorem poss_i_implies_poss_r (T : Ty) :
+    poss_i ms T → poss_r ms T :=
+  λ ⟨p, _, h⟩ => ⟨p, h⟩
+
+/-- Restrictive possibility implies inclusive possibility when
+witnessing implies availability (the standard coherence condition). -/
+theorem poss_r_implies_poss_i (T : Ty)
+    (hcoh : ∀ p a, ms.ext p T a → ms.hasType p T) :
+    poss_r ms T → poss_i ms T :=
+  λ ⟨p, a, h⟩ => ⟨p, hcoh p a h, a, h⟩
 
 end ModalNotions
 
@@ -141,11 +174,13 @@ Ch6's `ModalSystem` is Prop-valued (more general).
 These conversion functions connect the two formalizations. -/
 
 /-- Embed a Ch1 Bool-valued modal type system into a Ch6 Prop-valued modal system.
-Each predicate becomes a type; an object witnesses the type iff `mts w P = true`. -/
+Each predicate becomes a type; an object witnesses the type iff `mts w P = true`.
+All predicates are available in all possibilities (Bool-valued systems don't
+distinguish availability from witnessing). -/
 def ModalTypeSystem.toModalSystem {W Pred : Type} (mts : ModalTypeSystem W Pred)
     (Obj : Type) : ModalSystem Pred Obj where
   Poss := W
-  poss := λ w => ⟨λ P _ => mts w P = true⟩
+  poss := λ w => ⟨λ _ => True, λ P _ => mts w P = true⟩
 
 /-- Project a Ch6 Prop-valued modal system back to Ch1 Bool when witnesses are decidable.
 Requires a decision procedure for whether each type has a witness. -/
@@ -219,10 +254,16 @@ theorem BoxR_implies_BoxI {Ty Obj : Type} (ms : ModalSystem Ty Obj) (T : Ty) :
     BoxR ms T → BoxI ms T :=
   restrictive_nec_implies_inclusive ms T
 
-/-- ◇_r T ↔ ◇_i T (diamond notions coincide). -/
-theorem DiamondR_iff_DiamondI {Ty Obj : Type} (ms : ModalSystem Ty Obj) (T : Ty) :
-    DiamondR ms T ↔ DiamondI ms T :=
-  poss_i_iff_poss_r ms T
+/-- ◇_i T → ◇_r T (inclusive diamond implies restrictive diamond). -/
+theorem DiamondI_implies_DiamondR {Ty Obj : Type} (ms : ModalSystem Ty Obj) (T : Ty) :
+    DiamondI ms T → DiamondR ms T :=
+  poss_i_implies_poss_r ms T
+
+/-- ◇_r T → ◇_i T when witnessing implies availability. -/
+theorem DiamondR_implies_DiamondI {Ty Obj : Type} (ms : ModalSystem Ty Obj) (T : Ty)
+    (hcoh : ∀ p a, ms.ext p T a → ms.hasType p T) :
+    DiamondR ms T → DiamondI ms T :=
+  poss_r_implies_poss_i ms T hcoh
 
 /-- □_r T → ◇_r T when the modal system has at least one possibility.
 The D axiom of modal logic. -/
@@ -375,6 +416,81 @@ theorem Topos.nec_implies_poss (τ : Topos) (hne : Nonempty τ.bg)
     (hn : τ.inducedNec) : τ.inducedPoss :=
   ⟨hne.some, hn hne.some⟩
 
+/-! ### Topos ↔ ModalSystem bridge
+
+A topos τ : (bg → Type) induces a single-type modal system where:
+- Possibilities are the situations (τ.bg)
+- There is one distinguished type (Unit)
+- A possibility s has the type witnessed iff τ.fg(s) is inhabited
+
+This connects Cooper's topos-based modality to the ModalSystem framework
+from §6.3. The induced accessibility relation is *universal* — every
+situation is accessible from every other — because topoi encode what follows
+at each situation rather than which situations are accessible. This is the
+formal content of Cooper's claim (§6.4) that "topoi replace accessibility
+relations between possible worlds." -/
+
+/-- Convert a topos to a single-type modal system.
+Possibilities are the background situations; the single type is witnessed
+at possibility s iff τ.fg(s) is inhabited. -/
+def Topos.toModalSystem (τ : Topos) : ModalSystem Unit Unit where
+  Poss := τ.bg
+  poss := λ s => {
+    available := λ _ => True
+    witnesses := λ _ _ => Nonempty (τ.fg s)
+  }
+
+/-- Topos-induced necessity = restrictive necessity in the derived modal system.
+∀ s, Nonempty (τ.fg s) ↔ nec_r (τ.toModalSystem) (). -/
+theorem Topos.inducedNec_iff_nec_r (τ : Topos) :
+    τ.inducedNec ↔ nec_r τ.toModalSystem () := by
+  constructor
+  · intro h p; exact ⟨(), h p⟩
+  · intro h p; exact (h p).choose_spec
+
+/-- Topos-induced possibility = restrictive possibility in the derived modal system.
+∃ s, Nonempty (τ.fg s) ↔ poss_r (τ.toModalSystem) (). -/
+theorem Topos.inducedPoss_iff_poss_r (τ : Topos) :
+    τ.inducedPoss ↔ poss_r τ.toModalSystem () := by
+  constructor
+  · intro ⟨s, h⟩; exact ⟨s, (), h⟩
+  · intro ⟨s, _, h⟩; exact ⟨s, h⟩
+
+/-- All types are available in every possibility of a topos-derived system.
+This means inclusive and restrictive modal notions *coincide* for topoi —
+the distinction only matters when some types are absent from some possibilities. -/
+theorem Topos.allAvailable (τ : Topos) (s : τ.bg) :
+    τ.toModalSystem.hasType s () :=
+  trivial
+
+/-- For a topos-derived modal system, nec_r = nec_i (restrictive = inclusive).
+Since every type is available in every possibility, the inclusive guard
+is vacuous. -/
+theorem Topos.nec_r_iff_nec_i (τ : Topos) :
+    nec_r τ.toModalSystem () ↔ nec_i τ.toModalSystem () := by
+  constructor
+  · exact restrictive_nec_implies_inclusive τ.toModalSystem ()
+  · intro h p; exact h p (τ.allAvailable p)
+
+/-- The accessibility relation induced by a topos is reflexive:
+every situation is accessible from itself. -/
+theorem Topos.accessRel_refl (τ : Topos) (s : τ.bg) :
+    τ.toModalSystem.toAccessRel () s s :=
+  λ _ h => h
+
+/-- The accessibility relation induced by a topos is: s₁ R s₂ iff
+whenever τ.fg(s₁) is inhabited, so is τ.fg(s₂). This captures
+Cooper's insight (§6.4) that the modal content is carried by the
+topos foreground rather than by the accessibility structure — the
+relation between situations is *derived* from the type-theoretic
+content, not stipulated as a primitive. -/
+theorem Topos.accessRel_characterization (τ : Topos) (s₁ s₂ : τ.bg) :
+    τ.toModalSystem.toAccessRel () s₁ s₂ ↔
+    (Nonempty (τ.fg s₁) → Nonempty (τ.fg s₂)) := by
+  constructor
+  · intro h hne; exact h () hne
+  · intro h _ hne; exact h hne
+
 /-! ### Broccoli example (§6.4, (25)–(31))
 
 "Mary should eat her broccoli" — deontic (children must eat food on their
@@ -512,25 +628,45 @@ Propositions as types (not as sets of possible worlds). Two notions:
 True iff the type is inhabited. §6.5. -/
 abbrev RussellianProp := Type
 
-/-- An Austinian proposition: a situation–type pair.
-True iff the situation is of the type.
-§6.5, following @cite{barwise-perry-1983}. -/
-structure AustinianProp where
+/-- An Austinian proposition: a situation paired with a classifying type.
+§6.5, following @cite{barwise-perry-1983} and @cite{austin-1961}.
+
+True iff the situation is of the type. The situation and type are
+independent — the proposition *claims* that `sit` is of the situation
+type, but this need not hold. This is the canonical Austinian proposition
+type; see also `TrueAustinianProp` for the always-true special case. -/
+abbrev AustinianProp := CheckableAustinian
+
+/-- A witnessed (always-true) Austinian proposition: a situation–type pair
+where the situation is bundled with its type, guaranteeing truth by
+construction. This is a special case — useful when you need to exhibit
+a true proposition without a separate truth check.
+
+For the general (falsifiable) version, use `AustinianProp`. -/
+structure TrueAustinianProp where
   /-- The type (situation type) -/
   SitType : Type
-  /-- The situation -/
+  /-- The situation (witness of the type) -/
   sit : SitType
 
-/-- An Austinian proposition is true (the situation witnesses the type).
-By construction, an AustinianProp carries its own witness, so existence
-of the pair IS truth — the constructive reading. -/
-def AustinianProp.isTrue (p : AustinianProp) : Prop := Nonempty p.SitType
+/-- A `TrueAustinianProp` is always true (the situation witnesses the type). -/
+def TrueAustinianProp.isTrue (p : TrueAustinianProp) : Prop := Nonempty p.SitType
 
-/-- If a Russellian proposition is true, the corresponding Austinian is too.
+/-- A `TrueAustinianProp` embeds into an `AustinianProp` that is always true. -/
+def TrueAustinianProp.toAustinian (p : TrueAustinianProp) :
+    AustinianProp p.SitType where
+  sit := p.sit
+  sitType _ := True
+
+/-- The embedded proposition is always true. -/
+theorem TrueAustinianProp.toAustinian_isTrue (p : TrueAustinianProp) :
+    p.toAustinian.isTrue := trivial
+
+/-- If a Russellian proposition is true, there exists a true Austinian proposition.
 §6.5: "if a Russellian proposition containing the same type
 is true, then there is an Austinian proposition which is true." -/
-theorem russellian_true_implies_austinian {T : Type} (h : IsTrue T) :
-    ∃ p : AustinianProp, p.SitType = T :=
+theorem russellian_true_implies_trueAustinian {T : Type} (h : IsTrue T) :
+    ∃ p : TrueAustinianProp, p.SitType = T :=
   ⟨⟨T, h.some⟩, rfl⟩
 
 /-! ### Structural vs postulated subtyping (§6.5, (50))
@@ -905,9 +1041,9 @@ inductive TwoObj where | obj_a | obj_b deriving DecidableEq
 def twoModal : ModalSystem TwoPred TwoObj where
   Poss := Bool
   poss p := match p with
-    | true  => ⟨λ pred obj => match pred, obj with
+    | true  => ⟨λ _ => True, λ pred obj => match pred, obj with
         | .rain, .obj_a => True | .snow, .obj_b => True | _, _ => False⟩
-    | false => ⟨λ pred obj => match pred, obj with
+    | false => ⟨λ _ => True, λ pred obj => match pred, obj with
         | .rain, .obj_a => True | _, _ => False⟩
 
 /-- Rain is necessary (has witnesses in both possibilities). -/
@@ -934,6 +1070,59 @@ theorem diamond_snow : DiamondR twoModal .snow := by
   unfold DiamondR; exact snow_possible
 theorem not_box_snow : ¬ BoxR twoModal .snow := by
   unfold BoxR; exact snow_not_necessary
+
+/-- When all types are available everywhere (as in `twoModal`), nec_i
+and nec_r agree: snow is not inclusively necessary either. -/
+theorem snow_not_nec_i : ¬ nec_i twoModal .snow := by
+  intro h
+  obtain ⟨obj, hobj⟩ := h false trivial
+  revert hobj
+  simp only [twoModal, ModalSystem.ext]
+  cases obj <;> simp
+
+/-! ### Restrictive vs inclusive distinction
+
+A modal system where snow is only available in one possibility.
+This demonstrates that `nec_i` is strictly weaker than `nec_r`:
+snow is inclusively necessary (has witnesses wherever available)
+but not restrictively necessary (not available = not checked). -/
+
+/-- A modal system where snow is only a type in the first possibility.
+Rain is available everywhere; snow is only available at `true`. -/
+def twoModalRestricted : ModalSystem TwoPred TwoObj where
+  Poss := Bool
+  poss p := match p with
+    | true  => ⟨λ _ => True, λ pred obj => match pred, obj with
+        | .rain, .obj_a => True | .snow, .obj_b => True | _, _ => False⟩
+    | false => ⟨λ pred => pred = .rain, λ pred obj => match pred, obj with
+        | .rain, .obj_a => True | _, _ => False⟩
+
+/-- Snow is NOT restrictively necessary: no witnesses at `false`. -/
+theorem restricted_snow_not_nec_r : ¬ nec_r twoModalRestricted .snow := by
+  intro h
+  obtain ⟨obj, hobj⟩ := h false
+  revert hobj
+  simp only [twoModalRestricted, ModalSystem.ext]
+  cases obj <;> simp
+
+/-- Snow IS inclusively necessary: the only possibility where snow
+is available (`true`) has a witness. The `false` possibility doesn't
+have snow as a type, so it's not checked. -/
+theorem restricted_snow_nec_i : nec_i twoModalRestricted .snow := by
+  intro p hp
+  match p with
+  | true => exact ⟨.obj_b, trivial⟩
+  | false =>
+    exfalso
+    simp [twoModalRestricted, ModalSystem.hasType] at hp
+
+/-- This is the key result: nec_i does NOT imply nec_r.
+The inclusive/restrictive distinction is non-trivial. -/
+theorem nec_i_not_implies_nec_r :
+    ¬ (∀ (Ty Obj : Type) (ms : ModalSystem Ty Obj) (T : Ty),
+      nec_i ms T → nec_r ms T) := by
+  intro h
+  exact restricted_snow_not_nec_r (h _ _ twoModalRestricted .snow restricted_snow_nec_i)
 
 /-- Buy/sell postulated subtyping phenomenon. -/
 def samSellsBookToKim : SellEvent String := ⟨"Kim", "Syntactic Structures", "Sam"⟩
@@ -1006,27 +1195,26 @@ theorem meaningPostulate_transfers_belief {Agent : Type} {ltm : LTM Agent}
   believe_closed_under_subtype hb mp.coerce
 
 -- ============================================================================
--- Bridge: AustinianProp → CheckableAustinian (Ginzburg 2012)
+-- Bridge: TrueAustinianProp → AustinianProp (Ginzburg 2012)
 -- ============================================================================
 
-/-! ## Cooper → Ginzburg Austinian Propositions
+/-! ## TrueAustinianProp → AustinianProp
 
-`AustinianProp` carries its own witness (always true by
-construction). @cite{ginzburg-2012} Ch. 4 uses Austinian propositions that can
-be false — `CheckableAustinian` (defined in `Discourse.lean`). This bridge
-embeds the former into the latter. -/
+`TrueAustinianProp` carries its own witness (always true by construction).
+`AustinianProp` (= `CheckableAustinian`) is the general case that can be
+false. This bridge embeds the former into the latter. -/
 
-/-- Cooper's `AustinianProp` (always true) embeds into `CheckableAustinian`.
+/-- Embed a `TrueAustinianProp` (always true) into an `AustinianProp`.
 
-An `AustinianProp` carries its own witness, so the resulting
-`CheckableAustinian` is always true. -/
-def cooperToGinzburg (ap : AustinianProp) :
-    CheckableAustinian ap.SitType where
+A `TrueAustinianProp` carries its own witness, so the resulting
+`AustinianProp` is always true. -/
+def cooperToGinzburg (ap : TrueAustinianProp) :
+    AustinianProp ap.SitType where
   sit := ap.sit
   sitType _ := True
 
-/-- Cooper-to-Ginzburg embedding preserves truth. -/
-theorem cooperToGinzburg_always_true (ap : AustinianProp) :
+/-- The embedding preserves truth. -/
+theorem cooperToGinzburg_always_true (ap : TrueAustinianProp) :
     (cooperToGinzburg ap).isTrue := trivial
 
 end Semantics.TypeTheoretic

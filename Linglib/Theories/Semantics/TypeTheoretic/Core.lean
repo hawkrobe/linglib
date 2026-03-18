@@ -925,6 +925,97 @@ theorem dudamelSentence_is_existWitness :
     dudamelIsAConductor =
     ExistWitness Ind Conductor (λ y => propT (Ind.dudamel = y)) := rfl
 
+/-! ## § 3.4 CnstrIsA — Construction-based "is a" (ex 85–92)
+
+Cooper §3.4 shows that TTR can distinguish two analyses of
+"Dudamel is a conductor" that Montague collapses:
+
+1. **Compositional** (via `semBe` + `semIndefArt`): the content involves
+   existential quantification — `ExistWitness Ind Conductor (λ y => propT (d = y))`.
+
+2. **Construction-based** `CnstrIsA` (§3.4, ex 87): the VP ↟ NP construction
+   makes the VP content equal to the NP content directly — `conductor(d)`.
+
+The two are truth-conditionally equivalent (inhabited iff Dudamel is a conductor)
+but structurally distinct as types. This structural distinction is unavailable
+in Montague's system, where truth-conditional equivalence entails identity of
+denotation. The reversed sentence "A conductor is Dudamel" only receives the
+compositional (existentially quantified) reading.
+
+This is what Cooper means (§3.4, p.117) when he says the distinction between
+"Dudamel is a conductor" and "A conductor is Dudamel" is "not available on
+Montague's (1973) original approach since the two contents are
+truth-conditionally equivalent." -/
+
+/-- CnstrIsA: construction-based content for "NP is a CN".
+§3.4, ex (87): VP → V NP ∧ CnstrIsA. The content is the predicate
+applied directly to the individual — no existential quantification.
+§3.4, ex (92a): `[ e : conductor(d) ]`. -/
+abbrev cnstrIsA {E : Type} (pred : E → Type) (individual : E) : Type :=
+  pred individual
+
+/-- Construction-based "Dudamel is a conductor" — direct predication.
+§3.4, ex (92a): the CnstrIsA content is `conductor(d)`. -/
+abbrev dudamelIsAConductor_cnstr : Type := cnstrIsA Conductor .dudamel
+
+/-- CnstrIsA "Dudamel is a conductor" is TRUE. -/
+def dudamelIsAConductor_cnstr_true : dudamelIsAConductor_cnstr :=
+  Conductor.mk
+
+/-- CnstrIsA "Beethoven is a conductor" is FALSE. -/
+instance : IsFalse (cnstrIsA Conductor .beethoven) :=
+  ⟨fun h => nomatch h⟩
+
+/-- The compositional reading (via semBe + semIndefArt) and the construction
+reading (CnstrIsA) are truth-conditionally equivalent: both are inhabited
+iff the individual has the property.
+§3.4, p.115: "(82c) has a witness ('is true') if and only if (83) has a witness". -/
+theorem cnstrIsA_equiv_compositional (individual : Ind) (pred : Ind → Type) :
+    Nonempty (cnstrIsA pred individual) ↔
+    Nonempty (ExistWitness Ind pred (λ y => propT (individual = y))) := by
+  constructor
+  · intro ⟨h⟩; exact ⟨⟨individual, h, PLift.up rfl⟩⟩
+  · intro ⟨⟨y, hy, ⟨heq⟩⟩⟩; subst heq; exact ⟨hy⟩
+
+/-- As ITypes, the compositional and construction readings are
+intensionally distinct even though truth-conditionally equivalent.
+This is the formal content of Cooper's claim (§3.4, p.115) that
+"they are distinct properties" — the distinction is precisely the
+IType-level intensional identity that TTR provides and Montague lacks. -/
+theorem cnstrIsA_intensionally_distinct :
+    ¬ IType.intEq
+      ⟨cnstrIsA Conductor .dudamel, "conductor(d)"⟩
+      ⟨dudamelIsAConductor, "exist(conductor, be(d))"⟩ := by
+  simp [IType.intEq]
+
+/-- "A conductor is Dudamel" always gets the compositional (existential) reading.
+The CnstrIsA construction requires the subject to be a proper name and the
+complement to be an indefinite NP (§3.4, ex 87: VP → V NP ∧ CnstrIsA).
+When the subject is "a conductor", only the compositional derivation
+(via ContForwardApp) is available.
+
+The reversed sentence's content: `semIndefArt conductor (λ x => semBe (semPropName d) x)`.
+This expands to `ExistWitness Ind Conductor (λ x => propT (x = .dudamel))` — note
+the reversed equality compared to "Dudamel is a conductor". -/
+abbrev aConductorIsDudamel : Type :=
+  (semIndefArt conductorPpty) (λ x => semBe (semPropName .dudamel) x)
+
+/-- "A conductor is Dudamel" is TRUE (Dudamel is a conductor, so the
+existential witness exists). -/
+def aConductorIsDudamel_true : aConductorIsDudamel :=
+  ⟨.dudamel, Conductor.mk, PLift.up rfl⟩
+
+/-- "A conductor is Dudamel" and "Dudamel is a conductor" (compositional)
+are truth-conditionally equivalent — in Montague's system, they are
+indistinguishable. But TTR distinguishes them structurally: the
+CnstrIsA reading of "Dudamel is a conductor" (direct predication) has
+no analogue for "A conductor is Dudamel". -/
+theorem reversed_equiv_compositional :
+    Nonempty aConductorIsDudamel ↔ Nonempty dudamelIsAConductor := by
+  constructor
+  · intro ⟨⟨y, hc, ⟨heq⟩⟩⟩; subst heq; exact ⟨⟨.dudamel, hc, PLift.up rfl⟩⟩
+  · intro ⟨⟨y, hc, ⟨heq⟩⟩⟩; subst heq; exact ⟨⟨.dudamel, hc, PLift.up rfl⟩⟩
+
 end DerivationPhenomena
 
 -- ============================================================================

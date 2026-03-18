@@ -264,6 +264,7 @@ inductive HomogeneityRemover where
   | every         -- "every door" (nominal domain)
   | each          -- "each door" (nominal domain)
   | completely    -- "completely blue" (degree domain)
+  | necessarily   -- "necessarily" (modal domain; @cite{agha-jeretic-2022})
   deriving Repr, DecidableEq
 
 /--
