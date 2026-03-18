@@ -2422,7 +2422,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="jeffrey-1965" data-role="cited" data-tag="Semantics" data-year="1965">
-<p class="bib-citation"><strong>Jeffrey, R.</strong> (1965). <a href="https://doi.org/10.1007/bf01063989" class="bib-title-link">The Logic of Decision</a>. <em>Synthese, 48(3), 473–492</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Conditional.lean">Conditional</a></span></p>
+<p class="bib-citation"><strong>Jeffrey, R.</strong> (1965). <a href="https://press.uchicago.edu/ucp/books/book/chicago/L/bo3640589.html" class="bib-title-link">The Logic of Decision</a>. <em>University of Chicago Press</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Conditional.lean">Conditional</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="jin-koenig-2021" data-role="formalized" data-tag="Semantics" data-year="2021">
