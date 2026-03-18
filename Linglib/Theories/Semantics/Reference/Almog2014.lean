@@ -76,7 +76,7 @@ def nameProfile : ReferentialProfile := ⟨true, true, false⟩
 
 /-- dthat[the φ]: designation only.
 
-@cite{almog-2014}'s sharpest separation (Ch 1): `dthat[the tallest spy]` rigidly
+sharpest separation (Ch 1): `dthat[the tallest spy]` rigidly
 designates whoever is actually the tallest spy (`dthatW_isRigid`), but its
 content is a general proposition (a rigid intension), NOT a structured
 ⟨individual, property⟩ pair. This distinguishes rigidity from direct
@@ -86,10 +86,10 @@ def dthatProfile : ReferentialProfile := ⟨true, false, false⟩
 /-- Referentially-used description: referential use only.
 
 "The man drinking a martini" used referentially — the speaker has Jones in
-mind, using the description to identify him. Per @cite{almog-2014} Ch 3
+mind, using the description to identify him. Per Ch 3
 §§2.2–2.12, this is a cognitive mechanism: the speaker's mind is already
 "loaded" with the referent. The description itself is non-rigid
-(designation = false), and per @cite{almog-2014}'s reading of Donnellan
+(designation = false), and per reading of Donnellan
 (§2.12), the propositional content is NOT singular — Donnellan gives a
 "proposition-free account, rather de re (de object coming in) in its
 form." Only the cognitive fix is present. -/
@@ -107,7 +107,7 @@ def attrDescProfile : ReferentialProfile := ⟨false, false, false⟩
 singular propositional content (⟨demonstrated object, property⟩), and
 referential use (the speaker has the object in mind via the demonstration).
 The demonstrative is the paradigm case where all three of
-@cite{almog-2014}'s mechanisms converge. -/
+mechanisms converge. -/
 def demoProfile : ReferentialProfile := ⟨true, true, true⟩
 
 /-- De re scope reading: singularity without designation.
@@ -164,7 +164,7 @@ theorem singularProp_indep_referentialUse :
 
 /-! ## Dthat: Designation Without Singularity
 
-@cite{almog-2014}'s central argument against conflating rigidity with direct
+central argument against conflating rigidity with direct
 referentiality. `dthat[the φ]` is rigid by mechanism — `KaplanLD.dthatW_isRigid`
 proves this — but its content is not a structured ⟨individual, property⟩ pair.
 It is a general proposition that happens to be world-invariant. -/
@@ -184,13 +184,13 @@ theorem dthat_deJureRigid {C W E : Type*} (desc : Intension W E) (cW : W) :
   ⟨rfl, λ _ => dthatW_isRigid desc cW⟩
 
 /-- dthat-expressions do NOT have singular propositional content.
-This is the formal content of @cite{almog-2014}'s separation thesis. -/
+This is the formal content of separation thesis. -/
 theorem dthat_not_singular {C W E : Type*} (desc : Intension W E) (cW : W) :
     (dthatExpression (C := C) desc cW).profile.singularProp = false := rfl
 
 /-! ## End-to-End Argumentation Chain
 
-@cite{almog-2014}'s central argument in formal steps:
+central argument in formal steps:
 
 1. dthat rigidifies descriptions → `dthatW_isRigid`
 2. Rigid designators are scope-inert → `rigid_iff_scope_invariant` (fwd)
@@ -200,7 +200,7 @@ theorem dthat_not_singular {C W E : Type*} (desc : Intension W E) (cW : W) :
    insufficient; we need singularity (structured content) to distinguish
    ⟨Hesperus, bright⟩ from ⟨Phosphorus, bright⟩.
 
-This is the formal core of @cite{almog-2014}'s argument that designation
+This is the formal core of argument that designation
 and singularity are independent mechanisms with different explanatory roles. -/
 
 /-- Step 1–2: dthat is scope-inert. Since dthat is rigid (dthatW_isRigid),
@@ -246,7 +246,7 @@ theorem frege_puzzle {W E : Type*} (a b : E) (P : E → W → Bool) (hab : a ≠
 
 /-! ## The "No Entailments" Thesis (Ch 2, §2.1)
 
-@cite{almog-2014}'s central metatheoretic claim: direct reference theory
+central metatheoretic claim: direct reference theory
 proper — whether via designation, singular propositions, or referential use —
 produces NO entailments about either modal or attitudinal questions.
 
@@ -263,7 +263,7 @@ verb semantics. The reference theory is silent on both. -/
 
 Distinct individuals produce distinct singular propositions — this is a
 structural fact about ⟨individual, property⟩ pairs, not an explanation of
-attitude opacity. Per @cite{almog-2014} (Ch 2, §2.1), no doctrine regarding
+attitude opacity. Per (Ch 2, §2.1), no doctrine regarding
 modal or cognitive matters follows from direct reference theory proper.
 Substitution failure in attitude reports requires an independent theory
 of attitudinal verb semantics (see `Attitudes.Doxastic.substitutionMayFail`
@@ -282,7 +282,7 @@ theorem structured_content_distinguishes {W E : Type*} :
 proper name definition through `IsDeJureRigid` to the broader system.
 
 This is the formal content of @cite{kripke-1980}'s thesis as formalized
-via @cite{almog-2014}'s designation mechanism. -/
+via designation mechanism. -/
 theorem properName_deJure {C W E : Type*} (e : E) :
     isDirectlyReferential (properName (C := C) (W := W) e).character :=
   λ _ => rigid_isRigid e
@@ -295,12 +295,12 @@ world but diverge in belief-accessible worlds. This is exactly the scenario
 where proper names have the same referent but different cognitive significance.
 
 The bridge is informal: PLA uses cover-relative assignment functions while
-@cite{almog-2014}'s framework uses mechanism-based analysis. A formal
+framework uses mechanism-based analysis. A formal
 connection would require unifying "mode of presentation" across both. -/
 
 /-! ## KDthat: Outside-In Reference (Ch 3, §2.13)
 
-@cite{almog-2014}'s alternative to Kaplan's `dthat`. In KDthat, the reference
+alternative to Kaplan's `dthat`. In KDthat, the reference
 is already fixed by an incoming signal (outside-in) before any linguistic
 expression is deployed. The description in parentheses serves only as a
 communicative guide — it helps the audience identify the referent the speaker
@@ -327,7 +327,7 @@ theorem kdthat_isRigid {W E : Type*} (loaded : E) (guide : E → W → Bool) :
   rigid_isRigid loaded
 
 /-- Changing the communicative guide does not change the referent.
-This is the formal content of @cite{almog-2014}'s outside-in thesis:
+This is the formal content of outside-in thesis:
 reference is fixed at object-contact (stage 1), not at communication
 (stage 3). -/
 theorem kdthat_guide_irrelevant {W E : Type*}
@@ -340,7 +340,7 @@ KDthat: "that [pointing at Jones] — the man with the martini" → Jones.
 Dthat: "dthat[the man with the martini]" → whoever actually satisfies it.
 When Jones is drinking water, these pick out different individuals.
 
-This is the formal core of @cite{almog-2014}'s argument that Donnellan's
+This is the formal core of argument that Donnellan's
 referential use is a genuinely different mechanism from Kaplan's
 rigidification-by-description. -/
 theorem kdthat_dthat_diverge {W E : Type*}
@@ -353,7 +353,7 @@ theorem kdthat_dthat_diverge {W E : Type*}
 
 /-- A KDthat-expression as a `ReferringExpression`: referential use only.
 
-The profile is `refDescProfile` ⟨F, F, T⟩ because in @cite{almog-2014}'s
+The profile is `refDescProfile` ⟨F, F, T⟩ because in's
 framework, the expression (description) is not de jure rigid — the rigidity
 comes from the speaker's cognitive fix on the loaded referent, not from
 the expression's linguistic type. Per §2.12, Donnellan gives a
@@ -373,7 +373,7 @@ secures rigidity — the cognitive fix does.
 Contrast with `dthat_deJureRigid`: dthat is de jure rigid (rigid by
 linguistic mechanism + designation=true). KDthat is de facto rigid
 (rigid content + designation=false). This formalizes the core of
-@cite{almog-2014}'s distinction between designation and referential use
+distinction between designation and referential use
 as independent sources of world-invariance. -/
 theorem kdthat_deFactoRigid {C W E : Type*} (loaded : E) (guide : E → W → Bool)
     (c : C) :
@@ -383,7 +383,7 @@ theorem kdthat_deFactoRigid {C W E : Type*} (loaded : E) (guide : E → W → Bo
 
 /-! ## Informativeness Is Not Semantic (Ch 4, §2)
 
-@cite{almog-2014}'s dissolution of the Frege puzzle. The informativeness of
+dissolution of the Frege puzzle. The informativeness of
 "Cicero = Tully" is NOT a semantic fact — it is a cognitive/relational fact,
 depending on the thinker's partial information database. Semantically, the
 two names contribute identical content (proven below). Any difference in
@@ -409,7 +409,7 @@ theorem informativeness_not_semantic {W E : Type*}
 when a and b are co-referential rigid designators.
 
 This is the "full stop" of what direct reference theory delivers
-(@cite{almog-2014}, Ch 2, §2.1). Whether the proposition is *necessary*
+(Ch 2, §2.1). Whether the proposition is *necessary*
 requires the independent metaphysical doctrine of modal haecceitism.
 Whether an agent *believes* it requires an independent theory of attitude
 verb semantics. The reference theory is silent on both. -/
@@ -422,13 +422,13 @@ theorem dr_same_proposition {W E : Type*}
 
 /-! ## The Dual Semantic Function of Nominals (Ch 4, §4.1)
 
-@cite{almog-2014} extends @cite{donnellan-1966}'s referential/attributive
+extends @cite{donnellan-1966}'s referential/attributive
 distinction beyond definite descriptions to ALL nominals. Every nominal
 — proper name, bare plural, Det+CN phrase — has two potential semantic
 functions: pre-nominal (reference already established) and nominal (the
 noun originates the reference). The duality is *semantic*, not pragmatic
 — it is "written into the very conventional rules governing these phrases"
-(@cite{almog-2014}). -/
+(). -/
 
 /-- The dual semantic function of nominals.
 - `preNominal`: Reference preceded the nominal. The speaker already has
@@ -458,7 +458,7 @@ theorem kdthat_is_preNominal :
 
 /-! ## The Orthogonality of Mechanism and Content
 
-@cite{almog-2014}'s deepest structural claim: the *mechanism* by which
+deepest structural claim: the *mechanism* by which
 reference is secured (designation, cognitive fix, etc.) and the *content*
 that results (the intension, the proposition expressed) are orthogonal.
 Same content can arise from different mechanisms; same mechanism can
@@ -545,7 +545,7 @@ theorem mechanism_content_orthogonality {C W E : Type*}
 
 /-! ## The Flow Diagram Reversal (Ch 1, §2.3)
 
-@cite{almog-2014}'s recurring structural observation: in all four founding
+recurring structural observation: in all four founding
 fathers' work, the classical Fregean direction of semantic determination is
 *reversed*. Classically, meaning (intension) determines denotation (extension)
 — symbol → satisfaction → object. In the historical/referential account,
@@ -574,7 +574,7 @@ Consequences already formalized in this module:
 
 /-- The flow diagram reversal as a retraction: `evalAt w ∘ rigid = id`.
 
-@cite{almog-2014} Ch 1, §2.3: "this reversal of the flow diagram is a
+Ch 1, §2.3: "this reversal of the flow diagram is a
 pattern that recurs in all four founding fathers' works on direct reference."
 Kripke's reversal for names (Ch 1), Donnellan's for descriptions (Ch 3),
 Kaplan's for demonstratives (Ch 2), Putnam's for common nouns (Ch 4). -/
@@ -585,7 +585,7 @@ theorem flowDiagramReversal {W E : Type*} (w : W) :
 /-- The Fregean direction is lossy: non-rigid intensions (descriptions)
 cannot survive the round-trip through entity.
 
-This is the mathematical content of @cite{almog-2014}'s "no entailments"
+This is the mathematical content of "no entailments"
 thesis: once you project to the retracted image (rigid intensions / entities),
 the modal information that lived in the ambient intension space is gone.
 "The man drinking a martini" varies across worlds; `rigid (desc w)` does not.
@@ -598,7 +598,7 @@ theorem fregeDirectionLossy {W E : Type*}
 
 /-! ## The Russell-Partee-Kaplan Challenge (Ch 4, §3)
 
-@cite{almog-2014}'s formulation of the RPK impossibility: three natural
+formulation of the RPK impossibility: three natural
 desiderata for a global semantics of nominals cannot all be satisfied
 simultaneously. Each of the three historical waves of logical reformers
 sacrifices exactly one.
@@ -653,7 +653,7 @@ def montague : RPKApproach :=
     | .semanticFaith => false
     | .uniformComp => true }
 
-/-- Direct reference (@cite{almog-2014}): Keep visible grammar + referential
+/-- Direct reference (): Keep visible grammar + referential
 semantics, sacrifice uniform composition. "John" and "every philosopher"
 have different semantic functions (pre-nominal vs nominal). -/
 def directRef : RPKApproach :=
@@ -725,7 +725,7 @@ universal quantifier `fun P => ∀ x, P x` is not in the image of this map
 (assuming `E` has ≥ 2 elements). Therefore "Every philosopher is wise" cannot
 be given a subject-predicate semantics in this framework.
 
-This is the formal core of @cite{almog-2014}'s RPK challenge (Ch 4, §3):
+This is the formal core of RPK challenge (Ch 4, §3):
 all three desiderata cannot be satisfied simultaneously. -/
 theorem rpk_impossibility {E : Type*} (a b : E) (hab : a ≠ b) :
     ¬ ∃ e : E, (fun P : E → Prop => P e) = (fun P => ∀ x, P x) :=

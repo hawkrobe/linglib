@@ -69,7 +69,7 @@ structure NominalizationDatum where
   takesCPComplement : Bool
   deriving Repr, BEq
 
-/-- *Beobachtung* ('observation') — the running example in @cite{benz-2025} Ch. 3.
+/-- *Beobachtung* ('observation') — the running example in Ch. 3.
     All three readings are available for this single form. -/
 def beobachtung_CEN : NominalizationDatum :=
   { form := "Beobachtung"
@@ -183,7 +183,7 @@ theorem cen_rn_mirror :
 
 /-- The three types of German preverbal elements.
 
-    @cite{benz-2025} Ch. 4: prefixes are inseparable and attach as heads;
+    Ch. 4: prefixes are inseparable and attach as heads;
     particles are separable and attach as phrases; RSPs are adjectival
     phrases that form complex predicates with the verb. -/
 inductive PreverbalElement where
@@ -194,7 +194,7 @@ inductive PreverbalElement where
 
 /-- Syntactic status: head or phrase.
 
-    @cite{benz-2025} §4.3.1: following Wurmbrand (1998) and Zeller (2001a),
+    §4.3.1: following Wurmbrand (1998) and Zeller (2001a),
     prefixes are heads (inseparable under V2 movement) while particles
     are phrases (obligatorily stranded under V2). RSPs are unambiguously
     phrasal (they can be modified: *total flach gehämmert*). -/
@@ -206,7 +206,7 @@ def PreverbalElement.isHead : PreverbalElement → Bool
 /-- Does this element always specify a result state that conflicts with
     other delimiters?
 
-    @cite{benz-2025} §4.1: prefixes and RSPs always contribute a
+    §4.1: prefixes and RSPs always contribute a
     (potentially conflicting) result state specification. Particles
     can have non-delimiting readings (directional, completive) that
     don't necessarily conflict — this is why PRT-pfx combinations
@@ -222,14 +222,14 @@ def PreverbalElement.alwaysSpecifiesResult : PreverbalElement → Bool
 
 /-- German inseparable prefixes (closed class).
 
-    @cite{benz-2025} Table 4. The prefix *ge-* is the rare
+    Table 4. The prefix *ge-* is the rare
     non-participial prefix (as in *ge-bären*, *ge-denken*). -/
 def inseparablePrefixes : List String :=
   ["be", "ent", "er", "ge", "miss", "ver", "zer"]
 
 /-- German separable particles (open class, representative sample).
 
-    @cite{benz-2025} Table 4. Elements like durch-, über-, um-
+    Table 4. Elements like durch-, über-, um-
     are ambiguous between prefix and particle uses. -/
 def separableParticles : List String :=
   ["ab", "an", "auf", "aus", "bei", "ein", "los", "nach", "vor", "zu"]
@@ -255,7 +255,7 @@ structure CooccurrenceDatum where
   exampleStr : String
   deriving Repr, BEq
 
-/-- The full co-occurrence paradigm from @cite{benz-2025} Table 3. -/
+/-- The full co-occurrence paradigm from Table 3. -/
 def cooccurrenceTable : List CooccurrenceDatum := [
   -- pfx-pfx: *ent-ver-trauen. Structure allows (two heads), but
   -- double delimitation blocks.
@@ -323,7 +323,7 @@ def cooccurrenceTable : List CooccurrenceDatum := [
 /-- Structural compatibility: phrase can take headed complement; two heads
     can combine; head cannot wrap phrase; two phrases cannot stack.
 
-    @cite{benz-2025} §4.3.1, §4.4. -/
+    §4.3.1, §4.4. -/
 def structurallyCompatible (outer inner : PreverbalElement) : Bool :=
   match outer.isHead, inner.isHead with
   | true,  true  => true   -- head + head
@@ -343,7 +343,7 @@ theorem structural_prediction_matches :
 /-- Two elements that both always specify a result state cannot co-occur,
     as a single event cannot be delimited twice with conflicting endpoints.
 
-    @cite{benz-2025} §4.1: the interpretive constraint is about conflicting
+    §4.1: the interpretive constraint is about conflicting
     result state specifications. Particles escape this because they can
     have non-result (directional/completive) readings. -/
 def interpretivelyCompatible (outer inner : PreverbalElement) : Bool :=
@@ -361,7 +361,7 @@ theorem interpretive_prediction_matches :
 /-- A combination is allowed iff both structurally compatible AND
     interpretively compatible (no conflicting result states).
 
-    @cite{benz-2025} §4.4: both factors are needed; neither alone
+    §4.4: both factors are needed; neither alone
     explains the full paradigm. -/
 def predictedAllowed (outer inner : PreverbalElement) : Bool :=
   structurallyCompatible outer inner && interpretivelyCompatible outer inner
@@ -388,7 +388,7 @@ structure GermanResultativeDatum where
   verbClass : String
   deriving Repr, BEq
 
-/-- German RSP data from @cite{benz-2025} §4.2.
+/-- German RSP data from §4.2.
 
     German allows obligatorily transitive, unaccusative, and inherently
     reflexive M predicates in resultatives — not just unergatives. -/
@@ -432,7 +432,7 @@ theorem german_allows_non_unergative_M :
 -- ────────────────────────────────────────────────────
 
 /-- RSPs are incompatible with prefixed verbs.
-    @cite{benz-2025} Ch. 4: adding an RSP to a prefix verb is ungrammatical,
+    Ch. 4: adding an RSP to a prefix verb is ungrammatical,
     but the same RSP with the simplex verb is fine. -/
 def rsp_pfx_contrasts : List (GermanResultativeDatum × GermanResultativeDatum) := [
   ( { sentence := "*Sie haben uns arm be-raubt"
@@ -474,7 +474,7 @@ theorem rsp_pfx_contrast_pattern :
   native_decide
 
 /-- RSPs are also incompatible with particles.
-    @cite{benz-2025} Ch. 4: adding an RSP to a particle verb is ungrammatical,
+    Ch. 4: adding an RSP to a particle verb is ungrammatical,
     but the same RSP with the simplex verb is fine. -/
 def rsp_prt_contrasts : List (GermanResultativeDatum × GermanResultativeDatum) := [
   ( { sentence := "*Sie hat den Tisch trocken ab-gewischt"
@@ -513,7 +513,7 @@ theorem rsp_prt_contrast_pattern :
 -- § 12. Interpretive Transparency
 -- ────────────────────────────────────────────────────
 
-/-- @cite{benz-2025} Claim 2: RSPs are always transparent (outside v's
+/-- Claim 2: RSPs are always transparent (outside v's
     locality domain for allosemy); prefixes and particles can be opaque
     (inside the complex head). -/
 inductive InterpretiveTransparency where
@@ -535,7 +535,7 @@ theorem rsp_always_transparent :
 
 /-! ### Complex predicate semantics
 
-Following Williams (2015), adopted by @cite{benz-2025} §4.2:
+Following Williams (2015), adopted by §4.2:
 resultatives are complex predicates with semantics:
 
     K(e₁, e₂, s) = Means(e₁, e₂) & End(e₁, s)
@@ -577,7 +577,7 @@ theorem claim1_two_factors :
 -- § 15. Nominalization Type Inventory
 -- ────────────────────────────────────────────────────
 
-/-- German nominalization types discussed in @cite{benz-2025} Ch. 5.
+/-- German nominalization types discussed in Ch. 5.
 
     - **ung**: *-ung* suffixation (*Beobachtung*, *Erzählung*). Requires
       the verb to project a full verbal shell including v; the entire
@@ -600,7 +600,7 @@ inductive NominalizationType where
 
 /-- Whether a preverbal element is acceptable in a given nominalization type.
 
-    @cite{benz-2025} Ch. 5: the distribution of preverbal elements across
+    Ch. 5: the distribution of preverbal elements across
     nominalization types reveals complementary distribution between prefixes
     and RSPs:
 
@@ -636,7 +636,7 @@ def peAcceptable : NominalizationType → PreverbalElement → Bool
 /-- Prefixes and RSPs show complementary distribution across -ung and Ge-...-e:
     pfx is accepted where RSP is rejected, and vice versa.
 
-    @cite{benz-2025} Ch. 5: this complementarity follows from the structural
+    Ch. 5: this complementarity follows from the structural
     difference between head-level (pfx) and phrase-level (RSP) preverbal
     elements, interacting with the different structural requirements of
     -ung (requires full vP) vs Ge-...-e (directly nominalizes root). -/
@@ -679,7 +679,7 @@ theorem ung_head_phrase_pattern :
 
 /-! ### Benz's core theoretical argument (Chs. 4–5)
 
-@cite{benz-2025}'s central claim is that the 9-cell co-occurrence paradigm
+central claim is that the 9-cell co-occurrence paradigm
 (§6, Table 3) and the PE×nominalization distribution (§16, the table in
 Ch. 5) are not stipulated — they follow from the conjunction of two
 independently motivated principles:
@@ -719,7 +719,7 @@ inductive SynLevel where
 
     This is a general principle of morphosyntactic structure, not specific
     to German preverbal elements. It follows from the ban on phrasal
-    incorporation (@cite{benz-2025} §4.3.1, following Baker 1988). -/
+    incorporation (§4.3.1, following Baker 1988). -/
 def incorporationAllowed (outer inner : SynLevel) : Bool :=
   match outer, inner with
   | .head,   .head   => true   -- incorporation / head-adjunction
@@ -760,7 +760,7 @@ def resultStatesCompatible (a b : ResultStateSpec) : Bool :=
 
 /-- Classify each PE by its syntactic level.
 
-    @cite{benz-2025} §4.3.1: prefixes are heads (inseparable under V2);
+    §4.3.1: prefixes are heads (inseparable under V2);
     particles and RSPs are phrases (stranded under V2, can be modified). -/
 def PreverbalElement.synLevel : PreverbalElement → SynLevel
   | .pfx => .head
@@ -769,7 +769,7 @@ def PreverbalElement.synLevel : PreverbalElement → SynLevel
 
 /-- Classify each PE by its result state specification.
 
-    @cite{benz-2025} §4.1: prefixes and RSPs obligatorily specify a result
+    §4.1: prefixes and RSPs obligatorily specify a result
     state. Particles are neutral — they can have non-delimiting readings
     (directional, completive) that do not introduce a result state. -/
 def PreverbalElement.resultSpec : PreverbalElement → ResultStateSpec
@@ -804,11 +804,11 @@ theorem resultSpec_matches_alwaysSpecifies (pe : PreverbalElement) :
     PE-specific Booleans. A combination is blocked iff at least one
     derivation can be constructed.
 
-    **`byLexicalIntegrity`** (@cite{benz-2025} §4.3.1, Baker 1988): only
+    **`byLexicalIntegrity`** (§4.3.1, Baker 1988): only
     heads can occupy the inner (closer-to-root) position in a word-internal
     combination. A phrasal inner element cannot incorporate.
 
-    **`byResultUniqueness`** (@cite{benz-2025} §4.1): an event has at most
+    **`byResultUniqueness`** (§4.1): an event has at most
     one telos. Two elements that both obligatorily specify a result state
     yield conflicting endpoints. -/
 inductive Blocked : PreverbalElement → PreverbalElement → Prop where
@@ -989,7 +989,7 @@ theorem end_to_end_pc_root :
 /-- Whether a verb can undergo *-ung* nominalization, based on its
     Vendler class.
 
-    @cite{benz-2025} Ch. 5, following Roßdeutscher & Kamp (2010):
+    Ch. 5, following Roßdeutscher & Kamp (2010):
     *-ung* requires complex change-of-state event structure. Only
     accomplishments and achievements (which contain a result state
     component) qualify. Activities and states do not. -/
@@ -1064,7 +1064,7 @@ theorem brechen_two_paths :
 
 /-- The two paths DISAGREE for *frieren*: the canonical PC root → stative
     v → RN (not CEN), yet the achievement vendlerClass → can -ung. This
-    is not a bug — it captures @cite{benz-2025}'s key insight that allosemy
+    is not a bug — it captures key insight that allosemy
     means BOTH v allosemes are available for any verb. The canonical
     alloseme is a default, not a constraint. *Frieren* CAN have eventive v
     and thus CAN form a CEN, even though its canonical alloseme is stative. -/

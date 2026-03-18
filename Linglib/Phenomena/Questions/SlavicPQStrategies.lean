@@ -84,28 +84,28 @@ structure SlavicPQProfile where
   declPQ : DeclPQAvailability := .unavailable
   /-- Whether adding negation triggers epistemic bias -/
   negationTriggersBias : Bool := true
-  /-- Example number from @cite{simik-2024} -/
+  /-- Example number from -/
   exampleNum : Option String := none
   deriving Repr, BEq
 
 -- Czech, Slovak, Upper Sorbian: verb movement (no particle Fragment entries)
 
 /-- Czech: verb-initial (VSO) with rising/falling intonation.
-No overt PQ particle. Default = InterPPQ (@cite{simik-2024} ex. 25). -/
+No overt PQ particle. Default = InterPPQ (ex. 25). -/
 def czech : SlavicPQProfile :=
   { language := "Czech", code := "cs"
   , defaultStrategy := .verbMovement
   , declPQ := .available
   , exampleNum := some "25" }
 
-/-- Slovak: verb-initial, parallel to Czech (@cite{simik-2024} ex. 26). -/
+/-- Slovak: verb-initial, parallel to Czech (ex. 26). -/
 def slovak : SlavicPQProfile :=
   { language := "Slovak", code := "sk"
   , defaultStrategy := .verbMovement
   , declPQ := .available
   , exampleNum := some "26" }
 
-/-- Upper Sorbian: verb-initial (@cite{simik-2024} ex. 27). -/
+/-- Upper Sorbian: verb-initial (ex. 27). -/
 def upperSorbian : SlavicPQProfile :=
   { language := "Upper Sorbian", code := "hsb"
   , defaultStrategy := .verbMovement
@@ -115,7 +115,7 @@ def upperSorbian : SlavicPQProfile :=
 -- Slovenian, Ukrainian, Polish: clause-initial particle (derived from Fragments)
 
 /-- Slovenian: clause-initial *ali* (optionally) + verb movement.
-*ali* is reported as incompatible with DeclPQs (@cite{simik-2024} ex. 28). -/
+*ali* is reported as incompatible with DeclPQs (ex. 28). -/
 def slovenian : SlavicPQProfile :=
   { language := "Slovenian", code := "sl"
   , defaultStrategy := .clauseInitialParticle
@@ -123,7 +123,7 @@ def slovenian : SlavicPQProfile :=
   , declPQ := .unavailable
   , exampleNum := some "28" }
 
-/-- Ukrainian: clause-initial *čy* (obligatory) (@cite{simik-2024} ex. 29). -/
+/-- Ukrainian: clause-initial *čy* (obligatory) (ex. 29). -/
 def ukrainian : SlavicPQProfile :=
   { language := "Ukrainian", code := "uk"
   , defaultStrategy := .clauseInitialParticle
@@ -133,7 +133,7 @@ def ukrainian : SlavicPQProfile :=
 
 /-- Polish: clause-initial *czy* (obligatory in default PQ).
 Verb-initial PQs are possible but unacceptable in quiz scenarios
-(@cite{simik-2024} ex. 30d). -/
+(ex. 30d). -/
 def polish : SlavicPQProfile :=
   { language := "Polish", code := "pl"
   , defaultStrategy := .clauseInitialParticle
@@ -143,7 +143,7 @@ def polish : SlavicPQProfile :=
 
 -- Serbian: particle combination
 
-/-- Serbian: *da* (+ *li*) is the default strategy (@cite{simik-2024} ex. 31).
+/-- Serbian: *da* (+ *li*) is the default strategy (ex. 31).
 Serbian has the richest PQ repertoire among Slavic languages
 (Todorović 2023). -/
 def serbian : SlavicPQProfile :=
@@ -157,7 +157,7 @@ def serbian : SlavicPQProfile :=
 
 /-- Macedonian: *dali* (clause-initial) for default PQs.
 *dali* can introduce negative PQs without triggering bias, unlike
-Bulgarian *li* (@cite{simik-2024} ex. 32). -/
+Bulgarian *li* (ex. 32). -/
 def macedonian : SlavicPQProfile :=
   { language := "Macedonian", code := "mk"
   , defaultStrategy := .clauseInitialParticle
@@ -166,7 +166,7 @@ def macedonian : SlavicPQProfile :=
   , negationTriggersBias := false  -- dali + neg is unbiased
   , exampleNum := some "32" }
 
-/-- Bulgarian: verb-attached *li* (@cite{simik-2024} ex. 33).
+/-- Bulgarian: verb-attached *li* (ex. 33).
 *li* encliticizes onto the focused constituent. -/
 def bulgarian : SlavicPQProfile :=
   { language := "Bulgarian", code := "bg"
@@ -178,7 +178,7 @@ def bulgarian : SlavicPQProfile :=
 /-- Russian: verb-attached *li* (formal) or IntonPQ (default).
 *li*-PQs are rare in spoken Russian — IntonPQs dominate
 (Onoeva & Staňková, to appear: only 6/500 were liPQs).
-IntonPQs are arguably unbiased (@cite{simik-2024} §4.2.3). -/
+IntonPQs are arguably unbiased (§4.2.3). -/
 def russian : SlavicPQProfile :=
   { language := "Russian", code := "ru"
   , defaultStrategy := .intonationOnly
@@ -196,7 +196,7 @@ def allProfiles : List SlavicPQProfile :=
 
 /-- Languages using verb movement as default PQ strategy.
 These are the languages without an overt question particle in default PQs
-(@cite{simik-2024} fn. 45). -/
+(fn. 45). -/
 def verbMovementLanguages : List SlavicPQProfile :=
   allProfiles.filter (·.defaultStrategy == .verbMovement)
 
@@ -209,7 +209,7 @@ theorem verbMovement_implies_declPQ :
     verbMovementLanguages.all (·.declPQ == .available) = true := by native_decide
 
 /-- The *li* family of particles spans Bulgarian, Russian, and (as *da li*) Serbian.
-These trace back to proto-Slavic *li* (@cite{simik-2024} §4.2.1). -/
+These trace back to proto-Slavic *li* (§4.2.1). -/
 def liFamily : List SlavicPQProfile :=
   allProfiles.filter λ p =>
     match p.particle with
@@ -217,12 +217,12 @@ def liFamily : List SlavicPQProfile :=
     | none => false
 
 -- ============================================================================
--- §4: Bias-Related Particles (@cite{simik-2024} §4.2.4)
+-- §4: Bias-Related Particles (§4.2.4)
 -- ============================================================================
 
 /-- The *razve* family: cross-Slavic particles specialized for expressing
 mirative/dubitative bias in PQs. These indicate surprise at or doubt about
-the evidence (@cite{simik-2024} §4.2.4).
+the evidence (§4.2.4).
 
 Russian *razve*, Ukrainian and Belarusian *xiba*, Polish *czyż(by)*,
 Bulgarian *nima*, Czech *copak*/*cožpak*/*snad*, Serbian *zar*.
@@ -264,7 +264,7 @@ theorem razve_both_negations :
     razve.outerNeg = true ∧ razve.innerNeg = true := ⟨rfl, rfl⟩
 
 /-- Czech *náhodou* is restricted to outer negation only, unlike *razve*
-(@cite{stankova-2025}, @cite{simik-2024} §5). -/
+(@cite{stankova-2025}, §5). -/
 theorem nahodou_outer_only :
     nahodou.outerNeg = true ∧ nahodou.innerNeg = false := ⟨rfl, rfl⟩
 

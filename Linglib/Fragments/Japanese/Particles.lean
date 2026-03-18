@@ -83,7 +83,7 @@ discourse markers with dual-layered secondary meaning (presuppositional +
 expressive-like). They require a salient counterstance in the discourse and
 express the speaker's evaluative stance toward that counterstance.
 
-### Classification (@cite{kubota-2026}: (1)–(2))
+### Classification (: (1)–(2))
 
 **Adverbs:**
 - (1a) *dōse* 'anyway', *shosen* 'anyway', *yahari* 'after all', *kekkyoku* 'after all'
@@ -109,7 +109,7 @@ inductive OutlookCat where
 /-- An outlook marker lexical entry.
 
 Encodes the form, stance type, syntactic category, and modal selectional
-restrictions following @cite{kubota-2026}. -/
+restrictions following. -/
 structure OutlookEntry where
   form : String
   romaji : String
@@ -119,7 +119,7 @@ structure OutlookEntry where
   /-- Modal selectional restrictions (which modal flavors the marker is compatible with). -/
   modalCompat : ModalCompatibility
   /-- Does this marker require a salient counterstance in the discourse?
-      True for all outlook markers by definition (@cite{kubota-2026}: (37)–(38)). -/
+      True for all outlook markers by definition (: (37)–(38)). -/
   requiresCounterstance : Bool := true
   deriving Repr, BEq
 
@@ -136,10 +136,10 @@ private def deonticOnly : ModalCompatibility :=
   { epistemic := false, deontic := true, circumstantial := false }
 
 
-/-! ### Adverbs (@cite{kubota-2026}: (1)) -/
+/-! ### Adverbs (: (1)) -/
 
 /-- *dōse* 'anyway' — signals pessimistic/defeatist outlook.
-    @cite{kubota-2026}): "I can't win a gold medal anyway." -/
+   ): "I can't win a gold medal anyway." -/
 def dōse : OutlookEntry :=
   { form := "どうせ", romaji := "dōse", gloss := "anyway"
   , cat := .adverb, stance := .negative, modalCompat := allModals }
@@ -150,7 +150,7 @@ def shosen : OutlookEntry :=
   , cat := .adverb, stance := .negative, modalCompat := allModals }
 
 /-- *yahari* 'after all/as expected' — confirms expected outcome.
-    Incompatible with *igai-ni* 'unexpectedly' (@cite{kubota-2026}: (11)). -/
+    Incompatible with *igai-ni* 'unexpectedly' (: (11)). -/
 def yahari : OutlookEntry :=
   { form := "やはり", romaji := "yahari", gloss := "after all/as expected"
   , cat := .adverb, stance := .emphasis, modalCompat := allModals }
@@ -161,32 +161,32 @@ def kekkyoku : OutlookEntry :=
   , cat := .adverb, stance := .emphasis, modalCompat := allModals }
 
 /-- *masani* 'precisely/exactly' — emphatic confirmation.
-    @cite{kubota-2026}): "It is precisely you who should go." -/
+   ): "It is precisely you who should go." -/
 def masani : OutlookEntry :=
   { form := "まさに", romaji := "masani", gloss := "precisely"
   , cat := .adverb, stance := .emphasis, modalCompat := allModals }
 
 /-- *mushiro* 'rather' — contrary to expected evaluation.
-    @cite{kubota-2026}): "Frankly admitting your mistake actually leaves a better impression."
-    Incompatible with *igai-ni* 'unexpectedly' (@cite{kubota-2026}: (11)). -/
+   ): "Frankly admitting your mistake actually leaves a better impression."
+    Incompatible with *igai-ni* 'unexpectedly' (: (11)). -/
 def mushiro : OutlookEntry :=
   { form := "むしろ", romaji := "mushiro", gloss := "rather"
   , cat := .adverb, stance := .contrary, modalCompat := allModals }
 
 /-- *kaette* 'rather/on the contrary' — contrary to expectation.
-    @cite{kubota-2026}). -/
+   ). -/
 def kaette : OutlookEntry :=
   { form := "かえって", romaji := "kaette", gloss := "rather/on the contrary"
   , cat := .adverb, stance := .contrary, modalCompat := allModals }
 
 /-- *yoppodo* 'much more/rather' — strong contrary evaluation.
-    @cite{kubota-2026}): "Frankly admitting your mistake leaves a far better impression." -/
+   ): "Frankly admitting your mistake leaves a far better impression." -/
 def yoppodo : OutlookEntry :=
   { form := "よっぽど", romaji := "yoppodo", gloss := "much more/rather"
   , cat := .adverb, stance := .contrary, modalCompat := allModals }
 
 /-- *semete* 'at least' — minimum standard, settling for less.
-    @cite{kubota-2026}, (46)): compatible with desiderative *-tai* and deontic *-beki*
+   , (46)): compatible with desiderative *-tai* and deontic *-beki*
     but NOT with epistemic *hazu* or ability *-eru*. -/
 def semete : OutlookEntry :=
   { form := "せめて", romaji := "semete", gloss := "at least"
@@ -198,23 +198,23 @@ def mashite : OutlookEntry :=
   , cat := .adverb, stance := .minimum, modalCompat := allModals }
 
 
-/-! ### Focus Particles (@cite{kubota-2026}: (2)) -/
+/-! ### Focus Particles (: (2)) -/
 
 /-- *nanka* 'anything like' — negative evaluation focus particle.
-    @cite{kubota-2026}, (9), (37)–(42)): the prototypical outlook marker.
+   , (9), (37)–(42)): the prototypical outlook marker.
     Requires a salient counterstance; allows perspective shift under embedding. -/
 def nanka : OutlookEntry :=
   { form := "なんか", romaji := "nanka", gloss := "anything like"
   , cat := .focusParticle, stance := .negative, modalCompat := allModals }
 
 /-- *kurai* 'at least' — minimum standard focus particle.
-    @cite{kubota-2026}): "Why don't you have something light, like some tea?" -/
+   ): "Why don't you have something light, like some tea?" -/
 def kurai : OutlookEntry :=
   { form := "くらい", romaji := "kurai", gloss := "at least"
   , cat := .focusParticle, stance := .minimum, modalCompat := allModals }
 
 /-- *koso* 'precisely' — emphatic confirmation focus particle.
-    @cite{kubota-2026}): "It is you who should go." -/
+   ): "It is you who should go." -/
 def koso : OutlookEntry :=
   { form := "こそ", romaji := "koso", gloss := "precisely"
   , cat := .focusParticle, stance := .emphasis, modalCompat := allModals }

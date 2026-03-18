@@ -47,7 +47,7 @@ open Semantics.Lexical.Verb.EntailmentProfile
 open Semantics.Lexical.Verb.Affectedness
 
 -- ════════════════════════════════════════════════════
--- § 1. Outcome Set Cardinality (@cite{bhadra-2024} eq. 62)
+-- § 1. Outcome Set Cardinality (eq. 62)
 -- ════════════════════════════════════════════════════
 
 /-- Cardinality of a verb root's outcome set — the possible states of the
@@ -61,12 +61,12 @@ inductive OutcomeCardinality where
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 2. Force Transmission Classification (@cite{bhadra-2024} Table 1)
+-- § 2. Force Transmission Classification (Table 1)
 -- ════════════════════════════════════════════════════
 
 /-- Classification of force-transmitting verbs by impact type.
 
-    @cite{bhadra-2024} Table 1: the three classes are distinguished by whether
+    Table 1: the three classes are distinguished by whether
     force transmission occurs, whether integral change is entailed, and
     whether surface impingement is effected.
 
@@ -97,7 +97,7 @@ def ForceTransmissionClass.outcomeCardinality : ForceTransmissionClass → Outco
   | .noForceTransmission => .empty
 
 -- ════════════════════════════════════════════════════
--- § 3. Boundary State Operators (@cite{bhadra-2024} eqs. 64–65)
+-- § 3. Boundary State Operators (eqs. 64–65)
 -- ════════════════════════════════════════════════════
 
 /-- Boundary states of an event's impact on an object.
@@ -118,7 +118,7 @@ instance {S : Type} [BEq S] : BEq (BoundaryStates S) where
   beq a b := a.pre == b.pre && a.res == b.res
 
 -- ════════════════════════════════════════════════════
--- § 4. Reversal and Restitution Conditions (@cite{bhadra-2024} eqs. 49–50)
+-- § 4. Reversal and Restitution Conditions (eqs. 49–50)
 -- ════════════════════════════════════════════════════
 
 /-- Reversibility condition (eq. 49): the result state of the base event
@@ -136,7 +136,7 @@ def restitutive {S : Type} [BEq S] (base affixed : BoundaryStates S) : Bool :=
   affixed.res == base.res
 
 -- ════════════════════════════════════════════════════
--- § 5. un- and re- Compatibility (@cite{bhadra-2024} eqs. 66–68, Fig. 5)
+-- § 5. un- and re- Compatibility (eqs. 66–68, Fig. 5)
 -- ════════════════════════════════════════════════════
 
 /-- *un-* compatibility (eq. 67): requires multi-membered outcome set
@@ -159,11 +159,11 @@ def ForceTransmissionClass.reCompatible : ForceTransmissionClass → Bool
 -- § 6. LevinClass → ForceTransmissionClass Bridge
 -- ════════════════════════════════════════════════════
 
-/-- Map @cite{levin-1993} classes to @cite{bhadra-2024}'s force transmission classes.
+/-- Map @cite{levin-1993} classes to force transmission classes.
 
-    NOTE: @cite{bhadra-2024} reclassifies some traditionally COS classes as PFC.
+    NOTE: reclassifies some traditionally COS classes as PFC.
     The bend class (45.2) has `changeOfState = true` per @cite{levin-1993} but
-    receives multi-membered outcomes per @cite{bhadra-2024}: fold can yield
+    receives multi-membered outcomes per: fold can yield
     many different states (slightly creased, halfway bent, tightly folded, etc.).
     This is a refinement, not a contradiction — Bhadra's VRO framework captures
     finer-grained distinctions within COS. -/
@@ -264,7 +264,7 @@ theorem noforce_disallows_both :
 -- § 8. Bridge to EventStructure
 -- ════════════════════════════════════════════════════
 
-/-- @cite{bhadra-2024}'s PFC classification is orthogonal to the template-level
+/-- PFC classification is orthogonal to the template-level
     `hasResultState` property. Bend (45.2) has a result state (accomplishment
     template) but coil (9.6) does not (putting template lacks BECOME). Both are
     PFC — outcome cardinality captures a different dimension than template shape. -/
@@ -274,7 +274,7 @@ theorem pfc_orthogonal_to_hasResultState :
     LevinClass.forceTransmissionClass .bend = .potentialForChange ∧
     LevinClass.forceTransmissionClass .coil = .potentialForChange := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- @cite{bhadra-2024} reclassifies bend (45.2) from COS to PFC despite
+/-- reclassifies bend (45.2) from COS to PFC despite
     Levin's CoS=true meaning components. This is the central refinement. -/
 theorem bend_cos_per_levin_pfc_per_bhadra :
     (LevinClass.meaningComponents .bend).changeOfState = true ∧
@@ -290,7 +290,7 @@ theorem ie_templates :
 -- § 9. Bridge to Affectedness Hierarchy
 -- ════════════════════════════════════════════════════
 
-/-- @cite{bhadra-2024}'s PFC/IE distinction refines @cite{beavers-2010}'s
+/-- PFC/IE distinction refines @cite{beavers-2010}'s
     `potential` degree. Both PFC and IE objects have `causallyAffected`
     without `changeOfState`, mapping to `AffectednessDegree.potential`.
     But they differ in outcome cardinality:
@@ -319,7 +319,7 @@ theorem result_roots_singleton_outcomes :
     RootType.allowsRestitutiveAgain .result = false := ⟨rfl, rfl⟩
 
 /-- PC roots allow restitutive 'again' (@cite{beavers-etal-2021}), which aligns
-    with @cite{bhadra-2024}'s prediction: verbs with multi-membered outcome sets
+    with prediction: verbs with multi-membered outcome sets
     (PFC verbs) can return to a prior state. Result roots cannot, because their
     singleton outcome is deterministically entailed. -/
 theorem pc_roots_allow_restitutive_again :
@@ -327,7 +327,7 @@ theorem pc_roots_allow_restitutive_again :
     RootType.entailsChange .propertyConcept = false := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 11. Compositional VRO Framework (@cite{bhadra-2024} eqs. 53, 59, 60)
+-- § 11. Compositional VRO Framework (eqs. 53, 59, 60)
 -- ════════════════════════════════════════════════════════════════
 
 section CompositionalVRO
@@ -338,14 +338,14 @@ open Core.Time
 variable {Entity State Time : Type*} [LinearOrder Time]
 
 /-- A *state function* maps a time point to a lifespan point (property bundle)
-    of an entity (@cite{bhadra-2024} eq. 53).
+    of an entity (eq. 53).
 
     A lifespan point `l(x)` is a bundle of properties that an entity *x* has
     at a point in its lifespan. The state function connects time to properties
     via lifespan indexing. -/
 abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
 
-/-- The APPLIES meta-predicate (@cite{bhadra-2024} eq. 59): the force associated
+/-- The APPLIES meta-predicate (eq. 59): the force associated
     with event *e* is being exerted on entity *x*.
 
     This ensures the verb denotes a dynamic process that happened to *x*,
@@ -353,7 +353,7 @@ abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
 abbrev Applies (Entity Time : Type*) [LE Time] := Entity → Ev Time → Prop
 
 /-- Verb-Root-Outcomes: the compositional bundle for a dynamic transitive verb
-    root (@cite{bhadra-2024} eq. 60).
+    root (eq. 60).
 
     Each verb root is lexically equipped with:
     - `verb`: the verb's denotation (entity × event predicate)
@@ -375,11 +375,11 @@ structure VerbRootVRO (Entity State Time : Type*) [LE Time] where
   thresholds : Set State
 
 -- ════════════════════════════════════════════════════════════════
--- § 12. Event-Parameterized Boundary Operators (@cite{bhadra-2024} eqs. 64–65)
+-- § 12. Event-Parameterized Boundary Operators (eqs. 64–65)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Result state: the state of entity *x* at the right boundary of event *e*
-    (@cite{bhadra-2024} eq. 64).
+    (eq. 64).
 
     `res(e)(x) := stateAt(RB(τ(e)))(x)` — the property bundle of *x*
     at the temporal right boundary of event *e*. This is NOT a temporal
@@ -389,7 +389,7 @@ def resState (stateAt : StateFunction Entity State Time)
   stateAt (Ev.τ e).finish x
 
 /-- Pre-state: the state of entity *x* at the left boundary of event *e*
-    (@cite{bhadra-2024} eq. 65).
+    (eq. 65).
 
     `pre(e)(x) := stateAt(LB(τ(e)))(x)` — the property bundle of *x*
     at the temporal left boundary of event *e*. -/
@@ -398,7 +398,7 @@ def preState (stateAt : StateFunction Entity State Time)
   stateAt (Ev.τ e).start x
 
 -- ════════════════════════════════════════════════════════════════
--- § 13. Formal Semantics of un- and re- (@cite{bhadra-2024} eqs. 66, 68)
+-- § 13. Formal Semantics of un- and re- (eqs. 66, 68)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Multi-membered outcome set: there exist at least two distinct outcomes.
@@ -406,7 +406,7 @@ def preState (stateAt : StateFunction Entity State Time)
 def Set.multiMembered (s : Set State) : Prop :=
   ∃ s₁ s₂, s₁ ∈ s ∧ s₂ ∈ s ∧ s₁ ≠ s₂
 
-/-- Full semantics of reversative *un-* (@cite{bhadra-2024} eq. 66).
+/-- Full semantics of reversative *un-* (eq. 66).
 
     ⟦un-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ APPLIES(e')(x) ∧ τ(e') ≪ τ(e) ∧
       res(e')(x) = pre(e)(x) ∧ |O| > 1] ∧
@@ -426,7 +426,7 @@ def unSem (stateAt : StateFunction Entity State Time)
     -- Assertion: result of un-event equals pre-state of base event
     resState stateAt e x = preState stateAt e' x
 
-/-- Presupposition of restitutive *re-* (@cite{bhadra-2024} eq. 68, first line).
+/-- Presupposition of restitutive *re-* (eq. 68, first line).
 
     There exists a prior event *e'* such that:
     1. The base verb P holds of *e'* and *x*
@@ -442,7 +442,7 @@ def rePresupposition (stateAt : StateFunction Entity State Time)
     (Ev.τ e').precedes (Ev.τ e) ∧
     resState stateAt e x = resState stateAt e' x
 
-/-- Full semantics of restitutive *re-* (@cite{bhadra-2024} eq. 68).
+/-- Full semantics of restitutive *re-* (eq. 68).
 
     ⟦re-⟧ᵍ := λP.λx.λe. [∃e': P(e')(x) ∧ APPLIES(e')(x) ∧ τ(e') ≪ τ(e) ∧
       res(e)(x) = res(e')(x)] ∧ APPLIES(e)(x) ∧ P(e)(x)

@@ -41,7 +41,7 @@ open Interfaces (VoiceSystemProfile VoiceSystemSymmetry VoiceEntry PivotTarget)
 -- § 1. Bridge: Decausativization ↔ IntransitivizationType
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §8.3.1.2: "Decausativization suppresses the referent
+/-! §8.3.1.2: "Decausativization suppresses the referent
 of the initial A from participant structure and converts the initial P into
 the S term of an intransitive construction."
 
@@ -70,7 +70,7 @@ theorem reflexive_not_decausativization :
 -- § 2. Bridge: Causativization ↔ CausativeConstruction
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §8.3.1.1 defines causativization as "the
+/-! §8.3.1.1 defines causativization as "the
 nucleativization of a participant (the causer) that instigates the event
 denoted by the initial construction or controls its realization."
 
@@ -100,7 +100,7 @@ theorem causativization_decausativization_inverse :
   ⟨rfl, rfl⟩
 
 /-- The three morphological complexity levels of @cite{comrie-1989} map to
-    @cite{creissels-2025} §12.1.4's synthetic/analytic/periphrastic
+    §12.1.4's synthetic/analytic/periphrastic
     distinction. Lexical = synthetic (most compact). -/
 theorem complexity_alignment :
     (CausativeComplexity.lexical < CausativeComplexity.morphological) ∧
@@ -111,7 +111,7 @@ theorem complexity_alignment :
 -- § 3. Bridge: Applicativization ↔ Pylkkänen's ApplType
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §14.1 distinguishes three varieties:
+/-! §14.1 distinguishes three varieties:
 - P-applicativization (§14.1.1): applied phrase fills P role
 - D-applicativization (§14.1.3): applied phrase is dative oblique
 - X-applicativization (§14.1.4): applied phrase is ordinary oblique
@@ -139,7 +139,7 @@ theorem p_applicativization_valency_increasing :
 -- § 4. Bridge: Symmetrical Voices ↔ VoiceSystemProfile
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §8.5: symmetrical voice systems are those in which
+/-! §8.5: symmetrical voice systems are those in which
 verb morphology marks the selection of a participant as the privileged
 syntactic term (pivot) WITHOUT AFFECTING TRANSITIVITY. This is a fundamentally
 different type of voice system from A/P-prominent systems (§1.3.3.3).
@@ -171,7 +171,7 @@ theorem english_is_active_passive :
 -- § 5. Passivization vs Decausativization (§8.3.1.2 vs §8.3.2.1)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §8.3.2.1: "The maintenance of the initial A in
+/-! §8.3.2.1: "The maintenance of the initial A in
 participant structure is essential to distinguish passivization from
 decausativization."
 
@@ -195,7 +195,7 @@ theorem passive_decausative_distinct :
 -- § 6. Bridge: Passivization ↔ Antipassivization structural symmetry
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §8.3.2: passivization, antipassivization, and
+/-! §8.3.2: passivization, antipassivization, and
 S-denucleativization form a natural class — all three denucleativize a core
 term without nucleativizing any other participant, and the denucleativized
 participant remains in participant structure. They differ only in which
@@ -225,7 +225,7 @@ theorem denucleativization_paradigm :
 -- § 7. Bridge: Reflexivization/Reciprocalization ↔ existing data
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §8.3.3: reflexivization and reciprocalization
+/-! §8.3.3: reflexivization and reciprocalization
 cumulate two participant roles (A and P) into a single participant (S).
 They differ in whether S refers to a single individual (reflexive) or
 a group whose members mutually fill both roles (reciprocal).
@@ -246,10 +246,10 @@ theorem refl_recip_same_structure :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 8. Voice Marker Stacking (@cite{creissels-2025} §8.4)
+-- § 8. Voice Marker Stacking (§8.4)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §8.4: voice markers can be stacked compositionally.
+/-! §8.4: voice markers can be stacked compositionally.
 Example from Tswana (§8.4.1, ex. 38):
 - write-CAUS-APPL: causativize then applicativize
 - write-APPL-PASS: applicativize then passivize
@@ -270,10 +270,10 @@ def tswana_caus_appl_pass : VoiceStack :=
   [causativization, pApplicativization, passivization]
 
 -- ════════════════════════════════════════════════════
--- § 9. Portative Derivation (@cite{creissels-2025} §8.3.7)
+-- § 9. Portative Derivation (§8.3.7)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §8.3.7 identifies portative derivation as a distinct
+/-! §8.3.7 identifies portative derivation as a distinct
 voice alternation type that cannot be reduced to either causativization or
 applicativization, although it shares features with both:
 
@@ -296,10 +296,10 @@ theorem portative_distinct_from_causativization :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 10. Alignment Profiles (@cite{creissels-2025} §1.3.4)
+-- § 10. Alignment Profiles (§1.3.4)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} §1.3.4.2: most languages have a clear preference
+/-! §1.3.4.2: most languages have a clear preference
 for either A-alignment (S codes like A) or P-alignment (S codes like P).
 Some languages (e.g., Basque, Georgian) show split-S patterns. -/
 
@@ -323,7 +323,7 @@ def mandinka : ObligatoryCodingProfile :=
   , violationsExist := true }
 
 -- ════════════════════════════════════════════════════
--- § 11. Russian -sja polysemy (@cite{creissels-2025} §8.2, ex. 8)
+-- § 11. Russian -sja polysemy (§8.2, ex. 8)
 -- ════════════════════════════════════════════════════
 
 /-! The Russian verbal suffix *-sja / -s'* is a paradigmatic example of voice
@@ -345,7 +345,7 @@ theorem russian_sja_polysemy :
     russian_sja.alternations.length = 4 := rfl
 
 -- ════════════════════════════════════════════════════
--- § 12. Tswana -el polysemy (@cite{creissels-2025} §8.2)
+-- § 12. Tswana -el polysemy (§8.2)
 -- ════════════════════════════════════════════════════
 
 /-! The Tswana voice suffix *-el* (traditionally called "applicative") marks
@@ -366,7 +366,7 @@ def tswana_el : VoiceMarkerProfile :=
 -- § 13. Causativizability and Voice Alternations
 -- ════════════════════════════════════════════════════
 
-/-! @cite{creissels-2025} Ch 12 discusses restrictions on causativization.
+/-! Ch 12 discusses restrictions on causativization.
 @cite{krejci-2012}'s hierarchy (already formalized in
 `MorphologicalCausation.lean`) describes which verb classes can be
 causativized: unaccusatives > middles/ingestives > unergatives >

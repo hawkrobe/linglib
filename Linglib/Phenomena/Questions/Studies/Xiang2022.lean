@@ -55,7 +55,7 @@ inductive ModalType where
   | deonticShould
   deriving DecidableEq, Repr
 
-/-- A single empirical datum from @cite{xiang-2022}. -/
+/-- A single empirical datum from. -/
 structure Xiang2022Datum where
   /-- The question under study -/
   question : String
@@ -71,7 +71,7 @@ structure Xiang2022Datum where
 
 /-! ### Core data: MS licensing by modal type -/
 
-/-- Ability *can* licenses mention-some (@cite{xiang-2022}, ex. 2).
+/-- Ability *can* licenses mention-some (ex. 2).
 
 "Who can chair the committee?" — naming a single individual is a
 sufficient answer. This is the paper's central empirical observation:
@@ -84,7 +84,7 @@ def canQuestionMS : Xiang2022Datum :=
   , source := "Xiang 2022, ex. 2"
   }
 
-/-- Bare wh-question requires mention-all (@cite{xiang-2022}, ex. 1).
+/-- Bare wh-question requires mention-all (ex. 1).
 
 "Who called?" — without a modal, the question demands exhaustive listing.
 Non-modalized questions uniformly receive MA. -/
@@ -96,7 +96,7 @@ def bareQuestionMA : Xiang2022Datum :=
   , source := "Xiang 2022, ex. 1"
   }
 
-/-- Deontic *should* blocks mention-some (@cite{xiang-2022}, ex. 6b).
+/-- Deontic *should* blocks mention-some (ex. 6b).
 
 "Which students should pass the test?" — even though modal, deontic
 modals pattern with MA. Only ability *can* licenses MS. -/
@@ -108,7 +108,7 @@ def deonticBlocksMS : Xiang2022Datum :=
   , source := "Xiang 2022, ex. 6b"
   }
 
-/-- Epistemic *might* blocks mention-some (@cite{xiang-2022}, ex. 6c).
+/-- Epistemic *might* blocks mention-some (ex. 6c).
 
 "Which students might pass the test?" — epistemics pattern with MA,
 not MS. The question demands the full epistemic picture. -/
@@ -120,7 +120,7 @@ def epistemicBlocksMS : Xiang2022Datum :=
   , source := "Xiang 2022, ex. 6c"
   }
 
-/-- Non-modalized question requires MA (@cite{xiang-2022}, ex. 6a).
+/-- Non-modalized question requires MA (ex. 6a).
 
 "Which students passed the test?" — without a modal, exhaustive. -/
 def nonModalMA : Xiang2022Datum :=
@@ -133,7 +133,7 @@ def nonModalMA : Xiang2022Datum :=
 
 /-! ### Context sensitivity (Section 2.2) -/
 
-/-- Goal-driven MS: same question, recruit-one goal (@cite{xiang-2022}, Section 2.2).
+/-- Goal-driven MS: same question, recruit-one goal (Section 2.2).
 
 "Who can chair the committee?" with the goal of recruiting *one* person.
 @cite{van-rooij-2003} models this via a decision problem where any single
@@ -146,7 +146,7 @@ def goalDrivenMS : Xiang2022Datum :=
   , source := "Xiang 2022, Section 2.2 (cf. van Rooij 2003)"
   }
 
-/-- Goal-driven MA: same question, know-all goal (@cite{xiang-2022}, Section 2.2).
+/-- Goal-driven MA: same question, know-all goal (Section 2.2).
 
 Same question as above, but the goal of knowing the *full* candidate list.
 The DP requires complete information, so all candidates must be named. -/
@@ -172,7 +172,7 @@ structure MentionOneOnlyDatum where
   source : String
   deriving Repr
 
-/-- Valid MS answer: single individual (@cite{xiang-2022}, ex. 3a).
+/-- Valid MS answer: single individual (ex. 3a).
 
 "Anne can." — a single-individual MS answer is acceptable. -/
 def mentionOneValid : MentionOneOnlyDatum :=
@@ -182,7 +182,7 @@ def mentionOneValid : MentionOneOnlyDatum :=
   , source := "Xiang 2022, ex. 3a"
   }
 
-/-- Invalid MS answer: disjunction (@cite{xiang-2022}, ex. 3b).
+/-- Invalid MS answer: disjunction (ex. 3b).
 
 "#Anne or Bill can." — a disjunctive MS answer is blocked by
 the mention-one-only constraint. This is NOT predicted by
@@ -313,7 +313,7 @@ def dayalAdvantages : Nat :=
 
 /-! ## Bridge: RelExh Derivation + Decision-Theoretic Agreement
 
-Formalizes the derivation chain from @cite{xiang-2022}, Section 5.2 (ex. 93):
+Formalizes the derivation chain from, Section 5.2 (ex. 93):
 
 1. Define the paper's own scenario (3 worlds, 2 individuals, ability modal base)
 2. Show EP fails for the FO can-question (overlapping answer propositions)
@@ -447,7 +447,7 @@ Models the "complete roster" context. -/
 def identifyAllDP : DecisionProblem XW XW :=
   { completeInformationDP with prior := λ _ => 1 / 3 }
 
-/-! ## Part I: EP/RelExh Derivation Chain (@cite{xiang-2022}, Section 5.2)
+/-! ## Part I: EP/RelExh Derivation Chain (Section 5.2)
 
 The derivation follows ex. 93 exactly:
 1. Both a and b are true answers at w0 under FO interpretation
@@ -481,7 +481,7 @@ theorem propExt_b_not_entails_a :
 
 /-! ### Step 3: EP fails -/
 
-/-- **EP fails for the FO can-question at w0** (@cite{xiang-2022}, ex. 93).
+/-- **EP fails for the FO can-question at w0** (ex. 93).
 
 Both a and b are true answers at w0, but neither proposition entails the other
 (they overlap at w0 but diverge at w1 vs w2). So there is no strongest true
@@ -492,7 +492,7 @@ theorem canQ_ep_fails :
 
 /-! ### Step 4: RelExh passes -/
 
-/-- **RelExh passes for the FO can-question at w0** (@cite{xiang-2022}, ex. 93).
+/-- **RelExh passes for the FO can-question at w0** (ex. 93).
 
 For each v ∈ mb(w0) = {w1, w2}:
 - Singleton {w1}: only a chairs → ◇chair(a) is the unique true answer → EP holds

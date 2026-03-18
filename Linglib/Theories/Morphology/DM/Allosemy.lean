@@ -50,7 +50,7 @@ open Minimalism (VoiceFlavor VoiceHead)
 
 /-- A syntactic context that conditions alloseme selection.
 
-    @cite{benz-2025} §2.4: allosemy is conditioned by the semantics of a
+    §2.4: allosemy is conditioned by the semantics of a
     previously interpreted domain (below) or the syntactic features of the
     next higher head (above). Both cyclic locality and linear adjacency
     play a role, but the exact locality conditions are an open question.
@@ -79,7 +79,7 @@ structure AllosemicEntry (Sem : Type) where
 /-- An allosemic head: a functional morpheme with multiple
     context-dependent meanings.
 
-    @cite{benz-2025} §2.6: "This dissertation is about examining the
+    §2.6: "This dissertation is about examining the
     principal promise of allosemy as a tool in syntactic theory." -/
 structure AllosemicHead (Sem : Type) where
   /-- Which functional head (n, v, a). -/
@@ -93,12 +93,12 @@ def AllosemicHead.allosemeCount {Sem : Type} (h : AllosemicHead Sem) : Nat :=
   h.entries.length
 
 -- ════════════════════════════════════════════════════
--- § 2. v Allosemy (@cite{benz-2025} Ch. 3)
+-- § 2. v Allosemy (Ch. 3)
 -- ════════════════════════════════════════════════════
 
 /-- Allosemes of the verbal categorizer v.
 
-    @cite{benz-2025} §2.2: v can be semantically null or contribute
+    §2.2: v can be semantically null or contribute
     eventive semantics, depending on its syntactic context. This
     distinction drives the nominalization reading typology (Ch. 3):
 
@@ -142,7 +142,7 @@ theorem v_has_two_allosemes : vAllosemic.allosemeCount = 2 := rfl
     Property concept roots yield stative v — no inherent change event.
 
     This connects @cite{beavers-etal-2021}'s root typology to
-    @cite{benz-2025}'s v allosemy: the root's lexical semantics
+    v allosemy: the root's lexical semantics
     determines which v alloseme is selected. -/
 def VAlloseme.fromRootType : _root_.RootType → VAlloseme
   | .result          => .eventive
@@ -169,7 +169,7 @@ theorem fromRootType_iff_entailsChange (rt : _root_.RootType) :
 /-- n allosemy: the three semantic types from `CategorizerSemantics`
     are allosemes of n conditioned by morphosyntactic features.
 
-    @cite{benz-2025} Ch. 3 adds a fourth possibility for content
+    Ch. 3 adds a fourth possibility for content
     nominalizations: n can select a CP complement when v_eventive
     is present, yielding the content (CCN) reading. -/
 inductive NAlloseme where
@@ -212,7 +212,7 @@ def nAllosemic : AllosemicHead NAlloseme where
 theorem n_has_four_allosemes : nAllosemic.allosemeCount = 4 := rfl
 
 -- ════════════════════════════════════════════════════
--- § 4. Voice Allosemy (@cite{kratzer-1996}; @cite{benz-2025} §2.3)
+-- § 4. Voice Allosemy (@cite{kratzer-1996}; §2.3)
 -- ════════════════════════════════════════════════════
 
 /-- Voice allosemy: the thematic interpretation of the external argument
@@ -222,7 +222,7 @@ theorem n_has_four_allosemes : nAllosemic.allosemeCount = 4 := rfl
     holder function with the denotation of an action predicate or the
     agent function with the denotation of a stative predicate."
 
-    @cite{benz-2025} §2.3: while Voice_{D} must introduce a DP argument,
+    §2.3: while Voice_{D} must introduce a DP argument,
     the thematic interpretation of that argument can be left to allosemy.
     The denotations in @cite{kratzer-1996} correspond not to separate
     syntactic heads, but to allosemes of a single Voice head. -/
@@ -253,12 +253,12 @@ theorem voice_allosemy_syntactically_invisible :
     VoiceAlloseme.agent.toFlavor = VoiceAlloseme.holder.toFlavor := rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Nominalization Reading Derivation (@cite{benz-2025} Ch. 3)
+-- § 5. Nominalization Reading Derivation (Ch. 3)
 -- ════════════════════════════════════════════════════
 
 /-- Reading types for deverbal nominalizations.
 
-    @cite{benz-2025} Ch. 3 argues for three readings, the third (content)
+    Ch. 3 argues for three readings, the third (content)
     being less studied than event and result:
 
     - **CEN** (Complex Event Nominalization): "Die Beobachtung des
@@ -278,7 +278,7 @@ inductive NominalizationReading where
 
 /-- Derive the nominalization reading from the allosemes of v and n.
 
-    @cite{benz-2025} Ch. 3 "Chapter claim": CCNs and their characteristic
+    Ch. 3 "Chapter claim": CCNs and their characteristic
     syntax of CP-complementation are best accommodated in a structural
     polysemy account, implemented in terms of allosemy of v and n.
 
@@ -319,10 +319,10 @@ theorem readings_distinct :
     NominalizationReading.result ≠ .content := by decide
 
 -- ════════════════════════════════════════════════════
--- § 6. The Allomorphy Analogy (@cite{benz-2025} §2.5)
+-- § 6. The Allomorphy Analogy (§2.5)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{benz-2025} Ch. 2 evaluates three positions on the relationship
+/-- Ch. 2 evaluates three positions on the relationship
     between allosemy and allomorphy:
 
     1. The allomorphy analogy is deeply flawed and should be abandoned.

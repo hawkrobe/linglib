@@ -71,7 +71,7 @@ variable {D : Type u} {W : Type*}
 abbrev Interp (W : Type*) (D : Type u) := W → D → Bool
 
 /-- Evaluate a one-place predicate on a partial assignment.
-    @cite{spector-2025} §2.1:
+    §2.1:
     - `1` if `g(x) ∈ I(P,w)`
     - `0` if `g(x) ≠ #` and `g(x) ∉ I(P,w)`
     - `#` if `g(x) = #` -/
@@ -112,13 +112,13 @@ theorem evalPred_unvalued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : 
 
 -- ════════════════════════════════════════════════════════════════
 -- Truth at a World
--- @cite{spector-2025} §2.1, definition (6)
+-- §2.1, definition (6)
 -- ════════════════════════════════════════════════════════════════
 
 /-- A sentence φ is true at a world w iff there is an assignment g
     such that ⟦φ⟧^{w,g} = 1.
 
-    @cite{spector-2025} §2.1: "A sentence φ is true at a world w
+    §2.1: "A sentence φ is true at a world w
     if and only if there is an assignment function g such that
     ⟦φ⟧^{w,g} = 1." This bridges trivalent assignment-level
     semantics to world-level truth conditions. -/
@@ -132,7 +132,7 @@ def trueAtWorld (φ : W → PartialAssign D → Truth3) (w : W) : Prop :=
 /-!
 ### Parametric Transparency
 
-@cite{spector-2025} §6.3 observes that the Transparency proofs are
+§6.3 observes that the Transparency proofs are
 parametric in the assignment type — the same Middle Kleene reasoning
 works for individual assignments `g` and plural assignments `G`.
 We factor this out: the proofs below are stated over abstract Truth3
@@ -143,7 +143,7 @@ values, independent of assignment representation.
     meetMiddle E φ` whenever `E = true → presup = true`. Independent of
     assignment type — works for both individual and plural systems.
 
-    @cite{spector-2025} §3.2, §6.3: The three cases are:
+    §3.2, §6.3: The three cases are:
     - `E = false`: `meetMiddle false _ = false` (left zero)
     - `E = #`: `meetMiddle # _ = #` (left absorbs)
     - `E = true`: witness gives `presup = true`, so `meetMiddle true φ = φ` -/
@@ -181,7 +181,7 @@ Consider "A table is in the room and it is purple," translated as
 
 The frame is `F(ψ) = ∃xT(x) ∧ ψ`, and the presupposition is `U(x)`.
 
-**Proof** (@cite{spector-2025} §3.2): Consider `(w,g)`.
+**Proof** (§3.2): Consider `(w,g)`.
 - If `∃xT(x)` is false at `(w,g)`: both sentences are false
   (Middle Kleene: `false ∧ _ = false`).
 - If `∃xT(x)` is `#` at `(w,g)`: both sentences are `#`
@@ -193,7 +193,7 @@ The frame is `F(ψ) = ∃xT(x) ∧ ψ`, and the presupposition is `U(x)`.
 /-- Forward conjunction Transparency: `∃xT(x) ∧ P(x̲)` satisfies
     Transparency in every context.
 
-    @cite{spector-2025} §3.2: The abstract pattern is: if `E = true`
+    §3.2: The abstract pattern is: if `E = true`
     implies `presup = true` (the witness connection), then the frame
     `F(ψ) = meetMiddle E ψ` satisfies Transparency for `presup`.
 
@@ -210,7 +210,7 @@ theorem forward_conj_transparency
 /-- Reverse conjunction Transparency FAILS: `P(x̲) ∧ ∃xT(x)` does NOT
     satisfy Transparency in the null context.
 
-    @cite{spector-2025} §3.2: Take `φ = P(x)`. If `g` does not value `x`,
+    §3.2: Take `φ = P(x)`. If `g` does not value `x`,
     then `φ ∧ ∃xT(x)` is `#` (left undefined absorbs), but
     `(U(x) ∧ φ) ∧ ∃xT(x)` is `false ∧ ∃xT(x) = false` (since `U(x) = false`
     and `meetMiddle false # = false`). The key asymmetry of Middle Kleene:
@@ -246,7 +246,7 @@ section Bathroom
 The frame is `F(ψ) = joinMiddle (¬∃xB(x)) ψ`, and the presupposition
 is `U(x)`.
 
-**Proof** (@cite{spector-2025} §3.3): Consider `(w,g)`.
+**Proof** (§3.3): Consider `(w,g)`.
 - If `¬∃xB(x)` is true at `(w,g)`: `joinMiddle true _ = true` (SK).
 - If `¬∃xB(x)` is `#` at `(w,g)`: `joinMiddle # _ = #` (left absorbs).
 - If `¬∃xB(x)` is false at `(w,g)`: then `∃xB(x)` is true, so `g`
@@ -272,7 +272,7 @@ theorem bathroom_transparency
 /-- Reverse bathroom Transparency FAILS: `H(x̲) ∨ ¬∃xB(x)` does NOT
     satisfy Transparency in the null context.
 
-    @cite{spector-2025} §3.3: Consider `g` that does not value `x` and a
+    §3.3: Consider `g` that does not value `x` and a
     tautological `φ`. Then `φ ∨ ¬∃xB(x)` has `φ = #` (unvalued), so
     `joinMiddle # (¬∃xB(x)) = #`. But `(U(x) ∧ φ) ∨ ¬∃xB(x)` has
     `U(x) = false`, so `meetMiddle false # = false`, and
@@ -300,7 +300,7 @@ section BathroomTruthConditions
 /-!
 ### Bathroom truth-condition equivalence
 
-@cite{spector-2025} §2.1 proves that the trivalent sentence
+§2.1 proves that the trivalent sentence
 `¬∃xB(x) ∨ F(x)` is true at a world `w` (in the sense of
 definition (6): ∃g such that the sentence is `.true` at `(w,g)`)
 if and only if the classical sentence `¬∃xB(x) ∨ ∃x(B(x) ∧ F(x))`
@@ -357,7 +357,7 @@ def bathroomClassical (B F : Interp W D) (dom : List D) (w : W) : Prop :=
 /-- **Direction 1**: If the classical bathroom disjunction holds,
     then the trivalent sentence is true at `w`.
 
-    @cite{spector-2025} §2.1: We construct a specific `g` that
+    §2.1: We construct a specific `g` that
     makes the trivalent sentence `.true`.
 
     - If no bathrooms exist: any `g` works (¬∃xB(x) is true,
@@ -387,7 +387,7 @@ theorem bathroom_classical_to_trivalent (B F : Interp W D) (dom : List D) (w : W
 /-- **Direction 2**: If the trivalent bathroom sentence is true at `w`,
     then the classical disjunction holds.
 
-    @cite{spector-2025} §2.1: By Middle Kleene disjunction, the sentence
+    §2.1: By Middle Kleene disjunction, the sentence
     is `.true` at `(w,g)` only if either:
     (a) `¬∃xB(x)` is `.true` → `∃xB(x)` is `.false` → no bathrooms, or
     (b) `¬∃xB(x)` is `.false` and `F(x)` is `.true`. In case (b),
@@ -450,7 +450,7 @@ theorem bathroom_trivalent_to_classical (B F : Interp W D) (dom : List D) (w : W
 
 /-- **Bathroom truth-condition equivalence** (the complete iff).
 
-    @cite{spector-2025} §2.1: The trivalent sentence `¬∃xB(x) ∨ F(x)`
+    §2.1: The trivalent sentence `¬∃xB(x) ∨ F(x)`
     is true at world `w` if and only if the classical sentence
     `¬∃xB(x) ∨ ∃x(B(x) ∧ F(x))` is classically true at `w`.
 
@@ -471,7 +471,7 @@ end BathroomTruthConditions
 
 /-- A bare pronoun `P(x̲)` is infelicitous in the null context.
 
-    @cite{spector-2025} §3.1: In the null context, Transparency requires
+    §3.1: In the null context, Transparency requires
     that for every `φ`, `U(x) ∧ φ` and `φ` have the same truth value
     across all `(w,g)`. But take `g` with `g(x) = #` and `φ` always true:
     `meetMiddle false true = false ≠ true`, so Transparency fails.
@@ -578,12 +578,12 @@ open Classical
 abbrev PSent (W : Type*) (D : Type*) := W → PluralAssign D → Truth3
 
 /-- Alias for `PluralAssign.singularAt` — `G` assigns `x` uniquely to `d`.
-    @cite{spector-2025} §6.2: `|G(x)| = 1` with `G(x) = d`. -/
+    §6.2: `|G(x)| = 1` with `G(x) = d`. -/
 abbrev singularAt (G : PluralAssign D) (x : Nat) (d : D) : Prop :=
   G.singularAt x d
 
 /-- Evaluate a one-place predicate relative to `(w, G)`.
-    @cite{spector-2025} §6.2:
+    §6.2:
     - `1` if `|G(x)| = 1` and `G(x) ∈ I(P,w)`
     - `0` if `|G(x)| = 1` and `G(x) ∉ I(P,w)`
     - `#` if `|G(x)| ≠ 1` -/
@@ -594,7 +594,7 @@ noncomputable def evalPredPlural (I : Interp W D) (G : PluralAssign D)
   else .indet
 
 /-- The `atomic(x)` predicate as a Truth3 value.
-    @cite{spector-2025} §6.3: `⟦atomic(x)⟧^{w,G} = 1` if `|G(x)| = 1`,
+    §6.3: `⟦atomic(x)⟧^{w,G} = 1` if `|G(x)| = 1`,
     `0` otherwise. Always bivalent (never `#`). Replaces `U(x)` from
     the simplified system. -/
 noncomputable def atomicT3 (G : PluralAssign D) (x : Nat) : Truth3 :=
@@ -606,7 +606,7 @@ theorem atomicT3_defined (G : PluralAssign D) (x : Nat) :
   simp only [atomicT3]; split <;> rfl
 
 /-- Plural existential quantifier with witness condition.
-    @cite{spector-2025} §6.2:
+    §6.2:
     - `1` if `⟦φ⟧^{w,G} = 1`
     - `0` if for every atomic `a ∈ D`, `G_{x=a} ≠ ∅` and `⟦φ⟧^{w,G_{x=a}} = 0`
     - `#` otherwise -/
@@ -618,7 +618,7 @@ noncomputable def existsPlural (x : Nat) (φ : PSent W D) (dom : Set D)
   else .indet
 
 /-- Plural universal quantifier.
-    @cite{spector-2025} §6.2:
+    §6.2:
     - `1` if for every atomic `a ∈ D`, `G_{x=a} ≠ ∅` and `⟦φ⟧^{w,G_{x=a}} = 1`
     - `0` if the coverage condition holds and some `a` gives `⟦φ⟧^{w,G_{x=a}} = 0`
     - `#` otherwise -/
@@ -671,7 +671,7 @@ section UniversalAnaphora
 /-!
 ### Universal doesn't introduce a discourse referent
 
-@cite{spector-2025} §6.3 (pp.20–21): `∀xP(x) ∧ Q(x̲)` does NOT
+§6.3 (pp.20–21): `∀xP(x) ∧ Q(x̲)` does NOT
 satisfy Transparency in the null context. When `∀xP(x)` is true
 at `(w,G)`, `G(x)` contains all atomic individuals in `D`, so
 `|G(x)| ≠ 1` (assuming `|D| ≥ 2`), and therefore `atomic(x)` is
@@ -683,7 +683,7 @@ antecedent of a singular pronoun.
     anaphora. For two-element domains: `∀xP(x)` being true forces
     `|G(x)| > 1`, making `atomic(x)` false.
 
-    @cite{spector-2025} §6.3: the sentences `∀xP(x) ∧ (atomic(x) ∧ φ)`
+    §6.3: the sentences `∀xP(x) ∧ (atomic(x) ∧ φ)`
     and `∀xP(x) ∧ φ` can differ — taking `φ` tautological, the first
     is false (since `atomic(x)` is false when `|G(x)| > 1`) while
     the second is true. -/
@@ -709,12 +709,12 @@ section Covariation
 /-!
 ### The covariation problem and its fix
 
-@cite{spector-2025} §5: In the simplified (individual-assignment) system,
+§5: In the simplified (individual-assignment) system,
 `¬∃x¬∃yS(x,y)` ("everybody spoke to somebody") is true at `(w,g)` iff
 for all `a`, `(a, g(y)) ∈ I(S,w)`. This wrongly gives a *constant-witness*
 reading: "everyone spoke to `g(y)`" — a single person.
 
-@cite{spector-2025} §6.4: With plural assignments, the innermost ∃y
+§6.4: With plural assignments, the innermost ∃y
 is evaluated relative to `G_{x=a}` for each `a`, so different `a`'s can
 pair with different `b`'s. The sentence now correctly means
 "for every `a` there exists `b` such that `(a,b) ∈ S`."
@@ -725,7 +725,7 @@ variable {D : Type*} {W : Type*}
 /-- The covariation fix: with plural assignments, the universal-existential
     pattern is correctly expressible.
 
-    @cite{spector-2025} §6.4: If a world satisfies `∀x∃y S(x,y)`, we can
+    §6.4: If a world satisfies `∀x∃y S(x,y)`, we can
     build a plural assignment `G` that witnesses each `a`-`b` pair
     independently. This is impossible with individual assignments, where
     a single `g(y)` must work for all values of `x`. -/
@@ -782,7 +782,7 @@ variable {D : Type*} {W : Type*}
 /-!
 ### Two notions of truth at a world
 
-@cite{spector-2025} §7: Two modes of interpretation for donkey sentences:
+§7: Two modes of interpretation for donkey sentences:
 
 - **Weak Truth**: `S` is weakly true at `w` if ∃G such that `S` is true
   at `(w,G)`. Generates *existential* (weak) readings.
@@ -797,12 +797,12 @@ They diverge for donkey sentences.
 -/
 
 /-- Weak truth at a world: ∃G such that the sentence is true at (w,G).
-    @cite{spector-2025} §7 (46a). -/
+    §7 (46a). -/
 def weakTruthP (φ : PSent W D) (w : W) : Prop :=
   ∃ G : PluralAssign D, φ w G = .true
 
 /-- Strong truth at a world: weakly true AND not weakly false.
-    @cite{spector-2025} §7 (46b). -/
+    §7 (46b). -/
 def strongTruthP (φ : PSent W D) (w : W) : Prop :=
   (∃ G : PluralAssign D, φ w G = .true) ∧
   ¬∃ G : PluralAssign D, φ w G = .false
@@ -847,7 +847,7 @@ open Classical
 /-!
 ### The Strong Truth Operator
 
-@cite{spector-2025} §7 (55): The operator `O` internalizes Strong Truth
+§7 (55): The operator `O` internalizes Strong Truth
 as an embeddable operator in the object language:
 
     ⟦O(S)⟧^{w,G} = 1 if ⟦S⟧^{w,G} = 1 and ¬∃G'. ⟦S⟧^{w,G'} = 0
@@ -862,7 +862,7 @@ rather than globally. Key properties:
 -/
 
 /-- The Strong Truth Operator O.
-    @cite{spector-2025} §7 (55). -/
+    §7 (55). -/
 noncomputable def strongTruthOp (φ : PSent W D)
     (w : W) (G : PluralAssign D) : Truth3 :=
   if φ w G = .true ∧ ¬∃ G', φ w G' = .false then .true
@@ -871,7 +871,7 @@ noncomputable def strongTruthOp (φ : PSent W D)
 
 /-- O preserves logical equivalence: if φ₁ and φ₂ agree everywhere,
     O(φ₁) and O(φ₂) agree everywhere.
-    @cite{spector-2025} §7 (57). -/
+    §7 (57). -/
 theorem strongTruthOp_preserves_equiv (φ₁ φ₂ : PSent W D)
     (hequiv : ∀ w G, φ₁ w G = φ₂ w G) :
     ∀ w G, strongTruthOp φ₁ w G = strongTruthOp φ₂ w G := by
@@ -914,7 +914,7 @@ section Comparison
 /-!
 ### Spector's static system vs. Dynamic Predicate Logic
 
-@cite{spector-2025} positions the system as a non-dynamic alternative to
+positions the system as a non-dynamic alternative to
 DPL (@cite{groenendijk-stokhof-1991}). Key comparison:
 
 | Phenomenon | Spector | DPL |

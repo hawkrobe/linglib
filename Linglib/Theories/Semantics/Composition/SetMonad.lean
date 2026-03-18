@@ -45,7 +45,7 @@ The set monad `S a := a → Prop` with:
 - `η x := {x}` (singleton set)
 - `m ⫝̸ f := ⋃_{x ∈ m} f(x)` (flatmap / bind)
 
-These are @cite{charlow-2020}'s eqs (16) and (27), generalized to
+These are eqs (16) and (27), generalized to
 arbitrary types (the paper uses `S` as abbreviation for `Set`). -/
 
 section Operations
@@ -54,13 +54,13 @@ variable {A B C : Type}
 
 /-- **η** (unit): inject a value into a singleton set.
 
-    @cite{charlow-2020} eq. (16): `η := λp. {p}`. Equivalent to
+    eq. (16): `η := λp. {p}`. Equivalent to
     `setPure` from `Applicative.lean` (shown in `eta_eq_setPure`). -/
 def eta (x : A) : A → Prop := fun y => y = x
 
 /-- **⫝̸** (bind): monadic bind for sets.
 
-    @cite{charlow-2020} eq. (27): `m ⫝̸ f := ⋃_{x ∈ m} f(x)`.
+    eq. (27): `m ⫝̸ f := ⋃_{x ∈ m} f(x)`.
     For each element `a` in the set `m`, apply `f` to get a new set,
     then take the union of all results. -/
 def setBind (m : A → Prop) (f : A → B → Prop) : B → Prop :=
@@ -81,7 +81,7 @@ end Operations
 The three monad laws for `(S, η, ⫝̸)`. ASSOCIATIVITY (the third law)
 is the key property: it guarantees that an indefinite can iteratively
 scope out of nested islands, and that the result is the same as if it
-had directly taken wide scope (@cite{charlow-2020} §4.2, eq. 34). -/
+had directly taken wide scope (§4.2, eq. 34). -/
 
 section MonadLaws
 
@@ -90,7 +90,7 @@ variable {A B C : Type}
 /-- **LEFT IDENTITY**: `η x ⫝̸ f = f x`.
 
     Applying the singleton `{x}` to a function `f` yields exactly `f x`.
-    @cite{charlow-2020} eq. (42), first law. -/
+    eq. (42), first law. -/
 theorem set_left_identity (x : A) (f : A → B → Prop) :
     setBind (eta x) f = f x := by
   funext b; apply propext; simp only [setBind, eta]; constructor
@@ -100,7 +100,7 @@ theorem set_left_identity (x : A) (f : A → B → Prop) :
 /-- **RIGHT IDENTITY**: `m ⫝̸ η = m`.
 
     Binding a set with the singleton constructor recovers the original set.
-    @cite{charlow-2020} eq. (42), second law. -/
+    eq. (42), second law. -/
 theorem set_right_identity (m : A → Prop) :
     setBind m eta = m := by
   funext a; apply propext; simp only [setBind, eta]; constructor
@@ -109,7 +109,7 @@ theorem set_right_identity (m : A → Prop) :
 
 /-- **ASSOCIATIVITY**: `(m ⫝̸ f) ⫝̸ g = m ⫝̸ (λx. f x ⫝̸ g)`.
 
-    The central theorem of @cite{charlow-2020} §4.2. Because `⫝̸` is
+    The central theorem of §4.2. Because `⫝̸` is
     associative, taking scope at the edge of an island (one application
     of `⫝̸`) and then taking scope at the next level (another `⫝̸`) is
     equivalent to taking scope directly out of the island. This is what
@@ -146,7 +146,7 @@ variable {A : Type}
 /-- **∃̣** (existential closure): a set of propositions is "true" iff
     it contains a true member.
 
-    @cite{charlow-2020} eq. (19): `m^∃̣ := T ∈ m`. In classical set
+    eq. (19): `m^∃̣ := T ∈ m`. In classical set
     theory this checks whether `True` is literally in the set. In Lean's
     type theory, we use `∃ p, m p ∧ p` (there exists a true member),
     which avoids `propext` issues when propositions are logically but
@@ -168,7 +168,7 @@ consequence of the set monad. This section proves that:
 2. `setAp` derives from `setBind` + `eta` (the standard monad→applicative
    derivation)
 
-This makes precise @cite{charlow-2020}'s observation that the
+This makes precise observation that the
 pointwise composition of alternative semantics (the applicative `⊛`)
 is strictly weaker than scope-taking composition (the monadic `⫝̸`):
 the former is derivable from the latter, but not vice versa. -/
@@ -201,7 +201,7 @@ end ApplicativeBridge
 
 /-! ### §5 LIFT decomposition
 
-@cite{charlow-2020} §3.2 (eq. 28): Partee's LIFT operation —
+§3.2 (eq. 28): Partee's LIFT operation —
 which maps an individual to a generalized quantifier — decomposes
 as `⫝̸ ∘ η`. Starting from the predicative (set) meaning of an
 indefinite, `η` injects it into a singleton set, and `⫝̸` produces
@@ -225,7 +225,7 @@ variable {m : Model}
 
 /-- **LIFT = A ∘ η** on the domain.
 
-    @cite{charlow-2020} eq. (28): `(η x)^⫝̸ = λf. ⋃_{y ∈ {x}} f y = λf. f x = lift(x)`.
+    eq. (28): `(η x)^⫝̸ = λf. ⋃_{y ∈ {x}} f y = λf. f x = lift(x)`.
 
     In linglib's formulation using `A` (which takes an explicit domain):
     `A(domain)(η(j))(P) = domain.any (λx. η(j)(x) && P(x))`.
@@ -273,7 +273,7 @@ end LiftDecomposition
 
 /-! ### §6 Higher-order alternative sets
 
-@cite{charlow-2020} §5.2, eq. (48): when a scope argument `f` is itself
+§5.2, eq. (48): when a scope argument `f` is itself
 a function into sets, `⫝̸` with an extra `η` produces **higher-order
 alternative sets** of type `S(S b)`. These preserve the identity of
 distinct sources of alternatives, enabling selective exceptional scope
@@ -287,7 +287,7 @@ section HigherOrder
 /-- Applying `η` inside a `⫝̸` computation produces higher-order
     alternative sets: the result is of type `S(S b)`, a set of sets.
 
-    @cite{charlow-2020} §5.2, eq. (48): if `m : S a` and `f : a → b`,
+    §5.2, eq. (48): if `m : S a` and `f : a → b`,
     then `m ⫝̸ (λx. η(η(f x)))` has type `S(S b)`. Each member of the
     outer set is a singleton containing one alternative. -/
 theorem higher_order_from_eta {A B : Type} (m : A → Prop) (f : A → B) :

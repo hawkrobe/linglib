@@ -18,12 +18,12 @@ namespace Core.Quantification
 variable {α : Type*}
 
 -- ============================================================================
--- §10 Number-Tree Impossibility Theorems (@cite{van-benthem-1984} §3.2)
+-- §10 Number-Tree Impossibility Theorems (§3.2)
 -- ============================================================================
 
 /-- Number-tree representation of a conservative, quantity-invariant GQ.
     Under CONSERV + QUANT, a quantifier's truth value depends only on
-    `a = |A ∩ B|` and `b = |A \ B|` (@cite{van-benthem-1984} §2, "tree of numbers").
+    `a = |A ∩ B|` and `b = |A \ B|` (§2, "tree of numbers").
     This is inherently cross-domain: any `(a, b)` pair is realizable in some
     universe of size ≥ a + b. -/
 abbrev NumberTreeGQ := Nat → Nat → Bool
@@ -34,7 +34,7 @@ namespace NumberTreeGQ
 def Variety (q : NumberTreeGQ) : Prop :=
   (∃ a b, q a b = true) ∧ (∃ a b, q a b = false)
 
-/-- @cite{van-benthem-1984} Thm 3.2.1: No asymmetric CONSERV+QUANT quantifiers exist.
+/-- Thm 3.2.1: No asymmetric CONSERV+QUANT quantifiers exist.
 
     On the number tree, asymmetry means: for all `a b c`,
     `q(a, b) → ¬q(a, c)` — because `|A ∩ B| = a` and `|B \ A| = c` is free
@@ -47,7 +47,7 @@ theorem no_asymmetric (q : NumberTreeGQ) (hVar : q.Variety)
   obtain ⟨⟨a, b, hab⟩, _⟩ := hVar
   exact absurd hab (Bool.eq_false_iff.mp (hAsym a b b hab))
 
-/-- @cite{van-benthem-1984} §3.2 consequence: No strict partial order quantifiers.
+/-- §3.2 consequence: No strict partial order quantifiers.
 
     On the number tree, irreflexivity is `∀ n, q(n, 0) = false` (since
     `Q(A,A)` has `|A ∩ A| = n`, `|A \ A| = 0`). Transitivity (with C = A
@@ -67,7 +67,7 @@ theorem no_strict_partial_order (q : NumberTreeGQ) (hVar : q.Variety)
     rw [hIrrefl] at this
     exact absurd this (by decide))
 
-/-- @cite{van-benthem-1984} Thm 3.2.3: No Euclidean CONSERV+QUANT quantifiers exist.
+/-- Thm 3.2.3: No Euclidean CONSERV+QUANT quantifiers exist.
 
     On the number tree (3-set Venn diagram with 7 free size parameters
     `p, q, r, s, t, u` plus one more), the Euclidean property becomes:
@@ -142,10 +142,10 @@ def noNT : NumberTreeGQ := λ a _ => a == 0
 /-- "not all" on the number tree: Q(A,B) iff A ⊄ B iff |A\B| ≥ 1. -/
 def notAllNT : NumberTreeGQ := λ _ b => decide (b ≥ 1)
 
--- §10c Additivity (@cite{van-benthem-1984} §5.2, p.460)
+-- §10c Additivity (§5.2, p.460)
 
 /-- Additive: (a,b) ∈ Q and (a',b') ∈ Q implies (a+a', b+b') ∈ Q.
-    @cite{van-benthem-1984} p.460: all, some, no, not all are additive.
+    p.460: all, some, no, not all are additive.
     Additivity means Q's truth set is closed under componentwise addition
     in the number tree. -/
 def Additive (q : NumberTreeGQ) : Prop :=
@@ -167,11 +167,11 @@ theorem notAllNT_additive : Additive notAllNT := by
   intro a b a' b' h1 h2
   simp only [notAllNT, decide_eq_true_eq] at *; omega
 
--- §10d Continuity, PLUS, UNIF (@cite{van-benthem-1984} §4.3, §7)
+-- §10d Continuity, PLUS, UNIF (§4.3, §7)
 
 /-- Right continuity on the number tree (CONT): on each diagonal a+b = n,
     the true points form a contiguous interval.
-    @cite{van-benthem-1984} §4.3: all right-monotone quantifiers are
+    §4.3: all right-monotone quantifiers are
     continuous. "precisely one" is continuous but non-monotone. -/
 def RightCont (q : NumberTreeGQ) : Prop :=
   ∀ n a₁ a₂ a, a₁ ≤ a → a ≤ a₂ → a₂ ≤ n →
@@ -180,13 +180,13 @@ def RightCont (q : NumberTreeGQ) : Prop :=
 
 /-- Left continuity on the number tree: on each diagonal, the false
     points (absence) also form a contiguous interval.
-    @cite{van-benthem-1984} §4.3: equivalent to right continuity of ¬Q. -/
+    §4.3: equivalent to right continuity of ¬Q. -/
 def LeftCont (q : NumberTreeGQ) : Prop :=
   ∀ n a₁ a₂ a, a₁ ≤ a → a ≤ a₂ → a₂ ≤ n →
     q a₁ (n - a₁) = false → q a₂ (n - a₂) = false →
     q a (n - a) = false
 
-/-- PLUS (@cite{van-benthem-1984} §7): adding one individual to the
+/-- PLUS (§7): adding one individual to the
     situation cannot create a "dead end." Both presence and absence must
     be extensible in at least one direction.
     - For + positions: q(a+1,b) or q(a,b+1) is true.
@@ -195,7 +195,7 @@ def Plus (q : NumberTreeGQ) : Prop :=
   (∀ a b, q a b = true → q (a + 1) b = true ∨ q a (b + 1) = true) ∧
   (∀ a b, q a b = false → q (a + 1) b = false ∨ q a (b + 1) = false)
 
-/-- UNIF (@cite{van-benthem-1984} §7): the addition experiment
+/-- UNIF (§7): the addition experiment
     (a,b) → (a+1,b) and (a,b) → (a,b+1) always yields the same
     pattern for positions of the same truth value. The experiment
     result depends only on whether Q holds, not on *where* in the
@@ -290,7 +290,7 @@ theorem notAllNT_uniform : Uniform notAllNT := by
     simp only [decide_eq_false_iff_not, not_le] at h1 h2
     constructor <;> simp only [decide_eq_decide] <;> constructor <;> intro <;> omega
 
--- §10e @cite{van-benthem-1984} Theorem 7.1: Square of Opposition uniqueness
+-- §10e Theorem 7.1: Square of Opposition uniqueness
 
 /-- Two number-tree quantifiers that agree at (0,0) and satisfy the same
     row/column recurrence must be identical. Used to factor out the common
@@ -309,7 +309,7 @@ private theorem grid_ext (f g : ℕ → ℕ → Bool)
     | zero => exact hrow a (congr_fun iha 0)
     | succ _ ihb => exact hcol _ _ ihb
 
-/-- The six postulates that @cite{van-benthem-1984} §7 uses to characterize
+/-- The six postulates that §7 uses to characterize
     the Square of Opposition. -/
 structure SixPostulates (q : NumberTreeGQ) : Prop where
   variety : q.Variety
@@ -688,10 +688,10 @@ theorem toNumberTree_spec [Fintype α] [DecidableEq α] (q : GQ α)
 end NumberTreeBridge
 
 -- ============================================================================
--- §11 Counting Quantifiers (@cite{van-benthem-1984} §5.4)
+-- §11 Counting Quantifiers (§5.4)
 -- ============================================================================
 
-/-- @cite{van-benthem-1984} Thm 5.4: On a finite set with n individuals, there are
+/-- Thm 5.4: On a finite set with n individuals, there are
     exactly 2^((n+1)(n+2)/2) conservative quantifiers (satisfying QUANT).
     The tree of numbers has (n+1)(n+2)/2 points at levels a + b ≤ n. -/
 def conservativeQuantifierCount (n : Nat) : Nat :=

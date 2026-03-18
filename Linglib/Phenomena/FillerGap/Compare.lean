@@ -32,7 +32,7 @@ namespace Phenomena.FillerGap.Compare
 open ProcessingModel
 
 -- ============================================================================
--- Concrete Conditions from @cite{hofmeister-sag-2010}
+-- Concrete Conditions from
 -- ============================================================================
 
 /-! ### CNPC conditions (Experiment 1) -/
@@ -232,7 +232,7 @@ def frequencyMoS : IslandManipulation :=
 -- Accuracy Scoring
 -- ============================================================================
 
-/-- All manipulations: @cite{hofmeister-sag-2010} + @cite{lu-degen-2025}. -/
+/-- All manipulations: + @cite{lu-degen-2025}. -/
 def allManipulations : List IslandManipulation := [
   fillerComplexityCNPC,
   fillerComplexityWhIsland,
@@ -329,12 +329,12 @@ theorem cnpc_acceptability_range :
     best - worst ≥ 25 := by native_decide
 
 -- ============================================================================
--- Connection to @cite{hofmeister-sag-2010}: Construction-Specific Islands
+-- Connection to: Construction-Specific Islands
 -- ============================================================================
 
-/-! ### @cite{hofmeister-sag-2010}'s construction-based island analysis
+/-! ### construction-based island analysis
 
-@cite{hofmeister-sag-2010} @cite{deane-1991} argues that island constraints are construction-specific
+@cite{deane-1991} argues that island constraints are construction-specific
 GAP restrictions, not universal Subjacency. This means:
 - The grammar **overgerates** (licenses extractions freely)
 - Construction-specific constraints (GAP restrictions) block some extractions
@@ -343,7 +343,7 @@ GAP restrictions, not universal Subjacency. This means:
 This is exactly the division of labor the processing comparison reveals:
 grammar determines structural possibility, processing determines ease.
 
-The @cite{hofmeister-sag-2010} F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) classifies which
+The F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) classifies which
 constructions are islands. The processing model explains **within-island**
 gradient effects (filler complexity, NP type). -/
 
@@ -357,8 +357,8 @@ theorem sag_island_subset :
     islandConstructions.length < 5 := by native_decide
 
 /-- The constructions Sag identifies as islands (topicalization, exclamatives)
-are not among those tested by @cite{hofmeister-sag-2010} (CNPC, wh-islands,
-adjuncts). This is significant: H&S test processing-based islands, whi@cite{hofmeister-sag-2010} identifies grammar-based islands — they explain **different** cases.
+are not among those tested by (CNPC, wh-islands,
+adjuncts). This is significant: H&S test processing-based islands, whiidentifies grammar-based islands — they explain **different** cases.
 
 Together they cover both:
 - Grammar-based islands: topicalization [GAP ⟨⟩], exclamatives [GAP ⟨⟩]
@@ -395,7 +395,7 @@ theorem complementary_coverage :
 
 ### Key findings
 
-1. **Filler complexity paradox** (@cite{hofmeister-sag-2010}): more complex wh-phrases *improve*
+1. **Filler complexity paradox** (): more complex wh-phrases *improve*
    island acceptability. Predicted by processing, not by competence or discourse.
 
 2. **Prosodic amelioration**: focus on embedded object
@@ -410,17 +410,17 @@ theorem complementary_coverage :
 ### Theoretical upshot
 
 Island effects arise from (at least) three distinct mechanisms:
-- **Grammar**: categorical blocking (topicalization, exclamatives — @cite{hofmeister-sag-2010})
-- **Processing**: gradient difficulty from memory load (CNPC, wh-islands — @cite{hofmeister-sag-2010})
+- **Grammar**: categorical blocking (topicalization, exclamatives —)
+- **Processing**: gradient difficulty from memory load (CNPC, wh-islands —)
 - **Discourse**: information-structural backgroundedness (MoS — @cite{lu-degen-2025})
 
 Both domains use `ProcessingModel.ProcessingProfile` with Pareto dominance
 for weight-free ordinal comparison.
 
-### Connection to @cite{hofmeister-sag-2010}
+### Connection to
 
 Sag's F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) identifies grammar-based
-islands (topicalization, exclamatives with `[GAP ⟨⟩]`). @cite{hofmeister-sag-2010} covers
+islands (topicalization, exclamatives with `[GAP ⟨⟩]`). covers
 processing-based islands (CNPC, wh-islands). @cite{lu-degen-2025} covers
 discourse-based islands (MoS). Together they provide a three-mechanism account.
 -/
@@ -443,7 +443,7 @@ The three sources are now tracked by `constraintSource` in Islands.Data:
 
 Together, these three mechanisms partition the space of island phenomena:
 1. Grammar-based: topicalization, exclamatives
-2. Processing-based: CNPC, wh-islands (@cite{hofmeister-sag-2010}) — gradient with filler complexity
+2. Processing-based: CNPC, wh-islands () — gradient with filler complexity
 3. Discourse-based: MoS complements — gradient with prosodic focus -/
 
 /-- MoS islands are discourse-sourced, distinct from syntactic/processing islands. -/

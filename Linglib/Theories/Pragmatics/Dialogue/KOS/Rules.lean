@@ -50,7 +50,7 @@ and QUD entries. Concrete instances connect to:
 - String-based answerhood: pattern matching on content strings
 - Propositional answerhood (`BProp W`): a fact entails a question's answer
 
-@cite{ginzburg-2012} Ch. 4: "q is resolved relative to a DGB dgb iff
+Ch. 4: "q is resolved relative to a DGB dgb iff
 the FACTS in dgb contextually entail an answer to q." -/
 class Answerhood (Fact QContent : Type) where
   resolves : Fact → QContent → Bool
@@ -66,7 +66,7 @@ def allResolved {Fact QContent : Type} [Answerhood Fact QContent]
 
 /-- Push a question onto the QUD stack.
 
-@cite{ginzburg-2012} Ch. 4: when a question is asked, it becomes
+Ch. 4: when a question is asked, it becomes
 the maximal element of QUD. -/
 def DGB.pushQud {P Fact QContent : Type}
     (dgb : DGB P Fact QContent) (q : QContent) : DGB P Fact QContent :=
@@ -74,7 +74,7 @@ def DGB.pushQud {P Fact QContent : Type}
 
 /-- Remove resolved questions from QUD.
 
-@cite{ginzburg-2012} Ch. 4: QUD-downdate removes a question q
+Ch. 4: QUD-downdate removes a question q
 from QUD when FACTS contextually entail an answer to q. -/
 def DGB.downdateQud {P Fact QContent : Type} [Answerhood Fact QContent]
     (dgb : DGB P Fact QContent) : DGB P Fact QContent :=
@@ -94,7 +94,7 @@ def DGB.recordMove {P Fact QContent : Type}
 
 /-- Assert: add fact to FACTS, record the move, and downdate QUD.
 
-@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 66): assertion adds content to
+Ch. 4 (p. 95, ex. 66): assertion adds content to
 FACTS, pushes About(p,?) onto QUD, and any resolved question is removed. -/
 def DGB.assertFact {P Fact QContent : Type} [Answerhood Fact QContent]
     (dgb : DGB P Fact QContent) (p : Fact) : DGB P Fact QContent :=
@@ -106,7 +106,7 @@ def DGB.assertFact {P Fact QContent : Type} [Answerhood Fact QContent]
 
 /-- **Ask rule**: a question utterance pushes onto QUD and records the move.
 
-@cite{ginzburg-2012} Ch. 4, "Ask QUD-incrementation" (p. 95, ex. 66). -/
+Ch. 4, "Ask QUD-incrementation" (p. 95, ex. 66). -/
 def TIS.ask {P Fact QContent : Type}
     (tis : TIS P Fact QContent) (q : QContent) :
     TIS P Fact QContent :=
@@ -116,7 +116,7 @@ def TIS.ask {P Fact QContent : Type}
 /-- **Assert rule** (simplified): assertion adds to FACTS and downdates.
 
 This version does not push About(p) onto QUD. For the full
-@cite{ginzburg-2012} Assert protocol with QUD-incrementation,
+Assert protocol with QUD-incrementation,
 use `TIS.assertWithQUD`. -/
 def TIS.assertRule {P Fact QContent : Type} [Answerhood Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) :
@@ -124,9 +124,9 @@ def TIS.assertRule {P Fact QContent : Type} [Answerhood Fact QContent]
   { tis with
     dgb := (tis.dgb.assertFact p).recordMove (.assert p) }
 
-/-- **Assert QUD-incrementation**: the full @cite{ginzburg-2012} Assert protocol.
+/-- **Assert QUD-incrementation**: the full Assert protocol.
 
-@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 66): when A asserts p:
+Ch. 4 (p. 95, ex. 66): when A asserts p:
 1. p is added to FACTS
 2. About(p) — a polar question "whether p" — is pushed onto QUD
 3. QUD is downdated (resolved questions removed)
@@ -142,7 +142,7 @@ def TIS.assertWithQUD {P Fact QContent : Type} [Answerhood Fact QContent]
 
 /-- **Accept rule**: addressee grounds an assertion — adds fact to own FACTS.
 
-@cite{ginzburg-2012} Ch. 4, "Accept" (p. 95, ex. 66 step 4a). -/
+Ch. 4, "Accept" (p. 95, ex. 66 step 4a). -/
 def TIS.accept {P Fact QContent : Type}
     (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
   { tis with dgb := (tis.dgb.addFact p).recordMove (.accept p) }
@@ -152,7 +152,7 @@ def TIS.accept {P Fact QContent : Type}
 Precondition: q₂ influences some q₁ on QUD (q₂ is a subquestion).
 Effect: push q₂ onto QUD (it becomes the new MaxQud).
 
-@cite{ginzburg-2012} Ch. 4, "QSPEC" (p. 95, ex. 66 step 2). -/
+Ch. 4, "QSPEC" (p. 95, ex. 66 step 2). -/
 def TIS.qspec {P Fact QContent : Type}
     (tis : TIS P Fact QContent) (q : QContent) : TIS P Fact QContent :=
   { tis with
@@ -160,7 +160,7 @@ def TIS.qspec {P Fact QContent : Type}
 
 /-- **Check rule**: addressee requests confirmation of an assertion.
 
-@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 68): a Check move pushes
+Ch. 4 (p. 95, ex. 68): a Check move pushes
 a polar question about the asserted content onto QUD. -/
 def TIS.check {P Fact QContent : Type}
     (tis : TIS P Fact QContent) (p : Fact) (aboutP : QContent) :
@@ -170,7 +170,7 @@ def TIS.check {P Fact QContent : Type}
 
 /-- **Confirm rule**: speaker confirms in response to a check.
 
-@cite{ginzburg-2012} Ch. 4 (p. 95, ex. 68 step 2). -/
+Ch. 4 (p. 95, ex. 68 step 2). -/
 def TIS.confirm {P Fact QContent : Type} [Answerhood Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
   { tis with
@@ -178,7 +178,7 @@ def TIS.confirm {P Fact QContent : Type} [Answerhood Fact QContent]
 
 /-- **QCoord rule**: successive question coordination.
 
-@cite{ginzburg-2012} Ch. 4, ex. 77 (p. 99): allows a speaker to follow
+Ch. 4, ex. 77 (p. 99): allows a speaker to follow
 up an initial question with a non-influencing question, where the initial
 question remains QUD-maximal.
 
@@ -192,7 +192,7 @@ def TIS.qcoord {P Fact QContent : Type}
 
 /-- **Fact update/QUD-downdate**: combined rule.
 
-@cite{ginzburg-2012} Ch. 4, ex. 85 (p. 103): when Accept occurs,
+Ch. 4, ex. 85 (p. 103): when Accept occurs,
 FACTS is updated and resolved questions are downdated from QUD. -/
 def TIS.factUpdateQudDowndate {P Fact QContent : Type} [Answerhood Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
@@ -200,7 +200,7 @@ def TIS.factUpdateQudDowndate {P Fact QContent : Type} [Answerhood Fact QContent
 
 /-- **Greeting**: conversation initialization.
 
-@cite{ginzburg-2012} Ch. 4 (p. 87): precondition is MOVES = ⟨⟩. -/
+Ch. 4 (p. 87): precondition is MOVES = ⟨⟩. -/
 def TIS.greet {P Fact QContent : Type}
     (tis : TIS P Fact QContent) : TIS P Fact QContent :=
   { tis with dgb := tis.dgb.recordMove .greet }
@@ -286,12 +286,12 @@ theorem downdateQud_removes_resolved {P Fact QContent : Type} [Answerhood Fact Q
   simp [this]
 
 -- ════════════════════════════════════════════════════
--- § 6. M-Coherence (@cite{ginzburg-2012} ex. 70, p. 96)
+-- § 6. M-Coherence (ex. 70, p. 96)
 -- ════════════════════════════════════════════════════
 
 /-! ## Move Coherence
 
-@cite{ginzburg-2012} ex. 70 (p. 96) defines M(ove)-Coherence: a move m₁
+ex. 70 (p. 96) defines M(ove)-Coherence: a move m₁
 is coherent with respect to a DGB dgb₀ iff there exists a conversational
 rule c₁ mapping dgb₀ to dgb₁ such that dgb₁.LatestMove = m₁.
 
@@ -299,7 +299,7 @@ Pairwise and sequential M-Coherence extend this to move pairs and sequences. -/
 
 /-- A conversational rule: a function from DGB to DGB.
 
-@cite{ginzburg-2012} Ch. 4 summary (p. 112): "a mapping that indicates
+Ch. 4 summary (p. 112): "a mapping that indicates
 how one DGB can be modified by a conversationally related action." -/
 abbrev ConvRule (P Fact QContent : Type) :=
   DGB P Fact QContent → DGB P Fact QContent
@@ -307,20 +307,20 @@ abbrev ConvRule (P Fact QContent : Type) :=
 /-- A move is M-Coherent with respect to a DGB if some conversational rule
 produces a DGB whose latest move is that move.
 
-@cite{ginzburg-2012} ex. 70a (p. 96). -/
+ex. 70a (p. 96). -/
 def mCoherent {P Fact QContent : Type}
     (rules : List (ConvRule P Fact QContent))
     (dgb₀ : DGB P Fact QContent) (m : IllocMove Fact QContent) : Prop :=
   ∃ rule, rule ∈ rules ∧ (rule dgb₀).latestMove = some m
 
 -- ════════════════════════════════════════════════════
--- § 7. Activity Relevance (@cite{ginzburg-2012} ex. 90, p. 105)
+-- § 7. Activity Relevance (ex. 90, p. 105)
 -- ════════════════════════════════════════════════════
 
 /-- A move is genre-relevant if the outcome of adding it to the DGB
 can be anticipated to conclude as a conversation of the genre type.
 
-@cite{ginzburg-2012} ex. 90 (p. 105): "m0 is relevant to G0 in dgb0 for A
+ex. 90 (p. 105): "m0 is relevant to G0 in dgb0 for A
 iff A believes that outcome(dgb0 ⊕ₘₒᵥₑₛ m0, G0) will be fulfilled." -/
 def genreRelevant {P Fact QContent : Type}
     (genre : GenreType QContent)
@@ -389,7 +389,7 @@ theorem inquiry_cycle_moves :
 end InquiryExample
 
 -- ════════════════════════════════════════════════════
--- § 9. Check/Confirm Example (@cite{ginzburg-2012} ex. 68, p. 95)
+-- § 9. Check/Confirm Example (ex. 68, p. 95)
 -- ════════════════════════════════════════════════════
 
 section CheckExample
@@ -424,7 +424,7 @@ end CheckExample
 
 /-! ## Partition-Based Answerhood
 
-@cite{ginzburg-2012} Ch. 4 defines QUD-downdate in terms of FACTS
+Ch. 4 defines QUD-downdate in terms of FACTS
 resolving questions. The `Answerhood` typeclass above abstracts this.
 Here we connect it to the partition-based `QUD W` from
 `Core/Discourse/QUD.lean` (@cite{groenendijk-stokhof-1984}):

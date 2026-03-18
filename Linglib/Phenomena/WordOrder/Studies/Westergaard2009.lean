@@ -59,7 +59,7 @@ NOT @cite{laka-1990}'s ΣP (which is `Cat.Pol` in linglib at F-value 2).
 -- ============================================================================
 
 open Minimalism (ForceHead V2Profile) in
-/-- Map theory-neutral V2 observations to @cite{westergaard-2009}'s
+/-- Map theory-neutral V2 observations to's
     split-ForceP micro-parameter representation. The mapping:
     - `declV2`   → Decl° (verb movement in declaratives)
     - `whQV2`    → Int°  (verb movement in wh-questions)
@@ -189,7 +189,7 @@ structure V2Datum where
 -- § 2  Micro-Cues (Ch. 3 §4, Ch. 10 §3)
 -- ============================================================================
 
-/-! @cite{westergaard-2009} Ch. 3 §4 introduces the *cues* — the syntactic
+/-! Ch. 3 §4 introduces the *cues* — the syntactic
     templates in the input that trigger each micro-parameter. A micro-cue
     is a piece of I-language structure that children produce on exposure
     to the relevant input. Ch. 10 §3 (34)–(37) gives the final formulations.
@@ -327,7 +327,7 @@ def no_decl_nonsubj : V2Datum :=
     clauseType := .declarative
     v2Status := .obligatory
     description := "Non-subject-initial declarative: V2 obligatory"
-    citation := "@cite{westergaard-2009} Ch. 2 Table 2.3" }
+    citation := "Ch. 2 Table 2.3" }
 
 /-- Yes/no-questions: V2 obligatory. -/
 def no_yesno : V2Datum :=
@@ -336,7 +336,7 @@ def no_yesno : V2Datum :=
     clauseType := .yesNoQuestion
     v2Status := .obligatory
     description := "Yes/no-question: V2 obligatory"
-    citation := "@cite{westergaard-2009} Ch. 1 (3)" }
+    citation := "Ch. 1 (3)" }
 
 /-- Wh-questions with long (polysyllabic) wh-phrases: V2 obligatory. -/
 def no_wh_long : V2Datum :=
@@ -345,7 +345,7 @@ def no_wh_long : V2Datum :=
     clauseType := .whQuestion
     v2Status := .obligatory
     description := "Wh-question with disyllabic korfor 'why': V2 obligatory"
-    citation := "@cite{westergaard-2009} Ch. 2 (40)" }
+    citation := "Ch. 2 (40)" }
 
 /-- Wh-questions with short (monosyllabic) wh-words: V2 optional,
     conditioned by information structure. -/
@@ -355,7 +355,7 @@ def no_wh_short : V2Datum :=
     clauseType := .whQuestion
     v2Status := .optional
     description := "Wh-question with monosyllabic ka 'what': V2/non-V2 depends on subject givenness"
-    citation := "@cite{westergaard-2009} Ch. 2 (43)–(45)" }
+    citation := "Ch. 2 (43)–(45)" }
 
 /-- Exclamatives: non-V2 obligatory. -/
 def no_excl : V2Datum :=
@@ -364,7 +364,7 @@ def no_excl : V2Datum :=
     clauseType := .exclamative
     v2Status := .impossible
     description := "Exclamative: non-V2 obligatory"
-    citation := "@cite{westergaard-2009} Ch. 1 (5)" }
+    citation := "Ch. 1 (5)" }
 
 /-- Embedded declaratives: non-V2 (mostly). -/
 def no_emb_decl : V2Datum :=
@@ -373,7 +373,7 @@ def no_emb_decl : V2Datum :=
     clauseType := .embeddedDecl
     v2Status := .impossible
     description := "Embedded declarative: non-V2 (verb below negation)"
-    citation := "@cite{westergaard-2009} Ch. 2 (36)" }
+    citation := "Ch. 2 (36)" }
 
 -- Cross-Germanic Contrasts
 
@@ -384,7 +384,7 @@ def en_decl : V2Datum :=
     clauseType := .declarative
     v2Status := .impossible
     description := "English declarative: no V2 (SVO base order)"
-    citation := "@cite{westergaard-2009} Ch. 3 Table 3.1" }
+    citation := "Ch. 3 Table 3.1" }
 
 /-- Standard English: V2 in wh-questions (via SAI). -/
 def en_wh : V2Datum :=
@@ -393,7 +393,7 @@ def en_wh : V2Datum :=
     clauseType := .whQuestion
     v2Status := .obligatory
     description := "English wh-question: V2 (subject-auxiliary inversion)"
-    citation := "@cite{westergaard-2009} Ch. 3 Table 3.1" }
+    citation := "Ch. 3 Table 3.1" }
 
 /-- Belfast English: V2 in embedded questions too. -/
 def belfast_emb_q : V2Datum :=
@@ -402,7 +402,7 @@ def belfast_emb_q : V2Datum :=
     clauseType := .embeddedQuestion
     v2Status := .obligatory
     description := "Belfast English: V2 in embedded questions"
-    citation := "@cite{westergaard-2009} Ch. 3 Table 3.1; @cite{henry-1995}" }
+    citation := "Ch. 3 Table 3.1; @cite{henry-1995}" }
 
 /-- Danish: V2 in exclamatives (unlike Norwegian and English). -/
 def da_excl : V2Datum :=
@@ -411,7 +411,7 @@ def da_excl : V2Datum :=
     clauseType := .exclamative
     v2Status := .obligatory
     description := "Danish exclamative: V2 (unlike Norwegian/English)"
-    citation := "@cite{westergaard-2009} Ch. 2 (19)" }
+    citation := "Ch. 2 (19)" }
 
 /-- German root declaratives: V2 obligatory. -/
 def de_decl : V2Datum :=
@@ -515,7 +515,7 @@ theorem active_count_ordering :
 -- § 5  Wh Head/Phrase Distinction
 -- ============================================================================
 
-/-! @cite{westergaard-2009} Ch. 7 argues that monosyllabic wh-words
+/-! Ch. 7 argues that monosyllabic wh-words
     are syntactic heads (X°) while polysyllabic wh-constituents are
     phrases (XP). When a wh-head occupies Int°, it blocks verb movement,
     making non-V2 possible. When a wh-phrase is in SpecIntP, Int° is
@@ -621,7 +621,7 @@ theorem de_emb_no_v2 :
 
 /-! `GermanicV2.lean` proves that German V2 involves head-to-head movement
     of V to C, skipping T (HMC violation). This is the structural realization
-    of +Decl° in @cite{westergaard-2009}'s profile: verb movement targets
+    of +Decl° in profile: verb movement targets
     the Decl° head in the CP domain.
 
     The bridge: German has +Decl° (our profile) AND the syntactic analysis
@@ -629,7 +629,7 @@ theorem de_emb_no_v2 :
 
 /-- German +Decl° is consistent with the V-to-C movement formalized in
     `GermanicV2.lean`: the verb moves to C (= the Decl° position in
-    @cite{westergaard-2009}'s split-ForceP).
+    split-ForceP).
 
     The GermanicV2 file shows:
     - V2 is head-to-head movement (`v2_mover_stays_minimal`)
@@ -711,7 +711,7 @@ theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
 -- § 11  Economy
 -- ============================================================================
 
-/-! @cite{westergaard-2009}'s structural economy (p. 4):
+/-! structural economy (p. 4):
 
     (9a) Only build as much structure as there is evidence for in the input.
     (9b) Only move elements as far as there is evidence for in the input.

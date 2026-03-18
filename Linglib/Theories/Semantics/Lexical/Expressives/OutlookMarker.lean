@@ -45,7 +45,7 @@ open Semantics.Lexical.Expressives (TwoDimProp CIExprProperties)
 /-- The type of evaluative stance an outlook marker expresses.
 
 Each stance type characterizes how the speaker situates the prejacent
-relative to a salient counterstance in the discourse (@cite{kubota-2026}: §3). -/
+relative to a salient counterstance in the discourse (: §3). -/
 inductive StanceType where
   /-- Negative/pessimistic evaluation: the prejacent is undesirable or implausible.
       E.g., *nanka* 'anything like', *dōse* 'anyway' -/
@@ -64,7 +64,7 @@ inductive StanceType where
 
 /-! ## Three-Way Typology of Secondary Meaning -/
 
-/-- Classification of secondary (non-at-issue) meanings following @cite{kubota-2026}).
+/-- Classification of secondary (non-at-issue) meanings following).
 
 This typology cross-cuts the standard CI vs presupposition divide. Each class
 exhibits different projection behavior, discourse sensitivity, and interaction
@@ -91,7 +91,7 @@ inductive SecondaryMeaningClass where
 Hard triggers project robustly in all embedding environments.
 Soft triggers allow non-projective readings under epistemic uncertainty.
 
-@cite{kubota-2026} shows that Japanese *mata* 'again' (hard) projects more
+shows that Japanese *mata* 'again' (hard) projects more
 robustly than *yameru* 'stop' or *seikō-suru* 'succeed' (soft). -/
 inductive TriggerStrength where
   /-- Projects robustly under questions, modals, conditionals.
@@ -107,7 +107,7 @@ inductive TriggerStrength where
 
 /-- An outlook meaning combines a presuppositional and an expressive component.
 
-The key innovation of @cite{kubota-2026}: these two layers are not independently
+The key innovation of: these two layers are not independently
 stipulated but **fall out** from the marker's basic function as a counterstance marker.
 The marker presupposes a salient counterstance in discourse, and the expressive-like
 evaluation arises from the relationship between the prejacent and this counterstance.
@@ -160,7 +160,7 @@ end OutlookMeaning
 
 /-! ## Diagnostic Properties
 
-@cite{potts-2007} identifies six properties of expressives. @cite{kubota-2026} shows that
+@cite{potts-2007} identifies six properties of expressives. shows that
 outlook markers share some but not all of these, which is what makes them a
 distinct class of secondary meaning. -/
 
@@ -201,7 +201,7 @@ def expressiveProfile : SecondaryMeaningProperties :=
   , allowsPerspectiveShift := false   -- Potts' default; cf. @cite{wang-etal-2005}
   , requiresDiscourseAntecedent := false }
 
-/-- Canonical properties of outlook markers (@cite{kubota-2026}: §3).
+/-- Canonical properties of outlook markers (: §3).
 
 Outlook markers share descriptive ineffability and immediacy with expressives,
 but crucially lack independence and nondisplaceability. They allow perspective
@@ -232,7 +232,7 @@ def hardPresupProfile : SecondaryMeaningProperties :=
 
 /-- Outlook markers share descriptive ineffability with expressives.
 
-@cite{kubota-2026}–(41)): when B denies A's outlook-marked utterance, the denial
+–(41)): when B denies A's outlook-marked utterance, the denial
 targets the propositional content, not the evaluative component. The negative
 evaluation expressed by *nanka* or *dōse* is not what "no" targets. -/
 theorem outlook_shares_descriptiveIneffability :
@@ -248,7 +248,7 @@ theorem outlook_shares_immediacy :
 
 /-- Outlook markers LACK independence (unlike expressives).
 
-@cite{kubota-2026}–(43)): the evaluative meaning of outlook markers
+–(43)): the evaluative meaning of outlook markers
 interacts with the propositional content and can be attributed to a non-speaker
 attitude holder, violating the independence criterion. -/
 theorem outlook_lacks_independence :
@@ -258,7 +258,7 @@ theorem outlook_lacks_independence :
 
 /-- Outlook markers LACK nondisplaceability (unlike expressives).
 
-@cite{kubota-2026}): under attitude embedding, *nanka*/*dōse* evaluate from
+): under attitude embedding, *nanka*/*dōse* evaluate from
 the attitude holder's (not the speaker's) perspective. -/
 theorem outlook_lacks_nondisplaceability :
     outlookMarkerProfile.nondisplaceable = false ∧
@@ -267,7 +267,7 @@ theorem outlook_lacks_nondisplaceability :
 
 /-- Outlook markers REQUIRE discourse antecedent (unlike expressives).
 
-@cite{kubota-2026}–(38)): *nanka* is felicitous only when a counterstance is
+–(38)): *nanka* is felicitous only when a counterstance is
 salient in the discourse; it is infelicitous as a response to a neutral *wh*-question
 where no specific stance is at issue. -/
 theorem outlook_requires_discourse_antecedent :
@@ -277,7 +277,7 @@ theorem outlook_requires_discourse_antecedent :
 
 /-- Outlook markers ALLOW perspective shift (unlike default expressives).
 
-@cite{kubota-2026}): "My advisor seems to have thought I wouldn't possibly get
+): "My advisor seems to have thought I wouldn't possibly get
 accepted at SALT" — the negative evaluation is the advisor's, not the speaker's. -/
 theorem outlook_allows_perspective_shift :
     outlookMarkerProfile.allowsPerspectiveShift = true ∧
@@ -296,13 +296,13 @@ theorem outlook_vs_hardPresup_ineffability :
 
 /-! ## Modal Selectional Restrictions
 
-@cite{kubota-2026}–(46)) shows that outlook markers interact differently with
+–(46)) shows that outlook markers interact differently with
 different modal flavors. This connects to Kratzer's conversational backgrounds. -/
 
 /-- Modal flavors that an outlook marker is compatible with.
 
 *semete* 'at least' is compatible with deontic *-beki* and desiderative *-tai*
-but NOT with epistemic *hazu* or ability *-eru* (@cite{kubota-2026}: (46)).
+but NOT with epistemic *hazu* or ability *-eru* (: (46)).
 
 This reflects the fact that minimum-standard outlook markers require that
 the ordering source involve subjective preferences (deontic/bouletic), not

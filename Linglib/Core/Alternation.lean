@@ -47,13 +47,13 @@ namespace Core.Alternation
 open Prominence (ArgumentRole)
 
 -- ════════════════════════════════════════════════════
--- § 1. TR-Roles (@cite{creissels-2025} §1.3.3)
+-- § 1. TR-Roles (§1.3.3)
 -- ════════════════════════════════════════════════════
 
 /-- Transitivity-Related role including obliques.
 
     Extends `Prominence.ArgumentRole` (S, A, P, R, T) with X for obliques.
-    @cite{creissels-2025} §1.3.3: "OBLIQUE NOMINAL TERMS (or simply OBLIQUES),
+    §1.3.3: "OBLIQUE NOMINAL TERMS (or simply OBLIQUES),
     symbolized as X, are defined as nominal terms of verbal clauses that do
     not meet the definition of either A, P, or S." -/
 inductive TRRole where
@@ -87,13 +87,13 @@ inductive ParticipantFate where
   /-- Participant is denucleativized: demoted from core term to oblique or
       unexpressed, but MAINTAINED IN PARTICIPANT STRUCTURE. The participant
       is still semantically present and may appear as an oblique phrase.
-      @cite{creissels-2025} §8.3.2.1: "the referent of the initial A is
+      §8.3.2.1: "the referent of the initial A is
       denucleativized ... but is maintained in participant structure." -/
   | denucleativized
   /-- Participant is suppressed: REMOVED FROM PARTICIPANT STRUCTURE entirely.
       The participant has no syntactic realization in the derived construction
       and is not semantically implied.
-      @cite{creissels-2025} §8.3.1.2: "Decausativization suppresses the
+      §8.3.1.2: "Decausativization suppresses the
       referent of the initial A from participant structure." -/
   | suppressed
   /-- Participant's coding is maintained unchanged. -/
@@ -111,12 +111,12 @@ inductive ParticipantFate where
 
 /-- Whether and how a valency alternation is morphologically coded.
 
-    @cite{creissels-2025} §1.1.3: voice = coded alternation; flexivalency
+    §1.1.3: voice = coded alternation; flexivalency
     = uncoded alternation. The distinction is fundamental to his framework:
     same structural alternation, different morphosyntactic status. -/
 inductive AlternationMarking where
   /-- Coded by verbal morphology (affix, ablaut, tone, etc.) — this is
-      VOICE in @cite{creissels-2025}'s terminology. -/
+      VOICE in terminology. -/
   | synthetic
   /-- Coded by an analytic construction (auxiliary + nonfinite form). -/
   | analytic
@@ -138,7 +138,7 @@ def AlternationMarking.isVoice : AlternationMarking → Bool
 /-- A valency alternation defined by its structural effect on participants.
 
     This is the unified type subsuming both @cite{levin-1993}'s English-specific
-    diathesis alternations and @cite{creissels-2025}'s cross-linguistic voice
+    diathesis alternations and cross-linguistic voice
     alternation types. Each alternation specifies:
     - What happens to each participant of the initial construction
     - Whether a new participant is introduced
@@ -165,7 +165,7 @@ structure ValencyAlternation where
 -- § 5. Creissels' Voice Alternation Typology (§8.3)
 -- ════════════════════════════════════════════════════
 
-/-- Causativization (@cite{creissels-2025} §8.3.1.1): nucleativization of a
+/-- Causativization (§8.3.1.1): nucleativization of a
     causer in A role. Initial construction is intransitive; initial S becomes
     P in the derived transitive construction. -/
 def causativization : ValencyAlternation :=
@@ -177,7 +177,7 @@ def causativization : ValencyAlternation :=
   , initialTransitive := some false
   , derivedTransitive := some true }
 
-/-- Decausativization (@cite{creissels-2025} §8.3.1.2): the initial A is
+/-- Decausativization (§8.3.1.2): the initial A is
     SUPPRESSED FROM PARTICIPANT STRUCTURE; initial P becomes S of an
     intransitive construction. Called "anticausative" in most other
     frameworks; Creissels prefers "decausative" because the prefix *de-*
@@ -196,7 +196,7 @@ def decausativization : ValencyAlternation :=
   , initialTransitive := some true
   , derivedTransitive := some false }
 
-/-- Passivization (@cite{creissels-2025} §8.3.2.1): A is denucleativized
+/-- Passivization (§8.3.2.1): A is denucleativized
     (oblique or unexpressed) but maintained in participant structure.
     No participant is nucleativized. P becomes S.
 
@@ -212,7 +212,7 @@ def passivization : ValencyAlternation :=
   , initialTransitive := some true
   , derivedTransitive := some false }
 
-/-- I-passivization (@cite{creissels-2025} §8.3.2.2): impersonal variant
+/-- I-passivization (§8.3.2.2): impersonal variant
     of passivization. A is denucleativized, but P's coding is unchanged —
     the derived construction is impersonal (no S). -/
 def iPassivization : ValencyAlternation :=
@@ -224,7 +224,7 @@ def iPassivization : ValencyAlternation :=
   , initialTransitive := some true
   , derivedTransitive := none }
 
-/-- Antipassivization (@cite{creissels-2025} §8.3.2.3): P is denucleativized
+/-- Antipassivization (§8.3.2.3): P is denucleativized
     (oblique or unexpressed); A becomes S of an intransitive construction. -/
 def antipassivization : ValencyAlternation :=
   { name := "antipassivization"
@@ -235,7 +235,7 @@ def antipassivization : ValencyAlternation :=
   , initialTransitive := some true
   , derivedTransitive := some false }
 
-/-- S-denucleativization (@cite{creissels-2025} §8.3.2.4): S of an
+/-- S-denucleativization (§8.3.2.4): S of an
     intransitive construction is denucleativized, yielding an impersonal
     construction. -/
 def sDenucleativization : ValencyAlternation :=
@@ -247,7 +247,7 @@ def sDenucleativization : ValencyAlternation :=
   , initialTransitive := some false
   , derivedTransitive := none }
 
-/-- Reflexivization (@cite{creissels-2025} §8.3.3): A and P are cumulated
+/-- Reflexivization (§8.3.3): A and P are cumulated
     into S — a single participant fills both roles. -/
 def reflexivization : ValencyAlternation :=
   { name := "reflexivization"
@@ -258,7 +258,7 @@ def reflexivization : ValencyAlternation :=
   , initialTransitive := some true
   , derivedTransitive := some false }
 
-/-- Reciprocalization (@cite{creissels-2025} §8.3.3): like reflexivization
+/-- Reciprocalization (§8.3.3): like reflexivization
     but with a group reading — participants mutually fill both roles. -/
 def reciprocalization : ValencyAlternation :=
   { name := "reciprocalization"
@@ -269,7 +269,7 @@ def reciprocalization : ValencyAlternation :=
   , initialTransitive := some true
   , derivedTransitive := some false }
 
-/-- P-applicativization (@cite{creissels-2025} §8.3.5, §14.1.1): a
+/-- P-applicativization (§8.3.5, §14.1.1): a
     non-nuclear participant is nucleativized as P. The initial P may be
     denucleativized (demoted to oblique) or maintained in double-P
     constructions. -/
@@ -282,7 +282,7 @@ def pApplicativization : ValencyAlternation :=
   , initialTransitive := some true
   , derivedTransitive := some true }
 
-/-- D-applicativization (@cite{creissels-2025} §14.1.3): a non-nuclear
+/-- D-applicativization (§14.1.3): a non-nuclear
     participant is nucleativized as a dative oblique (a special oblique
     type with core-term-like properties in many languages). -/
 def dApplicativization : ValencyAlternation :=
@@ -294,7 +294,7 @@ def dApplicativization : ValencyAlternation :=
   , initialTransitive := none
   , derivedTransitive := none }
 
-/-- X-applicativization (@cite{creissels-2025} §14.1.4): a non-nuclear
+/-- X-applicativization (§14.1.4): a non-nuclear
     participant is nucleativized as an ordinary oblique. -/
 def xApplicativization : ValencyAlternation :=
   { name := "X-applicativization"
@@ -305,7 +305,7 @@ def xApplicativization : ValencyAlternation :=
   , initialTransitive := none
   , derivedTransitive := none }
 
-/-- A/S-nucleativization of obliques (@cite{creissels-2025} §8.3.4.1):
+/-- A/S-nucleativization of obliques (§8.3.4.1):
     an oblique participant (e.g., an instrument) takes over the A or S role
     in the derived construction. The nucleativized participant does NOT
     outrank the initial A/S in agentivity (distinguishing this from
@@ -322,7 +322,7 @@ def asNucleativizationOfObliques : ValencyAlternation :=
   , initialTransitive := some true
   , derivedTransitive := some true }
 
-/-- Concernativization (@cite{creissels-2025} §8.3.4.2): nucleativization
+/-- Concernativization (§8.3.4.2): nucleativization
     of a concernee (external possessor / adversely affected party) into
     the A role. The initial construction may be transitive or intransitive.
 
@@ -342,7 +342,7 @@ def concernativization : ValencyAlternation :=
   , initialTransitive := some false  -- prototypical case is intransitive
   , derivedTransitive := some true }
 
-/-- Portative derivation (@cite{creissels-2025} §8.3.7): converts a motion
+/-- Portative derivation (§8.3.7): converts a motion
     verb into a transitive 'A moves carrying P'. Distinguished from both
     causativization and applicativization. -/
 def portativeDerivation : ValencyAlternation :=
@@ -355,12 +355,12 @@ def portativeDerivation : ValencyAlternation :=
   , derivedTransitive := some true }
 
 -- ════════════════════════════════════════════════════
--- § 6. Alignment (@cite{creissels-2025} §1.3.4)
+-- § 6. Alignment (§1.3.4)
 -- ════════════════════════════════════════════════════
 
 /-- Alignment between core terms of transitive and intransitive clauses.
 
-    @cite{creissels-2025} §1.3.4.2: the central typological parameter is
+    §1.3.4.2: the central typological parameter is
     whether S patterns with A (A-alignment, traditionally "accusative") or
     with P (P-alignment, traditionally "ergative"). Creissels avoids the
     traditional case-based labels because A-alignment can occur without
@@ -372,7 +372,7 @@ inductive Alignment where
   | P_alignment
   deriving DecidableEq, BEq, Repr
 
-/-- The Obligatory Coding Principle (@cite{creissels-2025} §1.3.4.4):
+/-- The Obligatory Coding Principle (§1.3.4.4):
     in most languages, every verb assigns a particular type of participant
     coding to one of its participants, and this type coincides with either
     A coding or P coding. A language that fully complies has either
@@ -392,12 +392,12 @@ structure ObligatoryCodingProfile where
   deriving Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § 7. Voice Marker Polysemy (@cite{creissels-2025} §8.2)
+-- § 7. Voice Marker Polysemy (§8.2)
 -- ════════════════════════════════════════════════════
 
 /-- A voice marker and the alternation types it can mark.
 
-    @cite{creissels-2025} §8.2: cross-linguistically, voice markers are
+    §8.2: cross-linguistically, voice markers are
     polysemous — the same morpheme may mark multiple voice alternation types.
     For example, Russian *-sja* marks reflexivization, reciprocalization,
     passivization, and antipassivization (§8.2, ex. 8). -/
@@ -411,12 +411,12 @@ structure VoiceMarkerProfile where
   deriving Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § 8. Voice Alternation Distribution (@cite{creissels-2025} §8.3.8)
+-- § 8. Voice Alternation Distribution (§8.3.8)
 -- ════════════════════════════════════════════════════
 
 /-- Cross-linguistic prevalence of voice alternation types.
 
-    @cite{creissels-2025} §8.3.8, citing @cite{bahrt-2021}: distribution of
+    §8.3.8, citing @cite{bahrt-2021}: distribution of
     synthetic voice marking across 222 languages from all genera. -/
 structure VoiceDistribution where
   alternation : ValencyAlternation
@@ -424,7 +424,7 @@ structure VoiceDistribution where
   percentage : Float
   deriving Repr, BEq
 
-/-- @cite{bahrt-2021} distribution data, cited in @cite{creissels-2025}
+/-- @cite{bahrt-2021} distribution data, cited in
     §8.3.8. Percentages represent languages (out of 222) with synthetic
     marking for each voice alternation type. -/
 def bahrt2021Distribution : List VoiceDistribution :=
@@ -482,7 +482,7 @@ theorem decausativization_decreases :
 theorem passivization_decreases :
     passivization.isValencyDecreasing = true := rfl
 
-/-- The central distinction of @cite{creissels-2025} §8.3.2.1:
+/-- The central distinction of §8.3.2.1:
     passivization MAINTAINS A in participant structure (`.denucleativized`),
     while decausativization SUPPRESSES A from participant structure
     (`.suppressed`). These are structurally distinct operations. -/
@@ -517,7 +517,7 @@ theorem portative_increases :
 -- ════════════════════════════════════════════════════
 
 /-- Map @cite{levin-1993}'s English-specific diathesis alternations to
-    @cite{creissels-2025}'s cross-linguistic valency alternation types.
+    cross-linguistic valency alternation types.
 
     Key insight: most Levin alternations are UNCODED (flexivalency) in
     English — the structural effect is the same as the corresponding coded
@@ -724,7 +724,7 @@ theorem bppa_is_applicative_like :
     (toValencyAlternation .bodyPartPossessorAscension).involvesNucleativization = true := rfl
 
 /-- The understood reciprocal object alternation involves cumulation,
-    just like reflexivization and reciprocalization in @cite{creissels-2025}. -/
+    just like reflexivization and reciprocalization in. -/
 theorem understoodReciprocal_cumulates :
     (toValencyAlternation .understoodReciprocalObject).involvesCumulation = true := rfl
 
@@ -753,7 +753,7 @@ theorem verbalPassive_is_passivization :
     toValencyAlternation .verbalPassive = passivization := rfl
 
 /-- The understood reflexive object alternation involves cumulation,
-    like reflexivization in @cite{creissels-2025}. -/
+    like reflexivization in. -/
 theorem understoodReflexive_cumulates :
     (toValencyAlternation .understoodReflexiveObject).involvesCumulation = true := rfl
 
@@ -773,12 +773,12 @@ theorem understoodBodyPartObject_decreases :
     (toValencyAlternation .understoodBodyPartObject).isValencyDecreasing = true := rfl
 
 -- ════════════════════════════════════════════════════
--- § 12. Flexivalency / Ambitransitivity (@cite{creissels-2025} Ch 15)
+-- § 12. Flexivalency / Ambitransitivity (Ch 15)
 -- ════════════════════════════════════════════════════
 
 /-- Types of ambitransitivity (uncoded transitivity alternation).
 
-    @cite{creissels-2025} §15.2: a verb is ambitransitive when it can
+    §15.2: a verb is ambitransitive when it can
     appear in both transitive and intransitive constructions without
     morphological marking. The five subtypes differ in what happens to the
     participants. -/

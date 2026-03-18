@@ -67,7 +67,7 @@ namespace Fragments.Mayan.Kiche
 -- § 1: Verb Classes
 -- ============================================================================
 
-/-- K'iche' transitive verb classes. @cite{mondloch-2017}, Lesson 15. -/
+/-- K'iche' transitive verb classes., Lesson 15. -/
 inductive TransVerbClass where
   /-- Derived: polysyllabic roots ending in vowels. -/
   | derived
@@ -79,7 +79,7 @@ inductive TransVerbClass where
 -- § 2: Voice Alternations
 -- ============================================================================
 
-/-- The five transitive voices of K'iche'. @cite{mondloch-2017},
+/-- The five transitive voices of K'iche'.,
     Lessons 15–22, 26–30. -/
 inductive KicheVoice where
   /-- Active Voice: A and P both expressed. -/
@@ -104,7 +104,7 @@ def allVoices : List KicheVoice :=
 -- ============================================================================
 
 /-- The voice marker suffix for derived transitive verbs (DTVs).
-    @cite{mondloch-2017}: Active = -j (Lesson 15), Simple Passive = -x
+   : Active = -j (Lesson 15), Simple Passive = -x
     (Lesson 19), Antipassive = -n (Lesson 21), Agent Focus = -n
     (Lesson 22), Completed Passive = -taaj (Lesson 20). -/
 def dtvVoiceMarker : KicheVoice → String
@@ -115,7 +115,7 @@ def dtvVoiceMarker : KicheVoice → String
   | .completedPassive       => "-taaj"
 
 /-- The voice marker suffix for radical transitive verbs (RTVs).
-    @cite{mondloch-2017}: Active = Ø (Lesson 26), Simple Passive = -Vtaj
+   : Active = Ø (Lesson 26), Simple Passive = -Vtaj
     (Lesson 28, where V is a copy of the root vowel), Agent Focus = -Vk
     (Lesson 30). -/
 def rtvVoiceMarker : KicheVoice → String
@@ -129,14 +129,14 @@ def rtvVoiceMarker : KicheVoice → String
 -- § 4: Aspect Markers
 -- ============================================================================
 
-/-- K'iche' aspect markers. @cite{mondloch-2017}, Lesson 9. -/
+/-- K'iche' aspect markers., Lesson 9. -/
 inductive Aspect where
   | incomplete  -- k- (ka- before clusters)
   | completed   -- x-
   deriving DecidableEq, BEq, Repr
 
 /-- The morphological form of the aspect marker.
-    @cite{mondloch-2017}, Lesson 9: k- (ka-) for incomplete, x- for
+   , Lesson 9: k- (ka-) for incomplete, x- for
     completed. -/
 def aspectMarker : Aspect → String
   | .incomplete => "k-"
@@ -148,7 +148,7 @@ def aspectMarker : Aspect → String
 
 /-- The transitive active voice template:
     aspect + P(Set B) + A(Set A) + root + voice marker.
-    @cite{mondloch-2017}, Lesson 15. -/
+   , Lesson 15. -/
 structure ActiveVerbForm where
   aspect : Aspect
   object : PhiFeatures  -- P: cross-referenced by Set B
@@ -160,7 +160,7 @@ structure ActiveVerbForm where
 /-- The passive voice template:
     aspect + S(Set B) + root + passive marker.
     The agent appears as an oblique (rumaal/kumaal).
-    @cite{mondloch-2017}, Lesson 19. -/
+   , Lesson 19. -/
 structure PassiveVerbForm where
   aspect : Aspect
   subject : PhiFeatures  -- promoted P, cross-referenced by Set B
@@ -171,7 +171,7 @@ structure PassiveVerbForm where
 /-- The antipassive voice template:
     aspect + S(Set B) + root + antipassive marker.
     P is suppressed. Verb conjugates like an intransitive.
-    @cite{mondloch-2017}, Lesson 21. -/
+   , Lesson 21. -/
 structure AntipassiveVerbForm where
   aspect : Aspect
   subject : PhiFeatures  -- A, cross-referenced by Set B (as intransitive)
@@ -204,7 +204,7 @@ def KicheVoice.realizesPatient : KicheVoice → Bool
 /-- Is the verb in this voice conjugated like an intransitive
     (only Set B agreement, no Set A)?
     Passives and antipassives both conjugate intransitively.
-    @cite{mondloch-2017}: Lesson 19 (passive = "like intransitive"),
+   : Lesson 19 (passive = "like intransitive"),
     Lesson 21 (antipassive = "exactly as Simple Intransitive Verbs"). -/
 def KicheVoice.conjugatesIntransitively : KicheVoice → Bool
   | .active     => false  -- Set A + Set B
@@ -219,12 +219,12 @@ def KicheVoice.conjugatesIntransitively : KicheVoice → Bool
     When 'who' questions target the agent, the verb appears in Agent
     Focus, not Active Voice. This is why *wi* is not licensed for
     subject extraction — Agent Focus morphology is used instead.
-    @cite{mondloch-2017}, Lesson 22; @cite{mendes-ranero-2021}, §2. -/
+   , Lesson 22; @cite{mendes-ranero-2021}, §2. -/
 def subjectExtractionVoice : KicheVoice := .agentFocus
 
 /-- Agent Focus Antipassive shares the same marker as Absolutive
     Antipassive for DTVs (-n), but their functions are distinct.
-    @cite{mondloch-2017}, Lesson 22 notes: "In spite of the confusingly
+   , Lesson 22 notes: "In spite of the confusingly
     similar structure between the two voices, their meanings are quite
     different." -/
 theorem af_marker_eq_antip_marker :
@@ -287,7 +287,7 @@ theorem dtv_comppass_marker : dtvVoiceMarker .completedPassive = "-taaj" := rfl
 /-- K'iche' negation uses a circumfixal pattern: **na...taj/ta**.
     The first element *na* precedes the negated constituent; the second
     element *taj* (or *ta* before verbs) follows it.
-    @cite{mondloch-2017}, Lesson 13. -/
+   , Lesson 13. -/
 structure Negation where
   proclitic : String := "na"
   enclitic : String
@@ -310,7 +310,7 @@ theorem neg_same_proclitic :
 
 /-- K'iche' basic word order for intransitive clauses with noun
     subjects is Verb-Subject (VS).
-    @cite{mondloch-2017}, Lesson 9: "the preferred word order appears
+   , Lesson 9: "the preferred word order appears
     to be: verb-subject." -/
 inductive BasicWordOrder where
   | VS   -- Verb-Subject (intransitive)

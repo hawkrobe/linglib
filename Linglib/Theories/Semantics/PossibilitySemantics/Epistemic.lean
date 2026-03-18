@@ -48,18 +48,18 @@ open Core.Proposition (FiniteWorlds BProp)
     The paper's full Definition 4.20 also requires R-regularity; the
     epistemic compatibility frame (Definition 4.26) adds Knowability.
     Our `epistemicScale` satisfies all three conditions by construction
-    (Example 4.30). @cite{holliday-mandelkern-2024} -/
+    (Example 4.30). -/
 structure ModalCompatFrame (S : Type*) [FiniteWorlds S] extends CompatFrame S where
   access : S → S → Bool
   access_refl : ∀ x, access x x = true
 
 /-- Box operator: □A = {x | R(x) ⊆ A}.
-    @cite{holliday-mandelkern-2024} eq. (III). -/
+    eq. (III). -/
 def box {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : BProp S) : BProp S :=
   fun x => FiniteWorlds.worlds.filter (F.access x) |>.all A
 
 /-- Diamond operator: ◇A = ¬□¬A (via orthocomplement, NOT Boolean dual).
-    @cite{holliday-mandelkern-2024} eq. (IV). -/
+    eq. (IV). -/
 def diamond {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : BProp S) : BProp S :=
   orthoNeg F.toCompatFrame (box F (orthoNeg F.toCompatFrame A))
 
@@ -78,11 +78,11 @@ def diamond {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : BProp S) 
 
     Compatibility: (a,i) ◇ (a',i') iff a ∩ a' ≠ ∅ ∧ a ⊆ i' ∧ a' ⊆ i.
     Accessibility: (a,i) R (a',i') iff a ⊆ a' ∧ i' ⊆ i.
-    @cite{holliday-mandelkern-2024} Definition 5.1, Example 5.3. -/
+    Definition 5.1, Example 5.3. -/
 
 /-- The epistemic scale frame. Compatibility is the path graph;
     accessibility captures epistemic access (refining information).
-    @cite{holliday-mandelkern-2024} Example 4.30, Example 4.33. -/
+    Example 4.30, Example 4.33. -/
 def epistemicScale : ModalCompatFrame Poss5 where
   compat := pathFrame.compat
   compat_refl := pathFrame.compat_refl
@@ -106,7 +106,7 @@ def propP : BProp Poss5 := fun x => match x with | .x1 | .x2 => true | _ => fals
 -- ════════════════════════════════════════════════════
 
 /-! Verification of the truth values listed in Example 4.33.
-    @cite{holliday-mandelkern-2024} -/
+    -/
 
 private def boxP : BProp Poss5 := fun x => match x with | .x1 => true | _ => false
 private def negP : BProp Poss5 := fun x => match x with | .x4 | .x5 => true | _ => false
@@ -145,19 +145,19 @@ theorem uncertainty_at_x3 :
 
 /-! The motivating examples from §1–2 of the paper: epistemic possibility
     does not collapse to classical negation, and truth does not collapse
-    to knowledge. @cite{holliday-mandelkern-2024} -/
+    to knowledge. -/
 
 /-- ◇¬p does NOT entail ¬p: x₃ makes "it might not be raining" true
     but does not settle "it's not raining." This is the core motivation
     for the entire paper — in classical logic, ◇¬p → ¬p, but this fails
-    in possibility semantics. @cite{holliday-mandelkern-2024} §1, p. 2. -/
+    in possibility semantics. §1, p. 2. -/
 theorem diamond_neg_not_entail_neg :
     diamond epistemicScale (orthoNeg pathFrame propP) .x3 = true ∧
     orthoNeg pathFrame propP .x3 = false := by native_decide
 
 /-- p does NOT entail □p: x₂ makes p true without knowing p. "It's
     raining" does not mean "It must be raining." Failure of necessitation
-    for non-logical truths. @cite{holliday-mandelkern-2024} §2, p. 3. -/
+    for non-logical truths. §2, p. 3. -/
 theorem p_not_entail_box_p :
     propP .x2 = true ∧ box epistemicScale propP .x2 = false := by native_decide
 
@@ -170,7 +170,7 @@ theorem p_not_entail_box_p :
     In possibility semantics, if x settles ¬A (all compatible possibilities
     fail A), then x cannot also make ◇A true (which requires a compatible
     possibility in □¬A's complement).
-    @cite{holliday-mandelkern-2024} Proposition 4.27. -/
+    Proposition 4.27. -/
 
 /-- ¬p ∧ ◇p = ∅: "p is false and p might be true" is contradictory. -/
 theorem wittgenstein_p (x : Poss5) :
@@ -187,7 +187,7 @@ theorem wittgenstein_neg_p (x : Poss5) :
 /-- Wittgenstein's Law for ALL regular propositions in the epistemic
     scale: ¬A ∧ ◇A = ∅. There are 2⁵ = 32 Boolean functions on Poss5,
     of which 10 are ◇-regular (Figure 8); the theorem checks all 160 cases.
-    @cite{holliday-mandelkern-2024} Proposition 4.27. -/
+    Proposition 4.27. -/
 theorem wittgenstein_general (A : Poss5 → Bool) (x : Poss5)
     (hReg : isRegular pathFrame A = true) :
     conj (orthoNeg pathFrame A) (diamond epistemicScale A) x = false := by
@@ -202,7 +202,7 @@ theorem wittgenstein_general (A : Poss5 → Bool) (x : Poss5)
     The partial possibility x₃ verifies the disjunction without
     committing to either disjunct — both disjuncts are empty by
     Wittgenstein's Law (p ∧ ◇¬p = ∅ and ¬p ∧ ◇p = ∅).
-    @cite{holliday-mandelkern-2024} Example 3.20, Example 4.33. -/
+    Example 3.20, Example 4.33. -/
 theorem epistemic_distrib_failure :
     let pDisj := disj pathFrame propP (orthoNeg pathFrame propP)
     let uncertainty := conj (diamond epistemicScale propP)
@@ -221,7 +221,7 @@ theorem epistemic_distrib_failure :
 
     The full free choice entailment holds for propositions in the image
     of the embedding e_B in epistemic extensions of Boolean algebras
-    (@cite{holliday-mandelkern-2024} Proposition 5.12.3, inheritance
+    (Proposition 5.12.3, inheritance
     principle). The path frame is non-Boolean (distributivity fails),
     so free choice does NOT hold in general in the epistemic scale.
 
@@ -239,7 +239,7 @@ theorem free_choice_at_x3 :
 /-- Free choice FAILS at x₁: ◇(p ∨ ¬p) is true but ◇¬p is false.
     x₁ knows p, so while the disjunction is trivially possible, the
     individual disjunct ¬p is not epistemically accessible.
-    @cite{holliday-mandelkern-2024} Proposition 5.12.3. -/
+    Proposition 5.12.3. -/
 theorem free_choice_fails_at_x1 :
     diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x1 = true ∧
     conj (diamond epistemicScale propP)
@@ -251,7 +251,7 @@ theorem free_choice_fails_at_x1 :
 -- ════════════════════════════════════════════════════
 
 /-- T axiom: □A entails A (knowledge is factive).
-    @cite{holliday-mandelkern-2024} Proposition 4.25. -/
+    Proposition 4.25. -/
 theorem T_axiom_p (x : Poss5) :
     box epistemicScale propP x = true → propP x = true := by
   cases x <;> native_decide
@@ -276,7 +276,7 @@ theorem box_implies_diamond (x : Poss5) :
     yield classical logic. Here, when all possibilities are worlds
     (compat = identity), the ortholattice collapses to a Boolean algebra
     — the same classical-collapse phenomenon from opposite directions.
-    @cite{holliday-mandelkern-2024} Remark 4.9. -/
+    Remark 4.9. -/
 
 /-- Box = Kripke necessity: the compatibility frame's box operator is
     definitionally Kripke necessity evaluation. The compat relation
@@ -288,7 +288,7 @@ theorem box_eq_kripkeEval {S : Type*} [FiniteWorlds S]
 /-- Diamond = Kripke possibility when compat = identity. The
     orthocomplement reduces to Boolean negation, so ◇A = ¬□¬A
     becomes the standard ¬∀¬ = ∃ dual.
-    @cite{holliday-mandelkern-2024} Remark 4.9. -/
+    Remark 4.9. -/
 theorem diamond_eq_kripkeEval_classical {S : Type*} [FiniteWorlds S] [DecidableEq S]
     (F : ModalCompatFrame S)
     (hClassical : ∀ x y, F.compat x y = true → x = y)
@@ -330,7 +330,7 @@ theorem T_axiom_general {S : Type*} [FiniteWorlds S]
     "Either the dog is inside or it must be outside; it's not the case that
     it must be outside; therefore it is inside." The tautological first
     premise carries no information.
-    @cite{holliday-mandelkern-2024} §2.3. -/
+    §2.3. -/
 
 /-- Disjunctive syllogism fails: p ∨ □¬p and ¬□¬p both hold at x₃
     (full uncertainty) but p does not. -/
@@ -349,7 +349,7 @@ theorem disjSyllogism_fails :
     Since p ⊨ ◇p, orthomodularity would give ◇p ⊨ p ∨ (¬p ∧ ◇p).
     But ¬p ∧ ◇p = ⊥ by Wittgenstein's Law, so this collapses to
     ◇p ⊨ p — absurd.
-    @cite{holliday-mandelkern-2024} §2.4. -/
+    §2.4. -/
 
 /-- p entails ◇p: truth implies epistemic possibility. -/
 theorem p_entails_diamond (x : Poss5) (h : propP x = true) :
@@ -371,7 +371,7 @@ theorem orthomodularity_fails :
     algebra, ¬a is the greatest element disjoint from a. In an ortholattice
     this need not hold: p ∧ ◇¬p = ⊥ (Wittgenstein) but ◇¬p ≰ ¬p.
     This is the algebraic root of why ◇¬p ≠ ¬p.
-    @cite{holliday-mandelkern-2024} Proposition 3.7. -/
+    Proposition 3.7. -/
 
 /-- Pseudocomplementation fails: p ∧ ◇¬p = ⊥ but ◇¬p ≰ ¬p.
     x₃ witnesses ◇¬p (might not be raining) without witnessing ¬p. -/
@@ -391,7 +391,7 @@ theorem pseudocomplementation_fails :
     B₀ = {⊥, p, ¬p, ⊤} is a four-element Boolean algebra; B₁ (generated
     by applying □ and ◇ to B₀) is an eight-element Boolean algebra.
     Distributivity only fails when mixing levels.
-    @cite{holliday-mandelkern-2024} §3.2.4. -/
+    §3.2.4. -/
 
 /-- Within-level distributivity (B₁): ◇p ∧ (◇¬p ∨ ◇p) = (◇p ∧ ◇¬p) ∨ (◇p ∧ ◇p).
     All operands from the same epistemic level → distributivity holds. -/

@@ -54,7 +54,7 @@ using P₁ as prior.
 -/
 
 -- ============================================================================
--- §1. Empirical Data (@cite{nouwen-2024}, §3)
+-- §1. Empirical Data (§3)
 -- ============================================================================
 
 namespace Phenomena.Gradability.Intensifiers
@@ -62,7 +62,7 @@ namespace Phenomena.Gradability.Intensifiers
 open Semantics.Lexical.Adjective.Intensification (EvaluativeValence)
 
 /--
-Intensifier degree class (@cite{nouwen-2024}, Figure 2).
+Intensifier degree class (Figure 2).
 
 - **H** (high): targets extreme degrees ("horribly warm" ≈ very warm)
 - **M** (moderate): targets moderate degrees ("pleasantly warm" ≈ nicely warm)
@@ -97,7 +97,7 @@ structure IntensifierEntry where
   attested : Bool := true
   deriving Repr
 
--- Intensifier Data (@cite{nouwen-2024}, Figure 2)
+-- Intensifier Data (Figure 2)
 
 -- Negative-evaluative → High degree (H)
 
@@ -185,7 +185,7 @@ def allEntries : List IntensifierEntry :=
   , unusually, surprisingly, impossibly, remarkably
   , usually_, expectedly_, possibly_ ]
 
--- Goldilocks Effect (@cite{nouwen-2024}, §3)
+-- Goldilocks Effect (§3)
 
 /--
 The Goldilocks effect: evaluative valence determines degree class.
@@ -210,7 +210,7 @@ theorem pleasantly_goldilocks : goldilocksHolds pleasantly = true := by native_d
 theorem nicely_goldilocks : goldilocksHolds nicely = true := by native_decide
 theorem decently_goldilocks : goldilocksHolds decently = true := by native_decide
 
--- Zwicky's Generalization (@cite{nouwen-2024}, §3.2)
+-- Zwicky's Generalization (§3.2)
 
 /--
 Zwicky's generalization: modal adjectives with negative polarity
@@ -354,7 +354,7 @@ Constant evaluative measure (no evaluative content).
 
 Models adverbs like "*usually" — a constant measure provides no
 discriminating information about degree, which is why "*usually warm"
-is vacuous (Zwicky's generalization, as discussed in @cite{nouwen-2024}).
+is vacuous (Zwicky's generalization, as discussed in).
 -/
 def muUsual : EvaluativeMeasure 10 where
   form := "usual"
@@ -375,7 +375,7 @@ theorem usual_constant :
 /--
 Intensified utterances are costlier than bare utterances.
 
-@cite{nouwen-2024} assumes that "horribly warm" has higher production cost
+assumes that "horribly warm" has higher production cost
 than "warm" because it contains more morphological material.
 This cost differential drives the pragmatic reasoning.
 -/
@@ -411,7 +411,7 @@ theorem intensifierS1Score_nonneg :
   · exact le_refl 0
   · exact le_of_lt (exp_pos _)
 
-/-- RSAConfig for the @cite{nouwen-2024} simultaneous dual-threshold model.
+/-- RSAConfig for the simultaneous dual-threshold model.
 
     Extends @cite{lassiter-goodman-2017} threshold RSA with a second threshold
     for the evaluative adverb. L1 jointly infers height, adjective threshold,
@@ -501,12 +501,12 @@ theorem pleasantly_dominates_horribly_at_moderate :
   rsa_predict
 
 -- ============================================================================
--- Sequential Model (@cite{nouwen-2024}'s key innovation)
+-- Sequential Model (key innovation)
 -- ============================================================================
 
 /-! ## Sequential Dual-Threshold Model
 
-@cite{nouwen-2024}'s key theoretical contribution: the evaluative adverb and
+key theoretical contribution: the evaluative adverb and
 base adjective apply sequentially rather than simultaneously. The listener
 first updates beliefs via the evaluative measure, then applies the adjective
 threshold to the resulting posterior:
@@ -678,7 +678,7 @@ theorem seq_pleasantly_prefers_moderate :
 
 /-! ## Zwicky Vacuity: Derived from RSA
 
-@cite{nouwen-2024} §5: Positive modal adverbs (*usually, *expectedly) cannot
+§5: Positive modal adverbs (*usually, *expectedly) cannot
 serve as intensifiers because their evaluative measure is constant across
 heights, providing no discriminating information about degree. In the
 sequential model, the evaluative step with a constant measure preserves
@@ -705,7 +705,7 @@ def muUnusualN : Height → ℕ := muHorrible
 
 /-- Negative modal and negative evaluative measures are structurally identical.
     This is the semantic foundation of why both types make good intensifiers
-    (@cite{nouwen-2024} §5: "the corresponding measure function has a shape
+    (§5: "the corresponding measure function has a shape
     similar to that of negative evaluatives"). -/
 theorem muUnusualN_eq_muHorrible : muUnusualN = muHorrible := rfl
 

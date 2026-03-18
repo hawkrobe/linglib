@@ -75,7 +75,7 @@ open Fragments.Japanese
 -- ============================================================================
 
 /-- Shape-based classifiers in the Japanese inventory decompose into
-    three dimensionality classes (@cite{downing-1996} Ch. 5). -/
+    three dimensionality classes (Ch. 5). -/
 def shapeClassifiers : List ClassifierEntry :=
   Classifiers.allClassifiers.filter (·.encodes .shape)
 
@@ -119,7 +119,7 @@ theorem human_has_register_variant :
 -- ============================================================================
 
 /-- Distribution of classifiers in anaphoric examples
-    (@cite{downing-1996} Ch. 6, Table 6.1, n = 55). -/
+    (Ch. 6, Table 6.1, n = 55). -/
 structure AnaphoricDistribution where
   classifier : ClassifierEntry
   count : Nat
@@ -141,7 +141,7 @@ theorem nin_dominates_anaphoric :
     = some 48 := by native_decide
 
 /-- Distribution of numerals in anaphoric classifier examples
-    (@cite{downing-1996} Ch. 6, Table 6.2, n = 55).
+    (Ch. 6, Table 6.2, n = 55).
     Numeral 1 is absent — explained by competition with zero anaphora. -/
 structure NumeralDistribution where
   numeral : Nat
@@ -160,7 +160,7 @@ theorem two_dominates_anaphoric :
     = some 41 := by native_decide
 
 /-- Numeral 1 is absent from anaphoric classifier constructions.
-    @cite{downing-1996} explains: 'one' + CL has low contrastive
+    explains: 'one' + CL has low contrastive
     information potential and competes with zero anaphora. -/
 theorem one_absent_from_anaphoric :
     anaphoricNumeralData.all (·.numeral ≠ 1) = true := by native_decide
@@ -169,7 +169,7 @@ theorem one_absent_from_anaphoric :
 -- § 4. Individuation Bridge (Ch. 7 ↔ Chierchia 1998)
 -- ============================================================================
 
-/-- @cite{downing-1996} Ch. 7 discusses classifier phrases as individuators.
+/-- Ch. 7 discusses classifier phrases as individuators.
     @cite{chierchia-1998}'s later linking hypothesis formalizes this:
     [+arg, -pred] languages have kind-denoting bare nouns and need classifiers
     for individuation. The strict correlation is contested (see module docstring),
@@ -205,7 +205,7 @@ theorem classifiers_carry_individuation_info :
 
 /-- Seven recurrent semantic relations between the independent sense
     of the classifier morpheme and the classifier category.
-    Six are from @cite{downing-1996} Ch. 5, Table 5.2; the seventh
+    Six are from Ch. 5, Table 5.2; the seventh
     (`sharedQuality`) is attested in non-Japanese languages and noted
     by Downing as recurring cross-linguistically but absent in Japanese. -/
 inductive MorphemeCategoryRelation where
@@ -240,7 +240,7 @@ structure MorphemeRelationWitness where
   independentMeaning : String
   deriving Repr
 
-/-- Concrete @cite{downing-1996} Table 5.2 morpheme-category relation
+/-- Concrete Table 5.2 morpheme-category relation
     assignments for classifiers in our inventory. Each entry records
     the classifier, the relation type, and the independent lexical
     meaning of the morpheme that motivates the relation. -/
@@ -287,7 +287,7 @@ theorem sortal_dominance :
   native_decide
 
 /-- Function-based classifiers are the largest semantic group,
-    confirming @cite{downing-1996}'s observation that the system
+    confirming observation that the system
     concentrates on interactionally significant categories. -/
 theorem function_classifiers_numerous :
     (Classifiers.allClassifiers.filter (·.encodes .function)).length ≥ 8 := by
@@ -297,7 +297,7 @@ theorem function_classifiers_numerous :
 -- § 7. Core Inventory Completeness (Table 1.1)
 -- ============================================================================
 
-/-- The core inventory from @cite{downing-1996} Table 1.1 has exactly 27
+/-- The core inventory from Table 1.1 has exactly 27
     classifiers, all of which are represented in the Japanese fragment. -/
 theorem core_inventory_complete :
     Classifiers.coreClassifiers.length = 27 := by native_decide
@@ -337,7 +337,7 @@ theorem maritime_size_split :
 -- § 8. Frequency Distribution (Ch. 3, Table 3.1)
 -- ============================================================================
 
-/-- Frequency data from @cite{downing-1996} Ch. 3, Table 3.1:
+/-- Frequency data from Ch. 3, Table 3.1:
     raw counts of classifiers in a 500-form corpus sample
     (first 50 uses from each of five works of fiction + 250 forms
     from transcribed conversations and oral narrative). -/
@@ -347,7 +347,7 @@ structure FrequencyEntry where
   deriving Repr
 
 /-- Frequency distribution of classifiers from our inventory that appear in
-    @cite{downing-1996} Table 3.1 (n = 500). Classifiers with 0 occurrences
+    Table 3.1 (n = 500). Classifiers with 0 occurrences
     in the sample are omitted. -/
 def frequencyData : List FrequencyEntry :=
   [ { classifier := Classifiers.nin,  count := 201 }
@@ -374,7 +374,7 @@ theorem nin_most_frequent :
     = some 201 := by native_decide
 
 /-- 人 nin and つ tsu together account for 316/500 = 63% of all classifier
-    uses, a striking concentration that @cite{downing-1996} highlights as
+    uses, a striking concentration that highlights as
     the major frequency finding (Ch. 3). -/
 theorem nin_tsu_dominate :
     let ninCount := 201
@@ -391,7 +391,7 @@ theorem top_five_dominate :
 
 /-- Quality classifiers (shape-based: hon, mai, ko) are collectively more
     frequent than any individual kind classifier (function-based like ken,
-    dai). @cite{downing-1996} Ch. 3 observes that "classifiers denoting
+    dai). Ch. 3 observes that "classifiers denoting
     categories united by a common shape ... are used relatively more often
     than most of the 'kind-based' classifiers." -/
 theorem quality_over_kind_classifiers :

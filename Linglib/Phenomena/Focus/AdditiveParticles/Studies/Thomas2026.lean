@@ -25,9 +25,9 @@ namespace Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
 
 open Phenomena.Focus.AdditiveParticles
 
--- Argument-Building Examples (COCA, @cite{thomas-2026} §1/§3)
+-- Argument-Building Examples (COCA, §1/§3)
 
-/-- Argument-building "too" from COCA (@cite{thomas-2026}, ex. 1a/14a).
+/-- Argument-building "too" from COCA (ex. 1a/14a).
 ANT = Ernie took Iree in on her own; π = it was a good thing she did.
 Both jointly support the conclusion that Ernie helped Iree a great deal. -/
 def ernieIree : AdditiveParticleDatum :=
@@ -42,7 +42,7 @@ def ernieIree : AdditiveParticleDatum :=
   , source := "Thomas (2026), ex. 1a/14a"
   }
 
-/-- Argument-building "too" from COCA (@cite{thomas-2026}, ex. 1b/14b).
+/-- Argument-building "too" from COCA (ex. 1b/14b).
 ANT = I know a couple people who have gotten tickets;
 π = the fine is a hefty one.
 Both jointly support the conclusion: you should worry about traffic
@@ -59,7 +59,7 @@ def trafficTicket : AdditiveParticleDatum :=
   , source := "Thomas (2026), ex. 1b/14b"
   }
 
-/-- Argument-building "too" from COCA (@cite{thomas-2026}, ex. 1c/14c/65).
+/-- Argument-building "too" from COCA (ex. 1c/14c/65).
 ANT = A room just opened up at this hotel;
 π = It looks kind of fancy.
 Both jointly support the conclusion: this hotel would be a good place
@@ -76,13 +76,13 @@ def hotelRoom : AdditiveParticleDatum :=
   , source := "Thomas (2026), ex. 1c/14c/65"
   }
 
-/-- All argument-building examples from @cite{thomas-2026}. -/
+/-- All argument-building examples from. -/
 def argumentBuildingExamples : List AdditiveParticleDatum :=
   [ernieIree, trafficTicket, hotelRoom]
 
 -- Standard (Focus-Alternative) Examples
 
-/-- Standard focus-alternative "too" (@cite{thomas-2026}, ex. 5a/10/21).
+/-- Standard focus-alternative "too" (ex. 5a/10/21).
 ANT = "I like pizza", π = "I like spaghetti".
 Both are partial answers to "What do you like?" -/
 def pizzaSpaghetti : AdditiveParticleDatum :=
@@ -97,7 +97,7 @@ def pizzaSpaghetti : AdditiveParticleDatum :=
   , source := "Thomas (2026), ex. 5a/10/21"
   }
 
-/-- Standard additive presupposition example (@cite{thomas-2026}, ex. 2/68).
+/-- Standard additive presupposition example (ex. 2/68).
 Q: Who did Avery invite?
 ANT = She invited Bailey (and Cameron). π = She invited Dana. -/
 def averyInvited : AdditiveParticleDatum :=
@@ -119,7 +119,7 @@ def standardExamples : List AdditiveParticleDatum :=
 -- Infelicitous Examples
 
 /-- Infelicitous: π entails the resolution — violates non-triviality
-(@cite{thomas-2026}, ex. 11/29a/73).
+(ex. 11/29a/73).
 ANT = "Sam is happy", π = "He's ecstatic".
 Since "ecstatic" entails "happy", ⟦π⟧ ⊆ RQ|_{ANT∩⟦π⟧} = |Sam is ecstatic|,
 violating Def. 64c.i. -/
@@ -136,7 +136,7 @@ def happyEcstatic : AdditiveParticleDatum :=
   }
 
 /-- Infelicitous: reversed argumentative orientation — no suitable RQ
-(@cite{thomas-2026}, ex. 15a/19a).
+(ex. 15a/19a).
 In the context of (14a) where Ernie's actions are evaluated positively,
 replacing "good thing" with "bad thing" reverses the argumentative
 direction. No RQ satisfies both the Antecedent and Conjunction Conditions. -/
@@ -153,7 +153,7 @@ def badThingSheDidToo : AdditiveParticleDatum :=
   }
 
 /-- Infelicitous: conjunction provides no additional evidence — fails
-Conjunction Condition (@cite{thomas-2026}, ex. 25/72B).
+Conjunction Condition (ex. 25/72B).
 ANT = "She invited Bailey and Cameron", π = "Dogs are mammals".
 π provides no information about who Avery invited. -/
 def dogsAreMammals : AdditiveParticleDatum :=
@@ -169,7 +169,7 @@ def dogsAreMammals : AdditiveParticleDatum :=
   }
 
 /-- Infelicitous: weaker alternative works just as well — violates
-maximality (@cite{thomas-2026}, ex. 30/74).
+maximality (ex. 30/74).
 ANT = "Avery plays an instrument", π = "Bailey plays the cello".
 "Bailey plays an instrument" (weaker than π) gives the same evidential
 boost to the resolution. -/
@@ -186,7 +186,7 @@ def instrumentCello : AdditiveParticleDatum :=
   }
 
 /-- Infelicitous: cross-product question — no single RQ satisfies both
-conditions (@cite{thomas-2026}, ex. 13/40/75).
+conditions (ex. 13/40/75).
 Q: Who ate what? ANT = "Avery ate pizza", π = "Bailey ate spaghetti".
 Every resolution to "Who ate what?" specifies what BOTH Avery and Bailey
 ate, so ANT alone provides no information about Bailey's food. -/
@@ -202,13 +202,13 @@ def whoAteWhat : AdditiveParticleDatum :=
   , source := "Thomas (2026), ex. 13/40/75"
   }
 
-/-- Infelicitous examples from @cite{thomas-2026}. -/
+/-- Infelicitous examples from. -/
 def infelicitousExamples : List AdditiveParticleDatum :=
   [happyEcstatic, badThingSheDidToo, dogsAreMammals, instrumentCello, whoAteWhat]
 
 -- Collected Data
 
-/-- All @cite{thomas-2026} examples. -/
+/-- All examples. -/
 def allExamples : List AdditiveParticleDatum :=
   argumentBuildingExamples ++ standardExamples ++ infelicitousExamples
 

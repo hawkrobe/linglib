@@ -44,7 +44,7 @@ namespace Phenomena.Ellipsis.ClarificationEllipsis
 -- ════════════════════════════════════════════════════
 
 /-- The two readings of a clarification ellipsis.
-@cite{ginzburg-cooper-2004} ex. 4b–c. -/
+ex. 4b–c. -/
 inductive CEReading where
   /-- "Are you asking whether p?" — polar question about propositional content.
       Paraphrasable as a polar interrogative. Presupposes shared belief about
@@ -82,7 +82,7 @@ structure CEDatum where
 -- ════════════════════════════════════════════════════
 
 /-- CE of a proper name: the running example.
-@cite{ginzburg-cooper-2004} ex. 4a. -/
+ex. 4a. -/
 def ceProperName : CEDatum where
   antecedent := "Did Bo finagle a raise?"
   fragment := "Bo?"
@@ -92,7 +92,7 @@ def ceProperName : CEDatum where
   source := "Ginzburg & Cooper (2004) ex. 4a"
 
 /-- CE of a rare word: clarifying lexical content.
-@cite{ginzburg-cooper-2004} ex. 4a. -/
+ex. 4a. -/
 def ceRareWord : CEDatum where
   antecedent := "Did Bo finagle a raise?"
   fragment := "finagle?"
@@ -102,7 +102,7 @@ def ceRareWord : CEDatum where
   source := "Ginzburg & Cooper (2004) ex. 4a"
 
 /-- Non-identical CE: fragment is not phonologically identical to antecedent.
-@cite{ginzburg-cooper-2004} ex. 8a. -/
+ex. 8a. -/
 def ceNonIdentical : CEDatum where
   antecedent := "Did Bo leave?"
   fragment := "My cousin?"
@@ -113,7 +113,7 @@ def ceNonIdentical : CEDatum where
   source := "Ginzburg & Cooper (2004) ex. 8a"
 
 /-- Non-identical CE with category switch.
-@cite{ginzburg-cooper-2004} ex. 8c. -/
+ex. 8c. -/
 def ceNonIdenticalVerb : CEDatum where
   antecedent := "Did you bike to work yesterday?"
   fragment := "Cycle?"
@@ -124,7 +124,7 @@ def ceNonIdenticalVerb : CEDatum where
   source := "Ginzburg & Cooper (2004) ex. 8c"
 
 /-- CE of an indexical with distinct locations: constituent reading only.
-@cite{ginzburg-cooper-2004} ex. 11. -/
+ex. 11. -/
 def ceDistinctLocations : CEDatum where
   antecedent := "Let's hold the conference here."
   fragment := "Here?"
@@ -134,7 +134,7 @@ def ceDistinctLocations : CEDatum where
   source := "Ginzburg & Cooper (2004) ex. 11"
 
 /-- CE of an indexical pronoun across speakers: constituent reading only.
-@cite{ginzburg-cooper-2004} ex. 13a. -/
+ex. 13a. -/
 def ceIndexicalI : CEDatum where
   antecedent := "Can I come in?"
   fragment := "I?"
@@ -144,7 +144,7 @@ def ceIndexicalI : CEDatum where
   source := "Ginzburg & Cooper (2004) ex. 13a"
 
 /-- BNC example: CE of an unknown word.
-@cite{ginzburg-cooper-2004} ex. 6a. -/
+ex. 6a. -/
 def ceSpunyarn : CEDatum where
   antecedent := "you always had er er say every foot he had with a piece of spunyarn in the wire"
   fragment := "Spunyarn?"
@@ -158,7 +158,7 @@ def ceSpunyarn : CEDatum where
 -- ════════════════════════════════════════════════════
 
 /-- Syntactic parallelism: CE fragment must categorially match antecedent sub-utterance.
-@cite{ginzburg-cooper-2004} ex. 10. -/
+ex. 10. -/
 structure SyntacticParallelismDatum where
   antecedent : String
   fragment : String
@@ -169,7 +169,7 @@ structure SyntacticParallelismDatum where
   deriving Repr
 
 /-- Accusative pronoun matching accusative antecedent: acceptable.
-@cite{ginzburg-cooper-2004} ex. 10a. -/
+ex. 10a. -/
 def accMatchOK : SyntacticParallelismDatum where
   antecedent := "I phoned him."
   fragment := "Him?"
@@ -178,7 +178,7 @@ def accMatchOK : SyntacticParallelismDatum where
   source := "Ginzburg & Cooper (2004) ex. 10a"
 
 /-- Nominative pronoun for accusative antecedent: unacceptable.
-@cite{ginzburg-cooper-2004} ex. 10a. -/
+ex. 10a. -/
 def nomMismatchBad : SyntacticParallelismDatum where
   antecedent := "I phoned him."
   fragment := "#he?"
@@ -192,7 +192,7 @@ def nomMismatchBad : SyntacticParallelismDatum where
 
 /-- Clausal readings require shared belief about the sub-utterance's content;
 constituent readings do not. This is the key condition that distinguishes
-the two readings. @cite{ginzburg-cooper-2004} §1.2, ex. 11–13. -/
+the two readings. §1.2, ex. 11–13. -/
 structure SharedBeliefDatum where
   antecedent : String
   fragment : String
@@ -205,7 +205,7 @@ structure SharedBeliefDatum where
   deriving Repr
 
 /-- Same location: shared belief → both readings.
-@cite{ginzburg-cooper-2004} ex. 12. -/
+ex. 12. -/
 def sameLocation : SharedBeliefDatum where
   antecedent := "Let's hold the conference here."
   fragment := "Here?"
@@ -215,7 +215,7 @@ def sameLocation : SharedBeliefDatum where
   source := "Ginzburg & Cooper (2004) ex. 12"
 
 /-- Different locations: no shared belief → constituent only.
-@cite{ginzburg-cooper-2004} ex. 11. -/
+ex. 11. -/
 def differentLocations : SharedBeliefDatum where
   antecedent := "Let's hold the conference here."
   fragment := "Here?"

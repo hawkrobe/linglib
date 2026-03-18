@@ -66,7 +66,7 @@ open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
 /-- A Kripke probability structure: agents have both an information
     partition (S5 accessibility) and a probability assignment at each state.
 
-    This is @cite{fagin-halpern-1994}'s M = (S, π, K₁,...,Kₙ, P), where:
+    This is M = (S, π, K₁,...,Kₙ, P), where:
     - `accessRel` = the accessibility relations Kᵢ (information partitions)
     - `worldCredence` = the probability assignment P mapping (i, s) to Pᵢ,ₛ
 
@@ -86,7 +86,7 @@ structure KripkeKP (W E : Type*) where
     their accessible worlds. Two propositions agreeing on all
     i-accessible worlds from w receive the same credence.
 
-    @cite{fagin-halpern-1994}'s literal CONS (p. 350) says the sample space
+    literal CONS (p. 350) says the sample space
     Sᵢ,ₛ is a subset of Kᵢ(s). Since our `WorldCredence` abstraction does
     not model explicit sample spaces, we capture the operational consequence:
     propositions agreeing on accessible worlds receive equal credence.
@@ -106,7 +106,7 @@ def CONS {W E : Type*} (kp : KripkeKP W E) : Prop :=
     each state. Probability differences arise only from different
     information sets, not from different priors.
 
-    @cite{fagin-halpern-1994}'s OBJ (p. 350): Pᵢ,ₛ = Pⱼ,ₛ for all
+    OBJ (p. 350): Pᵢ,ₛ = Pⱼ,ₛ for all
     i, j, and s. Axiomatized by W8. -/
 def OBJ {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i j : E) (w : W) (φ : BProp W),
@@ -119,11 +119,11 @@ def OBJ {W E : Type*} (kp : KripkeKP W E) : Prop :=
     Under S5 (equivalence relations), probability is constant within
     each information cell.
 
-    Note: @cite{fagin-halpern-1994} distinguishes UNIF (t ∈ Sᵢ,ₛ, the
+    Note: distinguishes UNIF (t ∈ Sᵢ,ₛ, the
     *sample space*) from SDP (t ∈ Kᵢ(s), the *accessible worlds*).
     Since our `WorldCredence` abstraction does not model explicit sample
     spaces, this definition uses accessibility (Kᵢ) and thus corresponds
-    to @cite{fagin-halpern-1994}'s SDP restricted to a single agent
+    to SDP restricted to a single agent
     rather than their literal UNIF. For finite models where Sᵢ,ₛ = Kᵢ(s)
     (which holds under CONS when the sample space equals the accessible
     worlds), the two are equivalent. Axiomatized by W9. -/
@@ -135,7 +135,7 @@ def UNIF {W E : Type*} (kp : KripkeKP W E) : Prop :=
 /-- **SDP** (State-determined probability): the probability distribution
     is determined by the information set.
 
-    @cite{fagin-halpern-1994}'s SDP (p. 351) is a single-agent condition:
+    SDP (p. 351) is a single-agent condition:
     for all i, s, t, if t ∈ Kᵢ(s) then Pᵢ,ₛ = Pᵢ,ₜ. Our formulation
     generalizes to the multi-agent case: if two (agent, state) pairs have
     the same accessible worlds, they have the same credence. This captures
@@ -151,12 +151,12 @@ def SDP {W E : Type*} (kp : KripkeKP W E) : Prop :=
 -- ============================================================================
 
 /-- Normalization: the credence function assigns 1 to the trivially
-    true proposition. This is @cite{fagin-halpern-1994}'s axiom W2. -/
+    true proposition. This is axiom W2. -/
 def Normalized {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i : E) (w : W), kp.worldCredence i w (fun _ => true) = 1
 
 /-- Nonnegativity: credences are non-negative.
-    This is @cite{fagin-halpern-1994}'s axiom W1. -/
+    This is axiom W1. -/
 def Nonnegative {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i : E) (w : W) (φ : BProp W), 0 ≤ kp.worldCredence i w φ
 
@@ -169,7 +169,7 @@ def Nonnegative {W E : Type*} (kp : KripkeKP W E) : Prop :=
     So `Monotone (wcr i w)` says: if φ ⊆ ψ then P(φ) ≤ P(ψ).
 
     This is a standard property of probability measures, following from
-    nonnegativity + additivity (W1 + W3 of @cite{fagin-halpern-1994}).
+    nonnegativity + additivity (W1 + W3 of).
     It is the hypothesis needed for `probCKIter_monotone`.
 
     By reducing to Mathlib's `Monotone`, this connects to the same
@@ -205,7 +205,7 @@ theorem measureMonotone_isProbabilistic {E W : Type*}
     concentrated on accessible worlds, then φ is indistinguishable
     from truth — hence has probability 1.
 
-    This is @cite{fagin-halpern-1994}'s axiom W7:
+    This is axiom W7:
     K_i φ ⇒ (w_i(φ) = 1). -/
 theorem knows_implies_prob_one {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hCONS : CONS kp) (hNorm : Normalized kp)
@@ -228,12 +228,12 @@ theorem knows_implies_prob_one {W E : Type*} [FiniteWorlds W]
     E_G^b(φ)(w) = ∧_{i∈G} [w_i(φ)(w) ≥ b]
 
     When b = 1, coincides with Boolean `everyoneKnows` (under CONS).
-    This is @cite{fagin-halpern-1994}'s E_G^b operator (Section 5). -/
+    This is E_G^b operator (Section 5). -/
 def everyoneProbably {W E : Type*} (wcr : WorldCredence E W)
     (group : List E) (b : ℚ) (φ : BProp W) (w : W) : Bool :=
   group.all fun i => nestedThreshold wcr b i φ w
 
-/-- @cite{fagin-halpern-1994}'s F_G^b iteration for probabilistic common
+/-- F_G^b iteration for probabilistic common
     knowledge (Section 5). Unlike the naive iteration `(E_G^b)^n`, each
     level conjoins φ with the previous level before applying E_G^b:
 
@@ -254,7 +254,7 @@ def probCKIter {W E : Type*} (wcr : WorldCredence E W)
 /-- Probabilistic common knowledge: C_G^b(φ)(w) iff (F_G^b)^k(φ)(w)
     for all k = 1, ..., bound.
 
-    @cite{fagin-halpern-1994}'s C_G^b is the greatest fixed point of
+    C_G^b is the greatest fixed point of
     X ⟺ E_G^b(φ ∧ X) (Lemma 5.1). The iteration `probCKIter` (F_G^b)^k
     converges to this fixed point from above.
 
@@ -332,7 +332,7 @@ private theorem s5_access_eq {W : Type*} {R : AccessRel W}
 
 /-- SDP implies UNIF under S5 accessibility.
 
-    @cite{fagin-halpern-1994} notes (p. 351) that CONS + SDP together
+    notes (p. 351) that CONS + SDP together
     imply UNIF. Under S5 (reflexive + Euclidean), if w' is accessible
     from w then w and w' have the same accessible worlds, so SDP with
     i = j directly gives UNIF.
@@ -374,7 +374,7 @@ theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [FiniteWorlds W]
     if w' is accessible from w, `nestedThreshold θ i φ` gives the same
     value at w and w'.
 
-    This is the formal content of @cite{fagin-halpern-1994}'s observation
+    This is the formal content of observation
     that UNIF enables introspection for probabilistic beliefs. Under UNIF,
     an i-probability formula (w_i(φ) ≥ b) has the same truth value at all
     states within an information cell, which is exactly what this theorem
@@ -393,7 +393,7 @@ theorem unif_threshold_stable {W E : Type*}
 
     w_i(φ) ≥ θ → K_i(w_i(φ) ≥ θ)
 
-    This is @cite{fagin-halpern-1994}'s axiom W9 for the case where
+    This is axiom W9 for the case where
     the formula is a positive i-probability formula. Combined with the
     case where w_i(φ) < θ (which gives K_i(w_i(φ) < θ)), UNIF yields
     Miller's principle: agents are always certain of their own credences.
@@ -417,7 +417,7 @@ theorem unif_positive_introspection {W E : Type*} [FiniteWorlds W]
     ¬(w_i(φ) ≥ θ) → K_i(¬(w_i(φ) ≥ θ))
 
     Together with `unif_positive_introspection`, this completes
-    @cite{fagin-halpern-1994}'s axiom W9: under UNIF, every
+    axiom W9: under UNIF, every
     i-probability formula or its negation is known by agent i. -/
 theorem unif_negative_introspection {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
@@ -435,7 +435,7 @@ theorem unif_negative_introspection {W E : Type*} [FiniteWorlds W]
 -- ============================================================================
 
 /-- The empty proposition has credence 0.
-    This is @cite{fagin-halpern-1994}'s axiom W5: w_i(false) = 0.
+    This is axiom W5: w_i(false) = 0.
     In standard probability, P(∅) = 0 follows from normalization +
     additivity. We state it separately since `WorldCredence` does not
     include additivity as a structural axiom. -/
@@ -448,7 +448,7 @@ def NullEmpty {W E : Type*} (kp : KripkeKP W E) : Prop :=
 
 /-- Miller's principle: w_i(φ) ≥ b · w_i(w_i(φ) ≥ b).
 
-    @cite{fagin-halpern-1994} (p. 352): under UNIF, this axiom connecting
+    (p. 352): under UNIF, this axiom connecting
     higher-order probabilities to first-order probabilities holds. It says
     that the agent's credence in φ is at least b times the agent's credence
     that the agent's credence in φ is at least b.
@@ -463,7 +463,7 @@ def NullEmpty {W E : Type*} (kp : KripkeKP W E) : Prop :=
       w_i(w_i(φ) ≥ b) = 0 (by CONS + NullEmpty), and RHS = 0 ≤ w_i(φ). ✓
 
     Miller's principle completely characterizes uniform structures
-    (@cite{fagin-halpern-1994}, citing Halpern 1991). It is the
+    (citing Halpern 1991). It is the
     probabilistic analogue of the KD45 introspection axioms. -/
 theorem miller_principle {W E : Type*}
     (kp : KripkeKP W E)
@@ -498,7 +498,7 @@ theorem miller_principle {W E : Type*}
 -- §10. Lemma 5.1: C_G^b is the Greatest Pre-Fixed-Point
 -- ============================================================================
 
-/-- **Lemma 5.1** (@cite{fagin-halpern-1994}, Section 5):
+/-- **Lemma 5.1** (Section 5):
     C_G^b(φ) is the greatest fixed-point solution of
     X ⟺ E_G^b(φ ∧ X).
 
@@ -556,7 +556,7 @@ theorem probCK_greatest_prefixedpoint {W E : Type*}
 
 /-! ### Figure 1 Counterexample
 
-@cite{fagin-halpern-1994} (Section 5) shows that the "obvious" definition
+(Section 5) shows that the "obvious" definition
 of probabilistic common knowledge C_G^b as the infinite conjunction
 E_G^b φ ∧ (E_G^b)² φ ∧ ··· is **incorrect**. Their 4-state counterexample
 (Figure 1) demonstrates a structure where the naive iteration succeeds at
@@ -601,7 +601,7 @@ private def fig1Group : List (Fin 2) := [0, 1]
 
 /-- Naive iteration (E_G^b)^k: just iterates everyoneProbably without
     conjoining φ at each level. This is the **incorrect** definition
-    that @cite{fagin-halpern-1994} shows fails for probabilistic CK.
+    that shows fails for probabilistic CK.
     Compare with `probCKIter` which uses the correct F_G^b operator. -/
 def naiveIter {W E : Type*} (wcr : WorldCredence E W)
     (group : List E) (b : ℚ) (φ : BProp W) : ℕ → BProp W

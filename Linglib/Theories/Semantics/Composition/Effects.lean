@@ -167,7 +167,7 @@ end WriterInstances
 
 /-! ### §2 Meta-combinators
 
-@cite{bumford-charlow-2024}'s central contribution: **meta-combinators**
+central contribution: **meta-combinators**
 that build higher-order modes of combination from basic ones. Given any
 binary combinator `(∗) :: σ → τ → ω` (e.g., function application), these
 produce new combinators that work when one or both daughters carry effects.
@@ -191,7 +191,7 @@ variable {σ τ ω : Type}
 /-- **F̄** (Map Left): lift a binary combinator when the left daughter
     carries an effect.
 
-    @cite{bumford-charlow-2024} eq. 2.17a, Figure 4:
+    eq. 2.17a, Figure 4:
     `F̄(∗) E₁ E₂ := (λa. a ∗ E₂) • E₁` -/
 def mapL {F : Type → Type} [Functor F]
     (star : σ → τ → ω) (e₁ : F σ) (e₂ : τ) : F ω :=
@@ -200,7 +200,7 @@ def mapL {F : Type → Type} [Functor F]
 /-- **F̃** (Map Right): lift a binary combinator when the right daughter
     carries an effect.
 
-    @cite{bumford-charlow-2024} eq. 2.17b, Figure 4:
+    eq. 2.17b, Figure 4:
     `F̃(∗) E₁ E₂ := (λb. E₁ ∗ b) • E₂` -/
 def mapR {F : Type → Type} [Functor F]
     (star : σ → τ → ω) (e₁ : σ) (e₂ : F τ) : F ω :=
@@ -209,7 +209,7 @@ def mapR {F : Type → Type} [Functor F]
 /-- **A** (Structured Application): lift when both daughters carry effects
     of the same type, merging them into a single layer.
 
-    @cite{bumford-charlow-2024} eq. 3.10, Figure 7:
+    eq. 3.10, Figure 7:
     `A(∗) E₁ E₂ := η(∗) ⊛ E₁ ⊛ E₂` -/
 def structuredApp {F : Type → Type} [Applicative F]
     (star : σ → τ → ω) (e₁ : F σ) (e₂ : F τ) : F ω :=
@@ -218,7 +218,7 @@ def structuredApp {F : Type → Type} [Applicative F]
 /-- **J** (Join): monadic flattening for when the basic combinator
     produces a nested effect `F(F ω)`.
 
-    @cite{bumford-charlow-2024} eq. 4.22, Figure 8:
+    eq. 4.22, Figure 8:
     `J(∗) E₁ E₂ := μ(E₁ ∗ E₂)` where μ is monadic join. -/
 def joinMode {F : Type → Type} [Monad F]
     (star : σ → τ → F ω) (e₁ : F σ) (e₂ : F τ) : F ω :=
@@ -239,7 +239,7 @@ variable {α β : Type}
 /-- **F̃(>) = fmap.** Map Right applied to forward application is
     functorial map — the forward mapping operation `(•>)`.
 
-    @cite{bumford-charlow-2024} eq. 2.18. -/
+    eq. 2.18. -/
 theorem mapR_fa_eq_fmap {F : Type → Type} [Functor F]
     (f : α → β) (e₂ : F α) :
     mapR fa' f e₂ = f <$> e₂ := rfl
@@ -247,7 +247,7 @@ theorem mapR_fa_eq_fmap {F : Type → Type} [Functor F]
 /-- **F̄(<) = fmap.** Map Left applied to backward application is
     functorial map — the backward mapping operation `(•<)`.
 
-    @cite{bumford-charlow-2024} eq. 2.18. -/
+    eq. 2.18. -/
 theorem mapL_ba_eq_fmap {F : Type → Type} [Functor F]
     (e₁ : F α) (f : α → β) :
     mapL ba' e₁ f = f <$> e₁ := rfl
@@ -255,7 +255,7 @@ theorem mapL_ba_eq_fmap {F : Type → Type} [Functor F]
 /-- **Eq. 3.6: (•) = η + (⊛).** The functorial map decomposes as
     pure (η) the function, then applicatively sequence (⊛).
 
-    @cite{bumford-charlow-2024} eq. 3.6: `k • m := η k ⊛ m` -/
+    eq. 3.6: `k • m := η k ⊛ m` -/
 theorem fmap_eq_pure_ap {F : Type → Type}
     [Applicative F] [LawfulApplicative F] {α β : Type}
     (f : α → β) (m : F α) :
@@ -266,7 +266,7 @@ theorem fmap_eq_pure_ap {F : Type → Type}
     `A(∗)(η a)(E₂) = F̃(∗)(a)(E₂)`.
 
     Follows from the Homomorphism and Identity laws for applicatives
-    (@cite{bumford-charlow-2024} eq. 3.4). -/
+    (eq. 3.4). -/
 theorem structuredApp_pure_left {F : Type → Type}
     [Applicative F] [LawfulApplicative F]
     (star : σ → τ → ω) (a : σ) (e₂ : F τ) :
@@ -298,20 +298,20 @@ variable {α β : Type}
 
 /-- Functorial application: pure function, effectful argument.
 
-    This is the `(•)` map operation from @cite{bumford-charlow-2024}
+    This is the `(•)` map operation from
     eq. 2.3, with the forward variant `(•>)` from Figure 3. -/
 def fApp {F : Type → Type} [Functor F] (f : α → β) (ma : F α) : F β := f <$> ma
 
 /-- Applicative application: both function and argument effectful.
 
-    This is `(⊛)` from @cite{bumford-charlow-2024} eq. 3.3 — the
+    This is `(⊛)` from eq. 3.3 — the
     applicative functor's sequencing operation. -/
 def aApp {F : Type → Type} [Applicative F] (mf : F (α → β)) (ma : F α) : F β :=
   mf <*> ma
 
 /-- Monadic application: both effectful, with sequencing.
 
-    Enabled by `(≫=)` from @cite{bumford-charlow-2024} Ch. 4. Every
+    Enabled by `(≫=)` from Ch. 4. Every
     monad determines an applicative via eq. 4.19a:
     `F ⊛ X = F ≫= λf. f • X`. -/
 def mApp {F : Type → Type} [Monad F] (mf : F (α → β)) (ma : F α) : F β :=
@@ -336,7 +336,7 @@ theorem aApp_pure_left {F : Type → Type} [Applicative F] [LawfulApplicative F]
 /-- Applicative application = Structured Application applied to FA.
 
     `(⊛)` is `A(>)` — the meta-combinator A instantiated to forward
-    application (@cite{bumford-charlow-2024} eq. 3.10). -/
+    application (eq. 3.10). -/
 theorem aApp_eq_structuredApp_fa {F : Type → Type}
     [Applicative F] [LawfulApplicative F]
     (mf : F (α → β)) (ma : F α) :
@@ -353,7 +353,7 @@ end GeneralizedApplication
 
 /-! ### §4 The W ⊣ R adjunction for binding
 
-@cite{bumford-charlow-2024} §5.1 proposes that binding arises from an
+§5.1 proposes that binding arises from an
 **adjunction** between the output effect W (= product) and the input
 effect R (= reader). The adjunction W ⊣ R says that functions out of
 pairs `α × ι → β` are isomorphic to curried functions `α → ι → β` —
@@ -375,12 +375,12 @@ variable {ι α β : Type}
 
 /-- **Φ** (currying): convert from uncurried to curried form.
 
-    @cite{bumford-charlow-2024} eq. 5.3: `Φ := λcaλx. c ⟨a, x⟩` -/
+    eq. 5.3: `Φ := λcaλx. c ⟨a, x⟩` -/
 def Φ (c : α × ι → β) (a : α) (x : ι) : β := c (a, x)
 
 /-- **Ψ** (uncurrying): convert from curried to uncurried form.
 
-    @cite{bumford-charlow-2024} eq. 5.3: `Ψ := λk⟨a, x⟩. k a x` -/
+    eq. 5.3: `Ψ := λk⟨a, x⟩. k a x` -/
 def Ψ (k : α → ι → β) (p : α × ι) : β := k p.1 p.2
 
 /-- Φ and Ψ are inverses (curry-uncurry round-trip). -/
@@ -392,12 +392,12 @@ theorem Ψ_Φ_id (c : α × ι → β) : Ψ (Φ c) = c := by
 
 /-- **η** (unit) of W ⊣ R: `η a x = ⟨a, x⟩`.
 
-    @cite{bumford-charlow-2024} eq. 5.4: `η := Φ id` -/
+    eq. 5.4: `η := Φ id` -/
 def adj_η (a : α) (x : ι) : α × ι := (a, x)
 
 /-- **ε** (co-unit) of W ⊣ R: `ε ⟨f, x⟩ = f x`.
 
-    @cite{bumford-charlow-2024} eq. 5.4: `ε := Ψ id`
+    eq. 5.4: `ε := Ψ id`
 
     The co-unit extracts the value by applying the stored function
     to the stored referent — this IS binding resolution. -/
@@ -415,7 +415,7 @@ theorem adj_ε_eq : @adj_ε ι α = Ψ id := rfl
     sentence body `κ` has been partially applied to `x`, we get
     `ε(κ x, x) = κ x x = W κ x`.
 
-    This connects @cite{bumford-charlow-2024}'s adjunction-based binding
+    This connects adjunction-based binding
     to the W combinator in `Binding.lean`. -/
 theorem adj_counit_yields_W (κ : ι → ι → β) (x : ι) :
     adj_ε (κ x, x) = W κ x := rfl
@@ -438,7 +438,7 @@ section CounitCombinator
 
 /-! #### The C meta-combinator
 
-@cite{bumford-charlow-2024} eq. 5.8, Figure 10: the **co-unit** meta-combinator
+eq. 5.8, Figure 10: the **co-unit** meta-combinator
 uses the adjunction's ε to compose W-computations (antecedent storage) with
 R-computations (pronoun resolution). For W ⊣ R, C reduces to unpacking the
 stored referent and feeding it to the reader function. -/
@@ -447,7 +447,7 @@ variable {ι σ τ ω : Type}
 
 /-- **C** (Co-unit): the adjunction-based meta-combinator for binding.
 
-    @cite{bumford-charlow-2024} eq. 5.8, Figure 10:
+    eq. 5.8, Figure 10:
     `C(∗) E₁ E₂ := ε((λl. (λr. l ∗ r) • E₂) • E₁)`
 
     For the W ⊣ R adjunction (§5.1), where W α = α × ι (product)
@@ -477,7 +477,7 @@ theorem counitApp_via_adj_ε (star : σ → τ → ω) (e₁ : σ × ι) (e₂ :
     reader, C(>) reduces to the W combinator from `Binding.lean`:
     `C(>) ⟨κ x, x⟩ id = κ x x = W κ x`.
 
-    This connects @cite{bumford-charlow-2024}'s adjunction mechanism
+    This connects adjunction mechanism
     (their central §5 contribution) to the classical duplicator
     combinator that underlies binding. -/
 theorem counitApp_reflexive_is_W (κ : ι → ι → ω) (x : ι) :
@@ -491,7 +491,7 @@ end CounitCombinator
 
 /-! ### §5 Effect operations and handlers
 
-Named operations from @cite{bumford-charlow-2024}, connecting existing
+Named operations from, connecting existing
 linglib infrastructure to the effect/handler pattern.
 
 **Effects** (introduce computational context):
@@ -553,7 +553,7 @@ variable {W : Type}
     the at-issue content is the value, the CI is the log.
 
     This connects @cite{potts-2005}'s two-dimensional semantics to
-    @cite{bumford-charlow-2024}'s Writer effect (their W constructor
+    Writer effect (their W constructor
     in Table 2). -/
 def twoDimToWriter (p : TwoDimProp W) : Writer (W → Bool) (W → Bool) :=
   ⟨p.atIssue, [p.ci]⟩
@@ -573,7 +573,7 @@ section ScopeBridge
 
 /-- A generalized quantifier IS a `Cont Bool Entity` value.
 
-    @cite{bumford-charlow-2024} Ch. 4: the continuation monad is the
+    Ch. 4: the continuation monad is the
     algebraic effect for scope-taking. A GQ `(e → t) → t` IS
     `Cont Bool Entity` by definition. -/
 def gqAsCont {m : Model} (gq : (m.Entity → Bool) → Bool) : Cont Bool m.Entity :=
@@ -664,7 +664,7 @@ section BindingBridge
 
 /-! #### Binding via the C meta-combinator
 
-Worked derivation connecting C (@cite{bumford-charlow-2024} eq. 5.8) to
+Worked derivation connecting C (eq. 5.8) to
 existing binding infrastructure over the toy model.
 
 The **W combinator** `W κ x = κ x x` is the shared link between three
@@ -675,14 +675,14 @@ independent binding mechanisms:
 - **@cite{charlow-2018}'s Reader join**: `denotGJoin body = W body`
   (proven in `Charlow2018.lean:denotGJoin_is_W`)
 
-The derivation follows @cite{bumford-charlow-2024} §5.1: the subject
+The derivation follows §5.1: the subject
 stores itself as an antecedent via `▷(x) = ⟨x, x⟩` (a W-computation),
 the reflexive pronoun is the identity reader (an R-computation), and
 C resolves the binding by feeding the stored referent to the reader. -/
 
 /-- Antecedent storage: `▷(x) = ⟨x, x⟩`.
 
-    @cite{bumford-charlow-2024} eq. 5.1b: an entity stores its
+    eq. 5.1b: an entity stores its
     referent in the W (product) effect, making it available for
     downstream binding via the co-unit ε. -/
 def store {α : Type} (x : α) : α × α := (x, x)
@@ -709,7 +709,7 @@ theorem john_sees_himself_via_C :
 /-- C-based binding agrees with H&K assignment-based binding:
     both compute `sees(g[1↦j](1), g[1↦j](1)) = sees(j, j)`.
 
-    This connects @cite{bumford-charlow-2024}'s adjunction mechanism
+    This connects adjunction mechanism
     to @cite{heim-kratzer-1998}'s predicate abstraction. -/
 theorem binding_C_agrees_with_hk (g : Assignment toyModel) :
     counitApp ba' (store ToyEntity.john)
@@ -848,7 +848,7 @@ the same operation `f e e`:
 |--------|-----------|------------|------|
 | @cite{heim-kratzer-1998} | `denotGJoin` (μ) | `λg. f g g` | `Variables.lean` |
 | @cite{barker-shan-2014} | `W` (duplicator) | `W κ x = κ x x` | `Binding.lean` |
-| @cite{bumford-charlow-2024} | `adj_ε` (co-unit) | `ε(f e, e) = (f e) e` | `Effects.lean` §4 |
+| | `adj_ε` (co-unit) | `ε(f e, e) = (f e) e` | `Effects.lean` §4 |
 
 The individual two-way bridges exist:
 - `denotGJoin_is_W` (`Charlow2018.lean`)
@@ -895,7 +895,7 @@ end BindingUnification
 
 /-! ### §9 Indeterminacy effect
 
-The **indeterminacy** effect — labeled `S` in @cite{bumford-charlow-2024}'s
+The **indeterminacy** effect — labeled `S` in's
 Table 2 — is the set monad `(S, η, ⫝̸)` from @cite{charlow-2020},
 formalized in `SetMonad.lean`.
 

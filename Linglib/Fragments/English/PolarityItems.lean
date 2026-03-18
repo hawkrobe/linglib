@@ -93,7 +93,7 @@ def atAll : PolarityItemEntry :=
   , baseForce := .degree
   , licensingContexts :=
       [.negation, .nobody, .conditional_ant, .question]
-  , scalarDirection := .strengthening -- emphatic: "not at all" = complete negation (@cite{israel-2001} Figure 1)
+  , scalarDirection := .strengthening -- emphatic: "not at all" = complete negation (Figure 1)
   , scalarValue := .low              -- minimal degree
   , canonicity := .canonical
   , notes := "Degree emphasis; 'Did you sleep at all?'"
@@ -136,7 +136,7 @@ def liftAFinger : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
-  , scalarDirection := .strengthening  -- emphatic minimizer (@cite{israel-2001} §1, Figure 1)
+  , scalarDirection := .strengthening  -- emphatic minimizer (§1, Figure 1)
   , scalarValue := .low           -- minimal effort (a finger, not a hand)
   , canonicity := .canonical      -- low-value NPI = canonical
   , likelihoodEffect := .impeding -- patient/increment: more effort → less likely
@@ -150,7 +150,7 @@ def budgeAnInch : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .degree
   , licensingContexts := [.negation, .nobody, .without_clause]
-  , scalarDirection := .strengthening  -- emphatic minimizer (@cite{israel-2001} §1, Figure 1)
+  , scalarDirection := .strengthening  -- emphatic minimizer (§1, Figure 1)
   , scalarValue := .low           -- minimal distance (an inch)
   , canonicity := .canonical      -- low-value NPI = canonical
   , likelihoodEffect := .impeding -- increment: more distance → less likely
@@ -260,7 +260,7 @@ def rather : PolarityItemEntry :=
   }
 
 -- ----------------------------------------------------------------------------
--- Canonical Emphatic PPIs (@cite{israel-2001} Figure 1: high value, emphatic)
+-- Canonical Emphatic PPIs (Figure 1: high value, emphatic)
 -- ----------------------------------------------------------------------------
 
 /-- "tons of" - canonical emphatic PPI (high value)
@@ -273,7 +273,7 @@ def tonsOf : PolarityItemEntry :=
   , scalarDirection := .strengthening  -- emphatic: maximal quantity
   , scalarValue := .high               -- high on quantity scale
   , canonicity := .canonical           -- high-value emphatic PPI = canonical
-  , notes := "@cite{israel-2001} Figure 1: canonical emphatic PPI"
+  , notes := "Figure 1: canonical emphatic PPI"
   }
 
 /-- "utterly" - canonical emphatic PPI (high degree)
@@ -286,11 +286,11 @@ def utterly : PolarityItemEntry :=
   , scalarDirection := .strengthening  -- emphatic: maximal degree
   , scalarValue := .high               -- high on degree scale
   , canonicity := .canonical           -- high-value emphatic PPI = canonical
-  , notes := "@cite{israel-2001} Figure 1: canonical emphatic PPI"
+  , notes := "Figure 1: canonical emphatic PPI"
   }
 
 -- ----------------------------------------------------------------------------
--- Inverted NPIs (@cite{israel-2001} §3: maximizer NPIs)
+-- Inverted NPIs (§3: maximizer NPIs)
 -- ----------------------------------------------------------------------------
 
 /-- "wild horses" - inverted emphatic NPI (high scalar value, stimulus role)
@@ -305,7 +305,7 @@ def wildHorses : PolarityItemEntry :=
   , canonicity := .inverted           -- high-value NPI = inverted
   , likelihoodEffect := .facilitating -- stimulus: more powerful → more likely to move
   , morphology := .idiomatic
-  , notes := "@cite{israel-2001} §3: maximizer NPI; stimulus/agent role"
+  , notes := "§3: maximizer NPI; stimulus/agent role"
   }
 
 /-- "all the tea in China" - inverted emphatic NPI (high value, reward role)
@@ -320,7 +320,7 @@ def allTheTeaInChina : PolarityItemEntry :=
   , canonicity := .inverted           -- high-value NPI = inverted
   , likelihoodEffect := .facilitating -- reward: bigger reward → more likely to act
   , morphology := .idiomatic
-  , notes := "@cite{israel-2001} §3: maximizer NPI; reward role"
+  , notes := "§3: maximizer NPI; reward role"
   }
 
 /-- "a ten-foot pole" - inverted emphatic NPI (high value, instrument role)
@@ -335,7 +335,7 @@ def aTenFootPole : PolarityItemEntry :=
   , canonicity := .inverted           -- high-value NPI = inverted
   , likelihoodEffect := .facilitating -- instrument: bigger → easier to reach
   , morphology := .idiomatic
-  , notes := "@cite{israel-2001} §3: maximizer NPI; instrument role"
+  , notes := "§3: maximizer NPI; instrument role"
   }
 
 /-- "in a million years" - inverted emphatic NPI (high temporal value)
@@ -350,11 +350,11 @@ def inAMillionYears : PolarityItemEntry :=
   , canonicity := .inverted           -- high-value NPI = inverted
   , likelihoodEffect := .facilitating -- duration: more time → more likely (punctual event)
   , morphology := .idiomatic
-  , notes := "@cite{israel-2001} §3–4: inverted temporal NPI; bounded interval for punctual event"
+  , notes := "§3–4: inverted temporal NPI; bounded interval for punctual event"
   }
 
 -- ----------------------------------------------------------------------------
--- Inverted PPIs (@cite{israel-2001} §3: minimizer PPIs)
+-- Inverted PPIs (§3: minimizer PPIs)
 -- ----------------------------------------------------------------------------
 
 /-- "at the drop of a hat" - inverted emphatic PPI (low value, stimulus role)
@@ -369,7 +369,7 @@ def atTheDropOfAHat : PolarityItemEntry :=
   , canonicity := .inverted            -- low-value PPI = inverted
   , likelihoodEffect := .facilitating  -- stimulus: any stimulus triggers event
   , morphology := .idiomatic
-  , notes := "@cite{israel-2001} §3: minimizer PPI; stimulus role"
+  , notes := "§3: minimizer PPI; stimulus role"
   }
 
 /-- "in a jiffy" - inverted emphatic PPI (low temporal value)
@@ -384,7 +384,7 @@ def inAJiffy : PolarityItemEntry :=
   , canonicity := .inverted            -- low-value PPI = inverted
   , likelihoodEffect := .facilitating  -- bounded interval: short → event very likely
   , morphology := .idiomatic
-  , notes := "@cite{israel-2001} §3–4: inverted temporal PPI"
+  , notes := "§3–4: inverted temporal PPI"
   }
 
 /-- "for a pittance" - inverted emphatic PPI (low monetary value, reward role)
@@ -399,7 +399,7 @@ def forAPittance : PolarityItemEntry :=
   , canonicity := .inverted            -- low-value PPI = inverted
   , likelihoodEffect := .facilitating  -- reward/price: small cost → exchange more likely
   , morphology := .idiomatic
-  , notes := "@cite{israel-2001} §3–4: inverted pecuniary PPI; reward role"
+  , notes := "§3–4: inverted pecuniary PPI; reward role"
   }
 
 /-- "for a song" - inverted emphatic PPI (low monetary value, reward role)
@@ -414,7 +414,7 @@ def forASong : PolarityItemEntry :=
   , canonicity := .inverted
   , likelihoodEffect := .facilitating
   , morphology := .idiomatic
-  , notes := "@cite{israel-2001} §3: inverted pecuniary PPI; reward role"
+  , notes := "§3: inverted pecuniary PPI; reward role"
   }
 
 -- ============================================================================
@@ -429,7 +429,7 @@ def weakNPIs : List PolarityItemEntry :=
 def strongNPIs : List PolarityItemEntry :=
   [liftAFinger, budgeAnInch, inYears, until_]
 
-/-- Inverted (maximizer) NPIs (@cite{israel-2001} §3) -/
+/-- Inverted (maximizer) NPIs (§3) -/
 def invertedNPIs : List PolarityItemEntry :=
   [wildHorses, allTheTeaInChina, aTenFootPole, inAMillionYears]
 
@@ -444,7 +444,7 @@ def allFCIs : List PolarityItemEntry :=
 def canonicalPPIs : List PolarityItemEntry :=
   [some_ppi, already, somewhat, rather, tonsOf, utterly]
 
-/-- Inverted (minimizer) PPIs (@cite{israel-2001} §3) -/
+/-- Inverted (minimizer) PPIs (§3) -/
 def invertedPPIs : List PolarityItemEntry :=
   [atTheDropOfAHat, inAJiffy, forAPittance, forASong]
 
@@ -492,7 +492,7 @@ def lookup (form : String) : Option PolarityItemEntry :=
 #guard wildHorses.scalarValue == .high
 #guard allTheTeaInChina.scalarValue == .high
 
--- Canonicity: canonical vs inverted (@cite{israel-2001})
+-- Canonicity: canonical vs inverted ()
 #guard liftAFinger.canonicity == .canonical
 #guard budgeAnInch.canonicity == .canonical
 #guard wildHorses.canonicity == .inverted
@@ -506,7 +506,7 @@ def lookup (form : String) : Option PolarityItemEntry :=
 #guard allTheTeaInChina.likelihoodEffect == .facilitating
 #guard atTheDropOfAHat.likelihoodEffect == .facilitating
 
--- Canonical emphatic PPIs: high value, strengthening (@cite{israel-2001} Figure 1)
+-- Canonical emphatic PPIs: high value, strengthening (Figure 1)
 #guard tonsOf.scalarValue == .high
 #guard tonsOf.scalarDirection == .strengthening
 #guard tonsOf.canonicity == .canonical

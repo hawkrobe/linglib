@@ -55,7 +55,7 @@ open DepGrammar
 -- §1: Discontinuity Classification
 -- ============================================================================
 
-/-- Discontinuity types (@cite{osborne-2019}, Ch 8, Table 19). -/
+/-- Discontinuity types (Ch 8, Table 19). -/
 inductive DiscontinuityType where
   | whFronting        -- "Which song do you like?"
   | topicalization    -- "That song, you don't like"
@@ -65,7 +65,7 @@ inductive DiscontinuityType where
   deriving Repr, DecidableEq
 
 /-- Direction of displacement relative to canonical position.
-    @cite{osborne-2019}: wh-fronting, topicalization,
+   : wh-fronting, topicalization,
     NP-internal fronting, and scrambling displace leftward;
     extraposition displaces rightward. -/
 inductive DisplacementDir where
@@ -83,7 +83,7 @@ def displacementDir : DiscontinuityType → DisplacementDir
   | .extraposition    => .lowering
 
 /-- Whether a discontinuity type involves constituent or non-constituent rising.
-    @cite{osborne-2019}: constituent rising = risen catena is a
+   : constituent rising = risen catena is a
     constituent; non-constituent rising = risen catena is not a constituent. -/
 inductive RisingType where
   | constituent     -- Risen catena is a constituent
@@ -99,7 +99,7 @@ inductive RisingType where
 def isContiguous (nodes : List Nat) : Bool :=
   isInterval (nodes.mergeSort (· ≤ ·))
 
-/-- A **risen catena** (@cite{osborne-2019}, Ch 7 §7.10) is a catena whose string yield
+/-- A **risen catena** (Ch 7 §7.10) is a catena whose string yield
     is not contiguous — the catena is connected in the dependency tree but its
     words are separated by intervening material in linear order.
 
@@ -111,15 +111,15 @@ def isRisenCatena (t : DepTree) (nodes : List Nat) : Bool :=
 
 /-- Classify a dependency as rising or lowering based on whether the
     dependent precedes or follows its head in linear order.
-    @cite{osborne-2019}. -/
+   . -/
 def classifyDisplacement (d : Dependency) : DisplacementDir :=
   if d.depIdx < d.headIdx then .rising else .lowering
 
 -- ============================================================================
--- §3: Example Trees — From @cite{osborne-2019}
+-- §3: Example Trees — From
 -- ============================================================================
 
-/-- **Wh-fronting**: "What did you eat?" (@cite{osborne-2019}, Ch 8 §8.2)
+/-- **Wh-fronting**: "What did you eat?" (Ch 8 §8.2)
     Words: what(0) did(1) you(2) eat(3)
     Deps: eat(3) → you(2:nsubj), eat(3) → what(0:obj), eat(3) → did(1:aux)
 
@@ -136,7 +136,7 @@ def whFrontingTree : DepTree :=
 /-- The displaced dependency: eat(3) → what(0). -/
 def whFrontingArc : Dependency := ⟨3, 0, .obj⟩
 
-/-- **Topicalization**: "...but those ideas I do accept" (@cite{osborne-2019}, Ch 8 §8.3)
+/-- **Topicalization**: "...but those ideas I do accept" (Ch 8 §8.3)
     Simplified to core: "Those ideas I do accept"
     Words: those(0) ideas(1) I(2) do(3) accept(4)
     Deps: accept(4) → I(2:nsubj), accept(4) → do(3:aux),
@@ -165,7 +165,7 @@ def topicalizationArc : Dependency := ⟨4, 1, .obj⟩
 
     Risen catena = {uns(1)} — scrambled to pre-subject position.
     The catena {uns(1), gebacken(4)} has non-contiguous yield.
-    @cite{osborne-2019}. -/
+   . -/
 def scramblingTree : DepTree :=
   { words := [ Word.mk' "dass" .SCONJ, Word.mk' "uns" .PRON
              , Word.mk' "Maria" .PROPN, Word.mk' "etwas" .PRON
@@ -174,7 +174,7 @@ def scramblingTree : DepTree :=
             , ⟨4, 2, .nsubj⟩, ⟨4, 3, .obj⟩, ⟨4, 1, .iobj⟩ ]
     rootIdx := 0 }
 
-/-- **Extraposition**: "The idea arose to try again" (@cite{osborne-2019}, Ch 8 §8.6)
+/-- **Extraposition**: "The idea arose to try again" (Ch 8 §8.6)
     Words: the(0) idea(1) arose(2) to(3) try(4) again(5)
     Deps: arose(2) → idea(1:nsubj), idea(1) → the(0:det),
           idea(1) → try(4:acl), try(4) → to(3:mark), try(4) → again(5:advmod)
@@ -239,7 +239,7 @@ theorem extraposition_risen_catena :
 theorem rightDislocation_risen_catena :
     isRisenCatena rightDislocationTree [2, 4] = true := by native_decide
 
-/-- @cite{osborne-2019}: all discontinuity types produce risen catenae. -/
+/--: all discontinuity types produce risen catenae. -/
 theorem all_discontinuities_are_risen_catenae :
     isRisenCatena whFrontingTree [0, 3] = true ∧
     isRisenCatena topicalizationTree [1, 4] = true ∧
@@ -265,7 +265,7 @@ theorem extraposition_is_lowering :
     classifyDisplacement extrapositionArc = .lowering := by native_decide
 
 /-- Rising discontinuities: wh-fronting, topicalization, NP-internal fronting,
-    scrambling. (@cite{osborne-2019}, Ch 8 Table 19). -/
+    scrambling. (Ch 8 Table 19). -/
 theorem rising_types :
     displacementDir .whFronting = .rising ∧
     displacementDir .topicalization = .rising ∧
@@ -273,7 +273,7 @@ theorem rising_types :
     displacementDir .scrambling = .rising := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Lowering discontinuity: extraposition. (@cite{osborne-2019}, Ch 8 Table 19). -/
+/-- Lowering discontinuity: extraposition. (Ch 8 Table 19). -/
 theorem lowering_types :
     displacementDir .extraposition = .lowering := rfl
 

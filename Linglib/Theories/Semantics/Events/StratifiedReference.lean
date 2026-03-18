@@ -51,7 +51,7 @@ def SR {α β : Type*} [SemilatticeSup α]
 -- ════════════════════════════════════════════════════
 
 /-- Universal Stratified Reference: every P-entity has SR.
-    @cite{champollion-2017} eq. (63): SR_{d,g}(P) = ∀x. P(x) → SR_{d,g}(P)(x).
+    eq. (63): SR_{d,g}(P) = ∀x. P(x) → SR_{d,g}(P)(x).
     When this holds, P is "stratified" along dimension d at granularity g. -/
 def SR_univ {α β : Type*} [SemilatticeSup α]
     (d : α → β) (g : β → Prop) (P : α → Prop) : Prop :=
@@ -64,7 +64,7 @@ def SR_univ {α β : Type*} [SemilatticeSup α]
 /-- Stratified Distributive Reference: dimension is a thematic role θ,
     granularity is Atom. SDR_{θ}(P)(e) holds iff e can be decomposed
     into P-parts whose θ-fillers are atoms (individuals).
-    @cite{champollion-2017} eq. (24)/(59).
+    eq. (24)/(59).
 
     SDR captures *distributivity*: "The boys each saw a movie" distributes
     over atomic agents. -/
@@ -84,7 +84,7 @@ def SDR_univ {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 /-- Proper subinterval granularity relative to a fixed outer event e.
     Used by SSR: the runtime of each part must be a proper subinterval
     of the runtime of the whole.
-    @cite{champollion-2017} eq. (38)/(60). -/
+    eq. (38)/(60). -/
 def SSRGranularity {Time : Type*} [LinearOrder Time]
     (outer inner : Ev Time) : Prop :=
   inner.runtime.properSubinterval outer.runtime
@@ -93,7 +93,7 @@ def SSRGranularity {Time : Type*} [LinearOrder Time]
     granularity requires proper subinterval of the outer event's runtime.
     SSR(P)(e) holds iff e can be built from P-parts with strictly
     smaller runtimes.
-    @cite{champollion-2017} eq. (38)/(60).
+    eq. (38)/(60).
 
     SSR captures *atelicity*: predicates compatible with "for"-adverbials
     have SSR. "John ran for an hour" → run has SSR. -/
@@ -114,7 +114,7 @@ def SSR_univ {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
     granularity requires strictly smaller measure value.
     SMR_{μ}(P)(x) holds iff x can be decomposed into P-parts with
     strictly smaller μ-values.
-    @cite{champollion-2017} eq. (53)/(61).
+    eq. (53)/(61).
 
     SMR captures *measurement*: "three pounds of apples" has SMR
     along the weight measure. -/
@@ -145,7 +145,7 @@ abbrev DistConstr {α β : Type*} [SemilatticeSup α]
 
 /-- "each" distributes over atomic θ-fillers.
     Map = θ (thematic role), granularity = Atom.
-    @cite{champollion-2017} §6.4. -/
+    §6.4. -/
 abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (Share : α → Prop) (x : α) : Prop :=
   SDR θ Share x
@@ -153,7 +153,7 @@ abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 /-- "for"-adverbials require SSR: the predicate must have stratified
     subinterval reference (atelicity).
     Map = τ, granularity = proper subinterval.
-    @cite{champollion-2017} §5.3. -/
+    §5.3. -/
 abbrev forConstr {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
     (Share : Ev Time → Prop) (e : Ev Time) : Prop :=
   SSR Share e
@@ -163,7 +163,7 @@ abbrev forConstr {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
 -- ════════════════════════════════════════════════════
 
 /-- SR_univ entails SR for any specific element (instantiation).
-    @cite{champollion-2017} eq. (32): universal → restricted. -/
+    eq. (32): universal → restricted. -/
 theorem sr_univ_entails_restricted {α β : Type*} [SemilatticeSup α]
     {d : α → β} {g : β → Prop} {P : α → Prop}
     (h : SR_univ d g P) {x : α} (hx : P x) : SR d g P x :=
@@ -188,7 +188,7 @@ theorem sdr_mono {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 -- § 9. Meaning Postulates (per-verb distributivity)
 -- ════════════════════════════════════════════════════
 
-/-- Meaning postulates for verb distributivity (@cite{champollion-2017} §6.2–6.3).
+/-- Meaning postulates for verb distributivity (§6.2–6.3).
     These encode which verbs have SDR along which roles.
 
     - `see` is distributive on both agent and theme: "The boys saw the girls"
@@ -211,17 +211,17 @@ class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
   /-- "kill" has SDR along the theme role. -/
   kill_theme_sdr : SDR_univ themeOf kill
   /-- "kill" does NOT have SDR along the agent role (collective causation).
-      @cite{champollion-2017} §6.3: group agents can collectively cause death. -/
+      §6.3: group agents can collectively cause death. -/
   kill_agent_not_sdr : ¬ SDR_univ agentOf kill
   /-- "meet" does NOT have SDR along the agent role (inherently collective).
-      @cite{champollion-2017} §6.3: meeting requires multiple participants. -/
+      §6.3: meeting requires multiple participants. -/
   meet_agent_not_sdr : ¬ SDR_univ agentOf meet
 
 -- ════════════════════════════════════════════════════
 -- § 10. Aspect Bridge (SSR ↔ atelicity)
 -- ════════════════════════════════════════════════════
 
-/-- for-adverbials require SSR (@cite{champollion-2017} §5.3, eq. 39/66).
+/-- for-adverbials require SSR (§5.3, eq. 39/66).
     "John ran for an hour" is felicitous because "run" has SSR.
     "* John arrived for an hour" is infelicitous because "arrive" lacks SSR. -/
 theorem forAdverbial_requires_ssr
@@ -238,7 +238,7 @@ theorem forAdverbial_requires_ssr
     we get a < e, contradicting QUA.
 
     This is strictly stronger than the route through CUM
-    (@cite{champollion-2017} §4.4), which would require additional
+    (§4.4), which would require additional
     mereological axioms (SSR_univ → CUM is false in general: P = "events
     with runtime length ≤ 1" has SSR_univ but not CUM over dense time). -/
 theorem qua_incompatible_with_ssr
@@ -258,7 +258,7 @@ theorem qua_incompatible_with_ssr
 -- ════════════════════════════════════════════════════
 
 /-- The "for"-adverbial adds a duration constraint on the event runtime
-    and requires the predicate to have SSR (@cite{champollion-2017} eq. 39).
+    and requires the predicate to have SSR (eq. 39).
     "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SSR(V)(e). -/
 def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
     [SemilatticeSup (Ev Time)]
@@ -266,7 +266,7 @@ def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
   V e ∧ e.runtime = duration ∧ SSR V e
 
 /-- "in"-adverbials are incompatible with SSR (they require telicity).
-    @cite{champollion-2017} §5.4: "V in δ" requires QUA, which is incompatible
+    §5.4: "V in δ" requires QUA, which is incompatible
     with SSR. Any P-event with SSR has a strict P-part, contradicting QUA. -/
 theorem in_adverbial_incompatible_with_ssr
     {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]

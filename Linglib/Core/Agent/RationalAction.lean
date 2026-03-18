@@ -249,7 +249,7 @@ theorem RationalAction.finset_sum_policy_gt_of_sum_score_gt
 /-!
 ## Luce's Choice Axiom
 
-@cite{luce-1959} showed that the ratio rule `P(a|s) = v(a)/Σv(b)` is
+showed that the ratio rule `P(a|s) = v(a)/Σv(b)` is
 characterized by the **independence of irrelevant alternatives** (IIA): the
 relative probability of two actions depends only on their scores, not on what
 other actions are available.
@@ -267,7 +267,7 @@ section LuceChoiceAxiom
 
 variable {S A : Type*} [Fintype A]
 
-/-- Constant Ratio Rule (@cite{luce-1959}, Theorem 2):
+/-- Constant Ratio Rule (Theorem 2):
     `policy(a₁) · score(a₂) = policy(a₂) · score(a₁)`.
     The odds ratio policy(a₁)/policy(a₂) = score(a₁)/score(a₂). -/
 theorem RationalAction.policy_ratio (ra : RationalAction S A) (s : S) (a₁ a₂ : A) :
@@ -320,7 +320,7 @@ theorem RationalAction.pChoice_sum_eq_one [DecidableEq A] (ra : RationalAction S
 
 /-- IIA core: the ratio of `pChoice` values in any subset equals the score ratio.
     For `a₁, a₂ ∈ T` with `score(a₂) > 0`:
-    `pChoice(a₁, T) · score(a₂) = pChoice(a₂, T) · score(a₁)` (@cite{luce-1959}, Axiom 1). -/
+    `pChoice(a₁, T) · score(a₂) = pChoice(a₂, T) · score(a₁)` (Axiom 1). -/
 theorem RationalAction.pChoice_ratio [DecidableEq A] (ra : RationalAction S A) (s : S)
     (T : Finset A) (a₁ a₂ : A) (h₁ : a₁ ∈ T) (h₂ : a₂ ∈ T) :
     ra.pChoice s T a₁ * ra.score s a₂ = ra.pChoice s T a₂ * ra.score s a₁ := by
@@ -335,7 +335,7 @@ private theorem RationalAction.pChoice_mem [DecidableEq A] (ra : RationalAction 
     ra.pChoice s T a = ra.score s a / ∑ b ∈ T, ra.score s b := by
   simp only [pChoice, ha, hT, ↓reduceIte]
 
-/-- IIA (@cite{luce-1959}, Axiom 1): `P(a, S) = P(a, T) / Σ_{b∈S} P(b, T)` for `S ⊆ T`.
+/-- IIA (Axiom 1): `P(a, S) = P(a, T) / Σ_{b∈S} P(b, T)` for `S ⊆ T`.
     Choice probability from a subset is the conditional probability. -/
 theorem RationalAction.iia [DecidableEq A] (ra : RationalAction S A) (s : S)
     (S' T : Finset A) (hST : S' ⊆ T)
@@ -352,7 +352,7 @@ theorem RationalAction.iia [DecidableEq A] (ra : RationalAction S A) (s : S)
   rw [hsum]
   field_simp
 
-/-- Product rule (@cite{luce-1959}, Theorem 1):
+/-- Product rule (Theorem 1):
     `P(a, T) = P(a, S) · P(S, T)` for `a ∈ S ⊆ T`,
     where `P(S, T) = Σ_{b∈S} score(b) / Σ_{b∈T} score(b)`. -/
 theorem RationalAction.product_rule [DecidableEq A] (ra : RationalAction S A) (s : S)
@@ -374,7 +374,7 @@ noncomputable def RationalAction.scaleBy (ra : RationalAction S A) (k : ℝ) (hk
   score s a := k * ra.score s a
   score_nonneg s a := mul_nonneg (le_of_lt hk) (ra.score_nonneg s a)
 
-/-- Scale invariance (@cite{luce-1959}, Theorem 5): scaling scores by `k > 0` preserves policy. -/
+/-- Scale invariance (Theorem 5): scaling scores by `k > 0` preserves policy. -/
 theorem RationalAction.scaleBy_policy (ra : RationalAction S A) (s : S) (a : A)
     (k : ℝ) (hk : 0 < k) :
     (ra.scaleBy k hk).policy s a = ra.policy s a := by
@@ -386,7 +386,7 @@ theorem RationalAction.scaleBy_policy (ra : RationalAction S A) (s : S) (a : A)
     simp [hs0, hne]
     field_simp
 
-/-- Uniqueness (forward direction, @cite{luce-1959}, Theorem 4):
+/-- Uniqueness (forward direction, Theorem 4):
     If scores are proportional (`score'(s,a) = k · score(s,a)` for some `k > 0`),
     then both agents have the same policy. -/
 theorem RationalAction.policy_eq_of_proportional (ra ra' : RationalAction S A) (s : S)
@@ -651,7 +651,7 @@ end SoftmaxBasic
 
 The exponential parameterization `score = exp(α · utility)` is not a design
 choice — it is the **unique** transformation connecting Luce's ratio scale to
-a utility (interval) scale (@cite{luce-1959}, §2.A; @cite{adams-messick-1958}).
+a utility (interval) scale (§2.A; @cite{adams-messick-1958}).
 
 **Ratio vs interval scales.** Luce's Axiom 1 (IIA) yields a **ratio scale**
 `v`: only ratios `v(a)/v(b)` are meaningful (Theorem 4). Fechner's
@@ -791,7 +791,7 @@ theorem cauchy_mul_exp (g : ℝ → ℝ)
   simp only [h] at this
   rw [← exp_log (hg_pos s), this, mul_comm]
 
-/-- **Fechnerian uniqueness** (@cite{luce-1959}, §2.A; @cite{adams-messick-1958}):
+/-- **Fechnerian uniqueness** (§2.A; @cite{adams-messick-1958}):
     If a ratio scale `v` and interval scale `u` represent the same
     ordering via `v(x)/v(y) = g(u(x) - u(y))` for a strictly monotone
     multiplicative `g`, then `v` is the exponential of `u`.
@@ -1676,7 +1676,7 @@ theorem RationalAction.proportional_of_policy_eq
   field_simp [h₁_ne]
   linarith
 
-/-- Full uniqueness characterization (@cite{luce-1959}, Theorem 4 and its converse):
+/-- Full uniqueness characterization (Theorem 4 and its converse):
     Two agents with positive total scores have the same policy if and only if
     their scores are proportional. -/
 theorem RationalAction.policy_eq_iff_proportional
@@ -1696,13 +1696,13 @@ theorem RationalAction.policy_eq_iff_proportional
 end UniquenessCharacterization
 
 -- ============================================================================
--- §7. Appendix 1: Alternative Forms of Axiom 1 (@cite{luce-1959}, pp. 129–132)
+-- §7. Appendix 1: Alternative Forms of Axiom 1 (pp. 129–132)
 -- ============================================================================
 
 /-!
 ## Alternative Forms of Axiom 1
 
-@cite{luce-1959} proves three equivalent formulations of the choice
+proves three equivalent formulations of the choice
 axiom:
 
 **(a) Ratio form**: There exists a positive function `v` such that
@@ -1754,7 +1754,7 @@ def ChoiceFn.hasPairwiseIIA (cf : ChoiceFn A) : Prop :=
   ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
     cf.prob T a * cf.prob {a, b} b = cf.prob T b * cf.prob {a, b} a
 
-/-- (a) → (b): Ratio form implies product rule (@cite{luce-1959}, Appendix 1). -/
+/-- (a) → (b): Ratio form implies product rule (Appendix 1). -/
 theorem ratio_implies_product (cf : ChoiceFn A)
     (h : cf.hasRatioScale) : cf.hasProductRule := by
   intro S T hST hS _hT a ha
@@ -1769,7 +1769,7 @@ theorem ratio_implies_product (cf : ChoiceFn A)
     exact Finset.sum_congr rfl (λ b hb => hv_rule T b (hST hb))
   rw [hsum]; field_simp
 
-/-- (a) → (c): Ratio form implies pairwise IIA (@cite{luce-1959}, Appendix 1). -/
+/-- (a) → (c): Ratio form implies pairwise IIA (Appendix 1). -/
 theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
     (h : cf.hasRatioScale) : cf.hasPairwiseIIA := by
   intro T a b ha hb
@@ -1780,7 +1780,7 @@ theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
       hv_rule {a, b} b hab_b, hv_rule {a, b} a hab_a]
   ring
 
-/-- (c) → (a): Pairwise IIA implies ratio form (@cite{luce-1959}, Appendix 1).
+/-- (c) → (a): Pairwise IIA implies ratio form (Appendix 1).
     The ratio scale is constructed by fixing a reference element x₀ and
     setting v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀}). Requires normalization
     (probabilities sum to 1) and strict positivity for elements in the choice set. -/
@@ -1840,7 +1840,7 @@ theorem pairwiseIIA_implies_ratio [Inhabited A] (cf : ChoiceFn A)
     _ = v a * 1 := by rw [hsum T hT_ne]
     _ = v a := mul_one _
 
-/-- **Axiom 1 equivalence** (@cite{luce-1959}, Appendix 1):
+/-- **Axiom 1 equivalence** (Appendix 1):
     Ratio form ↔ pairwise IIA (under normalization and positivity). -/
 theorem axiom1_ratio_iff_pairwiseIIA [Inhabited A] (cf : ChoiceFn A)
     (hsum : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, cf.prob T a = 1)

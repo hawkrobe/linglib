@@ -65,7 +65,7 @@ open Core Real Finset
 -- ============================================================================
 
 /-- A **square** of four underlying forms indexed by two binary factors
-    (row = top/bottom, column = left/right). This is @cite{magri-2025}'s
+    (row = top/bottom, column = left/right). This is's
     eq. (12): the four forms `x^{TL}, x^{TR}, x^{BL}, x^{BR}` arranged
     so that rows and columns correspond to independent phonological
     dimensions (e.g., prefix identity × stem-initial obstruent quality).
@@ -87,17 +87,17 @@ structure Square (X : Type) where
 
 /-- A constraint `C` is **insensitive to the row dimension** of a square:
     it assigns the same violation count to forms that share a column.
-    Cf. @cite{magri-2025} Figure 4a. -/
+    Cf. Figure 4a. -/
 def InsensitiveToRow {X : Type} (C : X → ℕ) (sq : Square X) : Prop :=
   C sq.tl = C sq.bl ∧ C sq.tr = C sq.br
 
 /-- A constraint `C` is **insensitive to the column dimension** of a square:
     it assigns the same violation count to forms that share a row.
-    Cf. @cite{magri-2025} Figure 4b. -/
+    Cf. Figure 4b. -/
 def InsensitiveToCol {X : Type} (C : X → ℕ) (sq : Square X) : Prop :=
   C sq.tl = C sq.tr ∧ C sq.bl = C sq.br
 
-/-- **Constraint independence** (@cite{magri-2025} §2.4): the rows and
+/-- **Constraint independence** (§2.4): the rows and
     columns of the square are *independent dimensions* relative to a
     constraint set — each constraint is insensitive to at least one
     dimension (row or column). No constraint can encode an interaction
@@ -138,7 +138,7 @@ def ViolDiffIndependence {n : ℕ} {X : Type}
     -- Or Δₖ is column-insensitive: same along each row
     (Δ k sq.tl = Δ k sq.tr ∧ Δ k sq.bl = Δ k sq.br)
 
-/-- **ME predicts HZ** (@cite{magri-2025} §3.6, eq. 22): when the
+/-- **ME predicts HZ** (§3.6, eq. 22): when the
     violation differences satisfy independence (inherited from constraint
     independence), the weighted sum of violation differences — which
     equals the ME logit probability by `maxent_logit_harmony` —
@@ -172,7 +172,7 @@ theorem me_predicts_hz {n : ℕ} {X : Type}
 
 /-- An *n*-ary harmony function `H` is **separable** if it decomposes
     into a product of powers of unary functions, each attending to a
-    single constraint (@cite{magri-2025} eq. 30):
+    single constraint (eq. 30):
 
     `H(C₁(x,y), …, Cₙ(x,y)) = ∏ₖ (hₖ(Cₖ(x,y)))^{wₖ}`
 
@@ -205,7 +205,7 @@ theorem SeparableHarmony.eval_zero {n : ℕ} (H : SeparableHarmony n) :
 -- ============================================================================
 
 /-- The **ME separable harmony**: each `hₖ(x) = exp(−x)` (the
-    exponential-of-opposite function from @cite{magri-2025} Figure 5a).
+    exponential-of-opposite function from Figure 5a).
     This gives `H_ME(v) = ∏ₖ (exp(−vₖ))^{wₖ} = exp(−Σ wₖvₖ)`. -/
 noncomputable def meSeparable (n : ℕ) (w : Fin n → ℝ) :
     SeparableHarmony n where
@@ -239,7 +239,7 @@ theorem me_separable_eval {n : ℕ} (w : Fin n → ℝ)
 -- § 7: Constraint Rescaling (§5.3, eq. 33–34)
 -- ============================================================================
 
-/-- **Constraint rescaling** (@cite{magri-2025} eq. 33): given a separable
+/-- **Constraint rescaling** (eq. 33): given a separable
     harmony with unary functions `hₖ`, the rescaled constraint is
     `Ĉₖ = −log(hₖ(Cₖ))`.
 
@@ -277,7 +277,7 @@ theorem meSeparable_rescale {n : ℕ} (w : Fin n → ℝ) (k : Fin n) (v : ℕ) 
     (meSeparable n w).rescale k v = (v : ℝ) := by
   simp [SeparableHarmony.rescale, meSeparable, Real.log_exp]
 
-/-- **Any separable harmony is ME under rescaling** (@cite{magri-2025}
+/-- **Any separable harmony is ME under rescaling** (
     eq. 34): `H(C₁, …, Cₙ) = H_ME(Ĉ₁, …, Ĉₙ)` where `Ĉₖ = −log hₖ(Cₖ)`.
 
     This is the key insight: the choice of `hₖ` only affects how
@@ -297,7 +297,7 @@ theorem separable_eq_me_rescaled {n : ℕ} (H : SeparableHarmony n)
 -- § 8: Forward Direction — Separable ⟹ HZ (§5.4)
 -- ============================================================================
 
-/-- **Separable harmonies predict HZ** (@cite{magri-2025} §5.4):
+/-- **Separable harmonies predict HZ** (§5.4):
     for *any* separable harmony `H`, if the rescaled violation differences
     `Δ̂ₖ(x) = Ĉₖ(Cₖ(x,NO)) − Ĉₖ(Cₖ(x,YES))` satisfy independence on a
     square, then the logit rate `log(H(v_YES)/H(v_NO))` satisfies HZ's
@@ -334,7 +334,7 @@ theorem separable_predicts_hz {n : ℕ} {X : Type}
 -- § 9: Backward Direction — HZ ⟹ Separable (§5.5, online appendices)
 -- ============================================================================
 
--- **HZ implies separability** (@cite{magri-2025} main result, §5.5):
+-- **HZ implies separability** (main result, §5.5):
 -- if an n-ary harmony function H predicts HZ's generalization for
 -- *every* constraint set satisfying independence, then H is separable.
 --
@@ -351,7 +351,7 @@ theorem separable_predicts_hz {n : ℕ} {X : Type}
 -- ============================================================================
 
 /-- The **inverse function** `h(x) = 1/(1+x)` used in the non-separable
-    harmony `H(v) = 1 / (1 + Σ wₖvₖ)` (@cite{magri-2025} eq. 27).
+    harmony `H(v) = 1 / (1 + Σ wₖvₖ)` (eq. 27).
     Like ME's `exp(−x)`, it is positive, normalized, and decreasing —
     but the resulting harmony is *not* separable. -/
 noncomputable def inverseFunction (x : ℝ) : ℝ := 1 / (1 + x)
@@ -374,7 +374,7 @@ theorem inverseFunction_strictAntiOn :
   exact div_lt_div_of_pos_left one_pos (by linarith) (by linarith)
 
 /-- The non-separable harmony using the inverse function:
-    `H(v) = 1 / (1 + Σₖ wₖ · vₖ)` (@cite{magri-2025} eq. 27).
+    `H(v) = 1 / (1 + Σₖ wₖ · vₖ)` (eq. 27).
 
     This has the form `H = h(Σ wₖCₖ)` (eq. 26) with `h = inverseFunction`,
     which is *not* separable because the single `h` sees the *sum* of all
@@ -383,7 +383,7 @@ noncomputable def nonSeparableInverseHarmony {n : ℕ} (w : Fin n → ℝ)
     (v : Fin n → ℕ) : ℝ :=
   inverseFunction (∑ k, w k * (v k : ℝ))
 
-/-- **Counterexample** (@cite{magri-2025} §4.4, online appendix D.1):
+/-- **Counterexample** (§4.4, online appendix D.1):
     the non-separable inverse harmony does *not* predict HZ's
     generalization in general.
 

@@ -26,7 +26,7 @@ namespace Phenomena.Questions.MentionSome
 
 /-- Data point distinguishing mention-some from choice readings.
 
-@cite{groenendijk-stokhof-1984}, Section 5.1-5.3: Both yield non-exhaustive answers, but differ
+, Section 5.1-5.3: Both yield non-exhaustive answers, but differ
 in their semantic source and paraphrase possibilities. -/
 structure MentionSomeVsChoiceDatum where
   /-- The question -/
@@ -43,7 +43,7 @@ structure MentionSomeVsChoiceDatum where
 
 /-- Classic mention-some: "Where can I buy X?"
 
-@cite{groenendijk-stokhof-1984}, p. 331: The questioner's practical goal makes a single answer sufficient. -/
+, p. 331: The questioner's practical goal makes a single answer sufficient. -/
 def whereCanIBuy : MentionSomeVsChoiceDatum :=
   { question := "Where can I buy an Italian newspaper?"
   , mentionSomeAnswer := "At the station kiosk"
@@ -83,7 +83,7 @@ def mentionSomeVsChoiceExamples : List MentionSomeVsChoiceDatum :=
 
 /-- Data on embedded mention-some questions under attitude verbs.
 
-@cite{groenendijk-stokhof-1984}, Section 5.3: Paraphrases help identify the reading. -/
+, Section 5.3: Paraphrases help identify the reading. -/
 structure EmbeddedMentionSomeDatum where
   /-- The sentence with embedded question -/
   sentence : String
@@ -101,7 +101,7 @@ structure EmbeddedMentionSomeDatum where
 
 /-- "John knows where he can buy an Italian newspaper" (mention-some).
 
-@cite{groenendijk-stokhof-1984}, (9)-(10): John knows of at least one place that sells them. -/
+, (9)-(10): John knows of at least one place that sells them. -/
 def johnKnowsWherePaper : EmbeddedMentionSomeDatum :=
   { sentence := "John knows where he can buy an Italian newspaper"
   , mentionSomeParaphrase := "There is a place that sells Italian newspapers and John knows it sells them"
@@ -112,7 +112,7 @@ def johnKnowsWherePaper : EmbeddedMentionSomeDatum :=
 
 /-- "John knows who has a pen" - three-way ambiguity.
 
-@cite{groenendijk-stokhof-1984}, Section 5.3: Can be mention-some, choice (which pen), or mention-all. -/
+, Section 5.3: Can be mention-some, choice (which pen), or mention-all. -/
 def johnKnowsWhoHasPen : EmbeddedMentionSomeDatum :=
   { sentence := "John knows who has a pen"
   , mentionSomeParaphrase := "John knows of someone who has a pen (that they have a pen)"
@@ -123,7 +123,7 @@ def johnKnowsWhoHasPen : EmbeddedMentionSomeDatum :=
 
 /-- "John wonders where he can buy an Italian newspaper" (mention-some).
 
-@cite{groenendijk-stokhof-1984}, (11)-(12): John wants to know of some place (not all places). -/
+, (11)-(12): John wants to know of some place (not all places). -/
 def johnWondersWherePaper : EmbeddedMentionSomeDatum :=
   { sentence := "John wonders where he can buy an Italian newspaper"
   , mentionSomeParaphrase := "John wants to know of some place that it sells Italian newspapers"
@@ -157,7 +157,7 @@ def embeddedMentionSomeExamples : List EmbeddedMentionSomeDatum :=
 
 /-- Data illustrating why partial answerhood doesn't capture mention-some.
 
-@cite{groenendijk-stokhof-1984}, Section 5.2: Negative answers satisfy P-ANS but are NOT acceptable
+, Section 5.2: Negative answers satisfy P-ANS but are NOT acceptable
 mention-some answers. This is the key problem with the P-ANS analysis. -/
 structure NegativeAnswerDatum where
   /-- The question -/
@@ -196,7 +196,7 @@ def coffeeNegative : NegativeAnswerDatum :=
 
 /-- Newspaper example.
 
-@cite{groenendijk-stokhof-1984}: Negative answers don't satisfy the questioner's goal. -/
+: Negative answers don't satisfy the questioner's goal. -/
 def newspaperNegative : NegativeAnswerDatum :=
   { question := "Where can I buy an Italian newspaper?"
   , positiveAnswer := "At the station kiosk"
@@ -211,7 +211,7 @@ def negativeAnswerExamples : List NegativeAnswerDatum :=
 
 /-- Data on which verbs allow/block mention-some readings.
 
-@cite{groenendijk-stokhof-1984}, Section 5.4: Verbs like "depends" and "matter" BLOCK mention-some
+, Section 5.4: Verbs like "depends" and "matter" BLOCK mention-some
 because they require complete information about the question. -/
 structure VerbLicensingDatum where
   /-- Example sentence -/
@@ -228,7 +228,7 @@ structure VerbLicensingDatum where
 
 /-- "It depends on who has a pen" - BLOCKS mention-some.
 
-@cite{groenendijk-stokhof-1984}, Section 5.4: "depends" requires knowing the complete answer. -/
+, Section 5.4: "depends" requires knowing the complete answer. -/
 def dependsBlocks : VerbLicensingDatum :=
   { sentence := "It depends on who has a pen"
   , verb := "depends"
@@ -283,7 +283,7 @@ def verbLicensingExamples : List VerbLicensingDatum :=
 
 /-- Data on mention-n readings with numeral quantification.
 
-@cite{groenendijk-stokhof-1984}, Section 5.3 (citing Belnap): Questions like "Where do two unicorns live?"
+, Section 5.3 (citing Belnap): Questions like "Where do two unicorns live?"
 have multiple readings involving cumulative quantification. -/
 structure MentionNDatum where
   /-- The question -/
@@ -340,7 +340,7 @@ def mentionNExamples : List MentionNDatum :=
 
 /-- Data on how human concerns/goals license mention-some.
 
-@cite{groenendijk-stokhof-1984}, Section 5.4: The questioner's practical goal makes partial
+, Section 5.4: The questioner's practical goal makes partial
 information sufficient. -/
 structure HumanConcernDatum where
   /-- The question -/

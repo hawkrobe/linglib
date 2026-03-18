@@ -59,7 +59,7 @@ open Core.Semantics.ContentLayer
 /-- The type of denial, determined by which content layer is targeted.
 
     Each type corresponds to a `ContentLayer` via `targetLayer`. This
-    is the central claim of @cite{van-der-sandt-maier-2003}: the different
+    is the central claim of: the different
     denial types are not different operations, but one mechanism
     (non-monotonic discourse correction) targeting different layers. -/
 inductive DenialType where
@@ -124,7 +124,7 @@ structure DenialDatum where
   retractedContent : String
   /-- What content survives the denial -/
   survivingContent : String := ""
-  /-- Paper example number, if from @cite{van-der-sandt-maier-2003} -/
+  /-- Paper example number, if from -/
   exampleNum : String := ""
   notes : String := ""
   deriving Repr
@@ -135,7 +135,7 @@ structure DenialDatum where
 
 /-- Positive denial: denial does not require negation.
 
-    @cite{van-der-sandt-maier-2003} §2.1, ex. 6: "Mary IS happy" can deny
+    §2.1, ex. 6: "Mary IS happy" can deny
     "Mary is unhappy." The correcting utterance is syntactically positive.
     This demonstrates the paper's central architectural claim: denial is a
     discourse operation (non-monotonic correction), not a syntactic one
@@ -154,7 +154,7 @@ def maryHappy_positive : DenialDatum :=
 -- ════════════════════════════════════════════════════
 
 /-- Propositional denial: negation targets the assertion (at-issue content).
-    @cite{van-der-sandt-maier-2003} §2.2, ex. 5. -/
+    §2.2, ex. 5. -/
 def maryNotHappy : DenialDatum :=
   { assertion := "Mary is happy"
   , denial := "Mary is not happy"
@@ -169,7 +169,7 @@ def maryNotHappy : DenialDatum :=
 -- ════════════════════════════════════════════════════
 
 /-- Presuppositional denial of the king of France.
-    @cite{van-der-sandt-maier-2003} §2.4, ex. 30b. -/
+    §2.4, ex. 30b. -/
 def kingBald_presuppositional : DenialDatum :=
   { assertion := "The king of France is bald"
   , denial := "The king of France is NOT bald"
@@ -180,7 +180,7 @@ def kingBald_presuppositional : DenialDatum :=
   , notes := "The correction targets the existence presupposition, not the predication" }
 
 /-- Presuppositional denial of "stop" (prior-state presupposition).
-    @cite{van-der-sandt-maier-2003} §2.2, ex. 10. -/
+    §2.2, ex. 10. -/
 def stop_presuppositional : DenialDatum :=
   { assertion := "John stopped smoking"
   , denial := "John did not stop smoking"
@@ -190,7 +190,7 @@ def stop_presuppositional : DenialDatum :=
   , exampleNum := "10" }
 
 /-- Presuppositional denial of "know" (factive presupposition).
-    @cite{van-der-sandt-maier-2003} §2.2, ex. 9. -/
+    §2.2, ex. 9. -/
 def know_presuppositional : DenialDatum :=
   { assertion := "Virginia knows that the earth is flat"
   , denial := "Virginia cannot know that the earth is flat"
@@ -205,7 +205,7 @@ def know_presuppositional : DenialDatum :=
 -- ════════════════════════════════════════════════════
 
 /-- Scalar implicature denial: "possible" implicates "not necessary."
-    @cite{van-der-sandt-maier-2003} §2.2, ex. 11 / §2.4, ex. 29b.
+    §2.2, ex. 11 / §2.4, ex. 29b.
 
     "Possible" literally means ◇p; the scalar implicature is ¬□p (not
     necessary). The correction "it is necessary" retracts the implicature
@@ -220,7 +220,7 @@ def possible_necessary : DenialDatum :=
   , exampleNum := "29b" }
 
 /-- Scalar implicature denial with "several."
-    @cite{van-der-sandt-maier-2003} §2.3, ex. 21.
+    §2.3, ex. 21.
 
     "Several" implicates "not all." The correction "all" retracts the
     upper-bound implicature. -/
@@ -234,7 +234,7 @@ def several_all : DenialDatum :=
   , exampleNum := "21" }
 
 /-- Gradable adjective implicature denial: "good" implicates "not excellent."
-    @cite{van-der-sandt-maier-2003} §2.2, ex. 12. -/
+    §2.2, ex. 12. -/
 def good_excellent : DenialDatum :=
   { assertion := "That haggis is good"
   , denial := "That haggis is not good"
@@ -249,7 +249,7 @@ def good_excellent : DenialDatum :=
 -- ════════════════════════════════════════════════════
 
 /-- Connotation denial: "lady" connotes a social role beyond "woman/wife."
-    @cite{van-der-sandt-maier-2003} §2.2, ex. 13. -/
+    §2.2, ex. 13. -/
 def lady_wife : DenialDatum :=
   { assertion := "That was a lady I kissed last night"
   , denial := "That wasn't a lady I kissed last night"
@@ -261,7 +261,7 @@ def lady_wife : DenialDatum :=
   , notes := "Category E: connotation/register denial, mapped to imp layer" }
 
 /-- Register denial: "steed" connotes formality/literary register.
-    @cite{van-der-sandt-maier-2003} §2.2, ex. 14. -/
+    §2.2, ex. 14. -/
 def steed_horse : DenialDatum :=
   { assertion := "That is a steed"
   , denial := "That is not a steed"
@@ -286,7 +286,7 @@ def steed_horse : DenialDatum :=
   = presuppositional denial (targets `pr`: "John lived in Paris before") -/
 
 /-- Propositional reading of "still" denial.
-    @cite{van-der-sandt-maier-2003} §2.3, ex. 19. -/
+    §2.3, ex. 19. -/
 def still_propositional : DenialDatum :=
   { assertion := "John still lives in Paris"
   , denial := "John does NOT still live in Paris"
@@ -297,7 +297,7 @@ def still_propositional : DenialDatum :=
   , exampleNum := "19" }
 
 /-- Presuppositional reading of "still" denial.
-    @cite{van-der-sandt-maier-2003} §2.3, ex. 20. -/
+    §2.3, ex. 20. -/
 def still_presuppositional : DenialDatum :=
   { assertion := "John still lives in Paris"
   , denial := "John does NOT still live in Paris"

@@ -58,7 +58,7 @@ inductive CausalChainPosition where
   deriving DecidableEq, BEq, Repr
 
 /-- Thematic hierarchy from causal chain position.
-    @cite{bohnemeyer-2004} rule (31): participant of a causing subevent
+    rule (31): participant of a causing subevent
     outranks participant of the caused subevent. -/
 def outranks : CausalChainPosition → CausalChainPosition → Bool
   | .head, .tail => true
@@ -72,7 +72,7 @@ theorem tail_does_not_outrank_head : outranks .tail .head = false := rfl
 -- ════════════════════════════════════════════════════
 
 /-- Which end of the causal chain provides the linking default.
-    @cite{bohnemeyer-2004} §7 rule (32):
+    §7 rule (32):
 
     - Imperfective viewpoints align with the initial (causing) subevent →
       the highest-ranking role defines the default → accusative pattern.
@@ -113,7 +113,7 @@ theorem linking_derives_incompletive :
 -- ════════════════════════════════════════════════════
 
 /-- Type of transitivization operation, determined by the causation type
-    of the intransitive base (@cite{bohnemeyer-2004} §6, rules 26–27). -/
+    of the intransitive base (§6, rules 26–27). -/
 inductive TransitivizationType where
   | applicative  -- internally caused: *-t*, add applied object linked to U
   | causative    -- externally caused: *-s*, add instigator linked to A
@@ -122,7 +122,7 @@ inductive TransitivizationType where
 /-- The causation type of the intransitive base determines which
     transitivization operation applies.
 
-    @cite{bohnemeyer-2004} rules (26)–(27):
+    rules (26)–(27):
     - Internally caused base (sing, walk, play): *-t* applicative, adding
       an applied object. The original S keeps its position.
     - Externally caused base (die, fall, roll): *-s* causative, adding
@@ -154,25 +154,25 @@ def verbTransitivization (v : YukatekVerb) : TransitivizationType :=
 -- § 5a. Internally caused active verbs → applicative
 
 /-- "work" (internally caused active) → applicative transitivization.
-    @cite{bohnemeyer-2004} ex. (4):
+    ex. (4):
     Túun meyah ich u=kòol → 'He's working on his milpa'
     Túun meyah-t-ik u=kòol → 'He's making his milpa' -/
 theorem meyah_applicative : verbTransitivization meyah = .applicative := rfl
 
 /-- "play" (internally caused active) → applicative.
-    @cite{bohnemeyer-2004} ex. (5). -/
+    ex. (5). -/
 theorem baaxal_applicative : verbTransitivization baaxal = .applicative := rfl
 
 -- § 5b. Externally caused verbs → causative (regardless of stem class)
 
 /-- "die" (inactive, externally caused) → causative.
-    @cite{bohnemeyer-2004} ex. (6):
+    ex. (6):
     Túun kim-il Pedro → 'Pedro's dying'
     Juan=e' túun kim-s-ik Pedro → 'Juan is killing Pedro' -/
 theorem kim_causative : verbTransitivization kim = .causative := rfl
 
 /-- "fall" (inactive, externally caused) → causative.
-    @cite{bohnemeyer-2004} ex. (7). -/
+    ex. (7). -/
 theorem luub_causative : verbTransitivization luub = .causative := rfl
 
 -- § 5c. Non-internally-caused ACTIVE verbs → causative (not applicative!)
@@ -181,12 +181,12 @@ theorem luub_causative : verbTransitivization luub = .causative := rfl
 /-- "roll" (active class but externally caused) → causative transitivization.
     Despite being an active verb (same stem class as "work"), balak' shows
     causative linking because its base is not internally caused.
-    @cite{bohnemeyer-2004} ex. (10), (22): the original S is linked to U,
+    ex. (10), (22): the original S is linked to U,
     and the added participant is the instigator linked to A. -/
 theorem balak_causative : verbTransitivization balak = .causative := rfl
 
 /-- "buzz" (active class but externally caused) → causative.
-    @cite{bohnemeyer-2004} ex. (11). -/
+    ex. (11). -/
 theorem tsiirin_causative : verbTransitivization tsiirin = .causative := rfl
 
 -- § 5d. Positional verbs → causative
@@ -194,7 +194,7 @@ theorem tsiirin_causative : verbTransitivization tsiirin = .causative := rfl
 /-- All positional verbs transitivize with causative linking, since they
     denote externally-caused state changes at the event-structure level.
     Control is a participant-structure property, not an event-structure one.
-    @cite{bohnemeyer-2004} ex. (25), §6. -/
+    ex. (25), §6. -/
 theorem kulTal_causative : verbTransitivization kulTal = .causative := rfl
 theorem waalTal_causative : verbTransitivization waalTal = .causative := rfl
 
@@ -205,7 +205,7 @@ theorem waalTal_causative : verbTransitivization waalTal = .causative := rfl
 /-- Degree achievements are event-structurally state changes, not processes,
     even though they behave atelically.
 
-    @cite{bohnemeyer-2004} §5: ka'n 'get tired' passes state-change
+    §5: ka'n 'get tired' passes state-change
     diagnostics (resultative *-a'n*, universal quantifier *láah*) despite
     being atelic in the realization-under-cessation test. -/
 theorem kaan_is_state_change :
@@ -220,7 +220,7 @@ theorem naak_is_state_change :
     This is the first direct counterevidence against @cite{kraemer-wunderlich-1999}'s
     aspect-based linking: rule (14) predicts applicative for degree achievements
     (since they are [-perf] bases), but they exclusively causativize.
-    @cite{bohnemeyer-2004} ex. (21). -/
+    ex. (21). -/
 theorem degree_achievements_causativize :
     verbTransitivization kaan = .causative ∧
     verbTransitivization naak = .causative := ⟨rfl, rfl⟩
@@ -243,7 +243,7 @@ theorem nonactive_are_state_changes :
     for active verbs: both internally-caused (meyah) and externally-caused
     (balak') actives are processes, but they differ in transitivization.
 
-    This is the core argument of @cite{bohnemeyer-2004}: linking under
+    This is the core argument of: linking under
     transitivization depends on causation type, not event type or aspect. -/
 theorem causation_orthogonal_to_event_type :
     meyah.stemClass.eventType = balak.stemClass.eventType ∧
@@ -262,7 +262,7 @@ theorem same_causation_same_transitivization :
 -- § 7a. hàan "eat" — the key exception proving the rule
 
 /-- hàan "eat" is inactive by stem class but internally caused.
-    @cite{bohnemeyer-2004} ex. (9): hàan takes applicative *-t* (not
+    ex. (9): hàan takes applicative *-t* (not
     causative *-s*), exactly as predicted by internal causation.
 
     This directly refutes stem-class-based linking: if stem class
@@ -294,7 +294,7 @@ open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile)
     entailment in @cite{dowty-1991}'s framework: an internally-caused
     event has a participant who causes (instigates) the event.
 
-    @cite{bohnemeyer-2004} §2: internal causation is "closely correlated
+    §2: internal causation is "closely correlated
     with the properties of control and agentivity." -/
 def CausationType.impliesCausationEntailment : CausationType → Bool
   | .internal => true   -- instigator causes the event
@@ -316,7 +316,7 @@ theorem external_lacks_causation :
 
 open Semantics.Causation.MorphologicalCausation (IntransitivizationType)
 
-/-- Detransitivization type in Yukatek, from @cite{bohnemeyer-2004}
+/-- Detransitivization type in Yukatek, from
     rules (28)–(30).
 
     - Antipassive (rule 28): removes the caused event, retaining the
@@ -342,7 +342,7 @@ def DetransitivizationType.toGeneral : DetransitivizationType → Intransitiviza
 
 /-- Active transitive stems detransitivize like antipassive; inactive
     transitive stems detransitivize like anticausative or passive.
-    @cite{bohnemeyer-2004} ex. (12): p'eh "chip" → antipassive p'èeh,
+    ex. (12): p'eh "chip" → antipassive p'èeh,
     passive p'e'h-el, anticausative p'éeh-el. -/
 theorem antipassive_active_pattern :
     DetransitivizationType.toGeneral .antipassive = .unmarked := rfl
@@ -355,7 +355,7 @@ theorem anticausative_removes_cause :
 -- ════════════════════════════════════════════════════
 
 /-- Detransitivization as a template-level operation.
-    @cite{bohnemeyer-2004} rules (28)–(30) decompose detransitivization
+    rules (28)–(30) decompose detransitivization
     in terms of which subevent is retained:
 
     - Antipassive: retain the causing process → accomplishment → activity

@@ -53,10 +53,10 @@ open Semantics.Lexical.Verb.EntailmentProfile
 open Core
 
 -- ════════════════════════════════════════════════════
--- § 1. Agentivity Primitives (@cite{grimm-2011} Table 2, §2.1)
+-- § 1. Agentivity Primitives (Table 2, §2.1)
 -- ════════════════════════════════════════════════════
 
-/-- The four agentivity primitives (@cite{grimm-2011} Table 2 (agentive properties), p.520).
+/-- The four agentivity primitives (Table 2 (agentive properties), p.520).
 
     Each has an agentive (+) and non-agentive (∅) pole. The non-agentive
     pole is not a separate feature — it is simply the absence of the
@@ -69,14 +69,14 @@ structure AgentivityNode where
   sentience   : Bool
   /-- +instigation: prior independent action whose effects can be
       attributed to this argument. Replaces Dowty's "causation"
-      (@cite{grimm-2011} p.521). -/
+      (p.521). -/
   instigation : Bool
   /-- +motion: the argument is in motion during the event. -/
   motion      : Bool
   deriving DecidableEq, Repr, BEq
 
 /-- Validity constraint: volition presupposes sentience
-    (@cite{grimm-2011} p.521, following @cite{dowty-1991} p.607). -/
+    (p.521, following @cite{dowty-1991} p.607). -/
 def AgentivityNode.valid (a : AgentivityNode) : Bool :=
   !a.volition || a.sentience
 
@@ -133,10 +133,10 @@ instance : OrderTop AgentivityNode where
   le_top := by decide
 
 -- ════════════════════════════════════════════════════
--- § 2. Persistence Levels (@cite{grimm-2011} §2.2, Fig. 2)
+-- § 2. Persistence Levels (§2.2, Fig. 2)
 -- ════════════════════════════════════════════════════
 
-/-- The five valid persistence levels (@cite{grimm-2011} p.524–525, Fig. 2).
+/-- The five valid persistence levels (p.524–525, Fig. 2).
 
     Each level is a valid combination of four persistence dimensions:
     - ExPB: existential persistence (beginning) — entity exists before event
@@ -265,7 +265,7 @@ instance : Lattice PersistenceLevel where
   le_inf := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 3. Combined Agentivity Lattice Node (@cite{grimm-2011} Fig. 3)
+-- § 3. Combined Agentivity Lattice Node (Fig. 3)
 -- ════════════════════════════════════════════════════
 
 /-- A node in the full agentivity lattice = agentivity features ×
@@ -274,7 +274,7 @@ instance : Lattice PersistenceLevel where
     1. volition → sentience (agentivity constraint)
     2. If the argument does not exist at the beginning (totalNonPersistence
        or exPersEnd), it cannot have any agentivity properties
-       (@cite{grimm-2011} p.526–527). -/
+       (p.526–527). -/
 structure GrimmNode where
   agentivity  : AgentivityNode
   persistence : PersistenceLevel
@@ -335,12 +335,12 @@ instance : OrderTop GrimmNode where
 -- § 4. Named Participant Types
 -- ════════════════════════════════════════════════════
 
-/-- Maximal Agent (@cite{grimm-2011} Fig. 4): all agentivity features,
+/-- Maximal Agent (Fig. 4): all agentivity features,
     total persistence. The prototypical transitive subject. -/
 def maximalAgent : GrimmNode :=
   ⟨⟨true, true, true, true⟩, .totalPersistence⟩
 
-/-- Maximal Patient (@cite{grimm-2011} Fig. 4): no agentivity features,
+/-- Maximal Patient (Fig. 4): no agentivity features,
     existential persistence (beginning). The prototypical affected object
     that ceases to exist (break, destroy). -/
 def maximalPatient : GrimmNode :=
@@ -348,22 +348,22 @@ def maximalPatient : GrimmNode :=
 
 /-- The "effector" participant type: instigation + motion, total
     persistence. The canonical agent of effective action verbs (kill, break).
-    @cite{grimm-2011} §3, labeled Ia/IIa in Fig. 5. -/
+    §3, labeled Ia/IIa in Fig. 5. -/
 def effectorAgent : GrimmNode :=
   ⟨⟨false, false, true, true⟩, .totalPersistence⟩
 
 /-- Experiencer: sentience only, qualitative persistence (beginning).
-    The dative experiencer of psych verbs (@cite{grimm-2011} §5.1.1). -/
+    The dative experiencer of psych verbs (§5.1.1). -/
 def experiencerNode : GrimmNode :=
   ⟨⟨false, true, false, false⟩, .quPersBeginning⟩
 
 /-- Recipient: sentience, qualitative persistence (beginning).
-    The canonical dative recipient (@cite{grimm-2011} Fig. 7). -/
+    The canonical dative recipient (Fig. 7). -/
 def recipientNode : GrimmNode :=
   ⟨⟨false, true, false, false⟩, .quPersBeginning⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. Transitivity Region (@cite{grimm-2011} §3, Fig. 4)
+-- § 5. Transitivity Region (§3, Fig. 4)
 -- ════════════════════════════════════════════════════
 
 /-- A node is in the **transitivity region** iff its persistence level
@@ -371,11 +371,11 @@ def recipientNode : GrimmNode :=
 
     The transitivity region excludes totalNonPersistence and exPersEnd
     because the prototypical transitive event requires both participants
-    to exist at the beginning (@cite{grimm-2011} p.529–530). -/
+    to exist at the beginning (p.529–530). -/
 def GrimmNode.inTransitiveRegion (n : GrimmNode) : Bool :=
   n.persistence.exPersB
 
-/-- Tsunoda's transitivity hierarchy (@cite{grimm-2011} §3, example 8).
+/-- Tsunoda's transitivity hierarchy (§3, example 8).
 
     | Class | Example verbs | Transitivity |
     |-------|--------------|-------------|
@@ -396,23 +396,23 @@ inductive TransitivityClass where
 
 /-- The canonical agent position for each transitivity class.
     All classes share the same agent type: instigation + motion,
-    total persistence (@cite{grimm-2011} Fig. 5, labeled Ia/IIa). -/
+    total persistence (Fig. 5, labeled Ia/IIa). -/
 def TransitivityClass.agentNode : TransitivityClass → GrimmNode
   | _ => effectorAgent
 
 /-- The canonical patient position for each transitivity class
-    (@cite{grimm-2011} Fig. 5). -/
+    (Fig. 5). -/
 def TransitivityClass.patientNode : TransitivityClass → GrimmNode
   | .resultativeEffective => ⟨⊥, .exPersBeginning⟩     -- Ip
   | .contact              => ⟨⊥, .quPersBeginning⟩     -- IIp
   | .pursuit              => ⟨⊥, .totalNonPersistence⟩ -- IIIp
 
 -- ════════════════════════════════════════════════════
--- § 6. Case Regions (@cite{grimm-2011} §4, Figs. 6–7)
+-- § 6. Case Regions (§4, Figs. 6–7)
 -- ════════════════════════════════════════════════════
 
 /-- Case regions on the agentivity lattice. A case marker corresponds
-    to a **connected region** of the lattice (@cite{grimm-2011} §4). -/
+    to a **connected region** of the lattice (§4). -/
 inductive CaseRegion where
   /-- Nominative (accusative systems) / Ergative (ergative systems):
       the region spreading from maximal agent. Marks subjects. -/
@@ -423,7 +423,7 @@ inductive CaseRegion where
   | accAbs
   /-- Dative: the region around sentience + qualitative persistence
       (beginning). Marks recipients, experiencers, benefactives
-      (@cite{grimm-2011} §5.1, Fig. 7). -/
+      (§5.1, Fig. 7). -/
   | dative
   /-- Oblique: the middle region between core cases. -/
   | oblique
@@ -475,7 +475,7 @@ def CaseRegion.toErgativeCase : CaseRegion → Case
     The correspondence is direct for 3 of 4 features:
     - volition = volition
     - sentience = sentience
-    - causation → instigation (@cite{grimm-2011} p.521)
+    - causation → instigation (p.521)
     - movement = motion
 
     Independent existence is handled by the persistence dimension. -/
@@ -582,7 +582,7 @@ theorem maximalPatient_in_transitiveRegion :
     maximalPatient.inTransitiveRegion = true := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 10. Transitivity Hierarchy Verification (@cite{grimm-2011} §3)
+-- § 10. Transitivity Hierarchy Verification (§3)
 -- ════════════════════════════════════════════════════
 
 /-- Class I patients (break) are in the transitivity region. -/
@@ -623,7 +623,7 @@ theorem classIII_patient_le_classI :
     TransitivityClass.resultativeEffective.patientNode := by decide
 
 -- ════════════════════════════════════════════════════
--- § 11. Case Region Verification (@cite{grimm-2011} §4)
+-- § 11. Case Region Verification (§4)
 -- ════════════════════════════════════════════════════
 
 /-- Maximal agent maps to NOM/ERG region. -/
@@ -635,12 +635,12 @@ theorem maximalPatient_accAbs :
     maximalPatient.toCaseRegion = .accAbs := by native_decide
 
 /-- The effector agent (instigation + motion, total persistence) maps to
-    NOM/ERG. This is the agent of break/kill (@cite{grimm-2011} Fig. 5, Ia). -/
+    NOM/ERG. This is the agent of break/kill (Fig. 5, Ia). -/
 theorem effectorAgent_nomErg :
     effectorAgent.toCaseRegion = .nomErg := by native_decide
 
 /-- The experiencer/recipient maps to the dative region
-    (@cite{grimm-2011} §5.1, Fig. 7). -/
+    (§5.1, Fig. 7). -/
 theorem experiencer_dative :
     experiencerNode.toCaseRegion = .dative := by native_decide
 
@@ -770,13 +770,13 @@ theorem fromEntailmentProfile_monotone
   exact ⟨⟨⟨bImpl _ _ hv, bImpl _ _ hs⟩, bImpl _ _ hc⟩, bImpl _ _ hm⟩
 
 -- ════════════════════════════════════════════════════
--- § 14. Dative Polysemy (@cite{grimm-2011} §5.1)
+-- § 14. Dative Polysemy (§5.1)
 -- ════════════════════════════════════════════════════
 
 /-- The dative region unifies recipients, experiencers, and second
     arguments of communication/service verbs — they all share the
     semantic properties of **sentience** and **qualitative persistence
-    (beginning)** (@cite{grimm-2011} Fig. 7, p.536).
+    (beginning)** (Fig. 7, p.536).
 
     This explains dative "polysemy": the diverse uses of the dative
     share a connected region on the lattice, not a single function. -/
@@ -784,7 +784,7 @@ theorem dative_unifies_recipient_experiencer :
     recipientNode.toCaseRegion = .dative ∧
     experiencerNode.toCaseRegion = .dative := ⟨rfl, rfl⟩
 
-/-- The dative experiencer subject (@cite{grimm-2011} §5.1.1) has the
+/-- The dative experiencer subject (§5.1.1) has the
     same lattice position as the dative recipient — sentience +
     qualitative persistence. This explains why languages cross-linguistically
     use the same case (dative) for both. -/
@@ -792,13 +792,13 @@ theorem dative_experiencer_eq_recipient :
     experiencerNode = recipientNode := rfl
 
 -- ════════════════════════════════════════════════════
--- § 15. Russian Genitive/Accusative Alternation (@cite{grimm-2011} §5.2)
+-- § 15. Russian Genitive/Accusative Alternation (§5.2)
 -- ════════════════════════════════════════════════════
 
 /-- The Russian genitive/accusative alternation arises when the object
     of an intensional verb (want, seek, await) falls in a region covered
     by two cases. The accusative covers existential persistence (beginning);
-    the genitive covers total non-persistence (@cite{grimm-2011} Fig. 8).
+    the genitive covers total non-persistence (Fig. 8).
 
     - Accusative (specific reading): the object is referential → exists
       → existential persistence (beginning) → ACC region.
@@ -807,7 +807,7 @@ theorem dative_experiencer_eq_recipient :
 
     The alternation is limited to verbs whose objects have no persistence
     entailments — only intensional verbs like *want*, *seek*, *await*
-    license the genitive (@cite{grimm-2011} p.541). -/
+    license the genitive (p.541). -/
 structure GenAccAlternation where
   /-- The object node under the specific/referential reading. -/
   specificReading : GrimmNode
@@ -829,11 +829,11 @@ theorem genAcc_specific_is_acc :
     russianGenAcc.specificReading.toCaseRegion = .accAbs := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 16. Upward/Downward Closure (@cite{grimm-2011} §2.3, p.528)
+-- § 16. Upward/Downward Closure (§2.3, p.528)
 -- ════════════════════════════════════════════════════
 
 /-- Agents are **upwards closed** in the agentivity dimension
-    (@cite{grimm-2011} p.528): if `a` qualifies as agent for a predicate
+    (p.528): if `a` qualifies as agent for a predicate
     (i.e., `a` has at least the entailments required by the verb), then
     any `b ≥ a` also qualifies. An entity with *more* agentive properties
     can always fill an agent role requiring fewer.
@@ -846,7 +846,7 @@ theorem agent_upward_closed (minReq a b : AgentivityNode)
   le_trans ha hab
 
 /-- Patients are **downwards closed** in the persistence dimension
-    (@cite{grimm-2011} p.528): if `p` qualifies as patient (i.e., `p`
+    (p.528): if `p` qualifies as patient (i.e., `p`
     has at most the persistence features of the verb's patient slot),
     then any `q ≤ p` also qualifies. A *more* affected entity (less
     persistence) can always fill a patient role.
@@ -859,7 +859,7 @@ theorem patient_downward_closed (maxPers p q : PersistenceLevel)
   le_trans hqp hp
 
 -- ════════════════════════════════════════════════════
--- § 17. Semantic Opposition (@cite{grimm-2011} §3, p.530)
+-- § 17. Semantic Opposition (§3, p.530)
 -- ════════════════════════════════════════════════════
 
 /-- Semantic opposition between two GrimmNodes. Transitivity increases
@@ -902,7 +902,7 @@ theorem build_subject_to_nom :
 
 /-- Build object → OBLIQUE (not ACC). The object of *build* maps to
     exPersEnd (entity comes into existence), which falls OUTSIDE the
-    transitivity region (@cite{grimm-2011} p.529–530). Creation verbs
+    transitivity region (p.529–530). Creation verbs
     are non-prototypically transitive — the object does not exist at
     the beginning of the event to "undergo its effects."
     This is a correct prediction: creation verb objects cross-linguistically
@@ -928,27 +928,27 @@ theorem die_subject_to_abs :
     = .abs := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 19. Canonical Verb-Agentivity Chain (@cite{grimm-2011} §2.2, p.523–524)
+-- § 19. Canonical Verb-Agentivity Chain (§2.2, p.523–524)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{grimm-2011} illustrates the agentivity lattice with a chain of
+/-! illustrates the agentivity lattice with a chain of
     canonical verbs, each adding one feature. This demonstrates that the
     lattice directly formalizes "degree of agentivity" — higher on the
     lattice means more agentive. -/
 
-/-- sit/stand subject: ⊥ (no agentivity). @cite{grimm-2011} p.523. -/
+/-- sit/stand subject: ⊥ (no agentivity). p.523. -/
 def sitAgentivity : AgentivityNode := ⊥
 
-/-- know/see subject: sentience only. @cite{grimm-2011} p.524. -/
+/-- know/see subject: sentience only. p.524. -/
 def knowAgentivity : AgentivityNode := ⟨false, true, false, false⟩
 
-/-- discover subject: sentience + instigation. @cite{grimm-2011} p.524. -/
+/-- discover subject: sentience + instigation. p.524. -/
 def discoverAgentivity : AgentivityNode := ⟨false, true, true, false⟩
 
-/-- look at subject: sentience + instigation + motion. @cite{grimm-2011} p.524. -/
+/-- look at subject: sentience + instigation + motion. p.524. -/
 def lookAtAgentivity : AgentivityNode := ⟨false, true, true, true⟩
 
-/-- assassinate subject: all four features. @cite{grimm-2011} p.524. -/
+/-- assassinate subject: all four features. p.524. -/
 def assassinateAgentivity : AgentivityNode := ⊤
 
 /-- The canonical verb chain is totally ordered and forms a maximal
@@ -967,7 +967,7 @@ theorem canonical_verbs_valid :
     assassinateAgentivity.valid = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 20. Persistence Covering Relations (@cite{grimm-2011} Fig. 2)
+-- § 20. Persistence Covering Relations (Fig. 2)
 -- ════════════════════════════════════════════════════
 
 /-- exPersEnd and quPersBeginning are incomparable (neither ≤ the other).
@@ -989,10 +989,10 @@ theorem persistence_chain :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 21. DOM and the Agentivity Lattice (@cite{grimm-2011} §4)
+-- § 21. DOM and the Agentivity Lattice (§4)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{grimm-2011} (p.534): "it is a combination of verbal and nominal
+/-! (p.534): "it is a combination of verbal and nominal
     properties which trigger DOM." The lattice provides a formal account:
 
     1. The case regions defined in §6 (`toCaseRegion`) map lattice positions
@@ -1100,7 +1100,7 @@ theorem inanimate_canonical_no_dom :
 
 /-- Animate objects of canonical transitives: outside ACC/ABS, DOM
     predicted. The lattice reason: sentience pushes the object into
-    the dative region (@cite{grimm-2011} Fig. 7). -/
+    the dative region (Fig. 7). -/
 theorem animate_canonical_dom :
     domPredictedByLattice .animate .quPersBeginning = true := by
   native_decide
@@ -1243,7 +1243,7 @@ theorem fromEntailmentProfile_drops_patient :
     pairings: causation→CoS, movement→stationary, IE→DE. These are
     *relational* constraints between two profiles.
 
-    @cite{grimm-2011}'s system replaces them with a single persistence
+    system replaces them with a single persistence
     dimension on the patient side. The IE feature is dropped entirely
     from the agentivity projection, so the IE→DE constraint becomes
     invisible.

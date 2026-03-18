@@ -141,7 +141,7 @@ theorem noUniformity_removes : 117649 - 7 = 117642 := by native_decide
 epistemic choices of PPQ must differ from those of each NPQ form.
 
 "PPQ ≠ NPQ (interpreted more precisely as PPQ^ev ≠ NPQ^ev &
-PPQ^ep ≠ NPQ^ep)" — @cite{gartner-gyuris-2017} §2.2. -/
+PPQ^ep ≠ NPQ^ep)" — §2.2. -/
 def ppqNeqNpq (bp : BiasProfile) : Bool :=
   -- PPQ ≠ IN-NPQ (both dimensions must differ)
   (bp.ppqEv != bp.inNpqEv && bp.ppqEp != bp.inNpqEp) &&
@@ -205,7 +205,7 @@ def avoidDisagreement (bp : BiasProfile) : Bool :=
 cell of NPQ must contain −. The constraint applies per-cell, not per-row.
 
 This yields 4 choices per cell (subsets containing the matching polarity),
-so 4⁶ = 4096 total (@cite{gartner-gyuris-2017} §2.4, chart (19)). -/
+so 4⁶ = 4096 total (§2.4, chart (19)). -/
 def dontRuleOutAgreement (bp : BiasProfile) : Bool :=
   -- + ∈ each PPQ cell
   bp.ppqEv.contains .pos && bp.ppqEp.contains .pos &&
@@ -313,7 +313,7 @@ theorem staticComplementarity_space : (4 * 2) ^ 3 = 512 := by native_decide
 -- §10: Cross-Linguistic Data — Appendix A
 -- ============================================================================
 
-/-- [1] English V1-Interrogative (@cite{gartner-gyuris-2017} Appendix A [1],
+/-- [1] English V1-Interrogative (Appendix A [1],
 from Sudo 2013:284).
 
 PPQ:    ⟨{+,  %}, {+, −, %}⟩
@@ -327,7 +327,7 @@ def englishV1 : BiasProfile where
   onNpqEv := [.neut, .neg]
   onNpqEp := [.pos]
 
-/-- [2] Japanese ∅-Interrogative (@cite{gartner-gyuris-2017} Appendix A [2],
+/-- [2] Japanese ∅-Interrogative (Appendix A [2],
 from Sudo 2013:285).
 
 PPQ:    ⟨{%},      {+, −, %}⟩
@@ -341,7 +341,7 @@ def japaneseNull : BiasProfile where
   onNpqEv := [.pos, .neut]
   onNpqEp := [.pos]
 
-/-- [3] Japanese *no*-Interrogative (@cite{gartner-gyuris-2017} Appendix A [3],
+/-- [3] Japanese *no*-Interrogative (Appendix A [3],
 = ex. (4), from Sudo 2013:288).
 
 PPQ:    ⟨{+},           {+, −, %}⟩
@@ -355,7 +355,7 @@ def japaneseNo : BiasProfile where
   onNpqEv := [.pos, .neut, .neg]
   onNpqEp := [.pos]
 
-/-- [4] Japanese *desho*-Interrogative (@cite{gartner-gyuris-2017} Appendix A [4],
+/-- [4] Japanese *desho*-Interrogative (Appendix A [4],
 = ex. (23), from Sudo 2013:290).
 
 PPQ:    ⟨{+, −, %},  {+}⟩
@@ -369,7 +369,7 @@ def japaneseDesho : BiasProfile where
   onNpqEv := [.neut, .neg]
   onNpqEp := [.neg]
 
-/-- [5] Hungarian ∧-Interrogative (@cite{gartner-gyuris-2017} Appendix A [5],
+/-- [5] Hungarian ∧-Interrogative (Appendix A [5],
 from Gyuris 2017: Section 4).
 
 PPQ:    ⟨{+, %},    {+, −, %}⟩
@@ -383,7 +383,7 @@ def hungarianWedge : BiasProfile where
   onNpqEv := [.neut, .neg]
   onNpqEp := [.pos]
 
-/-- [6] Hungarian *e*-Interrogative (@cite{gartner-gyuris-2017} Appendix A [6],
+/-- [6] Hungarian *e*-Interrogative (Appendix A [6],
 = ex. (10), from Gyuris 2017: Section 4). IN-NPQ is not expressible.
 
 PPQ:    ⟨{%},   {+, −, %}⟩
@@ -422,7 +422,7 @@ theorem englishV1_staticComplementarity :
     staticComplementarity englishV1 = true := rfl
 
 /-- Hungarian ∧-Interrogative has the same bias profile as English V1
-(@cite{gartner-gyuris-2017} Appendix A: [5] = [1]). -/
+(Appendix A: [5] = [1]). -/
 theorem hungarianWedge_eq_englishV1 : hungarianWedge = englishV1 := rfl
 
 /-- Japanese ∅-Interrogative satisfies No Uniformity. -/
@@ -453,7 +453,7 @@ theorem japaneseNo_ppqNeqNpq : ppqNeqNpq japaneseNo = true := rfl
 
 /-- Japanese *no*-Interrogative violates Distributive Markedness:
 |PPQ^ev| = 1 < |ON-NPQ^ev| = 3. This is a known counterexample
-noted by @cite{gartner-gyuris-2017} §2.3. -/
+noted by §2.3. -/
 theorem japaneseNo_violates_distributiveMarkedness :
     markednessDistributive japaneseNo = false := rfl
 
@@ -488,13 +488,13 @@ theorem japaneseDesho_violates_staticComplementarity :
 /-- English V1 violates Avoid Disagreement: PPQ^ep = {+,−,%} contains −,
 and IN-NPQ^ep = {+} contains +. This exemplifies the systematic
 incompatibility between Narrow Epistemic Choice and Polarity Match
-for epistemic cells (@cite{gartner-gyuris-2017} §3.1.2). -/
+for epistemic cells (§3.1.2). -/
 theorem englishV1_violates_avoidDisagreement :
     avoidDisagreement englishV1 = false := rfl
 
 /-- English V1 violates Don't Rule Out Agreement: IN-NPQ^ep = {+} does
 not contain −. Again, the epistemic dimension conflicts with NEC-derived
-empirical patterns (@cite{gartner-gyuris-2017} §3.1.2). -/
+empirical patterns (§3.1.2). -/
 theorem englishV1_violates_dontRuleOutAgreement :
     dontRuleOutAgreement englishV1 = false := rfl
 
@@ -549,7 +549,7 @@ theorem englishV1_ppq_evidence_matches_romero :
 
 /-- Hungarian *e*-Interrogative has evidential "anti-bias" {%^ev} for PPQ:
 requiring *neutral* evidence only. This is the key counterexample to
-PPQ ≠ NPQ noted by @cite{gartner-gyuris-2017} §2.2.
+PPQ ≠ NPQ noted by §2.2.
 
 This contrasts with standard PPQs which admit positive evidence. -/
 theorem hungarianE_ppq_antibias :
