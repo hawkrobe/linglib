@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.229.331] - 2026-03-18
+
+### Changed
+- **`Marantz1991.lean`** (third audit): Remove hallucinated Georgian *-s* suffix claim from `georgianSpellout` docstring; replace with Marantz's actual statement that "dative and accusative morphological case have fallen together"
+
+## [0.229.330] - 2026-03-18
+
+### Changed
+- **`Marantz1991.lean`** (second audit): Fix "default is subsumed under unmarked" — Marantz explicitly distinguishes them (unmarked is environment-sensitive, default is absolute last resort); fix "NOM-ACC(=DAT)" notation → "NOM-DAT" with abstract/surface clarification; add §12 agreement–case independence theorems (`case_direction_changes`, `agreement_invariant_across_series`, `case_splits_but_agreement_does_not`) formalizing §7's core insight that split ergativity exploits the lack of correlation between case direction and agreement direction; add Hindi unaccusative ERG impossibility (`hindi_perfective_unaccusative_no_erg`) and unergative phantom-NP parameterization (`hindi_perfective_unergative_with_phantom` / `without_phantom`); add `phantom_np_parameter` cross-linguistic contrast (Georgian obligatory vs Hindi optional phantom NP counting)
+
+## [0.229.329] - 2026-03-18
+
+### Changed
+- **`Marantz1991.lean`**: Replace UNVERIFIED citation numbers (principle 29, condition 30, ex. 6/8b, ex. 11–13, p.12, p.25–26) with content descriptions per CLAUDE.md; fix misleading "ACC/DAT syncretism" comment (it's a spell-out mapping, not syncretism); add `CaseDiscrimination` import and `sourceToAccessibility` bridge connecting case realization hierarchy to Moravcsik agreement hierarchy; add end-to-end Voice→NP count→case theorems (`voice_to_case_transitive`, `voice_to_case_unaccusative`, `burzio_from_voice`); document evidential series exclusion from algorithm; add `npsFromVoice` for constructive Voice→case chain
+
+## [0.229.328] - 2026-03-18
+
+### Added
+- **`Marantz1991.lean`** (new study file): Formalize @cite{marantz-1991} "Case and Licensing" — derives Georgian split ergativity from the dependent case algorithm + language-specific spell-out (`georgianSpellout : CaseVal → Core.Case`); `subject_derivation_matches_fragment` proves all 8 verb-class × tense derivations match fragment data; `lexical_bleeds_dependent_georgian` shows Class 4 DAT blocks dependent ACC; Burzio decomposition via NP count (`burzio_unaccusative_no_acc`, `nonthematic_subject_with_acc`); Hindi split derived from same algorithm (`hindi_split_is_algorithmic`)
+- **Georgian verb classes** (`Fragments/Georgian/Agreement.lean`): `VerbClass` (class1–4), `takesErgInAorist`, `verbClassSubjectCase`, `verbClassObjectCase` with `class1_matches_subjectCase` bridge to existing functions; `erg_iff_nonderived` captures the Ergative generalization
+- **`alignmentToLangType`**: bridges `Core.AlignmentFamily` to `Minimalism.CaseLanguageType`, connecting split-ergativity parameterization to the dependent case algorithm
+
+### Changed
+- **`DependentCase.lean`**: reorder citations to give @cite{marantz-1991} priority as originator of dependent case theory
+
 ## [0.229.327] - 2026-03-18
 
 ### Added

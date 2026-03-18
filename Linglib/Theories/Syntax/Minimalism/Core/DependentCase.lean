@@ -2,10 +2,12 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 /-!
 # Dependent Case Theory
-@cite{baker-2015} @cite{deal-2010} @cite{marantz-1991} @cite{ozaki-2026} @cite{scott-2023}
+@cite{marantz-1991} @cite{baker-2015} @cite{deal-2010} @cite{ozaki-2026} @cite{scott-2023}
 
-An alternative to Agree-based case assignment. Case is determined by
-the structural configuration of NPs within a Spell-Out domain:
+Originally proposed by @cite{marantz-1991} as an alternative to Agree-based
+case assignment; developed into a cross-linguistic algorithm by
+@cite{baker-2015}. Case is determined by the structural configuration of
+NPs within a Spell-Out domain:
 
 1. **Lexical case**: Assigned by a particular head (P, V) — highest priority
 2. **Dependent case**: Assigned to an NP that stands in a c-command

@@ -203,4 +203,81 @@ def fullCaseInventory : List Core.Case := [.nom, .erg, .gen, .dat]
 theorem full_inventory_valid :
     Core.validInventory fullCaseInventory = true := by native_decide
 
+-- ============================================================================
+-- § 6: Verb Classes (@cite{harris-1981}, @cite{marantz-1991})
+-- ============================================================================
+
+/-- Georgian verb classes (@cite{harris-1981}).
+
+    The class determines unaccusativity, case frame, and agreement pattern.
+    The key split for case theory: classes 1 and 3 (non-derived subjects)
+    take ERG in the aorist, while class 2 (derived/unaccusative subject)
+    does not — motivating @cite{marantz-1991}'s Ergative generalization. -/
+inductive VerbClass where
+  | class1  -- Transitive (ačvenebs 'shows', xedavs 'sees')
+  | class2  -- Medioactive: unaccusative/passive (šendeba 'is built')
+  | class3  -- Active intransitive: unergative (pikrobs 'thinks')
+  | class4  -- Inversion: psych with DAT subject (uqvars 'likes')
+  deriving DecidableEq, BEq, Repr
+
+/-- Does the subject take ERG in the aorist (Series II)?
+
+    The Ergative generalization (@cite{marantz-1991} ex. 6): ERG tracks
+    the thematic vs derived status of the subject. Class 2 (unaccusative)
+    subjects are derived (raised from object position) → no ERG. Class 4
+    subjects have quirky DAT (lexical case) → not eligible for ERG. -/
+def takesErgInAorist : VerbClass → Bool
+  | .class1 => true   -- transitive: ERG subject
+  | .class2 => false  -- unaccusative: NO ERG (derived subject)
+  | .class3 => true   -- unergative: ERG subject
+  | .class4 => false  -- psych: DAT subject (quirky, not structural)
+
+theorem class1_takes_erg : takesErgInAorist .class1 = true := rfl
+theorem class2_no_erg : takesErgInAorist .class2 = false := rfl
+theorem class3_takes_erg : takesErgInAorist .class3 = true := rfl
+theorem class4_no_erg : takesErgInAorist .class4 = false := rfl
+
+/-- Subject case by verb class and tense series (@cite{marantz-1991} ex. 1–3).
+
+    Present/aorist patterns from @cite{marantz-1991}. Evidential follows
+    the general inversion pattern: all subjects surface as DAT
+    (@cite{harris-1981}). -/
+def verbClassSubjectCase : VerbClass → TenseSeries → Core.Case
+  | .class1, .present    => .nom
+  | .class1, .aorist     => .erg
+  | .class1, .evidential => .dat
+  | .class2, .present    => .nom
+  | .class2, .aorist     => .nom   -- derived subject: no ERG
+  | .class2, .evidential => .dat   -- inversion
+  | .class3, .present    => .nom
+  | .class3, .aorist     => .erg   -- unergatives DO get ERG
+  | .class3, .evidential => .dat   -- inversion
+  | .class4, _           => .dat   -- quirky DAT always
+
+/-- Object case by verb class and tense series.
+    Classes 2 and 3 are intransitive (no direct object). -/
+def verbClassObjectCase : VerbClass → TenseSeries → Option Core.Case
+  | .class1, .present    => some .dat
+  | .class1, .aorist     => some .nom
+  | .class1, .evidential => some .nom
+  | .class2, _           => none   -- intransitive
+  | .class3, _           => none   -- intransitive
+  | .class4, _           => some .nom  -- stimulus = NOM
+
+/-- Class 1 patterns match the existing `subjectCase`/`objectCase`. -/
+theorem class1_matches_subjectCase (ts : TenseSeries) :
+    verbClassSubjectCase .class1 ts = subjectCase ts := by
+  cases ts <;> rfl
+
+theorem class1_matches_objectCase (ts : TenseSeries) :
+    verbClassObjectCase .class1 ts = some (objectCase ts) := by
+  cases ts <;> rfl
+
+/-- The Ergative generalization from verb classes:
+    ERG in the aorist ↔ non-derived subject (classes 1, 3). -/
+theorem erg_iff_nonderived :
+    takesErgInAorist .class1 = true ∧ takesErgInAorist .class3 = true ∧
+    takesErgInAorist .class2 = false ∧ takesErgInAorist .class4 = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
 end Fragments.Georgian.Agreement
