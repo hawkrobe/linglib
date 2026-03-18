@@ -380,6 +380,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.English.Predicates
 import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Scales
@@ -1440,6 +1441,7 @@ import Linglib.Theories.Semantics.PossibilitySemantics.Lifting
 import Linglib.Theories.Semantics.PossibilitySemantics.Ortholattice
 -- Theories: Semantics.Montague (Montague architecture)
 import Linglib.Theories.Semantics.Lexical.Adjective.Antonymy
+import Linglib.Theories.Semantics.Lexical.Adjective.ClauseEmbedding
 import Linglib.Theories.Semantics.Lexical.Adjective.Classification
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory

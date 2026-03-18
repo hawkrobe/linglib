@@ -14,7 +14,7 @@ traditional factive and nonfactive classes.**
 
 The gradient patterns observed in inference judgments do not, on their own,
 settle whether factivity is fundamentally discrete or gradient. As Degen &
-Tonhauser note (p. 583), "the observed gradience in projection [is] compatible
+Tonhauser note, "the observed gradience in projection [is] compatible
 with a binary factivity category" under the assumption that predicates are
 ambiguous between factive and nonfactive readings. @cite{grove-white-2025}
 subsequently show that models implementing discrete factivity fit these data
@@ -102,96 +102,103 @@ def traditionalClass : Predicate → TraditionalClass
 Mean certainty ratings from Experiment 1a (gradient scale 0-1).
 Higher = more projective (speaker more certain of CC).
 
-Values read from Figure 2 of the paper. The gradient nature and
-ordering show no categorical factive/nonfactive gap.
+Values computed from the data at
+github.com/judith-tonhauser/projective-probability (results/5-projectivity-no-fact),
+rounded to 2 decimal places. The gradient nature and ordering show no
+categorical factive/nonfactive gap.
 -/
 def projectionRating_Exp1a : Predicate → Float
-  -- Canonically factive (purple diamonds) - not clustered at top
-  | .beAnnoyed => 0.89
-  | .know => 0.84
+  -- Canonically factive - not clustered at top
+  | .beAnnoyed => 0.88
+  | .know => 0.86
   | .see => 0.81
-  | .reveal => 0.71
-  | .discover => 0.77
-  -- Nonveridical nonfactive (grey squares)
-  | .pretend => 0.17
+  | .reveal => 0.70
+  | .discover => 0.78
+  -- Nonveridical nonfactive
+  | .pretend => 0.15
   | .think => 0.20
-  | .suggest => 0.24
-  | .say => 0.25
-  -- Veridical nonfactive (blue triangles down)
-  | .beRight => 0.19
+  | .suggest => 0.22
+  | .say => 0.24
+  -- Veridical nonfactive
+  | .beRight => 0.18
   | .demonstrate => 0.49
-  -- Optionally factive (orange triangles up) - spans wide range
-  | .inform => 0.79
+  -- Optionally factive - spans wide range
+  | .inform => 0.81
   | .hear => 0.75
-  | .acknowledge => 0.73
-  | .admit => 0.67
+  | .acknowledge => 0.72
+  | .admit => 0.66
   | .confess => 0.64
-  | .announce => 0.59
-  | .establish => 0.37
-  | .confirm => 0.35
-  | .prove => 0.31
+  | .announce => 0.58
+  | .establish => 0.36
+  | .confirm => 0.34
+  | .prove => 0.30
 
 /--
-Proportion of 'yes' responses from Experiment 1b (categorical).
-Approximate values from Figure 4.
+Proportion of 'yes' responses from Experiment 1b (binary choice).
+
+Values computed from the data at
+github.com/judith-tonhauser/projective-probability (results/8-projectivity-no-fact-binary),
+rounded to 2 decimal places.
 -/
 def projectionRating_Exp1b : Predicate → Float
-  | .know => 0.88
-  | .beAnnoyed => 0.87
-  | .inform => 0.85
-  | .see => 0.84
-  | .discover => 0.82
-  | .hear => 0.80
+  | .know => 0.93
+  | .beAnnoyed => 0.92
+  | .inform => 0.90
+  | .see => 0.86
+  | .discover => 0.84
+  | .hear => 0.81
   | .acknowledge => 0.78
-  | .reveal => 0.74
-  | .admit => 0.72
-  | .confess => 0.68
-  | .announce => 0.58
-  | .demonstrate => 0.54
-  | .establish => 0.50
-  | .confirm => 0.48
-  | .prove => 0.42
-  | .suggest => 0.32
-  | .pretend => 0.30
-  | .say => 0.28
-  | .think => 0.24
-  | .beRight => 0.18
+  | .reveal => 0.70
+  | .admit => 0.67
+  | .confess => 0.58
+  | .announce => 0.57
+  | .demonstrate => 0.31
+  | .establish => 0.19
+  | .confirm => 0.16
+  | .prove => 0.13
+  | .suggest => 0.07
+  | .pretend => 0.07
+  | .say => 0.07
+  | .think => 0.04
+  | .beRight => 0.03
 
 
 /--
 Mean inference ratings from Experiment 2a (gradient scale 0-1).
 Higher = inference to CC more strongly supported.
 
-Approximate values from Figure 9.
+Values computed from the data at
+github.com/judith-tonhauser/projective-probability (results/4-veridicality3),
+rounded to 2 decimal places.
 -/
 def inferenceRating_Exp2a : Predicate → Float
-  | .prove => 0.97
+  | .prove => 0.96
   | .beRight => 0.96
-  | .see => 0.93
-  | .discover => 0.92
-  | .confirm => 0.91
-  | .know => 0.90
-  | .beAnnoyed => 0.89
-  | .admit => 0.88
-  | .acknowledge => 0.87
-  | .establish => 0.85
-  | .reveal => 0.84
-  | .confess => 0.80
-  | .demonstrate => 0.75
-  | .inform => 0.68
-  | .announce => 0.60
-  | .say => 0.55
-  | .hear => 0.45
-  | .suggest => 0.35
-  | .think => 0.30
-  | .pretend => 0.15
+  | .see => 0.95
+  | .discover => 0.94
+  | .confirm => 0.94
+  | .know => 0.93
+  | .beAnnoyed => 0.92
+  | .admit => 0.91
+  | .acknowledge => 0.90
+  | .establish => 0.90
+  | .reveal => 0.90
+  | .confess => 0.89
+  | .demonstrate => 0.85
+  | .inform => 0.83
+  | .announce => 0.81
+  | .say => 0.68
+  | .hear => 0.50
+  | .suggest => 0.34
+  | .think => 0.32
+  | .pretend => 0.12
 
 
 /--
 Optionally factive predicates can be as projective as canonically factive ones.
 
 Inform projects more strongly than reveal (a canonical factive):
-inform=0.79 vs reveal=0.71 (Exp 1a).
+inform=0.81 vs reveal=0.70 (Exp 1a).
 -/
 theorem optionally_factive_as_projective_as_factive :
     projectionRating_Exp1a .inform > projectionRating_Exp1a .reveal ∧
@@ -202,8 +209,8 @@ theorem optionally_factive_as_projective_as_factive :
 There is no categorical gap between factive and optionally factive
 predicates in projection.
 
-The mean projection rating of the least projective factive (reveal: 0.71)
-is lower than the most projective optionally factive (inform: 0.79).
+The mean projection rating of the least projective factive (reveal: 0.70)
+is lower than the most projective optionally factive (inform: 0.81).
 -/
 theorem no_categorical_projection_gap :
     projectionRating_Exp1a .inform > projectionRating_Exp1a .reveal := by
@@ -212,8 +219,8 @@ theorem no_categorical_projection_gap :
 /--
 Predicates with highest entailment have lowest projection.
 
-be_right: inference=0.96, projection=0.19
-know: inference=0.90, projection=0.84
+be_right: inference=0.96, projection=0.18
+know: inference=0.93, projection=0.86
 
 This dissociation between inference (entailment) strength and projection
 strength is one of the key empirical observations of the paper,
@@ -224,13 +231,45 @@ theorem entailment_projection_dissociation :
   ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
--- §5. Fragment Factivity Bridge
+-- §5. Cross-Diagnostic Consistency
+-- ============================================================================
+
+/-- The two projection diagnostics (Exp 1a continuous, Exp 1b binary) agree
+    on the two most projective predicates: be_annoyed and know. -/
+theorem top_two_agree :
+    projectionRating_Exp1a .beAnnoyed > projectionRating_Exp1a .know ∧
+    projectionRating_Exp1b .beAnnoyed < projectionRating_Exp1b .know ∧
+    (∀ p : Predicate, p ≠ .beAnnoyed → p ≠ .know →
+      projectionRating_Exp1a p < projectionRating_Exp1a .know) ∧
+    (∀ p : Predicate, p ≠ .beAnnoyed → p ≠ .know →
+      projectionRating_Exp1b p < projectionRating_Exp1b .know) := by
+  refine ⟨by native_decide, by native_decide, fun p h1 h2 => ?_, fun p h1 h2 => ?_⟩ <;>
+    cases p <;> simp_all [projectionRating_Exp1a, projectionRating_Exp1b] <;> native_decide
+
+/-- The binary diagnostic produces sharper separation: nonfactive predicates
+    cluster near 0 in binary (< 0.10) but are above 0.15 in continuous. -/
+theorem binary_sharper_separation :
+    projectionRating_Exp1b .pretend < 0.10 ∧
+    projectionRating_Exp1b .think < 0.10 ∧
+    projectionRating_Exp1b .say < 0.10 ∧
+    projectionRating_Exp1b .suggest < 0.10 ∧
+    projectionRating_Exp1b .beRight < 0.10 ∧
+    projectionRating_Exp1a .pretend > 0.10 ∧
+    projectionRating_Exp1a .think > 0.10 ∧
+    projectionRating_Exp1a .say > 0.10 ∧
+    projectionRating_Exp1a .suggest > 0.10 ∧
+    projectionRating_Exp1a .beRight > 0.10 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+
+-- ============================================================================
+-- §6. Fragment Factivity Bridge
 -- ============================================================================
 
 open Fragments.English.Predicates.Verbal in
-/-- Canonically factive predicates have `factivePresup = true` in the
+/-- Canonically factive *verbs* have `factivePresup = true` in the
     Fragment, matching D&T 2022's traditional classification. "be annoyed"
-    has no Fragment entry (copular construction). -/
+    is copular and emotive — its presupposition derives from emotive
+    semantics, not doxastic veridicality, so `factivePresup = false`. -/
 theorem factive_entries_have_factivePresup :
     know.factivePresup = true ∧
     discover.factivePresup = true ∧
@@ -251,13 +290,23 @@ theorem nonfactive_entries_lack_factivePresup :
 open Phenomena.Presupposition.Studies.DegenTonhauser2021 in
 open Fragments.English.Predicates.Verbal in
 /-- The traditional classification is consistent with Fragment factivity
-    for all predicates that have entries: every predicate classified as
-    factive has `factivePresup = true`, every nonfactive has `false`. -/
+    for verbal entries: every verb classified as factive has
+    `factivePresup = true`, every nonfactive has `false`. -/
 theorem traditionalClass_consistent_with_fragment (p : Predicate)
     (v : VerbEntry) (h : toVerbEntry p = some v) :
     (traditionalClass p = .factive → v.factivePresup = true) ∧
     (traditionalClass p = .nonveridicalNonfactive → v.factivePresup = false) := by
   cases p <;> (unfold toVerbEntry at h; cases h) <;>
     refine ⟨fun hc => ?_, fun hc => ?_⟩ <;> first | rfl | simp [traditionalClass] at hc
+
+open Phenomena.Presupposition.Studies.DegenTonhauser2021 in
+open Fragments.English.Predicates.Copular in
+/-- "be annoyed" is a presupposition trigger (emotive factive), while
+    "be right" is not. This matches D&T 2022's traditional classification:
+    factive predicates trigger presuppositions, veridical nonfactives do not. -/
+theorem copular_presup_matches_classification :
+    (toPredicateCore .beAnnoyed).isPresupTrigger = true ∧
+    (toPredicateCore .beRight).isPresupTrigger = false := by
+  exact ⟨rfl, rfl⟩
 
 end Phenomena.Presupposition.Studies.DegenTonhauser2022

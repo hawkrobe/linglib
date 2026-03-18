@@ -369,7 +369,7 @@ theorem empirical_ordering_consistent_with_tau :
     Both experiments confirm that higher prior → stronger projection. -/
 theorem prior_effect_consistent :
     (exp1_priorEffect .categorical).β > 0 ∧
-    (exp2b_priorEffect .categorical).β > 0 :=
+    exp2b_priorEffect .categorical = some ⟨0.18, 0.01, 12.81⟩ :=
   prior_effect_replicates
 
 end Phenomena.Presupposition.Studies.GroveWhite2025

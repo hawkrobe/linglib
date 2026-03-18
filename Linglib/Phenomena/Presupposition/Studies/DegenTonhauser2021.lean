@@ -1,8 +1,10 @@
 import Linglib.Phenomena.Presupposition.Gradience
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates.Copular
 
 /-!
 # @cite{degen-tonhauser-2021}: Prior Beliefs Modulate Projection
+@cite{qing-goodman-lassiter-2016}
 
 Prior beliefs modulate projection. Open Mind 5:59–70.
 
@@ -33,6 +35,7 @@ clause-embedding predicates.
 - Exp 2b (projection, N=266): replicates prior effect
   - Categorical: β = 0.18, SE = 0.01, t = 12.81
   - Group-level: β = 0.34, SE = 0.03, t = 13.27
+  - Individual-level NOT tested (between-participant: no individual priors)
 
 ## Replication
 
@@ -42,9 +45,10 @@ Spearman r = .991.
 ## Theoretical Significance
 
 The prior-belief effect motivates probabilistic models of projection
-(@cite{qing-goodman-lassiter-2016}, @cite{scontras-tonhauser-2025}),
-and the gradient by-predicate pattern is subsequently modeled by
-@cite{grove-white-2025}'s discrete-factivity model.
+(e.g., @cite{qing-goodman-lassiter-2016}). Both existing probabilistic
+projection models (Qing et al. 2016, Stevens et al. 2017) are couched
+within the RSA framework, which standardly assumes utterance interpretation
+is modulated by listeners' prior beliefs.
 -/
 
 namespace Phenomena.Presupposition.Studies.DegenTonhauser2021
@@ -55,35 +59,32 @@ open Phenomena.Presupposition.Gradience
 -- §1. The 20 Clause-Embedding Predicates
 -- ============================================================================
 
-/-- The 20 clause-embedding predicates investigated in D&T 2021 and reused
-    in @cite{degen-tonhauser-2022} and @cite{grove-white-2025}. The set
-    spans cognitive (know), emotive (be annoyed), communication (announce),
-    and inferential (prove) predicates. -/
+/-- The 20 clause-embedding predicates investigated in D&T 2021, listed
+    alphabetically as in Figure 1C. The set spans cognitive (know), emotive
+    (be annoyed), communication (announce), and inferential (prove) predicates.
+    For the traditional factive/nonfactive classification of these predicates,
+    see `DegenTonhauser2022.traditionalClass`. -/
 inductive Predicate where
-  -- Canonically factive (5)
-  | beAnnoyed
-  | discover
-  | know
-  | reveal
-  | see
-  -- Nonveridical nonfactive (4)
-  | pretend
-  | suggest
-  | say
-  | think
-  -- Veridical nonfactive (2)
-  | beRight
-  | demonstrate
-  -- Optionally factive (9)
   | acknowledge
   | admit
   | announce
+  | beAnnoyed
+  | beRight
   | confess
   | confirm
+  | demonstrate
+  | discover
   | establish
   | hear
   | inform
+  | know
+  | pretend
   | prove
+  | reveal
+  | say
+  | see
+  | suggest
+  | think
   deriving DecidableEq, Repr
 
 -- ============================================================================
@@ -98,15 +99,23 @@ structure RegressionEffect where
   deriving Repr
 
 /-- The three levels of prior-belief predictor tested in Experiment 1.
-    The individual-level model captures the most variance (lowest BIC). -/
+    The individual-level model captures the most variance (lowest BIC).
+    Experiment 2 is between-participant, so only categorical and group-level
+    are tested there (individual priors unavailable). -/
 inductive PriorLevel where
   /-- Binary: high vs low fact condition. -/
   | categorical
   /-- Continuous: group-level mean prior probability by item. -/
   | groupLevel
-  /-- Continuous: each participant's own prior probability rating. -/
+  /-- Continuous: each participant's own prior probability rating.
+      Only available in within-participant designs (Experiment 1). -/
   | individualLevel
   deriving DecidableEq, Repr
+
+/-- Experiment 1: prior manipulation was successful.
+    Higher-probability facts yielded higher prior ratings than
+    lower-probability facts (β = 0.45, SE = 0.01, t = 31.12). -/
+def exp1_priorManipulation : RegressionEffect := ⟨0.45, 0.01, 31.12⟩
 
 /-- Experiment 1 regression: prior predicts projection at all three levels. -/
 def exp1_priorEffect : PriorLevel → RegressionEffect
@@ -114,11 +123,14 @@ def exp1_priorEffect : PriorLevel → RegressionEffect
   | .groupLevel      => ⟨0.31, 0.02, 12.58⟩
   | .individualLevel => ⟨0.28, 0.02, 13.85⟩
 
-/-- Experiment 2b regression: between-participant replication. -/
-def exp2b_priorEffect : PriorLevel → RegressionEffect
-  | .categorical     => ⟨0.18, 0.01, 12.81⟩
-  | .groupLevel      => ⟨0.34, 0.03, 13.27⟩
-  | .individualLevel => ⟨0.34, 0.03, 13.27⟩ -- not separately reported
+/-- Experiment 2b regression: between-participant replication.
+    Only categorical and group-level predictors are available —
+    Exp 2 is between-participant, so individual priors are not measured
+    alongside projection. -/
+def exp2b_priorEffect : PriorLevel → Option RegressionEffect
+  | .categorical     => some ⟨0.18, 0.01, 12.81⟩
+  | .groupLevel      => some ⟨0.34, 0.03, 13.27⟩
+  | .individualLevel => none  -- between-participant: not applicable
 
 /-- BIC values for the three prior-level models in Experiment 1.
     Lower = better fit. Individual-level wins decisively. -/
@@ -135,28 +147,39 @@ theorem individual_best_by_bic :
     exp1_bic .groupLevel < exp1_bic .categorical := by
   simp [exp1_bic]; constructor <;> native_decide
 
+/-- The prior manipulation was successful: β > 0. -/
+theorem prior_manipulation_successful :
+    exp1_priorManipulation.β > 0 := by native_decide
+
 -- ============================================================================
 -- §3. Core Finding: Prior Modulates Projection
 -- ============================================================================
 
-/-- The prior effect is positive at every level of analysis in both
-    experiments. A positive β means higher prior → stronger projection. -/
+/-- The prior effect is positive at every level of analysis in Experiment 1.
+    A positive β means higher prior → stronger projection. -/
 theorem prior_effect_positive_exp1 (level : PriorLevel) :
     (exp1_priorEffect level).β > 0 := by
   cases level <;> simp [exp1_priorEffect] <;> native_decide
 
-/-- The prior effect replicates in the between-participant design. -/
-theorem prior_effect_positive_exp2b (level : PriorLevel) :
-    (exp2b_priorEffect level).β > 0 := by
-  cases level <;> simp [exp2b_priorEffect] <;> native_decide
+/-- The prior effect replicates in the between-participant design
+    at both applicable levels (categorical and group-level). -/
+theorem prior_effect_positive_exp2b_cat :
+    exp2b_priorEffect .categorical = some ⟨0.18, 0.01, 12.81⟩ := rfl
+
+theorem prior_effect_positive_exp2b_grp :
+    exp2b_priorEffect .groupLevel = some ⟨0.34, 0.03, 13.27⟩ := rfl
+
+/-- Individual-level prior is not available in the between-participant design. -/
+theorem exp2b_no_individual :
+    exp2b_priorEffect .individualLevel = none := rfl
 
 /-- The prior effect replicates across experiments:
     Exp 1 (within-participant) and Exp 2b (between-participant) show
-    the same direction and similar magnitude. -/
+    the same direction at the categorical level. -/
 theorem prior_effect_replicates :
     (exp1_priorEffect .categorical).β > 0 ∧
-    (exp2b_priorEffect .categorical).β > 0 :=
-  ⟨by native_decide, by native_decide⟩
+    exp2b_priorEffect .categorical = some ⟨0.18, 0.01, 12.81⟩ :=
+  ⟨by native_decide, rfl⟩
 
 -- ============================================================================
 -- §4. Replication Correlations
@@ -177,15 +200,55 @@ theorem replication_robust :
   ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
--- §5. Fragment Bridge
+-- §5. Projection Profiles (Gradience Integration)
+-- ============================================================================
+
+/-- Mean certainty ratings by predicate and fact condition from Experiment 1.
+    Values computed from the data at
+    github.com/judith-tonhauser/projective-probability (results/9-prior-projection),
+    rounded to 2 decimal places. Ordered by overall projection strength
+    (Figure 3 x-axis). -/
+def projectionProfile : Predicate → ProjectionProfile
+  | .pretend     => ⟨0.31, 0.21⟩
+  | .beRight     => ⟨0.34, 0.20⟩
+  | .suggest     => ⟨0.32, 0.24⟩
+  | .say         => ⟨0.38, 0.22⟩
+  | .think       => ⟨0.40, 0.20⟩
+  | .confirm     => ⟨0.37, 0.28⟩
+  | .prove       => ⟨0.41, 0.25⟩
+  | .establish   => ⟨0.43, 0.27⟩
+  | .demonstrate => ⟨0.48, 0.33⟩
+  | .announce    => ⟨0.53, 0.41⟩
+  | .admit       => ⟨0.60, 0.43⟩
+  | .confess     => ⟨0.58, 0.45⟩
+  | .reveal      => ⟨0.62, 0.47⟩
+  | .acknowledge => ⟨0.65, 0.49⟩
+  | .discover    => ⟨0.69, 0.55⟩
+  | .hear        => ⟨0.72, 0.57⟩
+  | .see         => ⟨0.69, 0.60⟩
+  | .inform      => ⟨0.76, 0.57⟩
+  | .know        => ⟨0.74, 0.68⟩
+  | .beAnnoyed   => ⟨0.80, 0.68⟩
+
+/-- The core finding: prior beliefs modulate projection for EVERY predicate.
+    High-prior content projects more strongly than low-prior content across
+    all 20 predicates. -/
+theorem prior_modulates_all (p : Predicate) :
+    priorBeliefModulatesProjection (projectionProfile p) := by
+  cases p <;> simp [projectionProfile, priorBeliefModulatesProjection] <;> native_decide
+
+-- ============================================================================
+-- §6. Fragment Bridge
 -- ============================================================================
 
 section FragmentBridge
 
 open Fragments.English.Predicates.Verbal
+open Fragments.English.Predicates.Copular
 
-/-- Map each D&T predicate to its Fragment verb entry. 18 of 20 are simple
-    verbs; "be annoyed" and "be right" are copular constructions. -/
+/-- Map each D&T predicate to its Fragment verb entry (18 of 20).
+    "be annoyed" and "be right" are copular — use `toPredicateCore` for
+    full coverage. -/
 def toVerbEntry : Predicate → Option VerbEntry
   | .know => some know
   | .think => some think
@@ -208,26 +271,58 @@ def toVerbEntry : Predicate → Option VerbEntry
   | .beAnnoyed => none
   | .beRight => none
 
-/-- All 20 D&T predicates. -/
-def allPredicates : List Predicate :=
-  [.beAnnoyed, .discover, .know, .reveal, .see,
-   .pretend, .suggest, .say, .think, .beRight, .demonstrate,
-   .acknowledge, .admit, .announce, .confess, .confirm,
-   .establish, .hear, .inform, .prove]
+/-- Map each D&T predicate to its `VerbCore` — the semantic spine shared by
+    verbal and copular entries. Covers all 20 predicates.
+    Copular entries go through `ClauseEmbeddingAdj.toVerbCore` (English-specific
+    realization: copula + adjective). -/
+def toPredicateCore : Predicate → VerbCore
+  | .know => know.toVerbCore
+  | .think => think.toVerbCore
+  | .discover => discover.toVerbCore
+  | .see => see.toVerbCore
+  | .say => say.toVerbCore
+  | .hear => hear.toVerbCore
+  | .reveal => reveal.toVerbCore
+  | .acknowledge => acknowledge.toVerbCore
+  | .admit => admit.toVerbCore
+  | .announce => announce.toVerbCore
+  | .confess => confess.toVerbCore
+  | .inform => inform.toVerbCore
+  | .suggest => suggest.toVerbCore
+  | .pretend => pretend.toVerbCore
+  | .confirm => confirm.toVerbCore
+  | .demonstrate => demonstrate.toVerbCore
+  | .establish => establish.toVerbCore
+  | .prove => prove.toVerbCore
+  | .beAnnoyed => beAnnoyed.toVerbCore
+  | .beRight => beRight.toVerbCore
 
-/-- 18 of 20 predicates have Fragment entries (all except copular
+/-- All 20 D&T predicates (alphabetical). -/
+def allPredicates : List Predicate :=
+  [.acknowledge, .admit, .announce, .beAnnoyed, .beRight,
+   .confess, .confirm, .demonstrate, .discover, .establish,
+   .hear, .inform, .know, .pretend, .prove,
+   .reveal, .say, .see, .suggest, .think]
+
+/-- All 20 predicates have Fragment entries via `toPredicateCore`. -/
+theorem full_coverage :
+    allPredicates.length = 20 := by native_decide
+
+/-- 18 of 20 predicates have `VerbEntry` entries (all except copular
     "be annoyed" and "be right"). -/
-theorem fragment_coverage :
+theorem verbEntry_coverage :
     (allPredicates.filter (fun p => (toVerbEntry p).isSome)).length = 18 := by
   native_decide
 
-/-- Every Fragment-mapped predicate can take a finite clause complement
-    (as primary or alternate frame), matching D&T's experimental design. -/
-theorem all_entries_take_clause_complement (p : Predicate)
-    (v : VerbEntry) (h : toVerbEntry p = some v) :
-    v.complementType = .finiteClause ∨
-    v.altComplementType = some .finiteClause := by
-  cases p <;> (unfold toVerbEntry at h; cases h) <;> first | left; rfl | right; rfl
+/-- Every predicate takes a finite clause complement (as primary or alternate
+    frame), matching D&T's experimental design. -/
+theorem all_predicates_take_clause_complement (p : Predicate) :
+    (toPredicateCore p).complementType = .finiteClause ∨
+    (toPredicateCore p).altComplementType = some .finiteClause := by
+  cases p <;>
+    simp [toPredicateCore, Semantics.Lexical.Adjective.ClauseEmbeddingAdj.toVerbCore,
+          beAnnoyed, beRight] <;>
+    first | left; rfl | right; rfl
 
 end FragmentBridge
 

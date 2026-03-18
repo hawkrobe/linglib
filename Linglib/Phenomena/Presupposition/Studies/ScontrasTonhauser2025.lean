@@ -2,6 +2,7 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Core.Agent.BToM
 import Linglib.Theories.Semantics.Attitudes.Factivity
+import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
@@ -57,6 +58,15 @@ effect (β = 0.16, p < .001). The QUD manipulation was not significant
 (β = 0.009, p = .75). Exp 2 confirms (2a) utterance effect (β = 0.34,
 p < .001) and (2c) QUD effect (β = 0.14, p < .001) with a stronger QUD
 manipulation. Exp 2 did not manipulate prior probability.
+
+## Connection to @cite{degen-tonhauser-2021}
+
+The prior effect (prediction 2b) replicates the core finding of
+@cite{degen-tonhauser-2021}: higher prior probability of complement content
+leads to stronger projection. D&T 2021 demonstrate this across 20 predicates
+with β = 0.14 (categorical) / β = 0.28 (individual-level). S&T 2025's RSA
+model provides the theoretical explanation: L1's Bayesian inference naturally
+incorporates prior beliefs, so higher priors yield higher posteriors.
 -/
 
 set_option autoImplicit false
@@ -683,5 +693,20 @@ theorem model_predicts_effects :
     directionCorrect .qud = true :=
   ⟨prediction_2b, prediction_2c,
    by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §12. Connection to @cite{degen-tonhauser-2021}
+-- ============================================================================
+
+/-- The prior effect found by S&T 2025 (β = 0.16) replicates the prior effect
+    found by @cite{degen-tonhauser-2021} (β = 0.14 categorical, β = 0.28
+    individual). Both find that higher prior probability of the complement
+    content leads to stronger projection. The RSA model's `prediction_2b`
+    provides the theoretical explanation for this empirical finding. -/
+theorem prior_effect_consistent_with_dt2021 :
+    exp1_priorEffect.β > 0 ∧
+    (DegenTonhauser2021.exp1_priorEffect .categorical).β > 0 ∧
+    (DegenTonhauser2021.exp1_priorEffect .individualLevel).β > 0 :=
+  ⟨by native_decide, by native_decide, by native_decide⟩
 
 end Phenomena.Presupposition.Studies.ScontrasTonhauser2025

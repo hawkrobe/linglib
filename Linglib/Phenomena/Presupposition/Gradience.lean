@@ -112,13 +112,13 @@ structure NoCategoricalGap where
   canonFactiveRating : Float
   overlap : optFactiveRating > canonFactiveRating
 
-/-- Witnessed by inform (0.79) > reveal (0.71) in @cite{degen-tonhauser-2022}
+/-- Witnessed by inform (0.81) > reveal (0.70) in @cite{degen-tonhauser-2022}
     Experiment 1a (sliding scale, collapsing over facts). -/
 def noCategoricalGap_witness : NoCategoricalGap :=
   { optFactivePred := "inform"
     canonFactivePred := "reveal"
-    optFactiveRating := 0.79
-    canonFactiveRating := 0.71
+    optFactiveRating := 0.81
+    canonFactiveRating := 0.70
     overlap := by native_decide }
 
 end Phenomena.Presupposition.Gradience
