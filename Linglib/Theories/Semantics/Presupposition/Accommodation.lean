@@ -38,6 +38,7 @@ paribus — presupposition P comes into existence at t."
 
 namespace Semantics.Presupposition.Accommodation
 
+open Classical
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
@@ -197,8 +198,9 @@ theorem heim_projection_when_consistent (c : ContextSet W) (presup : BProp W)
 theorem heim_never_intermediate (c : ContextSet W) (presup : BProp W) :
  ∀ d, heimSelect c presup ≠ .intermediate d := by
  intro d
- simp only [heimSelect]
- split <;> simp [AccommodationLevel.intermediate]
+ by_cases h : ContextSet.nonEmpty (globalAccommodate c presup)
+ · rw [heim_projection_when_consistent c presup h]; exact AccommodationLevel.noConfusion
+ · rw [heim_cancellation_equivalence c presup h]; exact AccommodationLevel.noConfusion
 
 /-- Van der Sandt vs. Fauconnier: the key difference is whether
  accommodation leaves shadows at intermediate levels.

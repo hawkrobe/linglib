@@ -38,7 +38,7 @@ namespace Semantics.TypeTheoretic
 Signs may carry illocutionary force: assertion, query, command,
 or acknowledgement. -/
 
-/-- Illocutionary force in TTR. @cite{cooper-2023} §2.6, ex (91). -/
+/-- Illocutionary force in TTR. §2.6, ex (91). -/
 inductive IllocForce where
   | assertion
   | query
@@ -46,7 +46,7 @@ inductive IllocForce where
   | acknowledgement
   deriving Repr, DecidableEq
 
-/-- A sign with illocutionary force. @cite{cooper-2023} ex (91). -/
+/-- A sign with illocutionary force. ex (91). -/
 structure ForcedSign (Phon Cont : Type) extends TTRSign Phon Cont where
   illoc : IllocForce
 
@@ -89,7 +89,7 @@ An information state (gameboard) has two parts:
 - **Shared**: latest utterance + shared commitments -/
 
 /-- An agent's information state (gameboard).
-@cite{cooper-2023} §2.6, ex (88). -/
+§2.6, ex (88). -/
 structure InfoState (SignT CommT : Type) where
   /-- The agent's agenda: sign types planned for realization -/
   agenda : List SignT
@@ -106,7 +106,7 @@ def InfoState.initial {SignT CommT : Type} (baseComm : CommT) :
   commitments := baseComm
 
 /-- Pop the top agenda item (ExecTopAgenda).
-@cite{cooper-2023} §2.6, ex (120). -/
+§2.6, ex (120). -/
 def InfoState.execTopAgenda {SignT CommT : Type}
     (s : InfoState SignT CommT) : Option (SignT × InfoState SignT CommT) :=
   match s.agenda with
@@ -223,14 +223,14 @@ end InfoStatePhenomena
 
 /-! ## § 4.2–4.3 Parametric content
 
-@cite{cooper-2023} §4.3 introduces *parametric content*: semantic content that
+§4.3 introduces *parametric content*: semantic content that
 depends on a context (a presupposition). A parametric content has:
 - `bg` (background): a context type — the presupposition
 - `fg` (foreground): a function from satisfying contexts to content -/
 
 /-- Parametric content: a background type (presupposition) paired with
 a foreground function from satisfying contexts to content.
-@cite{cooper-2023} §4.3, (14). -/
+§4.3, (14). -/
 structure Parametric (Content : Type*) where
   /-- Background type — what the context must provide (presupposition) -/
   Bg : Type*
@@ -324,7 +324,7 @@ structure TotalInfoState (Memory Board : Type) where
   gb : Board
 
 /-- The three accommodation strategies for presupposition resolution.
-@cite{cooper-2023} §4.4, (74). -/
+§4.4, (74). -/
 inductive AccommodationKind where
   | gameboard
   | longTermMemory
@@ -571,7 +571,7 @@ section FramesAndDescriptions
 /-! ## §5.4 Frames as records -/
 
 /-- Ambient temperature frame.
-@cite{cooper-2023} §5.4, (14). -/
+§5.4, (14). -/
 structure AmbTempFrame (Loc : Type) (temp : Loc → Nat → Prop) where
   x : Nat
   loc : Loc
@@ -814,7 +814,7 @@ end FramePhenomena
 -- ============================================================================
 
 /-! ## Questions as Dependent Types
-@cite{ginzburg-2012} @cite{cooper-2023}
+@cite{ginzburg-2012}
 
 In TTR, a question is a function from a record type to a type — essentially
 a dependent function `(x : R) → T(x)`. A *polar* question is a proposition
@@ -879,9 +879,9 @@ def Parametric.toTTRQuestion (p : Parametric Type) : TTRQuestion p.Bg where
 -- ============================================================================
 
 /-! ## Austinian Propositions for Discourse
-@cite{ginzburg-2012} @cite{cooper-2023} @cite{barwise-perry-1983}
+@cite{ginzburg-2012} @cite{barwise-perry-1983}
 
-@cite{cooper-2023} §6.5 defines `AustinianProp` as a situation–type pair
+§6.5 defines `AustinianProp` as a situation–type pair
 that carries its own witness (always true by construction). This suffices
 for truth-conditional semantics but not for discourse: when A asserts
 "Bo is here", the content enters FACTS as a *checkable* claim that can

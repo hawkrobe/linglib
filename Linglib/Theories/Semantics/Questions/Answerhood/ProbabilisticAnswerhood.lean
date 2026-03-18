@@ -565,6 +565,32 @@ theorem strongerEvidence_is_positive {W : Type*} [Fintype W]
   simp only [evidencesMoreStrongly, decide_eq_true_eq] at h
   exact h
 
+-- Resolution Evidenced by R (Q|_R)
+
+/-- The resolution of Q evidenced by R — Q|_R from @cite{thomas-2026} Def. 62.
+
+Returns the alternative A ∈ alt(Q) that maximizes the Bayes factor
+P(A|info(R)) / P(A). This is the ∩A from Definition 62 such that
+A's Bayes factor strictly dominates all non-contained alternatives.
+
+For single-alternative resolutions (the common case), this reduces
+to the alternative with the highest conditional probability increase. -/
+def evidencedResolution {W : Type*} [Fintype W]
+    (p : W → Bool) (q : Issue W) (prior : Prior W) : Option (InfoState W) :=
+  let candidates := q.alternatives.filterMap fun alt =>
+    let pAlt := probOfProp prior alt
+    if pAlt > 0 then
+      let bayesFactor := conditionalProb prior p alt / pAlt
+      if bayesFactor > 1 then some (alt, bayesFactor) else none
+    else none
+  match candidates with
+  | [] => none
+  | (best, _) :: _ =>
+    -- Find the candidate with the highest Bayes factor
+    let winner := candidates.foldl (fun (acc : InfoState W × ℚ) (cur : InfoState W × ℚ) =>
+      if cur.2 > acc.2 then cur else acc) (best, 0)
+    some winner.1
+
 /-!
 ## ℚ↔ℝ Probability Bridge
 

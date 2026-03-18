@@ -63,7 +63,7 @@ composition and await scope assignment via retrieval. -/
 variable {E : Type}
 
 /-- A quantifier store: a list of quantifiers awaiting scope resolution.
-    @cite{cooper-2023} Ch8 §8.3: stored quantifiers are later retrieved at
+    Ch8 §8.3: stored quantifiers are later retrieved at
     scope positions, and retrieval order determines scope. -/
 structure QStore (E : Type) where
   /-- The stored quantifiers, ordered by storage time -/
@@ -73,7 +73,7 @@ structure QStore (E : Type) where
 def QStore.empty : QStore E := ⟨[]⟩
 
 /-- A store is *plugged* when all quantifiers have taken scope.
-    @cite{cooper-2023} Ch8: plugged content is fully scope-resolved. -/
+    Ch8: plugged content is fully scope-resolved. -/
 def QStore.isPlugged (qs : QStore E) : Prop := qs.stored = []
 
 /-- A store is *unplugged* when quantifiers remain to be scoped. -/
@@ -104,7 +104,7 @@ Store moves a quantifier from content into the qstore, leaving behind
 a variable (trace) in the content. -/
 
 /-- Store a quantifier: push it onto the front of the store.
-    @cite{cooper-2023} Ch8 §8.3: store(Q) moves Q into the qstore. -/
+    Ch8 §8.3: store(Q) moves Q into the qstore. -/
 def QStore.store (qs : QStore E) (q : Quant E) : QStore E :=
   ⟨q :: qs.stored⟩
 
@@ -119,7 +119,7 @@ Retrieve pops a quantifier from the store and applies it at a scope
 position. The order of retrieval determines relative scope. -/
 
 /-- Retrieve the first quantifier from the store.
-    @cite{cooper-2023} Ch8 §8.3: retrieve pops the outermost stored quantifier.
+    Ch8 §8.3: retrieve pops the outermost stored quantifier.
     Returns the quantifier and the remaining store, or `none` if plugged. -/
 def QStore.retrieve (qs : QStore E) :
     Option (Quant E × QStore E) :=
@@ -146,10 +146,10 @@ theorem store_then_retrieve (qs : QStore E) (q : Quant E) :
 
 For sentences with two quantifiers and a binary relation, the two
 possible retrieval orders produce exactly two scope readings.
-@cite{cooper-2023} Ch8: "every boy hugged a dog" has ∀>∃ and ∃>∀ readings. -/
+Ch8: "every boy hugged a dog" has ∀>∃ and ∃>∀ readings. -/
 
 /-- A two-quantifier scope configuration: two quantifiers and a relation.
-    @cite{cooper-2023} Ch8: the minimal underspecified content for a
+    Ch8: the minimal underspecified content for a
     doubly-quantified sentence. -/
 structure TwoQuantScope (E : Type) where
   /-- The binary relation (e.g., hug) -/
@@ -160,7 +160,7 @@ structure TwoQuantScope (E : Type) where
   q₂ : Quant E
 
 /-- Surface scope reading: Q₁ scopes over Q₂.
-    @cite{cooper-2023} Ch8: retrieving Q₁ first = outermost scope.
+    Ch8: retrieving Q₁ first = outermost scope.
     For "every boy hugged a dog": ∀x.boy(x) → ∃y.dog(y) ∧ hug(x,y). -/
 def TwoQuantScope.surfaceScope (s : TwoQuantScope E) : Type :=
   s.q₁ (λ x => s.q₂ (λ y => s.rel x y))
@@ -172,7 +172,7 @@ def TwoQuantScope.inverseScope (s : TwoQuantScope E) : Type :=
 
 /-- The underspecification closure 𝔖 for two quantifiers:
     the join of all possible scope readings.
-    @cite{cooper-2023} Ch8 §8.4: each witness of 𝔖(content) is one
+    Ch8 §8.4: each witness of 𝔖(content) is one
     fully specified reading. With two quantifiers, |𝔖| = 2. -/
 def TwoQuantScope.𝔖 (s : TwoQuantScope E) : Type :=
   JoinType s.surfaceScope s.inverseScope
@@ -193,7 +193,7 @@ def TwoQuantScope.inverseToUnderspec (s : TwoQuantScope E)
   Sum.inr w
 
 /-- Select a scope reading by ScopeConfig.
-    @cite{cooper-2023} Ch8 → @cite{scontras-pearl-2021} bridge:
+    Ch8 → @cite{scontras-pearl-2021} bridge:
     retrieval order corresponds to ScopeConfig.surface /.inverse. -/
 def TwoQuantScope.readingAt (s : TwoQuantScope E)
     (sc : Semantics.Scope.ScopeConfig) : Type :=
@@ -246,7 +246,7 @@ end ScopeInfrastructure
 
 /-! ### Scope ambiguity in "every boy hugged a dog"
 
-@cite{cooper-2023} Ch8: the classic scope ambiguity example.
+Ch8: the classic scope ambiguity example.
 Two boys, two dogs; each boy hugs a different dog.
 Surface scope is true but inverse scope is false. -/
 
@@ -384,7 +384,7 @@ end ScopeBridge
 
 /-! ### Localization
 
-@cite{cooper-2023} Ch8 §8.5: localization moves a stored quantifier's
+Ch8 §8.5: localization moves a stored quantifier's
 background into the domain of a property, absorbing the context
 dependency. This is the Ch8 mechanism for donkey anaphora:
 
@@ -400,7 +400,7 @@ section Localization
 variable {E : Type}
 
 /-- Localization: absorb a parametric property's background into its body.
-    @cite{cooper-2023} Ch8 §8.5: 𝔏(P) moves context material into the
+    Ch8 §8.5: 𝔏(P) moves context material into the
     property's domain type, enabling donkey anaphora.
 
     Before 𝔏: restrictor is parametric (depends on which donkey).
@@ -408,7 +408,7 @@ variable {E : Type}
 def localize (P : PPpty E) : Ppty E := λ a => (c : P.Bg) × P.fg c a
 
 /-- Universal localization: strong donkey reading variant.
-    @cite{cooper-2023} Ch8: 𝔏ʸ(P) uses universal instead of existential binding.
+    Ch8: 𝔏ʸ(P) uses universal instead of existential binding.
     "Every farmer who owns a donkey beats it" with strong reading:
     every donkey a farmer owns, the farmer beats. -/
 def localizeUniv (P : PPpty E) : Ppty E := λ a => (c : P.Bg) → P.fg c a
@@ -653,7 +653,7 @@ end DonkeyAnaphora
 
 /-! ### Reflexivization and anaphoric operations
 
-@cite{cooper-2023} Ch8 introduces two operations for binding:
+Ch8 introduces two operations for binding:
 
 1. **ℜ(P)** (eq 84): *Reflexivization* — removes the reflexive marking (r-field)
    from the context and binds the reflexive pronoun to the subject variable
@@ -679,7 +679,7 @@ section BindingTheory
 variable {E : Type}
 
 /-- Reflexivization: identify the two arguments of a binary relation.
-    @cite{cooper-2023} Ch8, eq (84): ℜ(P) removes the reflexive marking
+    Ch8, eq (84): ℜ(P) removes the reflexive marking
     (r-field) from the context and replaces the dependency on the
     assignment variable 𝔤.xᵢ with the domain variable r.x.
 
@@ -736,7 +736,7 @@ end BindingTheory
 
 /-! ### Binding in "Sam likes himself" / "Sam likes him"
 
-@cite{cooper-2023} Ch8, eqs (67)–(73): "Sam likes him" has two fields x and y
+Ch8, eqs (67)–(73): "Sam likes him" has two fields x and y
 for individuals (68a). When y=x, the fields are filled by the same individual
 (68b,c). Reflexivization ℜ forces this identification.
 
@@ -748,7 +748,7 @@ The complementary distribution:
 section BindingPhenomenon
 
 /-- Individuals for the binding example.
-    @cite{cooper-2023} Ch8: Sam is the subject; Bill is a potential
+    Ch8: Sam is the subject; Bill is a potential
     non-local antecedent for "him". -/
 inductive BindInd where
   | sam | bill | kim
@@ -1013,7 +1013,7 @@ section GeneralizedClosure
 
 variable {E : Type}
 
-/-- @cite{cooper-2023} eq (20). -/
+/-- eq (20). -/
 abbrev ContType₈ (_E : Type) := Type
 
 /-- 𝔖(T): underspecification closure, eq (89). 7 clauses:

@@ -15,9 +15,10 @@ The novel contribution of @cite{thomas-2026} is explaining the "argument-buildin
 use of "too" where the antecedent and prejacent aren't focus alternatives
 but jointly build an argument for some conclusion.
 
-Example: "Sue cooks, and she has a lot of free time, too."
-- Not asserting "Sue cooks" AND "has free time" as focus alternatives
-- Both contribute toward conclusion: "Sue should host the dinner party"
+Example (@cite{thomas-2026}, ex. 1c/14c/65):
+"A room just opened up at this hotel. It looks kind of fancy, too."
+- ANT = "room just opened up", π = "looks fancy" are not focus alternatives
+- Both contribute toward conclusion: "This hotel would be a good place to stay"
 
 ## Definition 64: Felicity Conditions for TOO(π)
 
@@ -36,10 +37,11 @@ Given resolved question RQ and antecedent ANT:
 - ANT = "John came", π = "Mary came", RQ = "Who came?"
 
 **Argument-building use**: ANT and π jointly support a conclusion
-- "Sue cooks, and she has free time, too."
-- ANT = "Sue cooks", π = "Sue has free time"
-- RQ = "Who should host?" (implicit)
-- Together they evidence "Sue should host"
+- "A room just opened up at this hotel. It looks kind of fancy, too."
+  (@cite{thomas-2026}, ex. 1c/14c/65)
+- ANT = "room just opened up", π = "looks fancy"
+- RQ = "What would be a good hotel?" (implicit)
+- Together they evidence "This hotel would be a good place to stay"
 
 -/
 
@@ -116,7 +118,7 @@ end AdditiveContext
 The antecedent must raise the probability of some resolution. -/
 def antecedentCondition {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) : Bool :=
-  probAnswers ctx.antecedent ctx.resolvedQuestion ctx.prior
+  probAnswersFull ctx.antecedent ctx.resolvedQuestion ctx.prior
 
 /-- Condition 2: Conjunction evidences more strongly.
 
@@ -141,16 +143,24 @@ def nonTrivialityConditionWith {W : Type*}
     -- π doesn't entail alt (there's a π-world that's not in alt)
     !(worlds.all λ w => prejacent w → alt w)
 
-/-- Condition 3b: No weaker proposition works as well.
+/-- Condition 3b: No weaker proposition works as well (Def. 64c.ii).
 
-This is a maximality condition: π should be minimal in some sense.
-We approximate this by checking that π is informative. -/
+For every strengthened resolution R, no strict weakening S ⊃ ⟦π⟧
+should evidence R at least as strongly as π does given ANT.
+
+Over finite types this reduces to an entailment check: for every
+world w with positive prior, ANT(w) ∧ R(w) → π(w). The derivation
+uses linearity of Bayes factors to reduce exponential subset
+enumeration to a per-world check. -/
 def maximalityCondition {W : Type*} [Fintype W]
-    (prejacent : W → Bool) (prior : Prior W) : Bool :=
-  -- π should have positive probability (informative)
-  probOfProp prior prejacent > 0 &&
-  -- π shouldn't be a tautology
-  probOfProp prior prejacent < 1
+    (ctx : AdditiveContext W) (prejacent : W → Bool)
+    (strengthened : List (InfoState W))
+    (worlds : List W) : Bool :=
+  strengthened.all fun resolution =>
+    worlds.all fun w =>
+      if ctx.prior w > 0 then
+        !(ctx.antecedent w && resolution w && !prejacent w)
+      else true
 
 /-- Full felicity conditions for TOO(π) with explicit world list.
 
@@ -164,8 +174,8 @@ def tooFelicitousWith {W : Type*} [Fintype W]
   conjunctionCondition ctx prejacent &&
   -- Condition 3a: π doesn't entail the strengthened resolution
   nonTrivialityConditionWith prejacent (strengthenedResolutions' ctx prejacent) worlds &&
-  -- Condition 3b: Maximality (π is properly informative)
-  maximalityCondition prejacent ctx.prior
+  -- Condition 3b: Maximality — no weaker proposition works as well (Def. 64c.ii)
+  maximalityCondition ctx prejacent (strengthenedResolutions' ctx prejacent) worlds
 
 /-- Noncomputable version using Fintype.elems. -/
 noncomputable def tooFelicitous {W : Type*} [Fintype W]
@@ -408,11 +418,12 @@ Argument-building use arises exactly when:
 This is the DEFINITION of argument-building: ANT and π are not themselves
 answers to RQ, but jointly serve as EVIDENCE for some answer.
 
-Example: "Sue cooks, and she has free time, too."
-- RQ = "Who should host?" (implicit)
-- ANT = "Sue cooks" - doesn't determine who should host
-- π = "Sue has free time" - doesn't determine who should host
-- But ANT ∧ π together raise the probability that Sue should host -/
+Example (@cite{thomas-2026}, ex. 1c/65):
+"A room just opened up at this hotel. It looks kind of fancy, too."
+- RQ = "What would be a good hotel?" (implicit)
+- ANT = "room just opened up" - doesn't determine which hotel is good
+- π = "looks fancy" - doesn't determine which hotel is good
+- But ANT ∧ π together raise the probability that this hotel is good -/
 def isArgumentBuildingUseCharacterized {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool)
     (worlds : List W) : Bool :=
@@ -523,7 +534,8 @@ theorem standard_use_felicitous {W : Type*} [Fintype W]
     (hConj : conjunctionCondition ctx prejacent = true)
     (hNonTriv : nonTrivialityConditionWith prejacent
       (strengthenedResolutions' ctx prejacent) worlds = true)
-    (hMax : maximalityCondition prejacent ctx.prior = true) :
+    (hMax : maximalityCondition ctx prejacent
+      (strengthenedResolutions' ctx prejacent) worlds = true) :
     tooFelicitousWith ctx prejacent worlds = true := by
   simp only [tooFelicitousWith, hAnt, hConj, hNonTriv, hMax, Bool.and_self]
 
