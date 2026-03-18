@@ -1442,7 +1442,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="doke-mofokeng-1967" data-role="cited" data-tag="Syntax" data-year="1967">
-<p class="bib-citation"><strong>Doke, C. M. &amp; Mofokeng, S. M.</strong> (1967). Textbook of Southern Sotho Grammar. <em>Longmans</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/MorphemeOrder.lean">MorphemeOrder</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/Studies/HahnDegenFutrell2021.lean">HahnDegenFutrell2021</a></span></p>
+<p class="bib-citation"><strong>Doke, C. M. &amp; Mofokeng, S. M.</strong> (1967). <a href="https://search.worldcat.org/title/2880498" class="bib-title-link">Textbook of Southern Sotho Grammar</a>. <em>Longmans</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/MorphemeOrder.lean">MorphemeOrder</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/Studies/HahnDegenFutrell2021.lean">HahnDegenFutrell2021</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="dong-etal-2026" data-role="primary" data-tag="Pragmatics" data-year="2026">
