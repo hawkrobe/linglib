@@ -3918,7 +3918,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="russell-1905" data-role="cited" data-tag="Semantics" data-year="1905">
-<p class="bib-citation"><strong>Russell, B.</strong> (1905). <a href="https://doi.org/10.2307/j.ctv2nrzgz1.4" class="bib-title-link">On Denoting</a>. <em>Mind, 13–28</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Determiner/Definite.lean">Definite</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Reference/Donnellan.lean">Donnellan</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Situations/Elbourne.lean">Elbourne</a></span></p>
+<p class="bib-citation"><strong>Russell, B.</strong> (1905). <a href="https://doi.org/10.1093/mind/XIV.4.479" class="bib-title-link">On Denoting</a>. <em>Mind, 14(56), 479–493</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Determiner/Definite.lean">Definite</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Reference/Donnellan.lean">Donnellan</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Situations/Elbourne.lean">Elbourne</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="russell-1980" data-role="cited" data-tag="Other" data-year="1980">
