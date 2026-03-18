@@ -1,6 +1,7 @@
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Core.Number
+import Linglib.Core.AgreementTarget
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
@@ -259,24 +260,8 @@ theorem constraint_iii_holds :
 -- §4: The Agreement Hierarchy (Ch 6, §6.2)
 -- ============================================================================
 
-/-- Agreement target types, ordered by syntactic closeness to the controller.
-
-    The ordering is Corbett's Agreement Hierarchy: attributive < predicate <
-    relative pronoun < personal pronoun. As we move rightward, semantic
-    agreement becomes more likely. -/
-inductive AgreementTarget where
-  | attributive      -- "this committee" / "*these committee"
-  | predicate        -- "the committee has/have decided"
-  | relativePronoun  -- "the committee, which/who..."
-  | personalPronoun  -- "the committee... it/they"
-  deriving DecidableEq, BEq, Repr
-
-/-- Rank on the Agreement Hierarchy (higher = further right = more semantic). -/
-def AgreementTarget.rank : AgreementTarget → Nat
-  | .attributive     => 0
-  | .predicate       => 1
-  | .relativePronoun => 2
-  | .personalPronoun => 3
+-- AgreementTarget is now in Core/AgreementTarget.lean.
+open Core (AgreementTarget)
 
 /-- Whether agreement is determined by morphological form (syntactic)
     or by referential meaning (semantic). -/
@@ -295,13 +280,13 @@ structure AgreementProfile where
 
 /-- The Agreement Hierarchy monotonicity constraint: once semantic agreement
     becomes possible at a target, it remains possible at all targets further
-    right on the hierarchy. -/
+    right (= lower `Core.AgreementTarget.rank`) on the hierarchy. -/
 def AgreementProfile.respectsHierarchy (p : AgreementProfile) : Bool :=
   let targets := [AgreementTarget.attributive, .predicate,
                    .relativePronoun, .personalPronoun]
   targets.all λ t1 =>
     targets.all λ t2 =>
-      t1.rank >= t2.rank || !p.semanticPossible t1 || p.semanticPossible t2
+      t1.rank <= t2.rank || !p.semanticPossible t1 || p.semanticPossible t2
 
 -- Language data
 
@@ -314,7 +299,8 @@ def britishCommittee : AgreementProfile :=
       | .attributive     => false  -- *these committee
       | .predicate       => true   -- the committee have decided
       | .relativePronoun => true   -- the committee, who have...
-      | .personalPronoun => true } -- the committee... they
+      | .personalPronoun => true   -- the committee... they
+      | .verbTarget      => true }
 
 /-- American English *committee*: semantic agreement rare in predicate,
     but available in relative and personal pronoun. -/
@@ -324,7 +310,8 @@ def americanCommittee : AgreementProfile :=
       | .attributive     => false
       | .predicate       => false  -- ?the committee have decided (rare in AmE)
       | .relativePronoun => true
-      | .personalPronoun => true }
+      | .personalPronoun => true
+      | .verbTarget      => true }
 
 /-- Serbo-Croatian *deca* 'children': morphologically feminine singular,
     semantically plural. Semantic agreement available everywhere. -/

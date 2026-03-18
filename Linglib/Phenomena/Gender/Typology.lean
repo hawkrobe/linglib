@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.AgreementTarget
 import Linglib.Core.WALS.Features.F30A
 import Linglib.Core.WALS.Features.F31A
 import Linglib.Core.WALS.Features.F32A
@@ -193,36 +194,9 @@ theorem ch32_no_purely_formal :
 -- Agreement Targets
 -- ============================================================================
 
-/-- Morphosyntactic targets where gender agreement can surface.
-
-    @cite{corbett-1991} establishes an implicational hierarchy:
-      attributive > predicate > relative pronoun > personal pronoun > verb
-    If a language shows gender agreement on a lower target, it shows
-    agreement on all higher targets. This is the Agreement Hierarchy. -/
-inductive AgreementTarget where
-  | attributive       -- attributive adjective (e.g. French un bon livre)
-  | predicate         -- predicate adjective (e.g. Russian kniga interesnaja)
-  | relativePronoun   -- relative pronoun (e.g. German der/die/das)
-  | personalPronoun   -- personal pronoun (e.g. English he/she/it)
-  | verbTarget        -- verb (e.g. Hindi laRkaa aayaa / laRkii aayii)
-  deriving DecidableEq, BEq, Repr
-
-/-- Numeric rank in Corbett's Agreement Hierarchy (higher = more likely
-    to show agreement; lower = less likely, implying higher targets agree). -/
-def AgreementTarget.rank : AgreementTarget → Nat
-  | .attributive     => 4
-  | .predicate       => 3
-  | .relativePronoun => 2
-  | .personalPronoun => 1
-  | .verbTarget      => 0
-
-/-- The hierarchy is strictly ordered. -/
-theorem agreement_hierarchy_strict :
-    AgreementTarget.attributive.rank > AgreementTarget.predicate.rank ∧
-    AgreementTarget.predicate.rank > AgreementTarget.relativePronoun.rank ∧
-    AgreementTarget.relativePronoun.rank > AgreementTarget.personalPronoun.rank ∧
-    AgreementTarget.personalPronoun.rank > AgreementTarget.verbTarget.rank := by
-  native_decide
+-- AgreementTarget is now in Core/AgreementTarget.lean. Re-export so that
+-- downstream files importing this module still see it in this namespace.
+export Core (AgreementTarget)
 
 -- ============================================================================
 -- Semantic Basis Categories

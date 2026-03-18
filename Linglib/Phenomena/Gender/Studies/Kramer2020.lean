@@ -1,6 +1,7 @@
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Fragments.Spanish.Gender
+import Linglib.Fragments.Russian.Gender
 
 /-!
 # Kramer 2020: Grammatical Gender — A Close Look at Gender Assignment
@@ -379,6 +380,32 @@ theorem amharic_radical_interpretability :
   · exact absurd hu (by decide)
   · exact ⟨⟨.i, ⟨.fem, .pos⟩⟩, by simp, rfl, rfl⟩
 
+/-- Spanish's n types (Set 1) satisfy Radical Interpretability: u[+FEM]
+    is accompanied by i[+FEM] in the same dimension. -/
+theorem spanish_radical_interpretability :
+    radicalInterpretability
+      [ GenderFeature.mk .i ⟨.fem, .pos⟩,   -- n i[+FEM]
+        GenderFeature.mk .i ⟨.fem, .neg⟩,   -- n i[−FEM]
+        GenderFeature.mk .u ⟨.fem, .pos⟩ ]  -- n u[+FEM]
+    := amharic_radical_interpretability  -- same inventory
+
+/-- Russian's n types (5-n) satisfy Radical Interpretability: both
+    u[+FEM] and u[−FEM] are paired with i[+FEM] and i[−FEM]. -/
+theorem russian_radical_interpretability :
+    radicalInterpretability
+      [ GenderFeature.mk .i ⟨.fem, .pos⟩,   -- n i[+FEM]
+        GenderFeature.mk .i ⟨.fem, .neg⟩,   -- n i[−FEM]
+        GenderFeature.mk .u ⟨.fem, .pos⟩,   -- n u[+FEM]
+        GenderFeature.mk .u ⟨.fem, .neg⟩ ]  -- n u[−FEM]
+    := by
+  intro gf hgf hu
+  simp only [List.mem_cons, List.mem_nil_iff, or_false] at hgf
+  rcases hgf with rfl | rfl | rfl | rfl
+  · exact absurd hu (by decide)
+  · exact absurd hu (by decide)
+  · exact ⟨⟨.i, ⟨.fem, .pos⟩⟩, by simp, rfl, rfl⟩
+  · exact ⟨⟨.i, ⟨.fem, .neg⟩⟩, by simp, rfl, rfl⟩
+
 /-- The Semantic Core follows from Radical Interpretability + structural
     assignment: if a language has any gender feature (even uninterpretable),
     it must have an interpretable one in the same dimension, which forces
@@ -484,16 +511,6 @@ agreement with the SAME noun *vrač* in the SAME clause.
 (a social-gender projection can coexist with morphosyntactic gender on n).
 -/
 
-/-- Agreement gender triggered on a specific target type. -/
-structure AgreementGender where
-  /-- The agreement target (attributive, predicate, etc.) -/
-  target : AgreementTarget
-  /-- The gender triggered on this target -/
-  gender : GenderDimension
-  /-- Polarity of the gender feature -/
-  polarity : Polarity
-  deriving DecidableEq, BEq, Repr
-
 /-- A hybrid noun: a single lexical item that triggers different genders
     on different agreement targets simultaneously.
     (@cite{kramer-2020} §2.2.3, §3.3.2; @cite{corbett-1991}) -/
@@ -510,11 +527,6 @@ structure HybridNoun where
   distinct : morphGender ≠ semGender
   deriving Repr
 
-/-- Whether a hybrid noun shows mixed agreement: morphosyntactic gender on
-    some targets, semantic gender on others. -/
-def HybridNoun.showsMixedAgreement (hn : HybridNoun) : Bool :=
-  hn.morphGender ≠ hn.semGender
-
 /-- Russian *vrač* 'doctor': morphologically masculine (from n), but
     can trigger feminine agreement when referring to a female doctor.
     (@cite{kramer-2020} ex. 15-16/27; @cite{corbett-1991}) -/
@@ -524,9 +536,6 @@ def russianVrac : HybridNoun :=
     morphGender := ⟨.fem, .neg⟩  -- [−FEM] = morphological masculine
     semGender := ⟨.fem, .pos⟩    -- [+FEM] = semantic feminine (female referent)
     distinct := by decide }
-
-/-- Hybrid nouns have distinct morphological and semantic genders. -/
-theorem vrac_mixed_agreement : russianVrac.showsMixedAgreement = true := rfl
 
 /-- Hybrid nouns are problematic for lexical approaches: a lexical entry
     can bear only one gender feature, but hybrid nouns need two genders
@@ -567,9 +576,6 @@ def NInventory.purelySemanticGender (inv : NInventory) : Bool :=
 
 def dieriNs : NInventory :=
   ⟨"Dieri", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 2⟩
-
-def zayseNs : NInventory :=
-  ⟨"Zayse", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 2⟩
 
 def mangarayiNs : NInventory :=
   ⟨"Mangarayi", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 3⟩
@@ -783,6 +789,20 @@ theorem spanish_licensing_mesa :
 theorem spanish_licensing_libro :
     Fragments.Spanish.Gender.libro.nHead = RootClass.default.licensedNHead := rfl
 
+/-- Bridge: the licensing type of a root class agrees with the licensing
+    type derived from its n head's gender feature. For gendered root classes,
+    the `GenderFeature.licensingType` (defined in `Categorizer.lean`) produces
+    the same result as `RootClass.licensing`. -/
+theorem licensing_bridge_femaleReferent :
+    (CatHead.n_iFem.phi.gender.get (by rfl)).licensingType =
+      RootClass.femaleReferent.licensing := rfl
+theorem licensing_bridge_maleReferent :
+    (CatHead.n_iMasc.phi.gender.get (by rfl)).licensingType =
+      RootClass.maleReferent.licensing := rfl
+theorem licensing_bridge_arbitraryFem :
+    (CatHead.n_uFem.phi.gender.get (by rfl)).licensingType =
+      RootClass.arbitraryFem.licensing := rfl
+
 -- ============================================================================
 -- § 11: NInventory ↔ GenderProfile Bridge
 -- ============================================================================
@@ -808,6 +828,14 @@ theorem spanish_surface_genders_consistent :
     imply surface richness (only 2 genders). -/
 theorem spanish_structural_vs_surface :
     spanishNs.nHeads.length > spanishNs.surfaceGenders := by decide
+
+/-- NInventory ↔ AssignmentSystem bridge: having arbitrary (u) features
+    in the n-inventory corresponds to `semanticAndFormal` assignment in
+    the WALS typology. 3-n languages with no u-features are `semanticOnly`.
+    (@cite{kramer-2020} §2.3; @cite{corbett-2013} Ch 32) -/
+theorem spanish_assignment_consistent :
+    spanishNs.hasArbitraryGender = true ∧
+    spanish.assignment = .semanticAndFormal := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 12: Default Gender Derivation (@cite{kramer-2015} §6.2)
@@ -911,5 +939,154 @@ theorem spanish_derivation_chain :
 theorem fixed_gender_from_n_head :
     set1SurfaceGender Fragments.Spanish.Gender.persona.nHead = .feminine ∧
     set1SurfaceGender Fragments.Spanish.Gender.ángel.nHead = .masculine := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 13: Russian Gender (@cite{kramer-2020} §2.3.2, §3.3.2)
+-- ============================================================================
+
+/-! Russian is a 5-n language with 3 surface genders — the same inventory
+as Lavukaleve, supporting @cite{kramer-2015}'s prediction that n-inventory
+size and surface gender count are independent (mediated by VI). -/
+
+def russianNs : NInventory :=
+  ⟨"Russian", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
+               CatHead.n_uFem, CatHead.n_uNegFem], 3⟩
+
+/-- Russian and Lavukaleve share the same n-inventory (5 heads). -/
+theorem russian_lavukaleve_same_ns :
+    russianNs.nHeads = lavukaleveNs.nHeads := rfl
+
+/-- Both have 3 surface genders despite the 5-n inventory. -/
+theorem russian_lavukaleve_same_surface :
+    russianNs.surfaceGenders = lavukaleveNs.surfaceGenders := rfl
+
+/-- Russian has 5 structural heads mapping to 3 surface genders. -/
+theorem russian_structural_vs_surface :
+    russianNs.nHeads.length > russianNs.surfaceGenders := by decide
+
+/-- Russian: the DM n-inventory predicts the same number of surface genders
+    as the WALS typological profile. -/
+theorem russian_ninventory_matches_profile :
+    russianNs.surfaceGenders = russian.rawGenderCount := rfl
+
+/-- Russian n-inventory matches the WALS gender count bin. -/
+theorem russian_surface_genders_consistent :
+    Phenomena.Gender.Typology.GenderCount.three.contains
+      russianNs.surfaceGenders = true := rfl
+
+/-- Russian has u-features → `semanticAndFormal` assignment, consistent
+    with the WALS profile. -/
+theorem russian_assignment_consistent :
+    russianNs.hasArbitraryGender = true ∧
+    russian.assignment = .semanticAndFormal := ⟨rfl, rfl⟩
+
+-- Bridge: Russian fragment nouns ↔ DM study types
+
+/-- Fragment-derived: *vrač* has morphological masculine (u[−FEM]). -/
+theorem vrač_morph_masculine :
+    Fragments.Russian.Gender.vrač.nHead.phi.gender =
+      some ⟨.u, ⟨.fem, .neg⟩⟩ := rfl
+
+/-- *vrač* is a hybrid noun: its morphological gender (u[−FEM] = masculine)
+    differs from the semantic gender triggered by a female referent ([+FEM]).
+    This matches the `russianVrac` definition from §7. -/
+theorem vrač_matches_hybrid :
+    russianVrac.morphGender = ⟨.fem, .neg⟩ ∧
+    Fragments.Russian.Gender.vrač.nHead.phi.gender =
+      some ⟨.u, russianVrac.morphGender⟩ := ⟨rfl, rfl⟩
+
+/-- Fragment-derived: *zakon* (Class I) surfaces as masculine. -/
+theorem zakon_fragment_masculine :
+    Fragments.Russian.Gender.surfaceGender
+      Fragments.Russian.Gender.zakon.nHead = .masculine := rfl
+
+/-- Fragment-derived: *vino* (default) surfaces as neuter. -/
+theorem vino_fragment_neuter :
+    Fragments.Russian.Gender.surfaceGender
+      Fragments.Russian.Gender.vino.nHead = .neuter := rfl
+
+/-- Fragment-derived: Russian has all 5 n-types in its lexicon. -/
+theorem russian_fragment_covers_inventory :
+    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_iFem) = true ∧
+    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_iMasc) = true ∧
+    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_uFem) = true ∧
+    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_uNegFem) = true ∧
+    Fragments.Russian.Gender.allNouns.any (·.nHead == CatHead.n_plain) = true :=
+  Fragments.Russian.Gender.five_n_types_covered
+
+-- ============================================================================
+-- § 14: VI-Derived Surface Gender Count
+-- ============================================================================
+
+/-! The `NInventory.surfaceGenders` field is currently stipulated. Here we
+derive the surface gender count from VI rules applied to each n-head,
+verifying that the computed count matches the stipulated count.
+
+The key VI patterns from @cite{kramer-2015}:
+- **Set 1** (Spanish, Amharic): [+FEM] → feminine, else → masculine (2)
+- **Set 2** (Maa): [−FEM] → masculine, else → feminine (2)
+- **3-gender** (Russian, Mangarayi, Lavukaleve): [+FEM] → fem,
+  [−FEM] → masc, no feature → neuter (3)
+-/
+
+/-- A VI gender-class assignment: maps each n-head to a surface gender
+    class (encoded as Nat). Two n-heads yielding the same Nat surface
+    as the same gender. -/
+def NInventory.computeSurfaceGenders (inv : NInventory)
+    (viMap : CatHead → Nat) : Nat :=
+  (inv.nHeads.map viMap).eraseDups.length
+
+/-- Set 1 VI: [+FEM] → 0 (feminine), everything else → 1 (masculine). -/
+def viSet1 (ch : CatHead) : Nat :=
+  match ch.phi.gender with
+  | some gf => if gf.val == ⟨.fem, .pos⟩ then 0 else 1
+  | none    => 1
+
+/-- Set 2 VI: [−FEM] → 1 (masculine), everything else → 0 (feminine). -/
+def viSet2 (ch : CatHead) : Nat :=
+  match ch.phi.gender with
+  | some gf => if gf.val == ⟨.fem, .neg⟩ then 1 else 0
+  | none    => 0
+
+/-- 3-gender VI: [+FEM] → 0, [−FEM] → 1, no feature → 2. -/
+def viThreeGender (ch : CatHead) : Nat :=
+  match ch.phi.gender with
+  | some gf => if gf.val == ⟨.fem, .pos⟩ then 0 else 1
+  | none    => 2
+
+-- Set 1 verification
+theorem spanish_vi_derived :
+    spanishNs.computeSurfaceGenders viSet1 = spanishNs.surfaceGenders := by native_decide
+
+theorem amharic_vi_derived :
+    amharicNs.computeSurfaceGenders viSet1 = amharicNs.surfaceGenders := by native_decide
+
+-- Set 2 verification
+theorem maa_vi_derived :
+    maaNs.computeSurfaceGenders viSet2 = maaNs.surfaceGenders := by native_decide
+
+-- 3-gender verification
+theorem russian_vi_derived :
+    russianNs.computeSurfaceGenders viThreeGender = russianNs.surfaceGenders := by native_decide
+
+theorem mangarayi_vi_derived :
+    mangarayiNs.computeSurfaceGenders viThreeGender =
+      mangarayiNs.surfaceGenders := by native_decide
+
+theorem lavukaleve_vi_derived :
+    lavukaleveNs.computeSurfaceGenders viThreeGender =
+      lavukaleveNs.surfaceGenders := by native_decide
+
+/-- Dieri: same 3-n inventory as Mangarayi but 2 surface genders under
+    Set 1 VI (where plain n → masculine, not neuter). -/
+theorem dieri_vi_derived :
+    dieriNs.computeSurfaceGenders viSet1 = dieriNs.surfaceGenders := by native_decide
+
+/-- The Dieri vs Mangarayi contrast: same n-heads, different VI → different
+    surface gender counts. This is now DERIVED, not stipulated. -/
+theorem dieri_mangarayi_vi_contrast :
+    dieriNs.nHeads = mangarayiNs.nHeads ∧
+    dieriNs.computeSurfaceGenders viSet1 ≠
+      mangarayiNs.computeSurfaceGenders viThreeGender := ⟨rfl, by native_decide⟩
 
 end Phenomena.Gender.Studies.Kramer2020
