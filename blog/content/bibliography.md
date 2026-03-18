@@ -1442,7 +1442,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="doke-mofokeng-1967" data-role="cited" data-tag="Syntax" data-year="1967">
-<p class="bib-citation"><strong>Doke, C. M. &amp; Mofokeng, S. M.</strong> (1967). <a href="https://search.worldcat.org/title/2880498" class="bib-title-link">Textbook of Southern Sotho Grammar</a>. <em>Longmans</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/MorphemeOrder.lean">MorphemeOrder</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/Studies/HahnDegenFutrell2021.lean">HahnDegenFutrell2021</a></span></p>
+<p class="bib-citation"><strong>Doke, C. M. &amp; Mofokeng, S. M.</strong> (1967). <a href="https://www.google.com/books/edition/Textbook_of_Southern_Sotho_Grammar/KdNDSAAACAAJ" class="bib-title-link">Textbook of Southern Sotho Grammar</a>. <em>Longmans</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/MorphemeOrder.lean">MorphemeOrder</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/Studies/HahnDegenFutrell2021.lean">HahnDegenFutrell2021</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="dong-etal-2026" data-role="primary" data-tag="Pragmatics" data-year="2026">
@@ -3898,7 +3898,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="rowlands-1969" data-role="cited" data-tag="Typology" data-year="1969">
-<p class="bib-citation"><strong>Rowlands, E. C.</strong> (1969). Teach Yourself Yoruba. <em>English Universities Press</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean">Typology</a></span></p>
+<p class="bib-citation"><strong>Rowlands, E. C.</strong> (1969). <a href="https://www.google.com/books/edition/Teach_Yourself_Yoruba/-f_nAAAACAAJ" class="bib-title-link">Teach Yourself Yoruba</a>. <em>English Universities Press</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean">Typology</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="rubino-2013" data-role="cited" data-tag="Morphology" data-year="2013">
