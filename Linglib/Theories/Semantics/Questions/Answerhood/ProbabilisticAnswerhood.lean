@@ -402,7 +402,11 @@ def evidencesMoreStrongly {W : Type*} [Fintype W]
   let probGivenR' := conditionalProb prior infoR' a
   probGivenR > probGivenR'
 
-/-- Simpler version: single propositions instead of state lists. -/
+/-- Simpler version: single propositions instead of state lists.
+
+Compares conditional probabilities P(A|R) > P(A|R'). This is equivalent
+to comparing Bayes factors P(A|R)/P(A) > P(A|R')/P(A), since the
+denominator P(A) is the same on both sides and cancels. -/
 def evidencesMoreStronglyProp {W : Type*} [Fintype W]
     (evidence evidence' : W → Bool) (conclusion : W → Bool)
     (prior : Prior W) : Bool :=

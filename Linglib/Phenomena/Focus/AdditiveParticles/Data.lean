@@ -25,12 +25,14 @@ inductive FelicityJudgment where
   | odd
   deriving DecidableEq, Repr, BEq
 
-/-- Type of additive particle use. -/
+/-- Type of additive particle use.
+
+Binary classification following @cite{thomas-2026}: standard (focus-alternative)
+vs argument-building. Degree-"too" ("too expensive") is a distinct lexeme,
+not an additive particle use. -/
 inductive UseType where
-  | standard
-  | argumentBuilding
-  | scalar
-  | contrastive
+  | standard        -- ANT and π are focus alternatives
+  | argumentBuilding -- ANT and π jointly support a conclusion
   deriving DecidableEq, Repr, BEq
 
 /-- Empirical data point for additive particles. -/
@@ -172,25 +174,6 @@ def eitherExamples : List AdditiveParticleDatum :=
   , eitherWontCome
   ]
 
--- Scalar/Emphatic Uses
-
-/-- Scalar "too" - emphatic reading. -/
-def tooExpensive : AdditiveParticleDatum :=
-  { sentence := "This is too expensive."
-  , antecedent := ""
-  , prejacent := "This is expensive (beyond threshold)"
-  , particle := "too"
-  , resolvedQuestion := none
-  , felicity := .ok
-  , useType := .scalar
-  , notes := "Scalar/degree 'too' - different from additive 'too'"
-  }
-
-/-- Scalar examples (different "too"). -/
-def scalarExamples : List AdditiveParticleDatum :=
-  [ tooExpensive
-  ]
-
 -- Cross-Linguistic Notes
 
 /-- A structure for cross-linguistic comparison data. -/
@@ -307,7 +290,7 @@ def roothExamples : List AdditiveParticleDatum :=
     Note: Ahn's "either" analysis is in Studies/Ahn2015.lean -/
 def allExamples : List AdditiveParticleDatum :=
   classicExamples ++ infelicitousExamples ++
-  eitherExamples ++ scalarExamples ++ roothExamples
+  eitherExamples ++ roothExamples
 
 /-- Count felicitous examples. -/
 def felicitousCount : Nat :=

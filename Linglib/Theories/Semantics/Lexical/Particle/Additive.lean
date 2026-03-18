@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Questions.Answerhood.ProbabilisticAnswerhood
-import Linglib.Theories.Semantics.Questions.Answerhood.Support
 import Linglib.Theories.Semantics.Questions.Denotation.Basic
 
 /-!
@@ -8,6 +7,24 @@ import Linglib.Theories.Semantics.Questions.Denotation.Basic
 
 Felicity conditions for additive particles following @cite{thomas-2026}
 "A probabilistic, question-based approach to additivity".
+
+## Related modules
+
+- `Semantics.FocusParticles` (`Theories/Semantics/Focus/Particles.lean`):
+  Traditional focus particle semantics (EVEN, only). @cite{thomas-2026} §6
+  argues that Def. 64 subsumes @cite{heim-1992}'s individual-based
+  presupposition as a special case of the standard focus-alternative use.
+- `Phenomena.Focus.AdditiveParticles.Studies.Ahn2015`: Ahn's ⊓/⊔ Boolean
+  semantics for too/either. Independent analysis; Thomas does not discuss it.
+- `ProbabilisticAnswerhood`: Core definitions (Defs. 61–63) used here.
+
+## Heim 1992 Subsumption
+
+@cite{thomas-2026} §6 argues that Def. 64 subsumes @cite{heim-1992}'s
+individual-based additive presupposition as a special case. This is
+proved formally by `heim_subsumption`: when ANT and π each entail
+distinct alternatives of RQ (the Heim setup), the Antecedent and
+Conjunction Conditions (Def. 64a-b) hold automatically.
 
 ## Insight: Argument-Building Use
 
@@ -88,8 +105,6 @@ structure AdditiveContext (W : Type*) [Fintype W] where
   antecedent : W → Bool
   /-- Prior probability distribution over worlds -/
   prior : Prior W
-  /-- The actual world (for truth evaluation) -/
-  actualWorld : Option W := none
 
 namespace AdditiveContext
 
@@ -113,18 +128,29 @@ end AdditiveContext
 
 -- Felicity Conditions (Definition 64)
 
-/-- Condition 1: Antecedent probabilistically answers RQ.
+/-- Condition 1: Antecedent probabilistically answers RQ (Def. 64a).
 
-The antecedent must raise the probability of some resolution. -/
+The antecedent must raise the probability of some resolution.
+
+Uses `probAnswers` (condition (a) of Def. 62 only), which checks that some
+alternative's conditional probability exceeds its prior. For polar/binary
+QUDs, this is equivalent to the full Def. 62 (`probAnswersFull`) by
+`probAnswersFull_eq_simple_binary`. For non-binary questions, the full
+definition additionally requires Bayes-factor dominance (condition (b)). -/
 def antecedentCondition {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) : Bool :=
-  probAnswersFull ctx.antecedent ctx.resolvedQuestion ctx.prior
+  probAnswers ctx.antecedent ctx.resolvedQuestion ctx.prior
 
-/-- Condition 2: Conjunction evidences more strongly.
+/-- Condition 2: Conjunction answers RQ and evidences more strongly.
 
-ANT ∧ π must evidence some resolution A more strongly than ANT alone. -/
+@cite{thomas-2026} Def. 64b: ANT ∩ ⟦π⟧ Answers RQ, AND RQ|_{ANT∩⟦π⟧}
+is Evidenced more strongly by ANT ∩ ⟦π⟧ than by ANT. -/
 def conjunctionCondition {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool) : Bool :=
+  let conj := λ w => ctx.antecedent w && prejacent w
+  -- Def. 64b(i): ANT∧π Answers RQ
+  probAnswers conj ctx.resolvedQuestion ctx.prior &&
+  -- Def. 64b(ii): ANT∧π evidences some resolution more strongly than ANT alone
   someResolutionStrengthened ctx.antecedent prejacent ctx.resolvedQuestion ctx.prior
 
 /-- Get the resolution(s) that are strengthened by the conjunction. -/
@@ -135,7 +161,11 @@ def strengthenedResolutions' {W : Type*} [Fintype W]
 /-- Condition 3a: Prejacent doesn't entail the evidenced resolution.
 
 π shouldn't make the conclusion trivially certain.
-Uses a provided world list for computability. -/
+Uses a provided world list for computability.
+
+TODO: This checks `.any` over all strengthened alternatives, but should check
+against the specific Q|_{ANT∩π} from Def. 62. For singleton resolutions (all
+paper examples), the behavior is identical. -/
 def nonTrivialityConditionWith {W : Type*}
     (prejacent : W → Bool) (strengthened : List (InfoState W))
     (worlds : List W) : Bool :=
@@ -149,9 +179,15 @@ For every strengthened resolution R, no strict weakening S ⊃ ⟦π⟧
 should evidence R at least as strongly as π does given ANT.
 
 Over finite types this reduces to an entailment check: for every
-world w with positive prior, ANT(w) ∧ R(w) → π(w). The derivation
-uses linearity of Bayes factors to reduce exponential subset
-enumeration to a per-world check. -/
+world w with positive prior, ANT(w) ∧ R(w) → π(w). If this holds,
+then for any S ⊃ ⟦π⟧, since ANT ∩ S ⊇ ANT ∩ π, conditioning on
+the larger set ANT ∩ S can only dilute the probability of R
+(subset dilution of conditional probability), so P(R | ANT ∩ π) ≥
+P(R | ANT ∩ S), preserving strict evidence advantage.
+
+TODO: Like `nonTrivialityConditionWith`, this uses all strengthened
+alternatives instead of the specific Q|_{ANT∩π}. Correct for singleton
+resolutions (all paper examples). -/
 def maximalityCondition {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool)
     (strengthened : List (InfoState W))
@@ -182,68 +218,49 @@ noncomputable def tooFelicitous {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool) : Bool :=
   tooFelicitousWith ctx prejacent Fintype.elems.toList
 
-/-- Felicity for "also" - same conditions as "too". -/
+/-- Felicity for "also" — same core conditions as "too".
+
+@cite{thomas-2026} §6 (ex. 86) observes that sentence-initial "also" is
+NOT subject to the Prejacent Condition part (ii) (maximality):
+"Also, Bailey plays the cello" is acceptable where "#Bailey plays the
+cello, too" is not. This implementation does not model syntactic position
+and applies full felicity conditions regardless. A position-sensitive
+version would skip `maximalityCondition` for sentence-initial "also". -/
 noncomputable def alsoFelicitous {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool) : Bool :=
   tooFelicitous ctx prejacent
 
-/-- Felicity for "either" - requires negative polarity context.
+/-- Felicity for "either" — placeholder, gates on negative polarity.
 
-For now, we use the same core conditions as "too", but in actual use
-"either" appears in negative contexts. -/
+@cite{thomas-2026} explicitly defers a precise characterization of
+"either" to future work (footnote 9). This placeholder simply gates
+on polarity; the actual felicity conditions for "either" likely involve
+additional constraints (see @cite{ahn-2015} for an alternative account
+using ⊔ in a Boolean algebra). -/
 noncomputable def eitherFelicitous {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool)
     (inNegativeContext : Bool) : Bool :=
   inNegativeContext && tooFelicitous ctx prejacent
 
--- Additive Utterances
-
-/-- An utterance with an additive particle. -/
-structure AdditiveUtterance (W : Type*) where
-  /-- The additive particle used -/
-  particle : AdditiveParticle
-  /-- The prejacent (main content) -/
-  prejacent : W → Bool
-  /-- Optional: the focused element (for focus-based analyses) -/
-  focus : Option (W → Bool) := none
-
-namespace AdditiveUtterance
-
-variable {W : Type*} [Fintype W]
-
-/-- Check if the utterance is felicitous in the given context. -/
-noncomputable def isFelicitous (utt : AdditiveUtterance W) (ctx : AdditiveContext W)
-    (polarityPositive : Bool := true) : Bool :=
-  match utt.particle with
-  | .too => polarityPositive && tooFelicitous ctx utt.prejacent
-  | .also => polarityPositive && alsoFelicitous ctx utt.prejacent
-  | .either => eitherFelicitous ctx utt.prejacent (!polarityPositive)
-
-/-- The asserted content of the utterance (just the prejacent). -/
-def assertedContent (utt : AdditiveUtterance W) : W → Bool :=
-  utt.prejacent
-
-/-- The presupposed content: that the antecedent is established. -/
-def presupposedContent (_utt : AdditiveUtterance W) (ctx : AdditiveContext W) :
-    W → Bool :=
-  ctx.antecedent
-
-end AdditiveUtterance
-
 -- Use Type Classification
 
-/-- Types of additive particle uses. -/
+/-- Types of additive particle uses (@cite{thomas-2026}).
+
+Thomas's framework is binary: either ANT and π are focus alternatives
+(standard) or they are not (argument-building). -/
 inductive AdditiveUseType where
   | standard        -- ANT and π are focus alternatives
   | argumentBuilding -- ANT and π jointly support a conclusion
-  | scalar          -- π is scalar alternative to ANT
   deriving DecidableEq, Repr, BEq
 
-/-- Check if ANT and π could be focus alternatives (with explicit world list).
+/-- Heuristic: check if ANT and π each overlap some alternative of RQ.
 
-In standard use, the antecedent and prejacent are typically:
-1. About different entities with the same property, OR
-2. About the same entity with different properties (focus alternatives) -/
+This is a NECESSARY but not SUFFICIENT condition for focus-alternative use.
+It only checks that both ANT and π are non-trivially consistent with some
+RQ alternative — this is much weaker than actual focus-alternative structure
+(which would require ANT and π to be related by substitution of the focused
+constituent). Every pair of non-trivial propositions passes this check
+for sufficiently fine-grained questions. -/
 def isFocusAlternativeUseWith {W : Type*}
     (ant prejacent : W → Bool) (rq : Issue W) (worlds : List W) : Bool :=
   -- Both ANT and π should be (non-trivial) partial answers to RQ
@@ -272,10 +289,8 @@ noncomputable def classifyUse {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool) : AdditiveUseType :=
   if isFocusAlternativeUse ctx.antecedent prejacent ctx.resolvedQuestion then
     .standard
-  else if isArgumentBuildingUse ctx prejacent then
-    .argumentBuilding
   else
-    .scalar
+    .argumentBuilding
 
 -- Core Theoretical Results (@cite{thomas-2026})
 
@@ -310,6 +325,27 @@ def determinesSomeAlternative {W : Type*} (p : W → Bool) (q : Issue W)
     (worlds : List W) : Bool :=
   q.alternatives.any λ alt => directlyDetermines p alt worlds
 
+/-- When π entails alt, P(alt | ANT ∧ π) = 1 (every ANT∧π world is an alt world). -/
+private lemma condProb_conj_eq_one_of_entails {W : Type*} [Fintype W]
+    (prior : Prior W) (ant prejacent alt : W → Bool)
+    (hEntails : ∀ w : W, prejacent w = true → alt w = true)
+    (hConjPossible : probOfProp prior (λ w => ant w && prejacent w) > 0) :
+    conditionalProb prior (λ w => ant w && prejacent w) alt = 1 := by
+  simp only [conditionalProb]
+  simp only [hConjPossible, ↓reduceIte]
+  have hEqMass : probOfProp prior (λ w => (ant w && prejacent w) && alt w) =
+                 probOfProp prior (λ w => ant w && prejacent w) := by
+    simp only [probOfProp]
+    congr 1
+    ext w
+    by_cases hp : prejacent w
+    · have halt : alt w = true := hEntails w hp
+      simp only [halt, Bool.and_true]
+    · simp only [Bool.not_eq_true] at hp
+      simp only [hp, Bool.and_false, Bool.false_and]
+  rw [hEqMass]
+  exact div_self (ne_of_gt hConjPossible)
+
 /-- **Theorem: Standard Use Reduction**
 
 When π directly determines an alternative A of the resolved question,
@@ -323,89 +359,101 @@ already entailed it).
 
 Linguistically: In standard focus-alternative uses, the general probabilistic
 conditions REDUCE TO the simple requirement that ANT be true and π be true.
-The complex probability calculations aren't needed - direct entailment suffices.
-
-Note: We require universal entailment (π → alt for all worlds), not just
-over a specific world list, because probability calculations use the full
-Fintype. -/
+The complex probability calculations aren't needed - direct entailment suffices. -/
 theorem standard_use_reduction {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool)
     (alt : InfoState W)
     (_hAltInQ : alt ∈ ctx.resolvedQuestion.alternatives)
-    -- Universal entailment: π implies alt in all worlds
     (hEntails : ∀ w : W, prejacent w = true → alt w = true)
     (hNotAlreadyCertain : conditionalProb ctx.prior ctx.antecedent alt < 1)
     (_hAntPossible : probOfProp ctx.prior ctx.antecedent > 0)
     (hConjPossible : probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) > 0) :
-    -- Then π raises the probability of alt given ANT
     conditionalProb ctx.prior (λ w => ctx.antecedent w && prejacent w) alt >
     conditionalProb ctx.prior ctx.antecedent alt := by
-  -- When π entails alt, P(alt | ANT ∧ π) = 1 (since every ANT∧π world is an alt world)
-  -- And we're given P(alt | ANT) < 1
-  -- So P(alt | ANT ∧ π) > P(alt | ANT)
-
-  -- Step 1: Show P(alt | ANT ∧ π) = 1
-  have hCondEq1 : conditionalProb ctx.prior (λ w => ctx.antecedent w && prejacent w) alt = 1 := by
-    simp only [conditionalProb]
-    simp only [hConjPossible, ↓reduceIte]
-    -- P((ANT ∧ π) ∧ alt) = P(ANT ∧ π) because π entails alt
-    have hEqMass : probOfProp ctx.prior (λ w => (ctx.antecedent w && prejacent w) && alt w) =
-                   probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) := by
-      simp only [probOfProp]
-      congr 1
-      ext w
-      -- If ANT ∧ π holds, then alt holds (by hEntails)
-      by_cases hp : prejacent w
-      · have halt : alt w = true := hEntails w hp
-        simp only [halt, Bool.and_true]
-      · simp only [Bool.not_eq_true] at hp
-        simp only [hp, Bool.and_false, Bool.false_and]
-    rw [hEqMass]
-    -- P(ANT ∧ π) / P(ANT ∧ π) = 1
-    have hne : probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) ≠ 0 :=
-      ne_of_gt hConjPossible
-    exact div_self hne
-
-  -- Step 2: Conclude using P(alt | ANT) < 1
-  rw [hCondEq1]
+  rw [condProb_conj_eq_one_of_entails ctx.prior ctx.antecedent prejacent alt hEntails hConjPossible]
   exact hNotAlreadyCertain
 
 /-- Corollary: Standard use satisfies the conjunction condition.
 
 When π directly determines some alternative and that alternative isn't
-already certain given ANT, the conjunction condition holds. -/
+already certain (neither given ANT nor a priori), the conjunction
+condition holds. -/
 theorem standard_use_conjunction_condition {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool)
     (alt : InfoState W)
     (hAltInQ : alt ∈ ctx.resolvedQuestion.alternatives)
-    -- Universal entailment: π implies alt
     (hEntails : ∀ w : W, prejacent w = true → alt w = true)
     (hNotAlreadyCertain : conditionalProb ctx.prior ctx.antecedent alt < 1)
     (hAntPossible : probOfProp ctx.prior ctx.antecedent > 0)
-    (hConjPossible : probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) > 0) :
+    (hConjPossible : probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) > 0)
+    (hAltNotCertain : probOfState ctx.prior alt < 1) :
     conjunctionCondition ctx prejacent = true := by
-  -- Use standard_use_reduction to show the conjunction strengthens evidence for alt
-  have hStrengthens : conditionalProb ctx.prior (λ w => ctx.antecedent w && prejacent w) alt >
-                      conditionalProb ctx.prior ctx.antecedent alt :=
-    standard_use_reduction ctx prejacent alt hAltInQ hEntails hNotAlreadyCertain hAntPossible hConjPossible
+  have hCondEq1 := condProb_conj_eq_one_of_entails ctx.prior ctx.antecedent prejacent alt
+    hEntails hConjPossible
+  have hStrengthens := standard_use_reduction ctx prejacent alt hAltInQ hEntails
+    hNotAlreadyCertain hAntPossible hConjPossible
+  simp only [conjunctionCondition]
+  rw [Bool.and_eq_true]
+  constructor
+  · -- Def. 64b(i): probAnswers — P(alt | ANT ∧ π) = 1 > P(alt)
+    unfold probAnswers probOfState
+    rw [List.any_eq_true]
+    exact ⟨alt, hAltInQ, by simp only [decide_eq_true_eq]; rw [hCondEq1]; exact hAltNotCertain⟩
+  · -- Def. 64b(ii): someResolutionStrengthened
+    unfold someResolutionStrengthened strengthenedResolutions
+    simp only [decide_eq_true_eq]
+    exact List.length_pos_of_mem (List.mem_filter.mpr ⟨hAltInQ, by
+      simp only [conjunctionStrengthens, evidencesMoreStronglyProp, decide_eq_true_eq]
+      exact hStrengthens⟩)
 
-  -- conjunctionCondition requires some resolution to be strengthened
-  simp only [conjunctionCondition, someResolutionStrengthened, strengthenedResolutions]
-  simp only [decide_eq_true_eq]
+-- Heim 1992 Subsumption
 
-  -- Show the filtered list is non-empty (alt is in it)
-  have hInFiltered : alt ∈ ctx.resolvedQuestion.alternatives.filter
-      (λ a => conjunctionStrengthens ctx.antecedent prejacent a ctx.prior) := by
-    simp only [List.mem_filter]
-    constructor
-    · exact hAltInQ
-    · -- conjunctionStrengthens holds for alt
-      simp only [conjunctionStrengthens, evidencesMoreStronglyProp]
-      simp only [decide_eq_true_eq]
-      exact hStrengthens
+/-- **Theorem: Heim 1992 Subsumption** (@cite{thomas-2026} §6).
 
-  -- Non-empty list has positive length
-  exact List.length_pos_of_mem hInFiltered
+@cite{heim-1992}'s additive presupposition for TOO(π) requires:
+∃x ≠ y such that P(x) is established and π = "y P'd".
+
+Under @cite{thomas-2026}'s Def. 64, this falls out as a SPECIAL CASE of
+the standard focus-alternative use. When ANT and π each entail distinct
+alternatives of RQ:
+
+- The **Antecedent Condition** holds because ANT entails an alternative,
+  raising its probability to 1 (by `probAnswers_when_entailing`).
+- The **Conjunction Condition** holds because π entails another alternative
+  that wasn't already certain given ANT, so ANT ∧ π provides new evidence
+  (by `standard_use_conjunction_condition`).
+
+The remaining conditions (non-triviality, maximality) depend on the
+question structure and are verified concretely in the pizza/spaghetti
+scenario (`Thomas2026.pizza_spaghetti_too_felicitous`).
+
+This theorem makes precise the claim in @cite{thomas-2026} §6 that
+Def. 64 **subsumes** @cite{heim-1992}'s individual-based presupposition:
+every Heim-felicitous "too" is Thomas-felicitous, but Thomas additionally
+explains argument-building uses that Heim cannot. -/
+theorem heim_subsumption {W : Type*} [Fintype W] [DecidableEq W]
+    (ctx : AdditiveContext W) (prejacent : W → Bool)
+    (altAnt altPi : InfoState W)
+    -- Heim's setup: ANT entails one alternative, π entails another
+    (hAntInQ : altAnt ∈ ctx.resolvedQuestion.alternatives)
+    (hPiInQ : altPi ∈ ctx.resolvedQuestion.alternatives)
+    (hAntEntails : ∀ w, ctx.antecedent w = true → altAnt w = true)
+    (hPiEntails : ∀ w, prejacent w = true → altPi w = true)
+    -- Probability assumptions (non-degeneracy)
+    (hAntPossible : probOfProp ctx.prior ctx.antecedent > 0)
+    (hConjPossible : probOfProp ctx.prior (λ w => ctx.antecedent w && prejacent w) > 0)
+    (hAntAltNotCertain : probOfState ctx.prior altAnt < 1)
+    (hPiAltNotCertain : probOfState ctx.prior altPi < 1)
+    (hPiNotCertainGivenAnt : conditionalProb ctx.prior ctx.antecedent altPi < 1) :
+    -- Then Def. 64a and 64b hold
+    antecedentCondition ctx = true ∧
+    conjunctionCondition ctx prejacent = true := by
+  exact ⟨
+    probAnswers_when_entailing ctx.antecedent ctx.resolvedQuestion ctx.prior
+      altAnt hAntInQ hAntEntails hAntPossible hAntAltNotCertain,
+    standard_use_conjunction_condition ctx prejacent altPi hPiInQ hPiEntails
+      hPiNotCertainGivenAnt hAntPossible hConjPossible hPiAltNotCertain
+  ⟩
 
 -- Result 2: Argument-Building Characterization
 
@@ -507,7 +555,7 @@ theorem cumulative_evidence_necessary {W : Type*} [Fintype W]
     -- ¬(x > x) is trivially true
     simp only [lt_irrefl, decide_false]
     exact Bool.false_ne_true
-  simp only [hEmpty, List.length_nil, Nat.not_lt_zero, decide_false]
+  simp only [hEmpty, List.length_nil, Nat.not_lt_zero, decide_false, Bool.and_false]
 
 /-- Corollary: If π is irrelevant, "too" is infelicitous.
 
@@ -559,25 +607,5 @@ theorem no_antecedent_infelicitous {W : Type*} [Fintype W]
     (hNoAnt : antecedentCondition ctx = false) :
     tooFelicitousWith ctx prejacent worlds = false := by
   simp only [tooFelicitousWith, hNoAnt, Bool.false_and]
-
--- Examples Infrastructure
-
-/-- Structure for storing additive particle examples for testing. -/
-structure AdditiveExample (W : Type*) [Fintype W] where
-  description : String
-  context : AdditiveContext W
-  prejacent : W → Bool
-  expectedFelicitous : Bool
-  useType : AdditiveUseType
-
-/-- Verify an example matches expectations (with explicit world list). -/
-def AdditiveExample.verifyWith {W : Type*} [Fintype W]
-    (ex : AdditiveExample W) (worlds : List W) : Bool :=
-  tooFelicitousWith ex.context ex.prejacent worlds == ex.expectedFelicitous
-
-/-- Noncomputable verification using Fintype. -/
-noncomputable def AdditiveExample.verify {W : Type*} [Fintype W]
-    (ex : AdditiveExample W) : Bool :=
-  tooFelicitous ex.context ex.prejacent == ex.expectedFelicitous
 
 end Semantics.Lexical.Particle.Additive
