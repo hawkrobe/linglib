@@ -1,6 +1,8 @@
 /-
 # Conditional Semantics
 
+@cite{lewis-1973} @cite{stalnaker-1968}
+
 Compositional semantics for conditional sentences.
 
 ## Overview
@@ -8,7 +10,7 @@ Compositional semantics for conditional sentences.
 This module provides the semantic building blocks for conditionals:
 1. **Material conditional**: p → q = ¬p ∨ q (classical logic)
 2. **Strict conditional**: □(p → q) - necessity of material conditional
-3. **Variably strict conditional**: Stalnaker/Lewis-style conditionals
+3. **Variably strict conditional**: @cite{stalnaker-1968}/@cite{lewis-1973}-style conditionals
 
 ## The Material Conditional Problem
 
@@ -69,7 +71,7 @@ def strictImp {W : Type*} (access : W → Set W) (p q : Prop' W) : Prop' W :=
 def strictImpFinite {W : Type*} (access : W → List W) (p q : BProp W) : BProp W :=
   λ w => (access w).all λ w' => !p w' || q w'
 
--- Variably Strict Conditional (Stalnaker-Lewis)
+-- Variably Strict Conditional (@cite{stalnaker-1968}–@cite{lewis-1973})
 
 /--
 A similarity ordering on worlds.
@@ -88,7 +90,7 @@ structure SimilarityOrdering (W : Type*) where
   trans : ∀ w w₁ w₂ w₃, closer w w₁ w₂ → closer w w₂ w₃ → closer w w₁ w₃
 
 /--
-Variably strict conditional (Stalnaker-Lewis style):
+Variably strict conditional (@cite{stalnaker-1968}/@cite{lewis-1973}):
 
 "If p, then q" is true at w iff:
 - Either there are no p-worlds (vacuous truth), or
@@ -168,7 +170,7 @@ theorem perfection_not_entailed : ∃ (W : Type) (p q : Prop' W) (w : W),
 /--
 **Conditional perfection is NOT semantically entailed** (variably strict).
 
-Even under Stalnaker/Lewis variably strict semantics (stronger than material
+Even under @cite{stalnaker-1968}/@cite{lewis-1973} variably strict semantics (stronger than material
 implication), the conditional does not entail its converse. There exist a
 similarity ordering, propositions p and q, and a world w such that
 "if p then q" holds but "if ¬p then ¬q" does not.
@@ -352,9 +354,9 @@ Stalnaker's selection function approach to counterfactuals:
 - A selection function `s : W × 𝒫(W) → W` selects THE closest antecedent-world
 - "If A were, C would be" is true iff C holds at s(w, ⦃A⦄)
 
-Key distinction from Lewis:
-- Lewis: Universal quantification over all closest A-worlds
-- Stalnaker: Selection of a single A-world (with supervaluation for ties)
+Key distinction from @cite{lewis-1973}:
+- @cite{lewis-1973}: Universal quantification over all closest A-worlds
+- @cite{stalnaker-1968}: Selection of a single A-world (with supervaluation for ties)
 
 This is formalized for use in @cite{ramotowska-santorio-2025} analysis of
 counterfactual force under quantifiers.
@@ -383,7 +385,7 @@ structure SelectionFunction (W : Type*) where
 Given an ordering, a selection function is "legitimate" iff it always
 selects a world that is closest (minimal w.r.t. the ordering).
 
-This is the connection between Lewis/Kratzer orderings and Stalnaker selection.
+This is the connection between @cite{lewis-1973}/Kratzer orderings and @cite{stalnaker-1968} selection.
 -/
 def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
     (domain : Set W) (w : W) (A : Set W) : Set W :=
@@ -405,7 +407,7 @@ def selectionalCounterfactual {W : Type*} (s : SelectionFunction W)
 **Comparative closeness** relation derived from a similarity ordering.
 
 `w₁ ≤_w₀ w₂` means w₁ is at least as similar to w₀ as w₂ is.
-This is the Lewis notation.
+This is the @cite{lewis-1973} notation.
 -/
 def comparativeCloseness {W : Type*} (sim : SimilarityOrdering W)
     (w₀ w₁ w₂ : W) : Prop :=

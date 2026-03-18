@@ -1,13 +1,13 @@
 /-
 # Counterfactual Conditionals: Three Theories
 
-@cite{ramotowska-santorio-2025}
+@cite{ramotowska-santorio-2025} @cite{lewis-1973}
 
 Formalization of three competing theories of counterfactual conditionals.
 
 ## The Three Theories
 
-1. Universal Theory (Lewis/Kratzer): Universal quantification over closest A-worlds
+1. Universal Theory (@cite{lewis-1973}/Kratzer): Universal quantification over closest A-worlds
    - ⦃A □→ B⦄_w = ∀w' ∈ closest(w, A). B(w')
 
 2. Selectional Theory (Stalnaker): Selection function + supervaluation
@@ -45,7 +45,7 @@ open Core.Duality (Truth3 ProjectionType dist)
 /--
 The set of closest A-worlds to w according to a similarity ordering.
 
-In Lewis's notation: min_{≤_w}(A) = {w' ∈ A : ¬∃w'' ∈ A. w'' <_w w'}
+In @cite{lewis-1973}'s notation: min_{≤_w}(A) = {w' ∈ A : ¬∃w'' ∈ A. w'' <_w w'}
 -/
 def closestWorlds {W : Type*} (sim : SimilarityOrdering W)
     (domain : Set W) (w : W) (A : Set W) : Set W :=
@@ -75,7 +75,7 @@ This predicts:
 -/
 
 /--
-Universal counterfactual semantics (Lewis/Kratzer).
+Universal counterfactual semantics (@cite{lewis-1973}/Kratzer).
 
 True at w iff all closest A-worlds satisfy B.
 -/
@@ -736,7 +736,7 @@ def causalCounterfactual (dyn : CausalDynamics) (s : Situation)
 Causal counterfactual matches necessity test for negative antecedent.
 
 "If A were false, B would be false" = A is necessary for B.
-This connects Stalnaker selection to Lewis/Nadathur-Lauer counterfactual dependence.
+This connects @cite{stalnaker-1968} selection to @cite{lewis-1973}/@cite{nadathur-lauer-2020} counterfactual dependence.
 -/
 theorem causal_counterfactual_necessity (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) :
