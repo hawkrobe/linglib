@@ -545,7 +545,7 @@ From @cite{steedman-2000}:
 "It is interesting to note that there are alternative systems to the λ-calculus
 for capturing the notion of abstraction, and that these systems entirely avoid
 the use of bound variables. They are the combinatory systems invented by
-@cite{schoenfinkel-1924} and @cite{curry-feys-1958}."
+Schönfinkel (1924) and @cite{curry-feys-1958}."
 
 The key insight: CCG uses combinators (B, T, S) directly for composition,
 avoiding the need for traces or movement. This is why our formalization
