@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Theories.Semantics.Lexical.Plural.Cumulativity
+import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference
@@ -126,6 +127,20 @@ variable {Atom W : Type} [DecidableEq Atom] [Fintype Atom]
     - `Finset Atom` (computational, for DIST) -/
 noncomputable def kindExtensionFinset (k : Kind W Atom) (w : W) : Finset Atom :=
   @Finset.filter _ (· ∈ k.concept w) (fun _ => Classical.dec _) Finset.univ
+
+/-- Computable kind extension from a Bool-valued membership test.
+    Use this for finite verification instead of the noncomputable
+    `kindExtensionFinset`, which requires Classical.dec for Set membership.
+
+    Example usage:
+    ```
+    def lionMember : World → Animal → Bool
+      | _, .simba => true | _, .nala => true | _, _ => false
+    def lionExt := kindExtensionOfBool lionMember
+    ```
+    Then pass `lionExt` directly to `distributiveKindPred`. -/
+def kindExtensionOfBool [Fintype Atom] (member : W → Atom → Bool) (w : W) : Finset Atom :=
+  Finset.univ.filter (member w)
 
 /--
 Distributive Kind Predication: evaluate a kind at the actual world to
@@ -589,22 +604,17 @@ theorem italian_gen_disambiguation :
       (·.nominalExpression == .italianBarePlural)
       |>.all (!·.accidentalOK)) = true := ⟨rfl, rfl⟩
 
-/-- The gen disambiguation derives from the same kind-denotation chain:
-    def pl can denote kind → DKP → accidental; bare pl cannot. -/
-theorem italian_gen_from_kind_denotation :
+/-- Both generalization and episodic disambiguation derive from the same
+    kind-denotation chain:
+    def pl can denote kind → DKP available → accidental / near-universal;
+    bare pl cannot → no DKP → no accidental / no near-universal. -/
+theorem italian_disambiguation_from_kind_denotation :
     canDenote .italianDefinitePlural .kind = true ∧
     lfAvailable .italianDefinitePlural .distributiveKindPred = true ∧
     canDenote .italianBarePlural .kind = false ∧
-    lfAvailable .italianBarePlural .distributiveKindPred = false := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- This disambiguation is derived from unambiguous denotation types. -/
-theorem italian_episodic_from_denotation :
-    -- Italian def pl: kind → DKP available → near-universal
-    canDenote .italianDefinitePlural .kind = true ∧
-    -- Italian bare pl: no kind → no DKP → no near-universal
-    canDenote .italianBarePlural .kind = false ∧
-    -- Italian bare pl: property → DPP available → existential
-    canDenote .italianBarePlural .property = true := ⟨rfl, rfl, rfl⟩
+    lfAvailable .italianBarePlural .distributiveKindPred = false ∧
+    -- Additionally, bare pl has property → DPP → existential
+    canDenote .italianBarePlural .property = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 8: Connection to Tessler & Goodman (2019)
@@ -997,25 +1007,6 @@ def evalBFG (situations : List Situation) (normal : NormalcyPredicate)
     (kindRestrictor : Restrictor) (predScope : Scope) : Bool :=
   traditionalGEN situations normal kindRestrictor predScope
 
-/-- The two parses use different operators from the theory layer.
-
-    BFG compositionally instantiates GEN (modal quantifier over situations,
-    from `Theories/Semantics/Lexical/Noun/Kind/Generics.lean`).
-    DKP compositionally instantiates DIST (distributive operator over
-    atoms, from `Theories/Semantics/Lexical/Plural/Distributivity.lean`).
-
-    Only BFG is subject to T&G's generic inference because only BFG
-    involves Gen; DKP is a non-generic, referential truth condition. -/
-theorem parses_use_different_operators :
-    -- BFG = GEN (subject to generic inference)
-    subjectToGenericInference .bonaFideGeneric = true ∧
-    -- DKP = DIST (not subject to generic inference)
-    subjectToGenericInference .distributiveKindPred = false ∧
-    -- CKP = ** (not subject to generic inference)
-    subjectToGenericInference .cumulativeKindPred = false ∧
-    -- DPP = ∃ (not subject to generic inference)
-    subjectToGenericInference .existentialDPP = false := ⟨rfl, rfl, rfl, rfl⟩
-
 /-- Table 1 is derivable from LF availability + LF → flavor mapping.
 
     Kind-denoting plurals support both flavors because they have LFs
@@ -1026,8 +1017,9 @@ theorem table1_from_lf_structure :
     -- Kind-denoting plurals: both flavors available via different LFs
     (∃ lf, lfAvailable .englishBarePlural lf = true ∧ lfFlavor lf = .lawLike) ∧
     (∃ lf, lfAvailable .englishBarePlural lf = true ∧ lfFlavor lf = .accidental) ∧
-    -- Singular indefinites via Italian bare pl (property-only, like singular indef):
-    -- only BFG available, which is law-like
+    -- Property-only nominals (Italian bare pl, singular indef — by different
+    -- mechanisms: Italian bare pl is [-arg,+pred] without D; singular indef
+    -- has ∩ undefined for singular count nouns): only BFG available → law-like
     (lfFlavor .bonaFideGeneric = .lawLike) ∧
     -- No accidental LF is available for property-only nominals
     (lfAvailable .italianBarePlural .distributiveKindPred = false) ∧
@@ -1122,6 +1114,57 @@ def cumulativeKindPred
   cumulativeOp R kindExtension locations
 
 end CumulativeKindPred
+
+-- ============================================================================
+-- § 12a: Gen Does Not Encode Cumulativity (§4.2)
+-- ============================================================================
+
+/-!
+## Cumulativity Comes from ** (CKP), Not from Gen
+
+@cite{guerrini-2026} §4.2: Gen itself does not encode cumulativity. Evidence:
+
+1. **Q-adverb test**: Adding Q-adverbs (which replace Gen) removes
+   cumulative readings. "Wugs are always/often/typically black, white,
+   green, and red" — only the "all four colors simultaneously" reading
+   survives, not the cumulative "each wug is one color" reading (ex. (69)).
+
+2. **Italian subjunctive test**: Forcing the BFG parse (kind in Gen's
+   restrictor) removes cumulative readings. "I linguisti che si occupino
+   di semantica..." — only distributive, not cumulative (ex. (71)).
+
+This means cumulative readings must arise from the CKP LF (which uses **
+independently of Gen), not from a cumulative BFG LF.
+-/
+
+/-- Q-adverbs remove cumulative readings (§4.2, ex. (68)-(69)):
+    forcing BFG parse eliminates cumulativity. -/
+structure CumulativityDiagnosticDatum where
+  sentence : String
+  hasCumulative : Bool
+  hasDistributive : Bool
+  notes : String
+
+def wugsColors : CumulativityDiagnosticDatum :=
+  { sentence := "Wugs are black, white, green, and red."
+  , hasCumulative := true
+  , hasDistributive := true
+  , notes := "ex. (68a); cumulative (each wug one color) and distributive (each wug all colors)" }
+
+def wugsQAdvColors : CumulativityDiagnosticDatum :=
+  { sentence := "Wugs are always/often/typically black, white, green, and red."
+  , hasCumulative := false
+  , hasDistributive := true
+  , notes := "ex. (69); Q-adverb forces BFG → only distributive survives" }
+
+/-- Q-adverbs kill cumulative readings, confirming that cumulative
+    readings arise from ** (CKP) and not from Gen. -/
+theorem qadv_kills_cumulativity :
+    wugsColors.hasCumulative = true ∧
+    wugsQAdvColors.hasCumulative = false ∧
+    -- Both retain the distributive/simultaneous reading
+    wugsColors.hasDistributive = true ∧
+    wugsQAdvColors.hasDistributive = true := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 13: Epistemic Adjective Diagnostic (§5.2.2)
@@ -1244,13 +1287,20 @@ structure QAdvDatum where
   testedReading : GenFlavor
   notes : String
 
--- (25a): "*Lions are usually extinct" — kind predicate resists Q-adverbs
+-- (25a): "*Lions are usually extinct" — direct kind predicate resists Q-adverbs.
+-- NB: 'extinct' is a DIRECT kind predicate — it applies to the kind qua kind,
+-- not distributively to individual lions. This is distinct from Guerrini's
+-- Distributive Kind Predication (DKP), which distributes over atoms via DIST.
+-- Q-adverb resistance follows from the absence of Gen in direct kind predication
+-- (Cohen 2001, §3.6 of the paper). `testedReading` is `.lawLike` here because
+-- the test sentence probes whether Gen (which Q-adverbs replace) is present;
+-- it is not, hence the infelicity.
 def lionsUsuallyExtinct : QAdvDatum :=
   { sentence := "*Lions are usually extinct."
   , nominalForm := .kindDenotingPlural
   , qAdvCompatible := false
-  , testedReading := .accidental
-  , notes := "Kind predicate 'extinct' resists Q-adverb; DKP only" }
+  , testedReading := .lawLike
+  , notes := "Direct kind predicate — applies to kind, not individuals; Gen absent → Q-adverb blocked" }
 
 -- (25b): "LLMs are usually popular" — accidental predicate OK with Q-adverb
 -- (forces BFG parse; see (49))
@@ -1298,6 +1348,56 @@ theorem episodic_qadv_aligns_with_table3 :
     -- Episodic bare plural via DKP ≈ referential definite plural
     birdsAllMigrating.qAdvCompatible = true ∧
     birdsAlwaysMigrating.qAdvCompatible = false := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 14a: Quantificational Variability Effects (§1, §3.1, §5.1)
+-- ============================================================================
+
+/-!
+## QVE Absence as a DKP Diagnostic
+
+@cite{guerrini-2026} §1, §3.1, §5.1: Quantificational Variability Effects
+(QVEs) are the hallmark of generic quantification. A sentence like "Birds
+rarely fly" (= QVE with 'rarely') is interpreted as "few birds fly" — the
+Q-adverb varies the quantificational force. QVEs arise when Gen is present,
+because Q-adverbs are overt counterparts of Gen.
+
+Key fact: episodic bare plurals lack QVEs (examples (8), (90), (92)):
+- "Birds are rarely migrating" ≉ "Few birds are migrating"
+- "Birds are always migrating" does NOT yield episodic QVE
+
+This absence is predicted by the DKP analysis: no Gen → no Q-adverb slot
+→ no QVE. On the BFG analysis, QVEs would be expected but don't appear.
+-/
+
+/-- Whether a given LF parse supports Quantificational Variability Effects.
+
+    QVEs arise only when Gen is present (Gen is the covert Q-adverb that
+    overt Q-adverbs like 'usually', 'rarely' replace). -/
+def supportsQVE (lf : GeneralizationLF) : Bool :=
+  match lf with
+  | .bonaFideGeneric      => true   -- Gen present → QVE possible
+  | .distributiveKindPred => false  -- no Gen → no QVE
+  | .cumulativeKindPred   => false  -- no Gen → no QVE
+  | .existentialDPP       => false  -- no Gen → no QVE
+
+/-- Only BFG supports QVEs. DKP's absence of QVEs is a direct consequence
+    of not having Gen in the LF. Examples (8), (90), (92) in the paper. -/
+theorem only_bfg_supports_qve :
+    supportsQVE .bonaFideGeneric = true ∧
+    supportsQVE .distributiveKindPred = false ∧
+    supportsQVE .cumulativeKindPred = false ∧
+    supportsQVE .existentialDPP = false := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- QVE absence aligns with Q-adverb incompatibility: both are
+    consequences of the same structural fact (no Gen in DKP). -/
+theorem qve_absence_matches_qadv_incompatibility :
+    -- DKP has no QVEs
+    supportsQVE .distributiveKindPred = false ∧
+    -- DKP is not subject to generic inference
+    subjectToGenericInference .distributiveKindPred = false ∧
+    -- DKP is an accidental flavor (no Gen)
+    lfFlavor .distributiveKindPred = .accidental := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 15: DPP Compositional Bridge (§5.3, diagram (145))
@@ -1353,5 +1453,459 @@ theorem diagram_145_four_paths :
     -- Italian bare plural: property path only
     (lfAvailable .italianBarePlural .distributiveKindPred = false) ∧
     (lfAvailable .italianBarePlural .existentialDPP = true) := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 16: Habituality and the Two LF Structures (§3.4)
+-- ============================================================================
+
+/-!
+## The Role of Hab in Both LF Structures
+
+@cite{guerrini-2026} §3.4: The VP in habitual sentences involves a habitual
+aspect operator **Hab** (formalized in `Theories/Semantics/Lexical/Verb/Habituals.lean`
+as `traditionalHAB`). On the "habituality is genericity" view
+(@cite{chierchia-1995}, @cite{chierchia-1998}), Hab IS Gen applied to situations
+involving a single individual. On the Dobrovie-Sorin (2001) view, Hab is a
+distinct operator below Gen.
+
+Either way, the paper's structural ambiguity holds. The two LF structures
+(41a) and (41b)/(42b) share the same "low part" (⟦Hab VP⟧) but differ in
+what appears ABOVE it:
+
+- **(41a) BFG**: Gen(kind, ⟦Hab VP⟧) — Gen binds the kind's world variable
+- **(41b) DKP**: DIST(⟦Hab VP⟧)(kind_{s₀}) — kind evaluated at actual world
+
+For episodic sentences ("Birds are migrating"), there is no Hab at all —
+the VP is evaluated directly at s₀. DKP still applies (DIST over kind
+extension), but BFG requires Hab/Gen to be present. This is why episodic
+bare plurals get near-universal readings without generic quantification.
+-/
+
+/-- VP aspect: habitual or episodic.
+
+    Habitual VPs involve the Hab operator (see `Habituals.lean`).
+    Episodic VPs are evaluated directly at the world of evaluation. -/
+inductive VPAspect where
+  | habitual   -- ⟦Hab VP⟧: habitual/generic aspect
+  | episodic   -- ⟦VP⟧_{s₀}: episodic aspect, evaluated at actual world
+  deriving DecidableEq, Repr, BEq
+
+/-- Which LFs are compatible with which aspect.
+
+    BFG requires Gen, which in turn requires either Hab or an overt Q-adverb
+    to provide the quantificational structure. In episodic sentences (no Hab,
+    no Q-adverb), BFG is unavailable — only DKP/CKP/DPP survive. -/
+def lfCompatibleWithAspect (asp : VPAspect) (lf : GeneralizationLF) : Bool :=
+  match asp, lf with
+  | .habitual, _                     => true   -- all LFs OK with Hab
+  | .episodic, .bonaFideGeneric      => false  -- Gen requires Hab or Q-adverb
+  | .episodic, .distributiveKindPred => true   -- DIST(VP)(kind_{s₀})
+  | .episodic, .cumulativeKindPred   => true   -- **(VP)(locs)(kind_{s₀})
+  | .episodic, .existentialDPP       => true   -- ∃x[P(x) ∧ VP(x)]
+
+/-- In episodic sentences, BFG is unavailable — only DKP/CKP/DPP. -/
+theorem episodic_no_bfg :
+    lfCompatibleWithAspect .episodic .bonaFideGeneric = false ∧
+    lfCompatibleWithAspect .episodic .distributiveKindPred = true ∧
+    lfCompatibleWithAspect .episodic .cumulativeKindPred = true ∧
+    lfCompatibleWithAspect .episodic .existentialDPP = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- This explains the episodic asymmetry (§5):
+    - Bare plurals in episodics: DKP available → near-universal ✓
+    - Singular indefinites in episodics: no DKP, no BFG (episodic) → only ∃
+
+    The singular indefinite chain goes through ∩ being undefined for
+    singular count nouns (`downDefinedFor`), NOT through the Italian
+    bare plural's [-arg] parameter (which is a different mechanism). -/
+theorem episodic_kind_plural_advantage :
+    -- Kind-denoting plural: DKP available in episodic
+    lfCompatibleWithAspect .episodic .distributiveKindPred = true ∧
+    canDenote .englishBarePlural .kind = true ∧
+    -- Singular indefinite: ∩ undefined for singular count → no kind denotation
+    downDefinedFor .count false = false ∧
+    -- Episodic: no Gen/Hab → no BFG
+    lfCompatibleWithAspect .episodic .bonaFideGeneric = false := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 17: Singular Kind Terms Diverge from Plural Kind Terms (§6.2)
+-- ============================================================================
+
+/-!
+## Singular Kinds Cannot Support Accidental or Cumulative Readings
+
+@cite{guerrini-2026} §6.2: Singular kind terms ("the dodo", "the madrigal")
+differ strikingly from plural kind terms ("dodos", "madrigals"):
+
+1. Kind predication OK for both ("The dodo is extinct" / "Dodos are extinct")
+2. Genericity + QVE OK for singular kinds ("The lion rarely has a mane")
+3. **Accidental readings unavailable** for singular kinds
+4. **Cumulative readings unavailable** for singular kinds
+
+This follows from treating singular kinds as atomic (following
+@cite{barker-1992}, @cite{schwarzschild-1996}, @cite{dayal-2004}).
+DIST does not apply to atoms (only to pluralities), so DKP is unavailable.
+The cumulative operator ** similarly requires pluralities.
+-/
+
+/-- Number of a kind-denoting term. -/
+inductive KindTermNumber where
+  | singular  -- "the dodo", "the madrigal"
+  | plural    -- "dodos", "madrigals", "LLMs"
+  deriving DecidableEq, Repr, BEq
+
+/-- Singular kind terms are atomic — DIST and ** do not apply.
+    Only BFG is available (kind enters Gen restrictor). -/
+def singularKindLFAvailable (lf : GeneralizationLF) : Bool :=
+  match lf with
+  | .bonaFideGeneric      => true   -- kind in Gen restrictor: OK
+  | .distributiveKindPred => false  -- DIST requires plurality: blocked
+  | .cumulativeKindPred   => false  -- ** requires plurality: blocked
+  | .existentialDPP       => false  -- singular kinds are not properties
+
+/-- Singular kind terms support only law-like readings. -/
+theorem singular_kind_law_like_only :
+    singularKindLFAvailable .bonaFideGeneric = true ∧
+    singularKindLFAvailable .distributiveKindPred = false ∧
+    singularKindLFAvailable .cumulativeKindPred = false ∧
+    singularKindLFAvailable .existentialDPP = false := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Singular kind divergence datum from §6.2, examples (133)–(136). -/
+structure SingularKindDivergenceDatum where
+  sentence : String
+  kindTermNumber : KindTermNumber
+  accidentalOK : Bool
+  cumulativeOK : Bool
+  notes : String
+
+def madrigalPopularSg : SingularKindDivergenceDatum :=
+  { sentence := "The madrigal is popular."
+  , kindTermNumber := .singular
+  , accidentalOK := false
+  , cumulativeOK := false
+  , notes := "Only law-like: the form is inherently popular" }
+
+def madrigalPopularPl : SingularKindDivergenceDatum :=
+  { sentence := "Madrigals are popular."
+  , kindTermNumber := .plural
+  , accidentalOK := true
+  , cumulativeOK := false
+  , notes := "Also accidental via DKP: actual madrigals happen to be popular" }
+
+def wugColorsSg : SingularKindDivergenceDatum :=
+  { sentence := "The wug is white, green, black, and yellow."
+  , kindTermNumber := .singular
+  , accidentalOK := false
+  , cumulativeOK := false
+  , notes := "Singular kind is atomic — DIST/CKP inapplicable; only the 'all four colors' reading (direct predication)" }
+
+def wugColorsPl : SingularKindDivergenceDatum :=
+  { sentence := "Wugs are white, green, black, and yellow."
+  , kindTermNumber := .plural
+  , accidentalOK := true
+  , cumulativeOK := true
+  , notes := "Cumulative available: each wug is one color" }
+
+def singularKindDivergenceData : List SingularKindDivergenceDatum :=
+  [madrigalPopularSg, madrigalPopularPl, wugColorsSg, wugColorsPl]
+
+/-- Singular kind terms lack accidental and cumulative readings;
+    plural kind terms support both. -/
+theorem singular_plural_divergence :
+    (singularKindDivergenceData.filter (·.kindTermNumber == .singular)
+      |>.all (!·.accidentalOK)) = true ∧
+    (singularKindDivergenceData.filter (·.kindTermNumber == .singular)
+      |>.all (!·.cumulativeOK)) = true ∧
+    (singularKindDivergenceData.filter (·.kindTermNumber == .plural)
+      |>.all (·.accidentalOK)) = true := ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 18: Greenberg Data — Temporally Modified Sentences (§3.7)
+-- ============================================================================
+
+/-!
+## Greenberg (2002, 2004, 2007): Further Evidence for DKP
+
+@cite{guerrini-2026} §3.7: @cite{greenberg-2002} @cite{greenberg-2004}
+@cite{greenberg-2007} presented data teasing apart bare plurals from
+singular indefinites in accidentally-flavored generalizations.
+
+**Temporally modified sentences** (@cite{greenberg-2004}): "Italian restaurants
+are closed today" can be true accidentally (national holiday). The singular
+"An Italian restaurant is closed today" requires a law-like link.
+
+**"Extremely unnatural kinds"** (@cite{greenberg-2007}): "Norwegian students
+with names ending in 's' wear thick green socks" — true via DKP (actual
+students happen to), but the singular is infelicitous (no law-like link).
+-/
+
+/-- Greenberg datum from @cite{guerrini-2026} §3.7. -/
+structure GreenbergDatum where
+  sentence : String
+  nominalForm : NominalForm
+  accidentalOK : Bool
+  lawLikeOK : Bool
+  notes : String
+
+def italianRestaurantsPl : GreenbergDatum :=
+  { sentence := "Italian restaurants are closed today."
+  , nominalForm := .kindDenotingPlural
+  , accidentalOK := true
+  , lawLikeOK := true
+  , notes := "ex. (50a); from Greenberg (2004); both readings for bare plural" }
+
+def italianRestaurantSg : GreenbergDatum :=
+  { sentence := "An Italian restaurant is closed today."
+  , nominalForm := .singularIndefinite
+  , accidentalOK := false
+  , lawLikeOK := true
+  , notes := "ex. (50b); from Greenberg (2004); only law-like for singular indef" }
+
+def norwegianStudentsPl : GreenbergDatum :=
+  { sentence := "Norwegian students with names ending in 's' wear thick green socks."
+  , nominalForm := .kindDenotingPlural
+  , accidentalOK := true
+  , lawLikeOK := false
+  , notes := "ex. (51a); from Greenberg (2007); accidental only (no law-like link)" }
+
+def norwegianStudentSg : GreenbergDatum :=
+  { sentence := "A Norwegian student with a name ending in 's' wears thick green socks."
+  , nominalForm := .singularIndefinite
+  , accidentalOK := false
+  , lawLikeOK := false
+  , notes := "ex. (51b); from Greenberg (2007); infelicitous (no DKP, no link for BFG)" }
+
+def greenbergData : List GreenbergDatum :=
+  [italianRestaurantsPl, italianRestaurantSg, norwegianStudentsPl, norwegianStudentSg]
+
+/-- Bare plurals support accidental readings; singular indefinites do not. -/
+theorem greenberg_accidental_asymmetry :
+    (greenbergData.filter (·.nominalForm == .kindDenotingPlural)
+      |>.all (·.accidentalOK)) = true ∧
+    (greenbergData.filter (·.nominalForm == .singularIndefinite)
+      |>.all (!·.accidentalOK)) = true := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 19: Episodic Homogeneity Removal (§5.1)
+-- ============================================================================
+
+/-!
+## Homogeneity in Episodic Bare Plurals
+
+@cite{guerrini-2026} §5.1: Near-universal episodic readings ("Birds are
+migrating") arise from DKP — DIST over the kind extension at s₀. Since
+there is no Gen in this LF:
+
+- 'all' removes homogeneity (targets DIST): "Birds are all migrating" ✓
+- 'always' does NOT apply (no Gen to target): "#Birds are always migrating"
+  forces a habitual/generic reparse, not an episodic reading.
+
+This is a direct consequence of Table 3 (§4): episodic DKP has
+DIST-homogeneity but no Gen-homogeneity.
+-/
+
+/-- Episodic homogeneity removal datum. -/
+structure EpisodicHomogeneityDatum where
+  sentence : String
+  remover : HomogeneityRemover
+  episodicOK : Bool
+  notes : String
+
+def birdsAllMigratingEp : EpisodicHomogeneityDatum :=
+  { sentence := "Birds are all migrating."
+  , remover := .all
+  , episodicOK := true
+  , notes := "'all' removes DIST homogeneity; episodic maintained" }
+
+def birdsAlwaysMigratingEp : EpisodicHomogeneityDatum :=
+  { sentence := "Birds are always migrating."
+  , remover := .always
+  , episodicOK := false
+  , notes := "Forces habitual/law-like reading; episodic lost" }
+
+def studentsAllScaredEp : EpisodicHomogeneityDatum :=
+  { sentence := "Students are all scared."
+  , remover := .all
+  , episodicOK := true
+  , notes := "'all' removes DIST homogeneity; stage-level episodic" }
+
+def studentsAlwaysScaredEp : EpisodicHomogeneityDatum :=
+  { sentence := "Students are always scared."
+  , remover := .always
+  , episodicOK := false
+  , notes := "Forces generic reading; not episodic" }
+
+def episodicHomogeneityData : List EpisodicHomogeneityDatum :=
+  [birdsAllMigratingEp, birdsAlwaysMigratingEp,
+   studentsAllScaredEp, studentsAlwaysScaredEp]
+
+/-- In episodic DKP, 'all' preserves the episodic reading but 'always'
+    forces a generic reparse. DIST but no Gen → only 'all' applies. -/
+theorem episodic_all_not_always :
+    (episodicHomogeneityData.filter (·.remover == .all)
+      |>.all (·.episodicOK)) = true ∧
+    (episodicHomogeneityData.filter (·.remover == .always)
+      |>.all (!·.episodicOK)) = true := ⟨rfl, rfl⟩
+
+/-- Derives from Table 3: episodic DKP has DIST-homogeneity
+    (removable by 'all') but no Gen-homogeneity ('always' vacuous). -/
+theorem episodic_homogeneity_from_table3 :
+    hasHomogeneitySource .referentialDefinitePlural .dist = true ∧
+    hasHomogeneitySource .referentialDefinitePlural .gen = false ∧
+    removesHomogeneity .all .dist = true ∧
+    removesHomogeneity .always .dist = false := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 20: Bridge to Homogeneity and Non-Maximality (§5.1, §5.2, §6.1)
+-- ============================================================================
+
+/-!
+## DKP Inherits Homogeneity and Non-Maximality from DIST
+
+@cite{guerrini-2026} §5.1, §6.1: The near-universal reading from Distributive
+Kind Predication is **homogeneous** and **non-maximal**, just like referential
+definite plurals. This follows directly from DKP being compositionally
+DIST applied to the kind extension — the trivalent truth conditions are
+inherited, not stipulated.
+
+This connects to the theory-neutral homogeneity data in
+`Phenomena/Plurals/Homogeneity.lean` (@cite{kriz-2015} @cite{kriz-spector-2021})
+and non-maximality data in `Phenomena/Plurals/NonMaximality.lean`.
+
+The paper's examples (88)–(90) make this explicit:
+- "Birds are migrating" — possibly non-maximal, ∼ ∀ (DKP + homogeneity)
+- "Birds are not migrating" — possibly non-maximal, ∼ ¬∃ (negated homogeneity)
+- "Birds are all migrating" — maximal, ∼ ∀ ('all' removes DIST homogeneity)
+- "#Birds are always migrating" — forces generic reparse (Gen absent)
+
+These are exactly the predictions of `distributiveKindPredTV` (§2) inheriting
+`pluralTruthValue` from `Distributivity.lean`.
+-/
+
+/-- DKP truth value is computed via DIST (`pluralTruthValue`), so it
+    inherits the homogeneity gap from referential definite plurals.
+
+    This is the formal bridge between Guerrini's analysis and the
+    Križ & Spector homogeneity theory: the same trivalent operator
+    that gives definite plurals their characteristic behavior also
+    gives kind-denoting plurals their non-maximal, exception-tolerant
+    readings. The parallel is not stipulated — it's structural. -/
+theorem dkp_homogeneity_from_dist {Atom W : Type} [DecidableEq Atom] [Fintype Atom]
+    (kindExtension : W → Finset Atom) (P : Atom → W → Bool) (s₀ : W) :
+    distributiveKindPredTV kindExtension P s₀ = pluralTruthValue P (kindExtension s₀) s₀ := rfl
+
+-- ============================================================================
+-- §21  Compositional Tree Demo: BFG vs DKP vs DPP
+-- ============================================================================
+
+/-!
+## Compositional Trees: Two LF Parses Evaluated End-to-End
+
+@cite{guerrini-2026} structures (29), (30), (105b)
+
+Demonstrates that the BFG and DKP parses of "Lions hunt" can be represented
+as `Tree Unit String` values and evaluated via the existing `interp` machinery,
+with covert operators (Gen, DIST, DPP) as lexicon entries.
+
+### The scenario
+
+Three lions: Simba (hunts), Nala (hunts), Mufasa (doesn't hunt).
+
+- **BFG** parse: Gen(lion, hunt) — "generally, lions hunt" → **true**
+  (2 out of 3 lions hunt; the generic quantifier tolerates exceptions)
+- **DKP** parse: DIST(hunt)(∩lions_{s₀}) — "all actual lions hunt" → **false**
+  (Mufasa doesn't hunt; DIST requires universality)
+- **DPP** parse: DPP(lion, hunt) — "some lion hunts" → **true**
+  (existential; at least one lion hunts)
+
+This demonstrates the core of @cite{guerrini-2026}: the same surface sentence
+"Lions hunt" has two structurally distinct LFs that can **disagree** in
+truth value.
+-/
+
+section CompositionalTreeDemo
+
+open Semantics.Montague
+open Semantics.Composition.Tree
+open Semantics.Lexical.CovertQuantifier (genThreshold dist dpp)
+open Core.Tree
+
+/-- Demo entity domain: three individual lions plus the lion-kind
+    (the maximal sum ∩lions_{s₀}, treated as a fourth entity). -/
+inductive DemoEntity where
+  | simba | nala | mufasa | lionKind
+  deriving DecidableEq, Repr
+
+instance : BEq DemoEntity := ⟨fun a b => decide (a = b)⟩
+
+private def demoModel : Model :=
+  { Entity := DemoEntity, decEq := inferInstance }
+
+private def demoAtoms : List DemoEntity := [.simba, .nala, .mufasa]
+
+/-- Mereological decomposition: lionKind → its atoms, atoms → self. -/
+private def atomsOf : DemoEntity → List DemoEntity
+  | .lionKind => [.simba, .nala, .mufasa]
+  | x => [x]
+
+/-- Lexicon: overt words + covert operators from reusable constructors.
+
+    Gen, DIST, DPP are instantiated from theory-layer constructors
+    (`genThreshold`, `dist`, `dpp`) rather than
+    being defined ad hoc. -/
+private def guerriniLex : Lexicon demoModel := fun s =>
+  match s with
+  | "lion"   => some ⟨.e ⇒ .t, fun x => match x with
+      | .simba | .nala | .mufasa => true | .lionKind => false⟩
+  | "hunt"   => some ⟨.e ⇒ .t, fun x => match x with
+      | .simba | .nala => true | .mufasa | .lionKind => false⟩
+  | "∩lions" => some ⟨.e, DemoEntity.lionKind⟩
+  | "Gen"    => some (genThreshold demoModel demoAtoms 2 3)
+  | "DIST"   => some (dist demoModel atomsOf)
+  | "DPP"    => some (dpp demoModel demoAtoms)
+  | _        => none
+
+private def g₀ : Semantics.Montague.Variables.Assignment demoModel :=
+  fun _ => DemoEntity.simba
+
+/-- BFG parse: Gen(lion, hunt) — @cite{guerrini-2026}, structure (29). -/
+private def bfgTree : Tree Unit String :=
+  .bin (.bin (.leaf "Gen") (.leaf "lion")) (.leaf "hunt")
+
+/-- DKP parse: DIST(hunt)(∩lions) — @cite{guerrini-2026}, structure (30). -/
+private def dkpTree : Tree Unit String :=
+  .bin (.leaf "∩lions") (.bin (.leaf "DIST") (.leaf "hunt"))
+
+/-- DPP parse: DPP(lion, hunt) — @cite{guerrini-2026}, structure (105b). -/
+private def dppTree : Tree Unit String :=
+  .bin (.bin (.leaf "DPP") (.leaf "lion")) (.leaf "hunt")
+
+/-- The three parses disagree: same surface sentence, different truth values.
+
+    BFG: true  — Gen tolerates exceptions (2/3 lions hunt)
+    DKP: false — DIST requires all atoms (Mufasa doesn't hunt)
+    DPP: true  — ∃ requires at least one (Simba hunts) -/
+theorem three_parses_disagree :
+    evalTree guerriniLex g₀ bfgTree = some true ∧
+    evalTree guerriniLex g₀ dkpTree = some false ∧
+    evalTree guerriniLex g₀ dppTree = some true := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+
+/-- When all lions hunt, BFG and DKP agree: both true. -/
+theorem all_hunt_agreement :
+    let lexAll : Lexicon demoModel := fun s =>
+      match s with
+      | "lion"   => some ⟨.e ⇒ .t, fun x => match x with
+          | .simba | .nala | .mufasa => true | .lionKind => false⟩
+      | "hunt"   => some ⟨.e ⇒ .t, fun x => match x with
+          | .simba | .nala | .mufasa => true | .lionKind => false⟩
+      | "∩lions" => some ⟨.e, DemoEntity.lionKind⟩
+      | "Gen"    => some (genThreshold demoModel demoAtoms 2 3)
+      | "DIST"   => some (dist demoModel atomsOf)
+      | _        => none
+    evalTree lexAll g₀ bfgTree = some true ∧
+    evalTree lexAll g₀ dkpTree = some true := by
+  constructor <;> native_decide
+
+end CompositionalTreeDemo
 
 end Phenomena.Generics.Studies.Guerrini2026
