@@ -1,4 +1,5 @@
 import Linglib.Phenomena.Presupposition.Gradience
+import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # @cite{degen-tonhauser-2021}: Prior Beliefs Modulate Projection
@@ -174,5 +175,60 @@ theorem replication_robust :
     replication_r_exp1_vs_td2020 > 0.95 ∧
     replication_r_exp2a_vs_exp1 > 0.95 :=
   ⟨by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §5. Fragment Bridge
+-- ============================================================================
+
+section FragmentBridge
+
+open Fragments.English.Predicates.Verbal
+
+/-- Map each D&T predicate to its Fragment verb entry. 18 of 20 are simple
+    verbs; "be annoyed" and "be right" are copular constructions. -/
+def toVerbEntry : Predicate → Option VerbEntry
+  | .know => some know
+  | .think => some think
+  | .discover => some discover
+  | .see => some see
+  | .say => some say
+  | .hear => some hear
+  | .reveal => some reveal
+  | .acknowledge => some acknowledge
+  | .admit => some admit
+  | .announce => some announce
+  | .confess => some confess
+  | .inform => some inform
+  | .suggest => some suggest
+  | .pretend => some pretend
+  | .confirm => some confirm
+  | .demonstrate => some demonstrate
+  | .establish => some establish
+  | .prove => some prove
+  | .beAnnoyed => none
+  | .beRight => none
+
+/-- All 20 D&T predicates. -/
+def allPredicates : List Predicate :=
+  [.beAnnoyed, .discover, .know, .reveal, .see,
+   .pretend, .suggest, .say, .think, .beRight, .demonstrate,
+   .acknowledge, .admit, .announce, .confess, .confirm,
+   .establish, .hear, .inform, .prove]
+
+/-- 18 of 20 predicates have Fragment entries (all except copular
+    "be annoyed" and "be right"). -/
+theorem fragment_coverage :
+    (allPredicates.filter (fun p => (toVerbEntry p).isSome)).length = 18 := by
+  native_decide
+
+/-- Every Fragment-mapped predicate can take a finite clause complement
+    (as primary or alternate frame), matching D&T's experimental design. -/
+theorem all_entries_take_clause_complement (p : Predicate)
+    (v : VerbEntry) (h : toVerbEntry p = some v) :
+    v.complementType = .finiteClause ∨
+    v.altComplementType = some .finiteClause := by
+  cases p <;> (unfold toVerbEntry at h; cases h) <;> first | left; rfl | right; rfl
+
+end FragmentBridge
 
 end Phenomena.Presupposition.Studies.DegenTonhauser2021

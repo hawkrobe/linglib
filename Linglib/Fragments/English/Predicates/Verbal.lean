@@ -277,6 +277,7 @@ def see : VerbEntry where
   formPastPart := "seen"
   formPresPart := "seeing"
   complementType := .np
+  altComplementType := some .finiteClause
   subjectEntailments := some ⟨false, true, false, false, true, false, false, false, false, false⟩
   vendlerClass := some .state
   factivePresup := true
@@ -1121,6 +1122,108 @@ def claim : VerbEntry := .mkRegular {
   complementType := .finiteClause
   vendlerClass := some .achievement
   levinClass := some .say }
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Clause-Embedding Predicates (@cite{degen-tonhauser-2021})
+-- ════════════════════════════════════════════════════
+
+/-! The 20 clause-embedding predicates from @cite{degen-tonhauser-2021}.
+    Predicates already defined above: know, discover, see, think, say, hear.
+    "be annoyed" and "be right" are copular constructions, not simple verbs. -/
+
+/-- "reveal" — factive communication verb (@cite{degen-tonhauser-2022}: canonically factive) -/
+def reveal : VerbEntry := .mkRegular {
+  form := "reveal"
+  complementType := .finiteClause
+  speechActVerb := true
+  vendlerClass := some .achievement
+  presupType := some .softTrigger
+  factivePresup := true
+  attitudeBuilder := some (.doxastic .veridical)
+  levinClass := some .say }
+
+/-- "acknowledge" — optionally factive communication verb -/
+def acknowledge : VerbEntry := .mkRegular {
+  form := "acknowledge"
+  complementType := .finiteClause
+  speechActVerb := true
+  vendlerClass := some .achievement
+  levinClass := some .say }
+
+/-- "admit" — optionally factive communication verb -/
+def admit : VerbEntry where
+  form := "admit"
+  form3sg := "admits"
+  formPast := "admitted"
+  formPastPart := "admitted"
+  formPresPart := "admitting"
+  complementType := .finiteClause
+  speechActVerb := true
+  vendlerClass := some .achievement
+  levinClass := some .say
+
+/-- "announce" — communication verb -/
+def announce : VerbEntry := .mkRegular {
+  form := "announce"
+  complementType := .finiteClause
+  speechActVerb := true
+  vendlerClass := some .achievement
+  levinClass := some .say }
+
+/-- "confess" — optionally factive communication verb -/
+def confess : VerbEntry := .mkRegular {
+  form := "confess"
+  complementType := .finiteClause
+  speechActVerb := true
+  vendlerClass := some .achievement
+  levinClass := some .say }
+
+/-- "inform" — optionally factive communication verb with recipient -/
+def inform : VerbEntry := .mkRegular {
+  form := "inform"
+  complementType := .finiteClause
+  speechActVerb := true
+  vendlerClass := some .achievement
+  levinClass := some .tell }
+
+/-- "suggest" — non-factive communication verb -/
+def suggest : VerbEntry := .mkRegular {
+  form := "suggest"
+  complementType := .finiteClause
+  speechActVerb := true
+  vendlerClass := some .achievement
+  levinClass := some .say }
+
+/-- "pretend" — anti-veridical attitude verb -/
+def pretend : VerbEntry := .mkRegular {
+  form := "pretend"
+  complementType := .finiteClause
+  vendlerClass := some .activity
+  opaqueContext := true }
+
+/-- "confirm" — evidential verb -/
+def confirm : VerbEntry := .mkRegular {
+  form := "confirm"
+  complementType := .finiteClause
+  vendlerClass := some .achievement }
+
+/-- "demonstrate" — evidential verb -/
+def demonstrate : VerbEntry := .mkRegular {
+  form := "demonstrate"
+  complementType := .finiteClause
+  vendlerClass := some .achievement }
+
+/-- "establish" — evidential verb -/
+def establish : VerbEntry := .mkRegular {
+  form := "establish"
+  complementType := .finiteClause
+  vendlerClass := some .achievement }
+
+/-- "prove" — evidential verb -/
+def prove : VerbEntry := .mkRegular {
+  form := "prove"
+  complementType := .finiteClause
+  vendlerClass := some .achievement }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Manner of Speaking (Levin 37.3)
@@ -2193,7 +2296,8 @@ def appoint : VerbEntry := .mkRegular {
 -- § Levin Class Expansion — Perception (§ 30)
 -- ════════════════════════════════════════════════════
 
-/-- "hear" — Levin 30.1 See verbs. Stative perception. -/
+/-- "hear" — Levin 30.1 See verbs. Stative perception. Also embeds
+    finite clauses (optionally factive per @cite{degen-tonhauser-2022}). -/
 def hear : VerbEntry where
   form := "hear"
   form3sg := "hears"
@@ -2201,6 +2305,7 @@ def hear : VerbEntry where
   formPastPart := "heard"
   formPresPart := "hearing"
   complementType := .np
+  altComplementType := some .finiteClause
   vendlerClass := some .state
   levinClass := some .see
 
@@ -2629,6 +2734,9 @@ def allVerbs : List VerbEntry := [
   bury, drop, lift, lock, shut, spread, stretch, switch,
   -- Communication
   say, tell, claim,
+  -- Clause-Embedding (@cite{degen-tonhauser-2021})
+  reveal, acknowledge, admit, announce, confess, inform, suggest,
+  pretend, confirm, demonstrate, establish, prove,
   -- Manner of Speaking (@cite{storment-2026})
   whisper, murmur, shout, cry, scream, speak, talk,
   -- Question-embedding (@cite{dayal-2025})

@@ -223,4 +223,41 @@ theorem entailment_projection_dissociation :
     projectionRating_Exp1a .know > projectionRating_Exp1a .beRight :=
   ⟨by native_decide, by native_decide⟩
 
+-- ============================================================================
+-- §5. Fragment Factivity Bridge
+-- ============================================================================
+
+open Fragments.English.Predicates.Verbal in
+/-- Canonically factive predicates have `factivePresup = true` in the
+    Fragment, matching D&T 2022's traditional classification. "be annoyed"
+    has no Fragment entry (copular construction). -/
+theorem factive_entries_have_factivePresup :
+    know.factivePresup = true ∧
+    discover.factivePresup = true ∧
+    see.factivePresup = true ∧
+    reveal.factivePresup = true := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+open Fragments.English.Predicates.Verbal in
+/-- Nonveridical nonfactive predicates have `factivePresup = false` in the
+    Fragment, matching D&T 2022's traditional classification. -/
+theorem nonfactive_entries_lack_factivePresup :
+    pretend.factivePresup = false ∧
+    suggest.factivePresup = false ∧
+    say.factivePresup = false ∧
+    think.factivePresup = false := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+open Phenomena.Presupposition.Studies.DegenTonhauser2021 in
+open Fragments.English.Predicates.Verbal in
+/-- The traditional classification is consistent with Fragment factivity
+    for all predicates that have entries: every predicate classified as
+    factive has `factivePresup = true`, every nonfactive has `false`. -/
+theorem traditionalClass_consistent_with_fragment (p : Predicate)
+    (v : VerbEntry) (h : toVerbEntry p = some v) :
+    (traditionalClass p = .factive → v.factivePresup = true) ∧
+    (traditionalClass p = .nonveridicalNonfactive → v.factivePresup = false) := by
+  cases p <;> (unfold toVerbEntry at h; cases h) <;>
+    refine ⟨fun hc => ?_, fun hc => ?_⟩ <;> first | rfl | simp [traditionalClass] at hc
+
 end Phenomena.Presupposition.Studies.DegenTonhauser2022
