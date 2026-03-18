@@ -2678,7 +2678,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="klima-1964" data-role="cited" data-tag="Syntax" data-year="1964">
-<p class="bib-citation"><strong>Klima, E. S.</strong> (1964). Negation in English. In <em>The Structure of Language, 246–323. Prentice-Hall</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean">SubjectAuxInversion</a></span></p>
+<p class="bib-citation"><strong>Klima, E. S.</strong> (1964). <a href="https://search.worldcat.org/title/710863" class="bib-title-link">Negation in English</a>. In <em>The Structure of Language, 246–323. Prentice-Hall</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean">SubjectAuxInversion</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="knick-sharf-2026" data-role="cited" data-tag="Semantics" data-year="2026">
