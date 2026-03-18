@@ -147,6 +147,14 @@ theorem semanticMasc_all_iMasc :
 theorem semanticFem_all_iFem :
     [mat', sestra, korova].all (·.nHead == CatHead.n_iFem) = true := by native_decide
 
+-- Semantic core surface gender derivation (ex. 17)
+theorem otec_masculine  : surfaceGender otec.nHead   = .masculine := rfl
+theorem mat'_feminine   : surfaceGender mat'.nHead   = .feminine  := rfl
+theorem brat_masculine  : surfaceGender brat.nHead   = .masculine := rfl
+theorem sestra_feminine : surfaceGender sestra.nHead = .feminine  := rfl
+theorem byk_masculine   : surfaceGender byk.nHead    = .masculine := rfl
+theorem korova_feminine : surfaceGender korova.nHead = .feminine  := rfl
+
 -- Declension class ↔ gender correlation (ex. 18)
 theorem classI_masculine  : surfaceGender zakon.nHead = .masculine := rfl
 theorem classII_feminine  : surfaceGender škola.nHead = .feminine  := rfl

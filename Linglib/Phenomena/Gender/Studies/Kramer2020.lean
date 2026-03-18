@@ -127,16 +127,6 @@ open Morphology.DM
 -- § 1: The Semantic Core Generalization (@cite{kramer-2020} ex. 2/28)
 -- ============================================================================
 
-/-- The three minimal semantic properties for gender assignment
-    (@cite{kramer-2020} ex. 3). Every language with gender uses at least
-    one to assign gender to some nouns. -/
-inductive SemanticCoreProperty where
-  | animacy       -- animate vs inanimate (e.g. Sochiapan Chinantec)
-  | humanness     -- human vs nonhuman (e.g. Akɔɔse)
-  | socialGender  -- social gender for humans / biological sex for animals
-                   -- (e.g. Amharic, Spanish)
-  deriving DecidableEq, BEq, Repr
-
 /-- **Semantic Core Generalization** (@cite{kramer-2020} ex. 2/28):
     every language in the sample satisfies the semantic core. -/
 theorem semantic_core_holds :
@@ -608,12 +598,6 @@ def ojibweNs : NInventory :=
   ⟨"Ojibwe", [CatHead.n_iAnim, CatHead.n_iInanim, CatHead.n_plain,
               CatHead.n_uAnim], 2⟩
 
--- 4-n languages, Set 2 with 3 surface genders (@cite{kramer-2015} Ch 7)
-
-def wariNs : NInventory :=
-  ⟨"Wari'", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
-             CatHead.n_uNegFem], 3⟩
-
 -- 5-n languages (@cite{kramer-2015} Ch 7)
 
 def lavukaleveNs : NInventory :=
@@ -736,11 +720,16 @@ This classification generates the licensing tables found in Tables 3.1
 (Amharic, 3 ns) and 6.2 (Spanish, 4 ns). -/
 
 /-- Root classes from @cite{kramer-2015} §3.4, parameterized by which n head
-    the root is licensed to combine with. -/
+    the root is licensed to combine with.
+
+    The first four classes are from Tables 3.1/6.2 (3-n and Set 1 4-n systems).
+    `arbitraryMasc` extends the typology to 5-n systems (Russian, Lavukaleve)
+    and Set 2 4-n systems (Maa, Wari'), where u[−FEM] is also attested. -/
 inductive RootClass where
   | femaleReferent    -- √WOMAN, √QUEEN: semantically requires i[+FEM]
   | maleReferent      -- √MAN, √KING: semantically requires i[−FEM]
   | arbitraryFem      -- √TABLE, √CHAIR: PF-licensed with u[+FEM]
+  | arbitraryMasc     -- √LAW, √DOCTOR: PF-licensed with u[−FEM] (5-n / Set 2)
   | default           -- √BOOK, √CAR: no requirement, combines with plain n
   deriving DecidableEq, BEq, Repr
 
@@ -749,6 +738,7 @@ def RootClass.licensedNHead : RootClass → CatHead
   | .femaleReferent => CatHead.n_iFem
   | .maleReferent   => CatHead.n_iMasc
   | .arbitraryFem   => CatHead.n_uFem
+  | .arbitraryMasc  => CatHead.n_uNegFem
   | .default        => CatHead.n_plain
 
 /-- The licensing type for each root class. -/
@@ -756,6 +746,7 @@ def RootClass.licensing : RootClass → LicensingType
   | .femaleReferent => .semantic   -- Encyclopedia / List 3
   | .maleReferent   => .semantic   -- Encyclopedia / List 3
   | .arbitraryFem   => .arbitrary  -- PF / List 2
+  | .arbitraryMasc  => .arbitrary  -- PF / List 2
   | .default        => .arbitrary  -- elsewhere
 
 /-- Natural-gender roots are semantically licensed. -/
@@ -766,16 +757,21 @@ theorem natural_roots_semantic :
 /-- Arbitrary and default roots are PF-licensed. -/
 theorem arbitrary_roots_pf :
     RootClass.arbitraryFem.licensing = .arbitrary ∧
-    RootClass.default.licensing = .arbitrary := ⟨rfl, rfl⟩
+    RootClass.arbitraryMasc.licensing = .arbitrary ∧
+    RootClass.default.licensing = .arbitrary := ⟨rfl, rfl, rfl⟩
 
 /-- Each root class maps to a distinct n head. -/
 theorem root_classes_distinct_n :
     RootClass.femaleReferent.licensedNHead ≠ RootClass.maleReferent.licensedNHead ∧
     RootClass.femaleReferent.licensedNHead ≠ RootClass.arbitraryFem.licensedNHead ∧
+    RootClass.femaleReferent.licensedNHead ≠ RootClass.arbitraryMasc.licensedNHead ∧
     RootClass.femaleReferent.licensedNHead ≠ RootClass.default.licensedNHead ∧
     RootClass.maleReferent.licensedNHead ≠ RootClass.arbitraryFem.licensedNHead ∧
+    RootClass.maleReferent.licensedNHead ≠ RootClass.arbitraryMasc.licensedNHead ∧
     RootClass.maleReferent.licensedNHead ≠ RootClass.default.licensedNHead ∧
-    RootClass.arbitraryFem.licensedNHead ≠ RootClass.default.licensedNHead := by
+    RootClass.arbitraryFem.licensedNHead ≠ RootClass.arbitraryMasc.licensedNHead ∧
+    RootClass.arbitraryFem.licensedNHead ≠ RootClass.default.licensedNHead ∧
+    RootClass.arbitraryMasc.licensedNHead ≠ RootClass.default.licensedNHead := by
   decide
 
 /-- Verify that the Spanish fragment's nouns match their expected root classes.
@@ -802,6 +798,33 @@ theorem licensing_bridge_maleReferent :
 theorem licensing_bridge_arbitraryFem :
     (CatHead.n_uFem.phi.gender.get (by rfl)).licensingType =
       RootClass.arbitraryFem.licensing := rfl
+theorem licensing_bridge_arbitraryMasc :
+    (CatHead.n_uNegFem.phi.gender.get (by rfl)).licensingType =
+      RootClass.arbitraryMasc.licensing := rfl
+
+/-- Russian fragment nouns match their root classes. -/
+theorem russian_licensing_otec :
+    Fragments.Russian.Gender.otec.nHead = RootClass.maleReferent.licensedNHead := rfl
+theorem russian_licensing_mat' :
+    Fragments.Russian.Gender.mat'.nHead = RootClass.femaleReferent.licensedNHead := rfl
+theorem russian_licensing_zakon :
+    Fragments.Russian.Gender.zakon.nHead = RootClass.arbitraryMasc.licensedNHead := rfl
+theorem russian_licensing_škola :
+    Fragments.Russian.Gender.škola.nHead = RootClass.arbitraryFem.licensedNHead := rfl
+theorem russian_licensing_vino :
+    Fragments.Russian.Gender.vino.nHead = RootClass.default.licensedNHead := rfl
+
+/-- *persona* is human-denoting but has u[+FEM] (arbitrary feminine), not
+    i[+FEM] (natural feminine). This is the key exception to the pattern
+    that human-denoting nouns get interpretable gender features.
+    (@cite{kramer-2020} §3.2, p. 59; @cite{kramer-2015} §6.2)
+
+    In root-class terms: persona's root is licensed as `arbitraryFem`
+    despite denoting humans — its root is only licensed to combine with
+    n u[+FEM], never n i[+FEM] or n i[−FEM]. -/
+theorem persona_exception :
+    Fragments.Spanish.Gender.persona.nHead = RootClass.arbitraryFem.licensedNHead ∧
+    Fragments.Spanish.Gender.persona.gloss = "person" := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 11: NInventory ↔ GenderProfile Bridge
