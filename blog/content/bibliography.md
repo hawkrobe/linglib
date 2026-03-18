@@ -2662,7 +2662,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 </div>
 
 <div class="bib-entry" data-key="kleene-1952" data-role="cited" data-tag="Semantics" data-year="1952">
-<p class="bib-citation"><strong>Kleene, S. C.</strong> (1952). <a href="https://doi.org/10.1007/978-0-8176-4769-8_11" class="bib-title-link">Introduction to Metamathematics</a>. In <em>Perspectives on the History of Mathematical Logic, 161–168. Birkhäuser Boston</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Kleene.lean">Kleene</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/ThreeValuedLogic.lean">ThreeValuedLogic</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/Truth3.lean">Truth3</a></span></p>
+<p class="bib-citation"><strong>Kleene, S. C.</strong> (1952). <a href="https://www.google.com/books/edition/Introduction_to_Metamathematics/NK3OzAEACAAJ" class="bib-title-link">Introduction to Metamathematics</a>. <em>North-Holland</em>.<span class="bib-meta"><a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Kleene.lean">Kleene</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/ThreeValuedLogic.lean">ThreeValuedLogic</a> <a href="https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/Truth3.lean">Truth3</a></span></p>
 </div>
 
 <div class="bib-entry" data-key="klein-1980" data-role="foundational" data-tag="Semantics" data-year="1980">
