@@ -66,7 +66,6 @@ def tud : HungarianVerbEntry where
   formPastIndef := "tudott"
   complementType := .finiteClause
   altComplementType := some .smallClause
-  factivePresup := true
   presupType := some .softTrigger
   attitudeBuilder := some (.doxastic .veridical)
   takesQuestionBase := true

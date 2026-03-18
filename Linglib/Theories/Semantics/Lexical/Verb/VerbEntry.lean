@@ -308,8 +308,6 @@ structure VerbCore where
   -- === Class-Specific Features ===
   /-- For CoS verbs: which type (cessation, inception, continuation)? -/
   cosType : Option CoSType := none
-  /-- For factive verbs: what does it presuppose about its complement? -/
-  factivePresup : Bool := false
   /-- For implicative verbs: which semantic builder (links to compositional semantics). -/
   implicativeBuilder : Option ImplicativeBuilder := none
   /-- For causative verbs: which semantic builder (links to compositional semantics). -/
@@ -410,6 +408,13 @@ where `P` is the activity predicate (complement denotation).
 def VerbCore.getCoSSemantics {W : Type*} (v : VerbCore) (P : W → Bool) :
     Option (PrProp W) :=
   v.cosType.map λ t => cosSemantics t P
+
+/-- Does this verb presuppose its complement via factivity?
+    DERIVED from attitudeBuilder: true iff the verb is doxastic veridical. -/
+def VerbCore.factivePresup (v : VerbCore) : Bool :=
+  match v.attitudeBuilder with
+  | some (.doxastic .veridical) => true
+  | _ => false
 
 /-- Does this verb presuppose its complement? -/
 def VerbCore.presupposesComplement (v : VerbCore) : Bool :=

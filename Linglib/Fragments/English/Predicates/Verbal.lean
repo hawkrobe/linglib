@@ -280,7 +280,7 @@ def see : VerbEntry where
   altComplementType := some .finiteClause
   subjectEntailments := some ⟨false, true, false, false, true, false, false, false, false, false⟩
   vendlerClass := some .state
-  factivePresup := true
+  attitudeBuilder := some (.doxastic .veridical)
   levinClass := some .see
 
 -- ════════════════════════════════════════════════════
@@ -298,7 +298,6 @@ def know : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true
   takesQuestionBase := true
   complementSig := some .mono
   attitudeBuilder := some (.doxastic .veridical)
@@ -314,7 +313,7 @@ def regret : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true
+  attitudeBuilder := some (.doxastic .veridical)
 
 /-- "realize" — factive, presupposes complement is true -/
 def realize : VerbEntry := .mkRegular {
@@ -323,7 +322,6 @@ def realize : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true
   attitudeBuilder := some (.doxastic .veridical) }
 
 /-- "discover" — semifactive, weaker projection -/
@@ -333,7 +331,6 @@ def discover : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true
   takesQuestionBase := true
   attitudeBuilder := some (.doxastic .veridical) }
 
@@ -344,7 +341,6 @@ def notice : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true
   attitudeBuilder := some (.doxastic .veridical) }
 
 -- ════════════════════════════════════════════════════
@@ -1138,7 +1134,6 @@ def reveal : VerbEntry := .mkRegular {
   speechActVerb := true
   vendlerClass := some .achievement
   presupType := some .softTrigger
-  factivePresup := true
   attitudeBuilder := some (.doxastic .veridical)
   levinClass := some .say }
 
@@ -1438,7 +1433,7 @@ def remember_rog : VerbEntry := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true
+  attitudeBuilder := some (.doxastic .veridical)
   takesQuestionBase := true
   senseTag := .rogative }
 
@@ -1453,7 +1448,7 @@ def forget_rog : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true
+  attitudeBuilder := some (.doxastic .veridical)
   takesQuestionBase := true
   senseTag := .rogative
 
