@@ -139,6 +139,18 @@ def evalTree {m : Model} (lex : Lexicon m) (g : Assignment m) (t : Tree C String
   | some ⟨.t, b⟩ => some b
   | _ => none
 
+/-- Extract proposition (`s→t`) from tree interpretation.
+
+    For intensional trees where the root denotes a proposition
+    rather than a bare truth value — e.g., trees containing EXH
+    or other propositional operators. Evaluate the result at a
+    specific world to get a truth value. -/
+def evalTreeProp {m : Model} (lex : Lexicon m) (g : Assignment m) (t : Tree C String)
+    : Option (m.World → Bool) :=
+  match interp m lex g t with
+  | some ⟨.fn .s .t, p⟩ => some p
+  | _ => none
+
 end TreeInterp
 
 section TypeMismatch

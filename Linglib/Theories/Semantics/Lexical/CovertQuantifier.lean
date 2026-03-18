@@ -1,18 +1,33 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
+import Linglib.Theories.Semantics.Montague.Types
 
 /-!
-# Covert Quantifier — Shared GEN/HAB Infrastructure
+# Covert Operators: Theory and Compositional Interface
 
-@cite{krifka-etal-1995} @cite{carlson-1977}
+@cite{krifka-etal-1995} @cite{carlson-1977} @cite{guerrini-2026}
 
-GEN (over situations) and HAB (over occasions) are both covert quantifiers
-with identical formal structure: universal quantification over a restricted
-domain, with a threshold-based alternative that eliminates the hidden
-restriction parameter.
+Covert operators (Gen, DIST, Hab, DPP) are semantically contentful LF nodes
+with no overt realization. This module provides:
 
-This module captures the shared structure parametrically, so that
-`traditionalGEN` and `traditionalHAB` are both instances.
+1. **Abstract quantifier theory** (`covertQ`, `measure`, `thresholdQ`) —
+   domain-polymorphic semantics with eliminability proofs. GEN and HAB
+   are both instances.
+
+2. **Montague-typed constructors** (`gen`, `genThreshold`, `dist`, `dpp`,
+   `hab`) — `LexEntry` values that compose via FA in `evalTree`.
+   These package the theory-layer semantics for tree-based interpretation.
+
+## Usage
+
+```
+open Semantics.Lexical.CovertQuantifier (genThreshold dist dpp extendLexicon)
+
+def myLex : Lexicon myModel :=
+  extendLexicon baseLex
+    [("Gen",  genThreshold myModel atoms 2 3),
+     ("DIST", dist myModel atomsOf)]
+```
 -/
 
 namespace Semantics.Lexical.CovertQuantifier
@@ -114,5 +129,85 @@ theorem reduces_to_threshold (domain : List D)
     simp only [hNotQ]
     symm; rw [decide_eq_false_iff_not]
     intro hContra; linarith
+
+-- ============================================================================
+-- Montague-Typed Constructors
+-- ============================================================================
+
+section Compositional
+
+open Semantics.Montague
+
+/-- Gen: `(e→t) → (e→t) → t`. Dyadic generic quantifier.
+
+    `generally` encodes the truth conditions — different theories
+    instantiate it differently (threshold, normalcy, probabilistic).
+    `traditionalGEN` (in `Generics.lean`) and `thresholdQ` (above)
+    are specific instantiations. -/
+def gen (m : Model)
+    (generally : (m.Entity → Bool) → (m.Entity → Bool) → Bool)
+    : LexEntry m :=
+  ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, generally⟩
+
+/-- Gen with threshold: true iff ≥ `num/denom` of restrictor-satisfying
+    atoms also satisfy scope. Montague-typed counterpart of `thresholdQ`. -/
+def genThreshold (m : Model) (atoms : List m.Entity)
+    (num denom : Nat) : LexEntry m :=
+  gen m (fun restr scope =>
+    let restricted := atoms.filter restr
+    let both := restricted.filter scope
+    decide (denom * both.length ≥ num * restricted.length))
+
+/-- DIST: `(e→t) → (e→t)`. Distributive operator.
+
+    `atomsOf x` returns the atomic parts of x — for atomic entities
+    it returns `[x]`, for plural/kind entities their parts.
+    Montague-typed counterpart of `Distributivity.distMaximal`. -/
+def dist (m : Model) (atomsOf : m.Entity → List m.Entity)
+    : LexEntry m :=
+  ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), fun P x => (atomsOf x).all P⟩
+
+/-- DPP: `(e→t) → (e→t) → t`. Derived Property Predication.
+
+    DPP(P)(Q) = ∃x[P(x) ∧ Q(x)]. An existential type-shift for
+    kind-denoting NPs combining with stage-level predicates.
+    @cite{guerrini-2026} structure (105b). -/
+def dpp (m : Model) (atoms : List m.Entity) : LexEntry m :=
+  ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun prop pred =>
+    atoms.any (fun x => prop x && pred x)⟩
+
+/-- Hab: `(e→t) → (e→t)`. Habitual aspectual operator.
+
+    `h` maps a predicate to its habitual counterpart.
+    Montague-typed counterpart of `traditionalHAB` (in `Habituals.lean`). -/
+def hab (m : Model) (h : (m.Entity → Bool) → (m.Entity → Bool))
+    : LexEntry m :=
+  ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), h⟩
+
+/-- EXH: `(s→t) → (s→t)`. Exhaustivity operator (proposition modifier).
+
+    `exhOp` maps a proposition to its exhaustified version — typically
+    asserting the prejacent and negating innocently excludable alternatives.
+    Specific implementations (`exhB` from `InnocentExclusion`,
+    `applyIEBool` from `Operators`) are plugged in at lexicon construction
+    time with their alternatives and world domain baked into the closure.
+
+    Unlike Gen/DIST/Hab (which quantify over entities), EXH operates on
+    propositions (`s→t`). Both compose via FA in the same tree — the
+    Montague type system handles the dispatch:
+    - Gen:  `(e→t) → (e→t) → t`  — FA with entity predicates
+    - EXH:  `(s→t) → (s→t)`      — FA with propositions -/
+def exh (m : Model) (exhOp : (m.World → Bool) → (m.World → Bool))
+    : LexEntry m :=
+  ⟨(.s ⇒ .t) ⇒ (.s ⇒ .t), exhOp⟩
+
+/-- Extend a lexicon with named covert operators. -/
+def extendLexicon {m : Model} (base : Lexicon m)
+    (ops : List (String × LexEntry m)) : Lexicon m :=
+  fun s => match ops.find? (fun p => p.1 == s) with
+    | some (_, entry) => some entry
+    | none => base s
+
+end Compositional
 
 end Semantics.Lexical.CovertQuantifier
