@@ -1033,6 +1033,7 @@ import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
 import Linglib.Phenomena.Presupposition.Studies.Grove2022
+import Linglib.Phenomena.Presupposition.Studies.Beaver2001
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
@@ -1089,6 +1090,7 @@ import Linglib.Phenomena.Reference.Studies.GilesEtAl2026
 import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
 import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
 import Linglib.Phenomena.Reference.Studies.RosaArnold2017
+import Linglib.Phenomena.Reference.Studies.Schlenker2003
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.Reference.Studies.Krifka2026
 import Linglib.Phenomena.ScalarImplicatures.Basic
@@ -1515,6 +1517,7 @@ import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Theories.Semantics.Presupposition.TonhauserDerivation
 import Linglib.Theories.Semantics.Presupposition.Transparency
+import Linglib.Theories.Semantics.Presupposition.Accommodation
 import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
@@ -1564,6 +1567,7 @@ import Linglib.Theories.Semantics.Intensional.Basic
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.ContentComposition
+import Linglib.Theories.Semantics.Attitudes.ContextQuantification
 import Linglib.Theories.Semantics.Attitudes.ContrafactiveGap
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Intensional
@@ -1635,6 +1639,7 @@ import Linglib.Theories.Semantics.Reference.Almog2014
 import Linglib.Theories.Semantics.Reference.Demonstratives
 import Linglib.Theories.Semantics.Reference.KaplanLD
 import Linglib.Theories.Semantics.Reference.Monsters
+import Linglib.Theories.Semantics.Reference.PersonFeatures
 import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
 import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke

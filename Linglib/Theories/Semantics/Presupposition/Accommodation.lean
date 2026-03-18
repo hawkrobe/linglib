@@ -93,6 +93,14 @@ theorem globalAccommodate_idempotent (c : ContextSet W) (presup : BProp W)
  · exact globalAccommodate_strengthens c presup w
  · intro hw; exact ⟨hw, h w hw⟩
 
+/-- Accommodation via PrProp.defined: `globalAccommodate c p.presup` restricts
+ the context to points where `PrProp.defined` holds. This is the structural
+ connection between accommodation and PrProp — accommodation targets
+ `.presup` by construction. -/
+theorem globalAccommodate_eq_defined (c : ContextSet W) (p : PrProp W) :
+ ∀ w, globalAccommodate c p.presup w ↔ c w ∧ PrProp.defined w p :=
+ λ _ => Iff.rfl
+
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Accommodation Constraints
 -- ════════════════════════════════════════════════════════════════

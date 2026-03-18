@@ -74,7 +74,7 @@ assertion — the sentence is semantically defective.
 @cite{wang-2025}: IC is NON-VIOLABLE.
 -/
 def satisfiesIC (p : PrProp W) : Prop :=
-  ∃ w, p.presup w = true ∧ p.assertion w = true
+  ∃ w, PrProp.holds w p
 
 /--
 FP (Felicity Presupposition): the common ground entails the presupposition.
@@ -83,7 +83,7 @@ Standard Stalnakerian presupposition satisfaction. When the CG only partially
 entails the presupposition, FP is violated but may be tolerated.
 -/
 def satisfiesFP (cg : ContextSet W) (p : PrProp W) : Prop :=
-  ∀ w, cg w → p.presup w = true
+  ∀ w, cg w → PrProp.defined w p
 
 /--
 Partial FP satisfaction: the presupposition is compatible with the CG
@@ -93,7 +93,7 @@ but not fully entailed.
 while others don't (jiu, zhidao).
 -/
 def partialFP (cg : ContextSet W) (p : PrProp W) : Prop :=
-  (∃ w, cg w ∧ p.presup w = true) ∧ ¬satisfiesFP cg p
+  (∃ w, cg w ∧ PrProp.defined w p) ∧ ¬satisfiesFP cg p
 
 /--
 MP (Maximize Presupposition): prefer S_p over S when the presuppositional
@@ -174,7 +174,7 @@ theorem no_cg_blocks (alt : AltStructure) :
 IC satisfaction is necessary for felicity.
 -/
 def icNecessary (p : PrProp W) (h : satisfiesIC p) :
-    ∃ w, p.presup w = true ∧ p.assertion w = true := h
+    ∃ w, PrProp.holds w p := h
 
 
 -- ============================================================================

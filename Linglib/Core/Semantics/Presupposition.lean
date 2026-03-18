@@ -6,11 +6,35 @@ import Linglib.Core.Semantics.Proposition
 @cite{heim-1983} @cite{schlenker-2009} @cite{von-fintel-1999} @cite{geurts-2005} @cite{belnap-1970}
 
 `PrProp W` is linglib's canonical representation of **partial propositions** —
-propositions that may be undefined at some worlds. The two fields are:
-- `presup` (= defined/assertive): whether the proposition says anything at w
+propositions that may be undefined at some evaluation points. The type
+parameter `W` is the evaluation domain: worlds, possibilities, events,
+world-assignment pairs, or any other type. The two fields are:
+- `presup` (= definedness): whether the proposition says anything at this point
 - `assertion` (= content): what it says when defined
 
-This general type has multiple linguistic interpretations:
+## Domain generality
+
+`PrProp W` is parametric over `W`. Common instantiations:
+- `PrProp World` — classical presupposition over possible worlds
+- `PrProp (Possibility W E)` — dynamic presupposition over world-assignment pairs
+- `PrProp (W × Event)` — event presuppositions (preconditions on events)
+- `PrProp (W × Time)` — temporal presuppositions
+
+All operations (filtering connectives, `eval`, accommodation) work
+uniformly across domains because they are pointwise over `W`.
+
+## Satisfaction relations
+
+Two satisfaction relations connect PrProp to CCP's `updateFromSat`:
+- `PrProp.defined w p` — presupposition holds at w (definedness test)
+- `PrProp.holds w p` — both presupposition and assertion hold (full satisfaction)
+
+These enable structural integration with the dynamic semantics layer:
+`updateFromSat PrProp.holds p` produces a `CCP W` that is eliminative,
+distributive, and supports the Galois connection — all by construction.
+
+## Linguistic interpretations
+
 - **Presupposition**: `presup` = presupposition holds; failure = undefined
   (@cite{heim-1983}, @cite{schlenker-2009})
 - **Conditional assertion**: `presup` = assertive; failure = nonassertive
@@ -18,11 +42,22 @@ This general type has multiple linguistic interpretations:
 - **Homogeneity**: `presup` = all atoms agree; failure = truth-value gap
   (@cite{kriz-2016})
 
-The choice of **connective system** (how gaps behave under ∧/∨) is
-orthogonal to `PrProp` itself — see `Truth3.GapPolicy`:
+## Connective systems
+
+The choice of connective system (how gaps behave under ∧/∨) is orthogonal
+to `PrProp` itself — see `Truth3.GapPolicy`:
 - Classical (`PrProp.and`): both must be defined
 - Filtering (`PrProp.andFilter`): one can satisfy the other's presupposition
 - Belnap (`PrProp.andBelnap`): gaps are skipped, defined operands contribute
+
+## Structural joints
+
+Everything in the presupposition system derives from `.presup` and `.assertion`:
+- Heritage function for `p → q` = `(impFilter p q).presup` (by construction)
+- CCP update = `updateFromSat PrProp.holds p` (from CCP infrastructure)
+- Presupposition test = `updateFromSat PrProp.defined p`
+- Accommodation = intersect context with `{w | PrProp.defined w p}`
+- Local context satisfaction = `supportOf PrProp.defined s p`
 
 -/
 
@@ -46,11 +81,18 @@ variable {W : Type*}
 def eval (p : PrProp W) : Prop3 W := λ w =>
   if p.presup w then Truth3.ofBool (p.assertion w) else .indet
 
-/-- A PrProp is defined at w iff its presupposition holds at w. -/
-def isDefinedAt (p : PrProp W) (w : W) : Prop := p.presup w = true
+/-- Definedness relation: presupposition holds at the evaluation point.
 
-/-- The set of worlds where p is defined. -/
-def definedWorlds (p : PrProp W) : W -> Prop := λ w => p.presup w = true
+    Argument order `(w : W) (p : PrProp W)` matches `updateFromSat`:
+    `updateFromSat PrProp.defined p` gives the presupposition test CCP. -/
+def defined (w : W) (p : PrProp W) : Prop := p.presup w = true
+
+/-- Full satisfaction relation: both presupposition and assertion hold.
+
+    `updateFromSat PrProp.holds p` gives the full CCP (presupposition
+    test + assertion filter). This CCP is automatically eliminative and
+    distributive via CCP's `updateFromSat` infrastructure. -/
+def holds (w : W) (p : PrProp W) : Prop := p.presup w = true ∧ p.assertion w = true
 
 /-- Evaluation is defined iff presupposition holds. -/
 theorem eval_isDefined (p : PrProp W) (w : W) :

@@ -881,7 +881,7 @@ def Parametric.toTTRQuestion (p : Parametric Type) : TTRQuestion p.Bg where
 /-! ## Austinian Propositions for Discourse
 @cite{ginzburg-2012} @cite{barwise-perry-1983}
 
-§6.5 defines `AustinianProp` as a situation–type pair
+§6.5 defines `TrueAustinianProp` as a situation–type pair
 that carries its own witness (always true by construction). This suffices
 for truth-conditional semantics but not for discourse: when A asserts
 "Bo is here", the content enters FACTS as a *checkable* claim that can
@@ -900,7 +900,7 @@ enabling:
 
 /-- A checkable Austinian proposition: situation + classifying predicate.
 
-Unlike `AustinianProp` (which carries its own witness), a `CheckableAustinian`
+Unlike `TrueAustinianProp` (which carries its own witness), a `CheckableAustinian`
 separates the situation from the predicate, so it can be false.
 
 @cite{ginzburg-2012} Ch. 4: `[sit = s, sit-type = T]` where truth requires

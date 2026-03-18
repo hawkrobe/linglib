@@ -50,15 +50,6 @@ def presupProjectsAt (_ctx : ContextPolarity) (p : PrProp W) : BProp W :=
   p.presup
 
 /--
-Check if a presupposition is satisfied in a context.
-
-A presupposition is satisfied at world w if it holds at w.
--/
-def presupSatisfiedAt (p : PrProp W) (w : W) : Prop :=
-  p.presup w = true
-
-
-/--
 Filtering is independent of assertion polarity.
 
 When computing presupposition projection for filtering connectives,

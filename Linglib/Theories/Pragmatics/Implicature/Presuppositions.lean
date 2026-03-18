@@ -95,25 +95,6 @@ structure PresupDerivation (W : Type*) where
 
 
 /--
-Presupposition failure blocks SI computation.
-
-When a sentence's presupposition fails, we cannot compute scalar implicatures
-because the sentence lacks a truth value. This captures the intuition that
-SIs are computed only for felicitous utterances.
--/
-def siBlockedByPresupFailure {W : Type*} (p : PrProp W) (w : W) : Prop :=
-  p.presup w = false → True  -- SI computation not applicable
-
-/--
-SI computation requires presupposition satisfaction.
-
-For a scalar implicature to be computed, the base sentence must be
-felicitous (presupposition satisfied).
--/
-def siRequiresPresup {W : Type*} (p : PrProp W) (w : W) : Prop :=
-  p.presup w = true
-
-/--
 Exhaustification may strengthen presuppositions.
 
 When alternatives to a sentence have presuppositions, exhaustification
@@ -129,16 +110,6 @@ structure ExhWithPresup (W : Type*) where
   alternatives : List (PrProp W)
   /-- The exhaustified meaning -/
   exhaustified : PrProp W
-
-
-/--
-In a felicitous context, SI computation can proceed.
-
-This is the precondition for applying the Standard Recipe when
-presuppositions are involved.
--/
-theorem si_proceeds_when_felicitous {W : Type*} (p : PrProp W) (w : W)
-    (h : p.presup w = true) : siRequiresPresup p w := h
 
 
 -- ============================================================================

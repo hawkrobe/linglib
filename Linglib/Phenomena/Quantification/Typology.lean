@@ -4,7 +4,7 @@ import Linglib.Fragments.Japanese.Determiners
 
 /-!
 # Cross-Linguistic Quantifier Typology
-@cite{barwise-cooper-1981} @cite{peters-westerstahl-2006} @cite{cheng-sybesma-1999} @cite{shimoyama-2006} @cite{nakanishi-2007}
+@cite{barwise-cooper-1981} @cite{peters-westerstahl-2006} @cite{shimoyama-2006} @cite{nakanishi-2007}
 
 Empirical quantifier inventories from three languages (three families) mapped to
 a common `QuantifierInventory` structure, following the pattern established in
@@ -19,7 +19,7 @@ a common `QuantifierInventory` structure, following the pattern established in
 ## Data sources
 
 - English: @cite{barwise-cooper-1981}
-- Mandarin: @cite{li-1998}, @cite{cheng-sybesma-1999}
+- Mandarin: general knowledge (no single source)
 - Japanese: @cite{shimoyama-2006}, @cite{nakanishi-2007}
 
 -/
@@ -83,7 +83,7 @@ open Fragments.Mandarin.Determiners in
 def mandarin : QuantifierInventory :=
   { language := "Mandarin"
   , family := "Sino-Tibetan"
-  , source := "Li (1998), Cheng & Sybesma (1999)"
+  , source := "general knowledge"
   , entries := Fragments.Mandarin.Determiners.allQuantifiers.map λ q =>
       { form := q.pinyin
       , qforce := q.qforce

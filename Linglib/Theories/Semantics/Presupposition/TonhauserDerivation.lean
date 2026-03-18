@@ -105,29 +105,32 @@ global context for felicitous use. Accommodation is blocked.
 
 In Schlenker's terms: the local context at matrix level IS the global context,
 and the presupposition must be entailed (not just "could be accommodated").
+
+This is a marker structure. The constraint that accommodation is blocked
+is a property of the trigger class, not derivable from the content alone.
+Full derivation requires connecting to `Accommodation.AccommodationOK` and
+trigger-specific constraints (anaphoric binding, salience, etc.).
 -/
 structure SCF_Requires (W : Type*) where
-  /-- The projective content -/
+  /-- The projective content that must be established -/
   content : BProp W
-  /-- The trigger blocks accommodation: content MUST be in global context -/
-  requiresEstablishment : ∀ (c : ContextSet W), ContextSet.nonEmpty c →
-    (felicitous : Prop) → felicitous → ContextSet.entails c content
 
 /--
 **SCF=no** means accommodation is ALLOWED.
 
-The projective content can be informative - it can update the context
+The projective content can be informative — it can update the context
 rather than being required to already hold.
+
+Witness: there exist non-empty contexts where the content is NOT entailed
+yet the trigger's use is still felicitous (via accommodation).
 -/
 structure SCF_Allows (W : Type*) where
   /-- The projective content -/
   content : BProp W
   /-- Accommodation is possible: there exist contexts where content is
       informative (not entailed) yet use is felicitous -/
-  allowsInformativity : ∃ (c : ContextSet W), ContextSet.nonEmpty c ∧
-    ¬ContextSet.entails c content ∧
-    -- Use is still possible via accommodation
-    True  -- (felicity after accommodation)
+  accommodable : ∃ (c : ContextSet W), ContextSet.nonEmpty c ∧
+    ¬ContextSet.entails c content
 
 /--
 **OLE (Obligatory Local Effect)** in local context terms.
@@ -146,13 +149,20 @@ def OLE_Obligatory (Dox : DoxasticAccessibility W Agent)
 /--
 **OLE=no** means: under belief embedding, the projective content is still
 evaluated relative to the speaker's (global) context, not the holder's beliefs.
+
+Formally: there exist doxastic contexts where the content holds globally
+but NOT in the attitude holder's beliefs. The content is "speaker-anchored"
+— it does not shift under belief embedding.
+
+Class B triggers (expressives) and Class D triggers exhibit this behavior.
 -/
-def OLE_NotObligatory (content : BProp W) : Prop :=
-  ∀ (c : ContextSet W),
-    -- Content is evaluated relative to global context, ignoring belief embedding
-    ContextSet.entails c content →
-    -- This suffices for felicity even under belief
-    True
+def OLE_NotObligatory (Dox : DoxasticAccessibility W Agent)
+    (content : BProp W) : Prop :=
+  ∃ (c : ContextSet W) (agent : Agent) (w_star : W),
+    c w_star ∧
+    ContextSet.entails c content ∧
+    let blc : BeliefLocalCtx W Agent := { globalCtx := c, dox := Dox, agent := agent }
+    ¬ContextSet.entails (blc.atWorld w_star) content
 
 
 /--
