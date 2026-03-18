@@ -804,6 +804,7 @@ import Linglib.Phenomena.Focus.PolarityStress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
 import Linglib.Phenomena.Focus.DiscourseOnly
 import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025
+import Linglib.Phenomena.Focus.Studies.OzyildizEtAl2025
 import Linglib.Phenomena.Focus.Studies.ThomasDeo2020
 import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
@@ -976,7 +977,7 @@ import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025
-import Linglib.Phenomena.Plurals.Studies.QingEtAl2025
+import Linglib.Phenomena.Questions.Studies.QingEtAl2025
 import Linglib.Phenomena.Plurals.Compare
 import Linglib.Phenomena.Plurals.Studies.Champollion2017
 import Linglib.Phenomena.Plurals.Multiplicity
@@ -1013,7 +1014,10 @@ import Linglib.Phenomena.PsychVerbs.Studies.Kim2024
 import Linglib.Phenomena.Presupposition.Basic
 import Linglib.Phenomena.Presupposition.Diagnostics
 import Linglib.Phenomena.Presupposition.ProjectiveContent
+import Linglib.Phenomena.Presupposition.Gradience
 import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
+import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2022
+import Linglib.Phenomena.Presupposition.Studies.GroveWhite2025
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
@@ -1470,6 +1474,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
+import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
 import Linglib.Core.Semantics.GradedProposition
 import Linglib.Core.Categorical.AgentCat
@@ -1479,7 +1484,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 import Linglib.Theories.Semantics.Montague.Modification
-import Linglib.Theories.Semantics.Lexical.CovertQuantifier
+import Linglib.Theories.Semantics.Lexical.CovertOperator
 import Linglib.Theories.Semantics.Lexical.Noun.Binominal
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977

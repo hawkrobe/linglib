@@ -1,5 +1,49 @@
 # Changelog
 
+## [0.229.326] - 2026-03-18
+
+### Added
+- **`DegenTonhauser2021.lean`**: Formalize Degen & Tonhauser 2021 (Open Mind) — the `Predicate` type (20 clause-embedding predicates) now lives here, with regression results (β, SE, t at three prior levels), BIC model comparison, and replication correlations; `individual_best_by_bic` proves individual-level prior beliefs predict projection better than group-level or categorical
+- **Monotonicity theorem** (`GroveWhite2025.lean`): `higher_tau_higher_gradedTruth` proves higher τ yields higher graded truth at worlds where factivePos holds but nonFactivePos does not — the discrete-factivity model's key structural prediction
+- **Empirical data connections** (`GroveWhite2025.lean`): `empirical_ordering_consistent_with_tau` connects D&T 2022 projection data to the theoretical model; `prior_effect_consistent` connects D&T 2021 regression results to the model
+
+### Fixed
+- **Mis-attribution in `Gradience.lean`**: "core finding of D&T 2022" → "core finding of D&T 2021" — the prior-belief modulation finding is from the 2021 Open Mind paper, not the 2022 Language paper
+- **Spearman r in `Gradience.lean`**: ≈ 0.98 → .991 (exact value from D&T 2021)
+- **`DegenTonhauser2022.lean`**: now imports D&T 2021 for `Predicate` (respecting chronological dependency); module docstring converted from `/-` to `/-!` and placed after imports
+
+## [0.229.325] - 2026-03-18
+
+### Fixed
+- **`UniversalI` formalization mismatch**: was quantifying only over focus alternatives with fixed proposition, but the paper's Universal I (68) involves both proposition weakening (A∧B → A) AND focus change — this matters because Predicate P (69) violates the paper's version but would satisfy the old formalization
+- **Unused imports removed**: `Attitudes.Factivity` and `Entailment.Polarity` were imported but never used in any definition or theorem
+
+### Added
+- **Predicate P** (`OzyildizEtAl2025.lean` §5a): counterexample from (69) showing Universals T and I are independently needed — P is focus-sensitive and satisfies T (uniform sensitivity) but violates I (inference (63) holds by UE of *say* + monotonicity of belief); `predicateP_violates_I` proves the entailment goes through
+- **Updated module docstring**: Core Contributions expanded (6 items), Architecture updated to reflect structural `liftDegreeFS` bridge
+
+## [0.229.324] - 2026-03-18
+
+### Added
+- **Rooth–Villalta bridge theorems** (`OzyildizEtAl2025.lean`): `liftDegreeFS` structurally lifts degree-comparison predicates to `ClauseEmbedPred` using focus alternatives as comparison class; `liftDegreeFS_is_fs` proves they are focus-sensitive when threshold depends on C — makes the Rooth–Villalta connection structural, not just documentation
+- **Substrate/conflicting attitude framework** (`OzyildizEtAl2025.lean` §3b): `ue_substrate_entails_conflicting` proves UE predicates' substrate entails what the conflicting attitude negates; `ue_recipe_inconsistent` proves no consistent Villalta-style context exists for UE predicates — explains WHY believe/know are never focus-sensitive
+- **D'/D'' counterexamples** (`OzyildizEtAl2025.lean` §5b): `predicateD'` (deny-like, not FS, causes 1-inference false positive), `predicateD''` (QUD-matching, IS FS, causes 2-inference false negative) — different from B'/B'', these formalize §6.1's problems with inference-test-only approaches
+
+### Fixed
+- **`inferenceOnly` transparency rating**: was `true` but paper explicitly says "only applying the inference-based test is less transparent" (p. 72); corrected to `false`
+
+## [0.229.323] - 2026-03-18
+
+### Added
+- **Özyıldız et al. (2025) study file** (`Phenomena/Focus/Studies/OzyildizEtAl2025.lean`): formalizes focus-sensitivity of clause-embedding predicates — `IsFocusSensitive`/`IsNotFocusSensitive` definitions via Rooth's focus alternatives, conjectured semantic universals T (uniform sensitivity) and I (non-UE), pathological predicates B'/B'' showing logical gaps, two-step diagnostic, desiderata evaluation, predicate classifications (want ✓, be glad ✓, know ✗, believe ✗, be surprised ✓, guess ✓)
+- **New bib entries**: `ozyildiz-etal-2025`, `romero-2015-salt` (SALT 25 surprise-predicates), `dretske-1972`, `harner-2016`, `wehbe-flor-2022`, `tonhauser-matthewson-2016`
+
+### Fixed
+- **`romero-2015` hallucinated metadata**: booktitle was "Freedom of Mind and Other Essays" (a Frankfurt philosophy book), publisher was "Princeton University Press", DOI pointed to wrong paper. Now correctly `romero-2019` citing SuB 19 proceedings with verified DOI
+- **`romero-2015` / `romero-2015-salt` split**: the single entry was serving two different Romero papers (SuB high-negation for BiasedPQ.lean; SALT surprise-predicates for Preferential.lean). Now properly separated
+- **`qing-uegaki-2025` author format**: was `Qing, C., Özyıldız, D., ...` (non-standard), now proper BibTeX `and`-separated full names
+- **`QingEtAl2025.lean` misplaced in `Phenomena/Plurals/Studies/`**: NVP question-embedding paper has nothing to do with plurals; moved to `Phenomena/Questions/Studies/`
+
 ## [0.229.322] - 2026-03-17
 
 ### Added
