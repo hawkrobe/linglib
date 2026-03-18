@@ -184,7 +184,7 @@ Is there a sharp boundary between "borderline tall" and "clearly tall"?
 
 This threatens any theory that posits sharp boundaries anywhere.
 
-Source: @cite{fine-1975}, @cite{williamson-1994}, @cite{raffman-2014}
+Source: @cite{fine-1975}, @cite{williamson-1994},
 -/
 structure HigherOrderVaguenessData where
   basePredicate : String

@@ -1,6 +1,6 @@
 /-
 # Coreference Patterns
-@cite{konig-siemund-2000}
+
 
 Empirical data on coreference constraints for reflexives, pronouns, and full nominals.
 

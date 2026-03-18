@@ -302,7 +302,7 @@ def Template.eventType : Template → EventType
     This is a per-verb property of the ROOT, not of the template.
     Two activity verbs can differ: *sing* (internal) vs *roll* (external).
 
-    @cite{levin-hovav-1995} §4; @cite{smith-1978}; @cite{bohnemeyer-2004} §2,6. -/
+    @cite{levin-hovav-1995} §4; @cite{bohnemeyer-2004} §2,6. -/
 inductive CausationType where
   | internal   -- instigated by a participant (sing, walk, write, play)
   | external   -- no instigator; "spontaneous" (break, fall, roll, buzz)

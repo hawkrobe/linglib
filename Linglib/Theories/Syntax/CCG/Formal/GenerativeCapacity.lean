@@ -1,6 +1,6 @@
 /-
 # CCG Generative Capacity
-@cite{joshi-1985} @cite{vijay-shanker-weir-1994}
+
 
 Proves that CCG is strictly more expressive than context-free grammars.
 

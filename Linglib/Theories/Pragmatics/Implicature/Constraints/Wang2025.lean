@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
 # Alternative Competition for Presupposition Triggers
-@cite{heim-1991} @cite{katzir-2007} @cite{sauerland-2008} @cite{wang-2025}
+@cite{heim-1991} @cite{katzir-2007} @cite{wang-2025}
 
 Constraint-based evaluation of presuppositional vs. non-presuppositional alternatives,
 following @cite{wang-2025} "Presupposition, Competition, and Coherence" Ch. 4.

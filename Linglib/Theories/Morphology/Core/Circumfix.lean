@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Circumfixal Exponence
-@cite{spencer-zwicky-1998}
+
 
 Circumfixal exponence wraps a stem with morphological material on both sides
 (prefix + suffix). This is a theory-neutral description of the surface

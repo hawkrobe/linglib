@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Intentional Identity Data @cite{chatzikyriakidis-etal-2025}
-@cite{edelberg-1986} @cite{geach-1967}
+@cite{geach-1967}
 
 Empirical data for intentional identity — the phenomenon where
 two attitude reports appear to be "about the same thing" even

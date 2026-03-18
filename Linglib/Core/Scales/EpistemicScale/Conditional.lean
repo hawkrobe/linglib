@@ -3,7 +3,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Conditional Plausibility and Probabilistic Update
 
-@cite{halpern-2003} @cite{jeffrey-1965} @cite{popper-1955}@cite{halpern-2003} axiomatizes conditional plausibility measures,
+@cite{halpern-2003} @cite{jeffrey-1965}@cite{halpern-2003} axiomatizes conditional plausibility measures,
 generalizing Bayesian conditioning, Popper spaces, Jeffrey's rule,
 and imaging under a single algebraic framework (Cond1–Cond4).
 

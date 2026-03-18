@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Inertial Modality @cite{dowty-1979}
-@cite{fusco-sgrizzi-2026} @cite{kratzer-2012} @cite{portner-1998}
+@cite{fusco-sgrizzi-2026} @cite{kratzer-2012}
 
 The inertial ordering source ranks accessible worlds by how well they match
 the "normal continuation" of the current state of affairs.

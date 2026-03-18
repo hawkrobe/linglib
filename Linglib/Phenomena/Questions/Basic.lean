@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Questions: Basic Types and Shared Infrastructure
-@cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{krifka-2011} @cite{anand-hardt-mccloskey-2021}
+@cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{anand-hardt-mccloskey-2021}
 
 Theory-neutral types for question-answer phenomena.
 

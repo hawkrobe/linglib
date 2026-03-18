@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Morphological Exponence Rules
-@cite{bybee-1985} @cite{comrie-1976} @cite{kennedy-2007} @cite{lakoff-1970} @cite{link-1983}
+@cite{bybee-1985} @cite{kennedy-2007} @cite{lakoff-1970} @cite{link-1983}
 
 Concrete instantiations of `MorphRule` for functional categories.
 

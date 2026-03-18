@@ -3,7 +3,7 @@ import Linglib.Core.ProcessingModel
 
 /-!
 # Dependency Length Minimization
-@cite{ferrer-i-cancho-2006} @cite{futrell-gibson-2020} @cite{gibson-2000} @cite{zaslavsky-hu-levy-2020}
+@cite{futrell-gibson-2020} @cite{gibson-2000} @cite{zaslavsky-hu-levy-2020}
 
 Formalizes the core claim of @cite{futrell-gibson-2020}: natural languages
 minimize total dependency length beyond what independent constraints predict.

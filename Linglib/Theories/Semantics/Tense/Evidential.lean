@@ -6,7 +6,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Tense and Evidence
-@cite{cumming-2026} @cite{ninan-2022} @cite{reichenbach-1947}
+@cite{cumming-2026} @cite{reichenbach-1947}
 
 @cite{cumming-2026} argues that English
 nonfuture tenses encode an evidential constraint: the speaker's evidence must

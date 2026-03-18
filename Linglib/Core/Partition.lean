@@ -14,7 +14,7 @@ import Mathlib.Algebra.Order.GroupWithZero.Finset
 
 /-!
 # Partition Lattice
-@cite{blackwell-1953} @cite{carnap-1971} @cite{groenendijk-stokhof-1984} @cite{merin-1999}
+@cite{blackwell-1953} @cite{groenendijk-stokhof-1984} @cite{merin-1999}
 
 Refinement, coarsening, and cell enumeration for partitions (`QUD`).
 

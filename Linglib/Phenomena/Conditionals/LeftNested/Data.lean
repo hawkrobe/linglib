@@ -2,7 +2,7 @@ import Linglib.Core.Empirical
 
 /-!
 # Left-Nested Conditionals: Empirical Data
-@cite{gibbard-1981} @cite{haegeman-2003} @cite{iatridou-1991} @cite{lassiter-2025} @cite{mcgee-1985}
+@cite{gibbard-1981} @cite{haegeman-2003} @cite{iatridou-1991} @cite{lassiter-2025}
 
 Theory-neutral empirical observations about left-nested conditionals (LNCs)
 from @cite{cao-white-lassiter-2025} "Sorting out left-nested conditionals."

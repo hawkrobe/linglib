@@ -5,7 +5,7 @@ Lexicalized grammar with categories encoding argument structure and
 combinatory rules (>, <, B, T, S) deriving phrases.
 
 - @cite{steedman-2000}. The Syntactic Process.
-- @cite{steedman-baldridge-2011}. Combinatory Categorial Grammar.
+-. Combinatory Categorial Grammar.
 -/
 
 import Linglib.Core.Grammar

@@ -5,7 +5,7 @@ Formalization of the Head Movement Constraint and its violations.
 
 ## The Head Movement Constraint (HMC)
 
-@cite{travis-1984}: A head X can only move to the head Y that immediately
+: A head X can only move to the head Y that immediately
 c-commands X.
 
 In other words: head movement cannot "skip" an intervening head.

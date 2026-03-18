@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Pre-Existence and Modal Insertion in Factive Complements
-@cite{bondarenko-2019} @cite{bondarenko-2020} @cite{williams-2025} @cite{white-2014}
+@cite{williams-2025} @cite{white-2014}
 @misc{white-2014}
 
 @cite{ippolito-kiss-williams-2025} argues that the distribution of the covert modal in

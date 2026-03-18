@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Supervaluation.Basic
 
 /-!
 # Klein's Delineation Approach
-@cite{burnett-2014} @cite{klein-1980} @cite{van-rooij-2011} @cite{kennedy-2007}
+@cite{klein-1980} @cite{kennedy-2007}
 @cite{kamp-1975}
 
 @cite{klein-1980} "A Semantics for Positive and Comparative Adjectives":

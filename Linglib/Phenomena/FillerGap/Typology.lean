@@ -6,7 +6,7 @@ import Linglib.Core.WALS.Features.F123A
 
 /-!
 # Cross-Linguistic Typology of Relativization (WALS Chapters 122--123)
-@cite{comrie-1989} @cite{de-vries-2002} @cite{keenan-comrie-1977} @cite{hawkins-1987} @cite{comrie-2013}
+@cite{comrie-1989} @cite{keenan-comrie-1977} @cite{comrie-2013}
 
 Cross-linguistic data on relative clause formation strategies from two WALS
 chapters by @cite{comrie-2013}, supplemented with the

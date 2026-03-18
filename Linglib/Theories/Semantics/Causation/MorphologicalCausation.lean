@@ -6,7 +6,7 @@ import Linglib.Core.Lexical.RootFeatures
 /-!
 # Morphological Causation: Causative Construction Typology
 
-@cite{comrie-1989} @cite{song-1996} @cite{shibatani-1976} @cite{dixon-2000} @cite{krejci-2012}
+@cite{comrie-1989} @cite{song-1996} @cite{krejci-2012}
 
 Causative constructions cross-linguistically vary along two orthogonal
 axes: **morphological complexity** (compact → analytic) and **semantic

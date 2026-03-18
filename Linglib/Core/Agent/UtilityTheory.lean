@@ -2,7 +2,7 @@ import Linglib.Core.Agent.RationalAction
 
 /-!
 # Luce's Utility Decomposition Theory (Chapter 3) @cite{luce-1959}
-@cite{franke-jger-2016}
+
 
 @cite{luce-1959} extends the choice axiom from simple alternatives to
 **gambles** — uncertain prospects of the form "get outcome `a` if event `ρ` occurs,

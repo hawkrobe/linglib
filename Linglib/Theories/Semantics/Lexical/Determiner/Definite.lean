@@ -7,7 +7,7 @@ import Linglib.Fragments.English.Determiners
 
 /-!
 # The Semantics of Definiteness
-@cite{donnellan-1966} @cite{heim-1982} @cite{kamp-1981} @cite{partee-1987} @cite{russell-1905} @cite{strawson-1950} @cite{barwise-cooper-1981}
+@cite{donnellan-1966} @cite{heim-1982} @cite{kamp-1981} @cite{partee-1987} @cite{russell-1905} @cite{barwise-cooper-1981}
 
 Denotations for definite descriptions using the type vocabulary from
 `Core/Definiteness.lean`. Two theories, formalized as determiner denotations

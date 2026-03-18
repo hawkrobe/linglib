@@ -2,7 +2,7 @@ import Linglib.Core.Agent.RationalAction
 
 /-!
 # Psychophysics: Stevens' Power Law and Multidimensional Stimuli @cite{luce-1959}
-@cite{stevens-1957}
+
 
 @cite{luce-1959} §2.B–C: the power-law specialization of the Fechnerian framework
 and its extension to multi-dimensional stimulus continua.

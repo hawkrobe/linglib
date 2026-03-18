@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Conditionals.Counterfactual
 /-!
 # Psych Verb Causal Links
 
-@cite{kim-2024} @cite{allen-1983} @cite{bach-1986} @cite{kratzer-2000}Formal integration of @cite{kim-2024}'s maintenance relation with existing @cite{lewis-1973}
+@cite{kim-2024} @cite{allen-1983} @cite{bach-1986}Formal integration of @cite{kim-2024}'s maintenance relation with existing @cite{lewis-1973}
 infrastructure: temporal intervals, event sorts,
 and counterfactual semantics.
 

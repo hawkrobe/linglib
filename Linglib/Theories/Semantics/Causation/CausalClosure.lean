@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Causation.Sufficiency
 
 /-!
 # Causal Closure Operator
-@cite{davey-priestley-2002} @cite{nadathur-lauer-2020}
+@cite{nadathur-lauer-2020}
 
 The algebraic root of causal reasoning: for positive dynamics,
 `normalDevelopment` is a **closure operator** on `(Situation, trueLE)`.

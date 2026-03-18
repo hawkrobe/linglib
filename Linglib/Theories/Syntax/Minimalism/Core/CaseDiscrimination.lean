@@ -1,6 +1,6 @@
 /-!
 # Case Discrimination in Agreement @cite{preminger-2014}
-@cite{bobaljik-2008} @cite{moravcsik-1974} @cite{scott-2023}
+@cite{bobaljik-2008} @cite{scott-2023}
 
 @cite{preminger-2014} formalizes the **Moravcsik hierarchy**: agreement is case-discriminating —
 probes are sensitive to the case of their potential targets.

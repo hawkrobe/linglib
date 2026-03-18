@@ -2,7 +2,7 @@ import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Dutch Polarity Particles
-@cite{dimroth-2010} @cite{turco-braun-dimroth-2014}
+@cite{turco-braun-dimroth-2014}
 
 Lexical entries for Dutch sentence-internal polarity particles.
 

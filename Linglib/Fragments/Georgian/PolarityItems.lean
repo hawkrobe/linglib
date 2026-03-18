@@ -10,7 +10,7 @@ Georgian indefinite pronoun polarity items, typed by the categories from
 - **aravin** (არავინ): Negative indefinite (ara- NEG prefix + vin 'who')
 - **nebismieri** (ნებისმიერი): Free choice item
 
-Forms and basic distribution verified against @cite{borise-2019} Ch. 4 §2:
+Forms and basic distribution verified against Ch. 4 §2:
 aravin is morphologically NEG + wh (not NEG + indefinite), and Georgian is a
 non-strict negative concord language (verbal negation *ar* is optional with
 preverbal neg-words). Mood-conditioned variants: vera-vin (modal), nura-vin

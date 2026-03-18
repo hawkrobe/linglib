@@ -1,6 +1,6 @@
 /-
 # English Numeral Modifiers
-@cite{egre-verheyen-2023} @cite{solt-2014}
+
 
 Fragment entries for numeral modification expressions, covering:
 - **Tolerance modifiers**: "around", "approximately", "roughly"

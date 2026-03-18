@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 /-!
 # Enhanced Dependencies
-@cite{de-marneffe-nivre-2019} @cite{schuster-manning-2016}
+@cite{de-marneffe-nivre-2019}
 
 Basic dependency trees enforce a **unique-heads constraint**: every word (except root)
 has exactly one head. This means certain predicate-argument relations that hold

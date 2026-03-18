@@ -1,6 +1,6 @@
 /-
 # Merge Unification: Internal and External Merge are the Same Operation
-@cite{chomsky-2004} @cite{harizanov-gribanova-2019}
+@cite{harizanov-gribanova-2019}
 
 Formalization of the claim that Internal and External Merge reduce to the
 same fundamental operation, differing only in their input conditions.

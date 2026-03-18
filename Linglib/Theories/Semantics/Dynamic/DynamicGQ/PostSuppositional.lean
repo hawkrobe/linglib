@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Post-Suppositional Dynamic GQs
-@cite{brasoveanu-2012} @cite{charlow-2021}
+@cite{charlow-2021}
 
 @cite{charlow-2021}'s §5: bi-dimensional meanings using a Writer-like monad.
 A `PostSupp S A` carries both a value and accumulated post-suppositional

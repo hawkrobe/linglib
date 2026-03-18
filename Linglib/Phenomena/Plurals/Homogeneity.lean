@@ -162,7 +162,7 @@ Summative predicates: apply to parts of a singular entity.
 
 "The flag is blue" requires all (salient) parts to be blue.
 
-Source: @cite{lobner-2000}, @cite{kriz-2015}, @cite{amiraz-2020}
+Source: @cite{lobner-2000}, @cite{kriz-2015},
 -/
 def summativeExample : HomogeneityDatum :=
   { positiveSentence := "The flag is blue."
@@ -227,7 +227,7 @@ def collectiveExample : HomogeneityDatum :=
 When a plurality is part of a larger group that satisfies a collective predicate,
 the smaller plurality is neither clearly a satisfier nor clearly not.
 
-Source: @cite{kriz-2015}, @cite{kriz-2016}, @cite{chatain-2021}
+Source: @cite{kriz-2015}, @cite{kriz-2016},
 -/
 structure UpwardHomogeneityDatum where
   /-- The sentence -/

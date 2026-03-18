@@ -6,7 +6,7 @@ import Linglib.Phenomena.Classifiers.Typology
 
 /-!
 # Cross-Linguistic Typology of Numeral Systems (WALS Chapters 53--56, 131)
-@cite{aikhenvald-2000} @cite{greenberg-1978} @cite{sanches-slobin-1973} @cite{stolz-veselinova-2013}
+@cite{aikhenvald-2000} @cite{greenberg-1978} @cite{stolz-veselinova-2013}
 
 Typological data on four dimensions of numeral morphology and syntax, drawn from
 WALS chapters by Stolz & Veselinova (Ch 53) and Gil (Ch 54--56). The data

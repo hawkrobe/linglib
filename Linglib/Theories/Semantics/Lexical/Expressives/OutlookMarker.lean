@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
 # Outlook Markers: Dual-Layered Secondary Meaning
-@cite{coppock-2018} @cite{farkas-bruce-2010} @cite{kubota-2026} @cite{potts-2007} @cite{abusch-2002}
+@cite{farkas-bruce-2010} @cite{kubota-2026} @cite{potts-2007}
 
 Formalization of @cite{kubota-2026} "Outlook Management: 'Subjective' Meanings of
 Discourse-Sensitive Adverbs and Particles."

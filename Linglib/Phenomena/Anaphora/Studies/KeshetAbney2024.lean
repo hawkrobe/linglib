@@ -6,7 +6,7 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 /-!
 # PIP Anaphora Phenomena
 
-@cite{keshet-abney-2024} @cite{geach-1962} @cite{partee-1972} @cite{roberts-1989}Connects PIP to the theory-neutral anaphora data
+@cite{keshet-abney-2024} @cite{partee-1972} @cite{roberts-1989}Connects PIP to the theory-neutral anaphora data
 in `Phenomena/Anaphora/`. Verifies that PIP's description-based anaphora
 correctly predicts felicity judgments for:
 

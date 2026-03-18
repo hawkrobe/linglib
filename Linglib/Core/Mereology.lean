@@ -9,7 +9,7 @@ import Mathlib.Order.Hom.Lattice
 
 /-!
 # Algebraic Mereology
-@cite{champollion-2017} @cite{krifka-1989} @cite{krifka-1998} @cite{link-1983} @cite{simons-1987}
+@cite{champollion-2017} @cite{krifka-1989} @cite{krifka-1998} @cite{link-1983}
 
 Framework-agnostic mereological infrastructure formalized over Mathlib's
 `SemilatticeSup` (binary join = mereological sum ⊕) and `PartialOrder`

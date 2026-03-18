@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Truth3
 
 /-!
 # Three-Valued Logics: LP and K3
-@cite{priest-1979} @cite{kleene-1952}
+@cite{kleene-1952}
 
 LP (Logic of Paradox) and K3 (Strong Kleene logic) are dual
 three-valued logics built on the same truth tables but with

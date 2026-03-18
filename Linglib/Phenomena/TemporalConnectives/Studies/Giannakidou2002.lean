@@ -5,7 +5,7 @@ import Linglib.Fragments.Greek.TemporalConnectives
 
 /-!
 # Giannakidou (2002): UNTIL, Aspect, and Negation
-@cite{giannakidou-2002} @cite{karttunen-1974} @cite{klein-1994} @cite{mittwoch-1977}
+@cite{giannakidou-2002} @cite{karttunen-1974} @cite{klein-1994}
 @cite{de-swart-1996} @cite{de-swart-molendijk-1999}
 
 A Novel Argument for Two *Until*s. Semantics and Linguistic Theory 12, 84–103.

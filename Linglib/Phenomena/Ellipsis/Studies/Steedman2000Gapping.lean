@@ -3,7 +3,7 @@ import Linglib.Phenomena.Ellipsis.Gapping
 
 /-!
 # CCG Gapping Bridge
-@cite{maling-1972} @cite{ross-1970} @cite{steedman-2000}
+@cite{ross-1970} @cite{steedman-2000}
 
 Connects CCG category theory (from `Theories.Syntax.CCG.Gapping`) to
 empirical gapping data (from `Phenomena.Ellipsis.Gapping`).

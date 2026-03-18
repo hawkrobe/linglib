@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
 
 /-!
 # Split Scope via Polarized Individuals @cite{elliott-2025}
-@cite{penka-2011} @cite{rullmann-1995}
+@cite{rullmann-1995}
 
 Connecting the polarized individual decomposition of
 determiners (`Theories/Semantics/Lexical/Determiner/PolarizedIndividuals`)

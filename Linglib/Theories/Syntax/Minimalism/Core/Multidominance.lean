@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Phase
 
 /-!
 # Multidominance
-@cite{citko-2005} @cite{citko-2014}
+@cite{citko-2014}
 
 Multiply dominated structures: syntactic objects shared between two
 or more dominating nodes. A node is multiply dominated when it has

@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 
 /-!
 # Japanese Particles
-@cite{dayal-2025} @cite{kubota-2026} @cite{miyagawa-2012} @cite{sauerland-yatsushiro-2017}
+@cite{dayal-2025} @cite{kubota-2026} @cite{sauerland-yatsushiro-2017}
 
 ## Part 1: Interrogative Particles
 

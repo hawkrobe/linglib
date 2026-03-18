@@ -4,7 +4,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Finnish Case System @cite{karlsson-2017}
-@cite{kiparsky-1998} @cite{krifka-1989} @cite{krifka-1992}
+@cite{krifka-1989}
 
 The Finnish partitive case is the primary formal link between case marking
 and aspectual interpretation in the language (@cite{karlsson-2017}, Chs. 9, 12–13).

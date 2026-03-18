@@ -31,7 +31,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 ## Connection to RSA Theory
-@cite{bergen-goodman-2015} @cite{merchant-2004} @cite{stainton-2006}
+@cite{bergen-goodman-2015} @cite{merchant-2004}
 
 This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
 See `Phenomena.Ellipsis.Studies.BergenGoodman2015` for the noisy channel RSA

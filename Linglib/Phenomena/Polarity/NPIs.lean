@@ -1,6 +1,6 @@
 /-
 # Negative Polarity Items: Empirical Patterns
-@cite{chierchia-2013} @cite{ladusaw-1992} @cite{zanuttini-1991} @cite{schwab-liu-2020}
+@cite{chierchia-2013}
 
 Theory-neutral data about NPI licensing and distribution.
 

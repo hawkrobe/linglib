@@ -1,8 +1,8 @@
 /-
 Modal Theory Infrastructure.
 
-Defines `ModalTheory` for comparing @cite{kratzer-1977} derived-accessibility
-semantics with Simple/@cite{kripke-1963} primitive-accessibility semantics.
+Defines `ModalTheory` for comparing derived-accessibility
+semantics with Simple/primitive-accessibility semantics.
 
 - Kratzer, A. (1991). Modality. In Semantics: An International Handbook.
 - Kripke, S. (1963). Semantical Considerations on Modal Logic.

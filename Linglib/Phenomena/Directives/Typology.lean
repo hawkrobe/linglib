@@ -6,7 +6,7 @@ import Linglib.Core.WALS.Features.F73A
 
 /-!
 # Cross-Linguistic Typology of Imperatives (WALS Chapters 70--73)
-@cite{aikhenvald-2010} @cite{van-der-auwera-2006} @cite{van-der-auwera-lejeune-2013}
+@cite{van-der-auwera-lejeune-2013}
 
 Cross-linguistic data on imperative and related mood systems from four WALS
 chapters, all authored by Johan van der Auwera and Ludo @cite{van-der-auwera-lejeune-2013}.

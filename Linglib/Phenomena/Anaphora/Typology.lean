@@ -5,7 +5,7 @@ import Linglib.Phenomena.Reference.DirectReference
 
 /-!
 # Pronoun Typology: PER/DEM Classification + Gradient Measures
-@cite{cardinaletti-starke-1999} @cite{dchaine-wiltschko-2002} @cite{elbourne-2005} @cite{patel-grosz-grosz-2017} @cite{postal-1966} @cite{schwarz-2009} @cite{schwarz-2013} @cite{levshina-stoynova-2023}
+@cite{cardinaletti-starke-1999} @cite{elbourne-2005} @cite{patel-grosz-grosz-2017} @cite{postal-1966} @cite{schwarz-2009} @cite{schwarz-2013} @cite{levshina-stoynova-2023}
 
 @cite{patel-grosz-grosz-2017} "Revisiting Pronominal Typology" (LI 48(2)) argue
 that 3rd-person pronouns split into two structural types:
@@ -551,7 +551,7 @@ theorem haitian_creole_no_split :
 @cite{schwarz-2013} §5.5 explicitly connects the article contrast to
 pronouns: "pronouns are definite articles without overt NP". German d-pronouns (der/die/das) are identical
 to strong articles. The pronominal domain shows parallel contrasts
-(@cite{bosch-rozario-zhao-2003}/2007, @cite{hinterwimmer-2009}, @cite{kaiser-2010}/2011).
+(/2007, /2011).
 
 The structural mapping:
 - Schwarz weak article = PG&G D_det layer = PER pronoun

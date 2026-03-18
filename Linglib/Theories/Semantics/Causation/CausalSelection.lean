@@ -5,7 +5,7 @@ import Linglib.Core.StructuralEquationModel
 
 /-!
 # Causal Selection Models
-@cite{icard-et-al-2017} @cite{quillien-lucas-2023}
+@cite{icard-et-al-2017}
 
 Theory-layer definitions for **causal selection**: the cognitive process
 of ranking causes by importance, given a causal model.

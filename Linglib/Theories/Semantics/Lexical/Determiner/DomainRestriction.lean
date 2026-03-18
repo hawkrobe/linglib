@@ -4,7 +4,7 @@ import Linglib.Core.NestedRestriction
 /-!
 # Quantifier Domain Restriction
 
-@cite{ritchie-schiller-2024} @cite{bach-1994} @cite{cutting-vishton-1995} @cite{previc-1998} @cite{stanley-szab-2000} @cite{von-fintel-1994} @cite{barwise-cooper-1981}
+@cite{ritchie-schiller-2024} @cite{cutting-vishton-1995} @cite{previc-1998} @cite{stanley-szab-2000} @cite{von-fintel-1994} @cite{barwise-cooper-1981}
 
 @cite{ritchie-schiller-2024}: Default Domain Restriction Possibilities.
 *Semantics & Pragmatics* 17, Article 13: 1–49.

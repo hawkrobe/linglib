@@ -1,6 +1,6 @@
 /-
 # Predicate Logic with Anaphora (PLA)
-@cite{dekker-2012} @cite{dekker-2008}
+@cite{dekker-2012}
 
 @cite{dekker-2012}'s foundational system for dynamic semantics.
 

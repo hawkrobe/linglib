@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!
 # Restrictor Theory of Conditionals
-@cite{kratzer-1986} @cite{kratzer-2012} @cite{von-fintel-2012}
+@cite{kratzer-1986} @cite{kratzer-2012}
 
 Kratzer's restrictor analysis: if-clauses restrict the modal domain rather than
 functioning as binary connectives. "If α, (must) β" is analyzed as modal

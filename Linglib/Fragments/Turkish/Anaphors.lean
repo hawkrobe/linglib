@@ -2,7 +2,7 @@ import Linglib.Fragments.Turkish.Case
 
 /-!
 # Turkish Anaphors
-@cite{kornfilt-1997} @cite{goksel-kerslake-2005} @cite{akkus-2021}
+@cite{kornfilt-1997} @cite{goksel-kerslake-2005}
 
 Turkish local anaphors relevant to binding theory and processing.
 

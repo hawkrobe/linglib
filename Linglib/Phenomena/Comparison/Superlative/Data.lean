@@ -1,6 +1,6 @@
 /-!
 # Superlative Constructions: Empirical Data
-@cite{hackl-2009} @cite{heim-1999} @cite{sharvit-stateva-2002} @cite{szabolcsi-1986}
+@cite{heim-1999} @cite{sharvit-stateva-2002} @cite{szabolcsi-1986}
 
 Empirical data on superlative constructions, including the absolute
 vs. relative reading ambiguity and the interaction with focus.

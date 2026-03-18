@@ -2,7 +2,7 @@ import Linglib.Core.Discourse.Evidence
 
 /-!
 # Epistemic Evidentiality — Empirical Data
-@cite{groenendijk-stokhof-1975} @cite{karttunen-1972} @cite{kratzer-1991} @cite{von-fintel-gillies-2010} @cite{von-fintel-gillies-2021}
+@cite{kratzer-1991} @cite{von-fintel-gillies-2010} @cite{von-fintel-gillies-2021}
 
 Theory-neutral empirical observations about the interaction between epistemic
 necessity modals (English *must*, *have to*) and evidential source.

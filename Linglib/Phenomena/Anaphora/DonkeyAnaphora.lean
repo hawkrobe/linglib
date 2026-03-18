@@ -1,6 +1,6 @@
 /-
 # Donkey Anaphora: Empirical Data
-@cite{evans-1977}
+
 
 Theory-neutral data on donkey anaphora and related binding puzzles.
 

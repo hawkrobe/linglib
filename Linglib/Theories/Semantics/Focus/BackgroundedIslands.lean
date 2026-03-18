@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Backgrounded Constituents Are Islands
-@cite{erteschik-shir-2007} @cite{goldberg-2013} @cite{kratzer-selkirk-2020} @cite{lu-degen-2025} @cite{roberts-2012} @cite{goldberg-2006}
+@cite{kratzer-selkirk-2020} @cite{lu-degen-2025} @cite{roberts-2012} @cite{goldberg-2006}
 
 Formalization of the discourse-backgroundedness account of manner-of-speaking
 (MoS) island effects, following @cite{lu-degen-2025}.

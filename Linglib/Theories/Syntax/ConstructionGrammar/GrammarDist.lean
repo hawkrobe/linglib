@@ -6,7 +6,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 /-!
 # Grammar as Distribution
 
-@cite{dunn-2026} @cite{hawkins-franke-frank-goldberg-smith-griffiths-goodman-2023} @cite{bergen-levy-goodman-2016} @cite{dunn-2025}A grammar is a frequency profile over constructions. This
+@cite{dunn-2026} @cite{bergen-levy-goodman-2016} @cite{dunn-2025}A grammar is a frequency profile over constructions. This
 generalizes lexical uncertainty: where LU varies meaning
 assignments, grammar uncertainty varies both meaning AND production frequency.
 

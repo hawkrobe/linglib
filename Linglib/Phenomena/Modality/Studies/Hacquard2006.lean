@@ -184,7 +184,7 @@ end Phenomena.Modality.Studies.Hacquard2006
 
 /-!
 # Actuality Inference Data (Cross-Linguistic)
-@cite{bhatt-1999} @cite{hacquard-2006} @cite{mari-martin-2007} @cite{nadathur-2023}
+@cite{bhatt-1999} @cite{hacquard-2006} @cite{nadathur-2023}
 
 Cross-linguistic empirical data on actuality inferences with ability modals,
 following the pattern of `Phenomena/Causation/Data.lean`.

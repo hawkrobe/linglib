@@ -7,7 +7,7 @@ import Linglib.Core.Logic.OT
 # @cite{krifka-2007b} — Negated Antonyms: Creating and Filling the Gap
 @cite{krifka-2007b}
 
-In: @cite{sauerland-stateva-2007-volume}, Presupposition and Implicature in
+In:, Presupposition and Implicature in
 Compositional Semantics, Palgrave Macmillan.
 
 ## Krifka's Thesis

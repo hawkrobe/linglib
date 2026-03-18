@@ -3,7 +3,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Syntactic Modification via Feature Composition
-@cite{alexeyenko-zeijlstra-2025} @cite{escribano-2004} @cite{zeijlstra-2020}
+@cite{alexeyenko-zeijlstra-2025}
 
 Nominal modification as a species of complementation: adjectives and nouns
 cannot directly merge because neither c-selects the other. Resolution comes

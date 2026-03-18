@@ -3,7 +3,7 @@ import Linglib.Fragments.Mandarin.QuestionParticles
 
 /-!
 # Nandao-Q Empirical Data
-@cite{alleton-1988} @cite{zheng-2026}
+@cite{zheng-2026}
 
 Theory-neutral data on Mandarin *nandao*-question felicity. The core finding
 is that positive evidential bias is **necessary** for nandao-Q felicity, while

@@ -3,7 +3,7 @@ import Linglib.Core.ExtractionMorphology
 import Linglib.Fragments.Mayan.Params
 
 /-!
-# Chol Agreement and Case Fragment @cite{coon-2010a} @cite{coon-2013a}
+# Chol Agreement and Case Fragment @cite{coon-2013a}
 @cite{imanishi-2020}
 
 Agreement morphology and case assignment for Chol (Cholan, Mayan), a

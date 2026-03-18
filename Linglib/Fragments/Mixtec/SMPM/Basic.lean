@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # San Martín Peras Mixtec (SMPM) Fragment
-@cite{ostrove-2026} @cite{ostrove-2022}
+@cite{ostrove-2026}
 
 Language data for San Martín Peras Mixtec (ISO: jmx), an Oto-Manguean
 language spoken by about 12,000 people in Oaxaca, Mexico. SMPM is

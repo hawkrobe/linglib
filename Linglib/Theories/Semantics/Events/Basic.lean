@@ -210,7 +210,7 @@ def exampleRun : Ev ℤ :=
   ⟨⟨1, 5, by omega⟩, .action⟩
 
 -- ════════════════════════════════════════════════════
--- § 9. Manners (@cite{liefke-2024} §4.3; @cite{dik-1975}; @cite{alexeyenko-2015})
+-- § 9. Manners (@cite{liefke-2024} §4.3)
 -- ════════════════════════════════════════════════════
 
 /-- A manner: the "how" of an event, individuated as an equivalence class

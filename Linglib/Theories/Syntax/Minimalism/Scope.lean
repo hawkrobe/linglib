@@ -1,6 +1,6 @@
 /-
 # Minimalist Scope Theory: QR and Scope Economy
-@cite{bruening-2001} @cite{may-1985} @cite{szabolcsi-2010}
+@cite{bruening-2001} @cite{may-1985}
 
 Formalization of quantifier scope in the Minimalist tradition.
 

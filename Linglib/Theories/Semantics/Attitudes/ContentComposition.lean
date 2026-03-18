@@ -2,7 +2,7 @@ import Linglib.Core.ContentIndividual
 
 /-!
 # Content Composition @cite{moulton-2015}
-@cite{grimshaw-1990} @cite{kratzer-2006} @cite{heim-kratzer-1998} @cite{hintikka-1962}
+@cite{kratzer-2006} @cite{heim-kratzer-1998} @cite{hintikka-1962}
 
 CPs as predicates of content individuals, not propositions.
 

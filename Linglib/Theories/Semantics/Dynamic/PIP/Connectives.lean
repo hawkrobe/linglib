@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.PIP.Basic
 /-!
 # PIP Connectives and Modal Operators
 
-@cite{keshet-abney-2024} @cite{frank-1997} @cite{kratzer-1991} @cite{veltman-1996}Dynamic encoding of PIP connectives:
+@cite{keshet-abney-2024} @cite{kratzer-1991} @cite{veltman-1996}Dynamic encoding of PIP connectives:
 - Conjunction, negation, disjunction (with label floating)
 - Labeled existential quantification
 - Modal operators (must, might, would) as world quantifiers

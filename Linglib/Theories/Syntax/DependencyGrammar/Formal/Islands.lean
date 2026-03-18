@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 /-!
 # Islands as Constraints on Rising Catenae
-@cite{huang-1982} @cite{osborne-2019} @cite{ross-1967}
+@cite{osborne-2019} @cite{ross-1967}
 
 Formalizes @cite{osborne-2019}'s analysis of islands in dependency grammar.
 Islands are syntactic configurations that constrain which rising catenae can

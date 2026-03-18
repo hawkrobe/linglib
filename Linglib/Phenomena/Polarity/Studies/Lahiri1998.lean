@@ -6,7 +6,7 @@ import Linglib.Fragments.Hindi.PolarityItems
 
 /-!
 # Lahiri (1998): Focus and Negative Polarity in Hindi
-@cite{lahiri-1998} @cite{kadmon-landman-1993} @cite{krifka-1995} @cite{lee-horn-1994}
+@cite{lahiri-1998} @cite{kadmon-landman-1993} @cite{lee-horn-1994}
 
 Hindi NPIs (*koii bhii* 'anyone', *ek bhii* 'even one', *kuch bhii* 'anything',
 *zaraa bhii* 'even a little') are morphologically composed of a weak indefinite

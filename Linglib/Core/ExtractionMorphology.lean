@@ -1,6 +1,6 @@
 /-!
 # Extraction Morphology
-@cite{elkins-torrence-brown-2026} @cite{erlewine-2018} @cite{mccloskey-2002} @cite{erlewine-2016}
+@cite{elkins-torrence-brown-2026} @cite{erlewine-2018} @cite{erlewine-2016}
 
 Theory-neutral types for cross-linguistic extraction morphology ---
 how languages morphologically mark that a constituent has undergone

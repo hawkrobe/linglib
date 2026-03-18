@@ -6,7 +6,7 @@ import Linglib.Core.WALS.Features.F120A
 
 /-!
 # Copula and Predication Typology (WALS Chapters 117--120)
-@cite{hengeveld-1992} @cite{pustet-2003} @cite{stassen-1997} @cite{stassen-2013} @cite{haspelmath-2001}
+@cite{hengeveld-1992} @cite{pustet-2003} @cite{stassen-2013} @cite{haspelmath-2001}
 
 Cross-linguistic data on predication strategies and copulas from four WALS
 chapters, all authored by Leon @cite{stassen-2013}. These chapters address a

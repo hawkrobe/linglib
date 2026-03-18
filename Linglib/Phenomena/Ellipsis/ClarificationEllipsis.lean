@@ -1,6 +1,6 @@
 /-!
 # Clarification Ellipsis: Empirical Data
-@cite{ginzburg-cooper-2004} @cite{purver-2004}
+@cite{ginzburg-cooper-2004}
 
 Theory-neutral data on clarification ellipsis (CE) — bare fragments
 used to request clarification of a preceding utterance.

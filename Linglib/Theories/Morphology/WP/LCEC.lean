@@ -3,7 +3,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # The Low Conditional Entropy Conjecture @cite{ackerman-malouf-2013}
-@cite{blevins-2006} @cite{stump-finkel-2013}
+
 
 Ackerman, F. & Malouf, R. (2013). Morphological Organization: The Low
 Conditional Entropy Conjecture. *Language* 89(3), 429–464.

@@ -15,9 +15,9 @@ import Linglib.Core.Lexical.MorphRule
 # Cross-Linguistic Typology of Valence and Voice (WALS Chapters 105--111)
 @cite{maslova-nedjalkov-2013} @cite{polinsky-2013} @cite{siewierska-2013} @cite{song-2013}
 @cite{haspelmath-2013}
-@cite{nordlinger-2023} @cite{evans-2008} @cite{evans-et-al-2011}
+@cite{nordlinger-2023}
 @cite{dalrymple-et-al-1998} @cite{siloni-2008} @cite{siloni-2012}
-@cite{konig-kokutani-2006} @cite{hurst-2012} @cite{dixon-1972} @cite{ryding-2005}
+@cite{konig-kokutani-2006} @cite{dixon-1972} @cite{ryding-2005}
 @cite{kimenyi-1980} @cite{galloway-1993}
 
 Typological data on valence-changing and voice constructions, drawn from
@@ -1172,7 +1172,7 @@ theorem some_languages_have_both_app_and_antipass :
 
 /-- Languages with antipassives classified by alignment, from WALS Ch 108
     Table 1. This is the key empirical evidence for the antipassive-ergativity
-    debate (@cite{silverstein-1976}, @cite{dixon-1979} vs @cite{heath-1976}, @cite{givon-1984}). -/
+    debate (@cite{silverstein-1976}). -/
 structure AntipassiveAlignmentDatum where
   language : String
   alignment : AlignmentType

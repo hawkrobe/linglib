@@ -5,7 +5,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
 # @cite{alsop-2024} — Free Choice *Any* as GI-RSA
-@cite{alsop-2024} @cite{champollion-alsop-grosu-2019} @cite{dayal-1998} @cite{franke-bergen-2020} @cite{szabolcsi-2004} @cite{tessler-franke-2019}
+@cite{alsop-2024} @cite{champollion-alsop-grosu-2019} @cite{franke-bergen-2020} @cite{tessler-franke-2019}
 
 "Disjunction, Free Choice, and Exhaustification" (Chapter 4)
 

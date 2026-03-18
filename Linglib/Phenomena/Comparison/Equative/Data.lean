@@ -1,6 +1,6 @@
 /-!
 # Equative Constructions: Empirical Data
-@cite{haspelmath-buchholz-1998} @cite{kennedy-2007} @cite{rett-2020}
+@cite{kennedy-2007} @cite{rett-2020}
 
 Empirical data on equative constructions ("as tall as"), including the
 at-least vs. exactly ambiguity and cross-linguistic variation.

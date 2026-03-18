@@ -6,7 +6,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Multi-Agent Epistemic Logic
 
-@cite{halpern-2003} @cite{fagin-vardi-1995} @cite{fagin-halpern-1994}
+@cite{halpern-2003} @cite{fagin-halpern-1994}
 
 Multi-agent epistemic operators from @cite{halpern-2003}: individual
 knowledge (Kᵢ), everyone knows (E_G), common knowledge (C_G),

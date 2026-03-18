@@ -6,7 +6,7 @@ import Linglib.Core.WALS.Features.F59A
 
 /-!
 # Cross-Linguistic Typology of Possession (WALS Chapters 57--59)
-@cite{aikhenvald-2013} @cite{heine-1997} @cite{heine-2009} @cite{nichols-1986} @cite{nichols-bickel-2013} @cite{stassen-2009}
+@cite{heine-1997} @cite{heine-2009} @cite{nichols-1986} @cite{nichols-bickel-2013} @cite{stassen-2009}
 
 Typological data on possessive constructions across languages, drawn from
 two WALS chapters by @cite{nichols-bickel-2013} and supplemented with data on

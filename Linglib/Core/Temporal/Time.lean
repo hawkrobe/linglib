@@ -5,7 +5,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Theory-Neutral Temporal Infrastructure
-@cite{allen-1983} @cite{champollion-2015} @cite{fox-hackl-2006} @cite{kamp-reyle-1993} @cite{klein-1994} @cite{kratzer-1989} @cite{kratzer-2021} @cite{rouillard-2026} @cite{zhao-2025} @cite{smith-1991}
+@cite{allen-1983} @cite{champollion-2015} @cite{fox-hackl-2006} @cite{kamp-reyle-1993} @cite{klein-1994} @cite{kratzer-1989} @cite{rouillard-2026} @cite{zhao-2025} @cite{smith-1991}
 
 Framework-agnostic types for temporal reasoning: intervals, temporal relations,
 situations (world–time pairs), and concrete time instances.

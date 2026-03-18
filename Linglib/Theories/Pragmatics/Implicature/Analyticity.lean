@@ -4,7 +4,7 @@ import Linglib.Core.Empirical
 
 /-!
 # L-Analyticity in Natural Language
-@cite{barwise-cooper-1981} @cite{gajewski-2002} @cite{von-fintel-1993} @cite{van-benthem-1989}
+@cite{barwise-cooper-1981} @cite{gajewski-2002} @cite{von-fintel-1993}
 
 Formalization of @cite{gajewski-2002}. A sentence is L-analytic iff its logical
 skeleton (obtained by replacing non-logical items with variables) is true

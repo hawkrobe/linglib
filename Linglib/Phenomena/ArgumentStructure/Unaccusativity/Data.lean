@@ -6,7 +6,7 @@ data fully theory-neutral.
 
 /-!
 # Unaccusativity Diagnostic Data
-@cite{burzio-1986} @cite{levin-hovav-1995} @cite{perlmutter-1978} @cite{storment-2026}
+@cite{burzio-1986} @cite{levin-hovav-1995} @cite{storment-2026}
 
 Theory-neutral empirical data on unaccusativity diagnostics.
 

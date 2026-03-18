@@ -312,7 +312,7 @@ def InterclauseRelation.encodableViaSR : InterclauseRelation → Bool
     These are characteristic of oral narrative in clause-chaining languages
     and serve to structure discourse into episodes.
 
-    @cite{sarvasy-aikhenvald-2025} §1.6; @cite{de-vries-2005}; @cite{sarvasy-aikhenvald-2025} §3.3. -/
+    @cite{sarvasy-aikhenvald-2025} §1.6; @cite{sarvasy-aikhenvald-2025} §3.3. -/
 inductive BridgingType where
   /-- Recapitulative (tail-head) linkage: the first medial clause of a new chain
       repeats (wholly or in reduced form) the final clause of the preceding chain.

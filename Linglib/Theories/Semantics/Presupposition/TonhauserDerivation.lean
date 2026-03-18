@@ -1,6 +1,6 @@
 /-
 # Deriving @cite{tonhauser-beaver-roberts-simons-2013} from Local Contexts
-@cite{heim-1983} @cite{lewis-1979} @cite{van-der-sandt-1993}
+@cite{heim-1983} @cite{lewis-1979}
 
 This module states and proves the main theorems showing that Schlenker's
 local context theory derives the four-class taxonomy of @cite{tonhauser-beaver-roberts-simons-2013}.

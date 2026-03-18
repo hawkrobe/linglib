@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Causation.Necessity
 
 /-!
 # Structural Causation Tests
-@cite{hall-2004} @cite{nadathur-lauer-2020} @cite{pearl-2000}
+@cite{nadathur-lauer-2020} @cite{pearl-2000}
 
 Verification that `Core.StructuralEquationModel` correctly models classic causal
 structures from the philosophy and linguistics literature. Each section

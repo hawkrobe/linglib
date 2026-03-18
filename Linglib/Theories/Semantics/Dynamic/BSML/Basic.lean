@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Dynamic.TeamSemantics
 
 /-!
 # Bilateral State-based Modal Logic (BSML) — Core
-@cite{aloni-yang-2024} @cite{aloni-2022}
+@cite{aloni-2022}
 
 Core definitions for BSML: formulas, models, bilateral support/anti-support,
 and double negation elimination.

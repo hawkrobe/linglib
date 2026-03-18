@@ -1,6 +1,6 @@
 /-
 # X-Bar Theory
-@cite{jackendoff-1977}
+
 
 Formalization of X-Bar structure following @cite{adger-2003} Chapter 2.
 

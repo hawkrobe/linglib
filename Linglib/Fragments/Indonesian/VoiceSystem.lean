@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 
 /-!
 # Indonesian Voice System
-@cite{sneddon-1996} @cite{arka-2003}
+@cite{sneddon-1996}
 
 Indonesian distinguishes three productive voice prefixes on verbs:
 

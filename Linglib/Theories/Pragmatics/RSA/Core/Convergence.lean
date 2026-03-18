@@ -2,7 +2,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
 # RSA Convergence Theory (Stub)
-@cite{csiszr-tusndy-1984} @cite{zaslavsky-hu-levy-2020}
+@cite{zaslavsky-hu-levy-2020}
 
 Proves that RSA dynamics converge by showing G_α is monotonically increasing.
 

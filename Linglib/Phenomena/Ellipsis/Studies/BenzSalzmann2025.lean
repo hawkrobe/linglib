@@ -10,7 +10,7 @@ Proceedings of the Chicago Linguistic Society 60.
 ## Overview
 
 German has N-stranding NP-ellipsis: ellipsis of NP after N-to-n head
-movement (@cite{sternefeld-2006}), which strands the moved noun outside
+movement, which strands the moved noun outside
 the deletion domain. What looks like deletion of individual constituents
 (PPs, relative clauses, genitives) is actually NP-ellipsis with N having
 evacuated.

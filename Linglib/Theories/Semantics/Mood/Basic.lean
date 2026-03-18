@@ -481,7 +481,7 @@ theorem subj_nonveridical {W Time : Type*} [LE Time]
 
 /-!
 ### SUBJ as Temporal Anchor
-@cite{giannakidou-1998} @cite{mendes-2025} @cite{muskens-1996} @cite{portner-2018}
+@cite{giannakidou-1998} @cite{mendes-2025} @cite{muskens-1996}
 
 Both SUBJ's situation introduction and attitude embedding create new temporal
 reference points for embedded clauses:

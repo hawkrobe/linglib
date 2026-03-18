@@ -1,6 +1,6 @@
 /-!
 # Korean Conjunctive (Converbal) Suffixes
-@cite{sohn-1999} @cite{yeon-brown-2011}
+@cite{sohn-1999}
 
 Medial clause markers in Korean: conjunctive suffixes on the verb stem that
 link clauses in a chain. Korean has no switch-reference morphology; instead,

@@ -2,7 +2,7 @@ import Linglib.Core.ProcessingModel
 
 /-!
 # Cue-Based Retrieval
-@cite{lewis-vasishth-2005} @cite{lewis-etal-2006}
+@cite{lewis-vasishth-2005}
 
 Content-addressable memory retrieval for sentence processing. Items in
 working memory are encoded with feature bundles and retrieved via parallel

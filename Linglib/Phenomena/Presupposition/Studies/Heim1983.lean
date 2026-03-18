@@ -3,7 +3,7 @@ import Linglib.Phenomena.Presupposition.Basic
 
 /-!
 # NeoGricean Presuppositions to Phenomena
-@cite{heim-1983} @cite{karttunen-1974} @cite{kracht-2003}
+@cite{heim-1983} @cite{karttunen-1974}
 
 Connects the NeoGricean presupposition infrastructure (trigger types, derivation
 tracking, SI interaction) to empirical presupposition data from

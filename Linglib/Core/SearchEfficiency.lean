@@ -4,8 +4,8 @@ import Linglib.Core.PropertyDomain
 /-!
 # Search Efficiency in Reference Production
 
-@cite{giles-etal-2026} @cite{rubio-fernandez-2019}
-@cite{jara-ettinger-rubio-fernandez-2022}
+@cite{giles-etal-2026}
+
 
 The search efficiency view of overinformativeness: speakers produce
 redundant modifiers when the modifier facilitates the listener's

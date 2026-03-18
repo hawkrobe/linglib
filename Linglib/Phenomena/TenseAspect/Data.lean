@@ -394,7 +394,7 @@ def indirectQShifted : ReichenbachFrame ℤ where
     (Abusch, Von Stechow, Kratzer, Ogihara) — there is no attitude verb
     to trigger the shift.
 
-    @cite{banfield-1982}, @cite{schlenker-2004}, @cite{sharvit-2008}. -/
+    @cite{banfield-1982}, @cite{schlenker-2004},. -/
 
 /-- FID matrix: "She walked to the window" (past, narrated event at -3). -/
 def fidWalked : ReichenbachFrame ℤ where

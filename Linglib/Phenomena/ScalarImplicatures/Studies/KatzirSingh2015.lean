@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Questions.Denotation.Partition
 
 /-!
 # Economy of Structure and Information
-@cite{heim-1991} @cite{hurford-1974} @cite{katzir-2007} @cite{katzir-singh-2015} @cite{magri-2009} @cite{magri-2011} @cite{spector-2014}
+@cite{heim-1991} @cite{hurford-1974} @cite{katzir-2007} @cite{katzir-singh-2015} @cite{magri-2009} @cite{spector-2014}
 
 @cite{katzir-singh-2015}. Proceedings of Sinn und Bedeutung 19, pp. 322–339.
 

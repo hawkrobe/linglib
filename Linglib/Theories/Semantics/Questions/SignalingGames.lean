@@ -2,7 +2,7 @@ import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Questions/SignalingGames.lean
-@cite{farrell-1993} @cite{lewis-1969} @cite{van-rooy-2003}
+@cite{lewis-1969} @cite{van-rooy-2003}
 
 Signaling Games and Credible Communication.
 

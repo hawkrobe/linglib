@@ -11,7 +11,7 @@ import Linglib.Fragments.Hindi.Case
 
 /-!
 # Morphosyntactic Alignment Typology (WALS Chapters 98--100)
-@cite{bickel-nichols-2009} @cite{comrie-1978} @cite{comrie-2013} @cite{dixon-1994} @cite{dryer-haspelmath-2013} @cite{dixon-1972} @cite{haspelmath-2021}
+@cite{comrie-1978} @cite{comrie-2013} @cite{dixon-1994} @cite{dryer-haspelmath-2013} @cite{dixon-1972} @cite{haspelmath-2021}
 
 Formalizes three chapters from the World Atlas of Language Structures (WALS)
 covering morphosyntactic alignment -- the way languages mark the core

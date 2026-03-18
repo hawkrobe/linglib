@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # Cumulative Predication
 
-@cite{beck-sauerland-2000}
+
 
 Formalizes Beck & Sauerland's cumulative operator `**`, which derives
 cumulative truth conditions from transitive predicates applied to

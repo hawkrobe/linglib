@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Directive Modality: Strong and Weak Necessity
-@cite{kolodny-macfarlane-2010} @cite{kratzer-2012} @cite{von-fintel-iatridou-2008}
+@cite{kratzer-2012} @cite{von-fintel-iatridou-2008}
 
 @cite{von-fintel-iatridou-2008} argue that natural languages systematically
 distinguish **strong necessity** ("must", "have to") from **weak necessity**

@@ -5,7 +5,7 @@ import Linglib.Theories.Phonology.Autosegmental.Defs
 
 /-!
 # Finnish Vowel Harmony @cite{karlsson-2017}
-@cite{goldsmith-1976} @cite{ringen-heinmki-1999}
+@cite{goldsmith-1976}
 
 Finnish has **palatal vowel harmony**: the [±back] feature of root vowels
 propagates rightward through all suffixes. This is

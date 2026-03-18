@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # French Predicate Lexicon Fragment
-@cite{kayne-1975} @cite{song-1996}
+@cite{song-1996}
 
 French causative predicates, centered on the *faire* causative.
 @cite{song-1996} classifies *faire* as a COMPACT causative with free morpheme

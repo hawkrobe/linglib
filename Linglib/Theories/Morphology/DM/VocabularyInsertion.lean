@@ -2,7 +2,7 @@ import Linglib.Theories.Morphology.DM.Categorizer
 
 /-!
 # Vocabulary Insertion (Distributed Morphology)
-@cite{halle-marantz-1993} @cite{bobaljik-2000} @cite{embick-2010}
+@cite{halle-marantz-1993} @cite{bobaljik-2000}
 
 Vocabulary Insertion is the mechanism by which syntactic terminal nodes
 receive phonological exponents in Distributed Morphology. It is the

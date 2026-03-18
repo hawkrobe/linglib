@@ -1,6 +1,6 @@
 /-
 # Presupposition Phenomena Data
-@cite{beaver-geurts-2014}
+
 
 Theory-neutral presupposition examples and empirical patterns.
 

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Mandarin Question Particles
-@cite{chu-1998} @cite{li-thompson-1981} @cite{zheng-2026}
+@cite{zheng-2026}
 
 Lexical entries for Mandarin interrogative particles with distributional
 properties and bias profiles.

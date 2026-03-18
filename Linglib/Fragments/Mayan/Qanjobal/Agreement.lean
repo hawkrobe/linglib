@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Fragments.Mayan.Params
 
 /-!
-# Q'anjob'al Agreement and Case Fragment @cite{mateo-pedro-2009}
+# Q'anjob'al Agreement and Case Fragment
 @cite{imanishi-2020}
 
 Agreement morphology and case assignment for Q'anjob'al (Q'anjob'alan,

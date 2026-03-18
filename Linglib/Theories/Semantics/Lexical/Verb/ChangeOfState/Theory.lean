@@ -1,6 +1,6 @@
 /-
 # Change-of-State Predicate Semantics
-@cite{simons-2001}
+
 
 CoS predicates (stop, start, continue) presuppose a prior state:
 - "stop P" presupposes P was true, asserts P is now false

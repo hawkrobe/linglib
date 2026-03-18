@@ -3,7 +3,7 @@ import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
 # Polarized Individuals and the Birkhoff Representation @cite{elliott-2025}
-@cite{birkhoff-1937} @cite{van-benthem-1984}
+@cite{van-benthem-1984}
 
 Entity–polarity pairs, trivalent functions, and the Birkhoff
 representation theorem for conservative GQs.

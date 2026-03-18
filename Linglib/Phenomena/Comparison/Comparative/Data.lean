@@ -1,6 +1,6 @@
 /-!
 # Comparative Constructions: Empirical Data
-@cite{bhatt-takahashi-2011} @cite{bresnan-1973} @cite{kennedy-1999} @cite{lechner-2004}
+@cite{bresnan-1973} @cite{kennedy-1999} @cite{lechner-2004}
 
 Basic empirical data on comparative constructions — phrasal vs. clausal
 standards, morphological variation, and acceptability patterns.

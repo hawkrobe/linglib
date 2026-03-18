@@ -3,7 +3,7 @@ import Linglib.Core.Case
 /-!
 # Case Containment and Syncretism
 @cite{caha-2009} @cite{mcfadden-2018} @cite{bobaljik-2012} @cite{blake-1994}
-@cite{baerman-2005}
+
 
 ## Containment
 

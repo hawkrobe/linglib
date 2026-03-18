@@ -4,8 +4,8 @@ import Linglib.Core.Agent.BayesianUpdate
 import Mathlib.Analysis.Convex.Jensen
 
 /-!
-# Optimal Experiment Design @cite{lindley-1956} @cite{chaloner-verdinelli-1995}
-@cite{hawkins-etal-2025} @cite{myung-pitt-2009} @cite{van-rooy-2003}
+# Optimal Experiment Design @cite{lindley-1956}
+@cite{hawkins-etal-2025} @cite{van-rooy-2003}
 
 Domain-general framework for optimal experiment design: selecting experiments
 (questions, stimuli, tests) to maximize expected information gain (EIG).

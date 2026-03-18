@@ -1,6 +1,6 @@
 /-
 # Anti-Conventional Implicatures (ACIs)
-@cite{mccready-2019}
+
 
 Formalization of @cite{lo-guercio-2025} "Maximize Conventional Implicatures!"
 Semantics & Pragmatics 18(9).

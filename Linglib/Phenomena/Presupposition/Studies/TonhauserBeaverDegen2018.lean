@@ -3,7 +3,7 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
 # @cite{tonhauser-beaver-degen-2018}: How Projective Is Projective Content?
-@cite{tonhauser-beaver-degen-2018} @cite{potts-2005} @cite{simons-roberts-2010} @cite{tonhauser-beaver-roberts-simons-2013}Empirical data from "How projective is projective content? Gradience in
+@cite{tonhauser-beaver-degen-2018} @cite{potts-2005} @cite{tonhauser-beaver-roberts-simons-2013}Empirical data from "How projective is projective content? Gradience in
 projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 
 ## Key Findings

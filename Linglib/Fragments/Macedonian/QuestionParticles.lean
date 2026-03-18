@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Macedonian Question Particles
-@cite{mitkovska-saraevi-2024} @cite{simik-2024}
+@cite{simik-2024}
 
 Lexical entries for Macedonian interrogative particles.
 

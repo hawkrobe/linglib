@@ -6,7 +6,7 @@ import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Causal Bayes Net
-@cite{cheng-1997} @cite{grusdt-lassiter-franke-2022}
+@cite{grusdt-lassiter-franke-2022}
 
 Two-node causal Bayesian network infrastructure: directed causal structure
 over two binary variables, noisy-OR parameterization, and probability

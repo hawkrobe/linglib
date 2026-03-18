@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 /-
 The ANS operator and the answerhood thesis (@cite{groenendijk-stokhof-1984}, Ch. I).
-@cite{belnap-1972} @cite{belnap-1982}
+@cite{belnap-1982}
 
 Includes @cite{belnap-1982}'s Unique Answer Fallacy (questions can have multiple
 complete true answers), Distributivity Principle (knowing-wh reduces to

@@ -1,6 +1,6 @@
 /-
 # Embedding of Interrogatives under Attitude Predicates
-@cite{grimshaw-1979}
+
 
 Empirical data on which predicates embed which types of interrogative clauses,
 following @cite{dayal-2025}. The key contrast is between subordination (standard

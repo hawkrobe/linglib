@@ -8,7 +8,7 @@ import Linglib.Core.WALS.Features.F78A
 
 /-!
 # Cross-Linguistic Typology of Modality and Evidentiality (WALS Chapters 74--78)
-@cite{aikhenvald-2004} @cite{de-haan-1999} @cite{willett-1988} @cite{de-haan-2013}
+@cite{aikhenvald-2004} @cite{de-haan-2013}
 @cite{vanbogaert-2013} @cite{deandradedehaanValenzuela-2013}
 
 Cross-linguistic data on modality and evidentiality from the World Atlas of

@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Montague.Variables
 
 /-!
 # Glue Semantics
-@cite{asudeh-2022} @cite{dalrymple-etal-1993}
+@cite{asudeh-2022}
 
 Glue Semantics is a composition framework where meanings are assembled
 via proof search in the implicational fragment of linear logic (⊸).

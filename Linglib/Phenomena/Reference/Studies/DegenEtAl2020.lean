@@ -8,7 +8,7 @@ import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 /-!
 # @cite{degen-etal-2020}
 @cite{frank-goodman-2012} @cite{dale-reiter-1995} @cite{engelhardt-etal-2006}
-@cite{grice-1975} @cite{kursat-degen-2021} @cite{cohn-gordon-etal-2019}
+@cite{grice-1975} @cite{kursat-degen-2021}
 
 When Redundancy Is Useful: A Bayesian Approach to "Overinformative" Referring
 Expressions. *Psychological Review* 127(4), 591–621.

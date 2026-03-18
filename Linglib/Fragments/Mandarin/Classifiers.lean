@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.NounCategorization
 
 /-!
 # Mandarin Chinese Classifier Lexicon
-@cite{aikhenvald-2000} @cite{chao-1968} @cite{erbaugh-1986}
+@cite{aikhenvald-2000}
 
 Typed classifier entries for Mandarin Chinese, replacing unstructured
 string representations with semantically annotated `ClassifierEntry` values.

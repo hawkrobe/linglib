@@ -3,7 +3,7 @@ import Linglib.Core.Agent.NormalCDF
 
 /-!
 # Signal Detectability Theory (@cite{luce-1959}, §2.E) @cite{luce-1959}
-@cite{green-swets-1966} @cite{macmillan-creelman-2005}
+
 
 Signal Detection Theory (SDT) models the observer's task of discriminating
 between two hypotheses — "signal present" (sN) and "noise only" (N) — when

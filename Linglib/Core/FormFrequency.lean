@@ -2,7 +2,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Form-Frequency Correspondence @cite{haspelmath-2021}
-@cite{zipf-1935}
+
 
 @cite{haspelmath-2021}'s deeper explanation of argument-coding splits:
 the Role-Reference Association Universal (Universal 1) itself reduces to a

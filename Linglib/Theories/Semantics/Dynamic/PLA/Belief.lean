@@ -1,7 +1,7 @@
 /-
 # PLA Belief Reports
 
-@cite{dekker-2012} @cite{kaplan-1968} Chapter 4 (Quantification and Modality), §4.2: Knowing Who and Believing What.
+@cite{dekker-2012} Chapter 4 (Quantification and Modality), §4.2: Knowing Who and Believing What.
 
 ## Key Concepts
 

@@ -3,7 +3,7 @@ import Linglib.Core.Prosody
 
 /-!
 # Prosodic Word (PrWd)
-@cite{selkirk-1984} @cite{nespor-vogel-1986}
+@cite{selkirk-1984}
 
 The prosodic word (PrWd, ω) is the prosodic constituent immediately
 above the foot in the prosodic hierarchy:

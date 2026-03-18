@@ -2,7 +2,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Team Semantics Infrastructure
-@cite{aloni-2022} @cite{ciardelli-groenendijk-roelofsen-2019} @cite{hodges-1997}
+@cite{aloni-2022} @cite{ciardelli-groenendijk-roelofsen-2019}
 
 Team semantics evaluates formulas relative to sets of evaluation points
 (teams) rather than single points. This module provides the core infrastructure.

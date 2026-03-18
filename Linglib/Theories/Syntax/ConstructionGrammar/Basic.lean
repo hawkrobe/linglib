@@ -4,7 +4,7 @@ import Linglib.Core.Semantics.CommonGround
 
 /-!
 # Construction Grammar: Core Types
-@cite{diessel-2023} @cite{goldberg-1995} @cite{goldberg-2003} @cite{goldberg-2006}
+@cite{goldberg-1995} @cite{goldberg-2003} @cite{goldberg-2006}
 
 Minimal infrastructure for Construction Grammar (CxG), the framework in which
 constructions — learned pairings of form and function — are the basic units

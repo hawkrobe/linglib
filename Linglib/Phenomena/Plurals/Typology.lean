@@ -7,7 +7,7 @@ import Linglib.Core.WALS.Features.F36A
 
 /-!
 # Cross-Linguistic Typology of Nominal Plurality (WALS Chapters 33--36)
-@cite{corbett-2000} @cite{daniel-2013} @cite{dryer-haspelmath-2013} @cite{haspelmath-2013}
+@cite{corbett-2000} @cite{dryer-haspelmath-2013} @cite{haspelmath-2013}
 
 Typological data on how languages encode plurality, drawn from four WALS
 chapters by Dryer, Haspelmath, Daniel, and Moravcsik. The data covers four

@@ -157,7 +157,7 @@ def snad : ParticleEntry :=
 /-- *copak* 'what then, RAZVE'
 
 Expresses a conflict between the speaker's prior belief and current
-contextual evidence (@cite{stankova-simik-2024} §6.2; @cite{sticha-1995b}, @cite{nekula-1996},
+contextual evidence (@cite{stankova-simik-2024} §6.2;, @cite{nekula-1996},
 @cite{sebestova-mala-2016}). Licensed in both positive and negative PQs,
 but requires a biased context (evidential bias).
 

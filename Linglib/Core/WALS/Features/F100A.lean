@@ -1,6 +1,6 @@
 /-!
 # WALS Feature 100A: Alignment of Verbal Person Marking
-@cite{siewierska-2013b}
+
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 100A`.

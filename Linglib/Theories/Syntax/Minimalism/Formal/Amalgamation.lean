@@ -1,6 +1,6 @@
 /-
 # Amalgamation: A Lattice-Theoretic Characterization
-@cite{embick-noyer-2001}
+
 
 Formalization of postsyntactic amalgamation following @cite{harizanov-gribanova-2019}
 "Whither head movement?" (NLLT 37:461-522).

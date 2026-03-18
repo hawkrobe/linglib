@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 /-!
 # Temporal Decomposition of Events
-@cite{kiparsky-2002} @cite{pustejovsky-1991}
+@cite{kiparsky-2002}
 
 Bridges the gap between `EventStructure.Template` (predicate-role decomposition,
 no temporal information) and `ViewpointAspect` (temporal operators on opaque

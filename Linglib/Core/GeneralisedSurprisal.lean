@@ -1,6 +1,6 @@
 /-!
 # Generalised Surprisal and Incremental Alternative Sampling
-@cite{giulianelli-etal-2026} @cite{giulianelli-opedal-cotterell-2024}
+@cite{giulianelli-etal-2026}
 
 Parameterized family of processing difficulty measures that decomposes
 prediction into explicit temporal and representational dimensions,

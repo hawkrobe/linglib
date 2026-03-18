@@ -1,6 +1,6 @@
 /-
 # Negation Scope in Numeral Interpretation
-@cite{jespersen-1917}
+
 
 Formalization of the negation scope asymmetry from @cite{horn-1972}, following Jespersen.
 

@@ -26,7 +26,7 @@ import Linglib.Core.WALS.Features.F61A
 
 /-!
 # Word-Order Typology (@cite{dryer-haspelmath-2013} / WALS)
-@cite{dryer-1992} @cite{dryer-haspelmath-2013} @cite{gibson-2025} @cite{greenberg-1963} @cite{derbyshire-1977} @cite{hale-1983}
+@cite{dryer-1992} @cite{dryer-haspelmath-2013} @cite{gibson-2025} @cite{greenberg-1963}
 
 WALS data from @cite{gibson-2025}: cross-linguistic counts
 of harmonic vs disharmonic word-order pairings. @cite{dryer-1992} documents

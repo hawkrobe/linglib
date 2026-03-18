@@ -200,7 +200,7 @@ def predictExceptiveGrammaticality (qt : QuantifierType) : Bool :=
 
 /-!
 ## Exception Uniqueness
-@cite{gajewski-2002} @cite{hoeksema-1995} @cite{moltmann-1995}
+@cite{gajewski-2002}
 
 The but-exceptive typically requires that the exception be unique:
 

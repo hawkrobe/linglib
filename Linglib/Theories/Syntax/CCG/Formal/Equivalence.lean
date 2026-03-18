@@ -1,6 +1,6 @@
 /-
 # Semantic Equivalence and Spurious Ambiguity
-@cite{eisner-1996} @cite{hepple-morrill-1989}
+
 
 CCG derivations fall into equivalence classes: multiple derivations yield
 identical interpretations due to the associativity of functional composition.

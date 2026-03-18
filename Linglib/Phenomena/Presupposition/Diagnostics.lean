@@ -1,6 +1,6 @@
 /-
 # Presupposition Diagnostics
-@cite{von-fintel-2004}
+
 
 Empirical diagnostics for identifying and classifying projective content.
 

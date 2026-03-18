@@ -2,7 +2,7 @@ import Mathlib.Data.List.Basic
 
 /-!
 # Mixed Consequence Relations
-@cite{cobreros-etal-2012} @cite{zardini-2008}
+@cite{cobreros-etal-2012}
 
 Abstract framework for mixed notions of logical consequence, where
 premises and conclusions may be evaluated under different standards

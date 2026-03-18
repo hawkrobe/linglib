@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 /-!
 # Greek Negation Fragment
-@cite{holton-et-al-2012} @cite{tsiakmakis-2025}
+@cite{tsiakmakis-2025}
 
 Greek distinguishes two sentential negation markers that are in
 complementary distribution by mood:

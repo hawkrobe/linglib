@@ -3,7 +3,7 @@ import Linglib.Core.Agent.BToM
 
 /-!
 # RSAConfig — Unified RSA Configuration
-@cite{baker-tenenbaum-2009} @cite{degen-2023} @cite{frank-goodman-2012} @cite{bergen-levy-goodman-2016} @cite{kao-etal-2014-hyperbole} @cite{qing-franke-2013}
+@cite{degen-2023} @cite{frank-goodman-2012} @cite{bergen-levy-goodman-2016} @cite{kao-etal-2014-hyperbole} @cite{qing-franke-2013}
 
 A streamlined RSA configuration grounded in rational action theory. Each RSA
 model decomposes into two orthogonal dimensions:

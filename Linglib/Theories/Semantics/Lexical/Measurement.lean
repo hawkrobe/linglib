@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
 /-!
 # Cross-Categorial Measurement Semantics
 
-@cite{wellwood-2015} @cite{schwarzschild-2006} @cite{kennedy-2007}
+@cite{wellwood-2015} @cite{kennedy-2007}
 
 @cite{wellwood-2015} argues that all comparative sentences contain a covert `much`
 morpheme whose semantics is a measure function μ assigned by a variable

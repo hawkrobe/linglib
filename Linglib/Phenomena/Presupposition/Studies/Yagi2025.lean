@@ -1,6 +1,6 @@
 /-
 # Conflicting Presuppositions in Disjunction
-@cite{hausser-1976} @cite{landman-1986}
+
 
 Formalizes @cite{yagi-2025} "Conflicting presuppositions in disjunction" (S&P 18:7).
 

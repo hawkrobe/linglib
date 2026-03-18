@@ -4,7 +4,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.ConfigData
 
 /-!
 # Lexicalization: Efficient Encoding of Emerging Concepts
-@cite{xu-etal-2024} @cite{brinton-traugott-2005} @cite{kemp-xu-regier-2018}
+@cite{xu-etal-2024}
 
 Inaugural module of `Theories/Diachronic/`: formal theories of language change.
 

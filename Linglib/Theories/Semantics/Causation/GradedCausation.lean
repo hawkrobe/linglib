@@ -6,9 +6,9 @@ or necessity but a **unique blend of three graded measures**:
 
 | Measure | Definition | Source |
 |---------|-----------|--------|
-| SUF | Probability of sufficiency | @cite{pearl-2019} |
-| INT | Degree of intention | @cite{halpern-kleiman-weiner-2018} |
-| ALT | Number of causee alternatives | @cite{frankfurt-1969} |
+| SUF | Probability of sufficiency | |
+| INT | Degree of intention | |
+| ALT | Number of causee alternatives | |
 
 ## Key Finding
 

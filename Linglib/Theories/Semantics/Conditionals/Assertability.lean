@@ -1,6 +1,6 @@
 /-
 # Probabilistic Assertability for Conditionals
-@cite{grusdt-lassiter-franke-2022} @cite{adams-1975}
+@cite{grusdt-lassiter-franke-2022}
 
 Assertability conditions for conditional sentences based on conditional probability.
 

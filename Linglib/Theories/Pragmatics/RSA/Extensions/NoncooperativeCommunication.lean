@@ -6,7 +6,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Noncooperative Communication: Unified Argumentative RSA
-@cite{barnett-griffiths-hawkins-2022} @cite{cummins-2025} @cite{cummins-franke-2021} @cite{mazzarella-2018} @cite{merin-1999} @cite{sperber-2010} @cite{goodman-stuhlmuller-2013} @cite{yoon-etal-2020}
+@cite{barnett-griffiths-hawkins-2022} @cite{cummins-2025} @cite{cummins-franke-2021} @cite{merin-1999} @cite{sperber-2010} @cite{goodman-stuhlmuller-2013} @cite{yoon-etal-2020}
 
 Unifies @cite{cummins-franke-2021}'s argumentative strength framework and
 @cite{barnett-griffiths-hawkins-2022}'s persuasive RSA into a single parameterized model,

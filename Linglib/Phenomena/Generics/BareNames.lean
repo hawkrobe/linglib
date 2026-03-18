@@ -4,7 +4,7 @@ import Mathlib.Data.Rat.Defs
 # Bare Singular Names and Genericity
 
 Empirical patterns on generic uses of bare singular names (BSNs) like "Ruth",
-following @cite{gasparri-2025}. Predicativists treat BSNs as predicative DPs:
+following. Predicativists treat BSNs as predicative DPs:
 
   ⟦∅ Ruth⟧ = ⟦the⟧ [λx.x is called Ruth]
 

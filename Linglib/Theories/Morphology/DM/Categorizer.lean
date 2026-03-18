@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 
 /-!
 # Categorizing Heads (Distributed Morphology) @cite{harley-2014}
-@cite{acquaviva-2009} @cite{embick-2004} @cite{marantz-1997} @cite{pfau-2000}
+@cite{embick-2004} @cite{marantz-1997}
 @cite{kramer-2015}
 
 @cite{harley-2014} "On the identity of roots" addresses three questions about

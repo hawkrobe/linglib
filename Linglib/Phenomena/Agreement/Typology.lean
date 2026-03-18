@@ -3,7 +3,7 @@ import Linglib.Fragments.Finnish.Negation
 
 /-!
 # Paradigmatic Structure of Person Marking
-@cite{cysouw-2009} @cite{greenberg-1963} @cite{ingram-1978}
+@cite{cysouw-2009} @cite{greenberg-1963}
 
 Formalizes the typological framework from:
 

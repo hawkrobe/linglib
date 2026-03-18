@@ -3,7 +3,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Free Indirect Discourse (FID) as Mixed Perspective
-@cite{banfield-1982} @cite{eckardt-2015} @cite{schlenker-2004}
+@cite{banfield-1982} @cite{schlenker-2004}
 
 Free Indirect Discourse is a narrative mode where the narrator's voice and
 the character's perspective blend. The hallmark of FID is that different

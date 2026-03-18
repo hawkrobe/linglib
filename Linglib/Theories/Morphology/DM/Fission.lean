@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
 # Fission (Distributed Morphology)
-@cite{halle-marantz-1993} @cite{noyer-1997}
+@cite{halle-marantz-1993}
 
 Fission is a postsyntactic operation that splits a single terminal node
 into two morphological exponents. This module provides the generic

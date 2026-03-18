@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.NounCategorization
 
 /-!
 # Japanese Classifier Lexicon
-@cite{aikhenvald-2000} @cite{downing-1996} @cite{lakoff-1987}
+@cite{aikhenvald-2000} @cite{downing-1996}
 
 Typed classifier entries for Japanese (josūshi 助数詞).
 
