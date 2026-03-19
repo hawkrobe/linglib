@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.229.352] - 2026-03-19
+
+### Added
+- **End-to-end (11) paradigm** (Reinhart1976.lean §7): `corefPermittedAddr` decidable coreference function, `paradigm_11a_blocked` through `paradigm_11d_permitted` — complete chain from tree structure through c-command to coreference predictions
+- **(10a) vs (10b) non-equivalence** (§8): `corefPermitted_10a`, `restriction_10a_vs_10b` (concrete witness), `restriction_10b_subsumes_10a` (general proof for all addresses/pronoun configurations)
+
+### Fixed
+- **Hallucinated preposed PP example**: docstring claimed "Near Dan, he saw a snake" has coreference "fine" — this is actually (43a) BLOCKED (\*) in the dissertation. Corrected to cite (45) "Near him, Dan saw a snake" (permitted) and (43a) (blocked)
+- **Binary tree limitation documented**: preposed PP trees (41)/(42) are ternary (S → PP NP VP); binary encoding changes c-command facts for subject→PP direction. Docstring now explicitly flags this limitation
+- **`subject_object_asymmetry` address**: fixed from [L,R,R,R] (PP node) to [L,R,R,R,R] (the actual NP "her")
+- **"Theorem 49" → "Claim (49)"**: Reinhart numbers it (49) but doesn't call it a theorem
+
+## [0.229.351] - 2026-03-19
+
+### Added
+- **`Reinhart1976.lean` (Anaphora/Studies)**: Formalize Reinhart 1976 *The Syntactic Domain of Anaphora* — c-command domain, coreference restriction (10b), Claim (49) (c-command ⊆ command via B&P antitone), preposed PP examples, subject–object asymmetry
+- **`langacker-1969`, `kayne-1984`** bibliography entries
+
+### Fixed
+- **S-command attribution**: `@cite{reinhart-1976}` was incorrectly attributed to S-command (S-nodes); Reinhart's c-command (def. 36) uses **branching nodes** = K-command. S-command is Langacker's original "command"
+- **Redundant disjunct** in `cCommand`: `dominates sis addrB || sis == addrB` simplified to `dominates sis addrB` (`isPrefixOf` already handles identity)
+
+### Changed
+- **`PTree` → `Tree Unit String`**: Replace local `PTree` type with `Core.Tree.Tree Unit String`, connecting c-command infrastructure to the unified tree type
+- **`reinhart-1976`** bibliography: role upgraded from `cited` to `formalized`
+
 ## [0.229.350] - 2026-03-19
 
 ### Added

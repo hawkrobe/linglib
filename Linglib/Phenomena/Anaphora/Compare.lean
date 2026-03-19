@@ -42,6 +42,7 @@ import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
 import Linglib.Phenomena.Anaphora.Studies.Hudson1990
 import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
 import Linglib.Core.Interface
+import Linglib.Core.Tree
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.GaloisConnection.Basic
 import Mathlib.Order.CompleteLattice.Basic
@@ -250,28 +251,22 @@ but for standard structures, they agree on whether the critical node x ∈ P.
 
 -- B.1: Tree Structure and C-Command
 
-/-- A minimal binary tree for phrase structure -/
-inductive PTree (α : Type) where
-  | leaf : α → PTree α
-  | branch : PTree α → PTree α → PTree α
-  deriving Repr, DecidableEq
-
 /-- Directions in a binary tree -/
 inductive Dir where | L | R
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, BEq
 
 /-- Address = path from root -/
 abbrev Address := List Dir
 
-/-- Get subtree at address -/
-def PTree.at {α : Type} (t : PTree α) : Address → Option (PTree α)
-  | [] => some t
-  | Dir.L :: rest => match t with
-    | .leaf _ => none
-    | .branch l _ => l.at rest
-  | Dir.R :: rest => match t with
-    | .leaf _ => none
-    | .branch _ r => r.at rest
+open Core.Tree (Tree)
+open Core.Tree.Tree (leaf bin)
+
+/-- Get subtree at address (binary branching only) -/
+def atAddr {W : Type} : Tree Unit W → Address → Option (Tree Unit W)
+  | t, [] => some t
+  | .bin l _, Dir.L :: rest => atAddr l rest
+  | .bin _ r, Dir.R :: rest => atAddr r rest
+  | _, _ :: _ => none
 
 /-- Does address `a` dominate `b`? (a is prefix of b) -/
 def dominates (a b : Address) : Bool := a.isPrefixOf b
@@ -283,14 +278,15 @@ def sister : Address → Option Address
   | [Dir.R] => some [Dir.L]
   | d :: rest => (sister rest).map (d :: ·)
 
-/-- **C-command**:
-    A c-commands B iff A's sister dominates B (or equals B).
+/-- **C-command** (@cite{reinhart-1976} def. 36):
+    A c-commands B iff A's sister dominates B.
 
-    This is the standard definition for binary branching trees. -/
+    Standard definition for binary branching trees; `dominates`
+    uses `isPrefixOf` which includes the identity case. -/
 def cCommand (addrA addrB : Address) : Bool :=
   match sister addrA with
   | none => false
-  | some sis => dominates sis addrB || sis == addrB
+  | some sis => dominates sis addrB
 
 -- B.2: Argument Structure and O-Command
 
@@ -366,8 +362,8 @@ structure ConfigurationalClause where
   obj : String
 
   -- Tree: [S [DP subj] [VP [V verb] [DP obj]]]
-  -- Simplified: branch (leaf subj) (branch (leaf verb) (leaf obj))
-  tree : PTree String
+  -- Simplified: .bin (.leaf subj) (.bin (.leaf verb) (.leaf obj))
+  tree : Tree Unit String
   subjAddr : Address
   objAddr : Address
 
@@ -380,8 +376,8 @@ structure ConfigurationalClause where
   -- === CONFIGURATIONAL INVARIANTS ===
 
   -- Tree structure: subject at [L], object at [R,R]
-  tree_subj : tree.at subjAddr = some (.leaf subj) := by rfl
-  tree_obj : tree.at objAddr = some (.leaf obj) := by rfl
+  tree_subj : atAddr tree subjAddr = some (leaf subj) := by rfl
+  tree_obj : atAddr tree objAddr = some (leaf obj) := by rfl
 
   -- Subject external to VP (left child of root)
   subj_external : subjAddr = [Dir.L] := by rfl
@@ -427,7 +423,7 @@ def johnSeesHimself : ConfigurationalClause where
   verb := "sees"
   obj := "himself"
 
-  tree := .branch (.leaf "John") (.branch (.leaf "sees") (.leaf "himself"))
+  tree := .bin (.leaf "John") (.bin (.leaf "sees") (.leaf "himself"))
   subjAddr := [Dir.L]
   objAddr := [Dir.R, Dir.R]
 
@@ -567,13 +563,14 @@ def branchingNodes {Node : Type} (T : AbstractTree Node) : Set Node :=
 def maximalProjections {Node : Type} (T : LabeledTree Node) : Set Node :=
   {n | T.label n = .S ∨ T.label n = .NP ∨ T.label n = .VP ∨ T.label n = .PP}
 
-/-- **S-command** (@cite{reinhart-1976}'s original c-command) -/
+/-- **S-command** (@cite{langacker-1969}'s original "command" relation, parameterized by S-nodes) -/
 def sCommand {Node : Type} (T : LabeledTree Node) := commandRelation T.toAbstractTree (sNodes T)
 
 /-- **NP-command** -/
 def npCommand {Node : Type} (T : LabeledTree Node) := commandRelation T.toAbstractTree (npNodes T)
 
-/-- **K-command** (Kayne's version) -/
+/-- **K-command** (@cite{reinhart-1976}'s c-command, parameterized by branching nodes;
+    also @cite{kayne-1984}) -/
 def kCommand {Node : Type} (T : AbstractTree Node) := commandRelation T (branchingNodes T)
 
 /-- **MAX-command** (approximates Chomsky's c-command) -/

@@ -672,6 +672,7 @@ import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
 import Linglib.Phenomena.Anaphora.BathroomSentences
 import Linglib.Phenomena.Anaphora.Bridging
 import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
+import Linglib.Phenomena.Anaphora.Studies.Reinhart1976
 import Linglib.Phenomena.Anaphora.Studies.Hudson1990
 import Linglib.Phenomena.Anaphora.Studies.DGNominal
 import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
@@ -838,6 +839,7 @@ import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
 import Linglib.Phenomena.Gradability.Studies.Nouwen2024
 import Linglib.Phenomena.Gradability.Studies.Fine1975
 import Linglib.Phenomena.Gradability.Studies.Kamp1975
+import Linglib.Phenomena.Gradability.Studies.Klein1980
 import Linglib.Phenomena.Gradability.Studies.Partee2010
 import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
 import Linglib.Phenomena.Gradability.Vagueness
