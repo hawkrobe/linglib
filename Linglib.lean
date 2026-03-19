@@ -846,19 +846,19 @@ import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
 import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
 import Linglib.Phenomena.Comparison.Data
-import Linglib.Phenomena.Comparison.Comparative.Data
-import Linglib.Phenomena.Comparison.Comparative.Differential
-import Linglib.Phenomena.Comparison.Comparative.Subcomparative
+import Linglib.Phenomena.Comparison.Comparative
+import Linglib.Phenomena.Comparison.Differential
+import Linglib.Phenomena.Comparison.Subcomparative
+import Linglib.Phenomena.Comparison.Equative
+import Linglib.Phenomena.Comparison.Superlative
+import Linglib.Phenomena.Comparison.DegreeQuestion
+import Linglib.Phenomena.Comparison.CrossCategorial
+import Linglib.Phenomena.Comparison.Compare
+import Linglib.Phenomena.Comparison.Typology
 import Linglib.Phenomena.Comparison.Studies.Kennedy1999
 import Linglib.Phenomena.Comparison.Studies.Kennedy2007
-import Linglib.Phenomena.Comparison.Studies.Heim2001
-import Linglib.Phenomena.Comparison.Compare
-import Linglib.Phenomena.Comparison.Equative.Data
-import Linglib.Phenomena.Comparison.Superlative.Data
-import Linglib.Phenomena.Comparison.DegreeQuestion.Data
-import Linglib.Phenomena.Comparison.CrossCategorial
-import Linglib.Phenomena.Comparison.Typology
 import Linglib.Phenomena.Comparison.Studies.Kennedy2007Typology
+import Linglib.Phenomena.Comparison.Studies.Heim2001
 import Linglib.Phenomena.Comparison.Studies.Stassen1985
 import Linglib.Phenomena.Comparison.Studies.Wellwood2015
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
@@ -1803,6 +1803,7 @@ import Linglib.Phenomena.Gradability.Studies.Kennedy2007Licensing
 import Linglib.Phenomena.Gradability.Studies.Rett2015Implicature
 import Linglib.Phenomena.Gradability.Studies.Morzycki2009
 import Linglib.Phenomena.Gradability.Studies.Rouillard2026
+import Linglib.Phenomena.Gradability.Studies.Sassoon2013
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.Elbourne2013
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic

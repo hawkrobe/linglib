@@ -1,5 +1,5 @@
-import Linglib.Phenomena.Comparison.Comparative.Data
-import Linglib.Phenomena.Comparison.Comparative.Subcomparative
+import Linglib.Phenomena.Comparison.Comparative
+import Linglib.Phenomena.Comparison.Subcomparative
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Equative

@@ -21,20 +21,21 @@ categories (nominal, verbal, adjectival — @cite{wellwood-2015}).
 Comparison/
 ├── Data.lean — this file: cross-construction overview
 ├── Typology.lean — WALS 121 cross-linguistic typology + Stassen 1985
-├── Comparative/
-│ ├── Data.lean — basic comparative judgments, phrasal vs. clausal
-│ ├── Differential.lean — "3 inches taller", factor phrases
-│ └── Subcomparative.lean — "longer than the desk is wide"
-├── Equative/
-│ └── Data.lean — "as tall as", at-least vs. exactly readings
-├── Superlative/
-│ └── Data.lean — absolute vs. relative, focus
-├── DegreeQuestion/
-│ └── Data.lean — "how tall", negative islands, modal obviation
+├── Comparative.lean — basic comparative judgments, phrasal vs. clausal
+├── Differential.lean — "3 inches taller", factor phrases
+├── Subcomparative.lean — "longer than the desk is wide"
+├── Equative.lean — "as tall as", at-least vs. exactly readings
+├── Superlative.lean — absolute vs. relative, focus
+├── DegreeQuestion.lean — "how tall", negative islands, modal obviation
 ├── CrossCategorial.lean — construction-level cross-categorial parallels
+├── Compare.lean — framework comparison (Klein, Kennedy, Heim, Schwarzschild)
 └── Studies/
+    ├── Heim2001.lean — sentential operator bridge
+    ├── Kennedy1999.lean — extent function algebra
     ├── Kennedy2007.lean — degree semantics bridge
-    └── Kennedy2007Typology.lean — typology–fragment bridge
+    ├── Kennedy2007Typology.lean — typology–fragment bridge
+    ├── Stassen1985.lean — comparative typology
+    └── Wellwood2015.lean — cross-categorial measurement
 ```
 
 ## Typological types

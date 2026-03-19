@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Comparison.Comparative.Data
+import Linglib.Phenomena.Comparison.Comparative
 import Linglib.Theories.Semantics.Degree.DegreeAbstraction
 import Linglib.Theories.Semantics.Degree.Comparative
 
@@ -22,9 +22,10 @@ Heim's framework makes different predictions about scope:
 
 -/
 
-namespace Phenomena.Comparison.Comparative.HeimBridge
+namespace Phenomena.Comparison.Studies.Heim2001
 
 open Semantics.Degree.DegreeAbstraction
+open Phenomena.Comparison.Comparative (clausalExamples)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Heim = Kennedy Extensionally
@@ -50,4 +51,4 @@ theorem clausal_admits_scope_readings :
     (clausalExamples.filter (·.acceptable)).length > 0 := by
   simp [clausalExamples]
 
-end Phenomena.Comparison.Comparative.HeimBridge
+end Phenomena.Comparison.Studies.Heim2001

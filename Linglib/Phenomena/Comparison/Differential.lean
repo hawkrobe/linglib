@@ -17,7 +17,7 @@ the extent of the comparison ("3 inches taller", "twice as expensive",
 
 -/
 
-namespace Phenomena.Comparison.Comparative.Differential
+namespace Phenomena.Comparison.Differential
 
 -- ════════════════════════════════════════════════════
 -- § 1. Measure Phrase Differentials
@@ -103,4 +103,4 @@ def degreeModifierExamples : List DegreeModifierDatum :=
     , requiresComparison := true }
   ]
 
-end Phenomena.Comparison.Comparative.Differential
+end Phenomena.Comparison.Differential

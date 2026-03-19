@@ -17,7 +17,7 @@ matrix and embedded predicates differ ("longer than the desk is wide").
 
 -/
 
-namespace Phenomena.Comparison.Comparative.Subcomparative
+namespace Phenomena.Comparison.Subcomparative
 
 -- ════════════════════════════════════════════════════
 -- § 1. Basic Subcomparative Data
@@ -75,4 +75,4 @@ def typologyData : List SubcomparativeTypologyDatum :=
     , note := "Exceed-type comparatives don't support subcomparatives" }
   ]
 
-end Phenomena.Comparison.Comparative.Subcomparative
+end Phenomena.Comparison.Subcomparative

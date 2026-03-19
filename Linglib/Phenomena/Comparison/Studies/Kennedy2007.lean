@@ -1,5 +1,5 @@
-import Linglib.Phenomena.Comparison.Comparative.Data
-import Linglib.Phenomena.Comparison.Comparative.Differential
+import Linglib.Phenomena.Comparison.Comparative
+import Linglib.Phenomena.Comparison.Differential
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Core.Scales.Scale
@@ -9,7 +9,7 @@ import Linglib.Core.Scales.Scale
 @cite{kennedy-2007} @cite{kennedy-mcnally-2005}
 
 Bridge connecting @cite{kennedy-2007}'s measure function approach to the
-comparative construction data in `Phenomena/Comparison/Comparative/`.
+comparative construction data in `Phenomena/Comparison/`.
 
 ## Key Bridges
 
@@ -27,7 +27,7 @@ comparative construction data in `Phenomena/Comparison/Comparative/`.
 
 -/
 
-namespace Phenomena.Comparison.Comparative.KennedyBridge
+namespace Phenomena.Comparison.Studies.Kennedy2007
 
 open Semantics.Degree
 open Core.Scale (Boundedness)
@@ -60,13 +60,13 @@ theorem lower_bounded_minEndpoint :
     This is a type-theoretic prediction: `differentialComparative`
     requires `ℚ` (with subtraction), not just an ordered type. -/
 theorem measure_phrases_require_subtraction :
-    ∀ d ∈ Phenomena.Comparison.Comparative.Differential.measurePhraseExamples,
+    ∀ d ∈ Phenomena.Comparison.Differential.measurePhraseExamples,
       d.acceptable = true → d.scaleType = "ratio (height)" ∨
                              d.scaleType = "interval (temperature)" := by
   intro d hd hacc
-  simp [Phenomena.Comparison.Comparative.Differential.measurePhraseExamples,
-        Phenomena.Comparison.Comparative.Differential.MeasurePhraseComparativeDatum.acceptable,
-        Phenomena.Comparison.Comparative.Differential.MeasurePhraseComparativeDatum.scaleType] at hd
+  simp [Phenomena.Comparison.Differential.measurePhraseExamples,
+        Phenomena.Comparison.Differential.MeasurePhraseComparativeDatum.acceptable,
+        Phenomena.Comparison.Differential.MeasurePhraseComparativeDatum.scaleType] at hd
   rcases hd with rfl | rfl | rfl | rfl <;> simp_all
 
-end Phenomena.Comparison.Comparative.KennedyBridge
+end Phenomena.Comparison.Studies.Kennedy2007
