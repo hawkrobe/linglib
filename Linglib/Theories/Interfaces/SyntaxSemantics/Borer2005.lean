@@ -170,7 +170,7 @@ theorem mass_spine_no_q :
     projects Q (individuation). The fragment records `countable` as
     an observable fact; this theorem shows it equals `spineHasQ`.
 
-    Un@cite{chierchia-1998}, `countable` is a lexical primitive and
+    Under @cite{chierchia-1998}, `countable` is a lexical primitive and
     this theorem is an accidental correlation rather than an
     explanation. The two theories agree on the data but disagree on
     direction of explanation.

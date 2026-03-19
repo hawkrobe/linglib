@@ -2,10 +2,10 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Presuppositions of *forget* Across Complement Frames
-@cite{kiparsky-kiparsky-1970} @cite{williams-2025} @cite{white-2014}
+@cite{kiparsky-kiparsky-1970} @cite{williams-2026} @cite{white-2014}
 @misc{white-2014}
 
-Theory-neutral empirical data from @cite{ippolito-kiss-williams-2025}, who shows that
+Theory-neutral empirical data from @cite{ippolito-kiss-williams-2026}, who shows that
 *forget* is uniformly factive across all complement types, but the
 **content** of the presupposition varies:
 
@@ -46,7 +46,7 @@ open Core.Verbs (ComplementType)
 
 /-- Whether a factive presupposition has modal content.
 
-    @cite{ippolito-kiss-williams-2025} shows that *forget* always presupposes, but the
+    @cite{ippolito-kiss-williams-2026} shows that *forget* always presupposes, but the
     content varies by complement type:
     - `.nonModal`: directly presupposes complement truth
     - `.modal`: presupposes a modalized version (obligation/plan) -/
@@ -82,7 +82,7 @@ structure ForgetJudgment where
 "Forgot that p" presupposes p (non-modal). This is the canonical
 factive reading recognized since @cite{kiparsky-kiparsky-1970}.
 
-@cite{ippolito-kiss-williams-2025}, ex. (1): "Ana forgot that she stopped by the
+@cite{ippolito-kiss-williams-2026}, ex. (1): "Ana forgot that she stopped by the
 flower shop." Presupposes: Ana stopped by the flower shop. -/
 
 def forget_finiteCP : ForgetJudgment where
@@ -97,7 +97,7 @@ def forget_finiteCP : ForgetJudgment where
 critical evidence against the Modalized Complement Analysis's
 overprediction: the gerund is non-finite but NOT modalized.
 
-@cite{ippolito-kiss-williams-2025}, ex. (12): "Ana forgot stopping by the flower shop."
+@cite{ippolito-kiss-williams-2026}, ex. (12): "Ana forgot stopping by the flower shop."
 Presupposes: Ana stopped by the flower shop. -/
 
 def forget_gerund : ForgetJudgment where
@@ -109,11 +109,11 @@ def forget_gerund : ForgetJudgment where
 /-! ### Psych-action reading (plain infinitive)
 
 "Forgot to VP" presupposes a plan or obligation to VP (modal).
-Un@cite{ippolito-kiss-williams-2025}, this arises because the plain infinitive's
+Un@cite{ippolito-kiss-williams-2026}, this arises because the plain infinitive's
 forward-oriented temporal profile violates the pre-existence
 presupposition, triggering covert modal insertion.
 
-@cite{ippolito-kiss-williams-2025}, ex. (3): "Ana forgot to stop by the flower shop."
+@cite{ippolito-kiss-williams-2026}, ex. (3): "Ana forgot to stop by the flower shop."
 Presupposes: Ana was supposed to / had a plan to stop. -/
 
 def forget_infinitival : ForgetJudgment where

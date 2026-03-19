@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Morphological Infrastructure
-@cite{bybee-1985} @cite{champollion-2017} @cite{link-1983} @cite{zwicky-1977} @cite{zwicky-pullum-1983}
+@cite{bybee-1985} @cite{champollion-2017} @cite{link-1983} @cite{zwicky-pullum-1983}
 
 Framework-agnostic types for morphological analysis and compositional
 morphological rules.

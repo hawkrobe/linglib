@@ -66,7 +66,7 @@ open Minimalism.PConstraint (PCCGrammar pccLicit weakGrammar strongGrammar
 
     @cite{adamson-zompi-2025} argue that polite pronouns carry two distinct
     sets of φ-features (following @cite{smith-2017}, @cite{anagnostopoulou-2017a},
-    @cite{wurmbrand-2017}, among others):
+    among others):
 
     - **`agreementPerson`** (uninterpretable): governs verbal agreement,
       clitic allomorphy, reflexive binding, clitic ordering, participle

@@ -6,7 +6,7 @@ import Mathlib.Data.Finset.Card
 
 /-!
 # Generalized Quantifiers
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-de-pol-2023} @cite{van-de-pol-etal-2023} @cite{mostowski-1957}
+@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-de-pol-etal-2023} @cite{mostowski-1957}
 
 Determiners have type `(e→t) → ((e→t) → t)`:
 - `⟦every⟧ = λR.λS. ∀x. R(x) → S(x)`

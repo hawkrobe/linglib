@@ -139,4 +139,49 @@ s accepts φ iff ⟦φ⟧(s) ≠ ∅
 def accepts {W : Type*} (s : State W) (φ : Update W) : Prop :=
   (φ s).Nonempty
 
+
+-- ═══ Three Notions of Validity (§1.2) ═══
+
+/-- **Validity₁**: updating the minimal state **0** with the premises
+    in order yields a state that supports the conclusion.
+
+    ψ₁,...,ψₙ ⊩₁ φ  iff  **0**[ψ₁]⋯[ψₙ] ⊨ φ
+
+    @cite{veltman-1996}, §1.2. This is the notion Veltman concentrates on:
+    it captures the fact that default conclusions depend on exactly what
+    information is available. -/
+def valid₁ {W : Type*} (premises : List (Update W)) (conclusion : Update W) : Prop :=
+  supports (premises.foldl (fun s u => u s) Set.univ) conclusion
+
+/-- **Validity₂**: for *every* state σ, updating with the premises
+    in order yields a state that supports the conclusion.
+
+    ψ₁,...,ψₙ ⊩₂ φ  iff  ∀σ, σ[ψ₁]⋯[ψₙ] ⊨ φ -/
+def valid₂ {W : Type*} (premises : List (Update W)) (conclusion : Update W) : Prop :=
+  ∀ σ : State W, supports (premises.foldl (fun s u => u s) σ) conclusion
+
+/-- **Validity₃**: one cannot accept all premises without accepting
+    the conclusion. Closest to the classical notion.
+
+    ψ₁,...,ψₙ ⊩₃ φ  iff  ∀σ, (σ ⊨ ψ₁ ∧ ... ∧ σ ⊨ ψₙ) → σ ⊨ φ -/
+def valid₃ {W : Type*} (premises : List (Update W)) (conclusion : Update W) : Prop :=
+  ∀ σ : State W, (∀ p ∈ premises, supports σ p) → supports σ conclusion
+
+/-- Validity₂ implies validity₁: specializing σ = **0**.
+
+    @cite{veltman-1996}, Proposition 1.3 (one direction, unconditional). -/
+theorem valid₂_imp_valid₁ {W : Type*}
+    (premises : List (Update W)) (conclusion : Update W) :
+    valid₂ premises conclusion → valid₁ premises conclusion :=
+  fun h => h Set.univ
+
+/-- Validity₃ is monotonic: adding premises preserves validity.
+
+    @cite{veltman-1996}, §1.2: validity₃ is the only notion that is
+    both left and right monotonic. -/
+theorem valid₃_monotone {W : Type*}
+    (premises extra : List (Update W)) (conclusion : Update W) :
+    valid₃ premises conclusion → valid₃ (premises ++ extra) conclusion :=
+  fun h σ hsup => h σ (fun p hp => hsup p (List.mem_append_left extra hp))
+
 end Semantics.Dynamic.UpdateSemantics

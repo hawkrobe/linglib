@@ -4,7 +4,7 @@ import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 
 /-!
 # PVC–DOC Structural Priming
-@cite{haddican-tamminga-dendikken-wade-2026} @cite{dendikken-1995} @cite{halle-marantz-1993} @cite{johnson-1991} @cite{aarts-1989} @cite{svenonius-1996a} @cite{bruening-2010a}
+@cite{haddican-tamminga-dendikken-wade-2026} @cite{dendikken-1995} @cite{halle-marantz-1993} @cite{johnson-1991} @cite{aarts-1989} @cite{bruening-2010a}
 
 English Particle Verbs Prime Double Object Constructions in Production.
 *Linguistic Inquiry*. doi:10.1162/LING.a.558
@@ -141,7 +141,7 @@ def doc_sc : SyntacticObject :=
 def doc_appl : SyntacticObject :=
   merge DP_hsu (merge Appl_h (merge V_give DP_book))
 
-/-- **PVC, Small Clause** (@cite{aarts-1989}; @cite{dendikken-1995}; @cite{svenonius-1996a}):
+/-- **PVC, Small Clause** (@cite{aarts-1989}; @cite{dendikken-1995}):
     `[VP V [SC DP Prt]]` -/
 def pvc_sc : SyntacticObject :=
   merge V_lift (merge DP_hsu Prt_up)

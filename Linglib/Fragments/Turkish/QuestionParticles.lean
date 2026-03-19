@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Turkish Question Particle Fragment
-@cite{fox-katzir-2011} @cite{turk-ince-2026}
+@cite{fox-katzir-2011} @cite{turk-hirsch-2026}
 
 Turkish polar question particle *mI* (with vowel-harmony allomorphs
 mı/mi/mu/mü). Following Turk, Hirsch & İnce (2026), *mI* heads PolP

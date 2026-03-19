@@ -2,7 +2,7 @@ import Linglib.Phenomena.Negation.Studies.Stakov2026Typology
 
 /-!
 # Staňková & Šimík (2024): Negation in Czech Polar Questions
-@cite{stankova-simik-2024} @cite{gartner-gyuris-2017} @cite{simik-2024}
+@cite{stankova-2025} @cite{gartner-gyuris-2017} @cite{simik-2024}
 
 Experimental data from three naturalness judgment experiments on negation
 in Czech polar questions (Staňková & Šimík, FASL 32 / JSL 33).
@@ -318,7 +318,7 @@ theorem copak_requires_evidential_bias :
 
 This confirms they express different types of bias:
 náhodou → epistemic bias; copak → evidential bias.
-(@cite{stankova-simik-2024} §6) -/
+(@cite{stankova-2025} §6) -/
 theorem nahodou_copak_contrast :
     v1_context.significant = false ∧     -- náhodou's licenser (FALSUM) is context-insensitive
     copak_context.significant = true :=   -- copak requires evidential bias

@@ -135,7 +135,7 @@ def cellEntropy {n : Nat} (ps : ParadigmSystem n) (c : Fin n) : ℚ :=
     low H(Cᵢ | Cⱼ) means knowing form j strongly constrains form i.
 
     When H(Cᵢ | Cⱼ) = 0, cell j *fully determines* cell i — an
-    implicative relation in the sense of @cite{wurzel-1984}. -/
+    implicative relation. -/
 def conditionalCellEntropy {n : Nat} (ps : ParadigmSystem n)
     (ci cj : Fin n) : ℚ :=
   conditionalEntropy (jointCellDistribution ps ci cj) (cellDistribution ps cj)

@@ -5,7 +5,7 @@ import Linglib.Phenomena.Questions.PolarAnswers
 
 /-!
 # Turk, Hirsch & İnce (2026) — Category Match Bridge
-@cite{fox-katzir-2011} @cite{kratzer-selkirk-2020} @cite{rooth-1992} @cite{turk-ince-2026}
+@cite{fox-katzir-2011} @cite{kratzer-selkirk-2020} @cite{rooth-1992} @cite{turk-hirsch-2026}
 
 Connects the empirical judgments in `PolarAnswers.lean` (modal answers
 are infelicitous to Turkish polar questions) to the formal explanation:

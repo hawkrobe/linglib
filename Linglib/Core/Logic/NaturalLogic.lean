@@ -3,7 +3,7 @@ import Mathlib.Algebra.BigOperators.Group.List.Defs
 
 /-!
 # Natural Logic Relations and Entailment Signatures
-@cite{icard-2012} @cite{maccartney-manning-2009} @cite{zwarts-1996}
+@cite{icard-2012} @cite{maccartney-manning-2009}
 
 Framework-agnostic infrastructure for the natural logic relation algebra and
 entailment signatures, following @cite{icard-2012} "Inclusion and Exclusion in

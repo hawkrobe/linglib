@@ -456,7 +456,7 @@ theorem homogeneity_fits_trajectory :
 **Q1: At what age does SDA arise?**
 Already at age 4–5, SDA is the most frequent non-deviant reading.
 This parallels the early emergence of free-choice inferences
-(@cite{tieu-etal-2015}).
+(@cite{tieu-etal-2016}).
 
 **Q2: Do children shift from AR to SDA?**
 No. AR is nearly absent (2.3%). The two participants who consistently

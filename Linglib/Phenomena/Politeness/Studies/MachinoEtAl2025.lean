@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Degree.Core
 
 /-
-# @cite{machino-goodman-2025}: Minding the Politeness Gap
+# Minding the Politeness Gap
 
 Cross-cultural RSA model for intensifier/hedging interpretation, extending
 @cite{yoon-etal-2020} with culture-specific literal semantics and pragmatic weights.

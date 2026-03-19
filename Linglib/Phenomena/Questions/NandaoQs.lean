@@ -3,7 +3,7 @@ import Linglib.Fragments.Mandarin.QuestionParticles
 
 /-!
 # Nandao-Q Empirical Data
-@cite{zheng-2026}
+@cite{zheng-2025}
 
 Theory-neutral data on Mandarin *nandao*-question felicity. The core finding
 is that positive evidential bias is **necessary** for nandao-Q felicity, while
@@ -22,7 +22,7 @@ namespace Phenomena.Questions.NandaoQs
 
 /-- A nandao-Q felicity datum. -/
 structure NandaoDatum where
-  /-- Example number from @cite{zheng-2026} -/
+  /-- Example number from @cite{zheng-2025} -/
   exampleNum : String
   /-- Context description -/
   context : String

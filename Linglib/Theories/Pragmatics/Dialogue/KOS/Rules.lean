@@ -449,7 +449,7 @@ def answerhoodFromPartition {W : Type} [BEq W] (worlds : List W) :
 
 /-- A `BProp W` resolves a `Discourse.Issue W` if it settles some alternative.
 
-@cite{ciardelli-groenendijk-roelofsen-2019}: resolving an issue means
+@cite{ciardelli-groenendijk-roelofsen-2018}: resolving an issue means
 establishing enough information to determine which alternative holds. -/
 def bpropResolvesIssue {W : Type} (worlds : List W)
     (fact : Core.Proposition.BProp W) (q : Discourse.Issue W) : Bool :=

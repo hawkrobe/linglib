@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 /-!
 # Unified Numeral Semantics
-@cite{blok-2015} @cite{goodman-stuhlmuller-2013} @cite{horn-1972} @cite{kennedy-2015} @cite{hackl-2000} @cite{link-1983}
+@cite{blok-2015} @cite{goodman-stuhlmuller-2013} @cite{horn-1972} @cite{kennedy-2015} @cite{hackl-2000} @cite{link-1983} @cite{spector-2013}
 
 Consolidates numeral theory infrastructure into a single module. All numeral meanings
 (bare + modified) flow through `maxMeaning`. The only theory disagreement is the
@@ -398,12 +398,12 @@ theorem universal_closure_fails :
   omega
 
 -- ============================================================================
--- Section 7c: EXH–Type-Shifting Duality (@cite{spector-2013} §6.2 vs @cite{kennedy-2015} §3.1)
+-- Section 7c: EXH–Type-Shifting Duality (@cite{spector-2013} §6.2 vs @cite{kennedy-2015})
 -- ============================================================================
 
 /-! ## EXH and Type-Shifting Are Inverses
 
-@cite{spector-2013} (§6.2) proposes that the exact reading of bare numerals arises from
+@cite{spector-2013} (§6.2) presents an approach (from @cite{chierchia-fox-spector-2012}) where the exact reading of bare numerals arises from
 a covert exhaustivity operator: `EXH(≥n) = ≥n ∧ ¬(≥n+1) = (=n)`. @cite{kennedy-2015} proposes the reverse: the lower-bound reading arises from type-shifting the
 exact meaning: `typeShift(=n) = ∃k≥n.(=k) = (≥n)`.
 
@@ -434,7 +434,7 @@ because:
 /-- Scalar exhaustification for numerals.
     `exhNumeral m n` = "the max count is at least m AND NOT at least m+1"
     = "the max count is exactly m".
-    This is @cite{spector-2013}'s (§6.2) EXH applied to the numeral scalar alternative set
+    This is the EXH from @cite{spector-2013} (§6.2) applied to the numeral scalar alternative set
     {`≥k` : k is a numeral}. -/
 def exhNumeral (_maxN : Nat) (m : Nat) (n : Nat) : Bool :=
   maxMeaning .ge m n && !(maxMeaning .ge (m + 1) n)

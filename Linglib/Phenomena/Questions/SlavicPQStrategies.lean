@@ -8,7 +8,7 @@ import Linglib.Fragments.Macedonian.QuestionParticles
 
 /-!
 # Cross-Slavic Polar Question Strategies
-@cite{esipova-romero-2023} @cite{simik-2024} @cite{todorovic-2023}
+@cite{esipova-romero-2023} @cite{simik-2024}
 
 Typology of default (unbiased) polar question strategies across Slavic
 languages, based on @cite{simik-2024} §4.1. Slavic languages show rich variation

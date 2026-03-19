@@ -129,4 +129,46 @@ theorem specific_classifiers_have_semantics :
 theorem all_sortal :
     allClassifiers.all (!·.isMensural) = true := by native_decide
 
+-- ============================================================================
+-- Container / Measure classifiers (@cite{wang-sun-2026})
+-- ============================================================================
+
+-- Container classifiers can have either sortal or mensural readings
+-- depending on structural context (@cite{wang-sun-2026} §4.3): without
+-- 的 (de), the classifier denotes a concrete container (sortal reading);
+-- with de, it becomes an abstract measure unit (mensural reading).
+-- The `isMensural` flag indicates this dual capacity.
+
+/-- 杯 bēi — glasses, cups. -/
+def bei : ClassifierEntry :=
+  { form := "杯", gloss := "glass/cup"
+  , semantics := [.shape], shapeDimension := some .threeD
+  , isMensural := true }
+
+/-- 瓶 píng — bottles. -/
+def ping : ClassifierEntry :=
+  { form := "瓶", gloss := "bottle"
+  , semantics := [.shape], shapeDimension := some .threeD
+  , isMensural := true }
+
+/-- 碗 wǎn — bowls. -/
+def wan : ClassifierEntry :=
+  { form := "碗", gloss := "bowl"
+  , semantics := [.shape], shapeDimension := some .threeD
+  , isMensural := true }
+
+/-- 箱 xiāng — boxes. -/
+def xiang : ClassifierEntry :=
+  { form := "箱", gloss := "box"
+  , semantics := [.shape], shapeDimension := some .threeD
+  , isMensural := true }
+
+def containerClassifiers : List ClassifierEntry :=
+  [bei, ping, wan, xiang]
+
+theorem bei_is_mensural : bei.isMensural = true := rfl
+
+theorem container_classifiers_have_semantics :
+    containerClassifiers.all (·.semantics.length > 0) = true := by native_decide
+
 end Fragments.Mandarin.Classifiers

@@ -215,7 +215,7 @@ end PrecisionProjection
 -- level, then Q entails q at the issue level.
 --
 -- References:
--- - @cite{ciardelli-groenendijk-roelofsen-2019}. Inquisitive Semantics. OUP.
+-- - @cite{ciardelli-groenendijk-roelofsen-2018}. Inquisitive Semantics. OUP.
 -- - @cite{roberts-2012}. Information structure in discourse. S&P 5(6).
 
 namespace Discourse

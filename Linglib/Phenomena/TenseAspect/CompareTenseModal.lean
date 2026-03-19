@@ -4,7 +4,7 @@ import Linglib.Core.Discourse.Epistemicity
 
 /-!
 # Tense–Modal Evidentiality Bridge
-@cite{cumming-2026} @cite{von-fintel-gillies-2010} @cite{zheng-2026}
+@cite{cumming-2026} @cite{von-fintel-gillies-2010} @cite{zheng-2025}
 
 Connects @cite{cumming-2026}'s tense evidential constraint to @cite{von-fintel-gillies-2010} kernel semantics for epistemic `must`. Both phenomena reflect the same
 underlying requirement: the speaker's evidence is *indirect* — causally downstream
@@ -25,7 +25,7 @@ of the target event but not directly settling it.
 
 ## Concrete Scenario: Dripping Raincoat
 
-The dripping-raincoat scenario (@cite{zheng-2026}, used in Kernel.lean) provides a
+The dripping-raincoat scenario (@cite{zheng-2025}, used in Kernel.lean) provides a
 concrete bridge: the raincoat evidence is causally downstream of rain (T ≤ A),
 and the kernel {wearingRaincoat} doesn't settle isRaining.
 

@@ -12,9 +12,9 @@ This structure appears in four places across formal semantics:
 2. **@cite{kraus-magidor-1990}**: plausibility orderings interpret
    default consequence, System P (`Core/Logic/BeliefRevision.lean`)
 3. **@cite{veltman-1996}**: expectation patterns are normality orderings that
-   get dynamically refined (`Theories/Semantics/Dynamic/Effects/Default/`)
+   get dynamically refined (`Theories/Semantics/Dynamic/UpdateSemantics/`)
 4. **@cite{rudin-2025}**: ordering-source updates for epistemic modals
-   (`Theories/Semantics/Dynamic/Effects/Epistemic/`)
+   (`Theories/Semantics/Dynamic/Epistemic/`)
 
 This module extracts the common mathematical core. The `PlausibilityOrder`
 in `BeliefRevision.lean` adds a smoothness condition (every satisfiable

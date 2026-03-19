@@ -238,4 +238,39 @@ theorem expected_loglik_eq_neg_kl_plus_entropy {ι : Type*} [Fintype ι]
   rw [kl_eq_neg_crossEntropy_plus_negEntropy P Q hQ]
   ring
 
+-- ============================================================================
+-- §7. KL Divergence Non-Negativity (Gibbs' Inequality)
+-- ============================================================================
+
+/-- KL divergence is non-negative for distributions:
+    D_KL(P ∥ Q) ≥ 0 when P and Q are probability distributions.
+
+    This is Gibbs' inequality, the information-theoretic analogue of
+    "you can't do better than the truth." Uses the fundamental
+    inequality ln x ≤ x − 1.
+
+    See also `Core.ChannelCapacity.gibbs_inequality` for a statement
+    that doesn't reference `klDivergence` by name. -/
+theorem klDivergence_nonneg {ι : Type*} [Fintype ι]
+    (P Q : ι → ℝ) (hP_nn : ∀ i, 0 ≤ P i) (hQ_pos : ∀ i, 0 < Q i)
+    (hP_sum : ∑ i : ι, P i = 1) (hQ_sum : ∑ i : ι, Q i = 1) :
+    0 ≤ klDivergence P Q := by
+  unfold klDivergence
+  suffices hterm : ∀ i, P i - Q i ≤ P i * log (P i / Q i) by
+    calc (0 : ℝ) = ∑ i : ι, (P i - Q i) := by
+          rw [sum_sub_distrib, hP_sum, hQ_sum, sub_self]
+      _ ≤ ∑ i : ι, P i * log (P i / Q i) :=
+          sum_le_sum fun i _ => hterm i
+  intro i
+  by_cases hi : P i = 0
+  · simp [hi, le_of_lt (hQ_pos i)]
+  · have hPi : 0 < P i := lt_of_le_of_ne (hP_nn i) (Ne.symm hi)
+    have h1 := log_le_sub_one_of_pos (div_pos (hQ_pos i) hPi)
+    have h2 := mul_le_mul_of_nonneg_left h1 hPi.le
+    have h3 : P i * (Q i / P i - 1) = Q i - P i := by field_simp
+    rw [h3] at h2
+    rw [log_div (ne_of_gt (hQ_pos i)) (ne_of_gt hPi)] at h2
+    rw [log_div (ne_of_gt hPi) (ne_of_gt (hQ_pos i))]
+    nlinarith
+
 end Core.Divergence

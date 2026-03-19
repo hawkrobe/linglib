@@ -1,6 +1,6 @@
 /-
 # RSA/Core/CombinedUtility.lean
-@cite{hawkins-etal-2025} @cite{sumers-hawkins-2023}
+@cite{hawkins-etal-2025} @cite{sumers-etal-2023}
 
 Combined utility models for trading off multiple objectives.
 

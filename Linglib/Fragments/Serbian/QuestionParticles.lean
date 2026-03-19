@@ -2,10 +2,9 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Serbian Question Particles
-@cite{simik-2024} @cite{todorovic-2023}
+@cite{simik-2024}
 
-Lexical entries for Serbian interrogative particles. Serbian has the richest
-PQ repertoire among Slavic languages (Todorović 2023).
+Lexical entries for Serbian interrogative particles.
 
 ## Particles
 

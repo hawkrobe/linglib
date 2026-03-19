@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 
 /-!
-# @cite{everdell-2024} — Applicativization in O'dam (Southeastern Tepiman)
+# @cite{everdell-2023} — Applicativization in O'dam (Southeastern Tepiman)
 
 Everdell, Michael. 2023. *Arguments and adjuncts in O'dam:
 language-specific realization of a cross-linguistic distinction*. PhD

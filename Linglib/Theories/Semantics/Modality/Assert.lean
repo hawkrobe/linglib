@@ -3,7 +3,9 @@ import Linglib.Core.Discourse.SpeechActs
 
 /-!
 # The ASSERT Operator and Speech Act Phrase
-  @cite{hacquard-2006} @cite{tenny-speas-2004}Formalizes the Speech Act Phrase (SAP) from @cite{hacquard-2006}, following @cite{tenny-speas-2004}. Every matrix clause is
+  @cite{hacquard-2006}
+
+Formalizes the Speech Act Phrase (SAP) from @cite{hacquard-2006}. Every matrix clause is
 headed by a SAP that introduces a speech event e* with propositional
 CONTENT. The type of speech act determines the content:
 

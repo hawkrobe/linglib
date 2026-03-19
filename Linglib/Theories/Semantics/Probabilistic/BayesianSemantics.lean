@@ -33,6 +33,7 @@ Goodman's result: "threshold semantics + uncertainty = graded semantics".
 
 -/
 
+import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Core.FinitePMF
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.GradedProposition
@@ -43,60 +44,10 @@ namespace Semantics.Montague.BayesianSemantics
 
 open Core.Proposition
 open Core.GradedProposition
+open Semantics.Probabilistic.ParamPred
 
 -- Use the canonical FinitePMF from Core
 open Core
-
--- Parameterized Predicates
-
-/--
-A parameterized predicate has:
-- A parameter space Θ
-- For each θ, a Boolean predicate on entities
-
-The graded truth value emerges from marginalizing over Θ.
--/
-structure ParamPred (E Θ : Type*) [Fintype Θ] where
-  /-- Boolean semantics given a parameter value -/
-  semantics : Θ → E → Bool
-  /-- Prior distribution over parameters -/
-  prior : FinitePMF Θ
-
-namespace ParamPred
-
-variable {E Θ : Type*} [Fintype Θ] [DecidableEq Θ]
-
-/--
-Graded truth value: expected value of the Boolean predicate.
-
-`P(x) = E_θ[P_θ(x)]`
--/
-def gradedTruth (pred : ParamPred E Θ) (x : E) : ℚ :=
-  pred.prior.prob λ θ => pred.semantics θ x
-
-/--
-Convert a parameterized predicate to a graded predicate.
-
-This is how graded truth values *emerge* from Boolean semantics
-+ parameter uncertainty.
--/
-def toGPred (pred : ParamPred E Θ) : GPred E :=
-  pred.gradedTruth
-
-/--
-For a point mass prior (no uncertainty), graded truth = Boolean truth.
--/
-theorem gradedTruth_pure (sem : Θ → E → Bool) (θ₀ : Θ) (x : E) :
-    (ParamPred.mk sem (FinitePMF.pure θ₀)).gradedTruth x =
-    if sem θ₀ x then 1 else 0 := by
-  simp only [gradedTruth, FinitePMF.prob, FinitePMF.expect_pure]
-
-/-- Graded truth unfolds to expected value of the Boolean indicator. -/
-theorem gradedTruth_eq_expect (sem : Θ → E → Bool) (prior : FinitePMF Θ) (x : E) :
-    (ParamPred.mk sem prior).gradedTruth x =
-    prior.expect (λ θ => if sem θ x then 1 else 0) := rfl
-
-end ParamPred
 
 -- Example: Threshold Predicates (Lassiter & Goodman Style)
 
@@ -211,30 +162,5 @@ end FeaturePred
 Strategy #3 is most principled but requires more infrastructure.
 This module implements #2 as an intermediate step.
 -/
-
-/--
-Compose two parameterized predicates via conjunction.
-
-The result has uncertainty over both parameters (product space).
-Under independence, the joint prior is the product of individual priors.
--/
-def ParamPred.conj {E Θ₁ Θ₂ : Type*}
-    [Fintype Θ₁] [Fintype Θ₂] [DecidableEq Θ₁] [DecidableEq Θ₂]
-    (p : ParamPred E Θ₁) (q : ParamPred E Θ₂) : ParamPred E (Θ₁ × Θ₂) where
-  semantics := λ ⟨θ₁, θ₂⟩ x => p.semantics θ₁ x && q.semantics θ₂ x
-  prior := {
-    mass := λ ⟨θ₁, θ₂⟩ => p.prior.mass θ₁ * q.prior.mass θ₂
-    mass_nonneg := λ ⟨θ₁, θ₂⟩ => mul_nonneg (p.prior.mass_nonneg θ₁) (q.prior.mass_nonneg θ₂)
-    mass_sum_one := by
-      simp only [Fintype.sum_prod_type]
-      calc Finset.sum Finset.univ (λ a =>
-             Finset.sum Finset.univ (λ b => p.prior.mass a * q.prior.mass b))
-          = Finset.sum Finset.univ (λ a =>
-              p.prior.mass a * Finset.sum Finset.univ q.prior.mass) := by
-            congr 1; ext a; rw [← Finset.mul_sum]
-        _ = Finset.sum Finset.univ (λ a => p.prior.mass a * 1) := by
-            rw [q.prior.mass_sum_one]
-        _ = 1 := by simp [p.prior.mass_sum_one]
-  }
 
 end Semantics.Montague.BayesianSemantics

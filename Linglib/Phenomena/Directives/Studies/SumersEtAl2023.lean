@@ -388,7 +388,7 @@ def exampleTrial : ExampleTrial :=
 
 /-!
 ## Signaling Bandits: RSA Model
-@cite{frank-goodman-2012} @cite{sumers-hawkins-2023}
+@cite{frank-goodman-2012} @cite{sumers-etal-2023}
 
 Unlike Lewis signaling games where world state = correct action,
 signaling bandits separate abstract knowledge (feature values) from

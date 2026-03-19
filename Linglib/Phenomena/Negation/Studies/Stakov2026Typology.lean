@@ -4,11 +4,11 @@ import Linglib.Theories.Semantics.Modality.BiasedPQ
 
 /-!
 # Czech Three-Way Negation: Cross-Linguistic Typology
-@cite{repp-2013} @cite{romero-2024} @cite{stankova-2025} @cite{stankova-simik-2024} @cite{gartner-gyuris-2017} @cite{simik-2024}
+@cite{repp-2013} @cite{romero-2024} @cite{stankova-2025} @cite{stankova-2025} @cite{gartner-gyuris-2017} @cite{simik-2024}
 
 Bridges between the core three-way negation distinction (CzechThreeWayNeg.lean)
 and cross-linguistic frameworks: @cite{romero-2024} PQ typology, @cite{simik-2024} Czech
-PQ forms, @cite{stankova-simik-2024} verb position / context sensitivity.
+PQ forms, @cite{stankova-2025} verb position / context sensitivity.
 
 Also contains example data (CzechNegDatum), bias profiles, and corpus data.
 
@@ -113,7 +113,7 @@ theorem only_outer_requires_focus :
 -- §9: Example Data
 -- ============================================================================
 
-/-- Verb position in Czech polar questions (@cite{stankova-simik-2024} §2).
+/-- Verb position in Czech polar questions (@cite{stankova-2025} §2).
 
 Czech PQs use two word orders, determined by whether the finite verb
 moves to clause-initial position:
@@ -517,7 +517,7 @@ theorem decl_polarity_matches_evidence :
     (czechBiasProfile .againstP .neutral).contains .declNPQ = true := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §17: Verb Position Readings (@cite{stankova-simik-2024})
+-- §17: Verb Position Readings (@cite{stankova-2025})
 -- ============================================================================
 
 /-- Which negation readings are available for each verb position.

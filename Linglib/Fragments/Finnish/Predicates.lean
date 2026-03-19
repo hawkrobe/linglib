@@ -3,7 +3,6 @@ import Linglib.Core.VoiceSystem
 
 /-!
 # Finnish Verb Entries @cite{karlsson-2017}
-@cite{shore-1986}
 
 Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
 
@@ -146,7 +145,7 @@ theorem verb_types_distinct :
     Finnish lacks a true passive — what is traditionally called the
     passive is an impersonal construction where the agent is demoted
     to an implicit generic human referent, not promoted to a by-phrase
-    (@cite{shore-1986}, @cite{karlsson-2017} Ch. 11). Active is the basic form. -/
+    (@cite{karlsson-2017} Ch. 11). Active is the basic form. -/
 def finnishVoiceSystem : Interfaces.VoiceSystemProfile :=
   { language := "Finnish"
     voices := [ ⟨"Active", .agent⟩, ⟨"Impersonal", .patient⟩ ]

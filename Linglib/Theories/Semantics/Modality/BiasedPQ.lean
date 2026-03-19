@@ -5,7 +5,7 @@ import Linglib.Core.Discourse.SpeechActs
 
 /-!
 # Biased Polar Questions
-@cite{bring-gunlogson-2000} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2015} @cite{romero-2024} @cite{romero-han-2004} @cite{simik-2024} @cite{stankova-2025}
+@cite{bring-gunlogson-2000} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2019} @cite{romero-2024} @cite{romero-han-2004} @cite{simik-2024} @cite{stankova-2025}
 
 Cross-linguistic framework for polar question bias, following @cite{romero-2024}.
 Polar questions come in three forms — PosQ, LoNQ, HiNQ — which differ in
@@ -164,7 +164,7 @@ def verum (epistemic : ModalBase) (conversational : OrderingSource)
     -- p is entailed by the context set at w'
     cg w' && p w'
 
-/-- FALSUM operator (@cite{repp-2013}, @cite{romero-2015}, @cite{romero-2024} def. 33).
+/-- FALSUM operator (@cite{repp-2013}, @cite{romero-2019}, @cite{romero-2024} def. 33).
 
 At-issue content: ¬p
 CG-management content: ∀w' ∈ Epi(w). ∀w'' ∈ Conv(w'). [p ∉ CG]

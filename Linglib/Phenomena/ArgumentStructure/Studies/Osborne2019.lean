@@ -9,7 +9,7 @@ import Linglib.Phenomena.ArgumentStructure.Passive
 
 /-!
 # DG Valency Bridge: @cite{osborne-2019} @cite{osborne-2019}
-@cite{tesnire-1959}
+@cite{tesniere-1959}
 
 Full derivation chain from DG valency theory to argument structure
 phenomena, grounded in the English Fragment lexicon.

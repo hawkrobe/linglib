@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 
 /-!
 # Quantifier Universals Bridge
-@cite{barwise-cooper-1981} @cite{mostowski-1957} @cite{peters-westerstahl-2006} @cite{van-benthem-1984} @cite{van-de-pol-2023} @cite{van-de-pol-etal-2023}
+@cite{barwise-cooper-1981} @cite{mostowski-1957} @cite{peters-westerstahl-2006} @cite{van-benthem-1984} @cite{van-de-pol-etal-2023}
 
 Bridges the English determiner fragment (`Fragments.English.Determiners.QuantityWord`)
 to the GQ property predicates in `Core.Quantification` and

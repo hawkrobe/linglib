@@ -5,8 +5,7 @@ import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Fragments.English.NumeralModifiers
 
 /-!
-# @cite{beltrama-solt-burnett-2023} @cite{beltrama-solt-burnett-2023}
-@cite{solt-2023}
+# @cite{beltrama-solt-burnett-2023}
 
 Context, precision, and social perception: A sociopragmatic study.
 *Language in Society* 52(5): 805–835. doi:10.1017/S0047404522000240

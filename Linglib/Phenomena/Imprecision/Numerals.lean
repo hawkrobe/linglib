@@ -282,7 +282,7 @@ def approximatelyWithNonRound : ApproximatelyDatum :=
 /--
 Time expressions show similar round/non-round patterns.
 
-Source: dissertation (163), @cite{solt-2023}
+Source: dissertation (163)
 -/
 structure TimeExpressionDatum where
   /-- The sentence -/

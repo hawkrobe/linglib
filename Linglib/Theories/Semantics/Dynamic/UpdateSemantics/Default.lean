@@ -28,20 +28,20 @@ This module formalizes Veltman's §3: expectation states, the operators
 - Compatible defaults reinforce (`compatible_defaults_optimal`)
 - "Normally" is idempotent and commutative (`normallyUpdate_idempotent`, `normallyUpdate_comm`)
 
-## What's not here (§4–5)
+## What's not here (§5)
 
-Veltman's §4 — which he calls "the heart of the paper" — introduces
-**expectation frames** for conditional defaults: "if φ then normally ψ"
-(written φ ⇝ ψ). This enables specificity, the full Nixon Diamond,
-and the Tweety Triangle. §5 proves which inference patterns are valid
-for the default conditional (contraposition fails, cautious monotonicity
-holds, etc.). These require substantially more infrastructure and are
-left for future work.
+§5 proves which inference patterns are valid for the default
+conditional (contraposition fails, cautious monotonicity holds, etc.).
+Key patterns are verified as regression tests in
+`Phenomena/DefaultReasoning/Studies/Veltman1996.lean`.
+
+§4 (expectation frames, conditional defaults, specificity) is
+formalized in `Frames.lean` alongside this module.
 
 ## Connection to existing infrastructure
 
-- **CCP.lean**: Veltman's base language (§2) — CCPs, tests, might as
-  consistency test — is already formalized there. This module adds the
+- **Basic.lean**: Veltman's base language (§2) — states, updates, tests,
+  might as consistency test — is formalized there. This module adds the
   default layer (§3).
 
 - **BeliefRevision.lean**: `PreferentialConsequence` (System P) and

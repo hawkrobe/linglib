@@ -533,7 +533,7 @@ theorem cant_eq_must_neg (k : Kernel) (φ : BProp World) (w : World) :
 
 /-! ## Prior information state and nandao-Q felicity
 
-@cite{zheng-2026} shows Mandarin *nandao*-Qs are evidence-driven, not bias-driven.
+@cite{zheng-2025} shows Mandarin *nandao*-Qs are evidence-driven, not bias-driven.
 The felicity condition has three parts: (i) evidence in K supports the prejacent,
 (ii) K conflicts with prior expectations U, (iii) the prejacent is not directly
 settled in K. Condition (iii) is the same presupposition as `kernelMust`. -/
@@ -562,7 +562,7 @@ def evidenceRaises (p φ : BProp World) : Bool :=
 def Kernel.evidenceSupports (k : Kernel) (φ : BProp World) : Bool :=
   k.props.any (evidenceRaises · φ)
 
-/-- **Nandao-Q felicity** (@cite{zheng-2026}, condition 11 for polar questions):
+/-- **Nandao-Q felicity** (@cite{zheng-2025}, condition 11 for polar questions):
 (i) some evidence in K raises P(φ),
 (ii) K and U are incompatible (evidence is unexpected),
 (iii) φ is not directly settled in K. -/
@@ -575,7 +575,7 @@ def nandaoFelicitous (k : Kernel) (u : Background) (φ : BProp World) : Bool :=
 theorem nandao_must_presupposition (k : Kernel) (φ : BProp World) (w : World) :
     (!directlySettlesExplicit k φ) = (kernelMust k φ).presup w := rfl
 
-/-- Pure inquiry: nandao is felicitous without epistemic bias (@cite{zheng-2026} ex. 3).
+/-- Pure inquiry: nandao is felicitous without epistemic bias (@cite{zheng-2025} ex. 3).
 The three conditions suffice; no prior belief about φ is required. -/
 theorem nandao_pure_inquiry (k : Kernel) (u : Background) (φ : BProp World)
     (hEv : k.evidenceSupports φ = true)
@@ -584,7 +584,7 @@ theorem nandao_pure_inquiry (k : Kernel) (u : Background) (φ : BProp World)
     nandaoFelicitous k u φ = true := by
   simp only [nandaoFelicitous, hEv, hInc, hUns, Bool.not_false, Bool.true_and]
 
-/-! ### Dripping raincoat scenario (@cite{zheng-2026} exx. 2–3, 5)
+/-! ### Dripping raincoat scenario (@cite{zheng-2025} exx. 2–3, 5)
 
 w0 = raining, w1 = sprinkler (wet but not rain), w2 = dry, w3 = unknown.
 K = {wearingRaincoat}: direct evidence that someone entered with a wet coat.
@@ -605,12 +605,12 @@ P(rain|coat) = 1/2 > P(rain) = 1/4; K ∩ U = ∅; rain unsettled by K. -/
 theorem raincoat_nandao_felicitous :
     nandaoFelicitous raincoatK dryU isRaining = true := by native_decide
 
-/-- Without evidence, nandao is infelicitous (@cite{zheng-2026} ex. 5 ctx 2). -/
+/-- Without evidence, nandao is infelicitous (@cite{zheng-2025} ex. 5 ctx 2). -/
 theorem no_evidence_nandao_infelicitous :
     nandaoFelicitous ⟨[]⟩ dryU isRaining = false := by native_decide
 
 /-- When evidence is expected (K compatible with U), nandao is infelicitous
-(@cite{zheng-2026} ex. 6 ctx 2). -/
+(@cite{zheng-2025} ex. 6 ctx 2). -/
 theorem expected_evidence_infelicitous :
     let expectWet : Background := [wearingRaincoat]
     nandaoFelicitous raincoatK expectWet isRaining = false := by native_decide

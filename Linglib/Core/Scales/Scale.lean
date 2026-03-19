@@ -227,7 +227,7 @@ def AdditiveScale.IsRepresentable {α : Type*} [SemilatticeSup α]
 -- § 1d. Scale Polarity
 -- ════════════════════════════════════════════════════
 
-/-- Intrinsic polarity of a scale dimension (CSW §3.4, @cite{tucker-etal-2018}).
+/-- Intrinsic polarity of a scale dimension.
     `positive`: the unmarked direction (tall, hot, confident).
     `negative`: the marked/inverted direction (short, cold, doubtful). -/
 inductive ScalePolarity where

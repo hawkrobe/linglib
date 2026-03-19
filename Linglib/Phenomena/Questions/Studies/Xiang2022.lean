@@ -136,7 +136,7 @@ def nonModalMA : Xiang2022Datum :=
 /-- Goal-driven MS: same question, recruit-one goal (Section 2.2).
 
 "Who can chair the committee?" with the goal of recruiting *one* person.
-@cite{van-rooij-2003} models this via a decision problem where any single
+@cite{van-rooy-2003} models this via a decision problem where any single
 committee member resolves the DP. -/
 def goalDrivenMS : Xiang2022Datum :=
   { question := "Who can chair the committee?"

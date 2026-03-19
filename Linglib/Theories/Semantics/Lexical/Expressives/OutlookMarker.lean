@@ -198,7 +198,7 @@ def expressiveProfile : SecondaryMeaningProperties :=
   , descriptivelyIneffable := true
   , immediate := true
   , repeatable := true
-  , allowsPerspectiveShift := false   -- Potts' default; cf. @cite{wang-etal-2005}
+  , allowsPerspectiveShift := false   -- Potts' default
   , requiresDiscourseAntecedent := false }
 
 /-- Canonical properties of outlook markers (: §3).
