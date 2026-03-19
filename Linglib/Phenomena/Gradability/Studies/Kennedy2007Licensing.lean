@@ -108,4 +108,55 @@ theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree 
           adjMeasure, DirectedMeasure.kennedyAdjective, DirectedMeasure.licensed,
           tall, full, wet, dry, Boundedness.isLicensed]
 
+-- ════════════════════════════════════════════════════
+-- § 4. Scale Structure → Comparison Class Sensitivity
+-- ════════════════════════════════════════════════════
+
+/-! ### Two independent paths to the same prediction
+
+@cite{kennedy-2007}'s scale structure and `PropertyDomain.requiresComparisonClass`
+are two independent classifications that converge on the same prediction for
+whether an adjective's threshold depends on contextual class membership:
+
+- **Scale-structure path** (@cite{kennedy-2007}): `scaleType → interpretiveEconomy
+  → PositiveStandard → PositiveStandard.requiresComparisonClass`
+  Open scale → contextual standard → threshold depends on "the relevant class
+  of individuals" (Kennedy 2007, p. 17)
+- **Domain path** (@cite{sedivy-etal-1999}): `dimension.domain →
+  PropertyDomain.requiresComparisonClass`
+  Size/evaluative/sensory domains → context-sensitive threshold
+
+For every concrete Fragment adjective, the two paths agree. This convergence
+is non-trivial: it reflects the empirical fact that open-scale adjectives
+tend to belong to context-sensitive domains (size, evaluative), while
+closed-scale adjectives tend to belong to context-insensitive domains (state). -/
+
+open Semantics.Degree (interpretiveEconomy PositiveStandard)
+
+/-- "tall": both paths predict CC-dependence. -/
+theorem tall_cc_convergence :
+    (interpretiveEconomy tall.scaleType).requiresComparisonClass = true ∧
+    tall.dimension.domain.requiresComparisonClass = true :=
+  ⟨rfl, rfl⟩
+
+/-- "full": both paths predict CC-independence. -/
+theorem full_no_cc_convergence :
+    (interpretiveEconomy full.scaleType).requiresComparisonClass = false ∧
+    full.dimension.domain.requiresComparisonClass = false :=
+  ⟨rfl, rfl⟩
+
+/-- "wet": both paths predict CC-independence
+    (lower-bounded → endpoint standard; state domain). -/
+theorem wet_no_cc_convergence :
+    (interpretiveEconomy wet.scaleType).requiresComparisonClass = false ∧
+    wet.dimension.domain.requiresComparisonClass = false :=
+  ⟨rfl, rfl⟩
+
+/-- "dry": both paths predict CC-independence
+    (upper-bounded → endpoint standard; state domain). -/
+theorem dry_no_cc_convergence :
+    (interpretiveEconomy dry.scaleType).requiresComparisonClass = false ∧
+    dry.dimension.domain.requiresComparisonClass = false :=
+  ⟨rfl, rfl⟩
+
 end Phenomena.Gradability.KennedyLicensingBridge

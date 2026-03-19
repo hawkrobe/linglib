@@ -577,7 +577,63 @@ theorem literal_reversal_transfers_to_temp :
   ⟨literal_jockey_tall_super, jockey_tall_infers_sub⟩
 
 -- ============================================================================
--- § 12. Connection to Generic Language (@cite{tessler-goodman-2019})
+-- § 12. @cite{kennedy-2007} Applicability Chain
+-- ============================================================================
+
+/-! ### Why this model applies to "tall" but not "full"
+
+@cite{kennedy-2007}'s Interpretive Economy determines the standard of
+comparison from scale structure. For open-scale (Class A) adjectives like
+"tall", the standard is a contextual norm — determined by "the relevant
+class of individuals" (Kennedy 2007, p. 17). For closed-scale (Class B)
+adjectives like "full", the standard is the scale endpoint — fixed
+regardless of context.
+
+Kennedy leaves the mechanism for determining "the relevant class"
+underspecified. @cite{tessler-goodman-2022} fills this gap: the comparison
+class IS that contextual parameter, and it is inferred pragmatically via
+RSA. The bridge is:
+
+    open scale → contextual standard → CC is a free variable → L1 infers it
+    bounded scale → endpoint standard → no free variable → nothing to infer
+
+The chain connects three independent modules:
+1. `Semantics.Degree.interpretiveEconomy` (Theory: scale → standard type)
+2. `Semantics.Degree.PositiveStandard.requiresComparisonClass` (Theory: standard → CC-dependent?)
+3. `RSAConfig.L1_latent` with `Latent = ComparisonClass` (this file: infer CC) -/
+
+open Semantics.Degree (interpretiveEconomy PositiveStandard
+  scale_determines_cc_sensitivity isClassA)
+
+/-- Height is an open-scale dimension: "tall" is Class A. -/
+theorem height_is_classA :
+    isClassA Core.Scale.Boundedness.open_ = true := rfl
+
+/-- Open scale → comparison class inference applies (the full chain).
+    This is a three-step argument:
+    1. "tall" has an open scale (lexical fact)
+    2. Open scale → contextual standard (Interpretive Economy)
+    3. Contextual standard → CC-dependent threshold (semantic consequence)
+    Therefore the comparison class is a free variable that must be inferred
+    — exactly what `mkCompClassCfg` models with `Latent = ComparisonClass`. -/
+theorem open_scale_requires_cc_inference :
+    (interpretiveEconomy .open_).requiresComparisonClass = true := rfl
+
+/-- Closed scale → comparison class inference is irrelevant.
+    "Full" has an endpoint standard; the threshold is the scale maximum
+    regardless of who you compare to. No CC to infer. -/
+theorem closed_scale_no_cc_inference :
+    (interpretiveEconomy .closed).requiresComparisonClass = false := rfl
+
+/-- The applicability criterion: scale structure determines whether this
+    model's `ComparisonClass` latent is informative. The `isClassA` predicate
+    exactly characterizes the adjectives for which CC inference is needed. -/
+theorem model_applicability (b : Core.Scale.Boundedness) :
+    isClassA b = (interpretiveEconomy b).requiresComparisonClass :=
+  scale_determines_cc_sensitivity b
+
+-- ============================================================================
+-- § 13. Connection to Generic Language (@cite{tessler-goodman-2019})
 -- ============================================================================
 
 /-! Threshold semantics for gradable adjectives generalizes to generic
@@ -593,7 +649,7 @@ listener's posterior. The generics model infers which θ is pragmatically
 optimal. Same RSA machinery applied to different latent variables. -/
 
 -- ============================================================================
--- § 13. Comparison Class as NestedRestriction
+-- § 14. Comparison Class as NestedRestriction
 -- ============================================================================
 
 /-! The comparison class hierarchy is structurally a `NestedRestriction`:

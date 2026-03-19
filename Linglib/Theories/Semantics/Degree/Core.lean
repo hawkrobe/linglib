@@ -304,4 +304,39 @@ theorem classA_contextual : interpretiveEconomy .open_ = .contextual := rfl
 /-- Class B adjectives (closed scale) have endpoint standards. -/
 theorem classB_endpoint : interpretiveEconomy .closed = .maxEndpoint := rfl
 
+-- ════════════════════════════════════════════════════
+-- § 8. Scale Structure → Comparison Class Sensitivity
+-- ════════════════════════════════════════════════════
+
+/-- Whether the positive standard depends on contextual class membership.
+    @cite{kennedy-2007} notes that Class A adjectives have standards
+    determined by "the relevant class of individuals" (p. 17) — what
+    @cite{klein-1980} and @cite{tessler-goodman-2022} call the comparison
+    class. Endpoint standards (Class B) are fixed by scale structure.
+
+    `true` for `.contextual` (threshold varies with comparison class),
+    `false` for `.minEndpoint` / `.maxEndpoint` (threshold is a scale bound). -/
+def PositiveStandard.requiresComparisonClass : PositiveStandard → Bool
+  | .contextual  => true
+  | .minEndpoint  => false
+  | .maxEndpoint  => false
+
+/-- Class A adjectives require comparison class resolution:
+    open scale → contextual standard → CC-dependent. -/
+theorem classA_requires_cc :
+    (interpretiveEconomy .open_).requiresComparisonClass = true := rfl
+
+/-- Class B adjectives do NOT require comparison class resolution:
+    bounded scale → endpoint standard → CC-independent. -/
+theorem classB_no_cc (b : Boundedness) (h : isClassA b = false) :
+    (interpretiveEconomy b).requiresComparisonClass = false := by
+  cases b <;> simp_all [isClassA, interpretiveEconomy,
+    PositiveStandard.requiresComparisonClass]
+
+/-- The full chain: `isClassA` ↔ `requiresComparisonClass` after
+    Interpretive Economy. Scale structure determines everything. -/
+theorem scale_determines_cc_sensitivity (b : Boundedness) :
+    isClassA b = (interpretiveEconomy b).requiresComparisonClass := by
+  cases b <;> rfl
+
 end Semantics.Degree

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.349] - 2026-03-19
+
+### Added
+- **`Core.lean` (Degree)**: `PositiveStandard.requiresComparisonClass` predicate + `classA_requires_cc`, `classB_no_cc`, `scale_determines_cc_sensitivity` theorems connecting Kennedy 2007 scale structure to comparison class sensitivity
+- **`Kennedy2007Licensing.lean` (Gradability/Studies)**: §4 convergence theorems — `tall_cc_convergence`, `full_no_cc_convergence`, `wet_no_cc_convergence`, `dry_no_cc_convergence` proving Kennedy's scale-structure path and PropertyDomain path independently predict the same CC sensitivity for all four test adjectives
+- **`TesslerGoodman2022.lean` (Gradability/Studies)**: §12 Kennedy applicability chain — `open_scale_requires_cc_inference`, `closed_scale_no_cc_inference`, `model_applicability` connecting Kennedy 2007 typology to TG2022 RSA model scope
+
 ## [0.229.348] - 2026-03-19
 
 ### Added
