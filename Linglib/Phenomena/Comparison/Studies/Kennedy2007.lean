@@ -36,11 +36,11 @@ open Core.Scale (Boundedness)
 -- § 1. Interpretive Economy Predictions
 -- ════════════════════════════════════════════════════
 
-/-- Open-scale adjectives (Class A) use contextual standards. -/
+/-- Open-scale adjectives (Kennedy's "relative"; Class A here) use contextual standards. -/
 theorem open_scale_contextual :
     interpretiveEconomy .open_ = .contextual := rfl
 
-/-- Closed-scale adjectives (Class B) use endpoint standards. -/
+/-- Closed-scale adjectives (Kennedy's "absolute"; Class B here) use endpoint standards. -/
 theorem closed_scale_endpoint :
     interpretiveEconomy .closed = .maxEndpoint := rfl
 

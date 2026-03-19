@@ -283,10 +283,11 @@ def interpretiveEconomy (b : Boundedness) : PositiveStandard :=
   | .upperBounded => .maxEndpoint
   | .closed       => .maxEndpoint   -- both endpoints; max is default
 
-/-- @cite{kennedy-2007} Class A vs. Class B adjectives.
-    - **Class A** (relative): open scale, contextual standard.
+/-- @cite{kennedy-2007}'s relative vs. absolute adjective distinction.
+    Kennedy uses "relative" and "absolute"; we label them Class A/B for brevity.
+    - **Class A** (= Kennedy's "relative"): open scale, contextual standard.
       "tall", "expensive", "heavy"
-    - **Class B** (absolute): closed scale, endpoint standard.
+    - **Class B** (= Kennedy's "absolute"): closed scale, endpoint standard.
       "full", "empty", "straight", "bent"
 
     The class is determined entirely by scale boundedness. -/
@@ -309,10 +310,10 @@ theorem classB_endpoint : interpretiveEconomy .closed = .maxEndpoint := rfl
 -- ════════════════════════════════════════════════════
 
 /-- Whether the positive standard depends on contextual class membership.
-    @cite{kennedy-2007} notes that Class A adjectives have standards
-    determined by "the relevant class of individuals" (p. 17) — what
-    @cite{klein-1980} and @cite{tessler-goodman-2022} call the comparison
-    class. Endpoint standards (Class B) are fixed by scale structure.
+    @cite{kennedy-2007} argues that for relative (open-scale) adjectives,
+    "it is necessary to look to the distribution of objects in some domain
+    (a comparison class)" (p. 42) to fix truth conditions. Endpoint
+    standards (absolute adjectives) are fixed by scale structure.
 
     `true` for `.contextual` (threshold varies with comparison class),
     `false` for `.minEndpoint` / `.maxEndpoint` (threshold is a scale bound). -/

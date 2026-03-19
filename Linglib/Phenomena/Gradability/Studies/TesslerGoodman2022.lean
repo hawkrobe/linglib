@@ -583,14 +583,14 @@ theorem literal_reversal_transfers_to_temp :
 /-! ### Why this model applies to "tall" but not "full"
 
 @cite{kennedy-2007}'s Interpretive Economy determines the standard of
-comparison from scale structure. For open-scale (Class A) adjectives like
-"tall", the standard is a contextual norm — determined by "the relevant
-class of individuals" (Kennedy 2007, p. 17). For closed-scale (Class B)
-adjectives like "full", the standard is the scale endpoint — fixed
-regardless of context.
+comparison from scale structure. For open-scale (relative) adjectives like
+"tall", "it is necessary to look to the distribution of objects in some
+domain (a comparison class)" (Kennedy 2007, p. 42) to fix truth conditions.
+For closed-scale (absolute) adjectives like "full", the standard is the
+scale endpoint — fixed regardless of context.
 
-Kennedy leaves the mechanism for determining "the relevant class"
-underspecified. @cite{tessler-goodman-2022} fills this gap: the comparison
+Kennedy identifies that open-scale adjectives need a comparison class but
+does not specify the computational mechanism for inferring it. @cite{tessler-goodman-2022} fills this gap: the comparison
 class IS that contextual parameter, and it is inferred pragmatically via
 RSA. The bridge is:
 

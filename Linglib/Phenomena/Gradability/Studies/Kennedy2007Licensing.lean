@@ -120,8 +120,8 @@ whether an adjective's threshold depends on contextual class membership:
 
 - **Scale-structure path** (@cite{kennedy-2007}): `scaleType → interpretiveEconomy
   → PositiveStandard → PositiveStandard.requiresComparisonClass`
-  Open scale → contextual standard → threshold depends on "the relevant class
-  of individuals" (Kennedy 2007, p. 17)
+  Open scale → contextual standard → threshold requires "the distribution of
+  objects in some domain (a comparison class)" (Kennedy 2007, p. 42)
 - **Domain path** (@cite{sedivy-etal-1999}): `dimension.domain →
   PropertyDomain.requiresComparisonClass`
   Size/evaluative/sensory domains → context-sensitive threshold
