@@ -83,6 +83,15 @@ Per-kind RSAConfig with `Latent = ComparisonClass`, `World = Height`:
 | 10 | short | basketball | sub | `basketball_short_infers_sub` |
 | 11 | tall | jockey | sub | `jockey_tall_infers_sub` |
 | 12 | short | jockey | super | `jockey_short_infers_super` |
+
+### Alternative Literal Listener (Eq. 6, Fig. 2 — opposite predictions)
+
+| # | Kind | Adj | Literal | Pragmatic | Theorem |
+|---|------|-----|---------|-----------|---------|
+| 13 | basketball | tall | sub | super (#9) | `literal_basketball_tall_sub` |
+| 14 | basketball | short | super | sub (#10) | `literal_basketball_short_super` |
+| 15 | jockey | tall | super | sub (#11) | `literal_jockey_tall_super` |
+| 16 | jockey | short | sub | super (#12) | `literal_jockey_short_sub` |
 -/
 
 set_option autoImplicit false
@@ -259,6 +268,19 @@ theorem person_classes_identical :
     ∀ h : Height, l0HeightWeight .subordinate .person h =
                   l0HeightWeight .superordinate .person h := by
   native_decide
+
+/-- Sanity check: silence doesn't discriminate between comparison classes.
+
+    For the person kind (where subordinate = superordinate by
+    `person_classes_identical`), L1 hearing silence assigns equal
+    posterior to both comparison classes. This confirms the model's
+    baseline: only informative utterances (tall/short) shift CC inference. -/
+noncomputable def personCfg : RSA.RSAConfig Utterance Height :=
+  mkCompClassCfg .person
+
+theorem silent_no_cc_preference :
+    personCfg.L1_latent .silent .subordinate =
+    personCfg.L1_latent .silent .superordinate := by rsa_predict
 
 -- ============================================================================
 -- § 6. S1 Endorsement Predictions — Polarity × Expectations Interaction
@@ -439,7 +461,139 @@ theorem polarity_expectations_confirmed :
     shortJockey.inferredClass = "superordinate" := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 10. Comparison Class as NestedRestriction
+-- § 10. Alternative: Literal Listener Model (Eq. 6, Fig. 2)
+-- ============================================================================
+
+/-! ### The literal model makes the OPPOSITE predictions
+
+@cite{tessler-goodman-2022} §2 contrasts the pragmatic listener (Eq. 1) with
+an alternative literal listener (Eq. 6) that does not reason about a rational
+speaker:
+
+    L₀(x, θ, c | u, k) ∝ δ_{⟦u⟧}(x,θ) · P(x | c) · P(θ) · P(c | k)
+
+This model updates beliefs about x and c jointly via the literal meaning,
+using the comparison-class-specific prior P(x | c), but without S1
+informativity. It effectively asks: under which comparison class is the
+utterance more likely to be literally true? For "tall basketball player,"
+tallness is more probable under the basketball distribution (shifted right),
+so the literal model prefers subordinate — the OPPOSITE of the pragmatic
+model and the data.
+
+The pragmatic model inverts this because S1 normalizes by the total
+literal-listener mass Z_c(u), penalizing classes where the utterance is
+uninformative (too many heights satisfy it) and rewarding classes where the
+utterance is surprising. -/
+
+/-- Unnormalized literal score: Σ_h P(h|c) · |{θ : ⟦u⟧(h,θ)}|.
+    Total literal-listener mass for comparison class c, marginalized
+    over heights and thresholds. -/
+def literalClassScore (k : Kind) (c : ComparisonClass) (u : Utterance) : Nat :=
+  Finset.univ.sum λ h : Height => l0HeightWeight c k h * thresholdCount u h
+
+/-- Literal: basketball + "tall" → subordinate.
+    Basketball players' rightward-shifted heights make "tall" more often
+    literally true under subordinate comparison.
+    Opposite of pragmatic `basketball_tall_infers_super`. -/
+theorem literal_basketball_tall_sub :
+    literalClassScore .basketballPlayer .subordinate .tall >
+    literalClassScore .basketballPlayer .superordinate .tall := by native_decide
+
+/-- Literal: basketball + "short" → superordinate.
+    Opposite of pragmatic `basketball_short_infers_sub`. -/
+theorem literal_basketball_short_super :
+    literalClassScore .basketballPlayer .superordinate .short >
+    literalClassScore .basketballPlayer .subordinate .short := by native_decide
+
+/-- Literal: jockey + "tall" → superordinate.
+    Opposite of pragmatic `jockey_tall_infers_sub`. -/
+theorem literal_jockey_tall_super :
+    literalClassScore .jockey .superordinate .tall >
+    literalClassScore .jockey .subordinate .tall := by native_decide
+
+/-- Literal: jockey + "short" → subordinate.
+    Opposite of pragmatic `jockey_short_infers_super`. -/
+theorem literal_jockey_short_sub :
+    literalClassScore .jockey .subordinate .short >
+    literalClassScore .jockey .superordinate .short := by native_decide
+
+/-- Every literal prediction is reversed by the pragmatic model (Fig. 2).
+    This is the paper's key scientific claim: comparison class inference
+    requires social reasoning via S1, not just Bayesian updating on
+    literal truth conditions. -/
+theorem pragmatic_reverses_literal :
+    basketballCfg.L1_latent .tall .superordinate >
+    basketballCfg.L1_latent .tall .subordinate ∧
+    basketballCfg.L1_latent .short .subordinate >
+    basketballCfg.L1_latent .short .superordinate ∧
+    jockeyCfg.L1_latent .tall .subordinate >
+    jockeyCfg.L1_latent .tall .superordinate ∧
+    jockeyCfg.L1_latent .short .superordinate >
+    jockeyCfg.L1_latent .short .subordinate :=
+  ⟨basketball_tall_infers_super, basketball_short_infers_sub,
+   jockey_tall_infers_sub, jockey_short_infers_super⟩
+
+-- ============================================================================
+-- § 11. Dimension Generality: "Warm (for Winter)"
+-- ============================================================================
+
+/-! The paper's title example uses temperature, not height. The model is
+dimension-general: any relative gradable adjective whose comparison class
+shifts the degree prior produces the polarity × expectations interaction.
+
+The temperature domain maps onto the height domain:
+- Winter (expected cold) ↔ Jockey (expected short): prior peaked at 3
+- Summer (expected warm) ↔ Basketball (expected tall): prior peaked at 7
+- warm ↔ tall (positive adjective), cold ↔ short (negative adjective)
+
+Since the weight functions are identical, the § 8 predictions transfer:
+
+| Context | Adjective | Inferred CC | Height analogue |
+|---------|-----------|-------------|-----------------|
+| winter  | warm  | subordinate   | `jockey_tall_infers_sub` |
+| winter  | cold  | superordinate | `jockey_short_infers_super` |
+| summer  | warm  | superordinate | `basketball_tall_infers_super` |
+| summer  | cold  | subordinate   | `basketball_short_infers_sub` |
+
+This connects to `Core.Dimension.temperature`: a `sensory` domain with
+`requiresComparisonClass = true` (@cite{sedivy-etal-1999}). -/
+
+/-- Temperature is a comparison-class-sensitive dimension. -/
+theorem temperature_requires_cc :
+    Core.PropertyDomain.requiresComparisonClass .sensory = true := rfl
+
+/-- The literal/pragmatic reversal transfers to temperature via the
+    winter ↔ jockey mapping. The literal model predicts "warm in winter"
+    → superordinate (warm is more often literally true in the general
+    population than in winter), but the pragmatic model correctly predicts
+    subordinate: "warm for winter" is informative within the season. -/
+theorem literal_reversal_transfers_to_temp :
+    -- Literal: "winter + warm" ↔ "jockey + tall" → superordinate
+    literalClassScore .jockey .superordinate .tall >
+    literalClassScore .jockey .subordinate .tall ∧
+    -- Pragmatic: "winter + warm" ↔ "jockey + tall" → subordinate
+    jockeyCfg.L1_latent .tall .subordinate >
+    jockeyCfg.L1_latent .tall .superordinate :=
+  ⟨literal_jockey_tall_super, jockey_tall_infers_sub⟩
+
+-- ============================================================================
+-- § 12. Connection to Generic Language (@cite{tessler-goodman-2019})
+-- ============================================================================
+
+/-! Threshold semantics for gradable adjectives generalizes to generic
+language: "Birds fly south in the winter" ≈ P(x flies south | x is a bird) > θ
+(@cite{tessler-goodman-2019}). Both models share:
+
+1. A threshold variable θ setting the standard
+2. A prior P(x | c) conditioned on category membership
+3. Pragmatic inference about the contextually appropriate threshold/class
+
+The comparison class model (this file) infers which c maximizes the pragmatic
+listener's posterior. The generics model infers which θ is pragmatically
+optimal. Same RSA machinery applied to different latent variables. -/
+
+-- ============================================================================
+-- § 13. Comparison Class as NestedRestriction
 -- ============================================================================
 
 /-! The comparison class hierarchy is structurally a `NestedRestriction`:
@@ -483,5 +637,16 @@ theorem compClass_nesting (k : Kind) (h : Height) :
     (compClassRestriction k).region .subordinate h = true →
     (compClassRestriction k).region .superordinate h = true :=
   (compClassRestriction k).subset_of_le (by decide) h
+
+/-- Bridge to `Core.TwoLevel`: the study-local `ComparisonClass` is
+    isomorphic to the generic two-level nesting type. -/
+def ComparisonClass.toTwoLevel : ComparisonClass → Core.TwoLevel
+  | .subordinate => .restricted
+  | .superordinate => .full
+
+/-- The isomorphism preserves order. -/
+theorem ComparisonClass.toTwoLevel_monotone {a b : ComparisonClass}
+    (h : a ≤ b) : a.toTwoLevel ≤ b.toTwoLevel := by
+  revert h; cases a <;> cases b <;> decide
 
 end Phenomena.Gradability.Studies.TesslerGoodman2022

@@ -53,7 +53,7 @@ When you hear someone is a "tall basketball player", the most informative
 interpretation is that they are tall even compared to people in general,
 since basketball players are expected to be tall anyway.
 
-Source: @cite{tessler-goodman-2022} Section 3.1
+Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
 -/
 def tallBasketball : PolarityExpectationsDatum :=
   { adjective := "tall"
@@ -69,7 +69,7 @@ def tallBasketball : PolarityExpectationsDatum :=
 The negative adjective with high prior expectation leads to subordinate
 comparison: "short for a basketball player".
 
-Source: @cite{tessler-goodman-2022} Section 3.1
+Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
 -/
 def shortBasketball : PolarityExpectationsDatum :=
   { adjective := "short"
@@ -85,7 +85,7 @@ def shortBasketball : PolarityExpectationsDatum :=
 The pattern reverses for jockeys: negative adjective + low prior → superordinate.
 "Short for a person" is more informative than "short for a jockey".
 
-Source: @cite{tessler-goodman-2022} Section 3.1
+Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
 -/
 def shortJockey : PolarityExpectationsDatum :=
   { adjective := "short"
@@ -100,7 +100,7 @@ def shortJockey : PolarityExpectationsDatum :=
 
 Positive adjective + low prior → subordinate comparison class.
 
-Source: @cite{tessler-goodman-2022} Section 3.1
+Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
 -/
 def tallJockey : PolarityExpectationsDatum :=
   { adjective := "tall"
@@ -125,7 +125,7 @@ This captures the core empirical generalization:
 - positive adjective + low prior → subordinate
 - negative adjective + low prior → superordinate
 
-Source: @cite{tessler-goodman-2022} Table 1
+Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
 -/
 structure PolarityExpectationsPattern where
   /-- Examples demonstrating the pattern -/
@@ -216,7 +216,16 @@ inductive CueType where
   deriving Repr, DecidableEq
 
 /--
-Noun level in taxonomic hierarchy.
+Noun level in taxonomic hierarchy (Rosch & Mervis, 1975).
+
+This is distinct from @cite{tessler-goodman-2022}'s `ComparisonClass`
+(subordinate/superordinate reference population). `NounLevel` classifies
+the noun's position in a conceptual taxonomy; `ComparisonClass` classifies
+the reference population used for adjective threshold computation.
+They are related — basic-level nouns tend to trigger subordinate comparison
+classes — but the mapping is not identity: "basketball player" (basic-level
+noun) is the subordinate comparison class, while "people" (superordinate
+noun) is the superordinate comparison class.
 
 Source: @cite{weicker-schulz-2024}, Section 2
 -/

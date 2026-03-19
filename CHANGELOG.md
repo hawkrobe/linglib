@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.229.347] - 2026-03-19
+
+### Added
+- **`TesslerGoodman2022.lean` (Gradability/Studies)**: Formalize @cite{tessler-goodman-2022} "Warm (for Winter)" — comparison class inference RSA model with `ComparisonClass` as latent variable, threshold-marginalized L0 semantics, 17 verified predictions: 8 S1 endorsement (polarity × expectations), 4 L1 comparison class inference (Eq. 1), 4 literal listener reversals (Eq. 6, Fig. 2), 1 silent baseline; `pragmatic_reverses_literal` summary theorem; `literalClassScore` for alternative literal model; bridges to LassiterGoodman2017 (shared height priors), ComparisonClass data, NestedRestriction, TwoLevel, PropertyDomain (temperature dimension generality); generics connection docstring (@cite{tessler-goodman-2019})
+- **`ComparisonClass.lean` (Gradability)**: `NounLevel` docstring clarifying distinction from TG2022's `ComparisonClass` (Rosch taxonomic levels vs reference populations)
+
+### Fixed
+- **`ComparisonClass.lean` (Gradability)**: Fix 4× "Section 3.1" → "Section 3.2.1, Figure 3" and 1× "Table 1" → "Section 3.2.1, Figure 3" (Methods→Results citation errors)
+
+## [0.229.346] - 2026-03-19
+
+### Added
+- **`Umbach2004.lean` (Focus/Studies)**: Study file formalizing @cite{umbach-2004} "On the Notion of Contrast in Information Structure and Discourse Structure" — alternative set well-formedness (semantic independence + common integrator), confirm+deny condition on "but", exclusion variety taxonomy, CONTRAST vs CORRECTION discourse relations, bridge comparison with @cite{merin-1999} DTS account
+- **`InformationStructure.lean` (Core/Discourse)**: `semanticallyIndependent`, `commonIntegrator`, `wellFormedAlts` predicates for alternative set well-formedness; `ExclusionVariety` inductive (`.additional` / `.substitution`) with bridge to `CoherenceRelation`; `PolaritySwitchContext.toCoherenceRelation` bridge mapping
+- **`CoherenceRelation.lean` (Core/Discourse)**: `.correction` constructor added to `CoherenceRelation` (German *sondern* / corrective "but"); `contrast_correction_same_class`, `contrast_ne_correction` theorems
+
+### Changed
+- **`CoherenceRelation.lean` (Core/Discourse)**: Fix `.contrast` gloss from "violated expectation" to "similarity + dissimilarity + exclusion of additional alternative" per @cite{umbach-2004}; add @cite{umbach-2004} to module docstring
+- **`InformationStructure.lean` (Core/Discourse)**: Add import of `CoherenceRelation`, enriched `PolaritySwitchContext` docstring with cross-reference to discourse relations
+- **`FocusParticles.lean` (Fragments/English)**: Add `exclusionVariety` field to `Entry` structure; set "only" to `.substitution`; add `only_excludes_by_substitution`, `also_not_exclusive`, `even_not_exclusive` verification theorems
+- **`KehlerRohde2013.lean` (Reference/Studies)**: Add `.correction` cases (0% weight) to all exhaustive `CoherenceRelation` matches
+
+### Fixed
+- **`AndersonJM2006.lean`, `AspectualConsistency.lean`**: Bump stale verb count assertions from 233 to 234 (lexicon grew by 1 entry)
+
 ## [0.229.345] - 2026-03-18
 
 ### Added
