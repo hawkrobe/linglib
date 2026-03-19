@@ -172,8 +172,8 @@ def kampAtLeastAs {E C : Type*} (ext : C → E → Bool) (u₁ u₂ : E) (S : Se
   ∀ c ∈ S, ext c u₂ = true → ext c u₁ = true
 
 /-- Klein's strict comparative: there exists a context that separates
-    the two entities. This is `Klein.comparativeSem` from
-    `Degree/Frameworks/Klein.lean`. -/
+    the two entities. This is `comparativeSem` from
+    `Theories/Semantics/Comparison/Delineation.lean`. -/
 def kleinMoreThan {E C : Type*} (ext : C → E → Bool) (u₁ u₂ : E) (S : Set C) : Prop :=
   ∃ c ∈ S, ext c u₁ = true ∧ ext c u₂ = false
 

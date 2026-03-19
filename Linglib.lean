@@ -698,6 +698,7 @@ import Linglib.Phenomena.Ergativity.Basic
 import Linglib.Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
 import Linglib.Phenomena.Ergativity.Studies.Imanishi2020
 import Linglib.Phenomena.Ergativity.Studies.Bohnemeyer2004
+import Linglib.Phenomena.Ergativity.Studies.Scott2023
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
@@ -851,7 +852,7 @@ import Linglib.Phenomena.Comparison.Comparative.Subcomparative
 import Linglib.Phenomena.Comparison.Studies.Kennedy1999
 import Linglib.Phenomena.Comparison.Studies.Kennedy2007
 import Linglib.Phenomena.Comparison.Studies.Heim2001
-import Linglib.Phenomena.Comparison.Comparative.Compare
+import Linglib.Phenomena.Comparison.Compare
 import Linglib.Phenomena.Comparison.Equative.Data
 import Linglib.Phenomena.Comparison.Superlative.Data
 import Linglib.Phenomena.Comparison.DegreeQuestion.Data
@@ -920,6 +921,7 @@ import Linglib.Phenomena.Numerals.Typology
 import Linglib.Phenomena.Numerals.Studies.FoxHackl2006
 import Linglib.Phenomena.Numerals.Studies.HuangSpelkeSnedeker2013
 import Linglib.Phenomena.Numerals.Studies.Spector2013
+import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2022
 import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2026
 import Linglib.Phenomena.Quantification.Studies.Scontras2014
 import Linglib.Phenomena.Modality.Studies.Kratzer2012Scenario
@@ -1418,6 +1420,7 @@ import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Morphology.DM.Allosemy
+import Linglib.Theories.Morphology.DM.Impoverishment
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Theories.Morphology.WP.LCEC

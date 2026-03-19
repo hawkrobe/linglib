@@ -24,12 +24,12 @@ functions and measure functions.
 |-----------------------------|---------|------|-------|---------------|
 | Degrees in ontology?        | Yes     | Yes  | No    | Yes (intervals)|
 | Scope of -er                | DP      | CP   | N/A   | DP            |
-| Measure phrases             | Direct  | Direct| Hard | Direct        |
+| Measure phrases             | Direct  | Direct| Via ≈ | Direct       |
 | Subcomparatives             | Special | Special| Special| Natural    |
 
 -/
 
-namespace Phenomena.Comparison.Comparative.Compare
+namespace Phenomena.Comparison.Compare
 
 -- ════════════════════════════════════════════════════
 -- § 1. Extensional Equivalence of Degree Frameworks
@@ -93,4 +93,16 @@ theorem klein_correspondence {Entity D : Type*} [LinearOrder D]
     Semantics.Comparison.Delineation.comparativeSem delineation a b := by
   exact hdiscrim
 
-end Phenomena.Comparison.Comparative.Compare
+/-- **Strengthened Klein correspondence**: degree comparative ↔ Klein's
+    ordering via `measureDelineation`. No auxiliary hypotheses beyond
+    membership. Uses `ordering_iff_degree` from the theory layer. -/
+theorem klein_measure_equivalence {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (cc : Set Entity) (a b : Entity)
+    (ha : a ∈ cc) (hb : b ∈ cc) :
+    Semantics.Degree.Comparative.comparativeSem μ a b .positive ↔
+    Semantics.Comparison.Delineation.ordering
+      (Semantics.Comparison.Delineation.measureDelineation μ) cc a b := by
+  simp only [Semantics.Degree.Comparative.comparativeSem,
+    Semantics.Comparison.Delineation.ordering_iff_degree μ cc a b ha hb]
+
+end Phenomena.Comparison.Compare

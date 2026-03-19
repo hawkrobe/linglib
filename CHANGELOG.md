@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.229.354] - 2026-03-19
+
+### Added
+- **Klein 1980 main theorem** (`Klein1980.lean`): strict weak order from monotonicity — `klein_strict_weak_order` (asymmetry + negative transitivity), `klein_transitivity_derived` (non-circular corollary), `klein_almost_connected` (incomparability → nondistinctness), `IsNontrivialDelineation`
+- **`ordering_neg_trans`** (`Delineation.lean`): negative transitivity of Klein's ordering, no conditions needed (excluded middle on `delineation X v`)
+- **`nondistinct_of_incomparable`** (`Delineation.lean`): incomparability implies nondistinctness
+- **`measureDelineation_is_linear`** (`Delineation.lean`): measure-induced delineations are always linear
+- **`fairly_excludes_very`** (`Delineation.lean`): fairly A excludes very A under domain restriction
+
+### Fixed
+- Stale `Degree/Frameworks/Klein.lean` references in `Kamp1975.lean` and `Fine1975.lean`
+- Flatten `Phenomena/Comparison/Comparative/Compare.lean` → `Phenomena/Comparison/Compare.lean`
+
+## [0.229.353] - 2026-03-19
+
+### Added
+- **`BaleSchwarz2022.lean` rewrite**: Comprehensive formalization of Bale & Schwarz 2022 (SALT 32) — free relative argument against polysemy (exx. 10-14), MUCH as `MeasureTermSem` (eq. 25), text-domain unit sensitivity (exx. 39-40), compositional derivation chain (exx. 17-22), copular puzzle with Fragment-connected theorems
+- **`coppock-2021` bibliography entry**: Coppock 2021 "Challenge problems for a theory of degree multiplication" (SALT 31) — the actual paper proposing the division theory that Bale & Schwarz 2022 responds to
+
+### Fixed
+- **Coppock citation error**: All `@cite{coppock-2022}` references to the division theory of *per* corrected to `@cite{coppock-2021}` — the division theory is from Coppock's SALT 31 paper (2021), not her SALT 32 paper (2022, which is about distributivity)
+- **`perDivision` argument order**: Fixed from `(q, r) → q/r` to `(r, q) → q/r`, matching the paper's eq. 1 `⟦per⟧ = λr. λq. q/r`
+- **`coppock-2022` bib entry**: Fixed `subfield` from `morphology` to `semantics`, removed stale `sources` path (`BaleSchwarz2026Bridge.lean`)
+
+### Removed
+- **Redundant theorems**: `no_false_positives`/`no_false_negatives` (corollaries of `presup_predicts_felicity`), over-engineered `UndergenExample` struct, unused `MeasurementVerb` struct
+- **Trivial `copular_mismatch`**: Replaced `right; rfl` tautology with genuine structural theorem connecting Fragment entries to dimension types
+
 ## [0.229.352] - 2026-03-19
 
 ### Added
