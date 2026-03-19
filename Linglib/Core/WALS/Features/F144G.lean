@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 144G: Optional Double Negation in SVO languages
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144G`.
@@ -32,16 +34,8 @@ inductive OptionalDoubleNegationInSvoLanguages where
   | svoVsoNegvVnegNegvneg  -- SVO/VSO & NegV/VNeg/NegVNeg (1 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 144G datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : OptionalDoubleNegationInSvoLanguages
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 144G dataset (35 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint OptionalDoubleNegationInSvoLanguages) :=
   [ { walsCode := "adz", language := "Adzera", iso := "adz", value := .sNegVO }
   , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .snegVNegOSNegVNegO }
   , { walsCode := "arp", language := "Arapesh (Mountain)", iso := "ape", value := .snegvo }
@@ -120,11 +114,9 @@ theorem count_svoVsoNegvVnegNegvneg :
     (allData.filter (·.value == .svoVsoNegvVnegNegvneg)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F144G

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 111A: Nonperiphrastic Causative Constructions
 @cite{song-2013}
@@ -18,16 +20,8 @@ inductive NonperiphrCausativeType where
   | both  -- Both (24 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 111A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NonperiphrCausativeType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 111A dataset (310 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint NonperiphrCausativeType) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .morphologicalOnly }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .morphologicalOnly }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .morphologicalOnly }
@@ -353,11 +347,9 @@ theorem count_both :
     (allData.filter (·.value == .both)).length = 24 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F111A

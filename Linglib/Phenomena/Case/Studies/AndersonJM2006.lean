@@ -204,7 +204,7 @@ theorem experiencer_correctly_predicted :
 theorem anderson_linking_accuracy :
     (allVerbs.filter λ v =>
       (andersonPredictedSubjectTheta v.toVerbCore).isSome ==
-      (subjectRole v.toVerbCore).isSome).length = 233 := by
+      (subjectRole v.toVerbCore).isSome).length = 234 := by
   native_decide
 
 -- ============================================================================

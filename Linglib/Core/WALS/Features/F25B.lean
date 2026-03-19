@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 25B: Zero Marking of A and P Arguments
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 25B`.
@@ -16,16 +18,8 @@ inductive ZeroMarkingOfAAndPArguments where
   | nonZeroMarking  -- Non-zero marking (219 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 25B datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ZeroMarkingOfAAndPArguments
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 25B dataset (235 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ZeroMarkingOfAAndPArguments) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .nonZeroMarking }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .nonZeroMarking }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .nonZeroMarking }
@@ -272,11 +266,9 @@ theorem count_nonZeroMarking :
     (allData.filter (·.value == .nonZeroMarking)).length = 219 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F25B

@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 144X: Verb-Initial with Clause-Final Negative
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144X`.
@@ -18,16 +20,8 @@ inductive VerbInitialWithClauseFinalNegative where
   | noClauseFinalNeg  -- No clause-final neg (144 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 144X datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : VerbInitialWithClauseFinalNegative
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 144X dataset (151 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint VerbInitialWithClauseFinalNegative) :=
   [ { walsCode := "agc", language := "Agta (Central)", iso := "agt", value := .noClauseFinalNeg }
   , { walsCode := "agd", language := "Agta (Dupaningan)", iso := "duo", value := .noClauseFinalNeg }
   , { walsCode := "als", language := "Alsea", iso := "aes", value := .noClauseFinalNeg }
@@ -194,11 +188,9 @@ theorem count_noClauseFinalNeg :
     (allData.filter (·.value == .noClauseFinalNeg)).length = 144 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F144X

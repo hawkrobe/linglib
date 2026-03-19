@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 17A: Rhythm Types
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 17A`.
@@ -19,16 +21,8 @@ inductive RhythmTypes where
   | noRhythmicStress  -- No rhythmic stress (98 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 17A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : RhythmTypes
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 17A dataset (323 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint RhythmTypes) :=
   [ { walsCode := "ace", language := "Acehnese", iso := "ace", value := .trochaic }
   , { walsCode := "agu", language := "Aguacatec", iso := "agu", value := .noRhythmicStress }
   , { walsCode := "akl", language := "Aklanon", iso := "akl", value := .iambic }
@@ -369,11 +363,9 @@ theorem count_noRhythmicStress :
     (allData.filter (·.value == .noRhythmicStress)).length = 98 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F17A

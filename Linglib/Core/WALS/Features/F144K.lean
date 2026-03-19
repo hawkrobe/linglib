@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 144K: SVONeg Order
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144K`.
@@ -18,16 +20,8 @@ inductive SvonegOrder where
   | noSvoneg  -- No SVONeg (304 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 144K datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : SvonegOrder
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 144K dataset (446 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint SvonegOrder) :=
   [ { walsCode := "xam", language := "/Xam", iso := "xam", value := .noSvoneg }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .noSvoneg }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .noSvoneg }
@@ -489,11 +483,9 @@ theorem count_noSvoneg :
     (allData.filter (·.value == .noSvoneg)).length = 304 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F144K

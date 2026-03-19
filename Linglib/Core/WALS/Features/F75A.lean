@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 75A: Epistemic Possibility
 @cite{vanbogaert-2013}
@@ -17,16 +19,8 @@ inductive EpistemicPossibility where
   | other  -- Other (91 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 75A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : EpistemicPossibility
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 75A dataset (240 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint EpistemicPossibility) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .verbalConstructions }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .verbalConstructions }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .affixesOnVerbs }
@@ -280,11 +274,9 @@ theorem count_other :
     (allData.filter (·.value == .other)).length = 91 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F75A

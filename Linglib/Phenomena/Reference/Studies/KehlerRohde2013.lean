@@ -175,6 +175,7 @@ def perfective_model : NextMentionModel where
     | .elaboration => 28
     | .explanation => 18
     | .contrast    =>  8
+    | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
     | .result      =>  6
     | .parallel    =>  2
   pSourceGivenCR := fun
@@ -182,6 +183,7 @@ def perfective_model : NextMentionModel where
     | .elaboration => 98
     | .explanation => 80
     | .contrast    => 76
+    | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
     | .result      =>  8
     | .parallel    => 50
 
@@ -396,7 +398,7 @@ theorem passive_prediction_accurate :
     Result is in basis points (×10000); divide by 100 for percentage. -/
 def NextMentionModel.sourceBasisPts (m : NextMentionModel) : Nat :=
   let crs : List CoherenceRelation :=
-    [.occasion, .elaboration, .explanation, .contrast, .result, .parallel]
+    [.occasion, .elaboration, .explanation, .contrast, .correction, .result, .parallel]
   crs.foldl (λ acc cr => acc + m.pCR cr * m.pSourceGivenCR cr) 0
 
 /-- The instruction manipulation models from Tables 3–4.
@@ -407,6 +409,7 @@ private def sharedBias : CoherenceRelation → Nat
   | .elaboration => 100
   | .explanation => 82
   | .contrast    => 74
+  | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
   | .result      =>  9
   | .parallel    => 50
 
@@ -416,6 +419,7 @@ def whatNext_model : NextMentionModel where
     | .explanation =>  1
     | .elaboration =>  5
     | .contrast    =>  8
+    | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
     | .result      =>  5
     | .parallel    => 10
   pSourceGivenCR := sharedBias
@@ -426,6 +430,7 @@ def why_model : NextMentionModel where
     | .explanation => 91
     | .elaboration =>  8
     | .contrast    =>  1
+    | .correction  =>  0  -- not in K&R 2013 coding scheme; 0% weight in mixture
     | .result      =>  0
     | .parallel    =>  0
   pSourceGivenCR := sharedBias

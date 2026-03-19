@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 35A: Plurality in Independent Personal Pronouns
 @cite{haspelmath-2013b}
@@ -22,16 +24,8 @@ inductive PronounPlurality where
   | personStemNominalPluralAffix  -- Person stem + nominal plural affix (19 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 35A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PronounPlurality
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 35A dataset (261 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PronounPlurality) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .personNumberStem }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .personNumberStem }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noIndependentSubjectPronouns }
@@ -316,11 +310,9 @@ theorem count_personStemNominalPluralAffix :
     (allData.filter (·.value == .personStemNominalPluralAffix)).length = 19 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F35A

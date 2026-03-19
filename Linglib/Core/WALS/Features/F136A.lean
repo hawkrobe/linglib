@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 136A: M-T Pronouns
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 136A`.
@@ -17,16 +19,8 @@ inductive MTPronouns where
   | mTPronounsNonParadigmatic  -- M-T pronouns, non-paradigmatic (3 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 136A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : MTPronouns
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 136A dataset (230 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint MTPronouns) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .noMTPronouns }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .noMTPronouns }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noMTPronouns }
@@ -270,11 +264,9 @@ theorem count_mTPronounsNonParadigmatic :
     (allData.filter (·.value == .mTPronounsNonParadigmatic)).length = 3 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F136A

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 117A: Predicative Possession
 @cite{stassen-2013b}
@@ -19,16 +21,8 @@ inductive PredicativePossession where
   | have  -- 'Have' (63 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 117A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PredicativePossession
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 117A dataset (240 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PredicativePossession) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .have }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .topic }
   , { walsCode := "acl", language := "Acholi", iso := "ach", value := .conjunctional }
@@ -286,11 +280,9 @@ theorem count_have :
     (allData.filter (·.value == .have)).length = 63 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F117A

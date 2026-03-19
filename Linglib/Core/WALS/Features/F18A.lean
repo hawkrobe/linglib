@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 18A: Absence of Common Consonants
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 18A`.
@@ -20,15 +22,7 @@ inductive AbsenceOfCommonConsonants where
   | noFricativesOrNasals  -- No fricatives or nasals (1 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 18A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : AbsenceOfCommonConsonants
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint AbsenceOfCommonConsonants) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .allPresent }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .allPresent }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .allPresent }
@@ -531,7 +525,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "tru", language := "Trumai", iso := "tpy", value := .allPresent }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint AbsenceOfCommonConsonants) :=
   [ { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .allPresent }
   , { walsCode := "tso", language := "Tsou", iso := "tsu", value := .allPresent }
   , { walsCode := "ttu", language := "Tsova-Tush", iso := "bbl", value := .allPresent }
@@ -602,7 +596,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 18A dataset (567 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint AbsenceOfCommonConsonants) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 567 := by native_decide
@@ -621,11 +615,9 @@ theorem count_noFricativesOrNasals :
     (allData.filter (·.value == .noFricativesOrNasals)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F18A

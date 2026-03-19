@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 89A: Order of Numeral and Noun
 @cite{dryer-2013-wals}
@@ -18,15 +20,7 @@ inductive NumeralNounOrder where
   | numeralOnlyModifiesVerb  -- Numeral only modifies verb (2 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 89A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NumeralNounOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint NumeralNounOrder) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .numeralNoun }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .nounNumeral }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .nounNumeral }
@@ -529,7 +523,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "krn", language := "Korana", iso := "kqz", value := .numeralNoun }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint NumeralNounOrder) :=
   [ { walsCode := "kor", language := "Korean", iso := "kor", value := .numeralNoun }
   , { walsCode := "kje", language := "Koreguaje", iso := "coe", value := .nounNumeral }
   , { walsCode := "kku", language := "Korku", iso := "kfq", value := .numeralNoun }
@@ -1032,7 +1026,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "ter", language := "Tera", iso := "ttr", value := .nounNumeral }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint NumeralNounOrder) :=
   [ { walsCode := "trb", language := "Teribe", iso := "tfr", value := .nounNumeral }
   , { walsCode := "tes", language := "Teso", iso := "teo", value := .nounNumeral }
   , { walsCode := "tet", language := "Tetela", iso := "tll", value := .nounNumeral }
@@ -1190,7 +1184,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 89A dataset (1154 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint NumeralNounOrder) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1154 := by native_decide
@@ -1205,11 +1199,9 @@ theorem count_numeralOnlyModifiesVerb :
     (allData.filter (·.value == .numeralOnlyModifiesVerb)).length = 2 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F89A

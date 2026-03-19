@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 144P: NegSOV Order
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144P`.
@@ -18,16 +20,8 @@ inductive NegsovOrder where
   | noNegsov  -- No NegSOV (381 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 144P datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NegsovOrder
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 144P dataset (408 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint NegsovOrder) :=
   [ { walsCode := "aba", language := "Abau", iso := "aau", value := .noNegsov }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .noNegsov }
   , { walsCode := "abv", language := "Abui", iso := "abz", value := .noNegsov }
@@ -451,11 +445,9 @@ theorem count_noNegsov :
     (allData.filter (·.value == .noNegsov)).length = 381 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F144P

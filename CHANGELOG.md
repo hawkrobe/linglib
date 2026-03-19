@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.350] - 2026-03-19
+
+### Added
+- **`Datapoint.lean` (Core/WALS)**: Generic `Datapoint V` structure parameterized by feature value type, with generic `lookup`/`lookupISO` functions — eliminates ~1,500 lines of duplicated boilerplate across 192 WALS feature files
+- **`Scale.lean` (Core/Scales)**: `Rat01` type alias for `↥(Set.Icc (0 : ℚ) 1)` with `half`, `exceeds`, `value`, `nonneg`, `le_one` — shared bounded-rational infrastructure
+- **`InformationStructure.lean` (Core/Discourse)**: `DiscourseContext M` composite type bundling QUD + DiscourseStatus + CoherenceRelation; `ExclusionVariety` with `toCoherenceRelation` bridge; `FIPApplication` enum; `wellFormedAlts`/`semanticallyIndependent`/`commonIntegrator` (Umbach 2004 §2.2); polarity-switch types
+- **`Umbach2004.lean` (Focus/Studies)**: Formalize Umbach 2004 "On the Notion of Contrast" — alternative-set well-formedness, exclusion varieties (additional/substitution), confirm+deny QUD condition, contrast multiplicity, Rooth FIP connection, bridges to CoherenceRelation and FocusParticles
+- **`FocusParticles.lean` (Fragments/English)**: `exclusionVariety` field on `Entry`; `only_` entry with `.additional` exclusion; `only_excludes_additional` theorem
+
+### Changed
+- **WALS feature files (192 files)**: Use generic `Core.WALS.Datapoint V` instead of per-file `Datapoint` structure; thin `lookup`/`lookupISO` wrappers delegate to generic versions
+- **`gen_wals.py`**: Updated to generate files using generic `Datapoint V` type
+- **`AtIssueness.lean` (Core/Discourse)**: Replace 4 identical bounded-ℚ structures with `Rat01` aliases; `isAtIssue`/`isProjective` delegate to `Rat01.exceeds`
+- **`SpeechActs.lean` (Core/Discourse)**: Rename `epistemicAuthority` → `moodAuthority` to disambiguate from `Epistemicity.EpistemicAuthority` inductive type
+- **`SpeechActs.lean` (Minimalism)**: Update `moodAuthority` reference and theorem name
+
+### Fixed
+- **`InformationStructure.lean`**: Fix inverted `ExclusionVariety` docstrings — `.additional` = only-phrases/CONTRAST, `.substitution` = contrastive focus/CORRECTION (matching Umbach 2004 Table 1)
+- **`FocusParticles.lean`**: Fix `only_.exclusionVariety` from `.substitution` to `.additional`
+
 ## [0.229.349] - 2026-03-19
 
 ### Added

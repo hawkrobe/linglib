@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 143A: Order of Negative Morpheme and Verb
 @cite{dryer-2013-wals}
@@ -31,15 +33,7 @@ inductive NegVerbOrder where
   | opttriplenegOptdoubleneg  -- OptTripleNeg&OptDoubleNeg (1 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 143A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NegVerbOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint NegVerbOrder) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .vneg }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .negv }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .negv }
@@ -542,7 +536,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "kas", language := "Kashmiri", iso := "kas", value := .vNeg }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint NegVerbOrder) :=
   [ { walsCode := "ksn", language := "Kasong", iso := "cog", value := .negv }
   , { walsCode := "ktc", language := "Katcha", iso := "xtc", value := .negv }
   , { walsCode := "kti", language := "Kati (in West Papua, Indonesia)", iso := "kts", value := .vneg }
@@ -1045,7 +1039,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "rot", language := "Rotuman", iso := "rtm", value := .obligdoubleneg }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint NegVerbOrder) :=
   [ { walsCode := "rov", language := "Roviana", iso := "rug", value := .negv }
   , { walsCode := "ruk", language := "Rukai (Tanan)", iso := "dru", value := .negv }
   , { walsCode := "cos", language := "Rumsien", iso := "", value := .negv }
@@ -1374,7 +1368,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 143A dataset (1325 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint NegVerbOrder) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1325 := by native_decide
@@ -1415,11 +1409,9 @@ theorem count_opttriplenegOptdoubleneg :
     (allData.filter (·.value == .opttriplenegOptdoubleneg)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F143A

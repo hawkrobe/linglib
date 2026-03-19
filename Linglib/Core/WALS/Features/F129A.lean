@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 129A: Hand and Arm
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 129A`.
@@ -16,15 +18,7 @@ inductive HandAndArm where
   | different  -- Different (389 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 129A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : HandAndArm
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint HandAndArm) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .identical }
   , { walsCode := "arx", language := "'Are'are", iso := "alu", value := .identical }
   , { walsCode := "abw", language := "Abenaki (Western)", iso := "abe", value := .different }
@@ -527,7 +521,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "spo", language := "Spokane", iso := "spo", value := .different }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint HandAndArm) :=
   [ { walsCode := "squ", language := "Squamish", iso := "squ", value := .identical }
   , { walsCode := "sus", language := "Susu", iso := "sus", value := .identical }
   , { walsCode := "sva", language := "Svan", iso := "sva", value := .different }
@@ -648,7 +642,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 129A dataset (617 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint HandAndArm) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 617 := by native_decide
@@ -659,11 +653,9 @@ theorem count_different :
     (allData.filter (·.value == .different)).length = 389 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F129A

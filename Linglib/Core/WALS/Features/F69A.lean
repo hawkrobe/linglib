@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 69A: Position of Tense-Aspect Affixes
 @cite{dahl-2013}
@@ -19,15 +21,7 @@ inductive TenseAspectAffixPosition where
   | noTenseAspectInflection  -- No tense-aspect inflection (152 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 69A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : TenseAspectAffixPosition
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint TenseAspectAffixPosition) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .tenseAspectSuffixes }
   , { walsCode := "aar", language := "Aari", iso := "aiw", value := .tenseAspectSuffixes }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .tenseAspectSuffixes }
@@ -530,7 +524,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .mixedType }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint TenseAspectAffixPosition) :=
   [ { walsCode := "knc", language := "Kugu Nganhcara", iso := "uwa", value := .tenseAspectSuffixes }
   , { walsCode := "kya", language := "Kuku-Yalanji", iso := "gvn", value := .tenseAspectSuffixes }
   , { walsCode := "kmn", language := "Kuman", iso := "kue", value := .tenseAspectSuffixes }
@@ -1033,7 +1027,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "tgl", language := "Tshangla", iso := "tsj", value := .tenseAspectSuffixes }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint TenseAspectAffixPosition) :=
   [ { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .noTenseAspectInflection }
   , { walsCode := "ttu", language := "Tsova-Tush", iso := "bbl", value := .tenseAspectSuffixes }
   , { walsCode := "tgh", language := "Tuareg (Ghat)", iso := "thv", value := .tenseAspectPrefixes }
@@ -1168,7 +1162,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 69A dataset (1131 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint TenseAspectAffixPosition) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1131 := by native_decide
@@ -1185,11 +1179,9 @@ theorem count_noTenseAspectInflection :
     (allData.filter (·.value == .noTenseAspectInflection)).length = 152 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F69A

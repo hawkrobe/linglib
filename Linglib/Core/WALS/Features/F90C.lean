@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 90C: Postnominal relative clauses
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 90C`.
@@ -18,15 +20,7 @@ inductive PostnominalRelativeClauses where
   | nrelOrCorrelative  -- NRel or correlative (2 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 90C datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PostnominalRelativeClauses
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint PostnominalRelativeClauses) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .nounRelativeClauseDominant }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .nounRelativeClauseDominant }
   , { walsCode := "aar", language := "Aari", iso := "aiw", value := .nounRelativeClauseDominant }
@@ -529,7 +523,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "sht", language := "Shatt", iso := "shj", value := .nounRelativeClauseDominant }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint PostnominalRelativeClauses) :=
   [ { walsCode := "shn", language := "Shona", iso := "sna", value := .nounRelativeClauseDominant }
   , { walsCode := "sir", language := "Siar", iso := "sjr", value := .nounRelativeClauseDominant }
   , { walsCode := "skr", language := "Sikaritai", iso := "tty", value := .nounRelativeClauseDominant }
@@ -653,7 +647,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 90C dataset (620 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint PostnominalRelativeClauses) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 620 := by native_decide
@@ -668,11 +662,9 @@ theorem count_nrelOrCorrelative :
     (allData.filter (·.value == .nrelOrCorrelative)).length = 2 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F90C

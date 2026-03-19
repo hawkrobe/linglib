@@ -76,7 +76,7 @@ inductive IllocutionaryMood where
 
     @cite{lakoff-1970}: in declaratives, imperatives, and promissives the speaker is the
     seat of knowledge; in interrogatives the addressee is. -/
-def epistemicAuthority : IllocutionaryMood → DiscourseRole
+def moodAuthority : IllocutionaryMood → DiscourseRole
   | .declarative   => .speaker
   | .interrogative  => .addressee
   | .imperative     => .speaker
@@ -508,10 +508,10 @@ theorem directive_has_preparatory_conditions :
 
 -- Epistemic authority
 theorem epistemic_authority_declarative :
-    epistemicAuthority .declarative = .speaker := rfl
+    moodAuthority .declarative = .speaker := rfl
 
 theorem epistemic_authority_interrogative :
-    epistemicAuthority .interrogative = .addressee := rfl
+    moodAuthority .interrogative = .addressee := rfl
 
 theorem resolve_speaker_is_agent {W E P T : Type*}
     (tower : ContextTower (KContext W E P T)) :

@@ -163,6 +163,7 @@ import Linglib.Core.Interval.LogInterval
 import Linglib.Core.Interval.SqrtInterval
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Core.Subjectivity
+import Linglib.Core.WALS.Datapoint
 import Linglib.Core.WALS.Languages
 import Linglib.Core.WALS.Features.F1A
 import Linglib.Core.WALS.Features.F2A

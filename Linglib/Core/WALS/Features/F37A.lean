@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 37A: Definite Articles
 @cite{dryer-2013-wals}
@@ -19,15 +21,7 @@ inductive DefiniteArticleType where
   | noDefiniteOrIndefiniteArticle  -- No definite or indefinite article (198 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 37A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : DefiniteArticleType
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint DefiniteArticleType) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .definiteAffix }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .definiteWordDistinctFromDemonstrative }
   , { walsCode := "abu", language := "Abun", iso := "kgr", value := .demonstrativeWordUsedAsDefiniteArticle }
@@ -530,7 +524,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "srn", language := "Sirionó", iso := "srq", value := .noDefiniteOrIndefiniteArticle }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint DefiniteArticleType) :=
   [ { walsCode := "sro", language := "Siroi", iso := "ssd", value := .noDefiniteOrIndefiniteArticle }
   , { walsCode := "ssa", language := "Sisaala", iso := "sil", value := .definiteAffix }
   , { walsCode := "sis", language := "Sisiqa", iso := "baa", value := .definiteWordDistinctFromDemonstrative }
@@ -654,7 +648,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 37A dataset (620 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint DefiniteArticleType) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 620 := by native_decide
@@ -671,11 +665,9 @@ theorem count_noDefiniteOrIndefiniteArticle :
     (allData.filter (·.value == .noDefiniteOrIndefiniteArticle)).length = 198 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F37A

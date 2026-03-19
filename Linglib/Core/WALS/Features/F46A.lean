@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 46A: Indefinite Pronouns
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 46A`.
@@ -19,16 +21,8 @@ inductive IndefinitePronouns where
   | existentialConstruction  -- Existential construction (2 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 46A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : IndefinitePronouns
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 46A dataset (326 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint IndefinitePronouns) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .special }
   , { walsCode := "abu", language := "Abun", iso := "kgr", value := .genericNounBased }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .interrogativeBased }
@@ -372,11 +366,9 @@ theorem count_existentialConstruction :
     (allData.filter (·.value == .existentialConstruction)).length = 2 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F46A

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 106A: Reciprocal Constructions
 @cite{maslova-nedjalkov-2013}
@@ -18,16 +20,8 @@ inductive ReciprocalType where
   | identicalToReflexive  -- Identical to reflexive (44 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 106A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ReciprocalType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 106A dataset (175 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ReciprocalType) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .distinctFromReflexive }
   , { walsCode := "acg", language := "Achagua", iso := "aca", value := .distinctFromReflexive }
   , { walsCode := "ain", language := "Ainu", iso := "ain", value := .distinctFromReflexive }
@@ -218,11 +212,9 @@ theorem count_identicalToReflexive :
     (allData.filter (·.value == .identicalToReflexive)).length = 44 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F106A

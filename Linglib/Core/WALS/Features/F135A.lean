@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 135A: Red and Yellow
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 135A`.
@@ -19,16 +21,8 @@ inductive RedAndYellow where
   | none  -- None (3 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 135A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : RedAndYellow
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 135A dataset (120 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint RedAndYellow) :=
   [ { walsCode := "abd", language := "Abidji", iso := "abi", value := .redYellow }
   , { walsCode := "aga", language := "Agarabi", iso := "agd", value := .redVsYellow }
   , { walsCode := "agc", language := "Agta (Central)", iso := "agt", value := .redVsYellow }
@@ -166,11 +160,9 @@ theorem count_none :
     (allData.filter (·.value == .none)).length = 3 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F135A

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 84A: Order of Object, Oblique, and Verb
 @cite{dryer-2013-wals}
@@ -20,16 +22,8 @@ inductive ObjectObliqueVerbOrder where
   | noDominantOrder  -- No dominant order (167 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 84A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ObjectObliqueVerbOrder
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 84A dataset (500 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ObjectObliqueVerbOrder) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .noDominantOrder }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .vox }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .vox }
@@ -549,11 +543,9 @@ theorem count_noDominantOrder :
     (allData.filter (·.value == .noDominantOrder)).length = 167 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F84A

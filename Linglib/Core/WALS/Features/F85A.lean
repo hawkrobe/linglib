@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 85A: Order of Adposition and Noun Phrase
 @cite{dryer-2013-wals}
@@ -19,15 +21,7 @@ inductive AdpositionNPOrder where
   | noAdpositions  -- No adpositions (30 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 85A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : AdpositionNPOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint AdpositionNPOrder) :=
   [ { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .noDominantOrder }
   , { walsCode := "aar", language := "Aari", iso := "aiw", value := .postpositions }
   , { walsCode := "aba", language := "Abau", iso := "aau", value := .postpositions }
@@ -530,7 +524,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "kga", language := "Kinga", iso := "zga", value := .prepositions }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint AdpositionNPOrder) :=
   [ { walsCode := "knn", language := "Kinnauri", iso := "kfk", value := .postpositions }
   , { walsCode := "kin", language := "Kinyarwanda", iso := "kin", value := .prepositions }
   , { walsCode := "kio", language := "Kiowa", iso := "kio", value := .noAdpositions }
@@ -1033,7 +1027,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "tbx", language := "Tangbe", iso := "skj", value := .postpositions }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint AdpositionNPOrder) :=
   [ { walsCode := "tpt", language := "Tapieté", iso := "tpj", value := .prepositions }
   , { walsCode := "tce", language := "Tarahumara (Central)", iso := "tar", value := .postpositions }
   , { walsCode := "twe", language := "Tarahumara (Western)", iso := "tac", value := .noDominantOrder }
@@ -1221,7 +1215,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 85A dataset (1184 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint AdpositionNPOrder) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1184 := by native_decide
@@ -1238,11 +1232,9 @@ theorem count_noAdpositions :
     (allData.filter (·.value == .noAdpositions)).length = 30 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F85A

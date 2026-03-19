@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 65A: Perfective/Imperfective Aspect
 @cite{dahl-2013}
@@ -16,16 +18,8 @@ inductive PerfectiveImperfective where
   | noGrammaticalMarking  -- No grammatical marking (121 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 65A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PerfectiveImperfective
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 65A dataset (222 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PerfectiveImperfective) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .noGrammaticalMarking }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .grammaticalMarking }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noGrammaticalMarking }
@@ -259,11 +253,9 @@ theorem count_noGrammaticalMarking :
     (allData.filter (·.value == .noGrammaticalMarking)).length = 121 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F65A

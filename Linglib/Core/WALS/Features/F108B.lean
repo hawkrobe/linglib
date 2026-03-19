@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 108B: Productivity of the Antipassive Construction
 @cite{polinsky-2013}
@@ -18,16 +20,8 @@ inductive AntipassiveProductivity where
   | noAntipassive  -- No antipassive (146 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 108B datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : AntipassiveProductivity
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 108B dataset (186 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint AntipassiveProductivity) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .noAntipassive }
   , { walsCode := "ain", language := "Ainu", iso := "ain", value := .noAntipassive }
   , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .noAntipassive }
@@ -229,11 +223,9 @@ theorem count_noAntipassive :
     (allData.filter (·.value == .noAntipassive)).length = 146 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F108B

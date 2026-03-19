@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 131A: Numeral Bases
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 131A`.
@@ -20,16 +22,8 @@ inductive NumeralBases where
   | restricted  -- Restricted (20 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 131A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NumeralBases
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 131A dataset (196 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint NumeralBases) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .restricted }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .hybridVigesimalDecimal }
   , { walsCode := "abu", language := "Abun", iso := "kgr", value := .decimal }
@@ -245,11 +239,9 @@ theorem count_restricted :
     (allData.filter (·.value == .restricted)).length = 20 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F131A

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 99A: Alignment of Case Marking of Pronouns
 @cite{comrie-2013b}
@@ -21,16 +23,8 @@ inductive PronounCaseAlignment where
   | none  -- None (3 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 99A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PronounCaseAlignment
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 99A dataset (172 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PronounCaseAlignment) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .neutral }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .neutral }
   , { walsCode := "ain", language := "Ainu", iso := "ain", value := .neutral }
@@ -224,11 +218,9 @@ theorem count_none :
     (allData.filter (·.value == .none)).length = 3 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F99A

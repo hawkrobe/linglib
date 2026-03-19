@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 81B: Languages with two Dominant Orders of Subject, Object, and Verb
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 81B`.
@@ -19,16 +21,8 @@ inductive LanguagesWithTwoDominantOrdersOfSubjectObjectAndVerb where
   | sovOrOvs  -- SOV or OVS (3 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 81B datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : LanguagesWithTwoDominantOrdersOfSubjectObjectAndVerb
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 81B dataset (67 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint LanguagesWithTwoDominantOrdersOfSubjectObjectAndVerb) :=
   [ { walsCode := "ajg", language := "Ajagbe", iso := "ajg", value := .sovOrSvo }
   , { walsCode := "ami", language := "Amis", iso := "ami", value := .vsoOrVos }
   , { walsCode := "apl", language := "Apalaí", iso := "apy", value := .sovOrOvs }
@@ -113,11 +107,9 @@ theorem count_sovOrOvs :
     (allData.filter (·.value == .sovOrOvs)).length = 3 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F81B

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 86A: Order of Genitive and Noun
 @cite{dryer-2013-wals}
@@ -17,15 +19,7 @@ inductive GenitiveNounOrder where
   | noDominantOrder  -- No dominant order (96 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 86A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : GenitiveNounOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint GenitiveNounOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .genitiveNoun }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .genitiveNoun }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .genitiveNoun }
@@ -528,7 +522,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "khi", language := "Khinalug", iso := "kjj", value := .genitiveNoun }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint GenitiveNounOrder) :=
   [ { walsCode := "khm", language := "Khmer", iso := "khm", value := .nounGenitive }
   , { walsCode := "kmu", language := "Khmu'", iso := "kjg", value := .nounGenitive }
   , { walsCode := "khw", language := "Khowar", iso := "khw", value := .genitiveNoun }
@@ -1031,7 +1025,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "qum", language := "Sipakapense", iso := "qum", value := .nounGenitive }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint GenitiveNounOrder) :=
   [ { walsCode := "srn", language := "Sirionó", iso := "srq", value := .genitiveNoun }
   , { walsCode := "sro", language := "Siroi", iso := "ssd", value := .genitiveNoun }
   , { walsCode := "sis", language := "Sisiqa", iso := "baa", value := .nounGenitive }
@@ -1284,7 +1278,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 86A dataset (1249 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint GenitiveNounOrder) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1249 := by native_decide
@@ -1297,11 +1291,9 @@ theorem count_noDominantOrder :
     (allData.filter (·.value == .noDominantOrder)).length = 96 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F86A

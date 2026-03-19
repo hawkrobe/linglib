@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 143B: Obligatory Double Negation
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 143B`.
@@ -30,16 +32,8 @@ inductive ObligatoryDoubleNegation where
   | obligdoublenegOpttripleneg  -- ObligDoubleNeg&OptTripleNeg (5 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 143B datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ObligatoryDoubleNegation
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 143B dataset (119 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ObligatoryDoubleNegation) :=
   [ { walsCode := "abu", language := "Abun", iso := "kgr", value := .negvneg }
   , { walsCode := "amn", language := "Amanab", iso := "amn", value := .negVNeg }
   , { walsCode := "aml", language := "Ambae (Lolovoli Northeast)", iso := "omb", value := .negvneg }
@@ -198,11 +192,9 @@ theorem count_obligdoublenegOpttripleneg :
     (allData.filter (·.value == .obligdoublenegOpttripleneg)).length = 5 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F143B

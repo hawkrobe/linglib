@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 36A: The Associative Plural
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 36A`.
@@ -18,16 +20,8 @@ inductive AssociativePlural where
   | noAssociativePlural  -- No associative plural (37 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 36A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : AssociativePlural
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 36A dataset (236 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint AssociativePlural) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .uniqueAffixalAssociativePlural }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noAssociativePlural }
   , { walsCode := "adt", language := "Adyghe (Temirgoy)", iso := "ady", value := .uniquePeriphrasticAssociativePlural }
@@ -279,11 +273,9 @@ theorem count_noAssociativePlural :
     (allData.filter (·.value == .noAssociativePlural)).length = 37 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F36A

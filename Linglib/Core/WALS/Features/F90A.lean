@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 90A: Order of Relative Clause and Noun
 @cite{dryer-2013-wals}
@@ -21,15 +23,7 @@ inductive RelClauseNounOrder where
   | mixed  -- Mixed (64 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 90A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : RelClauseNounOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint RelClauseNounOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .nounRelativeClause }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .nounRelativeClause }
   , { walsCode := "aar", language := "Aari", iso := "aiw", value := .nounRelativeClause }
@@ -532,7 +526,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "mcv", language := "Mocoví", iso := "moc", value := .nounRelativeClause }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint RelClauseNounOrder) :=
   [ { walsCode := "mof", language := "Mofu-Gudur", iso := "mif", value := .nounRelativeClause }
   , { walsCode := "mok", language := "Mokilese", iso := "mkj", value := .nounRelativeClause }
   , { walsCode := "mga", language := "Mondunga", iso := "ndt", value := .nounRelativeClause }
@@ -860,7 +854,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 90A dataset (824 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint RelClauseNounOrder) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 824 := by native_decide
@@ -881,11 +875,9 @@ theorem count_mixed :
     (allData.filter (·.value == .mixed)).length = 64 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F90A

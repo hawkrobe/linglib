@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 79B: Suppletion in Imperatives and Hortatives
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 79B`.
@@ -19,16 +21,8 @@ inductive SuppletionInImperativesAndHortatives where
   | none  -- None (= no suppletive imperatives reported in the reference material) (153 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 79B datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : SuppletionInImperativesAndHortatives
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 79B dataset (193 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint SuppletionInImperativesAndHortatives) :=
   [ { walsCode := "xun", language := "!Xun (Ekoka)", iso := "knw", value := .imperative }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .none }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .hortative }
@@ -239,11 +233,9 @@ theorem count_none :
     (allData.filter (·.value == .none)).length = 153 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F79B

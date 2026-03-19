@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 77A: Semantic Distinctions of Evidentiality
 @cite{deandradedehaanValenzuela-2013}
@@ -17,16 +19,8 @@ inductive EvidentialityDistinctions where
   | directAndIndirect  -- Direct and indirect (71 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 77A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : EvidentialityDistinctions
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 77A dataset (418 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint EvidentialityDistinctions) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .noGrammaticalEvidentials }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .indirectOnly }
   , { walsCode := "acm", language := "Achumawi", iso := "acv", value := .indirectOnly }
@@ -458,11 +452,9 @@ theorem count_directAndIndirect :
     (allData.filter (·.value == .directAndIndirect)).length = 71 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F77A

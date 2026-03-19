@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 139A: Irregular Negatives in Sign Languages
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 139A`.
@@ -18,16 +20,8 @@ inductive IrregularNegativesInSignLanguages where
   | many  -- Many (more than 5) (21 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 139A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : IrregularNegativesInSignLanguages
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 139A dataset (35 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint IrregularNegativesInSignLanguages) :=
   [ { walsCode := "ada", language := "Adamorobe Sign Language", iso := "ads", value := .some }
   , { walsCode := "asl", language := "American Sign Language", iso := "ase", value := .many }
   , { walsCode := "aus", language := "Auslan", iso := "asf", value := .many }
@@ -78,11 +72,9 @@ theorem count_many :
     (allData.filter (·.value == .many)).length = 21 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F139A

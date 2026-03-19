@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 94A: Order of Adverbial Subordinator and Clause
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 94A`.
@@ -19,15 +21,7 @@ inductive OrderOfAdverbialSubordinatorAndClause where
   | mixed  -- Mixed (93 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 94A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : OrderOfAdverbialSubordinatorAndClause
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint OrderOfAdverbialSubordinatorAndClause) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .initialSubordinatorWord }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .initialSubordinatorWord }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .subordinatingSuffix }
@@ -530,7 +524,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "san", language := "Sango", iso := "sag", value := .initialSubordinatorWord }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint OrderOfAdverbialSubordinatorAndClause) :=
   [ { walsCode := "snm", language := "Sanuma", iso := "xsu", value := .finalSubordinatorWord }
   , { walsCode := "src", language := "Sarcee", iso := "srs", value := .mixed }
   , { walsCode := "srd", language := "Sardinian", iso := "sro", value := .initialSubordinatorWord }
@@ -693,7 +687,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 94A dataset (659 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint OrderOfAdverbialSubordinatorAndClause) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 659 := by native_decide
@@ -710,11 +704,9 @@ theorem count_mixed :
     (allData.filter (·.value == .mixed)).length = 93 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F94A

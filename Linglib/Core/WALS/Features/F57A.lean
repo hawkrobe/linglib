@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 57A: Position of Pronominal Possessive Affixes
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 57A`.
@@ -18,15 +20,7 @@ inductive PositionOfPronominalPossessiveAffixes where
   | noPossessiveAffixes  -- No possessive affixes (260 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 57A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PositionOfPronominalPossessiveAffixes
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint PositionOfPronominalPossessiveAffixes) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .noPossessiveAffixes }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .prefixesAndSuffixes }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .possessivePrefixes }
@@ -529,7 +523,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "mdo", language := "Mbodomo", iso := "gmm", value := .noPossessiveAffixes }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint PositionOfPronominalPossessiveAffixes) :=
   [ { walsCode := "mee", language := "Me'en", iso := "mym", value := .possessiveSuffixes }
   , { walsCode := "mei", language := "Meithei", iso := "mni", value := .possessivePrefixes }
   , { walsCode := "mek", language := "Mekens", iso := "skf", value := .possessivePrefixes }
@@ -935,7 +929,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 57A dataset (902 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint PositionOfPronominalPossessiveAffixes) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 902 := by native_decide
@@ -950,11 +944,9 @@ theorem count_noPossessiveAffixes :
     (allData.filter (·.value == .noPossessiveAffixes)).length = 260 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F57A

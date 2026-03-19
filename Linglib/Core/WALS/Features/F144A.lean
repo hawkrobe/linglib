@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 144A: Position of Negative Word With Respect to Subject, Object, and Verb
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144A`.
@@ -35,15 +37,7 @@ inductive PositionOfNegativeWordWithRespectToSubjectObjectAndVerb where
   | other  -- Other (169 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 144A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PositionOfNegativeWordWithRespectToSubjectObjectAndVerb
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .other }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .other }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .snegvo }
@@ -546,7 +540,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "kol", language := "Kolami", iso := "kfb", value := .moreThanOnePosition }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
   [ { walsCode := "kmb", language := "Kombai", iso := "", value := .optdoubleneg }
   , { walsCode := "xbi", language := "Kombio", iso := "xbi", value := .snegvo }
   , { walsCode := "kzy", language := "Komi-Zyrian", iso := "kpv", value := .snegvo }
@@ -1049,7 +1043,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "tma", language := "Tama", iso := "tma", value := .morphneg }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
   [ { walsCode := "tmm", language := "Tamabo", iso := "mla", value := .snegvo }
   , { walsCode := "tam", language := "Tamang (Eastern)", iso := "taj", value := .sonegv }
   , { walsCode := "tsk", language := "Tamashek", iso := "taq", value := .optdoubleneg }
@@ -1243,7 +1237,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 144A dataset (1190 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1190 := by native_decide
@@ -1292,11 +1286,9 @@ theorem count_other :
     (allData.filter (·.value == .other)).length = 169 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F144A

@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 144V: Verb-Initial with Preverbal Negative
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144V`.
@@ -23,16 +25,8 @@ inductive VerbInitialWithPreverbalNegative where
   | noPreverbalNeg  -- No preverbal neg (7 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 144V datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : VerbInitialWithPreverbalNegative
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 144V dataset (152 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint VerbInitialWithPreverbalNegative) :=
   [ { walsCode := "agc", language := "Agta (Central)", iso := "agt", value := .separateWordNoDoubleNegationWordNodoubleneg }
   , { walsCode := "agd", language := "Agta (Dupaningan)", iso := "duo", value := .separateWordNoDoubleNegationWordNodoubleneg }
   , { walsCode := "als", language := "Alsea", iso := "aes", value := .separateWordNoDoubleNegationWordNodoubleneg }
@@ -210,11 +204,9 @@ theorem count_noPreverbalNeg :
     (allData.filter (·.value == .noPreverbalNeg)).length = 7 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F144V

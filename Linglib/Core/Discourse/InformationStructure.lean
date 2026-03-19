@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Discourse.AtIssueness
+import Linglib.Core.Discourse.CoherenceRelation
 
 /-!
 # Core.InformationStructure
@@ -217,13 +218,26 @@ utterance, independent of how languages mark the switch.
 
 /-- The discourse context in which a polarity switch (neg → affirm) occurs.
     Crosslinguistically relevant: Dutch and German mark both contexts but with
-    different strategies. -/
+    different strategies.
+
+    This is the information-structural reflex of the discourse-structural
+    distinction between `CoherenceRelation.contrast` and
+    `CoherenceRelation.correction` (@cite{umbach-2004} §3). -/
 inductive PolaritySwitchContext where
   /-- Different topic situations, compatible claims -/
   | contrast
   /-- Same topic situation, mutually exclusive claims -/
   | correction
   deriving DecidableEq, Repr, BEq
+
+open Core.Discourse.CoherenceRelation in
+/-- Bridge from polarity-switch contexts to discourse coherence relations.
+    @cite{umbach-2004} §3: the contrast/correction distinction in information
+    structure corresponds directly to two distinct resemblance relations
+    at the discourse level. -/
+def PolaritySwitchContext.toCoherenceRelation : PolaritySwitchContext → CoherenceRelation
+  | .contrast   => .contrast
+  | .correction => .correction
 
 /-- How a language marks polarity switches (neg → affirm).
     Theory-neutral inventory: individual languages select a subset. -/
@@ -260,6 +274,84 @@ structure PolarityMarkingEntry where
   strategy : PolarityMarkingStrategy
   deriving Repr, DecidableEq, BEq
 
+/-! ## Alternative Set Well-Formedness (@cite{umbach-2004} §2.2)
+
+@cite{umbach-2004} identifies two constraints that jointly determine when
+elements can serve as alternatives (in focus, coordination, or discourse):
+
+1. **Semantic independence**: neither alternative entails the other
+   (dissimilarity). Explains why *#John had a drink and Mary had a martini*
+   is odd — "drink" subsumes "martini".
+
+2. **Common integrator**: a concept subsuming all alternatives (similarity).
+   Explains why alternatives must be of a comparable type.
+
+Together these define *comparability* = similarity + dissimilarity, which
+is the prerequisite for any type of contrast. -/
+
+/-- Two propositions are semantically independent iff neither entails the other.
+    @cite{umbach-2004} §2.2: required for alternatives in focus, coordination,
+    and discourse relations. Violation explains the oddness of
+    *#John had a drink and Mary had a martini*. -/
+def semanticallyIndependent {W : Type} (a b : W → Bool) : Prop :=
+  ¬(∀ w : W, a w = true → b w = true) ∧ ¬(∀ w : W, b w = true → a w = true)
+
+/-- A common integrator subsumes all alternatives.
+    @cite{umbach-2004} §2.2, following @cite{lang-1984}: coordinated elements
+    and focus alternatives must share a common superordinate concept.
+    For example, in "beer and martini", "drink" is the common integrator. -/
+def commonIntegrator {W : Type} (alts : List (W → Bool)) (integ : W → Bool) : Prop :=
+  ∀ a ∈ alts, ∀ w : W, a w = true → integ w = true
+
+/-- A well-formed alternative set satisfies both constraints.
+    @cite{umbach-2004} §2.2: alternatives must be comparable, i.e.,
+    similar (common integrator) and dissimilar (pairwise independent). -/
+def wellFormedAlts {W : Type} (alts : List (W → Bool)) (integ : W → Bool) : Prop :=
+  commonIntegrator alts integ ∧
+  ∀ a ∈ alts, ∀ b ∈ alts, a ≠ b → semanticallyIndependent a b
+
+/-! ## Exclusion Variety (@cite{umbach-2004} §2.3, §3.2)
+
+@cite{umbach-2004} distinguishes two varieties of exclusion that cross-cut
+information structure and discourse structure:
+
+- **Additional**: the excluded alternative would hold *in addition to* the
+  asserted item. Instantiated by *only*-phrases (§2.3: "only RONALD went
+  shopping" excludes anyone *in addition to* Ronald) and the discourse
+  relation CONTRAST (§3.2: "Did John go to Berlin, and *also* to Paris?").
+- **Substitution**: the excluded alternative would hold *instead of* the
+  asserted item. Instantiated by contrastive focus (§2.3: "RONALD went
+  shopping" excludes anyone *instead of* Ronald) and the discourse
+  relation CORRECTION (§3.2: German *sondern*).
+
+This distinction explains why contrastive focus and *only*-phrases have
+different presuppositions (§2.3), and why CONTRAST and CORRECTION respond
+to different implicit questions (§3.2). -/
+
+/-- Two varieties of exclusion that distinguish *only*-phrases from
+    contrastive focus, and CONTRAST from CORRECTION.
+
+    @cite{umbach-2004} §2.3: An *only*-phrase excludes the possibility
+    that someone *in addition to* the focused item satisfies the predicate.
+    A contrastive focus excludes the possibility that someone *instead of*
+    the focused item satisfies the predicate. -/
+inductive ExclusionVariety where
+  /-- Excludes additional alternatives: the excluded item would hold
+      *in addition to* the asserted one. *Only*-phrases / CONTRAST. -/
+  | additional
+  /-- Excludes by substitution: the excluded item would hold
+      *instead of* the asserted one. Contrastive focus / CORRECTION. -/
+  | substitution
+  deriving DecidableEq, Repr, BEq
+
+open Core.Discourse.CoherenceRelation in
+/-- Bridge from exclusion variety to discourse coherence relation.
+    @cite{umbach-2004} §3.2: the information-structural exclusion type
+    determines which discourse relation holds. -/
+def ExclusionVariety.toCoherenceRelation : ExclusionVariety → CoherenceRelation
+  | .additional    => .contrast
+  | .substitution  => .correction
+
 /-! ## Focus Interpretation Principle Applications (@cite{rooth-1992} §2)
 
 Four domains in which focus alternatives interact with context.
@@ -282,3 +374,28 @@ inductive FIPApplication where
   deriving DecidableEq, Repr, BEq
 
 end Core.InformationStructure
+
+/-! ## Discourse Context
+
+A composite type bundling the dimensions that most commonly co-occur
+at discourse analysis sites: the current QUD, the expression's discourse
+status, and the coherence relation to prior discourse.
+
+Motivated by co-occurrence analysis: `DiscourseStatus` appears in 5 of 7
+multi-import sites across `Phenomena/` and `Theories/`. -/
+
+/-- A discourse-structural context for an expression under analysis.
+
+    Bundles three dimensions:
+    - **QUD**: what question is currently at issue (@cite{roberts-2012})
+    - **Status**: how foregrounded the expression is (given/new/focused)
+    - **Coherence**: how the current unit relates to prior discourse (@cite{kehler-2002})
+
+    The `M` parameter is the meaning type for the QUD partition. -/
+structure Core.Discourse.DiscourseContext (M : Type*) where
+  /-- The current Question Under Discussion -/
+  qud : QUD M
+  /-- Discourse status of the current expression -/
+  status : Core.InformationStructure.DiscourseStatus
+  /-- Coherence relation to the preceding discourse unit, if any -/
+  coherence : Option Core.Discourse.CoherenceRelation.CoherenceRelation := none

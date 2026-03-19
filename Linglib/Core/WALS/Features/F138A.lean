@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 138A: Tea
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 138A`.
@@ -17,16 +19,8 @@ inductive Tea where
   | others  -- Others (36 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 138A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : Tea
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 138A dataset (230 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint Tea) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .wordsDerivedFromMinNanChineseTe }
   , { walsCode := "abz", language := "Abaza", iso := "abq", value := .wordsDerivedFromSiniticCha }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .wordsDerivedFromMinNanChineseTe }
@@ -270,11 +264,9 @@ theorem count_others :
     (allData.filter (·.value == .others)).length = 36 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F138A

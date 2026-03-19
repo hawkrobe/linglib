@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 12A: Syllable Structure
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 12A`.
@@ -17,16 +19,8 @@ inductive SyllableStructure where
   | complex  -- Complex (151 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 12A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : SyllableStructure
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 12A dataset (486 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint SyllableStructure) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .moderatelyComplex }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .moderatelyComplex }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .complex }
@@ -526,11 +520,9 @@ theorem count_complex :
     (allData.filter (·.value == .complex)).length = 151 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F12A

@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 142A: Para-Linguistic Usages of Clicks
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 142A`.
@@ -17,16 +19,8 @@ inductive ParaLinguisticUsagesOfClicks where
   | otherOrNone  -- Other or none (25 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 142A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ParaLinguisticUsagesOfClicks
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 142A dataset (143 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ParaLinguisticUsagesOfClicks) :=
   [ { walsCode := "alb", language := "Albanian", iso := "sqi", value := .logicalMeanings }
   , { walsCode := "ame", language := "Amele", iso := "aey", value := .affectiveMeanings }
   , { walsCode := "ami", language := "Amis", iso := "ami", value := .otherOrNone }
@@ -183,11 +177,9 @@ theorem count_otherOrNone :
     (allData.filter (·.value == .otherOrNone)).length = 25 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F142A

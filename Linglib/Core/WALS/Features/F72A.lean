@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 72A: Imperative-Hortative Systems
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 72A`.
@@ -18,16 +20,8 @@ inductive ImperativeHortativeSystems where
   | neitherTypeOfSystem  -- Neither type of system (201 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 72A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ImperativeHortativeSystems
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 72A dataset (375 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ImperativeHortativeSystems) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .neitherTypeOfSystem }
   , { walsCode := "acu", language := "Achuar", iso := "acu", value := .maximalSystem }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .neitherTypeOfSystem }
@@ -418,11 +412,9 @@ theorem count_neitherTypeOfSystem :
     (allData.filter (·.value == .neitherTypeOfSystem)).length = 201 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F72A

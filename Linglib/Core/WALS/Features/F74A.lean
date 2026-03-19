@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 74A: Situational Possibility
 @cite{vanbogaert-2013}
@@ -17,16 +19,8 @@ inductive SituationalPossibility where
   | otherKindsOfMarkers  -- Other kinds of markers (13 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 74A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : SituationalPossibility
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 74A dataset (234 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint SituationalPossibility) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .verbalConstructions }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .verbalConstructions }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .affixesOnVerbs }
@@ -274,11 +268,9 @@ theorem count_otherKindsOfMarkers :
     (allData.filter (·.value == .otherKindsOfMarkers)).length = 13 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F74A

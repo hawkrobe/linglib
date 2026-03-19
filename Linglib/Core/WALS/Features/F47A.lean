@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 47A: Intensifiers and Reflexive Pronouns
-
+@cite{koenig-siemund-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 47A`.
@@ -16,16 +18,8 @@ inductive IntensifierReflexive where
   | differentiated  -- Differentiated (74 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 47A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : IntensifierReflexive
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 47A dataset (168 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint IntensifierReflexive) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .differentiated }
   , { walsCode := "afr", language := "Afrikaans", iso := "afr", value := .identical }
   , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .identical }
@@ -205,11 +199,9 @@ theorem count_differentiated :
     (allData.filter (·.value == .differentiated)).length = 74 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F47A

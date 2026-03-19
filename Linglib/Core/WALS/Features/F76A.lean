@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 76A: Overlap between Situational and Epistemic Modal Marking
 @cite{vanbogaert-2013}
@@ -17,16 +19,8 @@ inductive ModalOverlap where
   | noOverlap  -- No overlap (105 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 76A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ModalOverlap
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 76A dataset (207 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ModalOverlap) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .overlapForEitherPossibilityOrNecessity }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .overlapForEitherPossibilityOrNecessity }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noOverlap }
@@ -247,11 +241,9 @@ theorem count_noOverlap :
     (allData.filter (·.value == .noOverlap)).length = 105 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F76A

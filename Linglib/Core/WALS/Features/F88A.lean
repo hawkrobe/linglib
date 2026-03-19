@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 88A: Order of Demonstrative and Noun
 @cite{dryer-2013-wals}
@@ -20,15 +22,7 @@ inductive DemonstrativeNounOrder where
   | mixed  -- Mixed (67 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 88A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : DemonstrativeNounOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint DemonstrativeNounOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .nounDemonstrative }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .demonstrativeNoun }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .demonstrativeNoun }
@@ -531,7 +525,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "kmh", language := "Kham", iso := "kjl", value := .demonstrativeNoun }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint DemonstrativeNounOrder) :=
   [ { walsCode := "khd", language := "Kham (Dege)", iso := "khg", value := .nounDemonstrative }
   , { walsCode := "knz", language := "Kham (Tibetan) (Nangchen)", iso := "khg", value := .nounDemonstrative }
   , { walsCode := "kty", language := "Khanty", iso := "kca", value := .demonstrativeNoun }
@@ -1034,7 +1028,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "sti", language := "Stieng", iso := "", value := .nounDemonstrative }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint DemonstrativeNounOrder) :=
   [ { walsCode := "sud", language := "Sudest", iso := "tgo", value := .nounDemonstrative }
   , { walsCode := "sue", language := "Suena", iso := "sue", value := .nounDemonstrative }
   , { walsCode := "suk", language := "Suki", iso := "sui", value := .demonstrativeNoun }
@@ -1263,7 +1257,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 88A dataset (1225 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint DemonstrativeNounOrder) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1225 := by native_decide
@@ -1282,11 +1276,9 @@ theorem count_mixed :
     (allData.filter (·.value == .mixed)).length = 67 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F88A

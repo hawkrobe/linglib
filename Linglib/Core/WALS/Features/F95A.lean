@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 95A: Relationship between the Order of Object and Verb and the Order of Adposition and Noun Phrase
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 95A`.
@@ -19,15 +21,7 @@ inductive RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNo
   | other  -- Other (158 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 95A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .other }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .other }
   , { walsCode := "aar", language := "Aari", iso := "aiw", value := .ovAndPostpositions }
@@ -530,7 +524,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "kmo", language := "Koiali (Mountain)", iso := "kpx", value := .ovAndPostpositions }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
   [ { walsCode := "kok", language := "Kokborok", iso := "trp", value := .ovAndPostpositions }
   , { walsCode := "kkt", language := "Kokota", iso := "kkk", value := .voAndPrepositions }
   , { walsCode := "kol", language := "Kolami", iso := "kfb", value := .ovAndPostpositions }
@@ -1033,7 +1027,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "tig", language := "Tigrinya", iso := "tir", value := .ovAndPrepositions }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
   [ { walsCode := "tgr", language := "Tigré", iso := "tig", value := .ovAndPrepositions }
   , { walsCode := "tja", language := "Tiipay (Jamul)", iso := "dih", value := .ovAndPostpositions }
   , { walsCode := "tik", language := "Tikar", iso := "tik", value := .other }
@@ -1179,7 +1173,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 95A dataset (1142 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1142 := by native_decide
@@ -1196,11 +1190,9 @@ theorem count_other :
     (allData.filter (·.value == .other)).length = 158 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F95A

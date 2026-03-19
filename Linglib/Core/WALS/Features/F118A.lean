@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 118A: Predicative Adjectives
 @cite{stassen-2013b}
@@ -17,16 +19,8 @@ inductive PredicativeAdjectiveType where
   | mixed  -- Mixed (103 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 118A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PredicativeAdjectiveType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 118A dataset (386 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PredicativeAdjectiveType) :=
   [ { walsCode := "abz", language := "Abaza", iso := "abq", value := .verbalEncoding }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .verbalEncoding }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .verbalEncoding }
@@ -426,11 +420,9 @@ theorem count_mixed :
     (allData.filter (·.value == .mixed)).length = 103 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F118A

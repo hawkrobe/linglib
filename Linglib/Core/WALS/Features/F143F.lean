@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 143F: Postverbal Negative Morphemes
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 143F`.
@@ -18,15 +20,7 @@ inductive PostverbalNegativeMorphemes where
   | none  -- None (712 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 143F datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PostverbalNegativeMorphemes
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint PostverbalNegativeMorphemes) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .vneg }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .none }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .none }
@@ -529,7 +523,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "kas", language := "Kashmiri", iso := "kas", value := .vNeg }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint PostverbalNegativeMorphemes) :=
   [ { walsCode := "ksn", language := "Kasong", iso := "cog", value := .none }
   , { walsCode := "ktc", language := "Katcha", iso := "xtc", value := .none }
   , { walsCode := "kti", language := "Kati (in West Papua, Indonesia)", iso := "kts", value := .vneg }
@@ -1032,7 +1026,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "rot", language := "Rotuman", iso := "rtm", value := .vneg }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint PostverbalNegativeMorphemes) :=
   [ { walsCode := "rov", language := "Roviana", iso := "rug", value := .none }
   , { walsCode := "ruk", language := "Rukai (Tanan)", iso := "dru", value := .none }
   , { walsCode := "cos", language := "Rumsien", iso := "", value := .none }
@@ -1361,7 +1355,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 143F dataset (1325 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint PostverbalNegativeMorphemes) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1325 := by native_decide
@@ -1376,11 +1370,9 @@ theorem count_none :
     (allData.filter (·.value == .none)).length = 712 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F143F

@@ -7,6 +7,7 @@ import Mathlib.Data.Fintype.Card
 import Mathlib.Order.Fin.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
+import Mathlib.Tactic.NormNum
 import Linglib.Tactics.OntSort
 
 /-!
@@ -125,6 +126,46 @@ def Boundedness.ofType (hasTop : Bool) (hasBot : Bool) : Boundedness :=
   | true, false => .upperBounded
   | false, true => .lowerBounded
   | false, false => .open_
+
+-- ════════════════════════════════════════════════════
+-- § 1a′. Rational Unit Interval
+-- ════════════════════════════════════════════════════
+
+/-- A rational number in the unit interval [0, 1].
+
+    Wraps Mathlib's `Set.Icc` subtype for gradient linguistic properties
+    (at-issueness, projectivity, etc.) and their contextual thresholds.
+    Using `Set.Icc` gives us standard interval infrastructure from Mathlib
+    (order, membership, etc.) without custom boilerplate.
+
+    Access: `r.val` for the rational value, `r.prop.1` for `0 ≤ r`,
+    `r.prop.2` for `r ≤ 1`. -/
+abbrev Rat01 := ↥(Set.Icc (0 : ℚ) 1)
+
+namespace Rat01
+
+/-- The rational value. -/
+abbrev value (r : Rat01) : ℚ := r.val
+
+/-- Proof that the value is non-negative. -/
+theorem nonneg (r : Rat01) : 0 ≤ r.val := r.prop.1
+
+/-- Proof that the value is at most 1. -/
+theorem le_one (r : Rat01) : r.val ≤ 1 := r.prop.2
+
+instance : Repr Rat01 where
+  reprPrec r _ := repr r.val
+
+/-- The midpoint ½, the standard default threshold. -/
+def half : Rat01 := ⟨1/2, by norm_num, by norm_num⟩
+
+/-- Does the value strictly exceed a threshold? -/
+def exceeds (d θ : Rat01) : Bool := decide (θ.val < d.val)
+
+/-- Closed-bounded: both 0 and 1 are attained. -/
+def boundedness : Boundedness := .closed
+
+end Rat01
 
 -- ════════════════════════════════════════════════════
 -- § 1b. MereoTag + LicensingPipeline

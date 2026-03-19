@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 4A: Voicing in Plosives and Fricatives
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 4A`.
@@ -18,15 +20,7 @@ inductive VoicingInPlosivesAndFricatives where
   | inBothPlosivesAndFricatives  -- In both plosives and fricatives (158 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 4A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : VoicingInPlosivesAndFricatives
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint VoicingInPlosivesAndFricatives) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .inPlosivesAlone }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .inPlosivesAlone }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .noVoicingContrast }
@@ -529,7 +523,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "tru", language := "Trumai", iso := "tpy", value := .inPlosivesAlone }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint VoicingInPlosivesAndFricatives) :=
   [ { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .inPlosivesAlone }
   , { walsCode := "tso", language := "Tsou", iso := "tsu", value := .inFricativesAlone }
   , { walsCode := "ttu", language := "Tsova-Tush", iso := "bbl", value := .inBothPlosivesAndFricatives }
@@ -600,7 +594,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 4A dataset (567 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint VoicingInPlosivesAndFricatives) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 567 := by native_decide
@@ -615,11 +609,9 @@ theorem count_inBothPlosivesAndFricatives :
     (allData.filter (·.value == .inBothPlosivesAndFricatives)).length = 158 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F4A

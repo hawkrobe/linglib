@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 42A: Pronominal and Adnominal Demonstratives
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 42A`.
@@ -17,16 +19,8 @@ inductive PronominalAndAdnominalDemonstratives where
   | differentInflection  -- Different inflection (21 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 42A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PronominalAndAdnominalDemonstratives
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 42A dataset (201 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PronominalAndAdnominalDemonstratives) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .identical }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .identical }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .identical }
@@ -241,11 +235,9 @@ theorem count_differentInflection :
     (allData.filter (·.value == .differentInflection)).length = 21 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F42A

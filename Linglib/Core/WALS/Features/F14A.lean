@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 14A: Fixed Stress Locations
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 14A`.
@@ -21,15 +23,7 @@ inductive FixedStressLocations where
   | ultimate  -- Ultimate (51 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 14A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : FixedStressLocations
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint FixedStressLocations) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .noFixedStress }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .ultimate }
   , { walsCode := "acg", language := "Achagua", iso := "aca", value := .initial }
@@ -532,13 +526,13 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .penultimate }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint FixedStressLocations) :=
   [ { walsCode := "zul", language := "Zulu", iso := "zul", value := .penultimate }
   , { walsCode := "zun", language := "Zuni", iso := "zun", value := .initial }
   ]
 
 /-- Complete WALS 14A dataset (502 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint FixedStressLocations) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 502 := by native_decide
@@ -559,11 +553,9 @@ theorem count_ultimate :
     (allData.filter (·.value == .ultimate)).length = 51 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F14A

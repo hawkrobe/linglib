@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 90G: Double-headed relative clauses
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 90G`.
@@ -18,16 +20,8 @@ inductive DoubleHeadedRelativeClauses where
   | doubleHeadedAsNondominantType  -- Double-headed as nondominant type (2 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 90G datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : DoubleHeadedRelativeClauses
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 90G dataset (5 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint DoubleHeadedRelativeClauses) :=
   [ { walsCode := "jms", language := "Jamsay", iso := "djm", value := .doubleHeadedOrInternallyHeaded }
   , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .doubleHeadedOrReln }
   , { walsCode := "kmb", language := "Kombai", iso := "", value := .doubleHeadedDominant }
@@ -48,11 +42,9 @@ theorem count_doubleHeadedAsNondominantType :
     (allData.filter (·.value == .doubleHeadedAsNondominantType)).length = 2 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F90G

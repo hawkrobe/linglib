@@ -478,7 +478,7 @@ theorem all_verbs_grad_ssr_complementary :
 /-- Count of verbs with vendlerClass annotations (for coverage tracking).
     Bump this number when adding new vendlerClass annotations. -/
 theorem vendler_coverage_count :
-    (allVerbs.filter (λ v => v.toVerbCore.vendlerClass.isSome)).length = 233 := by
+    (allVerbs.filter (λ v => v.toVerbCore.vendlerClass.isSome)).length = 234 := by
   native_decide
 
 -- ════════════════════════════════════════════════════

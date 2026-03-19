@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 50A: Asymmetrical Case-Marking
 @cite{iggesen-2013}
@@ -20,16 +22,8 @@ inductive AsymmetricalCaseMarking where
   | syncretismInRelevantNpTypes  -- Syncretism in relevant NP-types (21 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 50A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : AsymmetricalCaseMarking
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 50A dataset (261 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint AsymmetricalCaseMarking) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .noCaseMarking }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .symmetrical }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noCaseMarking }
@@ -310,11 +304,9 @@ theorem count_syncretismInRelevantNpTypes :
     (allData.filter (·.value == .syncretismInRelevantNpTypes)).length = 21 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F50A

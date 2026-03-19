@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 113A: Symmetric and Asymmetric Standard Negation
 @cite{miestamo-2013}
@@ -17,16 +19,8 @@ inductive NegationSymmetry where
   | both  -- Both (130 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 113A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NegationSymmetry
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 113A dataset (297 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint NegationSymmetry) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .both }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .both }
   , { walsCode := "acm", language := "Achumawi", iso := "acv", value := .asymmetric }
@@ -337,11 +331,9 @@ theorem count_both :
     (allData.filter (·.value == .both)).length = 130 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F113A

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 121A: Comparative Constructions
 @cite{stassen-2013}
@@ -18,16 +20,8 @@ inductive ComparativeType where
   | particle  -- Particle (22 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 121A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ComparativeType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 121A dataset (167 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ComparativeType) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .conjoined }
   , { walsCode := "alb", language := "Albanian", iso := "sqi", value := .particle }
   , { walsCode := "ale", language := "Aleut", iso := "ale", value := .locational }
@@ -210,11 +204,9 @@ theorem count_particle :
     (allData.filter (·.value == .particle)).length = 22 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F121A

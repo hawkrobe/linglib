@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 83A: Order of Object and Verb
 @cite{dryer-2013-wals}
@@ -17,15 +19,7 @@ inductive ObjectVerbOrder where
   | noDominantOrder  -- No dominant order (101 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 83A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ObjectVerbOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .vo }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .noDominantOrder }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .vo }
@@ -528,7 +522,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "ifm", language := "Ifumu", iso := "ifm", value := .vo }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "igb", language := "Igbo", iso := "ibo", value := .vo }
   , { walsCode := "ige", language := "Igede", iso := "ige", value := .vo }
   , { walsCode := "ign", language := "Ignaciano", iso := "ign", value := .vo }
@@ -1031,7 +1025,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "nbe", language := "Ngombe", iso := "ngc", value := .vo }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "ngo", language := "Ngoni", iso := "ngo", value := .vo }
   , { walsCode := "ngu", language := "Nguna", iso := "llp", value := .vo }
   , { walsCode := "nbr", language := "Ngäbere", iso := "gym", value := .ov }
@@ -1534,7 +1528,7 @@ private def allData_2 : List Datapoint :=
   , { walsCode := "zan", language := "Zande", iso := "zne", value := .vo }
   ]
 
-private def allData_3 : List Datapoint :=
+private def allData_3 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "zpr", language := "Zaparo", iso := "zro", value := .vo }
   , { walsCode := "zai", language := "Zapotec (Isthmus)", iso := "zai", value := .vo }
   , { walsCode := "zap", language := "Zapotec (Mitla)", iso := "zaw", value := .vo }
@@ -1556,7 +1550,7 @@ private def allData_3 : List Datapoint :=
   ]
 
 /-- Complete WALS 83A dataset (1518 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2 ++ allData_3
+def allData : List (Datapoint ObjectVerbOrder) := allData_0 ++ allData_1 ++ allData_2 ++ allData_3
 
 -- Count verification
 theorem total_count : allData.length = 1518 := by native_decide
@@ -1569,11 +1563,9 @@ theorem count_noDominantOrder :
     (allData.filter (·.value == .noDominantOrder)).length = 101 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F83A

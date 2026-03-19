@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 110A: Periphrastic Causative Constructions
 @cite{song-2013}
@@ -17,16 +19,8 @@ inductive PeriphrasticCausativeType where
   | both  -- Both (15 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 110A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PeriphrasticCausativeType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 110A dataset (118 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PeriphrasticCausativeType) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .purposiveOnly }
   , { walsCode := "aji", language := "Ajië", iso := "aji", value := .purposiveOnly }
   , { walsCode := "ame", language := "Amele", iso := "aey", value := .sequentialOnly }
@@ -158,11 +152,9 @@ theorem count_both :
     (allData.filter (·.value == .both)).length = 15 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F110A

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 87A: Order of Adjective and Noun
 @cite{dryer-2013-wals}
@@ -18,15 +20,7 @@ inductive AdjectiveNounOrder where
   | onlyInternallyHeadedRelativeClauses  -- Only internally-headed relative clauses (5 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 87A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : AdjectiveNounOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint AdjectiveNounOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .nounAdjective }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .adjectiveNoun }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .nounAdjective }
@@ -529,7 +523,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "kac", language := "Kachari", iso := "xac", value := .noDominantOrder }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint AdjectiveNounOrder) :=
   [ { walsCode := "kdz", language := "Kadazan", iso := "kzj", value := .nounAdjective }
   , { walsCode := "kgr", language := "Kagulu", iso := "kki", value := .nounAdjective }
   , { walsCode := "kng", language := "Kaingang", iso := "kgp", value := .nounAdjective }
@@ -1032,7 +1026,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "pba", language := "Pima Bajo", iso := "pia", value := .adjectiveNoun }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint AdjectiveNounOrder) :=
   [ { walsCode := "pip", language := "Pipil", iso := "ppl", value := .adjectiveNoun }
   , { walsCode := "prh", language := "Pirahã", iso := "myp", value := .nounAdjective }
   , { walsCode := "pir", language := "Piro", iso := "pib", value := .nounAdjective }
@@ -1403,7 +1397,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 87A dataset (1367 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint AdjectiveNounOrder) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1367 := by native_decide
@@ -1418,11 +1412,9 @@ theorem count_onlyInternallyHeadedRelativeClauses :
     (allData.filter (·.value == .onlyInternallyHeadedRelativeClauses)).length = 5 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F87A

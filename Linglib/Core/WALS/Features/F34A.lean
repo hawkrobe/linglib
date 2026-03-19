@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 34A: Occurrence of Nominal Plurality
 @cite{haspelmath-2013b}
@@ -20,16 +22,8 @@ inductive PluralityOccurrence where
   | allNounsAlwaysObligatory  -- All nouns, always obligatory (133 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 34A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PluralityOccurrence
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 34A dataset (291 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PluralityOccurrence) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .allNounsAlwaysObligatory }
   , { walsCode := "abu", language := "Abun", iso := "kgr", value := .noNominalPlural }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .noNominalPlural }
@@ -340,11 +334,9 @@ theorem count_allNounsAlwaysObligatory :
     (allData.filter (·.value == .allNounsAlwaysObligatory)).length = 133 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F34A

@@ -1,8 +1,5 @@
-import Linglib.Theories.Semantics.Dynamic.Core.CCP
-import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Default
-
 /-!
-# Dynamic Semantics for Generics
+# Generics: Dynamic Semantics with Horizon Expansion
 @cite{kirkpatrick-2024}
 
 James Ravi Kirkpatrick, "The Dynamics of Generics."
@@ -23,30 +20,21 @@ This cumulative expansion explains why generic Sobel sequences
 reverses ("#Albino ravens aren't black; but ravens are") are not: the
 evaluation order determines which individuals are salient.
 
+## Static as special case
+
+Discourse-initial evaluation (`evalGeneric []`) reduces to static truth
+conditions (`evalGeneric_empty_eq_static`). The `fromPredicate` constructor
+builds a `GenericSentence` from the same primitives as `traditionalGEN`
+(`Lexical/Noun/Kind/Generics.lean`), and `fromPredicate_static` proves the
+evaluations agree. Static GEN is the zero-context special case.
+
 ## Formal components
 
 - `GenericSentence E`: restrictor + scope + normal instances
 - `evalGeneric`: computable single-generic evaluation
 - `evalSequence`: computable sequence evaluation
-- `horizonExpansionCCP`: abstract CCP connecting to `IsExpansive`
-
-## Connection to existing infrastructure
-
-- `IsExpansive` (`Core/CCP.lean`): horizon expansion is the dual of
-  eliminative assertion — it grows rather than shrinks the context
-- `NormalityOrder.optimal` (`Core/Order/Normality.lean`): determines
-  which individuals count as "normal" for the restrictor class
-- `traditionalGEN` (`Lexical/Noun/Kind/Generics.lean`): the static
-  normality-based truth conditions that this theory dynamicizes
-
-## Comparison with @cite{veltman-1996}
-
-The paper's Appendix A compares with Veltman's update semantics for defaults
-(`UpdateSemantics/Default.lean`). Veltman treats generics as default rules
-(constraints on the preference structure of information states) and makes the
-same predictions for Sobel sequences. But his theory incorrectly predicts
-that reverse Sobel sequences are also consistent, because default rules
-don't make exceptional individuals *salient* — they just adjust preferences.
+- `fromPredicate`: construct from binary normalcy (bridges `traditionalGEN`)
+- `fromOrder`: construct from normality ordering
 
 ## What's not here
 
@@ -58,8 +46,6 @@ examples about Sobel sequences.
 -/
 
 namespace Semantics.Dynamic.Generics
-
-open Semantics.Dynamic.Core (CCP IsExpansive IsEliminative)
 
 -- ═══ Computable Model ═══
 
@@ -388,16 +374,14 @@ theorem horizonStep_idempotent (g : GenericSentence E)
     (hne : g.normalInstances ≠ []) (horizon : List E) :
     horizonStep g (horizonStep g horizon) = horizonStep g horizon := by
   simp only [horizonStep, evalGeneric]
-  by_cases h : horizon.any g.restrictor = true
-  · simp [h]
-  · push_neg at h
-    simp only [Bool.not_eq_true] at h
-    simp only [h]
+  cases h : horizon.any g.restrictor
+  · simp only [h, Bool.false_eq_true, ↓reduceIte]
     obtain ⟨e₀, he₀⟩ := List.exists_mem_of_ne_nil _ hne
     have : (horizon ++ g.normalInstances).any g.restrictor = true := by
       rw [List.any_eq_true]
       exact ⟨e₀, List.mem_append_right _ he₀, hnr e₀ he₀⟩
     simp [this]
+  · simp [h]
 
 omit [DecidableEq E] in
 /-- `horizonStep` is NOT monotone: there exist `g`, `h₁ ⊆ h₂` such that
@@ -488,7 +472,8 @@ theorem sobel_horizon_noncommutative (general exception : GenericSentence E)
     horizonStep general (horizonStep exception []) := by
   rw [sobel_forward_horizons _ _ hdis, sobel_reverse_horizons _ _ her hsub hne]
   intro heq
-  have hlen := congr_arg List.length heq
+  have hlen : (general.normalInstances ++ exception.normalInstances).length =
+      exception.normalInstances.length := by rw [heq]
   simp only [List.length_append] at hlen
   have : general.normalInstances.length ≠ 0 :=
     fun h => hne_gen (List.eq_nil_of_length_eq_zero h)
@@ -542,7 +527,7 @@ agree on both orders. Combined with `sobel_horizon_noncommutative`,
 this establishes that Kirkpatrick's theory escapes the impossibility
 precisely because horizon evolution is non-commutative. -/
 
-variable {G S : Type*}
+variable {G S : Type}
 
 /-- **Commutativity forces equal verdicts** (Appendix A, abstract form).
 
@@ -577,47 +562,6 @@ theorem sobel_asymmetry_rules_out_commutativity
   intro heq
   exact hrev (heq ▸ hfwd)
 
-
--- ═══ Abstract CCP Bridge ═══
-
-open Classical in
-/-- The horizon expansion step as an abstract CCP on sets of entities.
-
-This connects the computable model above to the CCP infrastructure in
-`Core/CCP.lean`. The CCP adds `normalInstances` to the horizon when
-no restrictor-satisfying individual is present — an expansive update. -/
-noncomputable def horizonExpansionCCP {E : Type*} (restrictor : E → Prop)
-    (normalInstances : Set E) : CCP E :=
-  λ s => if (∃ e ∈ s, restrictor e) then s else s ∪ normalInstances
-
-open Classical in
-/-- Horizon expansion is expansive: the output is always a superset
-    of the input. This is `IsExpansive` from `Core/CCP.lean`. -/
-theorem horizonExpansion_expansive {E : Type*} (restrictor : E → Prop)
-    (normalInstances : Set E) :
-    IsExpansive (horizonExpansionCCP restrictor normalInstances) := by
-  intro s e he
-  unfold horizonExpansionCCP
-  split
-  · exact he
-  · exact Set.mem_union_left _ he
-
-open Classical in
-/-- Horizon expansion is NOT eliminative (in general): when expansion
-    occurs, new individuals are added.
-
-    Witness: empty horizon with nonempty `normalInstances`. -/
-theorem horizonExpansion_not_eliminative {E : Type*}
-    (restrictor : E → Prop) (e₀ : E) :
-    ¬IsEliminative (horizonExpansionCCP restrictor ({e₀} : Set E)) := by
-  intro helim
-  have hmem : e₀ ∈ horizonExpansionCCP restrictor {e₀} ∅ := by
-    unfold horizonExpansionCCP
-    have hno : ¬∃ e ∈ (∅ : Set E), restrictor e := by
-      intro ⟨_, he, _⟩; exact he
-    rw [if_neg hno]
-    exact Set.mem_union_right _ rfl
-  exact helim ∅ hmem
 
 -- ═══ Presupposition–Expansion Duality ═══
 

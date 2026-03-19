@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 78A: Coding of Evidentiality
 @cite{deandradedehaanValenzuela-2013}
@@ -20,16 +22,8 @@ inductive EvidentialityCoding where
   | mixed  -- Mixed (10 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 78A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : EvidentialityCoding
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 78A dataset (418 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint EvidentialityCoding) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .noGrammaticalEvidentials }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .verbalAffixOrClitic }
   , { walsCode := "acm", language := "Achumawi", iso := "acv", value := .verbalAffixOrClitic }
@@ -467,11 +461,9 @@ theorem count_mixed :
     (allData.filter (·.value == .mixed)).length = 10 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F78A

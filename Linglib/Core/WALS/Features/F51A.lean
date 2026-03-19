@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 51A: Position of Case Affixes
 @cite{iggesen-2013}
@@ -23,15 +25,7 @@ inductive CaseAffixPosition where
   | noCaseAffixesOrAdpositionalClitics  -- No case affixes or adpositional clitics (379 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 51A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : CaseAffixPosition
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint CaseAffixPosition) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .caseSuffixes }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .noCaseAffixesOrAdpositionalClitics }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .noCaseAffixesOrAdpositionalClitics }
@@ -534,7 +528,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "lnd", language := "Linda", iso := "liy", value := .noCaseAffixesOrAdpositionalClitics }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint CaseAffixPosition) :=
   [ { walsCode := "lis", language := "Lisu", iso := "lis", value := .noCaseAffixesOrAdpositionalClitics }
   , { walsCode := "lit", language := "Lithuanian", iso := "lit", value := .caseSuffixes }
   , { walsCode := "lgt", language := "Logoti", iso := "log", value := .noCaseAffixesOrAdpositionalClitics }
@@ -1037,7 +1031,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "yaq", language := "Yaqui", iso := "yaq", value := .caseSuffixes }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint CaseAffixPosition) :=
   [ { walsCode := "yar", language := "Yareba", iso := "yrb", value := .caseSuffixes }
   , { walsCode := "ywl", language := "Yawelmani", iso := "yok", value := .caseSuffixes }
   , { walsCode := "ywr", language := "Yawuru", iso := "ywr", value := .inpositionalClitics }
@@ -1072,7 +1066,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 51A dataset (1031 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint CaseAffixPosition) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1031 := by native_decide
@@ -1097,11 +1091,9 @@ theorem count_noCaseAffixesOrAdpositionalClitics :
     (allData.filter (·.value == .noCaseAffixesOrAdpositionalClitics)).length = 379 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F51A

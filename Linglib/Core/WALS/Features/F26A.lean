@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 26A: Prefixing vs. Suffixing in Inflectional Morphology
 @cite{dryer-2013-wals}
@@ -20,15 +22,7 @@ inductive PrefixSuffixPreference where
   | strongPrefixing  -- Strong prefixing (58 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 26A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PrefixSuffixPreference
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint PrefixSuffixPreference) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .stronglySuffixing }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .stronglySuffixing }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .equalPrefixingAndSuffixing }
@@ -531,7 +525,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "mkj", language := "Makasae", iso := "mkz", value := .littleAffixation }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint PrefixSuffixPreference) :=
   [ { walsCode := "mal", language := "Malagasy", iso := "plt", value := .littleAffixation }
   , { walsCode := "mlg", language := "Malgwa", iso := "", value := .stronglySuffixing }
   , { walsCode := "mam", language := "Mam", iso := "mam", value := .weaklyPrefixing }
@@ -1004,7 +998,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 26A dataset (969 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint PrefixSuffixPreference) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 969 := by native_decide
@@ -1023,11 +1017,9 @@ theorem count_strongPrefixing :
     (allData.filter (·.value == .strongPrefixing)).length = 58 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F26A

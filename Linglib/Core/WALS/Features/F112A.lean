@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 112A: Negative Morphemes
 @cite{dryer-2013-wals}
@@ -20,15 +22,7 @@ inductive NegativeMorphemeType where
   | doubleNegation  -- Double negation (119 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 112A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NegativeMorphemeType
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint NegativeMorphemeType) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .negativeParticle }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .negativeParticle }
   , { walsCode := "aar", language := "Aari", iso := "aiw", value := .negativeAffix }
@@ -531,7 +525,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "knc", language := "Kugu Nganhcara", iso := "uwa", value := .negativeParticle }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint NegativeMorphemeType) :=
   [ { walsCode := "klg", language := "Kulung", iso := "kle", value := .negativeAffix }
   , { walsCode := "kmn", language := "Kuman", iso := "kue", value := .negativeAffix }
   , { walsCode := "kum", language := "Kumauni", iso := "kfy", value := .negativeParticle }
@@ -1034,7 +1028,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "thu", language := "Thulung", iso := "tdh", value := .doubleNegation }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint NegativeMorphemeType) :=
   [ { walsCode := "tdr", language := "Tibetan (Drokpa)", iso := "bod", value := .negativeAffix }
   , { walsCode := "tmo", language := "Tibetan (Modern Literary)", iso := "bod", value := .negativeParticle }
   , { walsCode := "tis", language := "Tibetan (Shigatse)", iso := "bod", value := .negativeAffix }
@@ -1195,7 +1189,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 112A dataset (1157 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint NegativeMorphemeType) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1157 := by native_decide
@@ -1214,11 +1208,9 @@ theorem count_doubleNegation :
     (allData.filter (·.value == .doubleNegation)).length = 119 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F112A

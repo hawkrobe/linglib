@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 133A: Number of Basic Colour Categories
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 133A`.
@@ -21,16 +23,8 @@ inductive NumberOfBasicColourCategories where
   | v11  -- 11 (11 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 133A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NumberOfBasicColourCategories
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 133A dataset (119 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint NumberOfBasicColourCategories) :=
   [ { walsCode := "abd", language := "Abidji", iso := "abi", value := .v4555 }
   , { walsCode := "aga", language := "Agarabi", iso := "agd", value := .v4555 }
   , { walsCode := "agc", language := "Agta (Central)", iso := "agt", value := .v665 }
@@ -171,11 +165,9 @@ theorem count_v11 :
     (allData.filter (·.value == .v11)).length = 11 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F133A

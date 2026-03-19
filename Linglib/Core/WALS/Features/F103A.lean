@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 103A: Third Person Zero of Verbal Person Marking
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 103A`.
@@ -20,16 +22,8 @@ inductive ThirdPersonZeroOfVerbalPersonMarking where
   | zeroOnlyIn3rdNonsingular  -- Zero only in 3rd nonsingular (1 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 103A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ThirdPersonZeroOfVerbalPersonMarking
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 103A dataset (380 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ThirdPersonZeroOfVerbalPersonMarking) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .noPersonMarking }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .zeroInSome3sgForms }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .noZeroRealization }
@@ -429,11 +423,9 @@ theorem count_zeroOnlyIn3rdNonsingular :
     (allData.filter (·.value == .zeroOnlyIn3rdNonsingular)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F103A

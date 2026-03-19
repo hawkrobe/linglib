@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 11A: Front Rounded Vowels
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 11A`.
@@ -18,15 +20,7 @@ inductive FrontRoundedVowels where
   | midOnly  -- Mid only (6 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 11A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : FrontRoundedVowels
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint FrontRoundedVowels) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .none }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .none }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .none }
@@ -529,7 +523,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .none }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint FrontRoundedVowels) :=
   [ { walsCode := "tul", language := "Tulu", iso := "tcy", value := .none }
   , { walsCode := "tun", language := "Tunica", iso := "tun", value := .none }
   , { walsCode := "tur", language := "Turkish", iso := "tur", value := .highAndMid }
@@ -595,7 +589,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 11A dataset (562 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint FrontRoundedVowels) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 562 := by native_decide
@@ -610,11 +604,9 @@ theorem count_midOnly :
     (allData.filter (·.value == .midOnly)).length = 6 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F11A

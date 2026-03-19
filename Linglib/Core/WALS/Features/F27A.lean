@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 27A: Reduplication
 @cite{rubino-2013}
@@ -17,16 +19,8 @@ inductive ReduplicationType where
   | noProductiveReduplication  -- No productive reduplication (55 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 27A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ReduplicationType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 27A dataset (368 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ReduplicationType) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .productiveFullAndPartialReduplication }
   , { walsCode := "agl", language := "Aghul", iso := "agx", value := .noProductiveReduplication }
   , { walsCode := "agc", language := "Agta (Central)", iso := "agt", value := .productiveFullAndPartialReduplication }
@@ -408,11 +402,9 @@ theorem count_noProductiveReduplication :
     (allData.filter (·.value == .noProductiveReduplication)).length = 55 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F27A

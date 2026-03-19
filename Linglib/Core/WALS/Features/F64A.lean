@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 64A: Nominal and Verbal Conjunction
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 64A`.
@@ -17,16 +19,8 @@ inductive NominalAndVerbalConjunction where
   | bothExpressedByJuxtaposition  -- Both expressed by juxtaposition (15 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 64A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NominalAndVerbalConjunction
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 64A dataset (301 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint NominalAndVerbalConjunction) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .identity }
   , { walsCode := "abu", language := "Abun", iso := "kgr", value := .identity }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .identity }
@@ -341,11 +335,9 @@ theorem count_bothExpressedByJuxtaposition :
     (allData.filter (·.value == .bothExpressedByJuxtaposition)).length = 15 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F64A

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 122A: Relativization on Subjects
 @cite{comrie-2013}
@@ -18,16 +20,8 @@ inductive SubjectRelativization where
   | gap  -- Gap (125 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 122A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : SubjectRelativization
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 122A dataset (166 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint SubjectRelativization) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .gap }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .gap }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .relativePronoun }
@@ -209,11 +203,9 @@ theorem count_gap :
     (allData.filter (·.value == .gap)).length = 125 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F122A

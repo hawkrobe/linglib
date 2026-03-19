@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 141A: Writing Systems
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 141A`.
@@ -20,16 +22,8 @@ inductive WritingSystems where
   | mixedLogographicSyllabic  -- Mixed logographic–syllabic (0 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 141A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : WritingSystems
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 141A dataset (6 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint WritingSystems) :=
   [ { walsCode := "che", language := "Cherokee", iso := "chr", value := .syllabic }
   , { walsCode := "chp", language := "Chipewyan", iso := "chp", value := .alphasyllabic }
   , { walsCode := "cre", language := "Cree (Plains)", iso := "crk", value := .alphasyllabic }
@@ -55,11 +49,9 @@ theorem count_mixedLogographicSyllabic :
     (allData.filter (·.value == .mixedLogographicSyllabic)).length = 0 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F141A

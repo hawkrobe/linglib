@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 100A: Alignment of Verbal Person Marking
-
+@cite{siewierska-2013b}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 100A`.
@@ -20,16 +22,8 @@ inductive VerbalPersonAlignment where
   | split  -- Split (28 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 100A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : VerbalPersonAlignment
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 100A dataset (380 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint VerbalPersonAlignment) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .accusative }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .accusative }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .ergative }
@@ -429,11 +423,9 @@ theorem count_split :
     (allData.filter (·.value == .split)).length = 28 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F100A

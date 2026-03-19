@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 140A: Question Particles in Sign Languages
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 140A`.
@@ -17,16 +19,8 @@ inductive QuestionParticlesInSignLanguages where
   | moreThanOne  -- More than one (4 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 140A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : QuestionParticlesInSignLanguages
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 140A dataset (38 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint QuestionParticlesInSignLanguages) :=
   [ { walsCode := "ada", language := "Adamorobe Sign Language", iso := "ads", value := .none }
   , { walsCode := "asl", language := "American Sign Language", iso := "ase", value := .one }
   , { walsCode := "aus", language := "Auslan", iso := "asf", value := .none }
@@ -78,11 +72,9 @@ theorem count_moreThanOne :
     (allData.filter (·.value == .moreThanOne)).length = 4 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F140A

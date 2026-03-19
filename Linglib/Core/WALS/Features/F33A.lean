@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 33A: Coding of Nominal Plurality
 @cite{haspelmath-2013b}
@@ -23,15 +25,7 @@ inductive PluralityCoding where
   | noPlural  -- No plural (98 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 33A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PluralityCoding
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint PluralityCoding) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .pluralSuffix }
   , { walsCode := "aar", language := "Aari", iso := "aiw", value := .noPlural }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .pluralSuffix }
@@ -534,7 +528,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "lmb", language := "Lamba", iso := "lam", value := .pluralPrefix }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint PluralityCoding) :=
   [ { walsCode := "lmu", language := "Lamen", iso := "lmu", value := .pluralWord }
   , { walsCode := "lan", language := "Lango", iso := "laj", value := .pluralSuffix }
   , { walsCode := "lao", language := "Lao", iso := "lao", value := .noPlural }
@@ -1037,7 +1031,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "vnm", language := "Vinmavis", iso := "vnm", value := .pluralWord }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint PluralityCoding) :=
   [ { walsCode := "wah", language := "Wahgi", iso := "", value := .noPlural }
   , { walsCode := "wak", language := "Wakhi", iso := "wbl", value := .pluralSuffix }
   , { walsCode := "wal", language := "Walman", iso := "van", value := .pluralSuffix }
@@ -1107,7 +1101,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 33A dataset (1066 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint PluralityCoding) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1066 := by native_decide
@@ -1132,11 +1126,9 @@ theorem count_noPlural :
     (allData.filter (·.value == .noPlural)).length = 98 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F33A

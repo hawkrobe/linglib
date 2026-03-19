@@ -14,7 +14,7 @@ namespace Fragments.English.FocusParticles
 
 open Semantics.FocusParticles (EvenThreshold)
 open Core.Semantics.ContentLayer (ContentLayer)
-open Core.InformationStructure (FIPApplication)
+open Core.InformationStructure (FIPApplication ExclusionVariety)
 
 /-- A focus-sensitive particle lexical entry. -/
 structure Entry where
@@ -28,6 +28,11 @@ structure Entry where
   threshold : Option EvenThreshold
   /-- FIP application type -/
   application : FIPApplication
+  /-- Exclusion variety (@cite{umbach-2004} §2.3): *only* excludes
+      additional alternatives ("no one *in addition to* X"), while
+      contrastive focus excludes by substitution ("no one *instead of* X").
+      `none` for non-exclusive particles like *even* and *also*. -/
+  exclusionVariety : Option ExclusionVariety := none
   deriving Repr, BEq
 
 /-- "even" — scalar focus particle.
@@ -43,13 +48,17 @@ def even_ : Entry :=
 
 /-- "only" — exclusive focus particle.
     Truth-functional (asserts exclusion of alternatives),
-    prejacent is a presupposition. -/
+    prejacent is a presupposition.
+    @cite{umbach-2004} §2.3: *only* excludes additional alternatives — it
+    excludes the possibility that someone *in addition to* the focused item
+    satisfies the predicate. -/
 def only_ : Entry :=
   { form := "only"
   , truthFunctional := true
   , contributionLayer := .atIssue
   , threshold := none
-  , application := .focusingAdverb }
+  , application := .focusingAdverb
+  , exclusionVariety := some .additional }
 
 /-- "also"/"too" — additive focus particle.
     Presupposes existence of a true alternative. -/
@@ -85,5 +94,18 @@ theorem only_is_truth_functional :
 /-- "even" and "only" differ on truth-functionality. -/
 theorem even_only_differ_on_truth :
     even_.truthFunctional ≠ only_.truthFunctional := by decide
+
+/-- "only" is an exclusive particle (additional exclusion variety).
+    @cite{umbach-2004} §2.3: excludes alternatives *in addition to* X. -/
+theorem only_excludes_additional :
+    only_.exclusionVariety = some .additional := rfl
+
+/-- "also" is additive, not exclusive — no exclusion variety. -/
+theorem also_not_exclusive :
+    also.exclusionVariety = none := rfl
+
+/-- "even" is scalar, not exclusive — no exclusion variety. -/
+theorem even_not_exclusive :
+    even_.exclusionVariety = none := rfl
 
 end Fragments.English.FocusParticles

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 127A: Reason Clauses
 @cite{cristofaro-2013}
@@ -17,16 +19,8 @@ inductive ReasonClauseType where
   | deranked  -- Deranked (42 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 127A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ReasonClauseType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 127A dataset (169 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ReasonClauseType) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .deranked }
   , { walsCode := "abu", language := "Abun", iso := "kgr", value := .balanced }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .balanced }
@@ -209,11 +203,9 @@ theorem count_deranked :
     (allData.filter (·.value == .deranked)).length = 42 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F127A

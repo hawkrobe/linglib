@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 40A: Inclusive/Exclusive Distinction in Verbal Inflection
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 40A`.
@@ -19,16 +21,8 @@ inductive InclusiveExclusiveDistinctionInVerbalInflection where
   | inclusiveExclusive  -- Inclusive/exclusive (30 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 40A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : InclusiveExclusiveDistinctionInVerbalInflection
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 40A dataset (200 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint InclusiveExclusiveDistinctionInVerbalInflection) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .weTheSameAsI }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .noInclusiveExclusive }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .weTheSameAsI }
@@ -246,11 +240,9 @@ theorem count_inclusiveExclusive :
     (allData.filter (·.value == .inclusiveExclusive)).length = 30 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F40A

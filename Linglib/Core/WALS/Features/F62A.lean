@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 62A: Action Nominal Constructions
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 62A`.
@@ -22,16 +24,8 @@ inductive ActionNominalConstructions where
   | noActionNominals  -- No action nominals (42 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 62A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ActionNominalConstructions
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 62A dataset (168 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ActionNominalConstructions) :=
   [ { walsCode := "xun", language := "!Xun (Ekoka)", iso := "knw", value := .restricted }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .ergativePossessive }
   , { walsCode := "agl", language := "Aghul", iso := "agx", value := .mixed }
@@ -223,11 +217,9 @@ theorem count_noActionNominals :
     (allData.filter (·.value == .noActionNominals)).length = 42 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F62A

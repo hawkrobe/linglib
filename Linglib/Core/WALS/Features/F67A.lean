@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 67A: The Future Tense
 @cite{dahl-2013}
@@ -16,16 +18,8 @@ inductive FutureTenseType where
   | noInflectionalFuture  -- No inflectional future (112 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 67A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : FutureTenseType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 67A dataset (222 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint FutureTenseType) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .noInflectionalFuture }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .inflectionalFutureExists }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noInflectionalFuture }
@@ -259,11 +253,9 @@ theorem count_noInflectionalFuture :
     (allData.filter (·.value == .noInflectionalFuture)).length = 112 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F67A

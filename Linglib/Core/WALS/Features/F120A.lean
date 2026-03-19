@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 120A: Zero Copula for Predicate Nominals
 @cite{stassen-2013b}
@@ -16,16 +18,8 @@ inductive ZeroCopulaType where
   | possible  -- Possible (175 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 120A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ZeroCopulaType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 120A dataset (386 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ZeroCopulaType) :=
   [ { walsCode := "abz", language := "Abaza", iso := "abq", value := .impossible }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .impossible }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .possible }
@@ -423,11 +417,9 @@ theorem count_possible :
     (allData.filter (·.value == .possible)).length = 175 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F120A

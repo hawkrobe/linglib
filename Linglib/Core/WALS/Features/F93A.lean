@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 93A: Position of Interrogative Phrases in Content Questions
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 93A`.
@@ -17,15 +19,7 @@ inductive PositionOfInterrogativePhrasesInContentQuestions where
   | mixed  -- Mixed (23 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 93A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PositionOfInterrogativePhrasesInContentQuestions
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint PositionOfInterrogativePhrasesInContentQuestions) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .notInitialInterrogativePhrase }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .notInitialInterrogativePhrase }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .notInitialInterrogativePhrase }
@@ -528,7 +522,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "mzh", language := "Mazatec (Huautla)", iso := "mau", value := .initialInterrogativePhrase }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint PositionOfInterrogativePhrasesInContentQuestions) :=
   [ { walsCode := "mba", language := "Mba", iso := "mfc", value := .notInitialInterrogativePhrase }
   , { walsCode := "mby", language := "Mbay", iso := "myb", value := .notInitialInterrogativePhrase }
   , { walsCode := "mbi", language := "Mbili", iso := "baw", value := .notInitialInterrogativePhrase }
@@ -934,7 +928,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 93A dataset (902 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint PositionOfInterrogativePhrasesInContentQuestions) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 902 := by native_decide
@@ -947,11 +941,9 @@ theorem count_mixed :
     (allData.filter (·.value == .mixed)).length = 23 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F93A

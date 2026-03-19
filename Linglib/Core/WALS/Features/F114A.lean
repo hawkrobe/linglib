@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 114A: Subtypes of Asymmetric Standard Negation
 @cite{miestamo-2013}
@@ -21,16 +23,8 @@ inductive AsymmetricNegationSubtype where
   | nonAssignable  -- Non-assignable (114 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 114A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : AsymmetricNegationSubtype
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 114A dataset (297 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint AsymmetricNegationSubtype) :=
   [ { walsCode := "abi", language := "Abipón", iso := "axb", value := .aCat }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .aCat }
   , { walsCode := "acm", language := "Achumawi", iso := "acv", value := .aFin }
@@ -349,11 +343,9 @@ theorem count_nonAssignable :
     (allData.filter (·.value == .nonAssignable)).length = 114 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F114A

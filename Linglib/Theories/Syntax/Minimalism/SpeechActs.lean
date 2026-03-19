@@ -122,14 +122,14 @@ def PRole.toDiscourseRole : PRole → Core.Discourse.DiscourseRole
   | .hearer          => .addressee
   | .seatOfKnowledge => .speaker  -- default; varies by mood
 
-open Core.Discourse (epistemicAuthority) in
+open Core.Discourse (moodAuthority) in
 /-- `seatOfKnowledge` (Speas & Tenny, configurational) agrees with
-    `epistemicAuthority` (DiscourseRole.lean, framework-agnostic) via
+    `moodAuthority` (SpeechActs.lean, framework-agnostic) via
     the `toIllocutionaryMood` bridge. Both encode the same generalization:
     declarative/imperative/subjunctive → speaker, interrogative → addressee. -/
-theorem seat_of_knowledge_agrees_with_epistemic_authority (m : SAPMood) :
+theorem seat_of_knowledge_agrees_with_mood_authority (m : SAPMood) :
     (seatOfKnowledge m).toDiscourseRole =
-    epistemicAuthority m.toIllocutionaryMood := by
+    moodAuthority m.toIllocutionaryMood := by
   cases m <;> rfl
 
 -- ============================================================================

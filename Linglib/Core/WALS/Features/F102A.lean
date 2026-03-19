@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 102A: Verbal Person Marking
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 102A`.
@@ -19,16 +21,8 @@ inductive VerbalPersonMarking where
   | bothTheAAndPArguments  -- Both the A and P arguments (193 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 102A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : VerbalPersonMarking
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 102A dataset (378 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint VerbalPersonMarking) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .onlyThePArgument }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .bothTheAAndPArguments }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .bothTheAAndPArguments }
@@ -424,11 +418,9 @@ theorem count_bothTheAAndPArguments :
     (allData.filter (·.value == .bothTheAAndPArguments)).length = 193 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F102A

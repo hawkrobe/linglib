@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 124A: 'Want' Complement Subjects
 @cite{cristofaro-2013}
@@ -19,16 +21,8 @@ inductive WantComplementSubject where
   | desiderativeParticle  -- Desiderative particle (8 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 124A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : WantComplementSubject
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 124A dataset (283 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint WantComplementSubject) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .subjectIsExpressedOvertly }
   , { walsCode := "abu", language := "Abun", iso := "kgr", value := .subjectIsExpressedOvertly }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .subjectIsLeftImplicit }
@@ -329,11 +323,9 @@ theorem count_desiderativeParticle :
     (allData.filter (·.value == .desiderativeParticle)).length = 8 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F124A

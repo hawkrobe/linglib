@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 144D: The Position of Negative Morphemes in SVO Languages
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144D`.
@@ -29,16 +31,8 @@ inductive PositionOfNegativeMorphemesInSvoLanguages where
   | optneg  -- OptNeg (35 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 144D datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : PositionOfNegativeMorphemesInSvoLanguages
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 144D dataset (463 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint PositionOfNegativeMorphemesInSvoLanguages) :=
   [ { walsCode := "xam", language := "/Xam", iso := "xam", value := .otherNegv }
   , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .snegvo }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .otherNegv }
@@ -539,11 +533,9 @@ theorem count_optneg :
     (allData.filter (·.value == .optneg)).length = 35 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F144D

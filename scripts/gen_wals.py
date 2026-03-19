@@ -409,6 +409,10 @@ def generate_feature(feature_id, cfg, langs):
     lines = []
     fid_clean = feature_id
 
+    # Import generic Datapoint (must come before docstring)
+    lines.append(f'import Linglib.Core.WALS.Datapoint')
+    lines.append(f'')
+
     # Module docstring
     lines.append(f'/-!')
     lines.append(f'# WALS Feature {feature_id}: {cfg["name"]}')
@@ -432,21 +436,12 @@ def generate_feature(feature_id, cfg, langs):
     lines.append(f'  deriving DecidableEq, BEq, Repr')
     lines.append(f'')
 
-    # Datapoint structure
-    lines.append(f'/-- A single WALS {feature_id} datapoint. -/')
-    lines.append(f'structure Datapoint where')
-    lines.append(f'  walsCode : String')
-    lines.append(f'  language : String')
-    lines.append(f'  iso : String')
-    lines.append(f'  value : {cfg["enum"]}')
-    lines.append(f'  deriving Repr, BEq, DecidableEq')
-    lines.append(f'')
-
     # Data — split into chunks of 500 for large features to avoid maxRecDepth
+    dp_type = f'Datapoint {cfg["enum"]}'
     CHUNK = 500
     if len(entries) <= CHUNK:
         lines.append(f'/-- Complete WALS {feature_id} dataset ({len(entries)} languages). -/')
-        lines.append(f'def allData : List Datapoint :=')
+        lines.append(f'def allData : List ({dp_type}) :=')
         for i, entry in enumerate(entries):
             lang = langs.get(entry["language_id"], {})
             name = lean_safe_string(lang.get("name", "?"))
@@ -460,7 +455,7 @@ def generate_feature(feature_id, cfg, langs):
         n_chunks = (len(entries) + CHUNK - 1) // CHUNK
         for ci in range(n_chunks):
             chunk = entries[ci * CHUNK : (ci + 1) * CHUNK]
-            lines.append(f'private def allData_{ci} : List Datapoint :=')
+            lines.append(f'private def allData_{ci} : List ({dp_type}) :=')
             for i, entry in enumerate(chunk):
                 lang = langs.get(entry["language_id"], {})
                 name = lean_safe_string(lang.get("name", "?"))
@@ -473,7 +468,7 @@ def generate_feature(feature_id, cfg, langs):
             lines.append(f'')
         chunk_refs = ' ++ '.join(f'allData_{i}' for i in range(n_chunks))
         lines.append(f'/-- Complete WALS {feature_id} dataset ({len(entries)} languages). -/')
-        lines.append(f'def allData : List Datapoint := {chunk_refs}')
+        lines.append(f'def allData : List ({dp_type}) := {chunk_refs}')
     lines.append(f'')
 
     # Count verification theorems
@@ -491,14 +486,12 @@ def generate_feature(feature_id, cfg, langs):
         )
     lines.append(f'')
 
-    # Lookup function
+    # Lookup wrappers (delegate to generic Datapoint.lookup / Datapoint.lookupISO)
     lines.append(f'/-- Look up a language by WALS code. -/')
-    lines.append(f'def lookup (code : String) : Option Datapoint :=')
-    lines.append(f'  allData.find? (·.walsCode == code)')
+    lines.append(f'def lookup (code : String) := Datapoint.lookup allData code')
     lines.append(f'')
     lines.append(f'/-- Look up a language by ISO 639-3 code. -/')
-    lines.append(f'def lookupISO (iso : String) : Option Datapoint :=')
-    lines.append(f'  allData.find? (·.iso == iso)')
+    lines.append(f'def lookupISO (iso : String) := Datapoint.lookupISO allData iso')
     lines.append(f'')
 
     lines.append(f'end Core.WALS.F{fid_clean}')

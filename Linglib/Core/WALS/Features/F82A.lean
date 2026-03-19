@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 82A: Order of Subject and Verb
 @cite{dryer-2013-wals}
@@ -17,15 +19,7 @@ inductive SubjectVerbOrder where
   | noDominantOrder  -- No dominant order (110 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 82A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : SubjectVerbOrder
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint SubjectVerbOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .sv }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .sv }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .sv }
@@ -528,7 +522,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "iqu", language := "Iquito", iso := "iqu", value := .sv }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint SubjectVerbOrder) :=
   [ { walsCode := "irx", language := "Iranxe", iso := "irn", value := .sv }
   , { walsCode := "irq", language := "Iraqw", iso := "irk", value := .sv }
   , { walsCode := "irr", language := "Irarutu", iso := "irh", value := .sv }
@@ -1031,7 +1025,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "nse", language := "Nsenga", iso := "nse", value := .sv }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint SubjectVerbOrder) :=
   [ { walsCode := "nto", language := "Ntomba", iso := "nto", value := .sv }
   , { walsCode := "nua", language := "Nuaulu", iso := "nxl", value := .sv }
   , { walsCode := "nbd", language := "Nubian (Dongolese)", iso := "dgl", value := .sv }
@@ -1531,7 +1525,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 82A dataset (1496 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint SubjectVerbOrder) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1496 := by native_decide
@@ -1544,11 +1538,9 @@ theorem count_noDominantOrder :
     (allData.filter (·.value == .noDominantOrder)).length = 110 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F82A

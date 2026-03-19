@@ -8,7 +8,7 @@ import Linglib.Phenomena.ArgumentStructure.Subcategorization
 import Linglib.Phenomena.ArgumentStructure.Passive
 
 /-!
-# DG Valency Bridge: @cite{osborne-2019} @cite{osborne-2019}
+# DG Valency Bridge: @cite{osborne-2019}
 @cite{tesniere-1959}
 
 Full derivation chain from DG valency theory to argument structure

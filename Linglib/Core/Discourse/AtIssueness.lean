@@ -17,58 +17,40 @@ used for gradable adjectives (degree > θ → positive meaning).
 
 ## Design
 
-The structural parallel to adjective semantics is:
+All four degree/threshold types are `Rat01` (= `↥(Set.Icc (0 : ℚ) 1)`)
+from `Core.Scales.Scale`. The type aliases document intent but share
+infrastructure (order instances, smart constructors, etc.).
 
 | Adjective               | At-issueness                   |
 |--------------------------|--------------------------------|
-| `Degree max` (Fin)       | `AtIssuenessDegree` (ℚ ∈ [0,1]) |
-| `Threshold max`          | `AtIssuenessThreshold`         |
+| `Degree max` (Fin)       | `AtIssuenessDegree` (`Rat01`)  |
+| `Threshold max`          | `AtIssuenessThreshold` (`Rat01`) |
 | `positiveMeaning d θ`    | `isAtIssue d θ`                |
-
-We use `ℚ` with bound proofs rather than `Degree max` (= `Fin (max + 1)`)
-because at-issueness is a continuous expression-level property — `ℚ` is more
-natural and avoids an arbitrary `max` parameter.
 
 -/
 
 namespace Core.Discourse.AtIssueness
 
-open Core.Scale (Boundedness)
+open Core.Scale (Boundedness Rat01)
 
 -- ════════════════════════════════════════════════════
 -- § Degree Types
 -- ════════════════════════════════════════════════════
 
-/-- A degree of at-issueness, bounded in [0, 1].
+/-- A degree of at-issueness ∈ [0, 1].
     0 = fully backgrounded (not at-issue), 1 = fully at-issue. -/
-structure AtIssuenessDegree where
-  value : ℚ
-  nonneg : 0 ≤ value
-  le_one : value ≤ 1
-  deriving Repr
+abbrev AtIssuenessDegree := Rat01
 
-/-- A degree of projectivity, bounded in [0, 1].
+/-- A degree of projectivity ∈ [0, 1].
     0 = no projection, 1 = obligatory projection. -/
-structure ProjectivityDegree where
-  value : ℚ
-  nonneg : 0 ≤ value
-  le_one : value ≤ 1
-  deriving Repr
+abbrev ProjectivityDegree := Rat01
 
 /-- Contextual threshold for at-issueness classification.
     Content with degree above this threshold counts as at-issue. -/
-structure AtIssuenessThreshold where
-  value : ℚ
-  nonneg : 0 ≤ value
-  le_one : value ≤ 1
-  deriving Repr
+abbrev AtIssuenessThreshold := Rat01
 
 /-- Contextual threshold for projectivity classification. -/
-structure ProjectivityThreshold where
-  value : ℚ
-  nonneg : 0 ≤ value
-  le_one : value ≤ 1
-  deriving Repr
+abbrev ProjectivityThreshold := Rat01
 
 -- ════════════════════════════════════════════════════
 -- § Threshold Semantics
@@ -77,11 +59,11 @@ structure ProjectivityThreshold where
 /-- Content is at-issue when its at-issueness degree exceeds the threshold.
     Mirrors `positiveMeaning` from `Adjective/Theory.lean`. -/
 def isAtIssue (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : Bool :=
-  decide (θ.value < d.value)
+  Rat01.exceeds d θ
 
 /-- Content is projective when its projectivity degree exceeds the threshold. -/
 def isProjective (d : ProjectivityDegree) (θ : ProjectivityThreshold) : Bool :=
-  decide (θ.value < d.value)
+  Rat01.exceeds d θ
 
 -- ════════════════════════════════════════════════════
 -- § Classical Recovery
@@ -99,12 +81,10 @@ def toClassical (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : AtIssuenes
   if isAtIssue d θ then .atIssue else .notAtIssue
 
 /-- Default threshold at 0.5, matching the midpoint of the [0, 1] scale. -/
-def defaultThreshold : AtIssuenessThreshold :=
-  ⟨1/2, by norm_num, by norm_num⟩
+def defaultThreshold : AtIssuenessThreshold := Rat01.half
 
 /-- Default projectivity threshold at 0.5. -/
-def defaultProjectivityThreshold : ProjectivityThreshold :=
-  ⟨1/2, by norm_num, by norm_num⟩
+def defaultProjectivityThreshold : ProjectivityThreshold := Rat01.half
 
 -- ════════════════════════════════════════════════════
 -- § Anti-Correlation
@@ -151,9 +131,6 @@ structure AntiCorrelation where
     between content and QUD partition. -/
 def atIssuenessFromQUD {M : Type*} (q : QUD M)
     (content : M → Bool) (worlds : List M) : AtIssuenessDegree :=
-  -- If content is constant across all worlds (doesn't distinguish anything),
-  -- at-issueness is 0. If it varies within QUD cells, it's more at-issue.
-  -- This is a qualitative approximation; the full version needs measure theory.
   let varies := worlds.any λ w₁ =>
     worlds.any λ w₂ => q.sameAnswer w₁ w₂ && (content w₁ != content w₂)
   if varies then
@@ -162,24 +139,8 @@ def atIssuenessFromQUD {M : Type*} (q : QUD M)
     ⟨0, le_refl 0, by norm_num⟩
 
 -- ════════════════════════════════════════════════════
--- § Order Instances
+-- § Boundedness
 -- ════════════════════════════════════════════════════
-
-instance : LE AtIssuenessDegree where
-  le a b := a.value ≤ b.value
-
-instance : LE ProjectivityDegree where
-  le a b := a.value ≤ b.value
-
-instance : Preorder AtIssuenessDegree where
-  le_refl a := @le_refl ℚ _ a.value
-  le_trans a b c (hab : a.value ≤ b.value) (hbc : b.value ≤ c.value) :=
-    @le_trans ℚ _ a.value b.value c.value hab hbc
-
-instance : Preorder ProjectivityDegree where
-  le_refl a := @le_refl ℚ _ a.value
-  le_trans a b c (hab : a.value ≤ b.value) (hbc : b.value ≤ c.value) :=
-    @le_trans ℚ _ a.value b.value c.value hab hbc
 
 /-- Both at-issueness and projectivity are closed-bounded scales on [0, 1]. -/
 def atIssuenessBoundedness : Boundedness := .closed
@@ -189,16 +150,9 @@ def projectivityBoundedness : Boundedness := .closed
 -- § Smart Constructors
 -- ════════════════════════════════════════════════════
 
-/-- Construct an at-issueness degree from a rational in [0, 100],
-    normalizing to [0, 1]. Useful for entering experimental ratings. -/
-def AtIssuenessDegree.ofPercent (n : ℚ) (h0 : 0 ≤ n) (h1 : n ≤ 100) :
-    AtIssuenessDegree :=
-  ⟨n / 100, div_nonneg h0 (by norm_num), by linarith⟩
-
-/-- Construct a projectivity degree from a rational in [0, 100],
-    normalizing to [0, 1]. -/
-def ProjectivityDegree.ofPercent (n : ℚ) (h0 : 0 ≤ n) (h1 : n ≤ 100) :
-    ProjectivityDegree :=
+/-- Construct a degree from a rational in [0, 100], normalizing to [0, 1].
+    Useful for entering experimental ratings. -/
+def ofPercent (n : ℚ) (h0 : 0 ≤ n) (h1 : n ≤ 100) : Rat01 :=
   ⟨n / 100, div_nonneg h0 (by norm_num), by linarith⟩
 
 end Core.Discourse.AtIssueness

@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 101A: Expression of Pronominal Subjects
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 101A`.
@@ -20,15 +22,7 @@ inductive ExpressionOfPronominalSubjects where
   | mixed  -- Mixed (32 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 101A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ExpressionOfPronominalSubjects
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint ExpressionOfPronominalSubjects) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .subjectAffixesOnVerb }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .subjectAffixesOnVerb }
   , { walsCode := "abv", language := "Abui", iso := "abz", value := .subjectPronounsInDifferentPosition }
@@ -531,7 +525,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "ocu", language := "Ocuilteco", iso := "ocu", value := .subjectAffixesOnVerb }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint ExpressionOfPronominalSubjects) :=
   [ { walsCode := "obg", language := "Ogbronuagum", iso := "ogu", value := .subjectAffixesOnVerb }
   , { walsCode := "oji", language := "Ojibwa (Eastern)", iso := "", value := .subjectCliticsOnVariableHost }
   , { walsCode := "olo", language := "Olo", iso := "ong", value := .subjectAffixesOnVerb }
@@ -746,7 +740,7 @@ private def allData_1 : List Datapoint :=
   ]
 
 /-- Complete WALS 101A dataset (711 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1
+def allData : List (Datapoint ExpressionOfPronominalSubjects) := allData_0 ++ allData_1
 
 -- Count verification
 theorem total_count : allData.length = 711 := by native_decide
@@ -765,11 +759,9 @@ theorem count_mixed :
     (allData.filter (·.value == .mixed)).length = 32 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F101A

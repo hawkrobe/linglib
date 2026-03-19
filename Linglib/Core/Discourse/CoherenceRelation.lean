@@ -1,6 +1,6 @@
 /-!
 # Discourse Coherence Relations
-@cite{hobbs-1979} @cite{kehler-2002}
+@cite{hobbs-1979} @cite{kehler-2002} @cite{umbach-2004}
 
 Coherence relations classify how adjacent discourse
 segments connect. Each relation belongs to one of three classes (resemblance,
@@ -17,6 +17,19 @@ listeners seek as a cause/explanation in sentence continuations:
 - **Occasion** ("and then"): temporal contiguity — no causal search
 
 This interacts with verb semantics to produce implicit causality (IC) bias. @cite{solstad-bott-2022} @cite{solstad-bott-2024}
+
+## Contrast vs Correction
+
+@cite{umbach-2004} argues that both CONTRAST and CORRECTION are resemblance
+relations requiring alternatives that are similar (common integrator) and
+dissimilar (semantically independent). They differ in their type of exclusion:
+- **CONTRAST**: excludes *additional* alternatives (the second alternative holds
+  *in addition to* the first; "but" with confirm+deny)
+- **CORRECTION**: excludes *by substitution* (the second alternative holds
+  *instead of* the first; German *sondern*, English corrective "but")
+
+Both are distinct from PARALLEL/SEQUENCE ("and"-coordination), which requires
+similarity+dissimilarity but no exclusion.
 
 -/
 
@@ -39,14 +52,19 @@ inductive CoherenceClass where
 -- ════════════════════════════════════════════════════
 
 /-- Individual discourse coherence relations.
-    Each relation specifies how the current segment connects to the prior one. -/
+    Each relation specifies how the current segment connects to the prior one.
+
+    @cite{umbach-2004} §3: CONTRAST and CORRECTION are distinct resemblance
+    relations that both require similarity+dissimilarity in their alternatives
+    but differ in their exclusion type. -/
 inductive CoherenceRelation where
   | explanation   -- "because": effect → cause (backward causal)
   | result        -- "so": cause → effect (forward causal)
   | occasion      -- "and then": event₁ → event₂ (temporal sequence)
   | elaboration   -- further detail on the same event
   | parallel      -- structural similarity between segments
-  | contrast      -- "although/but": violated expectation
+  | contrast      -- "but"/"although": similarity + dissimilarity + exclusion of additional alternative
+  | correction    -- "but" (corrective) / German *sondern*: exclusion by substitution
   deriving DecidableEq, Repr, BEq
 
 -- ════════════════════════════════════════════════════
@@ -61,6 +79,7 @@ def CoherenceRelation.toClass : CoherenceRelation → CoherenceClass
   | .elaboration  => .contiguity
   | .parallel     => .resemblance
   | .contrast     => .resemblance
+  | .correction   => .resemblance
 
 /-- Causal direction: does the relation seek a cause in the prior segment? -/
 inductive CausalDirection where
@@ -76,7 +95,8 @@ def CoherenceRelation.causalDirection : CoherenceRelation → CausalDirection
   | .occasion     => .none        -- "and then": temporal, not causal
   | .elaboration  => .none        -- same event, no causal search
   | .parallel     => .none        -- structural, not causal
-  | .contrast     => .none        -- violated expectation, not cause
+  | .contrast     => .none        -- resemblance, not causal
+  | .correction   => .none        -- resemblance, not causal
 
 /-- Does this relation trigger a search for a cause? -/
 def CoherenceRelation.selectsCause (r : CoherenceRelation) : Bool :=
@@ -140,5 +160,18 @@ theorem causal_relations_same_class :
 theorem contiguity_relations_same_class :
     CoherenceRelation.occasion.toClass =
     CoherenceRelation.elaboration.toClass := rfl
+
+/-- CONTRAST and CORRECTION are both resemblance relations
+    (@cite{umbach-2004} §3.2, @cite{kehler-2002}). -/
+theorem contrast_correction_same_class :
+    CoherenceRelation.contrast.toClass =
+    CoherenceRelation.correction.toClass := rfl
+
+/-- CONTRAST and CORRECTION are distinct relations despite sharing a class.
+    @cite{umbach-2004} §3.2: they differ in exclusion type (additional vs
+    substitution) and in the implicit question they respond to. German
+    lexicalizes the difference: *aber* (contrast) vs *sondern* (correction). -/
+theorem contrast_ne_correction :
+    CoherenceRelation.contrast ≠ CoherenceRelation.correction := by decide
 
 end Core.Discourse.CoherenceRelation

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 115A: Negative Indefinite Pronouns and Predicate Negation
 @cite{haspelmath-2013}
@@ -18,16 +20,8 @@ inductive NegativeIndefiniteType where
   | negativeExistentialConstruction  -- Negative existential construction (12 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 115A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : NegativeIndefiniteType
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 115A dataset (206 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint NegativeIndefiniteType) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .predicateNegationAlsoPresent }
   , { walsCode := "abu", language := "Abun", iso := "kgr", value := .predicateNegationAlsoPresent }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .predicateNegationAlsoPresent }
@@ -249,11 +243,9 @@ theorem count_negativeExistentialConstruction :
     (allData.filter (·.value == .negativeExistentialConstruction)).length = 12 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F115A

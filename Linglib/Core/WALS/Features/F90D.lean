@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 90D: Internally-headed relative clauses
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 90D`.
@@ -21,16 +23,8 @@ inductive InternallyHeadedRelativeClauses where
   | internallyHeadedExists  -- Internally-headed exists (4 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 90D datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : InternallyHeadedRelativeClauses
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 90D dataset (63 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint InternallyHeadedRelativeClauses) :=
   [ { walsCode := "amt", language := "Amdo (Themchen)", iso := "adx", value := .internallyHeadedOrReln }
   , { walsCode := "ao", language := "Ao", iso := "njo", value := .internallyHeadedOrReln }
   , { walsCode := "ath", language := "Athpare", iso := "aph", value := .internallyHeadedOccursAsNondominantType }
@@ -115,11 +109,9 @@ theorem count_internallyHeadedExists :
     (allData.filter (·.value == .internallyHeadedExists)).length = 4 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F90D

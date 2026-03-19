@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 31A: Sex-based and Non-sex-based Gender Systems
 @cite{corbett-2013}
@@ -17,16 +19,8 @@ inductive GenderBasis where
   | nonSexBased  -- Non-sex-based (28 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 31A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : GenderBasis
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 31A dataset (257 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint GenderBasis) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .sexBased }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noGender }
   , { walsCode := "ain", language := "Ainu", iso := "ain", value := .noGender }
@@ -297,11 +291,9 @@ theorem count_nonSexBased :
     (allData.filter (·.value == .nonSexBased)).length = 28 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F31A

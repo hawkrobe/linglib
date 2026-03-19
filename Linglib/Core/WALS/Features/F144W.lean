@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 144W: Verb-Initial with Negative that is Immediately Postverbal or between Subject and Object
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144W`.
@@ -20,16 +22,8 @@ inductive VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndO
   | none  -- None (139 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 144W datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 144W dataset (151 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject) :=
   [ { walsCode := "agc", language := "Agta (Central)", iso := "agt", value := .none }
   , { walsCode := "agd", language := "Agta (Dupaningan)", iso := "duo", value := .none }
   , { walsCode := "als", language := "Alsea", iso := "aes", value := .none }
@@ -200,11 +194,9 @@ theorem count_none :
     (allData.filter (·.value == .none)).length = 139 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F144W

@@ -1,3 +1,5 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 123A: Relativization on Obliques
 @cite{comrie-2013}
@@ -19,16 +21,8 @@ inductive ObliqueRelativization where
   | notPossible  -- Not possible (10 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 123A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ObliqueRelativization
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 123A dataset (112 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ObliqueRelativization) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .gap }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .gap }
   , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .relativePronoun }
@@ -158,11 +152,9 @@ theorem count_notPossible :
     (allData.filter (·.value == .notPossible)).length = 10 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F123A

@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 43A: Third Person Pronouns and Demonstratives
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 43A`.
@@ -20,16 +22,8 @@ inductive ThirdPersonPronounsAndDemonstratives where
   | relatedForNonHumanReference  -- Related for non-human reference (17 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 43A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : ThirdPersonPronounsAndDemonstratives
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 43A dataset (225 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint ThirdPersonPronounsAndDemonstratives) :=
   [ { walsCode := "ain", language := "Ainu", iso := "ain", value := .unrelated }
   , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .relatedByGenderMarkers }
   , { walsCode := "ale", language := "Aleut", iso := "ale", value := .relatedForAllDemonstratives }
@@ -274,11 +268,9 @@ theorem count_relatedForNonHumanReference :
     (allData.filter (·.value == .relatedForNonHumanReference)).length = 17 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F43A

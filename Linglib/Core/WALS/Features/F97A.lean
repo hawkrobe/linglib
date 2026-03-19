@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 97A: Relationship between the Order of Object and Verb and the Order of Adjective and Noun
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 97A`.
@@ -19,15 +21,7 @@ inductive RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNou
   | other  -- Other (198 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 97A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun
-  deriving Repr, BEq, DecidableEq
-
-private def allData_0 : List Datapoint :=
+private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .voAndNadj }
   , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .other }
   , { walsCode := "xam", language := "/Xam", iso := "xam", value := .voAndNadj }
@@ -530,7 +524,7 @@ private def allData_0 : List Datapoint :=
   , { walsCode := "knk", language := "Kanakuru", iso := "kna", value := .other }
   ]
 
-private def allData_1 : List Datapoint :=
+private def allData_1 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
   [ { walsCode := "knd", language := "Kannada", iso := "kan", value := .ovAndAdjn }
   , { walsCode := "kno", language := "Kanoê", iso := "kxo", value := .ovAndNadj }
   , { walsCode := "knr", language := "Kanuri", iso := "knc", value := .ovAndNadj }
@@ -1033,7 +1027,7 @@ private def allData_1 : List Datapoint :=
   , { walsCode := "rga", language := "Ronga", iso := "rng", value := .voAndNadj }
   ]
 
-private def allData_2 : List Datapoint :=
+private def allData_2 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) :=
   [ { walsCode := "rot", language := "Rotuman", iso := "rtm", value := .voAndNadj }
   , { walsCode := "rov", language := "Roviana", iso := "rug", value := .voAndNadj }
   , { walsCode := "ruk", language := "Rukai (Tanan)", iso := "dru", value := .other }
@@ -1353,7 +1347,7 @@ private def allData_2 : List Datapoint :=
   ]
 
 /-- Complete WALS 97A dataset (1316 languages). -/
-def allData : List Datapoint := allData_0 ++ allData_1 ++ allData_2
+def allData : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdjectiveAndNoun) := allData_0 ++ allData_1 ++ allData_2
 
 -- Count verification
 theorem total_count : allData.length = 1316 := by native_decide
@@ -1370,11 +1364,9 @@ theorem count_other :
     (allData.filter (·.value == .other)).length = 198 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F97A

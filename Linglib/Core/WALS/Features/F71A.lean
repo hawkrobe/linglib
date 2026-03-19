@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 71A: The Prohibitive
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 71A`.
@@ -18,16 +20,8 @@ inductive Prohibitive where
   | specialImperativeSpecialNegative  -- Special imperative + special negative (146 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 71A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : Prohibitive
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 71A dataset (496 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint Prohibitive) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .specialImperativeNormalNegative }
   , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .normalImperativeSpecialNegative }
   , { walsCode := "acl", language := "Acholi", iso := "ach", value := .specialImperativeSpecialNegative }
@@ -539,11 +533,9 @@ theorem count_specialImperativeSpecialNegative :
     (allData.filter (·.value == .specialImperativeSpecialNegative)).length = 146 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F71A

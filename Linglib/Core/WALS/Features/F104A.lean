@@ -1,6 +1,8 @@
+import Linglib.Core.WALS.Datapoint
+
 /-!
 # WALS Feature 104A: Order of Person Markers on the Verb
-@cite{dryer-haspelmath-2013}
+@cite{wals-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 104A`.
@@ -19,16 +21,8 @@ inductive OrderOfPersonMarkersOnTheVerb where
   | aAndPAreFused  -- A and P are fused (20 languages)
   deriving DecidableEq, BEq, Repr
 
-/-- A single WALS 104A datapoint. -/
-structure Datapoint where
-  walsCode : String
-  language : String
-  iso : String
-  value : OrderOfPersonMarkersOnTheVerb
-  deriving Repr, BEq, DecidableEq
-
 /-- Complete WALS 104A dataset (379 languages). -/
-def allData : List Datapoint :=
+def allData : List (Datapoint OrderOfPersonMarkersOnTheVerb) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .aAndPDoNotOrDoNotBothOccurOnTheVerb }
   , { walsCode := "abi", language := "Abipón", iso := "axb", value := .aPrecedesP }
   , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .pPrecedesA }
@@ -425,11 +419,9 @@ theorem count_aAndPAreFused :
     (allData.filter (·.value == .aAndPAreFused)).length = 20 := by native_decide
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) : Option Datapoint :=
-  allData.find? (·.walsCode == code)
+def lookup (code : String) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) : Option Datapoint :=
-  allData.find? (·.iso == iso)
+def lookupISO (iso : String) := Datapoint.lookupISO allData iso
 
 end Core.WALS.F104A
