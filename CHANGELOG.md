@@ -12,7 +12,7 @@
 ## [0.229.343] - 2026-03-18
 
 ### Added
-- **`ChannelCapacity.lean`**: Add `channelCapacity` definition (sup_{p(c)} I(W;C), the paper's eq. 3), `channelCapacity_le_log_card` (C* ≤ log|W|, proved via `csSup_le`), `mutualInfo_le_log_fin` (I ≤ log k for `Fin k` vocabulary)
+- **`ChannelCapacity.lean`**: Add `channelCapacity` definition (sup_{p(c)} I(W;C), the paper's eq. 3), `channelCapacity_le_log_card` (C* ≤ log|W|, proved via `csSup_le`), `mutualInfo_le_log_fin` (I ≤ log k for `Fin k` vocabulary), `mutualInfo_eq_log_Z_of_cap` (I = log Z at a CAP — fully proved, no sorry)
 - **`Divergence.lean`**: Add `klDivergence_nonneg` — KL divergence non-negativity stated in terms of `klDivergence` (Gibbs' inequality), connecting `Core.Divergence` to `Core.ChannelCapacity`
 - **`ZaslavskyEtAl2019.lean`**: Add `averageCAP` (eq. 7 — averaging per-language CAPs); §4 docstring on averaged-CAP methodology and footnote 4 subtlety
 - **`references.bib`**: Add `gibson-etal-2017` (PNAS 2017, cited by Zaslavsky et al.)
