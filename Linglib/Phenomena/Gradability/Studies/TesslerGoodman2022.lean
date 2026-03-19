@@ -582,46 +582,52 @@ theorem literal_reversal_transfers_to_temp :
 
 /-! ### Why this model applies to "tall" but not "full"
 
-@cite{kennedy-2007}'s Interpretive Economy determines the standard of
-comparison from scale structure. For open-scale (relative) adjectives like
-"tall", "it is necessary to look to the distribution of objects in some
-domain (a comparison class)" (Kennedy 2007, p. 42) to fix truth conditions.
-For closed-scale (absolute) adjectives like "full", the standard is the
-scale endpoint — fixed regardless of context.
+@cite{kennedy-2007}'s Interpretive Economy (§4.3, p. 36) determines the
+standard of comparison from scale structure. For open-scale (relative)
+adjectives like "tall", the standard-fixing function **s** requires
+contextual domain information — "the distribution of objects in some
+domain (a comparison class)" (p. 42). For closed-scale (absolute)
+adjectives like "full", the standard is the scale endpoint — fixed
+regardless of context.
 
-Kennedy identifies that open-scale adjectives need a comparison class but
-does not specify the computational mechanism for inferring it. @cite{tessler-goodman-2022} fills this gap: the comparison
-class IS that contextual parameter, and it is inferred pragmatically via
-RSA. The bridge is:
+Crucially, Kennedy argues (§2.3, p. 16) that the comparison class is
+NOT a semantic argument of *pos* (contra @cite{klein-1980}), but rather
+contextual information that feeds into **s**. @cite{tessler-goodman-2022}
+provides the computational mechanism for determining this contextual
+parameter: the comparison class is inferred pragmatically via RSA as a
+latent variable. This is architecturally compatible with Kennedy's view —
+the CC is pragmatic/contextual, not a constituent of the logical form.
 
-    open scale → contextual standard → CC is a free variable → L1 infers it
-    bounded scale → endpoint standard → no free variable → nothing to infer
+    open scale → contextual standard → CC feeds into s → L1 infers it
+    bounded scale → endpoint standard → s fixed by scale → nothing to infer
 
 The chain connects three independent modules:
 1. `Semantics.Degree.interpretiveEconomy` (Theory: scale → standard type)
-2. `Semantics.Degree.PositiveStandard.requiresComparisonClass` (Theory: standard → CC-dependent?)
+2. `Semantics.Degree.PositiveStandard.requiresComparisonClass` (Theory: standard → domain-dependent?)
 3. `RSAConfig.L1_latent` with `Latent = ComparisonClass` (this file: infer CC) -/
 
 open Semantics.Degree (interpretiveEconomy PositiveStandard
   scale_determines_cc_sensitivity isClassA)
 
-/-- Height is an open-scale dimension: "tall" is Class A. -/
+/-- Height is an open-scale dimension: "tall" is relative (Class A). -/
 theorem height_is_classA :
     isClassA Core.Scale.Boundedness.open_ = true := rfl
 
-/-- Open scale → comparison class inference applies (the full chain).
+/-- Open scale → contextual domain inference applies (the full chain).
     This is a three-step argument:
     1. "tall" has an open scale (lexical fact)
-    2. Open scale → contextual standard (Interpretive Economy)
-    3. Contextual standard → CC-dependent threshold (semantic consequence)
-    Therefore the comparison class is a free variable that must be inferred
-    — exactly what `mkCompClassCfg` models with `Latent = ComparisonClass`. -/
+    2. Open scale → contextual standard via **s** (Interpretive Economy)
+    3. Contextual **s** → needs domain information (Kennedy 2007, p. 42)
+    Therefore the domain (descriptively: comparison class) must be inferred
+    — exactly what `mkCompClassCfg` models with `Latent = ComparisonClass`.
+    This is compatible with Kennedy's view: the CC is pragmatic/contextual
+    (inferred by L1), not a semantic argument of *pos*. -/
 theorem open_scale_requires_cc_inference :
     (interpretiveEconomy .open_).requiresComparisonClass = true := rfl
 
-/-- Closed scale → comparison class inference is irrelevant.
-    "Full" has an endpoint standard; the threshold is the scale maximum
-    regardless of who you compare to. No CC to infer. -/
+/-- Closed scale → contextual domain inference is irrelevant.
+    "Full" has an endpoint standard via Interpretive Economy; the threshold
+    is the scale maximum regardless of context. No domain to infer. -/
 theorem closed_scale_no_cc_inference :
     (interpretiveEconomy .closed).requiresComparisonClass = false := rfl
 

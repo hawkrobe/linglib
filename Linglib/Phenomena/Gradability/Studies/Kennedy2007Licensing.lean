@@ -116,15 +116,21 @@ theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree 
 
 @cite{kennedy-2007}'s scale structure and `PropertyDomain.requiresComparisonClass`
 are two independent classifications that converge on the same prediction for
-whether an adjective's threshold depends on contextual class membership:
+whether an adjective's standard depends on contextual domain information:
 
 - **Scale-structure path** (@cite{kennedy-2007}): `scaleType → interpretiveEconomy
   → PositiveStandard → PositiveStandard.requiresComparisonClass`
-  Open scale → contextual standard → threshold requires "the distribution of
-  objects in some domain (a comparison class)" (Kennedy 2007, p. 42)
+  Open scale → contextual **s** → requires "the distribution of objects in some
+  domain (a comparison class)" (Kennedy 2007, p. 42)
 - **Domain path** (@cite{sedivy-etal-1999}): `dimension.domain →
   PropertyDomain.requiresComparisonClass`
   Size/evaluative/sensory domains → context-sensitive threshold
+
+Note: Kennedy argues (§2.3, p. 16) that the comparison class is descriptively
+real but NOT a semantic argument of *pos*. Our `requiresComparisonClass` tracks
+whether contextual domain information is needed — compatible with Kennedy's
+view that this information feeds into **s** contextually rather than as a
+constituent of the logical form.
 
 For every concrete Fragment adjective, the two paths agree. This convergence
 is non-trivial: it reflects the empirical fact that open-scale adjectives

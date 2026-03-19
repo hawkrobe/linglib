@@ -285,12 +285,16 @@ def interpretiveEconomy (b : Boundedness) : PositiveStandard :=
 
 /-- @cite{kennedy-2007}'s relative vs. absolute adjective distinction.
     Kennedy uses "relative" and "absolute"; we label them Class A/B for brevity.
-    - **Class A** (= Kennedy's "relative"): open scale, contextual standard.
-      "tall", "expensive", "heavy"
-    - **Class B** (= Kennedy's "absolute"): closed scale, endpoint standard.
-      "full", "empty", "straight", "bent"
+    - **Class A** (= Kennedy's "relative"): open scale, contextual standard
+      determined by the standard-fixing function **s**. "tall", "expensive", "heavy"
+    - **Class B** (= Kennedy's "absolute"): closed scale, endpoint standard
+      fixed by Interpretive Economy. "full", "empty", "straight", "bent"
 
-    The class is determined entirely by scale boundedness. -/
+    The class is determined entirely by scale boundedness (§4.2, p. 32-35).
+    Kennedy argues (§2.3, p. 16) that comparison classes are descriptively
+    real but not semantic arguments of *pos* — they influence the standard
+    through contextual domain restriction, not as constituents of the
+    logical form (contra @cite{klein-1980}). -/
 def isClassA (b : Boundedness) : Bool :=
   match b with
   | .open_ => true
@@ -306,29 +310,37 @@ theorem classA_contextual : interpretiveEconomy .open_ = .contextual := rfl
 theorem classB_endpoint : interpretiveEconomy .closed = .maxEndpoint := rfl
 
 -- ════════════════════════════════════════════════════
--- § 8. Scale Structure → Comparison Class Sensitivity
+-- § 8. Scale Structure → Contextual Domain Sensitivity
 -- ════════════════════════════════════════════════════
 
-/-- Whether the positive standard depends on contextual class membership.
-    @cite{kennedy-2007} argues that for relative (open-scale) adjectives,
-    "it is necessary to look to the distribution of objects in some domain
-    (a comparison class)" (p. 42) to fix truth conditions. Endpoint
-    standards (absolute adjectives) are fixed by scale structure.
+/-- Whether the positive standard depends on contextual domain information.
 
-    `true` for `.contextual` (threshold varies with comparison class),
-    `false` for `.minEndpoint` / `.maxEndpoint` (threshold is a scale bound). -/
+    @cite{kennedy-2007} argues (§2.3, p. 16) that the comparison class
+    "is not the crucial feature on which we should be basing an account of
+    the semantic properties of vague predicates" — it is NOT a semantic
+    argument of *pos* (contra @cite{klein-1980}). Instead, Kennedy replaces
+    it with the standard-fixing function **s** (eq 27): `⟦pos⟧ = λg.λx. g(x) ≥ s(g)`.
+
+    Nevertheless, for relative (open-scale) adjectives, **s** still requires
+    contextual domain information — "the distribution of objects in some
+    domain (a comparison class)" (p. 42). For absolute (closed-scale)
+    adjectives, the standard comes from scale endpoints via Interpretive
+    Economy, with no contextual domain needed.
+
+    `true` for `.contextual` (standard depends on contextual domain),
+    `false` for `.minEndpoint` / `.maxEndpoint` (standard is a scale bound). -/
 def PositiveStandard.requiresComparisonClass : PositiveStandard → Bool
   | .contextual  => true
   | .minEndpoint  => false
   | .maxEndpoint  => false
 
-/-- Class A adjectives require comparison class resolution:
-    open scale → contextual standard → CC-dependent. -/
+/-- Relative (Class A) adjectives need contextual domain information:
+    open scale → contextual **s** → domain-dependent. -/
 theorem classA_requires_cc :
     (interpretiveEconomy .open_).requiresComparisonClass = true := rfl
 
-/-- Class B adjectives do NOT require comparison class resolution:
-    bounded scale → endpoint standard → CC-independent. -/
+/-- Absolute (Class B) adjectives do NOT need contextual domain information:
+    bounded scale → endpoint standard → domain-independent. -/
 theorem classB_no_cc (b : Boundedness) (h : isClassA b = false) :
     (interpretiveEconomy b).requiresComparisonClass = false := by
   cases b <;> simp_all [isClassA, interpretiveEconomy,

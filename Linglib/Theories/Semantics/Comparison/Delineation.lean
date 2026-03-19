@@ -42,7 +42,14 @@ vague predicate precise.
 | ⟦tall⟧           | λd.λx. height(x) ≥ d    | λx. tall(x) in C        |
 | Comparative       | max > max                | ∃C. tall(x) ∧ ¬tall(y) |
 | Vagueness         | Threshold variability    | Comparison class var.    |
+| Comparison class  | Not a semantic argument  | Semantic argument of pos |
 | Measure phrases   | Direct (3 inches of d)   | Requires extension       |
+
+@cite{kennedy-2007} argues (§2.2–2.3) that the comparison class is NOT
+a semantic argument of *pos* (contra Klein). Instead, the standard is
+determined by a context-sensitive function **s** (eq 27) that may draw on
+domain information descriptively called a "comparison class" but which
+"does not correspond to a constituent of the logical form" (p. 16).
 
 Klein's approach has difficulty with measure phrases ("3 inches taller")
 and degree modifiers ("very tall"), which are natural in degree-based
