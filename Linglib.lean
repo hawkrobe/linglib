@@ -896,6 +896,7 @@ import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
 import Linglib.Phenomena.FillerGap.Studies.PickeringBarry1991
 import Linglib.Phenomena.FillerGap.Studies.Steedman2000CrossSerial
 import Linglib.Phenomena.FillerGap.CCGGenerativeCapacity
+import Linglib.Phenomena.FillerGap.Islands.Studies.Adger2025
 import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
 import Linglib.Phenomena.FillerGap.Studies.Charlow2020
 import Linglib.Phenomena.FillerGap.Studies.LuDegen2025

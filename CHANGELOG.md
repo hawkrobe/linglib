@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.345] - 2026-03-18
+
+### Added
+- **`Basic.lean` (MereologicalSyntax)**: `MLabel.toCat?` bridge function mapping mereological labels to `Minimalism.Cat`; EP bridge theorems (`nominal_ep_valid`, `verbal_ep_valid`, `toCat_preserves_family`, `nominal_verbal_disjoint`) verifying that 1-part chains form valid Extended Projections; `DecidableEq`/`BEq` instances for `SynObj`
+- **`SynGraph.lean`**: Subject island derivation (`subject_island_blocks`, `subject_itself_can_extract`); adjunct island derivation (`adjunct_island_blocks`, `adjunct_itself_can_extract`); general antilocality theorems (`antilocality_sub1`, `antilocality_sub12`); made `mkGraph` public for downstream use
+- **`Adger2025.lean` (FillerGap/Islands/Studies)**: Study file connecting `SynGraph` AL derivations to island constraint data — `uniform_island_mechanism` (all three island types from one predicate), cross-references with `Data.lean` classifications
+
+### Changed
+- **`Basic.lean` (MereologicalSyntax)**: Fix docstring claims — remove false assertions about code-level Borer2005 integration, accurately describe `angularLocalityOK` label-based limitation, add `set_option autoImplicit false`
+
 ## [0.229.344] - 2026-03-18
 
 ### Added

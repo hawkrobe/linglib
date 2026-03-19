@@ -255,10 +255,10 @@ verify that `satisfiesAL` returns the expected result. -/
 
 section ALDerivations
 
-private abbrev N := Nat
+abbrev N := Nat
 
 /-- Helper: build a SynGraph from edge lists. -/
-private def mkGraph (n : Nat)
+def mkGraph (n : Nat)
     (ones : List (Fin n × Fin n))
     (twos : List (Fin n × Fin n)) : SynGraph N :=
   { numNodes := n
@@ -531,5 +531,111 @@ private def g_indefinite_after := mkGraph 10
 
 theorem nominal_island_indefinite_reaches_C :
     g_indefinite_after.satisfiesAL ⟨9, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+
+-- ────────────────────────────────────────────────────
+-- Subject island: extraction from within a subject
+-- ────────────────────────────────────────────────────
+
+/-! @cite{adger-2025}, Chapter 6: Extraction from within a subject DP
+is blocked because the path from the extracted element to the matrix
+clause crosses dimensions.
+
+Structure:
+    C (0) ──1──▶ T (1) ──1──▶ v (2) ──1──▶ V (3)
+                 T (1) ──2──▶ DP_subj (4) ──1──▶ NP (5) ──1──▶ N_friend (6)
+                                                  NP (5) ──2──▶ PP (7) ──1──▶ N_who (8)
+
+"*Who did [a friend of t] arrive?" — extraction of N_who from within
+the subject DP.
+
+The path N_who(8) <₁ PP(7) <₂ NP(5) <₁ DP(4) <₂ T(1) crosses
+dimensions twice. N_who is not a within-dimension transitive part of
+any node in C's 1-part chain [T, v, V].
+
+Crucially, the SUBJECT DP ITSELF can extract (it is T's 2-part):
+this correctly predicts "Who [t arrived]?" is grammatical. -/
+
+private def g_subject_island := mkGraph 9
+  -- 1-parts: C─T─v─V, DP─NP─N_friend, PP─N_who
+  [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
+   (⟨2, by omega⟩, ⟨3, by omega⟩), (⟨4, by omega⟩, ⟨5, by omega⟩),
+   (⟨5, by omega⟩, ⟨6, by omega⟩), (⟨7, by omega⟩, ⟨8, by omega⟩)]
+  -- 2-parts: T─DP_subj, NP─PP
+  [(⟨1, by omega⟩, ⟨4, by omega⟩), (⟨5, by omega⟩, ⟨7, by omega⟩)]
+
+/-- Extraction from within a subject is blocked: N_who CANNOT reach C.
+    The cross-dimensional path N_who <₁ PP <₂ NP <₁ DP <₂ T prevents
+    N_who from being a within-dimension transitive part of any α in
+    C's 1-part chain. -/
+theorem subject_island_blocks :
+    g_subject_island.satisfiesAL ⟨8, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+
+/-- The subject DP itself CAN reach C (it is T's 2-part, and T is
+    in C's 1-part chain). Subjects can extract, just not their subparts. -/
+theorem subject_itself_can_extract :
+    g_subject_island.satisfiesAL ⟨4, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+
+-- ────────────────────────────────────────────────────
+-- Adjunct island: extraction from within an adjunct
+-- ────────────────────────────────────────────────────
+
+/-! @cite{adger-2025}, Chapter 6: Extraction from within an adjunct
+is blocked by the same cross-dimensional mechanism as subject islands.
+
+Structure:
+    C (0) ──1──▶ T (1) ──1──▶ v (2) ──1──▶ V (3)
+                 T (1) ──2──▶ subj (4)
+                              v (2) ──2──▶ AdvP (5) ──1──▶ PP (6) ──1──▶ NP_wh (7)
+
+"*What did John arrive [after fixing t]?" — extraction of NP_wh from
+the adjunct AdvP.
+
+The path NP_wh(7) <₁ PP(6) <₁ AdvP(5) <₂ v(2) crosses dimensions
+at the AdvP-to-v boundary. Within v's 2-part chain: AdvP is there,
+but NP_wh is not (NP_wh is in AdvP's 1-part chain, not its 2-part chain). -/
+
+private def g_adjunct_island := mkGraph 8
+  -- 1-parts: C─T─v─V, AdvP─PP─NP_wh
+  [(⟨0, by omega⟩, ⟨1, by omega⟩), (⟨1, by omega⟩, ⟨2, by omega⟩),
+   (⟨2, by omega⟩, ⟨3, by omega⟩), (⟨5, by omega⟩, ⟨6, by omega⟩),
+   (⟨6, by omega⟩, ⟨7, by omega⟩)]
+  -- 2-parts: T─subj, v─AdvP
+  [(⟨1, by omega⟩, ⟨4, by omega⟩), (⟨2, by omega⟩, ⟨5, by omega⟩)]
+
+/-- Extraction from within an adjunct is blocked: NP_wh CANNOT reach C. -/
+theorem adjunct_island_blocks :
+    g_adjunct_island.satisfiesAL ⟨7, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+
+/-- The adjunct AdvP itself CAN reach C (it is v's 2-part, and v is
+    in C's 1-part chain). Adjuncts can be fronted, just not extracted from. -/
+theorem adjunct_itself_can_extract :
+    g_adjunct_island.satisfiesAL ⟨5, by decide⟩ ⟨0, by decide⟩ = true := by native_decide
+
+-- ────────────────────────────────────────────────────
+-- General antilocality
+-- ────────────────────────────────────────────────────
+
+/-! Antilocality: complement-to-specifier movement within the same
+head is always blocked. This is (35a) stated as a general test:
+for any 2-node structure where β has exactly one 1-part γ and no
+further substructure, γ cannot re-subjoin to β. The only candidate α
+(γ itself) fails because γ is not a part of itself.
+
+We verify this for minimal structures of each shape: sub₁ and sub₁₂. -/
+
+/-- Antilocality for a bare sub₁: the sole complement cannot re-subjoin. -/
+theorem antilocality_sub1 :
+    let g := mkGraph 2 [(⟨0, by omega⟩, ⟨1, by omega⟩)] []
+    g.satisfiesAL ⟨1, by decide⟩ ⟨0, by decide⟩ = false := by native_decide
+
+/-- Antilocality for sub₁₂: neither the complement nor the specifier
+    can re-subjoin to the head. -/
+theorem antilocality_sub12 :
+    let g := mkGraph 3
+      [(⟨0, by omega⟩, ⟨1, by omega⟩)]
+      [(⟨0, by omega⟩, ⟨2, by omega⟩)]
+    g.satisfiesAL ⟨1, by decide⟩ ⟨0, by decide⟩ = false ∧
+    g.satisfiesAL ⟨2, by decide⟩ ⟨0, by decide⟩ = false := by
+  exact ⟨by native_decide, by native_decide⟩
 
 end ALDerivations

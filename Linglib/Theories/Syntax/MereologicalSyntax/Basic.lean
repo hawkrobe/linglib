@@ -1,3 +1,7 @@
+import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
+
+set_option autoImplicit false
+
 /-!
 # Mereological Syntax
 @cite{adger-2025}
@@ -26,12 +30,18 @@ entity with a label; no projection or labeling algorithm is needed.
 - **Within-dimension transitivity**: `labelInOnePartChain` follows only 1-parts.
 - **No cross-dimension transitivity**: 2-parts are not traversed.
 
-## Integration
+## Extended Projection Bridge
 
 Label sequences along the 1-part chain correspond to @cite{grimshaw-2005}'s
-Extended Projection. The ordering N < Cl < Q < D emerges from successive
-1-part relations, matching the F-value hierarchy in `ExtendedProjection/`.
-Semantic effects (CUM→QUA at Q) connect via `Borer2005.lean`.
+Extended Projection. `MLabel.toCat?` maps mereological labels to
+`Minimalism.Cat` where possible, and the EP bridge theorems (§ 8) verify
+that standard 1-part chains are category-consistent and F-monotone.
+
+## Limitations
+
+`angularLocalityOK` operates on labels rather than node identities. When
+multiple nodes share a label, this is lossy. For node-identity-based AL
+(supporting multiparthood), see `SynGraph.satisfiesAL` in `SynGraph.lean`.
 
 -/
 
@@ -43,10 +53,9 @@ namespace MereologicalSyntax
 
 /-- Category labels for syntactic objects in mereological syntax.
 
-    Unlike `Minimalism.Cat`, these are not projection-based: each label
-    identifies an independent syntactic object. The sequence of labels
-    in a complementation line (1-part chain) corresponds to the extended
-    projection (@cite{grimshaw-2005}). -/
+    Labels that overlap with `Minimalism.Cat` (N, V, D, Q, etc.) are
+    bridged via `MLabel.toCat?`. Labels specific to @cite{adger-2025}'s
+    analysis (Cl, Deg, Adv, O, Pred) have no `Cat` equivalent. -/
 inductive MLabel where
   | N     -- noun
   | Cl    -- classifier
@@ -67,13 +76,36 @@ inductive MLabel where
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════
+-- § 1b. Bridge to Minimalism.Cat
+-- ════════════════════════════════════════════════════
+
+open Minimalism in
+/-- Map mereological labels to `Minimalism.Cat` where possible.
+
+    Labels shared with the Minimalist framework map to their `Cat`
+    equivalent. Labels specific to mereological syntax return `none`. -/
+def MLabel.toCat? : MLabel → Option Cat
+  | .N => some .N
+  | .V => some .V
+  | .v => some .v
+  | .T => some .T
+  | .C => some .C
+  | .D => some .D
+  | .Q => some .Q
+  | .Num => some .Num
+  | .A => some .A
+  | .Asp => some .Asp
+  | .Mod => some .Mod
+  | .Cl | .Deg | .Adv | .O | .Pred => none
+
+-- ════════════════════════════════════════════════════
 -- § 2. Syntactic Objects
 -- ════════════════════════════════════════════════════
 
 /-- A syntactic object in mereological syntax.
 
     Each object has a label and at most two subparts, enforcing
-    Dimensionality (@cite{adger-2025}: 44):
+    Dimensionality (@cite{adger-2025}):
 
     - **`leaf l`**: bare object, no parts (0 dimensions)
     - **`sub₁ l x`**: `x` is 1-part of `l` (complement, dim 1)
@@ -87,7 +119,7 @@ inductive SynObj where
   | leaf : MLabel → SynObj
   | sub₁ : MLabel → SynObj → SynObj
   | sub₁₂ : MLabel → SynObj → SynObj → SynObj
-  deriving Repr
+  deriving Repr, DecidableEq, BEq
 
 -- ════════════════════════════════════════════════════
 -- § 3. Accessors
@@ -142,7 +174,7 @@ def SynObj.compLine : SynObj → List MLabel
     Captures within-dimension-1 transitivity: if A <₁ B <₁ C, then
     A is reachable from C. Crucially, 2-parts of objects in the chain
     are NOT traversed — this restricted transitivity prevents
-    cross-dimensional visibility (@cite{adger-2025}: 42). -/
+    cross-dimensional visibility (@cite{adger-2025}). -/
 def labelInOnePartChain (l : MLabel) : SynObj → Bool
   | .leaf _ => false
   | .sub₁ _ one => one.label == l || labelInOnePartChain l one
@@ -172,7 +204,7 @@ def labelInTwoPartChain (l : MLabel) : SynObj → Bool
 
     True when `l` is reachable by following ONLY 1-part edges or ONLY
     2-part edges from `root`, never crossing dimensions
-    (@cite{adger-2025}, p. 95). This is the parthood relation
+    (@cite{adger-2025}). This is the parthood relation
     relevant to Angular Locality. -/
 def labelWithinDimPartOf (l : MLabel) (root : SynObj) : Bool :=
   labelInOnePartChain l root || labelInTwoPartChain l root
@@ -188,16 +220,64 @@ def SynObj.onePartChainObjs : SynObj → List SynObj
   | .sub₁ _ one => one :: one.onePartChainObjs
   | .sub₁₂ _ one _ => one :: one.onePartChainObjs
 
-/-- Angular Locality (@cite{adger-2025}, definition 29, p. 91):
+/-- Angular Locality (@cite{adger-2025}, definition 29):
 
     γ can subjoin to β only if there is an α such that γ is a
     within-dimension transitive n-part of α AND α is a transitive
     1-part of β.
 
-    This is the tree-based approximation. For the full graph-based
-    implementation (supporting multiparthood and unbounded in-degree),
-    see `SynGraph.satisfiesAL` in `SynGraph.lean`. -/
+    **Caveat**: This operates on labels, not node identities. When
+    multiple nodes share a label, this function is an approximation.
+    For node-identity-based AL with multiparthood support, see
+    `SynGraph.satisfiesAL` in `SynGraph.lean`. -/
 def angularLocalityOK (l : MLabel) (target : SynObj) : Bool :=
   target.onePartChainObjs.any (labelWithinDimPartOf l ·)
+
+-- ════════════════════════════════════════════════════
+-- § 8. Extended Projection Bridge
+-- ════════════════════════════════════════════════════
+
+open Minimalism in
+/-- The nominal 1-part chain [N, Q, D] (leaf-to-root order), after
+    mapping through `toCat?`, is a valid Extended Projection: all
+    categories share [-V, +N] features (category-consistent) and
+    F-values increase monotonically (N=0 ≤ Q=2 ≤ D=4).
+
+    The classifier label Cl is filtered out (no Cat equivalent). This
+    does not affect EP validity — Cl spells out at Q and is not a
+    separate EP layer in @cite{grimshaw-2005}'s system. -/
+theorem nominal_ep_valid :
+    let cats := [MLabel.N, .Q, .D].filterMap MLabel.toCat?
+    allCategoryConsistent cats = true ∧
+    allFMonotone cats = true := by decide
+
+open Minimalism in
+/-- The verbal 1-part chain [V, v, T, C] is a valid Extended Projection:
+    all categories share [+V, -N] features and F-values increase
+    (V=0 ≤ v=1 ≤ T=2 ≤ C=6). -/
+theorem verbal_ep_valid :
+    let cats := [MLabel.V, .v, .T, .C].filterMap MLabel.toCat?
+    allCategoryConsistent cats = true ∧
+    allFMonotone cats = true := by decide
+
+open Minimalism in
+/-- All MLabel-to-Cat mappings preserve EP family: nominal labels map to
+    the nominal family, verbal labels to the verbal family. -/
+theorem toCat_preserves_family :
+    (MLabel.N.toCat?.map catFamily = some .nominal) ∧
+    (MLabel.Q.toCat?.map catFamily = some .nominal) ∧
+    (MLabel.Num.toCat?.map catFamily = some .nominal) ∧
+    (MLabel.D.toCat?.map catFamily = some .nominal) ∧
+    (MLabel.V.toCat?.map catFamily = some .verbal) ∧
+    (MLabel.v.toCat?.map catFamily = some .verbal) ∧
+    (MLabel.T.toCat?.map catFamily = some .verbal) ∧
+    (MLabel.C.toCat?.map catFamily = some .verbal) := by decide
+
+open Minimalism in
+/-- Nominal and verbal labels map to different EP families — confirming
+    that cross-EP 1-part chains would fail category consistency. -/
+theorem nominal_verbal_disjoint :
+    (MLabel.N.toCat?.map catFamily ≠ MLabel.V.toCat?.map catFamily) ∧
+    (MLabel.D.toCat?.map catFamily ≠ MLabel.C.toCat?.map catFamily) := by decide
 
 end MereologicalSyntax
