@@ -111,4 +111,58 @@ theorem closure_neg_eq {E : Type*} (φ : DPLRel E) :
   ext g; simp only [closure, toDRS, DPLRel.neg]
   exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨g, rfl, h⟩⟩
 
+-- ════════════════════════════════════════════════════════════════
+-- § Bridges for Implication, Disjunction, Universal, Closure
+-- ════════════════════════════════════════════════════════════════
+
+/-- **DPL implication = test of dynamic implication.**
+
+`toDRS(φ → ψ) = test(dimpl(toDRS φ)(toDRS ψ))` -/
+theorem impl_eq_test_dimpl {E : Type*} (φ ψ : DPLRel E) :
+    toDRS (DPLRel.impl φ ψ) = test (dimpl (toDRS φ) (toDRS ψ)) := by
+  ext g h
+  simp only [toDRS, DPLRel.impl, test, dimpl, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hall⟩; exact ⟨heq, by rw [← heq]; exact hall⟩
+  · intro ⟨heq, hall⟩; exact ⟨heq, by rw [heq]; exact hall⟩
+
+/-- **DPL disjunction = test of dynamic disjunction.**
+
+`toDRS(φ ∨ ψ) = test(ddisj(toDRS φ)(toDRS ψ))` -/
+theorem disj_eq_test_ddisj {E : Type*} (φ ψ : DPLRel E) :
+    toDRS (DPLRel.disj φ ψ) = test (ddisj (toDRS φ) (toDRS ψ)) := by
+  ext g h
+  simp only [toDRS, DPLRel.disj, test, ddisj, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hd⟩; exact ⟨heq, by rw [← heq]; exact hd⟩
+  · intro ⟨heq, hd⟩; exact ⟨heq, by rw [heq]; exact hd⟩
+
+/-- **DPL closure = test of existential closure.**
+
+`toDRS(◇φ) = test(closure(toDRS φ))` -/
+theorem close_eq_test_closure {E : Type*} (φ : DPLRel E) :
+    toDRS (DPLRel.close φ) = test (closure (toDRS φ)) := by
+  ext g h
+  simp only [toDRS, DPLRel.close, test, closure, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hc⟩; exact ⟨heq, by rw [← heq]; exact hc⟩
+  · intro ⟨heq, hc⟩; exact ⟨heq, by rw [heq]; exact hc⟩
+
+/-- **DPL truth = existential closure.**
+
+`trueAt φ g ↔ closure(toDRS φ) g` -/
+theorem trueAt_eq_closure {E : Type*} (φ : DPLRel E) (g : Assignment E) :
+    DPLRel.trueAt φ g ↔ closure (toDRS φ) g := Iff.rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § Unified API: Re-exports for single-import usage
+-- ════════════════════════════════════════════════════════════════
+
+/-! Importing `DPL.Bridge` gives access to both the DPL-specific
+operations (from `Basic`) and the shared dynamic algebra (from
+`DynProp`/`DynamicTy2`). This avoids the need to separately import
+`Core.DynProp` or `Core.CCP` for standard DPL work. -/
+
+export DPLRel (atom conj exists_ neg impl disj forall_ close)
+
 end Semantics.Dynamic.DPL
