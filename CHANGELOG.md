@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.229.338] - 2026-03-18
+
+### Added
+- **`Verbal.lean`**: Add `prevent` verb entry with `causativeBuilder := some .prevent` and verification theorems (`prevent_semantics`, `prevent_is_en_trigger`)
+- **`JinKoenig2021.lean`**: General sufficiency theorems (`negative_valence_is_en_trigger`, `negative_implicative_is_en_trigger`, `prevent_builder_is_en_trigger`) deriving EN trigger status from semantic properties — per-verb theorems are instantiations, not conjunction-of-facts; ALMOST/BARELY converse theorem (§6.1.4)
+
+### Fixed
+- **`JinKoenig2021.lean`**: Fix Table 6 docstring "25 rows" → "28 rows" (actual count); fix `hope_no_dual_inference` docstring (paper discusses reported cases and excludes them, not "no language has hope"); fix `worry` theorem (uncertainty-based builder has negative valence, so worry IS an EN trigger)
+
+## [0.229.337] - 2026-03-18
+
+### Added
+- **`Core/Negation.lean`**: Unified `ENBlockingReason` type (`.modalRestriction`, `.npOnlyComplement`, `.analyticNegation`) shared by Januubi and Zarma-Sonrai fragments
+- **`JinKoenig2021.lean`**: Add `InferenceDomainType` (modal/temporal/structural/degree) with `domainType_determines_condition` theorem proving domain type determines licensing condition; add FORGET-class bridges connecting to `ImplicativeBuilder.negative` and `CausativeBuilder.prevent`
+- **`VerbEntry.lean`**: Add `VerbCore.isENTrigger` — derived predicate that computes EN trigger status from preferential valence, implicative polarity, and causative builder
+
+### Changed
+- **`Rett2026.lean`**: Fix namespace from `Phenomena.Negation.ExpletiveNegation` → `Phenomena.Negation.Studies.Rett2026` to match file path and eliminate intermediate organizational level
+- **Januubi/Negation.lean, ZarmaSonrai/Negation.lean**: Replace local `ENBlockingReason` inductive types with shared `Core.ENBlockingReason`
+- **Greco2020.lean, NegationData.lean**: Update references to use new `Rett2026` namespace
+
+## [0.229.336] - 2026-03-18
+
+### Added
+- **`ChannelCapacity.lean`**: Formalize channel capacity and capacity-achieving priors (CAP) — `NamingChannel` structure (stochastic matrix p(w|c)), Bayesian `posterior`, `commPrecision` (expected surprisal S(c)), `mutualInfo` I(W;C), `IsCAP` predicate, `cap_linear` theorem (eq. 6: −log p(c) = S(c) + log Z, fully proved)
+- **`ZaslavskyEtAl2019.lean`**: Formalize Zaslavsky et al. 2019 color naming — WCS chips, warm/cool temperature, three-prior dissociation (WCS-CAP/KM-CAP/salience-weighted), CIELAB perceptual space, bridges to WALS color term data (F132A–F135A) and `Core.Efficiency.CostPair`, end-to-end CAP prediction theorem
+- **`references.bib`**: Add `zaslavsky-kemp-regier-tishby-2018` (PNAS 2018, was cited but missing)
+
+### Fixed
+- **`references.bib`**: Fix phantom `Zaslavsky.lean` file reference in `cover-thomas-2006` sources; update `zaslavsky-etal-2019` role from `cited` to `formalized`
+
 ## [0.229.335] - 2026-03-18
 
 ### Added

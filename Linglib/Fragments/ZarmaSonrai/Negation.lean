@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Negation
 
 /-!
 # Zarma-Sonrai: Negation and Expletive Negation Markers
@@ -162,15 +163,13 @@ def enNegatorForAspect : ENAspect → String
 theorem fear_uses_ipfv_neg : enNegatorForAspect .ipfv = "si" := rfl
 theorem delay_uses_pfv_neg : enNegatorForAspect .pfv = "batu" := rfl
 
+open Core (ENBlockingReason)
+
 /-- Why WITHOUT and TOO…TO do not trigger EN in Zarma-Sonrai.
 
     WITHOUT is expressed analytically as "q not p" and TOO…TO as
     "too…so that…not" — in both cases, the negation is a necessary
     part of the meaning, not expletive (@cite{jin-koenig-2021}, §7). -/
-inductive ENBlockingReason where
-  /-- Concept expressed analytically with necessary (non-expletive) negation -/
-  | analyticNegation
-  deriving DecidableEq, BEq, Repr
 
 def withoutBlocked : ENBlockingReason := .analyticNegation
 def tooToBlocked : ENBlockingReason := .analyticNegation

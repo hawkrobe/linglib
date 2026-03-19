@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Negation
 
 /-!
 # Januubi Arabic: Negation and Expletive Negation Markers
@@ -116,18 +117,11 @@ def allExamples : List ENExample :=
 -- § 4. Structural Constraints on EN
 -- ════════════════════════════════════════════════════
 
-/-- REGRET does not trigger EN in Januubi: Januubi speakers disprefer
-    modal operators in complement clauses, and REGRET-class EN requires
-    a deontic modal (e.g. *should*). Consequence: EN for REGRET is
-    impossible in Januubi (@cite{jin-koenig-2021}, §6.1.2, §7). -/
-inductive ENBlockingReason where
-  /-- Language disprefers modal operators in complement clauses -/
-  | modalRestriction
-  /-- Comparative complements only allow NPs, not clauses -/
-  | npOnlyComplement
-  deriving DecidableEq, BEq, Repr
+open Core (ENBlockingReason)
 
-/-- Why REGRET does not trigger EN in Januubi. -/
+/-- Why REGRET does not trigger EN in Januubi: Januubi speakers disprefer
+    modal operators in complement clauses, and REGRET-class EN requires
+    a deontic modal (e.g. *should*) (@cite{jin-koenig-2021}, §6.1.2, §7). -/
 def regretBlocked : ENBlockingReason := .modalRestriction
 
 /-- Why comparatives (MORE THAN, TOO…TO) do not trigger EN in Januubi. -/

@@ -4,11 +4,14 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.Karttunen
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Conditionals.Basic
+import Linglib.Theories.Semantics.Causation.Basic
+import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Phenomena.Negation.Typology
 import Linglib.Fragments.French.Negation
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Januubi.Negation
 import Linglib.Fragments.ZarmaSonrai.Negation
+import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Jin & Koenig (2021): A Cross-Linguistic Study of Expletive Negation
@@ -183,7 +186,7 @@ structure DualInferenceProfile where
   deriving Repr
 
 /-- Table 6 data: positive and negative inferences for each trigger
-    concept (@cite{jin-koenig-2021}, pp. 70–71). All 25 rows of the
+    concept (@cite{jin-koenig-2021}, pp. 70–71). All 28 rows of the
     paper's Table 6 are encoded. Within each class, concepts often have
     *different* inference profiles (e.g., AVOID adds "and in w₀" to FEAR's
     positive inference; DESPAIR has three sources of inference). -/
@@ -332,8 +335,10 @@ theorem worry_has_dual_inference {W E : Type*}
     negativeValenceEntailsDual (worry μ θ isUncertain).valence = true := rfl
 
 /-- Hope has positive valence → does NOT satisfy the dual-inference
-    condition → NOT an EN trigger. This is empirically correct: no language
-    in the 722-language sample has 'hope' as an EN trigger (§2, ex. 3). -/
+    condition → NOT an EN trigger. While 'hope' has been reported as a
+    possible EN trigger in Japanese/Korean (@cite{jin-koenig-2021}, §2,
+    exx. 5–6), JK2021 exclude these based on their definition (2): the
+    complement negation reflects epistemic uncertainty, not EN. -/
 theorem hope_no_dual_inference {W E : Type*}
     (μ : Semantics.Attitudes.Preferential.PreferenceFunction W E)
     (θ : Semantics.Attitudes.Preferential.ThresholdFunction W) :
@@ -490,6 +495,45 @@ theorem logical_triggers_grouped :
 theorem comparative_triggers_grouped :
     [TriggerSubclass.moreThan, .differentThan, .tooTo].all
       (·.licensingCondition == .comparative) = true := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 7b. Typed Inference Domains
+-- ════════════════════════════════════════════════════
+
+/-! ### The type of domain determines the licensing condition
+
+The paper's four licensing conditions correspond to four types of domain
+in which p and ¬p hold. This is not stated explicitly in the paper but
+follows from the structure of Table 6: propositional attitude triggers
+always involve different *sets of worlds*, temporal triggers involve
+different *time intervals*, logical operators include ¬ *structurally*,
+and comparatives involve different *degrees*. -/
+
+/-- The type of domain in which a trigger's inferences hold. -/
+inductive InferenceDomainType where
+  | modal      -- Different sets of possible worlds
+  | temporal   -- Different time intervals
+  | structural -- ¬ is part of the meaning (no separate domain for p)
+  | degree     -- Different degrees on a scale
+  deriving DecidableEq, BEq, Repr
+
+/-- Each trigger subclass has a characteristic domain type. -/
+def TriggerSubclass.inferenceDomainType : TriggerSubclass → InferenceDomainType
+  | .fear | .regret | .deny | .forget => .modal
+  | .before | .cannotWait | .since | .rarely => .temporal
+  | .impossible | .without | .unless => .structural
+  | .moreThan | .differentThan | .tooTo => .degree
+
+/-- The inference domain type determines the licensing condition.
+    This is a structural invariant: any trigger whose inferences
+    involve different worlds maps to propositionalAttitude, etc. -/
+theorem domainType_determines_condition (s : TriggerSubclass) :
+    s.licensingCondition = match s.inferenceDomainType with
+      | .modal => .propositionalAttitude
+      | .temporal => .temporalOperator
+      | .structural => .logicalOperator
+      | .degree => .comparative := by
+  cases s <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 8. Temporal Bridge: BEFORE → Dual Inference
@@ -698,6 +742,52 @@ theorem comparative_licensing :
     TriggerSubclass.moreThan.licensingCondition = .comparative := rfl
 
 -- ════════════════════════════════════════════════════
+-- § 11b. FORGET-Class Bridges: Heterogeneous Subclasses
+-- ════════════════════════════════════════════════════
+
+/-! ### Connecting FORGET-class subclasses to theory modules
+
+The FORGET class (§6.1.4) is "semantically heterogeneous" — the paper
+groups these triggers by their shared negative entailment (¬p in w₀ or
+close to w₀), but they derive from distinct semantic mechanisms:
+
+| Subclass    | Theory module          | Key type                  |
+|-------------|------------------------|---------------------------|
+| FORGET      | Causation/Implicative  | ImplicativeBuilder.negative |
+| STOP/PREVENT| Causation/Builder      | CausativeBuilder.prevent  |
+| ALMOST      | Degree/Comparative     | threshold proximity       |
+
+Each mechanism independently entails ¬p in the real world, unifying
+the class despite its heterogeneity. -/
+
+open NadathurLauer2020.Builder (CausativeBuilder)
+open Nadathur2023.Implicative (ImplicativeBuilder)
+
+/-- FORGET is a negative implicative: "X forgot to do Y" entails that
+    Y did NOT happen (¬p in w₀). This is DERIVED from the implicative
+    builder's polarity, not stipulated.
+    @cite{nadathur-2023}: negative implicatives entail complement falsity. -/
+theorem forget_grounded_in_implicativity :
+    ImplicativeBuilder.negative.entailsComplement = false := rfl
+
+/-- STOP/PREVENT are causative preventatives: "X prevented Y" entails
+    that Y did NOT occur (¬p in w₀). The negative entailment comes from
+    the causal blocking semantics of `preventSem`.
+    @cite{nadathur-lauer-2020}: prevent = effect blocked with preventer,
+    would have occurred without it. -/
+theorem prevent_is_causative_builder :
+    (CausativeBuilder.prevent).assertsSufficiency = false := rfl
+
+/-- The FORGET class is unified by real-world negative entailment:
+    all subclasses entail ¬p in w₀ (or worlds close to w₀), but
+    through different semantic mechanisms. The class maps to the
+    propositional attitude licensing condition because the positive
+    inference involves a modal domain (obligations, normal course). -/
+theorem forget_class_licensing :
+    TriggerSubclass.forget.licensingCondition = .propositionalAttitude ∧
+    TriggerSubclass.forget.inferenceDomainType = .modal := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
 -- § 12. Fragment Bridges: Cross-Linguistic Negator Data
 -- ════════════════════════════════════════════════════
 
@@ -856,5 +946,120 @@ theorem comparative_triggers_are_rett_ambidirectional :
 theorem fear_triggers_are_rett_ambidirectional :
     TriggerSubclass.fear.licensingCondition = .propositionalAttitude ∧
     negativeValenceEntailsDual .negative = true := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 16. End-to-End: Fragment Verbs → EN Trigger Status
+-- ════════════════════════════════════════════════════
+
+/-! ### Connecting English fragment verb entries to EN trigger status
+
+Each of the three branches of `VerbCore.isENTrigger` corresponds to
+one class of JK2021 triggers. The general theorems below show that
+the semantic property (negative valence, negative implicativity,
+causative blocking) is *sufficient* for EN trigger status — the
+conclusion follows from the hypothesis, not by enumerating cases.
+-/
+
+open Core.Verbs (VerbCore)
+
+/-- Any verb with negative preferential valence is an EN trigger.
+    This captures the FEAR class: negative valence activates both p
+    (attitude content) and ¬p (desire content). -/
+theorem negative_valence_is_en_trigger (v : VerbCore)
+    (h : v.preferentialValence = some .negative) :
+    v.isENTrigger = true := by
+  simp only [VerbCore.isENTrigger, h, show (some AttitudeValence.negative ==
+    some AttitudeValence.negative) = true from rfl, Bool.true_or]
+
+/-- Any negative implicative verb is an EN trigger.
+    This captures the FORGET class: "X forgot to p" entails ¬p in w₀. -/
+theorem negative_implicative_is_en_trigger (v : VerbCore)
+    (h : v.implicativeBuilder = some .negative) :
+    v.isENTrigger = true := by
+  simp only [VerbCore.isENTrigger, h, show (some ImplicativeBuilder.negative ==
+    some ImplicativeBuilder.negative) = true from rfl, Bool.true_or, Bool.or_true]
+
+/-- Any causative-prevent verb is an EN trigger.
+    This captures the STOP/PREVENT class: blocking entails ¬p in w₀. -/
+theorem prevent_builder_is_en_trigger (v : VerbCore)
+    (h : v.causativeBuilder = some .prevent) :
+    v.isENTrigger = true := by
+  simp only [VerbCore.isENTrigger, h, show (some CausativeBuilder.prevent ==
+    some CausativeBuilder.prevent) = true from rfl, Bool.or_true]
+
+-- Instantiations for English fragment verbs: the conclusion follows
+-- from the general theorem applied to the verb's semantic builder.
+
+open Fragments.English.Predicates.Verbal (fear dread worry forget prevent)
+
+/-- "fear" → negative valence → EN trigger. -/
+theorem english_fear_is_en_trigger :
+    fear.toVerbCore.isENTrigger = true :=
+  negative_valence_is_en_trigger _ rfl
+
+/-- "dread" → negative valence → EN trigger. -/
+theorem english_dread_is_en_trigger :
+    dread.toVerbCore.isENTrigger = true :=
+  negative_valence_is_en_trigger _ rfl
+
+/-- "worry" → negative valence (uncertainty-based) → EN trigger. -/
+theorem english_worry_is_en_trigger :
+    worry.toVerbCore.isENTrigger = true :=
+  negative_valence_is_en_trigger _ rfl
+
+/-- "forget" → negative implicative → EN trigger. -/
+theorem english_forget_is_en_trigger :
+    forget.toVerbCore.isENTrigger = true :=
+  negative_implicative_is_en_trigger _ rfl
+
+/-- "prevent" → causative blocking → EN trigger. -/
+theorem english_prevent_is_en_trigger :
+    prevent.toVerbCore.isENTrigger = true :=
+  prevent_builder_is_en_trigger _ rfl
+
+-- ════════════════════════════════════════════════════
+-- § 17. ALMOST/BARELY Converse (§6.1.4)
+-- ════════════════════════════════════════════════════
+
+/-! ### ALMOST and BARELY are converses
+
+The paper (§6.1.4, p. 65) notes that BARELY is "ALMOST's converse":
+- ALMOST p: p in worlds close to w₀, ¬p in w₀
+- BARELY p: p in w₀, ¬p in worlds close to w₀
+
+The positive and negative inferences are swapped. Both belong to
+the FORGET class because they share the property that either p or ¬p
+holds in the real world. -/
+
+/-- The ALMOST entry in Table 6 (index 13). -/
+private def almostProfile : DualInferenceProfile :=
+  { subclass := .forget
+  , positiveInference := "p in worlds close to w₀"
+  , negativeInference := "¬p in w₀" }
+
+/-- The BARELY entry in Table 6 (index 14). -/
+private def barelyProfile : DualInferenceProfile :=
+  { subclass := .forget
+  , positiveInference := "p at w₀"
+  , negativeInference := "¬p in worlds close to w₀" }
+
+/-- ALMOST and BARELY share the FORGET class despite being converses. -/
+theorem almost_barely_same_class :
+    almostProfile.subclass = barelyProfile.subclass := rfl
+
+/-- ALMOST and BARELY swap their domains
+    (@cite{jin-koenig-2021}, §6.1.4):
+    - ALMOST: p holds "close to w₀", ¬p in "w₀"
+    - BARELY: p holds in "w₀", ¬p "close to w₀"
+    The real-world (w₀) and close-to-real-world domains are exchanged. -/
+theorem almost_barely_converse :
+    -- ALMOST puts p in the close-to-real-world domain
+    almostProfile.positiveInference = "p in worlds close to w₀" ∧
+    -- BARELY puts ¬p in the close-to-real-world domain
+    barelyProfile.negativeInference = "¬p in worlds close to w₀" ∧
+    -- BARELY puts p in the real world
+    barelyProfile.positiveInference = "p at w₀" ∧
+    -- ALMOST puts ¬p in the real world
+    almostProfile.negativeInference = "¬p in w₀" := ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Negation.Studies.JinKoenig2021

@@ -42,6 +42,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.ContentLayer
 import Linglib.Core.Agent.ProductOfExperts
 import Linglib.Core.Partition
+import Linglib.Core.Negation
 import Linglib.Core.Polarity
 import Linglib.Core.PolarityPartition
 import Linglib.Core.PropertyDomain
@@ -145,6 +146,7 @@ import Linglib.Core.GeneralisedSurprisal
 import Linglib.Core.Distributions
 import Linglib.Core.FinitePMF
 import Linglib.Core.Divergence
+import Linglib.Core.ChannelCapacity
 import Linglib.Core.Inheritance
 import Linglib.Core.Morphology.MorphProfile
 import Linglib.Theories.Morphology.Core.Circumfix
@@ -662,6 +664,7 @@ import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
 import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Copulas.Studies.Partee1987
+import Linglib.Phenomena.Copulas.Studies.Elbourne2026
 import Linglib.Phenomena.Complementation.Attitudes.IntensionalExamples
 import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
@@ -880,6 +883,7 @@ import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Phenomena.Iconicity.Studies.SchlenkerEtAl2026
 import Linglib.Phenomena.LexicalTypology.Typology
 import Linglib.Phenomena.LexicalTypology.Studies.MajidBosterBowerman2008
+import Linglib.Phenomena.LexicalTypology.Studies.ZaslavskyEtAl2019
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
@@ -1415,6 +1419,7 @@ import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Theories.Morphology.WP.LCEC
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
+import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Accessible
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.BinaryOptimality

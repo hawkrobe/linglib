@@ -18,7 +18,7 @@ namespace Fragments.English.Predicates.Verbal
 -- (e.g., `open Fragments.English.Predicates.Verbal (ComplementType ...)`)
 -- continue to find them.
 export Core.Verbs (PreferentialBuilder AttitudeBuilder PresupTriggerType
-  ComplementType ControlType VerbCore complementToValence)
+  ComplementType ControlType VerbCore ImplicitInterp complementToValence)
 
 open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
@@ -147,7 +147,7 @@ def arrive : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   levinClass := some .inherentlyDirectedMotion }
 
-/-- "eat" — transitive, no presupposition -/
+/-- "eat" — transitive, implicit object is indefinite ("Have you eaten?") -/
 def eat : VerbEntry where
   form := "eat"
   form3sg := "eats"
@@ -157,6 +157,7 @@ def eat : VerbEntry where
   complementType := .np
   subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
   objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, false⟩
+  implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .eat
@@ -181,7 +182,9 @@ def kick : VerbEntry := .mkRegular {
     agentControl := some [.neutral, .compatible]
   } }
 
-/-- "give" — ditransitive -/
+/-- "give" — ditransitive, alternates DOC/PP.
+    Implicit goal is definite (@cite{fillmore-1986}: pragmatically recoverable).
+    Neither object can be implicit alone. -/
 def give : VerbEntry where
   form := "give"
   form3sg := "gives"
@@ -189,6 +192,9 @@ def give : VerbEntry where
   formPastPart := "given"
   formPresPart := "giving"
   complementType := .np_np
+  altComplementType := some .np_pp
+  implicitObj := some .indef
+  implicitGoal := some .def
   vendlerClass := some .accomplishment
   levinClass := some .give
 
@@ -247,7 +253,8 @@ def meet : VerbEntry where
   complementType := .np
   vendlerClass := some .achievement
 
-/-- "sell" — irregular transitive -/
+/-- "sell" — change of possession, alternates DOC/PP.
+    Implicit DO is definite; implicit goal is indefinite. -/
 def sell : VerbEntry where
   form := "sell"
   form3sg := "sells"
@@ -255,7 +262,10 @@ def sell : VerbEntry where
   formPastPart := "sold"
   formPresPart := "selling"
   complementType := .np
+  altComplementType := some .np_pp
   subjectEntailments := some ⟨true, true, true, false, true, false, false, false, false, false⟩
+  implicitObj := some .def
+  implicitGoal := some .indef
   vendlerClass := some .accomplishment
 
 /-- "leave" — transitive (also used intransitively with argument drop) -/
@@ -743,6 +753,17 @@ def force : VerbEntry := .mkRegular {
   controlType := .objectControl
   causativeBuilder := some .force }
 
+/-- "prevent" — blocking causative (barrier addition).
+    "X prevented Y from V-ing" entails the effect did NOT occur
+    (¬p in w₀) but would have without X's intervention.
+    @cite{nadathur-lauer-2020}: `preventSem` (dual of `causeSem`). -/
+def prevent : VerbEntry := .mkRegular {
+  form := "prevent"
+  complementType := .gerund
+  vendlerClass := some .accomplishment
+  controlType := .objectControl
+  causativeBuilder := some .prevent }
+
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Lexical Causatives
 -- ════════════════════════════════════════════════════
@@ -843,10 +864,13 @@ def destroy : VerbEntry := .mkRegular {
     agentControl := some [.neutral, .compatible]
   } }
 
-/-- "melt" — thick lexical causative (manner = by heat). -/
+/-- "melt" — thick lexical causative (manner = by heat).
+    Base transitive that productively takes DOC ("melt me some ice cream").
+    Implicit obj is indefinite ("the ice cream melted" / "we're melting"). -/
 def melt : VerbEntry := .mkRegular {
   form := "melt"
   complementType := .np
+  implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   causativeBuilder := some .make
@@ -1019,7 +1043,8 @@ def read : VerbEntry where
   vendlerClass := some .accomplishment
   verbIncClass := some .inc
 
-/-- "build" — creation verb, strictly incremental theme -/
+/-- "build" — creation verb, strictly incremental theme.
+    Base transitive that productively takes DOC ("build us a house"). -/
 def build : VerbEntry where
   form := "build"
   form3sg := "builds"
@@ -1029,11 +1054,14 @@ def build : VerbEntry where
   complementType := .np
   subjectEntailments := some ⟨true, true, true, true, true, false, false, false, false, false⟩
   objectEntailments := some ⟨false, false, false, false, false, true, true, true, false, true⟩
+  implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
   levinClass := some .build
 
-/-- "write" — creation verb, strictly incremental theme -/
+/-- "write" — creation verb, strictly incremental theme.
+    Alternates DOC/PP. Implicit DO in both frames (indefinite).
+    Uniquely allows implicit DO in both DOC and PP (@cite{bruening-2021}). -/
 def write : VerbEntry where
   form := "write"
   form3sg := "writes"
@@ -1041,6 +1069,8 @@ def write : VerbEntry where
   formPastPart := "written"
   formPresPart := "writing"
   complementType := .np
+  altComplementType := some .np_pp
+  implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
 
@@ -1099,7 +1129,9 @@ def say : VerbEntry where
   vendlerClass := some .achievement
   levinClass := some .say
 
-/-- "tell" — communication verb with recipient -/
+/-- "tell" — communication verb with recipient.
+    Also ditransitive ("tell me a story"). Implicit second obj is definite
+    (@cite{bruening-2021}: recoverable). Implicit goal (PP) is indefinite. -/
 def tell : VerbEntry where
   form := "tell"
   form3sg := "tells"
@@ -1108,6 +1140,9 @@ def tell : VerbEntry where
   formPresPart := "telling"
   speechActVerb := true
   complementType := .finiteClause
+  altComplementType := some .np_np
+  implicitObj := some .def
+  implicitGoal := some .indef
   vendlerClass := some .achievement
   levinClass := some .tell
 
@@ -1550,10 +1585,15 @@ def admire : VerbEntry := .mkRegular {
   vendlerClass := some .state
   levinClass := some .admire }
 
-/-- "envy" — AgExp verb (experiencer-subject) -/
+/-- "envy" — AgExp verb (experiencer-subject).
+    DOC-only ditransitive ("He envies me the car"). Implicit goal is
+    definite (familiar). Implicit second obj is indefinite. -/
 def envy : VerbEntry := .mkRegular {
   form := "envy"
   complementType := .np
+  altComplementType := some .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
   vendlerClass := some .state
   levinClass := some .admire }
 
@@ -2055,7 +2095,8 @@ def steal : VerbEntry where
 -- § Levin Class Expansion — Sending and Carrying (§ 11)
 -- ════════════════════════════════════════════════════
 
-/-- "send" — Levin 11.1 Send verbs. -/
+/-- "send" — Levin 11.1 Send verbs. Alternates DOC/PP.
+    Goal does not entail possession (prospective). Neither object implicit alone. -/
 def send : VerbEntry where
   form := "send"
   form3sg := "sends"
@@ -2063,6 +2104,8 @@ def send : VerbEntry where
   formPastPart := "sent"
   formPresPart := "sending"
   complementType := .np
+  altComplementType := some .np_np
+  implicitGoal := some .def
   vendlerClass := some .accomplishment
   levinClass := some .send
 
@@ -2140,7 +2183,8 @@ def hide : VerbEntry where
 -- § Levin Class Expansion — Throwing (§ 17)
 -- ════════════════════════════════════════════════════
 
-/-- "throw" — Levin 17.1 Throw verbs. Ballistic motion. -/
+/-- "throw" — Levin 17.1 Throw verbs. Ballistic motion. Alternates DOC/PP.
+    Implicit DO in PP frame only (definite). -/
 def throw : VerbEntry where
   form := "throw"
   form3sg := "throws"
@@ -2148,6 +2192,9 @@ def throw : VerbEntry where
   formPastPart := "thrown"
   formPresPart := "throwing"
   complementType := .np
+  altComplementType := some .np_np
+  implicitObj := some .def
+  implicitGoal := some .indef
   vendlerClass := some .achievement
   levinClass := some .throw
 
@@ -2697,6 +2744,271 @@ def rain : VerbEntry := .mkRegular {
   levinClass := some .weather }
 
 -- ════════════════════════════════════════════════════
+-- § Ditransitive Verbs — Implicit Arguments (@cite{bruening-2021})
+-- ════════════════════════════════════════════════════
+
+/-! Ditransitive verbs classified by their implicit argument behavior,
+    following @cite{bruening-2021} Table (56). The classification is
+    theory-neutral: it records surface optionality and interpretation
+    without committing to a specific structural analysis. -/
+
+-- DOC-only verbs (no PP frame alternant)
+
+/-- "charge" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
+def charge : VerbEntry := .mkRegular {
+  form := "charge"
+  complementType := .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "cost" — DOC-only. Implicit second obj indef, implicit goal def. -/
+def cost : VerbEntry := .mkRegular {
+  form := "cost"
+  complementType := .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .state }
+
+/-- "fine" — DOC-only. Implicit second obj indef, implicit goal def. -/
+def fine : VerbEntry := .mkRegular {
+  form := "fine"
+  complementType := .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "tip" — DOC-only. Implicit second obj indef, implicit goal def (unique). -/
+def tip : VerbEntry where
+  form := "tip"
+  form3sg := "tips"
+  formPast := "tipped"
+  formPastPart := "tipped"
+  formPresPart := "tipping"
+  complementType := .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment
+
+/-- "pay" — DOC-only. Implicit second obj indef, implicit goal def. -/
+def pay : VerbEntry where
+  form := "pay"
+  form3sg := "pays"
+  formPast := "paid"
+  formPastPart := "paid"
+  formPresPart := "paying"
+  complementType := .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment
+
+/-- "strike" — DOC-only. Implicit second obj indef, implicit goal def (familiar). -/
+def strike_ : VerbEntry where
+  form := "strike"
+  form3sg := "strikes"
+  formPast := "struck"
+  formPastPart := "struck"
+  formPresPart := "striking"
+  complementType := .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .achievement
+  senseTag := .default
+
+/-- "forgive" — DOC-only. Implicit second obj def, implicit goal def (addressee). -/
+def forgive : VerbEntry where
+  form := "forgive"
+  form3sg := "forgives"
+  formPast := "forgave"
+  formPastPart := "forgiven"
+  formPresPart := "forgiving"
+  complementType := .np_np
+  implicitObj := some .def
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment
+
+/-- "spare" — DOC-only. Implicit second obj def, no implicit goal. -/
+def spare : VerbEntry := .mkRegular {
+  form := "spare"
+  complementType := .np_np
+  implicitObj := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "deny" — DOC-only. Implicit second obj indef, implicit goal def. -/
+def deny : VerbEntry where
+  form := "deny"
+  form3sg := "denies"
+  formPast := "denied"
+  formPastPart := "denied"
+  formPresPart := "denying"
+  complementType := .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment
+
+/-- "permit" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
+def permit : VerbEntry where
+  form := "permit"
+  form3sg := "permits"
+  formPast := "permitted"
+  formPastPart := "permitted"
+  formPresPart := "permitting"
+  complementType := .np_np
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment
+
+/-- "assign" — DOC-only. Implicit second obj indef, implicit goal def. -/
+def assign : VerbEntry := .mkRegular {
+  form := "assign"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+-- DOC-only verbs with no implicit arguments
+
+/-- "begrudge" — DOC-only. Neither object implicit. -/
+def begrudge : VerbEntry := .mkRegular {
+  form := "begrudge"
+  complementType := .np_np
+  vendlerClass := some .state }
+
+/-- "bet" — DOC-only. Neither object implicit. -/
+def bet : VerbEntry where
+  form := "bet"
+  form3sg := "bets"
+  formPast := "bet"
+  formPastPart := "bet"
+  formPresPart := "betting"
+  complementType := .np_np
+  vendlerClass := some .accomplishment
+
+-- Alternating verbs (both DOC and PP frame)
+
+/-- "serve" — alternates DOC/PP. Implicit second obj indef (DOC).
+    Implicit goal def (PP). -/
+def serve : VerbEntry := .mkRegular {
+  form := "serve"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitObj := some .indef
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "teach" — alternates DOC/PP. Implicit goal indef (PP).
+    When both implicit, both are indefinite. -/
+def teach : VerbEntry where
+  form := "teach"
+  form3sg := "teaches"
+  formPast := "taught"
+  formPastPart := "taught"
+  formPresPart := "teaching"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitObj := some .indef
+  implicitGoal := some .indef
+  vendlerClass := some .activity
+
+/-- "feed" — alternates DOC/PP. Implicit second obj indef (DOC).
+    No implicit goal. -/
+def feed : VerbEntry where
+  form := "feed"
+  form3sg := "feeds"
+  formPast := "fed"
+  formPastPart := "fed"
+  formPresPart := "feeding"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitObj := some .indef
+  vendlerClass := some .activity
+
+/-- "show" — alternates DOC/PP. Implicit second obj def. No implicit goal. -/
+def show_ : VerbEntry where
+  form := "show"
+  form3sg := "shows"
+  formPast := "showed"
+  formPastPart := "shown"
+  formPresPart := "showing"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitObj := some .def
+  vendlerClass := some .accomplishment
+
+/-- "award" — alternates DOC/PP. Implicit goal def (PP). -/
+def award : VerbEntry := .mkRegular {
+  form := "award"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "forward" — alternates DOC/PP. Implicit goal def (PP). -/
+def forward_ : VerbEntry := .mkRegular {
+  form := "forward"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "grant" — alternates DOC/PP. Implicit goal def (PP). -/
+def grant : VerbEntry := .mkRegular {
+  form := "grant"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "offer" — alternates DOC/PP. Implicit goal def (PP). -/
+def offer : VerbEntry := .mkRegular {
+  form := "offer"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "reserve" — alternates DOC/PP. Implicit goal def (PP). -/
+def reserve : VerbEntry := .mkRegular {
+  form := "reserve"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  implicitGoal := some .def
+  vendlerClass := some .accomplishment }
+
+/-- "pass" — alternates DOC/PP. Implicit DO def in PP frame only. -/
+def pass : VerbEntry := .mkRegular {
+  form := "pass"
+  complementType := .np
+  altComplementType := some .np_pp
+  implicitObj := some .def
+  implicitGoal := some .indef
+  vendlerClass := some .accomplishment
+  levinClass := some .give }
+
+-- Alternating verbs with no implicit arguments
+
+/-- "hand" — alternates DOC/PP. Neither argument implicit. -/
+def hand : VerbEntry := .mkRegular {
+  form := "hand"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  vendlerClass := some .accomplishment
+  levinClass := some .give }
+
+/-- "lend" — alternates DOC/PP. Neither argument implicit. -/
+def lend : VerbEntry where
+  form := "lend"
+  form3sg := "lends"
+  formPast := "lent"
+  formPastPart := "lent"
+  formPresPart := "lending"
+  complementType := .np_np
+  altComplementType := some .np_pp
+  vendlerClass := some .accomplishment
+  levinClass := some .give
+
+-- ════════════════════════════════════════════════════
 -- § Verb List and Lookup
 -- ════════════════════════════════════════════════════
 
@@ -2722,7 +3034,7 @@ def allVerbs : List VerbEntry := [
   -- Causative (@cite{nadathur-lauer-2020} + @cite{wolff-2003})
   cause,
   make,
-  let_, have_caus, get_caus, force,
+  let_, have_caus, get_caus, force, prevent,
   -- Lexical causatives (Martin, @cite{martin-rose-nichols-2025})
   kill, break_, tear_, burn, destroy, melt,
   activate, affect, change, damage, eliminate, hurt, restore, trigger,
@@ -2766,6 +3078,10 @@ def allVerbs : List VerbEntry := [
   learn, hold, hide,
   -- Levin § 17 Throwing
   throw,
+  -- Ditransitive — implicit arguments (@cite{bruening-2021})
+  charge, cost, fine, tip, pay, strike_, forgive, spare, deny, permit, assign,
+  begrudge, bet, serve, teach, feed, show_, award, forward_, grant, offer,
+  reserve, pass, hand, lend,
   -- Levin § 19–20 Contact
   poke, touch,
   -- Levin § 21 Cutting
@@ -2891,7 +3207,7 @@ def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
 /-! These verify that the Fragment's causative annotations are consistent with
 the formal semantics in `NadathurLauer2020`. -/
 
-open NadathurLauer2020.Builder (CausativeBuilder)
+open NadathurLauer2020.Builder (CausativeBuilder preventSem)
 open NadathurLauer2020.Sufficiency (makeSem)
 open NadathurLauer2020.Necessity (causeSem)
 
@@ -2927,6 +3243,21 @@ theorem force_is_coercive :
 /-- "let" is permissive — derived from its builder. -/
 theorem let_is_permissive :
     let_.causativeBuilder.map (·.isPermissive) = some true := rfl
+
+/-- "prevent" uses blocking semantics (`preventSem`). -/
+theorem prevent_semantics :
+    prevent.causativeBuilder.map CausativeBuilder.toSemantics = some preventSem := rfl
+
+/-- "prevent" asserts neither sufficiency nor necessity —
+    it uses the dual `preventSem` (blocking). -/
+theorem prevent_not_sufficiency :
+    prevent.toVerbCore.assertsSufficiency = false := by native_decide
+
+/-- "prevent" is an EN trigger — it entails ¬p in w₀ (complement
+    falsity), satisfying the FORGET class licensing condition
+    (@cite{jin-koenig-2021}, §6.1.4). -/
+theorem prevent_is_en_trigger :
+    prevent.toVerbCore.isENTrigger = true := rfl
 
 /-- All sufficiency-asserting causatives share the same truth conditions. -/
 theorem sufficiency_verbs_share_truth_conditions :

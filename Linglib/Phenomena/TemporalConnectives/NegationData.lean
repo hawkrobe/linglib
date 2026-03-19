@@ -361,7 +361,7 @@ def french_avant_EN : ExpletiveNegDatum where
 
 /-! Note: The ambidirectionality↔EN correspondence formalized here is
     also verified (more comprehensively) in
-    `Phenomena.Negation.ExpletiveNegation.rett_generalization`
+    `Phenomena.Negation.Studies.Rett2026.rett_generalization`
     over the `ENConstruction` enum, which covers all six construction
     types. The `ENDistribution` entries below provide the same
     generalization over a subset (temporal connectives only). -/

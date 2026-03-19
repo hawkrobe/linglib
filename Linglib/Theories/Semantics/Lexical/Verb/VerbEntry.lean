@@ -467,6 +467,29 @@ def VerbCore.isCausative (v : VerbCore) : Bool :=
 def VerbCore.assertsSufficiency (v : VerbCore) : Bool :=
   v.causativeBuilder.map (·.assertsSufficiency) |>.getD false
 
+/-- Does this verb's semantics predict it is an expletive negation trigger?
+
+    DERIVED from attitude, implicative, and causative builders. Captures
+    the propositional attitude licensing condition from
+    @cite{jin-koenig-2021} §5.5, ex. 13a:
+
+    - **FEAR class**: negative-valence preferential attitudes activate
+      p (feared content) and ¬p (desired alternative).
+    - **FORGET class**: negative implicative verbs entail ¬p in w₀.
+    - **STOP/PREVENT**: causative preventatives entail ¬p in w₀.
+
+    DENY class triggers (doubt, question) are excluded — their
+    EN-triggering requires matrix negation/questioning (pragmatic,
+    via neg-raising), not purely lexical semantics. Temporal, logical,
+    and comparative triggers are operators/connectives, not verbs. -/
+def VerbCore.isENTrigger (v : VerbCore) : Bool :=
+  -- FEAR class: negative-valence preferential attitudes
+  (v.preferentialValence == some .negative) ||
+  -- FORGET class: negative implicative verbs
+  (v.implicativeBuilder == some .negative) ||
+  -- STOP/PREVENT: causative prevent verbs
+  (v.causativeBuilder == some .prevent)
+
 /-- Does this causative verb assert necessity (like "cause")?
 
     DERIVED from the builder: delegates to `CausativeBuilder.assertsNecessity`. -/

@@ -37,7 +37,7 @@ Two types of EN with different syntactic positions and licensing:
 
 -/
 
-namespace Phenomena.Negation.ExpletiveNegation
+namespace Phenomena.Negation.Studies.Rett2026
 
 open Core.Scale (Boundedness isAmbidirectional)
 open Semantics.Degree.Comparative (MannerEffect)
@@ -467,4 +467,4 @@ theorem neg_type_of_en_hosts :
       = true :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Negation.ExpletiveNegation
+end Phenomena.Negation.Studies.Rett2026

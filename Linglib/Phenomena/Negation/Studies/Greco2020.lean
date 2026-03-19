@@ -30,7 +30,7 @@ so the negation cannot scope into the propositional content.
 
 ## Connections
 
-- `Phenomena.Negation.ExpletiveNegation.ENType` — high vs low EN
+- `Phenomena.Negation.Studies.Rett2026.ENType` — high vs low EN
 - `Phenomena.Negation.Typology.NegationProfile.negIsHead` — head status
 - `Minimalism.fValue` — f-value classification (Extended Projection)
 - `Minimalism.isPhaseHead` — phase head identification
@@ -39,7 +39,7 @@ so the negation cannot scope into the propositional content.
 namespace Phenomena.Negation.Studies.Greco2020
 
 open Minimalism (Cat fValue isPhaseHead)
-open Phenomena.Negation.ExpletiveNegation (ENType ENDatum)
+open Phenomena.Negation.Studies.Rett2026 (ENType ENDatum)
 open Phenomena.Negation.Typology (NegationProfile italian spanish french)
 
 -- ════════════════════════════════════════════════════
