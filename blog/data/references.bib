@@ -512,7 +512,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean}
+  sources   = {Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean;Comparisons/RelevanceTheories.lean;Theories/Pragmatics/RSA/Core/CombinedUtility.lean}
 }
 @inproceedings{waldon-degen-2021,
   author    = {Waldon, Brandon and Degen, Judith},
@@ -609,7 +609,7 @@
   author    = {Alexandropoulou, Stavroula and Gotzner, Nicole},
   year      = {2024},
   title     = {Gradable adjective interpretation under negation: The role of competition},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   volume    = {9},
   number    = {1},
   pages     = {1--33},
@@ -622,7 +622,7 @@
   author    = {Alsop, Anna},
   year      = {2024},
   title     = {The Pragmatics of Free Choice Any},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   volume    = {9},
   number    = {1},
   doi       = {10.16995/glossa.9629},
@@ -2400,6 +2400,7 @@
   publisher = {Basil Blackwell},
   address   = {Oxford},
   isbn      = {0-631-14058-1},
+  url       = {https://search.worldcat.org/title/11518276},
   subfield  = {typology},
   role      = {cited},
   validated = {true},
@@ -2830,7 +2831,7 @@
   year      = {1995},
   title     = {Maximality in the Semantics of Wh-Constructions},
   school    = {University of Massachusetts Amherst},
-  url       = {https://scholarworks.umass.edu/dissertations/AAI9524743/},
+  url       = {https://www.proquest.com/dissertations-theses/maximality-semantics-ofwh-constructions/docview/304217714/se-2},
     subfield  = {semantics/compositional},
   role      = {cited},
   validated = {true},
@@ -3142,7 +3143,7 @@
 @book{talmy-2000,
   author    = {Talmy, Leonard},
   year      = {2000},
-  title     = {Toward a Cognitive Semantics, Vol},
+  title     = {Toward a Cognitive Semantics, Volume 1: Concept Structuring Systems},
   doi       = {10.7551/mitpress/6847.001.0001},
   publisher = {The MIT Press},
   subfield  = {semantics/compositional},
@@ -3647,18 +3648,8 @@
   validated = {true},
   sources   = {Phenomena/Imprecision/InferencePreservation.lean;Phenomena/Imprecision/Numerals.lean}
 }% REF: Foley, W. A. (2008). The place of Philippine languages in a typology of voice systems. In P. K. Austin & S. Musgrave (ed
-@book{schfer-2008,
-  author    = {Schäfer, Florian},
-  year      = {2008},
-  title     = {The Syntax of (Anti-)Causatives},
-  doi       = {10.1075/la.126},
-  publisher = {John Benjamins Publishing Company},
-  subfield  = {semantics/compositional},
-  role      = {cited},
-  validated = {true},
-  sources   = {Phenomena/Causatives/Compare.lean;Theories/Interfaces/SyntaxSemantics/Minimalism/CausalSourceBridge.lean;Theories/Interfaces/SyntaxSemantics/Minimalism/VoiceTheta.lean;Theories/Syntax/Minimalism/Core/Voice.lean;Theories/Syntax/Minimalism/VoiceAppl.lean}
-}
-@article{schfer-2025,
+% REMOVED: schfer-2008 was a duplicate of schaefer-2008 (same book, same DOI)
+@article{schaefer-2025,
   author    = {Schäfer, Florian},
   year      = {2025},
   title     = {Anticausatives in transitive guise},
@@ -4311,16 +4302,6 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Imprecision/Projection.lean}
-}% REF: Solt (2023). Imprecision without homogeneity.
-@unpublished{solt-2023,
-  author    = {Solt, Stephanie},
-  year      = {2023},
-  title     = {Imprecision without Homogeneity},
-  note      = {Manuscript},
-  subfield  = {semantics/compositional},
-  role      = {cited},
-  validated = {true},
-  sources   = {Phenomena/Imprecision/Numerals.lean;Phenomena/Quantification/Data.lean}
 }% REF: Erk, K. & Herbelot, A. (2024). How to Marry a Star: Probabilistic Constraints for Meaning in Context. Journal of Semanti
 @article{erk-herbelot-2024,
   author    = {Erk, Katrin and Herbelot, Aurélie},
@@ -4445,12 +4426,11 @@
   role      = {formalized},
   sources   = {Theories/Semantics/Modality/ModalIndefinites.lean}
 }
-@techreport{stone-1997,
+@misc{stone-1997,
   author    = {Stone, Matthew},
   year      = {1997},
   title     = {The Anaphoric Parallel between Modality and Tense},
-  institution = {University of Pennsylvania, Department of Computer and Information Science},
-  number    = {MS-CIS-97-09},
+  howpublished = {Technical Report IRCS 97--6, University of Pennsylvania},
   url       = {https://repository.upenn.edu/handle/20.500.14332/7078},
   subfield  = {semantics/modality},
   validated = {true},
@@ -4861,13 +4841,14 @@
   validated = {true},
   sources   = {Theories/Semantics/Conditionals/Restrictor.lean}
 }% REF: Willett, T. (1988). A cross-linguistic survey of the grammaticalization of evidentiality. Studies in Language 12: 51--97
-@misc{iatridou-1991,
-  author    = {Iatridou},
+@phdthesis{iatridou-1991,
+  author    = {Iatridou, Sabine},
   year      = {1991},
   title     = {Topics in Conditionals},
+  school    = {Massachusetts Institute of Technology},
+  url       = {https://dspace.mit.edu/handle/1721.1/13521},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {true},
   sources   = {Phenomena/Conditionals/LeftNested/Data.lean;Theories/Semantics/Conditionals/ConditionalType.lean}
 }% REF: Edgington (1995). On Conditionals.
 @incollection{edgington-1997,
@@ -5270,7 +5251,7 @@
   author    = {Kalyakin, Ivan},
   year      = {2026},
   title     = {{VP} ellipsis and argument structure alternations: Evidence from {Muira Dargwa} complex predicates},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   volume    = {11},
   number    = {1},
   pages     = {1--47},
@@ -5714,8 +5695,8 @@
 @article{schwarzschild-1999,
   author    = {Schwarzschild, Roger},
   year      = {1999},
-  title     = {GIVENness, AvoidF, and other constraints on the placement of focus},
-  journal   = {NLS 7: 141-177},
+  title     = {{GIVENness}, {AvoidF} and Other Constraints on the Placement of Accent},
+  journal   = {Natural Language Semantics},
   doi       = {10.1023/a:1008370902407},
   volume    = {7},
   number    = {2},
@@ -5851,9 +5832,9 @@
   year      = {2024},
   title     = {Resultative Expressions in {M}andarin {C}hinese},
   school    = {University College London},
+  url       = {https://discovery.ucl.ac.uk/id/eprint/10196298},
   subfield  = {semantics/causation},
   role      = {formalized},
-  validated = {true},
   sources   = {Theories/Semantics/Causation/Resultatives.lean;Phenomena/Constructions/Resultatives/Studies/Tay2024.lean}
 }% REF: Talmy, L. (1988). Force dynamics in language and cognition. *Cognitive Science* 12, 49–100. — Force magnitude and direct
 @article{talmy-1988,
@@ -6307,6 +6288,18 @@
   validated = {true},
   role      = {formalized},
   sources   = {Theories/Syntax/Minimalism/Tense/Wurmbrand.lean}
+}
+@book{wurmbrand-2001,
+  author    = {Wurmbrand, Susi},
+  year      = {2001},
+  title     = {Infinitives: Restructuring and Clause Structure},
+  publisher = {Mouton de Gruyter},
+  series    = {Studies in Generative Grammar},
+  number    = {55},
+  doi       = {10.1515/9783110908329},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Theories/Syntax/Minimalism/Tense/InfinitivalTense.lean}
 }
 @phdthesis{tsai-2015,
   author    = {Tsai, Cheng-Yu},
@@ -6790,7 +6783,7 @@
   author    = {Hovav, Malka and Levin, Beth},
   year      = {2024},
   title     = {Variable agentivity: Polysemy or underspecification? In The Landscape of Verb Classes},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   volume    = {9},
   number    = {1},
   subfield  = {semantics/tense},
@@ -7793,7 +7786,7 @@
   sources   = {Fragments/Bulgarian/QuestionParticles.lean;Fragments/Czech/Determiners.lean;Fragments/Czech/Particles.lean;Fragments/Macedonian/QuestionParticles.lean;Fragments/Polish/QuestionParticles.lean;Fragments/Russian/QuestionParticles.lean;Fragments/Serbian/QuestionParticles.lean;Fragments/Slovenian/QuestionParticles.lean;Fragments/Ukrainian/QuestionParticles.lean;Phenomena/Negation/CzechThreeWayNegBridge.lean;Phenomena/Negation/Studies/Stakov2026.lean;Phenomena/Negation/Studies/Stakov2026Typology.lean;Phenomena/Negation/Studies/StankovaSimik2024/Data.lean;Phenomena/Questions/NegativeQuestions.lean;Phenomena/Questions/SlavicPQStrategies.lean;Theories/Semantics/Modality/BiasedPQ.lean}
 }
 @article{stankova-simik-2024,
-  author    = {Sta\v{n}kov\'{a}, Anna and \v{S}im\'{i}k, Radek},
+  author    = {Staňková, Anna and \v{S}im\'{i}k, Radek},
   year      = {2024},
   title     = {Negation in {C}zech Polar Questions},
   journal   = {Journal of Slavic Linguistics},
@@ -7993,8 +7986,10 @@
   year      = {1997},
   title     = {Quantifiers in Pair-List Readings},
   doi       = {10.1007/978-94-011-5814-5_9},
-  booktitle = {Studies in Linguistics and Philosophy},
-  publisher = {Springer Netherlands},
+  booktitle = {Ways of Scope Taking},
+  editor    = {Szabolcsi, Anna},
+  publisher = {Kluwer},
+  series    = {Studies in Linguistics and Philosophy},
   pages     = {311--347},
   subfield  = {semantics/questions},
   role      = {cited},
@@ -8381,9 +8376,9 @@
   title     = {Surprise-predicates, strong exhaustivity and alternative questions},
   booktitle = {Proceedings of SALT 25},
   pages     = {225--245},
+  doi       = {10.3765/salt.v25i0.3081},
   subfield  = {semantics/presupposition},
   role      = {cited},
-  validated = {true},
   sources   = {Theories/Semantics/Attitudes/Preferential.lean;Phenomena/Focus/Studies/OzyildizEtAl2025.lean}
 }% REF: Spector & Egré (2015). A uniform semantics for embedded interrogatives.
 @article{spector-egr-2015,
@@ -8519,9 +8514,9 @@
   author    = {Qing, Ciyang and Özyıldız, Deniz and Roelofsen, Floris and Romero, Maribel and Uegaki, Wataru},
   year      = {2025},
   title     = {When can non-veridical preferential attitude predicates take questions?},
+  url       = {https://ling.auf.net/lingbuzz/008113},
   subfield  = {semantics/presupposition},
   role      = {cited},
-  validated = {true},
   sources   = {Fragments/German/Predicates.lean;Phenomena/Questions/Studies/QingEtAl2025.lean;Theories/Semantics/Attitudes/BuilderProperties.lean;Theories/Semantics/Attitudes/Preferential.lean}
 }% REF: Özyıldız et al. (2025). Operationalizing focus-sensitivity in a cross-linguistic context.
 @article{ozyildiz-etal-2025,
@@ -8582,12 +8577,12 @@
   sources   = {Phenomena/Focus/Studies/OzyildizEtAl2025.lean}
 }% REF: Roberts & Özyıldız (2025). A causal explanation for the contrafactive gap.
 @misc{roberts-ozyildiz-2025,
-  author    = {Roberts and Özyıldız},
+  author    = {Roberts, Tom and Özyıldız, Deniz},
   year      = {2025},
   title     = {A causal explanation for the contrafactive gap},
+  url       = {https://ling.auf.net/lingbuzz/009050},
   subfield  = {semantics/presupposition},
   role      = {cited},
-  validated = {true},
   sources   = {Theories/Semantics/Attitudes/ContrafactiveGap.lean;Theories/Semantics/Attitudes/Doxastic.lean}
 }% REF: Yagi, Y. (2025). Conflicting presuppositions in disjunction. S&P 18:7.
 @article{yagi-2025,
@@ -9301,7 +9296,7 @@
   subfield  = {syntax},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Interfaces/SyntaxSemantics/Minimalism/VoiceTheta.lean}
+  sources   = {Phenomena/Causatives/Compare.lean;Theories/Interfaces/SyntaxSemantics/Minimalism/CausalSourceBridge.lean;Theories/Interfaces/SyntaxSemantics/Minimalism/VoiceTheta.lean;Theories/Syntax/Minimalism/Core/Voice.lean;Theories/Syntax/Minimalism/VoiceAppl.lean}
 }% REF: Schäfer, Florian (2017). Romance and Greek medio-passives and the typology of Voice.
 @incollection{schaefer-2017,
   author    = {Sch\"{a}fer, Florian},
@@ -9311,8 +9306,9 @@
   editor    = {D'Alessandro, Roberta and Franco, Irene and Gallego, \'{A}ngel J.},
   pages     = {129--152},
   publisher = {Oxford University Press},
+  doi       = {10.1093/oso/9780198767886.003.0006},
+  url       = {https://books.google.com/books?id=2_9KDgAAQBAJ&pg=PA129},
   subfield  = {syntax},
-  validated = {true},
   role      = {cited},
   sources   = {Theories/Syntax/Minimalism/Core/Voice.lean}
 }
@@ -9345,7 +9341,7 @@
   author    = {Flemming, Edward},
   year      = {2021},
   title     = {Comparing {MaxEnt} and Noisy {Harmonic Grammar}},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   volume    = {6},
   number    = {1},
   pages     = {141, 1--42},
@@ -9459,7 +9455,7 @@
   author    = {Smith, Brian W. and Pater, Joe},
   year      = {2020},
   title     = {French Schwa and Gradient Cumulativity},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   volume    = {5},
   number    = {1},
   pages     = {24},
@@ -10554,16 +10550,15 @@
   role      = {formalized},
   sources   = {Phenomena/ArgumentStructure/Bridge/DGValency.lean}
 }% REF: Tesnière, L. (1959). *Éléments de syntaxe structurale*. Paris: Klincksieck.
-@book{tesnire-1959,
+@book{tesniere-1959,
   author    = {Tesni{\`e}re, Lucien},
   year      = {1959},
   title     = {{\'E}l{\'e}ments de syntaxe structurale},
   publisher = {Klincksieck},
   address   = {Paris},
-  doi       = {10.1075/z.185},
+  url       = {https://search.worldcat.org/title/241721220},
   subfield  = {syntax},
   role      = {cited},
-  validated = {true},
   sources   = {Phenomena/ArgumentStructure/Bridge/DGValency.lean;Theories/Syntax/DependencyGrammar/CRDC.lean}
 }% REF: Greenberg, J. (1963). Some universals of grammar. In Greenberg (ed.), Universals of Language.
 @incollection{greenberg-1963,
@@ -11502,10 +11497,9 @@
   volume    = {61},
   number    = {4},
   pages     = {825--883},
-  doi       = {10.31234/osf.io/yg9bf},
+  doi       = {10.1515/ling-2021-0098},
   subfield  = {syntax},
   role      = {cited},
-  validated = {true},
   sources   = {Phenomena/WordOrder/Gradience.lean}
 }% REF: Anand, P., Hardt, D., & McCloskey, J. (2025). Sluicing and Syntactic Identity.
 @article{anand-mccloskey-2025,
@@ -11871,8 +11865,6 @@
   journal   = {Rivista di Grammatica Generativa},
   volume    = {3},
   pages     = {127--181},
-  booktitle = {Recent Transformational Studies in European Languages},
-  editor    = {Keyser, Samuel Jay},
   subfield  = {morphology},
   role      = {cited},
   validated = {true},
@@ -11942,17 +11934,7 @@
   validated = {true},
   sources   = {Core/Lexical/MorphRule.lean;Fragments/Finnish/Negation.lean;Phenomena/Case/Bridge/FinnishSuffixOrder.lean;Phenomena/Morphology/DegreeCompositionBridge.lean;Theories/Morphology/Core/Exponence.lean;Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/MorphemeOrder.lean}
 }% REF: Erbaugh, M. S. (1986). Taking Stock: The Development of Chinese Noun Classifiers.
-@article{shore-1986,
-  author    = {Shore, Susanna},
-  year      = {1986},
-  title     = {Onko suomessa passiivia?},
-  journal   = {Suomen kielitieteellisen yhdistyksen julkaisuja},
-  volume    = {12},
-  subfield  = {morphology},
-  role      = {cited},
-  validated = {true},
-  sources   = {Fragments/Finnish/Predicates.lean}
-}
+
 @incollection{halle-marantz-1993,
   author    = {Halle, M. and A. Marantz},
   year      = {1993},
@@ -12186,7 +12168,7 @@
 @article{szabolcsi-2015,
   author    = {Szabolcsi, Anna},
   year      = {2015},
-  title     = {What do quantifier particles do? L&P 38(2)},
+  title     = {What Do Quantifier Particles Do?},
   doi       = {10.1007/s10988-015-9166-z},
   journal   = {Linguistics and Philosophy},
   volume    = {38},
@@ -12201,7 +12183,7 @@
   author    = {Mendes, Gesoel and Ranero, Rodrigo},
   year      = {2021},
   title     = {Chain Reduction via Substitution: Evidence from {M}ayan},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   volume    = {6},
   number    = {1},
   pages     = {1--31},
@@ -12331,18 +12313,6 @@
   role      = {cited},
   validated = {true},
   sources   = {Fragments/English/MeasurePhrases.lean;Phenomena/Quantification/BaleSchwarz2026Bridge.lean}
-}% REF: Mondloch, J. & S. Romero (2022). Clause structure and movement in K'ichean. Ms.
-@article{todorovic-2023,
-  author    = {Todorović, N},
-  year      = {2023},
-  title     = {Serbian polar questions},
-  journal   = {Glossa},
-  pages     = {214--226},
-  subfield  = {morphology},
-  role      = {cited},
-  doi       = {10.2307/j.ctv35n8b4h.20},
-  validated = {true},
-  sources   = {Fragments/Serbian/QuestionParticles.lean;Phenomena/Questions/SlavicPQStrategies.lean}
 }% REF: Claus, B. & Walch, V. (2024). Evaluative valence distinguishes at most from up to. *Proceedings of Sinn und Bedeutung* 2
 @inproceedings{claus-walch-2024,
   author    = {Claus, Berry and Walch, Milena},
@@ -12368,7 +12338,7 @@
   sources   = {Fragments/Japanese/Particles.lean;Phenomena/Modality/OutlookMarkers.lean;Theories/Semantics/Lexical/Expressives/OutlookMarker.lean}
 }% REF: Staňková, V. (2026). A three-way distinction of negation interpretation in Czech.
 @article{stankova-2025,
-  author    = {Sta\v{n}kov\'{a}, Anna},
+  author    = {Staňková, Anna},
   year      = {2025},
   title     = {Negation in {C}zech Polar Questions},
   journal   = {Journal of Slavic Linguistics},
@@ -12653,24 +12623,13 @@
   sources   = {Comparisons/TenseModalEvidentiality.lean;Core/Discourse/Evidence.lean;Phenomena/Modality/EpistemicEvidentiality.lean;Theories/Semantics/Modality/Kernel.lean}
 }% REF: Osborne & Li (2023). Conjunct Referential Dependency Constraint. (recent DG binding)
 @misc{osborne-li-2023,
-  author    = {Osborne and Li},
+  author    = {Osborne, Timothy and Li, Junying},
   year      = {2023},
   title     = {Conjunct Referential Dependency Constraint},
   subfield  = {comparative},
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Anaphora/Compare.lean;Theories/Syntax/DependencyGrammar/CRDC.lean}
-}% REF: Sumers, T.R., Ho, M.K., Griffiths, T.L., & Hawkins, R.D. (2023). Reconciling truthfulness and relevance as epistemic and
-@misc{sumers-hawkins-2023,
-  author    = {Sumers, Theodore and Ho, Mark K and Griffiths, Thomas L. and Hawkins, Robert},
-  year      = {2023},
-  title     = {Reconciling truthfulness and relevance as epistemic and decision-theoretic utility},
-  doi       = {10.31234/osf.io/e9m3j},
-  publisher = {Center for Open Science},
-  subfield  = {comparative},
-  role      = {cited},
-  validated = {true},
-  sources   = {Comparisons/RelevanceTheories.lean;Theories/Pragmatics/RSA/Core/CombinedUtility.lean;Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean}
 }
 @article{elliott-sudo-2025,
   author    = {Elliott, Patrick D. and Sudo, Yasutada},
@@ -12757,8 +12716,8 @@
   volume    = {13},
   number    = {3},
   pages     = {483--545},
+  url       = {https://www.jstor.org/stable/4178288},
   subfield  = {semantics/presupposition},
-  validated = {true},
   role      = {cited}
 }
 @book{dixon-1972,
@@ -12831,7 +12790,7 @@
   author    = {Weicker, Merle and Schulz, Petra},
   year      = {2024},
   title     = {Children and Adults Privilege Linguistic over Visual Information when Creating Comparison Classes for Prenominal Gradable Adjectives},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   volume    = {9},
   number    = {1},
   doi       = {10.16995/glossa.9912},
@@ -13071,7 +13030,7 @@
 @article{henderson-2019,
   author    = {Henderson, Robert},
   title     = {The roots of measurement},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   year      = {2019},
   volume    = {4},
   number    = {1},
@@ -13083,7 +13042,7 @@
 @article{ausensi-yu-smith-2021,
   author    = {Ausensi, Josep and Yu, Jianrong and Smith, Ryan Walter},
   title     = {Agent entailments and the division of labor between functional structure and roots},
-  journal   = {Glossa: a journal of general linguistics},
+  journal   = {Glossa},
   year      = {2021},
   volume    = {6},
   number    = {1},
@@ -13194,19 +13153,7 @@
   role      = {cited},
   sources   = {crossref}
 }
-@article{namboodiripad-etal-2023,
-  author    = {Levshina, Natalia and Namboodiripad, Savithry and Allassonni\`{e}re-Tang, Marc and Kramer, Mathew and Talamo, Luigi and Verkerk, Annemarie and Wilmoth, Sasha and Garrido Rodriguez, Gabriela and Gupton, Timothy Michael and Kidd, Evan and Liu, Zoey and Naccarato, Chiara and Nordlinger, Rachel and Panova, Anastasia and Stoynova, Natalia},
-  title     = {Why we need a gradient approach to word order},
-  journal   = {Linguistics},
-  year      = {2023},
-  volume    = {61},
-  number    = {4},
-  pages     = {825--883},
-  doi       = {10.1515/ling-2021-0098},
-  subfield  = {typology},
-  role      = {cited},
-  sources   = {crossref}
-}
+% REMOVED: namboodiripad-etal-2023 was a duplicate of levshina-stoynova-2023 (same paper, same DOI)
 
 @incollection{clements-1990,
   author    = {Clements, George N.},
@@ -13431,19 +13378,7 @@
   role      = {cited},
   sources   = {Phenomena/Morphology/Typology.lean}
 }
-@article{svenonius-1996a,
-  author    = {Svenonius, Peter},
-  title     = {Review of \emph{{P}articles} by {M}arcel den {D}ikken},
-  journal   = {Language},
-  year      = {1996},
-  volume    = {72},
-  number    = {4},
-  pages     = {816},
-  doi       = {10.2307/416108},
-  subfield  = {syntax},
-  role      = {cited},
-  sources   = {crossref}
-}
+
 @article{spector-2013,
   author    = {Spector, Benjamin},
   title     = {Bare numerals and scalar implicatures},
@@ -13812,23 +13747,12 @@
   role      = {cited},
   sources   = {crossref}
 }
-@article{sebestova-mala-2016,
-  author    = {\v{S}ebestov\'{a}, Denisa and Mal\'{a}, Mark\'{e}ta},
-  year      = {2016},
-  title     = {Anglick\'{e} p\v{r}ekladov\'{e} prot\v{e}j\v{s}ky \v{c}esk\'{y}ch v\v{e}t s \v{c}\'{a}sticemi copak a jestlipak},
-  journal   = {\v{C}asopis pro modern\'{i} filologii},
-  volume    = {98},
-  number    = {2},
-  pages     = {228--237},
-  subfield  = {semantics/particles},
-  role      = {cited},
-}
-@mastersthesis{stankova-2023,
-  author    = {Sta\v{n}kov\'{a}, Anna},
+
+@misc{stankova-2023,
+  author    = {Staňková, Anna},
   year      = {2023},
   title     = {The Expression of Speaker's Bias in {C}zech Polar Questions},
-  school    = {Charles University},
-  address   = {Prague},
+  howpublished = {MA thesis, Charles University, Prague},
   subfield  = {semantics/questions},
   role      = {cited},
 }
@@ -14300,11 +14224,10 @@
 @article{svenonius-2004,
   author    = {Svenonius, Peter},
   year      = {2004},
-  title     = {{S}lavic Prefixes Inside and Outside {VP}},
+  title     = {Slavic Prefixes Inside and Outside {VP}},
   journal   = {Nordlyd},
   volume    = {32},
   number    = {2},
-  pages     = {205--253},
   doi       = {10.7557/12.68},
   subfield  = {syntax/morphology},
   role      = {cited},
@@ -14327,6 +14250,8 @@
   volume    = {39},
   number    = {6},
   pages     = {1161--1178},
+  doi       = {10.1037/h0077714},
+  url       = {https://psycnet.apa.org/record/1981-25062-001},
   subfield  = {psychology/emotion},
   role      = {cited},
 }
@@ -14997,6 +14922,7 @@
   year      = {2025},
   title     = {Trivalence and Transparency: A Non-Dynamic Approach to Anaphora},
   journal   = {Linguistics and Philosophy},
+  url       = {https://hal.science/hal-04875735/document},
   subfield  = {semantics/presupposition},
   role      = {formalized},
   sources   = {Theories/Semantics/Presupposition/Transparency.lean, Phenomena/Anaphora/Studies/Spector2025.lean}
@@ -15358,4 +15284,17 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/ArgumentStructure/Typology.lean}
+}
+@article{xu-etal-2024,
+  author    = {Xu, Aotao and Kemp, Charles and Frermann, Lea and Xu, Yang},
+  year      = {2024},
+  title     = {Word reuse and combination support efficient communication of emerging concepts},
+  journal   = {Proceedings of the National Academy of Sciences},
+  volume    = {121},
+  number    = {46},
+  pages     = {e2406971121},
+  doi       = {10.1073/pnas.2406971121},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Core/Efficiency.lean;Phenomena/Polysemy/Studies/XuEtAl2024.lean;Theories/Diachronic/Lexicalization.lean}
 }

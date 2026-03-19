@@ -27,7 +27,7 @@ Classifies by underlying semantic structure:
 
 Three WALS features capture cross-linguistic variation in coordination:
 
-### Ch 56: Conjunctions and Universal Quantifiers (@cite{wals-2013})
+### Ch 56: Conjunctions and Universal Quantifiers (@cite{dryer-haspelmath-2013})
 Whether a language's conjunction marker ("and") is formally similar to
 its universal quantifier ("all/every"). Three values:
 - **Formally different**: "and" and "all" are unrelated forms (40/116)
@@ -36,13 +36,13 @@ its universal quantifier ("all/every"). Three values:
 - **Formally similar, with interrogative**: "and"/"all"/"wh" are all
   formally similar (43/116)
 
-### Ch 63: Noun Phrase Conjunction (@cite{wals-2013})
+### Ch 63: Noun Phrase Conjunction (@cite{dryer-haspelmath-2013})
 Whether a language's NP conjunction marker ("and") is the same as its
 comitative marker ("with"). Two values:
 - **'And' different from 'with'**: distinct forms (131/234)
 - **'And' identical to 'with'**: same form for both (103/234)
 
-### Ch 64: Nominal and Verbal Conjunction (@cite{wals-2013})
+### Ch 64: Nominal and Verbal Conjunction (@cite{dryer-haspelmath-2013})
 Whether a language uses the same marker for NP conjunction ("A and B")
 and VP/clausal conjunction ("sang and danced"). Three values:
 - **Identity**: same marker for both (161/301)

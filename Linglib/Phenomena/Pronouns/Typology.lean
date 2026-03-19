@@ -9,7 +9,7 @@ import Linglib.Core.WALS.Features.F48A
 
 /-!
 # Cross-Linguistic Typology of Pronouns (WALS Chapters 39--40, 44--48)
-@cite{wals-2013} @cite{dryer-haspelmath-2013}
+@cite{dryer-haspelmath-2013} @cite{dryer-haspelmath-2013}
 
 Typological data on pronoun systems across languages, drawn from seven
 chapters of the World Atlas of Language Structures. These chapters cover the

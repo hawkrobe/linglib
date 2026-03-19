@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausalLink
 /-!
 # Psych Verb Syntax-Semantics Interface
 
-@cite{pesetsky-1995} @cite{kim-2024} @cite{kratzer-1996} @cite{schfer-2008}## Directions of determination
+@cite{pesetsky-1995} @cite{kim-2024} @cite{kratzer-1996} @cite{schaefer-2008}## Directions of determination
 
 The psych verb interface involves three layers with distinct directions
 of determination:

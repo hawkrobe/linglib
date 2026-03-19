@@ -1,6 +1,6 @@
 /-!
 # WALS Feature 129A: Hand and Arm
-@cite{wals-2013}
+@cite{dryer-haspelmath-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 129A`.

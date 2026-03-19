@@ -276,7 +276,7 @@ open Minimalism
 open Fragments.Japanese.Predicates
 
 /-- Departure verbs predict no external argument: non-thematic Voice
-    does not assign a θ-role (@cite{kratzer-1996}, @cite{schfer-2025}). -/
+    does not assign a θ-role (@cite{kratzer-1996}, @cite{schaefer-2025}). -/
 theorem departure_no_external :
     voiceAnticausative.assignsTheta = false := rfl
 

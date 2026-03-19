@@ -17,7 +17,7 @@ import Linglib.Core.WALS.Features.F142A
 
 /-!
 # Lexical Typology (WALS Chapters 129--142)
-@cite{wals-2013}
+@cite{dryer-haspelmath-2013}
 
 Cross-linguistic data on lexical categorization from 16 WALS features spanning
 body-part terminology (Ch 129--130), colour terminology (Ch 132--135),

@@ -1,6 +1,6 @@
 /-
 # Valency-Based Binding: CRDC
-@cite{hudson-1990} @cite{tesnire-1959}
+@cite{hudson-1990} @cite{tesniere-1959}
 
 Implements @cite{osborne-li-2023} Conjunct Referential Dependency Constraint,
 a valency-based approach to binding in Dependency Grammar.

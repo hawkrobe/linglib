@@ -1,6 +1,6 @@
 /-!
 # WALS Feature 144L: The Position of Negative Morphemes in SOV Languages
-@cite{wals-2013}
+@cite{dryer-haspelmath-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 144L`.

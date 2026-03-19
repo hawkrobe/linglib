@@ -4,13 +4,13 @@ import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
 # Voice Head Flavors
-@cite{chomsky-2001} @cite{coon-2019} @cite{cuervo-2003} @cite{harley-2014} @cite{kratzer-1996} @cite{legate-2003} @cite{schfer-2008}
+@cite{chomsky-2001} @cite{coon-2019} @cite{cuervo-2003} @cite{harley-2014} @cite{kratzer-1996} @cite{legate-2003} @cite{schaefer-2008}
 
 Voice heads introduce (or fail to introduce) external arguments.
-The key typology from @cite{schfer-2008}:
+The key typology from @cite{schaefer-2008}:
 
 - **Agentive**: Introduces an agent external argument (@cite{kratzer-1996} Voice_AG)
-- **Causer**: Introduces a causer (@cite{schfer-2008} Voice_CAUSE)
+- **Causer**: Introduces a causer (@cite{schaefer-2008} Voice_CAUSE)
 - **NonThematic**: Semantically vacuous — no θ-role, but has a [D] feature
   requiring PF realization (anticausative SE in Romance; Muñoz @cite{munoz-perez-2026})
 - **Expletive**: No specifier, no semantics (middle voice, dispositionals)
@@ -49,7 +49,7 @@ namespace Minimalism
     passive Voice checks Case without assigning θ (@cite{collins-2005}: *by*). -/
 inductive VoiceFlavor where
   | agentive     -- Introduces external argument with agent θ-role (@cite{kratzer-1996})
-  | causer       -- Introduces causer (@cite{schfer-2008}: Voice_CAUSE)
+  | causer       -- Introduces causer (@cite{schaefer-2008}: Voice_CAUSE)
   | nonThematic  -- Semantically vacuous, no θ-role (anticausative SE, Chuj -j)
   | expletive    -- No specifier, no semantics (middle voice)
   | impersonal   -- Demotes agent to implicit generic human (Finnish "passive")

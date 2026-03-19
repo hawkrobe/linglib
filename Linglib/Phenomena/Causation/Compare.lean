@@ -6,7 +6,7 @@ import Linglib.Phenomena.Causation.Studies.MartinRoseNichols2025
 
 /-!
 # Causative Alternation: Cross-Theory Bridge
-@cite{cuervo-2003} @cite{kratzer-1996} @cite{martin-rose-nichols-2025} @cite{schfer-2008}
+@cite{cuervo-2003} @cite{kratzer-1996} @cite{martin-rose-nichols-2025} @cite{schaefer-2008}
 
 Connects four independent formalizations of the causative alternation:
 

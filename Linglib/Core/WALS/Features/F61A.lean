@@ -1,6 +1,6 @@
 /-!
 # WALS Feature 61A: Adjectives without Nouns
-@cite{wals-2013}
+@cite{dryer-haspelmath-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 61A`.

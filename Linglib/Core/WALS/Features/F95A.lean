@@ -1,6 +1,6 @@
 /-!
 # WALS Feature 95A: Relationship between the Order of Object and Verb and the Order of Adposition and Noun Phrase
-@cite{wals-2013}
+@cite{dryer-haspelmath-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 95A`.
