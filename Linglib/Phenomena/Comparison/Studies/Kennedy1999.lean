@@ -1,12 +1,10 @@
-import Linglib.Phenomena.Comparison.Comparative
-import Linglib.Phenomena.Comparison.Subcomparative
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Equative
 
 /-!
 # Kennedy 1999: Projecting the Adjective
-@cite{kennedy-1999}
+@cite{kennedy-1999} @cite{bresnan-1973} @cite{bhatt-pancheva-2004} @cite{kennedy-2007} @cite{lechner-2004} @cite{rett-2020} @cite{schwarzschild-2008}
 
 @cite{kennedy-1999} "Projecting the Adjective" (dissertation, UC Santa Cruz;
 published 1999, Garland). The foundational argument that gradable adjectives
@@ -51,6 +49,14 @@ The specific DegP syntax (§ 5) has been refined: @cite{heim-2001}'s
 sentential operator approach is now co-standard, and the two make
 different scope predictions. This study file records both the data and
 the 1999-era analysis.
+
+## Additional Data
+
+This file also collects comparison construction data from
+@cite{bresnan-1973} (phrasal/clausal comparatives, morphological
+distribution), @cite{bhatt-pancheva-2004} and @cite{lechner-2004}
+(subcomparatives), and @cite{kennedy-2007} and @cite{rett-2020}
+(equative constructions).
 
 -/
 
@@ -241,5 +247,209 @@ theorem measurePhrase_positive_only :
   intro d hd
   simp [measurePhraseData] at hd
   rcases hd with rfl | rfl | rfl | rfl <;> simp_all
+
+-- ════════════════════════════════════════════════════
+-- § 8. Comparative Construction Data
+-- ════════════════════════════════════════════════════
+
+/-- An acceptability judgment for a comparative construction.
+    @cite{bresnan-1973} @cite{kennedy-1999} @cite{lechner-2004} -/
+structure ComparativeJudgment where
+  /-- The example sentence -/
+  sentence : String
+  /-- Whether the sentence is acceptable -/
+  acceptable : Bool
+  /-- Phrasal or clausal standard? -/
+  standardType : String
+  /-- Notes on the reading or restriction -/
+  note : String := ""
+  deriving Repr
+
+/-- Phrasal comparatives — DP complement of *than*. -/
+def phrasalExamples : List ComparativeJudgment :=
+  [ { sentence := "Kim is taller than Lee"
+    , acceptable := true
+    , standardType := "phrasal" }
+  , { sentence := "Kim bought more books than Lee"
+    , acceptable := true
+    , standardType := "phrasal"
+    , note := "nominal comparative" }
+  , { sentence := "Kim ran faster than Lee"
+    , acceptable := true
+    , standardType := "phrasal"
+    , note := "adverbial comparative" }
+  ]
+
+/-- Clausal comparatives — CP complement of *than*. -/
+def clausalExamples : List ComparativeJudgment :=
+  [ { sentence := "Kim is taller than Lee is"
+    , acceptable := true
+    , standardType := "clausal" }
+  , { sentence := "Kim is taller than Lee is wide"
+    , acceptable := true
+    , standardType := "clausal"
+    , note := "subcomparative — different dimension" }
+  , { sentence := "Kim bought more books than Lee bought records"
+    , acceptable := true
+    , standardType := "clausal"
+    , note := "nominal subcomparative" }
+  ]
+
+/-- Synthetic vs. analytic comparative distribution in English.
+    The generalization: monosyllabic adjectives prefer synthetic (-er),
+    polysyllabic prefer analytic (more), disyllabic varies.
+    @cite{bresnan-1973} -/
+structure MorphDistributionDatum where
+  adjective : String
+  syllables : Nat
+  syntheticOk : Bool   -- "-er" form acceptable?
+  analyticOk : Bool    -- "more" form acceptable?
+  deriving Repr
+
+def morphDistribution : List MorphDistributionDatum :=
+  [ { adjective := "tall", syllables := 1, syntheticOk := true, analyticOk := false }
+  , { adjective := "smart", syllables := 1, syntheticOk := true, analyticOk := false }
+  , { adjective := "happy", syllables := 2, syntheticOk := true, analyticOk := true }
+  , { adjective := "clever", syllables := 2, syntheticOk := true, analyticOk := true }
+  , { adjective := "beautiful", syllables := 3, syntheticOk := false, analyticOk := true }
+  , { adjective := "expensive", syllables := 3, syntheticOk := false, analyticOk := true }
+  ]
+
+/-- Comparative deletion data: the standard of comparison may be
+    implicitly recovered from context.
+
+    "Kim is taller" — standard = contextually supplied comparison class.
+    This connects to the evaluative/positive reading of bare gradable
+    adjectives (Gradability/). -/
+structure ComparativeDeletionDatum where
+  sentence : String
+  /-- Is the standard explicitly present? -/
+  explicitStandard : Bool
+  /-- Available readings -/
+  readings : List String
+  deriving Repr
+
+def deletionExamples : List ComparativeDeletionDatum :=
+  [ { sentence := "Kim is taller"
+    , explicitStandard := false
+    , readings := ["comparative to contextual standard"] }
+  , { sentence := "Kim is taller than Lee"
+    , explicitStandard := true
+    , readings := ["comparative to Lee"] }
+  ]
+
+-- ════════════════════════════════════════════════════
+-- § 9. Subcomparative Data
+-- ════════════════════════════════════════════════════
+
+/-- A subcomparative judgment.
+    @cite{bhatt-pancheva-2004} @cite{kennedy-1999} @cite{lechner-2004} @cite{schwarzschild-2008} -/
+structure SubcomparativeDatum where
+  sentence : String
+  acceptable : Bool
+  /-- The matrix predicate (e.g., "long") -/
+  matrixPredicate : String
+  /-- The embedded predicate (e.g., "wide") -/
+  embeddedPredicate : String
+  /-- Are the dimensions commensurable? -/
+  commensurable : Bool
+  deriving Repr
+
+def subcomparativeExamples : List SubcomparativeDatum :=
+  [ { sentence := "The table is longer than the desk is wide"
+    , acceptable := true
+    , matrixPredicate := "long", embeddedPredicate := "wide"
+    , commensurable := true }
+  , { sentence := "The building is taller than the field is wide"
+    , acceptable := true
+    , matrixPredicate := "tall", embeddedPredicate := "wide"
+    , commensurable := true }
+  , { sentence := "??The soup is hotter than the dress is expensive"
+    , acceptable := false
+    , matrixPredicate := "hot", embeddedPredicate := "expensive"
+    , commensurable := false }
+  , { sentence := "More students passed than professors failed"
+    , acceptable := true
+    , matrixPredicate := "many (students)", embeddedPredicate := "many (professors)"
+    , commensurable := true }
+  ]
+
+/-- Cross-linguistic variation in subcomparative availability.
+    @cite{bhatt-pancheva-2004} -/
+structure SubcomparativeTypologyDatum where
+  language : String
+  available : Bool
+  note : String := ""
+  deriving Repr
+
+def subcomparativeTypology : List SubcomparativeTypologyDatum :=
+  [ { language := "English", available := true }
+  , { language := "German", available := true }
+  , { language := "French", available := true }
+  , { language := "Japanese", available := false
+    , note := "No clausal comparatives of this type" }
+  , { language := "Mandarin", available := false
+    , note := "Exceed-type comparatives don't support subcomparatives" }
+  ]
+
+-- ════════════════════════════════════════════════════
+-- § 10. Equative Construction Data
+-- ════════════════════════════════════════════════════
+
+/-- An equative judgment.
+    @cite{kennedy-2007} @cite{rett-2020} -/
+structure EquativeJudgment where
+  sentence : String
+  acceptable : Bool
+  /-- "at_least" or "exactly" -/
+  availableReadings : List String
+  note : String := ""
+  deriving Repr
+
+def equativeExamples : List EquativeJudgment :=
+  [ { sentence := "Kim is as tall as Lee"
+    , acceptable := true
+    , availableReadings := ["at_least", "exactly"] }
+  , { sentence := "Kim is as tall as Lee, if not taller"
+    , acceptable := true
+    , availableReadings := ["at_least"]
+    , note := "'if not taller' cancels the exactly implicature" }
+  , { sentence := "Kim is not as tall as Lee"
+    , acceptable := true
+    , availableReadings := ["strict_less"]
+    , note := "negated equative = strict inequality" }
+  , { sentence := "Kim ran as fast as Lee"
+    , acceptable := true
+    , availableReadings := ["at_least", "exactly"]
+    , note := "adverbial equative" }
+  ]
+
+/-- Equative encoding strategy. @cite{rett-2020} -/
+inductive EquativeStrategy where
+  | parameterMarker  -- "as...as" (English, German)
+  | reach            -- "tall reaching/to X" (many West African languages)
+  | similative       -- "tall like X" (French "aussi...que", many languages)
+  | exceed           -- "not exceed X in height" (Mandarin, Japanese)
+  deriving DecidableEq, BEq, Repr
+
+/-- Cross-linguistic equative strategy datum. -/
+structure EquativeTypologyDatum where
+  language : String
+  strategy : EquativeStrategy
+  exampleForm : String
+  deriving Repr
+
+def equativeTypology : List EquativeTypologyDatum :=
+  [ { language := "English", strategy := .parameterMarker
+    , exampleForm := "as tall as" }
+  , { language := "German", strategy := .parameterMarker
+    , exampleForm := "so groß wie" }
+  , { language := "French", strategy := .similative
+    , exampleForm := "aussi grand que" }
+  , { language := "Mandarin", strategy := .exceed
+    , exampleForm := "跟...一样高 (gēn...yíyàng gāo)" }
+  , { language := "Japanese", strategy := .exceed
+    , exampleForm := "...と同じぐらい高い (...to onaji gurai takai)" }
+  ]
 
 end Phenomena.Comparison.Studies.Kennedy1999

@@ -845,14 +845,6 @@ import Linglib.Phenomena.Gradability.Studies.Partee2010
 import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
 import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
-import Linglib.Phenomena.Comparison.Data
-import Linglib.Phenomena.Comparison.Comparative
-import Linglib.Phenomena.Comparison.Differential
-import Linglib.Phenomena.Comparison.Subcomparative
-import Linglib.Phenomena.Comparison.Equative
-import Linglib.Phenomena.Comparison.Superlative
-import Linglib.Phenomena.Comparison.DegreeQuestion
-import Linglib.Phenomena.Comparison.CrossCategorial
 import Linglib.Phenomena.Comparison.Compare
 import Linglib.Phenomena.Comparison.Typology
 import Linglib.Phenomena.Comparison.Studies.Kennedy1999
@@ -861,6 +853,7 @@ import Linglib.Phenomena.Comparison.Studies.Kennedy2007Typology
 import Linglib.Phenomena.Comparison.Studies.Heim2001
 import Linglib.Phenomena.Comparison.Studies.Stassen1985
 import Linglib.Phenomena.Comparison.Studies.Wellwood2015
+import Linglib.Phenomena.Comparison.Studies.FoxHackl2006
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Directives.Studies.RuytenbeekEtAl2017

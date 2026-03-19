@@ -1127,4 +1127,44 @@ theorem french_consistent :
 -- consistency theorems above cover only the 12 languages where both
 -- systems agree.
 
+-- ============================================================================
+-- Comparison Construction Categories
+-- ============================================================================
+
+/-- The major comparison construction types found cross-linguistically. -/
+inductive ComparisonConstruction where
+  | comparative     -- "taller than", "more expensive than"
+  | equative        -- "as tall as"
+  | superlative     -- "tallest", "most expensive"
+  | excessive       -- "too tall" (implicit comparison to a standard)
+  | sufficiency     -- "tall enough" (implicit comparison to a standard)
+  | degreeQuestion  -- "how tall" (comparison to answer alternatives)
+  deriving DecidableEq, BEq, Repr
+
+/-- What is being compared — the syntactic category of the gradable
+    expression, following @cite{wellwood-2015}.
+
+    The key insight: comparison constructions apply uniformly across
+    categories; what varies is the measured domain (entity, event, state). -/
+inductive ComparisonDomain where
+  | adjectival   -- "taller than", "more expensive than"
+  | nominal      -- "more coffee than", "fewer books than"
+  | verbal       -- "ran more than", "sang louder than"
+  | adverbial    -- "more quickly than", "as carefully as"
+  deriving DecidableEq, BEq, Repr
+
+/-- How degree comparison is morphologically realized in a given form.
+
+    This is orthogonal to `DegreeWordType` (above), which classifies
+    whether a *language* has degree marking at all. `DegreeMorphology`
+    classifies a specific *form*: English "taller" is synthetic,
+    "more tall" is analytic, "better" is suppletive — all in a language
+    that `DegreeWordType` classifies as `.hasDegreeWord`. -/
+inductive DegreeMorphology where
+  | synthetic   -- "-er"/"-est" (English, German)
+  | analytic    -- "more"/"most" (English, French)
+  | suppletive  -- "good"/"better"/"best" (English, Latin)
+  | mixed       -- both synthetic and analytic available
+  deriving DecidableEq, BEq, Repr
+
 end Phenomena.Comparison.Typology

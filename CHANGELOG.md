@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.229.357] - 2026-03-19
+
+### Changed
+- **Dissolve Comparison data files into Studies**: Merged 8 standalone data files into their provenance-tracking study files:
+  - `Comparative.lean` + `Subcomparative.lean` + `Equative.lean` → `Studies/Kennedy1999.lean`
+  - `Differential.lean` → `Studies/Kennedy2007.lean`
+  - `Superlative.lean` → `Studies/Heim2001.lean`
+  - `CrossCategorial.lean` → `Studies/Wellwood2015.lean`
+  - `Data.lean` enums → `Typology.lean`
+  - `DegreeQuestion.lean` → new `Studies/FoxHackl2006.lean`
+
+### Removed
+- `Phenomena/Comparison/{Comparative,Differential,Subcomparative,Equative,Superlative,DegreeQuestion,CrossCategorial,Data}.lean` — all content preserved in study files
+
+## [0.229.356] - 2026-03-19
+
+### Added
+- **Sassoon 2013 formalization** (`Phenomena/Gradability/Studies/Sassoon2013.lean`): multidimensional adjective typology — 18-adjective sample with dimension binding types (conjunctive/disjunctive/mixed), corpus data from exception phrases (Table 3), polarity judgments (Table 2), per-datum verification theorems for Hypotheses 2 and 3
+- **Dimension binding operations** (`Theory.lean`): `DimensionBindingType`, `conjunctiveBinding`, `disjunctiveBinding`, De Morgan theorems connecting negation theory of antonymy to polarity↔binding predictions, `predictedBinding` linking standard type to binding type
+- **`sassoon-2013`** bibliography entry
+
+### Changed
+- **`isNegativePole` → `isLowerEndpoint`** (`Fragments/English/Modifiers/Adjectives.lean`): renamed to clarify that this field tracks scale-endpoint polarity (which end of the scale the adjective selects), not evaluative polarity in the sense of Sassoon 2013
+
+## [0.229.355] - 2026-03-19
+
+### Added
+- **`VoiceFlavor.antipassive`** (`Voice.lean`): New voice flavor for antipassive constructions — agent present with absolutive (not ergative) case, object demoted to oblique. `assignsTheta`, `hasSemantics`, `eventContribution`, `toParams` all updated; `VoiceTheta.lean` maps antipassive → agent
+- **Mam antipassive voice** (`VoiceSystem.lean` §8): `mamAntipassiveVoice` (non-phase, no [uOblique]), `mamAntipassive_assigns_theta`, `mamAntipassive_not_phase`, `antipassive_vs_agentive`; voice system updated to 3 voices
+- **Pronoun internal structure** (`Agreement.lean` §6): `PersonFeature` (person/number/participant), `PronounForm` (null/encliticOnly/full), `derivePronounForm` — derives pronoun realization from φ-agreement + person features per Scott 2023 ch. 4. Eight verification theorems covering all person×position combinations
+- **Impoverishment** (`Theories/Morphology/DM/Impoverishment.lean`): Post-syntactic feature deletion completing the DM triad (Fission + VI + Impoverishment). `ImpoverishmentRule`, `deleteFeature`, `applyImpoverishmentChain`, redundancy-based deletion (`allRecoverable`), `deleteFeature_idempotent`
+- **Super-extended ergativity** (`Phenomena/Ergativity/Studies/Scott2023.lean`): Clause-type-conditioned alignment split in SJA Mam — `matrixAlignment` (tripartite) vs `seeAlignment` (neutral/all Set A), `SEETrigger` enum, `split_ergativity`, object default parallel
+
+### Fixed
+- **Set B default exponent**: Changed from `"∅"` to `"tz'="` throughout (`Agreement.lean`, `Phenomena/Agreement/Studies/Scott2023.lean`) — tz'= is an overt proclitic, not phonological zero (Scott 2023, p. 77)
+- **SJA/SJO variety confusion** (`VoiceSystem.lean`): Docstring now explicitly notes which data comes from which Mam variety (SJO for extraction, SJA for agreement/antipassive)
+- **Derived `canBeNull`**: Changed from stipulated Bool to `pos.isPhiAgreed`, making pronoun reduction a consequence of the agreement system rather than an independent assertion
+
 ## [0.229.354] - 2026-03-19
 
 ### Added

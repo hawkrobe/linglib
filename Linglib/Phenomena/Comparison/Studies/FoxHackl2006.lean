@@ -1,18 +1,18 @@
 /-!
-# Degree Questions: Empirical Data
-@cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995} @cite{fox-hackl-2006}
+# Fox & Hackl 2006: Degree Questions and Negative Islands
+@cite{fox-hackl-2006} @cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995}
 
 Empirical data on degree questions ("how tall is Kim?"), including
 negative islands, modal obviation, and comparative subdeletion.
 
-The theoretical analysis is in `Theories/Semantics/Questions/DegreeQuestion.lean`
-(@cite{fox-2007} density-of-measurement) and will also connect to the new
-`Theories/Semantics/Degree/DegreeQuestion.lean` (compositional "how").
+@cite{fox-hackl-2006}'s Universal Density of Measurement predicts that
+degree questions fail under negation because the maximality presupposition
+of "how" is undefined over dense scales with downward-monotone predicates.
 
 ## Key Empirical Patterns
 
 1. **Negative islands**: "*How tall isn't Kim?" is unacceptable
-   (@cite{fox-2007}: density of measurement blocks maximality).
+   (@cite{fox-hackl-2006}: density of measurement blocks maximality).
 2. **Modal obviation**: "How tall is Kim required to be?" is acceptable
    (universal modal rescues maximality).
 3. **Existential modal fails**: "*How tall is Kim allowed to be?"
@@ -20,7 +20,7 @@ The theoretical analysis is in `Theories/Semantics/Questions/DegreeQuestion.lean
 
 -/
 
-namespace Phenomena.Comparison.DegreeQuestion
+namespace Phenomena.Comparison.Studies.FoxHackl2006
 
 -- ════════════════════════════════════════════════════
 -- § 1. Basic Degree Question Data
@@ -48,7 +48,7 @@ def degreeQuestionExamples : List DegreeQuestionDatum :=
 -- § 2. Negative Islands
 -- ════════════════════════════════════════════════════
 
-/-- @cite{fox-2007} negative island data. -/
+/-- @cite{fox-hackl-2006} negative island data. -/
 def negativeIslandExamples : List DegreeQuestionDatum :=
   [ { sentence := "*How tall isn't Kim?"
     , acceptable := false
@@ -64,7 +64,7 @@ def negativeIslandExamples : List DegreeQuestionDatum :=
 -- § 3. Modal Obviation
 -- ════════════════════════════════════════════════════
 
-/-- @cite{fox-2007} modal obviation data. -/
+/-- @cite{fox-hackl-2006} modal obviation data. -/
 def modalObviationExamples : List DegreeQuestionDatum :=
   [ { sentence := "How tall is Kim required to be?"
     , acceptable := true
@@ -82,4 +82,4 @@ def modalObviationExamples : List DegreeQuestionDatum :=
     , mechanism := "existential modal fails" }
   ]
 
-end Phenomena.Comparison.DegreeQuestion
+end Phenomena.Comparison.Studies.FoxHackl2006
