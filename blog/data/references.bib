@@ -45,7 +45,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {cited},
-  sources   = {Core/InformationTheory.lean;Theories/Pragmatics/RSA/Extensions/InformationTheory/Zaslavsky.lean}
+  sources   = {Core/InformationTheory.lean;Core/ChannelCapacity.lean}
 }
 @article{macuch-silva-etal-2024,
   author    = {Macuch Silva, Vinicius and Lorson, Alexandra and Franke, Michael and Cummins, Chris and Winter, Bodo},
@@ -777,15 +777,15 @@
   role      = {formalized},
   sources   = {Phenomena/ScalarImplicatures/Studies/PottsEtAl2016.lean}
 }
-@unpublished{zaslavsky-hu-levy-2020,
-  author    = {Zaslavsky, Noga and Hu, Jennifer and Levy, Roger},
-  year      = {2020},
-  title     = {A Rate-Distortion View of Human Pragmatic Reasoning},
-  howpublished = {arXiv:2005.06641},
+@inproceedings{zaslavsky-hu-levy-2020,
+  author    = {Zaslavsky, Noga and Hu, Jennifer and Levy, Roger P.},
+  year      = {2021},
+  title     = {A Rate--Distortion View of Human Pragmatic Reasoning?},
+  booktitle = {Proceedings of the Society for Computation in Linguistics},
+  pages     = {347--348},
+  publisher = {Association for Computational Linguistics},
   url       = {https://arxiv.org/abs/2005.06641},
   subfield  = {pragmatics/rsa},
-  doi       = {10.48550/arxiv.2005.06641},
-  validated = {true},
   role      = {formalized},
   sources   = {Theories/Pragmatics/RSA/Extensions/InformationTheory/Basic.lean}
 }
@@ -1049,6 +1049,19 @@
   role      = {cited},
   sources   = {Theories/Pragmatics/RSA/Core/Noise.lean;Phenomena/Reference/Studies/GilesEtAl2026.lean}
 }
+@article{gibson-etal-2017,
+  author    = {Gibson, Edward and Futrell, Richard and Jara-Ettinger, Julian and Mahowald, Kyle and Bergen, Leon and Ratnasingam, Sivalogeswaran and Gibson, Mitchell and Piantadosi, Steven T. and Conway, Bevil R.},
+  year      = {2017},
+  title     = {Color naming across languages reflects color use},
+  journal   = {Proceedings of the National Academy of Sciences},
+  volume    = {114},
+  number    = {40},
+  pages     = {10785--10790},
+  subfield  = {semantics/lexical},
+  validated = {false},
+  role      = {cited},
+  sources   = {Phenomena/LexicalTypology/Studies/ZaslavskyEtAl2019.lean}
+}
 @article{zaslavsky-etal-2019,
   author    = {Zaslavsky, Noga and Kemp, Charles and Tishby, Naftali and Regier, Terry},
   year      = {2019},
@@ -1060,8 +1073,22 @@
   doi       = {10.1111/tops.12395},
   subfield  = {semantics/lexical},
   validated = {true},
+  role      = {formalized},
+  sources   = {Core/ChannelCapacity.lean;Phenomena/LexicalTypology/Studies/ZaslavskyEtAl2019.lean;Phenomena/Reference/Studies/GilesEtAl2026.lean;Theories/Pragmatics/RSA/Core/Noise.lean}
+}
+@article{zaslavsky-kemp-regier-tishby-2018,
+  author    = {Zaslavsky, Noga and Kemp, Charles and Regier, Terry and Tishby, Naftali},
+  year      = {2018},
+  title     = {Efficient compression in color naming and its evolution},
+  journal   = {Proceedings of the National Academy of Sciences},
+  volume    = {115},
+  number    = {31},
+  pages     = {7937--7942},
+  doi       = {10.1073/pnas.1800521115},
+  subfield  = {semantics/lexical},
+  validated = {true},
   role      = {cited},
-  sources   = {Phenomena/Reference/Studies/GilesEtAl2026.lean}
+  sources   = {Core/Efficiency.lean}
 }
 @article{wolfe-horowitz-2017,
   author    = {Wolfe, Jeremy M. and Horowitz, Todd S.},
@@ -1139,15 +1166,6 @@
   role      = {cited},
   validated = {true},
   sources   = {Theories/Pragmatics/RSA/Extensions/NoncooperativeCommunication.lean}
-}% REF: Machino, M., Chen, S., & Goodman, N. D. (2025). Minding the Politeness Gap: A cross-cultural computational model of inte
-@misc{machino-goodman-2025,
-  author    = {Machino, Yuka and Hofer, Matthias and Siegel, Max and Tenenbaum, Joshua B. and Hawkins, Robert D.},
-  year      = {2025},
-  title     = {Minding the Politeness Gap: A cross-cultural computational model of intensifier interpretation},
-  subfield  = {pragmatics/rsa},
-  role      = {cited},
-  validated = {true},
-  sources   = {Phenomena/Politeness/Studies/MachinoEtAl2025.lean}
 }
 @article{keysar-etal-2003,
   author    = {Keysar, Boaz and Lin, Shuhong and Barr, Dale J.},
@@ -1163,6 +1181,32 @@
   role      = {cited},
   sources   = {Phenomena/Reference/Studies/HawkinsGweonGoodman2021.lean}
 }% ══════════════════════════════════════════════════════════════════════════════
+@article{breheny-2008,
+  author    = {Breheny, Richard},
+  year      = {2008},
+  title     = {A New Look at the Semantics and Pragmatics of Numerically Quantified Noun Phrases},
+  journal   = {Journal of Semantics},
+  volume    = {25},
+  number    = {2},
+  pages     = {93--139},
+  doi       = {10.1093/jos/ffm016},
+  subfield  = {semantics/lexical},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/Numerals/Studies/Spector2013.lean}
+}
+@incollection{carston-1988,
+  author    = {Carston, Robyn},
+  year      = {1988},
+  title     = {Implicature, Explicature, and Truth-Theoretic Semantics},
+  booktitle = {Mental Representations: The Interface between Language and Reality},
+  editor    = {Kempson, Ruth},
+  publisher = {Cambridge University Press},
+  subfield  = {semantics/lexical},
+  validated = {false},
+  role      = {cited},
+  sources   = {Phenomena/Numerals/Studies/Spector2013.lean}
+}
 @article{breheny-et-al-2018,
   author    = {Breheny, Richard and Klinedinst, Nathan and Romoli, Jacopo and Sudo, Yasutada},
   year      = {2018},
@@ -2132,17 +2176,6 @@
   doi       = {10.1016/b978-1-4832-1446-7.50019-4},
   validated = {true},
   sources   = {Theories/Semantics/Probabilistic/Scenarios/Basic.lean}
-}% REF: Zwicky, A. M. (1977). On Clitics. Indiana University Linguistics Club.
-@article{zwicky-1977,
-  author    = {Nevis, Joel A. and Joseph, Brian D. and Wanner, Dieter and Zwicky, Arnold M.},
-  year      = {1977},
-  title     = {On Clitics},
-  journal   = {Indiana University Linguistics Club},
-  subfield  = {semantics/compositional},
-  role      = {cited},
-  doi       = {10.1075/lisl.22},
-  validated = {true},
-  sources   = {Core/Lexical/MorphRule.lean}
 }% REF: Comrie, B. (1978). Ergativity. In Lehmann, W. P. (ed.), Syntactic Typology. University of Texas Press.
 @incollection{comrie-1978,
   author    = {Comrie, Bernard},
@@ -4903,16 +4936,6 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Conditionals/LeftNested/Data.lean;Theories/Semantics/Conditionals/ConditionalType.lean}
-}% REF: Szabolcsi, A. (2004). Positive polarity - negative polarity. NLLT 22:409-452.
-@misc{tenny-speas-2004,
-  author    = {Tenny, Carol and Speas, Peggy},
-  year      = {2004},
-  title     = {The interaction of clausal syntax, discourse roles, and information structure},
-  note      = {Ms., Carnegie Mellon University and University of Massachusetts Amherst},
-  subfield  = {semantics/modality},
-  role      = {cited},
-  validated = {true},
-  sources   = {Theories/Semantics/Modality/Assert.lean}
 }% REF: Bhatt & Pancheva (2006). Conditionals.
 @article{werner-2006,
   author    = {Werner, Tom},
@@ -5341,6 +5364,28 @@
   validated = {true},
   role      = {formalized},
   sources   = {Theories/Semantics/Lexical/Determiner/Demonstrative/AhnZhu2025.lean}
+}
+@article{elbourne-2026,
+  author    = {Elbourne, Paul},
+  year      = {2026},
+  title     = {Adjectives without syntactic categories},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {44},
+  pages     = {17},
+  doi       = {10.1007/s11049-026-09703-w},
+  subfield  = {syntax-semantics interface},
+  role      = {formalized},
+  sources   = {Phenomena/Copulas/Studies/Elbourne2026.lean}
+}
+@article{elbourne-2024,
+  author    = {Elbourne, Paul},
+  year      = {2024},
+  title     = {A program for eliminating syntactic categories},
+  journal   = {Linguistic Inquiry},
+  doi       = {10.1162/ling_a_00540},
+  subfield  = {syntax-semantics interface},
+  role      = {cited},
+  sources   = {Phenomena/Copulas/Studies/Elbourne2026.lean}
 }
 @book{elbourne-2013,
   author    = {Elbourne, Paul},
@@ -7791,13 +7836,13 @@
   sources   = {Phenomena/Questions/Typology.lean;Theories/Semantics/Questions/StructuredMeaning.lean}
 }% Deleted: stankova-2026 (duplicate of stankova-2025)
 
-@inproceedings{zheng-2026,
-  author    = {Zheng, Anqi A.},
-  year      = {2026},
+@inproceedings{zheng-2025,
+  author    = {Zheng, Anshun},
+  year      = {2025},
   title     = {\emph{nandao}-Qs: When Surprise Sparks Inquiry},
   booktitle = {Proceedings of WCCFL 43},
+  url       = {https://ling.auf.net/lingbuzz/009757},
   subfield  = {semantics/questions},
-  validated = {true},
   role      = {cited},
   sources   = {Phenomena/Questions/NandaoQs.lean;Theories/Semantics/Modality/Kernel.lean}
 }% ══════════════════════════════════════════════════════════════════════════════
@@ -8111,14 +8156,14 @@
   role      = {cited},
   sources   = {Theories/Semantics/Questions/EntropyNPIs.lean}
 }% ══════════════════════════════════════════════════════════════════════════════
-@inproceedings{williams-2025,
-  author    = {Williams, Will},
-  year      = {2025},
+@inproceedings{williams-2026,
+  author    = {Williams, William},
+  year      = {2026},
   title     = {The Presuppositions of \emph{forget}},
   booktitle = {Proceedings of {SALT} 35},
   volume    = {35},
+  url       = {https://ling.auf.net/lingbuzz/009797},
   subfield  = {semantics/presupposition},
-  validated = {true},
   role      = {formalized},
   sources   = {Phenomena/Presupposition/ForgetPresuppositions.lean;Phenomena/Presupposition/Bridge/ForgetBridge.lean;Theories/Semantics/Attitudes/PreExistence.lean}
 }
@@ -8329,11 +8374,11 @@
   author    = {White, Aaron Steven},
   year      = {2014},
   title     = {Factive-Implicatives and Modalized Complements},
-  booktitle = {Proceedings of SALT 24},
-  pages     = {116--135},
+  booktitle = {Proceedings of {NELS} 44},
+  pages     = {267--278},
+  url       = {https://aaronstevenwhite.io/papers/white_factive-implicatives_2014.pdf},
   subfield  = {semantics/presupposition},
   role      = {cited},
-  validated = {true},
   sources   = {Phenomena/Presupposition/ForgetPresuppositions.lean;Theories/Semantics/Attitudes/PreExistence.lean}
 }% REF: Romero, M. (2019). High Negation in Subjunctive Conditionals and Polar Questions. SuB 19.
 @inproceedings{romero-2019,
@@ -8820,7 +8865,7 @@
   subfield  = {semantics/dynamic},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Semantics/Dynamic/Effects/Default/Basic.lean;Core/Order/Normality.lean;Theories/Semantics/Dynamic/Core/CCP.lean;Theories/Semantics/Dynamic/Effects/Epistemic/Basic.lean}
+  sources   = {Theories/Semantics/Dynamic/UpdateSemantics/Basic.lean;Theories/Semantics/Dynamic/UpdateSemantics/Default.lean;Theories/Semantics/Dynamic/UpdateSemantics/Frames.lean;Core/Order/Normality.lean;Phenomena/DefaultReasoning/Studies/Veltman1996.lean}
 }
 @unpublished{charlow-2018,
   author    = {Charlow, Simon},
@@ -9249,18 +9294,7 @@
   validated = {true},
   role      = {cited}
 }
-@incollection{wurmbrand-2017,
-  author    = {Wurmbrand, Susi},
-  year      = {2017},
-  title     = {Feature Sharing or How {I} Value My Son},
-  booktitle = {A Pesky Set: Papers for David Pesetsky},
-  editor    = {Halpert, Claire and Kotek, Hadas and van Urk, Coppe},
-  pages     = {173--182},
-  publisher = {MIT Working Papers in Linguistics},
-  subfield  = {syntax},
-  validated = {true},
-  role      = {cited}
-}
+
 @incollection{kratzer-1996,
   author    = {Kratzer, Angelika},
   year      = {1996},
@@ -9618,9 +9652,8 @@
   title     = {Sentential Negation and Negative Concord},
   school    = {University of Amsterdam},
   publisher = {LOT},
-  doi       = {10.53846/goediss-10298},
+  url       = {https://dare.uva.nl/search?identifier=73448f78-d2bd-49a6-8494-4dd11ea66130},
   subfield  = {syntax},
-  validated = {true},
   role      = {cited},
   sources   = {Phenomena/Negation/CzechThreeWayNegBridge.lean;Phenomena/TenseAspect/Data.lean}
 }
@@ -10361,6 +10394,28 @@
   validated = {true},
   role      = {foundational},
   sources   = {Phenomena/WordOrder/SubjectAuxInversion.lean}
+}
+@book{adger-2025,
+  author    = {Adger, David},
+  year      = {2025},
+  title     = {Mereological Syntax: Phrase Structure, Cyclicity, and Islands},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  subfield  = {syntax},
+  role      = {formalized},
+  sources   = {Theories/Syntax/MereologicalSyntax/Basic.lean;Phenomena/Classifiers/Studies/WangSun2026.lean}
+}
+@article{wang-sun-2026,
+  author    = {Wang, Chen and Sun, Ke},
+  year      = {2026},
+  title     = {Detaching {Mandarin} Classifiers from Nouns: A Mereological Solution},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {44},
+  pages     = {18},
+  doi       = {10.1007/s11049-026-09704-9},
+  subfield  = {syntax},
+  role      = {formalized},
+  sources   = {Phenomena/Classifiers/Studies/WangSun2026.lean}
 }
 @book{sag-wasow-bender-2003,
   author    = {Sag, Ivan A. and Wasow, Thomas and Bender, Emily M.},
@@ -12664,18 +12719,7 @@
   validated = {true},
   role      = {cited}
 }
-@incollection{zwarts-1996,
-  author    = {Zwarts, Frans},
-  year      = {1996},
-  title     = {Facets of Negation},
-  booktitle = {Quantifiers, Logic and Language},
-  editor    = {van der Does, Jaap and van Eijck, Jan},
-  pages     = {385--421},
-  publisher = {CSLI Publications},
-  subfield  = {semantics/negation},
-  validated = {true},
-  role      = {cited}
-}
+
 @inproceedings{zeijlstra-2007,
   author    = {Zeijlstra, Hedde},
   year      = {2007},
@@ -13198,18 +13242,7 @@
   role      = {cited},
   sources   = {crossref}
 }
-@book{wurzel-1984,
-  author    = {Wurzel, Wolfgang Ullrich},
-  title     = {Flexionsmorphologie und Nat\"{u}rlichkeit: Ein Beitrag zur morphologischen Theoriebildung},
-  year      = {1984},
-  publisher = {Akademie-Verlag},
-  address   = {Berlin},
-  isbn      = {9783112709658},
-  doi       = {10.1515/9783112709658},
-  subfield  = {morphology},
-  role      = {cited},
-  sources   = {crossref}
-}
+
 @incollection{clements-1990,
   author    = {Clements, George N.},
   title     = {The role of the sonority cycle in core syllabification},
@@ -14357,20 +14390,8 @@
   subfield  = {acquisition},
   role      = {cited},
 }
-@misc{tucker-etal-2018,
-  author    = {Tucker, Matthew A. and others},
-  year      = {2018},
-  title     = {Intrinsic Polarity of Scales},
-  subfield  = {semantics/scales},
-  role      = {cited},
-}
-@misc{wang-etal-2005,
-  author    = {Wang, Linton and others},
-  year      = {2005},
-  title     = {Expressives and Perspective Shift},
-  subfield  = {semantics/expressives},
-  role      = {cited},
-}
+
+
 @book{hudson-2010,
   author    = {Hudson, Richard},
   year      = {2010},
@@ -15067,6 +15088,7 @@
   year      = {2026},
   title     = {Presupposition Filtering in Disjunction: The Role of Exclusive Interpretation},
   booktitle = {Proceedings of Sinn und Bedeutung 30},
+  url       = {https://ling.auf.net/lingbuzz/009830},
   subfield  = {semantics/presupposition},
   role      = {formalized},
   sources   = {Phenomena/Presupposition/Studies/WangDavidson2026.lean;Theories/Semantics/Exhaustification/Trivalent.lean}
