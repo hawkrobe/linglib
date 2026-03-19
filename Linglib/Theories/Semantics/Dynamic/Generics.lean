@@ -702,7 +702,8 @@ This is a single Boolean judgment — it doesn't decompose into "select
 normal instances, then universally quantify." The `GenericSentence` shape
 (restrict → select normals → ∀) captures the normality-based family of
 theories; threshold semantics is a genuinely different algebraic shape.
-See `CompareSemantics.lean` for the threshold ↔ GEN eliminability result. -/
+See `CovertQuantifier.reduces_to_threshold` for the threshold ↔ GEN
+eliminability result. -/
 
 /-- Construct a `GenericSentence` from a binary normalcy predicate.
 

@@ -1202,8 +1202,6 @@ import Linglib.Comparisons.DynamicTTR
 import Linglib.Phenomena.Anaphora.Compare
 import Linglib.Phenomena.Assertion.Compare
 import Linglib.Phenomena.Case.Compare
-import Linglib.Phenomena.Generics.CompareModality
-import Linglib.Phenomena.Generics.CompareSemantics
 import Linglib.Phenomena.Gradability.Compare
 import Linglib.Phenomena.Modality.ComparePosition
 import Linglib.Phenomena.Presupposition.Compare

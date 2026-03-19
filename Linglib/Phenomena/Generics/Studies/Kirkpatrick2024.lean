@@ -37,8 +37,6 @@ makes exceptional individuals salient before the general claim is assessed.
   with threshold 0.5 — cannot explain order effects
 - @cite{tessler-goodman-2019} (`Studies/TesslerGoodman2019.lean`): RSA model
   explaining prevalence-based judgments — complementary, not competing
-- `CompareModality.lean`: GEN as modal necessity — the static structure
-  that Kirkpatrick's dynamic theory wraps in a CCP
 -/
 
 namespace Phenomena.Generics.Studies.Kirkpatrick2024

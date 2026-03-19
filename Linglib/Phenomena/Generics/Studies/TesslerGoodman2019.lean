@@ -894,7 +894,7 @@ This unification is structural (by construction), not proven post hoc.
 The integration pipeline is:
 
 1. **Traditional operator** (GEN/HAB) reduces to threshold semantics
-   (`CompareSemantics.gen_eliminable`, `Habituals.hab_reduces_to_threshold`)
+   (`CovertQuantifier.reduces_to_threshold`, `Habituals.hab_reduces_to_threshold`)
 2. **Threshold semantics** with uncertain threshold → marginalized L0
 3. **RSA endorsement** (`mkGenericCfg`) decides between generic and silence
 4. **Endorsement ≈ cue validity** (`endorsed_iff_cue_validity_gt_one`)
