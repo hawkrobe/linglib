@@ -1050,6 +1050,7 @@ import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 import Linglib.Phenomena.Classifiers.Studies.Downing1996
+import Linglib.Phenomena.Classifiers.Studies.WangSun2026
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Data
@@ -1427,6 +1428,8 @@ import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Coproduct
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
 import Linglib.Theories.Syntax.Minimalism.Formal.Linearization.LCA
+import Linglib.Theories.Syntax.MereologicalSyntax.Basic
+import Linglib.Theories.Syntax.SynGraph
 -- Theories: Semantics.Degree (degree semantics frameworks)
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Comparative
