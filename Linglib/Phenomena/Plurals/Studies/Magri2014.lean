@@ -60,6 +60,16 @@ The universal reading arises via two layers of EXH:
 
 Both derive the same net result: MYSTERY behaves as STRONG in UE,
 MYSTERY behaves as WEAK in DE.
+
+## Relationship to @cite{spector-2007}
+
+Magri extends Spector's exhaustivity-based account of plural morphology
+(PL/SING/TWO) to plural definites (THE/SOME/ALL) and unfocused conjunction
+(AND_unF/OR/BOTH). The key technical innovation is assumption (19): using
+*iterated* exhaustification where the *strengthened* alternatives (not
+just plain meanings) determine outer-level excludability. Spector's
+single-EXH result `Max(P) = {Exhaust(P)}` is formalized in
+`ScalarImplicatures/Studies/Spector2007.lean`.
 -/
 
 namespace Phenomena.Plurals.Studies.Magri2014
@@ -199,7 +209,7 @@ theorem strong_entails_weak (s : Scenario) (hn : s.total ≥ 1) :
 
 /--
 EXH applied to a prejacent: assert the prejacent and negate all
-innerExcludable alternatives.
+innerExcludable alternatives (@cite{spector-2007}, definition 18).
 
   EXH(phi) = phi AND AND{NOT psi : psi innerExcludable w.r.t. phi}
 -/
@@ -273,8 +283,12 @@ theorem outerExcludable_justified :
   ⟨rfl, exh_weak_strictly_stronger.1, exh_weak_strictly_stronger.2⟩
 
 /--
-Iterated EXH: the strengthened meaning is computed through double
-exhaustification with outer-level excludability.
+Iterated EXH (assumption 19 in @cite{magri-2014}, extending
+@cite{spector-2007}): the strengthened meaning is computed through
+double exhaustification with outer-level excludability. The key
+innovation over @cite{spector-2007}'s single EXH is that the
+*strengthened* meanings of alternatives (not just plain meanings)
+determine excludability at the outer level.
 
   doubleExh(phi) = EXH(phi) AND AND{NOT EXH(psi) : psi outerExcludable w.r.t. phi}
 -/
