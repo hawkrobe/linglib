@@ -1,6 +1,7 @@
 import Linglib.Core.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.Multiplicity
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Magri (2014): Homogeneity Effects via Double Strengthening
@@ -634,6 +635,502 @@ theorem dual_matches_conjunction_parallel :
     orAndParallel.arisesInUE = true ∧
     orAndParallel.arisesInDE = false := by
   exact ⟨rfl, rfl, rfl, rfl⟩
+
+
+-- ============================================================
+-- SECTION 9: Bridge to Fox's Computable exhB
+-- ============================================================
+
+/-!
+## Connection to @cite{fox-2007}'s Computable Algorithm
+
+The abstract three-role computation above uses hand-coded `innerExcludable`
+and `outerExcludable`. Here we verify that Fox's computable innocent
+exclusion algorithm (`exhB` from `InnocentExclusion.lean`) applied twice
+produces the same result: double exhaustification yields the universal
+reading.
+
+The key subtlety: `exhB` treats all alternatives in its list uniformly,
+so **non-transitive Horn-mateness** must be encoded in which alternatives
+are *included in the list*. THE and SOME get different alternative lists:
+- THE's alternatives: `[bSome]` (only SOME is a Horn-mate; ALL is not)
+- SOME's alternatives: `[bSome, bAll]` (both THE and ALL are Horn-mates)
+-/
+
+section FoxBridge
+
+open Exhaustification.InnocentExclusion (exhB)
+
+/-- Three worlds for a two-member plurality: none, one, or all satisfy. -/
+inductive Sat where | none | one | all
+  deriving Repr, DecidableEq, BEq
+
+private def satDomain : List Sat := [.none, .one, .all]
+
+/-- SOME meaning: at least one satisfies. -/
+private def bSome : Sat → Bool | .one | .all => true | _ => false
+/-- ALL meaning: all satisfy. -/
+private def bAll : Sat → Bool | .all => true | _ => false
+
+/-- THE's alternative list: only SOME is a Horn-mate (not ALL). -/
+private def theAlts : List (Sat → Bool) := [bSome]
+
+/-- SOME's alternative list: both THE (= SOME) and ALL are Horn-mates. -/
+private def someAlts : List (Sat → Bool) := [bSome, bAll]
+
+/-- Inner EXH(THE) = SOME: THE has no excludable alternatives because
+    its only Horn-mate (SOME) is equivalent, not strictly stronger. -/
+theorem fox_inner_exh_the :
+    ∀ w : Sat, exhB satDomain theAlts bSome w = bSome w := by
+  intro w; cases w <;> native_decide
+
+/-- Inner EXH(SOME) = SOME ∧ ¬ALL: the standard "only some" SI. -/
+theorem fox_inner_exh_some :
+    ∀ w : Sat, exhB satDomain someAlts bSome w = (bSome w && !bAll w) := by
+  intro w; cases w <;> native_decide
+
+/-- Inner results as named functions for the outer level. -/
+private def innerThe : Sat → Bool := exhB satDomain theAlts bSome
+private def innerSome : Sat → Bool := exhB satDomain someAlts bSome
+
+/-- Outer-level alternative list for THE: [EXH(THE), EXH(SOME)].
+    EXH(SOME) = SOME ∧ ¬ALL is strictly stronger than EXH(THE) = SOME,
+    and SOME is a Horn-mate of THE, so it becomes excludable. -/
+private def outerAltsForThe : List (Sat → Bool) := [innerThe, innerSome]
+
+/-- **Bridge theorem**: Fox's `exhB` applied twice with the correct
+    Horn-mate-restricted alternative sets yields the universal reading,
+    matching `double_strengthening_yields_universal`.
+
+    EXH(EXH(THE)) = EXH(THE) ∧ ¬EXH(SOME)
+                   = SOME ∧ ¬(SOME ∧ ¬ALL)
+                   = ALL -/
+theorem fox_double_exh_yields_all :
+    ∀ w : Sat, exhB satDomain outerAltsForThe innerThe w = bAll w := by
+  intro w; cases w <;> native_decide
+
+end FoxBridge
+
+
+-- ============================================================
+-- SECTION 10: Dual Theory — Inner EXH and DE Properties (§5.5)
+-- ============================================================
+
+/-!
+## Dual Theory: UE Is Trivial, DE Reveals Weak Meaning
+
+In the **dual** theory (§5.5.2), MYSTERY (AND_unF) has a *strong*
+plain meaning (conjunction ≡ STRONG). In UE environments, the
+strong meaning is already maximal — no strengthening occurs
+(computation 55b: |||MYSTERY||| = [[MYSTERY]]).
+
+In DE environments, the strong plain meaning under negation yields
+a weak global meaning. The abstract computation (55a) shows that
+double exhaustification of not·MYSTERY is vacuous:
+
+  |||not·MYSTERY||| = EXH(EXH(not·MYSTERY))
+                    = not·MYSTERY
+                    = not·STRONG                     (since MYSTERY ≡ STRONG)
+
+The vacuousness at the abstract level arises because MYSTERY ≡ STRONG
+means not·MYSTERY ≡ not·STRONG — there is no strictly stronger
+alternative to exclude. The *concrete* dual DE computation (61)/(72),
+which enriches the alternative set with atomic conjuncts LEFT and RIGHT,
+IS non-vacuous and derives not·OR. That computation is in Section 11.
+
+This section verifies the abstract-level properties: inner EXH is
+vacuous for the dual MYSTERY, and gap scenarios show the expected
+pattern.
+-/
+
+section DualComputation
+
+/-- Inner EXH in the dual theory.
+
+    Note: This reuses `innerExcludable` from the primal theory. The
+    abstract three-role `innerExcludable` uses primal entailment
+    (MYSTERY ≡ WEAK), while in the dual MYSTERY ≡ STRONG. However,
+    the inner EXH results are the same for both theories at the abstract
+    level: MYSTERY has no excludable alternatives, and WEAK excludes
+    STRONG. The primal `innerExcludable` gives the right answer because
+    neither theory allows MYSTERY to exclude anything at the inner level. -/
+def dualExh (prejacent : Role) (s : Scenario) : Bool :=
+  dualMeaning prejacent s &&
+  [Role.mystery, .weak, .strong].all (λ alt =>
+    if innerExcludable prejacent alt then !dualMeaning alt s else true)
+
+/-- In the dual, EXH is vacuous for MYSTERY: no alternative is
+    both a Horn-mate and asymmetrically stronger. This matches
+    computation (55b): |||MYSTERY||| = [[MYSTERY]] = ALL. -/
+theorem dual_exh_mystery (s : Scenario) :
+    dualExh .mystery s = allMeaning s := by
+  simp only [dualExh, innerExcludable, hornMates, entails, dualMeaning,
+    List.all_cons, List.all_nil, Bool.and_true, Bool.true_and, Bool.false_and,
+    Bool.not_true, Bool.not_false, ite_false, Bool.false_eq_true]
+
+/-- In the dual, EXH(WEAK) = SOME ∧ ¬ALL (WEAK excludes STRONG).
+    OR triggers "not-both" SI just as SOME triggers "not-all". -/
+theorem dual_exh_weak (s : Scenario) :
+    dualExh .weak s = (someMeaning s && !allMeaning s) := by
+  simp only [dualExh, innerExcludable, hornMates, entails, dualMeaning,
+    List.all_cons, List.all_nil, Bool.and_true, Bool.true_and, Bool.false_and,
+    Bool.not_true, Bool.not_false, ite_true, ite_false, Bool.false_eq_true]
+
+/-- NOT·MYSTERY in the dual = NOT·STRONG (since MYSTERY ≡ STRONG). -/
+theorem dual_not_mystery_eq_not_strong (s : Scenario) :
+    notMeaning (dualMeaning .mystery) s = notMeaning (dualMeaning .strong) s := rfl
+
+/-- In a gap scenario, the dual DE reveals the weak meaning.
+    not·MYSTERY = ¬ALL is true (not all satisfy), while
+    not·SOME = ¬∃ is false (some do satisfy). -/
+theorem dual_de_reveals_weak (s : Scenario)
+    (_hn : s.total ≥ 1) (hgap : s.satisfying ≥ 1 ∧ s.satisfying < s.total) :
+    notMeaning allMeaning s = true ∧ notMeaning someMeaning s = false := by
+  unfold notMeaning allMeaning someMeaning
+  have hne : s.satisfying ≠ s.total := by omega
+  have hge : s.satisfying ≥ 1 := hgap.1
+  simp [hne, hge]
+
+end DualComputation
+
+
+-- ============================================================
+-- SECTION 11: Enriched Conjunction Alternatives (§A.7)
+-- ============================================================
+
+/-!
+## Enriched Alternatives for Conjunction (§A.7)
+
+§A.7 adds the atomic conjuncts LEFT and RIGHT to the alternative set
+for unfocused conjunction, using @cite{fox-2007}'s definition of
+excludable alternatives. The crucial asymmetry (69b): AND_F has OR
+among its alternatives, but AND_unF does NOT. Non-transitive
+Horn-mateness is encoded by giving each prejacent its own alternative list.
+
+This derives computation (72): in DE environments, unfocused conjunction
+behaves as disjunction: |||not·AND_unF||| = not·OR.
+-/
+
+section EnrichedConjunction
+
+open Exhaustification.InnocentExclusion (exhB)
+
+/-- Four worlds for two atomic propositions (saw Adam, saw Bill). -/
+inductive ConjW where
+  | neither | onlyA | onlyB | both
+  deriving Repr, DecidableEq, BEq
+
+def conjDomain : List ConjW := [.neither, .onlyA, .onlyB, .both]
+
+def cLeft : ConjW → Bool | .onlyA | .both => true | _ => false
+def cRight : ConjW → Bool | .onlyB | .both => true | _ => false
+def cOr : ConjW → Bool | .neither => false | _ => true
+def cAnd : ConjW → Bool | .both => true | _ => false
+
+-- Per-prejacent alternative lists encoding non-transitive Horn-mateness (69b):
+-- AND_unF's alts: {AND_F, LEFT, RIGHT} — NOT OR (the crucial asymmetry)
+-- AND_F's alts: {AND_unF, OR, LEFT, RIGHT}
+-- LEFT's alts: {AND_F, AND_unF, OR, RIGHT}
+-- RIGHT's alts: {AND_F, AND_unF, OR, LEFT}
+
+/-- AND_unF's alternatives: {AND_F, LEFT, RIGHT}. OR is NOT included. -/
+private def andUnFAlts : List (ConjW → Bool) := [cAnd, cLeft, cRight]
+/-- AND_F's alternatives: {AND_unF, OR, LEFT, RIGHT}. -/
+private def andFAlts : List (ConjW → Bool) := [cAnd, cOr, cLeft, cRight]
+/-- LEFT's alternatives: {AND_F, AND_unF, OR, RIGHT}.
+    AND_F and AND_unF have the same denotation (`cAnd`), so the two
+    copies are semantically redundant but reflect the paper's (69b). -/
+private def leftAlts : List (ConjW → Bool) := [cAnd, cAnd, cOr, cRight]
+/-- RIGHT's alternatives: {AND_F, AND_unF, OR, LEFT}.
+    Same note: two `cAnd` copies for AND_F / AND_unF. -/
+private def rightAlts : List (ConjW → Bool) := [cAnd, cAnd, cOr, cLeft]
+
+-- Inner EXH for each item (with their own alternative lists)
+
+/-- EXH(AND_unF) = AND (vacuous: all alts are entailed by AND). -/
+theorem exh_andUnF :
+    ∀ w : ConjW, exhB conjDomain andUnFAlts cAnd w = cAnd w := by
+  intro w; cases w <;> native_decide
+
+/-- EXH(AND_F) = AND (same: AND entails everything in its alt list). -/
+theorem exh_andF :
+    ∀ w : ConjW, exhB conjDomain andFAlts cAnd w = cAnd w := by
+  intro w; cases w <;> native_decide
+
+/-- EXH(LEFT) = LEFT ∧ ¬RIGHT (RIGHT is the only IE alternative). -/
+theorem exh_left :
+    ∀ w : ConjW, exhB conjDomain leftAlts cLeft w =
+      (cLeft w && !cRight w) := by
+  intro w; cases w <;> native_decide
+
+/-- EXH(RIGHT) = RIGHT ∧ ¬LEFT (symmetric). -/
+theorem exh_right :
+    ∀ w : ConjW, exhB conjDomain rightAlts cRight w =
+      (cRight w && !cLeft w) := by
+  intro w; cases w <;> native_decide
+
+-- DE computation: negated meanings with per-prejacent alternative lists
+
+def nAnd : ConjW → Bool := fun w => !cAnd w
+def nOr : ConjW → Bool := fun w => !cOr w
+private def nLeft : ConjW → Bool := fun w => !cLeft w
+private def nRight : ConjW → Bool := fun w => !cRight w
+
+/-- not·AND_unF's alternatives: {not·AND_F, not·LEFT, not·RIGHT}. -/
+private def nAndUnFAlts : List (ConjW → Bool) := [nAnd, nLeft, nRight]
+/-- not·AND_F's alternatives: {not·AND_unF, not·OR, not·LEFT, not·RIGHT}. -/
+private def nAndFAlts : List (ConjW → Bool) := [nAnd, nOr, nLeft, nRight]
+/-- not·LEFT's alternatives: {not·AND_F, not·AND_unF, not·OR, not·RIGHT}. -/
+private def nLeftAlts : List (ConjW → Bool) := [nAnd, nAnd, nOr, nRight]
+/-- not·RIGHT's alternatives: {not·AND_F, not·AND_unF, not·OR, not·LEFT}. -/
+private def nRightAlts : List (ConjW → Bool) := [nAnd, nAnd, nOr, nLeft]
+
+/-- (71b) EXH(not·AND_unF) = not·AND (vacuous inner EXH).
+    Neither not·LEFT nor not·RIGHT is IE: excluding one forces including
+    the other, since ¬AND ∧ LEFT ∧ RIGHT is inconsistent. -/
+theorem de_exh_notAndUnF :
+    ∀ w : ConjW, exhB conjDomain nAndUnFAlts nAnd w = nAnd w := by
+  intro w; cases w <;> native_decide
+
+/-- (71a) EXH(not·AND_F) = not·AND ∧ ¬not·OR = not·AND ∧ OR.
+    not·OR is IE (the only alternative not entailed by not·AND_F
+    that can be consistently excluded). -/
+theorem de_exh_notAndF :
+    ∀ w : ConjW, exhB conjDomain nAndFAlts nAnd w =
+      (nAnd w && cOr w) := by
+  intro w; cases w <;> native_decide
+
+/-- (71c) EXH(not·LEFT) = not·LEFT ∧ OR ∧ RIGHT. -/
+theorem de_exh_notLeft :
+    ∀ w : ConjW, exhB conjDomain nLeftAlts nLeft w =
+      (nLeft w && cOr w && cRight w) := by
+  intro w; cases w <;> native_decide
+
+/-- (71d) EXH(not·RIGHT) = not·RIGHT ∧ OR ∧ LEFT. -/
+theorem de_exh_notRight :
+    ∀ w : ConjW, exhB conjDomain nRightAlts nRight w =
+      (nRight w && cOr w && cLeft w) := by
+  intro w; cases w <;> native_decide
+
+/-- Outer-level alternatives for not·AND_unF: the exhaustified forms
+    of its Horn-mates {not·AND_F, not·LEFT, not·RIGHT}. -/
+def outerNAndUnFAlts : List (ConjW → Bool) :=
+  [ exhB conjDomain nAndUnFAlts nAnd    -- EXH(not·AND_unF) (self)
+  , exhB conjDomain nAndFAlts nAnd      -- EXH(not·AND_F)
+  , exhB conjDomain nLeftAlts nLeft     -- EXH(not·LEFT)
+  , exhB conjDomain nRightAlts nRight ] -- EXH(not·RIGHT)
+
+/-- The inner EXH result for not·AND_unF (= not·AND, vacuous). -/
+def innerNAndUnF : ConjW → Bool :=
+  exhB conjDomain nAndUnFAlts nAnd
+
+/-- **Computation (72)**: Double exhaustification of not·AND_unF yields not·OR.
+
+    |||not·AND_unF||| = EXH(EXH(not·AND_unF))
+                     = not·AND ∧ ¬EXH(not·AND_F) ∧ ¬EXH(not·LEFT)
+                                                   ∧ ¬EXH(not·RIGHT)
+                     = not·AND ∧ ¬(not·AND ∧ OR) ∧ ...
+                     = not·AND ∧ (AND ∨ ¬OR)     ∧ ...
+                     = not·AND ∧ ¬OR                  (since not·AND is asserted)
+                     = not·OR
+
+    Unfocused conjunction in DE environments behaves as disjunction. -/
+theorem de_double_exh_conjunction :
+    ∀ w : ConjW,
+      exhB conjDomain outerNAndUnFAlts innerNAndUnF w = nOr w := by
+  intro w; cases w <;> native_decide
+
+end EnrichedConjunction
+
+
+-- ============================================================
+-- SECTION 12: Uniform Double Strengthening
+-- ============================================================
+
+/-!
+## Uniform Double Strengthening over Theory Variants
+
+The primal and dual theories share the same abstract mechanism — a
+three-element alternative configuration with non-transitive
+Horn-mateness. We unify them into a single `uniformResult`
+function that takes a `TheoryVariant` and returns the effective
+meaning in each polarity.
+-/
+
+section UniformStrengthening
+
+/-- The effective meaning of MYSTERY in each polarity, parameterized
+    by theory variant. Both variants produce the same result:
+    STRONG (= ALL) in UE, WEAK (= SOME) in DE. -/
+def uniformResult (v : TheoryVariant) (pol : Polarity) : Scenario → Bool :=
+  match v, pol with
+  | .primal, .positive => allMeaning    -- double-strengthened
+  | .primal, .negative => someMeaning   -- revealed
+  | .dual,   .positive => allMeaning    -- revealed
+  | .dual,   .negative => someMeaning   -- double-weakened
+
+/-- Primal and dual give the same effective meaning in both polarities. -/
+theorem uniform_primal_dual_agree :
+    ∀ (pol : Polarity), uniformResult .primal pol = uniformResult .dual pol := by
+  intro pol; cases pol <;> rfl
+
+/-- The primal UE result matches `double_strengthening_yields_universal`. -/
+theorem uniform_primal_ue (s : Scenario) (hn : s.total ≥ 1) :
+    uniformResult .primal .positive s = doubleExh .mystery s := by
+  simp only [uniformResult]
+  exact (double_strengthening_yields_universal s hn).symm
+
+/-- The dual UE result matches the plain meaning of MYSTERY in the dual. -/
+theorem uniform_dual_ue (s : Scenario) :
+    uniformResult .dual .positive s = dualMeaning .mystery s := rfl
+
+/-- The primal DE result matches the plain existential meaning. -/
+theorem uniform_primal_de (s : Scenario) :
+    uniformResult .primal .negative s = primalMeaning .mystery s := rfl
+
+/-- The homogeneity pattern: in gap scenarios, MYSTERY is false under
+    both polarities regardless of theory variant. -/
+theorem uniform_gap (v : TheoryVariant) (s : Scenario) (_hn : s.total ≥ 1)
+    (hgap : s.satisfying ≥ 1 ∧ s.satisfying < s.total) :
+    uniformResult v .positive s = false ∧
+    notMeaning (uniformResult v .negative) s = false := by
+  have hne : s.satisfying ≠ s.total := by omega
+  have hge : s.satisfying ≥ 1 := hgap.1
+  cases v <;> simp [uniformResult, notMeaning, allMeaning, someMeaning, hne, hge]
+
+end UniformStrengthening
+
+
+-- ============================================================
+-- SECTION 13: Questions Pull Apart Primal from Dual (§5.5.4)
+-- ============================================================
+
+/-!
+## Questions: A Testable Distinction (§5.5.4)
+
+Benjamin Spector (p.c., cited in §5.5.4) observes that **questions**
+provide an environment where no strengthening occurs — they do not
+license scalar implicatures. Under this assumption:
+
+- **Primal** MYSTERY has weak plain meaning (existential) → questions
+  should reveal existential force for definites.
+- **Dual** MYSTERY has strong plain meaning (conjunctive) → questions
+  should reveal conjunctive force for unfocused conjunction.
+
+The paper offers preliminary data supporting this prediction: definites
+in questions allow existential answers (62b), while unfocused conjunction
+in questions resists disjunctive answers (63b).
+-/
+
+section QuestionPrediction
+
+/-- In questions (no strengthening), the theory variant determines
+    what force MYSTERY displays: primal → weak, dual → strong. -/
+def mysteryInQuestions (v : TheoryVariant) : Role :=
+  match v with
+  | .primal => .weak     -- plain weak meaning revealed
+  | .dual   => .strong   -- plain strong meaning revealed
+
+/-- Questions differentiate the theories: primal MYSTERY shows WEAK,
+    dual MYSTERY shows STRONG. -/
+theorem questions_differentiate :
+    mysteryInQuestions .primal ≠ mysteryInQuestions .dual := by
+  decide
+
+/-- Definites (primal) should have existential force in questions. -/
+theorem definites_existential_in_questions :
+    mysteryInQuestions (domainVariant .definites) = .weak := rfl
+
+/-- Unfocused conjunction (dual) should have conjunctive force in questions. -/
+theorem conjunction_conjunctive_in_questions :
+    mysteryInQuestions (domainVariant .conjunction) = .strong := rfl
+
+/-- Datum: "Did you talk to the students?" admits existential answer. -/
+structure QuestionForceDatum where
+  question : String
+  domain : HomogeneityDomain
+  variant : TheoryVariant
+  predictedForce : Role
+  /-- Data point: is the prediction borne out? -/
+  supported : Bool
+  deriving Repr
+
+def definitesQuestion : QuestionForceDatum :=
+  { question := "Did you talk to the students?"
+  , domain := .definites
+  , variant := .primal
+  , predictedForce := .weak
+  , supported := true }   -- (62b): existential answer felicitous
+
+def conjunctionQuestion : QuestionForceDatum :=
+  { question := "Did you talk to Adam and Bill?"
+  , domain := .conjunction
+  , variant := .dual
+  , predictedForce := .strong
+  , supported := true }   -- (63b): conjunctive answer degraded
+
+/-- Both question data points support the primal/dual distinction. -/
+theorem question_data_supports :
+    [definitesQuestion, conjunctionQuestion].all (·.supported) = true := by
+  native_decide
+
+end QuestionPrediction
+
+
+-- ============================================================
+-- BRIDGE 3: Enriched Conjunction ↔ Empirical Data
+-- ============================================================
+
+/-!
+## Connecting Enriched Conjunction to Empirical Data
+
+The `de_double_exh_conjunction` theorem (Section 11) shows that
+unfocused conjunction under negation behaves as disjunction on
+the `ConjW` domain. Here we verify that this result matches the
+gap pattern documented in `Homogeneity.lean`'s `conjunctionExample`:
+in the gap scenario (Ann has red hair, Bert doesn't), both the
+positive conjunction and its negation are "neither true nor false."
+-/
+
+section ConjunctionBridge
+
+/-- The gap scenario for conjunction: one conjunct true, the other false. -/
+private def conjGapWorlds : List ConjW := [.onlyA]
+
+/-- In the gap, positive conjunction (AND) is false. -/
+theorem conj_gap_positive_false :
+    conjGapWorlds.all (λ w => cAnd w = false) = true := by
+  native_decide
+
+/-- In the gap, negative conjunction with enriched dual theory
+    gives not·OR (= "saw neither"). This is FALSE in the gap
+    (she DID see one of them), producing the homogeneity gap. -/
+theorem conj_gap_dual_negative_false :
+    conjGapWorlds.all (λ w => nOr w = false) = true := by
+  native_decide
+
+/-- This matches the empirical data: conjunction gap is
+    neither-true-nor-false for both polarities. -/
+theorem conj_gap_matches_empirical_data :
+    conjunctionExample.positiveInGap = .neitherTrueNorFalse ∧
+    conjunctionExample.negativeInGap = .neitherTrueNorFalse := ⟨rfl, rfl⟩
+
+/-- Full end-to-end: the enriched conjunction computation produces
+    truth values that correspond to the homogeneity gap pattern. -/
+theorem enriched_conjunction_end_to_end :
+    -- (1) Double EXH of not·AND_unF yields not·OR (Section 11)
+    (∀ w, Exhaustification.InnocentExclusion.exhB
+      conjDomain outerNAndUnFAlts innerNAndUnF w = nOr w) ∧
+    -- (2) In gap world, AND (positive) is false
+    cAnd .onlyA = false ∧
+    -- (3) In gap world, not·OR (dual negative) is false
+    nOr .onlyA = false ∧
+    -- (4) Empirical data confirms the gap
+    conjunctionExample.positiveInGap = .neitherTrueNorFalse ∧
+    conjunctionExample.negativeInGap = .neitherTrueNorFalse := by
+  exact ⟨de_double_exh_conjunction, rfl, rfl, rfl, rfl⟩
+
+end ConjunctionBridge
 
 
 end Phenomena.Plurals.Studies.Magri2014
