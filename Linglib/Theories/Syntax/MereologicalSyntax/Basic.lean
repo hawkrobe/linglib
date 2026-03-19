@@ -156,21 +156,48 @@ def SynObj.containsLabel (l : MLabel) : SynObj → Bool
   | .sub₁₂ l' one two => l == l' || one.containsLabel l || two.containsLabel l
 
 -- ════════════════════════════════════════════════════
--- § 6. Angular Locality
+-- § 6. Within-Dimension Chains
 -- ════════════════════════════════════════════════════
 
-/-- Angular Locality (@cite{adger-2025}: 89):
+/-- Is there an object with label `l` in `root`'s 2-part chain?
 
-    γ can subjoin to β only if there is an α such that γ is an n-part
-    of α and α is a 1-part of β.
+    Follows only 2-part edges: if A <₂ B <₂ C, then A is reachable
+    from C via this chain. 1-parts are NOT traversed — the dual of
+    `labelInOnePartChain`. -/
+def labelInTwoPartChain (l : MLabel) : SynObj → Bool
+  | .leaf _ | .sub₁ _ _ => false
+  | .sub₁₂ _ _ two => two.label == l || labelInTwoPartChain l two
 
-    This prevents subjunction from crossing more than one dimension.
-    For wh-movement: the moving element must originate from within
-    β's immediate 1-part, forcing cyclic movement through 1-parts
-    (≈ specifiers of phases in Minimalism). -/
+/-- Is label `l` a within-dimension transitive part of `root`?
+
+    True when `l` is reachable by following ONLY 1-part edges or ONLY
+    2-part edges from `root`, never crossing dimensions
+    (@cite{adger-2025}, p. 95). This is the parthood relation
+    relevant to Angular Locality. -/
+def labelWithinDimPartOf (l : MLabel) (root : SynObj) : Bool :=
+  labelInOnePartChain l root || labelInTwoPartChain l root
+
+-- ════════════════════════════════════════════════════
+-- § 7. Angular Locality
+-- ════════════════════════════════════════════════════
+
+/-- Collect all `SynObj` nodes along the transitive 1-part chain of
+    `root` (not including `root` itself). -/
+def SynObj.onePartChainObjs : SynObj → List SynObj
+  | .leaf _ => []
+  | .sub₁ _ one => one :: one.onePartChainObjs
+  | .sub₁₂ _ one _ => one :: one.onePartChainObjs
+
+/-- Angular Locality (@cite{adger-2025}, definition 29, p. 91):
+
+    γ can subjoin to β only if there is an α such that γ is a
+    within-dimension transitive n-part of α AND α is a transitive
+    1-part of β.
+
+    This is the tree-based approximation. For the full graph-based
+    implementation (supporting multiparthood and unbounded in-degree),
+    see `SynGraph.satisfiesAL` in `SynGraph.lean`. -/
 def angularLocalityOK (l : MLabel) (target : SynObj) : Bool :=
-  match target.onePart with
-  | none => false
-  | some alpha => alpha.containsLabel l
+  target.onePartChainObjs.any (labelWithinDimPartOf l ·)
 
 end MereologicalSyntax
