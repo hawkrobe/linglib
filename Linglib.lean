@@ -915,6 +915,7 @@ import Linglib.Phenomena.Numerals.Compare
 import Linglib.Phenomena.Numerals.Typology
 import Linglib.Phenomena.Numerals.Studies.FoxHackl2006
 import Linglib.Phenomena.Numerals.Studies.HuangSpelkeSnedeker2013
+import Linglib.Phenomena.Numerals.Studies.Spector2013
 import Linglib.Phenomena.Quantification.Studies.BaleSchwarz2026
 import Linglib.Phenomena.Quantification.Studies.Scontras2014
 import Linglib.Phenomena.Modality.Studies.Kratzer2012Scenario
@@ -1429,6 +1430,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
 import Linglib.Theories.Syntax.Minimalism.Formal.Linearization.LCA
 import Linglib.Theories.Syntax.MereologicalSyntax.Basic
+import Linglib.Theories.Syntax.MereologicalSyntax.Bridge
 import Linglib.Theories.Syntax.SynGraph
 -- Theories: Semantics.Degree (degree semantics frameworks)
 import Linglib.Theories.Semantics.Degree.Core
