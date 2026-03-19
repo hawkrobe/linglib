@@ -1,5 +1,63 @@
 # Changelog
 
+## [0.229.344] - 2026-03-18
+
+### Added
+- **`Elbourne2026.lean`**: Formalize Elbourne 2026 "Adjectives without syntactic categories" (NLLT 44:17) — ⟨et,et⟩ uniform adjective type, copula BE semantics, FA-sufficiency theorem, PM limitation (`pm_always_intersective`), `formerAdj` as genuine `AdjMeaning` via `List.any`, end-to-end `etet_subsumes_et` chain, compulsory E_R for attributive-only adjectives
+
+### Changed
+- **`Modification.lean`**: Remove duplicate adjective classification hierarchy (`AdjMeaning`, `isIntersective`, `isSubsective`, `isPrivative`, `intersectiveAdj`) — canonical definitions live in `Classification.lean`; Modification.lean now focuses solely on the PM composition operation
+- **`Kamp1975.lean`**: Remove dead `import Modification`; update bridge docstrings to reference `Classification.lean` directly
+
+## [0.229.343] - 2026-03-18
+
+### Added
+- **`ChannelCapacity.lean`**: Add `channelCapacity` definition (sup_{p(c)} I(W;C), the paper's eq. 3), `channelCapacity_le_log_card` (C* ≤ log|W|, proved via `csSup_le`), `mutualInfo_le_log_fin` (I ≤ log k for `Fin k` vocabulary)
+- **`Divergence.lean`**: Add `klDivergence_nonneg` — KL divergence non-negativity stated in terms of `klDivergence` (Gibbs' inequality), connecting `Core.Divergence` to `Core.ChannelCapacity`
+- **`ZaslavskyEtAl2019.lean`**: Add `averageCAP` (eq. 7 — averaging per-language CAPs); §4 docstring on averaged-CAP methodology and footnote 4 subtlety
+- **`references.bib`**: Add `gibson-etal-2017` (PNAS 2017, cited by Zaslavsky et al.)
+
+### Fixed
+- **`ZaslavskyEtAl2019.lean`**: Delete fabricated CostPair bridge (§6, not from paper), grue/WALS bridge (§5, not from paper), stipulative `PriorProfile`/`prior_dissociation`/`salience_exceeds_perceptual` (Bool fields masquerading as theorems), arbitrary `capacityBound`/`english_higher_capacity`; fix `cap_implies_linearity` docstring (clarify it applies to true CAPs not averaged ones); remove unverified WCS row/column references from Temperature comments; remove unused imports (`Core.Efficiency`, `Typology`)
+
+## [0.229.342] - 2026-03-18
+
+### Added
+- **`WangSun2026.lean`**: Add (32b) pre-DP modifier structure (`preDp_D`); N-detachment theorems (`noDe_n_inside_cl`, `de_cl_is_bare`); modifier position contrast theorems (`preDp_D_is_full`, `postCl_D_not_full`, `both_positions_sortal`)
+
+### Fixed
+- **`WangSun2026.lean`**: Fix Borer bridge docstring — note Num's different position (Borer: above Q in spine; Wang & Sun: Q's 2-part, outside spine); fix (34b) docstring — note 的 *de* is spell-out of Mod, N subjoins directly to D (not to Cl)
+
+## [0.229.341] - 2026-03-18
+
+### Added
+- **`MereologicalSyntax/Basic.lean`**: Add Angular Locality predicate (`angularLocalityOK`) — Adger 2025's constraint on subjunction across dimensions
+- **`WangSun2026.lean`**: Add (27b) Mod internal structure (Deg with A/Adv); (28c) post-Cl modification structure with contrast theorem; (45b) measure phrase without N (classifier independence); (39a,b) wh-island data with dimensionality derivation; fragment classifier references (zhāng, gè); end-to-end argumentation chains (`bei_end_to_end`, `modification_end_to_end`)
+
+### Fixed
+- **`WangSun2026.lean`**: Fix Borer bridge docstring to note n (categorizer) absent from mereological compLine
+
+## [0.229.340] - 2026-03-18
+
+### Added
+- **`ChannelCapacity.lean`**: Prove `mutualInfo_le_log_card` (was sorry) — I(W;C) ≤ log|W| via three-lemma chain: `gibbs_inequality` (KL ≥ 0, first proof in codebase), `entropy_le_log_card` (H(q) ≤ log|W|), `mutualInfo_le_marginal_entropy` (I ≤ H(W))
+- **`ZaslavskyEtAl2019.lean`**: Add `KMeansSystem.toChannel` (hard partition → NamingChannel), `cap_implies_linearity` (CAP → linear relation via `cap_linear'`), `capacity_bounded_by_terms` (end-to-end WALS → `mutualInfo_le_log_card` chain)
+
+### Fixed
+- **`ChannelCapacity.lean`**: Remove unverified equation/theorem references (Theorem 2.7.4, §10.8, eq. 1/4/5/6)
+- **`ZaslavskyEtAl2019.lean`**: Remove unverified figure/section references (Fig. 1–4, §5); consolidate stipulative per-prior theorems into `prior_dissociation`; remove duplicate `cap_predicts_linearity` (redundant with `cap_implies_linearity`); fix `grue_majority_from_wals` to delegate to `Typology.grue_majority`
+
+## [0.229.339] - 2026-03-18
+
+### Added
+- **`MereologicalSyntax/Basic.lean`**: New syntactic framework — Adger 2025's mereological syntax (subjoin, dimensionality, 1-part chains, cross-dimensional visibility)
+- **`WangSun2026.lean`**: Formalize Wang & Sun 2026 (NLLT) — three Mandarin classifier problems (modification, dislocation, *de*-interpretation) with mereological derivations; structural predictions for Q dimensionality, spell-out domain, and Cl visibility from D; `ClReading` type deriving sortal/mensural from structure; bridge to Borer 2005
+- **`Mandarin/Classifiers.lean`**: Add container classifiers 杯 bēi, 瓶 píng, 碗 wǎn, 箱 xiāng with `isMensural := true`
+- **`references.bib`**: Add `adger-2025` (MIT Press) and `wang-sun-2026` (NLLT 44:18)
+
+### Fixed
+- **`Borer2005.lean`**: Fix typo `Un@cite` → `Under @cite`
+
 ## [0.229.338] - 2026-03-18
 
 ### Added

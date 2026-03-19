@@ -1,29 +1,13 @@
 /-
-# Adjective Semantics and Predicate Modification
+# Predicate Modification
 @cite{kamp-1975} @cite{kamp-partee-1995} @cite{parsons-1970}
 
-## The Kamp Hierarchy
+Predicate modification (@cite{heim-kratzer-1998} Ch. 4):
+`⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)`, valid for intersective adjectives only.
 
-@cite{kamp-1975} introduced the classification of adjective meanings
-as functions from properties to properties (type `⟨⟨e,t⟩,⟨e,t⟩⟩`),
-constrained by meaning postulates:
-
-1. **Intersective** (Kamp's "predicative"): `⟦gray cat⟧ = ⟦gray⟧ ∩ ⟦cat⟧`
-2. **Subsective** (Kamp's "affirmative"): `⟦skillful surgeon⟧ ⊆ ⟦surgeon⟧`
-3. **Privative**: `⟦fake gun⟧ ∩ ⟦gun⟧ = ∅`
-4. **Non-subsective/modal**: no entailment ("alleged")
-
-The full hierarchy also includes **extensional** (adjective depends only
-on the noun's extension, not intension), which requires possible worlds
-to state. The general intensional hierarchy is in
+The adjective classification hierarchy (intersective, subsective,
+privative, extensional) is in
 `Theories/Semantics/Lexical/Adjective/Classification.lean`.
-The definitions below are single-world specializations of that hierarchy.
-
-## Predicate Modification
-
-Predicate modification (H&K Ch. 4): `⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)`,
-valid for intersective adjectives only.
-
 -/
 
 import Linglib.Theories.Semantics.Montague.Types
@@ -56,49 +40,10 @@ theorem predMod_true_left {E : Type*} (p : E → Bool) : predMod truePred p = p 
 
 end Generic
 
-section AdjClasses
-
-abbrev AdjMeaning (m : Model) := m.interpTy (.e ⇒ .t) → m.interpTy (.e ⇒ .t)
-
-/-- `ADJ(N) ⊆ N` for all nouns `N`. -/
-def isSubsective {m : Model} (adj : AdjMeaning m) : Prop :=
-  ∀ (noun : m.interpTy (.e ⇒ .t)),
-    predicateToSet (adj noun) ⊆ predicateToSet noun
-
-/-- `ADJ(N)(x) ↔ P(x) ∧ N(x)` for some fixed predicate `P`.
-    @cite{kamp-1975} definition (4): "predicative". -/
-def isIntersective {m : Model} (adj : AdjMeaning m) : Prop :=
-  ∃ (adjPred : m.interpTy (.e ⇒ .t)),
-    ∀ (noun : m.interpTy (.e ⇒ .t)),
-      ∀ (x : m.Entity), adj noun x = (adjPred x && noun x)
-
-/-- `ADJ(N) ∩ N = ∅` for all nouns `N`.
-    @cite{kamp-1975} definition (5): "fake gun" is not a gun. -/
-def isPrivative {m : Model} (adj : AdjMeaning m) : Prop :=
-  ∀ (noun : m.interpTy (.e ⇒ .t)),
-    predicateToSet (adj noun) ∩ predicateToSet noun = ∅
-
-/-- Privative adjectives are not subsective. -/
-theorem privative_not_subsective {m : Model} (adj : AdjMeaning m)
-    (hp : isPrivative adj) (hne : ∃ noun, (predicateToSet (adj noun)).Nonempty) :
-    ¬isSubsective adj := by
-  intro hs
-  obtain ⟨noun, x, hx⟩ := hne
-  have hsub := hs noun hx
-  have hdisj := hp noun
-  have : x ∈ predicateToSet (adj noun) ∩ predicateToSet noun := ⟨hx, hsub⟩
-  rw [hdisj] at this
-  exact this
-
-theorem intersective_implies_subsective {m : Model} (adj : AdjMeaning m)
-    (h : isIntersective adj) : isSubsective adj := by
-  intro noun x hx
-  obtain ⟨adjPred, hAdj⟩ := h
-  simp only [predicateToSet, Set.mem_setOf_eq] at hx ⊢
-  rw [hAdj] at hx
-  exact Bool.and_elim_right hx
-
-end AdjClasses
+/-! The adjective classification hierarchy (intersective, subsective,
+    privative, extensional) is in `Lexical/Adjective/Classification.lean`.
+    This file provides the composition operation (Predicate Modification)
+    that implements the intersective case. -/
 
 section PredicateModification
 
@@ -107,15 +52,6 @@ def predicateModification {m : Model}
   λ x => p₁ x && p₂ x
 
 infixl:70 " ⊓ₚ " => predicateModification
-
-def intersectiveAdj {m : Model} (adjPred : m.interpTy (.e ⇒ .t)) : AdjMeaning m :=
-  λ noun => adjPred ⊓ₚ noun
-
-theorem intersectiveAdj_is_intersective {m : Model} (adjPred : m.interpTy (.e ⇒ .t))
-    : isIntersective (intersectiveAdj adjPred) := by
-  use adjPred
-  intro noun x
-  rfl
 
 theorem predicateModification_comm {m : Model} (p₁ p₂ : m.interpTy (.e ⇒ .t))
     : p₁ ⊓ₚ p₂ = p₂ ⊓ₚ p₁ := by

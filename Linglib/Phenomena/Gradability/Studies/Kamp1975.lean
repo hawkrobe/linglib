@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Lexical.Adjective.Classification
-import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Core.Logic.Truth3
 import Mathlib.Data.Set.Basic
 
@@ -29,7 +28,7 @@ and § 3 formalizes the comparative definitions that descend from it.
 
 ## Structure
 
-- § 1: Bridge to `Modification.lean`'s extensional hierarchy
+- § 1: Single-world specialization of `Classification.lean`'s hierarchy
 - § 2: Many-valued logic failure (motivation for Theory 2)
 - § 3: Kamp → Klein lineage: `kampAtLeastAs` ↔ `kleinMoreThan`
 - § 4: Concrete witnesses for each hierarchy class
@@ -52,11 +51,11 @@ open Semantics.Lexical.Adjective.Classification
 -- § 1. Bridge to Modification.lean
 -- ════════════════════════════════════════════════════
 
-/-! `Modification.lean` defines `isIntersective` and `isSubsective` in a
-    single-world extensional setting (using `Model`). These are Kamp's
-    definitions (4) and (6) specialized to a single world.
-
-    The general intensional hierarchy lives in `Classification.lean`. -/
+/-! `Classification.lean` defines the general intensional hierarchy:
+    `isIntersective`, `isSubsective`, `isPrivative`, `isExtensional`
+    over `Property W E = W → E → Bool`. The bridge theorems below show
+    that fixing a world reduces the intensional definitions to their
+    single-world extensional counterparts. -/
 
 section Bridge
 
@@ -84,15 +83,10 @@ theorem subsective_at_world {adj : AdjMeaning W E}
   intro N x hadj
   exact h (λ _ => N) w x hadj
 
-/-! `intersective_at_world` and `subsective_at_world` ARE the bridge
-    theorems connecting Classification.lean's intensional hierarchy to
-    Modification.lean's extensional one. They show that fixing a world
-    yields the extensional intersection/subsection property.
-
-    A direct type-level connection to `Modification.isIntersective` is
-    not possible because Modification is typed over `Model` (Montague's
-    `interpTy`), while Classification uses bare types `W`, `E`. The
-    mathematical content is the same: both state `∃ Q, adj N x = Q x ∧ N x`. -/
+/-! `intersective_at_world` and `subsective_at_world` show that fixing
+    a world reduces the intensional hierarchy to single-world properties:
+    `∃ Q_w, adj(N)(w)(x) = Q_w(x) ∧ N(x)` (intersective) and
+    `adj(N)(w)(x) → N(x)` (subsective). -/
 
 end Bridge
 
