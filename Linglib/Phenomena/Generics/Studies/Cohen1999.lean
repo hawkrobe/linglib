@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Lexical.CovertQuantifier
-import Linglib.Phenomena.Generics.Data
 
 /-!
 # @cite{cohen-1999a}: Probability-Based Generic Quantification
@@ -218,13 +217,11 @@ def carriesMalaria : Scope := λ s => s.id == 0
 -- This is the key empirical challenge for fixed-threshold approaches.
 #guard !cohenGEN mosquitoSituations isMosquito carriesMalaria
 
-/-- Cohen's prediction conflicts with the shared data in `Data.lean`:
-    `mosquitosMalaria` has prevalence 1/100 but judgment 85/100 (clearly true).
-    Cohen predicts false (1/100 < 1/2). -/
+/-- Cohen's prediction conflicts with empirical judgments (@cite{leslie-2008}):
+    "Mosquitos carry malaria" has prevalence ~1/100 but judgment ~85/100 (clearly
+    true). Cohen predicts false (1/100 < 1/2). -/
 theorem cohen_wrong_on_mosquitoes :
-    Phenomena.Generics.mosquitosMalaria.prevalence < 1/2 ∧
-    Phenomena.Generics.mosquitosMalaria.judgment > 1/2 := by
-  simp [Phenomena.Generics.mosquitosMalaria]
+    (1 : ℚ) / 100 < 1/2 ∧ (85 : ℚ) / 100 > 1/2 := by
   constructor <;> norm_num
 
 end RareProperty

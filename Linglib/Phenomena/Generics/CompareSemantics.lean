@@ -13,6 +13,16 @@ such that threshold semantics gives the same truth value.
 GEN is eliminable: threshold semantics can express any GEN configuration,
 making the observable "prevalence" sufficient.
 
+## Dynamic bridge
+
+This eliminability result also applies to @cite{kirkpatrick-2024}'s dynamic
+semantics in discourse-initial position: `fromPredicate_static` (in
+`Theories/Semantics/Dynamic/Generics.lean`) proves that discourse-initial
+evaluation of a `GenericSentence` constructed via `fromPredicate` equals the
+static `traditionalGEN`. Composing with `gen_eliminable`, any discourse-initial
+dynamic generic is expressible via threshold semantics. The dynamic theory
+diverges from threshold only in multi-sentence discourse.
+
 -/
 
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics

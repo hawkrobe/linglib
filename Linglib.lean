@@ -815,7 +815,6 @@ import Linglib.Phenomena.Focus.Studies.OzyildizEtAl2025
 import Linglib.Phenomena.Focus.Studies.ThomasDeo2020
 import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
-import Linglib.Phenomena.Generics.Data
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Phenomena.Generics.Compare
 import Linglib.Phenomena.Generics.Studies.Cohen1999
@@ -1530,6 +1529,7 @@ import Linglib.Theories.Semantics.Negation.CzechNegation
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
 import Linglib.Phenomena.Focus.Studies.DeoThomas2025
 import Linglib.Phenomena.Focus.Studies.Francescotti1995
+import Linglib.Phenomena.Focus.Studies.Umbach2004
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Focus.Sensitivity

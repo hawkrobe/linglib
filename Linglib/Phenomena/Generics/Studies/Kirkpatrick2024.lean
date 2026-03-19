@@ -340,4 +340,99 @@ verdict for both orders — predicting the reverse Sobel is also felicitous,
 contrary to empirical judgment. -/
 
 
+-- ═══ Normality Grounding ═══
+
+/-- The full raven domain. -/
+def allRavens : List Raven := [.normal1, .normal2, .albino]
+
+/-- Normality ordering on ravens: normal ravens are equally normal;
+    the albino raven is less normal than both. This encodes the
+    normality intuition that @cite{kirkpatrick-2024}'s theory relies on:
+    normal-colored ravens are the "default" for raven-kind.
+
+    `ravenNormality e₁ e₂ = true` means `e₁` is at least as normal as `e₂`. -/
+def ravenNormality : Raven → Raven → Bool
+  | .albino, .normal1 => false
+  | .albino, .normal2 => false
+  | _, _ => true
+
+/-- The stipulated `normalRavens` are exactly the optimal ravens under
+    `ravenNormality`. This grounds the raven model: the normal instances
+    are derived from a normality ordering, not ad hoc. -/
+theorem ravensAreBlack_grounded :
+    (GenericSentence.fromOrder isRaven isBlack allRavens ravenNormality).normalInstances =
+    normalRavens := by native_decide
+
+/-- The stipulated `normalAlbinoRavens` are the optimal albino ravens.
+    Within the albino-restricted domain, the albino raven is trivially
+    optimal (it's the only member). -/
+theorem albinoRavensArentBlack_grounded :
+    (GenericSentence.fromOrder isAlbinoRaven (fun e => !isBlack e)
+      allRavens ravenNormality).normalInstances =
+    normalAlbinoRavens := by native_decide
+
+
+-- ═══ Binary Normalcy Grounding (fromPredicate) ═══
+
+/-- Binary normalcy predicate: normal ravens are not albino. -/
+def isNormalRaven : Raven → Bool
+  | .albino => false
+  | _ => true
+
+/-- `fromPredicate` constructs the same generic sentence as the hand-stipulated
+    `ravensAreBlack`, grounding `normalInstances` via a binary normalcy predicate
+    rather than a normality ordering. -/
+theorem ravensAreBlack_fromPredicate :
+    (GenericSentence.fromPredicate isRaven isBlack allRavens isNormalRaven).normalInstances =
+    normalRavens := by native_decide
+
+/-- `fromPredicate` and `fromOrder` agree on the raven model: both constructors
+    derive the same normal instances from their respective primitives.
+
+    This demonstrates that binary normalcy (traditional GEN) and normality
+    orderings (Kirkpatrick/Greenberg) coincide when the ordering has exactly
+    two equivalence classes. -/
+theorem fromPredicate_agrees_fromOrder :
+    (GenericSentence.fromPredicate isRaven isBlack allRavens isNormalRaven).normalInstances =
+    (GenericSentence.fromOrder isRaven isBlack allRavens ravenNormality).normalInstances := by
+  native_decide
+
+
+-- ═══ Static Theory Impossibility (§3) ═══
+
+/-! @cite{kirkpatrick-2024} §3 argues that static theories — @cite{cohen-1999a}'s
+probabilistic account, @cite{greenberg-2003}'s normality-based account,
+@cite{sterken-2015}'s indexical approach — all fail to predict the Sobel
+asymmetry. The formal reason: static theories evaluate each generic
+independently (no state threading), so the conjunction of truth values
+is commutative. If both generics are independently true, both orders
+yield `true ∧ true = true`.
+
+This is a special case of `commutative_implies_equal_verdicts` from
+`Generics.lean`: any evaluation where each generic's truth value is
+determined independently of discourse position is trivially commutative. -/
+
+/-- Any state-independent evaluation assigns the same conjunction
+    truth value regardless of presentation order. -/
+theorem static_order_irrelevant {α : Type} (truth : α → Bool) (g₁ g₂ : α) :
+    (truth g₁ && truth g₂) = (truth g₂ && truth g₁) := by
+  cases truth g₁ <;> simp
+
+/-- Both raven generics are true when evaluated discourse-initially
+    (= statically), yet the dynamic theory distinguishes the orders.
+
+    Static theories predict `true ∧ true` for both orders and therefore
+    cannot model the asymmetry that @cite{kirkpatrick-2024}'s dynamic
+    theory captures via horizon expansion and blocking. -/
+theorem static_vs_dynamic_divergence :
+    -- Both true in isolation (static prediction: both orders felicitous)
+    (evalGeneric [] ravensAreBlack).2 = true ∧
+    (evalGeneric [] albinoRavensArentBlack).2 = true ∧
+    -- Dynamic: forward Sobel is consistent
+    isConsistent sobelSequence = true ∧
+    -- Dynamic: reverse Sobel is inconsistent
+    isConsistent reverseSobelSequence = false :=
+  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+
 end Phenomena.Generics.Studies.Kirkpatrick2024

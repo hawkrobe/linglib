@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Lexical.CovertQuantifier
+import Linglib.Theories.Semantics.Dynamic.Generics
 
 /-!
 # Generic Quantification as Modal Necessity
@@ -69,7 +70,7 @@ structure RestrictedUniversal (D : Type) where
 
 /-- Evaluate a restricted universal: ∀d ∈ domain. restriction(d) → scope(d) -/
 def RestrictedUniversal.eval {D : Type} (ru : RestrictedUniversal D) : Bool :=
-  ru.domain.all λ d => !ru.restriction d || ru.scope d
+  ru.domain.all λ d => (ru.restriction d).not || ru.scope d
 
 /-- GEN as a restricted universal over situations. -/
 def genAsRU
@@ -108,7 +109,7 @@ theorem modal_matches_ru
     (p : World → Bool)
     : accessible.all p = (modalAsRU accessible p).eval := by
   unfold modalAsRU RestrictedUniversal.eval
-  simp only [Bool.not_true, Bool.false_or]
+  simp
 
 -- The normalcy–ordering-source correspondence
 
@@ -150,5 +151,49 @@ def correspondenceTable : List Correspondence :=
     , modalComponent := "necessity force (∀ over best worlds)"
     , notes := "Both are universal, not existential" }
   ]
+
+-- ═══ Connection to GenericSentence (Dynamic Generics) ═══
+
+/-! ### `RestrictedUniversal` ↔ `GenericSentence`
+
+`RestrictedUniversal D` and `GenericSentence E` encode the same logical
+form — ∀x ∈ domain. restriction(x) → scope(x) — but serve different roles:
+
+- `RestrictedUniversal` is the **static** skeleton shared by GEN and modal
+  necessity. It has no notion of discourse state or horizon expansion.
+- `GenericSentence` is the **dynamic** version: it adds `normalInstances`
+  (the entities introduced when the horizon lacks restrictor-satisfying
+  individuals) and composes via `evalGeneric` / `evalSequence`.
+
+`toGenericSentence` lifts a restricted universal into the dynamic framework
+by computing `normalInstances` as the restriction-satisfying elements of the
+domain. Discourse-initial evaluation then recovers the static truth conditions
+(`ru_toGeneric_static`). -/
+
+open Semantics.Dynamic.Generics
+
+/-- Lift a `RestrictedUniversal` to a `GenericSentence` by using all
+    restriction-satisfying domain elements as normal instances.
+
+    This is the maximal-normalcy special case: every restricted element
+    is considered normal. For finer control, use `GenericSentence.fromOrder`
+    or `GenericSentence.fromPredicate`. -/
+def RestrictedUniversal.toGenericSentence {D : Type} [DecidableEq D]
+    (ru : RestrictedUniversal D) : GenericSentence D :=
+  ⟨ru.restriction, ru.scope, ru.domain.filter ru.restriction⟩
+
+/-- Discourse-initial evaluation of a lifted `RestrictedUniversal` equals
+    its static evaluation. -/
+theorem ru_toGeneric_static {D : Type} [DecidableEq D]
+    (ru : RestrictedUniversal D) :
+    (evalGeneric [] (ru.toGenericSentence)).2 = ru.eval := by
+  simp only [evalGeneric, RestrictedUniversal.toGenericSentence, List.any_nil,
+    Bool.false_eq_true, ↓reduceIte, RestrictedUniversal.eval]
+  -- Goal: (domain.filter restriction).all scope = domain.all (fun d => !restriction d || scope d)
+  induction ru.domain with
+  | nil => rfl
+  | cons d ds ih =>
+    simp only [List.filter_cons, List.all_cons]
+    cases hr : ru.restriction d <;> simp [hr]
 
 end Phenomena.Generics.CompareModality

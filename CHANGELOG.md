@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.348] - 2026-03-19
+
+### Added
+- **`Generics.lean` (Dynamic)**: `GenericSentence.fromPredicate` constructor bridging to `traditionalGEN` via binary normalcy predicate; `fromPredicate_static` proving discourse-initial evaluation equals static restricted universal; section docstring documenting constructor set and why `fromThreshold` doesn't fit
+- **`CompareModality.lean` (Generics)**: `RestrictedUniversal.toGenericSentence` lifting static restricted universals into the dynamic framework; `ru_toGeneric_static` proving discourse-initial evaluation recovers static truth conditions
+- **`CompareSemantics.lean` (Generics)**: Docstring noting dynamic bridge: `fromPredicate_static` + `gen_eliminable` compose to show discourse-initial dynamic generics are expressible via threshold semantics
+- **`Kirkpatrick2024.lean` (Generics/Studies)**: `isNormalRaven` binary normalcy predicate; `ravensAreBlack_fromPredicate` demonstrating `fromPredicate` constructor; `fromPredicate_agrees_fromOrder` proving both constructors agree on the raven model; presupposition-expansion duality section (`horizonPresupposition`, `presup_success_no_expansion`, `presup_failure_expansion`); `GenericSentence.fromOrder` normality grounding; static theory impossibility theorems
+
+### Removed
+- **`Data.lean` (Generics)**: Removed theory-neutral data file; provenance now tracked in study files. Dead imports removed from `Cohen1999.lean` and `TesslerGoodman2019.lean`; `cohen_wrong_on_mosquitoes` inlined with literal rationals
+
+### Changed
+- **`CompareModality.lean` (Generics)**: `RestrictedUniversal.eval` uses `.not` instead of `!` to avoid DRS namespace conflict
+
 ## [0.229.347] - 2026-03-19
 
 ### Added

@@ -18,7 +18,7 @@ side effect of assertion. When processing a generic `Gen[φ][ψ]`:
 3. Evaluate truth: all restrictor-satisfying individuals on the expanded
    horizon must satisfy the scope
 
-This monotonic expansion explains why generic Sobel sequences
+This cumulative expansion explains why generic Sobel sequences
 ("Ravens are black; but albino ravens aren't") are consistent while their
 reverses ("#Albino ravens aren't black; but ravens are") are not: the
 evaluation order determines which individuals are salient.
@@ -618,5 +618,140 @@ theorem horizonExpansion_not_eliminative {E : Type*}
     rw [if_neg hno]
     exact Set.mem_union_right _ rfl
   exact helim ∅ hmem
+
+-- ═══ Presupposition–Expansion Duality ═══
+
+/-! ### Horizon expansion as presupposition-triggered accommodation
+
+@cite{kirkpatrick-2024} §4.2 (fn. 23) credits @cite{von-fintel-2001}
+and @cite{gillies-2007}: the expansion mechanism adapts their dynamic
+semantics for counterfactuals. Both use presupposition failure to
+trigger context adjustment, but in opposite directions:
+
+- **Eliminative accommodation** (`Presupposition/Accommodation.lean`):
+  presupposition failure → *shrink* context (remove non-presupposition worlds)
+- **Expansive accommodation** (horizon expansion):
+  presupposition failure → *grow* context (add normal restrictor-satisfying individuals)
+
+Both share the same abstract structure:
+
+1. A **presupposition test**: does the context already satisfy a condition?
+2. **On success**: no change (the context already works)
+3. **On failure**: adjust the context minimally to satisfy the condition
+4. **Idempotent**: once satisfied, further applications are no-ops
+
+The key divergence: eliminative accommodation is monotone (larger
+contexts yield larger results); expansive accommodation is NOT
+(`horizonStep_not_monotone`), because a larger horizon can BLOCK
+expansion that a smaller one triggers. -/
+
+/-- The horizon presupposition: restrictor-satisfying individuals are
+    already salient. When this holds, no expansion occurs. -/
+def horizonPresupposition (restrictor : E → Bool) (horizon : List E) : Bool :=
+  horizon.any restrictor
+
+omit [DecidableEq E] in
+private theorem forall_false_of_any_false {l : List E} {p : E → Bool}
+    (h : l.any p = false) : ∀ e ∈ l, p e = false := by
+  intro e he
+  cases hp : p e with
+  | false => rfl
+  | true =>
+    exfalso
+    have := any_eq_true_of_mem he hp
+    rw [h] at this
+    exact Bool.false_ne_true this
+
+omit [DecidableEq E] in
+/-- Presupposition success → no expansion. Delegates to `horizonStep_blocked`. -/
+theorem presup_success_no_expansion (g : GenericSentence E) (horizon : List E)
+    (h : horizonPresupposition g.restrictor horizon = true) :
+    horizonStep g horizon = horizon := by
+  simp only [horizonPresupposition] at h
+  rw [List.any_eq_true] at h
+  obtain ⟨e, he, hr⟩ := h
+  exact horizonStep_blocked g horizon he hr
+
+omit [DecidableEq E] in
+/-- Presupposition failure → expansion fires. Delegates to `horizonStep_expand`. -/
+theorem presup_failure_expansion (g : GenericSentence E) (horizon : List E)
+    (h : horizonPresupposition g.restrictor horizon = false) :
+    horizonStep g horizon = horizon ++ g.normalInstances := by
+  simp only [horizonPresupposition] at h
+  exact horizonStep_expand g horizon (forall_false_of_any_false h)
+
+
+-- ═══ Constructors: Grounding `normalInstances` ═══
+
+/-! ### Constructors for `GenericSentence`
+
+The `normalInstances` field of `GenericSentence` is a stipulation — the
+constructors below derive it from different theoretical primitives:
+
+- **`fromPredicate`** — binary normalcy predicate (`traditionalGEN` style).
+  Normal instances = domain elements satisfying both restrictor and normalcy.
+  Bridges to the static `traditionalGEN` in `Lexical/Noun/Kind/Generics.lean`.
+
+- **`fromOrder`** — normality ordering (`NormalityOrder` style).
+  Normal instances = optimal restrictor-satisfying entities under the ordering.
+  Bridges to @cite{kirkpatrick-2024} Definition 21's N_n functors.
+
+**Why no `fromThreshold`?** Threshold semantics (Cohen's prevalence > θ)
+measures the *proportion* of restrictor-satisfying cases where scope holds.
+This is a single Boolean judgment — it doesn't decompose into "select
+normal instances, then universally quantify." The `GenericSentence` shape
+(restrict → select normals → ∀) captures the normality-based family of
+theories; threshold semantics is a genuinely different algebraic shape.
+See `CompareSemantics.lean` for the threshold ↔ GEN eliminability result. -/
+
+/-- Construct a `GenericSentence` from a binary normalcy predicate.
+
+    This is the direct bridge to `traditionalGEN`: the normal instances
+    are exactly those domain elements satisfying both restrictor and normalcy.
+    Discourse-initial evaluation of the result equals `traditionalGEN`. -/
+def GenericSentence.fromPredicate
+    (restrictor scope : E → Bool) (domain : List E)
+    (normal : E → Bool) : GenericSentence E :=
+  ⟨restrictor, scope, domain.filter fun e => restrictor e && normal e⟩
+
+omit [DecidableEq E] in
+/-- Discourse-initial evaluation of `fromPredicate` equals the static
+    `traditionalGEN` — a restricted universal over normal situations.
+
+    This connects Kirkpatrick's dynamic framework back to the classical
+    static GEN: in discourse-initial position, the dynamic theory with
+    a binary normalcy predicate makes the same prediction as `traditionalGEN`.
+    The two diverge only in multi-sentence discourse, where prior generics
+    have expanded the horizon. -/
+theorem fromPredicate_static
+    (restrictor scope : E → Bool) (domain : List E) (normal : E → Bool) :
+    (evalGeneric [] (GenericSentence.fromPredicate restrictor scope domain normal)).2 =
+    domain.all (fun d => (restrictor d && normal d).not || scope d) := by
+  rw [evalGeneric_empty_eq_static]
+  simp only [GenericSentence.fromPredicate]
+  rw [List.filter_filter]
+  induction domain with
+  | nil => rfl
+  | cons d ds ih =>
+    simp only [List.all_cons, List.filter_cons]
+    cases hr : restrictor d <;> cases hn : normal d <;> simp_all
+
+/-- Compute a `GenericSentence` from a decidable normality ordering.
+
+    `leB e₁ e₂ = true` means `e₁` is at least as normal as `e₂`,
+    matching `NormalityOrder.le`. The normal instances are the
+    **optimal** restrictor-satisfying entities: those not strictly
+    dominated by any other restrictor-satisfying entity in the domain.
+
+    This is the computable realization of @cite{kirkpatrick-2024}
+    Definition 21's N_n functors:
+    `N(P)(w) = { a ∈ P(w) | ∀ b ∈ P(w), b ≤ a → a ≤ b }`. -/
+def GenericSentence.fromOrder
+    (restrictor scope : E → Bool) (domain : List E)
+    (leB : E → E → Bool) : GenericSentence E :=
+  let restricted := domain.filter restrictor
+  let normals := restricted.filter fun e =>
+    restricted.all fun e' => (leB e' e).not || leB e e'
+  ⟨restrictor, scope, normals⟩
 
 end Semantics.Dynamic.Generics

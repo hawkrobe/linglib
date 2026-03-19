@@ -2,7 +2,6 @@ import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
-import Linglib.Phenomena.Generics.Data
 import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -538,19 +537,17 @@ theorem endorsement_iff_exceeds_expected
     constructor <;> intro h <;> nlinarith
 
 -- ============================================================================
--- § 8. Connection to Phenomena.Generics.Data
+-- § 8. Prevalence Asymmetry (@cite{leslie-2008})
 -- ============================================================================
 
-/-! The prevalence asymmetry from `Phenomena.Generics.Data` is EXPLAINED
-by the endorsement model: same prevalence (50%), different prior shapes →
-different S1 endorsement rates.
+/-! The classic prevalence asymmetry is EXPLAINED by the endorsement model:
+same prevalence (50%), different prior shapes → different S1 endorsement rates.
 
-`laysEggsVsIsFemale` records the empirical observation.
-`laysEggs_endorsed` and `isFemale_borderline` derive the predictions. -/
+"Robins lay eggs" (true, ~50% prevalence) vs "Robins are female" (odd, ~50%
+prevalence). @cite{leslie-2008} documents the empirical observation;
+@cite{tessler-goodman-2019} derives the asymmetry from prior shape differences.
 
-/-- The data records 50% prevalence for both "lay eggs" and "is female". -/
-theorem asymmetry_same_prevalence :
-    Phenomena.Generics.laysEggsVsIsFemale.prevalence = 1/2 := rfl
+`laysEggs_endorsed` and `isFemale_borderline` (above) derive the predictions. -/
 
 -- ============================================================================
 -- § 9. Infinite-Rationality Limit: Generics as Categorical Defaults
