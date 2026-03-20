@@ -490,4 +490,150 @@ theorem account3_fails_at_w2 :
     know₂ thePriceFredKnows_intension john .w2 = true :=
   ⟨by native_decide, readingB_w2⟩
 
+/-! ## Refutation of Accounts 1-3 for Specificational Subjects (§3.3)
+
+The same three extensional accounts fail for specificational `be`.
+
+- **Account 1** (§3.3.1): Inapplicable for SSs — the formula has only one
+  operator (λw) that could bind the world variable. Unlike the CQ case,
+  there is no lower ∀w' binder from `know`, so the ambiguity cannot stem
+  from world variable choice.
+
+- **Account 2** (§3.3.2): Requires `be₃_spec` below, which collapses to
+  `be₁_spec` (Reading A). Overgenerates Reading B' for SSs, just as
+  `know₃` does for CQs.
+
+- **Account 3** (§3.3.3): The entity-level limitation from §2.4.3 applies
+  equally: property P on entities cannot capture which IC the SS NP
+  denotes. Structurally identical to the CQ case. -/
+
+/-- ⟦be₃_spec⟧(x_e)(y_{⟨s,⟨s,e⟩⟩})(w_s) = 1 iff y(w)(w) = x
+
+    Account 2's additional entry for specificational `be` (Romero (71c)).
+    Evaluates the concept-of-concepts y at the matrix world w to get an IC,
+    then evaluates that IC at w to get an entity, then checks identity with x.
+    Parallel to `know₃` — adds an extra layer of world evaluation. -/
+def be₃_spec (x : E) (y : W → (W → E)) (w : W) : Bool :=
+  (y w) w == x
+
+/-- `be₃_spec` collapses to `be₁_spec`: double world evaluation reduces to
+    single entity comparison. Parallel to `know₃_reduces_to_know₁`. -/
+theorem be₃_reduces_to_be₁ (x : E) (y : W → (W → E)) (w : W) :
+    be₃_spec x y w = be₁_spec x (y w) w := rfl
+
+/-! ## Mention-Some Readings and Exhaustivity (§4.1)
+
+CQs and SSs share a property that distinguishes them from regular NPs:
+they allow mention-some (existential-like) readings in contexts where
+regular NPs require exhaustive answers.
+
+Spanish `saber` 'know' + CQ *lo que también llevaba* "what he was also
+wearing" has a mention-some reading: knowing *something* Carlos was wearing
+suffices (Romero (91)). SSs pattern identically (Romero (93)).
+
+Two degrees of exhaustivity:
+- **Strongly exhaustive** (= `know₁` / `be₁_spec`): agent identifies the
+  complete answer / the IC's value equals the entity exactly.
+- **Mention-some**: agent identifies at least one correct part /
+  the entity is a part of the IC's value.
+
+The part-of relation ≤ is @cite{link-1983}'s mereological ≤ for plural
+individuals. For atomic entities, ≤ reduces to equality and mention-some
+collapses to strongly exhaustive. -/
+
+/-- Exhaustivity degree for CQ/SS interpretations (Romero §4.1). -/
+inductive ExhaustivityDegree where
+  | stronglyExhaustive  -- know/identify the COMPLETE answer
+  | mentionSome         -- know/identify SOME correct part
+  deriving DecidableEq, BEq, Repr
+
+/-- Mention-some `know` (Romero (101)):
+    ∃z. z ≤ y(w) ∧ ∀w' ∈ Dox(x,w). z ≤ y(w')
+
+    The agent identifies at least one entity z that is a part of the IC's
+    actual value y(w), and z is also a part of y(w') in all dox-alternatives.
+    Parametric over a part-of relation `leq` (@cite{link-1983}'s ≤). -/
+def know_CQ_SOME (leq : E → E → Bool) (y : W → E) (x : E) (w : W) : Bool :=
+  entities.any λ z => leq z (y w) &&
+    worlds.all λ w' => !Dox x w w' || leq z (y w')
+
+/-- Mention-some `be` (Romero (105)):
+    x ≤ y(w)
+
+    The post-copular entity x is a part of the IC's value at w. -/
+def be_SS_SOME (leq : E → E → Bool) (x : E) (y : W → E) (w : W) : Bool :=
+  leq x (y w)
+
+/-- `know₁` is the strongly exhaustive variant `know_CQ_STR` (Romero (100)).
+    The definitions are identical. -/
+theorem know₁_is_strongly_exhaustive :
+    ∀ (y : W → E) (x : E) (w : W),
+      know₁ y x w = knowGeneric (α := E) y x w := fun _ _ _ => rfl
+
+/-- `be₁_spec` is the strongly exhaustive variant `be_SS_STR` (Romero (104)).
+    The definitions are identical. -/
+theorem be₁_spec_is_strongly_exhaustive :
+    ∀ (x : E) (y : W → E) (w : W),
+      be₁_spec x y w = beGeneric (α := E) x y w := fun _ _ _ => rfl
+
+/-! ## CQ/SS Unification (§4–5)
+
+The paper's core contribution: concealed questions (with `know`) and
+specificational subjects (with `be`) are **the same semantic phenomenon**.
+Both involve an NP in a configuration with an intensional verb where
+the NP can contribute either its extension (Reading A) or its intension
+(Reading B). The formal parallel:
+
+| Feature                | CQs (`know`)       | SSs (`be`)           |
+|------------------------|---------------------|----------------------|
+| Extension → Reading A  | `know₁` + ext NP   | `be₁_spec` + ext NP |
+| Intension → Reading B  | `know₂` + int NP   | `be₂_spec` + int NP |
+| Generic schema         | `knowGeneric`       | `beGeneric`          |
+| Account 2 refutation   | `know₃` collapses   | `be₃_spec` collapses |
+| Mention-some variant   | `know_CQ_SOME`      | `be_SS_SOME`         |
+
+Both `know` and `be` are crosscategorial variants at different types of
+the SAME doxastic/identity operation — captured by `knowGeneric` and
+`beGeneric` sharing the same type-parametric template.
+
+Furthermore, CQs and SSs share two grammatical properties that set them
+apart from regular NPs in predicational sentences:
+
+1. **Neuter pronominalization**: pronouns referring to CQs/SSs must be
+   neuter *it* (English) / *se* (Finnish), not gendered *she*/*he* / *hän*.
+   Regular NPs select gender based on the referent (Romero (84)–(89)).
+
+2. **Mention-some readings**: CQs/SSs allow existential-like readings
+   (Spanish *saber* + *también* data, (91)–(93)). Regular NPs in
+   predicational sentences do not readily allow this.
+
+These shared properties support the unified analysis: CQs and SSs are
+not different constructions but the same type of NP in a configuration
+with an intensional verb. -/
+
+/-! ## Extensional Verb Limitation (Appendix)
+
+Intensional verbs (`know`, `look for`, specificational `be`) allow the NP
+complement/subject to contribute either its extension or its intension.
+Extensional verbs (`kill`) only allow the extension.
+
+This is a type-level constraint: extensional verbs take arguments of type e,
+which forces evaluation at the local world. The NP's intension (type ⟨s,e⟩)
+cannot serve as the argument. Intensional verbs take arguments of intensional
+type (⟨s,e⟩ or ⟨s,⟨s,e⟩⟩), so both the extension (NP evaluated at w) and the
+intension (NP unevaluated) can provide the right type.
+
+Example: "#John killed (yesterday) what Alexander the Great was looking for
+in his conquests" (Romero (117)). If `kill` could take the NP's extension
+at a non-local situation s, the sentence would wrongly predict a de dicto
+reading where the killed individual and Alexander's search target might be
+different physical objects. This reading is unavailable — `kill` is extensional. -/
+
+/-- Classification of verbs by whether they allow the NP's intension as
+    argument, per the appendix. -/
+inductive VerbIntensionality where
+  | intensional  -- know, look for, be_spec: NP contributes ext or int
+  | extensional  -- kill, see: NP contributes only its extension
+  deriving DecidableEq, BEq, Repr
+
 end Phenomena.Copulas.Studies.Romero2005

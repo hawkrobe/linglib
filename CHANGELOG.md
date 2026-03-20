@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.378] - 2026-03-20
+
+### Added
+- **Romero 2005 complete**: finish remaining sections (§3.3, §4.1, §4–5, Appendix)
+  - §3.3 SS refutations: `be₃_spec`, `be₃_reduces_to_be₁` (parallel to `know₃` for CQs)
+  - §4.1 mention-some: `ExhaustivityDegree`, `know_CQ_SOME`, `be_SS_SOME` (parameterized over Link's ≤)
+  - §4–5 CQ/SS unification: docstring with full parallel table, neuter pronominalization and mention-some as shared diagnostics
+  - Appendix: `VerbIntensionality` enum (intensional vs extensional verbs)
+
 ## [0.229.377] - 2026-03-20
 
 ### Changed
