@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Gradability.Data
+import Linglib.Phenomena.Gradability.Studies.Kennedy2007Licensing
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
 
@@ -24,7 +24,7 @@ entry, we verify:
 
 namespace Phenomena.Comparison.Studies.Kennedy2007Typology
 
-open Phenomena.Gradability
+open Phenomena.Gradability.Kennedy2007
 open Fragments.English.Predicates.Adjectival
 open Core.Scale
 

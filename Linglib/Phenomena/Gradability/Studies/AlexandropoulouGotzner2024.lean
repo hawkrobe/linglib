@@ -1,8 +1,6 @@
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Lexical.Adjective.Antonymy
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Phenomena.Gradability.Data
-
 /-!
 # @cite{alexandropoulou-gotzner-2024} — Negated Gradable Adjectives
 @cite{alexandropoulou-gotzner-2024}
@@ -33,8 +31,6 @@ open Semantics.Degree (positiveMeaning negativeMeaning antonymMeaning
   positiveMeaning_monotone)
 open Fragments.English.Predicates.Adjectival
   (large small gigantic tiny clean dirty pristine filthy)
-open Phenomena.Gradability (AdjectiveClass)
-
 -- ============================================================================
 -- § 1. Experimental Design & Stimuli
 -- ============================================================================

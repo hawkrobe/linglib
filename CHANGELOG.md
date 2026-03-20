@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.229.367] - 2026-03-19
+
+### Added
+- **Afkir & Zellou 2025 — Tarifit gradient phonological variation**
+  - `Theories/Phonology/Syllable/NaturalClass.lean`: 8-level Parker sonority scale (`NatClass` type), `natClassOf` bridge from segments, `parkerSonorityOf`, refinement theorem linking Parker to Clements
+  - `Theories/Phonology/HarmonicGrammar/Variation.lean`: `moreProbable` predicate for gradient MaxEnt probability ordering (H(a) > H(b) iff P(a) > P(b))
+  - `Fragments/Tarifit/Inventory.lean`: 9 C1C2əC3 target words with sonority profiles (rising/falling/plateauing verification theorems)
+  - `Phenomena/PhonologicalAlternation/Studies/AfkirZellou2025.lean`: 5-constraint MaxEnt model (MAX-V, *SONO-CC, DEP-V, *SONO-PEAK, *COMPLEX-ONSET), 15 gradient ranking theorems, structural harmony score verification
+  - Gradient/statistical phenomena as first-class citizens: `moreProbable` over ℚ harmony scores enables `native_decide` proofs of probability orderings
+- Add bib entries: `afkir-zellou-2025`, `parker-2002`
+
+## [0.229.366] - 2026-03-19
+
+### Changed
+- **Beltrama 2025 deep audit**: Fix docstring error (§8 negation logic), add MinSAA rejection argument (§4), fix `necessityStandard` vacuous-case semantics, add cross-module integration (Kennedy2007 licensing pipeline, EvaluativeValence, DegPType.sufficiency/*enough* parallel, IE divergence theorem), specify circumstantial modal base
+- **Kennedy2007Licensing**: Add MPA licensing theorems, IE exception for MPAs
+- Add bib entries: `beltrama-2025`, `wolfsdorf-2019`, `kagan-alexeyenko-2011`, `qing-2021`
+
 ## [0.229.365] - 2026-03-19
 
 ### Added
@@ -16,7 +34,8 @@
   - Add comparative (Simulation 4): `comp_marked_weak`, `comp_unmarked_counter_evaluative`
   - S1 score `exp(α · (log L₀ − C(u)))` defined inline in each config (no wrapper function)
   - Bridge to Neo-Gricean evaluativity: imports `Polarity`, `AdjectivalConstruction` from `Evaluativity.lean`
-  - 8 verified predictions total (was 4), covering full Table 1
+  - Cross-theory agreement theorem `rsa_neo_gricean_agreement`: proves RSA and Neo-Gricean accounts make compatible predictions
+  - 9 verified theorems total (was 4), covering full Table 1 + cross-theory agreement
 
 ## [0.229.363] - 2026-03-19
 

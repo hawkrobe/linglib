@@ -404,6 +404,7 @@ import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Czech.Reciprocals
 import Linglib.Fragments.Czech.Negation
 import Linglib.Fragments.Drubea.Prosody
+import Linglib.Fragments.Tarifit.Inventory
 import Linglib.Fragments.Dargwa.Agreement
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Dargwa.ComplexPredicates
@@ -836,7 +837,6 @@ import Linglib.Phenomena.Generics.Studies.DelPrete2013
 import Linglib.Phenomena.Generics.Studies.AsherPelletier2013
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Phenomena.Gender.Studies.Kramer2020
-import Linglib.Phenomena.Gradability.Data
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Studies.Rett2015
 import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
@@ -1165,6 +1165,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Jaeger2007
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Magri2025
 import Linglib.Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
+import Linglib.Phenomena.PhonologicalAlternation.Studies.AfkirZellou2025
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
@@ -1831,12 +1832,14 @@ import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Syllable.Defs
 import Linglib.Theories.Phonology.Syllable.Foot
+import Linglib.Theories.Phonology.Syllable.NaturalClass
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Theories.Phonology.HarmonicGrammar.Basic
 import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Theories.Phonology.HarmonicGrammar.Separability
+import Linglib.Theories.Phonology.HarmonicGrammar.Variation
 import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.ProsodicWord
 -- Theories: Sociolinguistics

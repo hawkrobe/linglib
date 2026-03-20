@@ -30,12 +30,7 @@ Vagueness arises from degree semantics + threshold uncertainty:
 - @cite{lassiter-goodman-2017}
 -/
 
-import Linglib.Phenomena.Gradability.Data
-
 namespace Phenomena.Gradability.Vagueness
-
--- Re-export degree types that are useful for vagueness discussions
-open Phenomena.Gradability (AdjectiveClass)
 
 
 /--

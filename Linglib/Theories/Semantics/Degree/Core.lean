@@ -354,4 +354,33 @@ theorem scale_determines_cc_sensitivity (b : Boundedness) :
     isClassA b = (interpretiveEconomy b).requiresComparisonClass := by
   cases b <;> rfl
 
+-- ════════════════════════════════════════════════════
+-- Adjective Classification (@cite{kennedy-2007})
+-- ════════════════════════════════════════════════════
+
+/--
+Kennedy's adjective classification based on scale structure and standard type.
+
+The key distinction:
+- **Relative Gradable Adjectives (RGA)**: Standard varies with comparison class
+  Examples: tall, expensive, big, old
+- **Absolute Gradable Adjectives (AGA)**: Standard fixed by scale structure
+  - Maximum standard: full, straight, closed, dry
+  - Minimum standard: wet, bent, open, dirty
+
+Source: @cite{kennedy-2007}, @cite{kennedy-mcnally-2005}
+-/
+inductive AdjectiveClass where
+  | relativeGradable     -- tall, expensive, big (context-dependent threshold)
+  | absoluteMaximum      -- full, straight, closed (threshold = max of scale)
+  | absoluteMinimum      -- wet, bent, open (threshold = min of scale)
+  | mildlyPositive       -- decent, acceptable, adequate (necessity standard, @cite{beltrama-2025})
+  deriving Repr, DecidableEq, BEq
+
+/-- Coarse 2-way classification: relative vs absolute.
+    Collapses absoluteMaximum and absoluteMinimum. -/
+def AdjectiveClass.isRelative : AdjectiveClass → Bool
+  | .relativeGradable => true
+  | _                 => false
+
 end Semantics.Degree

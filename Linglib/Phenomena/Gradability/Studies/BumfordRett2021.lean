@@ -191,7 +191,7 @@ noncomputable def mkEvalCfg (sem : Utterance → Sigma → EvalWorld → Bool) :
   latentPrior_nonneg _ _ := by positivity
 
 -- ============================================================================
--- § 7. Simulation 1: Positive Construction (§2.2.1)
+-- § 7. Simulation 1: Positive Construction (§2.2.1, Table 1)
 -- ============================================================================
 
 /-- Positive construction meaning (eq 12):
@@ -205,10 +205,6 @@ def posMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .null     => true
 
 @[reducible] noncomputable def posCfg := mkEvalCfg posMeaning
-
--- ============================================================================
--- § 7. Positive Evaluativity Predictions (§2.2.1, Table 1)
--- ============================================================================
 
 /-- Concise world constructor: mkW h m = (Fin h, Fin m). -/
 def mkW (h : Fin 9) (m : Fin 5) : EvalWorld := (h, m)
@@ -239,7 +235,7 @@ theorem pos_short_evaluative :
   rsa_predict
 
 -- ============================================================================
--- § 8. Simulation 2: Exact Equative (§2.2.2)
+-- § 8. Simulation 2: Exact Equative (§2.2.2, Table 1)
 -- ============================================================================
 
 /-- Keisha's height k, fixed and known to both speaker and listener.
@@ -261,10 +257,6 @@ def eqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .null     => true
 
 @[reducible] noncomputable def eqCfg := mkEvalCfg eqMeaning
-
--- ============================================================================
--- § 9. Equative Evaluativity Predictions (§2.2.2, Table 1)
--- ============================================================================
 
 -- k = 5 (height index 4). Relevant worlds: (4, j) for j ∈ {0,1,2,3,4}.
 -- μ = 3 (j=0): k well above mean → non-evaluative direction
@@ -303,7 +295,7 @@ theorem eq_unmarked_weakly_evaluative :
   rsa_predict
 
 -- ============================================================================
--- § 10. Simulation 3: ≥ Equative (§2.2.3)
+-- § 9. Simulation 3: ≥ Equative (§2.2.3, Table 1)
 -- ============================================================================
 
 /-! ### ≥ Equative (Minimum-Standard) Semantics
@@ -327,10 +319,6 @@ def geqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
 
 @[reducible] noncomputable def geqCfg := mkEvalCfg geqMeaning
 
--- ============================================================================
--- § 11. ≥ Equative Predictions (§2.2.3, Table 1)
--- ============================================================================
-
 /-! ### Prediction 5: Marked ≥ equative is evaluative
 
 Hearing "Jane is at least as short as Keisha" (marked) shifts L₁'s
@@ -352,7 +340,7 @@ theorem geq_unmarked_barely_evaluative :
   rsa_predict
 
 -- ============================================================================
--- § 12. Simulation 4: Comparative (§2.2.4)
+-- § 10. Simulation 4: Comparative (§2.2.4, Table 1)
 -- ============================================================================
 
 /-! ### Comparative Semantics
@@ -381,10 +369,6 @@ def compMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
 
 @[reducible] noncomputable def compCfg := mkEvalCfg compMeaning
 
--- ============================================================================
--- § 13. Comparative Predictions (§2.2.4, Table 1)
--- ============================================================================
-
 /-! ### Prediction 7: Comparative marked does not strongly shift k
 
 Unlike the equative, the marked comparative does not push the listener
@@ -410,7 +394,7 @@ theorem comp_unmarked_counter_evaluative :
   rsa_predict
 
 -- ============================================================================
--- § 14. Cross-Construction Contrast
+-- § 11. Cross-Construction Contrast
 -- ============================================================================
 
 /-! ### Gradient evaluativity ranking
@@ -443,7 +427,7 @@ constructions:
 - `comp_marked_weak` / `comp_unmarked_counter_evaluative` : comparative ✗✗ -/
 
 -- ============================================================================
--- § 15. Bridge to Neo-Gricean Evaluativity (@cite{rett-2015})
+-- § 12. Bridge to Neo-Gricean Evaluativity (@cite{rett-2015})
 -- ============================================================================
 
 /-! ### RSA ↔ Neo-Gricean Agreement
@@ -475,8 +459,42 @@ abbrev posConstruction  : AdjectivalConstruction := .positive
 abbrev eqConstruction   : AdjectivalConstruction := .equative
 abbrev compConstruction : AdjectivalConstruction := .comparative
 
+open Implicature.Evaluativity (deriveEvaluativity)
+
+/-- Cross-theory agreement: the RSA model and @cite{rett-2015}'s Neo-Gricean
+    account agree on the full evaluativity paradigm.
+
+    - **Positive**: Neo-Gricean says evaluative for both polarities (Q-implicature).
+      RSA confirms: both "tall" and "short" shift the posterior away from the CC mean.
+    - **Equative**: Neo-Gricean says evaluative for negative only (Manner implicature).
+      RSA confirms: marked form shifts strongly, unmarked weakly.
+    - **Comparative**: Neo-Gricean says never evaluative (no applicable implicature).
+      RSA confirms: neither polarity shifts strongly.
+
+    This theorem connects two independent formalizations — the categorical
+    `deriveEvaluativity` function and the RSA `L1` predictions — proving they
+    make compatible predictions despite using entirely different mechanisms. -/
+theorem rsa_neo_gricean_agreement :
+    -- Positive: both accounts say evaluative for both polarities
+    (deriveEvaluativity posConstruction .positive).isEvaluative = true ∧
+    (deriveEvaluativity posConstruction .negative).isEvaluative = true ∧
+    posCfg.L1 .unmarked (mkW 5 2) > posCfg.L1 .unmarked (mkW 3 2) ∧
+    posCfg.L1 .marked (mkW 3 2) > posCfg.L1 .marked (mkW 5 2) ∧
+    -- Equative: Neo-Gricean says marked-only; RSA shows marked shift
+    (deriveEvaluativity eqConstruction .positive).isEvaluative = false ∧
+    (deriveEvaluativity eqConstruction .negative).isEvaluative = true ∧
+    eqCfg.L1 .marked (mkW 4 4) > eqCfg.L1 .marked (mkW 4 0) ∧
+    -- Comparative: both say not evaluative
+    (deriveEvaluativity compConstruction .positive).isEvaluative = false ∧
+    (deriveEvaluativity compConstruction .negative).isEvaluative = false :=
+  ⟨by native_decide, by native_decide,
+   pos_tall_evaluative, pos_short_evaluative,
+   by native_decide, by native_decide,
+   eq_marked_evaluative,
+   by native_decide, by native_decide⟩
+
 -- ============================================================================
--- § 16. Cross-References
+-- § 13. Cross-References
 -- ============================================================================
 
 /-! ### Relationship to @cite{lassiter-goodman-2017}
