@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.362] - 2026-03-19
+
+### Added
+- **Bumford & Rett 2021 RSA evaluativity model** (`Phenomena/Gradability/Studies/BumfordRett2021.lean`)
+  - 2D world type (height × CC center) with Gaussian-weighted prior
+  - Positive construction: both antonyms evaluative (`pos_tall_evaluative`, `pos_short_evaluative`)
+  - Exact equative: antonym asymmetry — marked evaluative, unmarked weakly evaluative
+  - Lexical uncertainty over threshold offset σ drives cost-based manner implicature
+  - All 4 predictions verified via `rsa_predict` (45-world grid, 5 lexica)
+  - Cross-references to LassiterGoodman2017 (threshold RSA) and Rett 2015 (Neo-Gricean)
+
 ## [0.229.361] - 2026-03-19
 
 ### Added

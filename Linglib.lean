@@ -403,6 +403,7 @@ import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Czech.Reciprocals
 import Linglib.Fragments.Czech.Negation
+import Linglib.Fragments.Drubea.Prosody
 import Linglib.Fragments.Dargwa.Agreement
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Dargwa.ComplexPredicates
@@ -876,6 +877,7 @@ import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
 import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
+import Linglib.Phenomena.Gradability.Studies.BumfordRett2021
 import Linglib.Phenomena.Imprecision.Projection
 -- Phenomena: Iconicity (sign language classifier predicates, viewpoints)
 import Linglib.Phenomena.Iconicity.Basic
@@ -1164,6 +1166,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.Jaeger2007
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Magri2025
 import Linglib.Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
+import Linglib.Phenomena.Tone.Studies.Lionnet2025
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.Combinators
