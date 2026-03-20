@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.229.376] - 2026-03-20
+
+### Added
+- **Romero 2005 Account 2/3 refutations**: formalize the remaining two extensional accounts rejected in §2.4.2–2.4.3
+  - Account 2 (trace type ambiguity): `know₃` lexical entry, `know₃_reduces_to_know₁` structural collapse, `readingBprime`, `account2_overgenerates` (B' ≠ B at w2)
+  - Account 3 (pragmatic): `knowPragmatic`, `priceMilkProperty`, `account3_entity_frozen` (entity argument is world-frozen), `account3_gives_readingA`, `account3_fails_at_w2`
+
+## [0.229.375] - 2026-03-20
+
+### Changed
+- **Move PIP out of Dynamic/**: `Theories/Semantics/Dynamic/PIP/` → `Theories/Semantics/PIP/` — PIP is a static predicate calculus, not a dynamic semantics
+- **Dissolve `PIP/Phenomena.lean`**: all worked examples (Stone's puzzle, bathroom sentences, paycheck pronouns, summation, intensional burger/animal) absorbed into `Phenomena/Anaphora/Studies/KeshetAbney2024.lean`
+- Remove stipulative `AnaphoraStrategy`/`PhenomenonCoverage` types — replaced by `label_monotonicity_is_uniform` theorem that derives uniformity from actual label survival proofs
+
+### Fixed
+- Fix hallucinated paper item references in Felicity.lean: "items 47a–f" → correct items 41, 42, 45c
+- Fix dot-notation parse error in `label_monotonicity_is_uniform` theorem
+
+## [0.229.374] - 2026-03-20
+
+### Fixed
+- **Coetzee & Pater 2011 audit**: fix hallucinated data sources in TDDeletion.lean docstring — was "Labov (1989), Guy (1991a, 1994), Bayley (1997)", corrected to per-dialect sources from footnote 3: AAVE (Fasold 1972), Chicano (Santa Ana 1992), Jamaican (Patrick 1992), Trinidad (Kang 1994), Tejano (Bayley 1995)
+- Fix Philadelphia/AAVE conflation in morphological data — table (7) uses Philadelphia English (Guy 1991b), not AAVE; introduce `MorphDialect` type with `.philadelphia`, `.chicano`, `.tejano` instead of reusing `Dialect`
+- Fix UNVERIFIED comment on AAVE MaxEnt weights — weights are exact ℚ transcriptions from table (23) ME-HG row, not approximations
+
+### Added
+- **Per-type ranking counts** matching table (12): `type_a_count` (12), `type_b_count` (2), `type_c_count` (2), `type_d_count` (2), `type_e_count` (6), plus `type_counts_exhaust` (sum = 24) and `no_preV_only` (impossible pattern)
+- **Non-negative weight restriction theorems**: `nonneg_weights_preserve_ordering` (wMaxPreV ≥ 0 ⟹ H(preC,del) ≥ H(preV,del)) and `nonneg_weights_preserve_ordering_pause` (wMaxFin ≥ 0 ⟹ H(preC,del) ≥ H(pause,del)) — the key §4.4 insight that banning negative weights makes MaxEnt respect POC-like typological restrictions
+- `semiWeak_ge_regular` theorem for three-way morphological gradient (mono ≥ semi-weak ≥ regular)
+
 ## [0.229.373] - 2026-03-19
 
 ### Added
@@ -13,7 +43,7 @@
 ## [0.229.372] - 2026-03-19
 
 ### Added
-- **PIP Felicity conditions** (`Theories/Semantics/Dynamic/PIP/Felicity.lean`): static `PIPExpr` type with recursive `truth` and `felicitous` (F operator) functions, Karttunen's asymmetric conjunction, `singlePresup`, `might_blocks_anaphora` / `must_allows_anaphora` theorems
+- **PIP Felicity conditions** (`Theories/Semantics/PIP/Felicity.lean`): static `PIPExpr` type with recursive `truth` and `felicitous` (F operator) functions, Karttunen's asymmetric conjunction, `singlePresup`, `might_blocks_anaphora` / `must_allows_anaphora` theorems
 - **Intensional anaphora worked examples** in `Phenomena/Anaphora/Studies/KeshetAbney2024.lean`: IntensionalBurger (might blocks — world-dependent description fails at actual world) and IntensionalAnimal (must allows — world-independent description succeeds everywhere), with label registration, description failure/success, and felicity bridge theorems
 
 ### Fixed
