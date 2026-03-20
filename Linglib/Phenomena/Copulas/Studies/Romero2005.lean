@@ -2,6 +2,7 @@ import Linglib.Core.Semantics.Intension
 import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Attitudes.Doxastic
+import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
 
 /-!
 # Romero (2005): Concealed Questions and Specificational Subjects
@@ -67,14 +68,19 @@ open Semantics.Attitudes.Doxastic (AccessRel boxAt)
 abbrev W := World4
 abbrev E := Fin 4
 
-instance : DecidableEq E := inferInstance
-instance : BEq E := inferInstance
-
 /-- All worlds in the model. -/
 def worlds : List W := [.w0, .w1, .w2, .w3]
 
 /-- All entities in the model (prices / question-answers). -/
 def entities : List E := [0, 1, 2, 3]
+
+/-- `worlds` covers all of `World4`. Needed for soundness of `List.all`
+    as universal quantification. -/
+theorem worlds_complete : ∀ w : W, w ∈ worlds := by
+  intro w; cases w <;> simp [worlds]
+
+/-- `entities` covers all of `Fin 4`. -/
+theorem entities_complete : ∀ e : E, e ∈ entities := by decide
 
 /-! ## Doxastic Accessibility
 
@@ -139,7 +145,7 @@ def priceMilk : Intension W E
 def priceOil : Intension W E
   | _ => 3  -- $4.99
 
-instance : BEq (Intension W E) where
+scoped instance : BEq (Intension W E) where
   beq f g := worlds.all λ w => f w == g w
 
 /-! ## Romero's Lexical Entries
@@ -157,7 +163,8 @@ operation but differ in the type of their first argument.
 /-- ⟦know₁⟧(y_{⟨s,e⟩})(x_e)(w_s) = 1 iff ∀w' ∈ Dox_x(w). y(w') = y(w)
 
     The agent `x` knows the value of individual concept `y`:
-    in all doxastic alternatives, `y` yields the same value as in actuality. -/
+    in all doxastic alternatives, `y` yields the same value as in actuality.
+    Romero (29b); also (100) `know_{CQ,STR}` (strongly exhaustive CQ `know`). -/
 def know₁ (y : W → E) (x : E) (w : W) : Bool :=
   worlds.all λ w' => !Dox x w w' || y w' == y w
 
@@ -190,7 +197,7 @@ Specificational `be` is an intensional verb w.r.t. its subject position.
 /-- ⟦be₁_spec⟧(x_e)(y_{⟨s,e⟩})(w_s) = 1 iff y(w) = x
 
     Reading A: the individual concept `y` (extension of the SS NP) has
-    value `x` at the actual world `w`. -/
+    value `x` at the actual world `w`. Romero (67a); also (104) `be_{SS,STR}`. -/
 def be₁_spec (x : E) (y : W → E) (w : W) : Bool :=
   y w == x
 
@@ -359,13 +366,6 @@ theorem oil_rigid : Core.Intension.IsRigid (W := W) priceOil :=
 theorem milk_not_rigid : ¬ Core.Intension.IsRigid (W := W) priceMilk := by
   intro h; exact absurd (h .w0 .w1) (by decide)
 
-/-- When the IC is rigid, Reading A is trivially true — the agent knows the
-    value because it never varies. This is why the A/B distinction only
-    matters for non-rigid ICs. -/
-theorem rigid_trivializes_readingA :
-    ∀ w : W, know₁ priceOil john w = true := by
-  intro w; cases w <;> native_decide
-
 /-! ## Predicational vs Specificational `be`
 
 @cite{partee-1987} analyzes the **predicational** copula as an extensional
@@ -490,150 +490,186 @@ theorem account3_fails_at_w2 :
     know₂ thePriceFredKnows_intension john .w2 = true :=
   ⟨by native_decide, readingB_w2⟩
 
-/-! ## Refutation of Accounts 1-3 for Specificational Subjects (§3.3)
+/-! ## SS Account Refutations (§3.3)
 
-The same three extensional accounts fail for specificational `be`.
+Parallel to §2.4 for CQs. Account 2 requires `be₃_spec` which collapses
+to `be₁_spec`. -/
 
-- **Account 1** (§3.3.1): Inapplicable for SSs — the formula has only one
-  operator (λw) that could bind the world variable. Unlike the CQ case,
-  there is no lower ∀w' binder from `know`, so the ambiguity cannot stem
-  from world variable choice.
-
-- **Account 2** (§3.3.2): Requires `be₃_spec` below, which collapses to
-  `be₁_spec` (Reading A). Overgenerates Reading B' for SSs, just as
-  `know₃` does for CQs.
-
-- **Account 3** (§3.3.3): The entity-level limitation from §2.4.3 applies
-  equally: property P on entities cannot capture which IC the SS NP
-  denotes. Structurally identical to the CQ case. -/
-
-/-- ⟦be₃_spec⟧(x_e)(y_{⟨s,⟨s,e⟩⟩})(w_s) = 1 iff y(w)(w) = x
-
-    Account 2's additional entry for specificational `be` (Romero (71c)).
-    Evaluates the concept-of-concepts y at the matrix world w to get an IC,
-    then evaluates that IC at w to get an entity, then checks identity with x.
-    Parallel to `know₃` — adds an extra layer of world evaluation. -/
+/-- Account 2's `be` entry (Romero (71c)). Evaluates concept-of-concepts
+    at w twice, collapsing to entity comparison. Parallel to `know₃`. -/
 def be₃_spec (x : E) (y : W → (W → E)) (w : W) : Bool :=
   (y w) w == x
 
-/-- `be₃_spec` collapses to `be₁_spec`: double world evaluation reduces to
-    single entity comparison. Parallel to `know₃_reduces_to_know₁`. -/
+/-- `be₃_spec` collapses to `be₁_spec`. -/
 theorem be₃_reduces_to_be₁ (x : E) (y : W → (W → E)) (w : W) :
     be₃_spec x y w = be₁_spec x (y w) w := rfl
 
-/-! ## Mention-Some Readings and Exhaustivity (§4.1)
+/-! ## CQ Knowledge as Partition-Cell Inclusion
 
-CQs and SSs share a property that distinguishes them from regular NPs:
-they allow mention-some (existential-like) readings in contexts where
-regular NPs require exhaustive answers.
+@cite{groenendijk-stokhof-1984} partition semantics: a question denotes an
+equivalence relation on worlds. `know₁ y x w` checks that all doxastic
+alternatives of x at w fall within the same partition cell as w — the cell
+induced by the individual concept y. -/
 
-Spanish `saber` 'know' + CQ *lo que también llevaba* "what he was also
-wearing" has a mention-some reading: knowing *something* Carlos was wearing
-suffices (Romero (91)). SSs pattern identically (Romero (93)).
+/-- The CQ question induced by individual concept y: "what is y's value?"
+    Two worlds are equivalent iff y assigns them the same entity. -/
+def cqQuestion (y : W → E) : QUD W := QUD.ofProject y
 
-Two degrees of exhaustivity:
-- **Strongly exhaustive** (= `know₁` / `be₁_spec`): agent identifies the
-  complete answer / the IC's value equals the entity exactly.
-- **Mention-some**: agent identifies at least one correct part /
-  the entity is a part of the IC's value.
+/-- `know₁ y x w` = all dox-alternatives of x at w lie in the same
+    partition cell as w under the CQ question induced by y.
 
-The part-of relation ≤ is @cite{link-1983}'s mereological ≤ for plural
-individuals. For atomic entities, ≤ reduces to equality and mention-some
-collapses to strongly exhaustive. -/
+    This is the formal bridge between Romero's individual-concept semantics
+    and @cite{groenendijk-stokhof-1984}'s partition semantics for questions:
+    knowing a CQ IS having one's epistemic state contained in a single
+    partition cell. -/
+theorem know₁_eq_doxInCell (y : W → E) (x : E) (w : W) :
+    know₁ y x w =
+    worlds.all fun w' => !Dox x w w' || (cqQuestion y).sameAnswer w w' := by
+  simp only [know₁, cqQuestion, QUD.ofProject_sameAnswer, Bool.beq_comm]
 
-/-- Exhaustivity degree for CQ/SS interpretations (Romero §4.1). -/
-inductive ExhaustivityDegree where
-  | stronglyExhaustive  -- know/identify the COMPLETE answer
-  | mentionSome         -- know/identify SOME correct part
-  deriving DecidableEq, BEq, Repr
+/-- Rigid IC → trivially known by all agents.
 
-/-- Mention-some `know` (Romero (101)):
-    ∃z. z ≤ y(w) ∧ ∀w' ∈ Dox(x,w). z ≤ y(w')
+    When an IC is rigid (constant), the induced CQ partition is trivial — the
+    question has only one possible answer. Every agent's doxastic state is
+    vacuously contained in the single cell. This is why the A/B distinction
+    only matters for non-rigid ICs like `priceMilk`. -/
+theorem rigid_trivial_question (y : W → E) (hrig : Core.Intension.IsRigid y) :
+    ∀ x w, know₁ y x w = true := by
+  intro x w
+  simp only [know₁, List.all_eq_true]
+  intro w' _
+  simp only [Bool.or_eq_true, Bool.not_eq_true']
+  right; exact beq_iff_eq.mpr (hrig w' w)
 
-    The agent identifies at least one entity z that is a part of the IC's
-    actual value y(w), and z is also a part of y(w') in all dox-alternatives.
-    Parametric over a part-of relation `leq` (@cite{link-1983}'s ≤). -/
+/-! ## Mention-Some Readings (§4.1) -/
+
+/-- Mention-some `know` (Romero (101)): ∃z. z ≤ y(w) ∧ ∀w' ∈ Dox(x,w). z ≤ y(w').
+    Parametric over `leq` (@cite{link-1983}'s ≤). -/
 def know_CQ_SOME (leq : E → E → Bool) (y : W → E) (x : E) (w : W) : Bool :=
-  entities.any λ z => leq z (y w) &&
-    worlds.all λ w' => !Dox x w w' || leq z (y w')
+  entities.any fun z => leq z (y w) &&
+    worlds.all fun w' => !Dox x w w' || leq z (y w')
 
-/-- Mention-some `be` (Romero (105)):
-    x ≤ y(w)
-
-    The post-copular entity x is a part of the IC's value at w. -/
+/-- Mention-some `be` (Romero (105)): x ≤ y(w). -/
 def be_SS_SOME (leq : E → E → Bool) (x : E) (y : W → E) (w : W) : Bool :=
   leq x (y w)
 
-/-- `know₁` is the strongly exhaustive variant `know_CQ_STR` (Romero (100)).
-    The definitions are identical. -/
-theorem know₁_is_strongly_exhaustive :
-    ∀ (y : W → E) (x : E) (w : W),
-      know₁ y x w = knowGeneric (α := E) y x w := fun _ _ _ => rfl
+/-- For atomic ≤ (= equality), mention-some entails strongly exhaustive.
+    With no proper parts, any witness z with z = y(w) yields `know₁`.
+    This is the converse of @cite{groenendijk-stokhof-1984}'s
+    `mentionAll_implies_mentionSome`. -/
+theorem mentionSome_atomic_entails_str (y : W → E) (x : E) (w : W)
+    (h : know_CQ_SOME (· == ·) y x w = true) :
+    know₁ y x w = true := by
+  simp only [know_CQ_SOME, know₁] at *
+  rcases List.any_eq_true.mp h with ⟨z, _, hz⟩
+  simp only [Bool.and_eq_true] at hz
+  have hzeq : z = y w := eq_of_beq hz.1
+  exact List.all_eq_true.mpr fun w' hw' => by
+    have := (List.all_eq_true.mp hz.2) w' hw'
+    simp only [Bool.or_eq_true, Bool.not_eq_true'] at this ⊢
+    rcases this with h | h
+    · left; exact h
+    · right; rw [hzeq] at h; rw [Bool.beq_comm]; exact h
 
-/-- `be₁_spec` is the strongly exhaustive variant `be_SS_STR` (Romero (104)).
-    The definitions are identical. -/
-theorem be₁_spec_is_strongly_exhaustive :
-    ∀ (x : E) (y : W → E) (w : W),
-      be₁_spec x y w = beGeneric (α := E) x y w := fun _ _ _ => rfl
+/-! ## Connection to G&S Mention-Some Framework
 
-/-! ## CQ/SS Unification (§4–5)
+Romero's `know_CQ_SOME` is an instance of @cite{groenendijk-stokhof-1984}'s
+`knowMentionSome`: the CQ under `leq` induces a mention-some interrogative
+where `abstract(w, z) = leq(z, y(w))`, and doxastic universal quantification
+supplies the knowledge operator. -/
 
-The paper's core contribution: concealed questions (with `know`) and
-specificational subjects (with `be`) are **the same semantic phenomenon**.
-Both involve an NP in a configuration with an intensional verb where
-the NP can contribute either its extension (Reading A) or its intension
-(Reading B). The formal parallel:
+open Semantics.Questions.MentionSome (MentionSomeInterrogative knowMentionSome)
 
-| Feature                | CQs (`know`)       | SSs (`be`)           |
-|------------------------|---------------------|----------------------|
-| Extension → Reading A  | `know₁` + ext NP   | `be₁_spec` + ext NP |
-| Intension → Reading B  | `know₂` + int NP   | `be₂_spec` + int NP |
-| Generic schema         | `knowGeneric`       | `beGeneric`          |
-| Account 2 refutation   | `know₃` collapses   | `be₃_spec` collapses |
-| Mention-some variant   | `know_CQ_SOME`      | `be_SS_SOME`         |
+/-- The mention-some interrogative induced by a CQ under part-of ≤.
+    "Which part z of y's value holds?" -/
+def cqMSI (leq : E → E → Bool) (y : W → E) : MentionSomeInterrogative W E :=
+  ⟨entities, fun w z => leq z (y w)⟩
 
-Both `know` and `be` are crosscategorial variants at different types of
-the SAME doxastic/identity operation — captured by `knowGeneric` and
-`beGeneric` sharing the same type-parametric template.
+/-- Doxastic universal quantification as a knowledge operator. -/
+def doxKnows (agent : E) (w : W) (prop : W → Bool) : Bool :=
+  worlds.all fun w' => !Dox agent w w' || prop w'
 
-Furthermore, CQs and SSs share two grammatical properties that set them
-apart from regular NPs in predicational sentences:
-
-1. **Neuter pronominalization**: pronouns referring to CQs/SSs must be
-   neuter *it* (English) / *se* (Finnish), not gendered *she*/*he* / *hän*.
-   Regular NPs select gender based on the referent (Romero (84)–(89)).
-
-2. **Mention-some readings**: CQs/SSs allow existential-like readings
-   (Spanish *saber* + *también* data, (91)–(93)). Regular NPs in
-   predicational sentences do not readily allow this.
-
-These shared properties support the unified analysis: CQs and SSs are
-not different constructions but the same type of NP in a configuration
-with an intensional verb. -/
+/-- Romero's `know_CQ_SOME` IS @cite{groenendijk-stokhof-1984}'s
+    `knowMentionSome` applied to the CQ-induced mention-some interrogative
+    with doxastic knowledge. Definitional equality (rfl). -/
+theorem know_CQ_SOME_eq_knowMentionSome (leq : E → E → Bool) (y : W → E)
+    (x : E) (w : W) :
+    know_CQ_SOME leq y x w =
+    knowMentionSome (cqMSI leq y) (fun w agent prop => doxKnows agent w prop) x w :=
+  rfl
 
 /-! ## Extensional Verb Limitation (Appendix)
 
-Intensional verbs (`know`, `look for`, specificational `be`) allow the NP
-complement/subject to contribute either its extension or its intension.
-Extensional verbs (`kill`) only allow the extension.
+Romero's Appendix argues that the freedom to combine with extension or
+intension is a property of *intensional* verbs (`know`, `look for`, spec. `be`)
+only. Extensional verbs like `kill` take type-`e` arguments, so the NP's
+contribution is always evaluated at the local world — no room for IC-level
+interpretation. This is why CQ/SS readings don't arise with extensional verbs.
 
-This is a type-level constraint: extensional verbs take arguments of type e,
-which forces evaluation at the local world. The NP's intension (type ⟨s,e⟩)
-cannot serve as the argument. Intensional verbs take arguments of intensional
-type (⟨s,e⟩ or ⟨s,⟨s,e⟩⟩), so both the extension (NP evaluated at w) and the
-intension (NP unevaluated) can provide the right type.
+We formalize this by defining an extensional verb template and proving that
+it collapses the A/B distinction: it can only access the entity `y(w)`, not
+the IC `y` itself, making it impossible to distinguish worlds where `y`
+varies. -/
 
-Example: "#John killed (yesterday) what Alexander the Great was looking for
-in his conquests" (Romero (117)). If `kill` could take the NP's extension
-at a non-local situation s, the sentence would wrongly predict a de dicto
-reading where the killed individual and Alexander's search target might be
-different physical objects. This reading is unavailable — `kill` is extensional. -/
+/-- An extensional verb takes an entity argument (type e) and checks a
+    world-relative property. The IC `y` is always evaluated at `w` before
+    being passed to the verb. -/
+def extensionalVerb (verb : E → E → W → Bool) (y : W → E) (x : E) (w : W) : Bool :=
+  verb (y w) x w
 
-/-- Classification of verbs by whether they allow the NP's intension as
-    argument, per the appendix. -/
-inductive VerbIntensionality where
-  | intensional  -- know, look for, be_spec: NP contributes ext or int
-  | extensional  -- kill, see: NP contributes only its extension
-  deriving DecidableEq, BEq, Repr
+/-- For extensional verbs, the IC `y` and any IC `y'` that agrees at `w`
+    produce identical results. The verb cannot "see" the IC's behavior at
+    other worlds. This is why CQ readings (which require cross-world IC
+    comparison) are unavailable with extensional verbs. -/
+theorem extensional_collapses (verb : E → E → W → Bool)
+    (y y' : W → E) (x : E) (w : W) (h : y w = y' w) :
+    extensionalVerb verb y x w = extensionalVerb verb y' x w := by
+  simp only [extensionalVerb, h]
+
+/-- A rigid IC with value 0 at all worlds. -/
+def rigidZero : W → E := λ _ => 0
+
+/-- The key contrast: `priceMilk` and `rigidZero` agree at w2 (both yield 0).
+    An extensional verb CANNOT distinguish them (it only sees the entity at w),
+    but intensional `know₁` CAN (it checks doxastic alternatives where they
+    diverge). This is why CQ readings require intensional verbs. -/
+theorem extensional_vs_intensional :
+    -- Both ICs agree at w2: priceMilk w2 = rigidZero w2 = 0
+    priceMilk .w2 = rigidZero .w2 ∧
+    -- An extensional verb cannot distinguish them at w2
+    (∀ verb : E → E → W → Bool,
+      extensionalVerb verb priceMilk john .w2 =
+      extensionalVerb verb rigidZero john .w2) ∧
+    -- But know₁ CAN distinguish them at w2
+    know₁ priceMilk john .w2 ≠ know₁ rigidZero john .w2 := by
+  refine ⟨rfl, fun verb => ?_, ?_⟩
+  · exact extensional_collapses verb priceMilk rigidZero john .w2 rfl
+  · native_decide
+
+/-! ## CQ/SS Unification
+
+The paper's main contribution: CQs (with `know`) and SSs (with `be`) share
+the same semantic mechanism — the complement/subject NP contributes either
+its extension (Reading A) or its intension (Reading B) as an intensional
+object. The A/B ambiguity is derived from the two interpretive dimensions of
+the NP, NOT from lexical ambiguity of the verb.
+
+The crosscategorial templates `knowGeneric` and `beGeneric` witness this
+unification: both are parameterized by the same type variable α, with
+α = E for Reading A and α = (W → E) for Reading B. -/
+
+/-- CQ/SS unification: `know₁`/`be₁_spec` (Reading A) and `know₂`/`be₂_spec`
+    (Reading B) are instances of the SAME crosscategorial templates at
+    different types. The A/B ambiguity is type-driven, not lexicon-driven. -/
+theorem cq_ss_unified :
+    -- CQ Reading A = knowGeneric at type E
+    (∀ y x w, know₁ y x w = @knowGeneric E _ y x w) ∧
+    -- CQ Reading B = knowGeneric at type (W → E)
+    (∀ y x w, know₂ y x w = @knowGeneric (W → E) _ y x w) ∧
+    -- SS Reading A = beGeneric at type E
+    (∀ x y w, be₁_spec x y w = @beGeneric E _ x y w) ∧
+    -- SS Reading B = beGeneric at type (W → E)
+    (∀ x y w, be₂_spec x y w = @beGeneric (W → E) _ x y w) :=
+  ⟨fun _ _ _ => rfl, fun _ _ _ => rfl, fun _ _ _ => rfl, fun _ _ _ => rfl⟩
 
 end Phenomena.Copulas.Studies.Romero2005

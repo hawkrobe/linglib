@@ -1,13 +1,67 @@
 # Changelog
 
+## [0.229.384] - 2026-03-20
+
+### Changed
+- **Romero 2005 cleanup and deep integration**: remove redundant instances (`DecidableEq E`, `BEq E`), scope `BEq (Intension W E)` to avoid leaking, remove `rigid_trivializes_readingA` (subsumed by `rigid_trivial_question`), add `worlds_complete`/`entities_complete` exhaustiveness proofs, add extensional verb limitation (Appendix: `extensionalVerb`, `extensional_collapses`, `extensional_vs_intensional`), add CQ/SS unification theorem (`cq_ss_unified`), add paper equation references ((100), (101), (104), (105))
+
+## [0.229.383] - 2026-03-20
+
+### Added
+- **PIP generalized quantifiers** `gqEvery`, `gqSome` in `PIP/Connectives.lean` (paper items 28, 53–56); `forall_eq_neg_exists_neg` proves `forall_` = ¬∃x.¬
+- **SINGLE/PLURAL presuppositions** in `PIP/Connectives.lean` (paper items 71, 84): `single`, `plural`, `single_singleton`, `single_not_plural` (mutual exclusion)
+- **Multi-animal worked example** (paper §3.3, items 106–107): three different animals across three worlds; `ma_single_at_actual` shows only cat satisfies the description at the actual world; `ma_cross_world_plural` shows different animals satisfy at different worlds — demonstrating why Stone/Brasoveanu's cross-world summation would incorrectly predict plurality
+- **`ModalContinuation` enum** and `classifyModal2` replace string-based `pipPredictsModalSub` — makes explicit PIP's structural claim that subordinating modals (would/could) inherit accessibility relations
+
+## [0.229.382] - 2026-03-20
+
+### Added
+- **Uegaki 2022 formalization**: P-to-Q Entailment constraint (`IsPtoQEntailing`), Strawson C-distributivity (`IsStrawsonCDistributive`), fictitious predicate rejection tests (`shknow_violates_ptoq`, `allOpen_violates_ptoq`), highlighting for hope-whether (`ClauseType`, `highlightedValue`, `hopeHighlightSemantics`), cross-linguistic embedding data, constraint hierarchy theorems — `Phenomena/Questions/Studies/Uegaki2022.lean`
+- **7 bib entries**: `uegaki-2022`, `roelofsen-uegaki-2020`, `theiler-etal-2018`, `theiler-etal-2019`, `white-2021`, `pruitt-roelofsen-2011`, `steinert-threlkeld-2020`
+
+### Changed
+- **Fix citation attribution** in `CDistributivity.lean`: `@cite{qing-uegaki-2025}` → `@cite{uegaki-sudo-2019}` (NVP classification is from Uegaki & Sudo 2019, not Qing & Uegaki 2025)
+
+## [0.229.381] - 2026-03-20
+
+### Added
+- **Possible candidates** worked example (paper §3.2, items 85–87): `candidates_exist_but_description_fails` shows entities exist in the actual world but the description WINNER is empty there — PIP's strongest argument against Stone/Brasoveanu's "in" predicate
+
+### Changed
+- **Fix Roberts citation**: `@cite{roberts-1989}` → `@cite{roberts-1987}` (paper cites the 1987 UMass dissertation, not the 1989 journal article)
+- **Remove broken quantifier constructors** from `PIPExpr` (`.ex`, `.all`, `.sigma` conflated the quantified-variable domain with worlds; propositional fragment is correct and complete)
+- **Remove vacuous label theorems** `labels_survive_conj_left` and `labels_survive_disj` (conclusions were identical to hypotheses by definitional unfolding)
+
+## [0.229.380] - 2026-03-20
+
+### Added
+- **PIP vs DPL comparison** in `KeshetAbney2024.lean`: `pip_solves_dpl_negation_problem` formally contrasts DPL's `dpl_dne_fails_anaphora` (negation is a test, blocks anaphora) with PIP's `bathroom_mechanism` (labels survive negation, enables anaphora) — the architectural reason PIP handles bathroom sentences and double-negation anaphora where DPL cannot
+- **PIP ↔ Karttunen presupposition projection** bridge: `pip_felicity_agrees_with_andFilter` proves PIP's F operator on conjunction produces the same Bool as `Core.Presupposition.PrProp.andFilter` (Karttunen's asymmetric conjunction clause); `pip_felicity_agrees_with_neg` proves F for negation agrees with `PrProp.neg`
+
+## [0.229.379] - 2026-03-20
+
+### Added
+- **PIP ↔ Kripke grounding theorems** in `PIP/Connectives.lean`: `must_truth_agrees_kripkeEval` and `might_truth_agrees_kripkeEval` prove PIP's modal operators produce the same truth conditions as `Core.ModalLogic.kripkeEval`; `must_realistic_of_refl` derives the T axiom from `Core.ModalLogic.T_of_refl`; `must_realistic_at` handles pointwise-reflexive accessibility
+- **Cross-sentential anaphora bridges** in `KeshetAbney2024.lean`: `pip_cross_sentential_predictions` (indefinite persistence, negation blocks, double negation enables) and `pip_quantifier_blocking` (universals, negatives, proportionals) — connecting to `Phenomena/Anaphora/CrossSentential.lean`
+- `intensional_anaphora_is_T_axiom`: grounds the might/must asymmetry in reflexivity of the accessibility relation
+- `FiniteWorlds` instances for `IBWorld` and `IAWorld`
+
+### Changed
+- **Replace `PAccessRel` with `Core.ModalLogic.AccessRel`** throughout PIP — eliminates redundant type, connects to modal logic infrastructure
+
 ## [0.229.378] - 2026-03-20
 
 ### Added
-- **Romero 2005 complete**: finish remaining sections (§3.3, §4.1, §4–5, Appendix)
-  - §3.3 SS refutations: `be₃_spec`, `be₃_reduces_to_be₁` (parallel to `know₃` for CQs)
-  - §4.1 mention-some: `ExhaustivityDegree`, `know_CQ_SOME`, `be_SS_SOME` (parameterized over Link's ≤)
-  - §4–5 CQ/SS unification: docstring with full parallel table, neuter pronominalization and mention-some as shared diagnostics
-  - Appendix: `VerbIntensionality` enum (intensional vs extensional verbs)
+- **Romero 2005 deep integration**: replace thin enums/prose with structural theorems connecting to G&S partition semantics and mention-some infrastructure
+  - `know₁_eq_doxInCell`: CQ knowledge IS doxastic inclusion in partition cell (`QUD.ofProject y`), bridging Romero's IC semantics to G&S 1984
+  - `rigid_trivial_question`: rigid IC → trivially known (partition has one cell)
+  - `mentionSome_atomic_entails_str`: atomic ≤ makes mention-some = strongly exhaustive (converse of G&S `mentionAll_implies_mentionSome`)
+  - `know_CQ_SOME_eq_knowMentionSome`: Romero's mention-some CQ `know` IS G&S `knowMentionSome` (definitional rfl)
+  - §3.3 SS refutations: `be₃_spec`, `be₃_reduces_to_be₁`
+
+### Removed
+- `ExhaustivityDegree`, `VerbIntensionality` enums (unused, no theorems)
+- `refutations_uniform` (thin rfl conjunction), `cq_ss_parallel` (thin rfl)
 
 ## [0.229.377] - 2026-03-20
 
