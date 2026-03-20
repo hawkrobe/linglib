@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
 import Linglib.Core.StructuralEquationModel
-import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
+import Linglib.Core.Semantics.Intension
 import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
 import Linglib.Theories.Semantics.Attitudes.Preferential
 
@@ -344,7 +344,7 @@ end CausalFrame
 -- ════════════════════════════════════════════════════════════════
 
 section Situations
-open Semantics.Intensional.Situations.Elbourne (SitVarStatus)
+open Core.SitVarStatus (SitVarStatus)
 
 /-- Cognitive refinement: `es₁` is a cognitive part of `es₂` if every
     positive fact in `es₁` is also in `es₂`. -/

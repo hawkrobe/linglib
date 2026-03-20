@@ -4,7 +4,7 @@
 Framework-agnostic types for intensional semantics: intensions as functions
 from indices (possible worlds) to extensions, rigid designators, and evaluation.
 
-These primitives are shared by `Semantics.Intensional/`, `Semantics.Montague/`,
+These primitives are shared by `Semantics.Montague/`, `Semantics.Reference/`,
 and `RSA/` — any module that needs world-parameterized meanings.
 
 -/
@@ -14,7 +14,9 @@ import Linglib.Tactics.OntSort
 
 namespace Core
 
-/-- An intension of type τ over indices W: a function from worlds to extensions. -/
+/-- An intension of type τ over indices W: a function from worlds to extensions.
+    @cite{gallin-1975}'s Ty2 type system: every type τ has an intensional
+    counterpart `(s,τ)` interpreted as `W → ⟦τ⟧`. -/
 @[ont_sort] abbrev Intension (W : Type*) (τ : Type*) := W → τ
 
 namespace Intension
@@ -31,9 +33,6 @@ def IsRigid {W τ : Type*} (f : Intension W τ) : Prop := ∀ w₁ w₂, f w₁ 
 /-- A rigid designator is rigid. -/
 theorem rigid_isRigid {W τ : Type*} (x : τ) : IsRigid (rigid (W := W) x) :=
   λ _ _ => rfl
-
-/-- Propositions (W → Bool) are intensions of Bool, i.e. BProp. -/
-theorem proposition_eq_bprop (W : Type*) : Intension W Bool = BProp W := rfl
 
 /-- evalAt of rigid returns the original value. -/
 theorem evalAt_rigid {W τ : Type*} (x : τ) (w : W) : evalAt (rigid x) w = x := rfl
@@ -101,16 +100,6 @@ theorem rigid_allOrNothing {W τ : Type*}
   ⟨λ h => rigid_identity_necessary f g hf hg w₁ h w₂,
    λ h => rigid_identity_necessary f g hf hg w₂ h w₁⟩
 
-/-- Without rigidity, identity CAN be contingent: co-reference at one
-world does not imply co-reference at another. This is the essential
-contrast that makes `rigid_identity_necessary` non-trivial — rigidity
-is doing real work, not just any intensions satisfy the theorem. -/
-theorem nonrigid_identity_contingent {W τ : Type*}
-    (f g : Intension W τ) (w₁ : W)
-    (hDisagree : f w₁ ≠ g w₁) :
-    ¬ CoExtensional f g :=
-  λ h => hDisagree (h w₁)
-
 /-- An intension that takes different values at two worlds is not rigid.
 Contrapositive of `IsRigid`. -/
 theorem varying_not_rigid {W τ : Type*}
@@ -127,31 +116,11 @@ theorem rigid_neq_nonrigid {W τ : Type*} (f g : Intension W τ)
 
 /-- A character is stable iff it assigns the same content at every context.
 
-@cite{kaplan-1989} @cite{gallin-1975} @cite{von-fintel-heim-2011} Remark 5: non-indexical expressions have stable character —
+@cite{kaplan-1989} @cite{von-fintel-heim-2011} Remark 5: non-indexical expressions have stable character —
 their content does not depend on the context of utterance. This generalizes
 `constantCharacter` from `Reference/Basic.lean` to the framework-agnostic level. -/
 def StableCharacter {C W τ : Type*} (char : C → Intension W τ) : Prop :=
   ∀ c₁ c₂ : C, char c₁ = char c₂
-
-/-- Stable character iff pointwise equal content at every context. -/
-theorem stableCharacter_iff_sameContent {C W τ : Type*} (char : C → Intension W τ) :
-    StableCharacter char ↔ ∀ c₁ c₂ : C, ∀ w : W, char c₁ w = char c₂ w := by
-  constructor
-  · intro h c₁ c₂ w; exact congrFun (h c₁ c₂) w
-  · intro h c₁ c₂; funext w; exact h c₁ c₂ w
-
-/-- Rigid + stable character = fully constant: the same value at every
-context and every world. @cite{kaplan-1989} Remark 10.
-
-If an expression has stable character (non-indexical) and rigid content
-(designator), then it yields the same extension everywhere. -/
-theorem rigid_stableChar_constant {C W τ : Type*} [Inhabited C]
-    (char : C → Intension W τ) (hStable : StableCharacter char)
-    (hRigid : ∀ c, IsRigid (char c)) :
-    ∀ c₁ c₂ : C, ∀ w₁ w₂ : W, char c₁ w₁ = char c₂ w₂ := by
-  intro c₁ c₂ w₁ w₂
-  calc char c₁ w₁ = char c₁ w₂ := hRigid c₁ w₁ w₂
-    _ = char c₂ w₂ := congrFun (hStable c₁ c₂) w₂
 
 end Intension
 
@@ -194,6 +163,47 @@ def ReferentialMode.isFree : ReferentialMode → Bool
   | .bound => false
 
 end Core.ReferentialMode
+
+
+-- ════════════════════════════════════════════════════════════════
+-- Situation Variable Status (@cite{elbourne-2013})
+-- ════════════════════════════════════════════════════════════════
+
+namespace Core.SitVarStatus
+
+/-- @cite{elbourne-2013}'s two-way classification of situation variables.
+    Coarsens `ReferentialMode`'s three-way distinction: indexical and
+    anaphoric both map to `free`. -/
+inductive SitVarStatus where
+  /-- Free: mapped to a contextually salient situation (→ de re) -/
+  | free
+  /-- Bound: bound by an intensional operator (→ de dicto) -/
+  | bound
+  deriving DecidableEq, BEq, Repr
+
+open Core.ReferentialMode (ReferentialMode)
+
+/-- Expand Elbourne's two-way classification to Partee's three-way.
+    Free situation variables correspond to either indexical or anaphoric
+    interpretation; bound corresponds to bound. -/
+def SitVarStatus.toReferentialModes : SitVarStatus → List ReferentialMode
+  | .free  => [.indexical, .anaphoric]
+  | .bound => [.bound]
+
+/-- Collapse Partee's three-way classification to Elbourne's two-way.
+    Uses `ReferentialMode.isFree` for the coarsening. -/
+def ReferentialMode.toSitVarStatus : ReferentialMode → SitVarStatus :=
+  λ m => if m.isFree then .free else .bound
+
+/-- Round-trip: collapsing then expanding recovers the original status
+    (as a member of the expanded list). -/
+theorem sitVarStatus_roundtrip (s : SitVarStatus) :
+    ∀ m ∈ s.toReferentialModes, ReferentialMode.toSitVarStatus m = s := by
+  intro m hm
+  cases s <;> simp [SitVarStatus.toReferentialModes] at hm <;>
+    rcases hm with rfl | rfl <;> rfl
+
+end Core.SitVarStatus
 
 
 -- ════════════════════════════════════════════════════════════════

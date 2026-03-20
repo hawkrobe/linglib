@@ -1,7 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Theories.Semantics.Tense.Decomposition
 import Linglib.Theories.Semantics.Reference.KaplanLD
-import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
 import Linglib.Core.Semantics.Intension
 
 /-!
@@ -21,7 +20,7 @@ theoretical vocabularies.
 
 For the full tense theory comparison (Abusch, Von Stechow, Kratzer,
 Ogihara, Klecha, Deal, Sharvit, Zeijlstra, Wurmbrand), see
-`Comparisons/TenseTheories.lean` and `Theories/Semantics.Intensional/Tense/`.
+`Comparisons/TenseTheories.lean` and `Theories/Semantics/Tense/`.
 
 ## The Analogy
 
@@ -60,7 +59,7 @@ namespace Phenomena.TenseAspect.ComparePartee
 open Semantics.Tense (TenseInterpretation TemporalAssignment
   interpTense temporalLambdaAbs updateTemporal situationToTemporal PAST SitProp)
 open Semantics.Reference.KaplanLD (opNow)
-open Semantics.Intensional.Situations.Elbourne (SitVarStatus)
+open Core.SitVarStatus (SitVarStatus)
 open Core (Situation)
 open Core.ReferentialMode (ReferentialMode)
 

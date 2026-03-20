@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.229.370] - 2026-03-19
+
+### Changed
+- **Dissolve `Theories/Semantics/Intensional/`**: delete `Basic.lean` (dead code, 0 consumers), merge `Situations/Elbourne.lean` and `Situations/Percus.lean` into their respective study files (`Phenomena/Reference/Studies/Elbourne2013.lean`, `Percus2000.lean`)
+- Move `SitVarStatus` (Elbourne's free/bound classification) to `Core/Semantics/Intension.lean` alongside `ReferentialMode`
+- Clean up `Core/Semantics/Intension.lean`: remove 4 unused theorems, fix stale docstring references
+- Fix `gallin-1975` bib entry: publisher North-Holland (not Elsevier), add series/number
+- Update `ComparePartee.lean` and blog `PsychVerbSem.lean` imports to use `Core.SitVarStatus`
+
+## [0.229.369] - 2026-03-19
+
+### Changed
+- **Afkir & Zellou 2025 second audit (full 78-page book)**
+  - Mark unverified glosses: qrəβ "approach!" and srəm "be ashamed!" are from Berber root semantics, not from the paper (paper only glosses 9 of 38 words on p. 20)
+  - Fix ħkəm and sχəf docstrings: note model-data divergence — model predicts intrusive > vowelless but empirically these are "often vowelless" (Table 7, 13-20%) while "never" C1ǎC2 (Table 9)
+  - Document model limitation in module docstring: overpenalizes vowelless for high-sonority C3 words
+  - Add perception finding (§5.3.1 Figure 28) to module docstring: intrusive schwa boosts discrimination only for falling-sonority clusters
+  - Add §8 Constraint Independence theorems (intrusive_disjoint, vowelless_disjoint, faithful_disjoint): each surface form violates a disjoint constraint subset, structurally mirroring the paper's §4.2.8 statistical independence result (21 theorems total, up from 18)
+
+## [0.229.368] - 2026-03-19
+
+### Changed
+- **Afkir & Zellou 2025 audit against paper PDF**
+  - Replace 5 fabricated words (bred, ghres, msekh, nghel, ftel) with paper-verified words (qməʕ, nqəβ, ħkəm, sfən, and corrected glosses) — all 8 words now sourced from Tables 7/9 and p. 20
+  - Fix hallucinated gloss: sχəf "to swell" → "pass out!" (verified p. 20)
+  - Reframe docstring: clarify MaxEnt model is our formal reconstruction, not the paper's model (paper uses mixed effects logistic regression)
+  - Add theorems: hkem/sfen faithful>intrusive, nqeb faithful>vowelless, vowelless_all_obstruent_gt_mixed, rising_faithful_penalized (18 total, up from 15)
+  - Add per-word Table 7/9 categories and regression estimates in docstrings
+
 ## [0.229.367] - 2026-03-19
 
 ### Added

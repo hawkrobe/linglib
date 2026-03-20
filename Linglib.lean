@@ -1591,8 +1591,6 @@ import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Theories.Semantics.Events.SpatiotemporalDistance
--- Theories: Semantics.Intensional (possible-worlds semantics)
-import Linglib.Theories.Semantics.Intensional.Basic
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.ContentComposition
@@ -1673,8 +1671,6 @@ import Linglib.Theories.Semantics.Reference.ShiftedIndexicals
 import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Reference.Reciprocals
-import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
-import Linglib.Theories.Semantics.Intensional.Situations.Percus
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Tense.TemporalDeRe
 import Linglib.Theories.Semantics.Tense.FeatureChecking

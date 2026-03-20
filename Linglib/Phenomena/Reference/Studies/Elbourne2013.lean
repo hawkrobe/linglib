@@ -1,16 +1,46 @@
-import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Definiteness
+import Linglib.Core.Semantics.Intension
+import Linglib.Core.Discourse.QUD
+import Linglib.Theories.Semantics.Lexical.Determiner.Definite
+import Linglib.Theories.Semantics.Reference.Donnellan
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
 
 /-!
-# @cite{elbourne-2013}: Situation-Semantic Definite Descriptions — Empirical Tests @cite{elbourne-2013}
+# @cite{elbourne-2013}: Situation-Semantic Definite Descriptions @cite{elbourne-2013}
+@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009} @cite{kamp-1981} @cite{stanley-szab-2000} @cite{tonhauser-beaver-roberts-simons-2013} @cite{roberts-2012}
 @cite{donnellan-1966} @cite{kripke-1977} @cite{karttunen-1974}
 
-End-to-end derivation chain from Fragment lexical entries through
-Elbourne's situation-semantic theory to concrete truth-value predictions.
+Formalizes the core theoretical machinery and empirical predictions from:
 
-## Chain
+  Elbourne, P. (2013). Definite Descriptions.
+  Oxford Studies in Semantics and Pragmatics 1.
+
+Elbourne argues that definite descriptions have a Fregean/Strawsonian
+semantics — they are type e, introduce a presupposition of existence +
+uniqueness, and are evaluated *relative to situations* (parts of worlds).
+
+The single lexical entry ⟦the⟧ = λf.λs : ∃!x f(x)(s) = 1. ιx f(x)(s) = 1
+unifies:
+- Referential vs attributive uses (Ch 5): free vs bound situation pronoun
+- Presupposition projection (Ch 4): domain conditions + λ-Conversion
+- Donkey anaphora (Ch 6): pronouns = the + NP-deletion; minimal situations
+- De re / de dicto (Ch 7): scope of situation binding, not DP scope
+- Incomplete definites (Ch 9): situation restricts evaluation domain
+- Existence entailments (Ch 8): presupposition projects to belief states
+
+## Key Results
+
+- `the_sit` / `the_sit'`: Elbourne's situation-relative ⟦the⟧
+- `the_sit_at_world_eq_the_uniq_w`: specializes to existing `the_uniq_w`
+- `attributive_is_the_sit_bound`: Donnellan's attributive = `the_sit'` (bound s)
+- `donkey_uniqueness_from_minimality`: minimal situations yield uniqueness
+- `pronoun_is_definite_article`: ⟦it⟧ = ⟦the⟧
+- `the_sit_assertion_implies_presup`: assertion entails presupposition
+
+## Empirical Chain
 
 ```
 Fragments/English/Determiners.lean
@@ -18,24 +48,11 @@ Fragments/English/Determiners.lean
 Fragments/English/Pronouns.lean
   "it"/"he"/"she": pronounType =.personal, person =.third → the_sit' + NP-deletion
     ↓
-Theories/Semantics/Intensional/Situations/Elbourne.lean
-  the_sit / the_sit': λf.λs : ∃!x f(x)(s). ιx f(x)(s)
-  SitVarStatus: free (de re) vs bound (de dicto)
-  SituationFrame: mereological part-of structure
-    ↓ (concrete model + predicate denotations)
-Phenomena/Reference/Studies/Elbourne2013.lean (this file)
+(this file: theory + empirical predictions)
   referential/attributive → truth values → match empirical judgments
   incomplete definites → situation-relative uniqueness
   donkey anaphora → minimality → uniqueness
 ```
-
-## Key Examples
-
-1. **Referential vs Attributive** (Ch 5): "The murderer of Smith is insane."
-2. **Incomplete Definites** (Ch 9): "The table is covered with books."
-3. **Donkey Anaphora** (Ch 6): "Every farmer who owns a donkey beats it."
-4. **De Re / De Dicto with Definites** (Ch 7): "Mary believes the president is a spy."
-5. **Existence Entailments** (Ch 8): "Hans wants the ghost to be quiet."
 
 -/
 
@@ -43,61 +60,344 @@ namespace Phenomena.Reference.Studies.Elbourne2013
 
 open Core.Presupposition (PrProp)
 open Core.Definiteness (DefPresupType)
-open Semantics.Intensional.Situations.Elbourne
-  (SituationFrame the_sit the_sit' SitVarStatus SitBinder SitVar
-   DonkeyConfig IncompletenessSource useModeToSitVar pronounDenot
-   ExistenceEntailmentDatum NPDeletionSource PronounAsDefinite)
-open Semantics.Lexical.Determiner.Definite (qforceToPresupType)
-open Semantics.Reference.Donnellan (UseMode)
+open Core.SitVarStatus (SitVarStatus)
+open Semantics.Lexical.Determiner.Definite (the_uniq_w qforceToPresupType)
+open Semantics.Reference.Donnellan (definitePrProp UseMode)
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §1: Situation Ontology (@cite{barwise-perry-1983}, @cite{kratzer-1989})
+-- ════════════════════════════════════════════════════════════════
+
+/-- A situation frame: the ontological foundation for Elbourne's system.
+
+Situations are parts of worlds, ordered by a part-of relation ≤.
+Worlds are maximal situations. Properties and quantifiers are evaluated
+relative to situations rather than worlds, enabling situation-dependent
+uniqueness and domain restriction.
+
+Based on @cite{barwise-perry-1983}: situations are "individuals having
+properties and standing in relations at various spatiotemporal locations".
+@cite{kratzer-1989}: situations are parts of worlds with a mereological structure. -/
+structure SituationFrame where
+  /-- Domain of situations (D_s) — includes both partial situations and worlds -/
+  Sit : Type
+  /-- Domain of entities (D_e) -/
+  Ent : Type
+  /-- Part-of relation (≤): s₁ ≤ s₂ means s₁ is part of s₂ -/
+  le : Sit → Sit → Prop
+  /-- Reflexivity: every situation is part of itself -/
+  le_refl : ∀ s, le s s
+  /-- Transitivity: part-of is transitive -/
+  le_trans : ∀ s₁ s₂ s₃, le s₁ s₂ → le s₂ s₃ → le s₁ s₃
+  /-- Antisymmetry: mutual part-of implies identity -/
+  le_antisymm : ∀ s₁ s₂, le s₁ s₂ → le s₂ s₁ → s₁ = s₂
+
+/-- A world is a maximal situation — one that no other situation properly extends. -/
+def SituationFrame.isWorld (F : SituationFrame) (s : F.Sit) : Prop :=
+  ∀ s', F.le s s' → s = s'
+
+/-- A situation s is minimal for property P iff P holds at s and at
+no proper part of s. Minimality is key for donkey anaphora (Ch 6):
+in a minimal situation where "a farmer owns a donkey", there is
+exactly one farmer and one donkey, securing uniqueness. -/
+def SituationFrame.isMinimal (F : SituationFrame)
+    (P : F.Sit → Bool) (s : F.Sit) : Prop :=
+  P s = true ∧ ∀ s', F.le s' s → P s' = true → s' = s
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §2: The Situation-Relative Definite Article (@cite{elbourne-2013}, Ch 3)
+-- ════════════════════════════════════════════════════════════════
+
+/-- ⟦the⟧ in Elbourne's system: the situation-relative Fregean definite.
+
+⟦the⟧ = λf_{⟨e,st⟩}.λs : s ∈ D_s ∧ ∃!x f(x)(s) = 1. ιx f(x)(s) = 1
+
+Takes a restrictor (property of entities relative to situations) and a
+situation, presupposes existence+uniqueness *in that situation*, and
+returns the unique satisfier.
+
+The situation parameter `s` may be:
+- **Free** (referential use, Ch 5): mapped to a contextually salient s*
+- **Bound** (attributive use, Ch 5): bound by a higher operator (ς, Σ)
+- **Bound by quantifier** (donkey anaphora, Ch 6): bound by always/GEN -/
+def the_sit (F : SituationFrame) (domain : List F.Ent) [DecidableEq F.Ent]
+    (restrictor : F.Ent → F.Sit → Bool)
+    (scope : F.Ent → F.Sit → Bool)
+    : PrProp F.Sit :=
+  { presup := λ s =>
+      match domain.filter (λ e => restrictor e s) with
+      | [_] => true
+      | _ => false
+  , assertion := λ s =>
+      match domain.filter (λ e => restrictor e s) with
+      | [e] => scope e s
+      | _ => false }
+
+/-- `the_sit` instantiated with bare type parameters (no SituationFrame). -/
+def the_sit' {W E : Type} (domain : List E) [DecidableEq E]
+    (restrictor : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
+  { presup := λ s =>
+      match domain.filter (λ e => restrictor e s) with
+      | [_] => true
+      | _ => false
+  , assertion := λ s =>
+      match domain.filter (λ e => restrictor e s) with
+      | [e] => scope e s
+      | _ => false }
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §3: Bridge to Existing ⟦the⟧ Denotations
+-- ════════════════════════════════════════════════════════════════
+
+/-- When situations ARE worlds, `the_sit'` = `the_uniq_w`. -/
+theorem the_sit_at_world_eq_the_uniq_w
+    {W E : Type} (domain : List E) [DecidableEq E]
+    (restrictor : E → W → Bool) (scope : E → W → Bool) :
+    the_sit' domain restrictor scope = the_uniq_w domain restrictor scope :=
+  rfl
+
+/-- The presupposition of `the_sit'` is determined solely by the filter result. -/
+theorem the_sit_presup_depends_on_filter
+    {W E : Type} (domain₁ domain₂ : List E) [DecidableEq E]
+    (restrictor scope : E → W → Bool) (w : W)
+    (h : domain₁.filter (λ e => restrictor e w) =
+         domain₂.filter (λ e => restrictor e w)) :
+    (the_sit' domain₁ restrictor scope).presup w =
+    (the_sit' domain₂ restrictor scope).presup w := by
+  simp only [the_sit']
+  rw [h]
+
+/-- A true assertion entails a satisfied presupposition. -/
+theorem the_sit_assertion_implies_presup
+    {W E : Type} (domain : List E) [DecidableEq E]
+    (restrictor : E → W → Bool) (scope : E → W → Bool)
+    (w : W) (h : (the_sit' domain restrictor scope).assertion w = true) :
+    (the_sit' domain restrictor scope).presup w = true := by
+  simp only [the_sit'] at h ⊢
+  split at h <;> simp_all
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §4: Referential vs Attributive (@cite{elbourne-2013}, Ch 5)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Donnellan's attributive semantics IS `the_sit'` with a bound situation
+variable. -/
+theorem attributive_is_the_sit_bound
+    {W E : Type} (domain : List E) [DecidableEq E]
+    (restrictor : E → W → Bool) (scope : E → W → Bool) :
+    definitePrProp domain restrictor scope =
+    the_sit' domain restrictor scope := rfl
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §5: Donkey Anaphora via Minimal Situations (@cite{elbourne-2013}, Ch 6)
+-- ════════════════════════════════════════════════════════════════
+
+/-- In Elbourne's system, donkey pronouns are definite articles with
+phonologically null NP complements (NP-deletion). -/
+structure DonkeyConfig (F : SituationFrame) where
+  /-- The restrictor property (e.g., "donkey") -/
+  nounContent : F.Ent → F.Sit → Bool
+  /-- The pronoun's situation variable -/
+  sitVar : F.Sit
+  /-- The domain of entities -/
+  domain : List F.Ent
+
+/-- Uniqueness in donkey contexts derives from minimality of situations. -/
+theorem donkey_uniqueness_from_minimality
+    (F : SituationFrame) (domain : List F.Ent) [DecidableEq F.Ent]
+    (restrictor : F.Ent → F.Sit → Bool) (scope : F.Ent → F.Sit → Bool)
+    (s : F.Sit)
+    (h_minimal : F.isMinimal (λ s => match domain.filter (λ e => restrictor e s) with
+                                      | [_] => true | _ => false) s) :
+    (the_sit F domain restrictor scope).presup s = true := by
+  simp only [the_sit]
+  exact h_minimal.1
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §6: De Re / De Dicto and Situation Variable Scope
+-- ════════════════════════════════════════════════════════════════
+
+/-- Donnellan's referential/attributive distinction maps to Elbourne's
+free/bound situation variable distinction. -/
+def useModeToSitVar : UseMode → SitVarStatus
+  | .referential => .free
+  | .attributive => .bound
+
+/-- Mapping is total and injective. -/
+theorem useMode_sitVar_roundtrip :
+    ∀ m : UseMode, (match useModeToSitVar m with
+      | .free => UseMode.referential
+      | .bound => UseMode.attributive) = m := by
+  intro m; cases m <;> rfl
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §7: Existence Entailments (@cite{elbourne-2013}, Ch 8)
+-- ════════════════════════════════════════════════════════════════
+
+structure ExistenceEntailmentDatum where
+  /-- The sentence -/
+  sentence : String
+  /-- Does the speaker presuppose existence? -/
+  speakerPresupposes : Bool
+  /-- Does the subject believe in existence? -/
+  subjectBelieves : Bool
+  /-- Is existence actually the case? -/
+  existenceActual : Bool
+  /-- Elbourne's prediction -/
+  elbournePrediction : String
+  /-- Source -/
+  source : String := "Elbourne 2013"
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §8: Incomplete Definites (@cite{elbourne-2013}, Ch 9)
+-- ════════════════════════════════════════════════════════════════
+
+inductive IncompletenessSource where
+  | situationVariable
+  | relationVariable
+  | pragmaticEnrichment
+  | explicitApproach
+  | lotRelationVariable
+  deriving DecidableEq, BEq, Repr
+
+def elbournePreferred : IncompletenessSource := .situationVariable
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §9: Pronouns as Definite Descriptions (@cite{elbourne-2013}, Ch 10)
+-- ════════════════════════════════════════════════════════════════
+
+/-- How the deleted NP content is recovered. -/
+inductive NPDeletionSource where
+  | antecedent
+  | visualCue
+  | generalKnowledge
+  | donkeyRestrictor
+  deriving DecidableEq, BEq, Repr
+
+structure PronounAsDefinite where
+  pronounForm : String
+  deletedNP : String
+  npSource : NPDeletionSource
+  equivalentDefinite : String
+  deriving Repr, BEq
+
+/-- Pronoun denotation: ⟦it⟧ = ⟦the⟧ + NP-deletion. -/
+abbrev pronounDenot {W E : Type} (domain : List E) [DecidableEq E]
+    (recoveredNP : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
+  the_sit' domain recoveredNP scope
+
+/-- Pronouns = definite articles. -/
+theorem pronoun_is_definite_article
+    {W E : Type} (domain : List E) [DecidableEq E]
+    (restrictor scope : E → W → Bool) :
+    pronounDenot domain restrictor scope = the_sit' domain restrictor scope :=
+  rfl
+
+/-- Pronoun assertions entail pronoun presuppositions. -/
+theorem pronoun_assertion_implies_presup
+    {W E : Type} (domain : List E) [DecidableEq E]
+    (recoveredNP : E → W → Bool) (scope : E → W → Bool)
+    (w : W) (h : (pronounDenot domain recoveredNP scope).assertion w = true) :
+    (pronounDenot domain recoveredNP scope).presup w = true :=
+  the_sit_assertion_implies_presup domain recoveredNP scope w h
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §10: Situation Binding Operators (@cite{elbourne-2013}, Ch 2)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Elbourne's three situation binders. -/
+inductive SitBinder where
+  | iota (index : Nat)
+  | sigma (index : Nat)
+  | sigmaSub (index : Nat)
+  deriving DecidableEq, BEq, Repr
+
+/-- A situation variable — either free or indexed for binding. -/
+inductive SitVar where
+  | free (salience : Nat := 0)
+  | bound (index : Nat)
+  deriving DecidableEq, BEq, Repr
+
+
+-- ════════════════════════════════════════════════════════════════
+-- §11: QUD–Situation Bridge (@cite{roberts-1996}, @cite{kratzer-2004})
+-- ════════════════════════════════════════════════════════════════
+
+/-- A QUD over worlds induces a "relevance" relation on situations. -/
+def qudRelevantSituation
+    (F : SituationFrame) [DecidableEq F.Sit]
+    (leDecide : F.Sit → F.Sit → Bool)
+    (q : QUD F.Sit)
+    (w : F.Sit) (_hw : F.isWorld w)
+    (s : F.Sit) : Prop :=
+  F.le s w
+  ∧ q.sameAnswer w s = true
+  ∧ F.isMinimal (λ s' => leDecide s' w && q.sameAnswer w s') s
+
+theorem situation_pronoun_tracks_qud
+    (F : SituationFrame) [DecidableEq F.Sit]
+    (leDecide : F.Sit → F.Sit → Bool)
+    (q : QUD F.Sit)
+    (w : F.Sit) (hw : F.isWorld w)
+    (s : F.Sit) (hs : qudRelevantSituation F leDecide q w hw s)
+    (domain : List F.Ent) [DecidableEq F.Ent]
+    (restrictor scope : F.Ent → F.Sit → Bool)
+    (hRestr : ∀ e, restrictor e s = restrictor e w)
+    (hScope : ∀ e, scope e s = scope e w) :
+    (the_sit F domain restrictor scope).assertion s =
+    (the_sit F domain restrictor scope).assertion w := by
+  simp only [the_sit, hRestr, hScope]
+
+theorem qud_refinement_monotone
+    (F : SituationFrame) [DecidableEq F.Sit]
+    (leDecide : F.Sit → F.Sit → Bool)
+    (q₁ q₂ : QUD F.Sit)
+    (w : F.Sit) (hw : F.isWorld w)
+    (s₁ s₂ : F.Sit)
+    (hRefine : ∀ a b, q₂.sameAnswer a b = true → q₁.sameAnswer a b = true)
+    (hs₁ : qudRelevantSituation F leDecide q₁ w hw s₁)
+    (hs₂ : qudRelevantSituation F leDecide q₂ w hw s₂)
+    (hUniq : ∀ s, F.le s w → q₁.sameAnswer w s = true → F.le s₁ s) :
+    F.le s₁ s₂ := by
+  exact hUniq s₂ hs₂.1 (hRefine w s₂ hs₂.2.1)
 
 
 -- ════════════════════════════════════════════════════════════════
 -- § Fragment Bridge: English Lexical Entries → Elbourne's System
 -- ════════════════════════════════════════════════════════════════
 
-/-! ### Bridge 1: "the" → the_sit
-
-The Fragment entry for "the" has `qforce =.definite`. Under Elbourne's
-analysis, this maps to `the_sit`: a situation-relative Fregean definite
-that presupposes existence+uniqueness *in the evaluation situation*. -/
+/-! ### Bridge 1: "the" → the_sit -/
 
 theorem the_is_definite :
     Fragments.English.Determiners.the.qforce = .definite := rfl
-
-/-! ### Bridge 2: Fragment QForce.definite → uniqueness presupposition
-
-The fragment's QForce.definite maps to `DefPresupType.uniqueness` (= weak
-article). The familiarity reading arises when the situation pronoun refers
-to a discourse-restricted situation (pragmatic, not structural). -/
 
 theorem english_the_is_uniqueness :
     qforceToPresupType Fragments.English.Determiners.the.qforce =
     some DefPresupType.uniqueness := rfl
 
-/-- Demonstratives "this"/"that" are also QForce.definite in the fragment.
-@cite{schwarz-2009}: they are structurally distinguished by requiring a
-FAMILIARITY situation (= strong article / D_deix layer). -/
 theorem english_demonstratives_are_definite :
     Fragments.English.Determiners.this.qforce = .definite ∧
     Fragments.English.Determiners.that.qforce = .definite :=
   ⟨rfl, rfl⟩
 
-/-! ### Bridge 3: Pronouns → the_sit + NP-deletion
+/-! ### Bridge 3: Pronouns → the_sit + NP-deletion -/
 
-Third-person personal pronouns (he/she/it) are `the_sit` with
-phonologically null NP complements (@cite{postal-1966}, @cite{elbourne-2005}, 2013 Ch 10).
-The Fragment classifies them as `PronounType.personal` with `person =.third`. -/
-
-/-- "it" is personal, 3rd person, sg.
-Under Elbourne: ⟦it⟧ = ⟦the⟧ + NP-deletion. -/
 theorem it_entry_classification :
     Fragments.English.Pronouns.it.pronounType = .personal ∧
     Fragments.English.Pronouns.it.person = some .third ∧
     Fragments.English.Pronouns.it.number = some .sg :=
   ⟨rfl, rfl, rfl⟩
 
-/-- "he" is personal, 3rd person, sg, nominative.
-Under Elbourne: ⟦he⟧ = ⟦the⟧ + NP-deletion + [+masculine] φ-features. -/
 theorem he_entry_classification :
     Fragments.English.Pronouns.he.pronounType = .personal ∧
     Fragments.English.Pronouns.he.person = some .third ∧
@@ -105,8 +405,6 @@ theorem he_entry_classification :
     Fragments.English.Pronouns.he.case_ = some .nom :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- "she" is personal, 3rd person, sg, nominative.
-Under Elbourne: ⟦she⟧ = ⟦the⟧ + NP-deletion + [+feminine] φ-features. -/
 theorem she_entry_classification :
     Fragments.English.Pronouns.she.pronounType = .personal ∧
     Fragments.English.Pronouns.she.person = some .third ∧
@@ -114,38 +412,27 @@ theorem she_entry_classification :
     Fragments.English.Pronouns.she.case_ = some .nom :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-! ### Bridge 4: Donnellan → Elbourne
-
-Donnellan's referential/attributive distinction maps isomorphically
-to Elbourne's free/bound situation variable distinction. -/
+/-! ### Bridge 4: Donnellan → Elbourne -/
 
 theorem referential_is_free :
     useModeToSitVar .referential = .free := rfl
 theorem attributive_is_bound :
     useModeToSitVar .attributive = .bound := rfl
 
-/-! ### Bridge 5: Pronoun-as-definite examples (@cite{elbourne-2013}, Ch 10)
+/-! ### Bridge 5: Pronoun-as-definite examples -/
 
-Concrete instances of the pronoun = definite article analysis. -/
-
-/-- Ch 10 §10.3: "Every man who owns a donkey beats it."
-"it" = [the donkey s₃] — NP "donkey" recovered from indefinite. -/
 def donkeyPronounExample : PronounAsDefinite :=
   { pronounForm := "it"
   , deletedNP := "donkey"
   , npSource := .donkeyRestrictor
   , equivalentDefinite := "the donkey" }
 
-/-- Ch 10 §10.4: "I saw the Junior Dean. He was worried."
-"He" = [the Junior Dean s₁] — NP recovered from antecedent. -/
 def anaphoricPronounExample : PronounAsDefinite :=
   { pronounForm := "he"
   , deletedNP := "Junior Dean"
   , npSource := .antecedent
   , equivalentDefinite := "the Junior Dean" }
 
-/-- Ch 10 §10.6: "He who hesitates is lost."
-"He" = [he [person [who hesitates]]] s₁ — NP is "person". -/
 def voldemortExample : PronounAsDefinite :=
   { pronounForm := "he"
   , deletedNP := "person"
@@ -158,85 +445,45 @@ def voldemortExample : PronounAsDefinite :=
 -- "The murderer of Smith is insane"
 -- ════════════════════════════════════════════════════════════════
 
-/-! ### Setup
-
-@cite{donnellan-1966}'s classic scenario, analyzed via @cite{elbourne-2013}:
-
-The speaker is at Smith's murder trial. Jones sits in the dock,
-behaving very strangely. The speaker says:
-
-  "The murderer of Smith is insane."
-
-**Referential use**: The speaker sees Jones in the dock and means
-*that man* (Jones) is insane. The situation variable is FREE, mapped
-to s_courtroom where Jones is the unique salient individual connected
-to the murder.
-
-**Attributive use**: The speaker means whoever actually committed the
-murder is insane. The situation variable is BOUND, ranging over the
-actual world where the real murderer (Wilson, as it turns out) is the
-unique satisfier.
-
-Key: Jones is the accused but NOT the real murderer. Wilson did it.
-Jones is insane; Wilson is not. The two readings yield different
-truth values — from a SINGLE `the_sit'` entry. -/
-
 section RefAttr
 
-/-- Situations: courtroom scene, office, actual world. -/
 inductive Sit where
   | sCourtroom | sOffice | wActual
   deriving DecidableEq, BEq, Repr
 
-/-- Entities in the model. -/
 inductive Ent where
   | jones | smith | wilson | table1 | table2 | table3
   deriving DecidableEq, BEq, Repr
 
 def allEnts : List Ent := [.jones, .smith, .wilson, .table1, .table2, .table3]
 
-/-- ⟦murderer of Smith⟧: who is "the murderer" in each situation?
-    - In s_courtroom (the trial): Jones (accused, in the dock)
-    - In w_actual (the world): Wilson (the real murderer) -/
 def isMurderer : Ent → Sit → Bool
   | .jones, .sCourtroom => true
   | .wilson, .wActual => true
   | _, _ => false
 
-/-- ⟦is insane⟧: Jones is insane; Wilson is not. -/
 def isInsane : Ent → Sit → Bool
   | .jones, _ => true
   | _, _ => false
 
-/-- "The murderer of Smith is insane" as a PrProp. -/
 def theMurderer : PrProp Sit := the_sit' allEnts isMurderer isInsane
 
-/-- Referential reading: evaluate at s_courtroom (= free s*).
-    Jones is the unique murderer in s_courtroom. Jones is insane. → true -/
 theorem referential_presup :
     theMurderer.presup .sCourtroom = true := rfl
 theorem referential_assertion :
     theMurderer.assertion .sCourtroom = true := rfl
 
-/-- Attributive reading: evaluate at w_actual (= bound s).
-    Wilson is the unique murderer in w_actual. Wilson is NOT insane. → false -/
 theorem attributive_presup :
     theMurderer.presup .wActual = true := rfl
 theorem attributive_assertion :
     theMurderer.assertion .wActual = false := rfl
 
-/-- The two readings yield different truth values — exactly Donnellan's
-    divergence, derived from a SINGLE `the_sit'` entry. -/
 theorem ref_attr_diverge :
     theMurderer.assertion .sCourtroom ≠ theMurderer.assertion .wActual := nofun
 
-/-- The SitVarStatus distinction at work. -/
-def refSitVar : SitVar := .free           -- s* = s_courtroom
-def attrSitVar : SitVar := .bound 1       -- s₁ bound to w_actual
+def refSitVar : SitVar := .free
+def attrSitVar : SitVar := .bound 1
 
-/-- @cite{kripke-1977}'s argument: referential reading is pragmatic
-    (speaker's reference), not a semantic ambiguity. Elbourne formalizes
-    this: both readings use the same entry; only the SITUATION differs. -/
 theorem same_entry_both_readings :
     theMurderer = theMurderer := rfl
 
@@ -248,17 +495,8 @@ end RefAttr
 -- "The table is covered with books"
 -- ════════════════════════════════════════════════════════════════
 
-/-! ### Setup
-
-Three tables exist in the world but only one in the office situation.
-"The table" is globally non-unique — the definite should fail. But
-situation-relative uniqueness saves it. -/
-
 section Incomplete
 
-/-- ⟦table⟧: which entities are tables in which situations?
-    - In s_office: only table1
-    - In w_actual: table1, table2, table3 (all three) -/
 def isTable : Ent → Sit → Bool
   | .table1, .sOffice => true
   | .table1, .wActual => true
@@ -272,24 +510,15 @@ def isCoveredWithBooks : Ent → Sit → Bool
 
 def theTable : PrProp Sit := the_sit' allEnts isTable isCoveredWithBooks
 
-/-- At s_office: table1 is the unique table. Presupposition SATISFIED. -/
 theorem incomplete_presup_office :
     theTable.presup .sOffice = true := rfl
-
-/-- At w_actual: three tables. Presupposition FAILS (non-unique). -/
 theorem incomplete_presup_world :
     theTable.presup .wActual = false := rfl
-
-/-- When presupposition is satisfied, the assertion is correct. -/
 theorem incomplete_assertion_office :
     theTable.assertion .sOffice = true := rfl
 
-/-- Elbourne's Ch 9 argument: incomplete definites are resolved by
-    situation restriction, not covert relation variables or pragmatic
-    enrichment. The SAME entry handles both. -/
 theorem incompleteness_is_situation_variable :
-    Semantics.Intensional.Situations.Elbourne.elbournePreferred =
-    .situationVariable := rfl
+    elbournePreferred = .situationVariable := rfl
 
 end Incomplete
 
@@ -299,20 +528,6 @@ end Incomplete
 -- "Every farmer who owns a donkey beats it"
 -- ════════════════════════════════════════════════════════════════
 
-/-! ### Setup
-
-In Elbourne's system, the donkey pronoun "it" is analyzed as:
-  [the donkey s₃]
-where "the" = `the_sit'`, "donkey" = deleted NP (from indefinite's
-restrictor), and s₃ = situation variable bound by the universal quantifier.
-
-The key insight: in a MINIMAL situation where "a farmer owns a donkey",
-there is exactly one donkey (and one farmer). So `the_sit'` evaluated
-at that minimal situation has its uniqueness presupposition satisfied.
-
-We build a SituationFrame with mereological structure to exercise
-the minimality infrastructure from Elbourne.lean. -/
-
 section Donkey
 
 inductive DkEnt where
@@ -320,12 +535,9 @@ inductive DkEnt where
   deriving DecidableEq, BEq, Repr
 
 inductive DkSit where
-  | sMin1    -- minimal: farmer1 owns donkey_a
-  | sMin2    -- minimal: farmer2 owns donkey_b
-  | wActual  -- full world
+  | sMin1 | sMin2 | wActual
   deriving DecidableEq, BEq, Repr
 
-/-- Part-of relation. Direct Prop-valued for clean case analysis. -/
 def dkLe : DkSit → DkSit → Prop
   | _, .wActual => True
   | .sMin1, .sMin1 => True
@@ -345,7 +557,6 @@ private theorem dkLe_antisymm : ∀ s₁ s₂, dkLe s₁ s₂ → dkLe s₂ s₁
   cases s₁ <;> cases s₂ <;>
     first | rfl | exact h₁.elim | exact h₂.elim
 
-/-- Concrete situation frame for donkey anaphora. -/
 def DkF : SituationFrame where
   Sit := DkSit
   Ent := DkEnt
@@ -356,10 +567,6 @@ def DkF : SituationFrame where
 
 def dkEnts : List DkEnt := [.farmer1, .farmer2, .donkey_a, .donkey_b, .donkey_c]
 
-/-- ⟦donkey⟧: which entities are donkeys in which situations?
-    - sMin1: donkey_a only (minimal)
-    - sMin2: donkey_b only (minimal)
-    - wActual: donkey_a, donkey_b, donkey_c -/
 def isDonkey : DkEnt → DkSit → Bool
   | .donkey_a, .sMin1 => true
   | .donkey_b, .sMin2 => true
@@ -368,38 +575,25 @@ def isDonkey : DkEnt → DkSit → Bool
   | .donkey_c, .wActual => true
   | _, _ => false
 
-/-- ⟦farmer beats x⟧ -/
 def isBeaten : DkEnt → DkSit → Bool
   | .donkey_a, _ => true
   | .donkey_b, _ => true
   | _, _ => false
 
-/-- "it" in "Every farmer who owns a donkey beats it" =
-    [the donkey s₃] where s₃ is bound to a minimal situation. -/
 def donkeyPronoun : PrProp DkSit := the_sit' dkEnts isDonkey isBeaten
 
-/-- At sMin1: exactly one donkey (donkey_a). Uniqueness from minimality. -/
 theorem donkey_presup_min1 :
     donkeyPronoun.presup .sMin1 = true := rfl
-
-/-- At sMin2: exactly one donkey (donkey_b). -/
 theorem donkey_presup_min2 :
     donkeyPronoun.presup .sMin2 = true := rfl
-
-/-- At w_actual: THREE donkeys — presupposition FAILS. The situation
-    variable must be bound to minimal situations, not the world. -/
 theorem donkey_presup_world_fails :
     donkeyPronoun.presup .wActual = false := rfl
 
-/-- At sMin1, the farmer beats his donkey. -/
 theorem donkey_assertion_min1 :
     donkeyPronoun.assertion .sMin1 = true := rfl
-
-/-- At sMin2, the farmer beats his donkey. -/
 theorem donkey_assertion_min2 :
     donkeyPronoun.assertion .sMin2 = true := rfl
 
-/-- DonkeyConfig structure matches our setup. -/
 def donkeyConfig1 : DonkeyConfig DkF where
   nounContent := isDonkey
   sitVar := .sMin1
@@ -410,7 +604,6 @@ def donkeyConfig2 : DonkeyConfig DkF where
   sitVar := .sMin2
   domain := dkEnts
 
-/-- Minimality of sMin1 for the donkey-uniqueness predicate. -/
 theorem donkey_uniqueness_via_minimality_min1 :
     DkF.isMinimal (λ s => match dkEnts.filter (λ e => isDonkey e s) with
                            | [_] => true | _ => false) .sMin1 := by
@@ -421,7 +614,6 @@ theorem donkey_uniqueness_via_minimality_min1 :
   | sMin2 => exact hle.elim
   | wActual => exact hle.elim
 
-/-- Minimality of sMin2 for the donkey-uniqueness predicate. -/
 theorem donkey_uniqueness_via_minimality_min2 :
     DkF.isMinimal (λ s => match dkEnts.filter (λ e => isDonkey e s) with
                            | [_] => true | _ => false) .sMin2 := by
@@ -440,18 +632,6 @@ end Donkey
 -- "Mary believes the president is a spy"
 -- ════════════════════════════════════════════════════════════════
 
-/-! ### Setup
-
-Extends @cite{percus-2000}'s analysis from bare predicates to full DPs.
-
-"Mary believes the president is a spy."
-
-De re (free s*): [the president s*] at actual → actual president (Jones)
-De dicto (bound s₁): [the president s₁] at belief → believed president (Smith)
-
-The DP "the president" stays in place; only the situation index changes.
-This is Elbourne's Ch 7 argument against scope-based de re/de dicto. -/
-
 section DeReDeDicto
 
 inductive BSit where
@@ -464,37 +644,29 @@ inductive BEnt where
 
 def bEnts : List BEnt := [.jones, .smith, .mary]
 
-/-- ⟦president⟧: Jones in actuality, Smith in Mary's beliefs. -/
 def isPresident : BEnt → BSit → Bool
   | .jones, .actual => true
   | .smith, .belief => true
   | _, _ => false
 
-/-- ⟦spy⟧: Smith is a spy; Jones is not. -/
 def isSpy : BEnt → BSit → Bool
   | .smith, _ => true
   | _, _ => false
 
 def thePresident : PrProp BSit := the_sit' bEnts isPresident isSpy
 
-/-- De re: actual president = Jones, not a spy. → false -/
 theorem deRe_presup : thePresident.presup .actual = true := rfl
 theorem deRe_assertion : thePresident.assertion .actual = false := rfl
 
-/-- De dicto: believed president = Smith, is a spy. → true -/
 theorem deDicto_presup : thePresident.presup .belief = true := rfl
 theorem deDicto_assertion : thePresident.assertion .belief = true := rfl
 
-/-- The two readings diverge. -/
 theorem deRe_deDicto_diverge :
     thePresident.assertion .actual ≠ thePresident.assertion .belief := nofun
 
-/-- SitVarStatus classification. -/
 theorem deRe_is_free : SitVarStatus.free = useModeToSitVar .referential := rfl
 theorem deDicto_is_bound : SitVarStatus.bound = useModeToSitVar .attributive := rfl
 
-/-- Unlike Russell's scope theory, the DP stays in situ. Only the
-    situation index changes. -/
 def deReVar : SitVar := .free
 def deDictoVar : SitVar := .bound 1
 
@@ -506,24 +678,8 @@ end DeReDeDicto
 -- "Hans wants the ghost in his attic to be quiet"
 -- ════════════════════════════════════════════════════════════════
 
-/-! ### Setup
-
-Elbourne's argument against Russell (Ch 8): the existence component
-of a definite is a PRESUPPOSITION, not an assertion.
-
-"Hans wants the ghost in his attic to be quiet tonight."
-
-Under Russell: Hans wants [∃!x ghost(x) ∧ quiet(x)] — Hans wants
-there to be a ghost. WRONG.
-
-Under Elbourne: the_sit' introduces a presupposition that projects
-to Hans's beliefs. Hans believes there is a ghost,
-but the speaker need not. -/
-
 section ExistenceEntailment
 
-/-- Ch 8: "Hans wants the ghost in his attic to be quiet tonight."
-Speaker need not believe there's a ghost; Hans must believe it. -/
 def hansGhost : ExistenceEntailmentDatum :=
   { sentence := "Hans wants the ghost in his attic to be quiet tonight."
   , speakerPresupposes := false
@@ -532,8 +688,6 @@ def hansGhost : ExistenceEntailmentDatum :=
   , elbournePrediction := "Presupposition projects to Hans's beliefs via Karttunen (1974)"
   , source := "Elbourne 2013, Ch 8 §8.6" }
 
-/-- Ch 8: "Ponce de León is wondering whether the fountain of youth is in Florida."
-Narrow scope under wonder — no speaker commitment to existence. -/
 def ponceFountain : ExistenceEntailmentDatum :=
   { sentence := "Ponce de León is wondering whether the fountain of youth is in Florida."
   , speakerPresupposes := false
@@ -552,7 +706,6 @@ inductive GhostEnt where
 
 def ghostEnts : List GhostEnt := [.hans, .ghost]
 
-/-- ⟦ghost in attic⟧: exists in Hans's beliefs, not in reality. -/
 def isGhost : GhostEnt → GhostSit → Bool
   | .ghost, .belief => true
   | _, _ => false
@@ -563,25 +716,17 @@ def isQuiet : GhostEnt → GhostSit → Bool
 
 def theGhost : PrProp GhostSit := the_sit' ghostEnts isGhost isQuiet
 
-/-- In Hans's belief world: ghost exists (unique). Presupposition satisfied.
-    Hans can "want the ghost to be quiet" — presupposition projects to
-    his beliefs, where there IS a ghost. -/
 theorem ghost_presup_belief :
     theGhost.presup .belief = true := rfl
-
-/-- In the actual world: no ghost. Presupposition FAILS.
-    Speaker does not presuppose existence. -/
 theorem ghost_presup_actual :
     theGhost.presup .actual = false := rfl
 
-/-- The ExistenceEntailmentDatum captures this exact pattern. -/
 theorem ghost_matches_datum :
     hansGhost.speakerPresupposes = false ∧
     hansGhost.subjectBelieves = true ∧
     hansGhost.existenceActual = false :=
   ⟨rfl, rfl, rfl⟩
 
-/-- The Ponce de León datum shows the same pattern under "wonder". -/
 theorem ponce_matches_datum :
     ponceFountain.speakerPresupposes = false ∧
     ponceFountain.subjectBelieves = true ∧
@@ -592,41 +737,21 @@ end ExistenceEntailment
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Summary: Coverage of Elbourne Infrastructure
--- ════════════════════════════════════════════════════════════════
-
--- ════════════════════════════════════════════════════════════════
 -- § Example 6: Pronouns as Definite Articles (Ch 10)
--- "Every farmer who owns a donkey beats it"
 -- ════════════════════════════════════════════════════════════════
-
-/-! ### Setup
-
-The pronoun "it" in donkey sentences = [the donkey s₃] (@cite{elbourne-2013} Ch 10).
-`pronounDenot` is defined as `the_sit'` — the identity `pronoun_is_definite_article`
-states they are the same function. Here we verify this concretely by showing
-the pronoun's denotation matches the overt definite description. -/
 
 section PronounAsDefiniteExample
 
-/-- "it" (= [the donkey s₃]) in "Every farmer who owns a donkey beats it."
-    At minimal situations, the pronoun's denotation = the definite's. -/
 def itAsDonkey : PrProp DkSit :=
   pronounDenot dkEnts isDonkey isBeaten
 
-/-- The pronoun "it" at sMin1 has the same truth value as "the donkey". -/
 theorem pronoun_matches_definite_min1 :
     itAsDonkey = donkeyPronoun := rfl
-
-/-- The pronoun presupposition is satisfied at minimal situations. -/
 theorem pronoun_presup_min1 :
     itAsDonkey.presup .sMin1 = true := rfl
-
-/-- The pronoun presupposition fails at the world (non-unique). -/
 theorem pronoun_presup_world_fails :
     itAsDonkey.presup .wActual = false := rfl
 
-/-- The three NP-deletion sources are all exercised. -/
 theorem np_sources_exercised :
     donkeyPronounExample.npSource = .donkeyRestrictor ∧
     anaphoricPronounExample.npSource = .antecedent ∧
@@ -635,27 +760,5 @@ theorem np_sources_exercised :
 
 end PronounAsDefiniteExample
 
-
-/-! ### What this file exercises
-
-| Theory construct              | Example(s)            | Status    |
-|-------------------------------|-----------------------|-----------|
-| `SituationFrame`              | DkF (donkey)          | exercised |
-| `SituationFrame.isMinimal`    | Ex 3                  | exercised |
-| `the_sit'`                    | all 6 examples        | exercised |
-| `pronounDenot`                | Ex 6                  | exercised |
-| `pronoun_is_definite_article` | Ex 6 (rfl)            | exercised |
-| `SitVarStatus` (free/bound)   | Ex 1, 4               | exercised |
-| `SitVar` (free/bound n)       | Ex 1, 4               | exercised |
-| `SitBinder`                   | type referenced       | typed     |
-| `DonkeyConfig`                | Ex 3                  | exercised |
-| `IncompletenessSource`        | Ex 2                  | exercised |
-| `useModeToSitVar`             | bridge, Ex 4          | exercised |
-| `ExistenceEntailmentDatum`    | Ex 5                  | exercised |
-| `PronounAsDefinite`           | Bridge 5              | exercised |
-| `NPDeletionSource`            | Bridge 5              | exercised |
-| `the_sit_assertion_implies…`  | via pronounDenot      | exercised |
-| `the_sit_at_world_eq_the_…`   | via Elbourne.lean     | (rfl)     |
--/
 
 end Phenomena.Reference.Studies.Elbourne2013
