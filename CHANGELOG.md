@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.229.373] - 2026-03-19
+
+### Added
+- **Romero (2005) formalization** (`Phenomena/Copulas/Studies/Romero2005.lean`): concealed questions and specificational subjects — `know₁`/`know₂` lexical entries (29b,c), `be₁_spec`/`be₂_spec` (67a,b), A/B ambiguity demo (`readings_differ`), Account 1 refutation (`account1_equals_readingA`), crosscategorial uniformity (`knowGeneric`/`beGeneric`), rigidity theorems, `know₁_eq_boxAt` connecting to `Doxastic.boxAt` theory layer, Partee1987 pred/spec comparison
+- Bibliography entries: `heim-1979` (Concealed Questions), `uegaki-2019` (Semantics of Question-Embedding Predicates)
+
+### Removed
+- `specCopula` from `Numeral/Polysemy.lean` — dead code (never imported), misplaced in numeral polysemy file
+- `isPriceConcept` from Romero2005 — dead code (defined but unused in any theorem)
+
+## [0.229.372] - 2026-03-19
+
+### Added
+- **PIP Felicity conditions** (`Theories/Semantics/Dynamic/PIP/Felicity.lean`): static `PIPExpr` type with recursive `truth` and `felicitous` (F operator) functions, Karttunen's asymmetric conjunction, `singlePresup`, `might_blocks_anaphora` / `must_allows_anaphora` theorems
+- **Intensional anaphora worked examples** in `Phenomena/Anaphora/Studies/KeshetAbney2024.lean`: IntensionalBurger (might blocks — world-dependent description fails at actual world) and IntensionalAnimal (must allows — world-independent description succeeds everywhere), with label registration, description failure/success, and felicity bridge theorems
+
+### Fixed
+- Fix `!` notation conflict with `Core.DynProp.closure` in Felicity.lean — use `.not` for Bool negation
+- Fix hallucinated paper reference in `PIP/Connectives.lean` (cited "example 49, p. 9:23" — replaced with content description)
+
+## [0.229.371] - 2026-03-19
+
+### Added
+- **Shared phonological constraint library** (`Theories/Phonology/Constraints.lean`): reusable constructors `mkMax`, `mkDep`, `mkIdent`, `mkMark`, `mkMarkGrad`, `mkMaxCtx`, `mkDepCtx` with classification and violation bound theorems — every new study benefits
+- **English t/d-deletion fragment** (`Fragments/English/TDDeletion.lean`): cross-dialectal deletion rates from 5 English dialects × 3 contexts (table 10), morphological conditioning data (table 7), cross-dialectal generalization theorems
+- **Coetzee & Pater (2011) formalization** (`Phenomena/PhonologicalAlternation/Studies/CoetzeePater2011.lean`): POC model, MaxEnt model, and framework separation theorem for English t/d-deletion
+  - POC: 24 total rankings, verified deletion counts (8/24 pre-V, 8/24 pause, 12/24 pre-C)
+  - 5 distinct language types in factorial typology matching table (12)
+  - Structural implication: `preV_deletion_implies_preC` — every ranking producing pre-V deletion also produces pre-C deletion
+  - Tejano' impossibility: POC cannot generate reversed pre-C/pre-V rates
+  - MaxEnt CAN generate Tejano' with negative MAX-PRE-V weight (witness: wCT=1, wMax=2, wMaxPreV=-2)
+  - `framework_separation` theorem: POC ⊊ MaxEnt typologically
+  - OT limit bridge: categorical predictions for MAX >> *CT and *CT >> all faithfulness
+  - 20 theorems total (all `native_decide` or structural)
+- Bibliography entries: `coetzee-pater-2011`, `anttila-1997`, `kiparsky-1993b`, `mccarthy-prince-1995`
+
 ## [0.229.370] - 2026-03-19
 
 ### Changed

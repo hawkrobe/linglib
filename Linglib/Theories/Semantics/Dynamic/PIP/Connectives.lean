@@ -231,9 +231,8 @@ def might (access : PAccessRel W) (allWorlds : List W)
 Modal subordination operator (would): universal quantification over
 the same accessibility relation as the prior modal.
 
-In the paper (example 49, p. 9:23), "It would eat you first" is
-analyzed as MUST^{a₀}_{w*}([w₁]; DEF_X{x}; EAT_{w₁}{x, you}),
-where a₀ is the same accessibility relation from "might" in the
+In the paper's modal subordination analysis, "It would eat you first" is
+analyzed as MUST with the same accessibility relation from "might" in the
 preceding sentence. So `would` = `must` with the inherited modal base.
 -/
 def would (access : PAccessRel W) (allWorlds : List W)

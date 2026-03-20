@@ -83,10 +83,6 @@ def closeAppositive {m : Semantics.Montague.Model}
     : Option (m.interpTy .e) :=
   Semantics.Composition.TypeShifting.iota domain (fun x => n1 x && n2 x)
 
-/-- Specificational copula: ⟦be⟧ = λx.λy_i. ∨y_i = x (@cite{romero-2005}, (34)).
-    Maps individual concepts to their actual present values. -/
-def specCopula {α β : Type} (actualValue : α → β) (x : α) : β := actualValue x
-
 /-- The Identification Problem is resolved: close appositives are context-sensitive.
     "The von Neumann ordinal two" and "the Zermelo ordinal two" refer to different
     subkinds of TWO, so both can be true without contradiction (Snyder §5.2). -/

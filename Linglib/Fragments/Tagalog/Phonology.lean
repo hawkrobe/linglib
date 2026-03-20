@@ -41,7 +41,8 @@ open Theories.Phonology.HarmonicGrammar
 -- § 1: Underlying Forms
 -- ============================================================================
 
-/-- The four underlying concatenations from @cite{magri-2025} eq. (11). -/
+/-- The four underlying concatenations from @cite{magri-2025}'s
+    2×2 square arrangement. -/
 inductive NasalSubInput where
   | mang_b  -- /maŋ+b/  (top-left)
   | mang_k  -- /maŋ+k/  (top-right)
@@ -159,10 +160,10 @@ def violDiffProfile : Fin 6 → NasalSubInput → ℤ
 -- ============================================================================
 
 /-- Empirical rates of nasal substitution from @cite{zuraw-2010} type
-    frequencies (@cite{zuraw-hayes-2017} Figure 4, @cite{magri-2025}).
-    The four cells correspond to the two extreme prefixes (maŋ-other =
-    highest rate, paŋ-res = lowest) crossed with /b/ (voiced) and /k/
-    (voiceless). -/
+    frequencies, arranged per @cite{magri-2025}'s 2×2 square
+    (@cite{zuraw-hayes-2017}). The four cells correspond to the two
+    extreme prefixes (maŋ-other = highest rate, paŋ-res = lowest)
+    crossed with /b/ (voiced) and /k/ (voiceless). -/
 def nasalSubRate : NasalSubInput → ℚ
   | .mang_b => 916 / 1000  -- 0.916
   | .mang_k => 993 / 1000  -- 0.993

@@ -393,6 +393,7 @@ import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.English.Phonology
+import Linglib.Fragments.English.TDDeletion
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.Morph
 import Linglib.Fragments.English.Negation
@@ -670,6 +671,7 @@ import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
 import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Copulas.Studies.Partee1987
 import Linglib.Phenomena.Copulas.Studies.Elbourne2026
+import Linglib.Phenomena.Copulas.Studies.Romero2005
 import Linglib.Phenomena.Complementation.Attitudes.IntensionalExamples
 import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
@@ -1165,7 +1167,9 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Jaeger2007
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Magri2025
 import Linglib.Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
+import Linglib.Phenomena.PhonologicalAlternation.Studies.Zuraw2010
 import Linglib.Phenomena.PhonologicalAlternation.Studies.AfkirZellou2025
+import Linglib.Phenomena.PhonologicalAlternation.Studies.CoetzeePater2011
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
@@ -1312,6 +1316,7 @@ import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Update
 import Linglib.Theories.Semantics.Dynamic.PIP.Basic
 import Linglib.Theories.Semantics.Dynamic.PIP.Connectives
 import Linglib.Theories.Semantics.Dynamic.PIP.Phenomena
+import Linglib.Theories.Semantics.Dynamic.PIP.Felicity
 import Linglib.Theories.Semantics.Dynamic.PLA.Basic
 import Linglib.Theories.Semantics.Dynamic.PLA.Belief
 import Linglib.Theories.Semantics.Dynamic.PLA.DeepTheorems
@@ -1836,6 +1841,7 @@ import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Theories.Phonology.HarmonicGrammar.Separability
 import Linglib.Theories.Phonology.HarmonicGrammar.Variation
+import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.ProsodicWord
 -- Theories: Sociolinguistics
