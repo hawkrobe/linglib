@@ -145,6 +145,11 @@ def priceMilk : Intension W E
 def priceOil : Intension W E
   | _ => 3  -- $4.99
 
+/-- A rigid IC with value 0 at all worlds. Used to demonstrate that
+    extensional mechanisms (Account 3, extensional verbs) cannot distinguish
+    ICs that agree at the evaluation world. -/
+def rigidZero : W → E := λ _ => 0
+
 scoped instance : BEq (Intension W E) where
   beq f g := worlds.all λ w => f w == g w
 
@@ -490,6 +495,32 @@ theorem account3_fails_at_w2 :
     know₂ thePriceFredKnows_intension john .w2 = true :=
   ⟨by native_decide, readingB_w2⟩
 
+/-- **Type-level expressiveness limitation**: Account 3's entity-type argument
+    makes `knowPragmatic` extensional in the IC — it depends on `y` only
+    through `y w`, discarding cross-world behavior. For ANY property P, two
+    ICs that agree at `w` produce identical results. -/
+theorem account3_extensional_in_ic (y y' : W → E) (agent : E)
+    (P : E → W → Bool) (w : W) (h : y w = y' w) :
+    knowPragmatic agent (y w) P w = knowPragmatic agent (y' w) P w := by
+  simp only [h]
+
+/-- The structural refutation: Account 3 cannot distinguish ICs that agree
+    at the evaluation world, for ANY choice of P. But `know₁` can, because
+    it checks the IC's values across doxastic alternatives.
+
+    `priceMilk` and `rigidZero` both yield 0 at w2. No property P makes
+    `knowPragmatic` tell them apart. Yet `know₁` gives different results
+    (false vs true) because milk prices vary at w3 but rigidZero doesn't. -/
+theorem account3_type_limitation :
+    priceMilk .w2 = rigidZero .w2 ∧
+    (∀ P : E → W → Bool,
+      knowPragmatic john (priceMilk .w2) P .w2 =
+      knowPragmatic john (rigidZero .w2) P .w2) ∧
+    know₁ priceMilk john .w2 ≠ know₁ rigidZero john .w2 := by
+  refine ⟨rfl, fun P => ?_, ?_⟩
+  · exact account3_extensional_in_ic priceMilk rigidZero john P .w2 rfl
+  · native_decide
+
 /-! ## SS Account Refutations (§3.3)
 
 Parallel to §2.4 for CQs. Account 2 requires `be₃_spec` which collapses
@@ -625,9 +656,6 @@ theorem extensional_collapses (verb : E → E → W → Bool)
     (y y' : W → E) (x : E) (w : W) (h : y w = y' w) :
     extensionalVerb verb y x w = extensionalVerb verb y' x w := by
   simp only [extensionalVerb, h]
-
-/-- A rigid IC with value 0 at all worlds. -/
-def rigidZero : W → E := λ _ => 0
 
 /-- The key contrast: `priceMilk` and `rigidZero` agree at w2 (both yield 0).
     An extensional verb CANNOT distinguish them (it only sees the entity at w),
