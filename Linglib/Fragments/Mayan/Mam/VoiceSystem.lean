@@ -5,10 +5,16 @@ import Linglib.Core.VoiceSystem
 
 /-!
 # Mam Voice System Fragment
-@cite{elkins-torrence-brown-2026}
+@cite{elkins-torrence-brown-2026} @cite{scott-2023}
 
-Minimalist infrastructure for the SJO Mam verbal domain, connecting the
+Minimalist infrastructure for the Mam verbal domain, connecting the
 language-specific clause sizes to the ClauseSpine and VoiceHead abstractions.
+
+**Variety note**: Oblique extraction (=(y)a') data is from SJO (San Juan
+Ostuncalco) Mam via @cite{elkins-torrence-brown-2026}. Antipassive voice
+data draws on SJA (San Juan Atitán) Mam via @cite{scott-2023}. These are
+distinct varieties; shared infrastructure (clause spines, Voice heads) is
+parameterized where possible.
 
 ## Key Claims
 
@@ -176,7 +182,45 @@ theorem passive_voice_same_features :
   exact ⟨rfl, by decide⟩
 
 -- ============================================================================
--- § 8: Voice System Profile
+-- § 8: Antipassive Voice (@cite{scott-2023}, §2.5.4.1)
+-- ============================================================================
+
+/-- Mam antipassive Voice head.
+
+    In antipassive constructions, the agent is still introduced by Voice
+    but receives absolutive case (Set B marking) instead of ergative (Set A).
+    The object is demoted to an oblique introduced by a relational noun.
+    The verb bears the antipassive suffix -(a)n.
+
+    Antipassive Voice is NOT a phase head — the subject gets ABS, not ERG.
+    This is the key structural difference from agentive Voice: the clause
+    is syntactically intransitive despite having an agent.
+
+    In agent focus / ergative extraction contexts, the antipassive
+    co-occurs with the suffix -ta (@cite{scott-2023}, §2.7.1.3). -/
+def mamAntipassiveVoice : Minimalism.VoiceHead :=
+  { flavor := .antipassive
+  , hasD := true
+  , phaseHead := false
+  , features := [] }
+
+/-- Antipassive Voice assigns a θ-role (the agent is present). -/
+theorem mamAntipassive_assigns_theta :
+    mamAntipassiveVoice.assignsTheta = true := rfl
+
+/-- Antipassive Voice is NOT a phase head. -/
+theorem mamAntipassive_not_phase :
+    mamAntipassiveVoice.phaseHead = false := rfl
+
+/-- Antipassive and agentive Voice differ in phase-head status but both
+    assign θ-roles. This captures the transitivity alternation: same
+    agent, different case on the subject. -/
+theorem antipassive_vs_agentive :
+    mamAntipassiveVoice.assignsTheta = mamVoice.assignsTheta ∧
+    mamAntipassiveVoice.phaseHead ≠ mamVoice.phaseHead := ⟨rfl, by decide⟩
+
+-- ============================================================================
+-- § 9: Voice System Profile
 -- ============================================================================
 
 /-- Mam voice system: two-way asymmetrical (agentive/passive).
@@ -187,19 +231,23 @@ theorem passive_voice_same_features :
     extraction — instead, Voice carries [uOblique] which conditions
     extraction morphology (=(y)a'). -/
 def mamVoiceSystem : Interfaces.VoiceSystemProfile :=
-  { language := "Mam (SJO)"
-    voices := [ ⟨"Agentive Voice", .agent⟩, ⟨"Passive Voice", .patient⟩ ]
+  { language := "Mam"
+    voices := [ ⟨"Agentive Voice", .agent⟩, ⟨"Passive Voice", .patient⟩,
+                ⟨"Antipassive Voice", .agent⟩ ]
     symmetry := .asymmetrical
-    notes := "Agentive is basic (phase head); passive is derived (Elkins et al. 2026)" }
+    notes := "Agentive is basic (phase head); passive/antipassive are derived. " ++
+             "Antipassive demotes object to oblique, subject gets ABS (Scott 2023). " ++
+             "Voice data from SJA (Scott 2023) and SJO (Elkins et al. 2026)" }
 
 theorem mam_voice_system_asymmetrical :
     mamVoiceSystem.symmetry = .asymmetrical := rfl
 
 theorem mam_voice_count :
-    mamVoiceSystem.voiceCount = 2 := rfl
+    mamVoiceSystem.voiceCount = 3 := rfl
 
-theorem mam_is_active_passive :
-    mamVoiceSystem.isActivePassive = true := rfl
+/-- Mam is not a simple active/passive system — it also has antipassive. -/
+theorem mam_not_simple_active_passive :
+    mamVoiceSystem.isActivePassive = false := by native_decide
 
 theorem mam_no_oblique_pivots :
     mamVoiceSystem.distinguishesObliques = false := rfl

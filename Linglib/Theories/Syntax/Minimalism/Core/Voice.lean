@@ -54,6 +54,7 @@ inductive VoiceFlavor where
   | expletive    -- No specifier, no semantics (middle voice)
   | impersonal   -- Demotes agent to implicit generic human (Finnish "passive")
   | passive      -- Checks Case but does not assign θ (@cite{collins-2005}: *by* heads VoiceP)
+  | antipassive  -- Introduces agent with absolutive (not ergative) case; demotes object to oblique (@cite{scott-2023})
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -80,13 +81,13 @@ structure VoiceHead where
 /-- Does this Voice head introduce a θ-role? -/
 def VoiceHead.assignsTheta (v : VoiceHead) : Bool :=
   match v.flavor with
-  | .agentive | .causer => true
+  | .agentive | .causer | .antipassive => true
   | .nonThematic | .expletive | .impersonal | .passive => false
 
 /-- Does this Voice head have semantic content? -/
 def VoiceHead.hasSemantics (v : VoiceHead) : Bool :=
   match v.flavor with
-  | .agentive | .causer | .impersonal | .passive => true
+  | .agentive | .causer | .impersonal | .passive | .antipassive => true
   | .nonThematic | .expletive => false
 
 -- ============================================================================
@@ -170,9 +171,10 @@ theorem passive_has_semantics : voicePassive.hasSemantics = true := rfl
 /-- Passive Voice checks Case (@cite{collins-2005}, p. 96: feature dissociation). -/
 theorem passive_checks_case : voicePassive.checksCase = true := rfl
 
-/-- Only agentive and causer Voice assign θ-roles. -/
-theorem theta_implies_agentive_or_causer (v : VoiceHead) :
-    v.assignsTheta = true → v.flavor = .agentive ∨ v.flavor = .causer := by
+/-- Only agentive, causer, and antipassive Voice assign θ-roles. -/
+theorem theta_implies_agentive_or_causer_or_antipassive (v : VoiceHead) :
+    v.assignsTheta = true →
+    v.flavor = .agentive ∨ v.flavor = .causer ∨ v.flavor = .antipassive := by
   cases v with | mk flavor _ _ =>
   cases flavor <;> simp [VoiceHead.assignsTheta]
 
@@ -189,12 +191,13 @@ theorem theta_implies_agentive_or_causer (v : VoiceHead) :
     This formalizes @cite{kratzer-1996}'s "severing" in @cite{cuervo-2003}'s event-decomposition vocabulary: the external argument's subevent
     comes from Voice, not from the root. -/
 def VoiceFlavor.eventContribution : VoiceFlavor → Option VerbHead
-  | .agentive    => some .vDO
-  | .causer      => some .vDO
-  | .nonThematic => none
-  | .expletive   => none
-  | .impersonal  => none
-  | .passive     => none
+  | .agentive     => some .vDO
+  | .causer       => some .vDO
+  | .antipassive  => some .vDO
+  | .nonThematic  => none
+  | .expletive    => none
+  | .impersonal   => none
+  | .passive      => none
 
 /-- Build the full verbal decomposition by combining Voice's contribution
     with the root-determined lower event structure.
@@ -381,12 +384,13 @@ structure VoiceParams where
     They differ in Case-checking (`VoiceHead.checksCase`), which is
     a property of the full `VoiceHead`, not of the parametric decomposition. -/
 def VoiceFlavor.toParams : VoiceFlavor → VoiceParams
-  | .agentive    => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
-  | .causer      => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
-  | .nonThematic => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
-  | .expletive   => { selectsSpecifier := some false, extArgSemantics := some .expletive }
-  | .impersonal  => { selectsSpecifier := some false, extArgSemantics := some .thematicExistential }
-  | .passive     => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
+  | .agentive     => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
+  | .causer       => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
+  | .antipassive  => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
+  | .nonThematic  => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
+  | .expletive    => { selectsSpecifier := some false, extArgSemantics := some .expletive }
+  | .impersonal   => { selectsSpecifier := some false, extArgSemantics := some .thematicExistential }
+  | .passive      => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
 
 /-- The parametric decomposition of a VoiceHead, derived from its flavor. -/
 def VoiceHead.params (v : VoiceHead) : VoiceParams := v.flavor.toParams
@@ -426,7 +430,7 @@ theorem flavor_params_fully_specified (f : VoiceFlavor) :
     for fully-specified params, they agree. -/
 theorem flavor_params_theta_consistent (f : VoiceFlavor) :
     f.toParams.assignsTheta? = some (match f with
-      | .agentive | .causer | .impersonal => true
+      | .agentive | .causer | .antipassive | .impersonal => true
       | .nonThematic | .expletive | .passive => false) := by
   cases f <;> rfl
 

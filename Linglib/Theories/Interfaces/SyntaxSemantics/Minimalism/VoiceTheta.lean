@@ -67,12 +67,13 @@ open _root_.Interfaces.SyntaxSemantics (LinkingTheory ArgPosition)
     to predict the specific role. The current typology has only two
     θ-assigning flavors, so it can only distinguish agent from stimulus. -/
 def _root_.Minimalism.VoiceFlavor.thetaRole : VoiceFlavor → Option ThetaRole
-  | .agentive    => some .agent
-  | .causer      => some .stimulus
-  | .nonThematic => none
-  | .expletive   => none
-  | .impersonal  => none
-  | .passive     => none
+  | .agentive     => some .agent
+  | .causer       => some .stimulus
+  | .antipassive  => some .agent  -- agent is still present, just with ABS case
+  | .nonThematic  => none
+  | .expletive    => none
+  | .impersonal   => none
+  | .passive      => none
 
 /-- Voice_AG predicts agent. -/
 theorem agentive_predicts_agent :

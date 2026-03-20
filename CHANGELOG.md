@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.229.359] - 2026-03-19
+
+### Fixed
+- **Sassoon2013 data audit against paper**: Cross-checked all data values against the PDF
+  - `identical` binding corrected from `.conjunctive` to `.mixed` per paper's (36c) — Conj/Disj ratio 86/49 ≈ 1.76:1 is balanced, not clearly conjunctive (3:1+)
+  - `bad` ExceptData corrected: was `(0, 0, 20, 52)` (hallucinated), now `(3, 55)` matching Table 3
+  - `ExceptData` simplified from 4 fields to 2 (`conj`, `disj`) matching Table 3 directly — old structure conflated per-adjective and per-pair data
+  - All 18 adjectives' Conj/Disj values verified against Table 3
+  - All 18 polarity means verified against Table 2 (all correct)
+  - Added `normalizedConj` metric (conj/(conj+disj)) with verification theorems
+  - H3 counterexamples updated: `identical` now fails (closed → conjunctive predicted, mixed observed)
+  - Added docstring note on K&M2005 vs Sassoon modifier-based scale type discrepancies
+
+## [0.229.358] - 2026-03-19
+
+### Changed
+- **Mam Agreement Fragment theory-neutral refactor**: Removed Theories imports from `Fragments/Mayan/Mam/Agreement.lean` — vocabulary entries (`setAVocab`/`setBVocab`) and `agreeProbe` moved to Study file (`Phenomena/Agreement/Studies/Scott2023.lean`), `CaseVal` replaced with `Core.Case`, theory-neutral marker tables added (`setAMarkers`/`setBMarkers`/`lookupMarker`)
+- **Mam pronoun reduction accuracy fix**: `PronounForm` simplified from 3 to 2 constructors (`.reduced`/`.full`); 2nd/3rd person agreed-with pronouns now correctly return `.full` (not reduced), matching dissertation Table 4.25
+- **Mam ABS position**: Added `absPosition := .high` and `mam_case_locus` theorem connecting to Mayan parameter system
+
+### Added
+- **SatisfactionCond integration** (`Phenomena/Agreement/Studies/Scott2023.lean` §12): Theorems `satisfaction_derives_patient_no_agree`, `satisfaction_derives_intranS_agree`, `satisfaction_matches_fragment` — derive probe blocking from `mamInflSatisfaction` rather than stipulating `isPhiAgreed`
+- **Impoverishment integration** (§14): `mamImpoverishmentRule` connecting DM impoverishment to pronoun reduction; 4 verification theorems
+- **SEE docstring clarification** (`Phenomena/Ergativity/Studies/Scott2023.lean`): Added note on why `SplitErgativity` from `Core/Case.lean` doesn't fit Mam's tripartite→neutral split
+
 ## [0.229.357] - 2026-03-19
 
 ### Changed

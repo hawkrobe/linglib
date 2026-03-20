@@ -1,6 +1,9 @@
 import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
+import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Core.Spellout
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
+import Linglib.Theories.Morphology.DM.Impoverishment
 
 /-!
 # Minimalism Agree-Conditioned Pronoun Spellout in Mam
@@ -23,7 +26,7 @@ In a Mam transitive clause with a 3SG agent and 3SG patient:
    satisfaction condition [SAT: φ or Voice_TR].
    In a transitive clause, the probe encounters transitive Voice and
    **stops** — no φ-features are copied to Infl. The Set B slot is
-   filled by the Elsewhere form "∅" (default 2/3SG).
+   filled by the Elsewhere form "tz'=" (default 2/3SG).
 
 3. **Object is case-licensed by Voice**: The patient receives structural
    ACC from Voice (low-abs syntax; @cite{scott-2023}, §3.4). Infl's probe
@@ -35,18 +38,18 @@ In a Mam transitive clause with a 3SG agent and 3SG patient:
    base (@cite{scott-2023}, ch. 4). The patient, lacking φ-agreement, must
    be a full overt pronoun.
 
-## Two Paths to Set B "∅"
+## Two Paths to Set B "tz'="
 
-A key insight of Scott's analysis is that the same Set B form "∅" arises
+A key insight of Scott's analysis is that the same Set B form "tz'=" arises
 via two distinct mechanisms:
 
 - **Intransitive**: Infl's probe succeeds, copies S's φ-features
   (e.g., [3SG]) → no more specific Set B entry matches → Elsewhere
-  "∅" is selected.
+  "tz'=" is selected.
 - **Transitive**: Infl's probe is blocked by Voice_TR → no φ-features
-  on Infl → Elsewhere "∅" is selected.
+  on Infl → Elsewhere "tz'=" is selected.
 
-Both yield "∅", but the intransitive case involves real agreement while
+Both yield "tz'=", but the intransitive case involves real agreement while
 the transitive case involves probe failure. This bridge demonstrates
 both paths.
 
@@ -55,6 +58,66 @@ both paths.
 namespace Phenomena.Agreement.Studies.Scott2023
 
 open Minimalism Fragments.Mayan.Mam
+
+-- ============================================================================
+-- § 0: Minimalism-Specific Vocabulary (Set A / Set B as VI entries)
+-- ============================================================================
+
+/-! These Vocabulary Insertion entries encode the Fragment's theory-neutral
+    marker tables as Minimalism feature bundles, enabling the Agree → Spellout
+    pipeline. The Fragment (`Agreement.lean`) stores the markers as simple
+    person × number → string tables; here they are parameterized by
+    `FeatureBundle` and `Cat` for use with `spellout`. -/
+
+/-- Set A (ERG) vocabulary entries: φ-features on Voice (.v)
+    yield the morphological exponent (@cite{scott-2023}, Table 2.8). -/
+def setAVocab : Vocabulary :=
+  [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
+    , exponent := "n-/w-"
+    , context := some .v }
+  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .sg))]
+    , exponent := "t-"
+    , context := some .v }
+  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .sg))]
+    , exponent := "t-"
+    , context := some .v }
+  , { features := [.valued (.phi (.person .first)), .valued (.phi (.number .pl))]
+    , exponent := "q-"
+    , context := some .v }
+  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .pl))]
+    , exponent := "ky-"
+    , context := some .v }
+  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .pl))]
+    , exponent := "ky-"
+    , context := some .v } ]
+
+/-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
+    yield the morphological exponent (@cite{scott-2023}, Table 3.5).
+    The Elsewhere entry (no features, tz'=) surfaces when no more
+    specific entry matches. -/
+def setBVocab : Vocabulary :=
+  [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
+    , exponent := "chin"
+    , context := some .T }
+  , { features := [.valued (.phi (.person .first)), .valued (.phi (.number .pl))]
+    , exponent := "qo"
+    , context := some .T }
+  , { features := [.valued (.phi (.person .second)), .valued (.phi (.number .pl))]
+    , exponent := "chi"
+    , context := some .T }
+  , { features := [.valued (.phi (.person .third)), .valued (.phi (.number .pl))]
+    , exponent := "chi"
+    , context := some .T }
+  -- Elsewhere: default 2/3SG (tz'=)
+  , { features := []
+    , exponent := "tz'="
+    , context := some .T } ]
+
+/-- Which Minimalist head φ-Agrees with each argument position. -/
+def agreeProbe : MamArgPosition → Option Cat
+  | .agent   => some .v   -- Voice probes, agent in Spec,VoiceP
+  | .patient => none      -- Infl probe blocked by Voice_TR
+  | .intranS => some .T   -- Infl probes, S in its domain
 
 -- ============================================================================
 -- § 1: Probe Feature Bundles
@@ -126,29 +189,29 @@ theorem setA_spellout_1sg :
   native_decide
 
 -- ============================================================================
--- § 5: Set B — Two Paths to "∅"
+-- § 5: Set B — Two Paths to "tz'="
 -- ============================================================================
 
 /-- **Intransitive path**: Infl Agrees with a 3SG intransitive S, copies
     [Person:3, Number:sg]. No Set B entry is specified for these features
     (1SG=chin, 1PL=qo, 2/3PL=chi — none match 3SG), so the Elsewhere
-    entry is selected: "∅". -/
+    entry is selected: "tz'=". -/
 theorem setB_intransitive_3sg :
     let inflAgreed : FeatureBundle :=
       [.valued (.phi (.person .third)), .valued (.phi (.number .sg))]
-    spellout setBVocab inflAgreed (some .T) = some "∅" := by
+    spellout setBVocab inflAgreed (some .T) = some "tz'=" := by
   native_decide
 
 /-- **Transitive path**: Infl's probe is blocked by Voice_TR → no
     φ-features are copied → the Infl node has an empty feature bundle.
     The Elsewhere entry matches (empty features are a subset of anything)
-    and "∅" is selected.
+    and "tz'=" is selected.
 
     This is the DEFAULT Set B — it appears in transitives regardless of
     the object's person/number features. -/
 theorem setB_transitive_default :
     let inflBlocked : FeatureBundle := []
-    spellout setBVocab inflBlocked (some .T) = some "∅" := by
+    spellout setBVocab inflBlocked (some .T) = some "tz'=" := by
   native_decide
 
 /-- The two paths produce the same exponent — the surface form is
@@ -171,13 +234,13 @@ theorem setB_intransitive_1sg :
     spellout setBVocab t1sg (some .T) = some "chin" := by
   native_decide
 
-/-- In a transitive with a 1SG object, the default "∅" still appears —
+/-- In a transitive with a 1SG object, the default "tz'=" still appears —
     NOT "chin". This is because Infl's probe was blocked by Voice_TR,
     so the object's 1SG features are never copied to Infl. -/
 theorem setB_transitive_ignores_object :
-    -- Even though the object is 1SG, Infl shows default "∅", not "chin"
+    -- Even though the object is 1SG, Infl shows default "tz'=", not "chin"
     let inflBlocked : FeatureBundle := []
-    spellout setBVocab inflBlocked (some .T) = some "∅" ∧
+    spellout setBVocab inflBlocked (some .T) = some "tz'=" ∧
     -- Compare: a 1SG intransitive S would trigger "chin"
     let inflAgreed1sg : FeatureBundle :=
       [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
@@ -202,7 +265,7 @@ theorem setB_transitive_ignores_object :
     STOPPED by the VoiceP phase boundary. -/
 theorem probe_restriction_yields_default :
     -- Transitive: probe blocked → empty → Elsewhere
-    spellout setBVocab ([] : FeatureBundle) (some .T) = some "∅" ∧
+    spellout setBVocab ([] : FeatureBundle) (some .T) = some "tz'=" ∧
     -- Intransitive 1SG: probe succeeds → "chin" (not default)
     spellout setBVocab
       [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
@@ -225,7 +288,7 @@ theorem intransitive_pipeline_1sg :
         [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
         (.phi (.number .sg))) =
     some [.valued (.phi (.person .first)), .valued (.phi (.number .sg))] ∧
-    -- Spells out as "chin" (not default "∅")
+    -- Spells out as "chin" (not default "tz'=")
     spellout setBVocab
       [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
       (some .T) = some "chin" := by
@@ -240,7 +303,7 @@ theorem intransitive_pipeline_1sg :
     1. Voice Agrees with agent → [Person:3, Number:sg] on Voice
     2. [Person:3, Number:sg] on Voice spells out as Set A "t-"
     3. Infl's probe is blocked by Voice_TR → empty bundle on Infl
-    4. Empty Infl spells out as Elsewhere Set B "∅"
+    4. Empty Infl spells out as Elsewhere Set B "tz'="
     5. Patient is not φ-Agreed-with → overt pronoun required -/
 theorem full_pipeline_3sg_transitive :
     -- Step 1-2: Voice Agrees and spells out as Set A
@@ -248,15 +311,15 @@ theorem full_pipeline_3sg_transitive :
       (λ fb => applyAgree fb dp3sg (.phi (.number .sg))) = some voiceFullyAgreed ∧
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
     -- Step 3-4: Infl probe blocked → default Set B
-    spellout setBVocab ([] : FeatureBundle) (some .T) = some "∅" ∧
-    -- Step 5: patient requires overt pronoun
-    MamArgPosition.patient.canBeNull = false := by
+    spellout setBVocab ([] : FeatureBundle) (some .T) = some "tz'=" ∧
+    -- Step 5: patient is not eligible for reduction → overt pronoun
+    MamArgPosition.patient.canBeReduced = false := by
   exact ⟨by native_decide, by native_decide, by native_decide, rfl⟩
 
 /-- The pipeline generalizes: for every argument position, the predicted
     pronoun reduction matches the observed pattern. -/
 theorem all_positions_match :
-    mamArgPositions.all (λ pos => pos.canBeNull == pos.isPhiAgreed) = true := by
+    mamArgPositions.all (λ pos => pos.canBeReduced == pos.isPhiAgreed) = true := by
   native_decide
 
 -- ============================================================================
@@ -310,9 +373,9 @@ theorem agreement_is_tripartite :
     Set B. The patient's lack of agreement is NOT because both heads
     target the agent — it's because Infl's probe is blocked by VoiceP. -/
 theorem different_probe_heads :
-    MamArgPosition.agent.agreeProbe = some .v ∧
-    MamArgPosition.intranS.agreeProbe = some .T ∧
-    MamArgPosition.patient.agreeProbe = none := ⟨rfl, rfl, rfl⟩
+    agreeProbe .agent = some .v ∧
+    agreeProbe .intranS = some .T ∧
+    agreeProbe .patient = none := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 11: Connecting to Obligatory Operations (@cite{preminger-2014}, Ch. 5)
@@ -335,16 +398,58 @@ theorem intransitive_is_real_agreement :
   native_decide
 
 /-- Under Preminger's obligatory-no-crash model, probe failure converges
-    and produces Elsewhere morphology — exactly the Set B "∅" we observe
+    and produces Elsewhere morphology — exactly the Set B "tz'=" we observe
     in Mam transitives. This connects the abstract failure model to the
     concrete spellout: `ProbeOutcome.unvalued` → `PFRealization.elsewhere`
-    → the Elsewhere Vocabulary entry → "∅". -/
+    → the Elsewhere Vocabulary entry → "tz'=". -/
 theorem probe_failure_converges_with_elsewhere :
     derivationConverges .obligatoryNocrash .unvalued = true ∧
     ProbeOutcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 12: Unified Agree — Ā-agreement and φ-agreement as One Operation
+-- § 12: Deriving Probe Blocking from SatisfactionCond (@cite{deal-2024})
+-- ============================================================================
+
+/-! The Fragment file (`Agreement.lean`) stipulates `isPhiAgreed := false` for
+    patients. Here we DERIVE that result from the `SatisfactionCond` machinery
+    in `Agree.lean`: Infl's disjunctive probe [SAT: φ or Voice_TR] encounters
+    transitive Voice and stops without copying features.
+
+    This closes the gap between stipulation and derivation: the patient's
+    lack of φ-agreement is not an axiom but a consequence of probe
+    satisfaction theory. -/
+
+/-- In a transitive clause, `mamInflSatisfaction` is satisfied by Voice_TR
+    (head encounter .v) and copies no features — matching the Fragment's
+    `patient.isPhiAgreed = false`. -/
+theorem satisfaction_derives_patient_no_agree :
+    mamInflSatisfaction.isSatisfied [] (some .v) = true ∧
+    mamInflSatisfaction.copiedFeatures [] (some .v) = false ∧
+    MamArgPosition.patient.isPhiAgreed = false := ⟨by native_decide, by native_decide, rfl⟩
+
+/-- In an intransitive clause, `mamInflSatisfaction` is satisfied by
+    φ-features and DOES copy them — matching `intranS.isPhiAgreed = true`. -/
+theorem satisfaction_derives_intranS_agree :
+    let dp1sg := [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
+    mamInflSatisfaction.isSatisfied dp1sg none = true ∧
+    mamInflSatisfaction.copiedFeatures dp1sg none = true ∧
+    MamArgPosition.intranS.isPhiAgreed = true := ⟨by native_decide, by native_decide, rfl⟩
+
+/-- The satisfaction condition's `copiedFeatures` result aligns exactly with
+    the Fragment's `isPhiAgreed` for both Infl-probed positions:
+    - patient (transitive): copiedFeatures = false = isPhiAgreed
+    - intranS (intransitive): copiedFeatures = true = isPhiAgreed -/
+theorem satisfaction_matches_fragment :
+    mamInflSatisfaction.copiedFeatures [] (some .v) =
+      MamArgPosition.patient.isPhiAgreed ∧
+    mamInflSatisfaction.copiedFeatures
+      [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]
+      none =
+      MamArgPosition.intranS.isPhiAgreed := ⟨by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- § 13: Unified Agree — Ā-agreement and φ-agreement as One Operation
+-- (renumbered from former § 12)
 -- ============================================================================
 
 /-! Voice⁰ in Mam carries two independent probes:
@@ -395,5 +500,62 @@ theorem phi_and_oblique_agree_parallel :
       some [.valued (.oblique true)] ∧
     spellout [eqYaVocab] [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- § 14: Impoverishment — Connecting to DM (@cite{scott-2023}, §4.4.3)
+-- ============================================================================
+
+/-! Scott's impoverishment rule (ex. 84/94):
+
+    `[+/−singular] → ∅ / [+author]^F`
+
+    Deletes [±singular] from first person pronouns that have been
+    agreed with (marked by the F diacritic). This bleeds insertion of
+    the pronominal base morphemes *qin* ([+author,+singular]) and *qo*
+    ([+author,−singular]), yielding reduced pronouns.
+
+    We model this using `Morphology.DM.Impoverishment.ImpoverishmentRule`.
+    The condition checks for [+author] (= first person in our feature
+    system), and the target is [±singular] (= number). -/
+
+/-- The Mam first-person impoverishment rule: delete [±singular]
+    (number) when the bundle contains [+author] (first person) features
+    that have been agreed with. -/
+def mamImpoverishmentRule : Morphology.DM.Impoverishment.ImpoverishmentRule :=
+  { condition := λ fb =>
+      -- Check for [+author] (= valued first person): the F diacritic
+      -- condition is modeled by this rule only being applied in
+      -- agreed-with contexts (subj/poss position, not objects).
+      fb.any (λ f => match f with
+        | .valued (.phi (.person .first)) => true
+        | _ => false)
+  , target := .phi (.number .sg) }
+
+/-- The impoverishment rule fires for 1st person bundles. -/
+theorem impoverishment_fires_1sg :
+    mamImpoverishmentRule.condition
+      [.valued (.phi (.person .first)), .valued (.phi (.number .sg))] = true := by
+  native_decide
+
+/-- The impoverishment rule does NOT fire for 3rd person bundles. -/
+theorem impoverishment_blocked_3sg :
+    mamImpoverishmentRule.condition
+      [.valued (.phi (.person .third)), .valued (.phi (.number .sg))] = false := by
+  native_decide
+
+/-- After impoverishment, the number feature is deleted from 1st
+    person bundles, bleeding insertion of the base morpheme *qin*. -/
+theorem impoverishment_deletes_number :
+    Morphology.DM.Impoverishment.applyImpoverishment mamImpoverishmentRule
+      [.valued (.phi (.person .first)), .valued (.phi (.number .sg))] =
+    [.valued (.phi (.person .first))] := by
+  native_decide
+
+/-- Without impoverishment (3rd person), the number feature survives. -/
+theorem no_impoverishment_preserves :
+    Morphology.DM.Impoverishment.applyImpoverishment mamImpoverishmentRule
+      [.valued (.phi (.person .third)), .valued (.phi (.number .sg))] =
+    [.valued (.phi (.person .third)), .valued (.phi (.number .sg))] := by
+  native_decide
 
 end Phenomena.Agreement.Studies.Scott2023
