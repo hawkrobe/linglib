@@ -300,4 +300,29 @@ theorem drubea_enriches_hyman :
     Studies.Hyman2006.isTonalUnderHyman .registerBased = true ∧
     wordProsodicType = .registerBased := ⟨rfl, rfl⟩
 
+/-- Drubea is +T, −SA under @cite{hyman-2006}'s 2×2 typology
+    (same quadrant as Yoruba). -/
+theorem drubea_quadrant :
+    Studies.Hyman2006.drubea.quadrant = .toneOnly := rfl
+
+-- ============================================================================
+-- § 12: Culminativity — Register vs Stress
+-- ============================================================================
+
+/-- Drubea satisfies register culminativity: every stem in the fragment
+    has at most one `l` feature. This is `isCulminative` from
+    RegisterTier, applied to all stems in §2.
+
+    This is NOT @cite{hyman-2006}'s stress culminativity (def. 5b),
+    which concerns primary stress per word. Drubea has no stress
+    accent system — OBLHEAD does not apply. The two uses of
+    "culminativity" are formally parallel but phonologically distinct
+    (see `Hyman2006.CulminativityDomain`). -/
+theorem drubea_register_culminative_not_stress :
+    -- Register culminativity holds (Lionnet)
+    allStems.all (fun e => isCulminative e.specs) = true ∧
+    -- Stress accent is absent (Hyman)
+    Studies.Hyman2006.drubea.hasStressAccent = false := by
+  exact ⟨by native_decide, rfl⟩
+
 end Phenomena.Tone.Studies.Lionnet2025

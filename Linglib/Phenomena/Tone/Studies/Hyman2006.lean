@@ -280,6 +280,54 @@ theorem english_stress_only :
 theorem finnish_stress_only :
     (profileFromPhon finnish).quadrant = .stressOnly := rfl
 
+/-- Yoruba: +tone (WALS complex), −stress (absent from WALS F14A). -/
+theorem yoruba_tone_only :
+    (profileFromPhon yoruba).quadrant = .toneOnly := rfl
+
+/-- Japanese: +tone (WALS simple), −stress (absent from WALS F14A). -/
+theorem japanese_tone_only :
+    (profileFromPhon japanese).quadrant = .toneOnly := rfl
+
+/-- Mandarin: +tone (WALS complex), +stress (WALS noFixed). -/
+theorem mandarin_tone_and_stress :
+    (profileFromPhon mandarin).quadrant = .toneAndStress := rfl
+
+/-- Zulu: +tone (WALS simple), +stress (WALS penultimate). -/
+theorem zulu_tone_and_stress :
+    (profileFromPhon zulu).quadrant = .toneAndStress := rfl
+
+/-- Three of the four quadrants are attested among the 16 PhonProfile
+    languages. The −T−SA quadrant is NOT attested because WALS F14A
+    encodes stress *location* but not stress *absence*: languages
+    like French appear as `noFixed` (= free stress = +SA), even though
+    Hyman classifies French as −SA.
+
+    This demonstrates the inherent limitation of deriving Hyman's
+    framework from WALS data alone. -/
+theorem wals_covers_three_quadrants :
+    let profiles := [english, german, finnish, turkish, russian, french,
+                     spanish, japanese, mandarin, hindi, georgian,
+                     hungarian, swahili, yoruba, maori, zulu]
+    profiles.any (fun p => (profileFromPhon p).quadrant == .toneAndStress) = true ∧
+    profiles.any (fun p => (profileFromPhon p).quadrant == .toneOnly) = true ∧
+    profiles.any (fun p => (profileFromPhon p).quadrant == .stressOnly) = true := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
+
+/-- French is classified as −T−SA in Hyman's Table I, but WALS F14A
+    records it with `noFixed` stress (= free stress), which our
+    `profileFromPhon` maps to +SA. This mismatch arises because
+    WALS F14A does not distinguish "free word stress" (English) from
+    "no word stress" (French — stress is phrase-final, not word-level).
+
+    This is not a bug in the formalization but a documented limitation
+    of the WALS→Hyman bridge. The −SA classification requires
+    language-specific analysis beyond WALS data. -/
+theorem french_wals_mismatch :
+    (profileFromPhon french).quadrant = .stressOnly ∧
+    (tableI.filter (fun e => e.name == "French")).all
+      (fun e => e.profile.quadrant == .neither) = true := by
+  exact ⟨rfl, by native_decide⟩
+
 -- ============================================================================
 -- § 8: Connection to Lionnet 2025 (Register Enrichment)
 -- ============================================================================
@@ -324,7 +372,35 @@ theorem wals_coarser_than_lionnet :
     wals13AToHasTone .none = false := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 9: Culminativity — Two Distinct Uses
+-- § 9: Drubea in the 2×2 Typology
+-- ============================================================================
+
+/-- Drubea's word-prosodic profile under Hyman's framework: +T, −SA.
+
+    +T: register features (downstep) enter lexical realization — the
+    minimal pairs in @cite{lionnet-2025} ex. 4 demonstrate this directly.
+    −SA: no obligatory metrical head; the prosodic system is purely
+    register-based with no stress accent.
+
+    This places Drubea in the same quadrant as Yoruba, Igbo, and the
+    reclassified "PA" languages (Tokyo Japanese, Somali). -/
+def drubea : WordProsodicProfile := ⟨true, false⟩
+
+/-- Drubea is in the +T−SA quadrant (tone only). -/
+theorem drubea_tone_only :
+    drubea.quadrant = .toneOnly := rfl
+
+/-- Drubea's profile is consistent with Yoruba's
+    (both +T, −SA from different sub-types of tone). -/
+theorem drubea_same_quadrant_as_yoruba :
+    drubea.quadrant = (profileFromPhon yoruba).quadrant := rfl
+
+/-- Drubea lacks stress accent — it is not an OBLHEAD system. -/
+theorem drubea_no_stress :
+    drubea.hasStressAccent = false := rfl
+
+-- ============================================================================
+-- § 10: Culminativity — Two Distinct Uses
 -- ============================================================================
 
 /-- Hyman's stress culminativity (5b) and Drubea's register culminativity
@@ -352,7 +428,7 @@ theorem culminativity_parallel_but_distinct :
   decide
 
 -- ============================================================================
--- § 10: OBLHEAD as the Deepest Cut
+-- § 11: OBLHEAD as the Deepest Cut
 -- ============================================================================
 
 /-- Hyman's final proposal (§7): the most significant typological cut
