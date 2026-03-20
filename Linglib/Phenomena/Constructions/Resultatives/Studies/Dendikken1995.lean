@@ -51,19 +51,21 @@ PP predicates. Both are SC predication structures. -/
     Path resultatives → P (prepositional phrase as SC predicate).
     Fake reflexive → A (reflexive is the SC subject, AP is predicate). -/
 def resToSCPred : ResultativeType → SCPredCategory
-  | .causativeProperty    => .A
-  | .causativePath        => .P
-  | .noncausativeProperty => .A
-  | .noncausativePath     => .P
-  | .fakeReflexive        => .A
+  | .causativeProperty       => .A
+  | .causativePath           => .P
+  | .noncausativeProperty    => .A
+  | .noncausativePath        => .P
+  | .fakeReflexive           => .A
+  | .anticausativeProperty   => .A  -- @cite{levin-2026}: "The door pushed open"
 
 /-- Whether a resultative type involves a causative agent. -/
 def ResultativeType.hasCausativeAgent : ResultativeType → Bool
-  | .causativeProperty    => true
-  | .causativePath        => true
-  | .noncausativeProperty => false
-  | .noncausativePath     => false
-  | .fakeReflexive        => true
+  | .causativeProperty       => true
+  | .causativePath           => true
+  | .noncausativeProperty    => false
+  | .noncausativePath        => false
+  | .fakeReflexive           => true
+  | .anticausativeProperty   => false  -- cause suppressed
 
 /-! ## §2. Verification: categorization covers all types -/
 

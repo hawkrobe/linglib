@@ -33,6 +33,10 @@ inductive ResultativeType where
   | noncausativeProperty
   | noncausativePath
   | fakeReflexive
+  /-- Anticausative: verb doesn't alternate alone; construction licenses it
+      (@cite{levin-2026}). Distinct from `noncausativeProperty` (e.g., *freeze
+      solid*) where the verb independently shows the causative alternation. -/
+  | anticausativeProperty
   deriving Repr, DecidableEq, BEq
 
 /-- A single resultative example with judgment data. -/

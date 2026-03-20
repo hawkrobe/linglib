@@ -167,6 +167,7 @@ def flat : AdjectivalPredicateEntry where
   dimension := .flatness
   antonymForm := some "bumpy"
   antonymRelation := some .contradictory
+  spatialConfigType := some .surfaceOrient
 
 /-- "open" — closed scale (maximally open), contradictory to "closed" -/
 def open_ : AdjectivalPredicateEntry where
@@ -175,6 +176,7 @@ def open_ : AdjectivalPredicateEntry where
   dimension := .openness
   antonymForm := some "closed"
   antonymRelation := some .contradictory
+  spatialConfigType := some .barrierConfig
 
 /-- "closed" — closed scale, contradictory to "open" -/
 def closed_ : AdjectivalPredicateEntry where
@@ -183,6 +185,7 @@ def closed_ : AdjectivalPredicateEntry where
   dimension := .openness
   antonymForm := some "open"
   antonymRelation := some .contradictory
+  spatialConfigType := some .barrierConfig
 
 /-- "shut" — closed scale, contradictory to "open" (near-synonym of "closed") -/
 def shut : AdjectivalPredicateEntry where
@@ -191,6 +194,7 @@ def shut : AdjectivalPredicateEntry where
   dimension := .openness
   antonymForm := some "open"
   antonymRelation := some .contradictory
+  spatialConfigType := some .barrierConfig
 
 /-- "free" — closed scale (maximally free = unattached), contradictory to "stuck" -/
 def free_ : AdjectivalPredicateEntry where
@@ -199,6 +203,7 @@ def free_ : AdjectivalPredicateEntry where
   dimension := .freedom
   antonymForm := some "stuck"
   antonymRelation := some .contradictory
+  spatialConfigType := some .unattachment
 
 /-- "loose" — closed scale (maximally loose), contradictory to "tight" -/
 def loose : AdjectivalPredicateEntry where
@@ -207,6 +212,7 @@ def loose : AdjectivalPredicateEntry where
   dimension := .tightness
   antonymForm := some "tight"
   antonymRelation := some .contradictory
+  spatialConfigType := some .unattachment
 
 /-- "tight" — closed scale (maximally tight), contradictory to "loose" -/
 def tight : AdjectivalPredicateEntry where

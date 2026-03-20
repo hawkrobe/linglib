@@ -143,18 +143,25 @@ inductive InformationalStrength where
 -- Adjective Lexical Entry
 -- ════════════════════════════════════════════════════
 
-/--
-A gradable adjective lexical entry.
+/-- Spatial configuration type for adjectives in resultative constructions
+    (@cite{levin-2026}). Only adjectives describing spatially instantiated
+    states license intr-*push open* resultatives. -/
+inductive SpatialConfigType where
+  | barrierConfig   -- open, closed, shut: config relative to frame
+  | unattachment    -- free, loose: freedom from spatial contiguity
+  | surfaceOrient   -- flat: orientation relative to reference surface
+  deriving DecidableEq, BEq, Repr
 
-Bundles surface form, scale structure, and antonym information.
-The actual threshold is NOT part of the lexical entry — it's contextual.
--/
+/-- A gradable adjective lexical entry.
+    Bundles surface form, scale structure, and antonym information.
+    The actual threshold is NOT part of the lexical entry — it's contextual. -/
 structure GradableAdjEntry where
   form : String
   scaleType : Boundedness
   dimension : Core.Dimension
   antonymForm : Option String := none
   antonymRelation : Option AntonymRelation := none
+  spatialConfigType : Option SpatialConfigType := none
   deriving Repr
 
 -- ════════════════════════════════════════════════════

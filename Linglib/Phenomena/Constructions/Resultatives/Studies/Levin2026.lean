@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
+import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
@@ -61,14 +62,16 @@ namespace Phenomena.Constructions.Resultatives.Studies.Levin2026
 
 open LevinClass (pushPull hit swat wipe)
 open Fragments.English.Predicates.Verbal (push pull kick)
-open Fragments.English.Predicates.Adjectival (open_ closed_ shut free_ loose flat)
+open Fragments.English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
+  AdjectivalPredicateEntry)
 open Core.StructuralEquationModel
 open NadathurLauer2020.Sufficiency (causallySufficient)
 open NadathurLauer2020.Necessity (causallyNecessary)
 open Causative.Resultatives (completesForEffect resultativeCausativeBuilder
   freezeSolidModel)
 open Semantics.Lexical.Verb.ChangeOfState (CoSType)
-open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction)
+open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
+  ArgStructureConstruction)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Verb classes in the construction
@@ -195,25 +198,14 @@ Three semantic subtypes:
 3. **Surface orientation**: *flat* — orientation relative to a reference
    surface -/
 
-/-- Semantic subtype of the result-phrase adjective. -/
-inductive SpatialAdjType where
-  | barrierConfig    -- open, closed, shut
-  | unattachment     -- free, loose
-  | surfaceOrient    -- flat
-  deriving DecidableEq, BEq, Repr
+/-- Reuse the theory-level `SpatialConfigType` from `Adjective.Theory`. -/
+abbrev SpatialAdjType := Semantics.Lexical.Adjective.SpatialConfigType
 
-/-- Map each attested result adjective to its spatial subtype. -/
-def adjSpatialType (form : String) : Option SpatialAdjType :=
-  match form with
-  | "open" | "closed" | "shut" => some .barrierConfig
-  | "free" | "loose"          => some .unattachment
-  | "flat"                     => some .surfaceOrient
-  | _                          => none
-
-/-- All six attested adjectives have a spatial classification. -/
+/-- All six attested adjectives have a spatial classification in their
+    Fragment entries (structural, not string-based). -/
 theorem all_attested_adjs_spatial :
-    ["open", "closed", "shut", "free", "loose", "flat"].all
-      (adjSpatialType · |>.isSome) = true := by
+    [open_, closed_, shut, free_, loose, flat].all
+      (·.spatialConfigType |>.isSome) = true := by
   native_decide
 
 /-- All attested adjectives are closed-scale (absolute) in
@@ -224,16 +216,13 @@ theorem all_attested_adjs_closed_scale :
       (·.scaleType == .closed) = true := by
   native_decide
 
-/-- Adjectives in senses that are NOT spatially instantiated do not
-    appear in intr-*push open* resultatives, even when they occur in
-    transitive resultatives. The non-spatial senses of *free* ("free
-    of charge", "free of debris") and *loose* ("loose shoelaces") are
-    not attested. These senses are found in transitive resultatives
-    — e.g., "She brushed the picture free of shards" — but lack
-    intransitive counterparts. -/
-theorem nonspatial_senses_not_attested :
-    adjSpatialType "bald" = none ∧ adjSpatialType "firm" = none ∧
-    adjSpatialType "senseless" = none ∧ adjSpatialType "red" = none := ⟨rfl, rfl, rfl, rfl⟩
+/-! Adjectives in senses that are NOT spatially instantiated do not
+appear in intr-*push open* resultatives, even when they occur in
+transitive resultatives. The non-spatial senses of *free* ("free
+of charge", "free of debris") and *loose* ("loose shoelaces") are
+not attested. Adjectives like *bald*, *firm*, *senseless*, *red* have no
+`spatialConfigType` in the Fragment and are never attested in
+intr-*push open* resultatives (examples 57b–60b). -/
 
 -- ════════════════════════════════════════════════════
 -- § 3. Causative alternation pairs
@@ -277,7 +266,11 @@ def pull_free : AlternationPair :=
   , bareIntransitive := "*The cork pulled."
   , verbClass := .pushPull, adjType := .unattachment }
 
-/-- Slam–shut (related to fn. 11; examples 23, 24 near-synonyms). -/
+/-- Slam–shut (related to fn. 11; examples 23, 24 near-synonyms).
+    Note: *slam* is polysemous — in *Pat slammed the door / The door slammed*
+    it has a closing-with-impact sense that independently shows the causative
+    alternation. The `.hit` classification here applies to the surface-contact
+    sense, not the closing sense. -/
 def slam_shut : AlternationPair :=
   { verb := "slam", adjective := "shut"
   , transitive := "I grabbed a hammer and gave the valve-stem a solid smack."
@@ -312,7 +305,7 @@ def scrape_free : AlternationPair :=
 /-- Smack–flat (example 48). -/
 def smack_flat : AlternationPair :=
   { verb := "smack", adjective := "flat"
-  , transitive := "The poster board smacked against my windshield."
+  , transitive := "She smacked the poster board flat against the windshield."
   , intransitive := "The poster board smacked flat against my windshield."
   , bareIntransitive := "*The poster board smacked."
   , verbClass := .hit, adjType := .surfaceOrient }
@@ -337,10 +330,10 @@ theorem all_verbs_from_predicted_classes :
       d.verbClass == .wipe) = true := by
   native_decide
 
-/-- All pairs use adjectives with spatial types. -/
-theorem all_adjs_spatial :
-    alternationPairs.all (adjSpatialType ·.adjective |>.isSome) = true := by
-  native_decide
+/-- Each pair's `adjType` agrees with the Fragment entry's `spatialConfigType`. -/
+theorem push_open_adj_agrees : open_.spatialConfigType = some push_open.adjType := rfl
+theorem pull_free_adj_agrees : free_.spatialConfigType = some pull_free.adjType := rfl
+theorem slam_shut_adj_agrees : shut.spatialConfigType = some slam_shut.adjType := rfl
 
 /-! ### Negative evidence: verb alone doesn't suffice
 
@@ -413,6 +406,33 @@ theorem push_completes_for_open :
 /-- The resultative uses the `.make` builder (sufficiency). -/
 theorem push_open_uses_make :
     resultativeCausativeBuilder = .make := rfl
+
+/-! ### Bridge: ConstructionGrammar ↔ CausalDynamics
+
+Two independent systems model the "construction adds causation" insight:
+- `ArgStructureConstruction.semanticContribution.causation` (Boolean flag)
+- `CausalDynamics.laws` (structural equations)
+
+The Boolean layer predicts alternation behavior; the structural layer
+models how the causation works (sufficiency, necessity, tightness).
+They must agree: `causation = true ↔ dynamics non-empty`. -/
+
+/-- Consistency between the Boolean and structural causation layers. -/
+def causationConsistent (cxn : ArgStructureConstruction)
+    (dyn : CausalDynamics) : Bool :=
+  cxn.semanticContribution.causation == (dyn.laws.length > 0)
+
+/-- The resultative construction + push-open dynamics are consistent:
+    both say "there is causation." -/
+theorem resultative_push_open_consistent :
+    causationConsistent resultative pushDoorOpenModel = true := by native_decide
+
+/-- The resultative construction + freeze-solid dynamics are INconsistent:
+    the construction says causation but the dynamics are empty.
+    This formally captures why freeze-solid is a noncausative resultative —
+    it uses a DIFFERENT construction (noncausative) with no causation flag. -/
+theorem resultative_freeze_solid_inconsistent :
+    causationConsistent resultative freezeSolidModel = false := by native_decide
 
 /-! ### Key contrast: intr-push-open ≠ freeze-solid
 
@@ -688,42 +708,45 @@ An intr-*push open* resultative is licensed iff ALL of:
 4. The theme is capable of autonomous motion -/
 
 /-- Full licensing check for an intr-*push open* resultative. -/
-def isLicensed (verbClass : LevinClass) (adjForm : String)
+def isLicensed (verbClass : LevinClass) (adj : AdjectivalPredicateEntry)
     (causeStatus : CauseStatus) (theme : ThemeMotionCapacity) : Bool :=
   intrPushOpenClasses.contains verbClass &&
-  (adjSpatialType adjForm).isSome &&
+  adj.spatialConfigType.isSome &&
   anticausativeLicensed causeStatus &&
   canBeIntrPushOpenSubject theme
 
 /-- "The door pushed open" in a recoverable-cause context is licensed. -/
 theorem door_pushed_open_licensed :
-    isLicensed .pushPull "open" .recoverableInContext .projectile = true := by
+    isLicensed .pushPull open_ .recoverableInContext .projectile = true := by
   native_decide
 
 /-- "The door pushed open" in a cause-unknown context is licensed. -/
 theorem door_pushed_open_licensed_unknown :
-    isLicensed .pushPull "open" .identityUnknown .projectile = true := by
+    isLicensed .pushPull open_ .identityUnknown .projectile = true := by
   native_decide
 
 /-- Blocked: cause not recoverable. -/
 theorem blocked_no_context :
-    isLicensed .pushPull "open" .notRecoverable .projectile = false := by
+    isLicensed .pushPull open_ .notRecoverable .projectile = false := by
   native_decide
 
 /-- Blocked: theme requires continuous force (PCC). -/
 theorem blocked_continuous_force :
-    isLicensed .pushPull "open" .recoverableInContext
+    isLicensed .pushPull open_ .recoverableInContext
       .requiresContinuousForce = false := by
   native_decide
 
 /-- Blocked: verb class wrong (break is a CoS verb, not force). -/
 theorem blocked_wrong_verb_class :
-    isLicensed .break_ "open" .recoverableInContext .projectile = false := by
+    isLicensed .break_ open_ .recoverableInContext .projectile = false := by
   native_decide
 
-/-- Blocked: adjective not spatially instantiated. -/
+/-- Blocked: adjective not spatially instantiated (*red* has no spatial config). -/
+private def red_ : AdjectivalPredicateEntry where
+  form := "red"; scaleType := .closed; dimension := .color
+
 theorem blocked_wrong_adjective :
-    isLicensed .pushPull "red" .recoverableInContext .projectile = false := by
+    isLicensed .pushPull red_ .recoverableInContext .projectile = false := by
   native_decide
 
 /-! ### End-to-end: the full argument chain
@@ -758,5 +781,167 @@ theorem end_to_end_push_open :
     -- Step 8-9: theme is projectile → autonomous motion OK
     canBeIntrPushOpenSubject .projectile = true := by
   refine ⟨rfl, ?_, ?_, ?_, rfl, rfl, rfl, rfl⟩ <;> decide
+
+-- ════════════════════════════════════════════════════
+-- § 10. Filled resultative: construction–verb–adjective bundle
+-- ════════════════════════════════════════════════════
+
+/-! ## FilledResultative: unifying the Boolean and structural layers
+
+The construction grammar layer (MeaningComponents, fusion, alternation prediction)
+and the causation layer (CausalDynamics, sufficiency, necessity, tightness) run
+in parallel. `FilledResultative` bundles them into a single type where their
+agreement is a proof obligation — not an informal invariant.
+
+This is the formal reflex of @cite{levin-2026}'s analysis: a resultative
+is a **construction filled with specific lexical material** (verb class,
+adjective), and the filling must satisfy both the Boolean-level alternation
+prediction and the structural-level causal dynamics. -/
+
+/-- A resultative construction instantiated with its lexical fillers.
+
+Bundles the three components of @cite{levin-2026}'s analysis:
+1. **Verb class** — contributes manner semantics (force application)
+2. **Adjective** — contributes result state (spatially instantiated)
+3. **Construction** — contributes CAUSE + CoS (event structure)
+
+Plus the causal dynamics that model HOW the causation works.
+The proof fields enforce consistency across the Boolean and structural layers. -/
+structure FilledResultative where
+  /-- The verb's Levin class (manner root) -/
+  verbClass : LevinClass
+  /-- The result-state adjective (from Fragment) -/
+  adjective : AdjectivalPredicateEntry
+  /-- The argument structure construction (typically `resultative`) -/
+  construction : ArgStructureConstruction
+  /-- The structural causal model for this verb–result combination -/
+  dynamics : CausalDynamics
+  /-- The construction adds what the verb lacks: fusion predicts the
+      causative alternation for the composed meaning. -/
+  alternationPredicted :
+    predictedAlternationInConstruction
+      verbClass.meaningComponents construction .causativeInchoative = true
+  /-- The adjective describes a spatially instantiated state. -/
+  adjSpatial : adjective.spatialConfigType.isSome = true
+  /-- The Boolean and structural causation layers agree. -/
+  causalConsistency : causationConsistent construction dynamics = true
+
+/-- Suppress the causer: derive the anticausative variant from a filled
+    resultative, given discourse and theme licensing conditions. -/
+def FilledResultative.anticausative (_ : FilledResultative)
+    (cause : CauseStatus) (theme : ThemeMotionCapacity) : Bool :=
+  anticausativeLicensed cause && canBeIntrPushOpenSubject theme
+
+/-! ### Concrete instances -/
+
+/-- *push open*: pushPull + open + resultative + push-door-open dynamics. -/
+def pushOpen_filled : FilledResultative :=
+  { verbClass := .pushPull
+  , adjective := open_
+  , construction := resultative
+  , dynamics := pushDoorOpenModel
+  , alternationPredicted := by native_decide
+  , adjSpatial := by native_decide
+  , causalConsistency := by native_decide }
+
+/-- *pull free*: pushPull + free + resultative. -/
+def pullFree_filled : FilledResultative :=
+  { verbClass := .pushPull
+  , adjective := free_
+  , construction := resultative
+  , dynamics := pushDoorOpenModel  -- same causal shape: force → result
+  , alternationPredicted := by native_decide
+  , adjSpatial := by native_decide
+  , causalConsistency := by native_decide }
+
+/-- *slam shut*: hit + shut + resultative. -/
+def slamShut_filled : FilledResultative :=
+  { verbClass := .hit
+  , adjective := shut
+  , construction := resultative
+  , dynamics := pushDoorOpenModel
+  , alternationPredicted := by native_decide
+  , adjSpatial := by native_decide
+  , causalConsistency := by native_decide }
+
+/-! ### FilledResultative → licensing
+
+The `isLicensed` function and the `FilledResultative` type encode the same
+conditions from different angles. `isLicensed` is a flat Boolean check;
+`FilledResultative` bundles the conditions as proof obligations. The bridge
+theorem shows they agree: any `FilledResultative` with appropriate discourse
+and theme conditions passes `isLicensed`. -/
+
+/-- A `FilledResultative` whose verb class is in `intrPushOpenClasses`
+    passes `isLicensed` for any licensed cause status and theme. -/
+theorem filled_implies_licensed (fr : FilledResultative)
+    (cause : CauseStatus) (theme : ThemeMotionCapacity)
+    (hClass : intrPushOpenClasses.contains fr.verbClass = true)
+    (hCause : anticausativeLicensed cause = true)
+    (hTheme : canBeIntrPushOpenSubject theme = true) :
+    isLicensed fr.verbClass fr.adjective cause theme = true := by
+  simp [isLicensed, hClass, fr.adjSpatial, hCause, hTheme]
+
+/-- Concrete: `pushOpen_filled` passes `isLicensed` in a recoverable-cause,
+    projectile context. -/
+theorem pushOpen_filled_licensed :
+    isLicensed pushOpen_filled.verbClass pushOpen_filled.adjective
+      .recoverableInContext .projectile = true := by
+  native_decide
+
+/-- The anticausative of `pushOpen_filled` is licensed in the right
+    discourse context. -/
+theorem pushOpen_anticausative_licensed :
+    pushOpen_filled.anticausative .recoverableInContext .projectile = true := by
+  native_decide
+
+/-- The anticausative is blocked when the cause is not recoverable. -/
+theorem pushOpen_anticausative_blocked_no_context :
+    pushOpen_filled.anticausative .notRecoverable .projectile = false := by
+  native_decide
+
+/-- The anticausative is blocked when the theme requires continuous force. -/
+theorem pushOpen_anticausative_blocked_continuous :
+    pushOpen_filled.anticausative .recoverableInContext
+      .requiresContinuousForce = false := by
+  native_decide
+
+/-! ### FilledResultative ↔ end-to-end chain
+
+The `end_to_end_push_open` theorem proved 9 conjuncts individually.
+`pushOpen_filled` encodes three of those (alternation prediction,
+spatial adjective, causal consistency) as proof obligations on the type.
+The remaining conditions (discourse, theme) are runtime parameters. -/
+
+/-- `pushOpen_filled` subsumes the core of `end_to_end_push_open`:
+    the type's proof obligations cover steps 1-6. -/
+theorem pushOpen_filled_covers_core :
+    -- From alternationPredicted: steps 1-3 (verb blocked alone → construction enables)
+    predictedAlternationInConstruction
+      pushOpen_filled.verbClass.meaningComponents
+      pushOpen_filled.construction .causativeInchoative = true ∧
+    -- From causalConsistency: step 4 (non-empty dynamics)
+    causationConsistent pushOpen_filled.construction pushOpen_filled.dynamics = true ∧
+    -- From adjSpatial: step 2 (adjective spatial)
+    pushOpen_filled.adjective.spatialConfigType.isSome = true := by
+  exact ⟨pushOpen_filled.alternationPredicted,
+         pushOpen_filled.causalConsistency,
+         pushOpen_filled.adjSpatial⟩
+
+-- ════════════════════════════════════════════════════
+-- § 11. Cross-linguistic: Mandarin tuī-kāi 推开
+-- ════════════════════════════════════════════════════
+
+/-! ## Mandarin cognate
+
+Mandarin tuī-kāi "push-open" (§1, examples 4–6) is the cognate construction
+realized as a V-V compound rather than a syntactic adjunct. The Fragment
+entry already exists — this bridge connects it to the English analysis. -/
+
+/-- The Mandarin push-open compound is the cross-linguistic cognate:
+    same verb meaning (push), same result meaning (open), object-oriented. -/
+theorem mandarin_tui_kai_is_cognate :
+    Fragments.Mandarin.Resultatives.tui_kai.gloss = "push-open" ∧
+    Fragments.Mandarin.Resultatives.tui_kai.orientation = .objectOriented := ⟨rfl, rfl⟩
 
 end Phenomena.Constructions.Resultatives.Studies.Levin2026
