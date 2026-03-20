@@ -446,6 +446,21 @@ theorem account2_overgenerates :
     know₂ thePriceFredKnows_intension john .w2 = true :=
   ⟨by native_decide, readingB_w2⟩
 
+/-- `know₃` breaks crosscategorial uniformity: unlike `know₁` and `know₂`,
+    it is NOT an instance of `knowGeneric`. It pre-evaluates the
+    concept-of-concepts `y` at `w` before applying the generic schema, so
+    `know₃ y x w = knowGeneric (y w) x w` rather than `knowGeneric y x w`.
+
+    This is the structural economy argument (§2.5): the proposed analysis
+    uses only `know₁`/`know₂` (both crosscategorial), while Account 2
+    requires the non-uniform `know₃` which breaks the pattern. -/
+theorem know₃_not_crosscategorial :
+    ∃ (y : W → (W → E)) (x : E) (w : W),
+      know₃ y x w ≠ @knowGeneric (W → E) _ y x w := by
+  -- A concept-of-concepts that varies: w0 → priceMilk, otherwise → rigidZero
+  refine ⟨fun w => match w with | .w0 => priceMilk | _ => rigidZero, john, .w0, ?_⟩
+  native_decide
+
 /-! ## Refutation of Account 3: Pragmatic Account (§2.4.3)
 
 @cite{heim-1979}'s pragmatic account: `know` takes two internal arguments:
