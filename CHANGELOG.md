@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.389] - 2026-03-20
+
+### Fixed
+- **Sluice classification** (`Ginzburg2012.lean`): `NSUClass.toFunction` mapped `.sluice → .extensionMove`, but Tables 7.1–7.2 place Sluice under "Metacommunicative queries"; fixed to `.metacommunicativeQuery` with docstring noting the reprise/direct ambiguity
+- **NSUFunction frequency counts**: docstring stated unverifiable group totals (413, 132, 63) that didn't match Table 7.3 sums; replaced with verifiable sums computed from per-class data, verified by `functional_groups_sum_to_total` theorem
+
+### Changed
+- **Unused import removed** (`Ginzburg2012.lean`): `Theories.Semantics.TypeTheoretic.Discourse` was imported but never referenced
+- **Accept/Confirm simplification documented** (`KOS/Rules.lean`): the book's Accept (ex. 42) and Confirm (ex. 43) rules swap spkr/addr in effects; our code doesn't — now documented as a known simplification
+
+### Added
+- **NSU frequency verification** (`Ginzburg2012.lean`): `nsu_total_1283` and `functional_groups_sum_to_total` theorems proving Table 7.3 totals and functional group consistency
+
 ## [0.229.388] - 2026-03-20
 
 ### Added

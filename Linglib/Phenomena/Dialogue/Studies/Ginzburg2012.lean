@@ -1,5 +1,4 @@
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar
-import Linglib.Theories.Semantics.TypeTheoretic.Discourse
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Core.Discourse.QUD
 
@@ -375,19 +374,26 @@ def NSUClass.frequency : NSUClass → Nat
   | .propositionalModifier     => 11
   | .conjunctionFragment       => 10
 
-/-- Functional grouping from @cite{ginzburg-2012} Table 7.4 (p. 222). -/
+/-- Functional grouping from @cite{ginzburg-2012} Tables 7.1–7.2 (pp. 219–220).
+The per-group counts are computed from the per-class frequencies in Table 7.3. -/
 inductive NSUFunction where
-  /-- Positive feedback: plain + repeated acknowledgement (685) -/
+  /-- Positive feedback: plain + repeated acknowledgement (599 + 86 = 685) -/
   | positiveFeedback
-  /-- Answers: short, affirmative, rejection, repeated aff., helpful rej., prop. modifier (413) -/
+  /-- Answers: short, affirmative, rejection, repeated aff., helpful rej., prop. modifier (403) -/
   | answer
-  /-- Metacommunicative queries: CE, check question, reprise sluice, filler (132) -/
+  /-- Metacommunicative queries: CE, sluice, check question, filler (79 + 24 + 22 + 18 = 143).
+      Note: the Sluice class is ambiguous between a metacommunicative "reprise sluice"
+      reading (the more common one per §7.2.1) and a "direct sluice" reading that
+      functions as an information query. The BNC data (Table 7.3) does not split
+      the 24 sluice instances; we follow the primary classification (Tables 7.1–7.2)
+      in placing sluice here. Direct sluice receives separate grammatical treatment
+      in §7.8 and the Ch. 9 summary. -/
   | metacommunicativeQuery
-  /-- Extension moves: factive modifier, bare modifier, direct sluice, conj+frag (63) -/
+  /-- Extension moves: factive modifier, bare modifier, conj+frag (27 + 15 + 10 = 52) -/
   | extensionMove
   deriving Repr, DecidableEq, BEq
 
-/-- Classify an NSU class into its functional group (Table 7.4). -/
+/-- Classify an NSU class into its functional group (Tables 7.1–7.2). -/
 def NSUClass.toFunction : NSUClass → NSUFunction
   | .plainAcknowledgement     => .positiveFeedback
   | .repeatedAcknowledgement  => .positiveFeedback
@@ -398,12 +404,34 @@ def NSUClass.toFunction : NSUClass → NSUFunction
   | .helpfulRejection         => .answer
   | .propositionalModifier    => .answer
   | .clarificationEllipsis    => .metacommunicativeQuery
+  | .sluice                   => .metacommunicativeQuery
   | .checkQuestion            => .metacommunicativeQuery
   | .filler                   => .metacommunicativeQuery
   | .factiveModifier          => .extensionMove
   | .bareModifierPhrase       => .extensionMove
-  | .sluice                   => .extensionMove
   | .conjunctionFragment      => .extensionMove
+
+/-- All 15 NSU classes (Table 7.3). -/
+def allNSUClasses : List NSUClass :=
+  [.plainAcknowledgement, .shortAnswer, .affirmativeAnswer,
+   .repeatedAcknowledgement, .clarificationEllipsis, .rejection,
+   .factiveModifier, .repeatedAffirmativeAnswer, .helpfulRejection,
+   .sluice, .checkQuestion, .filler, .bareModifierPhrase,
+   .propositionalModifier, .conjunctionFragment]
+
+/-- Total classified NSUs: 1283 (Table 7.3). -/
+theorem nsu_total_1283 :
+    (allNSUClasses.map NSUClass.frequency).sum = 1283 := by native_decide
+
+/-- Functional group frequencies sum to the total (1283). -/
+theorem functional_groups_sum_to_total :
+    let groups := allNSUClasses.map (fun c => (c.toFunction, c.frequency))
+    let pf := (groups.filter (·.1 == .positiveFeedback)).map (·.2) |>.sum
+    let ans := (groups.filter (·.1 == .answer)).map (·.2) |>.sum
+    let mcq := (groups.filter (·.1 == .metacommunicativeQuery)).map (·.2) |>.sum
+    let ext := (groups.filter (·.1 == .extensionMove)).map (·.2) |>.sum
+    pf = 685 ∧ ans = 403 ∧ mcq = 143 ∧ ext = 52 ∧ pf + ans + mcq + ext = 1283 := by
+  native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. CR Form & Reading Taxonomy (@cite{ginzburg-2012} Ch. 6, §6.2)

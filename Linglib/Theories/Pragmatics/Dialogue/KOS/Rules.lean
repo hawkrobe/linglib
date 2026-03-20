@@ -142,7 +142,11 @@ def TIS.assertWithQUD {P Fact QContent : Type} [Answerhood Fact QContent]
 
 /-- **Accept rule**: addressee grounds an assertion — adds fact to own FACTS.
 
-Ch. 4, "Accept" (p. 95, ex. 66 step 4a). -/
+Ch. 4, "Accept" (p. 95, ex. 66 step 4a).
+
+**Known simplification**: the book's Accept rule (ex. 42) swaps spkr/addr
+in the effects (the acceptor becomes the new speaker). We don't model
+this because our worked examples don't track individual participants. -/
 def TIS.accept {P Fact QContent : Type}
     (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
   { tis with dgb := (tis.dgb.addFact p).recordMove (.accept p) }
@@ -170,7 +174,10 @@ def TIS.check {P Fact QContent : Type}
 
 /-- **Confirm rule**: speaker confirms in response to a check.
 
-Ch. 4 (p. 95, ex. 68 step 2). -/
+Ch. 4 (p. 95, ex. 68 step 2).
+
+**Known simplification**: the book's Confirm rule (ex. 43) swaps spkr/addr,
+as with Accept. See `TIS.accept` for details. -/
 def TIS.confirm {P Fact QContent : Type} [Answerhood Fact QContent]
     (tis : TIS P Fact QContent) (p : Fact) : TIS P Fact QContent :=
   { tis with
