@@ -31,8 +31,9 @@ The dimension-binding operations and De Morgan theorems are in
 `Theories/Semantics/Lexical/Adjective/Theory.lean`. This file contains:
 - The 18-adjective sample with empirical classifications from (36a–c), p. 359–360
 - Corpus data from Table 3 (conjunctivity/disjunctivity raw counts)
+- The 3:1 ratio criterion (p. 358) for classifying adjectives
+- Antonym pair structure with De Morgan consistency verification
 - Verification theorems connecting polarity, standard type, and binding type
-- Normalized conjunctivity metric and polarity–binding correlation
 
 ## Scale type note
 
@@ -109,8 +110,10 @@ def allAdjs : List MultidimAdj := [
   healthier, better_
 ]
 
+theorem sample_size : allAdjs.length = 18 := rfl
+
 -- ════════════════════════════════════════════════════
--- § 2. Corpus Data (Table 3)
+-- § 2. Corpus Data (Table 3) and 3:1 Criterion
 -- ════════════════════════════════════════════════════
 
 /-- Exception-phrase corpus data from Table 3. Each adjective has two counts:
@@ -152,42 +155,102 @@ def exceptData : List ExceptData := [
   ⟨"worse",       20, 32⟩
 ]
 
-/-- Normalized conjunctivity: conj / (conj + disj). Ranges from 0 (purely
-    disjunctive) to 1 (purely conjunctive). The paper reports a moderate-to-strong
-    correlation (r = 0.75, p < 0.0004) between this metric and polarity
-    judgments across the 18 adjectives (Section 2.2.2, p. 365). -/
-def normalizedConj (d : ExceptData) : Float :=
-  if d.conj + d.disj == 0 then 0.5
-  else d.conj.toFloat / (d.conj + d.disj).toFloat
+/-- The 3:1 ratio criterion from p. 358: Sassoon classifies adjectives as
+    conjunctive when the conj/disj ratio is "significantly larger," which
+    she operationalizes as ≥ 3 times the other count. -/
+def isStronglyConjunctive (d : ExceptData) : Bool := d.conj ≥ 3 * d.disj
+def isStronglyDisjunctive (d : ExceptData) : Bool := d.disj ≥ 3 * d.conj
 
-/-- Conjunctive adjectives (36a) have normalized conjunctivity > 0.75. -/
-theorem healthy_conjunctive : normalizedConj ⟨"healthy", 54, 11⟩ > 0.7 := by
-  native_decide
-theorem normal_conjunctive : normalizedConj ⟨"normal", 69, 10⟩ > 0.7 := by
-  native_decide
+/-- Classification from 3:1 criterion: conjunctive, disjunctive, or mixed. -/
+def classifyFromCorpus (d : ExceptData) : DimensionBindingType :=
+  if isStronglyConjunctive d then .conjunctive
+  else if isStronglyDisjunctive d then .disjunctive
+  else .mixed
 
-/-- Disjunctive adjectives (36b) have normalized conjunctivity < 0.25. -/
-theorem bad_disjunctive : normalizedConj ⟨"bad", 3, 55⟩ < 0.3 := by
-  native_decide
-theorem sick_disjunctive : normalizedConj ⟨"sick", 2, 26⟩ < 0.3 := by
-  native_decide
+-- Verify the 3:1 criterion classifies each adjective correctly
 
-/-- Mixed adjectives (36c) have normalized conjunctivity near 0.5. -/
-theorem good_mixed : let nc := normalizedConj ⟨"good", 24, 21⟩
-    nc > 0.4 ∧ nc < 0.7 := by native_decide
+theorem classify_healthy    : classifyFromCorpus ⟨"healthy",   54, 11⟩ = .conjunctive := rfl
+theorem classify_normal     : classifyFromCorpus ⟨"normal",    69, 10⟩ = .conjunctive := rfl
+theorem classify_typical    : classifyFromCorpus ⟨"typical",   54,  9⟩ = .conjunctive := rfl
+theorem classify_familiar   : classifyFromCorpus ⟨"familiar",  45,  9⟩ = .conjunctive := rfl
+theorem classify_healthier  : classifyFromCorpus ⟨"healthier", 35,  9⟩ = .conjunctive := rfl
 
-/-- Aggregate: 40% of positive-context exception phrases are dimensional
-    (357 out of 883 positive-context hits across all 18 adjectives). -/
-theorem aggregate_conjunctivity :
-    let total := 357; let all := 883; total * 100 / all = 40 := rfl
+theorem classify_bad        : classifyFromCorpus ⟨"bad",        3, 55⟩ = .disjunctive := rfl
+theorem classify_sick       : classifyFromCorpus ⟨"sick",       2, 26⟩ = .disjunctive := rfl
+theorem classify_atypical   : classifyFromCorpus ⟨"atypical",  19, 68⟩ = .disjunctive := rfl
+theorem classify_abnormal   : classifyFromCorpus ⟨"abnormal",   6, 20⟩ = .disjunctive := rfl
+theorem classify_different  : classifyFromCorpus ⟨"different",  13, 40⟩ = .disjunctive := rfl
 
-/-- Aggregate: 34% of negative-context exception phrases are dimensional
-    (193 out of 561 negative-context hits across all 18 adjectives). -/
-theorem aggregate_disjunctivity :
-    let total := 193; let all := 561; total * 100 / all = 34 := rfl
+theorem classify_identical  : classifyFromCorpus ⟨"identical",  86, 49⟩ = .mixed := rfl
+theorem classify_similar    : classifyFromCorpus ⟨"similar",    80, 67⟩ = .mixed := rfl
+theorem classify_good       : classifyFromCorpus ⟨"good",       24, 21⟩ = .mixed := rfl
+theorem classify_intelligent : classifyFromCorpus ⟨"intelligent", 37, 41⟩ = .mixed := rfl
+theorem classify_dissimilar : classifyFromCorpus ⟨"dissimilar", 58, 83⟩ = .mixed := rfl
+theorem classify_unfamiliar : classifyFromCorpus ⟨"unfamiliar", 15, 27⟩ = .mixed := rfl
+theorem classify_better     : classifyFromCorpus ⟨"better",     25, 25⟩ = .mixed := rfl
+theorem classify_worse      : classifyFromCorpus ⟨"worse",      20, 32⟩ = .mixed := rfl
+
+/-- All 18 adjectives: corpus classification matches assigned binding type. -/
+theorem corpus_matches_classification :
+    exceptData.all (fun d =>
+      classifyFromCorpus d == (allAdjs.find? (fun a => a.form == d.adj) |>.map MultidimAdj.binding
+        |>.getD .mixed)) = true := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 3. Hypothesis 2: Polarity predicts binding type
+-- § 3. Antonym Pairs and De Morgan Consistency
+-- ════════════════════════════════════════════════════
+
+/-- Antonym pairs from the paper's sample. Each pair (positive, negative)
+    should satisfy De Morgan consistency: if the positive is conjunctive,
+    the negative should be disjunctive, and vice versa. Mixed adjectives
+    are exempt (mixed.negate = mixed). -/
+def antonymPairs : List (MultidimAdj × MultidimAdj) := [
+  (healthy, sick),
+  (normal, abnormal),
+  (typical, atypical),
+  (familiar, unfamiliar),
+  (good_, bad_),
+  (similar_, dissimilar),
+  (identical, different)
+]
+
+/-- De Morgan consistency: the negative antonym's binding type matches
+    `.negate` of the positive antonym's binding, or one of them is mixed
+    (context-dependent, so not constrained by De Morgan). -/
+def deMorganConsistent (pos neg : MultidimAdj) : Bool :=
+  pos.binding == .mixed || neg.binding == .mixed ||
+  neg.binding == pos.binding.negate
+
+theorem antonyms_consistent :
+    antonymPairs.all (fun (p, n) => deMorganConsistent p n) = true := rfl
+
+-- Per-pair verification for explicitness
+
+theorem healthy_sick_consistent   : deMorganConsistent healthy  sick      = true := rfl
+theorem normal_abnormal_consistent : deMorganConsistent normal  abnormal  = true := rfl
+theorem typical_atypical_consistent : deMorganConsistent typical atypical  = true := rfl
+theorem familiar_unfamiliar_consistent : deMorganConsistent familiar unfamiliar = true := rfl
+theorem good_bad_consistent       : deMorganConsistent good_   bad_      = true := rfl
+theorem similar_dissimilar_consistent : deMorganConsistent similar_ dissimilar = true := rfl
+theorem identical_different_consistent : deMorganConsistent identical different = true := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 4. Comparative Inheritance
+-- ════════════════════════════════════════════════════
+
+/-- Comparatives inherit binding type from their base adjective (p. 360).
+    *healthier* inherits conjunctive from *healthy*; *better* inherits
+    mixed from *good*. -/
+theorem healthier_inherits : healthier.binding = healthy.binding := rfl
+theorem better_inherits    : better_.binding = good_.binding := rfl
+
+/-- *worse* diverges from *bad*: bad is disjunctive, but worse is mixed.
+    This is expected — comparative morphology changes scale structure
+    (closed → open), which shifts the H3 prediction. -/
+theorem worse_diverges : worse_.binding ≠ bad_.binding := by decide
+
+-- ════════════════════════════════════════════════════
+-- § 5. Hypothesis 2: Polarity predicts binding type
 -- ════════════════════════════════════════════════════
 
 /-! Under a negation theory of antonymy (@cite{heim-2006}, @cite{buering-2007}),
@@ -205,25 +268,10 @@ def predictedFromPolarity (isPositive : Bool) : DimensionBindingType :=
 def hypothesis2Holds (a : MultidimAdj) : Bool :=
   a.binding == .mixed || a.binding == predictedFromPolarity a.isPositive
 
-theorem hypothesis2_normal     : hypothesis2Holds normal     = true := rfl
-theorem hypothesis2_typical    : hypothesis2Holds typical    = true := rfl
-theorem hypothesis2_healthy    : hypothesis2Holds healthy    = true := rfl
-theorem hypothesis2_familiar   : hypothesis2Holds familiar   = true := rfl
-theorem hypothesis2_identical  : hypothesis2Holds identical  = true := rfl
-theorem hypothesis2_bad        : hypothesis2Holds bad_       = true := rfl
-theorem hypothesis2_sick       : hypothesis2Holds sick       = true := rfl
-theorem hypothesis2_atypical   : hypothesis2Holds atypical   = true := rfl
-theorem hypothesis2_abnormal   : hypothesis2Holds abnormal   = true := rfl
-theorem hypothesis2_different  : hypothesis2Holds different  = true := rfl
-theorem hypothesis2_similar    : hypothesis2Holds similar_   = true := rfl
-theorem hypothesis2_good       : hypothesis2Holds good_      = true := rfl
-theorem hypothesis2_intelligent : hypothesis2Holds intelligent = true := rfl
-theorem hypothesis2_dissimilar : hypothesis2Holds dissimilar = true := rfl
-theorem hypothesis2_worse      : hypothesis2Holds worse_     = true := rfl
-theorem hypothesis2_unfamiliar : hypothesis2Holds unfamiliar = true := rfl
+theorem hypothesis2_all : allAdjs.all hypothesis2Holds = true := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 4. Hypothesis 3: Standard type predicts binding type
+-- § 6. Hypothesis 3: Standard type predicts binding type
 -- ════════════════════════════════════════════════════
 
 /-- Predicted binding type from scale structure via Interpretive Economy.
@@ -267,6 +315,7 @@ theorem hypothesis3_worse      : hypothesis3Holds worse_      = true := rfl
 -- `familiar` is lowerBounded (partial → disjunctive) but observed conjunctive
 -- `unfamiliar` is closed (total → conjunctive) but observed mixed
 -- `bad` is open (relative → mixed) but observed disjunctive
+-- `healthier` is open (relative → mixed) but inherits conjunctive from `healthy`
 -- Under Sassoon's own modifier-based classification (Table 4), bad would be
 -- partial (→ disjunctive), resolving this counterexample. But similar/good/
 -- dissimilar gain new tensions under her classification.
@@ -274,9 +323,14 @@ theorem hypothesis3_identical_fails  : hypothesis3Holds identical  = false := rf
 theorem hypothesis3_familiar_fails   : hypothesis3Holds familiar   = false := rfl
 theorem hypothesis3_unfamiliar_fails : hypothesis3Holds unfamiliar = false := rfl
 theorem hypothesis3_bad_fails        : hypothesis3Holds bad_       = false := rfl
+theorem hypothesis3_healthier_fails  : hypothesis3Holds healthier  = false := rfl
+
+/-- H3 holds for 13 of 18 adjectives (72%) using K&M2005 scale types. -/
+theorem hypothesis3_success_count :
+    (allAdjs.filter hypothesis3Holds).length = 13 := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 5. De Morgan Chain: end-to-end
+-- § 7. De Morgan Chain: end-to-end
 -- ════════════════════════════════════════════════════
 
 /-! The full chain connecting Hypothesis 2 to the De Morgan theorems:
@@ -320,7 +374,7 @@ theorem not_healthy_iff_sick (s : HealthState) :
   deMorgan_conjunctive_disjunctive healthDims s
 
 -- ════════════════════════════════════════════════════
--- § 6. Polarity Judgment Data (Table 2)
+-- § 8. Polarity Judgment Data (Table 2)
 -- ════════════════════════════════════════════════════
 
 /-- Polarity judgment on a 1–7 scale (1 = perfectly negative, 7 = perfectly

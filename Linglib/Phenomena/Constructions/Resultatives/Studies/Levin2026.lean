@@ -61,7 +61,7 @@ does not directly accommodate. This file formalizes the specific case.
 
 namespace Phenomena.Constructions.Resultatives.Studies.Levin2026
 
-open LevinClass (pushPull hit swat wipe)
+open LevinClass (pushPull hit wipe)
 open Fragments.English.Predicates.Verbal (push pull kick)
 open Fragments.English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
   AdjectivalPredicateEntry)
@@ -327,7 +327,7 @@ def scrape_free : AlternationPair :=
   , bareIntransitive := "*The door scraped."
   , verbClass := .wipe, adjType := .unattachment }
 
-/-- Smack–flat (example 48). -/
+/-- Smack–flat (intransitive from example 48; transitive implied). -/
 def smack_flat : AlternationPair :=
   { verb := "smack", adjective := "flat"
   , transitive := "She smacked the poster board flat against the windshield."
@@ -988,9 +988,11 @@ Goldberg & Jackendoff typology (added to `ResultativeType` for
 @cite{levin-2026}). This closes the loop between the `FilledResultative`
 type and the broader resultative classification. -/
 
-/-- Intr-*push open* is an anticausative property resultative: the verb
-    is transitive-only, the adjective heads a property result phrase,
-    and the cause is suppressed. -/
+/-- Map a `FilledResultative` to its `ResultativeType`.
+    All intr-*push open* resultatives are anticausative property resultatives:
+    the verb is transitive-only, the adjective heads a property result phrase,
+    and the cause is suppressed. The transitive counterpart (tr-*push open*)
+    would be `causativeProperty`, but is modeled separately. -/
 def filledToResultativeType (_ : FilledResultative) :
     Resultatives.ResultativeType :=
   .anticausativeProperty
@@ -999,7 +1001,7 @@ def filledToResultativeType (_ : FilledResultative) :
     (freeze solid): the former has a suppressed cause, the latter
     has no constructional cause at all. -/
 theorem anticausative_not_noncausative :
-    Resultatives.ResultativeType.anticausativeProperty ≠
+    filledToResultativeType pushOpen_filled ≠
     Resultatives.ResultativeType.noncausativeProperty := by
   decide
 
@@ -1011,8 +1013,9 @@ theorem anticausative_not_noncausative :
 
 The paper (§1) motivates the English analysis by drawing parallels to
 Mandarin, where the verb *tuī* "push" similarly cannot occur intransitively
-outside resultative constructions (examples 4–6 illustrate *tuī fān*
-"push-upend"). The Mandarin cognate compound *tuī-kāi* "push-open" exists
+outside resultative constructions (example 4: *tuī fān* "push-upend";
+examples 5–6 show *tuī* alone cannot appear intransitively).
+The Mandarin cognate compound *tuī-kāi* "push-open" exists
 as a V-V compound in the Fragment — this bridge connects it to the English
 analysis. -/
 

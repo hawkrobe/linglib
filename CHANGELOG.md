@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.363] - 2026-03-19
+
+### Added
+- **Lionnet 2025 — Register Tier Theory and Drubea formalization**
+  - `Theories/Phonology/Autosegmental/RegisterTier.lean`: Register features (h/l), tonal geometry (TRN), `realizePitch` terracing, `hEpenthesis`/`hEpenthesisSpread`, `uttInitialNeutralize`, `isCulminative`, `WordProsodicType`, `DownstepProperties`, `AnalysisInventory`
+  - `Fragments/Drubea/Prosody.lean`: `StemPattern` (3-way), 7 minimal pairs (ex. 4), 3 CV⁺V triplets (ex. 45), disyllable examples (ex. 34), `BoundaryFeature` (h%/l%), `applyBoundary`
+  - `Phenomena/Tone/Studies/Lionnet2025.lean`: 30 verification theorems across 10 sections — segmental identity, culminativity, CV⁺V three-way contrast, terracing, h-epenthesis (abrupt + spreading), utterance-initial neutralization, utterance-final prosody, Leben 2018 downstep properties, register vs tonal parsimony (1+1 vs 3+2), typological classification
+
+### Changed
+- **Sassoon 2013**: Replace Float-based normalized conjunctivity with 3:1 ratio criterion (p. 358), add 18 per-adjective classification theorems, `corpus_matches_classification` agreement theorem
+- **Levin 2026**: Fix docstrings, remove unused `swat` open
+
 ## [0.229.362] - 2026-03-19
 
 ### Added
