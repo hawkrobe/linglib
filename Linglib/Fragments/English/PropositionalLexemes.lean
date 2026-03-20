@@ -68,23 +68,27 @@ structure PropLexeme where
 -- § 2. Lexical Entries
 -- ════════════════════════════════════════════════════
 
-/-- "yes" — affirms MaxPending or gives positive answer to MaxQUD.
-@cite{ginzburg-2012} Appendix C. -/
+/-- "yes" — propositional abstract of MaxQUD.
+@cite{ginzburg-2012} §7.5, ex. 21 (p. 232): content = max-qud([ ]).
+When MaxQUD = ?p (a polar question), max-qud([ ]) = p.
+DGB-PARAMS references max-qud : PolQuestion. -/
 def yes : PropLexeme where
   phon := "yes"
-  dgbRef := .both
+  dgbRef := .maxQUD
   polarity := .positive
-  contentRule := "If MaxPending = p, content = p. If MaxQUD = q?, content = positive answer to q."
-  source := "Appendix C"
+  contentRule := "cont = max-qud([]). DGB-PARAMS: max-qud : PolQuestion."
+  source := "§7.5, ex. 21"
 
-/-- "no" — negates MaxPending or gives negative answer to MaxQUD.
-@cite{ginzburg-2012} Appendix C. -/
+/-- "no" — negation of MaxQUD's propositional abstract.
+@cite{ginzburg-2012} §7.5, ex. 25 (p. 233): content is a proposition such that
+NegProp(cont) ∧ SimpleAns(cont, max-qud).
+DGB-PARAMS references max-qud : PolQuestion. -/
 def no : PropLexeme where
   phon := "no"
-  dgbRef := .both
+  dgbRef := .maxQUD
   polarity := .negative
-  contentRule := "If MaxPending = p, content = ¬p. If MaxQUD = q?, content = negative answer to q."
-  source := "Appendix C"
+  contentRule := "cont : Prop, c1 : NegProp(cont) ∧ SimpleAns(cont, max-qud)."
+  source := "§7.5, ex. 25"
 
 /-- "mmh" / "uh-huh" — informal positive acknowledgment.
 @cite{ginzburg-2012} Appendix C. -/
@@ -114,9 +118,10 @@ def propLexemes : List PropLexeme := [yes, no, mmh, huh]
 theorem all_have_content_rules :
     propLexemes.all (fun l => !l.contentRule.isEmpty) = true := by native_decide
 
-/-- yes and no reference both MaxQUD and MaxPending. -/
-theorem yes_no_reference_both :
-    yes.dgbRef = .both ∧ no.dgbRef = .both := ⟨rfl, rfl⟩
+/-- yes and no both reference MaxQUD (not MaxPending directly).
+@cite{ginzburg-2012} §7.5: both derive content from max-qud via dgb-params. -/
+theorem yes_no_reference_maxQUD :
+    yes.dgbRef = .maxQUD ∧ no.dgbRef = .maxQUD := ⟨rfl, rfl⟩
 
 /-- yes and no have opposite polarity. -/
 theorem yes_no_opposite_polarity :

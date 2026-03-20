@@ -25,7 +25,17 @@ The DGB is a conversational participant's own version of the public context:
 - **Pending**: ungrounded locutionary propositions (added in Ch. 6)
 - **QUD**: partially ordered set of questions under discussion
 - **non-resolve-cond**: well-formedness constraint — no QUD question is
-  resolved by FACTS
+  resolved by FACTS (see `DGB.nonResolveCond` in `Rules.lean`)
+
+### Known simplifications
+
+Our DGB corresponds to the **Ch. 4 intermediate version** (ex. 100), not
+the final Ch. 6 version (ex. 113). Specific differences:
+
+1. **MOVES**: stores `IllocMove` (Ch. 4) not `LocProp` (Ch. 6 final)
+2. **QUD**: stores bare `QContent` not `InfoStruc` (question + FECs, ex. 39)
+3. **Pending**: uses `PendingLoc` not `LocProp` (Ch. 6 final)
+4. **utt-time / c-utt**: temporal fields from ex. 100 are not modeled
 
 ## @cite{ginzburg-2012} TIS (ex. 93, p. 107)
 
@@ -130,9 +140,14 @@ theorem IllocMove.greet_null_fit {Fact QContent : Type} :
 
 /-- A pending locutionary proposition: an ungrounded utterance.
 
-@cite{ginzburg-2012} Ch. 6 (p. 215): Pending is a list of locutionary
-propositions — utterance records paired with a classifying type.
-We model this as a string-tagged record for now. -/
+@cite{ginzburg-2012} Ch. 6, ex. 113 (p. 215): in the final DGB version,
+Pending stores full LocProps (defined in §15 below). This `PendingLoc`
+is a simplified representation used in the DGB struct. For the full
+LocProp-based grounding protocol, see `integrateLocProp` in `Rules.lean`.
+
+**Known simplification**: the final DGB (ex. 113) uses `List(LocProp)` for
+both MOVES and Pending. Our DGB uses `IllocMove` for MOVES and `PendingLoc`
+for Pending — this corresponds to the Ch. 4 intermediate version. -/
 structure PendingLoc where
   /-- The utterance event identifier -/
   utt : String
@@ -160,14 +175,22 @@ structure DGB (Participant Fact QContent : Type) where
   /-- Shared commitments. @cite{ginzburg-2012}: "Facts : Set(Prop)" -/
   facts : List Fact := []
   /-- History of illocutionary moves. @cite{ginzburg-2012}: "Moves : list(IllocProp)".
-      The last element is the LatestMove. -/
+      The last element is the LatestMove.
+
+      **Known simplification**: the final DGB (ex. 113, p. 215) stores LocProps
+      in MOVES, not illocutionary propositions. We use `IllocMove` here,
+      matching the Ch. 4 version. -/
   moves : List (IllocMove Fact QContent) := []
   /-- Ungrounded locutionary propositions.
       @cite{ginzburg-2012} Ch. 6 (p. 215): added to the DGB in the final version. -/
   pending : List PendingLoc := []
   /-- Partially ordered set of questions under discussion.
       @cite{ginzburg-2012}: "QUD : poset(Question)". We use a list
-      (most recent = front) following QUD-maximality. -/
+      (most recent = front) following QUD-maximality.
+
+      **Known simplification**: the final version (ex. 39, p. 239) makes QUD
+      entries `InfoStruc` (question + FECs) rather than bare questions. We use
+      bare `QContent` here; the `InfoStruc` type is defined in §16 below. -/
   qud : List QContent := []
 
 /-- The latest move is the last element of the moves list. -/

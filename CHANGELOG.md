@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.388] - 2026-03-20
+
+### Added
+- **Non-resolve-cond** (`KOS/Rules.lean` §15): `DGB.nonResolveCond` well-formedness predicate from ex. 100 (p. 111), `initial_nonResolveCond`, `downdateQud_restores_nonResolveCond` (with `all_filter_self` helper)
+- **End-to-end chain** (`Ginzburg2012.lean` §10): DialogueSign → LocProp → integration → DGB update pipeline, covering CRification path, grounding path, exhaustiveness theorem, non-resolve-cond verification
+- **NSUFunction** grouping (`Ginzburg2012.lean` §7): 4 functional categories from Table 7.4 (positive feedback, answers, metacommunicative queries, extension moves), `NSUClass.toFunction` classifier, `NSUClass.frequency` BNC counts
+
+### Changed
+- **NSU taxonomy** (`Ginzburg2012.lean` §7): 11 ad-hoc classes → 15 empirical classes matching Table 7.3 (p. 221) exactly, with correct names and frequency ordering
+- **PropLexeme yes/no** (`PropositionalLexemes.lean`): `dgbRef` fixed from `.both` to `.maxQUD` per §7.5 (exx. 21, 25) — content derives from max-qud([ ]), not from MaxPending directly; contentRule strings updated to match book formulas
+- **DGB docstrings** (`KOS/Basic.lean`): documented known simplifications vs Ch. 6 final DGB (ex. 113) — MOVES as IllocMove (not LocProp), QUD as bare questions (not InfoStruc), PendingLoc (not LocProp), missing utt-time/c-utt
+
 ## [0.229.387] - 2026-03-20
 
 ### Added

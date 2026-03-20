@@ -626,4 +626,45 @@ theorem no_coercion_fallback {Cont QContent : Type}
     (integrateLocProp lp toCR).isGrounded = false := by
   simp only [integrateLocProp, h, IntegrationResult.isGrounded]
 
+-- ════════════════════════════════════════════════════
+-- § 15. Non-Resolve-Cond (@cite{ginzburg-2012} ex. 100, p. 111)
+-- ════════════════════════════════════════════════════
+
+/-! ## DGB Well-Formedness: Non-Resolve-Cond
+
+@cite{ginzburg-2012} ex. 100 (p. 111): the DGB includes a well-formedness
+constraint `non-resolve-cond` requiring that no question on QUD is already
+resolved by FACTS. This prevents trivially answered questions from lingering
+on QUD — they should be downdated. -/
+
+/-- The non-resolve-cond: no question on QUD is resolved by FACTS.
+@cite{ginzburg-2012} ex. 100 (p. 111). -/
+def DGB.nonResolveCond {P Fact QContent : Type} [Answerhood Fact QContent]
+    (dgb : DGB P Fact QContent) : Bool :=
+  dgb.qud.all fun q => !(dgb.facts.any fun f => Answerhood.resolves f q)
+
+/-- An empty DGB trivially satisfies non-resolve-cond. -/
+theorem DGB.initial_nonResolveCond {P Fact QContent : Type} [Answerhood Fact QContent] :
+    (DGB.initial : DGB P Fact QContent).nonResolveCond = true := rfl
+
+/-- Filtering by p then checking all satisfy p is trivially true. -/
+private theorem all_filter_self {α : Type} (l : List α) (p : α → Bool) :
+    (l.filter p).all p = true := by
+  induction l with
+  | nil => rfl
+  | cons x xs ih =>
+    unfold List.filter
+    cases hx : p x with
+    | true => simp only [List.all_cons, hx, Bool.true_and, ih]
+    | false => exact ih
+
+/-- After QUD-downdate, non-resolve-cond holds: all remaining questions
+are unresolved by FACTS. -/
+theorem downdateQud_restores_nonResolveCond
+    {P Fact QContent : Type} [Answerhood Fact QContent]
+    (dgb : DGB P Fact QContent) :
+    dgb.downdateQud.nonResolveCond = true := by
+  simp only [DGB.nonResolveCond, DGB.downdateQud]
+  exact all_filter_self _ _
+
 end Theories.Pragmatics.Dialogue.KOS

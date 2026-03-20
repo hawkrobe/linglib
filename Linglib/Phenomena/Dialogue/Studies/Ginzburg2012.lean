@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
+import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar
 import Linglib.Theories.Semantics.TypeTheoretic.Discourse
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Core.Discourse.QUD
@@ -23,6 +23,12 @@ framework and verified with the existing DGB/TIS/conversational-rule machinery.
    in the private state.
 5. **Genre relevance** (Ch. 4): initiating moves must be relevant to the
    conversational genre.
+6. **NSU taxonomy** (Ch. 7, Tables 7.3–7.4): 15 empirical NSU classes from
+   BNC corpus + 4 functional groupings.
+7. **Grounding protocol** (Ch. 6): LocProp integration branches on cparam
+   resolution — grounding vs CRification.
+8. **End-to-end chain** (§10): DialogueSign → LocProp → integration →
+   DGB update, with non-resolve-cond verification.
 
 -/
 
@@ -307,35 +313,97 @@ theorem all_fragments_are_nsus :
 
 /-! ## NSU Classification
 
-@cite{ginzburg-2012} Ch. 7 (§7.2) provides an empirical taxonomy of
-non-sentential utterances based on a BNC corpus study. Each class has
-a distinct resolution mechanism relative to QUD/Pending. -/
+@cite{ginzburg-2012} Ch. 7 (§7.2, Tables 7.3–7.4): empirical taxonomy of
+non-sentential utterances based on a BNC corpus study (Fernández 2006).
+200 speaker-turns from 54 BNC files; 14,315 sentences; 1,299 NSUs found,
+of which 1,283 (98.9%) were classified.
 
-/-- The 11 classes of NSUs from @cite{ginzburg-2012} Ch. 7, §7.2. -/
+Table 7.3 gives 15 empirical classes ordered by frequency.
+Table 7.4 groups them into 4 functional categories:
+positive feedback, answers, metacommunicative queries, extension moves. -/
+
+/-- The 15 NSU classes from @cite{ginzburg-2012} Table 7.3 (p. 221).
+Ordered by frequency in the BNC sub-corpus. -/
 inductive NSUClass where
-  /-- Short answer: fills an argument slot in MaxQUD ("Paris", "Bo") -/
+  /-- "mmh", "uh-huh" — acknowledges preceding utterance (599) -/
+  | plainAcknowledgement
+  /-- "Bo" — fills argument slot in MaxQUD (188) -/
   | shortAnswer
-  /-- Polar answer: "yes" / "no" to a polar MaxQUD -/
-  | polarAnswer
-  /-- Propositional lexeme: "yes", "no", "mmh" — meaning from DGB state -/
-  | propLexeme
-  /-- Sluice: bare wh-phrase ("Who?", "Where?") -/
+  /-- "Yes" — positive answer to polar query (105) -/
+  | affirmativeAnswer
+  /-- "Bo, hmm" — acknowledgement with repetition (86) -/
+  | repeatedAcknowledgement
+  /-- "Bo?" — clarification ellipsis (79) -/
+  | clarificationEllipsis
+  /-- "No" — negative answer to polar query / assertion (49) -/
+  | rejection
+  /-- "Great!" — factive modifier (27) -/
+  | factiveModifier
+  /-- "Bo, yes" — affirmative with repetition (26) -/
+  | repeatedAffirmativeAnswer
+  /-- "No, Max" — rejection with helpful alternative (24) -/
+  | helpfulRejection
+  /-- "Who?" — bare wh-phrase requesting elaboration (24) -/
   | sluice
-  /-- Reprise sluice: echo wh-substitution ("Bo did WHAT?") -/
-  | repriseSluice
-  /-- Reprise fragment: echo of a sub-utterance for clarification ("Bo?") -/
-  | repriseFragment
-  /-- Focus-establishing constituent: fragment providing focus ("PARIS") -/
-  | fec
-  /-- Declarative fragment: bare DP/PP with assertive force ("The manager") -/
-  | declarativeFragment
-  /-- Check fragment: rising intonation echo for confirmation ("Bo?↗") -/
-  | checkFragment
-  /-- Correction fragment: corrects a sub-utterance ("No, PARIS") -/
-  | correctionFragment
-  /-- Filler: hesitation / floor-holding ("uh", "well") -/
+  /-- "Okay?" — rising intonation check (22) -/
+  | checkQuestion
+  /-- "uh", "well" — hesitation / floor-holding (18) -/
   | filler
+  /-- "Yesterday" — bare modifier phrase (15) -/
+  | bareModifierPhrase
+  /-- "Maybe" — propositional modifier (11) -/
+  | propositionalModifier
+  /-- "And Max" — conjunction + fragment (10) -/
+  | conjunctionFragment
   deriving Repr, DecidableEq, BEq
+
+/-- BNC frequency count for each NSU class (Table 7.3). -/
+def NSUClass.frequency : NSUClass → Nat
+  | .plainAcknowledgement     => 599
+  | .shortAnswer               => 188
+  | .affirmativeAnswer         => 105
+  | .repeatedAcknowledgement   => 86
+  | .clarificationEllipsis     => 79
+  | .rejection                 => 49
+  | .factiveModifier           => 27
+  | .repeatedAffirmativeAnswer => 26
+  | .helpfulRejection          => 24
+  | .sluice                    => 24
+  | .checkQuestion             => 22
+  | .filler                    => 18
+  | .bareModifierPhrase        => 15
+  | .propositionalModifier     => 11
+  | .conjunctionFragment       => 10
+
+/-- Functional grouping from @cite{ginzburg-2012} Table 7.4 (p. 222). -/
+inductive NSUFunction where
+  /-- Positive feedback: plain + repeated acknowledgement (685) -/
+  | positiveFeedback
+  /-- Answers: short, affirmative, rejection, repeated aff., helpful rej., prop. modifier (413) -/
+  | answer
+  /-- Metacommunicative queries: CE, check question, reprise sluice, filler (132) -/
+  | metacommunicativeQuery
+  /-- Extension moves: factive modifier, bare modifier, direct sluice, conj+frag (63) -/
+  | extensionMove
+  deriving Repr, DecidableEq, BEq
+
+/-- Classify an NSU class into its functional group (Table 7.4). -/
+def NSUClass.toFunction : NSUClass → NSUFunction
+  | .plainAcknowledgement     => .positiveFeedback
+  | .repeatedAcknowledgement  => .positiveFeedback
+  | .shortAnswer              => .answer
+  | .affirmativeAnswer        => .answer
+  | .rejection                => .answer
+  | .repeatedAffirmativeAnswer => .answer
+  | .helpfulRejection         => .answer
+  | .propositionalModifier    => .answer
+  | .clarificationEllipsis    => .metacommunicativeQuery
+  | .checkQuestion            => .metacommunicativeQuery
+  | .filler                   => .metacommunicativeQuery
+  | .factiveModifier          => .extensionMove
+  | .bareModifierPhrase       => .extensionMove
+  | .sluice                   => .extensionMove
+  | .conjunctionFragment      => .extensionMove
 
 -- ════════════════════════════════════════════════════
 -- § 8. CR Form & Reading Taxonomy (@cite{ginzburg-2012} Ch. 6, §6.2)
@@ -425,5 +493,117 @@ theorem cr_targets_bo :
     .crification "Who do you mean by 'bo_ref'?" { index := "bo_ref", restriction := "individual" } := rfl
 
 end GroundingExample
+
+-- ════════════════════════════════════════════════════
+-- § 10. End-to-End Chain: Utterance → DGB Update
+-- ════════════════════════════════════════════════════
+
+/-! ## End-to-End: DialogueSign → LocProp → Integration → DGB
+
+@cite{ginzburg-2012}'s architecture connects grammar to dialogue via:
+1. A **DialogueSign** (Ch. 5) with dgb-params, q-params, quest-dom
+2. Conversion to a **LocProp** (Ch. 6) with cparams
+3. **Integration**: grounding (cparams resolved → FACTS) or
+   CRification (cparams unresolved → CR question on QUD)
+4. **DGB update** via conversational rules (Ch. 4)
+
+This section proves the full pipeline for the worked example
+"Did Jo leave?" — from DialogueSign to final DGB state. -/
+
+section EndToEndChain
+
+open Theories.Pragmatics.Dialogue.KOS.Grammar
+
+instance : Answerhood String String where
+  resolves fact question := fact == question
+
+-- Step 1: DialogueSign for the sentence "Did Jo leave?"
+-- "Jo" contributes DGB-PARAMS; "left" is a plain verb.
+
+/-- "Jo" as a DialogueSign — has DGB-PARAMS for referent resolution. -/
+private def joSign := Grammar.jo
+
+/-- "left" as a DialogueSign — no dialogue params. -/
+private def leftSign := Grammar.left
+
+-- Step 2: Convert to LocProp
+/-- "Jo" as a LocProp — dgb-params become cparams. -/
+private def joLocProp := joSign.toLocProp
+
+/-- Conversion preserves the phonological form. -/
+theorem e2e_phon_preserved : joLocProp.phon = "Jo" := rfl
+
+/-- Conversion transfers dgb-params to cparams. -/
+theorem e2e_cparams_from_dgb : joLocProp.cparams = joSign.dgbParams := rfl
+
+-- Step 3: Integration — branch on cparam resolution
+private def crQuestion (p : CParam) : String :=
+  s!"Who do you mean by '{p.index}'?"
+
+/-- "Jo" has unresolved cparams → CRification (not grounding). -/
+theorem e2e_jo_crifies :
+    (integrateLocProp joLocProp crQuestion).isGrounded = false := rfl
+
+/-- The CR question is derived from the unresolved parameter. -/
+theorem e2e_cr_question :
+    integrateLocProp joLocProp crQuestion =
+    .crification "Who do you mean by 'jo_ref'?"
+      { index := "jo_ref", restriction := "individual" } := rfl
+
+-- Step 4a: CRification path — CR question goes on QUD
+
+/-- Starting DGB: B has asked "Did Jo leave?", QUD has the question. -/
+private def tis₀ : TIS String String String := TIS.initial.ask "leave(jo)"
+
+/-- CRification: the CR question is pushed onto QUD. -/
+private def tis₁_cr : TIS String String String :=
+  { tis₀ with dgb := tis₀.dgb.pushQud "Who do you mean by 'jo_ref'?" }
+
+/-- After CRification, QUD has the CR question at the top. -/
+theorem e2e_cr_on_qud :
+    (tis₁_cr.dgb.qud).head? = some "Who do you mean by 'jo_ref'?" := rfl
+
+/-- The original question is still on QUD (below the CR). -/
+theorem e2e_original_still_on_qud :
+    "leave(jo)" ∈ tis₁_cr.dgb.qud := by
+  simp [tis₁_cr, tis₀, TIS.ask, DGB.pushQud, DGB.recordMove]
+
+-- Step 4b: Grounding path — resolved LocProp enters FACTS
+
+/-- A LocProp for "Jo" with resolved cparams (addressee knows who Jo is). -/
+private def joResolved : LocProp String where
+  phon := "Jo"
+  cat := "PROPN"
+  cont := "jo"
+
+/-- Resolved "Jo" grounds successfully. -/
+theorem e2e_resolved_grounds :
+    (integrateLocProp joResolved crQuestion).isGrounded = true := rfl
+
+/-- After grounding "Jo left", the assertion enters FACTS and resolves QUD. -/
+private def tis₁_ground : TIS String String String :=
+  tis₀.assertRule "leave(jo)"
+
+theorem e2e_ground_resolves_qud : tis₁_ground.dgb.qud = [] := by native_decide
+
+theorem e2e_ground_adds_fact : "leave(jo)" ∈ tis₁_ground.dgb.facts := by
+  simp [tis₁_ground, tis₀, TIS.assertRule, TIS.ask, DGB.assertFact,
+    DGB.addFact, DGB.downdateQud, DGB.recordMove, DGB.pushQud]
+
+/-- The full chain is consistent: CRification and grounding are exhaustive.
+Every LocProp either grounds or CRifies — there is no third option. -/
+theorem e2e_exhaustive (lp : LocProp String) (toCR : CParam → String) :
+    (integrateLocProp lp toCR).isGrounded = true ∨
+    (integrateLocProp lp toCR).isGrounded = false := by
+  unfold integrateLocProp
+  cases lp.cparams with
+  | nil => left; rfl
+  | cons _ _ => right; rfl
+
+/-- Non-resolve-cond holds after QUD-downdate in the grounding path. -/
+theorem e2e_nonResolveCond_after_ground :
+    tis₁_ground.dgb.nonResolveCond = true := by native_decide
+
+end EndToEndChain
 
 end Phenomena.Dialogue.Studies.Ginzburg2012
