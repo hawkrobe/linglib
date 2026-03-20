@@ -43,9 +43,13 @@ structure GradableNoun (Entity : Type) where
   /-- The contextual standard for this predicate. -/
   standard : Degree
 
-/-- Apply POS to a gradable noun: λx. standard(g) ≤ g(x). -/
+/-- Apply POS to a gradable noun: λx. standard(g) < g(x).
+
+Uses strict inequality, matching `positiveMeaning` in `Degree.Core`:
+an entity satisfies POS(N) iff its degree *exceeds* the standard
+(@cite{kennedy-2007}). -/
 def GradableNoun.pos {E : Type} (n : GradableNoun E) : E → Bool :=
-  λ x => n.standard ≤ n.measure x
+  λ x => n.standard < n.measure x
 
 
 /-- Size adjectives characterized by polarity (big vs small). -/
@@ -87,7 +91,7 @@ def measN {E : Type}
   λ x =>
     match minDegree sizeAdj with
     | none => false
-    | some minD => minD ≤ noun.measure x ∧ noun.standard ≤ noun.measure x
+    | some minD => minD ≤ noun.measure x ∧ noun.standard < noun.measure x
 
 
 /-- Example: an "idiot" gradable noun with standard at d3. -/

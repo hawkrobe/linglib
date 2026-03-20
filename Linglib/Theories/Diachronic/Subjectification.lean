@@ -23,8 +23,9 @@ unidirectional, and that specific semantic domains exhibit this pattern.
 - `Theories.Semantics.Modality.Narrog`: speaker-orientation level maps to
   subjectivity level; the directionality of modal change (see
   `Diachronic.ModalChange`) is an instance of subjectification.
-- `Core.Lexical.Binominal`: the bleaching cline (evaluative → quantificational)
-  parallels the subjectification trajectory in the nominal domain.
+- `Core.Lexical.Binominal`: the bleaching cline (N+PP → evaluative → intensifier)
+  parallels the subjectification trajectory in the nominal domain: N₁ shifts
+  from denoting objective properties to expressing speaker attitude.
 - `Diachronic.Grammaticalization`: subjectification is a semantic dimension of
   grammaticalization — as forms grammaticalize, they tend to acquire
   more subjective meanings.
@@ -96,7 +97,52 @@ theorem all_directed :
     rcases hs with rfl | rfl | rfl | rfl <;> decide
 
 -- ============================================================================
--- §2. Intersubjectification
+-- §2. Binominal Subjectification
+-- ============================================================================
+
+/-- Subjectification steps in the binominal (N₁-of-N₂) domain.
+
+@cite{ten-wolde-2023} §4.5: the EBNP → EM → BI transitions are driven by
+subjectification — N₁ shifts from ascribing objective/physical properties
+to expressing the speaker's subjective evaluation. -/
+def binominalSubjectificationSteps : List SubjectificationStep :=
+  [ -- N+PP/HC → EBNP: the key subjectification step in the binominal domain.
+    -- N₁ shifts from denoting objective referential properties to expressing
+    -- the speaker's evaluative attitude.
+    { expression := "N₁ in of-binominals"
+      sourceMeaning := "N₁ denotes referential property (N+PP: the beast of the field)"
+      targetMeaning := "N₁ ascribes evaluative property (EBNP: that idiot of a doctor)"
+      sourceLevel := .nonSubjective
+      targetLevel := .subjective
+      directed := by decide }
+  , -- EBNP → EM: N₁ bleaches from full gradable predicate to pure
+    -- speaker evaluation. Subjectivity level maintained but semantics bleached.
+    { expression := "[N₁ of a] in of-binominals"
+      sourceMeaning := "N₁ ascribes evaluative property (EBNP: a beast of a man)"
+      targetMeaning := "N₁ expresses speaker's subjective evaluation (EM: a hell of a game)"
+      sourceLevel := .subjective
+      targetLevel := .subjective
+      directed := by decide }
+  , -- EM → BI: N₁ further bleaches to degree intensifier.
+    -- Subjectivity level maintained; the change is syntactic (shifts into AdjP).
+    { expression := "[N₁ of a] in of-binominals"
+      sourceMeaning := "N₁ as evaluative modifier (EM: a hell of a time)"
+      targetMeaning := "N₁ as degree intensifier (BI: a hell of a good time)"
+      sourceLevel := .subjective
+      targetLevel := .subjective
+      directed := by decide }
+  ]
+
+/-- The N+PP → EBNP step is a genuine subjectification (nonSubjective → subjective);
+    the later steps maintain subjectivity while bleaching semantics further. -/
+theorem binominal_steps_directed :
+    ∀ s ∈ binominalSubjectificationSteps, s.sourceLevel ≤ s.targetLevel :=
+  fun s hs => by
+    simp [binominalSubjectificationSteps] at hs
+    rcases hs with rfl | rfl | rfl <;> decide
+
+-- ============================================================================
+-- §3. Intersubjectification
 -- ============================================================================
 
 /-- Intersubjectification: the final stage of the cline, where meanings

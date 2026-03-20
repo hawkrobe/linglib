@@ -86,7 +86,7 @@ structure BinominalN₁Entry where
   /-- Which *of*-binominal constructions this noun appears in. -/
   constructions : List OfBinominalType
   /-- Does this noun have a reduced/fused intensifier form
-      (e.g., *helluva*, *hella*, *beasta*)? -/
+      (e.g., *helluva*, *hella*, *whaleuva*)? -/
   hasReducedForm : Bool := false
   deriving Repr, BEq
 
@@ -121,6 +121,7 @@ def whale : BinominalN₁Entry where
   semanticClass := .animate
   constructions := [.nPP, .headClassifier,
                     .evaluative, .evaluativeModifier, .binominalIntensifier]
+  hasReducedForm := true  -- whaleuva (Figs 8.10, 8.12)
 
 def bitch : BinominalN₁Entry where
   form := "bitch"
@@ -219,6 +220,25 @@ def biConstruction : Construction where
   meaning := "[N₁ of a] intensifies following adjective or quantifier"
   specificity := .partiallyOpen
 
+/-- The simple NP construction (@cite{ten-wolde-2023} §8.4).
+
+The simple NP [[Det] (Mod) [N]] plays a key role in the constructional
+network: the head-classifier shares a polysemy link with the classifier
+premodifier in the NP, and the evaluative constructions share polysemy
+links with evaluative/intensifier premodifiers in the NP. -/
+def simpleNPConstruction : Construction where
+  name := "Simple NP"
+  form := "[[Det](Mod)[N]]"
+  meaning := "denotes a referent, premodifier ascribes property to head"
+  specificity := .fullyAbstract
+
+/-- The adjective phrase construction, linked to BI (@cite{ten-wolde-2023} Fig 8.13). -/
+def adjPhraseConstruction : Construction where
+  name := "AP"
+  form := "[[Intens][Adj]]"
+  meaning := "intensifier emphasizes the following adjective"
+  specificity := .fullyAbstract
+
 /-- The *of*-binominal constructional network (@cite{ten-wolde-2023}).
 
 All links on the grammaticalization path are **metaphorical** (M) at the
@@ -229,7 +249,8 @@ schematic N+PP mother node at a higher level (not modeled here). -/
 def ofBinominalNetwork : Constructicon where
   constructions :=
     [ nPPConstruction, headClassifierConstruction, pseudoPartitiveConstruction
-    , ebnpConstruction, emConstruction, biConstruction ]
+    , ebnpConstruction, emConstruction, biConstruction
+    , simpleNPConstruction, adjPhraseConstruction ]
   links :=
     [ -- Metaphorical: N+PP → Head-Classifier (Fig 8.7)
       { parent := "N+PP", child := "Head-Classifier"
@@ -237,36 +258,72 @@ def ofBinominalNetwork : Constructicon where
         linkType := some .metaphorical
         sharedProperties := ["[Det][N][of] frame", "N₁ heads"]
         overriddenProperties := ["PP classifies → of is linker", "no Det₂"] }
-    , -- Taxonomic: N+PP → Pseudo-partitive
+    , -- NOTE: This link is NOT in @cite{ten-wolde-2023}'s network figures
+      -- (Figs 8.7–8.13), which focus on the main evaluative path. Pseudo-partitive
+      -- is a side branch, not on the N+PP → HC → EBNP → EM → BI path.
+      -- Included here for structural completeness of the six-type taxonomy.
       { parent := "N+PP", child := "Pseudo-partitive"
         mode := .normal
+        linkType := some .polysemy
         sharedProperties := ["[Det][N][of] frame"]
-        overriddenProperties := ["head: N₁ → N₂"] }
+        overriddenProperties := ["head: N₁ → N₂", "N₁ quantizes"] }
     , -- Metaphorical: Head-Classifier → EBNP (Fig 8.9)
       { parent := "Head-Classifier", child := "Evaluative BNP"
         mode := .normal
         linkType := some .metaphorical
         sharedProperties := ["N₁ classifies/evaluates N₂"]
         overriddenProperties := ["head: N₁ → N₂", "N₁ evaluative"] }
+    , -- Polysemy: Head-Classifier → Simple NP (Fig 8.7)
+      -- The classifier premodifier in the NP and the head-classifier share
+      -- semantic function; this competition drives reanalysis.
+      { parent := "Head-Classifier", child := "Simple NP"
+        mode := .normal
+        linkType := some .polysemy
+        sharedProperties := ["classifier function"]
+        overriddenProperties := ["[N of N] → [classifier N]"] }
     , -- Metaphorical: EBNP → EM (Fig 8.11)
       { parent := "Evaluative BNP", child := "Evaluative Modifier"
         mode := .normal
         linkType := some .metaphorical
         sharedProperties := ["N₂ is semantic head", "N₁ evaluative"]
         overriddenProperties := ["N₁ frozen singular", "N₁ semantics bleached"] }
+    , -- Polysemy: EBNP → Simple NP (Fig 8.9)
+      -- EBNP shares evaluative premodification function with the NP:
+      -- *a beast of a boy* ↔ *a beastly boy*.
+      { parent := "Evaluative BNP", child := "Simple NP"
+        mode := .normal
+        linkType := some .polysemy
+        sharedProperties := ["N₁ ascribes evaluative property to head"]
+        overriddenProperties := ["[N of a N] → [Adj N]"] }
     , -- Metaphorical: EM → BI (Fig 8.13)
       { parent := "Evaluative Modifier", child := "Binominal Intensifier"
         mode := .normal
         linkType := some .metaphorical
         sharedProperties := ["[N₁ of a] chunk", "N₁ nonreferential"]
         overriddenProperties := ["[N of a] shifts into AdjP", "N₁ intensifies Adj"] }
+    , -- Polysemy: EM → Simple NP (Fig 8.11)
+      -- EM functions as subjective descriptive modifier in the NP:
+      -- *a hell of a game* ↔ *a hellish game*.
+      { parent := "Evaluative Modifier", child := "Simple NP"
+        mode := .normal
+        linkType := some .polysemy
+        sharedProperties := ["speaker evaluation of referent"]
+        overriddenProperties := ["[N of a] → evaluative premodifier"] }
+    , -- Polysemy: BI → AP (Fig 8.13)
+      -- BI's [N of a] chunk functions as an adjective intensifier:
+      -- *a hell of a good time* ↔ *a hella good time*.
+      { parent := "Binominal Intensifier", child := "AP"
+        mode := .normal
+        linkType := some .polysemy
+        sharedProperties := ["intensifier function"]
+        overriddenProperties := ["[N of a] → degree intensifier in AdjP"] }
     ]
 
-/-- The network has 6 constructions. -/
-theorem network_size : ofBinominalNetwork.constructions.length = 6 := rfl
+/-- The network has 8 constructions (6 of-binominal + simple NP + AP). -/
+theorem network_size : ofBinominalNetwork.constructions.length = 8 := rfl
 
-/-- The network has 5 inheritance links. -/
-theorem network_links : ofBinominalNetwork.links.length = 5 := rfl
+/-- The network has 9 links (4 grammaticalization + 1 N+PP polysemy + 4 polysemy to NP/AP). -/
+theorem network_links : ofBinominalNetwork.links.length = 9 := rfl
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 4: Per-Entry Verification
