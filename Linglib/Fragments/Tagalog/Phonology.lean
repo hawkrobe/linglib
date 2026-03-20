@@ -3,9 +3,9 @@ import Linglib.Theories.Phonology.HarmonicGrammar.Separability
 /-!
 # Tagalog Nasal Substitution Data @cite{zuraw-2010}
 
-Empirical data for Tagalog nasal substitution, the running case study in
-@cite{magri-2025}'s analysis of constraint interaction in probabilistic
-phonology.
+Empirical data for Tagalog nasal substitution (@cite{zuraw-2010}),
+the running case study in @cite{magri-2025}'s analysis of constraint
+interaction in probabilistic phonology.
 
 ## The process
 
@@ -17,20 +17,14 @@ the latter (@cite{zuraw-2010}):
 - `maŋ+bigáj` → `mamigáj` 'to distribute' (nasal substitution)
 - `paŋ+tabój` → `pantabój` 'to goad' (place assimilation, no substitution)
 
-## The 2×2 square
+## Data organization
 
-@cite{magri-2025} §2.1 arranges four underlying concatenations in a
-square, with prefix identity as the row dimension and
-stem-initial obstruent quality as the column dimension:
-
-```
-         b (voiced)     k (voiceless)
-maŋ-     maŋb            maŋk
-paŋ-     paŋb            paŋk
-```
-
-Each form has two surface variants: YES (nasal substitution applies) and
-NO (place assimilation only).
+- **§ 1: Stem consonants** — the six stem-initial obstruents from
+  @cite{zuraw-2010}'s factorial typology
+- **§ 2: Dictionary rates** — text-verified substitution rates from the
+  Tagalog dictionary study
+- **§ 3–7: 2×2 square** — @cite{magri-2025}'s arrangement of four
+  underlying concatenations for probabilistic analysis
 -/
 
 namespace Fragments.Tagalog.Phonology
@@ -38,11 +32,51 @@ namespace Fragments.Tagalog.Phonology
 open Theories.Phonology.HarmonicGrammar
 
 -- ============================================================================
--- § 1: Underlying Forms
+-- § 1: Stem Consonants (@cite{zuraw-2010})
+-- ============================================================================
+
+/-- The six stem-initial obstruents in the nasal substitution typology.
+    Coalescence maps each to its homorganic nasal: p→m, t→n, k→ŋ,
+    b→m, d→n, g→ŋ. -/
+inductive StemC where
+  | p | t | k   -- voiceless
+  | b | d | g   -- voiced
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether nasal substitution applies. -/
+inductive SubSt where
+  | yes  -- coalescence: nasal + obstruent → nasal
+  | no   -- faithful: nasal cluster preserved
+  deriving DecidableEq, BEq, Repr
+
+/-- A candidate is a stem consonant paired with a substitution decision. -/
+abbrev NSCand := StemC × SubSt
+
+-- ============================================================================
+-- § 2: Dictionary Rates (@cite{zuraw-2010})
+-- ============================================================================
+
+/-- Dictionary substitution rate for voiceless labial p (253/263 ≈ 96.2%).
+    Text-verified from @cite{zuraw-2010}'s discussion of the Tagalog
+    dictionary study. -/
+def dictRate_p : ℚ := 253 / 263
+
+/-- Dictionary substitution rate for voiced labial b (177/277 ≈ 63.9%).
+    Text-verified from @cite{zuraw-2010}'s discussion of the Tagalog
+    dictionary study. -/
+def dictRate_b : ℚ := 177 / 277
+
+/-- **Voicing effect in dictionary data** (labial place): voiceless p
+    has a higher substitution rate than voiced b. -/
+theorem dict_voicing_labial : dictRate_p > dictRate_b := by native_decide
+
+-- ============================================================================
+-- § 3: 2×2 Square — Underlying Forms (@cite{magri-2025})
 -- ============================================================================
 
 /-- The four underlying concatenations from @cite{magri-2025}'s
-    2×2 square arrangement. -/
+    2×2 square arrangement. These cross two prefixes (maŋ-, paŋ-)
+    with two of the six stem consonants (b, k). -/
 inductive NasalSubInput where
   | mang_b  -- /maŋ+b/  (top-left)
   | mang_k  -- /maŋ+k/  (top-right)
@@ -70,7 +104,7 @@ instance : Fintype NasalSubOutput where
 abbrev NasalSubCandidate := NasalSubInput × NasalSubOutput
 
 -- ============================================================================
--- § 2: The Square
+-- § 4: The Square
 -- ============================================================================
 
 /-- The 2×2 square of underlying forms: prefix × stem-initial obstruent. -/
@@ -81,7 +115,7 @@ def nasalSubSquare : Square NasalSubInput where
   br := .pang_k
 
 -- ============================================================================
--- § 3: Constraint Violation Profiles (Figure 3)
+-- § 5: Constraint Violation Profiles
 -- ============================================================================
 
 /-- C₁ = \*NC: one violation for every nasal–obstruent sequence.
@@ -131,7 +165,7 @@ def constraints : Fin 6 → NasalSubCandidate → ℕ
   | ⟨5, _⟩ => unifPang
 
 -- ============================================================================
--- § 4: Violation Differences (Δₖ)
+-- § 6: Violation Differences (Δₖ)
 -- ============================================================================
 
 /-- Violation difference `Δₖ(x) = Cₖ(x, NO) − Cₖ(x, YES)` for each
@@ -156,7 +190,7 @@ def violDiffProfile : Fin 6 → NasalSubInput → ℤ
   | ⟨5, _⟩, _ => 0
 
 -- ============================================================================
--- § 5: Empirical Rates
+-- § 7: Empirical Rates (2×2 square)
 -- ============================================================================
 
 /-- Empirical rates of nasal substitution from @cite{zuraw-2010} type
@@ -171,7 +205,7 @@ def nasalSubRate : NasalSubInput → ℚ
   | .pang_k => 909 / 1000  -- 0.909
 
 -- ============================================================================
--- § 6: Violation Difference Independence
+-- § 8: Violation Difference Independence
 -- ============================================================================
 
 /-- The violation differences cast to ℝ, for use with `me_predicts_hz`. -/
