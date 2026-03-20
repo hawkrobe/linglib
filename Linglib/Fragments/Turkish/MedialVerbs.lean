@@ -16,12 +16,13 @@ verb), but some converbs allow tense or aspect marking.
 
 | Suffix | Meaning | Negation |
 |--------|---------|----------|
-| -(y)ip | sequential 'and then, having done' | -(y)ip...(-madan) |
+| -(y)ip | sequential 'and then, having done' | -meyip |
 | -(y)erek | manner/simultaneous 'by doing, while doing' | -meyerek |
 | -(y)ince | temporal/conditional 'when, once' | -meyince |
 | -ken | simultaneous 'while (in the state)' | -mazken |
 | -dikce | proportional 'as, the more...the more' | -medikce |
 | -meden | negative 'without doing' | (inherently negative) |
+| -AlI | temporal 'since doing' | -meyeli |
 | -casina | manner 'as if' | -mezcesine |
 
 -/
@@ -83,6 +84,13 @@ def meden : ConverbEntry :=
   { form := "-meden", gloss := "without doing (negative)"
     inherentlyNegative := true, negativeForm := none }
 
+/-- -AlI: temporal 'since doing'.
+    Marks the medial event as a temporal starting point for the main event.
+    Example: *geleli üç gün oldu* 'it's been three days since (s/he) came'. -/
+def ali : ConverbEntry :=
+  { form := "-AlI", gloss := "since doing (temporal)"
+    inherentlyNegative := false, negativeForm := some "-meyeli" }
+
 /-- -casina: manner 'as if, as though'.
     Marks the medial event as a simulative manner description. -/
 def casina : ConverbEntry :=
@@ -91,7 +99,7 @@ def casina : ConverbEntry :=
 
 /-- All converbal suffixes. -/
 def allConverbs : List ConverbEntry :=
-  [ip, erek, ince, ken, dikce, meden, casina]
+  [ip, erek, ince, ken, dikce, meden, ali, casina]
 
 -- ============================================================================
 -- § Derived properties
@@ -109,11 +117,11 @@ def negativeConverbs : List ConverbEntry :=
 -- § Verification theorems
 -- ============================================================================
 
-/-- 7 converbal suffixes in total. -/
-theorem converb_count : allConverbs.length = 7 := rfl
+/-- 8 converbal suffixes in total. -/
+theorem converb_count : allConverbs.length = 8 := rfl
 
-/-- 6 affirmative converbs. -/
-theorem affirmative_count : affirmativeConverbs.length = 6 := rfl
+/-- 7 affirmative converbs. -/
+theorem affirmative_count : affirmativeConverbs.length = 7 := rfl
 
 /-- 1 inherently negative converb (-meden). -/
 theorem negative_count : negativeConverbs.length = 1 := rfl
@@ -125,7 +133,7 @@ theorem affirmative_have_neg_form :
 /-- The inherently negative converb has no separate negative form. -/
 theorem meden_no_neg_form : meden.negativeForm = none := rfl
 
-/-- 6 + 1 = 7: affirmative + negative exhausts the inventory. -/
+/-- 7 + 1 = 8: affirmative + negative exhausts the inventory. -/
 theorem polarity_partition :
     affirmativeConverbs.length + negativeConverbs.length
     = allConverbs.length := rfl

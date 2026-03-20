@@ -137,9 +137,9 @@ def korean : ClauseChainingParams where
 
 /-- Turkish (Turkic; @cite{goksel-kerslake-2005}).
 
-    Productive clause chaining via converbal suffixes (*-ip*, *-(y)arak*,
-    *-(y)inca*, etc.), no SR morphology. Rich set of interclausal semantic
-    relations encoded. Converbal forms retain some TAM distinctions.
+    Productive clause chaining via converbal suffixes (*-ip*, *-(y)erek*,
+    *-(y)ince*, *-AlI*, etc.), no SR morphology. Rich set of interclausal
+    semantic relations encoded. Converbal forms retain some TAM distinctions.
     Turkish converbs are the textbook examples of UD `VerbForm.Conv`. -/
 def turkish : ClauseChainingParams where
   direction           := .medialFinal

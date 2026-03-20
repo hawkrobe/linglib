@@ -517,6 +517,7 @@ import Linglib.Fragments.Mandarin.Morph
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Turkish.Comparison
+import Linglib.Fragments.Turkish.Definiteness
 import Linglib.Fragments.Turkish.MedialVerbs
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Turkish.QuestionParticles
@@ -524,6 +525,9 @@ import Linglib.Fragments.Turkish.Morph
 import Linglib.Fragments.Turkish.Anaphors
 import Linglib.Fragments.Turkish.Negation
 import Linglib.Fragments.Turkish.Possession
+import Linglib.Fragments.Turkish.SuffixTemplate
+import Linglib.Fragments.Turkish.TAM
+import Linglib.Fragments.Turkish.VowelHarmony
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Burmese.Negation
@@ -1145,6 +1149,7 @@ import Linglib.Phenomena.TenseAspect.Studies.Cruse1973
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024
 import Linglib.Phenomena.TenseAspect.Studies.Koev2017
 import Linglib.Phenomena.TenseAspect.Studies.Egressy2026
+import Linglib.Phenomena.TenseAspect.Studies.GokselKerslake2005
 import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
@@ -1281,6 +1286,8 @@ import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
 import Linglib.Theories.Semantics.Dynamic.Core.KindAnaphora
+-- Theories: Dynamic Semantics — ABLE (Beaver 2001)
+import Linglib.Theories.Semantics.Dynamic.ABLE.Basic
 -- Theories: Dynamic Semantics — Frameworks
 import Linglib.Theories.Semantics.Dynamic.FileChange.Basic
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
@@ -1811,6 +1818,7 @@ import Linglib.Phenomena.Gradability.Studies.Sassoon2013
 import Linglib.Phenomena.Gradability.Studies.Beltrama2025
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.Elbourne2013
+import Linglib.Phenomena.Binominals.Studies.TenWolde2023
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Attitudes
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic

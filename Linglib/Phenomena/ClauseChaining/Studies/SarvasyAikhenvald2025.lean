@@ -185,14 +185,16 @@ section Turkish
 theorem turkish_no_sr :
     turkish.srSystem = .none := rfl
 
-/-- Turkish has 7 converbal suffixes. -/
+/-- Turkish has 8 converbal suffixes (-(y)ip, -(y)erek, -(y)ince, -ken,
+    -dikce, -meden, -AlI, -casina). -/
 theorem turkish_converb_inventory :
-    allConverbs.length = 7 := rfl
+    allConverbs.length = 8 := rfl
 
-/-- Turkish marks 7 interclausal relations in its parameter bundle.
-    The converb count matches the relation count. -/
-theorem turkish_converb_relation_match :
-    allConverbs.length = turkish.relationsMarked.length := rfl
+/-- Turkish converbs outnumber relations: multiple converbs can encode the
+    same semantic relation (e.g., both -erek and -çasına encode manner;
+    both -erek and -ken encode simultaneous). -/
+theorem turkish_converb_covers_relations :
+    allConverbs.length ≥ turkish.relationsMarked.length := by native_decide
 
 /-- Turkish allows full independent negation on medial clauses — every
     affirmative converb has a negative counterpart, plus there is one
@@ -200,7 +202,7 @@ theorem turkish_converb_relation_match :
 theorem turkish_full_negation :
     turkish.medialMorph.polarity = .full := rfl
 
-/-- 6 affirmative + 1 inherently negative = 7 total. -/
+/-- 7 affirmative + 1 inherently negative = 8 total. -/
 theorem turkish_polarity_complete :
     affirmativeConverbs.length + negativeConverbs.length
     = allConverbs.length := rfl
@@ -213,7 +215,7 @@ end Turkish
 
 /-- Non-SR languages have richer converbal inventories than SR languages'
     non-SR-encoded relations. Korean (8 suffixes for 8 relations) and Turkish
-    (7 converbs for 7 relations) each have more dedicated markers than
+    (8 converbs for 7 relations) each have more dedicated markers than
     Nungon (2 SS forms for 2 relations) or Manambu (9 markers, but only
     3 dedicated relations — the rest are SR-conditioned). -/
 theorem noSR_more_dedicated_markers :

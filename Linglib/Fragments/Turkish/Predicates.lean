@@ -82,21 +82,21 @@ Allomorphs: -dür, -tür, -dir, -tir (vowel harmony).
 
 /-- öl-dür-mek — die-CAUS = "to kill" (morphological COMPACT causative). -/
 def ol_dur : TurkishVerbEntry where
-  form := "öl-dür-mek"
-  formProg := "öl-dür-ür"
-  formPast := "öl-dür-dü"
-  formEvidential := "öl-dür-müş"
-  formParticiple := "öl-dür-en"
+  form := "öldürmek"
+  formProg := "öldürüyor"
+  formPast := "öldürdü"
+  formEvidential := "öldürmüş"
+  formParticiple := "öldüren"
   complementType := .np
   causativeBuilder := some .make
 
 /-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
 def yap_tir : TurkishVerbEntry where
-  form := "yap-tır-mak"
-  formProg := "yap-tır-ır"
-  formPast := "yap-tır-dı"
-  formEvidential := "yap-tır-mış"
-  formParticiple := "yap-tır-an"
+  form := "yaptırmak"
+  formProg := "yaptırıyor"
+  formPast := "yaptırdı"
+  formEvidential := "yaptırmış"
+  formParticiple := "yaptıran"
   complementType := .smallClause
   controlType := .objectControl
   causativeBuilder := some .make
