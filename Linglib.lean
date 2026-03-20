@@ -1166,6 +1166,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.Jaeger2007
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Magri2025
 import Linglib.Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
+import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic

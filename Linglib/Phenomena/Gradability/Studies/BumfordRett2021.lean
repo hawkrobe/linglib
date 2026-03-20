@@ -162,27 +162,36 @@ private theorem worldPrior_nonneg_Q :
 theorem worldPriorR_nonneg : ∀ w : EvalWorld, 0 ≤ worldPriorR w := by
   intro w; simp only [worldPriorR]; exact_mod_cast worldPrior_nonneg_Q w
 
-/-- Utterance cost as ℝ. -/
+/-- Utterance cost as ℝ (cast from ℚ for use in S1 score). -/
 noncomputable def costR (u : Utterance) : ℝ := cost u
 
-/-- S1 belief-based score with utterance costs (eq 10):
-    Sₙ(u | w, L) ∝ exp(α · (log Lₙ₋₁(w | u, L) − C(u)))
-    Gated on l0 = 0 to avoid log(0). -/
-noncomputable def beliefScore :
-    (Utterance → EvalWorld → ℝ) → ℝ → Sigma → EvalWorld → Utterance → ℝ :=
-  fun l0 α _ w u =>
-    if l0 u w = 0 then 0
-    else exp (α * (log (l0 u w) - costR u))
+-- ============================================================================
+-- § 6. Parametric RSAConfig
+-- ============================================================================
 
-theorem beliefScore_nonneg :
-    ∀ (l0 : Utterance → EvalWorld → ℝ) (α : ℝ) (l : Sigma) (w : EvalWorld) (u : Utterance),
-    (∀ u' w', 0 ≤ l0 u' w') → 0 < α → 0 ≤ beliefScore l0 α l w u := by
-  intro _ _ _ _ _ _ _; simp only [beliefScore]; split
-  · exact le_refl 0
-  · exact le_of_lt (exp_pos _)
+/-- Parametric RSAConfig for all four constructions.
+
+    All simulations share the same architecture (eq 10); they differ only
+    in the meaning function (eqs 12, 14, 16, 18). -/
+@[reducible]
+noncomputable def mkEvalCfg (sem : Utterance → Sigma → EvalWorld → Bool) :
+    RSA.RSAConfig Utterance EvalWorld where
+  Latent := Sigma
+  meaning _ σ u w := if sem u σ w then worldPriorR w else 0
+  meaning_nonneg _ σ u w := by split <;> [exact worldPriorR_nonneg w; exact le_refl 0]
+  -- eq 10: Sₙ(u | w, L) ∝ exp(α · (log Lₙ₋₁(w | u, L) − C(u)))
+  s1Score := fun l0 α _ w u =>
+    if l0 u w = 0 then 0 else exp (α * (log (l0 u w) - costR u))
+  s1Score_nonneg := fun _ _ _ _ _ _ _ => by
+    split <;> [exact le_refl 0; exact le_of_lt (exp_pos _)]
+  α := 4
+  α_pos := by norm_num
+  worldPrior := worldPriorR
+  worldPrior_nonneg := worldPriorR_nonneg
+  latentPrior_nonneg _ _ := by positivity
 
 -- ============================================================================
--- § 6. Simulation 1: Positive Construction (§2.2.1)
+-- § 7. Simulation 1: Positive Construction (§2.2.1)
 -- ============================================================================
 
 /-- Positive construction meaning (eq 12):
@@ -195,22 +204,7 @@ def posMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .marked   => decide (htVal w ≤ muVal w + sigmaVal σ)
   | .null     => true
 
-/-- RSAConfig for the positive construction (Simulation 1).
-
-    Worlds: (height, CC center). Latent: threshold offset σ.
-    L0 bakes in the world prior (eq 10: L₀(w | u, L) ∝ P(w) · L(u, w)). -/
-@[reducible]
-noncomputable def posCfg : RSA.RSAConfig Utterance EvalWorld where
-  Latent := Sigma
-  meaning _ σ u w := if posMeaning u σ w then worldPriorR w else 0
-  meaning_nonneg _ σ u w := by split <;> [exact worldPriorR_nonneg w; exact le_refl 0]
-  s1Score := beliefScore
-  s1Score_nonneg := beliefScore_nonneg
-  α := 4
-  α_pos := by norm_num
-  worldPrior := worldPriorR
-  worldPrior_nonneg := worldPriorR_nonneg
-  latentPrior_nonneg _ _ := by positivity
+@[reducible] noncomputable def posCfg := mkEvalCfg posMeaning
 
 -- ============================================================================
 -- § 7. Positive Evaluativity Predictions (§2.2.1, Table 1)
@@ -266,24 +260,7 @@ def eqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .marked   => decide (htVal w = kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
   | .null     => true
 
-/-- RSAConfig for the exact equative (Simulation 2).
-
-    Same architecture as the positive construction but with equative
-    semantics. After hearing the equative, the listener knows ht = k.
-    The evaluativity question is whether the listener infers that k
-    is above or below the CC mean. -/
-@[reducible]
-noncomputable def eqCfg : RSA.RSAConfig Utterance EvalWorld where
-  Latent := Sigma
-  meaning _ σ u w := if eqMeaning u σ w then worldPriorR w else 0
-  meaning_nonneg _ σ u w := by split <;> [exact worldPriorR_nonneg w; exact le_refl 0]
-  s1Score := beliefScore
-  s1Score_nonneg := beliefScore_nonneg
-  α := 4
-  α_pos := by norm_num
-  worldPrior := worldPriorR
-  worldPrior_nonneg := worldPriorR_nonneg
-  latentPrior_nonneg _ _ := by positivity
+@[reducible] noncomputable def eqCfg := mkEvalCfg eqMeaning
 
 -- ============================================================================
 -- § 9. Equative Evaluativity Predictions (§2.2.2, Table 1)
@@ -348,19 +325,7 @@ def geqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .marked   => decide (htVal w ≤ kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
   | .null     => true
 
-/-- RSAConfig for the ≥ equative (Simulation 3). -/
-@[reducible]
-noncomputable def geqCfg : RSA.RSAConfig Utterance EvalWorld where
-  Latent := Sigma
-  meaning _ σ u w := if geqMeaning u σ w then worldPriorR w else 0
-  meaning_nonneg _ σ u w := by split <;> [exact worldPriorR_nonneg w; exact le_refl 0]
-  s1Score := beliefScore
-  s1Score_nonneg := beliefScore_nonneg
-  α := 4
-  α_pos := by norm_num
-  worldPrior := worldPriorR
-  worldPrior_nonneg := worldPriorR_nonneg
-  latentPrior_nonneg _ _ := by positivity
+@[reducible] noncomputable def geqCfg := mkEvalCfg geqMeaning
 
 -- ============================================================================
 -- § 11. ≥ Equative Predictions (§2.2.3, Table 1)
@@ -414,34 +379,22 @@ def compMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
   | .marked   => decide (htVal w < kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
   | .null     => true
 
-/-- RSAConfig for the comparative (Simulation 4). -/
-@[reducible]
-noncomputable def compCfg : RSA.RSAConfig Utterance EvalWorld where
-  Latent := Sigma
-  meaning _ σ u w := if compMeaning u σ w then worldPriorR w else 0
-  meaning_nonneg _ σ u w := by split <;> [exact worldPriorR_nonneg w; exact le_refl 0]
-  s1Score := beliefScore
-  s1Score_nonneg := beliefScore_nonneg
-  α := 4
-  α_pos := by norm_num
-  worldPrior := worldPriorR
-  worldPrior_nonneg := worldPriorR_nonneg
-  latentPrior_nonneg _ _ := by positivity
+@[reducible] noncomputable def compCfg := mkEvalCfg compMeaning
 
 -- ============================================================================
 -- § 13. Comparative Predictions (§2.2.4, Table 1)
 -- ============================================================================
 
-/-! ### Prediction 7: Comparative marked is NOT evaluative
+/-! ### Prediction 7: Comparative marked does not strongly shift k
 
-The critical contrast: while the equative marked form IS evaluative
-(`eq_marked_evaluative`), the comparative marked form is NOT.
-The world with k below μ (evaluative direction for "short") does not
-win over the world with k above μ — the opposite of the equative
-pattern. This is because comparatives lack antonymic competition. -/
+Unlike the equative, the marked comparative does not push the listener
+toward worlds where k is far from the CC center. At equal prior
+(dev = ±1), the world with k near the mean is preferred over the
+world with k well above the mean. The paper reports E[k − μ] = −0.44
+at L₁ — a very weak effect, unlike the equative's −1.06. -/
 
-theorem comp_marked_not_evaluative :
-    compCfg.L1 .marked (mkW 3 0) > compCfg.L1 .marked (mkW 3 3) := by
+theorem comp_marked_weak :
+    compCfg.L1 .marked (mkW 3 2) > compCfg.L1 .marked (mkW 3 0) := by
   rsa_predict
 
 /-! ### Prediction 8: Comparative unmarked is counter-evaluative
@@ -487,7 +440,7 @@ constructions:
 - `pos_tall_evaluative` / `pos_short_evaluative` : positive ✓✓
 - `eq_marked_evaluative` / `eq_unmarked_weakly_evaluative` : equative ✗✓
 - `geq_marked_evaluative` / `geq_unmarked_barely_evaluative` : ≥ equative ✗✓
-- `comp_marked_not_evaluative` / `comp_unmarked_counter_evaluative` : comparative ✗✗ -/
+- `comp_marked_weak` / `comp_unmarked_counter_evaluative` : comparative ✗✗ -/
 
 -- ============================================================================
 -- § 15. Bridge to Neo-Gricean Evaluativity (@cite{rett-2015})

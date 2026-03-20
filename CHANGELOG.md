@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.229.365] - 2026-03-19
+
+### Added
+- **Hyman 2006 — Word-prosodic typology formalization**
+  - `Phenomena/Tone/Studies/Hyman2006.lean`: Two-prototype framework (tone vs stress accent as independent binary properties), Table I 2×2 typology (18 languages, all 4 quadrants attested), Table II obligatoriness × culminativity (4 restricted H-tone systems), PA as non-type (Tokyo Japanese/Somali/Western Basque reclassified as +T−SA), definitional asymmetry (democratic tone vs monarchic stress), OBLHEAD as deepest typological cut
+  - Cross-layer integration: WALS F13A → Hyman's ±tone dimension, PhonProfile → WordProsodicProfile, Lionnet 2025 register-based enrichment of Hyman's tone prototype
+  - Cross-study theorems in Lionnet2025: `drubea_is_tonal_hyman`, `drubea_enriches_hyman`
+
+## [0.229.364] - 2026-03-19
+
+### Changed
+- **Bumford & Rett 2021**: Complete all 4 paper simulations, inline S1 scores, integrate with Evaluativity.lean
+  - Add ≥ equative (Simulation 3): `geq_marked_evaluative`, `geq_unmarked_barely_evaluative`
+  - Add comparative (Simulation 4): `comp_marked_weak`, `comp_unmarked_counter_evaluative`
+  - S1 score `exp(α · (log L₀ − C(u)))` defined inline in each config (no wrapper function)
+  - Bridge to Neo-Gricean evaluativity: imports `Polarity`, `AdjectivalConstruction` from `Evaluativity.lean`
+  - 8 verified predictions total (was 4), covering full Table 1
+
 ## [0.229.363] - 2026-03-19
 
 ### Added

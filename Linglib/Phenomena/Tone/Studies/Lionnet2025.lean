@@ -1,5 +1,6 @@
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Fragments.Drubea.Prosody
+import Linglib.Phenomena.Tone.Studies.Hyman2006
 
 /-!
 # Lionnet (2025): Tonal Languages Without Tone
@@ -281,5 +282,22 @@ theorem register_more_parsimonious :
     tone features (@cite{lionnet-2025} §6.2, Conclusion). -/
 theorem drubea_is_register_based :
     wordProsodicType = .registerBased := rfl
+
+-- ============================================================================
+-- § 11: Connection to Hyman 2006
+-- ============================================================================
+
+/-- Drubea is +tone under @cite{hyman-2006}'s definition (3): pitch
+    (via register features) enters into the lexical realization of
+    morphemes. The minimal pairs in §1 demonstrate this directly. -/
+theorem drubea_is_tonal_hyman :
+    Studies.Hyman2006.isTonalUnderHyman wordProsodicType = true := rfl
+
+/-- Drubea enriches Hyman's typology: it is a tonal system (by def. 3)
+    that is register-based rather than tone-based — a sub-distinction
+    within Hyman's tone prototype that he did not draw. -/
+theorem drubea_enriches_hyman :
+    Studies.Hyman2006.isTonalUnderHyman .registerBased = true ∧
+    wordProsodicType = .registerBased := ⟨rfl, rfl⟩
 
 end Phenomena.Tone.Studies.Lionnet2025
