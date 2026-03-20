@@ -1,4 +1,5 @@
 import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
+import Linglib.Theories.Phonology.Constraints
 import Linglib.Fragments.Farsi.Phonology
 
 /-!
@@ -43,7 +44,7 @@ Following standard OT/MaxEnt constraint families:
 
 namespace Phenomena.PhonologicalAlternation.Studies.Storme2026
 
-open Theories.Phonology.HarmonicGrammar
+open Theories.Phonology.HarmonicGrammar Theories.Phonology.Constraints
 open Fragments.Farsi.Phonology
 open Core.OT
 
@@ -63,42 +64,22 @@ instance : Fintype HiatusOutput where
 -- ============================================================================
 
 /-- MAX: penalizes deletion. 1 violation for deleteV1 or deleteV2, 0 otherwise. -/
-def maxConstraint : WeightedConstraint HiatusCandidate where
-  name := "MAX"
-  family := .faithfulness
-  eval := fun (_, o) => match o with
-    | .deleteV1 | .deleteV2 => 1
-    | _ => 0
-  weight := 2
+def maxConstraint : WeightedConstraint HiatusCandidate :=
+  mkMaxW "MAX" (fun (_, o) => o == .deleteV1 || o == .deleteV2) 2
 
 /-- DEP: penalizes epenthesis. 1 violation for epenthesis, 0 otherwise. -/
-def depConstraint : WeightedConstraint HiatusCandidate where
-  name := "DEP"
-  family := .faithfulness
-  eval := fun (_, o) => match o with
-    | .epenthesis => 1
-    | _ => 0
-  weight := 1
+def depConstraint : WeightedConstraint HiatusCandidate :=
+  mkDepW "DEP" (fun (_, o) => o == .epenthesis) 1
 
 /-- \*VV: markedness constraint penalizing vowel hiatus.
     1 violation for faithful (hiatus preserved), 0 for all repairs. -/
-def starVV : WeightedConstraint HiatusCandidate where
-  name := "*VV"
-  family := .markedness
-  eval := fun (_, o) => match o with
-    | .faithful => 1
-    | _ => 0
-  weight := 3
+def starVV : WeightedConstraint HiatusCandidate :=
+  mkMarkW "*VV" (fun (_, o) => o == .faithful) 3
 
 /-- IDENT: penalizes coalescence (feature change).
     1 violation for coalescence, 0 otherwise. -/
-def identConstraint : WeightedConstraint HiatusCandidate where
-  name := "IDENT"
-  family := .faithfulness
-  eval := fun (_, o) => match o with
-    | .coalescence => 1
-    | _ => 0
-  weight := 2
+def identConstraint : WeightedConstraint HiatusCandidate :=
+  mkIdentW "IDENT" (fun (_, o) => o == .coalescence) 2
 
 /-- The classical constraint set for Persian hiatus.
 

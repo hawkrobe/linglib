@@ -1,5 +1,5 @@
 import Linglib.Core.Prominence
-import Linglib.Core.Logic.OT
+import Linglib.Theories.Phonology.Constraints
 import Linglib.Phenomena.Case.Typology
 import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
 
@@ -42,7 +42,7 @@ to a possible OT grammar.
 namespace Phenomena.Case.Studies.Aissen2003
 
 open Core.Prominence
-open Core.OT
+open Core.OT Theories.Phonology.Constraints
 open Phenomena.Case.Typology
 
 -- ============================================================================
@@ -79,23 +79,19 @@ theorem scale2_nonempty : scale2Cands ≠ [] := by decide
 
 /-- *Ø/High: penalize unmarked High objects. -/
 def starZeroHigh : NamedConstraint Scale2Cand :=
-  { name := "*Ø/High", family := .markedness,
-    eval := λ c => if c.high then 0 else 1 }
+  mkMark "*Ø/High" fun c => !c.high
 
 /-- *Ø/Low: penalize unmarked Low objects. -/
 def starZeroLow : NamedConstraint Scale2Cand :=
-  { name := "*Ø/Low", family := .markedness,
-    eval := λ c => if c.low then 0 else 1 }
+  mkMark "*Ø/Low" fun c => !c.low
 
 /-- *!/Low: penalize marked Low objects (economy). -/
 def starBangLow : NamedConstraint Scale2Cand :=
-  { name := "*!/Low", family := .faithfulness,
-    eval := λ c => if c.low then 1 else 0 }
+  mkDep "*!/Low" fun c => c.low
 
 /-- *!/High: penalize marked High objects (economy). -/
 def starBangHigh : NamedConstraint Scale2Cand :=
-  { name := "*!/High", family := .faithfulness,
-    eval := λ c => if c.high then 1 else 0 }
+  mkDep "*!/High" fun c => c.high
 
 /-- Iconicity family (fixed: *Ø/High >> *Ø/Low). -/
 def iconicity2 : List (NamedConstraint Scale2Cand) := [starZeroHigh, starZeroLow]
@@ -149,29 +145,23 @@ theorem anim_nonempty : animCands ≠ [] := by decide
 
 /-- Iconicity: *Ø/Hu >> *Ø/An >> *Ø/In. -/
 def starZeroHu : NamedConstraint AnimCand :=
-  { name := "*Ø/Hu", family := .markedness,
-    eval := λ c => if c.hu then 0 else 1 }
+  mkMark "*Ø/Hu" fun c => !c.hu
 
 def starZeroAn : NamedConstraint AnimCand :=
-  { name := "*Ø/An", family := .markedness,
-    eval := λ c => if c.an then 0 else 1 }
+  mkMark "*Ø/An" fun c => !c.an
 
 def starZeroIn : NamedConstraint AnimCand :=
-  { name := "*Ø/In", family := .markedness,
-    eval := λ c => if c.inan then 0 else 1 }
+  mkMark "*Ø/In" fun c => !c.inan
 
 /-- Economy: *!/In >> *!/An >> *!/Hu. -/
 def starBangIn : NamedConstraint AnimCand :=
-  { name := "*!/In", family := .faithfulness,
-    eval := λ c => if c.inan then 1 else 0 }
+  mkDep "*!/In" fun c => c.inan
 
 def starBangAn : NamedConstraint AnimCand :=
-  { name := "*!/An", family := .faithfulness,
-    eval := λ c => if c.an then 1 else 0 }
+  mkDep "*!/An" fun c => c.an
 
 def starBangHu : NamedConstraint AnimCand :=
-  { name := "*!/Hu", family := .faithfulness,
-    eval := λ c => if c.hu then 1 else 0 }
+  mkDep "*!/Hu" fun c => c.hu
 
 /-- Iconicity family (fixed: *Ø/Hu >> *Ø/An >> *Ø/In). -/
 def animIconicity : List (NamedConstraint AnimCand) :=

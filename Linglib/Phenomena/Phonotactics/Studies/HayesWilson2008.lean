@@ -1,4 +1,5 @@
 import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
+import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Fragments.English.Phonology
 
@@ -35,7 +36,7 @@ the model assigns higher harmony (= higher MaxEnt probability via
 
 namespace Phenomena.Phonotactics.Studies.HayesWilson2008
 
-open Theories.Phonology Theories.Phonology.HarmonicGrammar
+open Theories.Phonology Theories.Phonology.HarmonicGrammar Theories.Phonology.Constraints
 open Core Core.OT Finset Real
 
 -- ============================================================================
@@ -63,42 +64,24 @@ private def matchesPat (s : Segment) (p : Segment) : Bool :=
   s.matchesPattern p
 
 /-- Constraint #1 from Table (4): *[+sonorant, +dorsal]. Weight 5.64. -/
-def c1_star_son_dors : WeightedConstraint Onset where
-  name := "*[+son,+dors]"
-  family := .markedness
-  weight := 564/100
-  eval onset := onset.countP (matchesPat · son_dors_pat)
+def c1_star_son_dors : WeightedConstraint Onset :=
+  mkMarkGradW "*[+son,+dors]" (fun onset => onset.countP (matchesPat · son_dors_pat)) (564/100)
 
 /-- Constraint #4 from Table (4): *[ ][+continuant]. Weight 5.17. -/
-def c4_star_blank_cont : WeightedConstraint Onset where
-  name := "*[ ][+cont]"
-  family := .markedness
-  weight := 517/100
-  eval onset :=
-    match onset with
-    | _ :: c₂ :: _ => if matchesPat c₂ continuant_pat then 1 else 0
-    | _ => 0
+def c4_star_blank_cont : WeightedConstraint Onset :=
+  mkMarkW "*[ ][+cont]" (fun onset => match onset with
+    | _ :: c₂ :: _ => matchesPat c₂ continuant_pat | _ => false) (517/100)
 
 /-- Constraint #5 from Table (4): *[ ][+voice, −sonorant]. Weight 5.37. -/
-def c5_star_blank_voice : WeightedConstraint Onset where
-  name := "*[ ][+voice]"
-  family := .markedness
-  weight := 537/100
-  eval onset :=
-    match onset with
-    | _ :: c₂ :: _ =>
-      if matchesPat c₂ voice_pat && !matchesPat c₂ sonorant_pat then 1 else 0
-    | _ => 0
+def c5_star_blank_voice : WeightedConstraint Onset :=
+  mkMarkW "*[ ][+voice]" (fun onset => match onset with
+    | _ :: c₂ :: _ => matchesPat c₂ voice_pat && !matchesPat c₂ sonorant_pat
+    | _ => false) (537/100)
 
 /-- Constraint #6 from Table (4): *[+sonorant][ ]. Weight 6.66. -/
-def c6_star_son_blank : WeightedConstraint Onset where
-  name := "*[+son][ ]"
-  family := .markedness
-  weight := 666/100
-  eval onset :=
-    match onset with
-    | c₁ :: _ :: _ => if matchesPat c₁ sonorant_pat then 1 else 0
-    | _ => 0
+def c6_star_son_blank : WeightedConstraint Onset :=
+  mkMarkW "*[+son][ ]" (fun onset => match onset with
+    | c₁ :: _ :: _ => matchesPat c₁ sonorant_pat | _ => false) (666/100)
 
 /-- The subset grammar: 4 constraints from Table (4). -/
 def onsetGrammar : List (WeightedConstraint Onset) :=

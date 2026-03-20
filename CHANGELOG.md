@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.377] - 2026-03-20
+
+### Changed
+- **Refactor 6 study files to use shared constraint library** (`Theories.Phonology.Constraints`):
+  - `Stojkovic2026`: 6 NamedConstraints → `mkMark`/`mkDep`
+  - `Zuraw2010`: 6 NamedConstraints → `mkMark`
+  - `Storme2026`: 4 WeightedConstraints → `mkMaxW`/`mkDepW`/`mkMarkW`/`mkIdentW`
+  - `AfkirZellou2025`: 5 WeightedConstraints → `mkMaxW`/`mkDepW`/`mkMarkGradW`
+  - `HayesWilson2008`: 4 WeightedConstraints → `mkMarkW`/`mkMarkGradW`
+  - `Aissen2003`: 12 NamedConstraints → `mkMark`/`mkDep` (iconicity/economy)
+- All 37 constraint definitions now use shared constructors that enforce correct `ConstraintFamily` classification
+
 ## [0.229.376] - 2026-03-20
 
 ### Added

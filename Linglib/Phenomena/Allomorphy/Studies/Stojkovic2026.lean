@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Features
-import Linglib.Core.Logic.OT
+import Linglib.Theories.Phonology.Constraints
 
 /-!
 # Slavic Verbalizer @cite{stojkovic-2026}
@@ -66,7 +66,7 @@ correspond to attested groups; {[iv]} is unattested.
 
 namespace Phenomena.Allomorphy.Studies.Stojkovic2026
 
-open Core.OT Core.ConstraintEvaluation
+open Core.OT Core.ConstraintEvaluation Theories.Phonology.Constraints
 
 -- ============================================================================
 -- § 0: Empirical Data
@@ -180,38 +180,28 @@ theorem fissionCandidates_nonempty : fissionCandidates ≠ [] := by decide
 
 /-- NOHIATUS: assign * for adjacent vowels. -/
 def noHiatus : NamedConstraint VBLZCandidate :=
-  { name := "NOHIATUS"
-  , family := .markedness
-  , eval := fun | .uHiatus => 1 | _ => 0 }
+  mkMark "NOHIATUS" fun | .uHiatus => true | _ => false
 
 /-- SPECIFY(•→[F]): assign * for unspecified base node.
     Only violated by the fully faithful candidate (not in our candidate set),
     so this constraint is vacuously satisfied. Included for completeness. -/
 def specify : NamedConstraint VBLZCandidate :=
-  { name := "SPECIFY"
-  , family := .markedness
-  , eval := fun _ => 0 }
+  mkMark "SPECIFY" fun _ => false
 
 /-- *SHARE[−back]: don't copy [−back] from an adjacent palatal.
     Violated by [ev] (shares [−back] for [e]) and [iv] (shares [−back] for [i]). -/
 def noShareBack : NamedConstraint VBLZCandidate :=
-  { name := "*SHARE[−back]"
-  , family := .markedness
-  , eval := fun | .ev => 1 | .iv => 1 | _ => 0 }
+  mkMark "*SHARE[−back]" fun | .ev | .iv => true | _ => false
 
 /-- DEP[+back]: don't epenthesise [+back] on the unspecified slot.
     Violated by [ov] and [uv] (both epenthesise [+back] to get a back vowel). -/
 def depBack : NamedConstraint VBLZCandidate :=
-  { name := "DEP[+back]"
-  , family := .faithfulness
-  , eval := fun | .ov => 1 | .uv => 1 | _ => 0 }
+  mkDep "DEP[+back]" fun | .ov | .uv => true | _ => false
 
 /-- DEP[−high]: don't epenthesise [−high] on the unspecified slot.
     Violated by [ov] and [ev] (both epenthesise [−high] to get a mid vowel). -/
 def depLowHigh : NamedConstraint VBLZCandidate :=
-  { name := "DEP[−high]"
-  , family := .faithfulness
-  , eval := fun | .ov => 1 | .ev => 1 | _ => 0 }
+  mkDep "DEP[−high]" fun | .ov | .ev => true | _ => false
 
 /-- DEP[+high]: don't epenthesise [+high] on the unspecified slot.
     Violated by [uv] and [iv] (both epenthesise [+high] to get a high vowel).
@@ -223,9 +213,7 @@ def depLowHigh : NamedConstraint VBLZCandidate :=
     [−high] is cross-linguistically more likely to be unmarked compared
     to [+high]." -/
 def depHigh : NamedConstraint VBLZCandidate :=
-  { name := "DEP[+high]"
-  , family := .faithfulness
-  , eval := fun | .uv => 1 | .iv => 1 | _ => 0 }
+  mkDep "DEP[+high]" fun | .uv | .iv => true | _ => false
 
 /-- The four variable constraints (excluding the undominated NOHIATUS
     and vacuous SPECIFY). These are permuted in the factorial typology. -/
