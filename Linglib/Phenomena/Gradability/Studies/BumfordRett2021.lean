@@ -1,5 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
 
@@ -43,11 +44,17 @@ We scale to heights 1–9, CC centers 3–7, |ht − μ| ≤ 2 (SD = 1),
 preserving the qualitative predictions with a 45-world grid
 (25 valid worlds after the Gaussian truncation).
 
-## Verified Predictions
+## Verified Predictions (Table 1)
 
-1. **Positive construction**: both antonyms evaluative (ht shifts away from μ)
-2. **Exact equative**: marked antonym evaluative, unmarked weakly evaluative
-3. **Antonym asymmetry**: marked equative produces stronger evaluative inference
+1. **Positive construction** (Simulation 1): both antonyms evaluative
+2. **Exact equative** (Simulation 2): marked antonym evaluative, unmarked weakly evaluative
+3. **≥ Equative** (Simulation 3): marked evaluative, unmarked barely evaluative
+4. **Comparative** (Simulation 4): neither antonym evaluative — evaluative world
+   does NOT win over non-evaluative world, unlike equatives
+5. **Antonym asymmetry**: marked equative produces stronger evaluative inference
+6. **Cross-construction contrast**: equative marked IS evaluative but comparative
+   marked is NOT, confirming that partial antonymic competition (not just cost)
+   drives evaluativity
 
 ## Connection to @cite{rett-2015}
 
@@ -65,6 +72,8 @@ The RSA model adds two things the Neo-Gricean account lacks:
 namespace Phenomena.Gradability.BumfordRett2021
 
 open RSA
+open Implicature.Evaluativity (Polarity)
+open Semantics.Degree (AdjectivalConstruction)
 
 -- ============================================================================
 -- § 1. World Type: Height × CC Center
@@ -317,7 +326,138 @@ theorem eq_unmarked_weakly_evaluative :
   rsa_predict
 
 -- ============================================================================
--- § 10. Cross-Construction Comparison
+-- § 10. Simulation 3: ≥ Equative (§2.2.3)
+-- ============================================================================
+
+/-! ### ≥ Equative (Minimum-Standard) Semantics
+
+The "at least as tall as" equative uses ≥ instead of = for height.
+Unlike the exact equative, the unmarked and marked forms are NOT
+synonymous: "at least as tall as K" and "at least as short as K"
+have different truth conditions. Antonymic competition is therefore
+partial, predicting evaluativity intermediate between the exact
+equative (full synonymy) and the comparative (no overlap). -/
+
+/-- ≥ equative meaning (eq 16):
+    - unmarked ("at least as tall as K"): ht ≥ k ∧ k ≥ μ + σ
+    - marked ("at least as short as K"): ht ≤ k ∧ k ≤ μ + σ
+    - null: true -/
+def geqMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
+  match u with
+  | .unmarked => decide (htVal w ≥ kHeight) && decide (kHeight ≥ muVal w + sigmaVal σ)
+  | .marked   => decide (htVal w ≤ kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
+  | .null     => true
+
+/-- RSAConfig for the ≥ equative (Simulation 3). -/
+@[reducible]
+noncomputable def geqCfg : RSA.RSAConfig Utterance EvalWorld where
+  Latent := Sigma
+  meaning _ σ u w := if geqMeaning u σ w then worldPriorR w else 0
+  meaning_nonneg _ σ u w := by split <;> [exact worldPriorR_nonneg w; exact le_refl 0]
+  s1Score := beliefScore
+  s1Score_nonneg := beliefScore_nonneg
+  α := 4
+  α_pos := by norm_num
+  worldPrior := worldPriorR
+  worldPrior_nonneg := worldPriorR_nonneg
+  latentPrior_nonneg _ _ := by positivity
+
+-- ============================================================================
+-- § 11. ≥ Equative Predictions (§2.2.3, Table 1)
+-- ============================================================================
+
+/-! ### Prediction 5: Marked ≥ equative is evaluative
+
+Hearing "Jane is at least as short as Keisha" (marked) shifts L₁'s
+posterior toward worlds where k is below the CC center.
+The paper reports E[k − μ] = −1.52 at L₁. -/
+
+theorem geq_marked_evaluative :
+    geqCfg.L1 .marked (mkW 4 4) > geqCfg.L1 .marked (mkW 4 0) := by
+  rsa_predict
+
+/-! ### Prediction 6: Unmarked ≥ equative is barely evaluative
+
+Hearing "Jane is at least as tall as Keisha" (unmarked) barely shifts
+the posterior. The paper reports E[k − μ] = 0.11 at L₁ — the weakest
+evaluative effect of any construction. -/
+
+theorem geq_unmarked_barely_evaluative :
+    geqCfg.L1 .unmarked (mkW 4 0) > geqCfg.L1 .unmarked (mkW 4 4) := by
+  rsa_predict
+
+-- ============================================================================
+-- § 12. Simulation 4: Comparative (§2.2.4)
+-- ============================================================================
+
+/-! ### Comparative Semantics
+
+The comparative uses strict inequality for height (ht > k / ht < k).
+Unlike the equatives, the comparative forms have NO semantic overlap:
+"taller than K" and "shorter than K" are not even close to synonymous.
+With no antonymic competition and high informativity (the comparative
+provides clear information worth the cost), there is no pressure for
+evaluative inference.
+
+The paper predicts E[k − μ] = −0.74 (unmarked) and −0.44 (marked) at
+L₁ — both close to zero. The listener guesses Keisha is slightly below
+the CC mean, but this is a generic probabilistic consequence of
+learning relative height, not an evaluative inference. -/
+
+/-- Comparative meaning (eq 18):
+    - unmarked ("taller than K"): ht > k ∧ k ≥ μ + σ
+    - marked ("shorter than K"): ht < k ∧ k ≤ μ + σ
+    - null: true -/
+def compMeaning (u : Utterance) (σ : Sigma) (w : EvalWorld) : Bool :=
+  match u with
+  | .unmarked => decide (htVal w > kHeight) && decide (kHeight ≥ muVal w + sigmaVal σ)
+  | .marked   => decide (htVal w < kHeight) && decide (kHeight ≤ muVal w + sigmaVal σ)
+  | .null     => true
+
+/-- RSAConfig for the comparative (Simulation 4). -/
+@[reducible]
+noncomputable def compCfg : RSA.RSAConfig Utterance EvalWorld where
+  Latent := Sigma
+  meaning _ σ u w := if compMeaning u σ w then worldPriorR w else 0
+  meaning_nonneg _ σ u w := by split <;> [exact worldPriorR_nonneg w; exact le_refl 0]
+  s1Score := beliefScore
+  s1Score_nonneg := beliefScore_nonneg
+  α := 4
+  α_pos := by norm_num
+  worldPrior := worldPriorR
+  worldPrior_nonneg := worldPriorR_nonneg
+  latentPrior_nonneg _ _ := by positivity
+
+-- ============================================================================
+-- § 13. Comparative Predictions (§2.2.4, Table 1)
+-- ============================================================================
+
+/-! ### Prediction 7: Comparative marked is NOT evaluative
+
+The critical contrast: while the equative marked form IS evaluative
+(`eq_marked_evaluative`), the comparative marked form is NOT.
+The world with k below μ (evaluative direction for "short") does not
+win over the world with k above μ — the opposite of the equative
+pattern. This is because comparatives lack antonymic competition. -/
+
+theorem comp_marked_not_evaluative :
+    compCfg.L1 .marked (mkW 3 0) > compCfg.L1 .marked (mkW 3 3) := by
+  rsa_predict
+
+/-! ### Prediction 8: Comparative unmarked is counter-evaluative
+
+Hearing "Jane is taller than Keisha" (unmarked) does NOT make the
+listener infer that Keisha is tall. In fact, the paper reports
+E[k − μ] = −0.74, slightly negative: Keisha is inferred to be
+slightly below the CC mean. This is because knowing Jane exceeds
+Keisha's height leaves more room for Keisha to be below average. -/
+
+theorem comp_unmarked_counter_evaluative :
+    compCfg.L1 .unmarked (mkW 5 3) > compCfg.L1 .unmarked (mkW 5 1) := by
+  rsa_predict
+
+-- ============================================================================
+-- § 14. Cross-Construction Contrast
 -- ============================================================================
 
 /-! ### Gradient evaluativity ranking
@@ -340,10 +480,50 @@ This ranking emerges from two factors:
 2. **Cost asymmetry**: The marked form's extra cost (C = 2 vs 1) forces
    L₁ to seek explanations for the speaker's costly choice, driving
    evaluative inferences in worlds where the marked form is distinctively
-   informative (i.e., atypical worlds). -/
+   informative (i.e., atypical worlds).
+
+The theorems above verify the key qualitative pattern across all four
+constructions:
+- `pos_tall_evaluative` / `pos_short_evaluative` : positive ✓✓
+- `eq_marked_evaluative` / `eq_unmarked_weakly_evaluative` : equative ✗✓
+- `geq_marked_evaluative` / `geq_unmarked_barely_evaluative` : ≥ equative ✗✓
+- `comp_marked_not_evaluative` / `comp_unmarked_counter_evaluative` : comparative ✗✗ -/
 
 -- ============================================================================
--- § 11. Cross-References
+-- § 15. Bridge to Neo-Gricean Evaluativity (@cite{rett-2015})
+-- ============================================================================
+
+/-! ### RSA ↔ Neo-Gricean Agreement
+
+@cite{rett-2015}'s Neo-Gricean account (formalized in
+`Theories/Pragmatics/Implicature/Evaluativity.lean`) classifies
+constructions categorically using `AdjectivalConstruction` and `Polarity`:
+- **Positive** (`.positive`): evaluative for both polarities (Q-implicature)
+- **Equative** (`.equative`): evaluative for `.negative` only (Manner/R-implicature)
+- **Comparative** (`.comparative`): NOT evaluative (no applicable implicature)
+
+This RSA model derives the same pattern *gradiently*: each `rsa_predict`
+theorem above confirms a qualitative directional prediction that matches
+the categorical classification. The RSA model adds:
+1. **Graded predictions** — evaluativity has a continuous strength, not just ±
+2. **Unified mechanism** — rational communication replaces separate Q/R principles
+3. **≥ equative predictions** — partial overlap produces intermediate evaluativity,
+   a novel prediction the categorical account does not make -/
+
+/-- Map utterance polarity to the evaluativity `Polarity` type. -/
+def utterancePolarity : Utterance → Option Polarity
+  | .unmarked => some .positive
+  | .marked   => some .negative
+  | .null     => none
+
+/-- Construction labels for each simulation, connecting to the
+    `AdjectivalConstruction` type from `Degree.Core`. -/
+abbrev posConstruction  : AdjectivalConstruction := .positive
+abbrev eqConstruction   : AdjectivalConstruction := .equative
+abbrev compConstruction : AdjectivalConstruction := .comparative
+
+-- ============================================================================
+-- § 16. Cross-References
 -- ============================================================================
 
 /-! ### Relationship to @cite{lassiter-goodman-2017}
@@ -354,19 +534,6 @@ This file extends that model to 2D worlds (height × CC center) and
 adds cost-driven antonym competition. The positive construction
 predictions here subsume LassiterGoodman2017's: both show that
 hearing "tall"/"short" shifts the height posterior.
-
-### Relationship to @cite{rett-2015}
-
-`Theories/Pragmatics/Implicature/Evaluativity.lean` formalizes Rett's
-Neo-Gricean account: Q-implicature for positive constructions,
-R-implicature (MMP) for equatives/questions. Both accounts predict:
-- Positive: evaluative for both antonyms
-- Equative: evaluative only for marked antonym
-- Comparative: not evaluative
-
-The RSA model adds gradient predictions (evaluativity as a continuous
-measure) and a unified mechanism (rational communication + cost
-asymmetry rather than separate Q/R principles).
 
 ### Architecture
 

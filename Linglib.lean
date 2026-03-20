@@ -1804,6 +1804,7 @@ import Linglib.Phenomena.Gradability.Studies.Rett2015Implicature
 import Linglib.Phenomena.Gradability.Studies.Morzycki2009
 import Linglib.Phenomena.Gradability.Studies.Rouillard2026
 import Linglib.Phenomena.Gradability.Studies.Sassoon2013
+import Linglib.Phenomena.Gradability.Studies.Beltrama2025
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.Elbourne2013
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic

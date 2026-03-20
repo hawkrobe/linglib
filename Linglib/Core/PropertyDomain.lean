@@ -112,6 +112,7 @@ def Dimension.happiness : Dimension := ⟨"happiness", .evaluative⟩
 def Dimension.cost : Dimension := ⟨"cost", .evaluative⟩
 def Dimension.price : Dimension := ⟨"price", .evaluative⟩
 def Dimension.quality : Dimension := ⟨"quality", .evaluative⟩
+def Dimension.value : Dimension := ⟨"value", .evaluative⟩
 
 -- Psychological domain
 def Dimension.intelligence : Dimension := ⟨"intelligence", .psychological⟩

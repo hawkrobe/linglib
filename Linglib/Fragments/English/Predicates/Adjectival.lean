@@ -500,19 +500,22 @@ def quiet : AdjectivalPredicateEntry where
 
 /-! ## Evaluative adjectives -/
 
-/-- "good" — open scale, contrary to "bad" -/
+/-- "good" — value scale (lower-bounded at 0 per @cite{wolfsdorf-2019}),
+    contrary to "bad". Despite the lower bound, "good" receives a contextual
+    standard (not minEndpoint): it patterns with relative adjectives
+    (@cite{beltrama-2025} §3). -/
 def good : AdjectivalPredicateEntry where
   form := "good"
-  scaleType := .open_
-  dimension := .quality
+  scaleType := .lowerBounded
+  dimension := .value
   antonymForm := some "bad"
   antonymRelation := some .contrary
 
-/-- "bad" — open scale, contrary to "good" -/
+/-- "bad" — value scale, contrary to "good" -/
 def bad : AdjectivalPredicateEntry where
   form := "bad"
-  scaleType := .open_
-  dimension := .quality
+  scaleType := .lowerBounded
+  dimension := .value
   antonymForm := some "good"
   antonymRelation := some .contrary
 
@@ -554,6 +557,32 @@ def dangerous : AdjectivalPredicateEntry where
   antonymForm := some "safe"
   antonymRelation := some .contrary
 
+/-! ## Mildly positive adjectives (MPAs)
+
+@cite{beltrama-2025}: MPAs encode a necessity standard — the minimum value
+required for pursuit. They share properties with both relative (context-sensitive,
+gradable) and absolute (no zone of indifference, crisp judgments, *barely*
+compatible) predicates. -/
+
+/-- "decent" — value scale, necessity standard (@cite{beltrama-2025}) -/
+def decent : AdjectivalPredicateEntry where
+  form := "decent"
+  scaleType := .lowerBounded
+  dimension := .value
+
+/-- "acceptable" — value scale, necessity standard (@cite{beltrama-2025}).
+    Deverbal *-able* form: modal suffix contributes functional standard. -/
+def acceptable : AdjectivalPredicateEntry where
+  form := "acceptable"
+  scaleType := .lowerBounded
+  dimension := .value
+
+/-- "adequate" — value scale, necessity standard (@cite{beltrama-2025}) -/
+def adequate : AdjectivalPredicateEntry where
+  form := "adequate"
+  scaleType := .lowerBounded
+  dimension := .value
+
 /-- All adjectival predicate entries -/
 def allEntries : List (AdjectivalPredicateEntry) := [
   -- Height / size
@@ -584,7 +613,9 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   -- Sensory
   bright, dark, loud, quiet,
   -- Evaluative
-  good, bad, beautiful, ugly, important, safe, dangerous
+  good, bad, beautiful, ugly, important, safe, dangerous,
+  -- Mildly positive adjectives (@cite{beltrama-2025})
+  decent, acceptable, adequate
 ]
 
 /-- Look up an entry by form -/

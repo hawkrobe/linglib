@@ -271,6 +271,7 @@ inductive PositiveStandard where
   | contextual    -- open-scale: θ = norm relative to comparison class
   | minEndpoint   -- lower-bounded: θ = minimum (e.g., "bent", "wet")
   | maxEndpoint   -- upper-bounded/closed: θ = maximum (e.g., "full", "dry")
+  | functional    -- necessity standard: θ = min value for pursuit (@cite{beltrama-2025})
   deriving DecidableEq, BEq, Repr
 
 /-- Interpretive Economy determines the standard from scale structure.
@@ -333,6 +334,7 @@ def PositiveStandard.requiresComparisonClass : PositiveStandard → Bool
   | .contextual  => true
   | .minEndpoint  => false
   | .maxEndpoint  => false
+  | .functional  => true   -- shifts with purpose and comparison class
 
 /-- Relative (Class A) adjectives need contextual domain information:
     open scale → contextual **s** → domain-dependent. -/

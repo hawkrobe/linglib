@@ -239,9 +239,10 @@ theorem negate_involutive (b : DimensionBindingType) :
     Total (max standard) → conjunctive, partial (min standard) → disjunctive,
     relative (contextual) → mixed. -/
 def predictedBinding : Semantics.Degree.PositiveStandard → DimensionBindingType
-  | .maxEndpoint => .conjunctive
-  | .minEndpoint => .disjunctive
-  | .contextual  => .mixed
+  | .maxEndpoint  => .conjunctive
+  | .minEndpoint  => .disjunctive
+  | .contextual   => .mixed
+  | .functional   => .mixed   -- evaluative; context-dependent like contextual
 
 -- ════════════════════════════════════════════════════
 -- Marginality Scales Account (@cite{dinis-jacinto-2026})

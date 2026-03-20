@@ -164,6 +164,7 @@ inductive AdjectiveClass where
   | relativeGradable     -- tall, expensive, big (context-dependent threshold)
   | absoluteMaximum      -- full, straight, closed (threshold = max of scale)
   | absoluteMinimum      -- wet, bent, open (threshold = min of scale)
+  | mildlyPositive       -- decent, acceptable, adequate (necessity standard, @cite{beltrama-2025})
   deriving Repr, DecidableEq, BEq
 
 /-- Coarse 2-way classification: relative vs absolute.

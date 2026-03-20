@@ -142,15 +142,15 @@ def cheap : AdjModifierEntry :=
   , isLowerEndpoint := true }
 
 -- ============================================================================
--- Quality Scale: good, bad
+-- Value Scale: good, bad (@cite{wolfsdorf-2019}, @cite{beltrama-2025})
 -- ============================================================================
 
 def good : AdjModifierEntry :=
   { form := "good"
   , formComp := some "better"
   , formSuper := some "best"
-  , scaleType := .open_
-  , dimension := .quality
+  , scaleType := .lowerBounded
+  , dimension := .value
   , antonymForm := some "bad"
   , antonymRelation := some .contrary }
 
@@ -158,8 +158,8 @@ def bad : AdjModifierEntry :=
   { form := "bad"
   , formComp := some "worse"
   , formSuper := some "worst"
-  , scaleType := .open_
-  , dimension := .quality
+  , scaleType := .lowerBounded
+  , dimension := .value
   , antonymForm := some "good"
   , antonymRelation := some .contrary
   , isLowerEndpoint := true }
