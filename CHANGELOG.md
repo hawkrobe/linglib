@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.229.361] - 2026-03-19
+
+### Added
+- **Degree semantics hierarchy** (`Theories/Semantics/Comparison/Hierarchy.lean`)
+  - Formal subsumption chain: Klein (Delineation) ← Kennedy (Degree) ← Scontras/B&S (Measurement)
+  - `ordering_faithful`: degree→delineation embedding preserves ordering exactly
+  - `degree_delineations_are_linear`: all degree-induced delineations are linear
+  - `nonlinear_delineation_exists`: concrete nonlinear witness (multi-criteria adjectives)
+  - `monotone_excludes_nonlinear`: monotonicity blocks nonlinearity
+  - `delineation_strictly_more_general`: Klein ⊋ Kennedy (strict containment)
+  - `degree_characterization`: degree semantics = monotone fragment of delineation theory
+  - `measurement_to_delineation_faithful`: full measurement→delineation chain preserves ordering
+
+## [0.229.360] - 2026-03-19
+
+### Added
+- **Scott 2021 — Two Types of Resumptive Pronouns in Swahili** (`Phenomena/FillerGap/Studies/Scott2021.lean`)
+  - End-to-end chain reduction derivation: DP structure → MaxElide → PersP deletion → VI
+  - Per-datum verification: bound resumptives (mi/we/si/nyi) and movement resumptives (ye/o)
+  - Table 4 parasitic gap interspeaker variation with generalization theorem
+  - Islands-are-syntactic theorem (§6 conclusion)
+  - `DPLayer` type modeling MaxElide's structural deletion target
+  - Cross-linguistic reduction prediction with Swahili confirmation
+- **Swahili Relativization Fragment** (`Fragments/Swahili/Relativization.lean`)
+  - *amba*-RC markers (gap, bound resumptive, movement resumptive)
+  - Full personal pronoun paradigm (Tables 1-2) and resumptive-by-class data (Table 3)
+  - DM Vocabulary Insertion rules for resumptive pronouns (28)
+  - Phonological minimality: monosyllabic word trigger
+- **Swahili Basic module** (`Fragments/Swahili/Basic.lean`)
+  - Shared `NounClass` (15 classes), `Gender` (5 pairings), subject prefixes
+  - Promoted from `Possession.lean` to avoid duplication across Swahili files
+- **`NPRelType` extensions** (`Core/Relativization/Basic.lean`)
+  - `.resumptiveMovement` and `.resumptiveBound` constructors for two-type resumption
+  - `isMovementCopy` classifier
+- **Hebrew two-type resumption** (`Fragments/Hebrew/Relativization.lean`)
+  - Sichel 2014 markers: `relSheBoundResumptive` (optional DO) and `relSheMovementResumptive` (obligatory PP)
+  - `relMarkersSichel` refined marker list
+- **Bibliography**: scott-2021, sichel-2014, landau-2006, van-urk-2018
+
+### Changed
+- `Fragments/Swahili/Possession.lean` now imports `Basic.lean` for shared `NounClass`
+
 ## [0.229.359] - 2026-03-19
 
 ### Fixed

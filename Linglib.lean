@@ -563,9 +563,11 @@ import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Tagalog.Morph
 import Linglib.Fragments.Tagalog.Phonology
 import Linglib.Fragments.Italian.DiscourseParticles
+import Linglib.Fragments.Swahili.Basic
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Swahili.Morph
+import Linglib.Fragments.Swahili.Relativization
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Icelandic.Reciprocals
 import Linglib.Fragments.Icelandic.TemporalConnectives
@@ -900,6 +902,7 @@ import Linglib.Phenomena.FillerGap.Studies.LuDegen2025
 import Linglib.Phenomena.FillerGap.Studies.Osborne2019Islands
 import Linglib.Phenomena.FillerGap.Studies.HPSGExtraction
 import Linglib.Phenomena.FillerGap.Studies.HPSGRelativeClauses
+import Linglib.Phenomena.FillerGap.Studies.Scott2021
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
@@ -1441,6 +1444,7 @@ import Linglib.Theories.Semantics.Degree.DegreeQuestion
 import Linglib.Theories.Semantics.Degree.DegreeAbstraction
 import Linglib.Theories.Semantics.Degree.Intervals
 import Linglib.Theories.Semantics.Comparison.Delineation
+import Linglib.Theories.Semantics.Comparison.Hierarchy
 import Linglib.Theories.Semantics.Degree.Granularity
 -- Theories: Semantics.Supervaluation (general supervaluation framework)
 import Linglib.Theories.Semantics.Supervaluation.Basic
@@ -1819,6 +1823,7 @@ import Linglib.Theories.Pragmatics.Dialogue.KOS.TTRBridge
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
+import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Syllable.Defs
 import Linglib.Theories.Phonology.Syllable.Foot
 import Linglib.Theories.Phonology.RuleBased.Defs

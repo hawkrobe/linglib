@@ -44,7 +44,7 @@ equivalence) lives in the theory layer: `Delineation.lean` §10.
   `kampAtLeastAs` ↔ `kleinMoreThan`)
 - **Fine (1975)**: `Studies/Fine1975.lean` (supervaluation ↔ delineation duality)
 - **Kennedy (2007)**: `Studies/Kennedy2007Licensing.lean` (degree-based alternative)
-- **Compare**: `Comparison/Compare.lean` (four-way framework comparison)
+- **Hierarchy**: `Theories/Semantics/Comparison/Hierarchy.lean` (Klein ← Kennedy ← Measurement)
 -/
 
 namespace Phenomena.Gradability.Studies.Klein1980

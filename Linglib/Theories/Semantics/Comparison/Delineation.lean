@@ -55,6 +55,8 @@ Klein handles degree modifiers via comparison-class narrowing (§4.1,
 eqs 42–43) and measure phrases via equivalence classes on a measurement
 scale (§4.2), though the degree-based treatment is arguably more direct.
 
+For the formal subsumption hierarchy (Klein ← Kennedy ← Measurement),
+see `Theories/Semantics/Comparison/Hierarchy.lean`.
 -/
 
 namespace Semantics.Comparison.Delineation
