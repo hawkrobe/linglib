@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.392] - 2026-03-20
+
+### Added
+- **D45 Entailment** (`ABLE/Basic.lean`): `Formula.entails` — ABLE entailment (∀σ, ψ.eval(φ.eval σ) = φ.eval σ), with `entails_iff_ccp_entails` bridge to `CCP.entails`, `entails_trans`, `satisfies_of_entails`
+- **`eval_empty`** (`ABLE/Basic.lean`): All ABLE formulas map ∅ → ∅ (corollary of eliminativity; key lemma for entailment bridge)
+
 ## [0.229.391] - 2026-03-20
 
 ### Added

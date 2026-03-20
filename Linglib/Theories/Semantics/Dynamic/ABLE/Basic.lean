@@ -49,6 +49,7 @@ since we don't model discourse markers.
 - **Lemma 8.6**: Satisfaction ↔ inconsistency with NOT (eliminativity bridge)
 - **Fact 8.7**: MUST is a test for satisfaction
 - **Facts 8.5, 8.8**: MIGHT and MUST are tests; presupposition projects through them
+- **D45/MP5**: Entailment — equivalent to `CCP.entails` (eliminativity makes guard redundant)
 -/
 
 namespace Semantics.Dynamic.ABLE
@@ -435,6 +436,59 @@ theorem fact_8_8_might (φ ψ : Formula P) (h : φ.presupposes ψ) :
 theorem fact_8_8_must (φ ψ : Formula P) (h : φ.presupposes ψ) :
     (Formula.must φ).presupposes ψ :=
   λ σ hadmit => h σ ((admits_must φ σ).mp hadmit)
+
+-- ════════════════════════════════════════════════════════════════
+-- § 11. Entailment (D45, MP5)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Every ABLE formula maps the empty state to ∅ (corollary of eliminativity). -/
+theorem eval_empty (φ : Formula P) : φ.eval ∅ = ∅ :=
+  Set.subset_empty_iff.mp (eval_eliminative φ ∅)
+
+/-- **Entailment in ABLE (D45)**: φ entails ψ iff every state resulting
+from updating with φ satisfies ψ.
+
+@cite{beaver-2001} Ch. 7 §7.2, Meaning Postulate MP5:
+`entails = λF λF' [∀I∀J, I{F}J → J satisfies F']`
+
+In our set-based formulation (without discourse markers), this reduces
+to: for all σ, ψ.eval(φ.eval σ) = φ.eval σ. -/
+noncomputable def entails (φ ψ : Formula P) : Prop :=
+  ∀ σ : InfoStateOf P, ψ.eval (φ.eval σ) = φ.eval σ
+
+/-- **ABLE entailment ↔ CCP entailment**.
+
+The nonemptiness guard in `CCP.entails` is redundant for ABLE formulas
+because all ABLE formulas are eliminative: ψ.eval ∅ = ∅.
+@cite{beaver-2001} D45 = `CCP.entails` modulo this vacuous case. -/
+theorem entails_iff_ccp_entails (φ ψ : Formula P) :
+    φ.entails ψ ↔ CCP.entails φ.eval ψ.eval := by
+  constructor
+  · intro h s _; exact h s
+  · intro h s
+    by_cases hne : (φ.eval s).Nonempty
+    · exact h s hne
+    · simp only [Set.not_nonempty_iff_eq_empty] at hne
+      rw [hne, eval_empty]
+
+/-- ABLE entailment is transitive. -/
+theorem entails_trans (φ ψ χ : Formula P)
+    (h1 : φ.entails ψ) (h2 : ψ.entails χ) :
+    φ.entails χ := by
+  intro σ
+  have h2' := h2 (φ.eval σ)
+  rw [h1 σ] at h2'
+  exact h2'
+
+/-- Entailment preserves satisfaction: if φ ⊨ ψ and σ satisfies φ,
+then σ satisfies ψ. -/
+theorem satisfies_of_entails (φ ψ : Formula P) (σ : InfoStateOf P)
+    (hent : φ.entails ψ) (hsat : φ.satisfies σ) :
+    ψ.satisfies σ := by
+  unfold satisfies at hsat ⊢
+  have h := hent σ
+  rw [hsat] at h
+  exact h
 
 end Formula
 
