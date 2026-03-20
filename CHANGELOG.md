@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.387] - 2026-03-20
+
+### Added
+- **LocProp** (`KOS/Basic.lean` §16): locutionary propositions with phon/cat/cont/cparams/constits, conversions to/from PendingLoc and UttSkeleton, round-trip theorem
+- **InfoStruc** (`KOS/Basic.lean` §17): QUD entries as question + focus-establishing constituents (FECs), `fromQuestion`/`withFEC` constructors
+- **Grounding protocol** (`KOS/Rules.lean` §14): `LocProp.isFullyResolved`, `LocProp.canGround`, `IntegrationResult` inductive (grounded/crification), `integrateLocProp`, theorems `resolved_always_grounds` and `no_coercion_fallback`
+- **KOS/Grammar.lean** (new): DialogueSign extending HPSG Sign with dgb-params/q-params/quest-dom, conversions to Synsem and LocProp, example entries (who, jo, left), verification theorems
+- **Fragments/English/PropositionalLexemes.lean** (new): PropLexeme structure, entries for yes/no/mmh/huh with DGB-dependent meaning, polarity/DGBRef types
+- **Ginzburg2012.lean** §7–9: NSUClass taxonomy (11 classes), CRForm taxonomy (8 forms), CRReading taxonomy (4 readings), grounding protocol example (didBoLeave grounding vs CRification)
+
+### Changed
+- **Move `slash_cparams_both_decrease`** from `KOS/Basic.lean` to `KOS/Grammar.lean`: eliminates transitive HPSG dependency for all KOS consumers; `Basic.lean` no longer imports HPSG
+
 ## [0.229.386] - 2026-03-20
 
 ### Added

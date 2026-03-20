@@ -10,9 +10,9 @@ Conversational rules govern how dialogue gameboards evolve during
 conversation. @cite{ginzburg-2012} Ch. 4 defines these as precondition/effect
 pairs (record types with `pre` and `effects` fields).
 
-## Core Rules (@cite{ginzburg-2012} Ch. 4, pp. 87–112)
+## Core Rules (@cite{ginzburg-2012} Ch. 4, pp. 72–112)
 
-1. **Greeting / CounterGreeting** — conversation initialization (p. 87)
+1. **Greeting / CounterGreeting** — conversation initialization (pp. 74–76, ex. 17/20b)
 2. **Initiating Move** — refined Free Speech with genre relevance (p. 108, ex. 94)
 3. **Ask QUD-incrementation** — question pushes onto QUD (p. 95, ex. 66)
 4. **Assert QUD-incrementation** — assertion pushes About(p) onto QUD (p. 95, ex. 66)
@@ -200,7 +200,7 @@ def TIS.factUpdateQudDowndate {P Fact QContent : Type} [Answerhood Fact QContent
 
 /-- **Greeting**: conversation initialization.
 
-Ch. 4 (p. 87): precondition is MOVES = ⟨⟩. -/
+Ch. 4 (p. 75, ex. 17): precondition is MOVES = ⟨⟩. -/
 def TIS.greet {P Fact QContent : Type}
     (tis : TIS P Fact QContent) : TIS P Fact QContent :=
   { tis with dgb := tis.dgb.recordMove .greet }
@@ -560,5 +560,70 @@ theorem directive_moves_world_to_mind {Fact QContent : Type}
     (IllocMove.ask (Fact := Fact) q).directionOfFit = .worldToMind ∧
     (IllocMove.check (QContent := QContent) p).directionOfFit = .worldToMind :=
   ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 14. Grounding Protocol (@cite{ginzburg-2012} Ch. 6, §6.5–6.7)
+-- ════════════════════════════════════════════════════
+
+/-! ## Utterance Integration: Grounding vs CRification
+
+@cite{ginzburg-2012} Ch. 6 (§6.5–6.7): when an utterance enters Pending,
+the addressee either *grounds* it (all contextual parameters resolved →
+content enters FACTS) or *CRifies* it (some parameter unresolved →
+a clarification request question is pushed onto QUD).
+
+This is the LocProp-level protocol that replaces the string-based
+`IS.integrateUtterance` from @cite{ginzburg-cooper-2004}. -/
+
+/-- Whether a LocProp has all contextual parameters resolved.
+A fully resolved LocProp can be grounded directly. -/
+def LocProp.isFullyResolved {Cont : Type} (lp : LocProp Cont) : Bool :=
+  lp.cparams.isEmpty
+
+/-- Whether a LocProp can be grounded (= fully resolved). -/
+def LocProp.canGround {Cont : Type} (lp : LocProp Cont) : Bool :=
+  lp.isFullyResolved
+
+/-- The result of integrating a LocProp into a DGB.
+Either grounded (content → FACTS) or CRified (CR question → QUD). -/
+inductive IntegrationResult (Cont QContent : Type) where
+  /-- All cparams resolved: content enters FACTS. -/
+  | grounded (content : Cont)
+  /-- Some cparam unresolved: CR question pushed onto QUD. -/
+  | crification (crQuestion : QContent) (unresolvedParam : CParam)
+  deriving Repr
+
+/-- Is this integration result a grounding? -/
+def IntegrationResult.isGrounded {Cont QContent : Type} :
+    IntegrationResult Cont QContent → Bool
+  | .grounded _ => true
+  | .crification _ _ => false
+
+/-- Integrate a LocProp: ground if resolved, CRify otherwise.
+
+The `toCR` function converts an unresolved parameter to a clarification
+question — this is domain-specific (e.g., "Who do you mean by 'Bo'?"). -/
+def integrateLocProp {Cont QContent : Type}
+    (lp : LocProp Cont) (toCR : CParam → QContent) :
+    IntegrationResult Cont QContent :=
+  match lp.cparams with
+  | [] => .grounded lp.cont
+  | p :: _ => .crification (toCR p) p
+
+/-- A fully resolved LocProp always grounds. -/
+theorem resolved_always_grounds {Cont QContent : Type}
+    (lp : LocProp Cont) (toCR : CParam → QContent)
+    (h : lp.isFullyResolved = true) :
+    (integrateLocProp lp toCR).isGrounded = true := by
+  simp only [LocProp.isFullyResolved, List.isEmpty_iff] at h
+  simp only [integrateLocProp, h, IntegrationResult.isGrounded]
+
+/-- If there are no coercion options and the LocProp has unresolved params,
+integration produces a CRification — there is no silent fallback. -/
+theorem no_coercion_fallback {Cont QContent : Type}
+    (lp : LocProp Cont) (toCR : CParam → QContent) (p : CParam) (ps : CParamSet)
+    (h : lp.cparams = p :: ps) :
+    (integrateLocProp lp toCR).isGrounded = false := by
+  simp only [integrateLocProp, h, IntegrationResult.isGrounded]
 
 end Theories.Pragmatics.Dialogue.KOS

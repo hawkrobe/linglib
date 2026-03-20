@@ -387,6 +387,7 @@ import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.Scales
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.English.TemporalDeictic
@@ -1824,6 +1825,7 @@ import Linglib.Theories.Pragmatics.Assertion.Gunlogson
 import Linglib.Theories.Pragmatics.Assertion.Lauer
 -- Theories: Pragmatics: Dialogue
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
+import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
 import Linglib.Theories.Pragmatics.Dialogue.KOS.TTRBridge
 -- Theories: Phonology

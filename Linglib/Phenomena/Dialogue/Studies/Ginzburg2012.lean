@@ -36,7 +36,9 @@ open Theories.Pragmatics.Dialogue.KOS
 
 /-! ## Non-Sentential Utterances
 
-@cite{ginzburg-2012} Ch. 5: ~20% of turns in the BNC are non-sentential.
+@cite{ginzburg-2012} Ch. 1 (p. 2) cites estimates that ~30% of utterances
+are non-sentential (de Waijer 2001); the BNC corpus study in Ch. 7 (§7.2.2)
+finds 1,299 NSUs in 14,315 sentences (~9%).
 Their interpretation depends on the QUD — the same fragment "Paris" means
 different things depending on what question is under discussion:
 
@@ -298,5 +300,130 @@ open Phenomena.Ellipsis.FragmentAnswers in
 theorem all_fragments_are_nsus :
     (basicFragments.map fragmentToNSU).all (fun d => !d.resolution.isEmpty) = true := by
   native_decide
+
+-- ════════════════════════════════════════════════════
+-- § 7. NSU Taxonomy (@cite{ginzburg-2012} Ch. 7, §7.2)
+-- ════════════════════════════════════════════════════
+
+/-! ## NSU Classification
+
+@cite{ginzburg-2012} Ch. 7 (§7.2) provides an empirical taxonomy of
+non-sentential utterances based on a BNC corpus study. Each class has
+a distinct resolution mechanism relative to QUD/Pending. -/
+
+/-- The 11 classes of NSUs from @cite{ginzburg-2012} Ch. 7, §7.2. -/
+inductive NSUClass where
+  /-- Short answer: fills an argument slot in MaxQUD ("Paris", "Bo") -/
+  | shortAnswer
+  /-- Polar answer: "yes" / "no" to a polar MaxQUD -/
+  | polarAnswer
+  /-- Propositional lexeme: "yes", "no", "mmh" — meaning from DGB state -/
+  | propLexeme
+  /-- Sluice: bare wh-phrase ("Who?", "Where?") -/
+  | sluice
+  /-- Reprise sluice: echo wh-substitution ("Bo did WHAT?") -/
+  | repriseSluice
+  /-- Reprise fragment: echo of a sub-utterance for clarification ("Bo?") -/
+  | repriseFragment
+  /-- Focus-establishing constituent: fragment providing focus ("PARIS") -/
+  | fec
+  /-- Declarative fragment: bare DP/PP with assertive force ("The manager") -/
+  | declarativeFragment
+  /-- Check fragment: rising intonation echo for confirmation ("Bo?↗") -/
+  | checkFragment
+  /-- Correction fragment: corrects a sub-utterance ("No, PARIS") -/
+  | correctionFragment
+  /-- Filler: hesitation / floor-holding ("uh", "well") -/
+  | filler
+  deriving Repr, DecidableEq, BEq
+
+-- ════════════════════════════════════════════════════
+-- § 8. CR Form & Reading Taxonomy (@cite{ginzburg-2012} Ch. 6, §6.2)
+-- ════════════════════════════════════════════════════
+
+/-! ## Clarification Request Taxonomy
+
+@cite{ginzburg-2012} Ch. 6 (§6.2.1): 8 forms of clarification request,
+each compatible with up to 4 reading types. -/
+
+/-- The 8 CR forms from @cite{ginzburg-2012} Ch. 6 §6.2.1. -/
+inductive CRForm where
+  /-- "Wot?" / "What?" — most general CR -/
+  | wot
+  /-- Literal reprise: exact echo with rising intonation ("Bo?") -/
+  | literalReprise
+  /-- Wh-substituted reprise: echo with wh-word ("Bo did WHAT?") -/
+  | whSubstituted
+  /-- Reprise sluice: bare wh-word after antecedent ("Who?") -/
+  | repriseSluice
+  /-- Reprise fragment: bare constituent echo ("Bo?") -/
+  | repriseFragment
+  /-- Gap: reprise with a gap ("Did __ leave?") -/
+  | gap
+  /-- Filler: "Huh?" -/
+  | fillerCR
+  /-- Explicit: metalinguistic ("What do you mean 'finagle'?") -/
+  | explicit
+  deriving Repr, DecidableEq, BEq
+
+/-- The 4 CR reading types from @cite{ginzburg-2012} Ch. 6 §6.2.1. -/
+inductive CRReading where
+  /-- "Are you asking/saying that p?" — confirms propositional content -/
+  | clausalConfirmation
+  /-- "What do you mean by X?" — requests intended referent/predicate -/
+  | intendedContent
+  /-- "Can you repeat X?" — requests phonological repetition -/
+  | repetition
+  /-- "Did you say X or Y?" — corrective alternative -/
+  | correction
+  deriving Repr, DecidableEq, BEq
+
+-- ════════════════════════════════════════════════════
+-- § 9. Grounding Protocol Example
+-- ════════════════════════════════════════════════════
+
+/-! ## Grounding vs CRification
+
+@cite{ginzburg-2012} Ch. 6: when "Did Bo leave?" enters Pending,
+the addressee either grounds it (if they know who "Bo" is) or
+CRifies it (if "Bo" is unresolved → "Who's Bo?").
+
+We show the branching behavior using `integrateLocProp`. -/
+
+section GroundingExample
+
+/-- "Did Bo leave?" as a LocProp with one cparam for the referent of "Bo". -/
+private def didBoLeave : LocProp String where
+  phon := "Did Bo leave?"
+  cat := "S"
+  cont := "leave(bo)"
+  cparams := [{ index := "bo_ref", restriction := "individual" }]
+  constits := [{ phon := "Bo", cat := "NP", cont := "bo" }]
+
+/-- "Did Bo leave?" with the "Bo" referent resolved. -/
+private def didBoLeaveResolved : LocProp String where
+  phon := "Did Bo leave?"
+  cat := "S"
+  cont := "leave(bo)"
+
+/-- CR question constructor for this example. -/
+private def toCR (p : CParam) : String := s!"Who do you mean by '{p.index}'?"
+
+/-- Unresolved "Bo" triggers CRification. -/
+theorem unresolved_bo_crifies :
+    (integrateLocProp didBoLeave toCR).isGrounded = false := by
+  native_decide
+
+/-- Resolved version grounds successfully. -/
+theorem resolved_bo_grounds :
+    (integrateLocProp didBoLeaveResolved toCR).isGrounded = true := by
+  native_decide
+
+/-- The CR question targets the unresolved parameter. -/
+theorem cr_targets_bo :
+    integrateLocProp didBoLeave toCR =
+    .crification "Who do you mean by 'bo_ref'?" { index := "bo_ref", restriction := "individual" } := rfl
+
+end GroundingExample
 
 end Phenomena.Dialogue.Studies.Ginzburg2012
