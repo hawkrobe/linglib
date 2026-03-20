@@ -66,6 +66,37 @@ namespace Core.Presupposition
 open Core.Duality
 open Core.Proposition
 
+/-- A presupposed value: a value that is only defined when its
+presupposition holds.
+
+`PrValue W α` generalizes `PrProp W` (= `PrValue W Bool`): the
+presupposition is always `W → Bool`, but the at-issue content can be
+any type — a truth value (`Bool`), a degree (`ℚ`), a measure, etc.
+
+Linguistic motivation: many presupposition triggers return non-boolean
+values. The revised *per* entry (@cite{bale-schwarz-2022}, eq. 43)
+returns a presupposed pure number (`ℚ`). Definite descriptions return
+presupposed entities. `PrValue` handles all of these uniformly. -/
+structure PrValue (W : Type*) (α : Type*) where
+  /-- The presupposition (must hold for definedness). -/
+  presup : W → Bool
+  /-- The at-issue content (value). -/
+  value : W → α
+
+namespace PrValue
+
+variable {W : Type*} {α : Type*}
+
+/-- A presupposed value is defined at w iff its presupposition holds. -/
+def defined (w : W) (pv : PrValue W α) : Prop := pv.presup w = true
+
+/-- Create a presuppositionless value (always defined). -/
+def pure (a : W → α) : PrValue W α where
+  presup := fun _ => true
+  value := a
+
+end PrValue
+
 /-- A presuppositional proposition: assertion + presupposition. -/
 structure PrProp (W : Type*) where
   /-- The presupposition (must hold for definedness). -/
@@ -76,6 +107,16 @@ structure PrProp (W : Type*) where
 namespace PrProp
 
 variable {W : Type*}
+
+/-- Convert a presupposed Bool value (`PrValue W Bool`) to `PrProp W`. -/
+def ofPrValue (pv : PrValue W Bool) : PrProp W where
+  presup := pv.presup
+  assertion := pv.value
+
+/-- Convert a `PrProp` to a `PrValue W Bool`. -/
+def toPrValue (p : PrProp W) : PrValue W Bool where
+  presup := p.presup
+  value := p.assertion
 
 /-- Evaluate a presuppositional proposition to three-valued truth. -/
 def eval (p : PrProp W) : Prop3 W := λ w =>

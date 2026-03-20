@@ -1,4 +1,5 @@
 import Linglib.Core.Empirical
+import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
@@ -49,6 +50,7 @@ namespace Phenomena.Quantification.BaleSchwarz2022
 
 open Semantics.Probabilistic.Measurement
 open Fragments.English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
+open Core.Presupposition (PrProp PrValue)
 open Core.Empirical (Acceptability)
 
 -- ============================================================================
@@ -408,23 +410,47 @@ theorem text_unit_sensitivity :
 -- § 10. Unit Sensitivity Presupposition (§7, eq. 43)
 -- ============================================================================
 
-/-- The presupposition from eq. (43): μ_{dim(q)}(x) ≥ q.
+/-- The revised lexical entry for *per* (eq. 43) as a `PrValue`:
+⟦per⟧ = λq. λx: μ_{dim(q)}(x) ≥ q. μ_{dim(q)}(x) / q
 
-The entity's measure in the per-unit's dimension must be at least the
-unit quantity. This is the only addition eq. (43) makes over eq. (16) —
-the at-issue content (the pure number μ(x)/q) is unchanged, i.e., it
-is still `perAnaphoric μ q x`.
+- **presup**: μ_{dim(q)}(x) ≥ q (unit sensitivity)
+- **value**: μ_{dim(q)}(x) / q (pure number)
 
-Note: `PrProp` (from `Core.Presupposition`) is not used here because
-*per*'s at-issue content is a pure number (ℚ), not a truth value (Bool).
-`PrProp` models presupposed propositions; eq. (43) is a presupposed value. -/
+This is the canonical use case for `PrValue`: the at-issue content is
+a pure number (ℚ), not a truth value (Bool). `PrProp` cannot represent
+this directly — it only handles presupposed propositions. -/
+def perAnaphoricWithPresup {E : Type*} (μ : MeasureFn E) (q : ℚ)
+    (x : E) : PrValue Unit ℚ where
+  presup := fun _ => decide (μ.apply x ≥ q)
+  value := fun _ => perAnaphoric μ q x
+
+/-- The unit sensitivity presupposition (eq. 43): μ_{dim(q)}(x) ≥ q. -/
 def perPresup {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) : Bool :=
   decide (μ.apply x ≥ q)
 
 /-- The presupposition is satisfied iff the entity's measure ≥ the unit. -/
 theorem presup_satisfied_iff {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) :
-    perPresup μ q x = true ↔ μ.apply x ≥ q := by
-  simp [perPresup, decide_eq_true_eq]
+    (perAnaphoricWithPresup μ q x).presup () = true ↔ μ.apply x ≥ q := by
+  simp [perAnaphoricWithPresup, decide_eq_true_eq]
+
+/-- The at-issue value is the pure number μ(x)/q. -/
+theorem perValue_eq {E : Type*} (μ : MeasureFn E) (q : ℚ) (x : E) :
+    (perAnaphoricWithPresup μ q x).value () = perAnaphoric μ q x := rfl
+
+/-- At the sentence level, `PrValue ℚ` composes with a measurement verb
+to produce a `PrProp` — presupposition projects, assertion is boolean. -/
+def perSentenceWithPresup {E : Type*} (μ_wt μ_vol : MeasureFn E)
+    (perUnit : ℚ) (numeral : ℚ) (x : E) : PrProp Unit where
+  presup := fun _ => perPresup μ_vol perUnit x
+  assertion := fun _ => measureVerbSem μ_wt (numeral * perAnaphoric μ_vol perUnit x) x
+
+/-- The sentence-level assertion matches `anaphoricTC`. -/
+theorem assertion_matches_tc {E : Type*} (μ_wt μ_vol : MeasureFn E)
+    (perUnit numeral : ℚ) (x : E) :
+    (perSentenceWithPresup μ_wt μ_vol perUnit numeral x).assertion () = true ↔
+      anaphoricTC μ_wt μ_vol x numeral perUnit := by
+  simp [perSentenceWithPresup, perPresup, measureVerbSem, anaphoricTC,
+    perAnaphoric, decide_eq_true_eq]
 
 /-- The `presupSatisfied` field in each datum correctly reflects the
 entity volume ≥ per-unit comparison. -/
