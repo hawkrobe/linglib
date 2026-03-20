@@ -158,6 +158,85 @@ structure GradableAdjEntry where
   deriving Repr
 
 -- ════════════════════════════════════════════════════
+-- Multidimensional Adjective Semantics
+-- ════════════════════════════════════════════════════
+
+/--
+How a multidimensional adjective binds its dimensions (@cite{sassoon-2013}).
+
+- **conjunctive**: entity must meet standard in ALL dimensions (e.g., *healthy*)
+- **disjunctive**: entity must meet standard in SOME dimension (e.g., *sick*)
+- **mixed**: context determines ∀ vs ∃ (e.g., *intelligent*)
+-/
+inductive DimensionBindingType where
+  | conjunctive
+  | disjunctive
+  | mixed
+  deriving Repr, DecidableEq, BEq
+
+variable {α : Type}
+
+/-- Conjunctive binding: ∀Q ∈ DIM(P,c). Q(x). -/
+def conjunctiveBinding (dims : List (α → Bool)) (x : α) : Bool :=
+  dims.all (· x)
+
+/-- Disjunctive binding: ∃Q ∈ DIM(P,c). Q(x). -/
+def disjunctiveBinding (dims : List (α → Bool)) (x : α) : Bool :=
+  dims.any (· x)
+
+private theorem not_all_eq_any_not_map :
+    ∀ (dims : List (α → Bool)) (x : α),
+      (!dims.all (· x)) = (dims.map λ d a => !d a).any (· x)
+  | [], _ => rfl
+  | d :: ds, x => by
+    simp only [List.all_cons, List.map_cons, List.any_cons]
+    cases d x <;> simp [not_all_eq_any_not_map ds x]
+
+private theorem not_any_eq_all_not_map :
+    ∀ (dims : List (α → Bool)) (x : α),
+      (!dims.any (· x)) = (dims.map λ d a => !d a).all (· x)
+  | [], _ => rfl
+  | d :: ds, x => by
+    simp only [List.any_cons, List.map_cons, List.all_cons]
+    cases d x <;> simp [not_any_eq_all_not_map ds x]
+
+/-- De Morgan: negating conjunctive binding yields disjunctive binding
+    over negated dimension predicates.
+    This is the formal core of @cite{sassoon-2013}'s Hypothesis 2 —
+    under a negation theory of antonymy, if the positive form is conjunctive,
+    the negative antonym (its negation) is disjunctive. -/
+theorem deMorgan_conjunctive_disjunctive
+    (dims : List (α → Bool)) (x : α) :
+    (!conjunctiveBinding dims x) =
+      disjunctiveBinding (dims.map λ d a => !d a) x :=
+  not_all_eq_any_not_map dims x
+
+theorem deMorgan_disjunctive_conjunctive
+    (dims : List (α → Bool)) (x : α) :
+    (!disjunctiveBinding dims x) =
+      conjunctiveBinding (dims.map λ d a => !d a) x :=
+  not_any_eq_all_not_map dims x
+
+/-- The predicted binding type for a negative antonym,
+    given its positive counterpart's binding type.
+    Follows from De Morgan under the negation theory of antonymy. -/
+def DimensionBindingType.negate : DimensionBindingType → DimensionBindingType
+  | .conjunctive => .disjunctive
+  | .disjunctive => .conjunctive
+  | .mixed       => .mixed
+
+theorem negate_involutive (b : DimensionBindingType) :
+    b.negate.negate = b := by cases b <;> rfl
+
+/-- @cite{sassoon-2013} Hypothesis 3: standard type predicts binding type.
+    Total (max standard) → conjunctive, partial (min standard) → disjunctive,
+    relative (contextual) → mixed. -/
+def predictedBinding : Semantics.Degree.PositiveStandard → DimensionBindingType
+  | .maxEndpoint => .conjunctive
+  | .minEndpoint => .disjunctive
+  | .contextual  => .mixed
+
+-- ════════════════════════════════════════════════════
 -- Marginality Scales Account (@cite{dinis-jacinto-2026})
 -- ════════════════════════════════════════════════════
 

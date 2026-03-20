@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 
 /-!
 # English Measure Phrase Fragment
-@cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2022} @cite{scontras-2014} @cite{davidson-1979}
+@cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2021} @cite{scontras-2014} @cite{davidson-1979}
 
 Lexical entries for English measure terms and the preposition *per*.
 
@@ -203,8 +203,10 @@ def allAtomizers : List QuantizingNounEntry :=
   conventions, parallel to mixed quotation. -/
 inductive PerInterpretation where
   /-- Grammatically composed: *per* interacts with a covert pronoun *pro*
-      whose value is determined anaphorically.
-      ⟦per⟧ = λq. λx. λr. (μ_dim(q)(x) / q) * r -/
+      whose value is determined anaphorically (@cite{bale-schwarz-2022}, eq. 16).
+      ⟦per⟧ = λq. λx. μ_{dim(q)}(x) / q
+      The result is a pure number that composes with the measure phrase
+      via multiplication (@cite{bale-schwarz-2026}: multiplication only). -/
   | compositional
   /-- Math speak: the *per*-phrase verbalizes a quantity calculus expression.
       Not derived from the syntactic structure of English. -/

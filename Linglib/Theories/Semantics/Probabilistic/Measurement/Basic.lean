@@ -232,7 +232,8 @@ def noDivisionHypothesis (Q : Type*) (ops : List (CompOp Q))
 
 /-- Weaker form: even if a language has a lexical item *per*, its compositional
 semantics can be restated using only multiplication and pure numbers.
-Both @cite{coppock-2022} and @cite{bale-schwarz-2022} are reformulable this way. -/
+@cite{bale-schwarz-2026} shows that both @cite{coppock-2021}'s division entry and
+@cite{bale-schwarz-2022}'s anaphoric entry are reformulable this way. -/
 def perMultiplicationOnly
     (Quantity : Type*) (mul : Quantity → Quantity → Quantity)
     (perMeaning : Quantity → Quantity → Quantity)

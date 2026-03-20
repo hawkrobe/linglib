@@ -54,8 +54,12 @@ structure AdjModifierEntry where
   antonymForm : Option String := none
   /-- Antonym relation: contrary (gap) vs contradictory (no gap) -/
   antonymRelation : Option NegationType := none
-  /-- Is this a "negative" adjective on its scale? (e.g., "short" vs "tall") -/
-  isNegativePole : Bool := false
+  /-- Does this adjective select the lower endpoint of its scale?
+      E.g., "short" selects the low end of height, "empty" selects the low end
+      of fullness. This is scale-endpoint polarity, distinct from evaluative
+      polarity (@cite{sassoon-2013}): *empty* is lower-endpoint but evaluatively
+      positive (total, max-standard). -/
+  isLowerEndpoint : Bool := false
   deriving Repr, BEq
 
 -- ============================================================================
@@ -79,7 +83,7 @@ def short : AdjModifierEntry :=
   , dimension := .height
   , antonymForm := some "tall"
   , antonymRelation := some .contrary
-  , isNegativePole := true }
+  , isLowerEndpoint := true }
 
 -- ============================================================================
 -- Happiness Scale: happy, unhappy, sad
@@ -102,7 +106,7 @@ def unhappy : AdjModifierEntry :=
   , dimension := .happiness
   , antonymForm := some "happy"
   , antonymRelation := some .contrary
-  , isNegativePole := true }
+  , isLowerEndpoint := true }
 
 def sad : AdjModifierEntry :=
   { form := "sad"
@@ -112,7 +116,7 @@ def sad : AdjModifierEntry :=
   , dimension := .happiness
   , antonymForm := some "happy"
   , antonymRelation := some .contrary
-  , isNegativePole := true }
+  , isLowerEndpoint := true }
 
 -- ============================================================================
 -- Price Scale: expensive, cheap
@@ -135,7 +139,7 @@ def cheap : AdjModifierEntry :=
   , dimension := .price
   , antonymForm := some "expensive"
   , antonymRelation := some .contrary
-  , isNegativePole := true }
+  , isLowerEndpoint := true }
 
 -- ============================================================================
 -- Quality Scale: good, bad
@@ -158,7 +162,7 @@ def bad : AdjModifierEntry :=
   , dimension := .quality
   , antonymForm := some "good"
   , antonymRelation := some .contrary
-  , isNegativePole := true }
+  , isLowerEndpoint := true }
 
 -- ============================================================================
 -- Intelligence Scale
@@ -194,7 +198,7 @@ def cold : AdjModifierEntry :=
   , dimension := .temperature
   , antonymForm := some "hot"
   , antonymRelation := some .contrary
-  , isNegativePole := true }
+  , isLowerEndpoint := true }
 
 -- ============================================================================
 -- Closed Scale Adjectives (Contradictory Antonyms)
@@ -217,7 +221,7 @@ def empty_ : AdjModifierEntry :=
   , dimension := .fullness
   , antonymForm := some "full"
   , antonymRelation := some .contradictory
-  , isNegativePole := true }
+  , isLowerEndpoint := true }
 
 def wet : AdjModifierEntry :=
   { form := "wet"
@@ -236,7 +240,7 @@ def dry : AdjModifierEntry :=
   , dimension := .wetness
   , antonymForm := some "wet"
   , antonymRelation := some .contradictory
-  , isNegativePole := true }
+  , isLowerEndpoint := true }
 
 -- ============================================================================
 -- Non-Gradable / Absolute Adjectives
