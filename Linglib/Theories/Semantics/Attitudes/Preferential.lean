@@ -50,28 +50,18 @@ namespace Semantics.Attitudes.Preferential
 
 open Core.Proposition
 open Semantics.Attitudes.CDistributivity (IsCDistributive degreeComparison_isCDistributive
-                      degreeComparisonProp degreeComparisonQuestion)
--- Basic Types
+                      degreeComparisonProp degreeComparisonQuestion DegreeFn ThresholdFn)
 
-/--
-Question denotation (Hamblin: set of propositions).
+-- Re-export types under more descriptive names for downstream use
 
-We use `List (BProp W)` as an extensional representation of question meanings.
-This is equivalent to the intensional `Hamblin.QuestionDen W := (W → Bool) → Bool`
-from `Semantics.Montague.Questions.Hamblin`, but more convenient for computation.
+/-- Question denotation: set of possible answers. Re-exported from `CDistributivity`. -/
+abbrev QuestionDen (W : Type*) := Semantics.Attitudes.CDistributivity.QuestionDen W
 
-The connection: a list `[p₁, p₂,...]` represents the characteristic function
-`λ p. p ∈ {p₁, p₂,...}`.
+/-- Preference function: μ(agent, prop) → degree. Alias for `DegreeFn`. -/
+abbrev PreferenceFunction (W E : Type*) := DegreeFn W E
 
-See `toHamblin` and `fromHamblin` for conversions.
--/
-abbrev QuestionDen (W : Type*) := List (BProp W)
-
-/-- Preference function: μ(agent, prop) → degree -/
-abbrev PreferenceFunction (W E : Type*) := E → BProp W → ℚ
-
-/-- Threshold function: θ(comparison_class) → degree -/
-abbrev ThresholdFunction (W : Type*) := QuestionDen W → ℚ
+/-- Threshold function: θ(comparison_class) → degree. Alias for `ThresholdFn`. -/
+abbrev ThresholdFunction (W : Type*) := ThresholdFn W
 
 -- Connection to Hamblin Question Semantics
 
@@ -137,16 +127,6 @@ those propositions that are answers to the question.
 def fromHamblin {W : Type*} (hamblinQ : Semantics.Questions.Hamblin.QuestionDen W)
     (candidates : List (BProp W)) : QuestionDen W :=
   candidates.filter hamblinQ
-
-/--
-Questions (as alternative sets) trigger significance presuppositions
-when combined with degree predicates.
-
-This is the key connection: Hamblin alternatives play the same role as
-Rooth focus alternatives in triggering significance presuppositions.
--/
-def alternativesTriggersSignificance : Prop :=
-  True  -- Placeholder for the formal statement; see documentation above
 
 -- List ↔ Hamblin Equivalence (for finite worlds)
 
@@ -656,6 +636,42 @@ theorem hope_triviality {W E : Type*}
     tspSatisfied μ θ x C = true :=
   degreeComparison_triviality "hope" .positive μ θ x Q C h_subset h_assert
 
+/--
+**Reverse direction**: TSP → assertion when C ⊆ Q.
+
+This is the other half of the triviality argument from @cite{uegaki-2022} §6.5.4:
+TSP says ∃p ∈ C. μ(x,p) > θ(C). When C ⊆ Q, this p is also in Q,
+so the assertion ∃p ∈ Q. μ(x,p) > θ(C) holds too.
+-/
+theorem hope_triviality_reverse {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W)
+    (h_subset : ∀ p, p ∈ C → p ∈ Q)
+    (h_tsp : tspSatisfied μ θ x C = true) :
+    (hope μ θ).questionSemantics x Q C = true := by
+  unfold tspSatisfied at h_tsp
+  unfold hope mkDegreeComparisonPredicate
+  simp only [List.any_eq_true, decide_eq_true_eq] at *
+  obtain ⟨p, hp_in_C, hp_holds⟩ := h_tsp
+  exact ⟨p, h_subset p hp_in_C, hp_holds⟩
+
+/--
+**Triviality identity**: When C = Q, assertion ↔ TSP.
+
+This is the core of @cite{uegaki-2022} §6.5.4: the assertion of a non-veridical
+preferential with an interrogative complement is **identical** to its
+presupposition (TSP). Whenever TSP is satisfied (defined), the assertion
+is true; whenever TSP fails, the assertion is false. The meaning is
+L-analytic — its truth value is determined entirely by the presupposition,
+leaving no informative content. This is what @cite{gajewski-2002} identifies
+as the trigger for unacceptability.
+-/
+theorem hope_triviality_identity {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q : QuestionDen W) :
+    (hope μ θ).questionSemantics x Q Q = tspSatisfied μ θ x Q := by
+  simp only [hope, mkDegreeComparisonPredicate, tspSatisfied]
+
 -- Classification Verification
 
 /-- Hope is Class 3 (anti-rogative) -/
@@ -777,6 +793,21 @@ def PreferentialPredicate.questionSemanticsAt {W E : Type*}
   else
     V.questionSemantics x Q C
 
+/--
+**World-independence contrast**: Non-veridical predicates have world-independent
+semantics (`questionSemanticsAt` ignores the world), while veridical predicates
+have world-dependent semantics. This is the structural basis for L-analyticity:
+for non-veridical predicates, assertion ⊆ presupposition holds at ALL worlds
+because the world variable doesn't appear.
+-/
+theorem nonveridical_worldIndependent {W E : Type*}
+    (name : String) (valence : AttitudeValence)
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W) (w₁ w₂ : W) :
+    (mkDegreeComparisonPredicate name valence μ θ).questionSemanticsAt x Q C w₁ =
+    (mkDegreeComparisonPredicate name valence μ θ).questionSemanticsAt x Q C w₂ := by
+  simp [PreferentialPredicate.questionSemanticsAt, mkDegreeComparisonPredicate]
+
 -- Veridical Predicate Instances
 
 /-- "be happy": veridical, positive valence -/
@@ -784,7 +815,10 @@ def beHappy {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction 
     PreferentialPredicate W E :=
   mkVeridicalPreferential "be happy" .positive μ θ
 
-/-- "be surprised": veridical, positive valence (pleasant surprise) -/
+/-- "be surprised": veridical, positive valence (expectation-violation).
+    Classified as positive following @cite{uegaki-sudo-2019}: the degree
+    function measures how much the true answer exceeds the subject's
+    expectations, a positive-direction evaluation. -/
 def beSurprised {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
     PreferentialPredicate W E :=
   mkVeridicalPreferential "be surprised" .positive μ θ
@@ -983,5 +1017,123 @@ with positive valence (TSP) and non-veridicality, this yields triviality.
 "Be happy" takes questions DESPITE being C-distributive and positive BECAUSE
 it is veridical — the truth requirement breaks the triviality derivation.
 -/
+
+-- ============================================================================
+-- Highlighting (@cite{uegaki-2022} Ch 6 §6.6, @cite{pruitt-roelofsen-2011})
+-- ============================================================================
+
+/-!
+## Highlighted Propositions and hope-whether
+
+@cite{uegaki-2022} Ch 6 addresses apparent counterexamples to the anti-rogativity
+of positive NVPs: attested "hope whether" constructions (@cite{white-2021}).
+
+The solution uses **highlighting** (@cite{pruitt-roelofsen-2011}): clauses have both
+an ordinary semantic value and a **highlighted value** — a subset of propositions
+with privileged status.
+
+### Key Insight
+
+- Polar interrogatives (`whether p`): highlighted value = `{p}` (singleton)
+- Constituent interrogatives (`who left`): highlighted value = ordinary value
+- Declaratives (`that p`): highlighted value = `{p}` (singleton)
+
+When `hope` is sensitive to the highlighted value rather than the ordinary
+semantic value, `hope whether p` reduces to `hope that p` — no triviality!
+The anti-rogativity prediction is preserved for constituent interrogatives
+(highlighted value = full question = trivial) while allowing polar ones.
+-/
+
+/-- Clause types relevant to highlighting. -/
+inductive ClauseType where
+  | declarative         -- "that p"
+  | polarInterrogative  -- "whether/if p"
+  | constituentInterrog -- "who/what/which..."
+  deriving DecidableEq, Repr, BEq
+
+/--
+Highlighted propositions of a clause (@cite{pruitt-roelofsen-2011}).
+
+- Polar interrogatives highlight the overtly-realized proposition (singleton)
+- Declaratives highlight the asserted proposition (singleton)
+- Constituent interrogatives highlight all alternatives (= ordinary value)
+
+The key asymmetry: polar and declarative both yield singletons,
+while constituent interrogatives yield the full question.
+-/
+def highlightedValue {W : Type*} (ct : ClauseType) (Q : QuestionDen W) :
+    QuestionDen W :=
+  match ct with
+  | .declarative => Q.take 1
+  | .polarInterrogative => Q.take 1
+  | .constituentInterrog => Q
+
+/--
+Highlighting-sensitive version of hope's denotation.
+
+The Dayal-answer preferred by the subject is restricted to be a
+**highlighted** proposition of the complement φ, rather than a member
+of the ordinary semantic value.
+
+⟦hope_C φ⟧ = λx: ∃w'[AnsD_w'(⟦φ⟧_H) ∈ C] .
+              ∃d ∈ { Pref_w(x,p) | p ∈ C } [d > θ(C)] .
+              ∃w''[ AnsD_w''(Q) ∈ ⟦φ⟧_H ∧ Pref_w(x, AnsD_w''(Q)) > θ(C) ]
+-/
+def hopeHighlightSemantics {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (ct : ClauseType) (x : E) (Q C : QuestionDen W) : Bool :=
+  let highlighted := highlightedValue ct Q
+  highlighted.any fun p => decide (μ x p > θ C)
+
+/--
+With a declarative complement, highlighting changes nothing:
+the highlighted value is {p}, and hopeSemanticsHighlight reduces to
+whether μ(x, p) > θ(C). Same as standard hope.
+-/
+theorem hope_highlight_declarative_equiv {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (p : BProp W) (C : QuestionDen W) :
+    hopeHighlightSemantics μ θ .declarative x [p] C =
+    decide (μ x p > θ C) := by
+  simp [hopeHighlightSemantics, highlightedValue]
+
+/--
+With a polar interrogative "whether p", highlighting reduces to the
+singleton {p}. So "hope whether p" ≈ "hope that p" — NOT trivial.
+-/
+theorem hope_highlight_polar_equiv {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (p : BProp W) (neg_p : BProp W) (C : QuestionDen W) :
+    hopeHighlightSemantics μ θ .polarInterrogative x [p, neg_p] C =
+    decide (μ x p > θ C) := by
+  simp [hopeHighlightSemantics, highlightedValue]
+
+/--
+With a constituent interrogative "who V", all alternatives are highlighted.
+This is identical to the standard (non-highlighting) semantics —
+still trivial when combined with TSP and Q ⊆ C.
+-/
+theorem hope_highlight_constituent_equiv {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W) :
+    hopeHighlightSemantics μ θ .constituentInterrog x Q C =
+    Q.any (fun p => decide (μ x p > θ C)) := by
+  simp [hopeHighlightSemantics, highlightedValue]
+
+/--
+Constituent interrogatives with TSP are still trivial under highlighting.
+This preserves the anti-rogativity prediction for "*hope who left".
+-/
+theorem hope_highlight_constituent_trivial {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
+    (x : E) (Q C : QuestionDen W)
+    (h_subset : ∀ p, p ∈ Q → p ∈ C)
+    (h_assert : hopeHighlightSemantics μ θ .constituentInterrog x Q C = true) :
+    tspSatisfied μ θ x C = true := by
+  rw [hope_highlight_constituent_equiv] at h_assert
+  unfold tspSatisfied
+  simp only [List.any_eq_true, decide_eq_true_eq] at *
+  obtain ⟨p, hp_in_Q, hp_holds⟩ := h_assert
+  exact ⟨p, h_subset p hp_in_Q, hp_holds⟩
 
 end Semantics.Attitudes.Preferential

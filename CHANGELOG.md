@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.229.386] - 2026-03-20
+
+### Added
+- **Veridical Uniformity** constraint in `CDistributivity.lean`: `IsVeridicallyUniform` (Table 8.2's fourth constraint), `cdist_not_implies_veridicalUniformity` (independence from C-distributivity)
+- **Triviality identity theorems** in `Preferential.lean`: `hope_triviality_identity` (assertion = TSP when C = Q, the heart of §6.5.4 L-analyticity), `hope_triviality_reverse` (TSP → assertion when C ⊆ Q)
+- **Full Table 8.2 encoding** in `Uegaki2022.lean`: `table8_2` with all 4 constraints × 7 predicates (care, mõtlema, daroo, wonder, magtaka + 2 fictitious), `CrossLingDatum` expanded with `veridicalUniformity`, `strawsonCDist`, `attested` fields
+- **New empirical theorems**: `cdist_subset_strawson_empirical`, `ptoq_rules_out_fictitious`, `ptoq_more_permissive_than_cdist`
+
+### Changed
+- **Fix `nvpToSelectionClass`**: class1_nonCDist → `.responsive` (was `.rogativePerspP` — worry takes both declaratives and interrogatives)
+- **Remove dangling reference** to Answerhood/Exhaustivity.lean from Uegaki2022 header docstring
+- **Document fear assertion direction simplification** (Section I): our model captures fear taking questions via `.negative` valence lacking TSP, rather than the book's flipped assertion direction (Pref < θ)
+
+## [0.229.385] - 2026-03-20
+
+### Changed
+- **Uegaki 2022 audit and refactoring**: eliminate `QuestionDen`/`PreferenceFunction`/`ThresholdFunction` redefinitions (Preferential re-exports from CDistributivity), remove 4 duplicate predicate instantiations from CDistributivity.lean, replace 2 axioms (`exists_nonCDistributive_worry/care`) with concrete proofs, fix `beSurprised` docstring (was "pleasant surprise", now correctly "expectation-violation"), remove `alternativesTriggersSignificance` placeholder
+- **New theorems**: `knopinion_violates_ptoq` (Table 8.2 fictitious predicate), `nonveridical_worldIndependent` (structural basis for L-analyticity), `nvpToSelectionClass`/`nvp_selection_agreement` (NVPClass↔SelectionClass bridge), `hope_world_independent`
+
 ## [0.229.384] - 2026-03-20
 
 ### Changed
