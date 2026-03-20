@@ -45,7 +45,7 @@ external/local variable distinction) are faithfully preserved.
 
 -/
 
-namespace Semantics.Dynamic.PIP
+namespace Semantics.PIP
 
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.IntensionalCDRT
@@ -283,4 +283,4 @@ structure BoundVar where
   deriving Repr
 
 
-end Semantics.Dynamic.PIP
+end Semantics.PIP

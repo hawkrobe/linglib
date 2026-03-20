@@ -1092,6 +1092,7 @@ import Linglib.Phenomena.Questions.WhComplement
 import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Questions.Studies.Dayal2025
+import Linglib.Phenomena.Questions.Studies.Uegaki2022
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
@@ -1313,10 +1314,9 @@ import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.PresuppositionWeakening
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Update
-import Linglib.Theories.Semantics.Dynamic.PIP.Basic
-import Linglib.Theories.Semantics.Dynamic.PIP.Connectives
-import Linglib.Theories.Semantics.Dynamic.PIP.Phenomena
-import Linglib.Theories.Semantics.Dynamic.PIP.Felicity
+import Linglib.Theories.Semantics.PIP.Basic
+import Linglib.Theories.Semantics.PIP.Connectives
+import Linglib.Theories.Semantics.PIP.Felicity
 import Linglib.Theories.Semantics.Dynamic.PLA.Basic
 import Linglib.Theories.Semantics.Dynamic.PLA.Belief
 import Linglib.Theories.Semantics.Dynamic.PLA.DeepTheorems

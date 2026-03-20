@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Dynamic.PIP.Basic
+import Linglib.Theories.Semantics.PIP.Basic
+import Linglib.Core.Logic.ModalLogic
 
 /-!
 # PIP Connectives and Modal Operators
@@ -22,15 +23,18 @@ PIP's modals are generalized quantifiers over worlds (paper Section 2.5):
 - MIGHT^β_w(W₁, W₂) ≜ SOME(β_w ∩ W₁, W₂)
 - MUST^β_w(W₁, W₂) ≜ EVERY(β_w ∩ W₁, W₂)
 
-Our encoding parameterizes by an accessibility relation (equivalent to
-a Kratzer modal base β) and quantifies over accessible worlds.
+Our encoding parameterizes by an accessibility relation (`Core.ModalLogic.AccessRel`,
+equivalent to a Kratzer modal base β) and quantifies over accessible worlds.
+The grounding theorem `must_truth_agrees_kripkeEval` proves that PIP's `must`
+produces the same truth conditions as `Core.ModalLogic.kripkeEval .necessity`.
 
 -/
 
-namespace Semantics.Dynamic.PIP
+namespace Semantics.PIP
 
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.IntensionalCDRT
+open Core.ModalLogic (AccessRel)
 
 variable {W E : Type*}
 
@@ -148,11 +152,6 @@ def forall_ (v : IVar) (domain : Set E)
 -- ============================================================
 
 /--
-PIP accessibility relation: decidable relation between worlds.
--/
-abbrev PAccessRel (W : Type*) := W → W → Bool
-
-/--
 Modal context expansion: adds accessible-world pairs to the context.
 
 Before evaluating the body of a modal, the context must include
@@ -165,16 +164,16 @@ would produce no accessible-world pairs for universal modals to check,
 making must/would vacuously satisfied and losing the modal subordination
 mechanism.
 -/
-def modalExpand (c : IContext W E) (access : PAccessRel W) : IContext W E :=
+def modalExpand (c : IContext W E) (access : AccessRel W) : IContext W E :=
   c ∪ { gw | ∃ w₀, (gw.1, w₀) ∈ c ∧ access w₀ gw.2 = true }
 
 /-- Modal expansion includes all original pairs. -/
-theorem modalExpand_superset (c : IContext W E) (access : PAccessRel W) :
+theorem modalExpand_superset (c : IContext W E) (access : AccessRel W) :
     c ⊆ modalExpand c access := by
   intro x hx; left; exact hx
 
 /-- Modal expansion adds accessible-world pairs. -/
-theorem modalExpand_adds_accessible (c : IContext W E) (access : PAccessRel W)
+theorem modalExpand_adds_accessible (c : IContext W E) (access : AccessRel W)
     (g : ICDRTAssignment W E) (w₀ w₁ : W)
     (hc : (g, w₀) ∈ c) (hacc : access w₀ w₁ = true) :
     (g, w₁) ∈ modalExpand c access := by
@@ -199,7 +198,7 @@ subordination work: "A wolf might come in" introduces the wolf (local)
 under the modal's world quantification (external). The wolf's descriptive
 content (via the label) is accessible in subsequent discourse.
 -/
-def must (access : PAccessRel W) (allWorlds : List W)
+def must (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
     let bodyResult := body { d with info := modalExpand d.info access }
@@ -218,7 +217,7 @@ Modal possibility (might): existential quantification over accessible worlds.
 Like `must`, the body is evaluated on an expanded context (via `modalExpand`)
 and the world variable is external.
 -/
-def might (access : PAccessRel W) (allWorlds : List W)
+def might (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) : PUpdate W E :=
   λ d =>
     let bodyResult := body { d with info := modalExpand d.info access }
@@ -235,7 +234,7 @@ In the paper's modal subordination analysis, "It would eat you first" is
 analyzed as MUST with the same accessibility relation from "might" in the
 preceding sentence. So `would` = `must` with the inherited modal base.
 -/
-def would (access : PAccessRel W) (allWorlds : List W)
+def would (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) : PUpdate W E :=
   must access allWorlds body
 
@@ -260,45 +259,125 @@ theorem labels_survive_negation (φ : PUpdate W E) (desc : Description W E)
     (negation φ d).labels.lookup α = some desc := h
 
 /--
-Labels survive conjunction (left-to-right).
-
-Labels registered by the first conjunct are available to the second.
--/
-theorem labels_survive_conj_left (φ ψ : PUpdate W E) (desc : Description W E)
-    (_h : (φ d).labels.lookup α = some desc)
-    (h_pres : (ψ (φ d)).labels.lookup α = some desc) :
-    (conj φ ψ d).labels.lookup α = some desc := h_pres
-
-/--
 Labels survive modal operators.
 
 Labels registered inside a modal scope propagate to the outer
 discourse state. This is what enables modal subordination.
 -/
-theorem labels_survive_must (access : PAccessRel W) (allWorlds : List W)
+theorem labels_survive_must (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) (desc : Description W E)
     (h : (body { d with info := modalExpand d.info access }).labels.lookup α = some desc) :
     (must access allWorlds body d).labels.lookup α = some desc := h
 
-theorem labels_survive_might (access : PAccessRel W) (allWorlds : List W)
+theorem labels_survive_might (access : AccessRel W) (allWorlds : List W)
     (body : PUpdate W E) (desc : Description W E)
     (h : (body { d with info := modalExpand d.info access }).labels.lookup α = some desc) :
     (might access allWorlds body d).labels.lookup α = some desc := h
 
-/--
-Labels from the first disjunct are available in the output.
-
-In PIP, X ≡ φ is tautological and floats freely across all operators.
-Our encoding simulates this by flowing labels from the first disjunct
-through the second. If the second disjunct preserves labels (as all
-PIP operators do), the output contains all labels from both disjuncts.
--/
-theorem labels_survive_disj (φ ψ : PUpdate W E) (desc : Description W E)
-    (_h_left : (φ d).labels.lookup α = some desc)
-    (h_pres : (ψ { d with labels := (φ d).labels }).labels.lookup α = some desc) :
-    (disj φ ψ d).labels.lookup α = some desc := h_pres
-
 end Properties
+
+
+-- ============================================================
+-- Grounding: PIP modals ↔ Core.ModalLogic.kripkeEval
+-- ============================================================
+
+open Core.ModalLogic (kripkeEval Refl)
+open Core.Proposition (FiniteWorlds)
+
+/--
+PIP's `must` produces the same truth conditions as `Core.ModalLogic.kripkeEval .necessity`.
+
+Specifically: a pair (g, w₀) survives `must R allWorlds (atom p)` iff
+`kripkeEval R .necessity (p g) w₀ = true` — the body predicate holds at
+all R-accessible worlds. This connects PIP's discourse-update modals to the
+standard Kripke semantics used throughout `Theories/Semantics/Modality/`.
+-/
+theorem must_truth_agrees_kripkeEval [FiniteWorlds W]
+    (R : AccessRel W) (p : ICDRTAssignment W E → W → Bool)
+    (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
+    (hd : (g, w₀) ∈ d.info) :
+    ((g, w₀) ∈ (must R FiniteWorlds.worlds (atom p) d).info) ↔
+    (kripkeEval R .necessity (p g) w₀ = true) := by
+  constructor
+  · intro ⟨_, h⟩
+    unfold kripkeEval
+    apply List.all_eq_true.mpr
+    intro v hv
+    simp only [List.mem_filter] at hv
+    have := h v (FiniteWorlds.complete v) hv.2
+    unfold atom Discourse.mapInfo at this
+    exact this.2
+  · intro hk
+    unfold kripkeEval at hk
+    refine ⟨hd, ?_⟩
+    intro w₁ _hw₁ hacc
+    unfold atom Discourse.mapInfo
+    constructor
+    · exact modalExpand_adds_accessible d.info R g w₀ w₁ hd hacc
+    · have : w₁ ∈ FiniteWorlds.worlds.filter (R w₀) := by
+        simp only [List.mem_filter]
+        exact ⟨FiniteWorlds.complete w₁, hacc⟩
+      exact List.all_eq_true.mp hk w₁ this
+
+/--
+PIP's `might` agrees with `kripkeEval .possibility`.
+-/
+theorem might_truth_agrees_kripkeEval [FiniteWorlds W]
+    (R : AccessRel W) (p : ICDRTAssignment W E → W → Bool)
+    (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
+    (hd : (g, w₀) ∈ d.info) :
+    ((g, w₀) ∈ (might R FiniteWorlds.worlds (atom p) d).info) ↔
+    (kripkeEval R .possibility (p g) w₀ = true) := by
+  constructor
+  · intro ⟨_, w₁, _, hacc, hmem⟩
+    unfold kripkeEval
+    apply List.any_eq_true.mpr
+    unfold atom Discourse.mapInfo at hmem
+    exact ⟨w₁, by simp only [List.mem_filter]; exact ⟨FiniteWorlds.complete w₁, hacc⟩, hmem.2⟩
+  · intro hk
+    unfold kripkeEval at hk
+    obtain ⟨v, hv, hpv⟩ := List.any_eq_true.mp hk
+    simp only [List.mem_filter] at hv
+    refine ⟨hd, v, FiniteWorlds.complete v, hv.2, ?_⟩
+    unfold atom Discourse.mapInfo
+    exact ⟨modalExpand_adds_accessible d.info R g w₀ v hd hv.2, hpv⟩
+
+/--
+Realistic modal base (T axiom) for PIP: if R is reflexive and `must R (atom p)`
+holds at (g, w₀), then p g w₀ = true.
+
+This derives PIP's key insight — must allows anaphora because a realistic
+modal base guarantees the description holds at the evaluation world — from
+`Core.ModalLogic.T_of_refl`.
+-/
+theorem must_realistic_of_refl [FiniteWorlds W]
+    (R : AccessRel W) (hRefl : Refl R)
+    (p : ICDRTAssignment W E → W → Bool)
+    (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
+    (hd : (g, w₀) ∈ d.info)
+    (hmust : (g, w₀) ∈ (must R FiniteWorlds.worlds (atom p) d).info) :
+    p g w₀ = true :=
+  Core.ModalLogic.T_of_refl hRefl (p g) w₀
+    ((must_truth_agrees_kripkeEval R p d g w₀ hd).mp hmust)
+
+/--
+Pointwise realistic base: if R w₀ w₀ = true and must holds at w₀,
+the body predicate holds at w₀.
+
+This is the version that applies to non-globally-reflexive relations
+(e.g., epistemic access from a specific evaluation world). It captures
+@cite{kratzer-1991}'s realistic modal base without requiring global reflexivity.
+-/
+theorem must_realistic_at [FiniteWorlds W]
+    (R : AccessRel W) (p : ICDRTAssignment W E → W → Bool)
+    (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
+    (hRefl_at : R w₀ w₀ = true)
+    (hmust : (g, w₀) ∈ (must R FiniteWorlds.worlds (atom p) d).info) :
+    p g w₀ = true := by
+  obtain ⟨_, h⟩ := hmust
+  have := h w₀ (FiniteWorlds.complete w₀) hRefl_at
+  unfold atom Discourse.mapInfo at this
+  exact this.2
 
 
 -- ============================================================
@@ -334,4 +413,69 @@ def quantifierBindings (boundVar restrictorVar : IVar) :
     ⟨restrictorVar, .local, none⟩ ]
 
 
-end Semantics.Dynamic.PIP
+-- ============================================================
+-- Generalized Quantifiers (paper items 28, 53–56)
+-- ============================================================
+
+/-!
+### PIP Generalized Quantifiers (paper items 28, 53–56)
+
+The paper defines (item 28):
+- EVERY(x, y) iff x ⊆ y
+- MOST(x, y) iff |x ∩ y|/|x| > θ
+- SOME(x, y) iff x ∩ y ≠ ∅
+
+Summation Σxφ collects entity values from assignments satisfying φ.
+GQs take two summation terms as arguments: the restrictor and the
+nuclear scope.
+-/
+
+/-- EVERY(restriction, scope) iff restriction ⊆ scope (paper item 28) -/
+def gqEvery {α : Type*} (restriction scope : Set α) : Prop :=
+  restriction ⊆ scope
+
+/-- SOME(restriction, scope) iff restriction ∩ scope ≠ ∅ -/
+def gqSome {α : Type*} (restriction scope : Set α) : Prop :=
+  (restriction ∩ scope).Nonempty
+
+/-- `forall_` encodes EVERY via ¬∃x.¬ (paper item 56) -/
+theorem forall_eq_neg_exists_neg {W E : Type*} (v : IVar) (domain : Set E)
+    (body : PUpdate W E) :
+    forall_ v domain body = negation (exists_ v domain (negation body)) := rfl
+
+
+-- ============================================================
+-- SINGLE / PLURAL (paper items 71, 84)
+-- ============================================================
+
+/--
+SINGLE(τ) ↔ |τ| = 1 (paper item 71)
+
+The existential presupposition of singular pronouns: she_τ ↝ τ|SINGLE(τ).
+A singular pronoun presupposes that its denotation is a singleton.
+-/
+def single {α : Type*} (s : Set α) : Prop :=
+  ∃ a, s = {a}
+
+/--
+PLURAL(τ) ↔ |τ| > 1 (paper item 84)
+
+The presupposition of plural pronouns: they_τ ↝ τ|PLURAL(τ).
+-/
+def plural {α : Type*} (s : Set α) : Prop :=
+  ∃ a b, a ≠ b ∧ a ∈ s ∧ b ∈ s
+
+/-- A singleton set satisfies SINGLE. -/
+theorem single_singleton {α : Type*} (a : α) : single ({a} : Set α) :=
+  ⟨a, rfl⟩
+
+/-- SINGLE and PLURAL are mutually exclusive. -/
+theorem single_not_plural {α : Type*} (s : Set α)
+    (hs : single s) : ¬plural s := by
+  obtain ⟨a, rfl⟩ := hs
+  intro ⟨x, y, hne, hx, hy⟩
+  simp only [Set.mem_singleton_iff] at hx hy
+  exact hne (hx.trans hy.symm)
+
+
+end Semantics.PIP
