@@ -82,6 +82,18 @@ inductive NPRelType where
       bearing case). E.g., Arabic "al-madina [illi saafartu ila-ha]"
       'the-city [that I-traveled to-it]'. -/
   | resumptive
+  /-- Movement resumptive: a lower copy of an Ā-movement chain that
+      is partially pronounced rather than fully deleted. Featurally
+      reduced relative to a bound resumptive (e.g., personless in
+      Swahili). Diagnosed by parasitic gap constructions.
+      @cite{scott-2021} @cite{sichel-2014} -/
+  | resumptiveMovement
+  /-- Bound resumptive: a base-generated pronoun syntactically bound
+      by the head of the relative clause. Not a movement copy — immune
+      to chain reduction. Retains full person features. Diagnosed by
+      obligatory presence inside adjunct islands.
+      @cite{scott-2021} @cite{sichel-2014} -/
+  | resumptiveBound
   /-- Relative pronoun: NP_rel is a dedicated relative pronoun that
       typically fronts to clause-initial position and bears case.
       E.g., English "the man [who left]", German "der Mann [der ging]". -/
@@ -125,5 +137,15 @@ structure RelClauseMarker where
 /-- Does this marker cover a given AH position? -/
 def RelClauseMarker.covers (m : RelClauseMarker) (p : AHPosition) : Bool :=
   m.positions.any (· == p)
+
+/-- Whether a resumptive pronoun type is a movement copy, a bound
+    pronoun, or unspecified. For languages where the two types coexist
+    and are morphologically distinct (@cite{scott-2021} for Swahili,
+    @cite{sichel-2014} for Hebrew). -/
+def NPRelType.isMovementCopy : NPRelType → Option Bool
+  | .resumptiveMovement => some true
+  | .resumptiveBound => some false
+  | .resumptive => none   -- unspecified (pre-Scott typology)
+  | _ => none             -- non-resumptive
 
 end Core

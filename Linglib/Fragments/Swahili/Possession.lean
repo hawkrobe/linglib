@@ -1,3 +1,4 @@
+import Linglib.Fragments.Swahili.Basic
 import Linglib.Phenomena.Possession.Typology
 import Linglib.Phenomena.Possession.Studies.Heine1997
 
@@ -53,45 +54,11 @@ theorem strategy_matches_schema :
 -- §2. The `-na` Paradigm
 -- ============================================================================
 
-/-- Swahili noun classes relevant to subject agreement in possessive
-    constructions. Classes 1/2 are human singular/plural. -/
-inductive NounClass where
-  | cl1   -- m- (human sg): a-na
-  | cl2   -- wa- (human pl): wa-na
-  | cl3   -- m- (tree sg): u-na
-  | cl4   -- mi- (tree pl): i-na
-  | cl5   -- ji-/∅ (augmentative sg): li-na
-  | cl6   -- ma- (augmentative pl): ya-na
-  | cl7   -- ki- (diminutive sg): ki-na
-  | cl8   -- vi- (diminutive pl): vi-na
-  | cl9   -- n- (animal sg): i-na
-  | cl10  -- n- (animal pl): zi-na
-  | cl15  -- ku- (infinitive): ku-na
-  | cl16  -- pa- (definite location): pa-na
-  | cl17  -- ku- (indefinite location): ku-na
-  | cl18  -- mu-/m- (inside location): mu-na
-  deriving DecidableEq, BEq, Repr
-
-/-- Subject prefix for each class in the `-na` construction. -/
-def subjPrefix : NounClass → String
-  | .cl1  => "a"
-  | .cl2  => "wa"
-  | .cl3  => "u"
-  | .cl4  => "i"
-  | .cl5  => "li"
-  | .cl6  => "ya"
-  | .cl7  => "ki"
-  | .cl8  => "vi"
-  | .cl9  => "i"
-  | .cl10 => "zi"
-  | .cl15 => "ku"
-  | .cl16 => "pa"
-  | .cl17 => "ku"
-  | .cl18 => "mu"
+open Fragments.Swahili (NounClass)
 
 /-- The possessive form: subject prefix + "na". -/
 def possessiveForm (c : NounClass) : String :=
-  subjPrefix c ++ "na"
+  c.subjPrefix ++ "na"
 
 /-- First-person singular and plural forms use special prefixes. -/
 def possForm1sg : String := "nina"
@@ -102,13 +69,6 @@ def possForm2pl : String := "mna"
 -- ============================================================================
 -- §3. Locative Classes and Possession
 -- ============================================================================
-
-/-- Whether a noun class is a locative class (16, 17, 18).
-    These classes provide the locative predicate in the Location Schema
-    and also serve as impersonal subjects in existential constructions. -/
-def NounClass.isLocative : NounClass → Bool
-  | .cl16 | .cl17 | .cl18 => true
-  | _ => false
 
 /-- Locative classes use the same `-na` marker for "there is ... with",
     illustrating how Companion and Location schemas overlap in Swahili. -/

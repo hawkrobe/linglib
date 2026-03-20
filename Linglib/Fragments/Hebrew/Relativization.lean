@@ -2,13 +2,28 @@ import Linglib.Core.Relativization.Basic
 
 /-!
 # Hebrew Relativization Fragment
-@cite{keenan-comrie-1977}
+@cite{keenan-comrie-1977} @cite{sichel-2014}
 
 Two relative clause markers (discussed §1.3.2):
 - Complementizer *she-* with gap (-case, covers SU/DO)
 - Same *she-* with resumptive pronoun (+case, covers DO–OCOMP)
 
 DO is shared between both constructions.
+
+## Two Types of Resumption (@cite{sichel-2014})
+
+Hebrew has both bound and movement resumptive pronouns, though unlike
+Swahili they are not morphologically distinct. @cite{sichel-2014} shows:
+
+- **Optional resumption** (direct objects): alternation between gap and
+  resumptive. When resumption is optional, a resumptive pronoun has the
+  distribution of a bound pronoun, and a gap is a movement trace.
+  Weak crossover effects distinguish the two (example (6) in
+  @cite{scott-2021}).
+
+- **Obligatory resumption** (PPs): always a movement copy (no gap
+  alternative). The resumptive pronoun *oto* shows reconstruction
+  effects (example (7) in @cite{scott-2021}), indicating movement.
 
 Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
 -/
@@ -40,7 +55,40 @@ def relSheResumptive : RelClauseMarker :=
   , positions := [.directObject, .indirectObject, .oblique, .genitive, .objComparison]
   , notes := "Complementizer she-; resumptive; DO–OCOMP; DO shared; §1.3.2" }
 
-/-- All Hebrew relative clause markers. -/
+/-- Complementizer *she-* with movement resumptive in PPs. Obligatory —
+    the PP object cannot be a gap (no P-stranding in Hebrew). Shows
+    reconstruction effects, indicating movement copy.
+    @cite{sichel-2014}: "ha-ec she-hu tipes alav" 'the tree that he
+    climbed on.it' — idiomatic reading preserved = reconstruction. -/
+def relSheMovementResumptive : RelClauseMarker :=
+  { form := "she- + movement RP"
+  , npRel := .resumptiveMovement
+  , bearsCaseMarking := true
+  , rcPosition := .postNominal
+  , positions := [.oblique, .genitive]
+  , notes := "she- + obligatory resumptive in PPs; movement copy; reconstruction; @cite{sichel-2014}" }
+
+/-- Complementizer *she-* with bound resumptive for direct objects.
+    Optional — alternates with gap. When used, behaves as a bound
+    pronoun (no reconstruction, weak crossover sensitivity).
+    @cite{sichel-2014}: "ze ha-yeled she-imo šelo ohevet oto"
+    'this is the boy who his mother loves him' — oto is bound. -/
+def relSheBoundResumptive : RelClauseMarker :=
+  { form := "she- + bound RP"
+  , npRel := .resumptiveBound
+  , bearsCaseMarking := true
+  , rcPosition := .postNominal
+  , positions := [.directObject]
+  , notes := "she- + optional resumptive for DO; bound pronoun; no reconstruction; @cite{sichel-2014}" }
+
+/-- All Hebrew relative clause markers. The legacy `relSheResumptive`
+    marker is retained for backward compatibility with
+    @cite{keenan-comrie-1977}-level typology. The Sichel markers
+    provide finer-grained two-type classification. -/
 def relMarkers : List RelClauseMarker := [relSheGap, relSheResumptive]
+
+/-- Sichel-refined markers distinguishing bound vs. movement resumption. -/
+def relMarkersSichel : List RelClauseMarker :=
+  [relSheGap, relSheBoundResumptive, relSheMovementResumptive]
 
 end Fragments.Hebrew
