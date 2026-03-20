@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.391] - 2026-03-20
+
+### Added
+- **Lemma 8.6** (`ABLE/Basic.lean`): Satisfaction ↔ inconsistency with NOT — `lemma_8_6` proves σ satisfies φ iff σ is not consistent with NOT φ, using `eval_eliminative`
+- **Fact 8.7** (`ABLE/Basic.lean`): MUST is a test for satisfaction — `must_isTest` (MUST is a test), `fact_8_7` (MUST φ passes iff σ satisfies φ)
+- **`eval_eliminative`** (`ABLE/Basic.lean`): All ABLE formulas are eliminative (inductive closure)
+
+## [0.229.390] - 2026-03-20
+
+### Added
+- **ABLE fragment** (`Theories/Semantics/Dynamic/ABLE/Basic.lean`): Beaver (2001) Ch. 7 — `Formula` inductive (pred, not, and, might, presup/∂), PUL evaluation semantics, structural admittance (D30), projection theorems (Facts 8.1, 8.3, 8.5–8.8), CCP bridge theorems (∂ = CCP.must, AND = CCP.seq, MIGHT = CCP.might), proof that NOT ≠ CCP.neg
+- **Beaver2001 §8** (`Phenomena/Presupposition/Studies/Beaver2001.lean`): ABLE worked examples using Spaceman Spiff scenario — `spiff_full_state_rejects_weight` (presupposition failure), `spiff_lands_then_weight_admits` (conditional presupposition satisfied after antecedent update)
+
 ## [0.229.389] - 2026-03-20
 
 ### Fixed
