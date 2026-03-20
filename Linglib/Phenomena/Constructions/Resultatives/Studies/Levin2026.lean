@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.Mandarin.Resultatives
+import Linglib.Phenomena.Constructions.Resultatives.Data
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
@@ -91,8 +92,11 @@ causative alternation (they lexicalize CoS). These verbs enter the
 construction because only their force-application component is
 relevant, not the removal result. -/
 
-/-- The core Levin classes for intr-*push open* verbs. -/
-def intrPushOpenClasses : List LevinClass := [.pushPull, .hit, .swat]
+/-- The core Levin classes for intr-*push open* verbs.
+    Verbs of exerting force (§12 = pushPull) and verbs of surface
+    contact, hitting subtype (§18.1 = hit). Wipe verbs (§10.4) also
+    participate but are handled separately (see `all_verbs_from_predicted_classes`). -/
+def intrPushOpenClasses : List LevinClass := [.pushPull, .hit]
 
 /-- All core intr-*push open* verb classes lack the causative alternation
     in isolation. This is the key precondition: the verb alone does not
@@ -178,6 +182,26 @@ theorem all_classes_alternate_in_resultative :
       predictedAlternationInConstruction
         c.meaningComponents resultative .causativeInchoative
     ) = true := by native_decide
+
+/-! ### Middle construction parallel (§2, examples 17–18)
+
+The paper shows *pound* enters the middle construction only with a
+result phrase: "*This kind of metal pounds easily" vs "This kind of
+metal pounds flat easily." The existing `predictedAlternationInConstruction`
+infrastructure derives this — the middle alternation requires CoS,
+which comes from the resultative construction, not the verb. -/
+
+/-- Hit-class verbs (including *pound*) cannot enter the middle alone. -/
+theorem hit_no_middle_alone :
+    LevinClass.hit.meaningComponents.predictedAlternation .middle = false := by
+  native_decide
+
+/-- Hit-class verbs CAN enter the middle inside the resultative.
+    This derives the paper's observation (18b) from the same mechanism. -/
+theorem hit_middle_in_resultative :
+    predictedAlternationInConstruction
+      LevinClass.hit.meaningComponents resultative .middle = true := by
+  native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Adjective set: spatially instantiated states
@@ -266,27 +290,28 @@ def pull_free : AlternationPair :=
   , bareIntransitive := "*The cork pulled."
   , verbClass := .pushPull, adjType := .unattachment }
 
-/-- Slam–shut (related to fn. 11; examples 23, 24 near-synonyms).
+/-- Slam–shut (fn. 11; intransitive from example 23).
     Note: *slam* is polysemous — in *Pat slammed the door / The door slammed*
     it has a closing-with-impact sense that independently shows the causative
     alternation. The `.hit` classification here applies to the surface-contact
-    sense, not the closing sense. -/
+    sense, not the closing sense. The transitive resultative is not explicitly
+    given in the paper but is implied by the alternation pair analysis. -/
 def slam_shut : AlternationPair :=
   { verb := "slam", adjective := "shut"
-  , transitive := "I grabbed a hammer and gave the valve-stem a solid smack."
+  , transitive := "She slammed the valve shut."
   , intransitive := "The valve slammed shut."
   , bareIntransitive := "*The valve slammed."
   , verbClass := .hit, adjType := .barrierConfig }
 
-/-- Punch–open (examples 11a, 71). -/
+/-- Punch–open (intransitive from example 11a; transitive implied). -/
 def punch_open : AlternationPair :=
   { verb := "punch", adjective := "open"
-  , transitive := "The two men punched the door."
+  , transitive := "The two men punched the door open."
   , intransitive := "The door punched open and two more men leaped into the room."
   , bareIntransitive := "*The door punched."
   , verbClass := .hit, adjType := .barrierConfig }
 
-/-- Fling–open (examples 33, 34). -/
+/-- Fling–open (intransitive from example 33; transitive implied). -/
 def fling_open : AlternationPair :=
   { verb := "fling", adjective := "open"
   , transitive := "She flung the front door open."
@@ -294,7 +319,7 @@ def fling_open : AlternationPair :=
   , bareIntransitive := "*The door flung."
   , verbClass := .pushPull, adjType := .barrierConfig }
 
-/-- Scrape–free (examples 35, 39). -/
+/-- Scrape–free (intransitive from example 39; transitive implied). -/
 def scrape_free : AlternationPair :=
   { verb := "scrape", adjective := "free"
   , transitive := "She scraped the plane's door free."
@@ -310,10 +335,10 @@ def smack_flat : AlternationPair :=
   , bareIntransitive := "*The poster board smacked."
   , verbClass := .hit, adjType := .surfaceOrient }
 
-/-- Thump–closed (example 12a). -/
+/-- Thump–closed (intransitive from example 12a; transitive from 12b). -/
 def thump_closed : AlternationPair :=
   { verb := "thump", adjective := "closed"
-  , transitive := "She thumped the door."
+  , transitive := "She thumped the door closed."
   , intransitive := "The front door thumped closed."
   , bareIntransitive := "*The door thumped."
   , verbClass := .hit, adjType := .barrierConfig }
@@ -323,17 +348,34 @@ def alternationPairs : List AlternationPair :=
   , fling_open, scrape_free, smack_flat, thump_closed ]
 
 /-- All pairs use verbs from the predicted classes
-    (pushPull, hit, swat — or wipe for scrape/sweep). -/
+    (pushPull, hit — or wipe for scrape/sweep). -/
 theorem all_verbs_from_predicted_classes :
     alternationPairs.all (λ d =>
       intrPushOpenClasses.contains d.verbClass ||
       d.verbClass == .wipe) = true := by
   native_decide
 
+/-- Each core-class pair (pushPull, hit) is blocked alone but gains the
+    causative alternation inside the resultative construction.
+    Wipe verbs (scrape/sweep) are excluded: they independently alternate
+    because they lexicalize CoS; they enter the construction through
+    their surface-contact sense, not their removing sense. -/
+theorem per_pair_alternation_core :
+    (alternationPairs.filter (intrPushOpenClasses.contains ·.verbClass)).all (λ p =>
+      !p.verbClass.participatesIn .causativeInchoative &&
+      predictedAlternationInConstruction
+        p.verbClass.meaningComponents resultative .causativeInchoative
+    ) = true := by native_decide
+
 /-- Each pair's `adjType` agrees with the Fragment entry's `spatialConfigType`. -/
 theorem push_open_adj_agrees : open_.spatialConfigType = some push_open.adjType := rfl
 theorem pull_free_adj_agrees : free_.spatialConfigType = some pull_free.adjType := rfl
 theorem slam_shut_adj_agrees : shut.spatialConfigType = some slam_shut.adjType := rfl
+theorem punch_open_adj_agrees : open_.spatialConfigType = some punch_open.adjType := rfl
+theorem fling_open_adj_agrees : open_.spatialConfigType = some fling_open.adjType := rfl
+theorem scrape_free_adj_agrees : free_.spatialConfigType = some scrape_free.adjType := rfl
+theorem smack_flat_adj_agrees : flat.spatialConfigType = some smack_flat.adjType := rfl
+theorem thump_closed_adj_agrees : closed_.spatialConfigType = some thump_closed.adjType := rfl
 
 /-! ### Negative evidence: verb alone doesn't suffice
 
@@ -359,10 +401,10 @@ transitive resultative lacks an intr-*push open* counterpart when the
 COMBINATION is wrong (examples 57–60). -/
 
 def blockedCombinations : List (String × String × String) :=
-  [ ("yank", "bald",  "*I yanked bald./My scalp yanked bald.")  -- (57b)
-  , ("pull", "firm",  "*The skin of her temples pulled firm.")   -- (58b)
-  , ("scrape","smooth","*The ground scraped smooth.")            -- (59b)
-  , ("punch","senseless","*Frank punched senseless.") ]          -- (60b)
+  [ ("yank", "bald",      "*I yanked bald./*My scalp yanked bald.")           -- (57b)
+  , ("pull", "firm",      "*The skin of her temples and cheeks pulled firm.") -- (58b)
+  , ("scrape","smooth",   "*The ground scraped smooth and clean.")            -- (59b)
+  , ("punch","senseless", "*Frank punched senseless.") ]                      -- (60b)
 
 -- ════════════════════════════════════════════════════
 -- § 4. The construction adds CAUSE
@@ -695,6 +737,14 @@ theorem directed_motion_themes_autonomous :
     directedMotionData.all (canBeIntrPushOpenSubject ·.themeType) = true := by
   native_decide
 
+/-! Natural forces (*storm*, *wind*) are attested as directed motion
+subjects — (85b) "The storm swept through the valley" — but NOT in
+intr-*push open* resultatives. The blocking mechanism is the adjective
+restriction: the relevant adjectives cannot be predicated of natural
+forces (*\*an open storm*), so no licensed verb–adjective combination
+exists. The theme passes the autonomous motion test but the adjective
+filter blocks it independently. -/
+
 -- ════════════════════════════════════════════════════
 -- § 9. Full licensing condition
 -- ════════════════════════════════════════════════════
@@ -826,11 +876,14 @@ structure FilledResultative where
   /-- The Boolean and structural causation layers agree. -/
   causalConsistency : causationConsistent construction dynamics = true
 
-/-- Suppress the causer: derive the anticausative variant from a filled
-    resultative, given discourse and theme licensing conditions. -/
-def FilledResultative.anticausative (_ : FilledResultative)
+/-- Whether this filled resultative can surface as an anticausative
+    (intr-*push open*), given discourse and theme conditions.
+    Checks the verb class restriction in addition to discourse/theme. -/
+def FilledResultative.canAnticausativize (fr : FilledResultative)
     (cause : CauseStatus) (theme : ThemeMotionCapacity) : Bool :=
-  anticausativeLicensed cause && canBeIntrPushOpenSubject theme
+  intrPushOpenClasses.contains fr.verbClass &&
+  anticausativeLicensed cause &&
+  canBeIntrPushOpenSubject theme
 
 /-! ### Concrete instances -/
 
@@ -892,17 +945,17 @@ theorem pushOpen_filled_licensed :
 /-- The anticausative of `pushOpen_filled` is licensed in the right
     discourse context. -/
 theorem pushOpen_anticausative_licensed :
-    pushOpen_filled.anticausative .recoverableInContext .projectile = true := by
+    pushOpen_filled.canAnticausativize .recoverableInContext .projectile = true := by
   native_decide
 
 /-- The anticausative is blocked when the cause is not recoverable. -/
 theorem pushOpen_anticausative_blocked_no_context :
-    pushOpen_filled.anticausative .notRecoverable .projectile = false := by
+    pushOpen_filled.canAnticausativize .notRecoverable .projectile = false := by
   native_decide
 
 /-- The anticausative is blocked when the theme requires continuous force. -/
 theorem pushOpen_anticausative_blocked_continuous :
-    pushOpen_filled.anticausative .recoverableInContext
+    pushOpen_filled.canAnticausativize .recoverableInContext
       .requiresContinuousForce = false := by
   native_decide
 
@@ -928,15 +981,40 @@ theorem pushOpen_filled_covers_core :
          pushOpen_filled.causalConsistency,
          pushOpen_filled.adjSpatial⟩
 
+/-! ### Connection to ResultativeType
+
+Intr-*push open* resultatives are `anticausativeProperty` in the
+Goldberg & Jackendoff typology (added to `ResultativeType` for
+@cite{levin-2026}). This closes the loop between the `FilledResultative`
+type and the broader resultative classification. -/
+
+/-- Intr-*push open* is an anticausative property resultative: the verb
+    is transitive-only, the adjective heads a property result phrase,
+    and the cause is suppressed. -/
+def filledToResultativeType (_ : FilledResultative) :
+    Resultatives.ResultativeType :=
+  .anticausativeProperty
+
+/-- Anticausative property is distinct from noncausative property
+    (freeze solid): the former has a suppressed cause, the latter
+    has no constructional cause at all. -/
+theorem anticausative_not_noncausative :
+    Resultatives.ResultativeType.anticausativeProperty ≠
+    Resultatives.ResultativeType.noncausativeProperty := by
+  decide
+
 -- ════════════════════════════════════════════════════
 -- § 11. Cross-linguistic: Mandarin tuī-kāi 推开
 -- ════════════════════════════════════════════════════
 
 /-! ## Mandarin cognate
 
-Mandarin tuī-kāi "push-open" (§1, examples 4–6) is the cognate construction
-realized as a V-V compound rather than a syntactic adjunct. The Fragment
-entry already exists — this bridge connects it to the English analysis. -/
+The paper (§1) motivates the English analysis by drawing parallels to
+Mandarin, where the verb *tuī* "push" similarly cannot occur intransitively
+outside resultative constructions (examples 4–6 illustrate *tuī fān*
+"push-upend"). The Mandarin cognate compound *tuī-kāi* "push-open" exists
+as a V-V compound in the Fragment — this bridge connects it to the English
+analysis. -/
 
 /-- The Mandarin push-open compound is the cross-linguistic cognate:
     same verb meaning (push), same result meaning (open), object-oriented. -/
