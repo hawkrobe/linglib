@@ -249,6 +249,9 @@ theorem ranking_connected (κ : RankingFunction W) :
       at least α ranks
     - Large α: very firm belief in the evidence
 
+    @cite{goldszmidt-pearl-1996} call this **J-conditioning** (after
+    Jeffrey); the operation is identical under the name change α = j.
+
     Requires both φ and ¬φ to be satisfiable (matching Spohn's
     requirement that A ∉ {∅, W}). -/
 noncomputable def conditionα [Fintype W] [DecidableEq W]
@@ -407,7 +410,7 @@ def satisfies_C4 [Fintype W] [DecidableEq W] (κ : RankingFunction W) : Prop :=
     (fun w => ¬ψ w) ∉ ((κ.revise ψ hψ hNψ).revise φ hφ hNφ).beliefSet
 
 /-- `rankProp` is ≤ any satisfying world's rank. -/
-private theorem rankProp_le_rank [Fintype W]
+theorem rankProp_le_rank [Fintype W]
     (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
     (hsat : ∃ w, φ w) (w : W) (hw : φ w) :
     κ.rankProp φ hsat ≤ κ.rank w := by
@@ -648,6 +651,43 @@ def independent [Fintype W] (κ : RankingFunction W)
     (hφ : ∃ w, φ w) (hψ : ∃ w, ψ w)
     (hφψ : ∃ w, φ w ∧ ψ w) : Prop :=
   κ.rankProp (fun w => φ w ∧ ψ w) hφψ = κ.rankProp φ hφ + κ.rankProp ψ hψ
+
+/-- **L-conditioning**: shift-based belief revision.
+
+    @cite{goldszmidt-pearl-1996}, Eqs. 29–30: L-conditioning with l ≥ 0
+    keeps φ-worlds at their original rank and shifts ¬φ-worlds up by l.
+    Unlike J-conditioning (`conditionα`), L-conditioning is commutative:
+    κ_{A,l₁}_{B,l₂} = κ_{B,l₂}_{A,l₁}.
+
+    This is the κ(φ) = 0 specialization of the general L-conditioning
+    (G&P Eq. 32). The general form subtracts κ(φ) from all worlds first,
+    but the precondition `h0 : ∃ w, φ w ∧ κ.rank w = 0` guarantees
+    κ(φ) = 0, so the subtraction vanishes for φ-worlds. -/
+noncomputable def lCondition [Fintype W]
+    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
+    (h0 : ∃ w, φ w ∧ κ.rank w = 0) (l : ℕ) : RankingFunction W where
+  rank w := if φ w then κ.rank w else κ.rank w + l
+  normalized := by
+    obtain ⟨w₀, hφ, hr⟩ := h0
+    exact ⟨w₀, show _ = 0 by rw [if_pos hφ]; exact hr⟩
+
+/-- **AGM success postulate** (K*2): after revision by φ, the evidence
+    φ is believed (all rank-0 worlds satisfy φ).
+
+    @cite{goldszmidt-pearl-1996} §6: ranking revision satisfies the AGM
+    postulates. The proof is direct: ¬φ-worlds receive rank ≥ α =
+    κ(¬φ) + 1 ≥ 1, so they cannot be rank-0 in the revised ranking. -/
+theorem revise_success [Fintype W] [DecidableEq W]
+    (κ : RankingFunction W) (φ : W → Prop) [DecidablePred φ]
+    (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w) :
+    φ ∈ (κ.revise φ hφ hNφ).beliefSet := by
+  intro w hw
+  by_contra hNφw
+  have : (κ.revise φ hφ hNφ).rank w ≥ 1 := by
+    unfold revise conditionα; simp only [if_neg hNφw]
+    have := rankProp_le_rank κ (fun w => ¬φ w) hNφ w hNφw
+    omega
+  omega
 
 end RankingFunction
 

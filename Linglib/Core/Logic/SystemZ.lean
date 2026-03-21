@@ -171,4 +171,120 @@ theorem pEntails_implies_rankEntails {Δ : KnowledgeBase W}
     {φ σ : W → Bool} (h : pEntails Δ φ σ) : rankEntails κ φ σ :=
   h κ hadm
 
+-- ══════════════════════════════════════════════════════════════════════
+-- § 5. Computable Consistency-Test (Fig. 2)
+-- ══════════════════════════════════════════════════════════════════════
+
+/-- Decidable tolerance check. Inlines the `tolerated` definition for
+    `Decidable` instance synthesis on finite types. -/
+def toleratedBool [Fintype W] (r : DefaultRule W) (Δ : KnowledgeBase W) : Bool :=
+  decide (∃ w : W, r.ante w = true ∧ r.cons w = true ∧
+    (Δ.all fun r' => r'.verified w) = true)
+
+/-- Iterative tolerance stripping (Consistency-Test, Fig. 2).
+    At each level, peels off tolerated rules and assigns them the
+    current stratum number. `fuel` bounds iterations. -/
+def zPrioritiesAux [Fintype W]
+    (remaining : KnowledgeBase W) (level : ℕ) (fuel : ℕ) :
+    List (DefaultRule W × ℕ) :=
+  match fuel, remaining with
+  | _, [] => []
+  | 0, _ => remaining.map (·, level)
+  | fuel' + 1, _ =>
+    let (tol, rest) := remaining.partition (fun r => toleratedBool r remaining)
+    if tol.isEmpty then remaining.map (·, level)
+    else tol.map (·, level) ++ zPrioritiesAux rest (level + 1) fuel'
+
+/-- Compute Z-priorities for all rules via the Consistency-Test (Fig. 2).
+    Each rule is assigned its stratum number. -/
+def zPriorities [Fintype W] (Δ : KnowledgeBase W) :
+    List (DefaultRule W × ℕ) :=
+  zPrioritiesAux Δ 0 Δ.length
+
+-- ══════════════════════════════════════════════════════════════════════
+-- § 6. System Z⁺: Variable-Strength Defaults
+-- ══════════════════════════════════════════════════════════════════════
+
+/-- A default rule with strength parameter δ.
+    @cite{goldszmidt-pearl-1996}, Definition 18: higher δ demands a wider
+    gap between verifying and falsifying worlds. -/
+structure StrengthRule (W : Type*) extends DefaultRule W where
+  /-- Strength parameter (δ ≥ 0) -/
+  strength : ℕ
+
+/-- A knowledge base of variable-strength default rules. -/
+abbrev StrengthKB (W : Type*) := List (StrengthRule W)
+
+/-- Strip strength parameters to get the underlying `KnowledgeBase`. -/
+def StrengthKB.flat {W : Type*} (Δ : StrengthKB W) : KnowledgeBase W :=
+  Δ.map (·.toDefaultRule)
+
+/-- @cite{goldszmidt-pearl-1996}, Definition 18 (corrected).
+    A ranking κ is **δ-admissible** relative to strength rules iff
+    for each rule (φᵢ → ψᵢ, δᵢ), every falsifying world is outranked
+    by at least δᵢ + 1 by some verifying world:
+      κ(v) + δᵢ < κ(w) for some verifying v.
+
+    Note: Eq. 14 as printed has δ on the wrong side; the "equivalently
+    κ(¬ψ|φ) > δ" clause and Fig. 3 confirm this corrected form. -/
+def strengthAdmissible (κ : RankingFunction W) (Δ : StrengthKB W) : Prop :=
+  Δ.Forall fun sr =>
+    ∀ w : W, sr.falsified w = true →
+      ∃ v : W, (sr.ante v && sr.cons v) = true ∧ κ.rank v + sr.strength < κ.rank w
+
+/-- `toleratedBool` computes `tolerated`: the Bool decision procedure
+    agrees with the Prop definition on finite types. -/
+theorem toleratedBool_iff [Fintype W] (r : DefaultRule W) (Δ : KnowledgeBase W) :
+    toleratedBool r Δ = true ↔ tolerated r Δ := by
+  simp [toleratedBool, tolerated, decide_eq_true_eq]
+
+/-- Any element's strength is bounded by the foldr-max over the list. -/
+private theorem strength_le_foldr_max (Δ : StrengthKB W)
+    (sr : StrengthRule W) (hsr : sr ∈ Δ) :
+    sr.strength ≤ Δ.foldr (fun sr n => max sr.strength n) 0 := by
+  induction Δ with
+  | nil => contradiction
+  | cons hd tl ih =>
+    simp only [List.foldr]
+    rcases List.mem_cons.mp hsr with rfl | htl
+    · exact le_max_left _ _
+    · exact le_trans (ih htl) (le_max_right _ _)
+
+/-- @cite{goldszmidt-pearl-1996}, Theorem 19: a strength knowledge base
+    is δ-consistent (admits a δ-admissible ranking) iff its flat
+    projection (ignoring strengths) is consistent (admits an ordinary
+    admissible ranking).
+
+    (→) Drop strength terms: κ(v) + δ < κ(w) implies κ(v) < κ(w).
+    (←) Scale the ranking by M = 1 + max{δᵢ}: the gap κ(v) < κ(w)
+    becomes κ(v)·M + δ < (κ(v)+1)·M ≤ κ(w)·M for any δ < M. -/
+theorem strength_consistent_iff_flat [Fintype W] (Δ : StrengthKB W) :
+    (∃ κ : RankingFunction W, strengthAdmissible κ Δ) ↔
+    (∃ κ : RankingFunction W, admissible κ Δ.flat) := by
+  constructor
+  · -- (→) δ-admissible → admissible (weaken constraints)
+    rintro ⟨κ, hadm⟩
+    refine ⟨κ, ?_⟩
+    rw [strengthAdmissible, List.forall_iff_forall_mem] at hadm
+    rw [admissible, StrengthKB.flat, List.forall_iff_forall_mem]
+    intro r hr w hw
+    obtain ⟨sr, hsr, rfl⟩ := List.mem_map.mp hr
+    obtain ⟨v, hv, hlt⟩ := hadm sr hsr w hw
+    exact ⟨v, hv, by omega⟩
+  · -- (←) admissible → ∃ δ-admissible (scale by 1 + max δ)
+    rintro ⟨κ, hadm⟩
+    set M := 1 + Δ.foldr (fun sr n => max sr.strength n) 0 with hM_def
+    refine ⟨⟨fun w => κ.rank w * M, ?_⟩, ?_⟩
+    · obtain ⟨w, hw⟩ := κ.normalized; exact ⟨w, by simp [hw]⟩
+    · rw [strengthAdmissible, List.forall_iff_forall_mem]
+      intro sr hsr w hw
+      rw [admissible, StrengthKB.flat, List.forall_iff_forall_mem] at hadm
+      obtain ⟨v, hv, hlt⟩ := hadm sr.toDefaultRule (List.mem_map.mpr ⟨sr, hsr, rfl⟩) w hw
+      refine ⟨v, hv, ?_⟩
+      have hδ : sr.strength < M := by
+        have := strength_le_foldr_max Δ sr hsr; omega
+      show κ.rank v * M + sr.strength < κ.rank w * M
+      have h := Nat.mul_le_mul_right M (show κ.rank v + 1 ≤ κ.rank w by omega)
+      rw [Nat.succ_mul] at h; omega
+
 end Core.Logic.SystemZ

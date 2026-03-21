@@ -362,4 +362,81 @@ theorem condProb_penguins_dont_fly :
     (fun w => isPenguinB w && isBirdB w) (fun w => !fliesB w)
     penguin_birds_dont_fly ⟨.penguinNoFly, rfl⟩
 
+-- ══════════════════════════════════════════════════════════════════════
+-- § 10. Computed Consistency-Test
+-- ══════════════════════════════════════════════════════════════════════
+
+/-- The Consistency-Test (Fig. 2) computes the same Z-priorities as
+    our manually-verified `prioritized` list: Z(r₁)=0, Z(r₂)=1, Z(r₃)=1. -/
+theorem Δ_pb_computed :
+    (zPriorities Δ_pb).map Prod.snd = [0, 1, 1] := by native_decide
+
+-- ══════════════════════════════════════════════════════════════════════
+-- § 11. System Z⁺: Variable-Strength Defaults (Definition 18)
+-- ══════════════════════════════════════════════════════════════════════
+
+/-! System Z⁺ augments each rule with a strength parameter δ, requiring
+    a wider gap between verifying and falsifying worlds. The Z⁺-priority
+    of a rule accounts for δ, giving stronger rules higher priority and
+    thus wider separation in the ranking. -/
+
+/-- Strength-augmented rules: δ₁=1, δ₂=1, δ₃=2.
+    "Penguins don't fly" (r₃) is strongest. -/
+def sr₁ : StrengthRule TweetyWorld := ⟨r₁, 1⟩
+def sr₂ : StrengthRule TweetyWorld := ⟨r₂, 1⟩
+def sr₃ : StrengthRule TweetyWorld := ⟨r₃, 2⟩
+
+def Δ_pb_plus : StrengthKB TweetyWorld := [sr₁, sr₂, sr₃]
+
+/-- Z⁺ priorities computed via the Z⁺_order procedure (Fig. 4) to
+    satisfy δ-admissibility constraints.
+    z⁺(r₁) = 1, z⁺(r₂) = 3, z⁺(r₃) = 4.
+
+    The constraint for r₃ (δ=2) is κ(penguinNoFly) + 2 < κ(penguinFlies).
+    Since penguinNoFly falsifies r₁ giving rank z⁺(r₁)+1 = 2,
+    we need 2 + 2 < z⁺(r₃) + 1, so z⁺(r₃) ≥ 4.
+
+    Note: z⁺(r₂) = 3 because the verifying world for r₂ (penguinNoFly)
+    has κ = z⁺(r₁) + 1 = 2, so z⁺(r₂) = 2 + δ₂ = 2 + 1 = 3. r₂ is
+    never falsified in TweetyWorld, so its priority doesn't affect ranks. -/
+def zPlus_prioritized : List (DefaultRule TweetyWorld × ℕ) :=
+  [(r₁, 1), (r₂, 3), (r₃, 4)]
+
+/-- κ⁺: the Z⁺ ranking with wider gaps than κ^z.
+    - birdFlies:    falsifies nothing → 0
+    - birdNoFly:    falsifies r₁ (z⁺=1) → 2
+    - penguinFlies: falsifies r₃ (z⁺=4) → 5
+    - penguinNoFly: falsifies r₁ (z⁺=1) → 2 -/
+def κ_plus : RankingFunction TweetyWorld :=
+  zRanking zPlus_prioritized ⟨.birdFlies, by native_decide⟩
+
+theorem κplus_birdFlies : κ_plus.rank .birdFlies = 0 := by native_decide
+theorem κplus_birdNoFly : κ_plus.rank .birdNoFly = 2 := by native_decide
+theorem κplus_penguinFlies : κ_plus.rank .penguinFlies = 5 := by native_decide
+theorem κplus_penguinNoFly : κ_plus.rank .penguinNoFly = 2 := by native_decide
+
+/-- κ⁺ is δ-admissible relative to the strength rules. -/
+theorem κplus_strength_admissible : strengthAdmissible κ_plus Δ_pb_plus := by
+  rw [strengthAdmissible, List.forall_iff_forall_mem]
+  intro sr hsr
+  simp [Δ_pb_plus] at hsr
+  rcases hsr with rfl | rfl | rfl
+  · -- sr₁ (b→f, δ=1): birdFlies (rank 0) witnesses 0+1 < 2
+    intro w hw
+    cases w <;> simp_all [sr₁, r₁, DefaultRule.falsified, isBirdB, fliesB]
+    all_goals exact ⟨.birdFlies, rfl, by native_decide⟩
+  · -- sr₂ (p→b, δ=1): vacuously true
+    intro w hw
+    cases w <;> simp_all [sr₂, r₂, DefaultRule.falsified, isPenguinB, isBirdB]
+  · -- sr₃ (p→¬f, δ=2): penguinNoFly (rank 2) witnesses 2+2 < 5
+    intro w hw
+    cases w <;> simp_all [sr₃, r₃, DefaultRule.falsified, isPenguinB, fliesB]
+    exact ⟨.penguinNoFly, by decide, by native_decide⟩
+
+/-- κ^z's gap for r₃ is too small for δ₃=2: 1 + 2 ≥ 2.
+    This motivates Z⁺ — the minimal ranking κ^z doesn't provide
+    enough separation for variable-strength defaults. -/
+theorem κz_gap_too_small_for_sr₃ :
+    κ_z.rank .penguinNoFly + sr₃.strength ≥ κ_z.rank .penguinFlies := by native_decide
+
 end Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
