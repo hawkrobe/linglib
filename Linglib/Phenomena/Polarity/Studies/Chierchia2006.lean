@@ -2,6 +2,9 @@ import Linglib.Phenomena.Polarity.Typology
 import Linglib.Core.Lexical.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
+import Linglib.Fragments.German.PolarityItems
+import Linglib.Theories.Semantics.Exhaustification.FreeChoice
+import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 
 /-!
@@ -134,39 +137,44 @@ def efciPureFci : PSIProfile :=
 
 Each PSI class predicts an **eligible region** on @cite{haspelmath-1997}'s
 implicational map — the set of functions where items of that class can
-appear. A surface form covers a contiguous subset of its class's eligible
-region. The eligible regions themselves are contiguous.
+appear. The eligible region is **derived** from the PSI parameters and the
+monotonicity classification of Haspelmath functions (`isDE`, `isFC`),
+not hardcoded.
 
-Theoretical reasoning:
-- **D-MAX** (pure NPIs): Even-like enrichment is informative only in DE
-  contexts → eligible in DE functions (question through directNeg).
-- **D-MIN, weak σ** (NPI/FCIs): In DE, exhaustification is vacuous → NPI;
-  under modals, antiexhaustive → FC. Eligible across the full polarity +
-  FC range (irrealis through freeChoice).
-- **D-MIN, σ̃** (pure FCIs): Proper strengthening fails in DE (the result
-  isn't strictly stronger) → only FC functions (comparative, freeChoice).
+The derivation:
 - **No obligatory alts** (plain indefinites): No polarity sensitivity →
-  specific/irrealis functions only.
+  eligible only where neither DE licensing nor FC licensing is required.
+- **D-MAX, weak σ** (pure NPIs): Even-like enrichment (E) is informative
+  only in DE contexts → filter to DE functions.
+- **D-MAX, σ̃**: Contradictory — even-like enrichment requires DE, but σ̃'s
+  proper strengthening fails in DE (`sigma_bold_fails_in_de`) → empty.
+- **D-MIN, weak σ** (NPI/FCIs): In DE, exhaustification is vacuous → NPI;
+  under modals, antiexhaustive → FC. Also usable in irrealis. Filter to
+  DE ∪ FC ∪ irrealis.
+- **D-MIN, σ̃** (pure FCIs): Proper strengthening fails in DE → filter to
+  FC only.
 -/
 
-/-- The Haspelmath functions predicted by a PSI class. -/
+/-- The Haspelmath functions predicted by a PSI class.
+
+    Derived from PSI parameters via the monotonicity classification of
+    Haspelmath functions (`IndefiniteFunction.isDE`, `IndefiniteFunction.isFC`).
+    Each branch filters `IndefiniteFunction.all` by the semantic property
+    that the PSI class's enrichment mechanism targets. -/
 def PSIProfile.predictedFunctions (p : PSIProfile) : List IndefiniteFunction :=
-  if !p.obligatoryDomainAlts then
-    -- Plain indefinites: no polarity sensitivity
-    [.specificKnown, .specificUnknown, .irrealis]
-  else match p.grain, p.requiresProperStrengthening with
-    -- Pure NPI (D-MAX, weak): DE contexts
-    | .max, false =>
-        [.question, .conditional, .indirectNeg, .directNeg]
-    -- D-MAX + presuppositional: unattested (DE + proper strengthening = ⊥)
-    | .max, true => []
-    -- NPI/FCI (D-MIN, weak): DE + FC (full polarity range)
-    | .min, false =>
-        [.irrealis, .question, .conditional, .indirectNeg,
-         .directNeg, .comparative, .freeChoice]
-    -- Pure FCI (D-MIN, presuppositional): FC only
-    | .min, true =>
-        [.comparative, .freeChoice]
+  IndefiniteFunction.all.filter (λ f =>
+    if !p.obligatoryDomainAlts then
+      -- Plain indefinites: no polarity sensitivity, no FC
+      !f.isDE && !f.isFC
+    else match p.grain, p.requiresProperStrengthening with
+      -- D-MAX, weak σ: even-like enrichment informative only in DE
+      | .max, false => f.isDE
+      -- D-MAX, σ̃: contradictory (DE + proper strengthening = ⊥)
+      | .max, true  => false
+      -- D-MIN, weak σ: NPI in DE + FCI under modals + irrealis
+      | .min, false => f.isDE || f.isFC || f == .irrealis
+      -- D-MIN, σ̃: proper strengthening fails in DE → FC only
+      | .min, true  => f.isFC)
 
 -- ============================================================================
 -- §4. Contiguity Theorems
@@ -304,36 +312,36 @@ vacuous in DE). This is formalized as the `requiresProperStrengthening`
 parameter blocking DE eligibility.
 -/
 
-/-- NPI/FCI items are eligible in DE contexts. -/
-theorem npiFCI_eligible_in_de :
-    npiFCI.predictedFunctions.contains .indirectNeg = true ∧
-    npiFCI.predictedFunctions.contains .directNeg = true := by
-  constructor <;> native_decide
+/-- Every DE Haspelmath function is in the NPI/FCI eligible region.
+    D-MIN + weak σ: exhaustification is vacuous in DE (NPI reading). -/
+theorem npiFCI_eligible_in_all_de :
+    (IndefiniteFunction.all.filter (·.isDE)).all
+      (npiFCI.predictedFunctions.contains ·) = true := by native_decide
 
-/-- Pure FCI items are NOT eligible in DE contexts. -/
-theorem pureFCI_not_eligible_in_de :
-    pureFCI.predictedFunctions.contains .indirectNeg = false ∧
-    pureFCI.predictedFunctions.contains .directNeg = false := by
-  constructor <;> native_decide
+/-- No DE Haspelmath function is in the pure FCI eligible region.
+    D-MIN + σ̃: proper strengthening fails in DE (`sigma_bold_fails_in_de`). -/
+theorem pureFCI_not_eligible_in_any_de :
+    (IndefiniteFunction.all.filter (·.isDE)).all
+      (λ f => !pureFCI.predictedFunctions.contains f) = true := by native_decide
 
-/-- The contrast derives from `requiresProperStrengthening`. -/
-theorem contrast_is_proper_strengthening :
-    npiFCI.requiresProperStrengthening = false ∧
-    pureFCI.requiresProperStrengthening = true := ⟨rfl, rfl⟩
+/-- Every DE function is in the pure NPI eligible region.
+    D-MAX + weak σ: even-like enrichment is informative in DE. -/
+theorem pureNPI_eligible_in_all_de :
+    (IndefiniteFunction.all.filter (·.isDE)).all
+      (pureNPI.predictedFunctions.contains ·) = true := by native_decide
 
-/-- Pure NPIs are eligible in DE but NOT in FC contexts. -/
-theorem pureNPI_de_only :
-    pureNPI.predictedFunctions.contains .directNeg = true ∧
-    pureNPI.predictedFunctions.contains .freeChoice = false := by
-  constructor <;> native_decide
+/-- No FC function is in the pure NPI eligible region.
+    D-MAX items lack antiexhaustive enrichment. -/
+theorem pureNPI_not_eligible_in_fc :
+    (IndefiniteFunction.all.filter (·.isFC)).all
+      (λ f => !pureNPI.predictedFunctions.contains f) = true := by native_decide
 
-/-- Among D-MIN items, `requiresProperStrengthening` is the sole
-    parameter that determines DE eligibility. This is the formal
-    content of the *qualsiasi*/*any* contrast. -/
-theorem dMin_de_iff_weak :
-    npiFCI.grain = .min ∧ npiFCI.predictedFunctions.contains .directNeg = true ∧
-    pureFCI.grain = .min ∧ pureFCI.predictedFunctions.contains .directNeg = false := by
-  refine ⟨rfl, ?_, rfl, ?_⟩ <;> native_decide
+/-- The *qualsiasi*/*any* contrast: among D-MIN items, every DE function
+    is included by weak σ (*any*) and excluded by σ̃ (*qualsiasi*). -/
+theorem dMin_sigma_determines_de :
+    (IndefiniteFunction.all.filter (·.isDE)).all
+      (λ f => npiFCI.predictedFunctions.contains f &&
+              !pureFCI.predictedFunctions.contains f) = true := by native_decide
 
 -- ============================================================================
 -- §7. Bridge to EFCI Theory
@@ -404,6 +412,7 @@ open Core.Lexical.PolarityItem
 open Fragments.English.PolarityItems (any ever)
 open Fragments.Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)
+open Fragments.German.PolarityItems (irgendein)
 
 -- English *any* is npi_fci → matches npiFCI profile
 theorem any_fragment_matches_npiFCI :
@@ -436,5 +445,358 @@ theorem qualunque_fragment_matches_pureFCI :
 -- Italian *uno qualsiasi* is fci → matches efciPureFci profile
 theorem uno_qualsiasi_fragment_matches_efciPureFci :
     uno_qualsiasi.polarityType = .fci := rfl
+
+-- German *irgendein* is npi_fci → matches efciNpiFci profile (table (94))
+theorem irgendein_fragment_matches_efciNpiFci :
+    irgendein.polarityType = .npi_fci := rfl
+
+-- ============================================================================
+-- §9. PSIProfile → PolarityType Bridge
+-- ============================================================================
+
+/-!
+## Bridging the two classification systems
+
+`Core.Lexical.PolarityItem.PolarityType` is a 5-way distributional
+classification. `PSIProfile` is a 4-parameter theoretical decomposition.
+The mapping should be consistent: each PSI class predicts exactly one
+`PolarityType`.
+-/
+
+/-- Map a PSI profile to the expected PolarityType. -/
+def PSIProfile.toPolarityType (p : PSIProfile) : PolarityType :=
+  if !p.obligatoryDomainAlts then .ppi  -- no obligatory alts = plain indefinite/PPI
+  else match p.grain, p.requiresProperStrengthening with
+    | .max, false => .npiWeak    -- D-MAX, weak σ → pure NPI
+    | .max, true  => .npiStrong  -- D-MAX, presuppositional → strong NPI (unattested)
+    | .min, false => .npi_fci    -- D-MIN, weak σ → NPI/FCI (any)
+    | .min, true  => .fci        -- D-MIN, presuppositional σ̃ → pure FCI (qualsiasi)
+
+-- Verify the mapping is correct for all five named classes
+theorem pureNPI_polarityType : pureNPI.toPolarityType = .npiWeak := rfl
+theorem npiFCI_polarityType : npiFCI.toPolarityType = .npi_fci := rfl
+theorem pureFCI_polarityType : pureFCI.toPolarityType = .fci := rfl
+theorem efciNpiFci_polarityType : efciNpiFci.toPolarityType = .npi_fci := rfl
+theorem efciPureFci_polarityType : efciPureFci.toPolarityType = .fci := rfl
+
+-- Verify Fragment entries match their PSI profile's predicted PolarityType
+theorem any_profile_consistent :
+    any.polarityType = npiFCI.toPolarityType := rfl
+
+theorem ever_profile_consistent :
+    ever.polarityType = pureNPI.toPolarityType := rfl
+
+theorem mai_profile_consistent :
+    mai.polarityType = pureNPI.toPolarityType := rfl
+
+theorem qualsiasi_profile_consistent :
+    qualsiasi.polarityType = pureFCI.toPolarityType := rfl
+
+theorem irgendein_profile_consistent :
+    irgendein.polarityType = efciNpiFci.toPolarityType := rfl
+
+-- ============================================================================
+-- §10. σ/σ̃ Operators (Implicature Freezing)
+-- ============================================================================
+
+/-!
+## σ̃: Presuppositional implicature freezing
+
+@cite{chierchia-2006} §3.3 (definition (41)/(72)/(113)):
+
+σ "freezes" the implicature: once σ applies, the enriched meaning becomes
+part of the semantic content and can no longer be canceled. σ̃ (bold sigma)
+adds a **presupposition**: the frozen meaning must be **strictly stronger**
+than the plain meaning. Items selecting σ̃ (*qualsiasi*) differ from items
+selecting plain σ (*any*) exactly in whether this presupposition is required.
+
+### Why σ̃ blocks DE licensing (§5.3)
+
+If enrichment is strengthening (enriched ⊂ plain), embedding in a DE
+context **reverses** the entailment: C(plain) ⊆ C(enriched). The enriched
+meaning under C is weaker, so σ̃'s presupposition fails. This is proved
+as `sigma_bold_fails_in_de`.
+-/
+
+section SigmaOperators
+
+variable {World : Type*}
+
+/-- σ̃'s presupposition: the enriched meaning is **strictly stronger**
+    than the plain meaning. @cite{chierchia-2006} definition (72).
+
+    This must hold for σ̃ to be defined (felicitous). Items selecting σ̃
+    (*qualsiasi*, *qualunque*) require proper strengthening; items selecting
+    plain σ (*any*, *ever*) don't. -/
+def sigmaBoldDefined (plain enriched : World → Prop) : Prop :=
+  (∀ w, enriched w → plain w) ∧ ¬(∀ w, plain w → enriched w)
+
+/-- **σ̃'s presupposition fails in DE contexts.**
+
+    @cite{chierchia-2006} §5.3: This is the formal content of the
+    *qualsiasi*/*any* contrast. If enrichment properly strengthens at the
+    base level (enriched ⊂ plain), then embedding in a DE context
+    *reverses* the entailment: C(plain) ⊆ C(enriched), making the
+    enriched meaning under C strictly WEAKER, not stronger.
+
+    So `sigmaBoldDefined (C plain) (C enriched)` is false — σ̃'s
+    presupposition cannot be met. This blocks *qualsiasi* (which selects σ̃)
+    from appearing in DE contexts, while *any* (which selects plain σ)
+    is unaffected. -/
+theorem sigma_bold_fails_in_de
+    (C : (World → Prop) → (World → Prop))
+    (hDE : ∀ (p q : World → Prop), (∀ w, p w → q w) → (∀ w, C q w → C p w))
+    (plain enriched : World → Prop)
+    (h_stronger : ∀ w, enriched w → plain w) :
+    ¬sigmaBoldDefined (C plain) (C enriched) := by
+  intro ⟨_, hCp_not_to_Ce⟩
+  exact hCp_not_to_Ce (hDE enriched plain h_stronger)
+
+end SigmaOperators
+
+-- ============================================================================
+-- §10b. Exhaustification Theory Bridges
+-- ============================================================================
+
+/-!
+## Connection to Exhaustification Theory
+
+@cite{chierchia-2006}'s PSI typology rests on three formal results, all proved
+in `Exhaustification.FreeChoice` and `Exhaustification.Operators`:
+
+1. **Domain widening reversal** (`widening_strengthens_in_de`): Widening
+   strengthens in DE but weakens in UE. This explains NPI licensing: items
+   with obligatory domain widening are informative only in DE.
+
+2. **SI vacuity in DE** (`si_vacuous_in_de`): Scalar implicatures are
+   vacuous in DE contexts. D-MAX enrichment (even-like) is informative
+   exactly where SIs are vacuous — in DE.
+
+3. **O⁻ yields universal force** (`antiexh_yields_universal`): Antiexhaustive
+   enrichment of an existential ∃x∈D.P(x) with D-MIN alternatives entails
+   ∀a∈D. P(a). This is the "birth of universal readings" (§5.1).
+
+`sigma_bold_fails_in_de` (§10 above) and `widening_strengthens_in_de`
+(FreeChoice) express the same underlying insight from different angles:
+DE reverses entailment direction, so strengthening at the base level
+becomes weakening under embedding.
+-/
+
+section ExhaustificationBridges
+
+/-- `sigma_bold_fails_in_de` is an instance of the general DE reversal
+    principle: both it and `widening_strengthens_in_de` follow from the
+    fact that DE contexts reverse ⊆ₚ.
+
+    This theorem shows the connection: if C is DE and enrichment
+    strengthens p (enriched ⊆ₚ plain), then C(plain) ⊆ₚ C(enriched) —
+    the enriched meaning under C is WEAKER, not stronger.
+
+    This is exactly `Exhaustification.FreeChoice.widening_strengthens_in_de`
+    specialized to the enrichment case, and it's why σ̃ fails in DE. -/
+theorem de_reversal_blocks_sigma_bold
+    {World : Type*}
+    (C : (World → Prop) → (World → Prop))
+    (hDE : ∀ (p q : World → Prop), (∀ w, p w → q w) → (∀ w, C q w → C p w))
+    (plain enriched : World → Prop)
+    (h_stronger : ∀ w, enriched w → plain w) :
+    -- (1) σ̃ fails: enrichment is not proper strengthening under C
+    ¬sigmaBoldDefined (C plain) (C enriched) ∧
+    -- (2) The reversal: C(plain) ⊆ C(enriched)
+    (∀ w, C plain w → C enriched w) :=
+  ⟨sigma_bold_fails_in_de C hDE plain enriched h_stronger,
+   hDE enriched plain h_stronger⟩
+
+/-- The paper's central argument chain:
+    σ̃ requires proper strengthening → DE reverses entailment →
+    σ̃ fails in DE → pureFCI (which selects σ̃) excludes all DE functions.
+
+    This connects the abstract theorem `sigma_bold_fails_in_de` (§10)
+    to the concrete typological prediction `pureFCI_not_eligible_in_any_de` (§6).
+
+    The chain:
+    1. `pureFCI.requiresProperStrengthening = true` (by definition)
+    2. `sigma_bold_fails_in_de` proves σ̃'s presupposition fails in DE
+    3. `predictedFunctions` filters by `f.isFC` when `requiresProperStrengthening`
+    4. No DE function passes the `isFC` filter → pureFCI excludes all DE -/
+theorem sigma_bold_determines_pureFCI_exclusion :
+    pureFCI.requiresProperStrengthening = true ∧
+    pureFCI.predictedFunctions.all (·.isFC) = true ∧
+    (IndefiniteFunction.all.filter (·.isDE)).all
+      (λ f => !pureFCI.predictedFunctions.contains f) = true :=
+  ⟨rfl, by native_decide, by native_decide⟩
+
+/-- The O⁻ bridge: antiexhaustive enrichment (`Exhaustification.oMinus`)
+    yields universal force from an existential base — proved as
+    `Exhaustification.antiexh_yields_universal` in `Operators.lean`.
+
+    D-MIN items (FCIs) activate all subdomains. Under O⁻, this gives:
+    ∀D'⊆D. ∃x∈D'.P(x), which amounts to ∀x∈D. P(x).
+
+    This is the formal engine behind the FCI universal reading that
+    `pureFCI` and `npiFCI` predict in FC contexts. -/
+theorem dMin_items_predict_fc_contexts :
+    pureFCI.grain = .min ∧
+    npiFCI.grain = .min ∧
+    pureFCI.predictedFunctions.all (·.isFC) = true ∧
+    npiFCI.predictedFunctions.any (·.isFC) = true :=
+  ⟨rfl, rfl, by native_decide, by native_decide⟩
+
+end ExhaustificationBridges
+
+-- ============================================================================
+-- §11. Italian FCI Empirical Data
+-- ============================================================================
+
+/-!
+## Italian FCI judgment data from @cite{chierchia-2006} §2
+
+These observations are the core empirical motivations:
+
+1. **Two FCI constructions**: [qualsiasi/qualunque N] (universal FCI) vs
+   [un N qualsiasi/qualunque] (existential FCI)
+2. **Quantificational force contrast**: universal FCI → ∀; existential FCI → ∃
+3. **Subtrigging**: bare universal FCIs are marginal in episodic contexts;
+   adding a relative clause modifier restores grammaticality
+4. **Negation scope**: universal FCIs under negation yield only ¬∀
+   (rhetorical reading), not NPI ¬∃
+-/
+
+/-- Grammaticality judgment for Italian FCI constructions. -/
+inductive Judgment where
+  | grammatical     -- fully acceptable
+  | marginal        -- ? or ?? — degraded but parseable
+  | ungrammatical   -- * — not acceptable
+  deriving DecidableEq, BEq, Repr
+
+/-- Quantificational force of the FCI reading. -/
+inductive QForce where
+  | universal    -- ∀ reading
+  | existential  -- ∃ reading
+  | ambiguous    -- both readings available
+  deriving DecidableEq, BEq, Repr
+
+/-- FCI construction type: [qualsiasi N] vs [un N qualsiasi]. -/
+inductive FCIType where
+  | universal    -- [qualsiasi/qualunque N]: universal force
+  | existential  -- [un N qualsiasi/qualunque]: existential force
+  deriving DecidableEq, BEq, Repr
+
+/-- Embedding context for FCI observations. -/
+inductive FCIContext where
+  | future              -- future tense (10a-b)
+  | imperative          -- imperative mood (10c-d)
+  | episodic_bare       -- bare episodic, no modifier (11a, 11c)
+  | episodic_subtrigged -- episodic + relative clause (11b, 11d)
+  | negation_bare       -- under negation, no modifier (12/73a)
+  | negation_subtrigged -- under negation + relative clause (73b)
+  deriving DecidableEq, BEq, Repr
+
+/-- An Italian FCI observation from @cite{chierchia-2006} §2. -/
+structure FCIObservation where
+  /-- The sentence (schematic) -/
+  sentence : String
+  /-- Example number in the paper -/
+  exampleNum : String
+  /-- FCI construction type -/
+  fciType : FCIType
+  /-- Embedding context -/
+  context : FCIContext
+  /-- Available quantificational force -/
+  force : QForce
+  /-- Grammaticality judgment -/
+  judgment : Judgment
+  deriving Repr
+
+-- §2 data: universal vs existential FCI contrast
+
+/-- (10a): "Domani interrogherò qualsiasi studente" (future, universal FCI)
+    — Both ∀ and ∃ readings available. -/
+def obs_10a : FCIObservation :=
+  ⟨"Domani interrogherò qualsiasi studente", "(10a)",
+   .universal, .future, .ambiguous, .grammatical⟩
+
+/-- (10b): "Domani interrogherò uno studente qualsiasi" (future, existential FCI)
+    — Only ∃ reading. -/
+def obs_10b : FCIObservation :=
+  ⟨"Domani interrogherò uno studente qualsiasi", "(10b)",
+   .existential, .future, .existential, .grammatical⟩
+
+/-- (10c): "Prendi qualunque dolce" (imperative, universal FCI)
+    — Both ∀ and ∃ readings available. -/
+def obs_10c : FCIObservation :=
+  ⟨"Prendi qualunque dolce", "(10c)",
+   .universal, .imperative, .ambiguous, .grammatical⟩
+
+/-- (10d): "Prendi un dolce qualunque" (imperative, existential FCI)
+    — Only ∃ reading. -/
+def obs_10d : FCIObservation :=
+  ⟨"Prendi un dolce qualunque", "(10d)",
+   .existential, .imperative, .existential, .grammatical⟩
+
+-- §2 data: subtrigging
+
+/-- (11a): "Ieri ho parlato con un qualsiasi filosofo" (bare episodic, EFCI)
+    — Marginal without modifier. -/
+def obs_11a : FCIObservation :=
+  ⟨"Ieri ho parlato con un qualsiasi filosofo", "(11a)",
+   .existential, .episodic_bare, .existential, .marginal⟩
+
+/-- (11b): "Ieri ho parlato con un qualsiasi filosofo che fosse interessato"
+    — Marginal; the paper notes RC "if anything, makes things worse" for
+    existential FCIs (p.543). Subtrigging does not rescue EFCIs. -/
+def obs_11b : FCIObservation :=
+  ⟨"Ieri ho parlato con un qualsiasi filosofo che fosse interessato", "(11b)",
+   .existential, .episodic_subtrigged, .existential, .marginal⟩
+
+/-- (11c): "Ieri ho parlato con qualsiasi filosofo" (bare episodic, universal FCI)
+    — Marginal without modifier. -/
+def obs_11c : FCIObservation :=
+  ⟨"Ieri ho parlato con qualsiasi filosofo", "(11c)",
+   .universal, .episodic_bare, .universal, .marginal⟩
+
+/-- (11d): "Ieri ho parlato con qualsiasi filosofo che fosse interessato"
+    — Fully grammatical: subtrigging rescues universal FCIs. -/
+def obs_11d : FCIObservation :=
+  ⟨"Ieri ho parlato con qualsiasi filosofo che fosse interessato", "(11d)",
+   .universal, .episodic_subtrigged, .universal, .grammatical⟩
+
+-- §5.3 / §2: negation scope
+
+/-- (12)/(73a): "Non leggerò qualunque libro" (negation + bare universal FCI)
+    — Only ¬∀ (rhetorical) reading; NOT the NPI ¬∃ reading. -/
+def obs_12 : FCIObservation :=
+  ⟨"Non leggerò qualunque libro", "(12)/(73a)",
+   .universal, .negation_bare, .universal, .grammatical⟩
+
+/-- (73b): "Non leggerò qualunque libro che mi consiglierà Gianni"
+    — With RC under negation: ∀¬ or ¬∃ readings become available. -/
+def obs_73b : FCIObservation :=
+  ⟨"Non leggerò qualunque libro che mi consiglierà Gianni", "(73b)",
+   .universal, .negation_subtrigged, .ambiguous, .grammatical⟩
+
+-- Verification theorems: the judgment data encodes the key contrasts
+
+/-- Subtrigging contrast: bare universal FCI is marginal in episodic;
+    subtrigged universal FCI is grammatical. -/
+theorem subtrigging_rescues_universal :
+    obs_11c.judgment = .marginal ∧ obs_11d.judgment = .grammatical := ⟨rfl, rfl⟩
+
+/-- Subtrigging does NOT rescue existential FCIs in episodic contexts. -/
+theorem subtrigging_no_help_existential :
+    obs_11a.judgment = .marginal ∧ obs_11b.judgment = .marginal := ⟨rfl, rfl⟩
+
+/-- Universal FCIs always admit ∀ (and sometimes ∃): force is ambiguous. -/
+theorem universal_fci_ambiguous_force :
+    [obs_10a, obs_10c].all (·.force == .ambiguous) = true := by native_decide
+
+/-- Existential FCIs have ∃ force only. -/
+theorem existential_fci_existential_force :
+    [obs_10b, obs_10d].all (·.force == .existential) = true := by native_decide
+
+/-- Under negation, bare universal FCI yields only ¬∀ (rhetorical), not NPI ¬∃.
+    This is the *qualsiasi*/*any* contrast: *qualsiasi* under negation ≠ NPI. -/
+theorem negation_rhetorical_only :
+    obs_12.force = .universal := rfl
 
 end Phenomena.Polarity.Studies.Chierchia2006
