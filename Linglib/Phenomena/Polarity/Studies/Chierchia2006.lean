@@ -522,6 +522,9 @@ section SigmaOperators
 
 variable {World : Type*}
 
+open Exhaustification.FreeChoice (entailment_reversal_in_de si_vacuous_in_de)
+open Exhaustification (oMinus antiexh_yields_universal)
+
 /-- σ̃'s presupposition: the enriched meaning is **strictly stronger**
     than the plain meaning. @cite{chierchia-2006} definition (72).
 
@@ -539,110 +542,50 @@ def sigmaBoldDefined (plain enriched : World → Prop) : Prop :=
     *reverses* the entailment: C(plain) ⊆ C(enriched), making the
     enriched meaning under C strictly WEAKER, not stronger.
 
-    So `sigmaBoldDefined (C plain) (C enriched)` is false — σ̃'s
-    presupposition cannot be met. This blocks *qualsiasi* (which selects σ̃)
-    from appearing in DE contexts, while *any* (which selects plain σ)
-    is unaffected. -/
+    Delegates to `Exhaustification.FreeChoice.entailment_reversal_in_de`:
+    the DE reversal gives C(plain) ⊆ C(enriched), which contradicts σ̃'s
+    requirement that C(enriched) be strictly stronger than C(plain). -/
 theorem sigma_bold_fails_in_de
     (C : (World → Prop) → (World → Prop))
     (hDE : ∀ (p q : World → Prop), (∀ w, p w → q w) → (∀ w, C q w → C p w))
     (plain enriched : World → Prop)
     (h_stronger : ∀ w, enriched w → plain w) :
-    ¬sigmaBoldDefined (C plain) (C enriched) := by
-  intro ⟨_, hCp_not_to_Ce⟩
-  exact hCp_not_to_Ce (hDE enriched plain h_stronger)
+    ¬sigmaBoldDefined (C plain) (C enriched) :=
+  fun ⟨_, hnotrev⟩ =>
+    hnotrev (entailment_reversal_in_de C hDE plain enriched h_stronger)
 
-end SigmaOperators
+/-- **SI vacuity in DE blocks D-MAX enrichment in UE.**
 
--- ============================================================================
--- §10b. Exhaustification Theory Bridges
--- ============================================================================
+    @cite{chierchia-2006} §4.1: D-MAX items (pure NPIs) trigger
+    even-like (E) enrichment, which is an SI. SIs are vacuous in DE
+    (`si_vacuous_in_de`), so E enrichment is informative only in
+    non-DE contexts — but D-MAX items *require* DE. This is why
+    pure NPIs are confined to DE contexts.
 
-/-!
-## Connection to Exhaustification Theory
-
-@cite{chierchia-2006}'s PSI typology rests on three formal results, all proved
-in `Exhaustification.FreeChoice` and `Exhaustification.Operators`:
-
-1. **Domain widening reversal** (`widening_strengthens_in_de`): Widening
-   strengthens in DE but weakens in UE. This explains NPI licensing: items
-   with obligatory domain widening are informative only in DE.
-
-2. **SI vacuity in DE** (`si_vacuous_in_de`): Scalar implicatures are
-   vacuous in DE contexts. D-MAX enrichment (even-like) is informative
-   exactly where SIs are vacuous — in DE.
-
-3. **O⁻ yields universal force** (`antiexh_yields_universal`): Antiexhaustive
-   enrichment of an existential ∃x∈D.P(x) with D-MIN alternatives entails
-   ∀a∈D. P(a). This is the "birth of universal readings" (§5.1).
-
-`sigma_bold_fails_in_de` (§10 above) and `widening_strengthens_in_de`
-(FreeChoice) express the same underlying insight from different angles:
-DE reverses entailment direction, so strengthening at the base level
-becomes weakening under embedding.
--/
-
-section ExhaustificationBridges
-
-/-- `sigma_bold_fails_in_de` is an instance of the general DE reversal
-    principle: both it and `widening_strengthens_in_de` follow from the
-    fact that DE contexts reverse ⊆ₚ.
-
-    This theorem shows the connection: if C is DE and enrichment
-    strengthens p (enriched ⊆ₚ plain), then C(plain) ⊆ₚ C(enriched) —
-    the enriched meaning under C is WEAKER, not stronger.
-
-    This is exactly `Exhaustification.FreeChoice.widening_strengthens_in_de`
-    specialized to the enrichment case, and it's why σ̃ fails in DE. -/
-theorem de_reversal_blocks_sigma_bold
-    {World : Type*}
+    Instantiates `Exhaustification.FreeChoice.si_vacuous_in_de`. -/
+theorem dMax_enrichment_vacuous_in_de
     (C : (World → Prop) → (World → Prop))
     (hDE : ∀ (p q : World → Prop), (∀ w, p w → q w) → (∀ w, C q w → C p w))
-    (plain enriched : World → Prop)
-    (h_stronger : ∀ w, enriched w → plain w) :
-    -- (1) σ̃ fails: enrichment is not proper strengthening under C
-    ¬sigmaBoldDefined (C plain) (C enriched) ∧
-    -- (2) The reversal: C(plain) ⊆ C(enriched)
-    (∀ w, C plain w → C enriched w) :=
-  ⟨sigma_bold_fails_in_de C hDE plain enriched h_stronger,
-   hDE enriched plain h_stronger⟩
+    (weak strong : World → Prop) (h_ent : ∀ w, strong w → weak w) :
+    ∀ w, ¬(C weak w ∧ ¬C strong w) :=
+  si_vacuous_in_de C hDE weak strong h_ent
 
-/-- The paper's central argument chain:
-    σ̃ requires proper strengthening → DE reverses entailment →
-    σ̃ fails in DE → pureFCI (which selects σ̃) excludes all DE functions.
+/-- **O⁻ yields universal force from existential base (§5.1).**
 
-    This connects the abstract theorem `sigma_bold_fails_in_de` (§10)
-    to the concrete typological prediction `pureFCI_not_eligible_in_any_de` (§6).
+    D-MIN items (FCIs) activate all subdomain alternatives. When
+    antiexhaustive enrichment (O⁻) is applied to ∃x∈D.P(x) with
+    D-MIN alternatives, the result entails ∀a∈D. P(a).
 
-    The chain:
-    1. `pureFCI.requiresProperStrengthening = true` (by definition)
-    2. `sigma_bold_fails_in_de` proves σ̃'s presupposition fails in DE
-    3. `predictedFunctions` filters by `f.isFC` when `requiresProperStrengthening`
-    4. No DE function passes the `isFC` filter → pureFCI excludes all DE -/
-theorem sigma_bold_determines_pureFCI_exclusion :
-    pureFCI.requiresProperStrengthening = true ∧
-    pureFCI.predictedFunctions.all (·.isFC) = true ∧
-    (IndefiniteFunction.all.filter (·.isDE)).all
-      (λ f => !pureFCI.predictedFunctions.contains f) = true :=
-  ⟨rfl, by native_decide, by native_decide⟩
+    This is the "birth of universal readings" — re-exported from
+    `Exhaustification.antiexh_yields_universal`. -/
+theorem fci_universal_from_oMinus
+    {Entity : Type*}
+    (D : List Entity) (P : Entity → World → Prop) (w : World)
+    (h : oMinus (Exhaustification.dMinAlts D P) (Exhaustification.existsIn D P) w) :
+    ∀ a ∈ D, P a w :=
+  antiexh_yields_universal D P w h
 
-/-- The O⁻ bridge: antiexhaustive enrichment (`Exhaustification.oMinus`)
-    yields universal force from an existential base — proved as
-    `Exhaustification.antiexh_yields_universal` in `Operators.lean`.
-
-    D-MIN items (FCIs) activate all subdomains. Under O⁻, this gives:
-    ∀D'⊆D. ∃x∈D'.P(x), which amounts to ∀x∈D. P(x).
-
-    This is the formal engine behind the FCI universal reading that
-    `pureFCI` and `npiFCI` predict in FC contexts. -/
-theorem dMin_items_predict_fc_contexts :
-    pureFCI.grain = .min ∧
-    npiFCI.grain = .min ∧
-    pureFCI.predictedFunctions.all (·.isFC) = true ∧
-    npiFCI.predictedFunctions.any (·.isFC) = true :=
-  ⟨rfl, rfl, by native_decide, by native_decide⟩
-
-end ExhaustificationBridges
+end SigmaOperators
 
 -- ============================================================================
 -- §11. Italian FCI Empirical Data
