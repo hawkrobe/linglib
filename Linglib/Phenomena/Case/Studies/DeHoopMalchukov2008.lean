@@ -24,10 +24,17 @@ an economy constraint, evaluated in @cite{blutner-2000}'s Bidirectional OT:
 ## Bidirectional OT
 
 Standard OT selects the best form for a given meaning (speaker). BiOT adds
-the hearer's perspective via **superoptimality**: a form–meaning pair ⟨f, m⟩
-is superoptimal iff no other superoptimal pair with the same form or same
-meaning is strictly more harmonic. This is a fixed-point computation
+the hearer's perspective via **superoptimality** (@cite{blutner-2000} eq. 14,
+"weak optimality"): a form–meaning pair ⟨f, m⟩ is superoptimal iff no other
+superoptimal pair with the same form or same meaning is strictly more harmonic.
+This is a greatest-fixed-point computation
 (`Core.ConstraintEvaluation.superoptimal`).
+
+Under weak BiOT, the 2×2 form-meaning game (2 forms × 2 meanings) always
+produces Horn's division of pragmatic labour regardless of ranking — the
+fixed-point computation re-admits marked-form / marked-meaning pairs whose
+blockers were themselves eliminated. This means Economy/PaIP-dominant rankings
+give the same results as functional-constraint-dominant rankings.
 
 ## Key Results
 
@@ -69,7 +76,7 @@ This derives: DOM ↔ nom-acc, DSM ↔ ergative (p. 580).
 
 namespace Phenomena.Case.Studies.DeHoopMalchukov2008
 
-open Core.ConstraintEvaluation
+open Core.ConstraintEvaluation (superoptimal)
 open Core.OT
 open Core.Prominence
 open Phenomena.Case.Typology
@@ -192,15 +199,18 @@ theorem dsm_distinguish :
     superoptimal allPairs (profileFor [distinguishSubj, economy])
     = [(.zero, .strong), (.overt, .weak)] := by native_decide
 
-/-- *! >> I for subjects: neutral (no DSM). Economy dominates. -/
+/-- *! >> I for subjects: under weak BiOT, ranking-independent — same
+    result as I >> *!. The fixed-point re-admits ⟨overt, strong⟩ once its
+    blocker ⟨zero, strong⟩ is eliminated. -/
 theorem dsm_economy_over_identify :
     superoptimal allPairs (profileFor [economy, identify])
-    = [(.zero, .weak)] := by native_decide
+    = [(.zero, .weak), (.overt, .strong)] := by native_decide
 
-/-- *! >> D for subjects: neutral (no DSM). Economy dominates. -/
+/-- *! >> D for subjects: under weak BiOT, ranking-independent — same
+    result as D >> *!. -/
 theorem dsm_economy_over_distinguish :
     superoptimal allPairs (profileFor [economy, distinguishSubj])
-    = [(.zero, .strong)] := by native_decide
+    = [(.zero, .strong), (.overt, .weak)] := by native_decide
 
 -- ============================================================================
 -- § 4: DOM — Object Case (Convergence)
@@ -248,8 +258,7 @@ theorem dsm_divergence :
 -- ============================================================================
 
 /-- Extract the case form assigned to a given strength level from the
-    superoptimal set. If no pair matches, defaults to zero (Economy wins
-    by default when no superoptimal pair covers this meaning). -/
+    superoptimal set. If no pair matches, defaults to zero. -/
 def extractForm (pairs : List (CaseForm × Strength)) (s : Strength) : CaseForm :=
   match pairs.find? (·.2 == s) with
   | some (f, _) => f
@@ -268,23 +277,24 @@ def markingPattern (ranking : List (NamedConstraint (CaseForm × Strength)))
   let pairs := superoptimal allPairs (profileFor ranking)
   ⟨extractForm pairs .strong, extractForm pairs .weak⟩
 
-/-- **Complete subject typology** (Table 1, p. 573).
-    Exactly 3 patterns: mark strong, mark weak, mark neither. -/
+/-- **Subject typology** (Table 1, p. 573).
+    Under weak BiOT, ranking is irrelevant for the 2×2 game: Economy-dominant
+    rankings produce the same patterns as constraint-dominant rankings. -/
 theorem subject_typology :
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
     markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ ∧
-    markingPattern [economy, identify] = ⟨.zero, .zero⟩ ∧
-    markingPattern [economy, distinguishSubj] = ⟨.zero, .zero⟩ := by
+    markingPattern [economy, identify] = ⟨.overt, .zero⟩ ∧
+    markingPattern [economy, distinguishSubj] = ⟨.zero, .overt⟩ := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-- **Object marking always targets strong** when I or D dominates.
-    Both constraints agree on the object pattern; the only variation
-    is whether marking occurs at all (functional >> Economy vs. not). -/
+/-- **Object marking always targets strong** regardless of ranking
+    (under weak BiOT). Both I and D agree on the object pattern,
+    and the pattern is ranking-independent. -/
 theorem object_typology :
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
     markingPattern [distinguishObj, economy] = ⟨.overt, .zero⟩ ∧
-    markingPattern [economy, identify] = ⟨.zero, .zero⟩ ∧
-    markingPattern [economy, distinguishObj] = ⟨.zero, .zero⟩ := by
+    markingPattern [economy, identify] = ⟨.overt, .zero⟩ ∧
+    markingPattern [economy, distinguishObj] = ⟨.overt, .zero⟩ := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 -- ============================================================================
@@ -429,13 +439,16 @@ def paip : NamedConstraint (CaseForm × Strength) :=
       | (.zero, _)  => 0
   }
 
-/-- **Nom-acc: PaIP blocks DSM** (p. 580).
-    Subject = primary actant. PaIP >> I for subjects: no marking.
-    PaIP >> D for subjects: no marking. -/
-theorem nomacc_paip_blocks_dsm :
-    markingPattern [paip, identify] = ⟨.zero, .zero⟩ ∧
-    markingPattern [paip, distinguishSubj] = ⟨.zero, .zero⟩ := by
-  refine ⟨?_, ?_⟩ <;> native_decide
+/-- **PaIP is ranking-independent under weak BiOT** (p. 580).
+    PaIP has the same violation profile as Economy, so PaIP >> I/D
+    produces the same result as I/D >> Economy. The paper discusses
+    PaIP-I/D conflict as resolved through voice alternation (passive
+    in nom-acc, antipassive in ergative), not through OT tableaux. -/
+theorem paip_ranking_independent :
+    markingPattern [paip, identify] = markingPattern [identify, economy] ∧
+    markingPattern [paip, distinguishSubj] = markingPattern [distinguishSubj, economy] ∧
+    markingPattern [paip, distinguishObj] = markingPattern [distinguishObj, economy] := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-- **Nom-acc: DOM proceeds** (p. 580).
     Objects are NOT the primary actant, so PaIP doesn't apply.
@@ -443,14 +456,6 @@ theorem nomacc_paip_blocks_dsm :
 theorem nomacc_dom_proceeds :
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
     markingPattern [distinguishObj, economy] = ⟨.overt, .zero⟩ := by
-  refine ⟨?_, ?_⟩ <;> native_decide
-
-/-- **Ergative: PaIP blocks DOM** (p. 580).
-    Object = primary actant. PaIP >> I for objects: no marking.
-    PaIP >> D for objects: no marking. -/
-theorem erg_paip_blocks_dom :
-    markingPattern [paip, identify] = ⟨.zero, .zero⟩ ∧
-    markingPattern [paip, distinguishObj] = ⟨.zero, .zero⟩ := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
 /-- **Ergative: DSM proceeds** (p. 580).
@@ -461,17 +466,18 @@ theorem erg_dsm_proceeds :
     markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
-/-- **Alignment correlation** (p. 580): the full picture.
-    PaIP + I/D derive the observed distribution of differential marking
-    across alignment types: DOM ↔ nom-acc, DSM ↔ ergative. -/
+/-- **Alignment correlation** (p. 580).
+    Under weak BiOT, both argument positions show differential marking
+    regardless of ranking. The asymmetry between nom-acc (DOM but not DSM)
+    and ergative (DSM but not DOM) is not derivable from ranking alone in
+    the 2×2 game — the paper resolves this via voice alternation
+    (passive/antipassive) when PaIP and I/D conflict. -/
 theorem alignment_correlation :
-    -- Nom-acc: DOM but not DSM
-    markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧          -- DOM possible
-    markingPattern [paip, identify] = ⟨.zero, .zero⟩ ∧              -- DSM blocked
-    -- Ergative: DSM but not DOM
-    markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ ∧   -- DSM possible
-    markingPattern [paip, distinguishObj] = ⟨.zero, .zero⟩ := by    -- DOM blocked
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+    -- Both I and D produce differential marking for all positions
+    markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
+    markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ ∧
+    markingPattern [distinguishObj, economy] = ⟨.overt, .zero⟩ := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 -- ============================================================================
 -- § 8: Bridge to @cite{aissen-2003}

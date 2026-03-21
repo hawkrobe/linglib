@@ -1,5 +1,69 @@
 # Changelog
 
+## [0.229.399] - 2026-03-20
+
+### Changed
+- **Rename `weakSuperoptimal` → `superoptimal`** (`ConstraintEvaluation.lean`): weak BiOT (Blutner 2000 eq. 14, greatest fixed point) is the standard form — now just `superoptimal`. Old iterative-removal `superoptimal` renamed to `iterativeSuperoptimal`. Helper lemmas: `superoptLoop_preserves`, `superoptimal_of_unblocked`. All 6 downstream files updated.
+- **Migrate study files to weak BiOT** (`Krifka2007.lean`, `DeHoopMalchukov2008.lean`, `Haspelmath2021.lean`): all BiOT computations now use `superoptimal` (GFP). Economy-dominant rankings produce same results as constraint-dominant under weak BiOT for 2×2 games (ranking-independence). DHM PaIP theorems restructured; Haspelmath bridge updated to match.
+
+### Added
+- **Bidirectional OT** (`Theories/Pragmatics/Bidirectional.lean`): `satisfiesQ`/`satisfiesI` predicates, `strongOptimal_eq_both`, Horn's division (kill/cause-to-die), total blocking (pork/pig-meat), `strong_subset_weak`, `iterative_eq_strong_horn`/`totalBlock`
+- **Blutner 2000 presupposition** (`Phenomena/Presupposition/Studies/Blutner2000.lean`): examples (18)/(19)/(20) from Blutner 2000 — accommodation site selection via superoptimality; `ProjectionSite.toAccommodationLevel` bridge
+
+## [0.229.398] - 2026-03-20
+
+### Added
+- **Bresnan 1973 study file** (`Phenomena/Comparison/Studies/Bresnan1973.lean`): QP structure (Det + Q) with bridge to `DegPType`; morphological derivation (suppletion function deriving `more`/`less`/`most`/`least` from `-er`/`-est` + `much`/`many`/`little`/`few`); four introductory puzzles (A)–(D) with structural explanations; comparative deletion identity condition (`DeletionTarget` enum); Bresnan's "all clausal" hypothesis vs modern `ThanClauseType`; privative adjective measure phrase constraint with polarity bridge to Kennedy 1999; Det+Q paradigm data with suppletion consistency verification; QP-AP parallelism (X̄ archicategory precursor); `simple_comparative_consensus` bridge to degree-semantic truth conditions
+
+## [0.229.397] - 2026-03-20
+
+### Fixed
+- **Hungarian VH audit** (`Fragments/Hungarian/VowelHarmony.lean`): moved *hernyó* from IIB-b to IA-b (it IS IA-b — last vowel /o/ is back harmonic, not a transparency case); removed duplicate theorems (`ház_trigger_is_back`, `papír_trigger_back_through_neutral`, generic `resolveThreeWay_*`); fixed `kötény_back` → `kötény_front` (proves front, not back); renamed `kötény_round` → `kötény_unround` (last vowel /e/ is unrounded); removed unused imports (`FeatureGeometry`, `Autosegmental.Defs`) and dead `agreeAt` open; added `back_rounding_irrelevant` theorem (§3.2.4: back stems always get /o/ regardless of stem rounding)
+
+## [0.229.396] - 2026-03-20
+
+### Added
+- **Hungarian vowel harmony** (`Fragments/Hungarian/VowelHarmony.lean`): 7 short vowels, harmony classification (front-harmonic/back-harmonic/neutral), `hungarianPalatalHarmony` and `hungarianLabialHarmony` system instances, stem class taxonomy (IA/IB/IIA/IIB × front/back from Siptár & Törkenczy 2000 §3.2.2), suffix alternation types matching (28), three-way suffix resolution (`resolveThreeWay`)
+- **Two-dimensional harmony**: rounding harmony (§3.2.4) modeled as second `HarmonySystem` for [round]; composes with palatal harmony to derive three-way suffixes (hoz/höz/hez)
+- **Stress tests for `HarmonySystem`**: simple harmonic (IA), disharmonic (IB), transparent (IIB) all pass `triggerValue`; antiharmonic stems (IIA-b: *híd*, *cél*) correctly demonstrate the framework's fundamental limitation — `triggerValue` returns `none` for all-neutral stems regardless of lexical backness; vacillation (*hotel*) shows deterministic limitation
+- **Architectural limitation documented**: Clements/Hume place-node spreading (COR/LAB/DOR, §6.1) cannot be captured by single-feature `HarmonySystem`
+- **Bibliography**: `siptar-torkenczy-2000`
+
+## [0.229.395] - 2026-03-20
+
+### Added
+- **`strong_subset_weak` theorem** (`Bidirectional.lean`): formalizes Blutner 2000 p. 12 claim that every strong-optimal pair is also weak-super-optimal; `strong_strict_subset_weak_horn` proves strict inclusion for Horn's division
+- **`iterative_eq_strong` theorems** (`Bidirectional.lean`): proves `superoptimal` (iterative removal) = `strongOptimal` (eq. 9) for Horn's division and total blocking — confirming that the old `superoptimal` algorithm computes strong BiOT, not weak BiOT
+- **Accommodation bridge** (`Blutner2000.lean`): `ProjectionSite.toAccommodationLevel` maps Blutner's projection sites to the `AccommodationLevel` type in `Semantics.Presupposition.Accommodation`
+
+### Fixed
+- **Q/I docstring accuracy** (`Bidirectional.lean`): Q-principle is production optimality corresponding to Horn's Q-based implicature and diversification/auditor's economy; I-principle is comprehension optimality corresponding to Horn's R-principle and unification/speaker's economy. Previously conflated these naming conventions
+- **`superoptimal` docstring** (`ConstraintEvaluation.lean`): clarified as equivalent to strong BiOT (eq. 9), not weak BiOT — `weakSuperoptimal` is the correct implementation of eq. 14
+
+## [0.229.394] - 2026-03-20
+
+### Added
+- **Harmony Systems theory** (`Theories/Phonology/Harmony/Defs.lean`): `HarmonySystem` type parameterized by trigger/target/transparent predicates, spreading feature, and direction; `triggerValue` (extract last trigger's feature value), `harmonizeOne` (apply to one segment), `harmonizeSuffix` (map over suffix). Based on Rose & Walker 2011 decomposition
+- **Turkish harmony instances** (`Fragments/Turkish/VowelHarmony.lean`): `palatalHarmony` ([back] → all suffix vowels) and `labialHarmony` ([round] → high suffix vowels only) as `HarmonySystem` instances
+- **Finnish harmony instance** (`Fragments/Finnish/VowelHarmony.lean`): `finnishHarmony` ([back] → non-neutral suffix vowels, neutral /e,i/ transparent) as `HarmonySystem` instance
+- **Bibliography**: `rose-walker-2011`
+
+### Changed
+- **Turkish VowelHarmony**: replaced `stemBack`/`stemRound` with `triggerValue palatalHarmony`/`triggerValue labialHarmony`
+- **Finnish VowelHarmony**: replaced `stemHarmony`/`harmonize`/`harmonizeSuffix` with theory-layer `triggerValue`/`harmonizeOne`/`harmonizeSuffix`
+
+## [0.229.393] - 2026-03-20
+
+### Added
+- **Weak BiOT** (`Core/Logic/ConstraintEvaluation.lean`): `weakSuperoptimal` — correct greatest-fixed-point algorithm for Blutner 2000 weak bidirectional OT (eq. 14); re-evaluates all original pairs each round so removed pairs can return when their blockers are eliminated. Derives Horn's division of pragmatic labour: unmarked forms ↔ stereotypical meanings, marked forms ↔ non-stereotypical meanings
+- **Strong BiOT** (`Core/Logic/ConstraintEvaluation.lean`): `strongOptimal` — independent Q and I evaluation (Blutner 2000 eq. 9), with `blocked` now public
+- **Bidirectional OT theory** (`Theories/Pragmatics/Bidirectional.lean`): `satisfiesQ`/`satisfiesI` predicates formalizing Horn 1984 Q/R principles as OT constraints; `strongOptimal_eq_both` equivalence; Horn's division counterexample (`horn_weak_biot` vs `horn_strong_biot`); total/partial blocking examples with strong-vs-weak comparison
+- **Blutner 2000 presupposition study** (`Phenomena/Presupposition/Studies/Blutner2000.lean`): presupposition projection via BiOT with AvoidA >> BeStrong constraints; examples (18)/(19) deriving global vs intermediate accommodation; Q-principle accommodation blocking (definite vs indefinite)
+- **Bibliography**: `atlas-levinson-1981`, `geurts-1995`
+
+### Fixed
+- **`superoptimal` docstring** (`ConstraintEvaluation.lean`): clarified as iterative-removal approximation, not greatest fixed point — may undercount for indirect blocking cases
+
 ## [0.229.392] - 2026-03-20
 
 ### Added

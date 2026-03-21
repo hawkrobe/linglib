@@ -50,9 +50,9 @@ Formalizes the quadruplet structure, proves the contradictory synonymy
 puzzle and its resolution via ThresholdPair, and bridges to the empirical
 data in `FlexibleNegation.lean`. The pragmatic mechanism connecting
 contradictory base → effective ThresholdPair is derived via two routes:
-1. **Bidirectional OT** (§ 9 below): @cite{blutner-2000}'s superoptimality
-   with M-Principle >> Economy derives the four-way form-meaning assignment
-   directly from `Core.ConstraintEvaluation.superoptimal`.
+1. **Bidirectional OT** (§ 9 below): @cite{blutner-2000}'s weak BiOT (eq. 14)
+   derives the four-way form-meaning assignment via the greatest-fixed-point
+   computation in `Core.ConstraintEvaluation.superoptimal`.
 2. **RSA model**: @cite{tessler-franke-2019} (`Studies/TesslerFranke2020.lean`)
    derives the same effect through Bayesian pragmatic reasoning.
 -/
@@ -288,19 +288,22 @@ theorem strengthened_not_exhaustive :
 -- § 9. Bidirectional OT: Deriving the Quadruplet
 -- ════════════════════════════════════════════════════
 
-/-! @cite{blutner-2000}'s Bidirectional OT (superoptimality) derives the
-    form-meaning assignment from constraint competition. This formalizes
-    Krifka's BiOT analysis, connecting the M-principle to the
-    `superoptimal` infrastructure in `Core.Logic.ConstraintEvaluation`.
+/-! @cite{blutner-2000}'s weak Bidirectional OT (eq. 14, "weak optimality")
+    derives the form-meaning assignment from constraint competition. Krifka
+    explicitly invokes this version (p. 6, citing @cite{blutner-2000} and
+    @cite{jaeger-2002}). The evaluation uses `superoptimal` from
+    `Core.Logic.ConstraintEvaluation`.
 
     Two ranked constraints:
     1. **M-principle** (@cite{horn-1984}): simple forms pair with stereotypical
        meanings; complex forms pair with non-stereotypical meanings.
     2. **Economy**: minimize form complexity.
 
-    Under M >> Economy, each quadruplet form receives a unique meaning
-    region — the full four-way distinction emerges from competition. Under
-    Economy >> M, only the two simplest forms survive and the gap vanishes. -/
+    Under weak BiOT, the four-way form-meaning assignment emerges from the
+    greatest-fixed-point computation regardless of ranking. This is because
+    the weak BiOT fixed point re-admits pairs whose blockers were themselves
+    eliminated — producing Horn's division of pragmatic labour in all cases
+    where each form has a unique best meaning and vice versa. -/
 
 /-- Meaning regions on the scale after pragmatic strengthening.
     The contradictory threshold θ splits into four regions:
@@ -380,20 +383,26 @@ theorem biot_covers_all_regions :
       [.positive, .plateauHigh, .negative, .plateauLow] := by
   native_decide
 
-/-- **Without the M-principle**: Economy >> M collapses the quadruplet to
-    only two forms. The plateau meanings vanish — the gap doesn't emerge.
-    This formalizes Krifka's central claim: the gap is pragmatically derived
-    through the M-principle, not semantically encoded. -/
-theorem economy_collapses_quadruplet :
+/-- Under weak BiOT, Economy >> M produces the **same** four-way assignment
+    as M >> Economy. The greatest-fixed-point computation re-admits the
+    complex forms after their blockers are removed: pairs like
+    ⟨notNegative, plateauHigh⟩ are initially blocked by
+    ⟨positive, plateauHigh⟩, but that pair is itself blocked by
+    ⟨positive, positive⟩, so ⟨notNegative, plateauHigh⟩ returns.
+
+    This ranking-independence is a general property of weak BiOT for
+    form-meaning games where each form has a unique best meaning. Under
+    strong BiOT (`strongOptimal`), Economy >> M would collapse the
+    quadruplet to only two pairs. -/
+theorem economy_ranking_independent :
     superoptimal biotPairs (biotProfile [economyQ, mPrinciple]) =
-      [(.positive, .positive), (.negative, .negative)] := by
+    superoptimal biotPairs (biotProfile [mPrinciple, economyQ]) := by
   native_decide
 
-/-- The M-principle is necessary for the full quadruplet:
-    4 surviving pairs with M >> Economy, only 2 with Economy >> M. -/
-theorem m_principle_necessary :
+/-- The full quadruplet survives under both rankings. -/
+theorem both_rankings_give_quadruplet :
     (superoptimal biotPairs (biotProfile [mPrinciple, economyQ])).length = 4 ∧
-    (superoptimal biotPairs (biotProfile [economyQ, mPrinciple])).length = 2 := by
+    (superoptimal biotPairs (biotProfile [economyQ, mPrinciple])).length = 4 := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- The BiOT derivation agrees with the strengthened semantics (§ 3):

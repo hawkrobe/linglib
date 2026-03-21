@@ -362,15 +362,15 @@ theorem ditransitive_parallels_monotransitive :
 
     This theorem re-exports the De Hoop & Malchukov result for reference. -/
 
-/-- DOM ↔ accusative, DSM ↔ ergative (@cite{de-hoop-malchukov-2008}, not a
-    numbered Haspelmath universal — included for cross-reference). -/
+/-- Differential marking patterns (@cite{de-hoop-malchukov-2008}, not a
+    numbered Haspelmath universal — included for cross-reference).
+    Under weak BiOT, all rankings produce differential marking;
+    the asymmetry DOM ↔ nom-acc / DSM ↔ ergative requires voice
+    alternation (passive/antipassive) to resolve PaIP-I/D conflicts. -/
 theorem alignment_correlation_deHoopMalchukov :
-    -- Nom-acc: DOM possible, DSM blocked by PaIP
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
-    markingPattern [paip, identify] = ⟨.zero, .zero⟩ ∧
-    -- Ergative: DSM possible, DOM blocked by PaIP
     markingPattern [distinguishSubj, economy] = ⟨.zero, .overt⟩ ∧
-    markingPattern [paip, distinguishObj] = ⟨.zero, .zero⟩ :=
+    markingPattern [distinguishObj, economy] = ⟨.overt, .zero⟩ :=
   alignment_correlation
 
 -- ============================================================================
