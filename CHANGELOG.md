@@ -9,6 +9,7 @@
 ### Added
 - **Count paradigm** (`Bresnan1973.lean` §8): paradigm (5) from the paper — `as many`/`too many`/`that many`/`so many`/`more` (count), `as few`/`too few`/`fewer`, with `countParadigm_suppletion_consistent` verification theorem
 - **QP well-formedness** (`Bresnan1973.lean` §9): `QP.isWellFormed` predicate encoding that `enough` requires null Det (Bresnan p. 286); `enough_requires_null_det` and `enough_null_wellformed` theorems
+- **Wellwood↔Bresnan bridge** (`Wellwood2015.lean` §18–19): import `Bresnan1973`; replace string-stipulated `BresnanDecompositionDatum` with typed `crossCategorialQP : Bresnan1973.QP`; `crossCategorial_more_from_suppletion` theorem verifying suppletion via `rfl`; `covert_much_is_bresnan_deletion` / `overt_much_no_deletion` connecting Wellwood §6.3 (covert `much` in GAs) to Bresnan's Rule 10 (Much Deletion)
 
 ## [0.229.400] - 2026-03-20
 

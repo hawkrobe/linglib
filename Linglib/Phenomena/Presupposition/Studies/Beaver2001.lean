@@ -3,6 +3,7 @@ import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Semantics.Presupposition.Accommodation
 import Linglib.Theories.Semantics.Presupposition.LocalContext
+import Linglib.Theories.Semantics.Dynamic.ABLE.Basic
 
 /-!
 # Beaver (2001) @cite{beaver-2001}
@@ -55,10 +56,12 @@ function output.
 
 ## Formalization Coverage
 
-This file formalizes key results from Chs. 2-6. The ABLE fragment (Ch. 7),
-quantifier projection (Ch. 8), and ABLE accommodation (Ch. 9) are not
-yet formalized. Quantifier projection is partially addressed by the
-`QuantifierProjection` type in `PresuppositionPolarity.lean`.
+This file formalizes key results from Chs. 2-7. The ABLE fragment (Ch. 7)
+is formalized in `Theories.Semantics.Dynamic.ABLE.Basic` and demonstrated
+here via worked examples (§8). Quantifier projection (Ch. 8) and ABLE
+accommodation (Ch. 9) are not yet formalized. Quantifier projection is
+partially addressed by the `QuantifierProjection` type in
+`PresuppositionPolarity.lean`.
 -/
 
 namespace Phenomena.Presupposition.Studies.Beaver2001
@@ -170,7 +173,7 @@ ensuring the variables agree across dimensions. -/
     the two dimensions. -/
 theorem filtering_links_dimensions (p q : PrProp W) (w : W) :
     (PrProp.impFilter p q).presup w =
-    (p.presup w && (!p.assertion w || q.presup w)) := rfl
+    (p.presup w && ((p.assertion w).not || q.presup w)) := rfl
 
 /-- SK connectives do NOT link dimensions: they reference only `.presup`,
     ignoring `.assertion`. This means they cannot capture filtering. -/
@@ -193,16 +196,16 @@ read from the same `PrProp.presup` and `PrProp.assertion` fields. -/
 /-- Heritage function for conditionals IS `.presup` of `impFilter`.
     @cite{beaver-2001} Ch. 3: heritage, filtering, and CCP agree. -/
 example (p q : PrProp W) : (PrProp.impFilter p q).presup =
-    (λ w => p.presup w && (!p.assertion w || q.presup w)) := rfl
+    (λ w => p.presup w && ((p.assertion w).not || q.presup w)) := rfl
 
 /-- Heritage function for conjunction IS `.presup` of `andFilter`. -/
 example (p q : PrProp W) : (PrProp.andFilter p q).presup =
-    (λ w => p.presup w && (!p.assertion w || q.presup w)) := rfl
+    (λ w => p.presup w && ((p.assertion w).not || q.presup w)) := rfl
 
 /-- Heritage function for disjunction IS `.presup` of `orFilter` (symmetric). -/
 example (p q : PrProp W) : (PrProp.orFilter p q).presup =
-    (λ w => (!p.assertion w || q.presup w) &&
-            (!q.assertion w || p.presup w) &&
+    (λ w => ((p.assertion w).not || q.presup w) &&
+            ((q.assertion w).not || p.presup w) &&
             (p.presup w || q.presup w)) := rfl
 
 /-- Filtering vs SK: filtering conjunction is strictly weaker than SK
@@ -437,5 +440,82 @@ theorem pulImpl_atomic (p q : BProp W) (σ : ContextSet W) (w : W) :
   · intro ⟨hσ, himp⟩
     refine ⟨hσ, fun ⟨⟨_, hp⟩, hn⟩ => ?_⟩
     exact hn ⟨⟨hσ, hp⟩, himp hp⟩
+
+-- ══════════════════════════════════════════════════════════
+-- § 8. ABLE Worked Examples
+-- (@cite{beaver-2001} Chs. 7-8)
+-- ══════════════════════════════════════════════════════════
+
+/-! ### ABLE Fragment Demonstrations
+
+The ABLE formalization in `Theories.Semantics.Dynamic.ABLE.Basic` provides
+the `Formula` type and its evaluation semantics. Here we instantiate it
+with the Spaceman Spiff scenario from §6 to demonstrate projection through
+negation and conditionals.
+
+Key correspondences to PUL:
+- `Formula.presup` (∂) = `CCP.must` — full support test (D59)
+- `Formula.and` = `CCP.seq` — sequential composition
+- `Formula.might` = `CCP.might` — compatibility test
+- `Formula.not` ≠ `CCP.neg` — PUL negation is set complement, not pass/fail
+
+### Structural Admittance (D54)
+
+Admittance is the mechanism by which presuppositions project. A context σ
+*admits* a formula φ iff every subformula's presupposition is satisfied at
+its local context (the context that results from processing prior material).
+This is why presupposition projection is asymmetric for conjunction:
+in `φ AND ψ`, σ must admit φ, and σ[φ] must admit ψ — so ψ's presupposition
+can be "filtered" by φ's content. -/
+
+open Semantics.Dynamic.ABLE (Formula)
+
+section ABLEExamples
+
+/-- Represent the Spiff scenario as a set-based info state.
+    Each element of the set is a possible world. -/
+def spiffState : Set SpiffWorld :=
+  {.onEarth, .onPlanetX_heavy, .onPlanetX_light, .inSpace}
+
+/-- ABLE formula: "Spiff lands on Planet X" (no presupposition). -/
+def ableLands : Formula SpiffWorld :=
+  .pred (λ w => match w with
+    | .onPlanetX_heavy | .onPlanetX_light => True
+    | _ => False)
+
+/-- ABLE formula: "Spiff's weight > Earth weight"
+    with presupposition ∂(has-weight). -/
+def ableWeightGreater : Formula SpiffWorld :=
+  .and
+    (.presup (.pred (λ w => match w with | .inSpace => False | _ => True)))
+    (.pred (λ w => match w with | .onPlanetX_heavy => True | _ => False))
+
+/-- Admitting "weight > Earth" requires the context to entail has-weight.
+    The full info state does NOT admit it (space is included). -/
+theorem spiff_full_state_rejects_weight :
+    ¬ableWeightGreater.pulAdmits spiffState := by
+  intro ⟨h, _⟩
+  simp only [Formula.pulAdmits, Formula.eval] at h
+  have : SpiffWorld.inSpace ∈ ({ p : SpiffWorld | p ∈ spiffState ∧
+    match p with | .inSpace => False | _ => True }) := by
+    rw [h]; exact Or.inr (Or.inr (Or.inr (Set.mem_singleton_iff.mpr rfl)))
+  exact this.2
+
+/-- After learning "Spiff lands on Planet X", the state admits "weight > Earth".
+    This is Fact 8.3: the conditional presupposition is satisfied. -/
+theorem spiff_lands_then_weight_admits :
+    ableWeightGreater.pulAdmits (ableLands.eval spiffState) := by
+  constructor
+  · -- ∂(has-weight) is satisfied after landing
+    simp only [Formula.eval, Formula.pulAdmits]
+    ext w; simp only [Set.mem_setOf_eq]
+    constructor
+    · intro ⟨⟨h1, h2⟩, h3⟩; exact ⟨h1, h2⟩
+    · intro ⟨h1, h2⟩
+      refine ⟨⟨h1, h2⟩, ?_⟩
+      cases w <;> simp_all [spiffState]
+  · trivial
+
+end ABLEExamples
 
 end Phenomena.Presupposition.Studies.Beaver2001

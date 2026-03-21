@@ -3,7 +3,7 @@ import Linglib.Core.Agent.ChoiceApproximations
 
 /-!
 # Speaker Discrimination: JND/Trace on S1
-@cite{degen-2023} @cite{luce-1959}
+@cite{luce-1959}
 
 Applies the just-noticeable-difference (JND) and trace infrastructure from
 @cite{luce-1959} — formalized in `ChoiceApproximations.lean` — to S1's

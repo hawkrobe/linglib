@@ -2183,4 +2183,141 @@ def applyIEBool (worlds : List W) (prejacent : W → Bool)
 
 end Decidable
 
+-- ============================================================================
+-- ANTIEXHAUSTIVE ENRICHMENT (O⁻)
+-- ============================================================================
+
+/-!
+## @cite{chierchia-2006} Antiexhaustive Operator O⁻
+
+Chierchia's O⁻ is distinct from O (exhaustification/only) and E (even-like
+enrichment). While O negates stronger alternatives, O⁻ requires that
+**every** alternative in C entails every other — i.e., the alternative set
+is a complete join semilattice. This yields "antiexhaustive" universal-like
+force from an existential base.
+
+Formally: O⁻_C(p) = p ∧ ∀q ∈ C. q
+(the assertion together with every alternative being true)
+
+The key use: when C = D-variants (subdomain alternatives) of an existential
+∃x∈D.P(x), asserting all D-variants gives ∀D'⊆D. ∃x∈D'.P(x), which
+amounts to a distribution requirement across subdomains — universal force.
+
+### Set-theoretic definition
+-/
+
+section Antiexhaustive
+
+variable {World : Type*}
+
+/-- Antiexhaustive enrichment O⁻: assert the prejacent and every alternative.
+
+    Simplified from @cite{chierchia-2006} definition (108c) / (62).
+    The paper defines O⁻_C(p) = p ∧ ∀q,q'∈C [q → q'] where q' has
+    domain complementary to q — i.e., mutual entailment between all
+    domain-alternative pairs. We simplify to the equivalent truth conditions
+    `p ∧ ∀q∈C. q` (asserting all alternatives), which produces the same
+    result when C consists of subdomain existentials forming a lattice.
+
+    When C is a set of D-variants (subdomain existentials), asserting all
+    of them yields: for every subdomain D' of D, ∃x∈D'.P(x). This is
+    antiexhaustive — it distributes the existential across all subdomains,
+    producing universal-like force. -/
+def oMinus (C : Set (Prop' World)) (p : Prop' World) : Prop' World :=
+  λ w => p w ∧ ∀ q ∈ C, q w
+
+/-- O⁻ is a strengthening operation: O⁻_C(p) ⊆ₚ p. -/
+theorem oMinus_entails (C : Set (Prop' World)) (p : Prop' World) :
+    oMinus C p ⊆ₚ p :=
+  λ _ ⟨hp, _⟩ => hp
+
+/-- O⁻ is at least as strong as any individual alternative. -/
+theorem oMinus_entails_alt (C : Set (Prop' World)) (p : Prop' World) (q : Prop' World)
+    (hq : q ∈ C) : oMinus C p ⊆ₚ q :=
+  λ _ ⟨_, hall⟩ => hall q hq
+
+end Antiexhaustive
+
+-- ============================================================================
+-- ANTIEXHAUSTIVE ENRICHMENT (O⁻) — Computable Bool version
+-- ============================================================================
+
+section AntiexhaustiveBool
+
+variable {W : Type}
+
+/-- Computable antiexhaustive operator: assert prejacent + all alternatives.
+
+    @cite{chierchia-2006} (108c): O⁻_C(p)(w) = p(w) ∧ ∀q∈C. q(w)
+
+    This is the Bool version for finite model checking. -/
+def oMinusB (alts : List (W → Bool)) (p : W → Bool) : W → Bool :=
+  λ w => p w && alts.all (· w)
+
+/-- O⁻ entails the prejacent. -/
+theorem oMinusB_entails_prejacent {alts : List (W → Bool)} {p : W → Bool}
+    {w : W} (h : oMinusB alts p w = true) : p w = true := by
+  simp only [oMinusB, Bool.and_eq_true] at h
+  exact h.1
+
+/-- O⁻ entails every alternative. -/
+theorem oMinusB_entails_all {alts : List (W → Bool)} {p : W → Bool}
+    {w : W} (h : oMinusB alts p w = true) :
+    ∀ q ∈ alts, q w = true := by
+  simp only [oMinusB, Bool.and_eq_true, List.all_eq_true] at h
+  exact h.2
+
+end AntiexhaustiveBool
+
+-- ============================================================================
+-- DOMAIN WIDENING ANTIEXHAUSTIVENESS DERIVATION
+-- ============================================================================
+
+/-!
+## Deriving Universal Force from Antiexhaustive Enrichment
+
+@cite{chierchia-2006} §5.1: When O⁻ is applied to an existential ∃x∈D.P(x)
+with D-MIN alternatives (all subdomains), the enriched meaning requires
+the existential to hold over every subdomain — equivalent to universal force.
+
+This is the formal engine behind FCI universal readings.
+-/
+
+section UniversalFromAntiexh
+
+variable {Entity : Type*} {World : Type*}
+
+/-- An existential over a finite domain (list-based for computability). -/
+def existsIn (D : List Entity) (P : Entity → Prop' World) : Prop' World :=
+  λ w => ∃ x ∈ D, P x w
+
+/-- D-MIN alternatives: existentials over all sublists (subdomains). -/
+def dMinAlts (D : List Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
+  {q | ∃ D' : List Entity, (∀ x ∈ D', x ∈ D) ∧ q = existsIn D' P}
+
+/-- **Antiexhaustiveness yields universal distribution.**
+
+    O⁻ applied to ∃x∈D.P(x) with D-MIN alternatives entails that for
+    every individual a ∈ D, P(a) holds — i.e., universal force.
+
+    This is Chierchia 2006's key formal result: the "birth of universal
+    readings" (§5.1) from antiexhaustive enrichment of an existential base. -/
+theorem antiexh_yields_universal
+    (D : List Entity) (P : Entity → Prop' World) (w : World)
+    (h : oMinus (dMinAlts D P) (existsIn D P) w) :
+    ∀ a ∈ D, P a w := by
+  intro a ha
+  obtain ⟨_, hall⟩ := h
+  have hmem : existsIn [a] P ∈ dMinAlts D P := by
+    unfold dMinAlts
+    exact ⟨[a], λ x hx => by simp at hx; rw [hx]; exact ha, rfl⟩
+  have := hall _ hmem
+  unfold existsIn at this
+  obtain ⟨x, hx, hPx⟩ := this
+  simp at hx
+  rw [hx] at hPx
+  exact hPx
+
+end UniversalFromAntiexh
+
 end Exhaustification

@@ -33,6 +33,7 @@ def nessuno : PolarityItemEntry :=
   , licensingContexts :=
       [.negation, .nobody, .without_clause, .conditional_ant, .question]
   , scalarDirection := .strengthening
+  , alternativeType := .domain
   , notes := "N-word; postverbal requires 'non': 'Non ho visto nessuno'" }
 
 /-- *niente/nulla* — N-word for non-human, pure NPI. -/
@@ -53,6 +54,7 @@ def mai : PolarityItemEntry :=
   , licensingContexts :=
       [.negation, .nobody, .without_clause, .question, .conditional_ant]
   , scalarDirection := .strengthening
+  , alternativeType := .domain
   , notes := "Pure NPI; 'Non l'ho mai visto'; no FC use" }
 
 /-- *alcuno* — Pure NPI (formal register).
@@ -89,6 +91,7 @@ def qualsiasi : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts :=
       [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , alternativeType := .domain
   , notes := "Pure FCI; 'qualsiasi studente' = any/every student; no NPI reading" }
 
 /-- *qualunque* — Pure universal FCI (post-nominal only). -/
@@ -98,6 +101,7 @@ def qualunque : PolarityItemEntry :=
   , baseForce := .existential
   , licensingContexts :=
       [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , alternativeType := .domain
   , notes := "Post-nominal FCI; 'libro qualunque' = any/whatever book" }
 
 -- ============================================================================
@@ -111,7 +115,8 @@ def uno_qualsiasi : PolarityItemEntry :=
   { form := "un N qualsiasi"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity]
+  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative]
+  , alternativeType := .domain
   , notes := "Existential FCI; 'un dottore qualsiasi' = a doctor whatever; needs modal" }
 
 -- ============================================================================

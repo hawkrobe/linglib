@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Measurement
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.Krifka1998
 import Linglib.Theories.Semantics.Degree.Comparative
+import Linglib.Phenomena.Comparison.Studies.Bresnan1973
 
 /-!
 # @cite{wellwood-2015}: On the Semantics of Comparison Across Categories
@@ -848,32 +849,36 @@ def crossCategorialExamples : List CrossCategorialDatum :=
 -- § 18. Bresnan's Decomposition (Morphosyntax)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{bresnan-1973}: `more` = `much` + `-er`.
+/-- @cite{bresnan-1973} decomposition: `more` = `-er` + `much`.
 
-    This decomposition predicts:
-    - `much` is the degree head (selecting the measured domain)
-    - `-er` is the comparative morpheme (introducing the standard)
-    - Their combination `more` is suppletive for `much + -er`
+    Wellwood's cross-categorial claim: the SAME QP underlies `more`
+    across nominal ("more coffee"), verbal ("ran more"), and adverbial
+    ("more quickly") domains. The adjectival domain ("taller") differs
+    only by Much Deletion (Rule 10): `much` deletes before adjectives.
 
-    The same pattern holds across domains:
-    - "more coffee" = much + -er + coffee
-    - "more quickly" = much + -er + quickly
-    - "taller" = -er + tall (no overt `much` for adjectives) -/
-structure BresnanDecompositionDatum where
-  surface : String
-  underlying : String
-  domain : String
-  deriving Repr
+    The formal QP structure and suppletion are in `Bresnan1973`. -/
+def crossCategorialQP : Bresnan1973.QP := ⟨.er, .much⟩
 
-def bresnanDecomposition : List BresnanDecompositionDatum :=
-  [ { surface := "more coffee", underlying := "much-er coffee"
-    , domain := "nominal" }
-  , { surface := "ran more", underlying := "ran much-er"
-    , domain := "verbal" }
-  , { surface := "taller", underlying := "-er tall"
-    , domain := "adjectival" }
-  , { surface := "more quickly", underlying := "much-er quickly"
-    , domain := "adverbial" }
-  ]
+/-- The surface form "more" derives from Bresnan's suppletion. -/
+theorem crossCategorial_more_from_suppletion :
+    Bresnan1973.suppletion crossCategorialQP = some "more" := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 19. Much Deletion Bridge (§6.3 ↔ Bresnan Rule 10)
+-- ════════════════════════════════════════════════════
+
+/-- Wellwood §6.3: GAs have "covert `much`" — `very` combines directly
+    with the adjective without overt `much` ("very hot", *"very much hot").
+
+    This is exactly Bresnan's Rule 10 (Much Deletion): `much → ∅` before
+    an adjective. The formal `muchDeletionApplies` predicate from
+    `Bresnan1973` captures when the deletion fires. -/
+theorem covert_much_is_bresnan_deletion :
+    Bresnan1973.muchDeletionApplies .much (adjFollows := true) = true := rfl
+
+/-- N/V retain overt `much` because Much Deletion only applies before A.
+    `adjFollows = false` → Much Deletion does not apply. -/
+theorem overt_much_no_deletion :
+    Bresnan1973.muchDeletionApplies .much (adjFollows := false) = false := rfl
 
 end Phenomena.Comparison.Studies.Wellwood2015

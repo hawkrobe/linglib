@@ -21,8 +21,9 @@ greater morphological boundedness (@cite{lehmann-1985}, @cite{hopper-traugott-20
 
 - `Core.FormFrequency`: form-frequency correspondence is a parallel diachronic
   process (phonological erosion of frequent forms).
-- `Core.Lexical.Binominal`: the bleaching cline for binominals (evaluative →
-  pseudo-partitive → quantificational) is a specialized grammaticalization path.
+- `Core.Lexical.Binominal`: the bleaching cline for binominals (N+PP →
+  pseudo-partitive → evaluative → modifier → intensifier) is a specialized
+  grammaticalization path in the nominal domain.
 - `Core.Subjectivity`: Traugott's subjectification cline is a semantic
   dimension of grammaticalization (see `Diachronic.Subjectification`).
 -/

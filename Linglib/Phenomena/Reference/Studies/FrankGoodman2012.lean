@@ -80,7 +80,7 @@ inductive Finding where
   /-- Hearing "square" → blue_square over green_square.
       The core RSA insight: "green" uniquely identifies green_square,
       so a speaker saying "square" probably means blue_square.
-      Evidence: model-human r² = 0.99 (Figure 1). -/
+      Evidence: model-human r = 0.99. -/
   | square_pragmatic_narrowing
   /-- Hearing "blue" → blue_square over blue_circle.
       Parallel inference: "circle" uniquely identifies blue_circle,

@@ -297,8 +297,7 @@ def clausalExamples : List ComparativeJudgment :=
 
 /-- Synthetic vs. analytic comparative distribution in English.
     The generalization: monosyllabic adjectives prefer synthetic (-er),
-    polysyllabic prefer analytic (more), disyllabic varies.
-    @cite{bresnan-1973} -/
+    polysyllabic prefer analytic (more), disyllabic varies. -/
 structure MorphDistributionDatum where
   adjective : String
   syllables : Nat
@@ -315,13 +314,18 @@ def morphDistribution : List MorphDistributionDatum :=
   , { adjective := "expensive", syllables := 3, syntheticOk := false, analyticOk := true }
   ]
 
-/-- Comparative deletion data: the standard of comparison may be
+/-- Bare comparative data: the standard of comparison may be
     implicitly recovered from context.
 
     "Kim is taller" — standard = contextually supplied comparison class.
     This connects to the evaluative/positive reading of bare gradable
-    adjectives (Gradability/). -/
-structure ComparativeDeletionDatum where
+    adjectives (Gradability/).
+
+    Note: "bare comparative" = comparative without an explicit standard.
+    This is NOT "comparative deletion" in @cite{bresnan-1973}'s sense
+    (= identity-based deletion of a clause constituent from the
+    than-clause). -/
+structure BareComparativeDatum where
   sentence : String
   /-- Is the standard explicitly present? -/
   explicitStandard : Bool
@@ -329,7 +333,7 @@ structure ComparativeDeletionDatum where
   readings : List String
   deriving Repr
 
-def deletionExamples : List ComparativeDeletionDatum :=
+def bareComparativeExamples : List BareComparativeDatum :=
   [ { sentence := "Kim is taller"
     , explicitStandard := false
     , readings := ["comparative to contextual standard"] }

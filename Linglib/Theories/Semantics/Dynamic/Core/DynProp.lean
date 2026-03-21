@@ -127,7 +127,7 @@ satisfaction set is non-empty, i.e., some assignment satisfies it. -/
 def closure (D : DRS S) : Condition S :=
   λ i => ∃ k, D i k
 
-notation "!" D => closure D
+scoped notation "!" D => closure D
 
 end Operations
 

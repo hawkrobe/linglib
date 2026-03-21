@@ -457,8 +457,10 @@ theorem account2_overgenerates :
 theorem know₃_not_crosscategorial :
     ∃ (y : W → (W → E)) (x : E) (w : W),
       know₃ y x w ≠ @knowGeneric (W → E) _ y x w := by
-  -- A concept-of-concepts that varies: w0 → priceMilk, otherwise → rigidZero
-  refine ⟨fun w => match w with | .w0 => priceMilk | _ => rigidZero, john, .w0, ?_⟩
+  -- Witness: y varies across John's doxastic alternatives at w2 ({w2, w3}).
+  -- know₃ evaluates y at w first (getting rigidZero, which is constant) → true.
+  -- knowGeneric compares y w2 (rigidZero) vs y w3 (priceMilk) as functions → false.
+  refine ⟨fun w => match w with | .w3 => priceMilk | _ => rigidZero, john, .w2, ?_⟩
   native_decide
 
 /-! ## Refutation of Account 3: Pragmatic Account (§2.4.3)

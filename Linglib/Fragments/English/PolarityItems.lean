@@ -51,6 +51,7 @@ def any : PolarityItemEntry :=
   , scalarValue := .low               -- existential = low on quantifier scale
   , canonicity := .canonical           -- low NPI = canonical
   , likelihoodEffect := .impeding      -- theme/patient role in typical use
+  , alternativeType := .domain         -- D-MIN domain alternatives (Chierchia 2006)
   , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC"
   }
 
@@ -65,6 +66,7 @@ def ever : PolarityItemEntry :=
   , scalarDirection := .strengthening  -- temporal endpoint → stronger assertion
   , scalarValue := .low               -- minimal temporal extent
   , canonicity := .canonical
+  , alternativeType := .domain         -- D-MAX domain alternatives (Chierchia 2006)
   , notes := "Temporal NPI; also in superlatives ('best ever')"
   }
 

@@ -1234,6 +1234,19 @@ The contiguity constraint on the map thus has a semantic explanation:
 adjacent functions share semantic properties (monotonicity, veridicality,
 specificity) that make it natural for a single form to cover them. -/
 
+/-- A Haspelmath function corresponds to a downward-entailing (or nonveridical)
+    licensing context. Functions 4–7 on the map: question, conditional,
+    indirect negation, direct negation (@cite{ladusaw-1979}). -/
+def IndefiniteFunction.isDE : IndefiniteFunction → Bool
+  | .question | .conditional | .indirectNeg | .directNeg => true
+  | _ => false
+
+/-- A Haspelmath function corresponds to a free choice context.
+    Functions 8–9 on the map: comparative, freeChoice. -/
+def IndefiniteFunction.isFC : IndefiniteFunction → Bool
+  | .comparative | .freeChoice => true
+  | _ => false
+
 /-- The NPI region (question through directNeg) is contiguous. -/
 theorem npi_region_contiguous :
     isContiguous [.question, .conditional, .indirectNeg, .directNeg] = true := by
