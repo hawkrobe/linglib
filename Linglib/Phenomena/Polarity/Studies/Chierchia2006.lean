@@ -10,7 +10,7 @@ import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 /-!
 # Chierchia 2006: Domain Widening and the PSI Typology
 @cite{chierchia-2006} @cite{chierchia-2013} @cite{fox-2007} @cite{bar-lev-fox-2020}
-@cite{haspelmath-1997} @cite{alonso-ovalle-moghiseh-2025}
+@cite{haspelmath-1997} @cite{kadmon-landman-1993} @cite{alonso-ovalle-moghiseh-2025}
 
 Formalizes the lasting contributions of @cite{chierchia-2006} "Broaden Your Views:
 Implicatures of Domain Widening and the 'Logicality' of Language."
@@ -396,16 +396,16 @@ theorem pureNPI_no_rescue :
     pureNPI.toEFCIRescue = none := rfl
 
 -- ============================================================================
--- §8. Fragment Bridges
+-- §8. Fragment Bridges (PSIProfile → PolarityType)
 -- ============================================================================
 
 /-!
-## Connecting Fragment entries to PSI theory
+## Bridging PSI profiles to Fragment entries
 
-Fragment entries store observable distributional properties (polarityType,
-licensingContexts); PSI profiles encode theoretical parameters
-(obligatoryDomainAlts, grain, scalar alternatives). Bridge theorems verify
-consistency between the two layers via polarityType.
+`Core.Lexical.PolarityItem.PolarityType` is a 5-way distributional
+classification. `PSIProfile` is a 4-parameter theoretical decomposition.
+Each PSI class predicts exactly one `PolarityType`, and each Fragment
+entry's `polarityType` should match its PSI profile's predicted type.
 -/
 
 open Core.Lexical.PolarityItem
@@ -413,55 +413,6 @@ open Fragments.English.PolarityItems (any ever)
 open Fragments.Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)
 open Fragments.German.PolarityItems (irgendein)
-
--- English *any* is npi_fci → matches npiFCI profile
-theorem any_fragment_matches_npiFCI :
-    any.polarityType = .npi_fci := rfl
-
--- English *ever* is npiWeak → matches pureNPI profile
-theorem ever_fragment_matches_pureNPI :
-    ever.polarityType = .npiWeak := rfl
-
--- Italian *mai* is npiWeak → matches pureNPI
-theorem mai_fragment_matches_pureNPI :
-    mai.polarityType = .npiWeak := rfl
-
--- Italian *alcuno* is npiWeak → matches pureNPI
-theorem alcuno_fragment_matches_pureNPI :
-    alcuno.polarityType = .npiWeak := rfl
-
--- Italian *nessuno* is npiWeak → matches pureNPI
-theorem nessuno_fragment_matches_pureNPI :
-    nessuno.polarityType = .npiWeak := rfl
-
--- Italian *qualsiasi* is fci → matches pureFCI profile
-theorem qualsiasi_fragment_matches_pureFCI :
-    qualsiasi.polarityType = .fci := rfl
-
--- Italian *qualunque* is fci → matches pureFCI profile
-theorem qualunque_fragment_matches_pureFCI :
-    qualunque.polarityType = .fci := rfl
-
--- Italian *uno qualsiasi* is fci → matches efciPureFci profile
-theorem uno_qualsiasi_fragment_matches_efciPureFci :
-    uno_qualsiasi.polarityType = .fci := rfl
-
--- German *irgendein* is npi_fci → matches efciNpiFci profile (table (94))
-theorem irgendein_fragment_matches_efciNpiFci :
-    irgendein.polarityType = .npi_fci := rfl
-
--- ============================================================================
--- §9. PSIProfile → PolarityType Bridge
--- ============================================================================
-
-/-!
-## Bridging the two classification systems
-
-`Core.Lexical.PolarityItem.PolarityType` is a 5-way distributional
-classification. `PSIProfile` is a 4-parameter theoretical decomposition.
-The mapping should be consistent: each PSI class predicts exactly one
-`PolarityType`.
--/
 
 /-- Map a PSI profile to the expected PolarityType. -/
 def PSIProfile.toPolarityType (p : PSIProfile) : PolarityType :=
@@ -479,43 +430,52 @@ theorem pureFCI_polarityType : pureFCI.toPolarityType = .fci := rfl
 theorem efciNpiFci_polarityType : efciNpiFci.toPolarityType = .npi_fci := rfl
 theorem efciPureFci_polarityType : efciPureFci.toPolarityType = .fci := rfl
 
--- Verify Fragment entries match their PSI profile's predicted PolarityType
+-- Fragment entries match their PSI profile's predicted PolarityType
 theorem any_profile_consistent :
     any.polarityType = npiFCI.toPolarityType := rfl
-
 theorem ever_profile_consistent :
     ever.polarityType = pureNPI.toPolarityType := rfl
-
 theorem mai_profile_consistent :
     mai.polarityType = pureNPI.toPolarityType := rfl
-
+theorem alcuno_profile_consistent :
+    alcuno.polarityType = pureNPI.toPolarityType := rfl
+theorem nessuno_profile_consistent :
+    nessuno.polarityType = pureNPI.toPolarityType := rfl
 theorem qualsiasi_profile_consistent :
     qualsiasi.polarityType = pureFCI.toPolarityType := rfl
-
+theorem qualunque_profile_consistent :
+    qualunque.polarityType = pureFCI.toPolarityType := rfl
+theorem uno_qualsiasi_profile_consistent :
+    uno_qualsiasi.polarityType = efciPureFci.toPolarityType := rfl
 theorem irgendein_profile_consistent :
     irgendein.polarityType = efciNpiFci.toPolarityType := rfl
 
 -- ============================================================================
--- §10. σ/σ̃ Operators (Implicature Freezing)
+-- §10. Exhaustification Theory: σ̃, SI Vacuity, and O⁻
 -- ============================================================================
 
 /-!
-## σ̃: Presuppositional implicature freezing
+## Exercising the Exhaustification theory layer
 
-@cite{chierchia-2006} §3.3 (definition (41)/(72)/(113)):
+This section connects @cite{chierchia-2006}'s PSI typology to the formal
+results in `Exhaustification.FreeChoice` and `Exhaustification.Operators`.
 
-σ "freezes" the implicature: once σ applies, the enriched meaning becomes
-part of the semantic content and can no longer be canceled. σ̃ (bold sigma)
-adds a **presupposition**: the frozen meaning must be **strictly stronger**
-than the plain meaning. Items selecting σ̃ (*qualsiasi*) differ from items
-selecting plain σ (*any*) exactly in whether this presupposition is required.
+### σ̃: Presuppositional implicature freezing (§3.3, §5.3)
 
-### Why σ̃ blocks DE licensing (§5.3)
+σ "freezes" the implicature; σ̃ adds a **presupposition** that the frozen
+meaning is **strictly stronger** than the plain meaning (definition (72)).
+`sigma_bold_fails_in_de` delegates to `entailment_reversal_in_de`.
 
-If enrichment is strengthening (enriched ⊂ plain), embedding in a DE
-context **reverses** the entailment: C(plain) ⊆ C(enriched). The enriched
-meaning under C is weaker, so σ̃'s presupposition fails. This is proved
-as `sigma_bold_fails_in_de`.
+### SI vacuity in DE (§4.1)
+
+D-MAX (even-like) enrichment is an SI. SIs are vacuous in DE
+(`si_vacuous_in_de`), explaining why pure NPIs are confined to DE.
+
+### O⁻ yields universal force (§5.1)
+
+Antiexhaustive enrichment of ∃x∈D.P(x) with D-MIN alternatives gives
+∀a∈D. P(a) (`antiexh_yields_universal`). This is the "birth of universal
+readings" behind FCI universal force.
 -/
 
 section SigmaOperators
@@ -687,7 +647,7 @@ def obs_11a : FCIObservation :=
 
 /-- (11b): "Ieri ho parlato con un qualsiasi filosofo che fosse interessato"
     — Marginal; the paper notes RC "if anything, makes things worse" for
-    existential FCIs (p.543). Subtrigging does not rescue EFCIs. -/
+    existential FCIs. Subtrigging does not rescue EFCIs. -/
 def obs_11b : FCIObservation :=
   ⟨"Ieri ho parlato con un qualsiasi filosofo che fosse interessato", "(11b)",
    .existential, .episodic_subtrigged, .existential, .marginal⟩
