@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.229.401] - 2026-03-20
+
+### Fixed
+- **Bresnan 1973 audit** (`Bresnan1973.lean`): fix puzzleD entry 4 — explanation was mixing Bresnan's syntactic analysis with Kennedy's semantic analysis (Bresnan just says "certainly no problem" on p. 334); remove unused `barCategorySpec` function
+- **Kennedy 1999 accuracy** (`Kennedy1999.lean`): remove misattributed `@cite{bresnan-1973}` from `morphDistribution` docstring (Bresnan discusses decomposition, not syllable-count distribution); rename `ComparativeDeletionDatum` → `BareComparativeDatum` (was misleadingly named — "comparative deletion" in Bresnan's sense = identity-based clause deletion, not bare comparatives without standards)
+
+### Added
+- **Count paradigm** (`Bresnan1973.lean` §8): paradigm (5) from the paper — `as many`/`too many`/`that many`/`so many`/`more` (count), `as few`/`too few`/`fewer`, with `countParadigm_suppletion_consistent` verification theorem
+- **QP well-formedness** (`Bresnan1973.lean` §9): `QP.isWellFormed` predicate encoding that `enough` requires null Det (Bresnan p. 286); `enough_requires_null_det` and `enough_null_wellformed` theorems
+
+## [0.229.400] - 2026-03-20
+
+### Changed
+- **`HarmonySystem` upgrade** (`Theories/Phonology/Harmony/Defs.lean`): direction-aware `triggerValue` (rightward→last trigger, leftward→first trigger), `isBlocker` field (default: no blockers) for opaque segments that halt spreading, `harmonyDomain` function (stem domain after last blocker), `spreadSuffix` (spreading with blocker halt semantics). Backward compatible: all three fragment files (Turkish, Finnish, Hungarian) build with zero changes
+- **Properties**: `spreadSuffix_length`, `spreadSuffix_eq_harmonizeSuffix` (equivalence without blockers), `harmonyDomain_no_blockers`, `spreadSuffix_blocker`
+
+### Added
+- **Blocker model for Hungarian /e/** (`Fragments/Hungarian/VowelHarmony.lean` §13): `palatalHarmony_eBlocks` treats /e/ as opaque (blocking) while /i/ stays transparent. *hotel* prediction shifts from `some true` (back) to `none` (no trigger in domain), matching the front option of vacillation. *papír* unchanged (back) since /i/ is still transparent
+
 ## [0.229.399] - 2026-03-20
 
 ### Changed

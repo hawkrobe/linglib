@@ -460,6 +460,7 @@ import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.DiscourseParticles
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Hungarian.Morph
+import Linglib.Fragments.Hungarian.VowelHarmony
 import Linglib.Fragments.Wan.Reciprocals
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
 import Linglib.Fragments.Finnish.Case
@@ -857,6 +858,7 @@ import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
 import Linglib.Phenomena.Comparison.Compare
 import Linglib.Phenomena.Comparison.Typology
+import Linglib.Phenomena.Comparison.Studies.Bresnan1973
 import Linglib.Phenomena.Comparison.Studies.Kennedy1999
 import Linglib.Phenomena.Comparison.Studies.Kennedy2007
 import Linglib.Phenomena.Comparison.Studies.Kennedy2007Typology
@@ -1058,6 +1060,7 @@ import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
 import Linglib.Phenomena.Presupposition.Studies.Grove2022
 import Linglib.Phenomena.Presupposition.Studies.Beaver2001
+import Linglib.Phenomena.Presupposition.Studies.Blutner2000
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
@@ -1346,6 +1349,8 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.Also
 import Linglib.Theories.Pragmatics.DecisionTheoretic.PartitionAdjunction
 -- Theories: Gricean Pragmatics
 import Linglib.Theories.Pragmatics.GriceanMaxims
+-- Theories: Bidirectional OT (Blutner 2000)
+import Linglib.Theories.Pragmatics.Bidirectional
 -- Theories: Relevance Theory (Sperber & Wilson)
 import Linglib.Theories.Pragmatics.RelevanceTheory.CognitiveEnvironment
 import Linglib.Theories.Pragmatics.RelevanceTheory.CognitiveEffects
@@ -1841,6 +1846,7 @@ import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Theories.Phonology.Harmony.Defs
 import Linglib.Theories.Phonology.Syllable.Defs
 import Linglib.Theories.Phonology.Syllable.Foot
 import Linglib.Theories.Phonology.Syllable.NaturalClass

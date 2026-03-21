@@ -2,10 +2,11 @@ import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Theories.Phonology.Autosegmental.Defs
+import Linglib.Theories.Phonology.Harmony.Defs
 
 /-!
 # Turkish Vowel Harmony
-@cite{goksel-kerslake-2005}
+@cite{goksel-kerslake-2005} @cite{rose-walker-2011}
 
 Turkish has a perfectly symmetric 2x2x2 vowel inventory and a
 **two-dimensional** vowel harmony system (@cite{goksel-kerslake-2005} Ch 3).
@@ -39,12 +40,19 @@ Examples with *göz* 'eye' [front, rounded]:
   Plural göz-ler (A -> e), Accusative göz-ü (I -> ü)
 Examples with *kol* 'arm' [back, rounded]:
   Plural kol-lar (A -> a), Accusative kol-u (I -> u)
+
+## Harmony systems (@cite{rose-walker-2011})
+
+Turkish VH decomposes into two `HarmonySystem` instances:
+- `palatalHarmony`: [back] spreads to all suffix vowels (twofold A)
+- `labialHarmony`: [round] spreads to high suffix vowels only (fourfold I)
 -/
 
 namespace Fragments.Turkish.VowelHarmony
 
 open Theories.Phonology (Segment Feature)
 open Theories.Phonology.Autosegmental (agreeAt)
+open Theories.Phonology.Harmony (HarmonySystem HarmonyDir triggerValue)
 
 -- ============================================================================
 -- § 1: Turkish Vowel Inventory (8 vowels)
@@ -83,18 +91,26 @@ def o_vowel : Segment := Segment.ofSpecs
    (.back, true), (.round, true), (.low, false)]
 
 -- ============================================================================
--- § 2: Stem Harmony Extraction
+-- § 2: Harmony System Instances
 -- ============================================================================
 
-/-- Extract [back] value of the last vowel in the stem. -/
-def stemBack (stem : List Segment) : Option Bool :=
-  let vowels := stem.filter (·.hasValue .syllabic true)
-  vowels.getLast?.bind (·.spec .back)
+/-- Palatal harmony: [back] spreads from the last stem vowel to all suffix
+    vowels. Every vowel is both trigger and target; no transparency. -/
+def palatalHarmony : HarmonySystem where
+  feature       := .back
+  isTrigger     := (·.hasValue .syllabic true)
+  isTarget      := (·.hasValue .syllabic true)
+  isTransparent := (λ _ => false)
+  direction     := .rightward
 
-/-- Extract [round] value of the last vowel in the stem. -/
-def stemRound (stem : List Segment) : Option Bool :=
-  let vowels := stem.filter (·.hasValue .syllabic true)
-  vowels.getLast?.bind (·.spec .round)
+/-- Labial harmony: [round] spreads from the last stem vowel to high suffix
+    vowels only. Every vowel triggers; only [+high] vowels are targets. -/
+def labialHarmony : HarmonySystem where
+  feature       := .round
+  isTrigger     := (·.hasValue .syllabic true)
+  isTarget      := (λ s => s.hasValue .syllabic true && s.hasValue .high true)
+  isTransparent := (λ _ => false)
+  direction     := .rightward
 
 -- ============================================================================
 -- § 3: Archiphoneme Resolution
@@ -140,15 +156,31 @@ theorem resolveI_front_round : resolveI false true = ü_vowel := rfl
 theorem resolveI_back_round : resolveI true true = u_vowel := rfl
 theorem resolveI_front_unround : resolveI false false = i_vowel := rfl
 
--- Stem harmony extraction
-theorem back_stem : stemBack [a_vowel] = some true := by native_decide
-theorem front_stem : stemBack [e_vowel] = some false := by native_decide
-theorem round_stem : stemRound [o_vowel] = some true := by native_decide
-theorem unround_stem : stemRound [ı_vowel] = some false := by native_decide
+-- ============================================================================
+-- § 5: Harmony System Verification
+-- ============================================================================
+
+/-- Palatal harmony extracts [back] from a back-vowel stem. -/
+theorem palatal_back_stem :
+    triggerValue palatalHarmony [a_vowel] = some true := by native_decide
+
+/-- Palatal harmony extracts [−back] from a front-vowel stem. -/
+theorem palatal_front_stem :
+    triggerValue palatalHarmony [e_vowel] = some false := by native_decide
+
+/-- Labial harmony extracts [round] from a rounded stem. -/
+theorem labial_round_stem :
+    triggerValue labialHarmony [o_vowel] = some true := by native_decide
+
+/-- Labial harmony extracts [−round] from an unrounded stem. -/
+theorem labial_unround_stem :
+    triggerValue labialHarmony [ı_vowel] = some false := by native_decide
 
 -- 2D harmony: göz (front, rounded) determines both dimensions
-theorem göz_back : stemBack [ö_vowel] = some false := by native_decide
-theorem göz_round : stemRound [ö_vowel] = some true := by native_decide
+theorem göz_palatal : triggerValue palatalHarmony [ö_vowel] = some false := by
+  native_decide
+theorem göz_labial : triggerValue labialHarmony [ö_vowel] = some true := by
+  native_decide
 
 -- Cross-backness: a and e disagree on dorsal features
 theorem a_e_dorsal_disagree :
