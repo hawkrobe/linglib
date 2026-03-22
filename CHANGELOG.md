@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.402] - 2026-03-22
+
+### Changed
+- **DegreeAbstraction.lean**: replace stub with real Heim 2001 formalization — `IsMaxDeg` (relational maximality), `isMaxDeg_matrixPredicate` (max of monotone predicate = measure value), `erOp`/`lessOp` (degree operators), scope configurations (`lowDegP_forall`/`highDegP_forall`/`lowDegP_exists`/`highDegP_exists`), monotone collapse theorems (`forall_more_high_to_low`, `forall_more_low_to_high`, `exists_more_scope_collapse`), negation presupposition failure (`negatedDegreePredicate`). Remove dead `ComparativeScopeReading` enum
+- **Heim2001.lean**: rewrite with paper's actual contributions — scope interaction data (monotone collapse, negation/↓monotone, non-monotone), Kennedy's generalization, intensional verb scope pattern (require/allow/need/able vs might/should/supposed/want), Russell ambiguity (de re/de dicto ≠ DegP-scope). Remove misattributed superlative typology data (not from Heim). Fix inaccurate docstring about wide-scope -er (plain comparatives collapse; ambiguity only with `exactly`/`less`). Add bridges to Superlative, Differential, FoxHackl2006
+
+### Fixed
+- **Compare.lean**: update scope divergence docstring to reference actual formalization in Heim2001.lean instead of claiming scope "can't be formalized"
+
 ## [0.229.401] - 2026-03-20
 
 ### Fixed

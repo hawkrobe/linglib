@@ -3,37 +3,33 @@ import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
-# Heim's Sentential Operator Approach
-@cite{heim-2001} @cite{heim-2006}
+# Heim's Degree Operator Approach
+@cite{heim-2001}
 
-@cite{heim-2001} "Degree Operators and Scope": the comparative morpheme
-`-er` is a sentential operator that introduces degree variables via
-λ-abstraction, rather than being a degree quantifier as in Kennedy's
-approach.
+@cite{heim-2001} "Degree Operators and Scope": degree morphemes (`-er`,
+`less`, `-est`, `too`) are **generalized quantifiers over degrees** (type
+⟨dt,t⟩) that take scope by QR, just like DP quantifiers. The key
+theoretical content is twofold:
 
-## Key Differences from Kennedy
+1. **Denotation**: ⟦-er than P⟧ = λQ. max(Q) > max(P), where max is
+   the maximality operator over degree predicates.
+2. **Scope**: because DegPs QR, they interact scopally with other
+   operators (quantifiers, negation, modals). The paper probes which
+   scope configurations are empirically available.
 
-| Feature         | Kennedy                  | Heim                     |
-|-----------------|--------------------------|--------------------------|
-| Type of -er     | degree quantifier        | sentential operator      |
-| Degree binding  | -er binds degree var     | λ-abstraction            |
-| Than-clause     | degree clause (type d)   | degree predicate (d → t) |
-| Scope           | DP-internal scope        | clausal scope            |
+## Monotonicity and Scope Collapse
 
-## Denotation
+Adjective denotations are *monotone*: if `tall(x,d)` then `tall(x,d')`
+for all `d' ≤ d`. This means max{d: tall(x,d)} = μ(x). And for
+monotone increasing operators (∀, ∃), low-DegP and high-DegP yield
+equivalent truth conditions — scope is undetectable.
 
-    ⟦-er⟧ = λD₂.λD₁. max(D₁) > max(D₂)
+## Comparison with Kennedy
 
-where D₁ and D₂ are degree predicates (sets of degrees):
-- D₁ = the matrix degree clause (abstracting over d)
-- D₂ = the than-clause degree predicate
-
-## Scope Predictions
-
-The sentential operator approach predicts scope interactions with
-other operators (negation, modals, quantifiers) that the degree
-quantifier approach does not, because -er takes scope at the clause
-level.
+Kennedy's `-er` is DP-internal (no QR needed), so it never takes wide
+scope. The two frameworks agree extensionally on simple comparatives
+but diverge on scope predictions with `exactly`-differentials, `less`,
+and intensional verbs.
 
 -/
 
@@ -42,83 +38,195 @@ namespace Semantics.Degree.DegreeAbstraction
 open Core.Scale
 
 -- ════════════════════════════════════════════════════
--- § 1. Degree Abstraction
+-- § 1. Degree Predicates and Maximality
 -- ════════════════════════════════════════════════════
 
-/-- A degree predicate: a set of degrees.
-    In Heim's framework, both the matrix clause and the than-clause
-    denote degree predicates after degree abstraction.
-
-    Example: "John is d-tall" = λd. height(John) ≥ d
-    This is the same as Kennedy's adjective denotation, but Heim
-    treats it as the result of degree abstraction rather than the
-    lexical entry of the adjective. -/
+/-- A degree predicate: a set of degrees (type ⟨d,t⟩ in Heim's terms).
+    Both the matrix clause and the than-clause denote degree predicates
+    after degree abstraction. -/
 def DegreePredicate (D : Type*) := D → Prop
 
-/-- The matrix degree predicate: abstracting over the degree variable
-    in "A is d-tall" yields λd. μ(A) ≥ d.
-    This is the degree set of A. -/
+/-- Heim's maximality operator (paper def. (6)):
+    max(P) := ιd. P(d) ∧ ∀d', P(d') → d' ≤ d
+
+    We define it relationally: `d` is the maximum of `P` when it
+    satisfies `P` and is an upper bound. -/
+def IsMaxDeg {D : Type*} [LE D] (P : DegreePredicate D) (d : D) : Prop :=
+  P d ∧ ∀ d', P d' → d' ≤ d
+
+/-- The matrix degree predicate for "A is d-tall": λd. μ(A) ≥ d. -/
 def matrixPredicate {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (a : Entity) : DegreePredicate D :=
   fun d => μ a ≥ d
 
-/-- The than-clause degree predicate: abstracting over the degree
-    variable in "B is d-tall" yields λd. μ(B) ≥ d.
-    This is the degree set of B. -/
+/-- The than-clause degree predicate for "B is d-tall": λd. μ(B) ≥ d. -/
 def thanClausePredicate {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (b : Entity) : DegreePredicate D :=
   fun d => μ b ≥ d
 
+/-- The maximum of a monotone predicate λd. μ(a) ≥ d is μ(a) itself.
+    This grounds the Heim–Kennedy equivalence: max{d: tall(a,d)} = μ(a). -/
+theorem isMaxDeg_matrixPredicate {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a : Entity) :
+    IsMaxDeg (matrixPredicate μ a) (μ a) :=
+  ⟨le_refl _, fun _ h => h⟩
+
 -- ════════════════════════════════════════════════════
--- § 2. -er as Sentential Operator
+-- § 2. Monotonicity
 -- ════════════════════════════════════════════════════
 
-/-- Heim's `-er` as a sentential operator over degree predicates.
+/-- An adjective denotation (type ⟨d,et⟩) is **monotone** iff
+    tall(x,d) implies tall(x,d') for all d' ≤ d.
 
+    Heim (p. 216, def. (3)): a function f of type ⟨d,et⟩ is monotone
+    iff ∀x∀d∀d'[f(d)(x) = 1 & d' < d → f(d')(x) = 1]. -/
+def Monotone {Entity D : Type*} [Preorder D]
+    (adj : D → Entity → Prop) : Prop :=
+  ∀ (x : Entity) (d d' : D), adj d x → d' ≤ d → adj d' x
+
+/-- `matrixPredicate μ a` is always monotone (by construction). -/
+theorem matrixPredicate_monotone {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (a : Entity) :
+    ∀ (d d' : D), matrixPredicate μ a d → d' ≤ d →
+      matrixPredicate μ a d' := by
+  intro d d' hd hle
+  exact le_trans hle hd
+
+-- ════════════════════════════════════════════════════
+-- § 3. Degree Operators
+-- ════════════════════════════════════════════════════
+
+/-- Heim's `-er` operating on degree predicates:
     ⟦-er⟧(D₂)(D₁) = max(D₁) > max(D₂)
 
-    When D₁ and D₂ are degree sets of entities A and B, this
-    yields: height(A) > height(B). -/
-def heimComparative {D : Type*} [LinearOrder D]
+    When applied to `matrixPredicate μ a` and `thanClausePredicate μ b`,
+    this reduces to μ(a) > μ(b). -/
+def erOp {D : Type*} [LinearOrder D]
     (d1Max d2Max : D) : Prop :=
   d1Max > d2Max
 
-/-- Heim comparative with measure function: same truth conditions as
-    Kennedy, but different compositional derivation.
+/-- Heim's `less` operator (paper (23)):
+    ⟦less than P⟧ = λQ. max(Q) < max(P) -/
+def lessOp {D : Type*} [LinearOrder D]
+    (d1Max d2Max : D) : Prop :=
+  d1Max < d2Max
 
-    "A is taller than B" via Heim:
-    ⟦-er⟧(λd. height(B) ≥ d)(λd. height(A) ≥ d) = height(A) > height(B) -/
+/-- Heim comparative with measure function: the result of composing
+    `-er` with degree predicates derived from a monotone adjective.
+
+    "A is taller than B" = ⟦-er⟧(λd. μ(B) ≥ d)(λd. μ(A) ≥ d)
+                         = max{d: μ(A) ≥ d} > max{d: μ(B) ≥ d}
+                         = μ(A) > μ(B) -/
 def heimComparativeWithMeasure {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) : Prop :=
   μ a > μ b
 
 -- ════════════════════════════════════════════════════
--- § 3. Scope Predictions
+-- § 4. Scope Configurations
 -- ════════════════════════════════════════════════════
 
-/-- Heim's approach predicts scope ambiguities with modals.
-    "The paper is required to be longer than that."
-    - -er > required: there's a length d such that the paper must be at least d-long
-    - required > -er: for each requirement, the paper meets the length threshold
+/-- **Low-DegP** truth conditions for "every girl is taller than 4ft":
+    ∀x[girl(x) → max{d: tall(x,d)} > 4']
 
-    Kennedy's degree quantifier approach does not predict the wide-scope
-    -er reading (because -er is DP-internal). -/
-inductive ComparativeScopeReading where
-  | wideScope   -- -er scopes above other operators
-  | narrowScope -- -er scopes below other operators
-  deriving DecidableEq, BEq, Repr
+    DegP scopes below the quantifier. Each girl's height exceeds 4'. -/
+def lowDegP_forall {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
+  ∀ x, restrictor x → μ x > threshold
+
+/-- **High-DegP** truth conditions for "every girl is taller than 4ft":
+    max{d: ∀x[girl(x) → tall(x,d)]} > 4'
+
+    DegP scopes above the quantifier. The maximal degree to which
+    *every* girl is tall exceeds 4'. This equals the height of the
+    *shortest* girl (by monotonicity). -/
+def highDegP_forall {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
+  ∃ d, (∀ x, restrictor x → μ x ≥ d) ∧ d > threshold
+
+/-- **Monotone collapse** (Heim §2.1): for ∀ + more-comparatives,
+    high-DegP → low-DegP (the reverse direction).
+
+    If there exists d > threshold s.t. every girl is d-tall, then
+    every girl exceeds threshold (since μ(x) ≥ d > threshold). -/
+theorem forall_more_high_to_low {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) :
+    highDegP_forall restrictor μ threshold →
+    lowDegP_forall restrictor μ threshold := by
+  rintro ⟨d, hall, hgt⟩ x hR
+  exact lt_of_lt_of_le hgt (hall x hR)
+
+/-- **Monotone collapse** (Heim §2.1): for ∀ + more-comparatives,
+    low-DegP → high-DegP (given a witness).
+
+    If every girl is taller than threshold, pick any girl `w` — her
+    height witnesses d > threshold with ∀x.tall(x,d) being vacuously
+    weak (every girl is at least threshold-tall, and w is one of them). -/
+theorem forall_more_low_to_high {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D)
+    (w : Entity) (hw : restrictor w)
+    (hmin : ∀ x, restrictor x → μ x ≥ μ w) :
+    lowDegP_forall restrictor μ threshold →
+    highDegP_forall restrictor μ threshold := by
+  intro hlow
+  exact ⟨μ w, hmin, hlow w hw⟩
+
+/-- Low-DegP for ∃: ∃x[girl(x) ∧ μ(x) > threshold]. -/
+def lowDegP_exists {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
+  ∃ x, restrictor x ∧ μ x > threshold
+
+/-- High-DegP for ∃: max{d: ∃x[girl(x) ∧ tall(x,d)]} > threshold.
+    This equals the tallest girl's height. -/
+def highDegP_exists {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) : Prop :=
+  ∃ d, (∃ x, restrictor x ∧ μ x ≥ d) ∧ d > threshold
+
+/-- Monotone collapse for ∃ + more: low ↔ high. -/
+theorem exists_more_scope_collapse {Entity D : Type*} [LinearOrder D]
+    (restrictor : Entity → Prop) (μ : Entity → D) (threshold : D) :
+    lowDegP_exists restrictor μ threshold ↔
+    highDegP_exists restrictor μ threshold := by
+  constructor
+  · rintro ⟨x, hR, hgt⟩
+    exact ⟨μ x, ⟨x, hR, le_refl _⟩, hgt⟩
+  · rintro ⟨d, ⟨x, hR, hge⟩, hgt⟩
+    exact ⟨x, hR, lt_of_lt_of_le hgt hge⟩
 
 -- ════════════════════════════════════════════════════
--- § 4. Kennedy–Heim Equivalence
+-- § 5. Presupposition Failure under Negation
+-- ════════════════════════════════════════════════════
+
+/-- The degree set {d : ¬(μ(x) ≥ d)} = {d : d > μ(x)}.
+    This set has no maximum on an unbounded scale.
+    Heim (p. 220): high-DegP over negation is ruled out because
+    max{d: ¬tall(m,d)} is undefined. -/
+def negatedDegreePredicate {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (a : Entity) : DegreePredicate D :=
+  fun d => ¬ (μ a ≥ d)
+
+/-- The negated degree set is exactly {d : d > μ(a)}. -/
+theorem negatedDegreePredicate_eq {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a : Entity) (d : D) :
+    negatedDegreePredicate μ a d ↔ d > μ a := by
+  simp [negatedDegreePredicate, not_le]
+
+-- ════════════════════════════════════════════════════
+-- § 6. Kennedy–Heim Equivalence
 -- ════════════════════════════════════════════════════
 
 /-- **Extensional equivalence**: Heim yields the same truth conditions
     as the consensus comparative semantics for simple comparatives.
-    They differ only in scope predictions with other operators. -/
+    They differ only on scope predictions with `exactly`-differentials,
+    `less`-comparatives, and intensional verbs (Heim §2.2–2.3). -/
 theorem heim_extensional_equivalence {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     heimComparativeWithMeasure μ a b ↔
       Semantics.Degree.Comparative.comparativeSem μ a b .positive :=
   Iff.rfl
+
+-- Backwards compatibility aliases
+@[deprecated erOp (since := "2026-03-21")]
+def heimComparative {D : Type*} [LinearOrder D]
+    (d1Max d2Max : D) : Prop := erOp d1Max d2Max
 
 end Semantics.Degree.DegreeAbstraction

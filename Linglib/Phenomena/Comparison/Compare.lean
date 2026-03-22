@@ -57,13 +57,13 @@ theorem schwarzschild_agrees {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
 -- § 2. Scope Divergence: Kennedy vs. Heim
 -- ════════════════════════════════════════════════════
 
-/-- The key divergence between Kennedy and Heim is scope.
-    Kennedy: -er is DP-internal → only narrow scope
-    Heim: -er is sentential → wide scope available
-
-    We can't formalize the scope prediction directly (it's about
-    LF movement), but we can state that Heim's denotation is
-    extensionally equivalent to the consensus in scope-free contexts. -/
+/-- Kennedy and Heim diverge on scope predictions. Heim's DegPs take
+    scope by QR (like DPs), while Kennedy's `-er` is DP-internal.
+    The scope differences are formalized in `Heim2001.lean`:
+    - Monotone collapse (∀/∃ + more): `exists_more_scope_collapse`
+    - Non-monotone divergence (exactly, less): `nonMonotoneData`
+    - Kennedy's generalization: DegP can't cross quantificational DPs
+    - Intensional verb scope: `intensionalVerbData` -/
 theorem heim_extensional_scope_free {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     Semantics.Degree.Comparative.comparativeSem μ a b .positive =
