@@ -593,7 +593,7 @@ theorem complement_size_ordering :
 inductive ForceHead where
   | Decl   -- declaratives (DeclP)
   | Int    -- wh-questions (IntP)
-  | Pol    -- yes/no-questions (PolP, @cite{holmberg-2003})
+  | Pol    -- yes/no-questions (PolP)
   | Excl   -- exclamatives (ExclP)
   | Imp    -- imperatives (ImpP)
   | Fin    -- embedded clauses (FinP = V-to-I)

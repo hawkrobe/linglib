@@ -50,7 +50,7 @@ Imp° are **finer** than @cite{rizzi-1997}'s inventory — they are all
 Fin° and Wh° do correspond to existing `Cat` heads (`.Fin` and `.C`
 respectively), but the five Force-level heads (Decl°, Int°, Pol°, Excl°,
 Imp°) are all at the Force level. Note: @cite{westergaard-2009}'s Pol°
-follows @cite{holmberg-2003} and is a CP-domain head for yes/no-questions,
+is a CP-domain head for yes/no-questions,
 NOT @cite{laka-1990}'s ΣP (which is `Cat.Pol` in linglib at F-value 2).
 -/
 
