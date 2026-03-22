@@ -1168,6 +1168,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.RSAHurford
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.Phonology.Typology
+import Linglib.Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000
 import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Clements1985
@@ -1847,6 +1848,7 @@ import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Harmony.Defs
+import Linglib.Theories.Phonology.Harmony.OT
 import Linglib.Theories.Phonology.Syllable.Defs
 import Linglib.Theories.Phonology.Syllable.Foot
 import Linglib.Theories.Phonology.Syllable.NaturalClass

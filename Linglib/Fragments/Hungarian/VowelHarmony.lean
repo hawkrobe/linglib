@@ -23,7 +23,7 @@ that push beyond a simple `triggerValue` analysis:
    backness must be lexically specified.
 
 2. **Vacillating stems** (§3.2.3.1): stems like *hotel* where speakers
-   accept both front and back suffixes. The `harmonizeSuffix` function
+   accept both front and back suffixes. The `spreadSuffix` function
    returns a single deterministic result and cannot model optionality.
 
 3. **Height-graded transparency** (§3.2.3): neutral vowels /i, í/ are
@@ -85,7 +85,7 @@ namespace Fragments.Hungarian.VowelHarmony
 
 open Theories.Phonology (Segment Feature FeatureVal)
 open Theories.Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
-  harmonizeOne harmonizeSuffix harmonyDomain spreadSuffix)
+  harmonizeOne harmonyDomain spreadSuffix)
 
 -- ============================================================================
 -- § 1: Vowel Inventory (7 short vowels)
@@ -454,7 +454,7 @@ theorem cél_no_trigger :
     mixed stems where back-harmonic vowels are followed by neutral vowels,
     especially /e/ (@cite{siptar-torkenczy-2000} §3.2.3.1, Table 11).
 
-    `harmonizeSuffix` is deterministic — it returns a single list. A
+    `spreadSuffix` is deterministic — it returns a single list. A
     vacillating stem like *hotel* would need to return a SET of possible
     outputs.
 

@@ -25,8 +25,6 @@ and halting at **blocker** (opaque) segments.
 - `triggerValue`: extract the harmony value from the domain (direction-aware)
 - `harmonizeOne`: apply harmony to a single segment
 - `spreadSuffix`: apply harmony through a suffix, halting at blockers
-- `harmonizeSuffix`: simple map version (no blocker awareness, backward compat)
-
 ## Instances
 
 - **Turkish palatal harmony**: [back] from last stem vowel → all suffix vowels
@@ -144,8 +142,8 @@ def harmonizeOne (sys : HarmonySystem) (val : Bool) (s : Segment) : Segment :=
     - **Target**: harmonized (feature value set) and spreading continues.
     - **Other** (transparent/inert): returned unchanged and spreading continues.
 
-    Without blockers (default), this is equivalent to `harmonizeSuffix`
-    (see `spreadSuffix_eq_harmonizeSuffix`). -/
+    Without blockers (default), this reduces to mapping `harmonizeOne`
+    over the suffix. -/
 def spreadSuffix (sys : HarmonySystem) (val : Bool)
     (suffix : List Segment) : List Segment :=
   match suffix with
@@ -155,20 +153,7 @@ def spreadSuffix (sys : HarmonySystem) (val : Bool)
     else harmonizeOne sys val s :: spreadSuffix sys val rest
 
 -- ============================================================================
--- § 6: Simple Suffix Map (backward compatible)
--- ============================================================================
-
-/-- Apply harmony to a suffix segment list by mapping `harmonizeOne` over
-    every segment. This is the simple version that does NOT halt at blockers.
-
-    For systems without blockers (the default), this is equivalent to
-    `spreadSuffix`. For systems WITH blockers, prefer `spreadSuffix`. -/
-def harmonizeSuffix (sys : HarmonySystem) (val : Bool)
-    (suffix : List Segment) : List Segment :=
-  suffix.map (harmonizeOne sys val)
-
--- ============================================================================
--- § 7: Properties
+-- § 6: Properties
 -- ============================================================================
 
 /-- Non-target segments are unchanged by harmonization. -/
@@ -176,16 +161,6 @@ theorem harmonizeOne_nontarget {sys : HarmonySystem} {val : Bool} {s : Segment}
     (h : sys.isTarget s = false) :
     harmonizeOne sys val s = s := by
   unfold harmonizeOne; simp [h]
-
-/-- Harmonizing an empty suffix returns an empty list. -/
-theorem harmonizeSuffix_nil (sys : HarmonySystem) (val : Bool) :
-    harmonizeSuffix sys val [] = [] := rfl
-
-/-- Suffix length is preserved by harmonization. -/
-theorem harmonizeSuffix_length (sys : HarmonySystem) (val : Bool)
-    (suffix : List Segment) :
-    (harmonizeSuffix sys val suffix).length = suffix.length := by
-  simp [harmonizeSuffix]
 
 /-- Spreading through an empty suffix returns an empty list. -/
 theorem spreadSuffix_nil (sys : HarmonySystem) (val : Bool) :
@@ -203,22 +178,6 @@ theorem spreadSuffix_length (sys : HarmonySystem) (val : Bool)
     split
     · rfl
     · simp [ih]
-
-/-- `spreadSuffix` agrees with `harmonizeSuffix` when there are no blockers.
-    This is the key backward-compatibility theorem: existing harmony systems
-    with `isBlocker := (λ _ => false)` (the default) get identical behavior
-    from both functions. -/
-theorem spreadSuffix_eq_harmonizeSuffix (sys : HarmonySystem) (val : Bool)
-    (suffix : List Segment) (h : ∀ s ∈ suffix, sys.isBlocker s = false) :
-    spreadSuffix sys val suffix = harmonizeSuffix sys val suffix := by
-  induction suffix with
-  | nil => rfl
-  | cons s rest ih =>
-    have hs : sys.isBlocker s = false := h s (.head _)
-    simp only [spreadSuffix, hs, Bool.false_eq_true, ↓reduceIte,
-               harmonizeSuffix, List.map_cons]
-    congr 1
-    exact ih (fun s' hs' => h s' (.tail _ hs'))
 
 /-- Helper: `takeWhile p l = l` when `p` holds for all elements. -/
 private theorem takeWhile_all {l : List Segment} {p : Segment → Bool}

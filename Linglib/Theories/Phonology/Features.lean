@@ -141,6 +141,10 @@ def Feature.allFeatures : List Feature :=
 
 theorem allFeatures_length : Feature.allFeatures.length = 26 := rfl
 
+/-- Every `Feature` constructor appears in `allFeatures`. -/
+theorem allFeatures_complete (f : Feature) : f ∈ Feature.allFeatures := by
+  cases f <;> simp [Feature.allFeatures]
+
 -- ============================================================================
 -- § 5: Segment Equality
 -- ============================================================================
@@ -149,5 +153,17 @@ theorem allFeatures_length : Feature.allFeatures.length = 26 := rfl
     Two segments are BEq-equal iff they agree on every feature value. -/
 instance : BEq Segment where
   beq s1 s2 := Feature.allFeatures.all λ f => s1.spec f == s2.spec f
+
+/-- Decidable equality on segments via exhaustive feature comparison.
+    Enables `native_decide` on segment-level goals and OT tableaux
+    over `List Segment` candidates. -/
+instance : DecidableEq Segment := fun s1 s2 =>
+  if h : (Feature.allFeatures.all fun f => s1.spec f == s2.spec f) = true
+  then isTrue (by
+    cases s1; cases s2; congr; funext f
+    exact eq_of_beq (List.all_eq_true.mp h f (allFeatures_complete f)))
+  else isFalse (fun heq => by
+    subst heq
+    exact h (List.all_eq_true.mpr fun f _ => beq_self_eq_true (s1.spec f)))
 
 end Theories.Phonology

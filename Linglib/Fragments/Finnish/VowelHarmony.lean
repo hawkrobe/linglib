@@ -41,7 +41,7 @@ open Theories.Phonology (Segment Feature FeatureVal)
 open Theories.Phonology.FeatureGeometry (GeomNode)
 open Theories.Phonology.Autosegmental (AutosegRep agreeAt)
 open Theories.Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
-  harmonizeOne harmonizeSuffix)
+  harmonizeOne spreadSuffix)
 
 -- ============================================================================
 -- § 1: Vowel Segments
