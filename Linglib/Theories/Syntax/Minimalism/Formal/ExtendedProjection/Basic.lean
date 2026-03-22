@@ -72,7 +72,7 @@ def catFeatures : Cat → CatFeatures
   | .D     => ⟨false, true⟩    -- [-V, +N]
   | .A     => ⟨true,  true⟩    -- [+V, +N]
   | .a     => ⟨true,  true⟩    -- [+V, +N] (adjectival categorizer, @cite{panagiotidis-2015})
-  | .P     => ⟨false, false⟩   -- [-V, -N]
+  | .P | .Place | .Path => ⟨false, false⟩   -- [-V, -N]
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 2: F-Value (Functional Level)
@@ -111,9 +111,9 @@ def catFeatures : Cat → CatFeatures
     Fin(F3) < Foc(F4) < Top(F5) < C(F6). -/
 def fValue : Cat → Nat
   | .V | .N | .A | .P          => 0   -- lexical (F0)
-  | .v | .n | .a | .Voice | .Appl => 1  -- first functional / categorizer (F1)
+  | .v | .n | .a | .Voice | .Appl | .Place => 1  -- first functional / categorizer (F1)
   | .T | .Q | .Neg | .Mod
-  | .Pol | .Asp | .Evid         => 2   -- specification domain (F2)
+  | .Pol | .Asp | .Evid | .Path => 2   -- specification domain (F2)
   | .Fin | .Num                 => 3   -- inner edge (F3)
   | .Foc | .D                   => 4   -- discourse / referential (F4)
   | .Top | .Rel                 => 5   -- topic field (F5, @cite{rizzi-1997}/2001)
@@ -173,7 +173,7 @@ def catFamily : Cat → CatFamily
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => .verbal
   | .N | .n | .Num | .Q | .D           => .nominal
   | .A | .a                              => .adjectival
-  | .P                                  => .adpositional
+  | .P | .Place | .Path                 => .adpositional
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 5b: Categorial Features — @cite{panagiotidis-2015}
@@ -217,7 +217,7 @@ def categorialFeatures : Cat → CategorialFeatures
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => ⟨false, true⟩   -- [V]
   | .N | .n | .Num | .Q | .D           => ⟨true, false⟩   -- [N]
   | .A | .a                              => ⟨true, true⟩    -- [N, V]
-  | .P                                  => ⟨false, false⟩  -- default (no features)
+  | .P | .Place | .Path                 => ⟨false, false⟩  -- default (no features)
 
 /-- Consistency under Panagiotidis's system: two categories share [N]/[V] features. -/
 def categorialConsistent (c1 c2 : Cat) : Bool :=
@@ -356,7 +356,7 @@ theorem f0_iff_lexical (c : Cat) :
 
 /-- F1+ is exactly the functional heads. -/
 theorem fpos_iff_functional (c : Cat) :
-    isFHead c = true ↔ (c = .v ∨ c = .n ∨ c = .a ∨ c = .Num ∨ c = .Q ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol ∨ c = .Asp ∨ c = .Evid) := by
+    isFHead c = true ↔ (c = .v ∨ c = .n ∨ c = .a ∨ c = .Place ∨ c = .Path ∨ c = .Num ∨ c = .Q ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol ∨ c = .Asp ∨ c = .Evid) := by
   cases c <;> simp [isFHead, fValue]
 
 -- Family consistency
@@ -394,7 +394,8 @@ theorem f0_corresponds_to_head :
 
 /-- Functional heads (F1+) extend the projection beyond the lexical head. -/
 theorem fhead_extends_projection :
-    isFHead .v ∧ isFHead .n ∧ isFHead .a ∧ isFHead .Num ∧ isFHead .Q ∧
+    isFHead .v ∧ isFHead .n ∧ isFHead .a ∧ isFHead .Place ∧ isFHead .Path ∧
+    isFHead .Num ∧ isFHead .Q ∧
     isFHead .D ∧ isFHead .T ∧ isFHead .C := by decide
 
 /-- The verbal and nominal spines are parallel at F0–F1: V ↔ N (lexical), v ↔ n (categorizer).
@@ -435,6 +436,32 @@ theorem categorizer_parallel :
 /-- The adjectival categorizer is in the adjectival family (parallel to v→verbal, n→nominal). -/
 theorem a_in_adjectival_family :
     catFamily .a = .adjectival := by decide
+
+/-- The adpositional chain P → Place → Path is category-consistent:
+    all share [-V, -N] features. @cite{dendikken-2010}: PlaceP (locational)
+    and PathP (directional) are functional projections above P. -/
+theorem adpositional_chain_consistent :
+    categoryConsistent .P .Place ∧ categoryConsistent .Place .Path := by decide
+
+/-- F-values increase along the adpositional chain: P(0) ≤ Place(1) ≤ Path(2).
+    Parallel to V(0) ≤ v(1) ≤ T(2) in the verbal domain. -/
+theorem adpositional_fvalues_monotone :
+    fValue .P ≤ fValue .Place ∧ fValue .Place ≤ fValue .Path := by decide
+
+/-- Place and Path are in the adpositional family. -/
+theorem place_path_adpositional :
+    catFamily .Place = .adpositional ∧ catFamily .Path = .adpositional := by decide
+
+/-- The adpositional EP spine [P, Place] is well-formed (locational PP). -/
+theorem locational_pp_wellformed :
+    allCategoryConsistent [Cat.P, Cat.Place] = true ∧
+    allFMonotone [Cat.P, Cat.Place] = true := by decide
+
+/-- The adpositional EP spine [P, Place, Path] is well-formed (directional PP).
+    @cite{dendikken-2010}: directional PPs project PathP above PlaceP. -/
+theorem directional_pp_wellformed :
+    allCategoryConsistent [Cat.P, Cat.Place, Cat.Path] = true ∧
+    allFMonotone [Cat.P, Cat.Place, Cat.Path] = true := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 8: Split-CP Extended Projection (@cite{rizzi-1997})

@@ -150,13 +150,21 @@ def disjunctionAnswerExamples : List DisjunctionAnswerDatum :=
 
     "Doesn't John walk?" asks the SAME question as "Does John walk?"
     but marks that the questioner expects "No" as the answer.
+
+    Note: `sameQuestion` encodes the G&S 1984 analysis. @cite{holmberg-2016}
+    argues that positive and negative polar questions are NOT the same question:
+    the negative question's primary proposition (the one the speaker expects)
+    is ¬p, producing different discourse effects and cross-linguistic answer
+    patterns. The value here reflects only the G&S view.
 -/
 structure NegativeInterrogativeDatum where
   /-- The positive form of the question -/
   positiveForm : String
   /-- The negative form of the question -/
   negativeForm : String
-  /-- Do they express the same question semantically? -/
+  /-- Do they express the same question semantically?
+      Note: this is the @cite{groenendijk-stokhof-1984} analysis;
+      @cite{holmberg-2016} argues they differ. -/
   sameQuestion : Bool
   /-- What does "No" mean as an answer to the negative form? -/
   noMeaning : String

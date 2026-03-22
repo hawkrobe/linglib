@@ -74,6 +74,7 @@ def dutchContrast : ProductionDatum where
     | .verumFocus => 0
     | .other => 5
     | .unmarked => 7
+    | .polarityReversal => 0
 
 /-- Dutch correction: 63% particle, 5% VF, 7% other, 25% unmarked -/
 def dutchCorrection : ProductionDatum where
@@ -84,6 +85,7 @@ def dutchCorrection : ProductionDatum where
     | .verumFocus => 5
     | .other => 7
     | .unmarked => 25
+    | .polarityReversal => 0
 
 /-- German contrast: 0% particle, 82% VF, 0% other, 18% unmarked -/
 def germanContrast : ProductionDatum where
@@ -94,6 +96,7 @@ def germanContrast : ProductionDatum where
     | .verumFocus => 82
     | .other => 0
     | .unmarked => 18
+    | .polarityReversal => 0
 
 /-- German correction: 0% particle, 78% VF, 8% other, 14% unmarked -/
 def germanCorrection : ProductionDatum where
@@ -104,6 +107,7 @@ def germanCorrection : ProductionDatum where
     | .verumFocus => 78
     | .other => 8
     | .unmarked => 14
+    | .polarityReversal => 0
 
 def allProductionData : List ProductionDatum :=
   [dutchContrast, dutchCorrection, germanContrast, germanCorrection]

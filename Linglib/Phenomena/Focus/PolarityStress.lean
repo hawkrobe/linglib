@@ -26,7 +26,7 @@ Polarity stress targets truth/polarity rather than content alternatives.
 
 - `ProsodicExhaustivity.lean` - Prosody effects on exhaustive interpretation
 - `Basic.lean` - General focus phenomena (only, even, contrast)
-- `Questions/NegativeQuestions.lean` - Negative question interpretation
+- `Questions/Studies/RomeroHan2004.lean` - Negative question interpretation (@cite{romero-han-2004})
 
 -/
 

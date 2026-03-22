@@ -34,6 +34,8 @@ inductive Cat where
   | v     -- light verb
   | n     -- nominal categorizer / gender (little-n, @cite{marantz-2001}; Distributed Morphology)
   | a     -- adjectival categorizer (little-a, @cite{panagiotidis-2015}; DegP complement)
+  | Place -- locational head (@cite{dendikken-2010}; PlaceP, F1 in adpositional EP)
+  | Path  -- directional head (@cite{dendikken-2010} @cite{svenonius-2010}; PathP, F2 in adpositional EP)
   | Num   -- number (@cite{ritter-1991}; NumP between nP and QP/DP)
   | Q     -- quantity / classifier (@cite{borer-2005}; QP between NumP and DP)
   | Voice -- Voice head (@cite{kratzer-1996}; @cite{schaefer-2008})

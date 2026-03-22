@@ -27,6 +27,25 @@ In short: "It is for sure that we should add p to the CG."
    - Asserting ¬FOR-SURE-CG(p) (PI) implicates belief in p
    - Asserting FOR-SURE-CG(¬p) (NI) implicates belief in ¬p
 
+## Relationship to @cite{holmberg-2016}
+
+@cite{romero-han-2004} and @cite{holmberg-2016} are complementary analyses of
+negative polar questions:
+
+- **R&H (this file)**: explains the *structural source of bias* — why preposed
+  negation forces an epistemic expectation. VERUM is the mechanism.
+- **Holmberg (AnsweringSystems.lean)**: explains *cross-linguistic answer variation* —
+  why "yes" means different things in Japanese vs English. The [±Pol] feature and
+  negation height are the mechanisms.
+
+Both agree that negative questions denote an unbalanced partition (the primary
+proposition is ¬p, not p). R&H derives this from VERUM scope; Holmberg derives
+it from the interaction of negation height with [±Pol] valuation.
+
+See: `Theories/Semantics/Questions/AnsweringSystems.lean` (answering systems, negation height),
+     `Theories/Syntax/Minimalism/Polarity.lean` ([±Pol] feature),
+     `Phenomena/Questions/Studies/Holmberg2016.lean` (bridge theorems).
+
 -/
 
 import Linglib.Theories.Semantics.Questions.Denotation.Basic

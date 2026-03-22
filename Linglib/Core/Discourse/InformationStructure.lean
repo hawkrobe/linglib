@@ -246,6 +246,10 @@ inductive PolarityMarkingStrategy where
   | particle
   /-- Pitch accent on the finite verb (@cite{hohle-1992} Verum focus) -/
   | verumFocus
+  /-- Polarity-reversing particle: affirms [+Pol] while contradicting a
+      negative context (e.g., German *doch*, Swedish *jo*, French *si*;
+      @cite{holmberg-2016}) -/
+  | polarityReversal
   /-- Other strategy (e.g., pre-utterance particle, intonation pattern) -/
   | other
   /-- No overt polarity marking -/

@@ -48,6 +48,7 @@ When neither departure is present, only indicative mood is possible.
 
 namespace Phenomena.Complementation.Studies.Grano2024
 
+open Core.Discourse (GramMood MoodEffect)
 open Semantics.Mood
 open Semantics.Attitudes.RationalAttitude
 

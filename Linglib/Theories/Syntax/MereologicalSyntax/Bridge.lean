@@ -51,56 +51,70 @@ theorem SynObj.size_pos (t : SynObj) : 0 < t.size := by
   cases t <;> simp [size] <;> omega
 
 -- ════════════════════════════════════════════════════
--- § 2. Pre-order Flattening
+-- § 2. Embedding
 -- ════════════════════════════════════════════════════
 
-/-- Labels in pre-order traversal. -/
-def SynObj.preorderLabels : SynObj → List MLabel
-  | .leaf l => [l]
-  | .sub₁ l one => l :: one.preorderLabels
-  | .sub₁₂ l one two => l :: one.preorderLabels ++ two.preorderLabels
-
-/-- 1-part edges as (parent, child) index pairs. -/
-def SynObj.onePartEdges (offset : Nat) : SynObj → List (Nat × Nat)
-  | .leaf _ => []
-  | .sub₁ _ one =>
-    (offset, offset + 1) :: one.onePartEdges (offset + 1)
-  | .sub₁₂ _ one two =>
-    (offset, offset + 1) :: one.onePartEdges (offset + 1) ++
-    two.onePartEdges (offset + 1 + one.size)
-
-/-- 2-part edges as (parent, child) index pairs. -/
-def SynObj.twoPartEdges (offset : Nat) : SynObj → List (Nat × Nat)
-  | .leaf _ => []
-  | .sub₁ _ one => one.twoPartEdges (offset + 1)
-  | .sub₁₂ _ one two =>
-    let twoOff := offset + 1 + one.size
-    (offset, twoOff) :: one.twoPartEdges (offset + 1) ++ two.twoPartEdges twoOff
-
--- ════════════════════════════════════════════════════
--- § 3. Embedding
--- ════════════════════════════════════════════════════
+/-- Embed a `SynObj` tree into a `SynGraph MLabel`, with a proof that
+    `numNodes > 0`. Used by `toSynGraph` which extracts the graph. -/
+def SynObj.toSynGraphAux :
+    SynObj → { g : SynGraph MLabel // 0 < g.numNodes }
+  | .leaf l =>
+    ⟨{ numNodes := 1
+       label := fun _ => l
+       onePart := fun _ => none
+       twoPart := fun _ => none }, Nat.one_pos⟩
+  | .sub₁ l one =>
+    let ⟨g, hg⟩ := one.toSynGraphAux
+    ⟨{ numNodes := 1 + g.numNodes
+       label := fun ⟨i, hi⟩ =>
+         if i = 0 then l else g.label ⟨i - 1, by omega⟩
+       onePart := fun ⟨i, hi⟩ =>
+         if i = 0 then some ⟨1, by omega⟩
+         else (g.onePart ⟨i - 1, by omega⟩).map
+           (fun ⟨j, hj⟩ => ⟨j + 1, by omega⟩)
+       twoPart := fun ⟨i, hi⟩ =>
+         if i = 0 then none
+         else (g.twoPart ⟨i - 1, by omega⟩).map
+           (fun ⟨j, hj⟩ => ⟨j + 1, by omega⟩)
+       }, by show 0 < 1 + g.numNodes; omega⟩
+  | .sub₁₂ l one two =>
+    let ⟨g₁, hg₁⟩ := one.toSynGraphAux
+    let ⟨g₂, hg₂⟩ := two.toSynGraphAux
+    ⟨{ numNodes := 1 + g₁.numNodes + g₂.numNodes
+       label := fun ⟨i, hi⟩ =>
+         if i = 0 then l
+         else if h : i - 1 < g₁.numNodes then g₁.label ⟨i - 1, h⟩
+         else g₂.label ⟨i - 1 - g₁.numNodes, by omega⟩
+       onePart := fun ⟨i, hi⟩ =>
+         if i = 0 then some ⟨1, by omega⟩
+         else if h : i - 1 < g₁.numNodes then
+           (g₁.onePart ⟨i - 1, h⟩).map
+             (fun ⟨j, hj⟩ => ⟨j + 1, by omega⟩)
+         else
+           (g₂.onePart ⟨i - 1 - g₁.numNodes, by omega⟩).map
+             (fun ⟨j, hj⟩ => ⟨j + 1 + g₁.numNodes, by omega⟩)
+       twoPart := fun ⟨i, hi⟩ =>
+         if i = 0 then some ⟨1 + g₁.numNodes, by omega⟩
+         else if h : i - 1 < g₁.numNodes then
+           (g₁.twoPart ⟨i - 1, h⟩).map
+             (fun ⟨j, hj⟩ => ⟨j + 1, by omega⟩)
+         else
+           (g₂.twoPart ⟨i - 1 - g₁.numNodes, by omega⟩).map
+             (fun ⟨j, hj⟩ => ⟨j + 1 + g₁.numNodes, by omega⟩)
+       }, by show 0 < 1 + g₁.numNodes + g₂.numNodes; omega⟩
 
 /-- Embed a `SynObj` tree into a `SynGraph MLabel`.
 
     Node indexing follows pre-order: root = 0, then 1-part subtree,
     then 2-part subtree. The result satisfies `isTree` (acyclic,
-    in-degree ≤ 1). -/
-def SynObj.toSynGraph (t : SynObj) : SynGraph MLabel :=
-  let n := t.size
-  let labels := t.preorderLabels
-  let ones := t.onePartEdges 0
-  let twos := t.twoPartEdges 0
-  { numNodes := n
-    label := λ i => labels.getD i.val .N
-    onePart := λ i =>
-      match ones.find? (λ p => p.1 == i.val) with
-      | some (_, c) => if h : c < n then some ⟨c, h⟩ else none
-      | none => none
-    twoPart := λ i =>
-      match twos.find? (λ p => p.1 == i.val) with
-      | some (_, c) => if h : c < n then some ⟨c, h⟩ else none
-      | none => none }
+    in-degree ≤ 1).
+
+    The definition is compositional: each case builds the graph from
+    subgraphs, making structural induction possible. -/
+def SynObj.toSynGraph (t : SynObj) : SynGraph MLabel := t.toSynGraphAux.val
+
+theorem SynObj.toSynGraph_pos (t : SynObj) : 0 < t.toSynGraph.numNodes :=
+  t.toSynGraphAux.property
 
 -- ════════════════════════════════════════════════════
 -- § 4. Graph-Based AL Check (via labels)
@@ -114,9 +128,10 @@ def SynObj.toSynGraph (t : SynObj) : SynGraph MLabel :=
     to the tree-based `angularLocalityOK`. -/
 def SynObj.alOK_via_graph (l : MLabel) (t : SynObj) : Bool :=
   let g := t.toSynGraph
+  have hroot : 0 < g.numNodes := t.toSynGraph_pos
   (List.range g.numNodes).any λ i =>
     if h : i < g.numNodes then
-      g.label ⟨i, h⟩ == l && g.satisfiesAL ⟨i, h⟩ ⟨0, t.size_pos⟩
+      g.label ⟨i, h⟩ == l && g.satisfiesAL ⟨i, h⟩ ⟨0, hroot⟩
     else false
 
 -- ════════════════════════════════════════════════════
@@ -154,7 +169,7 @@ theorem rollup_isTree :
 
 theorem rollup_compLine :
     t_rollup.compLine =
-    t_rollup.toSynGraph.onePartChain ⟨0, t_rollup.size_pos⟩ := by native_decide
+    t_rollup.toSynGraph.onePartChain ⟨0, by decide⟩ := by native_decide
 
 -- ────────────────────────────────────────────────────
 -- (c) Cross-dimensional (@cite{adger-2025} p. 95)
@@ -179,7 +194,7 @@ theorem crossdim_isTree :
 
 theorem crossdim_compLine :
     t_crossdim.compLine =
-    t_crossdim.toSynGraph.onePartChain ⟨0, t_crossdim.size_pos⟩ := by native_decide
+    t_crossdim.toSynGraph.onePartChain ⟨0, by decide⟩ := by native_decide
 
 -- ────────────────────────────────────────────────────
 -- (d) Classifier structure: D ──1──▶ Cl ──1──▶ N
@@ -189,7 +204,7 @@ private def t_classifier := SynObj.sub₁ .D (.sub₁ .Cl (.leaf .N))
 
 theorem classifier_compLine :
     t_classifier.compLine =
-    t_classifier.toSynGraph.onePartChain ⟨0, t_classifier.size_pos⟩ := by native_decide
+    t_classifier.toSynGraph.onePartChain ⟨0, by decide⟩ := by native_decide
 
 theorem classifier_isTree :
     t_classifier.toSynGraph.isTree = true := by native_decide
@@ -208,6 +223,21 @@ end BridgeTests
     TODO: proof by induction on `SynObj`, showing that the pre-order
     embedding preserves within-dimension chains. -/
 theorem al_bridge (t : SynObj) (l : MLabel) :
-    angularLocalityOK l t = t.alOK_via_graph l := by sorry
+    angularLocalityOK l t = t.alOK_via_graph l := by
+  induction t with
+  | leaf l' =>
+    simp only [angularLocalityOK, SynObj.onePartChainObjs, List.any_nil]
+    simp only [SynObj.alOK_via_graph, SynObj.toSynGraph, SynObj.toSynGraphAux,
+               SynGraph.satisfiesAL, SynGraph.chain]
+    simp
+  | sub₁ l' one ih =>
+    -- angularLocalityOK l (.sub₁ l' one) reduces definitionally to:
+    --   labelWithinDimPartOf l one || angularLocalityOK l one
+    show (labelWithinDimPartOf l one || angularLocalityOK l one) =
+         SynObj.alOK_via_graph l (.sub₁ l' one)
+    rw [ih]
+    -- Goal: labelWithinDimPartOf l one || one.alOK_via_graph l = (.sub₁ l' one).alOK_via_graph l
+    sorry
+  | sub₁₂ l' one two ih₁ ih₂ => sorry
 
 end MereologicalSyntax

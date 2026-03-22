@@ -37,17 +37,19 @@ def verumFocus : PolarityMarkingEntry where
   correctionOk := true
   strategy := .verumFocus
 
-/-- *doch* — pre-utterance correction particle.
-    Available only in corrections, NOT sentence-internal in the sense of
-    @cite{turco-braun-dimroth-2014}: it precedes the utterance rather than appearing
-    within the VP/middle field. -/
+/-- *doch* — polarity-reversing correction particle (@cite{holmberg-2016}).
+    Assigns [+Pol] while contradicting a negative context. Available only
+    in corrections, NOT sentence-internal in the sense of
+    @cite{turco-braun-dimroth-2014}: it precedes the utterance rather than
+    appearing within the VP/middle field. Cross-linguistically the same
+    class as Swedish *jo* and French *si*. -/
 def dochPreUtterance : PolarityMarkingEntry where
   label := "doch (pre-utterance)"
   form := some "doch"
   sentenceInternal := false
   contrastOk := false
   correctionOk := true
-  strategy := .other
+  strategy := .polarityReversal
 
 def allPolarityMarkings : List PolarityMarkingEntry := [verumFocus, dochPreUtterance]
 
@@ -63,6 +65,6 @@ theorem doch_form : dochPreUtterance.form = some "doch" := rfl
 theorem doch_not_sentenceInternal : dochPreUtterance.sentenceInternal = false := rfl
 theorem doch_not_contrastOk : dochPreUtterance.contrastOk = false := rfl
 theorem doch_correctionOk : dochPreUtterance.correctionOk = true := rfl
-theorem doch_strategy : dochPreUtterance.strategy = .other := rfl
+theorem doch_strategy : dochPreUtterance.strategy = .polarityReversal := rfl
 
 end Fragments.German.PolarityMarking

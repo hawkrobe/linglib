@@ -40,6 +40,8 @@ inductive EPSemanticType where
     changes the denotation from ⟨e,t⟩ to a closed type. -/
 def epSemanticType : Cat → EPSemanticType
   | .V | .N | .A | .P => .property       -- F0: property-denoting
+  | .Place              => .intermediate   -- F1: locational (@cite{dendikken-2010})
+  | .Path               => .intermediate   -- F2: directional (@cite{dendikken-2010})
   | .v                 => .intermediate   -- F1: event quantification domain
   | .n                 => .intermediate   -- F1: categorizer (gender/class, @cite{marantz-2001})
   | .a                 => .intermediate   -- F1: adjectival categorizer (@cite{panagiotidis-2015})
@@ -128,6 +130,16 @@ def adjectivalEP : List Cat := [.A, .a]
     E.g., "consider [SC him happy]" -/
 def smallClauseAdjectivalEP : List Cat := [.A]
 
+/-- Locational adpositional EP: P → Place.
+    @cite{dendikken-2010}: locational PPs project PlaceP but not PathP.
+    E.g., Dutch preP *op de heuvel* 'on the hill' (locational). -/
+def locationalPP : List Cat := [.P, .Place]
+
+/-- Directional adpositional EP: P → Place → Path.
+    @cite{dendikken-2010}: directional PPs project PathP above PlaceP.
+    E.g., Dutch postP *de heuvel op* 'onto the hill' (directional). -/
+def directionalPP : List Cat := [.P, .Place, .Path]
+
 /-- Infinitival EP: V → v → T (no C).
     E.g., "want [to leave]" — truncated at T, no complementizer. -/
 def infinitivalEP : List Cat := [.V, .v, .T]
@@ -137,7 +149,8 @@ def isTruncated (spine : List Cat) : Bool :=
   match spine.head?.map catFamily with
   | some .verbal     => spine.length < fullVerbalEP.length
   | some .nominal    => spine.length < fullNominalEP.length
-  | _                => false  -- A and P have no standard extended EP
+  | some .adpositional => spine.length < 3  -- full adpositional EP: [P, Place, Path]
+  | _                => false  -- A has no standard extended EP
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 5: Argument Domain (Grimshaw / Anand et al.)
@@ -307,6 +320,34 @@ theorem functional_heads_no_theta :
 theorem lexical_heads_assign_theta :
     canAssignTheta .V = true ∧ canAssignTheta .N = true ∧
     canAssignTheta .A = true ∧ canAssignTheta .P = true := by decide
+
+/-- Place and Path are functional heads: they do NOT assign theta roles. -/
+theorem place_path_no_theta :
+    canAssignTheta .Place = false ∧ canAssignTheta .Path = false := by decide
+
+/-- P is EP-internal to PlaceP: same [-V,-N], F0 < F1.
+    @cite{dendikken-2010}: P is the lexical complement of Place. -/
+theorem p_internal_to_place : isEPInternal .P .Place = true := by decide
+
+/-- PlaceP is EP-internal to PathP: same [-V,-N], F1 < F2.
+    @cite{dendikken-2010}: Place is the complement of Path in directional PPs. -/
+theorem place_internal_to_path : isEPInternal .Place .Path = true := by decide
+
+/-- Locational PP EP is well-formed: consistent and monotone. -/
+theorem locational_pp_ep_wellformed :
+    allCategoryConsistent locationalPP = true ∧
+    allFMonotone locationalPP = true := by decide
+
+/-- Directional PP EP is well-formed: consistent and monotone. -/
+theorem directional_pp_ep_wellformed :
+    allCategoryConsistent directionalPP = true ∧
+    allFMonotone directionalPP = true := by decide
+
+/-- A locational PP [P, Place] is truncated relative to the full
+    adpositional EP [P, Place, Path]. @cite{dendikken-2010}: locational
+    PPs lack the directional PathP layer. -/
+theorem locational_pp_truncated :
+    isTruncated locationalPP = true := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 7: Well-Formedness of Split-CP Spines

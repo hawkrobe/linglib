@@ -71,7 +71,19 @@ def kke : ParticleEntry :=
   , layer := .sap
   , inSubordinated := false, inQuasiSub := false, inMatrix := true }
 
-def allParticles : List ParticleEntry := [ka, no_, koto, kke]
+/-- *daroo* (だろう) — conjectural/epistemic copula at PerspP layer.
+    With declarative complement: "x thinks p" (⟦daroo⟧({p})(x) = INQ_x ⊆ {p}↓).
+    With interrogative complement: "x wonders Q" (⟦daroo⟧(Q)(x) = INQ_x ⊆ Q).
+    The dual reading arises from the absence of an ignorance component,
+    unlike wonder (@cite{roelofsen-uegaki-2020}, @cite{uegaki-roelofsen-2018}).
+    Appears in matrix and quasi-subordinated contexts but not in subordinated
+    interrogatives (which use *ka*). -/
+def daroo : ParticleEntry :=
+  { form := "だろう", romaji := "daroo"
+  , layer := .perspP
+  , inSubordinated := false, inQuasiSub := true, inMatrix := true }
+
+def allParticles : List ParticleEntry := [ka, no_, koto, kke, daroo]
 
 end Fragments.Japanese.Particles
 

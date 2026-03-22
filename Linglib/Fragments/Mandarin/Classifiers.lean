@@ -95,39 +95,10 @@ def ke : ClassifierEntry :=
 -- Inventory
 -- ============================================================================
 
-def allClassifiers : List ClassifierEntry :=
+def sortalClassifiers : List ClassifierEntry :=
   [ge, zhi, ben, liang, duo, wei, tiao, zhang, ba, tou, ke]
 
 def defaultClassifier : ClassifierEntry := ge
-
-/-- Look up a classifier by form. -/
-def lookup (form : String) : Option ClassifierEntry :=
-  allClassifiers.find? (·.form == form)
-
--- ============================================================================
--- Verification
--- ============================================================================
-
-/-- 个 is the default classifier. -/
-theorem ge_is_default : ge.isDefault = true := rfl
-
-/-- 只 encodes animacy. -/
-theorem zhi_encodes_animacy : zhi.encodes .animacy = true := by native_decide
-
-/-- 位 encodes humanness. -/
-theorem wei_encodes_humanness : wei.encodes .humanness = true := by native_decide
-
-/-- 本 encodes shape. -/
-theorem ben_encodes_shape : ben.encodes .shape = true := by native_decide
-
-/-- All non-default classifiers have at least one semantic parameter. -/
-theorem specific_classifiers_have_semantics :
-    (allClassifiers.filter (!·.isDefault)).all (·.semantics.length > 0) = true := by
-  native_decide
-
-/-- No classifier is mensural (all are sortal in this fragment). -/
-theorem all_sortal :
-    allClassifiers.all (!·.isMensural) = true := by native_decide
 
 -- ============================================================================
 -- Container / Measure classifiers (@cite{wang-sun-2026})
@@ -166,9 +137,52 @@ def xiang : ClassifierEntry :=
 def containerClassifiers : List ClassifierEntry :=
   [bei, ping, wan, xiang]
 
+-- ============================================================================
+-- Full inventory
+-- ============================================================================
+
+def allClassifiers : List ClassifierEntry :=
+  sortalClassifiers ++ containerClassifiers
+
+/-- Look up a classifier by form. -/
+def lookup (form : String) : Option ClassifierEntry :=
+  allClassifiers.find? (·.form == form)
+
+-- ============================================================================
+-- Verification
+-- ============================================================================
+
+/-- 个 is the default classifier. -/
+theorem ge_is_default : ge.isDefault = true := rfl
+
+/-- 只 encodes animacy. -/
+theorem zhi_encodes_animacy : zhi.encodes .animacy = true := by native_decide
+
+/-- 位 encodes humanness. -/
+theorem wei_encodes_humanness : wei.encodes .humanness = true := by native_decide
+
+/-- 本 encodes shape. -/
+theorem ben_encodes_shape : ben.encodes .shape = true := by native_decide
+
+/-- All non-default classifiers have at least one semantic parameter. -/
+theorem specific_classifiers_have_semantics :
+    (allClassifiers.filter (!·.isDefault)).all (·.semantics.length > 0) = true := by
+  native_decide
+
+/-- Sortal classifiers are not mensural. -/
+theorem sortal_classifiers_not_mensural :
+    sortalClassifiers.all (!·.isMensural) = true := by native_decide
+
+/-- Container classifiers CAN be mensural (structure determines reading). -/
 theorem bei_is_mensural : bei.isMensural = true := rfl
+
+theorem container_classifiers_are_mensural :
+    containerClassifiers.all (·.isMensural) = true := by native_decide
 
 theorem container_classifiers_have_semantics :
     containerClassifiers.all (·.semantics.length > 0) = true := by native_decide
+
+/-- Full inventory: 11 sortal + 4 container = 15 classifiers. -/
+theorem inventory_size : allClassifiers.length = 15 := by native_decide
 
 end Fragments.Mandarin.Classifiers

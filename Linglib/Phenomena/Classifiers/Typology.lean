@@ -228,7 +228,7 @@ theorem agreement_divides_types :
 
 /-- Mandarin inventory is derived from the classifier lexicon. -/
 theorem mandarin_inventory_from_fragment :
-    mandarin.inventorySize = 11 := by native_decide
+    mandarin.inventorySize = 15 := by native_decide
 
 /-- Japanese inventory is derived from the classifier lexicon. -/
 theorem japanese_inventory_from_fragment :

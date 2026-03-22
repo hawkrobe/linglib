@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
+import Linglib.Theories.Semantics.Attitudes.EmbeddingConstraints
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Questions.LeftPeriphery
 
@@ -34,8 +35,9 @@ type-shift p → {p}. This **question-oriented theory** provides:
 ## Linglib Integration
 
 This file imports and connects existing infrastructure:
-- `CDistributivity.lean`: C-distributivity, P-to-Q Entailment, fictitious predicates,
-  Veridical Uniformity
+- `CDistributivity.lean`: C-distributivity definition and proofs
+- `EmbeddingConstraints.lean`: P-to-Q Entailment, Strawson C-dist,
+  Veridical Uniformity, fictitious predicates
 - `Preferential.lean`: NVP classification, TSP, highlighting, triviality theorems
 - `LeftPeriphery.lean`: SelectionClass derivation
 -/
@@ -43,6 +45,7 @@ This file imports and connects existing infrastructure:
 namespace Phenomena.Questions.Studies.Uegaki2022
 
 open Semantics.Attitudes.CDistributivity
+open Semantics.Attitudes.EmbeddingConstraints
 open Semantics.Attitudes.Preferential hiding QuestionDen
 
 -- ============================================================================
@@ -70,6 +73,23 @@ theorem constraint_hierarchy_cdist_ptoq {W E : Type*}
     (hCD : IsCDistributive V_prop V_question) :
     IsPtoQEntailing V_question :=
   cDistributive_implies_ptoq V_prop V_question hCD
+
+/-- A C-distributive `PreferentialPredicate` satisfies P-to-Q Entailment
+    (for any fixed comparison class C).
+
+    This closes the end-to-end chain for Class 2 and Class 3 NVPs:
+    `attitudeBuilder → isCDistributive → IsPtoQEntailing`.
+    Class 1 NVPs (non-C-distributive) require individual P-to-Q proofs
+    (e.g., `wonder_satisfies_ptoq`, `daroo_satisfies_ptoq`, `care_satisfies_ptoq`). -/
+theorem preferential_cDist_implies_ptoq {W E : Type*}
+    (V : Semantics.Attitudes.Preferential.PreferentialPredicate W E)
+    (hCD : V.isCDistributive)
+    (C : QuestionDen W) :
+    IsPtoQEntailing (fun x Q (_w : W) => V.questionSemantics x Q C) := by
+  intro x Q w p hp hSingleton
+  have ⟨q, hq_mem, hq_holds⟩ := (hCD x [p] C w).mp hSingleton
+  simp only [List.mem_singleton] at hq_mem
+  exact (hCD x Q C w).mpr ⟨p, hp, hq_mem ▸ hq_holds⟩
 
 -- ============================================================================
 -- B. NVP Classification Matches Book Predictions
@@ -222,7 +242,7 @@ but satisfy P-to-Q Entailment.
 
 |                          | *shknow | *knopinion | care | mõtlema | daroo | wonder | magtaka |
 |--------------------------|---------|------------|------|---------|-------|--------|---------|
-| Veridical Uniformity     | ✓       | ✓          | ✗    | ✓       | ✓     | ✗      | ✗       |
+| Veridical Uniformity     | ✓       | ✓          | ✗    | ✓       | ✓     | NA     | ✗       |
 | C-distributivity         | ✓       | ✓          | ✗    | ✗       | ✗     | ✗      | ✗       |
 | Strawson C-distributivity| ✓       | ✓          | ✓    | ✗       | ✗     | ✗      | ✗       |
 | P-to-Q Entailment        | ✓       | ✓          | ✓    | ✓       | ✓     | ✓      | ✗       |
@@ -232,61 +252,94 @@ while ruling out all three fictitious predicates (*shknow, *knopinion).
 C-distributivity over-rules-out care, mõtlema, daroo, wonder.
 -/
 
-/-- Cross-linguistic embedding datum, encoding all four constraints
-    from @cite{uegaki-2022} Table 8.2. -/
+/-- Cross-linguistic embedding datum from @cite{uegaki-2022} Table 8.2.
+
+Fields `satisfiesVU`, `satisfiesCDist`, `satisfiesStrawsonCDist`, `satisfiesPtoQ`
+encode whether the predicate **satisfies** each constraint (not whether the
+constraint makes a correct prediction). This aligns with the theory-level
+definitions (`IsPtoQEntailing`, `IsCDistributive`, etc.) — e.g.,
+`shknow_violates_ptoq` proves *shknow does NOT satisfy P-to-Q Entailment,
+so `satisfiesPtoQ = false` for *shknow.
+
+The paper's ✓/✗ table encodes "correct prediction" — a different concept.
+For attested predicates, correct prediction = satisfies. For fictitious
+predicates, correct prediction = violates (the constraint correctly rules
+them out). Use `correctPrediction` to derive the paper's table. -/
 structure CrossLingDatum where
   predicate : String
   language : String
   takesDecl : Bool
   takesInterrog : Bool
-  veridicalUniformity : Bool
-  cDistributive : Bool
-  strawsonCDist : Bool
-  ptoqEntailing : Bool
-  attested : Bool  -- false for fictitious predicates
+  satisfiesVU : Bool           -- satisfies Veridical Uniformity
+  satisfiesCDist : Bool        -- satisfies C-distributivity
+  satisfiesStrawsonCDist : Bool -- satisfies Strawson C-distributivity
+  satisfiesPtoQ : Bool         -- satisfies P-to-Q Entailment
+  attested : Bool              -- false for fictitious predicates
   deriving Repr, BEq
 
-/-- Full Table 8.2 data from @cite{uegaki-2022}, including fictitious predicates. -/
+/-- Does a constraint make a correct prediction about this predicate?
+
+For attested predicates: correct iff the predicate satisfies the constraint
+(the constraint allows an actually-existing predicate).
+For fictitious predicates: correct iff the predicate violates the constraint
+(the constraint rules out a non-existent predicate). -/
+def CrossLingDatum.correctPrediction (d : CrossLingDatum) (satisfies : Bool) : Bool :=
+  if d.attested then satisfies else !satisfies
+
+/-- Full Table 8.2 data from @cite{uegaki-2022}, including fictitious predicates.
+
+Values use "satisfies" semantics:
+- *shknow, *knopinion: violate ALL four constraints (all false)
+- wonder: VU is NA in the paper (VU applies to responsive predicates;
+  wonder is rogative). Encoded as `satisfiesVU = true` because
+  `IsVeridicallyUniform` is vacuously satisfied: both `IsVeridicalDecl`
+  and `IsVeridicalInterrog` hold vacuously when ⟦wonder⟧({p}↓)(x) is
+  always false, making the biconditional trivially true. -/
 def table8_2 : List CrossLingDatum := [
-  -- Fictitious (unattested)
-  ⟨"*shknow",   "—",        true, true, true,  true,  true,  true,  false⟩,
-  ⟨"*knopinion","—",        true, true, true,  true,  true,  true,  false⟩,
+  -- Fictitious (unattested): violate all constraints
+  ⟨"*shknow",   "—",        true, true, false, false, false, false, false⟩,
+  ⟨"*knopinion","—",        true, true, false, false, false, false, false⟩,
   -- Attested
   ⟨"care",      "English",  true, true, false, false, true,  true,  true⟩,
   ⟨"mõtlema",   "Estonian", true, true, true,  false, false, true,  true⟩,
   ⟨"daroo",     "Japanese", true, true, true,  false, false, true,  true⟩,
-  ⟨"wonder",    "English",  false,true, false, false, false, true,  true⟩,
+  ⟨"wonder",    "English",  false,true, true,  false, false, true,  true⟩,
   ⟨"magtaka",   "Tagalog",  true, true, false, false, false, false, true⟩
 ]
 
-/-- All predicates that satisfy C-distributivity also satisfy P-to-Q Entailment. -/
-theorem cdist_subset_ptoq_empirical :
-    table8_2.all (fun d => !d.cDistributive || d.ptoqEntailing) = true := by
+/-- C-distributivity implies P-to-Q Entailment across all table predicates. -/
+theorem cdist_implies_ptoq_empirical :
+    table8_2.all (fun d => !d.satisfiesCDist || d.satisfiesPtoQ) = true := by
   native_decide
 
 /-- P-to-Q Entailment is strictly weaker: some attested predicates satisfy P-to-Q
     but not C-distributivity (care, mõtlema, daroo, wonder). -/
 theorem ptoq_strictly_weaker :
-    (table8_2.filter (fun d => d.attested && d.ptoqEntailing && !d.cDistributive)).length > 0 := by
+    (table8_2.filter (fun d =>
+      d.attested && d.satisfiesPtoQ && !d.satisfiesCDist)).length > 0 := by
   native_decide
 
-/-- C-distributivity implies Strawson C-distributivity (Table 8.2 hierarchy). -/
-theorem cdist_subset_strawson_empirical :
-    table8_2.all (fun d => !d.cDistributive || d.strawsonCDist) = true := by
+/-- C-distributivity implies Strawson C-distributivity across all table predicates. -/
+theorem cdist_implies_strawson_empirical :
+    table8_2.all (fun d => !d.satisfiesCDist || d.satisfiesStrawsonCDist) = true := by
   native_decide
 
-/-- P-to-Q Entailment rules out all fictitious predicates while keeping
-    all attested predicates except magtaka. -/
-theorem ptoq_rules_out_fictitious :
-    table8_2.all (fun d =>
-      d.attested || d.ptoqEntailing  -- fictitious predicates satisfy P-to-Q (vacuously)
-    ) = true := by
+/-- All unattested predicates violate P-to-Q Entailment — the constraint
+    correctly rules out every fictitious predicate in the table. -/
+theorem ptoq_rules_out_all_fictitious :
+    table8_2.all (fun d => d.attested || !d.satisfiesPtoQ) = true := by
   native_decide
 
-/-- P-to-Q Entailment keeps more attested predicates than C-distributivity. -/
+/-- P-to-Q Entailment allows more attested predicates than C-distributivity. -/
 theorem ptoq_more_permissive_than_cdist :
-    (table8_2.filter (fun d => d.attested && d.ptoqEntailing)).length >
-    (table8_2.filter (fun d => d.attested && d.cDistributive)).length := by
+    (table8_2.filter (fun d => d.attested && d.satisfiesPtoQ)).length >
+    (table8_2.filter (fun d => d.attested && d.satisfiesCDist)).length := by
+  native_decide
+
+/-- P-to-Q makes correct predictions for all predicates except magtaka. -/
+theorem ptoq_correct_predictions :
+    (table8_2.filter (fun d =>
+      d.correctPrediction d.satisfiesPtoQ)).length = 6 := by
   native_decide
 
 -- ============================================================================
@@ -329,16 +382,23 @@ theorem rogative_both :
   ⟨rfl, rfl⟩
 
 /--
-NVPClass↔SelectionClass bridge: the question-oriented theory's NVP classification
-aligns with the Left Periphery's SelectionClass taxonomy.
+NVPClass↔SelectionClass bridge (approximate): the question-oriented theory's
+NVP classification partially aligns with the Left Periphery's SelectionClass.
 
-- Class 3 (anti-rogative) ↔ uninterrogative: both predict no interrogative embedding
-- Class 1 (non-C-dist, e.g., worry) ↔ responsive: takes both decl and interrog
-- Class 2 (C-dist + negative, e.g., fear) ↔ responsive: takes both decl and interrog
+- Class 3 (anti-rogative) → uninterrogative: correct (both predict no interrog)
+- Class 2 (C-dist + negative) → responsive: correct (fear, dread take both)
+- Class 1 (non-C-dist) → responsive: **approximate** — correct for worry and care
+  (which take both decl + interrog), but **incorrect for wonder and daroo**, which
+  are better classified as `.rogativePerspP`. The issue is that `.responsive`
+  in the Left Periphery entails factivity/knowledge, which wonder and daroo lack.
+
+This mapping is lossy because NVPClass captures C-dist × valence while
+SelectionClass captures syntactic selection of left-peripheral layers —
+orthogonal dimensions that don't reduce to each other.
 -/
 def nvpToSelectionClass : NVPClass → SelectionClass
   | .class3_cDist_positive => .uninterrogative
-  | .class1_nonCDist => .responsive  -- worry, qidai: takes both decl and interrog
+  | .class1_nonCDist => .responsive  -- approximate: correct for worry/care
   | .class2_cDist_negative => .responsive  -- fear, dread: takes both decl and interrog
 
 /-- Anti-rogative NVPs (Class 3) map to uninterrogative SelectionClass. -/
@@ -355,6 +415,55 @@ theorem nvp_selection_agreement :
     (NVPClass.canTakeQuestion .class2_cDist_negative = true ∧
      allowsEmbedding (nvpToSelectionClass .class2_cDist_negative) .subordination false false = true) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+
+/-!
+### SelectionClass ↔ P-to-Q Bridge
+
+The Left Periphery's `SelectionClass` taxonomy (syntactic selection) and the
+question-oriented theory's P-to-Q Entailment (semantic constraint) are
+consistent: every `SelectionClass` that admits interrogative embedding is
+associated with a semantic structure that satisfies P-to-Q.
+
+- `rogativePerspP` (wonder): P-to-Q via vacuous singleton (`wonder_satisfies_ptoq`)
+- `responsive` (know, care): P-to-Q via C-distributivity (`cDistributive_implies_ptoq`)
+  or relevance semantics
+- `rogativeCP` (investigate): P-to-Q via existential semantics
+- `rogativeSAP` (ask): P-to-Q via speech-act semantics
+
+### Theoretical Gap: daroo
+
+The `nvpToSelectionClass` bridge maps Class 1 (non-C-distributive, takes questions)
+to `.responsive`. But `.responsive` in the Left Periphery sense requires factivity
+and knowledge entailment — properties daroo lacks. Daroo's behavior is better
+captured as `.rogativePerspP` (perspective-layer selection) with an extended
+semantics that drops the ignorance component. This suggests the SelectionClass
+taxonomy needs a finer-grained distinction within PerspP-selecting predicates:
+those with ignorance (wonder) vs without (daroo).
+-/
+
+/-- P-to-Q Entailment is satisfied by all attested interrogative-embedding
+    predicates in Table 8.2 except magtaka (Tagalog), which is the sole
+    counterexample — motivating the search for a still-weaker constraint. -/
+theorem ptoq_one_exception :
+    (table8_2.filter (fun d =>
+      d.attested && d.takesInterrog && !d.satisfiesPtoQ)).map (·.predicate)
+    = ["magtaka"] := by
+  native_decide
+
+/-- The SelectionClass taxonomy is consistent with P-to-Q: for each
+    interrogative-embedding SelectionClass, at least one attested predicate
+    in Table 8.2 demonstrates P-to-Q satisfaction.
+
+    - rogativePerspP: wonder satisfies P-to-Q (vacuous singleton)
+    - responsive: care, daroo, mõtlema all satisfy P-to-Q -/
+theorem selectionClass_ptoq_witnesses :
+    -- rogativePerspP example: wonder
+    (table8_2.any (fun d => d.predicate == "wonder" && d.satisfiesPtoQ)) = true ∧
+    -- responsive examples: care, daroo, mõtlema
+    (table8_2.any (fun d => d.predicate == "care" && d.satisfiesPtoQ)) = true ∧
+    (table8_2.any (fun d => d.predicate == "daroo" && d.satisfiesPtoQ)) = true ∧
+    (table8_2.any (fun d => d.predicate == "mõtlema" && d.satisfiesPtoQ)) = true := by
+  native_decide
 
 -- ============================================================================
 -- G. World-Independence and L-Analyticity

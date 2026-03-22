@@ -7859,6 +7859,17 @@
   role      = {cited},
   sources   = {Theories/Semantics/Questions/DegreeQuestion.lean;Theories/Semantics/Degree/DegreeQuestion.lean}
 }
+@book{holmberg-2016,
+  author    = {Holmberg, Anders},
+  year      = {2016},
+  title     = {The Syntax of Yes and No},
+  publisher = {Oxford University Press},
+  doi       = {10.1093/acprof:oso/9780198701859.001.0001},
+  subfield  = {semantics/questions},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Theories/Semantics/Questions/AnsweringSystems.lean;Theories/Syntax/Minimalism/Polarity.lean;Theories/Syntax/Minimalism/Questions.lean;Phenomena/Questions/PolarAnswerStructure.lean;Phenomena/Questions/Studies/Holmberg2016.lean;Fragments/Swedish/AnswerParticles.lean}
+}
 @article{van-urk-2018,
   author    = {Van Urk, Coppe},
   year      = {2018},
@@ -7899,7 +7910,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {cited},
-  sources   = {Phenomena/Questions/NegativeQuestions.lean;Theories/Semantics/Questions/PolarBias.lean}
+  sources   = {Phenomena/Questions/Studies/RomeroHan2004.lean;Theories/Semantics/Questions/PolarBias.lean}
 }
 @article{bhatt-dayal-2020,
   author    = {Bhatt, Rajesh and Dayal, Veneeta},
@@ -7926,7 +7937,7 @@
   subfield  = {semantics/questions},
   validated = {true},
   role      = {cited},
-  sources   = {Fragments/Bulgarian/QuestionParticles.lean;Fragments/Czech/Determiners.lean;Fragments/Czech/Particles.lean;Fragments/Macedonian/QuestionParticles.lean;Fragments/Polish/QuestionParticles.lean;Fragments/Russian/QuestionParticles.lean;Fragments/Serbian/QuestionParticles.lean;Fragments/Slovenian/QuestionParticles.lean;Fragments/Ukrainian/QuestionParticles.lean;Phenomena/Negation/CzechThreeWayNegBridge.lean;Phenomena/Negation/Studies/Stakov2026.lean;Phenomena/Negation/Studies/Stakov2026Typology.lean;Phenomena/Negation/Studies/StankovaSimik2024/Data.lean;Phenomena/Questions/NegativeQuestions.lean;Phenomena/Questions/SlavicPQStrategies.lean;Theories/Semantics/Modality/BiasedPQ.lean}
+  sources   = {Fragments/Bulgarian/QuestionParticles.lean;Fragments/Czech/Determiners.lean;Fragments/Czech/Particles.lean;Fragments/Macedonian/QuestionParticles.lean;Fragments/Polish/QuestionParticles.lean;Fragments/Russian/QuestionParticles.lean;Fragments/Serbian/QuestionParticles.lean;Fragments/Slovenian/QuestionParticles.lean;Fragments/Ukrainian/QuestionParticles.lean;Phenomena/Negation/CzechThreeWayNegBridge.lean;Phenomena/Negation/Studies/Stakov2026.lean;Phenomena/Negation/Studies/Stakov2026Typology.lean;Phenomena/Negation/Studies/StankovaSimik2024/Data.lean;Phenomena/Questions/Studies/RomeroHan2004.lean;Phenomena/Questions/SlavicPQStrategies.lean;Theories/Semantics/Modality/BiasedPQ.lean}
 }
 @article{stankova-2025,
   author    = {Staňková, Anna},
@@ -7940,7 +7951,7 @@
   url       = {https://muse.jhu.edu/article/970006},
   subfield  = {semantics/questions},
   role      = {formalized},
-  sources   = {Phenomena/Negation/CzechThreeWayNegBridge.lean;Phenomena/Negation/Studies/Stakov2026Typology.lean;Phenomena/Negation/Studies/StankovaSimik2024/Data.lean;Phenomena/Questions/NegativeQuestions.lean}
+  sources   = {Phenomena/Negation/CzechThreeWayNegBridge.lean;Phenomena/Negation/Studies/Stakov2026Typology.lean;Phenomena/Negation/Studies/StankovaSimik2024/Data.lean;Phenomena/Questions/Studies/RomeroHan2004.lean}
 }
 @article{dayal-2025,
   author    = {Dayal, Veneeta},
@@ -8052,7 +8063,7 @@
   subfield  = {semantics/questions},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/Questions/NegativeQuestions.lean;Theories/Semantics/Modality/BiasedPQ.lean;Theories/Semantics/Questions/Polarity.lean;Theories/Semantics/Questions/VerumFocus.lean}
+  sources   = {Phenomena/Questions/Studies/RomeroHan2004.lean;Theories/Semantics/Modality/BiasedPQ.lean;Theories/Semantics/Questions/Polarity.lean;Theories/Semantics/Questions/VerumFocus.lean}
 }% REF: Belnap (1972). S-P Interrogatives.
 @incollection{belnap-1982,
   author    = {Belnap, Nuel D.},
@@ -8541,16 +8552,16 @@
 @article{spector-egr-2015,
   author    = {Spector, Benjamin and Egré, Paul},
   year      = {2015},
-  title     = {A uniform semantics for embedded interrogatives},
+  title     = {A uniform semantics for embedded interrogatives: An answer, not necessarily the answer},
   journal   = {Synthese},
   volume    = {192},
   number    = {6},
   pages     = {1729--1784},
-  subfield  = {semantics/presupposition},
+  subfield  = {semantics/questions},
   role      = {cited},
   doi       = {10.1007/s11229-015-0722-4},
   validated = {true},
-  sources   = {Theories/Semantics/Attitudes/CDistributivity.lean}
+  sources   = {Theories/Semantics/Attitudes/EmbeddingConstraints.lean, Theories/Semantics/Attitudes/CDistributivity.lean}
 }% REF: Elliott et al. (2017). Predicates of relevance and theories of question embedding. JoS 34(3):547–554.
 @article{elliott-etal-2017,
   author    = {Elliott, Patrick D. and Klinedinst, Nathan and Sudo, Yasutada and Uegaki, Wataru},
@@ -8607,12 +8618,23 @@
 @inproceedings{roelofsen-uegaki-2020,
   author    = {Roelofsen, Floris and Uegaki, Wataru},
   year      = {2020},
-  title     = {Searching for a universal constraint on the denotation of clause-embedding predicates},
+  title     = {Searching for a universal constraint on the possible denotations of clause-embedding predicates},
   booktitle = {Proceedings of Semantics and Linguistic Theory 30},
   pages     = {542--561},
+  doi       = {10.3765/salt.v30i0.4834},
   subfield  = {semantics/questions},
   role      = {formalized},
-  sources   = {Theories/Semantics/Attitudes/CDistributivity.lean;Phenomena/Questions/Studies/Uegaki2022.lean}
+  sources   = {Theories/Semantics/Attitudes/EmbeddingConstraints.lean, Theories/Semantics/Attitudes/CDistributivity.lean}
+}% REF: Uegaki, W. & Roelofsen, F. (2018). Do modals take propositions or sets of propositions? Evidence from Japanese daroo. SALT 28.
+@inproceedings{uegaki-roelofsen-2018,
+  author    = {Uegaki, Wataru and Roelofsen, Floris},
+  year      = {2018},
+  title     = {Do modals take propositions or sets of propositions? {E}vidence from {J}apanese \emph{daroo}},
+  booktitle = {Proceedings of Semantics and Linguistic Theory 28},
+  pages     = {809--829},
+  subfield  = {semantics/questions},
+  role      = {cited},
+  sources   = {Theories/Semantics/Attitudes/EmbeddingConstraints.lean, Fragments/Japanese/Particles.lean}
 }% REF: Theiler, N., Roelofsen, F. & Aloni, M. (2018). A uniform semantics for declarative and interrogative complements. Journal of Semantics.
 @article{theiler-etal-2018,
   author    = {Theiler, Nadine and Roelofsen, Floris and Aloni, Maria},
@@ -8669,7 +8691,7 @@
   doi       = {10.1093/jos/ffz019},
   subfield  = {semantics/universals},
   role      = {cited},
-  sources   = {Theories/Semantics/Attitudes/CDistributivity.lean}
+  sources   = {Theories/Semantics/Attitudes/EmbeddingConstraints.lean}
 }% REF: Bondarenko, T. (2020). Factivity from pre-existence. Glossa 5(1).
 @article{bott-noveck-2004,
   author    = {Bott, Lewis and Noveck, Ira A.},
@@ -10402,6 +10424,48 @@
   validated = {true},
   role      = {formalized},
   sources   = {Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean;Phenomena/Constructions/ParticleVerbs/Data.lean}
+}
+@incollection{dendikken-2010,
+  author    = {den Dikken, Marcel},
+  year      = {2010},
+  title     = {On the Functional Structure of Locative and Directional {PP}s},
+  booktitle = {Mapping Spatial {PP}s: The Cartography of Syntactic Structures},
+  editor    = {Cinque, Guglielmo and Rizzi, Luigi},
+  publisher = {Oxford University Press},
+  address   = {New York},
+  volume    = {6},
+  doi       = {10.1093/oso/9780195393675.003.0003},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Phenomena/WordOrder/Studies/BroekhuisCorver2026.lean}
+}
+@incollection{svenonius-2010,
+  author    = {Svenonius, Peter},
+  year      = {2010},
+  title     = {Spatial {P} in {E}nglish},
+  booktitle = {Mapping Spatial {PP}s: The Cartography of Syntactic Structures},
+  editor    = {Cinque, Guglielmo and Rizzi, Luigi},
+  publisher = {Oxford University Press},
+  address   = {New York},
+  volume    = {6},
+  doi       = {10.1093/oso/9780195393675.003.0007},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Phenomena/WordOrder/Studies/BroekhuisCorver2026.lean}
+}
+@incollection{broekhuis-corver-2026,
+  author    = {Broekhuis, Hans and Corver, Norbert},
+  year      = {2026},
+  title     = {Adpositions and Adpositional Phrases},
+  booktitle = {Syntax of {D}utch},
+  publisher = {Routledge},
+  address   = {New York},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Fragments/Dutch/Adpositions.lean;Phenomena/WordOrder/Studies/BroekhuisCorver2026.lean}
 }
 @book{kayne-1984,
   author    = {Kayne, Richard S.},

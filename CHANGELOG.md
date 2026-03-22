@@ -1,5 +1,86 @@
 # Changelog
 
+## [0.229.411] - 2026-03-22
+
+### Fixed
+- **`deriveSurfaceOrder` decomposition** (`BroekhuisCorver2026.lean`): replaced incorrect `(MovedComplement, fOvert: Bool)` with 4-way `MovedConstituent` matching the paper's §6 ex. 64 — postP = DP moves, circumP = PP/R-pronoun moves (not "F is overt")
+- **`over`/`onder` directional fields** (`Adpositions.lean`): added `directional := true` and `pathShape := some .bounded` — circumP uses (*over de heide heen*, *onder de brug door*) are directional per §2.2 ex. 24
+- **Hallucinated docstring**: removed claim that *op* has "all four surface orders" (it has three) and fabricated "*op...af* compounds"
+- **Bib entry `broekhuis-corver-2026`**: corrected publisher (Amsterdam University Press → Routledge) and booktitle (Comprehensive Grammar Resources → Syntax of Dutch) per the paper's own references
+
+### Added
+- **Complement-type restrictions** (§3): 4 theorems proving postP/circumP-capable Ps cannot take adjectival or clausal complements
+- **P-stranding and extraction** (§6): `PPExtractionType` enum + `extractionOk` encoding the 3-way asymmetry from §5.2 — no DP extraction from prePP, yes R-pronoun extraction, yes postPP complement extraction
+- **End-to-end PathShape→telicity→auxiliary chain** (§5): `op_bounded_telic` + `telic_unaccusative_zijn` connecting *op*'s bounded PathShape through `pathShapeToTelicity` to Dutch *zijn* auxiliary selection — 4-file cross-module chain
+- **WALS lookup from actual dataset**: `dutch_wals_prepositions` looks up the Dutch entry in `F85A.allData` instead of duplicating it
+- **Vacuous theorem fix**: replaced `pvc_pred_matches_intrans_cat` (was `rfl = rfl`) with `pvc_predCat_is_P` that connects to a concrete PVC entry
+
+## [0.229.410] - 2026-03-22
+
+### Added
+- **Constraint hierarchy as Mathlib `PartialOrder`** (`EmbeddingConstraints.lean`): `Constraint` inductive (`.cDist`, `.ptoQ`, `.strawsonCDist`, `.vu`) with `PartialOrder` instance encoding the Hasse diagram (ptoQ ≤ cDist, strawsonCDist ≤ cDist, vu incomparable). 8 separation theorems proving all 6 non-implication directions with concrete counterexamples. Extends the VU fix from 0.229.407.
+
+## [0.229.409] - 2026-03-22
+
+### Added
+- **Dutch adposition fragment** (`Fragments/Dutch/Adpositions.lean`): 24 adposition entries with distributional properties (preP/postP/circumP/intransitive), R-pronominalization, complement types, locational/directional readings, PathShape; 5 verification theorems
+- **Broekhuis & Corver 2026 study** (`Phenomena/WordOrder/Studies/BroekhuisCorver2026.lean`): PP-internal movement analysis; bridges to Extended Projection, PathShape, WALS F85A, Den Dikken 1995
+- **Place/Path in Extended Projection** (`Cat.Place`, `Cat.Path`): adpositional functional heads (F1, F2)
+- **Bibliography**: `broekhuis-corver-2026`, `dendikken-2010`, `svenonius-2010`
+
+## [0.229.408] - 2026-03-22
+
+### Changed
+- **Swedish profile deduplication**: `PolarAnswerStructure.swedishProfile` now derives from `Fragments.Swedish.AnswerParticles.profile` instead of duplicating the definition
+- **Dissolved `NegativeQuestions.lean`** → `Studies/RomeroHan2004.lean`: negative question data now lives in a proper study file with @cite{romero-han-2004} provenance and bridge theorems to `VerumFocus` (polarity item licensing, VERUM triggering)
+
+## [0.229.407] - 2026-03-22
+
+### Fixed
+- **`IsVeridicallyUniform` definition** (`EmbeddingConstraints.lean`): was checking declarative veridicality only (`V x [p] w → p w`); now correctly encodes the paper's eq. 5 as `IsVeridicalDecl V ↔ IsVeridicalInterrog V` — either veridical w.r.t. both complement types or neither. Added `IsVeridicalDecl` (eq. 1) and `IsVeridicalInterrog` (eq. 3) as component definitions. `cdist_not_implies_veridicalUniformity` proof updated.
+
+## [0.229.406] - 2026-03-22
+
+### Fixed
+- **Swedish/Finnish negation height**: corrected from `NegationHeight.high` → `.middle` — per §4.5 (p165) Swedish has exclusively middle negation; per §4.6 (p178) Finnish has "a higher variety of middle negation"
+- **`NegationHeight.high` docstring**: now correctly describes C-domain negation (positively-biased questions, §4.8) rather than Swedish/Finnish
+- **`NegationHeight` docstring**: clarifies this classifies *constructions* not languages; adds structural accessibility mechanism from §4.3-4.7
+
+### Added
+- **End-to-end chain theorems** (`Holmberg2016.lean` §5): `japanese_endtoend`, `english_endtoend` trace from NegationHeight → AnsweringSystem → yesToNegativeQuestion → specific PolarAnswerDatum polarity; `endtoend_diverge` proves the chains yield opposite results
+- **Polarity reversal correlation** (`Holmberg2016.lean` §6): `truthBased_no_reversal` (Japanese/Mandarin lack reversal), `polarityBased_reversal_variation` (Swedish has it, English doesn't) — per §4.13
+
+## [0.229.405] - 2026-03-22
+
+### Added
+- **NegationHeight** (`Theories/Semantics/Questions/AnsweringSystems.lean`): `NegationHeight` (low/middle/high) + `predictedSystem` — derives answering system from negation height per @cite{holmberg-2016} Ch 4.3-4.5
+- **Swedish *ja* blocked**: `blockedInNegativeContext` field on `AnswerParticle`; *ja* is ungrammatical (not just infelicitous) in negative question responses; `ja_jo_complementary` theorem
+- **Holmberg2016 negation height bridge theorems**: 5 theorems showing NegationHeight predictions match language profiles (Japanese/Mandarin → low/truth-based; English → middle/polarity-based; Swedish/Finnish → middle/polarity-based)
+
+### Changed
+- **Renamed** `Holmberg2015.lean` → `Holmberg2016.lean`, namespace `Holmberg2015` → `Holmberg2016` — publication year is 2016
+- **Mandarin profile**: `.verbEcho` → `.mixed` (uses V-not-V + *shì/bú shì*)
+- **Finnish profile**: `.verbEcho` → `.mixed` (verb echo + particle *kyllä*)
+- **VerumFocus.lean**: cross-reference docstring linking to @cite{holmberg-2016} infrastructure (complementary analyses of negative polar questions)
+
+## [0.229.404] - 2026-03-22
+
+### Added
+- **Holmberg 2016 integration**: formalize "The Syntax of Yes and No" — answering system typology, syntactic [±Pol] feature, question syntax projections
+- **AnsweringSystems.lean** (`Theories/Semantics/Questions/`): `AnsweringSystem` (truthBased/polarityBased), `AnswerStrategy` (particle/verbEcho/mixed), `PolarAnswerProfile` — Holmberg's central binary parameter
+- **GramMood.lean** (`Core/Discourse/`): extract `GramMood`, `SubjunctiveType`, `MoodEffect` from `Theories/Semantics/Mood/Basic.lean` to Core — these are framework-agnostic morphological categories
+- **ClauseType.lean** (`Core/Discourse/`): `ClauseType = IllocutionaryMood × GramMood` — orthogonal force × mood cross-product bridging semantic mood and illocutionary force
+- **Polarity.lean** (`Theories/Syntax/Minimalism/`): syntactic `[±Pol]` feature (`PolFeature`), `PolHead`, valuation operation connecting `Core.Polarity` to PolP via Agree; `.pol` added to `FeatureVal`
+- **Questions.lean** (`Theories/Syntax/Minimalism/`): `QFeature`, `polarQuestionSpine`, `clauseType` — question syntax projections (ForceP > FinP > PolP > TP)
+- **PolarAnswerStructure.lean** (`Phenomena/Questions/`): yes/no answer infrastructure under Questions/ (not Ellipsis/); `PolarAnswerDatum`, cross-linguistic profiles (English, Japanese, Swedish, Finnish, Mandarin)
+- **Holmberg2016.lean** (`Phenomena/Questions/Studies/`): bridge theorems connecting Hamblin `polar` to [±Pol] variable, answering system divergence predictions, cross-linguistic profile comparisons
+- **Swedish/AnswerParticles.lean** (`Fragments/Swedish/`): new language fragment — ja/nej/jo three-way system, jo as polarity-reversing particle, `PolarAnswerProfile`
+- **`.polarityReversal`** added to `PolarityMarkingStrategy` (`Core/Discourse/InformationStructure.lean`)
+
+### Changed
+- **German doch reclassified**: `dochPreUtterance.strategy` changed from `.other` to `.polarityReversal` — matches cross-linguistic natural class with Swedish *jo* and French *si*
+- **PolarAnswers.lean**: add docstring caveat that `sameQuestion := true` is the G&S 1984 analysis; Holmberg 2016 argues positive and negative polar questions are NOT the same question
+
 ## [0.229.403] - 2026-03-22
 
 ### Changed
@@ -159,7 +240,7 @@
 ## [0.229.386] - 2026-03-20
 
 ### Added
-- **Veridical Uniformity** constraint in `CDistributivity.lean`: `IsVeridicallyUniform` (Table 8.2's fourth constraint), `cdist_not_implies_veridicalUniformity` (independence from C-distributivity)
+- **Veridical Uniformity** constraint in `EmbeddingConstraints.lean`: `IsVeridicalDecl`, `IsVeridicalInterrog`, `IsVeridicallyUniform` (Table 8.2's fourth constraint), `cdist_not_implies_veridicalUniformity` (independence from C-distributivity)
 - **Triviality identity theorems** in `Preferential.lean`: `hope_triviality_identity` (assertion = TSP when C = Q, the heart of §6.5.4 L-analyticity), `hope_triviality_reverse` (TSP → assertion when C ⊆ Q)
 - **Full Table 8.2 encoding** in `Uegaki2022.lean`: `table8_2` with all 4 constraints × 7 predicates (care, mõtlema, daroo, wonder, magtaka + 2 fictitious), `CrossLingDatum` expanded with `veridicalUniformity`, `strawsonCDist`, `attested` fields
 - **New empirical theorems**: `cdist_subset_strawson_empirical`, `ptoq_rules_out_fictitious`, `ptoq_more_permissive_than_cdist`

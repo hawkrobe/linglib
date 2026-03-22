@@ -1,6 +1,7 @@
-import Linglib.Theories.Syntax.MereologicalSyntax.Basic
+import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
+import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 
 /-!
 # Wang & Sun (2026): Detaching Mandarin Classifiers from Nouns
@@ -419,7 +420,7 @@ inductive ClReading where
   deriving DecidableEq, BEq, Repr
 
 def classifierReading (d : SynObj) : ClReading :=
-  if labelInOnePartChain .Cl d then .sortal else .mensural
+  if individuates d then .sortal else .mensural
 
 theorem noDe_is_sortal : classifierReading noDe_D = .sortal := by native_decide
 
@@ -506,5 +507,107 @@ theorem modification_end_to_end :
     basic_Q.isFull = true ∧
     classifierReading postCl_D = .sortal :=
   ⟨rfl, rfl, by native_decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § 8. Semantic Grounding
+-- ════════════════════════════════════════════════════
+
+/-! The structural predictions in §§ 3–5 determine syntactic visibility.
+    This section connects visibility to @cite{borer-2005}'s mereological
+    semantics via the bridge in `Interpretation.lean`: visible Cl → QUA
+    (count/sortal); invisible Cl → root preserved (mass/mensural). -/
+
+section SemanticGrounding
+
+open Mereology (CUM QUA)
+
+variable {α : Type*} [SemilatticeSup α]
+
+/-- Without 的: Cl visible → denotation is individuated → QUA. -/
+theorem noDe_is_qua (P : α → Prop) :
+    QUA (nominalDenotation noDe_D P) :=
+  visible_cl_gives_qua noDe_D P (by native_decide)
+
+/-- With 的: Cl invisible → denotation equals the root predicate. -/
+theorem de_preserves_root (P : α → Prop) :
+    nominalDenotation de_D P = P :=
+  invisible_cl_preserves_root de_D P (by native_decide)
+
+/-- With 的 and a cumulative root: denotation is CUM (mass/mensural). -/
+theorem de_is_cum (P : α → Prop) (hc : CUM P) :
+    CUM (nominalDenotation de_D P) :=
+  invisible_cl_cum de_D P (by native_decide) hc
+
+/-- End-to-end 的-contrast: same root, different structure, opposite
+    mereological properties. -/
+theorem bei_semantic_contrast (P : α → Prop) (hc : CUM P) :
+    QUA (nominalDenotation noDe_D P) ∧
+    CUM (nominalDenotation de_D P) :=
+  de_semantic_contrast noDe_D de_D P
+    (by native_decide) (by native_decide) hc
+
+end SemanticGrounding
+
+-- ════════════════════════════════════════════════════
+-- § 9. Cross-Theory Chain
+-- ════════════════════════════════════════════════════
+
+/-! End-to-end argumentation connecting three independent theories:
+
+    1. **@cite{chierchia-1998}**: Mandarin is [+arg, -pred] → nouns are
+       kind-denoting → bare nouns are arguments → classifiers required.
+    2. **@cite{borer-2005}**: Roots denote cumulative (CUM) predicates.
+       The Q head hosts individuation (Div), converting CUM → QUA.
+       Classifiers spell out at Q.
+    3. **@cite{wang-sun-2026}**: Mereological syntax determines whether
+       Cl is visible from D via 1-part chain transitivity. Visible Cl → QUA
+       (sortal); invisible Cl → CUM (mensural). The particle 的 changes
+       dimensional attachment, toggling visibility.
+
+    The CUM P hypothesis in `bei_semantic_contrast` IS Borer's thesis
+    instantiated for Chierchia's [+arg, -pred] languages: root predicates
+    are cumulative because they denote kind-level extensions (closed under
+    join). -/
+
+section CrossTheoryChain
+
+open Mereology (CUM QUA)
+
+variable {α : Type*} [SemilatticeSup α]
+
+/-- Mandarin's NMP is [+arg, -pred]: nouns denote kinds, requiring
+    classifiers for counting. This is the typological precondition
+    for the entire mereological analysis. -/
+theorem mandarin_needs_classifiers :
+    Fragments.Mandarin.Nouns.mandarinMapping =
+      Semantics.Lexical.Noun.Kind.Chierchia1998.NominalMapping.argOnly :=
+  Phenomena.Classifiers.Studies.Chierchia1998.mandarin_mapping
+
+/-- The Chierchia–Borer–Wang&Sun chain for 杯 bēi:
+    1. Mandarin NMP = argOnly → classifiers required (Chierchia)
+    2. bēi has mensural affordance (Fragment)
+    3. Without 的: Cl visible → QUA (Borer + Wang&Sun)
+    4. With 的: Cl invisible → CUM under Borer's thesis
+    5. Same root, opposite mereological properties (Interpretation) -/
+theorem full_chain (P : α → Prop) (hc : CUM P) :
+    -- Chierchia: Mandarin needs classifiers
+    Fragments.Mandarin.Nouns.mandarinMapping =
+      Semantics.Lexical.Noun.Kind.Chierchia1998.NominalMapping.argOnly ∧
+    -- Fragment: bēi can be mensural
+    Fragments.Mandarin.Classifiers.bei.isMensural = true ∧
+    -- Structural: opposite visibility
+    individuates noDe_D = true ∧
+    individuates de_D = false ∧
+    -- Semantic: opposite mereological properties
+    QUA (nominalDenotation noDe_D P) ∧
+    CUM (nominalDenotation de_D P) :=
+  ⟨Phenomena.Classifiers.Studies.Chierchia1998.mandarin_mapping,
+   rfl,
+   by native_decide,
+   by native_decide,
+   visible_cl_gives_qua noDe_D P (by native_decide),
+   invisible_cl_cum de_D P (by native_decide) hc⟩
+
+end CrossTheoryChain
 
 end Phenomena.Classifiers.Studies.WangSun2026

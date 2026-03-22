@@ -1523,7 +1523,8 @@ def dare : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  presupType := some .softTrigger }
+  presupType := some .softTrigger
+  implicativeBuilder := some .positive }
 
 /-- "bother" — occasion verb: presupposes effort/inconvenience -/
 def bother : VerbEntry := .mkRegular {
@@ -1532,7 +1533,8 @@ def bother : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  presupType := some .softTrigger }
+  presupType := some .softTrigger
+  implicativeBuilder := some .positive }
 
 /-- "hesitate" — occasion verb: presupposes reluctance/risk -/
 def hesitate : VerbEntry := .mkRegular {
@@ -1542,6 +1544,36 @@ def hesitate : VerbEntry := .mkRegular {
   controlType := .subjectControl
   passivizable := false
   presupType := some .softTrigger }
+
+/-- "venture" — positive implicative (@cite{karttunen-1971} ex. 2):
+    "John ventured to speak" entails "John spoke." -/
+def venture : VerbEntry := .mkRegular {
+  form := "venture"
+  complementType := .infinitival
+  vendlerClass := some .achievement
+  controlType := .subjectControl
+  passivizable := false
+  implicativeBuilder := some .positive }
+
+/-- "condescend" — positive implicative (@cite{karttunen-1971} ex. 2):
+    "John condescended to help" entails "John helped." -/
+def condescend : VerbEntry := .mkRegular {
+  form := "condescend"
+  complementType := .infinitival
+  vendlerClass := some .achievement
+  controlType := .subjectControl
+  passivizable := false
+  implicativeBuilder := some .positive }
+
+/-- "happen" — raising verb, positive implicative (@cite{karttunen-1971} ex. 2):
+    "John happened to see Mary" entails "John saw Mary."
+    Raising: "It happened to rain" — no theta role for matrix subject. -/
+def happen : VerbEntry := .mkRegular {
+  form := "happen"
+  complementType := .infinitival
+  controlType := .raising
+  passivizable := false
+  implicativeBuilder := some .positive }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Agent-Experiencer (@cite{solstad-bott-2024})
@@ -3051,7 +3083,7 @@ def allVerbs : List VerbEntry := [
   -- Factive question-embedding senses
   remember_rog, forget_rog,
   -- Occasion Verbs (@cite{solstad-bott-2024})
-  manage_occasion, dare, bother, hesitate,
+  manage_occasion, dare, bother, hesitate, venture, condescend, happen,
   -- Agent-Experiencer (@cite{solstad-bott-2024})
   enjoy, like, love, hate, admire, envy, respect, value,
   -- Stimulus-Experiencer (@cite{solstad-bott-2024})
