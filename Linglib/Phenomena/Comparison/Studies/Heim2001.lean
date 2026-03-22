@@ -59,14 +59,6 @@ theorem heim_eq_kennedy_simple {Entity D : Type*} [LinearOrder D]
       comparativeSem μ a b .positive :=
   Iff.rfl
 
-/-- The equivalence is grounded by maximality: max{d: μ(a) ≥ d} = μ(a).
-    Heim's `-er` compares maxima of degree predicates, and for monotone
-    adjectives, the max of the degree set IS the measure function value. -/
-theorem equivalence_via_maxDeg {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a : Entity) :
-    IsMaxDeg (matrixPredicate μ a) (μ a) :=
-  isMaxDeg_matrixPredicate μ a
-
 -- ════════════════════════════════════════════════════
 -- § 2. Scope Interaction Data
 -- ════════════════════════════════════════════════════
@@ -167,7 +159,7 @@ def nonMonotoneData : List ScopeInteractionDatum :=
     , operator := "exactly (non-monotone)"
     , scopeCollapse := false
     , highDegPAvailable := false
-    , explanation := "high-DegP: max{d: |{x: tall(x,d)}| = 2} > 5' — not a possible reading" }
+    , explanation := "high-DegP blocked by Kennedy's generalization: DegP cannot scope over quantificational DP" }
   , { sentence := "Every girl is exactly 1 inch taller than John"
     , operator := "∀ + exactly (differential)"
     , scopeCollapse := false
@@ -184,25 +176,19 @@ def nonMonotoneData : List ScopeInteractionDatum :=
 -- § 5. Kennedy's Generalization
 -- ════════════════════════════════════════════════════
 
-/-- **Kennedy's generalization** (Heim (27), p. 223):
-    If the scope of a quantificational DP contains the trace of a DegP,
-    it also contains that DegP itself.
-
-    In other words: DegP cannot cross over a quantificational DP
-    that c-commands its trace. This is a syntactic constraint on
-    DegP-movement, not a semantic equivalence. -/
-structure KennedyGeneralization where
-  /-- Description of the constraint -/
-  statement : String := "DegP cannot scope over a quantificational DP whose scope contains the DegP's trace"
-  /-- This is a syntactic constraint, not semantic -/
-  isSyntactic : Bool := true
-  /-- It targets quantificational DPs specifically (not all operators) -/
-  targetsQuantificationalDPs : Bool := true
-  /-- Non-quantificational DPs (traces, names) CAN be crossed -/
-  crossesNonQuantificational : Bool := true
-  deriving Repr
-
-def kennedyGeneralization : KennedyGeneralization := {}
+-- **Kennedy's generalization** (Heim (27)):
+-- If the scope of a quantificational DP contains the trace of a DegP,
+-- it also contains that DegP itself.
+--
+-- DegP cannot cross over a quantificational DP that c-commands its trace.
+-- This is a *syntactic* constraint on DegP-movement, not a semantic
+-- equivalence. It targets quantificational DPs specifically —
+-- non-quantificational DPs (traces, names) CAN be crossed by DegP.
+--
+-- This explains why high-DegP readings are unavailable for `nonMonotoneData`
+-- (e.g., "exactly two girls are taller than 5 feet" lacks the wide-scope
+-- DegP reading). Not formalized as a predicate — requires syntactic
+-- movement infrastructure (c-command, traces, QR) not yet in linglib.
 
 -- ════════════════════════════════════════════════════
 -- § 6. Intensional Verb Scope
@@ -333,14 +319,12 @@ theorem heim_exactly_matches_differential {Entity : Type*}
       (μ a - μ b = diff) :=
   Iff.rfl
 
-/-- **Bridge to FoxHackl2006**: Heim's presupposition failure for
-    high-DegP over negation (max of {d: ¬tall(m,d)} undefined) is
-    the same mechanism as Fox & Hackl's negative islands (max of
-    downward-monotone degree predicate undefined on dense scales). -/
-theorem shared_maximality_failure {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a : Entity) (d : D) :
-    negatedDegreePredicate μ a d ↔ d > μ a :=
-  negatedDegreePredicate_eq μ a d
+-- **Bridge to FoxHackl2006**: Heim's presupposition failure for
+-- high-DegP over negation (max of {d: ¬tall(m,d)} undefined) is
+-- the same mechanism as Fox & Hackl's negative islands (max of
+-- downward-monotone degree predicate undefined on dense scales).
+-- See `negation_presupposition_failure` (§3) and the underlying
+-- `negatedDegreePredicate_eq` from the theory layer.
 
 /-- **Bridge to scope theory**: the monotone collapse for ∃ is a
     proper theorem (not Iff.rfl). -/

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.403] - 2026-03-22
+
+### Changed
+- **DegreeAbstraction.lean**: replace `erOp`/`lessOp` (trivial wrappers around `>`/`<`) with `erOnPredicates`/`lessOnPredicates` that take `DegreePredicate` + `IsMaxDeg` proofs; remove deprecated `heimComparative` alias
+- **Heim2001.lean**: remove `equivalence_via_maxDeg` (redundant alias of `isMaxDeg_matrixPredicate`); remove `shared_maximality_failure` (duplicate of `negation_presupposition_failure`); replace `KennedyGeneralization` structure (anti-pattern: encoding conclusions as definitions) with documentation comment; fix "exactly two girls" explanation to cite Kennedy's generalization correctly
+
 ## [0.229.402] - 2026-03-22
 
 ### Changed

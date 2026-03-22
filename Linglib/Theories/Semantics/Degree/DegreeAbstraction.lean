@@ -96,20 +96,21 @@ theorem matrixPredicate_monotone {Entity D : Type*} [Preorder D]
 -- § 3. Degree Operators
 -- ════════════════════════════════════════════════════
 
-/-- Heim's `-er` operating on degree predicates:
+/-- Heim's `-er` operating on degree predicates (paper def. (6)):
     ⟦-er⟧(D₂)(D₁) = max(D₁) > max(D₂)
 
-    When applied to `matrixPredicate μ a` and `thanClausePredicate μ b`,
-    this reduces to μ(a) > μ(b). -/
-def erOp {D : Type*} [LinearOrder D]
-    (d1Max d2Max : D) : Prop :=
-  d1Max > d2Max
+    Takes two degree predicates and compares their maxima. -/
+def erOnPredicates {D : Type*} [LE D] [LT D]
+    (_P₁ _P₂ : DegreePredicate D) (d₁ d₂ : D)
+    (_h₁ : IsMaxDeg _P₁ d₁) (_h₂ : IsMaxDeg _P₂ d₂) : Prop :=
+  d₁ > d₂
 
 /-- Heim's `less` operator (paper (23)):
     ⟦less than P⟧ = λQ. max(Q) < max(P) -/
-def lessOp {D : Type*} [LinearOrder D]
-    (d1Max d2Max : D) : Prop :=
-  d1Max < d2Max
+def lessOnPredicates {D : Type*} [LE D] [LT D]
+    (_P₁ _P₂ : DegreePredicate D) (d₁ d₂ : D)
+    (_h₁ : IsMaxDeg _P₁ d₁) (_h₂ : IsMaxDeg _P₂ d₂) : Prop :=
+  d₁ < d₂
 
 /-- Heim comparative with measure function: the result of composing
     `-er` with degree predicates derived from a monotone adjective.
@@ -223,10 +224,5 @@ theorem heim_extensional_equivalence {Entity D : Type*} [LinearOrder D]
     heimComparativeWithMeasure μ a b ↔
       Semantics.Degree.Comparative.comparativeSem μ a b .positive :=
   Iff.rfl
-
--- Backwards compatibility aliases
-@[deprecated erOp (since := "2026-03-21")]
-def heimComparative {D : Type*} [LinearOrder D]
-    (d1Max d2Max : D) : Prop := erOp d1Max d2Max
 
 end Semantics.Degree.DegreeAbstraction
