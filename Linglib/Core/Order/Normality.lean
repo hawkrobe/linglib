@@ -65,7 +65,7 @@ def total : NormalityOrder W where
   le_trans _ _ _ _ _ := True.intro
 
 /-- Strict normality: w is strictly more normal than v. -/
-def slt (no : NormalityOrder W) (w v : W) : Prop :=
+@[reducible] def slt (no : NormalityOrder W) (w v : W) : Prop :=
   no.le w v ∧ ¬no.le v w
 
 /-- Optimal (most normal) worlds in a domain: those with no strictly
@@ -317,6 +317,38 @@ theorem refine_total_connected (φ : W → Prop) :
   · by_cases hφv : φ v
     · right; exact ⟨True.intro, fun h => absurd h hφw⟩
     · left; exact ⟨True.intro, fun h => absurd h hφv⟩
+
+-- ═══ Darwiche-Pearl Representation Conditions ═══
+
+/-! @cite{darwiche-pearl-1997}, Definition 8. Conditions on how a total
+    pre-order (faithful assignment) may change under revision by μ.
+    These are the representation-theorem equivalents of the iterated
+    revision postulates C1–C4. They constrain how *any* ordering-based
+    semantics — Kratzer modals, Lewis conditionals, Veltman defaults —
+    should evolve under discourse update.
+
+    `prior` and `post` are the orderings before and after revision by μ.
+    Lower in the ordering = more normal/plausible. -/
+
+/-- CR1: The ordering among μ-worlds is preserved. -/
+@[reducible] def satisfies_CR1 (prior post : NormalityOrder W) (μ : W → Bool) : Prop :=
+  ∀ w v, μ w = true → μ v = true →
+    (prior.le w v ↔ post.le w v)
+
+/-- CR2: The ordering among ¬μ-worlds is preserved. -/
+@[reducible] def satisfies_CR2 (prior post : NormalityOrder W) (μ : W → Bool) : Prop :=
+  ∀ w v, μ w = false → μ v = false →
+    (prior.le w v ↔ post.le w v)
+
+/-- CR3: If a μ-world was strictly below a ¬μ-world, it stays strictly below. -/
+@[reducible] def satisfies_CR3 (prior post : NormalityOrder W) (μ : W → Bool) : Prop :=
+  ∀ w v, μ w = true → μ v = false →
+    prior.slt w v → post.slt w v
+
+/-- CR4: If a μ-world was ≤ a ¬μ-world, it stays ≤. -/
+@[reducible] def satisfies_CR4 (prior post : NormalityOrder W) (μ : W → Bool) : Prop :=
+  ∀ w v, μ w = true → μ v = false →
+    prior.le w v → post.le w v
 
 end NormalityOrder
 end Core.Order

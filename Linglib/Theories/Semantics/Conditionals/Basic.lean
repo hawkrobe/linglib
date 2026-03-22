@@ -25,6 +25,7 @@ conditionals assert high conditional probability, not material implication.
 -/
 
 import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Order.Normality
 
 namespace Semantics.Conditionals
 
@@ -84,10 +85,21 @@ This is typically modeled as a preorder on worlds centered at each world.
 structure SimilarityOrdering (W : Type*) where
   /-- w₁ is at least as close to w as w₂ -/
   closer : W → W → W → Prop
-  /-- Reflexivity: every world is maximally similar to itself -/
-  refl : ∀ w, closer w w w
+  /-- Reflexivity: at each center, every world is at least as close as itself.
+      This makes `closer w₀` a preorder at every center `w₀`. -/
+  refl : ∀ w₀ w, closer w₀ w w
   /-- Transitivity -/
   trans : ∀ w w₁ w₂ w₃, closer w w₁ w₂ → closer w w₂ w₃ → closer w w₁ w₃
+
+/-- The `NormalityOrder` centered at world `w₀`: `le w₁ w₂` iff `w₁` is
+    at least as close to `w₀` as `w₂` is. Connects Lewis/Stalnaker
+    conditionals to the default reasoning infrastructure (`optimal`,
+    `refine`, `respects`, CR1–CR4). -/
+def SimilarityOrdering.atCenter {W : Type*} (sim : SimilarityOrdering W)
+    (w₀ : W) : Core.Order.NormalityOrder W where
+  le := sim.closer w₀
+  le_refl w := sim.refl w₀ w
+  le_trans w₁ w₂ w₃ := sim.trans w₀ w₁ w₂ w₃
 
 /--
 Variably strict conditional (@cite{stalnaker-1968}/@cite{lewis-1973}):
@@ -184,7 +196,7 @@ theorem perfection_not_entailed_variablyStrict :
       (p q : Prop' W) (w : W),
       variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w) := by
   use Bool
-  exact ⟨⟨fun _ _ _ => True, fun _ => trivial, fun _ _ _ _ _ _ => trivial⟩,
+  exact ⟨⟨fun _ _ _ => True, fun _ _ => trivial, fun _ _ _ _ _ _ => trivial⟩,
     Set.univ, (· = true), (fun _ => True), false,
     Or.inr ⟨true, ⟨Set.mem_univ _, rfl⟩, fun _ _ _ => trivial⟩,
     fun h => h Bool.false_ne_true trivial⟩
@@ -239,7 +251,7 @@ theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W
     · -- w = w', so we need to show q w = q w'
       subst h_eq
       -- Apply h_q_close to w itself
-      exact h_q_close w hw_in_pWorlds (sim.refl w)
+      exact h_q_close w hw_in_pWorlds (sim.refl w w)
     · -- w ≠ w', so by centering, w is strictly closer to itself
       have ⟨h_closer, _⟩ := h_centered w w' h_eq
       exact h_q_close w hw_in_pWorlds h_closer

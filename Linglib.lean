@@ -761,6 +761,7 @@ import Linglib.Phenomena.Conditionals.Studies.McKayVanInwagen1977
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
+import Linglib.Phenomena.DefaultReasoning.Studies.DarwichePearl1997
 import Linglib.Phenomena.DefaultReasoning.Studies.Veltman1996
 import Linglib.Phenomena.Clarification.Basic
 import Linglib.Phenomena.Clarification.Studies.DongEtAl2026
@@ -1456,6 +1457,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.XBar
 import Linglib.Theories.Syntax.Minimalism.Formal.Linearization.LCA
 import Linglib.Theories.Syntax.MereologicalSyntax.Basic
 import Linglib.Theories.Syntax.MereologicalSyntax.Bridge
+import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Theories.Syntax.SynGraph
 -- Theories: Semantics.Degree (degree semantics frameworks)
 import Linglib.Theories.Semantics.Degree.Core

@@ -1,4 +1,4 @@
-import Mathlib.Data.Set.Basic
+import Linglib.Core.Order.Normality
 
 /-!
 # Satisfaction Ordering
@@ -6,6 +6,9 @@ import Mathlib.Data.Set.Basic
 Satisfaction-based orderings: ordering elements by how many criteria they satisfy.
 Used by Kratzer modal semantics (worlds by propositions) and Phillips-Brown
 desire semantics (propositions by desires).
+
+The induced ordering is a `NormalityOrder` — connecting Kratzer's ordering
+source semantics to the default reasoning infrastructure in `Core/Order/`.
 -/
 
 namespace Core.SatisfactionOrdering
@@ -68,11 +71,15 @@ theorem empty_criteria_all_best (o : SatisfactionOrdering α Criterion)
   unfold atLeastAsGood satisfiedBy
   simp only [h, List.filter_nil, List.all_nil]
 
-/-- Prop-valued ordering for mathlib. -/
+/-- Prop-valued ordering: `a ≥ a'` iff `atLeastAsGood a a' = true`. -/
 def le (o : SatisfactionOrdering α Criterion) (a a' : α) : Prop :=
   o.atLeastAsGood a a' = true
 
-def toPreorder (o : SatisfactionOrdering α Criterion) : Preorder α where
+/-- The induced `NormalityOrder`: connects satisfaction-based orderings
+    (Kratzer modal semantics, Phillips-Brown desire) to the default
+    reasoning infrastructure (`optimal`, `refine`, `respects`, CR1–CR4). -/
+def toNormalityOrder (o : SatisfactionOrdering α Criterion) :
+    Core.Order.NormalityOrder α where
   le := o.le
   le_refl a := atLeastAsGood_refl o a
   le_trans a b c := atLeastAsGood_trans o a b c

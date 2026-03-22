@@ -93,15 +93,22 @@ theorem ordering_transitive (A : List (BProp World)) (u v w : World)
   rw [atLeastAsGoodAs_eq_generic] at *
   exact SatisfactionOrdering.atLeastAsGood_trans (worldOrdering A) u v w huv hvw
 
--- Mathlib Preorder Instance (via generic framework)
+-- NormalityOrder instance (via generic framework)
 
 /--
-**Kratzer's ordering as a mathlib Preorder.**
+**Kratzer's ordering as a `NormalityOrder`.**
 
-Derived from the generic `SatisfactionOrdering.toPreorder`.
+Connects Kratzer's ordering source to the default reasoning infrastructure,
+enabling `optimal`, `refine`, `respects`, and CR1–CR4 for modal semantics.
 -/
-def kratzerPreorder (A : List (BProp World)) : Preorder World :=
-  (worldOrdering A).toPreorder
+def kratzerNormality (A : List (BProp World)) : Core.Order.NormalityOrder World :=
+  (worldOrdering A).toNormalityOrder
+
+/-- Backwards-compatible alias. -/
+def kratzerPreorder (A : List (BProp World)) : Preorder World where
+  le := (kratzerNormality A).le
+  le_refl := (kratzerNormality A).le_refl
+  le_trans a b c := (kratzerNormality A).le_trans a b c
 
 /-- Equivalence under the ordering (via generic framework). -/
 def orderingEquiv (A : List (BProp World)) (w z : World) : Prop :=

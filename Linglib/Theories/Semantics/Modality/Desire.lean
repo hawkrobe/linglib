@@ -133,9 +133,9 @@ theorem satisfiedBy_eq_generic (GS : List (BProp World)) (a : BProp World) :
   unfold satisfiedBy propositionOrdering SatisfactionOrdering.satisfiedBy
   rfl
 
-/-- Preorder derived from proposition ordering. -/
-def propositionPreorder (GS : List (BProp World)) : Preorder (BProp World) :=
-  (propositionOrdering GS).toPreorder
+/-- NormalityOrder derived from proposition ordering. -/
+def propositionNormality (GS : List (BProp World)) : Core.Order.NormalityOrder (BProp World) :=
+  (propositionOrdering GS).toNormalityOrder
 
 end Semantics.Modality.Desire
 
