@@ -851,6 +851,99 @@ theorem atLeast_truth_table :
     uttMeaning .atLeast .inverse .twoNot .w3 = false ∧
     uttMeaning .atLeast .inverse .twoNot .w4 = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
+-- Compositional Grounding
+
+open Semantics.Montague (Model)
+open Semantics.Lexical.Determiner.Quantifier (exactly_n_sem at_least_n_sem)
+
+/-- 4-horse domain for grounding two-not truth conditions in numeral quantifier semantics. -/
+inductive Horse4 where | h1 | h2 | h3 | h4 deriving DecidableEq
+
+instance : Fintype Horse4 where
+  elems := {.h1, .h2, .h3, .h4}
+  complete := fun x => by cases x <;> simp
+
+/-- Jump predicate for each world state (out of 4 horses).
+    In partial worlds, the first k horses jumped. -/
+def jumpIn4 : JumpOutcome4 → Horse4 → Bool
+  | .w0, _ => false
+  | .w1, .h1 => true | .w1, _ => false
+  | .w2, .h1 => true | .w2, .h2 => true | .w2, _ => false
+  | .w3, .h1 => true | .w3, .h2 => true | .w3, .h3 => true | .w3, _ => false
+  | .w4, _ => true
+
+/-- Horse4 model as a Montague `Model`. -/
+abbrev horseModel4 : Model := { Entity := Horse4, decEq := inferInstance }
+
+instance : Fintype horseModel4.Entity where
+  elems := ({Horse4.h1, .h2, .h3, .h4} : Finset Horse4)
+  complete := fun x => by cases x <;> simp
+
+/-- Restrictor: all entities are horses (trivial for this model). -/
+def horse4_sem : horseModel4.interpTy (.e ⇒ .t) := fun _ => true
+
+/-- Jump predicate as Montague semantic value. -/
+def jumpIn4_sem (w : JumpOutcome4) : horseModel4.interpTy (.e ⇒ .t) :=
+  fun h => jumpIn4 w h
+
+-- Exact semantics grounding
+
+/-- Exact surface scope: ⟦exactly 2⟧(horse)(λx.¬jump(x))(w).
+    "There are exactly two horses that didn't jump." -/
+def twoNotExact_surface (w : JumpOutcome4) : Bool :=
+  exactly_n_sem horseModel4 2 horse4_sem (fun h => !jumpIn4_sem w h)
+
+/-- Exact inverse scope: ¬⟦exactly 2⟧(horse)(jump)(w).
+    "It's not the case that exactly two horses jumped." -/
+def twoNotExact_inverse (w : JumpOutcome4) : Bool :=
+  !(exactly_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+
+/-- Exact surface grounding: `twoNotTruth .exact .surface` derives from
+    compositional ⟦exactly 2⟧(horse)(λx.¬jump(x)), not stipulation. -/
+theorem exact_surface_from_exactly_n_sem :
+    ∀ w, twoNotTruth .exact .surface w = twoNotExact_surface w := by
+  intro w; cases w <;> native_decide
+
+/-- Exact inverse grounding: `twoNotTruth .exact .inverse` derives from
+    negating the compositional ⟦exactly 2⟧(horse)(jump). -/
+theorem exact_inverse_from_exactly_n_sem :
+    ∀ w, twoNotTruth .exact .inverse w = twoNotExact_inverse w := by
+  intro w; cases w <;> native_decide
+
+-- At-least semantics grounding
+
+/-- At-least surface scope: ⟦at least 2⟧(horse)(λx.¬jump(x))(w).
+    "There are at least two horses that didn't jump." -/
+def twoNotAtLeast_surface (w : JumpOutcome4) : Bool :=
+  at_least_n_sem horseModel4 2 horse4_sem (fun h => !jumpIn4_sem w h)
+
+/-- At-least inverse scope: ¬⟦at least 2⟧(horse)(jump)(w).
+    "It's not the case that at least two horses jumped." -/
+def twoNotAtLeast_inverse (w : JumpOutcome4) : Bool :=
+  !(at_least_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+
+/-- At-least surface grounding: `twoNotTruth .atLeast .surface` derives from
+    compositional ⟦at least 2⟧(horse)(λx.¬jump(x)). -/
+theorem atLeast_surface_from_at_least_n_sem :
+    ∀ w, twoNotTruth .atLeast .surface w = twoNotAtLeast_surface w := by
+  intro w; cases w <;> native_decide
+
+/-- At-least inverse grounding: `twoNotTruth .atLeast .inverse` derives from
+    negating the compositional ⟦at least 2⟧(horse)(jump). -/
+theorem atLeast_inverse_from_at_least_n_sem :
+    ∀ w, twoNotTruth .atLeast .inverse w = twoNotAtLeast_inverse w := by
+  intro w; cases w <;> native_decide
+
+/-- RSA meaning is grounded in compositional semantics: the meaning function
+    used by the two-not RSA config matches the GQT numeral quantifiers. -/
+theorem rsa_meaning_grounded (nr : NumeralReading) (s : ScopeReading) (w : JumpOutcome4) :
+    uttMeaning nr s .twoNot w = match nr, s with
+    | .exact, .surface => twoNotExact_surface w
+    | .exact, .inverse => twoNotExact_inverse w
+    | .atLeast, .surface => twoNotAtLeast_surface w
+    | .atLeast, .inverse => twoNotAtLeast_inverse w := by
+  cases nr <;> cases s <;> cases w <;> native_decide
+
 -- QUD Projection
 
 /-- QUD projection for the 5-world domain (extends every-not QUDs; paper (7)).
@@ -1037,5 +1130,41 @@ theorem atLeast_inverse_double :
   native_decide
 
 end TwoNot
+
+-- ============================================================================
+-- Cross-Model Narrative (§4.2.2)
+-- ============================================================================
+
+/-! The paper's key argument: the SAME "baseline" parameters that produce
+    low 1-of-2 endorsement also produce high 2-of-4 endorsement — but only
+    under exact numeral semantics.
+
+    The models have different world types (JumpOutcome vs JumpOutcome4),
+    so we state this as two separate bounds that together establish the
+    1-of-2 vs 2-of-4 asymmetry:
+
+    - Every-not baseline: S2(everyNot|w=1) < 1/2 (low)
+    - Two-not exact baseline: S2(twoNot|w=2) > 1/2 (high)
+    - Two-not at-least baseline: S2(twoNot|w=2) < 1/2 (low)
+
+    The first two use "baseline" parameters (b_suc=0.1, P(inv)=0.1).
+    The asymmetry between the second and third is the argument for exact
+    semantics: changing only the numeral reading flips the prediction. -/
+
+/-- Every-not baseline endorsement at w=1 is below 1/2.
+    This is the low-endorsement end of the 1-of-2 vs 2-of-4 asymmetry.
+    Uses the same b_suc=0.1 parameter that the TwoNot baseline uses. -/
+theorem everyNot_baseline_endorsement_low :
+    (1 : ℝ) / 2 > EveryNot.baselineCfg.S2 .one .everyNot := by
+  rsa_predict
+
+/-! **Cross-model summary** (proved above):
+    - `everyNot_baseline_endorsement_low`: S2(everyNot|w=1) < 1/2
+    - `TwoNot.exact_baseline_endorsement_high`: S2(twoNot|w=2) > 1/2
+    - `TwoNot.atleast_baseline_endorsement_low`: S2(twoNot|w=2) < 1/2
+
+    Same parameters, different domain size, same model architecture.
+    The exact/at-least split is the only difference between high and low
+    endorsement in the 2-of-4 context. -/
 
 end Phenomena.Quantification.Studies.ScontrasPearl2021

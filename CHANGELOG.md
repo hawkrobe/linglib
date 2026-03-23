@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.426] - 2026-03-23
+
+### Added
+- **Two-not compositional grounding**: 4-horse Montague model (`Horse4`, `horseModel4`, `jumpIn4`) with 9 grounding theorems connecting `twoNotTruth` to GQT numeral quantifiers (`exactly_n_sem`, `at_least_n_sem`). Both exact and at-least readings grounded for both scope configurations. `rsa_meaning_grounded` proves the RSA meaning function matches the compositional derivation for all 4 numeral×scope combinations
+- **Cross-model narrative (§4.2.2)**: `everyNot_baseline_endorsement_low` proves S2 < 1/2 for every-not at w=1 with baseline parameters. Together with `exact_baseline_endorsement_high` (S2 > 1/2) and `atleast_baseline_endorsement_low` (S2 < 1/2), this formally establishes the paper's central 1-of-2 vs 2-of-4 asymmetry: same parameters, different endorsement, only under exact semantics
+
 ## [0.229.425] - 2026-03-23
 
 ### Changed
