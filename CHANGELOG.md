@@ -6,7 +6,8 @@
 - **PrerequisiteAccount → ImplicativeClass → VerbEntry bridge** (`Implicative.lean`, `Nadathur2024.lean`): `PrerequisiteAccount.toImplicativeClass` derives classification from causal structure; end-to-end agreement theorems for dare, manage, jaksaa spanning all four layers (causal dynamics → prerequisite account → ImplicativeClass → fragment entry + cross-linguistic Finnish agreement)
 
 ### Fixed
-- **`innocent_nrv_not_necessary_for_msg`** → `innocent_nrv_vacuously_necessary`: but-for necessity is *vacuously true* when the effect is impossible (INT=0 blocks MSG regardless of NRV), not false as previously claimed
+- **Innocent Dreyfus necessity theorem**: replaced incorrect `innocent_nrv_not_necessary_for_msg` (claimed `= false`) with `innocent_sufficiency_is_what_matters` — the paper (p. 346) argues infelicity from sufficiency failing, not necessity. `causallyNecessary` (a simple but-for test from NL2020 Def 24) is inapplicable here because NRV is already determined by the background, violating Nadathur 2024 Definition 10b's precondition
+- **`causallyNecessary` docstring** (`StructuralEquationModel.lean`): documents the precondition (cause/effect must not be pre-determined) and notes divergence from Nadathur 2024 Definition 10b's achievability condition
 
 ## [0.229.414] - 2026-03-22
 

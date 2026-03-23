@@ -186,14 +186,23 @@ theorem innocent_dare_msg_infelicitous :
     causallySufficient dreyfusDynamics innocentBg vNRV vMSG = false := by
   native_decide
 
-/-- In the innocent scenario, NRV is vacuously necessary for MSG:
-    MSG cannot develop regardless (INT=0 blocks it), so the but-for
-    counterfactual "if NRV=0, MSG still fails" is trivially satisfied.
-    This illustrates a known limitation of but-for necessity in
-    structural equation models. -/
-theorem innocent_nrv_vacuously_necessary :
-    causallyNecessary dreyfusDynamics innocentBg vNRV vMSG = true := by
-  native_decide
+/-- In the innocent scenario, the paper argues infelicity from
+    **sufficiency** alone (p. 346): "each of (34a)–(34d) is infelicitous,
+    since ⟨NRV, 1⟩ is not sufficient." Definition 10's necessity
+    check is inapplicable here because NRV=1 is already determined
+    by the background (the precondition s ⊭_D ⟨X,x⟩ fails).
+
+    Note: `causallyNecessary` (a simple but-for test from
+    @cite{nadathur-lauer-2020} Def 24) returns `true` vacuously
+    in this scenario, but this is outside the domain of
+    @cite{nadathur-2024} Definition 10b. -/
+theorem innocent_sufficiency_is_what_matters :
+    -- Sufficiency fails (the paper's actual argument)
+    causallySufficient dreyfusDynamics innocentBg vNRV vMSG = false ∧
+    -- NRV is already determined by the background, so Def 10
+    -- necessity is inapplicable (but-for test is vacuously true)
+    innocentBg.hasValue vNRV true = true := by
+  exact ⟨by native_decide, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Fragment Verification: English

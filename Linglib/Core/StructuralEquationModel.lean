@@ -702,7 +702,14 @@ def causallySufficient (dyn : CausalDynamics) (s : Situation)
 
 /-- **Causal Necessity** (@cite{nadathur-lauer-2020}, Definition 24).
     C is causally necessary for E in situation s iff removing C and
-    developing normally does NOT produce E. -/
+    developing normally does NOT produce E.
+
+    **Precondition**: this but-for test assumes both `cause` and `effect`
+    are NOT already determined by `s`. If they are, the result is
+    vacuously true and not meaningful. @cite{nadathur-2024} Definition
+    10b adds an achievability condition (the effect must be obtainable
+    when the cause holds) that prevents vacuous necessity. This
+    implementation does not include that check. -/
 def causallyNecessary (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) : Bool :=
   let sWithoutCause := s.extend cause false
