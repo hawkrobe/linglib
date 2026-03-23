@@ -651,7 +651,7 @@ import Linglib.Fragments.Thai.PolarityItems
 import Linglib.Fragments.Tagalog.PolarityItems
 import Linglib.Fragments.Swahili.PolarityItems
 -- Phenomena
-import Linglib.Phenomena.Causation.Studies.SpalekMcNally.Data
+import Linglib.Phenomena.Causation.Studies.SpalekMcNally2026
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
 import Linglib.Phenomena.TemporalConnectives.Studies.AlstottAravind2026

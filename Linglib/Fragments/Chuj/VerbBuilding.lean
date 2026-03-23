@@ -332,8 +332,11 @@ def chel  : ChujRoot := ⟨"chel",  "hug", rootTV_pc⟩
 def tek'  : ChujRoot := ⟨"tek'",  "kick", rootTV_pc⟩
 
 -- √TV roots from examples (not in Table (5))
-def mak'  : ChujRoot := ⟨"mak'",  "hit", rootTV_pc⟩   -- ex. (55b), p. 65
-def il    : ChujRoot := ⟨"il",    "see", rootTV_pc⟩    -- ex. (10d), p. 41
+def mak'  : ChujRoot := ⟨"mak'",  "hit", rootTV_pc⟩    -- ex. (55b), p. 65
+def il    : ChujRoot := ⟨"il",    "see", rootTV_pc⟩     -- ex. (10d), p. 41
+def ch'ak : ChujRoot := ⟨"ch'ak", "fell", rootTV_pc⟩   -- ex. (63a), p. 68
+def b'o'  : ChujRoot := ⟨"b'o'",  "make", rootTV_pc⟩   -- ex. (62), p. 68
+def man   : ChujRoot := ⟨"man",   "buy", rootTV_pc⟩    -- ex. (59a), p. 67
 
 -- √ITV roots (Table (5), p. 39)
 def b'at  : ChujRoot := ⟨"b'at",  "go", rootITV⟩

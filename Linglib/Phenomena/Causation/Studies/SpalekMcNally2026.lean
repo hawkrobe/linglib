@@ -3,7 +3,7 @@ import Linglib.Fragments.Spanish.Predicates
 import Linglib.Core.Lexical.LevinClass
 
 /-!
-# Spalek & McNally (forthcoming): The Anatomy of a Verb
+# @cite{spalek-mcnally-2026}: The Anatomy of a Verb
 
 Empirical data and bridge theorems for the contrastive study of English
 *tear* and Spanish *rasgar*. These putative translation equivalents share
@@ -32,7 +32,7 @@ patient restrictions, separation geometry, and agent control.
 
 -/
 
-namespace Phenomena.Causation.ChangeOfState.Studies.SpalekMcNally
+namespace Phenomena.Causation.Studies.SpalekMcNally2026
 
 open Fragments.English.Predicates.Verbal
 open Fragments.Spanish.Predicates
@@ -59,7 +59,7 @@ theorem both_causative :
 -- ════════════════════════════════════════════════════
 
 /-- *tear* accepts robust patients; *rasgar* does not.
-    Spalek & McNally ex. (14): "she tore a chunk off her slice of bread" ✓
+    @cite{spalek-mcnally-2026} ex. (14): "she tore a chunk off her slice of bread" ✓
     vs. "??rasgó un trozo de pan" (§3.2). -/
 theorem patient_restriction_differs :
     tear_.rootProfile ≠ rasgar.rootProfile := by
@@ -73,7 +73,7 @@ theorem force_direction_differs :
   simp [tear_, rasgar]
 
 /-- *tear* is compatible with controlled action; *rasgar* is not.
-    Spalek & McNally ex. (17): "carefully tore the tin foil" ✓
+    @cite{spalek-mcnally-2026} ex. (17): "carefully tore the tin foil" ✓
     vs. "??rasgaron con cuidado el papel de aluminio" (§3.2). -/
 theorem agent_control_differs :
     tear_.rootProfile.bind (·.agentControl) ≠
@@ -109,7 +109,7 @@ def tearToSpanish : List TranslationDatum :=
     ⟨"desgarrar", 8⟩,     -- "rip"
     ⟨"rasgar", 8⟩,        -- "tear (gash)"
     ⟨"romper", 4⟩,        -- "break"
-    ⟨"partir", 3⟩,        -- "divide"
+    ⟨"partir", 4⟩,        -- "divide"
     ⟨"quitar", 3⟩ ]       -- "remove"
     -- + 27 other verbs with 1–2 instances each
 
@@ -132,4 +132,4 @@ theorem tear_preferred_for_rasgar :
     (rasgarToEnglish.filter (·.targetVerb == "rend")).head!.instances := by
   native_decide
 
-end Phenomena.Causation.ChangeOfState.Studies.SpalekMcNally
+end Phenomena.Causation.Studies.SpalekMcNally2026

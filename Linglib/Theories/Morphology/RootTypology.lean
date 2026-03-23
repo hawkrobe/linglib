@@ -125,7 +125,7 @@ inductive RootDenotationType where
        entail a prior change event?
     3. **Denotation type** (@cite{coon-2019}, (3)): event predicate, measure
        function, or entity predicate.
-    4. **Quality dimensions** (Spalek & McNally): within-class root content
+    4. **Quality dimensions** (@cite{spalek-mcnally-2026}): within-class root content
     5. **Class membership**: verb class taxonomy
 
     Axes 1, 2, and 3 cross-classify: Coon's four Chuj root classes are
@@ -140,7 +140,7 @@ structure Root where
   /-- Semantic denotation domain (@cite{coon-2019}, (3)). Optional — not all
       roots have been annotated. -/
   denotationType : Option RootDenotationType := none
-  /-- Within-class quality dimensions (Spalek & McNally) -/
+  /-- Within-class quality dimensions (@cite{spalek-mcnally-2026}) -/
   profile : RootProfile := {}
   /-- Verb class membership -/
   levinClass : Option LevinClass := none

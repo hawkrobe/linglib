@@ -67,7 +67,7 @@ end Range
 /-- Magnitude of force involved in the event.
 
     @cite{talmy-1988} identifies force magnitude as a core parameter of
-    force-dynamic schemas. Spalek & McNally: *tear* implies considerable
+    force-dynamic schemas. @cite{spalek-mcnally-2026}: *tear* implies considerable
     force; *rasgar* implies less (enough to damage something flimsy). -/
 inductive ForceLevel where
   | none      -- no force component (states)
@@ -79,7 +79,7 @@ inductive ForceLevel where
 /-- Spatial pattern of force application.
 
     @cite{talmy-2000}: force vectors have directional parameters.
-    Spalek & McNally: *tear* implies contrary-direction force (pulling
+    @cite{spalek-mcnally-2026}: *tear* implies contrary-direction force (pulling
     apart); *rasgar* implies unidirectional force (gash-like). -/
 inductive ForceDirection where
   | none             -- no directional force component
@@ -90,7 +90,7 @@ inductive ForceDirection where
 
 /-- Material substantiality of the affected entity (patient).
 
-    Spalek & McNally (forthcoming): the primary dimension distinguishing
+    @cite{spalek-mcnally-2026}: the primary dimension distinguishing
     *tear* (unrestricted) from *rasgar* (flimsy patients only). -/
 inductive Robustness where
   | insubstantial  -- states, abstractions (silence, darkness)
@@ -163,7 +163,7 @@ inductive Volitionality where
 
     @cite{dowty-1991}: Proto-Agent entailment P2 = "sentience
     (and/or perception)," enabling controlled action.
-    Spalek & McNally: *tear* is compatible with careful action
+    @cite{spalek-mcnally-2026}: *tear* is compatible with careful action
     ("carefully tore the tin foil"); *rasgar* is not
     ("??rasgaron con cuidado el papel"). -/
 inductive AgentControl where
@@ -192,15 +192,15 @@ inductive AgentControl where
 structure RootProfile where
   /-- Force magnitude: @cite{talmy-1988}. -/
   forceMag : Range ForceLevel := none
-  /-- Force directionality: @cite{talmy-2000}, Spalek & McNally. -/
+  /-- Force directionality: @cite{talmy-2000}, @cite{spalek-mcnally-2026}. -/
   forceDir : Range ForceDirection := none
-  /-- Patient material robustness: Spalek & McNally. -/
+  /-- Patient material robustness: @cite{spalek-mcnally-2026}. -/
   patientRob : Range Robustness := none
   /-- Type of physical change: @cite{levin-1993}, @cite{beavers-koontz-garboden-2020}. -/
   resultType : Range ResultType := none
   /-- Agent volitionality: @cite{dowty-1991} P1, @cite{ausensi-yu-smith-2021}. -/
   agentVolition : Range Volitionality := none
-  /-- Agent control: @cite{dowty-1991} P2, Spalek & McNally. -/
+  /-- Agent control: @cite{dowty-1991} P2, @cite{spalek-mcnally-2026}. -/
   agentControl : Range AgentControl := none
   /-- Instrument type the root selects for: @cite{majid-boster-bowerman-2008}.
       *cut* selects for sharp blades; *break* is unspecified. -/

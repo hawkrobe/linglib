@@ -142,7 +142,7 @@ def mejorar : SpanishVerbEntry :=
 /-- *rasgar* "tear (gash-like)" — Levin 45.1 equivalent; marked anticausative.
     Unlike English *tear*, *rasgar* requires flimsy/insubstantial patients and
     implies unidirectional (linear, gash-like) separation. Incompatible with
-    careful controlled action. Spalek & McNally (forthcoming, §3.2). -/
+    careful controlled action. @cite{spalek-mcnally-2026} (§3.2). -/
 def rasgar : SpanishVerbEntry :=
   { form := "rasgar", complementType := .np,
     causativeBuilder := some .make,

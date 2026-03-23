@@ -390,7 +390,7 @@ structure VerbCore where
       Most verbs use `.default`; polysemous entries use descriptive tags. -/
   senseTag : SenseTag := .default
 
-  -- === Root Content (@cite{levin-1993}; Spalek & McNally) ===
+  -- === Root Content (@cite{levin-1993}; @cite{spalek-mcnally-2026}) ===
   /-- @cite{levin-1993} verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
   /-- Root-specific quality dimensions (within-class variation). -/

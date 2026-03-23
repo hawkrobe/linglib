@@ -27,41 +27,25 @@ causative alternation proved from the Voice–root split.
 
 ## Bridge theorems (§§10–16)
 
-Connect the fragment's theory-neutral types to Minimalist VoiceHead
-properties (theta assignment, D feature, phase head, -aj prediction).
+Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
+`isGrammatical`, etc.) to Minimalist VoiceHead properties and to the
+@cite{beavers-etal-2021} root typology.
 
-## Bridge theorems
+### Chuj fragment bridge (§§10–15)
 
-### Chuj fragment bridge
+1. **Root class ↔ Root arity**: `CRootClass` maps to `Root` values.
+   √TV = selectsTheme, others = noTheme.
+2. **Voice suffix ↔ VoiceHead**: theta assignment, D feature, phase head.
+3. **Paradigm predictions**: `isGrammatical` matches data attestation.
+4. **-aj predictions**: `hasImplicitExternal` / `triggersAj` match -aj
+   distribution.
+5. **Agent diagnostics**: `assignsTheta` matches agent adverb / by-phrase.
+6. **Division of labor**: `formsBareTransitive` aligns with arity.
 
-Connects the Chuj fragment (`Fragments/Chuj/VerbBuilding.lean`) to the
-empirical data.
+### Root typology bridge (§§17–23)
 
-1. **Root class ↔ Root arity**: The phenomena's `CRootClass` maps to
-   the fragment's `Root` values. √TV = selectsTheme, others = noTheme.
-
-2. **Voice suffix ↔ VoiceHead**: Each suffix maps to the fragment's
-   VoiceHead, with matching properties (theta assignment, D feature,
-   phase head status).
-
-3. **Paradigm predictions**: The fragment's `isGrammatical` matches the
-   data's paradigm attestation for all root×voice combinations.
-
-4. **-aj predictions**: The fragment's `hasImplicitExternal` and
-   `triggersAj` match the data's -aj distribution.
-
-5. **Agent diagnostics**: The fragment's `assignsTheta` matches the
-   data's agent adverb and by-phrase diagnostics.
-
-6. **Division of labor**: The data's `formsBareTransitive` aligns with
-   the fragment's arity distinction: only roots with `selectsTheme`
-   form bare transitives.
-
-### Root typology bridge
-
-Connects the theory-side predictions of `Theories/Morphology/RootTypology.lean`
-(@cite{beavers-etal-2021} formalization) to the empirical data in
-`Phenomena/Causation/Studies/BeaversEtAl2021.lean`.
+Connects `Theories/Morphology/RootTypology.lean` (@cite{beavers-etal-2021})
+to empirical data in `Phenomena/Causation/Studies/BeaversEtAl2021.lean`.
 
 1. **Classification isomorphism**: The theory's `RootType` and the phenomena's
    `CoSRootClass` are provably isomorphic — they describe the same partition.
@@ -135,22 +119,22 @@ def ex16b : ChujExample :=
 /-- (62) √TV + -chaj (passive, §4.1.1, p. 68). -/
 def ex62 : ChujExample :=
   ⟨62, 68, "tz-b'o'-ch-aj ... winh nhulej tik",
-   "The brother's food is made by them.", mak', .ch, true⟩
+   "The brother's food is made by them.", b'o', .ch, true⟩
 
 /-- (59) √TV + -j (agentless passive, §4.1.2, p. 67). -/
 def ex59 : ChujExample :=
   ⟨59, 67, "tz-man-j-i ... / tz-choj-j-i ixim",
-   "It is bought. / It is ground.", mak', .j, true⟩
+   "It is bought. / It is ground.", man, .j, true⟩
 
 /-- (63a) Agent adverb with -chaj: grammatical (§4.1.1, p. 68). -/
 def ex63a : ChujExample :=
   ⟨63, 68, "sk'annhej sk'o'ol winh ix-ch'ak-chaj te' te'",
-   "The tree was felled on purpose.", mak', .ch, true⟩
+   "The tree was felled on purpose.", ch'ak, .ch, true⟩
 
 /-- (67a) Agent adverb with -j: ungrammatical (§4.1.2, p. 70). -/
 def ex67a : ChujExample :=
   ⟨67, 70, "*sk'annhej sk'o'ol winh ix-ch'ak-j-i te' te'",
-   "The tree was felled on purpose.", mak', .j, false⟩
+   "The tree was felled on purpose.", ch'ak, .j, false⟩
 
 /-- (54a) √TV + -w incorporation antipassive (§4, p. 64). -/
 def ex54a : ChujExample :=
@@ -194,7 +178,7 @@ def vØ : VoiceHead :=
 
 /-- Agentive intransitive v/Voice⁰ (-w): introduces overt agent in
     Spec,VoiceP but assigns absolutive (not ergative) case (p. 54).
-    Merges directly with root — cannot attach to derived stems (p. 55, (34a)).
+    Merges directly with root — cannot attach to derived stems (p. 54, (34b)).
     Used with √NOM and √POS to verbalize roots, and with √TV
     in incorporation antipassives (where the theme is a bare NP).
     Also models the null intransitive v/Voice⁰ for √ITV roots (p. 40):
@@ -278,12 +262,12 @@ theorem itv_intransitive :
     isActivity (buildDecomposition v_w activityLower) = true := by native_decide
 
 /-- √POS + -w → [vDO, vBE]: agent assumes a position (agentive stative).
-    (p. 52, (23b)): chot-w-i "hopped along crouched-down". -/
+    (p. 48, (23)): chot-w-i "The frog hopped." -/
 theorem pos_agentive :
     buildDecomposition v_w positionalLower = [.vDO, .vBE] := by native_decide
 
 /-- √NOM + -w → activity [vDO] (denominal agentive intransitive).
-    (p. 46, (16b)): chanhal-w-i "danced". -/
+    (p. 45, (16b)): chanhal-w-i "I danced." -/
 theorem nom_agentive :
     isActivity (buildDecomposition v_w activityLower) = true := by native_decide
 
@@ -318,16 +302,16 @@ theorem v_w_no_implicit : hasImplicitExternal v_w = false := by native_decide
     implicit; p. 70: "no thematic agent, implicit or otherwise"). -/
 theorem v_j_no_implicit : hasImplicitExternal v_j = false := by native_decide
 
-/-- -ch-aj: passive of √TV with implicit agent (Table 58). -/
+/-- -ch-aj: passive of √TV with implicit agent (ex. (58), p. 66). -/
 theorem ch_aj_passive :
     triggersAj v_ch false = true := by native_decide
 
-/-- -w-aj: absolutive antipassive (√TV theme is implicit; Table 58). -/
+/-- -w-aj: absolutive antipassive (√TV theme is implicit; ex. (58), p. 66). -/
 theorem w_aj_antipassive :
     triggersAj v_w true = true := by native_decide
 
 /-- -w incorporation antipassive: theme is overt bare NP → no -aj
-    (Table 58; p. 56, (26b)). -/
+    (ex. (58), p. 66; cf. (26b), p. 50). -/
 theorem w_incorporation_no_aj :
     triggersAj v_w false = false := by native_decide
 
@@ -352,7 +336,7 @@ theorem w_cross_class :
 -- § 9. Minimalist Division of Labor
 -- ════════════════════════════════════════════════════
 
-/-- Division of labor (@cite{coon-2019}, Table (2)/(77), p. 76): the root
+/-- Division of labor (@cite{coon-2019}, ex. (2)/(77), p. 75): the root
     determines whether a theme is present; Voice determines whether an
     agent is present. Same root with different Voice → different event type;
     same Voice with different root → same external argument status. -/
@@ -380,9 +364,12 @@ theorem chuj_causative_alternation_result :
 
 /-- Map the phenomena's root class to the fragment's Root.
     This connects theory-neutral distributional classes to the
-    theoretically analyzed Root structure. -/
+    theoretically analyzed Root structure.
+    √TV maps to `rootTV_res` as a representative — the choice between
+    `rootTV_res` and `rootTV_pc` is arbitrary for arity (both are
+    `selectsTheme`); only changeType differs. -/
 def toFragmentRoot : CRootClass → Root
-  | .tv  => rootTV_res  -- representative √TV (result subtype)
+  | .tv  => rootTV_res
   | .itv => rootITV
   | .pos => rootPOS
   | .nom => rootNOM

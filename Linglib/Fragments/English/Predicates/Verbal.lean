@@ -833,7 +833,7 @@ def break_ : VerbEntry where
     Unlike *break*, *tear* implies a specific directionality (bidirectional /
     pulling apart) and is compatible with careful controlled action.
     Patient restriction: any solid capable of irregular separation.
-    Spalek & McNally (forthcoming, §3.1–3.2).
+    @cite{spalek-mcnally-2026} (§3.1–3.2).
     @cite{majid-boster-bowerman-2008}: Dimension 2 — tearing consistently
     distinguished from break/cut across 10/28 languages. -/
 def tear_ : VerbEntry where
@@ -857,6 +857,68 @@ def tear_ : VerbEntry where
     instrumentType := some [.hands]
     patientDim := some [.twoD]
   }
+
+-- ════════════════════════════════════════════════════
+-- § Physical Disturbance CoS Verbs (@cite{tham-2025})
+-- ════════════════════════════════════════════════════
+
+/-- "crack" — Levin 45.1 Break verbs. Physical disturbance CoS verb.
+    @cite{tham-2025}: closed scale (contra @cite{rappaport-hovav-2014} two-point
+    classification), but allows BOTH telic ("cracked in a minute") and atelic
+    ("cracked for two days") readings. Compatible with *completely*, *partially*,
+    *badly*. The verb is NOT a standard degree achievement: its variable telicity
+    does not reduce to scale boundedness alone. -/
+def crack : VerbEntry := .mkRegular {
+  form := "crack"
+  complementType := .np
+  unaccusative := true
+  vendlerClass := some .achievement
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "cracking",
+    baseAdjective := some "cracked" }
+  causativeBuilder := some .make
+  levinClass := some .break_ }
+
+/-- "dent" — Levin 45.1 Break verbs. Physical disturbance CoS verb.
+    @cite{tham-2025}: closed scale, compatible with *more dented*, *completely
+    dented*, *badly dented*. -/
+def dent : VerbEntry := .mkRegular {
+  form := "dent"
+  complementType := .np
+  unaccusative := true
+  vendlerClass := some .achievement
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "denting",
+    baseAdjective := some "dented" }
+  causativeBuilder := some .make
+  levinClass := some .break_ }
+
+/-- "scratch" — Levin 45.1 Break verbs. Physical disturbance CoS verb.
+    @cite{tham-2025}: closed scale, compatible with *more scratched*, *completely
+    scratched*, *badly scratched*. Note: also has a manner reading (Levin
+    §10.4.1 wipe verbs: "The cat scratched the sofa") distinct from
+    the CoS reading formalized here. -/
+def scratch : VerbEntry := .mkRegular {
+  form := "scratch"
+  complementType := .np
+  unaccusative := true
+  vendlerClass := some .achievement
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "scratching",
+    baseAdjective := some "scratched" }
+  causativeBuilder := some .make
+  levinClass := some .break_ }
+
+/-- "shatter" — Levin 45.1 Break verbs. NOT a physical disturbance verb.
+    Punctual, non-gradable: *shatter in two minutes* (after, not duration),
+    #*shatter for two minutes*, ??*more shattered* (@cite{tham-2025} (12)). -/
+def shatter : VerbEntry := .mkRegular {
+  form := "shatter"
+  complementType := .np
+  unaccusative := true
+  vendlerClass := some .achievement
+  causativeBuilder := some .make
+  levinClass := some .break_ }
 
 /-- "burn" — thick lexical causative (manner = by fire/heat). -/
 def burn : VerbEntry := .mkRegular {

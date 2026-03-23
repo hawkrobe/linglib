@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.422] - 2026-03-23
+
+### Fixed
+- **Coon2019 "Table 58" hallucination**: three docstrings referenced nonexistent "Table 58" — corrected to "ex. (58), p. 66" (verified against PDF)
+- **Coon2019 verb field accuracy**: ex62/ex59/ex63a/ex67a used `mak'` ('hit') as placeholder — fixed to correct roots (`b'o'` 'make', `man` 'buy', `ch'ak` 'fell') matching the actual Chuj forms
+- **Coon2019 docstring cleanup**: removed duplicate "Bridge theorems" header, tightened section descriptions
+
+### Changed
+- **Chuj fragment lexicon**: added 3 √TV roots (`ch'ak`, `b'o'`, `man`) from Coon 2019 examples not in Table (5)
+- **`toFragmentRoot` docstring**: clarified that `rootTV_res` is an arbitrary representative for arity (both PC/result are `selectsTheme`)
+- **Spalek & McNally 2026**: added `spalek-mcnally-2026` bib entry (*Languages in Contrast* 26(1): 85–108, DOI 10.1075/lic.00059.spa); replaced all 10 raw inline citations across 6 files with `@cite{spalek-mcnally-2026}`; consolidated `SpalekMcNally/Data.lean` → `SpalekMcNally2026.lean`; fixed `partir` count (3→4, verified against Table 1 p. 102)
+
 ## [0.229.421] - 2026-03-23
 
 ### Changed
