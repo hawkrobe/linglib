@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.420] - 2026-03-23
+
+### Fixed
+- **Coon 2019 round 2** (`Coon2019.lean`): ex8→ex10a (paper's (8) is ITV b'ey not TV), ex20→ex7a ((20) is POS table not ITV sentence), ex23b→ex23a ((23b) is tree), ex16b person/page fix (ach→in, p.46→45), ex54a/ex55 label swap ((54)=incorporation, (55)=absolutive), stale §refs (§5→§4.2, §4.1-4.2→§4.1, p.37→41)
+
+### Changed
+- **Dissolved `Causation/Data.lean`** into `BellerGerstenberg2025.lean` — experimental acceptance rates, regression coefficients, and acceptability judgments now have provenance
+- **Dissolved `Causation/Compare.lean`** into `MartinRoseNichols2025.lean` — cross-theory bridges (template↔syntax, thick/thin↔Voice, alternation↔Voice) now live with the data they reference
+
 ## [0.229.419] - 2026-03-23
 
 ### Fixed

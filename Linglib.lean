@@ -798,12 +798,10 @@ import Linglib.Phenomena.Constructions.Resultatives.Studies.Dendikken1995
 import Linglib.Phenomena.Constructions.Resultatives.Studies.Levin2026
 import Linglib.Phenomena.Constructions.Resultatives.Studies.Tay2024
 import Linglib.Phenomena.Causation.Studies.BeaversEtAl2021
-import Linglib.Phenomena.Causation.Data
 import Linglib.Phenomena.Causation.Typology
 import Linglib.Phenomena.Causation.Studies.MartinRoseNichols2025
 import Linglib.Phenomena.Causation.Studies.NadathurLauer2020
 import Linglib.Phenomena.Causation.Studies.MunozPerez2026
-import Linglib.Phenomena.Causation.Compare
 import Linglib.Phenomena.Causation.Studies.Coon2019
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
