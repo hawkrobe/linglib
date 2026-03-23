@@ -1,8 +1,7 @@
 import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.ModalIndefinites
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Fragments.Chuj.VerbBuilding
+import Linglib.Phenomena.Causation.Studies.Coon2019
 import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.German.ModalIndefinites
@@ -461,13 +460,13 @@ theorem predictions_match_data :
 
 /-- Active transitive voice (vØ): agent = external → epistemic only. -/
 theorem active_agent_is_external :
-    Fragments.Chuj.vØ.hasD = true ∧
+    Phenomena.Causation.Studies.Coon2019.vØ.hasD = true ∧
     predictedFlavors .externalArg = [.epistemic] :=
   ⟨rfl, rfl⟩
 
 /-- Passive voice (-ch): theme promoted, agent implicit → both flavors. -/
 theorem passive_theme_is_internal :
-    Fragments.Chuj.v_ch.hasD = false ∧
+    Phenomena.Causation.Studies.Coon2019.v_ch.hasD = false ∧
     predictedFlavors .internalArgVolitional = [.epistemic, .circumstantial] :=
   ⟨rfl, rfl⟩
 

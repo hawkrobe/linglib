@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.421] - 2026-03-23
+
+### Changed
+- **Chuj fragment theory-neutral** (`Fragments/Chuj/VerbBuilding.lean`): removed `Minimalism.Core.Voice` import; voice heads (`vØ`, `v_w`, `v_ch`, `v_j`), event decompositions, existential closure, and verb building theorems moved to `Coon2019.lean`
+- **Fragment expanded**: absorbed theory-neutral distributional data from Coon2019 — `CRootClass`, `ChujVoiceSuffix`, `ExtArgStatus`, paradigm grammaticality (`isGrammatical`), -aj distribution, agent diagnostics, `rootToClass` bridge, and all verification theorems now live in the fragment
+- **`ChujVerb` eliminated**: `ChujExample.verb` now references `Fragments.Chuj.ChujRoot` from the fragment lexicon instead of duplicate local `ChujVerb` entries
+- **AlonsoOvalleRoyer2024**: updated to import `Coon2019` for voice heads (chronologically valid: 2024 > 2019); removed direct `Minimalism.Core.Voice` and `Fragments.Chuj.VerbBuilding` imports
+
 ## [0.229.420] - 2026-03-23
 
 ### Fixed
