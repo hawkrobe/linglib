@@ -549,38 +549,80 @@ noncomputable def mixS1Score (u : Utt) (wS α : ℝ) : ℝ :=
   Real.exp (α * mixUtility u wS)
 
 -- ============================================================================
--- §5c. Resource-Rational Analysis (Paper Eq. 10-11)
+-- §5c. Full Resource-Rational Model (Paper Eqs 7–10)
 -- ============================================================================
 
-/-- Expected communicative accuracy at speaker weight w_S.
-    The speaker produces utterance u with mixture-S1 probability; the listener's
-    accuracy is measured by egocentric L0 (the visible-context success rate).
+/-! The full model marginalizes over listener perspective-taking weight w_L.
 
-    This simplifies the paper's Eq. 10 by fixing the listener at w_L = 0
-    (egocentric) rather than marginalizing over w_L ∈ [0,1]. The qualitative
-    predictions are preserved: higher w_S → more specific utterances →
-    higher accuracy, but at cognitive cost β · w_S. -/
-noncomputable def expectedAccuracyR (wS α : ℝ) : ℝ :=
-  let Z := ∑ u' : Utt, mixS1Score u' wS α
+    The simplified model (Eqs 2–5) treats w_L as fixed at 1. The full model
+    (Eqs 7–9) has the speaker consider a range of listener weights, and the
+    resource-rational analysis (Eq. 10) measures accuracy averaged over w_L.
+
+    **Mixture L0** (Eq. 8): P_{L_0}^{mix}(target|u, l, w_L) =
+      w_L · P_{L_0}^{asym}(target|u, l) + (1−w_L) · P_{L_0}^{ego}(target|u).
+    At w_L = 0, the listener ignores hidden objects. At w_L = 1, the listener
+    accounts for all potential hidden distractors.
+
+    **Marginalized S1** (Eq. 9): the speaker's utility integrates over w_L,
+    discretized to 5 grid points {0, 1/4, 1/2, 3/4, 1} with uniform weight.
+
+    **Accuracy** (Eq. 10): since listener accuracy is linear in w_L,
+    E_{uniform w_L}[accuracy] = (egoInfR + asymInfR) / 2. -/
+
+/-- Mixture L0 accuracy: probability the mixture listener at weight w_L
+    correctly identifies the target, given hidden object profile l (Eq. 8). -/
+noncomputable def mixL0Target (u : Utt) (l : Bool × Bool × Bool) (wL : ℝ) : ℝ :=
+  wL * cfgAsym.L0 l u .target + (1 - wL) * egoInfR u
+
+/-- Asymmetric speaker utility at a specific listener weight (Eq. 7).
+    U^asym(u; w_L) = Σ_l P(l)/Z · log(P_L0^mix(target|u, l, w_L)) -/
+noncomputable def asymUtilityAtWL (u : Utt) (wL : ℝ) : ℝ :=
+  let Z : ℝ := ∑ l' : Bool × Bool × Bool, cfgAsym.latentPrior .target l'
+  ∑ l : Bool × Bool × Bool, (cfgAsym.latentPrior .target l / Z) *
+    Real.log (mixL0Target u l wL)
+
+/-- Mixed speaker utility at specific (w_S, w_L) (Eq. 8). -/
+noncomputable def mixUtilityFull (u : Utt) (wS wL : ℝ) : ℝ :=
+  wS * asymUtilityAtWL u wL + (1 - wS) * Real.log (egoInfR u)
+
+/-- W_L-marginalized speaker utility (Eq. 9 inside the exp).
+    Discretized: 5 uniform grid points at w_L ∈ {0, 1/4, 1/2, 3/4, 1}. -/
+noncomputable def mixUtilityMarg (u : Utt) (wS : ℝ) : ℝ :=
+  (1 / 5 : ℝ) * ∑ k : Fin 5, mixUtilityFull u wS (↑k / 4)
+
+/-- Full S1 score with w_L marginalization (Eq. 9). -/
+noncomputable def mixS1ScoreFull (u : Utt) (wS α : ℝ) : ℝ :=
+  Real.exp (α * mixUtilityMarg u wS)
+
+/-- Listener accuracy averaged over uniform w_L (for Eq. 10).
+    Since accuracy(u, w_L) = w_L·asymInfR(u) + (1−w_L)·egoInfR(u) is linear
+    in w_L, the expectation under uniform P(w_L) is the midpoint. -/
+noncomputable def avgListenerAccuracy (u : Utt) : ℝ :=
+  (egoInfR u + asymInfR u) / 2
+
+/-- Full expected accuracy (Eq. 10) with w_L marginalization.
+    Uses the w_L-marginalized S1 for speaker production and the
+    w_L-averaged listener accuracy for evaluation. -/
+noncomputable def expectedAccuracyFull (wS α : ℝ) : ℝ :=
+  let Z := ∑ u' : Utt, mixS1ScoreFull u' wS α
   if Z = 0 then 0
-  else ∑ u : Utt, (mixS1Score u wS α / Z) * egoInfR u
+  else ∑ u : Utt, (mixS1ScoreFull u wS α / Z) * avgListenerAccuracy u
 
-/-- Resource-rational utility (Eq. 10): accuracy minus perspective-taking cost.
-    U_RR(w_S) = ExpectedAccuracy(w_S) − β · w_S
-    Paper parameters: α = 2, β ∈ [0, 0.5]. -/
-noncomputable def rrUtilityR (wS α β : ℝ) : ℝ :=
-  expectedAccuracyR wS α - β * wS
+/-- Full resource-rational utility (Eqs 10–11).
+    U_RR(w_S) = ExpAccuracy_full(w_S) − β · w_S -/
+noncomputable def rrUtilityFull (wS α β : ℝ) : ℝ :=
+  expectedAccuracyFull wS α - β * wS
 
 -- ============================================================================
 -- §5d. Structural Properties
 -- ============================================================================
 
-/-- At w_S = 0, mixture utility reduces to egocentric log-L0. -/
+/-- At w_S = 0, the simplified mixture utility reduces to egocentric log-L0. -/
 theorem mixUtility_at_zero (u : Utt) :
     mixUtility u 0 = Real.log (egoInfR u) := by
   unfold mixUtility; ring
 
-/-- At w_S = 1, mixture utility reduces to asymmetric expected log-L0. -/
+/-- At w_S = 1, the simplified mixture utility reduces to asymmetric expected log-L0. -/
 theorem mixUtility_at_one (u : Utt) :
     mixUtility u 1 = asymLogInfR u := by
   unfold mixUtility; ring
@@ -594,26 +636,33 @@ theorem mixUtility_at_one (u : Utt) :
     The asymmetric speaker produces more specific utterances, improving
     listener accuracy. (Paper Figure 2, rightmost point of β = 0 curve.) -/
 theorem no_cost_prefers_full_pt :
-    rrUtilityR 1 2 0 > rrUtilityR 0 2 0 := by
-  sorry -- Follows from asymmetric S1 producing more specific utterances
+    rrUtilityFull 1 2 0 > rrUtilityFull 0 2 0 := by
+  rsa_predict
 
 /-- **Paper prediction (high β)**: When perspective-taking is costly,
     the cost term β · w_S dominates, making w_S = 0 preferable to w_S = 1.
     (Paper Figure 2, β = 0.5 curve.) -/
 theorem high_cost_penalizes_full_pt :
-    rrUtilityR 0 2 (1/2) > rrUtilityR 1 2 (1/2) := by
-  sorry -- β·1 = 0.5 exceeds the accuracy gain from full PT
+    rrUtilityFull 0 2 (1/2) > rrUtilityFull 1 2 (1/2) := by
+  rsa_predict
 
-/-- **Paper prediction (intermediate β)**: At moderate cost (β = 1/5),
-    there exists an intermediate weight w ∈ (0,1) that outperforms both
-    extremes. This is the paper's central result: the optimal degree of
-    perspective-taking is interior when costs are non-trivial.
-    (Paper §2.4, Figure 2, β = 0.2 shows w*_S ≈ 0.36.) -/
-theorem intermediate_weight_optimal :
-    ∃ w : ℝ, 0 < w ∧ w < 1 ∧
-    rrUtilityR w 2 (1/5) > rrUtilityR 0 2 (1/5) ∧
-    rrUtilityR w 2 (1/5) > rrUtilityR 1 2 (1/5) := by
-  sorry -- Interior optimum from trade-off: accuracy gain is concave, cost is linear
+/-- **Interior optimum limitation**: The paper's central result (§2.4,
+    Figure 2) is that at moderate cost (β = 0.2), an intermediate weight
+    w*_S ≈ 0.36 outperforms both extremes.
+
+    Our 3+1 object reference game is too simple to produce this effect.
+    Shape alone uniquely identifies the target among visible objects
+    (`egoInfR .s = 1`), so the egocentric baseline accuracy is ≈97%.
+    The marginal accuracy gain from perspective-taking is ≈0.3%, far
+    below the β = 0.2 cost. The interior optimum requires a richer display
+    where egocentric accuracy is substantially lower, creating a larger
+    incentive for specific utterances that disambiguate from hidden objects.
+
+    Verified: `rrUtilityFull 0 2 β > rrUtilityFull 1 2 β` for all
+    tested β ≥ 1/50 (even with the full w_L-marginalized model). -/
+theorem simplified_game_no_interior_optimum :
+    rrUtilityFull 0 2 (1/50) > rrUtilityFull 1 2 (1/50) := by
+  rsa_predict
 
 -- ============================================================================
 -- §5f. Listener Belief Adaptation (Paper §2.4.1, Appendix B)

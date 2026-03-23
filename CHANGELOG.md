@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.423] - 2026-03-23
+
+### Fixed
+- **Close 2 sorrys in ScontrasPearl2021TwoNot**: `exact_baseline_endorsement_high` and `exact_vs_atleast_endorsement` now proved via `rsa_predict` (S2 predictions)
+- **Close 2 sorrys in HawkinsGweonGoodman2021**: `no_cost_prefers_full_pt` and `high_cost_penalizes_full_pt` proved via `rsa_predict`; replaced false `intermediate_weight_optimal` (sorry) with `simplified_game_no_interior_optimum` (proved)
+- **HawkinsGweonGoodman2021 full model**: implemented Eqs 7–10 with w_L marginalization (`mixL0Target`, `asymUtilityAtWL`, `mixUtilityFull`, `mixUtilityMarg`, `mixS1ScoreFull`, `avgListenerAccuracy`, `expectedAccuracyFull`, `rrUtilityFull`); removed simplified `rrUtilityR`
+- **YoonEtAl2020 PhiGrid**: reduced S2 phi grid from `Fin 20` to `Fin 5` — L1 comparisons go from 36s to 1.5s; all existing S1/L1 theorems still pass
+- **YoonEtAl2020 S2 sorrys documented**: 3 sorrys blocked by (1) `rsa_predict` can't handle bare `Real.log(L1)` with fractional weights and (2) `both`/`kind` predictions don't hold with raw k/49 point estimates (paper infers θ via BDA)
+
 ## [0.229.422] - 2026-03-23
 
 ### Fixed

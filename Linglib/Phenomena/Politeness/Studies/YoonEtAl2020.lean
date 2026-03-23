@@ -429,14 +429,15 @@ the exponent is α · Σ terms), this is encoded as a constant term
 exp(−cost) factor after exponentiation.
 -/
 
-/-- Discretized kindness weight φ ∈ [0, 1] on a 20-point grid.
-    Grid: {0, 1/20, 2/20,..., 19/20}. The paper's WebPPL uses 40 values
-    at 0.025 spacing; we use 20 for tractability while maintaining
-    sufficient resolution for the MAP estimates (φ̂ ≈ 0.35-0.50). -/
-abbrev PhiGrid := Fin 20
+/-- Discretized kindness weight φ ∈ [0, 1] on a 5-point grid.
+    Grid: {0, 1/4, 1/2, 3/4, 1}. The paper's WebPPL uses 40 values
+    at 0.025 spacing; we use 5 matching the S1 submodel's `Phi` type
+    for tractable L1 computation (200 cells vs 800 with Fin 20).
+    MAP estimates (φ̂ ≈ 0.35-0.50) are mapped to nearest grid point. -/
+abbrev PhiGrid := Fin 5
 
-/-- The rational value of each grid point: k/20 for k ∈ {0,..., 19}. -/
-def phiVal (i : PhiGrid) : ℚ := i.val / 20
+/-- The rational value of each grid point: k/4 for k ∈ {0,..., 4}. -/
+def phiVal (i : PhiGrid) : ℚ := i.val / 4
 
 /-- S2 utility weights for a specific goal condition.
     Posterior means from the supplement's parameter table. -/
@@ -457,41 +458,41 @@ private def costTerm (u : Utterance) : ℚ :=
 
 -- §3a. Goal Condition Weights
 
-/-- Weights for "informative" goal condition.
+/-- Weights for "informative" goal condition (Table 2).
     High presentational weight (ω_pres = 62%) with neutral φ̂ ≈ 0.49.
-    Discretized to 10/20 = 0.50. -/
+    Discretized to 2/4 = 0.50. -/
 def informativeWeights : S2Weights where
   ωInf := 36/100
   ωSoc := 2/100
   ωPres := 62/100
-  phiHat := ⟨10, by omega⟩
+  phiHat := ⟨2, by omega⟩
 
-/-- Weights for "kind" (social) goal condition.
+/-- Weights for "kind" (social) goal condition (Table 2).
     Highest social weight (ω_soc = 31%) with kind φ̂ ≈ 0.37.
-    Discretized to 7/20 = 0.35. -/
+    Discretized to 1/4 = 0.25. -/
 def kindWeights : S2Weights where
   ωInf := 25/100
   ωSoc := 31/100
   ωPres := 44/100
-  phiHat := ⟨7, by omega⟩
+  phiHat := ⟨1, by omega⟩
 
-/-- Weights for "both" goal condition.
+/-- Weights for "both" goal condition (Table 2).
     Balanced: ω_inf = 36%, ω_soc = 11%, ω_pres = 54%, φ̂ ≈ 0.36.
-    Discretized to 7/20 = 0.35.
+    Discretized to 1/4 = 0.25.
     The combination of informativity and presentational pressure drives
     the "both" condition's distinctive negation pattern. -/
 def bothWeights : S2Weights where
   ωInf := 36/100
   ωSoc := 11/100
   ωPres := 54/100
-  phiHat := ⟨7, by omega⟩
+  phiHat := ⟨1, by omega⟩
 
 -- §3b. S2 RSAConfig (base S1/L1 layers)
 
 open RSA Real BigOperators in
 /-- Base RSAConfig for the S2 model's S1/L1 layers.
     Same scoring as the S1 submodel but with:
-    - 20-point φ grid (PhiGrid = Fin 20) for finer resolution
+    - 5-point φ grid (PhiGrid = Fin 5), matching the S1 submodel
     - α ≈ 4.47 (paper's fitted value)
     - Cost encoded as −cost/α in the constant term -/
 noncomputable def s2BaseCfg : RSAConfig Utterance HeartState where
@@ -544,11 +545,18 @@ set_option maxHeartbeats 8000000 in
 /-- Under "both" goals at h0, S2 prefers "not terrible" over "terrible".
     This is the paper's main finding: dual goals produce negation.
 
-    TODO: This prediction does not hold with raw acceptance proportions
-    (k/49) as point estimates for the literal semantics. The paper's
-    full model infers θ via BDA, marginalizing over posterior uncertainty
-    in a joint posterior over (α, c, ω, φ̂, θ). The qualitative prediction
-    may depend on this full posterior rather than point estimates. -/
+    **Blocked by two issues:**
+
+    1. **Correctness**: Does not hold with raw acceptance proportions
+       (k/49) as point estimates for the literal semantics. The paper's
+       full model infers θ via BDA, marginalizing over posterior uncertainty
+       in a joint posterior over (α, c, ω, φ̂, θ). The qualitative prediction
+       depends on this full posterior, not point estimates.
+
+    2. **Performance**: `rsa_predict` cannot handle bare `Real.log(L1)`
+       terms efficiently. The reifier's exp-log algebraic simplification
+       only fires for `exp(n * log(x))` with integer n; S2Utility has
+       fractional ω weights (0.36, 0.11, 0.54) multiplying log terms. -/
 theorem both_h0_prefers_negation :
     S2Utility bothWeights .h0 .notTerrible >
     S2Utility bothWeights .h0 .terrible := by
@@ -556,18 +564,24 @@ theorem both_h0_prefers_negation :
 
 set_option maxHeartbeats 8000000 in
 /-- Under "informative" goals at h0, S2 prefers "terrible" over "not terrible".
-    Direct speech dominates when the speaker prioritizes informativity. -/
+    Direct speech dominates when the speaker prioritizes informativity.
+
+    **Blocked by performance**: `rsa_predict` cannot handle bare
+    `Real.log(L1)` terms in S2Utility (see `both_h0_prefers_negation`).
+    Bare L1 comparisons on this config take ~3s, but S2Utility with
+    `log(L1)` falls through to expensive `logPoint` bisection. -/
 theorem informative_h0_prefers_direct :
     S2Utility informativeWeights .h0 .terrible >
     S2Utility informativeWeights .h0 .notTerrible := by
-  sorry -- TODO: rsa_predict crashes (code 134) on S2 utility with 640-cell model
+  sorry
 
 set_option maxHeartbeats 8000000 in
 /-- Under "kind" goals at h0, S2 prefers "not terrible" over "terrible".
     The social and presentational weights favor indirect speech.
 
-    TODO: Same sensitivity as `both_h0_prefers_negation` — does not hold
-    with raw proportions as point estimates for θ. -/
+    **Blocked by two issues** (same as `both_h0_prefers_negation`):
+    correctness with point estimates and `rsa_predict` performance
+    on bare `Real.log(L1)` terms. -/
 theorem kind_h0_prefers_negation :
     S2Utility kindWeights .h0 .notTerrible >
     S2Utility kindWeights .h0 .terrible := by

@@ -1,16 +1,17 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
+import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{scontras-pearl-2021} §4 — Two-Not RSA Model @cite{scontras-pearl-2021} @cite{kennedy-2015} @cite{musolino-2004}
+# @cite{scontras-pearl-2021} §4 — Two-Not RSA Model @cite{scontras-pearl-2021}
 
 The two-not model extends the every-not model (§3) to "two horses didn't jump"
 with n=4 horses. The key innovation: when n exceeds the numeral's value,
 exact vs at-least numeral semantics produce different truth conditions and
 thus different RSA predictions.
 
-## Model Structure (eqs 5–11)
+## Model Structure (§4.1)
 
 Domain: "Two horses didn't jump" with n=4 horses. 5 world states
 (0–4 jumped). 2 utterances (null, twoNot). 10 latent states
@@ -41,7 +42,7 @@ informativity → lower S2 endorsement at w=2.
 
 This predicts that adults endorse "two horses didn't jump" more readily
 in 2-of-4 contexts under exact numeral semantics — converging with
-@cite{kennedy-2015} and acquisition data from @cite{musolino-2004}.
+the exact semantics literature (see `Numeral.Semantics`).
 
 -/
 
@@ -131,7 +132,7 @@ def uttMeaning (nr : NumeralReading) : ScopeReading → Utt → JumpOutcome4 →
   | _, .null, _ => true
   | s, .twoNot, w => twoNotTruth nr s w
 
-/-- Exact semantics truth table (eq 6a). -/
+/-- Exact semantics truth table (paper (6), exact reading). -/
 theorem exact_truth_table :
     uttMeaning .exact .surface .twoNot .w0 = false ∧
     uttMeaning .exact .surface .twoNot .w1 = false ∧
@@ -144,7 +145,7 @@ theorem exact_truth_table :
     uttMeaning .exact .inverse .twoNot .w3 = true ∧
     uttMeaning .exact .inverse .twoNot .w4 = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- At-least semantics truth table (eq 6b). -/
+/-- At-least semantics truth table (paper (6), at-least reading). -/
 theorem atLeast_truth_table :
     uttMeaning .atLeast .surface .twoNot .w0 = true ∧
     uttMeaning .atLeast .surface .twoNot .w1 = true ∧
@@ -161,7 +162,7 @@ theorem atLeast_truth_table :
 -- §3. QUD Projection
 -- ============================================================================
 
-/-- QUD projection for the 5-world domain (eq 4, extended).
+/-- QUD projection for the 5-world domain (extends every-not QUDs; paper (7)).
     Explicit case analysis, kernel-reducible. -/
 def qudProject (q : QUD5) (f : JumpOutcome4 → ℝ) (w : JumpOutcome4) : ℝ :=
   match q, w with
@@ -294,27 +295,26 @@ noncomputable abbrev atleastSymCfg :=
     2-of-4 context, but ONLY under exact numeral semantics. This is the
     paper's key argument for exact semantics as the basic numeral meaning.
 
-    S2 predictions may require sorry because the state space
-    (5 worlds × 10 latents × 2 utterances = 100 S1 scores) exceeds
-    the heartbeat budget for kernel-level proof checking. -/
+    The `rsa_predict` tactic handles the S2 computation via reflection,
+    building L0→S1→L1→S2 layers and comparing exact rational bounds. -/
 
+set_option maxHeartbeats 1600000 in
 /-- Under exact semantics with baseline parameters (b_suc=0.1, P(inv)=0.1),
     S2 endorsement of "two horses didn't jump" at w=2 exceeds 1/2.
     Surface scope pinpoints w=2 as the unique true world, giving maximum
     informativity (Figure 7 right, red bar ≈ 0.8). -/
 theorem exact_baseline_endorsement_high :
     exactBaselineCfg.S2 .w2 .twoNot > (1 : ℝ) / 2 := by
-  -- TODO: 100 S1 entries may exceed heartbeat limits
-  sorry
+  rsa_predict
 
+set_option maxHeartbeats 3200000 in
 /-- Under at-least semantics with baseline parameters, S2 endorsement
     at w=2 is lower than under exact semantics.
     Exact surface has 1 true world; at-least surface has 3.
     (Figure 7: right panel > left panel at matching P(inv).) -/
 theorem exact_vs_atleast_endorsement :
     exactBaselineCfg.S2 .w2 .twoNot > atleastBaselineCfg.S2 .w2 .twoNot := by
-  -- TODO: cross-config comparison with 200 S1 entries
-  sorry
+  rsa_predict
 
 -- ============================================================================
 -- §7. Informativity Contrasts
