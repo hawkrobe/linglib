@@ -583,14 +583,124 @@ theorem pruning_weakens :
     True non-maximal readings require ≥3 atoms. -/
 def partialPrunedAlt : Set (Prop' HomWorld) := {someLaughed, janeLaughed}
 
+/-- MC-set for partialPrunedAlt: {homPrejacent, ∼janeLaughed}.
+    With ALT = {someLaughed, janeLaughed}, the only compatible negation
+    is ∼janeLaughed since ∼someLaughed contradicts the prejacent. -/
+private theorem mc_partial :
+    isMCSet partialPrunedAlt homPrejacent {homPrejacent, ∼janeLaughed} := by
+  constructor
+  · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
+    · intro ψ hψ
+      simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
+      rcases hψ with rfl | rfl
+      · left; rfl
+      · right; exact ⟨janeLaughed, by simp [partialPrunedAlt], rfl⟩
+    · exact ⟨.onlyKelly, fun ψ hψ => by
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
+        rcases hψ with rfl | rfl
+        · exact trivial
+        · exact id⟩
+  · intro E' hE' hsub ψ hψ'
+    rcases hE'.2.1 ψ hψ' with rfl | ⟨a, ha, rfl⟩
+    · exact Set.mem_insert _ _
+    · simp only [partialPrunedAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+      rcases ha with rfl | rfl
+      · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
+        exact hu (∼someLaughed) hψ' (hu homPrejacent (hsub (Set.mem_insert _ _)))
+      · exact Set.mem_insert_of_mem _ rfl
+
+/-- someLaughed is not IE-excludable for partialPrunedAlt. -/
+private theorem someLaughed_not_ie_partial :
+    ¬isInnocentlyExcludable partialPrunedAlt homPrejacent someLaughed := by
+  intro ⟨_, hIE⟩
+  have hNotIn : ∼someLaughed ∉ ({homPrejacent, ∼janeLaughed} : Set (Prop' HomWorld)) := by
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
+    exact ⟨fun h => Eq.mp (congrFun h .neither) id,
+           fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩
+  exact hNotIn (hIE _ mc_partial)
+
+/-- janeLaughed IS IE-excludable for partialPrunedAlt.
+    ∼janeLaughed is in every MC-set: if E omits ∼janeLaughed, E can be
+    extended (since ∼someLaughed is the only other option and contradicts φ),
+    violating maximality. -/
+private theorem janeLaughed_ie_partial :
+    isInnocentlyExcludable partialPrunedAlt homPrejacent janeLaughed := by
+  refine ⟨Set.mem_insert_of_mem _ rfl, fun E hMC => ?_⟩
+  by_contra hNotIn
+  have hcompat : isCompatible partialPrunedAlt homPrejacent (E ∪ {∼janeLaughed}) := by
+    refine ⟨Or.inl hMC.1.1, ?_, ?_⟩
+    · intro ψ hψ
+      rcases hψ with hψE | hψS
+      · exact hMC.1.2.1 ψ hψE
+      · right
+        exact ⟨janeLaughed, Set.mem_insert_of_mem _ rfl, Set.mem_singleton_iff.mp hψS⟩
+    · refine ⟨.onlyKelly, fun ψ hψ => ?_⟩
+      rcases hψ with hψE | hψS
+      · rcases hMC.1.2.1 ψ hψE with rfl | ⟨a, ha, rfl⟩
+        · exact trivial
+        · simp only [partialPrunedAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
+          rcases ha with rfl | rfl
+          · exfalso; obtain ⟨u, hu⟩ := hMC.1.2.2
+            exact hu (∼someLaughed) hψE (hu homPrejacent hMC.1.1)
+          · exact absurd hψE hNotIn
+      · rw [Set.mem_singleton_iff.mp hψS]; exact id
+  exact hNotIn (hMC.2 _ hcompat Set.subset_union_left (Set.subset_union_right rfl))
+
 /-- Partial pruning (removing kellyLaughed) does not yield universality.
 
-    TODO: Full proof requires MC-set construction for partialPrunedAlt
-    showing janeLaughed ∈ IE, then constructing Exh at .onlyKelly. -/
+    Counterexample: .onlyKelly satisfies Exh^{IE+II} (janeLaughed is
+    IE-excluded and someLaughed is II-included) but not the universal
+    kellyLaughed ∧ janeLaughed. -/
 theorem partial_pruning_not_universal :
     ¬(∀ w, exhIEII partialPrunedAlt homPrejacent w →
       kellyLaughed w ∧ janeLaughed w) := by
-  sorry
+  intro h
+  suffices hexh : exhIEII partialPrunedAlt homPrejacent .onlyKelly from
+    (h .onlyKelly hexh).2
+  refine ⟨trivial, ?_, ?_⟩
+  · -- IE: for all IE-excludable q, ¬q .onlyKelly
+    intro q hq
+    have hqAlt := hq.1
+    simp only [partialPrunedAlt] at hqAlt
+    rcases hqAlt with rfl | rfl
+    · exact absurd hq someLaughed_not_ie_partial
+    · exact id
+  · -- II: for all II-includable r, r .onlyKelly
+    intro r hr
+    have hrAlt := hr.1
+    simp only [partialPrunedAlt] at hrAlt
+    rcases hrAlt with rfl | rfl
+    · exact trivial
+    · exfalso
+      have hmi : isMISet partialPrunedAlt homPrejacent {someLaughed} := by
+        constructor
+        · constructor
+          · intro x hx; simp only [Set.mem_singleton_iff] at hx
+            rw [hx]; exact Set.mem_insert _ _
+          · refine ⟨.onlyKelly, fun ψ hψ => ?_⟩
+            rcases hψ with hψ_left | hψ_R
+            · rcases hψ_left with hψ_φ | hψ_ie
+              · rw [Set.mem_singleton_iff.mp hψ_φ]; exact trivial
+              · obtain ⟨q, hqIE, rfl⟩ := hψ_ie
+                have hqAlt := hqIE.1
+                simp only [partialPrunedAlt] at hqAlt
+                rcases hqAlt with rfl | rfl
+                · exact absurd hqIE someLaughed_not_ie_partial
+                · exact id
+            · rw [Set.mem_singleton_iff.mp hψ_R]; exact trivial
+        · intro R' hR'compat hsub r' hr'
+          have hr'Alt := hR'compat.1 hr'
+          simp only [partialPrunedAlt] at hr'Alt
+          rcases hr'Alt with rfl | rfl
+          · exact rfl
+          · exfalso
+            obtain ⟨u, hu⟩ := hR'compat.2
+            exact hu (∼janeLaughed)
+              (Or.inl (Or.inr ⟨janeLaughed, janeLaughed_ie_partial, rfl⟩))
+              (hu janeLaughed (Or.inr hr'))
+      have hmem := hr.2 _ hmi
+      simp only [Set.mem_singleton_iff] at hmem
+      exact Eq.mpr (congrFun hmem .onlyKelly) trivial
 
 
 -- ============================================================
