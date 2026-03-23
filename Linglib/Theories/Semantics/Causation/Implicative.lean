@@ -463,4 +463,21 @@ theorem specific_vs_bleached :
     (ImplicativeClass.manage.prerequisite.bind (some ·.isSpecific)) = some false := by
   exact ⟨rfl, rfl⟩
 
+-- ════════════════════════════════════════════════════
+-- § PrerequisiteAccount → ImplicativeClass Bridge
+-- ════════════════════════════════════════════════════
+
+/-- Derive the full `ImplicativeClass` from a `PrerequisiteAccount`.
+
+    Polarity (positive/negative) must be supplied externally — it is a
+    lexical choice orthogonal to causal structure. The prerequisite
+    account determines directionality and prerequisite type; lexical
+    implicatives are never aspect-governed. -/
+def PrerequisiteAccount.toImplicativeClass (pa : PrerequisiteAccount)
+    (polarity : ImplicativeBuilder) : ImplicativeClass :=
+  { polarity := polarity
+    directionality := pa.directionality
+    aspectGoverned := false
+    prerequisite := some pa.prerequisiteType }
+
 end Nadathur2024.Implicative

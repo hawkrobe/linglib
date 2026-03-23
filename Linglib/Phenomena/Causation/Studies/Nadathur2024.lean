@@ -186,10 +186,13 @@ theorem innocent_dare_msg_infelicitous :
     causallySufficient dreyfusDynamics innocentBg vNRV vMSG = false := by
   native_decide
 
-/-- In the innocent scenario, NRV is also not necessary for MSG
-    (MSG cannot be achieved regardless, since INT=0 blocks it). -/
-theorem innocent_nrv_not_necessary_for_msg :
-    causallyNecessary dreyfusDynamics innocentBg vNRV vMSG = false := by
+/-- In the innocent scenario, NRV is vacuously necessary for MSG:
+    MSG cannot develop regardless (INT=0 blocks it), so the but-for
+    counterfactual "if NRV=0, MSG still fails" is trivially satisfied.
+    This illustrates a known limitation of but-for necessity in
+    structural equation models. -/
+theorem innocent_nrv_vacuously_necessary :
+    causallyNecessary dreyfusDynamics innocentBg vNRV vMSG = true := by
   native_decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -348,5 +351,84 @@ theorem dreyfus_jaksaa_necessity_only :
 /-- One-way directionality follows from hasSufficiencyPresup = false. -/
 theorem dreyfus_jaksaa_oneWay :
     dreyfusJaksaaAccount.directionality = .oneWay := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § 6. PrerequisiteAccount → ImplicativeClass → VerbEntry Bridge
+-- ════════════════════════════════════════════════════════════════
+
+/-! The three independently-specified representations of implicative
+    verb semantics must agree. These theorems create a triangle:
+
+    ```
+    PrerequisiteAccount  →  ImplicativeClass  ←  VerbCore fields
+             ↘                                      ↗
+              ────────── agreement theorem ──────────
+    ```
+
+    Changing any vertex (causal dynamics, classification, or fragment
+    entry) without updating the others breaks the corresponding theorem. -/
+
+-- ── dare: end-to-end ──
+
+/-- End-to-end agreement for *dare*: causal dynamics, prerequisite account,
+    ImplicativeClass, and English fragment entry are all consistent.
+
+    This theorem breaks if:
+    - Dreyfus dynamics change (necessity/sufficiency results)
+    - `dreyfusDareAccount` is misconfigured
+    - `ImplicativeClass.dare` is changed
+    - The `dare` VerbEntry's fields change
+    - The `uskaltaa` Finnish entry's classification diverges -/
+theorem dare_end_to_end :
+    -- Layer 1: Causal dynamics → prerequisite account
+    dreyfusDareAccount.necessityPresup = true ∧
+    dreyfusDareAccount.sufficiencyPresup = true ∧
+    -- Layer 2: Prerequisite account → ImplicativeClass
+    dreyfusDareAccount.toImplicativeClass .positive = ImplicativeClass.dare ∧
+    -- Layer 3: ImplicativeClass → English fragment entry
+    dare.toVerbCore.implicativeBuilder = some ImplicativeClass.dare.polarity ∧
+    dare.toVerbCore.presupType = some .prerequisiteSoft ∧
+    -- Layer 4: Cross-linguistic — Finnish uskaltaa matches
+    uskaltaa.toImplicativeClass = ImplicativeClass.dare := by
+  exact ⟨by native_decide, by native_decide, rfl, rfl, rfl, rfl⟩
+
+-- ── manage: end-to-end ──
+
+/-- A PrerequisiteAccount for "manage to send message" in the Dreyfus
+    scenario. Same causal dynamics as dare, but unspecified prerequisite. -/
+private def dreyfusManageAccount : PrerequisiteAccount :=
+  { dynamics := dreyfusDynamics
+    background := dreyfusBg
+    prereqVar := vNRV
+    complementVar := vMSG
+    prerequisiteType := .unspecified
+    hasSufficiencyPresup := true }
+
+/-- End-to-end agreement for *manage*. -/
+theorem manage_end_to_end :
+    -- Layer 1: Causal dynamics
+    dreyfusManageAccount.necessityPresup = true ∧
+    dreyfusManageAccount.sufficiencyPresup = true ∧
+    -- Layer 2: Prerequisite account → ImplicativeClass
+    dreyfusManageAccount.toImplicativeClass .positive = ImplicativeClass.manage ∧
+    -- Layer 3: ImplicativeClass → English fragment
+    manage.toVerbCore.implicativeBuilder = some ImplicativeClass.manage.polarity ∧
+    manage.toVerbCore.presupType = some .prerequisiteSoft ∧
+    -- Layer 4: Cross-linguistic — Finnish onnistua matches
+    onnistua.toImplicativeClass = ImplicativeClass.manage := by
+  exact ⟨by native_decide, by native_decide, rfl, rfl, rfl, rfl⟩
+
+-- ── jaksaa: one-way end-to-end ──
+
+/-- End-to-end agreement for one-way implicative *jaksaa*. -/
+theorem jaksaa_end_to_end :
+    -- Layer 1: Causal dynamics — necessary but NOT sufficient
+    dreyfusJaksaaAccount.necessityPresup = true ∧
+    dreyfusJaksaaAccount.sufficiencyPresup = false ∧
+    -- Layer 2: Prerequisite account → ImplicativeClass
+    dreyfusJaksaaAccount.toImplicativeClass .positive = ImplicativeClass.jaksaa ∧
+    -- Layer 3: ImplicativeClass → Finnish fragment
+    jaksaa.toImplicativeClass = ImplicativeClass.jaksaa := by
+  exact ⟨by native_decide, by native_decide, rfl, rfl⟩
 
 end Phenomena.Causation.Studies.Nadathur2024
