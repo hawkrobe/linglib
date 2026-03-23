@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.418] - 2026-03-23
+
+### Fixed
+- **`pearl-2000` bib entry**: was hallucinated (Hitchcock review article with JSTOR DOI); corrected to Pearl's *Causality* monograph (CUP, 2nd ed. 2009, DOI 10.1017/CBO9780511803161)
+- **3 missing bib entries**: added `schulz-2011`, `baglini-francez-2016`, `kemmer-1994` — all verified via CrossRef
+- **Verified Nadathur 2024 references against source PDF**: Figure 3, §6.1.1, ex. 33c/34/35, Proposal 32, Definition 10b all confirmed correct
+- **Definition 10b implementation verified**: `causallyNecessary` matches Nadathur 2024 Def 10(b) exactly — precondition (s ⊭ cause, s ⊭ effect), achievability (∃ consistent supersituation of s[cause↦true] entailing effect), but-for (¬∃ consistent supersituation of s entailing effect without cause)
+
 ## [0.229.417] - 2026-03-23
 
 ### Added
