@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 # Degree Achievements
 @cite{kennedy-levin-2008}
 
-@cite{kennedy-2007} show that degree achievements (rust, cool, widen, increase)
+@cite{kennedy-levin-2008} show that degree achievements (rust, cool, widen, increase)
 have **variable telicity** determined by the boundedness of the underlying adjectival
 scale:
 

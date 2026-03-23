@@ -131,6 +131,10 @@ def Dimension.pregnancy : Dimension := ⟨"pregnancy", .state⟩
 def Dimension.hardness : Dimension := ⟨"hardness", .state⟩
 def Dimension.smoothness : Dimension := ⟨"smoothness", .state⟩
 def Dimension.purity : Dimension := ⟨"purity", .state⟩
+def Dimension.cracking : Dimension := ⟨"cracking", .state⟩
+def Dimension.denting : Dimension := ⟨"denting", .state⟩
+def Dimension.scratching : Dimension := ⟨"scratching", .state⟩
+def Dimension.shattering : Dimension := ⟨"shattering", .state⟩
 
 -- Physical dimension
 def Dimension.weight : Dimension := ⟨"weight", .size⟩

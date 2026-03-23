@@ -1500,6 +1500,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Antonymy
 import Linglib.Theories.Semantics.Lexical.Adjective.ClauseEmbedding
 import Linglib.Theories.Semantics.Lexical.Adjective.Classification
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
+import Linglib.Theories.Semantics.Lexical.Adjective.Aggregation
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
@@ -1840,7 +1841,9 @@ import Linglib.Phenomena.Gradability.Studies.Kennedy2007Licensing
 import Linglib.Phenomena.Gradability.Studies.Rett2015Implicature
 import Linglib.Phenomena.Gradability.Studies.Morzycki2009
 import Linglib.Phenomena.Gradability.Studies.Rouillard2026
+import Linglib.Phenomena.Gradability.Studies.DAmbrosioHedden2024
 import Linglib.Phenomena.Gradability.Studies.Sassoon2013
+import Linglib.Phenomena.Gradability.Studies.Tham2025
 import Linglib.Phenomena.Gradability.Studies.Beltrama2025
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.Elbourne2013

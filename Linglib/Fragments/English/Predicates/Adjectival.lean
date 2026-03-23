@@ -557,6 +557,49 @@ def dangerous : AdjectivalPredicateEntry where
   antonymForm := some "safe"
   antonymRelation := some .contrary
 
+/-! ## Physical disturbance deverbal adjectives
+
+@cite{tham-2025}: physical disturbance predicates are associated with a totally
+closed, multi-point scale. Lower bound = physical instantiation of disturbance;
+upper bound = spatial extent of host entity. Gradable (*more cracked*, *badly
+dented*), compatible with *completely* and *partially*. Contra
+@cite{rappaport-hovav-2014} (two-point) and @cite{rotstein-winter-2004}
+(lower-bounded only). -/
+
+/-- "cracked" — closed scale, contradictory to "uncracked".
+    Deverbal adjective from *crack* (Levin 45.1 Break verbs).
+    NOT a two-point scale: accepts *more cracked*, *completely cracked*,
+    *partially cracked*, *badly cracked* (@cite{tham-2025} §2.3–2.4). -/
+def cracked : AdjectivalPredicateEntry where
+  form := "cracked"
+  scaleType := .closed
+  dimension := .cracking
+
+/-- "dented" — closed scale.
+    Deverbal adjective from *dent*. Accepts *more dented*, *completely dented*,
+    *badly dented* (@cite{tham-2025} (11a), (20b)). -/
+def dented : AdjectivalPredicateEntry where
+  form := "dented"
+  scaleType := .closed
+  dimension := .denting
+
+/-- "scratched" — closed scale.
+    Deverbal adjective from *scratch*. Accepts *more scratched*, *completely
+    scratched*, *badly scratched* (@cite{tham-2025} (11b), (20c)). -/
+def scratched : AdjectivalPredicateEntry where
+  form := "scratched"
+  scaleType := .closed
+  dimension := .scratching
+
+/-- "shattered" — closed scale, NON-GRADABLE.
+    Deverbal adjective from *shatter* (Levin 45.1 Break verbs).
+    Contrast: ??*more shattered*, punctual verb, no durative reading.
+    Not a physical disturbance predicate (@cite{tham-2025} (12c)). -/
+def shattered : AdjectivalPredicateEntry where
+  form := "shattered"
+  scaleType := .closed
+  dimension := .shattering
+
 /-! ## Mildly positive adjectives (MPAs)
 
 @cite{beltrama-2025}: MPAs encode a necessity standard — the minimum value
@@ -605,6 +648,8 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   free_, loose, tight,
   -- State: hardness, purity, alive
   hard, soft, pure_, dead, alive,
+  -- State: physical disturbance (@cite{tham-2025})
+  cracked, dented, scratched, shattered,
   -- Informationally strong
   pristine, filthy,
   -- Physical dimensions

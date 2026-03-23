@@ -25,16 +25,16 @@ Domain: "Every horse didn't jump" with n=2 horses. 3 world states
 - **S2**: S2(u|w) ∝ exp(log Σ_{i,q} L1(w,i,q|u)) = L1(w|u)
 - **Endorsement**: P(endorse u | w_obs) = S2(u|w_obs)
 
-Parameters: α = 1 (§3.2, p.15). P(w) = Binomial(n, b_suc).
+Parameters: α = 1 (§3.2). P(w) = Binomial(n, b_suc).
 
-## QUDs (eqs 3–4)
+## QUDs (paper (3))
 
 Three QUD partitions over worlds:
 - how-many?: identity — partitions {w0}, {w1}, {w2}
 - all?: w = n? — partitions {w0,w1} vs {w2}
 - none?: w = 0? — partitions {w0} vs {w1,w2}
 
-## S2 vs L1 (eq 8)
+## S2 vs L1
 
 The paper models endorsement as S2, not L1. S2(u|w) ∝ P_{L1}(w|u),
 using the **normalized** L1 posterior. This matters because:
@@ -67,7 +67,7 @@ data — S&P is a modeling paper explaining @cite{musolino-lidz-2003} findings):
 | Config | S2(everyNot|w=1) | Paper value |
 |--------|-----------------|-------------|
 | b_suc=0.1 (baseline) | 0.288 | ~0.29 |
-| b_suc=0.5 (default) | 0.506 | ~0.48 |
+| b_suc=0.5 (default) | 0.506 | ~0.48 (read from Figure 2) |
 | b_suc=0.9 (high base rate) | 0.796 | ~0.80 |
 
 The S2 ordering w0 > w1 > w2 is **robust** across all prior configurations,
@@ -115,7 +115,7 @@ instance : Fintype Utt where
   elems := {.null, .everyNot}
   complete := fun x => by cases x <;> simp
 
-/-- QUDs partition worlds by the question under discussion (eqs 3–4).
+/-- QUDs partition worlds by the question under discussion (paper (3)).
     Three QUD partitions for n=2 worlds. -/
 inductive QUD where
   | howMany -- "How many horses jumped?" — {w0}, {w1}, {w2} (identity)
@@ -164,7 +164,7 @@ def uttMeaning : ScopeReading → Utt → JumpOutcome → Bool
   | _, .null, _ => true
   | s, .everyNot, w => scopeTruth s w
 
-/-- Truth table verification against the paper's equations (3a-b). -/
+/-- Truth table verification against the paper's utterance semantics (2). -/
 theorem truth_table :
     uttMeaning .surface .everyNot .zero = true ∧
     uttMeaning .surface .everyNot .one = false ∧
@@ -273,7 +273,7 @@ theorem every_not_scope_entailment :
 -- §4. QUD Projection
 -- ============================================================================
 
-/-- QUD answer function: q(w) → equivalence class identifier (eq 4).
+/-- QUD answer function: q(w) → equivalence class identifier (paper (3)).
     For howMany, each world is its own class (identity partition). -/
 def qudAnswer : QUD → JumpOutcome → Fin 3
   | .howMany, .zero => 0  | .howMany, .one => 1  | .howMany, .two => 2
@@ -381,10 +381,10 @@ noncomputable abbrev surfaceOnlyCfg :=
     (fun _ => 1) (fun _ => le_of_lt one_pos)
 
 -- ============================================================================
--- §7. S2 Endorsement (eq 8)
+-- §7. S2 Endorsement
 -- ============================================================================
 
-/-! S2 endorsement (eq 8) uses the generic `RSAConfig.S2` from
+/-! S2 endorsement uses the generic `RSAConfig.S2` from
     `Theories/Pragmatics/RSA/Core/Config.lean`:
     S2(u|w) = S2agent.policy(w, u) where S2agent.score(w, u) = cfg.L1(u, w)
     (the **normalized** L1 posterior).

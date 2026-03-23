@@ -3,7 +3,6 @@ import Linglib.Theories.Pragmatics.Implicature.NegationScope
 
 /-!
 # @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
-@cite{horn-1972} @cite{kennedy-2015} @cite{partee-1987} @cite{musolino-2004}
 
 "When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
@@ -23,7 +22,7 @@ rather than reporting new experiments.
 ### §2. Two-not (n=4)
 - `JumpOutcome4`: 0–4 horses jumped
 - `NumeralReading`: exact (=2) vs at-least (≥2)
-- `twoNotTruth`: truth conditions for "two horses didn't jump" (eq 6)
+- `twoNotTruth`: truth conditions for "two horses didn't jump" (paper (6))
 
 -/
 
@@ -89,7 +88,7 @@ inductive NumeralReading where
   | atLeast  -- "two" = at least 2 (@cite{horn-1972})
   deriving DecidableEq, BEq, Repr, Inhabited
 
-/-- Truth conditions for "two horses didn't jump" with n=4 horses (eq 6).
+/-- Truth conditions for "two horses didn't jump" with n=4 horses (paper (6)).
 
     Parameterized by numeral reading and scope configuration.
 
@@ -149,7 +148,7 @@ theorem exact_atleast_diverge_2of4 :
     twoNotTruth .atLeast .inverse .w4 = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §3. Scope Entailment Asymmetry (@cite{musolino-lidz-2003}, pp. 288–289)
+-- §3. Scope Entailment Asymmetry (@cite{musolino-lidz-2003})
 -- ============================================================================
 
 /-- For universals, surface scope (∀>¬: none jumped) ENTAILS inverse scope
