@@ -27,22 +27,25 @@ open Fragments.Icelandic.Predicates
 
 /-- Icelandic nominalizing suffixes. All spell out n in different
     morphological contexts — they are NOT different functional heads
-    (@cite{wood-2023} Ch. 3). -/
+    (@cite{wood-2023} Ch. 2 (2.1), Ch. 3).
+
+    The book lists: -un, -ing, -sla, -stur, -a, -n, -Ø, -ð, plus
+    others (-aður, -ning). This fragment covers the most common ones. -/
 inductive NomSuffix where
   | un     -- most productive: söfn-un 'collection', opn-un 'opening'
-  | an     -- less productive: vís-an 'showing'
   | ing    -- borrowed/Latinate pattern: birting 'publication'
   | sla    -- restricted: ræk-sla 'cultivation'
-  | nadur  -- restricted: skil-naður 'understanding'
+  | stur   -- restricted: þvo-ttur, les-tur
+  | adur   -- restricted: skil-naður (stem -n- + -aður)
   deriving DecidableEq, BEq, Repr
 
 /-- PF realization of the suffix. -/
 def NomSuffix.form : NomSuffix → String
   | .un    => "-un"
-  | .an    => "-an"
   | .ing   => "-ing"
   | .sla   => "-sla"
-  | .nadur => "-naður"
+  | .stur  => "-stur"
+  | .adur  => "-aður"
 
 -- ============================================================================
 -- § 2: Nominalization Entry Structure
@@ -80,7 +83,7 @@ def opnun : IcelandicNom :=
     baseVerb := "opna"
     gloss := "opening"
     suffix := .un
-    availableReadings := [.complexEvent, .result]
+    availableReadings := [.complexEvent, .simpleEntity]
     stVerb := some opnast }
 
 /-- *söfnun* 'collection' — from *safna* 'collect' (@cite{wood-2023} Ch. 5).
@@ -91,7 +94,7 @@ def sofnun : IcelandicNom :=
     baseVerb := "safna"
     gloss := "collection"
     suffix := .un
-    availableReadings := [.complexEvent, .result] }
+    availableReadings := [.complexEvent, .simpleEntity] }
 
 /-- *þvottur* 'washing' — from *þvo* 'wash' (@cite{wood-2023} Ch. 6).
     CEN: *þvo-ttur Guðrúnar á fötunum* 'Guðrún's washing of the clothes'
@@ -102,8 +105,8 @@ def pvottur : IcelandicNom :=
   { nomForm := "þvottur"
     baseVerb := "þvo"
     gloss := "washing/laundry"
-    suffix := .un  -- irregular, but nominalizing n
-    availableReadings := [.complexEvent, .simpleEvent, .result] }
+    suffix := .stur  -- irregular form -ttur, same n head
+    availableReadings := [.complexEvent, .simpleEvent, .simpleEntity] }
 
 /-- *misheyrn* 'mishearing' — from *misheyrast* 'mishear' (@cite{wood-2023} Ch. 5).
     Subject-experiencer -st verb; nominalization retains experiencer
@@ -128,14 +131,14 @@ def vontun : IcelandicNom :=
 
 /-- *viðvörun* 'warning' — from *viðvara* 'warn' (@cite{wood-2023} Ch. 6).
     CEN: *viðvörun Guðrúnar á hættunni* 'Guðrún's warning of the danger'
-    SEN: *Viðvörunin stóð í mörg ár* 'The warning stood for many years'
-    RN: *Ég snerti viðvörunina* 'I touched the warning' -/
+    SEN/State: *Viðvörunin stóð í mörg ár* 'The warning stood for many years'
+    Simple entity: *Ég snerti viðvörunina* 'I touched the warning' -/
 def vidvorun : IcelandicNom :=
   { nomForm := "viðvörun"
     baseVerb := "viðvara"
     gloss := "warning"
     suffix := .un
-    availableReadings := [.complexEvent, .simpleEvent, .result] }
+    availableReadings := [.complexEvent, .simpleEvent, .simpleState, .simpleEntity] }
 
 /-- *notkun* 'use' — from *nota* 'use' (@cite{wood-2023} Ch. 5).
     CEN reading; the verbalizer -ka appears in the nominal but not
@@ -150,13 +153,14 @@ def notkun : IcelandicNom :=
 /-- *aðdáun* 'admiration' — from *dást að* 'admire' (@cite{wood-2023} Ch. 6).
     P-prefixing: *að* 'to' must be prefixed to the noun.
     CEN: *Aðdáun Guðrúnar á Maríu* 'Guðrún's admiration of María'
-    SEN: *Aðdáunin stóð í mörg ár* 'The admiration lasted for many years' -/
+    SEN/State: *Aðdáunin stóð í mörg ár* 'The admiration lasted for many years'
+    No concrete entity reading (6.13c is unacceptable). -/
 def addaun : IcelandicNom :=
   { nomForm := "aðdáun"
     baseVerb := "dást að"
     gloss := "admiration"
     suffix := .un
-    availableReadings := [.complexEvent, .simpleEvent]
+    availableReadings := [.complexEvent, .simpleEvent, .simpleState]
     hasPPrefix := true
     prefixedP := some "að" }
 
@@ -167,8 +171,8 @@ def vidgerd : IcelandicNom :=
   { nomForm := "viðgerð"
     baseVerb := "gera við"
     gloss := "repair"
-    suffix := .un  -- irregular
-    availableReadings := [.complexEvent, .result]
+    suffix := .stur  -- irregular form -ð, same n head
+    availableReadings := [.complexEvent, .simpleEntity]
     hasPPrefix := true
     prefixedP := some "við" }
 

@@ -971,12 +971,12 @@ theorem end_to_end_result_root :
     resultStatesCompatible (PreverbalElement.rsp).resultSpec (PreverbalElement.rsp).resultSpec = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Mirror chain for PC roots: zero v → RN reading → *Ge-...-e*, which
-    accepts phrases (RSP) and rejects heads (pfx). -/
+/-- Mirror chain for PC roots: zero v → simple entity reading → *Ge-...-e*,
+    which accepts phrases (RSP) and rejects heads (pfx). -/
 theorem end_to_end_pc_root :
     let v := VAlloseme.fromRootType .propertyConcept
     v = .zero ∧
-    readingFromAllosemes v .sortal = some .result ∧
+    readingFromAllosemes v .sortal = some .simpleEntity ∧
     -- Ge-...-e distribution: phrase (RSP) accepted, head (pfx) rejected
     ((PreverbalElement.rsp).synLevel == .phrase) = true ∧
     ((PreverbalElement.pfx).synLevel == .phrase) = false :=
