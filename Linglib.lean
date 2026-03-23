@@ -1083,8 +1083,6 @@ import Linglib.Phenomena.Quantification.Data
 import Linglib.Phenomena.Quantification.Typology
 import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
-import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021RSA
-import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021TwoNot
 import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
 import Linglib.Phenomena.Quantification.Studies.Elliott2025
 import Linglib.Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
