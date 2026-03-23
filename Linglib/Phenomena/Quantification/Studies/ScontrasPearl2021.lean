@@ -253,34 +253,7 @@ theorem numeral_inverse_not_entails_surface :
   ⟨.w0, rfl, rfl⟩
 
 -- ============================================================================
--- §4. @cite{musolino-lidz-2003} Experimental Data
--- ============================================================================
-
-/-- Acceptance rate from a truth-value judgment experiment. -/
-structure AcceptanceRate where
-  accepted : Nat
-  total : Nat
-  deriving Repr
-
-/-- Experiment 2, matched condition: isomorphic reading (two > not) true.
-    "Two N didn't V" — context makes surface scope true, inverse false.
-    Adults accept readily when the isomorphic reading works → 100%. -/
-def ml2003_exp2_matched : AcceptanceRate := ⟨40, 40⟩
-
-/-- Experiment 2, unmatched condition: non-isomorphic reading (not > two) true.
-    "Two N didn't V" — context makes only inverse scope true.
-    Adults show isomorphism effect (surface scope preference) → 27.5%.
-    This is the key datum that @cite{scontras-pearl-2021}'s RSA model explains. -/
-def ml2003_exp2_unmatched : AcceptanceRate := ⟨11, 40⟩
-
-/-- Experiment 3: same as Exp 2 unmatched but preceded by an affirmative
-    statement (e.g., "Two frogs jumped... but two frogs didn't jump").
-    Affirmative context rescues non-isomorphic (inverse scope) access → 92.5%.
-    Modeled by @cite{scontras-pearl-2021}'s `supportiveCfg`. -/
-def ml2003_exp3_affirmative : AcceptanceRate := ⟨37, 40⟩
-
--- ============================================================================
--- §5. Numeral Semantics Grounding
+-- §4. Numeral Semantics Grounding
 -- ============================================================================
 
 /-! Connects S&P's `twoNotTruth` truth conditions to linglib's numeral
@@ -855,6 +828,7 @@ theorem atLeast_truth_table :
 
 open Semantics.Montague (Model)
 open Semantics.Lexical.Determiner.Quantifier (exactly_n_sem at_least_n_sem)
+open Semantics.Scope (ScopeConfig ScopeDerivation)
 
 /-- 4-horse domain for grounding two-not truth conditions in numeral quantifier semantics. -/
 inductive Horse4 where | h1 | h2 | h3 | h4 deriving DecidableEq
@@ -943,6 +917,68 @@ theorem rsa_meaning_grounded (nr : NumeralReading) (s : ScopeReading) (w : JumpO
     | .atLeast, .surface => twoNotAtLeast_surface w
     | .atLeast, .inverse => twoNotAtLeast_inverse w := by
   cases nr <;> cases s <;> cases w <;> native_decide
+
+-- maxMeaning ↔ GQT bridge
+
+/-- The two grounding layers agree: `maxMeaning .eq` (count-based) and
+    `exactly_n_sem` (GQT compositional) produce the same truth values.
+    Chains `twoNotExact_surface_matches_maxMeaning` with
+    `exact_surface_from_exactly_n_sem` by transitivity. -/
+theorem maxMeaning_agrees_gqt_exact_surface :
+    ∀ w, maxMeaning .eq 2 (4 - w.toNat) = twoNotExact_surface w := by
+  intro w; cases w <;> native_decide
+
+theorem maxMeaning_agrees_gqt_exact_inverse :
+    ∀ w, !(maxMeaning .eq 2 w.toNat) = twoNotExact_inverse w := by
+  intro w; cases w <;> native_decide
+
+theorem maxMeaning_agrees_gqt_atLeast_surface :
+    ∀ w, maxMeaning .ge 2 (4 - w.toNat) = twoNotAtLeast_surface w := by
+  intro w; cases w <;> native_decide
+
+theorem maxMeaning_agrees_gqt_atLeast_inverse :
+    ∀ w, !(maxMeaning .ge 2 w.toNat) = twoNotAtLeast_inverse w := by
+  intro w; cases w <;> native_decide
+
+-- Scope Derivation
+
+/-- Map data file's `ScopeReading` to Montague `ScopeConfig`. -/
+def readingToScopeConfig : ScopeReading → ScopeConfig
+  | .surface => .surface
+  | .inverse => .inverse
+
+/-- "Two horses didn't jump" as a `ScopeDerivation` under exact semantics:
+    a single syntactic form with multiple semantic values indexed by scope. -/
+def twoHorsesDidntJump_exact (w : JumpOutcome4) : ScopeDerivation horseModel4 .t where
+  surface := "Two horses didn't jump"
+  meaningAt
+    | .surface => exactly_n_sem horseModel4 2 horse4_sem (fun h => !jumpIn4_sem w h)
+    | .inverse => !(exactly_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+
+/-- "Two horses didn't jump" as a `ScopeDerivation` under at-least semantics. -/
+def twoHorsesDidntJump_atLeast (w : JumpOutcome4) : ScopeDerivation horseModel4 .t where
+  surface := "Two horses didn't jump"
+  meaningAt
+    | .surface => at_least_n_sem horseModel4 2 horse4_sem (fun h => !jumpIn4_sem w h)
+    | .inverse => !(at_least_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+
+/-- The exact two-not scope pair has INDEPENDENT readings: neither entails
+    the other. This independence makes exact numerals diagnostic for the
+    isomorphism effect — unlike universals, which have nested readings. -/
+theorem exact_two_not_scope_independent :
+    Semantics.Scope.classifyScopeEntailment
+      [JumpOutcome4.w0, .w1, .w2, .w3, .w4]
+      (twoNotTruth .exact .surface) (twoNotTruth .exact .inverse)
+    = .independent := by native_decide
+
+/-- At-least two-not has NESTED readings: inverse (true at {w0,w1}) entails
+    surface (true at {w0,w1,w2}). Like universals, at-least numerals are
+    non-diagnostic for the isomorphism effect. -/
+theorem atLeast_two_not_scope_nested :
+    Semantics.Scope.classifyScopeEntailment
+      [JumpOutcome4.w0, .w1, .w2, .w3, .w4]
+      (twoNotTruth .atLeast .surface) (twoNotTruth .atLeast .inverse)
+    = .inverseEntailsSurface := by native_decide
 
 -- QUD Projection
 
@@ -1038,23 +1074,6 @@ noncomputable abbrev atleastBaselineCfg :=
     (fun w => by cases w <;> positivity)
     (fun s => match s with | .surface => 9 | .inverse => 1)
     (fun s => by cases s <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-
-/-- Symmetric exact config: b_suc = 0.5, uniform scope/QUD.
-    Binomial(4, 0.5) ∝ (1, 4, 6, 4, 1). -/
-noncomputable abbrev exactSymCfg :=
-  cfg .exact
-    (fun w => match w with | .w0 => 1 | .w1 => 4 | .w2 => 6 | .w3 => 4 | .w4 => 1)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
-
-/-- Symmetric at-least config: b_suc = 0.5, uniform scope/QUD. -/
-noncomputable abbrev atleastSymCfg :=
-  cfg .atLeast
-    (fun w => match w with | .w0 => 1 | .w1 => 4 | .w2 => 6 | .w3 => 4 | .w4 => 1)
-    (fun w => by cases w <;> positivity)
-    (fun _ => 1) (fun _ => le_of_lt one_pos)
     (fun _ => 1) (fun _ => le_of_lt one_pos)
 
 -- Key Predictions (§4.2)

@@ -1,10 +1,25 @@
 # Changelog
 
-## [0.229.426] - 2026-03-23
+## [0.229.428] - 2026-03-23
 
 ### Added
+- **ScontrasPearl2021 two-not ScopeDerivation**: `twoHorsesDidntJump_exact`/`_atLeast` scope derivations, `exact_two_not_scope_independent` (diagnostic) vs `atLeast_two_not_scope_nested` (non-diagnostic), mirroring every-not model depth
+- **maxMeaning ↔ GQT bridge**: 4 theorems chaining count-based `maxMeaning` to compositional `exactly_n_sem`/`at_least_n_sem`, collapsing two parallel grounding layers into one chain
+
+### Removed
+- **ScontrasPearl2021 dead code**: `exactSymCfg`/`atleastSymCfg` (unused configs), `AcceptanceRate` struct + `ml2003_exp2_matched`/`ml2003_exp2_unmatched`/`ml2003_exp3_affirmative` (decorative data not connected to model predictions)
+
+## [0.229.427] - 2026-03-23
+
+### Added
+- **Longobardi 2005 Topological Mapping Theory**: `Theories/Interfaces/SyntaxSemantics/Minimalism/TopologicalMapping.lean` — axioms (52)-(54), Core Generalization (33) as theorem, NominalHeadClass taxonomy with table (28), properness hierarchy with raising monotonicity, expletive vs operator articles, bridge to Reference/Basic.lean
+- **Longobardi 2005 study file**: `Phenomena/Reference/Studies/Longobardi2005.lean` — Italian solo diagnostic data, expletive article evidence, N-to-D as HeadToHeadMovement, Last Resort derivation, bridges to Longobardi2001 DPParameter/ArgumentType
 - **Two-not compositional grounding**: 4-horse Montague model (`Horse4`, `horseModel4`, `jumpIn4`) with 9 grounding theorems connecting `twoNotTruth` to GQT numeral quantifiers (`exactly_n_sem`, `at_least_n_sem`). Both exact and at-least readings grounded for both scope configurations. `rsa_meaning_grounded` proves the RSA meaning function matches the compositional derivation for all 4 numeral×scope combinations
 - **Cross-model narrative (§4.2.2)**: `everyNot_baseline_endorsement_low` proves S2 < 1/2 for every-not at w=1 with baseline parameters. Together with `exact_baseline_endorsement_high` (S2 > 1/2) and `atleast_baseline_endorsement_low` (S2 < 1/2), this formally establishes the paper's central 1-of-2 vs 2-of-4 asymmetry: same parameters, different endorsement, only under exact semantics
+
+### Changed
+- Moved `Longobardi2001.lean` from `Phenomena/Generics/Studies/` to `Phenomena/Reference/Studies/` — the paper is fundamentally about reference (N-to-D, proper name syntax), not generics
+- Upgraded `longobardi-2005` bib entry from `cited` to `formalized`, updated `longobardi-2001` sources field
 
 ## [0.229.425] - 2026-03-23
 
