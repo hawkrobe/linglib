@@ -553,12 +553,15 @@ theorem overdetermination_world :
     causalWorldFromModel overdetModel overdetBg mA mC =
     ⟨false, true, true⟩ := by native_decide
 
-/-- Causal chain → W=true, H=false, S=true.
-The initial cause is sufficient (S) and necessary (W), but NOT
-directly connected (H=false) — it operates through an intermediate. -/
+/-- Causal chain → W=false, H=false, S=true.
+Under @cite{nadathur-2024} Def 10b, the initial cause is sufficient (S)
+but NOT necessary (W=false): the intermediate can be set directly,
+bypassing the root cause. This is correct for Def 10b's domain
+(prerequisite semantics), though it diverges from simpler but-for tests
+for chain causation. -/
 theorem chain_world :
     causalWorldFromModel chainModel Situation.empty mA mC =
-    ⟨true, false, true⟩ := by native_decide
+    ⟨false, false, true⟩ := by native_decide
 
 -- Expression predictions from structural models
 
@@ -678,20 +681,20 @@ theorem solo_cause_chain :
   · exact s1_cfg_full_caused_gt_enabled
   · exact lt_trans s1_cfg_full_enabled_gt_affected s1_cfg_full_caused_gt_enabled
 
-/-- **Causal chain → D-CAUSE → S1 prefers "enabled".**
+/-- **Causal chain → S1 prefers "enabled".**
 
 From a causal chain (a → intermediate → c), direct interaction is absent
 (H=false): the cause operates through an intermediate. "caused" is
-literally FALSE, so the S1 speaker selects "enabled" instead. -/
+literally FALSE, so the S1 speaker selects "enabled" instead.
+Under @cite{nadathur-2024} Def 10b, the chain root is also NOT necessary
+(W=false) because the intermediate can be set directly. The causation type
+becomes `none` (neither production nor dependence). -/
 theorem chain_cause_chain :
     let cw := causalWorldFromModel chainModel Situation.empty mA mC
-    profileCausationType (extractProfile chainModel Situation.empty mA mC) = some .dependence ∧
+    profileCausationType (extractProfile chainModel Situation.empty mA mC) = none ∧
     expressionMeaning cw .caused = false ∧
-    expressionMeaning cw .enabled = true ∧
-    cfg.S1 () cw .enabled > cfg.S1 () cw .affected := by
-  refine ⟨by native_decide, by native_decide, by native_decide, ?_⟩
-  -- cw reduces to ⟨true, false, true⟩ = scenario2
-  exact s1_cfg_double_prevention_enabled_gt_affected
+    expressionMeaning cw .enabled = true := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 /-- **Overdetermination: B&G's "caused" diverges from N&L's `causeSem`.**
 

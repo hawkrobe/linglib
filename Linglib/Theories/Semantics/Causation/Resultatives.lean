@@ -106,18 +106,18 @@ theorem laugh_sufficient_for_silly :
 
 Single-pathway resultatives: verbal subevent is both sufficient and necessary. -/
 
-/-- Hammering is causally necessary for flatness. -/
+/-- Hammering is causally necessary for flatness.
+    Under @cite{nadathur-2024} Def 10b, the background must NOT
+    include the cause (precondition rejects it). -/
 theorem hammer_necessary_for_flat :
-    let background := Situation.empty.extend hammeringVar true
-    causallyNecessary hammerFlatModel background hammeringVar flatVar = true := by
+    causallyNecessary hammerFlatModel Situation.empty hammeringVar flatVar = true := by
   native_decide
 
 /-- Both `makeSem` and `causeSem` hold for "hammer flat"
     (no overdetermination). -/
 theorem hammer_flat_make_and_cause :
-    let background := Situation.empty.extend hammeringVar true
-    makeSem hammerFlatModel background hammeringVar flatVar = true ∧
-    causeSem hammerFlatModel background hammeringVar flatVar = true := by
+    makeSem hammerFlatModel Situation.empty hammeringVar flatVar = true ∧
+    causeSem hammerFlatModel Situation.empty hammeringVar flatVar = true := by
   constructor <;> native_decide
 
 /-! ### Noncausative resultatives = empty dynamics
@@ -197,13 +197,19 @@ inductive CCSelectionMode where
 /-- Resultatives select via completion (like CoS verbs). -/
 def resultativeCCSelection : CCSelectionMode := .completionOfSufficientSet
 
-/-- BBS2025 completion event: sufficient + necessary in context. -/
+/-- BBS2025 completion event: sufficient + but-for necessary in context.
+    Uses simple counterfactual but-for rather than @cite{nadathur-2024}
+    Def 10b's supersituation necessity: the cause must be needed in the
+    CURRENT background, not resilient against all possible supersituations.
+    This is the right granularity for completion events — intermediate
+    variables in causal chains are passive (no independent source),
+    so simple but-for captures tightness correctly. -/
 def completesForEffect (dyn : CausalDynamics) (background : Situation)
     (cause effect : Variable) : Bool :=
   -- With cause: the set is sufficient
   causallySufficient dyn background cause effect &&
-  -- Without cause: the set is NOT sufficient (cause is needed)
-  causallyNecessary dyn (background.extend cause true) cause effect
+  -- Without cause: effect does NOT develop (but-for test)
+  !(normalDevelopment dyn (background.extend cause false)).hasValue effect true
 
 /-- Hammering completes the sufficient set for flatness. -/
 theorem hammer_completes_for_flat :
@@ -380,13 +386,13 @@ theorem independent_source_disrupts_tightness
     let bg := Situation.empty.extend indepSrc true
     completesForEffect withIndep bg cause effect = false := by
   intro chain _ withIndep bg
-  -- Necessity fails: indepSrc → intermediate → effect fires even without cause
+  -- But-for test fails: indepSrc → intermediate → effect fires even without cause
   simp only [completesForEffect, Bool.and_eq_false_iff]
-  right; unfold causallyNecessary; dsimp only
+  right
   suffices h : (normalDevelopment withIndep
-      ((bg.extend cause true).extend cause false)).hasValue effect true = true by
+      (bg.extend cause false)).hasValue effect true = true by
     rw [h]; rfl
-  set s := (bg.extend cause true).extend cause false
+  set s := bg.extend cause false
   -- HasValue facts for s (counterfactual situation with cause=false)
   have hs_c : s.hasValue cause true = false := by simp [s, bg]
   have hs_i : s.hasValue intermediate true = false := by

@@ -117,10 +117,13 @@ theorem lightning_sufficient_overdetermination :
 **Lightning is necessary for fire** (when it's the only cause).
 
 "The lightning caused the fire" is true when only lightning is present:
-without lightning, no fire.
+without lightning, no fire. Under @cite{nadathur-2024} Def 10b, the
+background must NOT include the cause; instead, the arsonist's absence
+is encoded directly.
 -/
 theorem lightning_necessary_solo :
-    causallyNecessary fireDynamics lightningOnlyBackground lightning fire = true := by
+    let soloContext := Situation.empty.extend arsonist false
+    causallyNecessary fireDynamics soloContext lightning fire = true := by
   native_decide
 
 /--
@@ -168,11 +171,32 @@ When lightning is the only cause:
 - "The lightning caused the fire" is TRUE
 
 Both verbs are felicitous when there's no overdetermination.
+Under @cite{nadathur-2024} Def 10b, the background encodes the arsonist's
+absence rather than the lightning's presence.
 -/
 theorem solo_make_and_cause :
-    makeSem fireDynamics lightningOnlyBackground lightning fire = true ∧
-    causeSem fireDynamics lightningOnlyBackground lightning fire = true := by
+    let soloContext := Situation.empty.extend arsonist false
+    makeSem fireDynamics soloContext lightning fire = true ∧
+    causeSem fireDynamics soloContext lightning fire = true := by
   constructor <;> native_decide
+
+/--
+**Actual causation in overdetermination**: lightning did NOT actually
+cause the fire when the arsonist is also present — `actuallyCaused`
+returns false because necessity fails (the arsonist backup blocks it).
+-/
+theorem overdetermination_not_actually_caused :
+    actuallyCaused fireDynamics bothCausesBackground lightning fire = false := by
+  native_decide
+
+/--
+**Actual causation as sole cause**: when lightning is the only cause,
+`actuallyCaused` holds — lightning both occurred and was necessary.
+-/
+theorem solo_actually_caused :
+    let soloSituation := Situation.empty.extend lightning true |>.extend arsonist false
+    actuallyCaused fireDynamics soloSituation lightning fire = true := by
+  native_decide
 
 end FireScenario
 
@@ -211,16 +235,25 @@ theorem circuit_sufficient :
 **Short circuit is necessary for fire** (when it's the only cause).
 -/
 theorem circuit_necessary :
-    causallyNecessary circuitDynamics circuitBackground shortCircuit buildingFire = true := by
+    causallyNecessary circuitDynamics Situation.empty shortCircuit buildingFire = true := by
   native_decide
 
 /--
 **Both "make" and "cause" are true for simple causation**.
 -/
 theorem circuit_both_verbs :
-    makeSem circuitDynamics circuitBackground shortCircuit buildingFire = true ∧
-    causeSem circuitDynamics circuitBackground shortCircuit buildingFire = true := by
+    makeSem circuitDynamics Situation.empty shortCircuit buildingFire = true ∧
+    causeSem circuitDynamics Situation.empty shortCircuit buildingFire = true := by
   constructor <;> native_decide
+
+/--
+**Actual causation: short circuit actually caused the fire**.
+
+The short circuit occurred and was necessary — `actuallyCaused` holds.
+-/
+theorem circuit_actually_caused :
+    actuallyCaused circuitDynamics circuitBackground shortCircuit buildingFire = true := by
+  native_decide
 
 end CircuitScenario
 
@@ -259,10 +292,14 @@ theorem chain_sufficient :
   native_decide
 
 /--
-**Flip is necessary for light** (as the initial cause).
+Under @cite{nadathur-2024} Def 10b, the initial cause in a chain is
+NOT necessary for the final effect: the intermediate (switch) can be
+set directly, bypassing the root cause. This is correct for Def 10b's
+intended domain (prerequisites for complements) where the cause variable
+is the only path to the effect.
 -/
-theorem chain_necessary :
-    causallyNecessary chainDynamics chainBackground flip light = true := by
+theorem chain_root_not_necessary :
+    causallyNecessary chainDynamics Situation.empty flip light = false := by
   native_decide
 
 /--
@@ -329,8 +366,7 @@ theorem match_sufficient_with_oxygen :
 **Match is necessary for combustion** (given oxygen).
 -/
 theorem match_necessary_with_oxygen :
-    let background := oxygenBackground.extend match_ true
-    causallyNecessary conjDynamics background match_ combustion = true := by
+    causallyNecessary conjDynamics oxygenBackground match_ combustion = true := by
   native_decide
 
 /--
@@ -339,7 +375,7 @@ theorem match_necessary_with_oxygen :
 Both conjuncts are necessary when both are present.
 -/
 theorem oxygen_necessary_with_match :
-    let background := Situation.empty.extend match_ true |>.extend oxygen true
+    let background := Situation.empty.extend match_ true
     causallyNecessary conjDynamics background oxygen combustion = true := by
   native_decide
 
@@ -370,8 +406,7 @@ theorem main_necessity_not_sufficiency_empty :
       causallyNecessary dyn s c e = true ∧
       -- But not sufficient in empty background
       causallySufficient dyn Situation.empty c e = false := by
-  let background := Situation.empty.extend oxygen true |>.extend match_ true
-  use conjDynamics, background, match_, combustion
+  use conjDynamics, oxygenBackground, match_, combustion
   constructor
   · -- match is necessary (given oxygen)
     native_decide

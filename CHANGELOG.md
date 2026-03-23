@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.229.417] - 2026-03-23
+
+### Added
+- **`simple_law_necessity` structured proof** (`StructuralEquationModel.lean`): proves `causallyNecessary ⟨[CausalLaw.simple c e]⟩ Situation.empty c e = true` for all `c, e : Variable` — 8 private helper lemmas covering normalDevelopment reduction, allExtensions preservation, eraseDupsBy membership, freeI/freeII characterization
+- **`allExtensions` scalability docstring** (`StructuralEquationModel.lean`): documents 3^n enumeration cost
+- **`isConsistentSuper` approximation docstring** (`StructuralEquationModel.lean`): documents per-variable (not joint) consistency check
+
+### Fixed
+- **Closed `single_cause_perfection` sorry** (`Integration.lean`): now delegates to `simple_law_necessity`
+- **Closed `single_pathway_sufficiency_implies_necessity` sorry** (`ProductionDependence.lean`): now delegates to `simple_law_necessity`; marked unused `hne` hypothesis as `_hne`
+- **`actuallyCaused` API** (`Necessity.lean`): added `actuallyCaused_eq_causeSem`, `actual_cause_cause_occurred`, `actual_cause_effect_occurred`, `actual_cause_necessary` decomposition theorems
+- **`actuallyCaused` consumers** (`Examples.lean`, `NadathurLauer2020.lean`): added overdetermination, solo cause, and actual causation theorems exercising the new API
+- **Dead code removal** (`StructuralEquationModel.lean`): deleted unused `hasAlternativeCause`, `isCounterfactuallyDependent`, `causallyNecessary_def`
+- **Stale docstrings** (`Necessity.lean`, `Basic.lean`): updated to reflect Def 10b semantics and actuallyCaused API
+
+## [0.229.416] - 2026-03-23
+
+### Changed
+- **`causallyNecessary` → Nadathur 2024 Definition 10b** (`StructuralEquationModel.lean`): replaced simple but-for test with full Def 10b implementation — precondition (cause/effect not already entailed), achievability (∃ consistent supersituation achieving effect), but-for over all consistent supersituations. Added `allExtensions`, `allVariables`, `innerVariables`, `isConsistentSuper` infrastructure
+- **`completesForEffect` uses inline but-for** (`Resultatives.lean`): decoupled from `causallyNecessary` (which now uses Def 10b supersituation test); uses simple counterfactual but-for — the right granularity for completion events in causal chains
+- **Jaksaa one-way scenario** (`Nadathur2024.lean`): replaced Dreyfus chain model (NRV→MSG→COM→SPY, where Def 10b chain bypass makes NRV not individually necessary for SPY) with direct conjunctive model (STR ∧ ENERGY → TASK) that properly models one-way implicatives under Def 10b
+- **Dare/manage COM contrast** (`Nadathur2024.lean`): dare infelicity for COM now argued purely from sufficiency failure (Proposal 32iii); manage felicity verified against direct complement MSG rather than transitive COM
+
+### Fixed
+- **Background convention for Def 10b**: cause must NOT be in background (precondition rejects it). Updated backgrounds in Examples.lean, NadathurLauer2020.lean, Resultatives.lean, HardingGerstenbergIcard2025.lean, BellerGerstenberg2025.lean
+- **Chain bypass assertions**: under Def 10b, root causes in chains (A→B→C) are NOT necessary for downstream effects (intermediate B can be set directly). Updated chain_root_not_necessary, bypass_profile_b, chain_cause_chain
+
 ## [0.229.415] - 2026-03-23
 
 ### Added

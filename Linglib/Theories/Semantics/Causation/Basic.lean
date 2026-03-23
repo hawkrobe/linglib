@@ -52,8 +52,8 @@ open NadathurLauer2020.Examples
 | `CausalLaw` | If preconditions hold, effect follows |
 | `CausalDynamics` | Collection of causal laws |
 | `normalDevelopment` | Forward propagation to fixpoint |
-| `causallySufficient` | Adding cause guarantees effect |
-| `causallyNecessary` | Removing cause blocks effect |
+| `causallySufficient` | Adding cause guarantees effect (@cite{nadathur-lauer-2020} Def 23) |
+| `causallyNecessary` | Supersituation necessity (@cite{nadathur-2024} Def 10b) |
 | `makeSem` | Semantics of "make" (sufficiency) |
 | `causeSem` | Semantics of "cause" (necessity + occurrence) |
 

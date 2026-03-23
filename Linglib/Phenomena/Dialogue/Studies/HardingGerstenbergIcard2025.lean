@@ -379,10 +379,13 @@ theorem milk_neither_literal_when_both :
     literallyTrue explDa wBoth = false := by
   constructor <;> native_decide
 
-/-- When Charlie is the sole cause, he is both sufficient and necessary. -/
+/-- When Charlie is the sole cause, he is both sufficient and necessary.
+    Necessity is tested against {Da=false} (Dana didn't drink) rather
+    than milkBgCharlie (which includes Ch=true): @cite{nadathur-2024}
+    Definition 10b requires the cause not already entailed by s. -/
 theorem milk_charlie_sole_profile :
     causallySufficient milkDyn Situation.empty Ch M = true ∧
-    causallyNecessary milkDyn milkBgCharlie Ch M = true := by
+    causallyNecessary milkDyn (Situation.empty.extend Da false) Ch M = true := by
   constructor <;> native_decide
 
 end MilkTheft

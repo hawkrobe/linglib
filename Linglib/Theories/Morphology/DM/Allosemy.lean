@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 
 /-!
 # Allosemy: Contextual Meaning Variation of Functional Heads
-@cite{benz-2025} @cite{kratzer-1996}
+@cite{benz-2025} @cite{wood-2023} @cite{kratzer-1996}
 
 @cite{benz-2025} "Structure and Interpretation Across Categories" examines allosemy — the
 meaning-side analog of allomorphy in Distributed Morphology. Where
@@ -98,27 +98,32 @@ def AllosemicHead.allosemeCount {Sem : Type} (h : AllosemicHead Sem) : Nat :=
 
 /-- Allosemes of the verbal categorizer v.
 
-    §2.2: v can be semantically null or contribute
-    eventive semantics, depending on its syntactic context. This
-    distinction drives the nominalization reading typology (Ch. 3):
+    @cite{benz-2025} §2.2 / @cite{wood-2023} Ch. 5: v can be semantically
+    null (identity function) or contribute eventive semantics, depending
+    on its syntactic context. This distinction drives the nominalization
+    reading typology:
 
-    - `eventive`: v introduces an event variable. Yields CEN reading
-      in nominalizations ("the frequent observation of the sky").
-    - `stative`: v is semantically null / contributes stative semantics.
-      Yields RN reading in nominalizations ("the observations are lost").
+    - `eventive`: v introduces an event variable and contributes the
+      normal verbal interpretation. Yields CEN reading in nominalizations
+      ("the frequent observation of the sky").
+    - `zero`: v is semantically Ø (identity function). The root combines
+      directly with n, yielding SEN or RN readings depending on n's
+      alloseme. @cite{wood-2023} Ch. 5: "When n is semantically zero and
+      v gets its ordinary verbal interpretation" (CEN); "when the v head
+      is Ø" the root interacts directly with n (SEN/RN).
 
     In nominalization contexts, both allosemes are available for the
-    same root — the ambiguity between CEN and RN readings arises from
-    v's alloseme varying, not from the root changing. -/
+    same root — the ambiguity between CEN and RN/SEN readings arises
+    from v's alloseme varying, not from the root changing. -/
 inductive VAlloseme where
   | eventive   -- introduces an event variable (CEN contexts)
-  | stative    -- null / stative semantics (RN contexts)
+  | zero       -- semantically Ø / identity function (SEN/RN contexts)
   deriving DecidableEq, BEq, Repr
 
 /-- Does this v alloseme introduce an event variable? -/
 def VAlloseme.introducesEvent : VAlloseme → Bool
   | .eventive => true
-  | .stative  => false
+  | .zero     => false
 
 /-- v allosemy as an `AllosemicHead`. -/
 def vAllosemic : AllosemicHead VAlloseme where
@@ -127,8 +132,8 @@ def vAllosemic : AllosemicHead VAlloseme where
     { label := "v_eventive"
     , denotation := .eventive
     , context := { complementIsEventive := true } },
-    { label := "v_stative"
-    , denotation := .stative
+    { label := "v_zero"
+    , denotation := .zero
     , context := { complementIsEventive := false } }
   ]
 
@@ -146,15 +151,15 @@ theorem v_has_two_allosemes : vAllosemic.allosemeCount = 2 := rfl
     determines which v alloseme is selected. -/
 def VAlloseme.fromRootType : _root_.RootType → VAlloseme
   | .result          => .eventive
-  | .propertyConcept => .stative
+  | .propertyConcept => .zero
 
 /-- Result roots yield eventive v. -/
 theorem result_root_eventive :
     VAlloseme.fromRootType .result = .eventive := rfl
 
-/-- PC roots yield stative v. -/
-theorem pc_root_stative :
-    VAlloseme.fromRootType .propertyConcept = .stative := rfl
+/-- PC roots yield zero v. -/
+theorem pc_root_zero :
+    VAlloseme.fromRootType .propertyConcept = .zero := rfl
 
 /-- The bridge preserves the change entailment information:
     eventive v iff the root entails change. -/
@@ -169,14 +174,35 @@ theorem fromRootType_iff_entailsChange (rt : _root_.RootType) :
 /-- n allosemy: the three semantic types from `CategorizerSemantics`
     are allosemes of n conditioned by morphosyntactic features.
 
-    Ch. 3 adds a fourth possibility for content
-    nominalizations: n can select a CP complement when v_eventive
-    is present, yielding the content (CCN) reading. -/
+    @cite{benz-2025} Ch. 3 adds a `content` possibility for content
+    nominalizations. @cite{wood-2023} Ch. 5 adds `zero` (identity
+    function, yielding CEN reading) and `simpleEvent` (yielding SEN).
+
+    The full inventory:
+    - `relational`: introduces a relation (body-part-of); type ⟨e,⟨e,t⟩⟩
+    - `sortal`: bare categorization; type ⟨e,t⟩
+    - `alienator`: existentially closes possessor; type ⟨e,t⟩
+    - `content`: selects CP complement (CCN reading, @cite{benz-2025})
+    - `zero`: semantically Ø (identity), noun = verb meaning (CEN,
+      @cite{wood-2023} Ch. 5 (5.4e))
+    - `simpleEvent`: λP⟨e,t⟩λx∃e. P(x) & x = e — picks out entities
+      equal to an event (SEN, @cite{wood-2023} Ch. 5 (5.4c))
+    - `result`: λP⟨s,t⟩λx∃e. P(e) & result(x)(e) — picks out entity
+      created as result of event (@cite{wood-2023} Ch. 6 (6.30))
+    - `state`: λP⟨e,t⟩λx∃e. P(x) & x = e — picks out states
+      (@cite{wood-2023} Ch. 1 (1.18), Ch. 6 §6.2)
+    - `entity`: λP⟨e,t⟩λx. P(x) — picks out entities described by the
+      root, no event connection (@cite{wood-2023} Ch. 5 (5.4d)) -/
 inductive NAlloseme where
-  | relational  -- introduces a relation (body-part-of); type ⟨e,⟨e,t⟩⟩
-  | sortal      -- bare categorization; type ⟨e,t⟩
-  | alienator   -- existentially closes possessor; type ⟨e,t⟩
-  | content     -- selects CP complement (CCN reading); type ⟨e,t⟩
+  | relational    -- introduces a relation (body-part-of); type ⟨e,⟨e,t⟩⟩
+  | sortal        -- bare categorization; type ⟨e,t⟩
+  | alienator     -- existentially closes possessor; type ⟨e,t⟩
+  | content       -- selects CP complement (CCN reading); type ⟨e,t⟩
+  | zero          -- Ø / identity function (CEN: noun = verb meaning)
+  | simpleEvent   -- λP.λx∃e. P(x) & x = e (SEN reading)
+  | result        -- λP.λx∃e. P(e) & result(x)(e) (result/product entity)
+  | state         -- picks out states (simple state reading)
+  | entity        -- λP.λx. P(x) (simple entity, no event connection)
   deriving DecidableEq, BEq, Repr
 
 /-- Bridge: `NSemanticType` from CategorizerSemantics maps to `NAlloseme`. -/
@@ -191,7 +217,9 @@ theorem content_is_new : ∀ (t : NSemanticType),
     NAlloseme.ofNSemanticType t ≠ .content := by
   intro t; cases t <;> simp [NAlloseme.ofNSemanticType]
 
-/-- n has four allosemes (extending the three from CategorizerSemantics). -/
+/-- n has nine allosemes (extending the three from CategorizerSemantics
+    with content from @cite{benz-2025} and zero/simpleEvent/result/state/
+    entity from @cite{wood-2023}). -/
 def nAllosemic : AllosemicHead NAlloseme where
   morpheme := .n
   entries := [
@@ -206,10 +234,25 @@ def nAllosemic : AllosemicHead NAlloseme where
     , context := { belowCat := none } },
     { label := "n_content"
     , denotation := .content
-    , context := { belowCat := some .v, complementIsEventive := true } }
+    , context := { belowCat := some .v, complementIsEventive := true } },
+    { label := "n_zero"
+    , denotation := .zero
+    , context := { belowCat := some .v, complementIsEventive := true } },
+    { label := "n_simpleEvent"
+    , denotation := .simpleEvent
+    , context := { belowCat := some .v } },
+    { label := "n_result"
+    , denotation := .result
+    , context := { belowCat := some .v, complementIsEventive := true } },
+    { label := "n_state"
+    , denotation := .state
+    , context := { belowCat := some .v } },
+    { label := "n_entity"
+    , denotation := .entity
+    , context := { belowCat := some .v } }
   ]
 
-theorem n_has_four_allosemes : nAllosemic.allosemeCount = 4 := rfl
+theorem n_has_nine_allosemes : nAllosemic.allosemeCount = 9 := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. Voice Allosemy (@cite{kratzer-1996}; §2.3)
@@ -258,65 +301,115 @@ theorem voice_allosemy_syntactically_invisible :
 
 /-- Reading types for deverbal nominalizations.
 
-    Ch. 3 argues for three readings, the third (content)
-    being less studied than event and result:
+    @cite{wood-2023} Ch. 1 (1.18) identifies five terminal reading types;
+    @cite{benz-2025} Ch. 3 adds the CCN for German, yielding six:
 
-    - **CEN** (Complex Event Nominalization): "Die Beobachtung des
-      Nachthimmels dauerte drei Stunden" — event reading
-    - **RN** (Result/Referring Nominalization): "Die Beobachtungen der
-      Astronomin sind verloren" — result/object reading
-    - **CCN** (Complex Content Nominalization): "Seine Beobachtung, dass
-      Planeten sich bewegen, veränderte die Wissenschaft" — content reading
-
-    The CCN is syntactically and semantically distinct from both CEN and RN:
-    it takes a CP complement specifying the propositional content. -/
+    - **CEN** (Complex Event Nominal): v eventive + n zero. Noun inherits
+      full verb meaning including event variable and argument structure.
+    - **SEN** (Simple Event Nominal): v zero + n simpleEvent. Event reading
+      without full argument structure; event comes from n's alloseme.
+    - **Result/Product Nominal**: v eventive + n result. Entity whose
+      existence is the result of an event (e.g. *prentun* 'printing' = the
+      printed object). Built off verbal meaning, retains event variable.
+    - **Simple State Nominal**: v zero + n state. State reading
+      (e.g. *aðdáun* 'admiration' as a lasting state, *þrælkun* 'slavery').
+    - **Simple Entity Nominal**: v zero + n entity. Entity reading with
+      no event connection (e.g. *þvottur* 'laundry' = the clothes).
+    - **CCN** (Complex Content Nominal): v eventive + n content. Takes
+      CP complement (@cite{benz-2025}). -/
 inductive NominalizationReading where
-  | complexEvent   -- CEN: event reading (takes temporal modifiers)
-  | result         -- RN: result/object reading (can be pluralized)
+  | complexEvent   -- CEN: event reading (takes temporal modifiers, telicity PPs)
+  | simpleEvent    -- SEN: event reading without full arg structure
+  | result         -- RN: result/product entity (existence results from event)
+  | simpleState    -- state reading (e.g. admiration, slavery)
+  | simpleEntity   -- simple entity reading, no event connection (e.g. laundry)
   | content        -- CCN: content reading (takes CP complement)
   deriving DecidableEq, BEq, Repr
 
 /-- Derive the nominalization reading from the allosemes of v and n.
 
-    Ch. 3 "Chapter claim": CCNs and their characteristic
-    syntax of CP-complementation are best accommodated in a structural
-    polysemy account, implemented in terms of allosemy of v and n.
+    Integrates @cite{benz-2025} Ch. 3 and @cite{wood-2023} Ch. 5–6:
 
-    The mapping:
-    - v_eventive + n_sortal → CEN (event reading)
-    - v_stative  + n_sortal → RN  (result reading)
-    - v_eventive + n_content → CCN (content reading)
-    - v_stative  + n_content → impossible (content requires eventive v) -/
+    - v_eventive + n_zero → CEN (n is identity, noun = verb meaning)
+    - v_eventive + n_sortal → CEN (@cite{benz-2025} mapping)
+    - v_eventive + n_result → result/product RN (entity from event)
+    - v_zero + n_simpleEvent → SEN (v absent, n picks out event-entity)
+    - v_zero + n_state → simple state (v absent, n picks out state)
+    - v_zero + n_entity → simple entity RN (no event connection)
+    - v_zero + n_sortal → simple entity RN (@cite{benz-2025} mapping)
+    - v_eventive + n_content → CCN (content requires eventive v)
+    - v_zero + n_content → impossible (content requires eventive v) -/
 def readingFromAllosemes : VAlloseme → NAlloseme → Option NominalizationReading
-  | .eventive, .sortal  => some .complexEvent
-  | .stative,  .sortal  => some .result
-  | .eventive, .content => some .content
-  | .stative,  .content => none   -- content requires eventive v
-  | _,         .relational => none -- relational n yields possessive, not nominalization
-  | _,         .alienator  => none -- alienator yields alienated noun
+  | .eventive, .zero        => some .complexEvent
+  | .eventive, .sortal      => some .complexEvent
+  | .eventive, .result      => some .result          -- result/product RN
+  | .zero,     .simpleEvent => some .simpleEvent
+  | .zero,     .state       => some .simpleState
+  | .zero,     .entity      => some .simpleEntity
+  | .zero,     .sortal      => some .simpleEntity
+  | .eventive, .content     => some .content
+  | .zero,     .content     => none   -- content requires eventive v
+  | _,         .relational  => none   -- relational n yields possessive
+  | _,         .alienator   => none   -- alienator yields alienated noun
+  | .zero,     .zero        => none   -- both zero is vacuous
+  | .zero,     .result      => none   -- result requires eventive v
+  | .eventive, .simpleEvent => none   -- SEN requires v = Ø
+  | .eventive, .state       => none   -- state requires v = Ø
+  | .eventive, .entity      => none   -- entity-n requires v = Ø
 
-/-- CEN requires eventive v. -/
-theorem cen_requires_eventive :
+/-- CEN from eventive v + zero n (@cite{wood-2023} Ch. 5). -/
+theorem cen_from_zero_n :
+    readingFromAllosemes .eventive .zero = some .complexEvent := rfl
+
+/-- CEN from eventive v + sortal n (@cite{benz-2025}). -/
+theorem cen_from_sortal_n :
     readingFromAllosemes .eventive .sortal = some .complexEvent := rfl
 
-/-- RN requires stative v. -/
-theorem rn_requires_stative :
-    readingFromAllosemes .stative .sortal = some .result := rfl
+/-- Result/product RN from eventive v + result n (@cite{wood-2023} Ch. 6 (6.30)). -/
+theorem result_from_eventive_v :
+    readingFromAllosemes .eventive .result = some .result := rfl
+
+/-- SEN from zero v + simpleEvent n (@cite{wood-2023} Ch. 5). -/
+theorem sen_from_zero_v :
+    readingFromAllosemes .zero .simpleEvent = some .simpleEvent := rfl
+
+/-- Simple state from zero v + state n (@cite{wood-2023} Ch. 1 (1.18)). -/
+theorem state_from_zero_v :
+    readingFromAllosemes .zero .state = some .simpleState := rfl
+
+/-- Simple entity from zero v + entity n (@cite{wood-2023} Ch. 5). -/
+theorem simpleEntity_from_entity_n :
+    readingFromAllosemes .zero .entity = some .simpleEntity := rfl
+
+/-- Simple entity from zero v + sortal n (@cite{benz-2025}). -/
+theorem simpleEntity_from_sortal_n :
+    readingFromAllosemes .zero .sortal = some .simpleEntity := rfl
 
 /-- CCN requires eventive v AND content n. -/
 theorem ccn_requires_eventive_content :
     readingFromAllosemes .eventive .content = some .content := rfl
 
-/-- Content reading is impossible with stative v: you cannot have
-    propositional content without an underlying event. -/
+/-- Content reading is impossible with zero v. -/
 theorem no_content_without_event :
-    readingFromAllosemes .stative .content = none := rfl
+    readingFromAllosemes .zero .content = none := rfl
 
-/-- The three readings are pairwise distinct. -/
+/-- The six readings are pairwise distinct. -/
 theorem readings_distinct :
+    NominalizationReading.complexEvent ≠ .simpleEvent ∧
     NominalizationReading.complexEvent ≠ .result ∧
+    NominalizationReading.complexEvent ≠ .simpleState ∧
+    NominalizationReading.complexEvent ≠ .simpleEntity ∧
     NominalizationReading.complexEvent ≠ .content ∧
-    NominalizationReading.result ≠ .content := by decide
+    NominalizationReading.simpleEvent ≠ .result ∧
+    NominalizationReading.simpleEvent ≠ .simpleState ∧
+    NominalizationReading.simpleEvent ≠ .simpleEntity ∧
+    NominalizationReading.simpleEvent ≠ .content ∧
+    NominalizationReading.result ≠ .simpleState ∧
+    NominalizationReading.result ≠ .simpleEntity ∧
+    NominalizationReading.result ≠ .content ∧
+    NominalizationReading.simpleState ≠ .simpleEntity ∧
+    NominalizationReading.simpleState ≠ .content ∧
+    NominalizationReading.simpleEntity ≠ .content := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. The Allomorphy Analogy (§2.5)

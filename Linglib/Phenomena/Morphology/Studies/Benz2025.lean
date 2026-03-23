@@ -84,7 +84,7 @@ def beobachtung_CEN : NominalizationDatum :=
 def beobachtung_RN : NominalizationDatum :=
   { form := "Beobachtung"
   , baseVerb := "beobachten"
-  , reading := .result
+  , reading := .simpleEntity
   , sentence := "Die Beobachtungen der Astronomin sind verloren"
   , translation := "The astronomer's observations are lost"
   , temporalModifiers := false
@@ -107,7 +107,7 @@ def allBeobachtungReadings : List NominalizationDatum :=
 /-- All three readings are attested for *Beobachtung*. -/
 theorem beobachtung_three_readings :
     (allBeobachtungReadings.any (·.reading == .complexEvent)) = true ∧
-    (allBeobachtungReadings.any (·.reading == .result)) = true ∧
+    (allBeobachtungReadings.any (·.reading == .simpleEntity)) = true ∧
     (allBeobachtungReadings.any (·.reading == .content)) = true := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
@@ -137,7 +137,10 @@ theorem rn_no_temporal : beobachtung_RN.temporalModifiers = false := rfl
 /-- Map each reading to its alloseme pair. -/
 def readingAllosemePair : NominalizationReading → VAlloseme × NAlloseme
   | .complexEvent => (.eventive, .sortal)
-  | .result       => (.stative,  .sortal)
+  | .simpleEvent  => (.zero,    .simpleEvent)
+  | .result       => (.eventive, .result)
+  | .simpleState  => (.zero,    .state)
+  | .simpleEntity => (.zero,    .sortal)
   | .content      => (.eventive, .content)
 
 /-- The alloseme pair correctly derives each reading. -/
@@ -145,7 +148,7 @@ theorem alloseme_derivation_CEN :
     readingFromAllosemes (.eventive) (.sortal) = some .complexEvent := rfl
 
 theorem alloseme_derivation_RN :
-    readingFromAllosemes (.stative) (.sortal) = some .result := rfl
+    readingFromAllosemes (.zero) (.sortal) = some .simpleEntity := rfl
 
 theorem alloseme_derivation_CCN :
     readingFromAllosemes (.eventive) (.content) = some .content := rfl
@@ -156,21 +159,22 @@ theorem alloseme_roundtrip (r : NominalizationReading) :
     readingFromAllosemes v n = some r := by
   cases r <;> rfl
 
-/-- The impossible combination: stative v + content n yields no reading.
+/-- The impossible combination: zero v + content n yields no reading.
     Content requires an underlying event. -/
-theorem stative_content_impossible :
-    readingFromAllosemes .stative .content = none := rfl
+theorem zero_content_impossible :
+    readingFromAllosemes .zero .content = none := rfl
 
-/-- CEN and RN are "mirror images" of the division of semantic labor:
-    in CEN, v does the work (introducing the event variable) while n merely
-    nominalizes; in RN, v is null (stative) and the referential/object
-    interpretation comes from the nominalization context. Both use the
-    same n alloseme (sortal) — it's v that varies. -/
-theorem cen_rn_mirror :
+/-- CEN and simple entity RN are "mirror images" of the division of
+    semantic labor: in CEN, v does the work (introducing the event
+    variable) while n merely nominalizes; in simple entity RN, v is null
+    (zero) and the referential/object interpretation comes from the
+    nominalization context. Both use the same n alloseme (sortal) —
+    it's v that varies. -/
+theorem cen_simpleEntity_mirror :
     (readingAllosemePair .complexEvent).1 = .eventive ∧
-    (readingAllosemePair .result).1 = .stative ∧
+    (readingAllosemePair .simpleEntity).1 = .zero ∧
     (readingAllosemePair .complexEvent).2 = .sortal ∧
-    (readingAllosemePair .result).2 = .sortal := by
+    (readingAllosemePair .simpleEntity).2 = .sortal := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════════
@@ -967,11 +971,11 @@ theorem end_to_end_result_root :
     resultStatesCompatible (PreverbalElement.rsp).resultSpec (PreverbalElement.rsp).resultSpec = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Mirror chain for PC roots: stative v → RN reading → *Ge-...-e*, which
+/-- Mirror chain for PC roots: zero v → RN reading → *Ge-...-e*, which
     accepts phrases (RSP) and rejects heads (pfx). -/
 theorem end_to_end_pc_root :
     let v := VAlloseme.fromRootType .propertyConcept
-    v = .stative ∧
+    v = .zero ∧
     readingFromAllosemes v .sortal = some .result ∧
     -- Ge-...-e distribution: phrase (RSP) accepted, head (pfx) rejected
     ((PreverbalElement.rsp).synLevel == .phrase) = true ∧
@@ -1045,7 +1049,7 @@ theorem rsp_data_grounded_in_fragments :
     and `VAlloseme.introducesEvent` (Allosemy.lean). -/
 theorem rootType_alloseme_divergence :
     brechen.rootType.map VAlloseme.fromRootType = some .eventive ∧
-    frieren.rootType.map VAlloseme.fromRootType = some .stative ∧
+    frieren.rootType.map VAlloseme.fromRootType = some .zero ∧
     brechen.rootType.map (VAlloseme.fromRootType · |>.introducesEvent) = some true ∧
     frieren.rootType.map (VAlloseme.fromRootType · |>.introducesEvent) = some false :=
   ⟨rfl, rfl, rfl, rfl⟩
@@ -1062,17 +1066,17 @@ theorem brechen_two_paths :
     -- Path 2: vendlerClass → canUngNominalize
     canUngNominalize brechen.vendlerClass = true := ⟨rfl, rfl⟩
 
-/-- The two paths DISAGREE for *frieren*: the canonical PC root → stative
+/-- The two paths DISAGREE for *frieren*: the canonical PC root → zero
     v → RN (not CEN), yet the achievement vendlerClass → can -ung. This
     is not a bug — it captures key insight that allosemy
     means BOTH v allosemes are available for any verb. The canonical
     alloseme is a default, not a constraint. *Frieren* CAN have eventive v
-    and thus CAN form a CEN, even though its canonical alloseme is stative. -/
+    and thus CAN form a CEN, even though its canonical alloseme is zero. -/
 theorem frieren_canonical_vs_possible :
-    -- Canonical path: PC root → stative v → RN (no CEN)
+    -- Canonical path: PC root → zero v → simple entity (no CEN)
     frieren.rootType.bind (λ rt =>
       readingFromAllosemes (VAlloseme.fromRootType rt) .sortal)
-      = some .result ∧
+      = some .simpleEntity ∧
     -- But -ung is still possible (achievement vendlerClass)
     canUngNominalize frieren.vendlerClass = true ∧
     -- Because eventive v is always available (that's what allosemy means)

@@ -45,7 +45,7 @@ open Phenomena.Causation.ThickThin
 theorem accomplishment_has_agentive_voice :
     -- Semantic: accomplishment has external causer
     Template.hasExternalCauser .accomplishment = true ∧
-    -- Syntactic: maps to causative heads (vDO + vGO + vBE)
+    -- Syntactic: maps to causative heads (vDO + vCAUSE + vGO + vBE)
     isCausative (templateToHeads .accomplishment) = true ∧
     -- Voice: agentive Voice assigns θ-role
     voiceAgent.assignsTheta = true := ⟨rfl, by native_decide, rfl⟩
@@ -55,7 +55,7 @@ theorem accomplishment_has_agentive_voice :
 theorem achievement_has_nonthematic_voice :
     -- Semantic: achievement lacks external causer
     Template.hasExternalCauser .achievement = false ∧
-    -- Syntactic: maps to inchoative heads (vGO + vBE)
+    -- Syntactic: maps to inchoative heads (vCAUSE + vGO + vBE)
     isInchoative (templateToHeads .achievement) = true ∧
     -- Voice: non-thematic Voice has no semantics
     voiceAnticausative.hasSemantics = false := ⟨rfl, by native_decide, rfl⟩
@@ -87,7 +87,7 @@ theorem production_aligns_agentive :
 
 /-- The causative alternation IS a Voice alternation:
     transitive = agentive Voice, anticausative = non-thematic Voice.
-    The VP-internal structure (vGO + vBE) is shared. -/
+    The VP-internal structure (vCAUSE + vGO + vBE) is shared. -/
 theorem alternation_is_voice_alternation :
     -- Achievement heads are a subset of accomplishment heads
     (templateToHeads .achievement).all
@@ -108,8 +108,8 @@ theorem thick_mostly_alternate_bridge :
 
 /-- Alternating thick verbs: the transitive form has agentive Voice,
     the anticausative has non-thematic Voice. Example: break.
-    - "John broke the vase" = Voice_AG + vDO + vGO + vBE
-    - "The vase broke" = Voice_∅ + vGO + vBE -/
+    - "John broke the vase" = Voice_AG + vDO + vCAUSE + vGO + vBE
+    - "The vase broke" = Voice_∅ + vCAUSE + vGO + vBE -/
 theorem break_alternation :
     break_.alternating = true ∧ break_.thick = true := ⟨rfl, rfl⟩
 

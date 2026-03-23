@@ -92,7 +92,7 @@ def inchoativeToCausative : AlternationDatum :=
   { description := "Inchoative → causative under vVPE (Muira Dargwa)"
     antecedentVoice := .nonThematic
     targetVoice := .agentive
-    rootStructure := [.vGO, .vBE]
+    rootStructure := [.vCAUSE, .vGO, .vBE]
     grammatical := true }
 
 /-- Causative antecedent → inchoative target (OK under vVPE).
@@ -102,7 +102,7 @@ def causativeToInchoative : AlternationDatum :=
   { description := "Causative → inchoative under vVPE (Muira Dargwa)"
     antecedentVoice := .agentive
     targetVoice := .nonThematic
-    rootStructure := [.vGO, .vBE]
+    rootStructure := [.vCAUSE, .vGO, .vBE]
     grammatical := true }
 
 /-- Same alternation is blocked in English VPE (@cite{merchant-2013}):
@@ -111,19 +111,19 @@ def englishAlternationBlocked : AlternationDatum :=
   { description := "Causative alternation blocked under English VPE"
     antecedentVoice := .nonThematic
     targetVoice := .agentive
-    rootStructure := [.vGO, .vBE]
+    rootStructure := [.vCAUSE, .vGO, .vBE]
     grammatical := false }
 
 -- ════════════════════════════════════════════════════
 -- § 3. Structural Verification
 -- ════════════════════════════════════════════════════
 
-/-- The shared root structure [vGO, vBE] yields different decompositions
+/-- The shared root structure [vCAUSE, vGO, vBE] yields different decompositions
     under different Voice flavors — this is the causative alternation
     from Voice.lean. -/
 theorem alternation_same_root :
-    buildDecomposition voiceAgent [.vGO, .vBE] = [.vDO, .vGO, .vBE] ∧
-    buildDecomposition voiceAnticausative [.vGO, .vBE] = [.vGO, .vBE] := by
+    buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE] = [.vDO, .vCAUSE, .vGO, .vBE] ∧
+    buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE] = [.vCAUSE, .vGO, .vBE] := by
   constructor <;> rfl
 
 /-- The causative alternation is tolerated under vVPE because
@@ -140,7 +140,7 @@ theorem causative_alternation_blocked_english :
     of v (= VP) is identical. This is why vVPE succeeds: it only
     requires identity of the VP, which contains the shared root. -/
 theorem shared_vp_core :
-    let root := [VerbHead.vGO, VerbHead.vBE]
+    let root := [VerbHead.vCAUSE, VerbHead.vGO, VerbHead.vBE]
     buildDecomposition voiceAgent root ≠ buildDecomposition voiceAnticausative root ∧
     root = root := by
   constructor
@@ -206,9 +206,10 @@ theorem vVPE_below_englishVPE :
     Merchant's deletion domain (@cite{merchant-2013}) →
     Kalyakin's empirical finding (@cite{kalyakin-2026}).
 
-    Step 1 (Voice.lean): The root `[vGO, vBE]` yields a causative
-    decomposition `[vDO, vGO, vBE]` under agentive Voice but an inchoative
-    `[vGO, vBE]` under nonThematic Voice. The full decompositions differ,
+    Step 1 (Voice.lean): The root `[vCAUSE, vGO, vBE]` yields a causative
+    decomposition `[vDO, vCAUSE, vGO, vBE]` under agentive Voice but an
+    inchoative `[vCAUSE, vGO, vBE]` under nonThematic Voice. The full
+    decompositions differ,
     but the root (= VP content) is shared.
 
     Step 2 (DeletionDomain.lean): Under vVPE ([E] on v), the deletion domain
@@ -219,8 +220,8 @@ theorem vVPE_below_englishVPE :
     vVPE is grammatical — matches the prediction. -/
 theorem end_to_end_causative_chain :
     -- Step 1: Voice determines causativity (Kratzer/Cuervo)
-    isCausative (buildDecomposition voiceAgent [.vGO, .vBE]) = true ∧
-    isInchoative (buildDecomposition voiceAnticausative [.vGO, .vBE]) = true ∧
+    isCausative (buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE]) = true ∧
+    isInchoative (buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE]) = true ∧
     -- Step 2: vVPE tolerates the transitivity difference (Merchant)
     canMismatch vVPE transitivityMismatch = true ∧
     -- Step 3: Alternation under vVPE is grammatical (Kalyakin)

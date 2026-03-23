@@ -143,8 +143,8 @@ def rootNOM : Root :=
 -- The root determines the lower event structure (below Voice).
 -- This is independent of which Voice head attaches.
 
-/-- Lower event structure for result roots: change + result state. -/
-def resultLower : List VerbHead := [.vGO, .vBE]
+/-- Lower event structure for result roots: cause + change + result state. -/
+def resultLower : List VerbHead := [.vCAUSE, .vGO, .vBE]
 
 /-- Lower event structure for activity roots (√TV PC, √ITV, √NOM):
     no sub-eventive decomposition below Voice. -/
@@ -173,14 +173,14 @@ theorem only_vØ_is_phase :
     v_ch.phaseHead = false ∧
     v_j.phaseHead = false := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- All three agentive voices contribute vDO to the event decomposition. -/
-theorem agentive_voices_contribute_vDO :
-    vØ.flavor.eventContribution = some .vDO ∧
-    v_w.flavor.eventContribution = some .vDO ∧
-    v_ch.flavor.eventContribution = some .vDO := ⟨rfl, rfl, rfl⟩
+/-- All three agentive voices prepend vDO to the event decomposition. -/
+theorem agentive_voices_prepend_vDO :
+    vØ.assignsTheta = true ∧
+    v_w.assignsTheta = true ∧
+    v_ch.assignsTheta = true := ⟨rfl, rfl, rfl⟩
 
-/-- -j contributes no subevent (no external cause). -/
-theorem v_j_no_event : v_j.flavor.eventContribution = none := rfl
+/-- -j contributes no vDO (no external cause). -/
+theorem v_j_no_vDO : v_j.assignsTheta = false := rfl
 
 -- ============================================================================
 -- § 5: Verb Building (buildDecomposition)

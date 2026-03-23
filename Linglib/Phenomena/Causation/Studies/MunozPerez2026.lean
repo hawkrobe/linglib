@@ -235,11 +235,11 @@ theorem person_restriction_matches_data :
     DERIVED from Fission's structural context condition. -/
 theorem stylLE_requires_inchoative :
     -- Fission applies in inchoative context
-    (applySpanishFission .s1 [.vGO, .vBE]).isSome = true ∧
+    (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).isSome = true ∧
     -- Fission blocked in activity context
     (applySpanishFission .s1 [.vDO]).isSome = false ∧
     -- Fission blocked in causative context
-    (applySpanishFission .s1 [.vDO, .vGO, .vBE]).isSome = false := by
+    (applySpanishFission .s1 [.vDO, .vCAUSE, .vGO, .vBE]).isSome = false := by
   native_decide
 
 /-- Every verb that licenses stylistic LE has inchoative structure.
@@ -281,10 +281,10 @@ theorem blocking_verbs_all_unmarked :
 /-- When Fission applies, the output clitic satisfies the PF
     marking condition (syncretic with reflexive), making SE optional. -/
 theorem se_optional_1sg :
-    spanishFissionSatisfiesPF .s1 [.vGO, .vBE] = true := by native_decide
+    spanishFissionSatisfiesPF .s1 [.vCAUSE, .vGO, .vBE] = true := by native_decide
 
 theorem se_optional_2sg :
-    spanishFissionSatisfiesPF .s2 [.vGO, .vBE] = true := by native_decide
+    spanishFissionSatisfiesPF .s2 [.vCAUSE, .vGO, .vBE] = true := by native_decide
 
 /-- The DAT-REFL syncretism that enables SE-optionality is present
     for exactly the persons where Fission applies. -/
@@ -321,17 +321,17 @@ theorem three_way_synonymy_from_vacuity :
 
 /-- Fission applies to 1SG in inchoative context. -/
 theorem fission_1sg_inchoative :
-    applySpanishFission .s1 [.vGO, .vBE] =
+    applySpanishFission .s1 [.vCAUSE, .vGO, .vBE] =
       some { cl1Form := "me", cl2Form := "le" } := by native_decide
 
 /-- Fission applies to 2SG in inchoative context. -/
 theorem fission_2sg_inchoative :
-    applySpanishFission .s2 [.vGO, .vBE] =
+    applySpanishFission .s2 [.vCAUSE, .vGO, .vBE] =
       some { cl1Form := "te", cl2Form := "le" } := by native_decide
 
 /-- Fission does NOT apply to 3SG (not [+PART]). -/
 theorem fission_blocked_3sg :
-    applySpanishFission .s3 [.vGO, .vBE] = none := by native_decide
+    applySpanishFission .s3 [.vCAUSE, .vGO, .vBE] = none := by native_decide
 
 /-- Fission does NOT apply in non-inchoative context (activity). -/
 theorem fission_blocked_activity :
@@ -339,20 +339,20 @@ theorem fission_blocked_activity :
 
 /-- Fission does NOT apply in causative context (has vDO). -/
 theorem fission_blocked_causative :
-    applySpanishFission .s1 [.vDO, .vGO, .vBE] = none := by native_decide
+    applySpanishFission .s1 [.vDO, .vCAUSE, .vGO, .vBE] = none := by native_decide
 
 /-- 1SG Cl₁ is "me" (reflects [+AUTHOR]). -/
 theorem cl1_1sg_is_me :
-    (applySpanishFission .s1 [.vGO, .vBE]).map (·.cl1Form) = some "me" := by native_decide
+    (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "me" := by native_decide
 
 /-- 2SG Cl₁ is "te" (reflects [-AUTHOR]). -/
 theorem cl1_2sg_is_te :
-    (applySpanishFission .s2 [.vGO, .vBE]).map (·.cl1Form) = some "te" := by native_decide
+    (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl1Form) = some "te" := by native_decide
 
 /-- Cl₂ is always invariable "le". -/
 theorem cl2_invariable :
-    (applySpanishFission .s1 [.vGO, .vBE]).map (·.cl2Form) = some "le" ∧
-    (applySpanishFission .s2 [.vGO, .vBE]).map (·.cl2Form) = some "le" := by native_decide
+    (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" ∧
+    (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by native_decide
 
 -- ============================================================================
 -- § 13: Bridge — Per-Verb Inchoative Verification

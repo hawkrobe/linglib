@@ -66,16 +66,20 @@ open Semantics.Lexical.Verb.LevinClassProfiles
 
     - `agentive`: External argument introduced (transitive/unergative)
     - `nonThematic`: No external argument (unaccusative/anticausative)
-    - `expletive`: No specifier, no semantics (middle voice) -/
+    - `expletive`: No specifier, no semantics (middle voice)
+    - `reflexive`: Agent that binds internal argument (@cite{wood-2015})
+    - `experiencer`: Experiencer external argument (@cite{wood-2015}) -/
 inductive VoiceType where
   | agentive     -- External argument introduced
   | nonThematic  -- No external argument (unaccusative)
   | expletive    -- No specifier, no semantics (middle)
+  | reflexive    -- Agent binds internal argument (@cite{wood-2015})
+  | experiencer  -- Experiencer external argument (@cite{wood-2015})
   deriving DecidableEq, BEq, Repr
 
 /-- Does this voice type introduce an external argument? -/
 def VoiceType.assignsTheta : VoiceType → Bool
-  | .agentive => true
+  | .agentive | .reflexive | .experiencer => true
   | .nonThematic | .expletive => false
 
 /--

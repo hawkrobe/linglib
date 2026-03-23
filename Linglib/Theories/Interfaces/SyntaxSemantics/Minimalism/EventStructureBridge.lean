@@ -12,13 +12,13 @@ semantic layer (Semantics.Events/EventStructure) to the syntactic layer
 
 ## Key Mapping
 
-| Template         | VerbHeads      | Description                    |
-|-----------------|----------------|--------------------------------|
-| state           | [vBE]          | Simple state                   |
-| activity        | [vDO]          | Agentive activity              |
-| achievement     | [vGO, vBE]     | Inchoative change of state     |
-| accomplishment  | [vDO, vGO, vBE]| Causative with external cause  |
-| motionContact   | [vDO]          | Manner activity (MOVE+CONTACT) |
+| Template         | VerbHeads              | Description                    |
+|-----------------|------------------------|--------------------------------|
+| state           | [vBE]                  | Simple state                   |
+| activity        | [vDO]                  | Agentive activity              |
+| achievement     | [vCAUSE, vGO, vBE]     | Inchoative change of state     |
+| accomplishment  | [vDO, vCAUSE, vGO, vBE]| Causative with external cause  |
+| motionContact   | [vDO]                  | Manner activity (MOVE+CONTACT) |
 
 -/
 
@@ -38,8 +38,8 @@ open Minimalism
 def templateToHeads : Template → List VerbHead
   | .state          => [.vBE]
   | .activity       => [.vDO]
-  | .achievement    => [.vGO, .vBE]
-  | .accomplishment => [.vDO, .vGO, .vBE]
+  | .achievement    => [.vCAUSE, .vGO, .vBE]
+  | .accomplishment => [.vDO, .vCAUSE, .vGO, .vBE]
   | .motionContact  => [.vDO]  -- Manner activity (@cite{rappaport-hovav-levin-2024})
 
 -- ============================================================================

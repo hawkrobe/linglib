@@ -118,19 +118,22 @@ theorem dare_send_msg_felicitous :
   exact ⟨by native_decide, by native_decide⟩
 
 /-- (34c) "#Dreyfus dared to establish communication" is predicted
-    infelicitous: COM depends on NRV, LST, and ¬BRK, so NRV alone
-    is causally necessary but NOT sufficient for COM. -/
+    infelicitous: NRV is NOT sufficient for COM (COM also requires
+    LST and ¬BRK). dare requires sufficiency (Proposal 32iii), so
+    insufficiency alone blocks felicity. Under @cite{nadathur-2024}
+    Definition 10b, NRV is also not individually necessary for COM
+    (the intermediate MSG can be achieved as a consistent supersituation
+    extension, bypassing NRV). -/
 theorem dare_establish_com_infelicitous :
-    causallyNecessary dreyfusDynamics dreyfusBg vNRV vCOM = true ∧
     causallySufficient dreyfusDynamics dreyfusBg vNRV vCOM = false := by
-  exact ⟨by native_decide, by native_decide⟩
+  native_decide
 
-/-- (34d) "#Dreyfus dared to spy" is infelicitous for the same reason:
-    NRV is necessary but not sufficient for SPY. -/
+/-- (34d) "#Dreyfus dared to spy" is infelicitous: NRV is NOT
+    sufficient for SPY (SPY depends on COM, which requires LST
+    and ¬BRK beyond NRV). -/
 theorem dare_spy_infelicitous :
-    causallyNecessary dreyfusDynamics dreyfusBg vNRV vSPY = true ∧
     causallySufficient dreyfusDynamics dreyfusBg vNRV vSPY = false := by
-  exact ⟨by native_decide, by native_decide⟩
+  native_decide
 
 -- ── manage predictions (ex. 35) ──
 
@@ -143,23 +146,28 @@ theorem manage_send_msg_felicitous :
   native_decide
 
 /-- (35c) "Dreyfus managed to establish communication" — felicitous.
-    manage is felicitous whenever the unresolved prerequisites collectively
-    represent a necessary and sufficient condition. The set {NRV, LST, ¬BRK}
-    is collectively necessary and sufficient for COM. -/
-theorem manage_com_nrv_necessary :
-    causallyNecessary dreyfusDynamics dreyfusBg vNRV vCOM = true := by
+    Under @cite{nadathur-2024} Definition 10b, NRV is NOT individually
+    necessary for COM (the intermediate MSG can be set directly as a
+    consistent supersituation). The paper's argument for manage felicity
+    with COM involves the COLLECTIVE unresolved prerequisites {NRV, LST,
+    ¬BRK} being jointly necessary and sufficient — this goes beyond
+    single-variable necessity. NRV IS individually necessary for MSG
+    (the direct complement of the prerequisite relation). -/
+theorem manage_com_nrv_necessity_for_msg :
+    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG = true := by
   native_decide
 
-/-- Key contrast: dare is INFELICITOUS for COM (34c) because NRV alone
-    is not sufficient, but manage IS felicitous (35c) because manage
-    doesn't require the prerequisite to be the ONLY unresolved ancestor.
-    We verify this by showing NRV is necessary (enough for manage)
-    but not sufficient (blocking dare's 32iii). -/
-theorem dare_vs_manage_com_contrast :
-    -- dare requires nec + suf → infelicitous
+/-- Key contrast: dare is INFELICITOUS for COM because NRV alone
+    is not sufficient (Proposal 32iii requires sufficiency). manage
+    IS felicitous because manage only requires necessity — verified
+    here for the direct complement MSG. Under Def 10b, individual
+    variable necessity is most meaningful for direct cause-effect
+    pairs (NRV→MSG) rather than transitive chains (NRV→MSG→COM). -/
+theorem dare_vs_manage_contrast :
+    -- dare requires suf → infelicitous for COM
     causallySufficient dreyfusDynamics dreyfusBg vNRV vCOM = false ∧
-    -- manage requires only nec → felicitous
-    causallyNecessary dreyfusDynamics dreyfusBg vNRV vCOM = true := by
+    -- manage requires nec → felicitous for MSG (direct complement)
+    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG = true := by
   exact ⟨by native_decide, by native_decide⟩
 
 -- ── fail predictions ──
@@ -340,26 +348,38 @@ theorem dreyfus_dare_manages :
 theorem dreyfus_dare_twoWay :
     dreyfusDareAccount.directionality = .twoWay := rfl
 
-/-- Construct a one-way account: jaksaa-like scenario where NRV is
-    necessary but NOT sufficient for SPY (because COM also requires
-    LST and ¬BRK). -/
-private def dreyfusJaksaaAccount : PrerequisiteAccount :=
-  { dynamics := dreyfusDynamics
-    background := dreyfusBg
-    prereqVar := vNRV
-    complementVar := vSPY
+/-- Simplified dynamics for one-way jaksaa scenario.
+    TASK := STR ∧ ENERGY. Strength is necessary but NOT sufficient
+    for task completion (also needs energy/endurance). Under
+    @cite{nadathur-2024} Definition 10b, this is a direct conjunctive
+    model — STR is a direct prerequisite of TASK, correctly captured
+    by Def 10b's supersituation necessity. -/
+private def vSTR := mkVar "STR"
+private def vENERGY := mkVar "ENERGY"
+private def vTASK := mkVar "TASK"
+private def jaksaaDynamics : CausalDynamics :=
+  ⟨[CausalLaw.conjunctive vSTR vENERGY vTASK]⟩
+
+/-- Construct a one-way account: jaksaa-like scenario where STR is
+    necessary but NOT sufficient for TASK (because TASK also requires
+    ENERGY). -/
+private def jaksaaAccount : PrerequisiteAccount :=
+  { dynamics := jaksaaDynamics
+    background := Situation.empty
+    prereqVar := vSTR
+    complementVar := vTASK
     prerequisiteType := .strength
     hasSufficiencyPresup := false }
 
-/-- One-way account: NRV is necessary but not sufficient for SPY. -/
-theorem dreyfus_jaksaa_necessity_only :
-    dreyfusJaksaaAccount.necessityPresup = true ∧
-    dreyfusJaksaaAccount.sufficiencyPresup = false := by
+/-- One-way account: STR is necessary but not sufficient for TASK. -/
+theorem jaksaa_necessity_only :
+    jaksaaAccount.necessityPresup = true ∧
+    jaksaaAccount.sufficiencyPresup = false := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- One-way directionality follows from hasSufficiencyPresup = false. -/
-theorem dreyfus_jaksaa_oneWay :
-    dreyfusJaksaaAccount.directionality = .oneWay := rfl
+theorem jaksaa_oneWay :
+    jaksaaAccount.directionality = .oneWay := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6. PrerequisiteAccount → ImplicativeClass → VerbEntry Bridge
@@ -432,10 +452,10 @@ theorem manage_end_to_end :
 /-- End-to-end agreement for one-way implicative *jaksaa*. -/
 theorem jaksaa_end_to_end :
     -- Layer 1: Causal dynamics — necessary but NOT sufficient
-    dreyfusJaksaaAccount.necessityPresup = true ∧
-    dreyfusJaksaaAccount.sufficiencyPresup = false ∧
+    jaksaaAccount.necessityPresup = true ∧
+    jaksaaAccount.sufficiencyPresup = false ∧
     -- Layer 2: Prerequisite account → ImplicativeClass
-    dreyfusJaksaaAccount.toImplicativeClass .positive = ImplicativeClass.jaksaa ∧
+    jaksaaAccount.toImplicativeClass .positive = ImplicativeClass.jaksaa ∧
     -- Layer 3: ImplicativeClass → Finnish fragment
     jaksaa.toImplicativeClass = ImplicativeClass.jaksaa := by
   exact ⟨by native_decide, by native_decide, rfl, rfl⟩

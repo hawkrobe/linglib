@@ -582,6 +582,7 @@ import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Icelandic.Case
+import Linglib.Fragments.Icelandic.Nominalizations
 import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Fragments.Icelandic.Reciprocals
 import Linglib.Fragments.Icelandic.TemporalConnectives
@@ -997,6 +998,7 @@ import Linglib.Phenomena.Morphology.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.Morphology.Studies.Adamson2024
 import Linglib.Phenomena.Morphology.Studies.Bhadra2024
 import Linglib.Phenomena.Morphology.Studies.Benz2025
+import Linglib.Phenomena.Morphology.Studies.Wood2023
 import Linglib.Phenomena.Allomorphy.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.Studies.Aitha2026
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data

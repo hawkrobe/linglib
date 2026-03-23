@@ -133,13 +133,10 @@ theorem sufficiency_as_closure_membership (dyn : CausalDynamics)
     causallySufficient dyn s trigger complement =
       (normalDevelopment dyn (s.extend trigger true)).hasValue complement true := rfl
 
-/-- Necessity is **complement of closure membership** under counterfactual
-    removal: `causallyNecessary dyn s cause effect` holds iff
-    `effect = true ∉ cl(s ⊕ {cause = false})`. -/
-theorem necessity_as_closure_nonmembership (dyn : CausalDynamics)
-    (s : Situation) (cause effect : Variable) :
-    causallyNecessary dyn s cause effect =
-      (!(normalDevelopment dyn (s.extend cause false)).hasValue effect true) := rfl
+-- Note: Under @cite{nadathur-2024} Definition 10b, `causallyNecessary` is no
+-- longer a simple but-for test over `s[cause ↦ false]`. The old
+-- `necessity_as_closure_nonmembership` theorem (relating necessity to
+-- closure non-membership via `rfl`) no longer holds definitionally.
 
 -- ════════════════════════════════════════════════════
 -- § 6. Closed Elements = Causal Fixpoints

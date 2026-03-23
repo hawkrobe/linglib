@@ -283,7 +283,7 @@ theorem departure_no_external :
 /-- Departure verbs have inchoative event structure (vGO + vBE, no vDO).
     Verified via `buildDecomposition` from `Core/Voice.lean`. -/
 theorem departure_is_inchoative :
-    isInchoative (buildDecomposition voiceAnticausative [.vGO, .vBE]) = true := by
+    isInchoative (buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE]) = true := by
   native_decide
 
 /-- Non-thematic Voice assigns no θ-role. -/

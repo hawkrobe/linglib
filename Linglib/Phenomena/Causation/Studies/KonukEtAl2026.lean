@@ -73,11 +73,19 @@ theorem compoundSufficient_singleton (dyn : CausalDynamics) (bg : Situation)
     compoundSufficient dyn bg [v] effect = causallySufficient dyn bg v effect := by
   simp [compoundSufficient, causallySufficient, List.foldl]
 
-/-- Singleton compound necessity reduces to individual necessity. -/
-theorem compoundNecessary_singleton (dyn : CausalDynamics) (bg : Situation)
+/-- Singleton compound necessity reduces to the simple but-for test
+    (set variable to false, check effect).
+
+    Note: `compoundNecessary` uses the @cite{nadathur-lauer-2020} but-for
+    test, while `causallyNecessary` uses @cite{nadathur-2024} Definition 10b
+    (with precondition + achievability + supersituation quantification).
+    The two coincide when the Def 10b precondition passes and the cause is
+    exogenous, but diverge in general. -/
+theorem compoundNecessary_singleton_butfor (dyn : CausalDynamics) (bg : Situation)
     (v : Variable) (effect : Variable) :
-    compoundNecessary dyn bg [v] effect = causallyNecessary dyn bg v effect := by
-  simp [compoundNecessary, causallyNecessary, List.foldl]
+    compoundNecessary dyn bg [v] effect =
+      (!(normalDevelopment dyn (bg.extend v false)).hasValue effect true) := by
+  simp [compoundNecessary, List.foldl]
 
 /-! ## § 1b. Bridge: Compound Sufficiency = `allSatisfy`
 

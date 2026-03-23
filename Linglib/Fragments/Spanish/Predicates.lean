@@ -61,7 +61,7 @@ structure SpanishVerbEntry extends VerbCore where
 def abrir : SpanishVerbEntry :=
   { form := "abrir", complementType := .np,
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *romper* "break" — marked anticausative, licenses stylistic LE.
@@ -69,7 +69,7 @@ def abrir : SpanishVerbEntry :=
 def romper : SpanishVerbEntry :=
   { form := "romper", complementType := .np,
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *hundir* "sink" — marked anticausative, licenses stylistic LE.
@@ -77,7 +77,7 @@ def romper : SpanishVerbEntry :=
 def hundir : SpanishVerbEntry :=
   { form := "hundir", complementType := .np,
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *caer* "fall" — marked anticausative, licenses stylistic LE.
@@ -86,7 +86,7 @@ def caer : SpanishVerbEntry :=
   { form := "caer", complementType := .none,
     unaccusative := true,
     anticausativeMarking := .marked,
-    causativeAlternation := false, verbHead := [.vGO, .vBE],
+    causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *morir* "die" — marked anticausative, licenses stylistic LE.
@@ -95,7 +95,7 @@ def morir : SpanishVerbEntry :=
   { form := "morir", complementType := .none,
     unaccusative := true,
     anticausativeMarking := .marked,
-    causativeAlternation := false, verbHead := [.vGO, .vBE],
+    causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *quebrar* "crack" — marked anticausative, licenses stylistic LE.
@@ -103,7 +103,7 @@ def morir : SpanishVerbEntry :=
 def quebrar : SpanishVerbEntry :=
   { form := "quebrar", complementType := .np,
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *hervir* "boil" — optional SE marking, but still licenses stylistic LE.
@@ -111,7 +111,7 @@ def quebrar : SpanishVerbEntry :=
 def hervir : SpanishVerbEntry :=
   { form := "hervir", complementType := .np,
     anticausativeMarking := .optional,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *olvidar* "forget" — marked anticausative, licenses stylistic LE.
@@ -119,7 +119,7 @@ def hervir : SpanishVerbEntry :=
 def olvidar : SpanishVerbEntry :=
   { form := "olvidar", complementType := .np,
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *ocurrir* "occur" — marked anticausative, licenses stylistic LE.
@@ -128,7 +128,7 @@ def ocurrir : SpanishVerbEntry :=
   { form := "ocurrir", complementType := .none,
     unaccusative := true,
     anticausativeMarking := .marked,
-    causativeAlternation := false, verbHead := [.vGO, .vBE],
+    causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true }
 
 /-- *mejorar* "improve" — UNMARKED anticausative, does NOT license stylistic LE.
@@ -136,7 +136,7 @@ def ocurrir : SpanishVerbEntry :=
 def mejorar : SpanishVerbEntry :=
   { form := "mejorar", complementType := .np,
     anticausativeMarking := .unmarked,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := false }
 
 /-- *rasgar* "tear (gash-like)" — Levin 45.1 equivalent; marked anticausative.
@@ -147,7 +147,7 @@ def rasgar : SpanishVerbEntry :=
   { form := "rasgar", complementType := .np,
     causativeBuilder := some .make,
     anticausativeMarking := .marked,
-    causativeAlternation := true, verbHead := [.vGO, .vBE],
+    causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,
     levinClass := some .break_,
     rootProfile := some {

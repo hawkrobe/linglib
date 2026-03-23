@@ -78,9 +78,10 @@ theorem preemption_make_not_cause :
   constructor <;> native_decide
 
 /-- When Suzy is the sole thrower, she both "made" and "caused" the
-    shattering. -/
+    shattering. Under @cite{nadathur-2024} Def 10b, the background
+    encodes Billy's absence rather than Suzy's presence. -/
 theorem suzy_solo_make_and_cause :
-    let bg := Situation.empty.extend suzyThrows true
+    let bg := Situation.empty.extend billyThrows false
     makeSem preemptionDyn bg suzyThrows bottleShatters = true ∧
     causeSem preemptionDyn bg suzyThrows bottleShatters = true := by
   constructor <;> native_decide
@@ -156,23 +157,21 @@ theorem match_not_sufficient_without_oxygen :
     causallySufficient enablingDyn Situation.empty matchStrike flame = false := by
   native_decide
 
-/-- Match is necessary for fire (given both present). -/
+/-- Match is necessary for fire given oxygen. -/
 theorem match_necessary :
-    let bg := oxygenBg.extend matchStrike true
-    causallyNecessary enablingDyn bg matchStrike flame = true := by
+    causallyNecessary enablingDyn oxygenBg matchStrike flame = true := by
   native_decide
 
-/-- Oxygen is also necessary for fire (given both present). -/
+/-- Oxygen is also necessary for fire given match. -/
 theorem oxygen_necessary :
-    let bg := oxygenBg.extend matchStrike true
+    let bg := Situation.empty.extend matchStrike true
     causallyNecessary enablingDyn bg oxygenPresent flame = true := by
   native_decide
 
 /-- Both "make" and "cause" are true for the match (given oxygen). -/
 theorem match_make_and_cause :
-    let bg := oxygenBg.extend matchStrike true
-    makeSem enablingDyn bg matchStrike flame = true ∧
-    causeSem enablingDyn bg matchStrike flame = true := by
+    makeSem enablingDyn oxygenBg matchStrike flame = true ∧
+    causeSem enablingDyn oxygenBg matchStrike flame = true := by
   constructor <;> native_decide
 
 end Enabling
@@ -200,7 +199,7 @@ theorem a_sufficient_for_c :
 
 /-- A is necessary for C (only cause). -/
 theorem a_necessary_for_c :
-    causallyNecessary bypassDyn (Situation.empty.extend a true) a c = true := by
+    causallyNecessary bypassDyn Situation.empty a c = true := by
   native_decide
 
 /-- B is NOT sufficient for C (no law B → C). -/
@@ -222,24 +221,25 @@ theorem preemption_profile :
       { sufficient := true, necessary := false, direct := true } := by
   native_decide
 
-/-- Enabling (both present): match is sufficient, necessary, direct. -/
+/-- Enabling: match is sufficient, necessary, direct (given oxygen).
+    Under @cite{nadathur-2024} Def 10b, bg excludes the cause. -/
 theorem enabling_profile :
-    let bg := oxygenBg.extend matchStrike true
-    extractProfile enablingDyn bg matchStrike flame =
+    extractProfile enablingDyn oxygenBg matchStrike flame =
       { sufficient := true, necessary := true, direct := true } := by
   native_decide
 
 /-- Chain bypass: A is sufficient, necessary, direct for C. -/
 theorem bypass_profile_a :
-    extractProfile bypassDyn (Situation.empty.extend a true) a c =
+    extractProfile bypassDyn Situation.empty a c =
       { sufficient := true, necessary := true, direct := true } := by
   native_decide
 
 /-- Chain bypass: B has no causal power over C.
-    Necessity is vacuously true — the effect doesn't occur with or
-    without B, so the but-for test passes trivially. -/
+    B is not sufficient (no B→C law), but IS necessary under Def 10b:
+    the only way to achieve C is through A→C, which also fires A→B,
+    so every path to C entails B. -/
 theorem bypass_profile_b :
-    extractProfile bypassDyn (Situation.empty.extend b true) b c =
+    extractProfile bypassDyn Situation.empty b c =
       { sufficient := false, necessary := true, direct := false } := by
   native_decide
 
@@ -289,5 +289,34 @@ theorem a_manipulates_c :
   native_decide
 
 end Intervention
+
+/-! ## 7. Actual causation
+
+Retrospective causal judgments: "did X actually cause Y in this situation?"
+`actuallyCaused` tests whether the cause occurred AND was causally necessary
+(under @cite{nadathur-2024} Def 10b). -/
+
+section ActualCausation
+
+/-- In preemption (both throwers), Suzy did NOT actually cause the
+    shattering — Billy's backup blocks necessity. -/
+theorem preemption_suzy_not_actual_cause :
+    actuallyCaused preemptionDyn preemptionBg suzyThrows bottleShatters = false := by
+  native_decide
+
+/-- When Suzy is the sole thrower, she actually caused the shattering. -/
+theorem solo_suzy_actual_cause :
+    let bg := Situation.empty.extend suzyThrows true |>.extend billyThrows false
+    actuallyCaused preemptionDyn bg suzyThrows bottleShatters = true := by
+  native_decide
+
+/-- In the enabling scenario, the match actually caused the flame
+    (given oxygen as background). -/
+theorem match_actually_caused_flame :
+    let bg := oxygenBg.extend matchStrike true
+    actuallyCaused enablingDyn bg matchStrike flame = true := by
+  native_decide
+
+end ActualCausation
 
 end Phenomena.Causation.StructuralCausation
