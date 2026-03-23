@@ -1389,7 +1389,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.Syntax.ConstructionGrammar.Slot
 import Linglib.Theories.Syntax.ConstructionGrammar.GrammarDist
-import Linglib.Phenomena.Constructions.Studies.Dunn2026
+import Linglib.Phenomena.Constructions.Studies.Dunn2025
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
 -- Theories: HPSG
 import Linglib.Theories.Syntax.HPSG.Core.Basic

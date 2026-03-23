@@ -4,7 +4,7 @@ import Mathlib.Algebra.Order.Ring.Rat
 /-!
 # Typed Slot-Filler Representation
 
-@cite{dunn-2026} @cite{kay-fillmore-1999} @cite{dunn-2025} @cite{fillmore-kay-oconnor-1988} @cite{goldberg-1995}
+@cite{dunn-2025} @cite{kay-fillmore-1999} @cite{fillmore-kay-oconnor-1988} @cite{goldberg-1995}
 
 Constructions are sequences of slots, where each slot is either fixed
 (a specific lexeme), open (any word of a given syntactic category),

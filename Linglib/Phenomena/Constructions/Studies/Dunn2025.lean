@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 /-!
 # Slot/Filler Verification
 
-@cite{dunn-2026} @cite{kay-fillmore-1999} @cite{goldberg-shirtz-2025}
+@cite{dunn-2025} @cite{kay-fillmore-1999} @cite{goldberg-shirtz-2025}
 
 Per-datum verification that `derivedSpecificity` (computed from the typed
 slot structure) matches the `Specificity` values stipulated in existing
@@ -19,7 +19,7 @@ Concrete `TypedForm` instantiations for six constructions verify:
 5. WXDY coinstantiation: X and Y share refIdx 2 (subject control)
 -/
 
-namespace Phenomena.Constructions.Studies.Dunn2026
+namespace Phenomena.Constructions.Studies.Dunn2025
 
 open ConstructionGrammar
 
@@ -225,4 +225,4 @@ theorem basic_forms_no_constraints :
     hasConstraint ditransitiveForm .negMinus = false ∧
     hasConstraint letAloneForm .locMinus = false := ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Constructions.Studies.Dunn2026
+end Phenomena.Constructions.Studies.Dunn2025

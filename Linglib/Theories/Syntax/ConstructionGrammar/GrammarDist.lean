@@ -1,44 +1,32 @@
 import Linglib.Core.InformationTheory
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.BToMGrounding
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 
 /-!
 # Grammar as Distribution
 
-@cite{dunn-2026} @cite{bergen-levy-goodman-2016} @cite{dunn-2025}A grammar is a frequency profile over constructions. This
+@cite{dunn-2025} @cite{bergen-levy-goodman-2016}
+
+A grammar is a frequency profile over constructions. This
 generalizes lexical uncertainty: where LU varies meaning
 assignments, grammar uncertainty varies both meaning AND production frequency.
 
 ## Architecture
 
-Two types capture the individual–population hierarchy from @cite{dunn-2025} variationist CxG:
+Two types capture the individual–population hierarchy from @cite{dunn-2025}
+variationist CxG:
 
 - `GrammarDist C` — frequency profile over constructions (individual grammar)
 - `Grammar C W` — frequency + interpretation (connects to RSA `Lexicon`)
 
-These embed into existing RSA infrastructure without new machinery:
-
-| Concept | RSAConfig slot | Type |
-|---------|---------------|------|
-| Individual grammar | `Latent` | `Grammar C W` |
-| Population grammar | `latentPrior` | `W → Grammar C W → ℝ` |
-| Community convention | `Latent` (2nd level) | `Grammar C W × Convention` |
-
-CHAI's two-level hierarchy (Θ, φ_k) maps directly:
-- φ_k (partner-specific lexicon) = a `Grammar` value
-- Θ (community convention) = the `latentPrior` shape parameter
-- P(φ_k | Θ) · P(Θ) = `latentPrior` over `Latent := Grammar × Convention`
-
-The same grammar object classifies differently in BToM depending on the
-phenomenon (§5): variability → medium, generalization → shared,
-online learning → mental.
-
+@cite{dunn-2025} measures variation across three dimensions — individuals,
+populations (dialects), and contexts (registers) — using Shannon entropy for
+constructional diversity and Jensen-Shannon divergence for grammar similarity.
 -/
 
 namespace ConstructionGrammar
 
-open Core.InformationTheory Core.BToM RSA.BToMGrounding
+open Core.InformationTheory
 
 -- ============================================================================
 -- §1. Core Types
@@ -49,10 +37,7 @@ open Core.InformationTheory Core.BToM RSA.BToMGrounding
 An individual's grammar is a frequency-weighted profile over constructions —
 not a binary set (in/out) but a weighting reflecting how often each
 construction is used. Note: this does not enforce normalization (Σ freq = 1);
-the weights are relative frequencies, not probabilities.
-
-In CHAI, this is φ_k — the partner-specific
-production model that determines both what to say and how to interpret. -/
+the weights are relative frequencies, not probabilities. -/
 structure GrammarDist (C : Type) where
   freq : C → ℚ
   freq_nonneg : ∀ c, 0 ≤ freq c
@@ -61,10 +46,8 @@ structure GrammarDist (C : Type) where
 
 Extends `GrammarDist` with a meaning function mapping each construction
 to a graded truth function over worlds. This connects grammar distributions
-to RSA's literal semantics and to Bergen et al.'s (2016) `Lexicon` type.
-
-The meaning function corresponds to CHAI's L_φ(u, o) — the truth-conditional
-function parameterized by the grammar. -/
+to RSA's literal semantics and to @cite{bergen-levy-goodman-2016}'s
+`Lexicon` type. -/
 structure Grammar (C W : Type) extends GrammarDist C where
   meaning : C → W → ℚ
 
@@ -113,9 +96,8 @@ This is the key structural claim: lexical uncertainty
 is the special case of grammar uncertainty where only meaning varies and
 production frequency is uniform across constructions.
 
-In CHAI terms: standard LU uses a flat prior P(φ) over lexicons; grammar
-uncertainty extends this to structured priors P(φ | Θ) where Θ encodes
-population-level frequency norms. -/
+Standard LU uses a flat prior over lexicons; grammar uncertainty extends
+this by additionally varying production frequency. -/
 def grammarOfLexicon (L : Lexicon U W) : Grammar U W where
   freq := fun _ => 1
   freq_nonneg := fun _ => by norm_num
@@ -149,125 +131,13 @@ variable {C : Type}
 /-- Production cost derived from frequency: -log₂(freq).
 
 Frequent constructions are cheap; rare ones are expensive. This connects
-Dunn's frequency-based grammar to RSA's utterance cost: setting
+@cite{dunn-2025}'s frequency-based grammar to RSA's utterance cost: setting
 `cost(u) = -log₂(freq(u))` in S1's action-based scoring rule grounds
-utterance cost in production frequency rather than stipulating it.
-
-In CHAI, this corresponds to the speaker's production model: S1 prefers
-utterances that are frequent in the speaker's grammar φ_k AND
-informative about the intended referent. -/
+utterance cost in production frequency rather than stipulating it. -/
 def GrammarDist.cost (g : GrammarDist C) (c : C) : ℚ :=
   if g.freq c ≤ 0 then 10
   else -log2Approx (g.freq c)
 
 end RSACost
-
--- ============================================================================
--- §5. BToM Classification
--- ============================================================================
-
-/-- Three BToM roles for grammars, corresponding to CHAI's three capacities.
-
-The same `Grammar C W` object classifies differently in BToM depending on
-the theoretical question. These correspond to the three core capacities
-identified in CHAI:
-
-| Role | BToM Category | Dynamics | CHAI capacity | Phenomenon |
-|------|---------------|----------|---------------|------------|
-| Competence | Medium | Dispositional | C1 (variability) | Dialect ID |
-| Convention | Shared | Dynamic | C3 (generalization) | Convention |
-| Accommodation | Mental | Episodic | C2 (online learning) | Accommodation |
-
-These classifications yield identical behavioral predictions (BToM marginals
-are insensitive to labels). They differ in cognitive-level claims about what
-inference the listener performs. -/
-inductive GrammarRole where
-  | competence    -- C1: fixed property of the speaker (their dialect/register)
-  | convention    -- C3: shared equilibrium abstracted across partners
-  | accommodation -- C2: speaker's online model of partner's grammar
-  deriving DecidableEq, Repr
-
-/-- Map grammar roles to BToM ontological categories. -/
-def GrammarRole.toBToMCategory : GrammarRole → LatentCategory
-  | .competence => .medium
-  | .convention => .shared
-  | .accommodation => .mental
-
-/-- Map grammar roles to temporal dynamics. -/
-def GrammarRole.toDynamics : GrammarRole → FactorDynamics
-  | .competence => .dispositional
-  | .convention => .dynamic
-  | .accommodation => .episodic
-
-/-- Construct a BToM latent classification from a grammar role.
-
-This makes explicit the cognitive commitment: treating grammar as
-medium (stable language structure), shared (evolving convention), or
-mental (belief about interlocutor). -/
-def grammarClassification (role : GrammarRole) :
-    LatentClassification Unit where
-  classify _ := role.toBToMCategory
-  dynamics _ := role.toDynamics
-
--- ============================================================================
--- §6. CHAI Hierarchy: From Partners to Populations
--- ============================================================================
-
-/-- CHAI's two-level hierarchy expressed via RSAConfig.
-
-In CHAI, convention formation is modeled as
-hierarchical Bayesian inference over two levels of grammar:
-
-- φ_k : partner-specific grammars (updated online through interaction)
-- Θ : community-level convention (abstracted across partners)
-
-These correspond to the two components of the latent variable in RSAConfig:
-set `Latent := Grammar C W × Convention` and define
-`latentPrior _ (φ, θ) := P(φ | θ) · P(θ)`.
-
-L1's marginalization then automatically computes CHAI's Eq 4:
-  L1(w|u) ∝ prior(w) · Σ_{φ,θ} P(φ|θ) · P(θ) · S1(u|w, φ)
-
-This derives three phenomena:
-- P1 (efficiency): S1 incorporates φ.cost, so frequent constructions win
-- P2 (partner → community): Θ pools across partners via P(θ | D₁, D₂,...)
-- P3 (context-sensitivity): different L0 meanings for different Θ values
-
-The `partnerGrammars` list contains one φ_k per interaction partner.
-CHAI's key claim is that Θ is abstracted by pooling across partners:
-P(Θ | D₁,..., D_K) ∝ P(Θ) · Π_k P(D_k | Θ). Each partner grammar
-φ_k is drawn from P(φ | Θ) and updated independently through interaction.
-
-TODO: Formalize the dynamic aspect (sequential Bayesian updating of φ_k and
-Θ across discourse turns). The current RSAConfig is static (single-utterance);
-extending to sequential observation requires `BToMModel.sharedUpdate`. -/
-structure CHAIHierarchy (C W : Type) where
-  /-- Partner-specific grammars (CHAI's φ_k for each partner k). -/
-  partnerGrammars : List (Grammar C W)
-  /-- Community-level convention parameter (CHAI's Θ).
-      Abstractly: a shape parameter for the distribution over partner grammars.
-      Concretely: a "default" grammar that partner grammars are drawn. -/
-  communityConvention : Grammar C W
-
-section CHAIConventionality
-variable {C W : Type}
-
-/-- A grammar is conventional if it is a fixed point of CHAI's hierarchical
-learning: the community convention Θ concentrates on g, and new partners'
-grammars φ_k converge to g through interaction.
-
-Formally: g is conventional when, for any partner k starting from the
-community prior P(φ | Θ=g), Bayesian updating on observations from a
-g-speaker yields a posterior that also concentrates on g.
-
-In signaling game terms: g is a Lewis convention — a regularity in behavior
-that is common knowledge, preferred over alternatives, and self-reinforcing.
-
-TODO: State as a fixed-point condition on the Bayesian update:
-  P(φ_k | D_k, Θ=g) concentrates on g when D_k is generated by g. -/
-def Grammar.isConventional (_g : Grammar C W) : Prop :=
-  sorry
-
-end CHAIConventionality
 
 end ConstructionGrammar
