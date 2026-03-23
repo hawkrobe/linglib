@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.PIP.Basic
 /-!
 # PIP Felicity Conditions (Static Formulation)
 
-@cite{keshet-abney-2024} @cite{karttunen-1974}
+@cite{keshet-abney-2024} @cite{karttunen-1973}
 
 PIP separates **truth conditions** from **felicity conditions**. Truth is
 classical (predicate calculus + set abstraction). Felicity is a separate
@@ -146,7 +146,7 @@ theorem felicitous_presup (φ : PIPExpr W) (ψ : W → Bool) (w : W) :
 theorem presup_truth_independent (φ : PIPExpr W) (ψ : W → Bool) (w : W) :
     (PIPExpr.presup φ ψ).truth w = φ.truth w := rfl
 
-/-- Conjunction felicity is asymmetric (paper item 42, @cite{karttunen-1974}):
+/-- Conjunction felicity is asymmetric (paper item 42, @cite{karttunen-1973}):
     the first conjunct can satisfy presuppositions of the second. -/
 theorem felicitous_conj (φ ψ : PIPExpr W) (w : W) :
     (PIPExpr.conj φ ψ).felicitous w =

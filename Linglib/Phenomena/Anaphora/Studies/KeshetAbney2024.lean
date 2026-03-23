@@ -1031,7 +1031,7 @@ theorem pip_solves_dpl_negation_problem :
 
 /--
 PIP's F operator and `Core.Presupposition.PrProp.andFilter` implement the
-same Karttunen conjunction clause (@cite{karttunen-1974}).
+same Karttunen conjunction clause (@cite{karttunen-1973}).
 
 **PIP Felicity** (`PIPExpr.felicitous` for `.conj φ ψ`):
   `φ.felicitous w && ((φ.truth w).not || ψ.felicitous w)`
