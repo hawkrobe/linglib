@@ -70,7 +70,7 @@ import Linglib.Theories.Semantics.Causation.Integration
 import Linglib.Theories.Semantics.Causation.GradedCausation
 import Linglib.Theories.Semantics.Causation.CausalSelection
 import Linglib.Theories.Semantics.Causation.Implicative
-import Linglib.Theories.Semantics.Causation.CausalVerb
+import Linglib.Theories.Semantics.Causation.ComplementEntailing
 import Linglib.Theories.Semantics.Causation.CausalClosure
 import Linglib.Theories.Semantics.Causation.DegreeCausation
 import Linglib.Theories.Semantics.Causation.PsychCausation

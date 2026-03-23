@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.CausalVerb
+import Linglib.Theories.Semantics.Causation.ComplementEntailing
 
 /-!
 # Degree Constructions and Actuality Inferences (@cite{nadathur-2023}, Chapter 5)
