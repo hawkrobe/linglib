@@ -2,12 +2,22 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
 # Verbal Decomposition
-@cite{cuervo-2003}
+@cite{cuervo-2003} @cite{wood-2015} @cite{pylkkanen-2008}
 
 Sub-eventive verb heads that decompose verbal structure into
-fine-grained event components. This decomposition connects directly
-to the causative alternation: inchoative verbs have [vGO, vBE],
-causatives add [vDO] for the external cause.
+fine-grained event components. Following @cite{wood-2015} and
+@cite{pylkkanen-2008}, CAUSE is an independent head — separate
+from both Voice (which introduces the external argument) and the
+root-determined event structure (vGO, vBE).
+
+Key decompositions:
+- State: [vBE]
+- Activity: [vDO]
+- Inchoative: [vCAUSE, vGO, vBE] (anticausative: "the door opened")
+- Causative: [vDO, vCAUSE, vGO, vBE] (transitive: "John opened the door")
+
+Voice contributes vDO (the agent's activity); CAUSE is part of the root
+structure, present in both causative and anticausative alternants.
 
 Independent of applicative heads — used by Fission, EventStructureBridge,
 and the Spanish fragment.
@@ -20,16 +30,19 @@ namespace Minimalism
 -- § 1: Sub-Eventive Verb Heads
 -- ============================================================================
 
-/-- Sub-eventive verb heads from @cite{cuervo-2003}.
+/-- Sub-eventive verb heads from @cite{cuervo-2003}, extended with
+    vCAUSE following @cite{wood-2015} and @cite{pylkkanen-2008}.
 
-    Spanish verbal structure decomposes into:
     - **vDO**: Dynamic subevent where an agent does something
+    - **vCAUSE**: Causal relation between subevents (independent head;
+      present in both causative and anticausative alternants)
     - **vGO**: Dynamic subevent of change (inchoative component)
     - **vBE**: Stative subevent of result state -/
 inductive VerbHead where
-  | vDO   -- Dynamic subevent (agent does something)
-  | vGO   -- Dynamic subevent of change
-  | vBE   -- Stative subevent of result
+  | vDO     -- Dynamic subevent (agent does something)
+  | vCAUSE  -- Causal relation between subevents (@cite{wood-2015}, @cite{pylkkanen-2008})
+  | vGO     -- Dynamic subevent of change
+  | vBE     -- Stative subevent of result
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -41,8 +54,8 @@ inductive VerbHead where
     Key patterns:
     - State: [vBE]
     - Activity: [vDO]
-    - Inchoative: [vGO, vBE] (anticausative: "the door opened")
-    - Causative: [vDO, vGO, vBE] (transitive: "John opened the door") -/
+    - Inchoative: [vCAUSE, vGO, vBE] (anticausative: "the door opened")
+    - Causative: [vDO, vCAUSE, vGO, vBE] (transitive: "John opened the door") -/
 def isInchoative (heads : List VerbHead) : Bool :=
   heads.contains .vGO && heads.contains .vBE && !heads.contains .vDO
 
@@ -58,6 +71,17 @@ def isState (heads : List VerbHead) : Bool :=
 def isActivity (heads : List VerbHead) : Bool :=
   heads == [.vDO]
 
+/-- Does this decomposition contain a CAUSE head? -/
+def hasCause (heads : List VerbHead) : Bool :=
+  heads.contains .vCAUSE
+
+/-- Is this an anticausative (CAUSE present, but no external agent)?
+    Anticausatives have the causal structure but lack an agentive vDO.
+    This is the key insight from @cite{wood-2015}: CAUSE is independent
+    of Voice, so it can appear without an agent. -/
+def isAnticausative (heads : List VerbHead) : Bool :=
+  hasCause heads && heads.contains .vGO && !heads.contains .vDO
+
 -- ============================================================================
 -- § 3: Verification Theorems
 -- ============================================================================
@@ -65,8 +89,16 @@ def isActivity (heads : List VerbHead) : Bool :=
 /-- Inchoative = change + result, no external cause. -/
 theorem inchoative_is_go_be : isInchoative [.vGO, .vBE] = true := by native_decide
 
+/-- Inchoative with CAUSE: [vCAUSE, vGO, vBE] is still inchoative (no vDO). -/
+theorem inchoative_with_cause :
+    isInchoative [.vCAUSE, .vGO, .vBE] = true := by native_decide
+
 /-- Causative = external cause + change + result. -/
 theorem causative_is_do_go_be : isCausative [.vDO, .vGO, .vBE] = true := by native_decide
+
+/-- Causative with CAUSE head. -/
+theorem causative_with_cause :
+    isCausative [.vDO, .vCAUSE, .vGO, .vBE] = true := by native_decide
 
 /-- Inchoative is NOT causative (no vDO). -/
 theorem inchoative_not_causative : isCausative [.vGO, .vBE] = false := by native_decide
@@ -81,5 +113,18 @@ theorem state_neither :
 /-- An activity is neither inchoative nor causative. -/
 theorem activity_neither :
     isInchoative [.vDO] = false ∧ isCausative [.vDO] = false := by native_decide
+
+/-- CAUSE is present in both causative and anticausative alternants. -/
+theorem cause_shared_across_alternation :
+    hasCause [.vDO, .vCAUSE, .vGO, .vBE] = true ∧
+    hasCause [.vCAUSE, .vGO, .vBE] = true := by native_decide
+
+/-- Anticausative = CAUSE + change, no agent. -/
+theorem anticausative_is_cause_go :
+    isAnticausative [.vCAUSE, .vGO, .vBE] = true := by native_decide
+
+/-- Causative with vDO is NOT anticausative. -/
+theorem causative_not_anticausative :
+    isAnticausative [.vDO, .vCAUSE, .vGO, .vBE] = false := by native_decide
 
 end Minimalism

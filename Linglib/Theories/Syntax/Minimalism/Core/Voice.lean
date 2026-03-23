@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
 # Voice Head Flavors
-@cite{chomsky-2001} @cite{coon-2019} @cite{cuervo-2003} @cite{harley-2014} @cite{kratzer-1996} @cite{legate-2003} @cite{schaefer-2008}
+@cite{chomsky-2001} @cite{coon-2019} @cite{cuervo-2003} @cite{harley-2014} @cite{kratzer-1996} @cite{legate-2003} @cite{schaefer-2008} @cite{wood-2015}
 
 Voice heads introduce (or fail to introduce) external arguments.
 The key typology from @cite{schaefer-2008}:
@@ -14,6 +14,8 @@ The key typology from @cite{schaefer-2008}:
 - **NonThematic**: Semantically vacuous — no θ-role, but has a [D] feature
   requiring PF realization (anticausative SE in Romance; Muñoz @cite{munoz-perez-2026})
 - **Expletive**: No specifier, no semantics (middle voice, dispositionals)
+- **Reflexive**: [+θ, +D] with reflexive binding (@cite{wood-2015} Icelandic -st)
+- **Experiencer**: [+θ, +D] introducing experiencer (@cite{wood-2015} subject-exp -st)
 
 ## Key Claim
 
@@ -25,13 +27,20 @@ Chilean Spanish when Fission produces a syncretic clitic.
 
 Voice and VerbHead are both "little-v" but encode different
 dimensions: Voice determines *whether* an external argument is introduced;
-VerbHead decomposes the *event structure* into subevents. The bridge
-formalizes @cite{kratzer-1996}'s insight in Cuervo's terms: agentive/causer Voice
-contributes vDO (the agent's activity subevent) to the decomposition, while
-non-thematic/expletive Voice contributes nothing. Combined with
-root-determined lower structure (vGO, vBE), this yields the causative
-alternation: Voice_AG + [vGO, vBE] = causative [vDO, vGO, vBE];
-Voice_nonThematic + [vGO, vBE] = inchoative [vGO, vBE].
+VerbHead decomposes the *event structure* into subevents.
+
+Following @cite{cuervo-2003} and @cite{pylkkanen-2008}, the CAUSE
+relation is modeled here as an independent VerbHead in the root's
+event decomposition — present in both causative and anticausative
+alternants. Voice contributes vDO (the agent's activity subevent)
+when it assigns a θ-role, but does NOT contribute the causal relation.
+
+Note: @cite{wood-2015} uses a SINGLE v head whose interpretation
+introduces CAUSE, rather than @cite{cuervo-2003}'s multi-headed
+decomposition. The VerbHead decomposition used here is a linglib
+modeling choice that captures the same Voice–CAUSE independence
+using @cite{cuervo-2003}'s notation. See `Fragments.Icelandic.Predicates`
+for the Icelandic fragment.
 
 -/
 
@@ -46,7 +55,9 @@ namespace Minimalism
     Agentive Voice introduces an agent; causer Voice introduces a causer;
     non-thematic Voice has no semantics (anticausative SE);
     expletive Voice has neither specifier nor semantics (middles);
-    passive Voice checks Case without assigning θ (@cite{collins-2005}: *by*). -/
+    passive Voice checks Case without assigning θ (@cite{collins-2005}: *by*);
+    reflexive Voice introduces agent that binds internal argument (@cite{wood-2015});
+    experiencer Voice introduces experiencer external argument (@cite{wood-2015}). -/
 inductive VoiceFlavor where
   | agentive     -- Introduces external argument with agent θ-role (@cite{kratzer-1996})
   | causer       -- Introduces causer (@cite{schaefer-2008}: Voice_CAUSE)
@@ -55,6 +66,8 @@ inductive VoiceFlavor where
   | impersonal   -- Demotes agent to implicit generic human (Finnish "passive")
   | passive      -- Checks Case but does not assign θ (@cite{collins-2005}: *by* heads VoiceP)
   | antipassive  -- Introduces agent with absolutive (not ergative) case; demotes object to oblique (@cite{scott-2023})
+  | reflexive    -- [+θ, +D]: introduces agent, binds internal argument (Icelandic -st reflexive; @cite{wood-2015})
+  | experiencer  -- [+θ, +D]: introduces experiencer external argument (@cite{wood-2015} subject-experiencer -st)
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -81,13 +94,13 @@ structure VoiceHead where
 /-- Does this Voice head introduce a θ-role? -/
 def VoiceHead.assignsTheta (v : VoiceHead) : Bool :=
   match v.flavor with
-  | .agentive | .causer | .antipassive => true
+  | .agentive | .causer | .antipassive | .reflexive | .experiencer => true
   | .nonThematic | .expletive | .impersonal | .passive => false
 
 /-- Does this Voice head have semantic content? -/
 def VoiceHead.hasSemantics (v : VoiceHead) : Bool :=
   match v.flavor with
-  | .agentive | .causer | .impersonal | .passive | .antipassive => true
+  | .agentive | .causer | .impersonal | .passive | .antipassive | .reflexive | .experiencer => true
   | .nonThematic | .expletive => false
 
 -- ============================================================================
@@ -131,6 +144,18 @@ def voiceImpersonal : VoiceHead :=
 def voicePassive : VoiceHead :=
   { flavor := .passive, hasD := true, phaseHead := false, checksCase := true }
 
+/-- Reflexive Voice (@cite{wood-2015}): introduces agent that is coreferent
+    with the internal argument. [+θ, +D], phase head (assigns θ).
+    Icelandic -st spells out this Voice in reflexive constructions. -/
+def voiceReflexive : VoiceHead :=
+  { flavor := .reflexive, hasD := true, phaseHead := true }
+
+/-- Experiencer Voice (@cite{wood-2015}): introduces experiencer external
+    argument. [+θ, +D], phase head. Icelandic subject-experiencer -st verbs
+    (e.g., *leiðast* 'be bored'). -/
+def voiceExperiencer : VoiceHead :=
+  { flavor := .experiencer, hasD := true, phaseHead := true }
+
 -- ============================================================================
 -- § 4: Verification Theorems
 -- ============================================================================
@@ -171,77 +196,65 @@ theorem passive_has_semantics : voicePassive.hasSemantics = true := rfl
 /-- Passive Voice checks Case (@cite{collins-2005}, p. 96: feature dissociation). -/
 theorem passive_checks_case : voicePassive.checksCase = true := rfl
 
-/-- Only agentive, causer, and antipassive Voice assign θ-roles. -/
-theorem theta_implies_agentive_or_causer_or_antipassive (v : VoiceHead) :
+/-- Reflexive Voice assigns a θ-role (@cite{wood-2015}). -/
+theorem reflexive_assigns_theta : voiceReflexive.assignsTheta = true := rfl
+
+/-- Experiencer Voice assigns a θ-role (@cite{wood-2015}). -/
+theorem experiencer_assigns_theta : voiceExperiencer.assignsTheta = true := rfl
+
+/-- Only θ-assigning Voice flavors assign θ-roles. -/
+theorem theta_implies_active_flavor (v : VoiceHead) :
     v.assignsTheta = true →
-    v.flavor = .agentive ∨ v.flavor = .causer ∨ v.flavor = .antipassive := by
-  cases v with | mk flavor _ _ =>
+    v.flavor = .agentive ∨ v.flavor = .causer ∨ v.flavor = .antipassive ∨
+    v.flavor = .reflexive ∨ v.flavor = .experiencer := by
+  cases v with | mk flavor _ _ _ _ =>
   cases flavor <;> simp [VoiceHead.assignsTheta]
 
 -- ============================================================================
 -- § 5: Voice–VerbHead Bridge (@cite{kratzer-1996} in @cite{cuervo-2003} terms)
 -- ============================================================================
 
-/-- The sub-eventive contribution of a Voice flavor.
-
-    Agentive and causer Voice contribute vDO — the dynamic subevent
-    where an external argument acts or causes. Non-thematic and expletive
-    Voice contribute nothing: there is no agent subevent.
-
-    This formalizes @cite{kratzer-1996}'s "severing" in @cite{cuervo-2003}'s event-decomposition vocabulary: the external argument's subevent
-    comes from Voice, not from the root. -/
-def VoiceFlavor.eventContribution : VoiceFlavor → Option VerbHead
-  | .agentive     => some .vDO
-  | .causer       => some .vDO
-  | .antipassive  => some .vDO
-  | .nonThematic  => none
-  | .expletive    => none
-  | .impersonal   => none
-  | .passive      => none
-
 /-- Build the full verbal decomposition by combining Voice's contribution
     with the root-determined lower event structure.
 
-    The root supplies lower subevents (e.g., [vGO, vBE] for change-of-state
-    roots). Voice optionally prepends vDO. The result is Cuervo's
-    full decomposition:
-    - Voice_AG + [vGO, vBE] → [vDO, vGO, vBE] (causative)
-    - Voice_nonTh + [vGO, vBE] → [vGO, vBE] (inchoative)
+    Voice contributes vDO when it assigns a θ-role (agentive, causer,
+    antipassive). The root supplies the lower structure, which now
+    includes vCAUSE for change-of-state roots (@cite{wood-2015},
+    @cite{pylkkanen-2008}). CAUSE is independent of Voice:
+
+    - Voice_AG + [vCAUSE, vGO, vBE] → [vDO, vCAUSE, vGO, vBE] (causative)
+    - Voice_nonTh + [vCAUSE, vGO, vBE] → [vCAUSE, vGO, vBE] (anticausative)
     - Voice_AG + [] → [vDO] (unergative activity)
     - Voice_nonTh + [vBE] → [vBE] (stative) -/
 def buildDecomposition (voice : VoiceHead) (rootStructure : List VerbHead) :
     List VerbHead :=
-  match voice.flavor.eventContribution with
-  | some h => h :: rootStructure
-  | none   => rootStructure
+  if voice.assignsTheta then .vDO :: rootStructure
+  else rootStructure
 
 -- ============================================================================
 -- § 6: Bridge Theorems
 -- ============================================================================
 
-/-- θ-assigning Voice contributes vDO. -/
-theorem theta_voice_contributes_vDO (v : VoiceHead)
+/-- θ-assigning Voice prepends vDO to the root structure. -/
+theorem theta_voice_prepends_vDO (v : VoiceHead) (root : List VerbHead)
     (h : v.assignsTheta = true) :
-    v.flavor.eventContribution = some .vDO := by
-  cases v with | mk flavor _ _ _ =>
-  cases flavor <;> simp [VoiceHead.assignsTheta] at h <;>
-    simp [VoiceFlavor.eventContribution]
+    buildDecomposition v root = .vDO :: root := by
+  simp [buildDecomposition, h]
 
-/-- Non-θ Voice contributes no subevent. -/
-theorem no_theta_no_event (v : VoiceHead)
+/-- Non-θ Voice leaves the root structure unchanged. -/
+theorem no_theta_passthrough (v : VoiceHead) (root : List VerbHead)
     (h : v.assignsTheta = false) :
-    v.flavor.eventContribution = none := by
-  cases v with | mk flavor _ _ _ =>
-  cases flavor <;> simp [VoiceHead.assignsTheta, VoiceFlavor.eventContribution] at h ⊢
+    buildDecomposition v root = root := by
+  simp [buildDecomposition, h]
 
-/-- Causative pattern: agentive Voice + [vGO, vBE] yields a causative decomposition. -/
+/-- Causative pattern: agentive Voice + [vCAUSE, vGO, vBE] yields a causative decomposition. -/
 theorem agent_plus_change_is_causative :
-    isCausative (buildDecomposition voiceAgent [.vGO, .vBE]) = true := by
+    isCausative (buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE]) = true := by
   native_decide
 
-/-- Inchoative pattern: non-thematic Voice + [vGO, vBE] stays inchoative. -/
+/-- Inchoative pattern: non-thematic Voice + [vCAUSE, vGO, vBE] stays inchoative. -/
 theorem nonthematic_plus_change_is_inchoative :
-    isInchoative (buildDecomposition voiceAnticausative [.vGO, .vBE]) = true := by
+    isInchoative (buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE]) = true := by
   native_decide
 
 /-- Activity pattern: agentive Voice + [] yields an activity. -/
@@ -254,23 +267,31 @@ theorem nonthematic_plus_state_is_state :
     isState (buildDecomposition voiceAnticausative [.vBE]) = true := by
   native_decide
 
-/-- The causative alternation: same root structure [vGO, vBE] is causative
-    under agentive Voice but inchoative under non-thematic Voice. This is
-    @cite{coon-2019}'s division of labor and @cite{kratzer-1996}'s severing in one
-    theorem: alternation is determined by Voice, not by the root. -/
+/-- The causative alternation: same root structure [vCAUSE, vGO, vBE] is
+    causative under agentive Voice but inchoative under non-thematic Voice.
+    CAUSE is shared across both alternants — only vDO (from Voice) differs.
+    This formalizes the @cite{wood-2015}/@cite{pylkkanen-2008} insight:
+    CAUSE is independent of Voice. -/
 theorem causative_alternation :
-    isCausative (buildDecomposition voiceAgent [.vGO, .vBE]) = true ∧
-    isInchoative (buildDecomposition voiceAnticausative [.vGO, .vBE]) = true := by
+    isCausative (buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE]) = true ∧
+    isInchoative (buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE]) = true := by
   native_decide
 
-/-- Voice determines causativity: if the root structure is [vGO, vBE],
+/-- Voice determines causativity: if the root structure is [vCAUSE, vGO, vBE],
     then whether the result is causative tracks exactly whether Voice
     assigns a θ-role. -/
-theorem voice_determines_causativity_go_be (v : VoiceHead) :
-    isCausative (buildDecomposition v [.vGO, .vBE]) = v.assignsTheta := by
-  cases v with | mk flavor _ _ _ =>
-  cases flavor <;> simp [buildDecomposition, VoiceFlavor.eventContribution,
+theorem voice_determines_causativity (v : VoiceHead) :
+    isCausative (buildDecomposition v [.vCAUSE, .vGO, .vBE]) = v.assignsTheta := by
+  cases v with | mk flavor _ _ _ _ =>
+  cases flavor <;> simp [buildDecomposition,
     isCausative, VoiceHead.assignsTheta] <;> decide
+
+/-- CAUSE is present in both causative and anticausative decompositions.
+    This is the independence claim: CAUSE is part of the root, not Voice. -/
+theorem cause_independent_of_voice :
+    hasCause (buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE]) = true ∧
+    hasCause (buildDecomposition voiceAnticausative [.vCAUSE, .vGO, .vBE]) = true := by
+  native_decide
 
 -- ============================================================================
 -- § 7: Feature Dissociation (@cite{collins-2005}, §4)
@@ -296,12 +317,10 @@ theorem passive_theta_case_dissociated :
 theorem utah_active_passive :
     voiceAgent.hasD = true ∧ voicePassive.hasD = true := ⟨rfl, rfl⟩
 
-/-- Passive Voice does not contribute vDO. In Collins' analysis, the
-    activity subevent exists (the agent acts in both active and passive)
-    but it is introduced by v, not by Voice. The current architecture
-    tracks only Voice's contribution; v's contribution is implicit. -/
-theorem passive_no_event_contribution :
-    VoiceFlavor.passive.eventContribution = none := rfl
+/-- Passive Voice does not prepend vDO: it does not assign θ, so
+    `buildDecomposition` passes the root structure through unchanged. -/
+theorem passive_no_vDO (root : List VerbHead) :
+    buildDecomposition voicePassive root = root := rfl
 
 -- ============================================================================
 -- § 8: Voice/Phase Bridge
@@ -321,9 +340,10 @@ theorem nonthematic_voice_not_phase_head :
 /-- Phase-head-ness correlates with θ-role assignment:
     Voice is a phase head iff it assigns a θ-role. -/
 theorem phase_iff_theta (v : VoiceHead)
-    (h : v = voiceAgent ∨ v = voiceCauser ∨ v = voiceAnticausative ∨ v = voiceMiddle) :
+    (h : v = voiceAgent ∨ v = voiceCauser ∨ v = voiceAnticausative ∨ v = voiceMiddle ∨
+         v = voiceReflexive ∨ v = voiceExperiencer) :
     v.phaseHead = v.assignsTheta := by
-  rcases h with rfl | rfl | rfl | rfl <;> rfl
+  rcases h with rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
 
 -- ============================================================================
 -- § 9: Parametric Voice Decomposition (@cite{alexiadou-schaefer-2015}, @cite{schaefer-2017})
@@ -375,6 +395,8 @@ structure VoiceParams where
     |--------|----|-----|---------|
     | agentive | +D | +λx (arg) | English active |
     | causer | +D | +λx (arg) | Psych causative |
+    | reflexive | +D | +λx (arg) | Icelandic -st reflexive |
+    | experiencer | +D | +λx (arg) | Icelandic subject-exp -st |
     | nonThematic | +D | −λx | Romance anticausative SE |
     | expletive | −D | −λx | English dispositional middle |
     | impersonal | −D | +∃x | Finnish impersonal |
@@ -387,6 +409,8 @@ def VoiceFlavor.toParams : VoiceFlavor → VoiceParams
   | .agentive     => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
   | .causer       => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
   | .antipassive  => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
+  | .reflexive    => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
+  | .experiencer  => { selectsSpecifier := some true,  extArgSemantics := some .thematicArgument }
   | .nonThematic  => { selectsSpecifier := some true,  extArgSemantics := some .expletive }
   | .expletive    => { selectsSpecifier := some false, extArgSemantics := some .expletive }
   | .impersonal   => { selectsSpecifier := some false, extArgSemantics := some .thematicExistential }
@@ -430,7 +454,7 @@ theorem flavor_params_fully_specified (f : VoiceFlavor) :
     for fully-specified params, they agree. -/
 theorem flavor_params_theta_consistent (f : VoiceFlavor) :
     f.toParams.assignsTheta? = some (match f with
-      | .agentive | .causer | .antipassive | .impersonal => true
+      | .agentive | .causer | .antipassive | .reflexive | .experiencer | .impersonal => true
       | .nonThematic | .expletive | .passive => false) := by
   cases f <;> rfl
 

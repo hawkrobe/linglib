@@ -581,6 +581,8 @@ import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Swahili.Morph
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Fragments.Wambaya.Reciprocals
+import Linglib.Fragments.Icelandic.Case
+import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Fragments.Icelandic.Reciprocals
 import Linglib.Fragments.Icelandic.TemporalConnectives
 import Linglib.Fragments.Chichewa.Reciprocals
@@ -736,6 +738,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.BeaversUdayana2022
 import Linglib.Phenomena.ArgumentStructure.Studies.Everdell2024
 import Linglib.Phenomena.ArgumentStructure.Studies.Creissels2025
 import Linglib.Phenomena.ArgumentStructure.Studies.Siloni2012
+import Linglib.Phenomena.ArgumentStructure.Studies.Wood2015
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025

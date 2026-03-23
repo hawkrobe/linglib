@@ -20,10 +20,12 @@ analysis is specifically Kratzer's **severing** of the external argument.
 
 `VoiceFlavor.thetaRole` maps each Voice flavor to the theta role
 it assigns. The current typology has
-exactly two θ-assigning flavors:
+these θ-assigning flavors:
 
 - Voice_AG → agent
 - Voice_CAUSE → stimulus
+- Voice_REFL → agent (with reflexive binding; @cite{wood-2015})
+- Voice_EXP → experiencer (@cite{wood-2015})
 
 This makes a clear empirical prediction: all external arguments
 introduced by Voice must be either agents or stimuli. Experiencer
@@ -70,6 +72,8 @@ def _root_.Minimalism.VoiceFlavor.thetaRole : VoiceFlavor → Option ThetaRole
   | .agentive     => some .agent
   | .causer       => some .stimulus
   | .antipassive  => some .agent  -- agent is still present, just with ABS case
+  | .reflexive    => some .agent  -- agent that binds internal argument (@cite{wood-2015})
+  | .experiencer  => some .experiencer  -- subject-experiencer (@cite{wood-2015})
   | .nonThematic  => none
   | .expletive    => none
   | .impersonal   => none
