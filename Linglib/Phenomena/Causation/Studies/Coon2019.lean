@@ -20,11 +20,11 @@ to the theoretical analysis.
    (√TV, √ITV, √POS, √NOM), identified by their surface distribution.
 2. **Voice suffixes** (ex. (78), pp. 75–76): Ø, -ch, -j, -w with their
    morphological and distributional properties.
-3. **Paradigm grammaticality** (§§2–5): which root×voice combinations
+3. **Paradigm grammaticality** (§§2–4): which root×voice combinations
    are grammatical.
-4. **-aj distribution** (§5): existential closure suffix tracks
+4. **-aj distribution** (§4.2): existential closure suffix tracks
    implicit arguments.
-5. **Agent diagnostics** (§4.1–4.2): agent-oriented adverbs and
+5. **Agent diagnostics** (§4.1): agent-oriented adverbs and
    by-phrases distinguish -ch from -j.
 6. **Example verbs** with glosses, organized by root class.
 
@@ -145,7 +145,7 @@ def ChujVoiceSuffix.hasAgent : ChujVoiceSuffix → Bool
   | .w    => true   -- overt agent (ABS)
 
 -- ════════════════════════════════════════════════════
--- § 4. Paradigm Grammaticality (§§2–5)
+-- § 4. Paradigm Grammaticality (§§2–4)
 -- ════════════════════════════════════════════════════
 
 /-- Whether a root class can combine with a voice suffix to form
@@ -164,7 +164,7 @@ def isGrammatical (rc : CRootClass) (vs : ChujVoiceSuffix) : Bool :=
   | .nom, .w    => true   -- √NOM takes -w (§3.1)
   | _,    _     => false
 
-/-- √TV is the only class that forms bare transitive stems (§2.2, p. 37). -/
+/-- √TV is the only class that forms bare transitive stems (§2.2, p. 41). -/
 def formsBareTransitive (rc : CRootClass) : Bool :=
   match rc with
   | .tv => true
@@ -201,8 +201,8 @@ def ajOnPassive (vs : ChujVoiceSuffix) : Bool :=
 /-- -aj on √TV stems in antipassive (-w) contexts. -/
 def ajOnAntipassive (apt : AntipassiveType) : Bool :=
   match apt with
-  | .absolutive    => true   -- implicit theme (ex. 54a: ix-ach-jax-w-aj-i)
-  | .incorporation => false  -- overt bare NP (ex. 55: ix-ach-jax-w-i ixim)
+  | .absolutive    => true   -- implicit theme (ex. 55b: Ix-mak'-waj)
+  | .incorporation => false  -- overt bare NP (ex. 54a: Ix-in-jax-w-i ixim)
 
 -- ════════════════════════════════════════════════════
 -- § 6. Agent Diagnostics (§4.1–4.2)
@@ -219,8 +219,8 @@ def ajOnAntipassive (apt : AntipassiveType) : Bool :=
 def agentAdverbOK (vs : ChujVoiceSuffix) : Bool :=
   match vs with
   | .null => true   -- active: agent is overt
-  | .ch   => true   -- passive: implicit agent licenses adverb (ex. 47)
-  | .j    => false  -- agentless: no agent to orient (ex. 48)
+  | .ch   => true   -- passive: implicit agent licenses adverb (ex. 63a)
+  | .j    => false  -- agentless: no agent to orient (ex. 67a)
   | .w    => true   -- antipassive: agent is overt
 
 /-- By-phrase test (§4.1.1–4.1.2).
@@ -248,6 +248,7 @@ structure ChujVerb where
 
 -- √TV roots (§2.2, ex. (10))
 def mak' : ChujVerb := ⟨"mak'", "hit", .tv⟩
+def chel : ChujVerb := ⟨"chel", "hug", .tv⟩
 def jax  : ChujVerb := ⟨"jax", "grind", .tv⟩
 def k'ux : ChujVerb := ⟨"k'ux", "bite", .tv⟩
 def il   : ChujVerb := ⟨"il", "see", .tv⟩
@@ -275,7 +276,7 @@ def chanhal : ChujVerb := ⟨"chanhal", "dance", .nom⟩
 def a'_water : ChujVerb := ⟨"a'", "water/swim", .nom⟩
 
 def tvRoots : List ChujVerb :=
-  [mak', jax, k'ux, il, jatz', tzak', a'_give, lok']
+  [mak', chel, jax, k'ux, il, jatz', tzak', a'_give, lok']
 
 def itvRoots : List ChujVerb :=
   [way, ok', jaw, b'at, kam, atin]
@@ -310,25 +311,25 @@ structure ChujExample where
 
 -- Key paradigm examples from §§2–5
 
-/-- (8) Active transitive: √TV + Ø (§2.2, p. 37). -/
-def ex8 : ChujExample :=
-  ⟨8, 37, "ix-∅-s-mak' ix konej nok' wakax",
-   "She hit the cow.", mak', .null, true⟩
+/-- (10a) Active transitive: √TV + Ø (§2.2, p. 41). -/
+def ex10a : ChujExample :=
+  ⟨10, 41, "Ix-ach-ko-chel-a'",
+   "We hugged you.", chel, .null, true⟩
 
-/-- (20) √ITV + null v (§3.1, p. 40). -/
-def ex20 : ChujExample :=
-  ⟨20, 40, "ix-in-way-i",
-   "I slept.", way, .null, true⟩
+/-- (7a) √ITV + null v (§2.1, p. 40). -/
+def ex7a : ChujExample :=
+  ⟨7, 40, "Ix-onh-way-i",
+   "We slept.", way, .null, true⟩
 
-/-- (23b) √POS + -w (§3.2, p. 44). -/
-def ex23b : ChujExample :=
-  ⟨23, 44, "ix-ach-chot-w-i",
-   "You sat down.", chot, .w, true⟩
+/-- (23a) √POS + -w (§3, p. 48). -/
+def ex23a : ChujExample :=
+  ⟨23, 48, "Ix-chot-w-i nok' k'ok'on",
+   "The frog hopped.", chot, .w, true⟩
 
-/-- (16b) √NOM + -w (§3.3, p. 46). -/
+/-- (16b) √NOM + -w (§2.5, p. 45). -/
 def ex16b : ChujExample :=
-  ⟨16, 46, "ix-ach-chanhal-w-i",
-   "You danced.", chanhal, .w, true⟩
+  ⟨16, 45, "Ix-in-chanhal-w-i",
+   "I danced.", chanhal, .w, true⟩
 
 /-- (62) √TV + -chaj (passive, §4.1.1, p. 68). -/
 def ex62 : ChujExample :=
@@ -350,15 +351,15 @@ def ex67a : ChujExample :=
   ⟨67, 70, "*sk'annhej sk'o'ol winh ix-ch'ak-j-i te' te'",
    "The tree was felled on purpose.", mak', .j, false⟩
 
-/-- (54a) √TV + -w absolutive antipassive (§4.3, p. 64). -/
+/-- (54a) √TV + -w incorporation antipassive (§4, p. 64). -/
 def ex54a : ChujExample :=
-  ⟨54, 64, "ix-ach-jax-w-aj-i",
-   "You did some grinding.", jax, .w, true⟩
+  ⟨54, 64, "Ix-in-jax-w-i ixim",
+   "I corn-ground.", jax, .w, true⟩
 
-/-- (55) √TV + -w incorporation antipassive (§4.3, p. 65). -/
+/-- (55b) √TV + -w absolutive antipassive (§4, p. 65). -/
 def ex55 : ChujExample :=
-  ⟨55, 65, "ix-ach-jax-w-i ixim",
-   "You corn-ground.", jax, .w, true⟩
+  ⟨55, 65, "Ix-mak'-waj ix Malin t'a waj Xun",
+   "Maria did some hitting to John.", mak', .w, true⟩
 
 -- ════════════════════════════════════════════════════
 -- § 9. Verification
@@ -441,16 +442,16 @@ theorem aj_tracks_implicit :
 /-- Grammatical examples are predicted grammatical;
     ungrammatical examples are predicted ungrammatical. -/
 theorem examples_grammaticality :
-    ex8.grammatical = true ∧     -- √TV + Ø
-    ex20.grammatical = true ∧    -- √ITV + null
-    ex23b.grammatical = true ∧   -- √POS + -w
+    ex10a.grammatical = true ∧     -- √TV + Ø
+    ex7a.grammatical = true ∧    -- √ITV + null
+    ex23a.grammatical = true ∧   -- √POS + -w
     ex16b.grammatical = true ∧   -- √NOM + -w
     ex62.grammatical = true ∧    -- √TV + -ch
     ex59.grammatical = true ∧    -- √TV + -j
     ex63a.grammatical = true ∧   -- agent adverb + -ch (OK)
     ex67a.grammatical = false ∧  -- agent adverb + -j (blocked)
-    ex54a.grammatical = true ∧   -- -w absolutive antipassive
-    ex55.grammatical = true :=   -- -w incorporation antipassive
+    ex54a.grammatical = true ∧   -- -w incorporation antipassive
+    ex55.grammatical = true :=   -- -w absolutive antipassive
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -586,13 +587,13 @@ theorem aj_full_distribution :
     √TV result + -ch → causative (passive with implicit agent)
     √ITV + -w → activity (intransitive) -/
 theorem event_decomposition_matches_data :
-    -- ex8: √TV + Ø → causative
+    -- ex10a: √TV + Ø → causative
     isCausative (buildDecomposition vØ resultLower) = true ∧
-    -- ex43a: √TV + -j → inchoative
+    -- ex59: √TV + -j → inchoative
     isInchoative (buildDecomposition v_j resultLower) = true ∧
-    -- ex36: √TV + -ch → causative (agent still present)
+    -- ex62: √TV + -ch → causative (agent still present)
     isCausative (buildDecomposition v_ch resultLower) = true ∧
-    -- ex20: √ITV + v_w → activity
+    -- ex7a: √ITV + v_w → activity
     isActivity (buildDecomposition v_w activityLower) = true :=
   ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
@@ -761,7 +762,7 @@ theorem result_no_stative_prediction_matches_data :
 -- ════════════════════════════════════════════════════
 
 /-- **Theory predicts**: PC verbs are morphologically marked; result verbs
-    are unmarked. (Markedness Generalization, eq. 44.)
+    are unmarked (Markedness Generalization, @cite{beavers-etal-2021}).
     **Data confirms**: PC median marked % (56.01) > result median (15.20). -/
 theorem markedness_prediction_matches_statistics :
     -- Theory: PC verbs are marked
