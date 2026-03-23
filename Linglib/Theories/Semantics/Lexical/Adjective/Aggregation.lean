@@ -1,69 +1,28 @@
+import Linglib.Theories.Semantics.Degree.Aggregation
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 /-!
-# Dimensional Aggregation for Multidimensional Adjectives
-@cite{dambrosio-hedden-2024}
+# Adjective–Aggregation Bridge
 
-D'Ambrosio, J. & Hedden, B. (2024). Multidimensional Adjectives.
-*Australasian Journal of Philosophy* 102(2): 253–277.
-
-The problem of **dimensional aggregation**: how do the dimensions of a
-multidimensional adjective combine to determine whether it applies
-(positive form) and how objects compare (comparative form)?
-
-This is analogous to preference aggregation in social choice theory.
-Arrow's impossibility theorem and its escape routes characterize what
-aggregation functions are available:
-
-- **Counting** (§4.2): x is F iff ≥k dimensions are satisfied.
-  Subsumes @cite{sassoon-2013}'s conjunctive (k=n) and disjunctive (k=1).
-- **Majority** (§4.2): x is F iff a strict majority of dimensions are satisfied.
-- **Weighted** (§4.3): x is F iff Σᵢ wᵢ·dᵢ(x) ≥ θ (utilitarian aggregation).
-  Subsumes @cite{tham-2025}'s eq. 47b weighted formula.
+Re-exports general aggregation mechanisms from `Semantics.Degree.Aggregation`
+and proves that @cite{sassoon-2013}'s binding types (conjunctive, disjunctive,
+mixed) are all counting aggregation — a single escape route from Arrow's
+impossibility theorem (@cite{dambrosio-hedden-2024}).
 -/
 
 namespace Semantics.Lexical.Adjective.Aggregation
 
 variable {α : Type}
 
--- ════════════════════════════════════════════════════
--- § 1. Counting Aggregation
--- ════════════════════════════════════════════════════
+-- Re-export general mechanisms so existing consumers don't break
+export Semantics.Degree.Aggregation (countBinding majorityBinding
+  weightedScore boolMeasures weightedBinding weightedBindingQ
+  AggregationType countBinding_zero)
 
-/-- Counting aggregation: x satisfies the predicate iff at least `k` of
-    the dimension predicates in `dims` return `true` for `x`.
-
-    Generalizes @cite{sassoon-2013}'s binding types:
-    - `k = dims.length` → conjunctive (∀ dims)
-    - `k = 1` → disjunctive (∃ dim)
-    - intermediate `k` → mixed / "dimension counting" -/
-def countBinding (k : Nat) (dims : List (α → Bool)) (x : α) : Bool :=
-  decide ((dims.filter (fun d => d x)).length ≥ k)
-
-/-- Majority binding: x satisfies the predicate iff a strict majority
-    of dimensions are satisfied. May's theorem (1952) characterizes this
-    as the unique aggregation rule satisfying neutrality, anonymity, and
-    positive responsiveness. -/
-def majorityBinding (dims : List (α → Bool)) (x : α) : Bool :=
-  decide (2 * (dims.filter (fun d => d x)).length > dims.length)
+open Semantics.Degree.Aggregation
 
 -- ════════════════════════════════════════════════════
--- § 2. Weighted Aggregation
--- ════════════════════════════════════════════════════
-
-/-- Weighted score over Bool dimensions: Σᵢ wᵢ · [dᵢ(x)],
-    where [b] = 1 if b, 0 otherwise. -/
-def weightedScore (weights : List ℚ) (dims : List (α → Bool)) (x : α) : ℚ :=
-  (weights.zip dims).foldl
-    (fun acc (w, d) => acc + w * if d x then 1 else 0) 0
-
-/-- Weighted binding: x is F iff its weighted score exceeds threshold θ. -/
-def weightedBinding (weights : List ℚ) (θ : ℚ)
-    (dims : List (α → Bool)) (x : α) : Bool :=
-  decide (weightedScore weights dims x ≥ θ)
-
--- ════════════════════════════════════════════════════
--- § 3. Subsumption Theorems
+-- Sassoon 2013 Subsumption Theorems
 -- ════════════════════════════════════════════════════
 
 private theorem all_eq_decide_filter_ge_length :
@@ -107,26 +66,6 @@ theorem conjunctive_is_countAll (dims : List (α → Bool)) (x : α) :
 theorem disjunctive_is_countOne (dims : List (α → Bool)) (x : α) :
     disjunctiveBinding dims x = countBinding 1 dims x :=
   any_eq_decide_filter_ge_one dims x
-
-/-- Counting with threshold 0 is always satisfied (vacuously true). -/
-theorem countBinding_zero (dims : List (α → Bool)) (x : α) :
-    countBinding 0 dims x = true := by
-  simp [countBinding]
-
--- ════════════════════════════════════════════════════
--- § 4. Classification
--- ════════════════════════════════════════════════════
-
-/-- Classification of dimensional aggregation mechanisms.
-    Each type corresponds to an escape route from Arrow's impossibility. -/
-inductive AggregationType where
-  /-- Threshold counting (rejects WO via non-transitivity or incompleteness). -/
-  | counting
-  /-- Weighted sum / utilitarian (rejects ONC, accepts interval scale IUC). -/
-  | utilitarian
-  /-- Weighted product / Cobb-Douglas (rejects ONC, accepts ratio scale RNC). -/
-  | cobbDouglas
-  deriving Repr, DecidableEq, BEq
 
 /-- @cite{sassoon-2013}'s binding types all map to counting aggregation.
     The key gap: Sassoon has no utilitarian or Cobb-Douglas mechanism. -/

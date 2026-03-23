@@ -183,7 +183,7 @@ def catFamily : Cat → CatFamily
     LF-interpretable features with semantic content.
 
     - **[N]** = sortal perspective / referentiality (capacity to introduce a
-      discourse referent, following @cite{longobardi-1994}/2005; §4.3 p84)
+      discourse referent, following @cite{longobardi-1994}, @cite{longobardi-2005}; §4.3 p84)
     - **[V]** = temporal perspective / eventivity (capacity to anchor to
       time/events; §4.3 p85)
 

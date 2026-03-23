@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference
-import Linglib.Phenomena.Generics.Studies.Longobardi2001
+import Linglib.Phenomena.Reference.Studies.Longobardi2001
 
 /-! # Guerrini (2026): Distributive Kind Predication
 @cite{guerrini-2026}
@@ -1032,7 +1032,7 @@ theorem table1_from_lf_structure :
 
 section Longobardi2001Bridge
 
-open Phenomena.Generics.Studies.Longobardi2001 (DPParameter bnCanBeReferential
+open Phenomena.Reference.Studies.Longobardi2001 (DPParameter bnCanBeReferential
   toNominalMapping romance english GenericType)
 
 /-- @cite{longobardi-2001}'s referential BN reading corresponds to DKP/CKP

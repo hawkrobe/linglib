@@ -482,6 +482,7 @@ theorem sassoon_binding_insufficient :
     asymmetries. Utilitarian aggregation resolves this by assigning
     different weights to quantity, quality, and positioning. -/
 
+open Semantics.Degree.Aggregation
 open Semantics.Lexical.Adjective.Aggregation
 
 /-- Disturbance adjective dimensions as Bool predicates. -/

@@ -846,7 +846,7 @@ import Linglib.Phenomena.Generics.Studies.Cohen1999
 import Linglib.Phenomena.Generics.Studies.Cohen2013
 import Linglib.Phenomena.Generics.Studies.Guerrini2026
 import Linglib.Phenomena.Generics.Studies.Krifka2013
-import Linglib.Phenomena.Generics.Studies.Longobardi2001
+import Linglib.Phenomena.Reference.Studies.Longobardi2001
 import Linglib.Phenomena.Generics.Studies.Kirkpatrick2024
 import Linglib.Phenomena.Generics.Studies.Nickel2009
 import Linglib.Phenomena.Generics.Studies.BonehDoron2013
@@ -1447,6 +1447,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.CausalSourceBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.TopologicalMapping
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics
@@ -1473,6 +1474,7 @@ import Linglib.Theories.Syntax.MereologicalSyntax.Bridge
 import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation
 import Linglib.Theories.Syntax.SynGraph
 -- Theories: Semantics.Degree (degree semantics frameworks)
+import Linglib.Theories.Semantics.Degree.Aggregation
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Equative
@@ -1843,8 +1845,10 @@ import Linglib.Phenomena.Gradability.Studies.DAmbrosioHedden2024
 import Linglib.Phenomena.Gradability.Studies.Sassoon2013
 import Linglib.Phenomena.Gradability.Studies.Tham2025
 import Linglib.Phenomena.Gradability.Studies.Beltrama2025
+import Linglib.Phenomena.Gradability.Studies.WaldonEtAl2023
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.Elbourne2013
+import Linglib.Phenomena.Reference.Studies.Longobardi2005
 import Linglib.Phenomena.Binominals.Studies.TenWolde2023
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Attitudes

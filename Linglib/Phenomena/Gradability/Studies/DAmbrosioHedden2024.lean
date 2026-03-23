@@ -38,6 +38,7 @@ namespace Phenomena.Gradability.Studies.DAmbrosioHedden2024
 
 open Semantics.Lexical.Adjective (DimensionBindingType conjunctiveBinding
   disjunctiveBinding)
+open Semantics.Degree.Aggregation
 open Semantics.Lexical.Adjective.Aggregation
 
 -- ════════════════════════════════════════════════════
@@ -142,24 +143,24 @@ theorem bob_athletic_endurance_heavy :
 
 /-- Under speed-heavy weights, Alice outscores Bob. -/
 theorem speed_heavy_alice_wins :
-    weightedScore [3, 1, 1] athleticDims .alice >
-    weightedScore [3, 1, 1] athleticDims .bob := by native_decide
+    weightedScore [3, 1, 1] (boolMeasures athleticDims) .alice >
+    weightedScore [3, 1, 1] (boolMeasures athleticDims) .bob := by native_decide
 
 /-- Under endurance-heavy weights, Bob outscores Alice. -/
 theorem endurance_heavy_bob_wins :
-    weightedScore [1, 1, 3] athleticDims .bob >
-    weightedScore [1, 1, 3] athleticDims .alice := by native_decide
+    weightedScore [1, 1, 3] (boolMeasures athleticDims) .bob >
+    weightedScore [1, 1, 3] (boolMeasures athleticDims) .alice := by native_decide
 
 /-- Comparative vagueness: when both weight vectors are admissible,
     "Alice is more athletic than Bob" is **indeterminate** — one
     aggregation function says yes, the other says no. -/
 theorem comparative_vagueness :
     -- Speed-heavy: Alice > Bob
-    weightedScore [3, 1, 1] athleticDims .alice >
-    weightedScore [3, 1, 1] athleticDims .bob ∧
+    weightedScore [3, 1, 1] (boolMeasures athleticDims) .alice >
+    weightedScore [3, 1, 1] (boolMeasures athleticDims) .bob ∧
     -- Endurance-heavy: Bob > Alice
-    weightedScore [1, 1, 3] athleticDims .bob >
-    weightedScore [1, 1, 3] athleticDims .alice :=
+    weightedScore [1, 1, 3] (boolMeasures athleticDims) .bob >
+    weightedScore [1, 1, 3] (boolMeasures athleticDims) .alice :=
   ⟨speed_heavy_alice_wins, endurance_heavy_bob_wins⟩
 
 -- ════════════════════════════════════════════════════
