@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.419] - 2026-03-23
+
+### Fixed
+- **Coon 2019 reference audit** (`Coon2019.lean`): verified against source PDF — fixed "Table 58" → ex. (78); "Table 2/77, p. 76" → ex. (2)/(77) p. 75; section numbers §3.1/§3.2/§3.3 → §2.1/§2.4/§3.1; agent adverb examples (47)/(48) → (63a)/(67a) pp. 68/70; passive examples (36)/(43a) → (62)/(59) pp. 68/67
+- **BellerGerstenberg2025 references verified** against source PDF: Figure 2 p. 343, Table 1 p. 346, Eqs. 4–7 pp. 346–347, "set to 0.2" p. 348, Table 8 p. 362, Table 9 p. 366 all confirmed correct
+- **Krejci 2012 Table 2.8 verified**: "Crosslinguistic application of causative processes by verb type" on p. 24 confirmed
+
 ## [0.229.418] - 2026-03-23
 
 ### Fixed

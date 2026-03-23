@@ -18,7 +18,7 @@ to the theoretical analysis.
 
 1. **Root classes** (§§2–3): four morphosyntactic classes of roots
    (√TV, √ITV, √POS, √NOM), identified by their surface distribution.
-2. **Voice suffixes** (Table 58/78): Ø, -ch, -j, -w with their
+2. **Voice suffixes** (ex. (78), pp. 75–76): Ø, -ch, -j, -w with their
    morphological and distributional properties.
 3. **Paradigm grammaticality** (§§2–5): which root×voice combinations
    are grammatical.
@@ -99,10 +99,10 @@ inductive CRootClass where
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 2. Voice Suffixes (Table 58/78)
+-- § 2. Voice Suffixes (ex. (78), pp. 75–76)
 -- ════════════════════════════════════════════════════
 
-/-- The four voice suffixes in Chuj (Table 58, p. 76). -/
+/-- The four voice suffixes in Chuj (ex. (78), pp. 75–76). -/
 inductive ChujVoiceSuffix where
   | null  -- Ø: active transitive
   | ch    -- -ch: passive with implicit agent
@@ -118,7 +118,7 @@ def ChujVoiceSuffix.form : ChujVoiceSuffix → String
   | .w    => "-w"
 
 -- ════════════════════════════════════════════════════
--- § 3. External Argument Properties (Table 58)
+-- § 3. External Argument Properties (ex. (78))
 -- ════════════════════════════════════════════════════
 
 /-- Status of the external argument for each voice form. -/
@@ -129,7 +129,7 @@ inductive ExtArgStatus where
   | absent      -- no external argument at all
   deriving DecidableEq, BEq, Repr
 
-/-- External argument status for each voice suffix (Table 58). -/
+/-- External argument status for each voice suffix (ex. (78)). -/
 def ChujVoiceSuffix.extArgStatus : ChujVoiceSuffix → ExtArgStatus
   | .null => .overt_erg
   | .ch   => .implicit
@@ -140,8 +140,8 @@ def ChujVoiceSuffix.extArgStatus : ChujVoiceSuffix → ExtArgStatus
     argument (observed via agent-oriented adverb diagnostics, §4.1–4.2). -/
 def ChujVoiceSuffix.hasAgent : ChujVoiceSuffix → Bool
   | .null => true   -- overt agent
-  | .ch   => true   -- implicit agent (adverbs OK, ex. 47)
-  | .j    => false  -- no agent at all (adverbs blocked, ex. 48)
+  | .ch   => true   -- implicit agent (adverbs OK, ex. 63a)
+  | .j    => false  -- no agent at all (adverbs blocked, ex. 67a)
   | .w    => true   -- overt agent (ABS)
 
 -- ════════════════════════════════════════════════════
@@ -152,16 +152,16 @@ def ChujVoiceSuffix.hasAgent : ChujVoiceSuffix → Bool
     a grammatical verb stem.
 
     Based on the distributional facts in §§2–5:
-    - √TV: all four voices (Ø, -ch, -j, -w) — Table 58
-    - √ITV: null v only (§3.1, p. 40)
-    - √POS: -w only (§3.2, p. 44)
-    - √NOM: -w only (§3.3, p. 46) -/
+    - √TV: all four voices (Ø, -ch, -j, -w) — ex. (78)
+    - √ITV: null v only (§2.1, p. 40)
+    - √POS: -w only (§2.4, p. 43)
+    - √NOM: -w only (§3.1, p. 46) -/
 def isGrammatical (rc : CRootClass) (vs : ChujVoiceSuffix) : Bool :=
   match rc, vs with
   | .tv,  _     => true   -- √TV combines with all four
-  | .itv, .null => true   -- √ITV takes null v (§3.1)
-  | .pos, .w    => true   -- √POS takes -w (§3.2)
-  | .nom, .w    => true   -- √NOM takes -w (§3.3)
+  | .itv, .null => true   -- √ITV takes null v (§2.1)
+  | .pos, .w    => true   -- √POS takes -w (§2.4)
+  | .nom, .w    => true   -- √NOM takes -w (§3.1)
   | _,    _     => false
 
 /-- √TV is the only class that forms bare transitive stems (§2.2, p. 37). -/
@@ -171,18 +171,18 @@ def formsBareTransitive (rc : CRootClass) : Bool :=
   | _   => false
 
 -- ════════════════════════════════════════════════════
--- § 5. -aj Distribution (§5, Table 58)
+-- § 5. -aj Distribution (§4.2, ex. (78))
 -- ════════════════════════════════════════════════════
 
 /-- Whether -aj (existential closure) appears on a √TV stem in each
-    voice form (Table 58, p. 76).
+    voice form (ex. (78), pp. 75–76; §4.2, p. 72).
 
     -aj marks the presence of an implicit argument:
     - Ø: no implicit arg → no -aj
-    - -ch: implicit external arg → -aj on stem (ex. 36, p. 59)
+    - -ch: implicit external arg → -aj on stem (§4.1.1, p. 68)
     - -j: no external arg at all → no -aj
-    - -w (absolutive): implicit internal arg → -aj (ex. 54a, p. 64)
-    - -w (incorporation): overt bare NP internal arg → no -aj (ex. 55, p. 65)
+    - -w (absolutive): implicit internal arg → -aj (ex. (55c), p. 65)
+    - -w (incorporation): overt bare NP internal arg → no -aj (ex. (54a), p. 64)
 
     For the -w cases, we encode the two antipassive subtypes separately. -/
 inductive AntipassiveType where
@@ -194,7 +194,7 @@ inductive AntipassiveType where
 def ajOnPassive (vs : ChujVoiceSuffix) : Bool :=
   match vs with
   | .null => false  -- no implicit arg
-  | .ch   => true   -- implicit agent (ex. 36: ix-mak'-ch-aj-i)
+  | .ch   => true   -- implicit agent (ex. 62: -ch-aj passive)
   | .j    => false  -- no agent at all
   | .w    => false  -- depends on antipassive type (see below)
 
@@ -208,14 +208,14 @@ def ajOnAntipassive (apt : AntipassiveType) : Bool :=
 -- § 6. Agent Diagnostics (§4.1–4.2)
 -- ════════════════════════════════════════════════════
 
-/-- Agent-oriented adverb test (§4.1, exx. 47–48).
-    "chi yuj" ('on purpose') is grammatical with -ch but not -j.
+/-- Agent-oriented adverb test (§4.1.1–4.1.2).
+    "on purpose" adverbs are grammatical with -chaj but not -j.
 
-    (47) Ix-mak'-ch-aj-i nok' wakax (yuj ix) chi yuj.
-         'The cow was hit (by her) on purpose.' ✓
+    (63a) on purpose ... ix-ch'ak-chaj te' te'.
+          'The tree was felled on purpose.' ✓  (p. 68)
 
-    (48) *Ix-mak'-j-i nok' wakax chi yuj.
-         'The cow was hit on purpose.' ✗ -/
+    (67a) *on purpose ... ix-ch'ak-j-i te' te'.
+          intended: 'The tree was felled on purpose.' ✗  (p. 70) -/
 def agentAdverbOK (vs : ChujVoiceSuffix) : Bool :=
   match vs with
   | .null => true   -- active: agent is overt
@@ -223,17 +223,16 @@ def agentAdverbOK (vs : ChujVoiceSuffix) : Bool :=
   | .j    => false  -- agentless: no agent to orient (ex. 48)
   | .w    => true   -- antipassive: agent is overt
 
-/-- By-phrase test (§4.1, exx. 47, 49).
-    "yuj ix" ('by her') is grammatical with -ch but not -j.
+/-- By-phrase test (§4.1.1–4.1.2).
+    Oblique agents ("yuj" DPs) are grammatical with -chaj but not -j.
 
-    (47)... (yuj ix)... 'by her' ✓ with -ch
-    (49) *Ix-mak'-j-i nok' wakax yuj ix.
-         'The cow was hit by her.' ✗ with -j -/
+    (62) ... yuj ... 'by them' ✓ with -chaj  (p. 68)
+    (65–66) -uj phrases with -j are causal, not agentive  (pp. 69–70) -/
 def byPhraseOK (vs : ChujVoiceSuffix) : Bool :=
   match vs with
   | .null => false  -- active: agent is already overt
-  | .ch   => true   -- passive: by-phrase identifies implicit agent
-  | .j    => false  -- agentless: no agent to identify (ex. 49)
+  | .ch   => true   -- passive: by-phrase identifies implicit agent (ex. 62)
+  | .j    => false  -- agentless: -uj phrase is causal, not agentive (exx. 65–66)
   | .w    => false  -- antipassive: agent is already overt
 
 -- ════════════════════════════════════════════════════
@@ -247,7 +246,7 @@ structure ChujVerb where
   rootClass : CRootClass
   deriving BEq, Repr
 
--- √TV roots (§2, Table 58)
+-- √TV roots (§2.2, ex. (10))
 def mak' : ChujVerb := ⟨"mak'", "hit", .tv⟩
 def jax  : ChujVerb := ⟨"jax", "grind", .tv⟩
 def k'ux : ChujVerb := ⟨"k'ux", "bite", .tv⟩
@@ -257,7 +256,7 @@ def tzak': ChujVerb := ⟨"tzak'", "wrap", .tv⟩
 def a'_give : ChujVerb := ⟨"a'", "give", .tv⟩
 def lok' : ChujVerb := ⟨"lok'", "pull out", .tv⟩
 
--- √ITV roots (§3.1, p. 40)
+-- √ITV roots (§2.1, p. 40)
 def way  : ChujVerb := ⟨"way", "sleep", .itv⟩
 def ok'  : ChujVerb := ⟨"ok'", "cry", .itv⟩
 def jaw  : ChujVerb := ⟨"jaw", "arrive", .itv⟩
@@ -265,13 +264,13 @@ def b'at : ChujVerb := ⟨"b'at", "go", .itv⟩
 def kam  : ChujVerb := ⟨"kam", "die", .itv⟩
 def atin : ChujVerb := ⟨"atin", "bathe", .itv⟩
 
--- √POS roots (§3.2, p. 44)
+-- √POS roots (§2.4, p. 43)
 def chot : ChujVerb := ⟨"chot", "sit/crouch", .pos⟩
 def kot  : ChujVerb := ⟨"kot", "on all fours", .pos⟩
 def watz : ChujVerb := ⟨"watz", "lie face down", .pos⟩
 def buch : ChujVerb := ⟨"buch", "sit cross-legged", .pos⟩
 
--- √NOM roots (§3.3, p. 46)
+-- √NOM roots (§3.1, p. 46)
 def chanhal : ChujVerb := ⟨"chanhal", "dance", .nom⟩
 def a'_water : ChujVerb := ⟨"a'", "water/swim", .nom⟩
 
@@ -331,25 +330,25 @@ def ex16b : ChujExample :=
   ⟨16, 46, "ix-ach-chanhal-w-i",
    "You danced.", chanhal, .w, true⟩
 
-/-- (36) √TV + -ch (passive, §4.1, p. 59). -/
-def ex36 : ChujExample :=
-  ⟨36, 59, "ix-mak'-ch-aj-i nok' wakax",
-   "The cow was hit.", mak', .ch, true⟩
+/-- (62) √TV + -chaj (passive, §4.1.1, p. 68). -/
+def ex62 : ChujExample :=
+  ⟨62, 68, "tz-b'o'-ch-aj ... winh nhulej tik",
+   "The brother's food is made by them.", mak', .ch, true⟩
 
-/-- (43a) √TV + -j (agentless passive, §4.2, p. 62). -/
-def ex43a : ChujExample :=
-  ⟨43, 62, "ix-mak'-j-i nok' wakax",
-   "The cow was hit.", mak', .j, true⟩
+/-- (59) √TV + -j (agentless passive, §4.1.2, p. 67). -/
+def ex59 : ChujExample :=
+  ⟨59, 67, "tz-man-j-i ... / tz-choj-j-i ixim",
+   "It is bought. / It is ground.", mak', .j, true⟩
 
-/-- (47) Agent adverb with -ch: grammatical (§4.1, p. 61). -/
-def ex47 : ChujExample :=
-  ⟨47, 61, "ix-mak'-ch-aj-i nok' wakax (yuj ix) chi yuj",
-   "The cow was hit (by her) on purpose.", mak', .ch, true⟩
+/-- (63a) Agent adverb with -chaj: grammatical (§4.1.1, p. 68). -/
+def ex63a : ChujExample :=
+  ⟨63, 68, "sk'annhej sk'o'ol winh ix-ch'ak-chaj te' te'",
+   "The tree was felled on purpose.", mak', .ch, true⟩
 
-/-- (48) Agent adverb with -j: ungrammatical (§4.2, p. 62). -/
-def ex48 : ChujExample :=
-  ⟨48, 62, "*ix-mak'-j-i nok' wakax chi yuj",
-   "The cow was hit on purpose.", mak', .j, false⟩
+/-- (67a) Agent adverb with -j: ungrammatical (§4.1.2, p. 70). -/
+def ex67a : ChujExample :=
+  ⟨67, 70, "*sk'annhej sk'o'ol winh ix-ch'ak-j-i te' te'",
+   "The tree was felled on purpose.", mak', .j, false⟩
 
 /-- (54a) √TV + -w absolutive antipassive (§4.3, p. 64). -/
 def ex54a : ChujExample :=
@@ -446,10 +445,10 @@ theorem examples_grammaticality :
     ex20.grammatical = true ∧    -- √ITV + null
     ex23b.grammatical = true ∧   -- √POS + -w
     ex16b.grammatical = true ∧   -- √NOM + -w
-    ex36.grammatical = true ∧    -- √TV + -ch
-    ex43a.grammatical = true ∧   -- √TV + -j
-    ex47.grammatical = true ∧    -- agent adverb + -ch (OK)
-    ex48.grammatical = false ∧   -- agent adverb + -j (blocked)
+    ex62.grammatical = true ∧    -- √TV + -ch
+    ex59.grammatical = true ∧    -- √TV + -j
+    ex63a.grammatical = true ∧   -- agent adverb + -ch (OK)
+    ex67a.grammatical = false ∧  -- agent adverb + -j (blocked)
     ex54a.grammatical = true ∧   -- -w absolutive antipassive
     ex55.grammatical = true :=   -- -w incorporation antipassive
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
@@ -601,7 +600,7 @@ theorem event_decomposition_matches_data :
 -- § 15. Division of Labor
 -- ════════════════════════════════════════════════════
 
-/-- The core empirical claim (Table 2/77, p. 76): roots determine
+/-- The core empirical claim (ex. (2)/(77), p. 75): roots determine
     internal arguments, Voice determines external arguments.
 
     The data confirms this in two ways:
