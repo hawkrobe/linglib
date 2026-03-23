@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Composition.Scope
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
+# @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{musolino-lidz-2003}
 
 "When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
@@ -62,6 +62,9 @@ experimental data):
 | b_suc=0.5 (default) | 0.506 | ~0.48 (read from Figure 2) |
 | b_suc=0.9 (high base rate) | 0.796 | ~0.80 |
 
+QUD manipulation (Figure 2, center panel): favoring none? < how-many? < all?
+yields monotonically increasing endorsement (paper: 0.38, 0.48, 0.63).
+
 ### Developmental Continuity (§3.3)
 
 Same model architecture explains child and adult behavior. Children's
@@ -76,10 +79,10 @@ Domain: "Two horses didn't jump" with n=4 horses. 5 world states
 ### Central Claim (§4.2)
 
 Under exact semantics, surface scope pinpoints w=2 as the unique true
-world → high S2 endorsement. Under at-least semantics, surface scope
-is true at {w0,w1,w2} → lower S2 endorsement. This predicts that adults
-endorse "two horses didn't jump" more readily in 2-of-4 contexts under
-exact numeral semantics.
+world → high S2 endorsement (> 1/2). Under at-least semantics, surface
+scope is true at {w0,w1,w2} → low S2 endorsement (< 1/2). This predicts
+that adults endorse "two horses didn't jump" more readily in 2-of-4
+contexts under exact numeral semantics.
 
 -/
 
@@ -191,21 +194,10 @@ def twoNotTruth : NumeralReading → ScopeReading → JumpOutcome4 → Bool
   | .atLeast, .inverse, .w1 => true
   | .atLeast, .inverse, _   => false
 
-/-- In the 1-of-2 context (n=2, numeral=2), "two horses didn't jump" reduces
-    to "every horse didn't jump" because the numeral saturates the domain.
-    The every-not model's `scopeTruth` thus covers the 1-of-2 two-not case
-    (paper §4.2): exact and at-least have the same extension when n = numeral.
-
-    This theorem documents the `scopeTruth` values that serve as the shared
-    baseline. The interesting divergence only appears in the 2-of-4 context
-    where n > numeral (see `exact_atleast_diverge_2of4`). -/
-theorem every_not_covers_1of2 :
-    scopeTruth .surface .zero = true ∧
-    scopeTruth .surface .one = false ∧
-    scopeTruth .surface .two = false ∧
-    scopeTruth .inverse .zero = true ∧
-    scopeTruth .inverse .one = true ∧
-    scopeTruth .inverse .two = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+-- In the 1-of-2 context (n=2, numeral=2), "two horses didn't jump" reduces
+-- to "every horse didn't jump" because the numeral saturates the domain:
+-- exact and at-least have the same extension when n = numeral (paper §4.2.1).
+-- The divergence only appears in the 2-of-4 context where n > numeral.
 
 /-- The two numeral theories diverge in the 2-of-4 context (n=4).
     Surface scope: exact → {w2}, at-least → {w0,w1,w2}
@@ -611,8 +603,10 @@ noncomputable abbrev highBaseCfg :=
     (fun _ => 1) (fun _ => le_of_lt one_pos)
 
 /-- Supportive context: b_suc = 0.9 + all?-biased QUD (1:18:1 ≈ 0.05:0.9:0.05).
-    Models the @cite{gualmini-etal-2008} early-success manipulation, where context
-    pragmatically supports inverse scope (§3.3, Figure 3). -/
+    Models S&P's supportive-context prediction (§3.3, Figure 3), motivated by
+    @cite{gualmini-etal-2008}'s finding that QUD manipulation increases endorsement.
+    When both pragmatic factors are supportive, scope access has negligible
+    impact on endorsement (paper: 0.91 at P(inv)=0.1 vs 0.91 at P(inv)=0.9). -/
 noncomputable abbrev supportiveCfg :=
   cfg (fun w => match w with | .zero => 1 | .one => 18 | .two => 81)
     (fun w => by cases w <;> positivity)
@@ -628,6 +622,40 @@ noncomputable abbrev surfaceOnlyCfg :=
     (fun s => match s with | .surface => 1 | .inverse => 0)
     (fun s => by cases s <;> positivity)
     (fun _ => 1) (fun _ => le_of_lt one_pos)
+
+-- QUD-Biased Configurations (Figure 2, center panel)
+
+/-! QUD manipulation: favored QUD gets P = 0.9, others get P = 0.05.
+    Default world prior (b_suc = 0.5) and default scope prior (uniform).
+    Paper: "we see an increase in utterance endorsement from the none?
+    (0.38) to how-many? (0.48) to all? (0.63) QUD." -/
+
+/-- None?-biased QUD: P(none?) ≈ 0.9, P(howMany?) = P(all?) ≈ 0.05.
+    Figure 2, center panel, leftmost bar (S2 ≈ 0.38). -/
+noncomputable abbrev noneBiasedCfg :=
+  cfg (fun w => match w with | .zero => 1 | .one => 2 | .two => 1)
+    (fun w => by cases w <;> positivity)
+    (fun _ => 1) (fun _ => le_of_lt one_pos)
+    (fun q => match q with | .howMany => 1 | .all_ => 1 | .none_ => 18)
+    (fun q => by cases q <;> positivity)
+
+/-- How-many?-biased QUD: P(howMany?) ≈ 0.9, P(all?) = P(none?) ≈ 0.05.
+    Figure 2, center panel, middle bar (S2 ≈ 0.48). -/
+noncomputable abbrev howManyBiasedCfg :=
+  cfg (fun w => match w with | .zero => 1 | .one => 2 | .two => 1)
+    (fun w => by cases w <;> positivity)
+    (fun _ => 1) (fun _ => le_of_lt one_pos)
+    (fun q => match q with | .howMany => 18 | .all_ => 1 | .none_ => 1)
+    (fun q => by cases q <;> positivity)
+
+/-- All?-biased QUD: P(all?) ≈ 0.9, P(howMany?) = P(none?) ≈ 0.05.
+    Figure 2, center panel, rightmost bar (S2 ≈ 0.63). -/
+noncomputable abbrev allBiasedCfg :=
+  cfg (fun w => match w with | .zero => 1 | .one => 2 | .two => 1)
+    (fun w => by cases w <;> positivity)
+    (fun _ => 1) (fun _ => le_of_lt one_pos)
+    (fun q => match q with | .howMany => 1 | .all_ => 18 | .none_ => 1)
+    (fun q => by cases q <;> positivity)
 
 -- S2 Endorsement
 
@@ -707,6 +735,24 @@ theorem supportive_S2_w0_gt_w1 :
 
 theorem supportive_S2_w1_gt_w2 :
     supportiveCfg.S2 .one .everyNot > supportiveCfg.S2 .two .everyNot := by
+  rsa_predict
+
+-- QUD Manipulation Ordering (Figure 2, center panel)
+
+/-- QUD manipulation: how-many?-biased > none?-biased (Figure 2, center panel).
+    Favoring the identity QUD yields higher endorsement than favoring the
+    "did none succeed?" QUD, because how-many? makes the ambiguous utterance
+    more informative at w=1 (partial success). -/
+theorem qud_howMany_gt_none :
+    howManyBiasedCfg.S2 .one .everyNot > noneBiasedCfg.S2 .one .everyNot := by
+  rsa_predict
+
+/-- QUD manipulation: all?-biased > how-many?-biased (Figure 2, center panel).
+    Favoring the "did all succeed?" QUD yields the highest endorsement because
+    both scope interpretations fully resolve all? at w=1 (the answer is "no"
+    under either reading). -/
+theorem qud_all_gt_howMany :
+    allBiasedCfg.S2 .one .everyNot > howManyBiasedCfg.S2 .one .everyNot := by
   rsa_predict
 
 end EveryNot
@@ -944,6 +990,14 @@ set_option maxHeartbeats 1600000 in
     informativity (Figure 7 right, red bar ≈ 0.8). -/
 theorem exact_baseline_endorsement_high :
     exactBaselineCfg.S2 .w2 .twoNot > (1 : ℝ) / 2 := by
+  rsa_predict
+
+set_option maxHeartbeats 1600000 in
+/-- Under at-least semantics with baseline parameters, S2 endorsement
+    at w=2 is below 1/2 (Figure 7 left, red bar ≈ 0.1).
+    Surface scope is true at {w0,w1,w2}, diluting informativity. -/
+theorem atleast_baseline_endorsement_low :
+    (1 : ℝ) / 2 > atleastBaselineCfg.S2 .w2 .twoNot := by
   rsa_predict
 
 set_option maxHeartbeats 3200000 in
