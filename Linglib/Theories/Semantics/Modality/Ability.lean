@@ -1,300 +1,51 @@
-import Linglib.Core.StructuralEquationModel
-import Linglib.Theories.Semantics.Causation.Sufficiency
-import Linglib.Theories.Semantics.Causation.Implicative
+import Linglib.Theories.Semantics.Causation.ComplementEntailing
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
-import Linglib.Theories.Semantics.Tense.Aspect.Core
 
 /-!
-# Ability Modals and Actuality Inferences (@cite{nadathur-2023}, Chapter 1)
+# Ability Modals: Kratzer Bridge
 @cite{hacquard-2006} @cite{kratzer-1981} @cite{nadathur-2023}
 
-Bridges **causality**, **modality**, and **aspect** to derive actuality
-inferences for ability modals cross-linguistically.
+Connects the causal model of ability (`CausalFrame World` with
+`actualization = .aspectual`, defined in `ComplementEntailing.lean`)
+to Kratzer's modal semantics.
 
-## Central Claim
-
-Actuality inferences arise from a three-way interaction:
-1. **Ability = causal sufficiency** in circumstantial modal base
-2. **Perfective aspect** requires the complement to be actualized
-3. **Imperfective aspect** is compatible with unrealized complements
-
-## Key Result
-
-`perfective_ability_entails_complement`: perfective + ability → complement true.
-
-This explains why Greek *boro* (PFV) entails the complement but *boro* (IMPF)
-does not, and similarly for Hindi *saknaa*, French *pouvoir*, etc.
-
-## Cross-Module Connections
-
-| From | To | Via |
-|------|-----|-----|
-| `Core.StructuralEquationModel` | `Modal.Kratzer` | `AbilityScenario.background` |
-| `Causative.Sufficiency` | this file | `abilityAt = causallySufficient` |
-| `Modal.Kratzer` | this file | `toCircumstantialBase` |
-| `ViewpointAspect` | this file | `toKleinViewpoint` |
+The core semantics of ability modals — `abilityFrame`, `sufficientAt`,
+`actualityWithAspect`, and all actuality-entailment theorems — live in
+`Causation/ComplementEntailing.lean`. This file provides only the bridge
+to Kratzer's circumstantial possibility.
 
 -/
 
 namespace Nadathur2023.Ability
 
 open Core.StructuralEquationModel
-open Semantics.Attitudes.Intensional (World allWorlds)
-open Semantics.Modality.Kratzer (ModalBase ConvBackground)
-open Semantics.Tense.Aspect.Core (ViewpointType ViewpointAspectB)
-
--- ════════════════════════════════════════════════════
--- Ability Scenario
--- ════════════════════════════════════════════════════
-
-/-- An ability scenario bundles a causal model with a world-to-situation mapping.
-
-    The key bridge: each possible world `w : World` projects to a `Situation`
-    in the causal model via `background`. Ability at `w` reduces to causal
-    sufficiency in the projected situation.
-
-    The background encodes the factual state of each world, including whether
-    the action was actually performed. Ability is counterfactual (would the
-    action suffice?), while actualization is factual (was the action performed
-    and did the complement follow?). -/
-structure AbilityScenario where
-  /-- The causal dynamics governing action → complement -/
-  dynamics : CausalDynamics
-  /-- The action variable (agent's action) -/
-  action : Variable
-  /-- The complement variable (outcome) -/
-  complement : Variable
-  /-- Maps each possible world to its background causal situation.
-      The background encodes whether the action was performed at that world. -/
-  background : World → Situation
-
--- ════════════════════════════════════════════════════
--- Core Semantics
--- ════════════════════════════════════════════════════
-
-/-- Ability at world `w`: the agent's action is causally sufficient for
-    the complement in the background situation of `w`.
-
-    This IS Kratzer's circumstantial possibility: the relevant "circumstances"
-    are the causal background at `w`, and "ability" means the action
-    guarantees the outcome given those circumstances.
-
-    Note: this is a **counterfactual** check — it extends the background
-    with action=true to test sufficiency, regardless of whether the action
-    was actually performed. -/
-def abilityAt (sc : AbilityScenario) (w : World) : Bool :=
-  causallySufficient sc.dynamics (sc.background w) sc.action sc.complement
-
-/-- The complement is actualized at `w`: the action WAS performed at `w`
-    (it's in the background) AND the complement developed via normal
-    causal propagation.
-
-    This is the **factual** counterpart to `abilityAt`: not "would the
-    action suffice?" but "was the action done and did the outcome follow?" -/
-def complementActualized (sc : AbilityScenario) (w : World) : Bool :=
-  factuallyDeveloped sc.dynamics (sc.background w) sc.action sc.complement
-
-/-- `complementActualized` is an instance of the `factuallyDeveloped` primitive. -/
-theorem complementActualized_eq_factuallyDeveloped (sc : AbilityScenario) (w : World) :
-    complementActualized sc w =
-      factuallyDeveloped sc.dynamics (sc.background w) sc.action sc.complement := rfl
-
-/-- Ability with aspectual modulation.
-
-    - **Perfective**: requires both ability AND actualization (the event
-      is viewed as completed within the reference time)
-    - **Imperfective**: requires only ability (the state of being able
-      is viewed from within, without requiring completion) -/
-def abilityWithAspect (sc : AbilityScenario) (asp : ViewpointAspectB)
-    (w : World) : Bool :=
-  match asp with
-  | .perfective => abilityAt sc w && complementActualized sc w
-  | .imperfective => abilityAt sc w
+open CausalVerb
+open Semantics.Attitudes.Intensional (World)
+open Semantics.Modality.Kratzer (ModalBase)
 
 -- ════════════════════════════════════════════════════
 -- Bridge to Kratzer Modal Semantics
 -- ════════════════════════════════════════════════════
 
-/-- Convert an `AbilityScenario` to a Kratzer circumstantial modal base.
+/-- Convert an ability `CausalFrame` to a Kratzer circumstantial modal base.
 
     The modal base at each world returns propositions encoding the
-    causal background. Specifically: the proposition "the action is
-    causally sufficient for the complement" restricted to worlds
-    sharing the same background. -/
-def toCircumstantialBase (sc : AbilityScenario) : ModalBase :=
-  λ _w => [λ w' => abilityAt sc w']
+    causal background. Ability IS circumstantial possibility, where the
+    "circumstances" are the causal structure. -/
+def toCircumstantialBase (f : CausalFrame World) : ModalBase :=
+  λ _w => [λ w' => f.sufficientAt w']
 
 /-- Ability as Kratzer possibility: "can VP" is ◇(complement) where
-    the modal base encodes circumstantial facts.
-
-    This bridges the causal model to Kratzer's framework: ability
-    IS circumstantial possibility, where the "circumstances" are
-    the causal structure. -/
-def abilityAsKratzerPossibility (sc : AbilityScenario) (w : World) : Bool :=
+    the modal base encodes circumstantial facts. -/
+def abilityAsKratzerPossibility (f : CausalFrame World) (w : World) : Bool :=
   Semantics.Modality.Kratzer.simplePossibility
-    (toCircumstantialBase sc)
-    (λ w' => complementActualized sc w')
+    (toCircumstantialBase f)
+    (λ w' => f.actualizedAt w')
     w
 
--- ════════════════════════════════════════════════════
--- Key Theorems
--- ════════════════════════════════════════════════════
-
-/-- **Central result**: perfective ability entails complement actualization.
-
-    If `abilityWithAspect sc.perfective w = true`, then the complement
-    is actualized at `w`. This is the formal account of actuality inferences
-    for ability modals.
-
-    Proof: immediate from the definition — perfective conjoins ability
-    with actualization. -/
-theorem perfective_ability_entails_complement (sc : AbilityScenario) (w : World)
-    (h : abilityWithAspect sc .perfective w = true) :
-    complementActualized sc w = true := by
-  simp only [abilityWithAspect, Bool.and_eq_true] at h
-  exact h.2
-
-/-- Imperfective ability is compatible with an unrealized complement.
-
-    Existential witness: a concrete scenario where the agent has the ability
-    (action is sufficient) but the complement is not actualized (action not
-    performed at that world). -/
-theorem imperfective_ability_compatible_with_unrealized :
-    ∃ (sc : AbilityScenario) (w : World),
-      abilityWithAspect sc .imperfective w = true ∧
-      complementActualized sc w = false := by
-  -- Witness: action → complement law, but action not performed at w0
-  let act := mkVar "act"
-  let comp := mkVar "comp"
-  let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
-  let sc : AbilityScenario := {
-    dynamics := dyn
-    action := act
-    complement := comp
-    -- Background: action not performed at any world
-    background := λ _ => Situation.empty
-  }
-  exact ⟨sc, .w0, by native_decide, by native_decide⟩
-
 /-- Ability = causal sufficiency (definitional). -/
-theorem ability_is_causal_sufficiency (sc : AbilityScenario) (w : World) :
-    abilityAt sc w = causallySufficient sc.dynamics (sc.background w)
-      sc.action sc.complement := rfl
-
-/-- **Aspect governs actuality**: the same scenario yields different
-    entailment patterns under different aspects.
-
-    With perfective: ability → complement actualized.
-    With imperfective: ability ↛ complement actualized.
-
-    Demonstrated by a concrete scenario where:
-    - At w0 (action performed): perfective ability holds, complement actualized
-    - At w1 (action not performed): imperfective ability holds, complement NOT actualized -/
-theorem aspect_governs_actuality :
-    ∃ (sc : AbilityScenario) (w : World),
-      abilityWithAspect sc .perfective w = true ∧
-      abilityWithAspect sc .imperfective w = true ∧
-      complementActualized sc w = true ∧
-      ∃ w', abilityWithAspect sc .imperfective w' = true ∧
-            complementActualized sc w' = false := by
-  let act := mkVar "act"
-  let comp := mkVar "comp"
-  let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
-  -- w0: action performed (in background). w1: action NOT performed.
-  let bg : World → Situation := λ w =>
-    match w with
-    | .w0 => Situation.empty.extend act true
-    | _ => Situation.empty
-  let sc : AbilityScenario := {
-    dynamics := dyn
-    action := act
-    complement := comp
-    background := bg
-  }
-  exact ⟨sc, .w0, by native_decide, by native_decide, by native_decide,
-         .w1, by native_decide, by native_decide⟩
-
--- ════════════════════════════════════════════════════
--- Contrast with Implicatives
--- ════════════════════════════════════════════════════
-
-/-- Ability differs from implicative verbs: ability can hold without
-    actualization (impossible for *manage*).
-
-    For *manage*, `manageSem` ALWAYS includes complement truth.
-    For ability, only perfective aspect forces complement truth.
-    Here we show ability holds at a world where the complement is NOT actualized. -/
-theorem ability_differs_from_implicative :
-    ∃ (sc : AbilityScenario) (w : World),
-      abilityAt sc w = true ∧ complementActualized sc w = false := by
-  let act := mkVar "act"
-  let comp := mkVar "comp"
-  let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
-  let sc : AbilityScenario := {
-    dynamics := dyn
-    action := act
-    complement := comp
-    background := λ _ => Situation.empty  -- action not performed
-  }
-  exact ⟨sc, .w0, by native_decide, by native_decide⟩
-
--- ════════════════════════════════════════════════════
--- Aspect-Compositionality Bridge (@cite{nadathur-2023}, Chapter 6)
--- ════════════════════════════════════════════════════
-
-/-! Chapter 6 argues that actuality inferences are not stipulated but
-    **derived compositionally** from perfective aspect applied to a
-    causally-structured event. The Boolean `abilityWithAspect` pattern
-    match (perfective ⇒ ability ∧ actualized) captures the truth conditions
-    that fall out when `PRFV` is applied to a causal event predicate.
-
-    The bridge theorem below makes this precise: define a "causal event
-    predicate" as one whose truth requires both ability and actualization,
-    and show that `PRFV` applied to such an event yields exactly the
-    perfective clause of `abilityWithAspect`.
-
-    This closes the gap between the stipulated pattern match and the
-    compositional derivation — they produce the same result. -/
-
-/-- A causal event predicate: an event is a "causal ability event" if
-    it witnesses both the ability (causal sufficiency) and the
-    actualization (complement development) at a world `w`.
-
-    This is the VP denotation for sentences like "She was able to swim":
-    the event of being-able includes both the causal structure (ability)
-    and the factual outcome (complement realized). -/
-def causalAbilityEvent (sc : AbilityScenario) (w : World) : Bool :=
-  abilityAt sc w && complementActualized sc w
-
-/-- **Aspect-compositionality bridge**: perfective ability is equivalent
-    to the existence of a "causal ability event".
-
-    `abilityWithAspect sc.perfective w` = `causalAbilityEvent sc w`.
-
-    The left side is our Boolean model of "PFV + ability modal".
-    The right side is what you get by asserting the existence of a
-    completed causal event (what `PRFV` applied to a causal VP yields).
-
-    This is definitional — the point is conceptual: the perfective
-    clause of `abilityWithAspect` IS the assertion of a completed
-    causal event, not an ad hoc conjunction. -/
-theorem perfective_is_causal_event (sc : AbilityScenario) (w : World) :
-    abilityWithAspect sc .perfective w = causalAbilityEvent sc w := rfl
-
-/-- **Imperfective is pure ability**: imperfective ability asserts
-    only causal sufficiency, with no event actualization.
-
-    This corresponds to `IMPF` viewing the ability state from within,
-    without requiring the event to have culminated. -/
-theorem imperfective_is_pure_ability (sc : AbilityScenario) (w : World) :
-    abilityWithAspect sc .imperfective w = abilityAt sc w := rfl
-
-/-- The compositional derivation: perfective adds actualization to ability,
-    imperfective doesn't. This is NOT stipulated but FOLLOWS from the
-    semantics of perfective aspect (asserting event completion) applied
-    to a causally-structured event (where completion = actualization). -/
-theorem aspect_adds_actualization (sc : AbilityScenario) (w : World) :
-    abilityWithAspect sc .perfective w =
-      (abilityWithAspect sc .imperfective w && complementActualized sc w) := rfl
+theorem ability_is_causal_sufficiency (f : CausalFrame World) (w : World) :
+    f.sufficientAt w = causallySufficient f.dynamics (f.background w)
+      f.trigger f.complement := rfl
 
 end Nadathur2023.Ability

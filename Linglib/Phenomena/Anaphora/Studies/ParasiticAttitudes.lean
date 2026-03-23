@@ -4,7 +4,9 @@
 Theory-neutral empirical data on presupposition projection across attitude sequences,
 the puzzle that motivates @cite{maier-2015}'s parasitic attitude analysis.
 
-## The Puzz@cite{karttunen-1973} observed an asymmetry in presupposition projection:
+## The Puzzle
+
+@cite{karttunen-1973} observed an asymmetry in presupposition projection:
 
   "Bill believed Fred had been beating his wife and he hoped Fred would stop"
   → Does not presuppose Fred was beating his wife (to speaker)

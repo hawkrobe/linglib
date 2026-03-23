@@ -18,11 +18,12 @@ namespace Fragments.English.Predicates.Verbal
 -- (e.g., `open Fragments.English.Predicates.Verbal (ComplementType ...)`)
 -- continue to find them.
 export Core.Verbs (PreferentialBuilder AttitudeBuilder PresupTriggerType
-  ComplementType ControlType VerbCore ImplicitInterp complementToValence)
+  ProjectionBehavior ComplementType ControlType VerbCore ImplicitInterp
+  complementToValence)
 
 open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
-open Nadathur2023.Implicative (ImplicativeBuilder)
+open Nadathur2024.Implicative (ImplicativeBuilder)
 open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
@@ -308,6 +309,7 @@ def know : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
+  projectionBehavior := some .hole
   takesQuestionBase := true
   complementSig := some .mono
   attitudeBuilder := some (.doxastic .veridical)
@@ -323,6 +325,7 @@ def regret : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
+  projectionBehavior := some .hole
   attitudeBuilder := some (.doxastic .veridical)
 
 /-- "realize" — factive, presupposes complement is true -/
@@ -332,6 +335,7 @@ def realize : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
+  projectionBehavior := some .hole
   attitudeBuilder := some (.doxastic .veridical) }
 
 /-- "discover" — semifactive, weaker projection -/
@@ -341,6 +345,7 @@ def discover : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
+  projectionBehavior := some .hole
   takesQuestionBase := true
   attitudeBuilder := some (.doxastic .veridical) }
 
@@ -351,6 +356,7 @@ def notice : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   presupType := some .softTrigger
+  projectionBehavior := some .hole
   attitudeBuilder := some (.doxastic .veridical) }
 
 -- ════════════════════════════════════════════════════
@@ -369,6 +375,7 @@ def stop : VerbEntry where
   controlType := .subjectControl
   passivizable := false
   presupType := some .softTrigger
+  projectionBehavior := some .hole
   cosType := some .cessation
   levinClass := some .aspectual
 
@@ -452,6 +459,8 @@ def manage : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
+  projectionBehavior := some .hole
+  presupType := some .prerequisiteSoft
   implicativeBuilder := some .positive }
 
 /-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
@@ -494,6 +503,7 @@ def promise : VerbEntry := .mkRegular {
   complementType := .infinitival
   vendlerClass := some .achievement
   controlType := .subjectControl
+  projectionBehavior := some .plug
   opaqueContext := true
   attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
 
@@ -519,6 +529,16 @@ def forget : VerbEntry where
   passivizable := false
   implicativeBuilder := some .negative
 
+/-- "neglect" — negative implicative (@cite{karttunen-1971} §10, ex. 38):
+    "John neglected to lock his door" entails "John didn't lock his door." -/
+def neglect : VerbEntry := .mkRegular {
+  form := "neglect"
+  complementType := .infinitival
+  vendlerClass := some .achievement
+  controlType := .subjectControl
+  passivizable := false
+  implicativeBuilder := some .negative }
+
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Doxastic Attitude
 -- ════════════════════════════════════════════════════
@@ -529,6 +549,7 @@ def believe : VerbEntry := .mkRegular {
   complementType := .finiteClause
   vendlerClass := some .state
   passivizable := false
+  projectionBehavior := some .hole
   opaqueContext := true
   attitudeBuilder := some (.doxastic .nonVeridical)
   complementSig := some .mono }
@@ -751,6 +772,7 @@ def force : VerbEntry := .mkRegular {
   complementType := .infinitival
   vendlerClass := some .accomplishment
   controlType := .objectControl
+  projectionBehavior := some .hole
   causativeBuilder := some .force }
 
 /-- "prevent" — blocking causative (barrier addition).
@@ -762,6 +784,7 @@ def prevent : VerbEntry := .mkRegular {
   complementType := .gerund
   vendlerClass := some .accomplishment
   controlType := .objectControl
+  projectionBehavior := some .hole
   causativeBuilder := some .prevent }
 
 -- ════════════════════════════════════════════════════
@@ -1127,6 +1150,7 @@ def say : VerbEntry where
   speechActVerb := true
   complementType := .finiteClause
   vendlerClass := some .achievement
+  projectionBehavior := some .plug
   levinClass := some .say
 
 /-- "tell" — communication verb with recipient.
@@ -1144,6 +1168,7 @@ def tell : VerbEntry where
   implicitObj := some .def
   implicitGoal := some .indef
   vendlerClass := some .achievement
+  projectionBehavior := some .plug
   levinClass := some .tell
 
 /-- "claim" — communication verb, speaker doesn't endorse -/
@@ -1152,6 +1177,7 @@ def claim : VerbEntry := .mkRegular {
   speechActVerb := true
   complementType := .finiteClause
   vendlerClass := some .achievement
+  projectionBehavior := some .plug
   levinClass := some .say }
 
 -- ════════════════════════════════════════════════════
@@ -1513,37 +1539,49 @@ def manage_occasion : VerbEntry := .mkRegular {
   controlType := .subjectControl
   passivizable := false
   implicativeBuilder := some .positive
-  presupType := some .softTrigger
+  presupType := some .prerequisiteSoft
   senseTag := .occasion }
 
-/-- "dare" — occasion verb: presupposes intimidating circumstance -/
+/-- "dare" — positive implicative with prerequisite presupposition: courage.
+    "Ana dared to enter the cave" → "Ana entered the cave."
+    Presupposes that daring/courageous action was required for complement
+    realization (@cite{nadathur-2024} §5.2, ex. 3–4, 26). -/
 def dare : VerbEntry := .mkRegular {
   form := "dare"
   complementType := .infinitival
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  presupType := some .softTrigger
+  presupType := some .prerequisiteSoft
   implicativeBuilder := some .positive }
 
-/-- "bother" — occasion verb: presupposes effort/inconvenience -/
+/-- "bother" — positive implicative with prerequisite presupposition: engagement.
+    "He bothered to answer" → "He answered."
+    Presupposes that overcoming apathy/effort was required
+    (@cite{nadathur-2024} §2, ex. 10, 28). -/
 def bother : VerbEntry := .mkRegular {
   form := "bother"
   complementType := .infinitival
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  presupType := some .softTrigger
+  presupType := some .prerequisiteSoft
   implicativeBuilder := some .positive }
 
-/-- "hesitate" — occasion verb: presupposes reluctance/risk -/
+/-- "hesitate" — polarity-reversing one-way implicative.
+    "Amira hesitated to drink a beer" ↛ "Amira did not drink a beer."
+    "Amira did not hesitate to drink a beer" → "Amira drank a beer."
+    The paper does not explicitly name the prerequisite for *hesitate*;
+    it is treated as a polarity-reversing analog of *dare*
+    (@cite{nadathur-2024} §6.4, ex. 45–47). -/
 def hesitate : VerbEntry := .mkRegular {
   form := "hesitate"
   complementType := .infinitival
   vendlerClass := some .activity
   controlType := .subjectControl
   passivizable := false
-  presupType := some .softTrigger }
+  presupType := some .prerequisiteSoft
+  implicativeBuilder := some .negative }
 
 /-- "venture" — positive implicative (@cite{karttunen-1971} ex. 2):
     "John ventured to speak" entails "John spoke." -/
@@ -3054,7 +3092,7 @@ def allVerbs : List VerbEntry := [
   -- Change of State
   stop, quit, start, begin_, continue_, keep,
   -- Implicative / Control
-  manage, fail, try_, persuade, promise, remember, forget,
+  manage, fail, try_, persuade, promise, remember, forget, neglect,
   -- Doxastic Attitude
   believe, think,
   -- Preferential Attitude (@cite{qing-uegaki-2025})
@@ -3347,7 +3385,7 @@ theorem lexical_causatives_differ_from_cause :
 -- § Implicative Grounding Theorems
 -- ════════════════════════════════════════════════════
 
-open Nadathur2023.Implicative (ImplicativeBuilder manageSem failSem)
+open Nadathur2024.Implicative (ImplicativeBuilder manageSem failSem)
 
 /-- "manage" uses positive implicative semantics (`manageSem`). -/
 theorem manage_semantics_implicative :

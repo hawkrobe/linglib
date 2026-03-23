@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.Builder
 import Linglib.Theories.Semantics.Attitudes.Factivity
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Predicates.Copular
 
 /-!
 # Karttunen 1971: Implicative Verbs @cite{karttunen-1971}
@@ -37,20 +38,24 @@ Key differences from the modern analysis:
   sufficiency in a structural equation model.
 - Karttunen's classification ignores aspect. Nadathur shows that *be able*
   is aspect-governed (perfective triggers entailment, imperfective doesn't).
-- Karttunen groups *force*/*cause*/*make* together; Nadathur distinguishes
-  them by causal mechanism (sufficiency vs counterfactual dependence).
+- Karttunen groups *force*/*cause*/*make* together (ex. 56) as having
+  the same entailment pattern (sufficient-only). Nadathur & Lauer show
+  they have the same entailment pattern but **different truth conditions**:
+  *make*/*force* assert causal sufficiency, while *cause* asserts causal
+  necessity. This difference surfaces in overdetermination scenarios.
 -/
 
 namespace Phenomena.Complementation.Studies.Karttunen1971
 
-open Nadathur2023.Implicative
+open Nadathur2024.Implicative
 open NadathurLauer2020.Builder (CausativeBuilder)
 open Fragments.English.Predicates.Verbal
+open Fragments.English.Predicates.Copular (beAble)
 open Core.Verbs
 open Core.StructuralEquationModel
 
 -- ════════════════════════════════════════════════════════════════
--- § 1. Karttunen's Four-Cell Classification (§§8–12)
+-- § 1. Karttunen's Four-Cell Classification (§§9–11)
 -- ════════════════════════════════════════════════════════════════
 
 /-! Karttunen's schemas:
@@ -140,7 +145,8 @@ theorem force_prevent_same_profile :
 def KarttunenClass.toImplicativeClass (k : KarttunenClass) : ImplicativeClass :=
   { polarity := k.polarity
     directionality := if k.isTwoWay then .twoWay else .oneWay
-    aspectGoverned := false }
+    aspectGoverned := false
+    prerequisite := if k.isTwoWay then some .unspecified else none }
 
 theorem karttunen_manage_matches :
     KarttunenClass.manage.toImplicativeClass = ImplicativeClass.manage := rfl
@@ -152,9 +158,19 @@ theorem karttunen_fail_matches :
 def karttunenOfImplicative (b : ImplicativeBuilder) : KarttunenClass :=
   { isSufficient := true, isNecessary := true, polarity := b }
 
-/-- Derive KarttunenClass from a CausativeBuilder (sufficient-only cell). -/
+/-- Map modern `CausativeBuilder` to the Karttunen cell that matches the
+    builder's **entailment pattern** (Karttunen's original criterion).
+
+    All positive causative builders (make, force, enable, cause) share the
+    same Karttunen cell: sufficient-only. This is because:
+    - Affirmative "V-ed X to VP" → VP (all require the effect occurred)
+    - Negation "didn't V X to VP" ↛ ¬VP (effect might occur from other causes)
+
+    The modern insight of @cite{nadathur-lauer-2020} is that these verbs
+    differ in causal MECHANISM (sufficiency vs necessity) despite sharing
+    the same ENTAILMENT PATTERN. See `cause_make_same_cell_different_mechanism`. -/
 def karttunenOfCausative : CausativeBuilder → KarttunenClass
-  | .cause | .make | .force | .enable =>
+  | .make | .force | .enable | .cause =>
     { isSufficient := true, isNecessary := false, polarity := .positive }
   | .prevent =>
     { isSufficient := true, isNecessary := false, polarity := .negative }
@@ -171,12 +187,28 @@ theorem force_karttunen_class :
 theorem prevent_karttunen_class :
     karttunenOfCausative .prevent = KarttunenClass.prevent := rfl
 
+/-- `cause` and `make` have the same Karttunen entailment cell
+    (sufficient-only) despite having different causal mechanisms.
+    This is the central insight of @cite{nadathur-lauer-2020}: same
+    entailment pattern ≠ same truth conditions. The difference emerges
+    in overdetermination scenarios where `makeSem` is true but `causeSem`
+    is false (see `builders_truth_conditionally_distinct` in Builder.lean). -/
+theorem cause_make_same_cell_different_mechanism :
+    karttunenOfCausative .cause = karttunenOfCausative .make ∧
+    CausativeBuilder.cause.assertsNecessity ≠ CausativeBuilder.make.assertsNecessity := by
+  exact ⟨rfl, by decide⟩
+
+/-- All positive causative builders map to `KarttunenClass.force`
+    (Karttunen's sufficient-only cell). -/
+theorem cause_karttunen_class :
+    karttunenOfCausative .cause = KarttunenClass.force := rfl
+
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Fragment Verification (ex. 2)
 -- ════════════════════════════════════════════════════════════════
 
 /-! Verify that Fragment verb entries carry the correct annotations,
-    matching Karttunen's inventory. -/
+    matching Karttunen's inventory (ex. 2, p.341). -/
 
 -- ── Positive implicatives ──
 
@@ -186,6 +218,21 @@ theorem manage_positive_implicative :
 theorem remember_positive_implicative :
     remember.toVerbCore.implicativeBuilder = some .positive := rfl
 
+theorem dare_positive_implicative :
+    dare.toVerbCore.implicativeBuilder = some .positive := rfl
+
+theorem bother_positive_implicative :
+    bother.toVerbCore.implicativeBuilder = some .positive := rfl
+
+theorem venture_positive_implicative :
+    venture.toVerbCore.implicativeBuilder = some .positive := rfl
+
+theorem condescend_positive_implicative :
+    condescend.toVerbCore.implicativeBuilder = some .positive := rfl
+
+theorem happen_positive_implicative :
+    happen.toVerbCore.implicativeBuilder = some .positive := rfl
+
 -- ── Negative implicatives (§10, ex. 38) ──
 
 theorem fail_negative_implicative :
@@ -193,6 +240,9 @@ theorem fail_negative_implicative :
 
 theorem forget_negative_implicative :
     forget.toVerbCore.implicativeBuilder = some .negative := rfl
+
+theorem neglect_negative_implicative :
+    neglect.toVerbCore.implicativeBuilder = some .negative := rfl
 
 -- ── Non-implicatives ──
 
@@ -219,6 +269,26 @@ theorem fail_entails_not :
 theorem hope_no_complement_entailment :
     hope.toVerbCore.entailsComplement = none := rfl
 
+-- ── Raising vs control ──
+
+/-- *happen* is a raising verb, not subject-control. "It happened to rain"
+    is grammatical — the matrix subject receives no theta role from *happen*.
+    Karttunen (§9) describes *happen*'s presupposition as chance-dependence,
+    but does not discuss its syntactic control type. -/
+theorem happen_is_raising :
+    happen.toVerbCore.controlType = .raising := rfl
+
+/-- *dare* and *bother* have both presupposition (occasion verbs) AND
+    implicative entailment: "John dared to speak" presupposes risk AND
+    entails "John spoke." These are compatible per Karttunen §9. -/
+theorem dare_presup_and_implicative :
+    dare.toVerbCore.presupType = some .prerequisiteSoft ∧
+    dare.toVerbCore.implicativeBuilder = some .positive := ⟨rfl, rfl⟩
+
+theorem bother_presup_and_implicative :
+    bother.toVerbCore.presupType = some .prerequisiteSoft ∧
+    bother.toVerbCore.implicativeBuilder = some .positive := ⟨rfl, rfl⟩
+
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Factive vs Implicative (§§0–2)
 -- ════════════════════════════════════════════════════════════════
@@ -235,7 +305,7 @@ theorem know_factive_not_implicative :
 
 theorem manage_implicative_not_factive :
     manage.toVerbCore.implicativeBuilder = some .positive ∧
-    manage.toVerbCore.presupType = none := ⟨rfl, rfl⟩
+    manage.toVerbCore.presupType = some .prerequisiteSoft := ⟨rfl, rfl⟩
 
 theorem hope_neither :
     hope.toVerbCore.presupType = none ∧
@@ -255,68 +325,112 @@ theorem force_no_necessity :
     CausativeBuilder.force.assertsNecessity = false := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § 6. Entailment Predictions from KarttunenClass
+-- § 6. KarttunenClass → Entailment Predictions
 -- ════════════════════════════════════════════════════════════════
 
-/-! Karttunen's schema (37): if v is sufficient-positive, affirming v(S)
-    entails S. Grounded through `manage_entails_complement` from the
-    causal semantics. -/
+/-! The grounding chain: KarttunenClass → ImplicativeBuilder →
+    causal semantics → complement entailment.
 
-theorem sufficient_positive_entails (sc : ImplicativeScenario)
-    (h : manageSem sc = true) :
-    (normalDevelopment sc.dynamics (sc.background.extend sc.action true)).hasValue
+    For sufficient-positive classes, the chain is:
+    `KarttunenClass.manage.polarity` = `.positive`
+    → `ImplicativeBuilder.positive.toSemantics` = `manageSem`
+    → `manage_entails_complement`: manageSem sc = true → complement true
+
+    These theorems derive the entailment from the classification,
+    not just re-export the theory-layer theorem. -/
+
+/-- A sufficient-positive KarttunenClass predicts complement truth
+    via the polarity field's grounded semantics. -/
+theorem sufficient_positive_class_entails (sc : ImplicativeScenario)
+    (k : KarttunenClass)
+    (_hSuf : k.isSufficient = true) (hPol : k.polarity = .positive)
+    (hSem : k.polarity.toSemantics sc = true) :
+    (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
+      sc.complement true = true := by
+  rw [hPol] at hSem
+  exact manage_entails_complement sc hSem
+
+/-- A sufficient-negative KarttunenClass predicts complement falsity. -/
+theorem sufficient_negative_class_entails (sc : ImplicativeScenario)
+    (k : KarttunenClass)
+    (_hSuf : k.isSufficient = true) (hPol : k.polarity = .negative)
+    (hSem : k.polarity.toSemantics sc = true) :
+    (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
+      sc.complement true = false := by
+  rw [hPol] at hSem
+  exact fail_entails_not_complement sc hSem
+
+/-- Instantiation: `KarttunenClass.manage` entails complement truth. -/
+theorem manage_class_entails (sc : ImplicativeScenario)
+    (hSem : KarttunenClass.manage.polarity.toSemantics sc = true) :
+    (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
       sc.complement true = true :=
-  manage_entails_complement sc h
+  sufficient_positive_class_entails sc .manage rfl rfl hSem
 
-theorem sufficient_negative_entails (sc : ImplicativeScenario)
-    (h : failSem sc = true) :
-    (normalDevelopment sc.dynamics (sc.background.extend sc.action true)).hasValue
+/-- Instantiation: `KarttunenClass.fail` entails complement falsity. -/
+theorem fail_class_entails (sc : ImplicativeScenario)
+    (hSem : KarttunenClass.fail.polarity.toSemantics sc = true) :
+    (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
       sc.complement true = false :=
-  fail_entails_not_complement sc h
+  sufficient_negative_class_entails sc .fail rfl rfl hSem
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Double Negation Cancellation (§2, ex. 13)
+-- § 7. Double Negation (§2, ex. 13; §10, ex. 40)
 -- ════════════════════════════════════════════════════════════════
 
-/-! "John didn't remember not to lock his door" → "John locked his door."
-    For two-way positive implicatives, ¬v(¬S) → S by the negative
-    direction (¬v(S') → ¬S' where S' = ¬S) plus Boolean double negation. -/
+/-! Double negation cancellation is a signature property of implicative
+    verbs. Karttunen's examples:
 
-theorem double_negation_cancellation (sc : ImplicativeScenario)
-    (hFail : failSem sc = true) :
-    (normalDevelopment sc.dynamics (sc.background.extend sc.action true)).hasValue
-      sc.complement true = false :=
-  fail_entails_not_complement sc hFail
+    - (13) "John didn't remember not to lock his door" → "John locked his door."
+    - (40a) "John didn't forget to lock his door" → (40d) "John locked his door."
+
+    The current causal semantics models the *positive* direction
+    (manageSem → complement true) and the *negative* direction
+    (failSem → complement false) separately. Full double negation
+    — where matrix negation and complement negation interact to yield
+    a positive entailment — would require compositional negation over
+    the causal model, which is not yet formalized.
+
+    What we CAN verify: the two directions (positive entailment, negative
+    entailment) are separately grounded, and two-way KarttunenClasses
+    predict both directions. -/
+
+/-- Two-way classes predict entailment in BOTH directions:
+    the positive polarity grounds the affirmative direction,
+    the negative polarity grounds the negation direction. -/
+theorem two_way_has_both_directions (k : KarttunenClass)
+    (hTwoWay : k.isTwoWay = true) :
+    k.isSufficient = true ∧ k.isNecessary = true := by
+  simp only [KarttunenClass.isTwoWay, Bool.and_eq_true] at hTwoWay
+  exact ⟨hTwoWay.2, hTwoWay.1⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 8. Coverage Summary
 -- ════════════════════════════════════════════════════════════════
 
-/-- All four cells of the 2×2 are populated by existing Fragment entries. -/
+/-- All four cells of the 2×2 are populated by Fragment entries. -/
 theorem all_cells_populated :
-    KarttunenClass.manage.isTwoWay = true ∧     -- nec + suf
-    KarttunenClass.force.isTwoWay = false ∧      -- suf only
-    KarttunenClass.beAble.isTwoWay = false ∧     -- nec only
-    KarttunenClass.hope.hasEntailment = false :=  -- neither
+    KarttunenClass.manage.isTwoWay = true ∧     -- nec + suf: manage
+    KarttunenClass.force.isTwoWay = false ∧      -- suf only: force
+    KarttunenClass.beAble.isTwoWay = false ∧     -- nec only: be able
+    KarttunenClass.hope.hasEntailment = false :=  -- neither: hope
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-! ### Gaps
+-- ── Necessary-only cell: be able (§11, schema 54) ──
 
-    Several verbs from Karttunen's implicative list (ex. 2) lack
-    `implicativeBuilder` annotations in the Fragment:
+/-- *be able* is NOT a lexical implicative — it has no `implicativeBuilder`.
+    The actuality entailment is **aspect-governed** (@cite{nadathur-2023}):
+    perfective "was able to VP" → VP; imperfective "was able to VP" ↛ VP.
+    Karttunen (§11) notes these verbs are ambiguous between implicative
+    and non-implicative readings. -/
+theorem beAble_not_lexical_implicative :
+    beAble.implicativeBuilder = none := rfl
 
-    - *dare*, *bother*: modeled as occasion verbs (presupposition only,
-      no entailment annotation). Both analyses are compatible — a verb
-      can presuppose a decisive condition AND entail the complement.
-
-    - *venture*, *condescend*, *happen*: added to the Fragment in this
-      formalization with positive implicative annotations. -/
-
-theorem dare_missing_implicative :
-    dare.toVerbCore.implicativeBuilder = none := rfl
-
-theorem bother_missing_implicative :
-    bother.toVerbCore.implicativeBuilder = none := rfl
+/-- *be able* takes infinitival complement with subject control.
+    "He was able to leave" — the subject has the ability (theta role). -/
+theorem beAble_infinitival_subject_control :
+    beAble.complementType = .infinitival ∧
+    beAble.controlType = .subjectControl := ⟨rfl, rfl⟩
 
 /-! ### Tension with Noonan's Reality Status
 

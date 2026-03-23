@@ -761,7 +761,7 @@ Each mechanism independently entails ¬p in the real world, unifying
 the class despite its heterogeneity. -/
 
 open NadathurLauer2020.Builder (CausativeBuilder)
-open Nadathur2023.Implicative (ImplicativeBuilder)
+open Nadathur2024.Implicative (ImplicativeBuilder)
 
 /-- FORGET is a negative implicative: "X forgot to do Y" entails that
     Y did NOT happen (¬p in w₀). This is DERIVED from the implicative

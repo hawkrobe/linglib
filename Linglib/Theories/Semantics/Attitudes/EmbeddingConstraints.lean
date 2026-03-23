@@ -785,7 +785,7 @@ theorem wonder_satisfies_ptoq {W E : Type*}
   -- hEnt : ∀ s ∈ inq x w, [p].any (covers s) = true
   -- From hEnt with s = dox x w (by hDoxInINQ): covers (dox x w) p = true
   have hDox := hEnt (dox x w) (hDoxInINQ x w)
-  simp only [List.any_cons] at hDox
+  simp at hDox
   -- hDox : covers (dox x w) p = true contradicts hIgn
   exact absurd hDox (by rw [hIgn]; exact Bool.false_ne_true)
 
@@ -961,7 +961,7 @@ theorem wondows_violates_ptoq {W E : Type*}
     (x : E) (p q : BProp W) (w : W)
     (h_factive : factive x w = true)
     (h_dox_singleton : doxSupports x [p] w = true)
-    (h_dox_pair : doxSupports x [p, q] w = true)
+    (_h_dox_pair : doxSupports x [p, q] w = true)
     (hp_compat : believes x (fun w' => !(p w')) = false)
     (hq_incompat : believes x (fun w' => !(q w')) = true) :
     ¬IsPtoQEntailing (wondowsSem factive doxSupports believes) := by
@@ -973,13 +973,12 @@ theorem wondows_violates_ptoq {W E : Type*}
   -- h2 : wondowsSem ... x [p, q] w = true
   -- The all-open component requires !(believes x (¬q)) = true, i.e., believes x (¬q) = false
   -- But hq_incompat says believes x (¬q) = true — contradiction
-  unfold wondowsSem at h2
-  simp only [Bool.and_eq_true, List.all_eq_true, Bool.not_eq_true'] at h2
-  obtain ⟨_, _, hall⟩ := h2
+  simp only [wondowsSem, Bool.and_eq_true, List.all_eq_true,
+             Bool.not_eq_true'] at h2
+  obtain ⟨_, hall⟩ := h2
   have hq_mem : q ∈ ([p, q] : List (W → Bool)) := by simp
-  have := hall q hq_mem
-  rw [hq_incompat] at this
-  exact Bool.false_ne_true this
+  rw [hall q hq_mem] at hq_incompat
+  exact Bool.false_ne_true hq_incompat
 
 -- ============================================================================
 -- Summary

@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Core.VoiceSystem
+import Linglib.Theories.Semantics.Causation.Implicative
 
 /-!
 # Finnish Verb Entries @cite{karlsson-2017}
@@ -160,5 +161,281 @@ theorem finnish_voice_count :
 
 theorem finnish_is_active_passive :
     finnishVoiceSystem.isActivePassive = true := rfl
+
+-- ============================================================================
+-- § 6: Finnish Implicative Verbs (@cite{nadathur-2024})
+-- ============================================================================
+
+/-! Finnish is the ideal testing ground for implicative verb semantics because
+    it has a much richer inventory of lexically-specific implicatives than
+    English. Where English has primarily *manage* (underspecified) and *dare*
+    (courage), Finnish has ~12 common implicatives that each lexicalize a
+    different prerequisite type.
+
+    The structure extends `FinnishVerb` with implicative fields. -/
+
+open Nadathur2024.Implicative (ImplicativeBuilder Directionality Prerequisite ImplicativeClass)
+
+/-- A Finnish implicative verb entry, extending the base verb with
+    implicative classification from @cite{nadathur-2024}. -/
+structure FinnishImplicativeVerb extends FinnishVerb where
+  /-- Positive (entails complement) or negative (entails ¬complement) -/
+  implicativeBuilder : ImplicativeBuilder
+  /-- One-way or two-way complement entailment -/
+  directionality : Directionality
+  /-- The lexically-specified prerequisite type -/
+  prerequisite : Prerequisite
+  /-- Negative 3sg present (with negation verb *ei*) -/
+  neg3sgAct : String
+  deriving Repr, BEq
+
+-- ── Two-way positive implicatives ──
+
+/-- *onnistua* 'succeed, manage' — two-way positive, unspecified prerequisite.
+    "Eman onnistui pakenema-an" → 'Eman fled.'
+    "Eman ei onnistunut pakenema-an" → 'Eman did not flee.'
+    (@cite{nadathur-2024} ex. 2) -/
+def onnistua : FinnishImplicativeVerb :=
+  { infinitive := "onnistua"
+    gloss := "to succeed, to manage"
+    verbType := .type1
+    pres3sgAct := "onnistuu"
+    presImpersonal := "onnistutaan"
+    implicativeBuilder := .positive
+    directionality := .twoWay
+    prerequisite := .unspecified
+    neg3sgAct := "onnistu" }
+
+/-- *uskaltaa* 'dare' — two-way positive, prerequisite = courage.
+    "Juno uskaltaa avata oven" → 'Juno opens the door.'
+    "Juno ei uskaltanut avata ovea" → 'Juno did not open the door.'
+    (@cite{nadathur-2024} ex. 4) -/
+def uskaltaa : FinnishImplicativeVerb :=
+  { infinitive := "uskaltaa"
+    gloss := "to dare"
+    verbType := .type1
+    pres3sgAct := "uskaltaa"
+    presImpersonal := "uskalletaan"
+    implicativeBuilder := .positive
+    directionality := .twoWay
+    prerequisite := .courage
+    neg3sgAct := "uskalla" }
+
+/-- *viitsiä* 'bother' — two-way positive, prerequisite = engagement.
+    (@cite{nadathur-2024} ex. 10) -/
+def viitsia : FinnishImplicativeVerb :=
+  { infinitive := "viitsiä"
+    gloss := "to bother"
+    verbType := .type1
+    pres3sgAct := "viitsii"
+    presImpersonal := "viitsitään"
+    implicativeBuilder := .positive
+    directionality := .twoWay
+    prerequisite := .engagement
+    neg3sgAct := "viitsi" }
+
+/-- *malttaa* 'have the patience' — two-way positive, prerequisite = patience.
+    "Marja malttoi odottaa" → 'Marja waited.'
+    "Marja ei malttanut odottaa" → 'Marja did not wait.'
+    (@cite{nadathur-2024} ex. 11) -/
+def malttaa : FinnishImplicativeVerb :=
+  { infinitive := "malttaa"
+    gloss := "to have the patience"
+    verbType := .type1
+    pres3sgAct := "malttaa"
+    presImpersonal := "maltetaan"
+    implicativeBuilder := .positive
+    directionality := .twoWay
+    prerequisite := .patience
+    neg3sgAct := "maltta" }
+
+/-- *hennoa* 'have the heart' — two-way positive, prerequisite = hard-heartedness.
+    (@cite{nadathur-2024} ex. 27) -/
+def hennoa : FinnishImplicativeVerb :=
+  { infinitive := "hennoa"
+    gloss := "to have the heart"
+    verbType := .type1
+    pres3sgAct := "hennoaa"  -- note: not *hennoo
+    presImpersonal := "hennotaan"
+    implicativeBuilder := .positive
+    directionality := .twoWay
+    prerequisite := .hardHeartedness
+    neg3sgAct := "hennoa" }  -- negation: ei hennoa (no consonant gradation)
+
+/-- *kehdata* 'act without shame, be unembarrassed' — two-way positive.
+    (@cite{nadathur-2024} ex. 40) -/
+def kehdata : FinnishImplicativeVerb :=
+  { infinitive := "kehdata"
+    gloss := "to act without shame"
+    verbType := .type4
+    pres3sgAct := "kehtaa"
+    presImpersonal := "kehdataan"
+    implicativeBuilder := .positive
+    directionality := .twoWay
+    prerequisite := .shamelessness
+    neg3sgAct := "kehtaa" }
+
+/-- *ehtiä* 'find/make time' — two-way positive, prerequisite = time.
+    (@cite{nadathur-2024} ex. 39) -/
+def ehtia : FinnishImplicativeVerb :=
+  { infinitive := "ehtiä"
+    gloss := "to find time, to make time"
+    verbType := .type1
+    pres3sgAct := "ehtii"
+    presImpersonal := "ehditään"
+    implicativeBuilder := .positive
+    directionality := .twoWay
+    prerequisite := .time
+    neg3sgAct := "ehdi" }
+
+-- ── One-way positive implicatives ──
+
+/-- *jaksaa* 'have the strength' — one-way positive, prerequisite = strength.
+    Positive: "Sampo jaksoi nousta" ↛ 'Sampo rose.' (only implicature)
+    Negative: "Sampo ei jaksanut nousta" → 'Sampo did not rise.'
+    (@cite{nadathur-2024} ex. 5) -/
+def jaksaa : FinnishImplicativeVerb :=
+  { infinitive := "jaksaa"
+    gloss := "to have the strength"
+    verbType := .type1
+    pres3sgAct := "jaksaa"
+    presImpersonal := "jaksetaan"
+    implicativeBuilder := .positive
+    directionality := .oneWay
+    prerequisite := .strength
+    neg3sgAct := "jaksa" }
+
+/-- *mahtua* 'fit, be small enough' — one-way positive, prerequisite = fitness.
+    "Freija mahtui kulkemaan oven" ↛ 'Freija went through the door.'
+    "Freija ei mahtunut kulkemaan oven" → 'Freija did not go through the door.'
+    (@cite{nadathur-2024} ex. 30) -/
+def mahtua : FinnishImplicativeVerb :=
+  { infinitive := "mahtua"
+    gloss := "to fit"
+    verbType := .type1
+    pres3sgAct := "mahtuu"
+    presImpersonal := "mahdutaan"
+    implicativeBuilder := .positive
+    directionality := .oneWay
+    prerequisite := .fitness
+    neg3sgAct := "mahdu" }
+
+/-- *pystyä* 'be able' — one-way positive (the Finnish counterpart of *be able*).
+    "Maarit pystyi tappelema-an" ↛ 'Maarit fought.'
+    "Maarit ei pystynyt tappelema-an" → 'Maarit did not fight.'
+    (@cite{nadathur-2024} ex. 29) -/
+def pystya : FinnishImplicativeVerb :=
+  { infinitive := "pystyä"
+    gloss := "to be able"
+    verbType := .type1
+    pres3sgAct := "pystyy"
+    presImpersonal := "pystytään"
+    implicativeBuilder := .positive
+    directionality := .oneWay
+    prerequisite := .unspecified
+    neg3sgAct := "pysty" }
+
+-- ── Polarity-reversing implicatives ──
+
+/-- *laiminlyödä* 'neglect' — polarity-reversing two-way.
+    "Hän laiminlöi korjata virheen" → 'He did not correct the error.'
+    "Hän ei laiminlyönyt korjata virhettä" → 'He corrected the error.'
+    (@cite{nadathur-2024} ex. 44) -/
+def laiminlyoda : FinnishImplicativeVerb :=
+  { infinitive := "laiminlyödä"
+    gloss := "to neglect"
+    verbType := .type2
+    pres3sgAct := "laiminlyö"
+    presImpersonal := "laiminlyödään"
+    implicativeBuilder := .negative
+    directionality := .twoWay
+    prerequisite := .unspecified
+    neg3sgAct := "laiminlyö" }
+
+/-- *epäröidä* 'hesitate' — polarity-reversing one-way.
+    "Juno epäröi ottaa osaa kilpailuun" ↛ 'Juno did not take part.'
+    "Juno ei epäröinyt ottaa osaa kilpailuun" → 'Juno took part.'
+    (@cite{nadathur-2024} §6.4, ex. 46) -/
+def eparoida : FinnishImplicativeVerb :=
+  { infinitive := "epäröidä"
+    gloss := "to hesitate"
+    verbType := .type2
+    pres3sgAct := "epäröi"
+    presImpersonal := "epäröidään"
+    implicativeBuilder := .negative
+    directionality := .oneWay
+    prerequisite := .courage
+    neg3sgAct := "epäröi" }
+
+-- ── Verification theorems ──
+
+/-- All two-way implicatives have `.twoWay` directionality. -/
+theorem twoWay_verbs_correct :
+    onnistua.directionality = .twoWay ∧
+    uskaltaa.directionality = .twoWay ∧
+    viitsia.directionality = .twoWay ∧
+    malttaa.directionality = .twoWay ∧
+    hennoa.directionality = .twoWay ∧
+    kehdata.directionality = .twoWay ∧
+    ehtia.directionality = .twoWay ∧
+    laiminlyoda.directionality = .twoWay :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- All one-way implicatives have `.oneWay` directionality. -/
+theorem oneWay_verbs_correct :
+    jaksaa.directionality = .oneWay ∧
+    mahtua.directionality = .oneWay ∧
+    pystya.directionality = .oneWay ∧
+    eparoida.directionality = .oneWay :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Each specific implicative has a distinct prerequisite type. -/
+theorem prerequisites_distinct :
+    uskaltaa.prerequisite = .courage ∧
+    viitsia.prerequisite = .engagement ∧
+    malttaa.prerequisite = .patience ∧
+    hennoa.prerequisite = .hardHeartedness ∧
+    jaksaa.prerequisite = .strength ∧
+    mahtua.prerequisite = .fitness ∧
+    ehtia.prerequisite = .time ∧
+    kehdata.prerequisite = .shamelessness :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Bleached implicatives (manage-type) have unspecified prerequisites. -/
+theorem bleached_unspecified :
+    onnistua.prerequisite = .unspecified ∧
+    pystya.prerequisite = .unspecified :=
+  ⟨rfl, rfl⟩
+
+/-- Polarity-reversing verbs have negative polarity. -/
+theorem polarity_reversing :
+    laiminlyoda.implicativeBuilder = .negative ∧
+    eparoida.implicativeBuilder = .negative :=
+  ⟨rfl, rfl⟩
+
+/-- Polarity-preserving verbs have positive polarity. -/
+theorem polarity_preserving :
+    onnistua.implicativeBuilder = .positive ∧
+    uskaltaa.implicativeBuilder = .positive ∧
+    viitsia.implicativeBuilder = .positive ∧
+    malttaa.implicativeBuilder = .positive ∧
+    hennoa.implicativeBuilder = .positive ∧
+    jaksaa.implicativeBuilder = .positive ∧
+    mahtua.implicativeBuilder = .positive ∧
+    pystya.implicativeBuilder = .positive ∧
+    kehdata.implicativeBuilder = .positive ∧
+    ehtia.implicativeBuilder = .positive :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Convert a Finnish implicative verb to an ImplicativeClass. -/
+def FinnishImplicativeVerb.toImplicativeClass (v : FinnishImplicativeVerb) : ImplicativeClass :=
+  { polarity := v.implicativeBuilder
+    directionality := v.directionality
+    aspectGoverned := false
+    prerequisite := some v.prerequisite }
+
+/-- Uskaltaa and English dare have the same classification. -/
+theorem uskaltaa_matches_dare :
+    uskaltaa.toImplicativeClass = ImplicativeClass.dare := rfl
 
 end Fragments.Finnish.Predicates

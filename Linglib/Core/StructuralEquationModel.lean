@@ -724,4 +724,85 @@ def extractProfile (dyn : CausalDynamics) (bg : Situation)
   , necessary := causallyNecessary dyn bg cause effect
   , direct := hasDirectLaw dyn cause effect }
 
+-- ============================================================
+-- § Causal Ancestors (@cite{nadathur-2024} Definition 11)
+-- ============================================================
+
+/-- **Immediate causal ancestors** of variable X: variables that appear
+    as preconditions of any law whose effect is X. -/
+def immediateAncestors (dyn : CausalDynamics) (x : Variable) : List Variable :=
+  (dyn.laws.filter (fun law => law.effect == x)).flatMap
+    (fun law => law.preconditions.map (·.1))
+  |>.eraseDups
+
+/-- **Causal ancestors** (@cite{nadathur-2024} Definition 11).
+    Transitive closure of immediate causal ancestors. Bounded to
+    avoid nontermination on cyclic models (which are ill-formed
+    but representable). -/
+def causalAncestors (dyn : CausalDynamics) (x : Variable)
+    (fuel : Nat := 20) : List Variable :=
+  match fuel with
+  | 0 => []
+  | n + 1 =>
+    let imm := immediateAncestors dyn x
+    let deeper := imm.flatMap (fun v => causalAncestors dyn v n)
+    (imm ++ deeper).eraseDups
+
+-- ============================================================
+-- § Causal Consistency (@cite{nadathur-2024} Definition 9)
+-- ============================================================
+
+/-- **Causal consistency** (@cite{nadathur-2024} Definition 9).
+
+    A situation s is causally consistent iff, for every inner variable
+    X ∈ dom(s), the dynamics do not causally entail the negation of
+    s's determination for X. That is: if s(X) = 1, then s does not
+    causally entail ⟨X, 0⟩, and vice versa. -/
+def causallyConsistent (dyn : CausalDynamics) (s : Situation)
+    (innerVars : List Variable) : Bool :=
+  innerVars.all fun x =>
+    match s.get x with
+    | some true  => !(normalDevelopment dyn s).hasValue x false
+    | some false => !(normalDevelopment dyn s).hasValue x true
+    | none       => true
+
+-- ============================================================
+-- § Situation-Based Necessity/Sufficiency (@cite{nadathur-2024} Def 12)
+-- ============================================================
+
+/-- **Situation-based causal sufficiency** (@cite{nadathur-2024} Definition 12a).
+
+    Situation s is causally sufficient for ⟨X, x⟩ iff the fixed point s*
+    of T_D relative to s assigns X = x. Equivalent to `causallySufficient`
+    when s directly sets the cause variable; this version works with
+    arbitrary situations as potential causes. -/
+def situationSufficient (dyn : CausalDynamics) (s : Situation)
+    (x : Variable) (val : Bool) : Bool :=
+  (normalDevelopment dyn s).hasValue x val
+
+/-- **Situation-based causal necessity** (@cite{nadathur-2024} Definition 12b).
+
+    Situation s is causally necessary for ⟨X, x⟩ iff for every situation s'
+    that:
+    (i) dom(s') ⊇ dom(s) ∩ Anc(X)
+    (ii) ∃ Y ∈ dom(s) ∩ Anc(X) with s'(Y) ≠ s(Y)
+    (iii) s'(X) ≠ x
+    we have s' ⊭_D ⟨X, x⟩.
+
+    Approximated here by a counterfactual test over each individual ancestor:
+    for each ancestor Y of X in dom(s), flipping Y's value blocks X = val. -/
+def situationNecessary (dyn : CausalDynamics) (s : Situation)
+    (x : Variable) (val : Bool) : Bool :=
+  let ancs := causalAncestors dyn x
+  let relevantAncs := ancs.filter (fun y => (s.get y).isSome)
+  -- If no relevant ancestors in s, s is vacuously necessary
+  relevantAncs.isEmpty ||
+  -- Every relevant ancestor in s: flipping it blocks x = val
+  relevantAncs.all fun y =>
+    match s.get y with
+    | some yval =>
+      let s' := s.extend y (!yval)
+      !(normalDevelopment dyn s').hasValue x val
+    | none => true
+
 end Core.StructuralEquationModel

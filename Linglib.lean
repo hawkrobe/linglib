@@ -778,6 +778,7 @@ import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Complementation.Studies.Cacchioli2025
 import Linglib.Phenomena.Complementation.Studies.Grano2024
 import Linglib.Phenomena.Complementation.Studies.Karttunen1971
+import Linglib.Phenomena.Causation.Studies.Nadathur2024
 import Linglib.Phenomena.Complementation.Studies.Osborne2019Control
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Control.Studies.Ostrove2026
@@ -1067,6 +1068,7 @@ import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
 import Linglib.Phenomena.Presupposition.Studies.Grove2022
 import Linglib.Phenomena.Presupposition.Studies.Beaver2001
 import Linglib.Phenomena.Presupposition.Studies.Blutner2000
+import Linglib.Phenomena.Presupposition.Studies.Karttunen1973
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
@@ -1649,6 +1651,7 @@ import Linglib.Theories.Semantics.Causation.CausalSelection
 import Linglib.Theories.Semantics.Causation.Integration
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.Sufficiency
+import Linglib.Theories.Semantics.Causation.ComplementEntailing
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.ProductionDependence
 import Linglib.Theories.Semantics.Causation.Resultatives

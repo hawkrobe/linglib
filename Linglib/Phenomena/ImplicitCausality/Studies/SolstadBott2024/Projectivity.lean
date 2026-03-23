@@ -185,15 +185,14 @@ theorem cataphoric_resolution_possible {W : Type*}
     - Occasion presupposition: opening was difficult (projective, survives negation)
       "John didn't manage to open the door" → opening WAS difficult
 
-    The fragment encodes this: `manage` has `implicativeBuilder` (at-issue)
-    while `manage_occasion` additionally has `presupType` (projective). -/
+    Both `manage` and `manage_occasion` have prerequisite presuppositions
+    (@cite{nadathur-2024} Proposal 32i); the occasion sense additionally
+    has a context-specific prerequisite. -/
 theorem manage_projection_vs_implicature :
-    -- Default manage: implicative but no presupposition type
     Fragments.English.Predicates.Verbal.manage.implicativeBuilder = some .positive ∧
-    Fragments.English.Predicates.Verbal.manage.presupType = none ∧
-    -- Occasion sense: same implicative PLUS presupposition
+    Fragments.English.Predicates.Verbal.manage.presupType = some .prerequisiteSoft ∧
     Fragments.English.Predicates.Verbal.manage_occasion.implicativeBuilder = some .positive ∧
-    Fragments.English.Predicates.Verbal.manage_occasion.presupType = some .softTrigger :=
+    Fragments.English.Predicates.Verbal.manage_occasion.presupType = some .prerequisiteSoft :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.ImplicitCausality.Studies.SolstadBott2024.Projectivity

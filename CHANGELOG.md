@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.229.414] - 2026-03-22
+
+### Fixed
+- **COM equation** (`Nadathur2024.lean`): restored ¬BRK as third precondition — paper's ex. 33c has COM := MSG ∧ LST ∧ ¬BRK, was incorrectly approximated as MSG ∧ LST
+- **`Directionality.oneWay` docstring**: was "entailment only in the affirmative" — paper says one-way polarity-preserving verbs entail under *negation*, positive entailment is an implicature
+- **`manage.presupType`**: changed `none` → `.prerequisiteSoft` — Nadathur 2024 Proposal 32i explicitly argues manage presupposes a prerequisite (underspecified). Updated 4 downstream theorems in Karttunen1971, Karttunen1973, SolstadBott2024
+- **Polarity-reversing docstring**: was "background A(x) as causally necessary for ¬P(x)" — paper §6.4 presents two options without committing
+- **`hesitate` docstring**: noted that the paper doesn't explicitly name hesitate's prerequisite
+
+### Added
+- **Innocent Dreyfus scenario** (`Nadathur2024.lean`): background INT=0, NRV=1 — verifies NRV is neither sufficient nor necessary for MSG when intention is absent
+- **dare vs manage COM contrast theorem**: formalizes the key prediction that dare is infelicitous for COM (NRV not sufficient, blocking 32iii) while manage is felicitous (only needs necessity)
+- **`sufficiencyPresup` vs `hasSufficiencyPresup` disambiguation**: docstring clarifies computed model check vs lexical verb property
+
+## [0.229.413] - 2026-03-22
+
+### Added
+- **Nadathur 2024 formalization** (`Causation/Studies/Nadathur2024.lean`): Prerequisite account (Proposal 32) for implicative verbs — Dreyfus scenario (8-variable causal model, 4 structural equations), `native_decide` proofs for dare/manage felicity predictions, bridge to Karttunen 1971 classification
+- **`Prerequisite` enum and `PrerequisiteAccount`** (`Implicative.lean`): 9 lexically-specified prerequisite types (courage, patience, strength, etc.), Proposal 32 decomposition into necessity presupposition (32i), assertion (32ii), sufficiency presupposition (32iii), directionality derived from (32iii)
+- **`PresupTriggerType.prerequisiteSoft`** (`VerbEntry.lean`): distinguishes causal prerequisite presuppositions from factive `.softTrigger` — `isSoft` predicate covers both
+- **12 Finnish implicative verb entries** (`Finnish/Predicates.lean`): `FinnishImplicativeVerb` structure with directionality/prerequisite fields; onnistua, uskaltaa, viitsiä, malttaa, hennoa, kehdata, ehtiä (two-way), jaksaa, mahtua, pystyä (one-way), laiminlyödä, epäröidä (polarity-reversing); 8 verification theorems + `uskaltaa_matches_dare` cross-linguistic bridge
+- **`hesitate` as polarity-reversing implicative** (`Verbal.lean`): `implicativeBuilder := some .negative`, `presupType := some .prerequisiteSoft`
+- **Causal ancestors and consistency** (`StructuralEquationModel.lean`): `immediateAncestors`, `causalAncestors` (Def 11), `causallyConsistent` (Def 9), `situationSufficient`/`situationNecessary` (Def 12)
+
+### Changed
+- **dare/bother presupType** `.softTrigger` → `.prerequisiteSoft` in English fragment and all downstream theorems (Karttunen1971, SolstadBott2024)
+- **ImplicativeScenario.action → .prerequisite** — renamed to match Nadathur 2024 terminology, updated CausalVerb.lean bridge
+
+## [0.229.412] - 2026-03-22
+
+### Added
+- **Mõtlema semantics** (`EmbeddingConstraints.lean`): `mõtlemaSem` (R&U 2020 eq. 32) — Estonian responsive predicate with disjunctive 'daroo' + 'imagine' readings. `mõtlema_satisfies_ptoq` proves P-to-Q Entailment via monotonicity of both disjuncts.
+- **Wondows fictitious predicate** (`EmbeddingConstraints.lean`): `wondowsSem` (R&U 2020 eq. 35, Steinert-Threlkeld 2020) — "know with declaratives, be uncertain with interrogatives." `wondows_violates_ptoq` proves P-to-Q violation via the all-open component.
+
+### Changed
+- **Extracted `anyTrue_not_veridicallyUniform` lemma** (`EmbeddingConstraints.lean`): shared counterexample for VU violation, eliminating 3× code duplication across `cDist_not_implies_veridicalUniformity`, `ptoQ_not_implies_vu`, `strawsonCDist_not_implies_vu`
+- **Renamed `cdist_not_implies_veridicalUniformity` → `cDist_not_implies_veridicalUniformity`** for consistency with `Constraint.cDist` and all other theorem names
+- **Condensed `strawsonCDist_not_implies_ptoQ` docstring** from 95-line scratch work to 10-line final explanation
+
 ## [0.229.411] - 2026-03-22
 
 ### Fixed

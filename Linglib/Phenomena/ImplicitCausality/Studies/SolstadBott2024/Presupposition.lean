@@ -21,20 +21,21 @@ open Fragments.English.Predicates.Verbal
 -- § 1. Bridge to Fragment: presupType = softTrigger
 -- ════════════════════════════════════════════════════
 
-/-- All four English occasion verbs are soft presupposition triggers —
-    their occasion presupposition can be locally accommodated.
-    (@cite{solstad-bott-2024}, Exp 2: no strong contextual felicity). -/
-theorem all_occasion_verbs_soft :
-    manage_occasion.presupType = some .softTrigger ∧
-    dare.presupType = some .softTrigger ∧
-    bother.presupType = some .softTrigger ∧
-    hesitate.presupType = some .softTrigger :=
+/-- All occasion verbs have prerequisite presuppositions (soft triggers
+    whose content is a causal prerequisite, not complement truth).
+    @cite{nadathur-2024} explains this as the presupposition of a
+    causally necessary and/or sufficient condition for the complement. -/
+theorem all_occasion_verbs_prerequisite :
+    manage_occasion.presupType = some .prerequisiteSoft ∧
+    dare.presupType = some .prerequisiteSoft ∧
+    bother.presupType = some .prerequisiteSoft ∧
+    hesitate.presupType = some .prerequisiteSoft :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- The default `manage` has no presupType — the occasion presupposition
-    is only visible under the @cite{solstad-bott-2024} analysis. -/
-theorem manage_default_no_presup :
-    manage.presupType = none := rfl
+/-- The default `manage` has a prerequisite presupposition (32i),
+    though the prerequisite is underspecified (@cite{nadathur-2024}). -/
+theorem manage_default_prerequisite :
+    manage.presupType = some .prerequisiteSoft := rfl
 
 /-- Both senses share the same implicative semantics. -/
 theorem manage_senses_share_implicative :

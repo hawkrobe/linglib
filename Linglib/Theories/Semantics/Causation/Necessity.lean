@@ -1,4 +1,7 @@
-/-
+import Linglib.Core.StructuralEquationModel
+import Mathlib.Tactic.Use
+
+/-!
 # Causal Necessity
 
 Causal necessity semantics for the verb "cause" based on
@@ -40,9 +43,6 @@ These can come apart in overdetermination cases:
 - Lightning NOT necessary (arsonist would have caused it anyway)
 
 -/
-
-import Linglib.Core.StructuralEquationModel
-import Mathlib.Tactic.Use
 
 namespace NadathurLauer2020.Necessity
 

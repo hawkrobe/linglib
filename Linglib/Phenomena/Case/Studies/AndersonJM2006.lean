@@ -200,11 +200,12 @@ theorem experiencer_correctly_predicted :
 -- ============================================================================
 
 /-- Anderson correctly predicts which argument becomes subject for
-    verbs that have entailment profiles. -/
+    every verb in the Fragment: the prediction is defined iff the
+    verb has a derived subject role. -/
 theorem anderson_linking_accuracy :
     (allVerbs.filter λ v =>
       (andersonPredictedSubjectTheta v.toVerbCore).isSome ==
-      (subjectRole v.toVerbCore).isSome).length = 237 := by
+      (subjectRole v.toVerbCore).isSome).length = allVerbs.length := by
   native_decide
 
 -- ============================================================================

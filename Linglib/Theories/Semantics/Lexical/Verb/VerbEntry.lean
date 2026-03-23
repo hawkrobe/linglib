@@ -163,8 +163,32 @@ Presupposition trigger type (@cite{tonhauser-beaver-roberts-simons-2013} classif
 - Soft triggers: Context-sensitive projection (stop, know)
 -/
 inductive PresupTriggerType where
-  | hardTrigger     -- Projective in all contexts
-  | softTrigger     -- Can be locally accommodated
+  | hardTrigger        -- Projective in all contexts
+  | softTrigger        -- Factive: complement truth presupposed, locally accommodatable
+  | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed (@cite{nadathur-2024})
+  deriving DecidableEq, Repr, BEq
+
+/-- Is this trigger locally accommodatable (soft)?
+    Both factive and prerequisite triggers are soft. -/
+def PresupTriggerType.isSoft : PresupTriggerType → Bool
+  | .hardTrigger => false
+  | .softTrigger => true
+  | .prerequisiteSoft => true
+
+/--
+Complement presupposition projection behavior (@cite{karttunen-1973}).
+
+Orthogonal to `PresupTriggerType` (whether the verb *triggers* presuppositions):
+this classifies what the verb does with presuppositions *of its complement*.
+
+- `plug`: blocks all complement presuppositions (*say*, *tell*, *promise*)
+- `hole`: lets all complement presuppositions project (*know*, *regret*, *stop*)
+- `filter`: conditionally cancels some complement presuppositions (*if...then*, *and*, *or*)
+-/
+inductive ProjectionBehavior where
+  | plug    -- Blocks complement presuppositions
+  | hole    -- Passes complement presuppositions through
+  | filter  -- Conditionally cancels complement presuppositions
   deriving DecidableEq, Repr, BEq
 
 -- CausativeBuilder is imported from NadathurLauer2020.Builder
@@ -174,7 +198,7 @@ inductive PresupTriggerType where
 open NadathurLauer2020.Builder (CausativeBuilder)
 
 -- ImplicativeBuilder follows the same pattern for implicative verbs (manage, fail).
-open Nadathur2023.Implicative (ImplicativeBuilder)
+open Nadathur2024.Implicative (ImplicativeBuilder)
 
 /--
 Disambiguates polysemous verb entries that share a citation form.
@@ -321,6 +345,9 @@ structure VerbCore where
   verbIncClass : Option VerbIncClass := none
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
+  /-- How does the verb treat presuppositions of its complement?
+      Orthogonal to `presupType`. @cite{karttunen-1973} -/
+  projectionBehavior : Option ProjectionBehavior := none
   /-- For measure predicates: which dimension this verb selects for.
       Determines *per*-phrase interpretation:
       simplex dimension → compositional, quotient → math speak. -/

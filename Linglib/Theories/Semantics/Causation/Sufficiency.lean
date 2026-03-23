@@ -2,7 +2,7 @@ import Linglib.Core.StructuralEquationModel
 import Mathlib.Tactic.Set
 import Mathlib.Tactic.SplitIfs
 
-/-
+/-!
 # Causal Sufficiency
 
 Causal sufficiency semantics for the verb "make" based on

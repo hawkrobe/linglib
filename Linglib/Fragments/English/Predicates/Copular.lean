@@ -32,6 +32,19 @@ def beAnnoyed : ClauseEmbeddingAdj where
 def beRight : ClauseEmbeddingAdj where
   adjForm := "right"
 
+/-- "able (to VP)" — copular predicate with infinitival complement.
+    @cite{karttunen-1971} §11: necessary-only (negation → ¬VP; affirmative ↛ VP).
+    @cite{nadathur-2023}: one-way positive, **aspect-governed** — the actuality
+    entailment arises in perfective contexts, not from the lexicon. Therefore
+    NO `implicativeBuilder`: the entailment is not unconditional like *manage*.
+
+    Not modeled via `ClauseEmbeddingAdj` because `toVerbCore` doesn't transfer
+    `controlType`. Constructed as a direct `VerbCore` instead. -/
+def beAble : VerbCore where
+  form := "be able"
+  complementType := .infinitival
+  controlType := .subjectControl
+
 end Fragments.English.Predicates.Copular
 
 -- ════════════════════════════════════════════════════

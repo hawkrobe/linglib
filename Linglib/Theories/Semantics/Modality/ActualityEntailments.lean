@@ -1,10 +1,12 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Theories.Semantics.Modality.Ability
+import Linglib.Theories.Semantics.Causation.ComplementEntailing
 
 /-!
 # Actuality Entailments: Position × Aspect
-  @cite{hacquard-2006} @cite{hacquard-2009} @cite{bhatt-1999} @cite{nadathur-2023}Bridges **event-relative modality** (`EventRelativity.lean`) with the
-**causal model of ability** (`Ability.lean`) to derive actuality
+  @cite{hacquard-2006} @cite{hacquard-2009} @cite{bhatt-1999} @cite{nadathur-2023}
+
+Bridges **event-relative modality** (`EventRelativity.lean`) with the
+**causal frame** (`ComplementEntailing.lean`) to derive actuality
 entailments from the relative scope of aspect and modal.
 
 ## The Puzzle
@@ -30,22 +32,21 @@ captures it:
 
 ## Bridge to @cite{nadathur-2023}
 
-`Ability.lean` formalizes the causal model: `abilityWithAspect sc.perfective w`
-= ability ∧ actualization. This IS the root/belowAsp case: aspect scopes
-over the modal, so perfective forces both ability and actualization.
+`ComplementEntailing.lean` formalizes the causal model: ability modals are
+`CausalFrame World` with `actualization = .aspectual`.
 
-The imperfective case `abilityWithAspect sc.imperfective w` = ability only.
-This corresponds to root + imperfective (aspect over modal, but imperfective
-doesn't force completion).
+- `actualityWithAspect .perfective w` = sufficiency ∧ actualization
+  → root + PFV case (aspect over modal forces actualization)
+- `actualityWithAspect .imperfective w` = sufficiency only
+  → root + IMPF case (no completion required)
 
 ## Content Licensing Explains the Asymmetry
 
 WHY are epistemic modals always above aspect? Content licensing
 (EventRelativity §8): epistemic modal bases require a contentful event.
 VP events lack content. Therefore epistemic modals cannot be bound by
-aspect (which introduces VP events) — they must be above AspP, bound
-by ASSERT or an attitude verb instead. Root modals need only
-circumstantial backgrounds (any event type), so they CAN be below AspP.
+aspect — they must be above AspP. Root modals need only circumstantial
+backgrounds (any event type), so they CAN be below AspP.
 
 The actuality entailment asymmetry follows from content licensing +
 aspect scope, without stipulation.
@@ -55,13 +56,14 @@ aspect scope, without stipulation.
 namespace Semantics.Modality.ActualityEntailments
 
 open Semantics.Modality.EventRelativity
-open Nadathur2023.Ability
+open CausalVerb
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
+open Core.StructuralEquationModel
 
 
 -- ════════════════════════════════════════════════════
--- § 1. Aspect Scope (@cite{hacquard-2006}, Ch.1, pp.29–48)
+-- § 1. Aspect Scope (@cite{hacquard-2006}, Ch.1)
 -- ════════════════════════════════════════════════════
 
 /-- The relative scope of aspect and the modal in the clause structure.
@@ -147,68 +149,58 @@ theorem ae_iff_aspect_over_modal_pfv (pos : ModalPosition) (asp : ViewpointAspec
 /-- The same lexical modal yields different actuality patterns depending
 solely on position. This is Hacquard's core argument against lexical
 ambiguity: French *pouvoir*, Greek *boro*, Hindi *saknaa* are single
-lexical items whose actuality behavior is structurally determined.:
-- Root-*pouvoir* (below Asp) + PFV → actuality entailment
-- Epistemic-*pouvoir* (above Asp) + PFV → no actuality entailment -/
+lexical items whose actuality behavior is structurally determined. -/
 theorem same_modal_different_entailments :
     actualityEntailmentPredicted .belowAsp .perfective = true ∧
     actualityEntailmentPredicted .aboveAsp .perfective = false := ⟨rfl, rfl⟩
 
 
 -- ════════════════════════════════════════════════════
--- § 4. Bridge to @cite{nadathur-2023}: Ability.lean
+-- § 4. Bridge to CausalFrame (@cite{nadathur-2023})
 -- ════════════════════════════════════════════════════
 
-/-! `Ability.lean` formalizes the causal semantics of ability modals: ability is causal sufficiency in a circumstantial
-background, modulated by viewpoint aspect. The bridge:
+/-! `ComplementEntailing.lean` formalizes the causal semantics: ability modals
+    are `CausalFrame World` with `actualization = .aspectual`. The bridge:
 
-- `abilityWithAspect sc.perfective w` = `abilityAt sc w ∧ complementActualized sc w`
-  → captures the root + PFV case (aspect over modal forces actualization)
+    - `actualityWithAspect .perfective w` = `sufficientAt w ∧ actualizedAt w`
+      → captures the root + PFV case
+    - `actualityWithAspect .imperfective w` = `sufficientAt w`
+      → captures the root + IMPF case
 
-- `abilityWithAspect sc.imperfective w` = `abilityAt sc w`
-  → captures the root + IMPF case (aspect over modal but no completion)
+    The theorems below make this correspondence explicit. -/
 
-The theorems below make this correspondence explicit. -/
-
-/-- Root + PFV matches Ability.lean: perfective ability is defined as
-ability ∧ actualization, and the theory predicts an actuality entailment.
-
-The bridge works at two levels:
-1. *Prediction*: `actualityEntailmentPredicted.belowAsp.perfective = true`
-2. *Model*: `abilityWithAspect sc.perfective w = abilityAt sc w && complementActualized sc w` -/
-theorem root_pfv_matches_ability :
+/-- Root + PFV matches CausalFrame: perfective produces sufficiency ∧ actualization,
+    and the theory predicts an actuality entailment. -/
+theorem root_pfv_matches_causal_frame :
     actualityEntailmentPredicted .belowAsp .perfective = true ∧
-    (∀ (sc : AbilityScenario) (w : World),
-      abilityWithAspect sc .perfective w =
-        (abilityAt sc w && complementActualized sc w)) :=
-  ⟨rfl, λ _ _ => rfl⟩
+    (∀ (f : CausalFrame World) (w : World),
+      f.actualityWithAspect .perfective w =
+        (f.sufficientAt w && f.actualizedAt w)) := by
+  exact ⟨rfl, λ f w => by
+    simp only [CausalFrame.actualityWithAspect]
+    cases f.actualization <;> rfl⟩
 
-/-- Root + IMPF matches Ability.lean: imperfective ability is pure
-ability without actualization, and the theory predicts no actuality
-entailment. -/
-theorem root_impfv_matches_ability :
+/-- Root + IMPF matches CausalFrame (aspectual mode): imperfective produces
+    sufficiency only, and the theory predicts no actuality entailment. -/
+theorem root_impfv_matches_causal_frame :
     actualityEntailmentPredicted .belowAsp .imperfective = false ∧
-    (∀ (sc : AbilityScenario) (w : World),
-      abilityWithAspect sc .imperfective w = abilityAt sc w) :=
-  ⟨rfl, λ _ _ => rfl⟩
+    (∀ (f : CausalFrame World) (w : World),
+      f.actualization = .aspectual →
+      f.actualityWithAspect .imperfective w = f.sufficientAt w) :=
+  ⟨rfl, λ _ _ h => by simp only [CausalFrame.actualityWithAspect, h]⟩
 
-/-- Ability.lean's central result — `perfective_ability_entails_complement`
-— is an instance of the position × aspect prediction: root + PFV
-yields an actuality entailment.
-
-This is the payoff of the bridge: the causal model (Nadathur) and the
-structural account (Hacquard) agree. The causal model explains WHY
-perfective ability entails the complement (causal sufficiency +
-actualization). The structural account explains WHY this pattern
-arises only for root modals (aspect scope). -/
+/-- The causal model (Nadathur) and the structural account (Hacquard) agree:
+    the causal model explains WHY perfective ability entails the complement;
+    the structural account explains WHY this arises only for root modals. -/
 theorem causal_structural_agreement :
     -- Structural prediction: root + PFV → AE
     actualityEntailmentPredicted .belowAsp .perfective = true ∧
-    -- Causal result: PFV ability → complement actualized
-    (∀ (sc : AbilityScenario) (w : World)
-      (h : abilityWithAspect sc .perfective w = true),
-      complementActualized sc w = true) :=
-  ⟨rfl, perfective_ability_entails_complement⟩
+    -- Causal result: PFV + aspectual mode → complement actualized
+    (∀ (f : CausalFrame World) (w : World)
+      (hMode : f.actualization = .aspectual)
+      (h : f.actualityWithAspect .perfective w = true),
+      f.actualizedAt w = true) :=
+  ⟨rfl, λ f w hMode h => CausalFrame.perfective_entails_complement f w h hMode⟩
 
 
 -- ════════════════════════════════════════════════════
@@ -229,12 +221,7 @@ theorem causal_structural_agreement :
 The chain: content licensing → position → scope → (no) AE. -/
 
 /-- The full explanatory chain from content licensing to actuality
-entailments, linking EventRelativity §§8–9 to @cite{hacquard-2006} Ch.1.
-
-Step 1: VP events lack content (EventRelativity §8).
-Step 2: Low position = bound to VP event = aspectOverModal.
-Step 3: aspectOverModal + PFV → actuality entailment.
-Step 4: High position = modalOverAspect → no AE even with PFV. -/
+entailments, linking EventRelativity §§8–9 to @cite{hacquard-2006} Ch.1. -/
 theorem content_licensing_to_actuality :
     -- Step 1: VP events lack content → can't project epistemic
     EventBinder.vpEvent.hasContent = false ∧
@@ -249,10 +236,7 @@ theorem content_licensing_to_actuality :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Epistemic modals are necessarily high (above Asp), because
-low modals are bound to VP events which lack content.
-
-Combined with § 2: epistemic + any aspect = no AE. This is not
-stipulated but derived from content licensing. -/
+low modals are bound to VP events which lack content. -/
 theorem epistemic_necessarily_no_ae :
     -- Low modals can't be epistemic (content licensing)
     ModalPosition.belowAsp.defaultBinder.canProjectEpistemic = false ∧
@@ -273,11 +257,7 @@ This theorem chains together:
 - EventRelativity §8 (content licensing determines available flavors)
 - EventRelativity §9 (position determines event binder)
 - This file §1–2 (position determines aspect scope → AE prediction)
-- Ability.lean (causal model validates the root + PFV case)
-
-The result: a single architectural principle (modals take event
-arguments) plus one predicate (content licensing) derives the
-entire actuality entailment paradigm. -/
+- ComplementEntailing.lean (causal model validates the root + PFV case) -/
 theorem three_way_interaction :
     -- Content licensing: VP events lack content
     EventBinder.vpEvent.hasContent = false ∧
@@ -289,11 +269,12 @@ theorem three_way_interaction :
     actualityEntailmentPredicted .belowAsp .perfective = true ∧
     -- Prediction: epistemic + PFV → no AE
     actualityEntailmentPredicted .aboveAsp .perfective = false ∧
-    -- Validation: causal model agrees (ability + PFV = ability ∧ actualization)
-    (∀ (sc : AbilityScenario) (w : World),
-      abilityWithAspect sc .perfective w =
-        (abilityAt sc w && complementActualized sc w)) :=
-  ⟨rfl, rfl, rfl, rfl, rfl, λ _ _ => rfl⟩
+    -- Validation: PFV = sufficiency ∧ actualization for any CausalFrame
+    (∀ (f : CausalFrame World) (w : World),
+      f.actualityWithAspect .perfective w =
+        (f.sufficientAt w && f.actualizedAt w)) :=
+  ⟨rfl, rfl, rfl, rfl, rfl, λ f _ => by
+    simp only [CausalFrame.actualityWithAspect]; cases f.actualization <;> rfl⟩
 
 
 end Semantics.Modality.ActualityEntailments

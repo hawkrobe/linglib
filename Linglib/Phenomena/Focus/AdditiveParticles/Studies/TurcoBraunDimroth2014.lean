@@ -72,6 +72,7 @@ def dutchContrast : ProductionDatum where
   pctByStrategy
     | .particle => 88
     | .verumFocus => 0
+    | .polarityReversal => 0
     | .other => 5
     | .unmarked => 7
 
@@ -82,6 +83,7 @@ def dutchCorrection : ProductionDatum where
   pctByStrategy
     | .particle => 63
     | .verumFocus => 5
+    | .polarityReversal => 0
     | .other => 7
     | .unmarked => 25
 
@@ -92,6 +94,7 @@ def germanContrast : ProductionDatum where
   pctByStrategy
     | .particle => 0
     | .verumFocus => 82
+    | .polarityReversal => 0
     | .other => 0
     | .unmarked => 18
 
@@ -102,6 +105,7 @@ def germanCorrection : ProductionDatum where
   pctByStrategy
     | .particle => 0
     | .verumFocus => 78
+    | .polarityReversal => 0
     | .other => 8
     | .unmarked => 14
 

@@ -254,7 +254,7 @@ example (c : ContextSet W) (p : BProp W) :
 /-- Static filtering = dynamic local context for conditionals.
     Both derive from PrProp fields: `.presup` and `.assertion`.
     This is the cornerstone theorem connecting three approaches:
-    1. Static filtering (@cite{karttunen-1974})
+    1. Static filtering (@cite{karttunen-1973})
     2. Heim's CCP / File Change Semantics (@cite{heim-1983})
     3. Local contexts (@cite{schlenker-2009}) -/
 theorem static_dynamic_agreement (c : ContextSet W)

@@ -22,7 +22,7 @@ Theory-neutral presupposition examples and empirical patterns.
 
 ## Projection Patterns
 
-Following @cite{karttunen-1974} and @cite{heim-1983}:
+Following @cite{karttunen-1973} and @cite{heim-1983}:
 - Negation: preserves presupposition
 - Conjunction: filtering (left-to-right)
 - Conditional: filtering (antecedent → consequent)
@@ -229,7 +229,7 @@ def johnSmokesAndStopped : PrProp SmokingWorld :=
 /--
 Summary of projection patterns across connectives.
 
-These capture the empirical generalizations from @cite{karttunen-1974}.
+These capture the empirical generalizations from @cite{karttunen-1973}.
 -/
 structure ProjectionPattern where
   /-- Name of the pattern -/
