@@ -146,7 +146,14 @@ def goalPrior : GoalCondition → Object → Goal → ℚ
 
     L0 normalizes across objects, giving a distribution over which
     objects the rule targets. S1 = L0^α normalizes across utterances,
-    giving the speaker's probability of producing the rule. -/
+    giving the speaker's probability of producing the rule.
+
+    **Model simplification:** The companion handout defines
+    U(goal, ¬obj) = 1 − U(goal, obj) for silence, making silence
+    informative (not-prohibiting has utility). Our RSAConfig uses
+    meaning(silence) = 1 (uninformative, uniform L0), a standard RSA
+    convention. This preserves within- and cross-config orderings
+    because S1 is monotone in L0, and L0 is monotone in meaning. -/
 def rsaMeaning (goal : Goal) (utt : Utterance) (obj : Object) : ℚ :=
   match utt with
   | .rule    => utility goal obj
@@ -181,9 +188,9 @@ noncomputable def mkCfg (condition : GoalCondition) :
   α_pos := by norm_num
   worldPrior obj := catPrior obj
   worldPrior_nonneg := fun obj => by exact_mod_cast le_of_lt (catPrior_pos obj)
-  latentPrior _ goal := goalPrior condition () goal
+  latentPrior obj goal := goalPrior condition obj goal
   latentPrior_nonneg := fun _ goal => by
-    cases condition <;> cases goal <;> simp [goalPrior] <;> norm_num
+    cases condition <;> cases goal <;> simp [goalPrior]
 
 -- ════════════════════════════════════════════════════
 -- § 4. Prediction Theorems
@@ -209,30 +216,47 @@ theorem limitLight_tablet_gt_boombox :
     (mkCfg .limitLight).L1 .rule .boombox := by rsa_predict
 
 /-! Cross-config predictions (goal modulation).
-    These compare L1 across different goal conditions — the paper's
-    central claim. Since rsa_predict operates within a single config,
-    we verify these on the ℚ utility values directly. The structural
-    claim is: if U(goal₁, obj) > U(goal₂, obj) and P_CAT is fixed,
-    then L1(rule, obj) is higher under goal₁. -/
+    The paper's central empirical claim: the same edge-case object
+    receives different L1 scores under different goal conditions.
+    Parallel to @cite{lassiter-goodman-2017}'s `basketball_tall_favors_taller`,
+    which shows context (prior) modulates L1 across configs. -/
+
+/-- **Goal sensitivity for flashlights** (the paper's key result, Fig. 1):
+    the flashlight is more likely to be targeted under limitLight than
+    limitNoise, because flashlights emit light but not noise. -/
+theorem goal_sensitivity_flashlight :
+    (mkCfg .limitLight).L1 .rule .flashlight >
+    (mkCfg .limitNoise).L1 .rule .flashlight := by rsa_predict
+
+/-- **Goal sensitivity for boomboxes** (reverse pattern, Fig. 1):
+    the boombox is more likely to be targeted under limitNoise than
+    limitLight, because boomboxes emit noise but not light. -/
+theorem goal_sensitivity_boombox :
+    (mkCfg .limitNoise).L1 .rule .boombox >
+    (mkCfg .limitLight).L1 .rule .boombox := by rsa_predict
+
+/-- **Goal sensitivity for tablets** under preventRecordings:
+    the tablet is more likely to be targeted under preventRecordings
+    than limitNoise, because tablets can record but are quiet. -/
+theorem goal_sensitivity_tablet :
+    (mkCfg .preventRecordings).L1 .rule .tablet >
+    (mkCfg .limitNoise).L1 .rule .tablet := by rsa_predict
+
+/-! Utility-level explanations: WHY the L1 orderings hold.
+    The cross-config L1 ordering follows from the utility ordering
+    because S1 is monotone in L0, which is monotone in meaning. -/
 
 /-- The flashlight's utility is much higher under limitLight than
-    limitNoise. Since P_CAT is fixed, L1 follows the same ordering. -/
+    limitNoise — the driver of `goal_sensitivity_flashlight`. -/
 theorem flashlight_utility_light_gt_noise :
     utility .limitLight .flashlight > utility .limitNoise .flashlight := by
   native_decide
 
-/-- The boombox shows the reverse pattern: higher utility under
-    limitNoise than limitLight. -/
+/-- The boombox's utility is higher under limitNoise than limitLight
+    — the driver of `goal_sensitivity_boombox`. -/
 theorem boombox_utility_noise_gt_light :
     utility .limitNoise .boombox > utility .limitLight .boombox := by
   native_decide
-
-/-- The candle's utility is uniformly low under limitNoise and
-    preventRecordings (it doesn't emit noise or record). -/
-theorem candle_uniformly_low :
-    utility .limitNoise .candle ≤ 1/10 ∧
-    utility .preventRecordings .candle ≤ 1/10 := by
-  constructor <;> native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Multi-Dimensional Semantics (eq. 8)

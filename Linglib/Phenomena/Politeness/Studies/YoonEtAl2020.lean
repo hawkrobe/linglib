@@ -545,47 +545,32 @@ set_option maxHeartbeats 8000000 in
 /-- Under "both" goals at h0, S2 prefers "not terrible" over "terrible".
     This is the paper's main finding: dual goals produce negation.
 
-    **Blocked by two issues:**
-
-    1. **Correctness**: Does not hold with raw acceptance proportions
-       (k/49) as point estimates for the literal semantics. The paper's
-       full model infers θ via BDA, marginalizing over posterior uncertainty
-       in a joint posterior over (α, c, ω, φ̂, θ). The qualitative prediction
-       depends on this full posterior, not point estimates.
-
-    2. **Performance**: `rsa_predict` cannot handle bare `Real.log(L1)`
-       terms efficiently. The reifier's exp-log algebraic simplification
-       only fires for `exp(n * log(x))` with integer n; S2Utility has
-       fractional ω weights (0.36, 0.11, 0.54) multiplying log terms. -/
+    Does not hold with raw acceptance proportions (k/49) as point estimates
+    for the literal semantics. The paper's full model infers θ via BDA,
+    marginalizing over posterior uncertainty in a joint posterior over
+    (α, c, ω, φ̂, θ). The qualitative prediction depends on this full
+    posterior, not point estimates — both directions fail interval verification,
+    confirming the values are indistinguishable under point estimation. -/
 theorem both_h0_prefers_negation :
     S2Utility bothWeights .h0 .notTerrible >
     S2Utility bothWeights .h0 .terrible := by
   sorry
 
-set_option maxHeartbeats 8000000 in
+set_option maxHeartbeats 20000000 in
 /-- Under "informative" goals at h0, S2 prefers "terrible" over "not terrible".
-    Direct speech dominates when the speaker prioritizes informativity.
-
-    **Blocked by performance**: `rsa_predict` cannot handle bare
-    `Real.log(L1)` terms in S2Utility (see `both_h0_prefers_negation`).
-    Bare L1 comparisons on this config take ~3s, but S2Utility with
-    `log(L1)` falls through to expensive `logPoint` bisection. -/
+    Direct speech dominates when the speaker prioritizes informativity. -/
 theorem informative_h0_prefers_direct :
     S2Utility informativeWeights .h0 .terrible >
     S2Utility informativeWeights .h0 .notTerrible := by
-  sorry
+  rsa_predict
 
-set_option maxHeartbeats 8000000 in
+set_option maxHeartbeats 20000000 in
 /-- Under "kind" goals at h0, S2 prefers "not terrible" over "terrible".
-    The social and presentational weights favor indirect speech.
-
-    **Blocked by two issues** (same as `both_h0_prefers_negation`):
-    correctness with point estimates and `rsa_predict` performance
-    on bare `Real.log(L1)` terms. -/
+    The social and presentational weights favor indirect speech. -/
 theorem kind_h0_prefers_negation :
     S2Utility kindWeights .h0 .notTerrible >
     S2Utility kindWeights .h0 .terrible := by
-  sorry
+  rsa_predict
 
 -- ============================================================================
 -- §4. Bridge to Subjectivity Cline

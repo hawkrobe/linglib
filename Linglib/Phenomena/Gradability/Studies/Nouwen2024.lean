@@ -46,11 +46,18 @@ using P₁ as prior.
 ### RSAConfig Mapping
 
 - **U** = `Utterance` (bare_warm, horribly_warm, pleasantly_warm, silent)
-- **W** = `Height` (Degree 10, 11 values: h0–h10)
-- **Latent** = `Threshold × Threshold` (100 values: θ_adj × θ_eval)
+- **W** = `Height` (Degree 6, 7 values: h0–h6)
+- **Latent** = `Threshold × Threshold` (36 values: θ_adj × θ_eval)
 - **s1Score** = beliefAction: `exp(α · (log L0 − C(u)))`
 - **α** = 4 (matching @cite{lassiter-goodman-2017})
 - **C(bare)** = 1, **C(horribly/pleasantly)** = 2, **C(∅)** = 0
+
+### Performance Note
+
+Uses scale n=6 (7 heights, 6 thresholds) rather than the paper's continuous
+distribution or @cite{lassiter-goodman-2017}'s n=10, giving 4.4× fewer L0 cells
+in the simultaneous model (1008 vs 4400) and 2.6× fewer in the sequential model.
+All qualitative Goldilocks predictions are preserved.
 -/
 
 -- ============================================================================
@@ -256,10 +263,43 @@ end Phenomena.Gradability.Intensifiers
 
 namespace RSA.Nouwen2024
 
-open RSA.LassiterGoodman2017 (Height Threshold
-  heightPrior thresholdPrior tallMeaning)
-open Core.Scale (deg thr allDegrees allThresholds)
+-- Local scale: n=6 (Degree 6 = Fin 7, Threshold 6 = Fin 6)
+-- Coarser than @cite{lassiter-goodman-2017}'s n=10 for faster rsa_predict
+-- (1008 vs 4400 L0 cells in the simultaneous model) while preserving
+-- all qualitative Goldilocks predictions. Norm = 3.
+
+instance : NeZero (6 : Nat) := ⟨by omega⟩
+
+abbrev Height := Core.Scale.Degree 6
+abbrev Threshold := Core.Scale.Threshold 6
+
+open Core.Scale (deg thr)
 open Semantics.Lexical.Adjective.Intensification (EvaluativeValence EvaluativeMeasure)
+open Semantics.Degree (positiveMeaning)
+
+/-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ, specialized to scale 6. -/
+def tallMeaning (θ : Threshold) (h : Height) : Bool :=
+  positiveMeaning h θ
+
+/-- Height prior: discretized bell curve centered at h3 (norm for scale 6).
+    Weights: [1, 5, 10, 20, 10, 5, 1] (sum = 52). -/
+def heightPrior (h : Height) : ℚ :=
+  match h.toNat with
+  | 0 => 1
+  | 1 => 5
+  | 2 => 10
+  | 3 => 20   -- peak (mean)
+  | 4 => 10
+  | 5 => 5
+  | _ => 1
+
+noncomputable def heightPriorR (h : Height) : ℝ := heightPrior h
+
+theorem heightPriorR_nonneg : ∀ h : Height, 0 ≤ heightPriorR h := by
+  intro h; simp only [heightPriorR]
+  exact_mod_cast (by
+    unfold heightPrior
+    split <;> norm_num : (0 : ℚ) ≤ heightPrior h)
 
 -- Utterances
 
@@ -285,24 +325,24 @@ Evaluative measure for "horrible" applied to the Height domain.
 
 μ_horrible(h) = |h - norm|
 
-Heights far from the norm (5) are evaluated as more "horrible".
-Agrees with `Intensification.muHorrible 10` (see `meaning_grounded_horribly`).
+Heights far from the norm (3) are evaluated as more "horrible".
+Agrees with `Intensification.muHorrible 6` (see `meaning_grounded_horribly`).
 -/
 def muHorrible (h : Height) : ℕ :=
   let d := h.toNat
-  if d ≥ 5 then d - 5 else 5 - d
+  if d ≥ 3 then d - 3 else 3 - d
 
 /--
 Evaluative measure for "pleasant" applied to the Height domain.
 
 μ_pleasant(h) = norm - |h - norm|
 
-Heights near the norm (5) are evaluated as more "pleasant".
-Agrees with `Intensification.muPleasant 10` (see `meaning_grounded_pleasantly`).
+Heights near the norm (3) are evaluated as more "pleasant".
+Agrees with `Intensification.muPleasant 6` (see `meaning_grounded_pleasantly`).
 -/
 def muPleasant (h : Height) : ℕ :=
   let d := h.toNat
-  if d ≥ 5 then 10 - d else d
+  if d ≥ 3 then 6 - d else d
 
 -- Meaning Function
 
@@ -332,7 +372,7 @@ theorem meaning_grounded_horribly :
     ∀ (h : Height) (θ θ_e : Threshold),
       meaning .horribly_warm h θ θ_e =
       Semantics.Lexical.Adjective.Intensification.intensifiedMeaning
-        (Semantics.Lexical.Adjective.Intensification.muHorrible 10) h θ θ_e := by
+        (Semantics.Lexical.Adjective.Intensification.muHorrible 6) h θ θ_e := by
   native_decide
 
 /--
@@ -344,7 +384,7 @@ theorem meaning_grounded_pleasantly :
     ∀ (h : Height) (θ θ_e : Threshold),
       meaning .pleasantly_warm h θ θ_e =
       Semantics.Lexical.Adjective.Intensification.intensifiedMeaning
-        (Semantics.Lexical.Adjective.Intensification.muPleasant 10) h θ θ_e := by
+        (Semantics.Lexical.Adjective.Intensification.muPleasant 6) h θ θ_e := by
   native_decide
 
 -- Zwicky Vacuity
@@ -354,12 +394,12 @@ Constant evaluative measure (no evaluative content).
 
 Models adverbs like "*usually" — a constant measure provides no
 discriminating information about degree, which is why "*usually warm"
-is vacuous (Zwicky's generalization, as discussed in).
+is vacuous (Zwicky's generalization).
 -/
-def muUsual : EvaluativeMeasure 10 where
+def muUsual : EvaluativeMeasure 6 where
   form := "usual"
   valence := .neutral
-  mu := λ _ => 5
+  mu := λ _ => 3
 
 /--
 A constant evaluative measure provides no information:
@@ -389,7 +429,6 @@ def utteranceCost : Utterance → ℚ
 -- RSAConfig (simultaneous dual-threshold model)
 -- ============================================================================
 
-open RSA.LassiterGoodman2017 (heightPriorR heightPriorR_nonneg)
 open Real (exp log exp_pos)
 
 noncomputable def utteranceCostR (u : Utterance) : ℝ := ↑(utteranceCost u)
@@ -447,30 +486,30 @@ noncomputable def nouwenCfg : RSA.RSAConfig Utterance Height where
 
 The Goldilocks effect for negative-evaluative bases: μ_horrible(h) = |h − norm|
 peaks at extremes, so L1 hearing "horribly warm" concentrates probability
-on extreme heights. Heights near the norm (h=5) have μ_horrible = 0
+on extreme heights. Heights near the norm (h=3) have μ_horrible = 0
 and cannot satisfy the evaluative positive form at any θ_e. -/
 
 theorem horribly_shifts_upward :
-    nouwenCfg.L1 .horribly_warm (deg 8) > nouwenCfg.L1 .horribly_warm (deg 4) := by
+    nouwenCfg.L1 .horribly_warm (deg 5) > nouwenCfg.L1 .horribly_warm (deg 2) := by
   rsa_predict
 
 theorem horribly_implies_warm :
-    nouwenCfg.L1 .horribly_warm (deg 8) > nouwenCfg.L1 .horribly_warm (deg 2) := by
+    nouwenCfg.L1 .horribly_warm (deg 5) > nouwenCfg.L1 .horribly_warm (deg 1) := by
   rsa_predict
 
 /-! ### M-adverb: "pleasantly warm" concentrates at moderate heights
 
 The Goldilocks effect for positive-evaluative bases: μ_pleasant(h) = norm − |h − norm|
-peaks at the norm (h=5), so L1 hearing "pleasantly warm" concentrates
-probability on moderate heights. Extreme heights (h=9,10) have
+peaks at the norm (h=3), so L1 hearing "pleasantly warm" concentrates
+probability on moderate heights. Extreme heights (h=5,6) have
 low μ_pleasant and cannot satisfy the evaluative positive form. -/
 
 theorem pleasantly_prefers_moderate :
-    nouwenCfg.L1 .pleasantly_warm (deg 6) > nouwenCfg.L1 .pleasantly_warm (deg 9) := by
+    nouwenCfg.L1 .pleasantly_warm (deg 4) > nouwenCfg.L1 .pleasantly_warm (deg 6) := by
   rsa_predict
 
 theorem pleasantly_implies_warm :
-    nouwenCfg.L1 .pleasantly_warm (deg 6) > nouwenCfg.L1 .pleasantly_warm (deg 2) := by
+    nouwenCfg.L1 .pleasantly_warm (deg 4) > nouwenCfg.L1 .pleasantly_warm (deg 1) := by
   rsa_predict
 
 /-! ### Cross-utterance Goldilocks predictions
@@ -482,22 +521,22 @@ assigns MORE to moderate heights than "warm" does. -/
 
 /-- At extreme heights, "horribly warm" assigns more probability than "warm". -/
 theorem horribly_above_bare_at_extreme :
-    nouwenCfg.L1 .horribly_warm (deg 9) > nouwenCfg.L1 .bare_warm (deg 9) := by
+    nouwenCfg.L1 .horribly_warm (deg 5) > nouwenCfg.L1 .bare_warm (deg 5) := by
   rsa_predict
 
 /-- At moderate heights, "pleasantly warm" assigns more probability than "warm". -/
 theorem pleasantly_above_bare_at_moderate :
-    nouwenCfg.L1 .pleasantly_warm (deg 6) > nouwenCfg.L1 .bare_warm (deg 6) := by
+    nouwenCfg.L1 .pleasantly_warm (deg 4) > nouwenCfg.L1 .bare_warm (deg 4) := by
   rsa_predict
 
 /-- At extreme heights, "horribly warm" dominates "pleasantly warm". -/
 theorem horribly_dominates_pleasantly_at_extreme :
-    nouwenCfg.L1 .horribly_warm (deg 9) > nouwenCfg.L1 .pleasantly_warm (deg 9) := by
+    nouwenCfg.L1 .horribly_warm (deg 6) > nouwenCfg.L1 .pleasantly_warm (deg 6) := by
   rsa_predict
 
 /-- At moderate heights, "pleasantly warm" dominates "horribly warm". -/
 theorem pleasantly_dominates_horribly_at_moderate :
-    nouwenCfg.L1 .pleasantly_warm (deg 6) > nouwenCfg.L1 .horribly_warm (deg 6) := by
+    nouwenCfg.L1 .pleasantly_warm (deg 4) > nouwenCfg.L1 .horribly_warm (deg 4) := by
   rsa_predict
 
 -- ============================================================================
@@ -664,12 +703,12 @@ but preserves the qualitative ordering. -/
 
 /-- Sequential "horribly warm" shifts upward (Goldilocks). -/
 theorem seq_horribly_shifts_upward :
-    (seqAdjCfg muHorrible).L1 .warm (deg 8) > (seqAdjCfg muHorrible).L1 .warm (deg 4) := by
+    (seqAdjCfg muHorrible).L1 .warm (deg 5) > (seqAdjCfg muHorrible).L1 .warm (deg 2) := by
   rsa_predict
 
 /-- Sequential "pleasantly warm" prefers moderate heights (Goldilocks). -/
 theorem seq_pleasantly_prefers_moderate :
-    (seqAdjCfg muPleasant).L1 .warm (deg 6) > (seqAdjCfg muPleasant).L1 .warm (deg 9) := by
+    (seqAdjCfg muPleasant).L1 .warm (deg 4) > (seqAdjCfg muPleasant).L1 .warm (deg 6) := by
   rsa_predict
 
 -- ============================================================================
@@ -695,8 +734,8 @@ model, connecting the data-layer check (`zwickyHolds`) to L1 posterior
 predictions. -/
 
 /-- ℕ-valued constant measure for the sequential model.
-    Models "usual": μ_usual(h) = 5 for all h (no height discrimination). -/
-def muUsualN : Height → ℕ := λ _ => 5
+    Models "usual": μ_usual(h) = 3 for all h (no height discrimination). -/
+def muUsualN : Height → ℕ := λ _ => 3
 
 /-- μ_unusual has the same shape as μ_horrible: peaks at extremes.
     Negative modals pattern with negative evaluatives because both assign
@@ -732,56 +771,56 @@ noncomputable def bareAdjCfg : RSA.RSAConfig AdjUtterance Height where
 
 /-- Constant-measure evaluative step preserves the prior's peak at the norm. -/
 theorem eval_constant_preserves_peak :
-    (evalCfg muUsualN).L1 .eval_pos (deg 5) >
-    (evalCfg muUsualN).L1 .eval_pos (deg 9) := by
+    (evalCfg muUsualN).L1 .eval_pos (deg 3) >
+    (evalCfg muUsualN).L1 .eval_pos (deg 6) := by
   rsa_predict
 
 /-- Extreme measure (unusual/horrible) boosts extreme heights in L1
     beyond what the constant measure assigns. -/
 theorem eval_unusual_boosts_extreme :
-    (evalCfg muUnusualN).L1 .eval_pos (deg 9) >
-    (evalCfg muUsualN).L1 .eval_pos (deg 9) := by
+    (evalCfg muUnusualN).L1 .eval_pos (deg 6) >
+    (evalCfg muUsualN).L1 .eval_pos (deg 6) := by
   rsa_predict
 
 /-! ### Sequential Model: Zwicky Predictions -/
 
 /-- "Usually warm" preserves moderate-height preference (like bare "warm"). -/
 theorem usually_warm_prefers_moderate :
-    (seqAdjCfg muUsualN).L1 .warm (deg 6) >
-    (seqAdjCfg muUsualN).L1 .warm (deg 9) := by
+    (seqAdjCfg muUsualN).L1 .warm (deg 4) >
+    (seqAdjCfg muUsualN).L1 .warm (deg 6) := by
   rsa_predict
 
 /-- "Unusually warm" shifts toward extremes (like "horribly warm").
     Note: `muUnusualN = muHorrible` by `muUnusualN_eq_muHorrible`,
     so this is structurally the same prediction as `seq_horribly_shifts_upward`. -/
 theorem unusually_warm_shifts_extreme :
-    (seqAdjCfg muUnusualN).L1 .warm (deg 8) >
-    (seqAdjCfg muUnusualN).L1 .warm (deg 4) := by
+    (seqAdjCfg muUnusualN).L1 .warm (deg 5) >
+    (seqAdjCfg muUnusualN).L1 .warm (deg 2) := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
+set_option maxHeartbeats 800000 in
 /-- **Zwicky's generalization, derived**: at extreme heights, "unusually warm"
     assigns more probability than "usually warm". Negative modal intensifiers
     are more informative than positive modal ones because μ_unusual discriminates
     heights while μ_usual does not. -/
 theorem zwicky_extreme_discrimination :
-    (seqAdjCfg muUnusualN).L1 .warm (deg 9) >
-    (seqAdjCfg muUsualN).L1 .warm (deg 9) := by
+    (seqAdjCfg muUnusualN).L1 .warm (deg 6) >
+    (seqAdjCfg muUsualN).L1 .warm (deg 6) := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
+set_option maxHeartbeats 800000 in
 /-- Converse: at moderate heights, "usually warm" dominates "unusually warm".
     The constant measure concentrates mass near the prior peak, while the
     extreme measure depletes mass at moderate heights. -/
 theorem zwicky_moderate_discrimination :
-    (seqAdjCfg muUsualN).L1 .warm (deg 6) >
-    (seqAdjCfg muUnusualN).L1 .warm (deg 6) := by
+    (seqAdjCfg muUsualN).L1 .warm (deg 4) >
+    (seqAdjCfg muUnusualN).L1 .warm (deg 4) := by
   rsa_predict
 
-/-- Bare "warm" baseline: prefers moderate heights (deg 6 > deg 9).
+/-- Bare "warm" baseline: prefers moderate heights (deg 4 > deg 6).
     Demonstrates that the bare model and "usually warm" agree qualitatively. -/
 theorem bare_warm_prefers_moderate :
-    bareAdjCfg.L1 .warm (deg 6) > bareAdjCfg.L1 .warm (deg 9) := by
+    bareAdjCfg.L1 .warm (deg 4) > bareAdjCfg.L1 .warm (deg 6) := by
   rsa_predict
 
 end RSA.Nouwen2024

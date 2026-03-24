@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.429] - 2026-03-24
+
+### Changed
+- **Nouwen2024 scale reduction (10→6)**: Reduced degree scale from n=10 to n=6 (Degree 6 = Fin 7, Threshold 6 = Fin 6), cutting simultaneous model L0 cells from 4400→1008 (4.4×) and sequential from 220→84 (2.6×). All 17 `rsa_predict` theorems preserved with updated degree points. Build time drops from ~50 min to <2 min. Local types/priors/measures replace LassiterGoodman2017 imports; grounding theorems reference `Intensification.muHorrible 6`
+
 ## [0.229.428] - 2026-03-23
 
 ### Added
@@ -33,12 +38,12 @@
 ## [0.229.424] - 2026-03-23
 
 ### Added
-- **Waldon et al. 2023 study file** (`Phenomena/Gradability/Studies/WaldonEtAl2023.lean`): multi-dimensional degree semantics for artifact nouns (eq. 8), context-sensitive dimension weighting via γ parameter, additive vs. multiplicative composition contrast (Sassoon & Fadlon 2017), 10 prediction theorems including goal sensitivity, γ-monotonicity, and edge-case sensitivity
-- **`Degree/Aggregation.lean`**: extracted category-neutral aggregation mechanisms (`weightedScore`, `countBinding`, `majorityBinding`, `boolMeasures`, `weightedBindingQ`, `AggregationType`) from `Adjective/Aggregation.lean`; unified `weightedScore` to ℚ-valued measure functions (Bool dims are the special case via `boolMeasures`)
+- **Waldon et al. 2023 study file** (`Phenomena/Gradability/Studies/WaldonEtAl2023.lean`): full RSA model via `RSAConfig` with Latent=Goal, beliefAction S1 pattern; 3 within-config `rsa_predict` theorems (object ordering), 3 cross-config `rsa_predict` theorems proving goal sensitivity at L1 level (`goal_sensitivity_flashlight`, `goal_sensitivity_boombox`, `goal_sensitivity_tablet`), multi-dimensional degree semantics (eq. 8), additive vs. multiplicative composition contrast (`multiplicativeScore` from Sassoon & Fadlon 2017), `AggregationType` classification
+- **`Degree/Aggregation.lean`**: extracted category-neutral aggregation mechanisms (`weightedScore`, `countBinding`, `majorityBinding`, `boolMeasures`, `weightedBindingQ`, `multiplicativeScore`, `AggregationType`) from `Adjective/Aggregation.lean`; unified `weightedScore` to ℚ-valued measure functions (Bool dims are the special case via `boolMeasures`)
 - **Bib entries**: `sassoon-fadlon-2017` (Glossa, DOI 10.5334/gjgl.155), `waldon-etal-2023` (SuB 27, pp. 674–692)
 
 ### Changed
-- **`Adjective/Aggregation.lean`**: now a bridge file — imports and re-exports `Degree.Aggregation`, retains Sassoon 2013 subsumption theorems (`conjunctive_is_countAll`, `disjunctive_is_countOne`, `sassoon_all_counting`)
+- **`Adjective/Aggregation.lean`**: now a bridge file — imports and re-exports `Degree.Aggregation` (including `multiplicativeScore`), retains Sassoon 2013 subsumption theorems (`conjunctive_is_countAll`, `disjunctive_is_countOne`, `sassoon_all_counting`)
 - **DAmbrosioHedden2024, Tham2025**: `weightedScore` calls updated to use `boolMeasures` lifter for Bool→ℚ unification
 
 ## [0.229.423] - 2026-03-23

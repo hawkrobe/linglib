@@ -1440,6 +1440,7 @@ def RExpr.normalize : RExpr → RExpr
   | .neg a => .neg a.normalize
   | .sub a b => .sub a.normalize b.normalize
   | .rexp a => .rexp a.normalize
+  | .rlog (.rexp inner) => inner.normalize  -- log(exp(x)) = x
   | .rlog a => .rlog a.normalize
   | .rpow a n => .rpow a.normalize n
   | .inv a => .inv a.normalize
@@ -1469,7 +1470,21 @@ def RExpr.normalize_denote : ∀ (e : RExpr), e.normalize.denote = e.denote
   | .div a b => congrArg₂ (· / ·) a.normalize_denote b.normalize_denote
   | .neg a => congrArg (- ·) a.normalize_denote
   | .sub a b => congrArg₂ (· - ·) a.normalize_denote b.normalize_denote
-  | .rlog a => congrArg Real.log a.normalize_denote
+  | .rlog (.rexp inner) => by
+    simp only [normalize, denote, Real.log_exp]; exact inner.normalize_denote
+  | .rlog (.nat n) => congrArg Real.log (normalize_denote (.nat n))
+  | .rlog (.ratCast q) => congrArg Real.log (normalize_denote (.ratCast q))
+  | .rlog (.add a b) => congrArg Real.log (normalize_denote (.add a b))
+  | .rlog (.mul a b) => congrArg Real.log (normalize_denote (.mul a b))
+  | .rlog (.div a b) => congrArg Real.log (normalize_denote (.div a b))
+  | .rlog (.neg a) => congrArg Real.log (normalize_denote (.neg a))
+  | .rlog (.sub a b) => congrArg Real.log (normalize_denote (.sub a b))
+  | .rlog (.rlog a) => congrArg Real.log (normalize_denote (.rlog a))
+  | .rlog (.rpow a n) => congrArg Real.log (normalize_denote (.rpow a n))
+  | .rlog (.inv a) => congrArg Real.log (normalize_denote (.inv a))
+  | .rlog (.iteZero a b c) => congrArg Real.log (normalize_denote (.iteZero a b c))
+  | .rlog (.expMulLogSub a b c) => congrArg Real.log (normalize_denote (.expMulLogSub a b c))
+  | .rlog (.rsqrt a) => congrArg Real.log (normalize_denote (.rsqrt a))
   | .rpow a 0 => congrArg (Real.rpow · 0) a.normalize_denote
   | .rpow a 1 => congrArg (Real.rpow · 1) a.normalize_denote
   | .rpow a (n + 2) => congrArg (Real.rpow · ↑(n + 2)) a.normalize_denote
@@ -1546,26 +1561,28 @@ theorem RExpr.not_gt_of_normalize_eq (lhs rhs : RExpr)
 /-- Tree-based comparison using `evalBothOpt`.
     Used by `rsa_predict` for sorry-free soundness proofs. -/
 def RExpr.checkGtOpt (lhs rhs : RExpr) : Bool :=
-  let (l_iv, l_valid) := lhs.evalBothOpt
-  let (r_iv, r_valid) := rhs.evalBothOpt
+  let (l_iv, l_valid) := lhs.normalize.evalBothOpt
+  let (r_iv, r_valid) := rhs.normalize.evalBothOpt
   l_valid && r_valid && decide (r_iv.hi < l_iv.lo)
 
 /-- Tree-based comparison for ¬(>). -/
 def RExpr.checkNotGtOpt (lhs rhs : RExpr) : Bool :=
-  let (l_iv, l_valid) := lhs.evalBothOpt
-  let (r_iv, r_valid) := rhs.evalBothOpt
+  let (l_iv, l_valid) := lhs.normalize.evalBothOpt
+  let (r_iv, r_valid) := rhs.normalize.evalBothOpt
   l_valid && r_valid && decide (l_iv.hi ≤ r_iv.lo)
 
 /-- If `checkGtOpt` succeeds, the denotations are ordered. -/
 theorem RExpr.gt_of_checkGtOpt (lhs rhs : RExpr)
     (h : lhs.checkGtOpt rhs = true) : lhs.denote > rhs.denote := by
   simp only [checkGtOpt, Bool.and_eq_true, decide_eq_true_eq] at h
+  rw [← lhs.normalize_denote, ← rhs.normalize_denote]
   exact QInterval.gt_of_separated (evalBothOpt_sound _ h.1.1) (evalBothOpt_sound _ h.1.2) h.2
 
 /-- If `checkNotGtOpt` succeeds, ¬(lhs > rhs). -/
 theorem RExpr.not_gt_of_checkNotGtOpt (lhs rhs : RExpr)
     (h : lhs.checkNotGtOpt rhs = true) : ¬(lhs.denote > rhs.denote) := by
   simp only [checkNotGtOpt, Bool.and_eq_true, decide_eq_true_eq] at h
+  rw [← lhs.normalize_denote, ← rhs.normalize_denote]
   exact not_lt.mpr (QInterval.le_of_separated (evalBothOpt_sound _ h.1.1) (evalBothOpt_sound _ h.1.2) h.2)
 
 -- ============================================================================
@@ -1674,6 +1691,12 @@ private unsafe def RExpr.evalBothOptCached (e : @& RExpr)
   cache.modify (·.insert addr result)
   return result
 
+-- Note: the cached implementations do NOT call .normalize because normalize
+-- allocates a fresh tree, destroying pointer sharing that evalBothOptCached
+-- relies on for O(unique-node) memoization via ptrAddrUnsafe. The reference
+-- implementations (checkGtOpt/checkNotGtOpt) normalize for kernel soundness;
+-- the cached versions are strictly more conservative (may miss some true results
+-- but never return a wrong true).
 private unsafe def RExpr.checkGtOptCachedImpl (lhs rhs : RExpr) : Bool :=
   unsafeBaseIO do
     let cache ← IO.mkRef (∅ : Std.HashMap USize (QInterval × Bool))

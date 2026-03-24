@@ -18,6 +18,9 @@ available aggregation functions:
 - **Majority** (§1): x is F iff a strict majority of dimensions are satisfied.
 - **Weighted** (§2): x is F iff Σᵢ wᵢ·fᵢ(x) ≥ θ (utilitarian aggregation).
   Subsumes @cite{tham-2025}'s eq. 47b and @cite{waldon-etal-2023}'s eq. 8.
+- **Multiplicative** (§4): x is F iff Πᵢ fᵢ(x) ≥ θ (Cobb-Douglas aggregation).
+  @cite{sassoon-fadlon-2017} argue natural kinds compose multiplicatively:
+  failure on ANY dimension kills membership.
 
 The weighted score is unified over ℚ-valued measure functions. Bool-valued
 dimension predicates are a special case via `boolMeasures`.

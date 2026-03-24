@@ -1,5 +1,6 @@
 import Linglib.Core.Interval.PadeExp
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Nat.Log
 
 set_option autoImplicit false
 
@@ -11,15 +12,17 @@ find `lo`, `hi` such that `exp(lo) ≤ q ≤ exp(hi)`, then refine by bisection.
 
 ## Strategy
 
-1. Initial bracket: `log(q) ∈ [-(q.den), q.num.natAbs]`
-   (since `exp(-d) ≤ 1/d ≤ q` and `exp(p) ≥ 1 + p ≥ p ≥ q` where `q = p/d`)
+1. Initial bracket: `log(q) ∈ [-(log₂(den)+1), log₂(num)+1]`
+   Uses bit lengths for a tight bracket proportional to `log(q)`, not `q` itself.
+   (since `n < 2^(log₂ n + 1) ≤ exp(log₂ n + 1)` for positive n)
 2. Bisect 50 iterations: check `exp(mid)` vs `q` using `expPoint` bounds
 3. Return `[lo, hi]` as `QInterval` containing `Real.log q`
 
 ## Precision
 
 50 bisection iterations on a bracket of width `W` give precision `W/2^50 ≈ W × 10⁻¹⁵`.
-For typical values (`q ∈ [10⁻⁴, 1]`, `W ≤ 10⁴`), precision ≈ `10⁻¹¹`.
+Bracket width is `log₂(num) + log₂(den) + 2`, so for 64-bit rationals: `W ≤ 130`,
+precision ≈ `1.2 × 10⁻¹³`.
 -/
 
 namespace Linglib.Interval
@@ -58,9 +61,13 @@ def logIterations : ℕ := 50
 
 /-- Point interval containing `log(q)` for rational `q > 0`.
 
-    Initial bracket: `[-(q.den), q.num.natAbs]`.
-    - Lower: `exp(-d) ≤ 1/d ≤ p/d = q` (since `p ≥ 1`, `d ≥ 1`)
-    - Upper: `exp(p) ≥ 1 + p ≥ p ≥ p/d = q`
+    Initial bracket: `[-(Nat.log 2 q.den + 1), Nat.log 2 q.num.natAbs + 1]`.
+    This uses bit lengths instead of raw values, giving a bracket width
+    proportional to `log₂(q)` rather than `q` itself — critical for
+    large-denominator rationals from interval arithmetic chains.
+
+    Lower: `exp(-(log₂ d + 1)) < 1/d ≤ q` since `d < 2^(log₂ d + 1) ≤ exp(log₂ d + 1)`.
+    Upper: `q ≤ p ≤ exp(log₂ p + 1)` by the same argument.
 
     50 bisection iterations narrow this to precision `bracket_width / 2^50`. -/
 def logPoint (q : ℚ) (_hq : 0 < q) : QInterval :=
@@ -69,12 +76,12 @@ def logPoint (q : ℚ) (_hq : 0 < q) : QInterval :=
   -- because exp(0) = 1 = q and the Padé interval straddles the target.
   if q = 1 then QInterval.exact 0
   else
-  let lo₀ : ℚ := -(↑q.den : ℚ)
-  let hi₀ : ℚ := ↑q.num.natAbs
+  let lo₀ : ℚ := -(↑(Nat.log 2 q.den + 1) : ℚ)
+  let hi₀ : ℚ := ↑(Nat.log 2 q.num.natAbs + 1)
   have hle₀ : lo₀ ≤ hi₀ := by
-    show -(↑q.den : ℚ) ≤ ↑q.num.natAbs
-    have : (0 : ℚ) ≤ ↑q.den := Nat.cast_nonneg _
-    have : (0 : ℚ) ≤ ↑q.num.natAbs := Nat.cast_nonneg _
+    show -(↑(Nat.log 2 q.den + 1) : ℚ) ≤ ↑(Nat.log 2 q.num.natAbs + 1)
+    have : (0 : ℚ) ≤ ↑(Nat.log 2 q.den + 1) := Nat.cast_nonneg _
+    have : (0 : ℚ) ≤ ↑(Nat.log 2 q.num.natAbs + 1) := Nat.cast_nonneg _
     linarith
   let ⟨(lo, hi), hle⟩ := logBisectCore q lo₀ hi₀ hle₀ logIterations
   ⟨lo, hi, hle⟩
@@ -82,6 +89,27 @@ def logPoint (q : ℚ) (_hq : 0 < q) : QInterval :=
 /-- n ≤ exp(n) for natural numbers, since exp(x) ≥ 1 + x ≥ x. -/
 private theorem nat_le_exp (n : ℕ) : (↑n : ℝ) ≤ Real.exp (↑n : ℝ) :=
   le_trans (le_add_of_nonneg_right zero_le_one) (Real.add_one_le_exp _)
+
+/-- 2^k ≤ exp(k) for natural k, since exp(1) ≥ 2 and exp is multiplicative. -/
+private theorem pow2_le_exp (k : ℕ) : (2 : ℝ) ^ k ≤ Real.exp (↑k : ℝ) := by
+  induction k with
+  | zero => simp [Real.exp_zero]
+  | succ n ih =>
+    have h2 : (2 : ℝ) ≤ Real.exp 1 := by linarith [Real.add_one_le_exp (1 : ℝ)]
+    calc (2 : ℝ) ^ (n + 1) = 2 ^ n * 2 := pow_succ 2 n
+      _ = 2 * 2 ^ n := by ring
+      _ ≤ Real.exp 1 * Real.exp (↑n) := mul_le_mul h2 ih (pow_nonneg (by norm_num) n)
+            (Real.exp_nonneg _)
+      _ = Real.exp (1 + ↑n) := (Real.exp_add 1 ↑n).symm
+      _ = Real.exp (↑(n + 1) : ℝ) := by push_cast; ring_nf
+
+/-- n < exp(Nat.log 2 n + 1) for positive n, using n < 2^(log₂ n + 1) ≤ exp(log₂ n + 1). -/
+private theorem lt_exp_log2_succ (n : ℕ) (_hn : 0 < n) :
+    (↑n : ℝ) < Real.exp (↑(Nat.log 2 n + 1) : ℝ) := by
+  have h1 : n < 2 ^ (Nat.log 2 n + 1) := Nat.lt_pow_succ_log_self (by norm_num) n
+  calc (↑n : ℝ) < ↑(2 ^ (Nat.log 2 n + 1) : ℕ) := by exact_mod_cast h1
+    _ = (2 : ℝ) ^ (Nat.log 2 n + 1) := by push_cast; ring
+    _ ≤ Real.exp (↑(Nat.log 2 n + 1) : ℝ) := pow2_le_exp _
 
 /-- logBisectCore preserves the bisection invariant exp(lo) ≤ q ≤ exp(hi). -/
 private theorem logBisectCore_sound (q : ℚ) (lo hi : ℚ) (hle : lo ≤ hi) (n : ℕ)
@@ -102,29 +130,33 @@ private theorem logBisectCore_sound (q : ℚ) (lo hi : ℚ) (hle : lo ≤ hi) (n
           (le_trans (by exact_mod_cast h_le_mid) (expPoint_containsReal _).1)
       · exact ih _ _ _ h_lo h_hi
 
-/-- Initial lower bracket: exp(-den) ≤ q for q > 0.
-    Since exp(d) ≥ d, we get exp(-d) = 1/exp(d) ≤ 1/d ≤ num/d = q. -/
+/-- Initial lower bracket: exp(-(Nat.log 2 den + 1)) ≤ q for q > 0.
+    Since den < 2^(log₂ den + 1) ≤ exp(log₂ den + 1), we get
+    exp(-(log₂ den + 1)) ≤ 1/den ≤ q. -/
 private theorem initial_lower_bound (q : ℚ) (hq : 0 < q) :
-    Real.exp (↑(-(↑q.den : ℚ)) : ℝ) ≤ (↑q : ℝ) := by
+    Real.exp (↑(-(↑(Nat.log 2 q.den + 1) : ℚ)) : ℝ) ≤ (↑q : ℝ) := by
   have hd_pos : (0 : ℝ) < ↑q.den := by exact_mod_cast Nat.cast_pos.mpr q.pos
   have hnum_pos : 0 < q.num := Rat.num_pos.mpr hq
-  push_cast
-  calc Real.exp (-(↑q.den : ℝ))
-      = (Real.exp (↑q.den : ℝ))⁻¹ := Real.exp_neg _
-    _ ≤ (↑q.den : ℝ)⁻¹ := inv_anti₀ hd_pos (nat_le_exp q.den)
-    _ = 1 / (↑q.den : ℝ) := (one_div (↑q.den : ℝ)).symm
-    _ ≤ ↑q.num / ↑q.den := by
-        apply div_le_div_of_nonneg_right _ hd_pos.le
-        exact_mod_cast hnum_pos
-    _ = ↑q := by exact_mod_cast Rat.num_div_den q
+  have hd_lt_exp : (↑q.den : ℝ) < Real.exp (↑(Nat.log 2 q.den + 1) : ℝ) :=
+    lt_exp_log2_succ q.den q.pos
+  have hgoal : Real.exp (-(↑(Nat.log 2 q.den + 1) : ℝ)) ≤ (↑q : ℝ) := by
+    calc Real.exp (-(↑(Nat.log 2 q.den + 1) : ℝ))
+        = (Real.exp (↑(Nat.log 2 q.den + 1) : ℝ))⁻¹ := Real.exp_neg _
+      _ ≤ (↑q.den : ℝ)⁻¹ := inv_anti₀ hd_pos hd_lt_exp.le
+      _ = 1 / (↑q.den : ℝ) := (one_div (↑q.den : ℝ)).symm
+      _ ≤ ↑q.num / ↑q.den := by
+          apply div_le_div_of_nonneg_right _ hd_pos.le
+          exact_mod_cast hnum_pos
+      _ = ↑q := by exact_mod_cast Rat.num_div_den q
+  simp only [Rat.cast_neg, Rat.cast_natCast] at hgoal ⊢
+  exact hgoal
 
-/-- Initial upper bracket: q ≤ exp(natAbs(q.num)) for q > 0. -/
+/-- Initial upper bracket: q ≤ exp(Nat.log 2 num + 1) for q > 0. -/
 private theorem initial_upper_bound (q : ℚ) (hq : 0 < q) :
-    (↑q : ℝ) ≤ Real.exp (↑(↑q.num.natAbs : ℚ) : ℝ) := by
-  have hd_pos : (0 : ℚ) < ↑q.den := Nat.cast_pos.mpr q.pos
+    (↑q : ℝ) ≤ Real.exp (↑(↑(Nat.log 2 q.num.natAbs + 1) : ℚ) : ℝ) := by
   have hnum_pos : 0 < q.num := Rat.num_pos.mpr hq
+  have hna_pos : 0 < q.num.natAbs := Int.natAbs_pos.mpr (ne_of_gt hnum_pos)
   have h_q_le : q ≤ (↑q.num.natAbs : ℚ) := by
-    -- q * den = num, and den ≥ 1, so q ≤ num = natAbs
     have h1 : q * ↑q.den = ↑q.num := by exact_mod_cast Rat.mul_den_eq_num q
     have h2 : (1 : ℚ) ≤ ↑q.den := by exact_mod_cast q.pos
     have h3 : q ≤ q * ↑q.den :=
@@ -133,8 +165,12 @@ private theorem initial_upper_bound (q : ℚ) (hq : 0 < q) :
     exact le_trans h4 (by
       show (↑q.num : ℚ) ≤ ↑(↑q.num.natAbs : ℤ)
       exact_mod_cast le_of_eq (Int.natAbs_of_nonneg hnum_pos.le).symm)
-  calc (↑q : ℝ) ≤ (↑(↑q.num.natAbs : ℚ) : ℝ) := by push_cast; exact_mod_cast h_q_le
-    _ ≤ Real.exp (↑(↑q.num.natAbs : ℚ) : ℝ) := by push_cast; exact nat_le_exp _
+  have hgoal : (↑q : ℝ) ≤ Real.exp (↑(Nat.log 2 q.num.natAbs + 1) : ℝ) := by
+    calc (↑q : ℝ) ≤ (↑q.num.natAbs : ℝ) := by exact_mod_cast h_q_le
+      _ ≤ Real.exp (↑(Nat.log 2 q.num.natAbs + 1) : ℝ) :=
+            le_of_lt (lt_exp_log2_succ q.num.natAbs hna_pos)
+  simp only [Rat.cast_natCast] at hgoal ⊢
+  exact hgoal
 
 /-- Containment theorem for logPoint: the bisection invariant exp(lo) ≤ q ≤ exp(hi)
     implies lo ≤ log(q) ≤ hi by monotonicity of log. -/
@@ -148,9 +184,11 @@ theorem logPoint_containsReal (q : ℚ) (hq : 0 < q) :
     simp [QInterval.exact, QInterval.containsReal, Real.log_one]
   · -- q ≠ 1: bisection
     simp only [QInterval.containsReal]
-    have hle₀ : -(↑q.den : ℚ) ≤ (↑q.num.natAbs : ℚ) := by
-      linarith [Nat.cast_nonneg (α := ℚ) q.den, Nat.cast_nonneg (α := ℚ) q.num.natAbs]
-    have hsound := logBisectCore_sound q (-(↑q.den : ℚ)) (↑q.num.natAbs) hle₀
+    have hle₀ : -(↑(Nat.log 2 q.den + 1) : ℚ) ≤ (↑(Nat.log 2 q.num.natAbs + 1) : ℚ) := by
+      linarith [Nat.cast_nonneg (α := ℚ) (Nat.log 2 q.den + 1),
+                Nat.cast_nonneg (α := ℚ) (Nat.log 2 q.num.natAbs + 1)]
+    have hsound := logBisectCore_sound q
+        (-(↑(Nat.log 2 q.den + 1) : ℚ)) (↑(Nat.log 2 q.num.natAbs + 1)) hle₀
         logIterations (initial_lower_bound q hq) (initial_upper_bound q hq)
     have hq_pos : (0 : ℝ) < ↑q := by exact_mod_cast hq
     constructor

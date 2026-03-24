@@ -17,7 +17,7 @@ variable {α : Type}
 -- Re-export general mechanisms so existing consumers don't break
 export Semantics.Degree.Aggregation (countBinding majorityBinding
   weightedScore boolMeasures weightedBinding weightedBindingQ
-  AggregationType countBinding_zero)
+  multiplicativeScore AggregationType countBinding_zero)
 
 open Semantics.Degree.Aggregation
 
