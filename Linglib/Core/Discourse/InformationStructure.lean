@@ -185,7 +185,7 @@ inductive DiscourseStatus where
   deriving DecidableEq, Repr, BEq
 
 /-- Ordinal rank: given < new < focused.
-    Used by extraction-acceptability theories (@cite{lu-degen-2025}) and
+    Used by extraction-acceptability theories (@cite{lu-pan-degen-2025}) and
     focus-comparison constraints (@cite{winckel-et-al-2025}). -/
 def DiscourseStatus.rank : DiscourseStatus → Fin 3
   | .given   => 0
@@ -376,6 +376,44 @@ inductive FIPApplication where
   /-- Question-answer congruence -/
   | qaCongruence
   deriving DecidableEq, Repr, BEq
+
+/-! ## Extraction and Information-Structural Clash
+@cite{erteschik-shir-1973} @cite{abeille-et-al-2020}
+
+Wh-extraction foregrounds ([FoC]) the moved element. Extracting from a
+backgrounded ([G]) domain creates an information-structural clash: the
+element is supposed to address the QUD (as [FoC]) but belongs to a
+dimension the QUD ignores (as [G]).
+
+This is the constraint underlying both @cite{erteschik-shir-1973}'s
+Dominance Condition on Extraction and @cite{abeille-et-al-2020}'s Focus
+Background Constraint (FBC): "a focused element should not be part of
+a backgrounded constituent." -/
+
+/-- **Information-structural extraction clash** (@cite{erteschik-shir-1973},
+@cite{abeille-et-al-2020}): a focused filler extracted from a backgrounded
+domain creates an incompatibility between the filler's discourse function
+(addressing the QUD) and the domain's discourse status (QUD-invisible).
+
+Both parameters are free, enabling use in:
+- MoS islands: `extractionISClash .focused domainStatus` (filler always focused)
+- Subject islands: `extractionISClash (fillerIS c) (subjectIS c)` (filler varies by construction)
+- General FBC: `extractionISClash extractedStatus governorStatus` -/
+def extractionISClash (fillerStatus domainStatus : DiscourseStatus) : Bool :=
+  fillerStatus == .focused && domainStatus == .given
+
+/-- Extraction of a focused element from a backgrounded domain clashes. -/
+theorem extractionISClash_focused_given :
+    extractionISClash .focused .given = true := rfl
+
+/-- Extraction from an at-issue domain does not clash. -/
+theorem extractionISClash_focused_new :
+    extractionISClash .focused .new = false := rfl
+
+/-- Non-focused extraction from a backgrounded domain does not clash
+(e.g., relative clause heads, topics). -/
+theorem extractionISClash_given_given :
+    extractionISClash .given .given = false := rfl
 
 end Core.InformationStructure
 

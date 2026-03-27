@@ -96,15 +96,11 @@ theorem fillerIS_varies :
     "A focused element should not be part of a backgrounded constituent."
 
 A violation occurs when a focused filler is extracted from a backgrounded
-domain. The FBC is relational: it depends on the IS profiles of *both* the
-filler and the extraction domain. -/
-def fbcViolation (fillerStatus domainStatus : DiscourseStatus) : Bool :=
-  fillerStatus == .focused && domainStatus == .given
-
-/-- The FBC predicts a subject island effect for a given construction
-iff extracting from a subject creates an IS clash. -/
+domain. This is exactly `extractionISClash` from `Core/InformationStructure.lean`,
+which unifies this constraint with @cite{erteschik-shir-1973}'s Dominance
+Condition on Extraction. -/
 def fbcPredictsIsland (c : FGDConstruction) : Bool :=
-  fbcViolation (fillerIS c) (subjectIS c)
+  extractionISClash (fillerIS c) (subjectIS c)
 
 -- ============================================================================
 -- §2b. Revised FBC (@cite{winckel-et-al-2025})
