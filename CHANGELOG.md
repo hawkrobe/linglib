@@ -1,5 +1,172 @@
 # Changelog
 
+## [0.229.448] - 2026-03-27
+
+### Changed
+- **Cascade.lean audit**: removed unused `SelectionMode`, added `Cascade.causStrength` (derived from `hasHead "CAUS"`), `Cascade.argPosition`/`specCCommands` (c-command over cascade positions), `Cascade.shiftSites` (HNPS landing sites from cascade depth)
+- **Pesetsky1995.lean audit**: replaced vacuous `both_accounts_predict_tsm_data` (`x = x`) with real `both_accounts_predict_cause_sm_illformed` connecting HMC + Onset Condition + empirical data; added `accounts_diverge_on_cause_target` (Pesetsky-Kim symmetry divergence); T/SM mutual exclusivity (`t_sm_exclusive_in_target/sm`, `source_determines_unique_stimulus`); rewrote §3 backward binding with c-command (`causer_ccommands_experiencer_base`, `experiencer_does_not_ccommand_causer_base`, `causer_is_cascade_internal`); replaced stipulative CAUS strength with derived `Cascade.causStrength`; added `cascadeForSource` with per-verb derivation theorems; §10 natural/arbitrary predicates (`isNaturalPredicate`); §11 HNPS cascade depth hierarchy (`shift_site_hierarchy`)
+
+## [0.229.447] - 2026-03-27
+
+### Added
+- **CyclicLinearization.lean**: `allPrecs_before_mem` (symmetric to after_mem), `spellout_preserves` (Order Preservation monotonicity), Holmberg's Generalization theorems (`object_shift_with_verb_movement`, `object_shift_without_verb_movement`), transitive cycle detection (`hasCycle`, `reachable`, `reachGo`) with `native_decide` tests showing `hasCycle` detects transitive cycles that `hasContradiction` misses
+- **ErlewineSommerlot2025.lean**: Voice bridge to Core Minimalist infrastructure — `vFlavorToCore`, `clauseToVoiceHead`, `voice_always_phase`, `malayic_passive_phase_diverges` (documents E&S vs Chomsky/Collins phase divergence), `active_consistent_with_core`
+- **references.bib**: `nomoto-2015`, `nomoto-2021`, `jeoung-2017` — all three cited in VoiceSystem.lean but previously missing
+
+### Fixed
+- **CyclicLinearization.lean**: docstring now accurately describes Holmberg's Generalization as formalized (was over-claiming without theorems); `hasContradiction` docstring clarifies it only checks direct cycles
+
+## [0.229.446] - 2026-03-27
+
+### Added
+- **`Theories/Syntax/Minimalism/Core/Cascade.lean`**: Cascade structures from Pesetsky 1995 "Zero Syntax" — `CascadeHead` (label, overt, affixal), `Cascade` inductive (binary-branching PP spine), `canReachV` HMC reachability predicate, named zero morpheme heads (CAUS, G, TEMP, SUG), named overt prepositions (at, about, to, of), `CausVariant` (affixal/prepositional), `CausStrength` (strong/weak/absent), `thetaSuppressed`, 15 verification theorems including `nonaffixal_blocks` and `all_affixal_reachable`
+- **`Phenomena/PsychVerbs/Studies/Pesetsky1995.lean`**: Cascade-based analysis of Class II psych verbs — concrete cascades for Target/SM/DOC/dative configurations, T/SM restriction derived from HMC (`tsm_restriction_via_hmc`), backward binding prediction, double object alternation (G vs *to*), θ-suppression by CAUS affixation, CAUS ≠ vCAUSE bridge, bridge theorems connecting Pesetsky's syntactic HMC account to Kim 2024's semantic Onset Condition, per-verb cascade decomposition for annoy/concern/frighten/interest
+
+## [0.229.445] - 2026-03-26
+
+### Removed
+- **`Interfaces/SyntaxSemantics/Minimalism/CausalSourceBridge.lean`**: deleted — the file misrepresented Pesetsky 1995's "Zero Syntax" thesis (which is about zero *morphemes* in syntax, not about syntax contributing nothing). The T/SM distinction has syntactic consequences in Pesetsky's account (Head Movement Constraint), not "zero syntax." CAUS is a word-internal zero morpheme, not Voice_CAUSE. Theorems like `pesetskyCAUS = pesetskyCAUS := rfl` proved nothing. No downstream consumers existed
+- **`Core/Interval/RSAVerify.lean`**: deleted 847-line orphaned file — interval-arithmetic L1 pipeline superseded by RExpr reflection + RSABuilder; zero imports, zero references to any definition; soundness theorems were already deleted in 0.228.89
+
+### Fixed
+- **PsychCausation.lean**: corrected `StimulusType` docstring — replaced false "T/SM has zero syntax" claim with Pesetsky's actual argument (T/SM restriction has syntactic consequences via Head Movement Constraint)
+
+## [0.229.444] - 2026-03-26
+
+### Removed
+- **`Core/NounClass.lean`**: deleted — the file applied the privative pair framework to noun class speculatively, with no literature basis (Harbour 2016 does not extend the phi kernel to noun class; the containment direction has no semantic motivation; 3^n class counts don't match empirical data). No downstream consumers existed
+
+### Fixed
+- **PrivativePair.lean**: removed false claim that nominal classification is a third phi-kernel domain; docstring now accurately says the skeleton covers person and number only
+
+## [0.229.443] - 2026-03-26
+
+### Added
+- **Harbour Ch 6 number impossibility theorem** (`FeatureRecursion.lean` §§ 7–10): `HarbourConfig` (complete 4-Bool parameter space for number feature activation), `categories` (generated number categories), markedness `PartialOrder` on `Category` (Mathlib `PartialOrder`/`Fintype`), **`categories_isLowerSet`** — the generated categories form a lower set (`IsLowerSet`) in the markedness order, subsuming ALL of Corbett's implicational universals (trial → dual → plural → singular, etc.) in a single lattice-theoretic theorem
+- **Bridge to Corbett2000** (`Harbour2016.lean` § 11): `attested_number_systems_derivable` — every attested number system (Pirahã, English, Russian, Upper Sorbian, Bayso, Slovene, Larike, Lihir, Japanese) is a subset of categories generated by some well-formed Harbour configuration
+
+## [0.229.442] - 2026-03-26
+
+### Added
+- **`Core/NounClass.lean`**: nominal classification as `PhiFeatures` instance (structural analogy to person/number, not sourced from Harbour 2016). `no_fourth_class` inherited from `PhiFeatures.no_four_way`. Multi-pair conjunction: `maxClasses n = 3^n`
+- **`Theories/Syntax/Minimalism/Agreement/FeatureRecursion.lean`**: feature recursion mechanism from @cite{harbour-2016} Ch 6. `Region` (recursion-eligible lattice region), `RecursiveNumber` (trial, greater plural, unit augmented, augmented). `no_singular_recursion` (atoms cannot be recursed), `recursion_yields_two` (each recursion splits a region into exactly 2 categories)
+- **Harbour 2016 CyclicAgree bridge** (`Harbour2016.lean` § 10): `specLevel_agrees_with_segments` — formal bridge proving `PhiFeatures.specLevel + 1 = segment count` for each person value in the standard geometry, connecting @cite{harbour-2016}'s algebraic hierarchy to @cite{bejar-rezac-2009}'s syntactic one
+
+### Changed
+- **Harbour2016 improvements**: `Clusivity` inductive replaces `Option Bool`; `no_exclusive_without_inclusive` strengthened to system-level statement (existence of exclusive implies existence of inclusive); DiscourseGroup docstring clarifies representational guards vs Harbour's theory; module docstring updated with chapter references
+- **Removed backward-compat abbrevs**: `Features.toPrivativePair` removed from `Core/Person.lean` and `Core/Number.lean` — use `PhiFeatures.toPair` directly
+- **PhiSemantics docstring bridge**: added paragraph connecting SPEAKER ⊂ PARTICIPANT ⊂ π hierarchy to `Core.PrivativePair`
+
+## [0.229.441] - 2026-03-26
+
+### Added
+- **`Core/PrivativePair.lean`**: theory-neutral abstraction over pairs of privative features with containment ([+inner] → [+outer]). Three well-formed cells, impossibility of a 4th (`no_four_way`), specification ordering. Unifies the structural parallel between Person [±participant, ±author] and Number [±minimal, ±atomic]
+- **Person PrivativePair bridge** (`Core/Person.lean` § 5): `PhiFeatures` instance, `no_fourth_person` (no 4-way singular person distinction — derived from `PrivativePair.no_four_way`)
+- **Number PrivativePair bridge** (`Core/Number.lean` § 6): `PhiFeatures` instance, `no_fourth_base_number` (no 4-way base number distinction)
+- **Harbour 2016 study file** (`Phenomena/Agreement/Studies/Harbour2016.lean`): set-level person features via `DiscourseGroup`, derivation of Cysouw's 8 categories from discourse roles × atomicity, person–number isomorphism (`person_number_isomorphism`), clusivity derived from person × atomicity (not a separate feature), impossibility results, containment hierarchy = specification ordering
+
+## [0.229.440] - 2026-03-26
+
+### Changed
+- **SyntaxPhonology interface populated**: `Spellout.lean` (Vocabulary Insertion / Elsewhere Condition) and `LCA.lean` (Linear Correspondence Axiom / linearization) moved from `Theories/Syntax/Minimalism/` to `Theories/Interfaces/SyntaxPhonology/Minimalism/` — these bridge narrow syntax to PF, parallel to the existing SyntaxSemantics interface on the LF side
+
+## [0.229.439] - 2026-03-26
+
+### Changed
+- **PhiSemantics moved** `Core/PhiSemantics.lean` → `Theories/Interfaces/SyntaxSemantics/Minimalism/PhiSemantics.lean` — φ-feature semantics maps syntactic features to semantic denotations, deriving the PCC. This is a syntax-semantics interface, not framework-agnostic infrastructure. Namespace `Core.PhiSemantics` → `Minimalism.PhiSemantics`
+- **Parameterized feature containment PCC** (`featureContainmentLicit`): generic over any feature mapping `P → Finset F`. Structural properties (reflexivity, transitivity, antisymmetry on feature sets, totality given chain hypothesis) proved generically — study files instantiate and derive
+- **Toosarvandani 2023 PCC now derived**: `pccLicit = featureContainmentLicit PronType.features`; `pcc_refl`, `pcc_trans`, `pcc_total` derived from generic theorems + `zapotec_features_chain` (Zapotec-specific chain property, proved by `native_decide`)
+
+### Added
+- **Gender resolution deepening** (`GenderResolution.lean`): `intersectFeatures_self` — full proof (no sorry) that intersection is idempotent, via `List.filter_eq_self` + `List.elem_eq_true_of_mem`. `resolve_idempotent` — resolving a bundle with itself yields its percolated i-features. `resolveN` — n-ary resolution via iterated intersection, with `resolveN_binary` proving binary subsumption. `satisfiesMRH` — Mismatch Resolution Hypothesis as a decidable predicate. `FeatureOrder` — feature geometry structure with derived `entails` and `satisfiesMRH'`
+- **Subset Principle vocabulary** (`VocabularyInsertion.lean`): `FeatureVI` structure + `subsetPrinciple` function — lightweight feature-subset vocabulary items for DM's Subset Principle. `elsewhere_always_matches` theorem
+- **A&A 2025 deepening** (§16–19): Greek/BCS vocabularies as `FeatureVI` items with `subsetPrinciple` verification against ad-hoc `greekVI`/`bcsVI`. `FeatureOrder` instances for Greek/Icelandic geometries with entailment theorems. MRH verification (both Greek and Icelandic satisfy MRH). N-ary coordination examples (3+ conjuncts) for all three languages
+- **Carstens 2026 deepening** (§16–17): Bantu MRH failure (full inventory and interpretable-only both fail MRH, unlike Greek). N-ary Bantu resolution: uniform cores succeed, any mismatch or uninterpretable conjunct blocks matching
+
+### Changed
+- **Unified `resolve` API**: `GenderResolution.resolve` is now the single compositional endpoint. Deleted: `resolveUniform`, `genderResolve`, `genderOp`, `resolvedFeatures`, `Outcome` type. `PhiBundle.gender` changed from `AnnotatedFeature G` to `FeatureBundle G`; `PhiResolved.gender` from `Option G` to `Option (List G)`
+
+## [0.229.438] - 2026-03-26
+
+### Added
+- **SINGULAR/PLURAL operators** (`Core/PhiSemantics.lean`): `singularFilter` (atomic sums, card = 1) and `pluralFilter` (nonatomic sums, card > 1) — intersection-mode number operators per Toosarvandani 2023 (56)
+- **Toosarvandani 2023 composition order** (§11): ⊕ and ∩ SINGULAR do not commute — proved `correct_1sg` (⊕ first yields {speaker}), `oplus_singular_noncommutative`, `wrong_order_produces_plural` ({speaker, addressee} in wrong-order result). Formalizes the paper's §3.2 argument for why person and number occupy different functional heads
+- **Toosarvandani 2023 feature denotation containment** (§10): elderDen ⊆ humanDen ⊆ animateDen ⊆ piDen at the atom level, paralleling the pronoun-level chain
+- **Toosarvandani 2023 bridges to Core** (§12): `PronType.toPersonFeatures` → `Core.Person.Features` with `person_features_consistent` proving agreement with PersonLevel route; `PronType.toAnimacyLevel` → `Core.Prominence.AnimacyLevel` with `zapotec_refines_3way` showing the 4-way system makes finer distinctions within AnimacyLevel.human
+
+### Fixed
+- **Hallucinated page numbers**: `toosarvandani-2023` bib entry and study file docstring corrected from 695–740 to 760–805
+
+### Changed
+- **Toosarvandani 2023 PCC rewrite**: replaced stipulated numeric ranking (`PhiRank`) with feature containment per paper's (86): `DFeature` enum, `PronType.features` mapping pronoun types to feature sets, `pccLicit` via `obj.features ⊆ subj.features`. Same-rank pairs now correctly licit (21 licit / 36 total, was 16). Added structural properties (reflexivity, antisymmetry, transitivity, totality), denotation↔PCC correspondence chain, and `PersonLevel` bridge
+- **`Core/PhiSemantics.lean` cleanup**: removed PCC types (`PhiRank`, `pccStrongLicit`, `pccWeakLicit`) — PCC is study-specific, not framework infrastructure
+
+## [0.229.436] - 2026-03-26
+
+### Added
+- **Theory-level self-matching theorems** (`GenderResolution.lean`): `singleton_self_matching` — universally quantified proof that a singleton interpretable feature bundle self-matches under resolution (requires `LawfulBEq`). `singleton_u_default` — uninterpretable features always yield default
+- **Subsumption bridge** (`CoordinateResolution.lean`): `single_feature_subsumption` — multi-feature `GenderResolution.resolve` on singleton bundles agrees with single-feature `genderResolve`, connecting A&A's multi-feature framework to the composed `resolveCoordinate`
+- **Cross-study bridge** (`Carstens2026.lean`): imports `AdamsonAnagnostopoulou2025`, adds `aa_resolve_is_inner` (A&A's `resolvedFeatures` is the inner computation of `GenderResolution.resolve`) and `bantu_aa_self_matching_consistent` (both studies' self-matching properties are instances of the same parameterized mechanism)
+- **A&A 2025 geometry functions** (§14): `greekGeometry`/`icelandicGeometry` map base gender nodes to full entailed iF bundles. 8 verified theorems: geometry→resolution outcomes, faithfulness to noun data, entailment asymmetry (Greek FEM entails MASC; Icelandic FEM independent of MASC)
+- **A&A 2025 missing predictions**: §7b (fixed-gender H+I PF convergence, 3 theorems for paper's (57a-b)), §7c (uniform inanimate patterns, 3 theorems for (38a-c)), Icelandic inanimate data (`isIF`/`isIM`/`isIN`), BCS neuter noun (`bcsN`) with two-step N+F derivation
+
+### Fixed
+- **A&A 2025 (59) citation fix**: was testing `isIN & isIN` (identical neuters), now correctly tests `isIF & isIM` (F+M inanimate mismatch per paper)
+- **A&A 2025 (69-70) citation fix**: was testing `bcsIM & bcsIF` (M+F), now correctly uses `bcsN` for neuter and separates gender resolution ({CLASS}) from coordination-introduced INDIV
+- **A&A 2025 `hiConverges` → `gkHIConverges`**: renamed to reflect Greek-specificity (uses `greekVI`)
+
+## [0.229.435] - 2026-03-26
+
+### Added
+- **φ-Feature Semantics API** (`Core/PhiSemantics.lean`): unified denotational API for person and animacy features as lattice predicates over finite individual domains. `oplus` (⊕) operator for pointwise join composition via Finset product+image (Harbour 2016, Kratzer 2009), `lexComp` for Lexical Complementarity, `PhiDomain` structure parameterizing speaker/addressee/animacy predicates with hierarchy constraints. Feature denotations (`speakerDen`, `participantDen`, `elderDen`, `humanDen`, `animateDen`, `piDen`), pronoun composition via nested ⊕, third-person restriction, LC chain, and `PhiRank` 6-level PCC hierarchy extending person with animacy
+- **Santiago Laxopa Zapotec fragment** (`Fragments/Zapotec/Basic.lean`): 6-individual domain (`ZapInd`) with 4-way animacy (elder/human/animal/inanimate), `PhiDomain` instance
+- **Toosarvandani 2023 study file** (`Phenomena/Agreement/Studies/Toosarvandani2023.lean`): 30+ verified theorems — heterogeneity (elder pronouns refer to mixed groups via ⊕), ⊕ associativity, denotation containment chain (elderPron ⊆ humanPron ⊆ animalPron ⊆ π), all 36 PCC IO×DO combinations, LC disjointness
+- **Bib entries**: `toosarvandani-2023` (Language 99(4)), `harbour-2016` (Impossible Persons, MIT Press)
+
+## [0.229.434] - 2026-03-26
+
+### Added
+- **Adamson & Anagnostopoulou 2025 study file** (`Phenomena/Agreement/Studies/AdamsonAnagnostopoulou2025.lean`): full formalization of the paper's core predictions — privative gender feature nodes (`GenderNode`), language-specific feature geometries for Greek (CLASS > MASC > FEM), Icelandic (MASC ∥ FEM), and BCS (CLASS > INDIV > MASC > ANIM > FEM), vocabulary schemas (Subset Principle), dual-feature system (iF/uF), redundancy rule at Transfer, H+I coordination PF crash predictions. 30 verified theorems including all six cells of Table 2, fixed-gender human resolution, ABA syncretism exclusion, and clausal subject defaults. Resolution reuses `GenderResolution.resolve` instantiated with `GenderNode`
+- **Harley & Ritter 2002 bib entry** (`harley-ritter-2002`): feature-geometric analysis of person and number in pronouns, cited in A&A 2025
+
+### Fixed
+- **GenderResolution.lean docstring**: corrected inaccurate Greek summary — neuter for inanimates results from iCLASS-only intersection mapped via Subset Principle, not from "empty intersection → default"; added Icelandic and BCS summaries
+
+## [0.229.433] - 2026-03-26
+
+### Changed
+- **Move GenderResolution + CoordinateResolution to Theories/Syntax/Minimalism/Agreement/**: both files are pure theory (types, operators, properties) with no empirical data — they belong in `Theories/`, not `Phenomena/`. The i/u feature distinction and percolation-and-intersection mechanism are Minimalist machinery (Agree, feature valuation). Study files (Carstens2026, Corbett2000) remain in `Phenomena/Agreement/Studies/` and import the new paths
+- **A&A 2025 bib entry**: upgraded `role` from `cited` to `formalized` — `GenderResolution.lean` directly implements their percolation-and-intersection mechanism
+
+## [0.229.432] - 2026-03-26
+
+### Added
+- **Unified coordinate resolution** (`Theories/Syntax/Minimalism/Agreement/CoordinateResolution.lean`): `ResolutionOp` abstraction capturing the common architecture across phi-dimensions — percolation of i-features, dimension-specific resolution, language-specific default. Three instances: number (summation, Corbett 2000), person (hierarchy, Noyer 1997), gender (intersection, A&A 2025). Composed `resolveCoordinate` resolves all three in parallel via `PhiBundle`/`PhiResolved`. Key structural result: `gender_only_fallible` — number and person always succeed, gender is the only dimension where resolution can fail
+- **Carstens2026 ↔ CoordinateResolution bridge** (§15): `unified_gender_eq` proves Bantu `resolveUniform` is the gender-dimension projection of unified resolution. `bantuDP` constructs phi-bundles from `GenderStatus`. End-to-end composed theorems: `bantu_coordinate_number` (sg+sg→pl), `bantu_coordinate_person` (3rd+3rd→3rd), `bantu_coordinate_gender` (agrees with `resolveUniform`)
+- **Corbett2000 ↔ CoordinateResolution bridge**: `numberResolve_eq_semanticResolve` proves `semanticResolve` is the unwrapped form of unified `numberResolve`
+
+### Fixed
+- **Params.lean SemanticCore docstring**: updated "three cores" → four values, reflecting the `.nonhuman` constructor added for Shona
+
+## [0.229.431] - 2026-03-26
+
+### Added
+- **Gender resolution framework** (`Theories/Syntax/Minimalism/Agreement/GenderResolution.lean`): General percolation-and-intersection mechanism for gender agreement with conjoined subjects, following Adamson & Anagnostopoulou (2025). Parameterized over feature type — instantiable for Bantu, Greek, BCS. Types: `AnnotatedFeature`, `FeatureBundle`, `Outcome`, `SelectionGrammar` (Highest Wins vs Best Semantic Match). Functions: `percolateI`, `intersectFeatures`, `resolve`, `selectFeature`
+- **Carstens2026 deeper derivation** (§12–§14): Bridge theorems connecting Bantu-specific `resolveUniform` to the general framework (`general_agrees_xhosa`, `general_agrees_shona`). End-to-end derivation chain from nP stacking through percolation and intersection to agreement outcome for 7 concrete examples (citizen, gangster, hat, carrot, elephant, cross-core). Two-grammars analysis with `TwoGrammarFeature` type, deriving HW and BSM predictions for stacked nPs from (79)–(81), proving the grammars differ
+
+### Fixed
+- **Carstens2026 docstring**: `mismatched_7and9_human_inanimate` renamed to `mismatched_7and9_both_human` — both conjuncts have [human] core (not [human] ∩ [inanimate] as the old docstring claimed); added `mismatched_1aand9_both_inanimate` for the actual (87)b/(88)b case
+
+## [0.229.430] - 2026-03-26
+
+### Added
+- **Carstens2026 gender resolution**: Formalized gender agreement with conjoined singulars in Bantu (Xhosa/Shona), including nP stacking, semantic cores ([human]/[animal]/[inanimate]), and the percolation-and-intersection mechanism for resolved agreement following Adamson & Anagnostopoulou (2025)
+- **Bantu family params** (`Fragments/Bantu/Params.lean`): Shared types for Bantu noun class systems — `SemanticCore`, `GenderStatus` (interpretable/uninterpretable), `NPStack`, `resolveUniform` resolution mechanism
+- **Xhosa fragment** (`Fragments/Xhosa/Basic.lean`): 11 noun classes (cl1–10, cl15), 5 genders with semantic core assignments, subject agreement prefixes, sample nP stacking structures
+- **Shona fragment** (`Fragments/Shona/Basic.lean`): 14 noun classes (cl1–14), 8 genders with binary [human]/[non-human] semantic split
+- **Swahili ↔ Bantu bridge**: `Gender.status` connecting existing Swahili genders to shared `GenderStatus` type
+- **Per-datum verification theorems**: matching ↔ interpretability for all 5 Xhosa and 8 Shona genders, mismatched conjunct resolution, default agreement classes, cross-linguistic interpretability counts, nP stacking preservation
+
 ## [0.229.429] - 2026-03-24
 
 ### Changed
