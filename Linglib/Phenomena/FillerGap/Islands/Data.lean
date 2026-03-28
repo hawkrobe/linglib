@@ -174,7 +174,7 @@ inductive ConstraintType where
   | coordinate        -- Coordination blocks asymmetric dependency
   | subject           -- Subject position blocks dependency
   | sententialSubject -- Sentential subject blocks dependency
-  | mannerOfSpeaking  -- MoS verb complement backgrounds content (Lu, @cite{lu-degen-2025})
+  | mannerOfSpeaking  -- MoS verb complement backgrounds content (@cite{lu-pan-degen-2025})
   deriving Repr, DecidableEq
 
 /-- Constraint strength classification -/
@@ -191,7 +191,7 @@ def constraintStrength : ConstraintType → ConstraintStrength
   | .coordinate => .strong          -- Strong (but ATB pattern ok)
   | .subject => .weak               -- Varies cross-linguistically
   | .sententialSubject => .strong
-  | .mannerOfSpeaking => .weak      -- Ameliorated by prosodic focus (@cite{lu-degen-2025})
+  | .mannerOfSpeaking => .weak      -- Ameliorated by prosodic focus (@cite{lu-pan-degen-2025})
 
 -- ============================================================================
 -- Filler-Gap Dependency Construction Types
@@ -233,7 +233,7 @@ inductive IslandSource where
   /-- Processing: island is an artifact of memory/retrieval difficulty -/
   | processing
   /-- Discourse: island arises from information-structural backgroundedness (@cite{goldberg-2006}, 2013;
-  Lu, @cite{lu-degen-2025}) -/
+  @cite{lu-pan-degen-2025}) -/
   | discourse
   deriving Repr, DecidableEq, BEq
 
@@ -248,7 +248,7 @@ def constraintSource : ConstraintType → IslandSource
   | .coordinate        => .syntactic
   | .subject           => .syntactic
   | .sententialSubject => .syntactic
-  | .mannerOfSpeaking  => .discourse  -- Lu, @cite{lu-degen-2025}
+  | .mannerOfSpeaking  => .discourse  -- @cite{lu-pan-degen-2025}
 
 /-- MoS islands are the only discourse-sourced island type currently formalized. -/
 theorem mos_is_discourse_island :
@@ -264,7 +264,7 @@ theorem mos_is_weak :
 
 /-!
 ## Gradience in Island Effects
-@cite{hofmeister-sag-2010} @cite{chomsky-1973} @cite{chomsky-1982} @cite{chomsky-1995} @cite{ross-1967} @cite{goldberg-2006} @cite{lu-degen-2025}
+@cite{hofmeister-sag-2010} @cite{chomsky-1973} @cite{chomsky-1982} @cite{chomsky-1995} @cite{ross-1967} @cite{goldberg-2006} @cite{lu-pan-degen-2025}
 
 @cite{hofmeister-sag-2010} argue that the binary strong/weak classification is insufficient. Island effects are **gradient** along multiple
 dimensions, and acceptability varies systematically with nonstructural

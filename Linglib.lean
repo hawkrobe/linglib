@@ -135,7 +135,9 @@ import Linglib.Core.Continuation
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.VarAssignment
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
+import Linglib.Core.PrivativePair
 import Linglib.Core.Person
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.PhiSemantics
 import Linglib.Core.Number
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
@@ -452,6 +454,7 @@ import Linglib.Fragments.Indonesian.Morph
 import Linglib.Fragments.Indonesian.VoiceSystem
 import Linglib.Fragments.Indonesian.Morphophonology
 import Linglib.Fragments.Indonesian.Predicates
+import Linglib.Fragments.Malayic.VoiceSystem
 import Linglib.Fragments.Teop.Nouns
 import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Januubi.Negation
@@ -575,7 +578,11 @@ import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Tagalog.Morph
 import Linglib.Fragments.Tagalog.Phonology
 import Linglib.Fragments.Italian.DiscourseParticles
+import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Swahili.Basic
+import Linglib.Fragments.Xhosa.Basic
+import Linglib.Fragments.Zapotec.Basic
+import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Possession
 import Linglib.Fragments.Swahili.Morph
@@ -911,6 +918,7 @@ import Linglib.Phenomena.FillerGap.TobaBatak
 import Linglib.Phenomena.FillerGap.Studies.Erlewine2016
 import Linglib.Phenomena.FillerGap.Studies.Erlewine2018
 import Linglib.Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
+import Linglib.Phenomena.FillerGap.Studies.ErlewineSommerlot2025
 import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
 import Linglib.Phenomena.FillerGap.Studies.PickeringBarry1991
 import Linglib.Phenomena.FillerGap.Studies.Steedman2000CrossSerial
@@ -918,7 +926,7 @@ import Linglib.Phenomena.FillerGap.CCGGenerativeCapacity
 import Linglib.Phenomena.FillerGap.Islands.Studies.Adger2025
 import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
 import Linglib.Phenomena.FillerGap.Studies.Charlow2020
-import Linglib.Phenomena.FillerGap.Studies.LuDegen2025
+import Linglib.Phenomena.FillerGap.Studies.LuPanDegen2025
 import Linglib.Phenomena.FillerGap.Studies.Osborne2019Islands
 import Linglib.Phenomena.FillerGap.Studies.HPSGExtraction
 import Linglib.Phenomena.FillerGap.Studies.HPSGRelativeClauses
@@ -1041,8 +1049,9 @@ import Linglib.Phenomena.Possession.Typology
 import Linglib.Phenomena.Possession.Studies.Heine1997
 import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.PsychVerbs.Data
-import Linglib.Phenomena.PsychVerbs.Studies.BellettiRizzi1988
+import Linglib.Phenomena.PsychVerbs.Studies.Kim2024_UPH
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024
+import Linglib.Phenomena.PsychVerbs.Studies.Pesetsky1995
 import Linglib.Phenomena.Presupposition.Basic
 import Linglib.Phenomena.Presupposition.Diagnostics
 import Linglib.Phenomena.Presupposition.ProjectiveContent
@@ -1210,7 +1219,14 @@ import Linglib.Phenomena.Agreement.Studies.AdamsonZompi2025
 import Linglib.Phenomena.Agreement.Studies.BejarRezac2009
 import Linglib.Phenomena.Agreement.Studies.Deal2024
 import Linglib.Phenomena.Agreement.Studies.PanchevaZubizarreta2018
+import Linglib.Theories.Syntax.Minimalism.Agreement.FeatureRecursion
+import Linglib.Theories.Syntax.Minimalism.Agreement.GenderResolution
+import Linglib.Theories.Syntax.Minimalism.Agreement.CoordinateResolution
 import Linglib.Phenomena.Agreement.Studies.Corbett2000
+import Linglib.Phenomena.Agreement.Studies.Carstens2026
+import Linglib.Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
+import Linglib.Phenomena.Agreement.Studies.Toosarvandani2023
+import Linglib.Phenomena.Agreement.Studies.Harbour2016
 import Linglib.Phenomena.Coordination.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
@@ -1421,8 +1437,9 @@ import Linglib.Theories.Syntax.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.Politeness.Studies.AlokBhalla2026
-import Linglib.Phenomena.SocialMeaning.Basic
 import Linglib.Phenomena.SocialMeaning.Studies.Burnett2019
+import Linglib.Phenomena.SocialMeaning.Studies.Labov2006
+import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
 import Linglib.Theories.Syntax.Minimalism.Inversion
 import Linglib.Theories.Syntax.Minimalism.SpeechActs
 import Linglib.Theories.Syntax.Minimalism.Polarity
@@ -1444,8 +1461,8 @@ import Linglib.Theories.Syntax.Minimalism.Core.EPP
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
+import Linglib.Theories.Syntax.Minimalism.Core.Cascade
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
-import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.CausalSourceBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.TopologicalMapping
 import Linglib.Theories.Morphology.DM.Fission
@@ -1468,7 +1485,9 @@ import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Coproduct
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
-import Linglib.Theories.Syntax.Minimalism.Formal.Linearization.LCA
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.LCA
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.Spellout
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization
 import Linglib.Theories.Syntax.MereologicalSyntax.Basic
 import Linglib.Theories.Syntax.MereologicalSyntax.Bridge
 import Linglib.Theories.Syntax.MereologicalSyntax.Interpretation

@@ -1,10 +1,51 @@
 # Changelog
 
+## [0.229.452] - 2026-03-27
+
+### Added
+- **Labov2012.lean**: Obama (ING) style-shifting data extracted from @cite{labov-2012} *Dialect Diversity in America* (Ch. 2, Figure 3). `StyleShiftObs` structure, `obama_ING` (72%/33%/3%), `obama_ING_monotone`
+
+### Changed
+- **Labov2006.lean**: removed Obama (ING) data (now in Labov2012.lean) — the data belongs under its own source
+- **Burnett2019.lean**: `smg_matches_labov_direction` bridge now imports from Labov2012 instead of Labov2006
+
+## [0.229.451] - 2026-03-27
+
+### Added
+- **Labov2006.lean — Table 7.8**: the centerpiece five-variable × three-class data matrix verified against the 2nd edition PDF (p. 140). Class stratification and style shifting theorems for all five variables: (r) with full 5-style `ContextualStyle` data, (æh)/(oh) with 4 styles, (th)/(dh) with 3 styles
+- **Labov2006.lean — (oh) real deviation**: `oh_real_deviation` captures Labov's finding (p. 146) that the lower class shows no style shifting for (oh) and inverts the expected class stratification — the only "real deviation" in the five-variable system
+- **Labov2006.lean — (ing) anomaly**: `ing_A_older_anomaly` explicitly proves the sc3/sc4 crossover (upper-middle SEC 9 uses more /in/ than lower-middle SEC 7–8 in casual speech for older speakers)
+- **Labov2006.lean — StratificationProfile predicates**: `ingProfile_hasStyleShift` and `ingProfile_classStrat_B` proved on verified (ing) data, demonstrating the Core infrastructure
+- **Burnett2019.lean — Labov bridge**: `smg_matches_labov_direction` connects SMG model predictions (cool-guy prefers -in' casual, -ing careful) to @cite{labov-2012} observed Obama rates (72% → 33% → 3%)
+
+### Changed
+- **Variable typology fix**: (æh) and (oh) corrected from first-order indicators to second-order markers — Table 7.8 data shows clear style shifting for both, making them markers not indicators. Added `all_markers` theorem proving all five NYC variables are second-order
+- **`SECGroup` → `ClassGroup`**: replaced dead 4-group type (never used) with 3-group type matching Table 7.8's actual grouping (SEC 0–2, 3–5, 6–9)
+
+## [0.229.450] - 2026-03-27
+
+### Added
+- **Core/SocialMeaning.lean**: `ContextualStyle` (5-point Labovian style scale with `toRegisterLevel` bridge), `StratificationProfile` (the fundamental Group×Style→ℚ data object of variationist sociolinguistics), structural predicates (`isMonotoneDown`, `hasStyleShift`, `hasCrossover`), `ChangeStatus` (stable/changeFromAbove/changeFromBelow), `VariableBehavior` (indexical order + change status with `isIndicator`/`isMarker`/`isStereotype` predicates)
+- **Labov2006.lean**: formalization of The Social Stratification of English in NYC (2nd ed.) — department store (r) data (Table 3.4) with stratification theorem, (ing) data (Table 10.10) by age×class×style with monotonicity and style-shifting theorems, Obama (ING) style shifting (@cite{labov-2012}), five-variable typology with bridges to `IndexicalOrder`/`ChangeStatus`
+
+### Changed
+- **Dissolved `SocialMeaning/Basic.lean`**: Obama data and (ING) observations moved to `Labov2006.lean` for provenance tracking; `StratificationDatum`/`StyleShiftingDatum` types superseded by `StratificationProfile`
+- **Burnett2019.lean**: import updated from `Basic` to `Core.SocialMeaning`
+- **references.bib**: consolidated `labov-1966`/`labov-2006` into single 2nd-edition entry; fixed DOI attribution (CUP DOI was on 1st edition entry)
+
+## [0.229.449] - 2026-03-27
+
+### Changed
+- **Chronological ordering fix**: renamed `BellettiRizzi1988.lean` → `Kim2024_UPH.lean` — the file is Kim 2024's UPH analysis applied to B&R 1988 data, not a B&R study. As a 2024 file, it legitimately cites B&R 1988, Pesetsky 1995, and Solstad & Bott 2024
+- **Pesetsky1995.lean**: removed §7 Pesetsky↔Kim bridge (moved to `Kim2024_UPH.lean` §9); removed `@cite{kim-2024}` and `@cite{arnold-wasow-2000}` forward citations; replaced with Pesetsky-internal `symmetric_blocking` and `hmc_predicts_tsm_data`
+- **Kim2024_UPH.lean**: added §9 Cascade bridge with `pesetsky_symmetric_blocking`, `kim_asymmetric_conflict`, `both_accounts_predict_cause_sm_illformed`, `accounts_diverge_on_cause_target`
+- **Pesetsky1995.lean**: added `cascadeChain` end-to-end derivation and 24 per-verb theorems (18 external + 6 internal) threading Fragment → Cascade → HMC → StimulusType → natural/arbitrary → CausStrength
+
 ## [0.229.448] - 2026-03-27
 
 ### Changed
 - **Cascade.lean audit**: removed unused `SelectionMode`, added `Cascade.causStrength` (derived from `hasHead "CAUS"`), `Cascade.argPosition`/`specCCommands` (c-command over cascade positions), `Cascade.shiftSites` (HNPS landing sites from cascade depth)
-- **Pesetsky1995.lean audit**: replaced vacuous `both_accounts_predict_tsm_data` (`x = x`) with real `both_accounts_predict_cause_sm_illformed` connecting HMC + Onset Condition + empirical data; added `accounts_diverge_on_cause_target` (Pesetsky-Kim symmetry divergence); T/SM mutual exclusivity (`t_sm_exclusive_in_target/sm`, `source_determines_unique_stimulus`); rewrote §3 backward binding with c-command (`causer_ccommands_experiencer_base`, `experiencer_does_not_ccommand_causer_base`, `causer_is_cascade_internal`); replaced stipulative CAUS strength with derived `Cascade.causStrength`; added `cascadeForSource` with per-verb derivation theorems; §10 natural/arbitrary predicates (`isNaturalPredicate`); §11 HNPS cascade depth hierarchy (`shift_site_hierarchy`)
+- **Pesetsky1995.lean audit**: replaced vacuous `both_accounts_predict_tsm_data` (`x = x`) with real bridge; T/SM mutual exclusivity (`t_sm_exclusive_in_target/sm`, `source_determines_unique_stimulus`); rewrote §3 backward binding with c-command (`causer_ccommands_experiencer_base`, `experiencer_does_not_ccommand_causer_base`); replaced stipulative CAUS strength with derived `Cascade.causStrength`; §10 natural/arbitrary predicates (`isNaturalPredicate`); §11 HNPS cascade depth hierarchy (`shift_site_hierarchy`)
 
 ## [0.229.447] - 2026-03-27
 

@@ -1,4 +1,5 @@
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.Register
 
 /-!
 # Social Meaning and the Indexical Field @cite{eckert-2008}
@@ -138,5 +139,136 @@ def IndexicalField.indexes {Variant Trait : Type}
 -- `SocialDimension` (Fiske et al.'s competence/warmth/antiSolidarity axes)
 -- has moved to `Theories/Sociolinguistics/SCM.lean`, where it belongs as part
 -- of the Stereotype Content Model theory rather than framework-agnostic Core.
+
+-- ============================================================================
+-- Contextual style (@cite{labov-2006}, ch. 4)
+-- ============================================================================
+
+/-- @cite{labov-2006}'s attention-to-speech model of contextual style.
+
+    Speech formality increases with the degree of conscious monitoring.
+    The five levels correspond to the interview methodology: casual speech
+    elicited through group interaction and emotional narratives (A), careful
+    interview speech (B), reading aloud (C), word lists (D), and minimal
+    pairs that force attention to a specific contrast (D'). -/
+inductive ContextualStyle where
+  | casual       -- A: group interaction, tangents, danger-of-death narrative
+  | careful      -- B: interview response speech
+  | reading      -- C: connected reading passage
+  | wordList     -- D: isolated word list
+  | minimalPair  -- D': minimal pair test
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+def ContextualStyle.toNat : ContextualStyle → Nat
+  | .casual => 0 | .careful => 1 | .reading => 2
+  | .wordList => 3 | .minimalPair => 4
+
+instance : LT ContextualStyle where
+  lt a b := a.toNat < b.toNat
+
+instance : LE ContextualStyle where
+  le a b := a.toNat ≤ b.toNat
+
+instance (a b : ContextualStyle) : Decidable (a < b) :=
+  Nat.decLt a.toNat b.toNat
+
+instance (a b : ContextualStyle) : Decidable (a ≤ b) :=
+  Nat.decLe a.toNat b.toNat
+
+theorem casual_lt_careful : ContextualStyle.casual < ContextualStyle.careful := by decide
+theorem careful_lt_reading : ContextualStyle.careful < ContextualStyle.reading := by decide
+theorem reading_lt_wordList : ContextualStyle.reading < ContextualStyle.wordList := by decide
+theorem wordList_lt_minimalPair : ContextualStyle.wordList < ContextualStyle.minimalPair := by decide
+
+/-- Bridge to `Core.Register.Level`: maps the 5-point Labovian style scale
+    to the 3-point register scale used by Fragment lexical entries. -/
+def ContextualStyle.toRegisterLevel : ContextualStyle → Core.Register.Level
+  | .casual | .careful => .informal
+  | .reading           => .neutral
+  | .wordList | .minimalPair => .formal
+
+-- ============================================================================
+-- Stratification profile
+-- ============================================================================
+
+/-- A stratification profile: the fundamental data object of variationist
+    sociolinguistics (@cite{labov-2006}).
+
+    Maps (social group, contextual style) pairs to a variable index (ℚ),
+    where the index is the proportion of non-prestige variant usage (0–100).
+    Every @cite{labov-2006}-style stratification diagram is a visualization
+    of one of these matrices. -/
+structure StratificationProfile (Group Style : Type) where
+  index : Group → Style → ℚ
+
+/-- A stratification profile is monotone (down) if higher-ranked groups
+    use less of the stigmatized variant, in every style.
+    This is the canonical pattern for socially stratified variables. -/
+def StratificationProfile.isMonotoneDown {Group Style : Type}
+    [LT Group] [DecidableRel (α := Group) (· < ·)]
+    (p : StratificationProfile Group Style) (styles : List Style) : Prop :=
+  ∀ s ∈ styles, ∀ g₁ g₂ : Group, g₁ < g₂ → p.index g₁ s ≥ p.index g₂ s
+
+/-- A profile exhibits style shifting if every group uses less of the
+    stigmatized variant in more formal styles. -/
+def StratificationProfile.hasStyleShift {Group Style : Type}
+    [LT Style] [DecidableRel (α := Style) (· < ·)]
+    (p : StratificationProfile Group Style) (groups : List Group) : Prop :=
+  ∀ g ∈ groups, ∀ s₁ s₂ : Style, s₁ < s₂ → p.index g s₁ ≥ p.index g s₂
+
+/-- A crossover occurs when group g₁ has a *higher* index than g₂ in style
+    s₁, but *lower* in style s₂. The canonical example: lower-middle class
+    exceeds upper-middle class in formal styles for (r) in NYC. -/
+def StratificationProfile.hasCrossover {Group Style : Type}
+    (p : StratificationProfile Group Style)
+    (g₁ g₂ : Group) (s₁ s₂ : Style) : Prop :=
+  p.index g₁ s₁ > p.index g₂ s₁ ∧ p.index g₁ s₂ < p.index g₂ s₂
+
+-- ============================================================================
+-- Variable behavior classification (@cite{labov-2006}, ch. 7)
+-- ============================================================================
+
+/-- @cite{labov-2006}'s classification of variable change status.
+
+    Labov distinguishes stable variables (no change in apparent time)
+    from variables undergoing change. Changes "from above" are led by
+    the highest-status group and involve adoption of an overt prestige
+    norm; changes "from below" are led by interior groups and proceed
+    below conscious awareness until they reach the level of social
+    comment. -/
+inductive ChangeStatus where
+  /-- No change in apparent time; stable social stratification. -/
+  | stable
+  /-- Prestige variant spreading from highest-status group downward. -/
+  | changeFromAbove
+  /-- Non-prestige variant spreading from interior social groups. -/
+  | changeFromBelow
+  deriving DecidableEq, BEq, Repr
+
+/-- A variable's sociolinguistic behavior: its structural properties in
+    the social matrix, its indexical order (awareness level), and its
+    change status. This type connects Labov's variationist classification
+    to @cite{silverstein-2003}'s indexical orders already formalized in
+    `IndexicalOrder`. -/
+structure VariableBehavior where
+  /-- Silverstein's indexical order (awareness level). -/
+  order : IndexicalOrder
+  /-- Stability vs. direction of change. -/
+  change : ChangeStatus
+
+/-- Indicators are first-order: socially stratified but below conscious
+    awareness, hence no style shifting. -/
+def VariableBehavior.isIndicator (vb : VariableBehavior) : Prop :=
+  vb.order = .first
+
+/-- Markers are second-order: socially stratified AND showing style
+    shifting. Available for conscious manipulation. -/
+def VariableBehavior.isMarker (vb : VariableBehavior) : Prop :=
+  vb.order = .second
+
+/-- Stereotypes are third-order: subject to overt metapragmatic
+    commentary and performance. -/
+def VariableBehavior.isStereotype (vb : VariableBehavior) : Prop :=
+  vb.order = .third
 
 end Core.SocialMeaning

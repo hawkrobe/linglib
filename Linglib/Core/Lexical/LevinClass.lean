@@ -562,6 +562,40 @@ theorem emission_predicts_unaccusative :
 theorem mos_predicts_unergative :
     LevinClass.predictsUnaccusative .mannerOfSpeaking = false := rfl
 
+/-! ### Communication verb manner contrast (@cite{lu-pan-degen-2025})
+
+The `mannerSpec` meaning component is what distinguishes MoS verbs from bridge
+verbs within the Communication verb superclass (§37). This distinction drives
+the manner-of-speaking island effect: verbs with `mannerSpec = true` activate
+manner alternatives, foregrounding the manner QUD and backgrounding the
+complement content.
+
+See `Theories/Semantics/Focus/BackgroundedIslands.lean` for the full
+derivation chain. -/
+
+/-- MoS verbs (§37.3) specify manner; bridge verbs (§37.7) do not.
+This is the lexical basis of the MoS island effect. -/
+theorem communication_verb_manner_contrast :
+    (LevinClass.mannerOfSpeaking).meaningComponents.mannerSpec = true ∧
+    (LevinClass.say).meaningComponents.mannerSpec = false ∧
+    (LevinClass.tell).meaningComponents.mannerSpec = false := ⟨rfl, rfl, rfl⟩
+
+/-- The MoS/bridge distinction is EXCLUSIVELY about manner specification.
+All three communication verb classes (say, tell, MoS) agree on all other
+meaning components — they differ ONLY in `mannerSpec`. -/
+theorem communication_verb_only_differ_in_manner :
+    (LevinClass.mannerOfSpeaking).meaningComponents.changeOfState =
+      (LevinClass.say).meaningComponents.changeOfState ∧
+    (LevinClass.mannerOfSpeaking).meaningComponents.contact =
+      (LevinClass.say).meaningComponents.contact ∧
+    (LevinClass.mannerOfSpeaking).meaningComponents.motion =
+      (LevinClass.say).meaningComponents.motion ∧
+    (LevinClass.mannerOfSpeaking).meaningComponents.causation =
+      (LevinClass.say).meaningComponents.causation ∧
+    (LevinClass.mannerOfSpeaking).meaningComponents.instrumentSpec =
+      (LevinClass.say).meaningComponents.instrumentSpec :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
 -- ════════════════════════════════════════════════════
 -- § 5. Root Entailment Mapping (@cite{beavers-koontz-garboden-2020})
 -- ════════════════════════════════════════════════════

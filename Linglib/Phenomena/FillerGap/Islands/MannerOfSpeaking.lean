@@ -2,9 +2,9 @@ import Linglib.Phenomena.FillerGap.Islands.Data
 
 /-!
 # Manner-of-Speaking Island Effects: Experimental Data
-@cite{lu-degen-2025}
+@cite{lu-pan-degen-2025}
 
-Empirical data from @cite{lu-degen-2025}, "Evidence for a discourse account
+Empirical data from @cite{lu-pan-degen-2025}, "Evidence for a discourse account
 of manner-of-speaking islands," *Language* 101(4): 627–659.
 
 Five acceptability judgment experiments testing the causal relationship between
@@ -282,45 +282,16 @@ verb-frame frequency account. -/
 
 section FrequencyNullEffects
 
-/-- A regression coefficient that did not reach significance. -/
-structure NullEffect where
-  /-- Standardized coefficient × 1000 -/
-  β : Int
-  /-- p > 0.05 (not significant) -/
-  p_gt_05 : Bool
-  deriving Repr
+/-- Frequency null results: verb-frame frequency and sentence complement ratio
+(SCR) are n.s. in every experiment that tested them.
 
-/-- Exp 1: verb-frame frequency n.s. (β = −0.003, p = 0.874). -/
-def exp1_freq : NullEffect := { β := -3, p_gt_05 := true }
+- Exp 1: freq β = −0.003, p = 0.874; SCR β = −0.0002, p = 0.987
+- Exp 2b: freq β = −0.001, p = 0.981; SCR β = 0.008, p = 0.754
+- Exp 3a: freq β = −0.005, p = 0.664; SCR β = −0.003, p = 0.793
+- Exp 3b: freq β = 0.01, p = 0.712; SCR β = 0.01, p = 0.587
 
-/-- Exp 1: SCR n.s. (β = −0.0002, p = 0.987). -/
-def exp1_scr : NullEffect := { β := 0, p_gt_05 := true }
-
-/-- Exp 2b: verb-frame frequency n.s. (β = −0.001, p = 0.981). -/
-def exp2b_freq : NullEffect := { β := -1, p_gt_05 := true }
-
-/-- Exp 2b: SCR n.s. (β = 0.008, p = 0.754). -/
-def exp2b_scr : NullEffect := { β := 8, p_gt_05 := true }
-
-/-- Exp 3a: predicate-frame frequency n.s. (β = −0.005, p = 0.664). -/
-def exp3a_freq : NullEffect := { β := -5, p_gt_05 := true }
-
-/-- Exp 3a: SCR n.s. (β = −0.003, p = 0.793). -/
-def exp3a_scr : NullEffect := { β := -3, p_gt_05 := true }
-
-/-- Exp 3b: predicate-frame frequency n.s. (β = 0.01, p = 0.712). -/
-def exp3b_freq : NullEffect := { β := 10, p_gt_05 := true }
-
-/-- Exp 3b: SCR n.s. (β = 0.01, p = 0.587). -/
-def exp3b_scr : NullEffect := { β := 10, p_gt_05 := true }
-
-/-- Frequency is never significant across all experiments. -/
-theorem frequency_never_significant :
-    exp1_freq.p_gt_05 ∧ exp1_scr.p_gt_05 ∧
-    exp2b_freq.p_gt_05 ∧ exp2b_scr.p_gt_05 ∧
-    exp3a_freq.p_gt_05 ∧ exp3a_scr.p_gt_05 ∧
-    exp3b_freq.p_gt_05 ∧ exp3b_scr.p_gt_05 :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+Total: 0/8 significant (all p > 0.05). -/
+def frequencyNullCount : Fin 9 := 0
 
 end FrequencyNullEffects
 

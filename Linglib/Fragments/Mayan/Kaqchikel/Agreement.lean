@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
-import Linglib.Theories.Syntax.Minimalism.Core.Spellout
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.Spellout
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Core.Case

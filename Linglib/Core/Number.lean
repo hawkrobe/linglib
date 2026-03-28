@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.UD
+import Linglib.Core.PrivativePair
 
 /-!
 # Number
@@ -189,7 +190,36 @@ def Features.fromCategory : Category → Option Features
   | _         => none
 
 -- ============================================================================
--- § 6: Features Verification
+-- § 6: PhiFeatures Instance
+-- ============================================================================
+
+/-- Number features are a `PhiFeatures` instance:
+    outer = isMinimal, inner = isAtomic.
+
+    The containment [+atomic] → [+minimal] maps to PrivativePair's
+    [+inner] → [+outer], unifying the structure with person features.
+    All shared properties are inherited by construction. -/
+instance : Core.PhiFeatures Features where
+  toPair f := ⟨f.isMinimal, f.isAtomic⟩
+  ofPair p := ⟨p.inner, p.outer⟩
+  roundtrip := fun ⟨_, _⟩ => rfl
+
+/-- The three canonical number values map to the three PrivativePair cells. -/
+theorem singular_is_maximal : PhiFeatures.toPair singularF = .maximal := rfl
+theorem dual_is_intermediate : PhiFeatures.toPair dualF = .intermediate := rfl
+theorem plural_is_minimal : PhiFeatures.toPair pluralF = .minimal := rfl
+
+/-- No 4-way base number distinction (inherited from `PhiFeatures`). -/
+theorem no_fourth_base_number :
+    ∀ (a b c d : Features),
+      a.wellFormed = true → b.wellFormed = true →
+      c.wellFormed = true → d.wellFormed = true →
+      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
+  fun a b c d ha hb hc hd =>
+    Core.PhiFeatures.no_four_way a b c d ha hb hc hd
+
+-- ============================================================================
+-- § 7: Features Verification
 -- ============================================================================
 
 theorem singular_wellFormed : singularF.wellFormed = true := rfl

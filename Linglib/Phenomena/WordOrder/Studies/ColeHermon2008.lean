@@ -423,7 +423,7 @@ to Spec,FP (a higher functional projection), past the fronted VP.
 This analysis connects to the claim in §6 that linear order within Merge
 is irrelevant — only c-command matters. This is precisely the content of
 the Linear Correspondence Axiom (LCA) formalized in
-`Theories.Syntax.Minimalism.Formal.Linearization.LCA`.
+`Theories.Interfaces.SyntaxPhonology.Minimalism.LCA`.
 -/
 
 /-- F head (higher functional projection above TP). -/

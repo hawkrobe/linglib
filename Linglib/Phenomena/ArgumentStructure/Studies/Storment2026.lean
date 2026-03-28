@@ -28,7 +28,7 @@ which correlates with unaccusativity.
 
 ## QI ∥ LI (Unified Smuggling)
 
-@cite{storment-2026} argues QI and locative inversion share the same mechanism: @cite{collins-2005} @cite{dowty-1991} @cite{lu-degen-2025}
+@cite{storment-2026} argues QI and locative inversion share the same mechanism: @cite{collins-2005} @cite{dowty-1991} @cite{lu-pan-degen-2025}
 smuggling of VP to Spec-VoiceP. Both are blocked by the transitivity constraint
 (§5) and both require non-phase Voice. They differ in input (quote vs locative PP).
 

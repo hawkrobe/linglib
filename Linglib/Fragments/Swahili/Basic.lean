@@ -1,3 +1,5 @@
+import Linglib.Fragments.Bantu.Params
+
 /-!
 # Swahili: Basic Types
 
@@ -20,6 +22,8 @@ pairs that define a "gender" (e.g., gender A = cl1/cl2 = human sg/pl).
 -/
 
 namespace Fragments.Swahili
+
+open Fragments.Bantu
 
 -- ============================================================================
 -- § 1: Noun Classes
@@ -113,5 +117,22 @@ def Gender.pluralClass : Gender → NounClass
   | .genderC => .cl6
   | .genderD => .cl8
   | .genderE => .cl10
+
+-- ============================================================================
+-- § 4: Bridge to Shared Bantu Types
+-- ============================================================================
+
+/-- Semantic core status for each Swahili gender.
+
+    Swahili's General Animate Concords (GAC) — class 1/2 agreement for all
+    animate nouns regardless of class — suggests [animate] may be grammaticalized
+    as a feature (@cite{carstens-2026} §8, (109)–(110)). The core assignments
+    below follow the pattern established for Xhosa and Shona, with gender E
+    (9/10) bearing [animal] given the predominance of animal terms in this
+    class. Genders B–D lack salient entity-class associations. -/
+def Gender.status : Gender → GenderStatus
+  | .genderA => .interpretable .human
+  | .genderE => .interpretable .animal
+  | _ => .uninterpretable
 
 end Fragments.Swahili

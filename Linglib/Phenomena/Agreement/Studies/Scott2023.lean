@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
-import Linglib.Theories.Syntax.Minimalism.Core.Spellout
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.Spellout
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 import Linglib.Theories.Morphology.DM.Impoverishment
 

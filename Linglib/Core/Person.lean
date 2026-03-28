@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Prominence
+import Linglib.Core.PrivativePair
 
 /-!
 # Person
@@ -123,7 +124,35 @@ theorem PersonLevel.isSAP_eq_participant (p : PersonLevel) :
     p.isSAP = p.toFeatures.hasParticipant := by cases p <;> rfl
 
 -- ============================================================================
--- § 5: Person Categories
+-- § 5: PhiFeatures Instance
+-- ============================================================================
+
+/-- Person features are a `PhiFeatures` instance:
+    outer = hasParticipant, inner = hasAuthor.
+
+    All shared properties (`no_four_way`, `specLevel`, `wellFormed`,
+    `injective`) are inherited by construction. -/
+instance : Core.PhiFeatures Features where
+  toPair f := ⟨f.hasParticipant, f.hasAuthor⟩
+  ofPair p := ⟨p.outer, p.inner⟩
+  roundtrip := fun ⟨_, _⟩ => rfl
+
+/-- The three canonical person values map to the three PrivativePair cells. -/
+theorem first_is_maximal : PhiFeatures.toPair first = .maximal := rfl
+theorem second_is_intermediate : PhiFeatures.toPair second = .intermediate := rfl
+theorem third_is_minimal : PhiFeatures.toPair third = .minimal := rfl
+
+/-- No 4-way singular person distinction (inherited from `PhiFeatures`). -/
+theorem no_fourth_person :
+    ∀ (a b c d : Features),
+      a.wellFormed = true → b.wellFormed = true →
+      c.wellFormed = true → d.wellFormed = true →
+      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
+  fun a b c d ha hb hc hd =>
+    Core.PhiFeatures.no_four_way a b c d ha hb hc hd
+
+-- ============================================================================
+-- § 6: Person Categories (Cysouw)
 -- ============================================================================
 
 /-- The 8 referential person categories (@cite{cysouw-2009}, Fig 10.1).
@@ -182,7 +211,7 @@ def includesAddressee : Category → Bool
 end Category
 
 -- ============================================================================
--- § 6: Category UD Bridges
+-- § 7: Category UD Bridges
 -- ============================================================================
 
 /-- Map singular Category to UD.Person. -/
@@ -224,7 +253,7 @@ theorem ud_conflates_incl_excl :
     Category.toUDPersonNumber .excl := rfl
 
 -- ============================================================================
--- § 7: Category ↔ Features Bridge
+-- § 8: Category ↔ Features Bridge
 -- ============================================================================
 
 /-- Decompose any Category into binary person features.
@@ -260,7 +289,7 @@ theorem toFeatures_wellFormed (p : Category) :
     p.toFeatures.wellFormed = true := by cases p <;> rfl
 
 -- ============================================================================
--- § 8: Category ↔ PersonLevel Bridge
+-- § 9: Category ↔ PersonLevel Bridge
 -- ============================================================================
 
 /-- Map singular Category to PersonLevel (the canonical three-way
@@ -308,7 +337,7 @@ theorem singular_sap_match :
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 9: Category Consistency
+-- § 10: Category Consistency
 -- ============================================================================
 
 /-- Singular categories: Category.toFeatures agrees with

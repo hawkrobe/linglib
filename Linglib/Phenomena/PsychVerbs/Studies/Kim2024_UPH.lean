@@ -1,3 +1,4 @@
+import Linglib.Theories.Syntax.Minimalism.Core.Cascade
 import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
@@ -6,12 +7,15 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
 
 /-!
-# Psych Verb Causation (@cite{belletti-rizzi-1988}, @cite{kim-2024} UPH)
+# Uniform Projection Hypothesis for Psych Verbs
 
-@cite{belletti-rizzi-1988} @cite{kim-2024} @cite{pesetsky-1995}
+@cite{kim-2024} @cite{belletti-rizzi-1988} @cite{pesetsky-1995}
 
-Theorems connecting fragment entries to the @cite{belletti-rizzi-1988} classification
-and @cite{kim-2024}'s Uniform Projection Hypothesis for Class II psych verbs.
+@cite{kim-2024}'s Uniform Projection Hypothesis (UPH) applied to the
+@cite{belletti-rizzi-1988} classification of psych verbs. All Class II
+(object-experiencer) psych verbs uniformly project Cause + Experiencer;
+the eventive/stative split comes from the causal source (external percept
+vs internal representation).
 
 ## Architecture
 
@@ -27,22 +31,26 @@ The fragment entries in `Verbal.lean` set four fields independently:
 - `causalSource` determines temporal and event-structural behavior
 
 These predictions are captured by the `classII_consistent` predicate (§ 1),
-verified per-verb (§ 2), and then used to DERIVE consequences (§ 3–7).
+verified per-verb (§ 2), and then used to DERIVE consequences (§§ 3–7).
 
 ## Key results
 
 1. **Consistency**: each Class II entry satisfies `classII_consistent`,
-   connecting 4 independently-set fields through Kim's theory
+   connecting 4 independently-set fields through @cite{kim-2024}'s theory
 2. **UPH derivation**: theta-grid uniformity FOLLOWS from consistency
 3. **Opacity derivation**: `opaqueContext` FOLLOWS from `causalSource`
 4. **Temporal prediction**: temporal behavior FOLLOWS from `causalSource`
 5. **T/SM restriction**: derived from the Onset Condition on causal chains
 6. **Class I/II theta reversal**: derived from the consistency predicates
 7. **Proto-role bridge**: theta roles map to canonical Dowty profiles
+8. **Cascade bridge** (§ 9): @cite{pesetsky-1995}'s syntactic HMC account
+   and @cite{kim-2024}'s semantic Onset Condition account both predict
+   Cause+SM incompatibility but diverge on Cause+Target
 -/
 
-namespace Phenomena.PsychVerbs.Studies.BellettiRizzi1988
+namespace Phenomena.PsychVerbs.Studies.Kim2024_UPH
 
+open Minimalism
 open Semantics.Causation.PsychCausation
 open Semantics.Causation.PsychCausalLink
 open Core.Time (Interval)
@@ -315,7 +323,7 @@ theorem external_implies_extensional :
     subjectIntensional CausalSource.external = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 8. Derived Stimulus Type (@cite{pesetsky-1995})
+-- § 8. Derived Stimulus Type (T/SM, @cite{pesetsky-1995})
 -- ════════════════════════════════════════════════════
 
 /-! For Class II verbs, stimulus subtype is DERIVED from causal source
@@ -390,4 +398,62 @@ theorem internal_derives_sm (v : VerbEntry)
   simp only [derivedStimulusType, hs]
   exact ⟨.subjectMatter, rfl, rfl, rfl⟩
 
-end Phenomena.PsychVerbs.Studies.BellettiRizzi1988
+-- ════════════════════════════════════════════════════
+-- § 9. Cascade Bridge: Pesetsky ↔ Kim on T/SM
+-- ════════════════════════════════════════════════════
+
+/-! @cite{pesetsky-1995} and @cite{kim-2024} both predict the T/SM
+    restriction (Cause + SM = ill-formed) but via different mechanisms:
+
+    **Pesetsky (syntactic, symmetric)**: CAUS must incorporate into V
+    via HMC. Both *at* (Target) and *about* (SM) are nonaffixal P heads
+    that block CAUS movement equally. So BOTH T and SM are predicted to
+    be incompatible with an overt Cause argument.
+
+    **Kim (semantic, asymmetric)**: SM maps to the onset of the causal
+    chain; Cause also maps to onset → position conflict. But Target maps
+    to the TERMINUS, so Target does NOT conflict with Cause.
+
+    The two accounts agree on Cause+SM being ill-formed but DIVERGE on
+    Cause+Target: Pesetsky predicts it ill-formed, Kim allows it.
+    `StimulusType.conflictsWithCause` encodes Kim's asymmetric prediction
+    (.subjectMatter → true, .target → false) — this is NOT Pesetsky's
+    symmetric prediction. -/
+
+/-- Pesetsky's symmetric prediction: both *at* and *about* are
+    nonaffixal and therefore block CAUS movement equally. -/
+theorem pesetsky_symmetric_blocking :
+    headAt.affixal = false ∧ headAbout.affixal = false :=
+  ⟨rfl, rfl⟩
+
+/-- Kim's asymmetric prediction: SM conflicts with Cause,
+    Target does not. -/
+theorem kim_asymmetric_conflict :
+    StimulusType.conflictsWithCause .subjectMatter = true ∧
+    StimulusType.conflictsWithCause .target = false :=
+  ⟨rfl, rfl⟩
+
+/-- **The accounts agree on Cause+SM**: Pesetsky predicts it blocked
+    (nonaffixal *about* blocks HMC), Kim predicts it blocked (SM and
+    Cause both map to onset), and the empirical data confirms it. -/
+theorem both_accounts_predict_cause_sm_illformed :
+    -- Kim: SM conflicts with Cause via Onset Condition
+    StimulusType.conflictsWithCause .subjectMatter = true ∧
+    -- Pesetsky: *about* is nonaffixal → blocks CAUS
+    headAbout.affixal = false ∧
+    -- Data: Cause+SM cooccurrence is ill-formed
+    (tsmData.filter (fun d => d.causePresent && d.smPresent)).all
+      (!·.wellFormed) = true :=
+  ⟨rfl, rfl, by native_decide⟩
+
+/-- **The accounts diverge on Cause+Target**: Pesetsky predicts it
+    blocked (nonaffixal *at* blocks HMC just like *about*), but Kim
+    predicts it acceptable (Target maps to terminus, not onset). -/
+theorem accounts_diverge_on_cause_target :
+    -- Pesetsky: *at* is nonaffixal → blocks CAUS (same as *about*)
+    headAt.affixal = false ∧
+    -- Kim: Target does NOT conflict with Cause
+    StimulusType.conflictsWithCause .target = false :=
+  ⟨rfl, rfl⟩
+
+end Phenomena.PsychVerbs.Studies.Kim2024_UPH

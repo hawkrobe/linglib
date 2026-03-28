@@ -180,4 +180,46 @@ theorem root_conditions_affix : isInwardConditioned 0 1 = true := rfl
 theorem outer_cannot_condition_inner :
     isOutwardSensitive 2 1 = true := rfl
 
+-- ============================================================================
+-- § 6: Feature-Set Vocabulary Items (Subset Principle)
+-- ============================================================================
+
+/-- A feature-set vocabulary item for the Subset Principle.
+    Simpler than the full `VocabItem`: a feature specification paired
+    with an exponent. The **Subset Principle** selects the most specific
+    item whose features are all present in the target.
+
+    Used when VI is purely determined by feature-subset matching
+    (e.g., gender agreement class selection in
+    @cite{adamson-anagnostopoulou-2025}). -/
+structure FeatureVI (F E : Type) where
+  features : List F
+  exponent : E
+  deriving DecidableEq, BEq, Repr
+
+/-- The **Subset Principle** (@cite{halle-marantz-1993}): among vocabulary
+    items whose feature specification is a subset of the target, select
+    the most specific (longest feature list).
+
+    Returns `none` only if `items` is empty. When items include an
+    elsewhere entry (empty feature list), `subsetPrinciple` always
+    succeeds — the elsewhere item matches any target. -/
+def subsetPrinciple {F E : Type} [BEq F]
+    (items : List (FeatureVI F E)) (target : List F) : Option E :=
+  let matching := items.filter (·.features.all (target.contains ·))
+  (matching.foldl (init := none) fun acc item =>
+    match acc with
+    | none => some item
+    | some prev =>
+      if item.features.length > prev.features.length
+      then some item
+      else some prev
+  ).map (·.exponent)
+
+/-- An elsewhere item (empty features) matches any target. -/
+theorem elsewhere_always_matches {F E : Type} [BEq F]
+    (e : E) (target : List F) :
+    (FeatureVI.mk ([] : List F) e).features.all (target.contains ·) = true := by
+  simp [List.all_nil]
+
 end Morphology.DM.VI

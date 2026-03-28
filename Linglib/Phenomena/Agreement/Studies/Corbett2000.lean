@@ -1,5 +1,6 @@
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.Agreement.Typology
+import Linglib.Theories.Syntax.Minimalism.Agreement.CoordinateResolution
 import Linglib.Core.Number
 import Linglib.Core.AgreementTarget
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
@@ -610,5 +611,22 @@ def PluralInterpretation.includesSingleton : PluralInterpretation → Bool
 /-- The compositional (pre-pragmatic) interpretation is always inclusive. -/
 theorem compositional_plural_is_inclusive :
     PluralInterpretation.inclusive.includesSingleton = true := rfl
+
+-- ============================================================================
+-- §12: Bridge to Unified Coordinate Resolution
+-- ============================================================================
+
+open Theories.Syntax.Minimalism.Agreement.CoordinateResolution
+
+/-- Corbett's `semanticResolve` is the unwrapped form of the unified
+    `numberResolve`: both compute the same value, but `numberResolve`
+    wraps the result in `Option` to fit the `ResolutionOp` interface
+    (which must handle dimensions where resolution can fail).
+
+    Number resolution always succeeds, so the `Option` is always `some`. -/
+theorem numberResolve_eq_semanticResolve (a b : NumberValue) :
+    numberResolve a b
+    = some (NumberValue.semanticResolve a b) := by
+  cases a <;> cases b <;> rfl
 
 end Phenomena.Agreement.Studies.Corbett2000

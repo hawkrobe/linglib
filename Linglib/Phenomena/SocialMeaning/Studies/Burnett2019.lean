@@ -1,6 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Sociolinguistics.EckertMontague
-import Linglib.Phenomena.SocialMeaning.Basic
+import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -346,5 +347,26 @@ theorem bush_bulletproofing :
   exact ⟨by rsa_predict, by rsa_predict⟩
 
 end tRelease
+
+-- ============================================================================
+-- §7. Cross-study bridge: Labov 2012 data ↔ SMG predictions
+-- ============================================================================
+
+/-- Cross-reference: the SMG model's qualitative predictions match the
+    directional pattern observed in @cite{labov-2012}'s data on Obama's
+    (ING) rates. The model predicts the cool-guy persona prefers *-in'*
+    in casual context and *-ing* in careful context; the data shows
+    Obama's *-in'* rate decreasing monotonically from casual (72%)
+    through careful (33%) to formal (3%). -/
+theorem smg_matches_labov_direction :
+    -- SMG: cool-guy prefers -in' in casual context
+    casualCfg.S1 () .coolGuy .in' > casualCfg.S1 () .coolGuy .ing ∧
+    -- SMG: cool-guy prefers -ing in careful context
+    carefulCfg.S1 () .coolGuy .ing > carefulCfg.S1 () .coolGuy .in' ∧
+    -- Observed: casual > careful > formal
+    Labov2012.obama_ING.casual > Labov2012.obama_ING.careful ∧
+    Labov2012.obama_ING.careful > Labov2012.obama_ING.formal :=
+  ⟨casual_coolGuy_prefers_in', careful_coolGuy_prefers_ing,
+   by native_decide, by native_decide⟩
 
 end Phenomena.SocialMeaning.Studies.Burnett2019

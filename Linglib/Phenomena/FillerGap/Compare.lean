@@ -19,7 +19,7 @@ explain the gradient nature of island effects.
 
 - Prosodic focus on embedded objects ameliorates MoS islands; adding manner
   adverbs to bridge verbs creates new islands. Which account predicts this?
-  (@cite{lu-degen-2025} → Discourse)
+  (@cite{lu-pan-degen-2025} → Discourse)
 
 -/
 
@@ -232,7 +232,7 @@ def frequencyMoS : IslandManipulation :=
 -- Accuracy Scoring
 -- ============================================================================
 
-/-- All manipulations: + @cite{lu-degen-2025}. -/
+/-- All manipulations: + @cite{lu-pan-degen-2025}. -/
 def allManipulations : List IslandManipulation := [
   fillerComplexityCNPC,
   fillerComplexityWhIsland,
@@ -412,7 +412,7 @@ theorem complementary_coverage :
 Island effects arise from (at least) three distinct mechanisms:
 - **Grammar**: categorical blocking (topicalization, exclamatives —)
 - **Processing**: gradient difficulty from memory load (CNPC, wh-islands —)
-- **Discourse**: information-structural backgroundedness (MoS — @cite{lu-degen-2025})
+- **Discourse**: information-structural backgroundedness (MoS — @cite{lu-pan-degen-2025})
 
 Both domains use `ProcessingModel.ProcessingProfile` with Pareto dominance
 for weight-free ordinal comparison.
@@ -421,7 +421,7 @@ for weight-free ordinal comparison.
 
 Sag's F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) identifies grammar-based
 islands (topicalization, exclamatives with `[GAP ⟨⟩]`). covers
-processing-based islands (CNPC, wh-islands). @cite{lu-degen-2025} covers
+processing-based islands (CNPC, wh-islands). @cite{lu-pan-degen-2025} covers
 discourse-based islands (MoS). Together they provide a three-mechanism account.
 -/
 
@@ -431,7 +431,7 @@ discourse-based islands (MoS). Together they provide a three-mechanism account.
 
 /-! ### Manner-of-Speaking Islands
 
-@cite{lu-degen-2025} introduce a **discourse-based** account of island effects
+@cite{lu-pan-degen-2025} introduce a **discourse-based** account of island effects
 that complements both competence and processing accounts. MoS islands arise from
 information-structural backgroundedness, not syntactic configuration or processing
 cost. This is a third mechanism alongside grammar-based and processing-based islands.

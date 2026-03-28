@@ -100,9 +100,10 @@ def CausalSource.isEventive : CausalSource → Bool
     predicate (T-predicates are "natural", SM-predicates are
     "arbitrary" in Pesetsky's terms).
 
-    Crucially, T/SM has zero syntax: the syntactic structure is
-    identical regardless of which subtype the stimulus has. The
-    distinction is purely semantic/lexical. -/
+    @cite{pesetsky-1995} argues that the T/SM distinction has syntactic
+    consequences: Target and Subject Matter cannot cooccur with Causer
+    in the same predicate (the T/SM restriction, explained via the
+    Head Movement Constraint). -/
 inductive StimulusType where
   | target        -- T: directed-at ("fears the dog")
   | subjectMatter -- SM: about ("worries about the exam")
