@@ -1,5 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Sociolinguistics.EckertMontague
+import Linglib.Theories.Sociolinguistics.SMG
 import Linglib.Core.SocialMeaning
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -368,5 +369,88 @@ theorem smg_matches_labov_direction :
     Labov2012.obama_ING.careful > Labov2012.obama_ING.formal :=
   ⟨casual_coolGuy_prefers_in', careful_coolGuy_prefers_ing,
    by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §8. Social Meaning Game: theory-layer bridge
+-- ============================================================================
+
+/-! The theory-layer `SocialMeaningGame` (Burnett Def. 4.1) captures the
+signalling game structure: types, meaning, prior, and social evaluation.
+We construct an SMG from the study's types and prove structural properties.
+
+The SMG's `naiveListener` is Franke's literal L₀ — *uniform* over
+compatible personae. This captures the exclusion structure (which
+personae are ruled out by each variant) but not the prior-weighted
+refinement. The *quantitative* predictions (69% -in' for cool guy,
+style shifting) use the RSAConfig's belief-based S₁ (Burnett eq. 13:
+P_S(m|π) ∝ L₀(π|m)^α), which incorporates the context-specific prior
+into the meaning function to recover Bayesian conditioning. -/
+
+section smgBridge
+
+open Sociolinguistics.SMG
+
+/-- Obama's social value function μ at the barbecue
+    (@cite{burnett-2019}, Table 6, p. 438).
+
+    Cool guy ({competent, friendly}) is most valued (μ = 2);
+    asshole ({incompetent, aloof}) is least (μ = 0).
+    The μ function reflects what the speaker (Obama) most wants
+    the listener to infer about him in this context. -/
+def obamaValues : Persona → ℚ
+  | .coolGuy     => 2
+  | .sternLeader => 1
+  | .doofus      => 1
+  | .asshole     => 0
+
+/-- The (ING) Social Meaning Game for the casual context
+    (@cite{burnett-2019}, Def. 4.1 + Table 2 + Table 6).
+
+    This connects the study's types to the theory-layer game
+    structure from `SMG.lean`, exercising `SocialMeaningGame`,
+    `naiveListener`, and `toInterpGame`. -/
+def casualSMG : SocialMeaningGame Persona INGVariant where
+  prior := casualPrior
+  prior_nonneg := by intro p; cases p <;> norm_num [casualPrior]
+  meaning := ingMeaning
+  socialEval := fun p _ => obamaValues p
+
+/-- The SMG meaning is grounded in the Eckert–Montague intersection
+    lift — connecting the game structure to the compositional
+    semantics layer via `ingMeaning_eq_emMeaningMI`. -/
+theorem smg_meaning_grounded (v : INGVariant) (p : Persona) :
+    casualSMG.meaning v p = emMeaningMI ingField v p.toFinset :=
+  ingMeaning_eq_emMeaningMI v p
+
+/-- The naive listener excludes stern leader after hearing *-in'*
+    (incompatible: stern leader = {competent, aloof} shares no
+    property with [-in'] = {incompetent, friendly}). -/
+theorem smg_L0_in'_excludes_sternLeader :
+    naiveListener casualSMG .in' .sternLeader = 0 := by
+  native_decide
+
+/-- The naive listener excludes doofus after hearing *-ing*
+    (incompatible: doofus = {incompetent, friendly} shares no
+    property with [-ing] = {competent, aloof}). -/
+theorem smg_L0_ing_excludes_doofus :
+    naiveListener casualSMG .ing .doofus = 0 := by
+  native_decide
+
+/-- The naive listener assigns equal probability (1/3) to all
+    compatible personae. Franke's literal L₀ is uniform over ⟦v⟧:
+    since 3 personae are compatible with each variant, each gets 1/3.
+
+    This is the structural content of the meaning function: each variant
+    partitions personae into compatible (1/3) and incompatible (0). -/
+theorem smg_L0_uniform_compatible :
+    naiveListener casualSMG .ing .coolGuy = 1/3 ∧
+    naiveListener casualSMG .ing .sternLeader = 1/3 ∧
+    naiveListener casualSMG .ing .asshole = 1/3 ∧
+    naiveListener casualSMG .in' .coolGuy = 1/3 ∧
+    naiveListener casualSMG .in' .asshole = 1/3 ∧
+    naiveListener casualSMG .in' .doofus = 1/3 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+
+end smgBridge
 
 end Phenomena.SocialMeaning.Studies.Burnett2019

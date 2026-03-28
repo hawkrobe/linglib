@@ -82,24 +82,6 @@ theorem first_lt_second : IndexicalOrder.first < IndexicalOrder.second := by dec
 theorem second_lt_third : IndexicalOrder.second < IndexicalOrder.third := by decide
 
 -- ============================================================================
--- Stances and qualities (@cite{ochs-1992}, @cite{eckert-2008})
--- ============================================================================
-
-/-- Eckert's distinction between momentary interactional positions and
-    stable attributed characteristics.
-
-    Variables directly index stances. Qualities are attributed on the basis
-    of habitual stance-taking: a person who habitually takes precise stances
-    gets attributed the quality "meticulous". -/
-inductive StanceLevel where
-  /-- Momentary interactional position (e.g., "being precise right now"). -/
-  | stance
-  /-- Stable attributed characteristic (e.g., "is a meticulous person").
-      Accretes from habitual stances. -/
-  | quality
-  deriving DecidableEq, BEq, Repr
-
--- ============================================================================
 -- Indexical field (@cite{eckert-2008})
 -- ============================================================================
 

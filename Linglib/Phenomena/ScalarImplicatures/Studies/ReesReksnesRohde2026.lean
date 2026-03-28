@@ -207,9 +207,9 @@ def unfamiliarScenario : RTScenario TrivialInterp :=
     The literal reading remains subthreshold (effects 1).
 
     This connects to @cite{burnett-2019}'s persona framework: "quiet"
-    is a stable speaker quality (`Core.SocialMeaning.StanceLevel.quality`)
-    that modulates the listener's expectations of the speaker's
-    communicative threshold. -/
+    is a stable speaker quality (an attributed characteristic accreted
+    from habitual stances) that modulates the listener's expectations
+    of the speaker's communicative threshold. -/
 def quietFamiliarScenario : RTScenario TrivialInterp :=
   { candidates    := [.literal, .changed, .phatic]
   , accessibility := λ | .literal => 1 | .changed => 2 | .phatic => 3

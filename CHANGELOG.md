@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.229.454] - 2026-03-27
+
+### Added
+- **BSB2022 → EM bridge**: `bsbGroundedField` via `fromIndexicalField bsbField`; `precise_scmProperties` = {competent, cold, antiSolidary}, `approximate_scmProperties` = {incompetent, warm, solidary}, `underspecified_indexes_nothing` = ∅ (compatible with all personae)
+- **BS2024 → EM bridge**: `precisionGroundedField` via `fromIndexicalField precisionField`; `exact_scmProperties`, `approx_scmProperties`. First uses of `fromIndexicalField` in the codebase
+
+### Changed
+- **SMG.lean docstring fixes**: `naiveListener` docstring corrected from "L₀(t | v) ∝ Pr(t) · ⟦v⟧(t)" to uniform 1/|⟦v⟧| (Franke's literal L₀, not Bayesian). `strategicSpeaker` docstring now documents that it normalizes raw socialEval, distinct from Burnett's eq. (13) soft-max formulation
+
+## [0.229.453] - 2026-03-27
+
+### Added
+- **Burnett2019.lean — SMG bridge**: imports `Theories.Sociolinguistics.SMG` and constructs a `SocialMeaningGame Persona INGVariant` (`casualSMG`) using `ingMeaning`, `casualPrior`, and `obamaValues` (Table 6). Bridge theorems: `smg_meaning_grounded` (connects to EM lift), `smg_L0_in'_excludes_sternLeader`/`smg_L0_ing_excludes_doofus` (exclusion), `smg_L0_uniform_compatible` (1/3 for each compatible persona). All parameter values verified against the paper PDF
+
+### Changed
+- **Core/SocialMeaning.lean**: removed unused `StanceLevel` type (dead code — defined but never referenced)
+
 ## [0.229.452] - 2026-03-27
 
 ### Added

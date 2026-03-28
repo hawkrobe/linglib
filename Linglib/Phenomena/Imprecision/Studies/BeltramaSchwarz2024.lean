@@ -2,6 +2,7 @@ import Linglib.Core.Scales.Roundness
 import Linglib.Core.SocialMeaning
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Sociolinguistics.SCM
+import Linglib.Theories.Sociolinguistics.EckertMontague
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -393,5 +394,32 @@ theorem div10_enables_imprecision (n : Nat) (h10 : n % 10 = 0) :
     impreciseReadingAvailable n := by
   unfold impreciseReadingAvailable inferPrecisionMode
   exact if_pos (Core.Roundness.score_ge_two_of_div10 n h10)
+
+-- ============================================================================
+-- § Eckert–Montague bridge
+-- ============================================================================
+
+/-! The precision field can be lifted to a grounded field over the SCM
+property space via `fromIndexicalField`, connecting it to
+@cite{burnett-2019}'s persona-theoretic infrastructure. -/
+
+open Sociolinguistics.EckertMontague
+
+/-- The precision field converted to a grounded field over the SCM
+    property space. -/
+def precisionGroundedField : GroundedField PrecisionVariant scmSpace :=
+  fromIndexicalField precisionField
+
+/-- Exact indexes {competent, cold, antiSolidary}. -/
+theorem exact_scmProperties :
+    precisionGroundedField.indexedProperties .exact =
+      {.competent, .cold, .antiSolidary} := by
+  native_decide
+
+/-- Approximate indexes {incompetent, warm, solidary}. -/
+theorem approx_scmProperties :
+    precisionGroundedField.indexedProperties .approximate =
+      {.incompetent, .warm, .solidary} := by
+  native_decide
 
 end Phenomena.Imprecision.Studies.BeltramaSchwarz2024

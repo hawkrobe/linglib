@@ -15,7 +15,8 @@ reasoning applied to a social-meaning interpretation game.
 
 * `SocialMeaningGame` (Def. 4.1): prior over personae, semantic meaning
   (from EM field), and a social evaluation function μ
-* `naiveListener` (Def. 4.2): L₀ = Bayes on literal meaning + prior
+* `naiveListener` (Def. 4.2): L₀ = uniform over compatible personae
+  (Franke's literal L₀, NOT Bayesian conditioning on the prior)
 * `strategicSpeaker` (Def. 4.3): S₁ maximizes social utility μ
 * `uncoveringListener` (Def. 4.4): L₁ = Bayes on S₁
 
@@ -91,10 +92,18 @@ def SocialMeaningGame.toInterpGame {P V : Type}
 -- §3. Naive listener (Burnett Definition 4.2)
 -- ============================================================================
 
-/-- The naive listener (Burnett Def. 4.2): L₀(t | v) ∝ Pr(t) · ⟦v⟧(t).
+/-- The naive listener (Burnett Def. 4.2): L₀(t | v) = 1/|⟦v⟧| if
+    ⟦v⟧(t), 0 otherwise.
 
-    Bayes' rule with literal meaning as likelihood. This is exactly
-    Franke's L₀ applied to the converted InterpGame. -/
+    This is Franke's literal L₀ — uniform over compatible types, NOT
+    Bayesian conditioning on the prior. The prior is passed through to
+    `toInterpGame` but Franke's `HearerStrategy.literal` ignores it,
+    distributing probability uniformly over `trueStates`.
+
+    The Bayesian L₀ (L₀(t | v) ∝ Pr(t) · ⟦v⟧(t)) is what Burnett's
+    RSA model uses (eq. 11). That prior-weighted version lives in the
+    `RSAConfig` meaning function in study files (e.g., Burnett2019.lean),
+    not here. -/
 def naiveListener {P V : Type}
     [Fintype P] [Fintype V]
     [DecidableEq P] [DecidableEq V]
@@ -114,8 +123,14 @@ theorem naiveListener_eq_L0 {P V : Type}
 -- §4. Strategic speaker (Burnett Definition 4.3)
 -- ============================================================================
 
-/-- The strategic speaker (Burnett Def. 4.3): S₁(v | t) is proportional
-    to the social utility μ(t, v) weighted by the literal meaning ⟦v⟧(t).
+/-- The strategic speaker (simplified): S₁(v | t) ∝ μ(t, v) · ⟦v⟧(t).
+
+    This normalizes raw social evaluation scores over compatible variants,
+    producing a closed-form rational speaker. This is a simplification of
+    Burnett's Def. 4.3 / eq. (13), which uses soft-max over log-L₀:
+    P_S(v | π) ∝ exp(α · ln(L₀(π | v))). The full RSA formulation with
+    belief-based S₁ scoring lives in study files (e.g., Burnett2019.lean's
+    `RSAConfig`), not here.
 
     Unlike Franke's best-response speaker (which maximizes hearer success),
     the SMG speaker maximizes *social* utility: a persona chooses variants

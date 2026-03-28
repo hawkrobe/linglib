@@ -2,6 +2,7 @@ import Linglib.Core.Scales.Roundness
 import Linglib.Core.SocialMeaning
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Sociolinguistics.SCM
+import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Fragments.English.NumeralModifiers
 
 /-!
@@ -419,5 +420,42 @@ theorem round_supports_contrast (n : Nat)
     classifyVariant n true = .approximate := by
   have h' : ¬(Core.Roundness.roundnessScore n < 2) := by omega
   unfold classifyVariant; constructor <;> simp [if_neg h']
+
+-- ============================================================================
+-- §10. Eckert–Montague bridge
+-- ============================================================================
+
+/-! The BSB2022 indexical field (`bsbField`) can be lifted to a grounded
+field over the SCM property space via `fromIndexicalField`, connecting
+the empirical sign-valued associations to the persona-theoretic
+infrastructure used by @cite{burnett-2019}'s Social Meaning Games. -/
+
+open Sociolinguistics.EckertMontague
+
+/-- The BSB2022 indexical field converted to a grounded field over the
+    SCM property space. -/
+def bsbGroundedField : GroundedField Variant scmSpace :=
+  fromIndexicalField bsbField
+
+/-- Precise indexes {competent, cold, antiSolidary}: positive
+    association with competence and anti-solidarity, negative with warmth. -/
+theorem precise_scmProperties :
+    bsbGroundedField.indexedProperties .precise =
+      {.competent, .cold, .antiSolidary} := by
+  native_decide
+
+/-- Approximate indexes {incompetent, warm, solidary}: the complement. -/
+theorem approximate_scmProperties :
+    bsbGroundedField.indexedProperties .approximate =
+      {.incompetent, .warm, .solidary} := by
+  native_decide
+
+/-- Underspecified indexes nothing: zero association on all dimensions
+    → no indexed social properties. Under the EM lift, this makes
+    underspecified compatible with *all* personae — consistent with its
+    diagnostic role as a neutral baseline (§7). -/
+theorem underspecified_indexes_nothing :
+    bsbGroundedField.indexedProperties .underspecified = ∅ := by
+  native_decide
 
 end Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
