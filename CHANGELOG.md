@@ -1,5 +1,54 @@
 # Changelog
 
+## [0.229.476] - 2026-04-03
+
+### Changed
+- **Quantification/Properties.lean**: `isom_asymmetric_eq_diff` sorry **closed** — piecewise involution `swapDiff` (swaps A\B ↔ B\A via `Fintype.equivOfCardEq`, fixes A∩B and complement) witnesses ISOM symmetry; 4 private helpers (`swapDiff_zone_AB`, `swapDiff_zone_BA`, `swapDiff_zone_fix`, `swapDiff_involutive`), 0 sorrys remaining in Quantification/
+
+## [0.229.475] - 2026-04-03
+
+### Changed
+- **Quantification/Properties.lean**: replaced false `isom_asymmetric_trivial` (P&W Prop 6.59) with correct fixed-domain version `isom_asymmetric_eq_diff` — Q(A,B) = false when |A\B| = |B\A| under CONSERV + ISOM + Asymmetric; full P&W result requires cross-universe ISOM (number triangle), not per-domain bijection invariance
+- **Quantification/Properties.lean**: removed false `isom_circular_trivial` (P&W Prop 6.69), replaced with comment explaining cross-universe requirement; counterexample: on Fin 2, Q(A,B) = "A full, B empty" is CONSERV + ISOM + vacuously circular + VAR
+
+### Added
+- **Quantification/Properties.lean**: `circular_reflexive_symmetric` — Circular + PositiveStrong → QSymmetric (setting B=A in circularity gives Q(A,A) ∧ Q(A,B) → Q(B,A))
+
+## [0.229.474] - 2026-04-03
+
+### Changed
+- **CoordinateResolution.lean**: `canonicalResolve` now **derived** from lattice primitives — cardinality addition via `Category.exactCard`/`fromCard` for determinate categories, MIN/AUG lattice join via `Category.isMinAug` — replacing 9-arm pattern match with a 3-branch structural definition
+- **Core/Number.lean**: added `Category.exactCard` (exact referent-set cardinality for sg/du/trial), `Category.isMinAug` (MIN/AUG system membership), `Category.fromCard` (cardinality → finest determinate category)
+
+### Added
+- **CoordinateResolution.lean**: `lattice_grounding_agrees` — proves derived `canonicalResolve` agrees with concrete powerset lattice (`latticeToFeatures` on bitmask-OR join)
+
+## [0.229.473] - 2026-04-03
+
+### Changed
+- **CoordinateResolution.lean**: number resolution fully grounded in lattice theory — `canonicalResolve` (mereological join: sg+sg→du, sg+du→trial), `coarsenTo` (maps to available system), `numberResolveIn` (composes both); old stipulated `numberResolve` deleted, `resolveCoordinate` now takes explicit `system : List Category` parameter
+- **CoordinateResolution.lean**: imports `FeatureRecursion.lean`, connects to `HarbourConfig.surfaceCategories` via `numberResolveConfig`
+- **Corbett2000.lean §12**: bridge theorem updated from deleted `numberResolve` to `numberResolveIn` — proves lattice-grounded resolution agrees with Corbett's semantic resolution for {sg,pl} systems
+- **Carstens2026.lean §14**: all `resolveCoordinate` calls pass explicit `[.singular, .plural]` system (Bantu number system)
+- **coarsenTo**: `.augmented` now coarsens to `.plural` when augmented is not in the target system
+
+### Added
+- **CoordinateResolution.lean §2c**: powerset lattice verification — `lattice_atom_join_dual` (atom⊔atom=dual), `lattice_atom_pair_plural` (atom⊔pair=plural) confirmed against `Core.Number.latticeToFeatures`
+- **CoordinateResolution.lean §2d**: system-dependent predictions — `resolve_sgpl_sg_sg` (English sg+sg→pl), `resolve_sgdupl_sg_sg` (Slovene sg+sg→du), `resolve_larike_sg_du` (Larike sg+du→trial), `resolve_minAug_min_min` (Winnebago min+min→aug)
+
+## [0.229.472] - 2026-04-03
+
+### Added
+- **DominantCophAgreement.lean**: general theorem that dominant cophonological evaluation (OT with MxBM-C subranking) selects basemap-faithful candidates — unifying the direct (`tonalOverwrite`) and constraint-based (`cophonologicalEval`) formalisms of dominant GT (@cite{rolle-2018})
+- **OT.lean §7**: `optimal_zero_first` — if any candidate has 0 violations on the top-ranked constraint, every optimal candidate does too
+- **BasemapCorrespondence.lean §4**: `basemapViolations_self_eq_zero`, `basemapViolations_eq_zero_imp` — zero-violation characterization for basemap correspondence
+- **AkinboFwangwar2026.lean §15**: `t24_basemap_faithful_general`, `t25_basemap_faithful_general`, `t26_basemap_faithful_general` — per-tableau basemap faithfulness derived from general `dominant_coph_selects_basemap_faithful`; `t24_anchor_mxbmc_agree` showing anchor/MxBM-C convergence for uniform melodies and documenting divergence for complex melodies (Tableaux 25-26)
+
+### Changed
+- **ConstraintEvaluation.lean**: made `lexLE_cons_cons_iff` public (needed by `optimal_zero_first`)
+- **RegisterTier.lean**: removed redundant `deriving BEq` from 5 types (`RegisterFeature`, `ToneFeature`, `TonalRootNode`, `TBUKind`, `WordProsodicType`) — fixes BEq diamond where `deriving BEq` and `DecidableEq`-derived BEq competed, causing `beq_self_eq_true` to silently fail
+- **AkinboFwangwar2026.lean**: removed redundant `deriving BEq` from 4 local types (`ToneSource`, `OutputTBU`, `SingleCand`, `PlurCand`); refactored §15 to use `mkBasemapConstraint` + general agreement theorem instead of raw `basemapViolations` calls
+
 ## [0.229.471] - 2026-04-03
 
 ### Changed

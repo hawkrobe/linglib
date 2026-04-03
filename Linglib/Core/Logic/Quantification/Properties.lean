@@ -858,135 +858,166 @@ theorem circular_symmetric_quasiRefl (q : GQ α)
   have hBA : q B A = true := by rw [← hSym]; exact hAB
   exact hCirc A B A hAB hBA
 
-/-- @cite{peters-westerstahl-2006} Prop 6.59: No ISOM (isomorphism-invariant)
-    quantifier except **0** (the always-false quantifier) is asymmetric.
-
-    Proof: Suppose Q is CONSERV + ISOM + asymmetric. By `asymmetric_irreflexive`,
-    Q(A,A) = false for all A, so Q is NegativeStrong. But CONSERV gives
-    Q(A,B) = Q(A, A∩B). If Q(A,B) = true then Q(A, A∩B) = true, and
-    by ISOM (which makes Q depend only on cardinalities |A∩B| and |A\B|),
-    Q(A∩B, A) must also be true (same cardinalities up to bijection).
-    But Q(A, A∩B) = true and asymmetry give Q(A∩B, A) = false — contradiction.
-    So Q(A,B) = false for all A, B, i.e., Q = **0**.
-
-    We formalize this as: CONSERV + ISOM + QAsymmetric + ∃A B, Q A B = true → False.
-    Equivalently, any CONSERV + ISOM + QAsymmetric quantifier is trivially false. -/
-theorem isom_asymmetric_trivial [Fintype α] [DecidableEq α] (q : GQ α)
-    (hCons : Conservative q) (hIsom : QuantityInvariant q)
-    (hAsym : QAsymmetric q) :
-    ∀ A B, q A B = false := by
+/-- Circularity + reflexivity → symmetry. Setting B = A in the circularity
+    condition: Q(A,A) ∧ Q(A,B) → Q(B,A). Since Q(A,A) = true (reflexivity),
+    we get Q(A,B) → Q(B,A) for all A, B.
+    @cite{peters-westerstahl-2006} Ch 6.4. -/
+theorem circular_reflexive_symmetric (q : GQ α)
+    (hCirc : QCircular q) (hPS : PositiveStrong q) :
+    QSymmetric q := by
   intro A B
-  -- Asymmetric → irreflexive
-  have hIrrefl := asymmetric_irreflexive q hAsym
-  -- Suppose Q(A,B) = true, derive contradiction
-  by_contra h
-  rw [Bool.not_eq_false] at h
-  -- By CONSERV: Q(A, B) = Q(A, A∩B)
-  have h1 : q A (λ x => A x && B x) = true := by rw [← hCons]; exact h
-  -- We need Q(A∩B, A) to get a contradiction via asymmetry.
-  -- By CONSERV on (A∩B, A): Q(A∩B, A) = Q(A∩B, (A∩B)∩A) = Q(A∩B, A∩B)
-  -- But Q(A∩B, A∩B) = false by irreflexivity.
-  -- Instead, use CONSERV to show Q(A, A∩B) = true, then asymmetry gives Q(A∩B, A) = false.
-  -- We need to show Q(A∩B, A) = true to get a contradiction with Q(A, A∩B) via asymmetry.
-  -- Actually, asymmetry says Q(A, A∩B) = true → Q(A∩B, A) = false. No contradiction yet.
-  -- The key insight: under CONSERV, Q(A, A∩B) = true. Now consider Q(A∩B, A∩B):
-  -- By irreflexivity, Q(A∩B, A∩B) = false. Good.
-  -- Now, Q(A, A∩B) = true. What about Q(A∩B, A)?
-  -- Under CONSERV: Q(A∩B, A) = Q(A∩B, (A∩B)∩A) = Q(A∩B, A∩B) = false.
-  -- So we have Q(A, A∩B) = true and Q(A∩B, A) = false. This is consistent with asymmetry.
-  -- We need ISOM to get the contradiction.
-  -- ISOM: Q depends only on |A∩B| and |A\B|. For Q(A, A∩B):
-  --   restrictor = A, scope = A∩B
-  --   restrictor ∩ scope = A∩(A∩B) = A∩B, restrictor \ scope = A\(A∩B) = A\B
-  -- For Q(A∩B, A):
-  --   restrictor = A∩B, scope = A
-  --   restrictor ∩ scope = (A∩B)∩A = A∩B, restrictor \ scope = (A∩B)\A = ∅
-  -- These have DIFFERENT |restrictor\scope|: |A\B| vs 0. So ISOM doesn't equate them.
-  -- Correct P&W argument: Take A = B (!) Then Q(A,A) = false by irreflexivity.
-  -- Actually the result is simpler: asymmetric + irreflexive means Q(A,B) = true → Q(B,A) = false.
-  -- For Q = **0**, this is vacuously true. For any Q with Q(A,B) = true for some A,B:
-  -- Q(A,B) = true. By CONSERV, Q(A, A∩B) = true, so Q(A∩B, A) = false (asymmetry).
-  -- Now use ISOM: build a bijection between (A, A∩B) and (A∩B, A).
-  -- CONSERV: Q(A∩B, A) = Q(A∩B, A∩B) = false (irreflexive). OK.
-  -- CONSERV: Q(A, A∩B) = Q(A, A∩(A∩B)) = Q(A, A∩B). Circular.
-  -- The real argument from P&W: Under CONSERV, Q(A,B) depends only on A∩B and A-B.
-  -- For Q(A, A∩B): relevant sets are A∩(A∩B) = A∩B and A-(A∩B) = A-B.
-  -- This is exactly the same as for Q(A,B). So Q(A,B) = Q(A, A∩B). Already known (= CONSERV).
-  -- Let's use irreflexivity directly: Q(A,A) = false for all A.
-  -- By CONSERV, Q(A,B) = Q(A, A∩B). So we need A ≠ A∩B for Q to be true.
-  -- But the issue is: can Q(A,B) be true for some A≠B?
-  -- Take A,B with Q(A,B) = true. Then A∩B ≠ A (otherwise Q(A,A∩B) = Q(A,A) = false).
-  -- So ∃x ∈ A, x ∉ B.
-  -- Asymmetry: Q(B,A) = false. By CONSERV: Q(B, A∩B) = false.
-  -- Now consider swapping A-B and B-A via a bijection:
-  -- Q(A,B): restrictor∩scope = A∩B, restrictor-scope = A-B (nonempty)
-  -- Q(B,A): restrictor∩scope = A∩B, restrictor-scope = B-A
-  -- If |A-B| = |B-A|, ISOM says Q(A,B) = Q(B,A), contradiction (true vs false).
-  -- If |A-B| ≠ |B-A|, we can construct a different counterexample.
-  -- P&W's actual proof: Take any Q(A,B)=true, CONSERV gives Q(A,A∩B)=true.
-  -- Asymmetry: Q(A∩B, A) = false. CONSERV on this: Q(A∩B, A∩B) = false. ✓ (irrefl)
-  -- Now take C = A∩B and consider Q(A, C) = true where C ⊆ A.
-  -- Under ISOM+CONSERV, Q(A,C) depends on |C| and |A-C|.
-  -- Asymmetry: Q(C, A) = false. Under CONSERV: Q(C, C∩A) = Q(C,C) = false. ✓.
-  -- Actually Q(C,A) by CONSERV = Q(C, C∩A) = Q(C,C) = false.
-  -- So asymmetry is consistent here! The contradiction must come from ISOM more carefully.
-  --
-  -- P&W's proof uses: take A,B with Q(A,B) = true. Let A' = B, B' = A.
-  -- ISOM: if ∃ bijection f with f[A∩B] = A'∩B' and f[A-B] = A'-B',
-  -- then Q(A,B) = Q(A',B'). Here A∩B = B∩A and A-B ↔ B-A.
-  -- On a finite type, if |A-B| = |B-A|, we can build such f, giving Q(B,A) = Q(A,B) = true.
-  -- But asymmetry says Q(B,A) = false. Contradiction.
-  -- If |A-B| ≠ |B-A|, we need a different argument.
-  --
-  -- On finite types: |A| = |A∩B| + |A-B| and |B| = |A∩B| + |B-A|.
-  -- If |A-B| ≠ |B-A| then |A| ≠ |B|.
-  -- Take A = {1,...,n}, B = {1,...,m} with n > m. Q(A,B) true.
-  -- Now take A' = {1,...,m}, B' = {1,...,n}. ISOM: Q(A',B') depends on
-  -- |A'∩B'| = m and |A'-B'| = 0. But Q(A,B) depends on |A∩B| = m, |A-B| = n-m.
-  -- These have different |restrictor-scope|, so ISOM doesn't equate them.
-  -- Hmm, the proof is more subtle than I thought.
-  --
-  -- Actually, the simplest way: under CONSERV+ISOM, Q depends on |A∩B| and |A\B|.
-  -- Q(A,B) true means f(|A∩B|, |A\B|) = true for some function f.
-  -- Q(B,A) depends on f(|A∩B|, |B\A|). Asymmetry: f(|A∩B|, |B\A|) = false.
-  -- These are only guaranteed equal when |A\B| = |B\A|, i.e., |A| = |B|.
-  -- P&W likely restricts to Fintype and uses a cardinality argument.
-  -- For now, use sorry to mark this as requiring a more careful proof.
-  sorry
+  rcases Bool.eq_false_or_eq_true (q A B) with hAB | hAB
+  · have hBA : q B A = true := hCirc A A B (hPS A) hAB
+    rw [hAB, hBA]
+  · rcases Bool.eq_false_or_eq_true (q B A) with hBA | hBA
+    · have : q A B = true := hCirc B B A (hPS B) hBA
+      rw [this] at hAB; exact absurd hAB (by decide)
+    · rw [hAB, hBA]
 
-/-- @cite{peters-westerstahl-2006} Prop 6.69: No non-trivial circular quantifiers exist
-    (under CONSERV + ISOM + VAR).
+/-- Piecewise involution swapping A\B ↔ B\A, fixing A∩B and the complement.
+    Used to witness ISOM in the proof of `isom_asymmetric_eq_diff`. -/
+private noncomputable def swapDiff [Fintype α] [DecidableEq α]
+    (A B : α → Bool)
+    (e : {x // A x = true ∧ ¬(B x = true)} ≃ {x // B x = true ∧ ¬(A x = true)}) :
+    α → α := fun x =>
+  if h : A x = true ∧ ¬(B x = true) then (e ⟨x, h⟩).val
+  else if h : B x = true ∧ ¬(A x = true) then (e.symm ⟨x, h⟩).val
+  else x
 
-    Proof sketch: Circular + CONSERV + ISOM implies both PS and NS
-    (reflexive and irreflexive), which is impossible for a non-trivial Q.
-    Circularity Q(A,B) ∧ Q(B,C) → Q(C,A) with A=B=C gives:
-    Q(A,A) ∧ Q(A,A) → Q(A,A), which is trivial.
-    The real argument: circularity + CONSERV gives transitivity,
-    and transitivity + CONSERV + ISOM + VAR leads to contradiction
-    (a transitive ISOM quantifier is either always true or always false).
+private lemma swapDiff_zone_AB [Fintype α] [DecidableEq α]
+    {A B : α → Bool}
+    {e : {x // A x = true ∧ ¬(B x = true)} ≃ {x // B x = true ∧ ¬(A x = true)}}
+    {x : α} (h : A x = true ∧ ¬(B x = true)) :
+    swapDiff A B e x = (e ⟨x, h⟩).val := by
+  simp only [swapDiff, dif_pos h]
 
-    We state this as: CONSERV + ISOM + QCircular + VAR → False. -/
-theorem isom_circular_trivial [Fintype α] [DecidableEq α] (q : GQ α)
+private lemma swapDiff_zone_BA [Fintype α] [DecidableEq α]
+    {A B : α → Bool}
+    {e : {x // A x = true ∧ ¬(B x = true)} ≃ {x // B x = true ∧ ¬(A x = true)}}
+    {x : α} (h : B x = true ∧ ¬(A x = true)) :
+    swapDiff A B e x = (e.symm ⟨x, h⟩).val := by
+  unfold swapDiff; rw [dif_neg (fun hp => h.2 hp.1), dif_pos h]
+
+private lemma swapDiff_zone_fix [Fintype α] [DecidableEq α]
+    {A B : α → Bool}
+    {e : {x // A x = true ∧ ¬(B x = true)} ≃ {x // B x = true ∧ ¬(A x = true)}}
+    {x : α} (h1 : ¬(A x = true ∧ ¬(B x = true)))
+    (h2 : ¬(B x = true ∧ ¬(A x = true))) :
+    swapDiff A B e x = x := by
+  simp only [swapDiff, dif_neg h1, dif_neg h2]
+
+private theorem swapDiff_involutive [Fintype α] [DecidableEq α]
+    (A B : α → Bool)
+    (e : {x // A x = true ∧ ¬(B x = true)} ≃ {x // B x = true ∧ ¬(A x = true)}) :
+    Function.Involutive (swapDiff A B e) := by
+  intro x
+  by_cases hA : A x = true <;> by_cases hB : B x = true
+  · have hf := swapDiff_zone_fix (fun h => h.2 hB) (fun h => h.2 hA) (e := e) (x := x)
+    rw [hf, hf]
+  · have hAB : A x = true ∧ ¬(B x = true) := ⟨hA, hB⟩
+    rw [swapDiff_zone_AB hAB]
+    have hp := (e ⟨x, hAB⟩).prop
+    rw [swapDiff_zone_BA hp]
+    have : (⟨(e ⟨x, hAB⟩).val, hp⟩ : {x // B x = true ∧ ¬(A x = true)}) = e ⟨x, hAB⟩ :=
+      Subtype.ext rfl
+    rw [this]; exact congrArg Subtype.val (e.symm_apply_apply ⟨x, hAB⟩)
+  · have hBA : B x = true ∧ ¬(A x = true) := ⟨hB, hA⟩
+    rw [swapDiff_zone_BA hBA]
+    have hp := (e.symm ⟨x, hBA⟩).prop
+    rw [swapDiff_zone_AB hp]
+    have : (⟨(e.symm ⟨x, hBA⟩).val, hp⟩ : {x // A x = true ∧ ¬(B x = true)}) =
+      e.symm ⟨x, hBA⟩ := Subtype.ext rfl
+    rw [this]; exact congrArg Subtype.val (e.apply_symm_apply ⟨x, hBA⟩)
+  · have hf := swapDiff_zone_fix (fun h => hA h.1) (fun h => hB h.1) (e := e) (x := x)
+    rw [hf, hf]
+
+private theorem swapDiff_swaps_A [Fintype α] [DecidableEq α]
+    (A B : α → Bool)
+    (e : {x // A x = true ∧ ¬(B x = true)} ≃ {x // B x = true ∧ ¬(A x = true)})
+    (x : α) : A (swapDiff A B e x) = B x := by
+  by_cases hA : A x = true <;> by_cases hB : B x = true
+  · rw [swapDiff_zone_fix (fun h => h.2 hB) (fun h => h.2 hA), hA, hB]
+  · rw [swapDiff_zone_AB ⟨hA, hB⟩]
+    have hp := (e ⟨x, ⟨hA, hB⟩⟩).prop
+    have : A (e ⟨x, ⟨hA, hB⟩⟩).val = false := by
+      cases h : A (e ⟨x, ⟨hA, hB⟩⟩).val; rfl; exact absurd h hp.2
+    have : B x = false := by cases h : B x; rfl; exact absurd h hB
+    rw [‹A _ = false›, ‹B x = false›]
+  · rw [swapDiff_zone_BA ⟨hB, hA⟩, (e.symm ⟨x, ⟨hB, hA⟩⟩).prop.1, hB]
+  · rw [swapDiff_zone_fix (fun h => hA h.1) (fun h => hB h.1)]
+    have : A x = false := by cases h : A x; rfl; exact absurd h hA
+    have : B x = false := by cases h : B x; rfl; exact absurd h hB
+    rw [‹A x = false›, ‹B x = false›]
+
+private theorem swapDiff_preserves_AB [Fintype α] [DecidableEq α]
+    (A B : α → Bool)
+    (e : {x // A x = true ∧ ¬(B x = true)} ≃ {x // B x = true ∧ ¬(A x = true)})
+    (x : α) : (A (swapDiff A B e x) && B (swapDiff A B e x)) = (A x && B x) := by
+  rw [swapDiff_swaps_A A B e x]
+  by_cases hA : A x = true <;> by_cases hB : B x = true
+  · rw [swapDiff_zone_fix (fun h => h.2 hB) (fun h => h.2 hA), hA, hB]
+  · have : B x = false := by cases h : B x; rfl; exact absurd h hB
+    simp [this]
+  · rw [swapDiff_zone_BA ⟨hB, hA⟩]
+    have hBf := (e.symm ⟨x, ⟨hB, hA⟩⟩).prop.2
+    have : B (e.symm ⟨x, ⟨hB, hA⟩⟩).val = false := by
+      cases h : B (e.symm ⟨x, ⟨hB, hA⟩⟩).val; rfl; exact absurd h hBf
+    have : A x = false := by cases h : A x; rfl; exact absurd h hA
+    simp [*]
+  · have : A x = false := by cases h : A x; rfl; exact absurd h hA
+    have : B x = false := by cases h : B x; rfl; exact absurd h hB
+    simp [*]
+
+/-- @cite{peters-westerstahl-2006} Prop 6.59 (fixed-domain version):
+    Under CONSERV + ISOM + asymmetry, Q(A,B) = false whenever |A \ B| = |B \ A|.
+
+    P&W's full Prop 6.59 states that no ISOM quantifier except **0** is asymmetric,
+    but their proof constructs a universe with |M \ A| ≥ |A \ B| — requiring
+    cross-universe ISOM (the number triangle), not just per-domain bijection
+    invariance (our `QuantityInvariant`). On a fixed finite domain, non-trivial
+    asymmetric ISOM quantifiers exist (e.g., on Fin 2, Q(A,B) = "A is full and
+    B is empty" is CONSERV + ISOM + asymmetric).
+
+    The fixed-domain version: when |A\B| = |B\A|, construct a piecewise involution
+    swapping A\B ↔ B\A (fixing A∩B and the complement). ISOM gives Q(A,B) = Q(B,A),
+    and asymmetry forces Q(A,B) = false. -/
+theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hIsom : QuantityInvariant q)
-    (hCirc : QCircular q)
-    (hVarT : ∃ A B, q A B = true)
-    (hVarF : ∃ A B, q A B = false) :
-    False := by
-  -- Circularity gives: Q(A,B) ∧ Q(B,C) → Q(C,A)
-  -- In particular with C = A: Q(A,B) ∧ Q(B,A) → Q(A,A), so quasi-reflexive+symmetric→reflexive
-  -- With A = C: Q(A,B) ∧ Q(B,A) → Q(A,A)
-  -- With A = B: Q(A,A) ∧ Q(A,C) → Q(C,A), so reflexive → symmetric
-  -- From VAR_T: ∃ A B, Q(A,B) = true
-  -- Need to show Q(A,A) = true for some A, then derive Q is always true
-  obtain ⟨A, B, hT⟩ := hVarT
-  obtain ⟨A', B', hF⟩ := hVarF
-  -- Q(A,B) = true. By CONSERV: Q(A, A∩B) = true.
-  have h1 : q A (λ x => A x && B x) = true := by rw [← hCons]; exact hT
-  -- Need Q(A∩B, A) to apply circularity with C=A → Q(A,A)
-  -- CONSERV: Q(A∩B, A) = Q(A∩B, (A∩B)∩A) = Q(A∩B, A∩B)
-  -- So we need Q(A∩B, A∩B) = true, i.e., Q is reflexive on A∩B.
-  -- This doesn't follow directly. Use sorry for the full proof.
-  sorry
+    (hAsym : QAsymmetric q)
+    {A B : α → Bool}
+    (hCard : Fintype.card {x // A x = true ∧ B x ≠ true} =
+             Fintype.card {x // B x = true ∧ A x ≠ true}) :
+    q A B = false := by
+  suffices h : q A B = q B A by
+    rcases Bool.eq_false_or_eq_true (q A B) with ht | hf
+    · have : q B A = false := hAsym A B ht
+      rw [h] at ht; rw [this] at ht; exact absurd ht (by decide)
+    · exact hf
+  rw [hCons A B, hCons B A]
+  have hComm : (λ x => B x && A x) = (λ x => A x && B x) := by
+    funext x; cases A x <;> cases B x <;> rfl
+  rw [hComm]
+  -- q A (A∧B) = q B (A∧B) via piecewise involution swapping A\B ↔ B\A
+  let e := Fintype.equivOfCardEq hCard
+  let f := swapDiff A B e
+  exact hIsom A (fun x => A x && B x) B (fun x => A x && B x) f
+    (swapDiff_involutive A B e).bijective
+    (swapDiff_swaps_A A B e)
+    (swapDiff_preserves_AB A B e)
+
+/- @cite{peters-westerstahl-2006} Prop 6.69 states that no non-trivial circular
+   quantifier exists (under CONSERV + ISOM + VAR). However, their proof uses
+   cross-universe ISOM (the number triangle), not per-domain bijection invariance.
+   On fixed finite domains, this does not hold: e.g., on Fin 2,
+   Q(A,B) = "A is full and B is empty" is CONSERV + ISOM + vacuously circular
+   (no A,B,C with Q(A,B) ∧ Q(B,C)) + VAR.
+
+   What CAN be proved in the fixed-domain setting:
+   - `circular_reflexive_symmetric`: Circular + PS → Symmetric
+   - `circular_symmetric_quasiRefl`: Circular + Symmetric → QuasiReflexive
+
+   The cross-universe result would require a formalization of number-triangle
+   quantifiers (Q : ℕ × ℕ → Bool) rather than `GQ α`. -/
 
 -- ============================================================================
 -- §8c — "Aristotle Reversed": Square from Inferential Conditions
