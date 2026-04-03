@@ -377,6 +377,7 @@ import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Fragments.Dutch.Binominals
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
+import Linglib.Fragments.Dutch.Modals
 import Linglib.Fragments.Dutch.TemporalConnectives
 import Linglib.Fragments.Danish.V2
 import Linglib.Fragments.Norwegian.V2
@@ -439,6 +440,7 @@ import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
 import Linglib.Fragments.Georgian.Agreement
+import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.Gorum.AuxiliaryVerbs
 import Linglib.Fragments.Hemba.AuxiliaryVerbs
 import Linglib.Fragments.Greek.Case
@@ -448,6 +450,7 @@ import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Greek.Reciprocals
 import Linglib.Fragments.Greek.AdjAgreement
+import Linglib.Fragments.Greek.Modals
 import Linglib.Fragments.Greek.MoodChoice
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hebrew.Relativization
@@ -470,6 +473,7 @@ import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.DiscourseParticles
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Hungarian.Morph
+import Linglib.Fragments.Hungarian.Modals
 import Linglib.Fragments.Hungarian.VowelHarmony
 import Linglib.Fragments.Wan.Reciprocals
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
@@ -492,6 +496,7 @@ import Linglib.Fragments.French.ModalIndefinites
 import Linglib.Fragments.French.Reciprocals
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
+import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Latvian.IndeterminatePronouns
@@ -503,6 +508,7 @@ import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Korean.Evidentials
+import Linglib.Fragments.Korean.Modals
 import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Korean.Phonology
@@ -516,6 +522,7 @@ import Linglib.Fragments.Japanese.Morph
 import Linglib.Fragments.Japanese.Negation
 import Linglib.Fragments.Mandarin.DiscourseParticles
 import Linglib.Fragments.Mandarin.Determiners
+import Linglib.Fragments.Mandarin.Modals
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Mandarin.Particles
@@ -642,6 +649,7 @@ import Linglib.Fragments.Chuj.ModalIndefinites
 import Linglib.Fragments.Malagasy.Relativization
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
+import Linglib.Fragments.Tlingit.Modals
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Russian.PolarityItems
 import Linglib.Fragments.German.PolarityItems
@@ -1538,6 +1546,7 @@ import Linglib.Theories.Semantics.Composition.WriterMonad
 import Linglib.Theories.Semantics.Composition.SetMonad
 import Linglib.Theories.Semantics.Composition.Applicative
 import Linglib.Theories.Semantics.Composition.Effects
+import Linglib.Theories.Semantics.Composition.LexiconBuilder
 import Linglib.Theories.Semantics.Composition.MaybeMonad
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Montague.Conjunction

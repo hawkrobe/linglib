@@ -1,5 +1,13 @@
 import Linglib.Theories.Semantics.Modality.Typology
 import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.Tlingit.Modals
+import Linglib.Fragments.Javanese.Modals
+import Linglib.Fragments.Gitksan.Modals
+import Linglib.Fragments.Korean.Modals
+import Linglib.Fragments.Greek.Modals
+import Linglib.Fragments.Mandarin.Modals
+import Linglib.Fragments.Dutch.Modals
+import Linglib.Fragments.Hungarian.Modals
 import Linglib.Phenomena.Modality.GermanModals
 
 /-!
@@ -49,13 +57,7 @@ def tlingit : ModalInventory where
   language := "Tlingit"
   family := "Athabaskan-Eyak-Tlingit"
   source := "Cable (2017)"
-  expressions := [
-    ⟨"gwal",           [pe]⟩,
-    ⟨"giwe",           [pe]⟩,
-    ⟨"shákdé",         [pe]⟩,
-    ⟨"future mode",    [nc]⟩,
-    ⟨"potential mode",  [pc]⟩
-  ]
+  expressions := Fragments.Tlingit.Modals.allExpressions
 
 theorem tlingit_all_iff : tlingit.allIFF = true := by native_decide
 theorem tlingit_size : tlingit.size = 5 := by native_decide
@@ -69,15 +71,7 @@ def javanese : ModalInventory where
   language := "Javanese"
   family := "Austronesian"
   source := "Vander Klok (2013a)"
-  expressions := [
-    ⟨"mesthi",    [ne]⟩,
-    ⟨"mesthi-ne", [ne]⟩,
-    ⟨"paleng",    [pe]⟩,
-    ⟨"oleh",      [pd]⟩,
-    ⟨"iso",       [pc]⟩,
-    ⟨"kudu1",     [nd, nc]⟩,
-    ⟨"kudu1-ne",  [nd, nc]⟩
-  ]
+  expressions := Fragments.Javanese.Modals.allExpressions
 
 theorem javanese_all_iff : javanese.allIFF = true := by native_decide
 theorem javanese_size : javanese.size = 7 := by native_decide
@@ -93,13 +87,7 @@ def gitksan : ModalInventory where
   language := "Gitksan"
   family := "Tsimshian"
   source := "Matthewson (2013)"
-  expressions := [
-    ⟨"ima('a)",    [pe, ne]⟩,     -- variable-force epistemic
-    ⟨"gat",        [pe, ne]⟩,     -- variable-force epistemic (+ reportative → epistemic)
-    ⟨"da'akhlxw",  [pc]⟩,
-    ⟨"anook(xw)",  [pd]⟩,
-    ⟨"sgi",        [nd, nc]⟩
-  ]
+  expressions := Fragments.Gitksan.Modals.allExpressions
 
 theorem gitksan_all_iff : gitksan.allIFF = true := by native_decide
 theorem gitksan_size : gitksan.size = 5 := by native_decide
@@ -124,18 +112,7 @@ def korean : ModalInventory where
   language := "Korean"
   family := "Koreanic"
   source := "Uegaki et al. (2025)"
-  expressions := [
-    ⟨"-napo-",          [ne]⟩,
-    ⟨"-keyss-",         [ne]⟩,
-    ⟨"-ya + ha-",       [nd, nc]⟩,       -- deontic + teleological(→circ) + circumstantial
-    ⟨"ke-",             [ne]⟩,
-    ⟨"they-",           [ne]⟩,
-    ⟨"-ya + keyss-",    [nd]⟩,
-    ⟨"kes.i-coh-",      [nc]⟩,            -- teleological → circumstantial
-    ⟨"ci(-to) molun-",  [pe]⟩,
-    ⟨"swu(-to) iss-",   [pe, pc]⟩,        -- epistemic + circumstantial
-    ⟨"-to + toy-",      [pd, pc]⟩          -- deontic + teleological(→circ)
-  ]
+  expressions := Fragments.Korean.Modals.allExpressions
 
 theorem korean_all_iff : korean.allIFF = true := by native_decide
 theorem korean_size : korean.size = 10 := by native_decide
@@ -151,11 +128,7 @@ def greek : ModalInventory where
   language := "Modern Greek"
   family := "Indo-European"
   source := "Uegaki et al. (2025)"
-  expressions := [
-    ⟨"Prepei", [ne, pe, nd, nc]⟩,    -- NOT IFF: forces={nec,poss}, flavors={e,d,c}
-    ⟨"Mporei", [ne, pe, pd, nc, pc]⟩, -- NOT IFF: missing (nec,d)
-    ⟨"Isos",   [pe]⟩                  -- IFF (singleton)
-  ]
+  expressions := Fragments.Greek.Modals.allExpressions
 
 theorem greek_not_all_iff : greek.allIFF = false := by native_decide
 theorem greek_size : greek.size = 3 := by native_decide
@@ -176,20 +149,7 @@ def mandarin : ModalInventory where
   language := "Mandarin"
   family := "Sino-Tibetan"
   source := "Uegaki et al. (2025)"
-  expressions := [
-    ⟨"yīdìng",  [ne]⟩,
-    ⟨"bìrán",   [ne]⟩,
-    ⟨"juéduì",  [ne]⟩,
-    ⟨"bìxū",    [nd, nc]⟩,           -- deontic + teleological(→circ) + circumstantial
-    ⟨"yào",     [nd, nc]⟩,           -- same pattern + weak necessity
-    ⟨"děi",     [nd, nc]⟩,           -- same pattern
-    ⟨"yīnggāi", [ne, nd, nc]⟩,      -- weak necessity across all flavors
-    ⟨"dàgài",   [ne]⟩,
-    ⟨"kěnéng",  [pe]⟩,
-    ⟨"kěyǐ",   [pd, pc]⟩,           -- deontic + teleological(→circ) + circumstantial
-    ⟨"yěxǔ",   [pe]⟩,
-    ⟨"néng",    [pd, pc]⟩             -- deontic + circumstantial
-  ]
+  expressions := Fragments.Mandarin.Modals.allExpressions
 
 theorem mandarin_all_iff : mandarin.allIFF = true := by native_decide
 theorem mandarin_size : mandarin.size = 12 := by native_decide
@@ -205,18 +165,7 @@ def dutch : ModalInventory where
   language := "Dutch"
   family := "Indo-European"
   source := "Uegaki et al. (2025)"
-  expressions := [
-    ⟨"zal",                     [ne]⟩,
-    ⟨"moet/moeten",             [ne, nd, nc]⟩,
-    ⟨"zou/zouden...moeten",     [nd, nc]⟩,
-    ⟨"kan/kunnen",              [pc]⟩,            -- teleological(→circ) + circumstantial
-    ⟨"zou/zouden...kunnen",     [ne, pe, pc]⟩,    -- NOT IFF
-    ⟨"waarschijnlijk",          [ne, pe]⟩,         -- variable-force epistemic
-    ⟨"zal/zouden waarschijnlijk", [ne]⟩,
-    ⟨"moet/moeten eigenlijk",   [nd]⟩,
-    ⟨"misschien",               [pe]⟩,
-    ⟨"mag/mogen",               [pd]⟩
-  ]
+  expressions := Fragments.Dutch.Modals.allExpressions
 
 theorem dutch_not_all_iff : dutch.allIFF = false := by native_decide
 theorem dutch_size : dutch.size = 10 := by native_decide
@@ -230,16 +179,7 @@ def hungarian : ModalInventory where
   language := "Hungarian"
   family := "Uralic"
   source := "Uegaki et al. (2025)"
-  expressions := [
-    ⟨"kell",          [ne, nd, nc]⟩,    -- strong across all flavors
-    ⟨"kellene",       [nd, nc]⟩,         -- weak necessity deontic + teleological(→circ)
-    ⟨"muszáj",        [nd, nc]⟩,         -- strong deontic + circumstantial
-    ⟨"valószínűleg",  [ne]⟩,             -- weak necessity epistemic
-    ⟨"lehet",         [pe]⟩,
-    ⟨"-hat/-het",     [pe, pd, pc]⟩,     -- weak across all flavors
-    ⟨"tud-",          [pc]⟩,
-    ⟨"kép-",          [pc]⟩
-  ]
+  expressions := Fragments.Hungarian.Modals.allExpressions
 
 theorem hungarian_all_iff : hungarian.allIFF = true := by native_decide
 theorem hungarian_size : hungarian.size = 8 := by native_decide
