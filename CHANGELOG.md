@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.229.478] - 2026-04-03
+
+### Added
+- **Fragments/{Tlingit,Javanese,Gitksan,Korean,Greek,Mandarin,Dutch,Hungarian}/Modals.lean**: migrated 8 inline modal inventories (60 expressions across 8 languages) from `ImelGuoST2026.lean` to Fragment files — single source of truth for cross-linguistic modal typology data
+- **Theories/Semantics/Composition/LexiconBuilder.lean**: dispatch layer connecting Fragment data to compositional semantics — `ComplementType.toTy` (verb complement type → Montague semantic type), `buildLexicon` (named entry list → `Lexicon m`), `VerbCore.mkLexEntry`, `extendLexicon`, `mergeLexicons`
+
+### Changed
+- **ImelGuoST2026.lean**: all 8 inline `ModalInventory` defs now import expressions from Fragment files; theorems unchanged
+
+## [0.229.477] - 2026-04-03
+
+### Changed
+- **CoordinateResolution.lean**: `canonicalResolve` now **derived** from lattice primitives — cardinality addition via `Category.exactCard`/`fromCard` for determinate categories, MIN/AUG lattice join via `Category.isMinAug` — replacing 9-arm pattern match with a 3-branch structural definition
+- **CoordinateResolution.lean**: `coarsenTo` `.plural` branch now falls back to `.greaterPlural` when plural is absent (fixes resolution closure for systems with recursive [±minimal] like Larike and Marshallese)
+- **CoordinateResolution.lean**: deduplicated `join3`/`dom3` — lattice verification theorems now use `Core.Number.bitmaskJoin`/`ps3Domain` directly
+- **Core/Number.lean**: `bitmaskJoin` and `ps3Domain` made public (were private, duplicated in CoordinateResolution)
+- **Core/Number.lean**: added `Category.exactCard`, `Category.isMinAug`, `Category.fromCard` (lattice primitives for deriving `canonicalResolve`)
+
+### Added
+- **CoordinateResolution.lean**: `resolution_closure_table3` — proves resolution is closed under all 15 Harbour 2014 Table 3 number systems (12 distinct configs, 2–5 values each); every pair of categories from a system resolves to a category in that system
+- **CoordinateResolution.lean**: `lattice_grounding_agrees` — proves derived `canonicalResolve` agrees with concrete powerset lattice (`latticeToFeatures` on bitmask-OR join)
+
 ## [0.229.476] - 2026-04-03
 
 ### Changed

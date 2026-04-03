@@ -87,6 +87,42 @@ def isInSystem : Category → Bool
   | .general => false
   | _ => true
 
+/-- Exact referent-set cardinality for determinate number categories.
+
+    Singular denotes exactly 1 individual (atom), dual exactly 2 (pair),
+    trial exactly 3 (triple). All other categories — plural, paucal,
+    greaterPlural, minimal, augmented — have indeterminate or
+    context-dependent cardinality and return `none`.
+
+    Used by `CoordinateResolution.canonicalResolve` to derive resolution
+    from cardinality addition: |A ⊔ B| = |A| + |B| for disjoint sets. -/
+def exactCard : Category → Option Nat
+  | .singular => some 1
+  | .dual     => some 2
+  | .trial    => some 3
+  | _         => none
+
+/-- Whether a category belongs to the [±minimal] number system (without
+    [±atomic]). In such systems, minimal = atoms ∪ minimal non-atoms,
+    and augmented = everything else. Returns `none` for categories
+    outside the MIN/AUG system. -/
+def isMinAug : Category → Bool
+  | .minimal | .augmented => true
+  | _ => false
+
+/-- Map a referent-set cardinality back to the finest determinate category.
+    1 → singular, 2 → dual, 3 → trial, 4+ → greaterPlural. -/
+def fromCard : Nat → Category
+  | 1 => .singular
+  | 2 => .dual
+  | 3 => .trial
+  | _ => .greaterPlural
+
+/-- `fromCard` inverts `exactCard` for determinate categories. -/
+theorem fromCard_singular : fromCard 1 = .singular := rfl
+theorem fromCard_dual : fromCard 2 = .dual := rfl
+theorem fromCard_trial : fromCard 3 = .trial := rfl
+
 end Category
 
 -- ============================================================================
@@ -291,8 +327,9 @@ grounding computationally verifiable. They are the `Bool` counterparts
 of `Mereology.Atom` and minimality-in-region. -/
 
 /-- Powerset lattice join (bitwise OR). Atoms are powers of 2;
-    sums are bitwise OR of their atoms. Used across §§8–10. -/
-private def bitmaskJoin (a b : Nat) : Nat := Nat.lor a b
+    sums are bitwise OR of their atoms. Used across §§8–10 and
+    by `CoordinateResolution` for lattice verification. -/
+def bitmaskJoin (a b : Nat) : Nat := Nat.lor a b
 
 /-- Ordering induced by join: a ≤ b iff a ⊔ b = b.
     In a join-semilattice, this is the canonical partial order. -/
@@ -356,7 +393,7 @@ theorem ex_pair_is_dual :
     This demonstrates that `isMinimalNonAtom` correctly distinguishes
     duals from plurals in a non-trivial lattice (the 2-atom domain
     above has only one non-atom and cannot show this). -/
-private def ps3Domain : List Nat := [1, 2, 4, 3, 5, 6, 7]
+def ps3Domain : List Nat := [1, 2, 4, 3, 5, 6, 7]
 
 theorem ps3_atom_is_singular :
     latticeToFeatures bitmaskJoin ps3Domain 1 = singularF := by native_decide

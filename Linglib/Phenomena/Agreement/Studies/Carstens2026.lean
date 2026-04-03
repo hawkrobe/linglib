@@ -696,9 +696,10 @@ def bantuDP (s : GenderStatus) : PhiBundle SemanticCore :=
     number := ⟨.singular, true⟩
     gender := statusToBundle s }
 
-/-- Conjoined Bantu singulars → plural number (summation). -/
+/-- Conjoined Bantu singulars → plural number (summation).
+    Bantu languages have a {sg, pl} number system. -/
 theorem bantu_coordinate_number (s₁ s₂ : GenderStatus) :
-    (resolveCoordinate (bantuDP s₁) (bantuDP s₂)).number = some .plural := by
+    (resolveCoordinate [.singular, .plural] (bantuDP s₁) (bantuDP s₂)).number = some .plural := by
   cases s₁ with
   | interpretable c₁ => cases s₂ with
     | interpretable c₂ => cases c₁ <;> cases c₂ <;> rfl
@@ -709,7 +710,7 @@ theorem bantu_coordinate_number (s₁ s₂ : GenderStatus) :
 
 /-- Conjoined Bantu singulars → 3rd person (full DPs are always 3rd). -/
 theorem bantu_coordinate_person (s₁ s₂ : GenderStatus) :
-    (resolveCoordinate (bantuDP s₁) (bantuDP s₂)).person = some .third := by
+    (resolveCoordinate [.singular, .plural] (bantuDP s₁) (bantuDP s₂)).person = some .third := by
   cases s₁ with
   | interpretable c₁ => cases s₂ with
     | interpretable c₂ => cases c₁ <;> cases c₂ <;> rfl
@@ -720,7 +721,7 @@ theorem bantu_coordinate_person (s₁ s₂ : GenderStatus) :
 
 /-- Gender dimension of composed resolution matches direct `resolve`. -/
 theorem bantu_coordinate_gender (s₁ s₂ : GenderStatus) :
-    (resolveCoordinate (bantuDP s₁) (bantuDP s₂)).gender
+    (resolveCoordinate [.singular, .plural] (bantuDP s₁) (bantuDP s₂)).gender
     = resolve (statusToBundle s₁) (statusToBundle s₂) := by
   rfl
 
@@ -728,14 +729,16 @@ theorem bantu_coordinate_gender (s₁ s₂ : GenderStatus) :
     Person: 3rd + 3rd → 3rd. Number: sg + sg → pl. Gender: [human] ∩ [human]
     = some [human]. All three succeed. -/
 theorem xhosa_human_coordinate :
-    resolveCoordinate (bantuDP (.interpretable .human))
+    resolveCoordinate [.singular, .plural]
+                      (bantuDP (.interpretable .human))
                       (bantuDP (.interpretable .human))
     = ⟨some .third, some .plural, some [.human]⟩ := rfl
 
 /-- End-to-end: conjoined uninterpretable Xhosa singulars.
     Person and number resolve; gender fails → default. -/
 theorem xhosa_uninterpretable_coordinate :
-    resolveCoordinate (bantuDP .uninterpretable) (bantuDP .uninterpretable)
+    resolveCoordinate [.singular, .plural]
+                      (bantuDP .uninterpretable) (bantuDP .uninterpretable)
     = ⟨some .third, some .plural, none⟩ := rfl
 
 -- ============================================================================

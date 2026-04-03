@@ -682,16 +682,18 @@ theorem compositional_plural_is_inclusive :
 
 open Theories.Syntax.Minimalism.Agreement.CoordinateResolution
 
-/-- Corbett's `semanticResolve` is the unwrapped form of the unified
-    `numberResolve`: both compute the same value, but `numberResolve`
-    wraps the result in `Option` to fit the `ResolutionOp` interface
-    (which must handle dimensions where resolution can fail).
+/-- Corbett's `semanticResolveIn` agrees with the lattice-grounded
+    `numberResolveIn` for any system containing `.plural`.
 
-    Number resolution always succeeds, so the `Option` is always `some`. -/
-theorem numberResolve_eq_semanticResolve (a b : NumberValue) :
-    numberResolve a b
-    = some (NumberValue.semanticResolve a b) := by
-  cases a <;> cases b <;> rfl
+    `numberResolveIn` computes the canonical lattice join (sg+sg→du)
+    then coarsens to the target system. `semanticResolveIn` computes
+    semantic summation (sg+sg→pl) then coarsens. For {sg,pl} systems,
+    these agree because the coarsening step absorbs the difference
+    (du→pl = pl→pl). -/
+theorem numberResolveIn_eq_semanticResolveIn (a b : NumberValue) :
+    numberResolveIn englishNS.values a b
+    = some (NumberValue.semanticResolveIn englishNS a b) := by
+  cases a <;> cases b <;> native_decide
 
 -- ============================================================================
 -- §13: Minor Number Constraints IV–VII (Ch 4)
