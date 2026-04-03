@@ -312,7 +312,7 @@ def americanCommittee : AgreementProfile :=
       | .predicate       => false  -- ?the committee have decided (rare in AmE)
       | .relativePronoun => true
       | .personalPronoun => true
-      | .verbTarget      => true }
+      | .verbTarget      => false }
 
 /-- Serbo-Croatian *deca* 'children': morphologically feminine singular,
     semantically plural. Semantic agreement available everywhere. -/
@@ -351,6 +351,9 @@ structure ControllerTargetSystem where
   name : String
   controllerValues : List NumberValue
   targetValues : List NumberValue
+  /-- Number appearing when controller lacks specification (§6.1.2).
+      Most languages default to singular; Tsez defaults to plural. -/
+  defaultNumber : NumberValue := .singular
   deriving BEq
 
 /-- Whether controller and target systems differ in size. -/
@@ -393,6 +396,10 @@ structure IndividuationProfile where
   name : String
   /-- Number values available at each hierarchy position -/
   valuesAt : AnimacyRank → List NumberValue
+  /-- Minor number values: restricted to a closed class of nouns (e.g.,
+      Hebrew dual for body-part nouns, Maltese dual). Constraints IV–VII
+      govern the distribution of minor numbers. -/
+  minorValues : List NumberValue := []
 
 /-- **Constraint II** (Corbett Ch 4): if trial exists at position X, then dual
     exists at X and at all positions higher on the animacy hierarchy. -/
@@ -469,13 +476,23 @@ inductive ResolutionStrategy where
   | closestConjunct
   deriving DecidableEq, BEq, Repr
 
-/-- The result of resolving two number values under semantic resolution. -/
+/-- The result of resolving two number values under semantic resolution.
+
+    Note: this function produces `.trial` for `sg + du` unconditionally.
+    In languages without trial, the result is meaningless — use
+    `semanticResolveIn` for language-sensitive resolution. -/
 def NumberValue.semanticResolve (a b : NumberValue) : NumberValue :=
   match a, b with
   | .singular, .singular => .plural  -- 1 + 1 > 1
   | .singular, .dual     => .trial   -- 1 + 2 = 3 (in languages with trial)
   | .dual, .singular     => .trial
   | _, _ => .plural                   -- default: conjunction yields plural
+
+/-- Language-sensitive semantic resolution: if the raw result is not in
+    the language's number system, fall back to plural. -/
+def NumberValue.semanticResolveIn (ns : NumberSystem) (a b : NumberValue) : NumberValue :=
+  let raw := NumberValue.semanticResolve a b
+  if ns.values.contains raw then raw else .plural
 
 /-- Semantic resolution: sg + sg → pl. -/
 theorem sg_sg_resolves_pl :
@@ -484,6 +501,16 @@ theorem sg_sg_resolves_pl :
 /-- Semantic resolution: sg + du → tri (in languages with trial). -/
 theorem sg_du_resolves_tri :
     NumberValue.semanticResolve .singular .dual = .trial := rfl
+
+/-- In languages without trial, sg + du resolves to pl. -/
+theorem sg_du_resolves_pl_without_trial :
+    NumberValue.semanticResolveIn englishNS .singular .dual = .plural := by
+  native_decide
+
+/-- In Larike (which has trial), sg + du keeps trial. -/
+theorem sg_du_resolves_tri_with_trial :
+    NumberValue.semanticResolveIn larikeNS .singular .dual = .trial := by
+  native_decide
 
 -- ============================================================================
 -- §8: Bridges to AnimacyRank, Plurals.Typology
@@ -628,5 +655,246 @@ theorem numberResolve_eq_semanticResolve (a b : NumberValue) :
     numberResolve a b
     = some (NumberValue.semanticResolve a b) := by
   cases a <;> cases b <;> rfl
+
+-- ============================================================================
+-- §13: Minor Number Constraints IV–VII (Ch 4)
+-- ============================================================================
+
+/-- **Constraint VII** (@cite{corbett-2000} Ch 4): only dual and paucal can be
+    minor numbers. Singular and plural cannot be minor — they are the core
+    of any number system. -/
+def IndividuationProfile.respectsConstraintVII (p : IndividuationProfile) : Bool :=
+  p.minorValues.all λ v => v == .dual || v == .paucal
+
+/-- **Constraint IV** (@cite{corbett-2000} Ch 4): if a minor number exists
+    at some animacy position, it must also exist at all higher positions.
+    Minor numbers obey the same monotonicity as full number values. -/
+def IndividuationProfile.respectsConstraintIV (p : IndividuationProfile) : Bool :=
+  p.minorValues.all λ v =>
+    allRanks.all λ r1 =>
+      allRanks.all λ r2 =>
+        r1.toNat <= r2.toNat ||
+        !(p.valuesAt r2).contains v ||
+        (p.valuesAt r1).contains v
+
+/-- Modern Hebrew: minor dual restricted to body-part nouns and a few
+    lexicalized time expressions. The dual is a closed class (Constraint V),
+    found only among human/body-part nouns. -/
+def hebrewIndiv : IndividuationProfile :=
+  { name := "Modern Hebrew"
+    valuesAt := λ
+      | .speaker | .addressee | .thirdPerson | .kin | .human =>
+          [.singular, .dual, .plural]
+      | _ => [.singular, .plural]
+    minorValues := [.dual] }
+
+/-- Maltese: minor dual, also restricted to a small set of nouns (body
+    parts and time expressions, e.g. *idejn* 'two hands'). -/
+def malteseIndiv : IndividuationProfile :=
+  { name := "Maltese"
+    valuesAt := λ
+      | .speaker | .addressee | .thirdPerson | .kin | .human =>
+          [.singular, .dual, .plural]
+      | _ => [.singular, .plural]
+    minorValues := [.dual] }
+
+def allIndividuationProfilesExtended : List IndividuationProfile :=
+  [upperSorbianIndiv, lihirIndiv, englishIndiv, hebrewIndiv, malteseIndiv]
+
+/-- Constraint VII holds for all profiles (only dual/paucal are minor). -/
+theorem constraint_vii_holds :
+    allIndividuationProfilesExtended.all (·.respectsConstraintVII) = true := by
+  native_decide
+
+/-- Constraint IV holds for all profiles (minor number monotonicity). -/
+theorem constraint_iv_holds :
+    allIndividuationProfilesExtended.all (·.respectsConstraintIV) = true := by
+  native_decide
+
+/-- Constraint II also holds for the extended profile set. -/
+theorem constraint_ii_extended :
+    allIndividuationProfilesExtended.all (·.respectsConstraintII) = true := by
+  native_decide
+
+/-- Hebrew and Maltese duals are minor numbers. -/
+theorem hebrew_minor_dual : hebrewIndiv.minorValues = [.dual] := rfl
+theorem maltese_minor_dual : malteseIndiv.minorValues = [.dual] := rfl
+
+/-- No language in our sample has minor singular or plural. -/
+theorem no_minor_singular_or_plural :
+    allIndividuationProfilesExtended.all
+      (λ p => !(p.minorValues.contains .singular) &&
+              !(p.minorValues.contains .plural)) = true := by
+  native_decide
+
+-- ============================================================================
+-- §14: Default Number (Ch 6, §6.1.2)
+-- ============================================================================
+
+/-- Tsez (Northeast Caucasian): when the controller lacks a number
+    specification, the default agreement target form is plural —
+    opposite to most languages. -/
+def tsezCT : ControllerTargetSystem :=
+  { name := "Tsez"
+    controllerValues := [.singular, .plural]
+    targetValues := [.singular, .plural]
+    defaultNumber := .plural }
+
+/-- English defaults to singular. -/
+theorem english_default_singular : englishCT.defaultNumber = .singular := rfl
+
+/-- Tsez defaults to plural. -/
+theorem tsez_default_plural : tsezCT.defaultNumber = .plural := rfl
+
+/-- Default number is always in the target system. -/
+theorem default_in_target_system :
+    [englishCT, baysoCT, hebrewCT, tsezCT].all
+      (λ ct => ct.targetValues.contains ct.defaultNumber) = true := by
+  native_decide
+
+-- ============================================================================
+-- §15: Associative Plurals (Ch 5)
+-- ============================================================================
+
+/-- Associative plural profile: "X and associates" constructions are
+    constrained by animacy — they typically require human or animate
+    controllers (@cite{corbett-2000} Ch 5). -/
+structure AssociativePluralProfile where
+  name : String
+  /-- Minimum animacy rank for associative plural use -/
+  minAnimacy : AnimacyRank
+  /-- Whether the associative marker is identical to the additive plural -/
+  sameAsAdditive : Bool
+  deriving BEq
+
+/-- Hungarian: associative -ék, dedicated form (not the additive plural),
+    restricted to human referents. -/
+def hungarianAssoc : AssociativePluralProfile :=
+  { name := "Hungarian", minAnimacy := .human, sameAsAdditive := false }
+
+/-- Japanese: associative -tachi, distinct from additive plural (none on
+    common nouns), human-restricted. -/
+def japaneseAssoc : AssociativePluralProfile :=
+  { name := "Japanese", minAnimacy := .human, sameAsAdditive := false }
+
+/-- Turkish: associative -ler (same as additive plural), available for
+    human referents. -/
+def turkishAssoc : AssociativePluralProfile :=
+  { name := "Turkish", minAnimacy := .human, sameAsAdditive := true }
+
+def allAssociativeProfiles : List AssociativePluralProfile :=
+  [hungarianAssoc, japaneseAssoc, turkishAssoc]
+
+/-- Associative plurals in our sample all require at least human animacy. -/
+theorem associative_requires_human :
+    allAssociativeProfiles.all
+      (λ p => p.minAnimacy.toNat >= AnimacyRank.human.toNat) = true := by
+  native_decide
+
+/-- Bridge: Japanese has both associative plural (here) and general number
+    (from the NumberSystem), reflecting the interaction between the two. -/
+theorem japanese_associative_with_general :
+    japaneseNS.hasGeneral = true ∧
+    japaneseAssoc.sameAsAdditive = false := by
+  native_decide
+
+-- ============================================================================
+-- §16: Count/Mass × Number Interaction (Ch 7)
+-- ============================================================================
+
+/-- Count/mass interaction with number systems (@cite{corbett-2000} Ch 7).
+
+    Mass nouns resist plural morphology; count nouns take it freely.
+    The count/mass distinction interacts with the animacy hierarchy:
+    higher animacy positions are more likely to be count (and thus
+    support richer number distinctions). -/
+structure CountMassNumberInteraction where
+  name : String
+  /-- Does the language require count nouns to inflect for number? -/
+  countNounsInflect : Bool
+  /-- Does the language allow mass nouns to inflect for number? -/
+  massNounsInflect : Bool
+  /-- Number system for count nouns -/
+  countSystem : NumberSystem
+  /-- Number system for mass nouns (often smaller or empty) -/
+  massSystem : NumberSystem
+  deriving BEq
+
+/-- English: count nouns inflect obligatorily, mass nouns do not
+    (*furnitures, *informations). -/
+def englishCountMass : CountMassNumberInteraction :=
+  { name := "English"
+    countNounsInflect := true
+    massNounsInflect := false
+    countSystem := englishNS
+    massSystem := { name := "English (mass)", values := [.singular] } }
+
+/-- Japanese: neither count nor mass nouns inflect for number (general
+    number covers both). -/
+def japaneseCountMass : CountMassNumberInteraction :=
+  { name := "Japanese"
+    countNounsInflect := false
+    massNounsInflect := false
+    countSystem := japaneseNS
+    massSystem := japaneseNS }
+
+def allCountMassInteractions : List CountMassNumberInteraction :=
+  [englishCountMass, japaneseCountMass]
+
+/-- Mass noun systems are never richer than count noun systems. -/
+theorem mass_never_richer_than_count :
+    allCountMassInteractions.all
+      (λ cm => cm.massSystem.size <= cm.countSystem.size) = true := by
+  native_decide
+
+/-- In English, count nouns inflect but mass nouns do not. -/
+theorem english_count_mass_asymmetry :
+    englishCountMass.countNounsInflect = true ∧
+    englishCountMass.massNounsInflect = false := by
+  native_decide
+
+/-- Bridge to Chierchia (1998): Japanese general number languages treat
+    count and mass nouns identically — both get the same number system. -/
+theorem japanese_count_mass_uniform :
+    japaneseCountMass.countSystem == japaneseCountMass.massSystem := by
+  native_decide
+
+-- ============================================================================
+-- §17: Predicate Hierarchy Bridge
+-- ============================================================================
+
+open Core (PredicateTarget)
+
+/-- Russian: predicate adjectives agree in gender/number, but past-tense
+    verbs also do — illustrating the Predicate Hierarchy within the
+    agreement target position. -/
+structure PredicateHierarchyProfile where
+  name : String
+  /-- Whether semantic agreement is available at each predicate sub-position -/
+  semanticPossible : PredicateTarget → Bool
+
+/-- The Predicate Hierarchy monotonicity constraint: once semantic agreement
+    becomes possible at a sub-position, it remains possible at all higher
+    positions. -/
+def PredicateHierarchyProfile.respectsHierarchy (p : PredicateHierarchyProfile) : Bool :=
+  let targets := [PredicateTarget.verb, .participle, .adjective, .noun]
+  targets.all λ t1 =>
+    targets.all λ t2 =>
+      t1.rank >= t2.rank || !p.semanticPossible t1 || p.semanticPossible t2
+
+/-- Russian *deca* ('children'): semantic agreement on predicate adjective
+    and noun, but not on finite verb. Participial agreement follows
+    adjective. -/
+def russianDecaPredHier : PredicateHierarchyProfile :=
+  { name := "Russian deca (Predicate Hierarchy)"
+    semanticPossible := λ
+      | .verb       => false
+      | .participle => true
+      | .adjective  => true
+      | .noun       => true }
+
+/-- The Russian Predicate Hierarchy profile respects monotonicity. -/
+theorem russian_predicate_hierarchy_holds :
+    russianDecaPredHier.respectsHierarchy = true := by native_decide
 
 end Phenomena.Agreement.Studies.Corbett2000

@@ -42,4 +42,49 @@ theorem agreement_hierarchy_strict :
     AgreementTarget.personalPronoun.rank > AgreementTarget.verbTarget.rank := by
   native_decide
 
+-- ============================================================================
+-- § 2: Predicate Hierarchy (@cite{corbett-2000} Ch 6)
+-- ============================================================================
+
+/-- The Predicate Hierarchy (@cite{corbett-2000}) decomposes the predicate
+    position on the Agreement Hierarchy into a sub-hierarchy:
+    verb < participle < adjective < noun.
+
+    Semantic agreement increases monotonically along this sub-hierarchy:
+    if semantic agreement is possible on a verb, it is possible on a
+    participle; if on a participle, then on an adjective; etc.
+
+    This is orthogonal to `AgreementTarget`, which treats `.predicate` and
+    `.verbTarget` as two positions on the main hierarchy. The Predicate
+    Hierarchy provides finer resolution *within* the predicate position. -/
+inductive PredicateTarget where
+  | verb         -- finite verb agreement (= AgreementTarget.verbTarget)
+  | participle   -- participial agreement
+  | adjective    -- predicate adjective (= AgreementTarget.predicate)
+  | noun         -- predicate noun ("she is a doctor")
+  deriving DecidableEq, BEq, Repr
+
+/-- Rank in the Predicate Hierarchy: higher = more likely to show
+    semantic agreement. verb (0) < participle (1) < adjective (2) < noun (3). -/
+def PredicateTarget.rank : PredicateTarget → Nat
+  | .verb       => 0
+  | .participle => 1
+  | .adjective  => 2
+  | .noun       => 3
+
+/-- The Predicate Hierarchy is strictly ordered. -/
+theorem predicate_hierarchy_strict :
+    PredicateTarget.verb.rank < PredicateTarget.participle.rank ∧
+    PredicateTarget.participle.rank < PredicateTarget.adjective.rank ∧
+    PredicateTarget.adjective.rank < PredicateTarget.noun.rank := by
+  native_decide
+
+/-- Map a PredicateTarget to the corresponding AgreementTarget.
+    The predicate sub-positions map to either `.predicate` or `.verbTarget`. -/
+def PredicateTarget.toAgreementTarget : PredicateTarget → AgreementTarget
+  | .verb       => .verbTarget
+  | .participle => .predicate  -- participial agreement ≈ predicate position
+  | .adjective  => .predicate
+  | .noun       => .predicate
+
 end Core

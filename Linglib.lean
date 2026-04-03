@@ -1796,6 +1796,7 @@ import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018
 import Linglib.Phenomena.Plurals.Studies.Magri2014
 import Linglib.Phenomena.Plurals.Studies.BarLev2021
+import Linglib.Phenomena.Plurals.Studies.VerbalNumber
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.ScalarImplicatures.Studies.Chierchia2004
 import Linglib.Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity

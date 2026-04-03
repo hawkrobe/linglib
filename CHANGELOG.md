@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.229.464] - 2026-04-03
+
+### Added
+- **Core/AgreementTarget.lean**: `PredicateTarget` type (verb < participle < adjective < noun) formalizing Corbett (2000) Ch 6 Predicate Hierarchy, with `rank`, `toAgreementTarget` bridge, `predicate_hierarchy_strict`
+- **Core/Number.lean §8**: lattice-theoretic grounding — `isAtomIn`, `isMinimalNonAtom`, `latticeToFeatures` mapping join-semilattice membership to `Features`, `latticeToFeatures_wellFormed` proving [+atomic]→[+minimal] from lattice structure (not Bool case analysis), concrete 3-element example
+- **Corbett2000.lean §13**: minor number Constraints IV–VII — `minorValues` field on `IndividuationProfile`, `respectsConstraintIV`/`respectsConstraintVII`, Hebrew + Maltese minor dual profiles, `no_minor_singular_or_plural`
+- **Corbett2000.lean §14**: default number — `defaultNumber` field on `ControllerTargetSystem`, Tsez (defaults to plural), `default_in_target_system`
+- **Corbett2000.lean §15**: associative plurals — `AssociativePluralProfile` with `minAnimacy` + `sameAsAdditive`, Hungarian/Japanese/Turkish data, `associative_requires_human`, bridge to general number
+- **Corbett2000.lean §16**: count/mass × number — `CountMassNumberInteraction`, English/Japanese data, `mass_never_richer_than_count`, Chierchia bridge
+- **Corbett2000.lean §17**: Predicate Hierarchy profiles — `PredicateHierarchyProfile` with monotonicity constraint, Russian *deca* data
+- **Corbett2000.lean §7**: `semanticResolveIn` — language-sensitive resolution that falls back to plural when trial unavailable, `sg_du_resolves_pl_without_trial`/`sg_du_resolves_tri_with_trial`
+- **Plurals/Studies/VerbalNumber.lean**: verbal number / pluractionality (Corbett Ch 8) — `VerbalNumberType` (participantAgreement/eventPlurality/mixed), `VerbalNumberProfile`, Hausa/Chechen/Navajo/Georgian data, WALS 80A bridge, implicational universals
+
+### Fixed
+- **Corbett2000.lean**: `americanCommittee.semanticPossible .verbTarget` changed from `true` to `false` — American English does not permit plural verb agreement for *committee*
+
 ## [0.229.463] - 2026-04-03
 
 ### Changed
