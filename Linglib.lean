@@ -22,6 +22,8 @@ import Linglib.Core.Logic.Quantification.Defs
 import Linglib.Core.Logic.Quantification.Properties
 import Linglib.Core.Logic.Quantification.NumberTree
 import Linglib.Core.Logic.Quantification.Lattice
+import Linglib.Core.Logic.Quantification.Logicality
+import Linglib.Core.Logic.Quantification.Polyadic
 import Linglib.Core.Logic.PolarizedIndividuals
 import Linglib.Core.Logic.SquareOfOpposition
 import Linglib.Core.Scales.Extent
@@ -1554,6 +1556,8 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Lexical.Determiner.Exceptive
+import Linglib.Theories.Semantics.Lexical.Determiner.Possessive
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic

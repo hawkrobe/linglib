@@ -87,6 +87,33 @@ theorem mergeRanking_empty_sub {C : Type}
     mergeRanking default [] = default := by
   simp [mergeRanking]
 
+/-- Subranking constraints appear first in the merged ranking. -/
+theorem mergeRanking_sub_prefix {C : Type}
+    (default sub : List (NamedConstraint C)) :
+    (mergeRanking default sub).take sub.length = sub := by
+  simp [mergeRanking, List.take_append_of_le_length (Nat.le_refl _)]
+
+/-- Every subranking constraint is in the merged ranking. -/
+theorem mergeRanking_sub_subset {C : Type}
+    (default sub : List (NamedConstraint C))
+    (c : NamedConstraint C) (h : c ∈ sub) :
+    c ∈ mergeRanking default sub := by
+  simp only [mergeRanking]
+  exact List.mem_append_left _ h
+
+/-- Every default constraint whose name is not in the subranking
+    is preserved in the merged ranking. -/
+theorem mergeRanking_preserves_default {C : Type}
+    (default sub : List (NamedConstraint C))
+    (c : NamedConstraint C) (hMem : c ∈ default)
+    (hName : ¬ (sub.map (·.name)).contains c.name) :
+    c ∈ mergeRanking default sub := by
+  simp only [mergeRanking]
+  refine List.mem_append_right _ (List.mem_filter.mpr ⟨hMem, ?_⟩)
+  cases h : (sub.map (·.name)).contains c.name
+  · rfl
+  · exact absurd h hName
+
 -- ============================================================================
 -- § 3: Cophonological Evaluation
 -- ============================================================================

@@ -22,7 +22,7 @@ which preserves this asymmetric c-command ordering.
 
 ## Deriving the dominant GT asymmetry
 
-The **dominant GT asymmetry** (@cite{rolle-2018} §1.5.1, §3.3.1) states
+The **dominant GT asymmetry** (@cite{rolle-2018} §3.4.1) states
 that dominant GT triggers are always dependents (affixes, modifiers) and
 targets are always lexical heads. Here we **derive** it from the
 CoP-scope hierarchy rather than stipulating it:
@@ -51,9 +51,9 @@ open Theories.Phonology.Autosegmental.GrammaticalTone
     by scope. The ordering Spec > Head > Complement determines which
     VI's cophonology takes precedence within the domain.
 
-    @cite{rolle-2018} Ch 6: "The cophonology of the trigger scopes
-    over the entire sequence, with cophonologies applying cyclically
-    at each node resulting in 'layers' of grammatical tone." -/
+    @cite{rolle-2018} Ch 6 §6.2: each VI has cophonology-scope over
+    all inwardly located morphemes, and cophonologies apply cyclically
+    up the tree, producing layered grammatical tone effects. -/
 inductive CoPPosition where
   /-- Specifier: outermost scope. Dependents (modifiers, possessors)
       typically occupy this position. -/
@@ -234,20 +234,5 @@ theorem complement_cannot_dominate_head :
 /-- Heads cannot impose dominant GT on specifiers (outward dominance). -/
 theorem head_cannot_dominate_spec :
     scopesOver .head .spec = false := rfl
-
--- ============================================================================
--- § 7: Cyclic Evaluation Order
--- ============================================================================
-
-/-- In a CoP with multiple GT-bearing morphemes, cophonologies apply
-    cyclically from innermost scope outward. The last-applied
-    cophonology's effects take precedence — this is why outer-scoping
-    (dependent) triggers "win" in cases of competing dominant GT.
-
-    This function extracts GT-bearing nodes in evaluation order
-    (innermost first). -/
-def evaluationOrder (nodes : List CoPNode) : List CoPNode :=
-  let sorted := hierarchyExchange nodes
-  sorted.reverse.filter (λ n => n.gtSpec.isSome)
 
 end Theories.Phonology.Autosegmental.CoPScope

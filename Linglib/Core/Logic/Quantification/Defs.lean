@@ -217,6 +217,29 @@ def QuasiUniversal (q : GQ α) : Prop :=
 def AlmostConnected (q : GQ α) : Prop :=
   ∀ (A B C : α → Bool), q A B = true → q A C = true ∨ q C B = true
 
+/-- Asymmetric: Q(A,B) → ¬Q(B,A). @cite{peters-westerstahl-2006} Ch 6.4.
+    Strictly stronger than antisymmetric: antisymmetry allows Q(A,B) ∧ Q(B,A)
+    when A = B; asymmetry forbids it entirely. Under CONSERV + ISOM, no
+    non-trivial quantifier is asymmetric (P&W Ch 6.4). -/
+def QAsymmetric (q : GQ α) : Prop :=
+  ∀ (A B : α → Bool), q A B = true → q B A = false
+
+/-- Reflexive (relational vocabulary): Q(A,A) for all A.
+    Definitionally equal to `PositiveStrong`; included for relational vocabulary
+    alignment with @cite{peters-westerstahl-2006} Ch 6.4 and @cite{van-benthem-1984}. -/
+abbrev QReflexive (q : GQ α) : Prop := PositiveStrong q
+
+/-- Irreflexive (relational vocabulary): Q(A,A) = false for all A.
+    Definitionally equal to `NegativeStrong`; included for relational vocabulary
+    alignment with @cite{peters-westerstahl-2006} Ch 6.4. -/
+abbrev QIrreflexive (q : GQ α) : Prop := NegativeStrong q
+
+/-- Circular: Q(A,B) ∧ Q(B,C) → Q(C,A). @cite{peters-westerstahl-2006} Ch 6.4.
+    No natural language quantifier is non-trivially circular (under CONSERV + ISOM).
+    Together with transitivity, circularity forces quasi-reflexivity. -/
+def QCircular (q : GQ α) : Prop :=
+  ∀ (A B C : α → Bool), q A B = true → q B C = true → q C A = true
+
 /-- VAR (Variety): Q is non-trivial — it both accepts and rejects some pair.
     @cite{van-benthem-1984} §2: rules out degenerate quantifiers like "at least 2"
     on singleton domains. Used as hypothesis in most uniqueness theorems. -/
@@ -250,7 +273,25 @@ def Filtrating (q : GQ α) : Prop :=
   ∀ (A B C : α → Bool),
     q A B = true → q A C = true → q A (λ x => B x && C x) = true
 
--- §1.4 @cite{mostowski-1957} --
+-- §1.5 Monotonicity Universals (@cite{peters-westerstahl-2006} Ch 5.8) --
+
+/-- MU1: All simple (lexicalized) determiners are monotone in scope.
+    @cite{peters-westerstahl-2006} §5.8 Universal 1. -/
+def MU1 (q : GQ α) : Prop := ScopeUpwardMono q ∨ ScopeDownwardMono q
+
+/-- MU2: All simple determiners are monotone in at least one restrictor direction.
+    @cite{peters-westerstahl-2006} §5.8 Universal 2. -/
+def MU2 (q : GQ α) : Prop := RestrictorUpwardMono q ∨ RestrictorDownwardMono q
+
+/-- MU3: All simple Mon↑ determiners are smooth.
+    @cite{peters-westerstahl-2006} §5.8 Universal 3. -/
+def MU3 (q : GQ α) : Prop := ScopeUpwardMono q → Smooth q
+
+/-- MU4: All simple Mon↓ determiners are co-smooth.
+    @cite{peters-westerstahl-2006} §5.8 Universal 4. -/
+def MU4 (q : GQ α) : Prop := ScopeDownwardMono q → CoSmooth q
+
+-- §1.6 @cite{mostowski-1957} --
 
 /-- QUANT (Isomorphism closure): Q is invariant under permutations of the
     domain. Model-agnostic version: Q(A,B) depends only on the pointwise

@@ -133,9 +133,28 @@ def japaneseNS : NumberSystem :=
 def pirahaNS : NumberSystem :=
   { name := "Pirahã", values := [] }
 
+/-- Winnebago (Siouan): minimal–augmented, two values. {±minimal} only
+    (@cite{harbour-2014} Table 3). -/
+def winnebagoNS : NumberSystem :=
+  { name := "Winnebago", values := [.minimal, .augmented] }
+
+/-- Rembarrnga (Australian): minimal–unit augmented–augmented, three values.
+    {±minimal*} — feature recursion on [±minimal] without [±atomic]
+    (@cite{harbour-2014} Table 3). -/
+def rembarrnganS : NumberSystem :=
+  { name := "Rembarrnga"
+    values := [.minimal, .unitAugmented, .augmented] }
+
+/-- Mebengokre (Jê): minimal–paucal–plural, three values.
+    {±additive, ±minimal} (@cite{harbour-2014} Table 3). -/
+def mebengokreNS : NumberSystem :=
+  { name := "Mebengokre"
+    values := [.minimal, .paucal, .plural] }
+
 def allNumberSystems : List NumberSystem :=
   [englishNS, russianNS, upperSorbianNS, baysoNS, sloveneNS,
-   larikeNS, lihirNS, japaneseNS, pirahaNS]
+   larikeNS, lihirNS, japaneseNS, pirahaNS,
+   winnebagoNS, rembarrnganS, mebengokreNS]
 
 -- Size checks
 theorem english_two : englishNS.size = 2 := by native_decide
@@ -166,10 +185,22 @@ def NumberSystem.trialImpliesDual (ns : NumberSystem) : Bool :=
 def NumberSystem.dualImpliesPlural (ns : NumberSystem) : Bool :=
   !ns.values.contains .dual || ns.values.contains .plural
 
-/-- Plural implies singular (unless the system is empty = no number). -/
-def NumberSystem.pluralImpliesSingular (ns : NumberSystem) : Bool :=
-  !ns.values.contains .plural || ns.values.contains .singular ||
+/-- Plural implies singular or minimal (@cite{harbour-2014} Table 1:
+    PL → SG/MIN). Plural requires a "base" category — either singular
+    (from [±atomic]) or minimal (from [±minimal]). -/
+def NumberSystem.pluralImpliesSingularOrMinimal (ns : NumberSystem) : Bool :=
+  !ns.values.contains .plural ||
+  ns.values.contains .singular || ns.values.contains .minimal ||
   ns.values.isEmpty
+
+/-- Augmented implies minimal (@cite{harbour-2014} Table 1: AUG → MIN). -/
+def NumberSystem.augmentedImpliesMinimal (ns : NumberSystem) : Bool :=
+  !ns.values.contains .augmented || ns.values.contains .minimal
+
+/-- Unit augmented implies augmented (@cite{harbour-2014} Table 1:
+    U.AUG → AUG). -/
+def NumberSystem.unitAugImpliesAugmented (ns : NumberSystem) : Bool :=
+  !ns.values.contains .unitAugmented || ns.values.contains .augmented
 
 theorem all_trial_implies_dual :
     allNumberSystems.all (·.trialImpliesDual) = true := by native_decide
@@ -177,8 +208,14 @@ theorem all_trial_implies_dual :
 theorem all_dual_implies_plural :
     allNumberSystems.all (·.dualImpliesPlural) = true := by native_decide
 
-theorem all_plural_implies_singular :
-    allNumberSystems.all (·.pluralImpliesSingular) = true := by native_decide
+theorem all_plural_implies_singular_or_minimal :
+    allNumberSystems.all (·.pluralImpliesSingularOrMinimal) = true := by native_decide
+
+theorem all_augmented_implies_minimal :
+    allNumberSystems.all (·.augmentedImpliesMinimal) = true := by native_decide
+
+theorem all_unitAug_implies_augmented :
+    allNumberSystems.all (·.unitAugImpliesAugmented) = true := by native_decide
 
 -- ============================================================================
 -- §3: Animacy Hierarchy and Number Marking (Ch 3)

@@ -58,18 +58,26 @@ namespace Core.Number
       greater plural ≈ all/abundance). -/
 inductive Category where
   | general        -- non-committal, outside the number system
-  | singular       -- exactly one
-  | dual           -- exactly two
-  | trial          -- exactly three
-  | paucal         -- a few (indeterminate, ~2–6)
-  | plural         -- more than one (residual)
-  | greaterPaucal  -- indeterminate, larger than paucal
-  | greaterPlural  -- abundance / totality (indeterminate)
+  | singular       -- exactly one ([+atomic, +minimal])
+  | dual           -- exactly two ([−atomic, +minimal])
+  | trial          -- exactly three (recursive [+minimal] on plural region)
+  | paucal         -- a few (indeterminate, [−additive])
+  | plural         -- more than one (residual, [−atomic] or [+additive])
+  | greaterPaucal  -- indeterminate, larger than paucal ([−additive]*)
+  | greaterPlural  -- abundance / totality (recursive [−minimal] on plural)
+  | minimal        -- [+minimal] without [±atomic] — includes atoms AND
+                    -- minimal non-atoms; distinct from singular
+  | augmented      -- [−minimal] without [±atomic] — complement of minimal
+  | unitAugmented  -- recursive [+minimal] on augmented region — minimal
+                    -- non-minimal; distinct from dual
+  | globalPlural   -- recursive [+additive] on [+additive] region (tentative)
   deriving DecidableEq, BEq, Repr
 
 namespace Category
 
-/-- A number category is determinate iff its cardinality boundary is fixed. -/
+/-- A number category is determinate iff its cardinality boundary is fixed.
+    Minimal and unit augmented are indeterminate: they depend on the
+    composition of the group, not a fixed cardinality. -/
 def isDeterminate : Category → Bool
   | .singular | .dual | .trial => true
   | _ => false
@@ -85,16 +93,21 @@ end Category
 -- § 2: UD Bridges
 -- ============================================================================
 
-/-- Map analytical number categories to UD.Number (general has no UD equivalent). -/
+/-- Map analytical number categories to UD.Number (general has no UD equivalent).
+    Minimal, augmented, unit augmented, and global plural have no UD representation. -/
 def Category.toUD : Category → Option UD.Number
-  | .general       => none
-  | .singular      => some .Sing
-  | .dual          => some .Dual
-  | .trial         => some .Tri
-  | .paucal        => some .Pauc
-  | .plural        => some .Plur
-  | .greaterPaucal => some .Grpa
-  | .greaterPlural => some .Grpl
+  | .general        => none
+  | .singular       => some .Sing
+  | .dual           => some .Dual
+  | .trial          => some .Tri
+  | .paucal         => some .Pauc
+  | .plural         => some .Plur
+  | .greaterPaucal  => some .Grpa
+  | .greaterPlural  => some .Grpl
+  | .minimal        => none
+  | .augmented      => none
+  | .unitAugmented  => none
+  | .globalPlural   => none
 
 /-- Map UD.Number to analytical number categories (partial).
 
@@ -181,8 +194,9 @@ def Features.toCategory : Features → Option Category
 /-- Map Corbett's number categories to base features (partial).
 
     Only the three categories derivable from the base [±atomic, ±minimal]
-    system have feature equivalents. Trial, paucal, and the rest require
-    feature recursion or [±additive]. -/
+    system have feature equivalents. Trial, paucal, minimal, augmented,
+    and the rest require feature recursion, [±additive], or different
+    feature activation patterns. -/
 def Features.fromCategory : Category → Option Features
   | .singular => some singularF
   | .dual     => some dualF
@@ -261,7 +275,7 @@ theorem atomic_implies_minimal (f : Features) (hw : f.wellFormed = true) :
 
 Number features grounded in a join-semilattice of individuals.
 
-Link (1983) models the domain of individuals as a join-semilattice
+@cite{link-1983} models the domain of individuals as a join-semilattice
 ⟨D, ⊔⟩. Number categories correspond to lattice predicates:
 - **singular** = atoms (no proper part)
 - **dual** = minimal non-atoms (join of exactly 2 atoms)
@@ -269,35 +283,56 @@ Link (1983) models the domain of individuals as a join-semilattice
 
 The containment [+atomic] → [+minimal] is a *theorem* of lattice
 theory, not a stipulation: atoms have no proper parts, so they are
-trivially minimal in any sublattice region. -/
+trivially minimal in any sublattice region (`Mereology.Atom`).
 
-/-- An element is an atom if no smaller element exists in the domain
-    (besides itself). -/
-def isAtomIn {D : Type} [DecidableEq D] (elems : List D) (x : D) : Bool :=
-  elems.all λ y => y == x || !(elems.contains y && elems.contains x)
+The decidable functions `isAtom` and `isMinimalNonAtom` are parameterized
+by a join operation and a finite domain, making the lattice-theoretic
+grounding computationally verifiable. They are the `Bool` counterparts
+of `Mereology.Atom` and minimality-in-region. -/
 
-/-- An element is minimal in a sublattice if no element in the same
-    region is strictly smaller. For non-atoms, "minimal" means there
-    is no non-atom strictly below. -/
+/-- Powerset lattice join (bitwise OR). Atoms are powers of 2;
+    sums are bitwise OR of their atoms. Used across §§8–10. -/
+private def bitmaskJoin (a b : Nat) : Nat := Nat.lor a b
+
+/-- Ordering induced by join: a ≤ b iff a ⊔ b = b.
+    In a join-semilattice, this is the canonical partial order. -/
+private def joinLE {D : Type} [DecidableEq D]
+    (join : D → D → D) (a b : D) : Bool :=
+  join a b == b
+
+/-- An element is an atom in a domain under the join-induced ordering:
+    x ∈ domain and no element other than x is below it.
+    Decidable counterpart of `Mereology.Atom` (∀ y, y ≤ x → y = x),
+    parameterized by a concrete join operation and finite domain. -/
+def isAtom {D : Type} [DecidableEq D]
+    (join : D → D → D) (domain : List D) (x : D) : Bool :=
+  domain.contains x &&
+  domain.all fun y => y == x || !(joinLE join y x)
+
+/-- An element is a minimal non-atom: not an atom, and no non-atom in
+    the domain is strictly below it in the join-induced ordering.
+    For number: minimal non-atoms are duals (pairs of exactly 2 atoms).
+    Non-minimal non-atoms are plurals (groups of 3+). -/
 def isMinimalNonAtom {D : Type} [DecidableEq D]
-    (atoms nonAtoms : List D) (x : D) : Bool :=
-  !atoms.contains x &&
-  nonAtoms.all λ y => y == x || !(nonAtoms.contains y)
+    (join : D → D → D) (domain : List D) (x : D) : Bool :=
+  let nonAtoms := domain.filter (! isAtom join domain ·)
+  nonAtoms.contains x &&
+  nonAtoms.all fun y => y == x || !(joinLE join y x)
 
-/-- Convert lattice membership to number features.
+/-- Convert lattice membership to number features using join structure.
     Atoms → singular, minimal non-atoms → dual, others → plural. -/
 def latticeToFeatures {D : Type} [DecidableEq D]
-    (atoms nonAtoms : List D) (x : D) : Features :=
-  if atoms.contains x then singularF
-  else if isMinimalNonAtom atoms nonAtoms x then dualF
+    (join : D → D → D) (domain : List D) (x : D) : Features :=
+  if isAtom join domain x then singularF
+  else if isMinimalNonAtom join domain x then dualF
   else pluralF
 
 /-- Containment follows from lattice structure: atoms always get
     [+minimal], so [+atomic] → [+minimal] holds by construction.
     Every branch of `latticeToFeatures` produces a well-formed bundle. -/
 theorem latticeToFeatures_wellFormed {D : Type} [DecidableEq D]
-    (atoms nonAtoms : List D) (x : D) :
-    (latticeToFeatures atoms nonAtoms x).wellFormed = true := by
+    (join : D → D → D) (domain : List D) (x : D) :
+    (latticeToFeatures join domain x).wellFormed = true := by
   simp only [latticeToFeatures]
   split
   · rfl
@@ -305,17 +340,32 @@ theorem latticeToFeatures_wellFormed {D : Type} [DecidableEq D]
     · rfl
     · rfl
 
-/-- Concrete example: a 3-element domain {a, b, a⊔b}.
-    a and b are atoms → singular; a⊔b is minimal non-atom → dual. -/
-private def exAtoms : List Nat := [0, 1]
-private def exNonAtoms : List Nat := [2]
+/-- Powerset lattice with 2 atoms: {0}=1, {1}=2, {0,1}=3. -/
+private def ps2Domain : List Nat := [1, 2, 3]
 
 theorem ex_atom_is_singular :
-    latticeToFeatures exAtoms exNonAtoms 0 = singularF := rfl
+    latticeToFeatures bitmaskJoin ps2Domain 1 = singularF := by native_decide
 theorem ex_atom_is_singular' :
-    latticeToFeatures exAtoms exNonAtoms 1 = singularF := rfl
+    latticeToFeatures bitmaskJoin ps2Domain 2 = singularF := by native_decide
 theorem ex_pair_is_dual :
-    latticeToFeatures exAtoms exNonAtoms 2 = dualF := rfl
+    latticeToFeatures bitmaskJoin ps2Domain 3 = dualF := by native_decide
+
+/-- Powerset lattice with 3 atoms: {0}=1, {1}=2, {2}=4.
+    Pairs (3,5,6) are minimal non-atoms → dual.
+    Triple (7) is non-minimal non-atom → plural.
+    This demonstrates that `isMinimalNonAtom` correctly distinguishes
+    duals from plurals in a non-trivial lattice (the 2-atom domain
+    above has only one non-atom and cannot show this). -/
+private def ps3Domain : List Nat := [1, 2, 4, 3, 5, 6, 7]
+
+theorem ps3_atom_is_singular :
+    latticeToFeatures bitmaskJoin ps3Domain 1 = singularF := by native_decide
+theorem ps3_pair_is_dual :
+    latticeToFeatures bitmaskJoin ps3Domain 3 = dualF := by native_decide
+theorem ps3_pair_is_dual' :
+    latticeToFeatures bitmaskJoin ps3Domain 5 = dualF := by native_decide
+theorem ps3_triple_is_plural :
+    latticeToFeatures bitmaskJoin ps3Domain 7 = pluralF := by native_decide
 
 -- ============================================================================
 -- § 9: The Additive Feature
@@ -350,7 +400,8 @@ def isJoinCompleteIn {D : Type} [DecidableEq D]
   region.all fun y => region.contains (join x y)
 
 /-- A region is globally join-complete: every element is [+additive].
-    Equivalent to CUM restricted to the region. -/
+    Decidable counterpart of `Mereology.CUM` restricted to the region:
+    CUM(Q) ⇔ ∀x,y ∈ Q, x ⊔ y ∈ Q. -/
 def isRegionJoinComplete {D : Type} [DecidableEq D]
     (join : D → D → D) (region : List D) : Bool :=
   region.all fun x => isJoinCompleteIn join region x
@@ -370,9 +421,6 @@ With 3 atoms, the non-atomic region is entirely join-complete, so
 With 5 atoms, the "paucal" region (2–3 atoms) is NOT join-complete:
 two small sums can join to exceed "a few." The "plural" region
 (≥ 4 atoms) IS join-complete, satisfying complement completeness. -/
-
-/-- Powerset lattice join (bitwise OR). -/
-private def bitmaskJoin (a b : Nat) : Nat := Nat.lor a b
 
 /-- Non-atoms in the 3-atom powerset. Atoms: {0}=1, {1}=2, {2}=4.
     Non-atoms: {0,1}=3, {0,2}=5, {1,2}=6, {0,1,2}=7. -/

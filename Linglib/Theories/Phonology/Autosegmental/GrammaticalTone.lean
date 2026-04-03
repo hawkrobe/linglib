@@ -216,11 +216,11 @@ inductive GTLevel where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- § 6: Exponence Types (@cite{rolle-2018} §2.2.1, Defs 16–18)
+-- § 6: Exponence Types (@cite{rolle-2018} §2.2.1, Defs 16–17)
 -- ============================================================================
 
 /-- How the GT construction relates to segmental exponence of
-    grammatical meaning (@cite{rolle-2018} Defs 16–18). -/
+    grammatical meaning (@cite{rolle-2018} Defs 16–17). -/
 inductive ExponenceType where
   /-- **Independent prosodic exponence** (Def 16): the grammatical
       category is exponed only by prosodic units of contrast (tonemes,
@@ -317,7 +317,7 @@ def tonalOverwrite {S : Type} [DecidableEq S] [BEq S] [Repr S]
   | _, _ => host  -- no change if melody doesn't match window pattern
 
 -- ============================================================================
--- § 9: Dominant GT Asymmetry (@cite{rolle-2018} §1.5.1, §3.3.1)
+-- § 9: Dominant GT Asymmetry (@cite{rolle-2018} §3.4.1)
 -- ============================================================================
 
 /-- The **dominant GT asymmetry**: within a multi-morphemic constituent,
@@ -350,7 +350,7 @@ def DominantGTAsymmetry.holds (a : DominantGTAsymmetry) : Bool :=
   a.triggerIsDependent && a.targetIsHead
 
 -- ============================================================================
--- § 10: GT Indomitability (@cite{rolle-2018} §3.3.2, Def 6)
+-- § 10: GT Indomitability (@cite{rolle-2018} §3.3.2)
 -- ============================================================================
 
 /-- Types of GT indomitability: exceptional targets that fail to undergo

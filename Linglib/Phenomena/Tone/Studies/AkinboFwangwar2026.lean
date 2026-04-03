@@ -630,17 +630,13 @@ in Mwaghavul's ideophone-to-verb derivation. -/
 
 open Morphology.DM
 
-/-- The M-tone verbaliser is a verbal categorizer: it takes an
-    ideophonic base (which may be nominal, adjectival, or adverbial)
-    and produces a verb. -/
-def mVerbalizerCat : CatHead := CatHead.v_plain
+/-- Both M-tone and M-H verbalisers are verbal categorizers: they take
+    an ideophonic base (which may be nominal, adjectival, or adverbial)
+    and produce a verb. Both map to the same `CatHead.v_plain`. -/
+def verbalizerCat : CatHead := CatHead.v_plain
 
-/-- The M-H verbaliser is also a verbal categorizer. -/
-def mhVerbalizerCat : CatHead := CatHead.v_plain
-
-/-- Both verbalisers produce verbal category. -/
-theorem verbalizers_are_verbal :
-    mVerbalizerCat.cat = .v ∧ mhVerbalizerCat.cat = .v := ⟨rfl, rfl⟩
+/-- The verbaliser produces verbal category. -/
+theorem verbalizer_is_verbal : verbalizerCat.cat = .v := rfl
 
 /-- Denominal verb derivation: an ideophonic noun + verbaliser → verb.
     This is exactly the `Recategorization.denominal` pattern. -/

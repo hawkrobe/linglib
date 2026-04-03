@@ -163,6 +163,141 @@ theorem optimal_subset (t : OTTableau Candidate) (c : Candidate) :
   fun hc => (List.mem_filter.mp hc).1
 
 -- ============================================================================
+-- § 4b: lexLE Transitivity — Total Preorder
+-- ============================================================================
+
+/-- `lexLE` with empty left is always true: the empty profile is
+    vacuously at least as harmonic as any profile. -/
+theorem lexLE_nil (b : List Nat) : lexLE [] b = true := by cases b <;> rfl
+
+/-- Characterization of `lexLE (x :: xs) []`: all entries must be zero. -/
+private theorem lexLE_cons_nil_iff (x : Nat) (xs : List Nat) :
+    lexLE (x :: xs) [] = true ↔ x = 0 ∧ lexLE xs [] = true := by
+  show (x == 0 && lexLE xs []) = true ↔ _
+  rw [Bool.and_eq_true, beq_iff_eq]
+
+/-- Characterization of `lexLE (x :: xs) (y :: ys)`: either the head is
+    strictly less, or the heads are equal and the tails are ≤. -/
+theorem lexLE_cons_cons_iff (x y : Nat) (xs ys : List Nat) :
+    lexLE (x :: xs) (y :: ys) = true ↔
+    (x < y ∨ (x = y ∧ lexLE xs ys = true)) := by
+  show (if x < y then true else if y < x then false else lexLE xs ys) = true ↔ _
+  constructor
+  · intro h
+    by_cases hxy : x < y
+    · exact Or.inl hxy
+    · rw [if_neg hxy] at h
+      by_cases hyx : y < x
+      · rw [if_pos hyx] at h; exact absurd h Bool.false_ne_true
+      · rw [if_neg hyx] at h
+        exact Or.inr ⟨by omega, h⟩
+  · intro h
+    cases h with
+    | inl hlt => rw [if_pos hlt]
+    | inr heq =>
+      obtain ⟨rfl, htail⟩ := heq
+      rw [if_neg (Nat.lt_irrefl x), if_neg (Nat.lt_irrefl x)]
+      exact htail
+
+/-- If `lexLE a [] = true` (all entries are zero), then `lexLE a c = true`
+    for any `c`. The all-zeros profile is the minimum under `lexLE`. -/
+theorem lexLE_of_nil_right : ∀ (a : List Nat),
+    lexLE a [] = true → ∀ (c : List Nat), lexLE a c = true
+  | [], _, c => lexLE_nil c
+  | x :: xs, h, c => by
+    rw [lexLE_cons_nil_iff] at h
+    obtain ⟨rfl, hxs⟩ := h
+    cases c with
+    | nil => rw [lexLE_cons_nil_iff]; exact ⟨rfl, hxs⟩
+    | cons z zs =>
+      rw [lexLE_cons_cons_iff]
+      by_cases hz : (0 : Nat) < z
+      · exact Or.inl hz
+      · have : z = 0 := by omega
+        subst this
+        exact Or.inr ⟨rfl, lexLE_of_nil_right xs hxs zs⟩
+
+/-- Lexicographic ≤ is transitive. Together with `lexLE_refl` and
+    `lexLE_total`, this makes `lexLE` a **total preorder** on
+    equal-length profiles — the correct algebraic structure for
+    OT harmony ordering. -/
+theorem lexLE_trans : ∀ (a b c : List Nat),
+    lexLE a b = true → lexLE b c = true → lexLE a c = true
+  | [], _, c, _, _ => lexLE_nil c
+  | _ :: _, [], c, hab, _ => lexLE_of_nil_right _ hab c
+  | x :: xs, y :: ys, [], hab, hbc => by
+    rw [lexLE_cons_nil_iff] at hbc
+    rw [lexLE_cons_cons_iff] at hab
+    rw [lexLE_cons_nil_iff]
+    cases hab with
+    | inl hxy => exact absurd hxy (by omega)  -- x < 0 impossible
+    | inr heq =>
+      obtain ⟨rfl, hxsys⟩ := heq
+      exact ⟨hbc.1, lexLE_trans xs ys [] hxsys hbc.2⟩
+  | x :: xs, y :: ys, z :: zs, hab, hbc => by
+    rw [lexLE_cons_cons_iff] at hab hbc ⊢
+    cases hab with
+    | inl hxy =>
+      cases hbc with
+      | inl hyz => exact Or.inl (by omega)
+      | inr heq => obtain ⟨rfl, _⟩ := heq; exact Or.inl hxy
+    | inr heq =>
+      obtain ⟨rfl, hxsys⟩ := heq
+      cases hbc with
+      | inl hyz => exact Or.inl hyz
+      | inr heq2 =>
+        obtain ⟨rfl, hyszs⟩ := heq2
+        exact Or.inr ⟨rfl, lexLE_trans xs ys zs hxsys hyszs⟩
+
+/-- Lexicographic < is irreflexive. -/
+theorem lexLT_irrefl (a : List Nat) : lexLT a a = false := by
+  simp [lexLT, lexLE_refl]
+
+/-- Lexicographic < is asymmetric: `a < b → ¬(b < a)`. -/
+theorem lexLT_asymm (a b : List Nat) (h : lexLT a b = true) :
+    lexLT b a = false := by
+  unfold lexLT at h ⊢
+  rw [Bool.and_eq_true] at h
+  simp [h.1]
+
+-- ============================================================================
+-- § 4c: Minimum Element Existence
+-- ============================================================================
+
+/-- A non-empty list has a minimum element under `lexLE`, provided all
+    profiles have equal length. This is the key ingredient for
+    `optimal_nonempty`: OT always picks at least one winner. -/
+theorem exists_lexLE_minimum {α : Type} (xs : List α) (hne : xs ≠ [])
+    (f : α → List Nat)
+    (hlen : ∀ a ∈ xs, ∀ b ∈ xs, (f a).length = (f b).length) :
+    ∃ x ∈ xs, ∀ y ∈ xs, lexLE (f x) (f y) = true := by
+  induction xs with
+  | nil => exact absurd rfl hne
+  | cons a rest ih =>
+    by_cases hrest : rest = []
+    · subst hrest
+      exact ⟨a, .head _, fun y hy => by
+        cases hy with
+        | head => exact lexLE_refl (f a)
+        | tail _ h => nomatch h⟩
+    · have hlen' : ∀ c ∈ rest, ∀ d ∈ rest, (f c).length = (f d).length :=
+        fun c hc d hd => hlen c (.tail a hc) d (.tail a hd)
+      obtain ⟨m, hm_mem, hm_min⟩ := ih hrest hlen'
+      have hlen_am : (f a).length = (f m).length :=
+        hlen a (.head _) m (.tail a hm_mem)
+      cases lexLE_total (f a) (f m) hlen_am with
+      | inl ham =>
+        exact ⟨a, .head _, fun y hy => by
+          cases hy with
+          | head => exact lexLE_refl (f a)
+          | tail _ h => exact lexLE_trans (f a) (f m) (f y) ham (hm_min y h)⟩
+      | inr hma =>
+        exact ⟨m, .tail a hm_mem, fun y hy => by
+          cases hy with
+          | head => exact hma
+          | tail _ h => exact hm_min y h⟩
+
+-- ============================================================================
 -- § 5: Bidirectional OT — Superoptimality (@cite{blutner-2000})
 -- ============================================================================
 

@@ -1,5 +1,70 @@
 # Changelog
 
+## [0.229.471] - 2026-04-03
+
+### Changed
+- **FeatureRecursion.lean §12**: `Harbour2014Entry` now carries an actual `HarbourConfig` instead of an inert parameter string — each Table 3 entry is machine-verified against the generative mechanism
+- **FeatureRecursion.lean §12**: added `surfaceCategories` (removes superordinate categories split by recursion/[±additive]) to match Table 3's morphological counts
+
+### Added
+- **FeatureRecursion.lean §12**: `table3_all_wellformed` (all 15 Table 3 configs well-formed), `table3_counts_match` (surface category counts = Table 3 `numValues` for all 15 entries) — the typology is now verified end-to-end, not just asserted
+
+## [0.229.470] - 2026-04-03
+
+### Added
+- **Quantification/Defs.lean**: `QAsymmetric`, `QReflexive` (alias for `PositiveStrong`), `QIrreflexive` (alias for `NegativeStrong`), `QCircular` relational property definitions; `MU1`-`MU4` monotonicity universals (@cite{peters-westerstahl-2006} Ch 5.8, Ch 6.4)
+- **Quantification/Properties.lean**: `asymmetric_irreflexive`, `asymmetric_antisymmetric`, `circular_symmetric_quasiRefl` theorems (all sorry-free)
+- **Quantification/Logicality.lean**: `HomInvariant` (Feferman's HOM), `InjInvariant` (INJ), `hom_implies_isom_same_type`, `isom_implies_inj_same_type` (INJ ≡ ISOM on finite types) — all sorry-free
+- **Quantification/Polyadic.lean**: `iterate`, `resume`, `branch` (Hintikka) polyadic quantifier operators; `surfaceScope`/`inverseScope`; `iterate_mono_in_R`, `resume_mono_in_R` monotonicity inheritance — all sorry-free
+- **Determiner/Possessive.lean**: `PossW`/`Poss` possessive quantifier operators with domain narrowing, `possW_scopeUpMono`/`possW_scopeDownMono` monotonicity inheritance, `possW_inner_conservative` — all sorry-free; imports Barker2011's π
+- **Determiner/Exceptive.lean**: `ExcI`/`ExcE` exceptive operators, `positiveStrong_exceptive` (PS quantifiers license exceptives), `symmetric_not_exceptive` (symmetric quantifiers block them) — all sorry-free; connects to `Phenomena/Polarity/Exceptives.lean`
+
+## [0.229.469] - 2026-04-03
+
+### Fixed
+- **FeatureRecursion.lean §7**: `markednessLE` had spurious edge `dual ≤ greaterPaucal` — Banyun ({±additive*, ±atomic}) has greaterPaucal without dual, so the exact and approximative branches are independent
+- **FeatureRecursion.lean §8**: `HarbourConfig.wellFormed` was too strict ([±additive] required [±atomic], but [±minimal] alone suffices as base); `categories` generated greaterPaucal whenever `hasAdditive && hasMinimal` regardless of recursion
+
+### Removed
+- **FeatureRecursion.lean §12**: `two_feature_systems_at_least_3` — used string length as fragile proxy for feature count
+
+### Changed
+- **FeatureRecursion.lean §8**: added `recurseOnAdditive : Bool` field to `HarbourConfig`; greaterPaucal now only generated when [±additive] recurses; 13 well-formed configs (up from 8 with old 4-field structure)
+- **Harbour2016.lean**: bridge theorem updated for 5-field `HarbourConfig` (all existing configs use `recurseOnAdditive = false`)
+
+## [0.229.468] - 2026-04-03
+
+### Fixed
+- **GrammaticalTone.lean §9**: wrong citation `§1.5.1, §3.3.1` → `§3.4.1` (verified against Rolle 2018 PDF)
+- **GrammaticalTone.lean §10**: removed unverified `Def 6` citation for indomitability (Def 6 in Ch 2 = tonal allomorphy, not indomitability)
+- **CoPScope.lean**: same `§1.5.1, §3.3.1` → `§3.4.1` fix; flagged unverified Ch 6 direct quotation with `-- UNVERIFIED:`
+- **GrammaticalTone.lean §6**: wrong citation `Defs 16–18` → `Defs 16–17` (Def 18 = non-restrictive prosodic exponence in §2.2.3, not an exponence type; `ExponenceType` only has 2 variants matching Defs 16–17)
+
+### Added
+- **CophonologyTheory.lean §2**: `mergeRanking_sub_prefix` (subranking constraints appear first), `mergeRanking_sub_subset` (every subranking constraint is preserved), `mergeRanking_preserves_default` (default constraints with non-overlapping names are preserved)
+
+### Changed
+- **CoPScope.lean §7**: deleted dead `evaluationOrder` function (defined but never called from any file)
+- **AkinboFwangwar2026.lean**: merged redundant `mVerbalizerCat`/`mhVerbalizerCat` (both `CatHead.v_plain`) into single `verbalizerCat`
+
+## [0.229.467] - 2026-04-03
+
+### Fixed
+- **Core/Number.lean §8**: `isAtomIn` and `isMinimalNonAtom` were broken — neither checked lattice ordering (old `isAtomIn` reduced to "x is the sole element"; old `isMinimalNonAtom` reduced to "x is the sole non-atom"). Replaced with join-aware `isAtom`/`isMinimalNonAtom` parameterized by a join operation, using `joinLE` (a ≤ b ⟺ a ⊔ b = b) for proper lattice ordering. Added 3-atom powerset example (`ps3Domain`) demonstrating correct dual/plural distinction
+
+### Added
+- **FeatureRecursion.lean §11**: `additive_subregion_is_cum` — formal bridge proving the [+additive] subregion satisfies `Mereology.CUM`, connecting number features to mereological infrastructure
+
+### Changed
+- **Core/Number.lean §8–10**: `bitmaskJoin` moved to §8 as shared infrastructure; `latticeToFeatures` now takes `join` + `domain` instead of pre-classified `atoms`/`nonAtoms` lists; docstrings reference `Mereology.Atom` and `Mereology.CUM` connections
+- **FeatureRecursion.lean §3**: `RecursiveNumber.toCategory` docstring notes missing `unitAugmented`/`augmented` Category constructors as future work
+
+## [0.229.466] - 2026-04-03
+
+### Added
+- **ConstraintEvaluation.lean §4b–4c**: `lexLE` total preorder foundation — `lexLE_nil`, `lexLE_cons_nil_iff`, `lexLE_cons_cons_iff` (characterization lemmas), `lexLE_of_nil_right` (all-zeros is the minimum profile), `lexLE_trans` (transitivity — structural recursion on all four list patterns), `lexLT_irrefl`, `lexLT_asymm`, `exists_lexLE_minimum` (non-empty list with equal-length profiles has a minimum element under `lexLE`)
+- **OT.lean §5–6**: `buildProfile_length` (all profiles have length = ranking length), `buildTableau_optimal_nonempty` (OT always picks at least one winner — follows from `lexLE` being a total preorder on equal-length profiles)
+
 ## [0.229.465] - 2026-04-03
 
 ### Added

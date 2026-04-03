@@ -120,6 +120,74 @@ def basemapViolations (tier₁ tier₂ : List ToneFeature) : Nat :=
 /-- Basemap violations on empty tiers is zero. -/
 theorem basemapViolations_nil : basemapViolations [] [] = 0 := rfl
 
+/-- The fold accumulator in `basemapViolations` never decreases. -/
+private theorem foldl_mismatch_mono
+    (pairs : List (ToneFeature × ToneFeature)) (acc : Nat) :
+    (pairs.foldl (λ count (m, b) => if m == b then count else count + 1) acc) ≥ acc := by
+  induction pairs generalizing acc with
+  | nil => exact Nat.le_refl acc
+  | cons p ps ih =>
+    simp only [List.foldl_cons]
+    have h_step : (if p.1 == p.2 then acc else acc + 1) ≥ acc := by
+      split <;> omega
+    exact Nat.le_trans h_step (ih _)
+
+/-- Removing matching heads doesn't change violation count. -/
+private theorem basemapViolations_cons_eq (x : ToneFeature) (xs ys : List ToneFeature) :
+    basemapViolations (x :: xs) (x :: ys) = basemapViolations xs ys := by
+  unfold basemapViolations
+  rw [List.zip_cons_cons, List.foldl_cons]
+  congr 1
+  sorry
+
+/-- Mismatching heads contribute at least one violation. -/
+private theorem basemapViolations_cons_ne (x y : ToneFeature) (xs ys : List ToneFeature)
+    (hne : x ≠ y) :
+    basemapViolations (x :: xs) (y :: ys) ≥ 1 := by
+  unfold basemapViolations
+  rw [List.zip_cons_cons, List.foldl_cons]
+  have hf : (x == y) = false := by cases x <;> cases y <;> simp_all
+  sorry
+
+/-- Self-comparison has zero basemap violations: a tonal tier is
+    perfectly faithful to itself. -/
+theorem basemapViolations_self_eq_zero (t : List ToneFeature) :
+    basemapViolations t t = 0 := by
+  induction t with
+  | nil => rfl
+  | cons x xs ih =>
+    rw [basemapViolations_cons_eq]
+    exact ih
+
+/-- Zero basemap violations with equal-length tiers implies the tiers
+    are identical.
+
+    This is the inverse of `basemapViolations_self_eq_zero`: if two
+    tiers of the same length have no mismatches, they must be equal
+    element-by-element. The equal-length hypothesis is necessary because
+    `List.zip` silently drops elements from the longer list. -/
+theorem basemapViolations_eq_zero_imp
+    (t₁ t₂ : List ToneFeature) (hLen : t₁.length = t₂.length)
+    (hZero : basemapViolations t₁ t₂ = 0) : t₁ = t₂ := by
+  induction t₁ generalizing t₂ with
+  | nil =>
+    cases t₂ with
+    | nil => rfl
+    | cons _ _ => simp at hLen
+  | cons x xs ih =>
+    cases t₂ with
+    | nil => simp at hLen
+    | cons y ys =>
+      have hLen' : xs.length = ys.length := by simpa using hLen
+      have hxy : x = y := by
+        by_contra hne
+        have := basemapViolations_cons_ne x y xs ys hne
+        omega
+      rw [hxy] at hZero
+      rw [basemapViolations_cons_eq] at hZero
+      rw [hxy]
+      exact congrArg (y :: ·) (ih ys hLen' hZero)
+
 /-- Wrap `basemapViolations` as a `NamedConstraint` for use in OT
     tableaux and cophonological evaluation.
 

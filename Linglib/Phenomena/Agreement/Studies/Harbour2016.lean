@@ -373,38 +373,53 @@ open Phenomena.Agreement.Studies.Corbett2000
     - English/Russian/Japanese: [±atomic] only → {sg, pl}
     - Upper Sorbian/Slovene: [±atomic, ±minimal] → {sg, du, pl}
     - Bayso: [±atomic, ±additive] → {sg, pl, pauc}
-    - Larike: [±atomic, ±minimal] + recursion → {sg, du, pl, trial, grpl}
-    - Lihir: [±atomic, ±minimal, ±additive] + recursion →
-             {sg, du, pl, trial, grpl, pauc, grpauc} -/
+    - Larike: [±atomic, ±minimal] + [±minimal] recursion → {sg, du, pl, trial, grpl}
+    - Lihir: [±atomic, ±minimal, ±additive] + [±minimal] recursion →
+             {sg, du, pl, trial, grpl, pauc} -/
 theorem attested_number_systems_derivable :
     pirahaNS.values.all
-      ((HarbourConfig.mk false false false false).categories.contains ·) = true ∧
+      ((HarbourConfig.mk false false false false false).categories.contains ·) = true ∧
     englishNS.values.all
-      ((HarbourConfig.mk true false false false).categories.contains ·) = true ∧
+      ((HarbourConfig.mk true false false false false).categories.contains ·) = true ∧
     russianNS.values.all
-      ((HarbourConfig.mk true false false false).categories.contains ·) = true ∧
+      ((HarbourConfig.mk true false false false false).categories.contains ·) = true ∧
     upperSorbianNS.values.all
-      ((HarbourConfig.mk true true false false).categories.contains ·) = true ∧
+      ((HarbourConfig.mk true true false false false).categories.contains ·) = true ∧
     baysoNS.values.all
-      ((HarbourConfig.mk true false true false).categories.contains ·) = true ∧
+      ((HarbourConfig.mk true false true false false).categories.contains ·) = true ∧
     sloveneNS.values.all
-      ((HarbourConfig.mk true true false false).categories.contains ·) = true ∧
+      ((HarbourConfig.mk true true false false false).categories.contains ·) = true ∧
     larikeNS.values.all
-      ((HarbourConfig.mk true true false true).categories.contains ·) = true ∧
+      ((HarbourConfig.mk true true false true false).categories.contains ·) = true ∧
     lihirNS.values.all
-      ((HarbourConfig.mk true true true true).categories.contains ·) = true ∧
+      ((HarbourConfig.mk true true true true false).categories.contains ·) = true ∧
     japaneseNS.values.all
-      ((HarbourConfig.mk true false false false).categories.contains ·) = true
+      ((HarbourConfig.mk true false false false false).categories.contains ·) = true
+    := by native_decide
+
+/-- MIN/AUG systems from @cite{harbour-2014} Table 3, now expressible
+    with the expanded `Category` type. -/
+theorem minAug_systems_derivable :
+    winnebagoNS.values.all
+      ((HarbourConfig.mk false true false false false).categories.contains ·) = true ∧
+    rembarrnganS.values.all
+      ((HarbourConfig.mk false true false true false).categories.contains ·) = true ∧
+    mebengokreNS.values.all
+      ((HarbourConfig.mk false true true false false).categories.contains ·) = true
     := by native_decide
 
 /-- The Harbour configurations used in the bridge are all well-formed. -/
 theorem bridge_configs_wellFormed :
-    (HarbourConfig.mk false false false false).wellFormed = true ∧
-    (HarbourConfig.mk true false false false).wellFormed = true ∧
-    (HarbourConfig.mk true true false false).wellFormed = true ∧
-    (HarbourConfig.mk true false true false).wellFormed = true ∧
-    (HarbourConfig.mk true true false true).wellFormed = true ∧
-    (HarbourConfig.mk true true true true).wellFormed = true
+    (HarbourConfig.mk false false false false false).wellFormed = true ∧
+    (HarbourConfig.mk true false false false false).wellFormed = true ∧
+    (HarbourConfig.mk true true false false false).wellFormed = true ∧
+    (HarbourConfig.mk true false true false false).wellFormed = true ∧
+    (HarbourConfig.mk true true false true false).wellFormed = true ∧
+    (HarbourConfig.mk true true true true false).wellFormed = true ∧
+    -- New configs for MIN/AUG systems:
+    (HarbourConfig.mk false true false false false).wellFormed = true ∧
+    (HarbourConfig.mk false true false true false).wellFormed = true ∧
+    (HarbourConfig.mk false true true false false).wellFormed = true
     := by decide
 
 end Phenomena.Agreement.Studies.Harbour2016
