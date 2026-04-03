@@ -1898,6 +1898,8 @@ import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
+import Linglib.Theories.Phonology.Autosegmental.CoPScope
 import Linglib.Theories.Phonology.Harmony.Defs
 import Linglib.Theories.Phonology.Harmony.OT
 import Linglib.Theories.Phonology.Syllable.Defs
@@ -1912,6 +1914,7 @@ import Linglib.Theories.Phonology.HarmonicGrammar.Separability
 import Linglib.Theories.Phonology.HarmonicGrammar.Variation
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.StratalOT
+import Linglib.Theories.Phonology.CophonologyTheory
 import Linglib.Theories.Phonology.ProsodicWord
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace

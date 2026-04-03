@@ -1,8 +1,21 @@
 # Changelog
 
+## [0.229.465] - 2026-04-03
+
+### Added
+- **Core/Number.lean §9–10**: [±additive] feature formalization — `isJoinCompleteIn` (decidable [+additive] predicate), `isRegionJoinComplete` (CUM restricted to subregion), powerset lattice examples demonstrating paucal/plural split: 3-atom lattice is vacuously join-complete (no paucal possible), 5-atom lattice has non-join-complete paucal region and join-complete plural region, `ps5_additive_asymmetry` theorem
+- **FeatureRecursion.lean §11**: lattice-grounded feature predicates — `minimalInPred` ([+minimal] as lattice predicate), `additiveInPred` ([+additive] as join-completeness), `additive_region_cum` (the [+additive] region is CUM — formal link between number and aspect/telicity), `atoms_all_minimal`/`atoms_no_nonminimal` (lattice proof that [±atomic] cannot undergo feature recursion)
+- **FeatureRecursion.lean §12**: Harbour 2014 Table 3 typology — `Harbour2014Entry`, `harbour2014Table3` (15 attested parametric settings generating 0–5 value number systems with example languages), `max_system_size`/`min_system_size` verification theorems
+
+### Changed
+- **references.bib**: updated `harbour-2014` sources field to `Core/Number.lean;Theories/Syntax/Minimalism/Agreement/FeatureRecursion.lean`
+
 ## [0.229.464] - 2026-04-03
 
 ### Added
+- **CophonologyTheory.lean**: Cophonology Theory — `CophVocabItem extends VocabItem` (VI + morpheme-specific constraint subranking R component), `mergeRanking`, `cophonologicalEval`. Connects DM `VocabItem` to OT `NamedConstraint`/`OTTableau.optimal`. Theorem: `cophonologicalEval_empty_sub` (empty subranking = standard OT)
+- **BasemapCorrespondence.lean**: Matrix-Basemap Correspondence (MxBM-C) — `deficientProjection`, `basemapOutput`, `tonalTier`, `basemapViolations`, `mkBasemapConstraint` (wraps violations as `NamedConstraint` for OT tableaux). Theorems: `tonalOverwrite_basemap_faithful` (matrix = basemap tonal tier under whole-word replacement), `basemapOutput_tone_independent_whole` (transparadigmatic uniformity: basemap output independent of host's underlying tones)
+- **CoPScope.lean**: CoP-scope hierarchy — `CoPPosition` (Spec > Head > Complement), `CoPPosition.isDependent` (derived from position, not stipulated), `CoPNode`, `hierarchyExchange`, `scopesOver`. Theorems: `scopes_over_head_implies_spec` (only Spec scopes over Head), `dominant_gt_asymmetry_from_scope` (derives `DominantGTAsymmetry.holds` from scope ordering + target=Head hypothesis)
 - **Core/AgreementTarget.lean**: `PredicateTarget` type (verb < participle < adjective < noun) formalizing Corbett (2000) Ch 6 Predicate Hierarchy, with `rank`, `toAgreementTarget` bridge, `predicate_hierarchy_strict`
 - **Core/Number.lean §8**: lattice-theoretic grounding — `isAtomIn`, `isMinimalNonAtom`, `latticeToFeatures` mapping join-semilattice membership to `Features`, `latticeToFeatures_wellFormed` proving [+atomic]→[+minimal] from lattice structure (not Bool case analysis), concrete 3-element example
 - **Corbett2000.lean §13**: minor number Constraints IV–VII — `minorValues` field on `IndividuationProfile`, `respectsConstraintIV`/`respectsConstraintVII`, Hebrew + Maltese minor dual profiles, `no_minor_singular_or_plural`
@@ -12,6 +25,13 @@
 - **Corbett2000.lean §17**: Predicate Hierarchy profiles — `PredicateHierarchyProfile` with monotonicity constraint, Russian *deca* data
 - **Corbett2000.lean §7**: `semanticResolveIn` — language-sensitive resolution that falls back to plural when trial unavailable, `sg_du_resolves_pl_without_trial`/`sg_du_resolves_tri_with_trial`
 - **Plurals/Studies/VerbalNumber.lean**: verbal number / pluractionality (Corbett Ch 8) — `VerbalNumberType` (participantAgreement/eventPlurality/mixed), `VerbalNumberProfile`, Hausa/Chechen/Navajo/Georgian data, WALS 80A bridge, implicational universals
+
+### Changed
+- **CoPScope.lean** (refactored): `CoPNode.isDependent` now derived from `CoPPosition.isDependent` instead of independent Bool field; `dominant_gt_asymmetry_from_scope` now takes `CoPPosition` hypotheses (target=Head, trigger scopes over target) instead of raw Bool substitution — uses `scopes_over_head_implies_spec` for a genuine derivation; dead code removed (`headIsNotDependent`, `dependentIsNotHead`, `dominantRequiresScope`)
+- **CophonologyTheory.lean** (refactored): `CophVocabItem` now `extends VocabItem` instead of wrapping via `.vi` field — exposes `.exponent`, `.matches`, `.specificity` directly; spurious `[BEq C]` removed from `mergeRanking` and `cophonologicalEval`
+- **AkinboFwangwar2026.lean**: `verbalizer_asymmetry_holds` now derived from `dominant_gt_asymmetry_from_scope .spec .head` instead of stipulated `DominantGTAsymmetry` record; imports CoPScope; CPT integration — `verbM_CophVI`, `verbMH_CophVI`, `verbMH_plur_CophVI` (CophVocabItems with anchor subrankings), `cophonologicalEval` equivalence theorems for Tableaux 24/25/26, basemap faithfulness theorems for all three tableau winners
+- **GrammaticalTone.lean**: updated `DominantGTAsymmetry` docstring to cross-reference `CoPScope.dominant_gt_asymmetry_from_scope` derivation
+- **references.bib**: added `inkelas-zoll-2007`, `sande-jenks-2017`, `benua-1997`; updated `rolle-2018` sources
 
 ### Fixed
 - **Corbett2000.lean**: `americanCommittee.semanticPossible .verbTarget` changed from `true` to `false` — American English does not permit plural verb agreement for *committee*

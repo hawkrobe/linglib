@@ -317,4 +317,100 @@ theorem ex_atom_is_singular' :
 theorem ex_pair_is_dual :
     latticeToFeatures exAtoms exNonAtoms 2 = dualF := rfl
 
+-- ============================================================================
+-- § 9: The Additive Feature
+-- ============================================================================
+
+/-! ### The Additive Feature
+@cite{harbour-2014}
+
+[±additive] is the third number feature, characterizing
+join-completeness within a lattice region. Applied to the non-atomic
+region, it separates:
+- [+additive] = "abundance" (plural/greater plural) — join-complete
+- [−additive] = "paucity" (paucal/greater paucal) — not join-complete
+
+The boundary is fixed by sociosemantic convention, subject to:
+- **Complement completeness** ((11)): the [+additive] subregion must
+  be join-complete.
+- **Fungibility** ((12)): the boundary must be permutation-invariant
+  (horizontal cuts by cardinality, not identity of atoms).
+
+**Connection to CUM**: [+additive] IS cumulativity restricted to a
+subregion. The link between number and aspect/telicity
+(@cite{harbour-2014} §4.4) runs through exactly this connection:
+mass nouns satisfy [+additive] (cumulative), count nouns satisfy
+[−additive] (quantized). -/
+
+/-- An element is join-complete in a region under a given join operation.
+    @cite{harbour-2014} (10): [+additive](x) ⟺ x ∈ Q ∧ ∀y ∈ Q, x ⊔ y ∈ Q. -/
+def isJoinCompleteIn {D : Type} [DecidableEq D]
+    (join : D → D → D) (region : List D) (x : D) : Bool :=
+  region.contains x &&
+  region.all fun y => region.contains (join x y)
+
+/-- A region is globally join-complete: every element is [+additive].
+    Equivalent to CUM restricted to the region. -/
+def isRegionJoinComplete {D : Type} [DecidableEq D]
+    (join : D → D → D) (region : List D) : Bool :=
+  region.all fun x => isJoinCompleteIn join region x
+
+-- ============================================================================
+-- § 10: Additive Feature — Powerset Lattice Examples
+-- ============================================================================
+
+/-! ### Powerset Lattice Examples
+
+Paucal vs plural on a powerset lattice (join = bitwise OR). Atoms
+encoded as powers of 2; sums as bitwise OR of their atoms.
+
+With 3 atoms, the non-atomic region is entirely join-complete, so
+[±additive] draws no distinction — paucal requires a richer lattice.
+
+With 5 atoms, the "paucal" region (2–3 atoms) is NOT join-complete:
+two small sums can join to exceed "a few." The "plural" region
+(≥ 4 atoms) IS join-complete, satisfying complement completeness. -/
+
+/-- Powerset lattice join (bitwise OR). -/
+private def bitmaskJoin (a b : Nat) : Nat := Nat.lor a b
+
+/-- Non-atoms in the 3-atom powerset. Atoms: {0}=1, {1}=2, {2}=4.
+    Non-atoms: {0,1}=3, {0,2}=5, {1,2}=6, {0,1,2}=7. -/
+private def ps3NonAtoms : List Nat := [3, 5, 6, 7]
+
+/-- With 3 atoms, the entire non-atomic region is join-complete.
+    [±additive] is vacuous — no paucal/plural split possible. -/
+theorem ps3_nonAtoms_joinComplete :
+    isRegionJoinComplete bitmaskJoin ps3NonAtoms = true := by native_decide
+
+/-- "Paucal" region in a 5-atom powerset: elements with 2–3 atoms.
+    Atoms: 1, 2, 4, 8, 16.
+    Dyads (C(5,2)=10): 3, 5, 6, 9, 10, 12, 17, 18, 20, 24.
+    Triads (C(5,3)=10): 7, 11, 13, 14, 19, 21, 22, 25, 26, 28. -/
+private def ps5Paucal : List Nat :=
+  [3, 5, 6, 9, 10, 12, 17, 18, 20, 24,
+   7, 11, 13, 14, 19, 21, 22, 25, 26, 28]
+
+/-- "Plural" region in a 5-atom powerset: elements with ≥ 4 atoms.
+    Tetrads (C(5,4)=5): 15, 23, 27, 29, 30. Pentad: 31. -/
+private def ps5Plural : List Nat := [15, 23, 27, 29, 30, 31]
+
+/-- The paucal region is NOT join-complete: {0,1}=3 ⊔ {2,3}=12 =
+    {0,1,2,3}=15 has 4 atoms and escapes the region. -/
+theorem ps5_paucal_not_joinComplete :
+    isRegionJoinComplete bitmaskJoin ps5Paucal = false := by native_decide
+
+/-- The plural region IS join-complete: joining two large sums stays
+    large. Satisfies complement completeness (@cite{harbour-2014} (11)). -/
+theorem ps5_plural_joinComplete :
+    isRegionJoinComplete bitmaskJoin ps5Plural = true := by native_decide
+
+/-- The paucal/plural asymmetry: the [+additive] region is join-complete,
+    the [−additive] region is not. This is the formal content of the
+    approximative number distinction (@cite{harbour-2014} §3). -/
+theorem ps5_additive_asymmetry :
+    isRegionJoinComplete bitmaskJoin ps5Plural = true ∧
+    isRegionJoinComplete bitmaskJoin ps5Paucal = false :=
+  ⟨ps5_plural_joinComplete, ps5_paucal_not_joinComplete⟩
+
 end Core.Number

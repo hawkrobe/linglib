@@ -325,11 +325,14 @@ def tonalOverwrite {S : Type} [DecidableEq S] [BEq S] [Repr S]
     clitics), and the target is always the **lexical head** (root, stem,
     noun). Lexical heads do not impose dominant GT on their dependents.
 
-    @cite{rolle-2018} derives this from the CoP-scope hierarchy (§6):
+    @cite{rolle-2018} derives this from the CoP-scope hierarchy:
     VIs within specifiers scope over heads, and VIs within heads scope
     over complements. Since dependents are structurally outer relative
-    to the head, the outer dominance principle (Def 5) guarantees that
-    dominant triggers are always dependents.
+    to the head, dominant triggers are always dependents.
+
+    See `CoPScope.dominant_gt_asymmetry_from_scope` for a derivation
+    of this asymmetry from the CoP-scope ordering, which eliminates
+    the stipulation by showing it follows from Spec > Head > Complement.
 
     We encode this as a predicate over GT specifications: if the
     trigger is dominant, then by the asymmetry, the trigger must be

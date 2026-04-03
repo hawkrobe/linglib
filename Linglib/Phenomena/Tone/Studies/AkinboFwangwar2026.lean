@@ -2,6 +2,9 @@ import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Core.Logic.OT
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Theories.Phonology.Autosegmental.CoPScope
+import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
+import Linglib.Theories.Phonology.CophonologyTheory
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 
 /-!
@@ -722,6 +725,8 @@ valuation window without checking whether the input TBUs are valued. -/
 
 open Theories.Phonology.Autosegmental.GrammaticalTone
   (GTSpec GTDominance GTLevel ExponenceType DominantGTAsymmetry)
+open Theories.Phonology.Autosegmental.CoPScope
+  (CoPPosition scopesOver dominant_gt_asymmetry_from_scope)
 
 /-- The M-tone verbaliser (VBZ₁) classified under @cite{rolle-2018}:
     replacive-dominant, word-level, independent prosodic exponence. -/
@@ -749,14 +754,13 @@ theorem verbalizers_are_dominant :
     verbMH_GT.dominance.isDominant = true := ⟨rfl, rfl⟩
 
 /-- The verbaliser-to-root relationship satisfies the dominant GT
-    asymmetry: the trigger (verbaliser) is a dependent, and the
-    target (ideophone root) is a lexical head. -/
-def verbalizerAsymmetry : DominantGTAsymmetry :=
-  { triggerIsDependent := true
-    targetIsHead := true }
-
+    asymmetry, **derived from CoP-scope**: the verbaliser is in Spec
+    position (dependent), the ideophone root is in Head position.
+    Spec scopes over Head, so the asymmetry holds. -/
 theorem verbalizer_asymmetry_holds :
-    verbalizerAsymmetry.holds = true := rfl
+    DominantGTAsymmetry.holds
+      ⟨CoPPosition.isDependent .spec, !CoPPosition.isDependent .head⟩ = true :=
+  dominant_gt_asymmetry_from_scope .spec .head rfl rfl
 
 /-- The GTSpec for VBZ₁ extends the same `Spec` used by `deriveVerb`.
     The `toSpec` projection recovers the original melody and window. -/
@@ -766,5 +770,123 @@ theorem verbM_GT_toSpec_eq :
 /-- The GTSpec for VBZ₂ extends the same `Spec` used by `deriveVerb`. -/
 theorem verbMH_GT_toSpec_eq :
     verbMH_GT.toSpec = verbMH := rfl
+
+-- ============================================================================
+-- S 14: Cophonology Theory Integration
+-- ============================================================================
+
+/-! ### Verbalisers as cophonological VIs
+
+Under Cophonology Theory (@cite{rolle-2018} Ch 4, @cite{sande-jenks-2017}),
+each verbaliser is a Vocabulary Item with a morpheme-specific constraint
+subranking (the R component). The subranking promotes anchor constraints
+above the default MAX-Tone, creating a morpheme-specific phonology that
+forces the grammatical tune onto the output.
+
+The default ranking has MAX-Tone high: without a verbaliser's cophonology,
+lexical tones are preserved. Each verbaliser's cophonology promotes its
+anchor constraints above MAX-Tone, forcing tone replacement — this is the
+CPT account of why dominant GT erases underlying tones.
+
+The three `cophEval` theorems below prove that `cophonologicalEval` with
+each verbaliser's subranking selects the same optimal candidates as the
+existing inline tableaux (24, 25, 26). -/
+
+open Theories.Phonology.CophonologyTheory (CophVocabItem cophonologicalEval)
+open Theories.Phonology.Autosegmental.BasemapCorrespondence (basemapViolations)
+
+/-- Default ranking for the M-tone verbaliser context: MAX-Tone high,
+    no anchor constraints. Without morpheme-specific effects, lexical
+    tones are preserved (no overwriting). -/
+def defaultRanking24 : List (NamedConstraint SingleCand) := [maxT24]
+
+/-- Default ranking for the M-H verbaliser context (singular verbs). -/
+def defaultRanking25 : List (NamedConstraint SingleCand) := [maxT25]
+
+/-- Default ranking for the M-H pluractional context. -/
+def defaultRanking26 : List (NamedConstraint PlurCand) := [maxT26]
+
+/-- The M-tone verbaliser (VBZ₁) as a cophonological VI: segmentally
+    null exponent with a subranking that promotes L-ANCH-Mᵥ and
+    R-ANCH-Mᵥ above the default MAX-Tone. -/
+def verbM_CophVI : CophVocabItem Unit Unit SingleCand :=
+  { exponent := ""
+    contextMatch := λ _ => true
+    subranking := [lAnch24, rAnch24] }
+
+/-- The M-H verbaliser (VBZ₂) as a cophonological VI for singular
+    verbs: promotes L-ANCH-Mᵥ, R-ANCH-Hᵥ >> R-ANCH-Mᵥ >> L-ANCH-Hᵥ
+    above MAX-Tone. -/
+def verbMH_CophVI : CophVocabItem Unit Unit SingleCand :=
+  { exponent := ""
+    contextMatch := λ _ => true
+    subranking := [lAnchM25, rAnchH25, rAnchM25, lAnchH25] }
+
+/-- The M-H verbaliser for pluractional verbs: same anchor constraint
+    logic but over `PlurCand` (two root morphemes with separate
+    evaluation domains for M-anchors and H-anchors). -/
+def verbMH_plur_CophVI : CophVocabItem Unit Unit PlurCand :=
+  { exponent := ""
+    contextMatch := λ _ => true
+    subranking := [lAnchM26, rAnchH26, rAnchM26, lAnchH26] }
+
+/-- Both verbalisers are dominant cophonologies (non-empty subranking). -/
+theorem verbalizers_are_dominant_coph :
+    verbM_CophVI.isDominantCoph = true ∧
+    verbMH_CophVI.isDominantCoph = true := ⟨rfl, rfl⟩
+
+/-- Cophonological evaluation with VBZ₁'s subranking selects the same
+    winner as Tableau 24: (wūlāʃ)₂ with M on every TBU. -/
+theorem verbM_cophEval_optimal :
+    cophonologicalEval defaultRanking24 verbM_CophVI.subranking
+      t24_candidates t24_nonempty = [t24e] := by
+  native_decide
+
+/-- Cophonological evaluation with VBZ₂'s subranking selects the same
+    winner as Tableau 25: (hāŋlā)₂(yáp)₃ with M-on-nonfinal,
+    H-on-final. -/
+theorem verbMH_cophEval_optimal :
+    cophonologicalEval defaultRanking25 verbMH_CophVI.subranking
+      t25_candidates t25_nonempty = [t25e] := by
+  native_decide
+
+/-- Cophonological evaluation with VBZ₂'s pluractional subranking
+    selects the same winner as Tableau 26: (jālpāt)₃(jálpát)₄. -/
+theorem verbMH_plur_cophEval_optimal :
+    cophonologicalEval defaultRanking26 verbMH_plur_CophVI.subranking
+      t26_candidates t26_nonempty = [t26d] := by
+  native_decide
+
+-- ============================================================================
+-- S 15: Basemap Faithfulness of Tableau Winners
+-- ============================================================================
+
+/-! ### Connection to Matrix-Basemap Correspondence
+
+The OT tableau winners exhibit zero basemap correspondence violations:
+their surface tones exactly match what the basemap output would produce.
+This structurally connects the anchor-constraint-based analysis to
+@cite{rolle-2018}'s MxBM-C theory — dominance as transparadigmatic
+uniformity (@cite{benua-1997}). -/
+
+/-- The Tableau 24 winner's tones [M, M] match the basemap output
+    for a whole-word M melody over a bisyllabic host. -/
+theorem t24_winner_basemap_faithful :
+    basemapViolations (t24e.output.map OutputTBU.tone) [.M, .M] = 0 := by
+  native_decide
+
+/-- The Tableau 25 winner's tones [M, M, H] match the basemap output
+    for a nonfinal-M, final-H melody over a trisyllabic host. -/
+theorem t25_winner_basemap_faithful :
+    basemapViolations (t25e.output.map OutputTBU.tone) [.M, .M, .H] = 0 := by
+  native_decide
+
+/-- The Tableau 26 winner's tones [M, M, H, H] match the basemap
+    output for M-on-reduplicant, H-on-base. -/
+theorem t26_winner_basemap_faithful :
+    basemapViolations
+      (t26d.redOutput.map OutputTBU.tone ++ t26d.baseOutput.map OutputTBU.tone)
+      [.M, .M, .H, .H] = 0 := by
+  native_decide
 
 end Phenomena.Tone.Studies.AkinboFwangwar2026
