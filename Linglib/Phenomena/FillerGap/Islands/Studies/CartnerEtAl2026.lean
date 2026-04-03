@@ -333,13 +333,14 @@ invariance. The discourse account (FBC) attributes subject islands to an
 IS clash, which varies by construction → predicts variance. -/
 def predictsInvariance : IslandSource → Bool
   | .syntactic  => true   -- same movement constraint across constructions
+  | .semantic   => true   -- same binding restriction across constructions
   | .processing => true   -- same processing bottleneck across constructions
   | .discourse  => false  -- different IS profiles → different predictions
 
 /-- The syntactic classification of subject islands in Data.lean predicts
 construction-invariant island effects — consistent with the data. -/
 theorem syntactic_predicts_invariance :
-    predictsInvariance (constraintSource .subject) = true := rfl
+    (constraintSources .subject).all predictsInvariance = true := rfl
 
 /-- The discourse source would predict construction-dependent effects —
 inconsistent with the data. -/
@@ -435,8 +436,8 @@ theorem argument_chain :
     islandEffect .relativeClause > 0 ∧
     islandEffect .topicalization > 0 ∧
     -- Conclusion: syntactic account predicts this, discourse account doesn't
-    constraintSource .subject = .syntactic ∧
-    predictsInvariance (constraintSource .subject) = true ∧
+    constraintSources .subject = [.syntactic] ∧
+    (constraintSources .subject).all predictsInvariance = true ∧
     predictsInvariance .discourse = false ∧
     -- Scope: BCI not tested
     cartnerTestsTheory .directBackgroundedness = false := by

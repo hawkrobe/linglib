@@ -56,9 +56,16 @@ inductive RegisterFeature where
     register setting.
 
     - `H`: high pitch target (upper half of register)
-    - `L`: low pitch target (lower half of register) -/
+    - `M`: mid pitch target (center of register)
+    - `L`: low pitch target (lower half of register)
+
+    Note: some autosegmental analyses treat M as derived (e.g., H+L or
+    registerless). We include it as a primitive to accommodate three-level
+    tone systems like Mwaghavul (Chadic) and Yoruba (Benue-Congo) where
+    H/M/L contrast lexically. -/
 inductive ToneFeature where
   | H  -- High tone
+  | M  -- Mid tone
   | L  -- Low tone
   deriving DecidableEq, BEq, Repr, Inhabited
 
@@ -71,8 +78,8 @@ inductive ToneFeature where
 
     Standard tones decompose as register + tone:
     - High  = `Hh` (high tone, raised register)
+    - Mid   = `Mh` or `Ml` or `Hl` or `Lh`
     - Low   = `Ll` (low tone, lowered register)
-    - Mid   = `Lh` or `Hl`
     - Downstepped High = `Hl`
 
     Register-only systems (Drubea/Numèè) use `tone = none`. -/

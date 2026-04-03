@@ -47,8 +47,13 @@ def isPhaseHead (so : SyntacticObject) : Bool :=
 
 /-- D as a phase head (@cite{citko-2014} §2.5, @cite{svenonius-2004}).
 
-    Some analyses treat DP as a phase. This is a weaker claim
-    used for scope barriers (QR cannot escape DP). -/
+    Several analyses treat definite DPs as phases:
+    - **Extraction barriers**: @cite{chomsky-2000}, @cite{davies-dubinsky-2003},
+      @cite{shen-huang-2026} — definite DP phasehood blocks wh-subextraction
+      (definite island effect). VOCs can neutralize phasehood via
+      N/D-incorporation.
+    - **Scope barriers**: QR cannot escape DP.
+    - **Spell-out domains**: definite D triggers Transfer of its complement. -/
 def isDPhaseHead (so : SyntacticObject) : Bool :=
   match labelCat so with
   | some .D => true

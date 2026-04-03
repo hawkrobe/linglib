@@ -119,6 +119,7 @@ def islandToGapRestriction : ConstraintType → GapRestriction
   | .subject           => .npOnly    -- weak: some NP extraction ok
   | .sententialSubject => .noGap     -- absolute barrier
   | .mannerOfSpeaking  => .npOnly    -- weak: ameliorable with focus
+  | .definiteNominal   => .npOnly    -- weak: ameliorated by VOCs (@cite{shen-huang-2026})
 
 /-- HPSG predicts all absolute islands block extraction. -/
 theorem absolute_islands_block :

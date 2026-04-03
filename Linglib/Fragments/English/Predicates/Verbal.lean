@@ -1158,6 +1158,7 @@ def write : VerbEntry where
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
+  levinClass := some .build
 
 /-- "sweep" — motion + sustained contact, variable agentivity (default sense). -/
 def sweep : VerbEntry where

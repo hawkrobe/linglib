@@ -113,9 +113,9 @@ theorem uniform_island_mechanism :
     syntactic in `Data.lean`'s `constraintSource`. This is consistent:
     AL is a structural constraint. -/
 theorem adger_derives_syntactic_islands :
-    constraintSource .subject = .syntactic ∧
-    constraintSource .adjunct = .syntactic ∧
-    constraintSource .complexNP = .syntactic := ⟨rfl, rfl, rfl⟩
+    constraintSources .subject = [.syntactic] ∧
+    constraintSources .adjunct = [.syntactic] ∧
+    constraintSources .complexNP = [.syntactic] := ⟨rfl, rfl, rfl⟩
 
 /-- @cite{adger-2025}'s account predicts that subject islands are weak
     (ameliorable): the subject *itself* can always extract; only

@@ -103,6 +103,7 @@ import Linglib.Core.Context.Rich
 import Linglib.Core.Discourse.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
+import Linglib.Core.SpecificityCondition
 import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Core.Genericity
@@ -411,6 +412,7 @@ import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Czech.Reciprocals
 import Linglib.Fragments.Czech.Negation
 import Linglib.Fragments.Drubea.Prosody
+import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Fragments.Tarifit.Inventory
 import Linglib.Fragments.Dargwa.Agreement
 import Linglib.Fragments.Dargwa.Case
@@ -925,6 +927,7 @@ import Linglib.Phenomena.FillerGap.Studies.Steedman2000CrossSerial
 import Linglib.Phenomena.FillerGap.CCGGenerativeCapacity
 import Linglib.Phenomena.FillerGap.Islands.Studies.Adger2025
 import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
+import Linglib.Phenomena.FillerGap.Islands.Studies.ShenHuang2026
 import Linglib.Phenomena.FillerGap.Studies.Charlow2020
 import Linglib.Phenomena.FillerGap.Studies.LuPanDegen2025
 import Linglib.Phenomena.FillerGap.Studies.Osborne2019Islands
@@ -1204,6 +1207,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.CoetzeePater2011
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
+import Linglib.Phenomena.Tone.Studies.AkinboFwangwar2026
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.Combinators
@@ -1891,6 +1895,7 @@ import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Theories.Phonology.Harmony.Defs
 import Linglib.Theories.Phonology.Harmony.OT
 import Linglib.Theories.Phonology.Syllable.Defs

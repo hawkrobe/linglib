@@ -77,6 +77,52 @@ def mkIdent {C : Type} (name : String) (violated : C → Bool) : NamedConstraint
     eval := fun c => if violated c then 1 else 0 }
 
 -- ============================================================================
+-- § 1b: Morpheme-Specific Constraint Constructors (@cite{finley-2009})
+-- ============================================================================
+
+/-- Build a LEFT-ANCHOR constraint: the morpheme's tonal specification must
+    be in correspondence with the left edge of the host.
+    `violated c` returns `true` when the left anchor is not satisfied.
+
+    Following @cite{finley-2009}: morpheme-specific versions of
+    @cite{mccarthy-prince-1995}'s ANCHOR constraints. -/
+def mkAnchorLeft {C : Type} (name : String) (violated : C → Bool) :
+    NamedConstraint C :=
+  { name := name
+    family := .faithfulness
+    eval := λ c => if violated c then 1 else 0 }
+
+/-- Build a RIGHT-ANCHOR constraint: the morpheme's tonal specification must
+    be in correspondence with the right edge of the host. -/
+def mkAnchorRight {C : Type} (name : String) (violated : C → Bool) :
+    NamedConstraint C :=
+  { name := name
+    family := .faithfulness
+    eval := λ c => if violated c then 1 else 0 }
+
+/-- Build an INTEGRITY constraint: the morpheme's tone must not have
+    multiple correspondents in the output.
+    Penalizes splitting of a single input tone across multiple output TBUs
+    when the one-to-one mapping is violated. -/
+def mkIntegrity {C : Type} (name : String) (violated : C → Bool) :
+    NamedConstraint C :=
+  { name := name
+    family := .faithfulness
+    eval := λ c => if violated c then 1 else 0 }
+
+/-- Anchor-left constraints are faithfulness constraints. -/
+theorem mkAnchorLeft_is_faithfulness {C : Type} (name : String) (p : C → Bool) :
+    (mkAnchorLeft name p).family = .faithfulness := rfl
+
+/-- Anchor-right constraints are faithfulness constraints. -/
+theorem mkAnchorRight_is_faithfulness {C : Type} (name : String) (p : C → Bool) :
+    (mkAnchorRight name p).family = .faithfulness := rfl
+
+/-- Integrity constraints are faithfulness constraints. -/
+theorem mkIntegrity_is_faithfulness {C : Type} (name : String) (p : C → Bool) :
+    (mkIntegrity name p).family = .faithfulness := rfl
+
+-- ============================================================================
 -- § 2: Markedness Constraint Constructors
 -- ============================================================================
 

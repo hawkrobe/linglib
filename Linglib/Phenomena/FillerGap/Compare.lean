@@ -370,7 +370,7 @@ theorem complementary_coverage :
     -- H&S's processing-based gradient effects apply to non-Sag island types
     constraintStrength .complexNP = .strong ∧
     -- Lu et al.'s discourse-based islands are a third mechanism
-    constraintSource .mannerOfSpeaking = .discourse := ⟨rfl, rfl, rfl, rfl⟩
+    constraintSources .mannerOfSpeaking = [.discourse] := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- Implications
@@ -436,20 +436,26 @@ that complements both competence and processing accounts. MoS islands arise from
 information-structural backgroundedness, not syntactic configuration or processing
 cost. This is a third mechanism alongside grammar-based and processing-based islands.
 
-The three sources are now tracked by `constraintSource` in Islands.Data:
-- `.syntactic` → competence grammar
+The four sources are now tracked by `constraintSources` in Islands.Data:
+- `.syntactic` → competence grammar (PIC, subjacency)
+- `.semantic` → binding restrictions (Specificity Condition)
 - `.processing` → performance/memory
 - `.discourse` → information structure
 
-Together, these three mechanisms partition the space of island phenomena:
+Some constraints are composite: definite nominal islands involve both
+`.syntactic` (PIC) and `.semantic` (Specificity) sources
+(@cite{shen-huang-2026}).
+
+Together, these mechanisms partition the space of island phenomena:
 1. Grammar-based: topicalization, exclamatives
-2. Processing-based: CNPC, wh-islands () — gradient with filler complexity
-3. Discourse-based: MoS complements — gradient with prosodic focus -/
+2. Processing-based: CNPC, wh-islands — gradient with filler complexity
+3. Discourse-based: MoS complements — gradient with prosodic focus
+4. Composite: definite nominal islands — syntactic + semantic -/
 
 /-- MoS islands are discourse-sourced, distinct from syntactic/processing islands. -/
 theorem mos_distinct_from_traditional_islands :
-    constraintSource .mannerOfSpeaking = .discourse ∧
-    constraintSource .complexNP = .syntactic ∧
-    constraintSource .embeddedQuestion = .syntactic := ⟨rfl, rfl, rfl⟩
+    constraintSources .mannerOfSpeaking = [.discourse] ∧
+    constraintSources .complexNP = [.syntactic] ∧
+    constraintSources .embeddedQuestion = [.syntactic] := ⟨rfl, rfl, rfl⟩
 
 end Phenomena.FillerGap.Compare

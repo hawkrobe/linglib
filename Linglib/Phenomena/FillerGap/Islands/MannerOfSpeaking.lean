@@ -348,7 +348,7 @@ Justified by: (1) prosodic focus ameliorates the effect (Exps 1, 3b),
 (2) say+adverb replicates it without structural change (Exp 3a),
 (3) frequency is not predictive (all experiments). -/
 theorem mos_island_is_discourse :
-    constraintSource .mannerOfSpeaking = .discourse := rfl
+    constraintSources .mannerOfSpeaking = [.discourse] := rfl
 
 /-- The ameliorability of MoS islands (weak classification) is empirically supported:
 prosodic focus improves extraction across all tested configurations. -/
@@ -371,8 +371,8 @@ theorem mos_and_wh_both_weak :
 /-- MoS islands differ from traditional weak islands in source:
 wh-islands are syntactically sourced; MoS islands are discourse-sourced. -/
 theorem mos_vs_wh_different_source :
-    constraintSource .mannerOfSpeaking ≠ constraintSource .embeddedQuestion := by
-  simp [constraintSource]
+    constraintSources .mannerOfSpeaking ≠ constraintSources .embeddedQuestion := by
+  simp [constraintSources]
 
 end IslandBridge
 

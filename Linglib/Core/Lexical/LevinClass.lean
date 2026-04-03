@@ -989,6 +989,46 @@ theorem pushPull_manner_unspecified :
 theorem break_manner_none :
     LevinClass.mannerKind .break_ = .none := rfl
 
+-- ============================================================================
+-- Verb of Creation (VOC) classification
+-- ============================================================================
+
+/-- Whether a Levin class denotes creation of the object referent.
+
+@cite{davies-dubinsky-2003}: verbs of creation (VOCs) produce their
+direct object as a result of the event — the object comes into existence
+through the action. In English, VOCs can ameliorate definite island
+effects via N/D-incorporation, neutralizing the phasehood of the object
+DP (@cite{shen-huang-2026}).
+
+Levin classes 25 (image creation), 26.1 (build), 26.2 (grow), 26.4
+(create), 26.7 (performance), and related classes are VOCs. Perception
+verbs (30), communication verbs (37), and consumption verbs (eat) are
+non-VOCs — the object exists independently of the event. -/
+def LevinClass.isVerbOfCreation : LevinClass → Bool
+  | .imageCreation => true   -- 25: draw, etch, engrave
+  | .build         => true   -- 26.1: build, assemble, construct
+  | .grow          => true   -- 26.2: grow, cultivate
+  | .create        => true   -- 26.4: create, design, invent
+  | .knead         => true   -- 26.5: knead, mold, shape
+  | .performance   => true   -- 26.7: perform, play, sing
+  | .cooking       => true   -- 45.3: cook, bake, fry (object created)
+  | _              => false
+
+/-- Build verbs are VOCs. -/
+theorem build_is_voc : LevinClass.isVerbOfCreation .build = true := rfl
+
+/-- Perception verbs are not VOCs. -/
+theorem see_is_not_voc : LevinClass.isVerbOfCreation .see = false := rfl
+
+/-- Core creation classes (build, create, grow, knead, imageCreation)
+    all have causativeResult root entailments: the object comes into
+    existence as a causal result of the agent's action. -/
+theorem build_class_causative :
+    LevinClass.build.rootEntailments = .causativeResult := rfl
+theorem create_class_causative :
+    LevinClass.create.rootEntailments = .causativeResult := rfl
+
 /-! ### Root-structural MC contribution
 
 The conservative structural derivation from root entailments to meaning

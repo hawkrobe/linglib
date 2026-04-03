@@ -42,12 +42,12 @@ MoS islands are uniquely discourse-sourced; all others are syntactic.
 Per-type theorems make the dependency maximally auditable: changing
 one island's classification breaks exactly one theorem. -/
 
-theorem embeddedQuestion_source : constraintSource .embeddedQuestion = .syntactic := rfl
-theorem complexNP_source : constraintSource .complexNP = .syntactic := rfl
-theorem adjunct_source : constraintSource .adjunct = .syntactic := rfl
-theorem coordinate_source : constraintSource .coordinate = .syntactic := rfl
-theorem subject_source : constraintSource .subject = .syntactic := rfl
-theorem sententialSubject_source : constraintSource .sententialSubject = .syntactic := rfl
+theorem embeddedQuestion_source : constraintSources .embeddedQuestion = [.syntactic] := rfl
+theorem complexNP_source : constraintSources .complexNP = [.syntactic] := rfl
+theorem adjunct_source : constraintSources .adjunct = [.syntactic] := rfl
+theorem coordinate_source : constraintSources .coordinate = [.syntactic] := rfl
+theorem subject_source : constraintSources .subject = [.syntactic] := rfl
+theorem sententialSubject_source : constraintSources .sententialSubject = [.syntactic] := rfl
 
 /-! ## §2. Levin Class → Manner Weight Bridge
 
@@ -177,12 +177,12 @@ but NOT structural islands. This double dissociation is the core prediction
 separating discourse from syntax/processing accounts. -/
 theorem differential_amelioration :
     -- MoS islands: discourse source → prosodic focus ameliorates
-    constraintSource .mannerOfSpeaking = .discourse ∧
+    constraintSources .mannerOfSpeaking = [.discourse] ∧
     -- Wh-islands: syntactic source → D-linking ameliorates
-    constraintSource .embeddedQuestion = .syntactic ∧
+    constraintSources .embeddedQuestion = [.syntactic] ∧
     -- Different sources → different amelioration mechanisms
-    constraintSource .mannerOfSpeaking ≠ constraintSource .embeddedQuestion := by
-  exact ⟨rfl, rfl, by simp [constraintSource]⟩
+    constraintSources .mannerOfSpeaking ≠ constraintSources .embeddedQuestion := by
+  exact ⟨rfl, rfl, by simp [constraintSources]⟩
 
 /-! ## §5. Per-Verb Backgroundedness–Acceptability Correlation
 

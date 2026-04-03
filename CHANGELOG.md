@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.229.457] - 2026-04-03
+
+### Changed
+- **ShenHuang2026.lean**: replaced ad-hoc `picViolated`/`specificityViolated` functions with compositional `activeSources` that filters `constraintSources .definiteNominal` by dependency type applicability and `vocNeutralizes` scope. Source-level structural facts (`all_sources_apply_to_movement`, `voc_neutralizes_syntactic_for_movement`, `binding_sources`) are `@[simp]` + `activeSources` is `@[irreducible]`, forcing all downstream proofs through named lemmas. Key derivations: `binding_voc_invariant`, `voc_amelioration_exactly_one`, `voc_amelioration_restricted` (references `binding_voc_invariant`), `violations_predict_dd_ordering` (references `binding_voc_invariant`)
+- **Islands/Data.lean**: added `vocNeutralizes : IslandSource → Bool` (VOCs neutralize syntactic sources via N/D-incorporation, not semantic/processing/discourse)
+- Fixed 4 hallucinated bib entries (davies-dubinsky-2003, fiengo-higginbotham-1981, boskovic-2015, huang-1982b)
+- Fixed `write` verb entry: added missing `levinClass := some .build`
+
+## [0.229.456] - 2026-04-02
+
+### Changed
+- **Islands/Data.lean dissolved**: raw data moved to study files for provenance tracking. Data.lean is now types-only (ConstraintType, IslandSource, WhDependencyType, etc.)
+- **Ross1967.lean** (new): Ross island examples (Word defs, PhenomenonData, #guards) moved from Data.lean
+- **HofmeisterSag2010.lean** (new): H&S processing data (ProcessingFactor, FillerType, IslandNPType, IslandCondition, cnpcAcceptability, whIslandAcceptability, cnpcBaseline, avgAcceptability, all gradience theorems) moved from Data.lean
+- **ShenHuang2026.lean**: absorbed `definite_nominal_is_composite`, `definite_nominal_is_weak`, `movement_more_constrained`, `binding_not_pic_constrained` from Data.lean
+- **HPSGExtraction.lean**: added `definiteNominal` case to `islandToGapRestriction`
+- Removed duplicate theorems `mos_is_discourse_island` / `mos_is_weak` from Data.lean (already in MannerOfSpeaking.lean as `mos_island_is_discourse` / `mos_island_is_weak`)
+
+## [0.229.455] - 2026-04-02
+
+### Added
+- **Core/SpecificityCondition.lean**: standalone binding-theoretic Specificity Condition (@cite{fiengo-higginbotham-1981}): `blocked op dpSpecificity` predicate, `ExternalOperator` enum (whTrace, questionOperator, existentialClosure, relOperator, focusOperator), `operator_insensitive` theorem. Independent of SynGraph — importable by any theory
+- **ShenHuang2026.lean**: @cite{shen-huang-2026} "The role of phases and specificity in definite islands" (NLLT 44:22). Encodes 2×2 factorial (English/Chinese × VOC/non-VOC), compositional constraint violation model (`activeSources`, `totalViolations`), DD scores from Experiments 1–3, key predictions: `binding_voc_invariant`, `voc_amelioration_exactly_one`, `violations_predict_dd_ordering`, `specificity_predicts_exp3`
+- **ConstraintType.definiteNominal**: new island constraint type for definite nominal islands
+- **IslandSource.semantic**: new island source for binding-theoretic constraints (Specificity Condition)
+- **constraintSources** (plural): replaces single-source `constraintSource` for composite island constraints; definite nominal islands have `[.syntactic, .semantic]`
+- **WhDependencyType**: `.movement` (PIC + Specificity) vs `.binding` (Specificity only); `constraintsForDependencyType`, `movement_more_constrained`, `binding_not_pic_constrained`
+- **LevinClass.isVerbOfCreation**: derives VOC status from Levin classes (§25–26); `build_is_voc`, `see_is_not_voc`
+- 8 bib entries: shen-huang-2026, davies-dubinsky-2003, fiengo-higginbotham-1981, fiengo-1987, huang-1982b, li-1992, boskovic-2015, cheng-sybesma-1999
+
+### Changed
+- **Phase.lean**: `isDPhaseHead` docstring expanded — now documents extraction barriers (@cite{davies-dubinsky-2003}, @cite{shen-huang-2026}), not just scope barriers
+
 ## [0.229.454] - 2026-03-27
 
 ### Added

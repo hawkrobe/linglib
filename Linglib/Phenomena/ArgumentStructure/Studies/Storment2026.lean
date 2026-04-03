@@ -46,7 +46,7 @@ open Fragments.English.Predicates.Verbal
 open Phenomena.ArgumentStructure.Unaccusativity.Data
 open Phenomena.AuxiliaryVerbs.Selection (TransitivityClass canonicalSelection)
 open Minimalism (VoiceFlavor VoiceHead licensesQI)
--- ConstraintType, constraintSource are at root namespace (no namespace in Islands/Data.lean)
+-- ConstraintType, constraintSources are at root namespace (no namespace in Islands/Data.lean)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Per-Verb Annotation Theorems
@@ -454,7 +454,7 @@ theorem li_arrive_smuggling_unified :
 /-- MoS islands are discourse-sourced, not syntactic — so they don't
     block the syntactic smuggling operation that produces QI. -/
 theorem mos_island_compatible_with_qi :
-    constraintSource .mannerOfSpeaking = .discourse ∧
+    constraintSources .mannerOfSpeaking = [.discourse] ∧
     derivedQI whisper.toVerbCore = true := ⟨rfl, rfl⟩
 
 /-- The extraction asymmetry: sub-extraction from MoS complement is
@@ -463,7 +463,7 @@ theorem mos_island_compatible_with_qi :
     operations, different sources. -/
 theorem mos_extraction_asymmetry :
     -- Sub-extraction blocked (discourse-sourced island)
-    constraintSource .mannerOfSpeaking = .discourse ∧
+    constraintSources .mannerOfSpeaking = [.discourse] ∧
     -- VP-smuggling licensed (non-phase Voice)
     derivedQI whisper.toVerbCore = true ∧
     derivedQI murmur.toVerbCore = true ∧
