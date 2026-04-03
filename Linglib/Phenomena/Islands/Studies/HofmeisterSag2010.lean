@@ -1,4 +1,4 @@
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
 
 set_option autoImplicit false
 
@@ -26,7 +26,7 @@ and the Minimal Link Condition.
 See `Phenomena.FillerGap.Compare` for the competence vs. performance comparison.
 -/
 
-namespace Phenomena.FillerGap.Islands.Studies.HofmeisterSag2010
+namespace Phenomena.Islands.Studies.HofmeisterSag2010
 
 -- ============================================================================
 -- §1. Processing factors
@@ -161,4 +161,4 @@ non-island baseline (108). Islands are ameliorated, not eliminated. -/
 theorem best_island_lt_baseline :
     (85 : Nat) < cnpcBaseline := by native_decide
 
-end Phenomena.FillerGap.Islands.Studies.HofmeisterSag2010
+end Phenomena.Islands.Studies.HofmeisterSag2010

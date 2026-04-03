@@ -912,8 +912,7 @@ import Linglib.Phenomena.Iconicity.Studies.SchlenkerEtAl2026
 import Linglib.Phenomena.LexicalTypology.Typology
 import Linglib.Phenomena.LexicalTypology.Studies.MajidBosterBowerman2008
 import Linglib.Phenomena.LexicalTypology.Studies.ZaslavskyEtAl2019
-import Linglib.Phenomena.FillerGap.Islands.Data
-import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
+import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
 import Linglib.Phenomena.FillerGap.OblExtraction
 import Linglib.Phenomena.FillerGap.TobaBatak
@@ -925,9 +924,11 @@ import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
 import Linglib.Phenomena.FillerGap.Studies.PickeringBarry1991
 import Linglib.Phenomena.FillerGap.Studies.Steedman2000CrossSerial
 import Linglib.Phenomena.FillerGap.CCGGenerativeCapacity
-import Linglib.Phenomena.FillerGap.Islands.Studies.Adger2025
-import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
-import Linglib.Phenomena.FillerGap.Islands.Studies.ShenHuang2026
+import Linglib.Phenomena.Islands.Studies.Adger2025
+import Linglib.Phenomena.Islands.Studies.CartnerEtAl2026
+import Linglib.Phenomena.Islands.Studies.HofmeisterSag2010
+import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Phenomena.Islands.Studies.ShenHuang2026
 import Linglib.Phenomena.FillerGap.Studies.Charlow2020
 import Linglib.Phenomena.FillerGap.Studies.LuPanDegen2025
 import Linglib.Phenomena.FillerGap.Studies.Osborne2019Islands

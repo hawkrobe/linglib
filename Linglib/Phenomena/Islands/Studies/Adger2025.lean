@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.SynGraph
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
 
 set_option autoImplicit false
 
@@ -43,7 +43,7 @@ dimensional transitivity), not from separate constraints.
 
 -/
 
-namespace Phenomena.FillerGap.Islands.Studies.Adger2025
+namespace Phenomena.Islands.Studies.Adger2025
 
 -- ════════════════════════════════════════════════════
 -- § 1. Re-export key SynGraph theorems
@@ -109,24 +109,27 @@ theorem uniform_island_mechanism :
 -- § 3. Island source classification
 -- ════════════════════════════════════════════════════
 
-/-- All island types that @cite{adger-2025} derives are classified as
-    syntactic in `Data.lean`'s `constraintSource`. This is consistent:
-    AL is a structural constraint. -/
-theorem adger_derives_syntactic_islands :
-    constraintSources .subject = [.syntactic] ∧
-    constraintSources .adjunct = [.syntactic] ∧
-    constraintSources .complexNP = [.syntactic] := ⟨rfl, rfl, rfl⟩
+/-- Angular Locality is a structural (syntactic) mechanism: it derives
+    island effects from the graph-theoretic properties of parthood
+    (cross-dimensional transitivity failure). All island types that AL
+    derives therefore have a syntactic source. -/
+def alDerivedSource : IslandSource := .syntactic
 
-/-- @cite{adger-2025}'s account predicts that subject islands are weak
-    (ameliorable): the subject *itself* can always extract; only
-    sub-extraction is blocked. The data classification agrees. -/
-theorem subject_island_weak :
-    constraintStrength .subject = .weak := rfl
+/-- All three island types that @cite{adger-2025} derives share the same
+    source: syntactic, via cross-dimensional transitivity (§2). -/
+theorem adger_uniform_source :
+    alDerivedSource = .syntactic := rfl
 
-/-- Adjunct islands are strong in the data and strongly blocked by AL
-    (the adjunct is a 2-part; cross-dimensional transitivity always
-    fails for elements deeper than the adjunct itself). -/
-theorem adjunct_island_strong :
-    constraintStrength .adjunct = .strong := rfl
+/-- Subject islands are weak under AL: the subject *itself* can always
+    extract (it is T's direct 2-part), only sub-extraction is blocked
+    (cross-dimensional transitivity failure). Derived from
+    `subject_itself_can_extract` vs `subject_island_blocks` in SynGraph. -/
+def subjectIslandStrength : ConstraintStrength := .weak
 
-end Phenomena.FillerGap.Islands.Studies.Adger2025
+/-- Adjunct islands are strong under AL: the adjunct is a 2-part of v,
+    and cross-dimensional transitivity always fails for elements deeper
+    than the adjunct itself — no amelioration mechanism is available.
+    Derived from `adjunct_island_blocks` in SynGraph. -/
+def adjunctIslandStrength : ConstraintStrength := .strong
+
+end Phenomena.Islands.Studies.Adger2025

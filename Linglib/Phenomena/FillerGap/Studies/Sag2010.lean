@@ -15,7 +15,7 @@ a common filler–gap structure but differ systematically along 7 parameters.
 
 -/
 
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
 
 namespace Phenomena.FillerGap.Studies.Sag2010
 

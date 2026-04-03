@@ -23,7 +23,8 @@ explain the gradient nature of island effects.
 
 -/
 
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Studies.Sag2010
 import Linglib.Core.ProcessingModel
 
@@ -307,19 +308,21 @@ theorem all_ordering_predictions_verified :
 -- Connection to Existing Island Classification
 -- ============================================================================
 
-/-- The binary strong/weak classification (constraintStrength in Islands.Data)
-is challenged by H&S's data.
+/-- The traditional binary strong/weak classification is challenged by H&S's data.
 
-The CNPC is classified as "strong", yet its acceptability varies by 25 points
-(60 → 85) under nonstructural manipulation. If "strong" means "consistently
-blocks the dependency", the CNPC is not consistently strong.
+The CNPC is traditionally classified as "strong", yet its acceptability varies
+by 25 points (60 → 85) under nonstructural manipulation. If "strong" means
+"consistently blocks the dependency", the CNPC is not consistently strong.
 
-Similarly, wh-islands are classified as "weak" (ameliorated with D-linking),
+Similarly, wh-islands are traditionally "weak" (ameliorated with D-linking),
 but H&S show that the amelioration tracks processing difficulty specifically,
 not D-linking per se — the same effect appears with nonreferential adjuncts
-(Experiment 3). -/
-theorem cnpc_is_classified_strong :
-    constraintStrength .complexNP = .strong := by rfl
+(Experiment 3).
+
+Under a processing account, the strong/weak distinction is gradient, not
+categorical — all islands have a processing component whose magnitude
+depends on filler complexity and structural distance. -/
+def cnpcTraditionalStrength : ConstraintStrength := .strong
 
 /-- Yet CNPC acceptability varies by 25+ points under nonstructural
 manipulation — gradient, not categorical. -/
@@ -368,9 +371,9 @@ theorem complementary_coverage :
     (fgParams .topicalized).isIsland = true ∧
     (fgParams .whExclamative).isIsland = true ∧
     -- H&S's processing-based gradient effects apply to non-Sag island types
-    constraintStrength .complexNP = .strong ∧
+    cnpcTraditionalStrength = .strong ∧
     -- Lu et al.'s discourse-based islands are a third mechanism
-    constraintSources .mannerOfSpeaking = [.discourse] := ⟨rfl, rfl, rfl, rfl⟩
+    Phenomena.Islands.MannerOfSpeaking.mosIslandSources = [.discourse] := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- Implications
@@ -436,15 +439,16 @@ that complements both competence and processing accounts. MoS islands arise from
 information-structural backgroundedness, not syntactic configuration or processing
 cost. This is a third mechanism alongside grammar-based and processing-based islands.
 
-The four sources are now tracked by `constraintSources` in Islands.Data:
+The four source types (`IslandSource` in `Core/Islands.lean`) are:
 - `.syntactic` → competence grammar (PIC, subjacency)
 - `.semantic` → binding restrictions (Specificity Condition)
 - `.processing` → performance/memory
 - `.discourse` → information structure
 
-Some constraints are composite: definite nominal islands involve both
-`.syntactic` (PIC) and `.semantic` (Specificity) sources
-(@cite{shen-huang-2026}).
+Source classifications are derived per-study from theoretical commitments:
+- @cite{lu-pan-degen-2025}: MoS → `.discourse` (from backgroundedness)
+- @cite{adger-2025}: subject/adjunct/CNPC → `.syntactic` (from Angular Locality)
+- @cite{shen-huang-2026}: definite nominal → `.syntactic` + `.semantic` (composite)
 
 Together, these mechanisms partition the space of island phenomena:
 1. Grammar-based: topicalization, exclamatives
@@ -452,10 +456,12 @@ Together, these mechanisms partition the space of island phenomena:
 3. Discourse-based: MoS complements — gradient with prosodic focus
 4. Composite: definite nominal islands — syntactic + semantic -/
 
-/-- MoS islands are discourse-sourced, distinct from syntactic/processing islands. -/
+/-- MoS islands are discourse-sourced, distinct from syntactic islands.
+The MoS source is derived from experimental evidence in MannerOfSpeaking.lean;
+the syntactic baseline is the consensus view for traditional islands. -/
 theorem mos_distinct_from_traditional_islands :
-    constraintSources .mannerOfSpeaking = [.discourse] ∧
-    constraintSources .complexNP = [.syntactic] ∧
-    constraintSources .embeddedQuestion = [.syntactic] := ⟨rfl, rfl, rfl⟩
+    Phenomena.Islands.MannerOfSpeaking.mosIslandSources = [.discourse] ∧
+    Phenomena.Islands.MannerOfSpeaking.mosIslandSources ≠ [IslandSource.syntactic] := by
+  exact ⟨rfl, by decide⟩
 
 end Phenomena.FillerGap.Compare

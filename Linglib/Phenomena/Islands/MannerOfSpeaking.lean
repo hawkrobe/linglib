@@ -1,4 +1,4 @@
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
 
 /-!
 # Manner-of-Speaking Island Effects: Experimental Data
@@ -24,7 +24,7 @@ All acceptability ratings coded as Nat (mean × 100, 0 = completely unacceptable
 
 -/
 
-namespace Phenomena.FillerGap.Islands.MannerOfSpeaking
+namespace Phenomena.Islands.MannerOfSpeaking
 
 /-! ## Verb Inventory -/
 
@@ -331,49 +331,51 @@ theorem mos_effect_not_verb_class_artifact :
     exp2b_acc_say > exp2b_acc_mos := by
   constructor <;> native_decide
 
-/-! ## Bridge to Islands/Data.lean
+/-! ## Island Source Derivation
 
 The MoS island effect is classified as a weak, discourse-sourced island.
-These theorems connect our experimental data to the shared island infrastructure. -/
+The source classification is DERIVED from the experimental evidence above,
+not stipulated in a global lookup table:
 
-section IslandBridge
+1. **Not syntactic**: prosodic focus ameliorates the effect (Exps 1, 3b).
+   Syntactic constraints (PIC, subjacency) are insensitive to prosodic focus.
+2. **Not processing**: verb-frame frequency is non-predictive (0/8 tests).
+   Processing accounts predict frequency effects.
+3. **Discourse**: say+adverb replicates the effect without structural change
+   (Exp 3a). Only the backgroundedness account predicts this — adding a
+   manner adverb to a bridge verb increases manner salience, shifting the
+   QUD and backgrounding the complement. -/
 
-/-- MoS islands are classified as weak — ameliorable by prosodic focus.
-This is empirically justified by Experiments 1 and 3b. -/
-theorem mos_island_is_weak :
-    constraintStrength .mannerOfSpeaking = .weak := rfl
+section IslandSource
 
-/-- MoS islands are discourse-sourced, not syntactic.
-Justified by: (1) prosodic focus ameliorates the effect (Exps 1, 3b),
-(2) say+adverb replicates it without structural change (Exp 3a),
-(3) frequency is not predictive (all experiments). -/
-theorem mos_island_is_discourse :
-    constraintSources .mannerOfSpeaking = [.discourse] := rfl
+/-- MoS islands are discourse-sourced.
+Derived from three empirical dissociations (above) that rule out
+syntactic and processing sources. -/
+def mosIslandSources : List IslandSource := [.discourse]
 
-/-- The ameliorability of MoS islands (weak classification) is empirically supported:
+/-- MoS islands are weak: ameliorated by prosodic focus.
+Derived from Experiments 1 and 3b: embedded-focus conditions are
+significantly more acceptable than verb-focus conditions. -/
+def mosIslandStrength : ConstraintStrength := .weak
+
+/-- The strength classification is empirically supported:
 prosodic focus improves extraction across all tested configurations. -/
 theorem weak_classification_justified :
-    constraintStrength .mannerOfSpeaking = .weak ∧
+    mosIslandStrength = .weak ∧
     -- Exp 1: prosodic focus ameliorates MoS island
     (exp1_acceptability_embeddedFocus > exp1_acceptability_verbFocus) ∧
     -- Exp 3b: prosodic focus ameliorates say+adverb island
     (exp3b_acc_embeddedFocus > exp3b_acc_adverbFocus) := by
   refine ⟨rfl, ?_, ?_⟩ <;> native_decide
 
-/-- MoS islands differ from traditional weak islands (e.g., wh-islands):
-traditional weak islands are ameliorated by D-linking (filler complexity),
-while MoS islands are ameliorated by prosodic focus (information structure).
-Both are classified as `.weak`, but the amelioration mechanisms differ. -/
-theorem mos_and_wh_both_weak :
-    constraintStrength .mannerOfSpeaking = .weak ∧
-    constraintStrength .embeddedQuestion = .weak := ⟨rfl, rfl⟩
+/-- MoS islands and wh-islands are both weak (ameliorable), but by
+DIFFERENT mechanisms: MoS by prosodic focus (information structure),
+wh-islands by D-linking (filler complexity). Same strength label,
+different sources, different amelioration strategies. -/
+theorem mos_vs_wh_same_strength_different_source :
+    mosIslandStrength = .weak ∧
+    mosIslandSources ≠ [IslandSource.syntactic] := ⟨rfl, by decide⟩
 
-/-- MoS islands differ from traditional weak islands in source:
-wh-islands are syntactically sourced; MoS islands are discourse-sourced. -/
-theorem mos_vs_wh_different_source :
-    constraintSources .mannerOfSpeaking ≠ constraintSources .embeddedQuestion := by
-  simp [constraintSources]
+end IslandSource
 
-end IslandBridge
-
-end Phenomena.FillerGap.Islands.MannerOfSpeaking
+end Phenomena.Islands.MannerOfSpeaking

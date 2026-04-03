@@ -1,12 +1,12 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
 
 /-!
 # Bridge: DG Islands → Phenomena Island Constraints
 @cite{hofmeister-sag-2010} @cite{osborne-2019} @cite{ross-1967}
 
 Maps the DG rising-catena island taxonomy (@cite{osborne-2019}, Ch 9) to the
-Phenomena island constraint types from `Phenomena.FillerGap.Islands.Data`.
+Phenomena island constraint types from `Phenomena.Islands.Data`.
 
 Three of Osborne's island types have direct Phenomena equivalents:
 - adjunct →.adjunct

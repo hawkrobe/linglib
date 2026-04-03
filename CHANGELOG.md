@@ -1,5 +1,65 @@
 # Changelog
 
+## [0.229.463] - 2026-04-03
+
+### Changed
+- **Core/Islands.lean deleted**: dissolved stipulated lookup tables (`constraintSources`, `constraintStrength`, `WhDependencyType`, `constraintsForDependencyType`, `vocNeutralizes`) — each study now derives its own source/strength classifications from its theoretical commitments
+- **Islands/Data.lean deleted**: types dissolved by provenance — `ConstraintType`, `ConstraintStrength`, `IslandSource` → Ross1967.lean; `FGDConstruction`, `ExtractionPosition` → CartnerEtAl2026.lean
+- **MannerOfSpeaking.lean**: `mosIslandSources := [.discourse]` derived from 3 empirical dissociations (focus ameliorates, say+adverb replicates, frequency null); `mosIslandStrength := .weak`
+- **ShenHuang2026.lean**: `definiteNominalSources := [.syntactic, .semantic]` derived from Phase Theory + Specificity Condition; `WhDependencyType`, `constraintsForDependencyType`, `vocNeutralizes` moved here (sole consumer); `definiteNominalStrength := .weak`
+- **Adger2025.lean**: `alDerivedSource := .syntactic` derived from Angular Locality; `subjectIslandStrength := .weak`, `adjunctIslandStrength := .strong`
+- **CartnerEtAl2026.lean**: `subjectIslandSource := .syntactic` derived from construction-invariance data
+- **LuPanDegen2025.lean**: `traditionalIslandSource := .syntactic` as baseline consensus; imports `mosIslandSources` from MannerOfSpeaking
+- **Compare.lean**: `cnpcTraditionalStrength := .strong` (local, with H&S challenge noted); imports MannerOfSpeaking for `mosIslandSources`
+- **Storment2026.lean**: imports MannerOfSpeaking for `mosIslandSources`
+
+## [0.229.462] - 2026-04-03
+
+### Added
+- **GrammaticalTone.lean**: Rolle 2018 grammatical tone typology — `TonalValue` (valued/unvalued), `GTOperation` (10 tonological operations from Table 3), `GTDominance` (4-way typology: replacive-dominant, subtractive-dominant, recessive, neutral) with `isDominant`/`isNonDominant`, `GTLevel` (word/phrase), `ExponenceType` (independent/auxiliary), `GTSpec extends Spec` (full GT specification), `DominantGTAsymmetry` (trigger=dependent, target=head), `IndomitabilityType` (4 variants), `GTRepair` (4 repair strategies). `ValuationWindow.local` added. `tonalOverwrite` docstring updated to explicitly note replacive-dominant GT implementation
+- **AkinboFwangwar2026.lean §13**: Rolle 2018 classification bridge — `verbM_GT`/`verbMH_GT` as `GTSpec` instances (replacive-dominant, word-level, independent prosodic). `verbalizers_are_dominant`, `verbalizer_asymmetry_holds`, `verbM_GT_toSpec_eq`/`verbMH_GT_toSpec_eq` (GTSpec projection recovers original Spec used by `deriveVerb`)
+
+## [0.229.461] - 2026-04-03
+
+### Changed
+- **AkinboFwangwar2026.lean**: expanded all three OT tableaux to include the paper's full candidate sets — (24) now has 5 candidates (a-e), (25) has all 7 (a-g), (26) has all 7 (a-g). Fixed (25d) encoding: all gram-M per correspondence subscripts. Fixed (26) constraint evaluation: M-anchors evaluate on reduplicant, H-anchors on base (per §4.1 "each tone's host is a root morpheme"). Added per-candidate violation profile theorems. Docstring tables now show both paper's autosegment-based and our TBU-based MAX-T counts. Added `mwaghavul_is_tonal_hyman` cross-reference to Hyman2006
+- **AkinboFwangwar2026.lean**: removed unused `import Linglib.Theories.Phonology.Constraints`
+- **references.bib**: fixed `rolle-2018` entry type from `@article` to `@phdthesis`
+
+## [0.229.460] - 2026-04-03
+
+### Added
+- **Core/Islands.lean** (new): framework-agnostic island constraint infrastructure extracted from `Phenomena/FillerGap/Islands/Data.lean` — `ConstraintType`, `ConstraintStrength`, `constraintStrength`, `IslandSource`, `constraintSources`, `WhDependencyType`, `constraintsForDependencyType`, `vocNeutralizes`
+- **Phase.lean §10**: N/D-incorporation mechanism (`DPPhaseStatus`, `isActivePhase`, `incorporation_deactivates`, `no_incorporation_preserves`, `non_phase_never_active`) formalizing @cite{davies-dubinsky-2003} and @cite{shen-huang-2026} — VOC verbs trigger D-incorporation, deactivating DP phasehood
+- **ShenHuang2026.lean §13**: Phase Theory bridge — `voc_removes_pic_barrier` (incorporation deactivates PIC), `nonvoc_preserves_pic_barrier` (no incorporation preserves PIC), `incorporation_determines_syntactic_source` (incorporation status = negation of active phase status). Connects Phase.lean's `DPPhaseStatus.isActivePhase` to the violation model's `vocNeutralizes .syntactic`
+
+### Changed
+- **Promoted `Islands/` to top-level**: `Phenomena/FillerGap/Islands/` → `Phenomena/Islands/`. Updated all imports (12 files) and namespaces (6 files)
+- **Islands/Data.lean** slimmed: now imports `Core.Islands` and defines only filler-gap-specific types (`FGDConstruction`, `ExtractionPosition`)
+- **Linglib.lean**: added `Core.Islands`, `Islands.Studies.HofmeisterSag2010`, `Islands.Studies.Ross1967`
+
+## [0.229.459] - 2026-04-03
+
+### Added
+- **AkinboFwangwar2026.lean** (rewrite): correspondence-based OT candidates with `ToneSource` (.lex/.gram) tracking whether each output TBU comes from the input or the verbaliser. Gradient constraint functions (`lAnchorViolations`, `rAnchorViolations`, `lAnchorMViolations`, `rAnchorHViolations`, `maxToneViolations`) computed from candidate structure. Three OT tableaux (24), (25), (26) with optimality theorems. End-to-end chain: `t24_winner_agrees_with_deriveVerb`, `t25_winner_agrees_with_deriveVerb` prove OT winner matches `tonalOverwrite` output. Iconic Phonological Disharmony (`iconicDisharmony`, `t26_winner_iconic`). DM Categorizer bridge (`mVerbalizerCat`, `verbalizers_are_verbal`, `denominal_ideophone_verb`). Expressiveness bridge to Potts 2005. Factorial typology. Empirical generalizations: `mh_only_from_mh_verbalizer`, `m_verbs_all_uniform`, `pluractional_uses_mh`
+- **Mwaghavul/Basic.lean** (rewrite): `VerbalizerChoice` (.m/.mh) replacing ad-hoc `nSyl`-based classification. `deriveVerb` now selects spec from `verbType`. 16 ideophone entries from paper's (7)-(8). Per-item derivation verification theorems. Generic `m_verb_uniform` theorem. Removed dead code (`mhMelodyDerivedOnly`, `derivedVerbsAreIdeophonic` as `Prop := True`, `Ideophone.isReduplicated`)
+- **references.bib**: 11 new entries (akinbo-fwangwar-2026, rolle-2018, finley-2009, dingemanse-akita-2017, dingemanse-2019, dingemanse-thompson-2020, yliniemi-2024, fwangwar-2018, barnabas-2011, crozier-blench-1992)
+
+### Changed
+- **RegisterTier.lean**: fixed TonalRootNode docstring — mid tones can be primitive (`ToneFeature.M`) or derived, depending on the system
+- **GrammaticalTone.lean**: `ToneFeature.M` added in previous version; no changes this version
+
+## [0.229.458] - 2026-04-03
+
+### Added
+- **ShenHuang2026.lean §2**: Table 1 divergent predictions (`AccountPrediction`, `picPrediction`, `specificityPrediction`, `experimentalResults`, `combinedPrediction`). `neither_account_alone_suffices` proves PIC and Specificity accounts each fail on at least one dimension; `combined_matches_results` proves the combined account matches all results
+- **ShenHuang2026.lean §11**: follow-up analyses — DD scores excluding hear/read/write ambiguity (`english_nonvoc_dd_excl` 0.53, `english_voc_dd_excl` 0.23, `voc_effect_robust`); Appendix A parser overload test (`appendixA`, DD = 0.05, not significant, `parser_overload_ruled_out`)
+- **ShenHuang2026.lean §12**: CyclicLinearization bridge — imports `CyclicLinearization` module; `binding_no_new_precedences` proves `spellout existing [] = existing` (binding adds no precedence statements); `binding_preserves_consistency` proves consistency is preserved
+- **references.bib**: added `aoun-li-1993` (Aoun & Li 1993, *Linguistic Inquiry* 24(2):199–238)
+
+### Changed
+- **ShenHuang2026.lean**: added quantitative caveat docstring on `violations_predict_dd_ordering` (model predicts presence/absence of effects, not magnitudes; Chinese DD > English DD despite fewer violations, per p.23)
+
 ## [0.229.457] - 2026-04-03
 
 ### Changed

@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Phenomena.FillerGap.LongDistance
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
 
 /-!
 # Bridge: HPSG Extraction to Filler-Gap Phenomena

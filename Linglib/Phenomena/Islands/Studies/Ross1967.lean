@@ -9,11 +9,63 @@ set_option autoImplicit false
 @cite{ross-1967} identified the foundational island constraints that block
 long-distance wh-dependencies: embedded question constraint, Complex NP
 Constraint, adjunct clause constraint, Coordinate Structure Constraint,
-and subject constraint. These constraint types are classified in
-`Islands/Data.lean`; the raw data (example pairs) lives here.
+and subject constraint.
+
+## Vocabulary types
+
+The descriptive vocabulary for island constraints is defined here at its
+point of origin. Source and strength classifications are NOT stipulated —
+each study derives its own from its theoretical commitments. See:
+- `MannerOfSpeaking.lean`: `mosIslandSources`, `mosIslandStrength`
+- `ShenHuang2026.lean`: `definiteNominalSources`, `definiteNominalStrength`
+- `Adger2025.lean`: `alDerivedSource`, `subjectIslandStrength`
+- `CartnerEtAl2026.lean`: `subjectIslandSource`
 -/
 
-namespace Phenomena.FillerGap.Islands.Studies.Ross1967
+-- ============================================================================
+-- Island Constraint Vocabulary
+-- ============================================================================
+
+/-- Types of island constraints (descriptive labels) -/
+inductive ConstraintType where
+  | embeddedQuestion  -- Wh-word blocks further wh-dependency
+  | complexNP         -- Complex NP blocks dependency
+  | adjunct           -- Adjunct clause blocks dependency
+  | coordinate        -- Coordination blocks asymmetric dependency
+  | subject           -- Subject position blocks dependency
+  | sententialSubject -- Sentential subject blocks dependency
+  | mannerOfSpeaking  -- MoS verb complement backgrounds content (@cite{lu-pan-degen-2025})
+  | definiteNominal   -- Definite/specific DP blocks dependency (@cite{chomsky-1973},
+                       -- @cite{fiengo-higginbotham-1981}, @cite{shen-huang-2026})
+  deriving Repr, DecidableEq
+
+/-- Constraint strength classification -/
+inductive ConstraintStrength where
+  | strong  -- Consistently blocks the dependency
+  | weak    -- Ameliorated in some contexts (e.g., D-linked wh-phrases)
+  deriving Repr, DecidableEq
+
+/-- Source of an island constraint: what mechanism produces it.
+Distinguishes structural accounts (subjacency), processing accounts
+(memory load), semantic accounts (binding restrictions), and discourse
+accounts (information structure).
+
+These are descriptive labels for the mechanism — the classification of
+which source applies to which island type is a theoretical claim, derived
+in individual study files from their theoretical commitments. -/
+inductive IslandSource where
+  /-- Syntactic: island follows from structural configuration (PIC, subjacency) -/
+  | syntactic
+  /-- Semantic: island follows from a binding restriction (Specificity Condition) -/
+  | semantic
+  /-- Processing: island is an artifact of memory/retrieval difficulty -/
+  | processing
+  /-- Discourse: island arises from information-structural backgroundedness (@cite{goldberg-2006}, 2013;
+  @cite{lu-pan-degen-2025}) -/
+  | discourse
+  deriving Repr, DecidableEq, BEq
+
+namespace Phenomena.Islands.Studies.Ross1967
 
 -- ============================================================================
 -- §1. Lexical entries for example sentences
@@ -144,4 +196,4 @@ def islandData : List PhenomenonData := [
 #guard wordsToString [what, do_, you, wonder, who, bought] == "what do you wonder who bought"
 #guard wordsToString [what, did, john, buy, and_, sell] == "what did John buy and sell"
 
-end Phenomena.FillerGap.Islands.Studies.Ross1967
+end Phenomena.Islands.Studies.Ross1967

@@ -5,7 +5,8 @@ import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Phenomena.Islands.MannerOfSpeaking
 
 /-!
 # Unaccusativity Bridge @cite{storment-2026}
@@ -46,7 +47,7 @@ open Fragments.English.Predicates.Verbal
 open Phenomena.ArgumentStructure.Unaccusativity.Data
 open Phenomena.AuxiliaryVerbs.Selection (TransitivityClass canonicalSelection)
 open Minimalism (VoiceFlavor VoiceHead licensesQI)
--- ConstraintType, constraintSources are at root namespace (no namespace in Islands/Data.lean)
+-- ConstraintType is at root namespace (no namespace in Islands/Data.lean)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Per-Verb Annotation Theorems
@@ -451,19 +452,21 @@ theorem li_arrive_smuggling_unified :
     discourse-sourced (not syntactic), so they don't block the syntactic
     VP-movement that produces QI. -/
 
+open Phenomena.Islands.MannerOfSpeaking (mosIslandSources) in
 /-- MoS islands are discourse-sourced, not syntactic — so they don't
     block the syntactic smuggling operation that produces QI. -/
 theorem mos_island_compatible_with_qi :
-    constraintSources .mannerOfSpeaking = [.discourse] ∧
+    mosIslandSources = [.discourse] ∧
     derivedQI whisper.toVerbCore = true := ⟨rfl, rfl⟩
 
+open Phenomena.Islands.MannerOfSpeaking (mosIslandSources) in
 /-- The extraction asymmetry: sub-extraction from MoS complement is
     discourse-blocked, but whole-complement fronting (QI) is
     syntactically licensed. Same verbs, same complements, different
     operations, different sources. -/
 theorem mos_extraction_asymmetry :
     -- Sub-extraction blocked (discourse-sourced island)
-    constraintSources .mannerOfSpeaking = [.discourse] ∧
+    mosIslandSources = [.discourse] ∧
     -- VP-smuggling licensed (non-phase Voice)
     derivedQI whisper.toVerbCore = true ∧
     derivedQI murmur.toVerbCore = true ∧

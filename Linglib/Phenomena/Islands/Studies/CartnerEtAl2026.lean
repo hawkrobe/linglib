@@ -1,4 +1,4 @@
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
 import Linglib.Core.Discourse.InformationStructure
 
 /-!
@@ -35,13 +35,34 @@ results do NOT falsify direct backgroundedness approaches
 4. Explicit distinction from direct backgroundedness (BCI), which is NOT
    falsified (connecting to `BackgroundedIslands.lean`)
 5. Cross-constructional invariance of the island effect
-6. Bridge to `constraintSource .subject = .syntactic`
+6. Bridge: subject islands have syntactic source
 7. End-to-end argument chain
 -/
 
+/-- The three canonical filler-gap dependency constructions in English.
+Each shares the abstract mechanism of movement (a filler displaced from a gap)
+but differs in information-structural profile (@cite{abeille-et-al-2020}).
+
+The distinction matters for testing whether island effects are
+construction-specific (as @cite{abeille-et-al-2020} claim) or
+construction-general (as @cite{cartner-et-al-2026} argue). -/
+inductive FGDConstruction where
+  | whQuestion
+  | relativeClause
+  | topicalization
+  deriving DecidableEq, Repr, BEq
+
+/-- Extraction position within the embedded clause.
+The subject/object asymmetry is the core empirical target of subject island
+research (@cite{ross-1967}, @cite{chomsky-1973}). -/
+inductive ExtractionPosition where
+  | subject
+  | object
+  deriving DecidableEq, Repr, BEq
+
 open Core.InformationStructure
 
-namespace Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
+namespace Phenomena.Islands.Studies.CartnerEtAl2026
 
 -- ============================================================================
 -- §1. Information-Structural Profiles of Filler-Gap Constructions
@@ -337,10 +358,18 @@ def predictsInvariance : IslandSource → Bool
   | .processing => true   -- same processing bottleneck across constructions
   | .discourse  => false  -- different IS profiles → different predictions
 
-/-- The syntactic classification of subject islands in Data.lean predicts
-construction-invariant island effects — consistent with the data. -/
+/-- Subject islands are syntactically sourced: they arise from a structural
+constraint on movement (Subject Condition / Phase + anti-locality) that is
+shared across all filler-gap constructions.
+
+Derived from the construction-invariance data (§§6–7): all three FGD types
+show statistically indistinguishable subject island costs. This matches
+the syntactic prediction (same constraint → same cost) and falsifies the
+discourse/FBC prediction (different IS profiles → different costs). -/
+def subjectIslandSource : IslandSource := .syntactic
+
 theorem syntactic_predicts_invariance :
-    (constraintSources .subject).all predictsInvariance = true := rfl
+    [subjectIslandSource].all predictsInvariance = true := rfl
 
 /-- The discourse source would predict construction-dependent effects —
 inconsistent with the data. -/
@@ -436,8 +465,8 @@ theorem argument_chain :
     islandEffect .relativeClause > 0 ∧
     islandEffect .topicalization > 0 ∧
     -- Conclusion: syntactic account predicts this, discourse account doesn't
-    constraintSources .subject = [.syntactic] ∧
-    (constraintSources .subject).all predictsInvariance = true ∧
+    subjectIslandSource = .syntactic ∧
+    [subjectIslandSource].all predictsInvariance = true ∧
     predictsInvariance .discourse = false ∧
     -- Scope: BCI not tested
     cartnerTestsTheory .directBackgroundedness = false := by
@@ -448,4 +477,4 @@ theorem argument_chain :
   · native_decide
   · native_decide
 
-end Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
+end Phenomena.Islands.Studies.CartnerEtAl2026

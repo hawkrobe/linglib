@@ -76,11 +76,14 @@ inductive ToneFeature where
 /-- Tonal root node (TRN): bundles register and tone features into
     a single prosodic specification (@cite{snider-2020}: 23).
 
-    Standard tones decompose as register + tone:
+    In register-based analyses, surface tones decompose as register + tone:
     - High  = `Hh` (high tone, raised register)
-    - Mid   = `Mh` or `Ml` or `Hl` or `Lh`
     - Low   = `Ll` (low tone, lowered register)
     - Downstepped High = `Hl`
+
+    Mid tones can be treated as derived (various register+tone combinations)
+    or as a primitive `ToneFeature.M`, depending on the system. Three-level
+    tone languages like Mwaghavul and Yoruba use `ToneFeature.M` directly.
 
     Register-only systems (Drubea/Numèè) use `tone = none`. -/
 structure TonalRootNode where

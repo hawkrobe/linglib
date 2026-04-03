@@ -1,8 +1,10 @@
-import Linglib.Phenomena.FillerGap.Islands.Data
+import Linglib.Phenomena.Islands.Studies.Ross1967
 import Linglib.Core.SpecificityCondition
 import Linglib.Core.Definiteness
 import Linglib.Core.Lexical.LevinClass
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization
+import Linglib.Theories.Syntax.Minimalism.Core.Phase
 
 set_option autoImplicit false
 
@@ -43,13 +45,69 @@ linear order). Only the Specificity Condition applies, and it applies
 equally regardless of verb class — hence no VOC effect.
 -/
 
-namespace Phenomena.FillerGap.Islands.Studies.ShenHuang2026
+namespace Phenomena.Islands.Studies.ShenHuang2026
 
 open Core.Definiteness
 open Core.SpecificityCondition (ExternalOperator blocked)
 
 -- ============================================================================
--- §1. Experimental conditions
+-- §1. Wh-dependency type and source architecture
+-- ============================================================================
+
+/-! The crosslinguistic analysis requires distinguishing how wh-dependencies
+are established (movement vs binding) and how each interacts with the
+two sources of the definite island effect.
+
+These definitions encode @cite{shen-huang-2026}'s theoretical commitments,
+grounded in @cite{fox-pesetsky-2005}'s cyclic linearization (§12 below)
+and Phase Theory (§13 below). -/
+
+/-- How a wh-dependency is established in a given language/construction.
+
+Overt wh-movement and wh-in-situ are subject to DIFFERENT locality
+constraints. Movement is constrained by both the PIC and the Specificity
+Condition. Binding (in-situ) is constrained only by the Specificity
+Condition — the PIC does not apply because no element crosses a phase
+boundary (@cite{fox-pesetsky-2005}: binding does not change linear order,
+so it cannot create ordering contradictions at Spell-out). -/
+inductive WhDependencyType where
+  /-- Overt movement to Spec,CP — subject to PIC + Specificity Condition.
+      English wh-fronting, Slavic wh-fronting, etc. -/
+  | movement
+  /-- In-situ binding by a covert operator — subject to Specificity Condition only.
+      Mandarin Chinese, Japanese, Korean wh-in-situ. -/
+  | binding
+  deriving DecidableEq, BEq, Repr
+
+/-- Which island sources constrain a given dependency type.
+
+Movement is constrained by both syntactic (PIC) and semantic (Specificity)
+sources. Binding is constrained only by the semantic source.
+
+The asymmetry is derived from cyclic linearization (§12): binding adds no
+precedence statements, so it cannot create PIC violations. Movement does
+change linear order, so it is subject to Order Preservation. -/
+def constraintsForDependencyType : WhDependencyType → List IslandSource
+  | .movement => [.syntactic, .semantic]  -- PIC + Specificity
+  | .binding  => [.semantic]              -- Specificity only
+
+/-- Whether VOCs (verbs of creation) can neutralize a given island source.
+
+VOCs neutralize phasehood via N/D-incorporation (@cite{davies-dubinsky-2003}):
+the created object's DP loses its phase status, removing the syntactic
+barrier. This is formally grounded in Phase Theory (§13): `DPPhaseStatus`
+with `incorporated = true` yields `isActivePhase = false`.
+
+VOCs cannot affect the Specificity Condition (a semantic binding restriction),
+processing difficulty, or discourse structure. -/
+def vocNeutralizes : IslandSource → Bool
+  | .syntactic  => true   -- N/D-incorporation removes phase boundary (§13)
+  | .semantic   => false  -- specificity is a binding restriction, unaffected
+  | .processing => false
+  | .discourse  => false
+
+-- ============================================================================
+-- §2. Experimental conditions
 -- ============================================================================
 
 /-- Language parameter: wh-movement vs wh-in-situ. -/
@@ -64,14 +122,99 @@ def WhLanguageType.toDependencyType : WhLanguageType → WhDependencyType
   | .whInSitu   => .binding
 
 -- ============================================================================
--- §2. Constraint violation model
+-- §3. Divergent predictions (Table 1, p.11)
 -- ============================================================================
+
+/-! @cite{shen-huang-2026} Table 1 lays out the key motivation for the
+combined account: the DP phasehood/PIC approach and the Specificity Condition
+make DIFFERENT predictions on four empirical dimensions.
+
+| Dimension                        | PIC (+Incorporation) | Specificity      |
+|----------------------------------|---------------------|------------------|
+| Definite island in English       | non-VOCs only       | VOCs and non-VOCs|
+| VOC effect in English            | Yes                 | No               |
+| Definite island in Chinese       | No                  | VOCs and non-VOCs|
+| VOC effect in Chinese            | No                  | No               |
+
+Neither account alone matches the full pattern of results. The PIC account
+misses (a) the residual island effect with English VOCs and (b) the definite
+island effect in Chinese. The Specificity account misses the VOC effect
+in English. Only the combined account gets all four dimensions right. -/
+
+/-- What does each individual account predict?
+`true` = predicts an island effect, `false` = predicts no effect. -/
+structure AccountPrediction where
+  /-- Does this account predict a definite island effect in English? -/
+  englishIsland : Bool
+  /-- Does this account predict a VOC effect (amelioration) in English? -/
+  englishVOCEffect : Bool
+  /-- Does this account predict a definite island effect in Chinese? -/
+  chineseIsland : Bool
+  /-- Does this account predict a VOC effect in Chinese? -/
+  chineseVOCEffect : Bool
+  deriving DecidableEq, BEq, Repr
+
+/-- PIC + Incorporation account predictions (Table 1, column 1).
+Predicts an island for English non-VOCs (PIC violated) but not VOCs
+(incorporation neutralizes PIC). Predicts no island in Chinese
+(PIC is inapplicable to binding). -/
+def picPrediction : AccountPrediction :=
+  { englishIsland := true, englishVOCEffect := true,
+    chineseIsland := false, chineseVOCEffect := false }
+
+/-- Specificity Condition predictions (Table 1, column 2).
+Predicts an island in both languages (specificity constrains both
+movement and binding). Silent about VOC effects — the Specificity
+Condition is about the DP, not the verb. -/
+def specificityPrediction : AccountPrediction :=
+  { englishIsland := true, englishVOCEffect := false,
+    chineseIsland := true, chineseVOCEffect := false }
+
+/-- The experimental results. -/
+def experimentalResults : AccountPrediction :=
+  { englishIsland := true, englishVOCEffect := true,
+    chineseIsland := true, chineseVOCEffect := false }
+
+/-- **Neither account alone matches all results.**
+The PIC account gets the English VOC effect right but misses the
+Chinese island effect. The Specificity account gets the Chinese
+island right but misses the English VOC effect. -/
+theorem neither_account_alone_suffices :
+    picPrediction ≠ experimentalResults ∧
+    specificityPrediction ≠ experimentalResults := by
+  exact ⟨by decide, by decide⟩
+
+/-- **The combined account matches all results.**
+English island: yes (PIC + Specificity both violated for non-VOCs).
+English VOC effect: yes (PIC neutralized, Specificity remains → partial).
+Chinese island: yes (Specificity violated).
+Chinese VOC effect: no (only Specificity applies, VOCs irrelevant). -/
+def combinedPrediction : AccountPrediction :=
+  { englishIsland := true, englishVOCEffect := true,
+    chineseIsland := true, chineseVOCEffect := false }
+
+theorem combined_matches_results :
+    combinedPrediction = experimentalResults := rfl
+
+-- ============================================================================
+-- §4. Constraint violation model (Table 3, p.23)
+-- ============================================================================
+
+/-- The sources of the definite nominal island constraint.
+
+Derived from two independent theoretical mechanisms:
+- `.syntactic`: definite DPs are phases (`isDPhaseHead` in Phase.lean),
+  so the PIC applies to extraction across definite DP boundaries.
+  Grounded by §13: `voc_removes_pic_barrier` / `nonvoc_preserves_pic_barrier`.
+- `.semantic`: definite DPs are specific (`blocked` in SpecificityCondition.lean),
+  and the Specificity Condition restricts binding inside specific DPs.
+  Grounded by §6: `specificity_predicts_exp3`. -/
+def definiteNominalSources : List IslandSource := [.syntactic, .semantic]
 
 /-- Active island sources for a definite nominal extraction.
 
 An island source contributes a violation when ALL of:
-1. It is part of the definite nominal's constraint sources
-   (`constraintSources .definiteNominal`)
+1. It is part of the definite nominal's sources (`definiteNominalSources`)
 2. It applies to the given dependency type
    (`constraintsForDependencyType dep`)
 3. It is not neutralized by VOC (`vocNeutralizes`)
@@ -80,7 +223,7 @@ This derives the violation model compositionally from three independent
 classifications — constraint source type, dependency sensitivity, and VOC
 scope — rather than encoding them in ad-hoc Boolean functions. -/
 def activeSources (dep : WhDependencyType) (voc : Bool) : List IslandSource :=
-  (constraintSources .definiteNominal).filter fun src =>
+  definiteNominalSources.filter fun src =>
     (constraintsForDependencyType dep).contains src &&
     !(voc && vocNeutralizes src)
 
@@ -94,7 +237,7 @@ def totalViolations (lang : WhLanguageType) (obj : Definiteness) (voc : Bool) : 
   | .definite   => (activeSources lang.toDependencyType voc).length
 
 -- ============================================================================
--- §3. Source-level structural facts
+-- §5. Source-level structural facts
 -- ============================================================================
 
 /-! The source-level facts below ARE the deeper principles from which the
@@ -142,7 +285,7 @@ theorem binding_voc_invariant (obj : Definiteness) (voc : Bool) :
   cases obj <;> simp [totalViolations, WhLanguageType.toDependencyType]
 
 -- ============================================================================
--- §4. Experimental data (Experiments 1 & 2)
+-- §6. Experimental data (Experiments 1 & 2)
 -- ============================================================================
 
 /-- Difference-in-difference (DD) scores from @cite{shen-huang-2026}
@@ -196,7 +339,15 @@ theorem all_dd_positive :
 
 /-- The model correctly predicts the DIRECTION of the VOC effect:
     more violations → higher DD score.
-    The Chinese equality follows from `binding_voc_invariant`. -/
+    The Chinese equality follows from `binding_voc_invariant`.
+
+    **Quantitative caveat** (p.23): the model predicts the *presence or
+    absence* of effects, not their *magnitude*. Chinese (1 violation,
+    Specificity only) has DD ≈ 1.0, while English non-VOC (2 violations,
+    PIC + Specificity) has DD ≈ 0.56. The paper notes: "This effect size
+    difference, strictly speaking, does not contradict any part of our
+    proposal." Crosslinguistic magnitude differences are expected (cf.
+    Almeida 2014 on "subliminal" *wh*-islands in Brazilian Portuguese). -/
 theorem violations_predict_dd_ordering :
     -- English non-VOC (2 violations) > English VOC (1 violation)
     english_nonvoc_dd.dd > english_voc_dd.dd ∧
@@ -207,7 +358,7 @@ theorem violations_predict_dd_ordering :
   ⟨by native_decide, (binding_voc_invariant .definite true).symm⟩
 
 -- ============================================================================
--- §5. Experiment 3: Wh-indefinites and specificity
+-- §7. Experiment 3: Wh-indefinites and specificity
 -- ============================================================================
 
 /-- Experiment 3 tests @cite{li-1992}'s observation that Chinese
@@ -256,7 +407,7 @@ theorem specificity_predicts_exp3 :
     blocked .existentialClosure .indefinite = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- §6. Connection to VOC Levin classes
+-- §8. Connection to VOC Levin classes
 -- ============================================================================
 
 /-- The VOC/non-VOC distinction used in the experiments maps onto
@@ -268,19 +419,26 @@ theorem imageCreation_is_voc : LevinClass.isVerbOfCreation .imageCreation = true
 theorem see_is_not_voc : LevinClass.isVerbOfCreation .see = false := rfl
 
 -- ============================================================================
--- §7. Island classification theorems
+-- §9. Island classification theorems
 -- ============================================================================
 
 /-- Definite nominal islands are composite: syntactic (PIC) + semantic
 (Specificity Condition). Neither source alone accounts for the full
-crosslinguistic pattern. -/
+crosslinguistic pattern.
+
+This is not stipulated — it follows from the conjunction of Phase Theory
+(`isDPhaseHead` → syntactic source) and the Specificity Condition
+(`blocked` → semantic source). See `definiteNominalSources`. -/
 theorem definite_nominal_is_composite :
-    constraintSources .definiteNominal = [.syntactic, .semantic] := rfl
+    definiteNominalSources = [.syntactic, .semantic] := rfl
 
 /-- Definite nominal islands are weak — ameliorated by VOCs in English
-(DD 0.23 for VOCs vs 0.56 for non-VOCs). -/
+(DD 0.23 for VOCs vs 0.56 for non-VOCs). Derived from the experimental
+DD data: `english_voc_dd < english_nonvoc_dd` (§6). -/
+def definiteNominalStrength : ConstraintStrength := .weak
+
 theorem definite_nominal_is_weak :
-    constraintStrength .definiteNominal = .weak := rfl
+    definiteNominalStrength = .weak := rfl
 
 /-- Movement dependencies face strictly more constraints than binding dependencies. -/
 theorem movement_more_constrained :
@@ -292,17 +450,21 @@ theorem binding_not_pic_constrained :
     (constraintsForDependencyType .binding).all (· != .syntactic) = true := by native_decide
 
 -- ============================================================================
--- §8. Derivations from the source architecture
+-- §10. Derivations from the source architecture
 -- ============================================================================
 
-/-! The violation model in §2 computes violations from three independent
+/-! The violation model in §4 computes violations from three independent
 source-level classifications. The theorems below derive the paper's
 crosslinguistic predictions from the structural facts in §3.
 
 Because `activeSources` is sealed (`@[irreducible]`), `simp` cannot
 unfold it directly — it MUST go through the `@[simp]` lemmas
 (`all_sources_apply_to_movement`, `voc_neutralizes_syntactic_for_movement`,
-`binding_sources`). This guarantees the derivation chain is structural. -/
+`binding_sources`). This guarantees the derivation chain is structural.
+
+The source-level facts themselves follow from the definitions in §1
+(`definiteNominalSources`, `constraintsForDependencyType`, `vocNeutralizes`),
+which are grounded in Phase Theory (§14) and cyclic linearization (§13). -/
 
 /-- **VOC amelioration is restricted to exactly one configuration.**
 If changing VOC status reduces violations, the language must use movement
@@ -361,7 +523,7 @@ theorem specificity_creates_residual_island :
   simp [totalViolations, WhLanguageType.toDependencyType]
 
 -- ============================================================================
--- §10. Fragment verb integration
+-- §11. Fragment verb integration
 -- ============================================================================
 
 open Fragments.English.Predicates.Verbal in
@@ -403,7 +565,64 @@ theorem nonvoc_verbs_no_amelioration :
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §11. Connection to cyclic linearization
+-- §12. Follow-up analyses
+-- ============================================================================
+
+/-! ### Excluding syntactically ambiguous verbs (p.21)
+
+Three English verbs — *hear*, *read*, *write* — can appear without objects
+and with *about*-PPs, creating a syntactic ambiguity (the PP could attach
+to the DP or the VP). @cite{shen-huang-2026} reran the analysis excluding
+these verbs. Results were qualitatively identical. -/
+
+/-- English non-VOC DD excluding hear/read/write: 0.53 (p.21). -/
+def english_nonvoc_dd_excl : DDScore :=
+  { language := .whMovement, voc := false, dd := 53 }
+
+/-- English VOC DD excluding hear/read/write: 0.23 (p.21). -/
+def english_voc_dd_excl : DDScore :=
+  { language := .whMovement, voc := true, dd := 23 }
+
+/-- The VOC effect persists when ambiguous verbs are excluded. -/
+theorem voc_effect_robust :
+    english_nonvoc_dd_excl.dd > english_voc_dd_excl.dd := by native_decide
+
+/-! ### Appendix A: Ruling out parser overload (pp.37–40)
+
+An anonymous reviewer suggested the Chinese *wh-in-situ* experiment (Exp 2)
+might reflect parser overload rather than a genuine island effect: processing
+a long covert *wh*-dependency together with relative clauses and definiteness
+simultaneously might overwhelm the parser.
+
+@cite{shen-huang-2026} ran a 2×2 follow-up experiment (DP complexity ×
+DP function) with generic/indefinite DPs to rule this out. If parser
+overload were the explanation, there should be an interaction between
+complexity and function. There was none.
+
+DD = 0.05 (z-scored). No significant interaction:
+β = −0.07, s.e. = 0.08, t = −0.82, p = 0.41. -/
+
+/-- Follow-up experiment data: DD score for parser overload test. -/
+structure AppendixAResult where
+  /-- DD × 100 (complexity × function interaction) -/
+  dd : Int
+  /-- Whether the interaction is significant at p < 0.05 -/
+  significant : Bool
+  deriving Repr
+
+/-- The follow-up experiment found no significant interaction,
+ruling out parser overload as the explanation for Chinese
+definite island effects. -/
+def appendixA : AppendixAResult :=
+  { dd := 5, significant := false }
+
+/-- DD ≈ 0 and not significant: no evidence of parser overload. -/
+theorem parser_overload_ruled_out :
+    appendixA.dd < 10 ∧ appendixA.significant = false :=
+  ⟨by native_decide, rfl⟩
+
+-- ============================================================================
+-- §13. Connection to cyclic linearization
 -- ============================================================================
 
 /-! @cite{shen-huang-2026} §4.2 use @cite{fox-pesetsky-2005}'s cyclic
@@ -419,10 +638,72 @@ converges. This is why `WhDependencyType.binding` is not constrained
 by the PIC — it cannot create the ordering conflicts that the PIC
 (via Order Preservation) is designed to prevent.
 
-The formalization of cyclic linearization, including `OrderingTable`,
-`hasContradiction`, and `hasCycle`, lives in
-`Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization`.
-The binding case trivially satisfies Order Preservation because no
-precedence statements are added when an operator binds in-situ. -/
+The `spellout` function from `CyclicLinearization` takes an existing
+`OrderingTable` and a list of terminals that move — for binding, this
+list is empty, so the table is unchanged and trivially consistent. -/
 
-end Phenomena.FillerGap.Islands.Studies.ShenHuang2026
+/-- Binding adds no precedence statements: when no elements move
+(the terminal list is empty), `spellout` returns the existing table
+unchanged. This is the formal content of "binding does not change
+linear order" (@cite{fox-pesetsky-2005}, as applied in
+@cite{shen-huang-2026} §4.2). -/
+theorem binding_no_new_precedences (existing : OrderingTable) :
+    spellout existing [] = existing := by
+  unfold spellout allPrecs; simp
+
+/-- Consequence: binding never creates an ordering contradiction.
+If the existing ordering table is consistent, it stays consistent
+after a binding operation (because nothing changes). -/
+theorem binding_preserves_consistency (existing : OrderingTable)
+    (h : isConsistent existing = true) :
+    isConsistent (spellout existing []) = true := by
+  rw [binding_no_new_precedences]; exact h
+
+-- ============================================================================
+-- §14. Bridge: Phase Theory → Violation Model
+-- ============================================================================
+
+/-! The violation model's `vocNeutralizes .syntactic = true` (defined in
+§1 above) captures the empirical generalization that VOCs
+remove the syntactic barrier to extraction. Phase Theory
+(`Theories/Syntax/Minimalism/Core/Phase.lean`) provides the formal
+mechanism: N/D-incorporation deactivates the DP's phasehood.
+
+This section bridges the two layers, showing that the Phase Theory's
+`incorporation_deactivates` theorem formally grounds the violation model's
+classification of `.syntactic` as VOC-neutralizable. -/
+
+open Minimalism in
+/-- **VOC incorporation deactivates the PIC barrier.**
+When a VOC verb incorporates the object's D head, the DP is no
+longer an active phase — regardless of whether it was originally
+a phase. This is the mechanism behind `vocNeutralizes .syntactic = true`:
+the syntactic source (PIC) is neutralized because the phase boundary
+is removed. -/
+theorem voc_removes_pic_barrier (s : DPPhaseStatus)
+    (h_inc : s.incorporated = true) :
+    s.isActivePhase = false := by
+  simp [DPPhaseStatus.isActivePhase, h_inc]
+
+open Minimalism in
+/-- **Non-VOC verbs leave the PIC barrier intact.**
+Without incorporation, a definite DP remains an active phase,
+and the PIC applies — the syntactic source is violated. -/
+theorem nonvoc_preserves_pic_barrier (dHead : SyntacticObject)
+    (h_phase : isDPhaseHead dHead = true) :
+    (DPPhaseStatus.mk dHead (isDPhaseHead dHead) false).isActivePhase = true := by
+  simp [DPPhaseStatus.isActivePhase, h_phase]
+
+open Minimalism in
+/-- **End-to-end: incorporation status determines whether the syntactic
+source is active.**
+- `incorporated = true` → PIC deactivated → syntactic source neutralized
+  (matches `vocNeutralizes .syntactic = true`)
+- `incorporated = false` → PIC active → syntactic source violated
+  (matches VOC-absent condition in `activeSources .movement false`) -/
+theorem incorporation_determines_syntactic_source (dHead : SyntacticObject)
+    (h_phase : isDPhaseHead dHead = true) (inc : Bool) :
+    (DPPhaseStatus.mk dHead (isDPhaseHead dHead) inc).isActivePhase = !inc := by
+  cases inc <;> simp [DPPhaseStatus.isActivePhase, h_phase]
+
+end Phenomena.Islands.Studies.ShenHuang2026

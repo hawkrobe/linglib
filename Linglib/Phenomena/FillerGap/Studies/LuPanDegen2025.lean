@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
-import Linglib.Phenomena.FillerGap.Islands.Data
-import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
+import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Phenomena.Islands.MannerOfSpeaking
 import Linglib.Core.Lexical.LevinClass
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -35,19 +35,25 @@ namespace Phenomena.FillerGap.Studies.LuPanDegen2025
 open Semantics.Focus.BackgroundedIslands
 open Core.InformationStructure
 
-/-! ## §1. Constraint Source per Island Type
+/-! ## §1. Island Source Classification
 
-Each island type has a source classification (discourse vs syntactic).
-MoS islands are uniquely discourse-sourced; all others are syntactic.
-Per-type theorems make the dependency maximally auditable: changing
-one island's classification breaks exactly one theorem. -/
+The paper's core contribution is the double dissociation between discourse-
+sourced MoS islands and syntactically-sourced traditional islands. The MoS
+source is imported from `MannerOfSpeaking.mosIslandSources` (derived from
+the experimental evidence there). The traditional island classification
+is the baseline consensus view: these islands arise from structural
+constraints on movement (subjacency, PIC, Relativized Minimality). -/
 
-theorem embeddedQuestion_source : constraintSources .embeddedQuestion = [.syntactic] := rfl
-theorem complexNP_source : constraintSources .complexNP = [.syntactic] := rfl
-theorem adjunct_source : constraintSources .adjunct = [.syntactic] := rfl
-theorem coordinate_source : constraintSources .coordinate = [.syntactic] := rfl
-theorem subject_source : constraintSources .subject = [.syntactic] := rfl
-theorem sententialSubject_source : constraintSources .sententialSubject = [.syntactic] := rfl
+open Phenomena.Islands.MannerOfSpeaking (mosIslandSources)
+
+/-- Traditional islands (wh, CNPC, adjunct, coordinate, subject, sentential
+subject) are syntactically sourced. This is the baseline consensus against
+which the paper shows MoS islands are categorically different.
+
+Note: @cite{hofmeister-sag-2010} argue that some of these (CNPC, wh-islands)
+have processing sources. That alternative classification is formalized in
+their study file, not here. -/
+def traditionalIslandSource : IslandSource := .syntactic
 
 /-! ## §2. Levin Class → Manner Weight Bridge
 
@@ -177,12 +183,12 @@ but NOT structural islands. This double dissociation is the core prediction
 separating discourse from syntax/processing accounts. -/
 theorem differential_amelioration :
     -- MoS islands: discourse source → prosodic focus ameliorates
-    constraintSources .mannerOfSpeaking = [.discourse] ∧
+    mosIslandSources = [.discourse] ∧
     -- Wh-islands: syntactic source → D-linking ameliorates
-    constraintSources .embeddedQuestion = [.syntactic] ∧
+    traditionalIslandSource = .syntactic ∧
     -- Different sources → different amelioration mechanisms
-    constraintSources .mannerOfSpeaking ≠ constraintSources .embeddedQuestion := by
-  exact ⟨rfl, rfl, by simp [constraintSources]⟩
+    mosIslandSources ≠ [traditionalIslandSource] := by
+  exact ⟨rfl, rfl, by decide⟩
 
 /-! ## §5. Per-Verb Backgroundedness–Acceptability Correlation
 
@@ -301,7 +307,7 @@ extraction degradation (`complementStatus .given → .rank = 0`).
 The experimental data confirms this directionally: higher backgroundedness
 proportions consistently co-occur with lower acceptability ratings. -/
 
-open Phenomena.FillerGap.Islands.MannerOfSpeaking in
+open Phenomena.Islands.MannerOfSpeaking in
 /-- **Experimental data matches formal model direction**: the formal model
 predicts that backgrounded complements have degraded extraction (rank 0).
 Experiments 1, 2b, and 3b all show the predicted anti-correlation:
@@ -316,7 +322,7 @@ theorem experimental_matches_model :
      exp1_acceptability_verbFocus < exp1_acceptability_embeddedFocus) := by
   refine ⟨?_, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> native_decide
 
-open Phenomena.FillerGap.Islands.MannerOfSpeaking in
+open Phenomena.Islands.MannerOfSpeaking in
 /-- **Say+adverb replicates formal model prediction**: adding manner weight
 compositionally (say + adverb) degrades extraction without changing syntax.
 This is exactly what the formal model predicts: manner weight → backgroundedness

@@ -253,4 +253,70 @@ theorem pic_blocks_agree (strength : PICStrength) (phase _probe goal : Syntactic
     -- Probe cannot access goal across the phase boundary
     phaseImpenetrable strength phase goal := h_impenetrable
 
+-- ============================================================================
+-- Part 10: N/D-Incorporation and Phase Deactivation
+-- ============================================================================
+
+/-! ### N/D-Incorporation (@cite{davies-dubinsky-2003}, @cite{shen-huang-2026})
+
+@cite{davies-dubinsky-2003} propose that verbs of creation (VOCs) trigger
+LF noun incorporation: the head noun of the object DP incorporates into
+the verb. This has the effect of neutralizing the DP's phasehood — the
+D head is no longer a blocking category, and extraction from the DP
+becomes possible.
+
+@cite{shen-huang-2026} adapt this analysis: it is the *determiner* that
+undergoes covert head movement to the verb (following @cite{boskovic-2015}
+on phase collapse). The incorporation neutralizes the PIC, explaining why
+VOCs ameliorate (but do not eliminate) definite island effects — the
+Specificity Condition still applies independently.
+
+Three conditions for incorporation (@cite{davies-dubinsky-2003}:28–29):
+1. The noun is a result nominal
+2. The object is complement of a causative verb semantically related
+   to the denoted result (e.g., *write-book*)
+3. The verb's subject controls the agentive subject of the object -/
+
+/-- Whether a DP's phase status has been deactivated by incorporation.
+
+When `incorporated = true`, the D head has been absorbed into the
+verb via head movement. The DP is no longer a phase boundary —
+`isDPhaseHead` is irrelevant because the D head is no longer
+projecting independently.
+
+This models the effect described by @cite{davies-dubinsky-2003} and
+@cite{shen-huang-2026}: VOCs neutralize the PIC for definite DPs. -/
+structure DPPhaseStatus where
+  /-- The D head (before incorporation) -/
+  dHead : SyntacticObject
+  /-- Whether D was originally a phase head -/
+  wasPhase : Bool := isDPhaseHead dHead
+  /-- Whether incorporation has applied -/
+  incorporated : Bool
+  deriving Repr
+
+/-- A DP is an active phase barrier iff it was originally a phase
+AND has not been deactivated by incorporation. -/
+def DPPhaseStatus.isActivePhase (s : DPPhaseStatus) : Bool :=
+  s.wasPhase && !s.incorporated
+
+/-- Incorporation deactivates phasehood: a D-phase that undergoes
+incorporation is no longer an active phase barrier. -/
+theorem incorporation_deactivates (s : DPPhaseStatus)
+    (h_phase : s.wasPhase = true) (h_inc : s.incorporated = true) :
+    s.isActivePhase = false := by
+  simp [DPPhaseStatus.isActivePhase, h_phase, h_inc]
+
+/-- Without incorporation, a D-phase remains active. -/
+theorem no_incorporation_preserves (s : DPPhaseStatus)
+    (h_phase : s.wasPhase = true) (h_no_inc : s.incorporated = false) :
+    s.isActivePhase = true := by
+  simp [DPPhaseStatus.isActivePhase, h_phase, h_no_inc]
+
+/-- Non-phases are never active barriers, regardless of incorporation. -/
+theorem non_phase_never_active (s : DPPhaseStatus)
+    (h : s.wasPhase = false) :
+    s.isActivePhase = false := by
+  simp [DPPhaseStatus.isActivePhase, h]
+
 end Minimalism
