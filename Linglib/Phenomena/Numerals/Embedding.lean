@@ -42,7 +42,7 @@ inductive EmbeddingType where
   | degree
   | convexity_test
   | acquisition
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A theory-neutral test case for a numeral in an embedding environment.
 

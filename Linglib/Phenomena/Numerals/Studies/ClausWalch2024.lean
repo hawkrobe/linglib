@@ -39,19 +39,19 @@ inductive Modifier where
   | exactly
   | atMost
   | upTo
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Framing condition in Experiment 2. -/
 inductive FramingCondition where
   | standard   -- positive context (e.g., "The battery lasts up to 100 hours")
   | reversed   -- negative context (e.g., "The repair costs at most 100 euros")
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Truth-value judgment in Experiment 1. -/
 inductive Judgment where
   | accepted
   | rejected
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Experiment 1: Truth-Value Judgments

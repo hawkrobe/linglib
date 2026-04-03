@@ -72,13 +72,13 @@ inductive AbstractCase where
   | nom   -- from Infl⁰
   | acc   -- from v⁰ (object)
   | erg   -- from v⁰ (subject)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which functional head assigns each abstract case. -/
 inductive FunctionalHead where
   | infl  -- Infl⁰
   | v     -- v⁰ (transitive)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def AbstractCase.assigner : AbstractCase → FunctionalHead
   | .nom => .infl
@@ -266,7 +266,7 @@ inductive ObjectType where
   | reflexive          -- caseless (incorporated)
   | extendedReflexive  -- caseless (possessor bound by subject)
   | bareNP             -- caseless (pseudo-incorporated)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def ObjectType.needsCase : ObjectType → Bool
   | .fullDP            => true
@@ -409,7 +409,7 @@ structure SyntacticErgativityFactors where
   subjectBelowVP : Bool
   /-- III. Only a single specifier available for extraction out of vP. -/
   singleEscapeHatch : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def SyntacticErgativityFactors.producesTrapping (f : SyntacticErgativityFactors) : Bool :=
   f.vPIsPhasal && f.subjectBelowVP && f.singleEscapeHatch
@@ -459,7 +459,7 @@ theorem af_removes_factor1 :
 structure ErgativityTypology where
   morphErg : Bool
   synErg  : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def qanjobalTypology : ErgativityTypology := ⟨true, true⟩
 def cholTypology : ErgativityTypology := ⟨true, false⟩
@@ -525,7 +525,7 @@ inductive VPInternalElement where
   | subject       -- transitive subject (in Spec,VoiceP)
   | lowAdverb     -- manner adverb (adjoined below vP)
   | secondObject  -- second object in DOC (if it existed)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Can this vP-internal element escape a transitive vP in a HIGH-ABS
     language? None can — the escape hatch is occupied by the object. -/

@@ -17,7 +17,7 @@ inductive SystemsOfGenderAssignment where
   | noGender  -- No gender (145 languages)
   | semantic  -- Semantic (53 languages)
   | semanticAndFormal  -- Semantic and formal (59 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 32A dataset (257 languages). -/
 def allData : List (Datapoint SystemsOfGenderAssignment) :=

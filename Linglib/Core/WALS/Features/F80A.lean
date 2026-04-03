@@ -19,7 +19,7 @@ inductive VerbalNumberAndSuppletion where
   | singularPluralPairsSuppletion  -- Singular-plural pairs, suppletion (15 languages)
   | singularDualPluralTriplesNoSuppletion  -- Singular-dual-plural triples, no suppletion (5 languages)
   | singularDualPluralTriplesSuppletion  -- Singular-dual-plural triples, suppletion (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 80A dataset (193 languages). -/
 def allData : List (Datapoint VerbalNumberAndSuppletion) :=

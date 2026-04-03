@@ -42,7 +42,7 @@ inductive PolFeature where
   | valued : Core.Polarity → PolFeature
   /-- Unvalued polarity: the feature in polar questions that the answer resolves -/
   | unvalued : PolFeature
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Convert a `PolFeature` to a `FeatureVal` for use in the Agree system.
     [+Pol] maps to `.pol true`, [-Pol] maps to `.pol false`. -/

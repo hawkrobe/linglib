@@ -57,7 +57,7 @@ inductive VerbStemClass where
   | inchoative       -- stative root + *-tal*: blacken, shrink, sink
   | positional       -- spatial configurations: sit, stand, hang
   | transitiveActive -- transitive roots: hit, chip, eat
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Event type encoded by each verb stem class.
     Active stems encode processes; all others encode state changes.
@@ -89,7 +89,7 @@ inductive StatusCategory where
   | subjunctive   -- −assertive, +perfective
   | incompletive  -- +assertive, −perfective
   | imperative    -- directive mood
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Aspectual value of a status category.
     Completive and subjunctive are perfective; incompletive is

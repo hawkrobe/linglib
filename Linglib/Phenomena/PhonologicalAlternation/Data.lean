@@ -21,7 +21,7 @@ inductive AlternationType where
   | deletion
   /-- Segment is inserted into the string. -/
   | insertion
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A single observed phonological alternation. -/
 structure AlternationDatum where

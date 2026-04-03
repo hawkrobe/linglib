@@ -91,7 +91,7 @@ inductive Role where
   | mystery  -- THE / PL / AND_unF
   | weak     -- SOME / SING / OR
   | strong   -- ALL / TWO / BOTH
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /--
 Entailment structure between the three items.
@@ -414,7 +414,7 @@ inductive HomogeneityDomain where
   | pluralMorphology
   /-- Unfocused conjunction: AND_unF <-> OR, BOTH (dual) -/
   | conjunction
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 The correspondence table from the paper: each domain instantiates the
@@ -468,7 +468,7 @@ Whether the domain uses the primal or dual version of the theory.
 inductive TheoryVariant where
   | primal  -- definites, plural morphology
   | dual    -- unfocused conjunction
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def domainVariant : HomogeneityDomain → TheoryVariant
   | .definites        => .primal
@@ -677,7 +677,7 @@ open Exhaustification.InnocentExclusion (exhB)
 
 /-- Three worlds for a two-member plurality: none, one, or all satisfy. -/
 inductive Sat where | none | one | all
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def satDomain : List Sat := [.none, .one, .all]
 
@@ -832,7 +832,7 @@ open Exhaustification.InnocentExclusion (exhB)
 /-- Four worlds for two atomic propositions (saw Adam, saw Bill). -/
 inductive ConjW where
   | neither | onlyA | onlyB | both
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def conjDomain : List ConjW := [.neither, .onlyA, .onlyB, .both]
 

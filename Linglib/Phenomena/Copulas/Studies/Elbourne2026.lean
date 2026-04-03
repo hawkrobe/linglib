@@ -225,8 +225,8 @@ section Former
 /-- Concrete 2-time model witnessing that `former` is non-subsective:
     Joe was a judge (at `past`) but is not a judge (at `now`),
     so Joe is a former judge at `now` — yet he is not a judge. -/
-private inductive T2 | past | now deriving DecidableEq, BEq
-private inductive E1 | joe deriving DecidableEq, BEq
+private inductive T2 | past | now deriving DecidableEq
+private inductive E1 | joe deriving DecidableEq
 
 private def judge : Property T2 E1
   | .past, .joe => true
@@ -326,7 +326,7 @@ section CompulsoryER
 inductive ERStatus where
   | optional    -- cute, tall, happy: both positions
   | compulsory  -- former, mere, alleged: attributive only
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def canBePredicate (s : ERStatus) : Bool := s == .optional
 

@@ -107,7 +107,7 @@ inductive InnerConditionalContent where
   | generic
   /-- Quantificational adverb (always, usually, etc.) → allows HC reading -/
   | quantAdv
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 namespace InnerConditionalContent
 
@@ -309,7 +309,7 @@ inductive PartyWorld where
   | ka         -- Kripke and Anscomb
   | ska        -- All three attended
   | none_      -- No one attended
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Core.Proposition.FiniteWorlds PartyWorld where
   worlds := [.sOnly, .kOnly, .aOnly, .sk, .sa, .ka, .ska, .none_]

@@ -252,7 +252,7 @@ inductive NegModalScope where
   /-- Modal scopes over negation: MODAL(NOT(P)).
       *You mustn't go* = you must not go. -/
   | modalOverNeg
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Evaluate NOT(MODAL(P)) at world w. -/
 def evalNegOverModal (T : ModalTheory) (force : ModalForce) (p : Proposition) (w : World) : Bool :=

@@ -65,7 +65,7 @@ structure VPLicensingDatum where
   mereoTag : MereoTag
   boundedness : Boundedness
   expectedLicensed : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- "eat two apples": accomplishment → telic → QUA → closed → licensed. -/
 def eatTwoApples : VPLicensingDatum :=

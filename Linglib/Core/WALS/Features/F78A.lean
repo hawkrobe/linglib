@@ -20,7 +20,7 @@ inductive EvidentialityCoding where
   | separateParticle  -- Separate particle (65 languages)
   | modalMorpheme  -- Modal morpheme (7 languages)
   | mixed  -- Mixed (10 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 78A dataset (418 languages). -/
 def allData : List (Datapoint EvidentialityCoding) :=

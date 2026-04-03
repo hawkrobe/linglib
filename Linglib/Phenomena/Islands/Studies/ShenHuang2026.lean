@@ -77,7 +77,7 @@ inductive WhDependencyType where
   /-- In-situ binding by a covert operator — subject to Specificity Condition only.
       Mandarin Chinese, Japanese, Korean wh-in-situ. -/
   | binding
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which island sources constrain a given dependency type.
 
@@ -114,7 +114,7 @@ def vocNeutralizes : IslandSource → Bool
 inductive WhLanguageType where
   | whMovement   -- English, German, etc.: overt wh-fronting
   | whInSitu     -- Mandarin Chinese, Japanese, etc.: in-situ wh-binding
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map language type to wh-dependency type. -/
 def WhLanguageType.toDependencyType : WhLanguageType → WhDependencyType
@@ -152,7 +152,7 @@ structure AccountPrediction where
   chineseIsland : Bool
   /-- Does this account predict a VOC effect in Chinese? -/
   chineseVOCEffect : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- PIC + Incorporation account predictions (Table 1, column 1).
 Predicts an island for English non-VOCs (PIC violated) but not VOCs

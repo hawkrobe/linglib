@@ -266,7 +266,7 @@ inductive IncompletenessSource where
   | pragmaticEnrichment
   | explicitApproach
   | lotRelationVariable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def elbournePreferred : IncompletenessSource := .situationVariable
 
@@ -281,7 +281,7 @@ inductive NPDeletionSource where
   | visualCue
   | generalKnowledge
   | donkeyRestrictor
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 structure PronounAsDefinite where
   pronounForm : String
@@ -320,13 +320,13 @@ inductive SitBinder where
   | iota (index : Nat)
   | sigma (index : Nat)
   | sigmaSub (index : Nat)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A situation variable — either free or indexed for binding. -/
 inductive SitVar where
   | free (salience : Nat := 0)
   | bound (index : Nat)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -449,11 +449,11 @@ section RefAttr
 
 inductive Sit where
   | sCourtroom | sOffice | wActual
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive Ent where
   | jones | smith | wilson | table1 | table2 | table3
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def allEnts : List Ent := [.jones, .smith, .wilson, .table1, .table2, .table3]
 
@@ -532,11 +532,11 @@ section Donkey
 
 inductive DkEnt where
   | farmer1 | farmer2 | donkey_a | donkey_b | donkey_c
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive DkSit where
   | sMin1 | sMin2 | wActual
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def dkLe : DkSit → DkSit → Prop
   | _, .wActual => True
@@ -636,11 +636,11 @@ section DeReDeDicto
 
 inductive BSit where
   | actual | belief
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive BEnt where
   | jones | smith | mary
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def bEnts : List BEnt := [.jones, .smith, .mary]
 
@@ -698,11 +698,11 @@ def ponceFountain : ExistenceEntailmentDatum :=
 
 inductive GhostSit where
   | actual | belief
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive GhostEnt where
   | hans | ghost
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def ghostEnts : List GhostEnt := [.hans, .ghost]
 

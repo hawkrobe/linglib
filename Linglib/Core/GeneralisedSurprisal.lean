@@ -49,7 +49,7 @@ inductive WarpingFn where
   | negLog
   /-- f(x) = x: information value (raw expected distance) -/
   | identity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Scoring functions measuring prediction accuracy.
 g(a, w, c) evaluates alternative a against target w in context c. -/
@@ -61,7 +61,7 @@ inductive ScoringFn where
   /-- sim(r(a), r(w)): semantic similarity.
       @cite{meister-giulianelli-pimentel-2024} -/
   | similarity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2: Temporal and Representational Resolution
@@ -88,7 +88,7 @@ inductive RepLevel where
   | semantic
   /-- Final layer: specialized for next-token prediction -/
   | predictive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §3: Distance Summary Statistics
@@ -112,7 +112,7 @@ inductive DistanceSummary where
   | min
   /-- Maximum pairwise distance. Worst-case prediction error. -/
   | max
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §4: Surprisal Configurations
@@ -125,7 +125,7 @@ structure SurprisalConfig where
   scoring : ScoringFn
   horizon : ForecastHorizon
   level   : RepLevel
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Standard surprisal: −log P(next word).
 @cite{levy-2008} @cite{smith-levy-2013} -/
@@ -159,7 +159,7 @@ inductive PsychMeasure where
   | selfPacedRT           -- Button-press latency (self-paced reading)
   | n400                  -- N400 ERP amplitude: semantic prediction error
   | p600                  -- P600 ERP amplitude: syntactic integration
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Explicit predictability judgements (cloze, rating) vs. implicit processing
 signatures (RTs, ERPs). Best-predicting IAS configurations differ between

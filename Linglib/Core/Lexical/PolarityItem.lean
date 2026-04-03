@@ -53,7 +53,7 @@ inductive LicensingContext where
   | adversative       -- "sorry", "surprised", "regret" (factive + DE)
   | since_temporal    -- "it's been five years since" (Iatridou)
   | free_relative     -- Free relatives: "whatever", "whoever"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Scalar Value (@cite{israel-2001} Figure 1)
@@ -69,7 +69,7 @@ inductive ScalarValue where
   | high     -- denotes high scalar value (tons, utterly, wild horses)
   | low      -- denotes low scalar value (a wink, an inch, a pittance)
   | unknown  -- not yet classified
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Scalar Direction (@cite{israel-1996}, @cite{israel-2001}; @cite{schwab-2022})
@@ -92,7 +92,7 @@ inductive ScalarDirection where
   | attenuating    -- all that, so recht, long: assertion weaker than alternatives
   | nonScalar      -- lift a finger: idiomatic, not scalar
   | unknown        -- not yet verified for this item
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Canonicity (@cite{israel-2001} §3, Figure 3)
@@ -116,7 +116,7 @@ inductive Canonicity where
   | canonical  -- scalar value tracks polarity type in the default way
   | inverted   -- scalar value is opposite to what polarity type predicts
   | unknown    -- not yet classified
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Likelihood Effect (@cite{israel-2001} §4)
@@ -143,7 +143,7 @@ inductive LikelihoodEffect where
   | facilitating  -- bigger → event more likely (agent, stimulus, reward)
   | impeding      -- bigger → event less likely (patient, theme, expense)
   | unknown       -- not yet classified
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Polarity Item Types
@@ -158,7 +158,7 @@ inductive PolarityType where
   | fci          -- Free Choice Item: modal/generic/imperative
   | npi_fci      -- Dual use: NPI in DE, FCI under modals (= "any")
   | ppi          -- Positive Polarity Item: blocked in DE
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Base quantificational force (when interpretable).
@@ -169,7 +169,7 @@ inductive BaseForce where
   | degree        -- Degree/extent (at all, in the least)
   | temporal      -- Time reference (ever, yet)
   | manner        -- Manner/way (whatsoever)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Morphological Composition (@cite{lahiri-1998}, @cite{lee-horn-1994})
@@ -183,7 +183,7 @@ inductive NPIMorphology where
   | indefPlusNeg   -- indefinite + negation (Hindi nahiiN, Italian n-words)
   | plain          -- morphologically simple (English 'any', 'ever')
   | idiomatic      -- frozen idiom ('lift a finger')
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Type of alternatives introduced by the focused element.
     @cite{lahiri-1998} §8: *ek bhii* introduces cardinality alternatives,
@@ -194,7 +194,7 @@ inductive AlternativeType where
   | contextualProperty -- {P₁, P₂, ...}: contextually determined
   | domain             -- subdomain alternatives (Chierchia 2006 D-alternatives)
   | unspecified         -- not yet analyzed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Polarity Item Entry

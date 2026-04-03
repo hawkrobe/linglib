@@ -74,7 +74,7 @@ inductive ExpressionType where
   | stop              -- change-of-state "stop"
   | only              -- focus-sensitive "only"
   | stupid            -- evaluative adjective "be stupid to"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Mean projectivity rating from Experiment 1a (0–1 scale).
 
@@ -139,7 +139,7 @@ inductive Predicate where
   | realize
   | reveal
   | see
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Mean projectivity ratings for the 12 predicates from Exp 1b (0–1 scale).
     Values approximate means from Figure 6. -/

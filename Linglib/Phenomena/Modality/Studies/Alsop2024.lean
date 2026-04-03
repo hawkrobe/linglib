@@ -58,7 +58,7 @@ inductive FCIState where
   | only2    -- {w0, wSP}
   | sOrBoth  -- {w0, wS, wSP}
   | pOrBoth  -- {w0, wP, wSP}
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype FCIState where
   elems := {.onlyS, .onlyP, .only1, .anyNum, .only2, .sOrBoth, .pOrBoth}
@@ -70,7 +70,7 @@ inductive Utterance where
   | mayP     -- "You may take P"
   | mayAny   -- "You may take any class"
   | mayEvery -- "You may take every class"
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Utterance where
   elems := {.mayS, .mayP, .mayAny, .mayEvery}
@@ -81,7 +81,7 @@ instance : Fintype Utterance where
 inductive Interp where
   | weak   -- Szabolcsi-type: unexhaustified, liberal meanings
   | strong -- Dayal-type: exhaustified, strict meanings
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Interp where
   elems := {.weak, .strong}
@@ -303,7 +303,7 @@ theorem exclusiveness_requires_ambiguity :
 /-- Extended utterances including negation of "may any". -/
 inductive UtteranceNeg where
   | mayS | mayP | mayAny | mayEvery | mayNotAny
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype UtteranceNeg where
   elems := {.mayS, .mayP, .mayAny, .mayEvery, .mayNotAny}
@@ -370,7 +370,7 @@ inductive Finding where
   | every_permBoth
   | exclusiveness_requires_ambiguity
   | no_fc_under_negation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map each finding to its RSA formalization. -/
 noncomputable def formalize : Finding → Prop

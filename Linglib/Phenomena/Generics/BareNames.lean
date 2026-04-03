@@ -28,7 +28,7 @@ inductive ReadingStatus where
   | ok          -- ✓
   | marginal    -- ?
   | degraded    -- ??
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A datum recording whether token and generic readings are available. -/
 structure ReadingDatum where
@@ -45,7 +45,7 @@ inductive SubjectType where
   | modifiedName      -- Italian Andrea, the Rutgers professor
   | barePlural        -- tigers, mountains
   | quotedName        -- 'Ruth', 'Tristan'
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- What licensing factor (if any) enables the generic reading? -/
 inductive GenericLicensor where
@@ -55,7 +55,7 @@ inductive GenericLicensor where
   | adjectivalMod     -- Italian (Andrea), German (Andrea)
   | genericContext     -- naming conventions, social stereotypes
   | kindLevelPred     -- extinct, widespread, common (select for kinds)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Full datum with DP type and licensing information. -/
 structure BSNDatum where

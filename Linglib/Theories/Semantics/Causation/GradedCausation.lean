@@ -66,7 +66,7 @@ structure CausalMeasures where
   suf : ℚ
   int : ℚ
   alt : ℕ
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-! ## Deterministic SUF
 
@@ -139,7 +139,7 @@ inductive InteractionTerm where
   | sufAlt      -- SUFresidALT × ALT
   | intAlt      -- INT × ALT
   | sufIntAlt   -- SUFresidALT × INT × ALT (three-way)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A verb's interaction profile: which interaction terms reliably
 predict its acceptability.

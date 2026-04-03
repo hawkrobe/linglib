@@ -60,7 +60,7 @@ def tbuKind : TBUKind := .syllable
 inductive VerbalizerChoice where
   | m   -- VBZ₁: M melody (targets unreduplicated ideophones only)
   | mh  -- VBZ₂: M-H melody (targets both unreduplicated and reduplicated)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The M-tone verbaliser (VBZ₁): targets only unreduplicated ideophones.
     Overwrites every TBU of the host with M. -/
@@ -132,7 +132,7 @@ def hamhoyof : Ideophone := ⟨"hámhɔ̀yɔ̀ʃ","dryness of cracked feet", [.H
 /-- A toned Mwaghavul syllable. -/
 structure Syl where
   ipa : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Convenience: a toned Mwaghavul syllable. -/
 abbrev TSyl := TBU Syl

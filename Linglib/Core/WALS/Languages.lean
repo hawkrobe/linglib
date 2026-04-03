@@ -16,7 +16,7 @@ structure Language where
   iso : String
   family : String
   genus : String
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 private def languages_0 : List Language :=
   [ { walsCode := "xun", name := "!Xun (Ekoka)", iso := "knw", family := "Kxa", genus := "Ju-Kung" }

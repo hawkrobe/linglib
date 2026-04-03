@@ -16,7 +16,7 @@ namespace Core.WALS.F58A
 inductive ObligatoryPossessiveInflection where
   | exists  -- Exists (43 languages)
   | absent  -- Absent (201 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 58A dataset (244 languages). -/
 def allData : List (Datapoint ObligatoryPossessiveInflection) :=

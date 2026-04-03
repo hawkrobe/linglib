@@ -36,7 +36,7 @@ open Core.Prominence
 /-- Person-number combinations in the Basque agreement paradigm. -/
 inductive PersonNumber where
   | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All person-number values. -/
 def allPersonNumbers : List PersonNumber :=
@@ -64,7 +64,7 @@ inductive ArgPosition where
   | patient
   /-- S: intransitive subject (ABS) -/
   | intranS
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Differential P Indexing

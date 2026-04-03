@@ -245,7 +245,7 @@ open Core.Context
 /-- A minimal clause chain context: world (event structure), agent (subject),
     position (clause index), and time (event time). -/
 inductive ChainAgent where | subjectA | subjectB | subjectC
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 abbrev ChainCtx := KContext Unit ChainAgent Unit ℤ
 

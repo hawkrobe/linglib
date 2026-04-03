@@ -29,7 +29,7 @@ inductive SemClass where
   | event
   | location
   | time
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Class hierarchy: `subclassOf a b` means a is a subclass of b. -/
 def subclassOf : SemClass → SemClass → Bool
@@ -60,7 +60,7 @@ inductive SemRole where
   | source
   | goal
   | beneficiary
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- A semantic role with its distribution over acceptable fillers. -/
 structure RoleWithConstraint (Concept : Type) where
@@ -213,7 +213,7 @@ inductive BladeSense where
   | weapon  -- sword, knife
   | grass   -- blade of grass
   | propeller  -- propeller blade
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 def bladeSenseToClass : BladeSense → SemClass
   | .weapon => .artifact

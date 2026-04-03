@@ -20,7 +20,7 @@ inductive ObjectObliqueVerbOrder where
   | oxv  -- OXV (27 languages)
   | ovx  -- OVX (45 languages)
   | noDominantOrder  -- No dominant order (167 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 84A dataset (500 languages). -/
 def allData : List (Datapoint ObjectObliqueVerbOrder) :=

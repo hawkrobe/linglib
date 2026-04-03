@@ -35,7 +35,7 @@ open Core.Time
 inductive SemanticDomain where
   | temporal   -- temporal domain (aspect)
   | degree     -- degree domain (comparison)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A cross-domain particle entry.
     Encodes the particle's surface form, its temporal and degree glosses,

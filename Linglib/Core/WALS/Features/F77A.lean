@@ -17,7 +17,7 @@ inductive EvidentialityDistinctions where
   | noGrammaticalEvidentials  -- No grammatical evidentials (181 languages)
   | indirectOnly  -- Indirect only (166 languages)
   | directAndIndirect  -- Direct and indirect (71 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 77A dataset (418 languages). -/
 def allData : List (Datapoint EvidentialityDistinctions) :=

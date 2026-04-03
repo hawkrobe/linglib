@@ -190,11 +190,11 @@ section ItalianWarmth
 
 inductive ItalyWorld where
   | allWarm  | noneWarm
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive ItalyUtt where
   | some_ | all_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- "Do Italians come from a warm country?" — a yes/no question. -/
 def warmthAnswer : ItalyWorld → Bool
@@ -256,11 +256,11 @@ section NeedlesslyWeak
 
 inductive GradeWorld where
   | allA | someNotAll | noneA
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive GradeUtt where
   | some_ | all_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- "How many of Kim's students got an A?" — answer encoded as
 (some-got-A, all-got-A) truth values on the ⟨some, all⟩ scale. -/
@@ -326,11 +326,11 @@ section Hurford
 
 inductive VisitWorld where
   | parisOnly | franceNotParis | neither
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive VisitUtt where
   | france | franceOrParis
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- "Did John visit France?" — a yes/no question. Genuinely coarser than
 identity: `parisOnly` and `franceNotParis` collapse (both → visited). -/
@@ -392,11 +392,11 @@ section DEReversal
 
 inductive DEWorld where
   | w1 | w2 | w3
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive DEUtt where
   | some_ | all_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- "A to some or all?" in DE — answer encoded as
 (some_DE, all_DE) truth values. -/
@@ -477,11 +477,11 @@ section MaxPresup
 
 inductive SunWorld where
   | oneShining | oneNotShining | manySuns
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive SunUtt where
   | aSun | theSun
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- "Is the sun shining?" — presupposition-sensitive answer.
 `manySuns` is a presupposition failure (uniqueness violated), distinct
@@ -648,11 +648,11 @@ section ExplicitQuestionRescue
 
 inductive WifeWorld where
   | oneWife | twoWives | noWife
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive WifeUtt where
   | one | two | zero
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open WifeWorld WifeUtt in
 /-- Semantic model for "John has N wives" (shared across discourse contexts). -/

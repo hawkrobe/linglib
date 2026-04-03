@@ -17,7 +17,7 @@ inductive ReduplicationType where
   | productiveFullAndPartialReduplication  -- Productive full and partial reduplication (278 languages)
   | fullReduplicationOnly  -- Full reduplication only (35 languages)
   | noProductiveReduplication  -- No productive reduplication (55 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 27A dataset (368 languages). -/
 def allData : List (Datapoint ReduplicationType) :=

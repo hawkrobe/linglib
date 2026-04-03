@@ -35,7 +35,7 @@ open Semantics.Tense.Aspect.LexicalAspect
 inductive AdverbialPosition where
   | eventLevel    -- VP-adjacent: measures event duration
   | perfectLevel  -- AspP-adjacent: measures gap (PTS) duration
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map function type: what does *in* relate to time?
     @cite{rouillard-2026} eqs. (62)--(64), (70):
@@ -44,14 +44,14 @@ inductive AdverbialPosition where
 inductive MapFunction where
   | runtime   -- τ: events → times (E-TIA)
   | identity  -- id: times → times (G-TIA)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Temporal adverbial type.
     @cite{rouillard-2026} terminology. -/
 inductive TIAType where
   | eTIA  -- Event TIA: measures event durations
   | gTIA  -- Gap TIA: measures durations devoid of events
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Aspect required by the adverbial's LF (E-perfect vs U-perfect).
     @cite{rouillard-2026} Table 1. -/
@@ -59,7 +59,7 @@ inductive AspectReq where
   | perfective    -- PFV (E-perfect)
   | imperfective  -- IMPV (U-perfect)
   | either        -- no aspectual requirement
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Temporal Adverbial Entries
@@ -135,7 +135,7 @@ inductive TemporalAdvType where
   | for_     -- "for three days": event-level duration
   | ago      -- "three days ago": past reference
   | before_  -- "before Monday": upper bound on event time
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A non-TIA temporal adverbial entry. -/
 structure TemporalAdvEntry where

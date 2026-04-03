@@ -39,13 +39,13 @@ namespace Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
 inductive SluiceKind where
   | merger    -- Overt correlate (inner antecedent) present
   | sprouting -- No overt correlate; wh-phrase corresponds to an implicit argument
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Embedding context of a sluice. -/
 inductive EmbeddingContext where
   | root     -- Matrix clause: "Who did she see?"
   | embedded -- Subordinate: "I don't know who she saw"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Antecedent–Ellipsis Mismatches (§5)
@@ -64,7 +64,7 @@ inductive MismatchDimension where
   | newWords           -- §5.4: Novel lexical material in paraphrase (71 clear cases)
   | voice              -- §5.5: Active/passive — NOT ATTESTED
   | argumentStructure  -- §5.5: Transitivity change — NOT ATTESTED
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a mismatch dimension is attested in the corpus. -/
 def MismatchDimension.attested : MismatchDimension → Bool
@@ -98,7 +98,7 @@ inductive PolarityReversalContext where
   | disjunction      -- Disjunction/doubt/remember (ex. 34)
   | qudPartialAnswer -- Negative partial answer to a superordinate QUD (ex. 35)
   | howEmbedded      -- "how" under know/learn/see — negation absent from antecedent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 4: New Words Subtypes (§5.4)
@@ -112,7 +112,7 @@ inductive NewWordsSubtype where
   | copularClause        -- Nominal antecedent → copular clause (46 cases)
   | existentialInterp    -- Existential interpretation in ellipsis site (17 cases)
   | strandedPreposition  -- Preposition in ellipsis with no antecedent source (17 cases)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 5: Corpus Summary Statistics

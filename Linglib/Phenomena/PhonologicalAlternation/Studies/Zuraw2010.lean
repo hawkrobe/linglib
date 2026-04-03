@@ -136,7 +136,7 @@ structure SubPattern where
   sub_b : Bool
   sub_d : Bool
   sub_g : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Determine whether YES wins over NO for a given consonant under a ranking. -/
 def subWins (ranking : List (NamedConstraint NSCand)) (c : StemC) : Bool :=

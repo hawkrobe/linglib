@@ -66,7 +66,7 @@ inductive Feature where
   | front            -- tongue body fronted (Hayes §4.5.1)
   | back             -- tongue body backed (Hayes §4.5.1)
   | tense            -- tense vowel quality (Hayes §4.5.3)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A feature value: `some true` = [+F], `some false` = [−F], `none` = unspecified. -/
 abbrev FeatureVal := Option Bool

@@ -810,7 +810,6 @@ import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
 import Linglib.Phenomena.Constructions.Studies.OsborneGross2012.Data
-import Linglib.Phenomena.Constructions.Resultatives.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
 import Linglib.Phenomena.Constructions.Resultatives.Studies.Dendikken1995

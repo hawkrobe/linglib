@@ -19,7 +19,7 @@ inductive InclusiveExclusiveDistinctionInVerbalInflection where
   | noInclusiveExclusive  -- No inclusive/exclusive (79 languages)
   | onlyInclusive  -- Only inclusive (9 languages)
   | inclusiveExclusive  -- Inclusive/exclusive (30 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 40A dataset (200 languages). -/
 def allData : List (Datapoint InclusiveExclusiveDistinctionInVerbalInflection) :=

@@ -71,7 +71,7 @@ theorem max_is_upper_bound {Entity D : Type*} [LinearOrder D]
 inductive ThanClauseType where
   | phrasal   -- "than Bill" — DP complement
   | clausal   -- "than Bill is tall" — CP complement
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Phrasal and clausal than-clauses yield the same degree when the
     elided material is the same predicate. "taller than Bill" and

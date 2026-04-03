@@ -50,7 +50,7 @@ structure TriconWord where
   c1    : NatClass
   c2    : NatClass
   c3    : NatClass
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- C1–C2 sonority profile: rising (C1 less sonorous than C2). -/
 def TriconWord.isRising (w : TriconWord) : Bool :=

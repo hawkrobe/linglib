@@ -18,7 +18,7 @@ inductive FrontRoundedVowels where
   | highAndMid  -- High and mid (23 languages)
   | highOnly  -- High only (8 languages)
   | midOnly  -- Mid only (6 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint FrontRoundedVowels) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .none }

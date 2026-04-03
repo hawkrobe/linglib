@@ -228,7 +228,7 @@ inductive MarkingStatus where
   | obligatory  -- must mark number
   | optional    -- may mark number
   | absent      -- cannot mark number
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric ordering: higher = more marking. -/
 def MarkingStatus.toNat : MarkingStatus → Nat
@@ -306,7 +306,7 @@ open Core (AgreementTarget)
 inductive AgreementType where
   | syntactic  -- form-driven: *committee* is morphologically singular
   | semantic   -- meaning-driven: *committee* denotes a group of individuals
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An agreement profile for a controller type records whether semantic
     agreement is available at each target position. -/
@@ -511,7 +511,7 @@ inductive ResolutionStrategy where
   /-- Syntactic resolution: the nearest (closest) conjunct to the target
       determines agreement, regardless of the other conjunct's number. -/
   | closestConjunct
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The result of resolving two number values under semantic resolution.
 
@@ -665,7 +665,7 @@ inductive PluralInterpretation where
   | inclusive
   /-- ≥ 2: derived by scalar implicature. The singular is excluded. -/
   | exclusive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Inclusive plural includes singletons; exclusive does not. -/
 def PluralInterpretation.includesSingleton : PluralInterpretation → Bool

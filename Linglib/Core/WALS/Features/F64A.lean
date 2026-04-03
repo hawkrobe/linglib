@@ -17,7 +17,7 @@ inductive NominalAndVerbalConjunction where
   | identity  -- Identity (161 languages)
   | differentiation  -- Differentiation (125 languages)
   | bothExpressedByJuxtaposition  -- Both expressed by juxtaposition (15 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 64A dataset (301 languages). -/
 def allData : List (Datapoint NominalAndVerbalConjunction) :=

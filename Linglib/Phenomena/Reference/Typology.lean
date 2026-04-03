@@ -68,7 +68,7 @@ inductive DefiniteArticleType where
   | noDefButIndef
   /-- Neither definite nor indefinite article. -/
   | noArticle
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 38 -- Indefinite Articles
@@ -93,7 +93,7 @@ inductive IndefiniteArticleType where
   | noIndefButDef
   /-- Neither indefinite nor definite article. -/
   | noArticle
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 41 -- Distance Contrasts in Demonstratives
@@ -123,7 +123,7 @@ inductive DemDistanceSystem where
   | fourWay
   /-- Five or more distance contrasts. -/
   | fiveOrMore
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Whether a three-way demonstrative system is distance-oriented or person-oriented.
@@ -142,7 +142,7 @@ inductive DemOrientationType where
   | personOriented
   /-- Not applicable (system is not three-way). -/
   | notApplicable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 42 -- Pronominal and Adnominal Demonstratives
@@ -162,7 +162,7 @@ inductive DemFormRelation where
   | differentStems
   /-- Same stems but different inflectional features (e.g. Turkish). -/
   | differentInflection
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 43 -- Third-Person Pronouns and Demonstratives
@@ -198,7 +198,7 @@ inductive PronounDemRelation where
   /-- Demonstratives used as 3rd-person pronouns for nonhuman reference only
       (e.g. Jaqaru: 3sg "upa" for humans, demonstratives for nonhumans). -/
   | relatedNonhuman
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether 3rd-person pronouns show ANY relationship to demonstratives
     (Bhat's "two-person" vs "three-person" distinction). -/
@@ -1187,7 +1187,7 @@ inductive GrammaticalizationStage where
   | demonstrative   -- Stage 1
   | definiteWord    -- Stage 2
   | definiteAffix   -- Stage 3
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map a DefiniteArticleType to its grammaticalization stage. -/
 def DefiniteArticleType.stage : DefiniteArticleType → GrammaticalizationStage

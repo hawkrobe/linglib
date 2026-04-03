@@ -30,7 +30,7 @@ inductive FGClauseType where
   | topicalized      -- "The bagels, I like."
   | whRelative       -- "the person who they nominated"
   | theClause        -- "The more people I met, the happier I became."
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Parameters of Variation (§2.1, example 6)
@@ -44,20 +44,20 @@ inductive FillerWhType where
   | exclamative    -- Exclamative wh (what!, how!)
   | relative       -- Relative wh (who, whose, which, where)
   | the            -- Definite degree marker "the" (the-clause)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Constraints on head daughter inversion (§2.1, parameter 6d / example 28). -/
 inductive InversionRequirement where
   | required     -- Must be inverted (matrix wh-interrogatives)
   | prohibited   -- Must not be inverted (topicalization, relative, exclamative)
   | optional     -- Optionally inverted (noninitial the-clause)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether head daughter can be infinitival (§2.1, parameter 6d / example 29). -/
 inductive Finiteness where
   | finiteOnly           -- Always finite (topicalization, exclamative, the-clause)
   | infinitivalPossible  -- VP[inf] head daughter possible (interrogative, relative)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Semantic type of the clause (§2.1, example 30; follows @cite{ginzburg-sag-2000}). -/
 inductive FGSemanticType where
@@ -65,14 +65,14 @@ inductive FGSemanticType where
   | fact       -- Fact: related to but distinct from proposition (exclamative)
   | austinean  -- Proposition or outcome (topicalization, the-clause)
   | modifier   -- Property: λx[...] (wh-relative modifies a CNP)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether the clause must/can be independent (§2.1, parameter 6g / example 31). -/
 inductive Independence where
   | required    -- Must be independent (topicalized, matrix wh-interrogative)
   | prohibited  -- Must be embedded (relative)
   | either      -- Can be either (exclamative, embedded interrogative, the-clause)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The 7 parameters of variation across F-G clause types (§2.1, example 6).
 
@@ -93,7 +93,7 @@ structure FGParameters where
   independence : Independence
   /-- (6b) Allowed filler categories (NP, PP, AP, AdvP, etc.) -/
   fillerIsNonverbal : Bool  -- true for all 5; topicalization also allows AdvP
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Parameter Values for Each Construction
@@ -284,7 +284,7 @@ structure WhWordProfile where
   interrogative : Bool
   exclamative : Bool
   relative : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def whWordProfiles : List WhWordProfile := [
   { form := "who",    interrogative := true,  exclamative := false, relative := true },

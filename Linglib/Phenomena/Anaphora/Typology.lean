@@ -47,7 +47,7 @@ DEM pronouns project D_deix + D_det (strong article layer). -/
 inductive PronounClass where
   | per   -- Personal: D_det + NP (weak article only)
   | dem   -- Demonstrative: D_deix + D_det + NP (strong article)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 /-- @cite{cardinaletti-starke-1999}: pronoun strength.
@@ -60,7 +60,7 @@ inductive PronounStrength where
   | strong  -- Full, stressed forms
   | weak    -- Reduced, unstressed
   | clitic  -- Phonologically deficient, attached to host
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Pragmatic contexts that license DEM pronoun use (@cite{patel-grosz-grosz-2017} §3).
 
@@ -72,7 +72,7 @@ inductive DEMLicensingContext where
   | register        -- Colloquial/informal register
   | deixis          -- Spatial/temporal pointing
   | contrast        -- Contrastive topic/focus
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §B: Per-Language Datum Structure
@@ -270,7 +270,7 @@ structure PronounComplexityProfile where
   demLicensingCount : Nat
   /-- Pronoun strength levels available: 1=strong only, 2=strong+weak, 3=strong+weak+clitic -/
   strengthLevels : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Compute gradient profile from a `PronounSystemDatum`. -/
 def PronounSystemDatum.toProfile (d : PronounSystemDatum) : PronounComplexityProfile :=

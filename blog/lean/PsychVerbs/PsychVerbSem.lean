@@ -91,7 +91,7 @@ structure ExperiencerState (Stimulus MState : Type*) where
 inductive CausalPathway where
   | perceptual       -- World → Percept → MentalState (external causation)
   | representational -- Belief → MentalState (maintenance causation)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. The Denotation
@@ -155,12 +155,12 @@ section CiceroTully
 /-- Stimuli for the Cicero/Tully opacity test. -/
 inductive CiceroStimulus where
   | cicero | tully
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Mental states for the opacity test. -/
 inductive ConcernState where
   | concerned
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Cognitive state: both Cicero and Tully are perceived (same person),
     but only Cicero is represented (the agent knows "Cicero" not "Tully"). -/

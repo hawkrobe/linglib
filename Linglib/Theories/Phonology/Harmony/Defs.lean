@@ -48,7 +48,7 @@ inductive HarmonyDir where
   | rightward     -- stem → suffix (standard for suffix-controlled VH)
   | leftward      -- suffix → stem (dominant-recessive systems)
   | bidirectional -- both directions from trigger
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A parameterized harmony system.
 

@@ -58,7 +58,7 @@ inductive OutcomeCardinality where
   | multi     -- PFC: multiple possible discrete outcomes, none entailed
   | singleton -- COS/IE: one specific outcome entailed
   | empty     -- No outcomes (verb exerts no force on object)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Force Transmission Classification (Table 1)
@@ -82,7 +82,7 @@ inductive ForceTransmissionClass where
   | impingementEffecting  -- IE: hit, scrub, kick — surface only
   | integralChange        -- COS: break, destroy, paint — integral change
   | noForceTransmission   -- No force on object: swim, believe, see
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Outcome set cardinality for each force transmission class.
 

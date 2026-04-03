@@ -358,7 +358,7 @@ inductive VerbIncClass where
   /-- Cumulative only: non-incremental (push, carry).
       CumTheta but ¬MSE on object role. Krifka §3.2. -/
   | cumOnly
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Meaning postulates for verb incrementality.
     These axiomatize which verbs have which incrementality properties

@@ -125,7 +125,7 @@ inductive Utterance where
   | unmarked  -- positive-polar form
   | marked    -- negative-polar form (costlier)
   | null      -- silence ∅
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Utterance costs: marked = 2, unmarked = 1, null = 0. -/
 def cost : Utterance → ℚ

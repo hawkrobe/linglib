@@ -22,7 +22,7 @@ namespace Core.Duality
 inductive DualityType where
   | existential
   | universal
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /-- Existential is robust: one witness suffices. -/
 def DualityType.isRobust : DualityType → Bool

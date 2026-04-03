@@ -75,7 +75,7 @@ inductive VoiceType where
   | expletive    -- No specifier, no semantics (middle)
   | reflexive    -- Agent binds internal argument (@cite{wood-2015})
   | experiencer  -- Experiencer external argument (@cite{wood-2015})
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this voice type introduce an external argument? -/
 def VoiceType.assignsTheta : VoiceType → Bool
@@ -106,7 +106,7 @@ inductive PreferentialBuilder where
   | uncertaintyBased
   /-- Relevance-based semantics (qidai, care): involves resolution. NOT C-distributive. -/
   | relevanceBased (valence : AttitudeValence)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Get the valence from the builder -/
 def PreferentialBuilder.valence : PreferentialBuilder → AttitudeValence
@@ -133,7 +133,7 @@ inductive AttitudeBuilder where
   | doxastic (veridicality : Veridicality)
   /-- Preferential attitude (hope, fear, worry) with degree/uncertainty semantics -/
   | preferential (builder : PreferentialBuilder)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Get veridicality from an attitude builder -/
 def AttitudeBuilder.veridicality : AttitudeBuilder → Veridicality
@@ -170,7 +170,7 @@ inductive PresupTriggerType where
   | hardTrigger        -- Projective in all contexts
   | softTrigger        -- Factive: complement truth presupposed, locally accommodatable
   | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed (@cite{nadathur-2024})
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Is this trigger locally accommodatable (soft)?
     Both factive and prerequisite triggers are soft. -/
@@ -193,7 +193,7 @@ inductive ProjectionBehavior where
   | plug    -- Blocks complement presuppositions
   | hole    -- Passes complement presuppositions through
   | filter  -- Conditionally cancels complement presuppositions
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- CausativeBuilder is imported from NadathurLauer2020.Builder
 -- (via Causative.Basic). Like PreferentialBuilder for attitude verbs,
@@ -222,7 +222,7 @@ inductive SenseTag where
   | causative     -- Causative use of otherwise non-causative verb
   | instrumental  -- Instrument-specific sense
   | occasion      -- Occasion verb sense (@cite{solstad-bott-2024}): agent-evocator subject
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Complement type that the verb selects.
@@ -243,7 +243,7 @@ inductive ComplementType where
   | gerund          -- "-ing" VP
   | smallClause     -- "consider X happy"
   | question        -- Embedded question "wonder who"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Is this complement type finite (i.e., does it contain a tense head)?
 
@@ -262,7 +262,7 @@ inductive ControlType where
   | objectControl   -- "John persuaded Mary to leave" (Mary = leaver)
   | raising         -- "John seems to be happy" (no theta role for matrix subject)
   | none            -- Not applicable
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Interpretation of an implicit (unexpressed) argument.
 
@@ -273,7 +273,7 @@ inductive ControlType where
 inductive ImplicitInterp where
   | indef   -- Existentially bound: unspecified "someone/something"
   | def     -- Pragmatically recoverable definite
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Cross-linguistic verb core: all semantic fields shared across languages.

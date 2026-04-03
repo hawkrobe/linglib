@@ -53,7 +53,7 @@ open Core.Scale (deg)
 inductive SizePolarity where
   | positive  -- big, huge, enormous, tremendous
   | negative  -- small, tiny, little, slight
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 structure BignessGeneralizationDatum where
   sizeAdj : String
@@ -143,7 +143,7 @@ inductive NominalScaleType where
   | enthusiasm  -- fan, lover, supporter (degree of devotion)
   | frequency   -- smoker, stamp-collector (how often/dedicated)
   | intensity   -- liar, cheat (how extremely)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 structure GradableNounExample where
   noun : String

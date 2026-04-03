@@ -190,7 +190,7 @@ inductive CIExprType where
   | honorific            -- "Don Pedro", "John-san"
   | emotiveMarker        -- "Alas, ...", "Wow!"
   | utteranceModifier    -- "Frankly, ...", "Honestly, ..."
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Properties of CI expressions (@cite{potts-2005} §2.5).

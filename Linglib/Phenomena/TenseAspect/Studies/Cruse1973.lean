@@ -72,7 +72,7 @@ inductive AgentivityFeature where
   /-- **Agentive**: use of one's own body's internal energy source
       (Cruse p.20). "John ran." The prototypical agent feature. -/
   | agentive_
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- An agentivity profile assigns Prop-valued feature predicates over
     entity–event pairs for each of Cruse's four sub-features.

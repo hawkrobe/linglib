@@ -69,7 +69,7 @@ type — presuppositional. The bridge theorem below connects the Off
 computation to that datum's target layer. -/
 
 private inductive KFW | kingWalks | kingStands | noKing
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def kfLayered : LayeredProp KFW :=
   { presupposition := fun | .kingWalks | .kingStands => true | .noKing => false
@@ -114,7 +114,7 @@ Off = {imp}: only the implicature conflicts with correction □p.
 At-issue content ◇p survives (□p entails ◇p). -/
 
 private inductive ModalW | possNotNec | nec
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def modalLayered : LayeredProp ModalW :=
   { presupposition := fun _ => true
@@ -171,7 +171,7 @@ Note: the Denial.lean datum `lady_wife` uses a related sentence
 type — implicature targeting the connotation of "lady." -/
 
 private inductive LadyW | ladyStranger | ladyWife | notLadyWife
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def ladyLayered : LayeredProp LadyW :=
   { presupposition := fun _ => true

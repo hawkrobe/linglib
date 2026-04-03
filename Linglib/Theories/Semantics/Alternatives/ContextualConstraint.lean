@@ -63,7 +63,7 @@ section SomeAll
 
 /-- Three homework worlds: did all, did some (but not all), did none. -/
 inductive HWWorld where | all_ | someNotAll | none_
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def hwDomain : List HWWorld := [.all_, .someNotAll, .none_]
 

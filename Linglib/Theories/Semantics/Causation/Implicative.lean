@@ -69,7 +69,7 @@ inductive Prerequisite where
   | time             -- ehtiä: finding/making time
   | shamelessness    -- kehdata: acting without shame
   | unspecified      -- manage, onnistua: contextually enriched
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Is the prerequisite lexically specific (names a particular condition)
     or underspecified (contextual enrichment)? -/
@@ -235,7 +235,7 @@ theorem prerequisite_derives_manageSem (pa : PrerequisiteAccount)
 inductive Directionality where
   | oneWay    -- only necessity presupposed; positive entailment is an implicature
   | twoWay    -- necessity + sufficiency presupposed (manage, dare, fail)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The directionality of a prerequisite account is determined by whether
     causal sufficiency is presupposed (32iii). Two-way verbs presuppose
@@ -309,7 +309,7 @@ end ConcreteExample
 inductive ImplicativeBuilder where
   | positive   -- manage, remember: success → complement true
   | negative   -- fail, forget: success → complement NOT true
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether the builder entails the complement (positive) or its negation (negative). -/
 def ImplicativeBuilder.entailsComplement : ImplicativeBuilder → Bool
@@ -367,7 +367,7 @@ structure ImplicativeClass where
   aspectGoverned : Bool
   /-- Lexically-specified prerequisite type (if any) -/
   prerequisite : Option Prerequisite := none
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- Instances for standard verb classes
 

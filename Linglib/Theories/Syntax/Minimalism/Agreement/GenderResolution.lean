@@ -61,7 +61,7 @@ namespace Theories.Syntax.Minimalism.Agreement.GenderResolution
 structure AnnotatedFeature (F : Type) where
   value : F
   interp : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A feature bundle on a conjunct DP. Features are ordered from outermost
     (highest nP layer) to innermost (lowest/core). Single-layer DPs have
@@ -147,7 +147,7 @@ inductive SelectionGrammar where
       (i[human], i[inanimate], i[animal]) beats a plain i[entity]
       from an arbitrary gender member. -/
   | bestSemanticMatch
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Select the determining feature from a non-empty intersection.
     `specificity` maps features to a ranking (higher = more specific). -/

@@ -89,7 +89,7 @@ inductive AristQuant where
   | none : AristQuant
   | some_ : AristQuant
   | all : AristQuant
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype AristQuant where
   elems := {.none, .some_, .all}
@@ -106,7 +106,7 @@ inductive World where
   | wS    -- only S-type aliens
   | wSA   -- S and A types
   | wA    -- only A-type aliens
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype World where
   elems := {.wN, .wNS, .wNA, .wNSA, .wS, .wSA, .wA}
@@ -117,7 +117,7 @@ inductive Utterance where
   | nn | ns | na
   | sn | ss | sa
   | an | as_ | aa
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Utterance where
   elems := {.nn, .ns, .na, .sn, .ss, .sa, .an, .as_, .aa}
@@ -129,7 +129,7 @@ inductive Parse where
   | m | o | i
   | mo | mi | oi
   | moi
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Parse where
   elems := {.none, .m, .o, .i, .mo, .mi, .oi, .moi}
@@ -422,7 +422,7 @@ noncomputable def vanillaConfig : RSA.RSAConfig Utterance World where
     (Latent := Lexicon). -/
 inductive LULex where
   | lit | oi
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype LULex where
   elems := {.lit, .oi}
@@ -450,7 +450,7 @@ noncomputable def luConfig : RSA.RSAConfig Utterance World where
     utterance (unlike LU, where each speaker has a fixed lexicon). -/
 inductive LIParse where
   | lit | i | o | oi
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype LIParse where
   elems := {.lit, .i, .o, .oi}

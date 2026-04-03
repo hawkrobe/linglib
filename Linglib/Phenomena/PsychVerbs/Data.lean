@@ -43,13 +43,13 @@ inductive PsychVerbClass where
   | classI    -- Experiencer-subject: enjoy, like, fear / It. temere
   | classII   -- Object-experiencer: frighten, concern / It. preoccupare
   | classIII  -- Dative experiencer (Romance): It. piacere
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Aspectual reading of a Class II psych verb. -/
 inductive ClassIIReading where
   | eventive  -- External cause: "the noise frightened John"
   | stative   -- Internal cause: "the problem concerns John"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § @cite{belletti-rizzi-1988} Syntactic Diagnostics
@@ -62,7 +62,7 @@ inductive BRDiagnostic where
   | causativeFare          -- §1.3: embedding under fare/make infinitive
   | backwardBinding        -- §2.1: anaphor in subject bound by object
   | adjectivalPassive      -- §1.5: passive is adjectival (not verbal)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Result of a B&R diagnostic applied to each class.
     `classI`/`classII` record whether the class *passes* the test. -/
@@ -131,7 +131,7 @@ theorem classII_pattern :
 inductive SubjectRole where
   | experiencer  -- Class I: subject = experiencer
   | stimulus     -- Class II: subject = stimulus/cause
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map from B&R class to expected subject role. -/
 def PsychVerbClass.expectedSubjectRole : PsychVerbClass → Option SubjectRole

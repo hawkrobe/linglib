@@ -93,7 +93,7 @@ structure GradientWOProfile where
   soEntropy1000 : Nat
   /-- Mutual information between case markers and grammatical role × 1000 (Dataset3.txt) -/
   caseMI1000 : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- 30 languages with exact values from OSF Dataset1.txt + Dataset3.txt
 
@@ -358,7 +358,7 @@ theorem high_entropy_languages_include_exceptions :
 structure RegisterProfile where
   register : String
   voProbability1000 : Nat  -- VO probability × 1000
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def russianConversation : RegisterProfile :=
   { register := "conversation", voProbability1000 := 390 }

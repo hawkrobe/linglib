@@ -90,7 +90,7 @@ inductive MorphImpType where
       indicative forms, particles, or intonation.
       (e.g., Mandarin Chinese, Thai, many isolating languages). -/
   | noMorphological
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 71: The Prohibitive
@@ -130,7 +130,7 @@ inductive ProhibitiveType where
       declarative and the affirmative imperative.
       (e.g., Sinhala; many Austronesian and African languages). -/
   | specialImpSpecialNeg
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 72: Imperative-Hortative Systems
@@ -164,7 +164,7 @@ inductive ImpHortSystem where
       (e.g., Latin `i` 'go.IMP.2SG', `eamus` 'go.SUBJ.1PL',
       `eat` 'go.SUBJ.3SG'; Georgian; Quechua). -/
   | allThree
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 73: The Optative
@@ -187,7 +187,7 @@ inductive OptativePresence where
       conditional, or periphrasis).
       (e.g., English, Mandarin Chinese, Japanese). -/
   | absent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Distribution Data (Aggregate Counts)
@@ -197,7 +197,7 @@ inductive OptativePresence where
 structure WALSCount where
   label : String
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Sum of counts in a WALS table. -/
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=

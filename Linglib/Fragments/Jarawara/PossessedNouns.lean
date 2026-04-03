@@ -144,8 +144,8 @@ theorem total_ipossessable :
 -- ============================================================================
 
 /-- Person–number features of a Jarawara possessor. -/
-inductive Person where | first | second | third deriving DecidableEq, BEq, Repr
-inductive PossGender where | masc | fem deriving DecidableEq, BEq, Repr
+inductive Person where | first | second | third deriving DecidableEq, Repr
+inductive PossGender where | masc | fem deriving DecidableEq, Repr
 
 /-- A possessor with full φ-features. Third person distinguishes gender;
     first and second person can be singular or plural, with clusivity
@@ -154,14 +154,14 @@ structure Possessor where
   person : Person
   number : Number
   gender : Option PossGender := none  -- only for 3rd person
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Possessed noun form: "masculine" (mano) or "feminine" (mani).
     These labels follow @cite{dixon-2004}'s terminology; they reflect
     φ-agreement with the possessor, not the noun's own gender
     (which is always feminine). -/
 inductive PossessedForm where | mascForm | femForm
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-! ### Derived mano paradigm (@cite{adamson-2024} Appendix B)
 
@@ -227,7 +227,7 @@ structure FreeVsPossessed where
   free : String
   iPossessed : String
   gloss : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def freeVsPossessedForms : List FreeVsPossessed :=
   [ ⟨"faha",  "fehe/fehe-ne",    "water / liquid, juice, sap, water"⟩

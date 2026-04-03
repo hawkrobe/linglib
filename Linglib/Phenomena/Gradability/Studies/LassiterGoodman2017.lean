@@ -92,7 +92,7 @@ inductive Utterance where
   | tall    -- "Sam is tall"
   | short   -- "Sam is short"
   | silent  -- null utterance ∅
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 -- ============================================================================
 -- Semantics (§4.1, Eqs. 22–23)

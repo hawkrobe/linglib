@@ -180,9 +180,9 @@ theorem basemapViolations_eq_zero_imp
     | cons y ys =>
       have hLen' : xs.length = ys.length := by simpa using hLen
       have hxy : x = y := by
-        by_contra hne
-        have := basemapViolations_cons_ne x y xs ys hne
-        omega
+        rcases Decidable.em (x = y) with rfl | hne
+        · rfl
+        · exact absurd hZero (by have := basemapViolations_cons_ne x y xs ys hne; omega)
       rw [hxy] at hZero
       rw [basemapViolations_cons_eq] at hZero
       rw [hxy]

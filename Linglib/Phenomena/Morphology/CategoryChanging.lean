@@ -28,7 +28,7 @@ inductive LexCat where
   | noun
   | verb
   | adjective
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- § 2: Root Families

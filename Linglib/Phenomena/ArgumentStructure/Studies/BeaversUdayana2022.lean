@@ -180,7 +180,7 @@ structure MiddleDiagnostics where
   licensesOleh : Bool
   licensesRationale : Bool
   licensesDenganSendiriNya : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- *ber-* dispositional/passive middles: no *oleh*, no rationale clause,
     no *dengan sendiri=nya* (the paper's (11), (13), (10c)).

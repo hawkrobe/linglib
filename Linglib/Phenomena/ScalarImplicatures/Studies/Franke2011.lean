@@ -139,13 +139,13 @@ IBR derivation:
 inductive ScalarState where
   | someNotAll : ScalarState  -- Some but not all
   | all : ScalarState         -- All
-  deriving DecidableEq, Fintype, Repr, BEq
+  deriving DecidableEq, Fintype, Repr
 
 /-- Messages for scalar implicature example -/
 inductive ScalarMessage where
   | some_ : ScalarMessage
   | all : ScalarMessage
-  deriving DecidableEq, Fintype, Repr, BEq
+  deriving DecidableEq, Fintype, Repr
 
 /-- Scalar implicature interpretation game -/
 def scalarGame : InterpGame where
@@ -221,7 +221,7 @@ inductive FCState where
   | onlyB : FCState    -- May have only B
   | either : FCState   -- May have either (free choice)
   | both : FCState     -- May have both together
-  deriving DecidableEq, Fintype, Repr, BEq
+  deriving DecidableEq, Fintype, Repr
 
 /-- Messages for free choice example -/
 inductive FCMessage where
@@ -229,7 +229,7 @@ inductive FCMessage where
   | mayB : FCMessage        -- ◇B
   | mayAorB : FCMessage     -- ◇(A∨B)
   | mayAandB : FCMessage    -- ◇(A∧B)
-  deriving DecidableEq, Fintype, Repr, BEq
+  deriving DecidableEq, Fintype, Repr
 
 /-- Free choice interpretation game -/
 def freeChoiceGame : InterpGame where

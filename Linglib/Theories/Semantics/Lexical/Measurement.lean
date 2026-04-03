@@ -79,7 +79,7 @@ open Semantics.Lexical.Noun.Kind.Dayal2004 (NumberFeature)
 inductive MereologicalStatus where
   | cumulative
   | quantized
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map mereological status to Kennedy scale boundedness.
 

@@ -31,7 +31,7 @@ open Semantics.Scope (ScopeConfig)
     w0: neither scope true, w1: inverse-only true, w2: both true -/
 inductive World where
   | w0 | w1 | w2
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allWorlds : List World := [.w0, .w1, .w2]
 
@@ -51,7 +51,7 @@ def meaning (s : ScopeConfig) (w : World) : Bool :=
 -- RSA
 
 inductive Utterance where | target | null
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allUtterances : List Utterance := [.target, .null]
 def allScopes : List ScopeConfig := [.surface, .inverse]

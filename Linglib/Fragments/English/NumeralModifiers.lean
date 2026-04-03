@@ -41,7 +41,7 @@ inductive ModifierType where
   | exactifier   -- "exactly", "precisely"
   | bound        -- "at least", "at most", "more than", "fewer than", "up to", "from...on"
   | approximator -- "almost", "nearly": proximal + polar (@cite{nouwen-2006} @cite{penka-2006})
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Pragmatic function of a numeral modifier.
@@ -54,7 +54,7 @@ inductive PragmaticFunction where
   | flatSignal      -- Signals flat/uniform distribution (between)
   | pointSignal     -- Signals point distribution (exactly)
   | boundSignal     -- Signals bound on the distribution (at least, at most, etc.)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Evaluative valence of a bound-setting modifier.
 
@@ -66,7 +66,7 @@ inductive EvaluativeValence where
   | positive   -- "up to", "from...on": invites positive evaluation
   | negative   -- "at most": invites negative evaluation
   | neutral    -- "at least", "more than", "fewer than": no evaluative bias
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Lexical entry for a numeral modifier. -/
 structure NumeralModifierEntry where

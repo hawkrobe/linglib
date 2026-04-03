@@ -51,20 +51,20 @@ open Semantics.Probabilistic.SDS.Core
 inductive BatConcept where
   | animal     -- Flying mammal
   | equipment  -- Baseball bat
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Concepts for "star": famous person vs celestial body. -/
 inductive StarConcept where
   | celebrity  -- Famous person
   | celestial  -- Celestial body
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Concepts for "port": harbor, wine, or computer port. -/
 inductive PortConcept where
   | harbor     -- Place where ships dock
   | wine       -- Fortified wine
   | computer   -- Computer port/connection
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- §2. Selectional Constraints Only (Paper §4)
@@ -323,7 +323,7 @@ For "a bat was sleeping":
 
 inductive BatFeature where
   | canFly | isBlack | hasWings | isWooden | isLong
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 def batFeatures : ConceptFeature BatConcept BatFeature where
   featureProb := λ
@@ -347,7 +347,7 @@ example : batFeatures.projectFeature playerHoldingBat .isLong > 80/100 := by nat
 /-- After "the astronomer married the star" (tie), features are mixed. -/
 inductive StarFeature where
   | isHuman | isCelestialBody | emitsLight
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 def starFeatures : ConceptFeature StarConcept StarFeature where
   featureProb := λ
@@ -384,7 +384,7 @@ inductive ArgumentSense where
   | proCon         -- sense 3: discussion of pros and cons
   | parameter      -- sense 5: value passed to a function
   | logicalReasoning -- sense 7: course of logical reasoning
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Graded sense applicability rating from a single annotator. -/
 structure SenseRating where
@@ -516,7 +516,7 @@ def predictedFunniness {α Θ : Type*} [SDSConstraintSystem α Θ] [BEq Θ]
 inductive HareHairConcept where
   | hare  -- The animal (rabbit)
   | hair  -- Human head covering
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- "The magician got so mad he pulled his hare out" as SDS.
 

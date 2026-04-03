@@ -36,7 +36,7 @@ structure QParticleEntry where
   whOk : Bool
   requiresEvidentialBias : Bool
   requiresEpistemicBias : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- ли li — verb-attached neutral PQ particle (@cite{simik-2024} ex. 33).
 Encliticizes onto the focused constituent. -/

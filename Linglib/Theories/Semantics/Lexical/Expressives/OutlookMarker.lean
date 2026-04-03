@@ -59,7 +59,7 @@ inductive StanceType where
   /-- Emphatic confirmation: the prejacent is precisely what's expected.
       E.g., *masani* 'precisely', *koso* 'precisely' -/
   | emphasis
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 
 /-! ## Three-Way Typology of Secondary Meaning -/
@@ -81,7 +81,7 @@ inductive SecondaryMeaningClass where
       (*almost*, *barely*), discourse particles (*doch*, *ja*), evidentials.
       Sensitive to discourse state; dual-layered meaning. -/
   | discourseSensitive
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 
 /-! ## Presupposition Trigger Strength -/
@@ -100,7 +100,7 @@ inductive TriggerStrength where
   /-- Allows non-projective readings when speaker is epistemically uncertain.
       E.g., *yameru* 'stop', *seikō-suru* 'succeed', factives. -/
   | soft
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 
 /-! ## Outlook Marker Semantics -/

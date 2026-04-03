@@ -37,7 +37,7 @@ inductive PComplementType where
   | infinitival  -- te-infinitive (na [CP te zijn gevallen])
   | smallClause  -- subject + predicate (met [SC Jan in ons team])
   | none_        -- no complement (intransitive / verbal particle)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A Dutch adposition lexical entry.
     Records observable distributional properties only — no
@@ -65,7 +65,7 @@ structure DutchAdposition where
   pathShape    : Option PathShape := none
   /-- English gloss -/
   gloss        : String
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 1. Spatial adpositions

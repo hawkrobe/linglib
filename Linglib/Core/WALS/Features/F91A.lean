@@ -17,7 +17,7 @@ inductive OrderOfDegreeWordAndAdjective where
   | degreeWordAdjective  -- Degree word-Adjective (227 languages)
   | adjectiveDegreeWord  -- Adjective-Degree word (192 languages)
   | noDominantOrder  -- No dominant order (62 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 91A dataset (481 languages). -/
 def allData : List (Datapoint OrderOfDegreeWordAndAdjective) :=

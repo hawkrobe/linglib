@@ -124,7 +124,7 @@ than non-informational registers (fiction, conversation).
 inductive Register where
   | informational      -- Wikipedia, academic, news
   | nonInformational   -- fiction, conversation
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Register effect datum: roundness β is larger in informational texts. -/
 structure RegisterEffectDatum where

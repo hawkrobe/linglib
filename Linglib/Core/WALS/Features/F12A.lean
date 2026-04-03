@@ -17,7 +17,7 @@ inductive SyllableStructure where
   | simple  -- Simple (61 languages)
   | moderatelyComplex  -- Moderately complex (274 languages)
   | complex  -- Complex (151 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 12A dataset (486 languages). -/
 def allData : List (Datapoint SyllableStructure) :=

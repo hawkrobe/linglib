@@ -23,7 +23,7 @@ inductive ACIJudgment where
   | arises          -- The ACI inference is drawn
   | doesNotArise    -- The ACI inference is not drawn
   | marginal        -- Speakers vary / uncertain
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 A single empirical item from the paper.
@@ -265,7 +265,7 @@ inductive CIExpressionType where
   | nominalAppositive    -- "Laura, a doctor"
   | supplementaryAdverb  -- "Luckily, p"
   | emotiveMarker        -- "Alas, p"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Evidence for ACI arising with each expression type.

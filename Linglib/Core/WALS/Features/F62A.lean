@@ -22,7 +22,7 @@ inductive ActionNominalConstructions where
   | mixed  -- Mixed (14 languages)
   | restricted  -- Restricted (24 languages)
   | noActionNominals  -- No action nominals (42 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 62A dataset (168 languages). -/
 def allData : List (Datapoint ActionNominalConstructions) :=

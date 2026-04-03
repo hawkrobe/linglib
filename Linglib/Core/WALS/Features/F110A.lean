@@ -17,7 +17,7 @@ inductive PeriphrasticCausativeType where
   | sequentialOnly  -- Sequential but no purposive (35 languages)
   | purposiveOnly  -- Purposive but no sequential (68 languages)
   | both  -- Both (15 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 110A dataset (118 languages). -/
 def allData : List (Datapoint PeriphrasticCausativeType) :=

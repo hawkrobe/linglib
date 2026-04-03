@@ -88,7 +88,7 @@ open Core.Prominence
 structure DecomposedPerson extends Core.Person.Features where
   /-- Bears [proximate]? SAPs inherently; 3P contextually. -/
   hasProximate : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Geometry well-formedness: [author] → [participant] → [proximate].
     Each feature entails the next in the containment hierarchy. -/
@@ -129,7 +129,7 @@ inductive ProbeTarget where
   | participant
   /-- #⁰: number probe, seeks [plural]. -/
   | plural
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is a DP visible to this probe? Relativized probing: probes skip
     DPs that lack the feature they seek.

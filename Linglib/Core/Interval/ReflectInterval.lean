@@ -60,7 +60,7 @@ inductive RExpr where
   /-- `rsqrt x` = √x (Real.sqrt). `denote` uses `Real.sqrt`, `eval` uses
       `sqrtInterval` (= exp(log/2)) for positive intervals, exact 0 for [0,0]. -/
   | rsqrt : RExpr → RExpr
-  deriving Repr, Inhabited, BEq, DecidableEq
+  deriving Repr, Inhabited, DecidableEq
 
 -- ============================================================================
 -- Denotation: RExpr → ℝ

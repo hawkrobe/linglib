@@ -18,19 +18,19 @@ section Features
 inductive Telicity where
   | telic   -- has natural endpoint (stop, build, arrive)
   | atelic  -- no natural endpoint (run, swim, love)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Duration: whether an event takes time or is instantaneous. -/
 inductive Duration where
   | durative  -- takes time (run, build, love)
   | punctual  -- instantaneous (recognize, arrive, die)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Dynamicity: whether the event involves change. -/
 inductive Dynamicity where
   | dynamic  -- involves change (run, build, die)
   | stative  -- no change (know, love, own)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 end Features
 
@@ -49,7 +49,7 @@ inductive VendlerClass where
   | activity      -- [+dynamic, +durative, -telic]  run, swim
   | achievement   -- [+dynamic, -durative, +telic]  recognize, die
   | accomplishment -- [+dynamic, +durative, +telic]  build, write
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Get the telicity of a Vendler class (states treated as atelic). -/
 def VendlerClass.telicity : VendlerClass → Telicity
@@ -120,7 +120,7 @@ structure AspectualProfile where
   duration : Duration
   /-- Whether the eventuality involves change -/
   dynamicity : Dynamicity
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Convert an aspectual profile to a Vendler class (semelfactives mapped to activity). -/
 def AspectualProfile.toVendlerClass (p : AspectualProfile) : VendlerClass :=

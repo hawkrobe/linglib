@@ -67,7 +67,7 @@ structure AlignmentCell where
   dir1 : HeadDirection
   dir2 : HeadDirection
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether an alignment cell represents a harmonic (consistent-direction) pair. -/
 def AlignmentCell.isHarmonic (c : AlignmentCell) : Bool :=
@@ -234,7 +234,7 @@ inductive SingleWordException where
   | demN         -- demonstrative-noun: many OV languages have Dem-N (head-initial order)
   | intensAdj    -- intensifier-adjective: "very tall" is head-initial in many OV languages
   | negVerb      -- negator-verb: "not run" is head-initial in many OV languages
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- All single-word exceptions from Gibson Table 4. -/
 def singleWordExceptions : List SingleWordException :=
@@ -287,7 +287,7 @@ theorem ch83_total : Core.WALS.F83A.allData.length = 1518 :=
     subjects overwhelmingly precede objects. -/
 inductive BasicOrder where
   | sov | svo | vso | vos | ovs | osv | noDominant
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 82: Order of Subject and Verb
@@ -296,7 +296,7 @@ inductive BasicOrder where
 /-- WALS Ch 82: Binary classification of S-V order. -/
 inductive SVOrder where
   | sv | vs | noDominant
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 83: Order of Object and Verb
@@ -311,7 +311,7 @@ inductive SVOrder where
     generalization formalized in the cross-tabulations above. -/
 inductive OVOrder where
   | ov | vo | noDominant
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Basic Order Language Profiles

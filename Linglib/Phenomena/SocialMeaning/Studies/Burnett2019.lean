@@ -59,7 +59,7 @@ open RSA
     competence (competent/incompetent) and warmth (friendly/aloof). -/
 inductive PersonaTrait where
   | competent | incompetent | friendly | aloof
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype PersonaTrait where
   elems := {.competent, .incompetent, .friendly, .aloof}
@@ -72,7 +72,7 @@ inductive Persona where
   | sternLeader  -- {competent, aloof}: the stern leader
   | doofus       -- {incompetent, friendly}: the doofus
   | asshole      -- {incompetent, aloof}: the arrogant asshole
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype Persona where
   elems := {.coolGuy, .sternLeader, .doofus, .asshole}
@@ -82,7 +82,7 @@ instance : Fintype Persona where
 inductive INGVariant where
   | ing  -- *-ing* [ɪŋ]
   | in'  -- *-in'* [ɪn]
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype INGVariant where
   elems := {.ing, .in'}

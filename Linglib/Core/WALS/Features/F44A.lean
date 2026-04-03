@@ -20,7 +20,7 @@ inductive GenderDistinctionsInIndependentPersonalPronouns where
   | v1stOr2ndPersonButNot3rd  -- 1st or 2nd person but not 3rd (2 languages)
   | v3rdPersonNonSingularOnly  -- 3rd person non-singular only (1 languages)
   | noGenderDistinctions  -- No gender distinctions (254 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 44A dataset (378 languages). -/
 def allData : List (Datapoint GenderDistinctionsInIndependentPersonalPronouns) :=

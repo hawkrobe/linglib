@@ -36,7 +36,7 @@ inductive PivotTarget where
   | instrumental
   | benefactive
   | circumstantial
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Coercion from `PivotTarget` to `ArgumentRole`.
 
@@ -61,7 +61,7 @@ structure VoiceEntry where
   name : String
   /-- Which argument role this voice promotes to pivot -/
   promotes : PivotTarget
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- S 3: Voice System Symmetry
@@ -76,7 +76,7 @@ structure VoiceEntry where
 inductive VoiceSystemSymmetry where
   | symmetrical
   | asymmetrical
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- S 4: Voice System Profile

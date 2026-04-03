@@ -42,7 +42,7 @@ inductive EffectType where
   | contradiction
   /-- New conclusion derived from input + context jointly -/
   | contextualImplication
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An effect profile: the cognitive effects of processing an input in
     context, with an overall magnitude assessment.

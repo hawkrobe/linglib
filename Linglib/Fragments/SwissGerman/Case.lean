@@ -33,7 +33,7 @@ inductive CrossSerialVerb where
   | loend
   /-- *aastriiche* "paint" — requires accusative NP object -/
   | aastriiche
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Case required by each verb on its NP object.
 

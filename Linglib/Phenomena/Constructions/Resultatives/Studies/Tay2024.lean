@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Morphology.Core.WordStructure
-import Linglib.Phenomena.Constructions.Resultatives.Data
+-- Data dissolved into GoldbergJackendoff2004 (imported transitively via Causation.Resultatives)
 import Linglib.Fragments.Mandarin.Resultatives
 
 /-!
@@ -42,8 +42,8 @@ Connects:
   `ResultOrientation`, `PhaseComplement`)
 - `Theories.Morphology.Core.WordStructure`: `MorphWord.compound` for V-V
 - `Fragments.Mandarin.Resultatives`: compound and phase complement lexical entries
-- `Phenomena.Constructions.Resultatives.Data`: English data for cross-linguistic
-  contrast (@cite{goldberg-jackendoff-2004})
+- `Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004`: English
+  data for cross-linguistic contrast
 -/
 
 namespace Phenomena.Constructions.Resultatives.Studies.Tay2024
@@ -91,7 +91,7 @@ theorem subject_oriented_count :
     reflexives for subject-result patterns. All fake reflexives are
     grammatical, but require the reflexive pronoun. -/
 theorem english_subject_result_requires_reflexive :
-    (Phenomena.Constructions.Resultatives.allExamples.filter
+    (ConstructionGrammar.Studies.GoldbergJackendoff2004.allExamples.filter
       (·.resType == .fakeReflexive)).all
       (·.judgment == .ok) = true := by
   native_decide
@@ -212,7 +212,7 @@ inductive CcfRole where
   | subjectMatter   -- CCF is what V1 is about (movie for crying)
   | source          -- CCF is non-agentive source of V1 (wine for drunk)
   | pureCauser      -- CCF causes but doesn't participate (onions for cry)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A CCF is a participant of V1 iff it is an agent, subject matter,
     or source — NOT a pure causer. -/

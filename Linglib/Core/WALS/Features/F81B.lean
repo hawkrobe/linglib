@@ -19,7 +19,7 @@ inductive LanguagesWithTwoDominantOrdersOfSubjectObjectAndVerb where
   | svoOrVso  -- SVO or VSO (13 languages)
   | svoOrVos  -- SVO or VOS (8 languages)
   | sovOrOvs  -- SOV or OVS (3 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 81B dataset (67 languages). -/
 def allData : List (Datapoint LanguagesWithTwoDominantOrdersOfSubjectObjectAndVerb) :=

@@ -150,7 +150,7 @@ inductive Axiom where
   | B     -- p → □◇p
   | four  -- □p → □□p
   | five  -- ◇p → □◇p
-  deriving DecidableEq, BEq, Repr, Inhabited, Hashable
+  deriving DecidableEq, Repr, Inhabited, Hashable
 
 instance : ToString Axiom where
   toString | .M => "M" | .D => "D" | .B => "B" | .four => "4" | .five => "5"

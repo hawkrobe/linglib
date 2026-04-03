@@ -184,7 +184,7 @@ inductive BeforeReading where
   | veridical
   | counterfactual
   | nonCommittal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Classify a *before* sentence into its reading based on whether B
     is instantiated in the actual world w.

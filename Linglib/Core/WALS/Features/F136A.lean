@@ -17,7 +17,7 @@ inductive MTPronouns where
   | noMTPronouns  -- No M-T pronouns (200 languages)
   | mTPronounsParadigmatic  -- M-T pronouns, paradigmatic (27 languages)
   | mTPronounsNonParadigmatic  -- M-T pronouns, non-paradigmatic (3 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 136A dataset (230 languages). -/
 def allData : List (Datapoint MTPronouns) :=

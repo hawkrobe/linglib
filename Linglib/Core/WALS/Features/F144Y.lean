@@ -25,7 +25,7 @@ inductive PositionOfNegativeMorphemesInObjectInitialLanguages where
   | oVNegSSoVNeg  -- O[V-Neg]S/SO[V-Neg] (1 languages)
   | oNegVSNegsvo  -- O[Neg-V]S/NegSVO (1 languages)
   | ovsNegv  -- OVS & NegV (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144Y dataset (16 languages). -/
 def allData : List (Datapoint PositionOfNegativeMorphemesInObjectInitialLanguages) :=

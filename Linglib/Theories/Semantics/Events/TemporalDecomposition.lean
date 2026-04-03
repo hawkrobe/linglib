@@ -322,7 +322,7 @@ theorem impf_activity_prfv_full_incompatible {Time : Type*} [LinearOrder Time]
 structure MoensSteedmanProfile extends AspectualProfile where
   /-- Whether the event has a persistent result after culmination -/
   hasConsequentState : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- @cite{moens-steedman-1988} five-way event classification.
     Refines Vendler by splitting `achievement` along ±consequent state:
@@ -342,7 +342,7 @@ inductive MoensSteedmanClass where
   | culminatedProcess -- build a house, write a letter
   | culmination       -- arrive, die, recognize
   | point             -- hiccup, flash, tap
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace MoensSteedmanClass
 
@@ -394,7 +394,7 @@ inductive WhenTarget where
   | completionCoercion  -- culminated process: strip prep, access culmination
   | inceptionCoercion   -- process: INCHOAT extracts onset as surrogate
   | homogeneousOverlap  -- state: any subinterval works
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- M&S's unified *when* semantics: one meaning, four behaviors derived
     from event type. -/

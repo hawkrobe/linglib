@@ -217,11 +217,11 @@ theorem spy_is_common :
 
 inductive W where
   | actual | belief
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive Person where
   | mary | john | bill | charlie
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 abbrev Sit := Situation W Unit
 
@@ -373,7 +373,7 @@ end Example2
 
 section Example3
 
-inductive Round where | r1 | r2 | r3 deriving DecidableEq, BEq, Repr
+inductive Round where | r1 | r2 | r3 deriving DecidableEq, Repr
 
 abbrev RSit := Situation W Round
 private def rSit (w : W) (r : Round) : RSit := ⟨w, r⟩

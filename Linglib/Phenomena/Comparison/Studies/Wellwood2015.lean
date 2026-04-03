@@ -66,7 +66,7 @@ inductive LexCat where
   | telicVP        -- ran to the park, graduated high school
   | gradableAdj    -- hot, tall, heavy
   | nonGradableAdj -- wooden, triangular
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Felicity with `much`/`more` (§2.1, §2.2, §3.1–3.2)
@@ -90,7 +90,7 @@ structure MuchFelicityDatum where
   category : LexCat
   felicitousWithMuch : Bool
   multipleDimensions : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def massNounDatum : MuchFelicityDatum :=
   { category := .massNoun, felicitousWithMuch := true, multipleDimensions := true }
@@ -167,7 +167,7 @@ inductive MeasuredDomain where
   | entity  -- physical objects (coffee, plastic, glass)
   | event   -- events/processes (driving, singing)
   | state   -- states (heat, hardness, speed, loudness)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 5. Dimension Reversal Data (§3.4)

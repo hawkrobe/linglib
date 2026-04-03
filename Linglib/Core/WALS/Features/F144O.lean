@@ -35,7 +35,7 @@ inductive OptionalDoubleNegationInSovLanguages where
   | svOvVNeg  -- SV & OV &  (Neg)[V-Neg] (1 languages)
   | svOvNegV  -- SV & OV &  [Neg-V(-Neg)] (1 languages)
   | svOvVNeg_21  -- SV & OV &  [(Neg-)V-Neg] (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144O dataset (31 languages). -/
 def allData : List (Datapoint OptionalDoubleNegationInSovLanguages) :=

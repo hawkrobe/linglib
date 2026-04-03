@@ -52,7 +52,7 @@ inductive PRole where
   | speaker          -- Spec-SAP (external argument)
   | hearer           -- Complement of SA (internal argument)
   | seatOfKnowledge  -- Varies by mood: speaker in decl, hearer in interrog
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Section B: SAP Mood — 2×2 Feature Matrix
@@ -71,7 +71,7 @@ inductive SAPMood where
   | interrogative   -- [+finite, hearer c-commands content]
   | imperative      -- [-finite, hearer c-commands content]
   | subjunctive     -- [-finite, hearer does NOT c-command content]
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Derive mood from the two binary features. -/
 def deriveMood (contentFinite hearerCCommandsContent : Bool) : SAPMood :=
@@ -288,7 +288,7 @@ theorem discourse_role_from_person (p : Fragments.English.Pronouns.PronounEntry)
 inductive SentienceProjection where
   | EvidP   -- Evidential Phrase: hosts EVIDENCE
   | EvalP   -- Evaluation Phrase: hosts SEAT OF KNOWLEDGE
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Rank ordering of Sentience Domain projections.
     EvidP < EvalP < SAP (the SAP itself is above the Sentience Domain). -/

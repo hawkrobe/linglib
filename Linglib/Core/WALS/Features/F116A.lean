@@ -21,7 +21,7 @@ inductive PolarQuestionType where
   | absenceOfDeclarativeMorphemes  -- Absence of declarative morphemes (4 languages)
   | interrogativeIntonationOnly  -- Interrogative intonation only (173 languages)
   | noInterrogativeDeclarativeDistinction  -- No interrogative-declarative distinction (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PolarQuestionType) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .questionParticle }

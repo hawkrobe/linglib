@@ -79,7 +79,7 @@ structure MeaningComponents where
   /-- Does the verb specify the manner of action?
       Cooking verbs "describe different ways of cooking food" (p. 244). -/
   mannerSpec : Bool := false
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 namespace MeaningComponents
 
@@ -290,7 +290,7 @@ inductive LevinClass where
   | aspectual          -- 55: begin, start, finish, ...
   -- Weather Verbs (§ 57)
   | weather            -- 57: rain, snow, ...
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Section number in @cite{levin-1993} for each class. -/
 def LevinClass.section : LevinClass → String
@@ -850,7 +850,7 @@ inductive CausationSource where
   | rootNonDetachable
   | template
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive the causation source from root entailments and meaning components.
     This is a derived classification: it follows from the relationship between
@@ -873,7 +873,7 @@ inductive ResultKind where
   | locationChange     -- spatial change (throw, arrive, leave)
   | possessionChange   -- ownership change (give)
   | none               -- no result entailed (hit, run, exist)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive result kind from root entailments and meaning components. -/
 def LevinClass.resultKind (c : LevinClass) : ResultKind :=
@@ -900,7 +900,7 @@ inductive MannerKind where
   | instrumentSpec   -- instrument specification (cut, poke verbs)
   | unspecified      -- B&KG +manner but no Levin spec flag (hit, push)
   | none             -- no manner in root (break, exist)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive manner kind from root entailments and meaning components. -/
 def LevinClass.mannerKind (c : LevinClass) : MannerKind :=

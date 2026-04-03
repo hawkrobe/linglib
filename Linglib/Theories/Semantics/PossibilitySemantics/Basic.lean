@@ -109,7 +109,7 @@ def isWorld {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (w : S) : Bool :=
     @cite{holliday-mandelkern-2024} Example 4.11, Figure 7. -/
 inductive Poss5 where
   | x1 | x2 | x3 | x4 | x5
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : FiniteWorlds Poss5 where
   worlds := [.x1, .x2, .x3, .x4, .x5]

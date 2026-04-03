@@ -114,21 +114,21 @@ abbrev Height := Degree 10
 inductive ComparisonClass where
   | subordinate   -- compare to the specific kind (basketball players)
   | superordinate -- compare to the broader category (people)
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Kinds (nominals) that can be modified by adjectives. -/
 inductive Kind where
   | person            -- generic person (baseline)
   | basketballPlayer  -- expected to be tall
   | jockey            -- expected to be short
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Utterances: positive adjective, negative adjective, or silence. -/
 inductive Utterance where
   | tall    -- "x is tall"
   | short   -- "x is short"
   | silent  -- say nothing (null utterance)
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 -- ============================================================================
 -- § 2. Height Priors (unnormalized weights)

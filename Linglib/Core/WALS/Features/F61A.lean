@@ -21,7 +21,7 @@ inductive AdjectivesWithoutNouns where
   | markedByPrecedingWord  -- Marked by preceding word (18 languages)
   | markedByFollowingWord  -- Marked by following word (7 languages)
   | markedByMixedOrOtherStrategies  -- Marked by mixed or other strategies (5 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 61A dataset (124 languages). -/
 def allData : List (Datapoint AdjectivesWithoutNouns) :=

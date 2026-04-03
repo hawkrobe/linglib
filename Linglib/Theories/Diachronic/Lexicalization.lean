@@ -53,7 +53,7 @@ inductive Strategy where
   /-- Combine existing words into a compound.
       E.g., "birthday card", "spreadsheet", "urban renewal". -/
   | combination
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Literality of the form-meaning relationship.
     Literal items are semantically transparent and tend to be more
@@ -67,7 +67,7 @@ inductive Literality where
       - Reuse: e.g., "mouse" for computer peripheral.
       - Combination: exocentric, e.g., "boîte noire" = flight recorder. -/
   | nonliteral
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A form-concept pair in an emerging encoding (one entry in E*). -/
 structure FormConceptPair where

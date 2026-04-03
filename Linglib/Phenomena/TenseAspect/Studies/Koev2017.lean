@@ -30,13 +30,13 @@ namespace Phenomena.TenseAspect.Studies.Koev2017
 inductive TemporalOverlap where
   | overlapping     -- τ(e) ∩ τ(e') ≠ ∅
   | nonoverlapping  -- τ(e) ∩ τ(e') = ∅
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether the described event and the learning event share a location. -/
 inductive SpatialRelation where
   | samePlace       -- loc(e) = loc(e')
   | differentPlace  -- loc(e) ≠ loc(e')
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Evidential Datum Structure

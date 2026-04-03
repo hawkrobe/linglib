@@ -58,7 +58,7 @@ inductive NominalHeadClass where
   /-- Never raise to D. Never object-referential. Full predicative use.
       Kind-referential with definite article. -/
   | commonNoun
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Object-referential: the nominal can denote a specific object
     (individual in Carlson's sense) by occupying the D position. -/
@@ -157,7 +157,7 @@ inductive LexicalNamingType where
   /-- Kind-naming: learning the name means learning to recognize a
       potentially open set of objects. Common nouns. -/
   | kindNaming
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A nominal argument configuration, capturing the syntactic and semantic
     state of a DP in argument position. -/
@@ -170,7 +170,7 @@ structure NominalConfig where
   dHasReferentialContent : Bool
   /-- Is the nominal in argument function? -/
   isArgument : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- **(52) Denotation Hypothesis**: Individuals are denoted in D.
 
@@ -304,7 +304,7 @@ inductive ArticleType where
   /-- Semantic operator: contributes uniqueness (ι), familiarity, or
       quantificational force. *il tavolo* 'the table' — real definite. -/
   | operator
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- An expletive article does not induce kind readings.
 

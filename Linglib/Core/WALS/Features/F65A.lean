@@ -16,7 +16,7 @@ namespace Core.WALS.F65A
 inductive PerfectiveImperfective where
   | grammaticalMarking  -- Grammatical marking (101 languages)
   | noGrammaticalMarking  -- No grammatical marking (121 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 65A dataset (222 languages). -/
 def allData : List (Datapoint PerfectiveImperfective) :=

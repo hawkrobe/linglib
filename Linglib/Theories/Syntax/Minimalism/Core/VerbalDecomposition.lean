@@ -43,7 +43,7 @@ inductive VerbHead where
   | vCAUSE  -- Causal relation between subevents (@cite{wood-2015}, @cite{pylkkanen-2008})
   | vGO     -- Dynamic subevent of change
   | vBE     -- Stative subevent of result
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Event Composition Predicates

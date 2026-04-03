@@ -31,7 +31,7 @@ structure ClauseType where
   force : IllocutionaryMood
   /-- Grammatical mood: verb morphology -/
   mood : GramMood
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A standard declarative-indicative clause. -/
 def ClauseType.declInd : ClauseType :=

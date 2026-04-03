@@ -103,7 +103,7 @@ Weak necessity modals quantify over the BEST favored worlds (with ordering). -/
 inductive Negotiability where
   | negotiable      -- not all participants committed; ordering source material
   | nonNegotiable   -- all participants committed; promoted to modal base
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Rubinstein's reconceptualized modal backgrounds (§3.2).
 
@@ -289,7 +289,7 @@ The paper establishes class membership via two diagnostic tests:
 inductive PriorityExpression where
   | modal (name : String)           -- ought, should
   | evaluativeComp (name : String)  -- good, better, preferable, worthwhile
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Properties shared by the evaluative comparative natural class. -/
 structure ComparativeClassMember where
@@ -540,7 +540,7 @@ inductive WeakNecessityStrategy where
   | lexical               -- dedicated item (English should/ought)
   | compositional         -- strong + weakening morphology (Spanish debería)
   | evaluativeComparative -- comparative/evaluative language (Hebrew yoter tov)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 structure WeakNecessityProfile where
   language : String

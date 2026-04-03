@@ -475,7 +475,7 @@ inductive EntailmentRelation where
       Example: "Jane shouted" entails "Jane made sound" — the sound-making
       is part of the shouting, not a precondition for it. -/
   | concomitant
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Only precondition entailments project by pragmatic default. -/
 def EntailmentRelation.projects : EntailmentRelation → Bool
@@ -633,7 +633,7 @@ inductive SuppressionCondition where
       aware that there's been a decision." — decision existence is QUD.
       (@cite{roberts-simons-2024} ex. 25) -/
   | preconditionAtIssue
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- When suppression applies, precondition content is merely locally entailed,
     not globally accommodated. The content is still an entailment of the

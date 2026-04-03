@@ -29,7 +29,7 @@ namespace Phenomena.AuxiliaryVerbs.Selection
 inductive PerfectAux where
   | be   -- Italian *essere*, French *être*, German *sein*
   | have -- Italian *avere*, French *avoir*, German *haben*
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Transitivity class relevant to auxiliary selection. -/
 inductive TransitivityClass where
@@ -37,7 +37,7 @@ inductive TransitivityClass where
   | unergative    -- subject = agent, no object (run, laugh)
   | transitive    -- subject = agent, object = theme (eat, build)
   | reflexive     -- reflexive clitic triggers *be* in Romance (Italian/French), *have* in German
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Language-level auxiliary selection rule. -/
 inductive SelectionRule where
@@ -45,7 +45,7 @@ inductive SelectionRule where
   | haveOnly -- all verbs → have (English, Spanish)
   | beOnly   -- all verbs → be (rare; some Sardinian dialects)
   | mixed    -- gradient/variable selection (some German dialects)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## Functions -/
 

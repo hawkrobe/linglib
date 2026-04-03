@@ -43,7 +43,7 @@ inductive Context where
   | preV   -- pre-vocalic (*west end*)
   | pause  -- pre-pausal (*west*)
   | preC   -- pre-consonantal (*west side*)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- English dialects with t/d-deletion data. -/
 inductive Dialect where
@@ -52,7 +52,7 @@ inductive Dialect where
   | jamaican  -- Jamaican English (Patrick 1992)
   | trinidad  -- Trinidadian English (Kang 1994)
   | tejano    -- Tejano English (Bayley 1995)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Observed deletion rate as a percentage (integer).
     From @cite{coetzee-pater-2011} table (10), p. 410. -/
@@ -103,7 +103,7 @@ inductive MorphStatus where
   | regularPast   -- *missed* (past tense suffix)
   | semiWeakPast  -- *kept* (semi-weak past)
   | monomorpheme  -- *mist* (monomorphemic)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Dialect labels for table (7) morphological data.
     Note: table (7) uses different dialects than table (10) — Philadelphia
@@ -112,7 +112,7 @@ inductive MorphDialect where
   | philadelphia  -- Philadelphia English (Guy 1991b)
   | chicano       -- Chicano English (Santa Ana 1992)
   | tejano        -- Tejano English (Bayley 1995)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Deletion rate by morphological status and dialect (percentages).
     From @cite{coetzee-pater-2011} table (7). -/

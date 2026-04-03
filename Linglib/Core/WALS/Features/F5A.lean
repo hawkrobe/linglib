@@ -19,7 +19,7 @@ inductive VoicingAndGapsInPlosiveSystems where
   | missingP  -- Missing /p/ (33 languages)
   | missingG  -- Missing /g/ (34 languages)
   | bothMissing  -- Both missing (3 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint VoicingAndGapsInPlosiveSystems) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .noneMissingInPTKBDG }

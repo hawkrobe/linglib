@@ -51,7 +51,7 @@ abbrev PTSConstraint (Time : Type*) [LE Time] := Interval Time → Prop
 inductive AdverbialType where
   | durative   -- specifies LB
   | inclusive   -- does not specify LB
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § Concrete Adverbials

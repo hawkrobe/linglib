@@ -18,7 +18,7 @@ inductive SvonegOrder where
   | optdoubleneg  -- OptDoubleNeg (12 languages)
   | onlywithanotherneg  -- OnlyWithAnotherNeg (35 languages)
   | noSvoneg  -- No SVONeg (304 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144K dataset (446 languages). -/
 def allData : List (Datapoint SvonegOrder) :=

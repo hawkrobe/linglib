@@ -60,7 +60,7 @@ inductive CinqueModHead where
   | modRoot
   /-- Mod_ability: below AspP (low) -/
   | modAbility
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Cinque's stipulated flavor for each head. -/
 def CinqueModHead.flavor : CinqueModHead → ModalFlavor

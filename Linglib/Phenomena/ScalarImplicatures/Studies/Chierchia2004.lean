@@ -183,7 +183,7 @@ inductive ImplicatureType where
   | direct
   /-- Indirect: from Strong Application through a DE function -/
   | indirect
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- In UE contexts, scalar items generate DIRECT implicatures.
     In DE contexts, the direct implicature is blocked, but the DE operator
@@ -284,7 +284,7 @@ inductive ScalarStrength where
   | strong
   /-- Weak: bottom of scale (some, or). No interfering indirect implicatures. -/
   | weak
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a scalar item of given strength intervenes in NPI licensing.
 
@@ -360,7 +360,7 @@ theorem root_ue_bridge (φ : Prop' World) (ALT : Set (Prop' World))
 inductive StrengthRelation where
   | strongerThan  -- for strengthening NPIs / Krifka's ScalAssert
   | weakerThan    -- for attenuating NPIs / Schwab's condition
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Unified scalar licensing parametrized by direction.
 

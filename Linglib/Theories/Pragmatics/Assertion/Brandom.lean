@@ -80,7 +80,7 @@ end NormativeStatus
 inductive BAgent where
   | speaker
   | addressee
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A scorecard: what one agent attributes to another.
 

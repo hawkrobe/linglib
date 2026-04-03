@@ -133,7 +133,7 @@ def exhB {W : Type} (domain : List W)
 /-- Four propositional worlds for examples with two atomic propositions. -/
 inductive PQWorld where
   | pOnly | qOnly | both | neither
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def pqDomain : List PQWorld := [.pOnly, .qOnly, .both, .neither]
 
@@ -219,7 +219,7 @@ private inductive ChW where
   | shOnly       -- some homework only
   | ahOnly       -- all homework only
   | neither      -- nothing done
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def chDomain : List ChW :=
   [.rOnly, .rAndSh, .rAndAh, .shOnly, .ahOnly, .neither]
@@ -307,7 +307,7 @@ inductive ModalW where
   | seesPQ       -- accessible: {p∧¬q, ¬p∧q}
   | seesBoth     -- accessible: {p∧q}
   | seesNothing  -- accessible: ∅
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def mDomain : List ModalW :=
   [.seesP, .seesQ, .seesPQ, .seesBoth, .seesNothing]

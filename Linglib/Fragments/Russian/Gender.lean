@@ -45,7 +45,7 @@ inductive DeclClass where
   | II   -- e.g. škola 'school' (typically feminine)
   | III  -- e.g. kost' 'bone' (typically feminine; exceptions: put', znamja)
   | IV   -- remaining patterns (typically neuter)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Russian Noun
@@ -116,7 +116,7 @@ def vrač : RussianNoun :=
 /-- Russian surface gender: a 3-way system. -/
 inductive SurfaceGender where
   | masculine | feminine | neuter
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive surface gender from n head via Russian VI rules.
 

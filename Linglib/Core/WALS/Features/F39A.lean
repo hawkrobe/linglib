@@ -19,7 +19,7 @@ inductive InclusiveExclusiveDistinctionInIndependentPronouns where
   | noInclusiveExclusive  -- No inclusive/exclusive (120 languages)
   | onlyInclusive  -- Only inclusive (5 languages)
   | inclusiveExclusive  -- Inclusive/exclusive (63 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 39A dataset (200 languages). -/
 def allData : List (Datapoint InclusiveExclusiveDistinctionInIndependentPronouns) :=

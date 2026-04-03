@@ -17,7 +17,7 @@ inductive GenitiveNounOrder where
   | genitiveNoun  -- Genitive-Noun (685 languages)
   | nounGenitive  -- Noun-Genitive (468 languages)
   | noDominantOrder  -- No dominant order (96 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint GenitiveNounOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .genitiveNoun }

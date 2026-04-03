@@ -86,7 +86,7 @@ inductive EPCondition where
   | prospective
   /-- No EP constraint (English bare future/will). -/
   | unconstrained
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Recover the predicate over `EvidentialFrame ℤ` from an `EPCondition`. -/
 def EPCondition.toConstraint : EPCondition → EvidentialFrame ℤ → Prop
@@ -132,7 +132,7 @@ inductive UPCondition where
   | nonfuture
   /-- No UP constraint. -/
   | unconstrained
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Recover the predicate over `EvidentialFrame ℤ` from a `UPCondition`. -/
 def UPCondition.toConstraint : UPCondition → EvidentialFrame ℤ → Prop

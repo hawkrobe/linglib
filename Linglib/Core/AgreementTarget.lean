@@ -23,7 +23,7 @@ inductive AgreementTarget where
   | relativePronoun   -- relative pronoun (e.g. German *der/die/das*)
   | personalPronoun   -- personal pronoun (e.g. English *he/she/it*)
   | verbTarget        -- verb (e.g. Hindi *laRkaa aayaa / laRkii aayii*)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric rank in the Agreement Hierarchy: higher = more likely to show
     agreement (more syntactic); lower = less likely (more semantic). -/
@@ -62,7 +62,7 @@ inductive PredicateTarget where
   | participle   -- participial agreement
   | adjective    -- predicate adjective (= AgreementTarget.predicate)
   | noun         -- predicate noun ("she is a doctor")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Rank in the Predicate Hierarchy: higher = more likely to show
     semantic agreement. verb (0) < participle (1) < adjective (2) < noun (3). -/

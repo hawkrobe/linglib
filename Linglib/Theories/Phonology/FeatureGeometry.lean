@@ -38,7 +38,7 @@ inductive GeomNode where
   | labial         -- Labial articulator (@cite{sagey-1986})
   | coronal        -- Coronal articulator (@cite{sagey-1986})
   | dorsal         -- Dorsal articulator (@cite{sagey-1986})
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Tree Structure

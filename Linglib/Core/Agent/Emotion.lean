@@ -67,7 +67,7 @@ inductive AppraisalType where
   | predictionError        -- PE: outcome − E[outcome | beliefs]
   | counterfactualAgent    -- CFa: U(agent alt) − U(actual)
   | counterfactualOpponent -- CFo: U(opponent alt) − U(actual)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Perspective for appraisal computation.
 
@@ -79,7 +79,7 @@ how the agent's choices appear to others. -/
 inductive AppraisalPerspective where
   | base          -- Direct outcomes (monetary + social)
   | reputational  -- Social perception
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Qualitative sign of an appraisal dimension in an emotion profile.
 
@@ -91,7 +91,7 @@ inductive AppraisalSign where
   | positive    -- High values increase the emotion (β > 0)
   | negative    -- High values decrease the emotion (β < 0)
   | irrelevant  -- Does not contribute (β ≈ 0)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Temporal orientation of an emotion.
 
@@ -105,7 +105,7 @@ All 20 emotion concepts in Houlihan et al. are retrospective. -/
 inductive TemporalOrientation where
   | retrospective  -- After outcome: evaluation of what happened
   | prospective    -- Before outcome: anticipation under uncertainty
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Appraisal Computation from BToM Marginals
@@ -179,7 +179,7 @@ end AppraisalComputation
 structure PerspectiveWeights where
   base : AppraisalSign
   reputational : AppraisalSign
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The 4 × 2 qualitative appraisal weight matrix for an emotion concept.
 
@@ -192,7 +192,7 @@ structure AppraisalWeights where
   pe  : PerspectiveWeights  -- Prediction error
   cfa : PerspectiveWeights  -- Counterfactual (agent)
   cfo : PerspectiveWeights  -- Counterfactual (opponent)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An emotion concept as a qualitative pattern over the appraisal space.
 
@@ -206,7 +206,7 @@ structure EmotionProfile where
   name : String
   weights : AppraisalWeights
   orientation : TemporalOrientation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Look up the qualitative sign for a specific appraisal type and perspective. -/
 def AppraisalWeights.getSign (w : AppraisalWeights)

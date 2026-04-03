@@ -59,7 +59,7 @@ open Semantics.Composition.WriterMonad (Writer)
 -- ════════════════════════════════════════════════════
 
 inductive E where | john | cats | dogs
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def like (x y : E) : Bool :=
   match x, y with
@@ -73,13 +73,13 @@ def like (x y : E) : Bool :=
 /-- CI propositions: unevaluated semantic objects logged by `write`. -/
 inductive CIProp where
   | likes : E → E → CIProp
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Presuppositional conditions: unevaluated conditions logged by `check`. -/
 inductive PresupProp where
   /-- ∃z. like(subj, z) ∧ z ≠ obj — the presupposition of "also" -/
   | existsOtherLiked : E → E → PresupProp
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def CIProp.eval : CIProp → Bool
   | .likes x y => like x y

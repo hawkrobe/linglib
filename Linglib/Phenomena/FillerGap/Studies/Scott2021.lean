@@ -72,7 +72,7 @@ inductive DPCat where
   | Num   -- number (hosts sg/pl; portmanteau with n)
   | n     -- categorizer (hosts gender/animacy; @cite{kramer-2015})
   | Pers  -- person (innermost; only in pronouns, not lexical DPs)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited DPCat := ⟨.D⟩
 
@@ -291,7 +291,7 @@ def insertResumptive (fb : FeatureBundle) : String :=
 inductive PronOrigin where
   | bound
   | movementCopy
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Full pipeline: tree → (optional) MaxElide → feature extraction → VI.
 
@@ -372,7 +372,7 @@ structure ParasiticGapJudgments where
   pronounMove : Bool    -- Row 2: mi_t ... ye_p
   pronounPronoun : Bool -- Row 3: mi_t ... mi_p
   movePronoun : Bool    -- Row 4: ye_t ... mi_p
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def speaker1 : ParasiticGapJudgments :=
   { moveMove := true, pronounMove := false, pronounPronoun := false, movePronoun := false }

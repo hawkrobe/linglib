@@ -10,8 +10,8 @@ representations: when adjacent segments share a geometric node's features, they
 are linked to a single autosegmental element on that node's tier. This module
 builds on the feature geometry (`FeatureGeometry.lean`) and segment type
 (`Features.lean`) to provide association lines, feature agreement predicates,
-autosegmental representations with consistency checking, spread/delink operations,
-and OCP violation counting.
+autosegmental representations with consistency checking, and spread/delink
+operations.
 -/
 
 namespace Theories.Phonology.Autosegmental
@@ -28,13 +28,7 @@ open Theories.Phonology.FeatureGeometry (GeomNode)
 structure AssocLine where
   src : Nat
   tgt : Nat
-  deriving DecidableEq, BEq, Repr
-
-/-- Association lines do not cross: if src₁ < src₂ then tgt₁ ≤ tgt₂. -/
-def noCrossing (lines : List AssocLine) : Bool :=
-  lines.all fun l1 => lines.all fun l2 =>
-    decide (l1.src < l2.src → l1.tgt ≤ l2.tgt) &&
-    decide (l1.tgt < l2.tgt → l1.src ≤ l2.src)
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Feature Agreement
@@ -59,7 +53,7 @@ def totalAssimilation (s1 s2 : Segment) : Bool := agreeAt s1 s2 .supralaryngeal
 structure Sharing where
   left : Nat
   node : GeomNode
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 4: Autosegmental Representation
@@ -96,10 +90,6 @@ def AutosegRep.delink (r : AutosegRep) (pos : Nat) (n : GeomNode) :
     AutosegRep :=
   { r with sharing := r.sharing.filter fun s =>
       !(s.left == pos && s.node == n) }
-
-/-- Remove all sharing involving node `n`. -/
-def AutosegRep.delinkAll (r : AutosegRep) (n : GeomNode) : AutosegRep :=
-  { r with sharing := r.sharing.filter fun s => s.node != n }
 
 -- ============================================================================
 -- § 5b: Feature Spreading
@@ -147,17 +137,7 @@ theorem copyFeaturesUnder_agreeAt (tgt src : Segment) (n : GeomNode) :
     (fun f => n.dominates f.node) src.spec tgt.spec
 
 -- ============================================================================
--- § 6: OCP
--- ============================================================================
-
-/-- Count OCP violations for node `n`: adjacent segments that agree on all
-    features dominated by `n`. Returns `Nat` matching `OT/Core.lean`'s
-    `NamedConstraint.eval`. -/
-def ocpViolations (segs : List Segment) (n : GeomNode) : Nat :=
-  (segs.zip (segs.drop 1)).filter (fun (s1, s2) => agreeAt s1 s2 n) |>.length
-
--- ============================================================================
--- § 7: Verification Theorems
+-- § 6: Verification Theorems
 -- ============================================================================
 
 private theorem list_all_beq_self {α : Type} [BEq α] [LawfulBEq α]

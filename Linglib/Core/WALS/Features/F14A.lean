@@ -21,7 +21,7 @@ inductive FixedStressLocations where
   | antepenultimate  -- Antepenultimate (12 languages)
   | penultimate  -- Penultimate (110 languages)
   | ultimate  -- Ultimate (51 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint FixedStressLocations) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .noFixedStress }

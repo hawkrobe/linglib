@@ -28,7 +28,7 @@ inductive EvaluativityStatus where
   | nonEvaluative
   | markedOnly
   | ungrammatical
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Evaluativity judgment datum. -/
 structure EvaluativityDatum where

@@ -43,7 +43,7 @@ inductive PolarityType where
   | ppi
   /-- Not polarity-sensitive. -/
   | neutral
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Determiner Entry

@@ -16,7 +16,7 @@ namespace Core.WALS.F120A
 inductive ZeroCopulaType where
   | impossible  -- Impossible (211 languages)
   | possible  -- Possible (175 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 120A dataset (386 languages). -/
 def allData : List (Datapoint ZeroCopulaType) :=

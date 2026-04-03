@@ -36,7 +36,7 @@ inductive Dialect where
   | ikale       -- Ìkálẹ̀ (south-eastern)
   | ondo        -- Oǹdó (south-eastern)
   | okitipupa   -- Òkìtìpupa (south-eastern)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Focus strategy
@@ -46,7 +46,7 @@ inductive Dialect where
 inductive FocusStrategy where
   | exSitu   -- Movement to Spec-FocP + overt focus particle
   | inSitu   -- No movement; prosodic marking (high tone) only
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Focus particle entry

@@ -129,7 +129,7 @@ inductive PossReading where
   | agent       -- agent interpretation (agentive event nominal)
   | possessor   -- general possessive interpretation
   | experiencer -- experiencer (with experiencer verbs)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Poss gets agent reading only with agentive (CEN) nP.
     @cite{wood-2023} Ch. 5 (5.24): "i* ↔ λxλe. agent(x)(e) /
@@ -157,7 +157,7 @@ inductive PPrefixPattern where
   | pConditionsDoubles   -- Pattern 1: P conditions meaning, can double
   | pConditionsNoDouble  -- Pattern 2: P conditions meaning, no doubling
   | pDoesNotCondition    -- Pattern 3: P doesn't condition root meaning
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Pattern assignment for fragment nominalizations. -/
 def PPrefixPattern.ofNom (n : IcelandicNom) : Option PPrefixPattern :=
@@ -192,7 +192,7 @@ theorem umonnun_pattern2 :
 inductive VerbalPrefix where
   | marg    -- 'many-': iterative, CEN only
   | endur   -- 're-': repetitive, CEN + SEN + result RN
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a prefix is compatible with a reading.
 

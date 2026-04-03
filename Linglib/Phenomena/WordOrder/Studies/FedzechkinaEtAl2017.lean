@@ -39,13 +39,13 @@ open DepGrammar DependencyLength Processing.MemorySurprisal
 inductive MiniLanguage where
   | langA  -- Short-dependency order (complex NP first)
   | langB  -- Long-dependency order (complex NP last)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Word order for a transitive sentence. -/
 inductive WordOrder where
   | SOV  -- Subject-Object-Verb
   | OSV  -- Object-Subject-Verb
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Dependency Trees: Language A vs Language B

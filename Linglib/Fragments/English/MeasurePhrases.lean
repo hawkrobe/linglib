@@ -214,7 +214,7 @@ inductive PerInterpretation where
   /-- Non-compositional, idiomatic unit (e.g., "pounds per square inch" = psi).
       Speakers know the abbreviation without knowing the underlying ratio. -/
   | idiomatic
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Entry for the preposition *per* in measure phrases. -/
 structure PerEntry where
@@ -268,11 +268,11 @@ theorem piece_no_dimension : piece.measureDimension = none := rfl
 /-- All container nouns are container nouns; all atomizers are atomizers. -/
 theorem all_containers_are_containers :
     ∀ n ∈ allContainerNouns, n.nounClass = .containerNoun := by
-  simp [allContainerNouns, allQuantizingNouns]; decide
+  simp [allContainerNouns, allQuantizingNouns]
 
 theorem all_atomizers_are_atomizers :
     ∀ n ∈ allAtomizers, n.nounClass = .atomizer := by
-  simp [allAtomizers, allQuantizingNouns]; decide
+  simp [allAtomizers, allQuantizingNouns]
 
 /-- Container nouns all have a measure dimension; atomizers never do. -/
 theorem containers_have_dimension :

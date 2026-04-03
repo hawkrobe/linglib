@@ -45,7 +45,7 @@ inductive EvidenceType where
   | elimination
   /-- Reported / hearsay evidence. -/
   | reported
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /-- A minimal pair comparing a bare prejacent with its modalized counterpart. -/
 structure MustMinimalPair where

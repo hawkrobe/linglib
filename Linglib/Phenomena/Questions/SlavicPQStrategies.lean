@@ -53,7 +53,7 @@ inductive PQStrategy where
   | particlePlusMovement
   /-- Intonation only (no overt morphosyntactic marking). -/
   | intonationOnly
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether the language permits declarative PQs (DeclPQs) as a separate
 strategy from interrogative PQs. -/
@@ -64,7 +64,7 @@ inductive DeclPQAvailability where
   | unavailable
   /-- DeclPQs marginal or register-restricted. -/
   | marginal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2: Slavic Language PQ Data

@@ -18,7 +18,7 @@ inductive VerbInitialWithClauseFinalNegative where
   | optdoubleneg  -- OptDoubleNeg (1 languages)
   | onlywithanotherneg  -- OnlyWithAnotherNeg (4 languages)
   | noClauseFinalNeg  -- No clause-final neg (144 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144X dataset (151 languages). -/
 def allData : List (Datapoint VerbInitialWithClauseFinalNegative) :=

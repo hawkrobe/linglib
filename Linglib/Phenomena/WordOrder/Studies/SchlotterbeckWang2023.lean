@@ -115,12 +115,12 @@ open RSA
 /-- Referents in the reference game. Flat enum with `Fintype` for `RSAConfig`. -/
 inductive Referent where
   | bigBlue | bigGreen | smallBlue | smallGreen | smallRed
-  deriving DecidableEq, Fintype, BEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- Words available to the speaker: size adjectives, color adjectives, noun. -/
 inductive Word where
   | big | small | blue | green | red | sticker
-  deriving DecidableEq, Fintype, BEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 -- ============================================================================
 -- §2. Boolean Semantics
@@ -393,7 +393,7 @@ inductive Finding where
   | both_orderings_identify_target_A
   /-- The meaning function correctly identifies the target (scene B). -/
   | both_orderings_identify_target_B
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map each finding to the model prediction that accounts for it. -/
 def formalize : Finding → Prop

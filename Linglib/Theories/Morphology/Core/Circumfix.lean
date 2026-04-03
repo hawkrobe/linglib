@@ -44,7 +44,7 @@ structure CircumfixExponence where
   stem : String
   /-- Description of the source of the circumfix -/
   gloss : String := ""
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Apply circumfixal exponence to produce the surface form. -/
 def CircumfixExponence.realize (c : CircumfixExponence) : String :=

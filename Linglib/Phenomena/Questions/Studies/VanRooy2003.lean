@@ -65,7 +65,7 @@ inductive NewspaperWorld
   | shopA_only      -- only shop A sells Italian newspapers
   | shopB_only      -- only shop B
   | both            -- both A and B sell
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : LawfulBEq NewspaperWorld where
   eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
@@ -77,7 +77,7 @@ instance : Fintype NewspaperWorld :=
 /-- Shops in the domain. -/
 inductive Shop
   | A | B
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- "x sells Italian newspapers" in world w. -/
 def sellsItalian : NewspaperWorld → Shop → Bool
@@ -141,7 +141,7 @@ inductive Granularity
   | city     -- e.g., "Amsterdam"
   | district -- e.g., "Amsterdam Centrum"
   | address  -- e.g., "123 Keizersgracht"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Different decision problems require different granularity.
 The required granularity determines the question interpretation. -/
@@ -200,7 +200,7 @@ reduce to set-containment/entailment. -/
 /-- Beatles for the collector example. -/
 inductive Beatle
   | john | paul | george | ringo
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Preference ranking over Beatles records (higher = more valuable). -/
 def beatleValue : Beatle → ℚ
@@ -213,7 +213,7 @@ def beatleValue : Beatle → ℚ
 Simplified to single-record worlds. -/
 inductive BeatleWorld
   | hasJohn | hasPaul | hasGeorge | hasRingo
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype BeatleWorld :=
   ⟨{.hasJohn, .hasPaul, .hasGeorge, .hasRingo}, by intro x; cases x <;> simp⟩

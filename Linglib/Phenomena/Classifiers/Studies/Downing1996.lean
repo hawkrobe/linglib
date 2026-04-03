@@ -230,7 +230,7 @@ inductive MorphemeCategoryRelation where
   /-- Morpheme independently represents a quality shared by members.
       e.g., Indonesian bentuk 'curved' → classifier for rings, wheels. -/
   | sharedQuality
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A witness pairing a classifier with its Table 5.2 morpheme-category
     relation and the independent meaning of the morpheme. -/

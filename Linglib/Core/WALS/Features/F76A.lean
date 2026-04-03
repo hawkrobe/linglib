@@ -17,7 +17,7 @@ inductive ModalOverlap where
   | overlapForBothPossibilityAndNecessity  -- Overlap for both possibility and necessity (36 languages)
   | overlapForEitherPossibilityOrNecessity  -- Overlap for either possibility or necessity (66 languages)
   | noOverlap  -- No overlap (105 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 76A dataset (207 languages). -/
 def allData : List (Datapoint ModalOverlap) :=

@@ -55,7 +55,7 @@ inductive TypeShift where
   | down   -- ∩: λP λs ιx[Ps(x)] - kind formation
   | iota   -- ι: λP ιx[Ps(x)] - definite description
   | exists -- ∃: λP λQ ∃x[P(x) ∧ Q(x)] - existential
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Meaning Preservation Ranking (@cite{dayal-2004}: 408)
@@ -107,7 +107,7 @@ structure InstantiationSet where
   count : Nat
   /-- Whether instances are "accessible" (epistemically available) -/
   accessible : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Accessibility of instantiation sets.
@@ -143,7 +143,7 @@ inductive NumberFeature where
   | sg   -- Singular: atomic instantiation set
   | pl   -- Plural: non-atomic instantiation set
   | mass -- Mass: no number distinction
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 License for singular morphology on kinds.
@@ -155,7 +155,7 @@ inductive SingularLicense where
   | inaccessible
   /-- Taxonomic reading (sub-kinds, not individuals) -/
   | taxonomic
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Singular Kinds (@cite{dayal-2004}: 411-423)
@@ -198,7 +198,7 @@ inductive CNDenotation where
   | individual
   /-- Property of sub-kinds: λk. P(k) where k ranges over sub-kinds -/
   | taxonomic
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 When a CN has a taxonomic reading, "the CN" can be singular even when
@@ -382,7 +382,7 @@ inductive PredicateType where
   | kindLevel
   /-- Object-level predicates: bark, be in the garden -/
   | objectLevel
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Does this predicate require DKP when applied to a kind? -/
 def requiresDKP : PredicateType → Bool

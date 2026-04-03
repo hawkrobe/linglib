@@ -85,7 +85,7 @@ structure EntailmentProfile where
   stationary          : Bool
   /-- (e) does not exist independently of the event -/
   dependentExistence  : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Feature Counting (informational, NOT used for ASP)
@@ -212,7 +212,7 @@ def wellFormedPair (subj obj : EntailmentProfile) : Bool :=
 inductive DoTestSource where
   | semantic    -- Profile-based: verb entails volition/causation/movement
   | pragmatic   -- Complement-based: complement evokes agentivity
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The do-test passes (semantically) iff at least one of
     {volition, causation, movement} holds. -/

@@ -316,7 +316,7 @@ Type of disjunction interpretation.
 inductive DisjunctionReading where
   | inclusive   -- p ∨ q (possibly both)
   | exclusive   -- (p ∨ q) ∧ ¬(p ∧ q) (not both)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Structural position of the disjunction.
@@ -328,7 +328,7 @@ inductive DisjunctionPosition where
   | every_scope       -- Scope of "every" (UE)
   | every_restrictor  -- Restrictor of "every" (DE)
   | negation_scope    -- Under negation (DE)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open Core.NaturalLogic (ContextPolarity)
 

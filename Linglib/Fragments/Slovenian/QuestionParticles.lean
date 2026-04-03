@@ -35,7 +35,7 @@ structure QParticleEntry where
   whOk : Bool
   requiresEvidentialBias : Bool
   requiresEpistemicBias : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- ali — clause-initial PQ particle (@cite{simik-2024} ex. 28).
 Optional; incompatible with DeclPQs. No bias requirements. -/

@@ -88,7 +88,7 @@ inductive WorldState where
   | w10  -- (BEL=1, C=0): Cole believes C but C is false
   | w01  -- (BEL=0, C=1): Cole doesn't believe but C is true
   | w00  -- (BEL=0, C=0): Cole doesn't believe and C is false
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 def WorldState.bel : WorldState → Bool
   | .w11 | .w10 => true
@@ -110,7 +110,7 @@ inductive Utterance where
   | thinkNeg    -- "Cole doesn't think that C"
   | cPos        -- "C"
   | cNeg        -- "not C"
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Utterance where
   elems := {.knowPos, .knowNeg, .thinkPos, .thinkNeg, .cPos, .cNeg}
@@ -151,7 +151,7 @@ inductive BeliefState where
   | notW11 | notW10 | notW01 | notW00
   -- Full (1)
   | all
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype BeliefState where
   elems := {.onlyW11, .onlyW10, .onlyW01, .onlyW00,

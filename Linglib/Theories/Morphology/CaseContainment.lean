@@ -149,7 +149,7 @@ structure AllomorphyPattern where
   acc : Nat
   gen : Nat
   dat : Nat
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does a pattern contain an ABA subsequence? An ABA violation occurs
     when two non-adjacent cases on the containment hierarchy share a form

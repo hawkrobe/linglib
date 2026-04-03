@@ -13,7 +13,7 @@ structure DiscourseOnlyParticle where
   form : String
   nativeForm : String
   gloss : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Hungarian *csak* — allows all clause types as S'. -/
 def csak : DiscourseOnlyParticle where

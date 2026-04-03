@@ -71,7 +71,7 @@ structure MultidimAdj where
   scaleType : Boundedness
   /-- Observed default binding type from exception-phrase corpus data (36a–c). -/
   binding : DimensionBindingType
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- Conjunctive adjectives (36a): Conj/Disj ratio 3:1 or higher
 

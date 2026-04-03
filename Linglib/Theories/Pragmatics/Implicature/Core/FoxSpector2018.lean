@@ -376,7 +376,7 @@ section ExhExh
 
 /-- Four worlds for two atomic propositions p, q. -/
 inductive PQWorld where | pq | p_only | q_only | neither
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 open PQWorld
 open Exhaustification.InnocentExclusion

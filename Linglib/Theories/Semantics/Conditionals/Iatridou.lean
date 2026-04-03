@@ -64,7 +64,7 @@ inductive ExclDimension where
   | temporal
   /-- Modal: w(topic) ≠ w(speaker) -/
   | modal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
@@ -167,7 +167,7 @@ inductive IatridouPredType where
   | stative
   /-- Telic predicate: "arrive", "build a house" -/
   | telic
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map Vendler classes to Iatridou's predicate classification.
 
@@ -191,7 +191,7 @@ inductive CounterfactualType where
   | presCF
   /-- Past Counterfactual: 2 ExclFs (modal + temporal) -/
   | pastCF
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The number of ExclFs required for each counterfactual type.
 

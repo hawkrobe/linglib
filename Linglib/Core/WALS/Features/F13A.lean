@@ -17,7 +17,7 @@ inductive Tone where
   | noTones  -- No tones (307 languages)
   | simpleToneSystem  -- Simple tone system (132 languages)
   | complexToneSystem  -- Complex tone system (88 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint Tone) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .complexToneSystem }

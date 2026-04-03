@@ -188,7 +188,7 @@ inductive PerceptualDifficulty where
   | easy    -- Color-like, orientation-like
   | medium  -- Size-like
   | hard    -- Material-like
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map difficulty to discrimination -/
 def difficultyToDiscrimination : PerceptualDifficulty → ℚ

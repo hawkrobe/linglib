@@ -46,7 +46,7 @@ open Core.Lexical.Binominal
 inductive GenitiveSource where
   | primeval    -- @cite{pesetsky-2013}: default case when D blocks structural case
   | equative   -- @cite{dendikken-2006}: EquP predication, not true genitive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map binominal type to its genitive source. -/
 def genitiveSource : BinominalType → GenitiveSource
@@ -63,14 +63,14 @@ def genitiveSource : BinominalType → GenitiveSource
 inductive AgreementNumber where
   | singular
   | plural
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which element controls verbal agreement?
     @cite{saab-2026}: Num in all three types, never QP in Spec,DP. -/
 inductive AgreementController where
   | num       -- Num head (correct: @cite{saab-2026})
   | specDP    -- QP in Spec,DP (incorrect alternative)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- In all three types, Num controls agreement. -/
 def agreementController : BinominalType → AgreementController

@@ -39,7 +39,7 @@ inductive NegStrategy where
   | negAffix
   /-- Free negative particle (English *not*). -/
   | negParticle
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## Functions -/
 

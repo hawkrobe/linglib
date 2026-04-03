@@ -62,7 +62,7 @@ inductive AdjType where
   | material  -- cotton, glass, gold, leather, metal, paper, plastic, wooden, woolen
               -- (paper claims 8 but lists 9; possible typo)
   | scalar    -- large, narrow, short, small, tall, thick, thin, wide
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map adjective type to `PropertyDomain`. -/
 def AdjType.toDomain : AdjType → Core.PropertyDomain
@@ -79,7 +79,7 @@ inductive Language where
   | english    -- N = 49 (60 recruited, 11 excluded)
   | hindi      -- N = 27
   | hungarian  -- N = 21
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def Language.n : Language → Nat
   | .english   => 49
@@ -101,7 +101,7 @@ theorem total_is_97 : totalN = 97 := rfl
 inductive Condition where
   | contrast    -- target + same-category competitor differing on adjective
   | noContrast  -- target + no same-category competitor
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Number of items per adjective type (8 adjectives × 3 nouns). -/
 def itemsPerType : Nat := 24

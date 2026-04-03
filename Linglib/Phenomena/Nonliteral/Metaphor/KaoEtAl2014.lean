@@ -60,7 +60,7 @@ inductive Finding where
   | context_sensitivity
   /-- Hearing "person", the listener correctly infers the referent is a person. -/
   | literal_correct
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def findings : List Finding :=
   [.nonliteral, .feature_large, .feature_graceful, .feature_majestic,
@@ -74,12 +74,12 @@ def findings : List Finding :=
     Categories double as utterance types. -/
 inductive Cat where
   | whale | person
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- QUDs: which feature is the speaker trying to communicate? -/
 inductive Goal where
   | large | graceful | majestic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- World = category × large × graceful × majestic. -/
 abbrev World := Cat × Bool × Bool × Bool

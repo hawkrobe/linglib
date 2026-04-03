@@ -74,7 +74,7 @@ theorem static_isStatic {W : Type*} {T : Type*} {P : Type*}
 inductive ViewpointVar where
   | free (i : Nat)
   | contextBound
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § Projection

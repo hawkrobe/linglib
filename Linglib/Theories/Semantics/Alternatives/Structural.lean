@@ -166,7 +166,7 @@ inductive ExWord where
   | apple | pear | or_ | and_
   | tall | man
   | but_ | not_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 section SomeAll
 

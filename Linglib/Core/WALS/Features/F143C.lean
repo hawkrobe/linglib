@@ -37,7 +37,7 @@ inductive OptionalDoubleNegation where
   | negVVnegNegVNeg  -- [Neg-V]/VNeg/[Neg-V-Neg] (1 languages)
   | negvNegVNegNegV  -- NegV/[Neg-V]/Neg[Neg-V] (1 languages)
   | optdoublenegOpttripleneg  -- OptDoubleNeg&OptTripleNeg (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 143C dataset (81 languages). -/
 def allData : List (Datapoint OptionalDoubleNegation) :=

@@ -64,7 +64,7 @@ inductive CoPPosition where
   /-- Complement: innermost scope. Complements and some affixes
       occupy this position. -/
   | complement
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Scope Ordering

@@ -104,7 +104,7 @@ inductive ObligatoryPossession where
   /-- Possessive inflection exists but is never obligatory; data insufficient
       to determine if any nouns require it. -/
   | unclear
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 59: Possessive Classification
@@ -130,7 +130,7 @@ inductive PossessiveClassification where
       (e.g., some Papuan and Austronesian languages distinguish kinship,
       body parts, edible items, and general property) -/
   | threeOrMore
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Predicative Possession Strategies (@cite{stassen-2009})
@@ -172,7 +172,7 @@ inductive PredicativePossession where
       conjunction or comitative construction ("I am with a book").
       (e.g., some Bantu languages: Swahili `nina kitabu` 'I-with book') -/
   | comitative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Adnominal Possession Marking (@cite{nichols-1986})
@@ -206,7 +206,7 @@ inductive AdnominalPossession where
       (e.g., Vietnamese `nha toi` 'house I' = 'my house',
        Mandarin construct-state juxtaposition in some cases) -/
   | juxtaposition
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Position of Pronominal Possessive Affixes (WALS Ch 57)
@@ -232,7 +232,7 @@ inductive PossessiveAffixPosition where
   /-- No possessive affixes: possession marked by independent words or clitics.
       (e.g., English my, your; Japanese no; Mandarin de) -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -273,7 +273,7 @@ inductive NumberOfPossessiveNouns where
   | twoToFour
   /-- Five or more possessive nouns. -/
   | fiveOrMore
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Convert WALS 58B enum to our NumberOfPossessiveNouns. -/
 private def fromWALS58B : Core.WALS.F58B.NumberOfPossessiveNouns →
@@ -301,7 +301,7 @@ private def fromWALS59A : Core.WALS.F59A.PossessiveClassification →
 structure WALSCount where
   label : String
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Sum of counts in a WALS table. -/
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
@@ -1384,7 +1384,7 @@ inductive PossessiveNotion where
   /-- Inanimate alienable: inanimate possessor, non-inherent relation.
       (e.g., "The room has a window" -- contingent, not body-part-like) -/
   | inanimateAlienable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Abstractness ordering: higher = more abstract possessive notion.
     Physical possession is the most concrete; abstract the most abstract.
@@ -1421,7 +1421,7 @@ inductive InalienabilityRank where
   | partWhole
   | culturalItem
   | generalProperty
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric rank for comparison (higher = more likely to be inalienable). -/
 def InalienabilityRank.toNat : InalienabilityRank -> Nat
@@ -1479,7 +1479,7 @@ inductive PossessionSource where
   /-- Equation schema: "Y is X's (property)" → 'X has Y'.
       (e.g., Scots Gaelic `is leam an leabhar` 'is mine the book') -/
   | equation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map predicative strategies to their likely grammaticalization source. -/
 def predicativeSource : PredicativePossession -> PossessionSource

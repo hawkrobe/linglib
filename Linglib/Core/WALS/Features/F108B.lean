@@ -18,7 +18,7 @@ inductive AntipassiveProductivity where
   | partiallyProductive  -- Partially productive (14 languages)
   | notProductive  -- Not productive (2 languages)
   | noAntipassive  -- No antipassive (146 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 108B dataset (186 languages). -/
 def allData : List (Datapoint AntipassiveProductivity) :=

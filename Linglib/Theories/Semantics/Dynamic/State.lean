@@ -51,7 +51,7 @@ These roles are relative to a given utterance (they can swap between turns).
 inductive Participant where
   | speaker
   | listener
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 Sentence forms (clause types) that determine discourse effects.
@@ -63,7 +63,7 @@ Following Farkas & Bruce:
 inductive SentenceForm where
   | declarative
   | interrogative
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 
 /--

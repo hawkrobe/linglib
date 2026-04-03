@@ -62,7 +62,7 @@ structure ENNegator where
   gloss : String
   /-- Whether this is the same as the standard negation marker -/
   isStandardNeg : Bool
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Januubi uses the standard negator **maa** for all EN contexts. -/
 def enNegator : ENNegator where

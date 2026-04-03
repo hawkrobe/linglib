@@ -63,7 +63,7 @@ variable {W Time : Type*} [LinearOrder Time]
 inductive BoundaryKind where
   | left   -- sets the left boundary (e.g., *since Monday*, *in years*)
   | right  -- sets the right boundary (e.g., *until 5pm*)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Which time span the adverbial operates on.
     - `pts`: the Perfect Time Span (LB set by adverbial or context, RB by Tense)
@@ -71,7 +71,7 @@ inductive BoundaryKind where
 inductive TimeSpanKind where
   | pts  -- Perfect Time Span
   | uts  -- Until Time Span
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The boundary set by Tense (not by the adverbial).
     PTS: Tense sets the RB. UTS: context/Tense sets the LB.
@@ -102,7 +102,7 @@ inductive NPIStrength where
   | strong  -- requires antiadditive (not, nobody, never)
   | weak    -- requires DE (few, at most, before)
   | none_   -- not an NPI
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A boundary adverbial: a temporal expression that sets one boundary
     of a time span (PTS or UTS).

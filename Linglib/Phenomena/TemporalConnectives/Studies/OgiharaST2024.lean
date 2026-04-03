@@ -278,7 +278,7 @@ inductive BeforeContextualStatus where
   | veridical       -- "He left before she arrived" (she did arrive)
   | counterfactual  -- "The bomb exploded before anyone defused it" (nobody defused)
   | nonCommittal    -- "The court decided before the votes were counted" (maybe counted)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- All three readings of *before* are compatible with `complementVeridical = false`.
     This is because *before* never ENTAILS complement occurrence — each

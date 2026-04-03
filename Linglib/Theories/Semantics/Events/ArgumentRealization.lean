@@ -28,7 +28,7 @@ inductive SuppressedVarReading where
   /-- The suppressed variable is interpreted as disjoint from the
       surface subject, yielding a dispositional/passive reading. -/
   | disjoint
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- How the base object is syntactically realized. -/
 inductive ObjectRealization where
@@ -36,7 +36,7 @@ inductive ObjectRealization where
   | incorporation
   /-- Object = full DP (functional application). -/
   | noIncorporation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A middle type classified by two independent dimensions:
     how the suppressed variable is interpreted and how the object
@@ -44,7 +44,7 @@ inductive ObjectRealization where
 structure MiddleType where
   objRealization : ObjectRealization
   suppressedVar : SuppressedVarReading
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which argument surfaces as subject in a middle construction depends
     on object realization, not on the suppression operation itself.

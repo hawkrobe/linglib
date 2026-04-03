@@ -42,7 +42,7 @@ inductive VerbalNumberType where
   | eventPlurality
   /-- Both patterns co-exist in the language. -/
   | mixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Profile for a language's verbal number system. -/
 structure VerbalNumberProfile where

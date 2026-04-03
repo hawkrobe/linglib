@@ -79,7 +79,7 @@ open Minimalism.PConstraint (PCCGrammar pccLicit weakGrammar strongGrammar
 structure DualPersonFeatures where
   agreementPerson : PersonLevel
   interpretablePerson : PersonLevel
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Ordinary pronoun: both layers are the same person. -/
 def DualPersonFeatures.ordinary (p : PersonLevel) : DualPersonFeatures :=
@@ -351,7 +351,7 @@ theorem lei_imposter_contrast :
 inductive ResolvedNumber where
   | pl2  -- 2nd person plural (vi incontrerete)
   | pl3  -- 3rd person plural (si incontreranno)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def resolvedAgreement (d : DualPersonFeatures) : ResolvedNumber :=
   if d.interpretablePerson.isSAP then .pl2 else .pl3

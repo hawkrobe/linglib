@@ -46,7 +46,7 @@ inductive ShiftLabel where
   | clauseChain -- clause chain scope (final verb TAM scopes over medial clauses)
   | roleShift   -- sign language Role Shift (viewpoint + perspective shift)
   | generic     -- unclassified shift
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════════════════
 -- § Context Shift
@@ -158,7 +158,7 @@ inductive DepthSpec where
   | origin
   | local
   | relative (k : ℕ)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 namespace DepthSpec
 

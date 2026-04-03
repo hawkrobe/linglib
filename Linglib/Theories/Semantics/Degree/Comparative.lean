@@ -119,7 +119,7 @@ structure MannerEffect where
   evaluative : Bool
   /-- Is the EN form pragmatically marked (optional, stylistic)? -/
   atypical : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- EN in ambidirectional constructions triggers evaluativity. -/
 def enEvaluativeEffect : MannerEffect :=

@@ -263,7 +263,7 @@ structure GRADDatum where
   verb : String
   objectMeasure : String
   expectsGRAD : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def eatGRAD : GRADDatum :=
   { verb := "eat", objectMeasure := "weight/volume", expectsGRAD := true }

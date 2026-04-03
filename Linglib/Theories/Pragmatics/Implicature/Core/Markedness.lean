@@ -51,7 +51,7 @@ structure Morphology where
   hasNegativePrefix : Bool
   /-- Is derived from the antonym (e.g., "unhappy" from "happy") -/
   isDerived : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Simple morphology for a monomorphemic adjective -/
 def simpleMorphology (form : String) : Morphology :=
@@ -339,7 +339,7 @@ open Semantics.Degree (AdjectivalConstruction)
 inductive PolarVariance where
   | variant    -- Different truth conditions (comparatives, positives)
   | invariant  -- Same truth conditions (equatives, questions)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Polar variance by adjectival construction type.
     @cite{rett-2015} Table 3.1/5.1. -/

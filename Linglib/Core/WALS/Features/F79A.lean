@@ -18,7 +18,7 @@ inductive SuppletionAccordingToTenseAndAspect where
   | aspect  -- Aspect (10 languages)
   | tenseAndAspect  -- Tense and aspect (24 languages)
   | none  -- None (123 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 79A dataset (193 languages). -/
 def allData : List (Datapoint SuppletionAccordingToTenseAndAspect) :=

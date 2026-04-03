@@ -78,7 +78,7 @@ inductive Token where
   | datV
   /-- Accusative-subcategorizing verb (e.g., *lönd* "let", *aastriiche* "paint") -/
   | accV
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The case that a token bears or requires. -/
 def Token.caseValue : Token → Case
@@ -103,7 +103,7 @@ structure CrossSerialClause where
   accNPs : Nat  -- number of accusative NPs
   datVs  : Nat  -- number of dative-subcategorizing verbs
   accVs  : Nat  -- number of accusative-subcategorizing verbs
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Claim 3: case matching — the number of dative verbs equals the number
     of dative NPs, and similarly for accusative. -/

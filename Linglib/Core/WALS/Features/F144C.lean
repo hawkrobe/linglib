@@ -31,7 +31,7 @@ inductive LanguagesWithDifferentWordOrderInNegativeClauses where
   | svoSovButSnegvo  -- SVO/SOV, but SNegVO (1 languages)
   | svoSovButSnegov  -- SVO/SOV, but SNegOV (1 languages)
   | svoSovButSovneg  -- SVO/SOV, but SOVNeg (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144C dataset (28 languages). -/
 def allData : List (Datapoint LanguagesWithDifferentWordOrderInNegativeClauses) :=

@@ -21,7 +21,7 @@ inductive AsymmetricNegationSubtype where
   | aFinAndACat  -- A/Fin and A/Cat (21 languages)
   | aNonrealAndACat  -- A/NonReal and A/Cat (11 languages)
   | nonAssignable  -- Non-assignable (114 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 114A dataset (297 languages). -/
 def allData : List (Datapoint AsymmetricNegationSubtype) :=

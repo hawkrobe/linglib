@@ -18,7 +18,7 @@ inductive PolitenessDistinctionsInPronouns where
   | binaryPolitenessDistinction  -- Binary politeness distinction (49 languages)
   | multiplePolitenessDistinctions  -- Multiple politeness distinctions (15 languages)
   | pronounsAvoidedForPoliteness  -- Pronouns avoided for politeness (7 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 45A dataset (207 languages). -/
 def allData : List (Datapoint PolitenessDistinctionsInPronouns) :=

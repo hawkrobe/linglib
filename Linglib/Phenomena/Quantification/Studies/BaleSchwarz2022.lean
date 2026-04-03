@@ -148,7 +148,7 @@ would need density (eq. 8), but free relatives rule it out. -/
 inductive WeighReading where
   | weight   -- μ_WT(x) = q  (eq. 5, attested)
   | density  -- μ_{WT/VOL}(x) = q  (eq. 8, hypothetical, ruled out)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Free relative data: *weigh* admits only weight readings. -/
 structure FreeRelativeDatum where
@@ -602,7 +602,7 @@ This is the paper's notation "0.9g" = ⟨0.9, .mass⟩. -/
 structure Quantity where
   value : ℚ
   dim : Dimension
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- A unit quantity: 1 in a given dimension (e.g., g = ⟨1, .mass⟩). -/
 def unitQuantity (d : Dimension) : Quantity := ⟨1, d⟩

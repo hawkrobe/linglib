@@ -53,7 +53,7 @@ inductive WordOrder where
   | VOS   -- Verb-Object-Subject (Malagasy)
   | OVS   -- Object-Verb-Subject (Hixkaryana)
   | OSV   -- Object-Subject-Verb (rare)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Languages can have different orders in main vs subordinate clauses -/
 structure WordOrderProfile where
@@ -77,7 +77,7 @@ Backward: gap in first conjunct, verb in second
 inductive GappingDirection where
   | forward   -- Gap follows the overt verb (VSO, SVO pattern)
   | backward  -- Gap precedes the overt verb (SOV pattern)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 A gapping pattern describes what a language allows.
@@ -269,7 +269,7 @@ inductive EllipsisType where
   | stripping    -- "Dexter ran away, and Warren (too)"
   | vpEllipsis   -- "Dexter ate bread, and Warren did too"
   | sluicing     -- "Dexter did something, but I don't know what"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is the ellipsis type syntactically mediated (vs purely anaphoric)? -/
 def isSyntacticallyMediated : EllipsisType → Bool

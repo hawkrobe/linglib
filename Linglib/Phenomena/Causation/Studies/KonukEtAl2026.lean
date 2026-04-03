@@ -315,7 +315,7 @@ inductive DisjunctMembership where
   | withinAB
   | withinCD
   | crossDisjunct
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Classify a pair of Experiment 2 variables by disjunct membership.
 Indices: A=0, B=1 (first conjunct), C=2, D=3 (second conjunct). -/

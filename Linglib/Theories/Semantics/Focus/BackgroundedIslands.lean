@@ -61,7 +61,7 @@ etc.) is what generates the alternative set: {say in manner m₁, say in manner
 m₂,...}. -/
 structure MannerComponent where
   name : String
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Lexical decomposition of a communication verb.
 
@@ -109,7 +109,7 @@ inductive CommDimension where
   | manner
   /-- QUD asks about content: "What did John say?" -/
   | content
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A communication event has two semantic dimensions.
 This mirrors the verb decomposition: MoS verbs make both dimensions
@@ -605,7 +605,7 @@ inductive MoSAccount where
   | verbFrameFrequency
   /-- Discourse: backgrounded complements resist extraction. -/
   | backgroundedness
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Testable predictions of each account.
 
@@ -621,7 +621,7 @@ structure Prediction where
   /-- Does verb-frame frequency correlate with acceptability?
   (Tested in all experiments) -/
   frequencyCorrelation : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Predictions of each account. -/
 def accountPredictions : MoSAccount → Prediction
@@ -763,7 +763,7 @@ inductive MannerWeightSource where
   | compositional
   /-- No manner component (bridge verbs: say, tell). -/
   | none
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Derive manner weight source from verb decomposition. -/
 def VerbDecomp.mannerWeightSource (v : VerbDecomp) : MannerWeightSource :=
@@ -826,7 +826,7 @@ structure ExtractionProfile where
   projective : Bool
   /-- Extraction from the clause is degraded -/
   resistsExtraction : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- MoS verb complement: backgrounded → projective → resists extraction.
 
@@ -1035,7 +1035,7 @@ structure IslandPrediction where
   status : DiscourseStatus
   /-- Ordinal extraction acceptability (0 = most degraded, 2 = best). -/
   rank : Fin 3
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Derive island predictions from at-issueness degree and threshold.
 Complements below threshold are backgrounded (islands); those above are

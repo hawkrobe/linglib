@@ -33,13 +33,13 @@ inductive Acceptability where
   | grammatical
   | ungrammatical
   | marginal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether the tense use is "true" (temporal) or "false" (psychological). -/
 inductive TenseUseType where
   | trueTense
   | falseTense
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A grammaticality judgment from @cite{lakoff-1970}. -/
 structure TenseJudgment where

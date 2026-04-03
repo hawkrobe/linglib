@@ -37,21 +37,21 @@ inductive Fusion where
   | isolating
   | concatenative
   | nonlinear
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 21: How many grammatical categories a single case formative expresses. -/
 inductive Exponence where
   | monoexponential
   | polyexponential
   | noCase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 22: How many inflectional categories are expressed on the verb. -/
 inductive VerbSynthesis where
   | low       -- 0--3 categories per verb word
   | moderate  -- 4--7 categories per verb word
   | high      -- 8+ categories per verb word
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Locus of marking: where grammatical relations are marked.
     Derived from WALS Ch 25A @cite{nichols-bickel-2013a}. -/
@@ -61,7 +61,7 @@ inductive LocusOfMarking where
   | doubleMarking
   | zeroMarking
   | inconsistentOrOther
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 26: Whether a language predominantly uses prefixes or suffixes. -/
 inductive PrefixSuffix where
@@ -71,14 +71,14 @@ inductive PrefixSuffix where
   | weaklyPrefixing
   | stronglyPrefixing
   | littleAffixation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 27: Whether the language has productive reduplication. -/
 inductive Reduplication where
   | productiveFull
   | fullOnly
   | noProductive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 23: Where grammatical relations are marked in clausal syntax.
     @cite{nichols-bickel-2013b} -/
@@ -88,7 +88,7 @@ inductive LocusClause where
   | doubleMarking
   | noMarking
   | other
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 24: Where grammatical relations are marked in possessive NPs.
     @cite{nichols-bickel-2013c} -/
@@ -98,7 +98,7 @@ inductive LocusPossessive where
   | doubleMarking
   | noMarking
   | other
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 25A: Whole-language locus-of-marking classification.
     @cite{nichols-bickel-2013a} -/
@@ -108,14 +108,14 @@ inductive WholeLanguageMarking where
   | doubleMarking
   | zeroMarking
   | inconsistentOrOther
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 25B: Whether A and P arguments are zero-marked.
     @cite{nichols-bickel-2013d} -/
 inductive ZeroMarkingAP where
   | zeroMarking
   | nonZeroMarking
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 28: Whether a language exhibits case syncretism. -/
 inductive CaseSyncretism where
@@ -123,14 +123,14 @@ inductive CaseSyncretism where
   | coreCasesOnly
   | coreAndNonCore
   | noSyncretism
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 29: Whether a language exhibits syncretism in verbal person/number. -/
 inductive VerbalSyncretism where
   | noSubjectMarking
   | syncretic
   | notSyncretic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 21B: What categories co-occur with TAM in a single formative. -/
 inductive TAMExponence where
@@ -140,7 +140,7 @@ inductive TAMExponence where
   | tamAgreementConstruct
   | tamPolarity
   | noTam
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 62: How a language constructs action nominals. -/
 inductive ActionNominal where
@@ -152,7 +152,7 @@ inductive ActionNominal where
   | mixed
   | restricted
   | noActionNominals
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 79A: Whether suppletion is conditioned by tense, aspect, or both. -/
 inductive SuppletionTA where
@@ -160,7 +160,7 @@ inductive SuppletionTA where
   | aspect
   | tenseAndAspect
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 79B: Whether a language has suppletive imperatives/hortatives. -/
 inductive SuppletionImperative where
@@ -169,7 +169,7 @@ inductive SuppletionImperative where
   | hortative
   | imperativeAndHortative
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 80A: Whether a language has verbal number marking. -/
 inductive VerbalNumber where
@@ -178,7 +178,7 @@ inductive VerbalNumber where
   | pairsSuppletion
   | triplesNoSuppletion
   | triplesSuppletion
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2. MorphProfile Structure
@@ -225,7 +225,7 @@ structure MorphProfile where
   suppletionImperative : Option SuppletionImperative := none
   /-- Ch 80A: Verbal number and suppletion (optional) -/
   verbalNumber : Option VerbalNumber := none
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- §3. WALS Converter Functions

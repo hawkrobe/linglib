@@ -22,7 +22,7 @@ inductive PronounPlurality where
   | personNumberStemNominalPluralAffix  -- Person-number stem + nominal plural affix (22 languages)
   | personStemPronominalPluralAffix  -- Person stem + pronominal plural affix (23 languages)
   | personStemNominalPluralAffix  -- Person stem + nominal plural affix (19 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 35A dataset (261 languages). -/
 def allData : List (Datapoint PronounPlurality) :=

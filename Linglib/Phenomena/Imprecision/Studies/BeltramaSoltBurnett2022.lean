@@ -64,7 +64,7 @@ inductive Variant where
   | precise        -- sharp number: "forty-nine minutes"
   | underspecified -- bare round number: "fifty minutes"
   | approximate    -- modified round number: "about fifty minutes"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2. Stimuli and Fragment connections
@@ -316,13 +316,13 @@ inductive Scenario where
   | persuasion    -- convincing friend: "it only adds X minutes"
   | stranger      -- chatting at bar: "how long have you lived here?"
   | bonding       -- new friend: "how long have you been at this job?"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Precision demand level of a communicative scenario. -/
 inductive PrecisionDemand where
   | high  -- descriptive accuracy serves communicative goal
   | low   -- socializing; precision is irrelevant
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def Scenario.precisionDemand : Scenario → PrecisionDemand
   | .forTheRecord => .high

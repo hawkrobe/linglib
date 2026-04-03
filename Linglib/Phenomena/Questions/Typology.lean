@@ -34,7 +34,7 @@ namespace Phenomena.Questions.Typology
 inductive ClauseTypingStrategy where
   | forced       -- Clause-typing forced at CP (English, Italian: whether/se)
   | delayed      -- Clause-typing delayed to PerspP (Hindi-Urdu: no wh-complementizer)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Data on simplex polar question embedding across languages.
     A simplex polar question is just the nucleus *p* (no "or not").
@@ -211,14 +211,14 @@ inductive QParticlePosition where
   | otherPosition   -- Other position
   | eitherOfTwo     -- In either of two positions
   | noParticle      -- No question particle
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 93A: Position of interrogative phrases (wh-words). -/
 inductive WhMovementStrategy where
   | initial   -- Wh-phrase obligatorily fronted (wh-movement)
   | inSitu    -- Wh-phrase stays in situ
   | mixed     -- Both strategies available
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 116A: How polar questions are formed. -/
 inductive PolarQuestionStrategy where
@@ -229,7 +229,7 @@ inductive PolarQuestionStrategy where
   | absenceOfDeclarative      -- Absence of declarative morphemes
   | intonationOnly            -- Interrogative intonation only
   | noDistinction             -- No interrogative-declarative distinction
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions

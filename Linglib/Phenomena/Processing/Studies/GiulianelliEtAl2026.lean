@@ -62,7 +62,7 @@ inductive Dataset where
   | aligned
   /-- 10 English narratives (~1000 words each), multi-sentence, self-paced RT -/
   | naturalStories
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2: Optimal Resolution per Measure
@@ -106,7 +106,7 @@ inductive LayerPattern where
   /-- Peaks at early-to-intermediate layers with secondary rise at final
       layer; characteristic of reading time measures -/
   | sShaped
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Layer-activation pattern for each psycholinguistic measure.
 

@@ -28,25 +28,25 @@ inductive QForce where
   | existential
   | negative
   | proportional
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Monotonicity in the scope argument. -/
 inductive Monotonicity where
   | increasing
   | decreasing
   | nonMonotone
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Weak/strong classification. -/
 inductive Strength where
   | weak
   | strong
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Gender for agreement. -/
 inductive Gender where
   | masc | fem
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Quantifier Entry

@@ -67,7 +67,7 @@ open RSA
 /-- Words available to the incremental speaker (Figure 1a). -/
 inductive Word where
   | red | dress | object
-  deriving DecidableEq, Fintype, BEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- Referents in the reference game scene (Figure 1a).
 
@@ -178,7 +178,7 @@ inductive Finding where
       probability to "dress" than to "red dress" for R1 — diverging
       from the global model which prefers "red dress". -/
   | incremental_prefers_bare_noun
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §6. Predictions

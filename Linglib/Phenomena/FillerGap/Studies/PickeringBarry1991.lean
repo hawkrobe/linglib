@@ -66,7 +66,7 @@ This is the central formal object of @cite{pickering-barry-1991}. -/
 inductive NestingPattern where
   | nested   -- abba: hard (must hold unfinished association in memory)
   | disjoint -- aabb: easy (each association completed sequentially)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Under the gap-free account, there is only one type of association:
 filler-verb. Under the trace account, there are two: filler-gap and gap-verb.
@@ -76,7 +76,7 @@ gap-free account needs only one. -/
 inductive AnalysisType where
   | gapFree    -- 1 association type: filler-verb
   | traceBased -- 2 association types: filler-gap + gap-verb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Number of independent association types required by each analysis. -/
 def AnalysisType.associationTypes : AnalysisType → Nat
@@ -109,13 +109,13 @@ inductive SentenceType where
   /-- "John found the saucer on which Mary put the cup into which
   I poured the tea." (ex 42) Pied-piped PPs, successive relatives. -/
   | engMultiPiedPiping
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Observed processing difficulty. -/
 inductive Difficulty where
   | easy -- Extensible without processing cost increase
   | hard -- Difficulty increases with each additional embedding
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Empirical processing difficulty for each sentence type.
 

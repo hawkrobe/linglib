@@ -548,7 +548,7 @@ inductive StativizerDiagnostic where
   | forAdverb   -- *for/in* adverbial compatibility
   | imperative  -- imperative mood
   | mexri       -- durative *until* compatibility
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Result of applying a stativizer diagnostic. -/
 structure DiagnosticResult where

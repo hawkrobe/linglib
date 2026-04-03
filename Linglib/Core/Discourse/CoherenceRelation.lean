@@ -45,7 +45,7 @@ inductive CoherenceClass where
   | resemblance   -- Parallel, Contrast (similarity of structure)
   | causeEffect   -- Result, Explanation (causal connection)
   | contiguity    -- Occasion, Elaboration (spatiotemporal adjacency)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Coherence Relations
@@ -65,7 +65,7 @@ inductive CoherenceRelation where
   | parallel      -- structural similarity between segments
   | contrast      -- "but"/"although": similarity + dissimilarity + exclusion of additional alternative
   | correction    -- "but" (corrective) / German *sondern*: exclusion by substitution
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 3. Properties
@@ -86,7 +86,7 @@ inductive CausalDirection where
   | backward   -- Prior segment is effect, continuation provides cause
   | forward    -- Prior segment is cause, continuation provides effect
   | none       -- No causal search
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The causal direction of each relation. -/
 def CoherenceRelation.causalDirection : CoherenceRelation → CausalDirection
@@ -117,7 +117,7 @@ inductive Connective where
   | andSo       -- "sodass" / "and so" → I-Cons
   | although    -- "obwohl" / "although"
   | andThen     -- "und dann" / "and then"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map connectives to the coherence relation they signal. -/
 def Connective.toRelation : Connective → CoherenceRelation

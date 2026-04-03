@@ -195,7 +195,7 @@ theorem outer_cannot_condition_inner :
 structure FeatureVI (F E : Type) where
   features : List F
   exponent : E
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The **Subset Principle** (@cite{halle-marantz-1993}): among vocabulary
     items whose feature specification is a subset of the target, select

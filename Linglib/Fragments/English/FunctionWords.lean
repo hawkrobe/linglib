@@ -79,7 +79,7 @@ inductive AuxType where
   | doSupport  -- do, does, did
   | be         -- am, is, are, was, were
   | have       -- have, has, had
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 structure AuxEntry where
   form : String
@@ -357,7 +357,7 @@ inductive AdvQuantForce where
   | existential   -- "sometimes"
   | proportional  -- "usually"
   | negative      -- "never"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- An adverbial quantifier entry: a closed-class adverb that quantifies
     over situations (times, events, occasions).

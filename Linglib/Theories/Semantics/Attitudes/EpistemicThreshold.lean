@@ -121,7 +121,7 @@ structure EpistemicEntry where
   θ : ℚ
   /-- Factivity flag -/
   factive : Bool := false
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! Standard epistemic thresholds (@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}, Table 1(b)).
 

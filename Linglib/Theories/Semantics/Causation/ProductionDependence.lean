@@ -60,7 +60,7 @@ inductive CausationType where
   /-- Dependence-based: counterfactual, allows abstract causers.
       *kill*, *destroy*, *damage*, overt *cause*. -/
   | dependence
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## Thick vs Thin Classification
 
@@ -84,7 +84,7 @@ inductive ThickThinClass where
   /-- Thin: result-only, no manner specification.
       *kill*, *destroy*, *damage*, *change*, *activate*. -/
   | thin
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Is the verb thick (encodes manner of causing)? -/
 def ThickThinClass.isThick : ThickThinClass → Bool

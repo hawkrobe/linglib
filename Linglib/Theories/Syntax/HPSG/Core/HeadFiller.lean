@@ -257,7 +257,7 @@ inductive GapRestriction where
   | unrestricted  -- Any GAP value (not an island)
   | npOnly        -- [GAP list(NP)] — weak island (only NP extraction)
   | noGap         -- [GAP ⟨⟩] — absolute barrier to extraction
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Does this GAP restriction block all extraction? -/
 def GapRestriction.isAbsoluteIsland : GapRestriction → Bool

@@ -64,7 +64,7 @@ open Phenomena.Ergativity
     specifier of VoiceP projected inside the nominalized clause). -/
 structure RON where
   active : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Mayan Absolutive Parameter
@@ -80,7 +80,7 @@ structure RON where
 structure MayanParams where
   ron : RON
   absPos : ABSPosition
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Kaqchikel: RON active, high absolutive. -/
 def kaqchikelParams : MayanParams :=
@@ -109,7 +109,7 @@ def qanjobalParams : MayanParams :=
 structure NomClause where
   hasExternalArg : Bool
   hasInternalArg : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Build the nominalized clause from the RON and transitivity. -/
 def nomClauseFromRON (ron : RON) (transitive : Bool) : NomClause :=

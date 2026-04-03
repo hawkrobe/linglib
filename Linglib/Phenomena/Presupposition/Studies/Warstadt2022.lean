@@ -39,7 +39,7 @@ inductive GCWorld where
   | usCitizen
   | gcHolder
   | nonUS
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allGCWorlds : List GCWorld := [.usCitizen, .gcHolder, .nonUS]
 
@@ -58,7 +58,7 @@ inductive GCUtterance where
   | greenCard
   | notGreenCard
   | silence
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allGCUtterances : List GCUtterance :=
   [.us, .notUS, .greenCard, .notGreenCard, .silence]
@@ -74,7 +74,7 @@ instance : Fintype GCUtterance where
 inductive GCQUD where
   | needVisa
   | freeDrink
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allGCQUDs : List GCQUD := [.needVisa, .freeDrink]
 
@@ -158,7 +158,7 @@ inductive FGSWorld where
   | runner
   | otherAthlete
   | nonAthlete
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allFGSWorlds : List FGSWorld :=
   [.olympicSprinter, .runner, .otherAthlete, .nonAthlete]
@@ -179,7 +179,7 @@ inductive FGSUtterance where
   | athlete
   | notAthlete
   | silence
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allFGSUtterances : List FGSUtterance :=
   [.olympicSprinter, .notOlympicSprinter, .runner, .notRunner,
@@ -270,7 +270,7 @@ structure GCContext where
   usCitizen : Bool
   gcHolder : Bool
   nonUS : Bool
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- All 2³ = 8 contexts (subsets of GCWorld). -/
 def allGCContexts : List GCContext :=
@@ -298,7 +298,7 @@ structure FGSContext where
   runner : Bool
   otherAthlete : Bool
   nonAthlete : Bool
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- All 2⁴ = 16 contexts. -/
 def allFGSContexts : List FGSContext :=
@@ -321,7 +321,7 @@ def fgsContextPrior (_c : FGSContext) : ℚ := 1 / 16
 
 inductive FGSQUD where
   | identity
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allFGSQUDs : List FGSQUD := [.identity]
 

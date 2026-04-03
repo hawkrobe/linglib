@@ -21,7 +21,7 @@ inductive RelClauseNounOrder where
   | adjoined  -- Adjoined (8 languages)
   | doublyHeaded  -- Doubly headed (1 languages)
   | mixed  -- Mixed (64 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint RelClauseNounOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .nounRelativeClause }

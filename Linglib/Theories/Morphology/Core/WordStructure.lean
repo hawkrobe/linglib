@@ -51,7 +51,7 @@ structure Morpheme where
   form   : String
   gloss  : String := ""
   status : MorphStatus := .freeWord
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2: Reduplication Type
@@ -67,7 +67,7 @@ structure Morpheme where
 inductive RedupType where
   | total
   | partialCopy (copied : String)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §3: MorphWord — Hierarchical Word Structure

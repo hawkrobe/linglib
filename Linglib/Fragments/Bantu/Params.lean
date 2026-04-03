@@ -47,7 +47,7 @@ inductive SemanticCore where
   | animal    -- [animal]: canonically classes 9/10 (Xhosa)
   | inanimate -- [inanimate]: canonically classes 7/8 (Xhosa)
   | nonhuman  -- [non-human]: Shona's 7/8 default for all non-humans
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Gender Interpretability
@@ -65,7 +65,7 @@ inductive SemanticCore where
 inductive GenderStatus where
   | interpretable : SemanticCore → GenderStatus
   | uninterpretable : GenderStatus
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def GenderStatus.isInterpretable : GenderStatus → Bool
   | .interpretable _ => true
@@ -95,7 +95,7 @@ structure NPStack where
   visibleClass : Nat
   coreClass : Nat
   status : GenderStatus
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def NPStack.isCanonical (s : NPStack) : Bool :=
   s.visibleClass == s.coreClass

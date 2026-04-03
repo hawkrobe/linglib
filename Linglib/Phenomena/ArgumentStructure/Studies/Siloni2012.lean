@@ -61,7 +61,7 @@ inductive RecipClass where
   | periphrastic
   | lexicalVerb
   | syntacticVerb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def toRecipClass : RecipFormation → RecipClass
   | .lexical  => .lexicalVerb
@@ -123,7 +123,7 @@ structure PropertyCluster where
   /-- (ix) Allows the discontinuous reciprocal construction —
       subject + comitative "with"-phrase (§7). -/
   discontinuous : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Predicted cluster for lexically-formed reciprocal verbs.
     Symmetric verbs: closed class, singular event, can be frozen or
@@ -217,7 +217,7 @@ structure BundledRole where
   external : EntailmentProfile
   /-- The internal (theme-like) component -/
   internal : EntailmentProfile
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Lexical reciprocalization: bundle a transitive verb's two roles. -/
 def reciprocalBundle (subjectProfile objectProfile : EntailmentProfile) :
@@ -280,7 +280,7 @@ structure LangRecipVerb where
   language : String
   iso : String
   formation : RecipFormation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- Class (ii): lexical reciprocal verbs (symmetric).
 -- Note: `formation` here classifies the reciprocal VERB mechanism,

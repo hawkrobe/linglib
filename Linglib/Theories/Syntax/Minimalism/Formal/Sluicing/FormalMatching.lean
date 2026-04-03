@@ -92,7 +92,7 @@ structure HeadPair where
       Distinguishes active v[agentive] from passive v[nonThematic] within
       the argument domain. -/
   voiceFlavor : Option VoiceFlavor := none
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Extract head pairs from a syntactic object, restricted to heads
     whose F-value falls within the argument domain of the given top category.
@@ -383,7 +383,7 @@ structure NominalEllipsisLicense where
   numHasE : Bool
   /-- The nominal argument domain boundary (n for full DPs). -/
   argDomainBoundary : Cat := .n
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Is NP-ellipsis licensed? Requires Num[E]. -/
 def NominalEllipsisLicense.isLicensed (nel : NominalEllipsisLicense) : Bool :=

@@ -39,7 +39,7 @@ open Semantics.Tense.Aspect.Core
 inductive EventSort where
   | action  -- dynamic eventualities (run, kick, build)
   | state   -- stative eventualities (know, love, own)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════
 -- § 2. Core Event Type

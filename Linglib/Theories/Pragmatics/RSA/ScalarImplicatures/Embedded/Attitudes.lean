@@ -54,7 +54,7 @@ inductive StudentOutcome where
   | noneO     -- no students passed
   | someO     -- some but not all passed
   | allO      -- all students passed
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 World state tracking both reality and John's beliefs.
@@ -68,7 +68,7 @@ structure BeliefWorld where
   actual : StudentOutcome
   /-- What John believes happened -/
   johnBelieves : StudentOutcome
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The actual world determines what's true at the matrix level -/
 def BeliefWorld.actuallyNone (w : BeliefWorld) : Bool := w.actual == .noneO
@@ -98,7 +98,7 @@ Two possible interpretations of "John believes some students passed":
 inductive AttitudeInterpretation where
   | global  -- "some" is weak, implicature at matrix level
   | local_  -- "some" is strong (some-but-not-all) inside belief
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 -- Truth Conditions
 
@@ -169,7 +169,7 @@ inductive AttitudeUtterance where
   | believesSome   -- "John believes some students passed"
   | believesAll    -- "John believes all students passed"
   | believesNone   -- "John believes no students passed"
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /--
 Truth under an interpretation (for "believes some" only).

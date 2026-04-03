@@ -30,7 +30,7 @@ inductive Condition where
   | must          -- "Students must take four classes"
   | haveTo        -- "Students have to take four classes"
   | mustHaveTo    -- "Students must have to take four classes" (concord)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Dimensions of social meaning measured in Experiment 2. -/
 inductive SocialDimension where
@@ -38,7 +38,7 @@ inductive SocialDimension where
   | standardDialect -- "Does the speaker speak a standard dialect?"
   | friendly        -- "How friendly does the speaker sound?"
   | attractive      -- "How attractive does the speaker sound?"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A Likert-scale rating (mean on a 7-point scale). -/
 structure LikertRating where

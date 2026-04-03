@@ -524,7 +524,7 @@ def cCommandsInB (root x y : SyntacticObject) : Bool :=
 inductive TreeShape where
   | leaf : TreeShape
   | node : TreeShape → TreeShape → TreeShape
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Strip labels from a syntactic object, yielding its abstract shape. -/
 def SyntacticObject.shape : SyntacticObject → TreeShape

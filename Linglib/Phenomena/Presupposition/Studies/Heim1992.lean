@@ -47,12 +47,12 @@ open Semantics.Presupposition.BeliefEmbedding
 inductive AttWorld where
   | actual   -- p is false here (Mary never smoked)
   | believed -- p is true here (Mary smoked)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Single agent: John. -/
 inductive Holder where
   | john
-  deriving DecidableEq, BEq
+  deriving DecidableEq
 
 /-! ## Frame Construction -/
 

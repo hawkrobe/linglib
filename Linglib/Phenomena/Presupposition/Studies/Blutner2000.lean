@@ -78,7 +78,7 @@ inductive ProjectionSite where
   | local         -- accommodate in the most embedded position
   | intermediate  -- accommodate at an intermediate level (e.g., antecedent)
   | global        -- accommodate at the top-level discourse context
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Constraints
@@ -108,7 +108,7 @@ abbrev Strength := Nat
 
 /-- The input form for example (18). Only one form (the presuppositional
     sentence). The competition is among interpretations (projection sites). -/
-inductive Form18 where | sentence deriving DecidableEq, BEq, Repr
+inductive Form18 where | sentence deriving DecidableEq, Repr
 
 /-- Generator: one form, three projection sites. -/
 def gen18 : List (Form18 × ProjectionSite) :=
@@ -138,7 +138,7 @@ theorem ex18_global_wins :
     against the antecedent — no accommodation needed. -/
 
 /-- Generator for example (19). -/
-inductive Form19 where | sentence deriving DecidableEq, BEq, Repr
+inductive Form19 where | sentence deriving DecidableEq, Repr
 
 def gen19 : List (Form19 × ProjectionSite) :=
   [(.sentence, .local), (.sentence, .intermediate), (.sentence, .global)]
@@ -178,12 +178,12 @@ theorem ex19_intermediate_wins :
 inductive DefForm where
   | definite    -- "the car hit him" (triggers presupposition)
   | indefinite  -- "a car hit him" (no presupposition)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The shared meaning (same context change result). -/
 inductive AccidentMeaning where
   | carHitHim  -- the resulting interpretation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Generator: both forms map to the same meaning. -/
 def genAccident : List (DefForm × AccidentMeaning) :=

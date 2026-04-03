@@ -83,14 +83,14 @@ Mushroom reward = sum of color reward + texture reward
 inductive FeatureType where
   | green | red | blue           -- Colors
   | spotted | solid | striped    -- Textures
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Possible reward values for features (coarse: data-level) -/
 inductive RewardValue where
   | minusTwo : RewardValue  -- -2 points
   | plusOne : RewardValue   -- +1 point
   | plusTwo : RewardValue   -- +2 points
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 def RewardValue.toInt : RewardValue → Int
   | .minusTwo => -2
@@ -113,7 +113,7 @@ In 2DP, they can diverge, revealing tradeoff.
 inductive ContextCondition where
   | oneDP : ContextCondition   -- One decision point
   | twoDP : ContextCondition   -- Two decision points
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Experiment 1: Sample size and conditions -/
 structure Exp1Design where
@@ -192,7 +192,7 @@ inductive InstructionCondition where
   | unbiased : InstructionCondition
   | truthBiased : InstructionCondition
   | relevanceBiased : InstructionCondition
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Experiment 2: Design parameters -/
 structure Exp2Design where
@@ -403,7 +403,7 @@ inductive Feature where
   | spotted : Feature
   | solid : Feature
   | striped : Feature
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Feature values in the experimental range -/
 inductive FeatureValue where
@@ -412,7 +412,7 @@ inductive FeatureValue where
   | zero : FeatureValue  --  0
   | pos1 : FeatureValue  -- +1
   | pos2 : FeatureValue  -- +2
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Convert feature value to rational -/
 def FeatureValue.toRat : FeatureValue → ℚ
@@ -477,7 +477,7 @@ Example: "Spots are +1" = {feature :=.spotted, value :=.pos1}
 structure Utterance where
   feature : Feature
   value : FeatureValue
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- All possible utterances (30 = 6 features x 5 values) -/
 def allUtterances : List Utterance :=

@@ -18,7 +18,7 @@ structure Datapoint (V : Type) where
   language : String
   iso : String
   value : V
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Look up a language by WALS code. -/
 def Datapoint.lookup {V : Type} [BEq V] (data : List (Datapoint V))

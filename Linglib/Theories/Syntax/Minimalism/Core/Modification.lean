@@ -54,14 +54,14 @@ inductive AttrStatus where
   | clitic    -- morphophonologically independent: Mandarin 的, Farsi ezafe
   | freeWord  -- independent word form
   | null      -- covert but syntactically present: English, Hungarian
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Position of attributive adjectives relative to the modified noun. -/
 inductive AdjPosition where
   | prenominal   -- A–N: English, German, Russian, Greek
   | postnominal  -- N–A: Basque, Farsi, Eastern Oromo
   | both         -- both orders productive: Latin, Tagalog
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Adjective Morphosyntactic Profile
@@ -87,7 +87,7 @@ structure AdjMorphProfile where
   agreementPhiKappaComplete : Bool
   /-- MAG (34b): morphophonological status of the attributivizer -/
   attrStatus               : AttrStatus
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Modification Routes (§5.1)
@@ -105,7 +105,7 @@ structure AdjMorphProfile where
 inductive ModificationRoute where
   | direct        -- [N, uN] + [N] → no Attr needed (§5.1.2)
   | attrMediated  -- Attr converts [A] → [N, uN] or [N] → [N, uA] (§5.1.3)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Determine the modification route from the adjective morphosyntactic
     profile. φ/κ-complete languages use direct modification; all others

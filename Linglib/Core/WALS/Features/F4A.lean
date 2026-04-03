@@ -18,7 +18,7 @@ inductive VoicingInPlosivesAndFricatives where
   | inPlosivesAlone  -- In plosives alone (189 languages)
   | inFricativesAlone  -- In fricatives alone (38 languages)
   | inBothPlosivesAndFricatives  -- In both plosives and fricatives (158 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint VoicingInPlosivesAndFricatives) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .inPlosivesAlone }

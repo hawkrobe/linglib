@@ -17,7 +17,7 @@ inductive EpistemicPossibility where
   | verbalConstructions  -- Verbal constructions (65 languages)
   | affixesOnVerbs  -- Affixes on verbs (84 languages)
   | other  -- Other (91 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 75A dataset (240 languages). -/
 def allData : List (Datapoint EpistemicPossibility) :=

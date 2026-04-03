@@ -29,6 +29,6 @@ inductive CombinationKind where
       CCG: harmonic composition (primarily; composition also serves other
       functions like heavy NP shift); DG: non-projective dependency. -/
   | headFiller
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 end Core

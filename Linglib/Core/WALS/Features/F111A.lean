@@ -18,7 +18,7 @@ inductive NonperiphrCausativeType where
   | morphologicalOnly  -- Morphological but no compound (254 languages)
   | compoundOnly  -- Compound but no morphological (9 languages)
   | both  -- Both (24 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 111A dataset (310 languages). -/
 def allData : List (Datapoint NonperiphrCausativeType) :=

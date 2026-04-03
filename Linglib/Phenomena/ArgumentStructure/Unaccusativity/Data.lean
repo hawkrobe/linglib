@@ -31,14 +31,14 @@ inductive Diagnostic where
   | auxiliarySelection       -- Italian essere/avere split
   | passiveType             -- Japanese: only indirect passive (no *-niyotte*)
   | whAdjunctBlocking       -- Japanese: *nani-o* 'what-ACC' = 'why' blocked
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Result of applying a diagnostic to a verb. -/
 inductive DiagnosticResult where
   | passes    -- Verb behaves as unaccusative on this diagnostic
   | fails     -- Verb behaves as unergative/transitive
   | marginal  -- Intermediate or speaker-variable judgment
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A single diagnostic judgment. -/
 structure DiagnosticDatum where
@@ -295,7 +295,7 @@ inductive QIStructuralTest where
   | conjointDisjoint    -- Setswana CJ/DJ alternation — Agent position (§3.4)
   | quoteCategory       -- Quote behaves as clause-external (§3.5)
   | constituentOrdering -- Position of constituents relative to Agent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A structural evidence datum for QI clause structure. -/
 structure QIStructuralDatum where

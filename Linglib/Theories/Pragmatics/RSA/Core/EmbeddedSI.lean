@@ -32,13 +32,13 @@ inductive EmbeddedSIWorld where
   | SA : EmbeddedSIWorld  -- Alice: some, Bob: all
   | AS : EmbeddedSIWorld  -- Alice: all, Bob: some
   | AA : EmbeddedSIWorld  -- Alice: all, Bob: all
-  deriving DecidableEq, Fintype, Repr, BEq
+  deriving DecidableEq, Fintype, Repr
 
 /-- Messages in the embedded SI scenario -/
 inductive EmbeddedSIMessage where
   | everySome : EmbeddedSIMessage  -- "Every student read some book"
   | everyAll  : EmbeddedSIMessage  -- "Every student read all books"
-  deriving DecidableEq, Fintype, Repr, BEq
+  deriving DecidableEq, Fintype, Repr
 
 /-- Literal meaning: when is each message true?
     - "every some" is true in all worlds (some ⊆ all)

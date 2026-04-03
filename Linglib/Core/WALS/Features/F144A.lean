@@ -35,7 +35,7 @@ inductive PositionOfNegativeWordWithRespectToSubjectObjectAndVerb where
   | optdoubleneg  -- OptDoubleNeg (67 languages)
   | morphneg  -- MorphNeg (333 languages)
   | other  -- Other (169 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .other }

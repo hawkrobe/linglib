@@ -58,14 +58,14 @@ inductive Object where
   | flashlight  -- edge case
   | boombox     -- clear member
   | tablet      -- clear member
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- The signaler's policy goals (Appendix A). -/
 inductive Goal where
   | limitLight         -- "emit light that could distract..."
   | limitNoise         -- "create noise that could distract..."
   | preventRecordings  -- "record performances and distribute..."
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Experimental conditions (determines latentPrior over Goals). -/
 inductive GoalCondition where
@@ -73,13 +73,13 @@ inductive GoalCondition where
   | limitLight         -- goal = limitLight; prior concentrated
   | limitNoise
   | preventRecordings
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Utterances: the rule-maker produces the rule or stays silent. -/
 inductive Utterance where
   | rule    -- "No electronic devices are allowed in the theater"
   | silence -- no rule produced
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 -- ════════════════════════════════════════════════════
 -- § 2. Feature Scores (Schematic)

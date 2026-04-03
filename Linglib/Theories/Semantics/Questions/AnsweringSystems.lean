@@ -47,7 +47,7 @@ inductive AnsweringSystem where
   | truthBased
   /-- "Yes" assigns positive polarity (English, Swedish, German, French, Finnish) -/
   | polarityBased
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- How a language forms answers to polar questions.
 
@@ -60,7 +60,7 @@ inductive AnswerStrategy where
   | verbEcho
   /-- Both particle and verb echo available (Swedish *ja/nej* + verb echo) -/
   | mixed
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A language's polar answer profile: answering system + answer strategy. -/
 structure PolarAnswerProfile where
@@ -71,7 +71,7 @@ structure PolarAnswerProfile where
   /-- Does the language have a dedicated polarity-reversing particle
       (e.g., Swedish *jo*, German *doch*, French *si*)? -/
   hasPolarityReversal : Bool := false
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The diagnostic prediction: what does "yes" mean in response to
     "Doesn't John drink?" under each answering system?
@@ -130,7 +130,7 @@ inductive NegationHeight where
   /-- Negation above PolP — C-domain, scoping over [±Pol]
       (English *-n't* in positively-biased questions) -/
   | high
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Derive the answering system from negation height.
 

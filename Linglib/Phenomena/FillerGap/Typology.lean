@@ -115,7 +115,7 @@ inductive SubjRelStrategy where
       ("the man [who left]"). WALS does not distinguish a "mixed"
       category; this value is used only in our language profiles. -/
   | mixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 123: Relativization Strategies on Obliques
@@ -151,7 +151,7 @@ inductive OblRelStrategy where
       uses alternative constructions (e.g., nominalization, paraphrase).
       (10/112 in WALS). -/
   | notRelativizable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Data Abbreviations
@@ -193,7 +193,7 @@ private def fromWALS123A : Core.WALS.F123A.ObliqueRelativization → OblRelStrat
 structure WALSCount where
   label : String
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Sum of counts in a WALS table. -/
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=

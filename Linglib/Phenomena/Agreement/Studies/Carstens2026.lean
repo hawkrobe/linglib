@@ -589,7 +589,7 @@ theorem derivation_human_inanimate_default :
 structure TwoGrammarFeature where
   classNum : Nat
   isCore : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- BSM specificity: core flavors outrank arbitrary i[entity]. -/
 def TwoGrammarFeature.specificity (f : TwoGrammarFeature) : Nat :=

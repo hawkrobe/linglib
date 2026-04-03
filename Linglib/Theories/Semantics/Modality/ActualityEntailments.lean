@@ -78,7 +78,7 @@ inductive AspectModalScope where
   | aspectOverModal
   /-- Epistemic: [Mod [Asp [VP]]] — modal scopes over aspect -/
   | modalOverAspect
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Position determines aspect scope.
 belowAsp → aspect over modal (root configuration).

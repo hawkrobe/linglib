@@ -18,7 +18,7 @@ inductive PastTenseType where
   | present23RemotenessDistinctions  -- Present, 2-3 remoteness distinctions (38 languages)
   | present4OrMoreRemotenessDistinctions  -- Present, 4 or more remoteness distinctions (2 languages)
   | noPastTense  -- No past tense (88 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 66A dataset (222 languages). -/
 def allData : List (Datapoint PastTenseType) :=

@@ -67,7 +67,7 @@ open Core (PhiFeatures PrivativePair)
 inductive Clusivity where
   | inclusive   -- speaker + addressee (± others)
   | exclusive   -- speaker + others, no addressee
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Discourse Groups

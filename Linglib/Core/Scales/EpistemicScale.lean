@@ -265,7 +265,7 @@ theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
 inductive EpistemicTag where
   | finitelyAdditive
   | qualitative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : LicensingPipeline EpistemicTag where
   toBoundedness

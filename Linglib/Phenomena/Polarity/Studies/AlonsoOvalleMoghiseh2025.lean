@@ -49,7 +49,7 @@ inductive AlternativeType where
   | scalar
   /-- Domain alternatives: ∃x∈D vs ∃x∈D' for D' ⊂ D -/
   | domain
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 An EFCI alternative with its type and whether it's pre-exhaustified.
@@ -303,7 +303,7 @@ inductive EFCIRescue where
   | partialExh
   /-- Both mechanisms available -/
   | both
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 EFCI type determines root context behavior.
@@ -351,7 +351,7 @@ Modal flavor type.
 inductive ModalFlavor where
   | deontic : ModalFlavor   -- Permission, obligation
   | epistemic : ModalFlavor -- Knowledge, belief
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 EFCI reading type under different conditions.
@@ -367,7 +367,7 @@ inductive EFCIReading where
   | modalVariation
   /-- Epistemic ignorance (modal insertion) -/
   | epistemicIgnorance
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Determine EFCI reading based on context and rescue mechanism.
@@ -485,7 +485,7 @@ universal surface force due to obligatory exhaustification.
 inductive FCIFlavor where
   | existential  -- irgendein, yek-i, vreun
   | universal    -- any, qualunque, whatever
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Universal FCI: existential with obligatorily active domain alternatives.
@@ -525,7 +525,7 @@ inductive UFCIContext where
   | epistemicModal     -- There might be any solution (FC)
   | generic            -- Any owl hunts mice (subtrigging)
   | question           -- Did you see any students? (NPI)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Universal FCI grammaticality prediction.

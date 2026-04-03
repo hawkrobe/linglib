@@ -43,7 +43,7 @@ requirements. All three are formalized as concrete theorems.
 structure Prec where
   before : String
   after  : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Generate all pairwise precedences from a left-to-right sequence of
     overt terminal labels. Given terminals [a, b, c], produces

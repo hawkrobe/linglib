@@ -196,7 +196,7 @@ section RunSmoke
 
 /-- Four activity worlds (run and smoke are independent). -/
 inductive AW where | rs | rns | s | ns
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def awDomain : List AW := [.rs, .rns, .s, .ns]
 
@@ -266,7 +266,7 @@ section ThreeCookies
 
 /-- Three cookie worlds: ate exactly 3, 4, or 5. -/
 inductive CW where | w3 | w4 | w5
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def cwDomain : List CW := [.w3, .w4, .w5]
 

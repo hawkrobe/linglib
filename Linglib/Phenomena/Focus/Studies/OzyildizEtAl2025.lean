@@ -589,7 +589,7 @@ inductive DiagnosticResult where
   | noEvidence       -- All inferences are entailments; no invalidating context found
   | focusSensitive   -- Invalidating context found AND truth values differ
   | inconclusive     -- Invalidating context found but truth values are the same
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The diagnostic applied to a predicate with known properties.
 
@@ -633,7 +633,7 @@ inductive Desideratum where
   | transparency            -- Clear how data supports the conclusion
   | crossLingUniformity     -- Minimal language-specific elements
   | itemGeneralizability    -- Clear recipe for any item in the class
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A method's rating on each desideratum. -/
 structure MethodEvaluation where
@@ -703,7 +703,7 @@ Both errors are caught by the truth-based follow-up step.
 inductive ComplementMonotonicity where
   | upwardEntailing     -- believe, know: weakening preserves truth
   | nonUpwardEntailing  -- want, deny, be surprised: weakening may not preserve truth
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- For UE predicates, the inference test is reliable:
     non-entailment genuinely indicates focus-sensitivity. -/

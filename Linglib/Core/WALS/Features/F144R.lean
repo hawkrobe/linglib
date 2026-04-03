@@ -22,7 +22,7 @@ inductive SonegvOrder where
   | prefixOnlywithanotherneg  -- Prefix&OnlyWithAnotherNeg (21 languages)
   | type1Type2  -- Type 1 / Type 2 (1 languages)
   | noSonegv  -- No SONegV (238 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144R dataset (411 languages). -/
 def allData : List (Datapoint SonegvOrder) :=

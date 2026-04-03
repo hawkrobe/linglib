@@ -37,7 +37,7 @@ inductive PositionOfNegativeMorphemesInSovLanguages where
   | svOvVNeg  -- SV&OV&[V-Neg] (23 languages)
   | svOvImmedpreverbal  -- SV&OV&ImmedPreverbal (5 languages)
   | svOvInitialneg  -- SV&OV&InitialNeg (4 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PositionOfNegativeMorphemesInSovLanguages) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .svOvVNeg }

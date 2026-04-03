@@ -50,7 +50,7 @@ structure TemporalFrameAdverb where
   forcesShifted : Bool
   /-- Compatible with the simultaneous reading? -/
   compatSimultaneous : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- *aznap* 'that day' — compatible with both readings.
     Anchors the embedded event to the matrix event day, which is

@@ -59,7 +59,7 @@ inductive ExtractionMarkingStrategy where
       morphology (*-Vn*, no Set A). Long-distance agent extraction does
       NOT trigger AF --- the repair is locality-sensitive. -/
   | agentFocusAlternation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- S 2: Extraction Target
@@ -81,7 +81,7 @@ inductive ExtractionTarget where
   | oblique
   /-- Possessor extraction -/
   | possessor
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The thematic category of an argument being extracted: agent
     (external argument), patient (internal argument), or oblique.
@@ -100,7 +100,7 @@ inductive ArgumentRole where
   | agent    -- external argument (agent, experiencer, causer)
   | patient  -- internal argument (patient, theme)
   | oblique  -- oblique argument (instrument, goal, source, etc.)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Default structural position for a given argument role (active voice). -/
 def ArgumentRole.defaultPosition : ArgumentRole → ExtractionTarget
@@ -118,7 +118,7 @@ def ArgumentRole.defaultPosition : ArgumentRole → ExtractionTarget
 inductive Extractee where
   | dpArg : ArgumentRole → Extractee
   | adjunct : Extractee
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- S 3: Extraction Profile

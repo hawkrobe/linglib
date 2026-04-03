@@ -112,7 +112,7 @@ theorem kichean_fpg_holds :
 inductive ExtractionMorphologyMechanism where
   | agreeReflex     -- Morpheme on probe head (Mam =(y)a')
   | copySpellout    -- Morpheme at extraction site (K'ichean *wi*)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def mamMechanism : ExtractionMorphologyMechanism := .agreeReflex
 def kicheanMechanism : ExtractionMorphologyMechanism := .copySpellout

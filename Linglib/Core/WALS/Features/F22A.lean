@@ -21,7 +21,7 @@ inductive InflectionalSynthesis where
   | categoriesPerWord8_9  -- 8-9 categories per word (24 languages)
   | categoriesPerWord10_11  -- 10-11 categories per word (7 languages)
   | categoriesPerWord12_13  -- 12-13 categories per word (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 22A dataset (145 languages). -/
 def allData : List (Datapoint InflectionalSynthesis) :=

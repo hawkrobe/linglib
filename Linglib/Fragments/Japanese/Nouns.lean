@@ -32,7 +32,7 @@ structure NounEntry where
 /-- Japanese case particles. -/
 inductive CaseParticle where
   | ga | wo | ni | de | no | wa
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Japanese NP structure (no articles, but has case particles). -/
 structure NP where

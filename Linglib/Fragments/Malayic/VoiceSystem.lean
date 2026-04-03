@@ -51,7 +51,7 @@ inductive LittleVFlavor where
   /-- Passive: licenses its specifier (external argument, if present).
       Realizes as ∅. -/
   | pass
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The four clause types in Malayic languages.
     @cite{erlewine-sommerlot-2025} (28), (29). -/
@@ -66,7 +66,7 @@ inductive ClauseType where
   /-- Object extraction: theme A'-extracted, *v* = v_ACT, Voice = ∅,
       agent immediately preverbal. -/
   | objectExtraction
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The *v* flavor selected by each clause type. -/
 def ClauseType.vFlavor : ClauseType → LittleVFlavor

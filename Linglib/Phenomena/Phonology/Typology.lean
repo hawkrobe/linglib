@@ -81,44 +81,44 @@ private abbrev ch19 := Core.WALS.F19A.allData
 /-- Consonant inventory size (WALS Ch 1). -/
 inductive CInventorySize where
   | small | moderatelySmall | average | moderatelyLarge | large
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Vowel quality inventory size (WALS Ch 2). -/
 inductive VInventorySize where
   | small | average | large
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Consonant-to-vowel ratio (WALS Ch 3). -/
 inductive CVRatio where
   | low | moderatelyLow | average | moderatelyHigh | high
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Voicing contrast in obstruents (WALS Ch 4). -/
 inductive VoicingContrast where
   | none | plosivesOnly | fricativesOnly | both
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Uvular consonant inventory (WALS Ch 6). -/
 inductive UvularPresence where
   | none | stopsOnly | continuantsOnly | stopsAndContinuants
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Glottalized consonant types (WALS Ch 7). -/
 inductive GlottalizedType where
   | none | ejectivesOnly | implosivesOnly | resonantsOnly
   | ejectivesAndImplosives | ejectivesAndResonants
   | implosivesAndResonants | allThree
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Lateral consonant inventory (WALS Ch 8). -/
 inductive LateralType where
   | noLaterals | lOnly | lateralsNoL | lAndObstruent | obstruentOnly
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Velar nasal status (WALS Ch 9). -/
 inductive VelarNasalStatus where
   | initial | noInitial | absent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Nasal vowel contrast type in West Africa (WALS Ch 10B).
 Areal sub-feature of Ch 10A, covering 40 West African languages. -/
@@ -126,27 +126,27 @@ inductive NasalVowelWA where
   | noContrast
   | twoWayNoSpreading | twoWaySpreading
   | fourWayNoSpreading | fourWaySpreading
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Front rounded vowel inventory (WALS Ch 11). -/
 inductive FrontRounded where
   | none | highAndMid | highOnly | midOnly
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Syllable structure complexity (WALS Ch 12). -/
 inductive SyllableComplexity where
   | simple | moderatelyComplex | complex
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Tone system type (WALS Ch 13). -/
 inductive ToneSystem where
   | none | simple | complex
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Fixed stress location (WALS Ch 14). -/
 inductive StressLocation where
   | noFixed | initial | second | third | antepenultimate | penultimate | ultimate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Weight-sensitive stress pattern (WALS Ch 15A).
 Sub-feature of Ch 14A, classifying how stress interacts with syllable weight. -/
@@ -155,31 +155,31 @@ inductive WeightStress where
   | rightEdge | rightOriented
   | unbounded | combinedRightUnbounded
   | notPredictable | fixedNoWeight
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Weight factor in weight-sensitive stress (WALS Ch 16A).
 Sub-feature of Ch 14A, classifying what makes a syllable heavy. -/
 inductive WeightFactor where
   | noWeight | longVowel | codaConsonant | longVowelOrCoda
   | prominence | lexicalStress | combined
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Rhythmic type (WALS Ch 17). -/
 inductive RhythmType where
   | trochaic | iambic | dual | undetermined | noRhythm
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Missing common consonants (WALS Ch 18). -/
 inductive MissingCommon where
   | allPresent | noBilabials | noFricatives | noNasals
   | noBilabialsOrNasals | noFricativesOrNasals
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Presence of uncommon consonants (WALS Ch 19). -/
 inductive UncommonPresent where
   | none | clicks | labialVelars | pharyngeals | thSounds
   | clicksPharyngealsAndTh | pharyngealsAndTh
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -343,7 +343,7 @@ structure PhonProfile where
   -- Marked segments (Ch 18--19)
   missingCommon : MissingCommon       -- Ch 18A
   uncommon      : UncommonPresent     -- Ch 19A
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Language Profiles

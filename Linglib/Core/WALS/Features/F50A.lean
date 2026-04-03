@@ -20,7 +20,7 @@ inductive AsymmetricalCaseMarking where
   | subtractiveQuantitativelyAsymmetrical  -- Subtractive-quantitatively asymmetrical (20 languages)
   | qualitativelyAsymmetrical  -- Qualitatively asymmetrical (7 languages)
   | syncretismInRelevantNpTypes  -- Syncretism in relevant NP-types (21 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 50A dataset (261 languages). -/
 def allData : List (Datapoint AsymmetricalCaseMarking) :=

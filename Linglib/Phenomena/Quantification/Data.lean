@@ -24,21 +24,21 @@ inductive Availability where
   | ambiguous     -- Both surface and inverse available
   | surfaceOnly   -- Only surface scope (inverse frozen)
   | inverseOnly   -- Only inverse scope (rare)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Confidence in the judgment -/
 inductive Confidence where
   | clear         -- Native speakers agree (but introspective)
   | gradient      -- Some variation / context-dependent
   | controversial -- Theoretical disagreement
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Source of the judgment -/
 inductive DataSource where
   | introspective   -- Linguist intuition (no experimental data)
   | experimental    -- Controlled experiment with ratings
   | corpus          -- Corpus-based evidence
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Types of configurations that induce scope freezing -/
 inductive FreezingContext where
@@ -50,7 +50,7 @@ inductive FreezingContext where
   | weakCrossover     -- Bound variable blocks inverse
   | adjunct           -- Adjunct scope interactions
   | attitude          -- Attitude verb complements
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A scope freezing example with empirical judgment -/
 structure Example where
@@ -580,7 +580,7 @@ section ScopeWordOrder
 inductive VerbOrder where
   | verbRaising          -- NP ... V_emb V_matrix (object precedes all verbs)
   | verbProjectionRaising -- V_matrix ... NP V_emb (object follows matrix verb)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Whether a word order blocks inverse scope -/
 def blocksInverseScope : VerbOrder → Bool
@@ -591,7 +591,7 @@ def blocksInverseScope : VerbOrder → Bool
 inductive ScopeAvailability where
   | surfaceOnly  -- Only ∃>∀ or ∀>¬ (whichever is surface)
   | ambiguous    -- Both readings available
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Convert word order to scope availability -/
 def wordOrderToAvailability : VerbOrder → ScopeAvailability

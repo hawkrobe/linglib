@@ -17,7 +17,7 @@ inductive NMPronouns where
   | noNMPronouns  -- No N-M pronouns (194 languages)
   | nMPronounsParadigmatic  -- N-M pronouns, paradigmatic (25 languages)
   | nMPronounsNonParadigmatic  -- N-M pronouns, non-paradigmatic (11 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 137A dataset (230 languages). -/
 def allData : List (Datapoint NMPronouns) :=

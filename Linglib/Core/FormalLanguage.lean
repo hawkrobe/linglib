@@ -24,7 +24,7 @@ inductive FormalLanguageType where
   | contextFree
   | mildlyContextSensitive
   | contextSensitive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric encoding for the Chomsky hierarchy ordering. -/
 def FormalLanguageType.toNat : FormalLanguageType → Nat

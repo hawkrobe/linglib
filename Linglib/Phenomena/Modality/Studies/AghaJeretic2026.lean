@@ -171,7 +171,7 @@ inductive ModalEnvironment where
   | unembedded
   | clausemateNegation
   | otherDE  -- other downward-entailing contexts (conditionals, etc.)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A variable force pattern: which forces are available in each environment. -/
 structure VariableForcePattern where

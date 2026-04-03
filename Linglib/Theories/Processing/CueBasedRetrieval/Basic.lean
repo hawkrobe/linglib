@@ -70,7 +70,7 @@ inductive CueSource where
   | itemLevel
   /-- Serial order: recency, linear precedence -/
   | positional
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A retrieval cue: a feature value tagged with its source.
 

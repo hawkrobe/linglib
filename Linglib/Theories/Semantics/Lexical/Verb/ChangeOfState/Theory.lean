@@ -60,7 +60,7 @@ inductive CoSType where
   | cessation    -- stop, quit, cease: P → ¬P
   | inception    -- start, begin: ¬P → P
   | continuation -- continue, keep: P → P
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- Lexical Entry Structure
 

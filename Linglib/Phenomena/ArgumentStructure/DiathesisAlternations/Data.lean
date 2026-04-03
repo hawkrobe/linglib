@@ -29,7 +29,7 @@ inductive AlternationResult where
   | participates   -- Verb participates in this alternation
   | blocked        -- Verb does not participate
   | marginal       -- Intermediate or speaker-variable judgment
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A single alternation judgment for a verb–alternation pair. -/
 structure AlternationDatum where

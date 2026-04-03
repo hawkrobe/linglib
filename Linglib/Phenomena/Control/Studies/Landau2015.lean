@@ -70,7 +70,7 @@ inductive ControlTier where
   | predicative
   /-- Logophoric control: attitude, predication + variable binding -/
   | logophoric
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Logophoric control corresponds to attitude complements. -/
 def ControlTier.isAttitude : ControlTier → Bool
@@ -186,7 +186,7 @@ inductive LandauPredicateClass where
   | propositional  -- (5b) attitude, PC
   | desiderative   -- (5c) attitude, PC
   | interrogative  -- (5d) attitude, PC
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map predicate class to control tier. -/
 def LandauPredicateClass.controlTier : LandauPredicateClass → ControlTier
@@ -286,7 +286,7 @@ inductive LandauClauseClass where
   | cSubjunctive   -- Untensed nonfinite, predicative control
   | fSubjunctive   -- Tensed nonfinite, logophoric control
   | finite          -- Fully finite, no control
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map clause class to control tier (when control obtains). -/
 def LandauClauseClass.controlTier : LandauClauseClass → Option ControlTier
@@ -363,7 +363,7 @@ structure TTCContrast where
   predicative : Bool
   /-- Available under logophoric control? -/
   logophoric : Bool
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The six contrasts from table (80), encoded as data. -/
 def ttcContrasts : List TTCContrast :=
@@ -474,7 +474,7 @@ structure BVASyncretism where
   controlledEqReferential : Bool
   /-- Is the bound variable pronoun identical to the referential pronoun? -/
   boundVarEqReferential : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive syncretism from a vocabulary item inventory.
 
@@ -512,7 +512,7 @@ inductive CopyControlType where
       control contexts, showing the full OC signature. Attested in
       SMPM, Gã, Büli. -/
   | obligatoryPronominal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Properties distinguishing copy control types. -/
 structure CopyControlProfile where
@@ -525,7 +525,7 @@ structure CopyControlProfile where
   requiresScopeOperator : Bool
   /-- Can the copy bear focus? -/
   copyCanBearFocus : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Profile for each copy control type. -/
 def copyControlProfile : CopyControlType → CopyControlProfile
@@ -547,7 +547,7 @@ structure ExemptAnaphorProfile where
   hasExemptAnaphors : Bool
   /-- Can exempt anaphors have quantified antecedents? -/
   allowsQuantifiedAntecedent : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10: Control Derivation
@@ -562,7 +562,7 @@ inductive ControlDerivation where
   /-- Controller enters derivation in embedded subject position and
       moves to matrix position. One DP, two copies. -/
   | movement
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Movement predicts exempt anaphors are UNAVAILABLE with quantified
     controllers. Base-generation predicts they ARE available. -/
@@ -589,7 +589,7 @@ inductive DeSeReading where
   | deSe
   /-- PRO = ADDRESSEE(i'): attitude holder's identification of addressee -/
   | deTe
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Object control verb subclasses (table (36)). -/
 inductive ObjectControlSubclass where
@@ -597,7 +597,7 @@ inductive ObjectControlSubclass where
   | psychological
   /-- Communicative verbs: *tell*, *ask*, *urge*, *recommend* -/
   | communicative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map object control subclass to its logophoric reading.
     Psychological verbs bind the AUTHOR coordinate (*de se*);

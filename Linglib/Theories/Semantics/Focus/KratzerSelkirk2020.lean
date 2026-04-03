@@ -62,7 +62,7 @@ inductive ISFeature where
   /-- Givenness: presupposes discourse salience, signals match.
       Contributes meaning directly (no operator needed). -/
   | G
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Newness is NOT a grammatical feature.
     New material is simply unmarked — no [FoC], no [G]. -/

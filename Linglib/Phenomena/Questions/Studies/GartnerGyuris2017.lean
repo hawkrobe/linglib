@@ -42,7 +42,7 @@ inductive BiasValue where
   | pos   -- +: evidence for p / belief that p
   | neg   -- −: evidence for ¬p / belief that ¬p
   | neut  -- %: no compelling evidence / agnostic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A bias choice is a non-empty subset of {+, −, %}.
 There are 2³ − 1 = 7 such subsets. We represent them as sorted lists
@@ -65,7 +65,7 @@ theorem seven_bias_choices : allBiasChoices.length = 7 := rfl
 inductive BiasDimension where
   | evidential  -- ev: based on contextual evidence
   | epistemic   -- ep: based on speaker's prior belief/expectation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- G&G's PQ form typology: PPQ, IN-NPQ, ON-NPQ.
 These map to Romero's PosQ, LoNQ, HiNQ respectively. -/
@@ -73,7 +73,7 @@ inductive GGPQForm where
   | PPQ     -- Positive polar question (?p)
   | IN_NPQ  -- NPQ with inside (propositional) negation (?¬p)
   | ON_NPQ  -- NPQ with outside negation (?~p)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map G&G forms to Romero's typology. -/
 def GGPQForm.toRomero : GGPQForm → PQForm
@@ -85,7 +85,7 @@ def GGPQForm.toRomero : GGPQForm → PQForm
 structure BiasCell where
   form : GGPQForm
   dim  : BiasDimension
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A bias profile assigns a non-empty bias choice to each of 6 cells
 (3 PQ forms × 2 bias dimensions). -/
@@ -96,7 +96,7 @@ structure BiasProfile where
   inNpqEp  : BiasChoice
   onNpqEv  : BiasChoice
   onNpqEp  : BiasChoice
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Access a bias profile by cell. -/
 def BiasProfile.get (bp : BiasProfile) : BiasCell → BiasChoice

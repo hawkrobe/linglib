@@ -19,7 +19,7 @@ inductive RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfRelativeClauseA
   | voAndReln  -- VO and RelN (5 languages)
   | voAndNrel  -- VO and NRel (416 languages)
   | other  -- Other (213 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfRelativeClauseAndNoun) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .voAndNrel }

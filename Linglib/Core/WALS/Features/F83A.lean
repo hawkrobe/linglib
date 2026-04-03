@@ -17,7 +17,7 @@ inductive ObjectVerbOrder where
   | ov  -- OV (712 languages)
   | vo  -- VO (705 languages)
   | noDominantOrder  -- No dominant order (101 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint ObjectVerbOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .vo }

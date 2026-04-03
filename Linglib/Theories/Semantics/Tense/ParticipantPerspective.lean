@@ -113,7 +113,7 @@ open Core.Morphology.Tense in
 inductive TenseUse where
   | trueTense   -- grammatical tense matches temporal relation
   | falseTense  -- grammatical tense diverges from temporal relation
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Classify a tense use based on whether the grammatical tense matches
     the temporal reality. A `GramTense.past` with `eventTime = speechTime`

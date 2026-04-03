@@ -45,7 +45,7 @@ inductive ArgPosition where
   | agent    -- A: transitive agent
   | patient  -- P: transitive patient
   | intranS  -- S: intransitive subject
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Case assignment in perfective (ergative) clauses.
     Standard ergative alignment: A = ERG, S = P = ABS. -/
@@ -109,7 +109,7 @@ def absPosition : Fragments.Mayan.ABSPosition := .low
     'Who saw the man?' / 'Who did the man see?' -/
 inductive ExtractionTarget where
   | intranS | patient | agent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def ExtractionTarget.extractable : ExtractionTarget → Bool
   | .intranS => true

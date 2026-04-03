@@ -93,7 +93,7 @@ inductive MamArgPosition where
   | agent    -- A: transitive agent (external argument, Spec,VoiceP)
   | patient  -- P: transitive patient (internal argument, complement of V)
   | intranS  -- S: intransitive subject (sole argument, moves to Spec,TP)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The case each argument position receives.
     A gets ERG (inherent, from Voice), P gets ACC (structural, from Voice),
@@ -210,7 +210,7 @@ inductive PersonFeature where
   | person      -- person category (1st/2nd/3rd)
   | number      -- number category (sg/pl)
   | participant -- [±participant]: local (1st/2nd) vs non-local (3rd)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The pronominal base morpheme's features. -/
 def baseFeatures : List PersonFeature := [.person, .number]
@@ -249,7 +249,7 @@ theorem enclitic_survives : isRedundant encliticFeature = false := by native_dec
 inductive PronounForm where
   | reduced -- 1st person agreed-with: base deleted, only =i remains
   | full    -- full independent pronoun (all other cases)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this person 1st (= [+author])? Only [+author] persons are
     eligible for the impoverishment rule (84) that deletes [±singular]

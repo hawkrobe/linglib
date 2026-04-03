@@ -46,7 +46,7 @@ inductive ActualizationStatus where
   | entailment
   | implicature
   | none
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A judgment about the two-*until* distinction, encoding
     @cite{giannakidou-2002}'s cross-linguistic evidence.

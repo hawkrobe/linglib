@@ -21,6 +21,6 @@ Sentence polarity: whether a sentence is affirmative or negated.
 inductive Polarity where
   | positive
   | negative
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 end Core

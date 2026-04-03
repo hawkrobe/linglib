@@ -76,7 +76,7 @@ inductive Segment where
   | participant -- [participant] — present on 1st and 2nd
   | speaker     -- [speaker] — 1st person in standard (1>2>3) geometry
   | addressee   -- [addressee] — 2nd person in addressee (2>1>3) geometry
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § 2: Person Geometry
@@ -89,7 +89,7 @@ inductive Segment where
 inductive Geometry where
   | standard   -- 1>2>3: 1st person most specified
   | addressee  -- 2>1>3: 2nd person most specified
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The person specification for a given person value under a geometry.
 
@@ -147,7 +147,7 @@ def fullProbeAddr : ProbeArticulation := [.pi, .participant, .addressee]
 structure AgreementSystem where
   geometry : Geometry
   probe : ProbeArticulation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Swahili/Abkhaz: flat probe, no PH sensitivity. -/
 def swahili : AgreementSystem := ⟨.standard, flatProbe⟩
@@ -182,7 +182,7 @@ def activeResidue (probe : ProbeArticulation) (goal : List Segment) : ProbeArtic
 inductive Controller where
   | ia   -- Internal argument controls (inverse context)
   | ea   -- External argument controls (direct context)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does the EA Agree with residue segments on cycle II?
 
@@ -320,7 +320,7 @@ theorem plc_violation_iff_inverse (geom : Geometry) (probe : ProbeArticulation)
 inductive RepairStrategy where
   | addedProbe  -- Extra agreement morphology for EA
   | rCase       -- Special Case on IA in inverse contexts
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does a given EA→IA combination require repair under this system?
 

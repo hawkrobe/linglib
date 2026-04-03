@@ -35,7 +35,7 @@ inductive WHFeature where
   | plusWH   -- Interrogative: ⟨⟨s,t⟩,t⟩
   | minusWH  -- Declarative: ⟨s,t⟩
   | alphaWH  -- Underspecified (typing delayed to PerspP)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- B. Predicate selection class
@@ -55,7 +55,7 @@ inductive SelectionClass where
   | rogativePerspP
   | rogativeSAP
   | responsive
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- C. Knowledge and ignorance: the semantic primitives
@@ -112,7 +112,7 @@ inductive EmbedType where
   | subordination      -- "knows whether S left" / "knows who S saw"
   | quasiSubordination -- "wants to know [did S leave↑]" (embedded inversion)
   | quotation          -- asked, "Did S leave?" (full quotation)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Full embedding prediction. -/
 def allowsEmbedding (cls : SelectionClass) (et : EmbedType)

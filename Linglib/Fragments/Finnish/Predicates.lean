@@ -41,7 +41,7 @@ inductive VerbType where
   | type4  -- -ata/-ätä stems (haluta, pelätä)
   | type5  -- -ita/-itä stems (tarvita, häiritä)
   | type6  -- -eta/-etä stems (vanheta, lämmetä)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A Finnish verb entry with active and impersonal "passive" forms. -/
 structure FinnishVerb where

@@ -113,6 +113,6 @@ inductive AggregationType where
   | utilitarian
   /-- Weighted product / Cobb-Douglas (rejects ONC, accepts ratio scale RNC). -/
   | cobbDouglas
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 end Semantics.Degree.Aggregation

@@ -218,7 +218,7 @@ theorem cost_differs_despite_equal_dep_length :
     and past participle) due to normative disagreement among informants. -/
 inductive LangGroup where
   | dutch | germanInf | germanPart
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Test sentence comprehensibility ratings × 100 (Table 1).
     Original scale: 1 = easy, 9 = hard. Levels 1–4 indexed 0–3. -/

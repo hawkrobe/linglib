@@ -33,7 +33,7 @@ structure IndeterminateSeriesEntry where
   existential : String       -- kaut-series
   negPolarity : String       -- ne-series (direct negation scope)
   freeChoice : String        -- jeb-series (indirect neg/comparatives/FC)
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Latvian Indeterminate Paradigm (Haspelmath 1997, p. 277)

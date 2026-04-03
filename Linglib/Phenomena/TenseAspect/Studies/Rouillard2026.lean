@@ -216,7 +216,7 @@ structure Table1Entry where
   tiaType : Bool     -- true = E-TIA, false = G-TIA
   aspect : Bool      -- true = PFV (E-perfect), false = IMPV (U-perfect)
   mipBlocks : Bool   -- true = MIP blocks this reading
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- All 8 cells of Table 1 (sentence (112)) "*Mary has been sick in 3 days"). -/
 def table1 : List Table1Entry :=
@@ -283,7 +283,7 @@ theorem nonhomogeneous_implies_closed_scale (p : AspectualProfile)
 inductive LicensingMechanism where
   | downwardEntailment   -- @cite{ladusaw-1979}, @cite{hoeksema-2006}, @cite{gajewski-2005}
   | maximalInformativity  -- @cite{rouillard-2026}: MIP
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- NPI prediction: does a licensing mechanism correctly predict
     both E-TIA and G-TIA distributions? -/

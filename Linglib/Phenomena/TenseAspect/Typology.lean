@@ -63,7 +63,7 @@ inductive AspectMarking where
   | grammatical
   /-- Language has no grammatical marking of perfective/imperfective -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Chapter 66 — The Past Tense
@@ -83,7 +83,7 @@ inductive PastMarking where
   | markedRemoteness4plus
   /-- No grammatical marking of past/non-past distinction -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a language has any past tense marking (any of the three
     marked categories). -/
@@ -105,7 +105,7 @@ inductive FutureMarking where
   | inflectional
   /-- No inflectional marking of future/nonfuture distinction -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Chapter 68 — The Perfect
@@ -128,7 +128,7 @@ inductive PerfectType where
   | other
   /-- No perfect category. -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a language has any perfect category. -/
 def PerfectType.hasPerfect : PerfectType → Bool
@@ -155,7 +155,7 @@ inductive TAAffixPosition where
   | mixed
   /-- No tense-aspect inflection -/
   | noInflection
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a language has any tense-aspect affixation. -/
 def TAAffixPosition.hasAffixes : TAAffixPosition → Bool
@@ -220,7 +220,7 @@ structure TAProfile where
   perfect : PerfectType
   /-- WALS Ch 69: tense-aspect affix position -/
   affixPosition : TAAffixPosition
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- WALS Aggregate Distribution Data (derived from generated modules)
@@ -230,7 +230,7 @@ structure TAProfile where
 structure Ch65Counts where
   grammatical : Nat
   noMarking : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def ch65Dist : Ch65Counts :=
   { grammatical := (ch65.filter (·.value == .grammaticalMarking)).length
@@ -242,7 +242,7 @@ structure Ch66Counts where
   markedRemoteness2_3 : Nat
   markedRemoteness4plus : Nat
   noMarking : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def ch66Dist : Ch66Counts :=
   { markedNoRemoteness := (ch66.filter (·.value == .presentNoRemotenessDistinctions)).length
@@ -254,7 +254,7 @@ def ch66Dist : Ch66Counts :=
 structure Ch67Counts where
   inflectional : Nat
   noInflectional : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def ch67Dist : Ch67Counts :=
   { inflectional := (ch67.filter (·.value == .inflectionalFutureExists)).length
@@ -266,7 +266,7 @@ structure Ch68Counts where
   fromFinishAlready : Nat
   otherPerfect : Nat
   noPerfect : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def ch68Dist : Ch68Counts :=
   { fromPossessive := (ch68.filter (·.value == .fromPossessive)).length
@@ -281,7 +281,7 @@ structure Ch69Counts where
   tonal : Nat
   mixed : Nat
   noInflection : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def ch69Dist : Ch69Counts :=
   { prefixing := (ch69.filter (·.value == .tenseAspectPrefixes)).length
@@ -1039,7 +1039,7 @@ inductive EvidentialityCoding where
   | particle
   /-- Other strategy -/
   | other
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a language has any grammatical evidentiality. -/
 def EvidentialityCoding.hasEvidentiality : EvidentialityCoding → Bool
@@ -1074,7 +1074,7 @@ structure TAMEProfile where
   affixPosition : TAAffixPosition
   /-- WALS Ch 78: coding of evidentiality -/
   evidentiality : EvidentialityCoding
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Sample Language TAMEProfiles

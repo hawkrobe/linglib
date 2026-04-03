@@ -140,7 +140,7 @@ inductive QuantOperator where
   | forall_   -- [∀]: universal closure
   | neg       -- [Neg]: negative closure
   | question  -- [Q]: question formation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Semantic interpretation of a propositional quantificational operator.
     Returns `none` for `.question`, which produces an alternative set rather
@@ -209,7 +209,7 @@ selection = quantification.
 section Derivation
 
 inductive Person where | a | b | c
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- `⟦dare⟧` = the set of all humans (extensional simplification). -/
 def dare : HamblinDen Person := fun _ => True

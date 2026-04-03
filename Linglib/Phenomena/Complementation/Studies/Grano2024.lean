@@ -65,7 +65,7 @@ structure MoodChoiceDatum where
   language : String
   predicate : String
   rejectsIndicative : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ── 'want': robustly rejects IND across all 7 languages ──
 
@@ -251,7 +251,7 @@ inductive DepartureKind where
                               -- → both modal backgrounds must remain → robust SBJV
   | eventualityAbstraction    -- open event argument ('begin', 'make')
   | comparisonAndAbstraction  -- comparison + eventuality abstraction ('intend')
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map departure kind to mood selection prediction.
 

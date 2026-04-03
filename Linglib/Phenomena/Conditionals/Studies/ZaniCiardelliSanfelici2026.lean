@@ -61,7 +61,7 @@ inductive DACReading where
   | sda   -- "if A or B, C" ≡ (if A, C) ∧ (if B, C)
   | dcr   -- "if A or B, C" ≡ (if A, C) ∨ (if B, C)
   | ar    -- "if A or B, C" ≡ (if A, C), where A is more realistic
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Logical strength ordering: SDA ≥ AR ≥ DCR. -/
 def DACReading.strength : DACReading → Nat
@@ -118,12 +118,12 @@ theorem alt_semantics_validates_sda {W : Type*} [DecidableEq W]
 inductive ConditionalMode where
   | indicative     -- "If the squirrel or the tortoise wins, it will get a hazelnut"
   | counterfactual -- "If the squirrel or the tortoise had won, it would have got a hazelnut"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Age groups in the study. Table 1. -/
 inductive AgeGroup where
   | age4   | age5   | age6   | age7   | age8   | age9   | adult
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Number of eligible participants per age group. Table 1. -/
 def AgeGroup.n : AgeGroup → Nat
@@ -424,7 +424,7 @@ inductive SDATheory where
   | alternativeSem    -- Alonso-Ovalle 2009, Ciardelli 2016: alt semantics
   | homogeneity       -- Santorio 2018, Cariani & Goldstein 2020: alt + homogeneity
   | exhaustification  -- Bar-Lev & Fox 2020: EXH-based
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- What each theory predicts as the pre-SDA reading in children. -/
 def SDATheory.predictedPreSDA : SDATheory → Option DACReading

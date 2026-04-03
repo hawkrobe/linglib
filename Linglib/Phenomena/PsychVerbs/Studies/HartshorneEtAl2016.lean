@@ -69,7 +69,7 @@ inductive SemanticType where
   /-- CAUSE(stimulus, BECOME(experiencer, emotional_state)).
       Specific instance where a stimulus causes an emotion. -/
   | causedEpisode
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map B&R class to Hartshorne et al.'s semantic type. -/
 def PsychVerbClass.toSemanticType : PsychVerbClass → Option SemanticType
@@ -102,7 +102,7 @@ structure SemanticTypeProfile where
   /-- Does the verb involve a transition (BECOME)?
       Episodes = true (BECOME), attitudes = false (BE). -/
   involvesBecome : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Profile for habitual attitudes (fear-type).
     Long duration, no causal responsibility, no transition. -/
@@ -169,7 +169,7 @@ theorem prominence_determines_linking (c : PsychVerbClass) (t : SemanticType)
 /-- Languages tested in @cite{hartshorne-etal-2016}. -/
 inductive Language where
   | english | mandarin | korean | japanese | russian
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Cross-linguistic replication datum: the attitude/episode distinction
     holds in each language tested. -/

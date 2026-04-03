@@ -55,7 +55,7 @@ inductive StudentResult where
   | noneP   -- no students passed
   | someP   -- some but not all passed
   | allP    -- all students passed
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype StudentResult where
   elems := ⟨[StudentResult.noneP, StudentResult.someP, StudentResult.allP], by decide⟩
@@ -93,7 +93,7 @@ Interpretations of "Did some students pass?":
 inductive QuestionInterpretation where
   | global  -- "some" = at least one
   | local_  -- "some" = some-but-not-all
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /--
 The partition induced by each interpretation.

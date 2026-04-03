@@ -36,7 +36,7 @@ inductive VerbSlot where
   | copula        -- compound tense: -DI, -mIş, -(y)sA
   | agreement     -- person/number
   | question      -- mI
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Nominal suffix slots, ordered innermost to outermost.
     @cite{goksel-kerslake-2005} Ch 6, 8, 14. -/
@@ -45,7 +45,7 @@ inductive NounSlot where
   | plural        -- -lAr
   | possessive    -- -(I)m, -(I)n, -(s)I, etc.
   | case          -- -(y)I, -(y)A, -DA, -DAn, -(n)In, zero
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def VerbSlot.rank : VerbSlot → Nat
   | .voice => 0 | .negation => 1 | .tam => 2

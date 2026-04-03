@@ -20,7 +20,7 @@ inductive NegativeMorphemeType where
   | negativeWordUnclearIfVerbOrParticle  -- Negative word, unclear if verb or particle (73 languages)
   | variationBetweenNegativeWordAndAffix  -- Variation between negative word and affix (21 languages)
   | doubleNegation  -- Double negation (119 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint NegativeMorphemeType) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .negativeParticle }

@@ -28,13 +28,13 @@ inductive CoordRole where
   | mu         -- Subset/additive (conjunction)
   | disj       -- Disjunction
   | advers     -- Adversative ("but")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Morphological boundness. -/
 inductive Boundness where
   | free
   | bound   -- clitic or suffix
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A Georgian coordination entry. -/
 structure CoordEntry where

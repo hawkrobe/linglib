@@ -135,7 +135,7 @@ def kGradation : PhonRule where
 inductive GradationType where
   | quantitative  -- geminate shortening (pp→p, tt→t, kk→k)
   | qualitative   -- quality change or deletion (p→v, t→d, k→∅)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A consonant gradation pair: strong and weak grades with classification. -/
 structure GradationPair where

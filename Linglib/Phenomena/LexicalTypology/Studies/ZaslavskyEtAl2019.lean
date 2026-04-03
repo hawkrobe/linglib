@@ -59,7 +59,7 @@ abbrev WCSChip := Fin 80
 inductive Temperature where
   | warm   -- reds, yellows
   | cool   -- blues, greens
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2. Communicative Precision and the Warm–Cool Asymmetry

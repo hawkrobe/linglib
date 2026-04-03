@@ -61,7 +61,7 @@ open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 inductive ActualizationMode where
   | lexical    -- trigger asserted by lexical semantics (aspect-independent)
   | aspectual  -- trigger asserted by perfective aspect only
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. CausalFrame

@@ -26,7 +26,7 @@ open Minimalism.PhiSemantics
     - `o` = inanimate object -/
 inductive ZapInd where
   | i | u | e | h | a | o
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype ZapInd where
   elems := {.i, .u, .e, .h, .a, .o}

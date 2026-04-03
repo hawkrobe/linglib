@@ -48,7 +48,7 @@ inductive ApplType where
   | high          -- Above VP: individual-event relation (@cite{pylkknen-2008})
   | lowRecipient  -- Below VP: transfer TO applied arg (@cite{pylkknen-2008})
   | lowSource     -- Below VP: transfer FROM applied arg (@cite{pylkknen-2008} §2.2, §2.3)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this a low applicative (either recipient or source)? -/
 def ApplType.isLow : ApplType → Bool
@@ -69,7 +69,7 @@ inductive ApplSemantics where
   | eventRelation   -- High: individual-event (ethical dative, benefactive)
   | possessionTo    -- Low recipient: HAVE relation
   | possessionFrom  -- Low source: HAVE-FROM relation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map each applicative type to its semantic contribution. -/
 def ApplType.semantics : ApplType → ApplSemantics
@@ -96,7 +96,7 @@ structure ApplHead where
   applType : ApplType
   /-- Does the applied argument get dative case? -/
   assignsDative : Bool := true
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Canonical high applicative (ethical dative). -/
 def applHigh : ApplHead :=

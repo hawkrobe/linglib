@@ -147,7 +147,7 @@ inductive AltStructure where
   | replacement
   /-- No structural alternative available (jiu/only) -/
   | none
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 @cite{wang-2025} pragmatic constraint ranking: IC >> FP >> MP.
@@ -167,7 +167,7 @@ inductive PragConstraint where
   | FP
   /-- Maximize Presupposition: prefer presuppositional form (violable) -/
   | MP
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- IC is non-violable; FP and MP are violable. -/
 def PragConstraint.isViolable : PragConstraint → Bool
@@ -194,7 +194,7 @@ inductive Obligatoriness where
   | optional
   /-- Trigger is blocked (mandatorily omitted in this context) -/
   | blocked
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 A presupposition trigger entry with @cite{wang-2025} alternative structure.

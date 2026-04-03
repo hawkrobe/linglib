@@ -77,7 +77,7 @@ Intensifier degree class (Figure 2).
 inductive IntensifierClass where
   | H  -- high degree
   | M  -- moderate degree
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 A deadjectival intensifier entry.
@@ -313,7 +313,7 @@ inductive Utterance where
   | horribly_warm   -- "x is horribly warm"
   | pleasantly_warm -- "x is pleasantly warm"
   | silent          -- say nothing
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 def allUtterances : List Utterance :=
   [.bare_warm, .horribly_warm, .pleasantly_warm, .silent]
@@ -572,7 +572,7 @@ beliefs step by step). -/
 inductive EvalUtterance where
   | eval_pos  -- the evaluative positive form holds
   | silent    -- say nothing
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Evaluative meaning for step 1.
     The evaluative positive form checks only μ_eval(h) > θ_e, without the
@@ -630,7 +630,7 @@ noncomputable def evalCfg (evalMu : Height → ℕ) : RSA.RSAConfig EvalUtteranc
 inductive AdjUtterance where
   | warm   -- "x is warm"
   | silent -- say nothing
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Adjective meaning for step 2: just the base positive form h > θ. -/
 def adjMeaning (u : AdjUtterance) (h : Height) (θ : Threshold) : Bool :=

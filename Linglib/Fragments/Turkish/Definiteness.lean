@@ -35,14 +35,14 @@ namespace Fragments.Turkish.Definiteness
 inductive ObjectMarking where
   | accusative    -- -(y)I: definite or specific indefinite
   | bare          -- zero: nonspecific indefinite
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Referential properties of Turkish direct objects. -/
 inductive Specificity where
   | definite
   | specificIndef
   | nonspecificIndef
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which specificities are compatible with each marking type? -/
 def compatible : ObjectMarking → Specificity → Bool

@@ -61,7 +61,7 @@ inductive DiagnosticResult where
   | reject    -- ✗ ungrammatical, unacceptable
   | marginal  -- ? degraded, speaker variation
   | coerced   -- ~ acceptable with meaning shift
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Convert Bool prediction to DiagnosticResult.

@@ -19,7 +19,7 @@ inductive ExponenceType where
   | caseReferentiality  -- Case + referentiality (6 languages)
   | caseTam  -- Case + TAM (2 languages)
   | noCase  -- No case (75 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 21A dataset (162 languages). -/
 def allData : List (Datapoint ExponenceType) :=

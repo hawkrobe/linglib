@@ -85,7 +85,7 @@ inductive AnchorType where
   | speechEvent
   /-- Anchored to the VP event → circumstantial modal base -/
   | describedEvent
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Map anchor type to modal flavor.
 
@@ -188,7 +188,7 @@ inductive EventBinder where
   | attitude
   /-- e₂: the VP's described event (bound by aspect) -/
   | vpEvent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 -- ════════════════════════════════════════════════════
@@ -503,7 +503,7 @@ inductive ModalPosition where
   | aboveAsp
   /-- Below AspP: bound by aspect's event quantifier (∃e[...]) -/
   | belowAsp
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Default event binder for a modal in each position.
 High modals default to the speech act (matrix) or attitude event
@@ -575,7 +575,7 @@ the same event variable — the VP event. -/
 inductive ViewpointAspectB' where
   | perfective
   | imperfective
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Aspect always binds the modal's event variable to the VP event.
 This is WHY low modals have `defaultBinder = .vpEvent`: the
@@ -814,7 +814,7 @@ making stipulated parameters redundant. -/
 structure IndTimePair (Individual TimePoint : Type*) where
   individual : Individual
   time : TimePoint
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Event projection: how events map to individuals and times.
 
@@ -885,15 +885,15 @@ event bindings. No lexical ambiguity is needed. -/
 
 /-- Two individuals in the train scenario. -/
 inductive TrainPerson where | speaker | jane
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Two time points: speech time and the past event time. -/
 inductive TrainTime where | now | then
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Two events: the speech act and Jane's train-taking. -/
 inductive TrainEvent where | speechAct | janesTaking
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The event projection for the train scenario.
 
@@ -925,7 +925,7 @@ theorem same_modal_different_params :
 
 /-- Two worlds: one where Jane took the train, one where she didn't. -/
 inductive TrainWorld where | took | didnt
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 private def allTW : List TrainWorld := [.took, .didnt]
 
@@ -1045,13 +1045,13 @@ holds. -/
 
 /-- Two worlds for the pregnancy scenario. -/
 inductive PregWorld where | pregnant | notPregnant
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 private def allPW : List PregWorld := [.pregnant, .notPregnant]
 
 /-- Two events: the matrix speech act and Jane's embedded thinking. -/
 inductive BeliefEvent where | speech | thinking
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Anchoring function for the belief scenario.
 - Speech event: speaker has no decisive evidence (empty background →

@@ -14,7 +14,7 @@ structure DiscourseOnlyParticle where
   form : String
   nativeForm : String
   gloss : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Mandarin *zhǐshì* (只是) — blocks exclamative S'. -/
 def zhishi : DiscourseOnlyParticle where

@@ -31,7 +31,7 @@ inductive TweetyWorld : Type where
   | birdNoFly      -- bird, not penguin, doesn't fly
   | penguinFlies   -- penguin (hence bird), flies
   | penguinNoFly   -- penguin (hence bird), doesn't fly
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype TweetyWorld :=
   ⟨⟨[TweetyWorld.birdFlies, TweetyWorld.birdNoFly,

@@ -20,7 +20,7 @@ inductive PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespect
   | immedPostverbal  -- Immed postverbal (92 languages)
   | postverbalNotImmedOrEnd  -- Postverbal, not immed or end (1 languages)
   | endNotImmedPostverbal  -- End, not immed postverbal (115 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespectToAdjacencyToVerb) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .immedPostverbal }

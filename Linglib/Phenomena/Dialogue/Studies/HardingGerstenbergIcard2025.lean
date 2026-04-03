@@ -49,7 +49,7 @@ structure CausalWorld where
 structure Explanation where
   cause : Variable
   effect : Variable
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- **Literal meaning** (Eq. 1): an explanation is true in a causal world
     iff (1) FACT holds, (2) the cause is present, and (3) the cause

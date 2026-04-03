@@ -28,7 +28,7 @@ inductive EmbedType where
   | subordination      -- "knows whether S left" / "knows who S saw"
   | quasiSubordination -- "wants to know [did S leave↑]" (embedded inversion)
   | quotation          -- asked, "Did S leave?" (full quotation)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Embedding predicate data

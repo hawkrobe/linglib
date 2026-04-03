@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Core.Empirical
 
 /-!
 # @cite{goldberg-jackendoff-2004}: The English Resultative as a Family of Constructions
@@ -38,7 +39,7 @@ inductive SubeventKind where
   | verbal
   /-- From the construction (CAUSE + BECOME/GO) -/
   | constructional
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- How the verbal and constructional subevents are related (§3).
 
@@ -49,13 +50,15 @@ inductive SubeventKind where
 - **instance_**: The verbal subevent is an instance of the constructional subevent.
   E.g., "kick the ball into the field" — kicking IS a way of causing motion.
 - **coOccurrence**: The two subevents merely co-occur without causal connection.
-  E.g., "She sang her way down the road" — singing accompanies motion. -/
+  G&J reserve this for the *way* construction ("She sang her way down the road"),
+  not for resultatives proper. Sound-emission resultatives ("The trolley rumbled
+  through the tunnel") use **result** — the sound is a result of motion. -/
 inductive SubeventRelation where
   | means
   | result
   | instance_
   | coOccurrence
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Type of result phrase. -/
 inductive RPType where
@@ -63,7 +66,7 @@ inductive RPType where
   | property
   /-- Directional/path result: "into the field", "off the table" -/
   | path
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The four subconstructions in the resultative family (§2, Table 1).
 
@@ -76,7 +79,7 @@ inductive ResultativeSubconstruction where
   | causativePath
   | noncausativeProperty
   | noncausativePath
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether a subconstruction is causative. -/
 def ResultativeSubconstruction.isCausative : ResultativeSubconstruction → Bool
@@ -133,7 +136,7 @@ Path RPs are bounded iff the goal is specific ("into the field" = bounded;
 inductive Boundedness where
   | bounded
   | unbounded
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-! ## Resultative entry -/
 
@@ -178,7 +181,7 @@ inductive SemRole where
   | patient
   | theme
   | resultGoal
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- An argument with its source (verb or construction). -/
 structure ArgSource where
@@ -236,7 +239,7 @@ inductive TemporalOrder where
   | verbalFirst
   | simultaneous
   | constructionalFirst
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Check the temporal constraint: constructional subevent does not precede verbal. -/
 def temporalConstraintSatisfied (order : TemporalOrder) : Bool :=
@@ -324,7 +327,7 @@ def swingShut : ResultativeEntry :=
   , rpBoundedness := .bounded
   , bareVerbClass := .activity }
 
-def wipeClea : ResultativeEntry :=
+def wipeClean : ResultativeEntry :=
   { verb := "wipe"
   , subconstruction := .causativeProperty
   , subevents :=
@@ -338,7 +341,7 @@ def wipeClea : ResultativeEntry :=
 /-- All resultative entries. -/
 def allEntries : List ResultativeEntry :=
   [ hammerFlat, kickIntoField, freezeSolid, rollIntoField
-  , drinkSick, laughSilly, swingShut, wipeClea ]
+  , drinkSick, laughSilly, swingShut, wipeClean ]
 
 /-! ## Per-datum verification theorems -/
 
@@ -574,5 +577,244 @@ theorem causative_match_parent :
     decompose causativePropertyConstruction = decompose resultative ∧
     decompose causativePathConstruction = decompose resultative := by
   constructor <;> native_decide
+
+/-! ## Empirical data: grammaticality judgments
+
+Theory-neutral grammaticality judgments and aspectual contrasts drawn
+from §§2–8 of the paper. These provide the shared data layer that
+other studies (Dendikken, Tay, Levin) connect to their own analyses. -/
+
+open Core.Empirical
+
+/-- What type of resultative is exemplified.
+
+Extends the paper's 2×2 matrix (§2) with fake reflexives (§5) and
+anticausative property resultatives (@cite{levin-2026}). -/
+inductive ResultativeType where
+  | causativeProperty
+  | causativePath
+  | noncausativeProperty
+  | noncausativePath
+  | fakeReflexive
+  /-- Anticausative: verb doesn't alternate alone; construction licenses it
+      (@cite{levin-2026}). Distinct from `noncausativeProperty` (e.g., *freeze
+      solid*) where the verb independently shows the causative alternation. -/
+  | anticausativeProperty
+  deriving Repr, DecidableEq
+
+/-- A single resultative example with judgment data. -/
+structure ResultativeDatum where
+  /-- Example identifier -/
+  exId : String
+  /-- The sentence -/
+  sentence : String
+  /-- Acceptability judgment -/
+  judgment : Acceptability
+  /-- Which resultative subtype -/
+  resType : ResultativeType
+  /-- What phenomenon this illustrates -/
+  phenomenon : String
+  deriving Repr, BEq
+
+/-! ### Causative property resultatives (§2, ex. 5a, 7a) -/
+
+def hammer_flat : ResultativeDatum :=
+  { exId := "1a"
+  , sentence := "She hammered the metal flat"
+  , judgment := .ok
+  , resType := .causativeProperty
+  , phenomenon := "causative + property RP: agent causes patient to become flat" }
+
+def wipe_clean : ResultativeDatum :=
+  { exId := "1b"
+  , sentence := "He wiped the table clean"
+  , judgment := .ok
+  , resType := .causativeProperty
+  , phenomenon := "causative + property RP: agent causes patient to become clean" }
+
+def paint_red : ResultativeDatum :=
+  { exId := "1c"
+  , sentence := "They painted the house red"
+  , judgment := .ok
+  , resType := .causativeProperty
+  , phenomenon := "causative + property RP: agent causes patient to become red" }
+
+/-! ### Causative path resultatives (§2, ex. 5b) -/
+
+def kick_into_field : ResultativeDatum :=
+  { exId := "2a"
+  , sentence := "She kicked the ball into the field"
+  , judgment := .ok
+  , resType := .causativePath
+  , phenomenon := "causative + path RP: agent causes theme to go to goal" }
+
+def push_off_table : ResultativeDatum :=
+  { exId := "2b"
+  , sentence := "He pushed the glass off the table"
+  , judgment := .ok
+  , resType := .causativePath
+  , phenomenon := "causative + path RP: agent causes theme to move from source" }
+
+/-! ### Noncausative property resultatives (§2, ex. 6a) -/
+
+def freeze_solid : ResultativeDatum :=
+  { exId := "3a"
+  , sentence := "The river froze solid"
+  , judgment := .ok
+  , resType := .noncausativeProperty
+  , phenomenon := "noncausative + property RP: theme becomes result state" }
+
+def swing_shut : ResultativeDatum :=
+  { exId := "3b"
+  , sentence := "The gate swung shut"
+  , judgment := .ok
+  , resType := .noncausativeProperty
+  , phenomenon := "noncausative + property RP: unaccusative verb + result state" }
+
+/-! ### Noncausative path resultatives (§2, ex. 6b) -/
+
+def roll_into_field : ResultativeDatum :=
+  { exId := "4a"
+  , sentence := "The ball rolled into the field"
+  , judgment := .ok
+  , resType := .noncausativePath
+  , phenomenon := "noncausative + path RP: theme moves along path" }
+
+def slide_off_table : ResultativeDatum :=
+  { exId := "4b"
+  , sentence := "The book slid off the table"
+  , judgment := .ok
+  , resType := .noncausativePath
+  , phenomenon := "noncausative + path RP: theme moves from source" }
+
+/-! ### Fake reflexive resultatives (§5, ex. 9) -/
+
+def laugh_silly : ResultativeDatum :=
+  { exId := "5a"
+  , sentence := "She laughed herself silly"
+  , judgment := .ok
+  , resType := .fakeReflexive
+  , phenomenon := "fake reflexive: intransitive verb + reflexive + result" }
+
+def drink_sick : ResultativeDatum :=
+  { exId := "5b"
+  , sentence := "He drank himself sick"
+  , judgment := .ok
+  , resType := .fakeReflexive
+  , phenomenon := "fake reflexive: verb lacks patient; construction adds it" }
+
+def run_ragged : ResultativeDatum :=
+  { exId := "5c"
+  , sentence := "She ran herself ragged"
+  , judgment := .ok
+  , resType := .fakeReflexive
+  , phenomenon := "fake reflexive: unergative verb + reflexive + result" }
+
+/-! ### Aspectual contrasts (§4, Principle 27) -/
+
+/-- An aspectual contrast pair. -/
+structure AspectualContrast where
+  /-- Sentence with temporal adverbial -/
+  sentence : String
+  /-- Acceptability -/
+  judgment : Acceptability
+  /-- Which adverbial type -/
+  adverbialType : String
+  /-- Description -/
+  description : String
+  deriving Repr, BEq
+
+def hammer_flat_in : AspectualContrast :=
+  { sentence := "She hammered the metal flat in an hour"
+  , judgment := .ok
+  , adverbialType := "in-adverbial"
+  , description := "resultative is telic: in-adverbial OK" }
+
+def hammer_flat_for : AspectualContrast :=
+  { sentence := "*She hammered the metal flat for an hour"
+  , judgment := .unacceptable
+  , adverbialType := "for-adverbial"
+  , description := "resultative is telic: for-adverbial bad" }
+
+def hammer_bare_for : AspectualContrast :=
+  { sentence := "She hammered the metal for an hour"
+  , judgment := .ok
+  , adverbialType := "for-adverbial"
+  , description := "bare activity is atelic: for-adverbial OK" }
+
+def hammer_bare_in : AspectualContrast :=
+  { sentence := "??She hammered the metal in an hour"
+  , judgment := .marginal
+  , adverbialType := "in-adverbial"
+  , description := "bare activity is atelic: in-adverbial degraded" }
+
+/-! ### Unacceptable resultatives (§6, semantic coherence violations) -/
+
+def eat_full : ResultativeDatum :=
+  { exId := "7a"
+  , sentence := "*She ate the food full"
+  , judgment := .unacceptable
+  , resType := .causativeProperty
+  , phenomenon := "semantic incoherence: patient of eat ≠ entity that becomes full" }
+
+def sleep_flat : ResultativeDatum :=
+  { exId := "7b"
+  , sentence := "*She slept the bed flat"
+  , judgment := .unacceptable
+  , resType := .causativeProperty
+  , phenomenon := "semantic incoherence: sleep cannot cause flatness" }
+
+/-! ### Aggregate data -/
+
+def allExamples : List ResultativeDatum :=
+  [ hammer_flat, wipe_clean, paint_red
+  , kick_into_field, push_off_table
+  , freeze_solid, swing_shut
+  , roll_into_field, slide_off_table
+  , laugh_silly, drink_sick, run_ragged
+  , eat_full, sleep_flat ]
+
+def aspectualContrasts : List AspectualContrast :=
+  [ hammer_flat_in, hammer_flat_for, hammer_bare_for, hammer_bare_in ]
+
+/-! ### Empirical verification -/
+
+/-- All four resultative types are attested in the data. -/
+theorem has_all_resultative_types :
+    (allExamples.any (·.resType == .causativeProperty)) = true ∧
+    (allExamples.any (·.resType == .causativePath)) = true ∧
+    (allExamples.any (·.resType == .noncausativeProperty)) = true ∧
+    (allExamples.any (·.resType == .noncausativePath)) = true ∧
+    (allExamples.any (·.resType == .fakeReflexive)) = true := by
+  constructor; native_decide
+  constructor; native_decide
+  constructor; native_decide
+  constructor; native_decide
+  native_decide
+
+/-- Both grammatical and ungrammatical examples are represented. -/
+theorem has_both_judgments :
+    (allExamples.any (·.judgment == .ok)) = true ∧
+    (allExamples.any (·.judgment == .unacceptable)) = true := by
+  constructor; native_decide
+  native_decide
+
+/-- The aspectual contrast data includes both in- and for-adverbials. -/
+theorem aspectual_both_adverbials :
+    (aspectualContrasts.any (·.adverbialType == "in-adverbial")) = true ∧
+    (aspectualContrasts.any (·.adverbialType == "for-adverbial")) = true := by
+  constructor; native_decide
+  native_decide
+
+/-- Telic resultatives accept in-adverbials and reject for-adverbials. -/
+theorem telic_adverbial_pattern :
+    hammer_flat_in.judgment == .ok ∧
+    hammer_flat_for.judgment == .unacceptable := by
+  constructor <;> native_decide
+
+/-- Atelic bare activities accept for-adverbials. -/
+theorem atelic_adverbial_pattern :
+    hammer_bare_for.judgment == .ok := by
+  native_decide
 
 end ConstructionGrammar.Studies.GoldbergJackendoff2004

@@ -47,7 +47,7 @@ structure QuestionParticleEntry where
   requiresEvidentialBias : Bool
   /-- Requires negative epistemic bias (prior belief against p)? -/
   requiresEpistemicBias : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- 吗 ma — basic polar question particle

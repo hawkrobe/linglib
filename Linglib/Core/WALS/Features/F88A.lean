@@ -20,7 +20,7 @@ inductive DemonstrativeNounOrder where
   | demonstrativeSuffix  -- Demonstrative suffix (28 languages)
   | demonstrativeBeforeAndAfterNoun  -- Demonstrative before and after Noun (17 languages)
   | mixed  -- Mixed (67 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint DemonstrativeNounOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .nounDemonstrative }

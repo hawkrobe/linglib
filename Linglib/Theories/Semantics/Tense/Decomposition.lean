@@ -127,7 +127,7 @@ structure KratzerDecomposition where
   tensePronoun : TensePronoun
   /-- Whether a PERFECT aspect head intervenes between VP and Tense -/
   hasPerfect : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Can this form be used deictically ("out of the blue")?
     Derived: indexical tense head → deictic-compatible. -/

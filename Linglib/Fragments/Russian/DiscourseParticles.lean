@@ -14,7 +14,7 @@ structure DiscourseOnlyParticle where
   form : String
   nativeForm : String
   gloss : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Russian *tol'ko* (только) — allows all clause types as S'. -/
 def tolko : DiscourseOnlyParticle where

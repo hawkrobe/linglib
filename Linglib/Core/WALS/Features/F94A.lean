@@ -19,7 +19,7 @@ inductive OrderOfAdverbialSubordinatorAndClause where
   | internalSubordinatorWord  -- Internal subordinator word (8 languages)
   | subordinatingSuffix  -- Subordinating suffix (64 languages)
   | mixed  -- Mixed (93 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint OrderOfAdverbialSubordinatorAndClause) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .initialSubordinatorWord }

@@ -75,7 +75,7 @@ inductive Utterance where
   | notHappy    -- "is not happy"
   | unhappy     -- "is unhappy"
   | notUnhappy  -- "is not unhappy"
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Lexicon for morphological negation "un-":
     contrary (polar opposite with gap) vs contradictory (complement).
@@ -83,7 +83,7 @@ inductive Utterance where
 inductive NegLexicon where
   | contrary
   | contradictory
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 -- ============================================================================
 -- § 3. Latent State

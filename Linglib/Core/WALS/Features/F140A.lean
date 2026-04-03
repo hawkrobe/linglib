@@ -17,7 +17,7 @@ inductive QuestionParticlesInSignLanguages where
   | none  -- None (25 languages)
   | one  -- One (9 languages)
   | moreThanOne  -- More than one (4 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 140A dataset (38 languages). -/
 def allData : List (Datapoint QuestionParticlesInSignLanguages) :=

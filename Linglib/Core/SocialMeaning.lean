@@ -61,7 +61,7 @@ inductive IndexicalOrder where
   | second
   /-- Stereotype: subject to metapragmatic commentary and performance. -/
   | third
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def IndexicalOrder.toNat : IndexicalOrder → Nat
   | .first => 0 | .second => 1 | .third => 2
@@ -139,7 +139,7 @@ inductive ContextualStyle where
   | reading      -- C: connected reading passage
   | wordList     -- D: isolated word list
   | minimalPair  -- D': minimal pair test
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def ContextualStyle.toNat : ContextualStyle → Nat
   | .casual => 0 | .careful => 1 | .reading => 2
@@ -225,7 +225,7 @@ inductive ChangeStatus where
   | changeFromAbove
   /-- Non-prestige variant spreading from interior social groups. -/
   | changeFromBelow
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A variable's sociolinguistic behavior: its structural properties in
     the social matrix, its indexical order (awareness level), and its

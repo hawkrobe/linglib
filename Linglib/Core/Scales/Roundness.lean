@@ -65,7 +65,7 @@ structure RoundnessProperties where
   twoPointFiveness : Bool
   fiveness : Bool
   tenness : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Compute all 6 roundness properties for a natural number. -/
 def roundnessProperties (n : Nat) : RoundnessProperties :=
@@ -105,7 +105,7 @@ inductive RoundnessGrade where
   | moderate  -- score 3-4 (e.g., 50, 20)
   | low       -- score 1-2 (e.g., 110, 15)
   | none      -- score 0 (e.g., 7, 99)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Classify a number into a roundness grade. -/
 def roundnessGrade (n : Nat) : RoundnessGrade :=

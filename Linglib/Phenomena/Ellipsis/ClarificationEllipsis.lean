@@ -53,7 +53,7 @@ inductive CEReading where
   /-- "Who/what do you mean by X?" — wh-question about the referent/predicate.
       Paraphrasable as a wh-interrogative. No shared-belief presupposition. -/
   | constituent
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- § 2. CE Data

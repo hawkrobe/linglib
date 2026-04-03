@@ -92,14 +92,14 @@ inductive DegPType where
   | superlative   -- -est / most
   | excessive     -- too
   | sufficiency   -- enough
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The standard of comparison: what the degree is compared to. -/
 inductive StandardType where
   | explicit     -- "taller than Bill" — explicit standard
   | contextual   -- "tall" — contextually determined standard
   | absolute     -- "full" — scale endpoint as standard
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 3. Positive Form Semantics
@@ -169,7 +169,7 @@ theorem positiveMeaning_monotone {max : Nat} (d : Degree max)
 inductive ModifierDirection where
   | amplifier   -- very, extremely: θ + δ → strengthens
   | downtoner   -- slightly, kind of: θ - δ → attenuates
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A degree modifier that shifts the threshold of a gradable predicate. -/
 structure DegreeModifier (max : Nat) where
@@ -250,7 +250,7 @@ inductive AdjectivalConstruction where
   | equative
   | measurePhrase
   | degreeQuestion
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : ToString AdjectivalConstruction where
   toString
@@ -272,7 +272,7 @@ inductive PositiveStandard where
   | minEndpoint   -- lower-bounded: θ = minimum (e.g., "bent", "wet")
   | maxEndpoint   -- upper-bounded/closed: θ = maximum (e.g., "full", "dry")
   | functional    -- necessity standard: θ = min value for pursuit (@cite{beltrama-2025})
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Interpretive Economy determines the standard from scale structure.
     When a scale has an endpoint, Interpretive Economy requires using it
@@ -375,7 +375,7 @@ inductive AdjectiveClass where
   | absoluteMaximum      -- full, straight, closed (threshold = max of scale)
   | absoluteMinimum      -- wet, bent, open (threshold = min of scale)
   | mildlyPositive       -- decent, acceptable, adequate (necessity standard, @cite{beltrama-2025})
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Coarse 2-way classification: relative vs absolute.
     Collapses absoluteMaximum and absoluteMinimum. -/

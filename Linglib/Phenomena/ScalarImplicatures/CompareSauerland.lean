@@ -154,7 +154,7 @@ inductive DisjWorld where
   | onlyA : DisjWorld    -- A ∧ ¬B
   | onlyB : DisjWorld    -- ¬A ∧ B
   | both : DisjWorld     -- A ∧ B
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 open DisjWorld
 
@@ -224,7 +224,7 @@ inductive DisjUtterance where
   | A     -- "A"
   | B     -- "B"
   | AandB -- "A and B"
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 open DisjUtterance
 

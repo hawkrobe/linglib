@@ -79,7 +79,7 @@ structure VHCandidate where
   suffixIn : List Segment
   /-- The surface (output) suffix. -/
   suffixOut : List Segment
-  deriving DecidableEq, BEq
+  deriving DecidableEq
 
 /-- SPREAD as a `NamedConstraint`: penalizes unharmonized targets in the
     output suffix. Returns 0 when the stem has no trigger. -/

@@ -47,7 +47,7 @@ inductive NounClass where
   | cl16   -- pa- (definite location): mahali 'place'
   | cl17   -- ku- (indefinite/general location): —
   | cl18   -- mu-/m- (interior location): —
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a noun class is animate (classes 1 and 2). Animate classes
     trigger person-matching resumptive pronouns in relativization. -/
@@ -100,7 +100,7 @@ inductive Gender where
   | genderC   -- cl5/cl6
   | genderD   -- cl7/cl8
   | genderE   -- cl9/cl10
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Singular class for a gender. -/
 def Gender.singularClass : Gender → NounClass

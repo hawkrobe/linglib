@@ -291,7 +291,7 @@ theorem thai_isoConcatenative : Core.WALS.F20A.lookup "tha" =
 structure WALSCount where
   label : String
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- WALS Chapter 20 distribution, derived from F20A data (@cite{bickel-nichols-2013a}). -/
 def ch20Distribution : List WALSCount :=

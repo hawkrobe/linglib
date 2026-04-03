@@ -97,7 +97,7 @@ inductive RestructuringDiagnostic where
   | cliticClimbing
   /-- Auxiliary change: auxiliary of the lower verb surfaces on the modal -/
   | auxiliaryChange
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A restructuring example: sentence + diagnostic + reading. -/
 structure RestructuringExample where

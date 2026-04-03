@@ -73,7 +73,7 @@ structure CascadeHead where
   label : String
   overt : Bool := true
   affixal : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this a zero morpheme (phonologically unrealized)? -/
 def CascadeHead.isZero (h : CascadeHead) : Bool := !h.overt
@@ -221,7 +221,7 @@ def thetaSuppressed (causAffixed : Bool) (rootHasExtArg : Bool) : Bool :=
 inductive CausVariant where
   | affixal       -- CAUS_aff: on V, strong features
   | prepositional -- CAUS_p: independent P in Cascade
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- CAUS_aff bears strong features that must be discharged at PF. -/
 def CausVariant.hasStrongFeatures : CausVariant → Bool
@@ -244,7 +244,7 @@ inductive CausStrength where
   | strong  -- CAUS with A-Causer suppression (annoy, give)
   | weak    -- CAUS without suppression (break, grow)
   | absent  -- No CAUS (run, sleep)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive CAUS strength from cascade structure.
     A cascade containing CAUS has strong causation; one without has absent.

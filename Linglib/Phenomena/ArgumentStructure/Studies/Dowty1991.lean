@@ -212,7 +212,7 @@ inductive IntransClass where
   | unergative    -- cell 1: agentive + atelic (run, walk, swim)
   | unaccusative  -- cell 4: non-agentive + telic (die, arrive, melt)
   | unstable      -- cells 2, 3: mixed — cross-linguistic variation
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 def table1 (agentive telic : Bool) : IntransClass :=
   match agentive, telic with

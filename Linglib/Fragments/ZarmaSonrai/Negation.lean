@@ -61,7 +61,7 @@ def pfvNeg2 : String := "batu"
 inductive ENAspect where
   | ipfv   -- imperfective complement → si
   | pfv    -- perfective complement → mana/batu
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An expletive negation marker used in a specific trigger context. -/
 structure ENNegator where
@@ -71,7 +71,7 @@ structure ENNegator where
   aspect : ENAspect
   /-- Whether this is a standard negation marker -/
   isStandardNeg : Bool
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Imperfective EN negator: *si*. -/
 def enIpfv : ENNegator where

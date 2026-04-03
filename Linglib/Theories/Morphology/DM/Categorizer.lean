@@ -69,7 +69,7 @@ inductive Categorizer where
   | n  -- nominal categorizer
   | v  -- verbal categorizer
   | a  -- adjectival categorizer
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map a categorizer to its syntactic category. -/
 def Categorizer.toCategory : Categorizer → Cat
@@ -91,7 +91,7 @@ inductive GenderDimension where
   | fem   -- [FEM] dimension
   | masc  -- [MASC] dimension
   | anim  -- [ANIM] dimension
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Polarity of a gender feature value.
     The binary [±VAL] system from @cite{kramer-2015} Ch 3.
@@ -102,7 +102,7 @@ inductive GenderDimension where
 inductive Polarity where
   | pos  -- [+VAL]: positive polarity
   | neg  -- [−VAL]: negative polarity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A gender feature value: a dimension (what kind of feature) combined
     with a polarity (positive or negative).
@@ -115,7 +115,7 @@ inductive Polarity where
 structure GenderVal where
   dim : GenderDimension
   pol : Polarity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Feature interpretability (@cite{kramer-2015} §3.4.2).
 
@@ -126,7 +126,7 @@ structure GenderVal where
 inductive Interpretability where
   | i  -- interpretable (natural gender)
   | u  -- uninterpretable (arbitrary gender)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A gender feature annotated for interpretability.
 
@@ -141,7 +141,7 @@ inductive Interpretability where
 structure GenderFeature where
   interp : Interpretability
   val : GenderVal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a gender feature is interpretable (natural). -/
 def GenderFeature.isNatural : GenderFeature → Bool
@@ -161,7 +161,7 @@ def GenderFeature.isArbitrary : GenderFeature → Bool
 inductive NumberOnN where
   | sg   -- singular (default/unmarked)
   | pl   -- irregular plural (e.g., Amharic broken plurals)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Phi-features hosted on a categorizing head.
 
@@ -171,7 +171,7 @@ inductive NumberOnN where
 structure PhiBundle where
   gender : Option GenderFeature := none
   number : Option NumberOnN := none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited PhiBundle := ⟨{}⟩
 
@@ -189,7 +189,7 @@ structure CatHead where
   cat : Categorizer
   phi : PhiBundle := {}
   selectsD : Bool := false
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The syntactic category of a phi-enriched categorizer head. -/
 def CatHead.toCategory (ch : CatHead) : Cat :=
@@ -320,7 +320,7 @@ def CatHead.a_plain : CatHead where
 inductive LicensingType where
   | semantic   -- Encyclopedia / List 3
   | arbitrary  -- PF / List 2
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A root–n licensing condition: specifies that a particular root (identified
     by index) is licensed to combine with an n head bearing specific features,
@@ -466,7 +466,7 @@ theorem anim_not_plain :
 inductive ImpoverishmentContext where
   | plural       -- [PL]: number feature
   | participant  -- [PARTICIPANT]: 1st/2nd person (speech act participants)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Impoverishment: postsyntactic deletion of morphosyntactic features.
 
@@ -481,7 +481,7 @@ structure ImpoverishmentRule where
   targetGender : GenderVal
   /-- The conditioning context (feature that triggers deletion). -/
   context : ImpoverishmentContext
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Apply impoverishment: if the rule matches, delete the gender feature. -/
 def ImpoverishmentRule.apply (rule : ImpoverishmentRule)
@@ -567,7 +567,7 @@ inductive Recategorization where
   | deadjectival -- a → v (to flatten, to widen)
   | deverbal_n   -- v → n (a build, a throw)
   | deverbal_a   -- v → a (broken, flattened)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The source categorizer of a re-categorization. -/
 def Recategorization.source : Recategorization → Categorizer

@@ -68,7 +68,7 @@ The distinction is continuous: β parameterizes the spectrum. -/
 inductive SpeakerOrientation where
   | cooperative     -- β=0: standard RSA
   | argumentative   -- β>0: goal-oriented
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify speaker orientation from the goal weight λ ∈ [0,1] -/
 def orientationOf (goalWeight : ℚ) : SpeakerOrientation :=
@@ -174,7 +174,7 @@ inductive MeaningLevel where
   | implicature     -- what is implicated (scalar, quantity)
   | presupposition  -- what is presupposed (factive, etc.)
   | typicality      -- inferred from typical usage patterns
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Blameworthiness ordering: false assertions attract most blame,
 typicality departures attract least. -/

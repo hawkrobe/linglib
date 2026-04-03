@@ -18,7 +18,7 @@ inductive CaseSyncretism where
   | coreCasesOnly  -- Core cases only (18 languages)
   | coreAndNonCore  -- Core and non-core (22 languages)
   | noSyncretism  -- No syncretism (35 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 28A dataset (198 languages). -/
 def allData : List (Datapoint CaseSyncretism) :=

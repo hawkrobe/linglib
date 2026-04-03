@@ -39,14 +39,14 @@ inductive DGBRef where
   | maxPending
   /-- References both (e.g., for CR-initiating lexemes) -/
   | both
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Polarity of a propositional lexeme's contribution. -/
 inductive Polarity where
   | positive   -- affirms/accepts
   | negative   -- negates/rejects
   | cr         -- requests clarification
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A propositional lexeme: a word whose meaning depends on DGB state. -/
 structure PropLexeme where
@@ -62,7 +62,7 @@ structure PropLexeme where
   contentRule : String
   /-- Source in @cite{ginzburg-2012} -/
   source : String := ""
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- § 2. Lexical Entries

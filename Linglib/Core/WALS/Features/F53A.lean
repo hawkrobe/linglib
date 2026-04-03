@@ -22,7 +22,7 @@ inductive OrdinalNumerals where
   | firstTwoThThreeTh  -- First, two-th, three-th (110 languages)
   | firstSecondThreeTh  -- First, second, three-th (61 languages)
   | various  -- Various (7 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 53A dataset (321 languages). -/
 def allData : List (Datapoint OrdinalNumerals) :=

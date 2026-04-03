@@ -93,7 +93,7 @@ predicted cancellability status. -/
 inductive Cancellability where
   | cancellable     -- inference can be followed by "but..."
   | nonCancellable  -- "#but..." is infelicitous
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A granularity-specific datum: example + construction + predicted
     flavor + cancellability. -/

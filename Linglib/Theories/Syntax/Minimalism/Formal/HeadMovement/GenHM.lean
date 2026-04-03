@@ -64,7 +64,7 @@ abbrev MValue := FeatureBundle
 inductive TerminalStrength where
   | strong
   | weak
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A language-specific assignment of strength to syntactic categories. -/
 def TerminalStrengthAssignment := Cat → TerminalStrength
@@ -151,7 +151,7 @@ inductive ChainSplitReason where
   /-- The goal is absent — deleted (VP ellipsis: "She runs faster than he does")
       or anaphoric (tag questions: "She likes him, doesn't she?") -/
   | goalAbsent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A GenHM chain between a probe and a goal, possibly split.
 
@@ -191,7 +191,7 @@ def GenHMChain.wellFormed (chain : GenHMChain) : Bool :=
 inductive SpellOutTarget where
   | onGoal
   | onProbe
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Determine where the M-value is spelled out.
 

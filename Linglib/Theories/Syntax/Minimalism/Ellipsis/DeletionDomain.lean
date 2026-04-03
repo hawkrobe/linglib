@@ -146,7 +146,7 @@ inductive SpinePos where
   | Voice  -- Voice head (active/passive/anticausative)
   | T      -- Tense
   | C      -- Complementizer
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Strict "in deletion domain of" relation on spine positions.
 
@@ -367,7 +367,7 @@ theorem adjoinedRoot_outside_vVPE : rootInVVPEDomain .adjoined = false := rfl
 inductive AgainPosition where
   | vP_adjunction  -- Repetitive: event-level *again* (high)
   | VP_adjunction  -- Restitutive: result-state *again* (low)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is an *again* reading available under a given ellipsis type?
 
@@ -512,7 +512,7 @@ inductive NomSpinePos where
   | n      -- Categorizer (gender/class, nominalizer; @cite{marantz-2001})
   | Num    -- Number (@cite{ritter-1991})
   | D      -- Determiner
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Strict "in deletion domain of" relation on nominal spine positions.
 

@@ -53,7 +53,7 @@ open Phenomena.Negation.Typology (NegationProfile italian spanish french)
 inductive NegMergePosition where
   | tp   -- Standard NegP: inflectional domain (F2)
   | cp   -- CP-area: left periphery (F3+, @cite{greco-2020} §4)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. F-value classification — derive TP vs CP from Extended Projection
@@ -120,7 +120,7 @@ structure SnegConditions where
   negIsHead : Bool
   mergePosition : NegMergePosition
   tpIsFocused : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A set of conditions yields surprise negation iff all four
     are satisfied. -/
@@ -158,7 +158,7 @@ structure SnegAttestation where
   language : String
   attested : Bool
   negIsHead : Option Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def italianSnegs : SnegAttestation :=
   { language := "Italian", attested := true, negIsHead := italian.negIsHead }

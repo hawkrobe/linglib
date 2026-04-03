@@ -59,7 +59,7 @@ inductive FootType where
       Well-formed shapes: (LH), (LL), (H).
       Used in right-prominent stress (Creek, Yupik). -/
   | iamb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Metrical Parse
@@ -73,7 +73,7 @@ inductive ParseElement where
   | foot : List SyllWeight → ParseElement
   /-- An unparsed syllable not dominated by any foot. -/
   | unfooted : SyllWeight → ParseElement
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A metrical parse: a prosodic domain represented as a linear sequence
     of footed and unfooted syllables. -/

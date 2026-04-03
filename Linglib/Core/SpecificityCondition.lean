@@ -83,7 +83,7 @@ inductive ExternalOperator where
   | relOperator
   /-- Focus operator -/
   | focusOperator
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether an external operator's binding into a DP is blocked by the
 Specificity Condition.

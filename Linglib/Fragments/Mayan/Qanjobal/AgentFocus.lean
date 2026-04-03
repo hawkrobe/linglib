@@ -61,7 +61,7 @@ open Minimalism
 /-- Person-number values relevant for Q'anjob'al agreement. -/
 inductive PN where
   | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Set A (ergative/possessive) markers: pre-consonantal allomorphs. -/
 def setAPreC : PN → String
@@ -105,7 +105,7 @@ theorem p3sg_erg_allomorphy :
 inductive StatusSuffix where
   | itv   -- intransitive: *-i*
   | tv    -- transitive: *-V'*
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def StatusSuffix.form : StatusSuffix → String
   | .itv => "-i"
@@ -120,7 +120,7 @@ inductive ExtractionTarget where
   | intranS   -- S: intransitive subject
   | patient   -- P: transitive object
   | agent     -- A: transitive subject
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Can this argument be A-bar extracted from a regular transitive clause? -/
 def ExtractionTarget.extractable : ExtractionTarget → Bool
@@ -149,7 +149,7 @@ structure VerbMorphology where
   statusSuffix : StatusSuffix
   /-- Does the verb bear Set A (ergative) agreement? -/
   hasSetA : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Regular transitive verb form. -/
 def regularTransitive : VerbMorphology :=
@@ -220,7 +220,7 @@ theorem crazy_ap_is_af_form :
     edge is needed — the trapping problem never arises. -/
 inductive PersonRestriction where
   | first | second | third
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does AF apply for this person of agent? Only 3rd person. -/
 def PersonRestriction.requiresAF : PersonRestriction → Bool

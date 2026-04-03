@@ -100,7 +100,7 @@ inductive HandArmRelation where
   | identical
   /-- Distinct words for 'hand' and 'arm'. -/
   | different
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a language uses the same or different lexemes for 'finger' and 'hand'.
     Identity of 'finger' and 'hand' is cross-linguistically rare (12% of sample)
@@ -110,7 +110,7 @@ inductive FingerHandRelation where
   | identical
   /-- Distinct words for 'finger' and 'hand'. -/
   | different
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Colour Term Systems (Ch 132--135)
@@ -127,7 +127,7 @@ inductive NonDerivedColourCount where
   | five        -- 5 non-derived categories
   | fiveHalf    -- 5.5 (transitional)
   | six         -- 6 non-derived categories
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Total number of basic colour categories including derived ones (F133A).
     Ranges from 3--4 (minimal systems) to 11 (maximal, e.g., English, Russian). -/
@@ -139,7 +139,7 @@ inductive BasicColourCount where
   | v8to8h      -- 8--8.5 basic colour categories
   | v9to10      -- 9--10 basic colour categories
   | v11         -- 11 basic colour categories (maximal)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- How a language treats the green-blue region of colour space (F134A).
     The classic grue/green-blue distinction. -/
@@ -158,7 +158,7 @@ inductive GreenBlueRelation where
   | yellowGreenVsBlue
   /-- No green or blue term at all. -/
   | noTerm
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- How a language treats the red-yellow region of colour space (F135A). -/
 inductive RedYellowRelation where
@@ -172,7 +172,7 @@ inductive RedYellowRelation where
   | yellowGreenVsRed
   /-- No red or yellow term at all. -/
   | noTerm
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Pronominal Root Patterns (Ch 136--137)
@@ -187,13 +187,13 @@ inductive MTPronounPattern where
   | paradigmatic
   /-- M-T pattern is non-paradigmatic (sporadic). -/
   | nonParadigmatic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether 1SG has an m-initial or m-containing form (F136B). -/
 inductive MIn1SG where
   | absent
   | present
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- N-M pronoun pattern (F137A): whether 1SG has /n/ and 2SG has /m/. -/
 inductive NMPronounPattern where
@@ -203,13 +203,13 @@ inductive NMPronounPattern where
   | paradigmatic
   /-- N-M pattern is non-paradigmatic. -/
   | nonParadigmatic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether 2SG has an m-initial or m-containing form (F137B). -/
 inductive MIn2SG where
   | absent
   | present
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Tea Wanderwort (Ch 138)
@@ -228,7 +228,7 @@ inductive TeaWordOrigin where
   | te
   /-- Independent form, not from either source. -/
   | other
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Sign Language Features (Ch 139--140)
@@ -240,14 +240,14 @@ inductive IrregularNegativeCount where
   | one
   | some    -- 2 to 5
   | many    -- more than 5
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Question particle usage in sign languages (F140A). -/
 inductive SignQuestionParticle where
   | none
   | one
   | moreThanOne
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Writing Systems (Ch 141) and Clicks (Ch 142)
@@ -262,7 +262,7 @@ inductive WritingSystemType where
   | syllabic
   | logographic
   | mixedLogographicSyllabic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Para-linguistic usage of clicks (F142A). Click sounds are used
     para-linguistically even in languages that lack phonemic clicks. -/
@@ -275,7 +275,7 @@ inductive ClickUsage where
   | affective
   /-- Other usage or no para-linguistic clicks attested. -/
   | otherOrNone
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions

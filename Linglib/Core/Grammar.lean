@@ -29,7 +29,7 @@ structure V2Data where
   impV2 : Bool       -- V2 in imperatives
   embFinV2 : Bool    -- V-to-I in embedded finite clauses
   embQV2 : Bool      -- V2 in embedded questions
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Clause Types

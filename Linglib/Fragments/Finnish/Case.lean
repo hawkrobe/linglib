@@ -91,7 +91,7 @@ inductive Direction where
   | static   -- at/in/on (no motion)
   | source   -- from/out of/off (motion away)
   | goal     -- to/into/onto (motion toward)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Location type: whether the spatial relation is conceptualized as
     internal (containment) or external (surface/proximity).
@@ -100,7 +100,7 @@ inductive Direction where
 inductive LocationType where
   | internal  -- containment: in, out of, into
   | external  -- surface/proximity: on/at, off/from, to/onto
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A cell in the Finnish local case matrix: the case name, suffix,
     directional coordinates, and mapping to `Core.Case`. -/
@@ -110,7 +110,7 @@ structure LocalCase where
   direction : Direction
   locationType : LocationType
   coreCase : Core.Case
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The 3×2 local case matrix.
 

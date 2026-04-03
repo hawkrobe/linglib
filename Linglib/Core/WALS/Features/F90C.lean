@@ -18,7 +18,7 @@ inductive PostnominalRelativeClauses where
   | nrelOrReln  -- NRel or RelN (31 languages)
   | nrelOrInternallyHeaded  -- NRel or internally-headed (8 languages)
   | nrelOrCorrelative  -- NRel or correlative (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PostnominalRelativeClauses) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .nounRelativeClauseDominant }

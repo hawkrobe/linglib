@@ -56,7 +56,7 @@ inductive OpTree where
   | content (label : String)
   | op (label : String) (scope : OpTree)
   | merge (left right : OpTree)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Does the tree contain a node (content or operator) with the given label? -/
 def OpTree.hasLabel : OpTree → String → Bool
@@ -90,7 +90,7 @@ inductive ExhFeature where
   | strong  -- [uexh*]: or, bare numerals, unstressed some, and, all
   | weak    -- [uexh]: stressed SOME
   | none    -- [—]: scalar adjectives
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An SI trigger paired with its *exh*-placement feature. -/
 structure SITriggerSpec where
@@ -313,7 +313,7 @@ theorem ex16_end_to_end :
 /-- Temperature scale: `freezing > cold > warm`.
 Scalar adjectives bear no `[uexh]` feature (§3.1). -/
 inductive TempWorld where | freezing | cold | warm
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def isCold     : TempWorld → Bool | .freezing | .cold => true | .warm => false
 def isFreezing : TempWorld → Bool | .freezing => true  | _ => false

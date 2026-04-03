@@ -20,7 +20,7 @@ inductive PrefixSuffixPreference where
   | equalPrefixingAndSuffixing  -- Equal prefixing and suffixing (147 languages)
   | weaklyPrefixing  -- Weakly prefixing (94 languages)
   | strongPrefixing  -- Strong prefixing (58 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PrefixSuffixPreference) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .stronglySuffixing }

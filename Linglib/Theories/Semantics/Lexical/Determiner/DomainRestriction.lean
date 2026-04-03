@@ -206,7 +206,7 @@ inductive SpatialScale where
   | action
   | vista
   | unrestricted
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype SpatialScale where
   elems := {.peripersonal, .action, .vista, .unrestricted}

@@ -80,7 +80,7 @@ open Minimalism
     Six cells: three persons × two numbers. -/
 inductive PersonNumber where
   | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All six person-number values. -/
 def personNumbers : List PersonNumber :=
@@ -179,7 +179,7 @@ inductive KaqArgPosition where
   | patient
   /-- S: intransitive subject (sole argument) -/
   | intranS
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Case assignment in perfective (ergative) clauses: ergative-absolutive alignment.
     Agent gets ERG (from Voice/v); patient and intranS both get ABS
@@ -333,7 +333,7 @@ inductive AgreeOutcome where
   | success : PersonNumber → AgreeOutcome
   /-- Probe attempted but found no suitable goal; default surfaces. -/
   | failure : AgreeOutcome
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The morphological exponent for an agreement outcome.
     Success: Set B form of the agreed-with argument.

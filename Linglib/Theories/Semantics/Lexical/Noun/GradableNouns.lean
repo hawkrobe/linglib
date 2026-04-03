@@ -56,7 +56,7 @@ def GradableNoun.pos {E : Type} (n : GradableNoun E) : E → Bool :=
 inductive SizePolarity where
   | big    -- measures bigness (positive)
   | small  -- measures smallness (negative/inverted)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Big: maps degrees to their "bigness" (identity on the degree scale). -/
 def bigness (d : Degree) : Degree := d
@@ -154,7 +154,7 @@ section Examples
 /-- A simple entity type for examples. -/
 inductive Person where
   | george | sarah | floyd
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- George: d8, Sarah: d4, Floyd: d1. -/
 def idiocyMeasure : Person → Degree

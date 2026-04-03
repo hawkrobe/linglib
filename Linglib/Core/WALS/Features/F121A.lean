@@ -18,7 +18,7 @@ inductive ComparativeType where
   | exceed  -- Exceed (33 languages)
   | conjoined  -- Conjoined (34 languages)
   | particle  -- Particle (22 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 121A dataset (167 languages). -/
 def allData : List (Datapoint ComparativeType) :=

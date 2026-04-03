@@ -20,7 +20,7 @@ inductive ThirdPersonPronounsAndDemonstratives where
   | relatedToNonRemoteDemonstratives  -- Related to non-remote demonstratives (14 languages)
   | relatedByGenderMarkers  -- Related by gender markers (24 languages)
   | relatedForNonHumanReference  -- Related for non-human reference (17 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 43A dataset (225 languages). -/
 def allData : List (Datapoint ThirdPersonPronounsAndDemonstratives) :=

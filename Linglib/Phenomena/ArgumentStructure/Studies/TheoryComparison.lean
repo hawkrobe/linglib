@@ -41,7 +41,7 @@ inductive ArgRole where
   | theme
   | resultState
   | path
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A predicted argument frame: ordered list of roles. -/
 abbrev ArgFrame := List ArgRole

@@ -73,19 +73,19 @@ namespace Fragments.Mayan.Kiche
 /-- Grammatical person in K'iche'. -/
 inductive Person where
   | first | second | third
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Formality level for 2nd person. -/
 inductive Formality where
   | informal | formal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A person/number/formality specification. -/
 structure PhiFeatures where
   person : Person
   number : Number
   formality : Formality
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Shorthand for informal phi features. -/
 abbrev phi (p : Person) (n : Number) : PhiFeatures := ⟨p, n, .informal⟩
@@ -175,13 +175,13 @@ inductive KicheArgPosition where
   | agent    -- A: transitive subject (triggers Set A)
   | patient  -- P: transitive object (triggers Set B)
   | intranS  -- S: intransitive subject (triggers Set B)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which agreement set cross-references each argument position? -/
 inductive AgreementSet where
   | setA  -- Ergative markers
   | setB  -- Absolutive markers
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The agreement set triggered by each argument position.
     S and P both trigger Set B (= absolutive grouping).

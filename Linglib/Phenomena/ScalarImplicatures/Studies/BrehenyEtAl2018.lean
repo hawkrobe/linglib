@@ -84,7 +84,7 @@ section IndirectSI
 /-- Three homework worlds: did none, did some but not all, did all. -/
 inductive HWWorld where
   | none_ | someNotAll | all_
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def hwDomain : List HWWorld := [.none_, .someNotAll, .all_]
 
@@ -178,7 +178,7 @@ section GradableAdjectives
     Represents glass fullness: empty (0), mid (0.5), full (1). -/
 inductive GlassWorld where
   | empty_ | mid | full_
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def glassDomain : List GlassWorld := [.empty_, .mid, .full_]
 
@@ -285,7 +285,7 @@ section ParticularisedSI
 /-- Three activity worlds for John. -/
 inductive ActivityWorld where
   | ranOnly | ranAndSmoked | neither
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def actDomain : List ActivityWorld :=
   [.ranOnly, .ranAndSmoked, .neither]
@@ -360,7 +360,7 @@ section SwansonCases
 /-- Three deontic worlds. -/
 inductive DeonticWorld where
   | forbidden | optional_ | required_
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def deonticDomain : List DeonticWorld :=
   [.forbidden, .optional_, .required_]

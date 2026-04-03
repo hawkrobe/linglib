@@ -630,7 +630,7 @@ theorem disjointness_condition {Atom : Type} [DecidableEq Atom]
     (`UD.Number`, `Word.Number`). -/
 inductive MathSystem where
   | nat | int | rat | real
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype MathSystem where
   elems := {.nat, .int, .rat, .real}

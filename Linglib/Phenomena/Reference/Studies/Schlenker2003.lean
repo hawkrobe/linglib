@@ -50,10 +50,10 @@ open Semantics.Reference.Kaplan (pronI_access)
 -- ════════════════════════════════════════════════════════════════
 
 inductive Person | alice | bob
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive World | w0 | w1
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 abbrev Ctx := KContext World Person Unit Unit
 

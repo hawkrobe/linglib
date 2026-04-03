@@ -19,7 +19,7 @@ inductive LocusOfMarkingInPossessiveNounPhrases where
   | doubleMarking  -- Double marking (22 languages)
   | noMarking  -- No marking (32 languages)
   | other  -- Other (6 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 24A dataset (236 languages). -/
 def allData : List (Datapoint LocusOfMarkingInPossessiveNounPhrases) :=

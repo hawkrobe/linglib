@@ -62,7 +62,7 @@ open Phenomena.Phonology
 structure WordProsodicProfile where
   hasTone         : Bool  -- (3): pitch enters lexical realization
   hasStressAccent : Bool  -- (5): obligatory metrical head structure
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The four cells of Table I. -/
 inductive ProsodicQuadrant where
@@ -70,7 +70,7 @@ inductive ProsodicQuadrant where
   | toneOnly         -- +T, −SA (e.g., Yoruba, Igbo, Skou)
   | stressOnly       -- −T, +SA (e.g., English, Russian, Turkish)
   | neither          -- −T, −SA (e.g., Bella Coola, French)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def WordProsodicProfile.quadrant (p : WordProsodicProfile) : ProsodicQuadrant :=
   match p.hasTone, p.hasStressAccent with
@@ -93,7 +93,7 @@ structure StressAccentCriteria where
   obligatoriness  : Bool
   /-- (5b) Every lexical word has at most one syllable with primary stress. -/
   culminativity   : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A system satisfying both criteria is a prototypical SA system. -/
 def StressAccentCriteria.isPrototypicalSA (c : StressAccentCriteria) : Bool :=
@@ -122,7 +122,7 @@ structure ClusteringProperties where
   demarcation    : Bool
   /-- Rhythmicity: echo-stresses occur on every other syllable (p. 234). -/
   rhythmicity    : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Prototypical SA systems exhibit all four clustering properties. -/
 def prototypicalSACluster : ClusteringProperties :=
@@ -218,7 +218,7 @@ inductive PALikeProperty where
   | combinesToneAndStress
   /-- (13c) Restricted, sparse, or privative tone (e.g., /H/ vs. ∅). -/
   | restrictedTone
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Hyman's key argument: languages called "PA" freely pick and choose
     between these properties. No single definition of PA can be given
@@ -419,7 +419,7 @@ theorem drubea_no_stress :
 inductive CulminativityDomain where
   | stressPerWord      -- Hyman (5b): at most one primary stress per word
   | registerPerStem    -- Lionnet: at most one `l` feature per native stem
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The two culminativity constraints are formally parallel but
     apply to different phonological objects. -/

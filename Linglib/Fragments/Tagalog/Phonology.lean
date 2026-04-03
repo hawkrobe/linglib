@@ -41,13 +41,13 @@ open Theories.Phonology.HarmonicGrammar
 inductive StemC where
   | p | t | k   -- voiceless
   | b | d | g   -- voiced
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether nasal substitution applies. -/
 inductive SubSt where
   | yes  -- coalescence: nasal + obstruent → nasal
   | no   -- faithful: nasal cluster preserved
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A candidate is a stem consonant paired with a substitution decision. -/
 abbrev NSCand := StemC × SubSt
@@ -82,7 +82,7 @@ inductive NasalSubInput where
   | mang_k  -- /maŋ+k/  (top-right)
   | pang_b  -- /paŋ+b/  (bottom-left)
   | pang_k  -- /paŋ+k/  (bottom-right)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The two surface variants for each underlying form. -/
 inductive NasalSubOutput where
@@ -90,7 +90,7 @@ inductive NasalSubOutput where
   | yes
   /-- NO: nasal substitution does not apply — place assimilation only. -/
   | no
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype NasalSubInput where
   elems := {.mang_b, .mang_k, .pang_b, .pang_k}

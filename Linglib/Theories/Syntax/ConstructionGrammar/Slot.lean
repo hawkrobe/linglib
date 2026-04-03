@@ -72,7 +72,7 @@ inductive SlotFiller (Lex : Type) where
       property "animate". More abstract than SYN (category-based): the
       filler is constrained by meaning, not by syntactic category. -/
   | semantic : String → SlotFiller Lex
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this slot open (not lexically fixed)?
 
@@ -93,7 +93,7 @@ inductive GramFunction where
   | comp   -- complement (clausal/verbal)
   | obj    -- direct object
   | pred   -- predicative complement / secondary predicate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Referential index for cross-slot coreference constraints.
     Slots sharing the same RefIndex must have their semantic values
@@ -107,7 +107,7 @@ inductive SlotConstraint where
   | locMinus   -- [loc -]: must occur left-isolated, not VP-internal
   | negMinus   -- [neg -]: cannot be negated
   | refEmpty   -- [ref ∅]: nonreferential (no variable-binding function)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A slot in a construction: filler content + semantic role + headedness.
 
@@ -128,7 +128,7 @@ structure Slot (Lex : Type) where
   refIdx : Option RefIndex := none
   /-- Syntactic constraints on this slot ([loc -], [neg -], [ref ∅]) -/
   constraints : List SlotConstraint := []
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A typed form: the form side of a construction as a sequence of slots.
 

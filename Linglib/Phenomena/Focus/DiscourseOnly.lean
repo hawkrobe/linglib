@@ -63,13 +63,13 @@ inductive ClauseType where
   | negRhetoricalWhQ
   | imperative
   | exclamative
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Position of the clause in the discourse *only* construction. -/
 inductive ArgPosition where
   | left   -- S (establishes evidential direction)
   | right  -- S' (fails to support direction)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- Data Structure
 

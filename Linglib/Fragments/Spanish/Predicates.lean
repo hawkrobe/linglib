@@ -32,7 +32,7 @@ inductive AnticausativeMarking where
   | marked     -- Requires SE (quebrar → quebrarse)
   | unmarked   -- No SE (mejorar → mejorar)
   | optional   -- Marginal SE (hervir → ?hervirse)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Verb Entry Structure

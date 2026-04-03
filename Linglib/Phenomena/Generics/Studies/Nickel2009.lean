@@ -61,12 +61,12 @@ open Semantics.Lexical.Noun.Kind.Generics (prevalence thresholdGeneric)
     appeal to different normality ways. -/
 structure NormalcyWay where
   id : Nat
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- An entity in the domain of a generic. -/
 structure Entity where
   id : Nat
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether an entity is normal in a given way. -/
 abbrev NormalIn := Entity → NormalcyWay → Bool

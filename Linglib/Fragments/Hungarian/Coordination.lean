@@ -28,13 +28,13 @@ inductive CoordRole where
   | mu         -- Subset/additive (conjunction)
   | disj       -- Disjunction
   | advers     -- Adversative ("but")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Morphological boundness. -/
 inductive Boundness where
   | free
   | bound
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A Hungarian coordination entry. -/
 structure CoordEntry where

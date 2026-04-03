@@ -48,7 +48,7 @@ inductive NatClass where
   | liquid -- liquids/taps: [+son, +approx, +cons]
   | glide  -- glides: [+son, +approx, −cons, −syll]
   | vowel  -- vowels: [+son, +approx, −cons, +syll]
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Parker (2002) 8-level sonority ranking. -/
 def NatClass.parkerSonority : NatClass → Nat

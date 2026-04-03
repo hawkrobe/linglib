@@ -17,7 +17,7 @@ inductive CulturalCategoriesOfLanguagesWithIdentityOfFingerAndHand where
   | hunterGatherers  -- Hunter-gatherers (46 languages)
   | farmerForagers  -- Farmer-foragers (18 languages)
   | fullFledgedFarmers  -- Full-fledged farmers (8 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 130B dataset (72 languages). -/
 def allData : List (Datapoint CulturalCategoriesOfLanguagesWithIdentityOfFingerAndHand) :=

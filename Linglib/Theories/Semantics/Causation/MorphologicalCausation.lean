@@ -91,7 +91,7 @@ inductive CauserType where
   | intentionalHuman  -- IHCr: volitional, controlled action
   | accidentalHuman   -- AHCr: unintentional, no control
   | naturalForce      -- NFCr: non-human, non-volitional
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Causee/affectee type: four levels of control and animacy.
 
@@ -104,7 +104,7 @@ inductive CauseeAffecteeType where
   | physImpactHuman     -- PhysImpHCEAF: physically coerced, no control
   | psychImpactHuman    -- PsychImpHCEAF: psychologically affected
   | inanimate           -- InanCEAF: no volition
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Agentivity Degree (@cite{hafeez-2025} Ch. 7)
@@ -120,7 +120,7 @@ inductive AgentivityDegree where
   | full     -- intentional causer (IHCr)
   | marginal -- accidental (AHCr) or natural force (NFCr)
   | induced  -- causee exercises control under causer influence
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Causer type determines causer's agentivity degree. -/
 def CauserType.agentivityDegree : CauserType → AgentivityDegree
@@ -147,7 +147,7 @@ def CauseeAffecteeType.hasInducedAgentivity : CauseeAffecteeType → Bool
 inductive Mediation where
   | direct    -- causer directly brings about result
   | indirect  -- causer acts through intermediary/causee
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 4. Causative Complexity (@cite{comrie-1989} §8.2)
@@ -165,7 +165,7 @@ inductive CausativeComplexity where
   | lexical
   | morphological
   | periphrastic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : LT CausativeComplexity where
   lt a b := match a, b with
@@ -207,7 +207,7 @@ structure CausativeConstruction where
   causerRestriction : Option CauserType
   /-- Required causee/affectee type (none = unrestricted) -/
   causeeRestriction : Option CauseeAffecteeType
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 6. Semantic Prototype
@@ -235,7 +235,7 @@ structure SemanticPrototype where
   absentCausees : List CauseeAffecteeType
   /-- Whether mediation is part of the prototype -/
   requiresMediation : Option Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 7. Comrie's Generalization
@@ -346,7 +346,7 @@ inductive IntransitivizationType where
   | anticausative   -- external cause removed; monoeventive result
   | reflexive       -- causer = causee (coidentification); bieventive
   | unmarked        -- no overt marking (English)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Reflexive intransitives retain the causer position (coidentified
     with the causee), preserving bieventive structure. Anticausatives

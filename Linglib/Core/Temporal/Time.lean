@@ -176,7 +176,7 @@ theorem finalSubinterval_refl (i : Interval Time) : i.finalSubinterval i :=
 inductive BoundaryType where
   | closed  -- boundary moment included in the interval
   | open_   -- boundary moment excluded from the interval
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A generalized interval with specified boundary types.
     Extends the basic `Interval` with open/closed annotations on each end.
@@ -299,7 +299,7 @@ end Interval
 inductive SituationBoundedness where
   | bounded    -- telic / perfective / closed
   | unbounded  -- atelic / imperfective / open
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- SituationBoundedness → MereoTag: bounded = quantized, unbounded = cumulative.
     Bounded situations (telic/perfective) are mereologically quantized;
@@ -328,7 +328,7 @@ inductive TemporalRelation where
   | overlapping -- t₁ ◦ t₂ (simplified to equality for points)
   | notAfter    -- t₁ ≤ t₂
   | notBefore   -- t₁ ≥ t₂
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace TemporalRelation
 

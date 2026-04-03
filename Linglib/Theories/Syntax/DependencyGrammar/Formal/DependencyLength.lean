@@ -106,7 +106,7 @@ structure HeadDirectionProfile where
   depLengthAt10 : Nat   -- × 100, mean dep length for sentences of length 10
   depLengthAt15 : Nat   -- × 100
   depLengthAt20 : Nat   -- × 100
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Behaghel's Laws

@@ -59,7 +59,7 @@ open Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
 inductive KennedyInterp where
   | exact      -- max{d : D(d)} = m  (basic de-Fregean meaning)
   | lowerBound -- ∃x[P(x) ∧ #(x) = m] (type-lowered via BE + iota)
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Kennedy's Class A/B alternative structure for numeral m.
     The alternatives are: the bare numeral, "more than m", "at least m". -/
@@ -67,7 +67,7 @@ inductive KennedyUtt where
   | bare     -- the bare numeral (ambiguous between exact and lower-bound)
   | moreThan -- "more than m" (Class B modifier)
   | atLeast  -- "at least m" (Class A modifier)
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Kennedy meaning for numeral m, parametrized by interpretation.
     Under exact interp: bare = max{d | P(d)} = m (bilateral).

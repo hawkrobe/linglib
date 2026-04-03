@@ -20,7 +20,7 @@ inductive NPCaseAlignment where
   | ergativeAbsolutive  -- Ergative - absolutive (32 languages)
   | tripartite  -- Tripartite (4 languages)
   | activeInactive  -- Active-inactive (4 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 98A dataset (190 languages). -/
 def allData : List (Datapoint NPCaseAlignment) :=

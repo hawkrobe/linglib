@@ -307,8 +307,7 @@ theorem derivation_in_historical_base
     have h_sit : gs.1.sit sfVar = s₁ := by
       rw [h_upd]
       unfold SitAssignment.updateSit
-      simp only [show (sfVar == sfVar) = true from by
-        unfold instBEqSVar BEq.beq; exact decide_eq_true rfl, ite_true]
+      simp only [beq_self_eq_true, ite_true]
     rw [h_sit]
     exact h_hist
 

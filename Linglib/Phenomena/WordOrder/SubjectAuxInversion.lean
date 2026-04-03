@@ -67,7 +67,7 @@ inductive SAIContext where
   | vpEllipsis
   /-- Emphatic/verum focus: "Sue DOES eat fish" -/
   | emphatic
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Acceptability judgment. -/
 inductive Acceptability where
@@ -76,7 +76,7 @@ inductive Acceptability where
   | marginal
   /-- Grammatical in some dialects but not Standard American/British English -/
   | dialectal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A single SAI judgment. -/
 structure SAIDatum where

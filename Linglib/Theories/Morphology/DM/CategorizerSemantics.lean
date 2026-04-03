@@ -55,7 +55,7 @@ inductive NSemanticType where
   /-- Alienator: n existentially closes a relational root.
       Input type: ⟨e,⟨e,t⟩⟩; result type: ⟨e,t⟩. -/
   | alienator
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map n-head features to the semantic type they contribute. -/
 def catHeadSemanticType (ch : CatHead) (mediatesAPossession : Bool := false)

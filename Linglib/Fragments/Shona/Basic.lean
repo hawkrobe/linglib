@@ -51,7 +51,7 @@ inductive NounClass where
   | cl12    -- ka- (diminutive singular): kasikana 'small girl'
   | cl13    -- tu- (diminutive plural): tusikana 'small girls'
   | cl14    -- hu-/u- (singular): huchi 'honey'
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def NounClass.classNumber : NounClass → Nat
   | .cl1 => 1 | .cl2 => 2 | .cl3 => 3 | .cl4 => 4 | .cl5 => 5
@@ -99,7 +99,7 @@ inductive Gender where
   | genderF   -- cl11/cl10 (streams, extended objects)
   | genderG   -- cl14/cl6
   | genderH   -- cl12/cl13 (diminutive)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def Gender.singularClass : Gender → NounClass
   | .genderA => .cl1

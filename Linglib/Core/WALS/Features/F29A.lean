@@ -17,7 +17,7 @@ inductive SyncretismInVerbalPersonNumberMarking where
   | noSubjectPersonNumberMarking  -- No subject person/number marking (57 languages)
   | syncretic  -- Syncretic (60 languages)
   | notSyncretic  -- Not syncretic (81 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 29A dataset (198 languages). -/
 def allData : List (Datapoint SyncretismInVerbalPersonNumberMarking) :=

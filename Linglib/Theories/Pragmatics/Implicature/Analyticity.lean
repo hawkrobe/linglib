@@ -19,7 +19,7 @@ inductive SemType where
   | e : SemType                         -- Individuals
   | t : SemType                         -- Truth values
   | fn : SemType → SemType → SemType    -- Functions ⟨a,b⟩
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 notation "⟨" a ", " b "⟩" => SemType.fn a b
 

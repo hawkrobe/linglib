@@ -65,7 +65,7 @@ open Core
 inductive AnaphorDepth where
   | deep
   | surface
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Syntactic domain of the null element. -/
 inductive NullDomain where
@@ -73,7 +73,7 @@ inductive NullDomain where
   | DP  -- Full determiner phrase
   | PP  -- Prepositional phrase
   | VP  -- Verb phrase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 2: BVQ and EIR — Derivation Chain
@@ -114,7 +114,7 @@ inductive Conclusion where
   | definitelySurface
   | definitelyDeep
   | inconclusive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The extraction test. Success is unambiguous (the operator
     binds a trace inside the overt structure → surface anaphor).

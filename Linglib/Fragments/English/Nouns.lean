@@ -42,7 +42,7 @@ inductive NPNumber where
   | sg    -- Singular
   | pl    -- Plural
   | mass  -- Mass (no number distinction)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- An English noun phrase. -/
 structure NP where

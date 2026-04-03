@@ -18,7 +18,7 @@ inductive AssociativePlural where
   | uniqueAffixalAssociativePlural  -- Unique affixal associative plural (48 languages)
   | uniquePeriphrasticAssociativePlural  -- Unique periphrastic associative plural (47 languages)
   | noAssociativePlural  -- No associative plural (37 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 36A dataset (236 languages). -/
 def allData : List (Datapoint AssociativePlural) :=

@@ -66,7 +66,7 @@ inductive PersonFeature where
   | part  -- [PART]: 1st and 2nd person
   | spkr  -- [SPKR]: 1st person only
   | addr  -- [ADDR]: 2nd person only
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does a DP of person level `p` bear feature `f`? -/
 def dpBears (p : PersonLevel) (f : PersonFeature) : Bool :=
@@ -110,7 +110,7 @@ inductive DynInteraction where
   | part
   | spkr
   | partAndSpkr
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 4: DealGrammar
@@ -126,7 +126,7 @@ inductive DynInteraction where
 structure DealGrammar where
   satisfaction : Option PersonFeature
   dynInteraction : DynInteraction
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 5: Licitness

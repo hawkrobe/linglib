@@ -13,7 +13,7 @@ structure DiscourseOnlyParticle where
   form : String
   nativeForm : String
   gloss : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Italian *solo che* — S' restricted to declaratives only. -/
 def soloChe : DiscourseOnlyParticle where

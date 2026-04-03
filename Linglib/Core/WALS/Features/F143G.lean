@@ -18,7 +18,7 @@ inductive MinorMorphologicalMeansOfSignalingNegation where
   | neginfix  -- NegInfix (2 languages)
   | negstemchange  -- NegStemChange (1 languages)
   | none  -- None (1315 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint MinorMorphologicalMeansOfSignalingNegation) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .none }

@@ -17,7 +17,7 @@ inductive PositionOfInterrogativePhrasesInContentQuestions where
   | initialInterrogativePhrase  -- Initial interrogative phrase (264 languages)
   | notInitialInterrogativePhrase  -- Not initial interrogative phrase (615 languages)
   | mixed  -- Mixed (23 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PositionOfInterrogativePhrasesInContentQuestions) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .notInitialInterrogativePhrase }

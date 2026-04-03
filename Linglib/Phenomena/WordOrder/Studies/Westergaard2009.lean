@@ -101,7 +101,7 @@ inductive ClauseType where
   | imperative
   | embeddedDecl
   | embeddedQuestion
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- V2 status of a clause type in a given language/dialect. -/
 inductive V2Status where
@@ -111,7 +111,7 @@ inductive V2Status where
   | impossible
   /-- V2 alternates with non-V2, conditioned by other factors -/
   | optional
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A single V2 observation: what happens in a given clause type. -/
 structure V2Datum where

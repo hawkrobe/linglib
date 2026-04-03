@@ -36,13 +36,13 @@ inductive CoordRole where
   | mu         -- Subset/additive
   | disj       -- Disjunction
   | advers     -- Adversative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Morphological boundness. -/
 inductive Boundness where
   | free
   | bound   -- clitic or suffix
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A Dargwa coordination entry. -/
 structure CoordEntry where

@@ -66,7 +66,7 @@ inductive TeluguCase where
   | gen   -- genitive
   | dat   -- dative
   | loc   -- postposition -lō 'in'
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map Telugu cases to the core `Case` type. -/
 def TeluguCase.toCore : TeluguCase → Core.Case
@@ -100,7 +100,7 @@ inductive StrongClass where
   -- -nu~-ṭi (kannu 'eye'), -du~-ṭi (gūdu 'nest'),
   -- -ru~-ṭi (ēru 'stream'), -li~-ṭi (nāgali 'plough'),
   -- -yi~-ṭi (nēyi 'ghee')
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Strong noun paradigm: the n-exponent for each case.
     All strong nouns share the NOM-vs-oblique split regardless of
@@ -108,7 +108,7 @@ inductive StrongClass where
 structure StrongParadigm where
   nomForm : String
   oblForm : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The *n*-exponent for the -lu∼-ṭi class. -/
 def luTiParadigm : StrongParadigm := ⟨"lu", "ṭi"⟩
@@ -128,7 +128,7 @@ def strongSurface (p : StrongParadigm) (c : TeluguCase) : String :=
 inductive WeakStemForm where
   | short  -- -am (before heavy σ or domain-finally)
   | long   -- -āni (before light σ within PrWd)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The weak noun paradigm for *samudram* 'ocean'.
     Data from @cite{krishnamurti-gwynn-1985}. -/
@@ -148,7 +148,7 @@ def weakParadigm : TeluguCase → WeakStemForm
 structure NContext where
   rootClass : StrongClass
   hasAccFeature : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- VI rule for NOM *n* of the -lu∼-ṭi class.
     No ACC feature required → this is the elsewhere/default rule. -/
@@ -302,7 +302,7 @@ inductive FollowingContext where
   | noSuffix           -- NOM, GEN, 3SG: no overt suffix
   | lightWithinPrWd    -- ACC -ni, DAT -ki, 1SG -ni, 2SG -vi
   | separatePrWd       -- postpositions (-lō, -gurinci, -eduru): separate PrWd
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The phonological conditioning: long form iff followed by a light
     syllable within the same prosodic word. -/
@@ -336,7 +336,7 @@ inductive AgrSuffix where
   | sg1   -- -ni (overt, light σ)
   | sg2   -- -vi (overt, light σ)
   | sg3   -- -∅ (null)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify agreement suffixes by their phonological context:
     overt light suffixes pattern identically to overt light case suffixes. -/
@@ -407,7 +407,7 @@ def weakUnderlying : WeakUnderlying := ⟨"am", "ni"⟩
 inductive LocalityType where
   | structural   -- can skip intervening material (c-command)
   | linear       -- requires strict linear adjacency
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def strongLocality : LocalityType := .structural
 def weakLocality : LocalityType := .linear
@@ -427,7 +427,7 @@ inductive StemCandidate where
   | l_l_H
   /-- (ˈsa.mu).(ˌdram) — two bimoraic feet. Optimal. -/
   | ll_H
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map each candidate to its `MetricalParse` representation. -/
 def StemCandidate.toParse : StemCandidate → MetricalParse
@@ -515,7 +515,7 @@ inductive WordCandNom where
   | deleteIM
   /-- ☞ (ˈsa.mu).(ˌdram) — /ni/ fully deleted. -/
   | deleteNi
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Word-level ranking for NOM.
 
@@ -567,7 +567,7 @@ inductive WordCandDat where
   | deleteNi
   /-- ☞ (ˈsa.mu).(ˌdrā).(ˌní.ki) — /m/ deleted, /a/→/ā/ (CL). -/
   | compLengthen
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Word-level ranking for DAT. Same constraint set as NOM, with
     \*DIST-0 additionally relevant (eliminates faithful candidate).

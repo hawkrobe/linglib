@@ -45,7 +45,7 @@ inductive PersonaCondition where
   | nerdy      -- "Ryan is studious, articulate, introverted, and uptight"
   | chill      -- "Ryan is laid-back, sociable, extroverted, and care-free"
   | noPersona  -- no persona description provided (baseline)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Screen fit condition (within-subjects, §3.1).
     Determines the relationship between the speaker's round-numeral
@@ -54,13 +54,13 @@ inductive ScreenFit where
   | match_     -- visible screen shows exact stated amount ($200 when "$200")
   | mismatch   -- visible screen shows very different amount
   | imprecise  -- visible screen shows close-but-not-exact amount ($193 when "$200")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Experimental task type. -/
 inductive TaskType where
   | coveredScreen        -- Exp 1: infer which phone the speaker saw
   | truthValueJudgment   -- Exp 2: judge the statement RIGHT vs WRONG
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The trait descriptors used for each persona condition.
     Each participant read: "Ryan is [descriptors]." -/
@@ -241,7 +241,7 @@ open Semantics.Lexical.Numeral.Precision
 inductive PrecisionVariant where
   | exact
   | approximate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The indexical field for numeral precision. -/
 def precisionField : IndexicalField PrecisionVariant SocialDimension :=
@@ -306,7 +306,7 @@ theorem opposite_directions (d : SocialDimension) :
 inductive ResponseShift where
   | towardRejection
   | towardAcceptance
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def shiftDirection : PrecisionVariant → ResponseShift
   | .exact       => .towardRejection

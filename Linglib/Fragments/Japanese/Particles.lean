@@ -27,7 +27,7 @@ namespace Fragments.Japanese.Particles
 /-- Layer of the left periphery that a particle occupies. -/
 inductive Layer where
   | cp | perspP | sap
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A Japanese particle entry. -/
 structure ParticleEntry where
@@ -116,7 +116,7 @@ inductive OutlookCat where
   | adverb
   /-- Focus particle (attaches to NP or phrase) -/
   | focusParticle
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- An outlook marker lexical entry.
 

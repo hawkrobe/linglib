@@ -75,7 +75,7 @@ no obligatory plural agreement, "and" = "with" lexically.
 inductive ConjunctionEncoding where
   | coordinate   -- Balanced A-and-B; conjuncts have equal rank
   | comitative   -- Asymmetric A-with-B; one NP accompanies another
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Diagnostic features for distinguishing coordinate from comitative encoding.
@@ -91,7 +91,7 @@ structure StrategyFeatures where
   pluralAgreement : Bool
   /-- The coordination marker is a dedicated form, not identical to "with". -/
   uniqueMarker : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Coordinate strategies have all four diagnostic properties. -/
 def coordinateFeatures : StrategyFeatures :=
@@ -128,7 +128,7 @@ AND-status.
 inductive DriftDirection where
   | withToAnd  -- Comitative → coordinator (attested)
   | andToWith  -- Coordinator → comitative (unattested)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The only attested drift direction is WITH → AND. -/
 def attestedDrift : DriftDirection := .withToAnd
@@ -162,7 +162,7 @@ on core argument NPs. Correlates statistically with AND-status.
 inductive Casedness where
   | cased     -- Bound case morphology on core arguments
   | uncased   -- No bound case morphology
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 @cite{stassen-2000}: "Tensedness" — whether a language has obligatory bound
@@ -171,7 +171,7 @@ past/non-past marking on verbs. Correlates statistically with AND-status.
 inductive Tensedness where
   | tensed    -- Obligatory bound tense marking
   | untensed  -- No obligatory bound tense
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- @cite{stassen-2000}: among cased languages, AND-status is more frequent
     than WITH-status; among uncased languages, the reverse holds. Stated as:

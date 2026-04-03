@@ -22,7 +22,7 @@ inductive ApplicativeType where
   | nonBenefactiveTransOnly  -- Non-benefactive object; only transitive (1 languages)
   | nonBenefactiveIntransOnly  -- Non-benefactive object; only intransitive (2 languages)
   | noApplicative  -- No applicative construction (100 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 109A dataset (183 languages). -/
 def allData : List (Datapoint ApplicativeType) :=

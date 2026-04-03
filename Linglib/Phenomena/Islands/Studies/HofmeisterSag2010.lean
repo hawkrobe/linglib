@@ -50,7 +50,7 @@ inductive ProcessingFactor where
   Counterintuitively, MORE complex fillers REDUCE processing difficulty
   because richer representations resist interference and aid retrieval. -/
   | fillerComplexity
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- §2. Experimental condition types
@@ -64,7 +64,7 @@ inductive FillerType where
   | bare
   /-- Complex wh-phrase: *which convict*, *which employee* -/
   | whichN
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Type of the island-forming NP (Experiment 1 only).
 Definite NPs trigger referent search and presupposition accommodation,
@@ -76,7 +76,7 @@ inductive IslandNPType where
   | plural
   /-- Indefinite singular: *a report* -/
   | indefinite
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- An experimental condition from @cite{hofmeister-sag-2010}.
 Acceptability stored as Nat (judgment ratio x 100, so 78 means 0.78). -/

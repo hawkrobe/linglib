@@ -87,7 +87,7 @@ structure SeparationEvent where
   forceDir : ForceDirection
   /-- Is the separation reversible (can the object be reassembled)? -/
   reversible : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Representative Clips
@@ -183,7 +183,7 @@ inductive Predictability where
   | high          -- sharp blade, controlled contact → "cutting"
   | intermediate  -- karate chop, directed blow → variable
   | low           -- hammer blow, snapping, tearing → "breaking"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Compute predictability from event features.
 
@@ -217,7 +217,7 @@ inductive BreakSubtype where
   | snapping   -- bidirectional pressure on 1D rigid object
   | smashing   -- blow from blunt instrument fragments object
   | other      -- other breaking patterns
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify break subtype for low-predictability events. -/
 def SeparationEvent.breakSubtype (e : SeparationEvent) : BreakSubtype :=
@@ -363,7 +363,7 @@ inductive EnglishCBVerb where
   | tear   -- hand separation of flexible material
   | snap   -- bidirectional pressure breaking rigid 1D object
   | smash  -- blow fragmenting rigid object
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- English verb assignment for core cutting-and-breaking events. -/
 def englishVerb (e : SeparationEvent) : EnglishCBVerb :=
@@ -398,7 +398,7 @@ inductive YeliDnyeCBVerb where
   | v1   -- cutting events (high predictability, but see limitation above)
   | v2   -- breaking, smashing events (low predictability, impact)
   | v3   -- snapping, tearing, and along-the-grain separation (hand action)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Yélî Dnye verb assignment (approximate, based on reported
     categorization patterns in the correspondence analysis).

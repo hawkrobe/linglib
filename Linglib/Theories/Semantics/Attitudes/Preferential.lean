@@ -222,7 +222,7 @@ This distinction is crucial for:
 inductive AttitudeValence where
   | positive   -- hope, wish, expect, look_forward_to
   | negative   -- fear, worry, dread
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- Significance Presuppositions (@cite{kennedy-2007}, @cite{uegaki-sudo-2019})
 
@@ -292,7 +292,7 @@ inductive SignificanceContent where
   | desiredExists
   /-- Negative: threat identification — no symmetric existence presupposition -/
   | threatIdentified
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Derive significance content from valence.
@@ -583,7 +583,7 @@ inductive NVPClass where
   | class1_nonCDist       -- Non-C-distributive: worry, qidai, tanosimi
   | class2_cDist_negative -- C-distributive + negative: fear, dread
   | class3_cDist_positive -- C-distributive + positive: hope, wish, expect
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Classify an NVP. Note: this now requires knowing whether the predicate
@@ -1049,7 +1049,7 @@ inductive ClauseType where
   | declarative         -- "that p"
   | polarInterrogative  -- "whether/if p"
   | constituentInterrog -- "who/what/which..."
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Highlighted propositions of a clause (@cite{pruitt-roelofsen-2011}).

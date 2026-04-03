@@ -20,7 +20,7 @@ inductive PluralityOccurrence where
   | allNounsAlwaysOptional  -- All nouns, always optional (55 languages)
   | allNounsOptionalInInanimates  -- All nouns, optional in inanimates (15 languages)
   | allNounsAlwaysObligatory  -- All nouns, always obligatory (133 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 34A dataset (291 languages). -/
 def allData : List (Datapoint PluralityOccurrence) :=

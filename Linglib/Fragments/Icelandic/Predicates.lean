@@ -52,7 +52,7 @@ inductive StType where
   | inherent         -- Lexicalized: *nálgast*, *minnast*
   | subjectExp       -- Voice_EXP: *leiðast*, *langaðist*
   | reciprocal       -- Voice[+θ, +D] + reciprocal: *kyssast*
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map each -st type to its Voice flavor. -/
 def StType.voiceFlavor : StType → VoiceFlavor
@@ -80,7 +80,7 @@ inductive AnticausativeMarking where
   | na      -- -na: exponent of specifierless Voice_{}
   | unmarked -- no overt marking (zero alternation)
   | ka      -- -ka: exponent of v (adjectival roots)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- -st and -na are complementary: they spell out different Voice types. -/
 def AnticausativeMarking.voiceType : AnticausativeMarking → String

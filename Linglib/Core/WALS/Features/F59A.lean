@@ -18,7 +18,7 @@ inductive PossessiveClassification where
   | twoClasses  -- Two classes (94 languages)
   | threeToFiveClasses  -- Three to five classes (20 languages)
   | moreThanFiveClasses  -- More than five classes (4 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 59A dataset (243 languages). -/
 def allData : List (Datapoint PossessiveClassification) :=

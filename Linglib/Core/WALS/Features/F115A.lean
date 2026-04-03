@@ -18,7 +18,7 @@ inductive NegativeIndefiniteType where
   | noPredicateNegation  -- No predicate negation (11 languages)
   | mixedBehaviour  -- Mixed behaviour (13 languages)
   | negativeExistentialConstruction  -- Negative existential construction (12 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 115A dataset (206 languages). -/
 def allData : List (Datapoint NegativeIndefiniteType) :=

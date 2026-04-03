@@ -17,7 +17,7 @@ inductive NumeralClassifiers where
   | absent  -- Absent (260 languages)
   | optional  -- Optional (62 languages)
   | obligatory  -- Obligatory (78 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 55A dataset (400 languages). -/
 def allData : List (Datapoint NumeralClassifiers) :=

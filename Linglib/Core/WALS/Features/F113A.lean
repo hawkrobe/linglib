@@ -17,7 +17,7 @@ inductive NegationSymmetry where
   | symmetric  -- Symmetric (114 languages)
   | asymmetric  -- Asymmetric (53 languages)
   | both  -- Both (130 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 113A dataset (297 languages). -/
 def allData : List (Datapoint NegationSymmetry) :=

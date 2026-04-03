@@ -33,7 +33,7 @@ inductive TigrinyaPrefix where
   | ki      -- kɨ-: subjunctive / irrealis
   | kemzi   -- kəmzi-: factive complementizer
   | ay_n    -- ʔay-...-n: negative circumfix
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Section B: Co-occurrence restrictions

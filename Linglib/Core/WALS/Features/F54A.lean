@@ -21,7 +21,7 @@ inductive DistributiveNumerals where
   | markedByPrecedingWord  -- Marked by preceding word (21 languages)
   | markedByFollowingWord  -- Marked by following word (5 languages)
   | markedByMixedOrOtherStrategies  -- Marked by mixed or other strategies (23 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 54A dataset (251 languages). -/
 def allData : List (Datapoint DistributiveNumerals) :=

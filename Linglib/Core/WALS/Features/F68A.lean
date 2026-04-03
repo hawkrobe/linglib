@@ -18,7 +18,7 @@ inductive PerfectType where
   | fromFinishAlready  -- From 'finish', 'already' (21 languages)
   | otherPerfect  -- Other perfect (80 languages)
   | noPerfect  -- No perfect (114 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 68A dataset (222 languages). -/
 def allData : List (Datapoint PerfectType) :=

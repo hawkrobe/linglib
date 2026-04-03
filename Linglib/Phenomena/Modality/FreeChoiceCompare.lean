@@ -474,7 +474,7 @@ A key division among FC theories:
 inductive ApproachType where
   | pragmatic : ApproachType
   | semantic : ApproachType
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify theories by approach -/
 def theoryApproach : String → ApproachType
@@ -529,7 +529,7 @@ contribute possibilities.
 inductive ClosureStatus where
   | closed : ClosureStatus      -- ALT closed under ∧
   | notClosed : ClosureStatus   -- ALT not closed under ∧
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Prediction based on closure -/
 def closurePrediction : ClosureStatus → String

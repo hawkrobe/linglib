@@ -39,7 +39,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   /-- Does adding negation to the PQ trigger epistemic bias? -/
   negationTriggersBias : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- дали dali — clause-initial PQ particle (@cite{simik-2024} ex. 32).
 Unlike Bulgarian li, dali + negation is unbiased. -/

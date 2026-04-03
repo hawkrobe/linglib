@@ -31,14 +31,14 @@ namespace Phenomena.Plurals.Studies.Charlow2021.Data
 -- ════════════════════════════════════════════════════
 
 inductive Boy3 where | b1 | b2 | b3
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype Boy3 where
   elems := {.b1, .b2, .b3}
   complete x := by cases x <;> decide
 
 inductive Movie5 where | m1 | m2 | m3 | m4 | m5
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype Movie5 where
   elems := {.m1, .m2, .m3, .m4, .m5}
@@ -58,14 +58,14 @@ def scenarioA_saw : Boy3 → Movie5 → Bool
 -- ════════════════════════════════════════════════════
 
 inductive Boy4 where | b1 | b2 | b3 | b4
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype Boy4 where
   elems := {.b1, .b2, .b3, .b4}
   complete x := by cases x <;> decide
 
 inductive Movie6 where | m1 | m2 | m3 | m4 | m5 | m6
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype Movie6 where
   elems := {.m1, .m2, .m3, .m4, .m5, .m6}

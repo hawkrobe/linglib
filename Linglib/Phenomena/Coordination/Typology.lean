@@ -77,7 +77,7 @@ inductive Syndesis where
   | asyndetic      -- A B (juxtaposition, no overt linker)
   | monosyndetic   -- A co-B (single coordinator)
   | bisyndetic     -- co-A co-B (two coordinators, one per coordinand)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Coordinator position relative to its coordinand (Haspelmath §1.2).
@@ -89,7 +89,7 @@ logically possible monosyndetic pattern that never occurs.
 inductive CoordinatorPosition where
   | prepositive    -- co precedes coordinand: "and A" / English "both X"
   | postpositive   -- co follows coordinand: "A-and" / Latin "X-que"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Structural pattern for binary coordination (Haspelmath (17)).
@@ -122,7 +122,7 @@ inductive CoordPattern where
   | a'co_co'b
   /-- co-A B-co: mixed bisyndetic (Latin "et A B-que") -/
   | co'a_b'co
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify a pattern's syndesis. -/
 def CoordPattern.syndesis : CoordPattern → Syndesis
@@ -140,7 +140,7 @@ inductive DiachronicSource where
   | comitative      -- "with" → coordinator (gives A co-B or A-co B)
   | focusParticle   -- "also/too" → coordinator (gives A-co B-co)
   | other
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Haspelmath's key insight connecting diachronic source to structural pattern:
@@ -165,7 +165,7 @@ Relevant to acquisition (@cite{clark-2017}: free morphemes acquired more readily
 inductive Boundness where
   | free    -- independent word (Hungarian "is", English "and")
   | bound   -- clitic or suffix (Georgian "-c", Latin "-que")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A conjunction morpheme in a specific language. -/
 structure ConjMorpheme where
@@ -699,7 +699,7 @@ inductive ConjQuantRelation where
       universal quantifier ("dare-mo" = everyone), and is related to
       the interrogative "dare" (who). -/
   | similarWithInterrogative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 63: Noun Phrase Conjunction
@@ -719,7 +719,7 @@ inductive ConjComitativeRelation where
       Example: Japanese "to" serves as both comitative ("with") and
       conjunction ("and"); Swahili "na" means both "and" and "with". -/
   | andIdenticalToWith
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 @cite{stassen-2000} AND/WITH classification of languages.
@@ -733,7 +733,7 @@ languages where "and" = "with" retain comitative-based conjunction (WITH-status)
 inductive AndWithStatus where
   | andLang   -- Coordinate and comitative are structurally distinct
   | withLang  -- Comitative marker = coordinator; no balanced coordination
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive AND/WITH status from the conjunction-comitative relation.
     @cite{stassen-2000}: lexical identity of "and" and "with" is the
@@ -764,7 +764,7 @@ inductive NomVerbalConjRelation where
       overt marker for either).
       Example: some Australian and South American languages. -/
   | bothJuxtaposition
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions

@@ -46,7 +46,7 @@ inductive LicensingContext where
   | doubtVerb            -- "I doubt anyone came"
   | denyVerb             -- "She denied seeing anyone"
   | adversative          -- "sorry/surprised that anyone" (Strawson-DE)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- LicensingContext Mapping: Phenomena ↔ Core
@@ -831,7 +831,7 @@ inductive ScalePosition where
   | minimal       -- Bottom of scale: one, a, some
   | intermediate  -- Middle: two, three, most, many
   | maximal       -- Top: every, all
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 An N-word (negative indefinite in NC language).

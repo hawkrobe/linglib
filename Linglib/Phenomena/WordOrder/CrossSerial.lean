@@ -59,7 +59,7 @@ structure Dependency where
   npPosition : Nat
   /-- Position of the verb (1-indexed from left among verbs) -/
   verbPosition : Nat
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Dependency pattern: how NPs and verbs are paired.
@@ -67,7 +67,7 @@ Dependency pattern: how NPs and verbs are paired.
 inductive DependencyPattern where
   | crossSerial  -- NP₁→V₁, NP₂→V₂, ... (Dutch)
   | nested       -- NP₁→Vₙ, NP₂→Vₙ₋₁, ... (German)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Generate cross-serial dependencies for n NP-V pairs -/
 def crossSerialDeps (n : Nat) : List Dependency :=

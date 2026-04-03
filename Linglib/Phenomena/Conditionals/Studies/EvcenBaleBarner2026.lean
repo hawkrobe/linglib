@@ -72,7 +72,7 @@ inductive QUDType where
   /-- "What will happen if I press the buttons?" — neutral.
   No specific focus on antecedents or consequences. -/
   | neutral
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Answer type manipulation (Experiment 2).
 
@@ -87,7 +87,7 @@ inductive AnswerType where
   square, it will play a dog barking" (a subset of the triangle/square
   partition). -/
   | overlyInformative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Speaker knowledge manipulation (Experiment 3).
 
@@ -97,7 +97,7 @@ inductive KnowledgeCondition where
   | fullKnowledge
   /-- Mary pressed and listened to only two buttons — partial knowledge. -/
   | partialKnowledge
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Datum Structure
@@ -347,7 +347,7 @@ private theorem Bool.of_not_eq_true {b : Bool} (h : ¬(b = true)) : b = false :=
 /-- Triggers in the experimental paradigm: three buttons. -/
 inductive Button3Trigger where
   | A | B | C
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The 6 possible worlds in a 3-button scenario.
 
@@ -360,7 +360,7 @@ inductive Button3World where
   | pressB_silent
   | pressC_plays
   | pressC_silent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype Button3World where
   elems := {.pressA_plays, .pressA_silent, .pressB_plays,

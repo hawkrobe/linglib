@@ -71,7 +71,7 @@ inductive ClassGroup where
   | lower   -- SEC 0–2
   | working -- SEC 3–5
   | middle  -- SEC 6–9
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def ClassGroup.toNat : ClassGroup → Nat
   | .lower => 0 | .working => 1 | .middle => 2
@@ -94,7 +94,7 @@ inductive Store where
   | saks   -- Saks Fifth Avenue (highest prestige)
   | macys  -- Macy's (middle)
   | klein  -- S. Klein (lowest prestige)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Store prestige ranking: Klein < Macy's < Saks. -/
 def Store.toNat : Store → Nat
@@ -341,7 +341,7 @@ inductive NYCVariable where
   | oh   -- (oh): 6-point height scale
   | th   -- (th): 3-variant (fricative/affricate/stop)
   | dh   -- (dh): 3-variant (fricative/affricate/stop)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classification of each variable by indexical order and change
     status, following @cite{labov-2006} Ch. 7.
@@ -460,12 +460,12 @@ theorem ing_styleShift_older :
 -- --------------------------------------------------------------------------
 
 inductive INGStyle where | A | B
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Four-group SEC classification used in the (ing) data.
     (Different grouping from `ClassGroup`: SC2 = SEC 3–6.) -/
 inductive INGClass where | sc1 | sc2 | sc3 | sc4
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def INGClass.toNat : INGClass → Nat
   | .sc1 => 0 | .sc2 => 1 | .sc3 => 2 | .sc4 => 3

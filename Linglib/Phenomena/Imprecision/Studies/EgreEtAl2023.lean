@@ -280,7 +280,7 @@ private def floatToRat (f : Float) : ℚ :=
 
 inductive Value where
   | v0 | v1 | v2 | v3 | v4 | v5 | v6
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 def Value.toNat : Value → Nat
   | .v0 => 0 | .v1 => 1 | .v2 => 2 | .v3 => 3
@@ -289,7 +289,7 @@ def Value.toNat : Value → Nat
 /-- Tolerance y: "around n" with tolerance y means x ∈ [n-y, n+y]. -/
 inductive Tolerance where
   | y0 | y1 | y2 | y3 | y4 | y5 | y6
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 def Tolerance.toNat : Tolerance → Nat
   | .y0 => 0 | .y1 => 1 | .y2 => 2 | .y3 => 3
@@ -475,7 +475,7 @@ theorem sorites_cumulative :
 /-- Message alternatives for the RSA model. -/
 inductive Utt where
   | around3 | between0_6 | between1_5 | between2_4 | exactly3
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 /-- Unnormalized BIR weights for "around 3".
 

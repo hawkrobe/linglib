@@ -91,7 +91,7 @@ inductive PredAdjStrategy where
       copula or other linking element for predication.
       Example: English `The book is red` requires the copula `is`. -/
   | nonVerbal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 118: Predicative Noun Phrase Strategy
@@ -115,7 +115,7 @@ inductive PredNounStrategy where
       Example: Russian present tense `Ona vrach` 'She doctor' = 'She is
       a doctor' (no copula in present tense). -/
   | nonVerbal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 119: Nominal vs Locational Predication
@@ -139,7 +139,7 @@ inductive NomLocStrategy where
       Example: Spanish `ser` (nominal: `Es doctora`) vs `estar`
       (locational: `Esta en la casa`). -/
   | different
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 120: Zero Copula for Predicate Nominals
@@ -166,7 +166,7 @@ inductive ZeroCopulaStatus where
       The copula is absent in most environments.
       Example: Tagalog `Doktor siya` 'Doctor she' = 'She is a doctor'. -/
   | widespread
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Copula Type (Supplementary Classification)
@@ -190,7 +190,7 @@ inductive CopulaType where
   | particle
   /-- No copula: predication by juxtaposition. -/
   | zero
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Distribution Data
@@ -200,7 +200,7 @@ inductive CopulaType where
 structure WALSCount where
   label : String
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Sum of counts in a WALS table. -/
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=

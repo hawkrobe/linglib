@@ -13,7 +13,7 @@ structure Parse where
   id : String
   /-- Human-readable description -/
   description : String := ""
-  deriving DecidableEq, Repr, BEq, Hashable
+  deriving DecidableEq, Repr, Hashable
 
 instance : ToString Parse := ⟨Parse.id⟩
 

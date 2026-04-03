@@ -73,14 +73,14 @@ inductive WCase where
   | acc   -- structural accusative (from V/P; does NOT trigger obj agreement)
   | erg   -- lexical/inherent case (assigned with θ-role)
   | dat   -- lexical case (e.g., applied arguments)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Structural vs lexical classification. -/
 inductive CaseKind where
   | structural  -- assigned at S-structure by functional heads (Agr-S, Agr-O)
                 -- or by lexical heads (V, P) for ACC
   | lexical     -- assigned at D-structure with θ-role (inherent)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Each case's structural/lexical classification. -/
 def WCase.kind : WCase → CaseKind
@@ -175,7 +175,7 @@ theorem weak_allows_erg_obj_acc :
 structure TransPattern where
   subject : WCase
   object  : WCase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The two allowed transitive patterns in Nez Perce (paper's (16A)).
     - NOM subject + ACC object (structural subject, structural object)
@@ -218,7 +218,7 @@ structure DitransPattern where
   subject : WCase
   goal    : WCase  -- thematically higher object
   theme   : WCase  -- thematically lower object
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The four allowed ditransitive patterns in Nez Perce (paper's (22A)).
     Columns are Agent, Goal, Theme following the paper's labels. -/
@@ -381,7 +381,7 @@ theorem burzio_from_maxAcc :
 inductive LexAssignment where
   | obligatory  -- ERG required on transitive subjects
   | optional    -- ERG optional (e.g., Nez Perce: some transitives lack ERG)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Language parameters for a three- or four-way system.
     The range of Case patterns a language allows follows from whether

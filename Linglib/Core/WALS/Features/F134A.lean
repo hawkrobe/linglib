@@ -21,7 +21,7 @@ inductive GreenAndBlue where
   | yellowGreenBlue  -- Yellow/green/blue (2 languages)
   | yellowGreenVsBlue  -- Yellow/green vs. blue (1 languages)
   | none  -- None (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 134A dataset (120 languages). -/
 def allData : List (Datapoint GreenAndBlue) :=

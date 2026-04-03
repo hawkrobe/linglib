@@ -52,7 +52,7 @@ inductive CausativeConstructionType where
   | and_
   /-- Two clauses, purposive (Korean *-ke ha-*; effect not entailed) -/
   | purp
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether a causative construction type is implicative.
 
@@ -79,7 +79,7 @@ inductive CausativeMorphology where
   | freeMorpheme
   /-- No separable morpheme: English *kill* (lexical causative) -/
   | lexical
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A cross-linguistic causative construction datum. -/
 structure CausativeConstructionDatum where

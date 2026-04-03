@@ -70,7 +70,7 @@ inductive ArgumentType where
   /-- Variables: denote via a variable bound by Ex or Gen.
       The noun's kind-naming meaning provides the restrictor. -/
   | quantificational
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: DP Parameters — Strong D × Transparent α
@@ -104,7 +104,7 @@ structure DPParameter where
   strongD : Bool
   /-- α is transparent to N-raising (Romance +, English −) -/
   transparentAlpha : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Romance (Italian, French, Spanish): strong D, transparent α. -/
 def romance : DPParameter := { strongD := true, transparentAlpha := true }
@@ -179,7 +179,7 @@ inductive GenericType where
       Only through overtly definite DPs in Romance (definite generics),
       or through bare plurals in English (which can be kind names). -/
   | definiteGeneric
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Which generic types are available for bare nouns in a language. -/
 def bnGenericTypes (dp : DPParameter) : List GenericType :=
@@ -257,7 +257,7 @@ inductive NominalClass where
   | romanceBN           -- "elefanti"
   | englishOvertIndef   -- "some elephants" / "two elephants"
   | englishBN           -- "elephants"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether a nominal class can be referential (kind-denoting).
 
@@ -848,7 +848,7 @@ inductive BNEnvironment where
   | episodic
   /-- Kind-level: predicate applies to kinds (extinct, widespread) -/
   | kindLevel
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether a generic reading is available for a BN in a given environment. -/
 def bnGenericAvailable (dp : DPParameter) (env : BNEnvironment) : Bool :=

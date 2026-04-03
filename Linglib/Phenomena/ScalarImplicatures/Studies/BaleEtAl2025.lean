@@ -67,7 +67,7 @@ inductive SpeakerKnowledge where
   | fullKnowledge
   /-- Partial Knowledge: speaker inspected only some sections, ignorant of ψ -/
   | partialKnowledge
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Cognitive load manipulation (between-subjects). -/
 inductive LoadCondition where
@@ -75,13 +75,13 @@ inductive LoadCondition where
   | noLoad
   /-- Dual-task: memorize a dot pattern while processing utterance -/
   | load
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A full experimental condition: speaker knowledge × cognitive load. -/
 structure ExperimentalCondition where
   knowledge : SpeakerKnowledge
   load : LoadCondition
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 /-! ## Observed SSI Rates
@@ -203,7 +203,7 @@ inductive CompetenceHypothesis where
       Load should not increase SSI rates for ignorant speakers — competence
       was never assumed, so there is nothing to fail to cancel. -/
   | contextualLicensing
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a hypothesis predicts a positive Knowledge × Load interaction
     (i.e., load increases SSI more — or decreases it less — in PK than FK).

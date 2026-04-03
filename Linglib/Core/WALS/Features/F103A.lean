@@ -20,7 +20,7 @@ inductive ThirdPersonZeroOfVerbalPersonMarking where
   | zeroInAll3sgForms  -- Zero in all 3sg forms (45 languages)
   | zeroInAll3rdPersonForms  -- Zero in all 3rd person forms (36 languages)
   | zeroOnlyIn3rdNonsingular  -- Zero only in 3rd nonsingular (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 103A dataset (380 languages). -/
 def allData : List (Datapoint ThirdPersonZeroOfVerbalPersonMarking) :=

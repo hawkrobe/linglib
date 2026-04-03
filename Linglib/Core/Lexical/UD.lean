@@ -44,7 +44,7 @@ inductive UPOS where
   | PUNCT  -- punctuation: . , ; : ! ?
   | SYM    -- symbol: $, %, @, +, :), 😀
   | X      -- other: foreign words, typos, abbreviations
-  deriving DecidableEq, BEq, Repr, Inhabited, Hashable
+  deriving DecidableEq, Repr, Inhabited, Hashable
 
 /-- String representation matching UD conventions -/
 def UPOS.toString : UPOS → String
@@ -111,7 +111,7 @@ inductive Number where
   | Inv    -- inverse number
   | Coll   -- collective
   | Count  -- count form
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Grammatical gender -/
 inductive Gender where
@@ -119,7 +119,7 @@ inductive Gender where
   | Fem    -- feminine
   | Neut   -- neuter
   | Com    -- common (masc or fem)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Grammatical case -/
 inductive Case where
@@ -150,7 +150,7 @@ inductive Case where
   | Tem    -- temporal
   | Cau    -- causative
   | Ben    -- benefactive
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Definiteness -/
 inductive Definite where
@@ -158,7 +158,7 @@ inductive Definite where
   | Ind    -- indefinite: a cat
   | Spec   -- specific indefinite
   | Cons   -- construct state
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Degree of comparison (for adjectives/adverbs) -/
 inductive Degree where
@@ -167,7 +167,7 @@ inductive Degree where
   | Sup    -- superlative: biggest
   | Abs    -- absolute superlative
   | Equ    -- equative
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- Pronominal Features
 
@@ -184,7 +184,7 @@ inductive PronType where
   | Neg    -- negative: nobody, nothing
   | Ind    -- indefinite: somebody, something
   | Exc    -- exclamative
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Grammatical person -/
 inductive Person where
@@ -192,7 +192,7 @@ inductive Person where
   | second -- 2nd person: you
   | third  -- 3rd person: he, she, it, they
   | zero   -- 0 person (impersonal)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- Verbal Features
 
@@ -206,7 +206,7 @@ inductive VerbForm where
   | Sup    -- supine
   | Conv   -- converb/adverbial participle
   | Vnoun  -- verbal noun (masdar)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Grammatical tense -/
 inductive Tense where
@@ -215,7 +215,7 @@ inductive Tense where
   | Fut    -- future: will walk
   | Imp    -- imperfect
   | Pqp    -- pluperfect
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Grammatical aspect -/
 inductive Aspect where
@@ -225,7 +225,7 @@ inductive Aspect where
   | Prosp  -- prospective
   | Hab    -- habitual
   | Iter   -- iterative
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Grammatical mood -/
 inductive Mood where
@@ -240,7 +240,7 @@ inductive Mood where
   | Adm    -- admirative
   | Nec    -- necessitative
   | Irr    -- irrealis
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Grammatical voice -/
 inductive Voice where
@@ -254,13 +254,13 @@ inductive Voice where
   | Inv    -- inverse
   | Lfoc   -- location-focus
   | Bfoc   -- beneficiary-focus
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Polarity -/
 inductive Polarity where
   | Pos    -- positive/affirmative
   | Neg    -- negative
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- Feature Bundle
 
@@ -280,7 +280,7 @@ structure MorphFeatures where
   mood     : Option Mood     := none
   voice    : Option Voice    := none
   polarity : Option Polarity := none
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Empty feature bundle -/
 def MorphFeatures.empty : MorphFeatures := {}
@@ -384,7 +384,7 @@ inductive DepRel where
   | root       -- root of the sentence
   | dep        -- unspecified dependency
 
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- String representation matching UD conventions -/
 def DepRel.toString : DepRel → String
@@ -465,6 +465,6 @@ structure DepArc where
   head : Nat
   /-- The dependency relation -/
   deprel : DepRel
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end UD

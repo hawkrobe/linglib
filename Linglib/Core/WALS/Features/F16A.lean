@@ -21,7 +21,7 @@ inductive WeightFactorsInWeightSensitiveStressSystems where
   | prominence  -- Prominence (41 languages)
   | lexicalStress  -- Lexical stress (38 languages)
   | combined  -- Combined (42 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 16A dataset (500 languages). -/
 def allData : List (Datapoint WeightFactorsInWeightSensitiveStressSystems) :=

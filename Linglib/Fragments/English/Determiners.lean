@@ -26,13 +26,13 @@ inductive QForce where
   | definite
   | negative
   | proportional
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 inductive Monotonicity where
   | increasing
   | decreasing
   | nonMonotone
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Weak/strong classification (B&C §4.3, Table II).
     Weak determiners allow there-insertion: "There are some cats."
@@ -40,7 +40,7 @@ inductive Monotonicity where
 inductive Strength where
   | weak
   | strong
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Unified lexical entry for quantifiers/determiners. -/
 structure QuantifierEntry where
@@ -248,7 +248,7 @@ This is a projection of the full lexicon for quantity-focused analyses.
 -/
 inductive QuantityWord where
   | none_ | few | some_ | half | most | all
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 instance : Fintype QuantityWord where
   elems := {.none_, .few, .some_, .half, .most, .all}
@@ -451,7 +451,7 @@ inductive InferentialClass where
   | overlap
   | disjointness
   | nonInclusion
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map quantity words to their inferential class (Square of Opposition corner). -/
 def QuantityWord.inferentialClass : QuantityWord → Option InferentialClass

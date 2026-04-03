@@ -178,7 +178,7 @@ This predicts:
 inductive PresupStatus where
   | satisfied  -- Presupposition holds
   | failed     -- Presupposition fails
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Result of evaluating a sentence with presuppositions. -/
 structure PresupResult where
@@ -283,7 +283,7 @@ supervaluation naturally implements this projection duality.
 inductive QStrength where
   | strong  -- every, no: conjunctive (universal-like)
   | weak    -- some, not-every: disjunctive (existential-like)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Strong quantifiers use conjunctive projection; weak use disjunctive. -/
 def QStrength.toProjection : QStrength → ProjectionType

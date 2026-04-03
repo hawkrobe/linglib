@@ -68,7 +68,7 @@ open Semantics.Causation.MorphologicalCausation
 structure ConstructionEntry where
   construction : CausativeConstruction
   prototype : SemanticPrototype
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Lexical Ergative (LEX-ERG): transitive/causative verb with ergative
     case on the causer NP in perfective aspect.

@@ -23,7 +23,7 @@ inductive VerbInitialWithPreverbalNegative where
   | type1Type2  -- Type 1 / Type 2 (4 languages)
   | type3Type6  -- Type 3 / Type 6 (1 languages)
   | noPreverbalNeg  -- No preverbal neg (7 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144V dataset (152 languages). -/
 def allData : List (Datapoint VerbInitialWithPreverbalNegative) :=

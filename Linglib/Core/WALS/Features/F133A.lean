@@ -21,7 +21,7 @@ inductive NumberOfBasicColourCategories where
   | v885  -- 8-8.5 (6 languages)
   | v910  -- 9-10 (8 languages)
   | v11  -- 11 (11 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 133A dataset (119 languages). -/
 def allData : List (Datapoint NumberOfBasicColourCategories) :=

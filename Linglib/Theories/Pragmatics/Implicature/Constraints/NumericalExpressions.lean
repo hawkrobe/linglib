@@ -53,7 +53,7 @@ inductive QuantifierForm where
   | bare        -- "100"
   | modified    -- "about 100", "approximately 100"
   | interval    -- "between 90 and 110"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 A candidate numeral expression for OT evaluation.
@@ -183,7 +183,7 @@ structure ViolationProfile where
   granularity : Nat
   qsimp : Nat
   nsal : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Compute the violation profile for a candidate.
@@ -304,7 +304,7 @@ inductive NumeralConstraint where
   | granularity
   | qsimp
   | nsal
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Coarse-grain a violation profile: a constraint is "satisfied" iff
     it has 0 violations. This discards degree-of-violation information

@@ -18,7 +18,7 @@ inductive IrregularNegativesInSignLanguages where
   | one  -- One (3 languages)
   | some  -- Some (2-5) (10 languages)
   | many  -- Many (more than 5) (21 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 139A dataset (35 languages). -/
 def allData : List (Datapoint IrregularNegativesInSignLanguages) :=

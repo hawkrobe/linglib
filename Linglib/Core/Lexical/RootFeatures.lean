@@ -74,7 +74,7 @@ inductive ForceLevel where
   | low       -- gentle / minimal force
   | moderate  -- typical force
   | high      -- considerable / violent force
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Spatial pattern of force application.
 
@@ -86,7 +86,7 @@ inductive ForceDirection where
   | unidirectional   -- linear / single-direction force (rasgar: gash)
   | bidirectional    -- contrary directions (tear: pulling apart)
   | omnidirectional  -- multi-directional (shatter: radiating fracture)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Material substantiality of the affected entity (patient).
 
@@ -97,7 +97,7 @@ inductive Robustness where
   | flimsy         -- thin solids: fabric, paper, thin plastic
   | moderate       -- standard solids: rope, muscle, tendons
   | robust         -- thick solids: bread, cement, bone
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Nature of the physical change produced by the event.
 
@@ -114,7 +114,7 @@ inductive ResultType where
   | fragmentation   -- complete structural failure (shatter, smash)
   | deformation     -- shape change, integrity preserved (bend, fold)
   | totalDestruction -- entity ceases to exist as such (destroy, ruin)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Type of instrument used in the event.
 
@@ -130,7 +130,7 @@ inductive InstrumentType where
   | bluntImpact   -- hammer, mallet, rock (unpredictable separation)
   | hands         -- bare hands (tearing, snapping, pulling apart)
   | none          -- no instrument / unspecified
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Dimensionality of the affected object (patient).
 
@@ -143,7 +143,7 @@ inductive ObjectDimensionality where
   | oneD          -- elongated: rope, stick, twig, carrot, yarn
   | twoD          -- flat/flexible: cloth, paper, plate
   | threeD        -- solid/volumetric: melon, pot, box, orange
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether the agent acts with volitional intent.
 
@@ -157,7 +157,7 @@ inductive Volitionality where
   | nonvolitional  -- unintentional / accidental
   | neutral        -- underspecified for volition
   | volitional     -- intentional / deliberate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether the action can be performed with care and control.
 
@@ -170,7 +170,7 @@ inductive AgentControl where
   | incompatible  -- incompatible with careful/controlled action
   | neutral       -- underspecified for control
   | compatible    -- compatible with careful/controlled action
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Within-class root content profile.
 
@@ -235,7 +235,7 @@ structure RootEntailments where
   manner : Bool
   result : Bool
   cause  : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 namespace RootEntailments
 
@@ -343,7 +343,7 @@ end RootEntailments
 inductive RootPosition where
   | complement  -- under v: fills result/state slot (inside VP)
   | adjoined    -- to v: modifies causing event (outside VP)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 7. Derived Properties

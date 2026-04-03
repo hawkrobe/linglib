@@ -57,7 +57,7 @@ inductive GramTense where
   | past
   | present
   | future
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 namespace GramTense
 
@@ -101,7 +101,7 @@ Languages differ in how embedded tense interacts with matrix tense:
 inductive SOTParameter where
   | relative  -- English: embedded tense relative to matrix
   | absolute  -- Japanese: embedded tense absolute (to utterance time)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -227,7 +227,7 @@ structure TensePronoun where
       this index to point at the matrix event time.
       @cite{klecha-2016}: modals can also shift the eval time index. -/
   evalTimeIndex : ℕ := 0
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace TensePronoun
 
@@ -344,7 +344,7 @@ theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Tim
 inductive Overtness where
   | overt  -- Phonologically realized (English "he", German Preterit -te)
   | zero   -- Phonologically empty (zero tense under SOT, pro-drop subjects)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Kratzer's locality generalization (1998, formula 26):
 

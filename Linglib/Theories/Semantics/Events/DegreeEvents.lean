@@ -52,7 +52,7 @@ inductive ComparisonRole where
   | standard      -- [STD]: the standard of comparison ("than Mary")
   | target        -- [TAR]: the target of comparison ("John is taller")
   | differential  -- [DIFF]: the differential ("3 inches taller")
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A predicate over degree events (not world-indexed). -/
 abbrev DegEvPred (Time Deg : Type*) [LE Time] [LE Deg] :=

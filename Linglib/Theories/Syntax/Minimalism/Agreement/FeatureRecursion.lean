@@ -291,7 +291,7 @@ structure HarbourConfig where
   /-- Whether [±additive] recurses (splitting paucal into paucal +
       greater paucal). Marked `*` on [±additive] in Table 3. -/
   recurseOnAdditive : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Well-formedness: feature activation prerequisites.
 

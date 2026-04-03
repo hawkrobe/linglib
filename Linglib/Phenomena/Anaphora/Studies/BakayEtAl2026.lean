@@ -70,7 +70,7 @@ inductive Feature where
   | genCase
   /-- Item-level: dative case -(y)A -/
   | datCase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2: Retrieval Cues from Fragment + Theory

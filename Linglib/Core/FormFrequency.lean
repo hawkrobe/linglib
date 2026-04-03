@@ -48,7 +48,7 @@ inductive CodingLength where
   | short
   /-- Long overt coding (e.g., full adposition, bisyllabic affix) -/
   | long
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric rank: zero (0) < short (1) < long (2). -/
 def CodingLength.rank : CodingLength → Nat
@@ -134,14 +134,14 @@ theorem frequency_proxy_matches_default (role : ArgumentRole)
 inductive VoiceDirection where
   | direct   -- downstream scenario, morphologically simpler
   | inverse  -- upstream scenario, morphologically more complex
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Ditransitive frame alternation.
     Double-object construction is shorter; prepositional dative is longer. -/
 inductive DitransitiveFrame where
   | doubleObject        -- V NP NP (shorter)
   | prepositionalDative -- V NP PP (longer)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Double-object is short coding; prepositional dative is long coding. -/
 def DitransitiveFrame.codingLength : DitransitiveFrame → CodingLength

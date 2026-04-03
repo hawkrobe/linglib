@@ -208,7 +208,7 @@ inductive IndividuationStrategy where
       a covert functional head. Plural morphology (-s, -en) is
       its morphological reflex. Enumeration is direct: "three cats." -/
   | covertDiv
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Both individuation strategies produce the same semantic result.
     The Great Divide is morphosyntactic, not semantic: overt
@@ -311,7 +311,7 @@ inductive MereoStatus where
   | cum       -- cumulative: closed under join (root denotation)
   | qua       -- quantized: no proper-part membership (after individuation)
   | measured  -- quantized + fixed measure value (after counting)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The semantic effect of each nominal functional head on the
     mereological status of its complement.

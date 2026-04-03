@@ -79,7 +79,7 @@ inductive SentType where
   | canDeclarative   -- "Vous pouvez VP" (ability/permission)
   | possibleDecl     -- "Il est possible de VP" (existential possibility)
   | plainDeclarative -- "Le cercle rouge est..." (control declarative)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The morphosyntactic mood of each sentence type. -/
 def SentType.mood : SentType → SAPMood
@@ -218,7 +218,7 @@ theorem canYou_more_conventionalized :
 inductive Study1Response where
   | move  -- Directive interpretation: participant moves a shape
   | yesNo -- Question interpretation: participant clicks yes or no
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Study 1 result: mean response time (ms) and proportion of directive
     (move) responses for each sentence type.
@@ -371,7 +371,7 @@ theorem study1_fixation_gap :
 inductive Study2Response where
   | move      -- Directive interpretation: participant moves a shape
   | trueFalse -- Assertive interpretation: participant clicks true or false
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Study 2 result for each sentence type.
 

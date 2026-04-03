@@ -31,7 +31,7 @@ inductive NegVerbOrder where
   | optdoubleneg  -- OptDoubleNeg (80 languages)
   | opttriplenegObligdoubleneg  -- OptTripleNeg&ObligDoubleNeg (5 languages)
   | opttriplenegOptdoubleneg  -- OptTripleNeg&OptDoubleNeg (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint NegVerbOrder) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .vneg }

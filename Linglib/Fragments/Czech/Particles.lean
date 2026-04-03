@@ -52,7 +52,7 @@ inductive ParticleSemantics where
       current contextual evidence. Requires evidential bias (biased context).
       Cross-Slavic: *copak* (Czech), *razve* (Russian), *zar* (Serbian). -/
   | evidentialConflict
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Particle Entry

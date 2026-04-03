@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.479] - 2026-04-03
+
+### Changed
+- **Codebase-wide BEq diamond fix**: removed redundant `deriving BEq` from ~2,400 deriving clauses across ~1,000 files where `DecidableEq` already provides a BEq instance — eliminates silent `beq_self_eq_true` failures caused by competing BEq instances
+- **Defs.lean**: removed dead code (`noCrossing`, `ocpViolations`, `delinkAll`) — defined but never referenced outside the file
+- **AkinboFwangwar2026.lean**: replaced 4 anchor violation functions (`lAnchorMViolations`, `rAnchorMViolations`, `lAnchorHViolations`, `rAnchorHViolations`) with parametrized `lAnchorViolations`/`rAnchorViolations` taking a `ToneFeature` argument
+
 ## [0.229.478] - 2026-04-03
 
 ### Added

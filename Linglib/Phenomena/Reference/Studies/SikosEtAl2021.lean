@@ -70,7 +70,7 @@ inductive ContextType where
   /-- Multiple objects match and pragmatic reasoning cannot help.
       L0 ≈ L1 even with full RSA. -/
   | ambiguous
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 /-! ## Model Fit Data
@@ -169,7 +169,7 @@ inductive Interpretation where
       L0 ≠ L1. Sikos et al.'s Experiment 3 suggests it may not, though
       the test has limited statistical power. (Structural observation) -/
   | baselineIsL0
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 -- ============================================================================
@@ -195,24 +195,24 @@ baseline.
 /-- Colors used in the experiments. -/
 inductive Color where
   | blue | green | red
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Shapes used in the experiments. -/
 inductive Shape where
   | square | circle | triangle
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An object in the reference game. -/
 structure Object where
   color : Color
   shape : Shape
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A feature predicate: either a color or a shape word. -/
 inductive Feature where
   | color (c : Color)
   | shape (s : Shape)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Literal semantics: does the feature apply to the object? -/
 def featureMeaning (f : Feature) (o : Object) : Bool :=

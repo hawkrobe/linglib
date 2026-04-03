@@ -225,7 +225,7 @@ theorem otan_matches_when :
 inductive MoodType where
   | subjunctive  -- non-veridical context
   | indicative   -- veridical context
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Greek mood selection for temporal connectives. -/
 def moodSelection : TemporalOrder → MoodType

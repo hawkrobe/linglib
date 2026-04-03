@@ -104,7 +104,7 @@ inductive GeneralizationLF where
       Low-scoped existential: "Bears are destroying my garden" ≈
       ∃x[bear(x) ∧ destroying-my-garden(x)]. (Guerrini's (105b)) -/
   | existentialDPP
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- Singular indefinites cannot denote kinds (∩ undefined for singular count
 -- nouns), so only Bona Fide Genericity is available — no DKP/CKP parse.
@@ -196,7 +196,7 @@ inductive GenFlavor where
   | lawLike
   /-- Accidental: "LLMs are popular" — contingently true of actual instances -/
   | accidental
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Nominal form in the generalization. -/
 inductive NominalForm where
@@ -204,7 +204,7 @@ inductive NominalForm where
   | kindDenotingPlural
   /-- Singular indefinite: "A lion hunts" / "Un leone caccia" -/
   | singularIndefinite
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Table 1 from Guerrini (2026): distribution of generalizations.
 
@@ -269,7 +269,7 @@ inductive HomogeneitySource where
   | dist
   /-- Gen: modal quantifier; homogeneity from generic quantification -/
   | gen
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Homogeneity remover: the adverb/quantifier that removes homogeneity. -/
 inductive HomogeneityRemover where
@@ -277,7 +277,7 @@ inductive HomogeneityRemover where
   | all
   /-- 'always': replaces Gen with non-homogeneous universal ∀ -/
   | always
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Table 3: which removers apply to which sources.
 
@@ -299,7 +299,7 @@ inductive SentenceType where
   | singularIndefiniteGeneric
   /-- Kind-denoting plural generic: "Lions hunt" -/
   | kindDenotingPluralGeneric
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Which homogeneity sources are present in each sentence type.
 
@@ -352,7 +352,7 @@ inductive NominalExpression where
   | englishBarePlural
   | italianDefinitePlural
   | italianBarePlural
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The Nominal Mapping Parameter for each nominal expression. -/
 def nominalMapping : NominalExpression → NominalMapping
@@ -822,7 +822,7 @@ end DKPPrevalence
 inductive ItalianMood where
   | indicative
   | subjunctive
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The Italian subjunctive is licensed inside the restrictor of Gen
     (a broadly intensional environment). Therefore:
@@ -1195,7 +1195,7 @@ inductive AdjReading where
       "Unknown voters" = voters whose identity is unknown to speaker.
       Does NOT support kind. -/
   | nonlocal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Kind predication is available only with local adjective readings. -/
 def adjReadingSupportsKind : AdjReading → Bool
@@ -1488,7 +1488,7 @@ bare plurals get near-universal readings without generic quantification.
 inductive VPAspect where
   | habitual   -- ⟦Hab VP⟧: habitual/generic aspect
   | episodic   -- ⟦VP⟧_{s₀}: episodic aspect, evaluated at actual world
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Which LFs are compatible with which aspect.
 
@@ -1551,7 +1551,7 @@ The cumulative operator ** similarly requires pluralities.
 inductive KindTermNumber where
   | singular  -- "the dodo", "the madrigal"
   | plural    -- "dodos", "madrigals", "LLMs"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Singular kind terms are atomic — DIST and ** do not apply.
     Only BFG is available (kind enters Gen restrictor). -/

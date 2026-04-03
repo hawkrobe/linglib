@@ -66,7 +66,7 @@ inductive AltGenSource where
   | online
   /-- Pre-stored with lexical entry -/
   | offline
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- What is done with alternatives once generated.
 
@@ -81,7 +81,7 @@ inductive AltNegMechanism where
   | innocentInclusion
   /-- No strengthening -/
   | none
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A scalar item's implicature processing profile.
 
@@ -93,7 +93,7 @@ structure ProcessProfile where
   altGen : AltGenSource
   /-- What is done with alternatives -/
   altNeg : AltNegMechanism
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited ProcessProfile where
   default := ⟨.online, .exhaustification⟩
@@ -112,7 +112,7 @@ inductive ScalarItemClass where
   | numeral
   /-- Free choice disjunction: different mechanism entirely (§2.3) -/
   | freeChoiceDisjunction
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The process profile for each scalar item class.
 
@@ -128,7 +128,7 @@ inductive ScalarItem where
   | three       -- Experiments 1–6 (target or prime)
   | four        -- Experiments 1–4
   | fcOr        -- Experiments 5–6 (FC disjunction under modal)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify a concrete item into its class. -/
 def itemClass : ScalarItem → ScalarItemClass
@@ -304,7 +304,7 @@ inductive TheoreticalPosition where
   | decomposed
   /-- Each scalar item class is fully independent -/
   | fullyIndependent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a theoretical position is compatible with the priming data. -/
 def compatibleWithData (pos : TheoreticalPosition) : Bool :=

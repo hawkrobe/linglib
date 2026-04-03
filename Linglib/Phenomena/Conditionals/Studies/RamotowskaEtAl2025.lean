@@ -60,7 +60,7 @@ inductive Theory where
   | universal    -- Lewis/Kratzer: ∀ closest worlds
   | selectional  -- Stalnaker + supervaluation
   | homogeneity  -- Universal + homogeneity presupposition
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Quantifiers tested in the experiment. -/
 inductive Quantifier where
@@ -68,7 +68,7 @@ inductive Quantifier where
   | some       -- Existential (weak/positive)
   | no         -- Universal negative (strong/negative)
   | notEvery   -- Negated universal (weak/negative)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 open Fragments.English.Determiners (Strength)
 
@@ -91,7 +91,7 @@ def Quantifier.isPositive : Quantifier → Bool
 inductive QuDType where
   | existential  -- E-QuD: "at least one has a chance to win"
   | universal    -- U-QuD: "all are guaranteed to win"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════════════════
 -- Theoretical Predictions (Table 3 of the paper)

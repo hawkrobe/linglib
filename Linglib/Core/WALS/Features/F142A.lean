@@ -17,7 +17,7 @@ inductive ParaLinguisticUsagesOfClicks where
   | logicalMeanings  -- Logical meanings (47 languages)
   | affectiveMeanings  -- Affective meanings (71 languages)
   | otherOrNone  -- Other or none (25 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 142A dataset (143 languages). -/
 def allData : List (Datapoint ParaLinguisticUsagesOfClicks) :=

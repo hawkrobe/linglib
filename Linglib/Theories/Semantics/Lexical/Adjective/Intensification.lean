@@ -47,7 +47,7 @@ inductive EvaluativeValence where
   | positive   -- pleasant, nice, decent
   | negative   -- horrible, terrible, awful
   | neutral    -- usual, possible (non-evaluative)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- Evaluative Measure Functions
 

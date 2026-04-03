@@ -57,7 +57,7 @@ inductive HungarianComplementType where
   | hogyCP
   /-- Bare finite complement without *hogy* — transparent to SOT -/
   | bareTP
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether the complement type includes the complementizer *hogy*. -/
 def HungarianComplementType.hasHogy : HungarianComplementType → Bool

@@ -20,7 +20,7 @@ inductive PositionOfPolarQuestionParticles where
   | otherPosition  -- Other position (8 languages)
   | inEitherOfTwoPositions  -- In either of two positions (26 languages)
   | noQuestionParticle  -- No question particle (355 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PositionOfPolarQuestionParticles) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .initial }

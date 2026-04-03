@@ -73,7 +73,7 @@ inductive IslandCondition where
   | cnpcBaseline
   | whIslandBare
   | whIslandWhich
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : HasProcessingProfile IslandCondition where
   profile

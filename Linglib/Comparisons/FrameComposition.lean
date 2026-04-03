@@ -45,14 +45,14 @@ open Semantics.TypeTheoretic
 /-- HPSG head feature names as frame attributes. -/
 inductive HeadAttr where
   | vform | inv | aux
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Head feature values as a sum type (heterogeneous → homogeneous). -/
 inductive HeadVal where
   | vform : HPSG.VForm → HeadVal
   | inv : HPSG.Inv → HeadVal
   | aux : Bool → HeadVal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Project HPSG HeadFeatures into a D-frame.
     Each feature becomes a functional attribute (exactly one value). -/

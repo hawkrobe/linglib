@@ -60,7 +60,7 @@ open Semantics.Reference.Basic
 inductive UseMode where
   | attributive
   | referential
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-! ## Definite Descriptions -/
 

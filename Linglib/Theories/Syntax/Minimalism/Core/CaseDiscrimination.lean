@@ -65,7 +65,7 @@ inductive CaseAccessibility where
   | dependent
   /-- Lexical/oblique case: DAT, GEN, PP, etc. Lowest. -/
   | lexical
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric rank for ordering. Higher = more accessible. -/
 def CaseAccessibility.rank : CaseAccessibility → Nat
@@ -122,7 +122,7 @@ structure AgreementPattern where
   sAgrees : Bool   -- intransitive subject
   aAgrees : Bool   -- transitive agent
   pAgrees : Bool   -- transitive patient
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Given a case alignment and an accessibility threshold, compute
     which argument positions are visible to the probe. -/

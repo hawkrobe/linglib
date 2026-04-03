@@ -114,14 +114,14 @@ theorem upperBounded_entails_plain {Ev W Entity : Type*}
 
 /-- Three books for testing the modal indefinite semantics. -/
 inductive Book where | a | b | c
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Three possible worlds varying in which books are available. -/
 inductive BookWorld where
   | abc   -- all three available
   | ab    -- only a, b available
   | ac    -- only a, c available
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Core.Proposition.FiniteWorlds BookWorld where
   worlds := [.abc, .ab, .ac]
@@ -145,7 +145,7 @@ private def isAvailable : Book → BookWorld → Bool
 
 /-- A speech event and a described event. -/
 inductive SpeechOrDescribed where | speech | described
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Epistemic anchoring: the speaker considers all three worlds possible. -/
 private def fEPI : AnchoringFn SpeechOrDescribed BookWorld :=
@@ -231,14 +231,14 @@ in which cards are grabbable, and two event types (local vs imperative). -/
 
 /-- Three cards for testing harmonic readings. -/
 inductive Card where | c1 | c2 | c3
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Three worlds varying in which cards are grabbable. -/
 inductive CardWorld where
   | all    -- all three grabbable
   | only1  -- only c1 grabbable
   | only2  -- only c2 grabbable
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 private def allCards : List Card := [.c1, .c2, .c3]
 private def allCW : List CardWorld := [.all, .only1, .only2]
@@ -260,7 +260,7 @@ private def canGrab : Card → CardWorld → Bool
 
 /-- Three event types: speech, local (described), imperative. -/
 inductive GrabEvent where | speech | local | imperative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Anchoring function for the card scenario.
     - Speech event: empty background (all worlds accessible).

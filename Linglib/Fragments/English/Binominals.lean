@@ -58,7 +58,7 @@ inductive N₁SemanticClass where
       refer to animate things. Already metaphorical; move quickly
       to evaluative and intensifier uses. -/
   | abstract
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Inanimate N₁ nouns typically develop pseudo-partitive readings;
     animate and abstract ones do not. -/

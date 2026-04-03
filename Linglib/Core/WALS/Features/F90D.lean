@@ -21,7 +21,7 @@ inductive InternallyHeadedRelativeClauses where
   | internallyHeadedOrDoubleHeaded  -- Internally-headed or double-headed (1 languages)
   | internallyHeadedOccursAsNondominantType  -- Internally-headed occurs as nondominant type (10 languages)
   | internallyHeadedExists  -- Internally-headed exists (4 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 90D dataset (63 languages). -/
 def allData : List (Datapoint InternallyHeadedRelativeClauses) :=

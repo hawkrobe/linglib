@@ -46,7 +46,7 @@ inductive InfClass where
   | ii   -- E-infinitive: -e- + case
   | iii  -- MA-infinitive: -ma- + case (mirrors local cases)
   | iv   -- MINEN-infinitive: -minen (verbal noun)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A case form available to an infinitive class. -/
 structure InfForm where
@@ -54,7 +54,7 @@ structure InfForm where
   caseName : String
   suffix : String
   gloss : String
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § 2: Infinitive Paradigms

@@ -75,7 +75,7 @@ inductive AdditiveParticle where
   | too    -- positive polarity, typically sentence-final
   | also   -- positive polarity, typically medial position
   | either -- negative polarity
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Polarity requirement for additive particles.
 
@@ -251,7 +251,7 @@ Thomas's framework is binary: either ANT and π are focus alternatives
 inductive AdditiveUseType where
   | standard        -- ANT and π are focus alternatives
   | argumentBuilding -- ANT and π jointly support a conclusion
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Heuristic: check if ANT and π each overlap some alternative of RQ.
 

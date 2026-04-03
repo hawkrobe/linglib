@@ -124,7 +124,7 @@ inductive SyllWeight where
   | light       -- CV (1 mora)
   | heavy       -- CVC or CVV (2 morae)
   | superheavy  -- CVVC, CVCC (3+ morae)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Mora count. `codaMoraic = true` means coda consonants contribute weight
     (the "Weight-by-Position" parameter of @cite{hayes-1989}). -/

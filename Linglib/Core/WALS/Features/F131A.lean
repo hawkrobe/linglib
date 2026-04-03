@@ -20,7 +20,7 @@ inductive NumeralBases where
   | otherBase  -- Other base (5 languages)
   | extendedBodyPartSystem  -- Extended body-part system (4 languages)
   | restricted  -- Restricted (20 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 131A dataset (196 languages). -/
 def allData : List (Datapoint NumeralBases) :=

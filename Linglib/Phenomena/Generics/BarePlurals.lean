@@ -21,13 +21,13 @@ inductive LocativeStatus where
   | argument
   | adjunct
   | none
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Presuppositional vs non-presuppositional verbs. -/
 inductive Presuppositionality where
   | presuppositional
   | nonPresuppositional
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- Basic Data Structure
 
@@ -197,7 +197,7 @@ def johnOwnsHorses : PresuppositionalDatum :=
 inductive InformationStatus where
   | topic
   | focus
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 structure TopicFocusDatum where
   sentence : String

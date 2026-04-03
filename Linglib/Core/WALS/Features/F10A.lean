@@ -16,7 +16,7 @@ namespace Core.WALS.F10A
 inductive VowelNasalization where
   | contrastPresent  -- Contrast present (64 languages)
   | contrastAbsent  -- Contrast absent (180 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 10A dataset (244 languages). -/
 def allData : List (Datapoint VowelNasalization) :=

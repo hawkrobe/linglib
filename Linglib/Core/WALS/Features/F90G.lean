@@ -18,7 +18,7 @@ inductive DoubleHeadedRelativeClauses where
   | doubleHeadedOrReln  -- Double-headed or RelN (1 languages)
   | doubleHeadedOrInternallyHeaded  -- Double-headed or internally-headed (1 languages)
   | doubleHeadedAsNondominantType  -- Double-headed as nondominant type (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 90G dataset (5 languages). -/
 def allData : List (Datapoint DoubleHeadedRelativeClauses) :=

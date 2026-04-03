@@ -86,7 +86,7 @@ inductive CausalExpression
   | enabled
   | affected
   | madeNoDifference
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : Nonempty CausalExpression := ⟨.caused⟩
 
@@ -107,7 +107,7 @@ structure CausalWorld where
   whether : Bool
   how : Bool
   sufficient : Bool
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype CausalWorld where
   elems := {
@@ -730,7 +730,7 @@ Rates stored as percentages (Nat) to avoid heavy Mathlib imports. -/
 structure AcceptanceRate where
   verb : String
   ratePct : Nat      -- Proportion of "Yes" responses (percentage)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def causedRate : AcceptanceRate := { verb := "caused", ratePct := 48 }
 def madeRate : AcceptanceRate := { verb := "made", ratePct := 40 }
@@ -754,7 +754,7 @@ structure Coefficient where
   estimate100 : Int   -- Estimate × 100
   lowerCI100 : Int    -- Lower 95% CI × 100
   upperCI100 : Int    -- Upper 95% CI × 100
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A coefficient is reliable when its 95% CI excludes 0. -/
 def Coefficient.isReliable (c : Coefficient) : Bool :=
@@ -821,7 +821,7 @@ inductive Acceptability where
   | acceptable       -- ✓
   | marginal         -- ?
   | unacceptable     -- *
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A single acceptability judgment: verb + context + status. -/
 structure CausativeJudgment where

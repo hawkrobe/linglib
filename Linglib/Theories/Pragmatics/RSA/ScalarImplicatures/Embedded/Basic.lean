@@ -35,7 +35,7 @@ inductive EmbeddedWorld where
   | none        -- Nobody solved any problems
   | someNotAll  -- Someone solved some-but-not-all problems
   | someAll     -- Someone solved all problems
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 
 /--
@@ -47,7 +47,7 @@ inductive DEUtterance where
   | noSome  -- "No one solved some of the problems"
   | noAll   -- "No one solved all of the problems" (scalar alternative)
   | null    -- Null/baseline utterance
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 
 /-!
@@ -98,7 +98,7 @@ inductive UEUtterance where
   | someSome  -- "Someone solved some problems"
   | someAll   -- "Someone solved all problems" (scalar alternative)
   | null
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Base lexicon meaning for UE: "some" = at-least-one -/
 def lexBaseUEMeaning : UEUtterance → EmbeddedWorld → Bool

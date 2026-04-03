@@ -16,7 +16,7 @@ namespace Core.WALS.F90F
 inductive AdjoinedRelativeClauses where
   | adjoinedRelativeClauseDominant  -- Adjoined relative clause dominant (8 languages)
   | adjoinedOrCorrelative  -- Adjoined or correlative (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 90F dataset (10 languages). -/
 def allData : List (Datapoint AdjoinedRelativeClauses) :=

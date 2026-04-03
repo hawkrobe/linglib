@@ -61,29 +61,29 @@ namespace Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
     10 classes = multisets of size 3 from {N, S, A}. -/
 inductive World where
   | NNN | NNS | NNA | NSS | NSA | NAA | SSS | SSA | SAA | AAA
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Inner quantifier: over a player's shots. -/
 inductive ShotQ where
   | all | none_ | some_
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Outer quantifier: over players. -/
 inductive PlayerQ where
   | every | exactlyOne | no
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Utterance: outer quantifier × inner quantifier, plus null. -/
 inductive Utterance where
   | stmt : PlayerQ → ShotQ → Utterance
   | null : Utterance
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Lexicon: how "some" is interpreted. -/
 inductive Lexicon where
   | weak   -- "some" = at least one (lower-bound)
   | strong -- "some" = some but not all (enriched)
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 -- ============================================================================
 -- §2. World Count Functions
@@ -265,7 +265,7 @@ inductive Finding where
   | ue_SSS_vs_SSA
   | ue_SSS_vs_SAA
   | ue_SSS_vs_AAA
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All findings. -/
 def findings : List Finding :=

@@ -49,7 +49,7 @@ namespace Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 inductive HKIState where
   | pos : HKIState  -- A has B
   | neg : HKIState  -- A doesn't have B
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype HKIState where
   elems := {.pos, .neg}
@@ -74,7 +74,7 @@ inductive HKIUtterance where
   | uPos : HKIUtterance   -- "A has B"
   | uNeg : HKIUtterance   -- "A doesn't have B"
   | uNull : HKIUtterance  -- Say nothing
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype HKIUtterance where
   elems := {.uPos, .uNeg, .uNull}
@@ -93,7 +93,7 @@ inductive Polarity where
   | positive : Polarity
   | negative : Polarity
   | null : Polarity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Get polarity of an utterance -/
 def HKIUtterance.polarity : HKIUtterance → Polarity
@@ -143,7 +143,7 @@ def literalTruth : HKIState → HKIUtterance → Bool
 inductive WorldType where
   | normal : WorldType
   | wonky : WorldType
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- All world types -/
 def allWorldTypes : List WorldType := [.normal, .wonky]
@@ -365,7 +365,7 @@ open Semantics.Montague
 /-- A simple model for part-whole relations. -/
 inductive PWEntity where
   | house | classroom | bathroom | stove
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Part-whole model. -/
 def pwModel : Model where

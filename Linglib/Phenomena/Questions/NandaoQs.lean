@@ -36,7 +36,7 @@ structure NandaoDatum where
   unexpectedEvidence : Bool
   /-- Is the nandao-Q felicitous? -/
   felicitous : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- §1 — Rhetorical, Biased, and Pure Inquiry Uses

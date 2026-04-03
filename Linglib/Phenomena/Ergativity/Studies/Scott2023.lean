@@ -65,7 +65,7 @@ structure MamAlignment where
   aMarker : MarkerSet
   /-- Marker set for O (transitive patient) -/
   oMarker : MarkerSet
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Matrix clause alignment: tripartite.
     S = Set B (ABS), A = Set A (ERG), O = default Set B (no agreement). -/
@@ -115,7 +115,7 @@ inductive SEETrigger where
   | chix     -- *ch'ix*: 'almost'
   | nim      -- *ni'm*: 'right now'
   | nanx     -- *na'nx*: 'not yet'
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All SEE triggers yield the same neutral alignment. -/
 def seeTriggerAlignment (_ : SEETrigger) : MamAlignment := seeAlignment

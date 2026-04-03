@@ -19,7 +19,7 @@ inductive ConsonantInventories where
   | average  -- Average (201 languages)
   | moderatelyLarge  -- Moderately large (94 languages)
   | large  -- Large (57 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint ConsonantInventories) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .large }

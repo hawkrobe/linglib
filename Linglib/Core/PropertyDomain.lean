@@ -45,7 +45,7 @@ inductive PropertyDomain where
   | evaluative
   | psychological
   | state
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /-- A named dimension classified by its perceptual domain. -/
 structure Dimension where
@@ -93,7 +93,7 @@ References:
 inductive NegationType where
   | contradictory
   | contrary
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ═══════════════════════════════════════════
 -- Smart Constructors

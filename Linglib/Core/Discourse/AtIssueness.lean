@@ -74,7 +74,7 @@ def isProjective (d : ProjectivityDegree) (θ : ProjectivityThreshold) : Bool :=
 inductive AtIssuenessClassical where
   | atIssue
   | notAtIssue
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Recover binary classification from gradient degree and threshold. -/
 def toClassical (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : AtIssuenessClassical :=

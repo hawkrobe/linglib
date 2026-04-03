@@ -81,7 +81,7 @@ inductive QuadForm where
   | notPositive  -- "not happy"
   | negative     -- "unhappy"
   | notNegative  -- "not unhappy"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Form complexity ordering:
     |happy| < |unhappy| < |not happy| < |not unhappy|
@@ -314,7 +314,7 @@ inductive Region where
   | plateauHigh  -- borderline high: "not unhappy" territory
   | plateauLow   -- borderline low: "not happy" territory
   | negative     -- clearly unhappy (d << θ)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Semantically compatible form-meaning pairs.
     Under contradictory semantics (H2), forms partition by literal denotation:

@@ -45,7 +45,7 @@ inductive SCMProperty where
   | cold
   | solidary
   | antiSolidary
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype SCMProperty where
   elems := {.competent, .incompetent, .warm, .cold, .solidary, .antiSolidary}
@@ -71,7 +71,7 @@ inductive SocialDimension where
   | competence
   | warmth
   | antiSolidarity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype SocialDimension where
   elems := {.competence, .warmth, .antiSolidarity}

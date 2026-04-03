@@ -16,7 +16,7 @@ namespace Core.WALS.F25B
 inductive ZeroMarkingOfAAndPArguments where
   | zeroMarking  -- Zero-marking (16 languages)
   | nonZeroMarking  -- Non-zero marking (219 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 25B dataset (235 languages). -/
 def allData : List (Datapoint ZeroMarkingOfAAndPArguments) :=

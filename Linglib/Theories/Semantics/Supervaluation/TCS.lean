@@ -395,7 +395,7 @@ theorem strict_tolerant_duality (M : TModel D Pred) (φ : TCSFormula Pred D) :
 section Example
 
 inductive Elt | a | b | c | d
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : Fintype Elt where
   elems := {.a, .b, .c, .d}

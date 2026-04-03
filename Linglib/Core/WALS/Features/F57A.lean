@@ -18,7 +18,7 @@ inductive PositionOfPronominalPossessiveAffixes where
   | possessiveSuffixes  -- Possessive suffixes (355 languages)
   | prefixesAndSuffixes  -- Prefixes and suffixes (32 languages)
   | noPossessiveAffixes  -- No possessive affixes (260 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PositionOfPronominalPossessiveAffixes) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .noPossessiveAffixes }

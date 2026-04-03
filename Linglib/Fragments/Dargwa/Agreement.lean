@@ -47,14 +47,14 @@ inductive SgGender where
   | masculine   -- w- (or ∅, realized as -j after vowels)
   | feminine    -- r-
   | neuter      -- b- (non-human, inanimate)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Plural gender values. These differ from singular genders. -/
 inductive PlGender where
   | sapHuman    -- d-: 1st/2nd person NPs
   | human       -- b-: 3rd person human plurals
   | nonHuman    -- d-: non-human plurals
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Gender agreement prefix on the verb stem.
     The prefix immediately precedes the root in simplex verbs and
@@ -87,7 +87,7 @@ inductive MarkerSet where
   | clitic    -- present, preterite, perfect, propositive
   | irrealis  -- past habitual, future, conditional
   | optative  -- optative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Person clitic/suffix forms (Table 4.20, 4.21 of @cite{sumbatova-2021}).
     Returns `none` when the person is unmarked.
@@ -134,7 +134,7 @@ inductive GenderController where
   | absolutive     -- default: the absolutive NP
   | predicate      -- copular clause: predicate NP
   | ergOrDat       -- Tanti allows ergative/dative control optionally
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Person agreement hierarchy: person (1, 2 > 3) and case
     (absolutive > ergative).

@@ -54,7 +54,7 @@ inductive HeartState where
   | h1  -- 1 heart (bad)
   | h2  -- 2 hearts (good)
   | h3  -- 3 hearts (amazing)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype HeartState where
   elems := {.h0, .h1, .h2, .h3}
@@ -70,7 +70,7 @@ inductive Utterance where
   | notBad        -- "It wasn't bad"
   | notGood       -- "It wasn't good"
   | notAmazing    -- "It wasn't amazing"
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Utterance where
   elems := {.terrible, .bad, .good, .amazing,
@@ -85,7 +85,7 @@ def Utterance.isNegated : Utterance → Bool
 /-- Get the base adjective (without negation) -/
 inductive Adjective where
   | terrible | bad | good | amazing
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 def Utterance.baseAdjective : Utterance → Adjective
   | .terrible | .notTerrible => .terrible
@@ -98,7 +98,7 @@ inductive GoalCondition where
   | informative  -- "give accurate and informative feedback"
   | kind         -- "make the listener feel good"
   | both         -- "BOTH make Bob feel good AND give accurate feedback"
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 Soft semantic meaning: P(accept | adjective, state) from the literal
@@ -224,7 +224,7 @@ inductive Phi where
   | p50   -- φ = 1/2
   | p75   -- φ = 3/4
   | p100  -- φ = 1   (pure informativity)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Phi where
   elems := {.p0, .p25, .p50, .p75, .p100}

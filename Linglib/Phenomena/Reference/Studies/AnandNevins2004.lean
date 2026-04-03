@@ -50,7 +50,7 @@ open Semantics.Reference.FreeIndirectDiscourse
 
 /-- A context with distinguishable agents (for testing identity). -/
 inductive Agent where | narrator | character
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 abbrev RefCtx := KContext Unit Agent Unit ℤ
 

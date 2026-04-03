@@ -19,7 +19,7 @@ inductive LocusOfMarkingInTheClause where
   | doubleMarking  -- Double marking (58 languages)
   | noMarking  -- No marking (42 languages)
   | other  -- Other (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 23A dataset (236 languages). -/
 def allData : List (Datapoint LocusOfMarkingInTheClause) :=

@@ -44,7 +44,7 @@ inductive Position where
   | adjunct     -- Adjunct position (by-phrase, PP modifier)
   | embedded    -- Inside a DP (possessor, PP complement)
   | complement  -- Clausal complement
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A quantifier with its structural position -/
 structure PositionedQuantifier where
@@ -87,7 +87,7 @@ inductive QRBarrier where
   | clauseBoundary -- QR is clause-bounded (cannot cross CP)
   | adjunctIsland -- QR from adjuncts is blocked
   | superiority   -- QR cannot cross a c-commanding quantifier (Bruening)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Check if QR is blocked for a given quantifier -/
 def qrIsBlocked (q : PositionedQuantifier) : Option QRBarrier :=

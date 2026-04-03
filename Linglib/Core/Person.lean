@@ -58,7 +58,7 @@ structure Features where
   hasParticipant : Bool
   /-- [+author]: referent includes the speaker (1P only for singulars). -/
   hasAuthor : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Well-formedness: [+author] → [+participant].
     An author (speaker) is necessarily a participant. -/
@@ -168,7 +168,7 @@ inductive Category where
   | excl      -- 1+3: exclusive ('we' = speaker + others, excluding addressee)
   | secondGrp -- 2+3: second person group ('you all', addressee + others)
   | thirdGrp  -- 3+3: third person group ('they')
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 namespace Category
 

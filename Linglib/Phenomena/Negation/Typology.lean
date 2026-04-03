@@ -127,7 +127,7 @@ inductive NegMorphemeType where
       and one following the verb (e.g., French `ne...pas`,
       Izi `to-ome-du` 'NEG-do-NEG'). -/
   | doubleNeg
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 113: Symmetric vs Asymmetric Standard Negation
@@ -153,7 +153,7 @@ inductive NegSymmetry where
       symmetric, others asymmetric (e.g., Lezgian: present symmetric,
       past imperfective asymmetric). -/
   | both
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 114: Subtypes of Asymmetric Negation
@@ -205,7 +205,7 @@ inductive AsymmetrySubtype where
   /-- Non-assignable: language has only symmetric negation (Type Sym in
       Ch 113), so no asymmetry subtype applies. -/
   | nonAssignable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Miestamo's Asymmetry Dimensions (beyond WALS)
@@ -223,7 +223,7 @@ inductive AsymmetryDimension where
       affirmative. E.g., Burmese *-bu* neutralizes TAM; Turkish aorist
       uses a different marker. -/
   | paradigmatic
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether the asymmetry is derived from the negation marker type
     or independent of it (@cite{miestamo-2005}). -/
@@ -234,7 +234,7 @@ inductive AsymmetrySource where
   /-- The asymmetry is not predictable from the marker type alone.
       E.g., TAM neutralization in Burmese is independent of circumfixing. -/
   | independent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Chapter 115: Negative Indefinites and Predicate Negation
@@ -267,7 +267,7 @@ inductive NegIndefiniteStrategy where
       serves as the main predicate (e.g., Nelemwa `kia agu i uya`
       'not.exist person 3SG arrive' = 'Nobody came'). -/
   | negExistential
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -333,7 +333,7 @@ inductive NegVerbPosition where
   | tripleNeg
   /-- Optional single negation. -/
   | optSingleNeg
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 143E/F: Whether a language has preverbal and/or postverbal
     negative morphemes. -/
@@ -350,7 +350,7 @@ inductive NegMorphemePosition where
   | both
   /-- None (language uses minor means or double negation). -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def fromWALS143A : Core.WALS.F143A.NegVerbOrder → NegVerbPosition
   | .negv => .preverbalParticle
@@ -1722,7 +1722,7 @@ inductive ContinentalArea where
   | northAmerica
   | southAmerica
   | pidginsCreoles
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Per-area EN survey data (Table 2). -/
 structure ENAreaData where

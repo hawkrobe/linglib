@@ -51,7 +51,7 @@ inductive PortugueseForm where
   | indFuture     -- "estará" (will be)
   | subjPresent   -- "esteja" (be.SUBJ.PRES)
   | subjFuture    -- "estiver" (be.SF)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Morphological decomposition of SF according to Mendes.

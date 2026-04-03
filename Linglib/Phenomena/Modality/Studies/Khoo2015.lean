@@ -43,19 +43,19 @@ namespace Phenomena.Modality.Studies.Khoo2015
 inductive SentenceType where
   | control  -- "Jim is at home right now" (non-modal assertion)
   | modal    -- "Fat Tony might be dead" (epistemic might)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Response type: falsity judgment vs rejection inclination. -/
 inductive ResponseType where
   | false_     -- "Do you agree that what [speaker] said is false?"
   | rejection  -- "Would you respond by saying 'No, ...'?"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An experimental condition is a sentence × response pair. -/
 structure Condition where
   sentence : SentenceType
   response : ResponseType
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Mean Likert rating for each condition. -/
 def meanRating : Condition → Float

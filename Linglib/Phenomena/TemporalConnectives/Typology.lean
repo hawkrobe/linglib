@@ -54,7 +54,7 @@ inductive UntilStrategy where
   /-- Durative *until* blocked under negation; PPI replaces NPI-*until*.
       Dutch: *tot*, *pas*. German: *bis*, *erst*. -/
   | ppiReplacement
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A language's strategy for the two-*until* distinction, with evidence
     linking to fragment entries and NegationData. -/

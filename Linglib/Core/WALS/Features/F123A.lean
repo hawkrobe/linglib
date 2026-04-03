@@ -19,7 +19,7 @@ inductive ObliqueRelativization where
   | pronounRetention  -- Pronoun-retention (20 languages)
   | gap  -- Gap (55 languages)
   | notPossible  -- Not possible (10 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 123A dataset (112 languages). -/
 def allData : List (Datapoint ObliqueRelativization) :=

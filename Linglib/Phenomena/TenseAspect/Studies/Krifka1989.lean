@@ -43,7 +43,7 @@ open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 inductive NomRef where
   | cum   -- mass/bare plural: cumulative reference
   | qua   -- count/measured/definite: quantized reference
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An NP datum with its reference classification. -/
 structure NPDatum where
@@ -110,7 +110,7 @@ structure CompositionDatum where
   verbIncClass : VerbIncClass
   npRef : NomRef
   expectedVPRef : NomRef
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def eatApples : CompositionDatum :=
   { verb := "eat", np := "apples", verbIncClass := .sinc,

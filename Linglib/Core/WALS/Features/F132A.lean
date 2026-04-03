@@ -21,7 +21,7 @@ inductive NumberOfNonDerivedBasicColourCategories where
   | v5  -- 5 (56 languages)
   | v55  -- 5.5 (11 languages)
   | v6  -- 6 (29 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 132A dataset (119 languages). -/
 def allData : List (Datapoint NumberOfNonDerivedBasicColourCategories) :=

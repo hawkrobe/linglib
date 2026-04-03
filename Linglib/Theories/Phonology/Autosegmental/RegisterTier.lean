@@ -48,7 +48,7 @@ namespace Theories.Phonology.Autosegmental.RegisterTier
 inductive RegisterFeature where
   | h  -- upstep: raise register
   | l  -- downstep: lower register
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Tone features (@cite{yip-1980}, @cite{clements-1981}).
 
@@ -67,7 +67,7 @@ inductive ToneFeature where
   | H  -- High tone
   | M  -- Mid tone
   | L  -- Low tone
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § 2: Tonal Geometry
@@ -89,7 +89,7 @@ inductive ToneFeature where
 structure TonalRootNode where
   register : Option RegisterFeature
   tone     : Option ToneFeature
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The prosodic domain that carries register/tone specifications.
 
@@ -98,7 +98,7 @@ structure TonalRootNode where
 inductive TBUKind where
   | mora
   | syllable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Register Specification and Realization
@@ -195,7 +195,7 @@ inductive WordProsodicType where
   | registerBased  -- Syntagmatic downstep contrast (e.g., Drubea, Numèè)
   | stressAccent   -- Prominence-based (e.g., English, Russian)
   | mixed          -- Both tone and register (e.g., Paicî, Baga Pukur)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Core definitional properties of downstep, following @cite{leben-2018}
     as refined by @cite{lionnet-2025} §6.1.
@@ -226,7 +226,7 @@ structure DownstepProperties where
 structure AnalysisInventory where
   underlyingPrimitives : Nat  -- distinct representational units (underlying + derived)
   postlexicalProcesses : Nat  -- postlexical rules/constraints needed
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- § 7: Verification Theorems

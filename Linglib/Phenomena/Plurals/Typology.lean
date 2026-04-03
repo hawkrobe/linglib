@@ -58,7 +58,7 @@ inductive PluralCoding where
   | pluralWord       -- separate word in NP (e.g. Hawaiian mau, Mandarin 些)
   | pluralClitic     -- NP-level clitic (e.g. Cayuvava me=)
   | noPlural         -- no indication of plurality
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Chapter 33 distribution: language counts per plural coding strategy.
     Total: 957 languages. -/
@@ -106,7 +106,7 @@ inductive PluralOccurrence where
   | allNounsAlwaysOptional     -- plural on all nouns, always optional
   | allNounsOptionalInanimates -- plural on all nouns, obligatory for human, optional for inanimate
   | allNounsAlwaysObligatory   -- plural on all nouns, always obligatory
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Chapter 34 distribution: language counts per occurrence type.
     Total: 290 languages. -/
@@ -149,7 +149,7 @@ inductive PronounPlurality where
   | pnStemNominalAffix          -- person-number stem + nominal plural affix (e.g. Russian)
   | personStemPronominalAffix   -- person stem + pronominal plural affix (e.g. Chuvash)
   | personStemNominalAffix      -- person stem + nominal plural affix (e.g. Mandarin -men)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Chapter 35 distribution: language counts per pronoun plurality type.
     Total: 260 languages. -/
@@ -195,7 +195,7 @@ inductive AssociativePlural where
   | uniqueAffixal       -- dedicated affix (e.g. Hungarian -ek)
   | uniquePeriphrastic  -- dedicated free/clitic marker (e.g. Tagalog, Japanese -tachi)
   | absent              -- no productive associative plural (e.g. Russian, English)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Chapter 36 distribution: language counts per associative plural type.
     Total: 237 languages. -/
@@ -249,7 +249,7 @@ structure PluralityProfile where
   pronounPlurality : PronounPlurality
   /-- Ch 36: Associative plural -/
   associativePlural : AssociativePlural
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Language Instances

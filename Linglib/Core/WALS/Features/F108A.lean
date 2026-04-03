@@ -17,7 +17,7 @@ inductive AntipassiveType where
   | implicitPatient  -- Implicit patient (18 languages)
   | obliquePatient  -- Oblique patient (30 languages)
   | noAntipassive  -- No antipassive (146 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 108A dataset (194 languages). -/
 def allData : List (Datapoint AntipassiveType) :=

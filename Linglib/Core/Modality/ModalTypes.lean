@@ -48,7 +48,7 @@ inductive ModalForce where
   | necessity
   | weakNecessity
   | possibility
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : LawfulBEq ModalForce where
   eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
@@ -107,7 +107,7 @@ inductive ModalFlavor where
   | epistemic       -- Evidence/knowledge
   | deontic         -- Norms/rules
   | circumstantial  -- Facts/abilities (subsumes teleological)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : LawfulBEq ModalFlavor where
   eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
@@ -134,7 +134,7 @@ def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .circumstantial
 structure ForceFlavor where
   force : ModalForce
   flavor : ModalFlavor
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : LawfulBEq ForceFlavor where
   eq_of_beq {a b} h := by
@@ -199,7 +199,7 @@ inductive ConcordType where
   | negation           -- ¬¬ → ¬ (negative concord)
   | modalNecessity     -- □□ → □ (necessity modal concord)
   | modalPossibility   -- ◇◇ → ◇ (possibility modal concord)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map modal force to the corresponding concord type.
     Weak necessity patterns with necessity for concord purposes (both are ∀ quantifiers). -/
@@ -229,7 +229,7 @@ def ModalItem.sharesConcordForce (a b : ModalItem) : Bool :=
 inductive ModalDecomposition where
   | decomposable  -- ⟦m⟧ = fo(m) × fl(m)
   | unitary       -- ⟦m⟧ ≠ fo(m) × fl(m)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify a modal item by whether its meaning set equals the Cartesian
     product of its force and flavor projections. A modal is decomposable

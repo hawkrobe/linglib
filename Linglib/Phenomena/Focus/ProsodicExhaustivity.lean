@@ -57,14 +57,14 @@ inductive StressPattern where
   | subjectFocus  -- Stress on subject ("BOB went")
   | objectFocus   -- Stress on object ("gave FLOWERS")
   | verbFocus     -- Stress on verb ("PASSED the test")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Exhaustivity interpretation -/
 inductive Exhaustivity where
   | exhaustive    -- Only the focused element
   | nonExhaustive -- At least the mentioned element
   | neutral       -- No clear preference
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A prosodic exhaustivity datum -/
 structure ProsodyDatum where

@@ -66,7 +66,7 @@ inductive CIAlternativeType where
   | nominalAppositive -- "Laura" vs "Laura, a doctor"
   | suppAdverb        -- "p" vs "Luckily, p"
   | emotiveMarker     -- "p" vs "Alas, p"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 A CI alternative pair: weaker and stronger CI expressions.

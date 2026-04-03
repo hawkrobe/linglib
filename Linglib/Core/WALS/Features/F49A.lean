@@ -23,7 +23,7 @@ inductive CaseCount where
   | cases8_9  -- 8-9 cases (23 languages)
   | cases10OrMore  -- 10 or more cases (24 languages)
   | exclusivelyBorderlineCaseMarking  -- Exclusively borderline case-marking (24 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 49A dataset (261 languages). -/
 def allData : List (Datapoint CaseCount) :=

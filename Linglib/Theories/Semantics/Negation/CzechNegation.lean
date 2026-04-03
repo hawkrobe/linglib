@@ -25,7 +25,7 @@ inductive NegPosition where
   /-- Outer negation: in PolP, FALSUM operator. Widest scope.
       Maps to high negation (VSO word order). Obligatorily focused. -/
   | outer
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Diagnostics that distinguish the three negation readings (Table 1). -/
 inductive Diagnostic where
@@ -39,7 +39,7 @@ inductive Diagnostic where
   | jeste
   /-- Particle *fakt* 'really' is compatible -/
   | fakt
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Table 1 from Staňková (2026 §3): compatibility of each negation reading
 with polarity items and particles.

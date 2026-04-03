@@ -72,7 +72,7 @@ inductive ContentLayer where
       material targetable by denial.
       Example: "It's not POSSIBLE — it's NECESSARY" (29b). -/
   | implicature
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════
 -- § Layered Propositions
@@ -179,7 +179,7 @@ Two corrections disambiguate the denial:
 -/
 
 private inductive KFWorld | kingBald | kingHairy | noKing1 | noKing2
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def kfPresup : KFWorld → Bool
   | .kingBald | .kingHairy => true | _ => false
@@ -230,7 +230,7 @@ possibility), but ¬□p contradicts □p.
 -/
 
 private inductive ModalW | possNotNec | nec
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def modalProp : LayeredProp ModalW :=
   { presupposition := λ _ => true

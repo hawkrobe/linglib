@@ -44,7 +44,7 @@ inductive LicensingStrength where
   | antiAdditive  -- licenses both weak and strong NPIs
   | downwardEntailing  -- licenses only weak NPIs
   | nonDE  -- does not license NPIs by monotonicity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify NPI licensing contexts by their monotonicity-based strength.
     Anti-additive contexts (negation, "without", "no one", universal restrictor) license strong NPIs.

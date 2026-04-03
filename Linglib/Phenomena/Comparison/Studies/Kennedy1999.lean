@@ -434,7 +434,7 @@ inductive EquativeStrategy where
   | reach            -- "tall reaching/to X" (many West African languages)
   | similative       -- "tall like X" (French "aussi...que", many languages)
   | exceed           -- "not exceed X in height" (Mandarin, Japanese)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Cross-linguistic equative strategy datum. -/
 structure EquativeTypologyDatum where

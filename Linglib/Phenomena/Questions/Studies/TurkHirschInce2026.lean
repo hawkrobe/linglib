@@ -45,7 +45,7 @@ inductive PolarWorld where
   | sleeps_free   -- Ali sleeps, no deontic necessity
   | nosleep_must  -- Ali doesn't sleep, must is in force
   | nosleep_free  -- Ali doesn't sleep, no deontic necessity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open PolarWorld
 

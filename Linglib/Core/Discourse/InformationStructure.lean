@@ -182,7 +182,7 @@ inductive DiscourseStatus where
   | given
   /-- Unmarked: merely new information -/
   | new
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Ordinal rank: given < new < focused.
     Used by extraction-acceptability theories (@cite{lu-pan-degen-2025}) and
@@ -228,7 +228,7 @@ inductive PolaritySwitchContext where
   | contrast
   /-- Same topic situation, mutually exclusive claims -/
   | correction
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 open Core.Discourse.CoherenceRelation in
 /-- Bridge from polarity-switch contexts to discourse coherence relations.
@@ -254,7 +254,7 @@ inductive PolarityMarkingStrategy where
   | other
   /-- No overt polarity marking -/
   | unmarked
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A cross-linguistic polarity-marking entry.
 
@@ -276,7 +276,7 @@ structure PolarityMarkingEntry where
   correctionOk : Bool
   /-- The polarity-marking strategy category -/
   strategy : PolarityMarkingStrategy
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-! ## Alternative Set Well-Formedness (@cite{umbach-2004} §2.2)
 
@@ -346,7 +346,7 @@ inductive ExclusionVariety where
   /-- Excludes by substitution: the excluded item would hold
       *instead of* the asserted one. Contrastive focus / CORRECTION. -/
   | substitution
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 open Core.Discourse.CoherenceRelation in
 /-- Bridge from exclusion variety to discourse coherence relation.
@@ -375,7 +375,7 @@ inductive FIPApplication where
   | scalarImplicature
   /-- Question-answer congruence -/
   | qaCongruence
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## Extraction and Information-Structural Clash
 @cite{erteschik-shir-1973} @cite{abeille-et-al-2020}

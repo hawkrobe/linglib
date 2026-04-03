@@ -29,7 +29,7 @@ inductive PositionOfNegativeMorphemesInSvoLanguages where
   | moreThanOneConstruction  -- More than one construction (48 languages)
   | obligneg  -- ObligNeg (56 languages)
   | optneg  -- OptNeg (35 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144D dataset (463 languages). -/
 def allData : List (Datapoint PositionOfNegativeMorphemesInSvoLanguages) :=

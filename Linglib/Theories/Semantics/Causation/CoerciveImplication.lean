@@ -19,7 +19,7 @@ inductive ActionType
   | Volitional
   | NonVolitional
   | Ambiguous
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- An event tagged with volitionality. -/
 structure TaggedEvent where
@@ -66,7 +66,7 @@ inductive CoercionStrength
   | Strong
   | Weak
   | None
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Compute coercion strength. -/
 def coercionStrength (ctx : CoerciveContext) : CoercionStrength :=

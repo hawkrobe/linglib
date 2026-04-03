@@ -45,7 +45,7 @@ inductive HWorld where
   | none       -- Nobody read any books
   | someNotAll -- Someone read some-but-not-all books
   | all_       -- Someone read all books
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 
 /--
@@ -62,7 +62,7 @@ inductive HUtterance where
   | all_      -- "all"
   | someOrAll -- "some or all" (the Hurford-relevant utterance)
   | null      -- null/baseline
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 
 /--
@@ -175,7 +175,7 @@ inductive HyponymWorld where
   | neither      -- Not American (and therefore not Californian)
   | americanOnly -- American but not Californian
   | californian  -- Californian (and therefore American)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Utterances for hyponymy scenario -/
 inductive HyponymUtterance where
@@ -183,7 +183,7 @@ inductive HyponymUtterance where
   | californian
   | americanOrCalifornian
   | null
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 Lexicon for hyponymy: Californian ⊆ American (no refinement possible).

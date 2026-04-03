@@ -40,7 +40,7 @@ inductive Language where
   | mandarin
   | japanese
   | turkish
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- Empirical Observation Records
 

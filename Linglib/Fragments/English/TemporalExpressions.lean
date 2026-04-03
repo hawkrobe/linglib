@@ -36,7 +36,7 @@ inductive TemporalOrder where
   | since_
   | by_
   | whenever
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Available readings for a temporal clause or modified VP.
     "Start" = initial point of embedded eventuality; "finish" = final point. -/
@@ -46,14 +46,14 @@ inductive Reading where
   | afterStart    -- ME follows onset of EE
   | afterFinish   -- ME follows telos of EE
   | durative      -- ME overlaps with EE runtime
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Syntactic complement type: clausal (*before she arrived*) vs
     nominal (*by 3pm*, *within an hour*). -/
 inductive ComplementType where
   | clausal
   | nominal
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § 2: Unified Temporal Expression Entry

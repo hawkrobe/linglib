@@ -60,7 +60,7 @@ inductive ConjunctionStrategy where
   | muOnly
   /-- Both J and MU overt (e.g., Hungarian "is és...is", Georgian "-c da...-c") -/
   | jMu
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Number of overt functional morphemes per strategy.
@@ -137,7 +137,7 @@ theorem hungarian_mu_free : hungarian_is.boundMorpheme = false := rfl
 
 inductive Group where
   | adult | child
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Age range for a participant group, in months. -/
 structure AgeRange where

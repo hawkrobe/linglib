@@ -54,7 +54,7 @@ Parallel to `IVar` for individuals and `PVar` for propositions.
 -/
 structure SVar where
   idx : Nat
-  deriving DecidableEq, BEq, Repr, Hashable
+  deriving DecidableEq, Repr, Hashable
 
 /--
 A situation discourse referent: assignment → Situation.
@@ -375,10 +375,7 @@ theorem temporal_shift_parasitic_on_modal {W Time E : Type*} [Preorder Time]
   have h_sit : gs.1.sit sfVar = s₁ := by
     rw [h_upd]
     unfold SitAssignment.updateSit
-    -- For SVar with BEq derived from DecidableEq
-    simp only [show (sfVar == sfVar) = true from by
-      unfold instBEqSVar BEq.beq
-      exact decide_eq_true rfl, ite_true]
+    simp only [beq_self_eq_true, ite_true]
   refine ⟨hc, ?_, ?_, ?_⟩
   -- 1. gs.1.sit sfVar = s₁ ∈ historicalBase history s₀
   · rw [h_sit]
@@ -571,23 +568,14 @@ theorem derivation_matches_paper {W Time E : Type*} [LE Time] [LT Time]
   have h_s₁ : gs.1.sit s₁ = sit₁ := by
     rw [h_upd]
     unfold SitAssignment.updateSit
-    simp only [show (s₁ == s₁) = true from by
-      unfold instBEqSVar BEq.beq; exact decide_eq_true rfl, ite_true]
+    simp only [beq_self_eq_true, ite_true]
   -- Helper: gs.1.sit s₀ = g.sit s₀ (unchanged by update to s₁)
   have h_s₀ : gs.1.sit s₀ = g.sit s₀ := by
     rw [h_upd]
     unfold SitAssignment.updateSit
     -- s₀ ≠ s₁, so the if-then-else chooses the else branch
-    have h_ne : (s₀ == s₁) = false := by
-      unfold instBEqSVar BEq.beq
-      have h_idx_ne : s₀.idx ≠ s₁.idx := by
-        intro heq
-        apply h_distinct
-        cases s₀; cases s₁
-        simp only at heq
-        subst heq
-        rfl
-      exact decide_eq_false h_idx_ne
+    have h_ne : (s₀ == s₁) = false :=
+      beq_false_of_ne (Ne.symm h_distinct)
     simp only [h_ne]
     rfl
   -- From initialization: g.sit s₀ = s₀'

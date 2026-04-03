@@ -19,7 +19,7 @@ inductive OrderOfPersonMarkersOnTheVerb where
   | pPrecedesA  -- P precedes A (57 languages)
   | bothOrdersOfAAndPOccur  -- Both orders of A and P occur (19 languages)
   | aAndPAreFused  -- A and P are fused (20 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 104A dataset (379 languages). -/
 def allData : List (Datapoint OrderOfPersonMarkersOnTheVerb) :=

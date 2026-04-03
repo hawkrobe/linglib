@@ -135,7 +135,7 @@ macro "thrPct" t:num : term => do
 inductive Utterance where
   | generic  -- "Ks have property F"
   | silent   -- say nothing
-  deriving Repr, DecidableEq, BEq, Fintype
+  deriving Repr, DecidableEq, Fintype
 
 -- ============================================================================
 -- § 3. Semantics: Generic = Positive Threshold over Prevalence

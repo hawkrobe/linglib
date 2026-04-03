@@ -58,7 +58,7 @@ structure FiPossessive where
   negAux : String := "ei"
   /-- In negative, possessee takes partitive case instead of nominative. -/
   negPossesseeCase : String := "PART"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def primaryConstruction : FiPossessive := {}
 
@@ -70,10 +70,10 @@ def primaryConstruction : FiPossessive := {}
     These are declining in spoken Finnish but required in formal/written
     registers. -/
 inductive FiPossPerson where | first | second | third
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive FiPossNumber where | sg | pl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def possSuffix : FiPossPerson → FiPossNumber → String
   | .first,  .sg => "-ni"

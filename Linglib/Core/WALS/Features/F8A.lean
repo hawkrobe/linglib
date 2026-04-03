@@ -19,7 +19,7 @@ inductive LateralConsonants where
   | lateralsButNoLNoObstruentLaterals  -- Laterals, but no /l/, no obstruent laterals (29 languages)
   | lAndLateralObstruent  -- /l/ and lateral obstruent (47 languages)
   | noLButLateralObstruents  -- No /l/, but lateral obstruents (8 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint LateralConsonants) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .lNoObstruentLaterals }

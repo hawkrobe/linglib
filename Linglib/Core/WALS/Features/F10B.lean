@@ -19,7 +19,7 @@ inductive NasalVowelsInWestAfrica where
   | twoWayNasalVsOralVowelContrastWithNasalSpreading  -- two-way nasal vs. oral vowel contrast (/ṽ/ vs. /V/) with nasal spreading (4 languages)
   | fourWayNasalVsOralVowelContrastWithoutNasalSpreading  -- four-way nasal vs. oral vowel contrast (/ṽ/ vs. /ṽː/ vs. /V/ vs. /Vː/) without nasal spreading (5 languages)
   | fourWayNasalVsOralVowelContrastWithNasalSpreading  -- four-way nasal vs. oral vowel contrast (/ṽ/ vs. /ṽː/ vs. /V/ v /Vː/) with nasal spreading (4 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 10B dataset (40 languages). -/
 def allData : List (Datapoint NasalVowelsInWestAfrica) :=

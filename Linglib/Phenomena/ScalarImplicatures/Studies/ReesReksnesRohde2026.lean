@@ -133,7 +133,7 @@ inductive TrivialInterp where
   | changed
   /-- Phatic: social gesture, no contentful enrichment -/
   | phatic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2. Experimental Data
@@ -156,7 +156,7 @@ def knowledgeSignificant : Fin 4 → Bool := λ _ => true
     experiments: familiar School > unfamiliar PM. -/
 inductive KnowledgeDirection where
   | schoolGreaterThanPM
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §3. Scenarios

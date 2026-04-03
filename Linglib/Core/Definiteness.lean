@@ -31,7 +31,7 @@ in this module ultimately maps into this binary type. -/
 inductive DefPresupType where
   | uniqueness   -- Russell/Frege/Strawson: ∃!x. φ(x)
   | familiarity  -- Heim/Kamp: x is discourse-familiar
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Demonstratives (this/that) project D_deix — the familiarity/strong-article
 layer. @cite{schwarz-2013} §5.5 and @cite{patel-grosz-grosz-2017}. -/
@@ -53,7 +53,7 @@ inductive ArticleType where
   | none_         -- No articles (Japanese, Korean, Czech, etc.)
   | weakOnly      -- Weak articles only (e.g., Kutchi Gujarati, French)
   | weakAndStrong -- Both weak and strong articles (e.g., German, Bavarian)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which presupposition types a language's article system makes available. -/
 def articleTypeToAvailablePresup : ArticleType → List DefPresupType
@@ -83,7 +83,7 @@ inductive DefiniteUseType where
   | immediateSituation -- Referent present in utterance situation (weak article)
   | largerSituation    -- Unique in larger context, e.g., "the king" (weak article)
   | bridging           -- Related to antecedent via relation (split: see BridgingSubtype)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map definite use type to presupposition type (@cite{schwarz-2013} §3.1).
 
@@ -109,7 +109,7 @@ prototypical case of relational bridging. -/
 inductive BridgingSubtype where
   | partWhole   -- "the fridge ... the crisper" (weak: situational uniqueness)
   | relational  -- "the play ... the author" (strong: anaphoric relation)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map bridging subtype to presupposition type (@cite{schwarz-2013} §3.2). -/
 def bridgingPresupType : BridgingSubtype → DefPresupType
@@ -129,7 +129,7 @@ inductive WeakArticleStrategy where
   | bareNominal    -- No overt form; bare noun = weak definite (Akan, Mauritian Creole)
   | overtArticle   -- Distinct overt weak article (German contracted, Fering A-form)
   | sameAsStrong   -- Single form for both (Haitian Creole `la`)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §6: The Indefinite–Definite Contrast
@@ -147,7 +147,7 @@ This is the dynamic semantics version of the ∃/ι contrast. -/
 inductive Definiteness where
   | indefinite  -- ∃: introduces new dref, no presupposition
   | definite    -- ι/familiar: retrieves existing dref, presupposes availability
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Definiteness is a binary contrast. -/
 theorem definite_indefinite_exhaustive :

@@ -81,7 +81,7 @@ inductive GenderNode where
   | indiv  -- individuation (BCS: dominates GRP and MASC)
   | grp    -- group/plural (BCS: under INDIV)
   | anim   -- animate (BCS: under MASC)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open GenderNode
 
@@ -91,7 +91,7 @@ open GenderNode
 
 /-- Inflection class for three-gendered languages. -/
 inductive Infl where | fem | masc | neut
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Greek vocabulary item schema (21).
 

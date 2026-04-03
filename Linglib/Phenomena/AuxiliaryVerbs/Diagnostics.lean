@@ -42,7 +42,7 @@ inductive NICEProperty where
   | inversion  -- subject-auxiliary inversion
   | code       -- VP ellipsis (code = stranding under ellipsis)
   | emphasis   -- emphatic/contrastive stress
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A NICE profile records which of the 4 properties a form exhibits. -/
 structure NICEProfile where

@@ -35,7 +35,7 @@ inductive SRValue where
   | ss       -- same subject as following clause
   | ds       -- different subject from following clause
   | neutral  -- not sensitive to subject continuity
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A medial clause marker entry in Manambu. -/
 structure MarkerEntry where

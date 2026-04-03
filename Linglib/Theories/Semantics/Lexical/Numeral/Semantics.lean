@@ -55,7 +55,7 @@ inductive OrderingRel where
   | lt  -- <  (fewer than)
   | ge  -- ≥  (at least)
   | le  -- ≤  (at most)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Class A (strict) vs Class B (non-strict) modified numerals.
 
@@ -65,7 +65,7 @@ The distinction predicts ignorance implicature patterns:
 inductive ModifierClass where
   | classA  -- strict: >, <
   | classB  -- non-strict: ≥, ≤
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Upper vs lower bound direction.
 
@@ -74,7 +74,7 @@ inductive ModifierClass where
 inductive BoundDirection where
   | upper  -- at most, fewer than, up to
   | lower  -- at least, more than, from...on
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Derive the modifier class from an ordering relation. -/
 def modifierClassOf : OrderingRel → ModifierClass
@@ -139,7 +139,7 @@ abbrev atMostMeaning (m : Nat) (n : Nat) : Bool := maxMeaning .le m n
 /-- Bare numeral utterances (one through five). -/
 inductive BareNumeral where
   | one | two | three | four | five
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Convert BareNumeral to its numeric value. -/
 def BareNumeral.toNat : BareNumeral → Nat
@@ -154,7 +154,7 @@ instance : ToString BareNumeral where
 inductive NumeralExpr where
   | bare (n : Nat)
   | modified (rel : OrderingRel) (n : Nat)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Meaning of a numeral expression, parameterized by the bare-numeral theory. -/
 def NumeralExpr.meaning (bareRel : OrderingRel) : NumeralExpr → Nat → Bool
@@ -175,7 +175,7 @@ alternatives for numeral n are:
 inductive NumeralAlternative where
   | bare (n : Nat)
   | modified (rel : OrderingRel) (n : Nat)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Lower-bound alternative set. -/
 def lowerAlternatives (n : Nat) : List NumeralAlternative :=
@@ -287,7 +287,7 @@ The four views on numeral semantics differ in which reading is basic:
 inductive DerivationalDirection where
   | exactFromAtLeast
   | atLeastFromExact
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive the derivational direction from a theory's `bareRel`. -/
 def NumeralTheory.derivationalDirection (T : NumeralTheory) : DerivationalDirection :=
@@ -869,7 +869,7 @@ def MeasurePredicate.fromHasDegree (E : Type) [HasDegree E] (dim : String) : Mea
 structure DegreePhrase where
   value : ℚ
   unit : String := ""
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Construct a degree phrase from a rational number -/
 def DegreePhrase.ofRat (n : ℚ) (unit : String := "") : DegreePhrase :=

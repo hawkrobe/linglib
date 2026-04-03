@@ -49,7 +49,7 @@ open Core.Prominence
 /-- Person-number combinations in the Georgian agreement paradigm. -/
 inductive PersonNumber where
   | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All person-number values. -/
 def allPersonNumbers : List PersonNumber :=
@@ -134,7 +134,7 @@ inductive TenseSeries where
   | present     -- includes future, present habitual
   | aorist      -- includes optative
   | evidential  -- sometimes called "perfect" or "inversion"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Georgian split-ergative system: only the aorist series
     uses ergative alignment. Present uses NOM-DAT framing and evidential
@@ -218,7 +218,7 @@ inductive VerbClass where
   | class2  -- Medioactive: unaccusative/passive (šendeba 'is built')
   | class3  -- Active intransitive: unergative (pikrobs 'thinks')
   | class4  -- Inversion: psych with DAT subject (uqvars 'likes')
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does the subject take ERG in the aorist (Series II)?
 

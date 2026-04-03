@@ -26,7 +26,7 @@ inductive Specificity where
   | lexicallySpecified
   | partiallyOpen
   | fullyAbstract
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Mode of information transfer in an inheritance link
 (@cite{goldberg-1995} §3.3.1, p. 73–74).
@@ -41,7 +41,7 @@ inductive Specificity where
 inductive InheritanceMode where
   | normal     -- child inherits defaults, may override
   | complete   -- all properties inherited strictly (not used in Goldberg 1995)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Type of semantic relation in an inheritance link
 (@cite{goldberg-1995} §3.3.2, p. 75).
@@ -62,7 +62,7 @@ inductive LinkType where
   | metaphorical   -- I_M: source → target via metaphor
   | subpart        -- I_S: child is proper subpart of parent
   | instance       -- I_I: child is special case of parent
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A construction: a learned pairing of form and function.
 

@@ -246,7 +246,7 @@ yield different accessible worlds. -/
 
 /-- Two outcomes: leave or stay. -/
 inductive LeaveWorld where | leave | stay
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 private def allLW : List LeaveWorld := [.leave, .stay]
 
@@ -327,11 +327,11 @@ holders yield different content types. -/
 
 /-- Speaker and addressee for the projection example. -/
 inductive Interlocutor where | speaker | addressee
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Speech time. -/
 inductive SpeechTime where | now
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The event projection for speech act events.
 

@@ -237,7 +237,7 @@ inductive MoodSelector where
   | crossLinguisticallyVariable  -- "hope", "expect": SBJV in some languages,
                                  -- IND in others (@cite{grano-2024}, Table 1)
   | moodNeutral                  -- "say", "think" (pragmatically flexible)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Does the selector prefer subjunctive?

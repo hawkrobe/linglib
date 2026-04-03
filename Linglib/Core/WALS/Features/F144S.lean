@@ -25,7 +25,7 @@ inductive SovnegOrder where
   | type5Type4  -- Type 5 / Type 4 (2 languages)
   | type5Type6  -- Type 5 / Type 6 (2 languages)
   | nosovneg  -- NoSOVNeg (217 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144S dataset (490 languages). -/
 def allData : List (Datapoint SovnegOrder) :=

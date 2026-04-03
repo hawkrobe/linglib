@@ -348,7 +348,7 @@ open Semantics.Lexical.Numeral
 /-- Finite cardinality type (worlds 0-3). -/
 inductive NCard where
   | c0 | c1 | c2 | c3
-  deriving DecidableEq, BEq, Repr, Fintype
+  deriving DecidableEq, Repr, Fintype
 
 def NCard.toNat : NCard → Nat
   | .c0 => 0 | .c1 => 1 | .c2 => 2 | .c3 => 3
@@ -356,7 +356,7 @@ def NCard.toNat : NCard → Nat
 /-- Utterance type for standard numeral words. -/
 inductive NUtt where
   | one | two | three
-  deriving DecidableEq, BEq, Repr, Fintype
+  deriving DecidableEq, Repr, Fintype
 
 def NUtt.toBareNumeral : NUtt → BareNumeral
   | .one => .one | .two => .two | .three => .three
@@ -430,7 +430,7 @@ open Semantics.Lexical.Numeral
 /-- Wider cardinality range (0-5) for modified numeral competition. -/
 inductive KCard where
   | c0 | c1 | c2 | c3 | c4 | c5
-  deriving DecidableEq, BEq, Repr, Fintype
+  deriving DecidableEq, Repr, Fintype
 
 def KCard.toNat : KCard → Nat
   | .c0 => 0 | .c1 => 1 | .c2 => 2 | .c3 => 3 | .c4 => 4 | .c5 => 5
@@ -438,7 +438,7 @@ def KCard.toNat : KCard → Nat
 /-- Lower-bound Kennedy alternatives for n=3. -/
 inductive KLowerUtt where
   | bare3 | moreThan3 | atLeast3
-  deriving DecidableEq, BEq, Repr, Fintype
+  deriving DecidableEq, Repr, Fintype
 
 /-- Inlined meaning for reification (avoids `maxMeaning` indirection). -/
 def kLowerMeaning : KLowerUtt → KCard → Bool
@@ -449,7 +449,7 @@ def kLowerMeaning : KLowerUtt → KCard → Bool
 /-- Upper-bound Kennedy alternatives for n=3. -/
 inductive KUpperUtt where
   | bare3 | fewerThan3 | atMost3
-  deriving DecidableEq, BEq, Repr, Fintype
+  deriving DecidableEq, Repr, Fintype
 
 /-- Inlined meaning for reification (avoids `maxMeaning` indirection). -/
 def kUpperMeaning : KUpperUtt → KCard → Bool

@@ -23,7 +23,7 @@ inductive PluralityCoding where
   | pluralWord  -- Plural word (170 languages)
   | pluralClitic  -- Plural clitic (81 languages)
   | noPlural  -- No plural (98 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PluralityCoding) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .pluralSuffix }

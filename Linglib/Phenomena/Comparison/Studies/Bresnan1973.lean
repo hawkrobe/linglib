@@ -86,7 +86,7 @@ inductive Det where
   | any_     -- NPI: any
   | no_      -- negative: no
   | null     -- empty Det (enough, more/less after QP Raising)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The Q (quantity) head: `much`, `many`, `little`, `few`, `enough`.
     Bresnan's central claim: these are the deep-structure elements
@@ -97,13 +97,13 @@ inductive Q where
   | little   -- negative mass/degree (antonym of much)
   | few      -- negative count (antonym of many)
   | enough   -- sufficiency (subcategorizes for null Det)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The QP: Bresnan's degree phrase structure. -/
 structure QP where
   det : Det
   q : Q
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Bridge: QP → DegPType
@@ -347,7 +347,7 @@ inductive DeletionTarget where
   | qp   -- QP deleted (measure phrase comparison / subdeletion)
   | ap   -- AP deleted (simple adjectival comparison)
   | np   -- NP deleted (predicative NP comparison)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The identity condition: deletion succeeds only when the clause
     constituent and the head have the same syntactic category.
@@ -396,7 +396,7 @@ inductive BresnanThanClauseAnalysis where
   /-- Full clause with maximal deletion: "than Bill is [x much tall]"
       → "than Bill" (deletion of AP + copula stranding) -/
   | maximalDeletion
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Under Bresnan's analysis, the modern `phrasal` type is just
     `maximalDeletion` of an underlying clause. -/
@@ -565,7 +565,7 @@ inductive BarCategory where
   | qp   -- quantity phrase
   | ap   -- adjective phrase
   | np   -- noun phrase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 11. Comparative Semantics Bridge

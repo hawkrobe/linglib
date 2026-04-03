@@ -151,7 +151,7 @@ inductive TheoryClass where
   | typeA
   /-- Exclusivity has *no effect* on filtering. -/
   | typeB
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Exhaustification strategy: bivalent (@cite{fox-2007}) or trivalent
     (@cite{spector-sudo-2017}). -/
@@ -159,14 +159,14 @@ inductive ExhStrategy where
   | bivalent   -- Fox 2007
   | exh1       -- Spector & Sudo 2017, weak negation
   | exh2       -- Spector & Sudo 2017, strong negation
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Semantic presupposition projection theory. -/
 inductive ProjectionTheory where
   | strongKleene       -- Strong Kleene truth tables
   | george2008         -- George's algorithm
   | dynamicSemantics   -- Classic CCP (Heim 1983)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Classify a combination of exhaustification + projection theory
     into Type A or Type B.
@@ -273,25 +273,25 @@ theorem exh2_destroys_filtering :
 inductive Monotonicity where
   | UE  -- upward-entailing (unembedded disjunction)
   | DE  -- downward-entailing (conditional antecedent)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Predicate type: whether test sentence contains presupposition trigger. -/
 inductive Predicate where
   | ps    -- presuppositional trigger present
   | noPs  -- non-presuppositional counterpart
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Order of trigger in disjunction. -/
 inductive Order where
   | first   -- trigger in first disjunct
   | second  -- trigger in second disjunct
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Presupposition triggers used in the experiment. -/
 inductive Trigger where
   | jie     -- 戒 'quit' (change-of-state, strong projector)
   | zhidao  -- 知道 'know' (factive, weaker projector)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Experimental finding summary. -/
 structure Finding where

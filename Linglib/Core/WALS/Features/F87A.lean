@@ -18,7 +18,7 @@ inductive AdjectiveNounOrder where
   | nounAdjective  -- Noun-Adjective (879 languages)
   | noDominantOrder  -- No dominant order (110 languages)
   | onlyInternallyHeadedRelativeClauses  -- Only internally-headed relative clauses (5 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint AdjectiveNounOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .nounAdjective }

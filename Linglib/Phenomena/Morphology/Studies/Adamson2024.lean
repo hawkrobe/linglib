@@ -324,7 +324,7 @@ structure InheritedGenderNoun where
   selectsD : Bool := true
   /-- The n head has an unvalued gender feature (probe). -/
   hasUnvaluedGender : Bool := true
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The n head for an inherited-gender noun: has {D} and an unvalued
     gender probe. The probe is dimension-agnostic — it has no pre-specified
@@ -340,7 +340,7 @@ def inheritedGenderN : CatHead := .iPoss
     prefixes expressing the possessor's φ-features. -/
 inductive YanyuwaGender where
   | female | male | feminine | masculine | food | arboreal | abstract
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All seven Yanyuwa gender values. -/
 def YanyuwaGender.all : List YanyuwaGender :=
@@ -355,7 +355,7 @@ theorem yanyuwa_seven_genders : YanyuwaGender.all.length = 7 := rfl
     IV (other inanimates, e.g., *himbu* 'feathered headdress'). -/
 inductive CoastalMarindGender where
   | gI | gII | gIII | gIV
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All four Coastal Marind gender values. -/
 def CoastalMarindGender.all : List CoastalMarindGender := [.gI, .gII, .gIII, .gIV]

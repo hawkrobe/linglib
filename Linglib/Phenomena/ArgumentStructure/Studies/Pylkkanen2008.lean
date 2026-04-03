@@ -190,7 +190,7 @@ structure ApplClassification where
   depictiveOK : Option Bool := none
   /-- Can resultatives cooccur with the applicative? (§2.1.4) -/
   resultativeOK : Option Bool := none
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Do the diagnostics predict a HIGH applicative?
     At least one "yes" on unergatives or static verbs → high. -/

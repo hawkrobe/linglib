@@ -47,7 +47,7 @@ inductive Weather where
   | sunny_cold
   | rainy_warm
   | rainy_cold
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype Weather :=
   ⟨⟨[Weather.sunny_warm, Weather.sunny_cold, Weather.rainy_warm, Weather.rainy_cold],

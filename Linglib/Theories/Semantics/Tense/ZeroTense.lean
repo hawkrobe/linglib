@@ -43,7 +43,7 @@ inductive OgiharaPastReading where
   | genuinePast
   /-- Zero tense: bound variable, no independent temporal content -/
   | zeroTense
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Both readings are available for past-under-past in SOT languages. -/
 def pastUnderPastReadings : List OgiharaPastReading :=

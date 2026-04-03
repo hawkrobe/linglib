@@ -71,7 +71,7 @@ inductive DefinitePluralReading where
   | homogeneous
   /-- THE ≈ ALL: universal interpretation -/
   | universal
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /--
 What each interpretive pattern predicts for positive and negative
@@ -83,7 +83,7 @@ structure GapPrediction where
   acceptPositiveGap : Bool
   /-- Accept "The Xs aren't P" when only some Xs are P? -/
   acceptNegativeGap : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Existential: accept positive (some are P), reject negative. -/
 def existentialGap : GapPrediction :=
@@ -129,7 +129,7 @@ structure ParticipantGroup where
   reading : DefinitePluralReading
   /-- Whether they compute the "not-all" scalar implicature -/
   computesImplicatures : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The six logically possible groups. -/
 def allGroups : List ParticipantGroup :=
@@ -173,7 +173,7 @@ structure ImplicatureAccountPrediction where
   homWithoutSIPossible : Bool
   /-- SI should not be rarer than homogeneity -/
   siNotRarerThanHom : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def magriPrediction : ImplicatureAccountPrediction :=
   { siPrerequisite := true
@@ -489,7 +489,7 @@ inductive DevelopmentalStage where
   | existential   -- literal existential meaning
   | homogeneous   -- homogeneous reading (mechanism-independent)
   | adult         -- homogeneous + scalar implicatures
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The developmental ordering: existential precedes homogeneous
     precedes full adult competence. -/

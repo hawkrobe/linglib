@@ -68,7 +68,7 @@ def schemaHasLexicalNucleus : PossessionSource → Bool
 inductive SourceStructure where
   | basic    -- Two core arguments (agent+patient or figure+ground)
   | extended -- Basic + oblique/topic participant added
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def schemaStructure : PossessionSource → SourceStructure
   | .action    => .basic
@@ -86,7 +86,7 @@ def schemaStructure : PossessionSource → SourceStructure
 inductive SubjectParticipant where
   | possessor  -- Possessor = clausal subject (transitive-like)
   | possessee  -- Possessee = clausal subject (intransitive/existential)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def schemaSubject : PossessionSource → SubjectParticipant
   | .action    => .possessor
@@ -180,7 +180,7 @@ inductive OverlapStage where
       (e.g., Estonian "isal on raamat" = "Father has a book", not
        "A book is on the father") -/
   | targetOnly
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The Overlap Model is a monotonic progression: each stage is more
     grammaticalized than the previous. -/
@@ -223,7 +223,7 @@ structure SchemaDist where
   africa : Nat
   america : Nat
   pacific : Nat
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def SchemaDist.total (d : SchemaDist) : Nat :=
   d.europe + d.asia + d.africa + d.america + d.pacific

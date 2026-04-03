@@ -16,6 +16,6 @@ inductive ENBlockingReason where
   | npOnlyComplement
   /-- Concept expressed analytically with necessary (non-expletive) negation -/
   | analyticNegation
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end Core

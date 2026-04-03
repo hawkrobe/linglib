@@ -17,7 +17,7 @@ inductive GenderBasis where
   | noGender  -- No gender (145 languages)
   | sexBased  -- Sex-based (84 languages)
   | nonSexBased  -- Non-sex-based (28 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 31A dataset (257 languages). -/
 def allData : List (Datapoint GenderBasis) :=

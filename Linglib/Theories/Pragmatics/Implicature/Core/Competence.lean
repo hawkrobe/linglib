@@ -218,7 +218,7 @@ inductive CompetenceContext where
   | disjunction      -- Competence blocked by Quality
   | authority        -- Strong competence assumption
   | uncertain        -- Weak competence assumption
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Should competence be assumed in this context?

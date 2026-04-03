@@ -63,7 +63,7 @@ inductive IslandSource where
   /-- Discourse: island arises from information-structural backgroundedness (@cite{goldberg-2006}, 2013;
   @cite{lu-pan-degen-2025}) -/
   | discourse
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 namespace Phenomena.Islands.Studies.Ross1967
 

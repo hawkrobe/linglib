@@ -40,7 +40,7 @@ inductive Mode where
   | ques      -- question: interrogative clauses
   | dir       -- directive: imperative clauses
   | noneMode  -- unspecified
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Head features (shared between head and phrase). -/
 structure HeadFeatures where
@@ -63,7 +63,7 @@ structure ContentFeatures where
   mode : Mode := .ref
   /-- Referential index (for coindexation) -/
   index : Option Nat := none
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Valence features (what arguments are needed). -/
 structure Valence where

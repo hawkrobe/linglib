@@ -21,7 +21,7 @@ namespace Fragments.Japanese.Passive
 inductive PassiveType where
   | direct    -- *-niyotte* agent, requires thematic Voice
   | indirect  -- *-rare-* adversative, available for all verbs
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Direct passive requires thematic Voice (an agentive external argument). -/
 def PassiveType.requiresThematicVoice : PassiveType → Bool

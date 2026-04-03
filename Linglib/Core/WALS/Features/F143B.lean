@@ -30,7 +30,7 @@ inductive ObligatoryDoubleNegation where
   | type1Type9  -- Type 1 / Type 9 (1 languages)
   | type2Type4  -- Type 2 / Type 4 (1 languages)
   | obligdoublenegOpttripleneg  -- ObligDoubleNeg&OptTripleNeg (5 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 143B dataset (119 languages). -/
 def allData : List (Datapoint ObligatoryDoubleNegation) :=

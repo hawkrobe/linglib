@@ -59,7 +59,7 @@ open Core.Subjectivity (SubjectivityLevel Performativity)
 inductive Volitivity where
   | volitive     -- involves will/desire (deontic, boulomaic)
   | nonVolitive  -- independent of will (epistemic, ability, evidential)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Classify `ModalFlavor` into Narrog's volitivity dimension.
 
@@ -85,7 +85,7 @@ inductive SpeakerOrientationLevel where
   | eventOriented    -- modality describes event/situation properties (ability)
   | speakerOriented  -- modality reflects speaker's assessment (epistemic, deontic)
   | mood             -- illocutionary force: imperative, hortative, admonitive
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def SpeakerOrientationLevel.toNat : SpeakerOrientationLevel → Nat
   | .eventOriented => 0
@@ -129,7 +129,7 @@ theorem speakerOrientation_toSubjectivity_monotone
 structure NarrogRegion where
   volitivity : Volitivity
   orientation : SpeakerOrientationLevel
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- A position in Narrog's full 3D space: volitivity × orientation × performativity.
 
@@ -141,7 +141,7 @@ structure NarrogPosition where
   volitivity : Volitivity
   orientation : SpeakerOrientationLevel
   performativity : Performativity
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Project to the 2D semantic map (dropping performativity). -/
 def NarrogPosition.toRegion (r : NarrogPosition) : NarrogRegion :=

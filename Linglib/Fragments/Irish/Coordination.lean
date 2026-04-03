@@ -19,13 +19,13 @@ inductive CoordRole where
   | disj       -- Disjunction
   | advers     -- Adversative ("but")
   | negDisj    -- Negative disjunction ("nor")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Morphological boundness. -/
 inductive Boundness where
   | free
   | bound
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An Irish coordination entry. -/
 structure CoordEntry where

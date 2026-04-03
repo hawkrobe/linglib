@@ -74,7 +74,7 @@ inductive ReciprocalType where
   | distinctFromReflexive
   | mixed
   | identicalToReflexive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Reciprocal Morphosyntactic Strategy (@cite{nordlinger-2023}, §3.1)
@@ -112,7 +112,7 @@ inductive RecipStrategy where
   | verbalAuxiliary
   | lexical
   | compoundVerb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether the strategy marks the NP/argument position (nominal strategy)
     or the verb/predicate (verbal strategy).
@@ -146,7 +146,7 @@ def RecipStrategy.isNominal : RecipStrategy → Bool
 inductive RecipValency where
   | bivalent    -- two syntactic arguments preserved
   | monovalent  -- verb becomes intransitive (single subject NP)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Reciprocal Formation Locus (Siloni 2008, 2012)
@@ -167,7 +167,7 @@ inductive RecipValency where
 inductive RecipFormation where
   | lexical
   | syntactic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Can the reciprocal construction appear in discontinuous form
     (reciprocants split across subject and comitative argument)?
@@ -195,7 +195,7 @@ def RecipFormation.allowsDiscontinuous : RecipFormation → Bool
 inductive PassivePresence where
   | present
   | absent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Ch 108: Antipassive Constructions (@cite{polinsky-2013})
@@ -216,7 +216,7 @@ inductive AntipassiveType where
   | implicitPatient
   | obliquePatient
   | noAntipassive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this value represent the presence of an antipassive? -/
 def AntipassiveType.hasAntipassive : AntipassiveType -> Bool
@@ -233,13 +233,13 @@ inductive AntipassiveProductivity where
   | productive
   | partiallyProductive
   | notProductive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Morphological alignment system (simplified for antipassive correlation). -/
 inductive AlignmentType where
   | accusative
   | ergative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Ch 105: Ditransitive Constructions: The Verb 'Give' (@cite{haspelmath-2013})
@@ -261,7 +261,7 @@ inductive DitransitiveType where
   | doubleObject
   | secondaryObject
   | mixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Ch 109: Applicative Constructions (@cite{polinsky-2013})
@@ -277,7 +277,7 @@ inductive ApplicativeBase where
   | bothBases
   | transitiveOnly
   | intransitiveOnly
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 109: Semantic role of the applied object.
 
@@ -288,14 +288,14 @@ inductive AppliedObjectRole where
   | benefactiveOnly
   | benefactiveAndOther
   | nonbenefactiveOnly
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 109: Full applicative type combining base and role.
     `none` for languages without applicative constructions. -/
 inductive ApplicativeType where
   | applicative (base : ApplicativeBase) (role : AppliedObjectRole)
   | noApplicative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this value represent the presence of an applicative? -/
 def ApplicativeType.hasApplicative : ApplicativeType -> Bool
@@ -311,7 +311,7 @@ inductive PeriphrasticCausativeType where
   | sequentialOnly
   | purposiveOnly
   | both
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Ch 111: Nonperiphrastic (morphological/compound) causative type. -/
 inductive NonperiphrCausativeType where
@@ -319,7 +319,7 @@ inductive NonperiphrCausativeType where
   | morphologicalOnly
   | compoundOnly
   | both
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this value represent a morphological causative? -/
 def NonperiphrCausativeType.hasMorphological : NonperiphrCausativeType -> Bool
@@ -461,7 +461,7 @@ structure ValenceProfile where
   applicative : ApplicativeType
   /-- Ch 111: Nonperiphrastic causative type -/
   causative : NonperiphrCausativeType
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Language Data
@@ -1103,7 +1103,7 @@ structure CausativeMorphologyExample where
   language : String
   morpheme : String
   position : String  -- "suffix", "prefix", "infix", "circumfix"
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 def causativeMorphExamples : List CausativeMorphologyExample :=
   [ { language := "Japanese",   morpheme := "-(s)ase",       position := "suffix" }
@@ -1176,7 +1176,7 @@ theorem some_languages_have_both_app_and_antipass :
 structure AntipassiveAlignmentDatum where
   language : String
   alignment : AlignmentType
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Accusative languages with antipassives (17 in WALS Table 1).
     These are the key counterexamples to the strong claim that
@@ -1337,7 +1337,7 @@ structure RecipProfile where
   formation : Option RecipFormation := none
   /-- Reciprocal-reflexive relationship (WALS Ch 106) -/
   reflexiveRelation : ReciprocalType
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- Language data: 12 reciprocal profiles from @cite{nordlinger-2023}
 
@@ -1614,7 +1614,7 @@ inductive ReciprocityType where
   | radial
   | melee
   | ring
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a reciprocity type requires every participant to be involved
     in at least one reciprocal pair. Radial IS participant-exhaustive —
@@ -1732,7 +1732,7 @@ inductive RecipMarkerPolysemy where
   | collective   -- joint action, no mutual entailment ("they gathered")
   | sociative    -- joint/associative action ("they walked together")
   | iterative    -- repeated action ("they kept hitting")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Polysemy pattern: which extended readings a language's reciprocal
     marker(s) can express. -/

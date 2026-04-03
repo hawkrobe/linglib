@@ -63,7 +63,7 @@ inductive VerbForm where
   | transitive
   /-- Agent Focus: suffix *-Vn*, Set B only, no Set A (erg). -/
   | agentFocus
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this verb form bear ergative (Set A) agreement? -/
 def VerbForm.hasSetA : VerbForm → Bool
@@ -140,7 +140,7 @@ inductive AFCandidate where
       No SSAL violation, but cross-referencing is incomplete: no Set A
       (ergative) agreement because the agent never enters Spec,TP. -/
   | agentFocusExtraction
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The verb form that surfaces for each candidate. -/
 def AFCandidate.verbForm : AFCandidate → VerbForm
@@ -179,7 +179,7 @@ def AFCandidate.violatesXRef : AFCandidate → Bool
 inductive AFConstraint where
   | antiLocality  -- Highest: Spec-to-Spec Anti-Locality (SSAL)
   | xref          -- Lower: cross-referencing agreement
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Violation profile for each candidate.
 
@@ -246,7 +246,7 @@ inductive MayanAFType where
   | afLanguage
   /-- XRef >> SSAL: no repair; extraction gap. -/
   | extractionGap
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Kaqchikel is an AF language (SSAL >> XRef). -/
 def kaqAFType : MayanAFType := .afLanguage

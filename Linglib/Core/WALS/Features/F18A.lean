@@ -20,7 +20,7 @@ inductive AbsenceOfCommonConsonants where
   | noNasals  -- No nasals (10 languages)
   | noBilabialsOrNasals  -- No bilabials or nasals (1 languages)
   | noFricativesOrNasals  -- No fricatives or nasals (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint AbsenceOfCommonConsonants) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .allPresent }

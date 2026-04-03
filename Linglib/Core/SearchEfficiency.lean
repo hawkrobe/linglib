@@ -87,7 +87,7 @@ inductive Sufficiency where
   /-- The attribute does not alone identify the target; it is redundant
       when paired with a sufficient attribute. -/
   | redundant
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The experimental conditions from @cite{giles-etal-2026} Exp 1,
     defined by the sufficiency × discriminability interaction. -/
@@ -106,7 +106,7 @@ inductive DisplayType where
       Tests whether speakers mention all discriminable attributes or
       selectively overinform to help difficult searches. -/
   | baseline
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- § Search Efficiency Predictions

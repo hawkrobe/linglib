@@ -19,7 +19,7 @@ inductive IndefinitePronouns where
   | special  -- Special (22 languages)
   | mixed  -- Mixed (23 languages)
   | existentialConstruction  -- Existential construction (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 46A dataset (326 languages). -/
 def allData : List (Datapoint IndefinitePronouns) :=

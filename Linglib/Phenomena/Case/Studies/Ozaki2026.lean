@@ -44,7 +44,7 @@ inductive CaseMarking where
   | ablative     -- *kara*
   | nominative   -- *-ga*
   | dative       -- *-ni*
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open Fragments.Japanese.Passive (PassiveType)
 
@@ -52,13 +52,13 @@ open Fragments.Japanese.Passive (PassiveType)
 inductive ArgumenthoodDiagnostic where
   | ellipsis                -- VP ellipsis includes the constituent
   | longDistanceScrambling  -- Constituent can scramble long-distance
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Diagnostics for unaccusativity. -/
 inductive UnaccusativityDiagnostic where
   | passivization   -- Only indirect passive available
   | naniOWhAdjunct  -- *nani-o* wh-adjunct test: blocked = unaccusative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Data Structures
@@ -72,7 +72,7 @@ structure AlternationDatum where
   grammatical : Bool
   sentence : String
   exampleNum : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An unaccusativity diagnostic datum. -/
 structure UnaccusativityDatum where
@@ -82,7 +82,7 @@ structure UnaccusativityDatum where
   grammatical : Bool
   sentence : String
   exampleNum : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An argumenthood diagnostic datum. -/
 structure ArgumenthoodDatum where
@@ -92,7 +92,7 @@ structure ArgumenthoodDatum where
   grammatical : Bool
   sentence : String
   exampleNum : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Alternation Data

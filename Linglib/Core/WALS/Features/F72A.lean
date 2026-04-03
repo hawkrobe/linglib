@@ -18,7 +18,7 @@ inductive ImperativeHortativeSystems where
   | minimalSystem  -- Minimal system (20 languages)
   | bothTypesOfSystem  -- Both types of system (21 languages)
   | neitherTypeOfSystem  -- Neither type of system (201 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 72A dataset (375 languages). -/
 def allData : List (Datapoint ImperativeHortativeSystems) :=

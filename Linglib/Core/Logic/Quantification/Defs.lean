@@ -254,7 +254,7 @@ inductive DoubleMono where
   | downUp   -- ↓MON↑: restrictor-↓ + scope-↑ (all)
   | upDown   -- ↑MON↓: restrictor-↑ + scope-↓ (not all)
   | downDown -- ↓MON↓: restrictor-↓ + scope-↓ (no)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Right continuity (CONT): if Q(A,B₁) and Q(A,B₂) hold and B₁ ⊆ B ⊆ B₂,
     then Q(A,B). @cite{van-benthem-1984} §4.3: all right-monotone quantifiers are

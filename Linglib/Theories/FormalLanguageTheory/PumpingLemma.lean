@@ -16,7 +16,7 @@ These are used by:
 /-- Alphabet for cross-serial dependency patterns. -/
 inductive FourSymbol where
   | a | b | c | d
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : LawfulBEq FourSymbol where
   eq_of_beq {x y} h := by cases x <;> cases y <;> first | rfl | exact absurd h (by decide)
@@ -276,7 +276,7 @@ theorem anbncndn_not_pumpable :
 /-- Alphabet for {aⁿbⁿcⁿ}. -/
 inductive ThreeSymbol where
   | a | b | c
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : LawfulBEq ThreeSymbol where
   eq_of_beq {x y} h := by cases x <;> cases y <;> first | rfl | exact absurd h (by decide)

@@ -81,13 +81,13 @@ open Real (exp log exp_pos)
     terrible, bad, ok (= paper's "neutral"), good, amazing. -/
 inductive Weather where
   | terrible | bad | ok | good | amazing
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Communicative goals (QUDs). The paper's central claim is that
     arousal as a QUD is what enables ironic interpretation. -/
 inductive Goal where
   | state | valence | arousal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- World = weather × positive? × high arousal?
     - `w.1` : weather state

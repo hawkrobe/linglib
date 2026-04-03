@@ -64,13 +64,13 @@ inductive ObstacleType where
   | ability       -- Addressee may not be able to provide the information
   | willingness   -- Addressee may not be willing to provide the information
   | speakerMemory -- Speaker uncertain whether request was already made
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Obstacle level: high or low risk that the precondition fails. -/
 inductive ObstacleLevel where
   | high  -- Significant risk of non-compliance
   | low   -- Minimal risk
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map obstacle types to the preparatory condition at risk.
     Speaker memory is not a preparatory condition on the hearer, so it
@@ -106,7 +106,7 @@ inductive RequestForm where
   | couldYouTellMe  -- "Could you tell me X?" — general (ability + willingness)
   | wouldYouMind    -- "Would you mind telling me X?" — targets willingness
   | haveYouToldMe   -- "Have you already told me X?" — targets speaker memory
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The preparatory condition primarily queried by each request form. -/
 def RequestForm.queriedCondition : RequestForm → Option PreparatoryCondition

@@ -150,7 +150,7 @@ inductive PluralTheory where
   | implicature
   /-- Plural interpretation via homogeneity presupposition. -/
   | homogeneity
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 Key predictions where the three theories diverge.
@@ -164,7 +164,7 @@ structure TheoryPrediction where
   multiplicityCorrelatesWithSI : Bool
   /-- Can it account for asymmetric polarity pattern in children? -/
   accountsForPolarityAsymmetry : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Positive vs negative plural sentences in singular contexts.
@@ -184,7 +184,7 @@ structure SingularContextPrediction where
   theory : PluralTheory
   /-- Does positive get different status from negative? -/
   positiveNegativeDiffer : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def ambiguitySingularPrediction : SingularContextPrediction :=
   { theory := .ambiguity, positiveNegativeDiffer := false }

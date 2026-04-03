@@ -51,7 +51,7 @@ inductive EnhancementType where
   | coordSharedDep    -- shared dependent in coordination
   | controlSubject    -- controlled subject (xcomp → nsubj propagation)
   | relClauseGap      -- relative clause gap made explicit
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Graph Utilities

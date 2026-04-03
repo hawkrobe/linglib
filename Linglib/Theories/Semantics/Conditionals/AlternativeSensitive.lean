@@ -209,7 +209,7 @@ strengthening to "If Allies, she'd fight Axis" makes it false.
 section Spain
 
 private inductive SpainW where | actual | axis | allies
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def spainCloser : SpainW → SpainW → SpainW → Bool
   | _, w₁, w₂ => w₁ == w₂ || (w₁ == .axis && w₂ == .allies)
@@ -272,7 +272,7 @@ all three constraints from the paper's introduction (pp. 513–514).
 section Hyperintensional
 
 private inductive PartyW where | actual | annaOnly | both | ottoOnly
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- annaOnly is closest to actual; both is next. -/
 private def partyCloser : PartyW → PartyW → PartyW → Bool
@@ -459,7 +459,7 @@ section OttoAnna
 
 private inductive OAWorld where
   | ottoOnly | annaOnly | both | neither
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 private def oaDomain : List OAWorld := [.ottoOnly, .annaOnly, .both, .neither]
 

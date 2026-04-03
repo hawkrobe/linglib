@@ -48,7 +48,7 @@ inductive NegationMarker where
   | syntactic  -- "not"
   /-- Morphological negation: "unhappy" -/
   | morphological  -- "un-", "-less", "in-", etc.
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 
 /--

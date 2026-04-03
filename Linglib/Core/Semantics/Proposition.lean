@@ -288,7 +288,7 @@ theorem entails_sound (W : Type*) [FiniteWorlds W] (p q : BProp W) :
 /-- A simple 4-world type for basic examples. -/
 inductive World4 where
   | w0 | w1 | w2 | w3
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : FiniteWorlds World4 where
   worlds := [.w0, .w1, .w2, .w3]
@@ -297,7 +297,7 @@ instance : FiniteWorlds World4 where
 /-- A simple 2-world type (true/false worlds). -/
 inductive World2 where
   | wT | wF
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : FiniteWorlds World2 where
   worlds := [.wT, .wF]

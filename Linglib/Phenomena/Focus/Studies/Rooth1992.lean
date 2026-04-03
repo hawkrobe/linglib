@@ -70,7 +70,7 @@ open Semantics.Questions.Hamblin
     alternative sets. -/
 inductive QAWorld where
   | fredBeans | fredRice | maryBeans | maryRice
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open QAWorld
 
@@ -275,7 +275,7 @@ inductive OnlyWorld where
   | billOnly   -- Mary introduced only Bill to Sue
   | johnOnly   -- Mary introduced only John to Sue
   | both       -- Mary introduced both Bill and John
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open OnlyWorld
 
@@ -405,7 +405,7 @@ open Semantics.Composition.Tree
 /-- Entity domain for the focus model. -/
 inductive E where
   | fred | mary | beans | rice
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def focusModel : Model := { Entity := E, decEq := inferInstance }
 

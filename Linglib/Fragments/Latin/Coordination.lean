@@ -27,13 +27,13 @@ inductive CoordRole where
   | disj       -- Disjunction
   | advers     -- Adversative ("but")
   | negCoord   -- Negative coordination ("neither...nor")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Morphological boundness. -/
 inductive Boundness where
   | free
   | bound   -- clitic or suffix
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A Latin coordination entry. -/
 structure CoordEntry where

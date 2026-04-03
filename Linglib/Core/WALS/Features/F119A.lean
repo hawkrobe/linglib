@@ -16,7 +16,7 @@ namespace Core.WALS.F119A
 inductive NominalLocationalPredication where
   | different  -- Different (269 languages)
   | identical  -- Identical (117 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 119A dataset (386 languages). -/
 def allData : List (Datapoint NominalLocationalPredication) :=

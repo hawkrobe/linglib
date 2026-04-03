@@ -40,7 +40,7 @@ inductive DeonticNecessityType where
   | weak            -- grammaticalized weak deontic necessity (*should*-type)
   | neutral         -- grammaticalized but unspecified for strength
   | indeterminate   -- unclear from available descriptions
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Language counts by deontic necessity type.
     Source: @cite{narrog-2010} Table 4, reproduced in @cite{narrog-2012}
@@ -66,7 +66,7 @@ inductive Area where
   | eurasia
   | pacific      -- Austronesian and Papuan
   | southSoutheastAsia
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Per-area counts of obligation (NEC) and ability/possibility (POT) marking.
     Source: @cite{narrog-2010} Table 3 / @cite{narrog-2012} Table 6.5 (p. 250). -/

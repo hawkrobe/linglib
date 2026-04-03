@@ -85,7 +85,7 @@ inductive HiatusInput where
   | ae_ah   -- /æ.ɑ/
   | ah_ae   -- /ɑ.æ/
   | ah_ah   -- /ɑ.ɑ/
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Resolution strategies for vowel hiatus. -/
 inductive HiatusOutput where
@@ -99,7 +99,7 @@ inductive HiatusOutput where
   | coalescence
   /-- Faithful (no repair — hiatus surfaces). -/
   | faithful
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited HiatusOutput := ⟨.faithful⟩
 

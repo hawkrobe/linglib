@@ -792,7 +792,7 @@ structure CausalProfile where
   sufficient : Bool
   necessary : Bool
   direct : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Extract the causal profile of a cause-effect pair. -/
 def extractProfile (dyn : CausalDynamics) (bg : Situation)

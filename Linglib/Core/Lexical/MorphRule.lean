@@ -44,7 +44,7 @@ inductive AttachmentSide where
   | suffix     -- attaches after stem (English *-ed*, *-s*, *-n't*)
   | infix      -- inserts within stem (Tagalog *-um-*)
   | circumfix  -- wraps around stem (German *ge-...-t*)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2: Selection Degree
@@ -66,7 +66,7 @@ inductive SelectionDegree where
   /-- Attaches only to a closed list of stems (e.g., *-n't* only to
       finite auxiliaries). Maximally selective. -/
   | closedClass
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Affixes are more selective than clitics. -/
 def SelectionDegree.isHighSelection : SelectionDegree → Bool
@@ -103,7 +103,7 @@ inductive MorphStatus where
       productive but may show lexical restrictions.
       English *-ness*, *un-*, *-ize*. -/
   | derivAffix
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Is this form bound (i.e., not a free word)? -/
 def MorphStatus.isBound : MorphStatus → Bool
@@ -170,7 +170,7 @@ inductive MorphCategory where
   | nonfinite     -- nonfinite markers, interrogative/relative
   | number        -- number marking on nouns (not verb agreement)
   | degree        -- comparative/superlative on adjectives
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Relevance rank: lower = closer to the stem.
 
@@ -275,6 +275,6 @@ def Stem.allForms (s : Stem σ) (baseMeaning : σ) :
 structure InflDistribution where
   onAux : List MorphCategory
   onLex : List MorphCategory
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 end Core.Morphology

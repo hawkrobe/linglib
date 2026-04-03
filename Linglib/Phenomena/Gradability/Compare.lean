@@ -30,7 +30,7 @@ inductive VaguenessTheoryType where
   | contextualism      -- Vagueness = context-sensitivity
   | nihilism           -- Vague predicates have no extension
   | tcs                -- Three notions of truth + non-transitive st-consequence
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Data characterizing what each theory says about key phenomena.

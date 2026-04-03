@@ -24,7 +24,7 @@ namespace Core.Morphology.Tense
 inductive TenseFormType where
   | synthetic     -- inflectional: *walked*, *walks*
   | periphrastic  -- auxiliary-based: *used to walk*, *going to walk*
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Synthetic past tense rule: appends "-ed" to the lemma.
 

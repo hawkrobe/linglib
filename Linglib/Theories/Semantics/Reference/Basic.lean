@@ -71,7 +71,7 @@ structure ReferentialProfile where
   singularProp : Bool
   /-- Donnellan: the speaker has a cognitive fix on a particular individual -/
   referentialUse : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A referring expression bundles a character with its referential profile. -/
 structure ReferringExpression (C : Type*) (W : Type*) (E : Type*) where

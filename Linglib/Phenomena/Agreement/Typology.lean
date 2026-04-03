@@ -87,7 +87,7 @@ inductive SingularType where
   | Sc  -- Spanish-type: 1=3 vs 2 (addressee distinguished)
   | Sd  -- English-type: 1=2 vs 3 (SAPs vs other)
   | Se  -- French-type: 1=2=3 (all homophonous)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Compute the singular homophony type from a paradigmatic structure. -/
 def ParadigmaticStructure.singularType (s : ParadigmaticStructure) : SingularType :=
@@ -115,7 +115,7 @@ inductive FirstPersonComplexType where
   | Pc  -- Only-inclusive: inclusive specialized, exclusive = 1sg (1+2=1+2+3 ≠ 1+3=1)
   | Pd  -- Inclusive/exclusive: incl vs excl, no min/aug split (1+2=1+2+3 ≠ 1+3)
   | Pe  -- Minimal/augmented: all three distinct (1+2 ≠ 1+2+3 ≠ 1+3)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Compute the first person complex type from a paradigmatic structure.
 
@@ -189,7 +189,7 @@ inductive ExplicitnessLevel where
   | unifiedWe            -- one form for all 'we'
   | inclusiveExclusive   -- incl vs excl distinguished
   | minimalAugmented     -- most explicit: min.incl ≠ aug.incl ≠ excl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Ord ExplicitnessLevel where
   compare a b :=
@@ -225,7 +225,7 @@ inductive HorizHomophonyLevel where
   | second      -- + 2sg = 2+3
   | exclusive   -- + 1sg = 1+3 (with incl/excl distinction)
   | first       -- + 1sg = 1+3 (without incl/excl; = all first person)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §8: Implicational Universals
@@ -635,7 +635,7 @@ inductive NumberStage where
   | N2  -- singular vs group (basic number opposition)
   | N3  -- restricted group (dual/trial) distinguished from unrestricted
   | N4  -- small group (paucal) additionally distinguished
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify a paradigm's number stage by checking singular/group opposition. -/
 def ParadigmaticStructure.numberStage (s : ParadigmaticStructure) : NumberStage :=
@@ -659,7 +659,7 @@ inductive PersonStage where
   | P2  -- non-first persons differentiated in non-singular
   | P3  -- exclusive vs inclusive distinguished
   | P4  -- minimal inclusive vs augmented inclusive distinguished
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify a paradigm's person differentiation stage. -/
 def ParadigmaticStructure.personStage (s : ParadigmaticStructure) : PersonStage :=

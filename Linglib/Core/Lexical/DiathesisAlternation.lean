@@ -60,7 +60,7 @@ inductive AlternationFamily where
   /-- Ch 7: Other constructions — way construction, cognate object,
       resultative, directional phrase. -/
   | otherConstructions
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 1b. Diathesis Alternation Diagnostics
@@ -147,7 +147,7 @@ inductive DiathesisAlternation where
   /-- §7.8: *she ran to the store*. Manner-of-motion verbs with
       directional PPs (Talmy's satellite-framing). -/
   | directionalPhrase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which family of @cite{levin-1993} Part One each alternation belongs to.
     Classifies the 25 curated alternations into 6 families matching

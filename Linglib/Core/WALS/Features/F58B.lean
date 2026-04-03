@@ -18,7 +18,7 @@ inductive NumberOfPossessiveNouns where
   | one  -- One (3 languages)
   | twoToFour  -- Two to four (4 languages)
   | fiveOrMore  -- Five or more (3 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 58B dataset (243 languages). -/
 def allData : List (Datapoint NumberOfPossessiveNouns) :=

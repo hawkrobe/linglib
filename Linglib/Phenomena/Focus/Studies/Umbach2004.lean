@@ -70,7 +70,7 @@ inductive W where
   | jBeer        -- John had a beer
   | jMartini     -- John had a martini
   | jBeerMartini -- John had a beer and a martini
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §2  Propositions
@@ -279,7 +279,7 @@ inductive CDWorld where
   | dishesOnly   -- John washed the dishes but not the room
   | both         -- John did both
   | neither      -- John did neither
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def cleanedRoom : CDWorld → Bool
   | .roomOnly | .both => true | _ => false
@@ -377,7 +377,7 @@ inductive ContrastMultiplicity where
   | single
   /-- Two contrastive foci: "Although A, B" (deny+deny, symmetric). -/
   | double
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §6  CONTRAST vs CORRECTION (@cite{umbach-2004} §3.2)

@@ -72,7 +72,7 @@ inductive MorphStatus where
   /-- Clitic: may be PrWd-internal or -external depending on the
       language and the specific clitic. -/
   | clitic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this morphological element parsed inside the PrWd with the stem?
 
@@ -100,7 +100,7 @@ def MorphStatus.isPrWdInternal : MorphStatus → Bool
     (sa.mu.dram). -/
 structure PrWd where
   syllables : List SyllWeight
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Total mora count of a prosodic word. -/
 def PrWd.moraCount (w : PrWd) : Nat :=
@@ -143,7 +143,7 @@ structure MorphElement where
       alternation: the long form is triggered when a *light* initial
       syllable follows within the PrWd (@cite{aitha-2026} §3.2). -/
   initialWeight : SyllWeight
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this element trigger the long stem form in Telugu weak nouns?
 
@@ -170,7 +170,7 @@ def MorphElement.triggersLongForm (m : MorphElement) : Bool :=
 inductive HiatusObligation where
   | obligatory   -- within PrWd
   | optional     -- across PrWd boundary
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Determine hiatus resolution obligation from the morphological
     status of the following element. -/

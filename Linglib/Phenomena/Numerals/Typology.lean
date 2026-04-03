@@ -73,7 +73,7 @@ inductive OrdinalFormation where
   | allFromCardinals     -- all ordinals derived regularly from cardinals (incl. "one-th")
   | various              -- mixed strategies, no single dominant pattern
   | noOrdinals           -- no productive ordinal formation reported
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Chapter 53 distribution: language counts per ordinal formation type.
     Total: 321 languages. -/
@@ -113,7 +113,7 @@ inductive DistributiveNumeral where
   | markedBySuffix       -- a suffix creates distributive (e.g., Georgian -agan)
   | markedByPrefix       -- a prefix creates distributive
   | markedByOtherMeans   -- other strategies (particles, circumfix, etc.)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Chapter 54 distribution: language counts per distributive type.
     Total: 251 languages. -/
@@ -150,7 +150,7 @@ def ch54Distribution : DistributiveDistribution :=
 inductive ConjunctionQuantifier where
   | identity             -- same morpheme for 'and' and 'all' (e.g., Mandarin dou, Tagalog lahat)
   | differentiation      -- different morphemes (e.g., English and/all, Japanese to/subete)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Chapter 56 distribution: language counts per conjunction-quantifier type.
     Total: 220 languages. -/
@@ -197,7 +197,7 @@ inductive Region where
   | mesoamerica
   | southAmerica
   | oceania
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a language has obligatory grammatical plural marking on common nouns.
     Used for the Sanches-Slobin generalization relating classifiers and plural. -/
@@ -205,7 +205,7 @@ inductive PluralMarking where
   | obligatory           -- plural marking required (e.g., English, Spanish)
   | optional             -- plural marking available but not required (e.g., Korean)
   | none                 -- no grammatical plural on nouns (e.g., Mandarin, Japanese)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The base of a language's numeral system (WALS Ch 131, Comrie).
 
@@ -220,7 +220,7 @@ inductive NumeralBase where
   | otherBase            -- base 5, 6, or other (rare)
   | bodyPartSystem       -- extended body-part counting system (e.g., Eipo)
   | restricted           -- restricted numeral system (few numerals, no productive base)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -287,7 +287,7 @@ structure NumeralProfile where
   pluralMarking : PluralMarking
   /-- Ch 131: Numeral base (optional; not all languages surveyed). -/
   numeralBase : Option NumeralBase := Option.none
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Language Instances
@@ -789,7 +789,7 @@ inductive SuppletionCutoff where
   | none                 -- no suppletive ordinals (all regular from cardinals)
   | first                -- only "first" is suppletive
   | firstAndSecond       -- "first" and "second" are suppletive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric rank for the suppletion cutoff (higher = more suppletion). -/
 def SuppletionCutoff.rank : SuppletionCutoff -> Nat

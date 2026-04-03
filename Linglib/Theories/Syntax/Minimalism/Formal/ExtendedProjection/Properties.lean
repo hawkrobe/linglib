@@ -33,7 +33,7 @@ inductive EPSemanticType where
   | proposition    -- ⟨s,t⟩: propositions (C at F3 in verbal EP)
   | entity         -- e: entities (D at F1 in nominal EP)
   | intermediate   -- between property and closed type (v, T)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Map categories to their EP semantic type.
     This reflects how functional structure progressively

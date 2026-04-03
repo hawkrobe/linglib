@@ -49,7 +49,7 @@ inductive ConditioningMode where
   | bayesian
   | jeffrey
   | ranking   -- @cite{spohn-1988}: κ_φ(w) = κ(w) - κ(φ) for φ-worlds
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 2. Conditional Probability Measure (Popper Space)

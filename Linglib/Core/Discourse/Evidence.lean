@@ -25,7 +25,7 @@ inductive EvidentialSource where
   | hearsay
   /-- Inference from observable effects (reasoning about the event). -/
   | inference
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Evidential perspective: the temporal relation of T to A.
     @cite{cumming-2026}'s three evidential orientations. Framework-agnostic:
@@ -40,7 +40,7 @@ inductive EvidentialPerspective where
   /-- A < T: evidence acquired before the event. Speaker has predictive
       grounds (plans, schedules, dispositions). -/
   | prospective
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Is this evidential perspective nonfuture? Retrospective and
     contemporaneous perspectives involve evidence that is downstream
@@ -65,7 +65,7 @@ inductive MirativityValue where
   | expected
   | unexpected
   | neutral
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Does this mirativity value mark surprise/new information? -/
 def MirativityValue.isMirative : MirativityValue → Bool

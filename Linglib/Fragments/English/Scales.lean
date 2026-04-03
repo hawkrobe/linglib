@@ -37,7 +37,7 @@ def Scale.weaker {α : Type} [BEq α] (s : Scale α) (x y : α) : Bool :=
 
 inductive QuantExpr where
   | some_ | most | all
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 def someAll : Scale QuantExpr :=
   { items := [.some_, .all], name := "⟨some, all⟩" }
@@ -47,7 +47,7 @@ def someMostAll : Scale QuantExpr :=
 
 inductive ConnExpr where
   | or_ | and_
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 def orAnd : Scale ConnExpr :=
   { items := [.or_, .and_], name := "⟨or, and⟩" }
@@ -56,7 +56,7 @@ inductive ModalExpr where
   | might | must
   | possible | necessary
   | allowed | required
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 def mightMust : Scale ModalExpr :=
   { items := [.might, .must], name := "⟨might, must⟩" }
@@ -72,7 +72,7 @@ inductive DegreeExpr where
   | warm | hot
   | good | excellent
   | like | love
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /-- The ⟨warm, hot⟩ scale -/
 def warmHot : Scale DegreeExpr :=
@@ -108,7 +108,7 @@ The scale goes from strongly negative to strongly positive:
 -/
 inductive EvalExpr where
   | terrible | bad | good | amazing
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /-- The ⟨terrible, bad, good, amazing⟩ evaluative scale -/
 def terribleAmazing : Scale EvalExpr :=
@@ -119,7 +119,7 @@ def terribleAmazing : Scale EvalExpr :=
 /-- Negated evaluative: "not terrible", "not amazing", etc. -/
 inductive NegatedEvalExpr where
   | notTerrible | notBad | notGood | notAmazing
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /-- Convert evaluative to negated form -/
 def EvalExpr.negate : EvalExpr → NegatedEvalExpr
@@ -144,7 +144,7 @@ This is the full utterance set for politeness scenarios:
 inductive EvalUtterance where
   | pos : EvalExpr → EvalUtterance
   | neg : NegatedEvalExpr → EvalUtterance
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /-- All evaluative utterances (positive and negated) -/
 def allEvalUtterances : List EvalUtterance := [
@@ -309,7 +309,7 @@ inductive ClosureEffect where
   | cleanSI         -- Closed: clean scalar implicature
   | contradiction   -- Not closed: potential contradiction
   | needsRescue     -- Not closed: requires modal/pruning rescue
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Predict exhaustification effect from closure status.

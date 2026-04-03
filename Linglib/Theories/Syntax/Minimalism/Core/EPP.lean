@@ -31,7 +31,7 @@ inductive EPPStrategy where
   | expletive
   /-- No EPP — verb-initial order persists (one analysis of Irish/Arabic VSO). -/
   | none
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Word-order parameter: EPP strategy and predicted basic order. -/
 structure WordOrderParameter where

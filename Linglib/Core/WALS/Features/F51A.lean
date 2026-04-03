@@ -23,7 +23,7 @@ inductive CaseAffixPosition where
   | prepositionalClitics  -- Prepositional clitics (17 languages)
   | inpositionalClitics  -- Inpositional clitics (7 languages)
   | noCaseAffixesOrAdpositionalClitics  -- No case affixes or adpositional clitics (379 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint CaseAffixPosition) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .caseSuffixes }

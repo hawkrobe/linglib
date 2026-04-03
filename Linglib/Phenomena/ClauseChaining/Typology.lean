@@ -68,7 +68,7 @@ inductive ClauseStatus where
   /-- Independent clause with full inflection. Supplies tense, mood, and
       often agreement for the entire chain. Exactly one per chain. -/
   | final
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § Chain directionality
@@ -92,7 +92,7 @@ inductive ChainDirection where
       attested in some verb-initial and SVO languages (e.g., Barai, some
       Papuan languages with initial-verb tendencies). -/
   | initialMedial
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Predicted head direction for a given chain direction.
 
@@ -128,7 +128,7 @@ inductive CategoryRetention where
       Its value is inherited from the final verb's specification (scope).
       E.g., Nungon medial verbs lack tense entirely. -/
   | absent
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : LE CategoryRetention where
   le a b := match a, b with
@@ -176,7 +176,7 @@ structure MedialMorphProfile where
   /-- Aspectual distinctions. Some languages retain perfective/imperfective
       on medial verbs to distinguish completed vs. ongoing subevents. -/
   aspect    : CategoryRetention
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Whether this profile represents maximal reduction (all categories absent). -/
 def MedialMorphProfile.isMaximallyReduced (p : MedialMorphProfile) : Bool :=
@@ -229,7 +229,7 @@ inductive SRSystem where
       subject and object, or subject and possessor. Rare.
       E.g., Panoan languages (subject+object tracking). -/
   | multiTrack
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- What participant role(s) SR tracks.
 
@@ -247,7 +247,7 @@ inductive SRTarget where
       grammatical function.
       E.g., Greater Awyu languages (@cite{de-vries-2025} §4.4). -/
   | topicBased
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- SR marking asymmetry.
 
@@ -263,7 +263,7 @@ inductive SRMarkedness where
   | dsUnmarked
   /-- SS and DS are both overtly marked with comparable morphological weight. -/
   | symmetric
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § Interclausal semantic relations
@@ -286,7 +286,7 @@ inductive InterclauseRelation where
   | contrastive   -- medial and next events contrast (but/whereas)
   | additive      -- medial event added to next without temporal/causal import
   | purpose       -- medial event is purpose of next event (in order to)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Whether a relation involves temporal ordering. -/
 def InterclauseRelation.isTemporal : InterclauseRelation → Bool
@@ -323,7 +323,7 @@ inductive BridgingType where
       the entire preceding episode before the next chain begins.
       E.g., Ku Waru *ab-*, Manambu *a-yk-*. -/
   | summary
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § Clause-linking strategy (shared vocabulary)
@@ -351,7 +351,7 @@ inductive ClauseLinkingStrategy where
       Clause chaining is the prototypical instantiation.
       E.g., Nungon: "he having.come, she cooked" (medial + final). -/
   | cosubordination
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Clause chaining is cosubordination: dependent but not embedded. -/
 def clauseChainingStrategy : ClauseLinkingStrategy := .cosubordination

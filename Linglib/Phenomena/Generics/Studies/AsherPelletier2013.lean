@@ -331,7 +331,7 @@ inductive AntiProbArgument where
   /-- Embedded generics ("Dogs chase cats that chase mice") require
       higher-order probabilities, leading to triviality results. -/
   | embeddedGenerics
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 
 -- ═══ Non-Monotonicity ═══

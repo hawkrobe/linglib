@@ -73,7 +73,7 @@ inductive Construction where
   /-- Heavy NP shift: nonshifted (V DO PP) vs. shifted (V PP DO).
       Uses "bring...to" and "take...into account." -/
   | heavyNPShift
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Corpus verb token counts (Table 1). -/
 structure VerbData where
@@ -112,7 +112,7 @@ inductive DAHeaviness where
   | themeEqualGoal
   /-- Theme longer: theme − goal ≥ 2 -/
   | themeLonger
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Heaviness categories for heavy NP shift (Table 3).
     Measured as relative length: DO length − PP length. -/
@@ -127,7 +127,7 @@ inductive HNPSHeaviness where
   | doLonger
   /-- DO ≫ PP: DO − PP ≥ 4 -/
   | doMuchLonger
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Figure 1 cell sizes: "give" dative corpus, by heaviness category. -/
 def fig1n : DAHeaviness → Nat
@@ -188,7 +188,7 @@ inductive ExpNewness where
   | bothGiven
   /-- Goal is given (= theme is new) -/
   | goalGiven
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Figure 8 cell sizes by newness condition. -/
 def fig8n : ExpNewness → Nat
@@ -219,7 +219,7 @@ structure RegressionResult where
   newnessSig : Bool
   /-- Newness × heaviness interaction is significant -/
   interactionSig : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Corpus DA: both heaviness and newness significant, no interaction. -/
 def daCorpusResult : RegressionResult :=

@@ -98,10 +98,10 @@ theorem cumulativeOp_right_universal (R : A → B → Bool) (x : Finset A) (y : 
 section ElephantExample
 
 inductive Elephant where | dumbo | babar | tantor
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive Continent where | africa | asia
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype Elephant where
   elems := {.dumbo, .babar, .tantor}

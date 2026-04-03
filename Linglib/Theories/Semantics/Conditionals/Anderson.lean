@@ -75,7 +75,7 @@ inductive MarkingStrategy where
       directly accessible.
       Japanese: "Jones-ga... nom-*eba*,... mise-*ru* (hazuda)." -/
   | oMarking
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § Strategy Properties

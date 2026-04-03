@@ -17,7 +17,7 @@ inductive ComitativesAndInstrumentals where
   | identity  -- Identity (76 languages)
   | differentiation  -- Differentiation (213 languages)
   | mixed  -- Mixed (33 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 52A dataset (322 languages). -/
 def allData : List (Datapoint ComitativesAndInstrumentals) :=

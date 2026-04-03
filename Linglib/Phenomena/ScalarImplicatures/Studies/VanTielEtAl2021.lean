@@ -73,7 +73,7 @@ inductive QuantityWord where
   | most          -- "most"
   | almostAll     -- "almost all"
   | all           -- "all"
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 /-- All quantity words in experimental order -/
 def allQuantityWords : List QuantityWord :=
@@ -131,7 +131,7 @@ inductive Model where
   | ptLit    -- Prototype Theory semantics + literal speaker
   | gqPrag   -- GQT semantics + pragmatic speaker
   | ptPrag   -- Prototype Theory semantics + pragmatic speaker
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Log-likelihood of test data (Exp. 1b) for each model
 

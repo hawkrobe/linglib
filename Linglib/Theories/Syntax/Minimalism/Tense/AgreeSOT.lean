@@ -60,7 +60,7 @@ inductive TenseFeatureStatus where
   | interpretable
   /-- [uT] -- checked by Agree, semantically vacuous -/
   | uninterpretable
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A tense head with its feature specification. -/
 structure TenseHead where
@@ -68,7 +68,7 @@ structure TenseHead where
   tense : GramTense
   /-- Whether this tense feature is interpretable or uninterpretable -/
   status : TenseFeatureStatus
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Is a tense head semantically active? Only interpretable features
     contribute to meaning. -/
@@ -372,7 +372,7 @@ inductive WilliamsCycleStage where
   | partialSOT
   /-- Full SOT: all boundaries transparent (English) -/
   | fullSOT
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map Williams Cycle stage to available readings by complement size. -/
 def readingsByStage (stage : WilliamsCycleStage) (cs : ComplementSize) :

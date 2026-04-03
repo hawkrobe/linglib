@@ -30,7 +30,7 @@ inductive ConstraintFamily where
   | faithfulness
   /-- Markedness: penalizes marked structures in the output. -/
   | markedness
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A named OT constraint with family classification.
     `eval c` returns the number of violations candidate `c` incurs. -/

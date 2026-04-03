@@ -80,7 +80,7 @@ inductive AffectednessDegree where
   | nonquantized  -- Some change entailed, but not to a specific degree
   | potential     -- Change is possible but not entailed
   | unspecified   -- No change entailment at all (e.g. perception verbs)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 namespace AffectednessDegree
 

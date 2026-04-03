@@ -222,14 +222,14 @@ an individual dref was introduced.
 -/
 structure PVar where
   idx : Nat
-  deriving DecidableEq, BEq, Repr, Hashable
+  deriving DecidableEq, Repr, Hashable
 
 /--
 An individual variable (names an individual dref).
 -/
 structure IVar where
   idx : Nat
-  deriving DecidableEq, BEq, Repr, Hashable
+  deriving DecidableEq, Repr, Hashable
 
 /--
 A concept variable (names a concept dref).
@@ -239,7 +239,7 @@ Concept variables are indices into the assignment that map to
 -/
 structure CVar where
   idx : Nat
-  deriving DecidableEq, BEq, Repr, Hashable
+  deriving DecidableEq, Repr, Hashable
 
 
 /--

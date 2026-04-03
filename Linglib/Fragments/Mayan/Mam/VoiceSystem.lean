@@ -89,7 +89,7 @@ structure MamDirHead where
       =(y)a' spellout when oblique extraction passes through its
       domain. -/
   hasUOblique : Bool := false
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Dir⁰'s probe features when it carries [uOblique]. -/
 def MamDirHead.features (d : MamDirHead) : Minimalism.FeatureBundle :=

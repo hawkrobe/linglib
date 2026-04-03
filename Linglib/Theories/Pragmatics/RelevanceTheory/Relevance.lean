@@ -40,7 +40,7 @@ structure RelevanceAssessment where
   effects : ℕ
   /-- Processing effort required -/
   effort : ℕ
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Comparative relevance: `a` is strictly more relevant than `b`.
 

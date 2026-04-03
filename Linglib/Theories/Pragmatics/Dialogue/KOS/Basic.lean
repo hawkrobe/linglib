@@ -85,7 +85,7 @@ inductive IllocMove (Fact QContent : Type) where
   | greet : IllocMove Fact QContent
   /-- Counter-greeting. -/
   | counterGreet : IllocMove Fact QContent
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Extract the propositional content from a move, if any. -/
 def IllocMove.factContent {Fact QContent : Type} : IllocMove Fact QContent → Option Fact
@@ -153,7 +153,7 @@ structure PendingLoc where
   utt : String
   /-- The classifying type (as string description) -/
   uttType : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The Dialogue Gameboard.
 
@@ -248,7 +248,7 @@ structure TurnUnderConstr where
   cat : Option String := none
   /-- Partial content accumulated -/
   partialContent : Option String := none
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The private component of an information state.
 
@@ -309,7 +309,7 @@ and a restriction characterizing what values are acceptable (e.g.,
 structure CParam where
   index : String
   restriction : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A set of contextual parameters, analogous to `HPSG.SlashValue`.
 
@@ -332,7 +332,7 @@ Clarification arises when the assignment is *partial*.
 @cite{ginzburg-cooper-2004} §6, ex. 81–82. -/
 structure CtxtAssignment where
   bindings : List (String × String) := []
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Does the assignment resolve a given parameter? -/
 def CtxtAssignment.resolves (f : CtxtAssignment) (cp : CParam) : Bool :=
@@ -359,7 +359,7 @@ structure SubUtterance where
   phon : String
   cat : String
   cont : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- An utterance skeleton: a sign with C-PARAMS and CONSTITS.
 
@@ -373,7 +373,7 @@ structure UttSkeleton where
   cont : String
   cparams : CParamSet := []
   constits : List SubUtterance := []
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Find the constituent whose CONT matches a parameter index. -/
 def UttSkeleton.constitForParam (u : UttSkeleton) (paramIdx : String) :
@@ -391,7 +391,7 @@ C-PARAMS have been resolved. Grounding checks whether f is total. -/
 structure SignAssignment where
   sign : UttSkeleton
   assignment : CtxtAssignment
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Clarification Ellipsis processing state.
 
@@ -422,7 +422,7 @@ inductive CoercionOp where
   | paramIdentification
   /-- Ground without clarification: ∃-quantify a parameter (ex. 77) -/
   | existentialGeneralization
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Output of a coercion operation: partial specification for the
     clarification context. -/
@@ -432,7 +432,7 @@ structure CoercionOutput where
   salUtt : SubUtterance
   /-- MAX-QUD: the question raised (string representation) -/
   maxQud : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Parameter focussing (@cite{ginzburg-cooper-2004} ex. 53):
 derive clausal CE reading.

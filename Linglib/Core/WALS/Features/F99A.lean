@@ -21,7 +21,7 @@ inductive PronounCaseAlignment where
   | tripartite  -- Tripartite (3 languages)
   | activeInactive  -- Active - inactive (3 languages)
   | none  -- None (3 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 99A dataset (172 languages). -/
 def allData : List (Datapoint PronounCaseAlignment) :=

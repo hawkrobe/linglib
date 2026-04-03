@@ -69,7 +69,7 @@ inductive Approach where
   /-- Ambiguity via EXH (@cite{chierchia-fox-spector-2012}): base = ≥n,
       exact via covert exhaustivity operator; both readings available -/
   | ambiguityEXH
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Maps each approach to its base `NumeralTheory`, where one exists.
     The underspecification view doesn't have a single base relation — it posits
@@ -105,7 +105,7 @@ structure ThreeGeneralizations where
   exactlyAvailable : Bool
   /-- (41c) "At most" readings available only in DE environments. -/
   atMostOnlyInDE : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def ThreeGeneralizations.allSatisfied (g : ThreeGeneralizations) : Bool :=
   g.atLeastAvailable && g.exactlyAvailable && g.atMostOnlyInDE

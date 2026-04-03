@@ -45,7 +45,7 @@ inductive StudentResult where
   | noneP   -- no students passed
   | someP   -- some but not all passed
   | allP    -- all students passed
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 Professor's happiness state.
@@ -53,7 +53,7 @@ Professor's happiness state.
 inductive ProfState where
   | unhappy
   | happy
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 World for conditional embedding.
@@ -63,7 +63,7 @@ Tracks both the student outcome and whether the professor is happy.
 structure CondWorld where
   students : StudentResult
   professor : ProfState
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- Truth Conditions for Conditionals
 
@@ -108,7 +108,7 @@ Interpretations of "If some students passed, the professor will be happy":
 inductive CondInterpretation where
   | global  -- "some" = at least one
   | local_  -- "some" = some-but-not-all
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /--
 Material conditional semantics: "If P, Q" = ¬P ∨ Q.

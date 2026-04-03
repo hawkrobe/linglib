@@ -79,7 +79,7 @@ inductive HomWorld where
   | onlyKelly : HomWorld -- Only Kelly laughed
   | onlyJane : HomWorld  -- Only Jane laughed
   | both     : HomWorld  -- Both laughed
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Kelly laughed (subdomain alternative for D = {Kelly}). -/
 def kellyLaughed : Prop' HomWorld
@@ -121,7 +121,7 @@ open Semantics.Lexical.Plural.ExistentialPL (existPL existPL_full existPL_single
 
 /-- The two atoms of the plurality "the kids". -/
 inductive Kid where | kelly | jane
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The predicate "laughed" as a function of atoms and worlds. -/
 def laughed : Kid → HomWorld → Prop

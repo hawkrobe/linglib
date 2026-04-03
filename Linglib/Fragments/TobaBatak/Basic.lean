@@ -41,7 +41,7 @@ inductive Voice where
   | av
   /-- Object voice: the patient/theme is the pivot -/
   | ov
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Which argument role is the pivot for a given voice? -/
 def Voice.pivotRole : Voice → Interfaces.ArgumentRole
@@ -56,7 +56,7 @@ def Voice.pivotRole : Voice → Interfaces.ArgumentRole
 inductive ExtractionJudgment where
   | grammatical
   | ungrammatical
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- § 3: Extraction Data Type

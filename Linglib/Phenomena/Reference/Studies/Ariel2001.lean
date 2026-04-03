@@ -246,7 +246,7 @@ inductive GivennessStatus where
   | uniquelyIdentifiable -- the N
   | referential          -- indefinite this N
   | typeIdentifiable     -- a N
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def GivennessStatus.rank : GivennessStatus → Nat
   | .inFocus              => 5

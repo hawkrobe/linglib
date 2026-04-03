@@ -45,7 +45,7 @@ We use `Fin 4` as our world type:
 /-- Three students in our domain -/
 inductive Student where
   | alice | bob | carol
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Model with three students -/
 def studentModel : Model where

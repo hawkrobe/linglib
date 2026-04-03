@@ -19,7 +19,7 @@ inductive TenseAspectAffixPosition where
   | tenseAspectTone  -- Tense-aspect tone (13 languages)
   | mixedType  -- Mixed type (146 languages)
   | noTenseAspectInflection  -- No tense-aspect inflection (152 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint TenseAspectAffixPosition) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .tenseAspectSuffixes }

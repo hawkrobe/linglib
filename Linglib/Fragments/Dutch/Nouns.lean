@@ -28,13 +28,13 @@ structure NounEntry where
 /-- Number marking on a Dutch NP. -/
 inductive NPNumber where
   | sg | pl | mass
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Scrambling position in the Dutch middle field. -/
 inductive ScramblingPosition where
   | unscrambled
   | scrambled
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A Dutch noun phrase with scrambling information. -/
 structure NP where

@@ -71,12 +71,12 @@ open Core.Genericity (GenericForm GenericReading)
     E.g., different height thresholds for "tall" (Barker 2002, exx. 10–11). -/
 structure Interp where
   id : Nat
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A world index: determines what factual state of affairs obtains. -/
 structure World where
   id : Nat
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A denotation under two indices: ⟦α⟧^{i,w} in Krifka's notation. -/
 abbrev Denotation := Interp → World → Bool
@@ -250,7 +250,7 @@ inductive RuleType where
   | moral       -- (6) "A gentleman opens doors for ladies"
   | legal       -- (7) "A bishop moves diagonally" / (8) pomegranate cost
   | linguistic  -- (9) "A madrigal is polyphonic"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 
 -- ═══ IS/BP Felicity Data ═══
@@ -458,7 +458,7 @@ def troutCaughtIS : GenericDatum :=
 inductive NumberDomain where
   | atomic  -- IS: single individuals; suited for checking defining properties
   | plural  -- BP: sums of individuals; suited for empirical generalizations
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 def isAtomicDomain : GenericForm → NumberDomain
   | .indefiniteSingular => .atomic

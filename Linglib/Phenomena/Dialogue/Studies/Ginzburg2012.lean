@@ -354,7 +354,7 @@ inductive NSUClass where
   | propositionalModifier
   /-- "And Max" — conjunction + fragment (10) -/
   | conjunctionFragment
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- BNC frequency count for each NSU class (Table 7.3). -/
 def NSUClass.frequency : NSUClass → Nat
@@ -391,7 +391,7 @@ inductive NSUFunction where
   | metacommunicativeQuery
   /-- Extension moves: factive modifier, bare modifier, conj+frag (27 + 15 + 10 = 52) -/
   | extensionMove
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Classify an NSU class into its functional group (Tables 7.1–7.2). -/
 def NSUClass.toFunction : NSUClass → NSUFunction
@@ -460,7 +460,7 @@ inductive CRForm where
   | fillerCR
   /-- Explicit: metalinguistic ("What do you mean 'finagle'?") -/
   | explicit
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The 4 CR reading types from @cite{ginzburg-2012} Ch. 6 §6.2.1. -/
 inductive CRReading where
@@ -472,7 +472,7 @@ inductive CRReading where
   | repetition
   /-- "Did you say X or Y?" — corrective alternative -/
   | correction
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- § 9. Grounding Protocol Example

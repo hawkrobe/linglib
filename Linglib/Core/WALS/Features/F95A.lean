@@ -19,7 +19,7 @@ inductive RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNo
   | voAndPostpositions  -- VO and Postpositions (42 languages)
   | voAndPrepositions  -- VO and Prepositions (456 languages)
   | other  -- Other (158 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .other }

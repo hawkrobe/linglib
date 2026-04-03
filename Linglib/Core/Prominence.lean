@@ -60,7 +60,7 @@ inductive AnimacyLevel where
   | animate
   /-- Least prominent: inanimate referents -/
   | inanimate
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Numeric rank on the animacy scale: Human (2) > Animate (1) > Inanimate (0). -/
 def AnimacyLevel.rank : AnimacyLevel → Nat
@@ -98,7 +98,7 @@ inductive AnimacyRank where
   | lowerAnimal
   | discreteInanimate
   | nondiscreteInanimate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric rank for comparison (higher = more likely to be plural-marked). -/
 def AnimacyRank.toNat : AnimacyRank → Nat
@@ -165,7 +165,7 @@ inductive DefinitenessLevel where
   | indefiniteSpecific
   /-- Least prominent: non-specific indefinites -/
   | nonSpecific
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Numeric rank on the definiteness scale:
     Pronoun (4) > Proper (3) > Definite (2) > IndSp (1) > NonSp (0). -/
@@ -216,7 +216,7 @@ inductive PersonLevel where
   | first
   | second
   | third
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Numeric rank on the person scale: 1st (2) > 2nd (1) > 3rd (0). -/
 def PersonLevel.rank : PersonLevel → Nat
@@ -265,7 +265,7 @@ inductive ArgumentRole where
   | R
   /-- T: the theme-like argument of a ditransitive verb -/
   | T
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Role rank: A > P for monotransitives,
     R > T for ditransitives. S is in between. Higher rank = higher
@@ -305,7 +305,7 @@ inductive MarkingChannel where
   | flagging
   /-- Verbal agreement / cross-referencing -/
   | indexing
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 6: Default Prominence (@cite{just-2024}, §3; @cite{haspelmath-2021}, §7)
@@ -491,7 +491,7 @@ structure Scenario where
   aPerson : PersonLevel
   /-- Person of the P argument -/
   pPerson : PersonLevel
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a scenario is "downstream": A has higher
     person rank than P. This is the "usual" direction — the role-reference

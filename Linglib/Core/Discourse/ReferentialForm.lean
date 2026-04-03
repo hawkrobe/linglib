@@ -59,7 +59,7 @@ inductive AccessibilityLevel where
   | cliticizedPron       -- "'er", "-la"
   | verbalAgreement      -- person inflection on the verb
   | zero                 -- ∅ (pro-drop)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Numeric rank: 0 (lowest accessibility) to 17 (highest).
     Higher rank = higher accessibility = more reduced form. -/
@@ -118,7 +118,7 @@ theorem pronoun_more_reduced_than_name :
 inductive NextMentionBias where
   | high     -- referent is expected to be mentioned next
   | low      -- referent is not expected to be mentioned next
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Accessibility prediction: high next-mention bias licenses reduced
     referential form (unstressed pronoun); low bias requires full form

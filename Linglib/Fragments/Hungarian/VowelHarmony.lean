@@ -166,7 +166,7 @@ inductive HarmonyRole where
   | frontHarmonic  -- ö, ő, ü, ű: trigger front, undergo harmony
   | backHarmonic   -- a, á, o, ó, u, ú: trigger back, undergo harmony
   | neutral        -- i, í, e, é: transparent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify a vowel's harmony role. -/
 def classifyVowel (s : Segment) : HarmonyRole :=
@@ -229,7 +229,7 @@ inductive StemClass where
   | IIA_b  -- simple neutral, back (antiharmonic): híd, cél, derék
   | IIB_f  -- complex neutral, front (transparent): üveg, rövid
   | IIB_b  -- complex neutral, back (transparent): papír, taxi
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this stem class select back suffixes? -/
 def StemClass.isBack : StemClass → Bool
@@ -252,7 +252,7 @@ inductive SuffixType where
   | twoWay_ú_ű     -- ú/ű: láb-ú/fej-ű
   | twoWay_ó_ő     -- ó/ő: -ból/-ből, -tól/-től, -ról/-ről, vár-ó/kér-ő
   | threeWay_o_ö_e  -- o/ö/e: -hoz/-höz/-hez, -on/-ön/-en, -tok/-tök/-tek
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Resolve a two-way a/e suffix given backness. -/
 def resolveA (back : Bool) : Segment :=

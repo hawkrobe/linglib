@@ -22,7 +22,7 @@ inductive SnegvoOrder where
   | prefixOnlywithanotherneg  -- Prefix&OnlyWithAnotherNeg (16 languages)
   | type1Type2  -- Type 1 / Type 2 (2 languages)
   | noSnegvo  -- No SNegVO (142 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144I dataset (421 languages). -/
 def allData : List (Datapoint SnegvoOrder) :=

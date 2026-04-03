@@ -46,7 +46,7 @@ inductive VerbClass where
   | expStim        -- ExpStim: admire, like, fear — subject is experiencer
   | agentEvocator  -- AgEvoc: criticise, congratulate — subject acts on evocator
   | agentPat       -- AgPat: kick, chase, hit — subject is agent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. IC Bias Direction
@@ -56,7 +56,7 @@ inductive VerbClass where
 inductive ICBias where
   | np1   -- Subject-biased (explanation targets subject referent)
   | np2   -- Object-biased (explanation targets object referent)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 3. Predicted IC Bias by Class
@@ -84,7 +84,7 @@ def VerbClass.predictedBias : VerbClass → ICBias
 inductive ExpConnective where
   | weil      -- "because" → I-Caus (Explanation relation)
   | sodass    -- "and so" → I-Cons (Consequence relation)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 5. Exp 1 Data: Coreference Biases (Table 1)

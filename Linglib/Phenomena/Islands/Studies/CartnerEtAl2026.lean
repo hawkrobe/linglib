@@ -50,7 +50,7 @@ inductive FGDConstruction where
   | whQuestion
   | relativeClause
   | topicalization
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Extraction position within the embedded clause.
 The subject/object asymmetry is the core empirical target of subject island
@@ -58,7 +58,7 @@ research (@cite{ross-1967}, @cite{chomsky-1973}). -/
 inductive ExtractionPosition where
   | subject
   | object
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 open Core.InformationStructure
 
@@ -324,7 +324,7 @@ inductive DiscourseIslandTheory where
   extraction domain, independent of construction type.
   @cite{cuneo-goldberg-2023}. -/
   | directBackgroundedness
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Cartner et al.'s experiments test the constructional IS profile account
 (by varying construction type while holding domain backgroundedness

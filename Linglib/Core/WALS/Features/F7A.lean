@@ -22,7 +22,7 @@ inductive GlottalizedConsonants where
   | ejectivesAndGlottalizedResonants  -- Ejectives and glottalized resonants (20 languages)
   | implosivesAndGlottalizedResonants  -- Implosives and glottalized resonants (4 languages)
   | ejectivesImplosivesAndGlottalizedResonants  -- Ejectives, implosives, and glottalized resonants (3 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint GlottalizedConsonants) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .ejectivesAndGlottalizedResonants }

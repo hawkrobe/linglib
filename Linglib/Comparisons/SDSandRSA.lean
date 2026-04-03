@@ -376,7 +376,7 @@ Marginalization yields same tie.
 inductive StarConcept where
   | celestial
   | celebrity
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Selectional preference: MARRY wants human object -/
 def marrySelectional : StarConcept → ℚ

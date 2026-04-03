@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.Mandarin.Resultatives
-import Linglib.Phenomena.Constructions.Resultatives.Data
+-- Data dissolved into GoldbergJackendoff2004 (imported transitively via Causation.Resultatives)
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
@@ -73,6 +73,7 @@ open Causative.Resultatives (completesForEffect resultativeCausativeBuilder
 open Semantics.Lexical.Verb.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   ArgStructureConstruction)
+open ConstructionGrammar.Studies.GoldbergJackendoff2004 (ResultativeType)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Verb classes in the construction
@@ -621,7 +622,7 @@ inductive CauseStatus where
   | identityUnknown
   /-- Cause novel and not recoverable; causative variant required. -/
   | notRecoverable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The anticausative variant is licensed when the cause is
     recoverable or unknown. -/
@@ -667,7 +668,7 @@ inductive ThemeMotionCapacity where
   /-- Entity requiring continuous external manipulation to move:
       nails being hammered, instruments being wielded. -/
   | requiresContinuousForce
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a theme can serve as subject of intr-*push open*. -/
 def canBeIntrPushOpenSubject : ThemeMotionCapacity → Bool
@@ -933,7 +934,9 @@ theorem filled_implies_licensed (fr : FilledResultative)
     (hCause : anticausativeLicensed cause = true)
     (hTheme : canBeIntrPushOpenSubject theme = true) :
     isLicensed fr.verbClass fr.adjective cause theme = true := by
-  simp [isLicensed, hClass, fr.adjSpatial, hCause, hTheme]
+  unfold isLicensed
+  rw [hClass, hCause, hTheme]
+  simp [fr.adjSpatial]
 
 /-- Concrete: `pushOpen_filled` passes `isLicensed` in a recoverable-cause,
     projectile context. -/
@@ -994,7 +997,7 @@ type and the broader resultative classification. -/
     and the cause is suppressed. The transitive counterpart (tr-*push open*)
     would be `causativeProperty`, but is modeled separately. -/
 def filledToResultativeType (_ : FilledResultative) :
-    Resultatives.ResultativeType :=
+    ResultativeType :=
   .anticausativeProperty
 
 /-- Anticausative property is distinct from noncausative property
@@ -1002,7 +1005,7 @@ def filledToResultativeType (_ : FilledResultative) :
     has no constructional cause at all. -/
 theorem anticausative_not_noncausative :
     filledToResultativeType pushOpen_filled ≠
-    Resultatives.ResultativeType.noncausativeProperty := by
+    ResultativeType.noncausativeProperty := by
   decide
 
 -- ════════════════════════════════════════════════════

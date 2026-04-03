@@ -35,7 +35,7 @@ For Nap: d₁ = nap, d₂ = rested, d₃ = pass.
 For Lobster: d₁ = eat lobster, d₂ = gustatory, d₃ = ¬die. -/
 inductive W where
   | w0 | w1 | w2 | w3 | w4 | w5 | w6 | w7
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def allW : List W := [.w0, .w1, .w2, .w3, .w4, .w5, .w6, .w7]
 

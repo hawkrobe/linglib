@@ -21,7 +21,7 @@ inductive BasicWordOrder where
   | ovs  -- OVS (11 languages)
   | osv  -- OSV (4 languages)
   | noDominantOrder  -- No dominant order (189 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint BasicWordOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .svo }

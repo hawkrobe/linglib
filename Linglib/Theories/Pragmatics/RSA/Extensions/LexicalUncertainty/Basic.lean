@@ -169,7 +169,7 @@ inductive ObsState where
   | knowAll      -- Speaker observed all passed
   | knowSomeNot  -- Speaker observed some-but-not-all passed
   | ignorant     -- Speaker made no observation
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /--
 World states for scalar scenarios.
@@ -177,7 +177,7 @@ World states for scalar scenarios.
 inductive ScalarWorld where
   | all     -- All passed
   | someNot -- Some but not all passed
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /--
 Utterances for some-or-all ignorance implicatures.
@@ -186,7 +186,7 @@ inductive SomeOrAllUtt where
   | all_
   | some_
   | someOrAll
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- Theorems
 

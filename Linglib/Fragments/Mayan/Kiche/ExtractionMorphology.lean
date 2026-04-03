@@ -47,7 +47,7 @@ inductive ExtractedArgType where
   | obliqueInstrumental  -- 'with what'
   | subject              -- 'who' (agent — triggers Agent Focus, not *wi*)
   | object               -- 'what' (patient)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this argument type an oblique? -/
 def ExtractedArgType.isOblique : ExtractedArgType → Bool
@@ -170,7 +170,7 @@ inductive KicheEmbeddedClauseType where
   | cp
   /-- Reduced AspP without complementizer. -/
   | aspP
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this clause type have an overt complementizer? -/
 def KicheEmbeddedClauseType.hasComp : KicheEmbeddedClauseType → Bool

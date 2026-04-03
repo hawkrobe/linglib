@@ -68,7 +68,7 @@ inductive VoiceFlavor where
   | antipassive  -- Introduces agent with absolutive (not ergative) case; demotes object to oblique (@cite{scott-2023})
   | reflexive    -- [+θ, +D]: introduces agent, binds internal argument (Icelandic -st reflexive; @cite{wood-2015})
   | experiencer  -- [+θ, +D]: introduces experiencer external argument (@cite{wood-2015} subject-experiencer -st)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Voice Head Structure
@@ -89,7 +89,7 @@ structure VoiceHead where
   /-- Agree-relevant features on Voice (e.g., [uOblique] for Mam =(y)a').
       Default empty — most Voice heads carry no probe features. -/
   features : FeatureBundle := []
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this Voice head introduce a θ-role? -/
 def VoiceHead.assignsTheta (v : VoiceHead) : Bool :=
@@ -363,7 +363,7 @@ inductive ExternalArgSemantics where
   | thematicArgument
   | thematicExistential
   | expletive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The ±D / ±λx parametric decomposition of Voice heads.
 
@@ -386,7 +386,7 @@ structure VoiceParams where
   /-- Does Voice introduce semantic agentivity/causation?
       `none` = underspecified -/
   extArgSemantics : Option ExternalArgSemantics
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map each named VoiceFlavor to its position in the ±D / ±λx
     parameter space.

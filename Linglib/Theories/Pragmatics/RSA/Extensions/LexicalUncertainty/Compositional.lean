@@ -159,14 +159,14 @@ Worlds for a 3-point scale (one, two, three).
 -/
 inductive ThreePointWorld where
   | one | two | three
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /--
 Atomic utterances for numerals.
 -/
 inductive NumeralAtom where
   | one_ | two_ | three_
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /--
 Base semantics for numerals: lower-bound (at-least) reading.

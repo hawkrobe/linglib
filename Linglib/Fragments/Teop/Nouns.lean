@@ -28,7 +28,7 @@ open Morphology.DM
 inductive Gender where
   | gI   -- article *a/ra*; animates
   | gII  -- article *o/ro*; inanimates
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A Teop noun with its gloss and gender assignment. -/
 structure Noun where
@@ -37,7 +37,7 @@ structure Noun where
   gender : Gender
   /-- Body-part nouns can be iPossessed, switching to gender I. -/
   isBodyPart : Bool := false
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Gender I Nouns (@cite{adamson-2024} Table 1, left column)
@@ -104,7 +104,7 @@ structure ArticleCtx where
   gender : Gender
   plural : Bool
   proprial : Bool := false
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def articleForm : ArticleCtx → String
   | ⟨.gI,  _, true⟩      => "e"

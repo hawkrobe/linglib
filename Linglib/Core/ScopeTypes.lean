@@ -10,7 +10,7 @@ namespace ScopeTheory
 structure ScopeReading where
   /-- Identifiers for scope-taking elements, in scope order (widest first) -/
   ordering : List String
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The surface scope reading (linear order = scope order) -/
 def ScopeReading.surface (elements : List String) : ScopeReading :=
@@ -69,7 +69,7 @@ inductive BinaryScopeAvailability where
   | surfaceOnly   -- Only scopeTaker1 > scopeTaker2
   | inverseOnly   -- Only scopeTaker2 > scopeTaker1
   | ambiguous     -- Both readings available
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Convert to general AvailableScopes -/
 def BinaryScopeAvailability.toAvailableScopes

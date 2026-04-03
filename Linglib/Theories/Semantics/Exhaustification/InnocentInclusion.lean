@@ -58,7 +58,7 @@ inductive FCWorld where
   | onlyB : FCWorld         -- Only b permitted
   | both : FCWorld          -- Both jointly permitted (◇(a ∧ b))
   | separatelyAB : FCWorld  -- Each individually permitted, not jointly (◇a ∧ ◇b ∧ ¬◇(a∧b))
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Proposition: a is permitted -/
 def permA : Prop' FCWorld
@@ -441,7 +441,7 @@ inductive DisjWorld where
   | onlyA : DisjWorld
   | onlyB : DisjWorld
   | both : DisjWorld
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Proposition a -/
 def propA : Prop' DisjWorld

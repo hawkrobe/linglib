@@ -57,7 +57,7 @@ inductive CaseSource where
   | lexical    -- Assigned by a specific head (P, inherent V case)
   | dependent  -- Assigned by structural configuration (@cite{baker-2015})
   | unmarked   -- Default when no other case applies
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Language Typology
@@ -72,7 +72,7 @@ inductive CaseLanguageType where
   | accusative  -- Japanese, English, Romance, ...
   | ergative    -- Basque, Hindi (split), ...
   | tripartite  -- Nez Perce (@cite{deal-2010}), Warlpiri, ...
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: NP in a Spell-Out Domain
@@ -88,7 +88,7 @@ structure NPInDomain where
   label : String
   /-- Lexical case pre-assigned by a P or V head (e.g., ABL from *kara*) -/
   lexicalCase : Option CaseVal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 4: Case Assignment Result
@@ -99,7 +99,7 @@ structure CasedNP where
   label : String
   case : CaseVal
   source : CaseSource
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Look up the assigned case for an NP by label. -/
 def getCaseOf (label : String) (results : List CasedNP) : Option CaseVal :=

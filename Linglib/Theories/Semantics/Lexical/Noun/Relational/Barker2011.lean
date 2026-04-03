@@ -26,7 +26,7 @@ inductive SemType where
   | pred1  -- Property: E → S → Bool
   | pred2  -- Relation: E → E → S → Bool
   | entity -- Individual: E
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 
 /-- Barker's π (Relationalizer): λP.λx.λy. P(y) ∧ R(x,y) -/
@@ -90,7 +90,7 @@ inductive InterpretationSource where
   | lexicalRelation   -- Noun is lexically relational (brother, author)
   | appliedPi         -- π was applied (possessive/demonstrative)
   | noRelation        -- No relation available (bare sortal)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 def canFillRelatum : InterpretationSource → Bool
   | .lexicalRelation => true   -- Lexical slot
@@ -122,7 +122,7 @@ inductive PossessionRelationType where
   | control
   /-- Pragmatic: any contextually salient relation -/
   | pragmatic
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Lexical possession (relational noun) vs pragmatic possession (sortal noun). -/
 def relationSource (isNounRelational : Bool) : String :=
@@ -185,7 +185,7 @@ inductive NominalInterpType where
   | pred1
   /-- Pred2: Has relatum slot (relational or π-shifted) -/
   | pred2
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Does this interpretation type have a relatum slot? -/
 def NominalInterpType.hasRelatumSlot : NominalInterpType → Bool

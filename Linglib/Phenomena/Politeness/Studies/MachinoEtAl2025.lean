@@ -43,13 +43,13 @@ inductive Modifier where
   | quite      -- ambiguous: downtoner (BrE) or amplifier (AmE)
   | very       -- strong amplifier
   | extremely  -- maximal amplifier
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Cultural variety -/
 inductive Culture where
   | americanEnglish  -- AmE
   | britishEnglish   -- BrE
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Strength Hierarchy

@@ -34,7 +34,7 @@ open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping
 inductive Gender where
   | masc  -- Masculine
   | fem   -- Feminine
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Noun Entry
@@ -84,7 +84,7 @@ inductive Determiner where
   -- Partitive (di + definite article)
   | del | dello | della   -- Singular partitive (mass)
   | dei | degli | delle   -- Plural partitive
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 5: NP Structure

@@ -24,7 +24,7 @@ inductive DerivationType where
   | directApp    -- Standard application: surface scope only
   | typeRaised   -- Type-raising: enables scope flexibility
   | composed     -- Composition: enables scope inversion
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Analyze derivation to determine its type. -/
 def analyzeDerivation : DerivStep → DerivationType

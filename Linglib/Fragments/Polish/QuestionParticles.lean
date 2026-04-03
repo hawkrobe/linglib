@@ -34,7 +34,7 @@ structure QParticleEntry where
   whOk : Bool
   requiresEvidentialBias : Bool
   requiresEpistemicBias : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- czy — obligatory clause-initial PQ particle (@cite{simik-2024} ex. 30).
 Verb-initial PQs possible but unacceptable in quiz scenarios. -/

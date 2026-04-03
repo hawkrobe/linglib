@@ -317,7 +317,7 @@ inductive EFCIType where
   | irgendein
   /-- Partial exhaustification available (e.g., Farsi yek-i) -/
   | yeki
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- EFCI typology data -/
 structure EFCITypologyDatum where

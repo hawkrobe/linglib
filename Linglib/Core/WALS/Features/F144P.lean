@@ -18,7 +18,7 @@ inductive NegsovOrder where
   | optdoubleneg  -- OptDoubleNeg (1 languages)
   | onlywithanotherneg  -- OnlyWithAnotherNeg (8 languages)
   | noNegsov  -- No NegSOV (381 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144P dataset (408 languages). -/
 def allData : List (Datapoint NegsovOrder) :=

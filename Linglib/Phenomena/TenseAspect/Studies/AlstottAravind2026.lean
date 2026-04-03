@@ -52,21 +52,21 @@ inductive Experiment where
   | exp2   -- before-clause + accomplishment (completive)
   | exp3   -- within-modifier + subject-experiencer (inchoative)
   | exp4   -- after-clause + subject-experiencer (inchoative)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Types of aspectual coercion tested across experiments. -/
 inductive CoercionType where
   | inchoative   -- INCHOAT: atelic → onset point (GLB)
   | completive   -- COMPLET: telic → telos point (LUB)
   | complement   -- Complement coercion (sanity check)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Spillover region where an effect was measured. -/
 inductive SpilloverRegion where
   | verb      -- at the critical verb
   | verbPlus1 -- one word after verb
   | verbPlus2 -- two words after verb
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Result from a self-paced reading experiment. -/
 structure ExperimentResult where

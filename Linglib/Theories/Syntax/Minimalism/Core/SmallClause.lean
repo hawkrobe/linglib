@@ -40,7 +40,7 @@ inductive SCPredCategory where
   | A   -- Adjective (resultative: "hammer the metal flat")
   | V   -- Verb (causative: "make the child laugh")
   | N   -- Noun (copular/ECM: "consider John a fool")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map SC predicate categories to syntactic categories. -/
 def SCPredCategory.toCat : SCPredCategory → Cat

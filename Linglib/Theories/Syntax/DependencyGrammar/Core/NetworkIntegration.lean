@@ -38,7 +38,7 @@ inductive WGNode where
   | wordClass (name : String)
   | depRel (rel : UD.DepRel)
   | dir (d : Dir)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Relation labels for property links in a WG network.
 In @cite{hudson-1984}'s terms, these are the named relations that connect
@@ -46,7 +46,7 @@ word-class nodes to their syntactic properties. -/
 inductive WGRel where
   | argSlot (idx : Nat)     -- the idx-th argument slot (target = depRel)
   | slotDir (idx : Nat)     -- direction for slot idx (target = Dir)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Building Networks

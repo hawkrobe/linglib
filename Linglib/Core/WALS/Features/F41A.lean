@@ -19,7 +19,7 @@ inductive DistanceContrastsInDemonstratives where
   | threeWayContrast  -- Three-way contrast (88 languages)
   | fourWayContrast  -- Four-way contrast (9 languages)
   | fiveWayContrast  -- Five (or more)-way contrast (4 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 41A dataset (234 languages). -/
 def allData : List (Datapoint DistanceContrastsInDemonstratives) :=

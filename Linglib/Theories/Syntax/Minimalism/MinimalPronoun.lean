@@ -65,7 +65,7 @@ inductive BVAContext where
   | boundVariable
   /-- Free / referential (unbound) -/
   | free
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Vocabulary Items and the Elsewhere Condition
@@ -131,7 +131,7 @@ inductive PronForm where
   | pronoun
   /-- Reflexive anaphor (English *-self*, SMPM *mí* + pronoun) -/
   | reflexive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: Obligatory Control Signature
@@ -156,7 +156,7 @@ structure OCSignature where
   controllerCodependent : Bool
   /-- (b): Embedded subject interpreted as bound variable -/
   boundVariable : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derived: VPE allows only sloppy, not strict readings (from codependency:
     controller must be local codependent of elided clause). -/

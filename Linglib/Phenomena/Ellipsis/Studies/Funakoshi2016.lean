@@ -38,7 +38,7 @@ structure EllipsisDatum where
   available : Bool
   /-- Example sentence -/
   sentence : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Adjunct elision is blocked when another VP-internal element is overt. -/
 def adjunct_blocked : EllipsisDatum where

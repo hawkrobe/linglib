@@ -28,7 +28,7 @@ inductive CausalRelation
   | ACausesC    -- A → C
   | CCausesA    -- C → A
   | Independent -- A ⊥ C
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 instance : ToString CausalRelation where
   toString
@@ -47,7 +47,7 @@ structure NoisyOR where
   background : ℚ
   /-- Causal power: P(C | A) - P(C | ¬A) -/
   power : ℚ
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 namespace NoisyOR
 
@@ -86,7 +86,7 @@ structure WorldState where
   pC : ℚ
   /-- Joint probability P(A ∧ C) -/
   pAC : ℚ
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 namespace WorldState
 

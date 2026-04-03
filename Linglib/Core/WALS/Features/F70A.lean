@@ -19,7 +19,7 @@ inductive MorphologicalImperative where
   | secondPlural  -- Second plural (2 languages)
   | secondPersonNumberNeutral  -- Second person number-neutral (89 languages)
   | noSecondPersonImperatives  -- No second-person imperatives (122 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint MorphologicalImperative) :=
   [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .secondSingularAndSecondPlural }

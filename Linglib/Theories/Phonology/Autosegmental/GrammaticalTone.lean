@@ -73,7 +73,7 @@ open Theories.Phonology.Autosegmental.RegisterTier (ToneFeature)
 structure TBU (S : Type) where
   seg  : S
   tone : ToneFeature
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Tonal Values (@cite{rolle-2018} §2.1.1, Table 1)
@@ -89,7 +89,7 @@ structure TBU (S : Type) where
 inductive TonalValue where
   | valued    -- TBU τ is linked to a toneme T
   | unvalued  -- TBU τ has no linked toneme (free TBU)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Tonological Operations (@cite{rolle-2018} §2.1.3, Table 3)
@@ -127,7 +127,7 @@ inductive GTOperation where
   /-- A tone spreads from the sponsor to one or more TBUs of the
       target (e.g., H spreading in Bantu). -/
   | toneSpreading
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 4: GT Dominance Effects (@cite{rolle-2018} Ch 3, Defs 1–4)
@@ -184,7 +184,7 @@ inductive GTDominance where
       Examples: Hausa referential -ⁿn (@cite{newman-1986}),
       Igbo associative construction (@cite{hyman-schuh-1974}). -/
   | neutral
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Dominant GT neutralizes the lexical tonal contrast of the target:
     whether the target is valued or unvalued, the output is the same.
@@ -213,7 +213,7 @@ inductive GTLevel where
   /-- A phrasal construction triggers tonal modification of its
       complement. -/
   | phrase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 6: Exponence Types (@cite{rolle-2018} §2.2.1, Defs 16–17)
@@ -231,7 +231,7 @@ inductive ExponenceType where
       category is exponed by segmental units AND co-occurring prosodic
       units separately. -/
   | auxiliary
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 7: Valuation Window and Grammatical Tone Specification
@@ -258,7 +258,7 @@ inductive ValuationWindow where
       subtractive-dominant GT with local scope, e.g., Japanese
       genitive -no (@cite{kawahara-2015}). -/
   | local
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A grammatical tone specification following @cite{rolle-2018}.
 
@@ -372,7 +372,7 @@ inductive IndomitabilityType where
       resist (e.g., monomoraic targets with Japanese -no genitive —
       @cite{kawahara-2015}). -/
   | phonological
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 11: Repairs in GT Application (@cite{rolle-2018} §3.3.3)
@@ -392,7 +392,7 @@ inductive GTRepair where
       the valuation window (but not deleted), and may redock outside
       the window or remain floating. -/
   | tonalDefenestration
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 12: Verification

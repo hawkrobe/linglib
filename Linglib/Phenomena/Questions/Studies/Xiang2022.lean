@@ -362,7 +362,7 @@ open Theories.Semantics.Questions.Exhaustivity
 /-- Three worlds: w0 is the utterance world, w1 and w2 are accessible. -/
 inductive XW where
   | w0 | w1 | w2
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype XW where
   elems := {.w0, .w1, .w2}
@@ -371,7 +371,7 @@ instance : Fintype XW where
 /-- Two individuals who might chair the committee. -/
 inductive XP where
   | a | b
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype XP where
   elems := {.a, .b}

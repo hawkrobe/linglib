@@ -35,7 +35,7 @@ structure QParticleEntry where
   whOk : Bool
   requiresEvidentialBias : Bool
   requiresEpistemicBias : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- da li — default PQ particle combination (@cite{simik-2024} ex. 31).
 Particle + verb movement. Neutral baseline. -/

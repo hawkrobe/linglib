@@ -134,7 +134,7 @@ Two types of inferences from disjunction.
 inductive DisjunctionInference where
   | exclusivity  -- "not both" (from ⟨or, and⟩ scale)
   | ignorance    -- "speaker doesn't know which"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Result of analyzing a disjunctive utterance.

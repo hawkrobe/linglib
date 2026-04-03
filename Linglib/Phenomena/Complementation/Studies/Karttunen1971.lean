@@ -78,7 +78,7 @@ structure KarttunenClass where
   isNecessary : Bool
   /-- Positive (*manage*: entails S) vs negative (*fail*: entails ¬S). -/
   polarity : ImplicativeBuilder
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ── Instances ──
 

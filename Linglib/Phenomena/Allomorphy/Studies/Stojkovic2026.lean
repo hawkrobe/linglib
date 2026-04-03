@@ -86,7 +86,7 @@ inductive SlavicLang where
   | lemkoRusyn
   | bulgarian
   | macedonian
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The three surface-form groups for the VBLZ in the infinitive stem. -/
 inductive VBLZGroup where
@@ -96,7 +96,7 @@ inductive VBLZGroup where
   | ovEvGroup
   /-- Always [uv], regardless of preceding consonant. -/
   | uvGroup
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Surface VC forms attested in the infinitive stem for each group. -/
 def VBLZGroup.forms : VBLZGroup → List String
@@ -115,7 +115,7 @@ structure VBLZDatum where
   lang : SlavicLang
   infStem : String
   presStem : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def polishVBLZ : VBLZDatum := ⟨.polish, "ov", "u"⟩
 def czechVBLZ : VBLZDatum := ⟨.czech, "ov", "u"⟩
@@ -162,7 +162,7 @@ inductive VBLZCandidate where
   | iv
   /-- [u.a]: monophthongisation, unspecified slot deleted, hiatus with /-a-/. -/
   | uHiatus
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All candidates. -/
 def allCandidates : List VBLZCandidate := [.ov, .ev, .uv, .iv, .uHiatus]

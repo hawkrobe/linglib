@@ -77,7 +77,7 @@ inductive InfinitivalTenseClass where
       Labeled "Nonpropositional; no attitude holder" in Table 4.
       Subsumes both restructuring and raising infinitives. -/
   | restructuring
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -101,7 +101,7 @@ inductive ComplementSize where
   /-- vP/AspP: bare aspectual projection, no independent tense or modal.
       Selected by restructuring/raising verbs (*try*, *begin*, *seem*). -/
   | vP_AspP
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map each infinitival tense class to its predicted complement size. -/
 def classToSize : InfinitivalTenseClass → ComplementSize
@@ -133,7 +133,7 @@ structure WollDecomposition where
   tense : GramTense
   /-- Whether woll is present (provides future orientation) -/
   hasWoll : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- *will* = present tense + woll. -/
 def will_ : WollDecomposition where
@@ -192,7 +192,7 @@ inductive TemporalOrientation where
   | simultaneous
   /-- Complement event's temporal location depends entirely on matrix -/
   | dependent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map each infinitival tense class to its predicted temporal orientation. -/
 def classOrientation : InfinitivalTenseClass → TemporalOrientation
@@ -229,7 +229,7 @@ inductive EpisodicAvailability where
       Example: "Leo seemed to sing in the shower yesterday" — OK with
       past matrix; "*Leo seems to sing in the shower right now" — bad. -/
   | matrixDependent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map each infinitival tense class to its episodic interpretation
     prediction (Table 3, p.432). -/

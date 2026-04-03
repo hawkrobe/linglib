@@ -78,7 +78,7 @@ inductive DenialType where
       (29b): "It's not POSSIBLE — it's NECESSARY."
       (14): "That is not a steed — it's a horse." -/
   | implicature
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map denial type to the content layer it targets. -/
 def DenialType.targetLayer : DenialType → ContentLayer

@@ -18,7 +18,7 @@ inductive NumeralNounOrder where
   | nounNumeral  -- Noun-Numeral (608 languages)
   | noDominantOrder  -- No dominant order (65 languages)
   | numeralOnlyModifiesVerb  -- Numeral only modifies verb (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint NumeralNounOrder) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .numeralNoun }

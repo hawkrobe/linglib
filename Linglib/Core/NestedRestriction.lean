@@ -91,7 +91,7 @@ end Theorems
 inductive TwoLevel where
   | restricted
   | full
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype TwoLevel where
   elems := {.restricted, .full}

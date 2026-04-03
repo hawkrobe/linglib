@@ -86,7 +86,7 @@ inductive ThetaRole where
   | source      -- Origin (John came from Paris)
   | instrument  -- Means (John opened the door with a key)
   | stimulus    -- Cause of experience (The noise frightened John)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 2. EntailmentProfile → ThetaRole (canonical direction)
@@ -280,7 +280,7 @@ inductive ArgPosition where
   | indirectObject  -- Indirect object / dative
   | oblique         -- Oblique / PP complement
   | applied         -- Applied argument (@cite{pylkknen-2008})
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 7. LinkingTheory

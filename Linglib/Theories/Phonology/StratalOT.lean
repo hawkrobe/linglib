@@ -60,7 +60,7 @@ inductive Stratum where
   | stem
   | word
   | phrase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Strata are linearly ordered: stem < word < phrase.
     This ordering reflects the direction of morphological derivation
@@ -162,7 +162,7 @@ def StratalDerivation.surface {S W P : Type}
 structure ConstraintId where
   name : String
   family : ConstraintFamily
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Extract the identity from a named constraint. -/
 def NamedConstraint.toId {C : Type} (nc : NamedConstraint C) : ConstraintId :=

@@ -111,7 +111,7 @@ open Real (rpow rpow_nonneg)
     mirrors `Weather` but a distinct type for `RSAConfig`. -/
 inductive Utterance where
   | terrible | bad | ok | good | amazing
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype Utterance where
   elems := {.terrible, .bad, .ok, .good, .amazing}
@@ -131,7 +131,7 @@ def Utterance.toWeather : Utterance → Weather
 inductive Strategy where
   | literal
   | ironic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype Strategy where
   elems := {.literal, .ironic}

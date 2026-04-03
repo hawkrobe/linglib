@@ -16,7 +16,7 @@ namespace Core.WALS.F137B
 inductive MInSecondPersonSingular where
   | noMInSecondPersonSingular  -- No m in second person singular (152 languages)
   | mInSecondPersonSingular  -- m in second person singular (78 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 137B dataset (230 languages). -/
 def allData : List (Datapoint MInSecondPersonSingular) :=

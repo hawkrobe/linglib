@@ -30,7 +30,7 @@ inductive PitchAccent where
   | H_star      -- H*: rheme accent (sharp rise to peak)
   | L_plus_H_star  -- L+H*: theme accent (rise from distinctive low)
   | null        -- No accent (background)
-  deriving Repr, DecidableEq, Inhabited, BEq
+  deriving Repr, DecidableEq, Inhabited
 
 -- Boundary Tones
 
@@ -46,7 +46,7 @@ inductive BoundaryTone where
   | L      -- Low phrase boundary (intermediate)
   | LH_pct -- Rising boundary (LH%) - continuation, theme
   | LL_pct -- Falling boundary (LL%) - finality, rheme
-  deriving Repr, DecidableEq, Inhabited, BEq
+  deriving Repr, DecidableEq, Inhabited
 
 -- Prosodic Hierarchy
 
@@ -61,7 +61,7 @@ inductive ProsodicLevel where
   | ω  -- prosodic word
   | φ  -- phonological phrase
   | ι  -- intonational phrase
-  deriving DecidableEq, Repr, BEq, Ord
+  deriving DecidableEq, Repr, Ord
 
 instance : LT ProsodicLevel where
   lt a b := a.ctorIdx < b.ctorIdx

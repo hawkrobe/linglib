@@ -165,7 +165,7 @@ inductive HebrewSOTChoice where
   | pastFormSimultaneous
   /-- Present morphology → genuine present (double-access) -/
   | presentFormDoubleAccess
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Both Hebrew forms are grammatical (optional SOT). -/
 theorem hebrew_both_available :

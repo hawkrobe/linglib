@@ -19,7 +19,7 @@ inductive GenderCount where
   | three  -- Three (26 languages)
   | four  -- Four (12 languages)
   | fiveOrMore  -- Five or more (24 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 30A dataset (257 languages). -/
 def allData : List (Datapoint GenderCount) :=

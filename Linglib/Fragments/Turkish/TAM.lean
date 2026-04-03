@@ -41,7 +41,7 @@ inductive TAMCategory where
   | conditional    -- hypothesis: -(y)sA
   | optative       -- wish/mild imperative: -(y)A
   | necessitative  -- obligation: -mAlI
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- TAM suffix entry with positive and negative forms. -/
 structure TAMEntry where
@@ -80,7 +80,7 @@ inductive CopulaSuffix where
   | pastCop         -- -DI: geliyordu 'was coming'
   | evidentialCop   -- -(y)mIş: geliyormuş 'was apparently coming'
   | conditionalCop  -- -(y)sA: geliyorsa 'if s/he is coming'
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § Verification

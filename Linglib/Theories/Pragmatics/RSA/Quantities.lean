@@ -23,7 +23,7 @@ inductive Utterance where
   | none_  -- "none of them"
   | some_  -- "some of them" (weak: ≥1)
   | all    -- "all of them"
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 instance : Fintype Utterance where
   elems := {.none_, .some_, .all}
@@ -64,7 +64,7 @@ inductive ExtUtterance where
   | some_  -- "some of them"
   | most   -- "most of them" (> half)
   | all    -- "all of them"
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 instance : Fintype ExtUtterance where
   elems := {.none_, .some_, .most, .all}

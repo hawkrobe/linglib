@@ -17,7 +17,7 @@ inductive SubjectVerbOrder where
   | sv  -- SV (1192 languages)
   | vs  -- VS (194 languages)
   | noDominantOrder  -- No dominant order (110 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint SubjectVerbOrder) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .sv }

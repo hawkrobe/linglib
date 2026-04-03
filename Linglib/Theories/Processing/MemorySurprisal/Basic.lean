@@ -137,7 +137,7 @@ structure MutualInfoProfile where
   name : String
   /-- I_t × 1000 for distances t = 1, 2, 3,... -/
   values : List Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Sum of I_t values (total predictive information × 1000). -/
 def MutualInfoProfile.totalInfo (p : MutualInfoProfile) : Nat :=
@@ -383,14 +383,14 @@ Values are stored as Nat × 1000 for decidable computation. -/
 structure TradeoffPoint where
   memoryBits1000 : Nat
   surprisal1000 : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A memory-surprisal trade-off curve for a language or baseline. -/
 structure TradeoffCurve where
   name : String
   /-- Points ordered by increasing memory (decreasing surprisal) -/
   points : List TradeoffPoint
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Approximate area under the trade-off curve via trapezoidal rule.
 

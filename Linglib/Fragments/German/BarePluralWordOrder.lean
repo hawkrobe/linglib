@@ -40,7 +40,7 @@ open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel)
 inductive BPSPosition where
   | leftOfJaDoch   -- Mittelfeld, left of particles (topic position)
   | rightOfJaDoch  -- Mittelfeld, right of particles (VP-internal)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A German BPS word order datum. -/
 structure JaDochDatum where

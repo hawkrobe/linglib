@@ -53,7 +53,7 @@ open Semantics.Montague (Model)
     conditions for all, some, some...not, none, and is excluded. -/
 inductive Region where
   | A | B | C | AB | AC | BC | ABC
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Region where
   elems := {.A, .B, .C, .AB, .AC, .BC, .ABC}
@@ -107,7 +107,7 @@ def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
 /-- Syllogistic quantifier: the four Aristotelian quantifiers. -/
 inductive SyllQuant where
   | all | some | someNot | no
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype SyllQuant where
   elems := {.all, .some, .someNot, .no}
@@ -122,7 +122,7 @@ structure Syllogism where
   order1AB : Bool
   q2 : SyllQuant
   order2BC : Bool
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- The 9 possible conclusions: 4 quantifiers × 2 term orders + NVC. -/
 inductive Conclusion where
@@ -131,7 +131,7 @@ inductive Conclusion where
   | someNotAC | someNotCA
   | noAC | noCA
   | nvc  -- "nothing follows" / no valid conclusion
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Conclusion where
   elems := {.allAC, .allCA, .someAC, .someCA,

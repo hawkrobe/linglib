@@ -32,7 +32,7 @@ open Theories.Pragmatics.Assertion.Krifka
 
 /-- Two-world model: it's raining or it's not. -/
 inductive Weather where | rain | noRain
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Proposition: it's raining. -/
 private def isRaining : Weather → Bool

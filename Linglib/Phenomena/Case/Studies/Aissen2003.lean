@@ -70,7 +70,7 @@ def interleavings {α : Type} : List α → List α → List (List α)
 structure Scale2Cand where
   high : Bool
   low : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def scale2Cands : List Scale2Cand :=
   [⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩]
@@ -133,7 +133,7 @@ structure AnimCand where
   hu : Bool
   an : Bool
   inan : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def animCands : List AnimCand :=
   [⟨true, true, true⟩, ⟨true, true, false⟩,
@@ -362,7 +362,7 @@ structure ProminentNP where
   lexicalCase : Option CaseVal
   animacy : AnimacyLevel
   definiteness : DefinitenessLevel
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Strip prominence, yielding the NP that the case algorithm sees. -/
 def ProminentNP.toNP (pnp : ProminentNP) : NPInDomain :=
@@ -376,7 +376,7 @@ def ProminentNP.toNP (pnp : ProminentNP) : NPInDomain :=
 structure TransClause where
   subject : ProminentNP
   object  : ProminentNP
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Run the dependent case algorithm on a transitive clause. -/
 def derivation (lang : CaseLanguageType) (tc : TransClause) : List CasedNP :=

@@ -45,7 +45,7 @@ inductive TigrinyaClauseType where
   | factive        -- kəmzi-: factive complement
   | negative       -- ʔay-...-n: negated clause
   | matrix         -- unmarked: root declarative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Clausal prefix entry

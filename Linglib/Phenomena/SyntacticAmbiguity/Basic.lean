@@ -58,7 +58,7 @@ inductive Disambiguation where
   | complementClause
   /-- Relative clause: *told [the woman that he'd risked his life for] to install ...* -/
   | relativeClause
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Referential context: whether the discourse makes the definite NP's
     referent uniquely identifiable without a modifier. -/
@@ -71,7 +71,7 @@ inductive ReferentialContext where
       a bare definite *the woman* violates uniqueness, so an RC
       modifier is pragmatically licensed. -/
   | nonUniqueReferents
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether the referential context supports the disambiguation type.
     Non-unique referents support RC (the modifier is needed to identify
@@ -85,7 +85,7 @@ def contextSupports : ReferentialContext → Disambiguation → Bool
 structure Condition where
   disambiguation : Disambiguation
   context : ReferentialContext
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether disambiguation and context match (context supports the
     actual disambiguation). -/

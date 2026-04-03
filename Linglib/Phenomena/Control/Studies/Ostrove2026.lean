@@ -450,7 +450,7 @@ structure ProDropProfile where
   language : String
   allowsProDrop : Bool
   hasOvertPRO : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The implicational universal: overt PRO → non-*pro*-drop. -/
 def satisfiesImplicational (p : ProDropProfile) : Bool :=

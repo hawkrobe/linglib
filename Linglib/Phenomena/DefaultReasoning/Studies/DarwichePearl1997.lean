@@ -57,7 +57,7 @@ open Core.Order (NormalityOrder)
 
 /-- Four-element world type for counterexamples. -/
 inductive W4 where | w1 | w2 | w3 | w4
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 instance : Fintype W4 :=
   ⟨⟨[W4.w1, W4.w2, W4.w3, W4.w4], by decide⟩,

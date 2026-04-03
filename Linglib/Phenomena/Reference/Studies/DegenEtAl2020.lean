@@ -116,7 +116,7 @@ inductive World where
   | bigRed
   /-- Small blue pin (TARGET) -/
   | smallBlue
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Referring expressions available to the speaker. Each is an adjective
     combination followed by the implicit head noun "pin":
@@ -137,7 +137,7 @@ inductive Utterance where
   | bigRed
   /-- "small blue pin" — size + color (OVERMODIFIED) -/
   | smallBlue
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- The target object in this scene. -/
 abbrev target : World := .smallBlue
@@ -733,7 +733,7 @@ inductive TaxonomicLevel where
   | basic
   /-- Superordinate: "animal", "furniture", "food" -/
   | superordinate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Informativeness conditions for nominal reference (§5.1). The referent
     is always uniquely identifiable — the conditions vary in what level
@@ -745,7 +745,7 @@ inductive NominalCondition where
   | basicSufficient
   /-- Superordinate sufficient (e.g., one animal among non-animals) -/
   | superSufficient
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §21. Experiment 3: Nominal Choice (§5)
@@ -865,7 +865,7 @@ inductive NomWorld where
   | cat
   /-- Distractor: a bird -/
   | bird
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Noun utterances at three taxonomic levels. -/
 inductive NomUtterance where
@@ -875,7 +875,7 @@ inductive NomUtterance where
   | basic
   /-- Superordinate: "animal" (applies to all objects equally) -/
   | super
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 -- ============================================================================
 -- §24. Typicality Meaning Function

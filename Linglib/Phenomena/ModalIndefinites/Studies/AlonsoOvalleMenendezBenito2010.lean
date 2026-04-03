@@ -149,14 +149,14 @@ theorem algún_un_same_assertion {Entity : Type*} [BEq Entity]
     Scenario (15): María, Juan, and Pedro are playing hide-and-seek.
     Pedro believes Juan is inside but not in the bathroom or kitchen. -/
 inductive Room where | bedroom | livingRoom | bathroom
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Epistemic worlds: which room Juan is in. -/
 inductive HideWorld where
   | inBedroom
   | inLivingRoom
   | inBathroom
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 private def allRooms : List Room := [.bedroom, .livingRoom, .bathroom]
 private def allHW : List HideWorld := [.inBedroom, .inLivingRoom, .inBathroom]
@@ -461,7 +461,7 @@ theorem fc_strictly_stronger :
 inductive DomainConstraint where
   | widening
   | antiSingleton
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The predicted modal effect from each domain constraint type. -/
 def DomainConstraint.modalEffect : DomainConstraint → String
@@ -528,7 +528,7 @@ theorem fewer_competitors :
 inductive UniquenessParam where
   | uniqueness
   | nonUniqueness
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A cell in the 2010 typology (Table 1). -/
 structure TypologyCell where

@@ -105,7 +105,7 @@ end Tense
 inductive MassCount where
   | mass   -- mass nouns: *mold*, *pollen*, *milk*, *gold*
   | count  -- count nouns: *spider*, *pollen grain*, *dog*, *cup*
-  deriving Repr, DecidableEq, BEq, Hashable
+  deriving Repr, DecidableEq, Hashable
 
 /-- Transitivity / argument structure. No direct UD equivalent. -/
 inductive Valence where
@@ -124,7 +124,7 @@ inductive Valence where
 inductive HeadDirection where
   | headInitial  -- head precedes complement (VO, preposition, head-initial FocP, ...)
   | headFinal    -- head follows complement (OV, postposition, head-final FocP, ...)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Feature Bundle and Word

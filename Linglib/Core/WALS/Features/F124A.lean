@@ -19,7 +19,7 @@ inductive WantComplementSubject where
   | bothConstructionTypesExist  -- Both construction types exist (14 languages)
   | desiderativeVerbalAffix  -- Desiderative verbal affix (45 languages)
   | desiderativeParticle  -- Desiderative particle (8 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 124A dataset (283 languages). -/
 def allData : List (Datapoint WantComplementSubject) :=

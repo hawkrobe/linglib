@@ -41,7 +41,7 @@ namespace Minimalism
 structure CatFeatures where
   plusV : Bool   -- [+V] = verbal/adjectival
   plusN : Bool   -- [+N] = nominal/adjectival
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Compute @cite{chomsky-1970}'s [±V, ±N] features from `Cat`.
     Functional categories inherit features from their lexical anchor:
@@ -164,7 +164,7 @@ inductive CatFamily where
   | nominal       -- N, n, Num, Q, D     [-V, +N]
   | adjectival    -- A                   [+V, +N]
   | adpositional  -- P                   [-V, -N]
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Map a category to its family.
     This determines which EP it can participate. -/
@@ -205,7 +205,7 @@ def catFamily : Cat → CatFamily
 structure CategorialFeatures where
   hasN : Bool   -- [N] = referentiality
   hasV : Bool   -- [V] = temporal predication
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Map a category to @cite{panagiotidis-2015}'s categorial features.
 
@@ -547,7 +547,7 @@ theorem nominal_functional_heads :
 structure ComplementSize where
   /-- The highest functional head in the complement -/
   highestHead : Cat
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The F-level of a complement (derived from `fValue`). -/
 def ComplementSize.fLevel (cs : ComplementSize) : Nat :=
@@ -625,7 +625,7 @@ inductive ForceHead where
   | Imp    -- imperatives (ImpP)
   | Fin    -- embedded clauses (FinP = V-to-I)
   | Wh     -- embedded questions (WhP)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Whether a ForceHead is a root-clause head (in the Force domain)
     or a lower/embedded head. -/
@@ -682,7 +682,7 @@ def V2Profile.differOnExactlyOne (p q : V2Profile) (fh : ForceHead) : Prop :=
 inductive WhElementStatus where
   | head    -- monosyllabic, occupies head position (Int°)
   | phrase  -- polysyllabic, occupies specifier position (SpecIntP)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Determine wh-element status from syllable count.
     Monosyllabic → head; polysyllabic → phrase. -/

@@ -32,7 +32,7 @@ inductive CliticCase where
   | accusative
   | dative
   | reflexive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Clitic Entries

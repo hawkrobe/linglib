@@ -19,7 +19,7 @@ inductive PredicativePossession where
   | topic  -- Topic (48 languages)
   | conjunctional  -- Conjunctional (59 languages)
   | have  -- 'Have' (63 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 117A dataset (240 languages). -/
 def allData : List (Datapoint PredicativePossession) :=

@@ -418,7 +418,7 @@ theorem noun_class_scope_agreement :
     - Verbal classifiers interact with tense/aspect -/
 inductive GrammaticalCategory where
   | definiteness | number | case_ | tenseAspect | possession
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether a classifier type typically interacts with a grammatical category
     (Aikhenvald Table 10.17). -/
@@ -505,7 +505,7 @@ inductive ClassifierStatus where
   | absent               -- no numeral classifiers (e.g., English, Spanish, Arabic)
   | optional             -- classifiers available but not required (e.g., Turkish, Bengali)
   | obligatory           -- classifiers required with numeral+noun (e.g., Mandarin, Japanese, Thai)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- WALS Chapter 55 distribution: language counts per classifier status.
     Total: 400 languages. -/

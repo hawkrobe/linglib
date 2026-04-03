@@ -30,7 +30,7 @@ open Semantics.Lexical.Plural.Distributivity (DistMaxClass)
 inductive SyntacticUse where
   | dpInternal   -- "jeder Hund" (every dog)
   | distance     -- "Die Hunde haben jeweils/jeder..."
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A German distributive item with its properties -/
 structure LexicalItem where

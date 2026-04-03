@@ -49,7 +49,7 @@ inductive TemporalOrientation where
   | present
   /-- past: evaluated at a past event time -/
   | past
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A time type for the orientation examples. -/
 inductive OTime where
@@ -57,7 +57,7 @@ inductive OTime where
   | now
   /-- Past event time -/
   | then_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 -- ════════════════════════════════════════════════════
@@ -70,13 +70,13 @@ inductive OrientationEvent where
   | speech
   /-- The VP event (e₂) -/
   | vpEvent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Individuals: speaker and the described event's agent. -/
 inductive OrientationPerson where
   | speaker
   | agent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Event projection for the temporal orientation scenario.
 Speech events project to (speaker, now); VP events project to (agent, then). -/
@@ -219,7 +219,7 @@ structure ActualityDatum where
   complementEntailed : Bool
   /-- Example sentence gloss -/
   gloss : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- Greek: boro 'can/be able'

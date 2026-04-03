@@ -46,7 +46,7 @@ structure AccSidePattern where
   sMarker : MarkerSet
   /-- Marker set cross-referencing O (transitive object). -/
   oMarker : MarkerSet
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Kaqchikel-type accusative alignment: S/A = set B (ABS), O = set A (ERG/GEN). -/
 def kaqchikelPattern : AccSidePattern :=
@@ -86,7 +86,7 @@ structure MayanExtractionDatum where
   absPosition : ABSPosition
   /-- Does the language ban A-bar extraction of transitive subjects? -/
   hasExtractionAsymmetry : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Tada's Generalization data (table (19) of @cite{coon-mateo-pedro-preminger-2014},
     extending @cite{tada-1993}).

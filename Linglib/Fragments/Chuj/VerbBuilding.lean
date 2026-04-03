@@ -123,7 +123,7 @@ inductive CRootClass where
   | itv  -- intransitive roots: take null v in intransitive stems
   | pos  -- positional roots: require -w for verbalization
   | nom  -- nominal roots: require -w for verbalization
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map an abstract Root to the distributional CRootClass.
     The bridge is determined by (arity × denotationType). -/
@@ -152,7 +152,7 @@ inductive ChujVoiceSuffix where
   | ch    -- -ch: passive with implicit agent
   | j     -- -j: agentless passive
   | w     -- -w: antipassive / verbalizer
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The morphological form of each suffix. -/
 def ChujVoiceSuffix.form : ChujVoiceSuffix → String
@@ -171,7 +171,7 @@ inductive ExtArgStatus where
   | overt_abs   -- overt, absolutive case (intransitive subject)
   | implicit    -- semantically present but not syntactically realized
   | absent      -- no external argument at all
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- External argument status for each voice suffix (ex. (78)). -/
 def ChujVoiceSuffix.extArgStatus : ChujVoiceSuffix → ExtArgStatus
@@ -230,7 +230,7 @@ def formsBareTransitive (rc : CRootClass) : Bool :=
 inductive AntipassiveType where
   | absolutive      -- theme is implicit (suppressed)
   | incorporation   -- theme is overt bare NP (incorporated)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- -aj on √TV stems in passive/agentless contexts. -/
 def ajOnPassive (vs : ChujVoiceSuffix) : Bool :=

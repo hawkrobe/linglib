@@ -70,7 +70,7 @@ inductive LogophoricRole where
   | self
   /-- The individual who makes the report. Entails both self and pivot. -/
   | source
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Logophoric roles form an implicational hierarchy.
     Rank: source (2) > self (1) > pivot (0). -/

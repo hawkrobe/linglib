@@ -17,7 +17,7 @@ inductive PredicativeAdjectiveType where
   | verbalEncoding  -- Verbal encoding (151 languages)
   | nonverbalEncoding  -- Nonverbal encoding (132 languages)
   | mixed  -- Mixed (103 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 118A dataset (386 languages). -/
 def allData : List (Datapoint PredicativeAdjectiveType) :=

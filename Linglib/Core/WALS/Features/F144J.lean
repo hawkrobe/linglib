@@ -21,7 +21,7 @@ inductive SvnegoOrder where
   | wordOnlywithanotherneg  -- Word&OnlyWithAnotherNeg (15 languages)
   | suffixOnlywithanotherneg  -- Suffix&OnlyWithAnotherNeg (17 languages)
   | noSvnego  -- No SVNegO (373 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144J dataset (446 languages). -/
 def allData : List (Datapoint SvnegoOrder) :=

@@ -47,7 +47,7 @@ inductive GramStage where
   | affix
   /-- No overt marker (grammaticalization endpoint). -/
   | zero
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Boundedness increases monotonically along the cline. -/
 def GramStage.boundedness : GramStage → Nat
@@ -106,6 +106,6 @@ inductive AVCSource where
   /-- Postural verb: 'sit'/'stand'/'lie' grammaticalize into
       progressive/habitual aspect markers. -/
   | posturalVerb
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 end Diachronic.Grammaticalization

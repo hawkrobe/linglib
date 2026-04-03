@@ -17,7 +17,7 @@ inductive UtteranceComplementType where
   | balanced  -- Balanced (114 languages)
   | balancedDeranked  -- Balanced/deranked (18 languages)
   | deranked  -- Deranked (11 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 128A dataset (143 languages). -/
 def allData : List (Datapoint UtteranceComplementType) :=

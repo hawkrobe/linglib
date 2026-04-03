@@ -91,7 +91,7 @@ open Phenomena.Case.Studies.Aissen2003
 inductive CaseForm where
   | zero  : CaseForm   -- Ø (unmarked)
   | overt : CaseForm   -- overtly case-marked (ERG, ACC, etc.)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Argument strength: prominence relative to role prototypicality.
 
@@ -105,7 +105,7 @@ inductive CaseForm where
 inductive Strength where
   | strong : Strength   -- prominent
   | weak   : Strength   -- non-prominent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All form–meaning pairs for asymmetrical marking. -/
 def allPairs : List (CaseForm × Strength) :=
@@ -269,7 +269,7 @@ def extractForm (pairs : List (CaseForm × Strength)) (s : Strength) : CaseForm 
 structure MarkingPattern where
   strongForm : CaseForm
   weakForm   : CaseForm
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive the marking pattern from a ranking's superoptimal set. -/
 def markingPattern (ranking : List (NamedConstraint (CaseForm × Strength)))
@@ -321,7 +321,7 @@ inductive SymForm where
   | zero  : SymForm   -- Ø
   | form1 : SymForm   -- e.g., ACC (Finnish), ERG (Lezgian)
   | form2 : SymForm   -- e.g., PART (Finnish), OBL (Lezgian)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All symmetrical-marking form–meaning pairs. -/
 def symPairs : List (SymForm × Strength) :=

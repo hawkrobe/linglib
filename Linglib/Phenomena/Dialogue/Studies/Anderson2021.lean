@@ -62,17 +62,17 @@ inductive MFWorld where
   | katie  -- Astronomy, Outdoors
   | nancy  -- German, Outdoors
   | sally  -- German, Indoors
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype MFWorld where
   elems := {.ina, .katie, .nancy, .sally}
   complete x := by cases x <;> simp
 
 inductive Major where | astronomy | german
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 inductive Location where | indoors | outdoors
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 def worldMajor : MFWorld → Major
   | .ina | .katie => .astronomy
@@ -90,7 +90,7 @@ inductive MFUtterance where
   | likeIndoors     -- "They like being indoors"
   | likeOutdoors    -- "They like being outdoors"
   | null            -- Speaker passes
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype MFUtterance where
   elems := {.studyHumanity, .studyScience, .likeIndoors, .likeOutdoors, .null}

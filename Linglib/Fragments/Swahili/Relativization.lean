@@ -98,10 +98,10 @@ def relMarkers : List RelClauseMarker := [ambaGap, ambaBound, ambaMovement]
 
 /-- Full form personal pronouns (@cite{scott-2021} Table 1). -/
 inductive Person where | first | second | third
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive GramNum where | sg | pl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Full pronoun form. -/
 def fullPronoun : Person → GramNum → String
@@ -173,7 +173,7 @@ inductive MonosyllabicWord where
   | na    -- preposition/connective: 'with', 'to', 'by'
   | ya    -- connective: 'of' (associative -a + class prefix)
   | mwa   -- connective: 'in' (-a + class 18 prefix mu-)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Words whose objects do NOT trigger resumption when relativized.
     For trisyllabic words like *katika* 'on', the preposition is dropped
@@ -183,7 +183,7 @@ inductive MonosyllabicWord where
     resumption. @cite{scott-2021} (22)–(23). -/
 inductive NonTriggeringWord where
   | katika    -- 'on', 'in' (trisyllabic; dropped under relativization)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Monosyllabic words always trigger resumption. -/
 def MonosyllabicWord.triggersResumption : MonosyllabicWord → Bool

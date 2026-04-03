@@ -19,7 +19,7 @@ inductive RhythmTypes where
   | dualBothTrochaicAndIambic  -- Dual: both trochaic and iambic (4 languages)
   | undetermined  -- Undetermined (37 languages)
   | noRhythmicStress  -- No rhythmic stress (98 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 17A dataset (323 languages). -/
 def allData : List (Datapoint RhythmTypes) :=

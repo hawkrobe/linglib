@@ -54,7 +54,7 @@ inductive Maxim where
   /-- Avoid obscurity of expression; avoid ambiguity;
       be brief; be orderly. -/
   | manner
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § Quantity Sub-Maxims
@@ -70,7 +70,7 @@ inductive QuantitySubmaxim where
   /-- "Do not make your contribution more informative than is
       required." -/
   | Q2
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Direction of a Quantity violation. -/
 inductive QuantityViolation where
@@ -80,7 +80,7 @@ inductive QuantityViolation where
   /-- Too much information (violates Q2). E.g., "the red apple" when
       only one apple is present. -/
   | overInformative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which sub-maxim a violation direction targets. -/
 def QuantityViolation.submaxim : QuantityViolation → QuantitySubmaxim

@@ -41,7 +41,7 @@ inductive ConstructionType where
   | verbChain                -- "will have helped", "will have been doing"
   | displacement             -- "Beans she spilled"
   | comparativeCorrelative   -- "the more you eat the fatter you get"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- §2: Idioms (Osborne & Groß 2012, §3)

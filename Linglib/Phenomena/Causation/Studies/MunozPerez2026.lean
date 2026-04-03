@@ -42,14 +42,14 @@ inductive Acceptability where
   | grammatical      -- Fully acceptable (✓)
   | ungrammatical    -- Rejected (*)
   | marginal         -- Marginal (??)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A clitic pattern in an anticausative construction. -/
 inductive CliticPattern where
   | se_cl        -- SE + dative clitic: se me rompió
   | cl_le        -- Dative clitic + LE: me le rompió (stylistic applicative)
   | se_cl_le     -- SE + dative clitic + LE: se me le rompió
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Person of the dative clitic. -/
 inductive DativeCliticPerson where
@@ -58,7 +58,7 @@ inductive DativeCliticPerson where
   | third_sg   -- le
   | first_pl   -- nos
   | third_pl   -- les
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A single grammaticality judgment from the paper. -/
 structure Judgment where

@@ -24,7 +24,7 @@ inductive Acceptability where
   | unacceptable -- * clearly unacceptable
   | anomalous    -- # semantically/pragmatically odd
   | variable     -- % dialectally variable
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Scale type for empirical measures. -/
 inductive ScaleType where

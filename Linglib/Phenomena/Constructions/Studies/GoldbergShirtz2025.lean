@@ -178,7 +178,7 @@ inductive PALPosition where
   | headNoun            -- "a real wink-wink"
   | predicateAdj        -- "The vibe was very wink-wink"
   | verb                -- "Don't wink-wink me"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- An attested PAL example with its syntactic position. -/
 structure PALExample where

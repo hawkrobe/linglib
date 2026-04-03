@@ -66,13 +66,13 @@ open UD (Voice)
 inductive PromptType where
   | pronoun      -- "She ___"
   | noPronoun    -- "___" (free completion)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Instruction condition (transfer-of-possession exps). -/
 inductive InstructionCond where
   | whatNext   -- "What happened next?"
   | why        -- "Why?"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. The Bayesian Model
@@ -105,7 +105,7 @@ inductive TopichoodLevel where
   | strong    -- subject of passive clause (marked promotion)
   | default_  -- subject of active clause
   | low       -- non-subject
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Compute topichood from voice and surface position. -/
 def topichood (voice : Voice) (isSubject : Bool) : TopichoodLevel :=

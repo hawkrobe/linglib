@@ -477,7 +477,7 @@ section PartitionExample
 /-- Three-world scenario: is it raining? -/
 inductive RainWorld where
   | sunny | rainy | cloudy
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- "Is it raining?" — partition into rainy vs non-rainy. -/
 def isRainingQ : QUD RainWorld :=

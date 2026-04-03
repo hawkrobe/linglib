@@ -47,7 +47,7 @@ inductive WXDYReading where
   | literal       -- genuine information-seeking question
   | incredulity   -- speaker expresses surprise/disapproval at the situation
   | ambiguous     -- both readings available
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-! ## Datum structure -/
 

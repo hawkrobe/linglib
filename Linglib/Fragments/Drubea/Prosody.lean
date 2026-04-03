@@ -34,7 +34,7 @@ inductive StemPattern where
   | registerless    -- ∅: no register feature (e.g., /kuɾe/ 'forest')
   | σ1_downstepped  -- l on first mora (e.g., /⁺kuɾe/ 'end')
   | σ2_downstepped  -- l on second mora (e.g., /ku⁺ɾe/ 'crayfish', /be⁺e/ NEG)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Expand a stem pattern to mora-level register specifications.
 
@@ -145,7 +145,7 @@ theorem mono_pairs_same_form :
 inductive BoundaryFeature where
   | h_pct  -- h%: final raising (Drubea, Paita dialect)
   | l_pct  -- l%: final lowering (Numèè)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Apply a boundary feature to the final registerless syllable.
 

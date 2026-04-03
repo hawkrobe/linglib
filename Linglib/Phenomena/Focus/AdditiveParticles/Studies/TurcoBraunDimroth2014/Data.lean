@@ -39,7 +39,7 @@ open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
 inductive Language where
   | dutch
   | german
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A production-strategy distribution datum (percentages as rationals).
     The distribution is keyed by `PolarityMarkingStrategy`, so adding a

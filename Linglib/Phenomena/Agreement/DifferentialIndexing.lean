@@ -60,7 +60,7 @@ inductive IndexingPersonLevel where
   | sap
   /-- Non-participants: 3rd person -/
   | third
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Rank on the indexing person scale: SAP (1) > 3rd (0). -/
 def IndexingPersonLevel.rank : IndexingPersonLevel → Nat

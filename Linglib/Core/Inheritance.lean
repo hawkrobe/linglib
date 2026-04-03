@@ -45,7 +45,7 @@ inductive LinkKind where
   | isA   -- taxonomic inheritance
   | or    -- mutual exclusivity (choice set)
   | prop  -- named property / relation
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A labeled directed edge: `source --[kind, label]--> target`.
 In WG, all knowledge is encoded as links between nodes: "cat isA mammal",
@@ -55,7 +55,7 @@ structure Link (α R : Type) where
   source : α
   target : α
   label : Option R := none
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Network

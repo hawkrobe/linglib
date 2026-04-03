@@ -1394,7 +1394,7 @@ structure TenseDeicticDatum where
   /-- The underlying referential mode (indexical = deictic-compatible,
       anaphoric = requires antecedent) -/
   underlyingMode : ReferentialMode
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- English simple past: CAN be used out of the blue. -/
 def englishSimplePastDatum : TenseDeicticDatum where

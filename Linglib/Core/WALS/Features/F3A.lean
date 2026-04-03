@@ -19,7 +19,7 @@ inductive ConsonantVowelRatio where
   | average  -- Average (234 languages)
   | moderatelyHigh  -- Moderately high (102 languages)
   | high  -- High (69 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint ConsonantVowelRatio) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .high }

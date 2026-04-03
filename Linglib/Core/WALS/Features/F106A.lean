@@ -18,7 +18,7 @@ inductive ReciprocalType where
   | distinctFromReflexive  -- Distinct from reflexive (99 languages)
   | mixed  -- Mixed (16 languages)
   | identicalToReflexive  -- Identical to reflexive (44 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 106A dataset (175 languages). -/
 def allData : List (Datapoint ReciprocalType) :=

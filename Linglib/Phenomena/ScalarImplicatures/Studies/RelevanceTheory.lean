@@ -49,7 +49,7 @@ inductive SIInterpretation where
   | lowerBound
   /-- Pragmatically enriched: "some but not all" -/
   | enriched
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2. UE Context: Implicature Arises

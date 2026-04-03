@@ -42,7 +42,7 @@ conventional status must be learned ("answer the door"). -/
 inductive IdiomInterpretability where
   | decoding   -- must learn to interpret ("kick the bucket")
   | encoding   -- can interpret but must learn conventionality ("answer the door")
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Grammatical vs extragrammatical idioms (§1.1.2).
 
@@ -52,7 +52,7 @@ structure ("first off", "by and large", "so far so good"). -/
 inductive IdiomGrammaticality where
   | grammatical       -- "kick the bucket", "spill the beans"
   | extragrammatical  -- "first off", "by and large", "so far so good"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Substantive vs formal idioms (§1.1.3).
 
@@ -62,7 +62,7 @@ purposes not knowable from form alone. -/
 inductive IdiomFormality where
   | substantive  -- "kick the bucket" — fully specified lexically
   | formal       -- "the X-er the Y-er" — productive open pattern
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Combined idiom classification. -/
 structure IdiomType where
@@ -77,7 +77,7 @@ inductive FamiliarityPattern where
   | unfamiliarPiecesUnfamiliarlyArranged  -- "kith and kin"
   | familiarPiecesUnfamiliarlyArranged    -- "all of a sudden", "home" as bare NP
   | familiarPiecesFamiliarlyArranged      -- "hang one on", rhetorical questions
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-! ## Section 2: Scalar Models (§2.3.2, Appendix)
 
@@ -97,7 +97,7 @@ in the 2D space of linguists × languages. -/
 structure ArgumentPoint (α : Type*) where
   /-- Coordinates, one per dimension -/
   coordinates : List α
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A scalar model (Definition A3 from the Appendix).
 
@@ -196,7 +196,7 @@ inductive LetAloneFamily where
   | neverMind     -- "He didn't make colonel, never mind general"
   | ifNot         -- "He made general, if not field marshal"  (reversed order)
   | inFact        -- "He made colonel; in fact, he made general"  (reversed order)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Clause ordering: *let alone* presents the stronger proposition first,
 while *if not* and *in fact* present the weaker first (p.533). -/
@@ -225,7 +225,7 @@ inductive LetAloneNPITrigger where
   | conditionalSurprise   -- "It would surprise me if John could pass, let alone Bill"
   | failureVerb           -- "He failed to reach sixth grade, let alone get a B.A."
   | anyoneWhod            -- "Anyone who'd been to high school, let alone grad school..."
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-! ## Section 5: Construction definitions for the constructicon -/
 
@@ -281,7 +281,7 @@ The running example: ⟨second lieutenant,..., colonel, general⟩. -/
 inductive Rank where
   | secondLieutenant | lieutenant | captain | major
   | colonel | general
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : Fintype Rank where
   elems := {.secondLieutenant, .lieutenant, .captain, .major, .colonel, .general}
@@ -308,7 +308,7 @@ def rankLe : Rank → Rank → Bool
 /-- States: whether a person achieved each rank. -/
 inductive AchievementState where
   | achievedNone | achievedUpToLt | achievedUpToCol | achievedUpToGen
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : Fintype AchievementState where
   elems := {.achievedNone, .achievedUpToLt, .achievedUpToCol, .achievedUpToGen}
@@ -422,7 +422,7 @@ This 2D model is the basis for the Appendix definitions (A1–A5). -/
 /-- Linguists ordered by erudition (most → least). -/
 inductive Linguist where
   | apotheosis | brilliant | competent | dimm
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : Fintype Linguist where
   elems := {.apotheosis, .brilliant, .competent, .dimm}
@@ -431,7 +431,7 @@ instance : Fintype Linguist where
 /-- Languages ordered by accessibility (most → least). -/
 inductive Lang where
   | english | french | greek | hittite
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : Fintype Lang where
   elems := {.english, .french, .greek, .hittite}
@@ -443,7 +443,7 @@ coordinate lists of `LingLangVal`. -/
 inductive LingLangVal where
   | ling : Linguist → LingLangVal
   | lang : Lang → LingLangVal
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Dimension ordering (≤) for the linguist/language scalar model.
 
@@ -492,7 +492,7 @@ inductive LLState where
   | twoTrue     -- Table 2c: Apotheosis reads English & French, Brilliant reads English
   | allTrue     -- Table 2d: everybody reads everything
   | diagonal    -- Apotheosis reads all, Brilliant reads Eng/Fr/Gr, Competent reads Eng/Fr, Dimm reads Eng
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : Fintype LLState where
   elems := {.allFalse, .topLeft, .twoTrue, .allTrue, .diagonal}

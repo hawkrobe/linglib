@@ -136,7 +136,7 @@ theorem nochange_empty :
     force and manner of folding. -/
 inductive ParchmentState where
   | flat | slightlyCreased | folded | tightlyFolded
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- fold(parchment): flat → folded -/
 def foldBoundary : BoundaryStates ParchmentState := ⟨.flat, .folded⟩
@@ -162,7 +162,7 @@ theorem fold_refold_restitutive :
     painting deterministically yields the `painted` state. -/
 inductive WallState where
   | unpainted | painted
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def paintBoundary : BoundaryStates WallState := ⟨.unpainted, .painted⟩
 def repaintBoundary : BoundaryStates WallState := ⟨.unpainted, .painted⟩
@@ -290,7 +290,7 @@ theorem fold_outcomes_multi : foldVRO.outcomes.multiMembered :=
     Breaking yields exactly one lexically specified result: broken. -/
 inductive LimbState where
   | intact | broken
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def breakVRO : VerbRootVRO Unit LimbState ℤ where
   verb := λ _ _ => True
@@ -310,7 +310,7 @@ theorem break_blocks_un (stateAt : StateFunction Unit LimbState ℤ)
     The object's surface is altered in exactly one way. -/
 inductive SurfaceState where
   | unaltered | surfaceAltered
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def hitVRO : VerbRootVRO Unit SurfaceState ℤ where
   verb := λ _ _ => True
@@ -330,7 +330,7 @@ theorem hit_blocks_un (stateAt : StateFunction Unit SurfaceState ℤ)
     since the object cannot be acted on again after being destroyed. -/
 inductive ObjectExistence where
   | exists_ | ceasedToExist
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def destroyVRO : VerbRootVRO Unit ObjectExistence ℤ where
   verb := λ _ _ => True

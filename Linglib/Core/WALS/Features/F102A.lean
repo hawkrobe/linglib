@@ -19,7 +19,7 @@ inductive VerbalPersonMarking where
   | onlyThePArgument  -- Only the P argument (24 languages)
   | aOrPArgument  -- A or P argument (6 languages)
   | bothTheAAndPArguments  -- Both the A and P arguments (193 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 102A dataset (378 languages). -/
 def allData : List (Datapoint VerbalPersonMarking) :=

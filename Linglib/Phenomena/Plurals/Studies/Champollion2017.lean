@@ -46,7 +46,7 @@ structure DistProfile where
   verb : String
   agentSDR : Bool   -- distributes over atomic agents?
   themeSDR : Bool   -- distributes over atomic themes?
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- "see" distributes on both agent and theme.
     "The boys saw the movies" → each boy saw each movie. -/
@@ -80,7 +80,7 @@ structure DistDatum where
   sentence : String
   distributiveOK : Bool
   collectiveOK : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def seeDistDatum : DistDatum :=
   { sentence := "The boys saw the movie",

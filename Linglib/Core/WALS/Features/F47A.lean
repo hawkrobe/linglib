@@ -16,7 +16,7 @@ namespace Core.WALS.F47A
 inductive IntensifierReflexive where
   | identical  -- Identical (94 languages)
   | differentiated  -- Differentiated (74 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 47A dataset (168 languages). -/
 def allData : List (Datapoint IntensifierReflexive) :=

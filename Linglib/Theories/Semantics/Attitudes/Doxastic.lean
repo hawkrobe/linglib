@@ -71,7 +71,7 @@ Non-veridical: believe, think, suspect
 inductive Veridicality where
   | veridical      -- x V p ⊢ p (knowledge, factives)
   | nonVeridical   -- x V p ⊬ p (belief, opinion)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- Common Ground Requirements (@cite{glass-2025})
 
@@ -84,7 +84,7 @@ concerns p (positive) or ¬p (negative).
 inductive CGPolarity where
   | positive   -- requirement concerns p (e.g., know requires p)
   | negative   -- requirement concerns ¬p (e.g., yǐwéi requires ◇¬p)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Common Ground requirement strength: entailment (□) or compatibility (◇)?
@@ -95,7 +95,7 @@ Common Ground requirement strength: entailment (□) or compatibility (◇)?
 inductive CGStrength where
   | necessity    -- □: all CG worlds satisfy condition
   | possibility  -- ◇: some CG world satisfies condition
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 Common Ground requirement for belief verbs.
@@ -112,7 +112,7 @@ contrafactives requiring ¬p to be Common Ground are systematically absent.
 structure CGRequirement where
   polarity : CGPolarity
   strength : CGStrength
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace CGRequirement
 
@@ -244,7 +244,7 @@ endogenous (determined by structural equations).
 -/
 structure CausalVar where
   name : String
-  deriving DecidableEq, Repr, BEq, Hashable
+  deriving DecidableEq, Repr, Hashable
 
 /--
 A causal edge represents direct causal influence: (parent, child) means

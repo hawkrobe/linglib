@@ -73,7 +73,7 @@ structure AgentivityNode where
   instigation : Bool
   /-- +motion: the argument is in motion during the event. -/
   motion      : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Validity constraint: volition presupposes sentience
     (p.521, following @cite{dowty-1991} p.607). -/
@@ -163,7 +163,7 @@ inductive PersistenceLevel where
   /-- +ExPB, +ExPE, +QuPB, +QuPE — entity persists unchanged throughout.
       Prototypical transitive subjects; unaffected objects of *see*, *cut at*. -/
   | totalPersistence
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Existential persistence at beginning (positive feature).
     Also serves as "entity exists at the beginning of the event." -/
@@ -278,7 +278,7 @@ instance : Lattice PersistenceLevel where
 structure GrimmNode where
   agentivity  : AgentivityNode
   persistence : PersistenceLevel
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The agentivity constraint: volition → sentience. -/
 def GrimmNode.agentivityValid (n : GrimmNode) : Bool :=
@@ -392,7 +392,7 @@ inductive TransitivityClass where
   /-- Pursuit: search, seek. Object may not even exist
       (totalNonPersistence). Outside the transitivity region. -/
   | pursuit
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The canonical agent position for each transitivity class.
     All classes share the same agent type: instigation + motion,
@@ -427,7 +427,7 @@ inductive CaseRegion where
   | dative
   /-- Oblique: the middle region between core cases. -/
   | oblique
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Predicts the case region for a node based on its lattice position.
 

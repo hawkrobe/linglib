@@ -30,7 +30,7 @@ inductive DoubleNegationInVerbInitialLanguages where
   | vsVoNegvVNeg  -- VS&VO&NegV/[(Neg-)V-Neg] (1 languages)
   | vosNegvneg  -- VOS & NegVNeg (1 languages)
   | vsoSvoV  -- VSO/SVO & (Neg)V(Neg) (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144U dataset (17 languages). -/
 def allData : List (Datapoint DoubleNegationInVerbInitialLanguages) :=

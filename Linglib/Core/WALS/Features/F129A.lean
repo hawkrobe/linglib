@@ -16,7 +16,7 @@ namespace Core.WALS.F129A
 inductive HandAndArm where
   | identical  -- Identical (228 languages)
   | different  -- Different (389 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint HandAndArm) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .identical }

@@ -59,14 +59,14 @@ open Core.Empirical
 inductive TaskType where
   | inference     -- "Does X imply Y?"
   | verification  -- "Is this sentence true of [picture]?"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Monotonicity of an embedding context. -/
 inductive Monotonicity where
   | upwardEntailing    -- UE: all, more than one
   | downwardEntailing  -- DE: not all, not more than one
   | nonMonotonic       -- NM: exactly two
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Quantifier contexts tested in Experiments 3–4. -/
 inductive QuantifierContext where
@@ -75,7 +75,7 @@ inductive QuantifierContext where
   | exactlyTwo       -- NM: "Exactly two squares are connected with some..."
   | notAll           -- DE: "Not all the squares are connected with some..."
   | notMoreThanOne   -- DE: "Not more than one square is connected with some..."
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def quantifierMonotonicity : QuantifierContext → Monotonicity
   | .all => .upwardEntailing
@@ -127,7 +127,7 @@ inductive EmbeddingType where
   | want     -- "Betty wants Fred to hear some..."
   | must     -- "Fred has to hear some..."
   | all      -- "All students heard some..."
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 structure EmbeddingResult where
   embedding : EmbeddingType

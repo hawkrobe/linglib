@@ -85,7 +85,7 @@ inductive Dimension where
   | cardinality  -- counting (@cite{scontras-2014}: CARD as measure term)
   | temperature  -- temperature (degrees Celsius, Fahrenheit)
   | area         -- area (square meters, acres)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Quotient dimensions: ratios of simplex dimensions.
 
@@ -95,7 +95,7 @@ inductive QuotientDimension where
   | density      -- mass / volume
   | speed        -- distance / time
   | pressure     -- force / area
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The simplex components of a quotient dimension. -/
 def QuotientDimension.components : QuotientDimension → Dimension × Dimension
@@ -109,7 +109,7 @@ by definition; `QuotientDimension` is always quotient. -/
 inductive DimensionType where
   | simplex
   | quotient
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- § 2. Measure Functions
@@ -274,7 +274,7 @@ inductive QuantizingNounClass where
   | measureTerm    -- kilo, liter, meter: names a measure function
   | containerNoun  -- glass, box, cup: ambiguous CONTAINER/MEASURE
   | atomizer       -- grain, piece, drop: imposes minimal-part structure
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Container nouns are ambiguous between two readings (Scontras §3.2):
 
@@ -288,7 +288,7 @@ inductive QuantizingNounClass where
 inductive ContainerReading where
   | container  -- individuated physical objects
   | measure    -- measure function (glass as a volume unit)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Scontras's QU prediction: which class/reading combinations yield
 quantity-uniform predicates?

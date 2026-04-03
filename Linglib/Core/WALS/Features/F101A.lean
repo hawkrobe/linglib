@@ -20,7 +20,7 @@ inductive ExpressionOfPronominalSubjects where
   | subjectPronounsInDifferentPosition  -- Subject pronouns in different position (67 languages)
   | optionalPronounsInSubjectPosition  -- Optional pronouns in subject position (61 languages)
   | mixed  -- Mixed (32 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint ExpressionOfPronominalSubjects) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .subjectAffixesOnVerb }

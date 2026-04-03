@@ -50,7 +50,7 @@ structure FIDProfile where
   worldDepth : DepthSpec
   /-- Which depth to read the position from -/
   positionDepth : DepthSpec
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace FIDProfile
 

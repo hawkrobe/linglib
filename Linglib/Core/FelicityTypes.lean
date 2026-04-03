@@ -15,7 +15,7 @@ inductive FelicityStatus where
   | odd
   /-- Borderline: some conditions met, others not. -/
   | borderline
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Source of oddness (which condition was violated). -/
 inductive OddnessSource where
@@ -33,7 +33,7 @@ inductive OddnessSource where
   | blindPresupMismatch
   /-- Theory doesn't distinguish sources. -/
   | unspecified
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Result of a felicity check: status + optional source information. -/
 structure FelicityResult where

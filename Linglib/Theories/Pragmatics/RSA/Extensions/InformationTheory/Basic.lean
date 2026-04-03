@@ -44,6 +44,6 @@ Track the depth of pragmatic reasoning:
 inductive RSALevel where
   | L : Nat → RSALevel  -- Listener level n
   | S : Nat → RSALevel  -- Speaker level n
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end RSA.InformationTheory

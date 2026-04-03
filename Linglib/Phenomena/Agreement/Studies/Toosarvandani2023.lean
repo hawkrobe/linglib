@@ -143,7 +143,7 @@ inductive DFeature where
   | human
   | animate
   | pi
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype DFeature where
   elems := {.speaker, .participant, .elder, .human, .animate, .pi}
@@ -157,7 +157,7 @@ inductive PronType where
   | thirdHuman
   | thirdAnimal
   | thirdInanimate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Fintype PronType where
   elems := {.first, .second, .thirdElder, .thirdHuman, .thirdAnimal, .thirdInanimate}

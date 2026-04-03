@@ -32,7 +32,7 @@ inductive SubjectivityLevel where
   | nonSubjective   -- ideational: describes world/event properties
   | subjective      -- speaker attitude, belief, evaluation
   | intersubjective -- attention to addressee face/self-image
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Numeric encoding for ordering. -/
 def SubjectivityLevel.toNat : SubjectivityLevel → Nat
@@ -96,6 +96,6 @@ theorem nonSubjective_le (l : SubjectivityLevel) :
 inductive Performativity where
   | performative   -- utterance constitutes the act (deontic imposition, promise)
   | descriptive    -- utterance describes an existing state (assessment, report)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 end Core.Subjectivity

@@ -112,7 +112,7 @@ theorem factive_entails_nonfactive [HasBelief W] [HasComplement W] (w : W) :
 inductive QUD where
   | bel   -- "Does X believe C?"
   | c     -- "Is C true?"
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- All QUDs. -/
 def allQUDs : List QUD := [.bel, .c]

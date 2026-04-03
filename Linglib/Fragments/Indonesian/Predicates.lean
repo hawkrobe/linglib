@@ -67,7 +67,7 @@ inductive RootClass where
   /-- Change-of-state verbs without entailed external cause: anticausative
       via *ter-*. The causer is left unspecified in the verb root. -/
   | causerUnspecified
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The root class predicts the default reading of the suppressed variable
     in non-incorporation *ber-* forms. -/
@@ -109,7 +109,7 @@ inductive TerClass where
   /-- Ability: the agent can (or usually cannot) perform the action.
       Suffixes retained. Expresses circumstantial modality. -/
   | abilitative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether the *ter-* reading entails the existence of an agent.
     Stative *ter-* is agentless (no *oleh* 'by' phrase possible);
@@ -534,7 +534,7 @@ inductive DenominalNounClass where
   | kinTerm
   /-- Clothing nouns: wearing relation. -/
   | clothing
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A denominal *ber-* entry: a relational noun that forms a stative
     possessional middle via *ber-* + incorporation. -/

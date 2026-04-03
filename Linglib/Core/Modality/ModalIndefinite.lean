@@ -45,7 +45,7 @@ inductive ModalComponentStatus where
       Ex: Sp. *algún* (conv. implicature per @cite{alonso-ovalle-menendez-benito-2010}),
       Ger. *irgendein* (domain widening per @cite{kratzer-shimoyama-2002}). -/
   | notAtIssue
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 -- ════════════════════════════════════════════════════

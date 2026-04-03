@@ -18,7 +18,7 @@ inductive PostverbalNegativeMorphemes where
   | vNeg  -- [V-Neg] (307 languages)
   | vnegVNeg  -- VNeg&[V-Neg] (18 languages)
   | none  -- None (712 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PostverbalNegativeMorphemes) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .vneg }

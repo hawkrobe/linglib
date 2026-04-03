@@ -30,7 +30,7 @@ inductive Truth3 where
   | true
   | false
   | indet
-  deriving Repr, DecidableEq, BEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited
 
 namespace Truth3
 
@@ -505,7 +505,7 @@ inductive GapPolicy where
   | middleKleene
   | weakKleene
   | belnap
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Parametric conjunction indexed by gap policy. -/
 def meet3 : GapPolicy → Truth3 → Truth3 → Truth3

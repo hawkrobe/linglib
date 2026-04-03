@@ -105,7 +105,7 @@ inductive IndefiniteFunction where
   /-- Free choice: "Anybody can do that."
       Universal-like meaning: all members of the domain qualify. -/
   | freeChoice
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- All nine function types, listed in map order. -/
 def IndefiniteFunction.all : List IndefiniteFunction :=
@@ -263,7 +263,7 @@ def IndefinitePronounProfile.seriesDisjoint
 structure WALSCount where
   label : String
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Sum of counts in a WALS table. -/
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=

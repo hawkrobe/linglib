@@ -19,7 +19,7 @@ inductive AppliedObjectRole where
   | instrumentAndLocative  -- Instrument and locative (12 languages)
   | onlyBenefactive  -- No other roles (= Only benefactive) (36 languages)
   | noApplicative  -- No applicative construction (100 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 109B dataset (183 languages). -/
 def allData : List (Datapoint AppliedObjectRole) :=

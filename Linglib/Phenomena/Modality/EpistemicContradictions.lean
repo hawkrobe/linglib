@@ -26,7 +26,7 @@ inductive SentenceType where
   | moore          -- p ∧ ¬Kp ("It's raining but I don't know it")
   | wittgenstein   -- p ∧ ◇¬p ("It's raining and it might not be")
   | classical      -- p ∧ ¬p ("It's raining and it's not raining")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Embedding environments that distinguish Moore from Wittgenstein. -/
 inductive EmbeddingEnv where
@@ -35,7 +35,7 @@ inductive EmbeddingEnv where
   | epistemic      -- "It might be that it's raining and it might not be"
   | disjunction    -- "Either ... or it's raining and it might not be"
   | attitude       -- "John thinks it's raining and it might not be"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Moore sentences become felicitous under embedding; Wittgenstein and
     classical contradictions remain infelicitous. This is the core

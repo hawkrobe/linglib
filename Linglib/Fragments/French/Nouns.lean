@@ -15,7 +15,7 @@ open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping
 inductive Gender where
   | masc  -- Masculine
   | fem   -- Feminine
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 A lexical entry for a French noun.
@@ -41,7 +41,7 @@ inductive Determiner where
   | un | une               -- Indefinite singular (a)
   | des                    -- Indefinite plural (some)
   | du | dela              -- Partitive (some, for mass)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 French NP structure.

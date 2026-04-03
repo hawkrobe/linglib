@@ -58,7 +58,7 @@ inductive Tri where
   | pos   : Tri
   | neg   : Tri
   | blank : Tri
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace Tri
 

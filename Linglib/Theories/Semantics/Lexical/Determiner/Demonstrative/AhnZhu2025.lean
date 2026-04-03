@@ -44,7 +44,7 @@ This is linguistically meaningful:
 inductive Arity where
   | one   -- E → S → Bool
   | two   -- E → E → S → Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 A predicate with its arity tracked in the type.

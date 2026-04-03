@@ -19,7 +19,7 @@ inductive AdpositionNPOrder where
   | inpositions  -- Inpositions (8 languages)
   | noDominantOrder  -- No dominant order (58 languages)
   | noAdpositions  -- No adpositions (30 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint AdpositionNPOrder) :=
   [ { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .noDominantOrder }

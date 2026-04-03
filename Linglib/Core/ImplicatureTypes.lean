@@ -24,7 +24,7 @@ inductive CoverageStatus where
   | incomplete    -- Could be modeled, formalization missing
   | outOfScope    -- Theory doesn't address this phenomenon
   | wrong         -- Prediction conflicts with data
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Pragmatic phenomena that theories might cover -/
 inductive PragmaticPhenomenon where
@@ -35,7 +35,7 @@ inductive PragmaticPhenomenon where
   | knowledgeCancellation  -- SI varies with speaker knowledge
   | exhaustivity           -- "Who came? John" -> only John
   | freeChoice             -- "You may have cake or ice cream" -> both permitted
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Coverage report for a single phenomenon -/
 structure PhenomenonCoverage where

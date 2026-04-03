@@ -17,7 +17,7 @@ inductive PurposeClauseType where
   | balanced  -- Balanced (38 languages)
   | balancedDeranked  -- Balanced/deranked (30 languages)
   | deranked  -- Deranked (102 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 125A dataset (170 languages). -/
 def allData : List (Datapoint PurposeClauseType) :=

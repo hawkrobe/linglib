@@ -288,7 +288,7 @@ both on the stimulus's salience AND the perceiver's acuity. -/
 inductive PerceptionScaleType where
   | existential       -- scale of stimuli ranked by likely existence
   | perceptualAbility -- scale of experiencers ranked by perceptual acuity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 structure AmbiguousSuperlativeDatum where
   sentence : String
@@ -340,7 +340,7 @@ This is why the Scalar Model can handle cases that pure monotonicity misses. -/
 inductive ScaleDirection where
   | reversing   -- NPI-licensing: high → low (= DE)
   | preserving  -- PPI-licensing: low → high (= UE)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map from polarity type to expected scale direction in licensing contexts. -/
 def expectedScaleDirection : PolarityType → Option ScaleDirection

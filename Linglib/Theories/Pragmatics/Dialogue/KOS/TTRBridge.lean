@@ -137,7 +137,7 @@ section AustinianExample
 /-- A simple situation type for the example. -/
 inductive Weather where
   | sunny | rainy | cloudy
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- "It is raining" as an Austinian proposition: situation = rainy, type = isRainy. -/
 def itIsRaining : BCheckableAustinian Weather where

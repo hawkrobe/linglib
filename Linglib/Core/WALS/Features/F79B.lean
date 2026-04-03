@@ -19,7 +19,7 @@ inductive SuppletionInImperativesAndHortatives where
   | hortative  -- Hortative (2 languages)
   | imperativeAndHortative  -- Imperative and Hortative (1 languages)
   | none  -- None (= no suppletive imperatives reported in the reference material) (153 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 79B dataset (193 languages). -/
 def allData : List (Datapoint SuppletionInImperativesAndHortatives) :=

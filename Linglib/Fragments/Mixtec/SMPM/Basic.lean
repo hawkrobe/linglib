@@ -37,17 +37,17 @@ inductive Aspect where
   | cont
   /-- Irrealis (IRR): mid/unmarked tone or stem changes -/
   | irr
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Person, Number, Gender
 -- ════════════════════════════════════════════════════════════════
 
 inductive Person where | first | second | third
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive Clusivity where | incl | excl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Grammatical genders for nonlocal (3rd person) pronouns (table 5).
 
@@ -61,7 +61,7 @@ inductive Gender where
   | liq      -- =rá (liquid gender)
   | wd       -- =tún (wooden gender)
   | aml      -- =rí (animal gender)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Pronoun Paradigm
@@ -76,7 +76,7 @@ inductive Gender where
 structure PronounForm where
   clitic : String
   nonclitic : Option String  -- `none` if no distinct nonclitic form exists
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-- Local person clitic pronouns (tables 4, 61). -/
 def pron1sg     : PronounForm := ⟨"=ì",    some "yù'u"⟩
@@ -130,7 +130,7 @@ inductive ClauseType where
       Selected by: ntùkú 'try', nàkú'ún 'remember', kìxà 'start',
       sakwā'a 'learn', etc. -/
   | untensedSubjunctive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Properties distinguishing the three clause types (table 26). -/
 structure ClauseProperties where
@@ -140,7 +140,7 @@ structure ClauseProperties where
   noncoreferentialSubject : Bool
   /-- Shows restructuring effects (quantifier fronting targets matrix) -/
   restructuring : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def clauseProperties : ClauseType → ClauseProperties
   | .finiteEmbedded      => ⟨true,  true,  false⟩
@@ -156,7 +156,7 @@ structure CTP where
   form : String
   gloss : String
   selects : ClauseType
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- Predicates selecting finite embedded clauses (27a)
 def think    : CTP := ⟨"ka'án",       "think",     .finiteEmbedded⟩

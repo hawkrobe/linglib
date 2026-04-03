@@ -63,7 +63,7 @@ inductive PathShape where
   | bounded
   | unbounded
   | source
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 3. PathShape ↔ Scale Boundedness Bridge

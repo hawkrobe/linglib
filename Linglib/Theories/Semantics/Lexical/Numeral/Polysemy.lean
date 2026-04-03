@@ -36,7 +36,7 @@ inductive PolymorphicAnalysis where
   | substantivalism  -- lexical = numeral (e), derive cardinal via CARD
   | adjectivalism    -- lexical = cardinal predicate (⟨e,t⟩), derive numeral via NOM+RSE
   | contextualism    -- lexical = atomic predicate (⟨e,t⟩), derive all via type-shifting
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Semantic functions of number words (Snyder (1a-f) + (76g-j)). -/
 inductive SemanticFunction where
@@ -49,7 +49,7 @@ inductive SemanticFunction where
   | taxonomic         -- (47) Each kind of two belongs to a different system
   | tokenRef          -- (76g) Two is next to a five on the board
   | kindRef           -- (76i) Two comes in several varieties
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which type-shifting path derives each semantic function under Contextualism.
     The lexical predicate λx_a.two(x) is the source for all. -/
@@ -61,7 +61,7 @@ inductive DerivationPath where
   | iotaFromPred    -- IOTA applied to pred → numeral (76e), kind-ref (76i)
   | iotaToken       -- IOTA applied to pred (token context) → token-ref (76g,h)
   | closeAppos      -- IOTA applied to N₁ ∧ N₂ → close appositive (76f,j)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map from semantic function to derivation path under Contextualism. -/
 def contextualistPath : SemanticFunction → DerivationPath

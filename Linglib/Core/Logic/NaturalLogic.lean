@@ -54,7 +54,7 @@ inductive NLRelation where
   | alternation -- | : disjoint (A ∩ B = ∅)
   | cover       -- ⌣ : exhaustive (A ∪ B = U)
   | independent -- # : none of the above
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 namespace NLRelation
 
@@ -224,7 +224,7 @@ inductive EntailmentSig where
   | antiMult      -- ⊟ : anti-multiplicative
   | addMult       -- ⊕⊞ : additive + multiplicative (morphism)
   | antiAddMult   -- ◇⊟ : anti-additive + anti-multiplicative (anti-morphism)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 namespace EntailmentSig
 
@@ -482,7 +482,7 @@ inductive DEStrength where
   | weak           -- Plain DE (licenses weak NPIs)
   | antiAdditive   -- DE + ∨-distributive (licenses strong NPIs)
   | antiMorphic    -- Anti-additive + ∧-distributive (= negation)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Strength of upward entailingness (dual of DEStrength).
@@ -496,7 +496,7 @@ inductive UEStrength where
   | weak           -- Plain UE (monotone)
   | multiplicative -- UE + ∧-distributive
   | additive       -- UE + ∨-distributive (strongest)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Check if a context's DE strength is sufficient for an NPI.
@@ -603,7 +603,7 @@ inductive ContextPolarity where
   | upward       -- Preserves entailment (stronger alternatives)
   | downward     -- Reverses entailment (weaker alternatives become stronger)
   | nonMonotonic -- Neither (e.g., "exactly n")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 namespace ContextPolarity
 

@@ -66,7 +66,7 @@ inductive AnaphoricRelation where
       per-situation distinctness (different individuals in each pair).
       This is the semantic core of reciprocal *each other*. -/
   | reciprocity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Reciprocal Scope Readings
@@ -81,7 +81,7 @@ inductive AnaphoricRelation where
 inductive RecipScope where
   | narrow  -- we-reading: reciprocity inside embedded clause
   | wide    -- I-reading: reciprocity in matrix clause
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Two Analyses
@@ -98,7 +98,7 @@ inductive RecipAnalysis where
       identity (∪). @cite{sternenfeld-1998}, @cite{beck-2001},
       @cite{dotlacil-2013}, @cite{haug-dalrymple-2020}. -/
   | relational
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: Properties of the Local Antecedent

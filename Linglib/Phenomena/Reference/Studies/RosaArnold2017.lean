@@ -76,33 +76,33 @@ open Core.Prominence
 inductive TransferRole where
   | goal    -- recipient/endpoint of transfer (e.g., "Lisa gave the pie to *Brendan*")
   | source  -- origin/source of transfer (e.g., "*Lisa* gave the pie to Brendan")
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Grammatical role of the referent in the prior sentence. -/
 inductive GramRole where
   | subject      -- grammatical subject of the prior sentence
   | nonsubject   -- nonsubject (object of PP, indirect object)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Gender match between referents (affects ambiguity of pronouns). -/
 inductive GenderContext where
   | sameGender       -- both characters same gender (pronoun ambiguous)
   | differentGender  -- different gender (pronoun unambiguous)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Experimental paradigm. -/
 inductive Paradigm where
   | eventRetelling        -- Exp 1: in-person picture description
   | sentenceCompletion    -- Exp 2: written story continuation
   | renamedCompletion     -- Exp 3: disconnected items (no repeated characters)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Experimental condition: fully crossed design. -/
 structure Condition where
   role : TransferRole
   gram : GramRole
   gender : GenderContext
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Empirical Data — Pronoun Rates (%)
@@ -216,7 +216,7 @@ theorem exp1_subj_gt_nonsub :
 inductive CoherenceCategory where
   | occasionResult   -- Occasion or Result continuations (goal-biased)
   | other            -- Elaboration, Explanation, etc. (source-biased or neutral)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Exp 2 coherence interaction: Goal vs Source effect by coherence category.
     Occasion/Result: β=1.22 (0.40), t=3.06, p=.002 — significant.

@@ -16,7 +16,7 @@ namespace Core.WALS.F63A
 inductive NounPhraseConjunction where
   | andDifferentFromWith  -- 'And' different from 'with' (131 languages)
   | andIdenticalToWith  -- 'And' identical to 'with' (103 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 63A dataset (234 languages). -/
 def allData : List (Datapoint NounPhraseConjunction) :=

@@ -63,7 +63,7 @@ inductive LexReflexiveSubtype where
   /-- Ingestives: agent causes substance to enter self (eat, drink).
       Includes "metaphorical ingestives" (learn). -/
   | ingestive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A lexically reflexive verb: a verb whose simple form has bieventive
     causative event structure with coidentified causer and causee.

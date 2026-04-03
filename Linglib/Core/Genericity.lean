@@ -48,7 +48,7 @@ inductive GenericForm where
       Patterns partly with BPs, partly with DSs.
       @cite{dayal-2004} analyzes as ι applied to the plural kind. -/
   | definitePlural
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Type of generic reading (@cite{krifka-2013}, ch. 15).
 
@@ -69,6 +69,6 @@ inductive GenericReading where
       are polyphonic count as admissible.
       NOT reducible to prevalence thresholds. -/
   | definitional
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 end Core.Genericity

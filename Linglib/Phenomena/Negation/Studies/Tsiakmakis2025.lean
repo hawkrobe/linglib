@@ -109,7 +109,7 @@ inductive NegatorType where
       *min* but lacking negation.
       ⟦NEG₂⟧^g(w) = λp. ∀w' ∈ Best_g(w) : p(w') -/
   | neg2
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- NEG₁ semantics: standard sentential negation.
 
@@ -207,7 +207,7 @@ inductive ENHostCategory where
   | biasedQuestions            -- biased polar questions (§5.8)
   | conditionals               -- if-conditionals (§5.6, tentative)
   | freeRelatives              -- free relatives (§5.11, tentative)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Each host category's negator type. -/
 def ENHostCategory.negatorType : ENHostCategory → NegatorType
@@ -551,7 +551,7 @@ inductive MaskingMechanism where
   /-- Speaker's epistemic bias overrides negative reading
       (optionally biased polar questions; §3.3) -/
   | speakerBias
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Each apparent (NEG₁) host has a specific masking mechanism. -/
 def ENHostCategory.maskingMechanism : ENHostCategory → Option MaskingMechanism

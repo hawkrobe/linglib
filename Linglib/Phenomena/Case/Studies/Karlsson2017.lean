@@ -55,7 +55,7 @@ inductive PartitiveLicensor where
   | unboundedQuantity
   /-- Irresultative action: *luin kirjaa* ('I was reading the book') -/
   | irresultative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A partitive licensing datum: object case + licensing context + telicity. -/
 structure PartitiveDatum where
@@ -158,7 +158,7 @@ inductive NominalSlot where
   | case_       -- 15 case suffixes
   | possessive  -- -ni, -si, -nsA, -mme, -nne
   | clitic      -- -kin, -kAAn, -pA, -hAn
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Finnish nominal suffix order (Karlsson §7.1). -/
 def finnishNominalOrder : List NominalSlot :=

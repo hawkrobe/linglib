@@ -60,7 +60,7 @@ inductive GrammaticalClass where
   | auxiliaryVerb
   | mainVerb
   | quantifier
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 Whether a scale is "open" or "closed" class.

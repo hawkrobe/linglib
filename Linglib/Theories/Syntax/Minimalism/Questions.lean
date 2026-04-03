@@ -49,7 +49,7 @@ open Core.Discourse (ClauseType IllocutionaryMood GramMood)
 inductive QFeature where
   | plusQ   -- interrogative
   | minusQ  -- declarative
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map the Q-feature to a `FeatureVal` for the Agree system. -/
 def QFeature.toFeatureVal : QFeature → FeatureVal

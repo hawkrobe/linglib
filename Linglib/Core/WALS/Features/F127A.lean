@@ -17,7 +17,7 @@ inductive ReasonClauseType where
   | balanced  -- Balanced (90 languages)
   | balancedDeranked  -- Balanced/deranked (37 languages)
   | deranked  -- Deranked (42 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 127A dataset (169 languages). -/
 def allData : List (Datapoint ReasonClauseType) :=

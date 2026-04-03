@@ -31,7 +31,7 @@ namespace Core.Efficiency
 structure CostPair where
   cost₁ : ℚ
   cost₂ : ℚ
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Pareto dominance: `a` dominates `b` iff `a` is at least as good on
     both dimensions and strictly better on at least one. -/

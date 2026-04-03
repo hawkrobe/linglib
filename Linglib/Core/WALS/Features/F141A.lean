@@ -20,7 +20,7 @@ inductive WritingSystems where
   | syllabic  -- Syllabic (2 languages)
   | logographic  -- Logographic (0 languages)
   | mixedLogographicSyllabic  -- Mixed logographic–syllabic (0 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 141A dataset (6 languages). -/
 def allData : List (Datapoint WritingSystems) :=

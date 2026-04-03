@@ -78,7 +78,7 @@ inductive ImperfettoReading where
   /-- Progressive: "Gianni was reading the newspaper." Temporal
       anchoring to a small reference time. -/
   | prog
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ═══ Object Type ═══
 
@@ -96,7 +96,7 @@ inductive ObjectType where
   | barePlural
   /-- No object (intransitive or PP complement) -/
   | none
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ═══ Same-Object Effect (SOE) ═══
 
@@ -115,7 +115,7 @@ inductive SOEStatus where
   | kindLevel
   /-- No SOE (bare plural, definite, or no object). -/
   | absent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- An Italian imperfective datum from @cite{del-prete-2013}. -/
 structure ItalianDatum where
@@ -383,7 +383,7 @@ inductive TheoreticalConcept where
       instances of the kind are distributed over atomic subevents of the
       plural event. This explains why bare plurals lack SOEs. -/
   | distributionToSubevents
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 
 -- ═══ §8.7: Oddness Explained ═══

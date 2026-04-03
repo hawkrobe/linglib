@@ -67,7 +67,7 @@ Lewis's semantics, matching the English judgment.
 section BumperCrop
 
 inductive CropWorld where | actual | goodWeather | sunCold
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Good weather is much more similar to the actual world than the sun
     growing cold. -/
@@ -124,7 +124,7 @@ This is absurd.
 section Spain
 
 inductive SpainWorld where | actual | axis | allies
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Axis is closer to actual than Allies (Spain's ideological alignment). -/
 def spainCloser : SpainWorld → SpainWorld → SpainWorld → Bool

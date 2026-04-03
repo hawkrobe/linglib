@@ -41,7 +41,7 @@ namespace Semantics.Causation.PsychCausation
 inductive CausalSource where
   | external  -- percept/event → eventive reading
   | internal  -- mental representation (stative causation/maintenance) → stative reading
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Position in a two-link causal chain.
 
@@ -50,7 +50,7 @@ inductive CausalSource where
 inductive CausalChainPosition where
   | onset      -- first link: external cause or representation
   | terminus   -- final link: experiencer's mental state change
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The Onset Condition: causal adjuncts (including Subject Matter)
     must map to the onset position of the causal chain.
@@ -107,7 +107,7 @@ def CausalSource.isEventive : CausalSource → Bool
 inductive StimulusType where
   | target        -- T: directed-at ("fears the dog")
   | subjectMatter -- SM: about ("worries about the exam")
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Target stimuli select *of*-PP complements. -/
 def StimulusType.ppFrame : StimulusType → String

@@ -45,13 +45,13 @@ open Core.Modality (ModalForce)
 inductive Doubling where
   | single   -- bare modal auxiliary
   | concord  -- modal auxiliary + modal adverb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Experimental condition: FORCE × NUMBER. -/
 structure Condition where
   force : ModalForce
   doubling : Doubling
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def necSM : Condition := ⟨.necessity, .single⟩
 def necMC : Condition := ⟨.necessity, .concord⟩
@@ -136,7 +136,7 @@ inductive SocialDimension where
   | friendliness -- Friendliness
   | warmth       -- Warmth
   | coolness     -- Coolness
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Competence/warmth classification.
     Necessity MC increases competence dimensions, decreases warmth.
@@ -144,7 +144,7 @@ inductive SocialDimension where
 inductive DimensionClass where
   | competence  -- Status, ability, expertise
   | warmth      -- Sociability, friendliness
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify each social dimension as competence or warmth. -/
 def SocialDimension.dimClass : SocialDimension → DimensionClass

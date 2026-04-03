@@ -40,7 +40,7 @@ namespace Core
 inductive AlignmentFamily where
   | accusative
   | ergative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Case Inventory
@@ -71,7 +71,7 @@ inductive Case where
   | ess    -- Essive: state or role ('as X') — Finnish -nA
   | transl -- Translative: change of state ('becoming X') — Finnish -ksi
   | abess  -- Abessive: privative ('without X') — Finnish -ttA
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § 3: Exhaustive Enumeration and Case Assignment
@@ -96,13 +96,13 @@ theorem Case.allCases_complete (c : Case) : c.inAllCases = true := by
 inductive CaseAssignment where
   | derived
   | fixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- For fixed-case NPs, what syntactic role the NP occupies. -/
 inductive FixedCaseEncoding where
   | directObject
   | adverbial
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The three spatial cases that serve as adverbial markers
     cross-linguistically (@cite{stassen-1985}, §2.2.3). -/
@@ -209,7 +209,7 @@ inductive CaseFeature where
   | abs
   | src
   | loc
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 7: Case Relations (Feature Bundles)
@@ -221,7 +221,7 @@ structure CaseRelation where
   abs : Bool
   src : Bool
   loc : Bool
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def CaseRelation.neutral : CaseRelation := ⟨false, false, false⟩
 def CaseRelation.absolutive : CaseRelation := ⟨true, false, false⟩
@@ -390,7 +390,7 @@ def SplitErgativity.alignment {Factor : Type} (split : SplitErgativity Factor)
 inductive Aspect where
   | perfective
   | imperfective
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def hindiSplit : SplitErgativity Aspect :=
   { ergCondition := fun a => a == .perfective }
@@ -422,7 +422,7 @@ inductive GramPrinciple where
   /-- Phonetic substance lost: loses stress, assimilates to host,
       may reduce to zero. -/
   | erosion
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Source category of a case marker on the grammaticalization cline
     (@cite{heine-2009} §29.1 eq. (1), §29.2).
@@ -440,7 +440,7 @@ inductive CaseGramStage where
   | caseAffix
   /-- Case marker lost: erosion endpoint or merger. -/
   | lost
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Boundedness increases monotonically along the case cline. -/
 def CaseGramStage.boundedness : CaseGramStage → Nat
@@ -573,7 +573,7 @@ inductive BeyondCaseTarget where
   | conjunction
   /-- Purposive → future tense marker. -/
   | tenseMarker
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 14: Comparative Entry

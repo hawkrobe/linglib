@@ -43,7 +43,7 @@ inductive QuantifierType where
   | existential         -- some, a, several
   | proportional        -- most, many, few
   | numeral             -- two, three, exactly five
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 But-exceptive example with grammaticality judgment.
@@ -311,7 +311,7 @@ inductive ExceptiveConstruction where
   | exceptExceptive    -- "everyone except John"
   | otherThan          -- "everyone other than John"
   | besidesExceptive   -- "everyone besides John"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Comparison of exceptive constructions.

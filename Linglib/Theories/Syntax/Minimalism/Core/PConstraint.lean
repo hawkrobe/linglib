@@ -69,7 +69,7 @@ inductive PProminence where
   | proximate    -- default: [+PROXIMATE]
   | participant  -- restricted: [+PARTICIPANT]
   | author       -- most restricted: [+AUTHOR]
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does a DP inherently satisfy the P-Prominence condition? -/
 def satisfiesProminence (setting : PProminence) (p : PersonLevel) : Bool :=
@@ -99,7 +99,7 @@ structure PCCGrammar where
       ALL Appl heads (false = default) or only when a [+author] DP
       is present (true = restricted). -/
   restrictedDomain : Bool := false
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 4: Grammar Instances

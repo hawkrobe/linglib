@@ -113,7 +113,7 @@ inductive TensePhenomenon where
       TP complements but blocked in CP complements. Clause size determines
       whether [uPAST] can Agree upward across the complement boundary -/
   | sizeSensitiveSOT
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -270,7 +270,7 @@ def embeddedFrame {Time : Type*} (matrixFrame : ReichenbachFrame Time)
 inductive EmbeddedTenseReading where
   | shifted       -- embedded event BEFORE matrix event (back-shifted)
   | simultaneous  -- embedded event AT matrix event time (SOT deletion)
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Available readings depend on the SOT parameter of the language.
 
@@ -524,7 +524,7 @@ structure ThenAdverb where
   gloss : String
   /-- "then" shifts P away from S: P ≠ S after "then" applies. -/
   shiftsPerspective : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 
 end Semantics.Tense

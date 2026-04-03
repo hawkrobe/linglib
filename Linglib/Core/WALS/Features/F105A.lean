@@ -18,7 +18,7 @@ inductive DitransitiveConstructionsTheVerbGive where
   | doubleObjectConstruction  -- Double-object construction (84 languages)
   | secondaryObjectConstruction  -- Secondary-object construction (65 languages)
   | mixed  -- Mixed (40 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 105A dataset (378 languages). -/
 def allData : List (Datapoint DitransitiveConstructionsTheVerbGive) :=

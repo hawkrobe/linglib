@@ -52,7 +52,7 @@ open Minimalism (ComplementSize fValue)
 inductive Reading where
   | belief
   | intention
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map complement size to rational attitude reading.
 

@@ -57,7 +57,7 @@ inductive MetaphorInterpretation where
   | literal
   /-- Metaphorical: the referent shares salient properties of the category -/
   | metaphorical
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- RT scenario for "He is a whale" (S&W pp. 233-237).
 
@@ -119,7 +119,7 @@ inductive HyperboleInterpretation where
   | literal
   /-- Approximate: a loosened version (very many, extremely) -/
   | approximate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- RT scenario for "I've told you a million times".
 
@@ -171,7 +171,7 @@ inductive LooseUseType where
   | hyperbole
   /-- Metaphor: "He is a whale" (large/impressive like a whale) -/
   | metaphor
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Distance from literal meaning: how much loosening is required.
     Increases along the continuum from literal (0) to metaphor (3). -/

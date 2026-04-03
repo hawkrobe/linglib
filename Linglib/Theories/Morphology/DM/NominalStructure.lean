@@ -42,7 +42,7 @@ inductive NominalPosition where
   | specPoss     -- Spec,PossP: alienable possessor position
   | num          -- Num head: number (high/inflectional)
   | d            -- D head: definiteness
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this position within nP?
 
@@ -104,7 +104,7 @@ theorem glh_root_and_n_local :
 inductive PossessionType where
   | inalienable  -- iPossession: possessor in Spec,nP (local to n)
   | alienable    -- aPossession: possessor in Spec,PossP (nonlocal to n)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def PossessionType.possessorPosition : PossessionType → NominalPosition
   | .inalienable => .specN
@@ -134,7 +134,7 @@ theorem alienable_cannot_affect_gender :
 inductive NumberPosition where
   | onN    -- low/derivational number (within nP)
   | onNum  -- high/inflectional number (on Num, outside nP)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def NumberPosition.toNominalPosition : NumberPosition → NominalPosition
   | .onN   => .nHead
@@ -158,7 +158,7 @@ inductive ExternalFeature where
   | tense         -- on T (clausal, outside DP entirely)
   | aspect        -- on Asp (clausal)
   | voice         -- on Voice (clausal)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map external features to their nearest NominalPosition (lower bound).
     Clausal features are outside DP entirely; D is the highest nominal
@@ -191,7 +191,7 @@ theorem external_features_irrelevant (f : ExternalFeature) :
 inductive PossessionGenderMechanism where
   | possesseeGender   -- gender determined by having an iPossessor
   | inheritedGender   -- gender copied from iPossessor via agreement
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Both mechanisms involve an iPossessor in Spec,nP. -/
 def PossessionGenderMechanism.possessorPosition :

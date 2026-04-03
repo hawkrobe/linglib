@@ -169,7 +169,7 @@ inductive RemainderGenderSource where
   | recycled  -- gender reused from semantic core (e.g. Dieri: masc, Spanish: masc/fem)
   | novel     -- novel gender not used for semantic core (e.g. Tamil: neuter)
   | both      -- mix of recycled and novel genders (e.g. Blackfoot: animate + inanimate)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- How remainder nouns (those not assigned gender by the semantic core)
     are distributed across genders (@cite{kramer-2020} Table 2).
@@ -182,7 +182,7 @@ structure RemainderPattern where
   sameGender : Bool
   /-- Source of the remainder gender(s). -/
   genderSource : RemainderGenderSource
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Dieri (Pama-Nyungan): all remainder nouns are masculine (= same gender
     used for male humans). Same gender, recycled. (@cite{kramer-2020} Table 2) -/
@@ -254,7 +254,7 @@ structure LexicalGenderRule where
   targetDimension : GenderDimension
   /-- Context restriction (e.g. humanness) -/
   context : SemanticBasis
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Harris's Human Gender rule for Spanish:
     [FEMALE] → [F] / __ [HUMAN]
@@ -277,7 +277,7 @@ inductive DiagnosticStatus where
   | handled       -- the approach handles this phenomenon
   | problematic   -- the approach cannot handle this phenomenon
   | inconclusive  -- the phenomenon may not exist or can be reanalyzed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A gender assignment approach, characterized by how it handles
     each of the three diagnostic phenomena from §3.3. -/
@@ -288,7 +288,7 @@ structure ApproachCapabilities where
   hybridAgreement : DiagnosticStatus
   /-- §3.3.3: the Semantic Core Generalization -/
   predictsSemanticCore : DiagnosticStatus
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The lexical approach (@cite{harris-1991}).
 
@@ -731,7 +731,7 @@ inductive RootClass where
   | arbitraryFem      -- √TABLE, √CHAIR: PF-licensed with u[+FEM]
   | arbitraryMasc     -- √LAW, √DOCTOR: PF-licensed with u[−FEM] (5-n / Set 2)
   | default           -- √BOOK, √CAR: no requirement, combines with plain n
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The n head each root class is licensed to combine with. -/
 def RootClass.licensedNHead : RootClass → CatHead
@@ -884,7 +884,7 @@ The polarity of the u-feature determines which gender is arbitrary vs default. -
 inductive SurfaceGender where
   | masculine
   | feminine
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Set 1 default gender derivation: if n has no [+FEM] feature, the
     default VI rule inserts masculine. If n has [+FEM] (interpretable or

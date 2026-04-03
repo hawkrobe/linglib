@@ -65,7 +65,7 @@ monotonically through all operators.
 -/
 structure FLabel where
   idx : Nat
-  deriving DecidableEq, BEq, Repr, Hashable
+  deriving DecidableEq, Repr, Hashable
 
 /--
 A description: the descriptive content associated with a formula label.

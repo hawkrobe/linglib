@@ -18,7 +18,7 @@ inductive PersonMarkingOnAdpositions where
   | noPersonMarking  -- No person marking (209 languages)
   | pronounsOnly  -- Pronouns only (83 languages)
   | pronounsAndNouns  -- Pronouns and nouns (23 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 48A dataset (378 languages). -/
 def allData : List (Datapoint PersonMarkingOnAdpositions) :=

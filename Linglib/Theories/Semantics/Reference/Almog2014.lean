@@ -440,7 +440,7 @@ noun originates the reference). The duality is *semantic*, not pragmatic
 inductive NominalFunction where
   | preNominal
   | nominal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Donnellan's `UseMode` maps into the broader `NominalFunction`.
 Referential use = pre-nominal (reference already established by
@@ -629,7 +629,7 @@ inductive RPKDesideratum where
   | semanticFaith
   /-- Same composition for all subject-predicate structures -/
   | uniformComp
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A semantic approach: satisfies some subset of the three desiderata. -/
 structure RPKApproach where

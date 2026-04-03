@@ -27,7 +27,7 @@ Following the typological literature:
 inductive GramMood where
   | indicative
   | subjunctive
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 Subjunctive subtypes (for finer-grained analysis).
@@ -44,7 +44,7 @@ inductive SubjunctiveType where
   | optative        -- wishes
   | potential        -- possibility
   | subordinateFuture  -- Mendes' SF (present morphology, future reference)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 The semantic effects of grammatical mood, connecting two independent dimensions:
@@ -64,7 +64,7 @@ structure MoodEffect where
   introducesSituation : Bool
   /-- SBJV leaves the eventuality argument open for abstraction (@cite{grano-2024}) -/
   eventualityOpen : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map grammatical mood to its semantic effects.
 

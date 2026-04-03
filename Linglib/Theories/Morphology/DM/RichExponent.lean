@@ -75,7 +75,7 @@ structure ProsodicPrespec where
       Example: English *-ity* requires a trochaic foot on the preceding
       syllable (@cite{alderete-1999}). -/
   preferredFoot : Option FootType := none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited ProsodicPrespec := ⟨{}⟩
 
@@ -100,7 +100,7 @@ structure RichExponent where
   segments : String
   /-- Prosodic prespecification (empty = prosodically inert). -/
   prosody : ProsodicPrespec := {}
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Create a prosodically inert exponent (equivalent to a bare string). -/
 def RichExponent.bare (s : String) : RichExponent :=

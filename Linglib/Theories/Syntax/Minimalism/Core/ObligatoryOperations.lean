@@ -77,7 +77,7 @@ inductive AgreementModel where
   | crashOnFailure
   /-- Preminger: obligatory but failure → default, no crash. -/
   | obligatoryNocrash
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Probe Outcomes
@@ -94,7 +94,7 @@ inductive ProbeOutcome where
   | valued
   /-- Probe attempted but found no suitable goal. -/
   | unvalued
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Convergence
@@ -130,7 +130,7 @@ inductive PFRealization where
   | agreement
   /-- Default/Elsewhere morphology (3SG ∅ in Kichean). -/
   | elsewhere
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map a probe outcome to its PF realization. -/
 def ProbeOutcome.pfRealization : ProbeOutcome → PFRealization
@@ -191,7 +191,7 @@ inductive ProbePresence where
   | present : ProbeOutcome → ProbePresence
   /-- No probe (functional head not projected). -/
   | absent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The three-way distinction that Preminger argues for:
     1. Probe present + valued → agreement morphology

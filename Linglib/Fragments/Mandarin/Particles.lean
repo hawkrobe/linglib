@@ -46,7 +46,7 @@ inductive MandarinTrigger where
   | kaishi -- 开始 'start' (inchoative)
   | faner  -- 反而 'instead' (contrastive)
   | er     -- 而 'instead' (contrastive, weaker)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 A Mandarin presuppositional particle entry.

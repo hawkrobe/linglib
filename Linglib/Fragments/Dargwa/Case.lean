@@ -90,7 +90,7 @@ inductive Localization where
   | ad     -- -š:u: 'in the functionally associated place'
   | apud   -- -hira: 'near, in the vicinity'
   | post   -- -hi: 'behind'
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Orientation values: motion w.r.t. the reference point.
     Tanti has 4 orientations (@cite{sumbatova-2021} §4.4.3.3). -/
@@ -99,7 +99,7 @@ inductive Orientation where
   | elative      -- -r: motion from
   | essive       -- localization + gender marker: position
   | translative  -- -t:i: motion across
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Direction values: motion w.r.t. the speaker.
     Tanti has 4 directions (@cite{sumbatova-2021} §4.4.3.3). -/
@@ -108,7 +108,7 @@ inductive Direction where
   | down    -- -ka(le)
   | hither  -- -se(le), -sale
   | thither -- -de(le), -dale
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A full locative form combines all three layers. -/
 structure LocativeForm where

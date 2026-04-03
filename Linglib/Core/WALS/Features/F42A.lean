@@ -17,7 +17,7 @@ inductive PronominalAndAdnominalDemonstratives where
   | identical  -- Identical (143 languages)
   | differentStem  -- Different stem (37 languages)
   | differentInflection  -- Different inflection (21 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 42A dataset (201 languages). -/
 def allData : List (Datapoint PronominalAndAdnominalDemonstratives) :=

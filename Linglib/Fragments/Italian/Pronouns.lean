@@ -91,7 +91,7 @@ inductive CliticCase where
   | accusative
   | dative
   | reflexive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A single clitic form in the paradigm. -/
 structure CliticEntry where

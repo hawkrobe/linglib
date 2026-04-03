@@ -19,7 +19,7 @@ inductive PrenominalRelativeClauses where
   | relnOrInternallyHeaded  -- RelN or internally-headed (15 languages)
   | relnOrCorrelative  -- RelN or correlative (5 languages)
   | relnOrDoubleHeaded  -- RelN or double-headed (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 90B dataset (191 languages). -/
 def allData : List (Datapoint PrenominalRelativeClauses) :=

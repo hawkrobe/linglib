@@ -18,7 +18,7 @@ inductive SubjectRelativization where
   | nonReduction  -- Non-reduction (24 languages)
   | pronounRetention  -- Pronoun-retention (5 languages)
   | gap  -- Gap (125 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 122A dataset (166 languages). -/
 def allData : List (Datapoint SubjectRelativization) :=

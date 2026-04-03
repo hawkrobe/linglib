@@ -37,7 +37,7 @@ open Fragments.Italian.Nouns (Gender)
 inductive PluralClass where
   | aPlural   -- -a plurals: number on n (low), can change gender
   | regular   -- -i, -e plurals: number on Num (high), preserves gender
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map plural class to number position in the nominal spine. -/
 def PluralClass.toNumberPosition : PluralClass → NumberPosition
@@ -62,7 +62,7 @@ structure NumberGenderNoun where
   gloss : String
   sgGender : Gender
   pluralClass : PluralClass
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Plural gender: -a plurals are always feminine; regular plurals
     preserve the singular gender. -/

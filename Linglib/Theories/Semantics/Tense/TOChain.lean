@@ -89,7 +89,7 @@ open Core.Reichenbach (ReichenbachFrame)
 inductive TimeSphere where
   | past     -- wholly before t₀
   | present  -- includes t₀
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 
 -- ════════════════════════════════════════════════════════════════

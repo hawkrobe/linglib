@@ -59,13 +59,13 @@ open Fragments.English.TDDeletion
 inductive TDOutput where
   | retain   -- faithful: cluster preserved (*west*)
   | delete   -- deletion: t/d removed (*wes*)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A candidate pairs a phonological context with an output form. -/
 structure TDCandidate where
   context : Context
   output : TDOutput
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited TDCandidate := ⟨⟨default, default⟩⟩
 

@@ -61,7 +61,7 @@ inductive TRRole where
   | A    -- agent-like core term of transitive clause
   | P    -- patient-like core term of transitive clause
   | X    -- oblique (non-core term)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Convert `ArgumentRole` to `TRRole`. R and T map to P (both are
     P-like in Creissels' binary core-term system). -/
@@ -103,7 +103,7 @@ inductive ParticipantFate where
   | cumulated
   /-- Not applicable (participant does not exist in initial construction). -/
   | na
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 3. Alternation Marking
@@ -124,7 +124,7 @@ inductive AlternationMarking where
   | equipollent
   /-- Uncoded — no morphological marking (FLEXIVALENCY). -/
   | uncoded
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this alternation an instance of voice (coded by verbal morphology)? -/
 def AlternationMarking.isVoice : AlternationMarking → Bool
@@ -370,7 +370,7 @@ inductive Alignment where
   | A_alignment
   /-- S is coded like P — traditionally "absolutive-ergative" -/
   | P_alignment
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The Obligatory Coding Principle (§1.3.4.4):
     in most languages, every verb assigns a particular type of participant
@@ -795,7 +795,7 @@ inductive AmbitransitivityType where
   | reciprocal
   /-- Ambiguous or underspecified. -/
   | unspecified
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- P-ambitransitivity corresponds to uncoded decausativization. -/
 theorem p_ambi_is_uncoded_decausativization :

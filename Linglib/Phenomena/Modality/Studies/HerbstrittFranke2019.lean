@@ -167,7 +167,7 @@ theorem inferred_threshold_ordering :
 /-- The five simple expressions from Experiments 2 and 3. -/
 inductive SimpleExpr where
   | certainlyNot | probablyNot | possibly | probably | certainly
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Simple expression meaning using the paper's inferred thresholds.
 
@@ -237,7 +237,7 @@ def posteriorProb (access obs : ℕ) (φ : UrnState → Bool) : ℚ :=
     the threshold of the inner expressions likely/probably." -/
 inductive InnerExpr where
   | likely | possible | unlikely
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Inner expression meaning (over urn states, Eq. 22). -/
 def InnerExpr.meaning : InnerExpr → UrnState → Bool
@@ -248,7 +248,7 @@ def InnerExpr.meaning : InnerExpr → UrnState → Bool
 /-- The four outer modifiers from Experiment 3. -/
 inductive OuterMod where
   | is_ | isCertainly | isProbably | mightBe
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Outer modifier threshold (Table 9, complex model).
 

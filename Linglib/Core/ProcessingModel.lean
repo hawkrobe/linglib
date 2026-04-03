@@ -44,7 +44,7 @@ structure ProcessingProfile where
   /-- Retrieval facilitation: richer fillers, higher predictability
   (higher = easier retrieval, so this dimension is inverted in comparison) -/
   ease : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Pareto Dominance
@@ -56,7 +56,7 @@ inductive CompareResult where
   | easier        -- Better-or-equal on all dimensions, strictly better on ≥1
   | equal         -- Identical on all dimensions
   | incomparable  -- Some dimensions harder, some easier
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Compare two processing profiles via Pareto dominance.
 

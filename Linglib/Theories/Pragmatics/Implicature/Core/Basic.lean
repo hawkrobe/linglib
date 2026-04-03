@@ -39,7 +39,7 @@ inductive BeliefState where
   | belief      -- Bel_S(ψ)
   | disbelief   -- Bel_S(¬ψ)
   | noOpinion   -- ¬Bel_S(ψ) ∧ ¬Bel_S(¬ψ)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 /--
@@ -185,7 +185,7 @@ inductive ImplicatureOutcome where
   | undecided       -- Only weak implicature, no competence assumption
   | strongInference -- Competence assumed, strong implicature derived
   | incompetent     -- Competence rejected, speaker is uncertain
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Map a belief state to its implicature outcome.
@@ -226,7 +226,7 @@ Reference:
 inductive SITrigger where
   | default      -- Levinson: SIs fire automatically as presumptive meanings
   | contextual   -- Geurts: SIs depend on Question Under Discussion
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Parameters that characterize a Neo-Gricean theory variant.

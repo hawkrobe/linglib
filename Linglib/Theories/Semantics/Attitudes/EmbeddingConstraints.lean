@@ -261,7 +261,7 @@ inductive Constraint where
   | ptoQ
   | strawsonCDist
   | vu
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 namespace Constraint
 

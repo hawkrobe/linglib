@@ -38,7 +38,7 @@ inductive AHPosition where
   /-- Object of comparison: the least accessible position
       ("the person [that I am taller than _]"). -/
   | objComparison
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Relative Clause Position
@@ -63,7 +63,7 @@ inductive RCPosition where
       and outside the RC. E.g., Hindi-Urdu "jo aadmii aayaa, vo
       aadmii meraa bhaaii hai". -/
   | correlative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: NP_rel Type (what occupies the relativized position)
@@ -101,7 +101,7 @@ inductive NPRelType where
   /-- Non-reduction: NP_rel is a full NP — the head noun is repeated
       inside the RC. E.g., Bambara. -/
   | nonReduction
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 4: Relative Clause Marker

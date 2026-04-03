@@ -26,7 +26,7 @@ inductive ScalarWorld where
   | none  -- No one (0)
   | some  -- Some but not all (1 or 2 out of 3)
   | all   -- All (3 out of 3)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- RSA scalar implicature result. -/
 structure RSAScalarResult where

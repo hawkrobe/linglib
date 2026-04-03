@@ -98,7 +98,7 @@ structure MotionVPDatum where
   pp : String
   pathShape : PathShape
   expectedTelicity : Telicity
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- "arrive at the store" — inherently bounded → telic → "in X" ✓ -/
 def arriveAtStore : MotionVPDatum :=

@@ -45,7 +45,7 @@ inductive BoxChoice where
   | mismatch     -- visible box incompatible with description
   | lowerBounded -- visible box satisfying LB but not exact reading
   | covered      -- hidden box (inferred to contain exact match)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Section 2: Covered-Box Data
@@ -125,7 +125,7 @@ inductive KnowerLevel where
   | twoKnower
   | threeKnower
   | cpKnower
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether a child at a given knower level knows the meaning of a numeral. -/
 def knowsNumeral : KnowerLevel → Nat → Bool

@@ -90,7 +90,7 @@ inductive Utt
   | conditional
   | C
   | conjAC
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : Nonempty Utt := ⟨.likelyC⟩
 
@@ -105,7 +105,7 @@ inductive State
   | s1
   | s2
   | s3
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : Nonempty State := ⟨.s1⟩
 

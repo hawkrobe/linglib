@@ -31,7 +31,7 @@ inductive ClassifierDirection where
   | approaching    -- classifier moves toward the signer
   | receding       -- classifier moves away from the signer
   | stationary     -- classifier does not move
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether classifier movement is dynamic (involves motion). -/
 def ClassifierDirection.isDynamic : ClassifierDirection → Bool
@@ -46,7 +46,7 @@ def ClassifierDirection.isDynamic : ClassifierDirection → Bool
 inductive MotionType where
   | absolute  -- the object itself moves (standard interpretation)
   | relative  -- the object appears to move from a moving viewpoint
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A relative motion reading: the object class and how it appears
     to move from the character's perspective. -/
@@ -82,6 +82,6 @@ inductive RoleShiftStatus where
   | strict     -- body rotation, eyegaze shift, agreement changes
   | broad      -- signer's body represents another character (no rotation)
   | absent     -- no Role Shift markers
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 end Phenomena.Iconicity

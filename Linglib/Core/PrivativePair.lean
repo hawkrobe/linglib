@@ -54,7 +54,7 @@ structure PrivativePair where
   outer : Bool
   /-- The entailing (inner) feature — implies `outer`. -/
   inner : Bool
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- § 2: Well-Formedness

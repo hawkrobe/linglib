@@ -53,7 +53,7 @@ inductive BeforeAfterTheory where
   | ambiguity              -- @cite{rett-2020}
   | quantificationalEvent  -- @cite{ogihara-steinert-threlkeld-2024}
   | intensionalUniform     -- @cite{beaver-condoravdi-2003}
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Theory profile: what each theory posits and predicts. -/
 structure TheoryProfile where

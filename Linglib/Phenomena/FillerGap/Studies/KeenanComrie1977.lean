@@ -82,7 +82,7 @@ structure StrategyEntry where
   obl : Bool
   gen : Bool
   ocomp : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which AH position does this strategy cover? -/
 def StrategyEntry.covers (s : StrategyEntry) : AHPosition → Bool

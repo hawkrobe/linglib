@@ -18,7 +18,7 @@ inductive SnegovOrder where
   | optdoubleneg  -- OptDoubleNeg (4 languages)
   | onlywithanotherneg  -- OnlyWithAnotherNeg (11 languages)
   | noSnegov  -- No SNegOV (368 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144Q dataset (408 languages). -/
 def allData : List (Datapoint SnegovOrder) :=

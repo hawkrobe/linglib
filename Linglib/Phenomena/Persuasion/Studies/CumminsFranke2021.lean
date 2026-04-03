@@ -186,7 +186,7 @@ theorem wider_enrichment_weakens_argStr
 inductive ClaimType where
   | absolute     -- "top M" (actual rank ≤ M)
   | percentile   -- "top M per cent" (actual rank ≤ ⌈N × M/100⌉)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A "top M" datum from C&F §5, examples 29–38 (p. 12) -/
 structure TopMDatum where

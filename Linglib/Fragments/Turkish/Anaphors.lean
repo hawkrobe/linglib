@@ -39,7 +39,7 @@ inductive AnaphorType where
   | reciprocal
   /-- kendi 'self' — can also be intensifier -/
   | reflexive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Is this anaphor type subject to a plurality requirement on its antecedent? -/
 def AnaphorType.requiresPluralAntecedent : AnaphorType → Bool

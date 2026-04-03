@@ -16,7 +16,7 @@ namespace Core.WALS.F39B
 inductive InclusiveExclusiveFormsInPamaNyungan where
   | noInclusiveExclusiveOpposition  -- No inclusive/exclusive opposition (31 languages)
   | inclusiveAndExclusiveDifferentiated  -- Inclusive and exclusive differentiated (40 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 39B dataset (71 languages). -/
 def allData : List (Datapoint InclusiveExclusiveFormsInPamaNyungan) :=

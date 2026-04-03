@@ -37,7 +37,7 @@ inductive NomSuffix where
   | sla    -- restricted: ræk-sla 'cultivation'
   | stur   -- restricted: þvo-ttur, les-tur
   | adur   -- restricted: skil-naður (stem -n- + -aður)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- PF realization of the suffix. -/
 def NomSuffix.form : NomSuffix → String

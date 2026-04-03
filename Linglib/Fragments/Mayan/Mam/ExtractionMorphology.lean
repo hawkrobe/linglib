@@ -60,7 +60,7 @@ inductive MamClauseType where
   /-- VP-sized infinitival complement: no Voice projected.
       =(y)a' impossible — no Voice⁰ to host [oblique] (Elkins et al. §6.1). -/
   | infinitival
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this clause type project Voice? -/
 def MamClauseType.projectsVoice : MamClauseType → Bool
@@ -82,7 +82,7 @@ inductive MamExtractionJudgment where
   | licensed
   /-- =(y)a' is blocked (may not appear) in this configuration -/
   | blocked
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 3: Monoclausal Data
@@ -313,7 +313,7 @@ structure MovementReflex where
       Islands are configurations where the phase edge is unavailable,
       blocking successive-cyclic movement. -/
   movementPhaseBounded : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Island sensitivity is derived: a movement reflex is island-sensitive
     iff the morpheme requires movement AND movement is phase-bounded.

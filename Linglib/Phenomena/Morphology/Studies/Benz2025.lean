@@ -194,7 +194,7 @@ inductive PreverbalElement where
   | pfx  -- inseparable prefix (be-, ent-, er-, ge-, miss-, ver-, zer-)
   | prt  -- separable particle (ab-, an-, auf-, aus-, ein-, los-, nach-, vor-, zu-, ...)
   | rsp  -- resultative secondary predicate (platt, tot, kaputt, ...)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Syntactic status: head or phrase.
 
@@ -523,7 +523,7 @@ theorem rsp_prt_contrast_pattern :
 inductive InterpretiveTransparency where
   | transparent
   | nonTransparent
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def typicalTransparency : PreverbalElement → InterpretiveTransparency
   | .rsp => .transparent
@@ -596,7 +596,7 @@ inductive NominalizationType where
   | ung           -- -ung suffixation
   | ge_e          -- Ge-...-e circumfixation
   | nomInfinitive -- nominalized infinitive (das V-en)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ────────────────────────────────────────────────────
 -- § 16. PE Acceptability across Nominalization Types
@@ -714,7 +714,7 @@ into these dimensions and prove that the predicted paradigm matches. -/
 inductive SynLevel where
   | head    -- X⁰: can incorporate into other heads
   | phrase  -- XP: cannot incorporate
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- **Lexical Integrity**: a head can take a head complement (head-adjunction
     / incorporation), and a phrase can take a head complement (normal
@@ -744,7 +744,7 @@ def incorporationAllowed (outer inner : SynLevel) : Bool :=
 inductive ResultStateSpec where
   | specifies  -- obligatorily introduces a result state
   | neutral    -- compatible with either (e.g. directional/completive readings)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- **Result State Uniqueness**: two elements that both obligatorily specify
     a result state cannot co-occur, because a single event cannot be

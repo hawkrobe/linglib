@@ -33,7 +33,7 @@ These verbs lexically encode the manner of verbal communication. -/
 inductive MoSVerb where
   | whisper | mutter | shout | yell | scream | mumble
   | stammer | whine | groan | moan | shriek | murmur
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Focus conditions manipulated via prosodic capitalization/bolding. -/
 inductive FocusCondition where
@@ -43,14 +43,14 @@ inductive FocusCondition where
   | embeddedFocus
   /-- Manner adverb capitalized (Exp 3b only) -/
   | adverbFocus
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Verb types compared across experiments. -/
 inductive VerbType where
   | mos         -- Manner-of-speaking verb (whisper, shout, etc.)
   | say         -- Bridge verb *say*
   | sayAdverb   -- *say* + manner adverb (say softly, say loudly, etc.)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## Experiment 1: Discourse Effects on MoS Islands
 

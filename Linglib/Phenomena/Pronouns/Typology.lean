@@ -91,7 +91,7 @@ inductive InclusiveExclusive where
   | onlyInclusive
   /-- Full inclusive/exclusive distinction in 1st-person plural. -/
   | inclusiveExclusive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 40 -- Inclusive/Exclusive in Verbal Inflection
@@ -109,7 +109,7 @@ inductive InclusiveExclusiveVerbal where
   | onlyInclusive
   /-- Full inclusive/exclusive distinction in verbal inflection. -/
   | inclusiveExclusive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 44 -- Gender Distinctions in Independent Personal Pronouns
@@ -132,7 +132,7 @@ inductive GenderInPronouns where
   /-- No gender distinctions in pronouns at all (e.g. Finnish,
       Turkish, Japanese). -/
   | noGenderDistinctions
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 45 -- Politeness Distinctions in Pronouns
@@ -149,7 +149,7 @@ inductive PolitenessDistinction where
   /-- Pronouns avoided entirely for politeness; titles or kin terms
       used instead (e.g. Korean, Thai). -/
   | pronounsAvoided
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 46 -- Indefinite Pronouns
@@ -171,7 +171,7 @@ inductive IndefinitePronounType where
   | mixed
   /-- Existential construction used instead of indefinite pronouns. -/
   | existentialConstruction
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 47 -- Intensifiers and Reflexive Pronouns
@@ -185,7 +185,7 @@ inductive IntensifierReflexive where
   /-- Different, morphologically unrelated forms for intensifier
       and reflexive. -/
   | differentiated
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Types: WALS Ch 48 -- Person Marking on Adpositions
@@ -204,7 +204,7 @@ inductive PersonMarkingOnAdpositions where
   /-- Both pronominal and nominal complements trigger person marking
       on adpositions. -/
   | pronounsAndNouns
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -236,7 +236,7 @@ inductive InclusiveExclusivePamaNyungan where
   | noOpposition
   /-- Inclusive and exclusive forms are differentiated. -/
   | differentiated
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def fromWALS39B : Core.WALS.F39B.InclusiveExclusiveFormsInPamaNyungan →
     InclusiveExclusivePamaNyungan

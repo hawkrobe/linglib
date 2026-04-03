@@ -40,7 +40,7 @@ inductive Number where
   | one   -- Singular
   | two   -- Dual (if language has it)
   | many  -- Plural (> 1)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Count noun denotation with number argument: `⟨s,⟨n,⟨e,t⟩⟩⟩`.
 `⟦dog⟧(w)(1)(fido) = true` iff fido is a single dog in w. -/

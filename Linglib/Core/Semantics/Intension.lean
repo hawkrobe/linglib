@@ -152,7 +152,7 @@ inductive ReferentialMode where
   | anaphoric
   /-- Bound by a c-commanding operator (∀x...his..., whenever...is...) -/
   | bound
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Coarsen to a two-way free/bound classification.
     Indexical and anaphoric are both "free" — they differ only in how the
@@ -179,7 +179,7 @@ inductive SitVarStatus where
   | free
   /-- Bound: bound by an intensional operator (→ de dicto) -/
   | bound
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open Core.ReferentialMode (ReferentialMode)
 

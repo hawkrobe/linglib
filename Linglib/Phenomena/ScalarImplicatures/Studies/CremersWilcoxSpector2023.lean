@@ -124,7 +124,7 @@ namespace Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 inductive CWSWorld where
   | w_a : CWSWorld
   | w_ab : CWSWorld
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype CWSWorld where
   elems := {.w_a, .w_ab}
@@ -135,7 +135,7 @@ inductive CWSUtterance where
   | A : CWSUtterance
   | AandB : CWSUtterance
   | AandNotB : CWSUtterance
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype CWSUtterance where
   elems := {.A, .AandB, .AandNotB}
@@ -207,7 +207,7 @@ theorem exhAnotB_unchanged : ∀ w, exhMeaning w .AandNotB = literalTruth w .Aan
 inductive CWSParse where
   | literal : CWSParse
   | exh : CWSParse
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype CWSParse where
   elems := {.literal, .exh}
@@ -355,7 +355,7 @@ theorem exh_meaning_blocks_wab :
 inductive CWSBackground where
   | wonky : CWSBackground
   | default_ : CWSBackground
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype CWSBackground where
   elems := {.wonky, .default_}
@@ -369,7 +369,7 @@ instance : Fintype CWSBackground where
 inductive CWSQUD where
   | coarse : CWSQUD
   | fine : CWSQUD
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype CWSQUD where
   elems := {.coarse, .fine}
@@ -383,7 +383,7 @@ inductive CWSInterpretation where
   | literal : CWSInterpretation
   | exh : CWSInterpretation
   | antiExh : CWSInterpretation
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype CWSInterpretation where
   elems := {.literal, .exh, .antiExh}

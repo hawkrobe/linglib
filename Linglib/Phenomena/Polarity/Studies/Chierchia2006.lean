@@ -74,7 +74,7 @@ open Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025 (FCIFlavor EFCIRescue)
 inductive DomainAltGrain where
   | max  -- Pure NPIs: large D-alternatives → even-like
   | min  -- FCIs: all D-alternatives → antiexhaustive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The PSI profile: the 2026-consensus distillation of
     @cite{chierchia-2006}'s parametric PSI typology.
@@ -94,7 +94,7 @@ structure PSIProfile where
   requiresProperStrengthening : Bool
   /-- Whether scalar alternatives are also activated -/
   hasScalarAlts : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2. The Five PSI Classes (table (94))
@@ -570,20 +570,20 @@ inductive Judgment where
   | grammatical     -- fully acceptable
   | marginal        -- ? or ?? — degraded but parseable
   | ungrammatical   -- * — not acceptable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Quantificational force of the FCI reading. -/
 inductive QForce where
   | universal    -- ∀ reading
   | existential  -- ∃ reading
   | ambiguous    -- both readings available
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- FCI construction type: [qualsiasi N] vs [un N qualsiasi]. -/
 inductive FCIType where
   | universal    -- [qualsiasi/qualunque N]: universal force
   | existential  -- [un N qualsiasi/qualunque]: existential force
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Embedding context for FCI observations. -/
 inductive FCIContext where
@@ -593,7 +593,7 @@ inductive FCIContext where
   | episodic_subtrigged -- episodic + relative clause (11b, 11d)
   | negation_bare       -- under negation, no modifier (12/73a)
   | negation_subtrigged -- under negation + relative clause (73b)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An Italian FCI observation from @cite{chierchia-2006} §2. -/
 structure FCIObservation where

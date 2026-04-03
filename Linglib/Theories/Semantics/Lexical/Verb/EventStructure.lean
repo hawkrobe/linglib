@@ -45,7 +45,7 @@ inductive Template where
   | achievement    -- [BECOME [x ⟨STATE⟩]]
   | accomplishment -- [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]
   | motionContact  -- [x MOVE y] WHILE [x CONTACT y]
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Template Properties
@@ -217,7 +217,7 @@ theorem motionContact_variable_agentivity :
 inductive DeterminingPredicate where
   | motion   -- MOVE determines: unaccusative/transitive+PP frames
   | contact  -- CONTACT determines: simple transitive frame
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- When CONTACT determines argument realization, the subject is an
     effector (movement + IE → external argument). This yields the simple
@@ -285,7 +285,7 @@ theorem lexicalized_is_full_agent :
 inductive EventType where
   | process     -- PROC only: walk, sing, roll, buzz
   | stateChange -- Involves CHANGE: die, break, grow, darken, sit
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive event type from template.
     Activities and motionContact are processes; states, achievements, and
@@ -306,7 +306,7 @@ def Template.eventType : Template → EventType
 inductive CausationType where
   | internal   -- instigated by a participant (sing, walk, write, play)
   | external   -- no instigator; "spontaneous" (break, fall, roll, buzz)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end Semantics.Lexical.Verb.EventStructure
 

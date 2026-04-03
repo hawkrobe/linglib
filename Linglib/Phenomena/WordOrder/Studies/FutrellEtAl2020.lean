@@ -40,7 +40,7 @@ structure LanguageDLM where
   depLengthAt10 : Nat    -- × 100
   depLengthAt15 : Nat    -- × 100
   depLengthAt20 : Nat    -- × 100
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Classification

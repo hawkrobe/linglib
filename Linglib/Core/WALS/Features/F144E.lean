@@ -42,7 +42,7 @@ inductive MultipleNegativeConstructionsInSvoLanguages where
   | svoVsoNegv  -- SVO/VSO & NegV (2 languages)
   | svoVosNegv  -- SVO/VOS & NegV (2 languages)
   | svoSovNegvVneg  -- SVO/SOV & NegV/VNeg (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144E dataset (48 languages). -/
 def allData : List (Datapoint MultipleNegativeConstructionsInSvoLanguages) :=

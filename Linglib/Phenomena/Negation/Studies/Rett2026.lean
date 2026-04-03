@@ -58,7 +58,7 @@ open Fragments.English.Modifiers.Adjectives (AdjModifierEntry)
 inductive ENType where
   | high   -- Non-truth-conditional; obligatory (exclamatives, surprise)
   | low    -- Truth-conditional; optional (before, than, fear)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Cross-Linguistic EN Data
@@ -193,7 +193,7 @@ inductive ENConstruction where
   | until        -- temporal *until*
   | comparative  -- degree comparative *than*
   | fear         -- negative attitude verbs (*fear*, *worry*, *doubt*)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Theory-derived: is the construction ambidirectional?
     Backed by the ambidirectionality theorems in TemporalConnectives

@@ -96,7 +96,7 @@ theorem fullArrow_all_enabled :
     aggregation mechanisms yield different verdicts. -/
 
 inductive Person where | alice | bob
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Dimensional profiles for *athletic*:
     - Alice: fast, agile, not enduring

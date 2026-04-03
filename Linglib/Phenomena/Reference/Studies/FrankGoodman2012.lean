@@ -90,7 +90,7 @@ inductive Finding where
   | green_unique_reference
   /-- Hearing "circle" → blue_circle (unique identifier, no pragmatics needed). -/
   | circle_unique_reference
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def findings : List Finding :=
   [.square_pragmatic_narrowing, .blue_pragmatic_narrowing,
@@ -106,12 +106,12 @@ def findings : List Finding :=
     has only 3 of 4 possible combinations — no green_circle. -/
 inductive Object where
   | blue_square | blue_circle | green_square
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- The four single-word utterances (feature predicates). -/
 inductive Feature where
   | blue | green | square | circle
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 -- ============================================================================
 -- §3. Literal Semantics
@@ -370,14 +370,14 @@ full applicability matrix, and `mkRefGame` builds the RSAConfig from it. -/
 /-- Three objects in a reference game: target + 2 distractors. -/
 inductive Obj3 where
   | target | d1 | d2
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Feature values in a 2-dimensional reference game.
     dim1_a / dim2_a are the target's values on each dimension.
     b-variants are d1-specific; c-variants are d2-specific. -/
 inductive Dim2Feature where
   | dim1_a | dim1_b | dim1_c | dim2_a | dim2_b | dim2_c
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Context specification: 4 booleans encoding distractor overlap with target.
     Each boolean indicates whether a distractor shares the target's value on

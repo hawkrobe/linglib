@@ -38,7 +38,7 @@ inductive VMovementParam where
   | raises
   /-- V stays in situ below T (English lexical verbs) -/
   | inSitu
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Pollock's four diagnostics for verb position relative to T. -/
 inductive VDiagnostic where
@@ -50,7 +50,7 @@ inductive VDiagnostic where
   | floatingQ
   /-- Can V invert with the subject (V-to-C via T)? -/
   | inversion
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Prediction: does V precede the diagnostic position?
 
@@ -81,7 +81,7 @@ inductive TenseSupportContext where
   | tagQuestion
   /-- VP ellipsis (stranded T): "She runs faster than he does" -/
   | vpEllipsis
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Does this parameter setting require do-support in the given context?
 

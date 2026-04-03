@@ -10,7 +10,7 @@ namespace Interfaces.BindingSemantics
 structure Position where
   /-- Linear index (word position) -/
   index : Nat
-  deriving Repr, DecidableEq, BEq, Hashable
+  deriving Repr, DecidableEq, Hashable
 
 /-- A binding relation: which binder binds which bindee. -/
 structure BindingRelation where

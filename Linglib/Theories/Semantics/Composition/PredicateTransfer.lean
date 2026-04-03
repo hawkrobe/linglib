@@ -147,7 +147,7 @@ inductive QuantifierSource where
   | typeShift
   /-- Phonologically realized (always, usually, often, etc.) -/
   | overt
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Type-shifted elements take narrow scope only (local application).
     Predicate Transfer and overt quantifiers can take wide scope

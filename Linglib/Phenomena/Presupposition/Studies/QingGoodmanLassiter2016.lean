@@ -65,7 +65,7 @@ inductive WorldState where
   | wTF  -- (past=T, now=F): smoked, quit (stopped)
   | wFT  -- (past=F, now=T): didn't smoke, started
   | wFF  -- (past=F, now=F): never smoked
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 def WorldState.past : WorldState → Bool
   | .wTT | .wTF => true
@@ -95,7 +95,7 @@ inductive Utterance where
   | neverSmoked         -- "John has never smoked" {(F,F)}
   | notNeverSmoked      -- "John hasn't never smoked" {(T,T),(T,F),(F,T)}
   | silence             -- null utterance          {(T,T),(T,F),(F,T),(F,F)}
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 -- ============================================================================
 -- §3. Literal Semantics
@@ -164,7 +164,7 @@ inductive ContextSet where
   | pastFalseNowTrue   -- -past+now
   | pastFalseNowFalse  -- -past-now
   | universe           -- no constraints
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- World-context compatibility: w ∈ C. -/
 def compatibleBool : ContextSet → WorldState → Bool
@@ -187,7 +187,7 @@ inductive QUD where
   | now   -- "Does John smoke now?" (partitions by now)
   | max   -- Full world identification (identity QUD)
   | past  -- "Did John smoke?" (partitions by past)
-  deriving DecidableEq, Repr, BEq, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- QUD aggregation: sums L0 probabilities over the QUD equivalence class.
     - now: sums over worlds with same now value

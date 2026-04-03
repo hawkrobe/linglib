@@ -41,7 +41,7 @@ inductive MultipleNegativeConstructionsInSovLanguages where
   | svOvNegvVNeg  -- SV & OV & NegV/[V-Neg] (1 languages)
   | svOvNegVVNeg  -- SV & OV & [Neg-V]/[V-Neg] (2 languages)
   | svOvVnegVNeg  -- SV & OV & VNeg/[V-Neg] (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144M dataset (54 languages). -/
 def allData : List (Datapoint MultipleNegativeConstructionsInSovLanguages) :=

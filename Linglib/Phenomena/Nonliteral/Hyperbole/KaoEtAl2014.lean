@@ -83,7 +83,7 @@ inductive Finding where
   /-- Sharp numbers are interpreted more precisely than round numbers:
       P(exact match | "$501") > P(exact match | "$500"). -/
   | halo_sharp_precise
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All findings from the paper. -/
 def findings : List Finding :=
@@ -97,12 +97,12 @@ def findings : List Finding :=
 /-- Item types (Experiments 3a/3b): electric kettles, laptops, watches. -/
 inductive Item where
   | electricKettle | laptop | watch
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Price states: round/sharp pairs {50,51,500,501,...,10000,10001}. -/
 inductive PriceState where
   | s50 | s51 | s500 | s501 | s1000 | s1001 | s5000 | s5001 | s10000 | s10001
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def PriceState.value : PriceState → ℚ
   | .s50 => 50 | .s51 => 51 | .s500 => 500 | .s501 => 501
@@ -114,14 +114,14 @@ instance : HasDegree PriceState where degree := PriceState.value
 /-- Affect: no affect vs notable affect. -/
 inductive Affect where
   | none | notable
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 abbrev World := PriceState × Affect
 
 /-- Communicative goals: 5 = (3 relevance × 2 precision) minus 1 collapse. -/
 inductive Goal where
   | price | valence | priceValence | approxPrice | approxPriceValence
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance : Fintype PriceState where
   elems := {.s50, .s51, .s500, .s501, .s1000, .s1001, .s5000, .s5001, .s10000, .s10001}

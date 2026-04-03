@@ -87,7 +87,7 @@ theorem animacy_colour_asymmetry :
 /-- Features in the experimental stimuli (Fig. 10, Tables 4–5). -/
 inductive StimulusFeature where
   | animacy | colour | horn | shape_ | appendages
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Conditional entropy H(row|col) from Table 6.
     Lower values mean the column feature is more predictive of the row feature.
@@ -154,7 +154,7 @@ theorem horn_predicts_animacy_better_than_colour :
 /-- Semantic basis for categorization (both experimental and typological). -/
 inductive SemanticBasis where
   | animacy | colour
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Intra-category similarity from Word2Vec embeddings of 472 frequent
     physical nouns from CHILDES (§4.1.1). Higher InSim means category members

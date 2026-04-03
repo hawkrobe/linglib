@@ -90,7 +90,7 @@ inductive AlignmentType where
       with A, patient-like S patterns with P. The split is typically
       lexically or semantically determined (e.g., Georgian, Guarani). -/
   | active
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited AlignmentType := ⟨.neutral⟩
 
@@ -233,7 +233,7 @@ structure AlignmentProfile where
   verbAlignment : AlignmentType
   /-- Notes on the alignment system -/
   notes : String := ""
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether NP and pronoun alignment match (no split ergativity in case). -/
 def AlignmentProfile.caseUniform (p : AlignmentProfile) : Bool :=
@@ -1087,7 +1087,7 @@ inductive DitransitiveAlignment where
   | secundative
   /-- Tripartite (R ≠ T ≠ P): all three roles distinctly marked -/
   | tripartite
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether this ditransitive alignment marks R distinctly from P. -/
 def DitransitiveAlignment.marksR : DitransitiveAlignment → Bool
@@ -1107,7 +1107,7 @@ structure DitransitiveProfile where
   iso639 : String
   alignment : DitransitiveAlignment
   notes : String := ""
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 section DitransitiveData
 

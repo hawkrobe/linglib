@@ -29,7 +29,7 @@ structure FissionOutput where
   cl1Form : String
   /-- Cl₂: bears case features -/
   cl2Form : String
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- § 2: Fission Rule (Parameterized)

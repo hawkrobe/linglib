@@ -169,7 +169,7 @@ inductive PassiveType where
   | typeOne
   /-- Agent + bare verb. No prefix on verb; agent is preverbal. -/
   | typeTwo
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classification of the agent DP in a passive clause, determining
     which passive type(s) are available. Sneddon (§3.29) draws a
@@ -195,7 +195,7 @@ inductive AgentDP where
   | noun
   /-- No agent expressed. Type one only (§3.27). -/
   | unexpressed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether passive type one (*di-*verb) is available for this agent.
     Type one requires the agent to be in "Box A": 3rd person (pronoun
@@ -264,7 +264,7 @@ inductive VoicePrefixConstraint where
   /-- Only passive type one available, regardless of agent person.
       Applies to *ter-* and *ke-...-an* verbs (§3.32). -/
   | typeOneOnly
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- *ter-* verbs force type one passive — the preverbal agent position
     of type two is unavailable (@cite{sneddon-1996} §3.32). -/

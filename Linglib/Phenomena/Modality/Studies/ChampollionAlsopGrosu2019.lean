@@ -82,7 +82,7 @@ inductive FCState where
   | onlyOne   -- May take either, but not both (FCI + EI)
   | anyNumber -- May take any combination (FCI, no EI)
   | onlyBoth  -- May only take both together (no FCI, no EI)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype FCState where
   elems := {.onlyA, .onlyB, .onlyOne, .anyNumber, .onlyBoth}
@@ -94,7 +94,7 @@ inductive Utterance where
   | b    -- "You may take a pear" (◇B)
   | or_  -- "You may take an apple or a pear" (◇(A∨B))
   | and_ -- "You may take an apple and a pear" (◇(A∧B))
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Utterance where
   elems := {.a, .b, .or_, .and_}
@@ -104,7 +104,7 @@ instance : Fintype Utterance where
 inductive Interp where
   | literal     -- I₁: standard modal logic meanings
   | exhaustified -- I₂: strengthened via covert Exh (@cite{fox-2007})
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Interp where
   elems := {.literal, .exhaustified}
@@ -260,7 +260,7 @@ inductive Finding where
   | fci_robust_to_prior
   | ei_uniform
   | ei_prior_sensitive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map each finding to its RSA formalization. -/
 noncomputable def formalize : Finding → Prop
@@ -296,7 +296,7 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 /-- Utterances with null option (no conjunction). -/
 inductive UtteranceWithNull where
   | a | b | or_ | null
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype UtteranceWithNull where
   elems := {.a, .b, .or_, .null}

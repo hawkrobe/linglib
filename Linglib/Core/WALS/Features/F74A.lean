@@ -17,7 +17,7 @@ inductive SituationalPossibility where
   | affixesOnVerbs  -- Affixes on verbs (63 languages)
   | verbalConstructions  -- Verbal constructions (158 languages)
   | otherKindsOfMarkers  -- Other kinds of markers (13 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 74A dataset (234 languages). -/
 def allData : List (Datapoint SituationalPossibility) :=

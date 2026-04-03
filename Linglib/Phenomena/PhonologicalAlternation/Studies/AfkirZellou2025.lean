@@ -73,7 +73,7 @@ inductive SurfaceForm where
   | intrusive
   /-- CCC: vowelless — no schwa at all. -/
   | vowelless
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A candidate pairs a word's consonant profile with a surface form. -/
 structure TarifitCandidate where
@@ -81,7 +81,7 @@ structure TarifitCandidate where
   c2 : NatClass
   c3 : NatClass
   surface : SurfaceForm
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Build a candidate from a word and surface form. -/
 def mkCandidate (w : TriconWord) (sf : SurfaceForm) : TarifitCandidate :=

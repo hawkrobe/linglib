@@ -61,7 +61,7 @@ Markedness is reflected in:
 inductive Polarity where
   | positive  -- unmarked (tall, happy, long, expensive)
   | negative  -- marked (short, unhappy, brief, cheap)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Is this polarity marked?
@@ -109,7 +109,7 @@ inductive EvaluativityImplicature where
   | quantity  -- Q-principle: evaluativity from uninformativity avoidance
   | manner    -- R-principle: evaluativity from marked form use
   | none      -- No evaluativity implicature
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Which implicature type derives evaluativity for this construction + polarity?

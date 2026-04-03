@@ -71,7 +71,7 @@ open RSA.CombinedUtility
 /-- Stick lengths 1–5 -/
 inductive Stick where
   | s1 | s2 | s3 | s4 | s5
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Stick where
   elems := {.s1, .s2, .s3, .s4, .s5}
@@ -81,7 +81,7 @@ instance : Fintype Stick where
 inductive StickWorld where
   | w123 | w124 | w125 | w134 | w135
   | w145 | w234 | w235 | w245 | w345
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype StickWorld where
   elems := {.w123, .w124, .w125, .w134, .w135, .w145, .w234, .w235, .w245, .w345}
@@ -270,7 +270,7 @@ theorem argStr_positive_but_backfires :
 inductive ListenerType where
   | pragmatic   -- expects strongest evidence (67% of participants)
   | literal     -- expects weaker/hedged evidence (33%)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Evidence strength conditions (distance from midpoint 5") -/
 inductive EvidenceStrength where
@@ -278,13 +278,13 @@ inductive EvidenceStrength where
   | moderate  -- 7" (2" from midpoint)
   | strong    -- 8" (3" from midpoint)
   | strongest -- 9" (4" from midpoint)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which contestant goes first -/
 inductive FirstContestant where
   | longBiased   -- wants judge to say "longer"
   | shortBiased  -- wants judge to say "shorter"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Stick Contest design parameters -/
 structure StickContestDesign where
@@ -370,14 +370,14 @@ inductive ModelFamily where
   | anchorAdjust     -- A&A: P(w|u) = P(w) + η(s(u) - R)
   | minAcceptable    -- MAS: like A&A but R ~ Unif[-1,1]
   | rsaPragmatic     -- RSA with persuasive speaker
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Model variant (how individual differences are handled) -/
 inductive ModelVariant where
   | homogeneous       -- single model for all participants
   | heterogeneous     -- mixture of J0 and J1
   | speakerDependent  -- mixture weights conditioned on speaker phase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Model comparison result from Table 1 -/
 structure ModelComparisonDatum where

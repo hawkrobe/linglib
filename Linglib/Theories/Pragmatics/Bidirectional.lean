@@ -132,13 +132,13 @@ theorem strongOptimal_eq_both {F M : Type} [BEq F] [BEq M]
 inductive HornForm where
   | unmarked  -- e.g., "kill", "him"
   | marked    -- e.g., "cause to die", "himself"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Meanings in Horn's division example. -/
 inductive HornMeaning where
   | stereotypical     -- e.g., direct causation, disjoint reference
   | nonStereotypical  -- e.g., indirect causation, coreferential
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All form-meaning pairs (forms are semantically equivalent). -/
 def hornPairs : List (HornForm × HornMeaning) :=
@@ -192,13 +192,13 @@ theorem weak_strictly_larger :
 inductive LexForm where
   | listed   -- e.g., "pork", "fury"
   | derived  -- e.g., "pig-meat", "furiosity"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Meanings for total blocking. -/
 inductive LexMeaning where
   | specialized  -- the meaning covered by the listed form
   | general      -- the broader/derived meaning
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Gen for total blocking: the listed form only covers the specialized
     meaning; the derived form covers both meanings. -/

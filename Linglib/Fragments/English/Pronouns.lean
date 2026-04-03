@@ -22,7 +22,7 @@ inductive PronounType where
   | wh          -- who, what, which, where, when, why, how
   | relative    -- who, which, that (in relative clauses)
   | demonstrative -- this, that (pronominal use)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /--
 A lexical entry for a pronoun.

@@ -17,7 +17,7 @@ inductive ConjunctionsAndUniversalQuantifiers where
   | formallyDifferent  -- Formally different (40 languages)
   | formallySimilarWithoutInterrogative  -- Formally similar, without interrogative (33 languages)
   | formallySimilarWithInterrogative  -- Formally similar, with interrogative (43 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 56A dataset (116 languages). -/
 def allData : List (Datapoint ConjunctionsAndUniversalQuantifiers) :=

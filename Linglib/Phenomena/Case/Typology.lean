@@ -57,7 +57,7 @@ inductive CaseCount where
   | fiveSeven -- 5--7 cases
   | eightNine -- 8--9 cases
   | tenPlus   -- 10 or more cases
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited CaseCount := ⟨.none⟩
 
@@ -103,7 +103,7 @@ inductive AsymmetricalCaseMarking where
   | pronounOnly       -- conditioned on pronoun vs full NP alone
   | twoConditions     -- two of the three conditions
   | threeConditions   -- all three conditions simultaneously
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited AsymmetricalCaseMarking := ⟨.noCase⟩
 
@@ -140,7 +140,7 @@ inductive CaseAffixPosition where
   | prefixesOnly      -- case prefixes only
   | toneOnly          -- case expressed by tone only
   | bothSuffixPrefix  -- both case suffixes and case prefixes
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited CaseAffixPosition := ⟨.noAffixes⟩
 
@@ -191,7 +191,7 @@ inductive ComitativeInstrumental where
   | identity        -- same marker for comitative and instrumental
   | differentiation -- distinct markers
   | mixed           -- both strategies coexist
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited ComitativeInstrumental := ⟨.identity⟩
 
@@ -272,7 +272,7 @@ structure CaseProfile where
   affixPosition : CaseAffixPosition
   /-- Ch 52: Comitative-instrumental relation -/
   comitativeInstr : ComitativeInstrumental
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether the raw case count is consistent with the WALS bin. -/
 def CaseProfile.rawCountConsistent (p : CaseProfile) : Bool :=

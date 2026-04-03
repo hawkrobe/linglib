@@ -129,13 +129,13 @@ def DFrame.compatibleOn {Attr Val : Type} [BEq Val]
     possible frame: one attribute, two nodes. -/
 inductive PriceAttr where
   | price
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Nodes in the PRICE frame: the commodity (x) and its price value (p). -/
 inductive PriceNode where
   | commodity   -- x: the object being priced
   | priceVal    -- p: the monetary value
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The shared PRICE frame. PRICE maps the commodity to its value. -/
 def priceFrameBase : DFrame PriceAttr PriceNode where
@@ -177,14 +177,14 @@ theorem price_cheap_different_central :
 /-- Attributes for an artifact frame. -/
 inductive ArtifactAttr where
   | material | shape | use
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Values for artifact attributes. -/
 inductive ArtifactVal where
   | plastic | leather | paper
   | rectangular | round
   | carrying | storage
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Base *bag* frame: shape and use specified, material open. -/
 def bagFrame : DFrame ArtifactAttr ArtifactVal where
@@ -242,7 +242,7 @@ inductive PencilPart where
   | pigment   -- pigment of the core
   | core      -- the graphite core
   | pencil    -- the pencil (main node)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A pencil part is a valid COLOR unification target iff it is a
     visible object (type constraint from §4.1.2). -/

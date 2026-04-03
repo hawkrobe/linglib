@@ -37,7 +37,7 @@ namespace Phenomena.TenseAspect.Studies.Izvorski1997.Data
     footnote 1 lists ~25 languages across 6 families. -/
 inductive PELanguage where
   | bulgarian | turkish | norwegian | macedonian | albanian
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Ev vs. Must: Same Force, Different Base
@@ -49,7 +49,7 @@ inductive PELanguage where
     indirect evidence only. -/
 inductive EvidenceBasis where
   | direct | indirect
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A data point from the Ev/must paradigm.
     The paper's argument (§3, pp. 227–229):
@@ -93,7 +93,7 @@ def evMustData : List EvMustDatum := [evMust_indirect, evMust_direct]
 /-- Standard presupposition diagnostics applied to the evidential. -/
 inductive PresupDiagnostic where
   | cancellation | projection | denial
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A presupposition diagnostic datum. -/
 structure PresupDiagnosticDatum where

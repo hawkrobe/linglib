@@ -38,7 +38,7 @@ inductive Level where
   | formal    -- literary, written, careful speech (e.g., *must*, *shall*, *aap*)
   | neutral   -- unmarked (e.g., *can*, *will*, *tum*, *gayo*)
   | informal  -- colloquial, casual speech (e.g., *have to*, *tuu*, *boku*)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : ToString Level where
   toString
@@ -106,6 +106,6 @@ def areVariants (a b : Level) : Bool := a != b
 inductive SocialIndex where
   | competence
   | solidarity
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 end Core.Register

@@ -22,21 +22,21 @@ inductive AMType where
   | agreeMorpheme    -- verbal inflectional morpheme (Magahi, Basque)
   | particle         -- free-standing particle (Korean, Japanese)
   | cliticPronoun    -- clitic pronoun attached to verb (Galician)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Distribution across clause types (§3.1). -/
 inductive Embeddability where
   | rootOnly       -- allocutive marking restricted to root clauses
   | limitedEmbed   -- can embed under some predicates (e.g., speech/thought)
   | freelyEmbed    -- no embedding restriction
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Where honorification surfaces. -/
 inductive HonDomain where
   | verbal   -- verbal agreement only
   | nominal  -- nominal morphology only (e.g., Japanese -san)
   | both     -- verbal and nominal
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A single allocutive datum: one language's profile. -/
 structure AllocDatum where
@@ -49,7 +49,7 @@ structure AllocDatum where
   has3PHon : Bool
   /-- Where honorification is realized -/
   domain : HonDomain
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Crosslinguistic Data (@cite{alok-bhalla-2026}, Table 1)

@@ -49,7 +49,7 @@ open Semantics.Dynamic.Generics
 /-- Three entities: two normal ravens and one albino raven. -/
 inductive Raven where
   | normal1 | normal2 | albino
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All entities are ravens. -/
 def isRaven : Raven → Bool := λ _ => true
@@ -138,7 +138,7 @@ theorem reverse_sobel_inconsistent :
 /-- Two entities: a male lion and a female lion. -/
 inductive Animal where
   | maleLion | femaleLion
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def hasMane : Animal → Bool
   | .maleLion => true
@@ -205,7 +205,7 @@ theorem reverse_sobel_inconsistent_general :
     Another Sobel pair demonstrating the generality of the phenomenon. -/
 inductive Person where
   | goodTeacher1 | goodTeacher2 | badTeacher
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def isTeacher : Person → Bool := fun _ => true
 def isBadTeacher : Person → Bool

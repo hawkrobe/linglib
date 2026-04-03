@@ -94,7 +94,7 @@ inductive BrevityInterpretation where
       the "Incremental Algorithm Interpretation" in the paper;
       the recommended interpretation. -/
   | noBrevity
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Constraint strength: higher value = more constrained Q2.
     Full Brevity (3) is strictest, No Brevity (0) is weakest. -/
@@ -119,7 +119,7 @@ inductive REGAttribute where
   | headNoun
   /-- Modifying property (colour, size, material, ...). -/
   | modifier (d : Core.PropertyDomain)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A knowledge base entity: attribute-value pairs.
     Values are strings for generality (the paper uses a subsumption

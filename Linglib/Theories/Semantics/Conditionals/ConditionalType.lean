@@ -57,7 +57,7 @@ Key diagnostics:
 inductive ConditionalType where
   | hypothetical  -- Antecedent supposed, speaker uncertain
   | premise       -- Antecedent echoes discourse, no uncertainty
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 namespace ConditionalType
 
@@ -148,7 +148,7 @@ depends on BOTH monotonicity (semantic) AND epistemic status (discourse).
 inductive AntecedentStatus where
   | hypothetical   -- Speaker uncertain → licenses NPIs
   | established    -- Speaker treats as given → licenses PPIs
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /--
 Get the antecedent status from a conditional type.
@@ -322,7 +322,7 @@ inductive ConditionalMarkerType where
   | hcOnly     -- Only marks HCs (e.g., Japanese -ra, German falls)
   | pcOnly     -- Only marks PCs (currently uninstantiated)
   | both       -- Can mark either (e.g., English "if", German wenn)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Cross-linguistic conditional marker datum.
 

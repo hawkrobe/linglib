@@ -58,7 +58,7 @@ structure LanguageEfficiency where
   /-- Branching direction entropy × 1000 (higher = more word-order freedom).
       `none` when the value is unavailable in the published data. -/
   branchDirEntropy1000 : Option Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Language Data (54 languages, SI Table 2 + SI Figure 2)

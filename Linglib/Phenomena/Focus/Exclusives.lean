@@ -45,7 +45,7 @@ inductive JustFlavor where
   | unexplanatory        -- "The lamp just broke" → no identifiable cause
   | unelaboratory        -- "Fido is just a dog" → no further elaboration needed
   | counterexpectational -- "She just ate the communion wafer!" → norm violation
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Why the widest answerable construal is optimal at context.
     Corresponds to @cite{deo-thomas-2025}). -/
@@ -53,7 +53,7 @@ inductive ContextType where
   | answerable  -- (37a): widest construal is answerable (Quality + Relevance)
   | qualityFail -- (37b): wider construals fail Quality (speaker lacks evidence)
   | relevanceFail -- (37c): wider construals fail Relevance (not discourse-relevant)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Data structures

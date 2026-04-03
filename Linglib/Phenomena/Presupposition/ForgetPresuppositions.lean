@@ -55,7 +55,7 @@ inductive PresupContent where
   | nonModal
   /-- Presupposes a modalized version: "forgot to VP" → presupposes should VP -/
   | modal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- An empirical judgment about *forget*'s presupposition in a particular
     complement frame.

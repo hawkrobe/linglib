@@ -133,7 +133,7 @@ inductive VerbPosition where
       The verb+ne- stays low in TP. Can be licensed by either
       FALSUM[iNeg] or Op¬[iNeg], but not both simultaneously (S&Š eq. 12). -/
   | nonV1
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
@@ -398,7 +398,7 @@ inductive CzechPQForm where
   | declPPQ
   /-- DeclNPQ: Declarative (SVO), Negative. Requires negative evidential bias. -/
   | declNPQ
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map Czech PQ forms to Romero's cross-linguistic PQ typology.
 
@@ -675,7 +675,7 @@ inductive InterNPQUseCategory where
   | relevance
   /-- Speaker hopes that p, and considers it epistemically possible. -/
   | hope
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Distribution of InterNPQ+náhodou use categories (@cite{simik-2024} fn. 59). -/
 def interNPQDistribution : InterNPQUseCategory → Nat

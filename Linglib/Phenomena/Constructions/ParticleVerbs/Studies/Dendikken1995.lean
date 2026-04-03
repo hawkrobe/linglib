@@ -91,7 +91,7 @@ movement, preferring continuous order (P incorporates instead). -/
 inductive PVCDerivation where
   | dpMovement     -- DP moves out of SC → split order
   | incorporation  -- P incorporates into V → continuous order
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map derivation type to surface order. -/
 def PVCDerivation.surfaceOrder : PVCDerivation → PVCOrder

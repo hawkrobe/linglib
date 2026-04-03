@@ -60,7 +60,7 @@ structure RuPossessive where
   copula : String := "est'"
   /-- Negative existential `net` + genitive (replaces `est'` + NOM). -/
   negForm : String := "net"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def primaryConstruction : RuPossessive := {}
 
@@ -95,7 +95,7 @@ inductive RuOverlapExample where
   | stageI   -- `Lampa stoit u okna.` (pure location)
   | stageII  -- `Sejcas u Markovyx gripp.` (ambiguous)
   | stageIII -- `U Peti est' masina.` (possession only)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §5. Schema-Notion Correlations

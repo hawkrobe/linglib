@@ -45,7 +45,7 @@ namespace Fragments.Mayan
 inductive ABSPosition where
   | high  -- ABS on aspect marker (pre-stem)
   | low   -- ABS on verb stem (post-stem)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Case Locus (theoretical interpretation)
@@ -60,7 +60,7 @@ inductive ABSPosition where
 inductive CaseLocus where
   | absNom  -- Infl⁰ assigns case to transitive object (HIGH-ABS)
   | absDef  -- v⁰ assigns case to transitive object (LOW-ABS)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map the observable morphological parameter to the theoretical
     case-assignment locus. -/
@@ -86,6 +86,6 @@ inductive MarkerSet where
   /-- Set B: cross-references absolutive arguments (intransitive subject
       and, in ergative alignment, transitive patient). -/
   | setB
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end Fragments.Mayan

@@ -74,7 +74,7 @@ open Phenomena.Comparison.Typology
 inductive ChainingStrategy where
   | balancing
   | deranking
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- For deranking languages: whether deranking is restricted to
     same-subject chains or applies unconditionally (§4.4, pp. 83-94). -/
@@ -83,7 +83,7 @@ inductive DerankedConditionality where
   | conditional
   /-- Deranking regardless of subject identity. -/
   | absolute
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- For absolutely deranked consecutive chains: which predicate in the
     chain is deranked. Correlates with basic word order (§4.4.4, p. 94). -/
@@ -94,7 +94,7 @@ inductive DerankedDirection where
   /-- The posterior (later, rightmost) predicate is deranked.
       Typically VSO languages. -/
   | posterior
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Stassen's language type in temporal chaining (§4.7, pp. 98-101).
 
@@ -111,7 +111,7 @@ inductive ChainingLanguageType where
       SOV languages derank the anterior predicate;
       VSO languages derank the posterior predicate. -/
   | absoluteDeranking
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The chaining strategy for a language type. -/
 def ChainingLanguageType.strategy : ChainingLanguageType → ChainingStrategy

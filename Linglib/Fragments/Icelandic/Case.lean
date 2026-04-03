@@ -303,7 +303,7 @@ inductive SubjectDiagnostic where
   | proControl             -- controls PRO in infinitival complements (§4.1.1.8)
   | extraction             -- extracts from embedded clauses (§4.1.1.9)
   | verbAgreement          -- triggers person/number agreement on verb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does a quirky (non-nominative) subject pass this diagnostic?
     Quirky subjects pass all diagnostics EXCEPT verb agreement
@@ -324,7 +324,7 @@ def SubjectDiagnostic.passedByQuirkySubject : SubjectDiagnostic → Bool
 inductive AgreementTarget where
   | nominativeArg  -- verb agrees with whichever NP bears nominative
   | default3sg     -- no nominative argument → default 3sg
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Determine the agreement target for a verb's case frame.
     If any argument is nominative, the verb agrees with it.

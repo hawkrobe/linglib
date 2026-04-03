@@ -58,7 +58,7 @@ inductive CausativeBuilder where
   /-- Blocking: add barrier so effect cannot occur.
       Semantic function: `preventSem` (dual of `causeSem`). -/
   | prevent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## Prevent semantics
 

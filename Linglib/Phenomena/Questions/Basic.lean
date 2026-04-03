@@ -21,7 +21,7 @@ inductive WhSemanticType where
   | temporal        -- when — ranges over times
   | locative        -- where — ranges over locations
   | classificatory  -- what kind of, what sort of — ranges over kinds
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- Question Types
 

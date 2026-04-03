@@ -43,7 +43,7 @@ namespace Phenomena.Causation.Studies.BeaversEtAl2021
 inductive CoSRootClass where
   | propertyConcept  -- deadjectival: flatten, redden, widen
   | result           -- non-deadjectival: break, crack, shatter
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- PC subclasses (@cite{dixon-1982}; @cite{beavers-etal-2021} ex. 5). -/
 inductive PCSubclass where
@@ -53,7 +53,7 @@ inductive PCSubclass where
   | color             -- white, black, red, green, blue, brown
   | physicalProperty  -- cool/cold, warm/hot, dry/wet, soft/hard, smooth/rough
   | speed             -- fast, slow
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Result root subclasses (@cite{levin-1993}; @cite{beavers-etal-2021} ex. 6). -/
 inductive ResultSubclass where
@@ -65,7 +65,7 @@ inductive ResultSubclass where
   | destroying                 -- destroyed, ruined
   | calibratableCoS            -- go up, increase, go down, decrease, differ
   | inherentlyDirectedMotion   -- come, go, enter, exit, return
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Morphological Paradigm Structure
@@ -79,7 +79,7 @@ inductive ParadigmPosition where
   | inchoative      -- Position 3: intransitive change-of-state
   | causative        -- Position 4: transitive causative
   | resultStative   -- Position 5: deverbal stative (participle-like)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Morphological relationship codes between forms (@cite{beavers-etal-2021}
     eq. 41, generalizing @cite{haspelmath-1993}:90–92). -/
@@ -92,7 +92,7 @@ inductive MorphRelation where
   | unrelated  -- (u) no above relation applies
   | unattested -- (n) Y_k is unattested
   | suppletive -- (s) X is Y_k (suppletive)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 3. Per-Root Crosslinguistic Data (Tables A1, A2)
@@ -226,7 +226,7 @@ theorem both_comparisons_significant :
 inductive DiagnosticResult where
   | positive  -- diagnostic is satisfied
   | negative  -- diagnostic is not satisfied
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Stative form + change denial test (§3.3, ex. 10–11).
     "The bright photo has never brightened" → OK (PC)
@@ -287,7 +287,7 @@ inductive LanguageType where
   | asymmetric        -- English-type: PC marked, result unmarked (overt asymmetry)
   | highMarking       -- Hebrew-type: both root classes marked
   | lowMarking        -- Labile/equipollent: low or no marking for both
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The fourth logically possible type (result marked, PC unmarked)
     is UNATTESTED — predicted by the markedness generalization. -/

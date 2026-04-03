@@ -99,7 +99,7 @@ inductive JumpOutcome where
   | zero   -- 0 horses jumped
   | one    -- 1 horse jumped
   | two    -- 2 horses jumped (all)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype JumpOutcome where
   elems := {.zero, .one, .two}
@@ -109,7 +109,7 @@ instance : Fintype JumpOutcome where
 inductive ScopeReading where
   | surface  -- ∀>¬: "For every horse, it didn't jump"
   | inverse  -- ¬>∀: "Not every horse jumped"
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype ScopeReading where
   elems := {.surface, .inverse}
@@ -146,7 +146,7 @@ inductive JumpOutcome4 where
   | w2  -- 2 horses jumped
   | w3  -- 3 horses jumped
   | w4  -- 4 horses jumped (all)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype JumpOutcome4 where
   elems := {.w0, .w1, .w2, .w3, .w4}
@@ -160,7 +160,7 @@ def JumpOutcome4.toNat : JumpOutcome4 → Nat
 inductive NumeralReading where
   | exact    -- "two" = exactly 2 (@cite{kennedy-2015})
   | atLeast  -- "two" = at least 2 (@cite{horn-1972})
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype NumeralReading where
   elems := {.exact, .atLeast}
@@ -333,7 +333,7 @@ open Semantics.Scope (ScopeConfig ScopeDerivation)
 inductive Utt where
   | null     -- silence (always true, uninformative baseline)
   | everyNot -- "Every horse didn't jump" (scopally ambiguous)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Utt where
   elems := {.null, .everyNot}
@@ -345,7 +345,7 @@ inductive QUD where
   | howMany -- "How many horses jumped?" — {w0}, {w1}, {w2} (identity)
   | all_    -- "Did all the horses jump?" — {w0,w1} vs {w2}
   | none_   -- "Did none of the horses jump?" — {w0} vs {w1,w2}
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype QUD where
   elems := {.howMany, .all_, .none_}
@@ -361,7 +361,7 @@ inductive Latent where
   | invHowMany   -- inverse scope, how-many? QUD
   | invAll       -- inverse scope, all? QUD
   | invNone      -- inverse scope, none? QUD
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Latent where
   elems := {.surfHowMany, .surfAll, .surfNone, .invHowMany, .invAll, .invNone}
@@ -743,7 +743,7 @@ open Real (rpow rpow_nonneg)
 inductive Utt where
   | null    -- silence (always true, uninformative baseline)
   | twoNot  -- "two horses didn't jump" (scopally ambiguous)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Utt where
   elems := {.null, .twoNot}
@@ -759,7 +759,7 @@ inductive QUD5 where
   | none_      -- "Did none of the horses jump?" — {w0} vs {w1..w4}
   | twoExact   -- "Did exactly two horses jump?" — {w2} vs {w0,w1,w3,w4}
   | twoAtLeast -- "Did at least two horses jump?" — {w0,w1} vs {w2,w3,w4}
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype QUD5 where
   elems := {.howMany, .all_, .none_, .twoExact, .twoAtLeast}
@@ -770,7 +770,7 @@ instance : Fintype QUD5 where
 inductive Latent10 where
   | surfHowMany | surfAll | surfNone | surfTwoExact | surfTwoAtLeast
   | invHowMany  | invAll  | invNone  | invTwoExact  | invTwoAtLeast
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Latent10 where
   elems := { .surfHowMany, .surfAll, .surfNone, .surfTwoExact, .surfTwoAtLeast,

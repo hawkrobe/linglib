@@ -67,7 +67,7 @@ inductive Entity where
   | b2  -- bottle on table (peripersonal)
   | b3  -- bottle across room (action space)
   | b4  -- bottle outside window (vista)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def bottleModel : Model := { Entity := Entity, decEq := inferInstance }
 
@@ -113,7 +113,7 @@ inductive World where
   | nearEmpty
   | midEmpty
   | allEmpty
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype World where
   elems := ({World.nearEmpty, World.midEmpty, World.allEmpty} : Finset World)
@@ -258,7 +258,7 @@ theorem some_nesting_peri_to_vista (w : World) :
 inductive Utterance where
   | everyEmpty  -- "every bottle is empty"
   | someEmpty   -- "some bottle is empty"
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Utterance where
   elems := ({Utterance.everyEmpty, Utterance.someEmpty} : Finset Utterance)

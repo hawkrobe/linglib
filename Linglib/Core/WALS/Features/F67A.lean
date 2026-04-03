@@ -16,7 +16,7 @@ namespace Core.WALS.F67A
 inductive FutureTenseType where
   | inflectionalFutureExists  -- Inflectional future exists (110 languages)
   | noInflectionalFuture  -- No inflectional future (112 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 67A dataset (222 languages). -/
 def allData : List (Datapoint FutureTenseType) :=

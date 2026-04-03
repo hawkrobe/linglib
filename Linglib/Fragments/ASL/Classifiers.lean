@@ -45,7 +45,7 @@ inductive Entity where
   | wall      -- a wall
   | corner    -- a corner
   | rectangle -- a rectangular object
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
 -- § Lexical Predicates

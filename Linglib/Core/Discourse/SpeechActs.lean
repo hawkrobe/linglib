@@ -53,7 +53,7 @@ open Core.Proposition (BProp)
 inductive DiscourseRole where
   | speaker
   | addressee
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Illocutionary Mood
@@ -70,7 +70,7 @@ inductive IllocutionaryMood where
   | imperative
   | promissive
   | exclamative
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Which participant holds epistemic authority for a given illocutionary mood.
 
@@ -118,7 +118,7 @@ inductive DirectionOfFit where
       Declarations bring about a state of affairs by representing it as
       obtaining. -/
   | double
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Illocutionary Taxonomy (@cite{searle-1979})
@@ -140,7 +140,7 @@ inductive SearleClass where
   | declaration
   /-- We express feelings about presupposed states of affairs (apologies, congratulations). -/
   | expressive
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Direction of fit for each illocutionary class. The five classes are
     *derived* from the possible directions of fit. -/
@@ -193,7 +193,7 @@ inductive PsychMode where
   /-- Expressive states (pleasure, sorrow, etc.): presuppose the truth
       of their content but impose no fit responsibility (Ch. 1, pp. 7–8). -/
   | expressive
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Direction of fit for each psychological mode.
 
@@ -242,7 +242,7 @@ inductive CausalSelfRef where
   /-- World-to-state: the conditions of satisfaction must cause the state.
       Example: perceptions — the object causes the visual experience. -/
   | worldToState
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Causal self-referentiality for each psychological mode.
 
@@ -367,7 +367,7 @@ inductive CommitmentSource where
   | selfGenerated
   /-- Commitment attributed to another participant -/
   | otherGenerated
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- A commitment tagged with its source. -/
 structure TaggedCommitment (W : Type*) where
@@ -424,7 +424,7 @@ inductive ContextualEvidence where
   | neutral
   /-- Current context provides evidence against p. -/
   | againstP
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end Commitment
 
@@ -464,7 +464,7 @@ inductive PreparatoryCondition where
   | permission
   /-- Hearer is willing to perform the act. Independent of ability. -/
   | willingness
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Subsumption: `c₁.subsumes c₂` iff satisfying c₂ entails satisfying c₁.
 

@@ -57,7 +57,7 @@ structure EmpiricalProfile where
   combinesBarely     : Bool  -- felicitous with *barely*
   emphasisInDE       : Bool  -- produces emphasis under negation / *even*
   ableDerivation     : Bool  -- systematically derived via *-able*
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- MPAs: context-sensitive, gradable, no zone of indifference,
     no borderline cases, combines with *barely*, emphatic in DE contexts,
@@ -161,7 +161,7 @@ structure MinSAAHypothesis where
   compEntailsPos   : Bool
   /-- Denial cancels all degree (MinSAAs: yes; MPAs: no) -/
   denialCancels    : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- MinSAA predictions: *slightly* OK, not CC-sensitive, comparative
     entails positive form, denial cancels all degree. -/
@@ -305,7 +305,7 @@ theorem good_vs_mpa_standard_override :
     This is the standard Horn/Grice reasoning over evaluative scales. -/
 inductive EvaluativeAlternative where
   | decent | good | great | fantastic
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Evaluative scale ordering: decent < good < great < fantastic. -/
 def EvaluativeAlternative.rank : EvaluativeAlternative → Nat

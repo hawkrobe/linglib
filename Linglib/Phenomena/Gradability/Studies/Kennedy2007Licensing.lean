@@ -280,7 +280,7 @@ inductive DegreeModifierType where
   | measurePhrase   -- 6 feet tall (require dimensional scale)
   | intensifier     -- very, extremely (shift threshold up)
   | diminisher      -- slightly, somewhat (shift threshold down)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /--
 Data capturing degree modifier compatibility patterns.

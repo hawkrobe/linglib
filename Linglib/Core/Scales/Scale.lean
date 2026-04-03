@@ -96,7 +96,7 @@ inductive Boundedness where
   | lowerBounded -- minimum exists, no maximum (Kennedy: wet; Rouillard: N/A)
   | upperBounded -- maximum exists, no minimum (Kennedy: dry; Rouillard: N/A)
   | closed       -- both bounds exist (Kennedy: full; Rouillard: telic VP)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Does this scale have an inherent maximum? -/
 def Boundedness.hasMax : Boundedness → Bool
@@ -176,7 +176,7 @@ end Rat01
 inductive MereoTag where
   | qua  -- quantized / bounded / telic / closed
   | cum  -- cumulative / unbounded / atelic / open
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def MereoTag.toBoundedness : MereoTag → Boundedness
   | .qua => .closed
@@ -274,7 +274,7 @@ def AdditiveScale.IsRepresentable {α : Type*} [SemilatticeSup α]
 inductive ScalePolarity where
   | positive
   | negative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 1e. Positive Region
@@ -950,7 +950,7 @@ These participate in the abstract `DirectedMeasure` infrastructure above via the
     values like height, temperature, etc. -/
 structure Degree (max : Nat) where
   value : Fin (max + 1)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance {n : Nat} : Inhabited (Degree n) := ⟨⟨0, Nat.zero_lt_succ n⟩⟩
 
@@ -979,7 +979,7 @@ def Degree.toNat {max : Nat} (d : Degree max) : Nat := d.value.val
 /-- A threshold for a gradable adjective. x is "tall" iff degree(x) > threshold. -/
 structure Threshold (max : Nat) where
   value : Fin max
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 instance {n : Nat} (h : 0 < n := by omega) : Inhabited (Threshold n) := ⟨⟨0, h⟩⟩
 

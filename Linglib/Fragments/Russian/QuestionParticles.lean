@@ -37,7 +37,7 @@ structure QParticleEntry where
   whOk : Bool
   requiresEvidentialBias : Bool
   requiresEpistemicBias : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- ли li — neutral polar question particle (formal register).
 Verb-attached enclitic, cliticizes onto the focused constituent.

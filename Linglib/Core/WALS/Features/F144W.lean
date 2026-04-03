@@ -20,7 +20,7 @@ inductive VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndO
   | suffixOnlywithanotherneg  -- Suffix&OnlyWithAnotherNeg (3 languages)
   | wordbetweensando  -- WordBetweenSAndO (1 languages)
   | none  -- None (139 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144W dataset (151 languages). -/
 def allData : List (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject) :=

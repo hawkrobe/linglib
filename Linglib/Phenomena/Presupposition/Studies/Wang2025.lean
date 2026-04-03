@@ -38,7 +38,7 @@ inductive ContextCondition where
   | full        -- CG fully entails the presupposition
   | partialSupport  -- CG partially entails the presupposition
   | noSupport   -- CG does not support the presupposition
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A single naturalness judgment datum (Experiment 1). -/
 structure Exp1Datum where
@@ -119,7 +119,7 @@ inductive Resolution where
   | deRe
   /-- Presupposition resolved against attitude holder's beliefs (de dicto) -/
   | deDicto
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A de re judgment datum (Experiment 3). -/
 structure Exp3Datum where

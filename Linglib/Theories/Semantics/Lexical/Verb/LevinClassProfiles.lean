@@ -41,7 +41,7 @@ open Semantics.Lexical.Verb.EntailmentProfile
 structure ArgTemplate where
   subjectProfile : EntailmentProfile
   objectProfile : Option EntailmentProfile := none
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Named Templates

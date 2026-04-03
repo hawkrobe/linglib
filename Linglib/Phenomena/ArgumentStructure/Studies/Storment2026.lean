@@ -497,7 +497,7 @@ inductive QIPosition where
   | specVoiceP   -- VP's position after smuggling
   | specvP       -- Agent's in-situ position
   | discourseP   -- Quote's clause-external position
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The QI derivation assigns constituents to structural positions.
     Each position has testable predictions (§3). -/

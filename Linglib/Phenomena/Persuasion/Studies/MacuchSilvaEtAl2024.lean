@@ -60,13 +60,13 @@ open RSA.Domains.Quantity
 inductive Condition where
   | highSuccess  -- "describe as if students did well"
   | lowSuccess   -- "describe as if students did poorly"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Adjective choice in the forced-choice task -/
 inductive Adjective where
   | right
   | wrong
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An exam stimulus: nCorrect out of nTotal cells are green (correct).
 Each table has 5 students × 12 questions = 60 cells. -/

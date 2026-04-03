@@ -16,7 +16,7 @@ namespace Core.WALS.F107A
 inductive PassiveType where
   | present  -- Present (162 languages)
   | absent  -- Absent (211 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 107A dataset (373 languages). -/
 def allData : List (Datapoint PassiveType) :=

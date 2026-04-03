@@ -49,7 +49,7 @@ inductive EpistemicAuthority where
   | ego            -- speaker has privileged epistemic access
   | allocutive     -- addressee has privileged epistemic access
   | nonparticipant -- no speech-act participant has special access
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Epistemic profile: bundles the three orthogonal epistemic dimensions
     that the glossary identifies as cross-linguistically relevant.

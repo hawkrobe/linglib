@@ -343,7 +343,7 @@ inductive ConstituencyTest where
   | pseudoclefting
   | proformSub
   | answerFragment
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A constituency test result recording DG vs PSG predictions vs observation. -/
 structure TestResult where

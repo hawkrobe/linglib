@@ -46,7 +46,7 @@ inductive Felicity where
   | ok       -- Fully acceptable
   | marginal -- Somewhat degraded
   | odd      -- Clearly infelicitous
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- Type of bridging relation: uses `BridgingSubtype` from `Core/Definiteness.lean`.
 
@@ -60,7 +60,7 @@ inductive DefiniteForm where
   | mandarinBare
   /-- Mandarin demonstrative na + classifier -/
   | mandarinNaCl
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A bridging anaphora datum -/
 structure BridgingDatum where

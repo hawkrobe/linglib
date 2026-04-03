@@ -20,7 +20,7 @@ section TestDomain
 /-- A simple domain with dogs and cats (both animals). -/
 inductive Animal where
   | dog1 | dog2 | cat1 | cat2
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def allAnimals : List Animal := [.dog1, .dog2, .cat1, .cat2]
 

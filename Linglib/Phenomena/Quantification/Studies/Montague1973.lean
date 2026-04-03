@@ -290,7 +290,7 @@ Two men (m1, m2), two women (w1, w2).
 -/
 inductive ToyEntity where
   | m1 | m2 | w1 | w2
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 def toyPTQModel : PTQModel where
   Entity := ToyEntity

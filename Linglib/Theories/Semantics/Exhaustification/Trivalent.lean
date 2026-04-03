@@ -172,7 +172,7 @@ section BathroomDisjunction
     - `neither`: p false, q false (presupposition satisfied) -/
 inductive BathWorld where
   | pOnly | qOnly | neither
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def bDomain : List BathWorld := [.pOnly, .qOnly, .neither]
 

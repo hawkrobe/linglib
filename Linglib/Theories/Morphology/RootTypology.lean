@@ -81,7 +81,7 @@ open Semantics.Tense.Aspect.LexicalAspect
 inductive RootType where
   | propertyConcept  -- flat, red, long — deadjectival CoS (flatten, redden)
   | result           -- crack, break, shatter — non-deadjectival CoS
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether a root lexically entails prior change (@cite{beavers-etal-2021} §3.6).
 
@@ -99,7 +99,7 @@ def RootType.entailsChange : RootType → Bool
 inductive RootArity where
   | selectsTheme  -- root obligatorily takes internal argument (Coon's √TV)
   | noTheme       -- no internal argument selection (Coon's √ITV, √NOM, √POS)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Does this root arity entail an obligatory internal argument? -/
 def RootArity.hasInternalArg : RootArity → Bool
@@ -115,7 +115,7 @@ inductive RootDenotationType where
   | eventPred   -- ⟨e, ⟨s,t⟩⟩ (√TV, √ITV)
   | measureFn   -- ⟨e, ⟨s,d⟩⟩ (√POS; @cite{henderson-2019})
   | entityPred  -- ⟨e,t⟩ (√NOM)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Unified root characterization bundling all classification dimensions.
 
@@ -157,7 +157,7 @@ inductive PCClass where
   | color             -- white, black, red, green, blue, brown
   | physicalProperty  -- cool/cold, warm/hot, dry/wet, soft/hard, smooth/rough
   | speed             -- fast, slow
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Result root subclasses (@cite{levin-1993}; @cite{beavers-etal-2021} ex. 6). -/
 inductive ResultClass where
@@ -169,7 +169,7 @@ inductive ResultClass where
   | destroying                 -- destroyed, ruined
   | calibratableCoS            -- go up, increase, go down, decrease, differ
   | inherentlyDirectedMotion   -- come, go, enter, exit, return
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 1b. Change Restriction (B&@cite{beavers-koontz-garboden-2020} §2.4)
@@ -191,7 +191,7 @@ inductive ResultClass where
 inductive ChangeRestriction where
   | anyChange      -- break-type: spatial or temporal (√CRACK, √SHATTER, √BEND)
   | temporalOnly   -- cook/kill-type: temporal change only (√COOK, √KILL, √MELT)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Change restriction for each result root subclass.
     Breaking/bending roots and directed motion allow spatial change descriptions;
@@ -364,7 +364,7 @@ theorem bkg_bifurcation_multiple_witnesses :
 inductive Markedness where
   | unmarked  -- Basic form (no additional morphology)
   | marked    -- Derived form (overt morphological marking: -en, -ed, etc.)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- The Markedness Generalization (@cite{beavers-etal-2021} eq. 44).
 
@@ -586,7 +586,7 @@ inductive PossessionEntailment where
   | none        -- root says nothing about possession (template provides ◇have')
   | prospective -- root entails future/intended possession (√PROMISE, √OWE)
   | actual      -- root entails actual possession transfer (√GIVE, √HAND)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Six classes of ditransitive verb roots (B&@cite{beavers-koontz-garboden-2020} §3.6).
     The ditransitive parallel to the PC/result distinction for CoS roots:
@@ -599,7 +599,7 @@ inductive DitransitiveRootClass where
   | sending            -- √SEND, √MAIL, √SHIP: caused motion, no manner
   | accompaniedMotion  -- √BRING, √TAKE: agent accompanies theme
   | carrying           -- √CARRY, √HAUL, √LUG: manner + accompaniment
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- What a ditransitive root entails about the transfer event.
     Each field is a distinct semantic entailment from the ROOT,
@@ -609,7 +609,7 @@ structure DitransitiveEntailments where
   causedMotion  : Bool  -- root entails caused motion of theme
   manner        : Bool  -- root specifies manner of transfer/motion
   accompaniment : Bool  -- root entails agent accompanies theme
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Entailment profile for each ditransitive root class (B&@cite{beavers-koontz-garboden-2020} §3.6). -/
 def DitransitiveRootClass.entailments : DitransitiveRootClass → DitransitiveEntailments
@@ -741,7 +741,7 @@ inductive MRCDiagnostic where
   | selectionalRestriction
   | denialOfAction
   | actorParaphrase
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether a diagnostic tests for result entailment. -/
 def MRCDiagnostic.testsResult : MRCDiagnostic → Bool
@@ -771,7 +771,7 @@ structure MRCDiagnosticProfile where
   selectionalRestriction : Bool
   denialOfAction         : Bool
   actorParaphrase   : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether the profile shows result entailment (passes ≥1 result diagnostic). -/
 def MRCDiagnosticProfile.showsResult (p : MRCDiagnosticProfile) : Bool :=
@@ -931,7 +931,7 @@ theorem root_stative_vendler :
 inductive AdjectivalStructure where
   | basicStative    -- [AspP AspS √ROOT] — simple adjective
   | resultStative   -- [AspP AspR [vP DP v_become √ROOT]] — deverbal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- PC roots admit both structures; result roots only admit resultStative. -/
 def RootType.admitsBasicStative : RootType → Bool
@@ -961,7 +961,7 @@ theorem admitsBasicStative_iff_no_change (rt : RootType) :
 inductive AgainReading where
   | restitutive   -- again scopes over root only
   | repetitive    -- again scopes over vP (includes BECOME)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Which readings of 'again' are available for each root type. -/
 def RootType.againReadings : RootType → List AgainReading
@@ -996,7 +996,7 @@ theorem pc_has_restitutive :
 inductive AgainPresupposition where
   | priorState   -- presupposes a prior state held (no change implied)
   | priorChange  -- presupposes a prior change event occurred
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- What *again* presupposes when scoping over just the root.
 
@@ -1387,7 +1387,7 @@ theorem same_change_same_morphosyntax (r₁ r₂ : Root)
 structure FullRootSpec where
   entailments : RootEntailments
   position : RootPosition
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Adjoined position requires +manner: a root in adjunct position
     must specify a manner of action. Without manner, there is nothing
@@ -1477,7 +1477,7 @@ inductive TemplateHead where
   | vBecome  -- v_become: change-of-state head
   | pLoc     -- P_loc: locative preposition (ditransitive motion)
   | pHave    -- P_have: possession preposition (ditransitive transfer)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Which template heads a root's entailments make redundant (Table 13).
 

@@ -262,12 +262,12 @@ each feature word is an intersective adjective, composed via `predMod`.
     d2:     shape=2, color=1, texture=1 (differs on all features) -/
 inductive VisObj where
   | target | d1 | d2
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- The 4 objects in the asymmetric display (3 visible + 1 behind occlusion) -/
 inductive AsymObj where
   | target | d1 | d2 | hidden
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Utterance: which features to mention (2³ = 8 possible utterances) -/
 inductive Utt where
@@ -279,7 +279,7 @@ inductive Utt where
   | st    -- shape + texture: "the checked square"
   | ct    -- color + texture: "the blue checked one"
   | sct   -- all three: "the blue checked square"
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : Nonempty VisObj := ⟨.target⟩
 instance : Nonempty AsymObj := ⟨.target⟩

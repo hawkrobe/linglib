@@ -253,7 +253,7 @@ but for standard structures, they agree on whether the critical node x ∈ P.
 
 /-- Directions in a binary tree -/
 inductive Dir where | L | R
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Address = path from root -/
 abbrev Address := List Dir

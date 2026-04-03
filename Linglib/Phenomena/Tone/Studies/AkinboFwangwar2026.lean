@@ -71,27 +71,27 @@ open Fragments.Mwaghavul
     the M-tone verbaliser, subscript 3 = from the H-tone verbaliser
     (or subscript 4 for H in pluractional tableaux). We collapse the
     grammatical subscripts into `.gram` and use the separate M-specific
-    and H-specific anchor constraint functions (`lAnchorMViolations`,
-    `rAnchorHViolations`, etc.) to distinguish which verbaliser tone
+    and H-specific anchor constraint functions (`lAnchorViolations .M`,
+    `rAnchorViolations .H`, etc.) to distinguish which verbaliser tone
     is being tracked. -/
 inductive ToneSource where
   | lex   -- subscript 1: from the input
   | gram  -- subscripts 2, 3: from the verbaliser
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An output TBU with correspondence: the surface tone and where it
     came from. -/
 structure OutputTBU where
   tone   : ToneFeature
   source : ToneSource
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A candidate for a single-root-morpheme tableau (M-tone or M-H singular).
     Records the output TBUs on a single root morpheme. -/
 structure SingleCand where
   label  : String
   output : List OutputTBU
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A candidate for a two-root-morpheme tableau (pluractional M-H).
     Records output TBUs on reduplicant and base separately. -/
@@ -99,7 +99,7 @@ structure PlurCand where
   label     : String
   redOutput : List OutputTBU
   baseOutput : List OutputTBU
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- S 2: Gradient Constraint Functions
@@ -127,27 +127,19 @@ of the candidate, following @cite{akinbo-fwangwar-2026} §4.3 and
   (i.e., lexical tones that were deleted/overwritten by grammatical tones).
 -/
 
-/-- Count L-ANCHOR violations for M-toned grammatical TBUs: number of
-    TBUs to the left of the leftmost gram-M. If no gram-M is present,
-    every TBU is a violation (M not anchored). -/
-def lAnchorMViolations (tbus : List OutputTBU) : Nat :=
-  match tbus.findIdx? (λ t => t.source == .gram && t.tone == .M) with
+/-- Count L-ANCHOR violations for a given grammatical tone: number of
+    TBUs to the left of the leftmost grammatical occurrence of `tone`.
+    If the tone is not present, every TBU is a violation (tone not
+    anchored). Parametrized over `ToneFeature` to avoid duplicating
+    the M and H variants. -/
+def lAnchorViolations (tone : ToneFeature) (tbus : List OutputTBU) : Nat :=
+  match tbus.findIdx? (λ t => t.source == .gram && t.tone == tone) with
   | none   => tbus.length
   | some i => i
 
-/-- Count R-ANCHOR violations for M-toned grammatical TBUs. -/
-def rAnchorMViolations (tbus : List OutputTBU) : Nat :=
-  lAnchorMViolations tbus.reverse
-
-/-- Count L-ANCHOR violations for H-toned grammatical TBUs. -/
-def lAnchorHViolations (tbus : List OutputTBU) : Nat :=
-  match tbus.findIdx? (λ t => t.source == .gram && t.tone == .H) with
-  | none   => tbus.length
-  | some i => i
-
-/-- Count R-ANCHOR violations for H-toned grammatical TBUs. -/
-def rAnchorHViolations (tbus : List OutputTBU) : Nat :=
-  lAnchorHViolations tbus.reverse
+/-- Count R-ANCHOR violations for a given grammatical tone. -/
+def rAnchorViolations (tone : ToneFeature) (tbus : List OutputTBU) : Nat :=
+  lAnchorViolations tone tbus.reverse
 
 /-- MAX-Tone: count lexical tones that were deleted (overwritten).
     = number of input TBUs minus number of output TBUs that retain
@@ -178,12 +170,12 @@ def maxToneViolations (tbus : List OutputTBU) (inputSize : Nat) : Nat :=
 def lAnch24 : NamedConstraint SingleCand :=
   { name := "L-ANCH-Mᵥ"
     family := .faithfulness
-    eval := λ c => lAnchorMViolations c.output }
+    eval := λ c => lAnchorViolations .M c.output }
 
 def rAnch24 : NamedConstraint SingleCand :=
   { name := "R-ANCH-Mᵥ"
     family := .faithfulness
-    eval := λ c => rAnchorMViolations c.output }
+    eval := λ c => rAnchorViolations .M c.output }
 
 def maxT24 : NamedConstraint SingleCand :=
   { name := "MAX-Tone"
@@ -195,22 +187,22 @@ def maxT24 : NamedConstraint SingleCand :=
 def lAnchM25 : NamedConstraint SingleCand :=
   { name := "L-ANCH-Mᵥ"
     family := .faithfulness
-    eval := λ c => lAnchorMViolations c.output }
+    eval := λ c => lAnchorViolations .M c.output }
 
 def rAnchH25 : NamedConstraint SingleCand :=
   { name := "R-ANCH-Hᵥ"
     family := .faithfulness
-    eval := λ c => rAnchorHViolations c.output }
+    eval := λ c => rAnchorViolations .H c.output }
 
 def rAnchM25 : NamedConstraint SingleCand :=
   { name := "R-ANCH-Mᵥ"
     family := .faithfulness
-    eval := λ c => rAnchorMViolations c.output }
+    eval := λ c => rAnchorViolations .M c.output }
 
 def lAnchH25 : NamedConstraint SingleCand :=
   { name := "L-ANCH-Hᵥ"
     family := .faithfulness
-    eval := λ c => lAnchorHViolations c.output }
+    eval := λ c => lAnchorViolations .H c.output }
 
 def maxT25 : NamedConstraint SingleCand :=
   { name := "MAX-Tone"
@@ -433,22 +425,22 @@ represents "distinguishable identity" (@cite{dingemanse-thompson-2020}).
 def lAnchM26 : NamedConstraint PlurCand :=
   { name := "L-ANCH-Mᵥ"
     family := .faithfulness
-    eval := λ c => lAnchorMViolations c.redOutput }
+    eval := λ c => lAnchorViolations .M c.redOutput }
 
 def rAnchH26 : NamedConstraint PlurCand :=
   { name := "R-ANCH-Hᵥ"
     family := .faithfulness
-    eval := λ c => rAnchorHViolations c.baseOutput }
+    eval := λ c => rAnchorViolations .H c.baseOutput }
 
 def rAnchM26 : NamedConstraint PlurCand :=
   { name := "R-ANCH-Mᵥ"
     family := .faithfulness
-    eval := λ c => rAnchorMViolations c.redOutput }
+    eval := λ c => rAnchorViolations .M c.redOutput }
 
 def lAnchH26 : NamedConstraint PlurCand :=
   { name := "L-ANCH-Hᵥ"
     family := .faithfulness
-    eval := λ c => lAnchorHViolations c.baseOutput }
+    eval := λ c => lAnchorViolations .H c.baseOutput }
 
 def maxT26 : NamedConstraint PlurCand :=
   { name := "MAX-Tone"

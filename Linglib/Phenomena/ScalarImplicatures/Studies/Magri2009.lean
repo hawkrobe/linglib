@@ -119,11 +119,11 @@ inductive ItalyWorld₃ where
   | allWarm     -- all Italians come from a warm country (CK-compatible)
   | someNotAll  -- some but not all (not CK-compatible)
   | noneWarm    -- none do (not CK-compatible)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive ItalyUtt where
   | some_ | all_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open ItalyWorld₃ ItalyUtt in
 def italianScenario : BlindScenario ItalyWorld₃ ItalyUtt where
@@ -196,11 +196,11 @@ inductive TallWorld where
   | alwaysTall   -- tall at all times (CK-compatible: homogeneity (70))
   | sometimesOnly -- tall at some but not all times (NOT CK-compatible)
   | neverTall    -- tall at no time (CK-compatible: homogeneity (70))
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive QAdvUtt where
   | sometimes_ | always_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open TallWorld QAdvUtt in
 /-- @cite{magri-2009} §4.1: Q-adverbs with individual-level predicates.
@@ -452,7 +452,7 @@ inductive BPSWorld where
   | allThroughout  -- every fireman is tall throughout his lifespan
   | partialOnly    -- some fireman tall at some times but not throughout
   | noneTall       -- no fireman is ever tall
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The bare plural reading and its definite-description alternative.
 
@@ -467,7 +467,7 @@ fireman P. In the 3-world model, the definite-description alternative
 inductive BPSReading where
   | existential_  -- ∃-BPS: there exist firemen who are tall (narrow scope)
   | generic_      -- definite/GEN alternative: there is a fireman tall throughout
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open BPSWorld BPSReading in
 /-- @cite{magri-2009} §4.2: bare plural existential reading of an ILP.
@@ -754,7 +754,7 @@ open TallWorld
 /-- Utterance type for the ⟨always, GEN⟩ Horn scale. -/
 inductive AlwaysGENUtt where
   | always_ | gen_
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open AlwaysGENUtt in
 /-- @cite{magri-2009} §4.6: *always* vs covert GEN.
@@ -967,7 +967,7 @@ inductive BPAlwaysWorld where
   | allTall       -- all firemen always tall
   | mixedFiremen  -- some firemen tall, others not
   | noneTall      -- no fireman tall
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open BPAlwaysWorld AlwaysGENUtt in
 /-- @cite{magri-2009} §4.6.2: *always* vs GEN with bare plural subject.

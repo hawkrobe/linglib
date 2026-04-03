@@ -62,7 +62,7 @@ inductive PPSurfaceOrder where
   | postP       -- DP P: DP complement moves to Spec,FP
   | circumP     -- P₁ DP P₂: PP/R-pronoun complement moves to Spec,FP
   | intransP    -- P (no complement): verbal particle / intransitive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- What constituent moves to Spec,FP to produce a non-canonical order.
     @cite{broekhuis-corver-2026} §6 ex. 64: the crucial distinction is
@@ -72,7 +72,7 @@ inductive MovedConstituent where
   | dpToSpecFP      -- postP: DP moves (semantically conditioned — directional)
   | ppToSpecFP      -- circumP: PP or R-pronoun moves (default for PP complements)
   | noComplement    -- intransitive: nothing to move
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive surface order from what moved.
     @cite{broekhuis-corver-2026} §6, ex. 64:
@@ -253,7 +253,7 @@ inductive PPExtractionType where
   | dpFromPrePP       -- ex. 53: *Jan heeft Els niet [op t] gewacht* — blocked
   | rPronFromPrePP    -- ex. 54: Daar <op> heeft Els niet <op> gewacht — OK
   | dpFromPostPP      -- ex. 58: Marie gaat het bosᵢ [t_i in] — OK
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether extraction is possible for each PP type. -/
 def extractionOk : PPExtractionType → Bool

@@ -137,7 +137,7 @@ Source: @cite{alexandropoulou-gotzner-2024}, @cite{horn-1972}
 inductive InformationalStrength where
   | weak    -- large, small, clean, dirty
   | strong  -- gigantic, tiny, pristine, filthy
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- Adjective Lexical Entry
@@ -150,7 +150,7 @@ inductive SpatialConfigType where
   | barrierConfig   -- open, closed, shut: config relative to frame
   | unattachment    -- free, loose: freedom from spatial contiguity
   | surfaceOrient   -- flat: orientation relative to reference surface
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A gradable adjective lexical entry.
     Bundles surface form, scale structure, and antonym information.
@@ -179,7 +179,7 @@ inductive DimensionBindingType where
   | conjunctive
   | disjunctive
   | mixed
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 variable {α : Type}
 

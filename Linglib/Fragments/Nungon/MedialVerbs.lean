@@ -52,7 +52,7 @@ inductive SRCategory where
   | ssSIM  -- same subject, simultaneous events
   | dsSEQ  -- different subject, sequential events
   | dsSIM  -- different subject, simultaneous events
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Whether this SR category indicates same subject. -/
 def SRCategory.isSS : SRCategory → Bool
@@ -72,7 +72,7 @@ def SRCategory.isSequential : SRCategory → Bool
 structure PersonNumber where
   person : UD.Person
   number : UD.Number
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A DS suffix entry: form + person/number it indexes. -/
 structure DSSuffix where

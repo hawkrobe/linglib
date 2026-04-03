@@ -55,7 +55,7 @@ inductive PQForm where
   /-- High negation question: [n't p?]. "Isn't Jane coming?"
       In Czech: interrogative (VSO) word order. -/
   | HiNQ
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2: Bias Typology (@cite{romero-2024} §2)
@@ -72,7 +72,7 @@ inductive OriginalBias where
   | neutral
   /-- Speaker originally expected/believed ¬p. -/
   | againstP
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- Re-export `ContextualEvidence` from Core so that downstream files
 -- opening `Semantics.Modality.BiasedPQ` still find it here.
@@ -410,6 +410,6 @@ inductive EvidentialBiasStrength where
   | strong  -- Inner: □_ev(¬p)
   | weak    -- Medial: ¬□_ev(p)
   | none_   -- Outer: FALSUM, not □_ev-based
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end Semantics.Modality.BiasedPQ

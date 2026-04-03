@@ -20,7 +20,7 @@ inductive GenitivesAdjectivesAndRelativeClauses where
   | adjectivesAndRelativeClausesCollapsed  -- Adjectives and relative clauses collapsed (33 languages)
   | moderatelyDifferentiatedInOtherWays  -- Moderately differentiated in other ways (3 languages)
   | highlyDifferentiated  -- Highly differentiated (77 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 60A dataset (138 languages). -/
 def allData : List (Datapoint GenitivesAdjectivesAndRelativeClauses) :=

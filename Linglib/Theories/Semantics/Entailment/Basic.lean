@@ -13,7 +13,7 @@ section FiniteWorldSemantics
 /-- A small finite set of worlds for decidable reasoning. -/
 inductive World where
   | w0 | w1 | w2 | w3
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def allWorlds : List World := [.w0, .w1, .w2, .w3]
 

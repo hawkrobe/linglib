@@ -276,7 +276,7 @@ inductive BindingAcceptability where
   | intermediate
   /-- Type C: ill-formed, not acceptable for any speakers. -/
   | illFormed
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A binding datum: which NP is the antecedent, which is the reflexive,
     in which voice, and the acceptability judgment. -/

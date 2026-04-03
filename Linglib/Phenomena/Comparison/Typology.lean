@@ -79,7 +79,7 @@ inductive ComparativeType where
   /-- Mixed: the language uses more than one of the above types productively,
       without a clear dominant strategy. -/
   | mixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Stassen 1985 Fine-grained Typology (@cite{stassen-1985} Ch 2)
@@ -109,7 +109,7 @@ open Core (CaseAssignment FixedCaseEncoding)
     ``` -/
 inductive ComparativeType1985 where
   | separative | allative | locative | exceed | conjoined | particle
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map @cite{stassen-1985} types to the coarser WALS 2013 types.
 
@@ -171,7 +171,7 @@ inductive DegreeWordType where
   /-- No overt degree marking; comparison expressed via exceed verb,
       juxtaposition, or pragmatic inference. -/
   | noDegreeMarking
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Superlative Strategies
@@ -200,7 +200,7 @@ inductive SuperlativeStrategy where
   | comparativeUniversal
   /-- No dedicated superlative strategy; context or periphrasis used. -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Function
@@ -1139,7 +1139,7 @@ inductive ComparisonConstruction where
   | excessive       -- "too tall" (implicit comparison to a standard)
   | sufficiency     -- "tall enough" (implicit comparison to a standard)
   | degreeQuestion  -- "how tall" (comparison to answer alternatives)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- What is being compared — the syntactic category of the gradable
     expression, following @cite{wellwood-2015}.
@@ -1151,7 +1151,7 @@ inductive ComparisonDomain where
   | nominal      -- "more coffee than", "fewer books than"
   | verbal       -- "ran more than", "sang louder than"
   | adverbial    -- "more quickly than", "as carefully as"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- How degree comparison is morphologically realized in a given form.
 
@@ -1165,6 +1165,6 @@ inductive DegreeMorphology where
   | analytic    -- "more"/"most" (English, French)
   | suppletive  -- "good"/"better"/"best" (English, Latin)
   | mixed       -- both synthetic and analytic available
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 end Phenomena.Comparison.Typology

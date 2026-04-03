@@ -102,7 +102,7 @@ inductive EvidentialSystem where
       grammatical categories. May include further splits.
       (e.g., Quechua, Tuyuca, Kashaya, Aymara) -/
   | threeOrMore
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a language has any grammatical evidential marking. -/
 def EvidentialSystem.hasEvidentials : EvidentialSystem -> Bool
@@ -153,7 +153,7 @@ inductive EvidentialCoding where
   /-- Not applicable: language has no grammatical evidentials (Ch 77
       value 1). Used for cross-chapter profile consistency. -/
   | notApplicable
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether the coding strategy involves a bound morpheme (affix or clitic). -/
 def EvidentialCoding.isBound : EvidentialCoding -> Bool
@@ -174,7 +174,7 @@ private abbrev ch78 := Core.WALS.F78A.allData
 structure WALSCount where
   label : String
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Sum of counts in a WALS table. -/
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
@@ -339,7 +339,7 @@ structure EvidentialityProfile where
   markers : List String := []
   /-- Notes on the evidential system -/
   notes : String := ""
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ============================================================================
 -- Language Data

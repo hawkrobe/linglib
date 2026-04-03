@@ -55,7 +55,7 @@ inductive MergeType where
   /-- Internal merge (movement): specifier/edge position.
       E.g., wh-phrase moves to Spec,CP. -/
   | intSpec
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Is this a specifier position (external or via movement)? -/
 def MergeType.isSpec : MergeType → Bool

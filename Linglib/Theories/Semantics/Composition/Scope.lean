@@ -35,13 +35,13 @@ open Semantics.Lexical.Determiner.Quantifier
 inductive ScopeConfig where
   | surface  -- First operator takes wide scope
   | inverse  -- Second operator takes wide scope
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Specific quantifier-negation scope orderings -/
 inductive QNScope where
   | forallNeg  -- ∀>¬: Universal scopes over negation
   | negForall  -- ¬>∀: Negation scopes over universal
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Convert general config to QN-specific scope -/
 def toQNScope : ScopeConfig → QNScope
@@ -138,7 +138,7 @@ inductive ScopeEntailment where
   | inverseEntailsSurface  -- inverse ⊂ surface
   | independent            -- neither entails the other (e.g., exact numerals)
   | equivalent             -- readings are extensionally identical
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Diagnostic scope pairs allow contexts where exactly one reading is true.
     Only independent pairs are diagnostic; nested or equivalent pairs are not. -/

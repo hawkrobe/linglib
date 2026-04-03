@@ -72,7 +72,7 @@ open RSA
     terminates utterances). -/
 inductive Word where
   | blue | red | big | small | pin | stop
-  deriving DecidableEq, Fintype, BEq, Repr
+  deriving DecidableEq, Fintype, Repr
 
 /-- Referents in the 2×2 reference game: big/small × blue/red. -/
 inductive Referent where

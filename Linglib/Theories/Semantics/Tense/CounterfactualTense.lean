@@ -49,7 +49,7 @@ inductive PastMorphologyUse where
   | temporal
   /-- Counterfactual: distance from actuality -/
   | counterfactual
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Counterfactual distance: past morphology marks modal remoteness,
     not temporal precedence. The "reference world" is remote from

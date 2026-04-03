@@ -23,7 +23,7 @@ inductive EFCIRescue where
   | partialExhaustification
   /-- Both mechanisms available -/
   | both
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 The reading an EFCI yields in different contexts.
@@ -39,7 +39,7 @@ inductive EFCIReading where
   | modalVariation
   /-- Speaker doesn't know/care which x satisfies P -/
   | epistemicIgnorance
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 
 /--
@@ -127,7 +127,7 @@ Modal flavor type for context specification.
 inductive ModalFlavor where
   | deontic   -- Permission, obligation
   | epistemic -- Knowledge, belief
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Context for determining EFCI reading.

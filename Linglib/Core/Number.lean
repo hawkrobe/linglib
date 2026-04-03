@@ -71,7 +71,7 @@ inductive Category where
   | unitAugmented  -- recursive [+minimal] on augmented region — minimal
                     -- non-minimal; distinct from dual
   | globalPlural   -- recursive [+additive] on [+additive] region (tentative)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 namespace Category
 
@@ -195,7 +195,7 @@ structure Features where
   isAtomic : Bool
   /-- [+minimal]: referent is a minimal element of the relevant lattice region. -/
   isMinimal : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Well-formedness: [+atomic] → [+minimal].
     An atom (singleton) is necessarily a minimal element. -/

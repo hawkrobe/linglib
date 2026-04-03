@@ -70,7 +70,7 @@ inductive NoonanCompType where
   | infinitive     -- Non-finite with "to" or equivalent
   | nominalized    -- Gerund / action nominal
   | participle     -- Participial complement
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## B. Complement-taking predicate classes (@cite{noonan-2007} Table 2.1) -/
 
@@ -96,7 +96,7 @@ inductive CTPClass where
   | achievement     -- manage, fail, dare
   | phasal          -- start, stop, continue
   | negative        -- avoid, refrain, prevent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## C. Reality status (@cite{noonan-2007} §2.3) -/
 
@@ -105,7 +105,7 @@ inductive CTPClass where
 inductive RealityStatus where
   | realis    -- CTP asserts or presupposes complement truth
   | irrealis  -- CTP does not commit to complement truth
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Reality status of each CTP class (@cite{noonan-2007} Table 2.3). -/
 def ctpRealityStatus : CTPClass → RealityStatus
@@ -142,7 +142,7 @@ structure CTPDatum where
   hasEquiDeletion : Bool
   hasRaising : Bool
   hasNegativeRaising : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## E. Cross-linguistic data
 
@@ -754,13 +754,13 @@ inductive SubordinatorOrder where
   /-- Mixed or no dominant subordination pattern.
       93/659 = 14.1%. -/
   | mixed
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A single row in a WALS frequency table: a category label and its count. -/
 structure WALSCount where
   label : String
   count : Nat
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Sum of counts in a WALS table. -/
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
@@ -814,7 +814,7 @@ inductive OVAdpositionType where
   /-- OV order with prepositions (disharmonic).
       E.g., some Iranian languages. Rare: 14/1142 = 1.2%. -/
   | ovPrep
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open Core.WALS.F95A (RelationshipBetweenTheOrderOfObjectAndVerbAndTheOrderOfAdpositionAndNounPhrase) in
 /-- Chapter 95 distribution: OV order × adposition type (N = 1142).
@@ -853,7 +853,7 @@ inductive ComplementizerPosition where
   /-- No overt complementizer; complementation via juxtaposition or
       verb morphology. E.g., Mandarin serial verb constructions. -/
   | none
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Position of the relative clause with respect to the head noun.
 
@@ -878,7 +878,7 @@ inductive RelativeClausePosition where
       E.g., Hindi "jo aadmii aayaa, vo lambaa hai"
       'which man came, he tall is'. -/
   | correlative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Strategy for expressing purpose clauses ("in order to V").
 
@@ -899,7 +899,7 @@ inductive PurposeClauseStrategy where
   /-- Purpose expressed via serial verb construction.
       E.g., Yoruba, many West African and Oceanic languages. -/
   | serialVerb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-! ## K. Language Profile Structure -/
 
@@ -1657,7 +1657,7 @@ inductive BalancedDeranked where
   | balanced        -- Complement retains main-clause morphology
   | balancedDeranked -- Both balanced and deranked strategies exist
   | deranked        -- Complement uses reduced/non-finite forms
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Cristofaro's 'want' complement subject typology (WALS Ch 124A).
     Captures whether desiderative CTPs leave the complement subject
@@ -1669,7 +1669,7 @@ inductive WantCompStrategy where
   | both              -- Both construction types exist
   | desidAffix        -- Desiderative verbal affix (no separate verb)
   | desidParticle     -- Desiderative particle (no separate verb)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -1748,7 +1748,7 @@ structure ComplementationProfile where
   utteranceComp : Option BalancedDeranked := none
   /-- Notes on the complementation system. -/
   notes : String := ""
-  deriving Repr, BEq, DecidableEq
+  deriving Repr, DecidableEq
 
 /-! ## T. Language Complementation Profiles
 

@@ -74,7 +74,7 @@ inductive GenderCount where
   | three     -- 3 genders (e.g. German masc/fem/neut, Romanian masc/fem/neut)
   | four      -- 4 genders (e.g. Dyirbal: masc/fem/edible/residual)
   | fivePlus  -- 5+ genders / noun classes (e.g. Swahili ~15 classes)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited GenderCount := ⟨.none⟩
 
@@ -114,7 +114,7 @@ inductive GenderBasis where
   | noGender     -- no gender system at all
   | sexBased     -- gender organized around biological sex (masc/fem ± neuter)
   | nonSexBased  -- gender organized around other criteria (animacy, shape, etc.)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited GenderBasis := ⟨.noGender⟩
 
@@ -141,7 +141,7 @@ inductive AssignmentSystem where
   | noGender           -- no gender system to assign to
   | semanticOnly       -- assignment purely by meaning (e.g. Tamil, Zande)
   | semanticAndFormal  -- assignment by both meaning and form (e.g. Russian, German)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 instance : Inhabited AssignmentSystem := ⟨.noGender⟩
 
@@ -213,7 +213,7 @@ inductive SemanticBasis where
   | humanness     -- human/non-human
   | shape         -- round/long/flat (classifier-like noun classes)
   | rationality   -- rational/non-rational (some Caucasian languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- GenderProfile: Combined Profile Across All Three Chapters
@@ -244,7 +244,7 @@ structure GenderProfile where
   agreementTargets : List AgreementTarget
   /-- Semantic dimensions organizing the system -/
   semanticBases : List SemanticBasis
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether the raw gender count is consistent with the WALS bin. -/
 def GenderProfile.rawCountConsistent (p : GenderProfile) : Bool :=

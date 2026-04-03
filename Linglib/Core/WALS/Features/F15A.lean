@@ -22,7 +22,7 @@ inductive WeightSensitiveStress where
   | combinedRightEdgeAndUnbounded  -- Combined: Right-edge and unbounded (8 languages)
   | notPredictable  -- Not predictable (26 languages)
   | fixedStress  -- Fixed stress (no weight-sensitivity) (281 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 15A dataset (500 languages). -/
 def allData : List (Datapoint WeightSensitiveStress) :=

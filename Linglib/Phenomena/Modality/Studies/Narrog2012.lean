@@ -70,7 +70,7 @@ inductive GramCategory where
   | epistemic3         -- speculative, epistemic mood
   | volitiveMood       -- imperative, hortative
   | illocutionaryMod   -- sentence-final particles, tag questions (widest scope)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Empirical scope level from Japanese data (@cite{narrog-2009a},
     @cite{narrog-2012} Tables 3.5–3.7, 3.9). Lower number = narrower scope.
@@ -179,7 +179,7 @@ inductive ChangeRole where
   | source  -- lower scope: voice, benefactives (+ possession, directionals in Table 3.10)
   | target  -- higher scope: mood, IM (+ politeness/honorification in Table 3.10)
   | both    -- same level: aspect, tense, negation (+ referent honorification in Table 3.10)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classification of categories by their diachronic role relative to
     modality. Extends @cite{narrog-2012} Table 3.10 to cover all

@@ -41,7 +41,7 @@ open Semantics.Attitudes.RationalAttitude (Reading readingFromSize)
 inductive InfComplementizer where
   | di   -- CP infinitival (belief): "di essere in pericolo"
   | a_   -- Sub-CP infinitival (intention): "a partire"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The complement size selected by each Italian infinitival complementizer. -/
 def InfComplementizer.complementSize : InfComplementizer → ComplementSize

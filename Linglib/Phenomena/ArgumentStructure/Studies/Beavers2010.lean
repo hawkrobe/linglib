@@ -54,7 +54,7 @@ structure PatientLRole where
   quantized    : Bool
   nonquantized : Bool
   potential    : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 namespace PatientLRole
 

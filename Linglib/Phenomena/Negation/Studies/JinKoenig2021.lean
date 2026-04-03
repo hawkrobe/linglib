@@ -119,7 +119,7 @@ inductive LicensingCondition where
   | logicalOperator
   /-- Meaning entails Q(Y,D) and ¬Q(Z,D') over distinct entities. -/
   | comparative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Subclasses of EN triggers within each licensing condition (Table 5). -/
 inductive TriggerSubclass where
@@ -142,7 +142,7 @@ inductive TriggerSubclass where
   | moreThan       -- more/less Q than (§6.4)
   | differentThan  -- q is different than p (§6.4)
   | tooTo          -- too Q to p (§6.4)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Each subclass belongs to exactly one licensing condition. -/
 def TriggerSubclass.licensingCondition : TriggerSubclass → LicensingCondition
@@ -515,7 +515,7 @@ inductive InferenceDomainType where
   | temporal   -- Different time intervals
   | structural -- ¬ is part of the meaning (no separate domain for p)
   | degree     -- Different degrees on a scale
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Each trigger subclass has a characteristic domain type. -/
 def TriggerSubclass.inferenceDomainType : TriggerSubclass → InferenceDomainType
@@ -882,7 +882,7 @@ structure ENDefinition where
   /-- (iii) The negator does not contribute logical negation to the
       proposition denoted by the syntactic dependent. -/
   isTruthConditionallyVacuous : Bool
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An instance of negation is EN iff all three conditions hold. -/
 def isEN (d : ENDefinition) : Bool :=

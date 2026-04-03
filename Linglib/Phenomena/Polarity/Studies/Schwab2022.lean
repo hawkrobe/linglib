@@ -46,13 +46,13 @@ inductive Condition where
   | grammatical   -- NPI in properly negated clause
   | illusion      -- NPI in RC without matrix negation (pseudo-licensing)
   | ungrammatical -- NPI in positive clause, no RC
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- NPI type tested -/
 inductive NPIType where
   | strengthening  -- jemals (ever)
   | attenuating    -- soRecht (all that)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A single experimental datum -/
 structure ExperimentalDatum where

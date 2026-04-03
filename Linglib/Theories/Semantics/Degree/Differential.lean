@@ -57,7 +57,7 @@ inductive MeasurementLevel where
   | ordinal    -- only ordering (ranking, not distance)
   | interval   -- meaningful distances (temperature in °C/°F)
   | ratio      -- meaningful zero + distances (height, weight)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this measurement level admit measure phrase differentials? -/
 def admitsMeasurePhrase : MeasurementLevel → Bool

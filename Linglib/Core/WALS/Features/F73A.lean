@@ -16,7 +16,7 @@ namespace Core.WALS.F73A
 inductive Optative where
   | inflectionalOptativePresent  -- Inflectional optative present (48 languages)
   | inflectionalOptativeAbsent  -- Inflectional optative absent (271 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 73A dataset (319 languages). -/
 def allData : List (Datapoint Optative) :=

@@ -58,7 +58,7 @@ inductive PerfectReading where
   | universal
   | resultative
   | presentState
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 2. Subevent-to-Parameter Mappings

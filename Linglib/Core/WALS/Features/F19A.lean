@@ -21,7 +21,7 @@ inductive PresenceOfUncommonConsonants where
   | thSounds  -- 'Th' sounds (40 languages)
   | clicksPharyngealsAndTh  -- Clicks, pharyngeals, and 'th' (1 languages)
   | pharyngealsAndTh  -- Pharyngeals and "th" (2 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PresenceOfUncommonConsonants) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .clicks }

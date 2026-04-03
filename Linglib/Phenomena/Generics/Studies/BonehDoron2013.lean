@@ -66,7 +66,7 @@ inductive QForce where
   /-- Universal: GEN ∀-quantifies over individuals/events meeting
       the restrictor. -/
   | universal
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Configuration for a covert quantifier, recording the structural
     differences between GEN and HAB beyond the shared `covertQ` skeleton. -/
@@ -79,7 +79,7 @@ structure CovertQConfig where
   /-- Whether the operator is modalized (references a modal base MB).
       Both GEN and HAB reference MB in their denotations (eqs. (13), (21)). -/
   isModal : Bool
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- GEN configuration: universal, requires explicit restrictor, modal. -/
 def genConfig : CovertQConfig :=
@@ -121,7 +121,7 @@ inductive HabitualForm where
   | usedTo
   /-- Periphrastic *would*: "people would dress elegantly." -/
   | would
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether a habitual form admits perfective aspect.
 

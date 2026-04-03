@@ -51,14 +51,14 @@ inductive InflPattern where
       @cite{anderson-2006} discusses this as a logical possibility;
       clear exemplars are rare. -/
   | splitDoubled
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Which element(s) of an AVC bear a given property. -/
 inductive AVCElement where
   | aux   -- auxiliary only
   | lex   -- lexical verb only
   | both  -- both auxiliary and lexical verb
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-! ## Key functions -/
 

@@ -17,7 +17,7 @@ namespace Semantics.Lexical.Numeral.Precision
 inductive PrecisionMode where
   | exact       -- f_e(s) = s
   | approximate -- f_a(s) = Round(s)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Round a rational number to the nearest multiple of `base`. -/
 def roundToNearest (n : ℚ) (base : ℚ := 10) : ℚ :=

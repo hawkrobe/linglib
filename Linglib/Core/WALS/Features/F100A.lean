@@ -20,7 +20,7 @@ inductive VerbalPersonAlignment where
   | active  -- Active (26 languages)
   | hierarchical  -- Hierarchical (11 languages)
   | split  -- Split (28 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 100A dataset (380 languages). -/
 def allData : List (Datapoint VerbalPersonAlignment) :=

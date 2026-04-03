@@ -41,7 +41,7 @@ inductive BinominalType where
   | pseudoPartitive   -- *un grupo de estudiantes* / *a glass of water*
   | quantificational  -- *un montón de estudiantes* / *a bunch of flowers*
   | qualitative       -- *una mierda de departamento* / *that idiot of a doctor*
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this binominal type license NP-ellipsis?
     @cite{saab-2026}: pseudo-partitive and quantificational yes;
@@ -72,7 +72,7 @@ theorem npe_iff_numE (b : BinominalType) :
 inductive BNPHead where
   | n₁   -- N₁ denotes the referent (N+PP, head-classifier)
   | n₂   -- N₂ denotes the referent (pseudo-partitive, evaluative, EM, BI)
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- The six types of *of*-binominal construction (@cite{ten-wolde-2023}).
 
@@ -97,7 +97,7 @@ inductive OfBinominalType where
   /-- Binominal Intensifier (BI): [N₁ of a] intensifies Adj/Quant.
       *a hell of a good time*, *a whale of a lot of fun* -/
   | binominalIntensifier
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Which noun is the semantic head of each construction type.
 
@@ -224,7 +224,7 @@ inductive AgreementLevel where
   | usuallyAgree
   /-- N₁ and N₂ do not have to agree in number. -/
   | noAgreement
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Numeric encoding: agreement loosens over time. -/
 def AgreementLevel.toNat : AgreementLevel → Nat

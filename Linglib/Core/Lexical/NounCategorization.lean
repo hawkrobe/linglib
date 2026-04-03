@@ -63,7 +63,7 @@ inductive ClassifierType where
   /-- Deictic classifier: appears on deictics, articles, demonstratives.
       Marks spatial location and/or determination. (Ch 7) -/
   | deicticClassifier
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2 Semantic Parameters (@cite{aikhenvald-2000} §11.1.1)
@@ -94,7 +94,7 @@ inductive SemanticParameter where
   | socialStatus     -- honorific, kin, age
   -- Perceptual (salient but unattested in noun categorization)
   | colour           -- perceptually salient but no attested classifier system uses it
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §2b Shape Dimensionality (@cite{downing-1996} Ch. 5; @cite{allan-1977})
@@ -111,7 +111,7 @@ inductive ShapeDimension where
   | oneD    -- long, slender (1-dimensional extent)
   | twoD    -- flat, thin (2-dimensional extent)
   | threeD  -- round, compact (3-dimensional extent)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §3 Structural Properties
@@ -127,7 +127,7 @@ inductive CategorizationScope where
   | clause             -- Clause-level (verbal classifiers)
   | adpositionalNP     -- Adpositional NP (locative classifiers)
   | attributiveNP      -- Attributive NP (deictic classifiers)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Principles governing noun-to-class/classifier assignment (§2.3). -/
 inductive AssignmentPrinciple where
@@ -139,14 +139,14 @@ inductive AssignmentPrinciple where
   | phonological
   /-- Mixed: semantic core + morphological/phonological overlay -/
   | mixed
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Surface realization of a classifier morpheme (Table 15.3). -/
 inductive SurfaceRealization where
   | prefix | suffix | clitic | freeForm
   | suppletion | stress | reduplication
   | nounIncorporation | repeater
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- §4 ClassifierEntry: individual classifier lexical entry

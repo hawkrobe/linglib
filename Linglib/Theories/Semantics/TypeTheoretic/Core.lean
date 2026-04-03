@@ -671,7 +671,7 @@ inductive Cat where
   | n   -- common noun
   | v   -- verb
   | vp  -- verb phrase
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Whether a category is lexical (word-level) vs phrasal. -/
 def Cat.isLexical : Cat → Bool

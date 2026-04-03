@@ -73,7 +73,7 @@ inductive MLabel where
   | Asp   -- aspect
   | O     -- object (VP-internal)
   | Pred  -- predicate (degree constructions)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 1b. Bridge to Minimalism.Cat
@@ -119,7 +119,7 @@ inductive SynObj where
   | leaf : MLabel → SynObj
   | sub₁ : MLabel → SynObj → SynObj
   | sub₁₂ : MLabel → SynObj → SynObj → SynObj
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════
 -- § 3. Accessors

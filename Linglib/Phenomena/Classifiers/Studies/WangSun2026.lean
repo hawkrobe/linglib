@@ -41,7 +41,7 @@ inductive GramStatus where
   | marginal -- marginally acceptable (?)
   | bad      -- ungrammatical (*)
   | hashBad  -- semantically anomalous (#)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 structure ClDatum where
   mandarin : String
@@ -417,7 +417,7 @@ theorem wh_dimensionality_contrast :
 inductive ClReading where
   | sortal   -- Cl visible from D: concrete referent (e.g., real glass)
   | mensural -- Cl invisible from D: abstract measure (e.g., glassful)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def classifierReading (d : SynObj) : ClReading :=
   if individuates d then .sortal else .mensural

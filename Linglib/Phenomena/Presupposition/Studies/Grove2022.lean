@@ -72,7 +72,7 @@ inductive CWorld where
   | broNoSuit -- has brother, no wetsuit
   | noBroSuit -- no brother, has wetsuit
   | noBro     -- no brother, no wetsuit
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 open CWorld
 

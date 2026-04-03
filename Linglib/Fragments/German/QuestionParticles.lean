@@ -41,7 +41,7 @@ structure QParticleEntry where
   whOk : Bool
   requiresEvidentialBias : Bool
   requiresEpistemicBias : Bool
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- denn — highlighting-sensitive flavoring particle.
 Signals the question is prompted by salient contextual evidence.

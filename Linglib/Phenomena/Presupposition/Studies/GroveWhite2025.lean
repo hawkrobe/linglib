@@ -142,7 +142,7 @@ inductive FactivityReading where
   | factive
   /-- The nonfactive reading: BEL only. -/
   | nonfactive
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype FactivityReading where
   elems := {.factive, .nonfactive}

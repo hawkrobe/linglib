@@ -23,7 +23,7 @@ inductive BareNominalType where
   | definiteRequired
   | fullyBare
   | classifier
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Cross-linguistic kind reference datum. -/
 structure CrossLingDatum where
@@ -246,7 +246,7 @@ def universalSomeBooks : ScopeDatum :=
 inductive ScramblingPosition where
   | unscrambled
   | scrambled
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Scrambling scope datum. -/
 structure ScramblingScopeDatum where
@@ -375,7 +375,7 @@ inductive PredLevel where
   | kind
   /-- Applies to individuals; needs coercion for kinds: bark, sleep -/
   | object
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Predicate classification datum -/
 structure PredicateDatum where
@@ -456,7 +456,7 @@ inductive SingularKindLicense where
   | invention
   /-- Taxonomic - species-level predication -/
   | taxonomic
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Singular kind datum -/
 structure SingularKindDatum where
@@ -552,7 +552,7 @@ inductive NominalDenotation where
   | kind
   /-- Denotes a property (type ⟨e,t⟩) -/
   | property
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- English bare plural denotation ambiguity datum.
 

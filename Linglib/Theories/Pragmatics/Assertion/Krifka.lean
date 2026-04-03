@@ -73,7 +73,7 @@ inductive ClauseLayer where
   | ComP
   /-- Act Phrase: speech act type -/
   | ActP
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Rank ordering of clause layers (innermost = 0). -/
 def ClauseLayer.rank : ClauseLayer → Nat
@@ -99,7 +99,7 @@ inductive CommitmentStrength where
   | weak
   | standard
   | strong
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Numerical ordering of commitment strengths. -/
 def CommitmentStrength.rank : CommitmentStrength → Nat
@@ -143,7 +143,7 @@ structure LayeredAssertion (W : Type*) where
 inductive KAgent where
   | speaker
   | addressee
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Bridge `KAgent` to the framework-agnostic `DiscourseRole`.
     Both encode the same two-participant distinction. -/
@@ -386,7 +386,7 @@ theorem actp_declarative_default {W : Type*} (p : BProp W) :
 inductive UpdateType where
   | informative   -- ·φ : eliminates worlds where φ is false
   | performative  -- •φ : changes worlds so φ becomes true
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Informative update: restrict context set to worlds satisfying φ.
     @cite{krifka-2020}, (7): `c + ·φ = {i | i ∈ c ∧ φ(i)}` -/
@@ -452,7 +452,7 @@ theorem question_accept_eq_assert_root {W : Type*}
 structure ActorCommitter where
   actor     : KAgent
   committer : KAgent
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- In assertions, speaker is both actor and committer. -/
 def assertionRoles : ActorCommitter :=

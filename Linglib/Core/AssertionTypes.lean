@@ -21,7 +21,7 @@ inductive AssertionOutcome where
   | retracted
   /-- Assertion met with a demand for reasons -/
   | challenged
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Assertion-related phenomena that theories may handle. -/
 inductive AssertionPhenomenon where
@@ -39,6 +39,6 @@ inductive AssertionPhenomenon where
   | lying
   /-- Challenging: demanding reasons for a commitment -/
   | challenging
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 end Interfaces

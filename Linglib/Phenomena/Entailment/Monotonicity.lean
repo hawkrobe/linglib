@@ -35,7 +35,7 @@ Type of monotonicity position being tested.
 inductive Position where
   | restrictor  -- First argument of determiner: "Every [STUDENT] smokes"
   | scope       -- Second argument of determiner: "Every student [SMOKES]"
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 Direction of the set inclusion in the inference.
@@ -43,7 +43,7 @@ Direction of the set inclusion in the inference.
 inductive Direction where
   | upward    -- Subset to superset (dogs → animals)
   | downward  -- Superset to subset (animals → dogs)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /--
 A monotonicity inference judgment.

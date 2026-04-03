@@ -69,11 +69,11 @@ Three possible worlds:
 -/
 inductive SWorld where
   | actual | wolfIn | noWolf
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 inductive SEntity where
   | wolf
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def sWorlds : List SWorld := [.actual, .wolfIn, .noWolf]
 def αWolf : FLabel := ⟨0⟩
@@ -212,11 +212,11 @@ section Bathroom
 /-- @cite{partee-1972}'s bathroom sentence world model. -/
 inductive BWorld where
   | bath | noBath
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 inductive BEntity where
   | bathroom
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def αBath : FLabel := ⟨1⟩
 def vBath : IVar := ⟨1⟩
@@ -315,7 +315,7 @@ Description-based: "it" → "the paycheck of [current subject]" → Bill's paych
 -/
 inductive PEntity where
   | john | bill | johnsPaycheck | billsPaycheck
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def αPaycheck : FLabel := ⟨2⟩
 def vPaycheck : IVar := ⟨2⟩
@@ -323,7 +323,7 @@ def vPossessor : IVar := ⟨3⟩
 
 inductive PWorld where
   | w0
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Relational paycheck predicate: depends on both paycheck and possessor. -/
 def isPaycheckOf (g : ICDRTAssignment PWorld PEntity) (_w : PWorld) : Bool :=
@@ -399,7 +399,7 @@ a prior modal's scope.
 inductive ModalContinuation where
   | subordinating   -- inherits accessibility (would, could)
   | independent     -- establishes own accessibility (indicative, will, must)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify an English modal by whether it subordinates. -/
 def classifyModal2 : String → ModalContinuation
@@ -510,11 +510,11 @@ fails because some context-set worlds have no burger.
 -/
 inductive IBWorld where
   | actual | burgerW
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 inductive IBEntity where
   | burger
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def ibWorlds : List IBWorld := [.actual, .burgerW]
 def αBurger : FLabel := ⟨10⟩
@@ -582,11 +582,11 @@ succeeds because must guarantees X at every accessible world including w.
 -/
 inductive IAWorld where
   | actual | shedW
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 inductive IAEntity where
   | animal
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def iaWorlds : List IAWorld := [.actual, .shedW]
 def αAnimal : FLabel := ⟨11⟩
@@ -663,11 +663,11 @@ predicts plurality: it would sum across all accessible worlds, getting
 -/
 inductive MAWorld where
   | actual | shedW1 | shedW2
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 inductive MAEntity where
   | cat | dog | raccoon
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def maWorlds : List MAWorld := [.actual, .shedW1, .shedW2]
 def αMA : FLabel := ⟨12⟩
@@ -746,11 +746,11 @@ no winner, so Σx WINNER_w([x]) = ∅, failing SINGLE (paper item 87):
 -/
 inductive PCWorld where
   | actual | aliceWins | bobWins
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 inductive PCEntity where
   | alice | bob
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def pcWorlds : List PCWorld := [.actual, .aliceWins, .bobWins]
 def αWinner : FLabel := ⟨20⟩

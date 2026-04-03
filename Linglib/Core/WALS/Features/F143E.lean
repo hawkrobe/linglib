@@ -18,7 +18,7 @@ inductive PreverbalNegativeMorphemes where
   | negV  -- [Neg-V] (230 languages)
   | negvNegV  -- NegV&[Neg-V] (23 languages)
   | none  -- None (390 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PreverbalNegativeMorphemes) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .none }

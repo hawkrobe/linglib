@@ -20,7 +20,7 @@ inductive ExponenceOfTenseAspectMoodInflection where
   | tamAgreementConstruct  -- TAM+agreement+construct (1 languages)
   | tamPolarity  -- TAM+polarity (5 languages)
   | noTam  -- no TAM (4 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 21B dataset (160 languages). -/
 def allData : List (Datapoint ExponenceOfTenseAspectMoodInflection) :=

@@ -19,7 +19,7 @@ inductive IndefiniteArticleType where
   | indefiniteAffix  -- Indefinite affix (24 languages)
   | noIndefiniteButDefiniteArticle  -- No indefinite, but definite article (98 languages)
   | noDefiniteOrIndefiniteArticle  -- No definite or indefinite article (198 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint IndefiniteArticleType) :=
   [ { walsCode := "aar", language := "Aari", iso := "aiw", value := .noIndefiniteButDefiniteArticle }

@@ -55,7 +55,7 @@ open Fragments.Mayan.Yukatek
 inductive CausalChainPosition where
   | head  -- causing subevent (first in causal chain)
   | tail  -- caused subevent (last in causal chain)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Thematic hierarchy from causal chain position.
     rule (31): participant of a causing subevent
@@ -117,7 +117,7 @@ theorem linking_derives_incompletive :
 inductive TransitivizationType where
   | applicative  -- internally caused: *-t*, add applied object linked to U
   | causative    -- externally caused: *-s*, add instigator linked to A
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The causation type of the intransitive base determines which
     transitivization operation applies.
@@ -330,7 +330,7 @@ inductive DetransitivizationType where
   | antipassive   -- retain causing process, remove caused event
   | anticausative -- retain caused event, remove causing process
   | passive       -- retain caused event, add instigator
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Map Yukatek detransitivization to the general intransitivization
     typology from `MorphologicalCausation.lean`. Anticausatives remove

@@ -64,7 +64,7 @@ structure SyntacticContext where
   aboveCat : Option Categorizer := none
   /-- Does the complement denote an event? -/
   complementIsEventive : Bool := false
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- A single alloseme: a labeled meaning available in a particular context. -/
 structure AllosemicEntry (Sem : Type) where
@@ -118,7 +118,7 @@ def AllosemicHead.allosemeCount {Sem : Type} (h : AllosemicHead Sem) : Nat :=
 inductive VAlloseme where
   | eventive   -- introduces an event variable (CEN contexts)
   | zero       -- semantically Ø / identity function (SEN/RN contexts)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Does this v alloseme introduce an event variable? -/
 def VAlloseme.introducesEvent : VAlloseme → Bool
@@ -203,7 +203,7 @@ inductive NAlloseme where
   | result        -- λP.λx∃e. P(e) & result(x)(e) (result/product entity)
   | state         -- picks out states (simple state reading)
   | entity        -- λP.λx. P(x) (simple entity, no event connection)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Bridge: `NSemanticType` from CategorizerSemantics maps to `NAlloseme`. -/
 def NAlloseme.ofNSemanticType : NSemanticType → NAlloseme
@@ -272,7 +272,7 @@ theorem n_has_nine_allosemes : nAllosemic.allosemeCount = 9 := rfl
 inductive VoiceAlloseme where
   | agent   -- λx.λe. agent(x)(e) — combines with action VPs
   | holder  -- λx.λs. holder(x)(s) — combines with stative VPs
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Voice alloseme selection from VP semantics. -/
 def VoiceAlloseme.fromVPType (vpIsAction : Bool) : VoiceAlloseme :=
@@ -324,7 +324,7 @@ inductive NominalizationReading where
   | simpleState    -- state reading (e.g. admiration, slavery)
   | simpleEntity   -- simple entity reading, no event connection (e.g. laundry)
   | content        -- CCN: content reading (takes CP complement)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Derive the nominalization reading from the allosemes of v and n.
 
@@ -430,7 +430,7 @@ inductive AllomorphyAnalogyPosition where
   | abandoned       -- position 1: analogy is flawed
   | strictParallel  -- position 2: only strict mirror cases
   | partialAnalogy  -- position 3: some respects hold, others don't
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Benz's position. -/
 def benzPosition : AllomorphyAnalogyPosition := .partialAnalogy

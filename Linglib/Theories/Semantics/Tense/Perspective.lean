@@ -142,7 +142,7 @@ inductive EmbeddedTenseStatus where
   | shifted
   /-- Tense deleted by SOT; no temporal presupposition -/
   | deleted
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- A shifted tense retains its presupposition (PRES or PAST relative to π). -/
 def shiftedTensePresup {Time : Type*} [LT Time]
@@ -298,7 +298,7 @@ structure TenseShiftProfile where
   /-- Is ⌈then⌉ restricted to past-oriented contexts?
       Japanese tooji cannot co-occur with future matrix tense. -/
   thenPastOnly : Bool := false
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Modern Greek: shifts in attitude reports (past & future) and relative
     clauses under future, but NOT in relative clauses under past. -/
@@ -380,7 +380,7 @@ structure WOLLDecomposition where
   isIntensional : Bool := true
   /-- WOLL decomposes into a modal component + PRES -/
   containsPres : Bool := true
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 
 end Semantics.Tense.Perspective

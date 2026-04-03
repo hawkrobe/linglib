@@ -78,7 +78,7 @@ inductive BaseTransitivity where
   | intransitive   -- One syntactic argument (patient-subject or agent-subject)
   | transitive     -- Two syntactic arguments (subject + primary object)
   | ditransitive   -- Three syntactic arguments (subject + 2 objects)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The type of non-argument entailed participant (if any) that a
     transitive verb has. These are participants entailed by the verb's
@@ -88,7 +88,7 @@ inductive EntailedParticipantType where
   | locative          -- Entailed location (goal, source, or container)
   | instrument        -- Entailed instrument (always inanimate, always adjunct)
   | none              -- No relevant entailed non-argument participant
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether a locative participant is compatible with an animate referent.
     This determines whether the locative can be promoted by an applicative,
@@ -96,7 +96,7 @@ inductive EntailedParticipantType where
 inductive AnimateCompatibility where
   | compatible        -- Locative can be animate (goal of motion, etc.)
   | incompatible      -- Locative resists animate interpretation (container, surface)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Semantic class of an O'dam verb, relevant to applicativization. -/
 inductive VerbClass where
@@ -109,7 +109,7 @@ inductive VerbClass where
   | simpleTransitive   -- Canonical agent-patient: *mu'kda'* 'sharpen'
   | denominalCreation  -- Incorporated object in base: *junmada'* 'make mole'
   | ditransitive       -- Three-argument base: *makia'* 'give', *tikka'* 'ask'
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- An O'dam verb entry for applicativization analysis. -/
 structure OdamVerb where
@@ -144,7 +144,7 @@ inductive ApplFunction where
   | promotion            -- Promotes entailed non-argument to core argument [+ANIM]
   | beneficiary          -- Introduces beneficiary (elsewhere case)
   | blocked              -- Cannot applicativize (ditransitives)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
 -- § 3. Predicting Applicative Function (the core algorithm)

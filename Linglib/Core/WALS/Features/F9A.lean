@@ -17,7 +17,7 @@ inductive VelarNasal where
   | initialVelarNasal  -- Initial velar nasal (147 languages)
   | noInitialVelarNasal  -- No initial velar nasal (87 languages)
   | noVelarNasal  -- No velar nasal (235 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 9A dataset (469 languages). -/
 def allData : List (Datapoint VelarNasal) :=

@@ -17,7 +17,7 @@ inductive VowelQualityInventories where
   | small  -- Small (2-4) (93 languages)
   | average  -- Average (5-6) (287 languages)
   | large  -- Large (7-14) (184 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint VowelQualityInventories) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .average }

@@ -37,7 +37,7 @@ inductive PositionOfNegativeMorphemesInVerbInitialLanguages where
   | optsingleneg  -- OptSingleNeg (1 languages)
   | obligdoubleneg  -- ObligDoubleNeg (7 languages)
   | optdoubleneg  -- OptDoubleNeg (10 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144T dataset (152 languages). -/
 def allData : List (Datapoint PositionOfNegativeMorphemesInVerbInitialLanguages) :=

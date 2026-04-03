@@ -118,7 +118,7 @@ def isNeutral (s : Segment) : Bool :=
 /-- The harmony class of a vowel: back, front, or neutral. -/
 inductive HarmonyClass where
   | back | front | neutral
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Classify a vowel segment. -/
 def classifyVowel (s : Segment) : HarmonyClass :=

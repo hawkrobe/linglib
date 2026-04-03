@@ -49,7 +49,7 @@ namespace Quantifiers
 
 inductive QuantExpr where
   | none_ | some_ | most | all
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def QuantExpr.ofString? : String → Option QuantExpr
   | "none" => some .none_
@@ -94,7 +94,7 @@ theorem some_has_stronger_alternatives :
 structure QuantWorld (maxN : Nat) where
   /-- How many entities satisfy the predicate (0 to maxN). -/
   count : Fin (maxN + 1)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Intensional meaning: quantifier as function from worlds to truth values. -/
 def worldMeaning (maxN : Nat) : QuantExpr → QuantWorld maxN → Bool
@@ -133,7 +133,7 @@ namespace Connectives
 
 inductive ConnExpr where
   | or_ | and_
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def ConnExpr.ofString? : String → Option ConnExpr
   | "or" => some .or_
@@ -170,7 +170,7 @@ namespace Modals
 
 inductive ModalExpr where
   | possible | necessary
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def ModalExpr.ofString? : String → Option ModalExpr
   | "possible" => some .possible
@@ -243,7 +243,7 @@ This scale is structurally unusual: the alternatives differ in morphology
 
 inductive NumberExpr where
   | singular | plural
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 def NumberExpr.toString : NumberExpr → String
   | .singular => "singular"
@@ -277,7 +277,7 @@ example : scalarImplicatures Connectives.connScale .or_ = [.and_] := by
 inductive Monotonicity where
   | upward
   | downward
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def scalarAlternativesInContext {α : Type} [BEq α]
     (s : HornScale α) (x : α) (m : Monotonicity) : List α :=
@@ -511,7 +511,7 @@ inductive ScaleMembership where
   | quantifier (pos : Quantifiers.QuantExpr)
   | connective (pos : Connectives.ConnExpr)
   | modal (pos : Modals.ModalExpr)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Look up the scale position of a word form. -/
 def scaleOf : String → Option ScaleMembership

@@ -151,7 +151,7 @@ inductive ChujDPPosition where
   | adjunctVolitional
   /-- Adjunct of a non-volitional verb (e.g., "it rained where") -/
   | adjunctNonVolitional
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Which modal flavors are available to *yalnhej* in each position
 (Table 5, §3.2–4.2). -/
@@ -358,7 +358,7 @@ inductive EmbeddingModal where
   | imperative
   | deontic
   | attitudeVerb
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 structure HarmonicDatum where
   chuj : String

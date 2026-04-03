@@ -21,7 +21,7 @@ inductive CorrelativeRelativeClauses where
   | correlativeOrAdjoined  -- Correlative or adjoined (2 languages)
   | correlativeAsNondominantType  -- Correlative as nondominant type (3 languages)
   | correlativeExists  -- Correlative exists (1 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 90E dataset (23 languages). -/
 def allData : List (Datapoint CorrelativeRelativeClauses) :=

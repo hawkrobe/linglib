@@ -95,7 +95,7 @@ inductive Finding where
   /-- Partial access (a=2): state 1 does not exceed state 2 (still canceled).
       Evidence: t(25) = 1.5, p = .92. -/
   | one_partial_1v2_canceled
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All findings from the paper. -/
 def findings : List Finding :=
@@ -311,7 +311,7 @@ open Phenomena
 /-- World states: how many of 3 objects have the property. -/
 inductive WorldState where
   | s0 | s1 | s2 | s3
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 def WorldState.toNat : WorldState → Nat
   | .s0 => 0 | .s1 => 1 | .s2 => 2 | .s3 => 3
@@ -319,7 +319,7 @@ def WorldState.toNat : WorldState → Nat
 /-- Speaker access: how many of 3 objects the speaker can observe. -/
 inductive Access where
   | a1 | a2 | a3
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Observations: (number seen with property, access level).
     Latent variable in L1 — L1 marginalizes over observations. -/
@@ -327,7 +327,7 @@ inductive Obs where
   | o0a1 | o1a1                      -- access=1: saw 0 or 1
   | o0a2 | o1a2 | o2a2              -- access=2: saw 0, 1, or 2
   | o0a3 | o1a3 | o2a3 | o3a3      -- access=3: saw 0, 1, 2, or 3
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 def Obs.access : Obs → Access
   | .o0a1 | .o1a1 => .a1
@@ -446,7 +446,7 @@ noncomputable def gsCfg {U : Type*} [Fintype U]
 
 inductive QUtt where
   | none_ | some_ | all
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 def qMeaning : QUtt → WorldState → Bool
   | .none_, s => s.toNat == 0
@@ -462,7 +462,7 @@ noncomputable abbrev gsCfgQ := gsCfg qMeaning
 
 inductive NumUtt where
   | one | two | three
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 def lbMeaning : NumUtt → WorldState → Bool
   | .one,   s => s.toNat ≥ 1

@@ -18,7 +18,7 @@ inductive Prohibitive where
   | normalImperativeSpecialNegative  -- Normal imperative + special negative (182 languages)
   | specialImperativeNormalNegative  -- Special imperative + normal negative (55 languages)
   | specialImperativeSpecialNegative  -- Special imperative + special negative (146 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 71A dataset (496 languages). -/
 def allData : List (Datapoint Prohibitive) :=

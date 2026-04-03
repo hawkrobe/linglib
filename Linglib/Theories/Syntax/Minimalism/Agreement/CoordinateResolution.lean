@@ -423,7 +423,7 @@ def resolveCoordinate {G : Type} [BEq G]
 -- § 9: Examples
 -- ============================================================================
 
-private inductive ExGender where | m | f | n deriving DecidableEq, BEq
+private inductive ExGender where | m | f | n deriving DecidableEq
 
 /-- English {sg, pl}: 1st + 3rd → 1st, sg + sg → pl, [m] + [m] → [m]. -/
 example : resolveCoordinate [.singular, .plural]

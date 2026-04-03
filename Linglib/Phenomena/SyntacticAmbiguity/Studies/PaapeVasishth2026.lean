@@ -98,7 +98,7 @@ inductive TrialOutcome where
   | covertPostponedSuccess
   /-- Garden-pathed, covert reanalysis, postponed to spillover, fails → reject. -/
   | covertPostponedFail
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Whether a trial outcome involves garden-pathing. -/
 def TrialOutcome.isGardenPathed : TrialOutcome → Bool
@@ -175,7 +175,7 @@ inductive ExpCondition where
   | ambRC_nonUnique      -- ambiguous RC, non-unique referents
   | unambRC_unique       -- unambiguous RC, unique referent
   | unambRC_nonUnique    -- unambiguous RC, non-unique referents
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Map experimental conditions to the abstract Condition type. -/
 def ExpCondition.toCondition : ExpCondition → Condition
@@ -428,7 +428,7 @@ inductive ModelVariant where
   | mptSimple            -- MPT: garden-pathing + reanalysis only
   | mptNoTriage          -- MPT without triage (best model)
   | mptFull              -- full MPT with triage
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Cross-validated predictive fit ranking (1 = best). -/
 def modelRank : ModelVariant → Nat
@@ -517,7 +517,7 @@ inductive DiscEntity where
   | woman1   -- the woman he risked his life for
   | woman2   -- a second woman
   | man
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Non-unique context domain: a man and two women. -/
 def nonUniqueDomain : List DiscEntity := [.woman1, .woman2, .man]
@@ -607,7 +607,7 @@ inductive SedivyEntity where
   | shortGlass   -- same-category competitor
   | ball         -- distractor
   | key          -- distractor
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Contrast display: two glasses (tall and short) plus distractors. -/
 def contrastDisplay : List SedivyEntity :=

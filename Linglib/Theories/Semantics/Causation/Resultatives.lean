@@ -192,7 +192,7 @@ inductive CCSelectionMode where
   | memberOfSufficientSet
   /-- CoS/resultative: subject completes a sufficient set (BBS2025 §4.2) -/
   | completionOfSufficientSet
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Resultatives select via completion (like CoS verbs). -/
 def resultativeCCSelection : CCSelectionMode := .completionOfSufficientSet
@@ -504,7 +504,7 @@ inductive ContiguityType where
   | containerContents  -- "drink teapot dry", "cry eyes out"
   | contentsContainer  -- "fill bucket full", "load truck full"
   | impingement        -- "wipe table clean", "scrub floor clean"
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- All contiguity types involve passive intermediates (no independent
     energy source), so necessity propagates through the chain. -/
@@ -647,7 +647,7 @@ inductive ResultativeRealization where
   | verbCompound
   /-- Mandarin V-de: result clause introduced by particle de -/
   | deComplement
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Whether the result predicate targets the subject or object.
     English enforces DOR (Direct Object Restriction): the result must
@@ -656,7 +656,7 @@ inductive ResultativeRealization where
 inductive ResultOrientation where
   | objectOriented
   | subjectOriented
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Phase complements: a grammaticalized closed-class subset of Mandarin
     V2 resultatives with fixed change-of-state semantics.
@@ -667,7 +667,7 @@ inductive PhaseComplement where
   | hao   -- 好 hǎo "good" → inception of satisfactory/completed state
   | diao  -- 掉 diào "fall off" → inception of detachment/disappearance
   | zhu   -- 住 zhù "hold" → continuation of state
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Phase complements have fixed CoS semantics, bridging Mandarin morphology
     to the cross-linguistic `CoSType` infrastructure in `ChangeOfState.Theory`. -/

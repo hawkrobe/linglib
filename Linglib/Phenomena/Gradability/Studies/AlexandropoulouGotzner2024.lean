@@ -37,7 +37,7 @@ open Fragments.English.Predicates.Adjectival
 
 inductive EvaluativePolarity where
   | positive | negative
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def classifyAdj (entry : GradableAdjEntry) : Bool :=
   match entry.antonymRelation with

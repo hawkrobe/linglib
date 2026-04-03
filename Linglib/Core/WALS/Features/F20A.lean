@@ -21,7 +21,7 @@ inductive FusionType where
   | tonalConcatenative  -- Tonal/concatenative (2 languages)
   | ablautConcatenative  -- Ablaut/concatenative (5 languages)
   | isolatingConcatenative  -- Isolating/concatenative (13 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 20A dataset (165 languages). -/
 def allData : List (Datapoint FusionType) :=

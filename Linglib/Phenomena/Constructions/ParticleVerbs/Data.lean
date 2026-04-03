@@ -22,7 +22,7 @@ structure ParticleVerb where
   verb     : String
   particle : String
   meaning  : String
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 def pick_up   : ParticleVerb := ⟨"pick",  "up",  "lift / collect"⟩
 def lift_up   : ParticleVerb := ⟨"lift",  "up",  "raise"⟩
@@ -39,14 +39,14 @@ def inventory : List ParticleVerb :=
 inductive PVCOrder where
   | continuous  -- V Prt DP  ("lifted up the box")
   | split       -- V DP Prt  ("lifted the box up")
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- DP weight category, relevant to particle shift constraints. -/
 inductive DPWeight where
   | pronoun     -- "her", "it"
   | light       -- "the box", "Hsu"
   | heavy       -- "the box that was sitting on the table"
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- A single particle shift datum: a ⟨verb, order, DP weight, judgment⟩ tuple. -/
 structure ParticleShiftDatum where

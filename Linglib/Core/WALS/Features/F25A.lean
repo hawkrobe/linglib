@@ -19,7 +19,7 @@ inductive LocusOfMarkingWholeLanguageTypology where
   | doubleMarking  -- Double-marking (16 languages)
   | zeroMarking  -- Zero-marking (6 languages)
   | inconsistentOrOther  -- Inconsistent or other (121 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 25A dataset (236 languages). -/
 def allData : List (Datapoint LocusOfMarkingWholeLanguageTypology) :=

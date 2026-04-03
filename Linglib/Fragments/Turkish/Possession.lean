@@ -46,11 +46,11 @@ def predicativeStrategy : PredicativePossession := .genitiveDative
     possessum and agree with the possessor in person and number. -/
 inductive PossPerson where
   | first | second | third
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 inductive PossNumber where
   | sg | pl
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Possessive suffix forms (after consonant-final stems). -/
 def possSuffix : PossPerson → PossNumber → String
@@ -71,7 +71,7 @@ inductive ExistPred where
   | var
   /-- `yok` 'non-existent, there is not' — negative possession -/
   | yok
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- `var`/`yok` is not a verb — it is a non-verbal predicate that takes
     no tense/aspect morphology in the base form. This is characteristic

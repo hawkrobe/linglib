@@ -77,7 +77,7 @@ inductive ViewpointType where
   | perfective    -- TT AT TSit
   | perfect       -- TT AFTER TSit
   | prospective   -- TT BEFORE TSit
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Bool-level viewpoint aspect, capturing the perfective/imperfective distinction
     without the full interval-based `EventPred`/`IntervalPred` machinery.
@@ -88,7 +88,7 @@ inductive ViewpointType where
 inductive ViewpointAspectB where
   | perfective
   | imperfective
-  deriving DecidableEq, Repr, BEq, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Project `ViewpointType` to the coarser perfective/imperfective distinction.
     Returns `none` for `perfect` and `prospective` (neither is simply perf/impf). -/
@@ -373,7 +373,7 @@ inductive PerfectType where
   | universal     -- PERFECT(UNBOUNDED): ongoing through PTS
   | experiential  -- PERFECT(NEUTRAL): began within PTS
   | resultative   -- PERFECT(BOUNDED): completed within PTS (simplified)
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Universal perfect: PERF_P(UNBOUNDED(V)).
     "has been running" — event ongoing throughout PTS.

@@ -58,7 +58,7 @@ inductive MonotonicityEnv where
   | DE  -- Downward entailing (antitone)
   | NM  -- Non-monotone (e.g., "exactly N")
   | DN  -- Doubly negative: globally UE, locally DE at each step
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 /-- Whether an environment is globally upward-entailing.
 DN and UE both return true — the crux of the coarsening problem. -/
@@ -76,7 +76,7 @@ inductive PICondition where
   | ppi          -- Sentence contains the PPI "some"
   | noPISimple   -- No PI, simple NP
   | noPIComplex  -- No PI, complex NP (controls for structural complexity)
-  deriving DecidableEq, BEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
 -- Core Data: PI Influence Findings
@@ -213,7 +213,7 @@ inductive Mechanism where
   | priming            -- PIs prime/cue the monotonicity computation
   | scalarSideEffect   -- PIs' scalar semantics create inferential side-effects
   | statisticalTracking -- Listeners track PI–environment co-occurrence
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Experiment 3 rules out the scalar side-effect as the sole mechanism. -/
 structure MechanismVerdict where

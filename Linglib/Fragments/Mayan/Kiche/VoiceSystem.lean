@@ -73,7 +73,7 @@ inductive TransVerbClass where
   | derived
   /-- Radical: monosyllabic roots ending in consonants. -/
   | radical
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § 2: Voice Alternations
@@ -93,7 +93,7 @@ inductive KicheVoice where
   /-- Completed Passive (distinct morphology from Simple Passive in
       completed aspect). -/
   | completedPassive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- All five voices. -/
 def allVoices : List KicheVoice :=
@@ -133,7 +133,7 @@ def rtvVoiceMarker : KicheVoice → String
 inductive Aspect where
   | incomplete  -- k- (ka- before clusters)
   | completed   -- x-
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- The morphological form of the aspect marker.
    , Lesson 9: k- (ka-) for incomplete, x- for
@@ -291,7 +291,7 @@ theorem dtv_comppass_marker : dtvVoiceMarker .completedPassive = "-taaj" := rfl
 structure Negation where
   proclitic : String := "na"
   enclitic : String
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Negation of nonverbal predicates (pronouns, nouns, adjectives,
     adverbs, prepositions): na...taj. -/
@@ -316,7 +316,7 @@ inductive BasicWordOrder where
   | VS   -- Verb-Subject (intransitive)
   | VOS  -- Verb-Object-Subject (transitive active)
   | VS_passive  -- Verb-Subject (passive, with oblique agent)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Intransitive basic word order is verb-initial. -/
 def intransitiveOrder : BasicWordOrder := .VS

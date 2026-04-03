@@ -23,7 +23,7 @@ inductive FelicityJudgment where
   | ok
   | marginal
   | odd
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Type of additive particle use.
 
@@ -33,7 +33,7 @@ not an additive particle use. -/
 inductive UseType where
   | standard        -- ANT and π are focus alternatives
   | argumentBuilding -- ANT and π jointly support a conclusion
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Repr
 
 /-- Empirical data point for additive particles. -/
 structure AdditiveParticleDatum where

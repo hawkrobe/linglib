@@ -17,7 +17,7 @@ inductive Tea where
   | wordsDerivedFromSiniticCha  -- Words derived from Sinitic cha (110 languages)
   | wordsDerivedFromMinNanChineseTe  -- Words derived from Min Nan Chinese te (84 languages)
   | others  -- Others (36 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 138A dataset (230 languages). -/
 def allData : List (Datapoint Tea) :=

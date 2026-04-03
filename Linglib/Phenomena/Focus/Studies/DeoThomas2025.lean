@@ -36,7 +36,7 @@ inductive AlternativeSource where
   | causal       -- Causal explanations
   | elaboration  -- Elaboration / specification alternatives
   | normative    -- Norm-based expectations
-  deriving Repr, DecidableEq, BEq
+  deriving Repr, DecidableEq
 
 /-- Map each flavor of *just* to its alternative source. -/
 def associatedSource : JustFlavor → AlternativeSource

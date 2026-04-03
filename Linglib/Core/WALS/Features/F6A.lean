@@ -18,7 +18,7 @@ inductive UvularConsonants where
   | uvularStopsOnly  -- Uvular stops only (38 languages)
   | uvularContinuantsOnly  -- Uvular continuants only (11 languages)
   | uvularStopsAndContinuants  -- Uvular stops and continuants (48 languages)
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint UvularConsonants) :=
   [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .uvularStopsOnly }

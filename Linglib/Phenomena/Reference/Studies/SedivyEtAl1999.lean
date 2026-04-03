@@ -65,13 +65,13 @@ def adjDomain : Core.PropertyDomain := .size
 inductive TokenType where
   | good  -- target is a good exemplar (e.g., clearly tall)
   | poor  -- target is a marginal exemplar
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Contrast condition across all experiments. -/
 inductive Condition where
   | contrast    -- display includes same-category competitor differing on scalar dimension
   | noContrast  -- no same-category competitor
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- § ANOVA Results

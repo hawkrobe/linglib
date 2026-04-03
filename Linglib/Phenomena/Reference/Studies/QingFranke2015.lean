@@ -124,7 +124,7 @@ inductive Finding where
       *pragmatic* direction: 115/180 chose green_circle (Table 2). The model
       predictions are correct; human data here follows pragmatics, not salience. -/
   | salience_reversal_green
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 def findings : List Finding :=
   [.speaker_prefers_unique_shape, .speaker_prefers_unique_color,
@@ -142,14 +142,14 @@ def findings : List Finding :=
     green_circle: both features shared -/
 inductive Object where
   | green_square | blue_circle | green_circle
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : Nonempty Object := ⟨.green_square⟩
 
 /-- The four single-word utterances (feature predicates). -/
 inductive Utterance where
   | square | circle | green | blue
-  deriving DecidableEq, BEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : Nonempty Utterance := ⟨.square⟩
 
