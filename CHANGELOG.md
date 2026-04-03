@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.480] - 2026-04-03
+
+### Changed
+- **BasemapCorrespondence.lean**: closed 2 sorrys in `basemapViolations_cons_eq` and `basemapViolations_cons_ne` — `beq_self_eq_true` now works directly thanks to the BEq diamond fix
+
 ## [0.229.479] - 2026-04-03
 
 ### Changed

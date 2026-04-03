@@ -138,7 +138,7 @@ private theorem basemapViolations_cons_eq (x : ToneFeature) (xs ys : List ToneFe
   unfold basemapViolations
   rw [List.zip_cons_cons, List.foldl_cons]
   congr 1
-  sorry
+  cases x <;> rfl
 
 /-- Mismatching heads contribute at least one violation. -/
 private theorem basemapViolations_cons_ne (x y : ToneFeature) (xs ys : List ToneFeature)
@@ -146,8 +146,11 @@ private theorem basemapViolations_cons_ne (x y : ToneFeature) (xs ys : List Tone
     basemapViolations (x :: xs) (y :: ys) ≥ 1 := by
   unfold basemapViolations
   rw [List.zip_cons_cons, List.foldl_cons]
-  have hf : (x == y) = false := by cases x <;> cases y <;> simp_all
-  sorry
+  have : ∀ (acc : Nat), acc ≥ 1 →
+      (xs.zip ys).foldl (λ count (m, b) => if m == b then count else count + 1) acc ≥ 1 :=
+    fun acc hacc => Nat.le_trans hacc (foldl_mismatch_mono _ _)
+  apply this
+  cases x <;> cases y <;> (first | exact absurd rfl hne | decide)
 
 /-- Self-comparison has zero basemap violations: a tonal tier is
     perfectly faithful to itself. -/
