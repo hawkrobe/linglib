@@ -32,18 +32,63 @@ namespace Core.Morphology
 -- §1. Typological Classification Types
 -- ============================================================================
 
-/-- WALS Ch 20: How inflectional formatives are attached to stems. -/
+/-- WALS Ch 20: How inflectional formatives are attached to stems.
+
+    Note: this captures *fusion* only — the degree of phonological
+    boundedness between formative and stem. The traditional labels
+    "agglutinating" and "fusional" conflate fusion with *flexivity*
+    (see `Flexivity` below). Both `concatenative + nonflexive` (Turkish)
+    and `concatenative + flexive` (Russian) map to `.concatenative` here.
+    @cite{bickel-nichols-2001} -/
 inductive Fusion where
   | isolating
   | concatenative
   | nonlinear
   deriving DecidableEq, Repr
 
-/-- WALS Ch 21: How many grammatical categories a single case formative expresses. -/
+/-- Whether inflectional formatives show item-based allomorphic variation.
+
+    @cite{bickel-nichols-2001} argue this is the crucial parameter that
+    the traditional typology conflates with fusion:
+    - **nonflexive** ("agglutinating"): formatives have invariant or
+      rule-governed shape (Turkish *-ler* ~ *-lar* is vowel-harmony,
+      not item-based allomorphy)
+    - **flexive** ("fusional"): formatives vary unpredictably by
+      inflectional class (Latin *-ī* ~ *-ae* ~ *-ūs* for genitive
+      singular depending on declension class)
+
+    Orthogonal to `Fusion`: a language can be concatenative + nonflexive
+    (Turkish), concatenative + flexive (Russian), nonlinear + flexive
+    (Arabic), or isolating (flexivity N/A). -/
+inductive Flexivity where
+  | nonflexive   -- formatives phonologically invariant / rule-governed
+  | flexive      -- formatives show item-based (class-conditioned) allomorphy
+  deriving DecidableEq, Repr
+
+/-- WALS Ch 21: How many grammatical categories a single case formative
+    expresses. Specifically about *case* formatives and whether they
+    bundle number, TAM, etc.
+
+    Distinct from `ExponenceScope` (B&N's broader cumulative/separative
+    parameter which applies to all morphological categories, not just case).
+    @cite{bickel-nichols-2001} -/
 inductive Exponence where
   | monoexponential
   | polyexponential
   | noCase
+  deriving DecidableEq, Repr
+
+/-- Whether a single formative expresses multiple grammatical categories
+    simultaneously (cumulative) or each formative expresses exactly one
+    category (separative).
+
+    @cite{bickel-nichols-2001}: this is a general morphological parameter
+    applying across all category pairs, not limited to case+number (cf.
+    WALS Ch 21 `Exponence`). Latin *-ō* (1sg.pres.act.ind) is cumulative;
+    Turkish verb suffixes are separative (each suffix = one category). -/
+inductive ExponenceScope where
+  | cumulative    -- one formative, multiple categories
+  | separative    -- one formative per category
   deriving DecidableEq, Repr
 
 /-- WALS Ch 22: How many inflectional categories are expressed on the verb. -/
@@ -225,6 +270,14 @@ structure MorphProfile where
   suppletionImperative : Option SuppletionImperative := none
   /-- Ch 80A: Verbal number and suppletion (optional) -/
   verbalNumber : Option VerbalNumber := none
+  /-- @cite{bickel-nichols-2001}: Flexivity — whether inflectional formatives
+      show item-based allomorphic variation (flexive) or are phonologically
+      invariant (nonflexive). Orthogonal to `fusion`. Not derivable from WALS. -/
+  flexivity : Option Flexivity := none
+  /-- @cite{bickel-nichols-2001}: Exponence scope — whether single formatives
+      bundle multiple categories (cumulative) or each expresses one (separative).
+      Broader than WALS Ch 21 `exponence` (which is case-specific). -/
+  bnExponence : Option ExponenceScope := none
   deriving Repr, DecidableEq
 
 -- ============================================================================
@@ -459,5 +512,66 @@ def MorphProfile.isLowSynthesis (p : MorphProfile) : Bool :=
 
 def MorphProfile.isHighSynthesis (p : MorphProfile) : Bool :=
   p.verbSynthesis == .high
+
+def MorphProfile.isFlexive (p : MorphProfile) : Bool :=
+  p.flexivity == some .flexive
+
+def MorphProfile.isNonflexive (p : MorphProfile) : Bool :=
+  p.flexivity == some .nonflexive
+
+def MorphProfile.isCumulative (p : MorphProfile) : Bool :=
+  p.bnExponence == some .cumulative
+
+def MorphProfile.isSeparative (p : MorphProfile) : Bool :=
+  p.bnExponence == some .separative
+
+/-- Traditional "agglutinating" = concatenative + nonflexive + separative.
+    @cite{bickel-nichols-2001} decomposition of the traditional typology. -/
+def MorphProfile.isAgglutinating (p : MorphProfile) : Bool :=
+  p.isConcatenative && p.isNonflexive && p.isSeparative
+
+/-- Traditional "fusional" = concatenative + flexive + cumulative.
+    @cite{bickel-nichols-2001} decomposition of the traditional typology. -/
+def MorphProfile.isFusional (p : MorphProfile) : Bool :=
+  p.isConcatenative && p.isFlexive && p.isCumulative
+
+-- ============================================================================
+-- §6. Structural Theorems on the B&N Parameter Space
+-- ============================================================================
+
+/-! ### Mutual exclusion
+
+The traditional types "agglutinating" and "fusional" are mutually exclusive
+because they require contradictory values on the flexivity dimension
+(nonflexive vs flexive). This follows from the B&N decomposition — it is
+not an empirical observation but a structural consequence of the definitions. -/
+
+/-- Agglutinating and fusional are mutually exclusive: they require opposite
+    flexivity values (nonflexive vs flexive). -/
+theorem agglutinating_fusional_exclusive (p : MorphProfile) :
+    ¬(p.isAgglutinating = true ∧ p.isFusional = true) := by
+  simp only [MorphProfile.isAgglutinating, MorphProfile.isFusional,
+             MorphProfile.isConcatenative, MorphProfile.isNonflexive,
+             MorphProfile.isFlexive, MorphProfile.isCumulative,
+             MorphProfile.isSeparative]
+  cases p.flexivity with
+  | none => simp
+  | some f => cases f <;> simp
+
+/-- Nonflexive and flexive are contradictory: a language cannot be both. -/
+theorem nonflexive_flexive_exclusive (p : MorphProfile) :
+    ¬(p.isNonflexive = true ∧ p.isFlexive = true) := by
+  simp only [MorphProfile.isNonflexive, MorphProfile.isFlexive]
+  cases p.flexivity with
+  | none => simp
+  | some f => cases f <;> simp
+
+/-- Cumulative and separative are contradictory: a language cannot be both. -/
+theorem cumulative_separative_exclusive (p : MorphProfile) :
+    ¬(p.isCumulative = true ∧ p.isSeparative = true) := by
+  simp only [MorphProfile.isCumulative, MorphProfile.isSeparative]
+  cases p.bnExponence with
+  | none => simp
+  | some e => cases e <;> simp
 
 end Core.Morphology

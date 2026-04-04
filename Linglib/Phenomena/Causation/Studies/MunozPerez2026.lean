@@ -242,10 +242,10 @@ theorem stylLE_requires_inchoative :
     (applySpanishFission .s1 [.vDO, .vCAUSE, .vGO, .vBE]).isSome = false := by
   native_decide
 
-/-- Every verb that licenses stylistic LE has inchoative structure.
+/-- Every Muñoz-Pérez verb that licenses stylistic LE has inchoative structure.
     DERIVED from the verb fragment. -/
 theorem stylLE_verbs_inchoative :
-    (Fragments.Spanish.Predicates.allVerbs.filter (·.licensesStylLE)).all
+    (Fragments.Spanish.Predicates.munozVerbs.filter (·.licensesStylLE)).all
       (fun v => isInchoative v.verbHead) = true := by native_decide
 
 -- ============================================================================
@@ -268,10 +268,10 @@ theorem optional_licenses_stylLE :
     hervir.anticausativeMarking = .optional ∧
     hervir.licensesStylLE = true := ⟨rfl, rfl⟩
 
-/-- All verbs blocking stylistic LE are unmarked.
+/-- All Muñoz-Pérez verbs blocking stylistic LE are unmarked.
     DERIVED from the fragment data. -/
 theorem blocking_verbs_all_unmarked :
-    (Fragments.Spanish.Predicates.allVerbs.filter (!·.licensesStylLE)).all
+    (Fragments.Spanish.Predicates.munozVerbs.filter (!·.licensesStylLE)).all
       (fun v => v.anticausativeMarking == .unmarked) = true := by native_decide
 
 -- ============================================================================

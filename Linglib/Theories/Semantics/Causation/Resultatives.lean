@@ -150,27 +150,22 @@ end CausalModels
 
 /-! ### Agreement with Boolean flags -/
 
-/-- Causative entries have CAUSE; noncausative entries do not. -/
-theorem causative_iff_has_cause (e : ResultativeEntry) :
-    e.subconstruction.isCausative = e.subevents.constructional.hasCause →
-    (e.subconstruction.isCausative = true ↔
-     e.subevents.constructional.hasCause = true) := by
-  intro h
-  constructor
-  · intro hc; rw [← h]; exact hc
-  · intro hb; rw [h]; exact hb
+/-- isCausative ↔ hasCause — derived from the subconstruction, not stipulated per entry. -/
+theorem causative_iff_has_cause (sc : ResultativeSubconstruction) :
+    sc.isCausative = sc.constructionalDesc.hasCause := by
+  cases sc <;> rfl
 
-/-- All causative entries in the data have CAUSE (verified empirically). -/
+/-- All causative entries in the data have CAUSE (via derived subevent). -/
 theorem causativeResultativeHasCAUSE :
     (allEntries.filter (·.subconstruction.isCausative)).all
-      (·.subevents.constructional.hasCause) = true := by
+      (·.dualSubevent.constructional.hasCause) = true := by
   native_decide
 
 /-- MEANS-relation causative entries all have CAUSE. -/
 theorem causative_means_have_cause :
     (allEntries.filter (λ e =>
-      e.subconstruction.isCausative && e.subevents.relation == .means
-    )).all (·.subevents.constructional.hasCause) = true := by
+      e.subconstruction.isCausative && e.subeventRelation == .means
+    )).all (·.dualSubevent.constructional.hasCause) = true := by
   native_decide
 
 /-! ### CC-selection (Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
@@ -221,30 +216,33 @@ theorem kick_completes_for_field :
     completesForEffect kickIntoFieldModel Situation.empty kickingVar inFieldVar = true := by
   native_decide
 
-/-! ### Temporal constraint as completion event (G&J Principle 33) -/
+/-! ### Temporal constraint as completion event
 
-/-- Causal completion + temporal ordering. -/
+The temporal constraint is now relation-dependent: for MEANS relations,
+the constructional subevent cannot precede the verbal subevent. -/
+
+/-- Causal completion + temporal ordering (relation-dependent). -/
 def isCompletionEvent (dyn : CausalDynamics) (background : Situation)
-    (cause effect : Variable) (order : TemporalOrder) : Bool :=
+    (cause effect : Variable) (rel : SubeventRelation) (order : TemporalOrder) : Bool :=
   completesForEffect dyn background cause effect &&
-  temporalConstraintSatisfied order
+  temporalConstraintSatisfied rel order
 
 /-- Hammering is a completion event for flatness (verbal precedes result). -/
 theorem hammer_is_completion_event :
     isCompletionEvent hammerFlatModel Situation.empty
-      hammeringVar flatVar .verbalFirst = true := by
+      hammeringVar flatVar .means .verbalFirst = true := by
   native_decide
 
 /-- Hammering is a completion event when simultaneous with result. -/
 theorem hammer_completion_simultaneous :
     isCompletionEvent hammerFlatModel Situation.empty
-      hammeringVar flatVar .simultaneous = true := by
+      hammeringVar flatVar .means .simultaneous = true := by
   native_decide
 
-/-- Result preceding verbal subevent violates temporal constraint. -/
+/-- MEANS relation: constructional-first violates temporal constraint. -/
 theorem hammer_not_completion_if_result_first :
     isCompletionEvent hammerFlatModel Situation.empty
-      hammeringVar flatVar .constructionalFirst = false := by
+      hammeringVar flatVar .means .constructionalFirst = false := by
   native_decide
 
 /-! ### CausativeBuilder bridge -/
@@ -580,9 +578,9 @@ theorem activity_entries_become_accomplishments :
 /-- Constructional BECOME = CoS inception. -/
 def resultStateMapsToCoS : CoSType := .inception
 
-/-- All resultative entries have BECOME. -/
+/-- All resultative entries have BECOME (via derived subevent). -/
 theorem all_have_become :
-    allEntries.all (·.subevents.constructional.hasBecome) = true := by
+    allEntries.all (·.dualSubevent.constructional.hasBecome) = true := by
   native_decide
 
 /-- Inception presupposes ¬P before. -/

@@ -33,6 +33,8 @@ def morphProfile : MorphProfile :=
   , suppletionTA := walsSuppletionTA "arz"
   , suppletionImperative := walsSuppletionImperative "arz"
   , verbalNumber := walsVerbalNumber "arz"
+  , flexivity := some .flexive
+  , bnExponence := some .cumulative
   }
 
 end Fragments.Arabic

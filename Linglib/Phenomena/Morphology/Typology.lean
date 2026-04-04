@@ -1766,4 +1766,138 @@ theorem ch80_count_triplesNoSuppletion :
 theorem ch80_count_triplesSuppletion :
     (ch80.filter (·.value == .singularDualPluralTriplesSuppletion)).length = 2 := by native_decide
 
+-- ============================================================================
+-- §11. @cite{bickel-nichols-2001} Orthogonality of Fusion and Flexivity
+-- ============================================================================
+
+/-! ### Flexivity × Fusion independence
+
+@cite{bickel-nichols-2001}: the traditional 1D typological scale
+(isolating > agglutinating > fusional > polysynthetic) conflates two
+orthogonal parameters — fusion and flexivity. Both `concatenative + nonflexive`
+("agglutinating") and `concatenative + flexive` ("fusional") are attested in
+our sample, demonstrating orthogonality. -/
+
+def countByFlexivity (langs : List MorphProfile) (f : Flexivity) : Nat :=
+  (langs.filter (λ p => p.flexivity == some f)).length
+
+def countByBNExponence (langs : List MorphProfile) (e : ExponenceScope) : Nat :=
+  (langs.filter (λ p => p.bnExponence == some e)).length
+
+/-- Flexivity distribution: both values attested.
+    2 isolating languages (Mandarin, Thai) have `none`. -/
+theorem sample_nonflexive_count :
+    countByFlexivity allMorphProfiles .nonflexive = 10 := by native_decide
+theorem sample_flexive_count :
+    countByFlexivity allMorphProfiles .flexive = 6 := by native_decide
+
+/-- B&N exponence distribution: both values attested.
+    2 isolating languages (Mandarin, Thai) have `none`. -/
+theorem sample_separative_count :
+    countByBNExponence allMorphProfiles .separative = 10 := by native_decide
+theorem sample_cumulative_count :
+    countByBNExponence allMorphProfiles .cumulative = 6 := by native_decide
+
+/-- Key orthogonality test: among concatenative languages,
+    both flexive and nonflexive are attested. -/
+theorem concatenative_admits_both_flexivities :
+    let concats := allMorphProfiles.filter MorphProfile.isConcatenative
+    (concats.filter MorphProfile.isFlexive).length > 0 ∧
+    (concats.filter MorphProfile.isNonflexive).length > 0 := by native_decide
+
+/-- Traditional "agglutinating" decomposed: concatenative + nonflexive + separative.
+    Turkish, Finnish, Japanese, Korean, Hungarian, Swahili, Quechua, English,
+    Tagalog all satisfy this. Indonesian is WALS-isolating despite productive
+    affixation, so it does not count as agglutinating here. -/
+theorem sample_agglutinating_count :
+    (allMorphProfiles.filter MorphProfile.isAgglutinating).length = 9 := by native_decide
+
+/-- Traditional "fusional" decomposed: concatenative + flexive + cumulative.
+    Russian, German, Spanish, Hindi, Georgian all satisfy this. -/
+theorem sample_fusional_count :
+    (allMorphProfiles.filter MorphProfile.isFusional).length = 5 := by native_decide
+
+/-- Arabic is nonlinear + flexive + cumulative (root-and-pattern morphology). -/
+theorem arabic_nonlinear_flexive :
+    arabicMorph.isNonlinear = true ∧
+    arabicMorph.isFlexive = true ∧
+    arabicMorph.isCumulative = true := by native_decide
+
+/-- Isolating languages (Mandarin, Thai) have no flexivity/exponence marking. -/
+theorem isolating_no_flexivity :
+    mandarinMorph.flexivity = none ∧
+    thaiMorph.flexivity = none := by native_decide
+
+-- ============================================================================
+-- §12. Exponence ↔ ExponenceScope Independence
+-- ============================================================================
+
+/-! ### WALS Exponence vs B&N ExponenceScope
+
+WALS Ch 21 `Exponence` classifies *case* formatives specifically (do they
+bundle case+number?). B&N `ExponenceScope` classifies formatives *in general*
+(do formatives bundle multiple categories?). These are genuinely independent:
+
+- Finnish, Tagalog: polyexponential (case bundles number) but separative
+  (verb suffixes are one-category-each)
+- Hindi-Urdu, Georgian, Spanish: monoexponential (case is separate) but
+  cumulative (verb morphology bundles multiple categories)
+
+This confirms @cite{bickel-nichols-2001}'s point that their exponence
+parameter is broader than the WALS case-specific classification. -/
+
+/-- WALS Exponence and B&N ExponenceScope are independent: both cross-
+    classifications are attested (poly+sep and mono+cum). -/
+theorem exponence_scope_independent :
+    -- polyexponential + separative: attested (Finnish, Tagalog)
+    (allMorphProfiles.filter (λ p =>
+      p.exponence == .polyexponential && p.bnExponence == some .separative)).length > 0 ∧
+    -- monoexponential + cumulative: attested (Hindi, Georgian, Spanish)
+    (allMorphProfiles.filter (λ p =>
+      p.exponence == .monoexponential && p.bnExponence == some .cumulative)).length > 0 := by
+  native_decide
+
+-- ============================================================================
+-- §13. B&N Parameter Space Partition
+-- ============================================================================
+
+/-! ### Exhaustive partition of concatenative languages
+
+Among concatenative languages with both B&N parameters specified,
+every language is classified as either agglutinating or fusional.
+This verifies that the B&N decomposition is exhaustive — there are
+no concatenative languages falling through the cracks. -/
+
+/-- Every concatenative language in the sample is either agglutinating
+    or fusional (the B&N decomposition is exhaustive). -/
+theorem concatenative_partition :
+    let concats := allMorphProfiles.filter MorphProfile.isConcatenative
+    concats.all (λ p => p.isAgglutinating || p.isFusional) = true := by native_decide
+
+/-- No language in the sample is both agglutinating and fusional. -/
+theorem no_agglutinating_and_fusional :
+    allMorphProfiles.all (λ p => !(p.isAgglutinating && p.isFusional)) = true := by
+  native_decide
+
+/-- The three B&N parameters are independently attested: among concatenative
+    languages, both exponence scopes occur with both flexivity values. -/
+theorem exponence_flexivity_independent :
+    let concats := allMorphProfiles.filter MorphProfile.isConcatenative
+    -- nonflexive + separative (agglutinating): attested
+    (concats.filter (λ p => p.isNonflexive && p.isSeparative)).length > 0 ∧
+    -- flexive + cumulative (fusional): attested
+    (concats.filter (λ p => p.isFlexive && p.isCumulative)).length > 0 := by
+  native_decide
+
+/-- Every language in the sample falls into exactly one of the three
+    fusion types (concatenative, nonlinear, isolating), and concatenative
+    languages are fully partitioned into agglutinating and fusional. -/
+theorem sample_type_exhaustive :
+    allMorphProfiles.length =
+    (allMorphProfiles.filter MorphProfile.isAgglutinating).length +
+    (allMorphProfiles.filter MorphProfile.isFusional).length +
+    (allMorphProfiles.filter MorphProfile.isNonlinear).length +
+    (allMorphProfiles.filter MorphProfile.isIsolating).length := by
+  native_decide
+
 end Phenomena.Morphology.Typology

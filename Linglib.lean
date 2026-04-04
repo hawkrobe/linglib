@@ -1855,6 +1855,7 @@ import Linglib.Theories.Diachronic.ModalChange
 import Linglib.Theories.Diachronic.Subjectification
 import Linglib.Phenomena.Causation.Studies.BellerGerstenberg2025
 import Linglib.Phenomena.Causation.Studies.KonukEtAl2026
+import Linglib.Phenomena.Causation.Studies.KoontzGarboden2009
 import Linglib.Phenomena.Causation.Studies.Krejci2012
 import Linglib.Phenomena.Causation.Studies.Song1996
 import Linglib.Phenomena.Ellipsis.Studies.BergenGoodman2015

@@ -31,6 +31,8 @@ def morphProfile : MorphProfile :=
   , suppletionTA := walsSuppletionTA "kor"
   , suppletionImperative := walsSuppletionImperative "kor"
   , verbalNumber := walsVerbalNumber "kor"
+  , flexivity := some .nonflexive
+  , bnExponence := some .separative
   }
 
 end Fragments.Korean

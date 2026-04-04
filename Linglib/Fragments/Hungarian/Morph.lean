@@ -31,6 +31,8 @@ def morphProfile : MorphProfile :=
   , suppletionTA := walsSuppletionTA "hun"
   , suppletionImperative := walsSuppletionImperative "hun"
   , verbalNumber := walsVerbalNumber "hun"
+  , flexivity := some .nonflexive
+  , bnExponence := some .separative
   }
 
 end Fragments.Hungarian

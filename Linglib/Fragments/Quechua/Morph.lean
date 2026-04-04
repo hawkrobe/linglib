@@ -34,6 +34,8 @@ def morphProfile : MorphProfile :=
   , suppletionTA := walsSuppletionTA "qvi"
   , suppletionImperative := walsSuppletionImperative "qvi"
   , verbalNumber := walsVerbalNumber "qvi"
+  , flexivity := some .nonflexive
+  , bnExponence := some .separative
   }
 
 end Fragments.Quechua

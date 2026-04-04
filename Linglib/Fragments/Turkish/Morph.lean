@@ -31,6 +31,8 @@ def morphProfile : MorphProfile :=
   , suppletionTA := walsSuppletionTA "tur"
   , suppletionImperative := walsSuppletionImperative "tur"
   , verbalNumber := walsVerbalNumber "tur"
+  , flexivity := some .nonflexive
+  , bnExponence := some .separative
   }
 
 end Fragments.Turkish

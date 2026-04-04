@@ -31,6 +31,8 @@ def morphProfile : MorphProfile :=
   , suppletionTA := walsSuppletionTA "hin"
   , suppletionImperative := walsSuppletionImperative "hin"
   , verbalNumber := walsVerbalNumber "hin"
+  , flexivity := some .flexive
+  , bnExponence := some .cumulative
   }
 
 end Fragments.Hindi

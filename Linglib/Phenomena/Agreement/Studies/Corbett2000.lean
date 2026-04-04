@@ -302,8 +302,14 @@ theorem constraint_iii_holds :
 open Core (AgreementTarget)
 
 /-- Whether agreement is determined by morphological form (syntactic)
-    or by referential meaning (semantic). -/
-inductive AgreementType where
+    or by referential meaning (semantic).
+
+    Distinct from `Core.AgreementType` (grammatical vs. pronominal,
+    @cite{bickel-nichols-2001}), which is about whether the agreement
+    marker has referential autonomy. This type is about what *controls*
+    agreement — the formal features of the controller or its semantic
+    content. -/
+inductive AgreementControl where
   | syntactic  -- form-driven: *committee* is morphologically singular
   | semantic   -- meaning-driven: *committee* denotes a group of individuals
   deriving DecidableEq, Repr

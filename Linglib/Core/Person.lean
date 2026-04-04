@@ -349,4 +349,23 @@ theorem s2_features_match :
 theorem s3_features_match :
     Category.s3.toFeatures = Core.Prominence.PersonLevel.third.toFeatures := rfl
 
+-- ============================================================================
+-- § 11: Epistemic Authority (@cite{bickel-nichols-2001})
+-- ============================================================================
+
+/-- Epistemic authority marking on verb agreement.
+    @cite{bickel-nichols-2001}
+
+    Some languages (Akhvakh, Kathmandu Newari, Tibetan) mark whether the
+    speaker has direct epistemic authority over the event. The morphological
+    distinction cross-cuts person but correlates with it:
+    - **conjunct**: speaker has authority (1st person declarative, 2nd
+      person interrogative)
+    - **disjunct**: speaker lacks authority (2nd/3rd declarative, 1st/3rd
+      interrogative) -/
+inductive EpistemicAuthority where
+  | conjunct    -- speaker has epistemic authority over the event
+  | disjunct    -- speaker lacks epistemic authority
+  deriving DecidableEq, Repr
+
 end Core.Person

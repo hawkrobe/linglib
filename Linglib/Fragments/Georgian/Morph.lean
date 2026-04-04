@@ -31,6 +31,8 @@ def morphProfile : MorphProfile :=
   , suppletionTA := walsSuppletionTA "kat"
   , suppletionImperative := walsSuppletionImperative "kat"
   , verbalNumber := walsVerbalNumber "kat"
+  , flexivity := some .flexive
+  , bnExponence := some .cumulative
   }
 
 end Fragments.Georgian

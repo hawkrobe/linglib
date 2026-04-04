@@ -124,18 +124,31 @@ theorem cause_implies_resultState (t : Template) :
 /-! ### Causative/Inchoative Alternation
 
     The accomplishment template [[x ACT] CAUSE [BECOME [y STATE]]]
-    has an intransitive variant: the achievement [BECOME [x STATE]],
-    obtained by stripping the external cause. This is the
-    event-structural core of the causative/inchoative alternation
-    (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998}).
+    has an intransitive variant. On the **deletion** analysis
+    (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998}), this is
+    the achievement [BECOME [x STATE]], obtained by stripping the
+    external cause — yielding a monoeventive representation.
 
-    Whether the intransitive variant is *monoeventive* (true
-    anticausative) or *bieventive* (reflexive, with coidentification
-    of causer and causee) is a language- and verb-specific property
-    formalized in `MorphologicalCausation.IntransitivizationType`. -/
+    On the competing **reflexivization** analysis (@cite{koontz-garboden-2009};
+    @cite{chierchia-2004}), anticausativization does NOT delete CAUSE.
+    Instead, the reflexive clitic (*se*, *sich*) identifies the EFFECTOR
+    with the THEME: the derived inchoative retains the full causative
+    structure [∃v[CAUSE(v,e) ∧ EFFECTOR(v,x) ∧ BECOME(e,s) ∧ THEME(s,x)]].
+    This preserves the Monotonicity Hypothesis and explains why
+    anticausative morphology cross-linguistically coincides with reflexive
+    morphology (Haspelmath 1990: 9/13 languages).
 
-/-- The intransitive variant of a template, stripping the external cause.
-    Only accomplishments have an alternation partner. -/
+    `Template.intransitiveVariant` below implements the deletion view at the
+    template level. The reflexivization analysis is formalized in
+    `Phenomena.Causation.Studies.KoontzGarboden2009`. -/
+
+/-- The intransitive variant of a template on the **deletion** analysis,
+    stripping the external cause. Only accomplishments have an alternation
+    partner.
+
+    NOTE: this implements one specific analysis. On the reflexivization
+    analysis (@cite{koontz-garboden-2009}), the intransitive variant retains
+    CAUSE with reflexivized arguments. -/
 def Template.intransitiveVariant : Template → Option Template
   | .accomplishment => some .achievement
   | _ => none
@@ -147,7 +160,8 @@ theorem intransitive_has_resultState (t t' : Template) :
   cases t <;> simp [Template.intransitiveVariant, Template.hasResultState]
   rintro rfl; rfl
 
-/-- The intransitive variant loses CAUSE. -/
+/-- The intransitive variant loses CAUSE (on the deletion analysis).
+    @cite{koontz-garboden-2009} disputes this — see `AnticausativeAnalysis`. -/
 theorem intransitive_no_cause (t t' : Template) :
     t.intransitiveVariant = some t' → t'.hasCause = false := by
   cases t <;> simp [Template.intransitiveVariant, Template.hasCause]
@@ -302,11 +316,33 @@ def Template.eventType : Template → EventType
     This is a per-verb property of the ROOT, not of the template.
     Two activity verbs can differ: *sing* (internal) vs *roll* (external).
 
-    @cite{levin-hovav-1995} §4; @cite{bohnemeyer-2004} §2,6. -/
+    @cite{levin-hovav-1995} §4; @cite{bohnemeyer-2004} §2,6.
+
+    @cite{koontz-garboden-2009} §4.1: externally caused COS verbs have
+    CAUSE+EFFECTOR in their LSR and license *por sí solo* 'by itself'.
+    Internally caused COS verbs (*empeorar*, *hervir*, *crecer*) lack CAUSE
+    in their LSR and reject *por sí solo*. -/
 inductive CausationType where
   | internal   -- instigated by a participant (sing, walk, write, play)
   | external   -- no instigator; "spontaneous" (break, fall, roll, buzz)
   deriving DecidableEq, Repr
+
+/-- Externally caused COS verbs have CAUSE in their LSR;
+    internally caused COS verbs do not (@cite{koontz-garboden-2009} §4.1;
+    @cite{levin-hovav-1995} §4).
+
+    This determines whether derived inchoatives (on the reflexivization
+    analysis) retain a CAUSE operator. -/
+def CausationType.hasCauseInLSR : CausationType → Bool
+  | .external => true
+  | .internal => false
+
+/-- *por sí solo* / *by itself* is licensed iff CAUSE is present in the
+    LSR (@cite{koontz-garboden-2009} §4.1). Stative predicates and
+    internally caused COS verbs reject it. -/
+def CausationType.licensesBySelf : CausationType → Bool
+  | .external => true
+  | .internal => false
 
 end Semantics.Lexical.Verb.EventStructure
 

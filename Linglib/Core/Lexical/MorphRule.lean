@@ -46,6 +46,29 @@ inductive AttachmentSide where
   | circumfix  -- wraps around stem (German *ge-...-t*)
   deriving DecidableEq, Repr
 
+/-- Typological position classification for formatives.
+    @cite{bickel-nichols-2001} Table 2.
+
+    Superset of `AttachmentSide`: adds simulfixation (process morphology),
+    detached formatives (Wackernagel clitics, free auxiliaries), and
+    endoclisis (clitic insertion inside a word). -/
+inductive FormativePosition where
+  | praefixed     -- formative precedes host (= `AttachmentSide.prefix`)
+  | postfixed     -- formative follows host (= `AttachmentSide.suffix`)
+  | infixed       -- formative inserted within host (= `AttachmentSide.infix`)
+  | circumfixed   -- formative wraps host (= `AttachmentSide.circumfix`)
+  | simultaneous  -- non-segmental: ablaut, umlaut, tonal change, reduplication
+  | detached      -- syntactically free formative (auxiliary, Wackernagel clitic)
+  | endoclitic    -- clitic inserted inside a word (Udi, European Portuguese)
+  deriving DecidableEq, Repr
+
+/-- Map `AttachmentSide` to the richer `FormativePosition` classification. -/
+def AttachmentSide.toFormativePosition : AttachmentSide → FormativePosition
+  | .prefix    => .praefixed
+  | .suffix    => .postfixed
+  | .infix     => .infixed
+  | .circumfix => .circumfixed
+
 -- ============================================================================
 -- §2: Selection Degree
 -- ============================================================================
@@ -87,9 +110,14 @@ locate a given morpheme on this scale. -/
 inductive MorphStatus where
   /-- Syntactically independent word. -/
   | freeWord
-  /-- Simple clitic: phonologically reduced variant of
-      a free word, occurring in the same syntactic positions.
-      English contracted auxiliaries *'s*, *'ve*, *'d*. -/
+  /-- Simple clitic: phonologically bound form that can attach to
+      hosts of virtually any syntactic category.
+      @cite{bickel-nichols-2001}: defined primarily by low selectivity
+      (categorical freedom) + phonological dependence, not necessarily
+      by being a reduced variant of a free word. Many simple clitics
+      have no free-word counterpart (Latin *-que*). English contracted
+      auxiliaries (*'s*, *'ve*, *'d*) are a subcase where a free variant
+      exists. -/
   | simpleClitic
   /-- Special clitic: either no corresponding free word
       exists, or the distribution differs from the free word.
@@ -179,14 +207,18 @@ Derivation = 1 (changes verb category).
 ...
 Agreement = 8 (least relevant to verb meaning).
 
-`number` on nouns is ranked 3 (same as voice): it changes the
-noun's denotation via @cite{link-1983}, unlike verb agreement which
-is semantically vacuous.
+`number` on nouns is ranked 3 (same as voice): Bybee's
+relevance hierarchy predicts number is stem-adjacent in noun
+morphology (stem < number < case), consistent with cross-linguistic
+suffixing order. The semantic motivation via @cite{link-1983}
+algebraic closure is a linglib extension, not Bybee's argument.
 
-`degree` on adjectives is ranked 5 (same as tense on verbs):
-comparative/superlative morphology compositionally modifies
-the adjective's interpretation, analogous to how tense modifies
-the verb's temporal reference. -/
+`degree` on adjectives is ranked 5 (same as tense on verbs).
+Note: Bybee's hierarchy is stated for verbs; the extension to
+adjectival degree is a linglib analogy (comparative/superlative
+morphology modifies the adjective's interpretation analogously
+to how tense modifies temporal reference), not a claim from
+@cite{bybee-1985}. -/
 def MorphCategory.relevanceRank : MorphCategory → Nat
   | .stem       => 0
   | .derivation => 1

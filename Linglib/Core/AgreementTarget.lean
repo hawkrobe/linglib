@@ -87,4 +87,55 @@ def PredicateTarget.toAgreementTarget : PredicateTarget → AgreementTarget
   | .adjective  => .predicate
   | .noun       => .predicate
 
+-- ============================================================================
+-- § 3: Agreement Type (@cite{bickel-nichols-2001})
+-- ============================================================================
+
+/-- Whether agreement markers have referential autonomy.
+    @cite{bickel-nichols-2001}
+
+    - **grammatical**: pure agreement — the marker cannot stand alone as
+      an argument; an independent NP is required (English *she walk-s*,
+      the *-s* cannot replace *she*)
+    - **pronominal**: cross-referencing — the marker can function as the
+      sole expression of the argument; an independent NP is optional
+      (Swahili *a-li-ki-soma (kitabu)* — the prefixes suffice without
+      the noun)
+
+    This distinction is orthogonal to the Agreement Hierarchy: a language
+    can have pronominal agreement on verbs but grammatical agreement on
+    adjectives, or vice versa. -/
+inductive AgreementType where
+  | grammatical   -- pure agreement (cannot stand alone as argument)
+  | pronominal    -- cross-referencing (can be sole argument expression)
+  deriving DecidableEq, Repr
+
+-- ============================================================================
+-- § 4: Agreement Direction (@cite{bickel-nichols-2001})
+-- ============================================================================
+
+/-- Direction of agreement: which element originates ("drives") the features.
+    @cite{bickel-nichols-2001} §9
+
+    - **headDriven**: the phrasal head provides features that percolate to
+      its dependents — dependents carry the agreement morphology.
+      (German/Watam NP concord: noun's gender/number → adjective, det;
+      = dependent marking in the sense of §3.)
+    - **dependentDriven**: a dependent provides features that the head
+      matches — the head carries the agreement morphology.
+      (Belhare/Swahili verb agreement: subject's person/number → verb;
+      = head marking in the sense of §3.)
+
+    Related to but distinct from `Core.Morphology.LocusOfMarking`: locus
+    is a language-level WALS typological parameter classifying where *all*
+    grammatical relations are marked (head, dependent, double, zero).
+    `AgreementDirection` is phenomenon-specific — a language can be
+    overall head-marking (`LocusOfMarking.headMarking`) yet have specific
+    head-driven agreement (e.g., NP concord in an otherwise head-marking
+    language). -/
+inductive AgreementDirection where
+  | headDriven       -- head drives features → dependents carry morphology (NP concord)
+  | dependentDriven  -- dependent drives features → head carries morphology (verb agreement)
+  deriving DecidableEq, Repr
+
 end Core

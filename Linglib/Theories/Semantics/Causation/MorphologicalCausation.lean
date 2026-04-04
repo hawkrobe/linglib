@@ -333,9 +333,12 @@ theorem physImpact_no_induced :
     causative/inchoative alternation verbs are NOT structurally uniform.
     Two distinct operations produce surface intransitives:
 
-    - **anticausative**: the external cause is removed entirely.
-      The result is monoeventive: [BECOME [x STATE]].
-      No causer position exists.
+    - **anticausative**: on the deletion analysis (@cite{krejci-2012}),
+      the external cause is removed entirely; the result is monoeventive:
+      [BECOME [x STATE]], with no causer position. On the competing
+      reflexivization analysis (@cite{koontz-garboden-2009}), CAUSE is
+      retained and the EFFECTOR is identified with the THEME — the result
+      is bieventive. See `EventStructure.AnticausativeAnalysis`.
     - **reflexive**: the causer and causee are *coidentified* —
       a single participant fills both roles. The result is bieventive:
       [x ACT] CAUSE [BECOME [x STATE]] with causer = causee.
@@ -389,8 +392,9 @@ theorem bieventive_implies_bySelf (it : IntransitivizationType) :
   cases it <;> simp [IntransitivizationType.isBieventive,
     IntransitivizationType.licensesBySelf]
 
-/-- Anticausatives are monoeventive: no coidentification, no bieventivity,
-    no "by itself" licensing. -/
+/-- Anticausatives are monoeventive on @cite{krejci-2012}'s analysis:
+    no coidentification, no bieventivity, no "by itself" licensing.
+    @cite{koontz-garboden-2009} disputes this — see `AnticausativeAnalysis`. -/
 theorem anticausative_monoeventive :
     IntransitivizationType.isBieventive .anticausative = false ∧
     IntransitivizationType.hasCoidentification .anticausative = false ∧
