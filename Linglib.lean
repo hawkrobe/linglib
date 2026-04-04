@@ -708,7 +708,7 @@ import Linglib.Phenomena.Copulas.Studies.Romero2005
 import Linglib.Phenomena.Complementation.Attitudes.IntensionalExamples
 import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
-import Linglib.Phenomena.Anaphora.BathroomSentences
+import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.Bridging
 import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
 import Linglib.Phenomena.Anaphora.Studies.Reinhart1976

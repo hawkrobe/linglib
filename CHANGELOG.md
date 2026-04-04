@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.229.503] - 2026-04-04
+
+### Changed
+- **CCP.lean** (Theories/Semantics/Dynamic/Core): added `sep_monotone`/`sep_eliminative` — shared foundation for all filter-by-predicate operations; `updateFromSat_monotone` and `updateFromSat_eliminative` now delegate to them; `updateFromSat_monotone` uses mathlib `Monotone` (was ad-hoc 4-arg); added `IsEliminative.le_id`/`IsExpansive.id_le` bridging to order notation
+- **Update.lean** (Theories/Semantics/Dynamic/Core): `update_monotone` delegates to `sep_monotone`; `update_mono` delegates to `update_monotone`
+- **Basic.lean** (Theories/Semantics/Dynamic/Bilateral): all atom/pred1/pred2 monotonicity and eliminativity proofs delegate to `sep_monotone`/`sep_eliminative` (was 10 duplicate proof terms, now 10 one-liners)
+- **BUS.lean** (Theories/Semantics/Dynamic/Bilateral): diamond eliminativity now derived via `test_eliminative` from new `diamond_positive_isTest`/`diamond_negative_isTest`; box eliminativity delegates to diamond
+- **PLA/Update.lean**: updated `update_monotone` call site for new `Monotone`-based signature
+
+### Added
+- **Basic.lean**: `PartialOrder (BilateralDen W E)` — pointwise order (both dimensions); `neg_monotone`/`neg_le_neg_iff` — negation is an order automorphism; `pred2_negative_monotone`/`pred2_negative_eliminative` — previously missing
+- **BUS.lean**: `diamond_positive_isTest`/`diamond_negative_isTest`; `box_positive_eliminative`/`box_negative_eliminative`
+
+### Fixed
+- **Spector2025.lean** (Phenomena/Anaphora/Studies): added missing `open Hofmann2025` for `bathroom_felicity_alignment` theorem
+
+## [0.229.502] - 2026-04-04
+
+### Changed
+- **FreeChoice.lean** (Theories/Semantics/Dynamic/Bilateral): refactored to paper-accurate general definitions — `disjPos1` now matches eq. 92a (full (1,*) row of Strong Kleene table: `ψ.positive(φ.positive s) ∪ ψ.negative(φ.positive s) ∪ ψ.unknownUpdate(φ.positive s)`); `disjPos2` matches eq. 92b (full (*,1) column); FC theorems restated as general precondition extraction (`fc_preconditions`, `fc_disjPos1_nonempty`, `fc_disjPos2_nonempty`); `dual_prohibition` split into `dual_prohibition_disjPos1`/`dual_prohibition_disjPos2`; bathroom-specific material moved to study file
+- **FreeChoiceCompare.lean** (Phenomena/Modality): updated `#check` references for renamed FC theorems
+
+### Added
+- **Basic.lean** (Theories/Semantics/Dynamic/Bilateral): `partition` — every possibility in s is verified, falsified, or unknown (Strong Kleene partition property); `partition_assertable` — under assertability, positive ∪ negative covers s; `de_morgan_conj` — ¬(φ ∧ ψ) = ¬φ ∨ ¬ψ (positive dimension)
+- **FreeChoice.lean**: `subset_disjPos1` — `φ.positive s ⊆ disjPos1` via partition; `neg_subset_disjPos2` — embedding of anaphoric term into general disjPos2; `egli_positive` — Egli's theorem for positive dimension
+- **ElliottSudo2025.lean** (Phenomena/Modality/Studies): new study file for @cite{elliott-sudo-2025} — `BathroomConfig`, `bathroomSentence`, `fc_with_anaphora` (bathroom-specific FC inference under simplification hypotheses), concrete `BathroomWorld`/`BathroomEntity` example
+
+### Fixed
+- **FreeChoice.lean**: `@cite{alonso-ovalle-2006}` → `@cite{elliott-sudo-2025}` in module docstring
+
 ## [0.229.501] - 2026-04-04
 
 ### Changed

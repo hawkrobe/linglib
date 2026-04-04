@@ -206,12 +206,9 @@ contributes nothing), modal disjunction is impossible.
 theorem dual_prohibition_disjPos1 (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : ¬(disjPos1 φ ψ s).Nonempty) :
     impossible (φ ∨ᶠᶜ ψ) s := by
-  simp only [impossible, InfoState.consistent] at *
-  intro ⟨p, hp⟩
-  unfold disjModal at hp
-  split_ifs at hp with hcond
-  · exact absurd hcond.1 h
-  · exact hp
+  intro hc
+  have ⟨h1, _⟩ := fc_preconditions φ ψ s hc
+  exact absurd h1 h
 
 /--
 Dual prohibition via disjPos2: if disjPos2 is empty (second disjunct
@@ -220,12 +217,9 @@ contributes nothing), modal disjunction is impossible.
 theorem dual_prohibition_disjPos2 (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : ¬(disjPos2 φ ψ s).Nonempty) :
     impossible (φ ∨ᶠᶜ ψ) s := by
-  simp only [impossible, InfoState.consistent] at *
-  intro ⟨p, hp⟩
-  unfold disjModal at hp
-  split_ifs at hp with hcond
-  · exact absurd hcond.2 h
-  · exact hp
+  intro hc
+  have ⟨_, h2⟩ := fc_preconditions φ ψ s hc
+  exact absurd h2 h
 
 -- ============================================================================
 -- Section 6: Structural results (DNE, negation, binding)

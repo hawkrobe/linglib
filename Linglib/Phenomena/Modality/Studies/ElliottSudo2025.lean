@@ -1,3 +1,5 @@
+import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
+
 /-!
 # Elliott & Sudo (2025): Free Choice with Anaphora
 @cite{elliott-sudo-2025}
@@ -21,8 +23,6 @@ Under these simplification conditions, the general FC preconditions
 2. It's possible there's a bathroom in a funny place
 
 -/
-
-import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
 
 namespace Phenomena.Modality.Studies.ElliottSudo2025
 

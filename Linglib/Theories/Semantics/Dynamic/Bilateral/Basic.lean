@@ -99,6 +99,26 @@ theorem atom_disjoint (pred : W → Bool) (s : InfoState W E) :
     simp_all
   · intro h; exact h.elim
 
+/-- Atomic positive update is monotone. -/
+theorem atom_positive_monotone (pred : W → Bool) :
+    Monotone (atom pred).positive (α := InfoState W E) :=
+  sep_monotone _
+
+/-- Atomic negative update is monotone. -/
+theorem atom_negative_monotone (pred : W → Bool) :
+    Monotone (atom pred).negative (α := InfoState W E) :=
+  sep_monotone _
+
+/-- Atomic positive update is eliminative. -/
+theorem atom_positive_eliminative (pred : W → Bool) :
+    IsEliminative (atom pred).positive (P := Possibility W E) :=
+  sep_eliminative _
+
+/-- Atomic negative update is eliminative. -/
+theorem atom_negative_eliminative (pred : W → Bool) :
+    IsEliminative (atom pred).negative (P := Possibility W E) :=
+  sep_eliminative _
+
 
 /--
 Negation: swap positive and negative updates.
@@ -263,7 +283,7 @@ theorem de_morgan_conj (φ ψ : BilateralDen W E) (s : InfoState W E) :
     (~(φ ⊙ ψ)).positive s = (disj (~φ) (~ψ)).positive s := by
   unfold neg conj disj unknownUpdate
   congr 1; congr 1
-  ext p; simp only [Set.mem_setOf_eq, and_comm]
+  ext p; simp only [and_comm]
 
 
 /--
@@ -341,6 +361,46 @@ def pred2 (p : E → E → W → Bool) (t₁ t₂ : Nat) : BilateralDen W E :=
   { positive := λ s => { poss ∈ s | p (poss.assignment t₁) (poss.assignment t₂) poss.world }
   , negative := λ s => { poss ∈ s | !p (poss.assignment t₁) (poss.assignment t₂) poss.world } }
 
+/-- pred1 positive update is monotone. -/
+theorem pred1_positive_monotone (p : E → W → Bool) (t : Nat) :
+    Monotone (pred1 p t).positive (α := InfoState W E) :=
+  sep_monotone _
+
+/-- pred1 negative update is monotone. -/
+theorem pred1_negative_monotone (p : E → W → Bool) (t : Nat) :
+    Monotone (pred1 p t).negative (α := InfoState W E) :=
+  sep_monotone _
+
+/-- pred1 positive update is eliminative. -/
+theorem pred1_positive_eliminative (p : E → W → Bool) (t : Nat) :
+    IsEliminative (pred1 p t).positive (P := Possibility W E) :=
+  sep_eliminative _
+
+/-- pred1 negative update is eliminative. -/
+theorem pred1_negative_eliminative (p : E → W → Bool) (t : Nat) :
+    IsEliminative (pred1 p t).negative (P := Possibility W E) :=
+  sep_eliminative _
+
+/-- pred2 positive update is monotone. -/
+theorem pred2_positive_monotone (p : E → E → W → Bool) (t₁ t₂ : Nat) :
+    Monotone (pred2 p t₁ t₂).positive (α := InfoState W E) :=
+  sep_monotone _
+
+/-- pred2 negative update is monotone. -/
+theorem pred2_negative_monotone (p : E → E → W → Bool) (t₁ t₂ : Nat) :
+    Monotone (pred2 p t₁ t₂).negative (α := InfoState W E) :=
+  sep_monotone _
+
+/-- pred2 positive update is eliminative. -/
+theorem pred2_positive_eliminative (p : E → E → W → Bool) (t₁ t₂ : Nat) :
+    IsEliminative (pred2 p t₁ t₂).positive (P := Possibility W E) :=
+  sep_eliminative _
+
+/-- pred2 negative update is eliminative. -/
+theorem pred2_negative_eliminative (p : E → E → W → Bool) (t₁ t₂ : Nat) :
+    IsEliminative (pred2 p t₁ t₂).negative (P := Possibility W E) :=
+  sep_eliminative _
+
 
 /-- Unilateral denotation: single update function -/
 def UnilateralDen (W : Type*) (E : Type*) := InfoState W E → InfoState W E
@@ -373,6 +433,42 @@ def toUnilateral (φ : BilateralDen W E) : UnilateralDen W E := φ.positive
 instance : InvolutiveNeg (BilateralDen W E) where
   neg := neg
   neg_neg := neg_neg
+
+
+-- ============================================================================
+-- Order-theoretic structure
+-- ============================================================================
+
+/--
+Pointwise partial order on bilateral denotations: φ ≤ ψ iff both
+`φ.positive s ⊆ ψ.positive s` and `φ.negative s ⊆ ψ.negative s` for all s.
+-/
+instance : PartialOrder (BilateralDen W E) where
+  le φ ψ := (∀ s, φ.positive s ≤ ψ.positive s) ∧ (∀ s, φ.negative s ≤ ψ.negative s)
+  le_refl _ := ⟨λ _ => le_refl _, λ _ => le_refl _⟩
+  le_trans _ _ _ h1 h2 :=
+    ⟨λ s => le_trans (h1.1 s) (h2.1 s), λ s => le_trans (h1.2 s) (h2.2 s)⟩
+  le_antisymm _ _ h1 h2 := BilateralDen.ext
+    (funext λ s => le_antisymm (h1.1 s) (h2.1 s))
+    (funext λ s => le_antisymm (h1.2 s) (h2.2 s))
+
+/-- Negation is monotone: swapping dimensions preserves the pointwise order.
+    `~φ ≤ ~ψ ↔ φ ≤ ψ` because the pointwise order checks both components
+    independently, and swap just rearranges them. -/
+theorem neg_monotone : Monotone (neg : BilateralDen W E → BilateralDen W E) := by
+  intro φ ψ ⟨hp, hn⟩
+  show (∀ s, φ.negative s ≤ ψ.negative s) ∧ (∀ s, φ.positive s ≤ ψ.positive s)
+  exact ⟨hn, hp⟩
+
+/-- Negation reflects and preserves order: ~φ ≤ ~ψ ↔ φ ≤ ψ. -/
+theorem neg_le_neg_iff (φ ψ : BilateralDen W E) : ~φ ≤ ~ψ ↔ φ ≤ ψ := by
+  constructor
+  · intro h
+    show (∀ s, φ.positive s ≤ ψ.positive s) ∧ (∀ s, φ.negative s ≤ ψ.negative s)
+    exact ⟨h.2, h.1⟩
+  · intro ⟨hp, hn⟩
+    show (∀ s, φ.negative s ≤ ψ.negative s) ∧ (∀ s, φ.positive s ≤ ψ.positive s)
+    exact ⟨hn, hp⟩
 
 end BilateralDen
 

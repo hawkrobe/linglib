@@ -26,11 +26,14 @@ namespace InfoState
 
 variable {W E : Type*}
 
+/-- Propositional update is monotone in the state argument. -/
+theorem update_monotone (φ : W → Bool) : Monotone (· ⟦φ⟧ : InfoState W E → InfoState W E) :=
+  sep_monotone _
+
 /-- Update is monotonic: larger states give larger results -/
 theorem update_mono {s s' : InfoState W E} (h : s ⊆ s') (φ : W → Bool) :
-    s⟦φ⟧ ⊆ s'⟦φ⟧ := by
-  intro p ⟨hp, hφ⟩
-  exact ⟨h hp, hφ⟩
+    s⟦φ⟧ ⊆ s'⟦φ⟧ :=
+  update_monotone φ h
 
 /-- Update is idempotent -/
 theorem update_update (s : InfoState W E) (φ : W → Bool) :

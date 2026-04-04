@@ -350,7 +350,7 @@ This follows from `Core.updateFromSat_monotone`.
 -/
 theorem update_monotone {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
     (s t : InfoState E) (h : s ⊆ t) : φ.update M s ⊆ φ.update M t :=
-  Core.updateFromSat_monotone (satisfiesPLA M) φ s t h
+  Core.updateFromSat_monotone (satisfiesPLA M) φ h
 
 /--
 Support is downward closed: if t ⊆ s and s supports φ, then t supports φ.

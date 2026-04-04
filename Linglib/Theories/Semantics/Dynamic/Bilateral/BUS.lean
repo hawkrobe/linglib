@@ -93,21 +93,55 @@ def box (φ : BUSDen W E) : BUSDen W E :=
 prefix:max "◇ᵇ" => diamond
 prefix:max "□ᵇ" => box
 
-/-- Diamond positive is either s or ∅. -/
-theorem diamond_positive_subset (φ : BUSDen W E) (s : InfoState W E) :
-    (◇ᵇφ).positive s ⊆ s := by
-  unfold diamond
-  by_cases h : (φ.positive s).consistent
-  · simp [h]
-  · simp [h]
+/-- Diamond positive is a test (returns s or ∅). -/
+theorem diamond_positive_isTest (φ : BUSDen W E) :
+    IsTest (◇ᵇφ).positive (P := Possibility W E) := by
+  intro s
+  show (if (φ.positive s).consistent then s else ∅) = s ∨
+       (if (φ.positive s).consistent then s else ∅) = ∅
+  split
+  · left; rfl
+  · right; rfl
 
-/-- Diamond negative is either s or ∅. -/
+/-- Diamond negative is a test (returns s or ∅). -/
+theorem diamond_negative_isTest (φ : BUSDen W E) :
+    IsTest (◇ᵇφ).negative (P := Possibility W E) := by
+  intro s
+  show (if s ⪯ φ.negative s then s else ∅) = s ∨
+       (if s ⪯ φ.negative s then s else ∅) = ∅
+  split
+  · left; rfl
+  · right; rfl
+
+/-- Diamond positive is eliminative (from IsTest). -/
+theorem diamond_positive_eliminative (φ : BUSDen W E) :
+    IsEliminative (◇ᵇφ).positive (P := Possibility W E) :=
+  test_eliminative _ (diamond_positive_isTest φ)
+
+/-- Diamond positive subset (convenience form). -/
+theorem diamond_positive_subset (φ : BUSDen W E) (s : InfoState W E) :
+    (◇ᵇφ).positive s ⊆ s :=
+  diamond_positive_eliminative φ s
+
+/-- Diamond negative is eliminative (from IsTest). -/
+theorem diamond_negative_eliminative (φ : BUSDen W E) :
+    IsEliminative (◇ᵇφ).negative (P := Possibility W E) :=
+  test_eliminative _ (diamond_negative_isTest φ)
+
+/-- Diamond negative subset (convenience form). -/
 theorem diamond_negative_subset (φ : BUSDen W E) (s : InfoState W E) :
-    (◇ᵇφ).negative s ⊆ s := by
-  unfold diamond
-  by_cases h : s ⪯ φ.negative s
-  · simp [h]
-  · simp [h]
+    (◇ᵇφ).negative s ⊆ s :=
+  diamond_negative_eliminative φ s
+
+/-- Box positive is eliminative (□φ = ¬◇¬φ, so positive = diamond negative of ¬φ). -/
+theorem box_positive_eliminative (φ : BUSDen W E) :
+    IsEliminative (□ᵇφ).positive (P := Possibility W E) :=
+  diamond_negative_eliminative (BilateralDen.neg φ)
+
+/-- Box negative is eliminative. -/
+theorem box_negative_eliminative (φ : BUSDen W E) :
+    IsEliminative (□ᵇφ).negative (P := Possibility W E) :=
+  diamond_positive_eliminative (BilateralDen.neg φ)
 
 end BUSDen
 

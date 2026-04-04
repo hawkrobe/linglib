@@ -199,6 +199,22 @@ theorem eliminative_expansive_id {P : Type*} (u : CCP P)
     ∀ s, u s = s :=
   λ s => Set.Subset.antisymm (he s) (hx s)
 
+/-- Eliminative ↔ antitone on the identity: u s ≤ s for all s. -/
+theorem isEliminative_iff_le_id {P : Type*} (u : CCP P) :
+    IsEliminative u ↔ ∀ s, u s ≤ s := Iff.rfl
+
+/-- Expansive ↔ identity below: s ≤ u s for all s. -/
+theorem isExpansive_iff_id_le {P : Type*} (u : CCP P) :
+    IsExpansive u ↔ ∀ s, s ≤ u s := Iff.rfl
+
+/-- Eliminative updates are antitone at the identity: u ≤ id in the pointwise order. -/
+theorem IsEliminative.le_id {P : Type*} {u : CCP P} (h : IsEliminative u) (s : InfoStateOf P) :
+    u s ≤ s := h s
+
+/-- Expansive updates satisfy id ≤ u in the pointwise order. -/
+theorem IsExpansive.id_le {P : Type*} {u : CCP P} (h : IsExpansive u) (s : InfoStateOf P) :
+    s ≤ u s := h s
+
 
 /--
 A test is a CCP that either passes (returns input) or fails (returns ∅).
@@ -302,6 +318,22 @@ theorem content_mono (sat : P → φ → Prop) (ψ₁ ψ₂ : φ)
 end GaloisContent
 
 
+-- ============================================================================
+-- Separation (filtering) infrastructure
+-- ============================================================================
+
+/-- Filtering a set by a predicate is monotone. This is the shared foundation
+    for monotonicity of `updateFromSat`, `atom`, `pred1`, `pred2`, etc. -/
+theorem sep_monotone {P : Type*} (pred : P → Prop) :
+    Monotone (λ s : Set P => { p ∈ s | pred p }) :=
+  λ _ _ h _ hp => ⟨h hp.1, hp.2⟩
+
+/-- Filtering a set by a predicate is eliminative. -/
+theorem sep_eliminative {P : Type*} (pred : P → Prop) :
+    IsEliminative (λ s : Set P => { p ∈ s | pred p }) :=
+  λ _ _ hp => hp.1
+
+
 /--
 The standard update construction: filter by satisfaction.
 
@@ -313,7 +345,7 @@ def updateFromSat {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) : CCP P :=
 /-- Standard updates are eliminative -/
 theorem updateFromSat_eliminative {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
     IsEliminative (updateFromSat sat ψ) :=
-  λ _ _ hp => hp.1
+  sep_eliminative _
 
 /-- Standard update membership -/
 theorem mem_updateFromSat {P φ : Type*} (sat : P → φ → Prop) (ψ : φ)
@@ -371,13 +403,13 @@ theorem dynamicEntails_trans {P φ : Type*} (sat : P → φ → Prop)
 
 
 /--
-Update is monotone: larger input states yield larger output states.
+`updateFromSat` is monotone in the state argument: larger input states yield
+larger output states. Uses mathlib's `Monotone` (i.e., `s ≤ t → f s ≤ f t`
+where `≤` on `Set` is `⊆`).
 -/
-theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ)
-    (s t : InfoStateOf P) (h : s ⊆ t) :
-    updateFromSat sat ψ s ⊆ updateFromSat sat ψ t := by
-  intro p hp
-  exact ⟨h hp.1, hp.2⟩
+theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
+    Monotone (updateFromSat sat ψ) :=
+  sep_monotone _
 
 
 -- ═══ Assignment & State Infrastructure ═══
