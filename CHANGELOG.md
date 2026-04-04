@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.505] - 2026-04-04
+
+### Added
+- **FinitePMF.lean** (Core): 7 canonical probability lemmas — `probOf_complement_add`, `probOf_and_le`, `probOf_partition`, `condProb_complement_sum`, `probOf_pos_of_condProb_gt`, `probOf_target_pos_of_condProb_gt`; turns FinitePMF from a thin type into a real probability API
+
+### Changed
+- **ProbabilisticAnswerhood.lean**: 9 private probability lemmas now delegate to FinitePMF (one-liners instead of inline proofs); deleted 5 dead definitions (`irrelevant`, `maxSupportedAlternative`, `isUniformOver`, `isProbMentionSomeAnswer`, `isProbMentionAllAnswer`)
+- **Additive.lean**: removed hallucinated `@cite{kripke-2009}`; deleted 2 stipulated conclusions (`standard_use_felicitous`, `no_antecedent_infelicitous` — trivially true by definition)
+- **IppolitoKissWilliams2025.lean**: 3 private probability lemmas (`probOfProp_partition`, `probOfProp_total_partition`, `probOfProp_nonneg'`) now delegate to FinitePMF
+
+## [0.229.504] - 2026-04-04
+
+### Added
+- **Operators.lean** (Theories/Semantics/Dynamic/IntensionalCDRT): core ICDRT operators from @cite{hofmann-2025} — `ICDRTUpdate`, `relVarUp` (Definition 25), `dynPred` (Definition 27), `localEntailment` (Definition 28), `decCondition`/`notCondition` (Definitions 22-23), `pragMaxDC` (Definition 35), `propMaxOp` (Definition 40), `accessible`/`veridicalIndiv`/`counterfactualIndiv` (Definition 38); structural theorems: `veridical_implies_accessible`, `counterfactual_veridical_fails`, `double_complement_eq`, `disjunction_enables_anaphora`
+
+### Changed
+- **Hofmann2025.lean** (Phenomena/Anaphora/Studies): complete rewrite — concrete model M₁ (4 worlds, 1 entity) with end-to-end ICDRT derivations for all four phenomena (double negation, bathroom disjunction, disagreement, modal subordination); accessibility now derived from `Operators.lean` definitions via `veridicalIndiv`/`counterfactualIndiv`/`localEntailment` rather than stipulated lookup table; 16 per-datum verification theorems preserved
+- **Connectives.lean** (Theories/Semantics/Dynamic/IntensionalCDRT): clarified module docstring — bilateral connectives implement DN-DRT/BUS (@cite{krahmer-muskens-1995}), not @cite{hofmann-2025}'s full ICDRT analysis; updated donkey conditional docstring
+- **Bilateral.lean** docstrings already clarified in prior session
+
 ## [0.229.503] - 2026-04-04
 
 ### Changed

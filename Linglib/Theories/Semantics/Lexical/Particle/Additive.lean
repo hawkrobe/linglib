@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Questions.Denotation.Basic
 
 /-!
 # Additive Particles: too, also, either
-@cite{heim-1992} @cite{kripke-2009} @cite{thomas-2026}
+@cite{heim-1992} @cite{thomas-2026}
 
 Felicity conditions for additive particles following @cite{thomas-2026}
 "A probabilistic, question-based approach to additivity".
@@ -242,56 +242,6 @@ noncomputable def eitherFelicitous {W : Type*} [Fintype W]
     (inNegativeContext : Bool) : Bool :=
   inNegativeContext && tooFelicitous ctx prejacent
 
--- Use Type Classification
-
-/-- Types of additive particle uses (@cite{thomas-2026}).
-
-Thomas's framework is binary: either ANT and π are focus alternatives
-(standard) or they are not (argument-building). -/
-inductive AdditiveUseType where
-  | standard        -- ANT and π are focus alternatives
-  | argumentBuilding -- ANT and π jointly support a conclusion
-  deriving DecidableEq, Repr
-
-/-- Heuristic: check if ANT and π each overlap some alternative of RQ.
-
-This is a NECESSARY but not SUFFICIENT condition for focus-alternative use.
-It only checks that both ANT and π are non-trivially consistent with some
-RQ alternative — this is much weaker than actual focus-alternative structure
-(which would require ANT and π to be related by substitution of the focused
-constituent). Every pair of non-trivial propositions passes this check
-for sufficiently fine-grained questions. -/
-def isFocusAlternativeUseWith {W : Type*}
-    (ant prejacent : W → Bool) (rq : Issue W) (worlds : List W) : Bool :=
-  -- Both ANT and π should be (non-trivial) partial answers to RQ
-  rq.alternatives.any (λ alt => worlds.any λ w => ant w && alt w) &&
-  rq.alternatives.any (λ alt => worlds.any λ w => prejacent w && alt w)
-
-/-- Noncomputable version using Fintype. -/
-noncomputable def isFocusAlternativeUse {W : Type*} [Fintype W]
-    (ant prejacent : W → Bool) (rq : Issue W) : Bool :=
-  isFocusAlternativeUseWith ant prejacent rq Fintype.elems.toList
-
-/-- Check if this is an argument-building use.
-
-In argument-building use:
-1. ANT and π are NOT focus alternatives
-2. Together they provide cumulative evidence for some conclusion -/
-noncomputable def isArgumentBuildingUse {W : Type*} [Fintype W]
-    (ctx : AdditiveContext W) (prejacent : W → Bool) : Bool :=
-  -- Not standard focus alternatives
-  !isFocusAlternativeUse ctx.antecedent prejacent ctx.resolvedQuestion &&
-  -- But conjunction still strengthens evidence
-  conjunctionCondition ctx prejacent
-
-/-- Classify the use type of an additive particle. -/
-noncomputable def classifyUse {W : Type*} [Fintype W]
-    (ctx : AdditiveContext W) (prejacent : W → Bool) : AdditiveUseType :=
-  if isFocusAlternativeUse ctx.antecedent prejacent ctx.resolvedQuestion then
-    .standard
-  else
-    .argumentBuilding
-
 -- Core Theoretical Results (@cite{thomas-2026})
 
 /-!
@@ -331,19 +281,17 @@ private lemma condProb_conj_eq_one_of_entails {W : Type*} [Fintype W]
     (hEntails : ∀ w : W, prejacent w = true → alt w = true)
     (hConjPossible : probOfProp prior (λ w => ant w && prejacent w) > 0) :
     conditionalProb prior (λ w => ant w && prejacent w) alt = 1 := by
-  simp only [conditionalProb]
-  simp only [hConjPossible, ↓reduceIte]
   have hEqMass : probOfProp prior (λ w => (ant w && prejacent w) && alt w) =
                  probOfProp prior (λ w => ant w && prejacent w) := by
-    simp only [probOfProp]
-    congr 1
-    ext w
+    congr 1; ext w
     by_cases hp : prejacent w
-    · have halt : alt w = true := hEntails w hp
-      simp only [halt, Bool.and_true]
-    · simp only [Bool.not_eq_true] at hp
-      simp only [hp, Bool.and_false, Bool.false_and]
-  rw [hEqMass]
+    · simp only [hEntails w hp, Bool.and_true]
+    · simp only [Bool.not_eq_true] at hp; simp only [hp, Bool.and_false, Bool.false_and]
+  rw [show conditionalProb prior (λ w => ant w && prejacent w) alt =
+        probOfProp prior (λ w => (ant w && prejacent w) && alt w) /
+        probOfProp prior (λ w => ant w && prejacent w) from
+    Core.FinitePMF.condProb_of_pos prior _ alt hConjPossible,
+    hEqMass]
   exact div_self (ne_of_gt hConjPossible)
 
 /-- **Theorem: Standard Use Reduction**
@@ -569,43 +517,5 @@ theorem irrelevant_prejacent_infelicitous {W : Type*} [Fintype W]
   simp only [tooFelicitousWith]
   have hConj := cumulative_evidence_necessary ctx prejacent hIrrelevant
   simp only [hConj, Bool.and_false, Bool.false_and]
-
--- Standard Theorems
-
-/-- Standard use satisfies felicity when both ANT and π answer RQ.
-
-In standard "too" use where ANT and π are both partial answers to the
-resolved question, the felicity conditions are satisfied. -/
-theorem standard_use_felicitous {W : Type*} [Fintype W]
-    (ctx : AdditiveContext W) (prejacent : W → Bool) (worlds : List W)
-    (hAnt : antecedentCondition ctx = true)
-    (hConj : conjunctionCondition ctx prejacent = true)
-    (hNonTriv : nonTrivialityConditionWith prejacent
-      (strengthenedResolutions' ctx prejacent) worlds = true)
-    (hMax : maximalityCondition ctx prejacent
-      (strengthenedResolutions' ctx prejacent) worlds = true) :
-    tooFelicitousWith ctx prejacent worlds = true := by
-  simp only [tooFelicitousWith, hAnt, hConj, hNonTriv, hMax, Bool.and_self]
-
-/-- Argument-building use is distinct from standard use.
-
-If we have an argument-building use, the antecedent and prejacent
-are not focus alternatives. -/
-theorem argumentBuilding_not_standard {W : Type*} [Fintype W]
-    (ctx : AdditiveContext W) (prejacent : W → Bool)
-    (hArgBuild : isArgumentBuildingUse ctx prejacent = true) :
-    isFocusAlternativeUse ctx.antecedent prejacent ctx.resolvedQuestion = false := by
-  simp only [isArgumentBuildingUse] at hArgBuild
-  simp only [Bool.and_eq_true, Bool.not_eq_true'] at hArgBuild
-  exact hArgBuild.1
-
-/-- If ANT alone doesn't answer RQ, "too" is infelicitous.
-
-The antecedent must be established as relevant to the resolved question. -/
-theorem no_antecedent_infelicitous {W : Type*} [Fintype W]
-    (ctx : AdditiveContext W) (prejacent : W → Bool) (worlds : List W)
-    (hNoAnt : antecedentCondition ctx = false) :
-    tooFelicitousWith ctx prejacent worlds = false := by
-  simp only [tooFelicitousWith, hNoAnt, Bool.false_and]
 
 end Semantics.Lexical.Particle.Additive

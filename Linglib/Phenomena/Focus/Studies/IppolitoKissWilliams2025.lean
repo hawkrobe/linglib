@@ -390,26 +390,22 @@ private lemma probOfProp_partition {W : Type*} [Fintype W]
     (prior : Prior W) (e h : W → Bool) :
     probOfProp prior e =
     probOfProp prior (λ w => e w && h w) +
-    probOfProp prior (λ w => e w && !h w) := by
-  simp only [probOfProp, ← Finset.sum_add_distrib]
-  congr 1; funext w
-  by_cases he : e w = true <;> by_cases hh : h w = true <;> simp [he, hh]
+    probOfProp prior (λ w => e w && !h w) :=
+  prior.probOf_partition e h
 
 /-- Total partition: P(⊤) = P(H) + P(¬H). -/
 private lemma probOfProp_total_partition {W : Type*} [Fintype W]
     (prior : Prior W) (h : W → Bool) :
     probOfProp prior (λ _ => true) =
     probOfProp prior h + probOfProp prior (λ w => !h w) := by
-  have := probOfProp_partition prior (λ _ => true) h
+  have := prior.probOf_partition (λ _ => true) h
   simp only [Bool.true_and] at this; exact this
 
 /-- Non-negativity of probOfProp under non-negative prior. -/
 private lemma probOfProp_nonneg' {W : Type*} [Fintype W]
-    (prior : Prior W) (hP : ∀ w, prior w ≥ 0) (f : W → Bool) :
-    probOfProp prior f ≥ 0 := by
-  unfold probOfProp; apply Finset.sum_nonneg'; intro w; split
-  · exact hP w
-  · exact le_refl 0
+    (prior : Prior W) (_hP : ∀ w, prior w ≥ 0) (f : W → Bool) :
+    probOfProp prior f ≥ 0 :=
+  prior.probOf_nonneg f
 
 /-- For binary issues, probabilistic `probSupports` (P(H|S) > P(H)) implies
 DTS `posRelevant` (BF_H(S) > 1).
@@ -433,8 +429,9 @@ theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     posRelevant ⟨⟨topic⟩, prior.mass⟩ evidence := by
   intro hSupp
   simp only [probSupports, isPositiveEvidence, evidentialBoost, decide_eq_true_eq] at hSupp
-  unfold conditionalProb at hSupp
-  simp only [gt_iff_lt, hS_pos, ↓reduceIte] at hSupp
+  rw [show conditionalProb prior evidence topic =
+        probOfProp prior (fun w => evidence w && topic w) / probOfProp prior evidence from
+    Core.FinitePMF.condProb_of_pos prior evidence topic hS_pos] at hSupp
   set pH := probOfProp prior topic
   set pNH := probOfProp prior (λ w => !(topic w))
   set pE := probOfProp prior evidence

@@ -55,22 +55,17 @@ abbrev Prior (W : Type*) [Fintype W] := Core.FinitePMF W
 
 /-- Compute P(φ) - probability that φ is true.
 
-This sums the probability mass over worlds where φ holds. -/
+Delegates to `Core.FinitePMF.probOf`. -/
 def probOfProp {W : Type*} [Fintype W]
     (prior : Prior W) (φ : W → Bool) : ℚ :=
-  ∑ w : W, if φ w then prior w else 0
+  prior.probOf φ
 
 /-- Compute P(A | C) - conditional probability of A given C.
 
-Returns P(A ∧ C) / P(C) when P(C) > 0, otherwise 0. -/
+Delegates to `Core.FinitePMF.condProb`. -/
 def conditionalProb {W : Type*} [Fintype W]
     (prior : Prior W) (condition : W → Bool) (target : W → Bool) : ℚ :=
-  let pCondition := probOfProp prior condition
-  if pCondition > 0 then
-    let pBoth := probOfProp prior (λ w => condition w && target w)
-    pBoth / pCondition
-  else
-    0
+  prior.condProb condition target
 
 /-- Probability of an info state being actual.
 
@@ -97,11 +92,6 @@ def relevant {W : Type*} [Fintype W]
     let condProb := conditionalProb prior p alt
     let priorProb := probOfState prior alt
     condProb != priorProb
-
-/-- Non-relevance: P doesn't change any alternative's probability. -/
-def irrelevant {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
-  !relevant p q prior
 
 -- Definition 62: Probabilistic Answerhood
 
@@ -170,62 +160,41 @@ def probAnswersFull {W : Type*} [Fintype W]
 
 private lemma probOfProp_complement_add' {W : Type*} [Fintype W]
     (prior : Prior W) (f : W → Bool) :
-    probOfProp prior f + probOfProp prior (fun w => !f w) = 1 := by
-  have h : probOfProp prior f + probOfProp prior (fun w => !f w) = ∑ w : W, prior w := by
-    unfold probOfProp; rw [← Finset.sum_add_distrib]
-    apply Finset.sum_congr rfl; intro w _
-    by_cases hf : f w = true <;> simp [hf]
-  rw [h]; exact prior.mass_sum_one
+    probOfProp prior f + probOfProp prior (fun w => !f w) = 1 :=
+  prior.probOf_complement_add f
 
 private lemma probOfProp_nonneg' {W : Type*} [Fintype W]
-    (prior : Prior W) (f : W → Bool) : 0 ≤ probOfProp prior f := by
-  unfold probOfProp
-  exact Finset.sum_nonneg fun w _ => by
-    by_cases hf : f w = true <;> simp [hf]; exact prior.mass_nonneg w
+    (prior : Prior W) (f : W → Bool) : 0 ≤ probOfProp prior f :=
+  prior.probOf_nonneg f
 
 private lemma probOfProp_and_le' {W : Type*} [Fintype W]
     (prior : Prior W) (f g : W → Bool) :
-    probOfProp prior (fun w => g w && f w) ≤ probOfProp prior f := by
-  unfold probOfProp; apply Finset.sum_le_sum; intro w _
-  by_cases hg : g w = true <;> by_cases hf : f w = true <;> simp [hg, hf]; exact prior.mass_nonneg w
+    probOfProp prior (fun w => g w && f w) ≤ probOfProp prior f :=
+  prior.probOf_and_le g f
 
 private lemma pp_pos_of_cond_gt' {W : Type*} [Fintype W]
     (prior : Prior W) (f g : W → Bool)
     (hGt : conditionalProb prior g f > probOfProp prior f) :
-    probOfProp prior g > 0 := by
-  by_contra h_le; push_neg at h_le
-  have := le_antisymm h_le (probOfProp_nonneg' prior g)
-  simp only [conditionalProb, this, lt_irrefl, ↓reduceIte] at hGt
-  linarith [probOfProp_nonneg' prior f]
+    probOfProp prior g > 0 :=
+  prior.probOf_pos_of_condProb_gt g f hGt
 
 private lemma pf_pos_of_cond_gt' {W : Type*} [Fintype W]
     (prior : Prior W) (f g : W → Bool)
     (hGt : conditionalProb prior g f > probOfProp prior f) :
-    probOfProp prior f > 0 := by
-  have hPg := pp_pos_of_cond_gt' prior f g hGt
-  by_contra h_le; push_neg at h_le
-  have h_eq := le_antisymm h_le (probOfProp_nonneg' prior f)
-  have hAnd_eq : probOfProp prior (fun w => g w && f w) = 0 :=
-    le_antisymm (by linarith [probOfProp_and_le' prior f g])
-               (probOfProp_nonneg' prior _)
-  simp only [conditionalProb, hPg, ↓reduceIte] at hGt
-  rw [hAnd_eq] at hGt; simp at hGt; linarith
+    probOfProp prior f > 0 :=
+  prior.probOf_target_pos_of_condProb_gt g f hGt
 
 private lemma probOfProp_and_complement_split' {W : Type*} [Fintype W]
     (prior : Prior W) (g f : W → Bool) :
     probOfProp prior (fun w => g w && f w) +
-    probOfProp prior (fun w => g w && !f w) = probOfProp prior g := by
-  unfold probOfProp; rw [← Finset.sum_add_distrib]
-  apply Finset.sum_congr rfl; intro w _
-  by_cases hg : g w = true <;> simp [hg]
-  by_cases hf : f w = true <;> simp [hf]
+    probOfProp prior (fun w => g w && !f w) = probOfProp prior g :=
+  (prior.probOf_partition g f).symm
 
 private lemma condProb_complement_sum' {W : Type*} [Fintype W]
     (prior : Prior W) (g f : W → Bool)
     (hPg : probOfProp prior g > 0) :
-    conditionalProb prior g f + conditionalProb prior g (fun w => !f w) = 1 := by
-  simp only [conditionalProb, hPg, ↓reduceIte]
-  rw [← add_div, probOfProp_and_complement_split', div_self (ne_of_gt hPg)]
+    conditionalProb prior g f + conditionalProb prior g (fun w => !f w) = 1 :=
+  prior.condProb_complement_sum g f hPg
 
 private lemma cond_complement_lt' {W : Type*} [Fintype W]
     (prior : Prior W) (p f : W → Bool)
@@ -356,22 +325,6 @@ def supportedAlternatives {W : Type*} [Fintype W]
     let priorProb := probOfState prior alt
     condProb > priorProb
 
-/-- The maximally supported alternative: the one whose probability
-increases the most when P is learned. -/
-def maxSupportedAlternative {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : Option (InfoState W × ℚ) :=
-  let increases := q.alternatives.filterMap λ alt =>
-    let condProb := conditionalProb prior p alt
-    let priorProb := probOfState prior alt
-    let increase := condProb - priorProb
-    if increase > 0 then some (alt, increase) else none
-  increases.foldl (λ best current =>
-    match best with
-    | none => some current
-    | some (_, bestInc) =>
-      if current.2 > bestInc then some current else best
-  ) none
-
 -- Definition 63: Evidences More Strongly
 
 /-- Informational content of a resolving state.
@@ -440,18 +393,6 @@ def isNegativeEvidence {W : Type*} [Fintype W]
 
 -- Connection to Standard Answerhood
 
-/-- Check if a prior is uniform over a world list.
-
-For proving that probabilistic answerhood reduces to standard answerhood
-under uniform priors. -/
-def isUniformOver {W : Type*} [Fintype W] [DecidableEq W]
-    (prior : Prior W) (worlds : List W) : Bool :=
-  match worlds with
-  | [] => true
-  | w :: ws =>
-    let prob := prior w
-    ws.all λ v => prior v == prob
-
 /-- Entailing an alternative guarantees probabilistic answerhood.
 
 If P entails some alternative A (every P-world is an A-world) and A is not
@@ -477,11 +418,12 @@ theorem probAnswers_when_entailing {W : Type*} [Fintype W] [DecidableEq W]
     unfold probOfProp
     congr 1; funext w
     cases hp : p w with
-    | false => simp [hp]
-    | true => simp [hp, hEntails w hp]
+    | false => simp
+    | true => simp [hEntails w hp]
   have hCond : conditionalProb prior p alt = 1 := by
-    unfold conditionalProb
-    simp only [gt_iff_lt, hPosP, ↓reduceIte, hConj]
+    rw [show conditionalProb prior p alt =
+          probOfProp prior (fun w => p w && alt w) / probOfProp prior p from
+      Core.FinitePMF.condProb_of_pos prior p alt hPosP, hConj]
     exact div_self (ne_of_gt hPosP)
   -- conditionalProb = 1 > probOfState prior alt
   rw [hCond]
@@ -512,31 +454,6 @@ def someResolutionStrengthened {W : Type*} [Fintype W]
     (p1 p2 : W → Bool) (q : Issue W)
     (prior : Prior W) : Bool :=
   (strengthenedResolutions p1 p2 q prior).length > 0
-
--- Probabilistic Mention-Some
-
-/-- Probabilistic mention-some: P gives a "partial" probabilistic answer.
-
-P is a probabilistic mention-some answer to Q if:
-1. P raises the probability of some alternative(s)
-2. P doesn't resolve Q completely (doesn't make one alternative certain) -/
-def isProbMentionSomeAnswer {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
-  let supported := supportedAlternatives p q prior
-  -- Raises probability of some alternatives
-  supported.length > 0 &&
-  -- But doesn't make any alternative certain (probability 1)
-  supported.all λ alt => conditionalProb prior p alt < 1
-
-/-- Probabilistic mention-all: P resolves Q completely.
-
-P is a probabilistic mention-all answer if learning P makes
-exactly one alternative have probability 1. -/
-def isProbMentionAllAnswer {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
-  let certainAlts := q.alternatives.filter λ alt =>
-    conditionalProb prior p alt == 1
-  certainAlts.length == 1
 
 -- Theorems
 

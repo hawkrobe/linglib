@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.Order.Field.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -63,6 +64,111 @@ def uniform [Nonempty W] : FinitePMF W where
     simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one_div]
     have h : (Fintype.card W : ℚ) ≠ 0 := by exact_mod_cast Fintype.card_pos.ne'
     exact div_self h
+
+/-- Probability mass of worlds satisfying a predicate.
+
+`probOf pmf φ = ∑ w, if φ w then pmf w else 0`
+
+Unlike `prob` (which goes through `expect`), this computes the sum
+directly — matching the form used by `ProbabilisticAnswerhood.probOfProp`
+and `DTS.probSum`. -/
+def probOf (pmf : FinitePMF W) (φ : W → Bool) : ℚ :=
+  ∑ w : W, if φ w then pmf.mass w else 0
+
+/-- Conditional probability P(target | condition).
+
+Returns P(condition ∧ target) / P(condition) when P(condition) > 0,
+otherwise 0. This is the single canonical conditional probability
+used by `ProbabilisticAnswerhood.conditionalProb`. -/
+def condProb (pmf : FinitePMF W) (condition target : W → Bool) : ℚ :=
+  let pCond := pmf.probOf condition
+  if pCond > 0 then
+    pmf.probOf (fun w => condition w && target w) / pCond
+  else 0
+
+/-- `probOf` is nonneg. -/
+theorem probOf_nonneg (pmf : FinitePMF W) (φ : W → Bool) :
+    0 ≤ pmf.probOf φ := by
+  unfold probOf
+  exact Finset.sum_nonneg fun w _ => by
+    split_ifs <;> [exact pmf.mass_nonneg w; linarith]
+
+/-- `condProb` unfolds when conditioning event has positive probability. -/
+theorem condProb_of_pos (pmf : FinitePMF W) (cond target : W → Bool)
+    (h : pmf.probOf cond > 0) :
+    pmf.condProb cond target =
+      pmf.probOf (fun w => cond w && target w) / pmf.probOf cond := by
+  simp [condProb, h]
+
+/-- `condProb` is zero when conditioning event has zero probability. -/
+theorem condProb_of_zero (pmf : FinitePMF W) (cond target : W → Bool)
+    (h : pmf.probOf cond = 0) :
+    pmf.condProb cond target = 0 := by
+  simp [condProb, h]
+
+/-- `condProb` unfolds when conditioning event has nonzero probability. -/
+theorem condProb_of_ne_zero (pmf : FinitePMF W) (cond target : W → Bool)
+    (hne : pmf.probOf cond ≠ 0) :
+    pmf.condProb cond target =
+      pmf.probOf (fun w => cond w && target w) / pmf.probOf cond := by
+  exact condProb_of_pos pmf cond target (lt_of_le_of_ne (pmf.probOf_nonneg cond) (Ne.symm hne))
+
+/-- P(φ) + P(¬φ) = 1. -/
+theorem probOf_complement_add (pmf : FinitePMF W) (φ : W → Bool) :
+    pmf.probOf φ + pmf.probOf (fun w => !φ w) = 1 := by
+  have h : pmf.probOf φ + pmf.probOf (fun w => !φ w) = ∑ w : W, pmf w := by
+    unfold probOf; rw [← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl; intro w _
+    by_cases hf : φ w = true <;> simp [hf]
+  rw [h]; exact pmf.mass_sum_one
+
+/-- P(φ ∧ ψ) ≤ P(ψ). -/
+theorem probOf_and_le (pmf : FinitePMF W) (φ ψ : W → Bool) :
+    pmf.probOf (fun w => φ w && ψ w) ≤ pmf.probOf ψ := by
+  unfold probOf; apply Finset.sum_le_sum; intro w _
+  by_cases hφ : φ w = true <;> by_cases hψ : ψ w = true <;> simp [hφ, hψ]; exact pmf.mass_nonneg w
+
+/-- Partition: P(φ) = P(φ ∧ ψ) + P(φ ∧ ¬ψ). -/
+theorem probOf_partition (pmf : FinitePMF W) (φ ψ : W → Bool) :
+    pmf.probOf φ =
+    pmf.probOf (fun w => φ w && ψ w) + pmf.probOf (fun w => φ w && !ψ w) := by
+  unfold probOf; rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl; intro w _
+  by_cases hφ : φ w = true <;> by_cases hψ : ψ w = true <;> simp [hφ, hψ]
+
+/-- P(target | cond) + P(¬target | cond) = 1 when P(cond) > 0. -/
+theorem condProb_complement_sum (pmf : FinitePMF W) (cond target : W → Bool)
+    (h : pmf.probOf cond > 0) :
+    pmf.condProb cond target + pmf.condProb cond (fun w => !target w) = 1 := by
+  rw [condProb_of_pos pmf cond target h,
+      condProb_of_pos pmf cond _ h, ← add_div,
+      show pmf.probOf (fun w => cond w && target w) +
+           pmf.probOf (fun w => cond w && !target w) = pmf.probOf cond from
+        (pmf.probOf_partition cond target).symm]
+  exact div_self (ne_of_gt h)
+
+/-- If P(target | cond) > P(target) then P(cond) > 0. -/
+theorem probOf_pos_of_condProb_gt (pmf : FinitePMF W) (cond target : W → Bool)
+    (h : pmf.condProb cond target > pmf.probOf target) :
+    pmf.probOf cond > 0 := by
+  by_contra hle; push_neg at hle
+  have hZero := le_antisymm hle (pmf.probOf_nonneg cond)
+  rw [condProb_of_zero pmf cond target hZero] at h
+  linarith [pmf.probOf_nonneg target]
+
+/-- If P(target | cond) > P(target) then P(target) > 0. -/
+theorem probOf_target_pos_of_condProb_gt (pmf : FinitePMF W) (cond target : W → Bool)
+    (h : pmf.condProb cond target > pmf.probOf target) :
+    pmf.probOf target > 0 := by
+  have hPc := pmf.probOf_pos_of_condProb_gt cond target h
+  by_contra hle; push_neg at hle
+  have hf_eq := le_antisymm hle (pmf.probOf_nonneg target)
+  have hAnd_eq : pmf.probOf (fun w => cond w && target w) = 0 :=
+    le_antisymm (by linarith [pmf.probOf_and_le cond target])
+               (pmf.probOf_nonneg _)
+  have : pmf.condProb cond target = 0 := by
+    rw [condProb_of_pos pmf cond target hPc, hAnd_eq]; simp
+  linarith
 
 variable [DecidableEq W]
 
