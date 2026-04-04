@@ -25,7 +25,7 @@ and distinct syntactic frames.
 
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.DiathesisAlternation
 
 namespace Semantics.Lexical.Verb.EventStructure
 
@@ -433,5 +433,94 @@ theorem hit_atelic :
 /-- State classes (exist, admire) are predicted stative. -/
 theorem exist_stative :
     LevinClass.exist.eventTemplate.vendlerClass = .state := rfl
+
+/-! ### § 9. Bridge: Event Structure ↔ Diathesis Alternation
+
+`predictedTemplate` and `predictedAlternation` are two predictions computed from the
+same `MeaningComponents` feature vector. This section proves their agreement and shows
+that `MeaningComponents.fuse` simultaneously derives both template shift and new
+alternation predictions from a single componentwise OR operation.
+
+The central theorem — `ci_alternation_iff_template_alternates` — says the
+causative/inchoative alternation is exactly the syntactic reflex of having an
+accomplishment event template (which has an intransitive variant), modulo
+`instrumentSpec`. This connects @cite{levin-1993}'s diathesis alternation diagnostics
+to @cite{rappaport-hovav-levin-1998}'s event structure decomposition. -/
+
+/-- The causative/inchoative alternation is available iff the verb's event template
+    has an intransitive variant (i.e., is an accomplishment), given no instrumentSpec.
+
+    Both conditions reduce to `changeOfState ∧ causation`, making the alternation
+    prediction and the event structure prediction two views of a single semantic fact. -/
+theorem ci_alternation_iff_template_alternates (mc : MeaningComponents)
+    (h_inst : mc.instrumentSpec = false) :
+    mc.predictedAlternation .causativeInchoative = true ↔
+    mc.predictedTemplate.intransitiveVariant.isSome = true := by
+  rcases mc with ⟨cos, con, mot, caus, inst, man⟩
+  subst h_inst
+  cases cos <;> cases con <;> cases mot <;> cases caus <;>
+    simp_all [MeaningComponents.predictedAlternation, MeaningComponents.predictedTemplate,
+              Template.intransitiveVariant]
+
+/-- instrumentSpec breaks the template↔alternation correspondence: cut verbs have
+    accomplishment template (they cause state change) but cannot undergo
+    causative/inchoative alternation (instrument specification requires an agent).
+
+    This is why `ci_alternation_iff_template_alternates` requires
+    `instrumentSpec = false` — the hypothesis is necessary, not just sufficient. -/
+theorem instrumentSpec_breaks_correspondence :
+    LevinClass.cut.eventTemplate = .accomplishment ∧
+    LevinClass.cut.eventTemplate.intransitiveVariant = some .achievement ∧
+    LevinClass.cut.meaningComponents.predictedAlternation .causativeInchoative = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Fusion with CoS + causation yields accomplishment template regardless of
+    the verb's original template. The resultative construction adds
+    [CAUSE [BECOME [STATE]]], upgrading any verb to accomplishment. -/
+theorem fuse_cos_caus_yields_accomplishment (v c : MeaningComponents)
+    (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
+    (v.fuse c).predictedTemplate = .accomplishment := by
+  rcases v with ⟨cos, con, mot, caus, inst, man⟩
+  rcases c with ⟨cos', con', mot', caus', inst', man'⟩
+  simp_all [MeaningComponents.fuse, MeaningComponents.predictedTemplate]
+
+/-- One fusion, three consequences: accomplishment template, causative/inchoative
+    alternation, and intransitive variant — all from a single componentwise OR. -/
+theorem fuse_dual_prediction (v c : MeaningComponents)
+    (hCoS : c.changeOfState = true) (hCaus : c.causation = true)
+    (hInstV : v.instrumentSpec = false) (hInstC : c.instrumentSpec = false) :
+    (v.fuse c).predictedTemplate = .accomplishment ∧
+    (v.fuse c).predictedAlternation .causativeInchoative = true ∧
+    (v.fuse c).predictedTemplate.intransitiveVariant = some .achievement := by
+  have h_tmpl := fuse_cos_caus_yields_accomplishment v c hCoS hCaus
+  have h_inst : (v.fuse c).instrumentSpec = false := by
+    rcases v with ⟨_, _, _, _, inst, _⟩; rcases c with ⟨_, _, _, _, inst', _⟩
+    simp_all [MeaningComponents.fuse]
+  exact ⟨h_tmpl,
+    (ci_alternation_iff_template_alternates _ h_inst).mpr
+      (by simp [h_tmpl, Template.intransitiveVariant]),
+    by simp [h_tmpl, Template.intransitiveVariant]⟩
+
+/-- Fusion-induced Vendler class shift: fusion with CoS + causation
+    yields accomplishment Vendler class (telic, bounded). -/
+theorem fuse_vendler_class_shift (v c : MeaningComponents)
+    (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
+    (v.fuse c).predictedTemplate.vendlerClass = .accomplishment := by
+  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; rfl
+
+/-- Fusion with CoS + causation yields result state, enabling *again*/*re-*
+    restitutive readings (@cite{dowty-1979}). -/
+theorem fuse_cos_caus_has_result_state (v c : MeaningComponents)
+    (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
+    (v.fuse c).predictedTemplate.hasResultState = true := by
+  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; rfl
+
+/-- Fusion with CoS + causation yields CAUSE structure, enabling
+    negation-over-CAUSE readings and *by itself* modification
+    (@cite{koontz-garboden-2009}). -/
+theorem fuse_cos_caus_has_cause (v c : MeaningComponents)
+    (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
+    (v.fuse c).predictedTemplate.hasCause = true := by
+  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; rfl
 
 end Semantics.Lexical.Verb.EventStructure

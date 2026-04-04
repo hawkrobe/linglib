@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.493] - 2026-04-03
+
+### Added
+- **EventStructure.lean** (Theories/Semantics/Lexical/Verb): bridge theorems connecting event structure templates to diathesis alternation predictions — `ci_alternation_iff_template_alternates` (CI alternation ↔ accomplishment template, modulo instrumentSpec), `instrumentSpec_breaks_correspondence` (cut-class witness), `fuse_cos_caus_yields_accomplishment` (fusion → accomplishment regardless of base template), `fuse_dual_prediction` (one fusion → template + alternation + intransitive variant), `fuse_vendler_class_shift`, `fuse_cos_caus_has_result_state`, `fuse_cos_caus_has_cause`
+- **Levin2026.lean** (Phenomena/Constructions/Resultatives/Studies): event structure corollaries — `pushPull_accomplishment_in_resultative`, `hit_accomplishment_in_resultative`, `pushPull_dual_in_resultative`, `pushPull_vendler_shift` (activity→accomplishment via bridge theorems)
+
+## [0.229.492] - 2026-04-03
+
+### Changed
+- **FreeChoice.lean** (Theories/Semantics/Exhaustification): promoted `diamond_collects` and `diamond_distributes_iff` (◇(A∨B) ↔ ◇A∨◇B) from study file to theory infrastructure
+- **CiardelliGuerrini2026.lean**: bridge to @cite{rotter-liu-2025} modal concord data — `must_haveTo_same_force`, `must_haveTo_concord`, `must_may_no_concord`; scope data verification theorems against Fragment entries; imports promoted `diamond_distributes_iff`
+- **references.bib**: added `grosz-2010`, `anand-brasoveanu-2010`, `meyer-sauerland-2017`, `simons-2005` (all cited in C&G formalization)
+
+## [0.229.491] - 2026-04-03
+
+### Changed
+- **CiardelliGuerrini2026.lean**: deep integration rewrite — `diamond_distributes_iff` (◇(A∨B) ↔ ◇A∨◇B semantic equivalence), Fragment-derived modal features (`mayFeature`/`mustFeature` from `FunctionWords` entries), `negation_concord_pattern` general theorem, `conjunctive_narrow_stronger` (◇(A∧B) → ◇A∧◇B), ATB counterexample (ex. 3), `need_not_existential_ok`/`need_not_universal_blocked` from Fragment force
+- **ModalTypes.lean**: `ForceFlavor` now derives `Inhabited`; `ModalForce.negatedConcordForce` refactored to `abbrev` of `ModalForce.dual`
+- **Disjunction.lean** (Theories/Semantics/Modality): added note on C&G reanalysis of "may A or may B" sentences via modal concord
+
 ## [0.229.490] - 2026-04-03
 
 ### Changed
@@ -19,10 +39,10 @@
 ## [0.229.488] - 2026-04-03
 
 ### Added
-- **Monotonicity.lean** (Theories/Morphology/Core): theory-layer Monotonicity Hypothesis — `isMonotonic` parametric over operator type, `satisfiesMH` universal property, `reflexivizeOps`/`deleteOp` operations, `isMonotonic_refl`/`reflexivizeOps_satisfiesMH`/`isMonotonic_append_right` structural theorems
+- **Monotonicity.lean** (Theories/Morphology/Core): theory-neutral MH apparatus — `isMonotonic`/`satisfiesMH` parametric over operator type, `identityOp`/`deleteOp`, `satisfiesMH_iff_noRemoval` characterization, `satisfiesMH_comp` closure, `deleteOp_not_satisfiesMH`/`identityOp_satisfiesMH`; docstring distinguishes MH from Bifurcation and M/R Complementarity per @cite{beavers-koontz-garboden-2020}
 
 ### Changed
-- **KoontzGarboden2009.lean**: replaced local `isMonotonic` (over `List String`) with theory-layer import (over `VerbHead`); added `reflexivization_satisfiesMH_verbHead` instantiating the universal MH theorem
+- **KoontzGarboden2009.lean**: replaced local `isMonotonic` (over `List String`) with theory-layer import (over `VerbHead`); reflexivization vs deletion framed as competing MH predictions
 
 ## [0.229.487] - 2026-04-03
 

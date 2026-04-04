@@ -184,6 +184,58 @@ theorem all_classes_alternate_in_resultative :
         c.meaningComponents resultative .causativeInchoative
     ) = true := by native_decide
 
+/-! ### Event structure shift (bridge to `EventStructure`)
+
+The same fusion operation that predicts new alternations also predicts
+template shift: manner verbs (activity template) become accomplishments
+inside the resultative. This connects to telicity, result state
+diagnostics (*again*/*re-* ambiguity), and CAUSE structure. -/
+
+open Semantics.Lexical.Verb.EventStructure
+
+/-- PushPull alone is an activity (no CoS, no CAUSE). -/
+theorem pushPull_is_activity :
+    LevinClass.pushPull.eventTemplate = .activity := rfl
+
+/-- PushPull in the resultative shifts to accomplishment (the construction
+    adds [CAUSE [BECOME [STATE]]]). -/
+theorem pushPull_accomplishment_in_resultative :
+    (LevinClass.pushPull.meaningComponents.fuse
+      resultative.semanticContribution).predictedTemplate = .accomplishment := by
+  exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
+
+/-- Hit alone is an activity. -/
+theorem hit_is_activity' :
+    LevinClass.hit.eventTemplate = .activity := rfl
+
+/-- Hit in the resultative shifts to accomplishment. -/
+theorem hit_accomplishment_in_resultative :
+    (LevinClass.hit.meaningComponents.fuse
+      resultative.semanticContribution).predictedTemplate = .accomplishment := by
+  exact fuse_cos_caus_yields_accomplishment _ _ rfl rfl
+
+/-- Full dual prediction for pushPull in the resultative: template shift
+    AND alternation AND intransitive variant, all from one fusion. -/
+theorem pushPull_dual_in_resultative :
+    (LevinClass.pushPull.meaningComponents.fuse
+      resultative.semanticContribution).predictedTemplate = .accomplishment ∧
+    (LevinClass.pushPull.meaningComponents.fuse
+      resultative.semanticContribution).predictedAlternation
+        .causativeInchoative = true ∧
+    (LevinClass.pushPull.meaningComponents.fuse
+      resultative.semanticContribution).predictedTemplate.intransitiveVariant
+        = some .achievement := by
+  exact fuse_dual_prediction _ _ rfl rfl rfl rfl
+
+/-- Vendler class shift: pushPull goes from atelic activity to telic
+    accomplishment inside the resultative. -/
+theorem pushPull_vendler_shift :
+    LevinClass.pushPull.eventTemplate.vendlerClass = .activity ∧
+    (LevinClass.pushPull.meaningComponents.fuse
+      resultative.semanticContribution).predictedTemplate.vendlerClass
+        = .accomplishment :=
+  ⟨rfl, fuse_vendler_class_shift _ _ rfl rfl⟩
+
 /-! ### Middle construction parallel (§2, examples 17–18)
 
 The paper shows *pound* enters the middle construction only with a
