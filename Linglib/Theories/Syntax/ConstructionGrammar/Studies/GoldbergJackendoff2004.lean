@@ -620,6 +620,31 @@ theorem semanticContribution_matches_constructionalDesc (sc : ResultativeSubcons
     sc.semanticContribution.changeOfState = sc.constructionalDesc.hasBecome := by
   cases sc <;> exact ⟨rfl, rfl⟩
 
+/-- No subconstruction contributes instrument specificity. -/
+theorem no_subconstruction_instrumentSpec (sc : ResultativeSubconstruction) :
+    sc.semanticContribution.instrumentSpec = false := by
+  cases sc <;> rfl
+
+/-- Bundled: causative subconstruction contributes CoS + causation + ¬instrumentSpec.
+    Satisfies the hypotheses of `fuse_cos_caus_enables`. -/
+theorem causative_sc_contribution (sc : ResultativeSubconstruction)
+    (h : sc.isCausative = true) :
+    sc.semanticContribution.changeOfState = true ∧
+    sc.semanticContribution.causation = true ∧
+    sc.semanticContribution.instrumentSpec = false := by
+  cases sc <;> simp_all [ResultativeSubconstruction.isCausative,
+    ResultativeSubconstruction.semanticContribution]
+
+/-- Bundled: noncausative subconstruction contributes CoS + ¬causation + ¬instrumentSpec.
+    Satisfies the hypotheses of `fuse_cos_only_partial`. -/
+theorem noncausative_sc_contribution (sc : ResultativeSubconstruction)
+    (h : sc.isCausative = false) :
+    sc.semanticContribution.changeOfState = true ∧
+    sc.semanticContribution.causation = false ∧
+    sc.semanticContribution.instrumentSpec = false := by
+  cases sc <;> simp_all [ResultativeSubconstruction.isCausative,
+    ResultativeSubconstruction.semanticContribution]
+
 /-- Causative subconstructions match the parent `resultative`'s semantic contribution. -/
 theorem causative_semantics_match_parent (sc : ResultativeSubconstruction)
     (h : sc.isCausative = true) :
@@ -947,15 +972,10 @@ theorem aspect_chain (b : Core.Scale.Boundedness) (hMax : b.hasMax = true) :
   · exact closed_scale_telic_resultative b hMax
   · rw [closed_scale_telic_resultative b hMax]; rfl
 
-/-- **Alternation chain**: for any verb class and any causative subconstruction,
-    if the verb lacks instrument specificity, fusion with the subconstruction
-    enables causativeInchoative, middle, instrumentSubject, and the resultative
-    alternation — regardless of the verb's original feature profile.
-
-    This is the G&J insight formalized: the construction systematically augments
-    the verb's meaning component profile. The proof uses `fuse_alternation_monotone`
-    from ArgumentStructure (monotonicity of fusion) plus the fact that all
-    subconstructions contribute CoS, and causative ones also contribute causation. -/
+/-- **Alternation chain**: corollary of `fuse_cos_caus_enables` for
+    causative resultative subconstructions. The subconstruction contributes
+    CoS + causation + ¬instrumentSpec, satisfying the general enabling
+    theorem's hypotheses. -/
 theorem alternation_chain (mc : MeaningComponents) (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = false) (hCausative : sc.isCausative = true) :
     let fused := composedMeaning mc sc.toConstruction
@@ -963,39 +983,28 @@ theorem alternation_chain (mc : MeaningComponents) (sc : ResultativeSubconstruct
     fused.predictedAlternation .middle = true ∧
     fused.predictedAlternation .instrumentSubject = true ∧
     fused.predictedAlternation .resultative = true := by
-  cases sc <;> simp_all [ResultativeSubconstruction.isCausative,
-    composedMeaning, ResultativeSubconstruction.toConstruction,
-    ResultativeSubconstruction.semanticContribution,
-    MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+  have ⟨hCoS, hCaus, hNoInst⟩ := causative_sc_contribution sc hCausative
+  simp only [composedMeaning, ResultativeSubconstruction.toConstruction]
+  exact fuse_cos_caus_enables mc _ hCoS hCaus hInstr hNoInst
 
-/-- **Noncausative contrast**: in noncausative subconstructions, the verb
-    gains CoS (middle, resultative alternation) but NOT causation
-    (no causativeInchoative, no instrumentSubject). The asymmetry follows
-    from the semantic contribution: noncausative has BECOME but not CAUSE. -/
+/-- **Noncausative contrast**: corollary of `fuse_cos_only_partial`.
+    Noncausative subconstructions contribute CoS but not causation,
+    so only CoS-dependent alternations fire. -/
 theorem noncausative_partial_chain (mc : MeaningComponents)
     (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = false) (hNonCaus : sc.isCausative = false)
     (hNoCaus : mc.causation = false) :
     let fused := composedMeaning mc sc.toConstruction
-    -- Gains: CoS-only alternations
     fused.predictedAlternation .middle = true ∧
     fused.predictedAlternation .resultative = true ∧
-    -- Lacks: causation-dependent alternations
     fused.predictedAlternation .causativeInchoative = false ∧
     fused.predictedAlternation .instrumentSubject = false := by
-  cases sc <;> simp_all [ResultativeSubconstruction.isCausative,
-    composedMeaning, ResultativeSubconstruction.toConstruction,
-    ResultativeSubconstruction.semanticContribution,
-    MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+  have ⟨hCoS, hNoCausC, hNoInst⟩ := noncausative_sc_contribution sc hNonCaus
+  simp only [composedMeaning, ResultativeSubconstruction.toConstruction]
+  exact fuse_cos_only_partial mc _ hCoS hNoCausC hNoCaus hInstr hNoInst
 
-/-- **instrumentSpec blocking persists across subconstructions**: a verb
-    with instrument specificity (e.g., cut-class) remains blocked from
-    instrument-sensitive alternations in ALL subconstructions, because
-    `fuse` is componentwise OR and no subconstruction contributes
-    `instrumentSpec = false` to cancel it.
-
-    Uses `fuse_blocks_only_via_instrumentSpec` from ArgumentStructure:
-    the sole source of alternation loss is instrumentSpec. -/
+/-- **instrumentSpec blocking**: corollary of `instrumentSpec_blocks_after_fuse`.
+    Cut-class verbs remain blocked in all subconstructions. -/
 theorem instrumentSpec_blocks_across_subconstructions (mc : MeaningComponents)
     (sc : ResultativeSubconstruction)
     (hInstr : mc.instrumentSpec = true) :
@@ -1003,9 +1012,8 @@ theorem instrumentSpec_blocks_across_subconstructions (mc : MeaningComponents)
     fused.predictedAlternation .causativeInchoative = false ∧
     fused.predictedAlternation .instrumentSubject = false ∧
     fused.predictedAlternation .resultative = false := by
-  cases sc <;> simp_all [composedMeaning, ResultativeSubconstruction.toConstruction,
-    ResultativeSubconstruction.semanticContribution,
-    MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+  simp only [composedMeaning, ResultativeSubconstruction.toConstruction]
+  exact instrumentSpec_blocks_after_fuse mc _ hInstr
 
 /-! ## Empirical data: grammaticality judgments
 

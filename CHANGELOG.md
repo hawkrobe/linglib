@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.229.490] - 2026-04-03
+
+### Changed
+- **DiathesisAlternation.lean** (Core/Lexical): promoted 4 general structural theorems from construction grammar layer — `fuse_alternation_monotone`, `instrumentSpec_persists`, `fuse_not_generally_monotone`, `fuse_blocks_only_via_instrumentSpec`; added enabling/blocking theorems `fuse_cos_caus_enables`, `fuse_cos_only_partial`, `instrumentSpec_blocks`, `instrumentSpec_blocks_after_fuse`
+- **ArgumentStructure.lean**: removed duplicate monotonicity theorems (now in DiathesisAlternation.lean)
+- **GoldbergJackendoff2004.lean**: chain theorems rewritten as corollaries of promoted theorems via `fuse_cos_caus_enables`/`fuse_cos_only_partial`
+
+## [0.229.489] - 2026-04-03
+
+### Added
+- **CiardelliGuerrini2026.lean** (Phenomena/Modality/Studies): @cite{ciardelli-guerrini-2026} "Against Wide Scope Free Choice" — reductionist thesis (FC from ◇(A∨B) not ◇A∨◇B), scope ambiguity data for MOD-A-COORD-MOD-B constructions, modal concord derivation via Zeijlstra features, auxiliary vs non-auxiliary prediction, negation-flips-force concord data with 4 checking theorems, conjunctive permission (may-and-may) reading
+- **ModalTypes.lean** (Core/Modality): Zeijlstra 2007 feature system — `ModalInterpretability` (interpretable/uninterpretable), `ModalFeature` (force × interpretability), `ModalFeature.checks` (i-feature checks c-commanded u-feature), `ModalFeature.checksAcrossNegation` (negation flips force for concord), `ModalForce.negatedConcordForce`
+
+### Changed
+- **FreeChoiceCompare.lean**: added §9 source-LF dimension from @cite{ciardelli-guerrini-2026} — `SourceLFComparison` type, `all_narrow_scope`/`only_cg_explains_lf` theorems showing C&G uniquely explains how ◇(A∨B) arises compositionally; updated summary table with "Source LF" row
+
+## [0.229.488] - 2026-04-03
+
+### Added
+- **Monotonicity.lean** (Theories/Morphology/Core): theory-layer Monotonicity Hypothesis — `isMonotonic` parametric over operator type, `satisfiesMH` universal property, `reflexivizeOps`/`deleteOp` operations, `isMonotonic_refl`/`reflexivizeOps_satisfiesMH`/`isMonotonic_append_right` structural theorems
+
+### Changed
+- **KoontzGarboden2009.lean**: replaced local `isMonotonic` (over `List String`) with theory-layer import (over `VerbHead`); added `reflexivization_satisfiesMH_verbHead` instantiating the universal MH theorem
+
 ## [0.229.487] - 2026-04-03
 
 ### Added

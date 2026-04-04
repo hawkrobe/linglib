@@ -216,6 +216,129 @@ def MeaningComponents.predictedAlternation : MeaningComponents → DiathesisAlte
   | _, .wayConstruction => false
   | _, .directionalPhrase => false
 
+/-! ### Structural properties of fusion + alternation prediction
+
+These theorems characterize how `MeaningComponents.fuse` (componentwise OR)
+interacts with `predictedAlternation`. They are stated purely over
+`MeaningComponents` — no reference to specific constructions, verb classes,
+or empirical data. Construction grammar modules use these as lemmas. -/
+
+/-- **Enabling via CoS + causation**: fusing any verb (without instrumentSpec)
+    with any meaning components contributing CoS + causation (without
+    instrumentSpec) enables all four instrument-sensitive alternations.
+
+    This is the general principle behind Goldbergian constructional fusion:
+    a construction that adds CoS and causation to a verb's meaning unlocks
+    causativeInchoative, middle, instrumentSubject, and the resultative
+    alternation — regardless of what else the verb has or lacks. -/
+theorem fuse_cos_caus_enables (v c : MeaningComponents)
+    (hCoS : c.changeOfState = true) (hCaus : c.causation = true)
+    (hInstV : v.instrumentSpec = false) (hInstC : c.instrumentSpec = false) :
+    let f := v.fuse c
+    f.predictedAlternation .causativeInchoative = true ∧
+    f.predictedAlternation .middle = true ∧
+    f.predictedAlternation .instrumentSubject = true ∧
+    f.predictedAlternation .resultative = true := by
+  rcases v with ⟨cos, con, mot, caus, inst, man⟩
+  simp_all [MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+
+/-- **Partial enabling via CoS only**: fusing a verb (without instrumentSpec
+    or causation) with meaning components contributing CoS but NOT causation
+    enables middle and resultative alternation, but NOT causativeInchoative
+    or instrumentSubject.
+
+    This is the noncausative case: a construction with BECOME but no CAUSE
+    adds only half the alternation profile. -/
+theorem fuse_cos_only_partial (v c : MeaningComponents)
+    (hCoS : c.changeOfState = true) (hNoCaus : c.causation = false)
+    (hNoCausV : v.causation = false)
+    (hInstV : v.instrumentSpec = false) (hInstC : c.instrumentSpec = false) :
+    let f := v.fuse c
+    f.predictedAlternation .middle = true ∧
+    f.predictedAlternation .resultative = true ∧
+    f.predictedAlternation .causativeInchoative = false ∧
+    f.predictedAlternation .instrumentSubject = false := by
+  rcases v with ⟨cos, con, mot, caus, inst, man⟩
+  simp_all [MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+
+/-- **instrumentSpec blocks unconditionally**: any meaning components with
+    instrumentSpec = true are blocked from causativeInchoative,
+    instrumentSubject, and resultative — regardless of what they're fused
+    with. Since `fuse` is componentwise OR, instrumentSpec can only grow. -/
+theorem instrumentSpec_blocks (mc : MeaningComponents)
+    (h : mc.instrumentSpec = true) :
+    mc.predictedAlternation .causativeInchoative = false ∧
+    mc.predictedAlternation .instrumentSubject = false ∧
+    mc.predictedAlternation .resultative = false := by
+  rcases mc with ⟨cos, con, mot, caus, inst, man⟩
+  simp_all [MeaningComponents.predictedAlternation]
+
+/-- Corollary: instrumentSpec blocks after ANY fusion, since
+    `v.instrumentSpec = true → (v.fuse c).instrumentSpec = true`. -/
+theorem instrumentSpec_blocks_after_fuse (v c : MeaningComponents)
+    (h : v.instrumentSpec = true) :
+    (v.fuse c).predictedAlternation .causativeInchoative = false ∧
+    (v.fuse c).predictedAlternation .instrumentSubject = false ∧
+    (v.fuse c).predictedAlternation .resultative = false := by
+  rcases v with ⟨cos, con, mot, caus, inst, man⟩
+  simp_all [MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+
+/-- **Monotonicity**: an instrument-free fusion never removes an alternation.
+
+    If a verb participates in alternation `alt`, fusing with any meaning
+    components whose `instrumentSpec = false` preserves that participation.
+
+    Captures the Goldbergian principle that constructions ADD meaning:
+    `fuse` is componentwise OR, so positive features can only increase.
+    The sole exception is `instrumentSpec`; the hypothesis rules it out.
+
+    Proof: case-split on `alt`. Purely positive alternations (middle,
+    conative, BPPA) are preserved by `a || b ≥ a`. Mixed alternations
+    (causativeInchoative, instrumentSubject, resultative) preserve positive
+    features and `¬instrumentSpec` since `false || false = false`.
+    Class-specific alternations hold vacuously (`false = true` premise). -/
+theorem fuse_alternation_monotone (v c : MeaningComponents) (alt : DiathesisAlternation)
+    (h_no_inst : c.instrumentSpec = false)
+    (h_bare : v.predictedAlternation alt = true) :
+    (v.fuse c).predictedAlternation alt = true := by
+  rcases v with ⟨cos, con, mot, caus, inst, man⟩
+  rcases c with ⟨cos', con', mot', caus', inst', man'⟩
+  cases alt <;> simp_all [MeaningComponents.predictedAlternation, MeaningComponents.fuse]
+
+/-- **instrumentSpec persists through fusion**: once a verb has instrument
+    specificity, no fusion can remove it (`true || b = true`). -/
+theorem instrumentSpec_persists (v c : MeaningComponents)
+    (h : v.instrumentSpec = true) :
+    (v.fuse c).instrumentSpec = true := by
+  simp [MeaningComponents.fuse, h]
+
+/-- **Fusion is NOT generally monotone**: when instrumentSpec is added,
+    it CAN block an alternation the verb had alone.
+
+    Witness: CoS + causation + ¬instrumentSpec participates in
+    causativeInchoative; fusing with {instrumentSpec} blocks it.
+    Shows `c.instrumentSpec = false` in `fuse_alternation_monotone`
+    is necessary, not just sufficient. -/
+theorem fuse_not_generally_monotone :
+    ∃ (v c : MeaningComponents) (alt : DiathesisAlternation),
+      v.predictedAlternation alt = true ∧
+      (v.fuse c).predictedAlternation alt = false :=
+  ⟨⟨true, false, false, true, false, false⟩,
+   ⟨false, false, false, false, true, false⟩,
+   .causativeInchoative, rfl, rfl⟩
+
+/-- **instrumentSpec is the sole blocker**: if a verb participates alone
+    but NOT after fusion, instrumentSpec must have been introduced.
+    No other feature addition can destroy alternation participation. -/
+theorem fuse_blocks_only_via_instrumentSpec (v c : MeaningComponents)
+    (alt : DiathesisAlternation)
+    (h_bare : v.predictedAlternation alt = true)
+    (h_fused : (v.fuse c).predictedAlternation alt = false) :
+    (v.fuse c).instrumentSpec = true := by
+  rcases v with ⟨cos, con, mot, caus, inst, man⟩
+  rcases c with ⟨cos', con', mot', caus', inst', man'⟩
+  cases alt <;> simp_all [MeaningComponents.predictedAlternation, MeaningComponents.fuse]
+
 /-- Full alternation profile for a Levin class, combining component-derived
     predictions with class-specific overrides.
 
