@@ -52,14 +52,14 @@ namespace Fragments.Chuj
     Examples: mak' "hit", tek' "kick". -/
 def rootTV_pc : Root :=
   { arity := .selectsTheme, changeType := .propertyConcept,
-    denotationType := some .eventPred }
+    denotationType := some .indivStatePred }
 
 /-- √TV root (result): selects theme, entails change-of-state.
     Semantic type ⟨e, ⟨s,t⟩⟩ (@cite{coon-2019}, (3)).
     Examples: jatz' "hit (breaking)", tzak' "wrap". -/
 def rootTV_res : Root :=
   { arity := .selectsTheme, changeType := .result,
-    denotationType := some .eventPred }
+    denotationType := some .indivStatePred }
 
 /-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per @cite{davis-1997}),
     but does NOT project a complement — the entity argument becomes the
@@ -68,7 +68,7 @@ def rootTV_res : Root :=
     Examples: way "sleep", ok' "cry", jaw "arrive", b'at "go". -/
 def rootITV : Root :=
   { arity := .noTheme, changeType := .propertyConcept,
-    denotationType := some .eventPred }
+    denotationType := some .indivStatePred }
 
 /-- √POS root: positional/stative. Semantic type ⟨e, ⟨s,d⟩⟩ — a
     measure function, not a truth-value predicate.
@@ -89,13 +89,13 @@ def rootNOM : Root :=
 -- ============================================================================
 
 /-- Coon's four root classes are recovered as (arity × denotationType) pairs.
-    √TV = selectsTheme + eventPred, √ITV = noTheme + eventPred,
+    √TV = selectsTheme + indivStatePred, √ITV = noTheme + indivStatePred,
     √POS = noTheme + measureFn, √NOM = noTheme + entityPred. -/
 theorem four_way_classification :
     rootTV_res.arity = .selectsTheme ∧
-    rootTV_res.denotationType = some .eventPred ∧
+    rootTV_res.denotationType = some .indivStatePred ∧
     rootITV.arity = .noTheme ∧
-    rootITV.denotationType = some .eventPred ∧
+    rootITV.denotationType = some .indivStatePred ∧
     rootPOS.arity = .noTheme ∧
     rootPOS.denotationType = some .measureFn ∧
     rootNOM.arity = .noTheme ∧
@@ -130,7 +130,7 @@ inductive CRootClass where
 def rootToClass (r : Root) : CRootClass :=
   match r.arity, r.denotationType with
   | .selectsTheme, _               => .tv
-  | .noTheme,      some .eventPred  => .itv
+  | .noTheme,      some .indivStatePred  => .itv
   | .noTheme,      some .measureFn  => .pos
   | _,             _                => .nom
 

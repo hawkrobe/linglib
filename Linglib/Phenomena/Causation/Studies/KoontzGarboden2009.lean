@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Causation.MorphologicalCausation
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
+import Linglib.Theories.Morphology.Core.Monotonicity
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Core.Alternation
 
@@ -60,6 +61,8 @@ namespace Phenomena.Causation.Studies.KoontzGarboden2009
 open Fragments.Spanish.Predicates
 open Semantics.Causation.MorphologicalCausation
 open Semantics.Lexical.Verb.EventStructure
+open Morphology.Core.Monotonicity
+open Minimalism (VerbHead)
 open Core.Alternation
 
 -- ════════════════════════════════════════════════════
@@ -149,6 +152,74 @@ def reflexivizeBool {Entity : Type} (R : Entity → Entity → Bool) :
 def reflexivizationYieldsAnticausative : CauserSpec → Bool
   | .effector => true
   | .agent => false
+
+-- ════════════════════════════════════════════════════
+-- § 3b. Reduction to Proto-Role Entailments
+-- ════════════════════════════════════════════════════
+
+/-! K-G's EFFECTOR/AGENT distinction (@cite{van-valin-wilkins-1996})
+    partially reduces to @cite{dowty-1991}'s proto-role entailments.
+
+    The reduction: EFFECTOR verbs entail causation but NOT volition
+    for their subject. AGENT verbs entail both. Volition is the
+    discriminating feature.
+
+    Where it reduces: for every Spanish verb with a `causerSpec`,
+    checking `volition` in the subject's entailment profile yields
+    the same classification. The alternation prediction chains:
+    entailment profile → CauserSpec → anticausativization.
+
+    Where it doesn't reduce conceptually: K-G's EFFECTOR is defined
+    by what the verb LACKS (thematic specification of the causer),
+    while Dowty's system specifies what the verb ENTAILS (individual
+    proto-role features). These are different theoretical objects that
+    happen to align for the causative alternation. A hypothetical verb
+    entailing sentience but not volition for its causer would be
+    classified as EFFECTOR by `toCauserSpec` — correctly, since it
+    would still admit non-agentive causers — but its EFFECTOR status
+    would carry more structure than K-G's underspecification account
+    predicts. -/
+
+open Semantics.Lexical.Verb.EntailmentProfile
+
+/-- Derive `CauserSpec` from a proto-role entailment profile.
+    Volition is the discriminating feature:
+    - volition → AGENT (thematically specified causer)
+    - causation without volition → EFFECTOR (underspecified causer)
+    - neither → not a causer at all -/
+def toCauserSpec (p : EntailmentProfile) : Option CauserSpec :=
+  if p.volition then some .agent
+  else if p.causation then some .effector
+  else none
+
+/-- The derivation matches the stipulated `causerSpec` for every
+    Spanish verb that has both fields populated. -/
+theorem causerSpec_matches_profile :
+    (allVerbs.filter (fun v => v.causerSpec.isSome && v.subjectEntailments.isSome)).all
+      (fun v => v.subjectEntailments.bind toCauserSpec == v.causerSpec) = true := by
+  native_decide
+
+/-- Volition is the discriminating feature: all EFFECTOR verbs have
+    `volition = false` in their subject profile. -/
+theorem effector_lacks_volition :
+    (allVerbs.filter (fun v => v.causerSpec == some .effector)).all
+      (fun v => v.subjectEntailments.map (·.volition) == some false) = true := by
+  native_decide
+
+/-- All AGENT verbs have `volition = true` in their subject profile. -/
+theorem agent_has_volition :
+    (allVerbs.filter (fun v => v.causerSpec == some .agent)).all
+      (fun v => v.subjectEntailments.map (·.volition) == some true) = true := by
+  native_decide
+
+/-- Both EFFECTOR and AGENT verbs satisfy `isEffector` (movement ∨ IE
+    with causation). This is why `isEffector` alone cannot distinguish
+    them — it's a necessary but not sufficient condition for K-G's
+    EFFECTOR. The AGENT/EFFECTOR split requires checking volition. -/
+theorem both_satisfy_causation :
+    (allVerbs.filter (fun v => v.causerSpec.isSome)).all
+      (fun v => v.subjectEntailments.map (·.causation) == some true) = true := by
+  native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. The Main Prediction (§§3.1–3.2)
@@ -267,24 +338,31 @@ theorem feel_like_requires_cause :
     analysis resolves this: no operator is deleted, the relation is
     simply reflexivized. -/
 
-/-- The Monotonicity Hypothesis: a word formation operation is
-    monotonic if it does not remove any operator from the input LSR.
-    Reflexivization preserves all operators (CAUSE, BECOME, THEME,
-    EFFECTOR) — it only adds the identity constraint x = y. -/
-def isMonotonic (inputOps outputOps : List String) : Bool :=
-  inputOps.all (outputOps.contains ·)
+/-- On the reflexivization analysis, anticausativization is the
+    identity on operator lists — it satisfies the MH. -/
+theorem reflexivization_satisfiesMH_verbHead :
+    satisfiesMH (identityOp (Op := VerbHead)) :=
+  identityOp_satisfiesMH
 
-/-- Reflexivization is monotonic: all operators survive. -/
+/-- On the deletion analysis, anticausativization removes vCAUSE —
+    it does not satisfy the MH. -/
+theorem deletion_of_cause_not_satisfiesMH :
+    ¬ satisfiesMH (deleteOp VerbHead.vCAUSE) :=
+  deleteOp_not_satisfiesMH _
+
+/-- Concrete instance: the inchoative operator list [vCAUSE, vGO, vBE]
+    is monotonically preserved by reflexivization. -/
 theorem reflexivization_monotonic :
     isMonotonic
-      ["CAUSE", "EFFECTOR", "BECOME", "THEME"]
-      ["CAUSE", "EFFECTOR", "BECOME", "THEME"] = true := by native_decide
+      [VerbHead.vCAUSE, .vGO, .vBE]
+      [VerbHead.vCAUSE, .vGO, .vBE] = true := by native_decide
 
-/-- Deletion is not monotonic: CAUSE is removed. -/
+/-- Concrete instance: deleting vCAUSE from the inchoative list
+    breaks monotonicity. -/
 theorem deletion_not_monotonic :
     isMonotonic
-      ["CAUSE", "EFFECTOR", "BECOME", "THEME"]
-      ["BECOME", "THEME"] = false := by native_decide
+      [VerbHead.vCAUSE, .vGO, .vBE]
+      [VerbHead.vGO, .vBE] = false := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge: Reflexivization ↔ ValencyAlternation

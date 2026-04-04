@@ -490,6 +490,22 @@ theorem diamond_distributes (p q : Prop' World) :
   | inl hp => exact Or.inl ⟨w, hp⟩
   | inr hq => exact Or.inr ⟨w, hq⟩
 
+/-- Reverse: ◇A ∨ ◇B → ◇(A ∨ B). -/
+theorem diamond_collects (p q : Prop' World) :
+    diamond p ∨ diamond q → diamond (pdisj p q) := by
+  intro h
+  cases h with
+  | inl hp => obtain ⟨w, hw⟩ := hp; exact ⟨w, Or.inl hw⟩
+  | inr hq => obtain ⟨w, hw⟩ := hq; exact ⟨w, Or.inr hw⟩
+
+/-- **◇(A ∨ B) ↔ ◇A ∨ ◇B**: the scope distinction is truth-conditionally
+    vacuous in standard modal logic. Central to @cite{ciardelli-guerrini-2026}'s
+    reductionist thesis: the difference between narrow-scope ◇(A ∨ B) and
+    wide-scope ◇A ∨ ◇B matters only for pragmatic enrichment. -/
+theorem diamond_distributes_iff (p q : Prop' World) :
+    diamond (pdisj p q) ↔ diamond p ∨ diamond q :=
+  ⟨diamond_distributes p q, diamond_collects p q⟩
+
 end FCDuality
 
 -- ============================================================================

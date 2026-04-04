@@ -134,7 +134,7 @@ def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .circumstantial
 structure ForceFlavor where
   force : ModalForce
   flavor : ModalFlavor
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Inhabited
 
 instance : LawfulBEq ForceFlavor where
   eq_of_beq {a b} h := by
@@ -216,7 +216,69 @@ def ModalItem.sharesConcordForce (a b : ModalItem) : Bool :=
     ConcordType.fromModalForce ff1.force == ConcordType.fromModalForce ff2.force
 
 -- ============================================================================
--- §6. Modal Decomposability
+-- §6. Modal Features (Zeijlstra 2007)
+-- ============================================================================
+
+/-- Interpretability of a modal feature (@cite{zeijlstra-2007}).
+
+    Modal elements carry features specifying modal force (∃/∀).
+    Features are either **interpretable** (semantically active — the element
+    contributes a modal operator at LF) or **uninterpretable** (semantically
+    vacuous — the element is checked by a c-commanding interpretable feature
+    and does not contribute its own operator).
+
+    @cite{ciardelli-guerrini-2026} use this distinction to derive narrow-scope
+    readings for "MOD A COORD MOD B" sentences: when both auxiliaries carry
+    uninterpretable features, a single silent interpretable operator scopes
+    over the coordination, yielding Δ(A ∘ B) rather than ΔA ∘ ΔB. -/
+inductive ModalInterpretability where
+  | interpretable    -- i-MOD: semantically active (allow, demand, silent OP)
+  | uninterpretable  -- u-MOD: semantically vacuous (may, must as auxiliaries)
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+/-- A modal feature: force (∃/∀) paired with interpretability (i/u).
+
+    @cite{zeijlstra-2007}: every modal element carries a feature from this
+    four-cell space: [i∃-MOD], [u∃-MOD], [i∀-MOD], [u∀-MOD]. -/
+structure ModalFeature where
+  force : ModalForce
+  interp : ModalInterpretability
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+/-- Feature checking: an interpretable feature checks a c-commanded
+    uninterpretable feature of matching concord class.
+
+    @cite{zeijlstra-2007}: u-features must be c-commanded by a matching
+    i-feature to be licensed. The match is by concord class (necessity and
+    weak necessity both count as ∀-type). -/
+def ModalFeature.checks (checker checked : ModalFeature) : Bool :=
+  checker.interp == .interpretable &&
+  checked.interp == .uninterpretable &&
+  ConcordType.fromModalForce checker.force == ConcordType.fromModalForce checked.force
+
+/-- Negation flips the relevant modal force for concord purposes.
+
+    @cite{ciardelli-guerrini-2026} §4.2: modal concord across negation
+    requires opposite forces — ALLOW[i∃](¬NEED[u∀]) is well-formed because
+    ¬∀ = ∃, but *DEMAND[i∀](¬NEED[u∀]) is ill-formed (same force).
+
+    Derived from `ModalForce.dual` — negation over a modal operator yields
+    its dual force (¬□ = ◇, ¬◇ = □). -/
+abbrev ModalForce.negatedConcordForce := ModalForce.dual
+
+/-- Feature checking across negation: an interpretable feature checks a
+    negated uninterpretable feature when their forces are duals.
+
+    ALLOW[i∃](¬NEED[u∀]): ∃ checks negated ∀ (= ∃) ✓
+    *DEMAND[i∀](¬NEED[u∀]): ∀ checks negated ∀ (= ∃) ✗ -/
+def ModalFeature.checksAcrossNegation (checker checked : ModalFeature) : Bool :=
+  checker.interp == .interpretable &&
+  checked.interp == .uninterpretable &&
+  ConcordType.fromModalForce checker.force ==
+    ConcordType.fromModalForce checked.force.dual
+
+-- ============================================================================
+-- §7. Modal Decomposability
 -- ============================================================================
 
 /-- Whether a modal meaning decomposes into independent force and flavor

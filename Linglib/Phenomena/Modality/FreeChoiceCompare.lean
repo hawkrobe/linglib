@@ -642,6 +642,64 @@ def allPredictCancellation : Bool := explicitCancellation.felicitous
 #guard allPredictCancellation
 
 -- ============================================================================
+-- SECTION 9: Source LF — @cite{ciardelli-guerrini-2026}
+-- ============================================================================
+
+/-!
+## An Orthogonal Dimension: Source LF
+
+@cite{ciardelli-guerrini-2026} identify a dimension missing from the comparison
+above. All seven theories derive FC from the **narrow-scope** LF ◇(A ∨ B).
+None addresses the compositional question: how does this LF arise for sentences
+with surface form "may A or may B"?
+
+### The Reductionist Thesis
+
+Previous work assumed that "may A or may B" can receive the LF ◇A ∨ ◇B
+(wide scope), creating a separate "wide-scope free choice" problem. C&G argue
+this LF does not generate the FC reading at all — it generates an ignorance
+reading. The FC reading comes entirely from ◇(A ∨ B), derived via modal
+concord (@cite{zeijlstra-2007}).
+
+### Consequences for the Comparison
+
+The reductionist thesis is **compatible with every theory in the table**.
+It adds a pre-semantic step (LF derivation via concord) that feeds into
+whichever FC mechanism one prefers. The key new prediction is that
+non-auxiliary modal constructions ("it's ok that", "be allowed to")
+should NOT give rise to FC in coordination — a prediction that
+distinguishes concord-based from movement-based accounts
+(@cite{meyer-sauerland-2017}).
+-/
+
+/-- Source LF comparison: all theories assume narrow-scope input. -/
+structure SourceLFComparison where
+  theory : String
+  inputLF : String
+  derivesFC : Bool
+  explainsHowLFArises : Bool
+  deriving Repr
+
+def lfComparisons : List SourceLFComparison :=
+  [ { theory := "Fox 2007", inputLF := "◇(A ∨ B)"
+    , derivesFC := true, explainsHowLFArises := false }
+  , { theory := "Bar-Lev & Fox 2020", inputLF := "◇(A ∨ B)"
+    , derivesFC := true, explainsHowLFArises := false }
+  , { theory := "Champollion et al. 2019", inputLF := "◇(A ∨ B)"
+    , derivesFC := true, explainsHowLFArises := false }
+  , { theory := "Aloni 2022", inputLF := "◇(A ∨ B)"
+    , derivesFC := true, explainsHowLFArises := false }
+  , { theory := "Ciardelli & Guerrini 2026", inputLF := "◇(A ∨ B) via concord"
+    , derivesFC := true, explainsHowLFArises := true } ]
+
+/-- All theories derive FC from narrow-scope LF. -/
+theorem all_narrow_scope : lfComparisons.all (·.derivesFC) = true := rfl
+
+/-- Only C&G explain how the narrow-scope LF arises compositionally. -/
+theorem only_cg_explains_lf :
+    (lfComparisons.filter (·.explainsHowLFArises)).length = 1 := rfl
+
+-- ============================================================================
 -- Summary
 -- ============================================================================
 
@@ -663,6 +721,10 @@ def allPredictCancellation : Bool := explicitCancellation.felicitous
 - @cite{holliday-mandelkern-2024}: Possibility semantics — FC holds when the
   proposition algebra is Boolean, fails in non-Boolean ortholattices
 
+**LF derivation (orthogonal to the above)**:
+- @cite{ciardelli-guerrini-2026}: Modal concord derives narrow-scope LF
+  ◇(A ∨ B) for surface "may A or may B" — no wide-scope FC problem
+
 ### Key Differentiators
 
 | Feature | Best Theory |
@@ -673,6 +735,7 @@ def allPredictCancellation : Bool := explicitCancellation.felicitous
 | Cross-disjunct anaphora | Elliott & Sudo |
 | Static team semantics | Aloni |
 | Why FC fails selectively | Holliday & Mandelkern |
+| Source LF for "may A or may B" | Ciardelli & Guerrini |
 
 ### Complementary Insights
 
@@ -683,6 +746,7 @@ Each theory contributes something unique:
 - **Aloni**: Static team-semantic alternative to dynamics
 - **Elliott & Sudo**: Anaphora + bilateral structure
 - **Holliday & Mandelkern**: WHEN FC holds (Boolean algebra) vs fails (ortholattice)
+- **Ciardelli & Guerrini**: WHERE the LF comes from (concord, not movement)
 -/
 
 end Phenomena.Modality.FreeChoiceCompare

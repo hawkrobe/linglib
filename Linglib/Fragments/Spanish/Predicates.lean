@@ -94,7 +94,9 @@ def abrir : SpanishVerbEntry :=
   { form := "abrir", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true, causerSpec := some .effector }
+    licensesStylLE := true, causerSpec := some .effector,
+    subjectEntailments := some ⟨false, false, true, false, true,
+                                 false, false, false, false, false⟩ }
 
 /-- *romper* "break" — marked anticausative, licenses stylistic LE.
     EFFECTOR causer: agents, instruments, natural forces, events
@@ -103,7 +105,9 @@ def romper : SpanishVerbEntry :=
   { form := "romper", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true, causerSpec := some .effector }
+    licensesStylLE := true, causerSpec := some .effector,
+    subjectEntailments := some ⟨false, false, true, false, true,
+                                 false, false, false, false, false⟩ }
 
 /-- *hundir* "sink" — marked anticausative, licenses stylistic LE.
     EFFECTOR causer (@cite{koontz-garboden-2009} ex. 46). -/
@@ -111,7 +115,9 @@ def hundir : SpanishVerbEntry :=
   { form := "hundir", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := true, causerSpec := some .effector }
+    licensesStylLE := true, causerSpec := some .effector,
+    subjectEntailments := some ⟨false, false, true, false, true,
+                                 false, false, false, false, false⟩ }
 
 /-- *caer* "fall" — marked anticausative, licenses stylistic LE.
     (exx. 11–12, unaccusative) -/
@@ -198,7 +204,9 @@ def asesinar : SpanishVerbEntry :=
   { form := "asesinar", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false, causerSpec := some .agent }
+    licensesStylLE := false, causerSpec := some .agent,
+    subjectEntailments := some ⟨true, true, true, true, true,
+                                 false, false, false, false, false⟩ }
 
 /-- *cortar* "cut" — AGENT causer required. No anticausative.
     @cite{koontz-garboden-2009} ex. 26. -/
@@ -206,7 +214,9 @@ def cortar : SpanishVerbEntry :=
   { form := "cortar", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := false, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false, causerSpec := some .agent }
+    licensesStylLE := false, causerSpec := some .agent,
+    subjectEntailments := some ⟨true, true, true, true, true,
+                                 false, false, false, false, false⟩ }
 
 /-- *ahogar* "drown" — EFFECTOR causer, but animate theme undergoers
     are typical. Alternates: *ahogarse* is a derived inchoative.
@@ -215,7 +225,9 @@ def ahogar : SpanishVerbEntry :=
   { form := "ahogar", complementType := .np,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
-    licensesStylLE := false, causerSpec := some .effector }
+    licensesStylLE := false, causerSpec := some .effector,
+    subjectEntailments := some ⟨false, false, true, false, true,
+                                 false, false, false, false, false⟩ }
 
 /-- *empeorar* "worsen" — internally caused COS verb. No CAUSE in LSR.
     Rejects *por sí solo*. @cite{koontz-garboden-2009} ex. 65a. -/

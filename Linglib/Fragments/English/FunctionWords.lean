@@ -70,7 +70,7 @@ def CompEntry.toWord (c : CompEntry) : Word :=
 -- ============================================================================
 
 section Auxiliaries
-open Core.Modality (ForceFlavor ModalForce ModalFlavor)
+open Core.Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
 open Core.Register (Level)
 
 /-- Auxiliary type -/
@@ -103,6 +103,16 @@ structure AuxEntry where
       `true` when the contracted form cannot be derived by regular *-n't*
       suffixation (e.g., *won't* ← *will*, *can't* ← *can*, *don't* ← *do*). -/
   negIrregular : Bool := false
+  /-- Modal feature interpretability (@cite{zeijlstra-2007}).
+      Modal auxiliaries carry **uninterpretable** features [u∃/∀-MOD]:
+      they are semantically vacuous and checked by a c-commanding
+      interpretable operator. Non-modal auxiliaries (do, be, have) carry
+      no modal feature (`none`).
+
+      @cite{ciardelli-guerrini-2026} use this to derive narrow-scope
+      LFs for "may A or may B" via modal concord: both "may"s carry
+      [u∃-MOD], checked by a single silent [i∃-MOD] operator. -/
+  interpretability : Option ModalInterpretability := none
   deriving Repr, BEq
 
 -- Modals (no agreement). Modal meanings follow @cite{kratzer-1981}, @cite{palmer-2001}.
@@ -114,40 +124,49 @@ def can : AuxEntry where
   form := "can"; auxType := .modal
   modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
   negForm := some "can't"; negIrregular := true   -- [kænt] not *[kænənt]
+  interpretability := some .uninterpretable
 def could : AuxEntry where
   form := "could"; auxType := .modal; tense := some .Past
   modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
   negForm := some "couldn't"
+  interpretability := some .uninterpretable
 def will : AuxEntry where
   form := "will"; auxType := .modal
   modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
   negForm := some "won't"; negIrregular := true    -- [wont] not *[wɪlnt]
+  interpretability := some .uninterpretable
 def would : AuxEntry where
   form := "would"; auxType := .modal; tense := some .Past
   modalMeaning := cp [.necessity] [.epistemic, .circumstantial]
   negForm := some "wouldn't"
+  interpretability := some .uninterpretable
 def shall : AuxEntry where
   form := "shall"; auxType := .modal
   modalMeaning := cp [.necessity] [.deontic]
   register := .formal
   negForm := some "shan't"; negIrregular := true   -- [ʃænt] not *[ʃælnt]
+  interpretability := some .uninterpretable
 def should : AuxEntry where
   form := "should"; auxType := .modal; tense := some .Past
   modalMeaning := cp [.weakNecessity] [.deontic, .epistemic]
   negForm := some "shouldn't"
+  interpretability := some .uninterpretable
 def may : AuxEntry where
   form := "may"; auxType := .modal
   modalMeaning := cp [.possibility] [.epistemic, .deontic]
   negForm := none                                  -- *mayn't: paradigm gap
+  interpretability := some .uninterpretable
 def might : AuxEntry where
   form := "might"; auxType := .modal; tense := some .Past
   modalMeaning := cp [.possibility] [.epistemic]
   negForm := some "mightn't"
+  interpretability := some .uninterpretable
 def must : AuxEntry where
   form := "must"; auxType := .modal
   modalMeaning := cp [.necessity] [.epistemic, .deontic, .circumstantial]
   register := .formal
   negForm := some "mustn't"; negIrregular := true  -- [t] deletion: [mʌsnt]
+  interpretability := some .uninterpretable
 
 -- Semi-modals and periphrastic modals
 
@@ -158,19 +177,23 @@ def haveTo : AuxEntry where
   form := "have to"; auxType := .modal
   modalMeaning := cp [.necessity] [.deontic, .circumstantial]
   register := .informal
+  interpretability := some .uninterpretable
 
 -- Semi-modals (Z&P Table 1 rows o–q)
 def dare : AuxEntry where
   form := "dare"; auxType := .modal
   negForm := some "daren't"
+  interpretability := some .uninterpretable
 def need : AuxEntry where
   form := "need"; auxType := .modal
   modalMeaning := cp [.necessity] [.deontic, .circumstantial]
   negForm := some "needn't"
+  interpretability := some .uninterpretable
 def ought : AuxEntry where
   form := "ought"; auxType := .modal
   modalMeaning := cp [.weakNecessity] [.deontic, .epistemic]
   negForm := some "oughtn't"
+  interpretability := some .uninterpretable
 
 -- Do-support
 def do_ : AuxEntry where
@@ -234,6 +257,14 @@ def AuxEntry.toModalItem (a : AuxEntry) : Core.Modality.ModalItem where
   form := a.form
   meaning := a.modalMeaning
   register := a.register
+
+/-- Project to the modal feature (force × interpretability) for the primary
+    force value. Returns `none` for non-modal auxiliaries or entries without
+    modal meaning. -/
+def AuxEntry.toModalFeature (a : AuxEntry) : Option ModalFeature :=
+  match a.interpretability, a.modalMeaning with
+  | some interp, ff :: _ => some ⟨ff.force, interp⟩
+  | _, _ => none
 
 end Auxiliaries
 

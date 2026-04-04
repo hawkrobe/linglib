@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.229.495] - 2026-04-03
+
+### Added
+- **FunctionWords.lean** (Fragments/English): `interpretability : Option ModalInterpretability` field on `AuxEntry` — all 13 modal entries carry `some .uninterpretable` (@cite{zeijlstra-2007}), non-modal auxiliaries default to `none`; `AuxEntry.toModalFeature` projection (force × interpretability)
+- **ModalTypes.lean**: `ModalInterpretability` and `ModalFeature` now derive `Inhabited`
+
+### Changed
+- **CiardelliGuerrini2026.lean**: `mayFeature`/`mustFeature` now fully derived from `AuxEntry.toModalFeature` (both force AND interpretability from Fragment); `may_feature_eq`/`must_feature_eq` verify the full feature; `may_uninterpretable`/`must_uninterpretable`/`can_uninterpretable`/`need_uninterpretable` per-entry verification theorems; Rotter & Liu bridge updated to use `toModalFeature`
+
+### Fixed
+- **TheoryComparison.lean** (Phenomena/ArgumentStructure/Studies): `ThetaRole.resultGoal` → `.goal` — the `resultGoal` constructor was removed from `ThetaRole`; added `ArgRole.toTheta` helper for local-to-shared role mapping
+
+## [0.229.494] - 2026-04-03
+
+### Added
+- **HaninkKoontzGarboden2025.lean** (Phenomena/Possession/Studies): formalization of @cite{hanink-koontz-garboden-2025} — bipartite verb composability derived from `RootDenotationType.hasIndivArg` (`bipartite_gap_iff_no_indiv_arg`), v_have (-iʔ) possessive verbalizer via Barker's π (`vHave_is_ex_pi`), ∇ type-shifter (`nabla_closes_indiv_arg`), MH consistency (`all_derivations_monotonic`), universalist refutation (`within_language_variation`), `class2_characterization` biconditional, 35 Wá·šiw PC roots from Table A1 with per-root verification via `Root` from RootTypology
+
+### Changed
+- **RootTypology.lean**: `RootDenotationType.eventPred` → `indivStatePred` + new `statePred` (⟨v,t⟩ quality-type); `hasIndivArg` predicate on `RootDenotationType`; `PCClass.humanPropensity` (completing Dixon 1982's 7 categories); `verbalFormIsMarked` docstring clarified as cross-linguistic tendency
+- **VerbBuilding.lean** (Fragments/Chuj), **Coon2019.lean** (Phenomena/Causation/Studies): `eventPred` → `indivStatePred`, `subclass_counts_match` updated for 7 PC categories
+
 ## [0.229.493] - 2026-04-03
 
 ### Added

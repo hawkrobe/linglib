@@ -545,11 +545,11 @@ theorem theme_persists_all_voices :
 
 /-- The four root classes have distinct denotation types (@cite{coon-2019}, (3)).
     The fragment's `denotationType` field captures these:
-    √TV/√ITV = eventPred ⟨e,⟨s,t⟩⟩, √POS = measureFn ⟨e,⟨s,d⟩⟩,
+    √TV/√ITV = indivStatePred ⟨e,⟨s,t⟩⟩, √POS = measureFn ⟨e,⟨s,d⟩⟩,
     √NOM = entityPred ⟨e,t⟩. -/
 theorem denotation_type_alignment :
-    (toFragmentRoot .tv).denotationType = some .eventPred ∧
-    (toFragmentRoot .itv).denotationType = some .eventPred ∧
+    (toFragmentRoot .tv).denotationType = some .indivStatePred ∧
+    (toFragmentRoot .itv).denotationType = some .indivStatePred ∧
     (toFragmentRoot .pos).denotationType = some .measureFn ∧
     (toFragmentRoot .nom).denotationType = some .entityPred := ⟨rfl, rfl, rfl, rfl⟩
 
@@ -767,19 +767,20 @@ theorem result_roots_classified_and_predicted :
     RootType.hasSimpleStative .result = false := by
   exact ⟨by native_decide, rfl⟩
 
-/-- The subclass taxonomies are parallel: the theory's `PCClass` and the
-    phenomena's `PCSubclass` have the same constructors. Similarly for
-    `ResultClass` and `ResultSubclass`. This is verified by exhaustive
-    mapping (both have 6 PC subclasses and 8 result subclasses). -/
+/-- The subclass taxonomies are aligned: B&KG's `PCSubclass` has 6
+    categories (matching their Table 2); the theory's `PCClass` has 7
+    (adding `humanPropensity` from @cite{dixon-1982}, attested in
+    @cite{hanink-koontz-garboden-2025}). `ResultClass` and `ResultSubclass`
+    match exactly (8 subclasses). -/
 theorem subclass_counts_match :
-    -- 6 PC subclasses in both
-    [PCClass.dimension, .age, .value, .color, .physicalProperty, .speed].length =
-    [PCSubclass.dimension, .age, .value, .color, .physicalProperty, .speed].length ∧
+    -- B&KG's 6 PC subclasses are a subset of the theory's 7
+    [PCSubclass.dimension, .age, .value, .color, .physicalProperty, .speed].length = 6 ∧
+    [PCClass.dimension, .age, .value, .color, .physicalProperty, .humanPropensity, .speed].length = 7 ∧
     -- 8 result subclasses in both
     [ResultClass.entitySpecificCoS, .cooking, .breaking, .bending,
      .killing, .destroying, .calibratableCoS, .inherentlyDirectedMotion].length =
     [ResultSubclass.entitySpecificCoS, .cooking, .breaking, .bending,
      .killing, .destroying, .calibratableCoS, .inherentlyDirectedMotion].length :=
-  ⟨rfl, rfl⟩
+  ⟨rfl, rfl, rfl⟩
 
 end Phenomena.Causation.Studies.Coon2019

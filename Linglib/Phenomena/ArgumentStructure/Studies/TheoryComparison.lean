@@ -92,17 +92,16 @@ def CxGFrame.farSatisfied (f : CxGFrame) : Bool :=
   let fusedConRoles := f.fusedPairs.map (·.2)
   f.constructionRoles.all (λ r => fusedConRoles.contains r || f.constructionRoles.contains r)
 
-/-- Check semantic coherence for all fused pairs. -/
+/-- Map local ArgRole to ThetaRole for coherence checking.
+    `.resultState` and `.path` map to `.goal` — the closest
+    available role in the shared ThetaRole vocabulary. -/
+private def ArgRole.toTheta : ArgRole → ThetaRole
+  | .agent => .agent | .patient => .patient
+  | .theme => .theme | .resultState => .goal
+  | .path => .goal
+
 def CxGFrame.coherent (f : CxGFrame) : Bool :=
-  f.fusedPairs.all (λ ⟨rV, rC⟩ => rolesCoherent
-    (match rV with
-     | .agent => .agent | .patient => .patient
-     | .theme => .theme | .resultState => .resultGoal
-     | .path => .resultGoal)
-    (match rC with
-     | .agent => .agent | .patient => .patient
-     | .theme => .theme | .resultState => .resultGoal
-     | .path => .resultGoal))
+  f.fusedPairs.all (λ ⟨rV, rC⟩ => rolesCoherent rV.toTheta rC.toTheta)
 
 /-! ### DG argument licensing
 

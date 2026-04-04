@@ -106,16 +106,35 @@ def RootArity.hasInternalArg : RootArity → Bool
   | .selectsTheme => true
   | .noTheme => false
 
-/-- The semantic denotation domain of a root (@cite{coon-2019}, (3)).
+/-- The semantic denotation domain of a root (@cite{coon-2019}, (3);
+    extended by @cite{hanink-koontz-garboden-2025}).
 
-    - **eventPred** ⟨e, ⟨s,t⟩⟩: entity → event → truth-value (√TV, √ITV)
+    - **indivStatePred** ⟨e, ⟨v,t⟩⟩: individual/state relation (√TV, √ITV;
+      also PC Class 1/3 roots per @cite{hanink-koontz-garboden-2025}: λx_e λs_v[P(x)(s)])
+    - **statePred** ⟨v,t⟩: predicate of states, no individual argument
+      (@cite{hanink-koontz-garboden-2025} Class 2 PC roots: λs_v[P(s)],
+      e.g., √I:YEL 'big' in Wá·šiw)
     - **measureFn** ⟨e, ⟨s,d⟩⟩: entity → event → degree (√POS; @cite{henderson-2019})
     - **entityPred** ⟨e,t⟩: entity → truth-value, no event (√NOM) -/
 inductive RootDenotationType where
-  | eventPred   -- ⟨e, ⟨s,t⟩⟩ (√TV, √ITV)
-  | measureFn   -- ⟨e, ⟨s,d⟩⟩ (√POS; @cite{henderson-2019})
-  | entityPred  -- ⟨e,t⟩ (√NOM)
+  | indivStatePred  -- ⟨e, ⟨v,t⟩⟩ (√TV, √ITV; PC Class 1/3)
+  | statePred       -- ⟨v,t⟩ (PC Class 2: quality-type)
+  | measureFn       -- ⟨e, ⟨s,d⟩⟩ (√POS; @cite{henderson-2019})
+  | entityPred      -- ⟨e,t⟩ (√NOM)
   deriving DecidableEq, Repr
+
+/-- Whether a root denotation type includes an individual argument.
+
+    Types with an individual argument (⟨e, ...⟩) can compose directly
+    with v_become (which requires ⟨e, ⟨v,t⟩⟩). Types without one
+    (⟨v,t⟩) cause a type mismatch and require type-shifting (e.g., ∇)
+    or possessive semantics (v_have) to predicate of individuals.
+    (@cite{hanink-koontz-garboden-2025} §5.1) -/
+def RootDenotationType.hasIndivArg : RootDenotationType → Bool
+  | .indivStatePred => true   -- ⟨e, ⟨v,t⟩⟩
+  | .statePred      => false  -- ⟨v,t⟩
+  | .measureFn      => true   -- ⟨e, ⟨s,d⟩⟩
+  | .entityPred     => true   -- ⟨e,t⟩
 
 /-- Unified root characterization bundling all classification dimensions.
 
@@ -130,7 +149,7 @@ inductive RootDenotationType where
 
     Axes 1, 2, and 3 cross-classify: Coon's four Chuj root classes are
     recovered as (arity × denotationType) pairs:
-    √TV = selectsTheme + eventPred, √ITV = noTheme + eventPred,
+    √TV = selectsTheme + indivStatePred, √ITV = noTheme + indivStatePred,
     √POS = noTheme + measureFn, √NOM = noTheme + entityPred. -/
 structure Root where
   /-- Does this root select an internal argument? -/
@@ -149,13 +168,19 @@ structure Root where
 /-- Does this root lexically entail prior change? -/
 def Root.entailsChange (r : Root) : Bool := r.changeType.entailsChange
 
-/-- Property concept root subclasses (@cite{dixon-1982}; @cite{beavers-etal-2021} ex. 5). -/
+/-- Property concept root subclasses (@cite{dixon-1982}; @cite{beavers-etal-2021} ex. 5).
+
+    @cite{dixon-1982} identifies seven semantic categories. @cite{beavers-etal-2021}
+    omits HUMAN PROPENSITY from their Table 2 sample but the category is attested
+    crosslinguistically (@cite{hanink-koontz-garboden-2025} Table A1: hungry,
+    afraid, sick, brave, generous, etc. in Wá·šiw). -/
 inductive PCClass where
   | dimension         -- large/big, small, long, short, deep, wide, tall/high
   | age               -- old/aged
   | value             -- bad/worse, good/improved
   | color             -- white, black, red, green, blue, brown
   | physicalProperty  -- cool/cold, warm/hot, dry/wet, soft/hard, smooth/rough
+  | humanPropensity   -- hungry, afraid, sick, brave, generous (@cite{dixon-1982})
   | speed             -- fast, slow
   deriving DecidableEq, Repr
 
@@ -229,8 +254,13 @@ def RootType.hasSimpleStative : RootType → Bool
   | .propertyConcept => true
   | .result => false
 
-/-- PC root verbs are morphologically marked (deadjectival: wid-en, flat-ten);
-    result root verbs are unmarked (basic verbs: break, crack, shatter).
+/-- PC root verbs TEND to be morphologically marked (deadjectival: wid-en,
+    flat-ten); result root verbs tend to be unmarked (break, crack, shatter).
+
+    This captures the cross-linguistic DEFAULT pattern, not a universal.
+    @cite{hanink-koontz-garboden-2025} §4: Wá·šiw Class 1 PC roots predicate
+    as bare verbs without verbal morphology (zero categorization), deviating
+    from the tendency captured here.
 
     Crosslinguistic evidence (§7, Fig. 5): PC median = 56.01% marked;
     result median = 15.20% (U = 1291, p < 0.001). -/
@@ -1292,7 +1322,7 @@ def Root.stativeMarkedness (r : Root) : Markedness :=
     breaking, and the root lexically entails a prior change event. -/
 def Root.break_ : Root :=
   { arity := .selectsTheme, changeType := .result,
-    denotationType := some .eventPred, levinClass := some .break_ }
+    denotationType := some .indivStatePred, levinClass := some .break_ }
 
 /-- √HIT: selects theme + does not entail change (Levin 18.1).
     "Hit X" — the root takes a contactee, but hitting does not entail
@@ -1301,7 +1331,7 @@ def Root.break_ : Root :=
     (`entailsChange = false`) is what matters, not the label. -/
 def Root.hit : Root :=
   { arity := .selectsTheme, changeType := .propertyConcept,
-    denotationType := some .eventPred, levinClass := some .hit }
+    denotationType := some .indivStatePred, levinClass := some .hit }
 
 /-- √DIE: no theme + entails change.
     "Die" — intransitive; the dying entity is introduced by functional
@@ -1309,7 +1339,7 @@ def Root.hit : Root :=
     lexically entails a prior change event (becoming dead). -/
 def Root.die : Root :=
   { arity := .noTheme, changeType := .result,
-    denotationType := some .eventPred }
+    denotationType := some .indivStatePred }
 
 /-- √SIT: no theme + does not entail change (positional root).
     "Sit" — Coon's √POS class: denotes a spatial configuration state.

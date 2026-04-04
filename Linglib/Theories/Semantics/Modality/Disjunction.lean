@@ -30,6 +30,18 @@ Three innovations over Zimmermann:
 - Free choice (◇(A∨B) → ◇A ∧ ◇B) follows from the structure
 - Exclusive 'or' follows from Disjointness, not scalar implicature
 
+## Note on "may A or may B" sentences
+
+@cite{ciardelli-guerrini-2026} argue that sentences like "You may A or you
+may B" — which @cite{geurts-2005} analyzes as overt modal disjunctions —
+receive their FC reading from the **narrow-scope** LF ◇(A ∨ B) via modal
+concord (@cite{zeijlstra-2007}), not from the wide-scope LF ◇A ∨ ◇B.
+Since ◇(A ∨ B) ↔ ◇A ∨ ◇B truth-conditionally, the two analyses agree on
+truth conditions but differ on compositional source. The Geurts analysis
+here is compatible with C&G if the "overt modals" in such sentences are
+reanalyzed as uninterpretable concord markers rather than semantic operators.
+See `Phenomena.Modality.Studies.CiardelliGuerrini2026`.
+
 -/
 
 import Linglib.Core.Semantics.Proposition

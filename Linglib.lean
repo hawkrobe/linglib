@@ -156,6 +156,7 @@ import Linglib.Core.Inheritance
 import Linglib.Core.Morphology.MorphProfile
 import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Theories.Morphology.Core.Monotonicity
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Morphology.Core.WordStructure
 import Linglib.Core.Discourse.CoherenceRelation
@@ -992,6 +993,7 @@ import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Linglib.Phenomena.Modality.Studies.Kratzer1981
+import Linglib.Phenomena.Modality.Studies.CiardelliGuerrini2026
 import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
@@ -1060,6 +1062,7 @@ import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
 import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024
 import Linglib.Phenomena.Possession.Typology
 import Linglib.Phenomena.Possession.Studies.Heine1997
+import Linglib.Phenomena.Possession.Studies.HaninkKoontzGarboden2025
 import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024_UPH
