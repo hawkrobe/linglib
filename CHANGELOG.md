@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.486] - 2026-04-03
+
+### Changed
+- **Resultatives.lean**: generalize `deriveCausativeBuilder` with `coercive`/`permissive` force-dynamic parameters — neutral → `.make`, coercive → `.force`, permissive → `.enable`; new theorems `coercive_derives_force`, `permissive_derives_enable`, `coercive_overrides_permissive`; `noncausative_no_builder`/`non_means_no_builder` now universally quantified over force-dynamic params
+
 ## [0.229.485] - 2026-04-03
 
 ### Changed

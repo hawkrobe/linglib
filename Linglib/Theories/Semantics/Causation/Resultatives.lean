@@ -262,18 +262,32 @@ MEANS + CAUSE → `makeSem` (sufficiency). Among sufficiency builders,
 `.make` is uniquely identified by lacking coercion (`.force`) and
 barrier-removal (`.enable`). -/
 
-/-- Derive the CausativeBuilder from subevent relation + constructional desc.
+/-- Derive the CausativeBuilder from subevent relation + constructional desc
+    + force-dynamic properties.
 
-    MEANS + CAUSE: verbal subevent is sufficient for result → `.make`.
+    **Step 1** (structural): MEANS + CAUSE licenses a sufficiency-based builder.
     All other combinations don't license an independent causal builder:
     - RESULT: verbal subevent is caused BY the result (reversed directionality)
     - INSTANCE: verbal subevent IS the constructional subevent (identity, not causation)
     - CO-OCCURRENCE: no causal connection
-    - ¬hasCause: noncausative (BECOME without CAUSE) — no external causation -/
-def deriveCausativeBuilder (rel : SubeventRelation) (desc : SubeventDesc) :
+    - ¬hasCause: noncausative (BECOME without CAUSE) — no external causation
+
+    **Step 2** (force-dynamic): among sufficiency builders, force-dynamic
+    properties disambiguate:
+    - coercive → `.force` (overcome resistance: "force X into Y")
+    - permissive → `.enable` (barrier removal: "let X go free")
+    - neutral → `.make` (default: resultatives, "make X flat")
+
+    Necessity (`.cause`) and blocking (`.prevent`) require causal model
+    inspection — they cannot be derived from subevent structure alone. -/
+def deriveCausativeBuilder (rel : SubeventRelation) (desc : SubeventDesc)
+    (coercive : Bool := false) (permissive : Bool := false) :
     Option CausativeBuilder :=
   match rel, desc.hasCause with
-  | .means, true => some .make
+  | .means, true =>
+    some (if coercive then .force
+          else if permissive then .enable
+          else .make)
   | _, _ => none
 
 /-- `.make` is the unique builder asserting neutral sufficiency
@@ -286,8 +300,34 @@ theorem make_unique_neutral_sufficiency (b : CausativeBuilder)
   cases b <;> simp_all [CausativeBuilder.assertsSufficiency,
     CausativeBuilder.isCoercive, CausativeBuilder.isPermissive]
 
+/-- Neutral derivation (no coercion, no permissivity) yields `.make`. -/
+theorem neutral_derives_make (desc : SubeventDesc)
+    (h : desc.hasCause = true) :
+    deriveCausativeBuilder .means desc = some .make := by
+  simp [deriveCausativeBuilder, h]
+
+/-- Coercive derivation yields `.force`. -/
+theorem coercive_derives_force (desc : SubeventDesc)
+    (h : desc.hasCause = true) :
+    deriveCausativeBuilder .means desc (coercive := true) = some .force := by
+  simp [deriveCausativeBuilder, h]
+
+/-- Permissive derivation yields `.enable`. -/
+theorem permissive_derives_enable (desc : SubeventDesc)
+    (h : desc.hasCause = true) :
+    deriveCausativeBuilder .means desc (permissive := true) = some .enable := by
+  simp [deriveCausativeBuilder, h]
+
+/-- Coercive takes priority over permissive (force > enable). -/
+theorem coercive_overrides_permissive (desc : SubeventDesc)
+    (h : desc.hasCause = true) :
+    deriveCausativeBuilder .means desc (coercive := true) (permissive := true) =
+      some .force := by
+  simp [deriveCausativeBuilder, h]
+
 /-- For any causative subconstruction with MEANS relation,
-    the derived builder is `.make`. -/
+    the derived builder is `.make` (resultatives are neutral — no
+    coercion, no barrier-removal). -/
 theorem causative_means_derives_make (sc : ResultativeSubconstruction)
     (h : sc.isCausative = true) :
     deriveCausativeBuilder .means sc.constructionalDesc = some .make := by
@@ -297,32 +337,36 @@ theorem causative_means_derives_make (sc : ResultativeSubconstruction)
 /-- Noncausative subconstructions don't derive a CausativeBuilder
     (no CAUSE operator → no external causation to encode). -/
 theorem noncausative_no_builder (sc : ResultativeSubconstruction)
-    (h : sc.isCausative = false) :
-    deriveCausativeBuilder .means sc.constructionalDesc = none := by
+    (h : sc.isCausative = false)
+    (coercive permissive : Bool) :
+    deriveCausativeBuilder .means sc.constructionalDesc coercive permissive = none := by
   cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
     simp [deriveCausativeBuilder, ResultativeSubconstruction.constructionalDesc]
 
 /-- Non-MEANS relations never derive a CausativeBuilder, regardless of
-    whether the constructional subevent has CAUSE. The causal builder
-    only applies when the verbal subevent brings about the result. -/
-theorem non_means_no_builder (desc : SubeventDesc) :
-    deriveCausativeBuilder .result desc = none ∧
-    deriveCausativeBuilder .instance_ desc = none ∧
-    deriveCausativeBuilder .coOccurrence desc = none := by
+    whether the constructional subevent has CAUSE or force-dynamic properties. -/
+theorem non_means_no_builder (desc : SubeventDesc) (coercive permissive : Bool) :
+    deriveCausativeBuilder .result desc coercive permissive = none ∧
+    deriveCausativeBuilder .instance_ desc coercive permissive = none ∧
+    deriveCausativeBuilder .coOccurrence desc coercive permissive = none := by
   simp [deriveCausativeBuilder]
 
 /-- When `deriveCausativeBuilder` succeeds, the resulting builder
-    asserts causal sufficiency. -/
+    asserts causal sufficiency — regardless of force-dynamic properties. -/
 theorem derived_asserts_sufficiency (rel : SubeventRelation) (desc : SubeventDesc)
-    (b : CausativeBuilder) (h : deriveCausativeBuilder rel desc = some b) :
+    (coercive permissive : Bool)
+    (b : CausativeBuilder) (h : deriveCausativeBuilder rel desc coercive permissive = some b) :
     b.assertsSufficiency = true := by
   unfold deriveCausativeBuilder at h
   split at h
-  · have := Option.some.inj h; subst this; rfl
+  · simp only [Option.some.injEq] at h
+    cases coercive <;> cases permissive <;>
+      simp_all <;> subst h <;> rfl
   · simp at h
 
 /-- The resultative CausativeBuilder, derived from MEANS + CAUSE.
-    Uses `causativeProperty` as the representative causative subconstruction;
+    Resultatives are neutral (no coercion, no barrier-removal), so
+    the force-dynamic parameters default to false.
     `causative_means_derives_make` proves all causative subconstructions
     yield the same result. -/
 def resultativeCausativeBuilder : CausativeBuilder :=
