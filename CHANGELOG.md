@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.229.484] - 2026-04-03
+
+### Changed
+- **GoldbergJackendoff2004.lean**: deep integration rewrite — derive constructional subevent from subconstruction type (eliminates per-entry stipulation), bridge to event structure templates (accomplishment/achievement), semantic contribution on derived subconstructions with `fusedMC` compositional fusion, Levin class tagging on all 8 entries with verb-class participation theorems, `adjScaleToRPBoundedness` bridge connecting Kennedy 2007 closed-scale adjectives to G&J bounded RP → telic resultatives, `ObjectSelection` inductive (selected/unselected/fakeReflexive), corrected `SubeventRelation` docstrings per §3
+
+## [0.229.483] - 2026-04-03
+
+### Added
+- **MorphProfile.lean**: structural theorems on B&N parameter space — `agglutinating_fusional_exclusive` (mutual exclusion from flexivity contradiction), `nonflexive_flexive_exclusive`, `cumulative_separative_exclusive`; all proved by case-splitting, not native_decide
+- **Typology.lean**: `exponence_scope_independent` (WALS Exponence and B&N ExponenceScope are independent — poly+sep and mono+cum both attested), `concatenative_partition` (every concatenative language is agglutinating or fusional), `no_agglutinating_and_fusional`, `exponence_flexivity_independent`, `sample_type_exhaustive` (agglutinating + fusional + nonlinear + isolating = total sample)
+
+### Changed
+- **AgreementTarget.lean**: fixed `AgreementDirection` docstring inversion — "driven" now correctly means "who originates features" per B&N §9, not "who carries morphology" (headDriven = head provides features → dependents carry morphology; dependentDriven = dependent provides features → head carries morphology)
+
+## [0.229.482] - 2026-04-03
+
+### Added
+- **KoontzGarboden2009.lean**: study file for anticausativization as reflexivization — `AnticausativeAnalysis` enum (deletion/reflexivization/existentialBinding/leastCommonDenominator) with `retainsCause`/`preservesMH`, reflexivization operator `λℜλx[ℜ(x,x)]`, non-entailment model, Monotonicity Hypothesis with `isMonotonic`, Haspelmath 1990 syncretism data (13 languages, 9/13 syncretism), bridges to `ValencyAlternation` and `IntransitivizationType`
+- **Spanish Predicates.lean**: `CauserSpec` inductive (effector/agent) with `causerSpec` field on `SpanishVerbEntry`; 5 new verb entries (*asesinar*, *cortar*, *ahogar*, *empeorar*, *crecer*); `effector_verbs_alternate` and `agent_verbs_dont_alternate` verification theorems
+
+### Changed
+- **EventStructure.lean**: `CausationType.hasCauseInLSR` and `CausationType.licensesBySelf` predicates; docstring updates acknowledging reflexivization vs deletion debate
+- **MorphologicalCausation.lean**: docstring updates noting K-G's competing analysis of anticausative morphology
+
+## [0.229.481] - 2026-04-03
+
+### Added
+- **MorphProfile.lean**: `Flexivity` (nonflexive/flexive) and `ExponenceScope` (cumulative/separative) types implementing Bickel & Nichols (2001) orthogonal decomposition of the traditional agglutinating/fusional typology; added as optional fields on `MorphProfile`; helper predicates `isFlexive`, `isNonflexive`, `isCumulative`, `isSeparative`, `isAgglutinating`, `isFusional`
+- **MorphRule.lean**: `FormativePosition` 7-way typological position type (B&N Table 2: praefixed/postfixed/infixed/circumfixed/simultaneous/detached/endoclitic) with `AttachmentSide.toFormativePosition` bridge
+- **Person.lean**: `EpistemicAuthority` (conjunct/disjunct) for languages with epistemic authority marking (Akhvakh, Kathmandu Newari, Tibetan)
+- **AgreementTarget.lean**: `AgreementType` (grammatical/pronominal) and `AgreementDirection` (headDriven/dependentDriven)
+- **Typology.lean**: 10 cross-linguistic verification theorems for B&N parameters — flexivity/exponence distribution counts, fusion×flexivity orthogonality, agglutinating/fusional decomposition counts, Arabic nonlinear+flexive test
+
+### Changed
+- **18 Fragment Morph.lean files**: populated `flexivity` and `bnExponence` fields (10 nonflexive+separative, 6 flexive+cumulative, 2 isolating = none)
+- **MorphProfile.lean**: improved Fusion/Exponence docstrings to clarify WALS scope vs B&N parameter space
+- **MorphRule.lean**: corrected MorphCategory docstrings — `degree` rank attribution now marked as linglib extension (not Bybee 1985), `number` rank Link 1983 justification flagged as linglib addition
+
 ## [0.229.480] - 2026-04-03
 
 ### Changed
