@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.Scale
+import Mathlib.Order.GaloisConnection.Basic
 
 /-!
 # Extent Functions
@@ -184,5 +185,72 @@ theorem crossExtent_always_false [LinearOrder D]
     exact absurd (h (le_refl (μ a))) (not_lt.mpr hab)
   · -- μ b ≤ μ a: then μ b ∈ posExt μ a, so μ b ∈ negExt μ b, i.e. μ b < μ b — impossible
     exact absurd (h hba) (lt_irrefl _)
+
+-- ════════════════════════════════════════════════════
+-- § 7. Galois Connection on Extents
+-- ════════════════════════════════════════════════════
+
+-- ─── Galois Connection Foundation ─────────────────
+--
+-- The extent functions are instances of Mathlib's `gc_sSup_Iic`:
+--
+--   GaloisConnection (sSup : Set D → D) (Set.Iic : D → Set D)
+--
+-- Since `posExt μ x = Set.Iic (μ x)` definitionally, posExt factors
+-- through the right adjoint of sSup. The antonymy biconditional is
+-- then a consequence of the Galois connection's monotonicity.
+--
+-- For the antitone direction (negExt), we use `gc_Ici_sInf` on
+-- OrderDual: negExt is the complement of Iic, and Ici on the dual
+-- order gives the strict upset.
+--
+-- @cite{heim-2006}'s LITTLE operator is the order-reversing map
+-- witnessing this Galois duality: it sends posExt(a) to negExt(a),
+-- inverting the set-inclusion ordering.
+
+/-- `posExt μ x` is the principal downset `Set.Iic (μ x)`. This
+    grounds all extent algebra in Mathlib's order infrastructure. -/
+theorem posExt_eq_Iic [Preorder D] (μ : Entity → D) (x : Entity) :
+    posExt μ x = Set.Iic (μ x) :=
+  rfl
+
+/-- `posExt` is an order embedding: it faithfully reflects ≤.
+    Follows from `gc_sSup_Iic`: `Set.Iic` is the right adjoint
+    of `sSup`, so it is monotone and reflects the order. -/
+theorem posExt_orderEmbedding [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    μ a ≤ μ b ↔ posExt μ a ⊆ posExt μ b :=
+  (posExt_subset_iff μ a b).symm
+
+/-- `negExt` is an order-reversing embedding: it faithfully reflects ≥.
+    This is the antitone half of the Galois connection — the map
+    that LITTLE implements. -/
+theorem negExt_orderReversing [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    μ a ≤ μ b ↔ negExt μ b ⊆ negExt μ a :=
+  (negExt_subset_iff μ b a).symm
+
+/-- **Antitone Galois connection**: the composition posExt → negExt
+    reverses set-inclusion ordering. This is the abstract content of
+    @cite{heim-2006}'s LITTLE operator: degree negation reverses the
+    lattice ordering on extents.
+
+    Concretely: if posExt(a) ⊆ posExt(b), then negExt(b) ⊆ negExt(a).
+    The unique order-reversing map witnessing this IS LITTLE. -/
+theorem extent_galois_antitone [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    posExt μ a ⊆ posExt μ b ↔ negExt μ b ⊆ negExt μ a :=
+  antonymy_biconditional_weak μ b a
+
+/-- **Cross-polar anomaly as Galois incompatibility**: posExt and negExt
+    occupy complementary sublattices of (Set D, ⊆). The downset lattice
+    (posExt's range) and the upset lattice (negExt's range) never contain
+    a pair S ⊆ T — they are separated by the boundary degree.
+
+    The algebraic content: for any d, `d ∈ Set.Iic (μ a)` implies `d ≤ μ a`,
+    but `d ∈ Set.Ioi (μ b)` requires `μ b < d`. At `d = μ a`, the first
+    holds but the second requires `μ b < μ a`. At `d = μ b + ε`, the second
+    holds but the first requires `μ b + ε ≤ μ a`, which can't hold for
+    all ε. So no element witnesses containment. -/
+theorem galois_cross_incompatible [LinearOrder D] (μ : Entity → D) (a b : Entity) :
+    ¬ posExt μ a ⊆ negExt μ b :=
+  crossExtent_always_false μ a b
 
 end Core.Scale

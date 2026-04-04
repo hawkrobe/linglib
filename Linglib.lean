@@ -894,6 +894,9 @@ import Linglib.Phenomena.Comparison.Studies.Heim2001
 import Linglib.Phenomena.Comparison.Studies.Stassen1985
 import Linglib.Phenomena.Comparison.Studies.Wellwood2015
 import Linglib.Phenomena.Comparison.Studies.FoxHackl2006
+import Linglib.Phenomena.Comparison.Studies.VonStechow1984
+import Linglib.Phenomena.Comparison.Studies.Buring2007
+import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Directives.Studies.RuytenbeekEtAl2017
@@ -994,6 +997,7 @@ import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Linglib.Phenomena.Modality.Studies.Kratzer1981
 import Linglib.Phenomena.Modality.Studies.CiardelliGuerrini2026
+import Linglib.Phenomena.Modality.Studies.ElliottSudo2025
 import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010

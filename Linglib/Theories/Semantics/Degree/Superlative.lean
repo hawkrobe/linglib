@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Degree.Core
 
 /-!
@@ -67,5 +67,25 @@ theorem absolute_unique {Entity D : Type*} [LinearOrder D]
   have h1 := hx.2 y hy.1 (Ne.symm hne)
   have h2 := hy.2 x hx.1 hne
   exact absurd h1 (not_lt.mpr (le_of_lt h2))
+
+-- ════════════════════════════════════════════════════
+-- § 4. Order-Theoretic Foundation
+-- ════════════════════════════════════════════════════
+
+/-- The absolute superlative entails that `μ(x)` is the greatest
+    element of the degree image `μ '' C`. Strict `>` for distinct
+    entities implies `≥` for all.
+
+    The converse fails: `IsGreatest` allows ties (`μ x = μ y`),
+    while `absoluteSuperlative` requires strict dominance. -/
+theorem absoluteSuperlative_isGreatest {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (C : Set Entity) (x : Entity)
+    (h : absoluteSuperlative μ C x) :
+    IsGreatest (μ '' C) (μ x) := by
+  refine ⟨Set.mem_image_of_mem μ h.1, fun d hd => ?_⟩
+  obtain ⟨y, hy, rfl⟩ := hd
+  rcases eq_or_ne y x with rfl | hne
+  · exact le_refl _
+  · exact le_of_lt (h.2 y hy hne)
 
 end Semantics.Degree.Superlative

@@ -62,9 +62,11 @@ distribution), @cite{bhatt-pancheva-2004} and @cite{lechner-2004}
 
 namespace Phenomena.Comparison.Studies.Kennedy1999
 
-open Semantics.Degree.Comparative (comparativeSem equativeViaExtent equativeViaExtent_iff
+open Semantics.Degree.Comparative (comparativeSem
   comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset)
-open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false)
+open Semantics.Degree.Equative (equativeLiteral equative_iff_posExt_subset)
+open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false
+  posExt_subset_iff negExt_subset_iff extent_galois_antitone)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Polar Anomaly Data
@@ -95,17 +97,18 @@ def crossPolarData : List CrossPolarDatum :=
   , { sentence := "??Kim is as short as Lee is tall"
     , acceptable := false, samePolarity := false, isEquative := true
     , note := "cross-polar: neg-ext(height, Kim) vs pos-ext(height, Lee)" }
-  , { sentence := "Kim is taller than Lee is short"
-    , acceptable := true, samePolarity := false, isEquative := false
-    , note := "comparison of deviation: compares differential extents, which are same-sort" }
+  , { sentence := "??Kim is taller than Lee is short"
+    , acceptable := false, samePolarity := false, isEquative := false
+    , note := "cross-polar anomaly: direct antonyms on same dimension (@cite{buring-2007} §1, ex. 1b)" }
   ]
 
-/-- Among equatives, cross-polar = unacceptable. The comparative rescues
-    cross-polar because -er compares *degrees*, not *extents*. -/
-theorem crossPolar_iff_unacceptable_equative :
-    ∀ d ∈ crossPolarData, d.isEquative = true →
+/-- Cross-polar = unacceptable for both equatives and comparatives
+    when the adjectives are direct antonyms on the same dimension.
+    @cite{buring-2007} shows this holds uniformly (§1, ex. 1). -/
+theorem crossPolar_iff_unacceptable :
+    ∀ d ∈ crossPolarData,
       (d.acceptable = false ↔ d.samePolarity = false) := by
-  intro d hd heq
+  intro d hd
   simp [crossPolarData] at hd
   rcases hd with rfl | rfl | rfl | rfl | rfl <;> simp_all
 
@@ -131,17 +134,8 @@ theorem crossPolar_predicted {Entity D : Type*} [LinearOrder D]
     This reduces to μ(subject) ≥ μ(standard). -/
 theorem samePolar_equative_welldefined {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    equativeViaExtent μ a b ↔ μ a ≥ μ b :=
-  equativeViaExtent_iff μ a b
-
-/-- **Bridge**: the extent-based equative (`equativeViaExtent`, defined via
-    `posExt` inclusion) and the direct equative (`equativeLiteral`, defined
-    as μ(a) ≥ μ(b)) are equivalent. This connects Kennedy's algebraic
-    formulation to the standard point-comparison semantics. -/
-theorem equative_extent_eq_literal {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (a b : Entity) :
-    equativeViaExtent μ a b ↔ Semantics.Degree.Equative.equativeLiteral μ a b :=
-  equativeViaExtent_iff μ a b
+    equativeLiteral μ a b ↔ posExt μ b ⊆ posExt μ a :=
+  equative_iff_posExt_subset μ a b
 
 -- ════════════════════════════════════════════════════
 -- § 4. Comparative = Strict Extent Inclusion
@@ -176,11 +170,12 @@ theorem antonymy_derived {Entity D : Type*} [LinearOrder D]
 
 /-- The antonymy biconditional also holds for equatives:
     "A is as tall as B" iff "B is as short as A" — extent inclusion
-    in one polarity implies extent inclusion in the other. -/
+    in one polarity implies extent inclusion in the other.
+    Follows from the Galois connection on extents (Extent.lean § 7). -/
 theorem equative_antonymy_extent {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
-    equativeViaExtent μ a b ↔ negExt μ a ⊆ negExt μ b := by
-  rw [equativeViaExtent_iff, ge_iff_le, Core.Scale.negExt_subset_iff]
+    equativeLiteral μ a b ↔ negExt μ a ⊆ negExt μ b := by
+  rw [equative_iff_posExt_subset, extent_galois_antitone]
 
 -- ════════════════════════════════════════════════════
 -- § 6. Historical: DegP Projection

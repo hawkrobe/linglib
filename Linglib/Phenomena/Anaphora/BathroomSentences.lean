@@ -74,7 +74,7 @@ def bathroomWithMight : BathroomDatum := {
   felicitous := true
   hasModal := true
   notes := "Explicit epistemic modal"
-  source := "Elliott & Sudo (2025)"
+  source := "Novel variant"
 }
 
 /-- Bathroom with definite article -/
@@ -87,7 +87,7 @@ def bathroomDefinite : BathroomDatum := {
   felicitous := true
   hasModal := false
   notes := "Definite 'the bathroom' instead of pronoun"
-  source := "Elliott & Sudo (2025)"
+  source := "Novel variant"
 }
 
 -- Part 2: Variants and Extensions
@@ -102,7 +102,7 @@ def lostKey : BathroomDatum := {
   felicitous := true
   hasModal := false
   notes := "Not literally 'bathroom' but same pattern"
-  source := "Elliott & Sudo (2025)"
+  source := "Novel example (common pattern)"
 }
 
 /-- Nobody came variant -/
@@ -115,7 +115,7 @@ def nobodyCame : BathroomDatum := {
   felicitous := true
   hasModal := false
   notes := "Negative universal instead of negated existential"
-  source := "Elliott & Sudo (2025)"
+  source := "Novel example"
 }
 
 /-- With quantificational adverb -/
@@ -262,7 +262,7 @@ def doubleNegBathroom : DoubleNegationDatum := {
   antecedent := "bathroom"
   felicitous := true
   notes := "DNE makes the bathroom accessible"
-  source := "Elliott & Sudo (2025)"
+  source := "Novel example (pattern discussed in Elliott & Sudo 2025)"
 }
 
 def doubleNegNobody : DoubleNegationDatum := {
@@ -272,7 +272,7 @@ def doubleNegNobody : DoubleNegationDatum := {
   antecedent := "people (implicit)"
   felicitous := true
   notes := "DNE with negative quantifier"
-  source := "Elliott & Sudo (2025)"
+  source := "Novel example"
 }
 
 -- Part 7: Collected Data

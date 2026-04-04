@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Scale
+import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Degree.Core
 
 /-!
@@ -72,5 +72,27 @@ theorem negated_iff_not_literal {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (a b : Entity) :
     negatedEquative μ a b ↔ ¬ equativeLiteral μ a b := by
   simp [negatedEquative, equativeLiteral, not_le]
+
+-- ════════════════════════════════════════════════════
+-- § 4. Extent-Theoretic Characterization
+-- ════════════════════════════════════════════════════
+
+open Core.Scale
+
+/-- Equative as positive extent inclusion (@cite{kennedy-1999}):
+    "A is as tall as B" iff posExt(B) ⊆ posExt(A) — every degree
+    B has, A also has. -/
+theorem equative_iff_posExt_subset {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    equativeLiteral μ a b ↔ posExt μ b ⊆ posExt μ a :=
+  (posExt_subset_iff μ b a).symm
+
+/-- Negated equative as strict extent inclusion:
+    "A is not as tall as B" iff posExt(A) ⊂ posExt(B) — B has
+    strictly more degrees than A. -/
+theorem negatedEquative_iff_posExt_ssubset {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    negatedEquative μ a b ↔ posExt μ a ⊂ posExt μ b :=
+  (posExt_ssubset_iff μ a b).symm
 
 end Semantics.Degree.Equative

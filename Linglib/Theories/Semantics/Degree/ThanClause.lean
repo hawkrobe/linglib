@@ -50,18 +50,13 @@ def thanClauseMax {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (standard : Entity) : D :=
   μ standard
 
-/-- The than-clause maximum is in the than-clause denotation. -/
-theorem max_in_denotation {Entity D : Type*} [LinearOrder D]
+/-- μ(b) is the greatest element of the than-clause denotation.
+    This is `isGreatest_Iic` specialized to degree semantics: the
+    maximum of {d | d ≤ μ(b)} is μ(b). -/
+theorem thanClauseMax_isGreatest {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (b : Entity) :
-    thanClauseMax μ b ∈ thanClauseDenotation μ b := by
-  simp [thanClauseMax, thanClauseDenotation]
-
-/-- The than-clause maximum is an upper bound of the denotation. -/
-theorem max_is_upper_bound {Entity D : Type*} [LinearOrder D]
-    (μ : Entity → D) (b : Entity) :
-    ∀ d ∈ thanClauseDenotation μ b, d ≤ thanClauseMax μ b := by
-  intro d hd
-  exact hd
+    IsGreatest (thanClauseDenotation μ b) (thanClauseMax μ b) :=
+  isGreatest_Iic
 
 -- ════════════════════════════════════════════════════
 -- § 3. Phrasal vs. Clausal Standards

@@ -65,7 +65,7 @@ are vacuous. This yields Δ(A ∘ B), not ΔA ∘ ΔB.
 namespace Phenomena.Modality.Studies.CiardelliGuerrini2026
 
 open Core.Modality
-open Exhaustification.FreeChoice (diamond pdisj diamond_distributes_iff)
+open Exhaustification.FreeChoice (diamond pdisj diamond_distributes_iff FCAltSet free_choice_forward)
 open Exhaustification (pand)
 open Fragments.English.FunctionWords
 
@@ -238,17 +238,6 @@ theorem checks_second (cd : ConcordDerivation) :
     cd.checker.checks cd.f₂ = true :=
   silent_checks_matching cd.f₁ cd.f₂ cd.uInterp₂ cd.sameClass
 
-/-- Cross-force checking fails: a checker with different concord class
-    cannot check a feature. -/
-theorem cross_class_blocked (cd : ConcordDerivation)
-    (g : ModalFeature) (hU : g.interp = .uninterpretable)
-    (hDiff : ConcordType.fromModalForce cd.f₁.force ≠ ConcordType.fromModalForce g.force) :
-    cd.checker.checks g = false := by
-  unfold checker silentChecker ModalFeature.checks
-  simp only [BEq.beq, Bool.and_eq_false_imp]
-  intro _ _
-  exact Bool.eq_false_iff.mpr (by intro h; exact hDiff (LawfulBEq.eq_of_beq h))
-
 end ConcordDerivation
 
 /-- Construct a `ConcordDerivation` from two `AuxEntry`s. The derivation
@@ -271,16 +260,20 @@ def modalAuxiliaries : List AuxEntry :=
 /-- Exactly 13 English modal auxiliaries carry u-features. -/
 theorem modal_aux_count : modalAuxiliaries.length = 13 := by native_decide
 
-/-- Every modal auxiliary has a derivable modal feature. -/
-theorem modal_aux_all_have_features :
-    modalAuxiliaries.all (λ a => a.toModalFeature.isSome) = true := by native_decide
+/-- Modal auxiliaries with modal meaning (i.e., those that can form
+    `ConcordDerivation`s). Excludes `dare` which has u-features but
+    no modal meaning specification. -/
+def concordCapableModals : List AuxEntry :=
+  modalAuxiliaries.filter (λ a => a.toModalFeature.isSome)
 
-/-- Every modal auxiliary's feature is uninterpretable. -/
-theorem modal_aux_all_uninterpretable :
-    modalAuxiliaries.all (λ a =>
-      match a.toModalFeature with
-      | some f => f.interp == .uninterpretable
-      | none => false) = true := by native_decide
+/-- 12 of 13 modal auxiliaries have derivable modal features. -/
+theorem concord_capable_count : concordCapableModals.length = 12 := by native_decide
+
+/-- Every concord-capable modal's feature is uninterpretable. -/
+theorem concord_capable_all_uninterpretable :
+    concordCapableModals.all (λ a =>
+      decide (a.interpretability == some .uninterpretable)) = true := by
+  native_decide
 
 /-- Non-modal auxiliaries have no modal feature — they cannot participate
     in concord at all. -/
@@ -611,16 +604,16 @@ The empirical finding that "must have to" preserves single-necessity meaning
 theorem must_haveTo_same_feature :
     must.toModalFeature = haveTo.toModalFeature := rfl
 
-/-- Feature checking between "must"[i∀] and "have to"[u∀] succeeds.
-    In "must have to" stacking, one carries the i-feature (semantically
-    active) and the other carries the u-feature (semantically vacuous).
-    This models the @cite{rotter-liu-2025} finding: "must have to" yields
-    single necessity, not double necessity. -/
-theorem must_haveTo_concord :
-    (ModalFeature.checks
-      ⟨must.toModalFeature.get!.force, .interpretable⟩
-      must.toModalFeature.get!)
-    = true := by native_decide
+/-- "Have to" carries [u∀-MOD]: necessity force, uninterpretable. -/
+theorem haveTo_feature_eq :
+    haveTo.toModalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
+
+/-- "Must have to" concord as a `ConcordDerivation` — derived from Fragment.
+    The @cite{rotter-liu-2025} finding that "must have to" yields single
+    necessity (not double necessity) follows: the checker checks both
+    u-features, leaving one semantic operator. -/
+def mustHaveToConcord : ConcordDerivation :=
+  .fromAux must haveTo must_feature_eq haveTo_feature_eq rfl rfl rfl
 
 /-- Cross-force concord fails: "must"[u∀] cannot be checked by a silent
     [i∃-MOD] operator. This predicts no concord between necessity and

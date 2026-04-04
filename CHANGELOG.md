@@ -1,5 +1,64 @@
 # Changelog
 
+## [0.229.501] - 2026-04-04
+
+### Changed
+- **DegreeAbstraction.lean** (Theories/Semantics/Degree): restructured to derive from Mathlib order theory — `isMaxDeg_matrixPredicate` now derives from `isGreatest_Iic` via `isMaxDeg_iff_isGreatest` bridge; scope collapse reformulated via degree images (`exists_scope_via_degreeImage`, `forall_scope_via_degreeImage`); `negatedDegreePredicate_eq` connected to `negExt`; `heim_kennedy_via_galois` connects Heim comparative to Kennedy's extent inclusion via Galois connection
+- **Comparative.lean** (Theories/Semantics/Degree): deleted `equativeViaExtent` and `equativeViaExtent_iff` — redundant intermediary superseded by `equative_iff_posExt_subset` in Equative.lean
+- **ThanClause.lean** (Theories/Semantics/Degree): replaced ad hoc `max_in_denotation` + `max_is_upper_bound` with single `thanClauseMax_isGreatest` delegating to Mathlib's `isGreatest_Iic`
+- **Kennedy1999.lean** (Phenomena/Comparison/Studies): updated to use `equativeLiteral` + `equative_iff_posExt_subset` directly; `equative_antonymy_extent` now derives from `extent_galois_antitone`; deleted redundant `equative_extent_eq_literal` bridge
+
+### Added
+- **Extent.lean** (Core/Scales): § 7 Galois Connection on Extents — `posExt_eq_Iic` (bridge to Mathlib's `Set.Iic`), `posExt_orderEmbedding`/`negExt_orderReversing` (monotone/antitone embeddings), `extent_galois_antitone` (antitone Galois connection: posExt inclusion ↔ reverse negExt inclusion), `galois_cross_incompatible` (cross-polar anomaly as Galois incompatibility)
+- **DegreeAbstraction.lean**: `isMaxDeg_iff_isGreatest` (Heim's `IsMaxDeg` = Mathlib's `IsGreatest`), `matrixPredicate_mem_iff_Iic`/`matrixPredicate_mem_iff_posExt` (Heim = Kennedy = principal downset)
+- **Equative.lean** (Theories/Semantics/Degree): § 4 extent-theoretic characterization — `equative_iff_posExt_subset` (equative as posExt inclusion), `negatedEquative_iff_posExt_ssubset` (negated equative as strict inclusion)
+- **Superlative.lean** (Theories/Semantics/Degree): `absoluteSuperlative_isGreatest` — superlative entails `IsGreatest` on degree image
+- **Intensional.lean** (Theories/Semantics/Degree): `isMaxDegOverWorlds_iff_isGreatest` — modal degree maximality = `IsGreatest` on degree image
+
+## [0.229.500] - 2026-04-04
+
+### Changed
+- **Basic.lean** (Theories/Semantics/Dynamic/Bilateral): upgraded BilateralDen connectives to full Strong Kleene dynamic semantics per @cite{elliott-sudo-2025} — conjunction negative now includes gap term `ψ.negative (φ.unknownUpdate s)` (eq. 61); disjunction rewritten with dynamic state-passing positive (`φ.positive s ∪ ψ.positive (φ.negative s) ∪ ψ.positive (φ.unknownUpdate s)`) and sequential negative (`ψ.negative (φ.negative s)`); `de_morgan_disj` updated for new disjunction shape
+- **FreeChoice.lean** (Theories/Semantics/Dynamic/Bilateral): `fc_with_anaphora` now actually derives its conclusion from `modified_fc_semantic` (was vacuously assuming conclusion as hypothesis); `dual_prohibition_first` — stronger version showing impossibility of first disjunct alone suffices; `dual_prohibition` preserved for backwards compat
+
+### Added
+- **Basic.lean** (Theories/Semantics/Dynamic/Bilateral): `unknownUpdate` — dynamic analog of Strong Kleene # (eq. 53); `unknownUpdate_neg` — unknown update invariant under negation; `unknownUpdate_atom` — atomic propositions have empty unknown update; `assertable` — every possibility accounted for (def. 54)
+- **BUS.lean** (Theories/Semantics/Dynamic/Bilateral): `diamond`/`box` — epistemic modals as BilateralDen values (eq. 73), `◇ᵇ`/`□ᵇ` notation; `diamond_positive_subset`/`diamond_negative_subset`
+- **FreeChoice.lean** (Theories/Semantics/Dynamic/Bilateral): `diamond_positive_eq` — bridges local `possible` to `BUSDen.diamond`
+
+### Fixed
+- **BUS.lean**: `de_morgan_disj_negative` → `disj_negative` (name + statement updated for sequential negative); `conj_negative` updated to include gap term
+- **BathroomSentences.lean** (Phenomena/Anaphora): removed hallucinated source attributions — `lostKey`, `nobodyCame`, `bathroomWithMight`, `bathroomDefinite`, `doubleNegNobody` were incorrectly attributed to Elliott & Sudo (2025); changed to "Novel example/variant"
+
+## [0.229.499] - 2026-04-04
+
+### Changed
+- **Buring2007.lean** (Phenomena/Comparison/Studies): rewrote LITTLE formalization — `littlePred` now operates on degree predicates (complement function) instead of `ScaleDirection` enum; `little_posExt_eq_negExt` connects LITTLE to @cite{kennedy-1999}'s extent algebra (`posExt` → `negExt`); `little_involution` on degree predicates (not direction flags); `crossPolar_anomaly_impossible` bridges to `crossExtent_always_false` (algebraic proof that same-dimension cross-polar comparison is impossible); deleted redundant `crossPolarNomaly` (was identical to `subcomparative`); `little_reverses_comparison` now delegates to `taller_shorter_antonymy`; simplified `CrossPolarDatum` (removed unused dimension fields); `klein_limitation_is_subcomparative` replaces `klein_limitation_is_crossPolar`
+
+### Fixed
+- **VonStechow1984.lean** (Phenomena/Comparison/Studies): removed trivially-true theorems `russellAmbiguity_not_degPScope` and `thanClause_is_DE` (both just read hand-entered fields); removed unused imports (`Equative`, `ThanClause`, `Heim2001`, `Ladusaw1979`)
+- **Sassoon2013.lean** (Phenomena/Gradability/Studies): fixed `@cite{buering-2007}` → `@cite{buring-2007}` typo
+
+## [0.229.498] - 2026-04-04
+
+### Added
+- **Buring2007.lean** (Phenomena/Comparison/Studies): formalization of @cite{buring-2007} cross-polar nomalies — `littlePred` (LITTLE degree negation on degree predicates), `little_posExt_eq_negExt` (LITTLE maps posExt to negExt), `little_involution` (double degree negation cancels), `little_reverses_comparison` (degree negation swaps argument order via `taller_shorter_antonymy`), `crossPolar_anomaly_impossible` (bridge to `crossExtent_always_false`), `CrossPolarType`/`CrossPolarDatum` (three-way pattern: anomaly/nomaly/inverseNomaly), 6 cross-polar examples with `#guard` grammaticality check, `subcomparative_same_dimension` (same-dimension collapse), `klein_limitation_is_subcomparative` (bridge to @cite{von-stechow-1984} Klein limitation 3), concrete LadderHouse example, `AnomalyBlockingDatum` (MaxElide blocking mechanism)
+
+## [0.229.497] - 2026-04-04
+
+### Added
+- **Intensional.lean** (Theories/Semantics/Degree): `tooSem` (R13: *too* as counterfactual comparative, definitionally = `moreSem` — same additive structure, different standard source); `tooSem_exceeds_counterfactual_worlds` (positive excess → actual degree strictly exceeds every counterfactual world); `accessibleSet` (Kripke accessibility relation → `Set W` for `IsMaxDegOverWorlds`); `modalComparative_kripke` (modal comparatives grounded in Kripke R, bridging `maxDeg_witness` to concrete accessibility relations)
+
+## [0.229.496] - 2026-04-03
+
+### Added
+- **Intensional.lean** (Theories/Semantics/Degree): @cite{von-stechow-1984} intensional degree semantics — `actuallyDeg` (evaluate intension at actual world, NOT Kaplan's tower-based operator), `intensionalComparative` (world-indexed comparative), `deReComparative`/`deDictoComparative` (Russell's ambiguity via ACTUALLY), `IsMaxDegOverWorlds` (modal comparatives), `moreSem` (R4: *more*/-er as addition), `asSem` (R5: *as* as multiplication); bridge theorems: `deDicto_absurd`, `intensional_extensional_bridge`, `moreSem_comparative_bridge`, `moreSem_differential_bridge`, `asSem_factor_bridge`
+- **VonStechow1984.lean** (Phenomena/Comparison/Studies): formalization of @cite{von-stechow-1984} — 9-phenomenon × 5-family scorecard (`TheoryFamily`, `Phenomenon`, `Score`, `scorecard`), Russell's ambiguity data with concrete `yachtLength`, ambiguous counterfactuals, NPI licensing bridge to @cite{ladusaw-1979}, quantifier/connective ∨→∧ inference, modal comparatives via `IsMaxDegOverWorlds`, Klein limitation data, cross-category generalization, *too* as counterfactual comparative; `#guard` checks for synthesis coverage and Cresswell limitations
+- **CiardelliGuerrini2026.lean**: `ConcordDerivation` structure packaging the full derivation chain (two u-features + same concord class → silent checker + checking proofs), `ConcordDerivation.fromAux` constructor from Fragment entries, `checks_first`/`checks_second` derived proofs; `mayMayConcord`/`mustMustConcord`/`mustHaveToConcord` instantiations; `modalAuxiliaries`/`concordCapableModals` with universal theorems (`modal_aux_count = 13`, `concord_capable_count = 12`, `concord_capable_all_uninterpretable`); `reductionist_thesis` — formal statement that narrow scope + Exh² → FC while wide scope + Exh → ¬FC; `wideScopeExh`, `narrowScope_yields_fc`, `wideScope_blocks_fc`, `scope_equivalence`
+
+### Fixed
+- **Heim2001.lean** (Phenomena/Comparison/Studies): `russellAmbiguity.explanation` — "world-variable binding" → "presence/absence of ACTUALLY operator" (more accurate per @cite{von-stechow-1984}'s mechanism)
+
 ## [0.229.495] - 2026-04-03
 
 ### Added

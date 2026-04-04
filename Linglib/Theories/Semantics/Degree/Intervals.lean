@@ -115,4 +115,61 @@ theorem positiveInterval_iff_posExt {Entity D : Type*}
       d ∈ Core.Scale.posExt μ x := by
   simp [positiveInterval, Core.Scale.posExt]
 
+-- ════════════════════════════════════════════════════
+-- § 6. Negative Intervals and LITTLE
+-- ════════════════════════════════════════════════════
+
+/-- The negative interval for entity x: [μ(x), ⊤].
+    This is the "extent to which x is short" — the interval from
+    x's degree to the top of the scale. Negative adjectives (short,
+    narrow, shallow) denote negative intervals on the same underlying
+    measure function as their positive counterpart.
+
+    @cite{buring-2007} §4 (def. 22): ⟦short⟧ = ⟦LITTLE tall⟧, where
+    LITTLE inverts the interval: the positive interval [⊥, μ(x)]
+    becomes the negative interval [μ(x), ⊤]. -/
+def negativeInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
+    (μ : Entity → D) (x : Entity) : Interval D :=
+  { lower := μ x, upper := ⊤, valid := le_top }
+
+/-- MUCH is the identity on intervals (@cite{buring-2007} §4, def. 21b):
+    ⟦MUCH⟧ = λi. i. It contributes "little to the meaning of a plain
+    comparative" — it simply denotes the identity function on intervals,
+    which by the semantics of -er is compared by ⊂ before ⊂ applies. -/
+def much {D : Type*} [Preorder D] (i : Interval D) : Interval D := i
+
+/-- LITTLE inverts an interval by swapping the "measured" region.
+    On degree predicates: LITTLE(λd. d ≤ μ(x)) = λd. μ(x) < d.
+    On intervals: maps [⊥, μ(x)] to [μ(x), ⊤].
+
+    @cite{buring-2007} §4 (def. 21d): ⟦LITTLE⟧ = λi.λd. i(d) = 0.
+    The result: x is LITTLE-er long than y iff x's LITTLE-longness
+    (= negative interval) is a proper superset of y's — i.e., x is
+    shorter than y. -/
+theorem little_inverts_interval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
+    (μ : Entity → D) (x : Entity) :
+    negativeInterval μ x = { lower := (positiveInterval μ x).upper
+                           , upper := ⊤
+                           , valid := le_top } := by
+  simp [negativeInterval, positiveInterval]
+
+/-- Negative interval comparative: x is shorter than y iff
+    x's negative interval extends further down (lower bound is lower),
+    which means μ(x) < μ(y). -/
+theorem negativeInterval_comparative {Entity D : Type*}
+    [LinearOrder D] [BoundedOrder D]
+    (μ : Entity → D) (a b : Entity) :
+    (negativeInterval μ a).lower < (negativeInterval μ b).lower ↔
+      μ a < μ b := by
+  simp [negativeInterval]
+
+/-- The negative interval contains exactly the degrees in `negExt`
+    plus the boundary point μ(x). The boundary convention difference
+    (negExt uses strict <, intervals use ≤) accounts for the ∨. -/
+theorem negativeInterval_membership {Entity D : Type*}
+    [LinearOrder D] [BoundedOrder D]
+    (μ : Entity → D) (x : Entity) (d : D) :
+    (negativeInterval μ x).lower ≤ d ↔ μ x ≤ d := by
+  simp [negativeInterval]
+
 end Semantics.Degree.Intervals

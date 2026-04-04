@@ -310,15 +310,15 @@ BUS is uniquely designed to handle "bathroom disjunctions":
 /-!
 Elliott & Sudo FC is derived from modal disjunction semantics.
 The BUS module provides FC derivation via:
-- `fc_semantic_first_disjunct`: ◇(φ ∨ ψ) → ◇φ
-- `fc_semantic_second_disjunct`: ◇(φ ∨ ψ) → ψ possible after ¬φ
-- `dual_prohibition`: ¬◇φ ∧ ¬◇ψ → ¬◇(φ ∨ ψ)
+- `fc_preconditions`: ◇(φ ∨ᶠᶜ ψ) → disjPos1 and disjPos2 nonempty
+- `dual_prohibition_disjPos1`: disjPos1 empty → ¬◇(φ ∨ᶠᶜ ψ)
+- `dual_prohibition_disjPos2`: disjPos2 empty → ¬◇(φ ∨ᶠᶜ ψ)
 -/
 
 -- Verify BUS theorems are imported and accessible
-#check @fc_semantic_first_disjunct
-#check @fc_semantic_second_disjunct
-#check @dual_prohibition
+#check @fc_preconditions
+#check @dual_prohibition_disjPos1
+#check @dual_prohibition_disjPos2
 
 -- ============================================================================
 -- SECTION 3e: @cite{holliday-mandelkern-2024} - Possibility Semantics

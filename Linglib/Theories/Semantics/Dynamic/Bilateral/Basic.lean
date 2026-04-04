@@ -134,18 +134,86 @@ theorem neg_involutive : Function.Involutive (neg : BilateralDen W E → Bilater
 
 
 /--
-Conjunction: sequence positive updates, combine negative updates.
+Unknown update: possibilities in s that subsist in neither the positive
+nor the negative update.
+
+This is the dynamic analog of the third truth value (#) in Strong Kleene
+logic. For atomic propositions, the unknown update is always empty.
+For existential statements, it captures possibilities where variable
+definedness introduces a gap.
+
+Equation (53) of @cite{elliott-sudo-2025}.
+-/
+def unknownUpdate (φ : BilateralDen W E) (s : InfoState W E) : InfoState W E :=
+  { p ∈ s | p ∉ φ.positive s ∧ p ∉ φ.negative s }
+
+/-- The unknown update of a negation equals the unknown update of the original. -/
+theorem unknownUpdate_neg (φ : BilateralDen W E) (s : InfoState W E) :
+    unknownUpdate (~φ) s = unknownUpdate φ s := by
+  ext p
+  simp only [unknownUpdate, neg, Set.mem_setOf_eq, and_comm (a := p ∉ φ.negative s)]
+
+/-- For atomic propositions, the unknown update is empty. -/
+theorem unknownUpdate_atom (pred : W → Bool) (s : InfoState W E) :
+    unknownUpdate (atom pred) s = ∅ := by
+  ext p
+  simp only [unknownUpdate, atom, InfoState.update, Set.mem_setOf_eq,
+    Set.mem_empty_iff_false, iff_false, not_and, Bool.not_eq_true]
+  intro hp
+  cases pred p.world <;> simp_all
+
+/--
+Assertability condition: φ is assertable at context c iff the unknown
+update is empty — every possibility is accounted for by either the
+positive or negative update.
+
+Definition (54) of @cite{elliott-sudo-2025}.
+-/
+def assertable (φ : BilateralDen W E) (c : InfoState W E) : Prop :=
+  unknownUpdate φ c = ∅
+
+/-- Every possibility in s is either verified, falsified, or unknown.
+    This is the partition property of the Strong Kleene truth table. -/
+theorem partition (φ : BilateralDen W E) (s : InfoState W E) :
+    s ⊆ φ.positive s ∪ φ.negative s ∪ unknownUpdate φ s := by
+  intro p hp
+  by_cases h1 : p ∈ φ.positive s
+  · exact Set.mem_union_left _ (Set.mem_union_left _ h1)
+  · by_cases h2 : p ∈ φ.negative s
+    · exact Set.mem_union_left _ (Set.mem_union_right _ h2)
+    · exact Set.mem_union_right _ ⟨hp, h1, h2⟩
+
+/-- Assertability implies the positive and negative updates cover the state. -/
+theorem partition_assertable (φ : BilateralDen W E) (s : InfoState W E)
+    (h : assertable φ s) : s ⊆ φ.positive s ∪ φ.negative s := by
+  intro p hp
+  have hmem := partition φ s hp
+  rcases hmem with (hp' | hp') | hp'
+  · exact Set.mem_union_left _ hp'
+  · exact Set.mem_union_right _ hp'
+  · exfalso
+    have hempty : unknownUpdate φ s = ∅ := h
+    rw [hempty] at hp'
+    exact hp'
+
+
+/--
+Conjunction: sequence positive updates, combine negative updates
+following the Strong Kleene truth table.
 
 For conjunction φ ∧ ψ:
-- s[φ ∧ ψ]⁺ = s[φ]⁺[ψ]⁺ (sequence: first assert φ, then ψ)
-- s[φ ∧ ψ]⁻ = s[φ]⁻ ∪ (s[φ]⁺ ∩ s[ψ]⁻) (fail if φ fails OR φ succeeds but ψ fails)
+- s[φ ∧ ψ]⁺ = s[φ]⁺[ψ]⁺ (the (1,1) cell: both verified)
+- s[φ ∧ ψ]⁻ = s[φ]⁻                    (the (0,*) row: φ falsified)
+             ∪ s[φ]⁺[ψ]⁻              (the (1,0) cell: φ verified, ψ falsified)
+             ∪ s[φ]?[ψ]⁻              (the (#,0) cell: φ unknown, ψ falsified)
 
-The negative update reflects: a conjunction is denied if either conjunct
-could be denied.
+Equation (61) of @cite{elliott-sudo-2025}.
 -/
 def conj (φ ψ : BilateralDen W E) : BilateralDen W E :=
   { positive := λ s => ψ.positive (φ.positive s)
-  , negative := λ s => φ.negative s ∪ (φ.positive s ∩ ψ.negative (φ.positive s)) }
+  , negative := λ s => φ.negative s
+      ∪ ψ.negative (φ.positive s)
+      ∪ ψ.negative (φ.unknownUpdate s) }
 
 /-- Notation for conjunction -/
 infixl:65 " ⊙ " => conj
@@ -157,23 +225,45 @@ theorem conj_assoc_positive (φ ψ χ : BilateralDen W E) (s : InfoState W E) :
 
 
 /--
-Standard disjunction: choice between updates.
+Standard disjunction: dynamic Strong Kleene semantics.
 
-For standard disjunction φ ∨ ψ:
-- s[φ ∨ ψ]⁺ = s[φ]⁺ ∪ s[ψ]⁺ (either disjunct holds)
-- s[φ ∨ ψ]⁻ = s[φ]⁻ ∩ s[ψ]⁻ (both must fail to deny)
+For disjunction φ ∨ ψ, the positive update covers two verification routes:
+
+- **Verification via φ**: s[φ]⁺ (φ is true, ψ is anything)
+- **Verification via ψ**: s[φ]⁻[ψ]⁺ ∪ s[φ]?[ψ]⁺ (φ is false or unknown, ψ is true)
+
+The negative update is sequential: s[φ ∨ ψ]⁻ = s[φ]⁻[ψ]⁻ (both must be
+denied in sequence, passing state dynamically).
+
+The dynamic state-passing in the positive update is what makes bathroom
+disjunctions work: s[¬∃xP(x)]⁻[Q(x)]⁺ = s[∃xP(x)]⁺[Q(x)]⁺ (by DNE),
+introducing the discourse referent x for cross-disjunct anaphora.
+
+Equations (64)/(67) of @cite{elliott-sudo-2025}.
 -/
 def disj (φ ψ : BilateralDen W E) : BilateralDen W E :=
-  { positive := λ s => φ.positive s ∪ ψ.positive s
-  , negative := λ s => φ.negative s ∩ ψ.negative s }
+  { positive := λ s =>
+      φ.positive s                           -- verification via φ
+      ∪ ψ.positive (φ.negative s)            -- verification via ψ (φ false)
+      ∪ ψ.positive (φ.unknownUpdate s)       -- verification via ψ (φ unknown)
+  , negative := λ s =>
+      ψ.negative (φ.negative s)              -- sequential denial
+  }
 
 /-- Notation for disjunction -/
 infixl:60 " ⊕ " => disj
 
-/-- De Morgan: negated disjunction swaps to conjunction of negations -/
+/-- De Morgan: ¬(φ ∨ ψ) = ¬φ ∧ ¬ψ (positive dimension). -/
 theorem de_morgan_disj (φ ψ : BilateralDen W E) (s : InfoState W E) :
-    (~(φ ⊕ ψ)).positive s = φ.negative s ∩ ψ.negative s := by
-  simp only [neg, disj]
+    (~(φ ⊕ ψ)).positive s = (conj (~φ) (~ψ)).positive s := by
+  simp only [neg, disj, conj]
+
+/-- De Morgan: ¬(φ ∧ ψ) = ¬φ ∨ ¬ψ (positive dimension). -/
+theorem de_morgan_conj (φ ψ : BilateralDen W E) (s : InfoState W E) :
+    (~(φ ⊙ ψ)).positive s = (disj (~φ) (~ψ)).positive s := by
+  unfold neg conj disj unknownUpdate
+  congr 1; congr 1
+  ext p; simp only [Set.mem_setOf_eq, and_comm]
 
 
 /--
@@ -274,7 +364,7 @@ theorem neg_eq_swap (φ : BilateralDen W E) :
 
 /-- DNE follows from swap ∘ swap = id -/
 theorem dne_from_swap (φ : BilateralDen W E) :
-    toPair (~~φ) = toPair φ := by simp [neg_eq_swap, Prod.swap_swap]
+    toPair (~~φ) = toPair φ := rfl
 
 /-- Projection: bilateral → unilateral (forgets negative) -/
 def toUnilateral (φ : BilateralDen W E) : UnilateralDen W E := φ.positive

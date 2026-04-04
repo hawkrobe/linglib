@@ -15,6 +15,7 @@ import Linglib.Theories.Semantics.Dynamic.Bilateral.Basic
 namespace Semantics.Dynamic.BUS
 
 open Semantics.Dynamic.Core
+open Classical
 
 export BilateralDen (atom neg conj disj exists_ existsFull forall_ pred1 pred2
   supports entails toPair ofPair toUnilateral)
@@ -64,11 +65,49 @@ theorem neg_positive_eq_negative (φ : BUSDen W E) (s : InfoState W E) :
 theorem neg_negative_eq_positive (φ : BUSDen W E) (s : InfoState W E) :
     (BilateralDen.neg φ).negative s = φ.positive s := rfl
 
-theorem de_morgan_disj_negative (φ ψ : BUSDen W E) (s : InfoState W E) :
-    (BilateralDen.disj φ ψ).negative s = φ.negative s ∩ ψ.negative s := rfl
+theorem disj_negative (φ ψ : BUSDen W E) (s : InfoState W E) :
+    (BilateralDen.disj φ ψ).negative s = ψ.negative (φ.negative s) := rfl
+
 theorem conj_negative (φ ψ : BUSDen W E) (s : InfoState W E) :
     (BilateralDen.conj φ ψ).negative s =
-    φ.negative s ∪ (φ.positive s ∩ ψ.negative (φ.positive s)) := rfl
+    φ.negative s ∪ ψ.negative (φ.positive s) ∪ ψ.negative (φ.unknownUpdate s) := rfl
+
+/--
+Epistemic possibility: ◇φ as a bilateral denotation.
+
+- s[◇φ]⁺ = s if s[φ]⁺ is consistent, else ∅
+- s[◇φ]⁻ = s if s subsists in s[φ]⁻, else ∅
+
+Equation (73) of @cite{elliott-sudo-2025}.
+-/
+def diamond (φ : BUSDen W E) : BUSDen W E :=
+  { positive := λ s => if (φ.positive s).consistent then s else ∅
+  , negative := λ s => if s ⪯ φ.negative s then s else ∅ }
+
+/--
+Epistemic necessity: □φ = ¬◇¬φ.
+-/
+def box (φ : BUSDen W E) : BUSDen W E :=
+  BilateralDen.neg (diamond (BilateralDen.neg φ))
+
+prefix:max "◇ᵇ" => diamond
+prefix:max "□ᵇ" => box
+
+/-- Diamond positive is either s or ∅. -/
+theorem diamond_positive_subset (φ : BUSDen W E) (s : InfoState W E) :
+    (◇ᵇφ).positive s ⊆ s := by
+  unfold diamond
+  by_cases h : (φ.positive s).consistent
+  · simp [h]
+  · simp [h]
+
+/-- Diamond negative is either s or ∅. -/
+theorem diamond_negative_subset (φ : BUSDen W E) (s : InfoState W E) :
+    (◇ᵇφ).negative s ⊆ s := by
+  unfold diamond
+  by_cases h : s ⪯ φ.negative s
+  · simp [h]
+  · simp [h]
 
 end BUSDen
 

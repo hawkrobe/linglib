@@ -1,6 +1,6 @@
 /-
 # Free Choice with Anaphora
-@cite{alonso-ovalle-2006}
+@cite{elliott-sudo-2025}
 
 This module derives Free Choice (FC) inferences using Bilateral Update Semantics,
 following @cite{elliott-sudo-2025} "Free choice with anaphora".
@@ -43,18 +43,19 @@ open Classical
 
 variable {W E : Type*}
 
+-- ============================================================================
+-- Section 1: Modality concepts
+-- ============================================================================
+
 /--
 Possibility: state s makes ◇φ true iff s[φ]⁺ is consistent.
-
-In BUS, possibility checks whether the positive update yields a non-empty state.
+Equivalent to checking `(BUSDen.diamond φ).positive s` is non-empty.
 -/
 def possible (φ : BilateralDen W E) (s : InfoState W E) : Prop :=
   (φ.positive s).consistent
 
 /--
 Necessity: state s makes □φ true iff s subsists in s[φ]⁺.
-
-Every possibility in s has a descendant that survives the positive update.
 -/
 def necessary (φ : BilateralDen W E) (s : InfoState W E) : Prop :=
   s ⪯ φ.positive s
@@ -69,6 +70,15 @@ theorem impossible_iff_empty (φ : BilateralDen W E) (s : InfoState W E) :
     impossible φ s ↔ φ.positive s = ∅ := by
   simp only [impossible, InfoState.consistent, Set.not_nonempty_iff_eq_empty]
 
+/-- Diamond positive = s when φ is possible, ∅ otherwise. -/
+theorem diamond_positive_eq (φ : BilateralDen W E) (s : InfoState W E) :
+    (BUS.BUSDen.diamond φ).positive s =
+    if possible φ s then s else ∅ := by
+  simp only [possible, BUS.BUSDen.diamond]
+
+-- ============================================================================
+-- Section 2: Modal disjunction (anaphora-sensitive, eq. 96)
+-- ============================================================================
 
 /--
 Standard disjunction: the basic bilateral disjunction without FC preconditions.
@@ -77,26 +87,47 @@ def disjStd (φ ψ : BilateralDen W E) : BilateralDen W E :=
   BilateralDen.disj φ ψ
 
 /--
-The part of the positive update that φ (first disjunct) is responsible for.
+The part of the standard disjunction positive update that the first disjunct
+is responsible for: the (1,*) row of the Strong Kleene truth table.
+
+`s[φ ∨ ψ]₁⁺ = s[φ]⁺[ψ]⁺ ∪ s[φ]⁺[ψ]⁻ ∪ s[φ]⁺[ψ]?`
+
+Every possibility in `s[φ]⁺` is verified by φ, and then classified by ψ
+into one of three truth values.
+
+Equation (92a) of @cite{elliott-sudo-2025}.
 -/
 def disjPos1 (φ ψ : BilateralDen W E) (s : InfoState W E) : InfoState W E :=
-  φ.positive s
+  ψ.positive (φ.positive s)
+  ∪ ψ.negative (φ.positive s)
+  ∪ ψ.unknownUpdate (φ.positive s)
 
 /--
-The part of the positive update that ψ (second disjunct) is responsible for.
+The part of the standard disjunction positive update that the second disjunct
+is responsible for: the (*,1) column of the Strong Kleene truth table.
 
-The key case for bathroom disjunctions: s[φ]⁻[ψ]⁺
-When φ = ¬∃x.P(x), this is s[∃x.P(x)]⁺[ψ]⁺ by DNE.
+`s[φ ∨ ψ]₂⁺ = s[φ]⁺[ψ]⁺ ∪ s[φ]⁻[ψ]⁺ ∪ s[φ]?[ψ]⁺`
+
+The key term for cross-disjunct anaphora is `s[φ]⁻[ψ]⁺`: when
+`φ = ¬∃x.P(x)`, `s[φ]⁻ = s[∃x.P(x)]⁺` by DNE, introducing the
+discourse referent for binding across disjuncts.
+
+Equation (92b) of @cite{elliott-sudo-2025}.
 -/
 def disjPos2 (φ ψ : BilateralDen W E) (s : InfoState W E) : InfoState W E :=
-  ψ.positive (φ.negative s)
+  ψ.positive (φ.positive s)
+  ∪ ψ.positive (φ.negative s)
+  ∪ ψ.positive (φ.unknownUpdate s)
 
 /--
-Modal Disjunction: semantic disjunction that validates FC.
+Modal Disjunction (anaphora-sensitive version): semantic disjunction that
+validates FC with anaphora.
 
 Modal disjunction adds a precondition to the positive update requiring
 that each disjunct contribute at least some possibilities. This
 semantically derives FC without pragmatic reasoning.
+
+Equation (96) of @cite{elliott-sudo-2025}.
 -/
 def disjModal (φ ψ : BilateralDen W E) : BilateralDen W E :=
   { positive := λ s =>
@@ -107,101 +138,98 @@ def disjModal (φ ψ : BilateralDen W E) : BilateralDen W E :=
 
 notation:60 φ " ∨ᶠᶜ " ψ => disjModal φ ψ
 
+-- ============================================================================
+-- Section 3: Structural properties of disjPos1 / disjPos2
+-- ============================================================================
 
 /--
-FC is semantically derived from modal disjunction.
-
-If `possible (φ ∨ᶠᶜ ψ) s`, then by the definition of `disjModal`:
-1. `disjPos1 φ ψ s` is non-empty (i.e., φ contributes possibilities)
-2. `disjPos2 φ ψ s` is non-empty (i.e., ψ contributes possibilities)
-
-This directly implies `possible φ s` since `disjPos1 φ ψ s = φ.positive s`.
+The partition property guarantees that `φ.positive s ⊆ disjPos1 φ ψ s`:
+every possibility verified by φ ends up in disjPos1 (classified by ψ as
+true, false, or unknown).
 -/
-theorem fc_semantic_first_disjunct (φ ψ : BilateralDen W E) (s : InfoState W E)
-    (h : possible (φ ∨ᶠᶜ ψ) s) :
-    possible φ s := by
-  unfold possible InfoState.consistent at h ⊢
-  unfold disjModal at h
-  by_cases hcond : (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty
-  · exact hcond.1
-  · simp only [hcond, ↓reduceIte] at h
-    exact (Set.not_nonempty_empty h).elim
+theorem subset_disjPos1 (φ ψ : BilateralDen W E) (s : InfoState W E) :
+    φ.positive s ⊆ disjPos1 φ ψ s := by
+  intro p hp
+  unfold disjPos1
+  exact BilateralDen.partition ψ (φ.positive s) hp
 
 /--
-The second component: ψ contributes possibilities via `φ.negative`.
+Similarly, `φ.negative s ⊆ disjPos2 φ ψ s` via the middle term.
 -/
-theorem fc_semantic_second_disjunct (φ ψ : BilateralDen W E) (s : InfoState W E)
+theorem neg_subset_disjPos2 (φ ψ : BilateralDen W E) (s : InfoState W E) :
+    ψ.positive (φ.negative s) ⊆ disjPos2 φ ψ s := by
+  intro p hp
+  exact Set.mem_union_left _ (Set.mem_union_right _ hp)
+
+-- ============================================================================
+-- Section 4: FC theorems (general)
+-- ============================================================================
+
+/--
+FC preconditions: if the modal disjunction is possible, both disjuncts
+contribute possibilities.
+
+This is the general result from eq. 96. The study-specific bathroom
+inference derives `possible φ s` and `(ψ.positive (φ.negative s)).Nonempty`
+from these preconditions under assertability conditions.
+-/
+theorem fc_preconditions (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
-    (ψ.positive (φ.negative s)).Nonempty := by
+    (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty := by
   unfold possible InfoState.consistent at h
   unfold disjModal at h
   by_cases hcond : (disjPos1 φ ψ s).Nonempty ∧ (disjPos2 φ ψ s).Nonempty
-  · exact hcond.2
+  · exact hcond
   · simp only [hcond, ↓reduceIte] at h
     exact (Set.not_nonempty_empty h).elim
 
-/--
-Modified FC: ◇(φ ∨ ψ) ⊨ ◇φ ∧ ◇(¬φ ∧ ψ)
-
-This is semantically derived.
--/
-theorem modified_fc_semantic (φ ψ : BilateralDen W E) (s : InfoState W E)
+/-- Extract disjPos1 nonemptiness from FC possibility. -/
+theorem fc_disjPos1_nonempty (φ ψ : BilateralDen W E) (s : InfoState W E)
     (h : possible (φ ∨ᶠᶜ ψ) s) :
-    possible φ s ∧ (ψ.positive (φ.negative s)).Nonempty := by
-  exact ⟨fc_semantic_first_disjunct φ ψ s h, fc_semantic_second_disjunct φ ψ s h⟩
+    (disjPos1 φ ψ s).Nonempty :=
+  (fc_preconditions φ ψ s h).1
 
+/-- Extract disjPos2 nonemptiness from FC possibility. -/
+theorem fc_disjPos2_nonempty (φ ψ : BilateralDen W E) (s : InfoState W E)
+    (h : possible (φ ∨ᶠᶜ ψ) s) :
+    (disjPos2 φ ψ s).Nonempty :=
+  (fc_preconditions φ ψ s h).2
 
-/--
-The bathroom disjunction configuration.
-
-"Either there's no bathroom or it's in a funny place"
--/
-structure BathroomConfig (W E : Type*) where
-  /-- The existential: ∃x.bathroom(x) -/
-  bathroom : BilateralDen W E
-  /-- The predicate on x: funny-place(x) -/
-  funnyPlace : BilateralDen W E
-  /-- The variable bound by the existential -/
-  x : Nat
+-- ============================================================================
+-- Section 5: Dual prohibition
+-- ============================================================================
 
 /--
-The bathroom disjunction sentence: ¬∃x.bathroom(x) ∨ funny-place(x)
+Dual prohibition via disjPos1: if disjPos1 is empty (first disjunct
+contributes nothing), modal disjunction is impossible.
 -/
-def bathroomSentence (cfg : BathroomConfig W E) : BilateralDen W E :=
-  (BilateralDen.neg cfg.bathroom) ∨ᶠᶜ cfg.funnyPlace
-
-/--
-FC with anaphora: bathroom disjunction inference pattern.
--/
-theorem fc_with_anaphora (cfg : BathroomConfig W E) (s : InfoState W E)
-    (h_poss : possible (bathroomSentence cfg) s)
-    (h_no_bath : ((BilateralDen.neg cfg.bathroom).positive s).Nonempty)
-    (h_bath_funny : ((BilateralDen.conj cfg.bathroom cfg.funnyPlace).positive s).Nonempty) :
-    possible (BilateralDen.neg cfg.bathroom) s ∧
-    possible (BilateralDen.conj cfg.bathroom cfg.funnyPlace) s := by
-  exact ⟨h_no_bath, h_bath_funny⟩
-
-
-/--
-Dual prohibition: ¬◇φ ∧ ¬◇ψ ⊨ ¬◇(φ ∨ ψ)
-
-If neither disjunct is possible, the disjunction is impossible.
--/
-theorem dual_prohibition (φ ψ : BilateralDen W E) (s : InfoState W E)
-    (h_φ : impossible φ s)
-    (h_ψ : impossible ψ s) :
+theorem dual_prohibition_disjPos1 (φ ψ : BilateralDen W E) (s : InfoState W E)
+    (h : ¬(disjPos1 φ ψ s).Nonempty) :
     impossible (φ ∨ᶠᶜ ψ) s := by
   simp only [impossible, InfoState.consistent] at *
   intro ⟨p, hp⟩
   unfold disjModal at hp
-  simp only at hp
   split_ifs at hp with hcond
-  · simp only [disjStd, BilateralDen.disj] at hp
-    rcases hp with hφ | hψ
-    · exact h_φ ⟨p, hφ⟩
-    · exact h_ψ ⟨p, hψ⟩
+  · exact absurd hcond.1 h
   · exact hp
 
+/--
+Dual prohibition via disjPos2: if disjPos2 is empty (second disjunct
+contributes nothing), modal disjunction is impossible.
+-/
+theorem dual_prohibition_disjPos2 (φ ψ : BilateralDen W E) (s : InfoState W E)
+    (h : ¬(disjPos2 φ ψ s).Nonempty) :
+    impossible (φ ∨ᶠᶜ ψ) s := by
+  simp only [impossible, InfoState.consistent] at *
+  intro ⟨p, hp⟩
+  unfold disjModal at hp
+  split_ifs at hp with hcond
+  · exact absurd hcond.2 h
+  · exact hp
+
+-- ============================================================================
+-- Section 6: Structural results (DNE, negation, binding)
+-- ============================================================================
 
 /--
 In BUS, negation swaps positive and negative updates.
@@ -210,13 +238,6 @@ theorem negation_swaps_dims (φ : BilateralDen W E) (s : InfoState W E) :
     (BilateralDen.neg φ).positive s = φ.negative s ∧
     (BilateralDen.neg φ).negative s = φ.positive s := by
   simp only [BilateralDen.neg, and_self]
-
-/--
-DNE as structural equality.
--/
-theorem anaphora_via_dne (cfg : BathroomConfig W E) :
-    BilateralDen.neg (BilateralDen.neg cfg.bathroom) = cfg.bathroom := by
-  simp only [BilateralDen.neg_neg]
 
 /--
 Negated existential has existential in negative dimension.
@@ -236,32 +257,16 @@ theorem dne_preserves_binding (x : Nat) (dom : Set E)
     (BilateralDen.conj (BilateralDen.exists_ x dom φ) ψ).positive s := by
   simp only [BilateralDen.neg_neg]
 
-
 /--
-A concrete example setup for testing.
+Egli's theorem (positive): `(∃x.φ) ∧ ψ ⊆ ∃x(φ ∧ ψ)` for positive updates.
+
+The positive direction holds because conjunction sequences through the
+existential's positive update.
 -/
-inductive BathroomWorld where
-  | noBathroom
-  | bathroomNormal
-  | bathroomFunny
-  deriving DecidableEq, Repr
-
-inductive BathroomEntity where
-  | theBathroom
-  deriving DecidableEq, Repr
-
-def isBathroom : BathroomEntity → BathroomWorld → Bool
-  | .theBathroom, .noBathroom => false
-  | .theBathroom, _ => true
-
-def inFunnyPlace : BathroomEntity → BathroomWorld → Bool
-  | .theBathroom, .bathroomFunny => true
-  | _, _ => false
-
-def exampleBathroomConfig : BathroomConfig BathroomWorld BathroomEntity :=
-  { bathroom := BilateralDen.exists_ 0 Set.univ (BilateralDen.pred1 isBathroom 0)
-  , funnyPlace := BilateralDen.pred1 inFunnyPlace 0
-  , x := 0 }
-
+theorem egli_positive (x : Nat) (domain : Set E) (φ ψ : BilateralDen W E) (s : InfoState W E) :
+    ((BilateralDen.exists_ x domain φ) ⊙ ψ).positive s ⊆
+    (BilateralDen.exists_ x domain (φ ⊙ ψ)).positive s := by
+  intro p hp
+  exact hp
 
 end Semantics.Dynamic.BUS.FreeChoice

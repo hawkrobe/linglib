@@ -253,7 +253,7 @@ theorem worse_diverges : worse_.binding ≠ bad_.binding := by decide
 -- § 5. Hypothesis 2: Polarity predicts binding type
 -- ════════════════════════════════════════════════════
 
-/-! Under a negation theory of antonymy (@cite{heim-2006}, @cite{buering-2007}),
+/-! Under a negation theory of antonymy (@cite{heim-2006}, @cite{buring-2007}),
     if a positive adjective P is conjunctive (∀Q∈DIM: Q(x)), then its
     negative antonym ¬P is disjunctive (∃Q∈DIM: ¬Q(x)), by De Morgan's laws.
     The proof is in Theory.lean as `deMorgan_conjunctive_disjunctive`. -/

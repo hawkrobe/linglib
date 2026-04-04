@@ -268,7 +268,7 @@ def russellAmbiguity : RussellAmbiguityDatum :=
   { sentence := "John thinks the yacht is longer than it is"
   , readings := ["de dicto (contradictory)", "de re (sensible)"]
   , isDegPScope := false
-  , explanation := "Von Stechow (1984): both readings arise from world-variable binding in the than-clause, not DegP movement" }
+  , explanation := "Von Stechow (1984): both readings arise from presence/absence of ACTUALLY operator in the than-clause, not DegP movement" }
 
 -- ════════════════════════════════════════════════════
 -- § 8. Superlative Readings
