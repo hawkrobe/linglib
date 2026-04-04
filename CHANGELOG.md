@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.487] - 2026-04-03
+
+### Added
+- **ArgumentStructure.lean**: general structural theorems — `fuse_alternation_monotone` (instrument-free fusion preserves alternations, ∀ v c alt), `instrumentSpec_persists`, `fuse_not_generally_monotone` (witness showing hypothesis is necessary), `fuse_blocks_only_via_instrumentSpec` (instrumentSpec is the sole blocker)
+- **GoldbergJackendoff2004.lean**: chain theorems — `aspect_chain` (hasMax → bounded → accomplishment → telic, ∀ Boundedness), `alternation_chain` (causative subconstruction + ¬instrumentSpec → 4 alternations, ∀ mc sc), `noncausative_partial_chain` (gains middle+resultative but not CI+instrumentSubject), `instrumentSpec_blocks_across_subconstructions`
+
 ## [0.229.486] - 2026-04-03
 
 ### Changed
@@ -27,8 +33,8 @@
 ## [0.229.482] - 2026-04-03
 
 ### Added
-- **KoontzGarboden2009.lean**: study file for anticausativization as reflexivization — `AnticausativeAnalysis` enum (deletion/reflexivization/existentialBinding/leastCommonDenominator) with `retainsCause`/`preservesMH`, reflexivization operator `λℜλx[ℜ(x,x)]`, non-entailment model, Monotonicity Hypothesis with `isMonotonic`, Haspelmath 1990 syncretism data (13 languages, 9/13 syncretism), bridges to `ValencyAlternation` and `IntransitivizationType`
-- **Spanish Predicates.lean**: `CauserSpec` inductive (effector/agent) with `causerSpec` field on `SpanishVerbEntry`; 5 new verb entries (*asesinar*, *cortar*, *ahogar*, *empeorar*, *crecer*); `effector_verbs_alternate` and `agent_verbs_dont_alternate` verification theorems
+- **KoontzGarboden2009.lean**: study file for anticausativization as reflexivization — `AnticausativeAnalysis` enum (deletion/reflexivization/existentialBinding/leastCommonDenominator) with `retainsCause`/`preservesMH`, reflexivization operator `λℜλx[ℜ(x,x)]`, non-entailment model, Monotonicity Hypothesis with `isMonotonic`, Haspelmath 1990 syncretism data (13 languages, 9/13 syncretism), bridges to `ValencyAlternation` and `IntransitivizationType`; proto-role bridge §3b: `toCauserSpec` derives `CauserSpec` from `EntailmentProfile` via volition, `causerSpec_matches_profile`/`effector_lacks_volition`/`agent_has_volition`/`both_satisfy_causation` verification theorems
+- **Spanish Predicates.lean**: `CauserSpec` inductive (effector/agent) with `causerSpec` field on `SpanishVerbEntry`; 5 new verb entries (*asesinar*, *cortar*, *ahogar*, *empeorar*, *crecer*); `effector_verbs_alternate` and `agent_verbs_dont_alternate` verification theorems; `subjectEntailments` on 6 causative verbs (C+IE for EFFECTOR, V+S+C+M+IE for AGENT)
 
 ### Changed
 - **EventStructure.lean**: `CausationType.hasCauseInLSR` and `CausationType.licensesBySelf` predicates; docstring updates acknowledging reflexivization vs deletion debate

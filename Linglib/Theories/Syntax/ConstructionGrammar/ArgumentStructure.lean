@@ -493,6 +493,80 @@ theorem causedMotion_adds_motion_causation :
     causedMotion.semanticContribution.motion = true ∧
     causedMotion.semanticContribution.causation = true := ⟨rfl, rfl⟩
 
+/-! ### General structural properties of fusion + alternation
+
+These theorems characterize how `MeaningComponents.fuse` interacts with
+`predictedAlternation` in general — they hold for ALL verb classes, ALL
+constructions, and ALL alternation types. The concrete instances below
+(hit + resultative, touch + caused-motion, etc.) are consequences. -/
+
+/-- **Monotonicity**: an instrument-free construction never removes an alternation.
+
+    If a verb participates in alternation `alt`, fusing with any construction
+    whose `instrumentSpec = false` preserves that participation.
+
+    This captures the Goldbergian principle that constructions ADD meaning:
+    `fuse` is componentwise OR, so positive features can only increase.
+    The one exception is `instrumentSpec`: a construction that adds it can
+    block alternations requiring `¬instrumentSpec`. The hypothesis
+    `c.instrumentSpec = false` rules out this sole source of loss.
+
+    Proof: case-split on `alt`. For purely positive alternations (middle,
+    conative, BPPA), the required features are preserved by `a || b ≥ a`.
+    For mixed alternations (causativeInchoative, instrumentSubject,
+    resultative), the positive features are preserved and the negative
+    condition `¬instrumentSpec` is preserved since `false || false = false`.
+    Class-specific alternations are vacuously true (premise is `false = true`). -/
+theorem fuse_alternation_monotone (v c : MeaningComponents) (alt : DiathesisAlternation)
+    (h_no_inst : c.instrumentSpec = false)
+    (h_bare : v.predictedAlternation alt = true) :
+    (v.fuse c).predictedAlternation alt = true := by
+  rcases v with ⟨cos, con, mot, caus, inst, man⟩
+  rcases c with ⟨cos', con', mot', caus', inst', man'⟩
+  cases alt <;> simp_all [MeaningComponents.predictedAlternation, MeaningComponents.fuse]
+
+/-- **instrumentSpec persists through fusion**: once a verb has instrument
+    specificity, no fusion can remove it. This is why cut-class verbs
+    (instrumentSpec = true) remain blocked from causativeInchoative even
+    inside the resultative: `true || false = true`. -/
+theorem instrumentSpec_persists (v c : MeaningComponents)
+    (h : v.instrumentSpec = true) :
+    (v.fuse c).instrumentSpec = true := by
+  simp [MeaningComponents.fuse, h]
+
+/-- **Fusion is NOT generally monotone**: when a construction adds instrumentSpec,
+    it CAN block an alternation the verb had alone.
+
+    Witness: a verb with CoS + causation + ¬instrumentSpec participates in
+    causativeInchoative; fusing with {instrumentSpec} blocks it. This shows
+    the hypothesis `c.instrumentSpec = false` in `fuse_alternation_monotone`
+    is necessary, not just sufficient. -/
+theorem fuse_not_generally_monotone :
+    ∃ (v c : MeaningComponents) (alt : DiathesisAlternation),
+      v.predictedAlternation alt = true ∧
+      (v.fuse c).predictedAlternation alt = false :=
+  ⟨⟨true, false, false, true, false, false⟩,
+   ⟨false, false, false, false, true, false⟩,
+   .causativeInchoative, rfl, rfl⟩
+
+/-- **instrumentSpec is the sole blocker**: for any alternation, if a verb
+    participates alone but NOT after fusion, instrumentSpec must have been
+    introduced. No other feature addition can destroy alternation participation.
+
+    This follows from the structure of `predictedAlternation`: component-derived
+    alternations use only positive conditions (CoS, contact, motion, causation)
+    combined with at most one negative condition (`¬instrumentSpec`). Since
+    `fuse` is componentwise OR, positive conditions are always preserved —
+    only the negative condition can be disrupted, and only by instrumentSpec. -/
+theorem fuse_blocks_only_via_instrumentSpec (v c : MeaningComponents)
+    (alt : DiathesisAlternation)
+    (h_bare : v.predictedAlternation alt = true)
+    (h_fused : (v.fuse c).predictedAlternation alt = false) :
+    (v.fuse c).instrumentSpec = true := by
+  rcases v with ⟨cos, con, mot, caus, inst, man⟩
+  rcases c with ⟨cos', con', mot', caus', inst', man'⟩
+  cases alt <;> simp_all [MeaningComponents.predictedAlternation, MeaningComponents.fuse]
+
 /-! ### Key derivation: construction-dependent alternation
 
 The payoff: `predictedAlternation` on fused components derives that manner

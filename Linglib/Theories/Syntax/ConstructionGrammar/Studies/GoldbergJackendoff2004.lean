@@ -917,6 +917,96 @@ theorem wipe_already_has_everything :
   constructor; native_decide
   constructor <;> native_decide
 
+/-! ## General chain theorems
+
+The full derivation pipeline connecting adjective scale structure,
+RP boundedness, aspect, and alternation participation. These are
+universally quantified — they hold for ANY verb class and ANY
+subconstruction satisfying the hypotheses, not just the attested entries.
+
+The two chains are logically independent (aspect and alternation don't
+interact at the MeaningComponents level), but they share a common input:
+the subconstruction type determines both the constructional semantics
+(CoS, causation) and the default subevent relation (MEANS). -/
+
+/-- **Aspect chain**: any adjective with a scale maximum, used as an RP
+    in a resultative, produces a telic accomplishment.
+
+    The derivation composes two independently-defined functions:
+    `adjScaleToRPBoundedness` (Kennedy 2007 → G&J) and
+    `resultativeVendlerClass` (G&J → Vendler). Neither function knows
+    about the other; the chain theorem proves they compose correctly. -/
+theorem aspect_chain (b : Core.Scale.Boundedness) (hMax : b.hasMax = true) :
+    let rpB := adjScaleToRPBoundedness b
+    rpB = .bounded ∧
+    resultativeVendlerClass rpB = .accomplishment ∧
+    (resultativeVendlerClass rpB).telicity = .telic := by
+  constructor
+  · simp [adjScaleToRPBoundedness, hMax]
+  constructor
+  · exact closed_scale_telic_resultative b hMax
+  · rw [closed_scale_telic_resultative b hMax]; rfl
+
+/-- **Alternation chain**: for any verb class and any causative subconstruction,
+    if the verb lacks instrument specificity, fusion with the subconstruction
+    enables causativeInchoative, middle, instrumentSubject, and the resultative
+    alternation — regardless of the verb's original feature profile.
+
+    This is the G&J insight formalized: the construction systematically augments
+    the verb's meaning component profile. The proof uses `fuse_alternation_monotone`
+    from ArgumentStructure (monotonicity of fusion) plus the fact that all
+    subconstructions contribute CoS, and causative ones also contribute causation. -/
+theorem alternation_chain (mc : MeaningComponents) (sc : ResultativeSubconstruction)
+    (hInstr : mc.instrumentSpec = false) (hCausative : sc.isCausative = true) :
+    let fused := composedMeaning mc sc.toConstruction
+    fused.predictedAlternation .causativeInchoative = true ∧
+    fused.predictedAlternation .middle = true ∧
+    fused.predictedAlternation .instrumentSubject = true ∧
+    fused.predictedAlternation .resultative = true := by
+  cases sc <;> simp_all [ResultativeSubconstruction.isCausative,
+    composedMeaning, ResultativeSubconstruction.toConstruction,
+    ResultativeSubconstruction.semanticContribution,
+    MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+
+/-- **Noncausative contrast**: in noncausative subconstructions, the verb
+    gains CoS (middle, resultative alternation) but NOT causation
+    (no causativeInchoative, no instrumentSubject). The asymmetry follows
+    from the semantic contribution: noncausative has BECOME but not CAUSE. -/
+theorem noncausative_partial_chain (mc : MeaningComponents)
+    (sc : ResultativeSubconstruction)
+    (hInstr : mc.instrumentSpec = false) (hNonCaus : sc.isCausative = false)
+    (hNoCaus : mc.causation = false) :
+    let fused := composedMeaning mc sc.toConstruction
+    -- Gains: CoS-only alternations
+    fused.predictedAlternation .middle = true ∧
+    fused.predictedAlternation .resultative = true ∧
+    -- Lacks: causation-dependent alternations
+    fused.predictedAlternation .causativeInchoative = false ∧
+    fused.predictedAlternation .instrumentSubject = false := by
+  cases sc <;> simp_all [ResultativeSubconstruction.isCausative,
+    composedMeaning, ResultativeSubconstruction.toConstruction,
+    ResultativeSubconstruction.semanticContribution,
+    MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+
+/-- **instrumentSpec blocking persists across subconstructions**: a verb
+    with instrument specificity (e.g., cut-class) remains blocked from
+    instrument-sensitive alternations in ALL subconstructions, because
+    `fuse` is componentwise OR and no subconstruction contributes
+    `instrumentSpec = false` to cancel it.
+
+    Uses `fuse_blocks_only_via_instrumentSpec` from ArgumentStructure:
+    the sole source of alternation loss is instrumentSpec. -/
+theorem instrumentSpec_blocks_across_subconstructions (mc : MeaningComponents)
+    (sc : ResultativeSubconstruction)
+    (hInstr : mc.instrumentSpec = true) :
+    let fused := composedMeaning mc sc.toConstruction
+    fused.predictedAlternation .causativeInchoative = false ∧
+    fused.predictedAlternation .instrumentSubject = false ∧
+    fused.predictedAlternation .resultative = false := by
+  cases sc <;> simp_all [composedMeaning, ResultativeSubconstruction.toConstruction,
+    ResultativeSubconstruction.semanticContribution,
+    MeaningComponents.fuse, MeaningComponents.predictedAlternation]
+
 /-! ## Empirical data: grammaticality judgments
 
 Theory-neutral grammaticality judgments and aspectual contrasts drawn
