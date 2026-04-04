@@ -245,12 +245,94 @@ theorem hammer_not_completion_if_result_first :
       hammeringVar flatVar .means .constructionalFirst = false := by
   native_decide
 
-/-! ### CausativeBuilder bridge -/
+/-! ### CausativeBuilder bridge: derived from SubeventRelation + CAUSE
 
-/-- The resultative construction uses `.make` (sufficiency). -/
-def resultativeCausativeBuilder : CausativeBuilder := .make
+The resultative's CausativeBuilder is `.make`, but this is NOT stipulated —
+it is DERIVED from two independently-motivated properties:
 
-/-- Resultative causation uses the `.make` builder. -/
+1. **MEANS relation**: the verbal subevent is the means by which the
+   constructional subevent is brought about (@cite{goldberg-jackendoff-2004}
+   §3, Principle 25). MEANS ↔ causal sufficiency: adding the verbal
+   subevent guarantees the result.
+
+2. **CAUSE in constructional subevent**: causative subconstructions have
+   `hasCause = true` (derived from `constructionalDesc`).
+
+MEANS + CAUSE → `makeSem` (sufficiency). Among sufficiency builders,
+`.make` is uniquely identified by lacking coercion (`.force`) and
+barrier-removal (`.enable`). -/
+
+/-- Derive the CausativeBuilder from subevent relation + constructional desc.
+
+    MEANS + CAUSE: verbal subevent is sufficient for result → `.make`.
+    All other combinations don't license an independent causal builder:
+    - RESULT: verbal subevent is caused BY the result (reversed directionality)
+    - INSTANCE: verbal subevent IS the constructional subevent (identity, not causation)
+    - CO-OCCURRENCE: no causal connection
+    - ¬hasCause: noncausative (BECOME without CAUSE) — no external causation -/
+def deriveCausativeBuilder (rel : SubeventRelation) (desc : SubeventDesc) :
+    Option CausativeBuilder :=
+  match rel, desc.hasCause with
+  | .means, true => some .make
+  | _, _ => none
+
+/-- `.make` is the unique builder asserting neutral sufficiency
+    (no coercion, no barrier-removal). -/
+theorem make_unique_neutral_sufficiency (b : CausativeBuilder)
+    (hs : b.assertsSufficiency = true)
+    (hc : b.isCoercive = false)
+    (hp : b.isPermissive = false) :
+    b = .make := by
+  cases b <;> simp_all [CausativeBuilder.assertsSufficiency,
+    CausativeBuilder.isCoercive, CausativeBuilder.isPermissive]
+
+/-- For any causative subconstruction with MEANS relation,
+    the derived builder is `.make`. -/
+theorem causative_means_derives_make (sc : ResultativeSubconstruction)
+    (h : sc.isCausative = true) :
+    deriveCausativeBuilder .means sc.constructionalDesc = some .make := by
+  cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
+    simp [deriveCausativeBuilder, ResultativeSubconstruction.constructionalDesc]
+
+/-- Noncausative subconstructions don't derive a CausativeBuilder
+    (no CAUSE operator → no external causation to encode). -/
+theorem noncausative_no_builder (sc : ResultativeSubconstruction)
+    (h : sc.isCausative = false) :
+    deriveCausativeBuilder .means sc.constructionalDesc = none := by
+  cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
+    simp [deriveCausativeBuilder, ResultativeSubconstruction.constructionalDesc]
+
+/-- Non-MEANS relations never derive a CausativeBuilder, regardless of
+    whether the constructional subevent has CAUSE. The causal builder
+    only applies when the verbal subevent brings about the result. -/
+theorem non_means_no_builder (desc : SubeventDesc) :
+    deriveCausativeBuilder .result desc = none ∧
+    deriveCausativeBuilder .instance_ desc = none ∧
+    deriveCausativeBuilder .coOccurrence desc = none := by
+  simp [deriveCausativeBuilder]
+
+/-- When `deriveCausativeBuilder` succeeds, the resulting builder
+    asserts causal sufficiency. -/
+theorem derived_asserts_sufficiency (rel : SubeventRelation) (desc : SubeventDesc)
+    (b : CausativeBuilder) (h : deriveCausativeBuilder rel desc = some b) :
+    b.assertsSufficiency = true := by
+  unfold deriveCausativeBuilder at h
+  split at h
+  · have := Option.some.inj h; subst this; rfl
+  · simp at h
+
+/-- The resultative CausativeBuilder, derived from MEANS + CAUSE.
+    Uses `causativeProperty` as the representative causative subconstruction;
+    `causative_means_derives_make` proves all causative subconstructions
+    yield the same result. -/
+def resultativeCausativeBuilder : CausativeBuilder :=
+  match deriveCausativeBuilder .means
+    ResultativeSubconstruction.causativeProperty.constructionalDesc with
+  | some b => b
+  | none => .cause  -- unreachable: causativeProperty has hasCause = true
+
+/-- The derived builder is `.make` — causal sufficiency without
+    coercion or barrier-removal. -/
 theorem resultative_is_make :
     resultativeCausativeBuilder = .make := rfl
 

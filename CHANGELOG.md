@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.485] - 2026-04-03
+
+### Changed
+- **Resultatives.lean**: derive `resultativeCausativeBuilder` from `SubeventRelation` + `constructionalDesc` instead of stipulating `.make` — `deriveCausativeBuilder` maps MEANS + hasCause → `.make`, `make_unique_neutral_sufficiency` proves `.make` is the unique neutral sufficiency builder, `causative_means_derives_make`/`noncausative_no_builder`/`non_means_no_builder` coverage theorems, `derived_asserts_sufficiency` connects to N&L sufficiency
+
 ## [0.229.484] - 2026-04-03
 
 ### Changed
