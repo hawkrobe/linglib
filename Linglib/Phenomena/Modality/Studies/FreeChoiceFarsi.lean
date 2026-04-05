@@ -354,7 +354,7 @@ def irgendeinTypology : EFCITypologyDatum :=
   , language := "German"
   , item := "irgendein"
   , canInsertModal := true
-  , canPartialExh := true  -- Also allows partial exh
+  , canPartialExh := false  -- Table 2: (+ modal insertion, − partial exh)
   , grammaticalInRoot := true
   , rootReading := "Epistemic modal (speaker ignorance/indifference)"
   }

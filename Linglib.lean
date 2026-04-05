@@ -17,6 +17,7 @@ import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Tree
 import Linglib.Core.Logic.Duality
+import Linglib.Core.Logic.NonBivalence
 import Linglib.Core.Logic.Quantification
 import Linglib.Core.Logic.Quantification.Defs
 import Linglib.Core.Logic.Quantification.Properties
@@ -724,7 +725,6 @@ import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
-import Linglib.Phenomena.Anaphora.ModalSubordination
 import Linglib.Phenomena.Anaphora.Typology
 import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.Anaphora.Studies.Spector2025
@@ -971,6 +971,7 @@ import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Phenomena.Modality.Studies.RotterLiu2025Concord
 import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
 import Linglib.Phenomena.Modality.Studies.LiuRotter2025
+import Linglib.Phenomena.Modality.Studies.Mendes2025
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.Modality.FreeChoice
@@ -981,6 +982,7 @@ import Linglib.Phenomena.Modality.GermanModals
 import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
+import Linglib.Phenomena.Modality.Studies.AlonsoOvalleMoghiseh2025
 import Linglib.Phenomena.Modality.Studies.Khoo2015
 import Linglib.Phenomena.Modality.Typology
 import Linglib.Phenomena.Modality.Studies.ImelGuoST2026
@@ -1354,6 +1356,8 @@ import Linglib.Theories.Semantics.Dynamic.Bilateral.Basic
 import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
 import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS_DynamicTy2
+import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRT
+import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRTConnectives
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Basic
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.PointwiseUpdate
@@ -1369,12 +1373,10 @@ import Linglib.Theories.Semantics.Dynamic.DynamicGQ.HigherOrder
 import Linglib.Theories.Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
 import Linglib.Theories.Semantics.Dynamic.DynamicGQ.PostSuppositional
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Connectives
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.MendesDerivations
+import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Bridge
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.PresuppositionWeakening
+import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Operators
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Update
 import Linglib.Theories.Semantics.PIP.Basic
 import Linglib.Theories.Semantics.PIP.Connectives
 import Linglib.Theories.Semantics.PIP.Felicity
@@ -1387,6 +1389,7 @@ import Linglib.Theories.Semantics.Dynamic.PLA.Quantifiers
 import Linglib.Theories.Semantics.Dynamic.PLA.Semantics
 import Linglib.Theories.Semantics.Dynamic.PLA.Update
 -- Theories: Dynamic Semantics — Comparisons & top-level
+import Linglib.Theories.Semantics.Dynamic.Comparisons.ICDRT_BUS
 import Linglib.Theories.Semantics.Dynamic.Comparisons.PLA_BUS
 import Linglib.Theories.Semantics.Dynamic.State
 import Linglib.Theories.Semantics.Dynamic.TeamSemantics
@@ -1811,6 +1814,7 @@ import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Exhaustification.InnocentInclusion
 import Linglib.Theories.Semantics.Exhaustification.ScalePredictions
+import Linglib.Theories.Semantics.Exhaustification.SplitExhaustification
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018
 import Linglib.Phenomena.Plurals.Studies.Magri2014

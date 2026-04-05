@@ -1,18 +1,26 @@
-/-
-# ICDRT Connectives
+import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRT
 
-Bilateral connectives enabling cross-disjunct anaphora (bathroom sentences).
+/-!
+# Bilateral Connectives (DN-DRT / BUS)
+
+Bilateral connectives enabling cross-disjunct anaphora (bathroom sentences),
+following the DN-DRT / BUS mechanism (@cite{krahmer-muskens-1995}).
+
+This bilateral approach is NOT the same as @cite{hofmann-2025}'s full
+ICDRT analysis. ICDRT uses static operators over propositional discourse
+referents to derive accessibility from veridicality + discourse consistency,
+covering cases (modal subordination, disagreement) that bilateral accounts
+cannot (§5.1.1).
 
 ## Main definitions
 
-`BilateralICDRT.neg`, `disjBathroom`, `impl`, `donkeyConditional`, `bathroomSentence`
+`BilateralICDRT.neg`, `disjBathroom`, `impl`, `bathroomSentenceFull`
 
 -/
 
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Update
+namespace Semantics.Dynamic.Bilateral.ICDRT
 
-namespace Semantics.Dynamic.IntensionalCDRT
-
+open IntensionalCDRT
 open Semantics.Dynamic.Core
 
 
@@ -152,53 +160,7 @@ def forall_ (p : PVar) (v : IVar) (domain : Set E)
 
 
 /--
-Donkey conditional: "If a farmer owns a donkey, he beats it."
-
-In Hofmann's flat update:
-1. "a farmer" introduces dref f
-2. "a donkey" introduces dref d
-3. These are accessible in the consequent via propositional drefs
-
-Structure: ∃f.∃d.(owns(f,d) → beats(f,d))
-
-The indefinites take widest scope (flat), but propositional drefs
-track that they're introduced in the antecedent context.
--/
-def donkeyConditional (pFarmer pDonkey : PVar) (vFarmer vDonkey : IVar)
-    (farmers donkeys : Set E)
-    (owns beats : E → E → W → Prop) : BilateralICDRT W E :=
-  let antecedent : BilateralICDRT W E := atom (λ w =>
-    True)  -- Placeholder for owns predicate
-  let consequent : BilateralICDRT W E := atom (λ w =>
-    True)  -- Placeholder for beats predicate
-  exists_ pFarmer vFarmer farmers
-    (exists_ pDonkey vDonkey donkeys
-      (impl antecedent consequent))
-
-
-/--
-The classic bathroom sentence:
-  "Either there's no bathroom, or it's upstairs."
-
-Analysis:
-1. First disjunct: ¬∃x.bathroom(x)
-2. Second disjunct: upstairs(x)
-3. Bathroom disjunction: x from ¬∃ is accessible in second disjunct
-
-The negative of ∃x.bathroom(x) still introduces x (flatly),
-but with local context where bathroom(x) is false.
--/
-def bathroomSentence (p : PVar) (v : IVar) (domain : Set E)
-    (bathroom upstairs : E → W → Prop) : BilateralICDRT W E :=
-  let thereIsABathroom : BilateralICDRT W E :=
-    exists_ p v domain (atom (λ w => ∃ e, bathroom e w))
-  let itIsUpstairs : BilateralICDRT W E :=
-    -- The individual dref v is accessible here
-    atom (λ w => True)  -- Placeholder - needs entity lookup
-  disjBathroom thereIsABathroom.neg itIsUpstairs
-
-/--
-More detailed bathroom sentence with proper variable reference.
+Bathroom sentence with proper variable reference.
 
 In full ICDRT, "it" in the second disjunct looks up variable v,
 and the propositional dref p tracks where v has a referent.
@@ -207,15 +169,15 @@ def bathroomSentenceFull (p : PVar) (v : IVar) (domain : Set E)
     (bathroom upstairs : Entity E → W → Prop) : BilateralICDRT W E :=
   let thereIsABathroom : BilateralICDRT W E :=
     exists_ p v domain
-      { positive := λ c => c.updateFull (λ g w => bathroom (g.indiv v) w)
-        negative := λ c => c.updateFull (λ g w => ¬bathroom (g.indiv v) w) }
+      { positive := λ c => c.updateFull (λ g w => bathroom (g.indiv v w) w)
+        negative := λ c => c.updateFull (λ g w => ¬bathroom (g.indiv v w) w) }
   let itIsUpstairs : BilateralICDRT W E :=
-    -- v is accessible; we can reference g.indiv v
-    { positive := λ c => c.updateFull (λ g w => upstairs (g.indiv v) w)
-      negative := λ c => c.updateFull (λ g w => ¬upstairs (g.indiv v) w) }
+    -- v is accessible; we can reference g.indiv v w
+    { positive := λ c => c.updateFull (λ g w => upstairs (g.indiv v w) w)
+      negative := λ c => c.updateFull (λ g w => ¬upstairs (g.indiv v w) w) }
   disjBathroom thereIsABathroom.neg itIsUpstairs
 
 end BilateralICDRT
 
 
-end Semantics.Dynamic.IntensionalCDRT
+end Semantics.Dynamic.Bilateral.ICDRT

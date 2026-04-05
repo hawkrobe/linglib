@@ -2,6 +2,7 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Order.Sublattice
 import Linglib.Core.Logic.NaturalLogic
+import Linglib.Core.Logic.Truth3
 import Linglib.Tactics.OntSort
 
 /-!
@@ -255,6 +256,24 @@ inductive DoubleMono where
   | upDown   -- ↑MON↓: restrictor-↑ + scope-↓ (not all)
   | downDown -- ↓MON↓: restrictor-↓ + scope-↓ (no)
   deriving DecidableEq, Repr
+
+/-- Restrictor monotonicity determines projection type for embedded
+    trivalent content (@cite{ramotowska-marty-romoli-santorio-2025}).
+
+    Restrictor-↓ (every, no) = conjunctive/strong = fragile under gaps.
+    Restrictor-↑ (some, not-every) = disjunctive/weak = robust under gaps.
+
+    This is the monotonicity-theoretic explanation of why quantifier
+    STRENGTH (not polarity) determines truth-value judgments for
+    counterfactuals and other trivalent phenomena. -/
+def DoubleMono.toProjectionType : DoubleMono → Core.Duality.ProjectionType
+  | .downUp | .downDown => .conjunctive
+  | .upUp   | .upDown   => .disjunctive
+
+/-- Strong quantifiers are restrictor-downward: conjunctive projection. -/
+def DoubleMono.isStrong : DoubleMono → Bool
+  | .downUp | .downDown => true
+  | .upUp   | .upDown   => false
 
 /-- Right continuity (CONT): if Q(A,B₁) and Q(A,B₂) hold and B₁ ⊆ B ⊆ B₂,
     then Q(A,B). @cite{van-benthem-1984} §4.3: all right-monotone quantifiers are

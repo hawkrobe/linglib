@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Update
 
 /-!
 # Plural Intensional Presuppositional Predicate Calculus (PIP)
@@ -228,7 +227,7 @@ def retrieveDef {W E : Type*} (α : FLabel) : PUpdate W E :=
     | none => { d with info := ∅ }  -- Presupposition failure: α not registered
     | some desc =>
       d.mapInfo (λ c =>
-        { gw ∈ c | (gw.1.indiv desc.var).isSome ∧ desc.predicate gw.1 gw.2 })
+        { gw ∈ c | (gw.1.indiv desc.var gw.2).isSome ∧ desc.predicate gw.1 gw.2 })
 
 
 -- ============================================================

@@ -530,9 +530,9 @@ open Phenomena.Anaphora.Studies.Hofmann2025 in
 /-- Wrong-order bathroom sentence is infelicitous. This corresponds to
     `reverse_bathroom_transparency_fails`: `H(x̲) ∨ ¬∃xB(x)` fails
     Transparency because `H(x̲)` is in left position, and Middle Kleene
-    left-absorbs `#`. -/
+    left-absorbs `#`. @cite{evans-1977} -/
 theorem wrong_order_bathroom_infelicitous :
-    negatedBasic.felicitous = false := rfl
+    wrongOrderBathroom.felicitous = false := rfl
 
 open Phenomena.Anaphora.Studies.Hofmann2025 in
 /-- Summary: Spector's Transparency predictions align with the
@@ -544,8 +544,8 @@ theorem bathroom_felicity_alignment :
     bathroomDisjunction.felicitous = true ∧
     -- Infelicitous: conjunction (wrong connective for bathroom pattern)
     conjunctionBlocks.felicitous = false ∧
-    -- Infelicitous: counterfactual + veridical
-    negatedBasic.felicitous = false ∧
+    -- Infelicitous: reversed disjunction order (pronoun LEFT)
+    wrongOrderBathroom.felicitous = false ∧
     -- Infelicitous: separate sentences (no frame to establish Transparency)
     negationBlocks.felicitous = false :=
   ⟨rfl, rfl, rfl, rfl⟩

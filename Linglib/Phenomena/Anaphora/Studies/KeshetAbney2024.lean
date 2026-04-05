@@ -2,7 +2,6 @@ import Linglib.Theories.Semantics.PIP.Connectives
 import Linglib.Theories.Semantics.PIP.Felicity
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Phenomena.Anaphora.ModalSubordination
 import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.CrossSentential
@@ -85,11 +84,11 @@ def sAccess : AccessRel SWorld
   | .actual, .noWolf => true
   | _, _ => false
 
-def isWolf (g : ICDRTAssignment SWorld SEntity) (_w : SWorld) : Bool :=
-  g.indiv vWolf == .some .wolf
+def isWolf (g : ICDRTAssignment SWorld SEntity) (w : SWorld) : Bool :=
+  g.indiv vWolf w == .some .wolf
 
 def comesIn (g : ICDRTAssignment SWorld SEntity) (w : SWorld) : Bool :=
-  g.indiv vWolf == .some .wolf && w == .wolfIn
+  g.indiv vWolf w == .some .wolf && w == .wolfIn
 
 /--
 "A wolf might come in." (paper item 59a)
@@ -121,7 +120,7 @@ def stoneSentence2 : PUpdate SWorld SEntity :=
   conj
     (retrieveDef αWolf)
     (would sAccess sWorlds
-      (atom (λ g _w => g.indiv vWolf != .star)))
+      (atom (λ g w => g.indiv vWolf w != .star)))
 
 def stoneDiscourse : PUpdate SWorld SEntity :=
   conj stoneSentence1 stoneSentence2
@@ -136,11 +135,10 @@ theorem stone_discourse_label_available (d : Discourse SWorld SEntity) :
   rfl
 
 private def g₀_stone : ICDRTAssignment SWorld SEntity :=
-  { indiv := λ _ => .star, prop := λ _ => ∅ }
+  { indiv := λ _ _w => .star, prop := λ _ => ∅ }
 
 private def g_wolf : ICDRTAssignment SWorld SEntity :=
-  { indiv := λ v => if v == vWolf then .some .wolf else .star
-    prop := λ _ => ∅ }
+  g₀_stone.updateIndivConst vWolf (.some .wolf)
 
 private def stone_d₀ : Discourse SWorld SEntity :=
   { info := Set.univ, labels := LabelStore.empty }
@@ -221,11 +219,11 @@ inductive BEntity where
 def αBath : FLabel := ⟨1⟩
 def vBath : IVar := ⟨1⟩
 
-def isBathroom (g : ICDRTAssignment BWorld BEntity) (_w : BWorld) : Bool :=
-  g.indiv vBath == .some .bathroom
+def isBathroom (g : ICDRTAssignment BWorld BEntity) (w : BWorld) : Bool :=
+  g.indiv vBath w == .some .bathroom
 
 def isUpstairs (g : ICDRTAssignment BWorld BEntity) (w : BWorld) : Bool :=
-  g.indiv vBath == .some .bathroom && w == .bath
+  g.indiv vBath w == .some .bathroom && w == .bath
 
 /--
 "Either there's no bathroom, or it's upstairs." (paper item 92b)
@@ -257,7 +255,7 @@ theorem bathroom_label_survives_negation (d : Discourse BWorld BEntity) :
   rfl
 
 private def g₀ : ICDRTAssignment BWorld BEntity :=
-  { indiv := λ _ => .star, prop := λ _ => ∅ }
+  { indiv := λ _ _w => .star, prop := λ _ => ∅ }
 
 private def bath_d₀ : Discourse BWorld BEntity :=
   { info := Set.univ, labels := LabelStore.empty }
@@ -272,8 +270,7 @@ theorem bathroom_sentence_consistent :
   simp [isBathroom, g₀, vBath] at hpred
 
 private def g_bath : ICDRTAssignment BWorld BEntity :=
-  { indiv := λ v => if v == vBath then .some .bathroom else .star
-    prop := λ _ => ∅ }
+  g₀.updateIndivConst vBath (.some .bathroom)
 
 /-- Negative test: bathroom at noBath world is rejected. -/
 theorem bathroom_rejects_nonupstairs :
@@ -326,8 +323,8 @@ inductive PWorld where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Relational paycheck predicate: depends on both paycheck and possessor. -/
-def isPaycheckOf (g : ICDRTAssignment PWorld PEntity) (_w : PWorld) : Bool :=
-  match g.indiv vPaycheck, g.indiv vPossessor with
+def isPaycheckOf (g : ICDRTAssignment PWorld PEntity) (w : PWorld) : Bool :=
+  match g.indiv vPaycheck w, g.indiv vPossessor w with
   | .some .johnsPaycheck, .some .john => true
   | .some .billsPaycheck, .some .bill => true
   | _, _ => false
@@ -335,7 +332,7 @@ def isPaycheckOf (g : ICDRTAssignment PWorld PEntity) (_w : PWorld) : Bool :=
 /-- Re-evaluation yields Bill's paycheck when possessor = Bill. -/
 theorem paycheck_needs_descriptions :
     let g : ICDRTAssignment PWorld PEntity :=
-      { indiv := λ v =>
+      { indiv := λ v _w =>
           if v == vPaycheck then .some .billsPaycheck
           else if v == vPossessor then .some .bill
           else .star
@@ -359,10 +356,10 @@ a donkey. They paid a lot for them.", "them" = Σx(donkey(x)).
 -/
 def summationFiltered {W E : Type*} (c : IContext W E) (v : IVar)
     (φ : ICDRTAssignment W E → W → Bool) : Set (Entity E) :=
-  { e | ∃ g w, (g, w) ∈ c ∧ φ g w = true ∧ g.indiv v = e }
+  { e | ∃ g w, (g, w) ∈ c ∧ φ g w = true ∧ g.indiv v w = e }
 
 def summationValues {W E : Type*} (c : IContext W E) (v : IVar) : Set (Entity E) :=
-  { e | ∃ g w, (g, w) ∈ c ∧ g.indiv v = e }
+  { e | ∃ g w, (g, w) ∈ c ∧ g.indiv v w = e }
 
 theorem summationValues_eq_trivial_filter {W E : Type*}
     (c : IContext W E) (v : IVar) :
@@ -373,10 +370,89 @@ theorem summation_nonempty {W E : Type*}
     (c : IContext W E) (v : IVar)
     (gw : ICDRTAssignment W E × W)
     (h : gw ∈ c) :
-    gw.1.indiv v ∈ summationValues c v :=
+    gw.1.indiv v gw.2 ∈ summationValues c v :=
   ⟨gw.1, gw.2, h, rfl⟩
 
 end Summation
+
+
+-- ============================================================
+-- Modal Subordination Data (from @cite{roberts-1989})
+-- ============================================================
+
+/-- A modal subordination datum. -/
+structure ModalSubDatum where
+  sentence1 : String
+  sentence2 : String
+  modal1 : String
+  modal2 : String
+  anaphor : String
+  antecedent : String
+  felicitous : Bool
+  source : String := ""
+  deriving Repr
+
+def wolfMightWould : ModalSubDatum := {
+  sentence1 := "A wolf might come in."
+  sentence2 := "It would eat you first."
+  modal1 := "might", modal2 := "would"
+  anaphor := "it", antecedent := "a wolf"
+  felicitous := true
+  source := "Roberts (1989)"
+}
+
+def wolfMightCould : ModalSubDatum := {
+  sentence1 := "A wolf might come in."
+  sentence2 := "It could eat you first."
+  modal1 := "might", modal2 := "could"
+  anaphor := "it", antecedent := "a wolf"
+  felicitous := true
+  source := "Roberts (1989)"
+}
+
+def burglarMightWould : ModalSubDatum := {
+  sentence1 := "A burglar might break in."
+  sentence2 := "He would steal the jewelry."
+  modal1 := "might", modal2 := "would"
+  anaphor := "he", antecedent := "a burglar"
+  felicitous := true
+  source := "Roberts (1989)"
+}
+
+def wolfMightIndicative : ModalSubDatum := {
+  sentence1 := "A wolf might come in."
+  sentence2 := "It eats you first."
+  modal1 := "might", modal2 := "indicative"
+  anaphor := "it", antecedent := "a wolf"
+  felicitous := false
+  source := "Roberts (1989)"
+}
+
+def wolfMightWill : ModalSubDatum := {
+  sentence1 := "A wolf might come in."
+  sentence2 := "It will eat you first."
+  modal1 := "might", modal2 := "will"
+  anaphor := "it", antecedent := "a wolf"
+  felicitous := false
+  source := "Roberts (1989)"
+}
+
+def wolfCouldWould : ModalSubDatum := {
+  sentence1 := "A wolf could come in."
+  sentence2 := "It would eat you first."
+  modal1 := "could", modal2 := "would"
+  anaphor := "it", antecedent := "a wolf"
+  felicitous := true
+  source := "Roberts (1989)"
+}
+
+def modalSubData : List ModalSubDatum := [
+  wolfMightWould, wolfMightCould, burglarMightWould,
+  wolfMightIndicative, wolfMightWill, wolfCouldWould
+]
+
+def felicitousModalSub : List ModalSubDatum :=
+  modalSubData.filter (·.felicitous)
 
 
 -- ============================================================
@@ -411,23 +487,23 @@ def classifyModal2 : String → ModalContinuation
 PIP predicts modal subordination felicity iff the second modal
 subordinates (inherits the accessibility relation from the first).
 -/
-def pipPredictsModalSub (datum : ModalSubordination.ModalSubDatum) : Bool :=
+def pipPredictsModalSub (datum : ModalSubDatum) : Bool :=
   classifyModal2 datum.modal2 == .subordinating
 
 theorem pip_wolf_might_would :
-    pipPredictsModalSub ModalSubordination.wolfMightWould = true := by native_decide
+    pipPredictsModalSub wolfMightWould = true := by native_decide
 
 theorem pip_wolf_might_could :
-    pipPredictsModalSub ModalSubordination.wolfMightCould = true := by native_decide
+    pipPredictsModalSub wolfMightCould = true := by native_decide
 
 theorem pip_wolf_indicative_fails :
-    pipPredictsModalSub ModalSubordination.wolfMightIndicative = false := by native_decide
+    pipPredictsModalSub wolfMightIndicative = false := by native_decide
 
 theorem pip_wolf_will_fails :
-    pipPredictsModalSub ModalSubordination.wolfMightWill = false := by native_decide
+    pipPredictsModalSub wolfMightWill = false := by native_decide
 
 theorem pip_modal_sub_felicitous_agreement :
-    ModalSubordination.felicitousModalSub.all
+    felicitousModalSub.all
       (λ d => pipPredictsModalSub d == d.felicitous) = true := by
   native_decide
 
@@ -529,7 +605,7 @@ def ibAccess : AccessRel IBWorld
 
 /-- World-dependent predicate: burger exists only at burgerW. -/
 def isBurgerAt (g : ICDRTAssignment IBWorld IBEntity) (w : IBWorld) : Bool :=
-  g.indiv vBurger == .some .burger && w == .burgerW
+  g.indiv vBurger w == .some .burger && w == .burgerW
 
 def burgerSentence : PUpdate IBWorld IBEntity :=
   might ibAccess ibWorlds
@@ -602,8 +678,8 @@ def iaAccess : AccessRel IAWorld
   | _, _ => false
 
 /-- World-INdependent predicate: holds at ALL worlds. -/
-def isAnimalInShed (g : ICDRTAssignment IAWorld IAEntity) (_w : IAWorld) : Bool :=
-  g.indiv vAnimal == .some .animal
+def isAnimalInShed (g : ICDRTAssignment IAWorld IAEntity) (w : IAWorld) : Bool :=
+  g.indiv vAnimal w == .some .animal
 
 def animalSentence : PUpdate IAWorld IAEntity :=
   must iaAccess iaWorlds
@@ -619,8 +695,8 @@ theorem animal_label_registered (d : Discourse IAWorld IAEntity) :
 
 theorem animal_desc_succeeds :
     ∀ (g : ICDRTAssignment IAWorld IAEntity) (w : IAWorld),
-    g.indiv vAnimal == .some .animal → isAnimalInShed g w = true := by
-  intro g _ h; simp [isAnimalInShed, h]
+    g.indiv vAnimal w == .some .animal → isAnimalInShed g w = true := by
+  intro g w h; simp [isAnimalInShed, h]
 
 instance : FiniteWorlds IAWorld where
   worlds := iaWorlds
@@ -683,7 +759,7 @@ def maAccess : AccessRel MAWorld
 
 /-- World-dependent predicate: different animal in each world. -/
 def isAnimalInShedMA (g : ICDRTAssignment MAWorld MAEntity) (w : MAWorld) : Bool :=
-  match g.indiv vMA, w with
+  match g.indiv vMA w, w with
   | .some .cat, .actual => true
   | .some .dog, .shedW1 => true
   | .some .raccoon, .shedW2 => true
@@ -691,7 +767,7 @@ def isAnimalInShedMA (g : ICDRTAssignment MAWorld MAEntity) (w : MAWorld) : Bool
 
 /-- At the actual world, only one entity satisfies the description. -/
 private def maG (e : MAEntity) : ICDRTAssignment MAWorld MAEntity :=
-  { indiv := λ v => if v == vMA then .some e else .star
+  { indiv := λ v _w => if v == vMA then .some e else .star
     prop := λ _ => ∅ }
 
 /-- At actual, only cat satisfies the description (SINGLE). -/
@@ -704,13 +780,13 @@ theorem ma_single_at_actual :
 /-- Different entities satisfy the description at different worlds. -/
 theorem ma_different_animals_per_world :
     isAnimalInShedMA
-      { indiv := λ v => if v == vMA then .some .cat else .star
+      { indiv := λ v _w => if v == vMA then .some .cat else .star
         prop := λ _ => ∅ } .actual = true ∧
     isAnimalInShedMA
-      { indiv := λ v => if v == vMA then .some .dog else .star
+      { indiv := λ v _w => if v == vMA then .some .dog else .star
         prop := λ _ => ∅ } .shedW1 = true ∧
     isAnimalInShedMA
-      { indiv := λ v => if v == vMA then .some .raccoon else .star
+      { indiv := λ v _w => if v == vMA then .some .raccoon else .star
         prop := λ _ => ∅ } .shedW2 = true := by
   exact ⟨rfl, rfl, rfl⟩
 
@@ -766,7 +842,7 @@ def pcAccess : AccessRel PCWorld
 
 /-- World-dependent predicate: winner only at resolution worlds. -/
 def isWinner (g : ICDRTAssignment PCWorld PCEntity) (w : PCWorld) : Bool :=
-  match g.indiv vWinner, w with
+  match g.indiv vWinner w, w with
   | .some .alice, .aliceWins => true
   | .some .bob, .bobWins => true
   | _, _ => false
@@ -823,7 +899,7 @@ the description to hold at the evaluation world, might fails and must succeeds.
 theorem pip_intensional_anaphora_contrast :
     (∀ g : ICDRTAssignment IBWorld IBEntity, isBurgerAt g .actual = false) ∧
     (∀ (g : ICDRTAssignment IAWorld IAEntity) (w : IAWorld),
-     g.indiv vAnimal == .some .animal → isAnimalInShed g w = true) :=
+     g.indiv vAnimal w == .some .animal → isAnimalInShed g w = true) :=
   ⟨burger_desc_fails_at_actual, animal_desc_succeeds⟩
 
 /-- Labels are registered in BOTH cases — the asymmetry is about

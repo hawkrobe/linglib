@@ -1,7 +1,7 @@
 /-
 # Counterfactual Conditionals: Three Theories
 
-@cite{ramotowska-santorio-2025} @cite{lewis-1973}
+@cite{ramotowska-marty-romoli-santorio-2025} @cite{lewis-1973}
 
 Formalization of three competing theories of counterfactual conditionals.
 
@@ -34,6 +34,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.Logic.Truth3
+import Linglib.Core.Logic.NonBivalence
 
 namespace Semantics.Conditionals.Counterfactual
 
@@ -62,7 +63,7 @@ def closestWorldsB {W : Type*} [DecidableEq W]
 
 /-!
 ## Universal Theory
-@cite{ramotowska-santorio-2025}
+@cite{ramotowska-marty-romoli-santorio-2025}
 
 The standard possible-worlds analysis: counterfactuals universally quantify
 over the closest antecedent-worlds.
@@ -277,18 +278,18 @@ The selectional theory captures this because three-valued logic with
 supervaluation naturally implements this projection duality.
 -/
 
--- ProjectionType is now defined in Core.Duality (Core/Logic/Truth3.lean)
+/-- Quantifier strength IS projection type. Strong quantifiers (every, no)
+    use conjunctive projection; weak quantifiers (some, not-every) use
+    disjunctive. This was previously a separate `QStrength` inductive;
+    now unified with `ProjectionType` from Core.Duality. -/
+abbrev QStrength := ProjectionType
 
-/-- Quantifier strength as projection type. -/
-inductive QStrength where
-  | strong  -- every, no: conjunctive (universal-like)
-  | weak    -- some, not-every: disjunctive (existential-like)
-  deriving Repr, DecidableEq
-
-/-- Strong quantifiers use conjunctive projection; weak use disjunctive. -/
-def QStrength.toProjection : QStrength → ProjectionType
-  | .strong => .conjunctive
-  | .weak => .disjunctive
+/-- Strong quantifiers use conjunctive projection. -/
+abbrev QStrength.strong : QStrength := .conjunctive
+/-- Weak quantifiers use disjunctive projection. -/
+abbrev QStrength.weak : QStrength := .disjunctive
+/-- Identity: projection type is already itself. -/
+abbrev QStrength.toProjection (s : QStrength) : ProjectionType := s
 
 /--
 The Projection Duality Theorem.
@@ -311,23 +312,6 @@ def projectTruthValues (proj : ProjectionType) (results : List Truth3) : Truth3 
     else if results.all (· == .false) then .false
     else .gap
 
-/--
-Strength effect as projection duality.
-
-Strong quantifiers use conjunctive projection; weak use disjunctive.
--/
-theorem strength_is_projection_duality (s : QStrength) (results : List Truth3) :
-    projectTruthValues s.toProjection results =
-    match s with
-    | .strong =>
-      if results.all (· == .true) then .true
-      else if results.any (· == .false) then .false
-      else .gap
-    | .weak =>
-      if results.any (· == .true) then .true
-      else if results.all (· == .false) then .false
-      else .gap := by
-  cases s <;> simp [QStrength.toProjection, projectTruthValues]
 
 /--
 Conjunctive projection is fragile: one false element yields false.
@@ -360,92 +344,195 @@ theorem disjunctive_robust (results : List Truth3)
   unfold projectTruthValues
   simp [h]
 
--- PART 5b: Galois Connection (The Categorical Foundation)
+-- ════════════════════════════════════════════════════
+-- Bridge: projectTruthValues ↔ aggregate
+-- ════════════════════════════════════════════════════
 
 /-!
-## Galois Connection: Why Duality?
+## Connecting Two Implementations
 
-The projection duality is an instance of the adjoint functor relationship:
+`projectTruthValues` (all/any-based, defined here) and `aggregate`
+(foldl sup/inf-based, from `Core.Duality`) implement the same semantic
+operation — aggregating trivalent truth values by projection type.
+The theorem `projectTruthValues_eq_aggregate` proves they coincide.
 
-    ∃ ⊣ Δ ⊣ ∀
-
-where Δ is the diagonal/weakening functor.
-
-### Category-Theoretic Foundation
-
-Given projection π: D × W → W:
-- ∃_π is LEFT adjoint to pullback π*
-- ∀_π is RIGHT adjoint to pullback π*
-
-The RAPL/LAPC principle:
-- Left adjoints preserve colimits (joins): ∃ is robust
-- Right adjoints preserve limits (meets): ∀ is fragile
-
-### In the Truth Value Lattice
-
-For the three-valued lattice (false < indet < true):
-- Conjunctive = infimum (⋀) = meet = limit
-- Disjunctive = supremum (⋁) = join = colimit
-
-The quantifier-projection correspondence:
-
-| Quantifier Type | Lattice Op | Adjoint | Projection |
-|-----------------|------------|---------|------------|
-| every, no       | ⋀ (meet)   | RIGHT   | Fragile    |
-| some, not-every | ⋁ (join)   | LEFT    | Robust     |
-
-### Linguistic Consequence
-
-Natural language quantifiers inherit their projection behavior from their
-categorical status as adjoints. This explains cross-linguistic universals:
-
-1. All languages have robust existentials and fragile universals
-2. Polarity doesn't matter (no is strong like every) because both are ∀-like
-3. Strength = adjoint type, not logical polarity
-
-### Connection to Other Phenomena
-
-The same adjoint duality explains:
-- Presupposition projection: Universal presup (fragile) vs existential (robust)
-- Free Choice: □(A∨B) → □A∧□B (right adjoint distributes over meet)
-- NPI licensing: DE = right adjoint composition = license; UE = left = block
-- Homogeneity: "The Xs" = hidden universal = fragile under heterogeneity
-
-The Ramotowska et al. finding that strength determines counterfactual
-judgments is thus a reflection of deep categorical structure in semantics.
+The deeper connection: conjunctive projection computes the meet (⋀)
+and disjunctive projection computes the join (⋁) in the Truth3 lattice.
+This is why quantifier strength (not polarity) determines truth-value
+judgments — it tracks the adjoint type (right = fragile, left = robust).
 -/
 
--- Truth3.le, .meet, .join provided by Core.Duality.Truth3
+/-- Map projection type to duality type. -/
+def projToDuality : ProjectionType → Core.Duality.DualityType
+  | .conjunctive => .universal
+  | .disjunctive => .existential
 
-/-- Conjunctive projection computes the meet: meet(., false,.) = false -/
-example : Truth3.meet .true .false = .false := rfl
-example : Truth3.meet .true .gap = .gap := rfl
+private theorem foldl_inf_all_true_acc (l : List Truth3) (acc : Truth3)
+    (hl : l.all (· == .true) = true) :
+    l.foldl (· ⊓ ·) acc = acc := by
+  induction l generalizing acc with
+  | nil => rfl
+  | cons hd tl ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at hl
+    have hhd : hd = .true := by cases hd <;> simp_all
+    simp only [List.foldl_cons]
+    have : acc ⊓ hd = acc := by subst hhd; cases acc <;> decide
+    rw [this]; exact ih acc hl.2
 
-/-- Disjunctive projection computes the join: join(., true,.) = true -/
-example : Truth3.join .false .true = .true := rfl
-example : Truth3.join .false .gap = .gap := rfl
+private theorem foldl_sup_all_false_acc (l : List Truth3) (acc : Truth3)
+    (hl : l.all (· == .false) = true) :
+    l.foldl (· ⊔ ·) acc = acc := by
+  induction l generalizing acc with
+  | nil => rfl
+  | cons hd tl ih =>
+    simp only [List.all_cons, Bool.and_eq_true] at hl
+    have hhd : hd = .false := by cases hd <;> simp_all
+    simp only [List.foldl_cons]
+    have : acc ⊔ hd = acc := by subst hhd; cases acc <;> decide
+    rw [this]; exact ih acc hl.2
 
--- PART 5c: Connection to Core.Duality
+private theorem indet_inf (hd : Truth3) (h : (hd == Truth3.false) = false) :
+    Truth3.indet ⊓ hd = .indet := by
+  cases hd with
+  | false => simp at h
+  | true => rfl
+  | indet => rfl
 
-/-!
-## Duality Infrastructure
+private theorem indet_sup (hd : Truth3) (h : (hd == Truth3.true) = false) :
+    Truth3.indet ⊔ hd = .indet := by
+  cases hd with
+  | true => simp at h
+  | false => rfl
+  | indet => rfl
 
-The projection duality used here is an instance of the general `Core.Duality`
-infrastructure. See `Core/Duality.lean` for:
+private theorem foldl_inf_indet_no_false (l : List Truth3)
+    (h : l.any (· == .false) = false) :
+    l.foldl (· ⊓ ·) Truth3.indet = .indet := by
+  induction l with
+  | nil => rfl
+  | cons hd tl ih =>
+    simp only [List.any_cons] at h
+    have h1 : (hd == Truth3.false) = false := by
+      cases hh : (hd == Truth3.false) <;> simp_all
+    have h2 : tl.any (· == Truth3.false) = false := by
+      cases hh : tl.any (· == Truth3.false) <;> simp_all
+    simp only [List.foldl_cons]
+    rw [indet_inf hd h1]; exact ih h2
 
-- `DualityType`: existential (robust) vs universal (fragile)
-- `Truth3`: three-valued truth with join/meet operations
-- `existential_robust`: one true → result true (left adjoint property)
-- `universal_fragile`: one false → result false (right adjoint property)
-- `Quantifier.duality`: classification of quantifiers by adjoint type
+private theorem foldl_sup_indet_no_true (l : List Truth3)
+    (h : l.any (· == .true) = false) :
+    l.foldl (· ⊔ ·) Truth3.indet = .indet := by
+  induction l with
+  | nil => rfl
+  | cons hd tl ih =>
+    simp only [List.any_cons] at h
+    have h1 : (hd == Truth3.true) = false := by
+      cases hh : (hd == Truth3.true) <;> simp_all
+    have h2 : tl.any (· == Truth3.true) = false := by
+      cases hh : tl.any (· == Truth3.true) <;> simp_all
+    simp only [List.foldl_cons]
+    rw [indet_sup hd h1]; exact ih h2
 
-The counterfactual case is one instance of this
-general principle, which also explains:
-- Presupposition projection
-- Homogeneity in plurals
-- NPI licensing
-- Free choice inferences
--/
+private theorem conj_gap (l : List Truth3)
+    (h_not_all : l.all (· == .true) = false)
+    (h_no_false : l.any (· == .false) = false) :
+    l.foldl (· ⊓ ·) Truth3.true = .indet := by
+  induction l with
+  | nil => simp at h_not_all
+  | cons hd tl ih =>
+    simp only [List.foldl_cons]
+    simp only [List.all_cons, Bool.and_eq_true] at h_not_all
+    simp only [List.any_cons] at h_no_false
+    have h_hd_nf : (hd == Truth3.false) = false := by
+      cases hh : (hd == Truth3.false) <;> simp_all
+    have h_tl_nf : tl.any (· == Truth3.false) = false := by
+      cases hh : tl.any (· == Truth3.false) <;> simp_all
+    cases hd with
+    | false => simp at h_hd_nf
+    | true =>
+      have : Truth3.true ⊓ Truth3.true = Truth3.true := by decide
+      rw [this]
+      have : (Truth3.true == Truth3.true) = true := by decide
+      have h_tl_not_all : tl.all (· == Truth3.true) = false := by simp_all
+      exact ih h_tl_not_all h_tl_nf
+    | indet =>
+      have : Truth3.true ⊓ Truth3.indet = Truth3.indet := by decide
+      rw [this]
+      exact foldl_inf_indet_no_false tl h_tl_nf
+
+private theorem disj_gap (l : List Truth3)
+    (h_not_all : l.all (· == .false) = false)
+    (h_no_true : l.any (· == .true) = false) :
+    l.foldl (· ⊔ ·) Truth3.false = .indet := by
+  induction l with
+  | nil => simp at h_not_all
+  | cons hd tl ih =>
+    simp only [List.foldl_cons]
+    simp only [List.all_cons, Bool.and_eq_true] at h_not_all
+    simp only [List.any_cons] at h_no_true
+    have h_hd_nt : (hd == Truth3.true) = false := by
+      cases hh : (hd == Truth3.true) <;> simp_all
+    have h_tl_nt : tl.any (· == Truth3.true) = false := by
+      cases hh : tl.any (· == Truth3.true) <;> simp_all
+    cases hd with
+    | true => simp at h_hd_nt
+    | false =>
+      have : Truth3.false ⊔ Truth3.false = Truth3.false := by decide
+      rw [this]
+      have : (Truth3.false == Truth3.false) = true := by decide
+      have h_tl_not_all : tl.all (· == Truth3.false) = false := by simp_all
+      exact ih h_tl_not_all h_tl_nt
+    | indet =>
+      have : Truth3.false ⊔ Truth3.indet = Truth3.indet := by decide
+      rw [this]
+      exact foldl_sup_indet_no_true tl h_tl_nt
+
+/-- **Bridging theorem**: `projectTruthValues` (all/any-based) computes
+    the same result as `aggregate` (foldl sup/inf-based) under the
+    canonical `ProjectionType → DualityType` mapping.
+
+    This unifies the two parallel implementations: `projectTruthValues`
+    is used in the counterfactual embedding analysis, while `aggregate`
+    is the general operator in `Core.Duality`. -/
+theorem projectTruthValues_eq_aggregate (proj : ProjectionType) (l : List Truth3) :
+    projectTruthValues proj l = Core.Duality.aggregate (projToDuality proj) l := by
+  cases proj with
+  | conjunctive =>
+    simp only [projToDuality, Core.Duality.aggregate]
+    unfold projectTruthValues
+    have htop : (⊤ : Truth3) = .true := rfl; rw [htop]
+    cases h_all : l.all (· == .true) with
+    | true => simp only [↓reduceIte]; exact (foldl_inf_all_true_acc l .true h_all).symm
+    | false =>
+      simp only [Bool.false_eq_true, ↓reduceIte]
+      cases h_any : l.any (· == .false) with
+      | true =>
+        simp only [↓reduceIte]
+        have hmem : Truth3.false ∈ l := by
+          rw [List.any_eq_true] at h_any
+          obtain ⟨x, hx_mem, hx_eq⟩ := h_any; cases x <;> simp_all
+        exact (Core.Duality.foldl_inf_mem_false l .true hmem).symm
+      | false =>
+        simp only [Bool.false_eq_true, ↓reduceIte]
+        exact (conj_gap l h_all h_any).symm
+  | disjunctive =>
+    simp only [projToDuality, Core.Duality.aggregate]
+    unfold projectTruthValues
+    have hbot : (⊥ : Truth3) = .false := rfl; rw [hbot]
+    cases h_any : l.any (· == .true) with
+    | true =>
+      simp only [↓reduceIte]
+      have hmem : Truth3.true ∈ l := by
+        rw [List.any_eq_true] at h_any
+        obtain ⟨x, hx_mem, hx_eq⟩ := h_any; cases x <;> simp_all
+      exact (Core.Duality.foldl_sup_mem_true l .false hmem).symm
+    | false =>
+      simp only [Bool.false_eq_true, ↓reduceIte]
+      cases h_all : l.all (· == .false) with
+      | true => simp only [↓reduceIte]; exact (foldl_sup_all_false_acc l .false h_all).symm
+      | false =>
+        simp only [Bool.false_eq_true, ↓reduceIte]
+        exact (disj_gap l h_all h_any).symm
 
 /-!
 ## Quantifier Embedding
@@ -542,8 +629,8 @@ This is the formal content of the paper's claim that embedded
 selectional counterfactuals are determinate in mixed scenarios. -/
 theorem embeddedSelectional_determinate (s : QStrength) (bs : List Bool) :
     embeddedSelectional s (bs.map Truth3.ofBool) ≠ .gap := by
-  simp only [embeddedSelectional, projectTruthValues, Truth3.gap]
-  cases s <;> simp only [QStrength.toProjection]
+  unfold embeddedSelectional QStrength.toProjection
+  cases s <;> unfold projectTruthValues <;> dsimp only
   · -- conjunctive: gap requires ¬all_true ∧ ¬any_false — impossible for Bool
     rw [all_map_ofBool_beq_true, any_map_ofBool_beq_false]
     split_ifs with h1 h2
@@ -552,7 +639,7 @@ theorem embeddedSelectional_determinate (s : QStrength) (bs : List Bool) :
     · exfalso
       have hf : bs.all id = Bool.false := by cases bs.all id <;> simp_all
       induction bs with
-      | nil => simp [List.all] at hf
+      | nil => simp_all
       | cons b bs ih =>
         simp only [List.all, List.any, id] at hf h2 ⊢
         cases b <;> simp_all
@@ -564,7 +651,7 @@ theorem embeddedSelectional_determinate (s : QStrength) (bs : List Bool) :
     · exfalso
       have hf : bs.any id = Bool.false := by cases bs.any id <;> simp_all
       induction bs with
-      | nil => simp [List.all] at h2
+      | nil => simp_all
       | cons b bs ih =>
         simp only [List.any, List.all, id] at hf h2 ⊢
         cases b <;> simp_all
@@ -579,7 +666,7 @@ theorem strength_determines_pattern (bs : List Bool)
     (h_some_false : bs.any (!·)) :
     embeddedSelectional .strong (bs.map Truth3.ofBool) = .false ∧
     embeddedSelectional .weak (bs.map Truth3.ofBool) = .true := by
-  simp only [embeddedSelectional, projectTruthValues, QStrength.toProjection]
+  simp only [embeddedSelectional, QStrength.toProjection, projectTruthValues]
   rw [all_map_ofBool_beq_true, any_map_ofBool_beq_false, any_map_ofBool_beq_true]
   refine ⟨?_, by simp [h_some_true]⟩
   have h_not_all : bs.all id = Bool.false := by
@@ -817,5 +904,96 @@ theorem selectional_as_supervaluation {W : Type*} [DecidableEq W]
     simp only [hm]
     split_ifs <;>
       simp_all [List.all_eq_true, List.mem_toFinset, Bool.not_eq_true']
+
+-- ════════════════════════════════════════════════════
+-- Architectural Grounding via NonBivalence
+-- ════════════════════════════════════════════════════
+
+/-!
+## Connection to NonBivalence
+
+The `embeddedSelectional_determinate` theorem proved above is an instance
+of the general `global_always_determinate` theorem from `NonBivalence.lean`.
+Both say the same thing: aggregation over `map ofBool` never produces gaps.
+
+The difference: `embeddedSelectional_determinate` uses `projectTruthValues`
+(all/any-based), while `global_always_determinate` uses `aggregate`
+(foldl sup/inf-based). Both characterize the global architecture, where
+the quantifier sees only Boolean inputs.
+
+The `local_strength_irrelevant` theorem from `NonBivalence.lean` captures
+the homogeneity theory's architecture: when all inputs are gaps, both
+existential and universal aggregation return gap — strength is invisible.
+-/
+
+/-- The selectional theory's determinacy is an instance of the global
+    architecture from NonBivalence: Bool inputs → determinate output. -/
+theorem selectional_is_global_architecture (bs : List Bool)
+    (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
+    -- NonBivalence: global mixed pattern
+    Core.Duality.aggregate .existential (bs.map Truth3.ofBool) = .true ∧
+    Core.Duality.aggregate .universal (bs.map Truth3.ofBool) = .false :=
+  Core.NonBivalence.dichotomy_global bs h_some_true h_some_false
+
+-- ════════════════════════════════════════════════════
+-- Implicature Approach (Bassi & Bar-Lev)
+-- ════════════════════════════════════════════════════
+
+/-!
+## The Implicature Alternative
+
+@cite{bassi-bar-lev-2018} propose an alternative to the selectional theory:
+counterfactuals have a basic EXISTENTIAL meaning (true if some closest
+A-world satisfies B), strengthened to universal by an exhaustivity
+operator (EXH). In mixed scenarios, EXH strengthening fails, leaving the
+basic existential meaning.
+
+Under this approach:
+- Basic meaning: ∃w ∈ closest(w,A). B(w) — EXISTENTIAL
+- Strengthened: ∀w ∈ closest(w,A). B(w) — UNIVERSAL (via EXH)
+- In mixed scenarios: EXH fails → basic existential → ALL quantifiers
+  get existential individual results
+
+### Wrong Prediction
+
+The implicature theory predicts that in mixed scenarios, all quantified
+counterfactuals have the SAME (existential) individual results. Since
+existential is always true when B holds for some closest world:
+- every(true) = true, some(true) = true, no(true) = false, not-every(true) = false
+
+But @cite{ramotowska-marty-romoli-santorio-2025} observe:
+- every = LOW (~1), some = HIGH (~97), no = LOW (~1), not-every = HIGH (~86)
+
+The implicature theory gets "every" and "not-every" WRONG:
+- Predicts: every = HIGH (∀d. true), but observed: every = LOW
+- Predicts: not-every = LOW (¬∀d. true = false), but observed: not-every = HIGH
+-/
+
+/-- Under the implicature approach with all-true individual results,
+    "every" is true — the OPPOSITE of the observed data (~1.5/99).
+    The implicature theory predicts "every" = TRUE because individual CFs
+    are all existentially true, and conjunctive projection of all-true = true.
+
+    This contradicts @cite{ramotowska-marty-romoli-santorio-2025}: the selectional
+    theory correctly predicts "every" = FALSE via conjunctive projection
+    over mixed (not uniformly true) individual results. -/
+theorem implicature_wrong_for_every :
+    projectTruthValues .conjunctive [Truth3.true, Truth3.true] = .true := by
+  native_decide
+
+/-- Similarly, implicature predicts "no" = FALSE (since no(all-true) =
+    ∀d.¬true = false). This agrees with the data, but for the WRONG
+    REASON — the selectional theory also predicts FALSE for "no", but via
+    conjunctive projection of negated mixed results, not from uniformly
+    true individual CFs.
+
+    The discriminating case is "some": implicature predicts TRUE (correct!)
+    and "not-every" predicts FALSE (WRONG — observed ~86/99). -/
+theorem implicature_wrong_for_notEvery :
+    -- Implicature: not-every(all-true) = ∃d.¬true = FALSE (wrong!)
+    -- Data: not-every ≈ 86/99 (HIGH)
+    projectTruthValues .disjunctive
+      ([Truth3.true, Truth3.true].map Truth3.neg) = .false := by
+  native_decide
 
 end Semantics.Conditionals.Counterfactual

@@ -69,7 +69,35 @@ def also : Entry :=
   , threshold := none
   , application := .focusingAdverb }
 
-def allEntries : List Entry := [even_, only_, also]
+/-- "too" — additive focus particle, sentence-final.
+    @cite{thomas-2026}: felicity requires existence of an antecedent
+    fact and a contextually relevant question RQ such that the Antecedent,
+    Conjunction, and Prejacent Conditions (Def. 64) all hold.
+    Subsumes @cite{heim-1992}'s individual-based presupposition as a
+    special case of the standard focus-alternative use.
+    Unlike sentence-initial "also", subject to the full Prejacent
+    Condition including maximality (Def. 64c.ii). -/
+def too_ : Entry :=
+  { form := "too"
+  , truthFunctional := false
+  , contributionLayer := .presupposition
+  , threshold := none
+  , application := .focusingAdverb }
+
+/-- "either" — negative-polarity additive focus particle.
+    @cite{rullmann-2003}: complementary distribution with "too" in
+    polarity contexts. @cite{thomas-2026} defers full characterization
+    to future work (footnote 9); felicity conditions likely share the
+    core Antecedent/Conjunction structure with additional polarity
+    constraints. See @cite{ahn-2015} for a Boolean algebra account. -/
+def either_ : Entry :=
+  { form := "either"
+  , truthFunctional := false
+  , contributionLayer := .presupposition
+  , threshold := none
+  , application := .focusingAdverb }
+
+def allEntries : List Entry := [even_, only_, also, too_, either_]
 
 -- ============================================================
 -- Verification
@@ -107,5 +135,30 @@ theorem also_not_exclusive :
 /-- "even" is scalar, not exclusive — no exclusion variety. -/
 theorem even_not_exclusive :
     even_.exclusionVariety = none := rfl
+
+/-- "too" is additive, not truth-functional — like "also". -/
+theorem too_not_truth_functional :
+    too_.truthFunctional = false := rfl
+
+/-- "too" contributes via presupposition. -/
+theorem too_is_presuppositional :
+    too_.contributionLayer = .presupposition := rfl
+
+/-- "too" and "also" have the same semantic profile. -/
+theorem too_matches_also :
+    too_.truthFunctional = also.truthFunctional ∧
+    too_.contributionLayer = also.contributionLayer ∧
+    too_.threshold = also.threshold := ⟨rfl, rfl, rfl⟩
+
+/-- "either" is additive, not truth-functional. -/
+theorem either_not_truth_functional :
+    either_.truthFunctional = false := rfl
+
+/-- "either" and "too" differ only in form (and polarity, which is
+not captured in the Entry type — polarity licensing is in
+`Theories.Semantics.Lexical.Particle.Additive`). -/
+theorem either_same_profile_as_too :
+    either_.truthFunctional = too_.truthFunctional ∧
+    either_.contributionLayer = too_.contributionLayer := ⟨rfl, rfl⟩
 
 end Fragments.English.FocusParticles

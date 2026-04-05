@@ -11,7 +11,7 @@ Used for:
 - **Plural predication**: homogeneity gaps (all satisfy → true, none → false,
   some but not all → gap). @cite{kriz-2016}, @cite{kriz-spector-2021}
 - **Conditionals**: indeterminacy under supervaluation when selection functions
-  disagree. @cite{ramotowska-santorio-2025}
+  disagree. @cite{ramotowska-marty-romoli-santorio-2025}
 - **Presupposition**: undefined when presupposition fails.
 - **Duality**: existential vs universal aggregation over three-valued lists.
 

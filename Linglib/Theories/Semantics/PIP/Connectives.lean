@@ -122,7 +122,7 @@ def existsLabeled (α : FLabel) (v : IVar) (domain : Set E)
     let extended : IContext W E :=
       { gw | ∃ g₀ e, (g₀, gw.2) ∈ d.info ∧
                       e ∈ domain ∧
-                      gw.1 = g₀.updateIndiv v (.some e) }
+                      gw.1 = g₀.updateIndivConst v (.some e) }
     let desc : Description W E := ⟨v, bodyPred⟩
     let d' : Discourse W E := ⟨extended, d.labels.register α desc⟩
     body d'
@@ -136,7 +136,7 @@ def exists_ (v : IVar) (domain : Set E)
     let extended : IContext W E :=
       { gw | ∃ g₀ e, (g₀, gw.2) ∈ d.info ∧
                       e ∈ domain ∧
-                      gw.1 = g₀.updateIndiv v (.some e) }
+                      gw.1 = g₀.updateIndivConst v (.some e) }
     body { d with info := extended }
 
 /--

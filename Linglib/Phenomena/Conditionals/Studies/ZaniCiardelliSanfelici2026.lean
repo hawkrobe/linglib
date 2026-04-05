@@ -85,7 +85,7 @@ theorem ar_entails_dcr : DACReading.ar.strength ≥ DACReading.dcr.strength := b
 /-- SDA = conjunctive projection over alternatives.
     DCR = disjunctive projection over alternatives.
     This is the same duality as quantifier strength in
-    @cite{ramotowska-santorio-2025}. -/
+    @cite{ramotowska-marty-romoli-santorio-2025}. -/
 def dacProjection : DACReading → ProjectionType
   | .sda => .conjunctive
   | .dcr => .disjunctive

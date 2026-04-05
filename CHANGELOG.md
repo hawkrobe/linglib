@@ -1,5 +1,148 @@
 # Changelog
 
+## [0.229.516] - 2026-04-04
+
+### Added
+- **SplitExhaustification.lean** (Theories/Semantics/Exhaustification): general Prop-level theory grounding the EFCI split exhaustification analysis — 9 sorry-free structural theorems proved for arbitrary domains without `native_decide`:
+  - `scalar_exh_uniqueness`: ∃ ∧ ¬∃≥2 ↔ ∃! (O_σ yields uniqueness, any domain)
+  - `neg_all_exclusive_alts`: ∃ ∧ ¬exclusive → ∃≥2 (O_EXH-D yields plurality, any domain)
+  - `fc_two_element`: for |D| = 2, ∃ ∧ ¬exclusive → ∀d P(d) (full FC)
+  - `root_full_exh_contradiction`: for |D| = 2, ∃ ∧ ¬∀ ∧ ¬exclusive → ⊥ (motivates rescue)
+  - `uniqueness_satisfiable`, `uniqueness_precludes_universality`: O_σ result is strictly between assertion and contradiction
+  - `antecedent_weakening`, `strict_antecedent_weakening`: strengthening antecedent weakens conditional (DE blocking via Maximize Strength)
+  - `de_domain_alt_entailed`: (∃x → R) → (P d → R) (domain exh vacuous in DE)
+
+## [0.229.515] - 2026-04-04
+
+### Added
+- **ICDRT ↔ Dynamic Algebra Bridge** (Bridge.lean): connects ICDRT to abstract DRS/CCP infrastructure
+  - Type identifications: `ICDRTUpdate = DRS`, `DynProp = CCP` (definitional)
+  - `fiberDRS`: embeds assignment-only relations into pair relations with passive worlds — the key mathematical construction separating ICDRT's assignment-level semantics from world-level context updates
+  - `toDynProp_eq_lift_fiberDRS`: factorization `toDynProp = lift ∘ fiberDRS`
+  - `fiberDRS_seq`/`fiberDRS_idUp`: fiberDRS is a monoid homomorphism (ICDRTUpdate, seq, idUp) → (DRS, dseq, id)
+  - `toDynProp_isDistributive`: every ICDRT update produces a distributive CCP (corollary of `lift_isDistributive`)
+  - `notCondition_update_distributive`: ICDRT negation stays distributive (unlike CCP.neg which tests the whole state)
+  - Algebraic re-derivation of `seq_toDynProp`/`idUp_toDynProp` via fiberDRS + lift_dseq
+  - `lower_toDynProp`: round-trip identity via `lower_lift`
+  - `toDynProp_test_eliminative`/`toDynProp_dec_eliminative`: test updates lift to eliminative CCPs
+  - End-to-end CCP composition theorem for negated existentials
+
+## [0.229.514] - 2026-04-04
+
+### Changed
+- **Verified experimental data from raw CSV** (RamotowskaEtAl2025.lean): replaced estimated marginals with exact rationals computed from OSF raw data (https://osf.io/3jywr/) — Exp 1 strong 131/10→1705/150, weak 866/10→13086/146; Exp 2 TC all 8 cells updated; Exp 2 PD raw means 4554/111, 2601/114 (paper reports model-estimated marginals)
+- **Fixed hallucinated section reference** (RamotowskaEtAl2025.lean): "Table 4" → "§5.7.2" for Exp 1 results
+- **Fixed cite key** (Counterfactual.lean): `@cite{bassi-bar-lev-2024}` → `@cite{bassi-bar-lev-2018}` (SuB 21)
+- **Replaced aspirational prose with bridging theorem** (Counterfactual.lean): removed ~50 lines of unformalized Galois Connection / Duality Infrastructure prose; added `projToDuality` and `projectTruthValues_eq_aggregate` bridging theorem (fully proved — induction on list with gap case via `indet_inf`/`indet_sup` absorption)
+- **Deleted unused definition** (Counterfactual.lean): removed `implicatureAllTrue`
+
+### Added
+- **NonBivalence integration** (RamotowskaEtAl2025.lean): `homogeneity_erases_strength` derives strength-invisibility from `local_strength_irrelevant`; `selectional_strength_effect` derives the strength effect from `global_mixed_pattern`; `selectional_always_determinate` derives crisp judgments from `global_always_determinate` — all routed through `projectTruthValues_eq_aggregate` bridging theorem
+- **Theory.scope** (RamotowskaEtAl2025.lean): maps the three theories to `TrivalenceScope` (homogeneity→local, universal/selectional→global)
+- **Bassi & Bar-Lev 2018 bib entry** (references.bib): SuB 21, pp. 125-142
+
+## [0.229.513] - 2026-04-04
+
+### Added
+- **Star axiom theorems** (DiscourseRef.lean): `Entity.star_falsifies`, `star_falsifies₂_left`, `star_falsifies₂_right` — formal statement of ⋆ as universal falsifier (Hofmann 2025 §2.1)
+- **Hypothetical drefs** (Operators.lean): `hypotheticalIndiv`, `hypotheticalProp` — third veridicality category (neither veridical nor counterfactual)
+- **Veridicality trichotomy** (Operators.lean): `veridicality_trichotomy` (exhaustive three-way classification), `veridical_counterfactual_exclusive` (mutual exclusivity given nonempty DC)
+- **Star blocks predication** (Operators.lean): `star_blocks_dynPred` — connects universal falsifier axiom to ICDRT's predication mechanism
+- **Negated existential truth conditions** (Operators.lean): `dec_complement_counterfactual` — derives counterfactuality from DEC + complementation, connecting three independent ICDRT mechanisms
+- **ICDRTUpdate↔DynProp bridge** (Operators.lean): `toDynProp` lifts static update relations to context updates; `idUp_toDynProp` (identity), `seq_toDynProp` (composition preserves structure)
+- **Bilateral/ICDRT theorems**: `extendContext_mem` (witness inclusion), `atom_complementary` (positive ∪ negative = context), `atom_disjoint` (positive ∩ negative = ∅)
+- **ICDRT_BUS veridicality section**: § 3b with `icdrt_veridicality_exhaustive` and `icdrt_neg_existential_truth` theorems
+
+### Changed
+- **Fixed hallucinated section numbers** (ICDRT_BUS.lean): §4.4 → §4.3 for disagreement/modal subordination examples (42c, 42d); formula 58 → §5.1 for BUS negation
+- **Expanded ICDRT vs BUS summary table**: added veridicality, truth conditions, and star axiom rows
+
+## [0.229.512] - 2026-04-04
+
+### Added
+- **DE domain-exh-vacuous theorem** (AlonsoOvalleMoghiseh2025.lean): `de_domain_exh_vacuous` proves domain exhaustification is vacuous in DE contexts — (b₁∨b₂)→g already entails both subdomain conditionals, so pre-exhaustified domain alts are inconsistent and IE = ∅
+- **MCE discovery docstring** (AlonsoOvalleMoghiseh2025.lean): documents that the paper's (101) lists 2 MCEs but there are actually 3, explaining why IE = ∅ for the full alternative set; notes exhB/exhAll diverge maximally here
+
+### Changed
+- **Fixed irgendein rescue type** (Determiners.lean): `irgendein_de.efciRescue` corrected from `.both` to `.modalInsertion` per Table 2 — irgendein has modal insertion only, not both mechanisms
+- **Fixed irgendein partial exh** (FreeChoiceFarsi.lean): `irgendeinTypology.canPartialExh` corrected from `true` to `false` per Table 2
+- **Fixed unsplitModalAlts** (AlonsoOvalleMoghiseh2025.lean): scalar alternative corrected from `fun w => canB1 w && canB2 w` (= ◇b₁ ∧ ◇b₂) to `canJoint` (= ◇(b₁∧b₂)) — these are distinct modal propositions
+
+## [0.229.511] - 2026-04-04
+
+### Added
+- **Necessity modal case** (AlonsoOvalleMoghiseh2025.lean): □ case with box operators derived from PermW — `deontic_nec_split_exh`, `deontic_nec_fc`, `deontic_nec_embedded_uniqueness` proving FC + embedded uniqueness under deontic necessity
+- **Single-exh-no-FC theorem** (AlonsoOvalleMoghiseh2025.lean): `single_exh_no_fc` proves single IE on ◇(b₁∨b₂) without split gives only anti-conjunction, not FC — demonstrates split exhaustification is necessary for yek-i's distinctive profile
+- **Root preExhDom derivation** (AlonsoOvalleMoghiseh2025.lean): `preExhDom_from_exhB_root` proves pre-exhaustified domain alternatives are derived from IE, not stipulated
+- **Bridge theorems** (AlonsoOvalleMoghiseh2025.lean): `yeki_reading_agrees`, `irgendein_reading_agrees`, `vreun_reading_agrees` prove study typology agrees with Determiners lexicon; grammaticality bridges prove `getReading.isSome` matches `grammaticalInRoot`
+
+### Changed
+- **Removed string-based semantics** (Determiners.lean): deleted `uniquenessSemantics`, `freeChoiceSemantics`, `modalVariationSemantics` — dead code superseded by exhaustification-based derivations
+- **Fixed unverified equation reference** (AlonsoOvalleMoghiseh2025.lean): `@cite{chierchia-2013} eq. (56f)` → content description of pre-exhaustification of subdomain alternatives
+- **Removed unused `domAlts`** (AlonsoOvalleMoghiseh2025.lean): only `preExhDomAlts` is used
+
+## [0.229.510] - 2026-04-04
+
+### Added
+- **NonBivalence.lean** (Core/Logic): foundational module for local vs global trivalence — `TrivalenceScope` enum, gap sublattice theorems (`gap_sup_gap`, `gap_inf_gap`), `foldl_sup_gap`/`foldl_inf_gap` (gap absorption under aggregation), `existsAny_ofBool`/`forallAll_ofBool` (Bool aggregation reduction), `local_strength_irrelevant` (both duality types agree on all-gap input), `global_always_determinate` (aggregation over `map ofBool` never yields gap), `global_mixed_pattern` (mixed Bools → ∃ true, ∀ false = strength effect), `dichotomy_local`/`dichotomy_global` (the unifying theorems)
+- **Implicature approach** (Counterfactual.lean): Bassi & Bar-Lev existential-base + EXH theory with wrong-prediction theorems (`implicature_wrong_for_every`, `implicature_wrong_for_notEvery`) — this alternative to selectional semantics is ruled out by Ramotowska et al.'s data
+- **Experiment 1 data** (RamotowskaEtAl2025.lean): lottery scenario marginal means by strength (strong ≈ 13.1, weak ≈ 86.6) with verification guard
+- **Plural definite dissociation** (RamotowskaEtAl2025.lean): Experiment 2 plural definite QUD sensitivity data (E-QuD M=42.2, U-QuD M=29.6), confirming QUD manipulation was effective and counterfactual QUD insensitivity is genuine
+- **DoubleMono.toProjectionType** (Quantification/Defs.lean): bridge from van Benthem's double monotonicity types to projection type — restrictor-↓ = conjunctive/strong, restrictor-↑ = disjunctive/weak; explains why STRENGTH (not polarity) determines truth-value judgments
+- **Architectural grounding** (Counterfactual.lean): `selectional_is_global_architecture` theorem connecting `embeddedSelectional_determinate` to `NonBivalence.dichotomy_global`
+
+### Changed
+- **QStrength unified with ProjectionType** (Counterfactual.lean): `QStrength` is now `abbrev QStrength := ProjectionType` with `.strong`/`.weak` mapping to `.conjunctive`/`.disjunctive`; eliminates duplicate type while preserving API compatibility
+- **Cite key fixed**: `ramotowska-santorio-2025` → `ramotowska-marty-romoli-santorio-2025` across all files (references.bib, Counterfactual.lean, Truth3.lean, Basic.lean, RamotowskaEtAl2025.lean, ZaniCiardelliSanfelici2026.lean) per four-author convention
+
+## [0.229.509] - 2026-04-04
+
+### Added
+- **ICDRT_BUS.lean** (Theories/Semantics/Dynamic/Comparisons): ICDRT vs BUS comparison — proves ICDRT handles disagreement (per-speaker `DiscContext` with `counterfactualIndiv`/`veridicalIndiv`) and modal subordination (counterfactual drefs accessible in hypothetical contexts) where bilateral swap-based negation cannot; documents shared bathroom-sentence solution, negation architecture difference (static complementation vs dimension swap), and multi-agent vs single-agent root cause
+
+## [0.229.508] - 2026-04-04
+
+### Added
+- **Mendes2025.lean** (Phenomena/Modality/Studies): merged study file for @cite{mendes-2025} — compositional CDRT derivations (formulas 54–63) for Portuguese Subordinate Future + presupposition weakening via modal displacement; moved from Theories/IntensionalCDRT/
+- **ICDRT.lean** (Theories/Semantics/Dynamic/Bilateral): bilateral denotations instantiated for ICDRT contexts; moved from IntensionalCDRT/Bilateral.lean
+- **ICDRTConnectives.lean** (Theories/Semantics/Dynamic/Bilateral): bilateral connectives (bathroom disjunction, impl, bathroomSentenceFull); moved from IntensionalCDRT/Connectives.lean
+- **Operators.lean** (Theories/Semantics/Dynamic/IntensionalCDRT): `relVarUp_implies_localEntailment` theorem connecting Definition 25 to Definition 28
+
+### Changed
+- **IntensionalCDRT/ reorganization**: bilateral files (DN-DRT/BUS mechanism) moved to Bilateral/ where they belong alongside BUS.lean; Mendes 2025 study-specific files moved to Phenomena/Modality/Studies/; duplicate types consolidated
+- **Basic.lean** (IntensionalCDRT): removed `DiscourseCommitments` and `CommitmentSet` (duplicated by `DiscContext` in Operators.lean)
+- **Update.lean** (IntensionalCDRT): removed entirely — all definitions were unused (`relativeVarUpdate`/`relativeVarUpdate'` duplicated `relVarUp`, bilateral existential moved with bilateral files)
+- **ModalDonkeyAnaphora.lean**: replaced `structuralParallel : Prop := True` placeholder with documentation comment
+- **Connectives.lean** (now ICDRTConnectives.lean): removed `donkeyConditional` and `bathroomSentence` (had `True` placeholders)
+
+### Removed
+- **IntensionalCDRT/Update.lean**: all definitions unused externally; canonical `relVarUp` is in Operators.lean
+- **IntensionalCDRT/Bilateral.lean**: moved to Bilateral/ICDRT.lean
+- **IntensionalCDRT/Connectives.lean**: moved to Bilateral/ICDRTConnectives.lean
+- **IntensionalCDRT/MendesDerivations.lean**: merged into Phenomena/Modality/Studies/Mendes2025.lean
+- **IntensionalCDRT/PresuppositionWeakening.lean**: merged into Phenomena/Modality/Studies/Mendes2025.lean
+
+## [0.229.507] - 2026-04-04
+
+### Added
+- **AlonsoOvalleMoghiseh2025.lean** (Phenomena/Modality/Studies): formalize @cite{alonso-ovalle-moghiseh-2025} — root full-exh contradiction, scalar-only uniqueness, domain-only conjunction (Economy), split exhaustification under deontic ◇ deriving FC + embedded uniqueness, Maximize Strength blocking scalar exh in DE contexts, EFCI typology (vreun/irgendein/yek-i)
+
+### Changed
+- **Determiners.lean** (Fragments/Farsi): fix `yeki.requiresPartitive` (was true, now false); fix `getReading` routing for `.both` rescue → `.epistemicIgnorance`; add @cite tags to cross-linguistic entries
+- **InnocentExclusion.lean** (Theories/Semantics/Exhaustification): add `exhAll` (Chierchia 2013 contradiction-tolerating operator) and `maximizeStrength` constraint
+- **references.bib**: fix `sources` field for @cite{alonso-ovalle-moghiseh-2025} to point to actual formalization files
+
+## [0.229.506] - 2026-04-04
+
+### Added
+- **Operators.lean** (Theories/Semantics/Dynamic/IntensionalCDRT): `nullAssignment`/`initialContext` (Definitions 32-33) with `initialContext_consistent`; § 10 Compositional Fragment operators — `andCondition`, `orCondition`, `ifCondition`, `believeCondition` (Appendix C)
+- **ModalDonkeyAnaphora.lean**: bridge section connecting situation-level `DonkeyAccessibility` (@cite{mendes-2025}) to propositional-dref-level `accessible` (@cite{hofmann-2025}); `donkey_accessible_preserves_world_property` theorem
+- **references.bib**: 4 bibliography entries — @cite{krahmer-muskens-1995} (J. Semantics), @cite{frank-1996} (Stuttgart diss.), @cite{stone-1999} (Rutgers TR), @cite{brasoveanu-2006} (ms.)
+
+### Changed
+- **Hofmann2025.lean** (Phenomena/Anaphora/Studies): closed all 20 sorry proofs — refactored `mkProp`/`mkIndiv` to direct pattern matching for definitional reduction; all proofs use `simp_all` with explicit definition names; documented M₁ vs M₃ simplification for modal subordination; `accessiblePred` docstring updated to note derivation from operators
+- **Update.lean** (Theories/Semantics/Dynamic/IntensionalCDRT): updated module docstring — Operators.lean is canonical (Defs 17-40), Update.lean is complementary IContext-based encoding used by Bilateral/Connectives
+
 ## [0.229.505] - 2026-04-04
 
 ### Added

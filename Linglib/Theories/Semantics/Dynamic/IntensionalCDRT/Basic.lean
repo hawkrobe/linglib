@@ -1,4 +1,8 @@
-/-
+import Linglib.Theories.Semantics.Dynamic.Core.Update
+import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
+import Mathlib.Data.Set.Basic
+
+/-!
 # Intensional Compositional DRT (ICDRT)
 
 Core types for @cite{hofmann-2025} with propositional discourse referents enabling
@@ -6,13 +10,11 @@ anaphora to indefinites under negation.
 
 ## Main definitions
 
-`IContext`, `DynProp`, `CommitmentSet`
+* `IContext` — set of assignment-world pairs (information state)
+* `DynProp` — context-to-context transformer (sentence denotation)
 
+Discourse contexts (`DiscContext`) and commitment sets are in `Operators.lean`.
 -/
-
-import Linglib.Theories.Semantics.Dynamic.Core.Update
-import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
-import Mathlib.Data.Set.Basic
 
 namespace Semantics.Dynamic.IntensionalCDRT
 
@@ -93,26 +95,5 @@ def taut : DynProp W E := λ c => c
 def ofProp (p : W → Prop) : DynProp W E := λ c => c.update p
 
 end DynProp
-
--- Commitment Sets
-
-/-- Speaker's public commitments (discourse consistency requires non-empty). -/
-structure CommitmentSet (W : Type*) (E : Type*) where
-  context : IContext W E
-  dc : Set W
-  consistent : dc.Nonempty
-
-namespace CommitmentSet
-
-variable {W E : Type*}
-
-/-- Initial commitment set (all worlds) -/
-def initial [Nonempty W] : CommitmentSet W E where
-  context := IContext.univ
-  dc := Set.univ
-  consistent := Set.univ_nonempty
-
-end CommitmentSet
-
 
 end Semantics.Dynamic.IntensionalCDRT

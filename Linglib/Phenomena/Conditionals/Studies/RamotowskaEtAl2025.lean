@@ -1,10 +1,11 @@
 import Linglib.Core.Empirical
+import Linglib.Core.Logic.NonBivalence
 import Linglib.Fragments.English.Determiners
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{ramotowska-santorio-2025} - Counterfactuals and Quantificational Force
+# @cite{ramotowska-marty-romoli-santorio-2025} - Counterfactuals and Quantificational Force
 
 Ramotowska, S., Marty, P., Romoli, J. & Santorio, P. (2025).
 Counterfactuals and quantificational force: Experimental evidence for
@@ -43,8 +44,8 @@ Test sentences (Experiment 2):
 - STRENGTH: β = −77.09, p < .001 (Exp 1); β = −88.7, p < .001 (Exp 2)
 - QUD: not significant for counterfactuals
   (Exp 1: β = −0.09, p = .97; Exp 2: β = −0.6, p = 0.7)
-- Plural definites WERE sensitive to QUD (Exp 2: β = −12.6, p = 0.01),
-  confirming the QUD manipulation was effective
+- Plural definites WERE sensitive to QUD (Exp 2: β = −12.6, p = 0.01;
+  raw means E-QuD M=41.0, U-QuD M=22.8), confirming QUD manipulation effective
 -/
 
 namespace Phenomena.Conditionals.Studies.RamotowskaEtAl2025
@@ -130,25 +131,57 @@ structure ExperimentalDatum where
 
 Experiment 2 (§6) provides per-condition mean slider ratings for
 target counterfactual (TC) sentences in the mixed scenario, reported
-in §6.7.3 (p. 6:34). These are the verified values. -/
+in §6.7.3 (p. 6:34). Values verified against raw CSV data (OSF:
+osf.io/3jywr); paper rounds raw means to 1 decimal place. -/
 
 /-- Experiment 2: mean slider ratings for counterfactuals in mixed
-    scenarios. Verified from paper §6.7.3 (p. 6:34).
+    scenarios. Verified against raw CSV data (OSF) and paper §6.7.3.
 
     Strong quantifiers (every/all, none): all means < 4.
     Weak quantifiers (not all, some): all means > 82. -/
 def experiment2MixedResults : List ExperimentalDatum :=
   [ -- Strong quantifiers
-    { quantifier := .every, qud := .universal,    meanRating := 15/10 }  -- M = 1.5
-  , { quantifier := .every, qud := .existential,  meanRating := 12/10 }  -- M = 1.2
-  , { quantifier := .no,    qud := .universal,    meanRating := 33/10 }  -- M = 3.3
-  , { quantifier := .no,    qud := .existential,  meanRating := 9/10  }  -- M = 0.9
+    { quantifier := .every, qud := .universal,    meanRating := 222/153 }  -- M = 1.45
+  , { quantifier := .every, qud := .existential,  meanRating := 165/127 }  -- M = 1.30
+  , { quantifier := .no,    qud := .universal,    meanRating := 510/153 }  -- M = 3.33
+  , { quantifier := .no,    qud := .existential,  meanRating := 112/126 }  -- M = 0.89
     -- Weak quantifiers
-  , { quantifier := .notEvery, qud := .universal,   meanRating := 821/10 } -- M = 82.1
-  , { quantifier := .notEvery, qud := .existential, meanRating := 861/10 } -- M = 86.1
-  , { quantifier := .some,     qud := .universal,   meanRating := 961/10 } -- M = 96.1
-  , { quantifier := .some,     qud := .existential, meanRating := 972/10 } -- M = 97.2
+  , { quantifier := .notEvery, qud := .universal,   meanRating := 12567/153 } -- M = 82.14
+  , { quantifier := .notEvery, qud := .existential, meanRating := 11026/128 } -- M = 86.14
+  , { quantifier := .some,     qud := .universal,   meanRating := 14652/152 } -- M = 96.39
+  , { quantifier := .some,     qud := .existential, meanRating := 12197/125 } -- M = 97.58
   ]
+
+/-! ### Experiment 1 Results (lottery, n=87)
+
+Experiment 1 (§5) uses lottery scenarios where "only some of the tickets
+that have been bought win a prize." Mean slider ratings (0–99) for
+counterfactual sentences in the mixed scenario. No per-quantifier ×
+per-QUD breakdown is reported; the paper reports marginal means by
+STRENGTH (collapsing across QUD and polarity).
+
+Key results from the mixed-effects model (§5.7.2):
+- STRENGTH: β = −77.09, p < .001
+- QUD: β = −0.09, p = .97 (not significant) -/
+
+/-- Experiment 1: marginal means by quantifier strength in mixed
+    scenarios. These are the key data points establishing the
+    strength effect (strong < 15, weak > 84).
+    Values verified from raw CSV data (OSF: osf.io/3jywr). -/
+structure StrengthMarginal where
+  isStrong : Bool
+  meanRating : ℚ
+  deriving Repr
+
+def experiment1Marginals : List StrengthMarginal :=
+  [ { isStrong := true,  meanRating := 1705/150 }   -- M = 11.37 (strong, n=150)
+  , { isStrong := false, meanRating := 13086/146 }   -- M = 89.63 (weak, n=146)
+  ]
+
+-- The strength effect replicates across experiments: strong < 15,
+-- weak > 84 in Experiment 1.
+#guard experiment1Marginals.all λ d =>
+  if d.isStrong then d.meanRating < 15 else d.meanRating > 84
 
 -- ════════════════════════════════════════════════════════════════
 -- Key Empirical Observations
@@ -291,6 +324,48 @@ Key findings:
 -/
 
 -- ════════════════════════════════════════════════════════════════
+-- Plural Definite Dissociation (Experiment 2)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Plural Definites vs Counterfactuals: QUD Sensitivity
+
+Experiment 2 also tested plural definite sentences alongside
+counterfactuals. The key finding: plural definites ARE sensitive to
+QUD (β = −12.6, p = 0.01), while counterfactuals are NOT (β = −0.6,
+p = 0.7). This dissociation confirms:
+
+1. The QUD manipulation was effective (plural definites detect it)
+2. Counterfactuals' QUD insensitivity is a genuine semantic property
+3. Both phenomena use the same DIST operator, but differ in
+   architecture: plural homogeneity is LOCAL (gap before quantifier),
+   while selectional counterfactuals are GLOBAL (Bool before quantifier)
+-/
+
+/-- Plural definite datum: mean slider rating under each QUD condition
+    in the mixed scenario ("The players won this round"). -/
+structure PluralDefiniteDatum where
+  qud : QuDType
+  meanRating : ℚ
+  deriving Repr
+
+/-- Experiment 2: plural definite mean ratings in mixed scenario.
+    Unlike counterfactuals, these show a significant QUD effect.
+    Raw means from OSF data; paper §6.7.2 reports model-estimated
+    marginals (42.2 / 29.6) which differ slightly. -/
+def experiment2PluralDefiniteResults : List PluralDefiniteDatum :=
+  [ { qud := .existential, meanRating := 4554/111 }   -- M = 41.03
+  , { qud := .universal,   meanRating := 2601/114 }    -- M = 22.82
+  ]
+
+-- QUD affects plural definites: E-QuD > U-QuD by > 10 points
+#guard
+  match experiment2PluralDefiniteResults.find? (·.qud == .existential),
+        experiment2PluralDefiniteResults.find? (·.qud == .universal) with
+  | some e, some u => e.meanRating - u.meanRating > 10
+  | _, _ => false
+
+-- ════════════════════════════════════════════════════════════════
 -- Grounding: Study Predictions ↔ Formal Selectional Semantics
 -- ════════════════════════════════════════════════════════════════
 
@@ -326,23 +401,101 @@ theorem selectional_prediction_grounded (q : Quantifier) (bs : List Bool)
     decide
 
 -- ════════════════════════════════════════════════════════════════
+-- Architectural Explanation: Local vs Global Trivalence
+-- ════════════════════════════════════════════════════════════════
+
+open Core.NonBivalence (TrivalenceScope local_strength_irrelevant
+  global_mixed_pattern global_always_determinate)
+open Core.Duality (DualityType aggregate ProjectionType)
+open Semantics.Conditionals.Counterfactual (projToDuality projectTruthValues_eq_aggregate)
+
+/-!
+### Why Strength Matters: The Trivalence Scope Dichotomy
+
+The paper's deepest insight (§2.2): whether gaps arise LOCALLY (before
+the quantifier) or GLOBALLY (after the quantifier) determines whether
+quantifier strength matters. This is formalized in `Core.NonBivalence`
+as the dichotomy between `TrivalenceScope.local` and `.global`.
+
+- **Homogeneity** uses local scope: each individual's counterfactual
+  is `.indet` (gap). `local_strength_irrelevant` proves both ∃ and
+  ∀ aggregation return `.indet` — strength is invisible.
+- **Selectional** uses global scope: within each selected world,
+  individual outcomes are Bool. `global_mixed_pattern` proves mixed
+  Bools yield `.true` for ∃ and `.false` for ∀ — the strength effect.
+-/
+
+/-- Map each theory to its trivalence scope architecture. -/
+def Theory.scope : Theory → TrivalenceScope
+  | .universal   => .global   -- Lewis/Kratzer: closest worlds give Bool
+  | .selectional => .global   -- Stalnaker: selection function gives Bool
+  | .homogeneity => .«local»  -- Gaps arise before quantifier
+
+/-- **Homogeneity architecture erases strength**: when gaps arise locally,
+    both strong and weak quantifiers return `.indet`. The quantifier's
+    projection type is invisible — it cannot "see past" gaps.
+
+    This is why the homogeneity theory predicts no strength effect and
+    must resort to QUD × polarity to distinguish conditions. -/
+theorem homogeneity_erases_strength (n : Nat) (hn : n > 0) :
+    ∀ proj : ProjectionType,
+    embeddedSelectional proj (List.replicate n Truth3.indet) = .indet := by
+  intro proj
+  unfold embeddedSelectional
+  rw [projectTruthValues_eq_aggregate]
+  exact local_strength_irrelevant (projToDuality proj) n hn
+
+/-- **Selectional architecture produces strength effect**: when the
+    quantifier sees only Bools (global scope), mixed inputs yield
+    `.true` for weak (∃/disjunctive) and `.false` for strong (∀/conjunctive).
+
+    This connects the study's `embeddedSelectional` through the bridging
+    theorem to `NonBivalence.global_mixed_pattern`. -/
+theorem selectional_strength_effect (bs : List Bool)
+    (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
+    embeddedSelectional .weak (bs.map Truth3.ofBool) = .true ∧
+    embeddedSelectional .strong (bs.map Truth3.ofBool) = .false := by
+  unfold embeddedSelectional QStrength.toProjection
+  constructor <;> (rw [projectTruthValues_eq_aggregate]; simp only [projToDuality])
+  · exact (global_mixed_pattern bs h_some_true h_some_false).1
+  · exact (global_mixed_pattern bs h_some_true h_some_false).2
+
+/-- **Selectional counterfactuals are always determinate**: under global
+    scope, aggregation over Bools never produces a gap.
+
+    This explains why selectional semantics yields crisp true/false
+    judgments (no "undefined"), matching the experimental pattern of
+    extreme slider values (< 4 or > 82). -/
+theorem selectional_always_determinate (proj : ProjectionType) (bs : List Bool) :
+    embeddedSelectional proj (bs.map Truth3.ofBool) ≠ .indet := by
+  unfold embeddedSelectional
+  rw [projectTruthValues_eq_aggregate]
+  exact global_always_determinate (projToDuality proj) bs
+
+-- ════════════════════════════════════════════════════════════════
 -- Connections to Other Phenomena
 -- ════════════════════════════════════════════════════════════════
 
 /-!
 ## Related Phenomena
 
-1. **Projection Duality**:
-   The strength effect reflects the adjoint duality between universal
-   (right adjoint, fragile) and existential (left adjoint, robust)
-   operators. See `Counterfactual.lean` for the formalization.
+1. **Local vs Global Trivalence** (`Core.NonBivalence`):
+   The paper's deepest architectural insight is formalized as the
+   dichotomy theorems. `homogeneity_erases_strength` derives that
+   local gaps make strength invisible; `selectional_strength_effect`
+   derives that global Bools produce the strength effect. The
+   bridging theorem `projectTruthValues_eq_aggregate` connects the
+   counterfactual-specific `projectTruthValues` to the general
+   `aggregate` operator, enabling these derivations.
 
 2. **Plural Definites and QUD**:
    Unlike counterfactuals, plural definite sentences ("The players won
-   this round") ARE sensitive to QUD manipulation (Exp 2: E-QuD M=42.2
-   vs U-QuD M=29.6, β = −12.6, p = 0.01). This confirms the QUD
+   this round") ARE sensitive to QUD manipulation (Exp 2: raw means
+   E-QuD M=41.0 vs U-QuD M=22.8, β = −12.6, p = 0.01). This confirms the QUD
    manipulation worked and that counterfactuals' insensitivity to QUD
    is a genuine semantic property, not a failure of the manipulation.
+   The dissociation is predicted by scope: plural homogeneity is LOCAL
+   (gap before quantifier), selectional counterfactuals are GLOBAL.
 
 3. **Conditional Excluded Middle (CEM)**:
    Stalnaker's semantics validates CEM: (A □→ B) ∨ (A □→ ¬B).

@@ -97,6 +97,19 @@ def toOption : Entity E → Option E
   | .some e => Option.some e
   | .star => Option.none
 
+/-- ⋆ is the universal falsifier: any lifted predicate yields false for ⋆.
+    Formal statement of @cite{hofmann-2025} §2.1: "R(⋆) = 0 for all R". -/
+@[simp] theorem star_falsifies (p : E → Bool) :
+    Entity.liftPred p (.star : Entity E) = false := rfl
+
+/-- ⋆ falsifies binary predicates from the left. -/
+@[simp] theorem star_falsifies₂_left (p : E → E → Bool) (e : Entity E) :
+    Entity.liftPred₂ p (.star : Entity E) e = false := by cases e <;> rfl
+
+/-- ⋆ falsifies binary predicates from the right. -/
+@[simp] theorem star_falsifies₂_right (p : E → E → Bool) (e : Entity E) :
+    Entity.liftPred₂ p e (.star : Entity E) = false := by cases e <;> rfl
+
 instance [Inhabited E] : Inhabited (Entity E) where
   default := .star
 
@@ -252,8 +265,12 @@ In ICDRT, we need to track two kinds of assignments:
 This is used by IntensionalCDRT; simpler theories can use Nat → E.
 -/
 structure ICDRTAssignment (W : Type*) (E : Type*) where
-  /-- Individual variable assignment -/
-  indiv : IVar → Entity E
+  /-- Individual variable assignment: intensional individual drefs (individual
+      concepts). Each variable maps worlds to entities, possibly ⋆.
+      In @cite{hofmann-2025}'s notation: type s(we), i.e., for each variable v,
+      v(i) is a function from worlds to entities. v(i)(w) = ⋆ when v has no
+      referent in w. -/
+  indiv : IVar → W → Entity E
   /-- Propositional variable assignment -/
   prop : PVar → Set W
 
@@ -263,12 +280,17 @@ variable {W E : Type*}
 
 /-- Empty assignment (all variables map to ⋆ / empty set) -/
 def empty : ICDRTAssignment W E where
-  indiv := λ _ => .star
+  indiv := λ _ _ => .star
   prop := λ _ => ∅
 
-/-- Update individual variable -/
-def updateIndiv (g : ICDRTAssignment W E) (v : IVar) (e : Entity E) : ICDRTAssignment W E :=
+/-- Update individual variable with an individual concept (world-dependent). -/
+def updateIndiv (g : ICDRTAssignment W E) (v : IVar) (e : W → Entity E) : ICDRTAssignment W E :=
   { g with indiv := λ v' => if v' == v then e else g.indiv v' }
+
+/-- Update individual variable with a constant entity (world-invariant).
+    Convenience for cases where the entity is the same in all worlds. -/
+def updateIndivConst (g : ICDRTAssignment W E) (v : IVar) (e : Entity E) : ICDRTAssignment W E :=
+  g.updateIndiv v (λ _ => e)
 
 /-- Update propositional variable -/
 def updateProp (g : ICDRTAssignment W E) (p : PVar) (s : Set W) : ICDRTAssignment W E :=
@@ -342,7 +364,7 @@ def const (e : Entity E) : IDref W E := λ _ _ => e
 def undef : IDref W E := λ _ _ => .star
 
 /-- Variable lookup dref -/
-def ofVar (v : IVar) : IDref W E := λ g _ => g.indiv v
+def ofVar (v : IVar) : IDref W E := λ g w => g.indiv v w
 
 /-- Apply predicate to individual dref -/
 def satisfies (d : IDref W E) (p : E → W → Bool) : ICDRTAssignment W E → W → Bool :=

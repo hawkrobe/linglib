@@ -357,7 +357,7 @@ theorem subjunctive_implies_indicative {W : Type*} (sim : SimilarityOrdering W)
     subjunctiveConditional sim domain p q w → indicativeConditional p q w := by
   exact variably_strict_implies_material sim domain p q w hw hp h_centered
 
--- Selection Functions (@cite{stalnaker-1968}, @cite{ramotowska-santorio-2025})
+-- Selection Functions (@cite{stalnaker-1968}, @cite{ramotowska-marty-romoli-santorio-2025})
 
 /-!
 ## Selection Functions
@@ -370,7 +370,7 @@ Key distinction from @cite{lewis-1973}:
 - @cite{lewis-1973}: Universal quantification over all closest A-worlds
 - @cite{stalnaker-1968}: Selection of a single A-world (with supervaluation for ties)
 
-This is formalized for use in @cite{ramotowska-santorio-2025} analysis of
+This is formalized for use in @cite{ramotowska-marty-romoli-santorio-2025} analysis of
 counterfactual force under quantifiers.
 -/
 

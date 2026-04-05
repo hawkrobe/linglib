@@ -218,7 +218,9 @@ structure ModalDonkey (W Time : Type*) where
   /-- Historical alternatives at binding -/
   historicalBase : Set (Situation W Time)
 
-/--
+/-!
+### Structural parallel
+
 Both classic and modal donkey anaphora share:
 1. Existential introduction in a subordinate position
 2. Anaphoric retrieval outside c-command domain
@@ -228,13 +230,6 @@ The difference:
 - Classic: quantifies over individuals
 - Modal: quantifies over situations (and their times)
 -/
-def structuralParallel : Prop :=
-  -- Both involve:
-  -- 1. Indefinite/existential introduction
-  -- 2. Cross-clausal retrieval
-  -- 3. Universal force in the consequent
-  True  -- Documented parallel
-
 
 /--
 E-type vs unselective binding for situations.
@@ -338,5 +333,45 @@ theorem donkey_accessibility_transitive {W Time : Type*}
   -- goal : s₂.world = s₀.world
   exact h₂.trans h₁
 
+
+-- ════════════════════════════════════════════════════════════════
+-- Bridge to ICDRT accessibility (Operators.lean)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+## Connection to ICDRT propositional accessibility
+
+`DonkeyAccessibility` (this file, @cite{mendes-2025}) and
+`accessible` (`Operators.lean`, @cite{hofmann-2025}) formalize
+anaphoric accessibility at two different levels:
+
+- **Situation level** (`DonkeyAccessibility`): s₂ retrieves s₁ via
+  same-world constraint. Governs cross-clausal situation binding
+  (modal donkey anaphora).
+- **Propositional dref level** (`accessible`): v is accessible in
+  context φ at state i iff v has a referent in all φ-worlds (local
+  entailment) and discourse is consistent. Governs individual dref
+  accessibility across negation, disjunction, and attitude contexts.
+
+Both enforce the same structural pattern: the retrieval context must
+be compatible with the introduction context. For situations, this is
+world identity (`s₂.world = s₁.world`). For individual drefs, this
+is the subset requirement (`φ_anaphor ⊆ φ_antecedent`, Definition 39)
+combined with local entailment (v exists throughout φ_anaphor).
+
+The unifying principle is @cite{hofmann-2025}'s veridicality: both
+individual drefs and situation drefs are accessible when the anaphor's
+local context is contained within the antecedent's local context.
+-/
+
+/-- Accessibility at the situation level entails accessibility at the
+    world level: if s₂ can anaphorically retrieve s₁, then any
+    world-level property holding at s₁'s world also holds at s₂'s. -/
+theorem donkey_accessible_preserves_world_property {W Time : Type*}
+    (s₁ s₂ : Situation W Time)
+    (h : modallyAccessible s₁ s₂)
+    (P : W → Prop) (hp : P s₁.world) :
+    P s₂.world := by
+  rwa [h]
 
 end Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora

@@ -452,4 +452,79 @@ theorem exhR_all_relevant_eq_exhB {W : Type} (domain : List W)
 end RelevanceSensitive
 
 
+-- ============================================================
+-- SECTION 6: Contradiction-Tolerating Exhaustification
+-- ============================================================
+
+/-!
+## Chierchia 2013 Exhaustivity Operator
+
+@cite{chierchia-2013} defines an exhaustivity operator that negates
+**all** alternatives not entailed by the prejacent, regardless of whether
+the result is consistent (contradiction-tolerating). This contrasts with
+Fox's `exhB`, which uses innocent exclusion to guarantee consistency.
+
+The contradiction-tolerating operator is important for the theory of
+EFCIs (@cite{alonso-ovalle-moghiseh-2025}): when applied to all
+alternatives of an unembedded EFCI, it derives a contradiction, motivating
+either modal insertion (for *irgendein*-type EFCIs) or partial
+exhaustification (for Farsi *yek-i* DPs).
+-/
+
+section ChierchiaExh
+
+/-- Contradiction-tolerating exhaustivity operator (@cite{chierchia-2013}).
+
+    Negates every alternative not entailed by the prejacent, even if
+    the result is inconsistent. When restricted to alternatives where
+    IE = NW (all non-entailed alts are innocently excludable), this
+    coincides with `exhB`. -/
+def exhAll {W : Type} (domain : List W)
+    (alts : List (W → Bool)) (p : W → Bool) : W → Bool :=
+  fun w => p w && alts.all fun q =>
+    -- entailed? if yes, keep; if no, negate
+    if domain.any (fun v => p v && !q v) then !q w else true
+
+/-- When all alternatives are innocently excludable, `exhAll` = `exhB`. -/
+theorem exhAll_eq_exhB_when_all_ie {W : Type} (domain : List W)
+    (alts : List (W → Bool)) (p : W → Bool)
+    (h : ieIndices domain p alts = List.range alts.length) :
+    ∀ w, exhAll domain alts p w = exhB domain alts p w := by
+  intro w; simp only [exhAll, exhB]
+  sorry -- structural: when IE covers all NW alternatives
+
+end ChierchiaExh
+
+
+-- ============================================================
+-- SECTION 7: Maximize Strength
+-- ============================================================
+
+/-!
+## Maximize Strength (@cite{chierchia-2013})
+
+A constraint on exhaustification: do not exhaustify a sub-constituent
+S inside a matrix S' if doing so globally weakens S'. This blocks
+scalar exhaustification of EFCIs in downward-entailing contexts.
+-/
+
+section MaximizeStrength
+
+/-- Maximize Strength check: returns `true` if exhaustification does NOT
+    globally weaken (i.e., the exhaustified matrix is not strictly weaker
+    than the unexhaustified matrix).
+
+    Weakening = every world satisfying the original also satisfies
+    the exhaustified version, but not vice versa (the exhaustified
+    version is true in strictly more worlds → carries less information). -/
+def maximizeStrength {W : Type} (domain : List W)
+    (withExh withoutExh : W → Bool) : Bool :=
+  let origEntailsExhaust := domain.all fun w => !withoutExh w || withExh w
+  let exhaustEntailsOrig := domain.all fun w => !withExh w || withoutExh w
+  -- Blocked when exhaustification strictly weakens (orig ⊂ exh in truth-worlds)
+  !(origEntailsExhaust && !exhaustEntailsOrig)
+
+end MaximizeStrength
+
+
 end Exhaustification.InnocentExclusion

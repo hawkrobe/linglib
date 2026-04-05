@@ -86,7 +86,7 @@ def yeki : IndefiniteEntry :=
   , gloss := "one-INDF"
   , isEFCI := true
   , efciRescue := some .partialExhaustification
-  , requiresPartitive := true
+  , requiresPartitive := false
   , allowsMass := false
   , speakerIgnorance := false  -- NO modal component in root
   , uniqueness := true          -- Yields "exactly one" in root
@@ -181,7 +181,7 @@ def getReading (entry : IndefiniteEntry) (ctx : EFCIContext) : Option EFCIReadin
       match entry.efciRescue with
       | some .partialExhaustification => some .uniqueness
       | some .modalInsertion => some .epistemicIgnorance
-      | some .both => some .uniqueness  -- Default
+      | some .both => some .epistemicIgnorance  -- Modal insertion primary
       | some .none => none  -- Ungrammatical
       | none => some .plainExistential  -- Not EFCI
 
@@ -199,23 +199,22 @@ theorem yeki_epistemic : getReading yeki epistemicContext = some .modalVariation
 theorem yeki_de : getReading yeki deContext = some .plainExistential := rfl
 
 
-/--
-German *irgendein*: EFCI with modal insertion available.
--/
+/-- German *irgendein*: EFCI with modal insertion available.
+Cross-linguistic comparison entry; canonical German entry in `Fragments.German.ModalIndefinites`.
+@cite{kratzer-shimoyama-2002} -/
 def irgendein_de : IndefiniteEntry :=
   { form := "irgendein"
   , romanization := "irgendein"
   , gloss := "IRGEND.a"
   , isEFCI := true
-  , efciRescue := some .both  -- Both mechanisms available
+  , efciRescue := some .modalInsertion  -- Modal insertion only (Table 2)
   , requiresPartitive := false
   , speakerIgnorance := true   -- Has epistemic component
   , uniqueness := false
   }
 
-/--
-Romanian *vreun*: EFCI with no rescue mechanism.
--/
+/-- Romanian *vreun*: EFCI with no rescue mechanism.
+Cross-linguistic comparison entry; see @cite{falaus-2014}. -/
 def vreun_ro : IndefiniteEntry :=
   { form := "vreun"
   , romanization := "vreun"
@@ -226,9 +225,10 @@ def vreun_ro : IndefiniteEntry :=
   }
 
 /--
-Irgendein in root yields epistemic ignorance (or uniqueness with partial exh).
+Irgendein in root yields epistemic ignorance (via modal insertion).
+@cite{kratzer-shimoyama-2002}
 -/
-theorem irgendein_root : getReading irgendein_de rootContext = some .uniqueness := rfl
+theorem irgendein_root : getReading irgendein_de rootContext = some .epistemicIgnorance := rfl
 
 /--
 Vreun in root is ungrammatical (no rescue).
@@ -243,35 +243,6 @@ def allIndefinites : List IndefiniteEntry :=
 /-- Lookup by romanization -/
 def lookup (romanization : String) : Option IndefiniteEntry :=
   allIndefinites.find? λ e => e.romanization == romanization
-
-
-/--
-The uniqueness component of yek-i.
-
-In root contexts, yek-i conveys: ∃!x. P(x) = "exactly one x satisfies P"
-
-This comes from partial exhaustification of pre-exhaustified domain alternatives.
--/
-def uniquenessSemantics : String :=
-  "∃x. P(x) ∧ ∀y. y ≠ x → ¬P(y)"
-
-/--
-The free choice component under deontic modals.
-
-Under ◇_deo, yek-i conveys: ∀x. ◇_deo[P(x) ∧ ∀y≠x. ¬P(y)]
-"For each x, you may uniquely satisfy P with x"
--/
-def freeChoiceSemantics : String :=
-  "∀x ∈ D. ◇_deo[P(x) ∧ ∀y ∈ D. y ≠ x → ¬P(y)]"
-
-/--
-The modal variation component under epistemic modals.
-
-Under ◇_epi, yek-i conveys: |{x : ◇_epi[P(x) ∧ ∀y≠x. ¬P(y)]}| ≥ 2
-"At least two individuals are epistemic possibilities for uniquely satisfying P"
--/
-def modalVariationSemantics : String :=
-  "|{x ∈ D : ◇_epi[P(x) ∧ ∀y ∈ D. y ≠ x → ¬P(y)]}| ≥ 2"
 
 
 end Fragments.Farsi.Determiners
