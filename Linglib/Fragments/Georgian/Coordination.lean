@@ -1,3 +1,5 @@
+import Linglib.Core.Coordination
+
 /-!
 # Georgian Coordination Morphemes
 @cite{haspelmath-2007} @cite{bill-etal-2025}
@@ -22,19 +24,7 @@ to the Transparency Principle prediction).
 
 namespace Fragments.Georgian.Coordination
 
-/-- Role of a coordination morpheme in the M&S decomposition. -/
-inductive CoordRole where
-  | j          -- Set intersection (conjunction)
-  | mu         -- Subset/additive (conjunction)
-  | disj       -- Disjunction
-  | advers     -- Adversative ("but")
-  deriving DecidableEq, Repr
-
-/-- Morphological boundness. -/
-inductive Boundness where
-  | free
-  | bound   -- clitic or suffix
-  deriving DecidableEq, Repr
+open Core.Coordination
 
 /-- A Georgian coordination entry. -/
 structure CoordEntry where

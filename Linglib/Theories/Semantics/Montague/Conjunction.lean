@@ -116,6 +116,60 @@ theorem coordEntities_both_satisfy {m : Model} (e1 e2 : m.interpTy .e)
 
 end TypeRaising
 
+-- ============================================================================
+-- § M&S Decomposition: ☉ + MU (INCL) + J
+-- ============================================================================
+
+/-!
+## @cite{mitrovic-sauerland-2014} @cite{mitrovic-sauerland-2016} Decomposition
+
+DP conjunction decomposes into three operations:
+- ☉ (`msShift`): individual → singleton set (= Partee's `ident`)
+- MU (`inclFunc`): singleton set → GQ via subset inclusion (INCL)
+- J (`genConj`): generalized conjunction on GQs
+
+The composition MU ∘ ☉ = `typeRaise`. The full derivation
+"DP₁ and DP₂ VP" via ☉ + MU + J recovers `coordEntities`.
+
+### Connection to @cite{link-1983} Distributivity
+
+`coordEntities e1 e2 P = P(e1) ∧ P(e2)` is the two-atom instance of
+Link's distributive inference: for distributive P, `*P(e1 ⊕ e2)` holds
+iff P holds of every atom-part. Each MU application checks one atom;
+J conjoins the checks. See `Semantics.Lexical.Plural.Link1983.distr_atom_part`.
+-/
+
+section MSDecomposition
+
+/-- ☉: M&S type-shifter. Individual → singleton property.
+    ☉(x) = λy.[y = x] = the characteristic function of {x}.
+    Identical to @cite{partee-1987}'s `ident` in TypeShifting.lean. -/
+def msShift {m : Model} (x : m.interpTy .e) : m.interpTy (.e ⇒ .t) :=
+  λ y => @decide (x = y) (m.decEq x y)
+
+/-- MU particle semantics: INCL (subset inclusion).
+    For a singleton set from ☉(x), INCL({x})(P) = P(x).
+
+    The general definition would be INCL(S)(P) = ∀y. S(y) → P(y),
+    but M&S only apply MU to ☉-shifted individuals (singletons),
+    where subset inclusion reduces to direct predicate application.
+    We define `inclFunc` at this reduced type. -/
+def inclFunc {m : Model} (x : m.interpTy .e) : m.interpTy ((.e ⇒ .t) ⇒ .t) :=
+  λ P => P x
+
+/-- MU ∘ ☉ = typeRaise: the M&S roundtrip through singleton
+    formation and subset checking is just type-raising. -/
+theorem ms_inclFunc_eq_typeRaise {m : Model} (x : m.interpTy .e) :
+    inclFunc x = typeRaise x := rfl
+
+/-- Full M&S derivation via named operations:
+    J(MU(☉(e₁)), MU(☉(e₂))) = coordEntities e₁ e₂ -/
+theorem ms_full_derivation {m : Model} (e1 e2 : m.interpTy .e) :
+    genConj ((.e ⇒ .t) ⇒ .t) m (inclFunc e1) (inclFunc e2) =
+    coordEntities e1 e2 := rfl
+
+end MSDecomposition
+
 section Examples
 
 def tall_sem : toyModel.interpTy (.fn .e .t) :=

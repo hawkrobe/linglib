@@ -28,7 +28,6 @@ Key CI expressions:
 
 -/
 
-import Mathlib.Data.Rat.Defs
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.Presupposition
 
@@ -174,55 +173,58 @@ end TwoDimProp
 
 
 /--
-Types of CI-contributing expressions.
+Properties of secondary (non-at-issue) meaning expressions.
 
-Following Potts' taxonomy:
-- **Supplements**: Appositives, parentheticals, supplementary relatives
-- **Expressives**: Epithets, expressive adjectives, honorifics
-- **Utterance modifiers**: Speech act adverbs (frankly, honestly)
+Extends @cite{potts-2007}'s six expressive diagnostics with two additional
+properties needed to distinguish outlook markers (@cite{kubota-2026}) from
+pure expressives and pure presuppositions.
 -/
-inductive CIExprType where
-  | nominalAppositive    -- "Laura, a doctor, ..."
-  | clauseAppositive     -- "John, who is tall, ..."
-  | supplementaryAdverb  -- "Luckily, ...", "Amazingly, ..."
-  | epithet              -- "that bastard John"
-  | expressiveAdjective  -- "the damn dog"
-  | honorific            -- "Don Pedro", "John-san"
-  | emotiveMarker        -- "Alas, ...", "Wow!"
-  | utteranceModifier    -- "Frankly, ...", "Honestly, ..."
-  deriving Repr, DecidableEq
-
-/--
-Properties of CI expressions (@cite{potts-2005} §2.5).
--/
-structure CIExprProperties where
-  /-- CI is speaker-oriented (vs subject-oriented) -/
-  speakerOriented : Bool
-  /-- CI can be repeated for emphasis without redundancy -/
-  repeatable : Bool
-  /-- CI is immediate (affects context just by being uttered) -/
-  immediate : Bool
-  /-- CI is independent of at-issue truth -/
+structure SecondaryMeaningProperties where
+  /-- CI contributes to a dimension separate from at-issue content -/
   independent : Bool
+  /-- Predicates something of the utterance situation (not the described situation) -/
+  nondisplaceable : Bool
+  /-- Evaluated from a particular perspective (usually the speaker's) -/
+  perspectiveDependent : Bool
+  /-- Cannot be fully paraphrased by descriptive, non-expressive terms -/
+  descriptivelyIneffable : Bool
+  /-- Achieves its effect simply by being uttered (like a performative) -/
+  immediate : Bool
+  /-- Repetition strengthens rather than creating redundancy -/
+  repeatable : Bool
+  /-- Allows perspective shift to a non-speaker attitude holder under embedding -/
+  allowsPerspectiveShift : Bool
+  /-- Requires a salient issue/counterstance in prior discourse -/
+  requiresDiscourseAntecedent : Bool
   deriving Repr
 
 /--
-Expressives have all the characteristic CI properties.
+Expressives satisfy all six @cite{potts-2007} properties and do NOT typically
+allow perspective shift or require discourse antecedents.
 -/
-def expressiveProperties : CIExprProperties :=
-  { speakerOriented := true
-  , repeatable := true      -- "damn damn damn" strengthens
-  , immediate := true       -- Affects context immediately
-  , independent := true }   -- Independent of truth conditions
+def expressiveProperties : SecondaryMeaningProperties :=
+  { independent := true
+  , nondisplaceable := true
+  , perspectiveDependent := true
+  , descriptivelyIneffable := true
+  , immediate := true
+  , repeatable := true       -- "damn damn damn" strengthens
+  , allowsPerspectiveShift := false
+  , requiresDiscourseAntecedent := false }
 
 /--
-Appositives are slightly different (not repeatable in same way).
+Appositives share most expressive properties but are not repeatable
+and ARE descriptively paraphrasable ("Laura, a doctor" → "Laura is a doctor").
 -/
-def appositiveProperties : CIExprProperties :=
-  { speakerOriented := true
-  , repeatable := false     -- "John, a doctor, a doctor" is odd
+def appositiveProperties : SecondaryMeaningProperties :=
+  { independent := true
+  , nondisplaceable := true
+  , perspectiveDependent := true
+  , descriptivelyIneffable := false  -- "Laura, a doctor" ↔ "Laura is a doctor"
   , immediate := true
-  , independent := true }
+  , repeatable := false              -- "John, a doctor, a doctor" is odd
+  , allowsPerspectiveShift := false
+  , requiresDiscourseAntecedent := false }
 
 
 /--
@@ -277,39 +279,30 @@ CI equivalence: same CI content.
 def ciEquiv {W : Type*} (φ ψ : TwoDimProp W) : Prop :=
   ∀ w, φ.ci w = ψ.ci w
 
-/--
-CI weaker than: inverse of stronger.
--/
-def ciWeakerThan {W : Type*} (φ ψ : TwoDimProp W) : Prop :=
-  ciStrongerThan ψ φ
+/-- CI-stronger-than is irreflexive: no proposition is strictly CI-stronger than itself. -/
+theorem ciStrongerThan_irrefl {W : Type*} (φ : TwoDimProp W) :
+    ¬ ciStrongerThan φ φ :=
+  fun ⟨_, _, hw, hw'⟩ => by simp [hw] at hw'
 
+/-- CI-stronger-than is transitive. -/
+theorem ciStrongerThan_trans {W : Type*} (φ ψ χ : TwoDimProp W)
+    (h1 : ciStrongerThan φ ψ) (h2 : ciStrongerThan ψ χ) :
+    ciStrongerThan φ χ := by
+  obtain ⟨h2e, w, hwc, hwp⟩ := h2
+  constructor
+  · exact fun w h => h2e w (h1.1 w h)
+  · refine ⟨w, hwc, ?_⟩
+    cases hb : φ.ci w with
+    | false => rfl
+    | true => simp [h1.1 w hb] at hwp
 
-/--
-A context for evaluating CI felicity.
+/-- CI-stronger-than is asymmetric: if φ is CI-stronger than ψ, ψ is not CI-stronger than φ. -/
+theorem ciStrongerThan_asymm {W : Type*} (φ ψ : TwoDimProp W)
+    (h : ciStrongerThan φ ψ) : ¬ ciStrongerThan ψ φ := by
+  obtain ⟨_, w, hwp, hwf⟩ := h
+  intro ⟨he, _⟩
+  simp [he w hwp] at hwf
 
-Following Kaplan/Gutzmann, CI meaning restricts the set of
-contexts in which an expression can be felicitously used.
--/
-structure CIContext where
-  /-- Speaker's attitudes (who they like/dislike/respect) -/
-  speakerAttitudes : String → Int  -- Entity name → attitude (-100 to 100)
-  /-- Formality level of the context -/
-  formality : ℚ  -- 0 (casual) to 1 (formal)
-  /-- Speaker's emotional state -/
-  emotionalValence : Int  -- -100 (negative) to 100 (positive)
-
-/--
-Check if a CI expression is felicitous in a context.
-
-An epithet like "bastard" is felicitous iff speaker has negative attitude.
-An honorific like "don" is felicitous iff speaker has respect attitude.
--/
-def isFelicitous (exprType : CIExprType) (target : String) (ctx : CIContext) : Bool :=
-  match exprType with
-  | .epithet => ctx.speakerAttitudes target < -20  -- Negative attitude required
-  | .honorific => ctx.speakerAttitudes target > 50  -- Respect required
-  | .emotiveMarker => ctx.emotionalValence.natAbs > 30  -- Strong emotion
-  | _ => true  -- Other types: context-independent
 
 -- ============================================================================
 -- CI Bifurcation for De Re Presupposition (@cite{wang-2025})

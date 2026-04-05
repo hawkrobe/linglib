@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.Semantics.Tense.BranchingTime
 
 /-!
@@ -14,7 +13,7 @@ with future morphology) that:
 2. Weakens existential presuppositions of strong quantifiers in
    restrictors (§2.2)
 
-## Compositional derivations (§4.3.1, formulas 54–63)
+## Compositional derivations (§4.3.1)
 
 Target: "Se Maria estiver em casa, ela vai atender."
         "If Maria be.SF at home, she will answer."
@@ -30,54 +29,23 @@ quantifying over situations where the presupposition holds locally,
 rather than requiring it globally.
 -/
 
-namespace Phenomena.Modality.Studies.Mendes2025
+namespace Phenomena.TenseAspect.Studies.Mendes2025
 
 open Core.Time
 open Semantics.Tense.BranchingTime
 open Semantics.Dynamic.IntensionalCDRT
 open Semantics.Dynamic.IntensionalCDRT.Situations
-open Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 1. Compositional CDRT Derivations (§4.3.1, formulas 54–63)
+-- § 1. Compositional CDRT Derivations (§4.3.1)
 -- ════════════════════════════════════════════════════════════════
-
-/--
-Basic CDRT types following @cite{muskens-1996} and @cite{mendes-2025}.
-
-| Type | Interpretation |
-|------|----------------|
-| e    | Entities |
-| t    | Truth values |
-| s    | Situations |
-| c    | Contexts (SitContext) |
--/
-inductive CDRTType where
-  | e     -- Entity
-  | t     -- Truth value
-  | s     -- Situation
-  | c     -- Context
-  | arr : CDRTType → CDRTType → CDRTType  -- Function type
-  deriving DecidableEq, Repr
-
-notation:50 τ₁ " ⇒ " τ₂ => CDRTType.arr τ₁ τ₂
-
-/-- Verb phrase type: entity → situation → context → context -/
-def vpType : CDRTType := .e ⇒ .s ⇒ .c ⇒ .c
-
-/-- Sentence type: situation → context → context -/
-def sentType : CDRTType := .s ⇒ .c ⇒ .c
-
-/-- NP type: (entity → context → context) → context → context -/
-def npType : CDRTType := (.e ⇒ .c ⇒ .c) ⇒ .c ⇒ .c
-
 
 variable {W Time E : Type*} [LE Time] [LT Time]
 variable (history : WorldHistory W Time)
 
 /--
-(54) Maria — proper name.
+Maria — proper name.
 `⟦Maria⟧ = λP.P(maria)`
 -/
 def lexMaria (maria : E)
@@ -86,7 +54,7 @@ def lexMaria (maria : E)
   P maria c
 
 /--
-(55) estar em casa — "be at home".
+estar em casa — "be at home".
 `⟦estar em casa⟧ = λxλsλc. [| at-home(x)(s)]; c`
 -/
 def lexAtHome
@@ -97,7 +65,7 @@ def lexAtHome
   { gs ∈ c | atHomeRel x (gs.1.sit sitVar) }
 
 /--
-(56) atender — "answer (the door)".
+atender — "answer (the door)".
 `⟦atender⟧ = λxλsλc. [| answer(x)(s)]; c`
 -/
 def lexAnswer
@@ -108,13 +76,13 @@ def lexAnswer
   { gs ∈ c | answerRel x (gs.1.sit sitVar) }
 
 /--
-(57) SF (Subordinate Future).
+SF (Subordinate Future).
 `⟦SF⟧ = SUBJ ∘ FUT`
 -/
 def lexSF := @subordinateFuture W Time E _ _
 
 /--
-(58) ela — "she" (pronoun bound to Maria).
+ela — "she" (pronoun bound to Maria).
 `⟦ela⟧ = λP.P(maria)`
 -/
 def lexShe (maria : E)
@@ -123,7 +91,7 @@ def lexShe (maria : E)
   P maria c
 
 /--
-(59) vai — future auxiliary "will".
+vai — future auxiliary "will".
 `⟦vai⟧ = λVPλsλc. VP(s)(c)` — transparent; future comes from SF
 via modal anaphora.
 -/
@@ -134,9 +102,16 @@ def lexWill
   VP sitVar c
 
 /--
-(60) se — "if". Dynamic conditional.
+Sequential context update: feeds antecedent output into consequent.
+
+Note: the paper's `⟦if⟧` is dynamic implication (a test: `[| P ⇒ Q]`),
+but the derivation theorems here require extracting properties from the
+output context, which a test semantics cannot provide (tests preserve input
+unchanged). Sequential composition is appropriate because the universal
+force comes from SUBJ's quantification over historical alternatives, not
+from the conditional operator itself.
 -/
-def lexIf
+def seqUpdate
     (antecedent consequent : SitContext W Time E → SitContext W Time E)
     (c : SitContext W Time E) : SitContext W Time E :=
   consequent (antecedent c)
@@ -169,7 +144,7 @@ def deriveConsequent
   lexAnswer answerRel maria sfVar c₁
 
 /--
-Full sentence derivation (formula 63):
+Full sentence derivation:
 `⟦Se Maria estiver em casa, ela vai atender⟧`
 -/
 def deriveFullSentence
@@ -179,7 +154,7 @@ def deriveFullSentence
     (c : SitContext W Time E) : SitContext W Time E :=
   let antecedent := deriveAntecedent history maria atHomeRel sfVar speechVar
   let consequent := deriveConsequent maria answerRel sfVar
-  lexIf antecedent consequent c
+  seqUpdate antecedent consequent c
 
 
 /--
@@ -194,7 +169,7 @@ theorem derivation_in_historical_base
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧
           (gs.1.sit sfVar) ∈ historicalBase history s₀ := by
-  unfold deriveFullSentence lexIf at h
+  unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
   simp only [Set.mem_setOf_eq] at h
   obtain ⟨h_ind, _⟩ := h
@@ -228,7 +203,7 @@ theorem derivation_future_ordering
     (gs : SitAssignment W Time E × Situation W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     (gs.1.sit sfVar).time > (gs.1.sit speechVar).time := by
-  unfold deriveFullSentence lexIf at h
+  unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
   simp only [Set.mem_setOf_eq] at h
   obtain ⟨h_ind, _⟩ := h
@@ -252,28 +227,11 @@ theorem derivation_conditional_holds
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     atHomeRel maria (gs.1.sit sfVar) → answerRel maria (gs.1.sit sfVar) := by
   intro _
-  unfold deriveFullSentence lexIf at h
+  unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
   simp only [Set.mem_setOf_eq] at h
   exact h.2
 
-
-/--
-Table 3: temporal reference patterns.
-
-| Construction    | Matrix | Embedded | Time     |
-|-----------------|--------|----------|----------|
-| Conditional     | IND    | SF       | Future   |
-| Relative clause | IND    | SF       | Future   |
-| Complement      | IND    | SUBJ     | Variable |
-| Temporal clause | IND    | SF       | Future   |
--/
-inductive Construction where
-  | conditional
-  | relativeClause
-  | complement
-  | temporalClause
-  deriving DecidableEq, Repr
 
 /--
 Counterfactual conditional (for comparison).
@@ -299,13 +257,9 @@ theorem sf_vs_counterfactual_temporal {W Time E : Type*} [Preorder Time]
     (atHomeRel answerRel : E → Situation W Time → Prop)
     (sitVar speechVar : SVar)
     (c : SitContext W Time E) :
-    (∀ gs ∈ deriveFullSentence history maria atHomeRel answerRel sitVar speechVar c,
-      (gs.1.sit sitVar).time > (gs.1.sit speechVar).time) ∧
-    True := by
-  constructor
-  · intro gs h
-    exact derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c gs h
-  · trivial
+    ∀ gs ∈ deriveFullSentence history maria atHomeRel answerRel sitVar speechVar c,
+      (gs.1.sit sitVar).time > (gs.1.sit speechVar).time :=
+  derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -397,7 +351,7 @@ theorem sf_felicitous_under_uncertainty {W Time E : Type*} [LE Time]
 
 /--
 Relative clause with SF weakens strong quantifier presupposition.
-This is the formal version of the contrast in (17)–(18).
+This is the formal version of the indicative-vs-SF contrast in restrictors.
 -/
 def relClauseSF {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
@@ -462,4 +416,4 @@ theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time
   obtain ⟨s₁, h_s₁⟩ := h_nonempty
   exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
 
-end Phenomena.Modality.Studies.Mendes2025
+end Phenomena.TenseAspect.Studies.Mendes2025

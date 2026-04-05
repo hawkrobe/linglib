@@ -176,7 +176,7 @@ theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LE Time]
     The attitude state `s` causally brings about event `e` in world `w`
     "in the right way." Distinguished from plain CAUSE by requiring that
     the causation proceed via the agent's intention-in-action, not via
-    a deviant causal chain (Harman 1976; Chisholm 1966).
+    a deviant causal chain (@cite{harman-1976}; @cite{chisholm-1966}).
 
     Example (Harman): Betty aims her gun intending to kill the target.
     Her intention makes her nervous; nervousness causes her to pull the

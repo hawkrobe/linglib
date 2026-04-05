@@ -16,7 +16,7 @@ attitude infrastructure.
 ## Core Proposal (three premises → conclusion)
 
 1. **Premise 1**: Intention reports encode causally self-referential content
-   (@cite{searle-1983}; Harman 1976)
+   (@cite{searle-1983}; @cite{harman-1976})
 2. **Premise 2**: Encoding causal self-reference requires abstraction over
    the complement clause's eventuality argument (CAUSE* binds it)
 3. **Premise 3**: Only subjunctive and nonfinite clauses enable eventuality

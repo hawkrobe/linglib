@@ -446,6 +446,21 @@ theorem causativization_most_common :
 -- § 9. Properties
 -- ════════════════════════════════════════════════════
 
+/-- Look up what this alternation does to a given TR-role. -/
+def ValencyAlternation.fateOfRole (va : ValencyAlternation) : TRRole → ParticipantFate
+  | .A => va.fateOfA
+  | .P => va.fateOfP
+  | .S => va.fateOfS
+  | .X => .na
+
+/-- Does this fate remove the participant from core-term status?
+    True for denucleativization (demoted to oblique) and suppression
+    (removed from participant structure entirely). -/
+def ParticipantFate.removesFromCoreStatus : ParticipantFate → Bool
+  | .denucleativized => true
+  | .suppressed      => true
+  | _                => false
+
 /-- Does this alternation involve nucleativization (adding a new core term)? -/
 def ValencyAlternation.involvesNucleativization (va : ValencyAlternation) : Bool :=
   va.newParticipant.isSome

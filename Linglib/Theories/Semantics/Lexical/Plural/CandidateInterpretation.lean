@@ -41,11 +41,14 @@ def fullCandidateSet (P : Atom → W → Bool) (x : Finset Atom) : Set (BProp W)
 Candidate set parameterized by tolerance.
 
 With identity tolerance: only the maximal candidate.
-With full tolerance: all sub-plurality candidates.
+With full tolerance: all nonempty sub-plurality candidates.
+
+The nonemptiness constraint matches `fullCandidateSet` and `distTolerant`:
+empty sub-pluralities would create vacuously true candidates.
 -/
 def candidateSet (P : Atom → W → Bool) (tol : Tolerance Atom)
     (x : Finset Atom) : Set (BProp W) :=
-  { p | ∃ z ∈ x.powerset, tol.rel z x = true ∧ p = candidateProp P z }
+  { p | ∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x = true ∧ p = candidateProp P z }
 
 -- Part 5: Truth on All Readings
 
@@ -74,28 +77,28 @@ theorem candidateProp_x_eq_distMaximal (P : Atom → W → Bool) (x : Finset Ato
 Theorem: With identity tolerance, the candidate set is a singleton
 containing only the maximal candidate.
 -/
-theorem identity_candidateSet_eq_singleton (P : Atom → W → Bool) (x : Finset Atom) :
+theorem identity_candidateSet_eq_singleton (P : Atom → W → Bool) (x : Finset Atom)
+    (hne : x.Nonempty) :
     candidateSet P Tolerance.identity x = {candidateProp P x} := by
   ext p
   simp only [candidateSet, Set.mem_setOf_eq, Set.mem_singleton_iff,
              Finset.mem_powerset, Tolerance.identity, beq_iff_eq]
   constructor
-  · intro ⟨z, _, hz_eq, hp⟩
+  · intro ⟨z, _, _, hz_eq, hp⟩
     rw [← hz_eq, hp]
   · intro hp
-    exact ⟨x, Finset.Subset.refl x, rfl, hp⟩
+    exact ⟨x, Finset.Subset.refl x, hne, rfl, hp⟩
 
-/--
-Theorem: With full tolerance, fullCandidateSet (nonempty sub-pluralities) is
-contained in the full-tolerance candidate set.
--/
-theorem fullCandidateSet_subset_candidateSet_full (P : Atom → W → Bool) (x : Finset Atom) :
-    fullCandidateSet P x ⊆ candidateSet P Tolerance.full x := by
-  intro p hp
-  simp only [fullCandidateSet, Set.mem_setOf_eq] at hp
-  obtain ⟨z, hz_mem, _, hp⟩ := hp
-  simp only [candidateSet, Set.mem_setOf_eq]
-  exact ⟨z, hz_mem, by simp [Tolerance.full, Finset.mem_powerset.mp hz_mem], hp⟩
+/-- With full tolerance, fullCandidateSet = candidateSet (both require nonempty). -/
+theorem fullCandidateSet_eq_candidateSet_full (P : Atom → W → Bool) (x : Finset Atom) :
+    fullCandidateSet P x = candidateSet P Tolerance.full x := by
+  ext p
+  simp only [fullCandidateSet, candidateSet, Set.mem_setOf_eq]
+  constructor
+  · intro ⟨z, hz_mem, hne, hp⟩
+    exact ⟨z, hz_mem, hne, by simp [Tolerance.full, Finset.mem_powerset.mp hz_mem], hp⟩
+  · intro ⟨z, hz_mem, hne, _, hp⟩
+    exact ⟨z, hz_mem, hne, hp⟩
 
 /--
 Theorem: trueOnAll for the full candidate set iff all atoms satisfy P.
@@ -344,11 +347,12 @@ Identity tolerance candidate set contains exactly the maximal proposition.
 NOTE: This is a variant of identity_candidateSet_eq_singleton,
 stating it in terms of the explicit proposition form.
 -/
-theorem identity_candidateSet_singleton' (P : Atom → W → Bool) (x : Finset Atom) :
+theorem identity_candidateSet_singleton' (P : Atom → W → Bool) (x : Finset Atom)
+    (hne : x.Nonempty) :
     candidateSet P Tolerance.identity x =
     {λ w => decide (∀ a ∈ x, P a w = true)} := by
   -- This follows from identity_candidateSet_eq_singleton + candidateProp definition
-  rw [identity_candidateSet_eq_singleton]
+  rw [identity_candidateSet_eq_singleton P x hne]
   rfl
 
 /--
@@ -407,28 +411,14 @@ theorem distMaximal_eq_maximal_candidate (P : Atom → W → Bool) (x : Finset A
   rfl
 
 /--
-Correspondence Theorem: distTolerant with full tolerance is always true.
-
-With full tolerance, any sub-plurality (including the empty set) is tolerant,
-so distTolerant is true as long as x is in the powerset of itself (always true).
-The empty set vacuously satisfies the predicate.
--/
-theorem distTolerant_full_always_true (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    distTolerant P Tolerance.full x w = true := by
-  simp only [distTolerant, Tolerance.full, decide_eq_true_iff]
-  refine ⟨∅, Finset.empty_mem_powerset x, ?_, ?_⟩
-  · simp only [Finset.empty_subset, decide_true]
-  · intro a ha; simp at ha
-
-/--
-Correspondence Theorem: distTolerant unfolds to existence of tolerant witness.
+Correspondence Theorem: distTolerant unfolds to existence of a nonempty tolerant witness.
 
 This connects the operator to the candidate interpretation framework.
 -/
 theorem distTolerant_iff_exists_tolerant (P : Atom → W → Bool) (tol : Tolerance Atom)
     (x : Finset Atom) (w : W) :
     distTolerant P tol x w = true ↔
-    ∃ z ∈ x.powerset, tol.rel z x = true ∧ (∀ a ∈ z, P a w = true) := by
+    ∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x = true ∧ (∀ a ∈ z, P a w = true) := by
   simp only [distTolerant, decide_eq_true_iff]
 
 end Correspondence

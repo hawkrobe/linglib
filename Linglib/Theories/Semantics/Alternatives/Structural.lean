@@ -695,34 +695,81 @@ theorem horn_alternatives_are_structural {C W : Type} [BEq C] [LawfulBEq C] [BEq
   exact leafSubst_reachable α β c (List.mem_append_left _ _h_β_in_lex) φ
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §9  Neo-Gricean Principle with Structural Alternatives (def 21)
+-- §9  Maximize Content Principle (generalized)
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- The neo-Gricean conversational principle with structural alternatives
-(def 21): do not assert φ if there is another sentence φ' ∈ A_str(φ)
-such that ⟦φ'⟧ ⊂ ⟦φ⟧ and φ' is weakly assertable.
+/-- Generic "maximize content" principle parameterized over content dimension.
 
-This replaces the naïve principle (which considers ALL stronger
-alternatives) with one restricted to structurally-defined alternatives.
-The restriction solves the symmetry problem: φ'' = φ ∧ ¬φ' is excluded
-from A_str(φ) because it requires more structure than φ provides.
+Scalar inferences arise from comparing a sentence φ with formal alternatives
+φ' that are more informative along some content dimension. The same reasoning
+applies to three dimensions:
 
-The at-least-as-good-as relation (def 23, p. 680) combines structural
-complexity (≲) with semantic entailment (⊆). This is the same relation
-formalized in `KatzirSingh2015.lean` as `atLeastAsGood`, where complexity
-is an abstract ℕ parameter — the structural complexity defined here
-gives that parameter its intended content. -/
-def violatesConversationalPrinciple {C W World : Type}
+- **At-issue content** → Scalar Implicatures (Conversational Principle, @cite{katzir-2007})
+- **Presuppositional content** → Antipresuppositions (Maximize Presupposition, @cite{schlenker-2012})
+- **CI content** → Anti-Conventional Implicatures (MCIs!, @cite{lo-guercio-2025})
+
+All three are instances of: do not use φ if there is a formal alternative
+φ' ∈ F(φ) such that (a) φ' is strictly more informative along the relevant
+content dimension, (b) φ' is contextually relevant, and (c) ¬φ' is innocently
+excludable.
+
+`contentFn` maps each tree to its content along the relevant dimension. -/
+def violatesMaximize {C W World : Type}
+    (lex : List (Tree C W))
+    (contentFn : Tree C W → World → Bool)
+    (φ : Tree C W)
+    (weaklyAssertable : Tree C W → Bool) : Prop :=
+  ∃ φ' ∈ structuralAlternatives lex φ,
+    -- φ' is strictly more informative along contentFn
+    (∀ w, contentFn φ' w = true → contentFn φ w = true) ∧
+    (∃ w, contentFn φ w = true ∧ contentFn φ' w = false) ∧
+    -- φ' is weakly assertable
+    weaklyAssertable φ' = true
+
+/-- The neo-Gricean conversational principle: `violatesMaximize` applied
+to at-issue (truth-conditional) content. @cite{katzir-2007} def 21. -/
+abbrev violatesConversationalPrinciple {C W World : Type}
     (lex : List (Tree C W))
     (meaning : Tree C W → World → Bool)
     (φ : Tree C W)
     (weaklyAssertable : Tree C W → Bool) : Prop :=
+  violatesMaximize lex meaning φ weaklyAssertable
+
+/-- Maximize Presupposition (@cite{schlenker-2012}): `violatesMaximize`
+applied to presuppositional content. Do not use φ if there is a formal
+alternative φ' with the same assertive content but stronger presupposition.
+
+Note: the full formulation additionally requires that φ and φ' have
+the same assertive content relative to the context. This is captured
+by requiring `assertionFn φ' = assertionFn φ` as a side condition. -/
+def violatesMP {C W World : Type}
+    (lex : List (Tree C W))
+    (presupFn : Tree C W → World → Bool)
+    (assertionFn : Tree C W → World → Bool)
+    (φ : Tree C W)
+    (weaklyAssertable : Tree C W → Bool) : Prop :=
   ∃ φ' ∈ structuralAlternatives lex φ,
-    -- ⟦φ'⟧ ⊂ ⟦φ⟧ (strictly more informative)
-    (∀ w, meaning φ' w = true → meaning φ w = true) ∧
-    (∃ w, meaning φ w = true ∧ meaning φ' w = false) ∧
-    -- φ' is weakly assertable
+    -- Same assertive content (required for MP! unlike MCIs!)
+    (∀ w, assertionFn φ' w = assertionFn φ w) ∧
+    -- φ' has strictly stronger presupposition
+    (∀ w, presupFn φ' w = true → presupFn φ w = true) ∧
+    (∃ w, presupFn φ w = true ∧ presupFn φ' w = false) ∧
     weaklyAssertable φ' = true
+
+/-- Maximize Conventional Implicatures (@cite{lo-guercio-2025} def 15):
+`violatesMaximize` applied to CI content. Unlike MP!, does NOT require
+the same assertive content — CI content is independent of truth conditions.
+
+Do not use φ if there is a formal alternative φ' ∈ F(φ) such that:
+a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger)
+b. φ' ∈ C (contextually relevant)
+c. ¬⟦φ'⟧ᵘ doesn't contradict the negation of CI content of any element in C -/
+abbrev violatesMCIs {C W World : Type}
+    (lex : List (Tree C W))
+    (ciContentFn : Tree C W → World → Bool)
+    (φ : Tree C W)
+    (weaklyAssertable : Tree C W → Bool) : Prop :=
+  violatesMaximize lex ciContentFn φ weaklyAssertable
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §10  Bridge to Economy of Structure (@cite{katzir-singh-2015})

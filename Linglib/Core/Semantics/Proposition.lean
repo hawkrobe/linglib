@@ -271,6 +271,10 @@ noncomputable def toFintype {W : Type*} [fw : FiniteWorlds W] : Fintype W := by
   classical
   exact ⟨fw.worlds.toFinset, fun w => List.mem_toFinset.mpr (fw.complete w)⟩
 
+/-- Propositions overlap iff they share at least one world. -/
+def overlap (W : Type*) [FiniteWorlds W] (p q : BProp W) : Bool :=
+  FiniteWorlds.worlds.any λ w => p w && q w
+
 end FiniteWorlds
 
 /-- Decidable entailment is sound w.r.t. classical entailment. -/

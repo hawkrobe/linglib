@@ -434,14 +434,19 @@ content is independent of at-issue truth. -/
 def wxdyTwoDim {W : Type*} (embeddedProp unexpectedness : W → Bool) : TwoDimProp W :=
   TwoDimProp.withCI embeddedProp unexpectedness
 
-/-- WXDY's CI properties: speaker-oriented, not repeatable (you don't say
-"What's this fly doing in my soup?" twice for emphasis), immediate
-(affects context just by being uttered), independent of at-issue truth. -/
-def wxdyCIProperties : CIExprProperties :=
-  { speakerOriented := true
-  , repeatable := false
+/-- WXDY's CI properties: perspective-dependent (speaker-oriented), not
+repeatable (you don't say "What's this fly doing in my soup?" twice for
+emphasis), immediate, independent, nondisplaceable, descriptively
+ineffable (the unexpectedness resists paraphrase). -/
+def wxdyCIProperties : SecondaryMeaningProperties :=
+  { independent := true
+  , nondisplaceable := true
+  , perspectiveDependent := true
+  , descriptivelyIneffable := true
   , immediate := true
-  , independent := true }
+  , repeatable := false
+  , allowsPerspectiveShift := false
+  , requiresDiscourseAntecedent := false }
 
 /-- CI projects through negation: the unexpectedness meaning
 survives under negation. Delegates to `TwoDimProp.ci_projects_through_neg`. -/

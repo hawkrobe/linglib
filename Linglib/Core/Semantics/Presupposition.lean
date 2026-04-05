@@ -341,6 +341,57 @@ theorem orFlex_presup_weaker (p q : PrProp W) (w : W)
   simp only [or, orFlex] at *
   cases hp : p.presup w <;> cases hq : q.presup w <;> simp_all
 
+/-- Weak Kleene disjunction: undefined iff either operand undefined.
+    Both disjuncts must be defined for the disjunction to be defined.
+
+    @cite{kleene-1952}: indet is absorbing for both ∧ and ∨. -/
+def orWeak (p q : PrProp W) : PrProp W :=
+  { presup := λ w => p.presup w && q.presup w
+  , assertion := λ w => p.assertion w || q.assertion w }
+
+/-- Weak Kleene conjunction. -/
+def andWeak (p q : PrProp W) : PrProp W :=
+  { presup := λ w => p.presup w && q.presup w
+  , assertion := λ w => p.assertion w && q.assertion w }
+
+/-- `orWeak` evaluates to `Truth3.joinWeak` pointwise. -/
+theorem eval_orWeak (p q : PrProp W) (w : W) :
+    (orWeak p q).eval w = Truth3.joinWeak (p.eval w) (q.eval w) := by
+  simp only [eval, orWeak, Truth3.joinWeak, Truth3.ofBool]
+  cases p.presup w <;> cases q.presup w <;>
+    simp <;> cases p.assertion w <;> cases q.assertion w <;> rfl
+
+/-- `orWeak` agrees with `or` — they have the same definition for inclusive
+    disjunction, since both require both presuppositions. -/
+theorem orWeak_eq_or (p q : PrProp W) : orWeak p q = or p q := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- Genuineness
+-- @cite{zimmermann-2000} @cite{geurts-2005} @cite{katzir-singh-2012}
+-- ════════════════════════════════════════════════════════════════
+
+/-- **Genuineness** for disjunction: both disjuncts are "live possibilities"
+    in a state. Each disjunct must be true (defined and asserted) at some
+    world, and false (or undefined) at another, making the disjunction
+    informative.
+
+    @cite{zimmermann-2000}: disjunction requires that each disjunct be a
+    "live possibility." @cite{yagi-2025} Definition 8: genuineness requires
+    worlds w, w' in the result of the update where each disjunct is solely
+    responsible for truth.
+
+    This static version checks that the input state s has witness worlds
+    for each disjunct. The full dynamic version (checking the update
+    *result*) is in `UpdateSemantics.genuineness`. -/
+def genuineness (p q : PrProp W) (s : Finset W) : Prop :=
+  (∃ w ∈ s, p.eval w = .true) ∧
+  (∃ w ∈ s, q.eval w = .true)
+
+/-- Genuineness is symmetric. -/
+theorem genuineness_comm (p q : PrProp W) (s : Finset W) :
+    genuineness p q s ↔ genuineness q p s := by
+  simp only [genuineness, and_comm]
+
 /-- Presupposition projection: get the presupposition as a classical proposition. -/
 def projectPresup (p : PrProp W) : BProp W := p.presup
 

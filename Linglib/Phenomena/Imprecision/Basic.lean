@@ -4,13 +4,15 @@
 This module collects theory-neutral empirical patterns for imprecision and
 homogeneity in natural language, based primarily on:
 
-**Nina Haslinger (2024?). "Pragmatic Constraints on Imprecision."**
-Doctoral Dissertation, [Institution TBD].
+**@cite{haslinger-2025-diss}**
+Nina Haslinger (2025). "Pragmatic constraints on imprecision and homogeneity."
+Doctoral Dissertation, Georg-August-Universität Göttingen.
+doi:10.53846/goediss-11395
 
 ## Acknowledgment
 
 The data structures and empirical generalizations in this module are drawn
-from Nina Haslinger's dissertation, which provides a comprehensive treatment
+from @cite{haslinger-2025-diss}, which provides a comprehensive treatment
 of imprecision phenomena across plural definites, numerals, conjunctions,
 and degree expressions. Her work identifies two key pragmatic constraints:
 
@@ -40,7 +42,10 @@ See `ROADMAP.md` for the formalization plan.
 ## Key References
 
 ### Primary Source
-- Haslinger, N. (2024?). Pragmatic Constraints on Imprecision. Doctoral Dissertation.
+- @cite{haslinger-2025-diss}: Pragmatic constraints on imprecision and homogeneity.
+  Doctoral Dissertation, Georg-August-Universität Göttingen. doi:10.53846/goediss-11395
+- @cite{haslinger-2024}: Imprecision, structural complexity and the Gricean maxim of Manner.
+  Sinn und Bedeutung 28: 369-387. (Revised version of dissertation chapters 3 and 5.)
 
 ### Background on Homogeneity
 - Löbner, S. (2000). Polarity in natural language. *Linguistics and Philosophy*.
@@ -191,7 +196,7 @@ def phenomenaSummary : ImprecisionPhenomenaSummary :=
 /-
 ## Future Work: Theoretical Infrastructure
 
-To formalize the theoretical predictions from Haslinger's dissertation,
+To formalize the theoretical predictions from @cite{haslinger-2025-diss},
 we will need:
 
 ### Core/Trivalent.lean

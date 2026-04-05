@@ -128,8 +128,24 @@ def falloir : FrenchModalEntry where
   flavors := [.epistemic, .deontic, .circumstantial]
   isPersonal := false
 
+/-- *Devrais* ('should'): weak necessity = *devoir* + counterfactual morphology.
+
+    @cite{agha-jeretic-2022} §5.2: the CF morpheme picks out a witness set
+    from the strong necessity quantifier, yielding a definite plurality
+    of worlds (= weak necessity). Unlike Javanese NE, CF does not require
+    a unique witness, so it also applies to possibility (*pourrais*).
+
+    @cite{von-fintel-iatridou-2008}: counterfactual morphology is the
+    cross-linguistically productive strategy for deriving weak necessity
+    (also seen in Spanish *debería*, Hungarian *kell*+CF, etc.). -/
+def devrais : FrenchModalEntry where
+  form := "devrais"
+  force := .weakNecessity
+  flavors := [.epistemic, .deontic, .circumstantial]
+  isPersonal := true
+
 def allModals : List FrenchModalEntry :=
-  [pouvoir, devoir, ilEstPossible, falloir]
+  [pouvoir, devoir, ilEstPossible, falloir, devrais]
 
 def lookup (form : String) : Option FrenchModalEntry :=
   allModals.find? (·.form == form)
@@ -143,6 +159,7 @@ theorem pouvoir_is_possibility : pouvoir.force = .possibility := rfl
 theorem devoir_is_necessity : devoir.force = .necessity := rfl
 theorem ilEstPossible_is_possibility : ilEstPossible.force = .possibility := rfl
 theorem falloir_is_necessity : falloir.force = .necessity := rfl
+theorem devrais_is_weak_necessity : devrais.force = .weakNecessity := rfl
 
 theorem pouvoir_is_personal : pouvoir.isPersonal = true := rfl
 theorem devoir_is_personal : devoir.isPersonal = true := rfl

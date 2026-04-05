@@ -1,3 +1,5 @@
+import Linglib.Core.Coordination
+
 /-!
 # Hungarian Coordination Morphemes
 @cite{szabolcsi-2015} @cite{bill-etal-2025}
@@ -22,19 +24,7 @@ Connection to BillEtAl2025: Hungarian is one of two test languages.
 
 namespace Fragments.Hungarian.Coordination
 
-/-- Role of a coordination morpheme in the M&S decomposition. -/
-inductive CoordRole where
-  | j          -- Set intersection (conjunction)
-  | mu         -- Subset/additive (conjunction)
-  | disj       -- Disjunction
-  | advers     -- Adversative ("but")
-  deriving DecidableEq, Repr
-
-/-- Morphological boundness. -/
-inductive Boundness where
-  | free
-  | bound
-  deriving DecidableEq, Repr
+open Core.Coordination
 
 /-- A Hungarian coordination entry. -/
 structure CoordEntry where

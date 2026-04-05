@@ -27,9 +27,10 @@ We add:
 
 ## Connection to Mood Operators
 
-The mood operators from `Sentence/Mood/Basic.lean` have dynamic counterparts:
-- `SUBJ`: Introduces an SDref (existential over historical alternatives)
-- `IND`: Retrieves an SDref (presuppositional)
+Mood operators have dynamic counterparts here:
+- `dynSUBJ`: Introduces an SDref (existential over historical alternatives)
+- `dynIND`: Retrieves an SDref (presuppositional)
+- Static counterparts live in `Theories/Semantics/Mood/Basic.lean`
 
 -/
 
@@ -41,9 +42,9 @@ namespace Semantics.Dynamic.IntensionalCDRT.Situations
 
 open Core.Time
 open Semantics.Tense.BranchingTime
-open Semantics.Mood
 open Semantics.Dynamic.IntensionalCDRT
 open Semantics.Dynamic.Core
+open Semantics.Mood
 
 
 /--
@@ -131,6 +132,9 @@ instance {W Time E : Type*} : EmptyCollection (SitContext W Time E) := Set.instE
 instance {W Time E : Type*} : HasSubset (SitContext W Time E) := Set.instHasSubset
 instance {W Time E : Type*} : Union (SitContext W Time E) := Set.instUnion
 instance {W Time E : Type*} : Inter (SitContext W Time E) := Set.instInter
+instance {W Time E : Type*} :
+    Singleton (SitAssignment W Time E × Situation W Time) (SitContext W Time E) :=
+  Set.instSingletonSet
 
 namespace SitContext
 
@@ -149,11 +153,53 @@ def updateSit (c : SitContext W Time E) (p : Situation W Time → Prop) :
     SitContext W Time E :=
   { gs ∈ c | p gs.2 }
 
-/-- Current situations in context -/
-def currentSituations (c : SitContext W Time E) : Set (Situation W Time) :=
-  { s | ∃ g, (g, s) ∈ c }
-
 end SitContext
+
+
+-- ════════════════════════════════════════════════════════════════
+-- Context filters and general relation filters
+-- ════════════════════════════════════════════════════════════════
+
+/--
+A context filter is an operation that only removes entries, never adds them.
+
+Linguistic operations like predication, temporal constraints, and mood
+retrieval (IND) are all filters. Updates like SUBJ are NOT filters —
+they introduce new entries.
+-/
+def IsContextFilter {W Time E : Type*}
+    (f : SitContext W Time E → SitContext W Time E) : Prop :=
+  ∀ c, f c ⊆ c
+
+namespace IsContextFilter
+
+variable {W Time E : Type*}
+
+theorem comp {f g : SitContext W Time E → SitContext W Time E}
+    (hf : IsContextFilter f) (hg : IsContextFilter g) :
+    IsContextFilter (fun c => g (f c)) :=
+  fun c => Set.Subset.trans (hg (f c)) (hf c)
+
+theorem id_filter : @IsContextFilter W Time E id :=
+  fun _ _ h => h
+
+end IsContextFilter
+
+/--
+Filter a context by a binary relation on situation variable lookups.
+
+All temporal constraints (`dynPAST`, `dynPRES`, `dynFUT`) are instances
+of `dynRelation` with the appropriate ordering on `.time`.
+-/
+def dynRelation {W Time E : Type*}
+    (R : Situation W Time → Situation W Time → Prop)
+    (v₁ v₂ : SVar) (c : SitContext W Time E) : SitContext W Time E :=
+  { gs ∈ c | R (gs.1.sit v₁) (gs.1.sit v₂) }
+
+theorem dynRelation_isFilter {W Time E : Type*}
+    (R : Situation W Time → Situation W Time → Prop) (v₁ v₂ : SVar) :
+    @IsContextFilter W Time E (dynRelation R v₁ v₂) :=
+  fun _ _ h => h.1
 
 
 /--
@@ -167,7 +213,7 @@ The subjunctive:
 3. Binds s₁ to situation variable v
 4. Updates the context to use s₁ as the new current situation
 
-This is the dynamic counterpart of `SUBJ` from Mood/Basic.lean.
+See `Mood.SUBJ` in `Theories/Semantics/Mood/Basic.lean` for the static counterpart.
 -/
 def dynSUBJ {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
@@ -194,7 +240,7 @@ The indicative:
 2. Requires the current situation to be in the same world
 3. Passes through (presuppositional)
 
-This is the dynamic counterpart of `IND` from Mood/Basic.lean.
+See `Mood.IND` in `Theories/Semantics/Mood/Basic.lean` for the static counterpart.
 -/
 def dynIND {W Time E : Type*}
     (v : SVar)  -- Situation variable to retrieve
@@ -228,6 +274,141 @@ def dynFUT {W Time E : Type*} [LT Time]
     (c : SitContext W Time E) : SitContext W Time E :=
   { gs ∈ c | (gs.1.sit eventVar).time > (gs.1.sit refVar).time }
 
+theorem dynIND_isFilter {W Time E : Type*} (v : SVar) :
+    @IsContextFilter W Time E (dynIND v) :=
+  fun _ _ h => h.1
+
+
+-- ════════════════════════════════════════════════════════════════
+-- Temporal operators as dynRelation instances
+-- ════════════════════════════════════════════════════════════════
+
+theorem dynPAST_eq_dynRelation {W Time E : Type*} [LT Time]
+    (e r : SVar) (c : SitContext W Time E) :
+    dynPAST e r c =
+    dynRelation (fun s₁ s₂ : Situation W Time => s₁.time < s₂.time) e r c := rfl
+
+theorem dynPRES_eq_dynRelation {W Time E : Type*}
+    (e r : SVar) (c : SitContext W Time E) :
+    dynPRES e r c =
+    dynRelation (fun s₁ s₂ : Situation W Time => s₁.time = s₂.time) e r c := rfl
+
+theorem dynFUT_eq_dynRelation {W Time E : Type*} [LT Time]
+    (e r : SVar) (c : SitContext W Time E) :
+    dynFUT e r c =
+    dynRelation (fun s₁ s₂ : Situation W Time => s₁.time > s₂.time) e r c := rfl
+
+
+-- ════════════════════════════════════════════════════════════════
+-- dynRelation algebra
+-- ════════════════════════════════════════════════════════════════
+
+/-- Applying the same relation filter twice is the same as applying it once. -/
+theorem dynRelation_idempotent {W Time E : Type*}
+    (R : Situation W Time → Situation W Time → Prop)
+    (v₁ v₂ : SVar) (c : SitContext W Time E) :
+    dynRelation R v₁ v₂ (dynRelation R v₁ v₂ c) = dynRelation R v₁ v₂ c := by
+  apply Set.ext; intro gs
+  unfold dynRelation
+  exact ⟨fun ⟨⟨hc, _⟩, hR⟩ => ⟨hc, hR⟩, fun ⟨hc, hR⟩ => ⟨⟨hc, hR⟩, hR⟩⟩
+
+/-- Contradictory relation filters compose to the empty context. -/
+theorem dynRelation_contradictory {W Time E : Type*}
+    (R₁ R₂ : Situation W Time → Situation W Time → Prop)
+    (h : ∀ s₁ s₂, R₁ s₁ s₂ → R₂ s₁ s₂ → False)
+    (v₁ v₂ : SVar) (c : SitContext W Time E) :
+    dynRelation R₁ v₁ v₂ (dynRelation R₂ v₁ v₂ c) = ∅ := by
+  apply Set.ext; intro gs
+  unfold dynRelation
+  constructor
+  · rintro ⟨⟨_, hR₂⟩, hR₁⟩
+    exact absurd hR₁ (fun hR₁ => h _ _ hR₁ hR₂)
+  · exact False.elim
+
+/-- Transitive relations chain across three situation variables. -/
+theorem dynRelation_transitive {W Time E : Type*}
+    (R₁ R₂ R₃ : Situation W Time → Situation W Time → Prop)
+    (hTrans : ∀ a b c, R₁ a b → R₂ b c → R₃ a c)
+    (v₁ v₂ v₃ : SVar) (c : SitContext W Time E)
+    (gs : SitAssignment W Time E × Situation W Time)
+    (h : gs ∈ dynRelation R₂ v₂ v₃ (dynRelation R₁ v₁ v₂ c)) :
+    R₃ (gs.1.sit v₁) (gs.1.sit v₃) :=
+  hTrans _ _ _ h.1.2 h.2
+
+/--
+Trichotomy on any linearly ordered projection lifts to a context partition.
+
+For any function `f : Situation → α` into a linear order, the three
+comparison operators (<, =, >) form a complete partition of any context.
+The temporal partition (`PAST ∪ PRES ∪ FUT = c`) is the special case
+where `f = Situation.time`.
+-/
+theorem dynRelation_trichotomy {W Time E α : Type*} [LinearOrder α]
+    (f : Situation W Time → α)
+    (v₁ v₂ : SVar) (c : SitContext W Time E) :
+    dynRelation (fun s₁ s₂ => f s₁ < f s₂) v₁ v₂ c ∪
+    dynRelation (fun s₁ s₂ => f s₁ = f s₂) v₁ v₂ c ∪
+    dynRelation (fun s₁ s₂ => f s₁ > f s₂) v₁ v₂ c = c := by
+  apply Set.ext; intro gs
+  unfold dynRelation
+  constructor
+  · rintro ((⟨hc, _⟩ | ⟨hc, _⟩) | ⟨hc, _⟩) <;> exact hc
+  · intro hc
+    rcases lt_trichotomy (f (gs.1.sit v₁)) (f (gs.1.sit v₂)) with h | h | h
+    · exact Or.inl (Or.inl ⟨hc, h⟩)
+    · exact Or.inl (Or.inr ⟨hc, h⟩)
+    · exact Or.inr ⟨hc, h⟩
+
+
+-- ════════════════════════════════════════════════════════════════
+-- Temporal algebra (derived from dynRelation + order theory)
+-- ════════════════════════════════════════════════════════════════
+
+/-- PAST ∪ PRES ∪ FUT = identity. Derived from trichotomy on Time. -/
+theorem temporal_partition {W Time E : Type*} [LinearOrder Time]
+    (v₁ v₂ : SVar) (c : SitContext W Time E) :
+    dynPAST v₁ v₂ c ∪ dynPRES v₁ v₂ c ∪ dynFUT v₁ v₂ c = c := by
+  rw [dynPAST_eq_dynRelation, dynPRES_eq_dynRelation, dynFUT_eq_dynRelation]
+  exact dynRelation_trichotomy (fun s => s.time) v₁ v₂ c
+
+/-- PAST and FUT are contradictory on the same variables. -/
+theorem dynPAST_dynFUT_empty {W Time E : Type*} [Preorder Time]
+    (v₁ v₂ : SVar) (c : SitContext W Time E) :
+    dynPAST v₁ v₂ (dynFUT v₁ v₂ c) = ∅ := by
+  rw [dynPAST_eq_dynRelation, dynFUT_eq_dynRelation]
+  exact dynRelation_contradictory _ _
+    (fun s₁ s₂ (h1 : s₁.time < s₂.time) (h2 : s₂.time < s₁.time) =>
+      lt_asymm h1 h2) v₁ v₂ c
+
+/-- PAST and PRES are contradictory on the same variables. -/
+theorem dynPAST_dynPRES_empty {W Time E : Type*} [Preorder Time]
+    (v₁ v₂ : SVar) (c : SitContext W Time E) :
+    dynPAST v₁ v₂ (dynPRES v₁ v₂ c) = ∅ := by
+  rw [dynPAST_eq_dynRelation, dynPRES_eq_dynRelation]
+  exact dynRelation_contradictory _ _
+    (fun s₁ s₂ (h1 : s₁.time < s₂.time) (h2 : s₁.time = s₂.time) =>
+      absurd h1 (by rw [h2]; exact lt_irrefl _)) v₁ v₂ c
+
+/-- PRES and FUT are contradictory on the same variables. -/
+theorem dynPRES_dynFUT_empty {W Time E : Type*} [Preorder Time]
+    (v₁ v₂ : SVar) (c : SitContext W Time E) :
+    dynPRES v₁ v₂ (dynFUT v₁ v₂ c) = ∅ := by
+  rw [dynPRES_eq_dynRelation, dynFUT_eq_dynRelation]
+  exact dynRelation_contradictory _ _
+    (fun s₁ s₂ (h1 : s₁.time = s₂.time) (h2 : s₂.time < s₁.time) =>
+      absurd h2 (by rw [h1]; exact lt_irrefl _)) v₁ v₂ c
+
+/-- Chained PAST constraints compose: e < r ∧ r < s → e < s. -/
+theorem dynPAST_transitive {W Time E : Type*} [Preorder Time]
+    (e r s : SVar) (c : SitContext W Time E)
+    (gs : SitAssignment W Time E × Situation W Time)
+    (h : gs ∈ dynPAST r s (dynPAST e r c)) :
+    (gs.1.sit e).time < (gs.1.sit s).time := by
+  rw [dynPAST_eq_dynRelation, dynPAST_eq_dynRelation] at h
+  exact dynRelation_transitive _ _ _
+    (fun s₁ s₂ s₃ (h1 : s₁.time < s₂.time) (h2 : s₂.time < s₃.time) =>
+      lt_trans h1 h2) e r s c gs h
+
 
 /--
 Subordinate Future (SF) analysis.
@@ -236,7 +417,7 @@ The SF in Portuguese conditionals:
   "Se Maria estiver em casa, ela vai atender."
   "If Maria be.SF at home, she will answer."
 
-Structure (Mendes p.29):
+Structure (@cite{mendes-2025}):
 1. SF = SUBJ^{s₁}_{s₀} + FUT
 2. SUBJ introduces s₁ ∈ hist(s₀)
 3. FUT constrains τ(s₁) > τ(s₀)
@@ -388,25 +569,6 @@ theorem temporal_shift_parasitic_on_modal {W Time E : Type*} [Preorder Time]
   · exact h_gt
 
 /--
-Without modal displacement, no temporal shift.
-
-If we remove the modal component (SUBJ), there's no mechanism for
-the future-oriented reading. This shows the temporal shift is parasitic.
--/
-theorem no_modal_no_temporal_shift {W Time E : Type*} [Preorder Time]
-    (history : WorldHistory W Time)
-    (v : SVar)
-    (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
-    (h_in_c : gs ∈ c)
-    -- Without SUBJ, the situation variable is not updated
-    (h_no_subj : gs.1.sit v = gs.2)
-    -- And gs.2 is the current situation, not a future one
-    : gs.2.time = gs.2.time := by  -- Trivial: no shift occurs
-  rfl
-
-
-/--
 Relative clause with SF in restrictor.
 
 "Cada menino [que estiver acordado] vai receber um biscoito."
@@ -421,9 +583,7 @@ def relativeClauseSF {W Time E : Type*} [LE Time] [LT Time]
     (history : WorldHistory W Time)
     (rcVar : SVar)           -- Situation variable for relative clause
     (speechVar : SVar)       -- Speech time situation
-    (restrictor : E → SitContext W Time E → SitContext W Time E)  -- RC content
     (c : SitContext W Time E) : SitContext W Time E :=
-  -- Apply SF to introduce the RC situation
   subordinateFuture history rcVar speechVar c
 
 /--
@@ -455,7 +615,7 @@ SF in restrictor enables future reference for strong quantifiers.
 
 With SF in the relative clause, "every" can quantify over future entities.
 
-Note: Requires that restrictor and nuclear are filters (preserve subset membership).
+Restrictor and nuclear must be context filters (`IsContextFilter`).
 Linguistically, predicates filter contexts without modifying assignments.
 -/
 theorem sf_restrictor_future_reference {W Time E : Type*} [Preorder Time]
@@ -465,129 +625,162 @@ theorem sf_restrictor_future_reference {W Time E : Type*} [Preorder Time]
     (c : SitContext W Time E)
     (gs : SitAssignment W Time E × Situation W Time)
     (h : gs ∈ everyWithSFRestrictor history rcVar speechVar restrictor nuclear c)
-    -- Restrictor and nuclear are filters (preserve membership from SF)
-    (hRN_filter : nuclear (restrictor (subordinateFuture history rcVar speechVar c))
-                  ⊆ subordinateFuture history rcVar speechVar c) :
+    (hR : IsContextFilter restrictor) (hN : IsContextFilter nuclear) :
     -- The restrictor situation can be future relative to speech time
     (gs.1.sit rcVar).time > (gs.1.sit speechVar).time := by
   -- Track through the filter chain
   unfold everyWithSFRestrictor at h
-  have h_sf : gs ∈ subordinateFuture history rcVar speechVar c := hRN_filter h
+  have h_sf : gs ∈ subordinateFuture history rcVar speechVar c :=
+    Set.Subset.trans (hN _) (hR _) h
   -- subordinateFuture guarantees the future ordering via dynFUT
   unfold subordinateFuture dynFUT at h_sf
   exact h_sf.2
 
 
-/--
-Example sentence derivation (paper example 53).
+-- ════════════════════════════════════════════════════════════════
+-- Bridge theorems: dynamic operators realize static operators
+-- ════════════════════════════════════════════════════════════════
 
-"Se Maria estiver em casa, ela vai atender."
-"If Maria be.SF home, she will answer."
+/-!
+## Static↔Dynamic Bridge
 
-Full CDRT derivation following formulas (54)-(63).
+The dynamic operators `dynSUBJ` and `dynIND` are the context-level lifts of
+the static operators `Mood.SUBJ` and `Mood.IND` (defined in
+`Theories/Semantics/Mood/Basic.lean`).
+
+These bridge theorems prove the correspondence:
+- `dynSUBJ` implements `SUBJ`'s existential quantification over historical
+  alternatives, with additional bookkeeping (binding the result to a variable
+  and updating the current situation).
+- `dynIND` implements `IND`'s same-world presuppositional check as a
+  context filter.
 -/
-structure SentenceDerivation (W Time E : Type*) where
-  /-- The input context -/
-  inputContext : SitContext W Time E
-  /-- The output context after interpretation -/
-  outputContext : SitContext W Time E
-  /-- The situation variable introduced by SF -/
-  sfSitVar : SVar
-  /-- The speech time situation variable -/
-  speechSitVar : SVar
 
 /--
-Step-by-step derivation following paper's formulas.
+Full set characterization of dynSUBJ on singleton contexts.
 
-(54) ⟦SUBJ^s₁_{s₀}⟧ = λcλc'. ∃s₁[s₁ ∈ hist(s₀); c'(s₁)]
-(55) ⟦Maria⟧ = maria
-(56) ⟦estar em casa⟧ = λxλs. at-home(x)(s)
-(57) ⟦SF⟧ = SUBJ + FUT
-(58) ⟦atender⟧ = λxλs. answer(x)(s)
-(59) ⟦ela⟧ = λP.P(maria) (bound to Maria in discourse)
-(60) Full antecedent: SUBJ^s₁_{s₀}[FUT; at-home(maria)(s₁)]
-(61) Full consequent: answer(maria)(s₁) -- anchored to s₁
-(62) Conditional: ∀(g,s₀)∈c: if ⟦antecedent⟧ then ⟦consequent⟧
-(63) Result: Universal over historical alternatives where Maria is home
+Strictly stronger than `dynSUBJ_realizes_SUBJ`: gives the exact output set
+rather than just an existential iff. The output of `dynSUBJ` on `{(g, s₀)}`
+is precisely the set of `(g[v↦s₁], s₁)` for `s₁ ∈ historicalBase history s₀`.
 -/
-def exampleDerivation {W Time E : Type*} [LE Time] [LT Time]
+theorem dynSUBJ_singleton_eq {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (maria : E)
-    (atHome : E → Situation W Time → Prop)
-    (answer : E → Situation W Time → Prop)
-    (s₁ s₀ : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
-  -- (60) Antecedent: SF introduces s₁ with Maria at home
-  let antecedent : SitContext W Time E → SitContext W Time E :=
-    λ c' => { gs ∈ c' | atHome maria (gs.1.sit s₁) }
-  -- (61) Consequent: Maria answers, evaluated at s₁'s time
-  let consequent : SitContext W Time E → SitContext W Time E :=
-    λ c' => { gs ∈ c' | answer maria (gs.1.sit s₁) }
-  -- (62-63) Full conditional with SF
-  conditionalWithSF history s₁ s₀ antecedent consequent c
+    (v : SVar)
+    (g : SitAssignment W Time E)
+    (s₀ : Situation W Time) :
+    dynSUBJ history v ({(g, s₀)} : SitContext W Time E) =
+    { gs | ∃ s₁ ∈ historicalBase history s₀, gs = (g.updateSit v s₁, s₁) } := by
+  apply Set.ext; intro gs
+  unfold dynSUBJ
+  constructor
+  · rintro ⟨g', s₀', s₁, h_ctx, h_hist, h_upd, h_eq⟩
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Set.mem_singleton_iff.mp h_ctx)
+    exact ⟨s₁, h_hist, Prod.ext h_upd h_eq⟩
+  · rintro ⟨s₁, h_hist, h_eq⟩
+    rw [h_eq]
+    exact ⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩
 
 /--
-Derivation matches Mendes' formulas (54)-(63).
+Bridge: dynamic SUBJ realizes static SUBJ.
 
-The output context captures exactly the truth conditions described
-in the paper: universal quantification over historical alternatives
-where the antecedent holds.
+For a singleton context `{(g, s₀)}`, the set of situations reachable via
+`dynSUBJ` at variable `v` that satisfy `P` is exactly the set that static
+`SUBJ` existentially quantifies over.
+
+This proves `dynSUBJ` is the context-level lift of `Mood.SUBJ`: the dynamic
+operator implements the same existential quantification over historical
+alternatives, with additional bookkeeping (binding the result to a variable
+and updating the current situation).
 -/
-theorem derivation_matches_paper {W Time E : Type*} [LE Time] [LT Time]
+theorem dynSUBJ_realizes_SUBJ {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (maria : E)
-    (atHome answer : E → Situation W Time → Prop)
-    (s₁ s₀ : SVar)
+    (v : SVar)
+    (g : SitAssignment W Time E)
+    (s₀ : Situation W Time)
+    (P : SitPred W Time) :
+    (∃ gs ∈ dynSUBJ history v ({(g, s₀)} : SitContext W Time E),
+      P (gs.1.sit v) s₀) ↔
+    SUBJ history P s₀ := by
+  unfold SUBJ dynSUBJ
+  constructor
+  · -- Forward: dynamic output → static existential
+    rintro ⟨gs, ⟨g', s₀', s₁, h_ctx, h_hist, h_upd, h_eq⟩, h_P⟩
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Set.mem_singleton_iff.mp h_ctx)
+    have h_sit : gs.1.sit v = s₁ := by
+      rw [h_upd]
+      unfold SitAssignment.updateSit
+      simp only [beq_self_eq_true, ite_true]
+    exact ⟨s₁, h_hist, h_sit ▸ h_P⟩
+  · -- Backward: static existential → dynamic witness
+    rintro ⟨s₁, h_hist, h_P⟩
+    refine ⟨(g.updateSit v s₁, s₁), ?_, ?_⟩
+    · exact ⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩
+    · have h_sit : (g.updateSit v s₁).sit v = s₁ := by
+        unfold SitAssignment.updateSit
+        simp only [beq_self_eq_true, ite_true]
+      rw [h_sit]
+      exact h_P
+
+/--
+dynSUBJ invariant: variable v always equals the current situation.
+
+After `dynSUBJ` binds `v`, looking up `v` in the assignment always
+returns the current situation. This is the structural property that
+makes `dynIND` vacuous on the same variable (see `dynIND_after_dynSUBJ_same_var`).
+-/
+theorem dynSUBJ_binds_current {W Time E : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (v : SVar)
     (c : SitContext W Time E)
     (gs : SitAssignment W Time E × Situation W Time)
-    (h : gs ∈ exampleDerivation history maria atHome answer s₁ s₀ c)
-    -- s₀ and s₁ are distinct variables (required for proper tracking)
-    (h_distinct : s₁ ≠ s₀)
-    -- Speech time variable s₀ is properly initialized in the context:
-    -- all context entries have s₀ bound to their current situation
-    (h_init : ∀ g' s', (g', s') ∈ c → g'.sit s₀ = s') :
-    -- The output satisfies:
-    -- 1. s₁ is in the historical alternatives of s₀
-    (gs.1.sit s₁) ∈ historicalBase history (gs.1.sit s₀) ∧
-    -- 2. τ(s₁) > τ(s₀) (future)
-    (gs.1.sit s₁).time > (gs.1.sit s₀).time ∧
-    -- 3. If Maria is at home at s₁, she answers at s₁
-    (atHome maria (gs.1.sit s₁) → answer maria (gs.1.sit s₁)) := by
-  unfold exampleDerivation at h
-  unfold conditionalWithSF at h
-  simp only [Set.mem_setOf_eq] at h
-  obtain ⟨⟨h_ant, _⟩, h_ans⟩ := h
-  -- Track through subordinateFuture
-  unfold subordinateFuture at h_ant
-  unfold dynFUT at h_ant
-  obtain ⟨h_subj, h_gt⟩ := h_ant
-  unfold dynSUBJ at h_subj
-  obtain ⟨g, s₀', sit₁, hc, h_hist, h_upd, h_eq⟩ := h_subj
-  -- Helper: gs.1.sit s₁ = sit₁
-  have h_s₁ : gs.1.sit s₁ = sit₁ := by
-    rw [h_upd]
-    unfold SitAssignment.updateSit
-    simp only [beq_self_eq_true, ite_true]
-  -- Helper: gs.1.sit s₀ = g.sit s₀ (unchanged by update to s₁)
-  have h_s₀ : gs.1.sit s₀ = g.sit s₀ := by
-    rw [h_upd]
-    unfold SitAssignment.updateSit
-    -- s₀ ≠ s₁, so the if-then-else chooses the else branch
-    have h_ne : (s₀ == s₁) = false :=
-      beq_false_of_ne (Ne.symm h_distinct)
-    simp only [h_ne]
-    rfl
-  -- From initialization: g.sit s₀ = s₀'
-  have h_g_s₀ : g.sit s₀ = s₀' := h_init g s₀' hc
-  refine ⟨?_, ?_, ?_⟩
-  -- 1. s₁ ∈ historicalBase history (gs.1.sit s₀)
-  · rw [h_s₁, h_s₀, h_g_s₀]
-    exact h_hist
-  -- 2. τ(s₁) > τ(s₀)
-  · exact h_gt
-  -- 3. Conditional semantics
-  · intro _
-    exact h_ans
+    (h : gs ∈ dynSUBJ history v c) :
+    gs.1.sit v = gs.2 := by
+  unfold dynSUBJ at h
+  obtain ⟨g, s₀, s₁, _, _, h_upd, h_eq⟩ := h
+  rw [h_upd, h_eq]
+  unfold SitAssignment.updateSit
+  simp only [beq_self_eq_true, ite_true]
 
+/--
+Bridge: dynamic IND realizes static IND.
+
+The filter condition imposed by `dynIND` is exactly the same-world
+constraint of static `Mood.IND`: membership in the filtered context
+plus a predicate on the situations is equivalent to membership in the
+original context plus the static IND applied to those situations.
+-/
+theorem dynIND_realizes_IND {W Time E : Type*}
+    (v : SVar)
+    (c : SitContext W Time E)
+    (gs : SitAssignment W Time E × Situation W Time)
+    (P : SitPred W Time) :
+    (gs ∈ dynIND v c ∧ P gs.2 (gs.1.sit v)) ↔
+    (gs ∈ c ∧ IND P (gs.1.sit v) gs.2) := by
+  unfold dynIND IND
+  constructor
+  · rintro ⟨⟨hc, hw⟩, hP⟩
+    exact ⟨hc, hw, hP⟩
+  · rintro ⟨hc, hw, hP⟩
+    exact ⟨⟨hc, hw⟩, hP⟩
+
+/--
+IND is identity after SUBJ on the same variable.
+
+When SUBJ introduces s₁ and binds it to v, IND's same-world check
+on v is trivially satisfied (`gs.2 = s₁ = gs.1.sit v` by construction).
+This explains why `crossClausalBinding` with shared variables
+preserves the full SUBJ output.
+-/
+theorem dynIND_after_dynSUBJ_same_var {W Time E : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (v : SVar)
+    (c : SitContext W Time E) :
+    dynIND v (dynSUBJ history v c) = dynSUBJ history v c := by
+  apply Set.ext; intro gs
+  unfold dynIND
+  constructor
+  · exact fun ⟨h_mem, _⟩ => h_mem
+  · intro h_mem
+    exact ⟨h_mem, by rw [dynSUBJ_binds_current history v c gs h_mem]⟩
 
 end Semantics.Dynamic.IntensionalCDRT.Situations

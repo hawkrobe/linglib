@@ -214,26 +214,26 @@ are defined independently per language, we compare via string-valued fields
 
 /-- Georgian Fragment's J morpheme "da" matches Typology's Georgian "da". -/
 theorem georgian_j_bridge :
-    (georgian.morphemes.filter (·.role == "J")).any (·.form == "da") = true ∧
+    (georgian.morphemes.filter (·.role == .j)).any (·.form == "da") = true ∧
     Fragments.Georgian.Coordination.da.form = "da" := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Georgian Fragment's MU morpheme "-c" matches Typology's Georgian "-c". -/
 theorem georgian_mu_bridge :
-    (georgian.morphemes.filter (·.role == "MU")).any (·.form == "-c") = true ∧
+    (georgian.morphemes.filter (·.role == .mu)).any (·.form == "-c") = true ∧
     Fragments.Georgian.Coordination.c_.form = "-c" := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Georgian MU is bound in both Fragment and Typology. -/
 theorem georgian_mu_bound_bridge :
-    (georgian.morphemes.filter (·.role == "MU")).all
+    (georgian.morphemes.filter (·.role == .mu)).all
       (·.boundness == .bound) = true ∧
     (Fragments.Georgian.Coordination.c_.boundness == .bound) = true := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- Georgian MU is additive in both Fragment and Typology. -/
 theorem georgian_mu_additive_bridge :
-    (georgian.morphemes.filter (·.role == "MU")).all
+    (georgian.morphemes.filter (·.role == .mu)).all
       (·.alsoAdditive) = true ∧
     Fragments.Georgian.Coordination.c_.alsoAdditive = true := by
   exact ⟨by native_decide, rfl⟩
@@ -242,26 +242,26 @@ theorem georgian_mu_additive_bridge :
 
 /-- Hungarian Fragment's J morpheme "és" matches Typology's Hungarian "és". -/
 theorem hungarian_j_bridge :
-    (hungarian.morphemes.filter (·.role == "J")).any (·.form == "és") = true ∧
+    (hungarian.morphemes.filter (·.role == .j)).any (·.form == "és") = true ∧
     Fragments.Hungarian.Coordination.es.form = "és" := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Hungarian Fragment's MU morpheme "is" matches Typology's Hungarian "is". -/
 theorem hungarian_mu_bridge :
-    (hungarian.morphemes.filter (·.role == "MU")).any (·.form == "is") = true ∧
+    (hungarian.morphemes.filter (·.role == .mu)).any (·.form == "is") = true ∧
     Fragments.Hungarian.Coordination.is_.form = "is" := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Hungarian MU is free in both Fragment and Typology. -/
 theorem hungarian_mu_free_bridge :
-    (hungarian.morphemes.filter (·.role == "MU")).all
+    (hungarian.morphemes.filter (·.role == .mu)).all
       (·.boundness == .free) = true ∧
     (Fragments.Hungarian.Coordination.is_.boundness == .free) = true := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- Hungarian MU is additive in both Fragment and Typology. -/
 theorem hungarian_mu_additive_bridge :
-    (hungarian.morphemes.filter (·.role == "MU")).all
+    (hungarian.morphemes.filter (·.role == .mu)).all
       (·.alsoAdditive) = true ∧
     Fragments.Hungarian.Coordination.is_.alsoAdditive = true := by
   exact ⟨by native_decide, rfl⟩
@@ -270,19 +270,19 @@ theorem hungarian_mu_additive_bridge :
 
 /-- Latin Fragment's J morpheme "et" matches Typology's Latin "et". -/
 theorem latin_j_bridge :
-    (latin.morphemes.filter (·.role == "J")).any (·.form == "et") = true ∧
+    (latin.morphemes.filter (·.role == .j)).any (·.form == "et") = true ∧
     Fragments.Latin.Coordination.et.form = "et" := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Latin Fragment's MU morpheme "-que" matches Typology's Latin "-que". -/
 theorem latin_mu_bridge :
-    (latin.morphemes.filter (·.role == "MU")).any (·.form == "-que") = true ∧
+    (latin.morphemes.filter (·.role == .mu)).any (·.form == "-que") = true ∧
     Fragments.Latin.Coordination.que.form = "-que" := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Latin MU is bound in both Fragment and Typology. -/
 theorem latin_mu_bound_bridge :
-    (latin.morphemes.filter (·.role == "MU")).all
+    (latin.morphemes.filter (·.role == .mu)).all
       (·.boundness == .bound) = true ∧
     (Fragments.Latin.Coordination.que.boundness == .bound) = true := by
   exact ⟨by native_decide, by native_decide⟩
@@ -291,13 +291,13 @@ theorem latin_mu_bound_bridge :
 
 /-- Irish Fragment's J morpheme "agus" matches Typology's Irish "agus". -/
 theorem irish_j_bridge :
-    (irish.morphemes.filter (·.role == "J")).any (·.form == "agus") = true ∧
+    (irish.morphemes.filter (·.role == .j)).any (·.form == "agus") = true ∧
     Fragments.Irish.Coordination.agus.form = "agus" := by
   exact ⟨by native_decide, rfl⟩
 
 /-- Irish has no MU morpheme — J-only in both Fragment and Typology. -/
 theorem irish_j_only_bridge :
-    (irish.morphemes.filter (·.role == "MU")).length = 0 ∧
+    (irish.morphemes.filter (·.role == .mu)).length = 0 ∧
     (Fragments.Irish.Coordination.allEntries.filter
       (·.role == .j)).length = 1 := by
   exact ⟨by native_decide, by native_decide⟩

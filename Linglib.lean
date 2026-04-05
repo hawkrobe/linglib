@@ -16,6 +16,7 @@ import Linglib.Core.Empirical
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Tree
+import Linglib.Core.Coordination
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.NonBivalence
 import Linglib.Core.Logic.Quantification
@@ -438,6 +439,7 @@ import Linglib.Fragments.German.Morph
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.German.V2
+import Linglib.Fragments.German.Distributives
 import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
@@ -779,7 +781,6 @@ import Linglib.Phenomena.Conditionals.LeftNested.Data
 import Linglib.Phenomena.Conditionals.Studies.Lassiter2025
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
-import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
 import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
@@ -827,7 +828,6 @@ import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Studies.Stassen2000
 import Linglib.Phenomena.Coordination.Typology
-import Linglib.Phenomena.Coordination.Conjectures
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
@@ -972,7 +972,7 @@ import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Phenomena.Modality.Studies.RotterLiu2025Concord
 import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
 import Linglib.Phenomena.Modality.Studies.LiuRotter2025
-import Linglib.Phenomena.Modality.Studies.Mendes2025
+import Linglib.Phenomena.TenseAspect.Studies.Mendes2025
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
 import Linglib.Phenomena.Modality.FreeChoice
@@ -1083,7 +1083,7 @@ import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
 import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2022
 import Linglib.Phenomena.Presupposition.Studies.GroveWhite2025
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
-import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
+import Linglib.Phenomena.Expressives.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022

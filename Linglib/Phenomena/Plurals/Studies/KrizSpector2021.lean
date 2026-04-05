@@ -169,6 +169,16 @@ theorem forallH_triangle [Fintype Atom] (P : Atom → W → Bool)
     allViaForallH P x w ↔ allSatisfy P x w = true :=
   allViaForallH_iff_allSatisfy P x w
 
+/-- The full bridge: `removeGap` on bare plural truth = `allViaForallH`.
+    This formally connects Križ 2016's mechanism (`removeGap`) to K&S 2021's
+    deeper derivation (`∀H`). The semantic contribution of `all` can be
+    understood either as gap removal or as universal H-quantification —
+    they are provably the same. -/
+theorem removeGap_iff_forallH [Fintype Atom] (P : Atom → W → Bool)
+    (x : Finset Atom) (w : W) (hne : x.Nonempty) :
+    removeGap (fun w => pluralTruthValue P x w) w = .true ↔ allViaForallH P x w := by
+  rw [removeGap_plural_true_iff P x hne w, forallH_triangle P x w]
+
 -- ============================================================================
 -- Section 5: Non-Monotonic Context Finite Model
 -- ============================================================================

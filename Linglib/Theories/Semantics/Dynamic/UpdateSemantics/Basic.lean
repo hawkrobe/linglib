@@ -184,4 +184,150 @@ theorem valid₃_monotone {W : Type*}
     valid₃ premises conclusion → valid₃ (premises ++ extra) conclusion :=
   fun h σ hsup => h σ (fun p hp => hsup p (List.mem_append_left extra hp))
 
+-- ═══ Presuppositional Updates (§2.3 of @cite{yagi-2025}) ═══
+
+/-- The designated undefined state: update failure.
+
+    @cite{yagi-2025} Definition 5: when a presupposition is not satisfied,
+    the update yields ∗. We model ∗ as `none` via `Option (State W)`. -/
+abbrev PState (W : Type*) := Option (State W)
+
+/-- Presuppositional update: update by φ_p is defined only when the
+    presupposition p is supported (i.e. `s[p] = s`).
+
+    @cite{yagi-2025} Definition 5:
+      s[φ_p] = ∗  if s[p] ≠ s
+             = s[φ]  otherwise
+
+    @cite{heim-1982} @cite{beaver-2001} @cite{veltman-1996} -/
+noncomputable def PUpdate.presup {W : Type*} (p φ : W → Bool) : PState W → PState W
+  | none => none
+  | some s =>
+    if Update.prop p s = s then
+      some (Update.prop φ s)
+    else
+      none
+
+/-- Negation extended to PState: s[¬φ] = s/s[φ].
+
+    @cite{yagi-2025} Definition 4: s[¬φ] = s \ s[φ]. -/
+noncomputable def PUpdate.neg {W : Type*} (φ : W → Bool) : PState W → PState W
+  | none => none
+  | some s => some (s \ Update.prop φ s)
+
+/-- Disjunction extended to PState: s[φ ∨ ψ] = s[φ] ∪ s[¬φ][ψ].
+
+    @cite{yagi-2025} Definition 4, @cite{heim-1982}.
+    Extended with ∗ ∪ s = s ∪ ∗ = ∗. -/
+noncomputable def PUpdate.disj {W : Type*} (φ ψ : W → Bool) :
+    PState W → PState W
+  | none => none
+  | some s =>
+    let left := Update.prop φ s
+    let negLeft := s \ left
+    let right := Update.prop ψ negLeft
+    some (left ∪ right)
+
+/-- Presuppositional disjunction: s[φ_p ∨ ψ_q].
+    Apply presupposition checks to each disjunct.
+
+    This is the standard Heim/Beaver definition:
+      s[φ_p ∨ ψ_q] = s[φ_p] ∪ s[¬φ_p][ψ_q]
+
+    Both presuppositional updates must be defined for the result to be
+    defined: s[φ_p] requires s ⊨ p, and s[¬φ_p][ψ_q] requires s[¬φ_p] ⊨ q. -/
+noncomputable def PUpdate.disjPresup {W : Type*} (p φ q ψ : W → Bool) :
+    PState W → PState W
+  | none => none
+  | some s =>
+    -- Left disjunct: s[φ_p]
+    let left := PUpdate.presup p φ (some s)
+    -- Right context: s[¬φ_p] — but ¬φ_p requires negating the presuppositional φ
+    -- Following Yagi: s[¬φ_p] = s \ s[φ_p], but s[φ_p] may be ∗
+    match left with
+    | none => none  -- left undefined → whole disjunction undefined
+    | some leftResult =>
+      let negLeftCtx := s \ leftResult
+      -- Right disjunct: s[¬φ_p][ψ_q]
+      let right := PUpdate.presup q ψ (some negLeftCtx)
+      match right with
+      | none => none
+      | some rightResult => some (leftResult ∪ rightResult)
+
+/-- **Flexible accommodation disjunction** (dynamic version).
+
+    @cite{yagi-2025} (13) / @cite{geurts-2005} / @cite{aloni-2022}:
+      s[φ ∨ ψ] = s[χ][φ] ∪ s[ω][ψ], where s[χ] ∪ s[ω] = s
+
+    The propositions χ and ω *split* the state s into two substates.
+    By default χ = ω = ⊤ (both tautological), but when the default
+    violates genuineness (@cite{zimmermann-2000}), the split becomes
+    non-trivial: χ = ¬q and ω = ¬p for conflicting presuppositions. -/
+noncomputable def PUpdate.disjFlex {W : Type*}
+    (χ φ_presup φ ω ψ_presup ψ : W → Bool)
+    (_h_split : ∀ s : State W, Update.prop χ s ∪ Update.prop ω s = s) :
+    PState W → PState W
+  | none => none
+  | some s =>
+    let leftCtx := Update.prop χ s
+    let rightCtx := Update.prop ω s
+    let left := PUpdate.presup φ_presup φ (some leftCtx)
+    let right := PUpdate.presup ψ_presup ψ (some rightCtx)
+    match left, right with
+    | some l, some r => some (l ∪ r)
+    | _, _ => none  -- ∗ poisons: if either side is undefined, result is ∗
+
+
+-- ═══ Yagi's Core Observations (Dynamic) ═══
+
+/-- The standard presuppositional disjunction update is uninformative when
+    the presupposition is satisfied: if s[φ_p] is defined and s[φ_p] = s,
+    then the disjunction just returns s.
+
+    @cite{yagi-2025} §2.3: "whenever the update is defined, the disjunction
+    is uninformative." Proved as: if the presupposition check passes
+    (s[p] = s and s[q] = s), and s already satisfies φ ∨ ψ (i.e. at every
+    world either φ or ψ holds), then the update returns s unchanged. -/
+theorem presup_disj_uninformative_when_supported {W : Type*}
+    (p φ q ψ : W → Bool) (s : State W)
+    (hp : Update.prop p s = s) (hq : Update.prop q s = s)
+    (h_or : ∀ w, w ∈ s → (φ w = true ∨ ψ w = true)) :
+    PUpdate.disjPresup p φ q ψ (some s) = some s := by
+  -- Unfold the definition and reduce step by step
+  unfold PUpdate.disjPresup PUpdate.presup
+  -- Eliminate the presupposition check for the left disjunct
+  -- Helper: q holds at every world in s (from hq)
+  have hq_at : ∀ w, w ∈ s → q w = true := by
+    intro w hw
+    have : w ∈ Update.prop q s := hq.symm ▸ hw
+    exact this.2
+  -- Helper: q is supported on any subset of s
+  have hq_sub : ∀ t : State W, t ⊆ s → Update.prop q t = t := by
+    intro t ht; ext w; constructor
+    · exact fun ⟨hw, _⟩ => hw
+    · intro hw; exact ⟨hw, hq_at w (ht hw)⟩
+  -- Helper: ψ holds everywhere in s \ Update.prop φ s (by h_or + φ failure)
+  have hψ_sub : ∀ w, w ∈ s \ Update.prop φ s → ψ w = true := by
+    intro w ⟨hw, hnφ⟩
+    cases h_or w hw with
+    | inl h => exact absurd (show w ∈ Update.prop φ s from ⟨hw, h⟩) hnφ
+    | inr h => exact h
+  have h_q_neg : Update.prop q (s \ Update.prop φ s) = s \ Update.prop φ s :=
+    hq_sub _ (fun _ h => h.1)
+  simp only [hp, ↓reduceIte, h_q_neg]
+  -- Result: Update.prop φ s ∪ Update.prop ψ (s \ Update.prop φ s) = s
+  suffices h : Update.prop φ s ∪ Update.prop ψ (s \ Update.prop φ s) = s by
+    exact congrArg some h
+  apply Set.Subset.antisymm
+  · -- ⊆: both sides are subsets of s
+    intro w hw
+    cases hw with
+    | inl h => exact h.1
+    | inr h => exact h.1.1
+  · -- ⊇: every w ∈ s is in one side or the other
+    intro w hw
+    by_cases hφ : φ w = true
+    · exact Set.mem_union_left _ ⟨hw, hφ⟩
+    · exact Set.mem_union_right _ ⟨⟨hw, fun h => hφ h.2⟩, hψ_sub w ⟨hw, fun h => hφ h.2⟩⟩
+
 end Semantics.Dynamic.UpdateSemantics

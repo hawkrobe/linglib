@@ -74,24 +74,28 @@ def distMaximal (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
   decide (∀ a ∈ x, P a w = true)
 
 /--
-Tolerant distributive: ⟦each* P⟧^⪯(x) = ∃z. z ⪯ x ∧ ∀a ∈ z. P(a)
+Tolerant distributive: ⟦each* P⟧^⪯(x) = ∃z. z ⪯ x ∧ z ≠ ∅ ∧ ∀a ∈ z. P(a)
 
 This is the semantics of German "jeweils" (for non-max speakers).
+The nonemptiness constraint prevents the empty set from vacuously
+witnessing truth (∀a ∈ ∅, P a w is trivially true).
 -/
 def distTolerant (P : Atom → W → Bool) (tol : Tolerance Atom)
     (x : Finset Atom) (w : W) : Bool :=
-  decide (∃ z ∈ x.powerset, tol.rel z x = true ∧ ∀ a ∈ z, P a w = true)
+  decide (∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x = true ∧ ∀ a ∈ z, P a w = true)
 
 -- Key Theorems
 
-/-- Maximal distributive = tolerant distributive with identity tolerance -/
-theorem distMaximal_eq_identity (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
+/-- Maximal distributive = tolerant distributive with identity tolerance
+    (on nonempty pluralities). -/
+theorem distMaximal_eq_identity (P : Atom → W → Bool) (x : Finset Atom) (w : W)
+    (hne : x.Nonempty) :
     distMaximal P x w = distTolerant P Tolerance.identity x w := by
   simp only [distMaximal, distTolerant, Tolerance.identity, decide_eq_decide]
   constructor
   · intro h
-    exact ⟨x, Finset.mem_powerset.mpr (Finset.Subset.refl x), beq_self_eq_true x, h⟩
-  · intro ⟨z, _, hz_eq, hz_all⟩
+    exact ⟨x, Finset.mem_powerset.mpr (Finset.Subset.refl x), hne, beq_self_eq_true x, h⟩
+  · intro ⟨z, _, _, hz_eq, hz_all⟩
     simp only [beq_iff_eq] at hz_eq
     exact hz_eq ▸ hz_all
 
@@ -107,7 +111,8 @@ theorem distTolerant_allows_exceptions (P : Atom → W → Bool)
     (x : Finset Atom) (w : W) (a : Atom) (ha : a ∈ x) (hPa : P a w = true) :
     distTolerant P Tolerance.full x w = true := by
   simp only [distTolerant, decide_eq_true_iff]
-  refine ⟨{a}, Finset.mem_powerset.mpr (Finset.singleton_subset_iff.mpr ha), ?_, ?_⟩
+  refine ⟨{a}, Finset.mem_powerset.mpr (Finset.singleton_subset_iff.mpr ha),
+          ⟨a, Finset.mem_singleton.mpr rfl⟩, ?_, ?_⟩
   · simp only [Tolerance.full, Finset.singleton_subset_iff, decide_eq_true_iff]; exact ha
   · simp [hPa]
 
@@ -324,23 +329,110 @@ theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W)
 
 end KrizSpector
 
+-- Atom Vacuity
+
+/--
+On singletons, `distMaximal` reduces to the predicate itself.
+
+This is WHY `each`/`jeder` forces maximality: when it distributes P to individual
+atoms, the result is just P(a) — there's no plurality for tolerance to weaken.
+@cite{haslinger-etal-2025} §2.3, the argument below equation (21d).
+-/
+theorem distMaximal_singleton {Atom : Type*} {W : Type*}
+    (P : Atom → W → Bool) (a : Atom) (w : W) :
+    distMaximal P {a} w = P a w := by
+  simp only [distMaximal, Finset.mem_singleton, forall_eq]
+  cases P a w <;> simp
+
+/--
+**Atom Vacuity Theorem (general).**
+
+On singletons, `distTolerant` reduces to the predicate itself for ANY
+tolerance relation — not just identity tolerance.
+
+This is because {a} has exactly one nonempty subset (itself), and
+`tol.refl` guarantees `tol.rel {a} {a} = true`. The tolerance parameter
+literally has nothing to vary over: there is no proper nonempty
+sub-plurality of {a} that could serve as a weaker witness.
+
+This is the formal content of @cite{haslinger-etal-2025}'s argument for
+why the +dist/−max cell requires a *distance* distributor (*jeweils*),
+not a DP-internal one (*jeder*): DP-internal distributors scope over
+atoms, where tolerance is vacuous, so they can never exhibit
+non-maximality regardless of the tolerance context.
+-/
+theorem distTolerant_singleton {Atom : Type*} [DecidableEq Atom] {W : Type*}
+    (P : Atom → W → Bool) (tol : Tolerance Atom) (a : Atom) (w : W) :
+    distTolerant P tol {a} w = P a w := by
+  cases hP : P a w
+  · -- P a w = false: distTolerant must also be false
+    simp only [distTolerant]
+    rw [decide_eq_false_iff_not]
+    intro ⟨z, hz_mem, hz_ne, _, hz_all⟩
+    obtain ⟨b, hb⟩ := hz_ne
+    have hba : b = a := Finset.mem_singleton.mp (Finset.mem_powerset.mp hz_mem hb)
+    exact absurd (hba ▸ hz_all b hb) (by rw [hP]; decide)
+  · -- P a w = true: distTolerant must also be true
+    simp only [distTolerant, decide_eq_true_iff]
+    exact ⟨{a}, Finset.mem_powerset.mpr (Finset.Subset.refl _),
+           ⟨a, Finset.mem_singleton.mpr rfl⟩, tol.refl {a},
+           fun b hb => by rw [Finset.mem_singleton.mp hb]; exact hP⟩
+
+/--
+Corollary: on singletons, all tolerance relations agree.
+
+Tolerance is structurally irrelevant on atoms — the parameter has no
+room to vary. This is the deepest explanation of why `each`/`jeder`
+forces maximality: it's not that identity tolerance is "strict," but
+that ANY tolerance collapses to identity on atoms.
+-/
+theorem distTolerant_singleton_independent {Atom : Type*} [DecidableEq Atom] {W : Type*}
+    (P : Atom → W → Bool) (tol₁ tol₂ : Tolerance Atom) (a : Atom) (w : W) :
+    distTolerant P tol₁ {a} w = distTolerant P tol₂ {a} w := by
+  rw [distTolerant_singleton, distTolerant_singleton]
+
+/-- Special case: identity tolerance on singletons. Now a corollary of the
+    general `distTolerant_singleton`. -/
+theorem distTolerant_identity_singleton (P : Atom → W → Bool) (a : Atom) (w : W) :
+    distTolerant P Tolerance.identity {a} w = P a w :=
+  distTolerant_singleton P Tolerance.identity a w
+
 -- The Independence Result
 
-/-- Classification by [±distributive] × [±maximal] -/
-inductive DistMaxClass where
-  | distMax       -- each, jeder: +dist, +max
-  | distNonMax    -- jeweils: +dist, -max
-  | nonDistMax    -- all: -dist, +max
-  | nonDistNonMax -- the Xs: -dist, -max
-  deriving DecidableEq, Repr
+/--
+Classification by [±distributive] × [±maximal].
 
-/-- All four classes are instantiated by the formal operators -/
-def classifyOperator (forcesDistributivity : Bool) (usesTolerance : Bool)
-    : DistMaxClass :=
-  match forcesDistributivity, usesTolerance with
-  | true, false => .distMax
-  | true, true => .distNonMax
-  | false, false => .nonDistMax
-  | false, true => .nonDistNonMax
+@cite{haslinger-etal-2025} Table (5): the two properties are orthogonal.
+All four cells are attested or predicted.
+-/
+structure DistMaxClass where
+  /-- Does this operator force the predicate to apply to each atom separately? -/
+  isDistributive : Bool
+  /-- Does this operator block exception tolerance (force all atoms to satisfy P)? -/
+  isMaximal : Bool
+  deriving DecidableEq, Repr, BEq
+
+/-- each, jeder (DP and distance): +dist, +max -/
+def DistMaxClass.distMax : DistMaxClass := ⟨true, true⟩
+/-- jeweils: +dist, -max -/
+def DistMaxClass.distNonMax : DistMaxClass := ⟨true, false⟩
+/-- all/alle: -dist, +max -/
+def DistMaxClass.nonDistMax : DistMaxClass := ⟨false, true⟩
+/-- definite plurals: -dist, -max -/
+def DistMaxClass.nonDistNonMax : DistMaxClass := ⟨false, false⟩
+
+/--
+Hypothetical exception-tolerant DP quantifier.
+@cite{haslinger-etal-2025} eq. (27): predicted possible by the Križ & @cite{kriz-spector-2021}
+framework but not attested in any known language. The non-attestation is a typological
+puzzle — the formal tools for non-maximality (tolerance relations) don't inherently
+block DP-internal quantifiers from using them.
+
+⟦[jeder* P] Q⟧^≤ = λw.∃z[z ≤ ⊕P ∧ ∀y[y ∈ AT ∧ y ⊑ z → ⟦Q⟧^≤(w)(y)]]
+-/
+def distTolerantQuant (restrictor scope : Atom → W → Bool) (tol : Tolerance Atom)
+    (x : Finset Atom) (w : W) : Bool :=
+  decide (∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x = true ∧
+    (∀ a ∈ z, restrictor a w = true) ∧ (∀ a ∈ z, scope a w = true))
 
 end Semantics.Lexical.Plural.Distributivity

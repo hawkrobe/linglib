@@ -587,18 +587,26 @@ grammatical integration inversely correlates with expressiveness.
 
 open Semantics.Lexical.Expressives
 
-/-- Derived ideophonic verbs exhibit all four CI expression properties. -/
-def ideophoneVerbProperties : CIExprProperties :=
-  { speakerOriented := true
-    repeatable := true
+/-- Derived ideophonic verbs exhibit all canonical expressive properties:
+    independent, nondisplaceable, perspective-dependent, descriptively
+    ineffable, immediate, repeatable, no perspective shift, no discourse
+    antecedent required. -/
+def ideophoneVerbProperties : SecondaryMeaningProperties :=
+  { independent := true
+    nondisplaceable := true
+    perspectiveDependent := true
+    descriptivelyIneffable := true
     immediate := true
-    independent := true }
+    repeatable := true
+    allowsPerspectiveShift := false
+    requiresDiscourseAntecedent := false }
 
-/-- Derived ideophonic verbs have the same CI properties as canonical
-    expressives — grammatical integration does not strip expressiveness.
+/-- Derived ideophonic verbs have the same secondary meaning properties as
+    canonical expressives — grammatical integration does not strip
+    expressiveness.
 
     Note: this is definitionally true because the Mwaghavul data
-    instantiates the same four property values. The empirical content
+    instantiates the same property values. The empirical content
     is in the *claim* that these properties hold for derived verbs —
     the theorem merely records that claim in a machine-checkable form. -/
 theorem expressiveness_survives_integration :

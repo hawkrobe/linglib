@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.Linarith
@@ -718,5 +719,90 @@ theorem none_doubleMono_bridge :
   ⟨rfl, no_restrictor_down, no_scope_down⟩
 
 end CanonicalGQDenotations
+
+-- ============================================================================
+-- Distributivity & Maximality (@cite{haslinger-etal-2025})
+-- ============================================================================
+
+/-! Connection to the distributivity/maximality framework in
+    `Theories/Semantics/Lexical/Plural/Distributivity.lean`.
+
+    English quantifiers map to the 2×2 `DistMaxClass` classification:
+
+    | Form      | ±dist | ±max | Class        | Theory operator   |
+    |-----------|-------|------|--------------|-------------------|
+    | each      | +     | +    | distMax      | `distMaximal`     |
+    | every     | +     | +    | distMax      | `distMaximal`     |
+    | all       | -     | +    | nonDistMax   | `allViaForallH`   |
+    | some      | -     | -    | nonDistNonMax| —                 |
+
+    The key contrast with German: English lacks a lexicalized +dist/−max
+    item (German *jeweils*). English "each" and "every" both force
+    maximality; tolerance-based non-maximality in English comes from
+    bare plural definites, not from a dedicated distributor.
+
+    Cross-ref: `Fragments/German/Distributives.lean` for the German
+    typology; `Phenomena/Plurals/Studies/HaslingerEtAl2025.lean` for
+    the empirical evidence. -/
+
+open Semantics.Lexical.Plural.Distributivity
+
+/-- each: +distributive, +maximal — forces every atom to satisfy P.
+    Semantics: `distMaximal`. -/
+def each_distMaxClass : DistMaxClass := .distMax
+
+/-- every: +distributive, +maximal — same as each for dist/max,
+    differs in allowing collective readings more readily.
+    Semantics: `distMaximal`. -/
+def every_distMaxClass : DistMaxClass := .distMax
+
+/-- all: -distributive, +maximal — doesn't force atom-by-atom evaluation,
+    but blocks exception tolerance. Semantics: `allViaForallH`.
+    @cite{kriz-2016}: `all` removes homogeneity (gap → false). -/
+def all_distMaxClass : DistMaxClass := .nonDistMax
+
+/-- some: -distributive, -maximal — existential, no maximality. -/
+def some_distMaxClass : DistMaxClass := .nonDistNonMax
+
+/-- Metadata bridge: each is +dist, +max. -/
+theorem each_is_distMax :
+    each.qforce = .universal ∧ each_distMaxClass = .distMax := ⟨rfl, rfl⟩
+
+/-- Metadata bridge: every is +dist, +max. -/
+theorem every_is_distMax :
+    every.qforce = .universal ∧ every_distMaxClass = .distMax := ⟨rfl, rfl⟩
+
+/-- Metadata bridge: all is -dist, +max. -/
+theorem all_is_nonDistMax :
+    all.qforce = .universal ∧ all_distMaxClass = .nonDistMax := ⟨rfl, rfl⟩
+
+/-- English has no lexicalized +dist/−max item (contrast German *jeweils*).
+    All distributive universals in English are also maximal. -/
+theorem english_dist_implies_max :
+    each_distMaxClass.isDistributive = true →
+      each_distMaxClass.isMaximal = true ∧
+      every_distMaxClass.isMaximal = true := by
+  decide
+
+/-- Semantic grounding: `each` distributes via `distMaximal`. -/
+def eachSem {Atom W : Type*} [DecidableEq Atom] (P : Atom → W → Bool) :
+    Finset Atom → W → Bool :=
+  distMaximal P
+
+/-- Semantic grounding: `all` universally quantifies over the
+    homogeneity parameter. -/
+def allSem {Atom W : Type*} [DecidableEq Atom] [Fintype Atom]
+    (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Prop :=
+  allViaForallH P x w
+
+/-- `eachSem` IS `distMaximal` by construction. -/
+theorem each_eq_distMaximal {Atom W : Type*} [DecidableEq Atom]
+    (P : Atom → W → Bool) : eachSem P = distMaximal P := rfl
+
+/-- `allSem` reduces to checking every atom (via `allViaForallH_iff_allSatisfy`). -/
+theorem all_eq_allSatisfy {Atom W : Type*} [DecidableEq Atom] [Fintype Atom]
+    (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
+    allSem P x w ↔ allSatisfy P x w = true :=
+  allViaForallH_iff_allSatisfy P x w
 
 end Fragments.English.Determiners

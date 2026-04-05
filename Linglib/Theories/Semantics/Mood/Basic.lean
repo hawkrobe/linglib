@@ -94,63 +94,6 @@ def IND {W Time : Type*}
     (s₁ s₂ : Situation W Time) : Prop :=
   s₂.world = s₁.world ∧ P s₂ s₁
 
-/--
-Simplified IND: Just pass through with world check.
-
-For cases where we're already working with a single world.
--/
-def INDsimple {W Time : Type*}
-    (P : Situation W Time → Prop)
-    (s : Situation W Time) : Prop :=
-  P s
-
-
-/--
-A situation context: a list of available situation drefs.
-
-In CDRT, contexts track discourse referents. Here we track situations.
--/
-structure SitContext (W Time : Type*) where
-  /-- Available situation drefs -/
-  situations : List (Situation W Time)
-  /-- The "current" or "local" situation (for evaluation) -/
-  current : Situation W Time
-  deriving Repr
-
-/--
-Dynamic situation predicate: updates the situation context.
--/
-abbrev DynSitPred (W Time : Type*) := SitContext W Time → SitContext W Time → Prop
-
-/--
-Dynamic SUBJ: introduces a situation and adds it to the context.
-
-⟦SUBJ⟧_dyn = λP.λc. ∃s₁ ∈ hist(c.current). P({...c, situations := s₁ :: c.situations})
--/
-def SUBJdyn {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
-    (P : DynSitPred W Time)
-    (c : SitContext W Time) : Prop :=
-  ∃ s₁ : Situation W Time,
-    s₁ ∈ historicalBase history c.current ∧
-    ∃ c' : SitContext W Time,
-      c'.situations = s₁ :: c.situations ∧
-      c'.current = s₁ ∧
-      P { situations := s₁ :: c.situations, current := s₁ } c'
-
-/--
-Dynamic IND: retrieves the most recent situation from context.
-
-⟦IND⟧_dyn = λP.λc. c.situations.head? = some s → P(c)(c)
--/
-def INDdyn {W Time : Type*}
-    (P : DynSitPred W Time)
-    (c : SitContext W Time) : Prop :=
-  match c.situations with
-  | [] => False  -- No situation to retrieve
-  | s :: _ => c.current.world = s.world ∧ P c c
-
-
 -- ════════════════════════════════════════════════════════════════
 -- § Eventuality-Level Mood Operators (@cite{grano-2024})
 -- ════════════════════════════════════════════════════════════════
@@ -205,7 +148,7 @@ def SBJVev₁ {Ev : Type*} (P : Ev → Prop) : Ev → Prop := P
     which integrates CAUSE* from the core proposal (§4, (79)) with Portner
     & Rubinstein's (@cite{portner-rubinstein-2020}) modal quantification
     framework. The attitude state e must causally bring about the described
-    event e' "in the right way" (@cite{searle-1983}; Harman 1976). -/
+    event e' "in the right way" (@cite{searle-1983}; @cite{harman-1976}). -/
 def SBJVev₂ {Ev W : Type*}
     (causeStar : Ev → Ev → W → Prop)  -- CAUSE*(state, event, world)
     (content : Ev → W → Prop)          -- content of the attitude state
@@ -248,14 +191,6 @@ def prefersSubjunctive : MoodSelector → Bool
   | .crossLinguisticallyVariable => false  -- default: variable, not robust SBJV
   | .moodNeutral => false  -- default to indicative
 
-/-- Cross-linguistically variable selectors are distinct from both robust
-    indicative-selecting and robust subjunctive-selecting. -/
-theorem variable_ne_robust :
-    MoodSelector.crossLinguisticallyVariable ≠ .indicativeSelecting ∧
-    MoodSelector.crossLinguisticallyVariable ≠ .subjunctiveSelecting := by
-  exact ⟨nofun, nofun⟩
-
-
 /--
 Conditional with SF antecedent (@cite{mendes-2025}, main application).
 
@@ -289,38 +224,6 @@ def conditionalIND {W Time : Type*}
     (consequent : Situation W Time → Prop)
     (s : Situation W Time) : Prop :=
   antecedent s → consequent s
-
-
-/--
-Temporal shift.
-
-The subjunctive future (SF) enables future reference because:
-1. SUBJ introduces a situation s₁ in the historical alternatives
-2. Historical alternatives can have times ≥ current time
-3. The consequent is evaluated relative to τ(s₁), not τ(s₀)
-
-This temporal shift gives SF its future-oriented interpretation.
--/
-def temporalShift {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time)
-    (P : Situation W Time → Prop)
-    (s₀ : Situation W Time) : Prop :=
-  ∃ s₁ : Situation W Time,
-    s₁ ∈ historicalBase history s₀ ∧
-    s₁.time ≥ s₀.time ∧  -- Future or present
-    P s₁
-
-/--
-The future-oriented restriction: s₁ must be strictly after s₀.
--/
-def futureShift {W Time : Type*} [LT Time] [LE Time]
-    (history : WorldHistory W Time)
-    (P : Situation W Time → Prop)
-    (s₀ : Situation W Time) : Prop :=
-  ∃ s₁ : Situation W Time,
-    s₁ ∈ historicalBase history s₀ ∧
-    s₁.time > s₀.time ∧  -- Strictly future
-    P s₁
 
 
 /--

@@ -1,5 +1,160 @@
 # Changelog
 
+## [0.229.536] - 2026-04-05
+
+### Changed
+- **exhAll_eq_exhB_when_all_ie** (InnocentExclusion.lean): sorry closed — when IE = [0..n-1], all alternatives are non-weaker (proved via `ieIndices_sub_nw`: IE elements come from MCEs which are sublists of NW), so `exhAll`'s if-then-else always takes the `then` branch and both operators agree. Proof uses `all_agree` (induction on alts with index tracking) and `all_nonweaker` (derives non-weakness from h via IE ⊆ NW). **InnocentExclusion.lean is now 0-sorry**
+
+## [0.229.535] - 2026-04-05
+
+### Added
+- **Yagi 2025 formalization** (Presupposition/Studies/Yagi2025.lean): conflicting presuppositions in disjunction — 0-sorry proofs for all four failure results (Strong Kleene never false, K&P presup entails assertion, update semantics undefined/uninformative, Schlenker local contexts too restricted), meta-assertion operator, flexible accommodation (`orFlex`), genuineness, per-connective scorecard (`sk_fails_2b`, `classical_fails_2a`, `filter_fails_2a`, `metaAssert_fails_2a`, `orFlex_satisfies_both`), ex. (18) symmetric filtering overgeneration, negation static/dynamic divergence
+- **Weak Kleene connectives** (Core/Semantics/Presupposition.lean): `orWeak`, `andWeak` with `eval_orWeak` bridge to `Truth3.joinWeak`; `genuineness` predicate for Zimmermann 2000 liveness condition; `genuineness_comm` symmetry theorem
+- **Presuppositional update semantics** (Dynamic/UpdateSemantics/Basic.lean): `PState`, `PUpdate.presup`, `PUpdate.disjPresup`, `PUpdate.disjFlex` bridging static PrProp to dynamic CCP layer; `presup_disj_uninformative_when_supported` proving Yagi §2.3 key claim (supported presuppositions + true disjunction → uninformative update)
+
+## [0.229.534] - 2026-04-05
+
+### Changed
+- **ie_eq_nw_of_nw_consistent** (InnocentExclusion.lean): sorry closed — structured proof via 10 private helper lemmas (`sublists_sub`, `sublists_length_le`, `sublists_max_length_unique`, `sublists_proper_shorter`, `sublists_all_mem_contains`, `nw_nodup`, `not_dominates_nw`, `nw_mem_mce`, `dominates_proper_subset`, `mce_eq_nw`). Key insight: when NW is consistent, it is the unique MCE because no sublist of NW can be strictly longer (so NW passes the maximality filter) and NW dominates every proper subset (so nothing else survives). File down to 1 sorry (pre-existing `exhAll_eq_exhB_when_all_ie`)
+
+## [0.229.533] - 2026-04-05
+
+### Removed
+- **INDsimple** (Mood/Basic.lean): dead code — unused identity function on situations
+- **temporalShift, futureShift** (Mood/Basic.lean): dead static operators superseded by `dynSUBJ` + `historicalBase`
+- **variable_ne_robust** (Mood/Basic.lean): tautological theorem (constructor distinctness)
+- **SitBinding, SitBinding.isValid** (ModalDonkeyAnaphora.lean): data-as-types anti-pattern — encoding binding as a struct rather than using `dynSUBJ` directly
+- **DonkeyAccessibility** (ModalDonkeyAnaphora.lean): data-as-types anti-pattern — `modallyAccessible` predicate does the real work
+
+### Changed
+- **sf_vs_counterfactual_temporal** (Mendes2025.lean): removed spurious `∧ True` — now a direct term-mode proof delegating to `derivation_future_ordering`
+
+### Fixed
+- **Harman 1976 citations**: converted 3 inline citations to `@cite{harman-1976}` format, added bib entry (also added `@cite{chisholm-1966}`)
+
+## [0.229.532] - 2026-04-05
+
+### Added
+- **ie_eq_nw_of_nw_consistent** (InnocentExclusion.lean): general bridge theorem — when all non-weaker alternatives are jointly consistently excludable, IE = NW. Under this condition, Fox's exhaustification and the neo-Gricean Maximize principle agree on scalar inferences. Sorry'd with proof sketch; concrete instances verified by `native_decide`
+- **disj_nw_inconsistent** (InnocentExclusion.lean): counterexample — the disjunction alternative set fails NW-consistency (symmetric alternatives p, q prevent joint exclusion), explaining why IE ⊊ NW for disjunction
+- **Three-point Horn scale ⟨some, most, all⟩** (InnocentExclusion.lean): `ScaleW3` world type, entailment chain (`scale3_all_entails_most`, `scale3_most_entails_some`), NW-consistency and IE=NW verified for "some" and "most" as prejacents, exhaustification results (`scale3_exh_some`, `scale3_exh_most`, `scale3_exh_all`) matching Maximize predictions
+
+## [0.229.531] - 2026-04-05
+
+### Added
+- **IsContextFilter** (Situations.lean): predicate for operations that only remove context entries, with `comp` (composition) and `id_filter` theorems
+- **dynRelation** (Situations.lean): general situation relation filter — temporal operators are instances, with `dynRelation_isFilter` theorem
+- **dynRelation algebra** (Situations.lean): `dynRelation_idempotent`, `dynRelation_contradictory` (contradictory relations compose to ∅), `dynRelation_transitive` (transitive chains across three variables), `dynRelation_trichotomy` (any linearly ordered projection partitions contexts)
+- **Temporal constraints as dynRelation instances** (Situations.lean): `dynPAST_eq_dynRelation`, `dynPRES_eq_dynRelation`, `dynFUT_eq_dynRelation` — all three are `rfl`
+- **temporal_partition** (Situations.lean): `PAST ∪ PRES ∪ FUT = c`, derived from `dynRelation_trichotomy` on `Situation.time` via trichotomy of linear orders
+- **Temporal disjointness** (Situations.lean): `dynPAST_dynFUT_empty`, `dynPAST_dynPRES_empty`, `dynPRES_dynFUT_empty` — derived from `dynRelation_contradictory` + order theory
+- **dynPAST_transitive** (Situations.lean): chained PAST constraints compose (`e < r < s → e < s`), derived from `dynRelation_transitive` + `lt_trans`
+- **subjIndChain_singleton** (ModalDonkeyAnaphora.lean): compositional bridge — the full SUBJ-IND pipeline with predication filters on a singleton context is equivalent to `∃ s₁ ∈ historicalBase, P(s₁) ∧ Q(s₁)`
+- **subjIndChain_entails_conditionalSF** (ModalDonkeyAnaphora.lean): dynamic conjunction entails static implication — the pipeline result implies `conditionalSF` since `P ∧ Q → (P → Q)`
+
+### Changed
+- **subj_ind_chain_modal_donkey** (ModalDonkeyAnaphora.lean): ad-hoc filter hypothesis (`hQ_filter : Q(...) ⊆ ...`) replaced with `IsContextFilter Q`
+- **sf_restrictor_future_reference** (Situations.lean): ad-hoc composite filter hypothesis replaced with `IsContextFilter restrictor` + `IsContextFilter nuclear`
+- **dynIND_isFilter** (Situations.lean): extracted as standalone theorem
+
+## [0.229.530] - 2026-04-05
+
+### Added
+- **dynSUBJ_singleton_eq** (Situations.lean): full set characterization — `dynSUBJ` on singleton `{(g, s₀)}` equals `{ (g[v↦s₁], s₁) | s₁ ∈ historicalBase }`, strictly stronger than the existential iff
+- **dynSUBJ_realizes_SUBJ** (Situations.lean): bridge theorem proving dynamic `dynSUBJ` implements static `Mood.SUBJ` — for singleton contexts, existential reachability via `dynSUBJ` is equivalent to `SUBJ`'s quantification over historical alternatives
+- **dynSUBJ_binds_current** (Situations.lean): structural invariant — after `dynSUBJ` binds `v`, looking up `v` always returns the current situation (`gs.1.sit v = gs.2`)
+- **dynIND_realizes_IND** (Situations.lean): bridge theorem proving dynamic `dynIND` implements static `Mood.IND` — context membership plus predicate satisfaction decomposes into membership plus `IND`'s same-world presupposition
+- **dynIND_after_dynSUBJ_same_var** (Situations.lean): IND is identity after SUBJ on the same variable — the same-world check is trivially satisfied since SUBJ binds `v` to the current situation
+- **Singleton instance for SitContext**: resolves `Set.instSingletonSet` through the `def` barrier
+
+## [0.229.529] - 2026-04-05
+
+### Changed
+- **SecondaryMeaningProperties** (Basic.lean): promoted from OutlookMarker.lean, replacing 4-field `CIExprProperties` with 8-field version (@cite{potts-2007} + @cite{kubota-2026}); `expressiveProperties` and `appositiveProperties` now use the richer type; downstream users (KayFillmore1999, AkinboFwangwar2026) updated
+- **OutlookMarker.lean**: restored ~12 broken `@cite{kubota-2026}` citations throughout docstrings; removed duplicate `SecondaryMeaningProperties` and `expressiveProfile` (now imported from Basic.lean); fixed stray paren in `@cite{potts-2007}` docstring
+- **kubota-2026** (references.bib): fixed hallucinated metadata — title, booktitle ("Cambridge Handbook of Usage-Based Approaches to Japanese Linguistics"), editor (Hasegawa, Yoko), publisher (CUP), subfield (semantics not morphology) all corrected
+- **Register.lean**: updated docstring to remove reference to deleted `CIContext.formality`
+
+### Removed
+- **CIExprProperties** (Basic.lean): replaced by `SecondaryMeaningProperties`
+- **CIExprType**, **CIContext**, **isFelicitous** (Basic.lean): dead code with magic number thresholds (-20, 50, 30), unused outside Basic.lean
+- **ciWeakerThan** (Basic.lean): trivial wrapper (`ciStrongerThan` flipped), unused
+- **Rat import** (Basic.lean): `Mathlib.Data.Rat.Defs` no longer needed after CIContext deletion
+
+## [0.229.528] - 2026-04-05
+
+### Added
+- **dynSUBJ_realizes_SUBJ** (Situations.lean): bridge theorem proving dynamic `dynSUBJ` implements static `Mood.SUBJ` — for singleton contexts, existential reachability via `dynSUBJ` is equivalent to `SUBJ`'s quantification over historical alternatives
+- **dynIND_realizes_IND** (Situations.lean): bridge theorem proving dynamic `dynIND` implements static `Mood.IND` — context membership plus predicate satisfaction decomposes into membership plus `IND`'s same-world presupposition
+- **Singleton instance for SitContext**: resolves `Set.instSingletonSet` through the `def` barrier
+
+## [0.229.527] - 2026-04-05
+
+### Added
+- **removeGap_iff_forallH** (KrizSpector2021.lean): bridge theorem composing `removeGap_plural_true_iff` with `forallH_triangle` — Križ 2016's gap removal and K&S 2021's ∀H quantification are provably equivalent
+- **distr_star_iff_all_atoms** (Link1983.lean): explicit bridge connecting Link's mereological `Distr` + `*P` to Finset-based `distMaximal`; docstring maps lattice-based and Finset-based operators
+- **English Determiners distributivity section** (Determiners.lean): `DistMaxClass` classification for each/every/all/some; `eachSem`/`allSem` grounded in `distMaximal`/`allViaForallH`; `english_dist_implies_max` theorem
+- **fullCandidateSet_eq_candidateSet_full** (CandidateInterpretation.lean): upgraded from subset to equality now that both sets require nonempty witnesses
+
+### Changed
+- **distTolerant** (Distributivity.lean): added `z.Nonempty` constraint — ∅ was vacuously witnessing truth via `∀a ∈ ∅, P a w = true`
+- **candidateSet** (CandidateInterpretation.lean): added `z.Nonempty` constraint, matching `fullCandidateSet`
+- **distTolerantQuant** (Distributivity.lean): added `z.Nonempty` constraint (same bug)
+- **distMaximal_eq_identity**: now requires `x.Nonempty` hypothesis (empty pluralities break the identity tolerance ↔ maximal equivalence)
+- **identity_candidateSet_eq_singleton**, **identity_candidateSet_singleton'**: require `x.Nonempty`
+- **distTolerant_iff_exists_tolerant**: updated to include `z.Nonempty` in the existential
+
+### Removed
+- **distTolerant_full_always_true** (CandidateInterpretation.lean): deleted — was semantically wrong (∅ witness bug made it trivially true for any predicate/plurality)
+- **classifyOperator** (Distributivity.lean): dead code, never used
+- **addressesIssue** duplicate (AghaJeretic2022.lean): deleted redundant Bool version; canonical Prop version in `Semantics.Homogeneity`
+
+## [0.229.526] - 2026-04-05
+
+### Added
+- **ciStrongerThan_irrefl**, **ciStrongerThan_trans**, **ciStrongerThan_asymm** (Expressives/Basic.lean): structural theorems proving CI informativeness ordering is a strict partial order
+- **aci_polarity_insensitive** (ConventionalImplicatures.lean): theorem replacing trivial `aciInDEContext` def; shows MCIs! is structurally independent of context polarity
+- **ArgExtensionPattern** (LoGuercio2025.lean): moved from dissolved `Phenomena/Expressives/Basic.lean`; documents §3.2.4 competing accounts of expressive adjective scope
+- 4 bibliography entries: `gutzmann-2019`, `frazier-dillon-clifton-2015`, `lo-guercio-orlando-2022`, `levinson-2000` (all verified from paper pp.25-26, 35-36)
+
+### Changed
+- **ConventionalImplicatures.lean**: removed unused imports (`Core.Basic`, `BeliefState`); removed unused `_h_relevant` hypothesis from `aci_grounded_in_mcis`
+- **LoGuercio2025.lean**: import changed from dissolved `Phenomena.Expressives.Basic` to `Theories.Semantics.Lexical.Expressives.Basic`; fixed bare "Levinson 2000" → `@cite{levinson-2000}`; added `@cite{gutzmann-2019}`, `@cite{frazier-dillon-clifton-2015}`, `@cite{lo-guercio-orlando-2022}` citations
+- **references.bib**: updated sources fields for file moves; fixed lo-guercio-2025 title
+
+### Removed
+- **Phenomena/Expressives/Basic.lean**: dissolved per provenance-tracking policy — `ArgExtensionPattern` moved to `LoGuercio2025.lean`; CI projection wrappers deleted (redundant with theory layer); broken `RegisterConstrainedAlternative` section deleted (both registers were `.informal`, making `isCompatible` return `true` despite claiming incompatibility)
+
+## [0.229.525] - 2026-04-05
+
+### Changed
+- **Mendes2025.lean**: moved from `Phenomena/Modality/Studies/` to `Phenomena/TenseAspect/Studies/` (SF is a tense/aspect phenomenon, not modality); deleted unused `CDRTType` inductive, `Construction` inductive; renamed `lexIf` → `seqUpdate` with docstring explaining why sequential composition (not the paper's DRS conditional) is appropriate; removed bare formula number citations
+- **Situations.lean**: removed dead import of `Mood.Basic` and `open Semantics.Mood` (no symbols used); deleted duplicate `currentSituations` (identical to `situations`); deleted tautology `no_modal_no_temporal_shift` (proved `X = X`); deleted `SentenceDerivation` struct (never used); deleted duplicate `exampleDerivation`/`derivation_matches_paper` (canonical versions in Mendes2025.lean); removed unused `restrictor` param from `relativeClauseSF`; replaced unverified page-number citation with `@cite`
+- **ModalDonkeyAnaphora.lean**: removed phenomenon-level data structures (`ClassicDonkey`, `ModalDonkey`, `SituationBindingStrategy`, `mendesBindingStrategy`); fixed typo `crossClausualBinding` → `crossClausalBinding`; removed unused `E` type param from `DonkeyAccessibility`; removed dead `open Semantics.Mood`; replaced bare formula number citations with content descriptions
+- **Mood/Basic.lean**: removed unused duplicate `SitContext` struct, `DynSitPred`, `SUBJdyn`, `INDdyn` (canonical versions are in `IntensionalCDRT/Situations.lean`)
+
+### Removed
+- **SubordinateFuture.lean**: deleted 309-line file of stipulative string-field structures with no theorems; Portuguese examples already present as docstrings in Mendes2025.lean
+
+## [0.229.524] - 2026-04-05
+
+### Added
+- **Phenomena/Expressives/**: new basic-level phenomenon category for CI-bearing expressions (epithets, honorifics, expressive adjectives, appositives, supplementary adverbs, emotive markers); `Basic.lean` derives CI projection from `TwoDimProp` semantics and connects register blocking to `Core.Register.Level`; `Studies/LoGuercio2025.lean` (moved from Presupposition/Studies/)
+- **violatesMaximize** (Structural.lean): generic "maximize content" principle parameterized over content dimension — `violatesConversationalPrinciple` (at-issue), `violatesMP` (presuppositional), and `violatesMCIs` (CI) are all instances
+- **violatesMP** (Structural.lean): Maximize Presupposition formalization with same-assertion side condition
+- **epithet_not_alternative_outOfBlue** (ConventionalImplicatures.lean): tree-based proof that epithets are not structural alternatives out of the blue, via `category_preservation` on DP
+- **ci_projects_through_neg_derived**, **ci_projects_through_imp_derived**, **ci_independent_derived** (Phenomena/Expressives/Basic.lean): CI projection theorems derived from `TwoDimProp` operations rather than stipulated
+
+### Changed
+- **ConventionalImplicatures.lean**: rewritten to import and use `StructOp`/`structuralAlternatives` from Structural.lean; string-based `CIAlternativePair`/`applyMCIs` replaced with tree-based worked examples connecting Fox & Katzir alternatives to CI inference
+- **LoGuercio2025.lean**: moved from Presupposition/ to Expressives/; removed duplicate `InferenceTypeComparison` (now imports from ConventionalImplicatures); replaced hallucinated example numbers with content descriptions; added register-blocking data
+- **references.bib**: fixed lo-guercio-2025 title (removed journal info from title field), updated sources for lo-guercio-2025/potts-2005/gutzmann-2015 to reflect new file locations, removed stale NeoGricean paths
+
+## [0.229.523] - 2026-04-04
+
+### Changed
+- **Counterfactual.lean**: streamline `projectTruthValues` to delegate to `Core.Duality.aggregate` — delete 14 bridge helper lemmas (~264 lines), `projectTruthValues_eq_aggregate` is now `rfl`, `embeddedSelectional_determinate` and `strength_determines_pattern` are one-liners via `NonBivalence.global_always_determinate`/`global_mixed_pattern`, `universal_all_false` uses `foldl_inf_mem_false` + `sup_idem`
+
 ## [0.229.522] - 2026-04-04
 
 ### Changed

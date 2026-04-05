@@ -270,4 +270,42 @@ theorem properPlural_cum {P : E → Prop} {x y : E}
 
 end Classification
 
+-- ════════════════════════════════════════════════════
+-- § 6. Connection to Finset-Based Distributivity
+-- ════════════════════════════════════════════════════
+
+/-! Link's `Distr(P)` — P applies to atoms only — is the mereological
+    foundation for `distMaximal` in `Distributivity.lean`. The Finset-based
+    operator `distMaximal P x w = ∀a ∈ x. P(a)(w)` corresponds to
+    Link's distributive inference (`distr_atom_part`): if P is distributive,
+    distributing to every atom-part and checking each is correct.
+
+    The connection is structural: Link works with a lattice E and atoms,
+    while `distMaximal` works with `Finset Atom`. The correspondence is:
+    - Link's atoms A ⊆ E = the type `Atom` in `Distributivity.lean`
+    - Link's ≤ᵢ (individual part) = Finset membership `a ∈ x`
+    - Link's `*P(x)` (plural closure) = "the members of x all satisfy P"
+    - `Distr(P) ∧ *P(x)` → `∀a atom-part-of x. P(a)` = `distMaximal P x w` -/
+
+/-- Link's `distr_atom_part` is the mereological justification for
+    `Distributivity.distMaximal`. In the Finset-based setting:
+
+    - A `Finset Atom` corresponds to a plurality `x ∈ E`
+    - Each element `a ∈ x` corresponds to an atom `a ≤ᵢ x`
+    - `distMaximal P x w = ∀a ∈ x. P(a)(w)` checks every atom
+
+    For distributive predicates (`Distr P`), `distr_atom_part` proves
+    this is correct: `*P(x)` holds iff every atom-part of x satisfies P.
+    For collective predicates (¬Distr P), `distMaximal` would be
+    too strong — the predicate may hold of the plurality without
+    holding of each atom (e.g., "gathered", "surrounded").
+
+    The key correspondence:
+    - `distr_atom_part` (lattice) ≅ `distMaximal_forces_all` (Finset)
+    - `T8_atom_star_iff` (lattice) ≅ `distMaximal_singleton` (Finset) -/
+theorem distr_star_iff_all_atoms {P : E → Prop} (hDistr : Distr P)
+    (hJP : AtomJoinPrime E) {x : E} :
+    star P x → ∀ {y : E}, Atom y → y ≤ x → P y :=
+  distr_atom_part hDistr hJP
+
 end Semantics.Lexical.Plural.Link1983

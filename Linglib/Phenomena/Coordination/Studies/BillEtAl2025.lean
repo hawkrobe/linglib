@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Montague.Conjunction
+import Linglib.Core.Coordination
 
 /-!
 # @cite{bill-etal-2025} — DP Conjunction Complexity
@@ -36,12 +37,17 @@ alternative accounts.
 
 The M&S decomposition maps directly onto Montague/Conjunction.lean:
 - J = `genConj` (Partee & Rooth's generalized conjunction / set intersection)
-- MU = `inclFunc` (INCL schema / subset relation)
-- ☉ = `typeRaise` (individual → singleton set / generalized quantifier)
+- MU = `inclFunc` (INCL: subset check for singletons)
+- ☉ = `msShift` / `typeRaise` (individual → singleton set / GQ)
+
+`ms_inclFunc_eq_typeRaise` proves MU ∘ ☉ = typeRaise.
+`ms_full_derivation` proves J(MU(☉(e₁)), MU(☉(e₂))) = coordEntities.
 
 -/
 
 namespace Phenomena.Coordination.Studies.BillEtAl2025
+
+open Core.Coordination
 
 -- Conjunction Particle Typology
 
@@ -93,29 +99,29 @@ structure ConjParticle where
   language : String
   form : String
   gloss : String
-  role : String  -- "J" or "MU"
+  role : CoordRole
   boundMorpheme : Bool  -- clitic/suffix vs free morpheme
   deriving Repr
 
 /-- Georgian J particle -/
 def georgian_da : ConjParticle :=
   { language := "Georgian", form := "da", gloss := "and"
-  , role := "J", boundMorpheme := false }
+  , role := .j, boundMorpheme := false }
 
 /-- Georgian MU particle (clitic) -/
 def georgian_c : ConjParticle :=
   { language := "Georgian", form := "-c", gloss := "MU/also"
-  , role := "MU", boundMorpheme := true }
+  , role := .mu, boundMorpheme := true }
 
 /-- Hungarian J particle -/
 def hungarian_es : ConjParticle :=
   { language := "Hungarian", form := "és", gloss := "and"
-  , role := "J", boundMorpheme := false }
+  , role := .j, boundMorpheme := false }
 
 /-- Hungarian MU particle -/
 def hungarian_is : ConjParticle :=
   { language := "Hungarian", form := "is", gloss := "MU/also"
-  , role := "MU", boundMorpheme := false }
+  , role := .mu, boundMorpheme := false }
 
 /--
 Both Georgian and Hungarian allow all three strategies.
@@ -168,6 +174,8 @@ def hungarianChildren : ParticipantGroup :=
 def hungarianAdults : ParticipantGroup :=
   { language := "Hungarian", group := .adult, n := 30, ageRange := none }
 
+-- Correlations
+
 /--
 Age-accuracy correlation in Georgian children: medium positive.
 r(525) = 0.31, p < 0.001 (footnote 8).
@@ -180,12 +188,24 @@ r(497) = -0.18, p < 0.001 (footnote 9). Older children needed fewer replays.
 -/
 def georgianAgeSentencePlayedCorrelation : Float := -0.18
 
+/--
+Age-accuracy correlation in Hungarian children: small positive.
+r(423) = 0.19, p < 0.001 (footnote 11).
+-/
+def hungarianAgeAccuracyCorrelation : Float := 0.19
+
+/--
+Age-sentencePlayedN correlation in Hungarian children: small negative.
+r(405) = -0.28, p < 0.001 (footnote 11). Older children needed fewer replays.
+-/
+def hungarianAgeSentencePlayedCorrelation : Float := -0.28
+
 /-- A single cell in the Group × SentenceType design. -/
 structure ConditionResult where
   language : String
   group : Group
   sentenceType : ConjunctionStrategy
-  /-- Accuracy (percentage 0-100) -/
+  /-- Accuracy (percentage 0-100, approximate from Figure 4/6) -/
   accuracyPct : Nat
   /-- Number of participants -/
   nParticipants : Nat
@@ -208,6 +228,38 @@ def georgianAccuracy : List ConditionResult :=
   , { language := "Georgian", group := .child, sentenceType := .jMu,   accuracyPct := 78, nParticipants := georgianChildren.n }
   , { language := "Georgian", group := .child, sentenceType := .muOnly, accuracyPct := 80, nParticipants := georgianChildren.n }
   ]
+
+-- Error Type Breakdown (Section 3.1, footnote 12)
+
+/--
+Error categories for Georgian children (footnote 12).
+Of 103 total errors:
+- 73% placed unmentioned objects (possible ad-hoc implicature failure:
+  children may not derive "nothing else is on the table")
+- 20% placed only one of the mentioned objects
+- 7% placed neither mentioned object
+-/
+structure ErrorBreakdown where
+  totalErrors : Nat
+  /-- Placed unmentioned objects on the table -/
+  unmentionedObjectsPct : Nat
+  /-- Placed only one of two mentioned objects -/
+  oneConjunctOnlyPct : Nat
+  /-- Placed neither mentioned object -/
+  neitherConjunctPct : Nat
+  deriving Repr
+
+def georgianChildErrors : ErrorBreakdown :=
+  { totalErrors := 103
+  , unmentionedObjectsPct := 73
+  , oneConjunctOnlyPct := 20
+  , neitherConjunctPct := 7 }
+
+/-- Error percentages sum to 100. -/
+theorem error_pcts_sum :
+    georgianChildErrors.unmentionedObjectsPct +
+    georgianChildErrors.oneConjunctOnlyPct +
+    georgianChildErrors.neitherConjunctPct = 100 := by native_decide
 
 -- Statistical Results
 
@@ -445,22 +497,25 @@ under a single morpheme.
 /-!
 ## Semantic Decomposition (@cite{mitrovic-sauerland-2016})
 
-The M&S decomposition maps onto three operations already formalized:
+The M&S decomposition maps onto three operations in Montague/Conjunction.lean:
 
-| M&S piece | Semantic operation | Montague/Conjunction.lean |
+| M&S piece | Semantic operation | Conjunction.lean definition |
 |-----------|-------------------|--------------------------|
+| ☉         | {x} formation     | `msShift` (= Partee's `ident`) |
+| MU        | INCL (subset)     | `inclFunc` (reduces to `typeRaise` for singletons) |
 | J         | Set intersection  | `genConj` at ⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩ |
-| MU        | Subset (INCL)     | `inclFunc` / `inclProperty` |
-| ☉         | {x} formation     | `typeRaise` (e → ⟨⟨e,t⟩,t⟩) |
 
 The full derivation of "Mary and Susan sleep":
-1. ☉(Mary) = λP.P(Mary) — typeRaise
-2. MU(☉(Mary), sleep) = {Mary} ⊆ ⟦sleep⟧ — inclFunc
+1. ☉(Mary) = λy.[y = Mary] — msShift
+2. MU(☉(Mary)) = λP.P(Mary) — inclFunc (= typeRaise for singletons)
 3. Similarly for Susan
-4. J combines the two MU-results via conjunction — genConj at type t
+4. J combines the two MU-results via genConj at GQ type
 
-The result: {Mary} ⊆ ⟦sleep⟧ ∧ {Susan} ⊆ ⟦sleep⟧
-         = sleep(Mary) ∧ sleep(Susan)
+The result: P(Mary) ∧ P(Susan) = coordEntities Mary Susan P
+
+Key theorems:
+- `ms_inclFunc_eq_typeRaise`: MU ∘ ☉ = typeRaise
+- `ms_full_derivation`: J(MU(☉(e₁)), MU(☉(e₂))) = coordEntities e₁ e₂
 -/
 
 open Semantics.Montague.Conjunction in

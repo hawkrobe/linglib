@@ -19,7 +19,7 @@ goals, as in @cite{yoon-etal-2020} for politeness).
 * `Core.Pronouns.PronounEntry.register`: pronoun register (T/V/honorific)
 * `Core.Pronouns.AllocutiveEntry.register`: allocutive marker register
 * `Fragments.English.FunctionWords.AuxEntry.register`: modal register
-* `Semantics.Lexical.Expressives.CIContext.formality`: context formality (ℚ)
+* `Semantics.Lexical.Expressives.OutlookMarker.ModalCompatibility`: outlook marker selectional restrictions
 
 Binary T/V systems (Basque, Tamil, Galician, Punjabi) use `.informal`/`.formal`.
 Ternary honorific systems (Hindi, Magahi, Maithili, Korean) use all three levels.
@@ -81,8 +81,7 @@ theorem informal_lt_formal : Level.informal < Level.formal := by decide
 /-- Round-trip: `ofNat` inverts `toNat`. -/
 theorem ofNat_toNat (l : Level) : Level.fromNat l.toNat = l := by cases l <;> decide
 
-/-- Rational-valued encoding: informal=0, neutral=1/2, formal=1.
-    Bridges to `CIContext.formality : ℚ` (0=casual, 1=formal). -/
+/-- Rational-valued encoding: informal=0, neutral=1/2, formal=1. -/
 def Level.toRat : Level → ℚ
   | .informal => 0
   | .neutral  => 1/2
