@@ -152,13 +152,13 @@ def inExtension {m : Model} (p : m.interpTy (.e ⇒ .t)) (x : m.Entity) : Bool :
 theorem sleeps_extension :
     predicateToSet sleeps_sem = {ToyEntity.john} := by
   ext x
-  simp only [predicateToSet, Set.mem_setOf_eq, Set.mem_singleton_iff]
+  change sleeps_sem x = true ↔ x = ToyEntity.john
   cases x <;> simp [sleeps_sem]
 
 theorem laughs_extension :
     predicateToSet laughs_sem = {ToyEntity.john, ToyEntity.mary} := by
   ext x
-  simp only [predicateToSet, Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+  change laughs_sem x = true ↔ (x = ToyEntity.john ∨ x = ToyEntity.mary)
   cases x <;> simp [laughs_sem]
 
 theorem john_in_sleeps : inExtension sleeps_sem ToyEntity.john = true := rfl

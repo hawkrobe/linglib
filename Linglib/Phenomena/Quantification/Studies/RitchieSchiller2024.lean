@@ -73,7 +73,7 @@ def bottleModel : Model := { Entity := Entity, decEq := inferInstance }
 
 instance : Fintype bottleModel.Entity where
   elems := ({Entity.b1, Entity.b2, Entity.b3, Entity.b4} : Finset Entity)
-  complete := fun x => by cases x <;> simp
+  complete := fun x => by cases x <;> (unfold bottleModel; simp)
 
 -- ============================================================================
 -- §2. Spatial Scene & DDRPs

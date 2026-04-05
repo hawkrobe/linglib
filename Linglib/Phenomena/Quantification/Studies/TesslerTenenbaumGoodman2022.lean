@@ -76,7 +76,7 @@ def regionModel : Model := { Entity := Region, decEq := inferInstance }
 
 instance regionFM : Fintype regionModel.Entity where
   elems := ({Region.A, Region.B, Region.C, Region.AB, Region.AC, Region.BC, Region.ABC} : Finset Region)
-  complete := fun x => by cases x <;> simp
+  complete := fun x => by cases x <;> (unfold regionModel; simp)
 
 /-- "All Xs are Ys" in state s: every populated X-region also has Y,
     AND there is at least one populated X-region (existential import).

@@ -89,9 +89,9 @@ instance : SemilatticeInf Truth3 where
   inf_le_right a b := by cases a <;> cases b <;> rfl
   le_inf a b c hab hac := by cases a <;> cases b <;> cases c <;> trivial
 
-instance : Lattice Truth3 where
-  __ := inferInstanceAs (SemilatticeSup Truth3)
-  __ := inferInstanceAs (SemilatticeInf Truth3)
+instance : Lattice Truth3 :=
+  { (inferInstance : SemilatticeSup Truth3),
+    (inferInstance : SemilatticeInf Truth3) with }
 
 instance : Bot Truth3 := ⟨.false⟩
 instance : Top Truth3 := ⟨.true⟩
@@ -102,9 +102,9 @@ instance : OrderBot Truth3 where
 instance : OrderTop Truth3 where
   le_top a := by cases a <;> rfl
 
-instance : BoundedOrder Truth3 where
-  __ := inferInstanceAs (OrderBot Truth3)
-  __ := inferInstanceAs (OrderTop Truth3)
+instance : BoundedOrder Truth3 :=
+  { (inferInstance : OrderBot Truth3),
+    (inferInstance : OrderTop Truth3) with }
 
 @[simp] theorem sup_true (a : Truth3) : a ⊔ .true = .true := by cases a <;> rfl
 @[simp] theorem true_sup (a : Truth3) : Truth3.true ⊔ a = .true := by cases a <;> rfl

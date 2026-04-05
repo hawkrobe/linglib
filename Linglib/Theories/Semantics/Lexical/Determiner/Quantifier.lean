@@ -74,7 +74,7 @@ theorem A_eq_some_sem (m : Model) [Fintype m.Entity] (domain : List m.Entity)
     (hComplete : ∀ x : m.Entity, x ∈ domain) :
     Semantics.Composition.TypeShifting.A domain = some_sem m := by
   funext R S
-  simp only [Semantics.Composition.TypeShifting.A, some_sem]
+  simp only [Semantics.Composition.TypeShifting.A, some_sem, Model.interpTy]
   rw [Bool.eq_iff_iff, List.any_eq_true, decide_eq_true_eq]
   constructor
   · rintro ⟨x, _, h⟩
@@ -222,8 +222,8 @@ theorem exists_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
 
 /-- `count P = count (P ∘ f)` when f is a bijection. -/
 theorem count_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
-    {P : m.Entity → Prop} [DecidablePred P] [DecidablePred (P ∘ f)] :
-    count P = count (P ∘ f) := by
+    {P : m.Entity → Prop} [DecidablePred P] :
+    count P = @count _ _ (P ∘ f) (fun x => ‹DecidablePred P› (f x)) := by
   simp only [count, Function.comp]
   symm; apply Finset.card_bij (fun x _ => f x)
   · intro x hx; simp [Finset.mem_filter] at hx ⊢; exact hx
@@ -372,7 +372,7 @@ theorem most_scope_up : ScopeUpwardMono (most_sem m) := by
 /-- `⟦some⟧ = ⟦at least 1⟧`: existential quantification is "at least one". -/
 theorem some_eq_at_least_1 : some_sem m = at_least_n_sem m 1 := by
   funext (R : m.Entity → Bool) (S : m.Entity → Bool)
-  dsimp only [some_sem, at_least_n_sem]
+  dsimp only [some_sem, at_least_n_sem, Model.interpTy]
   rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
   constructor
   · intro ⟨x, hR, hS⟩
@@ -397,7 +397,7 @@ theorem outerNeg_some_eq_no : outerNeg (some_sem m) = no_sem m := by
     This is the counting quantifier instance of the Square of Opposition. -/
 theorem at_most_eq_outerNeg_at_least_succ (n : Nat) :
     at_most_n_sem m n = outerNeg (at_least_n_sem m (n + 1)) := by
-  funext R S; dsimp only [at_most_n_sem, at_least_n_sem, outerNeg]
+  funext R S; dsimp only [at_most_n_sem, at_least_n_sem, outerNeg, Model.interpTy]
   rw [Bool.eq_iff_iff, decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
   omega
 
@@ -410,7 +410,7 @@ theorem no_eq_at_most_0 : no_sem m = at_most_n_sem m 0 := by
     "Exactly n" is the meet of a lower bound and an upper bound. -/
 theorem exactly_eq_meet_at_least_at_most (n : Nat) :
     exactly_n_sem m n = gqMeet (at_least_n_sem m n) (at_most_n_sem m n) := by
-  funext R S; dsimp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, gqMeet]
+  funext R S; dsimp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, gqMeet, Model.interpTy]
   rw [Bool.eq_iff_iff, decide_eq_true_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq]
   omega
 
@@ -494,16 +494,20 @@ theorem quantityInvariant_of_quantity (q : m.interpTy Ty.det) (hQ : Quantity q) 
       count (fun (x : m.Entity) => g (A x) (B x)) =
       count (fun (x : m.Entity) => g (A' x) (B' x)) := by
     intro g _ _
-    simp only [count]; symm
+    show ((Finset.univ : Finset m.Entity).filter (fun x => g (A x) (B x))).card =
+         ((Finset.univ : Finset m.Entity).filter (fun x => g (A' x) (B' x))).card
+    symm
     apply Finset.card_bij (fun x _ => f x)
     · intro x hx
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-      rwa [hA x, hB x]
+      rw [Finset.mem_filter] at hx ⊢
+      exact ⟨Finset.mem_univ (α := m.Entity) _, by rw [hA x, hB x]; exact hx.2⟩
     · intro _ _ _ _ h; exact hBij.injective h
     · intro y hy
       obtain ⟨x, rfl⟩ := hBij.surjective y
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hy
-      exact ⟨x, by simp only [Finset.mem_filter, Finset.mem_univ, true_and]; rwa [← hA x, ← hB x], rfl⟩
+      exact ⟨x, by
+        rw [Finset.mem_filter]
+        exact ⟨Finset.mem_univ (α := m.Entity) _, by
+          rw [← hA x, ← hB x]; exact (Finset.mem_filter.mp hy).2⟩, rfl⟩
   exact hQ A B A' B'
     (cell (fun a b => a = true ∧ b = true))
     (cell (fun a b => a = true ∧ b = false))
@@ -723,7 +727,7 @@ theorem innerNeg_every_eq_no : innerNeg (every_sem m) = no_sem m := by
 theorem dualQ_every_eq_some : dualQ (every_sem m) = some_sem m := by
   funext R S; dsimp only [dualQ, outerNeg, innerNeg, every_sem, some_sem]
   rw [Bool.eq_iff_iff, Bool.not_eq_true', decide_eq_false_iff_not, decide_eq_true_eq]
-  push_neg
+  push Not
   exact exists_congr fun x => by cases R x <;> cases S x <;> simp
 
 -- === Extension (P&W Ch.4): spectator irrelevance ===
@@ -806,7 +810,7 @@ private theorem filter_and_eq {α : Type*} (es : List α) (R S : α → Bool) :
     `every(R,S) = ∀x∈R. S(x)`. -/
 theorem every_sem_extension (es : List m.Entity) (hComplete : ∀ x, x ∈ es) (R S : m.Entity → Bool) :
     every_sem m R S = (es.filter R).all S := by
-  dsimp only [every_sem]; rw [Bool.eq_iff_iff, decide_eq_true_eq, List.all_eq_true]
+  dsimp only [every_sem, Model.interpTy]; rw [Bool.eq_iff_iff, decide_eq_true_eq, List.all_eq_true]
   constructor
   · intro h x hx; simp only [List.mem_filter] at hx; exact h x hx.2
   · intro h x hR; exact h x (List.mem_filter.mpr ⟨hComplete x, hR⟩)
@@ -815,7 +819,7 @@ theorem every_sem_extension (es : List m.Entity) (hComplete : ∀ x, x ∈ es) (
     `some(R,S) = ∃x∈R. S(x)`. -/
 theorem some_sem_extension (es : List m.Entity) (hComplete : ∀ x, x ∈ es) (R S : m.Entity → Bool) :
     some_sem m R S = (es.filter R).any S := by
-  dsimp only [some_sem]; rw [Bool.eq_iff_iff, decide_eq_true_eq, List.any_eq_true]
+  dsimp only [some_sem, Model.interpTy]; rw [Bool.eq_iff_iff, decide_eq_true_eq, List.any_eq_true]
   constructor
   · intro ⟨x, hR, hS⟩; exact ⟨x, List.mem_filter.mpr ⟨hComplete x, hR⟩, hS⟩
   · intro ⟨x, hx, hS⟩; exact ⟨x, (List.mem_filter.mp hx).2, hS⟩
@@ -824,7 +828,7 @@ theorem some_sem_extension (es : List m.Entity) (hComplete : ∀ x, x ∈ es) (R
     `no(R,S) = ∀x∈R. ¬S(x)`. -/
 theorem no_sem_extension (es : List m.Entity) (hComplete : ∀ x, x ∈ es) (R S : m.Entity → Bool) :
     no_sem m R S = (es.filter R).all (λ x => !S x) := by
-  dsimp only [no_sem]; rw [Bool.eq_iff_iff, decide_eq_true_eq, List.all_eq_true]
+  dsimp only [no_sem, Model.interpTy]; rw [Bool.eq_iff_iff, decide_eq_true_eq, List.all_eq_true]
   constructor
   · intro h x hx
     have hm := List.mem_filter.mp hx
@@ -850,7 +854,7 @@ theorem every_positive_strong : PositiveStrong (every_sem m) := by
 theorem no_negative_strong_nonempty (R : m.Entity → Bool)
     (hR : ∃ x : m.Entity, R x = true) :
     no_sem m R R = false := by
-  dsimp only [no_sem]
+  dsimp only [no_sem, Model.interpTy]
   rw [Bool.eq_false_iff]
   intro h; rw [decide_eq_true_eq] at h
   obtain ⟨x, hRx⟩ := hR
@@ -1002,7 +1006,7 @@ theorem no_contradicts_some (R S : m.Entity → Bool) :
 theorem a_e_contrary (R S : m.Entity → Bool) :
     every_sem m R S = true → no_sem m R S = true →
     ∀ x : m.Entity, R x = false := by
-  dsimp only [every_sem, no_sem]
+  dsimp only [every_sem, no_sem, Model.interpTy]
   rw [decide_eq_true_eq, decide_eq_true_eq]
   intro hA hE x
   cases hR : R x
@@ -1016,7 +1020,7 @@ theorem a_e_contrary (R S : m.Entity → Bool) :
 theorem subalternation_a_i (R S : m.Entity → Bool)
     (hR : ∃ x : m.Entity, R x = true) :
     every_sem m R S = true → some_sem m R S = true := by
-  dsimp only [every_sem, some_sem]
+  dsimp only [every_sem, some_sem, Model.interpTy]
   rw [decide_eq_true_eq, decide_eq_true_eq]
   intro hA
   obtain ⟨x, hRx⟩ := hR
@@ -1358,7 +1362,7 @@ theorem exactly_n_conservative_quantity (n : Nat) :
 /-- `⟦all but 0⟧ = ⟦every⟧`: zero exceptions means universal. -/
 theorem all_but_0_eq_every : all_but_n_sem m 0 = every_sem m := by
   funext (R : m.Entity → Bool) (S : m.Entity → Bool)
-  dsimp only [all_but_n_sem, every_sem]
+  dsimp only [all_but_n_sem, every_sem, Model.interpTy]
   rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
   constructor
   · intro h x hR
@@ -1414,7 +1418,7 @@ private theorem cross_ratio_preserves_gt (a₁ b₁ a₂ b₂ : Nat)
     (hgt : a₁ > b₁) :
     a₂ > b₂ := by
   by_contra hle
-  push_neg at hle
+  push Not at hle
   rcases Nat.eq_zero_or_pos b₂ with rfl | hb₂pos
   · omega
   · have h1 : (b₁ + 1) * b₂ ≤ a₁ * b₂ :=
@@ -1461,14 +1465,14 @@ private theorem cross_ratio_eq_iff (a₁ b₁ a₂ b₂ : Nat)
     the ratio |A∩B|/|A\B|. Cross-ratio equality preserves the > comparison. -/
 theorem most_proportional : Proportional (most_sem m) := by
   intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
-  simp only [most_sem]
+  simp only [most_sem, Model.interpTy]
   rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
   exact cross_ratio_gt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
 
 /-- `⟦few⟧` is proportional: few(A,B) ↔ |A∩B| < |A\B|. -/
 theorem few_proportional : Proportional (few_sem m) := by
   intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
-  simp only [few_sem]
+  simp only [few_sem, Model.interpTy]
   rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
   exact cross_ratio_lt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
 
@@ -1491,6 +1495,7 @@ theorem half_proportional : Proportional (half_sem m) := by
   intro hNE₁ hNE₂ hCross
   simp only [half_sem]
   rw [count_decompose R₁ S₁, count_decompose R₂ S₂]
+  simp only [Model.interpTy]
   rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
   exact half_prop_core _ _ _ _ hNE₁ hNE₂ hCross
 

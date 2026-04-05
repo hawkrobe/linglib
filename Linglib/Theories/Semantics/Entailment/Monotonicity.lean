@@ -41,7 +41,7 @@ def entailmentModel : Semantics.Montague.Model :=
 
 instance : Fintype entailmentModel.Entity where
   elems := ({World.w0, World.w1, World.w2, World.w3} : Finset World)
-  complete := fun x => by cases x <;> simp
+  complete := fun x => by cases x <;> (unfold entailmentModel; simp)
 
 /-- "Every A is B" — delegates to canonical `every_sem`. -/
 abbrev every (a b : World → Bool) : Bool := every_sem entailmentModel a b

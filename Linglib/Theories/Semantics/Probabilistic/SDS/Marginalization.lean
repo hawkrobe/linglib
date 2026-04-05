@@ -337,7 +337,7 @@ is preserved (up to the trivial selectional factor).
 theorem lursa_sds_roundtrip_prior (pkg : LURSAPackage) (L : Lexicon pkg.U pkg.W) :
     let sds := lursaToSDS pkg
     @SDSConstraintSystem.unnormalizedPosterior _ _ sds.inst sds.sys L = pkg.prior L := by
-  simp only [lursaToSDS, SDSConstraintSystem.unnormalizedPosterior]
+  unfold lursaToSDS SDSConstraintSystem.unnormalizedPosterior
   simp only [SDSConstraintSystem.selectionalFactor, SDSConstraintSystem.scenarioFactor]
   ring
 

@@ -203,6 +203,7 @@ theorem discreteFactivity_gradedTruth (fp : FactivityParam) (w : W) :
   have : (Finset.univ : Finset FactivityReading) = {.factive, .nonfactive} := by
     ext x; cases x <;> simp
   rw [this, Finset.sum_insert (by decide), Finset.sum_singleton]
+  rfl
 
 /-- The discrete-factivity model's graded truth is exactly PDS's `probProp`:
     the probability of a Boolean predicate under a finite distribution.

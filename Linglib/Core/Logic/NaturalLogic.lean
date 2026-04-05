@@ -119,9 +119,9 @@ instance : Bot NLRelation := ⟨.equiv⟩
 instance : Top NLRelation := ⟨.independent⟩
 instance : OrderBot NLRelation where bot_le a := by cases a <;> rfl
 instance : OrderTop NLRelation where le_top a := by cases a <;> rfl
-instance : BoundedOrder NLRelation where
-  __ := inferInstanceAs (OrderBot NLRelation)
-  __ := inferInstanceAs (OrderTop NLRelation)
+instance : BoundedOrder NLRelation :=
+  { (inferInstance : OrderBot NLRelation),
+    (inferInstance : OrderTop NLRelation) with }
 
 /--
 Join operation ⋈ (@cite{icard-2012}, Lemma 1.5).

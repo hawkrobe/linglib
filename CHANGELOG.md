@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.522] - 2026-04-04
+
+### Changed
+- **NonBivalence.lean**: ground in mathlib algebraic machinery — gap sublattice (`gap_sup_gap`, `gap_inf_gap`) now derived from `sup_idem`/`inf_idem`, fold proofs use general `foldl_idem_const` + identity elements (`bot_sup_eq`, `top_inf_eq`), global proofs use explicit `ofBool_sup`/`ofBool_inf` homomorphism lemmas; verified correctness against Ramotowska et al. 2025 Table 2 (§2.2.2 local/global scope) and Agha & Jeretič 2022 eq. 25/27–28 (`mustD`/`shouldD := ⊕D`); added algebraic foundation section to module docstring
+
 ## [0.229.521] - 2026-04-04
 
 ### Changed

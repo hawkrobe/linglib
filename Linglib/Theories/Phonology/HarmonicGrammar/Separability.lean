@@ -425,10 +425,12 @@ private lemma list_map_sum_eq_finsum {α : Type} (l : List α) (f : α → ℚ) 
     (l.map f).sum = ∑ i : Fin l.length, f (l.get i) := by
   induction l with
   | nil => simp
-  | cons _ _ ih =>
-    simp only [List.map_cons, List.sum_cons, List.length_cons,
-      Fin.sum_univ_succ, ih, List.get_cons_zero]
-    congr 1
+  | cons head tail ih =>
+    simp only [List.map_cons, List.sum_cons, List.length_cons, ih]
+    show f head + ∑ i, f (tail.get i) =
+         ∑ i : Fin (tail.length + 1),
+           (fun j : Fin (tail.length + 1) => f ((head :: tail).get j)) i
+    rw [Fin.sum_univ_succ]; simp
 
 /-- **`harmonyScoreR` as a Fin-indexed weighted sum**:
     the List-based harmony score equals a negated Finset.sum over

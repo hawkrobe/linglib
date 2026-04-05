@@ -124,7 +124,8 @@ theorem scmPropertiesFromField_consistent {Variant : Type}
   simp only [PropertySpace.isConsistent]
   apply decide_eq_true
   intro p hp q hq hne
-  simp only [scmPropertiesFromField, Finset.mem_filter, Finset.mem_univ, true_and] at hp hq
+  have hp' := (Finset.mem_filter.mp hp).2
+  have hq' := (Finset.mem_filter.mp hq).2
   cases p <;> cases q <;>
     simp only [scmPropertyIndexed, scmIncompatible, scmSpace] at * <;>
     first | rfl | (exfalso; linarith)

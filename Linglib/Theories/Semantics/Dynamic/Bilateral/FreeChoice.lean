@@ -74,7 +74,7 @@ theorem impossible_iff_empty (φ : BilateralDen W E) (s : InfoState W E) :
 theorem diamond_positive_eq (φ : BilateralDen W E) (s : InfoState W E) :
     (BUS.BUSDen.diamond φ).positive s =
     if possible φ s then s else ∅ := by
-  simp only [possible, BUS.BUSDen.diamond]
+  simp only [possible, BUS.BUSDen.diamond]; rfl
 
 -- ============================================================================
 -- Section 2: Modal disjunction (anaphora-sensitive, eq. 96)

@@ -165,7 +165,7 @@ def scalarGame : InterpGame where
 /-- The scalar implicature game IS a scalar game: truth sets are nested. -/
 theorem scalarGame_is_scalar : isScalarGame scalarGame := by
   intro m₁ m₂; cases m₁ <;> cases m₂ <;>
-    simp [scalarGame, InterpGame.trueStates, Finset.subset_iff, Finset.mem_filter]
+    simp only [scalarGame, InterpGame.trueStates] <;> decide
 
 /-- The scalar implicature game has distinct truth sets. -/
 theorem scalarGame_distinct :
@@ -188,19 +188,20 @@ example : strongestAt scalarGame .all .all := by
   refine ⟨rfl, fun m' hm' => ?_⟩
   cases m' with
   | some_ =>
-    intro s hs
-    simp only [scalarGame, InterpGame.trueStates, Finset.mem_filter, Finset.mem_univ,
-      true_and] at hs ⊢
+    simp only [scalarGame, InterpGame.trueStates]
+    decide
   | all => exact Finset.Subset.refl _
 
 /-- Negative check: "some" is NOT strongest at "all" — "all" is stronger. -/
 example : ¬ strongestAt scalarGame .some_ .all := by
   intro ⟨_, hStr⟩
   have h := hStr .all rfl
-  have : ScalarState.someNotAll ∈ scalarGame.trueStates .some_ :=
+  have h1 : ScalarState.someNotAll ∈ scalarGame.trueStates .some_ :=
     scalarGame.mem_trueStates.mpr rfl
-  have : ScalarState.someNotAll ∈ scalarGame.trueStates .all := h this
-  simp [scalarGame, InterpGame.trueStates, Finset.mem_filter] at this
+  have h2 : ScalarState.someNotAll ∈ scalarGame.trueStates .all := h h1
+  unfold InterpGame.trueStates at h2
+  simp only [scalarGame] at h2
+  exact absurd h2 (by decide)
 
 /-!
 ## Free Choice Disjunction (Franke Section 3.3)

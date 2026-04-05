@@ -297,8 +297,10 @@ private lemma mapIdx_sum_eq_fin_sum {α : Type} (l : List α) (f : ℕ → α �
   induction l generalizing f with
   | nil => simp
   | cons x xs ih =>
-    simp only [List.mapIdx_cons, List.sum_cons, List.length_cons, List.get_eq_getElem]
-    rw [ih, Fin.sum_univ_succ]; simp
+    rw [List.mapIdx_cons, List.sum_cons, ih]
+    show f 0 x + ∑ i, f (↑i + 1) (xs.get i) =
+         ∑ i : Fin (xs.length + 1), (fun j : Fin (xs.length + 1) => f (↑j) ((x :: xs).get j)) i
+    rw [Fin.sum_univ_succ]; simp
 
 private lemma map_mapIdx_sum {α β : Type} (l : List α) (f : ℕ → α → β) (g : β → ℚ) :
     (l.mapIdx f |>.map g).sum = (l.mapIdx (fun i x => g (f i x))).sum := by

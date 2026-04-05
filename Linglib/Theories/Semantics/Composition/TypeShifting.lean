@@ -109,7 +109,7 @@ theorem BE_unique [Fintype m.Entity]
     ∀ Q : m.interpTy Ty.ett, f Q = BE Q := by
   letI : DecidableEq m.Entity := m.decEq
   intro Q; funext x
-  show f Q x = Q (fun j => decide (j = x))
+  change f Q x = Q (fun j => @decide (j = x) (m.decEq j x))
   let lit : m.Entity → m.interpTy Ty.ett := fun j =>
     if j = x then (lift j : m.interpTy Ty.ett) else (lift j)ᶜ
   let atom_x : m.interpTy Ty.ett := Finset.inf Finset.univ lit
@@ -127,19 +127,25 @@ theorem BE_unique [Fintype m.Entity]
   -- Step 3: Each f_lit j evaluates to true at x
   have hf_lit_x : ∀ j : m.Entity, f_lit j x = true := by
     intro j; simp only [f_lit]; split
-    · next h => rw [h]; simp [ident]
+    · next h => rw [h]; simp [ident, @decide_eq_true _ (m.decEq x x) rfl]
     · next h =>
-      have hid : ident j x = false := by simp [ident, h]
-      have := Pi.compl_apply (ident j) x
-      rw [this, hid]; rfl
+      have hid : ident j x = false := by
+        simp only [ident]
+        exact @decide_eq_false _ (m.decEq j x) h
+      show (ident j)ᶜ x = true
+      change (ident j x)ᶜ = true
+      rw [hid]; rfl
   -- f(atom_x) at x is true
   have hf_atom_true : f atom_x x = true := by
-    rw [congrFun hf_atom_eq x, finset_inf_fun_eval Finset.univ f_lit x]
+    have h1 : f atom_x x = (Finset.univ.inf f_lit) x := congrFun hf_atom_eq x
+    have h2 : (Finset.univ.inf f_lit) x = Finset.univ.inf (fun i => f_lit i x) :=
+      finset_inf_fun_eval Finset.univ f_lit x
+    rw [h1, h2]
     have h := Finset.le_inf (fun j (_ : j ∈ Finset.univ) => ge_of_eq (hf_lit_x j))
     exact top_le_iff.mp h
   -- Step 4: atom_x R = true → R = P_x
   have hatom_point : ∀ R : m.interpTy Ty.et, atom_x R = true →
-      R = fun j => decide (j = x) := by
+      R = fun j => @decide (j = x) (m.decEq j x) := by
     intro R hR
     have hlit_true : ∀ j : m.Entity, lit j R = true := by
       intro j
@@ -154,7 +160,7 @@ theorem BE_unique [Fintype m.Entity]
       simp only [lift] at hj; rw [hj]; symm
       exact @decide_eq_true _ (m.decEq j x) h
     · next h =>
-      have hcompl := Pi.compl_apply (lift j) R
+      have hcompl : (lift j)ᶜ R = (lift j R)ᶜ := rfl
       rw [hcompl] at hj; simp only [lift] at hj
       have hRj : R j = false := by
         cases hv : R j with
@@ -163,7 +169,7 @@ theorem BE_unique [Fintype m.Entity]
       rw [hRj]; symm
       exact @decide_eq_false _ (m.decEq j x) h
   -- Step 5: conclude by cases on Q(P_x)
-  set P_x := fun j => decide (j = x)
+  set P_x := fun j => @decide (j = x) (m.decEq j x)
   have hatom_le : ∀ S : m.interpTy Ty.ett, S P_x = true → atom_x ≤ S := by
     intro S hS R
     cases hR : atom_x R with
@@ -181,7 +187,8 @@ theorem BE_unique [Fintype m.Entity]
       rw [hf_atom_true] at h2
       exact top_le_iff.mp h2
     have hfQc2 : (f Q x)ᶜ = true := by
-      rw [← Pi.compl_apply, ← map_compl' f]; exact hfQc
+      have : (f Q)ᶜ x = (f Q x)ᶜ := rfl
+      rw [← this, ← map_compl' f]; exact hfQc
     cases hv : f Q x with
     | false => rfl
     | true => rw [hv] at hfQc2; exact Bool.noConfusion hfQc2

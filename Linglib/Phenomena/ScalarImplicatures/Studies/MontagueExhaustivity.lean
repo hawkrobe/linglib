@@ -54,7 +54,7 @@ def studentModel : Model where
 
 instance : Fintype studentModel.Entity where
   elems := ({Student.alice, Student.bob, Student.carol} : Finset Student)
-  complete := fun x => by cases x <;> simp
+  complete := fun x => by cases x <;> (unfold studentModel; simp)
 
 /-- All entities are students in this model -/
 def isStudent : studentModel.interpTy (.e ⇒ .t) := λ _ => true

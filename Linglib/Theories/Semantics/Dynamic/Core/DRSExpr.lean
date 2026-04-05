@@ -39,7 +39,6 @@ namespace Semantics.Dynamic.Core.DRSExpr
 -- § 1. DRS Syntax
 -- ════════════════════════════════════════════════════════════════
 
-set_option linter.dupNamespace false in
 /-- Syntactic representation of DRS expressions.
 
 Dref indices are natural numbers. Relation symbols are identified

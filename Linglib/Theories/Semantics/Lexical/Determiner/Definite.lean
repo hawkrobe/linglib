@@ -170,6 +170,7 @@ theorem the_is_every_on_singletons (m : Model) [Fintype m.Entity]
     (h_unique : ∀ x, restrictor x = true → x = e) :
     every_sem m restrictor scope = scope e := by
   simp only [every_sem]
+  dsimp only [Model.interpTy]
   rw [Bool.eq_iff_iff, decide_eq_true_eq]
   constructor
   · intro h; exact h e h_restr

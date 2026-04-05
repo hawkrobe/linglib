@@ -181,7 +181,7 @@ private def atis₂ : AustinianTIS Weather Weather :=
 
 theorem atis_assert_resolves : atis₂.dgb.qud = [] := by
   simp [atis₂, TIS.assertRule, DGB.assertFact, DGB.addFact, DGB.downdateQud,
-    DGB.recordMove, austinianAnswerhood, BCheckableAustinian.isTrue,
+    DGB.recordMove, Answerhood.resolves, austinianAnswerhood, BCheckableAustinian.isTrue,
     itIsRaining, isItRaining, atis₁, adgb₀, DGB.initial, DGB.pushQud]
 
 /-- The fact is in FACTS after assertion. -/
