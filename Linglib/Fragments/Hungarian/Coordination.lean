@@ -7,12 +7,12 @@ import Linglib.Core.Coordination
 Hungarian is one of two languages in our sample (with Georgian) that attests
 all three M&S conjunction strategies: J-only, MU-only, and J-MU.
 
-- *és* — J, free, prepositive: "A és B"
+- *es* — J, free, prepositive: "A es B"
 - *is* — MU, free, postpositive: "A is B is"
-- *és...is* — J-MU combined: "A is és B is"
+- *es...is* — J-MU combined: "A is es B is"
 
 The MU particle *is* is also Hungarian's additive/focus particle ("also/too"),
-confirming Mitrović & Sauerland's prediction that MU = additive particle.
+confirming Mitrovic & Sauerland's prediction that MU = additive particle.
 
 @cite{bill-etal-2025} found no significant sentence-type effect on comprehension
 in Hungarian children (possibly ceiling effects).
@@ -26,31 +26,19 @@ namespace Fragments.Hungarian.Coordination
 
 open Core.Coordination
 
-/-- A Hungarian coordination entry. -/
-structure CoordEntry where
-  form : String
-  gloss : String
-  role : CoordRole
-  boundness : Boundness
-  /-- Does this morpheme also serve as an additive/focus particle? -/
-  alsoAdditive : Bool := false
-  /-- Notes on usage or distribution -/
-  note : String := ""
-  deriving Repr, BEq
-
 -- ============================================================================
 -- Lexical entries
 -- ============================================================================
 
-/-- *és* — primary conjunction, J particle. Free, prepositive.
-    "Péter és Mari" = "Péter and Mari". -/
+/-- *es* — primary conjunction, J particle. Free, prepositive.
+    "Peter es Mari" = "Peter and Mari". -/
 def es : CoordEntry :=
   { form := "és", gloss := "and"
   , role := .j, boundness := .free }
 
 /-- *is* — MU particle / additive focus particle. Free, postpositive.
-    Conjunction: "Péter is Mari is" = "both Péter and Mari".
-    Additive: "Péter is alszik" = "Péter also sleeps".
+    Conjunction: "Peter is Mari is" = "both Peter and Mari".
+    Additive: "Peter is alszik" = "Peter also sleeps".
     One of the key pieces of evidence for M&S's MU = additive particle claim. -/
 def is_ : CoordEntry :=
   { form := "is", gloss := "also, too; and (MU)"
@@ -58,13 +46,13 @@ def is_ : CoordEntry :=
   , alsoAdditive := true }
 
 /-- *vagy* — disjunction. Free, prepositive.
-    "Péter vagy Mari" = "Péter or Mari". -/
+    "Peter vagy Mari" = "Peter or Mari". -/
 def vagy : CoordEntry :=
   { form := "vagy", gloss := "or"
   , role := .disj, boundness := .free }
 
 /-- *de* — adversative conjunction.
-    "szép de drága" = "beautiful but expensive". -/
+    "szep de draga" = "beautiful but expensive". -/
 def de : CoordEntry :=
   { form := "de", gloss := "but"
   , role := .advers, boundness := .free }

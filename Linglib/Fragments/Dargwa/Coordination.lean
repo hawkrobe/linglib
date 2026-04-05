@@ -1,3 +1,5 @@
+import Linglib.Core.Coordination
+
 /-!
 # Dargwa (Tanti) Coordination @cite{sumbatova-2021}
 
@@ -10,7 +12,7 @@ the following strategies:
 
 - **=ra** (ADD): enclitic additive particle, repeated after each conjunct.
   Also used as a sentence-level additive ('also, too').
-  "č'al malla=ra ca qulki=ra" = 'two mullahs and a thief'.
+  "c'al malla=ra ca qulki=ra" = 'two mullahs and a thief'.
 
 - **ja ... ja** (DISJ ... DISJ): repeated disjunction.
   "ja ... ja" = 'neither ... nor' (with negation).
@@ -30,31 +32,7 @@ is predicted by M&S: languages can have MU without J.
 
 namespace Fragments.Dargwa.Coordination
 
-/-- Role of a coordination morpheme in the M&S decomposition. -/
-inductive CoordRole where
-  | j          -- Set intersection (conjunction)
-  | mu         -- Subset/additive
-  | disj       -- Disjunction
-  | advers     -- Adversative
-  deriving DecidableEq, Repr
-
-/-- Morphological boundness. -/
-inductive Boundness where
-  | free
-  | bound   -- clitic or suffix
-  deriving DecidableEq, Repr
-
-/-- A Dargwa coordination entry. -/
-structure CoordEntry where
-  form : String
-  gloss : String
-  role : CoordRole
-  boundness : Boundness
-  /-- Does this morpheme also serve as an additive/focus particle? -/
-  alsoAdditive : Bool := false
-  /-- Notes -/
-  note : String := ""
-  deriving Repr, BEq
+open Core.Coordination
 
 -- ============================================================================
 -- Lexical entries

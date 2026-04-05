@@ -1,5 +1,82 @@
 # Changelog
 
+## [0.229.544] - 2026-04-05
+
+### Changed
+- **Coordination architecture refactoring**: unified "derive, don't duplicate" across coordination formalization
+  - `Core/Coordination.lean`: extended `CoordRole` with `negDisj`/`negCoord` (from Irish/Latin); added unified `CoordEntry` structure with optional fields (`alsoAdditive`, `alsoQuantifier`, `correlative`); moved `ConjunctionStrategy` + methods from BillEtAl2025
+  - 6 Fragment files (Georgian, Hungarian, Japanese, Latin, Irish, Dargwa): deleted local type declarations, now import and use `Core.Coordination` types
+  - `Typology.lean`: replaced `ConjMorpheme` with `SourcedEntry` wrapping `CoordEntry`; 5 Fragment-backed languages now derive from Fragment entries directly; WALS types replaced with `abbrev` aliases to `Core.WALS`; deleted backwards dependency on BillEtAl2025
+  - `BillEtAl2025.lean`: deleted local `ConjunctionStrategy` (uses Core's); received `ms_universality_challenged` and `boundness_confound` theorems from Typology (study-specific theorems belong in study files)
+  - `Stassen2000.lean`: deleted 17 tautological Fragment↔Typology bridge theorems (agreement now structural since Typology derives from Fragments); kept cross-module bridge `japanese_mu_quantifier_bridge` (Coordination ↔ Determiners)
+
+## [0.229.543] - 2026-04-05
+
+### Fixed
+- **`belnapLift` docstring**: removed references to `xorBelnap` and `impBelnap` as "Instances" — they were listed as if defined but don't exist. Now clearly distinguishes defined instances from the extensible pattern
+- **`andWeak_eq_and`** (Presupposition.lean): missing dual of `orWeak_eq_or` — both are `rfl`
+
+### Added
+- **`eval_orFlex`/`eval_andFlex`** (Presupposition.lean): flex connectives evaluate to `Truth3.joinBelnap`/`Truth3.meetBelnap` pointwise, closing the Truth3 bridge for flexible accommodation directly
+
+## [0.229.542] - 2026-04-05
+
+### Added
+- **`belnapLift`** (Presupposition.lean): uniform construction for conditional assertion connectives — parameterized by a binary Boolean function `f` and its identity element `id`. `orBelnap = belnapLift (·||·) false` and `andBelnap = belnapLift (·&&·) true` (both `rfl`). Generalizes the Belnap/flex identity from disjunction to all binary connectives
+- **`andFlex`** (Presupposition.lean): flexible accommodation conjunction (dual of `orFlex`). `andFlex_eq_andBelnap` extends the flex = Belnap identity to conjunction. `andFlex_eq_belnapLift` and `orFlex_eq_belnapLift` show both are instances of the uniform construction
+- **Collapse theorems** (Presupposition.lean): `all_or_agree_when_both_defined` and `all_and_agree_when_both_defined` — when both presuppositions hold, ALL connective families (classical, filtering, K&P, flex, Belnap, Weak Kleene) agree on assertion. The theories diverge ONLY when presuppositions conflict
+- **`belnapLift` structural theorems**: `belnapLift_eq_classical` (reduces to `f` when both defined), `belnapLift_right_undefined`/`belnapLift_left_undefined` (identity element makes undefined operand invisible), `belnapLift_comm` (commutative when `f` is)
+
+## [0.229.541] - 2026-04-05
+
+### Added
+- **Three-way equivalence** (Disjunction.lean): Geurts 2005 modal conjunction = Belnap 1970 conditional assertion = Yagi/Aloni flexible accommodation. `fromPrProp_presup_eq_orBelnap` and `fromPrProp_cell_eq_orBelnap` close the triangle via `orFlex_eq_orBelnap` transitivity
+- **exhaustivity_implies_uninformative** (Disjunction.lean): Geurts's exhaustivity constraint directly entails orFlex assertion = true throughout the context. Captures Schlenker §2.4 failure (@cite{yagi-2025}): the pragmatic condition on local contexts IS the exhaustivity constraint, and exhaustivity forces uninformativity
+
+## [0.229.540] - 2026-04-05
+
+### Added
+- **Japanese Coordination fragment** (`Fragments/Japanese/Coordination.lean`): 3 entries — `to_` (J), `mo` (MU), `ka` (disjunction) — with `alsoAdditive`/`alsoQuantifier` flags. `mo` has triple identity (MU + additive + universal quantifier), `ka` is its Boolean dual (disjunction + interrogative + existential). `boolean_duality_in_quantifiers` verifies all mo-particle quantifiers are universal, all ka-particle quantifiers are existential
+- **Japanese bridge theorems** (Stassen2000.lean): 5 bridges connecting Japanese Fragment to Typology (`japanese_j_bridge`, `japanese_mu_bridge`, `japanese_mu_bound_bridge`, `japanese_mu_additive_bridge`, `japanese_mu_quantifier_bridge`) plus `boundness_asymmetry_bridge` (Georgian bound vs Hungarian free MU)
+
+### Changed
+- **MU ↔ Distributivity unification**: M&S conjunction decomposition and Link 1983 distributive inference are the same operation
+  - `inclFunc` (Conjunction.lean): `def` → structural `abbrev` of `typeRaise` — MU IS type-raising, by definition not by theorem. Eliminates `ms_inclFunc_eq_typeRaise`
+  - `distMaximal_pair` (Distributivity.lean): `distMaximal P {a, b} w = P a w && P b w` — two-atom distributive check reduces to conjunction of individual checks
+  - `mu_is_distributive_check` (BillEtAl2025.lean): `coordEntities e₁ e₂ P = distMaximal P' {e₁, e₂} ()` — cross-theory bridge proving M&S and Link compute the same thing (can't be structural: different type systems)
+
+## [0.229.539] - 2026-04-05
+
+### Added
+- **PrProp.orKP** (Presupposition.lean): K&P two-dimensional disjunction connective (Definition 2 in @cite{yagi-2025}), with general `orKP_presup_entails_when_conflicting` theorem — when presuppositions conflict at w, K&P's presupposition entails the assertion (so the disjunction can never be false). Yagi2025 `kpDisj` now delegates to this
+- **PrProp.orFlex_eq_orBelnap** (Presupposition.lean): proves flexible accommodation disjunction (@cite{geurts-2005}) IS Belnap's conditional assertion disjunction (@cite{belnap-1970}) — two independent research traditions converge on the same connective. Surfaced by Yagi 2025 formalization
+- **kalomoiros-schwarz-2021** (references.bib): bib entry for "Presupposition Projection from Disjunction is Symmetric" (PLSA)
+
+### Fixed
+- **Yagi2025 section header**: removed false claim that K&P Def 2 = `orFilter` (K&P uses `A(ψ) ∨ Π(φ)`, orFilter uses `¬A(φ) ∨ Π(ψ)` — opposite polarity on assertions)
+- **metaAssertDisj docstring**: said "Weak Kleene" but uses Strong Kleene `Prop3.or`; since meta-assertion makes disjuncts bivalent, the two agree, but the docstring was wrong about which connective
+- **genuineness docstring**: removed hallucinated reference to nonexistent `UpdateSemantics.genuineness`
+- **presup_disj_uninformative_when_supported docstring**: removed misleading citation of Yagi §2.3 (the theorem applies to non-conflicting presuppositions; for conflicting presuppositions hp∧hq is vacuously unsatisfiable)
+
+### Removed
+- **update_never_false_pointwise** (Yagi2025.lean): redundant with `strong_kleene_never_false` — PrProp.or presup is always false when presups conflict, so eval is always .indet (≠ .false trivially). Replaced with `neither_presup_supported` (consolidates the two non-support theorems)
+
+## [0.229.538] - 2026-04-05
+
+### Added
+- **MU ↔ Distributivity unification**: formally connect M&S conjunction decomposition to Link 1983 distributive inference, proving they are the same operation
+  - `distMaximal_pair` (Distributivity.lean): `distMaximal P {a, b} w = P a w && P b w` — two-atom distributive check reduces to conjunction of individual checks
+  - `mu_is_distributive_check` (BillEtAl2025.lean): `coordEntities e₁ e₂ P = distMaximal P' {e₁, e₂} ()` — M&S J+MU derivation = Link's distributive predication for pairs
+  - `mu_singleton_is_additive` (BillEtAl2025.lean): `inclFunc e P = distMaximal P' {e} ()` — MU on one entity = distributive check on singleton, explaining why MU particles are universally additive particles
+
+## [0.229.537] - 2026-04-05
+
+### Added
+- **Haslinger, Hien, Rosina, Schmitt & Wurm (NLLT 2025) formalization**: unified semantics for universal quantifiers via Q_∀ + mereological structure
+  - `UnifiedUniversal.lean`: Q_∀ (`QForall`), `maxNonOverlap`, DNG theorems (`dng_atoms` [+dist], `dng_cum'` [−dist]), bridge to standard GQ, decidable `Finset` variant
+  - `ONEModifiers.lean`: ONE_∅ (`ONE_empty`), ONE_AT (`ONE_AT`), `ONE_AT_implies_ONE_empty`, English every/each/all presuppositional decomposition (`everyPresup`, `eachPresup`), `every_distributes`
+  - `HaslingerHienEtAl2025.lean`: cross-linguistic typology (11 languages, 1-form vs 2-form), finite model DNG verification on flat 3-element domain, bridge theorems to `distMaximal`/`allSatisfy`, German fragment consistency, *each ten minutes blocking via ONE_AT
+
 ## [0.229.536] - 2026-04-05
 
 ### Changed

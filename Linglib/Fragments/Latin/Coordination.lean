@@ -1,3 +1,5 @@
+import Linglib.Core.Coordination
+
 /-!
 # Latin Coordination Morphemes
 @cite{haspelmath-2007}
@@ -20,32 +22,7 @@ encodes the structural patterns (a_co_b, a_b'co, co'a_b'co).
 
 namespace Fragments.Latin.Coordination
 
-/-- Role of a coordination morpheme in the M&S decomposition. -/
-inductive CoordRole where
-  | j          -- Set intersection (conjunction)
-  | mu         -- Subset/additive (conjunction)
-  | disj       -- Disjunction
-  | advers     -- Adversative ("but")
-  | negCoord   -- Negative coordination ("neither...nor")
-  deriving DecidableEq, Repr
-
-/-- Morphological boundness. -/
-inductive Boundness where
-  | free
-  | bound   -- clitic or suffix
-  deriving DecidableEq, Repr
-
-/-- A Latin coordination entry. -/
-structure CoordEntry where
-  form : String
-  gloss : String
-  role : CoordRole
-  boundness : Boundness
-  /-- Can this morpheme be used in bisyndetic (correlative) patterns? -/
-  correlative : Bool := false
-  /-- Notes on usage or distribution -/
-  note : String := ""
-  deriving Repr, BEq
+open Core.Coordination
 
 -- ============================================================================
 -- Lexical entries

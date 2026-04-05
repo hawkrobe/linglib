@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Montague.Conjunction
-import Linglib.Core.Coordination
+import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Phenomena.Coordination.Typology
 
 /-!
 # @cite{bill-etal-2025} — DP Conjunction Complexity
@@ -37,11 +38,12 @@ alternative accounts.
 
 The M&S decomposition maps directly onto Montague/Conjunction.lean:
 - J = `genConj` (Partee & Rooth's generalized conjunction / set intersection)
-- MU = `inclFunc` (INCL: subset check for singletons)
-- ☉ = `msShift` / `typeRaise` (individual → singleton set / GQ)
+- MU = `typeRaise` (INCL on singletons = type-raising; structural `abbrev`)
+- ☉ = `msShift` (individual → singleton set)
 
-`ms_inclFunc_eq_typeRaise` proves MU ∘ ☉ = typeRaise.
-`ms_full_derivation` proves J(MU(☉(e₁)), MU(☉(e₂))) = coordEntities.
+`coordEntities` is defined AS `genConj(typeRaise e₁, typeRaise e₂)`,
+so the M&S derivation is the definition itself, not a theorem.
+`mu_is_distributive_check` proves this equals Link's `distMaximal` on pairs.
 
 -/
 
@@ -50,47 +52,6 @@ namespace Phenomena.Coordination.Studies.BillEtAl2025
 open Core.Coordination
 
 -- Conjunction Particle Typology
-
-/--
-Cross-linguistic conjunction strategy.
-
-@cite{mitrovic-sauerland-2014} decompose DP conjunction into three
-semantic pieces: J (set intersection), MU (subset), ☉ (type-shifter).
-Languages vary in which pieces are overtly realized.
--/
-inductive ConjunctionStrategy where
-  /-- Only J particle overt (e.g., English "and", Hungarian "és", Georgian "da") -/
-  | jOnly
-  /-- Only MU particles overt (e.g., Japanese "mo...mo", Hungarian "is...is",
-      Georgian "-c...-c") -/
-  | muOnly
-  /-- Both J and MU overt (e.g., Hungarian "is és...is", Georgian "-c da...-c") -/
-  | jMu
-  deriving DecidableEq, Repr
-
-/--
-Number of overt functional morphemes per strategy.
-
-Under @cite{mitrovic-sauerland-2016}, the underlying structure always has 3 semantic pieces
-(J + MU₁ + MU₂). What varies is how many are pronounced.
--/
-def ConjunctionStrategy.overtMorphemeCount : ConjunctionStrategy → Nat
-  | .jOnly  => 1  -- only J pronounced
-  | .muOnly => 2  -- both MUs pronounced
-  | .jMu    => 3  -- J + both MUs pronounced
-
-/--
-Under @cite{mitrovic-sauerland-2016}, there are always 3 semantic pieces.
-The transparency ratio measures how many are overtly realized.
--/
-def ConjunctionStrategy.semanticPieceCount : Nat := 3
-
-/--
-@cite{mitrovic-sauerland-2016} + Transparency Principle predicts: more overt morphemes → easier
-to acquire (closer to 1-to-1 form-meaning mapping).
--/
-def ConjunctionStrategy.predictedTransparency : ConjunctionStrategy → Nat :=
-  ConjunctionStrategy.overtMorphemeCount
 
 -- Georgian and Hungarian Conjunction Particles
 
@@ -497,25 +458,19 @@ under a single morpheme.
 /-!
 ## Semantic Decomposition (@cite{mitrovic-sauerland-2016})
 
-The M&S decomposition maps onto three operations in Montague/Conjunction.lean:
+The M&S decomposition maps onto operations in Montague/Conjunction.lean:
 
-| M&S piece | Semantic operation | Conjunction.lean definition |
-|-----------|-------------------|--------------------------|
+| M&S piece | Semantic operation | Conjunction.lean |
+|-----------|-------------------|-----------------|
 | ☉         | {x} formation     | `msShift` (= Partee's `ident`) |
-| MU        | INCL (subset)     | `inclFunc` (reduces to `typeRaise` for singletons) |
-| J         | Set intersection  | `genConj` at ⟨⟨e,t⟩,⟨⟨e,t⟩,t⟩⟩ |
+| MU        | INCL (subset)     | `typeRaise` (structural `abbrev`) |
+| J         | Set intersection  | `genConj` at GQ type |
 
-The full derivation of "Mary and Susan sleep":
-1. ☉(Mary) = λy.[y = Mary] — msShift
-2. MU(☉(Mary)) = λP.P(Mary) — inclFunc (= typeRaise for singletons)
-3. Similarly for Susan
-4. J combines the two MU-results via genConj at GQ type
-
-The result: P(Mary) ∧ P(Susan) = coordEntities Mary Susan P
-
-Key theorems:
-- `ms_inclFunc_eq_typeRaise`: MU ∘ ☉ = typeRaise
-- `ms_full_derivation`: J(MU(☉(e₁)), MU(☉(e₂))) = coordEntities e₁ e₂
+MU IS `typeRaise` — the identity is structural (an `abbrev`), not a
+theorem. `coordEntities` is defined AS `genConj(typeRaise e₁, typeRaise e₂)`,
+so the M&S derivation is the definition itself. The result
+P(e₁) ∧ P(e₂) equals Link's `distMaximal P {e₁, e₂}`
+(`mu_is_distributive_check`).
 -/
 
 open Semantics.Montague.Conjunction in
@@ -537,5 +492,107 @@ yields the same result as Partee & Rooth's `coordEntities`.
 theorem ms_decomposition_eq_coord {m : Semantics.Montague.Model} (e1 e2 : m.Entity)
     (p : m.Entity → Bool) :
     (typeRaise e1 p && typeRaise e2 p) = coordEntities e1 e2 p := rfl
+
+-- ============================================================================
+-- § MU ↔ Distributivity: The Root Explanation
+-- ============================================================================
+
+/-!
+## MU IS Distributive Predication
+
+The M&S decomposition and Link's distributive inference are the same
+operation. Both reduce to: check a predicate against each entity
+individually and conjoin.
+
+| Framework | Operation | Result |
+|-----------|-----------|--------|
+| M&S       | J(typeRaise(e₁), typeRaise(e₂))(P) | P(e₁) ∧ P(e₂) |
+| Link      | distMaximal P {e₁, e₂} w | P(e₁) ∧ P(e₂) |
+
+The M&S side is structural: `coordEntities` IS `genConj(typeRaise e₁,
+typeRaise e₂)` by definition, and MU IS `typeRaise` by `abbrev`.
+The Link side is independently structural: `distMaximal` IS
+`decide (∀ a ∈ x, P a w)`.
+
+The theorem below bridges the two type systems (Montague `Model.Entity`
+vs `Finset Atom`). This bridge can't be made structural — the types
+are different — but it proves the same operation is being computed.
+
+This explains WHY MU particles are universally additive particles
+(`mu_additive_generalization`): additive "also/too" IS the distributive
+check on a single atom (`typeRaise e P = P e = distMaximal P {e}`).
+Conjunction is the two-atom case. Link's `distr_atom_part` is the
+general case for arbitrary pluralities.
+-/
+
+section MUDistributivity
+
+open Semantics.Montague.Conjunction
+open Semantics.Lexical.Plural.Distributivity
+
+/--
+M&S conjunction = Link's distributive predication for pairs.
+
+`coordEntities e₁ e₂ P = distMaximal (fun a _ => P a) {e₁, e₂} ()`
+
+Both sides compute `P(e₁) ∧ P(e₂)`:
+- LHS by definition (`coordEntities` = `genConj(typeRaise e₁, typeRaise e₂)`)
+- RHS by `distMaximal_pair`
+
+This can't be an `abbrev` — the types are different (Montague
+`Model.Entity` vs `Finset Atom`). The theorem is the right tool
+for cross-theory unification.
+-/
+theorem mu_is_distributive_check {m : Semantics.Montague.Model}
+    (e1 e2 : m.Entity) (P : m.Entity → Bool) :
+    letI := m.decEq
+    coordEntities e1 e2 P =
+    distMaximal (fun a (_ : Unit) => P a) {e1, e2} () := by
+  letI := m.decEq
+  simp [coordEntities_both_satisfy, distMaximal_pair]
+
+end MUDistributivity
+
+-- ============================================================================
+-- § Typological Challenges
+-- ============================================================================
+
+open Phenomena.Coordination.Typology in
+/--
+**M&S universality challenged.**
+
+Georgian has all three strategies (J-only, MU-only, J-MU).
+M&S + Transparency predicts J-MU should be easiest (most transparent).
+But Georgian children found J-MU significantly harder (more replays).
+-/
+theorem ms_universality_challenged :
+    hasAllThreeStrategies georgian = true ∧
+    transparencyPredicts .jMu .jOnly = true ∧
+    georgianChild_j_vs_jmu.significant = true ∧
+    georgianChild_j_vs_jmu.estimate_thou < 0 := by
+  native_decide
+
+open Phenomena.Coordination.Typology in
+/--
+**The boundness confound.**
+
+Georgian MU (-c) is bound; Hungarian MU (is) is free. Hungarian children
+showed no significant sentence-type effect on either accuracy or replays.
+This raises the possibility that morphological boundness — not the M&S
+decomposition itself — drives the Georgian difficulty.
+
+If boundness is the real factor, then M&S categories (J, MU, J-MU) are
+not the right level of analysis for acquisition predictions.
+-/
+theorem boundness_confound :
+    -- Georgian MU is bound, Hungarian MU is free
+    georgian.muBoundness = some .bound ∧
+    hungarian.muBoundness = some .free ∧
+    -- Georgian children found J-MU significantly harder
+    georgianChild_j_vs_jmu.significant = true ∧
+    -- Hungarian: no significant sentence-type effect on replays
+    (hungarianSentencePlayedLRT.filter
+      (·.effect == "sentence")).all (·.significant == false) = true := by
+  native_decide
 
 end Phenomena.Coordination.Studies.BillEtAl2025

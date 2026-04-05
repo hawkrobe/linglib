@@ -1,9 +1,12 @@
-import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
+import Linglib.Core.Coordination
 import Linglib.Core.WALS.Features.F56A
 import Linglib.Core.WALS.Features.F63A
 import Linglib.Core.WALS.Features.F64A
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Hungarian.Coordination
+import Linglib.Fragments.Latin.Coordination
+import Linglib.Fragments.Irish.Coordination
+import Linglib.Fragments.Japanese.Coordination
 
 /-!
 # Cross-Linguistic Typology of Coordination
@@ -68,7 +71,6 @@ where the comitative-to-coordinator grammaticalization is still transparent.
 
 namespace Phenomena.Coordination.Typology
 
-open Phenomena.Coordination.Studies.BillEtAl2025
 open Core.Coordination
 
 -- ============================================================================
@@ -161,29 +163,27 @@ def DiachronicSource.expectedPattern : DiachronicSource → Syndesis
 -- Language Data: Structures
 -- ============================================================================
 
--- Boundness and CoordRole are imported from Core.Coordination
-
-/-- A conjunction morpheme in a specific language. -/
-structure ConjMorpheme where
-  form : String
-  role : CoordRole
-  boundness : Boundness
-  /-- Does this morpheme also serve as an additive/focus particle? -/
-  alsoAdditive : Bool
-  /-- Likely diachronic source, if known -/
+/-- A coordination entry annotated with its diachronic source.
+    Wraps `CoordEntry` (from `Core.Coordination`) with typological metadata.
+    For languages with Fragment files, `entry` references the Fragment entry
+    directly — no data duplication. -/
+structure SourcedEntry where
+  /-- The coordination morpheme entry. -/
+  entry : CoordEntry
+  /-- Likely diachronic source, if known. -/
   source : Option DiachronicSource := none
   deriving Repr
 
 /-- A language's conjunction system. -/
 structure ConjunctionSystem where
   language : String
-  /-- Available conjunction morphemes -/
-  morphemes : List ConjMorpheme
-  /-- Which conjunction strategies are available (M&S classification) -/
+  /-- Available conjunction morphemes (sourced entries). -/
+  morphemes : List SourcedEntry
+  /-- Which conjunction strategies are available (M&S classification). -/
   strategies : List ConjunctionStrategy
-  /-- Structural patterns attested (Haspelmath classification) -/
+  /-- Structural patterns attested (Haspelmath classification). -/
   patterns : List CoordPattern := []
-  /-- ISO 639-3 code -/
+  /-- ISO 639-3 code. -/
   iso : String := ""
   deriving Repr
 
@@ -200,7 +200,7 @@ See FormMeaning.lean `andBoth` for the "both" ≈ precision-adding analysis.
 def english : ConjunctionSystem :=
   { language := "English"
   , morphemes :=
-    [ { form := "and", role := .j, boundness := .free, alsoAdditive := false } ]
+    [ { entry := { form := "and", gloss := "and", role := .j, boundness := .free } } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
   , iso := "eng" }
@@ -213,9 +213,9 @@ particle (see AdditiveParticles/Data.lean `japaneseMo`).
 def japanese : ConjunctionSystem :=
   { language := "Japanese"
   , morphemes :=
-    [ { form := "to", role := .j, boundness := .bound, alsoAdditive := false
+    [ { entry := Fragments.Japanese.Coordination.to_
       , source := some .comitative }
-    , { form := "mo", role := .mu, boundness := .bound, alsoAdditive := true
+    , { entry := Fragments.Japanese.Coordination.mo
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a'co_b, .a'co_b'co]
@@ -229,8 +229,8 @@ One of two languages in our sample with all three strategies (J, MU, J-MU).
 def hungarian : ConjunctionSystem :=
   { language := "Hungarian"
   , morphemes :=
-    [ { form := "és", role := .j, boundness := .free, alsoAdditive := false }
-    , { form := "is", role := .mu, boundness := .free, alsoAdditive := true
+    [ { entry := Fragments.Hungarian.Coordination.es }
+    , { entry := Fragments.Hungarian.Coordination.is_
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly, .jMu]
   , patterns := [.a_co_b, .a'co_b'co]
@@ -244,8 +244,8 @@ One of two languages in our sample with all three strategies.
 def georgian : ConjunctionSystem :=
   { language := "Georgian"
   , morphemes :=
-    [ { form := "da", role := .j, boundness := .free, alsoAdditive := false }
-    , { form := "-c", role := .mu, boundness := .bound, alsoAdditive := true
+    [ { entry := Fragments.Georgian.Coordination.da }
+    , { entry := Fragments.Georgian.Coordination.c_
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly, .jMu]
   , patterns := [.a_co_b, .a'co_b'co]
@@ -259,8 +259,8 @@ A et B (monosyndetic), A B-que (monosyndetic), et A B-que (mixed bisyndetic).
 def latin : ConjunctionSystem :=
   { language := "Latin"
   , morphemes :=
-    [ { form := "et", role := .j, boundness := .free, alsoAdditive := false }
-    , { form := "-que", role := .mu, boundness := .bound, alsoAdditive := true
+    [ { entry := Fragments.Latin.Coordination.et }
+    , { entry := Fragments.Latin.Coordination.que
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a_co_b, .a_b'co, .co'a_b'co]
@@ -273,8 +273,9 @@ Pattern: A-(i)rang B (monosyndetic postpositive), A-to B-to (bisyndetic postposi
 def korean : ConjunctionSystem :=
   { language := "Korean"
   , morphemes :=
-    [ { form := "-(i)rang", role := .j, boundness := .bound, alsoAdditive := false }
-    , { form := "-to", role := .mu, boundness := .bound, alsoAdditive := true
+    [ { entry := { form := "-(i)rang", gloss := "and", role := .j, boundness := .bound } }
+    , { entry := { form := "-to", gloss := "also, too; and (MU)"
+                 , role := .mu, boundness := .bound, alsoAdditive := true }
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a'co_b, .a'co_b'co]
@@ -287,7 +288,7 @@ Primarily J-only for standard conjunction.
 def slovenian : ConjunctionSystem :=
   { language := "Slovenian"
   , morphemes :=
-    [ { form := "in", role := .j, boundness := .free, alsoAdditive := false } ]
+    [ { entry := { form := "in", gloss := "and", role := .j, boundness := .free } } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
   , iso := "slv" }
@@ -304,7 +305,7 @@ gives monosyndetic A co-B (@cite{noonan-1992}:163, @cite{haspelmath-2007}: (20))
 def lango : ConjunctionSystem :=
   { language := "Lango"
   , morphemes :=
-    [ { form := "kèdè", role := .j, boundness := .free, alsoAdditive := false
+    [ { entry := { form := "kèdè", gloss := "and; with", role := .j, boundness := .free }
       , source := some .comitative } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
@@ -318,7 +319,7 @@ Hausa (Chadic, Nigeria): "da" means both "with" (comitative) and "and"
 def hausa : ConjunctionSystem :=
   { language := "Hausa"
   , morphemes :=
-    [ { form := "da", role := .j, boundness := .free, alsoAdditive := false
+    [ { entry := { form := "da", gloss := "and; with", role := .j, boundness := .free }
       , source := some .comitative } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
@@ -332,7 +333,7 @@ example of prepositive bisyndetic coordination
 def yoruba : ConjunctionSystem :=
   { language := "Yoruba"
   , morphemes :=
-    [ { form := "àtí", role := .j, boundness := .free, alsoAdditive := false } ]
+    [ { entry := { form := "àtí", gloss := "and", role := .j, boundness := .free } } ]
   , strategies := [.jOnly]
   , patterns := [.co'a_co'b]
   , iso := "yor" }
@@ -345,7 +346,8 @@ gives A-co B-co (@cite{sridhar-1990}:106, @cite{haspelmath-2007}: (5)).
 def kannada : ConjunctionSystem :=
   { language := "Kannada"
   , morphemes :=
-    [ { form := "-u", role := .mu, boundness := .bound, alsoAdditive := true
+    [ { entry := { form := "-u", gloss := "and; also", role := .mu, boundness := .bound
+                 , alsoAdditive := true }
       , source := some .focusParticle } ]
   , strategies := [.muOnly]
   , patterns := [.a'co_b'co]
@@ -358,7 +360,7 @@ gives A-co B-co (@cite{dench-1995}:98, @cite{haspelmath-2007}: (26)).
 def martuthunira : ConjunctionSystem :=
   { language := "Martuthunira"
   , morphemes :=
-    [ { form := "-thurti", role := .j, boundness := .bound, alsoAdditive := false } ]
+    [ { entry := { form := "-thurti", gloss := "and", role := .j, boundness := .bound } } ]
   , strategies := [.jOnly]
   , patterns := [.a'co_b'co]
   , iso := "vma" }
@@ -370,7 +372,7 @@ Derives from comitative source (@cite{beyer-1992}:240, @cite{haspelmath-2007}: (
 def classicalTibetan : ConjunctionSystem :=
   { language := "Classical Tibetan"
   , morphemes :=
-    [ { form := "-daŋ", role := .j, boundness := .bound, alsoAdditive := false
+    [ { entry := { form := "-daŋ", gloss := "and; with", role := .j, boundness := .bound }
       , source := some .comitative } ]
   , strategies := [.jOnly]
   , patterns := [.a'co_b]
@@ -384,8 +386,9 @@ Pattern: A aur B (monosyndetic), A bhii B bhii (bisyndetic postpositive).
 def hindiUrdu : ConjunctionSystem :=
   { language := "Hindi-Urdu"
   , morphemes :=
-    [ { form := "aur", role := .j, boundness := .free, alsoAdditive := false }
-    , { form := "bhii", role := .mu, boundness := .free, alsoAdditive := true
+    [ { entry := { form := "aur", gloss := "and", role := .j, boundness := .free } }
+    , { entry := { form := "bhii", gloss := "also, too; and (MU)"
+                 , role := .mu, boundness := .free, alsoAdditive := true }
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a_co_b, .a'co_b'co]
@@ -399,8 +402,9 @@ Pattern: A ve B (monosyndetic), A da B de (bisyndetic postpositive).
 def turkish : ConjunctionSystem :=
   { language := "Turkish"
   , morphemes :=
-    [ { form := "ve", role := .j, boundness := .free, alsoAdditive := false }
-    , { form := "de/da", role := .mu, boundness := .free, alsoAdditive := true
+    [ { entry := { form := "ve", gloss := "and", role := .j, boundness := .free } }
+    , { entry := { form := "de/da", gloss := "also; and (MU)"
+                 , role := .mu, boundness := .free, alsoAdditive := true }
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a_co_b, .a'co_b'co]
@@ -413,7 +417,7 @@ Pattern: A agus B (monosyndetic medial).
 def irish : ConjunctionSystem :=
   { language := "Irish"
   , morphemes :=
-    [ { form := "agus", role := .j, boundness := .free, alsoAdditive := false } ]
+    [ { entry := Fragments.Irish.Coordination.agus } ]
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
   , iso := "gle" }
@@ -426,8 +430,9 @@ Pattern: A va B (monosyndetic), A ham B ham (bisyndetic postpositive).
 def persian : ConjunctionSystem :=
   { language := "Persian"
   , morphemes :=
-    [ { form := "va", role := .j, boundness := .free, alsoAdditive := false }
-    , { form := "ham", role := .mu, boundness := .free, alsoAdditive := true
+    [ { entry := { form := "va", gloss := "and", role := .j, boundness := .free } }
+    , { entry := { form := "ham", gloss := "also, too; and (MU)"
+                 , role := .mu, boundness := .free, alsoAdditive := true }
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a_co_b, .a'co_b'co]
@@ -442,8 +447,9 @@ Standard conjunction: *koira ja kissa* 'dog and cat' (monosyndetic medial).
 def finnish : ConjunctionSystem :=
   { language := "Finnish"
   , morphemes :=
-    [ { form := "ja", role := .j, boundness := .free, alsoAdditive := false }
-    , { form := "-kin", role := .mu, boundness := .bound, alsoAdditive := true
+    [ { entry := { form := "ja", gloss := "and", role := .j, boundness := .free } }
+    , { entry := { form := "-kin", gloss := "also, too; and (MU)"
+                 , role := .mu, boundness := .bound, alsoAdditive := true }
       , source := some .focusParticle } ]
   , strategies := [.jOnly, .muOnly]
   , patterns := [.a_co_b, .a'co_b'co]
@@ -464,7 +470,7 @@ def ConjunctionSystem.hasStrategy (sys : ConjunctionSystem) (s : ConjunctionStra
 
 /-- Does a language have a MU morpheme that also serves as additive? -/
 def ConjunctionSystem.muIsAdditive (sys : ConjunctionSystem) : Bool :=
-  sys.morphemes.any fun m => m.role == .mu && m.alsoAdditive
+  sys.morphemes.any fun m => m.entry.role == .mu && m.entry.alsoAdditive
 
 /--
 Every language with a MU conjunction particle uses the same morpheme
@@ -478,7 +484,7 @@ NOTE: Restricted to languages in our sample that HAVE a MU morpheme.
 -/
 theorem mu_additive_generalization :
     let withMu := allLanguages.filter fun sys =>
-      sys.morphemes.any (·.role == .mu)
+      sys.morphemes.any (·.entry.role == .mu)
     withMu.all (·.muIsAdditive) = true := by
   native_decide
 
@@ -509,7 +515,7 @@ theorem j_is_universal :
 
 /-- Get the boundness of a language's MU particle, if it has one. -/
 def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Boundness :=
-  (sys.morphemes.find? fun m => m.role == .mu).map (·.boundness)
+  (sys.morphemes.find? fun m => m.entry.role == .mu).map (·.entry.boundness)
 
 /--
 Georgian MU is bound, Hungarian MU is free.
@@ -585,58 +591,19 @@ What varies is which functional heads (J, MU₁, MU₂) are pronounced.
 ### Semantic content (via Montague/Conjunction.lean)
 
 - ☉ = `msShift` (individual → singleton set, = Partee's `ident`)
-- MU = `inclFunc` (INCL: singleton subset check, reduces to `typeRaise`)
+- MU = `typeRaise` (INCL on singletons IS type-raising; structural `abbrev`)
 - J = `genConj` at GQ type (Partee & Rooth set intersection)
 
-Key theorems in Montague/Conjunction.lean:
-- `ms_inclFunc_eq_typeRaise`: MU ∘ ☉ = typeRaise
-- `ms_full_derivation`: J(MU(☉(e₁)), MU(☉(e₂))) = coordEntities e₁ e₂
+`coordEntities` is defined AS `genConj(typeRaise e₁, typeRaise e₂)`,
+so the M&S derivation is the definition itself.
+`mu_is_distributive_check` (BillEtAl2025.lean) proves this equals
+Link's `distMaximal` on pairs — the cross-theory unification.
+
+The empirical challenge from @cite{bill-etal-2025} — Georgian children found J-MU
+*harder*, not easier, contradicting the Transparency Principle prediction —
+is formalized in `ms_universality_challenged` and `boundness_confound`
+in `Studies/BillEtAl2025.lean`.
 -/
-
-/--
-**Empirical challenge to M&S universality.**
-
-The M&S decomposition + Transparency Principle predicts J-MU (where all
-semantic pieces are overtly realized) should be EASIEST to acquire. But in
-Georgian, J-MU is significantly HARDER for children than either J-only
-or MU-only.
-
-This theorem surfaces the contradiction at the typology level so that
-any module importing Typology.lean sees that the M&S categories are
-empirically contested, not established universals.
-
-Conjunct 1: Georgian has all three M&S strategies (as M&S predicts).
-Conjunct 2: M&S + Transparency predicts J-MU is most transparent.
-Conjunct 3: Georgian children found J-MU significantly harder (more replays).
--/
-theorem ms_universality_challenged :
-    hasAllThreeStrategies georgian = true ∧
-    transparencyPredicts .jMu .jOnly = true ∧
-    georgianChild_j_vs_jmu.significant = true ∧
-    georgianChild_j_vs_jmu.estimate_thou < 0 := by
-  native_decide
-
-/--
-**The boundness confound.**
-
-Georgian MU (-c) is bound; Hungarian MU (is) is free. Hungarian children
-showed no significant sentence-type effect on either accuracy or replays.
-This raises the possibility that morphological boundness — not the M&S
-decomposition itself — drives the Georgian difficulty.
-
-If boundness is the real factor, then M&S categories (J, MU, J-MU) are
-not the right level of analysis for acquisition predictions.
--/
-theorem boundness_confound :
-    -- Georgian MU is bound, Hungarian MU is free
-    georgian.muBoundness = some .bound ∧
-    hungarian.muBoundness = some .free ∧
-    -- Georgian children found J-MU significantly harder
-    georgianChild_j_vs_jmu.significant = true ∧
-    -- Hungarian: no significant sentence-type effect on replays
-    (hungarianSentencePlayedLRT.filter
-      (·.effect == "sentence")).all (·.significant == false) = true := by
-  native_decide
 
 -- ============================================================================
 -- WALS Coordination Features (Chapters 56, 63, 64)
@@ -646,49 +613,15 @@ theorem boundness_confound :
 -- Chapter 56: Conjunctions and Universal Quantifiers
 -- ============================================================================
 
-/-- WALS Ch 56: Whether a language's conjunction marker is formally similar
-    to its universal quantifier and/or interrogative pronoun.
-
-    This captures a deep typological pattern: in many languages, "and",
-    "all/every", and "what/who" share morphological material, suggesting
-    a common semantic core (set-theoretic operations over individuals). -/
-inductive ConjQuantRelation where
-  /-- Conjunction and universal quantifier are formally unrelated.
-      Example: English "and" vs "every/all". -/
-  | formallyDifferent
-  /-- Conjunction and universal quantifier share formal material, but
-      the interrogative pronoun is different.
-      Example: English "every" ~ "and" similarity is marginal; Hungarian
-      "es" (and) ~ "minden" (every) share no form but the quantifier
-      and interrogative are linked. -/
-  | similarNoInterrogative
-  /-- Conjunction, universal quantifier, and interrogative pronoun all
-      share formal material.
-      Example: Japanese "mo" serves as conjunction particle ("A-mo B-mo"),
-      universal quantifier ("dare-mo" = everyone), and is related to
-      the interrogative "dare" (who). -/
-  | similarWithInterrogative
-  deriving DecidableEq, Repr
+/-- Short alias for WALS Ch 56 type. -/
+abbrev ConjQuantRelation := Core.WALS.F56A.ConjunctionsAndUniversalQuantifiers
 
 -- ============================================================================
 -- Chapter 63: Noun Phrase Conjunction
 -- ============================================================================
 
-/-- WALS Ch 63: Whether a language's NP coordinator ("and") is formally
-    identical to its comitative adposition ("with").
-
-    This is directly relevant to the diachronic source of coordinators:
-    languages where "and" = "with" are those where the comitative-to-
-    coordinator grammaticalization pathway is still transparent. -/
-inductive ConjComitativeRelation where
-  /-- The conjunction marker and comitative marker are different forms.
-      Example: English "and" (conjunction) vs "with" (comitative). -/
-  | andDifferentFromWith
-  /-- The conjunction marker and comitative marker are the same form.
-      Example: Japanese "to" serves as both comitative ("with") and
-      conjunction ("and"); Swahili "na" means both "and" and "with". -/
-  | andIdenticalToWith
-  deriving DecidableEq, Repr
+/-- Short alias for WALS Ch 63 type. -/
+abbrev ConjComitativeRelation := Core.WALS.F63A.NounPhraseConjunction
 
 /--
 @cite{stassen-2000} AND/WITH classification of languages.
@@ -715,46 +648,8 @@ def ConjComitativeRelation.toAndWithStatus : ConjComitativeRelation → AndWithS
 -- Chapter 64: Nominal and Verbal Conjunction
 -- ============================================================================
 
-/-- WALS Ch 64: Whether a language uses the same conjunction marker for
-    NP coordination ("cats and dogs") and VP/clausal coordination
-    ("sang and danced").
-
-    Languages that differentiate may use distinct markers, or may use
-    overt coordination for one but juxtaposition for the other. -/
-inductive NomVerbalConjRelation where
-  /-- Same conjunction marker for NP and VP coordination.
-      Example: English "and" in both "cats and dogs" and "sang and danced". -/
-  | identity
-  /-- Different conjunction markers for NP and VP coordination.
-      Example: Japanese "to" for NPs ("inu to neko") but different
-      strategies for VP conjunction. -/
-  | differentiation
-  /-- Both NP and VP coordination are expressed by juxtaposition (no
-      overt marker for either).
-      Example: some Australian and South American languages. -/
-  | bothJuxtaposition
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- WALS Converter Functions
--- ============================================================================
-
-/-- Map WALS F56A to our `ConjQuantRelation`. -/
-private def fromWALS56A : Core.WALS.F56A.ConjunctionsAndUniversalQuantifiers → ConjQuantRelation
-  | .formallyDifferent => .formallyDifferent
-  | .formallySimilarWithoutInterrogative => .similarNoInterrogative
-  | .formallySimilarWithInterrogative => .similarWithInterrogative
-
-/-- Map WALS F63A to our `ConjComitativeRelation`. -/
-private def fromWALS63A : Core.WALS.F63A.NounPhraseConjunction → ConjComitativeRelation
-  | .andDifferentFromWith => .andDifferentFromWith
-  | .andIdenticalToWith => .andIdenticalToWith
-
-/-- Map WALS F64A to our `NomVerbalConjRelation`. -/
-private def fromWALS64A : Core.WALS.F64A.NominalAndVerbalConjunction → NomVerbalConjRelation
-  | .identity => .identity
-  | .differentiation => .differentiation
-  | .bothExpressedByJuxtaposition => .bothJuxtaposition
+/-- Short alias for WALS Ch 64 type. -/
+abbrev NomVerbalConjRelation := Core.WALS.F64A.NominalAndVerbalConjunction
 
 -- ============================================================================
 -- Coordination Profile Structure
@@ -798,7 +693,7 @@ def englishWALS : CoordinationProfile :=
   { language := "English"
   , iso := "eng"
   , family := "Indo-European"
-  , conjQuant := some .similarNoInterrogative
+  , conjQuant := some .formallySimilarWithoutInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'and' for both NP and VP coordination; " ++
@@ -880,7 +775,7 @@ def japaneseWALS : CoordinationProfile :=
   { language := "Japanese"
   , iso := "jpn"
   , family := "Japonic"
-  , conjQuant := some .similarWithInterrogative
+  , conjQuant := some .formallySimilarWithInterrogative
   , conjComitative := some .andIdenticalToWith
   , nomVerbalConj := some .differentiation
   , walsNotes := "'mo' links conjunction, universal quantifier, and " ++
@@ -898,7 +793,7 @@ def mandarinWALS : CoordinationProfile :=
   { language := "Mandarin"
   , iso := "cmn"
   , family := "Sino-Tibetan"
-  , conjQuant := some .similarWithInterrogative
+  , conjQuant := some .formallySimilarWithInterrogative
   , conjComitative := some .andIdenticalToWith
   , nomVerbalConj := some .differentiation
   , walsNotes := "NP conjunction 'he/gen' doubles as comitative; " ++
@@ -949,7 +844,7 @@ def finnishWALS : CoordinationProfile :=
   { language := "Finnish"
   , iso := "fin"
   , family := "Uralic"
-  , conjQuant := some .similarWithInterrogative
+  , conjQuant := some .formallySimilarWithInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'ja' for both NP and VP; comitative expressed by " ++
@@ -967,7 +862,7 @@ def hungarianWALS : CoordinationProfile :=
   { language := "Hungarian"
   , iso := "hun"
   , family := "Uralic"
-  , conjQuant := some .similarNoInterrogative
+  , conjQuant := some .formallySimilarWithoutInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'és' for both NP and VP; distinct from comitative " ++
@@ -984,7 +879,7 @@ def hindiWALS : CoordinationProfile :=
   { language := "Hindi"
   , iso := "hin"
   , family := "Indo-European"
-  , conjQuant := some .similarWithInterrogative
+  , conjQuant := some .formallySimilarWithInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'aur' for both NP and VP coordination; distinct from " ++
@@ -1034,7 +929,7 @@ def tagalogWALS : CoordinationProfile :=
   { language := "Tagalog"
   , iso := "tgl"
   , family := "Austronesian"
-  , conjQuant := some .similarWithInterrogative
+  , conjQuant := some .formallySimilarWithInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'at' for both NP and VP coordination; distinct from " ++
@@ -1061,119 +956,119 @@ private abbrev ch64 := Core.WALS.F64A.allData
 
 -- F56A grounding (9 languages present)
 theorem english_f56a :
-    (Core.WALS.F56A.lookup "eng").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "eng").map (·.value) =
     englishWALS.conjQuant := by native_decide
 theorem french_f56a :
-    (Core.WALS.F56A.lookup "fre").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "fre").map (·.value) =
     frenchWALS.conjQuant := by native_decide
 theorem japanese_f56a :
-    (Core.WALS.F56A.lookup "jpn").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "jpn").map (·.value) =
     japaneseWALS.conjQuant := by native_decide
 theorem mandarin_f56a :
-    (Core.WALS.F56A.lookup "mnd").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "mnd").map (·.value) =
     mandarinWALS.conjQuant := by native_decide
 theorem turkish_f56a :
-    (Core.WALS.F56A.lookup "tur").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "tur").map (·.value) =
     turkishWALS.conjQuant := by native_decide
 theorem finnish_f56a :
-    (Core.WALS.F56A.lookup "fin").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "fin").map (·.value) =
     finnishWALS.conjQuant := by native_decide
 theorem hungarian_f56a :
-    (Core.WALS.F56A.lookup "hun").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "hun").map (·.value) =
     hungarianWALS.conjQuant := by native_decide
 theorem hindi_f56a :
-    (Core.WALS.F56A.lookup "hin").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "hin").map (·.value) =
     hindiWALS.conjQuant := by native_decide
 theorem tagalog_f56a :
-    (Core.WALS.F56A.lookup "tag").map (fromWALS56A ·.value) =
+    (Core.WALS.F56A.lookup "tag").map (·.value) =
     tagalogWALS.conjQuant := by native_decide
 
 -- F63A grounding (14 languages present; German absent)
 theorem english_f63a :
-    (Core.WALS.F63A.lookup "eng").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "eng").map (·.value) =
     englishWALS.conjComitative := by native_decide
 theorem french_f63a :
-    (Core.WALS.F63A.lookup "fre").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "fre").map (·.value) =
     frenchWALS.conjComitative := by native_decide
 theorem spanish_f63a :
-    (Core.WALS.F63A.lookup "spa").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "spa").map (·.value) =
     spanishWALS.conjComitative := by native_decide
 theorem russian_f63a :
-    (Core.WALS.F63A.lookup "rus").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "rus").map (·.value) =
     russianWALS.conjComitative := by native_decide
 theorem japanese_f63a :
-    (Core.WALS.F63A.lookup "jpn").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "jpn").map (·.value) =
     japaneseWALS.conjComitative := by native_decide
 theorem mandarin_f63a :
-    (Core.WALS.F63A.lookup "mnd").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "mnd").map (·.value) =
     mandarinWALS.conjComitative := by native_decide
 theorem korean_f63a :
-    (Core.WALS.F63A.lookup "kor").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "kor").map (·.value) =
     koreanWALS.conjComitative := by native_decide
 theorem turkish_f63a :
-    (Core.WALS.F63A.lookup "tur").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "tur").map (·.value) =
     turkishWALS.conjComitative := by native_decide
 theorem finnish_f63a :
-    (Core.WALS.F63A.lookup "fin").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "fin").map (·.value) =
     finnishWALS.conjComitative := by native_decide
 theorem hungarian_f63a :
-    (Core.WALS.F63A.lookup "hun").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "hun").map (·.value) =
     hungarianWALS.conjComitative := by native_decide
 theorem hindi_f63a :
-    (Core.WALS.F63A.lookup "hin").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "hin").map (·.value) =
     hindiWALS.conjComitative := by native_decide
 theorem arabic_f63a :
-    (Core.WALS.F63A.lookup "aeg").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "aeg").map (·.value) =
     arabicWALS.conjComitative := by native_decide
 theorem swahili_f63a :
-    (Core.WALS.F63A.lookup "swa").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "swa").map (·.value) =
     swahiliWALS.conjComitative := by native_decide
 theorem tagalog_f63a :
-    (Core.WALS.F63A.lookup "tag").map (fromWALS63A ·.value) =
+    (Core.WALS.F63A.lookup "tag").map (·.value) =
     tagalogWALS.conjComitative := by native_decide
 
 -- F64A grounding (14 languages present; Swahili absent)
 theorem english_f64a :
-    (Core.WALS.F64A.lookup "eng").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "eng").map (·.value) =
     englishWALS.nomVerbalConj := by native_decide
 theorem german_f64a :
-    (Core.WALS.F64A.lookup "ger").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "ger").map (·.value) =
     germanWALS.nomVerbalConj := by native_decide
 theorem french_f64a :
-    (Core.WALS.F64A.lookup "fre").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "fre").map (·.value) =
     frenchWALS.nomVerbalConj := by native_decide
 theorem spanish_f64a :
-    (Core.WALS.F64A.lookup "spa").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "spa").map (·.value) =
     spanishWALS.nomVerbalConj := by native_decide
 theorem russian_f64a :
-    (Core.WALS.F64A.lookup "rus").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "rus").map (·.value) =
     russianWALS.nomVerbalConj := by native_decide
 theorem japanese_f64a :
-    (Core.WALS.F64A.lookup "jpn").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "jpn").map (·.value) =
     japaneseWALS.nomVerbalConj := by native_decide
 theorem mandarin_f64a :
-    (Core.WALS.F64A.lookup "mnd").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "mnd").map (·.value) =
     mandarinWALS.nomVerbalConj := by native_decide
 theorem korean_f64a :
-    (Core.WALS.F64A.lookup "kor").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "kor").map (·.value) =
     koreanWALS.nomVerbalConj := by native_decide
 theorem turkish_f64a :
-    (Core.WALS.F64A.lookup "tur").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "tur").map (·.value) =
     turkishWALS.nomVerbalConj := by native_decide
 theorem finnish_f64a :
-    (Core.WALS.F64A.lookup "fin").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "fin").map (·.value) =
     finnishWALS.nomVerbalConj := by native_decide
 theorem hungarian_f64a :
-    (Core.WALS.F64A.lookup "hun").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "hun").map (·.value) =
     hungarianWALS.nomVerbalConj := by native_decide
 theorem hindi_f64a :
-    (Core.WALS.F64A.lookup "hin").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "hin").map (·.value) =
     hindiWALS.nomVerbalConj := by native_decide
 theorem arabic_f64a :
-    (Core.WALS.F64A.lookup "aeg").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "aeg").map (·.value) =
     arabicWALS.nomVerbalConj := by native_decide
 theorem tagalog_f64a :
-    (Core.WALS.F64A.lookup "tag").map (fromWALS64A ·.value) =
+    (Core.WALS.F64A.lookup "tag").map (·.value) =
     tagalogWALS.nomVerbalConj := by native_decide
 
 -- ============================================================================
@@ -1268,60 +1163,5 @@ theorem hindi_is_andLang : hindiWALS.andWithStatus = some .andLang := by native_
 theorem arabic_is_andLang : arabicWALS.andWithStatus = some .andLang := by native_decide
 theorem swahili_is_withLang : swahiliWALS.andWithStatus = some .withLang := by native_decide
 theorem tagalog_is_andLang : tagalogWALS.andWithStatus = some .andLang := by native_decide
-
--- ============================================================================
--- Fragment ↔ Typology Bridge Theorems
--- ============================================================================
-
-/-!
-## Bridge Theorems
-
-These theorems verify that the Fragment lexical entries
-(`Fragments.Georgian.Coordination`, `Fragments.Hungarian.Coordination`)
-are consistent with the Typology data in this file. Changes to either
-side will break exactly the relevant theorem.
--/
-
-/-- Georgian Fragment MU clitic "-c" is bound, matching Typology data. -/
-theorem georgian_fragment_mu_bound :
-    Fragments.Georgian.Coordination.c_.boundness = Boundness.bound ∧
-    georgian.muBoundness = some .bound := by
-  exact ⟨rfl, by native_decide⟩
-
-/-- Hungarian Fragment MU particle "is" is free, matching Typology data. -/
-theorem hungarian_fragment_mu_free :
-    Fragments.Hungarian.Coordination.is_.boundness = Boundness.free ∧
-    hungarian.muBoundness = some .free := by
-  exact ⟨rfl, by native_decide⟩
-
-/-- Georgian Fragment and Typology agree on J particle form. -/
-theorem georgian_fragment_j_form :
-    Fragments.Georgian.Coordination.da.form = "da" ∧
-    Fragments.Georgian.Coordination.da.role = CoordRole.j ∧
-    (georgian.morphemes.find? (·.role == .j)).map (·.form) = some "da" := by
-  exact ⟨rfl, rfl, by native_decide⟩
-
-/-- Hungarian Fragment and Typology agree on J particle form. -/
-theorem hungarian_fragment_j_form :
-    Fragments.Hungarian.Coordination.es.form = "és" ∧
-    Fragments.Hungarian.Coordination.es.role = CoordRole.j ∧
-    (hungarian.morphemes.find? (·.role == .j)).map (·.form) = some "és" := by
-  exact ⟨rfl, rfl, by native_decide⟩
-
-/-- Both Fragments confirm MU = additive particle (M&S prediction). -/
-theorem fragments_confirm_mu_additive :
-    Fragments.Georgian.Coordination.c_.alsoAdditive = true ∧
-    Fragments.Hungarian.Coordination.is_.alsoAdditive = true := by
-  exact ⟨rfl, rfl⟩
-
-/-- The boundness asymmetry is visible in both Fragments and Typology. -/
-theorem boundness_asymmetry_cross_validated :
-    -- Fragment level
-    Fragments.Georgian.Coordination.c_.boundness = .bound ∧
-    Fragments.Hungarian.Coordination.is_.boundness = .free ∧
-    -- Typology level
-    georgian.muBoundness = some .bound ∧
-    hungarian.muBoundness = some .free := by
-  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
 
 end Phenomena.Coordination.Typology

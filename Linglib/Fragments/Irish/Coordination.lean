@@ -1,3 +1,5 @@
+import Linglib.Core.Coordination
+
 /-!
 # Irish Coordination Morphemes
 @cite{haspelmath-2007}
@@ -13,56 +15,34 @@ encodes the structural pattern (a_co_b only, J-only strategy).
 
 namespace Fragments.Irish.Coordination
 
-/-- Role of a coordination morpheme. -/
-inductive CoordRole where
-  | j          -- Conjunction
-  | disj       -- Disjunction
-  | advers     -- Adversative ("but")
-  | negDisj    -- Negative disjunction ("nor")
-  deriving DecidableEq, Repr
-
-/-- Morphological boundness. -/
-inductive Boundness where
-  | free
-  | bound
-  deriving DecidableEq, Repr
-
-/-- An Irish coordination entry. -/
-structure CoordEntry where
-  form : String
-  gloss : String
-  role : CoordRole
-  boundness : Boundness
-  /-- Additional functions beyond coordination -/
-  note : String := ""
-  deriving Repr, BEq
+open Core.Coordination
 
 -- ============================================================================
 -- Lexical entries
 -- ============================================================================
 
 /-- *agus* — conjunction, J particle. Free, prepositive.
-    "Seán agus Máire" = "Seán and Máire". -/
+    "Sean agus Maire" = "Sean and Maire". -/
 def agus : CoordEntry :=
   { form := "agus", gloss := "and"
   , role := .j, boundness := .free }
 
-/-- *nó* — disjunction. Free, prepositive.
-    "Seán nó Máire" = "Seán or Máire". -/
+/-- *no* — disjunction. Free, prepositive.
+    "Sean no Maire" = "Sean or Maire". -/
 def no_ : CoordEntry :=
   { form := "nó", gloss := "or"
   , role := .disj, boundness := .free }
 
-/-- *ná* — negative disjunction / comparative particle.
-    "ní Seán ná Máire" = "neither Seán nor Máire".
-    Also used in comparatives: "níos mó ná" = "bigger than". -/
+/-- *na* — negative disjunction / comparative particle.
+    "ni Sean na Maire" = "neither Sean nor Maire".
+    Also used in comparatives: "nios mo na" = "bigger than". -/
 def na_ : CoordEntry :=
   { form := "ná", gloss := "nor, than"
   , role := .negDisj, boundness := .free
   , note := "also comparative particle" }
 
 /-- *ach* — adversative conjunction.
-    "Tá sé fuar ach tirim" = "It is cold but dry". -/
+    "Ta se fuar ach tirim" = "It is cold but dry". -/
 def ach : CoordEntry :=
   { form := "ach", gloss := "but"
   , role := .advers, boundness := .free }

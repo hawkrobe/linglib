@@ -1,8 +1,5 @@
 import Linglib.Phenomena.Coordination.Typology
-import Linglib.Fragments.Georgian.Coordination
-import Linglib.Fragments.Hungarian.Coordination
-import Linglib.Fragments.Latin.Coordination
-import Linglib.Fragments.Irish.Coordination
+import Linglib.Fragments.Japanese.Determiners
 
 /-!
 # @cite{stassen-2000} — AND-languages and WITH-languages
@@ -40,9 +37,9 @@ via `AndWithStatus` in `Typology.lean`, following the "derive, don't
 duplicate" principle. This file adds:
 
 - Stassen's strategy feature diagnostics (coordinate vs comitative encoding)
-- Fragment↔Typology bridge theorems for Georgian, Hungarian, Latin, Irish
 - The WITH→AND drift linked to `DiachronicSource.comitative`
 - Correlational parameter types (sorry-marked: statistical tendencies)
+- Cross-module bridge: Japanese MU = additive = universal quantifier
 
 ## 2026 Consensus
 
@@ -197,124 +194,30 @@ theorem tensedness_skews_andWith :
   exact ⟨100, 30, 50, 80, by omega, by omega⟩
 
 -- ============================================================================
--- Fragment ↔ Typology Bridge Theorems
+-- Cross-Module Bridges
 -- ============================================================================
 
 /-!
-## Fragment Bridges
+## Cross-Module Bridge
 
-These theorems verify that morpheme data in independently-defined Fragment
-entries is consistent with the corresponding Typology `ConjunctionSystem`
-entries. Since the Fragment types (`CoordRole`, `Boundness`, `CoordEntry`)
-are defined independently per language, we compare via string-valued fields
-(`.form`). This means a change to either side breaks the relevant theorem.
+Fragment↔Typology bridges are now structurally guaranteed — Typology's
+`ConjunctionSystem` entries derive directly from Fragment entries via
+`SourcedEntry`, so agreement is by construction.
+
+The one remaining cross-module bridge connects Coordination to Determiners:
+Japanese "mo" serves as MU conjunction particle, additive particle, AND
+universal quantifier component. This triple identity cannot be structural
+(Coordination and Determiners are independent modules).
 -/
 
--- Georgian bridges
-
-/-- Georgian Fragment's J morpheme "da" matches Typology's Georgian "da". -/
-theorem georgian_j_bridge :
-    (georgian.morphemes.filter (·.role == .j)).any (·.form == "da") = true ∧
-    Fragments.Georgian.Coordination.da.form = "da" := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Georgian Fragment's MU morpheme "-c" matches Typology's Georgian "-c". -/
-theorem georgian_mu_bridge :
-    (georgian.morphemes.filter (·.role == .mu)).any (·.form == "-c") = true ∧
-    Fragments.Georgian.Coordination.c_.form = "-c" := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Georgian MU is bound in both Fragment and Typology. -/
-theorem georgian_mu_bound_bridge :
-    (georgian.morphemes.filter (·.role == .mu)).all
-      (·.boundness == .bound) = true ∧
-    (Fragments.Georgian.Coordination.c_.boundness == .bound) = true := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Georgian MU is additive in both Fragment and Typology. -/
-theorem georgian_mu_additive_bridge :
-    (georgian.morphemes.filter (·.role == .mu)).all
-      (·.alsoAdditive) = true ∧
-    Fragments.Georgian.Coordination.c_.alsoAdditive = true := by
-  exact ⟨by native_decide, rfl⟩
-
--- Hungarian bridges
-
-/-- Hungarian Fragment's J morpheme "és" matches Typology's Hungarian "és". -/
-theorem hungarian_j_bridge :
-    (hungarian.morphemes.filter (·.role == .j)).any (·.form == "és") = true ∧
-    Fragments.Hungarian.Coordination.es.form = "és" := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Hungarian Fragment's MU morpheme "is" matches Typology's Hungarian "is". -/
-theorem hungarian_mu_bridge :
-    (hungarian.morphemes.filter (·.role == .mu)).any (·.form == "is") = true ∧
-    Fragments.Hungarian.Coordination.is_.form = "is" := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Hungarian MU is free in both Fragment and Typology. -/
-theorem hungarian_mu_free_bridge :
-    (hungarian.morphemes.filter (·.role == .mu)).all
-      (·.boundness == .free) = true ∧
-    (Fragments.Hungarian.Coordination.is_.boundness == .free) = true := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Hungarian MU is additive in both Fragment and Typology. -/
-theorem hungarian_mu_additive_bridge :
-    (hungarian.morphemes.filter (·.role == .mu)).all
-      (·.alsoAdditive) = true ∧
-    Fragments.Hungarian.Coordination.is_.alsoAdditive = true := by
-  exact ⟨by native_decide, rfl⟩
-
--- Latin bridges
-
-/-- Latin Fragment's J morpheme "et" matches Typology's Latin "et". -/
-theorem latin_j_bridge :
-    (latin.morphemes.filter (·.role == .j)).any (·.form == "et") = true ∧
-    Fragments.Latin.Coordination.et.form = "et" := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Latin Fragment's MU morpheme "-que" matches Typology's Latin "-que". -/
-theorem latin_mu_bridge :
-    (latin.morphemes.filter (·.role == .mu)).any (·.form == "-que") = true ∧
-    Fragments.Latin.Coordination.que.form = "-que" := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Latin MU is bound in both Fragment and Typology. -/
-theorem latin_mu_bound_bridge :
-    (latin.morphemes.filter (·.role == .mu)).all
-      (·.boundness == .bound) = true ∧
-    (Fragments.Latin.Coordination.que.boundness == .bound) = true := by
-  exact ⟨by native_decide, by native_decide⟩
-
--- Irish bridges
-
-/-- Irish Fragment's J morpheme "agus" matches Typology's Irish "agus". -/
-theorem irish_j_bridge :
-    (irish.morphemes.filter (·.role == .j)).any (·.form == "agus") = true ∧
-    Fragments.Irish.Coordination.agus.form = "agus" := by
-  exact ⟨by native_decide, rfl⟩
-
-/-- Irish has no MU morpheme — J-only in both Fragment and Typology. -/
-theorem irish_j_only_bridge :
-    (irish.morphemes.filter (·.role == .mu)).length = 0 ∧
-    (Fragments.Irish.Coordination.allEntries.filter
-      (·.role == .j)).length = 1 := by
-  exact ⟨by native_decide, by native_decide⟩
-
--- Georgian / Hungarian boundness asymmetry bridge
-
-/-- The Fragment-level boundness asymmetry between Georgian MU (bound) and
-    Hungarian MU (free) is consistent with the Typology-level asymmetry.
-    This connects @cite{bill-etal-2025}'s acquisition data (Georgian children
-    found J-MU harder) to the morphological difference. -/
-theorem boundness_asymmetry_bridge :
-    -- Typology layer
-    georgian.muBoundness = some .bound ∧
-    hungarian.muBoundness = some .free ∧
-    -- Fragment layer
-    (Fragments.Georgian.Coordination.c_.boundness == .bound) = true ∧
-    (Fragments.Hungarian.Coordination.is_.boundness == .free) = true := by
-  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+/-- Japanese MU "mo" also serves as a quantifier particle — the
+    Fragment records this via `alsoQuantifier`, and the Determiners
+    fragment independently records "mo" as the particle in dare-mo
+    (universal). This is the triple identity: MU = additive = ∀. -/
+theorem japanese_mu_quantifier_bridge :
+    Fragments.Japanese.Coordination.mo.alsoQuantifier = true ∧
+    Fragments.Japanese.Coordination.mo.alsoAdditive = true ∧
+    Fragments.Japanese.Determiners.dare_mo.particle = some "mo" := by
+  exact ⟨rfl, rfl, rfl⟩
 
 end Phenomena.Coordination.Studies.Stassen2000

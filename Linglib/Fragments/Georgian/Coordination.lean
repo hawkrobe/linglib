@@ -26,18 +26,6 @@ namespace Fragments.Georgian.Coordination
 
 open Core.Coordination
 
-/-- A Georgian coordination entry. -/
-structure CoordEntry where
-  form : String
-  gloss : String
-  role : CoordRole
-  boundness : Boundness
-  /-- Does this morpheme also serve as an additive/focus particle? -/
-  alsoAdditive : Bool := false
-  /-- Notes on usage or distribution -/
-  note : String := ""
-  deriving Repr, BEq
-
 -- ============================================================================
 -- Lexical entries
 -- ============================================================================
