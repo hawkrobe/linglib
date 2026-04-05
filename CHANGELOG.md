@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.229.521] - 2026-04-04
+
+### Changed
+- **SplitExhaustification.lean**: merged ModalSplitExhaustification.lean into §6 — 22 sorry-free theorems in one file covering both root-level and modal-level split exhaustification for arbitrary Kripke frames
+
+## [0.229.520] - 2026-04-04
+
+### Added
+- **ModalSplitExhaustification.lean** (Theories/Semantics/Exhaustification): Prop-level theory lifting split exhaustification to arbitrary Kripke frames — 10 sorry-free structural theorems for abstract modal semantics:
+  - `diamond_preserves_exist`, `diamond_uniqueness_implies_exist`: ◇ lifts existence from below-modal to above-modal
+  - `modal_domain_exh_plurality`: domain-exh above ◇ gives ∃≥2 for arbitrary domains (general W, D)
+  - `modal_split_exh_fc`: domain-exh above ◇ gives FC for |D|=2 (composes `fc_two_element` through ◇)
+  - `modal_split_exh_full`: FC + embedded uniqueness from O_EXH-D above ◇ and O_σ below
+  - `modal_uniqueness_not_fc`: countermodel — ◇(∃!d P d) ⊬ ∀d ◇(P d) (single below-◇ too weak)
+  - `modal_full_exh_contradiction`: adding ¬∀d ◇(P d) contradicts domain-exh for |D|=2
+  - `modal_exclusive_false_of_universal`: ∀d ◇(P d) → no element exclusively possible
+  - `modal_split_compatible_with_joint`, `modal_split_full_compatible_with_joint`: FC consistent with ◇(∀d P d) — scalar survives split exh (3-world countermodel with embedded uniqueness)
+
+## [0.229.519] - 2026-04-04
+
+### Added
+- **ICDRT compositional fragment** (Compositional.lean): type-driven compositional semantics for ICDRT following Hofmann 2025 Appendix C — `SemE`/`SemW` meta-types, 11 lexical entries (`commonNoun`, `indefinite`, `pronoun`, `properName`, `semNOT`, `semOR`, `semIF`, `semAND`, `semBelieved`, `semDEC`, `intransVP`), structural theorems (`semDEC_inclusion`, `semNOT_introduces_complement`, `double_neg_complement`), definitional unfolding theorems, bridge to CCP
+- **Compositional derivations** (Hofmann2025.lean §6): 6 end-to-end compositional derivations built from lexical entries — veridical, negated, double negation, bathroom disjunction, disagreement, modal subordination — all lifting to distributive CCPs via Bridge.lean
+
 ## [0.229.518] - 2026-04-04
 
 ### Added

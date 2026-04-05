@@ -23,10 +23,11 @@ ICDRT from nested-update systems.
 * `dynUnion` — φ ∪ ψ (footnote 11)
 * `dynPredication` — R_φ(v) (Definition 27)
 * `localEntailment` — v entailed in φ at i (Definition 28)
-* `decOp` — DEC_S^φ declarative assertion (Definition 22)
-* `notOp` — NOT^φ' sentential negation (Definition 23)
+* `decCondition` — DEC_S^φ declarative assertion condition (Definition 22)
+* `isComplement` — φ₁ ≡ φ̄₂ complementation condition (Definition 23)
 * `pragMaxDC` — pragmatic maximization for commitment sets (Definition 35)
 * `propMaxOp` — propositional maximization max_φ (Definition 40)
+* `believeCondition` — doxastic accessibility condition (Appendix C)
 
 -/
 
@@ -254,21 +255,6 @@ We factor out DEC as a condition on the output assignment.
 def decCondition (φ_DC : PVar) (φ : PVar) (j : ICDRTAssignment W E) : Prop :=
   j.prop φ_DC ⊆ j.prop φ
 
-/--
-Sentential negation operator (Definition 23): `NOT^φ'`
-
-`NOT^φ' ≡ λP. λφ. [φ' | φ ≡ φ̄']; P(φ')`
-
-The NOT operator:
-1. Introduces a propositional dref φ' for the negated content
-2. Constrains φ to be the complement of φ' (φ ≡ φ̄')
-3. Applies the scope P to φ'
-
-Negation is static complementation over propositional drefs,
-NOT bilateral swap of positive/negative updates.
--/
-def notCondition (φ_outer φ_inner : PVar) (j : ICDRTAssignment W E) : Prop :=
-  j.prop φ_outer = (j.prop φ_inner)ᶜ
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -592,55 +578,12 @@ theorem dec_complement_counterfactual (φ_DC φ_outer φ_inner : PVar)
   exact h_dec hw_dc hw_inner
 
 
--- ════════════════════════════════════════════════════════════════
--- § 10. Compositional Fragment (Appendix C)
--- ════════════════════════════════════════════════════════════════
-
-/--
-Sentential conjunction as update sequencing (Appendix C).
-
-`AND(P)(Q)(φ) ≡ P(φ) ; Q(φ)`
-
-Both conjuncts contribute conditions in the same local context φ.
--/
-def andCondition (φ : PVar) (cond₁ cond₂ : PVar → ICDRTAssignment W E → Prop)
-    (j : ICDRTAssignment W E) : Prop :=
-  cond₁ φ j ∧ cond₂ φ j
-
-/--
-Disjunction operator (Definition 24): `OR^{φ',ψ'}(P)(Q)(φ)`
-
-Introduces two fresh propositional drefs φ' and ψ' for the disjuncts,
-constrains their union to equal the matrix proposition φ, then applies
-P to φ' and Q to ψ'.
-
-`[φ', ψ' | φ ≡ φ' ∪ ψ']; P(φ'); Q(ψ')`
--/
-def orCondition (φ φ' ψ' : PVar) (j : ICDRTAssignment W E) : Prop :=
-  j.prop φ = j.prop φ' ∪ j.prop ψ'
-
-/--
-Conditional as negated conjunction with negated consequent:
-
-`IF(P)(Q)(φ) ≡ NOT^{φ'}(AND(P)(NOT^{φ''}(Q)))(φ)`
-
-The antecedent P is evaluated in φ', the consequent Q in φ''.
-The overall assertion φ is the complement of φ' restricted to cases
-where Q fails.
--/
-def ifCondition (φ φ_ant φ_cons : PVar)
-    (antCond consCond : PVar → ICDRTAssignment W E → Prop)
-    (j : ICDRTAssignment W E) : Prop :=
-  notCondition φ φ_ant j ∧
-  antCond φ_ant j ∧
-  notCondition φ_ant φ_cons j ∧
-  consCond φ_cons j
-
 /--
 Attitude verb condition: `believe^{φ'}(δ^v)` (Appendix C).
 
 The attitude verb introduces a propositional dref φ' for the agent's
-doxastic state. The belief content P is evaluated in φ'.
+doxastic state. `dox j` returns the set of worlds compatible with
+the agent's beliefs at assignment `j`.
 
 `believe_φ'(δ^v) ≡ [φ' | DOX(δ,φ) ⊆ φ']; P(φ')`
 
@@ -650,28 +593,6 @@ in context φ at assignment i.
 def believeCondition (φ_belief : PVar) (dox : ICDRTAssignment W E → Set W)
     (j : ICDRTAssignment W E) : Prop :=
   dox j ⊆ j.prop φ_belief
-
-/-- AND with sequencing: if the first conjunct holds under P, the second
-    under Q, then AND holds. -/
-theorem and_from_parts (φ : PVar) (cond₁ cond₂ : PVar → ICDRTAssignment W E → Prop)
-    (j : ICDRTAssignment W E)
-    (h₁ : cond₁ φ j) (h₂ : cond₂ φ j) :
-    andCondition φ cond₁ cond₂ j :=
-  ⟨h₁, h₂⟩
-
-/-- Disjunction entails union: if OR holds, the matrix proposition is the union
-    of the disjunct propositions. -/
-theorem or_union (φ φ' ψ' : PVar) (j : ICDRTAssignment W E)
-    (h : orCondition φ φ' ψ' j) :
-    j.prop φ = j.prop φ' ∪ j.prop ψ' := h
-
-/-- IF as NOT-AND-NOT: the conditional is equivalent to negation of the
-    conjunction of the antecedent with the negation of the consequent. -/
-theorem if_as_not_and_not (φ φ_ant φ_cons : PVar)
-    (antCond consCond : PVar → ICDRTAssignment W E → Prop)
-    (j : ICDRTAssignment W E)
-    (h : ifCondition φ φ_ant φ_cons antCond consCond j) :
-    isComplement φ φ_ant j := h.1
 
 
 end Semantics.Dynamic.IntensionalCDRT

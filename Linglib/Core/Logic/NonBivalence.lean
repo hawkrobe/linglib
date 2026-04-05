@@ -20,23 +20,59 @@ values) determines whether quantifier strength matters.
   strength-dependent pattern (strong → false, weak → true). This is the
   selectional theory's architecture.
 
-## Mathematical Foundation
+## Algebraic Foundation
 
-The gap sublattice theorem: `.indet` is a fixed point of both `⊔` and
-`⊓` in the Truth3 lattice (it is a sublattice). Folding either operation
-over all-gap input returns gap. This is why LOCAL gaps erase the
-quantifier's projection type — the quantifier cannot "see past" gaps
-regardless of whether it is conjunctive or disjunctive.
+The local/global dichotomy reduces to two general facts about bounded
+lattices:
 
-The Bool exclusion theorem: `ofBool` maps into {⊥, ⊤}, which contains no
-gaps. Folding over `map ofBool` always yields a definite value, and mixed
-Bool inputs distinguish ⊔-fold from ⊓-fold — which IS the strength
-effect.
+1. **Idempotency** (`sup_idem`, `inf_idem`): every element `a` of a
+   lattice satisfies `a ⊔ a = a` and `a ⊓ a = a`. Folding either
+   operation over a constant list with that constant as accumulator
+   yields the constant back. Applied to `.indet`, this gives gap
+   absorption: gap in, gap out.
+
+2. **Identity elements** (`bot_sup_eq`, `top_inf_eq`): `⊥ ⊔ a = a`
+   and `⊤ ⊓ a = a`. When the initial accumulator is the identity,
+   the first fold step transitions to the first element, and then
+   idempotency takes over.
+
+3. **Bounded sublattice** `{⊥, ⊤}`: `ofBool` embeds `Bool` into the
+   two-element sublattice `{⊥, ⊤}` of any bounded lattice. Since
+   `ofBool` is a lattice homomorphism (`ofBool a ⊔ ofBool b = ofBool
+   (a || b)`), folding `⊔`/`⊓` over `map ofBool` reduces to folding
+   `||`/`&&` over `Bool` — which is always definite.
+
+## Verification Against the Literature
+
+### @cite{ramotowska-marty-romoli-santorio-2025} (S&P 18, §2.2.2)
+
+The `TrivalenceScope` type formalizes their local/global distinction:
+- `TrivalenceScope.local` = homogeneity theory's architecture (gaps
+  arise per-individual before quantification, §2.2.2 "local scope")
+- `TrivalenceScope.global` = selectional theory's architecture (each
+  selection function yields determinate outcomes, §2.2.2 "global scope")
+
+`local_strength_irrelevant` captures their Table 2 prediction for the
+homogeneity theory: both strong and weak quantifiers yield gap.
+`global_mixed_pattern` captures the selectional theory's Table 2
+prediction: strong → false, weak → true.
+
+### @cite{agha-jeretic-2022} (SALT 32, §2–3)
+
+The same local/global structure appears in the modal domain:
+- `shouldD` (their eq. 27–28) uses supervaluation over deontic
+  alternatives (= `dist`), producing gaps for mixed modal bases.
+  This is `TrivalenceScope.local`.
+- `mustD` (their eq. 25) is universal quantification over the modal
+  base, always Boolean. This is `TrivalenceScope.global`.
+
+The should/must contrast parallels the/all: both exhibit the homogeneity
+pattern where supervaluation gaps erase quantifier strength.
 
 ## Main Definitions
 
 - `TrivalenceScope`: whether gaps arise locally or globally
-- `gap_sup_gap`, `gap_inf_gap`: gap sublattice (fixed point of both ops)
+- `gap_sup_gap`, `gap_inf_gap`: instances of `sup_idem`, `inf_idem`
 - `foldl_sup_gap`, `foldl_inf_gap`: gap absorption under aggregation
 - `local_strength_irrelevant`: both duality types agree on all-gap input
 - `global_always_determinate`: aggregation over `map ofBool` is never gap
@@ -56,7 +92,9 @@ open Core.Duality
 
 - **local**: gaps arise during composition (e.g., each individual's
   counterfactual is `.indet`). The quantifier sees `List Truth3` with
-  gaps in it. This is the homogeneity theory's architecture.
+  gaps in it. This is the homogeneity theory's architecture
+  (@cite{ramotowska-marty-romoli-santorio-2025} §2.2.2) and the
+  `shouldD := ⊕D` architecture (@cite{agha-jeretic-2022} eq. 27–28).
 - **global**: the quantifier sees only Boolean values (gaps arise, if at
   all, only after quantification). This is the selectional theory's
   architecture, where each selection function picks a world with
@@ -67,54 +105,65 @@ inductive TrivalenceScope where
   deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════════════════
--- Gap Sublattice: indet is a fixed point of both ⊔ and ⊓
+-- Gap Sublattice: Idempotency in Bounded Lattices
 -- ════════════════════════════════════════════════════════════════
 
-/-- Gap is a fixed point of sup: `gap ⊔ gap = gap`. -/
-@[simp] theorem gap_sup_gap : (Truth3.indet : Truth3) ⊔ .indet = .indet := rfl
+/-! The gap sublattice theorem — `.indet` is a fixed point of both
+`⊔` and `⊓` — is an instance of the general lattice-theoretic fact
+that every element is idempotent under both operations (`sup_idem`,
+`inf_idem` from mathlib). There is nothing special about `.indet` here;
+what makes the dichotomy work is that `.indet` is the ONLY element
+outside `{⊥, ⊤}`. -/
 
-/-- Gap is a fixed point of inf: `gap ⊓ gap = gap`. -/
-@[simp] theorem gap_inf_gap : (Truth3.indet : Truth3) ⊓ .indet = .indet := rfl
+/-- Gap is a fixed point of sup: `gap ⊔ gap = gap`.
+    Instance of `sup_idem` (mathlib `Order.Lattice`). -/
+@[simp] theorem gap_sup_gap : (Truth3.indet : Truth3) ⊔ .indet = .indet := sup_idem _
 
-/-- Sup-fold with indet accumulator over all-indet list. -/
-private theorem foldl_sup_indet_acc (l : List Truth3) (hl : l.all (· == .indet)) :
-    l.foldl (· ⊔ ·) Truth3.indet = .indet := by
-  induction l with
-  | nil => rfl
-  | cons hd tl ih =>
-    simp only [List.foldl_cons, List.all_cons, Bool.and_eq_true] at *
-    have hhd : hd = .indet := by cases hd <;> simp_all
-    subst hhd; exact ih hl.2
+/-- Gap is a fixed point of inf: `gap ⊓ gap = gap`.
+    Instance of `inf_idem` (mathlib `Order.Lattice`). -/
+@[simp] theorem gap_inf_gap : (Truth3.indet : Truth3) ⊓ .indet = .indet := inf_idem _
 
-/-- Inf-fold with indet accumulator over all-indet list. -/
-private theorem foldl_inf_indet_acc (l : List Truth3) (hl : l.all (· == .indet)) :
-    l.foldl (· ⊓ ·) Truth3.indet = .indet := by
-  induction l with
-  | nil => rfl
-  | cons hd tl ih =>
-    simp only [List.foldl_cons, List.all_cons, Bool.and_eq_true] at *
-    have hhd : hd = .indet := by cases hd <;> simp_all
-    subst hhd; exact ih hl.2
+/-- Folding an idempotent binary operation over a constant list with
+    the constant as accumulator returns the constant. General lemma
+    used to derive gap absorption from `sup_idem` / `inf_idem`. -/
+private theorem foldl_idem_const {α : Type*} (f : α → α → α) (a : α)
+    (h : f a a = a) (n : Nat) :
+    (List.replicate n a).foldl f a = a := by
+  induction n with
+  | zero => rfl
+  | succ k ih => simp only [List.replicate_succ, List.foldl_cons, h, ih]
 
-/-- Folding sup over all-gap input yields gap. -/
+/-- Folding sup over all-gap input yields gap.
+
+    Two mathlib facts at work:
+    1. **Identity**: `⊥ ⊔ a = a` — the first fold step transitions
+       the accumulator from `⊥` to `.indet`.
+    2. **Idempotency** (`sup_idem`): `a ⊔ a = a` — every subsequent
+       fold step preserves `.indet`. -/
 theorem foldl_sup_gap (n : Nat) (hn : n > 0) :
     (List.replicate n Truth3.indet).foldl (· ⊔ ·) ⊥ = .indet := by
   cases n with
   | zero => omega
   | succ k =>
     simp only [List.replicate_succ, List.foldl_cons]
+    -- ⊥ ⊔ .indet = .indet (identity element: ⊥ is identity for ⊔)
     change (List.replicate k Truth3.indet).foldl (· ⊔ ·) Truth3.indet = Truth3.indet
-    exact foldl_sup_indet_acc _ (by simp)
+    exact foldl_idem_const (· ⊔ ·) Truth3.indet (sup_idem _) k
 
-/-- Folding inf over all-gap input yields gap. -/
+/-- Folding inf over all-gap input yields gap.
+
+    Dual of `foldl_sup_gap`:
+    1. **Identity**: `⊤ ⊓ a = a` — first step transitions to `.indet`.
+    2. **Idempotency** (`inf_idem`): `a ⊓ a = a` — subsequent steps preserve. -/
 theorem foldl_inf_gap (n : Nat) (hn : n > 0) :
     (List.replicate n Truth3.indet).foldl (· ⊓ ·) ⊤ = .indet := by
   cases n with
   | zero => omega
   | succ k =>
     simp only [List.replicate_succ, List.foldl_cons]
+    -- ⊤ ⊓ .indet = .indet (identity element: ⊤ is identity for ⊓)
     change (List.replicate k Truth3.indet).foldl (· ⊓ ·) Truth3.indet = Truth3.indet
-    exact foldl_inf_indet_acc _ (by simp)
+    exact foldl_idem_const (· ⊓ ·) Truth3.indet (inf_idem _) k
 
 -- ════════════════════════════════════════════════════════════════
 -- Local Architecture: Strength Is Irrelevant
@@ -134,9 +183,17 @@ theorem forallAll_gap (n : Nat) (hn : n > 0) :
     existential and universal aggregation return gap. The quantifier's
     projection type is invisible.
 
-    This is why the homogeneity theory (local gaps) predicts that
-    strength has no effect — all quantified counterfactuals are
-    equally undefined. -/
+    This captures the homogeneity theory's prediction
+    (@cite{ramotowska-marty-romoli-santorio-2025} Table 2): all
+    quantified counterfactuals are equally undefined, regardless
+    of quantifier strength.
+
+    Also captures the `shouldD := ⊕D` prediction
+    (@cite{agha-jeretic-2022} §2): supervaluation over a mixed
+    deontic base yields gap regardless of quantifier type.
+
+    Algebraically: `⊥ ⊔ a = a` (identity) then `a ⊔ a = a`
+    (`sup_idem`); dually `⊤ ⊓ a = a` then `a ⊓ a = a`. -/
 theorem local_strength_irrelevant (d : DualityType) (n : Nat) (hn : n > 0) :
     aggregate d (List.replicate n Truth3.indet) = .indet := by
   cases d
@@ -147,28 +204,46 @@ theorem local_strength_irrelevant (d : DualityType) (n : Nat) (hn : n > 0) :
 -- Global Architecture: Strength Determines the Pattern
 -- ════════════════════════════════════════════════════════════════
 
-/-- Sup-fold with `ofBool` accumulator. -/
+/-! ### The `ofBool` lattice homomorphism
+
+`ofBool` embeds `Bool` into the two-element sublattice `{⊥, ⊤}` of
+`Truth3`. It is both a sup-homomorphism and an inf-homomorphism:
+
+    ofBool (a || b) = ofBool a ⊔ ofBool b
+    ofBool (a && b) = ofBool a ⊓ ofBool b
+
+This homomorphism property is the algebraic reason that folding
+lattice operations over `map ofBool` reduces to folding Boolean
+operations — and therefore always produces a definite result. -/
+
+/-- `ofBool` preserves `⊔`/`||` (sup-homomorphism). -/
+private theorem ofBool_sup (a b : Bool) :
+    Truth3.ofBool a ⊔ Truth3.ofBool b = Truth3.ofBool (a || b) := by
+  cases a <;> cases b <;> rfl
+
+/-- `ofBool` preserves `⊓`/`&&` (inf-homomorphism). -/
+private theorem ofBool_inf (a b : Bool) :
+    Truth3.ofBool a ⊓ Truth3.ofBool b = Truth3.ofBool (a && b) := by
+  cases a <;> cases b <;> rfl
+
+/-- Sup-fold with `ofBool` accumulator — homomorphism propagation. -/
 private theorem foldl_sup_ofBool_acc (bs : List Bool) (acc : Bool) :
     (bs.map Truth3.ofBool).foldl (· ⊔ ·) (Truth3.ofBool acc) =
     Truth3.ofBool (bs.foldl (· || ·) acc) := by
   induction bs generalizing acc with
   | nil => rfl
   | cons b bs ih =>
-    simp only [List.map_cons, List.foldl_cons]
-    rw [show Truth3.ofBool acc ⊔ Truth3.ofBool b = Truth3.ofBool (acc || b) from
-      by cases acc <;> cases b <;> rfl]
+    simp only [List.map_cons, List.foldl_cons, ofBool_sup]
     exact ih (acc || b)
 
-/-- Inf-fold with `ofBool` accumulator. -/
+/-- Inf-fold with `ofBool` accumulator — homomorphism propagation. -/
 private theorem foldl_inf_ofBool_acc (bs : List Bool) (acc : Bool) :
     (bs.map Truth3.ofBool).foldl (· ⊓ ·) (Truth3.ofBool acc) =
     Truth3.ofBool (bs.foldl (· && ·) acc) := by
   induction bs generalizing acc with
   | nil => rfl
   | cons b bs ih =>
-    simp only [List.map_cons, List.foldl_cons]
-    rw [show Truth3.ofBool acc ⊓ Truth3.ofBool b = Truth3.ofBool (acc && b) from
-      by cases acc <;> cases b <;> rfl]
+    simp only [List.map_cons, List.foldl_cons, ofBool_inf]
     exact ih (acc && b)
 
 /-- `foldl (· || ·) false = any id`. -/
@@ -193,14 +268,22 @@ private theorem foldl_and_true_eq_all (bs : List Bool) :
   | cons b bs ih =>
     simp only [List.foldl_cons, List.all_cons, id, ih (acc && b), Bool.and_assoc]
 
-/-- Existential aggregation over `map ofBool` = `ofBool (any id)`. -/
+/-- Existential aggregation over `map ofBool` = `ofBool (any id)`.
+
+    Since `ofBool` is a sup-homomorphism and `⊥ = ofBool false`,
+    folding `⊔` over `map ofBool` reduces to folding `||` over
+    the original Bool list. -/
 theorem existsAny_ofBool (bs : List Bool) :
     existsAny (bs.map Truth3.ofBool) = Truth3.ofBool (bs.any id) := by
   show (bs.map Truth3.ofBool).foldl (· ⊔ ·) ⊥ = Truth3.ofBool (bs.any id)
   have h : (⊥ : Truth3) = Truth3.ofBool false := rfl
   rw [h, foldl_sup_ofBool_acc, foldl_or_false_eq_any]
 
-/-- Universal aggregation over `map ofBool` = `ofBool (all id)`. -/
+/-- Universal aggregation over `map ofBool` = `ofBool (all id)`.
+
+    Since `ofBool` is an inf-homomorphism and `⊤ = ofBool true`,
+    folding `⊓` over `map ofBool` reduces to folding `&&` over
+    the original Bool list. -/
 theorem forallAll_ofBool (bs : List Bool) :
     forallAll (bs.map Truth3.ofBool) = Truth3.ofBool (bs.all id) := by
   show (bs.map Truth3.ofBool).foldl (· ⊓ ·) ⊤ = Truth3.ofBool (bs.all id)
@@ -211,8 +294,14 @@ theorem forallAll_ofBool (bs : List Bool) :
     regardless of duality type. The quantifier always gets a definite
     answer when its inputs are Boolean.
 
-    This is why the selectional theory (global Bools) always produces
-    determinate embedded counterfactuals. -/
+    This captures the selectional theory's architecture
+    (@cite{ramotowska-marty-romoli-santorio-2025} §2.2.2): selection
+    functions always pick worlds with determinate individual outcomes,
+    so the quantifier sees only `{⊥, ⊤}` — the gap-free sublattice.
+
+    Also captures the `mustD := ∀` architecture
+    (@cite{agha-jeretic-2022} eq. 25): universal quantification over
+    a Boolean-valued modal base always yields a definite result. -/
 theorem global_always_determinate (d : DualityType) (bs : List Bool) :
     aggregate d (bs.map Truth3.ofBool) ≠ .indet := by
   cases d with
@@ -229,8 +318,10 @@ theorem global_always_determinate (d : DualityType) (bs : List Bool) :
     false), existential aggregation yields `.true` and universal yields
     `.false`. This IS the strength effect.
 
-    Strong quantifiers (universal-like, ⊓-fold) reject mixed scenarios.
-    Weak quantifiers (existential-like, ⊔-fold) accept mixed scenarios. -/
+    This captures the selectional theory's Table 2 prediction
+    (@cite{ramotowska-marty-romoli-santorio-2025}):
+    strong quantifiers (universal, ⊓-fold) reject mixed scenarios,
+    weak quantifiers (existential, ⊔-fold) accept mixed scenarios. -/
 theorem global_mixed_pattern (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
     aggregate .existential (bs.map Truth3.ofBool) = .true ∧
@@ -256,14 +347,20 @@ theorem global_mixed_pattern (bs : List Bool)
 
 /-- **The Local Dichotomy**: when gaps arise locally (before the
     quantifier), both existential and universal aggregation return
-    `.indet`. Strength is invisible. -/
+    `.indet`. Strength is invisible.
+
+    @cite{ramotowska-marty-romoli-santorio-2025} §2.2.2: homogeneity theory.
+    @cite{agha-jeretic-2022} §2: `shouldD := ⊕D` architecture. -/
 theorem dichotomy_local (n : Nat) (hn : n > 0) :
     ∀ d : DualityType, aggregate d (List.replicate n Truth3.indet) = .indet :=
   λ d => local_strength_irrelevant d n hn
 
 /-- **The Global Dichotomy**: when the quantifier sees only Bools,
     mixed inputs produce the strength effect: existential → `.true`,
-    universal → `.false`. -/
+    universal → `.false`.
+
+    @cite{ramotowska-marty-romoli-santorio-2025} §2.2.2: selectional theory.
+    @cite{agha-jeretic-2022} §2: `mustD := ∀` architecture. -/
 theorem dichotomy_global (bs : List Bool)
     (h_some_true : bs.any id) (h_some_false : bs.any (!·)) :
     aggregate .existential (bs.map Truth3.ofBool) = .true ∧

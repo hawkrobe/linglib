@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Operators
+import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Compositional
+import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Bridge
 
 /-!
 # Hofmann (2025): Anaphoric Accessibility with Flat Update
@@ -719,6 +720,109 @@ theorem all_data_correct :
     accessiblePred conjunctionBlocks.antecedentStatus conjunctionBlocks.anaphorCtx = conjunctionBlocks.felicitous ∧
     accessiblePred wrongOrderBathroom.antecedentStatus wrongOrderBathroom.anaphorCtx = wrongOrderBathroom.felicitous :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 6. Compositional Derivations (Appendix C)
+-- ════════════════════════════════════════════════════════════════
+
+/-! ## Compositional Fragment Applied to Model M₁
+
+The hand-built derivations in §3 construct output assignments directly.
+Here we DERIVE sentence meanings from lexical entries using the
+compositional fragment (Compositional.lean, @cite{hofmann-2025}
+Appendix C). Each sentence meaning is built by function application
+and sequential composition, then wrapped in `semDEC` for assertion.
+
+Every compositional derivation is an `ICDRTUpdate BWorld BEnt` —
+a static update relation — which lifts to a distributive CCP via
+`Bridge.lean`'s `toDynProp_isDistributive`.
+-/
+
+open Semantics.Dynamic.IntensionalCDRT.Compositional
+
+/-- "There is a bathroom" — existential with restrictor `bathroom`
+    and vacuous scope.
+
+    `a^{v₁}(bathroom)(vacuous) = λφ.[φ:v₁]; [bathroom_φ(v₁)]` -/
+def thereIsABathroom : SemW BWorld BEnt :=
+  indefinite v1 (commonNoun isBathroom) vacuousScope
+
+/-- "It is upstairs" — pronoun `v₁` with VP predicate `upstairs`.
+
+    `it_{v₁}(upstairs) = λφ.[upstairs_φ(v₁)]` -/
+def itIsUpstairs : SemW BWorld BEnt :=
+  pronoun v1 (intransVP isUpstairs)
+
+/-- **Veridical**: "There is a bathroom. It is upstairs."
+
+    `DEC_S^{φ₁}(a^{v₁}(bathroom)(vacuous)) ⨟ DEC_S^{φ₃}(it_{v₁}(upstairs))` -/
+def veridical_comp : ICDRTUpdate BWorld BEnt :=
+  ICDRTUpdate.seq
+    (semDEC pDC_S p1 thereIsABathroom)
+    (semDEC pDC_S p3 itIsUpstairs)
+
+/-- **Negated**: "There isn't a bathroom."
+
+    `DEC_S^{φ₁}(NOT^{φ₂}(a^{v₁}(bathroom)(vacuous)))` -/
+def negated_comp : ICDRTUpdate BWorld BEnt :=
+  semDEC pDC_S p1 (semNOT p2 thereIsABathroom)
+
+/-- **Double negation**: "It's not the case that there isn't a bathroom."
+
+    `DEC_S^{φ₁}(NOT^{φ₂}(NOT^{φ₃}(a^{v₁}(bathroom)(vacuous))))` -/
+def doubleNeg_comp : ICDRTUpdate BWorld BEnt :=
+  semDEC pDC_S p1 (semNOT p2 (semNOT p3 thereIsABathroom))
+
+/-- **Bathroom disjunction**: "Either there isn't a bathroom, or it's upstairs."
+
+    `DEC_S^{φ₁}(OR^{φ₂,φ₃}(NOT^{φ₄}(∃bathroom))(it_{v₁}(upstairs)))` -/
+def bathDisj_comp : ICDRTUpdate BWorld BEnt :=
+  semDEC pDC_S p1
+    (semOR p2 p3
+      (semNOT p4 thereIsABathroom)
+      itIsUpstairs)
+
+/-- **Disagreement**: A: "There isn't a bathroom." B: "It is upstairs."
+
+    `DEC_A^{φ₁}(NOT^{φ₂}(∃bathroom)) ⨟ DEC_B^{φ₃}(it_{v₁}(upstairs))`
+
+    Different speakers have different commitment sets — this is
+    what bilateral accounts CANNOT handle (§5.1.1). -/
+def disagree_comp : ICDRTUpdate BWorld BEnt :=
+  ICDRTUpdate.seq
+    (semDEC pDC_A p1 (semNOT p2 thereIsABathroom))
+    (semDEC pDC_B p3 itIsUpstairs)
+
+/-- **Modal subordination**: "There isn't a bathroom. Sue believes it's upstairs."
+
+    `DEC_S^{φ₁}(NOT^{φ₂}(∃bathroom)) ⨟
+     DEC_S^{φ₃}(believed^{φ₄}(dox_sue)(it_{v₁}(upstairs)))`
+
+    The pronoun resolves in Sue's doxastic state `φ₄`, not the
+    speaker's commitment set. -/
+def modalSub_comp : ICDRTUpdate BWorld BEnt :=
+  ICDRTUpdate.seq
+    (semDEC pDC_S p1 (semNOT p2 thereIsABathroom))
+    (semDEC pDC_S p3
+      (semBelieved p4_modal
+        (λ j => { w | ∃ e, j.indiv v1 w = .some e })
+        itIsUpstairs))
+
+
+-- § 6.1 Bridge: compositional derivations are distributive CCPs
+
+/-- Every compositional derivation lifts to a distributive CCP. -/
+theorem veridical_comp_distributive :
+    IsDistributive veridical_comp.toDynProp :=
+  toDynProp_isDistributive _
+
+/-- Sequential composition lifts correctly. -/
+theorem veridical_comp_factors (c : IContext BWorld BEnt) :
+    veridical_comp.toDynProp c =
+    (semDEC pDC_S p3 itIsUpstairs).toDynProp
+      ((semDEC pDC_S p1 thereIsABathroom).toDynProp c) :=
+  ICDRTUpdate.seq_toDynProp _ _ c
 
 
 end Phenomena.Anaphora.Studies.Hofmann2025

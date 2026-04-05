@@ -168,11 +168,11 @@ an ordinary update relation, its `toDynProp` image is distributive.
 This is the algebraic content of @cite{hofmann-2025}'s key insight:
 negation in ICDRT is static complementation over propositional drefs,
 not dynamic whole-state inspection. -/
-theorem notCondition_update_distributive
+theorem complement_update_distributive
     (φ_outer φ_inner : PVar) :
     IsDistributive (ICDRTUpdate.toDynProp
       (λ i j : ICDRTAssignment W E =>
-        i = j ∧ notCondition φ_outer φ_inner j)) := by
+        i = j ∧ isComplement φ_outer φ_inner j)) := by
   apply toDynProp_isDistributive
 
 

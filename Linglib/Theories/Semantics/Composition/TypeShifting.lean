@@ -18,8 +18,11 @@ Three NP semantic types and six type-shifting operations (three inverse pairs):
 In the finite extensional setting, `pred = ident` and `nom = iota`. The
 conceptual difference: `ident`/`iota` are *formal* (pure combinatorics),
 while `pred`/`nom` are *substantive* (depend on entity-property correspondence).
-The intensional generalizations are Chierchia's ∪ (up) and ∩ (down) operators
-in `Semantics.Lexical.Noun.Kind.Chierchia1998`.
+The `pred`/`nom` pair originates in @cite{chierchia-1984}'s nominalization
+operator `^` from HST* (Cocchiarella's property theory), applied to infinitival
+and gerundive complements. The intensional generalizations are Chierchia's
+∪ (up) and ∩ (down) operators in `Semantics.Lexical.Noun.Kind.Chierchia1998`,
+which extend the same type-shift to kinds and bare plurals.
 
 -/
 
@@ -713,5 +716,60 @@ theorem NOM_pred (domain : List m.Entity) (j : m.interpTy .e)
     (hmem : j ∈ domain) (hnd : domain.Nodup) :
     NOM domain (pred j) = some j :=
   iota_ident domain j hmem hnd
+
+-- ============================================================================
+-- Complement Denotation Types (@cite{chierchia-1984})
+-- ============================================================================
+
+/-! ## Property vs. Proposition: Complement Denotation Types
+
+@cite{chierchia-1984} argues that infinitival and gerundive complements
+denote **properties** (type ⟨e,t⟩), not propositions (type ⟨s,t⟩). This
+is the original linguistic motivation for the `pred`/`nom` operators in
+@cite{partee-1987}'s type-shifting triangle.
+
+The key insight: `pred` and `nom` mediate between the **individual
+correlate** of a property (an entity of type `e` that "is" the property)
+and the property itself (type ⟨e,t⟩). This is exactly what infinitival
+complements need: "to run" denotes a property, but it can be nominalized
+("running is fun") to denote the individual correlate of that property.
+
+The intensional generalization of this idea appears in @cite{chierchia-1998}
+as ∩ (down) and ∪ (up), applied to kinds rather than infinitives.
+Both applications share the same underlying type-shift: there is a
+systematic correspondence between properties and their individual
+correlates in the domain. -/
+
+/-- Complement denotation layer: whether a complement denotes a
+    property (⟨e,t⟩, open predicate) or a proposition (t / ⟨s,t⟩, closed).
+
+    @cite{chierchia-1984} Ch I: the infinitive/gerund vs. finite clause
+    distinction corresponds to this type distinction. Nominalization
+    (`NOM`/`nom`) and control both require the property layer — control
+    needs an unsaturated individual argument to bind, and nominalization
+    maps ⟨e,t⟩ → e. Propositions must go through existential closure
+    (`A`) to reach the GQ layer.
+
+    The extensional `pred`/`nom` pair, their intensional generalization
+    as ∩/∪ in @cite{chierchia-1998}, and the Control Principle in
+    @cite{chierchia-1984} Ch IV all operate on the property layer. -/
+inductive ComplSemLayer where
+  /-- Property layer: ⟨e,t⟩. Domain of `pred`/`nom`/`NOM`.
+      Infinitival and gerundive complements. -/
+  | property
+  /-- Propositional layer: t (or ⟨s,t⟩ intensionally).
+      Finite indicative and subjunctive complements. -/
+  | proposition
+  deriving DecidableEq, Repr
+
+/-- Property-type complements support nominalization (⟨e,t⟩ → e via `NOM`)
+    and control (the unsaturated argument position can be bound).
+
+    This unifies @cite{chierchia-1984}'s two central claims: control and
+    nominalization are both consequences of the property/proposition
+    type distinction. -/
+def ComplSemLayer.isProperty : ComplSemLayer → Bool
+  | .property    => true
+  | .proposition => false
 
 end Semantics.Composition.TypeShifting

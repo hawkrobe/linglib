@@ -804,6 +804,7 @@ import Linglib.Phenomena.Complementation.Studies.Grano2024
 import Linglib.Phenomena.Complementation.Studies.Karttunen1971
 import Linglib.Phenomena.Causation.Studies.Nadathur2024
 import Linglib.Phenomena.Complementation.Studies.Osborne2019Control
+import Linglib.Phenomena.Control.Studies.Chierchia1984
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Control.Studies.Ostrove2026
 import Linglib.Fragments.Tigrinya.ClausePrefixes
@@ -1374,6 +1375,7 @@ import Linglib.Theories.Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
 import Linglib.Theories.Semantics.Dynamic.DynamicGQ.PostSuppositional
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Bridge
+import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Compositional
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Operators
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations

@@ -26,6 +26,7 @@ clause-bounded below the modal.
 4. **◇ + split exh = FC + embedded uniqueness** (yek-i under deontic ◇)
 5. **DE + scalar exh weakens** (Maximize Strength blocks it)
 6. **EFCI typology** (Table 2: modal insertion × partial exh)
+7. **Split necessity** (eqs. 143-146: single/two-operator alternatives fail)
 
 ## Relationship to `SplitExhaustification.lean`
 
@@ -301,6 +302,88 @@ theorem single_exh_not_fc_witness :
     ∃ w : PermW, exhB permDomain unsplitModalAlts canBuyAny w = true ∧
       canB1 w = true ∧ canB2 w = false :=
   ⟨.w100, by native_decide, rfl, rfl⟩
+
+
+-- ── Why split is necessary (§5, eqs. 143-146) ────────────────
+
+/-!
+### Why Split Exhaustification Is Necessary
+
+The paper argues that only split exhaustification — two independent
+operators targeting different alternative classes — derives the correct
+result. Three alternative architectures all fail:
+
+1. **Single operator below ◇** (eq. 143): gives ◇(uniqueness), too weak
+2. **Single operator above ◇** (eq. 146): gives FC + unwanted ¬◇(b₁∧b₂)
+3. **Two operators above+below** (eq. 144): same as (2) — too strong
+
+Only split exh (O_EXH-D above ◇, O_σ below ◇) avoids negating the modal
+scalar alternative, producing FC + uniqueness without ¬◇(b₁∧b₂).
+-/
+
+/-- All alternatives at the modal level: scalar ◇(b₁∧b₂) plus
+    pre-exhaustified domain alternatives {◇b₁∧¬◇b₂, ◇b₂∧¬◇b₁}.
+    Used by single-operator-above and two-operator architectures. -/
+private def allModalAlts : List (PermW → Bool) :=
+  [canJoint] ++ modalPreExhDomAlts
+
+/-- **Single operator below ◇ too weak (eq. 143)**: after scalar
+    exhaustification below the modal gives ◇(b₁⊻b₂), the result is
+    compatible with only one book being permitted — no FC emerges
+    without domain exhaustification above the modal. -/
+theorem below_modal_only_no_fc :
+    ∃ w : PermW, canExOr w = true ∧ canB1 w = true ∧ canB2 w = false :=
+  ⟨.w100, rfl, rfl, rfl⟩
+
+/-- **Single operator above ◇ too strong (eq. 146)**: a single IE
+    operator above ◇ with all alternatives on the unexhaustified assertion
+    ◇(b₁∨b₂) gives FC (from domain alts) BUT ALSO ¬◇(b₁∧b₂) (from
+    scalar alt).
+
+    Compare with split exh (`deontic_poss_split_exh`): the only
+    difference is `&& !canJoint w`. Split exh allows ◇(b₁∧b₂),
+    this forbids it. -/
+theorem above_only_all_alts_too_strong :
+    ∀ w : PermW, exhB permDomain allModalAlts canBuyAny w =
+      (canBuyAny w && (canB1 w == canB2 w) && !canJoint w) := by
+  intro w; cases w <;> native_decide
+
+/-- **Two operators above+below ◇ too strong (eq. 144-145)**: two IE
+    operators (O_σ below gives ◇(b₁⊻b₂), then full IE above) produces
+    FC + embedded uniqueness BUT ALSO ¬◇(b₁∧b₂).
+
+    Compare with split exh: identical result except for `&& !canJoint w`.
+    The scalar alternative ◇(b₁∧b₂) is innocently excludable because it
+    is non-entailed and consistently negatable alongside domain-alt
+    negations. -/
+theorem two_ie_above_below_too_strong :
+    ∀ w : PermW, exhB permDomain allModalAlts canExOr w =
+      (canExOr w && (canB1 w == canB2 w) && !canJoint w) := by
+  intro w; cases w <;> native_decide
+
+/-- Two-IE exhaustification is strictly stronger than split: it entails
+    the split result but not vice versa. The difference is exactly
+    ¬◇(b₁∧b₂) — split exh never negates the modal scalar alternative. -/
+theorem two_ie_strictly_stronger :
+    (∀ w, exhB permDomain allModalAlts canExOr w = true →
+          exhB permDomain modalPreExhDomAlts canExOr w = true) ∧
+    (∃ w, exhB permDomain modalPreExhDomAlts canExOr w = true ∧
+          exhB permDomain allModalAlts canExOr w = false) := by
+  constructor
+  · intro w h; cases w <;> revert h <;> native_decide
+  · exact ⟨.w111, by native_decide, by native_decide⟩
+
+/-- The distinguishing case: split exh allows ◇(b₁∧b₂) (compatible with
+    Forood buying both), while any architecture targeting the scalar
+    alternative at the modal level forbids it. -/
+theorem split_allows_joint_two_ie_forbids :
+    (∃ w, exhB permDomain modalPreExhDomAlts canExOr w = true ∧
+          canJoint w = true) ∧
+    (∀ w, exhB permDomain allModalAlts canExOr w = true →
+          canJoint w = false) := by
+  constructor
+  · exact ⟨.w111, by native_decide, rfl⟩
+  · intro w h; cases w <;> revert h <;> native_decide
 
 end DeonticPossibility
 
