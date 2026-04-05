@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.518] - 2026-04-04
+
+### Added
+- **PD dissociation theorems** (RamotowskaEtAl2025.lean): `pd_all_quantifiers_gap`, `cf_all_quantifiers_determinate`, `scope_determines_qud_sensitivity` — derives from NonBivalence dichotomy that PDs are QUD-sensitive (local gaps → pragmatic resolution) while CFs are QUD-insensitive (global Bools → no gap to resolve)
+- **Modal NonBivalence integration** (AghaJeretic2022.lean): `should_erases_strength`, `must_strength_effect`, `must_always_determinate` — connects should/must contrast to NonBivalence dichotomy; `shouldEval_indet` (general mixed-domain theorem), `modalScope` mapping modal force to `TrivalenceScope`
+
+## [0.229.517] - 2026-04-04
+
+### Added
+- **Split exhaustification necessity** — general structural theorems proving *why* split exhaustification is the only architecture deriving correct FC for EFCIs under modals:
+  - `exclusive_false_of_universal`: ∀d P(d) → ∀d ¬exclusive(d) — domain-exh never negates the scalar (general over any D with |D|≥2)
+  - `domain_exh_result_compatible_with_scalar`: ∃ model where ∃d, ¬exclusives, and ∀d all hold — scalar "survives" domain-only exh
+  - `full_exh_consistent_three`: for |D|=3, assertion + ¬scalar + ¬exclusives is satisfiable — root contradiction is specific to |D|=2
+- **AlonsoOvalleMoghiseh2025.lean** — computational verification of eqs. 143-146 (why alternative architectures fail):
+  - `below_modal_only_no_fc`: single operator below ◇ is too weak (no FC)
+  - `above_only_all_alts_too_strong`: single operator above ◇ gives FC + unwanted ¬◇(b₁∧b₂)
+  - `two_ie_above_below_too_strong`: two operators above+below give same unwanted ¬◇(b₁∧b₂)
+  - `two_ie_strictly_stronger`: two-IE strictly stronger than split (entails but not vice versa)
+  - `split_allows_joint_two_ie_forbids`: split allows ◇(b₁∧b₂), full IE forbids it
+
 ## [0.229.516] - 2026-04-04
 
 ### Added

@@ -473,6 +473,75 @@ theorem selectional_always_determinate (proj : ProjectionType) (bs : List Bool) 
   exact global_always_determinate (projToDuality proj) bs
 
 -- ════════════════════════════════════════════════════════════════
+-- The Plural Definite Dissociation
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Why Plural Definites Are QUD-Sensitive But Counterfactuals Are Not
+
+Experiment 2 tested both counterfactuals and plural definites ("The
+players won this round") in the same mixed scenarios. The key finding:
+
+- **Counterfactuals**: QUD has no effect (β = −0.6, p = 0.7)
+- **Plural definites**: QUD has a significant effect (β = −12.6, p = 0.01;
+  E-QuD M=41.0 vs U-QuD M=22.8)
+
+The NonBivalence dichotomy explains this dissociation:
+
+- **Plural definites use LOCAL trivalence**: each individual's predication
+  is evaluated via supervaluation (pluralTruthValue / dist), producing
+  `.indet` when some-but-not-all atoms satisfy the predicate. The
+  quantifier sees these gaps. By `local_strength_irrelevant`, ALL
+  quantifier types return `.indet`.
+
+- **Counterfactuals use GLOBAL trivalence**: within each selected world,
+  individual outcomes are Boolean. The quantifier sees Bools. By
+  `global_always_determinate`, the result is always definite.
+
+The consequence: when the semantic layer returns `.indet`, the only
+source of variation in judgments is pragmatic resolution — and pragmatic
+resolution is QUD-dependent (@cite{kriz-2016}: `sufficientlyTrue` and
+`addressesIssue`). When the semantic layer returns a determinate value,
+there is no gap for pragmatics to exploit — QUD has nothing to modulate.
+
+This is why the SAME mixed scenario produces QUD-sensitivity for PDs
+but not for CFs: the scope of trivalence determines whether pragmatics
+gets a foothold.
+-/
+
+/-- **Plural definites are LOCAL**: in mixed scenarios, every quantifier
+    returns `.indet`. Strength, polarity, and QUD are all invisible at
+    the semantic level — the quantifier cannot see past the gap. -/
+theorem pd_all_quantifiers_gap (n : Nat) (hn : n > 0) (d : DualityType) :
+    aggregate d (List.replicate n Truth3.indet) = .indet :=
+  local_strength_irrelevant d n hn
+
+/-- **Counterfactuals are GLOBAL**: in mixed scenarios, every quantifier
+    returns a determinate value. There is no gap for pragmatics to exploit. -/
+theorem cf_all_quantifiers_determinate (d : DualityType) (bs : List Bool) :
+    aggregate d (bs.map Truth3.ofBool) ≠ .indet :=
+  global_always_determinate d bs
+
+/-- **The dissociation**: for the same mixed input (n individuals, some
+    satisfying the predicate, some not), PDs return `.indet` while CFs
+    return a definite value. The gap is what makes PDs QUD-sensitive —
+    pragmatic resolution via `sufficientlyTrue` (@cite{kriz-2016}) depends
+    on the QUD partition. CFs have no gap to resolve.
+
+    This is a direct corollary of NonBivalence's dichotomy: local scope
+    produces gaps that pass through quantifiers; global scope produces
+    Bools that quantifiers can distinguish. -/
+theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
+    (bs : List Bool) (hlen : bs.length = n)
+    (h_some_true : bs.any id) (h_some_false : bs.any (!·))
+    (d : DualityType) :
+    -- PDs: gap (pragmatic resolution needed, QUD-sensitive)
+    aggregate d (List.replicate n Truth3.indet) = .indet ∧
+    -- CFs: determinate (no pragmatic resolution, QUD-insensitive)
+    aggregate d (bs.map Truth3.ofBool) ≠ .indet :=
+  ⟨local_strength_irrelevant d n hn, global_always_determinate d bs⟩
+
+-- ════════════════════════════════════════════════════════════════
 -- Connections to Other Phenomena
 -- ════════════════════════════════════════════════════════════════
 
@@ -483,21 +552,23 @@ theorem selectional_always_determinate (proj : ProjectionType) (bs : List Bool) 
    The paper's deepest architectural insight is formalized as the
    dichotomy theorems. `homogeneity_erases_strength` derives that
    local gaps make strength invisible; `selectional_strength_effect`
-   derives that global Bools produce the strength effect. The
-   bridging theorem `projectTruthValues_eq_aggregate` connects the
-   counterfactual-specific `projectTruthValues` to the general
-   `aggregate` operator, enabling these derivations.
+   derives that global Bools produce the strength effect.
 
-2. **Plural Definites and QUD**:
-   Unlike counterfactuals, plural definite sentences ("The players won
-   this round") ARE sensitive to QUD manipulation (Exp 2: raw means
-   E-QuD M=41.0 vs U-QuD M=22.8, β = −12.6, p = 0.01). This confirms the QUD
-   manipulation worked and that counterfactuals' insensitivity to QUD
-   is a genuine semantic property, not a failure of the manipulation.
-   The dissociation is predicted by scope: plural homogeneity is LOCAL
-   (gap before quantifier), selectional counterfactuals are GLOBAL.
+2. **Plural Definite Dissociation** (above):
+   `scope_determines_qud_sensitivity` derives the CF/PD dissociation
+   from the NonBivalence dichotomy. Plural definites are LOCAL (gap
+   before quantifier → QUD-sensitive pragmatic resolution); counterfactuals
+   are GLOBAL (Bool before quantifier → no gap to resolve).
 
-3. **Conditional Excluded Middle (CEM)**:
+3. **Modal Homogeneity** (@cite{agha-jeretic-2022}):
+   Weak necessity modals (*should*) are to strong necessity (*must*) what
+   plural definites are to `all`-sentences. `shouldEval` produces `.indet`
+   in mixed domains (local), while `mustEval` produces `ofBool` (global).
+   The same NonBivalence dichotomy predicts that embedded *should*-sentences
+   would be strength-insensitive while embedded *must*-sentences would show
+   the strength effect.
+
+4. **Conditional Excluded Middle (CEM)**:
    Stalnaker's semantics validates CEM: (A □→ B) ∨ (A □→ ¬B).
    See `Counterfactual.lean` for the proof.
 -/
