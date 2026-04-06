@@ -1,5 +1,159 @@
 # Changelog
 
+## [0.229.565] - 2026-04-06
+
+### Added
+- **Dekier 2021** (`Phenomena/Reference/Studies/Dekier2021.lean`): formalize nanosyntactic analysis of indefinite markers — 20 full paradigms + 6 gap paradigms from 45-language sample, 5 language lexicons with spellout verification, syncretism pattern computation, *ABA impossibility, paradigm gap monotonicity (`gap_propagates_upward`), prefix/suffix predictions, and ParadigmEntry↔spellout consistency theorems
+- **`gap_propagates_upward`** in `Nanosyntax/Core.lean`: general theorem — if spellout fails at rank r, it fails at all higher ranks (follows from Superset Principle)
+- **`MorphType`** inductive (`.suffix | .prefix`) in `Nanosyntax/Core.lean`: suffix (spellout-driven movement) vs prefix (subderivation)
+
+### Changed
+- **Bubnov2026.lean**: now imports Dekier2021 — eliminates duplicated `nsRank/suRank/skRank`, `englishLex/yakutLex/latinLex/russianLex` definitions and their spellout/syncretism theorems
+- **IndefiniteType.lean**: fix type (vi) requirement from ∨ to ∧ (dep(∅,x) ∧ var(v,x), contradictory conjunction)
+- **Dekier2021.lean**: unify `-nibud` → `-nibud'` (matching Fragment transliteration); remove hallucinated section/example/page numbers from docstrings
+- Renumber sections in Bubnov2026 (§1-§8) after deduplication
+
+## [0.229.564] - 2026-04-06
+
+### Added
+- **Generic containment module** (`Theories/Morphology/Containment.lean`): domain-independent *ABA / contiguity predicates on `List Nat`, with closed-form reduction lemmas (`violatesABA_three`, `violatesABA_four`) enabling bridge theorems from domain-specific modules
+- **Latin adjective fragment** (`Fragments/Latin/Adjectives.lean`): 7 entries (longus AAA, altus AAA, fortis AAA, bonus ABC, malus ABC, magnus ABB, parvus ABB) — cross-linguistic verification of Bobaljik 2012 against a language exhibiting all three attested patterns
+- **`DegreePattern.isVIConsistent`** and **`DegreePattern.isAttested`**: VI locality predicate (CMPR = SPRL) and combined attestedness predicate (contiguity + VI consistency); `vi_generates_viConsistent` theorem; verification theorems for all named patterns
+- **RSG (Root Suppletion Generalization)** in Bobaljik2012.lean: `isSyntheticComp` predicate and `english_rsg` theorem verifying that root suppletion is limited to synthetic comparatives
+- **`suppletion` field** on `AdjModifierEntry`: `DegreePattern` encoding root-class identity across pos/cmpr/sprl grades, eliminating the fragile string-based root heuristic (`sharesRoot`/`prefixMatch`/`endsWith`)
+
+### Changed
+- **Bobaljik2012.lean**: major rewrite — remove heuristic pattern derivation (§1-2), replace `derivePattern e` with `e.suppletion` throughout, add RSG (§5), attestedness verification (§3), Latin cross-linguistic section (§10), generic containment bridge (§11)
+- **DegreeContainment.lean**: import `Containment.lean`, add bridge theorem `degree_violatesABA_eq_generic`, add CSG scope restriction note (relative superlatives only, not elatives)
+- **CaseContainment.lean**: import `Containment.lean`, add bridge theorem `case_violatesABA_eq_generic` making structural isomorphism with degree containment explicit
+
+## [0.229.563] - 2026-04-06
+
+### Added
+- **Propagation gap** (`Theories/Semantics/Events/Krifka1998.lean` §10): ¬CUM ∧ ¬QUA is stable under VP formation
+  - `not_cum_vp_of_witnesses`: ¬CUM lifts from OBJ to VP via CumTheta + UP
+  - `middle_ground_stable`: full ¬CUM ∧ ¬QUA transfer — SINC + UP + CumTheta verb with middle-ground OBJ produces middle-ground VP
+- **Filip 2012 "Lexical Aspect"** (`Phenomena/TenseAspect/Studies/Filip2012.lean`): study file connecting propagation gap to Krifka's compositional telicity infrastructure
+  - `composedRef_binary`: `composedRef` always returns `.cum` or `.qua` — cannot express the middle ground (type-level encoding of the gap)
+  - `three_way_exhaustive`: every predicate falls into CUM ∨ QUA ∨ (¬CUM ∧ ¬QUA)
+  - Incremental verb data with per-verb composition verification via `composedRef`
+
+## [0.229.562] - 2026-04-06
+
+### Changed
+- **Anand & Hacquard 2013 cleanup** — audit and quality improvements
+  - `AnandHacquard2013.lean`: replace 5-value `SurveyAttitude` with direct use of 7-value `AttitudeClass` from Representationality.lean; `theory_matches_data` now verifies all 14 cells (7×2) derived from `AttitudeClass.licensesEpistemic`; remove unverified equation numbers from docstrings
+  - `Emotion.lean`: eliminate redundant `doxastic` field in `ProspectiveAppraisal.conditions` (entailed by `uncertain`); simplify to `isUncertain` predicate; rename bridge theorems to accurately reflect what they prove (`hope_from_uncertainty_and_preference`)
+  - `Preferential.lean`: document that `hope`/`fear` capture only the preferential component (= `wish` structurally); add `hope_eq_wish_semantics` theorem proving preferential identity; clarify that `hopeHybrid`/`fearHybrid` are the full A&H 2013 emotive doxastic semantics
+
+## [0.229.561] - 2026-04-05
+
+### Added
+- **Anand & Hacquard 2013 formalization** — epistemic licensing under attitude verbs
+  - `Theories/Semantics/Attitudes/Representationality.lean`: representational/non-representational/hybrid classification, `licensesEpistemic` function, `AttitudeClass` enum (7 classes), mood correlation bridge, 14 per-cell verification theorems for Table 3
+  - `Phenomena/Modality/Studies/AnandHacquard2013.lean`: study file with information state semantics (`mightS`/`mustS`), finite RainWorld model demonstrating must/might asymmetry, `theory_matches_data` theorem for all 14 data cells, BToM bridge connecting prospective emotions to emotive doxastic semantics
+  - `Theories/Semantics/Attitudes/Preferential.lean` §5: `EmotiveDoxasticPredicate` hybrid type combining `AccessRel` (doxastic) + `PreferenceFunction`, uncertainty condition, `must_contradicts_uncertainty` theorem
+  - `Core/Agent/Emotion.lean` §10–11: prospective emotions (`ProspectiveAppraisal`, `isHope`/`isFear`) and BToM computation (`buildProspectiveAppraisal`) bridging Houlihan's retrospective framework to pre-outcome emotional attitudes
+
+## [0.229.560] - 2026-04-05
+
+### Added
+- **Topological non-cumulativity** (`Core/Mereotopology.lean` §7): general principle that connectivity constraints create ¬CUM ∧ ¬QUA predicates invisible to pure mereology
+  - `connectivity_breaks_cum`: any predicate entailing self-connectivity fails CUM when two instances have a disconnected join — the topological source of non-cumulativity, orthogonal to the algebraic source (QUA)
+  - `connectivity_middle_ground`: ¬CUM ∧ ¬QUA from connectivity witnesses — join-disconnection blocks CUM while proper-part-preservation allows ¬QUA, a category impossible in pure semilattices
+- **Moon 2026 §11**: `mixedDrink_middle_ground` derives Moon's ¬CUM ∧ ¬QUA from `connectivity_middle_ground`, showing mixed drinks are an instance of the general topological principle, not an ad hoc construction
+
+## [0.229.559] - 2026-04-05
+
+### Added
+- **Borer 2005 bridge for Moon 2026** (`Phenomena/Countability/Studies/Moon2026.lean` §10): connects Moon's mereotopological individuation to Borer's syntactic Div operator
+  - `mixedDrink_not_atom`: ingredient parts witness non-atomicity (two disjoint parts ≤ x contradicts Atom)
+  - `div_excludes_mixed_drinks`: Borer's standard `Div` fails for mixed drinks (Div requires atomicity)
+  - `both_break_cum`: Div yields QUA, recipe yields ¬CUM — orthogonal mechanisms filling Q head
+  - `mixedDrink_not_qua`: mixed drinks are ¬CUM ∧ ¬QUA, occupying a middle ground between mass and standard count
+  - Imports `Theories/Interfaces/SyntaxSemantics/Borer2005.lean` — creates dependency edge between the two formalizations
+
+## [0.229.558] - 2026-04-05
+
+### Changed
+- **Bobaljik 2012 cleanup**: fix deprecation warnings (`String.data` → `String.toList`) in `Bobaljik2012.lean`
+
+## [0.229.557] - 2026-04-05
+
+### Changed
+- **Moon 2026 cleanup**: audit and improvements to mixed drink countability formalization
+  - **Add `covers` field to `MixedDrinkWitness`**: formalizes Moon's x = ⊕ȳ covering condition — ingredients exhaust the whole, no extra material
+  - **Remove dead `MargaritaIngredient` enum**: unused code deleted
+  - **Add substance noun CUM contrast** (§9): `substanceNounDen`/`substanceNoun_cum` formalizing the key asymmetry — substance nouns (wine) are CUM because they lack ConnectedLiquid, mixed drinks are not
+  - **Add `mass_count_asymmetry` theorem**: combined statement of the core result (substance CUM ∧ mixed drink ¬CUM)
+  - **Add Chierchia bridge docstring**: connects CUM failure to `IsMass` via `isMass_cum` (Chierchia1998.lean)
+  - **Fix `single_ingredient_not_mixed_drink`**: add explicit `{n : ℕ}` binder (autoImplicit is off)
+  - **Add 5 bib entries**: `moon-2026`, `casati-varzi-1999`, `grimm-2012`, `krifka-2021`, `wagiel-2021` — all `@cite` keys now resolve
+
+## [0.229.556] - 2026-04-05
+
+### Changed
+- **Bubnov 2026 refactored**: major audit fixing inaccuracies, improving architecture, deepening integration
+  - **Fix: Russian `-to` specType** `.specific` → `.epistemic` (type iv, var(∅,x)) per Bubnov §7
+  - **Fix: Latin `ali-` specType** `.unmarked` → `.epistemic` (type iv) — profile SK✗ SU✓ NS✓ matches epistemic, not unmarked
+  - **Move cross-linguistic types to `Core/IndefiniteType.lean`**: `IndefiniteSpecType`, `IndefiniteEntry`, `SyncretismPattern` — they're cross-linguistic, not Russian-specific
+  - **Add `IndefiniteSpecType.profileSK/SU/NS`**: semantic profiles derived from type (replaces stipulated `IndefiniteProfile` struct)
+  - **Add `classifyTriple`**: computes `SyncretismPattern` from three forms instead of stipulating
+  - **Add `distributionConsistent`**: verifies actual distribution ⊆ semantic profile per entry
+  - **Add `type_vi_contradictory`**: derives type (vi) gap from `variation_monotone` + `constancy_excludes_variation` — one-line term proof using both team semantics theorems
+  - **Add `diachronic_weakening_grounded`**: connects diachronic predictions to `variation_monotone`
+  - **Add `irgend_compatible_classifications`**: bridge connecting German *irgend-* entry to `ModalIndefiniteEntry` in `Fragments/German/ModalIndefinites.lean`
+  - **Add per-language bridge theorems**: `ali_matches_epistemic`, `ere_matches_specific`, `oo_matches_specificUnknown`
+  - **Move language entries to proper fragments**: English→`Fragments/English/Indefinites.lean`, German→`Fragments/German/Indefinites.lean`, Latin→`Fragments/Latin/Indefinites.lean`, Yakut→`Fragments/Yakut/Indefinites.lean`, Kannada→`Fragments/Kannada/Indefinites.lean`
+  - **Remove `IndefiniteProfile`**: 7 stipulated profile structs replaced by 3 derivation functions on `IndefiniteSpecType`
+
+## [0.229.555] - 2026-04-05
+
+### Added
+- **Degree containment and *ABA constraint** (`Theories/Morphology/DegreeContainment.lean`): `DegreeGrade` (pos/cmpr/sprl) with containment rank, `DegreePattern` with `violatesABA`/`isContiguous`, CSG Part I fully proved (CMPR suppletive → SPRL suppletive), exhaustive 27-pattern check (6 ABA violations), `patternFromForms` utility. Parallel to `CaseContainment.lean`
+- **Superlative = universal comparative bridge** (`Theories/Semantics/Degree/Superlative.lean`): `superlative_iff_universal_comparative` connecting `absoluteSuperlative` to universal quantification over `comparativeSem`
+- **Bobaljik 2012 study** (`Phenomena/Comparison/Studies/Bobaljik2012.lean`): English suppletive paradigms (good/bad = ABB), CSG/SSG/lesslessness verification against fragment data, cross-check with `Fragments/English/Modifiers/Adjectives.lean`, morphological vacuity theorems
+
+## [0.229.554] - 2026-04-05
+
+### Fixed
+- **False theorem corrected** (`Core/GameTheory.lean`): `splitOrSteal_cooperate_preferred_high_dia` was FALSE — defecting against a cooperator produces advantageous inequality (AI, not DI), so AIA weight penalizes defection. Renamed to `splitOrSteal_cooperate_preferred_high_aia`, fixed parameters (ωAIA not ωDIA), sorry closed with proof
+- **Surprise profile corrected** (`Core/Agent/Emotion.lean`): PE was ⟨positive, irrelevant⟩ but the paper's surprise loads on |PEπ_{a₂}| (opponent action prediction error), which is a social dimension — now PE = ⟨irrelevant, positive⟩ matching the refined profile
+- **Typeclass over-constraint** (`Core/Agent/Emotion.lean`): `weightedCounterfactualAppraisal` required `[Field F] [LinearOrder F]` but only needs `[Ring F]`
+
+### Added
+- **All-20 collapse theorem** (`HoulihanEtAl2023.lean`): `all_refined_collapse` proves all 20 refined profiles collapse to qualitative (replaces 4 spot checks)
+- **Game→DecisionProblem bridge** (`HoulihanEtAl2023.lean`): `SymmetricGame.toDecisionProblem` and `toSocialDecisionProblem` connect game theory to `Core.DecisionTheory`
+- **Fehr-Schmidt = combined3** (`HoulihanEtAl2023.lean`): `fehrSchmidt_eq_combined3` shows Fehr-Schmidt is a special case of `RSA.CombinedUtility.combined3`
+- **Evaluative adjectives grounded** (`HoulihanEtAl2023.lean`): `generousAdj`/`fairMindedAdj` defined as `AdjMeaning` instances with `isIntersective` proofs via `Adjective.Classification`
+- **SocialValueProfile.evaluate**: connects social value profiles to `SymmetricGame.socialUtility`
+
+### Changed
+- Clean section numbering in `Emotion.lean`: §1-§9 sequential (was §1, §1b, §2, §2b, §2c, §3-§6)
+
+## [0.229.553] - 2026-04-05
+
+### Added
+- **Fehr-Schmidt social utility** (`Core/Agent/SocialUtility.lean`): inequity aversion utility function U = v_self − α·max(0, v_other − v_self) − β·max(0, v_self − v_other), with monotonicity, selfish-case, and equal-payoff theorems
+- **Multi-agent game theory** (`Core/GameTheory.lean`): `SymmetricGame` type with payoff matrix, advantageous/disadvantageous inequality, Fehr-Schmidt weighted social utility, Split-or-Steal game (weak PD), defect-dominance and AIA-cooperation theorems
+- **Domain-refined emotion appraisals** (`Core/Agent/Emotion.lean`): `UtilityDomain` (monetary/affiliation/socialEquity), `DomainWeights`, `RefinedAppraisalWeights`, `RefinedEmotionProfile` with collapse projection back to qualitative profiles; weighted counterfactual appraisal; reputational expectation from BToM desire marginals
+- **Houlihan et al. 2023 study** (`Phenomena/Emotion/Studies/HoulihanEtAl2023.lean`): 20 domain-refined emotion profiles (distinguishing monetary/AIA/DIA base loadings per Fig. 4), social lesion model, evaluative adjective semantics ("generous" = high ω_AIA, "selfish" = high ω_Money ∧ low social), envy-DIA and guilt-reputational specificity theorems, game-to-emotion structural connections
+- `references.bib`: fehr-schmidt-1999
+
+### Changed
+- Fix `Emotion.lean` docstring: 18-dimensional → 19-dimensional appraisal space (matching paper's Fig. 3 caption)
+
+## [0.229.552] - 2026-04-05
+
+### Added
+- **Bubnov 2026 — Not all coexpressions are syncretisms: Limiting Nanosyntax**: formalized in `Phenomena/Reference/Studies/Bubnov2026.lean`
+  - Degano & Aloni (2025) indefinite typology: 7 types from Boolean combinations of variation/constancy predicates, with verification theorems for unattested type (vi) and diachronic weakening predictions
+  - Connects nanosyntax spellout (`Nanosyntax/Core.lean`) to indefinite paradigms: demonstrates that fseq-based spellout produces correct syncretism patterns (AAA/ABB/AAB/ABC) but predicts morphological containment that is empirically absent
+  - Bridge theorems connecting Russian fragment entries to Degano & Aloni semantic profiles
+- **Team semantics extension** (`Theories/Semantics/Dynamic/TeamSemantics.lean`): `variation` (var) and `constancy` (dep) predicates on assignment teams (Hodges 1997, Väänänen 2007), with `constancy_excludes_variation` theorem and `variation_monotone` (grounds diachronic weakening)
+- **Russian indefinite fragment** (`Fragments/Russian/Indefinites.lean`): *-nibud'* (non-specific), *-to* (specific unknown), *koe-* (specific known) with `IndefiniteSpecType` enum (Degano & Aloni 2025), cross-linguistic entries (English, Yakut, Latin, Kannada, German), ABC pattern verification
+- `references.bib`: 8 new entries (bubnov-2026, dekier-2021, degano-aloni-2025, hodges-1997, vaananen-2007, farkas-brasoveanu-2020, aloni-port-2015)
+
 ## [0.229.551] - 2026-04-05
 
 ### Changed

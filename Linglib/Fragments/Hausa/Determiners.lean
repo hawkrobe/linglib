@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
 import Linglib.Theories.Semantics.Lexical.Determiner.ONEModifiers
+import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
 import Linglib.Core.Definiteness
 
 /-!
@@ -49,6 +50,7 @@ namespace Fragments.Hausa.Determiners
 
 open Semantics.Lexical.Determiner.UnifiedUniversal
 open Semantics.Lexical.Determiner.ONEModifiers
+open Semantics.Lexical.Determiner.ChoiceFunction
 open Core.Definiteness
 
 -- ════════════════════════════════════════════════════
@@ -107,20 +109,24 @@ def dukSem {α : Type*} [PartialOrder α]
   QForall P Q
 
 -- ════════════════════════════════════════════════════
--- § 3. Semantic Entries: Indefinites
+-- § 3. Indefinites: Analysis Type → Scope
 -- ════════════════════════════════════════════════════
 
-/-- Hausa indefinite marker type: bare NP vs *wani/wata*-marked. -/
+/-- Hausa indefinite marker type: bare NP vs *wani/wata*-marked.
+
+    Both are ∃-quantifiers (@cite{zimmermann-2014}). The difference
+    is that *wani* is an overt ∃ that can QR, while bare NPs have
+    a covert ∃ that is locally bound. -/
 inductive HausaIndef where
-  | bare    -- unmarked bare NP: narrow scope only
-  | wani    -- *wani(m.)/wata(f.)/wa(d'an)su(pl.)*: flexible scope
+  | bare    -- unmarked bare NP: covert ∃, narrow scope
+  | wani    -- *wani(m.)/wata(f.)*: overt ∃, flexible scope
   deriving DecidableEq, Repr
 
-/-- *wani/wata* can take wide or narrow scope relative to negation,
-    conditionals, and modal operators. @cite{zimmermann-2014}. -/
-def HausaIndef.hasWideScope : HausaIndef → Bool
-  | .bare => false
-  | .wani => true
+/-- Both Hausa indefinite strategies use ∃-quantification, not
+    choice functions. @cite{zimmermann-2014}. -/
+def HausaIndef.indefType : HausaIndef → IndefType
+  | .bare => .existential
+  | .wani => .existential
 
 /-- *wani/wata* satisfies Matthewson's diagnostics for marked indefinites:
     occurrence in existential sentences, introduction of new discourse
@@ -155,13 +161,13 @@ theorem koo_binds_sg_pronouns :
     HausaUQ.koo.isDistributive = true ∧ HausaUQ.duk.isDistributive = false :=
   ⟨rfl, rfl⟩
 
-/-- Bare NPs obligatorily take narrow scope. *wani*-marked indefinites
-    have flexible scope. This scope contrast motivates the different
-    semantic analyses: bare = covert ∃ (locally bound), *wani* = overt
-    ∃-quantifier (can QR). @cite{zimmermann-2014}. -/
-theorem scope_contrast :
-    HausaIndef.bare.hasWideScope = false ∧
-    HausaIndef.wani.hasWideScope = true :=
+/-- Both Hausa INDEFs are ∃-quantifiers, so both allow narrow scope
+    under negation. Scope differences are not from analysis type but
+    from whether the ∃ is overt (*wani*, can QR) or covert (bare, local).
+    @cite{zimmermann-2014}. -/
+theorem hausa_indefs_allow_narrow_scope :
+    HausaIndef.bare.indefType.allowsNarrowScopeUnderNeg = true ∧
+    HausaIndef.wani.indefType.allowsNarrowScopeUnderNeg = true :=
   ⟨rfl, rfl⟩
 
 /-- *duk(a)* cannot co-occur with collective predicates like *gather*

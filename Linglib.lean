@@ -94,6 +94,8 @@ import Linglib.Core.Agent.GumbelLuce
 import Linglib.Core.Agent.GaussianChoice
 import Linglib.Core.Agent.PsychophysicalChoice
 import Linglib.Core.Agent.Learning
+import Linglib.Core.Agent.SocialUtility
+import Linglib.Core.GameTheory
 import Linglib.Core.Discourse.Evidence
 import Linglib.Core.Discourse.Epistemicity
 import Linglib.Core.Discourse.Logophoricity
@@ -108,6 +110,7 @@ import Linglib.Core.Context.Rich
 import Linglib.Core.Discourse.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
+import Linglib.Core.IndefiniteType
 import Linglib.Core.SpecificityCondition
 import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
@@ -115,7 +118,9 @@ import Linglib.Core.Genericity
 import Linglib.Core.FormalLanguage
 import Linglib.Core.Case
 import Linglib.Core.AgreementTarget
+import Linglib.Theories.Morphology.Containment
 import Linglib.Theories.Morphology.CaseContainment
+import Linglib.Theories.Morphology.DegreeContainment
 import Linglib.Core.Relativization.Basic
 import Linglib.Core.Relativization.Extraction
 import Linglib.Core.Relativization.Hierarchy
@@ -131,6 +136,7 @@ import Linglib.Core.Scales.EpistemicScale.CancellationChambers
 import Linglib.Core.Scales.EpistemicScale.CancellationHelpers
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Mereology
+import Linglib.Core.Mereotopology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Core.ContentIndividual
 import Linglib.Core.Agent.BToM
@@ -415,6 +421,7 @@ import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.Morph
 import Linglib.Fragments.English.Negation
 import Linglib.Fragments.English.V2
+import Linglib.Fragments.English.Indefinites
 import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Case
 import Linglib.Fragments.Czech.Determiners
@@ -444,6 +451,7 @@ import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.German.V2
 import Linglib.Fragments.German.Distributives
+import Linglib.Fragments.German.Indefinites
 import Linglib.Fragments.Hausa.Determiners
 import Linglib.Fragments.Akan.Determiners
 import Linglib.Fragments.SwissGerman.Case
@@ -507,8 +515,10 @@ import Linglib.Fragments.French.Reciprocals
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Javanese.Modals
+import Linglib.Fragments.Latin.Adjectives
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Coordination
+import Linglib.Fragments.Latin.Indefinites
 import Linglib.Fragments.Latvian.IndeterminatePronouns
 import Linglib.Fragments.Japanese.Case
 import Linglib.Fragments.Japanese.Comparison
@@ -662,7 +672,10 @@ import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Tlingit.Modals
 import Linglib.Fragments.Welsh.Relativization
+import Linglib.Fragments.Yakut.Indefinites
+import Linglib.Fragments.Kannada.Indefinites
 import Linglib.Fragments.Russian.PolarityItems
+import Linglib.Fragments.Russian.Indefinites
 import Linglib.Fragments.German.PolarityItems
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.German.QuestionParticles
@@ -783,6 +796,7 @@ import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
 import Linglib.Phenomena.TenseAspect.Studies.Cumming2026
 import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970
+import Linglib.Phenomena.Countability.Studies.Moon2026
 import Linglib.Phenomena.Conditionals.Data
 import Linglib.Phenomena.Conditionals.LeftNested.Data
 import Linglib.Phenomena.Conditionals.Studies.Lassiter2025
@@ -905,6 +919,7 @@ import Linglib.Phenomena.Comparison.Studies.Wellwood2015
 import Linglib.Phenomena.Comparison.Studies.FoxHackl2006
 import Linglib.Phenomena.Comparison.Studies.VonStechow1984
 import Linglib.Phenomena.Comparison.Studies.Buring2007
+import Linglib.Phenomena.Comparison.Studies.Bobaljik2012
 import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
@@ -1009,6 +1024,7 @@ import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Linglib.Phenomena.Modality.Studies.Kratzer1981
 import Linglib.Phenomena.Modality.Studies.CiardelliGuerrini2026
 import Linglib.Phenomena.Modality.Studies.ElliottSudo2025
+import Linglib.Phenomena.Modality.Studies.AnandHacquard2013
 import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
@@ -1070,6 +1086,7 @@ import Linglib.Phenomena.Polarity.Studies.Chierchia2006
 import Linglib.Phenomena.Polarity.Studies.Lahiri1998
 import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 import Linglib.Phenomena.Polarity.Typology
+import Linglib.Phenomena.Emotion.Studies.HoulihanEtAl2023
 import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Phenomena.Politeness.Studies.FrancikClark1985
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
@@ -1195,6 +1212,7 @@ import Linglib.Phenomena.TenseAspect.Studies.TsiliaZhao2026
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025ThenPresent
 import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
+import Linglib.Phenomena.TenseAspect.Studies.Filip2012
 import Linglib.Phenomena.TenseAspect.Studies.SpatialTrace
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.TenseAspect.Studies.DimensionCoherence
@@ -1714,6 +1732,7 @@ import Linglib.Theories.Semantics.Attitudes.Factivity
 import Linglib.Theories.Semantics.Attitudes.PreExistence
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Theories.Semantics.Attitudes.RationalAttitude
+import Linglib.Theories.Semantics.Attitudes.Representationality
 import Linglib.Theories.Semantics.Truthmaker.Basic
 import Linglib.Theories.Semantics.Causation.Basic
 import Linglib.Theories.Semantics.Causation.Builder
@@ -1922,6 +1941,8 @@ import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.Elbourne2013
 import Linglib.Phenomena.Reference.Studies.Longobardi2005
 import Linglib.Phenomena.Reference.Studies.Zimmermann2026
+import Linglib.Phenomena.Reference.Studies.Bubnov2026
+import Linglib.Phenomena.Reference.Studies.Dekier2021
 import Linglib.Phenomena.Binominals.Studies.TenWolde2023
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Attitudes

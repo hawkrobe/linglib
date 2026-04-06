@@ -80,7 +80,47 @@ def SkolemCF.isCorrect {S E : Type*} (f : SkolemCF S E) : Prop :=
   ∀ (s : S), (f s).isCorrect
 
 -- ════════════════════════════════════════════════════
--- § 3. Scope via Situation Binding
+-- § 3. Indefinite Analysis Type
+-- ════════════════════════════════════════════════════
+
+/-- The two main semantic analyses of indefinite determiners.
+
+    The analysis type structurally determines scope potential:
+    - ∃-quantifiers scope via QR/alternative mechanisms → flexible
+    - Choice functions scope via situation variable binding →
+      obligatory wide scope under non-intensional operators
+
+    @cite{reinhart-1997}: the key empirical distinction is scope under
+    negation. ∃-quantifiers allow narrow scope (¬ > ∃); choice functions
+    force wide scope (∃ > ¬) because negation cannot shift the situation
+    variable.
+
+    Cross-linguistic evidence: Hausa *wani/wata* (∃) vs Akan *bí* (CF).
+    @cite{zimmermann-2026} §3.3. -/
+inductive IndefType where
+  | existential    -- ∃-quantifier: scope via QR (wide + narrow)
+  | choiceFunction -- Choice function: scope via situation binding
+  deriving DecidableEq, Repr
+
+/-- CF-based indefinites force wide scope under negation;
+    ∃-based indefinites allow narrow scope. Derived from the
+    semantic architecture, not stipulated per-language. -/
+def IndefType.forcesWideScopeUnderNeg : IndefType → Bool
+  | .choiceFunction => true
+  | .existential    => false
+
+/-- ∃-based indefinites can take narrow scope; CF cannot. -/
+def IndefType.allowsNarrowScopeUnderNeg : IndefType → Bool
+  | .existential    => true
+  | .choiceFunction => false
+
+/-- Wide and narrow scope under negation are complementary. -/
+theorem scope_complementary (t : IndefType) :
+    t.forcesWideScopeUnderNeg = !t.allowsNarrowScopeUnderNeg := by
+  cases t <;> rfl
+
+-- ════════════════════════════════════════════════════
+-- § 4. Scope via Situation Binding
 -- ════════════════════════════════════════════════════
 
 /-- When the situation variable is bound to the resource situation

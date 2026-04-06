@@ -21,6 +21,7 @@ Both share scale type and antonym information, but serve different grammatical f
 import Linglib.Core.Lexical.Word
 import Linglib.Core.PropertyDomain
 import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Theories.Morphology.DegreeContainment
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 namespace Fragments.English.Modifiers.Adjectives
@@ -60,6 +61,12 @@ structure AdjModifierEntry where
       polarity (@cite{sassoon-2013}): *empty* is lower-endpoint but evaluatively
       positive (total, max-standard). -/
   isLowerEndpoint : Bool := false
+  /-- Suppletive pattern across positive, comparative, and superlative
+      grades (@cite{bobaljik-2012}). Default `aaa` = regular (same root
+      throughout). Set to `abb` for suppletive entries like *good/better/best*.
+      See `DegreeContainment.lean` for pattern definitions and the *ABA
+      constraint. -/
+  suppletion : Theories.Morphology.DegreeContainment.DegreePattern := ⟨0, 0, 0⟩
   deriving Repr, BEq
 
 -- ============================================================================
@@ -152,7 +159,8 @@ def good : AdjModifierEntry :=
   , scaleType := .lowerBounded
   , dimension := .value
   , antonymForm := some "bad"
-  , antonymRelation := some .contrary }
+  , antonymRelation := some .contrary
+  , suppletion := ⟨0, 1, 1⟩ }
 
 def bad : AdjModifierEntry :=
   { form := "bad"
@@ -162,7 +170,8 @@ def bad : AdjModifierEntry :=
   , dimension := .value
   , antonymForm := some "good"
   , antonymRelation := some .contrary
-  , isLowerEndpoint := true }
+  , isLowerEndpoint := true
+  , suppletion := ⟨0, 1, 1⟩ }
 
 -- ============================================================================
 -- Intelligence Scale

@@ -1,5 +1,6 @@
 import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
 # Superlative Semantics
@@ -87,5 +88,23 @@ theorem absoluteSuperlative_isGreatest {Entity D : Type*} [LinearOrder D]
   rcases eq_or_ne y x with rfl | hne
   · exact le_refl _
   · exact le_of_lt (h.2 y hy hne)
+
+-- ════════════════════════════════════════════════════
+-- § 5. Superlative as Universal Comparative
+-- ════════════════════════════════════════════════════
+
+/-- **Superlative = universal comparative** (@cite{heim-1999}):
+    "x is the tallest in C" iff "x is taller than every other y in C".
+
+    The superlative universally quantifies over the comparative:
+    ⟦-est⟧ applies ⟦-er⟧ to every alternative in the comparison class.
+    This semantic decomposition is the reflex of @cite{bobaljik-2012}'s
+    morphosyntactic containment hypothesis (`[[[ADJ] CMPR] SPRL]`). -/
+theorem superlative_iff_universal_comparative {Entity D : Type*} [LinearOrder D]
+    (μ : Entity → D) (C : Set Entity) (x : Entity) :
+    absoluteSuperlative μ C x ↔
+      x ∈ C ∧ ∀ y ∈ C, y ≠ x →
+        Semantics.Degree.Comparative.comparativeSem μ x y .positive := by
+  simp [absoluteSuperlative, Semantics.Degree.Comparative.comparativeSem]
 
 end Semantics.Degree.Superlative

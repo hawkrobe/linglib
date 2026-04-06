@@ -44,6 +44,7 @@ Then `IsCDistributive propSemantics questionSemantics` is a theorem.
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
+import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Preferential
@@ -444,7 +445,16 @@ theorem degreeComparisonPredicate_isCDistributive {W E : Type*}
 
 -- Standard Predicates with C-Distributivity Proofs
 
-/-- Hope: degree-comparison, positive valence -/
+/-- Hope (preferential component): degree-comparison, positive valence.
+This captures the preference ordering from @cite{villalta-2008} — the
+component shared by all emotive doxastic analyses. For the full emotive
+doxastic semantics with doxastic + uncertainty + preference components
+(@cite{anand-hacquard-2013}), see `hopeHybrid` below.
+
+Note: `hope` is structurally identical to `want` except for the name —
+both are positive-valence degree-comparison predicates. What distinguishes
+hope from want linguistically is the *additional* doxastic component
+(uncertainty condition, epistemic licensing) that `hopeHybrid` captures. -/
 def hope {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
     PreferentialPredicate W E :=
   mkDegreeComparisonPredicate "hope" .positive μ θ
@@ -455,7 +465,9 @@ theorem hope_isCDistributive {W E : Type*}
     (hope μ θ).isCDistributive :=
   degreeComparisonPredicate_isCDistributive "hope" .positive μ θ
 
-/-- Fear: degree-comparison, negative valence -/
+/-- Fear (preferential component): degree-comparison, negative valence.
+Captures the preference ordering only. For the full emotive doxastic
+semantics with uncertainty condition, see `fearHybrid` below. -/
 def fear {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
     PreferentialPredicate W E :=
   mkDegreeComparisonPredicate "fear" .negative μ θ
@@ -498,6 +510,16 @@ theorem dread_isCDistributive {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
     (dread μ θ).isCDistributive :=
   degreeComparisonPredicate_isCDistributive "dread" .negative μ θ
+
+/-- Hope and wish have identical preference semantics — they differ only
+in name. @cite{anand-hacquard-2013}: what distinguishes hope from
+want/wish is the doxastic component (captured by `hopeHybrid`), not
+the preferential semantics. -/
+theorem hope_eq_wish_semantics {W E : Type*}
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
+    (hope μ θ).propSemantics = (wish μ θ).propSemantics ∧
+    (hope μ θ).questionSemantics = (wish μ θ).questionSemantics := by
+  constructor <;> rfl
 
 -- Non-C-Distributive Predicates (worry, qidai)
 
@@ -1135,5 +1157,191 @@ theorem hope_highlight_constituent_trivial {W E : Type*}
   simp only [List.any_eq_true, decide_eq_true_eq] at *
   obtain ⟨p, hp_in_Q, hp_holds⟩ := h_assert
   exact ⟨p, h_subset p hp_in_Q, hp_holds⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § Emotive Doxastic Predicates (hope, fear as hybrids)
+-- @cite{anand-hacquard-2013} @cite{scheffler-2008}
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+## Emotive Doxastics: Hybrid Representational + Preferential
+
+@cite{anand-hacquard-2013} show that `hope` and `fear` are not pure
+preferential predicates (like `want`). They have three components:
+
+1. **Doxastic assertion**: the attitude holder believes φ is *possible*
+   (∃w' ∈ DOX: φ(w') = 1)
+2. **Preference assertion**: φ-verifiers are preferred to φ-falsifiers
+3. **Uncertainty condition**: the attitude holder is *uncertain* about φ
+   (both φ-verifiers and φ-falsifiers exist in DOX)
+
+The doxastic component is what licenses embedded epistemic *possibility*
+modals. The uncertainty condition is what blocks epistemic *necessity*:
+necessity entails certainty, contradicting the uncertainty requirement.
+
+This hybrid structure distinguishes `hope` from `want`:
+- `want` is pure preferential — no doxastic component, no epistemic licensing
+- `hope` has a doxastic component — licenses `might` but not `must`
+
+### Evidence for the doxastic component (@cite{scheffler-2008})
+
+`hope` can felicitously answer questions (providing doxastic information):
+  A: "Is Peter coming today?"
+  B: "I hope/\*want that he is coming today."
+
+`hope` is infelicitous with certainty about the complement:
+  "It is raining. #I hope it is raining." (vs. ✓"I want it to be raining.")
+
+### Verifiers and Falsifiers
+
+@cite{anand-hacquard-2013} define φ-verifiers in information state S as
+subsets of S that are *certain* about φ — where φ's truth value doesn't
+change with (monotonically) increasing information:
+
+  φ-verifiers in S = {S' ⊂ S | ∀S'' ⊂ S': ∀w' ∈ S'': ⟦φ⟧(w') = 1}
+
+For unmodalized φ, this simplifies to pow(S ∩ φ).
+For modalized φ (might p, must p), verifiers are still pow(S ∩ p) —
+modalized complements raise the same issue as unmodalized ones.
+-/
+
+open Semantics.Attitudes.Doxastic (AccessRel diaAt boxAt)
+
+/-- An emotive doxastic predicate: hybrid representational + preferential.
+
+Combines a doxastic accessibility relation (from `Doxastic.lean`)
+with a preference function (from `Preferential`). The accessibility
+relation provides the information state that epistemics quantify over;
+the preference function orders verifiers against falsifiers. -/
+structure EmotiveDoxasticPredicate (W E : Type*) where
+  /-- Name of the predicate -/
+  name : String
+  /-- Doxastic accessibility relation: DOX(x, w) -/
+  access : AccessRel W E
+  /-- Preference function: μ(x, p) → degree -/
+  μ : PreferenceFunction W E
+  /-- Threshold function: θ(C) → degree -/
+  θ : ThresholdFunction W
+  /-- Evaluative valence (positive for hope, negative for fear) -/
+  valence : AttitudeValence
+
+/-- The doxastic assertion: ∃w' ∈ DOX(x,w) such that φ(w').
+
+This is the component that licenses embedded epistemic possibility modals.
+When the complement is `might p`, the doxastic assertion reduces to
+`DOX ∩ p ≠ ∅` by vacuous quantification — identical to the unmodalized
+case. -/
+def EmotiveDoxasticPredicate.doxasticAssertion {W E : Type*}
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (w : W) (worlds : List W) : Bool :=
+  diaAt V.access agent w worlds p
+
+/-- The uncertainty condition: both φ-verifiers and φ-falsifiers exist
+in DOX. The attitude holder is genuinely uncertain about φ.
+
+This is what blocks epistemic necessity: `must p` under `hope` would
+require ∀w' ∈ DOX: p(w'), which combined with the uncertainty condition
+(∃w' ∈ DOX: ¬p(w')) yields a contradiction. -/
+def EmotiveDoxasticPredicate.uncertaintyCondition {W E : Type*}
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (w : W) (worlds : List W) : Bool :=
+  -- ∃w' ∈ DOX: p(w') — verifiers exist
+  diaAt V.access agent w worlds p &&
+  -- ∃w' ∈ DOX: ¬p(w') — falsifiers exist
+  diaAt V.access agent w worlds (fun w' => !p w')
+
+/-- The preference assertion: φ-verifying doxastic alternatives are
+preferred to φ-falsifying ones.
+
+For positive valence (hope): μ(x, p) > θ(C) — the agent prefers p.
+For negative valence (fear): μ(x, p) > θ(C) — where μ measures dispreference. -/
+def EmotiveDoxasticPredicate.preferenceAssertion {W E : Type*}
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (C : QuestionDen W) : Bool :=
+  decide (V.μ agent p > V.θ C)
+
+/-- Full semantics for an emotive doxastic: all three components must hold.
+
+⟦a hopes_C that φ⟧ is defined iff:
+  (i)   φ-verifiers in S' ≠ ∅ ∧ φ-falsifiers in S' ≠ ∅    (uncertainty)
+  (ii)  ∃w' ∈ S': ⟦φ⟧(w') = 1                              (doxastic)
+  (iii) φ-verifiers >_DES φ-falsifiers                       (preference)
+
+where S' = DOX(a, w).
+
+Note: condition (ii) is entailed by the first conjunct of (i), so it is
+redundant in the conjunction. We include it explicitly for clarity and
+because it is the component responsible for epistemic licensing — it
+provides the information state that embedded epistemics are anaphoric to. -/
+def EmotiveDoxasticPredicate.holdsAt {W E : Type*}
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (w : W) (worlds : List W) (C : QuestionDen W) : Bool :=
+  V.uncertaintyCondition agent p w worlds &&
+  V.doxasticAssertion agent p w worlds &&
+  V.preferenceAssertion agent p C
+
+/-- Hope: emotive doxastic with positive valence. -/
+def hopeHybrid {W E : Type*} (R : AccessRel W E)
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
+    EmotiveDoxasticPredicate W E :=
+  { name := "hope", access := R, μ := μ, θ := θ, valence := .positive }
+
+/-- Fear: emotive doxastic with negative valence. -/
+def fearHybrid {W E : Type*} (R : AccessRel W E)
+    (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
+    EmotiveDoxasticPredicate W E :=
+  { name := "fear", access := R, μ := μ, θ := θ, valence := .negative }
+
+-- ════════════════════════════════════════════════════════════════
+-- § Epistemic Embedding Theorems
+-- ════════════════════════════════════════════════════════════════
+
+/-- Under emotive doxastics, `might p` contributes the same doxastic
+assertion as bare `p` — modal concord.
+
+When the complement is `might p`, the doxastic assertion becomes:
+  ∃w' ∈ DOX: (∃w'' ∈ DOX: p(w''))
+By vacuous quantification over the shared information state, this
+reduces to: ∃w'' ∈ DOX: p(w'').
+Both yield: DOX ∩ p ≠ ∅.
+
+We model this by showing that the doxastic assertion for `p` and for
+the function `λ w. diaAt R x w worlds p` (= "might p" evaluated at
+the same DOX) are equivalent when the information state is shared. -/
+theorem doxastic_assertion_might_concord {W E : Type*}
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (w : W) (worlds : List W)
+    (h : V.doxasticAssertion agent p w worlds = true) :
+    V.doxasticAssertion agent
+      (fun w' => diaAt V.access agent w worlds p) w worlds = true := by
+  simp only [EmotiveDoxasticPredicate.doxasticAssertion, diaAt,
+    List.any_eq_true, Bool.and_eq_true] at *
+  obtain ⟨w', hw'_in, hw'_acc, hw'_p⟩ := h
+  exact ⟨w', hw'_in, hw'_acc, ⟨w', hw'_in, hw'_acc, hw'_p⟩⟩
+
+/-- Under emotive doxastics, `must p` contradicts the uncertainty
+condition. If ∀w' ∈ DOX: p(w'), then there are no falsifiers in DOX,
+violating the uncertainty condition's requirement that
+∃w' ∈ DOX: ¬p(w'). -/
+theorem must_contradicts_uncertainty {W E : Type*}
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (w : W) (worlds : List W)
+    (h_must : boxAt V.access agent w worlds p = true)
+    (h_accessible : diaAt V.access agent w worlds p = true) :
+    V.uncertaintyCondition agent p w worlds = false := by
+  simp only [EmotiveDoxasticPredicate.uncertaintyCondition, diaAt, boxAt,
+    List.any_eq_true, List.all_eq_true,
+    Bool.and_eq_true, Bool.or_eq_true, Bool.not_eq_true'] at *
+  have h_no_neg : (worlds.any fun w' => V.access agent w w' && !p w') = false := by
+    rw [Bool.eq_false_iff]
+    intro h_any
+    rw [List.any_eq_true] at h_any
+    obtain ⟨w', hw'_in, hw'_both⟩ := h_any
+    rw [Bool.and_eq_true] at hw'_both
+    obtain ⟨hw'_acc, hw'_np⟩ := hw'_both
+    have := h_must w' hw'_in
+    simp [hw'_acc] at this
+    simp [this] at hw'_np
+  rw [h_no_neg, Bool.and_false]
 
 end Semantics.Attitudes.Preferential

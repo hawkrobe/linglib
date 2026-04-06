@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
+import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
 import Linglib.Core.Definiteness
-import Linglib.Core.Semantics.Presupposition
 
 /-!
 # Akan (Kwa) Determiners
@@ -49,6 +49,7 @@ alternative-sensitive scalar operator *ara*.
 namespace Fragments.Akan.Determiners
 
 open Semantics.Lexical.Determiner.ChoiceFunction
+open Semantics.Lexical.Determiner.Definite
 open Semantics.Lexical.Determiner.UnifiedUniversal
 open Core.Definiteness
 open Core.Presupposition
@@ -80,16 +81,18 @@ def NoAnalysis.toPresupType : NoAnalysis → DefPresupType
     than Owusu's demonstrative analysis. -/
 def preferredAnalysis : NoAnalysis := .weak
 
-/-- ⟦nó⟧ contributes a presupposition (familiarity or uniqueness,
-    depending on the analysis) and passes through the NP assertion.
+/-- ⟦nó⟧ under the familiarity analysis: presupposes a unique salient
+    discourse referent matching the restrictor. Grounded in `the_fam`
+    from `Definite.lean` — the theory-layer denotation for Schwarz's
+    strong article.
 
-    Under Bombi's preferred analysis, *nó* presupposes uniqueness
-    evaluated relative to the context of a preceding clause.
-    Under Schwarz/Owusu's analysis, it presupposes familiarity. -/
-def noSem {W : Type*} (presupHolds : W → Bool) (assertion : W → Bool) :
-    PrProp W :=
-  { presup := presupHolds
-  , assertion := assertion }
+    Under Bombi's preferred uniqueness analysis, the same denotation
+    applies but evaluated against a discourse-restricted situation
+    rather than the full evaluation world. -/
+def noSem {E : Type} [DecidableEq E]
+    (dc : DiscourseContext E)
+    (restrictor : E → Bool) (scope : E → Bool) :=
+  the_fam dc restrictor scope
 
 -- ════════════════════════════════════════════════════
 -- § 2. Bare NPs
@@ -109,20 +112,22 @@ inductive BareNPReading where
   | indefinite  -- covert ∃: non-singleton denotation
   deriving DecidableEq, Repr
 
-/-- Akan bare NPs take narrow scope obligatorily (like Hausa bare NPs).
-    @cite{philipp-2022}: Akan bare NPs do not show the characteristic
-    properties of pseudo-noun incorporation. -/
-def bareNPHasWideScope : Bool := false
+/-- When a bare NP gets an indefinite reading, it is a covert
+    ∃-quantifier — hence narrow scope only. -/
+def bareNPIndefType : IndefType := .existential
 
 -- ════════════════════════════════════════════════════
 -- § 3. Indefinite *bí*: Choice Function Semantics
 -- ════════════════════════════════════════════════════
 
+/-- *bí* is analysed as a choice function, not an ∃-quantifier.
+    @cite{owusu-2022}, following @cite{mirrazi-2024}. -/
+def biIndefType : IndefType := .choiceFunction
+
 /-- ⟦bí⟧ = λs.λP. CH(f_s). f_s(P(s))
 
     @cite{owusu-2022} analyses *bí* as denoting a skolemized choice
-    function with individual and world/situation indices (following
-    @cite{mirrazi-2024}).
+    function with individual and world/situation indices.
 
     The choice function `f_s` selects a single individual of type *e*
     from the set of P-individuals in situation `s`. The key consequence:
@@ -135,11 +140,6 @@ def bareNPHasWideScope : Bool := false
 
     @cite{zimmermann-2026} §3.3 exx. (15–16). -/
 def biSem (S E : Type*) := SkolemCF S E
-
-/-- *bí* takes obligatory wide scope under negation.
-    This contrasts with Hausa *wani/wata* which allows narrow scope.
-    @cite{owusu-2022}, @cite{zimmermann-2026} §3.3 ex. (15). -/
-def biHasWideScope : Bool := true
 
 -- ════════════════════════════════════════════════════
 -- § 4. Universal Quantifier *bi-ara*
@@ -161,15 +161,26 @@ inductive BiaraReading where
   | freeChoice  -- 'fix any chair' (INDEF + ara at clause, FC context)
   deriving DecidableEq, Repr
 
-/-- Unlike Ga *ko*, Akan *bí* (and by extension *bi-ara*) is analysed
-    as a choice function, not an ∃-quantifier. This means the universal
-    reading of *bi-ara* cannot be from a simple FC ∃-quantifier.
-    @cite{owusu-2022}, @cite{zimmermann-2026} §3.3. -/
-def biaraUsesChoiceFunction : Bool := true
-
 -- ════════════════════════════════════════════════════
 -- § 5. Bridge Theorems
 -- ════════════════════════════════════════════════════
+
+/-- *bí* forces wide scope under negation — derived from its CF
+    analysis type, not stipulated independently.
+    @cite{owusu-2022}, @cite{zimmermann-2026} §3.3 ex. (15). -/
+theorem bi_forces_wide_scope :
+    biIndefType.forcesWideScopeUnderNeg = true := rfl
+
+/-- Bare NPs allow narrow scope — derived from their ∃ analysis type. -/
+theorem bareNP_allows_narrow_scope :
+    bareNPIndefType.allowsNarrowScopeUnderNeg = true := rfl
+
+/-- The scope contrast between *bí* and bare NPs follows from
+    the CF vs ∃ distinction, not from a per-lexeme stipulation. -/
+theorem bi_vs_bare_scope_derived :
+    biIndefType.forcesWideScopeUnderNeg = true ∧
+    bareNPIndefType.forcesWideScopeUnderNeg = false :=
+  ⟨rfl, rfl⟩
 
 /-- *nó* contributes familiarity regardless of the chosen analysis:
     both the strong and demonstrative analyses predict familiarity;
@@ -178,14 +189,6 @@ def biaraUsesChoiceFunction : Bool := true
 theorem no_requires_discourse_link :
     NoAnalysis.strong.toPresupType = .familiarity ∧
     NoAnalysis.demonstrative.toPresupType = .familiarity :=
-  ⟨rfl, rfl⟩
-
-/-- *bí*-marked indefinites take wide scope; bare NPs take narrow scope.
-    This is the Akan analogue of the Hausa *wani* vs bare NP contrast,
-    but with a different mechanism: choice function binding (Akan) vs
-    QR (Hausa). @cite{zimmermann-2026} §3.3. -/
-theorem bi_vs_bare_scope :
-    biHasWideScope = true ∧ bareNPHasWideScope = false :=
   ⟨rfl, rfl⟩
 
 /-- Akan's article system: overt DEF marker (*nó*) for familiarity,

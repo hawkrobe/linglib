@@ -40,10 +40,16 @@ The paper computes appraisals along four types × two perspectives:
 | Reputational | How the agent's choices appear to others |
 
 The paper's full model decomposes base utility into three domains
-(monetary, affiliation, social equity), yielding an 18-dimensional
-appraisal space. Our qualitative profiles collapse these base domains
-into a single "base" perspective (4 types × 2 perspectives = 8 dimensions),
-which suffices to uniquely characterize all 20 emotion concepts.
+(monetary, affiliation, social equity), yielding a 19-dimensional
+appraisal space (4 types × 3 base domains × 2 perspectives, minus
+some all-zero columns, plus |PE_{π_{a₂}}| for belief prediction error).
+Our qualitative profiles collapse these base domains into a single
+"base" perspective (4 types × 2 perspectives = 8 dimensions), which
+suffices to uniquely characterize all 20 emotion concepts.
+
+For domain-refined profiles that distinguish monetary/AIA/DIA effects,
+see `RefinedAppraisalWeights` (§6) and the full instantiation in
+`Phenomena.Emotion.Studies.HoulihanEtAl2023`.
 
 -/
 
@@ -108,7 +114,59 @@ inductive TemporalOrientation where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
--- § 2. Appraisal Computation from BToM Marginals
+-- § 2. Utility Domains (Refined Decomposition)
+-- ════════════════════════════════════════════════════════════════
+
+/-- The three base utility domains from @cite{fehr-schmidt-1999} as used in
+@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}.
+
+The qualitative `AppraisalPerspective.base` collapses these three domains
+into one. For domain-refined analysis, each base appraisal has a sign for
+each domain. The domain matters: *envy* loads specifically on `socialEquity`
+(DIA), not on `monetary` or `affiliation`; *guilt* loads on reputational
+dimensions of `affiliation` (AIA), not `monetary`. -/
+inductive UtilityDomain where
+  | monetary      -- Material payoff (Money)
+  | affiliation   -- AIA: aversion to advantageous inequality
+  | socialEquity  -- DIA: aversion to disadvantageous inequality
+  deriving DecidableEq, Repr
+
+instance : Fintype UtilityDomain where
+  elems := {.monetary, .affiliation, .socialEquity}
+  complete := λ x => by cases x <;> simp
+
+/-- Qualitative appraisal sign for each utility domain.
+
+This refines `PerspectiveWeights.base : AppraisalSign` into three
+domain-specific signs, capturing the paper's 19-dimensional structure. -/
+structure DomainWeights where
+  monetary     : AppraisalSign
+  affiliation  : AppraisalSign
+  socialEquity : AppraisalSign
+  deriving DecidableEq, Repr
+
+/-- Refined perspective weights: three base domains + one reputational. -/
+structure RefinedPerspectiveWeights where
+  base : DomainWeights
+  reputational : AppraisalSign
+  deriving DecidableEq, Repr
+
+/-- The full domain-refined appraisal weight matrix for an emotion concept.
+
+4 appraisal types × (3 base domains + 1 reputational) = 16 qualitative
+dimensions. This is the structure underlying the paper's Fig. 4. -/
+structure RefinedAppraisalWeights where
+  au  : RefinedPerspectiveWeights
+  pe  : RefinedPerspectiveWeights
+  cfa : RefinedPerspectiveWeights
+  cfo : RefinedPerspectiveWeights
+  deriving DecidableEq, Repr
+
+-- Collapse/projection functions are in §9 (after PerspectiveWeights
+-- and EmotionProfile are defined in §6).
+
+-- ════════════════════════════════════════════════════════════════
+-- § 3. Appraisal Computation from BToM Marginals
 -- ════════════════════════════════════════════════════════════════
 
 section AppraisalComputation
@@ -172,7 +230,64 @@ theorem pe_uses_belief_expectation [AddCommGroup F] (model : BToMModel F A P B D
 end AppraisalComputation
 
 -- ════════════════════════════════════════════════════════════════
--- § 3. Emotion Profiles
+-- § 4. Weighted Counterfactual Appraisal
+-- ════════════════════════════════════════════════════════════════
+
+section WeightedCounterfactual
+open Core.BToM
+
+variable {F : Type*} [Ring F]
+variable {A P B D S M W : Type*}
+  [Fintype P] [Fintype B] [Fintype D] [Fintype S] [Fintype M] [Fintype W]
+
+/-- Weighted counterfactual appraisal: the counterfactual utility difference
+weighted by the probability the agent would have chosen the alternative.
+
+    WCF(a, a', w) = P(a' | ω, a₂) · [U(w, a') − U(w, a)]
+
+@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} weight CFa₁ by
+the probability the player would have chosen differently, given the
+inferred preferences and updated beliefs. This connects counterfactual
+*appraisal* (utility comparison) to counterfactual *reasoning* (how
+likely was the alternative?) — bridging `counterfactualAppraisal` here
+with the counterfactual conditional semantics in
+`Theories.Semantics.Conditionals.Counterfactual`. -/
+def weightedCounterfactualAppraisal (utility : W → A → F)
+    (altProb : F) (actualAction altAction : A) (world : W) : F :=
+  altProb * (utility world altAction - utility world actualAction)
+
+end WeightedCounterfactual
+
+-- ════════════════════════════════════════════════════════════════
+-- § 5. Reputational Appraisal from BToM Desire Marginals
+-- ════════════════════════════════════════════════════════════════
+
+section ReputationalAppraisal
+open Core.BToM
+
+variable {F : Type*} [CommSemiring F]
+variable {A P B D S M W : Type*}
+  [Fintype P] [Fintype B] [Fintype D] [Fintype S] [Fintype M] [Fintype W]
+
+/-- Reputational appraisal: what an observer would infer about the
+agent's preferences from the observed action.
+
+    E[f(d) | a] = Σ_d P(d | a) · f(d)
+
+This is the second-order computation in @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}:
+the agent anticipates what observers will infer about their desires
+from their action. For the agent, this IS the `desireMarginal` — the
+BToM architecture already computes exactly this. The reputational
+appraisal is just the desire-marginal expectation of a preference
+projection function (e.g., extracting the AIA weight from the desire). -/
+def reputationalExpectation (model : BToMModel F A P B D S M W)
+    (desireProjection : D → F) (action : A) : F :=
+  ∑ d : D, model.desireMarginal action d * desireProjection d
+
+end ReputationalAppraisal
+
+-- ════════════════════════════════════════════════════════════════
+-- § 6. Emotion Profiles
 -- ════════════════════════════════════════════════════════════════
 
 /-- Appraisal weights for a single appraisal type, split by perspective. -/
@@ -185,7 +300,7 @@ structure PerspectiveWeights where
 
 Each of the four appraisal types has a base and reputational weight,
 yielding 8 qualitative dimensions. This is our abstraction of the
-paper's full 18-dimensional learned β weight matrix (Fig. 4),
+paper's full 19-dimensional learned β weight matrix (Fig. 4),
 collapsing monetary + affiliation + social equity into "base." -/
 structure AppraisalWeights where
   au  : PerspectiveWeights  -- Achieved utility
@@ -227,7 +342,7 @@ def EmotionProfile.isPurelyReputational (e : EmotionProfile) : Bool :=
   e.weights.cfa.base == .irrelevant && e.weights.cfo.base == .irrelevant
 
 -- ════════════════════════════════════════════════════════════════
--- § 4. The 20 Emotion Concepts
+-- § 7. The 20 Emotion Concepts
 -- ════════════════════════════════════════════════════════════════
 
 /-! Qualitative profiles abstracted from the learned β weights in
@@ -240,7 +355,7 @@ where each of `au, pe, cfa, cfo` is `⟨base, reputational⟩`.
 | Emotion        | AU_b | AU_r | PE_b | PE_r | CFa_b | CFa_r | CFo_b | CFo_r |
 |----------------|------|------|------|------|-------|-------|-------|-------|
 | joy            |  +   |  ·   |  +   |  ·   |   ·   |   ·   |   ·   |   ·   |
-| surprise       |  ·   |  ·   |  +   |  ·   |   ·   |   ·   |   ·   |   ·   |
+| surprise       |  ·   |  ·   |  ·   |  +   |   ·   |   ·   |   ·   |   ·   |
 | pride          |  +   |  +   |  ·   |  ·   |   +   |   ·   |   ·   |   ·   |
 | gratitude      |  +   |  ·   |  +   |  ·   |   ·   |   ·   |   −   |   ·   |
 | relief         |  +   |  ·   |  +   |  ·   |   −   |   ·   |   ·   |   ·   |
@@ -266,8 +381,13 @@ private abbrev O : PerspectiveWeights := ⟨.irrelevant, .irrelevant⟩
 def joy : EmotionProfile :=
   ⟨"joy", ⟨⟨.positive, .irrelevant⟩, ⟨.positive, .irrelevant⟩, O, O⟩, .retrospective⟩
 
+/-- Surprise: loads on |PEπ_{a₂}| — how unexpected the opponent's action was.
+This is a distinct appraisal dimension in the paper (the 19th), not a standard
+base PE (monetary/AIA/DIA prediction error). We place it in PE.reputational
+as the best available slot, since it concerns the social dimension (opponent's
+choice) rather than direct material outcomes. -/
 def surprise : EmotionProfile :=
-  ⟨"surprise", ⟨O, ⟨.positive, .irrelevant⟩, O, O⟩, .retrospective⟩
+  ⟨"surprise", ⟨O, ⟨.irrelevant, .positive⟩, O, O⟩, .retrospective⟩
 
 def pride : EmotionProfile :=
   ⟨"pride", ⟨⟨.positive, .positive⟩, O, ⟨.positive, .irrelevant⟩, O⟩, .retrospective⟩
@@ -337,7 +457,7 @@ def allEmotions : List EmotionProfile :=
    contempt, respect, envy, sympathy, confusion, excitement]
 
 -- ════════════════════════════════════════════════════════════════
--- § 5. Structural Theorems
+-- § 8. Structural Theorems
 -- ════════════════════════════════════════════════════════════════
 
 theorem twenty_emotions : allEmotions.length = 20 := by native_decide
@@ -358,5 +478,241 @@ theorem all_retrospective :
 /-- Embarrassment is purely reputational: all base dimensions are irrelevant. -/
 theorem embarrassment_purely_reputational :
     embarrassment.isPurelyReputational = true := by native_decide
+
+-- ════════════════════════════════════════════════════════════════
+-- § 9. Refined ↔ Qualitative Projections
+-- ════════════════════════════════════════════════════════════════
+
+/-- Collapse domain-refined weights back to the qualitative abstraction.
+
+Uses "any positive → positive, any negative → negative, else irrelevant"
+policy. This ensures the qualitative profiles remain compatible. -/
+def DomainWeights.collapse (d : DomainWeights) : AppraisalSign :=
+  if d.monetary == .positive || d.affiliation == .positive || d.socialEquity == .positive
+  then .positive
+  else if d.monetary == .negative || d.affiliation == .negative || d.socialEquity == .negative
+  then .negative
+  else .irrelevant
+
+/-- Collapse refined perspective weights to the qualitative abstraction. -/
+def RefinedPerspectiveWeights.toPerspectiveWeights
+    (r : RefinedPerspectiveWeights) : PerspectiveWeights :=
+  ⟨r.base.collapse, r.reputational⟩
+
+/-- Collapse a full refined weight matrix to the qualitative abstraction. -/
+def RefinedAppraisalWeights.toAppraisalWeights
+    (r : RefinedAppraisalWeights) : AppraisalWeights :=
+  ⟨r.au.toPerspectiveWeights, r.pe.toPerspectiveWeights,
+   r.cfa.toPerspectiveWeights, r.cfo.toPerspectiveWeights⟩
+
+/-- An emotion concept with domain-refined appraisal weights. -/
+structure RefinedEmotionProfile where
+  name : String
+  weights : RefinedAppraisalWeights
+  orientation : TemporalOrientation
+  deriving DecidableEq, Repr
+
+/-- Every refined profile projects to a qualitative profile. -/
+def RefinedEmotionProfile.toEmotionProfile
+    (r : RefinedEmotionProfile) : EmotionProfile :=
+  ⟨r.name, r.weights.toAppraisalWeights, r.orientation⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 10. Prospective Emotions: BToM Bridge to Emotive Doxastics
+-- @cite{anand-hacquard-2013} @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+## Prospective Emotions
+
+The 20 emotions in §7 are all **retrospective**: they are computed from
+an *observed outcome* (the agent saw what happened, and we appraise the
+result). But emotional attitude verbs like `hope` and `fear` are
+**prospective**: the outcome is *uncertain*, and the emotional state
+concerns how the uncertainty might be resolved.
+
+@cite{anand-hacquard-2013} formalize exactly this: emotive doxastics
+(hope, fear) combine:
+1. A **doxastic** component (belief that φ is possible but uncertain)
+2. A **preference** component (preference for φ-verifying resolutions)
+
+This maps directly onto the BToM architecture:
+- The doxastic component = **belief marginal**: Pr(b | a) determines the
+  agent's epistemic state (what they think is possible)
+- The preference component = **desire marginal**: Pr(d | a) determines
+  what the agent wants
+- The uncertainty condition = non-extreme credence: the agent's beliefs
+  don't settle the question
+
+### From Retrospective to Prospective
+
+| Retrospective (Houlihan) | Prospective (A&H emotive doxastic) |
+|---|---|
+| Outcome observed | Outcome uncertain |
+| AU = U(actual \| desires) | Preference = desire ordering over DOX partition |
+| PE = actual − E[actual \| beliefs] | N/A (no outcome to compare to) |
+| CF = U(alternative) − U(actual) | N/A (no actual outcome) |
+| Post-outcome: all 4 appraisal types | Pre-outcome: only AU analog available |
+
+The key structural insight: **prospective AU reduces to the preference
+ordering over verifiers vs. falsifiers.** When the outcome is uncertain,
+the achieved utility is not a single number but a *comparison* between
+the utility of φ-worlds and ¬φ-worlds, weighted by the agent's beliefs
+about which is actual. This is precisely the preference component of
+emotive doxastics.
+
+### Mathematical Foundation
+
+For a BToM model with belief states B and desire states D:
+
+**Prospective achieved utility** (expected utility conditional on φ):
+
+    EU(a, φ) = Σ_d Pr(d | a) · [Σ_w Pr(w | a, φ) · U(w, d)]
+
+**Prospective preference** (φ preferred to ¬φ):
+
+    φ >_DES ¬φ  ⟺  EU(a, φ) > EU(a, ¬φ)
+
+**Uncertainty** (non-extreme credence):
+
+    uncertain(a, φ) ⟺ 0 < Pr(φ | a) < 1
+      where Pr(φ | a) = Σ_b Pr(b | a) · ⟦φ⟧_b
+
+The prospective AU is a *conditional* expectation — conditioned on φ or
+¬φ being the resolution — rather than a *marginal* utility of the actual
+outcome. This is the formal content of "preference over how the uncertainty
+gets resolved" from @cite{anand-hacquard-2013} §4.1.
+-/
+
+/-- Prospective appraisal: computed over uncertain future outcomes
+rather than observed past outcomes.
+
+The BToM components needed are:
+- `beliefCredence`: Pr(φ | a) from the belief marginal (how likely the
+  agent thinks φ is)
+- `conditionalUtility`: EU(a, φ) and EU(a, ¬φ) — expected utility of
+  the φ-worlds and ¬φ-worlds, weighted by desires
+-/
+structure ProspectiveAppraisal (F : Type*) where
+  /-- Agent's credence in φ: Pr(φ | a) from BToM belief marginal.
+      This is `Σ_b Pr(b | a) · ⟦φ⟧_b` — the probabilistic analog of
+      "∃w' ∈ DOX: φ(w')" in the classical framework. -/
+  beliefCredence : F
+  /-- Expected utility conditional on φ: EU(a, φ).
+      The prospective analog of achieved utility. -/
+  utilityIfTrue : F
+  /-- Expected utility conditional on ¬φ: EU(a, ¬φ). -/
+  utilityIfFalse : F
+
+/-- The agent is uncertain about φ: credence is strictly between 0 and 1.
+This is the probabilistic analog of the A&H uncertainty condition:
+∃w' ∈ DOX: φ(w') ∧ ∃w' ∈ DOX: ¬φ(w'). -/
+def ProspectiveAppraisal.isUncertain {F : Type*} [LinearOrder F] [Zero F] [One F]
+    (a : ProspectiveAppraisal F) : Bool :=
+  decide (a.beliefCredence > 0) && decide (a.beliefCredence < 1)
+
+/-- Hope: uncertain about φ and prefers φ-resolution.
+@cite{anand-hacquard-2013}: emotive doxastic with positive valence. -/
+def ProspectiveAppraisal.isHope {F : Type*} [LinearOrder F] [Zero F] [One F]
+    (a : ProspectiveAppraisal F) : Bool :=
+  a.isUncertain && decide (a.utilityIfTrue > a.utilityIfFalse)
+
+/-- Fear: uncertain about φ and disprefers φ-resolution.
+@cite{anand-hacquard-2013}: emotive doxastic with negative valence. -/
+def ProspectiveAppraisal.isFear {F : Type*} [LinearOrder F] [Zero F] [One F]
+    (a : ProspectiveAppraisal F) : Bool :=
+  a.isUncertain && decide (a.utilityIfFalse > a.utilityIfTrue)
+
+/-- A prospective emotion profile: extends the retrospective 8-dimensional
+profile with the pre-outcome appraisal structure.
+
+Prospective emotions use only the AU analog (preference over resolutions).
+PE, CFa, CFo are undefined pre-outcome — there is no actual outcome to
+compute prediction error or counterfactuals against. -/
+structure ProspectiveEmotionProfile where
+  /-- Name of the prospective emotion -/
+  name : String
+  /-- Valence: does the agent prefer φ (positive) or ¬φ (negative)? -/
+  valence : AppraisalSign
+  /-- Orientation: always prospective -/
+  orientation : TemporalOrientation := .prospective
+
+/-- Prospective hope: positive prospective AU (prefers φ-resolution). -/
+def prospectiveHope : ProspectiveEmotionProfile :=
+  { name := "hope", valence := .positive }
+
+/-- Prospective fear: negative prospective AU (disprefers φ-resolution). -/
+def prospectiveFear : ProspectiveEmotionProfile :=
+  { name := "fear", valence := .negative }
+
+/-- Prospective dread: strong negative prospective AU. Structurally
+identical to fear but with higher intensity (lower threshold). -/
+def prospectiveDread : ProspectiveEmotionProfile :=
+  { name := "dread", valence := .negative }
+
+-- ════════════════════════════════════════════════════════════════
+-- § 11. BToM Computation of Prospective Appraisals
+-- ════════════════════════════════════════════════════════════════
+
+section ProspectiveBToM
+open Core.BToM
+
+variable {F : Type*} [CommSemiring F] [LinearOrder F]
+variable {A P B D S M W : Type*}
+  [Fintype P] [Fintype B] [Fintype D] [Fintype S] [Fintype M] [Fintype W]
+
+/-- Compute agent credence in φ from BToM belief marginals.
+
+    Pr(φ | a) = Σ_b Pr(b | a) · ⟦φ⟧_b
+
+where ⟦φ⟧_b is 1 if belief state b is compatible with φ, 0 otherwise.
+This is exactly `beliefExpectation` instantiated with the characteristic
+function of φ. -/
+def agentCredence (model : BToMModel F A P B D S M W)
+    (phiInBelief : B → F) (action : A) : F :=
+  model.beliefExpectation phiInBelief action
+
+/-- Compute prospective utility: expected utility of φ-worlds under
+inferred desires.
+
+    EU(a, φ) = Σ_d Pr(d | a) · U_φ(d)
+
+where U_φ(d) is the utility the agent would get from desire d being
+satisfied in a φ-world. This is `achievedUtility` with a φ-conditional
+utility function. -/
+def prospectiveUtility (model : BToMModel F A P B D S M W)
+    (conditionalUtility : D → F) (action : A) : F :=
+  ∑ d : D, model.desireMarginal action d * conditionalUtility d
+
+/-- Build a prospective appraisal from a BToM model.
+
+Combines the belief marginal (for credence) and desire marginal (for
+conditional utilities) to construct the pre-outcome appraisal that
+emotive doxastic attitudes operate over. -/
+def buildProspectiveAppraisal (model : BToMModel F A P B D S M W)
+    (phiInBelief : B → F)
+    (utilIfTrue utilIfFalse : D → F)
+    (action : A) : ProspectiveAppraisal F :=
+  { beliefCredence := agentCredence model phiInBelief action
+  , utilityIfTrue := prospectiveUtility model utilIfTrue action
+  , utilityIfFalse := prospectiveUtility model utilIfFalse action }
+
+/-- Agent credence is structurally a BToM belief expectation. -/
+theorem agentCredence_eq_beliefExpectation
+    (model : BToMModel F A P B D S M W)
+    (phiInBelief : B → F) (action : A) :
+    agentCredence model phiInBelief action =
+    model.beliefExpectation phiInBelief action := rfl
+
+/-- Prospective utility is structurally a desire-marginal weighted sum —
+the same computation as retrospective achieved utility, but with a
+conditional utility function instead of an actual-outcome utility. -/
+theorem prospectiveUtility_eq_desire_weighted_sum
+    (model : BToMModel F A P B D S M W)
+    (conditionalUtility : D → F) (action : A) :
+    prospectiveUtility model conditionalUtility action =
+    ∑ d : D, model.desireMarginal action d * conditionalUtility d := rfl
+
+end ProspectiveBToM
 
 end Core.Agent.Emotion

@@ -3,6 +3,7 @@ import Linglib.Fragments.Akan.Determiners
 import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
 import Linglib.Theories.Semantics.Lexical.Determiner.ONEModifiers
 import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
+import Linglib.Phenomena.Plurals.Studies.HaslingerHienEtAl2025
 
 /-!
 # @cite{zimmermann-2026}: African Lambdas I — Formal Semantics of African
@@ -55,6 +56,7 @@ open Fragments.Akan.Determiners
 open Semantics.Lexical.Determiner.UnifiedUniversal
 open Semantics.Lexical.Determiner.ONEModifiers
 open Semantics.Lexical.Determiner.ChoiceFunction
+open Phenomena.Plurals.Studies.HaslingerHienEtAl2025
 
 -- ════════════════════════════════════════════════════
 -- § 1. Hausa UQ Decomposition
@@ -123,13 +125,18 @@ theorem duk_collective {α : Type*} [SemilatticeSup α]
 
     @cite{zimmermann-2026} §3.3 exx. (13), (15). -/
 
-/-- Hausa *wani* and Akan *bí* differ in scope under negation. -/
+/-- Hausa *wani* and Akan *bí* differ in scope under negation:
+    *bí* (CF) forces wide scope; *wani* (∃) allows narrow scope.
+    This contrast is derived from `IndefType`, not stipulated per-language.
+    @cite{zimmermann-2026} §3.3 exx. (13), (15). -/
 theorem indef_scope_contrast :
-    HausaIndef.wani.hasWideScope = true ∧
-    biHasWideScope = true ∧
-    -- Both can take wide scope, but only wani can also take narrow:
-    HausaIndef.bare.hasWideScope = false ∧
-    bareNPHasWideScope = false :=
+    -- Akan bí: CF → obligatory wide scope under negation
+    biIndefType.forcesWideScopeUnderNeg = true ∧
+    -- Hausa wani: ∃ → narrow scope available under negation
+    HausaIndef.wani.indefType.allowsNarrowScopeUnderNeg = true ∧
+    -- Bare NPs in both languages: ∃ → narrow scope
+    bareNPIndefType.allowsNarrowScopeUnderNeg = true ∧
+    HausaIndef.bare.indefType.allowsNarrowScopeUnderNeg = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- The CF analysis of *bí* predicts wide scope under negation:
@@ -200,10 +207,52 @@ theorem no_discourse_linking :
     @cite{zimmermann-2026} §4.1.2 ex. (27). -/
 
 /-- *bi-ara* is structurally complex: INDEF (*bí*) + scalar operator
-    (*ara*). The FC reading is unavailable for Akan *bí* alone
-    (unlike Ga *ko*), because *bí* is a choice function.
+    (*ara*). The base indefinite *bí* is a choice function — derived
+    from `IndefType`, not stipulated.
     @cite{owusu-2022}, @cite{zimmermann-2026} §3.3. -/
-theorem biara_uses_cf :
-    biaraUsesChoiceFunction = true := rfl
+theorem biara_base_is_cf :
+    biIndefType = .choiceFunction := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 6. Extended Typological Sample
+-- ════════════════════════════════════════════════════
+
+/-! Zimmermann's survey adds Hausa to the @cite{haslinger-etal-2025-nllt}
+    sample as a 2-form Chadic language. The extended sample now covers
+    Niger-Congo (Kwa, Mande, Atlantic), Chadic, Afro-Asiatic, and
+    Austronesian in addition to Indo-European and Japonic. -/
+
+/-- Hausa entry for the typological sample: 2-form system with
+    *koo-wane* (distributive) and *duk(a)* (non-distributive).
+    @cite{zimmermann-2008}, @cite{zimmermann-2026} §4.1. -/
+def hausaUQEntry : UQLanguageEntry where
+  language := "Hausa"
+  systemType := .twoForm
+  distForm := "koo-wane(m.)/koo-wace(f.)"
+  nonDistForm := "duk(a)"
+  family := "Chadic"
+
+/-- Verify Hausa is classified as 2-form. -/
+theorem hausa_is_two_form :
+    hausaUQEntry.systemType = .twoForm := rfl
+
+/-- Akan *bi-ara* entry for the typological sample.
+    Akan is harder to classify: *bi-ara* is the only overt universal
+    quantifier, but its three-way ambiguity (∀/NPI/FC) makes it
+    unlike a simple 1-form system. We classify it as 1-form since
+    there is only one overt form, noting the caveat.
+    @cite{philipp-2022}, @cite{zimmermann-2026} §4.1.2. -/
+def akanUQEntry : UQLanguageEntry where
+  language := "Akan"
+  systemType := .oneForm
+  distForm := "bi-ara"
+  family := "Kwa"
+
+/-- Extended sample: Haslinger et al.'s original 11 + Hausa + Akan = 13. -/
+def extendedSample : List UQLanguageEntry :=
+  typologicalSample ++ [hausaUQEntry, akanUQEntry]
+
+theorem extended_sample_size :
+    extendedSample.length = 13 := by native_decide
 
 end Phenomena.Reference.Studies.Zimmermann2026

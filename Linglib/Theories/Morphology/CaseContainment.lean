@@ -1,4 +1,5 @@
 import Linglib.Core.Case
+import Linglib.Theories.Morphology.Containment
 
 /-!
 # Case Containment and Syncretism
@@ -305,5 +306,22 @@ theorem nom_acc_share_abs :
 /-- ABL/LOC syncretism: both map to {loc}. -/
 theorem abl_loc_same_case_relation :
     Case.toCaseRelation .abl = Case.toCaseRelation .loc := rfl
+
+-- ============================================================================
+-- § 12: Bridge to Generic Containment
+-- ============================================================================
+
+/-- Case-specific `violatesABA` is the generic contiguity checker
+    applied to the 4-position list [nom, acc, gen, dat].
+
+    This makes the isomorphism with degree containment structural:
+    both `AllomorphyPattern.violatesABA` and `DegreePattern.violatesABA`
+    (in `DegreeContainment.lean`) reduce to the same generic predicate
+    from `Containment.lean`. -/
+theorem case_violatesABA_eq_generic (p : AllomorphyPattern) :
+    p.violatesABA =
+      Theories.Morphology.Containment.violatesABA [p.nom, p.acc, p.gen, p.dat] := by
+  simp only [AllomorphyPattern.violatesABA,
+    Theories.Morphology.Containment.violatesABA_four]
 
 end Theories.Morphology.CaseContainment

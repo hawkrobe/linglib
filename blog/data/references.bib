@@ -62,6 +62,20 @@
   sources   = {Theories/Pragmatics/RSA/Extensions/ArgumentativeStrength.lean;Phenomena/Persuasion/Studies/MacuchSilvaEtAl2024.lean;Phenomena/Persuasion/Studies/CumminsFranke2021.lean}
 }% ══════════════════════════════════════════════════════════════════════════════
 
+@article{fehr-schmidt-1999,
+  author    = {Fehr, Ernst and Schmidt, Klaus M.},
+  year      = {1999},
+  title     = {A Theory of Fairness, Competition, and Cooperation},
+  journal   = {The Quarterly Journal of Economics},
+  volume    = {114},
+  number    = {3},
+  pages     = {817--868},
+  doi       = {10.1162/003355399556151},
+  subfield  = {behavioral-economics},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Core/Agent/SocialUtility.lean, Core/GameTheory.lean}
+}
 @phdthesis{frank-1996,
   author    = {Frank, Anette},
   year      = {1996},
@@ -7801,6 +7815,18 @@
   role      = {formalized},
   sources   = {Theories/Semantics/Events/Krifka1998.lean}
 }
+@incollection{filip-2012,
+  author    = {Filip, Hana},
+  year      = {2012},
+  title     = {Lexical Aspect},
+  booktitle = {The Oxford Handbook of Tense and Aspect},
+  editor    = {Binnick, Robert I.},
+  publisher = {Oxford University Press},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  validated = {false},
+  sources   = {Phenomena/TenseAspect/Studies/Filip2012.lean}
+}
 @article{kriz-spector-2021,
   author    = {Kri{\v{z}}, Manuel and Spector, Benjamin},
   year      = {2021},
@@ -9345,7 +9371,44 @@
   validated = {true},
   role      = {formalized},
   sources   = {Theories/Semantics/Attitudes/EpistemicThreshold.lean; Core/Agent/BToM.lean; Theories/Semantics/Modality/EpistemicProbability.lean}
-}% ══════════════════════════════════════════════════════════════════════════════
+}
+@article{anand-hacquard-2013,
+  author    = {Anand, Pranav and Hacquard, Valentine},
+  year      = {2013},
+  title     = {Epistemics and attitudes},
+  journal   = {Semantics and Pragmatics},
+  volume    = {6},
+  number    = {8},
+  pages     = {1--59},
+  doi       = {10.3765/sp.6.8},
+  subfield  = {semantics/attitudes},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Attitudes/Representationality.lean; Theories/Semantics/Attitudes/Preferential.lean; Phenomena/Modality/Studies/AnandHacquard2013.lean}
+}
+@article{bolinger-1968,
+  author    = {Bolinger, Dwight},
+  year      = {1968},
+  title     = {Post-posed main phrases: an {E}nglish pattern with a {G}erman counterpart},
+  journal   = {Canadian Journal of Linguistics},
+  volume    = {13},
+  number    = {2},
+  pages     = {1--10},
+  subfield  = {semantics/attitudes},
+  role      = {cited},
+  sources   = {Theories/Semantics/Attitudes/Representationality.lean}
+}
+@book{stalnaker-1984,
+  author    = {Stalnaker, Robert},
+  year      = {1984},
+  title     = {Inquiry},
+  publisher = {MIT Press},
+  address   = {Cambridge, MA},
+  subfield  = {semantics/attitudes},
+  role      = {cited},
+  sources   = {Theories/Semantics/Attitudes/Representationality.lean}
+}
+% ══════════════════════════════════════════════════════════════════════════════
 @article{keshet-abney-2024,
   author    = {Keshet, Ezra and Abney, Steven},
   year      = {2024},
@@ -17310,4 +17373,152 @@
   role      = {cited},
   validated = {false},
   sources   = {Core/Morphology/Wordhood.lean}
+}
+@article{bubnov-2026,
+  author    = {Bubnov, Gleb},
+  year      = {2026},
+  title     = {Not all coexpressions are syncretisms: Limiting Nanosyntax},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {11},
+  number    = {1},
+  pages     = {1--15},
+  doi       = {10.16995/glossa.25626},
+  subfield  = {morphology},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Phenomena/Reference/Studies/Bubnov2026.lean;Fragments/Russian/Indefinites.lean}
+}
+@article{dekier-2021,
+  author    = {Dekier, Jakub},
+  year      = {2021},
+  title     = {Morphosyntax of specific and non-specific indefinite markers},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {6},
+  number    = {1},
+  pages     = {1--33},
+  doi       = {10.5334/gjgl.1233},
+  subfield  = {morphology},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Reference/Studies/Bubnov2026.lean}
+}
+@article{degano-aloni-2025,
+  author    = {Degano, Marco and Aloni, Maria},
+  year      = {2025},
+  title     = {How to be (non-)specific},
+  journal   = {Linguistics and Philosophy},
+  doi       = {10.1007/s10988-025-09442-y},
+  subfield  = {semantics/dynamic},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Phenomena/Reference/Studies/Bubnov2026.lean;Theories/Semantics/Dynamic/TeamSemantics.lean;Fragments/Russian/Indefinites.lean}
+}
+@article{hodges-1997,
+  author    = {Hodges, Wilfrid},
+  year      = {1997},
+  title     = {Compositional semantics for a language of imperfect information},
+  journal   = {Logic Journal of the IGPL},
+  volume    = {5},
+  number    = {4},
+  pages     = {539--563},
+  doi       = {10.1093/jigpal/5.4.539},
+  subfield  = {semantics/dynamic},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Dynamic/TeamSemantics.lean}
+}
+@book{vaananen-2007,
+  author    = {V{\"a}{\"a}n{\"a}nen, Jouko},
+  year      = {2007},
+  title     = {Dependence Logic: A New Approach to Independence Friendly Logic},
+  publisher = {Cambridge University Press},
+  volume    = {70},
+  series    = {London Mathematical Society Student Texts},
+  doi       = {10.1017/CBO9780511611193.011},
+  subfield  = {semantics/dynamic},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Dynamic/TeamSemantics.lean}
+}
+@incollection{farkas-brasoveanu-2020,
+  author    = {Farkas, Donka F. and Brasoveanu, Adrian},
+  year      = {2020},
+  title     = {Kinds of (non)specificity},
+  booktitle = {The Wiley Blackwell Companion to Semantics},
+  pages     = {1--26},
+  doi       = {10.1002/9781118788516.sem037},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Reference/Studies/Bubnov2026.lean}
+}
+@incollection{aloni-port-2015,
+  author    = {Aloni, Maria and Port, Angelika},
+  year      = {2015},
+  title     = {Epistemic indefinites and methods of identification},
+  booktitle = {Epistemic Indefinites: Exploring Modality Beyond the Verbal Domain},
+  editor    = {Aloni, Maria and Morzycki, Marcin},
+  publisher = {Oxford University Press},
+  pages     = {117--140},
+  doi       = {10.1093/acprof:oso/9780199665297.003.0006},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Reference/Studies/Bubnov2026.lean;Fragments/Russian/Indefinites.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/lexical — countability / mereotopology
+
+@article{moon-2026,
+  author    = {Moon, Ellise},
+  year      = {2026},
+  title     = {Countability and measured parts in mixed drink nouns},
+  journal   = {Glossa: a journal of general linguistics},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  validated = {false},
+  sources   = {Phenomena/Countability/Studies/Moon2026.lean;Fragments/English/Nouns.lean}
+}
+@book{casati-varzi-1999,
+  author    = {Casati, Roberto and Varzi, Achille C.},
+  year      = {1999},
+  title     = {Parts and Places: The Structures of Spatial Representation},
+  publisher = {MIT Press},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {false},
+  sources   = {Core/Mereotopology.lean}
+}
+@phdthesis{grimm-2012,
+  author    = {Grimm, Scott},
+  year      = {2012},
+  title     = {Number and Individuation},
+  school    = {Stanford University},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {false},
+  sources   = {Core/Mereotopology.lean}
+}
+@incollection{krifka-2021,
+  author    = {Krifka, Manfred},
+  year      = {2021},
+  title     = {Individuating matter over time},
+  booktitle = {Countability in Natural Language},
+  editor    = {Doetjes, Jenny and Massam, Diane},
+  publisher = {Cambridge University Press},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {false},
+  sources   = {Core/Mereotopology.lean;Phenomena/Countability/Studies/Moon2026.lean}
+}
+@book{wagiel-2021,
+  author    = {W{\k{a}}giel, Marcin},
+  year      = {2021},
+  title     = {Subatomic Quantification},
+  publisher = {Language Science Press},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {false},
+  sources   = {Phenomena/Countability/Studies/Moon2026.lean}
 }

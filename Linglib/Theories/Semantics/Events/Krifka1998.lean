@@ -450,4 +450,74 @@ theorem roleHom_implies_cumTheta
   rw [← hx, ← hy]
   exact hf.map_sup e e'
 
+-- ════════════════════════════════════════════════════
+-- § 10. Propagation Gap (¬CUM ∧ ¬QUA Objects)
+-- ════════════════════════════════════════════════════
+
+/-! ### What happens when OBJ is neither CUM nor QUA?
+
+`cum_propagation` requires CUM(OBJ); `qua_propagation` requires QUA(OBJ).
+When OBJ is ¬CUM ∧ ¬QUA, neither fires. The question: does the VP
+inherit the middle-ground status, or could it escape?
+
+Answer: under appropriate conditions (CumTheta + UP for ¬CUM, SINC for
+¬QUA), the middle ground is **stable** — it transfers from OBJ to VP.
+
+These theorems are stated here (pure VP composition theory) rather
+than in a study file because they concern `VP`, `CumTheta`, `UP`,
+`SINC` — all defined in this module. @cite{filip-2012} identifies the
+linguistic significance of this gap; the formal content is a theorem
+about the existing propagation machinery.
+-/
+
+/-- ¬CUM lifts from OBJ to VP: if two OBJ-entities x,y satisfy OBJ
+    but their join x⊔y does not, the corresponding VP events e₁,e₂
+    also witness ¬CUM(VP).
+
+    Proof: if CUM(VP) held, VP(e₁⊔e₂) would give ∃z. OBJ(z) ∧ θ(z, e₁⊔e₂).
+    CumTheta gives θ(x⊔y, e₁⊔e₂), and UP forces z = x⊔y.
+    But OBJ(x⊔y) contradicts hSum. -/
+theorem not_cum_vp_of_witnesses {θ : α → β → Prop} {OBJ : α → Prop}
+    (hCumTheta : CumTheta θ) (hUP : UP θ)
+    {x y : α} {e₁ e₂ : β}
+    (hx : OBJ x) (hy : OBJ y)
+    (hθ₁ : θ x e₁) (hθ₂ : θ y e₂)
+    (hSum : ¬ OBJ (x ⊔ y)) :
+    ¬ CUM (VP θ OBJ) := by
+  intro hCum
+  have hVP₁ : VP θ OBJ e₁ := ⟨x, hx, hθ₁⟩
+  have hVP₂ : VP θ OBJ e₂ := ⟨y, hy, hθ₂⟩
+  obtain ⟨z, hz_obj, hz_θ⟩ := hCum e₁ e₂ hVP₁ hVP₂
+  have hθ_sum := hCumTheta x y e₁ e₂ hθ₁ hθ₂
+  have hz_eq := hUP z (x ⊔ y) (e₁ ⊔ e₂) hz_θ hθ_sum
+  exact hSum (hz_eq ▸ hz_obj)
+
+/-- ¬CUM ∧ ¬QUA is stable under VP formation: if OBJ is in the
+    middle ground and the verb is SINC + UP + CumTheta, the VP is
+    also ¬CUM ∧ ¬QUA.
+
+    ¬CUM: OBJ's CUM-failure witnesses lift through CumTheta + UP
+    (via `not_cum_vp_of_witnesses`).
+
+    ¬QUA: MSE (from SINC) maps the OBJ proper part y < x to a
+    proper sub-event e_y < e_x. Both VP(e_x) and VP(e_y) hold,
+    so VP is not quantized. -/
+theorem middle_ground_stable {θ : α → β → Prop} {OBJ : α → Prop}
+    (hCumTheta : CumTheta θ) (hUP : UP θ) (hSinc : SINC θ)
+    -- ¬CUM witnesses: two OBJ-entities whose join fails OBJ
+    {a b : α} {e_a e_b : β}
+    (ha : OBJ a) (hb : OBJ b)
+    (hθ_a : θ a e_a) (hθ_b : θ b e_b)
+    (hSum : ¬ OBJ (a ⊔ b))
+    -- ¬QUA witnesses: an OBJ-entity with a proper part also in OBJ
+    {x y : α} {e_x : β}
+    (hx : OBJ x) (hy : OBJ y) (hlt : y < x)
+    (hθ_x : θ x e_x) :
+    ¬ CUM (VP θ OBJ) ∧ ¬ QUA (VP θ OBJ) := by
+  constructor
+  · exact not_cum_vp_of_witnesses hCumTheta hUP ha hb hθ_a hθ_b hSum
+  · intro hQua
+    obtain ⟨e_y, he_y_lt, hθ_y⟩ := hSinc.mse x e_x y hθ_x hlt
+    exact hQua e_x e_y ⟨x, hx, hθ_x⟩ he_y_lt ⟨y, hy, hθ_y⟩
+
 end Semantics.Events.Krifka1998

@@ -291,4 +291,74 @@ def spelloutCase (entries : List LexEntry) (c : Core.Case) :
   | some r => spellout entries r
   | none => none
 
+-- ============================================================================
+-- §8: Paradigm gap monotonicity
+-- ============================================================================
+
+/-- For the min-selecting fold used in `spellout`, once we process at
+    least one element, the result is `some`. -/
+private theorem foldl_spellout_some (l : List LexEntry) (e : LexEntry) :
+    ∃ e', l.foldl (fun acc entry =>
+      match acc with
+      | none => some entry
+      | some prev => if entry.rank < prev.rank then some entry else some prev
+    ) (some e) = some e' := by
+  induction l generalizing e with
+  | nil => exact ⟨e, rfl⟩
+  | cons hd tl ih =>
+    simp only [List.foldl_cons]
+    split <;> exact ih _
+
+private theorem spellout_none_of_filter_nil (lex : List LexEntry) (r : Nat)
+    (hf : lex.filter (·.matches r) = []) :
+    spellout lex r = none := by
+  simp only [spellout, hf]
+  rfl
+
+private theorem entries_lt_of_spellout_none (lex : List LexEntry) (r : Nat)
+    (h : spellout lex r = none) :
+    ∀ e ∈ lex, e.rank < r := by
+  intro e he
+  by_cases hlt : e.rank < r
+  · exact hlt
+  · exfalso
+    have hge : e.matches r = true := by
+      simp [LexEntry.matches]; omega
+    have hmatch : e ∈ lex.filter (·.matches r) :=
+      List.mem_filter.mpr ⟨he, hge⟩
+    have hne : lex.filter (·.matches r) ≠ [] :=
+      List.ne_nil_of_mem hmatch
+    obtain ⟨hd, tl, heq⟩ := List.exists_cons_of_ne_nil hne
+    have hspellout : spellout lex r ≠ none := by
+      simp only [spellout, heq, List.foldl_cons]
+      obtain ⟨e', he'⟩ := foldl_spellout_some tl hd
+      intro hab
+      rw [Option.map_eq_none_iff] at hab
+      exact absurd (he' ▸ hab) (by intro h; nomatch h)
+    exact hspellout h
+
+/-- Paradigm gap monotonicity: if spellout fails at rank r, it fails
+    at all higher ranks. This follows from the Superset Principle —
+    an entry matching rank r' ≥ r would also match rank r. -/
+theorem gap_propagates_upward (lex : List LexEntry) (r r' : Nat)
+    (h : spellout lex r = none) (hr : r ≤ r') :
+    spellout lex r' = none := by
+  apply spellout_none_of_filter_nil
+  rw [List.filter_eq_nil_iff]
+  intro e he
+  simp only [Bool.not_eq_true, LexEntry.matches, decide_eq_false_iff_not, Nat.not_le]
+  have := entries_lt_of_spellout_none lex r h e he
+  omega
+
+-- ============================================================================
+-- §9: Morphological type (prefix vs suffix)
+-- ============================================================================
+
+/-- Morphological type of an exponent derived from nanosyntactic
+    spellout. Suffixes arise from spellout-driven movement (roll-up,
+    unary foot); prefixes arise from subderivation (binary foot). -/
+inductive MorphType where
+  | suffix | prefix
+  deriving DecidableEq, Repr, BEq
+
 end Theories.Morphology.Nanosyntax

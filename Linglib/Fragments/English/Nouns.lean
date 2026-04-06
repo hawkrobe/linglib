@@ -140,7 +140,25 @@ def furniture : NounEntry := { formSg := "furniture", formPl := none, countable 
 def rice : NounEntry := { formSg := "rice", formPl := none, countable := .mass }
 def gold : NounEntry := { formSg := "gold", formPl := none, countable := .mass }
 def air : NounEntry := { formSg := "air", formPl := none, countable := .mass }
+def wine : NounEntry := { formSg := "wine", formPl := none, countable := .mass }
+def coffee : NounEntry := { formSg := "coffee", formPl := none, countable := .mass }
+def beer : NounEntry := { formSg := "beer", formPl := none, countable := .mass }
+def milk : NounEntry := { formSg := "milk", formPl := none, countable := .mass }
+def tea : NounEntry := { formSg := "tea", formPl := none, countable := .mass }
 
+/-- Mixed drink nouns: count despite denoting liquids (@cite{moon-2026}).
+    Countability derives from a MEASURED PART (shot of spirit/espresso),
+    not from Universal Packager coercion. -/
+def martini : NounEntry := { formSg := "martini", formPl := "martinis" }
+def margarita : NounEntry := { formSg := "margarita", formPl := "margaritas" }
+def negroni : NounEntry := { formSg := "negroni", formPl := "negronis" }
+def mojito : NounEntry := { formSg := "mojito", formPl := "mojitos" }
+def daiquiri : NounEntry := { formSg := "daiquiri", formPl := "daiquiris" }
+def mimosa : NounEntry := { formSg := "mimosa", formPl := "mimosas" }
+def cappuccino : NounEntry := { formSg := "cappuccino", formPl := "cappuccinos" }
+def americano : NounEntry := { formSg := "americano", formPl := "americanos" }
+def latte : NounEntry := { formSg := "latte", formPl := "lattes" }
+def macchiato : NounEntry := { formSg := "macchiato", formPl := "macchiatos" }
 
 def john : NounEntry := { formSg := "John", formPl := none, proper := true }
 def mary : NounEntry := { formSg := "Mary", formPl := none, proper := true }
@@ -153,7 +171,9 @@ def bean : NounEntry := { formSg := "bean", formPl := some "beans" }
 def allNouns : List NounEntry := [
   pizza, book, cat, dog, girl, boy, ball, table, squirrel,
   man, woman, person, child, lawyer, student, teacher, fireman, soldier, horse, brother, spy,
-  water, sand, furniture, rice, gold, air,
+  water, sand, furniture, rice, gold, air, wine, coffee, beer, milk, tea,
+  martini, margarita, negroni, mojito, daiquiri, mimosa,
+  cappuccino, americano, latte, macchiato,
   john, mary, bill, sue, fred,
   bean
 ]
