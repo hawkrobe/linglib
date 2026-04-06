@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.SquareOfOpposition
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 
 /-!
 # Belnap 1970: Conditional Assertion and Restricted Quantification
@@ -73,7 +73,7 @@ open Core.Presupposition (PrProp)
 open Core.Duality (Truth3)
 open Core.Proposition
 open Core.SquareOfOpposition (Square SquareRelations)
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 open Semantics.Montague (Model toyModel ToyEntity)
 
 -- ════════════════════════════════════════════════════════════════

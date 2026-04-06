@@ -18,7 +18,7 @@ a restrictor and a scope to a truth value. The properties defined here
 are purely logical — they hold at the `Bool`-function level and require
 no model infrastructure.
 
-The theory-specific module `Semantics.Lexical.Determiner.Quantifier` defines
+The theory-specific module `Semantics.Quantification.Quantifier` defines
 concrete denotations (`every_sem`, `some_sem`, etc.) and proves they satisfy
 these properties.
 
@@ -321,7 +321,7 @@ def MU4 (q : GQ α) : Prop := ScopeDownwardMono q → CoSmooth q
     (unary) quantifiers; the extension to binary determiners is due to
     @cite{van-benthem-1984} (building on Lindström 1966).
 
-    The model-specific version in `Semantics.Lexical.Determiner.Quantifier.Quantity`
+    The model-specific version in `Semantics.Quantification.Quantifier.Quantity`
     uses cardinalities directly, which requires `FiniteModel`. This version
     captures the same intuition without model infrastructure.
 

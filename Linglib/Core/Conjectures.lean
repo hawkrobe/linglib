@@ -188,7 +188,7 @@ representations.
 - Quantity (isomorphism closure): depends only on cardinalities
 - Monotonicity: upward or downward monotone in scope
 
-Formal content: `Semantics.Lexical.Determiner.Quantifier.SatisfiesUniversals`
+Formal content: `Semantics.Quantification.Quantifier.SatisfiesUniversals`
 -/
 
 /-- Quantifiers satisfying the B&C semantic universals have strictly lower

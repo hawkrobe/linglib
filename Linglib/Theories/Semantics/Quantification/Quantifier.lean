@@ -38,7 +38,7 @@ the universals.
 
 -/
 
-namespace Semantics.Lexical.Determiner.Quantifier
+namespace Semantics.Quantification.Quantifier
 
 open Semantics.Montague
 open Core.Quantification
@@ -1412,4 +1412,4 @@ theorem half_proportional : Proportional (half_sem m) := by
 
 end FintypeProofs
 
-end Semantics.Lexical.Determiner.Quantifier
+end Semantics.Quantification.Quantifier

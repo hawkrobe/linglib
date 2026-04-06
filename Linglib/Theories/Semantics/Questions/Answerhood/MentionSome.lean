@@ -433,7 +433,7 @@ def cumulativeAnswer {W E : Type*} [DecidableEq E]
 @cite{belnap-1982}'s categorematic principle: the same quantifier words (every,
 some, most) work identically in declarative and interrogative contexts. The ∃
 in I-MS is structurally the same generalized-quantifier application as
-`some_sem` in `Semantics.Lexical.Determiner.Quantifier`: both compute
+`some_sem` in `Semantics.Quantification.Quantifier`: both compute
 `domain.any (λ x => restrictor(x) ∧ scope(x))`.
 -/
 

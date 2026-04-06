@@ -54,7 +54,7 @@ set_option autoImplicit false
 namespace Phenomena.Quantification.Studies.RitchieSchiller2024
 
 open Semantics.Montague (Model)
-open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem)
+open Semantics.Quantification.Quantifier (every_sem some_sem)
 open Semantics.Lexical.Determiner.DomainRestriction
 
 -- ============================================================================

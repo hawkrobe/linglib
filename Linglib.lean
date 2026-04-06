@@ -1593,7 +1593,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Lexical.Determiner.Exceptive
 import Linglib.Theories.Semantics.Lexical.Determiner.Possessive
 import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal

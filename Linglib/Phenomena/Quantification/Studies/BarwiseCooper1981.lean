@@ -8,7 +8,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 
 Bridges the English determiner fragment (`Fragments.English.Determiners.QuantityWord`)
 to the GQ property predicates in `Core.Quantification` and
-`Theories.Semantics.Lexical.Determiner.Quantifier`.
+`Theories.Semantics.Quantification.Quantifier`.
 
 ## Empirical phenomena verified
 
@@ -42,7 +42,7 @@ to the GQ property predicates in `Core.Quantification` and
 - **Formal definitions**: `Core.Quantification` — `Conservative`, `ScopeUpwardMono`,
   `ScopeDownwardMono`, `QuantityInvariant`, `PositiveStrong`, `QSymmetric`,
   `outerNeg`, `innerNeg`, `dualQ`
-- **Concrete denotations**: `Semantics.Lexical.Determiner.Quantifier` —
+- **Concrete denotations**: `Semantics.Quantification.Quantifier` —
   `every_sem`, `some_sem`, `no_sem`, `most_sem`, `few_sem`, `half_sem`
 - **Fragment entries**: `Fragments.English.Determiners.QuantityWord.gqDenotation`
 - **Domain restriction**: `Semantics.Lexical.Determiner.DomainRestriction` —
@@ -57,7 +57,7 @@ namespace Phenomena.Quantification.Bridge
 
 open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
 open Semantics.Montague (Model)
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 open Semantics.Lexical.Determiner.DomainRestriction (DomainRestrictor
   conservative_domain_restricted)
 
@@ -74,12 +74,12 @@ theorem conservativity_universal :
     PConservative (q.gqDenotation m) := by
   intro q m inst
   cases q <;> simp only [QuantityWord.gqDenotation]
-  · exact Semantics.Lexical.Determiner.Quantifier.no_conservative
-  · exact Semantics.Lexical.Determiner.Quantifier.few_conservative
-  · exact Semantics.Lexical.Determiner.Quantifier.some_conservative
-  · exact Semantics.Lexical.Determiner.Quantifier.half_conservative
-  · exact Semantics.Lexical.Determiner.Quantifier.most_conservative
-  · exact Semantics.Lexical.Determiner.Quantifier.every_conservative
+  · exact Semantics.Quantification.Quantifier.no_conservative
+  · exact Semantics.Quantification.Quantifier.few_conservative
+  · exact Semantics.Quantification.Quantifier.some_conservative
+  · exact Semantics.Quantification.Quantifier.half_conservative
+  · exact Semantics.Quantification.Quantifier.most_conservative
+  · exact Semantics.Quantification.Quantifier.every_conservative
 
 -- ============================================================================
 -- §2. @cite{mostowski-1957} / @cite{keenan-stavi-1986}: Quantity
@@ -245,7 +245,7 @@ theorem strong_not_symmetric :
 theorem dual_all_eq_some (m : Model) [Fintype m.Entity] :
     pdualQ (QuantityWord.all.gqDenotation m) = QuantityWord.some_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Lexical.Determiner.Quantifier.pdualQ_every_eq_some
+  exact Semantics.Quantification.Quantifier.pdualQ_every_eq_some
 
 /-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no (@cite{barwise-cooper-1981} §4.11).
     ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
@@ -253,7 +253,7 @@ theorem dual_all_eq_some (m : Model) [Fintype m.Entity] :
 theorem innerNeg_all_eq_none (m : Model) [Fintype m.Entity] :
     pinnerNeg (QuantityWord.all.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Lexical.Determiner.Quantifier.pinnerNeg_every_eq_no
+  exact Semantics.Quantification.Quantifier.pinnerNeg_every_eq_no
 
 /-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no (@cite{barwise-cooper-1981} §4.11).
     ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
@@ -261,7 +261,7 @@ theorem innerNeg_all_eq_none (m : Model) [Fintype m.Entity] :
 theorem outerNeg_some_eq_none (m : Model) [Fintype m.Entity] :
     pouterNeg (QuantityWord.some_.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Lexical.Determiner.Quantifier.pouterNeg_some_eq_no
+  exact Semantics.Quantification.Quantifier.pouterNeg_some_eq_no
 
 -- ============================================================================
 -- §9. Left anti-additivity → NPI licensing
@@ -287,8 +287,8 @@ theorem positive_strong_determiners_upward_monotone :
     PScopeUpwardMono (q.gqDenotation m) := by
   intro q m inst hPS
   cases q
-  case all => exact Semantics.Lexical.Determiner.Quantifier.every_scope_up
-  case some_ => exact Semantics.Lexical.Determiner.Quantifier.some_scope_up
+  case all => exact Semantics.Quantification.Quantifier.every_scope_up
+  case some_ => exact Semantics.Quantification.Quantifier.some_scope_up
   -- TODO: Adapt remaining cases for Prop-valued GQs.
   -- The vacuity argument (PPositiveStrong contradicted by R = fun _ => False)
   -- needs count lemmas adapted for Prop predicates.

@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 
 /-!
 # Unified Numeral Semantics
@@ -707,7 +707,7 @@ theorem atLeast_eq_lowerBound_three (n : Nat) :
 -- intersection cardinality. This connects B&N's quantifier view (type ⟨⟨e,t⟩,⟨e,t⟩,t⟩)
 -- to the Kennedy maximality view (type ⟨d,t⟩) that `maxMeaning` implements.
 
-open Classical Semantics.Montague Semantics.Lexical.Determiner in
+open Classical Semantics.Montague Semantics.Quantification in
 /-- GQT "at least n" agrees with `maxMeaning.ge` on intersection cardinality. -/
 theorem gqt_atLeast_agrees (m : Model) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
@@ -715,7 +715,7 @@ theorem gqt_atLeast_agrees (m : Model) [Fintype m.Entity]
     (maxMeaning .ge n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) = true) := by
   simp [Quantifier.at_least_n_sem, maxMeaning, decide_eq_true_eq]
 
-open Classical Semantics.Montague Semantics.Lexical.Determiner in
+open Classical Semantics.Montague Semantics.Quantification in
 /-- GQT "at most n" agrees with `maxMeaning.le` on intersection cardinality. -/
 theorem gqt_atMost_agrees (m : Model) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
@@ -723,7 +723,7 @@ theorem gqt_atMost_agrees (m : Model) [Fintype m.Entity]
     (maxMeaning .le n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) = true) := by
   simp [Quantifier.at_most_n_sem, maxMeaning, decide_eq_true_eq]
 
-open Classical Semantics.Montague Semantics.Lexical.Determiner in
+open Classical Semantics.Montague Semantics.Quantification in
 /-- GQT "exactly n" agrees with `maxMeaning.eq` on intersection cardinality. -/
 theorem gqt_exactly_agrees (m : Model) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :

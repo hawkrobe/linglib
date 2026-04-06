@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Composition.Scope
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Montague.Variables
 
@@ -51,7 +51,7 @@ scope example.
 namespace Semantics.Composition.Glue
 
 open Semantics.Montague
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Glue Logic: Implicational Fragment of Linear Logic

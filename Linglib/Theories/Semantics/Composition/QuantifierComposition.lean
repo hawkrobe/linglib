@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Montague.Variables
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 
 /-!
 # Quantifier Composition via Predicate Abstraction
@@ -51,7 +51,7 @@ open Semantics.Montague
 open Core.Tree
 open Semantics.Composition.Tree
 open Semantics.Montague.Variables
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Model and Lexicon

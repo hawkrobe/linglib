@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
@@ -405,14 +405,14 @@ def QuantifierEntry.toWord (d : QuantifierEntry) : Word :=
 #guard QuantityWord.all.ptPrototype 10 == 10
 
 -- ============================================================================
--- Canonical GQ Denotations (from Semantics.Lexical.Determiner.Quantifier)
+-- Canonical GQ Denotations (from Semantics.Quantification.Quantifier)
 -- ============================================================================
 
 /-!
 ## Compositional Generalized Quantifier Semantics
 
 The **single source of truth** for model-theoretic GQ denotations is
-`Semantics.Lexical.Determiner.Quantifier`. This section re-exports those
+`Semantics.Quantification.Quantifier`. This section re-exports those
 denotations and connects them to the `QuantityWord` scale.
 
 ### Thread map
@@ -421,7 +421,7 @@ From a `QuantityWord` you can reach:
 - **Compositional denotations**: `QuantityWord.gqDenotation` → `every_sem`, `some_sem`, etc.
 - **Semantic universals** (@cite{barwise-cooper-1981}): `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono`
   — all in `Core.Quantification`. `Quantity`, `SatisfiesUniversals` in
-  `Semantics.Lexical.Determiner.Quantifier`
+  `Semantics.Quantification.Quantifier`
 - **Proved properties**: `every_conservative`, `some_scope_up`, `no_scope_down`, etc.
 - **Duality operations** (B&C §4.11): `Core.Quantification.outerNeg`, `innerNeg`, `dualQ`
   with `outerNeg_up_to_down`, `outerNeg_down_to_up`, `innerNeg_up_to_down` (C9)
@@ -470,14 +470,14 @@ def QuantityWord.doubleMono : QuantityWord → Option Core.Quantification.Double
 
 section CanonicalGQDenotations
 open Semantics.Montague (Model)
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 
 variable {m : Model} [Fintype m.Entity]
 
 /-- Map quantity words to their canonical model-theoretic GQ denotation.
     These are the compositional `(e→t) → ((e→t) → t)` meanings from
     Montague/Barwise & Cooper, proved conservative and monotone in
-    `Semantics.Lexical.Determiner.Quantifier`. -/
+    `Semantics.Quantification.Quantifier`. -/
 def QuantityWord.gqDenotation (q : QuantityWord)
     (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
   match q with

@@ -37,7 +37,7 @@ open Semantics.Composition.Tree
 open Semantics.Composition.QuantifierComposition
 open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Montague.ToyLexicon (sleeps_sem)
-open Semantics.Lexical.Determiner.Quantifier (some_sem every_sem student_sem)
+open Semantics.Quantification.Quantifier (some_sem every_sem student_sem)
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Source Tree

@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Composition.SetMonad
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Semantics.Montague.Variables
 
@@ -58,7 +58,7 @@ open Semantics.Composition.WriterMonad
 open Semantics.Composition.Tree
 open Semantics.Composition.QuantifierComposition
 open Semantics.Lexical.Expressives
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 open Semantics.Reference.Binding
 open Semantics.Montague
 open Semantics.Montague.Variables

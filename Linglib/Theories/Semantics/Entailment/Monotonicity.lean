@@ -6,13 +6,13 @@ Reference: @cite{van-benthem-1986}, @cite{ladusaw-1980}, @cite{barwise-cooper-19
 
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 
 namespace Semantics.Entailment.Monotonicity
 
 open Semantics.Entailment
 open Semantics.Entailment.Polarity (isUpwardEntailing isDownwardEntailing)
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 
 section QuantifierSemantics
 
@@ -20,7 +20,7 @@ section QuantifierSemantics
 
 The 4-element `World` type used in the entailment domain doubles as an
 entity domain. We create a `Model` + `Fintype` instance so that the
-canonical GQ denotations from `Semantics.Lexical.Determiner.Quantifier`
+canonical GQ denotations from `Semantics.Quantification.Quantifier`
 (`every_sem`, `some_sem`, `no_sem`) can be instantiated here.
 
 This bridges the entailment-testing infrastructure (finite, decidable)

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Core.Divergence
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -40,7 +40,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
 
-open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem no_sem
+open Semantics.Quantification.Quantifier (every_sem some_sem no_sem
   subalternation_a_i)
 open Semantics.Montague (Model)
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.551] - 2026-04-05
+
+### Changed
+- **Move `Quantifier.lean` to `Theories/Semantics/Quantification/`**: GQ theory is not lexical semantics — it's a foundational semantic module. Namespace `Semantics.Quantification.Quantifier` replaces `Semantics.Lexical.Determiner.Quantifier`
+
 ## [0.229.550] - 2026-04-05
 
 ### Changed

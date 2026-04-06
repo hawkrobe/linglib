@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Pragmatics.Implicature.NegationScope
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Composition.Scope
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -326,7 +326,7 @@ namespace EveryNot
 open BigOperators
 open Real (rpow rpow_nonneg)
 open Semantics.Montague (Model)
-open Semantics.Lexical.Determiner.Quantifier (every_sem)
+open Semantics.Quantification.Quantifier (every_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 
 /-- Utterances: null (silence) or "Every horse didn't jump". -/
@@ -848,7 +848,7 @@ theorem atLeast_truth_table :
 -- Compositional Grounding
 
 open Semantics.Montague (Model)
-open Semantics.Lexical.Determiner.Quantifier (exactly_n_sem at_least_n_sem)
+open Semantics.Quantification.Quantifier (exactly_n_sem at_least_n_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 
 /-- 4-horse domain for grounding two-not truth conditions in numeral quantifier semantics. -/
@@ -898,14 +898,14 @@ noncomputable def twoNotExact_inverse (w : JumpOutcome4) : Prop :=
 theorem exact_surface_from_exactly_n_sem :
     ∀ w, (twoNotTruth .exact .surface w = true) ↔ twoNotExact_surface w := by
   intro w; cases w <;> simp [twoNotTruth, twoNotExact_surface, exactly_n_sem,
-    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Lexical.Determiner.Quantifier.count] <;> sorry
+    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Quantification.Quantifier.count] <;> sorry
 
 /-- Exact inverse grounding: `twoNotTruth .exact .inverse` derives from
     negating the compositional ⟦exactly 2⟧(horse)(jump). -/
 theorem exact_inverse_from_exactly_n_sem :
     ∀ w, (twoNotTruth .exact .inverse w = true) ↔ twoNotExact_inverse w := by
   intro w; cases w <;> simp [twoNotTruth, twoNotExact_inverse, exactly_n_sem,
-    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Lexical.Determiner.Quantifier.count] <;> sorry
+    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Quantification.Quantifier.count] <;> sorry
 
 -- At-least semantics grounding
 
@@ -924,14 +924,14 @@ noncomputable def twoNotAtLeast_inverse (w : JumpOutcome4) : Prop :=
 theorem atLeast_surface_from_at_least_n_sem :
     ∀ w, (twoNotTruth .atLeast .surface w = true) ↔ twoNotAtLeast_surface w := by
   intro w; cases w <;> simp [twoNotTruth, twoNotAtLeast_surface, at_least_n_sem,
-    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Lexical.Determiner.Quantifier.count] <;> sorry
+    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Quantification.Quantifier.count] <;> sorry
 
 /-- At-least inverse grounding: `twoNotTruth .atLeast .inverse` derives from
     negating the compositional ⟦at least 2⟧(horse)(jump). -/
 theorem atLeast_inverse_from_at_least_n_sem :
     ∀ w, (twoNotTruth .atLeast .inverse w = true) ↔ twoNotAtLeast_inverse w := by
   intro w; cases w <;> simp [twoNotTruth, twoNotAtLeast_inverse, at_least_n_sem,
-    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Lexical.Determiner.Quantifier.count] <;> sorry
+    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Quantification.Quantifier.count] <;> sorry
 
 /-- RSA meaning is grounded in compositional semantics: the meaning function
     used by the two-not RSA config matches the GQT numeral quantifiers. -/

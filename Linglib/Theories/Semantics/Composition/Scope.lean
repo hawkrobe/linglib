@@ -19,7 +19,7 @@ This module provides:
 -/
 
 import Linglib.Theories.Semantics.Montague.Types
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Core.Interface
 
 namespace Semantics.Scope
@@ -27,7 +27,7 @@ namespace Semantics.Scope
 open ScopeTheory
 
 open Semantics.Montague
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 
 -- Scope Configurations
 

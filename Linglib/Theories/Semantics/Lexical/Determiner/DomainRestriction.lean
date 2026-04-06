@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Core.NestedRestriction
 
 /-!
@@ -47,7 +47,7 @@ set_option autoImplicit false
 namespace Semantics.Lexical.Determiner.DomainRestriction
 
 open Semantics.Montague (Model)
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 
 -- ============================================================================
 -- §1. Domain-Restricted Quantifiers
@@ -166,7 +166,7 @@ theorem every_restricted_spectator {m : Model} [Fintype m.Entity]
   · intro h1 x ⟨hC, hR⟩; exact (h x hC hR).mp (h1 x ⟨hC, hR⟩)
   · intro h1 x ⟨hC, hR⟩; exact (h x hC hR).mpr (h1 x ⟨hC, hR⟩)
 
-open Semantics.Lexical.Determiner.Quantifier (PConservative PropGQ) in
+open Semantics.Quantification.Quantifier (PConservative PropGQ) in
 /-- Conservativity is preserved under domain restriction: if Q is conservative,
     then Q restricted by any domain predicate C is also conservative.
     Generalizes `every_restricted_conservative` from `every_sem` to any

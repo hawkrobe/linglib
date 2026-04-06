@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Reference.Donnellan
 import Linglib.Core.Semantics.Presupposition
@@ -31,7 +31,7 @@ with presuppositions:
 namespace Semantics.Lexical.Determiner.Definite
 
 open Semantics.Montague (Model Ty toyModel ToyEntity)
-open Semantics.Lexical.Determiner.Quantifier (every_sem some_sem Ty.det)
+open Semantics.Quantification.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
 open Core.Presupposition (PrProp)
 open Core.Definiteness (DefPresupType Definiteness)

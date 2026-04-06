@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Quantification
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Phenomena.Polarity.NPIs
 
 /-!
@@ -12,7 +12,7 @@ NPI licensing to downward entailingness (DE). The core claim:
 > Weak NPIs are licensed in downward-entailing contexts.
 
 This file bridges the GQ monotonicity proofs from `Core.Quantification` and
-`Semantics.Lexical.Determiner.Quantifier` to the NPI licensing data in
+`Semantics.Quantification.Quantifier` to the NPI licensing data in
 `Phenomena.Polarity.NPIs`, making the DE ↔ NPI connection formally explicit.
 
 ## Key connections
@@ -31,7 +31,7 @@ namespace Phenomena.Polarity.Studies.Ladusaw1979
 open Core.Quantification
 open Phenomena.Polarity.NPIs (LicensingContext)
 open Semantics.Montague
-open Semantics.Lexical.Determiner.Quantifier
+open Semantics.Quantification.Quantifier
 
 -- ============================================================================
 -- §1. Monotonicity classification of licensing contexts

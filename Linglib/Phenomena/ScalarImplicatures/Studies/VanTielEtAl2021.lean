@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Quantities
-import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Theories.Semantics.Quantification.Quantifier
 import Mathlib.Data.Rat.Defs
 
 /-!
