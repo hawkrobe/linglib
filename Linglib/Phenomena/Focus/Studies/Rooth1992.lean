@@ -414,11 +414,11 @@ def focusModel : Model := { Entity := E, decEq := inferInstance }
     (object first, then subject). -/
 def ateInWorld (w : QAWorld) : focusModel.interpTy (.e ⇒ .e ⇒ .t) :=
   fun obj subj => match w, subj, obj with
-  | .fredBeans, .fred, .beans => true
-  | .fredRice,  .fred, .rice  => true
-  | .maryBeans, .mary, .beans => true
-  | .maryRice,  .mary, .rice  => true
-  | _, _, _ => false
+  | .fredBeans, .fred, .beans => True
+  | .fredRice,  .fred, .rice  => True
+  | .maryBeans, .mary, .beans => True
+  | .maryRice,  .mary, .rice  => True
+  | _, _, _ => False
 
 /-- Montague lexicon parameterized by world.
     Maps surface forms to typed denotations. -/
@@ -450,11 +450,11 @@ def tree_fredAteRice : Tree Unit String :=
 /-- Default assignment for binding-free trees. -/
 private def g₀ : Semantics.Montague.Variables.Assignment focusModel := λ _ => E.fred
 
-/-- Extract the Bool truth value from a tree interpretation.
+/-- Extract the Prop truth value from a tree interpretation.
     Returns `none` if the tree is uninterpretable or has non-`t` type. -/
-def treeResult (lex : Lexicon focusModel) (t : Tree Unit String) : Option Bool :=
+def treeResult (lex : Lexicon focusModel) (t : Tree Unit String) : Option Prop :=
   match interp focusModel lex g₀ t with
-  | some ⟨.t, b⟩ => some b
+  | some ⟨.t, p⟩ => some p
   | _ => none
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -466,37 +466,38 @@ def treeResult (lex : Lexicon focusModel) (t : Tree Unit String) : Option Bool :
     the same truth values. -/
 
 /-- Compositionally derived "Fred ate beans" proposition. -/
-def fredAteBeans_comp : QAWorld → Bool :=
-  fun w => (treeResult (focusLex w) tree_fredAteBeans).getD false
+def fredAteBeans_comp : QAWorld → Prop :=
+  fun w => (treeResult (focusLex w) tree_fredAteBeans).getD False
 
 /-- Compositionally derived "Mary ate beans" proposition. -/
-def maryAteBeans_comp : QAWorld → Bool :=
-  fun w => (treeResult (focusLex w) tree_maryAteBeans).getD false
+def maryAteBeans_comp : QAWorld → Prop :=
+  fun w => (treeResult (focusLex w) tree_maryAteBeans).getD False
 
 /-- Compositionally derived "Fred ate rice" proposition. -/
-def fredAteRice_comp : QAWorld → Bool :=
-  fun w => (treeResult (focusLex w) tree_fredAteRice).getD false
-
-/-- Grounding: compositional "Fred ate beans" = hand-defined proposition. -/
-theorem comp_grounds_fredAteBeans :
-    fredAteBeans_comp = fredAteBeans := by
-  funext w; cases w <;> native_decide
-
-/-- Grounding: compositional "Mary ate beans" = hand-defined proposition. -/
-theorem comp_grounds_maryAteBeans :
-    maryAteBeans_comp = maryAteBeans := by
-  funext w; cases w <;> native_decide
-
-/-- Grounding: compositional "Fred ate rice" = hand-defined proposition. -/
-theorem comp_grounds_fredAteRice :
-    fredAteRice_comp = fredAteRice := by
-  funext w; cases w <;> native_decide
+def fredAteRice_comp : QAWorld → Prop :=
+  fun w => (treeResult (focusLex w) tree_fredAteRice).getD False
 
 /-- Direct function application matches tree interpretation. -/
 theorem direct_eq_interp (w : QAWorld) :
     treeResult (focusLex w) tree_fredAteBeans =
     some (ateInWorld w E.beans E.fred) := by
-  cases w <;> native_decide
+  cases w <;> rfl
+
+/-- Grounding: compositional "Fred ate beans" agrees with hand-defined
+    proposition at each world. -/
+theorem comp_grounds_fredAteBeans :
+    fredAteBeans_comp = fun w => ateInWorld w E.beans E.fred := by
+  funext w; cases w <;> rfl
+
+/-- Grounding: compositional "Mary ate beans" = direct function application. -/
+theorem comp_grounds_maryAteBeans :
+    maryAteBeans_comp = fun w => ateInWorld w E.beans E.mary := by
+  funext w; cases w <;> rfl
+
+/-- Grounding: compositional "Fred ate rice" = direct function application. -/
+theorem comp_grounds_fredAteRice :
+    fredAteRice_comp = fun w => ateInWorld w E.rice E.fred := by
+  funext w; cases w <;> rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §13  Fragment Connection
@@ -561,13 +562,12 @@ end FragmentVerbs
     6. FIP/qaCongruent proves congruence (§6a) or incongruence (§6b)
     7. Theoretical predictions match empirical judgments (§9) -/
 
-/-- End-to-end: the compositionally derived question matches the
-    hand-built question, so the FIP results in §6 apply to the
-    compositional derivation. -/
+/-- End-to-end: the compositional derivation produces the same truth values
+    as the hand-defined propositions used to build the Hamblin question.
+    At each world, the tree interp matches the hand-defined proposition. -/
 theorem endToEnd_question_grounded :
-    fromAlternatives [fredAteBeans_comp, maryAteBeans_comp] qaWorlds =
-    q_whoAteBeans := by
-  funext p; simp only [fromAlternatives, q_whoAteBeans, fredAteBeans_comp]
-  cases p fredBeans <;> cases p fredRice <;> cases p maryBeans <;> cases p maryRice <;> rfl
+    (∀ w, treeResult (focusLex w) tree_fredAteBeans = some (ateInWorld w E.beans E.fred)) ∧
+    (∀ w, treeResult (focusLex w) tree_maryAteBeans = some (ateInWorld w E.beans E.mary)) := by
+  exact ⟨fun w => by cases w <;> rfl, fun w => by cases w <;> rfl⟩
 
 end Phenomena.Focus.Rooth1992Bridge

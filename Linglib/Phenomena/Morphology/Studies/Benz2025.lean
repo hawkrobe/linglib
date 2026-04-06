@@ -34,7 +34,7 @@ This file formalizes three interconnected contributions from @cite{benz-2025}:
 
 namespace Phenomena.Morphology.Studies.Benz2025
 
-open Morphology.DM.Allosemy
+open Theories.Morphology.DM.Allosemy
 open Core.Empirical
 open Fragments.German.Predicates
 open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)

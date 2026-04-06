@@ -492,41 +492,35 @@ def QuantityWord.gqDenotation (q : QuantityWord)
 -- Monotonicity bridges (gap G): enum value ∧ semantic property
 -- ============================================================================
 
-open Core.Quantification in
 /-- Every: monotonicity metadata says `.increasing` and semantics is scope-↑. -/
 theorem every_mono_bridge : every.monotonicity = .increasing ∧
-    ScopeUpwardMono (every_sem m) :=
+    PScopeUpwardMono (every_sem m) :=
   ⟨rfl, every_scope_up⟩
 
-open Core.Quantification in
 /-- Some: monotonicity metadata says `.increasing` and semantics is scope-↑. -/
 theorem some_mono_bridge : some_.monotonicity = .increasing ∧
-    ScopeUpwardMono (some_sem m) :=
+    PScopeUpwardMono (some_sem m) :=
   ⟨rfl, some_scope_up⟩
 
-open Core.Quantification in
 /-- None: monotonicity metadata says `.decreasing` and semantics is scope-↓. -/
 theorem none_mono_bridge : none_.monotonicity = .decreasing ∧
-    ScopeDownwardMono (no_sem m) :=
+    PScopeDownwardMono (no_sem m) :=
   ⟨rfl, no_scope_down⟩
 
-open Core.Quantification in
 /-- All: monotonicity metadata says `.increasing` and semantics is scope-↑.
     (All and every share `every_sem`.) -/
 theorem all_mono_bridge : all.monotonicity = .increasing ∧
-    ScopeUpwardMono (every_sem m) :=
+    PScopeUpwardMono (every_sem m) :=
   ⟨rfl, every_scope_up⟩
 
-open Core.Quantification in
 /-- Most: monotonicity metadata says `.increasing` and semantics is scope-↑. -/
 theorem most_mono_bridge : most.monotonicity = .increasing ∧
-    ScopeUpwardMono (most_sem m) :=
+    PScopeUpwardMono (most_sem m) :=
   ⟨rfl, most_scope_up⟩
 
-open Core.Quantification in
 /-- Few: monotonicity metadata says `.decreasing` and semantics is scope-↓. -/
 theorem few_mono_bridge : few.monotonicity = .decreasing ∧
-    ScopeDownwardMono (few_sem m) :=
+    PScopeDownwardMono (few_sem m) :=
   ⟨rfl, few_scope_down⟩
 
 open Core.Quantification in
@@ -539,95 +533,89 @@ theorem half_mono_bridge : half.monotonicity = .nonMonotone :=
 -- Conservativity bridges (gap G): gqDenotation identity ∧ conservative
 -- ============================================================================
 
-open Core.Quantification in
 /-- All maps to `every_sem` and `every_sem` is conservative. -/
 theorem all_conservative_bridge :
     QuantityWord.gqDenotation .all m = every_sem m ∧
-    Conservative (every_sem m) :=
+    PConservative (every_sem m) :=
   ⟨rfl, every_conservative⟩
 
-open Core.Quantification in
 /-- Some maps to `some_sem` and `some_sem` is conservative. -/
 theorem some_conservative_bridge :
     QuantityWord.gqDenotation .some_ m = some_sem m ∧
-    Conservative (some_sem m) :=
+    PConservative (some_sem m) :=
   ⟨rfl, some_conservative⟩
 
-open Core.Quantification in
 /-- None maps to `no_sem` and `no_sem` is conservative. -/
 theorem none_conservative_bridge :
     QuantityWord.gqDenotation .none_ m = no_sem m ∧
-    Conservative (no_sem m) :=
+    PConservative (no_sem m) :=
   ⟨rfl, no_conservative⟩
 
-open Core.Quantification in
 /-- Most maps to `most_sem` and `most_sem` is conservative. -/
 theorem most_conservative_bridge :
     QuantityWord.gqDenotation .most m = most_sem m ∧
-    Conservative (most_sem m) :=
+    PConservative (most_sem m) :=
   ⟨rfl, most_conservative⟩
 
-open Core.Quantification in
 /-- Few maps to `few_sem` and `few_sem` is conservative. -/
 theorem few_conservative_bridge :
     QuantityWord.gqDenotation .few m = few_sem m ∧
-    Conservative (few_sem m) :=
+    PConservative (few_sem m) :=
   ⟨rfl, few_conservative⟩
 
-open Core.Quantification in
 /-- Half maps to `half_sem` and `half_sem` is conservative. -/
 theorem half_conservative_bridge :
     QuantityWord.gqDenotation .half m = half_sem m ∧
-    Conservative (half_sem m) :=
+    PConservative (half_sem m) :=
   ⟨rfl, half_conservative⟩
 
 -- ============================================================================
 -- Symmetry bridges (gap G): weak ↔ symmetric (P&W Ch.6)
 -- ============================================================================
 
-open Core.Quantification in
 /-- Some: weak (allows there-insertion) and symmetric. -/
 theorem some_symmetry_bridge : some_.strength = .weak ∧
-    QSymmetric (some_sem m) := ⟨rfl, some_symmetric⟩
+    PQSymmetric (some_sem m) := ⟨rfl, some_symmetric⟩
 
-open Core.Quantification in
 /-- None: weak and symmetric. -/
 theorem none_symmetry_bridge : none_.strength = .weak ∧
-    QSymmetric (no_sem m) := ⟨rfl, no_symmetric⟩
+    PQSymmetric (no_sem m) := ⟨rfl, no_symmetric⟩
 
-open Core.Quantification Semantics.Montague in
+open Semantics.Montague in
 /-- Every: strong and NOT symmetric. -/
 theorem every_not_symmetric_bridge : every.strength = .strong ∧
-    ¬QSymmetric (every_sem (m := toyModel)) := ⟨rfl, every_not_symmetric⟩
+    ¬PQSymmetric (every_sem (m := toyModel)) := ⟨rfl, every_not_symmetric⟩
 
 -- ============================================================================
 -- both/neither: Boolean GQ composition (K&S §2.3, §3.2)
 -- ============================================================================
 
+open Classical in
 /-- `⟦both⟧(R)(S)` = `⟦every⟧(R)(S)` when |R|=2.
     For the general case, both = every restricted to exactly-2 restrictors.
     Simplified: on finite models, both(R,S) = every(R,S) ∧ |R|≥2. -/
-def both_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
-  λ (R : m.Entity → Bool) S => every_sem m R S && decide ((Finset.univ.filter (fun x : m.Entity => R x = true)).card ≥ 2)
+noncomputable def both_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  λ (R : m.Entity → Prop) S => every_sem m R S ∧ (Finset.univ.filter (fun x : m.Entity => R x)).card ≥ 2
 
+open Classical in
 /-- `⟦neither⟧` = outer negation of `⟦both⟧` (K&S (83b)).
     "Neither student passed" = "It's not the case that both students passed"
     when exactly 2 students exist. K&S: neither = (not one) of the two. -/
-def neither_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
-  Core.Quantification.gqMeet (no_sem m)
-    (λ (R : m.Entity → Bool) _ => decide ((Finset.univ.filter (fun x : m.Entity => R x = true)).card ≥ 2))
+noncomputable def neither_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+  pgqMeet (no_sem m)
+    (λ (R : m.Entity → Prop) _ => (Finset.univ.filter (fun x : m.Entity => R x)).card ≥ 2)
 
-/-- both is conservative (follows from every_conservative + gqMeet closure). -/
-theorem both_conservative : Core.Quantification.Conservative (both_sem m) := by
+/-- both is conservative (follows from every_conservative + pgqMeet closure). -/
+theorem both_conservative : PConservative (both_sem m) := by
   intro R S
   simp only [both_sem]
   rw [every_conservative R S]
 
-/-- neither is conservative (follows from no_conservative + gqMeet closure). -/
+/-- neither is conservative (follows from no_conservative + pgqMeet closure). -/
 theorem neither_conservative :
-    Core.Quantification.Conservative (neither_sem m) := by
+    PConservative (neither_sem m) := by
   intro R S
-  simp only [neither_sem, Core.Quantification.gqMeet]
+  simp only [neither_sem, pgqMeet]
   rw [no_conservative R S]
 
 /-- K&S §3.2: both is positive strong — both(A,A) = true when |A|≥2. -/
@@ -649,73 +637,65 @@ theorem both_neither_mono_duality :
 -- Anti-additivity bridges (restrictor NPI licensing)
 -- ============================================================================
 
-open Core.Quantification in
 /-- "Every"/"all" is left-anti-additive in the restrictor: every(A∪B, C) = every(A,C) ∧ every(B,C).
     This licenses strong NPIs in the restrictor of "every":
     "Everyone who ever lifted a finger..." Cross-ref: `every_laa`. -/
 theorem every_laa_bridge :
     QuantityWord.gqDenotation .all m = every_sem m ∧
-    LeftAntiAdditive (every_sem m) :=
+    PLeftAntiAdditive (every_sem m) :=
   ⟨rfl, every_laa⟩
 
-open Core.Quantification in
 /-- "No"/"none" is left-anti-additive in the restrictor: no(A∪B, C) = no(A,C) ∧ no(B,C).
     Also scope-downward-monotone (licenses weak NPIs in scope).
     Cross-ref: `no_laa`, `no_scope_down`. -/
 theorem none_laa_bridge :
     QuantityWord.gqDenotation .none_ m = no_sem m ∧
-    LeftAntiAdditive (no_sem m) ∧
-    ScopeDownwardMono (no_sem m) :=
+    PLeftAntiAdditive (no_sem m) ∧
+    PScopeDownwardMono (no_sem m) :=
   ⟨rfl, no_laa, no_scope_down⟩
 
 -- ============================================================================
 -- @cite{van-benthem-1984}: Inferential + Double Mono Bridges
 -- ============================================================================
 
-open Core.Quantification in
 /-- All: inferential class is inclusion, confirmed by relational properties.
     Van Benthem Thm 3.1.1: the ONLY reflexive antisymmetric quantifier. -/
 theorem all_inferential_bridge :
     QuantityWord.all.inferentialClass = some .inclusion ∧
-    QTransitive (every_sem m) ∧ PositiveStrong (every_sem m) ∧
-    QAntisymmetric (every_sem m) :=
+    PQTransitive (every_sem m) ∧ PPositiveStrong (every_sem m) ∧
+    PQAntisymmetric (every_sem m) :=
   ⟨rfl, every_transitive, every_positive_strong, every_antisymmetric⟩
 
-open Core.Quantification in
 /-- Some: inferential class is overlap, confirmed by relational properties.
     Van Benthem Thm 3.3.2: the ONLY symmetric quasi-reflexive quantifier. -/
 theorem some_inferential_bridge :
     QuantityWord.some_.inferentialClass = some .overlap ∧
-    QSymmetric (some_sem m) ∧ QuasiReflexive (some_sem m) :=
+    PQSymmetric (some_sem m) ∧ PQuasiReflexive (some_sem m) :=
   ⟨rfl, some_symmetric, some_quasi_reflexive⟩
 
-open Core.Quantification in
 /-- None: inferential class is disjointness, confirmed by relational properties.
     Van Benthem Cor 3.3.3: the ONLY symmetric quasi-universal quantifier. -/
 theorem none_inferential_bridge :
     QuantityWord.none_.inferentialClass = some .disjointness ∧
-    QSymmetric (no_sem m) ∧ QuasiUniversal (no_sem m) :=
+    PQSymmetric (no_sem m) ∧ PQuasiUniversal (no_sem m) :=
   ⟨rfl, no_symmetric, no_quasi_universal⟩
 
-open Core.Quantification in
 /-- All: double mono ↓MON↑ metadata matches semantic proof. -/
 theorem all_doubleMono_bridge :
     QuantityWord.all.doubleMono = some .downUp ∧
-    RestrictorDownwardMono (every_sem m) ∧ ScopeUpwardMono (every_sem m) :=
+    PRestrictorDownwardMono (every_sem m) ∧ PScopeUpwardMono (every_sem m) :=
   ⟨rfl, every_restrictor_down, every_scope_up⟩
 
-open Core.Quantification in
 /-- Some: double mono ↑MON↑ metadata matches semantic proof. -/
 theorem some_doubleMono_bridge :
     QuantityWord.some_.doubleMono = some .upUp ∧
-    RestrictorUpwardMono (some_sem m) ∧ ScopeUpwardMono (some_sem m) :=
+    PRestrictorUpwardMono (some_sem m) ∧ PScopeUpwardMono (some_sem m) :=
   ⟨rfl, some_restrictor_up, some_scope_up⟩
 
-open Core.Quantification in
 /-- None: double mono ↓MON↓ metadata matches semantic proof. -/
 theorem none_doubleMono_bridge :
     QuantityWord.none_.doubleMono = some .downDown ∧
-    RestrictorDownwardMono (no_sem m) ∧ ScopeDownwardMono (no_sem m) :=
+    PRestrictorDownwardMono (no_sem m) ∧ PScopeDownwardMono (no_sem m) :=
   ⟨rfl, no_restrictor_down, no_scope_down⟩
 
 end CanonicalGQDenotations
@@ -743,7 +723,9 @@ end CanonicalGQDenotations
 
     Cross-ref: `Fragments/German/Distributives.lean` for the German
     typology; `Phenomena/Plurals/Studies/HaslingerEtAl2025.lean` for
-    the empirical evidence. -/
+    the S&P empirical evidence; @cite{haslinger-etal-2025-nllt} derives
+    the dist/non-dist split from Q_∀ + ONE (see `UnifiedUniversal.lean`,
+    `ONEModifiers.lean`, `HaslingerHienEtAl2025.lean`). -/
 
 open Semantics.Lexical.Plural.Distributivity
 

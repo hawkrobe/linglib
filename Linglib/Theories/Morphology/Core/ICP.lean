@@ -26,7 +26,7 @@ Constraint ensures null affixes behave like overt affixes with respect
 to adjacency requirements.
 -/
 
-namespace Morphology.ICP
+namespace Theories.Morphology.ICP
 
 open Minimalism.Modification
 
@@ -73,4 +73,4 @@ theorem magCondB_is_not_icp (status : AttrStatus) :
      | .affix  | .null     => false) = !icpBlocksIntervention status := by
   cases status <;> rfl
 
-end Morphology.ICP
+end Theories.Morphology.ICP

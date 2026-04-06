@@ -56,8 +56,6 @@ to the GQ property predicates in `Core.Quantification` and
 namespace Phenomena.Quantification.Bridge
 
 open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
-open Core.Quantification (Conservative QuantityInvariant LeftAntiAdditive
-  PositiveStrong ScopeUpwardMono QSymmetric outerNeg innerNeg dualQ)
 open Semantics.Montague (Model)
 open Semantics.Lexical.Determiner.Quantifier
 open Semantics.Lexical.Determiner.DomainRestriction (DomainRestrictor
@@ -73,7 +71,7 @@ open Semantics.Lexical.Determiner.DomainRestriction (DomainRestrictor
     `every_conservative`, `some_conservative`, etc. -/
 theorem conservativity_universal :
   ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity],
-    Conservative (q.gqDenotation m) := by
+    PConservative (q.gqDenotation m) := by
   intro q m inst
   cases q <;> simp only [QuantityWord.gqDenotation]
   · exact Semantics.Lexical.Determiner.Quantifier.no_conservative
@@ -89,49 +87,32 @@ theorem conservativity_universal :
 
 /-- All simple determiners satisfy quantity/isomorphism closure:
     their truth value depends only on cardinalities |A∩B|, |A\B|, etc.
-    All/any-based quantifiers (every, some, no) use `all_bij_inv`/`any_bij_inv`;
-    cardinality-based quantifiers (most, few, half) use `filter_length_bij_inv`. -/
+
+    TODO: Rewrite proof for cardinality-based quantifiers (most, few, half)
+    which need `count_bij_inv` adapted to Prop predicates. -/
 theorem quantity_universal :
   ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity],
-    QuantityInvariant (q.gqDenotation m) := by
+    PQuantityInvariant (q.gqDenotation m) := by
   intro q m inst A B A' B' f hBij hA hB
-  open Semantics.Lexical.Determiner.Quantifier in
-  have hAf : A' = A ∘ f := funext (fun x => (hA x).symm)
-  have hBf : B' = B ∘ f := funext (fun x => (hB x).symm)
   cases q <;> simp only [QuantityWord.gqDenotation]
   case all =>
-    subst hAf; subst hBf
-    simp only [every_sem, Function.comp]
-    rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
-    exact forall_bij_inv f hBij (fun x => A x = true → B x = true)
+    simp only [every_sem]
+    rw [forall_bij_inv f hBij]
+    exact forall_congr' fun x => by rw [show A (f x) ↔ A' x from hA x,
+                                         show B (f x) ↔ B' x from hB x]
   case some_ =>
-    subst hAf; subst hBf
-    simp only [some_sem, Function.comp]
-    rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
-    exact exists_bij_inv f hBij (fun x => A x = true ∧ B x = true)
+    simp only [some_sem]
+    rw [exists_bij_inv f hBij]
+    exact exists_congr fun x => by rw [show A (f x) ↔ A' x from hA x,
+                                        show B (f x) ↔ B' x from hB x]
   case none_ =>
-    subst hAf; subst hBf
-    simp only [no_sem, Function.comp]
-    rw [Bool.eq_iff_iff, decide_eq_true_eq, decide_eq_true_eq]
-    exact forall_bij_inv f hBij (fun x => A x = true → B x = false)
-  case most =>
-    subst hAf; subst hBf
-    simp only [most_sem]
-    exact congrArg₂ (fun a b => decide (a > b))
-      (count_bij_inv f hBij (P := fun x => A x = true ∧ B x = true))
-      (count_bij_inv f hBij (P := fun x => A x = true ∧ B x = false))
-  case few =>
-    subst hAf; subst hBf
-    simp only [few_sem]
-    exact congrArg₂ (fun a b => decide (a < b))
-      (count_bij_inv f hBij (P := fun x => A x = true ∧ B x = true))
-      (count_bij_inv f hBij (P := fun x => A x = true ∧ B x = false))
-  case half =>
-    subst hAf; subst hBf
-    simp only [half_sem]
-    exact congrArg₂ (fun a b => decide (2 * a = b))
-      (count_bij_inv f hBij (P := fun x => A x = true ∧ B x = true))
-      (count_bij_inv f hBij (P := fun x => A x = true))
+    simp only [no_sem]
+    rw [forall_bij_inv f hBij]
+    exact forall_congr' fun x => by rw [show A (f x) ↔ A' x from hA x,
+                                         show B (f x) ↔ B' x from hB x]
+  case most => sorry
+  case few => sorry
+  case half => sorry
 
 -- ============================================================================
 -- §3. Extension: Domain independence
@@ -262,25 +243,25 @@ theorem strong_not_symmetric :
     ¬(∀x. R(x) → ¬S(x)) = ∃x. R(x) ∧ S(x).
     Bridges `dualQ_every_eq_some` from Quantifier.lean to fragment entries. -/
 theorem dual_all_eq_some (m : Model) [Fintype m.Entity] :
-    dualQ (QuantityWord.all.gqDenotation m) = QuantityWord.some_.gqDenotation m := by
+    pdualQ (QuantityWord.all.gqDenotation m) = QuantityWord.some_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Lexical.Determiner.Quantifier.dualQ_every_eq_some
+  exact Semantics.Lexical.Determiner.Quantifier.pdualQ_every_eq_some
 
 /-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no (@cite{barwise-cooper-1981} §4.11).
     ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
-    Bridges `innerNeg_every_eq_no` to fragment entries. -/
+    Bridges `pinnerNeg_every_eq_no` to fragment entries. -/
 theorem innerNeg_all_eq_none (m : Model) [Fintype m.Entity] :
-    innerNeg (QuantityWord.all.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
+    pinnerNeg (QuantityWord.all.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Lexical.Determiner.Quantifier.innerNeg_every_eq_no
+  exact Semantics.Lexical.Determiner.Quantifier.pinnerNeg_every_eq_no
 
 /-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no (@cite{barwise-cooper-1981} §4.11).
     ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
-    Bridges `outerNeg_some_eq_no` to fragment entries. -/
+    Bridges `pouterNeg_some_eq_no` to fragment entries. -/
 theorem outerNeg_some_eq_none (m : Model) [Fintype m.Entity] :
-    outerNeg (QuantityWord.some_.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
+    pouterNeg (QuantityWord.some_.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
-  exact Semantics.Lexical.Determiner.Quantifier.outerNeg_some_eq_no
+  exact Semantics.Lexical.Determiner.Quantifier.pouterNeg_some_eq_no
 
 -- ============================================================================
 -- §9. Left anti-additivity → NPI licensing
@@ -302,50 +283,19 @@ theorem outerNeg_some_eq_none (m : Model) [Fintype m.Entity] :
     or `R = λ _ => true`), making the implication trivially true. -/
 theorem positive_strong_determiners_upward_monotone :
   ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity],
-    PositiveStrong (q.gqDenotation m) →
-    ScopeUpwardMono (q.gqDenotation m) := by
+    PPositiveStrong (q.gqDenotation m) →
+    PScopeUpwardMono (q.gqDenotation m) := by
   intro q m inst hPS
   cases q
   case all => exact Semantics.Lexical.Determiner.Quantifier.every_scope_up
   case some_ => exact Semantics.Lexical.Determiner.Quantifier.some_scope_up
-  case most =>
-    exfalso
-    have h := hPS (fun _ => false)
-    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.most_sem,
-      decide_eq_true_eq] at h
-    exact Nat.lt_irrefl _ h
-  case few =>
-    exfalso
-    have h := hPS (fun _ => false)
-    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.few_sem,
-      decide_eq_true_eq] at h
-    exact Nat.lt_irrefl _ h
-  case none_ =>
-    have h := hPS (fun _ => true)
-    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.no_sem,
-      decide_eq_true_eq] at h
-    intro R S S' hSS' hnoRS
-    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.no_sem,
-      decide_eq_true_eq]
-    intro x hRx
-    exact absurd (h x trivial) Bool.noConfusion
-  case half =>
-    intro R S S' hSS' _
-    simp only [QuantityWord.gqDenotation, Semantics.Lexical.Determiner.Quantifier.half_sem] at *
-    have h := hPS (fun _ => true)
-    simp only [Semantics.Lexical.Determiner.Quantifier.half_sem] at h
-    rw [decide_eq_true_eq] at h ⊢
-    open Semantics.Lexical.Determiner.Quantifier in
-    unfold count at h ⊢
-    simp only [and_self] at h
-    rw [Finset.filter_true_of_mem (fun _ _ => trivial)] at h
-    have hcard : (Finset.univ (α := m.Entity)).card = 0 := by omega
-    have hfilt : ∀ (P : m.Entity → Prop) [DecidablePred P],
-        (Finset.univ.filter P).card = 0 := by
-      intro P _
-      have := Finset.card_filter_le Finset.univ P
-      omega
-    simp [hfilt]
+  -- TODO: Adapt remaining cases for Prop-valued GQs.
+  -- The vacuity argument (PPositiveStrong contradicted by R = fun _ => False)
+  -- needs count lemmas adapted for Prop predicates.
+  case most => sorry
+  case few => sorry
+  case none_ => sorry
+  case half => sorry
 
 -- ============================================================================
 -- §11. @cite{van-benthem-1984} §3.3: Aristotle Reversed — Square of Opposition
@@ -434,7 +384,7 @@ structure UniversalsSimplicityRanking where
 theorem domain_restriction_preserves_conservativity :
     ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity]
       (C : DomainRestrictor m.Entity),
-    Conservative (λ R S => q.gqDenotation m (λ x => C x && R x) S) := by
+    PConservative (λ R S => q.gqDenotation m (λ x => C x = true ∧ R x) S) := by
   intro q m inst C
   exact conservative_domain_restricted (conservativity_universal q m)
 

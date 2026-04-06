@@ -145,18 +145,19 @@ open Semantics.Montague
     `traditionalGEN` (in `Generics.lean`) and `thresholdQ` (above)
     are specific instantiations. -/
 def gen (m : Model)
-    (generally : (m.Entity → Bool) → (m.Entity → Bool) → Bool)
+    (generally : (m.Entity → Prop) → (m.Entity → Prop) → Prop)
     : LexEntry m :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, generally⟩
 
+open Classical in
 /-- Gen with threshold: true iff ≥ `num/denom` of restrictor-satisfying
     atoms also satisfy scope. Montague-typed counterpart of `thresholdQ`. -/
-def genThreshold (m : Model) (atoms : List m.Entity)
+noncomputable def genThreshold (m : Model) (atoms : List m.Entity)
     (num denom : Nat) : LexEntry m :=
-  gen m (fun restr scope =>
-    let restricted := atoms.filter restr
-    let both := restricted.filter scope
-    decide (denom * both.length ≥ num * restricted.length))
+  ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun restr scope =>
+    let restricted := atoms.filter (fun x => decide (restr x))
+    let both := restricted.filter (fun x => decide (scope x))
+    denom * both.length ≥ num * restricted.length⟩
 
 /-- DIST: `(e→t) → (e→t)`. Distributive operator.
 
@@ -165,7 +166,7 @@ def genThreshold (m : Model) (atoms : List m.Entity)
     Montague-typed counterpart of `Distributivity.distMaximal`. -/
 def dist (m : Model) (atomsOf : m.Entity → List m.Entity)
     : LexEntry m :=
-  ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), fun P x => (atomsOf x).all P⟩
+  ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), fun P x => ∀ a ∈ atomsOf x, P a⟩
 
 /-- DPP: `(e→t) → (e→t) → t`. Derived Property Predication.
 
@@ -174,13 +175,13 @@ def dist (m : Model) (atomsOf : m.Entity → List m.Entity)
     @cite{guerrini-2026} structure (105b). -/
 def dpp (m : Model) (atoms : List m.Entity) : LexEntry m :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun prop pred =>
-    atoms.any (fun x => prop x && pred x)⟩
+    ∃ x ∈ atoms, prop x ∧ pred x⟩
 
 /-- Hab: `(e→t) → (e→t)`. Habitual aspectual operator.
 
     `h` maps a predicate to its habitual counterpart.
     Montague-typed counterpart of `traditionalHAB` (in `Habituals.lean`). -/
-def hab (m : Model) (h : (m.Entity → Bool) → (m.Entity → Bool))
+def hab (m : Model) (h : (m.Entity → Prop) → (m.Entity → Prop))
     : LexEntry m :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), h⟩
 
@@ -197,7 +198,7 @@ def hab (m : Model) (h : (m.Entity → Bool) → (m.Entity → Bool))
     Montague type system handles the dispatch:
     - Gen:  `(e→t) → (e→t) → t`  — FA with entity predicates
     - EXH:  `(s→t) → (s→t)`      — FA with propositions -/
-def exh (m : Model) (exhOp : (m.World → Bool) → (m.World → Bool))
+def exh (m : Model) (exhOp : (m.World → Prop) → (m.World → Prop))
     : LexEntry m :=
   ⟨(.s ⇒ .t) ⇒ (.s ⇒ .t), exhOp⟩
 

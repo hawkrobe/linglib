@@ -37,7 +37,7 @@ positions are implicit between adjacent morphemes in the flattened list.
 namespace Theories.Morphology.WordStructure
 
 open Core.Morphology (MorphStatus AttachmentSide)
-open Morphology.Circumfix (CircumfixExponence)
+open Theories.Morphology.Circumfix (CircumfixExponence)
 
 -- ============================================================================
 -- §1: Morpheme

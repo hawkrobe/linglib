@@ -110,7 +110,7 @@ theorem every_distributes {α : Type*} [PartialOrder α]
   constructor
   · intro hQ x hPx
     apply hQ
-    exact ⟨hPx, λ y hy hov => le_of_eq (hONE.pairwise_disjoint y x hy hPx (overlap_symm hov))⟩
+    exact ⟨hPx, λ y hy hov => le_of_eq (hONE.pairwise_disjoint y x hy hPx (Overlap.symm hov))⟩
   · intro hAll x ⟨hPx, _⟩
     exact hAll x hPx
 

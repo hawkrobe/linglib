@@ -78,7 +78,7 @@ inductive BVAContext where
     Vocabulary items are ordered by specificity. When multiple items could
     apply, the most specific (first in the list) wins.
 
-    This is a specialization of the general DM `Morphology.DM.VI.VocabItem`
+    This is a specialization of the general DM `Theories.Morphology.DM.VI.VocabItem`
     in `Theories/Morphology/DM/VocabularyInsertion.lean`, restricted to
     `BVAContext` matching with a parameterized `Form` type. -/
 structure VocabItem (Form : Type) where
@@ -194,12 +194,12 @@ def OCSignature.isOC (sig : OCSignature) : Bool :=
     The `Form` type is rendered to `String` via the supplied function. -/
 def MinPronInventory.toDMRules {Form : Type}
     (inv : MinPronInventory Form) (render : Form → String)
-    : List (Morphology.DM.VI.VocabItem BVAContext Unit) :=
+    : List (Theories.Morphology.DM.VI.VocabItem BVAContext Unit) :=
   let contextRules := inv.items.map fun item =>
     { exponent := render item.form
       contextMatch := fun ctx => ctx == item.context
       specificity := 1 }
-  let elsewhereRule : Morphology.DM.VI.VocabItem BVAContext Unit :=
+  let elsewhereRule : Theories.Morphology.DM.VI.VocabItem BVAContext Unit :=
     { exponent := render inv.elsewhere
       contextMatch := fun _ => true
       specificity := 0 }

@@ -176,7 +176,7 @@ example :
     let mary_meaning : toyModel.interpTy (catToTy NP) := ToyEntity.mary
     let sees_mary := fappSem sees_meaning mary_meaning
     let john_sees_mary := bappSem john_meaning sees_mary
-    john_sees_mary = true := rfl
+    john_sees_mary := trivial
 
 /-- Rule-to-rule relation: each syntactic rule has unique semantic rule. -/
 structure RuleToRuleRelation where

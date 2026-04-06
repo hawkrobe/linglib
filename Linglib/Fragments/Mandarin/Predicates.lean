@@ -55,37 +55,32 @@ def haipa : MandarinVerbEntry := .mk' {
   attitudeBuilder := some (.preferential (.degreeComparison .negative)) }
 
 /-!
-## yǐwéi: Exceptional Postsupposition
+## yǐwéi: Postsupposition via `postsupType`
 
 yǐwéi "be under the impression" has a POSTSUPPOSITION
 (output-context constraint) that ¬p is compatible with the Common Ground
 after the utterance. This is NOT a presupposition and cannot be derived
-from veridicality alone.
+from veridicality alone (@cite{glass-2025}, @cite{glass-2023}).
 
-The postsupposition is interpreted in the Theory layer (ContrafactiveGap.lean).
-Here we just flag the exceptional behavior.
+Encoded structurally as `postsupType := some .weakContrafactive` in VerbCore,
+formalized as `Core.Postsupposition.weakContrafactive`, and exercised in
+`Phenomena.Presupposition.Studies.Glass2025`.
 -/
 
 /-- 以为 "yǐwéi" — be under the impression that (weak contrafactive).
 
-**Exceptional**: Has postsupposition ◇¬p (CG compatible with ¬p after utterance).
-This cannot be derived from veridicality; see @cite{glass-2025}.
+Has postsupposition ◇¬p (CG compatible with ¬p after utterance).
+This cannot be derived from veridicality; see @cite{glass-2025} and @cite{glass-2023}.
+The postsupposition is recorded structurally via `postsupType` and exercised
+in `Phenomena.Presupposition.Studies.Glass2025`.
 -/
 def yiwei : MandarinVerbEntry := .mk' {
   form := "yiwei"
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  -- Doxastic non-veridical, but with exceptional postsupposition (see docs)
-  attitudeBuilder := some (.doxastic .nonVeridical) }
-
-/-- Does this verb have an exceptional postsupposition (not derivable from veridicality)?
-
-This is a theory-neutral flag. The actual CGRequirement interpretation
-happens in the Bridge layer (ContrafactiveGap.lean).
--/
-def hasExceptionalPostsupposition (form : String) : Bool :=
-  form == "yiwei"
+  attitudeBuilder := some (.doxastic .nonVeridical)
+  postsupType := some .weakContrafactive }
 
 def allVerbs : List MandarinVerbEntry := [qidai, danxin, xiwang, haipa, yiwei]
 

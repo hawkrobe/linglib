@@ -162,7 +162,7 @@ theorem marking_restriction :
 -- ============================================================================
 
 open Minimalism
-open Minimalism.Morphology
+open Theories.Morphology.DM.Fission
 open Fragments.Spanish.PersonFeatures
 open Fragments.Spanish.Predicates
 open Fragments.Spanish.Clitics

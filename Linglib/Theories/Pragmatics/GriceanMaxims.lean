@@ -92,4 +92,51 @@ theorem violations_independent :
     QuantityViolation.underInformative.submaxim ≠
     QuantityViolation.overInformative.submaxim := by decide
 
+-- ============================================================================
+-- § The Manner Submaxims
+-- ============================================================================
+
+/-- The four Manner sub-maxims (@cite{grice-1975} p.46).
+    @cite{martin-schaefer-kastner-2025} show that M2 (avoid ambiguity) and
+    its counterpart (maintain ambiguity) drive the distribution of French
+    anticausative *se*. -/
+inductive MannerSubmaxim where
+  /-- M1: "Avoid obscurity of expression." -/
+  | avoidObscurity
+  /-- M2: "Avoid ambiguity." -/
+  | avoidAmbiguity
+  /-- M3: "Be brief (avoid unnecessary prolixity)." -/
+  | beBrief
+  /-- M4: "Be orderly." -/
+  | beOrderly
+  deriving DecidableEq, Repr
+
+/-- Direction of a Manner violation. -/
+inductive MannerViolation where
+  /-- Unnecessarily obscure expression (violates M1). -/
+  | obscure
+  /-- Ambiguous when an unambiguous alternative exists (violates M2). -/
+  | ambiguous
+  /-- Unnecessarily verbose (violates M3). -/
+  | verbose
+  /-- Disordered presentation (violates M4). -/
+  | disordered
+  deriving DecidableEq, Repr
+
+/-- Which sub-maxim a Manner violation targets. -/
+def MannerViolation.submaxim : MannerViolation → MannerSubmaxim
+  | .obscure    => .avoidObscurity
+  | .ambiguous  => .avoidAmbiguity
+  | .verbose    => .beBrief
+  | .disordered => .beOrderly
+
+/-- The four Manner violation types each target different sub-maxims. -/
+theorem manner_ambiguity_targets_M2 :
+    MannerViolation.ambiguous.submaxim = .avoidAmbiguity := rfl
+
+/-- Ambiguity and obscurity target different sub-maxims. -/
+theorem manner_violations_M1_M2_independent :
+    MannerViolation.obscure.submaxim ≠
+    MannerViolation.ambiguous.submaxim := by decide
+
 end Theories.Pragmatics.GriceanMaxims

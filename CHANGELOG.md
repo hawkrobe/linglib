@@ -1,5 +1,66 @@
 # Changelog
 
+## [0.229.550] - 2026-04-05
+
+### Changed
+- **`interpTy .t` Bool → Prop migration**: unified Montague type interpretation with Mathlib's Prop + Decidable pattern
+  - Root change: `Model.interpTy .t = Prop` (was `Bool`); eliminates `= true` coercions, `decide` wrapping, and `Bool.eq_iff_iff` idioms throughout
+  - Eliminated redundant `IModel` type (merged into `Model` — it only hardcoded `World := World4`)
+  - Quantifier denotations are now direct Prop: `every_sem m R S = ∀ x, R x → S x`, `some_sem m R S = ∃ x, R x ∧ S x`, etc.
+  - GQ properties: added `P`-prefixed Prop versions (`PConservative`, `PScopeUpwardMono`, etc.) alongside existing Bool `Core.Quantification` library
+  - `evalTree` stays `Option Bool` via `decide` at the `.t` boundary (preserves `native_decide` proofs)
+  - `BProp W := W → Bool` unchanged (modal operators, RSA predicates stay Bool-valued)
+  - `TypeShifting.lean`: `ident`, `BE`, `A`, `lower`, `iota`, `NOM`, `THE` all updated; `BE_unique` fully rewritten for classical Prop reasoning
+  - ~40 downstream files updated (Phenomena studies, Fragments, Composition, Entailment)
+
+## [0.229.549] - 2026-04-05
+
+### Added
+- **Halle & Marantz 1993 — Distributed Morphology and the Pieces of Inflection**: formalized the foundational DM paper
+  - `Phenomena/Morphology/Studies/HalleMarantz1993.lean`: English verb inflection paradigm using `FeatureVI`/`subsetPrinciple` (5 context-free VI entries with competition theorems), conditioned allomorphy via `VocabItem` with root restrictions (Paninian principle: `-t`/`∅` override default `-d`), Tns+Agr fusion using `FusionRule` (all 5 paradigm cells derived from fused features, `fusion_always_spellable` universally quantified), impoverishment → VI syncretism derivation (`deleteFeature` + `pipeline_fusion_impoverishment_vi` threading fusion through impoverishment to VI), Baker 1985 bridge (`tnsAgr_outside_gfRules`: all Tns/Agr features outside all GF-rule categories in Bybee's relevance hierarchy, connecting three papers)
+
+### Changed
+- `references.bib`: `halle-marantz-1993` role upgraded from `cited` to `formalized`
+
+## [0.229.548] - 2026-04-05
+
+### Changed
+- **MSK2025 audit — fix entailment profiles and derivation claims**
+  - `Fragments/French/Predicates.lean`: fixed `sentience := false` (both profiles — anticausative subjects can be non-sentient: *le mur rougit*), `stationary := false` (not applicable to intransitive sole arguments); split into `cosSubjectProfile` (property-change verbs, both control classes) and `motionCosSubjectProfile` (motion verbs: approcher, plier only); durcir/radoucir/refroidir correctly use `cosSubjectProfile` (no movement entailment)
+  - `MartinSchaeferKastner2025.lean`: removed `deriveControlLevel` and `control_level_is_movement` biconditional — ControlLevel is pragmatic/world-knowledge, not derivable from entailments; added `control_level_not_from_entailments` (rougir = refroidir profiles), `movement_sufficient_not_necessary`; added `ResponsibilityGoal` + `predictSePreferenceExt` for G3 (responsibility preference); added `availableForms`/`choice_only_with_plusMinusSe` (choice prerequisite); K-G 2009 syncretism docstring
+
+## [0.229.547] - 2026-04-05
+
+### Added
+- **Martin, Schäfer & Kastner 2025 — lexical pragmatics of reflexive marking**: formalized three generalizations about French ±*se* anticausatives, connecting voice syncretism to Gricean Manner reasoning
+  - `GriceanMaxims.lean`: added `MannerSubmaxim` (M1–M4: avoidObscurity, avoidAmbiguity, beBrief, beOrderly) and `MannerViolation` types, paralleling existing `QuantitySubmaxim`/`QuantityViolation`
+  - `Fragments/French/Predicates.lean`: 10 new change-of-state verb entries with `EntailmentProfile` — 5 limited-control (brunir, noircir, pâlir, rajeunir, rougir) and 5 in-control (approcher, durcir, plier, radoucir, refroidir)
+  - `Phenomena/Causation/Studies/MartinSchaeferKastner2025.lean`: `ControlLevel` derived from `EntailmentProfile.movement`, `SeMarking` morphological class, voice ambiguity formalization via `VoiceFlavor.nonThematic`/`.reflexive` syncretism, three generalization theorems, per-verb control derivation, unaccusativity bridge, anti-causation-claim theorem, experimental data from Tables 2 & 4
+
+## [0.229.546] - 2026-04-05
+
+### Added
+- **Zimmermann 2026 "African Lambdas I"**: formalized core contributions on the nominal domain in African languages
+  - `Theories/Semantics/Lexical/Determiner/ChoiceFunction.lean`: choice function type (`CF`, `SkolemCF`) for indefinite semantics, with correctness conditions and scope-via-binding theorems (@cite{reinhart-1997}, @cite{kratzer-1998})
+  - `Fragments/Hausa/Determiners.lean`: first Hausa fragment — *koo-wane* (distributive UQ = Q_∀[ONE_∅]), *duk(a)* (non-distributive UQ = bare Q_∀), *wani/wata* (∃-quantifier INDEF with flexible scope), bare NP
+  - `Fragments/Akan/Determiners.lean`: first Akan fragment — *nó* (DEF marker with disputed analysis: strong vs weak vs demonstrative), *bí* (choice function INDEF with wide scope under negation), *bi-ara* (flexible universal: ∀/NPI/FC)
+  - `Phenomena/Reference/Studies/Zimmermann2026.lean`: bridge theorems connecting Hausa *koo*/*duk* to Q_∀ + ONE decomposition, CF-based scope contrast between Akan *bí* and Hausa *wani*, extended typological sample (13 languages)
+  - 11 new bibliography entries (zimmermann-2026, zimmermann-2008, zimmermann-2014, bombi-2018, owusu-2022, philipp-2022, reinhart-1997, winter-1997, mirrazi-2024, matthewson-1999, schwarzschild-2002)
+
+### Fixed
+- `Definite.lean:99`: Akan *nó* was uncritically labeled as Schwarz's strong article — now notes the Bombi/Owusu dispute
+- `Core/Definiteness.lean:129`: `bareNominal` comment oversimplified Akan bare NPs — now notes context-dependent readings
+
+## [0.229.545] - 2026-04-05
+
+### Changed
+- **Glass 2025 deepening**: migrated causal model infrastructure, eliminated ad-hoc types, added postsupposition field, and connected to neg-raising
+  - `Doxastic.lean`: replaced ad-hoc `CausalVar`/`CausalEdge`/`CausalModel` (~130 lines) with `Core.StructuralEquationModel` — `beliefFormationDynamics` uses `CausalDynamics` with `CausalLaw.simple`, `satisfiesPLC` uses `causallySufficient`, PLC theorems via `normalDevelopment` propagation instead of BFS graph reachability
+  - `VerbEntry.lean`: added `PostsupType` enum (`.weakContrafactive`/`.strongContrafactive`) and `postsupType` field to `VerbCore` — postsuppositions are now structural, not flagged by string matching
+  - `Mandarin/Predicates.lean`: yǐwéi now carries `postsupType := some .weakContrafactive` directly; deleted `hasExceptionalPostsupposition` string-matching function
+  - `Glass2025.lean`: updated to use `postsupType` field (`yiwei_has_postsupposition`), added §8 NegRaising bridge (`veridicality_determines_both` connecting PLC gap to neg-raising gap via shared veridicality source)
+  - `Postsupposition.lean`: added `strong_entails_weak` (CG ⊨ ¬p → CG ◇ ¬p for nonempty contexts) and `weak_not_entails_strong` (counterexample: `[true, false]`)
+
 ## [0.229.544] - 2026-04-05
 
 ### Changed

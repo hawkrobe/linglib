@@ -54,7 +54,7 @@ in `VocabularyInsertion.lean`.
 
 -/
 
-namespace Morphology.DM
+namespace Theories.Morphology.DM
 
 open Minimalism
 
@@ -671,4 +671,4 @@ theorem voice_introduces_external_arg :
     voiceAgent.hasD = true ∧ voiceAgent.assignsTheta = true :=
   ⟨rfl, rfl⟩
 
-end Morphology.DM
+end Theories.Morphology.DM

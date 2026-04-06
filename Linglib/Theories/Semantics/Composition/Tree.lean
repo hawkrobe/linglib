@@ -133,10 +133,11 @@ def interp (m : Model) (lex : Lexicon m) (g : Assignment m)
       | none => probeVal⟩
 
 /-- Extract truth value from tree interpretation. -/
-def evalTree {m : Model} (lex : Lexicon m) (g : Assignment m) (t : Tree C String)
+def evalTree {m : Model} [∀ (p : m.interpTy .t), Decidable p]
+    (lex : Lexicon m) (g : Assignment m) (t : Tree C String)
     : Option Bool :=
   match interp m lex g t with
-  | some ⟨.t, b⟩ => some b
+  | some ⟨.t, b⟩ => some (decide b)
   | _ => none
 
 /-- Extract proposition (`s→t`) from tree interpretation.
@@ -145,10 +146,11 @@ def evalTree {m : Model} (lex : Lexicon m) (g : Assignment m) (t : Tree C String
     rather than a bare truth value — e.g., trees containing EXH
     or other propositional operators. Evaluate the result at a
     specific world to get a truth value. -/
-def evalTreeProp {m : Model} (lex : Lexicon m) (g : Assignment m) (t : Tree C String)
+def evalTreeProp {m : Model} [∀ (p : m.interpTy .t), Decidable p]
+    (lex : Lexicon m) (g : Assignment m) (t : Tree C String)
     : Option (m.World → Bool) :=
   match interp m lex g t with
-  | some ⟨.fn .s .t, p⟩ => some p
+  | some ⟨.fn .s .t, p⟩ => some (λ w => decide (p w))
   | _ => none
 
 end TreeInterp

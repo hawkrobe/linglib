@@ -126,7 +126,11 @@ def bridgingPresupType : BridgingSubtype → DefPresupType
 - How many overt article forms? (0, 1, or 2)
 - What expresses weak-article definites? (bare nominal, overt article, etc.) -/
 inductive WeakArticleStrategy where
-  | bareNominal    -- No overt form; bare noun = weak definite (Akan, Mauritian Creole)
+  | bareNominal    -- No overt form; bare noun = weak definite (Mauritian Creole).
+                   -- Akan also uses this strategy, though Akan bare NPs have
+                   -- context-dependent readings: definite for globally unique
+                   -- referents (*ewia* 'sun'), indefinite/∃ otherwise.
+                   -- See @cite{owusu-2022}, @cite{philipp-2022}.
   | overtArticle   -- Distinct overt weak article (German contracted, Fering A-form)
   | sameAsStrong   -- Single form for both (Haitian Creole `la`)
   deriving DecidableEq, Repr

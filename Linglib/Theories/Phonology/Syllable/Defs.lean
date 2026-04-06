@@ -119,24 +119,35 @@ def SyllabifiedForm.allSegments (sf : SyllabifiedForm) : List Segment :=
 -- § 5: Syllable Weight
 -- ============================================================================
 
-/-- Syllable weight classes. -/
-inductive SyllWeight where
-  | light       -- CV (1 mora)
-  | heavy       -- CVC or CVV (2 morae)
-  | superheavy  -- CVVC, CVCC (3+ morae)
+/-- Syllable weight: the mora count of a syllable.
+
+    Instead of a lossy 3-value enum, `SyllWeight` wraps the actual mora
+    count. The conventional names `.light` (1μ), `.heavy` (2μ),
+    `.superheavy` (3μ) are abbreviations for the common values.
+
+    This design ensures the prosodic pipeline is lossless:
+    `MoraicSyllable → SyllWeight → PrWd` preserves exact mora counts,
+    so bridge theorems between moraic and segmental views are trivial. -/
+structure SyllWeight where
+  /-- The mora count: 1μ = light (CV), 2μ = heavy (CVV, CVC),
+      3μ = superheavy (CVVC, CVCC). -/
+  morae : Nat
   deriving DecidableEq, Repr
+
+namespace SyllWeight
+abbrev light : SyllWeight := ⟨1⟩
+abbrev heavy : SyllWeight := ⟨2⟩
+abbrev superheavy : SyllWeight := ⟨3⟩
+end SyllWeight
 
 /-- Mora count. `codaMoraic = true` means coda consonants contribute weight
     (the "Weight-by-Position" parameter of @cite{hayes-1989}). -/
 def Syllable.moraCount (σ : Syllable) (codaMoraic : Bool := true) : Nat :=
   σ.nucleus.length + if codaMoraic then σ.coda.length else 0
 
-/-- Weight classification from mora count. -/
+/-- Weight from mora count. -/
 def Syllable.weight (σ : Syllable) (codaMoraic : Bool := true) : SyllWeight :=
-  match σ.moraCount codaMoraic with
-  | 0 | 1 => .light
-  | 2 => .heavy
-  | _ => .superheavy
+  ⟨σ.moraCount codaMoraic⟩
 
 -- ============================================================================
 -- § 6: OT Markedness Constraints

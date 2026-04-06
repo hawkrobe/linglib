@@ -29,20 +29,10 @@ trochees, final in iambs.
 
 namespace Theories.Phonology.Syllable
 
--- ============================================================================
--- § 1: Mora Count from Weight
--- ============================================================================
-
-/-- Mora count derived from syllable weight class.
-    Light = 1μ (CV), heavy = 2μ (CVV, CVC), superheavy = 3μ (CVVC, CVCC).
-    Assumes Weight-by-Position (@cite{hayes-1989}): coda consonants are moraic. -/
-def SyllWeight.morae : SyllWeight → Nat
-  | .light => 1
-  | .heavy => 2
-  | .superheavy => 3
+-- `SyllWeight.morae` is now a field accessor — no separate function needed.
 
 -- ============================================================================
--- § 2: Foot Type
+-- § 1: Foot Type
 -- ============================================================================
 
 /-- The three canonical foot types (@cite{hayes-1995}, Ch. 3). -/

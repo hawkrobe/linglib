@@ -375,9 +375,9 @@ def pwModel : Model where
 /-- The "has" relation: which containers have which parts. -/
 def has_sem : pwModel.interpTy (.e ⇒ .e ⇒ .t) :=
   λ part container => match container, part with
-    | .house, .bathroom => true
-    | .classroom, .stove => false
-    | _, _ => false
+    | .house, .bathroom => True
+    | .classroom, .stove => False
+    | _, _ => False
 
 /-- Positive sentence meaning: "A has B". -/
 def posMeaning (container part : PWEntity) : pwModel.interpTy .t :=
@@ -391,9 +391,9 @@ def negMeaning (container part : PWEntity) : pwModel.interpTy .t :=
 theorem neg_is_compositional (container part : PWEntity) :
     negMeaning container part = neg (posMeaning container part) := rfl
 
-theorem house_has_bathroom : posMeaning .house .bathroom = true := rfl
-theorem house_doesnt_have_bathroom : negMeaning .house .bathroom = false := rfl
-theorem classroom_doesnt_have_stove : negMeaning .classroom .stove = true := rfl
+theorem house_has_bathroom : posMeaning .house .bathroom := trivial
+theorem house_doesnt_have_bathroom : ¬ negMeaning .house .bathroom := fun h => h trivial
+theorem classroom_doesnt_have_stove : negMeaning .classroom .stove := id
 
 open Semantics.Entailment.Polarity
 open Core.Proposition

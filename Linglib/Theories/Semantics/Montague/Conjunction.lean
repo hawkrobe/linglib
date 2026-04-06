@@ -31,7 +31,7 @@ namespace Conjunction
 /-- Generalized conjunction (Definition 5). -/
 def genConj (τ : Ty) (m : Model) : m.interpTy τ → m.interpTy τ → m.interpTy τ :=
   match τ with
-  | .t => λ x y => x && y
+  | .t => λ x y => x ∧ y
   | .e => λ x _ => x
   | .s => λ x _ => x
   | .fn _ τ' => λ f g => λ x => genConj τ' m (f x) (g x)
@@ -39,31 +39,31 @@ def genConj (τ : Ty) (m : Model) : m.interpTy τ → m.interpTy τ → m.interp
 /-- Generalized disjunction. -/
 def genDisj (τ : Ty) (m : Model) : m.interpTy τ → m.interpTy τ → m.interpTy τ :=
   match τ with
-  | .t => λ x y => x || y
+  | .t => λ x y => x ∨ y
   | .e => λ x _ => x
   | .s => λ x _ => x
   | .fn _ τ' => λ f g => λ x => genDisj τ' m (f x) (g x)
 
-theorem genConj_at_t (m : Model) (p q : Bool) :
-    genConj .t m p q = (p && q) := rfl
+theorem genConj_at_t (m : Model) (p q : Prop) :
+    genConj .t m p q = (p ∧ q) := rfl
 
-theorem genConj_at_et (m : Model) (f g : m.Entity → Bool) :
-    genConj (.fn .e .t) m f g = λ x => f x && g x := rfl
+theorem genConj_at_et (m : Model) (f g : m.Entity → Prop) :
+    genConj (.fn .e .t) m f g = λ x => f x ∧ g x := rfl
 
-theorem genConj_at_eet (m : Model) (f g : m.Entity → m.Entity → Bool) :
-    genConj (.fn .e (.fn .e .t)) m f g = λ x y => f x y && g x y := rfl
+theorem genConj_at_eet (m : Model) (f g : m.Entity → m.Entity → Prop) :
+    genConj (.fn .e (.fn .e .t)) m f g = λ x y => f x y ∧ g x y := rfl
 
-theorem genConj_comm_t (m : Model) (p q : Bool) :
+theorem genConj_comm_t (m : Model) (p q : Prop) :
     genConj .t m p q = genConj .t m q p := by
-  simp [genConj, Bool.and_comm]
+  simp only [genConj]; exact propext And.comm
 
-theorem genConj_assoc_t (m : Model) (p q r : Bool) :
+theorem genConj_assoc_t (m : Model) (p q r : Prop) :
     genConj .t m (genConj .t m p q) r = genConj .t m p (genConj .t m q r) := by
-  simp [genConj, Bool.and_assoc]
+  simp only [genConj]; exact propext and_assoc
 
-theorem genDisj_comm_t (m : Model) (p q : Bool) :
+theorem genDisj_comm_t (m : Model) (p q : Prop) :
     genDisj .t m p q = genDisj .t m q p := by
-  simp [genDisj, Bool.or_comm]
+  simp only [genDisj]; exact propext Or.comm
 
 /-!
 ## @cite{partee-rooth-1983} Key Facts
@@ -112,7 +112,7 @@ theorem typeRaise_preserves {m : Model} (e : m.interpTy .e) (p : m.interpTy (.e 
 
 theorem coordEntities_both_satisfy {m : Model} (e1 e2 : m.interpTy .e)
     (p : m.interpTy (.e ⇒ .t)) :
-    coordEntities e1 e2 p = (p e1 && p e2) := rfl
+    coordEntities e1 e2 p = (p e1 ∧ p e2) := rfl
 
 end TypeRaising
 
@@ -125,18 +125,23 @@ end TypeRaising
 
 DP conjunction decomposes into three operations:
 - ☉ (`msShift`): individual → singleton set (= Partee's `ident`)
-- MU (`inclFunc`): singleton set → GQ via subset inclusion (INCL)
+- MU (`typeRaise`): singleton set → GQ via subset inclusion (INCL)
 - J (`genConj`): generalized conjunction on GQs
 
-The composition MU ∘ ☉ = `typeRaise`. The full derivation
-"DP₁ and DP₂ VP" via ☉ + MU + J recovers `coordEntities`.
+MU IS `typeRaise` — M&S's INCL applied to ☉-shifted singletons
+reduces to direct predicate application, which is type-raising.
+This identity is structural (an `abbrev`), not a theorem.
+
+The full derivation "DP₁ and DP₂ VP" via ☉ + MU + J recovers
+`coordEntities`, which is itself defined as `genConj(typeRaise e₁, typeRaise e₂)`.
 
 ### Connection to @cite{link-1983} Distributivity
 
 `coordEntities e1 e2 P = P(e1) ∧ P(e2)` is the two-atom instance of
 Link's distributive inference: for distributive P, `*P(e1 ⊕ e2)` holds
-iff P holds of every atom-part. Each MU application checks one atom;
-J conjoins the checks. See `Semantics.Lexical.Plural.Link1983.distr_atom_part`.
+iff P holds of every atom-part. Each MU/typeRaise application checks
+one atom; J conjoins the checks. The formal unification is
+`mu_is_distributive_check` in BillEtAl2025.lean.
 -/
 
 section MSDecomposition
@@ -145,27 +150,25 @@ section MSDecomposition
     ☉(x) = λy.[y = x] = the characteristic function of {x}.
     Identical to @cite{partee-1987}'s `ident` in TypeShifting.lean. -/
 def msShift {m : Model} (x : m.interpTy .e) : m.interpTy (.e ⇒ .t) :=
-  λ y => @decide (x = y) (m.decEq x y)
+  λ y => x = y
 
-/-- MU particle semantics: INCL (subset inclusion).
-    For a singleton set from ☉(x), INCL({x})(P) = P(x).
+/-- MU particle semantics = typeRaise.
 
-    The general definition would be INCL(S)(P) = ∀y. S(y) → P(y),
-    but M&S only apply MU to ☉-shifted individuals (singletons),
-    where subset inclusion reduces to direct predicate application.
-    We define `inclFunc` at this reduced type. -/
-def inclFunc {m : Model} (x : m.interpTy .e) : m.interpTy ((.e ⇒ .t) ⇒ .t) :=
-  λ P => P x
+    M&S's INCL operator, in general, computes subset inclusion:
+    INCL(S)(P) = ∀y. S(y) → P(y). But M&S only apply MU to
+    ☉-shifted individuals (singletons), where INCL({x})(P) = P(x)
+    = typeRaise. So MU IS typeRaise — no separate definition needed.
 
-/-- MU ∘ ☉ = typeRaise: the M&S roundtrip through singleton
-    formation and subset checking is just type-raising. -/
-theorem ms_inclFunc_eq_typeRaise {m : Model} (x : m.interpTy .e) :
-    inclFunc x = typeRaise x := rfl
+    This `abbrev` preserves the M&S name for documentation while
+    making the identity structural rather than a bridge theorem. -/
+abbrev inclFunc {m : Model} (x : m.interpTy .e) : m.interpTy ((.e ⇒ .t) ⇒ .t) :=
+  typeRaise x
 
-/-- Full M&S derivation via named operations:
-    J(MU(☉(e₁)), MU(☉(e₂))) = coordEntities e₁ e₂ -/
+/-- Full M&S derivation: J(MU(e₁), MU(e₂)) = coordEntities e₁ e₂.
+    Since MU = typeRaise and coordEntities = genConj(typeRaise e₁, typeRaise e₂),
+    this is true by definition. -/
 theorem ms_full_derivation {m : Model} (e1 e2 : m.interpTy .e) :
-    genConj ((.e ⇒ .t) ⇒ .t) m (inclFunc e1) (inclFunc e2) =
+    genConj ((.e ⇒ .t) ⇒ .t) m (typeRaise e1) (typeRaise e2) =
     coordEntities e1 e2 := rfl
 
 end MSDecomposition
@@ -174,24 +177,23 @@ section Examples
 
 def tall_sem : toyModel.interpTy (.fn .e .t) :=
   λ x => match x with
-    | .john => true
-    | .mary => false
-    | _ => false
+    | .john => True
+    | _ => False
 
 def happy_sem : toyModel.interpTy (.fn .e .t) :=
   λ x => match x with
-    | .john => true
-    | .mary => true
-    | _ => false
+    | .john => True
+    | .mary => True
+    | _ => False
 
 def tall_and_happy : toyModel.interpTy (.fn .e .t) :=
   genConj (.fn .e .t) toyModel tall_sem happy_sem
 
-#guard tall_and_happy ToyEntity.john
-#guard !tall_and_happy ToyEntity.mary
+example : tall_and_happy ToyEntity.john := ⟨trivial, trivial⟩
+example : ¬tall_and_happy ToyEntity.mary := fun ⟨h, _⟩ => h
 
 theorem tall_and_happy_is_pointwise :
-    tall_and_happy = λ x => tall_sem x && happy_sem x := rfl
+    tall_and_happy = λ x => tall_sem x ∧ happy_sem x := rfl
 
 end Examples
 

@@ -49,54 +49,51 @@ section PredicateModification
 
 def predicateModification {m : Model}
     (p₁ p₂ : m.interpTy (.e ⇒ .t)) : m.interpTy (.e ⇒ .t) :=
-  λ x => p₁ x && p₂ x
+  λ x => p₁ x ∧ p₂ x
 
 infixl:70 " ⊓ₚ " => predicateModification
 
 theorem predicateModification_comm {m : Model} (p₁ p₂ : m.interpTy (.e ⇒ .t))
     : p₁ ⊓ₚ p₂ = p₂ ⊓ₚ p₁ := by
   funext x
-  simp only [predicateModification, Bool.and_comm]
+  simp only [predicateModification, And.comm]
 
 theorem predicateModification_assoc {m : Model}
     (p₁ p₂ p₃ : m.interpTy (.e ⇒ .t))
     : (p₁ ⊓ₚ p₂) ⊓ₚ p₃ = p₁ ⊓ₚ (p₂ ⊓ₚ p₃) := by
   funext x
-  simp only [predicateModification, Bool.and_assoc]
+  exact propext and_assoc
 
 theorem predicateModification_idem {m : Model} (p : m.interpTy (.e ⇒ .t))
     : p ⊓ₚ p = p := by
   funext x
-  simp only [predicateModification, Bool.and_self]
+  exact propext ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, h⟩⟩
 
 theorem predicateModification_true_right {m : Model} (p : m.interpTy (.e ⇒ .t))
-    : p ⊓ₚ (λ _ => true) = p := by
+    : p ⊓ₚ (λ _ => True) = p := by
   funext x
-  simp only [predicateModification, Bool.and_true]
+  exact propext ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, trivial⟩⟩
 
 theorem predicateModification_true_left {m : Model} (p : m.interpTy (.e ⇒ .t))
-    : (λ _ => true) ⊓ₚ p = p := by
+    : (λ _ => True) ⊓ₚ p = p := by
   funext x
-  simp only [predicateModification, Bool.true_and]
+  exact propext ⟨fun ⟨_, h⟩ => h, fun h => ⟨trivial, h⟩⟩
 
 theorem predicateModification_false_right {m : Model} (p : m.interpTy (.e ⇒ .t))
-    : p ⊓ₚ (λ _ => false) = (λ _ => false) := by
+    : p ⊓ₚ (λ _ => False) = (λ _ => False) := by
   funext x
-  simp only [predicateModification, Bool.and_false]
+  exact propext ⟨fun ⟨_, h⟩ => h, fun h => h.elim⟩
 
 theorem predicateModification_false_left {m : Model} (p : m.interpTy (.e ⇒ .t))
-    : (λ _ => false) ⊓ₚ p = (λ _ => false) := by
+    : (λ _ => False) ⊓ₚ p = (λ _ => False) := by
   funext x
-  simp only [predicateModification, Bool.false_and]
+  exact propext ⟨fun ⟨h, _⟩ => h, fun h => h.elim⟩
 
 theorem predicateModification_extension {m : Model}
     (p₁ p₂ : m.interpTy (.e ⇒ .t))
     : predicateToSet (p₁ ⊓ₚ p₂) = predicateToSet p₁ ∩ predicateToSet p₂ := by
   ext x
   simp only [predicateToSet, predicateModification, Set.mem_setOf_eq, Set.mem_inter_iff]
-  constructor
-  · intro h; exact ⟨Bool.and_elim_left h, Bool.and_elim_right h⟩
-  · intro ⟨h1, h2⟩; exact Bool.and_intro h1 h2
 
 theorem predicateModification_subset_left {m : Model}
     (p q r : m.interpTy (.e ⇒ .t))
@@ -112,40 +109,28 @@ theorem predicateModification_subset_right {m : Model}
   simp only [predicateModification_extension]
   exact Set.inter_subset_inter_right _ h
 
-/-- `(P ⊓ₚ Q)(x) = true ↔ P(x) = true ∧ Q(x) = true` -/
+/-- `(P ⊓ₚ Q)(x) ↔ P(x) ∧ Q(x)` -/
 theorem intersective_equivalence {m : Model}
     (p q : m.interpTy (.e ⇒ .t)) (x : m.Entity)
-    : (p ⊓ₚ q) x = true ↔ p x = true ∧ q x = true := by
-  simp only [predicateModification]
-  constructor
-  · intro h; exact ⟨Bool.and_elim_left h, Bool.and_elim_right h⟩
-  · intro ⟨h1, h2⟩; exact Bool.and_intro h1 h2
+    : (p ⊓ₚ q) x ↔ p x ∧ q x := by
+  exact Iff.rfl
 
 theorem intersective_equivalence_set {m : Model}
     (p q : m.interpTy (.e ⇒ .t)) (x : m.Entity)
     : x ∈ predicateToSet (p ⊓ₚ q) ↔ x ∈ predicateToSet p ∧ x ∈ predicateToSet q := by
   simp only [predicateToSet, Set.mem_setOf_eq, predicateModification]
-  constructor
-  · intro h; exact ⟨Bool.and_elim_left h, Bool.and_elim_right h⟩
-  · intro ⟨h1, h2⟩; exact Bool.and_intro h1 h2
 
 theorem pm_entails_left {m : Model}
     (p q : m.interpTy (.e ⇒ .t)) (x : m.Entity)
-    (h : (p ⊓ₚ q) x = true) : p x = true := by
-  simp only [predicateModification] at h
-  exact Bool.and_elim_left h
+    (h : (p ⊓ₚ q) x) : p x := h.1
 
 theorem pm_entails_right {m : Model}
     (p q : m.interpTy (.e ⇒ .t)) (x : m.Entity)
-    (h : (p ⊓ₚ q) x = true) : q x = true := by
-  simp only [predicateModification] at h
-  exact Bool.and_elim_right h
+    (h : (p ⊓ₚ q) x) : q x := h.2
 
 theorem pm_intro {m : Model}
     (p q : m.interpTy (.e ⇒ .t)) (x : m.Entity)
-    (hp : p x = true) (hq : q x = true) : (p ⊓ₚ q) x = true := by
-  simp only [predicateModification]
-  exact Bool.and_intro hp hq
+    (hp : p x) (hq : q x) : (p ⊓ₚ q) x := ⟨hp, hq⟩
 
 end PredicateModification
 
@@ -155,19 +140,19 @@ open ToyEntity ToyLexicon
 
 def gray_sem : toyModel.interpTy (.e ⇒ .t) :=
   λ x => match x with
-    | .john => true
-    | .mary => true
-    | _ => false
+    | .john => True
+    | .mary => True
+    | _ => False
 
 def cat_sem : toyModel.interpTy (.e ⇒ .t) :=
   λ x => match x with
-    | .pizza => true
-    | _ => false
+    | .pizza => True
+    | _ => False
 
 def big_sem : toyModel.interpTy (.e ⇒ .t) :=
   λ x => match x with
-    | .book => true
-    | _ => false
+    | .book => True
+    | _ => False
 
 def grayCat_sem : toyModel.interpTy (.e ⇒ .t) :=
   gray_sem ⊓ₚ cat_sem
@@ -177,9 +162,9 @@ example : predicateToSet grayCat_sem = predicateToSet gray_sem ∩ predicateToSe
 
 theorem grayCat_empty : predicateToSet grayCat_sem = ∅ := by
   ext x
-  simp only [predicateToSet, grayCat_sem, predicateModification,
-             Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
-  cases x <;> simp [gray_sem, cat_sem]
+  show grayCat_sem x ↔ x ∈ (∅ : Set _)
+  simp only [Set.mem_empty_iff_false, iff_false]
+  cases x <;> simp [grayCat_sem, predicateModification, gray_sem, cat_sem]
 
 def bigGrayCat_sem : toyModel.interpTy (.e ⇒ .t) :=
   big_sem ⊓ₚ (gray_sem ⊓ₚ cat_sem)

@@ -86,7 +86,7 @@ def sleeps_sem' : toyModel.interpTy (catToTy IV) := ToyLexicon.sleeps_sem
 def john_sleeps_sem : toyModel.interpTy (catToTy S) :=
   sleeps_sem' john_sem'
 
-#guard john_sleeps_sem
+example : john_sleeps_sem := trivial
 
 -- Example: "John sees Mary"
 
@@ -111,14 +111,14 @@ def sees_mary_sem : toyModel.interpTy (catToTy IV) :=
 def john_sees_mary_sem : toyModel.interpTy (catToTy S) :=
   sees_mary_sem john_sem'  -- function application
 
-#guard john_sees_mary_sem
+example : john_sees_mary_sem := trivial
 
 -- Example: "Mary sees John"
 
 def mary_sees_john_sem : toyModel.interpTy (catToTy S) :=
   (sees_sem' john_sem') mary_sem'
 
-#guard mary_sees_john_sem
+example : mary_sees_john_sem := trivial
 
 -- Example: "John eats pizza"
 
@@ -128,18 +128,18 @@ def pizza_sem' : toyModel.interpTy (catToTy NP) := ToyEntity.pizza
 def john_eats_pizza_sem : toyModel.interpTy (catToTy S) :=
   (eats_sem' pizza_sem') john_sem'
 
-#guard john_eats_pizza_sem
+example : john_eats_pizza_sem := trivial
 
 -- Truth Conditions from CCG Derivations
 
-/-- A sentence is true if its meaning is true -/
+/-- A sentence is true if its meaning holds -/
 def sentenceTrue (meaning : toyModel.interpTy .t) : Prop :=
-  meaning = true
+  meaning
 
 -- Prove truth conditions
-example : sentenceTrue john_sleeps_sem := rfl
-example : sentenceTrue john_sees_mary_sem := rfl
-example : sentenceTrue john_eats_pizza_sem := rfl
+example : sentenceTrue john_sleeps_sem := trivial
+example : sentenceTrue john_sees_mary_sem := trivial
+example : sentenceTrue john_eats_pizza_sem := trivial
 
 -- Derivation-Driven Semantic Composition
 
@@ -244,14 +244,14 @@ theorem john_sees_mary_typed_derivation :
     -- 5. John sees Mary : S has type t
     let result : toyModel.interpTy (catToTy S) := sees_mary_ty john_ty
     -- The result is the expected truth value
-    result = true := rfl
+    result := trivial
 
 /-- The derivation of "Mary sleeps" preserving types -/
 theorem mary_sleeps_typed_derivation :
     let sleeps_ty : toyModel.interpTy (catToTy IV) := ToyLexicon.sleeps_sem
     let mary_ty : toyModel.interpTy (catToTy NP) := ToyEntity.mary
     let result : toyModel.interpTy (catToTy S) := sleeps_ty mary_ty
-    result = false := rfl
+    ¬result := id
 
 -- THE HOMOMORPHISM PRINCIPLE
 
@@ -432,20 +432,18 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
 -- INTERPRETATION EXAMPLES
 
 /-- Helper to extract meaning from interpretation result -/
-def getMeaning (result : Option (Interp toyModel)) : Option Bool :=
+def getMeaning (result : Option (Interp toyModel)) : Option Prop :=
   match result with
   | some ⟨.atom .S, m⟩ => some m
   | _ => none
 
 /-- Interpretation of "John sleeps" produces correct truth value -/
 theorem john_sleeps_interp_correct :
-    getMeaning (john_sleeps.interp toySemLexicon) = some true := by
-  native_decide
+    getMeaning (john_sleeps.interp toySemLexicon) = some True := rfl
 
 /-- Interpretation of "John sees Mary" produces correct truth value -/
 theorem john_sees_mary_interp_correct :
-    getMeaning (john_sees_mary.interp toySemLexicon) = some true := by
-  native_decide
+    getMeaning (john_sees_mary.interp toySemLexicon) = some True := rfl
 
 -- TYPE-RAISING AND COMPOSITION TESTS
 
@@ -474,8 +472,7 @@ def john_sees_mary_via_tr : DerivStep :=
 
 /-- Type-raised derivation produces correct truth value -/
 theorem john_sees_mary_via_tr_correct :
-    getMeaning (john_sees_mary_via_tr.interp toySemLexicon) = some true := by
-  native_decide
+    getMeaning (john_sees_mary_via_tr.interp toySemLexicon) = some True := rfl
 
 -- FORWARD COMPOSITION TEST
 
@@ -546,7 +543,7 @@ For an S/NP derivation (like "John likes and Mary hates"),
 the meaning is a predicate on entities.
 -/
 def getPredicateMeaning (result : Option (Interp toyModel))
-    : Option (ToyEntity → Bool) :=
+    : Option (ToyEntity → Prop) :=
   match result with
   | some ⟨.rslash (.atom .S) (.atom .NP), m⟩ => some m
   | _ => none
@@ -554,7 +551,7 @@ def getPredicateMeaning (result : Option (Interp toyModel))
 /--
 Helper to extract predicate from coordination result.
 -/
-def coordMeaningAt (e : ToyEntity) : Option Bool :=
+def coordMeaningAt (e : ToyEntity) : Option Prop :=
   match john_likes_and_mary_hates.interp toySemLexicon with
   | some ⟨.rslash (.atom .S) (.atom .NP), m⟩ => some (m e)
   | _ => none
@@ -562,10 +559,10 @@ def coordMeaningAt (e : ToyEntity) : Option Bool :=
 /--
 Helper to compute pointwise conjunction of two predicate meanings.
 -/
-def pointwiseConjAt (e : ToyEntity) : Option Bool :=
+def pointwiseConjAt (e : ToyEntity) : Option Prop :=
   match john_likes.interp toySemLexicon, mary_hates.interp toySemLexicon with
   | some ⟨.rslash (.atom .S) (.atom .NP), m₁⟩, some ⟨.rslash (.atom .S) (.atom .NP), m₂⟩ =>
-      some (m₁ e && m₂ e)
+      some (m₁ e ∧ m₂ e)
   | _, _ => none
 
 /--
@@ -581,7 +578,7 @@ This is the semantic counterpart to the syntactic coordination rule.
 theorem coordination_is_pointwise_conjunction :
     ∀ e : ToyEntity, coordMeaningAt e = pointwiseConjAt e := by
   intro e
-  cases e <;> native_decide
+  cases e <;> rfl
 
 /--
 **THE TRUTH-CONDITIONAL CORRECTNESS THEOREM**
@@ -594,9 +591,8 @@ conjunction of the two predications.
 -/
 theorem coordination_truth_conditions_correct :
     getMeaning (john_likes_and_mary_hates_beans.interp toySemLexicon) =
-      some (ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.john &&
-            ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.mary) := by
-  native_decide
+      some (ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.john ∧
+            ToyLexicon.sees_sem ToyEntity.pizza ToyEntity.mary) := rfl
 
 -- WHY THIS THEOREM MATTERS
 

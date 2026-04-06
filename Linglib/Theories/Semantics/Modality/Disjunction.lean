@@ -27,6 +27,13 @@ Three innovations over Zimmermann:
 ## Bridge Theorems
 
 - `PrProp.orFlex` is the special case where domains = presuppositions
+- `PrProp.orFlex = PrProp.orBelnap`: three-way equivalence —
+  Geurts (modal conjunction) = Belnap (conditional assertion) = Yagi (flexible accommodation)
+- This identity generalizes beyond disjunction: `PrProp.belnapLift` shows
+  that flexible accommodation and Belnap conditional assertion are the same
+  construction for ANY binary connective (`andFlex = andBelnap`, etc.)
+- Exhaustivity + conflicting presuppositions → disjunction uninformative
+  (captures Schlenker's local context failure, @cite{yagi-2025} §2.4)
 - Free choice (◇(A∨B) → ◇A ∧ ◇B) follows from the structure
 - Exclusive 'or' follows from Disjointness, not scalar implicature
 
@@ -200,6 +207,37 @@ theorem fromPrProp_cell_eq_orFlex (p q : PrProp W) (w : W) :
     (fromPrProp p q).any (fun d => d.cell w) =
     (PrProp.orFlex p q).assertion w := by
   simp [fromPrProp, Disjunct.cell, PrProp.orFlex, List.any_cons, List.any_nil]
+
+/-- The three-way equivalence: Geurts (modal conjunction) =
+PrProp.orBelnap (conditional assertion, @cite{belnap-1970}).
+Transitivity via `fromPrProp_presup_eq_orFlex` + `orFlex_eq_orBelnap`. -/
+theorem fromPrProp_presup_eq_orBelnap (p q : PrProp W) (w : W) :
+    (fromPrProp p q).any (fun d => d.domain w) =
+    (PrProp.orBelnap p q).presup w := by
+  rw [fromPrProp_presup_eq_orFlex, ← PrProp.orFlex_eq_orBelnap]
+
+/-- The three-way equivalence (assertion side):
+Geurts cell = orBelnap assertion = orFlex assertion. -/
+theorem fromPrProp_cell_eq_orBelnap (p q : PrProp W) (w : W) :
+    (fromPrProp p q).any (fun d => d.cell w) =
+    (PrProp.orBelnap p q).assertion w := by
+  rw [fromPrProp_cell_eq_orFlex, ← PrProp.orFlex_eq_orBelnap]
+
+/-- **Exhaustivity forces uninformativity.** If Geurts's exhaustivity
+constraint holds for context C, the disjunction (orFlex/orBelnap) is
+already true throughout C — the disjunction is uninformative.
+
+This captures the essence of @cite{schlenker-2009}'s local context failure
+(@cite{yagi-2025} §2.4): the pragmatic condition on local contexts forces
+s₀ to contain only worlds where some disjunct is true, making the
+disjunction trivially satisfied. Geurts's exhaustivity constraint makes
+this explicit: it IS the constraint that contexts must be covered by
+disjunct cells. -/
+theorem exhaustivity_implies_uninformative (p q : PrProp W)
+    (C : BProp W) (h_exh : exhaustivity C (fromPrProp p q))
+    (w : W) (hw : C w = true) :
+    (PrProp.orFlex p q).assertion w = true := by
+  rw [← fromPrProp_cell_eq_orFlex]; exact h_exh w hw
 
 /-- When presuppositions conflict (p ∧ q = ⊥), the Geurts domains are
 automatically disjoint — the Disjointness constraint is satisfied for free. -/

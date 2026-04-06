@@ -280,14 +280,16 @@ noncomputable def PUpdate.disjFlex {W : Type*}
 
 -- ═══ Yagi's Core Observations (Dynamic) ═══
 
-/-- The standard presuppositional disjunction update is uninformative when
-    the presupposition is satisfied: if s[φ_p] is defined and s[φ_p] = s,
-    then the disjunction just returns s.
+/-- Presuppositional disjunction update is uninformative when both
+    presuppositions are already supported: if s ⊨ p and s ⊨ q and the
+    disjunction φ ∨ ψ is already true throughout s, the update returns
+    s unchanged.
 
-    @cite{yagi-2025} §2.3: "whenever the update is defined, the disjunction
-    is uninformative." Proved as: if the presupposition check passes
-    (s[p] = s and s[q] = s), and s already satisfies φ ∨ ψ (i.e. at every
-    world either φ or ψ holds), then the update returns s unchanged. -/
+    Note: this applies to **non-conflicting** presuppositions. When
+    p ∧ q = ⊥, the hypotheses hp and hq are jointly unsatisfiable
+    (unless s = ∅). For the conflicting case, see
+    `update_yields_undefined` in the Yagi2025 study, which shows the
+    update is undefined (∗) rather than uninformative. -/
 theorem presup_disj_uninformative_when_supported {W : Type*}
     (p φ q ψ : W → Bool) (s : State W)
     (hp : Update.prop p s = s) (hq : Update.prop q s = s)

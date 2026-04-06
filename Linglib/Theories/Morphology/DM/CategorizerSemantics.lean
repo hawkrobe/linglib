@@ -35,7 +35,7 @@ This means the DM categorizer head is simultaneously:
 2. A compositional semantic operator (determining the noun's semantic type)
 -/
 
-namespace Morphology.DM.CategorizerSemantics
+namespace Theories.Morphology.DM.CategorizerSemantics
 
 open Semantics.Lexical.Noun.Relational.Barker2011
 
@@ -236,4 +236,4 @@ theorem possessor_requires_relational (t : NSemanticType) :
     t.toBarker.canTakePossessor = true ↔ t = .relational := by
   cases t <;> simp [NSemanticType.toBarker, NominalInterpType.canTakePossessor]
 
-end Morphology.DM.CategorizerSemantics
+end Theories.Morphology.DM.CategorizerSemantics

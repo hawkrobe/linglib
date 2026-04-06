@@ -11,21 +11,36 @@ Doxastic attitudes use Hintikka-style accessibility relations:
 - R(x, w, w') means w' is compatible with what x believes/knows in w
 - ⟦x believes p⟧(w) = ∀w'. R(x,w,w') → p(w')
 
-## Veridicality
+## PrProp Decomposition
 
-- **Veridical** (know, realize): x V p ⊢ p
-- **Non-veridical** (believe, think): x V p ⊬ p
+`DoxasticPredicate.toPrProp` decomposes a doxastic predicate into a
+`PrProp` (partial proposition):
+- `presup` = veridicality check (for veridical verbs: p(w); otherwise: true)
+- `assertion` = universal modal (∀w'. R(x,w,w') → p(w'))
+
+This connects doxastic attitudes to the presupposition infrastructure
+in `Core.Presupposition`, enabling uniform treatment of factive
+presuppositions, projection, and the @cite{glass-2025} typology.
+
+## PresupClass
+
+`PresupClass` classifies doxastic verbs by their presuppositional profile:
+- `.factive` (know): presup = p → satisfies PLC
+- `.nonfactive` (believe): no presupposition → PLC does not apply
+- `.contrafactive` (hypothetical *contra*): presup = ¬p → violates PLC (UNATTESTED)
 
 ## Question Embedding
 
 Doxastic attitudes can embed questions via exhaustive interpretation:
-- ⟦x knows Q⟧ = ∀p ∈ Q. (p true → x knows p) ∧ (p false → x knows ¬p)
+- ⟦x knows Q⟧ = ∃p ∈ Q. p(w) ∧ x knows p
 
 -/
 
 import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Doxastic
@@ -73,123 +88,54 @@ inductive Veridicality where
   | nonVeridical   -- x V p ⊬ p (belief, opinion)
   deriving DecidableEq, Repr
 
--- Common Ground Requirements (@cite{glass-2025})
-
-/--
-Common Ground requirement polarity: does the verb place requirements on p or ¬p?
-
-@cite{glass-2025} distinguishes belief verbs by whether their projective content
-concerns p (positive) or ¬p (negative).
--/
-inductive CGPolarity where
-  | positive   -- requirement concerns p (e.g., know requires p)
-  | negative   -- requirement concerns ¬p (e.g., yǐwéi requires ◇¬p)
-  deriving DecidableEq, Repr
-
-/--
-Common Ground requirement strength: entailment (□) or compatibility (◇)?
-
-- `necessity`: CG must entail the condition (∀w ∈ c. φ(w))
-- `possibility`: CG must be compatible with the condition (∃w ∈ c. φ(w))
--/
-inductive CGStrength where
-  | necessity    -- □: all CG worlds satisfy condition
-  | possibility  -- ◇: some CG world satisfies condition
-  deriving DecidableEq, Repr
-
-/--
-Common Ground requirement for belief verbs.
-
-@cite{glass-2025} proposes a 2×2 typology based on polarity × strength:
-- Factive (know): positive × necessity → CG ⊨ p
-- Nonfactive (think): no requirement
-- Weak contrafactive (yǐwéi): negative × possibility → CG ◇ ¬p
-- Strong contrafactive (contra): negative × necessity → CG ⊨ ¬p (UNATTESTED)
-
-The key insight: weak contrafactives exist (Mandarin yǐwéi), but strong
-contrafactives requiring ¬p to be Common Ground are systematically absent.
--/
-structure CGRequirement where
-  polarity : CGPolarity
-  strength : CGStrength
-  deriving DecidableEq, Repr
-
-namespace CGRequirement
-
-/-- Factive requirement: CG entails p (know, realize) -/
-def factive : CGRequirement := ⟨.positive, .necessity⟩
-
-/-- Weak contrafactive: CG compatible with ¬p (Mandarin yǐwéi) -/
-def weakContrafactive : CGRequirement := ⟨.negative, .possibility⟩
-
-/-- Strong contrafactive: CG entails ¬p (hypothetical "contra" - UNATTESTED) -/
-def strongContrafactive : CGRequirement := ⟨.negative, .necessity⟩
-
-/-- Is this requirement satisfied given a context set and proposition? -/
-def satisfied {W : Type*} (req : CGRequirement) (contextSet : List W) (p : W → Bool) : Bool :=
-  match req.polarity, req.strength with
-  | .positive, .necessity => contextSet.all p           -- ∀w ∈ c. p(w)
-  | .positive, .possibility => contextSet.any p         -- ∃w ∈ c. p(w)
-  | .negative, .necessity => contextSet.all (!p ·)      -- ∀w ∈ c. ¬p(w)
-  | .negative, .possibility => contextSet.any (!p ·)    -- ∃w ∈ c. ¬p(w)
-
-end CGRequirement
-
 -- ============================================================================
--- Derivation: Veridicality → CG Requirement
+-- Presuppositional Classification (@cite{glass-2025})
 -- ============================================================================
 
 /-!
-## Deriving CG Requirements from Semantic Structure
+## Presuppositional Classification of Doxastic Verbs
 
-@cite{glass-2025} shows that for DOXASTIC verbs, the CG requirement is NOT a
-separate lexical property - it follows from VERIDICALITY:
+@cite{glass-2025} proposes a typology of belief verbs based on their
+presuppositional profile — what they require of the Common Ground:
 
-- **Veridical** (know): presupposes p → factive CG requirement
-- **Non-veridical** (believe): no presupposition → no CG requirement
+- **Factive** (know): presupposes p — CG must entail p
+- **Nonfactive** (think): no presupposition — no CG requirement
+- **Contrafactive** (hypothetical *contra*): would presuppose ¬p — UNATTESTED
+- **Weak contrafactive** (Mandarin yǐwéi): postsupposition ◇¬p — CG compatible with ¬p
 
-The key insight: `cgRequirement` should be DERIVED, not stipulated.
+The key insight: this classification is DERIVED from the `PrProp` produced by
+`DoxasticPredicate.toPrProp`, not stipulated as a separate type. The presup
+field of the PrProp determines the classification.
 
-### Postsuppositions (yǐwéi)
-
-yǐwéi is special: it has a POSTSUPPOSITION (output-context constraint),
-not a presupposition (input-context constraint). Its requirement ◇¬p
-applies AFTER the utterance updates the context.
-
-This is genuinely lexical (exceptional) and not derivable from veridicality.
+Postsuppositions (yǐwéi's ◇¬p) are output-context constraints, formalized
+separately in `Core.Postsupposition`.
 -/
 
 /--
-Derive CG requirement from veridicality for doxastic verbs.
+Classification of a doxastic verb's presuppositional profile.
 
-This captures the systematic relationship:
-- Veridical verbs presuppose their complement → factive requirement
-- Non-veridical verbs have no presupposition → no requirement
-
-Note: Postsuppositions (like yǐwéi's ◇¬p) are NOT captured here
-because they're about output context, not input presupposition.
+This emerges from the presup field of the `PrProp` produced by
+`DoxasticPredicate.toPrProp`. Not a primitive — a derived label.
 -/
-def deriveCGRequirement (v : Veridicality) : Option CGRequirement :=
-  match v with
-  | .veridical => some CGRequirement.factive       -- know → CG ⊨ p
-  | .nonVeridical => none                          -- believe → no requirement
+inductive PresupClass where
+  | factive         -- presup = p (know: CG must entail p)
+  | contrafactive   -- presup = ¬p (hypothetical *contra*: CG must entail ¬p — UNATTESTED)
+  | nonfactive      -- presup = true (believe/think: no CG requirement)
+  | other           -- none of the above
+  deriving DecidableEq, Repr
 
-/--
-**Theorem**: Factives have factive CG requirements.
+/-- Classify a doxastic verb by its veridicality. -/
+def classifyVeridicality : Veridicality → PresupClass
+  | .veridical => .factive
+  | .nonVeridical => .nonfactive
 
-This is a DERIVATION, not a stipulation. The factive presupposition
-follows from the verb being veridical.
--/
-theorem veridical_implies_factive :
-    deriveCGRequirement .veridical = some CGRequirement.factive := rfl
+/-- Veridical verbs are factive. -/
+theorem veridical_is_factive :
+    classifyVeridicality .veridical = .factive := rfl
 
-/--
-**Theorem**: Non-veridical verbs have no CG requirement.
-
-This is why believe/think don't presuppose anything about p.
--/
-theorem nonVeridical_implies_none :
-    deriveCGRequirement .nonVeridical = none := rfl
+/-- Non-veridical verbs are nonfactive. -/
+theorem nonVeridical_is_nonfactive :
+    classifyVeridicality .nonVeridical = .nonfactive := rfl
 
 -- ============================================================================
 -- Causal Models for Lexical Coherence (Roberts & Özyıldız 2025)
@@ -235,142 +181,64 @@ This asymmetry DERIVES the gap from independent causal-cognitive principles.
 -/
 
 -- ============================================================================
--- Causal Model Infrastructure (@cite{pearl-2000})
+-- Causal Model Infrastructure (via Core.StructuralEquationModel)
 -- ============================================================================
 
-/--
-A variable in a causal model. Variables can be exogenous (external) or
-endogenous (determined by structural equations).
+/-!
+The belief formation causal model uses `Core.StructuralEquationModel` —
+the same Pearl-style SCM framework used for resultatives, prerequisite
+semantics, and counterfactual conditionals. This avoids a parallel
+graph implementation and connects the PLC to the full causal infrastructure
+(interventions, counterfactuals, monotonicity proofs).
 -/
-structure CausalVar where
-  name : String
-  deriving DecidableEq, Repr, Hashable
 
-/--
-A causal edge represents direct causal influence: (parent, child) means
-the value of parent directly influences the value of child.
--/
-structure CausalEdge where
-  parent : CausalVar
-  child : CausalVar
-  deriving Repr, BEq
-
-/--
-A causal model M = (U, V, E) where:
-- exog: Exogenous variables (determined externally)
-- endog: Endogenous variables (determined by structural equations)
-- edges: Causal edges representing direct influence
-
-This is a simplified @cite{pearl-2000} causal model for our purposes.
--/
-structure CausalModel where
-  exog : List CausalVar
-  endog : List CausalVar
-  edges : List CausalEdge
-  deriving Repr
-
-namespace CausalModel
-
-/-- All variables in the model -/
-def allVars (M : CausalModel) : List CausalVar :=
-  M.exog ++ M.endog
-
-/-- Get parents of a variable (direct causes) -/
-def parents (M : CausalModel) (v : CausalVar) : List CausalVar :=
-  (M.edges.filter (·.child == v)).map (·.parent)
-
-/-- Get children of a variable (direct effects) -/
-def children (M : CausalModel) (v : CausalVar) : List CausalVar :=
-  (M.edges.filter (·.parent == v)).map (·.child)
-
-/--
-Check if there's a causal path from v₁ to v₂.
-
-A causal chain exists from v₁ to v₂ iff altering v₁ can alter v₂.
-This is the transitive closure of the edge relation.
--/
-def hasCausalChain (M : CausalModel) (v1 v2 : CausalVar) : Bool :=
-  -- BFS to find if v2 is reachable from v1
-  let rec search (frontier : List CausalVar) (visited : List CausalVar) (fuel : Nat) : Bool :=
-    match fuel with
-    | 0 => false  -- Timeout
-    | fuel + 1 =>
-      if frontier.isEmpty then false
-      else if frontier.any (· == v2) then true
-      else
-        let newVisited := visited ++ frontier
-        let newFrontier := frontier.flatMap (M.children ·) |>.filter (fun v => !newVisited.any (· == v))
-        search newFrontier newVisited fuel
-  search [v1] [] (M.allVars.length + 1)
-
-end CausalModel
+open Core.StructuralEquationModel
 
 -- ============================================================================
 -- Belief Formation Causal Model (Roberts & Özyıldız 2025)
 -- ============================================================================
 
 /-!
-Standard variables in belief formation causal models.
+Standard variables in belief formation, represented as
+`Core.StructuralEquationModel.Variable`.
 -/
 namespace BeliefVars
 
-/-- The proposition p being true/false -/
-def p : CausalVar := ⟨"p"⟩
-
-/-- The negation ¬p -/
-def not_p : CausalVar := ⟨"¬p"⟩
-
-/-- Indicators (evidence) for p: indic(p) -/
-def indic_p : CausalVar := ⟨"indic(p)"⟩
-
-/-- Indicators (evidence) for ¬p: indic(¬p) -/
-def indic_not_p : CausalVar := ⟨"indic(¬p)"⟩
-
-/-- Agent a acquires indicator for p: acq(a)(iₚ) -/
-def acq_a_ip : CausalVar := ⟨"acq(a)(iₚ)"⟩
-
-/-- Agent a acquires indicator for ¬p: acq(a)(i¬ₚ) -/
-def acq_a_inp : CausalVar := ⟨"acq(a)(i¬ₚ)"⟩
-
-/-- Agent believes p: B(a)(p) -/
-def B_a_p : CausalVar := ⟨"B(a)(p)"⟩
-
-/-- Agent believes ¬p: B(a)(¬p) -/
-def B_a_not_p : CausalVar := ⟨"B(a)(¬p)"⟩
+def p : Variable := ⟨"p"⟩
+def not_p : Variable := ⟨"¬p"⟩
+def indic_p : Variable := ⟨"indic(p)"⟩
+def indic_not_p : Variable := ⟨"indic(¬p)"⟩
+def acq_a_ip : Variable := ⟨"acq(a)(iₚ)"⟩
+def acq_a_inp : Variable := ⟨"acq(a)(i¬ₚ)"⟩
+def B_a_p : Variable := ⟨"B(a)(p)"⟩
+def B_a_not_p : Variable := ⟨"B(a)(¬p)"⟩
 
 end BeliefVars
 
 /--
-The standard causal model for knowledge/belief formation.
+The standard causal dynamics for knowledge/belief formation, expressed as
+structural equations in the `Core.StructuralEquationModel` framework.
 
-This captures the Roberts & Özyıldız insight that:
-1. Facts generate indicators (evidence)
-2. Agents acquire indicators through experience
-3. Acquisition of indicators leads to belief formation
+Each `CausalLaw.simple c e` says: if c is true, then e becomes true.
+The chain p → indic(p) → acq(a)(iₚ) → B(a)(p) is four simple laws;
+`normalDevelopment` propagates to fixpoint.
 
 Key structural equations:
 - indic(p) := p ∨ q (p is sufficient for its indicators; q = other sources)
 - acq(a)(iₚ) := indic(p) ∧ exp(a)(iₚ) (acquaintance requires indicator + experience)
 - B(a)(p) := acq(a)(iₚ) (belief results from acquaintance with evidence)
 -/
-def beliefFormationModel : CausalModel :=
-  { exog := [BeliefVars.p, BeliefVars.not_p]
-  , endog := [BeliefVars.indic_p, BeliefVars.indic_not_p,
-              BeliefVars.acq_a_ip, BeliefVars.acq_a_inp,
-              BeliefVars.B_a_p, BeliefVars.B_a_not_p]
-  , edges := [
-      -- p generates indicators for p
-      ⟨BeliefVars.p, BeliefVars.indic_p⟩,
-      -- ¬p generates indicators for ¬p, not for p
-      ⟨BeliefVars.not_p, BeliefVars.indic_not_p⟩,
-      -- Acquiring indicator for p leads to belief in p
-      ⟨BeliefVars.indic_p, BeliefVars.acq_a_ip⟩,
-      ⟨BeliefVars.acq_a_ip, BeliefVars.B_a_p⟩,
-      -- Acquiring indicator for ¬p leads to belief in ¬p
-      ⟨BeliefVars.indic_not_p, BeliefVars.acq_a_inp⟩,
-      ⟨BeliefVars.acq_a_inp, BeliefVars.B_a_not_p⟩
-    ]
-  }
+def beliefFormationDynamics : CausalDynamics :=
+  ⟨[ -- p generates indicators for p
+     CausalLaw.simple BeliefVars.p BeliefVars.indic_p,
+     -- ¬p generates indicators for ¬p, not for p
+     CausalLaw.simple BeliefVars.not_p BeliefVars.indic_not_p,
+     -- Acquiring indicator for p leads to belief in p
+     CausalLaw.simple BeliefVars.indic_p BeliefVars.acq_a_ip,
+     CausalLaw.simple BeliefVars.acq_a_ip BeliefVars.B_a_p,
+     -- Acquiring indicator for ¬p leads to belief in ¬p
+     CausalLaw.simple BeliefVars.indic_not_p BeliefVars.acq_a_inp,
+     CausalLaw.simple BeliefVars.acq_a_inp BeliefVars.B_a_not_p ]⟩
 
 -- ============================================================================
 -- The Predicate Lexicalization Constraint
@@ -380,12 +248,18 @@ def beliefFormationModel : CausalModel :=
 **Predicate Lexicalization Constraint (PLC)**
 
 A verbal predicate with at-issue content α can have presupposition π iff
-there exists a causal chain from π to α in the belief formation model.
+setting π to true and running `normalDevelopment` produces α.
+
+This uses `causallySufficient` from `Core.StructuralEquationModel`:
+the presupposition being true must be causally sufficient for the
+at-issue content in the belief formation model. This is stronger than
+mere graph reachability — it actually runs the structural equations.
 
 This is the central constraint from Roberts & Özyıldız (2025).
 -/
-def satisfiesPLC (presup atIssue : CausalVar) (M : CausalModel := beliefFormationModel) : Bool :=
-  M.hasCausalChain presup atIssue
+def satisfiesPLC (presup atIssue : Variable)
+    (dyn : CausalDynamics := beliefFormationDynamics) : Bool :=
+  causallySufficient dyn Situation.empty presup atIssue
 
 -- ============================================================================
 -- Deriving the Contrafactive Gap
@@ -447,12 +321,12 @@ Therefore any predicate trying to presuppose ¬p while asserting B(x)(p)
 is describing a causally incoherent eventuality.
 -/
 theorem contrafactive_gap_is_structural :
-    -- There exists a causal path from p to B(a)(p)
-    beliefFormationModel.hasCausalChain BeliefVars.p BeliefVars.B_a_p = true ∧
-    -- There is NO causal path from ¬p to B(a)(p)
-    beliefFormationModel.hasCausalChain BeliefVars.not_p BeliefVars.B_a_p = false ∧
-    -- But there IS a path from ¬p to B(a)(¬p)
-    beliefFormationModel.hasCausalChain BeliefVars.not_p BeliefVars.B_a_not_p = true := by
+    -- p is causally sufficient for B(a)(p)
+    causallySufficient beliefFormationDynamics .empty BeliefVars.p BeliefVars.B_a_p = true ∧
+    -- ¬p is NOT causally sufficient for B(a)(p)
+    causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_p = false ∧
+    -- But ¬p IS causally sufficient for B(a)(¬p)
+    causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_not_p = true := by
   native_decide
 
 -- ============================================================================
@@ -466,7 +340,8 @@ Weak contrafactives like Mandarin yǐwéi don't violate the PLC because
 their projective content is fundamentally different:
 
 1. **Not a presupposition**: @cite{glass-2025} argues yǐwéi's falsity inference
-   is a postsupposition (about output context) not presupposition (input)
+   is a postsupposition (about output context) not presupposition (input).
+   Postsuppositions are formalized in `Core.Postsupposition`.
 
 2. **Different requirement**: yǐwéi requires CG ◇ ¬p (CG compatible with ¬p),
    not CG ⊨ ¬p (CG entails ¬p)
@@ -480,16 +355,61 @@ at-issue content within the SAME eventuality. Postsuppositions about
 discourse context update are not subject to this constraint.
 -/
 
+-- ============================================================================
+-- PLC Validation via PresupClass
+-- ============================================================================
+
 /--
-Weak contrafactive is NOT a strong contrafactive - different structure.
-The requirement is ∃w ∈ CG. ¬p(w), not ∀w ∈ CG. ¬p(w).
+Map a `PresupClass` to the corresponding causal variables for PLC checking.
+
+- Factive: presup = p, at-issue = B(a)(p)
+- Contrafactive: presup = ¬p, at-issue = B(a)(p)
+
+For nonfactive (no presupposition) and other, the PLC doesn't apply.
 -/
-theorem weak_vs_strong_contrafactive :
-    CGRequirement.weakContrafactive ≠ CGRequirement.strongContrafactive := by
-  intro h
-  have : CGRequirement.weakContrafactive.strength = CGRequirement.strongContrafactive.strength := by
-    rw [h]
-  simp [CGRequirement.weakContrafactive, CGRequirement.strongContrafactive] at this
+def presupClassToCausalVars : PresupClass → Option (Variable × Variable)
+  | .factive => some (BeliefVars.p, BeliefVars.B_a_p)
+  | .contrafactive => some (BeliefVars.not_p, BeliefVars.B_a_p)
+  | .nonfactive => none
+  | .other => none
+
+/--
+Check if a `PresupClass` satisfies the Predicate Lexicalization Constraint.
+
+Returns `none` if the PLC doesn't apply (nonfactive, postsuppositions).
+Returns `some true` if it satisfies PLC, `some false` if it violates PLC.
+-/
+def presupClassSatisfiesPLC (pc : PresupClass) : Option Bool :=
+  match presupClassToCausalVars pc with
+  | none => none
+  | some (presup, atIssue) => some (satisfiesPLC presup atIssue)
+
+/--
+Is this presuppositional profile valid (attestable)?
+
+Valid means: either satisfies PLC (factives) or not subject to PLC
+(nonfactives, postsuppositions). Invalid = violates PLC (contrafactives).
+-/
+def presupClassIsValid (pc : PresupClass) : Bool :=
+  match presupClassSatisfiesPLC pc with
+  | none => true
+  | some b => b
+
+/-- Factive presuppositions are valid (satisfy PLC). -/
+theorem factive_presup_valid :
+    presupClassIsValid .factive = true := by
+  simp [presupClassIsValid, presupClassSatisfiesPLC, presupClassToCausalVars]
+  exact factive_satisfies_plc
+
+/-- Contrafactive presuppositions are invalid (violate PLC). -/
+theorem contrafactive_presup_invalid :
+    presupClassIsValid .contrafactive = false := by
+  simp [presupClassIsValid, presupClassSatisfiesPLC, presupClassToCausalVars]
+  exact strong_contrafactive_violates_plc
+
+/-- Nonfactive verbs are trivially valid (no presupposition to check). -/
+theorem nonfactive_presup_valid :
+    presupClassIsValid .nonfactive = true := rfl
 
 -- ============================================================================
 -- Additional Derived Properties
@@ -535,6 +455,48 @@ def DoxasticPredicate.holdsAt {W E : Type*}
     (V : DoxasticPredicate W E) (agent : E) (p : W → Bool)
     (w : W) (worlds : List W) : Bool :=
   veridicalityHolds V.veridicality p w && boxAt V.access agent w worlds p
+
+-- ============================================================================
+-- PrProp Construction: Doxastic Predicates as Partial Propositions
+-- ============================================================================
+
+open Core.Presupposition
+
+/--
+Convert a doxastic predicate application to a `PrProp`.
+
+The decomposition makes the presuppositional structure explicit:
+- `presup` = veridicality check (for veridical: p(w); for non-veridical: true)
+- `assertion` = universal modal (∀w'. R(x,w,w') → p(w'))
+
+`holdsAt` computes `presup(w) && assertion(w)` — the same as `PrProp.holds`.
+-/
+def DoxasticPredicate.toPrProp {W E : Type*}
+    (V : DoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (worlds : List W) : PrProp W :=
+  { presup := λ w => veridicalityHolds V.veridicality p w
+  , assertion := λ w => boxAt V.access agent w worlds p }
+
+/-- `toPrProp` decomposes `holdsAt`: the presup field is the veridicality
+    check and the assertion field is the modal. -/
+theorem DoxasticPredicate.toPrProp_presup {W E : Type*}
+    (V : DoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (w : W) (worlds : List W) :
+    (V.toPrProp agent p worlds).presup w =
+    veridicalityHolds V.veridicality p w := rfl
+
+theorem DoxasticPredicate.toPrProp_assertion {W E : Type*}
+    (V : DoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (w : W) (worlds : List W) :
+    (V.toPrProp agent p worlds).assertion w =
+    boxAt V.access agent w worlds p := rfl
+
+/-- PrProp for a hypothetical contrafactive verb: presupposes ¬p,
+    asserts agent believes p. UNATTESTED — see @cite{glass-2025}. -/
+def contrafactivePrProp {W E : Type*} (R : AccessRel W E) (agent : E)
+    (p : W → Bool) (worlds : List W) : PrProp W :=
+  { presup := λ w => !p w
+  , assertion := λ w => boxAt R agent w worlds p }
 
 /--
 Semantics for doxastic predicate taking a Hamblin question.

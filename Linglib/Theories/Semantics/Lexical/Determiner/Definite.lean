@@ -96,7 +96,12 @@ matching the restrictor.
 Assertion: the scope predicate holds of that entity.
 
 This corresponds to Schwarz's **strong article** (German full *von dem*,
-Fering D-form, Lakhota *k'uŋ*, Akan *nó*). -/
+Fering D-form, Lakhota *k'uŋ*).
+
+NOTE: Akan *nó* is sometimes cited as a strong article (@cite{schwarz-2013}),
+but this is disputed. @cite{bombi-2018} argues *nó* is weak (uniqueness-based),
+and @cite{owusu-2022} analyses it as a demonstrative (familiarity +
+non-uniqueness). See `Fragments/Akan/Determiners.lean` for details. -/
 def the_fam {E : Type} [DecidableEq E]
     (dc : DiscourseContext E)
     (restrictor : E → Bool) (scope : E → Bool) : PrProp Unit :=
@@ -143,10 +148,11 @@ of `the_uniq` is satisfied. The ι-operator is the presupposition-free
 core of the uniqueness-based definite. -/
 theorem the_uniq_presup_iff_iota {m : Model} (domain : List m.Entity)
     (restrictor : m.interpTy Ty.et) :
-    (match domain.filter restrictor with | [_] => true | _ => false) =
+    (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
+     | [_] => true | _ => false) =
     (iota domain restrictor).isSome := by
   simp only [iota]
-  cases h : domain.filter restrictor with
+  cases h : domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
   | nil => simp
   | cons hd tl =>
     cases tl with
@@ -164,14 +170,11 @@ When exactly one entity satisfies the restrictor, "the φ is ψ" and
 observation that the definite article is a universal quantifier
 restricted to singletons. -/
 theorem the_is_every_on_singletons (m : Model) [Fintype m.Entity]
-    (restrictor scope : m.Entity → Bool)
+    (restrictor scope : m.Entity → Prop)
     (e : m.Entity)
-    (h_restr : restrictor e = true)
-    (h_unique : ∀ x, restrictor x = true → x = e) :
-    every_sem m restrictor scope = scope e := by
-  simp only [every_sem]
-  dsimp only [Model.interpTy]
-  rw [Bool.eq_iff_iff, decide_eq_true_eq]
+    (h_restr : restrictor e)
+    (h_unique : ∀ x, restrictor x → x = e) :
+    every_sem m restrictor scope ↔ scope e := by
   constructor
   · intro h; exact h e h_restr
   · intro hse x hRx; rw [h_unique x hRx]; exact hse

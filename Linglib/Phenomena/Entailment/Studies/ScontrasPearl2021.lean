@@ -82,88 +82,64 @@ def extendedLexicon : SemLexicon toyModel := λ word cat =>
 
 -- CCG Predictions
 
-/-- Get truth value from CCG derivation -/
-def ccgTruth (d : DerivStep) : Option Bool :=
+/-- Get meaning (as Prop) from CCG derivation -/
+def ccgMeaning (d : DerivStep) : Option Prop :=
   getMeaning (d.interp extendedLexicon)
-
-#guard ccgTruth ccg_john_sleeps == some true
-#guard ccgTruth ccg_mary_sleeps == some false
-#guard ccgTruth ccg_john_sees_mary == some true
-#guard ccgTruth ccg_mary_sees_john == some true
 
 -- Pipeline Theorems: CCG Matches Empirical Truth Judgments
 
 /-- CCG correctly predicts "John sleeps" is true -/
 theorem ccg_predicts_john_sleeps :
-    ccgTruth ccg_john_sleeps = some johnSleepsTrue.judgedTrue := by
-  native_decide
+    ccgMeaning ccg_john_sleeps = some True := rfl
 
 /-- CCG correctly predicts "Mary sleeps" is false -/
 theorem ccg_predicts_mary_sleeps :
-    ccgTruth ccg_mary_sleeps = some marySleepsFalse.judgedTrue := by
-  native_decide
+    ccgMeaning ccg_mary_sleeps = some False := rfl
 
 /-- CCG correctly predicts "John laughs" is true -/
 theorem ccg_predicts_john_laughs :
-    ccgTruth ccg_john_laughs = some johnLaughsTrue.judgedTrue := by
-  native_decide
+    ccgMeaning ccg_john_laughs = some True := rfl
 
 /-- CCG correctly predicts "Mary laughs" is true -/
 theorem ccg_predicts_mary_laughs :
-    ccgTruth ccg_mary_laughs = some maryLaughsTrue.judgedTrue := by
-  native_decide
+    ccgMeaning ccg_mary_laughs = some True := rfl
 
 /-- CCG correctly predicts "John sees Mary" is true -/
 theorem ccg_predicts_john_sees_mary :
-    ccgTruth ccg_john_sees_mary = some johnSeesMaryTrue.judgedTrue := by
-  native_decide
+    ccgMeaning ccg_john_sees_mary = some True := rfl
 
 /-- CCG correctly predicts "Mary sees John" is true -/
 theorem ccg_predicts_mary_sees_john :
-    ccgTruth ccg_mary_sees_john = some marySeesJohnTrue.judgedTrue := by
-  native_decide
+    ccgMeaning ccg_mary_sees_john = some True := rfl
 
 -- Universal Coverage Theorem
 
-/-- A test case: derivation paired with expected judgment -/
+/-- A test case: derivation paired with expected Prop -/
 structure TestCase where
   deriv : DerivStep
-  expected : Bool
-
-/-- All intransitive verb test cases -/
-def intransitiveTestCases : List TestCase :=
-  [ ⟨ccg_john_sleeps, true⟩
-  , ⟨ccg_mary_sleeps, false⟩
-  , ⟨ccg_john_laughs, true⟩
-  , ⟨ccg_mary_laughs, true⟩
-  ]
-
-/-- All transitive verb test cases -/
-def transitiveTestCases : List TestCase :=
-  [ ⟨ccg_john_sees_mary, true⟩
-  , ⟨ccg_mary_sees_john, true⟩
-  ]
+  expected : Prop
 
 /-- Check if CCG predicts a test case correctly -/
-def ccgPredictsCorrectly (tc : TestCase) : Bool :=
-  ccgTruth tc.deriv == some tc.expected
+def ccgPredictsCorrectly (tc : TestCase) : Prop :=
+  ccgMeaning tc.deriv = some tc.expected
 
 /--
 **CCG correctly predicts ALL intransitive test cases.**
-
-This is the key theorem: compositional semantics via CCG
-produces exactly the empirically observed truth values.
 -/
 theorem ccg_predicts_all_intransitive :
-    intransitiveTestCases.all ccgPredictsCorrectly = true := by
-  native_decide
+    ccgMeaning ccg_john_sleeps = some True ∧
+    ccgMeaning ccg_mary_sleeps = some False ∧
+    ccgMeaning ccg_john_laughs = some True ∧
+    ccgMeaning ccg_mary_laughs = some True :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 /--
 **CCG correctly predicts ALL transitive test cases.**
 -/
 theorem ccg_predicts_all_transitive :
-    transitiveTestCases.all ccgPredictsCorrectly = true := by
-  native_decide
+    ccgMeaning ccg_john_sees_mary = some True ∧
+    ccgMeaning ccg_mary_sees_john = some True :=
+  ⟨rfl, rfl⟩
 
 /--
 **CCG correctly predicts ALL test cases.**
@@ -172,8 +148,13 @@ The syntax → semantics pipeline produces correct truth conditions
 for the entire test suite.
 -/
 theorem ccg_predicts_all_cases :
-    (intransitiveTestCases ++ transitiveTestCases).all ccgPredictsCorrectly = true := by
-  native_decide
+    ccgMeaning ccg_john_sleeps = some True ∧
+    ccgMeaning ccg_mary_sleeps = some False ∧
+    ccgMeaning ccg_john_laughs = some True ∧
+    ccgMeaning ccg_mary_laughs = some True ∧
+    ccgMeaning ccg_john_sees_mary = some True ∧
+    ccgMeaning ccg_mary_sees_john = some True :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- Summary: Complete Pipeline
 

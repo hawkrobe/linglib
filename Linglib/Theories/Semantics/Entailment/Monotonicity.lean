@@ -43,14 +43,29 @@ instance : Fintype entailmentModel.Entity where
   elems := ({World.w0, World.w1, World.w2, World.w3} : Finset World)
   complete := fun x => by cases x <;> (unfold entailmentModel; simp)
 
-/-- "Every A is B" — delegates to canonical `every_sem`. -/
-abbrev every (a b : World → Bool) : Bool := every_sem entailmentModel a b
+instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePred S] :
+    Decidable (every_sem entailmentModel R S) := by
+  unfold every_sem; exact inferInstance
 
-/-- "Some A is B" — delegates to canonical `some_sem`. -/
-abbrev some' (a b : World → Bool) : Bool := some_sem entailmentModel a b
+instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePred S] :
+    Decidable (some_sem entailmentModel R S) := by
+  unfold some_sem; exact inferInstance
 
-/-- "No A is B" — delegates to canonical `no_sem`. -/
-abbrev no (a b : World → Bool) : Bool := no_sem entailmentModel a b
+instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePred S] :
+    Decidable (no_sem entailmentModel R S) := by
+  unfold no_sem; exact inferInstance
+
+/-- "Every A is B" — delegates to canonical `every_sem`, lifting Bool predicates to Prop. -/
+abbrev every (a b : World → Bool) : Bool :=
+  decide (every_sem entailmentModel (fun x => a x = true) (fun x => b x = true))
+
+/-- "Some A is B" — delegates to canonical `some_sem`, lifting Bool predicates to Prop. -/
+abbrev some' (a b : World → Bool) : Bool :=
+  decide (some_sem entailmentModel (fun x => a x = true) (fun x => b x = true))
+
+/-- "No A is B" — delegates to canonical `no_sem`, lifting Bool predicates to Prop. -/
+abbrev no (a b : World → Bool) : Bool :=
+  decide (no_sem entailmentModel (fun x => a x = true) (fun x => b x = true))
 
 def fixedRestr : BProp World := p01
 

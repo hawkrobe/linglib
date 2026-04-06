@@ -218,7 +218,7 @@ indefinites compositionally. -/
 
 section LiftDecomposition
 
-open Semantics.Composition.TypeShifting (lift A)
+open Semantics.Composition.TypeShifting (lift A ident A_ident_eq_lift)
 open Semantics.Montague (Model Ty)
 
 variable {m : Model}
@@ -228,42 +228,15 @@ variable {m : Model}
     eq. (28): `(η x)^⫝̸ = λf. ⋃_{y ∈ {x}} f y = λf. f x = lift(x)`.
 
     In linglib's formulation using `A` (which takes an explicit domain):
-    `A(domain)(η(j))(P) = domain.any (λx. η(j)(x) && P(x))`.
+    `A(domain)(ident(j))(P) = (∃ x ∈ domain, j = x ∧ P x)`.
     When `j ∈ domain`, this reduces to `P(j) = lift(j)(P)`.
 
-    This theorem uses Bool-level equality rather than Prop because
-    `lift` and `A` produce `Bool`-valued GQs (matching linglib's Model). -/
+    This is exactly `A_ident_eq_lift` from TypeShifting.lean, re-exported
+    here in the set monad context. -/
 theorem lift_eq_A_eta (domain : List m.Entity) (j : m.interpTy .e)
-    (hj : j ∈ domain) (hnd : domain.Nodup) :
-    ∀ P : m.interpTy Ty.et, A domain (fun x => @decide (j = x) (m.decEq j x)) P = lift j P := by
-  intro P
-  simp only [A, lift]
-  induction domain with
-  | nil => contradiction
-  | cons hd tl ih =>
-    simp only [List.any_cons]
-    have hnd_tl := (List.nodup_cons.mp hnd).2
-    have hd_nmem := (List.nodup_cons.mp hnd).1
-    cases List.mem_cons.mp hj with
-    | inl heq =>
-      subst heq
-      have hdec : @decide (j = j) (m.decEq j j) = true := by
-        cases m.decEq j j with | isTrue _ => rfl | isFalse h => exact absurd rfl h
-      have : tl.any (fun x => @decide (j = x) (m.decEq j x) && P x) = false := by
-        rw [List.any_eq_false]
-        intro x hx
-        by_cases heq : j = x
-        · subst heq; exact absurd hx hd_nmem
-        · have : @decide (j = x) (m.decEq j x) = false := by
-            cases m.decEq j x with | isTrue h => exact absurd h heq | isFalse _ => rfl
-          simp [this]
-      rw [this, Bool.or_false, hdec, Bool.true_and]
-    | inr hmem =>
-      have hne : ¬ (j = hd) := fun heq => hd_nmem (heq ▸ hmem)
-      have hdec : @decide (j = hd) (m.decEq j hd) = false := by
-        cases m.decEq j hd with | isTrue h => exact absurd h hne | isFalse _ => rfl
-      simp only [hdec, Bool.false_and, Bool.false_or]
-      exact ih hmem hnd_tl
+    (hj : j ∈ domain) (_hnd : domain.Nodup) :
+    ∀ P : m.interpTy Ty.et, A domain (ident j) P = lift j P := by
+  intro P; exact congrFun (A_ident_eq_lift domain j hj) P
 
 end LiftDecomposition
 

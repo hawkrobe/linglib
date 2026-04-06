@@ -85,20 +85,20 @@ instance regionFM : Fintype regionModel.Entity where
     is false if there are no As." This ensures All entails Some.
     Grounded in `every_sem` and `some_sem` from `Quantifier.lean`. -/
 def syllAll (s : VennState) (X Y : Region → Bool) : Bool :=
-  every_sem regionModel (fun r => s r && X r) Y &&
-  some_sem regionModel (fun r => s r && X r) (fun _ => true)
+  decide (∀ r : Region, (s r = true ∧ X r = true) → Y r = true) &&
+  decide (∃ r : Region, s r = true ∧ X r = true)
 
 /-- "Some Xs are Ys": some populated X-region also has Y. -/
 def syllSome (s : VennState) (X Y : Region → Bool) : Bool :=
-  some_sem regionModel (fun r => s r && X r) Y
+  decide (∃ r : Region, (s r = true ∧ X r = true) ∧ Y r = true)
 
 /-- "Some Xs are not Ys": some populated X-region lacks Y. -/
 def syllSomeNot (s : VennState) (X Y : Region → Bool) : Bool :=
-  some_sem regionModel (fun r => s r && X r) (fun r => !Y r)
+  decide (∃ r : Region, (s r = true ∧ X r = true) ∧ ¬(Y r = true))
 
 /-- "No Xs are Ys": no populated X-region has Y. -/
 def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
-  no_sem regionModel (fun r => s r && X r) Y
+  decide (∀ r : Region, (s r = true ∧ X r = true) → ¬(Y r = true))
 
 -- ============================================================================
 -- §3. Premise and Conclusion Space
@@ -200,22 +200,15 @@ theorem barbara_valid (s : VennState)
     (h2 : syllAll s hasB hasC = true) :
     syllAll s hasA hasC = true := by
   unfold syllAll at *
-  simp only [Bool.and_eq_true] at *
+  simp only [Bool.and_eq_true, decide_eq_true_eq] at *
   obtain ⟨h1e, h1s⟩ := h1
   obtain ⟨h2e, _⟩ := h2
-  constructor
-  · -- every_sem: every populated A-region has C
-    simp only [every_sem, some_sem] at *
-    rw [decide_eq_true_eq] at *
-    intro r hr
-    have h1r := h1e r hr
-    -- h1r : hasB r = true, so s r && hasB r = true
-    have hrB : (s r && hasB r) = true := by
-      simp only [Bool.and_eq_true] at hr ⊢; exact ⟨hr.1, h1r⟩
-    have h2r := h2e r hrB
-    cases r <;> simp_all [hasA, hasB, hasC]
-  · -- some_sem: there exists a populated A-region (inherited from h1)
-    exact h1s
+  refine ⟨?_, h1s⟩
+  intro r hr
+  have h1r := h1e r hr
+  have hrB : s r = true ∧ hasB r = true := ⟨hr.1, h1r⟩
+  have h2r := h2e r hrB
+  cases r <;> simp_all [hasA, hasB, hasC]
 
 /-- Barbara also validates "Some A are C" (by subalternation: All → Some).
     Uses `barbara_valid` for the All A-C premise, then extracts the
@@ -227,15 +220,12 @@ theorem barbara_some_valid (s : VennState)
     syllSome s hasA hasC = true := by
   have hAllAC := barbara_valid s h1 h2
   unfold syllAll at hAllAC
-  simp only [Bool.and_eq_true] at hAllAC
+  simp only [Bool.and_eq_true, decide_eq_true_eq] at hAllAC
   obtain ⟨hEvery, hSome⟩ := hAllAC
-  -- hEvery : every populated A-region has C
-  -- hSome : there exists a populated A-region
   unfold syllSome
-  simp only [every_sem, some_sem] at *
-  rw [decide_eq_true_eq] at *
-  obtain ⟨r, hr, _⟩ := hSome
-  exact ⟨r, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
+  simp only [decide_eq_true_eq]
+  obtain ⟨r, hr⟩ := hSome
+  exact ⟨r, hr, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
 
 -- ============================================================================
 -- §5. Logical Invalidity
@@ -411,15 +401,12 @@ theorem all_entails_some_AC (s : VennState)
     concMeaning .someAC s = true := by
   simp only [concMeaning] at *
   unfold syllAll at h
-  simp only [Bool.and_eq_true] at h
+  simp only [Bool.and_eq_true, decide_eq_true_eq] at h
   obtain ⟨hEvery, hSome⟩ := h
-  -- hEvery : every populated A-region has C
-  -- hSome : there exists a populated A-region (existential import)
   unfold syllSome
-  simp only [every_sem, some_sem] at *
-  rw [decide_eq_true_eq] at *
-  obtain ⟨r, hr, _⟩ := hSome
-  exact ⟨r, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
+  simp only [decide_eq_true_eq]
+  obtain ⟨r, hr⟩ := hSome
+  exact ⟨r, hr, by have := hEvery r hr; cases r <;> simp_all [hasA, hasC]⟩
 
 /-- Strict informativity: "All A-C" is compatible with strictly fewer states.
     Witness: `state_A_AC` has regions .A and .AC populated. Region .A has

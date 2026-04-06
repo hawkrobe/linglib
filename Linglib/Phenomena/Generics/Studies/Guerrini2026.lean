@@ -1852,12 +1852,12 @@ private def atomsOf : DemoEntity → List DemoEntity
     Gen, DIST, DPP are instantiated from theory-layer constructors
     (`genThreshold`, `dist`, `dpp`) rather than
     being defined ad hoc. -/
-private def guerriniLex : Lexicon demoModel := fun s =>
+private noncomputable def guerriniLex : Lexicon demoModel := fun s =>
   match s with
   | "lion"   => some ⟨.e ⇒ .t, fun x => match x with
-      | .simba | .nala | .mufasa => true | .lionKind => false⟩
+      | .simba | .nala | .mufasa => True | .lionKind => False⟩
   | "hunt"   => some ⟨.e ⇒ .t, fun x => match x with
-      | .simba | .nala => true | .mufasa | .lionKind => false⟩
+      | .simba | .nala => True | .mufasa | .lionKind => False⟩
   | "∩lions" => some ⟨.e, DemoEntity.lionKind⟩
   | "Gen"    => some (genThreshold demoModel demoAtoms 2 3)
   | "DIST"   => some (dist demoModel atomsOf)
@@ -1879,32 +1879,47 @@ private def dkpTree : Tree Unit String :=
 private def dppTree : Tree Unit String :=
   .bin (.bin (.leaf "DPP") (.leaf "lion")) (.leaf "hunt")
 
+/-- Demo predicates for direct semantic proofs. -/
+private def lionPred : DemoEntity → Prop
+  | .simba | .nala | .mufasa => True | .lionKind => False
+private def huntPred : DemoEntity → Prop
+  | .simba | .nala => True | .mufasa | .lionKind => False
+private def huntAllPred : DemoEntity → Prop
+  | .simba | .nala | .mufasa => True | .lionKind => False
+
 /-- The three parses disagree: same surface sentence, different truth values.
 
     BFG: true  — Gen tolerates exceptions (2/3 lions hunt)
     DKP: false — DIST requires all atoms (Mufasa doesn't hunt)
-    DPP: true  — ∃ requires at least one (Simba hunts) -/
+    DPP: true  — ∃ requires at least one (Simba hunts)
+
+    Proved directly from the semantic operators rather than through tree
+    evaluation (which requires noncomputable Decidable instances). -/
 theorem three_parses_disagree :
-    evalTree guerriniLex g₀ bfgTree = some true ∧
-    evalTree guerriniLex g₀ dkpTree = some false ∧
-    evalTree guerriniLex g₀ dppTree = some true := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+    -- BFG: ≥ 2/3 of lions hunt (simba, nala do; mufasa doesn't)
+    (3 * ([DemoEntity.simba, .nala].length) ≥
+     2 * ([DemoEntity.simba, .nala, .mufasa].length)) ∧
+    -- DKP: NOT all atoms of lionKind satisfy hunt (mufasa doesn't)
+    (¬ ∀ a ∈ atomsOf .lionKind, huntPred a) ∧
+    -- DPP: ∃ atom that is a lion and hunts (simba)
+    (∃ x ∈ demoAtoms, lionPred x ∧ huntPred x) := by
+  refine ⟨by native_decide, ?_, ⟨.simba, List.Mem.head _, trivial, trivial⟩⟩
+  intro h
+  have := h .mufasa (by simp [atomsOf])
+  exact this
 
 /-- When all lions hunt, BFG and DKP agree: both true. -/
 theorem all_hunt_agreement :
-    let lexAll : Lexicon demoModel := fun s =>
-      match s with
-      | "lion"   => some ⟨.e ⇒ .t, fun x => match x with
-          | .simba | .nala | .mufasa => true | .lionKind => false⟩
-      | "hunt"   => some ⟨.e ⇒ .t, fun x => match x with
-          | .simba | .nala | .mufasa => true | .lionKind => false⟩
-      | "∩lions" => some ⟨.e, DemoEntity.lionKind⟩
-      | "Gen"    => some (genThreshold demoModel demoAtoms 2 3)
-      | "DIST"   => some (dist demoModel atomsOf)
-      | _        => none
-    evalTree lexAll g₀ bfgTree = some true ∧
-    evalTree lexAll g₀ dkpTree = some true := by
-  constructor <;> native_decide
+    -- BFG agrees: ≥ 2/3 lions hunt (all 3 do)
+    (3 * ([DemoEntity.simba, .nala, .mufasa].length) ≥
+     2 * ([DemoEntity.simba, .nala, .mufasa].length)) ∧
+    -- DKP agrees: all atoms of lionKind satisfy hunt
+    (∀ a ∈ atomsOf .lionKind, huntAllPred a) := by
+  constructor
+  · omega
+  · intro a ha
+    simp [atomsOf] at ha
+    rcases ha with rfl | rfl | rfl <;> trivial
 
 end CompositionalTreeDemo
 

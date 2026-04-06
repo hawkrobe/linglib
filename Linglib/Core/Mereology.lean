@@ -267,6 +267,15 @@ theorem IsSumHom.cum_preimage {α β : Type*}
 def Overlap {γ : Type*} [PartialOrder γ] (x y : γ) : Prop :=
   ∃ z, z ≤ x ∧ z ≤ y
 
+/-- Overlap is reflexive: every element overlaps itself (via x ≤ x). -/
+theorem Overlap.refl {γ : Type*} [PartialOrder γ] (x : γ) : Overlap x x :=
+  ⟨x, le_refl x, le_refl x⟩
+
+/-- Overlap is symmetric. -/
+theorem Overlap.symm {γ : Type*} [PartialOrder γ] {x y : γ}
+    (h : Overlap x y) : Overlap y x :=
+  let ⟨z, hzx, hzy⟩ := h; ⟨z, hzy, hzx⟩
+
 /-- Extensive measure function: additive over non-overlapping entities.
     @cite{krifka-1998} §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
     Examples: weight, volume, number (cardinality). -/

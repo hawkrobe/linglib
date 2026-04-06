@@ -52,7 +52,7 @@ structure Model where
 /-- Interpretation of types in a model. -/
 def Model.interpTy (m : Model) : Ty → Type
   | .e => m.Entity
-  | .t => Bool
+  | .t => Prop
   | .s => m.World
   | .fn σ τ => m.interpTy σ → m.interpTy τ
 
@@ -77,43 +77,42 @@ def mary_sem : toyModel.interpTy .e := ToyEntity.mary
 
 def sleeps_sem : toyModel.interpTy (.e ⇒ .t) :=
   λ x => match x with
-    | .john => true
-    | .mary => false
-    | _ => false
+    | .john => True
+    | _ => False
 
 def laughs_sem : toyModel.interpTy (.e ⇒ .t) :=
   λ x => match x with
-    | .john => true
-    | .mary => true
-    | _ => false
+    | .john => True
+    | .mary => True
+    | _ => False
 
 def sees_sem : toyModel.interpTy (.e ⇒ .e ⇒ .t) :=
   λ obj => λ subj => match subj, obj with
-    | .john, .mary => true
-    | .mary, .john => true
-    | _, _ => false
+    | .john, .mary => True
+    | .mary, .john => True
+    | _, _ => False
 
 def eats_sem : toyModel.interpTy (.e ⇒ .e ⇒ .t) :=
   λ obj => λ subj => match subj, obj with
-    | .john, .pizza => true
-    | .mary, .pizza => true
-    | _, _ => false
+    | .john, .pizza => True
+    | .mary, .pizza => True
+    | _, _ => False
 
 def reads_sem : toyModel.interpTy (.e ⇒ .e ⇒ .t) :=
   λ obj => λ subj => match subj, obj with
-    | .john, .book => true
-    | .mary, .book => true
-    | _, _ => false
+    | .john, .book => True
+    | .mary, .book => True
+    | _, _ => False
 
 def pizza_sem : toyModel.interpTy (.e ⇒ .t) :=
   λ x => match x with
-    | .pizza => true
-    | _ => false
+    | .pizza => True
+    | _ => False
 
 def book_sem : toyModel.interpTy (.e ⇒ .t) :=
   λ x => match x with
-    | .book => true
-    | _ => false
+    | .book => True
+    | _ => False
 
 end ToyLexicon
 
@@ -123,13 +122,13 @@ end ToyLexicon
 
 /-- Sentence negation. See `Core.Proposition.Decidable.pnot` for the
 world-indexed version with proven DE property. -/
-def neg {m : Model} (p : m.interpTy .t) : m.interpTy .t := !p
+def neg {m : Model} (p : m.interpTy .t) : m.interpTy .t := ¬p
 
-def conj {m : Model} (p q : m.interpTy .t) : m.interpTy .t := p && q
-def disj {m : Model} (p q : m.interpTy .t) : m.interpTy .t := p || q
+def conj {m : Model} (p q : m.interpTy .t) : m.interpTy .t := p ∧ q
+def disj {m : Model} (p q : m.interpTy .t) : m.interpTy .t := p ∨ q
 
 theorem double_negation {m : Model} (p : m.interpTy .t) : neg (neg p) = p := by
-  simp only [neg, Bool.not_not]
+  simp only [neg, not_not]
 
 -- ============================================================================
 -- Characteristic Functions
@@ -141,31 +140,31 @@ open ToyLexicon
 
 /-- Convert a predicate `e → t` to a `Set` (the extension). -/
 def predicateToSet {m : Model} (p : m.interpTy (.e ⇒ .t)) : Set m.Entity :=
-  { x | p x = true }
+  { x | p x }
 
-noncomputable def setToPredicate {m : Model} (s : Set m.Entity) [DecidablePred (· ∈ s)]
+def setToPredicate {m : Model} (s : Set m.Entity)
     : m.interpTy (.e ⇒ .t) :=
-  λ x => if x ∈ s then true else false
+  λ x => x ∈ s
 
-def inExtension {m : Model} (p : m.interpTy (.e ⇒ .t)) (x : m.Entity) : Bool := p x
+def inExtension {m : Model} (p : m.interpTy (.e ⇒ .t)) (x : m.Entity) : Prop := p x
 
 theorem sleeps_extension :
     predicateToSet sleeps_sem = {ToyEntity.john} := by
   ext x
-  change sleeps_sem x = true ↔ x = ToyEntity.john
+  show sleeps_sem x ↔ x = ToyEntity.john
   cases x <;> simp [sleeps_sem]
 
 theorem laughs_extension :
     predicateToSet laughs_sem = {ToyEntity.john, ToyEntity.mary} := by
   ext x
-  change laughs_sem x = true ↔ (x = ToyEntity.john ∨ x = ToyEntity.mary)
+  show laughs_sem x ↔ x = ToyEntity.john ∨ x = ToyEntity.mary
   cases x <;> simp [laughs_sem]
 
-theorem john_in_sleeps : inExtension sleeps_sem ToyEntity.john = true := rfl
-theorem mary_not_in_sleeps : inExtension sleeps_sem ToyEntity.mary = false := rfl
+theorem john_in_sleeps : inExtension sleeps_sem ToyEntity.john := trivial
+theorem mary_not_in_sleeps : ¬inExtension sleeps_sem ToyEntity.mary := id
 theorem john_mary_in_laughs :
-    inExtension laughs_sem ToyEntity.john = true ∧
-    inExtension laughs_sem ToyEntity.mary = true := ⟨rfl, rfl⟩
+    inExtension laughs_sem ToyEntity.john ∧
+    inExtension laughs_sem ToyEntity.mary := ⟨trivial, trivial⟩
 
 end CharacteristicFunctions
 
@@ -177,22 +176,22 @@ section Currying
 
 open ToyLexicon
 
-def uncurry {m : Model} (f : m.interpTy (.e ⇒ .e ⇒ .t)) : m.Entity × m.Entity → Bool :=
+def uncurry {m : Model} (f : m.interpTy (.e ⇒ .e ⇒ .t)) : m.Entity × m.Entity → Prop :=
   λ (x, y) => f y x
 
-def curry {m : Model} (r : m.Entity × m.Entity → Bool) : m.interpTy (.e ⇒ .e ⇒ .t) :=
+def curry {m : Model} (r : m.Entity × m.Entity → Prop) : m.interpTy (.e ⇒ .e ⇒ .t) :=
   λ y x => r (x, y)
 
 theorem curry_uncurry {m : Model} (f : m.interpTy (.e ⇒ .e ⇒ .t)) :
     curry (uncurry f) = f := rfl
 
-theorem uncurry_curry {m : Model} (r : m.Entity × m.Entity → Bool) :
+theorem uncurry_curry {m : Model} (r : m.Entity × m.Entity → Prop) :
     uncurry (curry r) = r := rfl
 
-def seesRelation : ToyEntity × ToyEntity → Bool
-  | (ToyEntity.john, ToyEntity.mary) => true
-  | (ToyEntity.mary, ToyEntity.john) => true
-  | _ => false
+def seesRelation : ToyEntity × ToyEntity → Prop
+  | (ToyEntity.john, ToyEntity.mary) => True
+  | (ToyEntity.mary, ToyEntity.john) => True
+  | _ => False
 
 theorem sees_uncurry_matches :
     ∀ p : ToyEntity × ToyEntity,

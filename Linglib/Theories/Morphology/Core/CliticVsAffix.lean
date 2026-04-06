@@ -25,7 +25,7 @@ scores affix-like on all six, despite the traditional clitic analysis.
 
 -/
 
-namespace Morphology.Diagnostics
+namespace Theories.Morphology.Diagnostics
 
 open Core.Morphology (MorphStatus SelectionDegree)
 
@@ -137,4 +137,4 @@ theorem classify_total (p : CliticAffixProfile) :
     · right; left; rfl
     · right; right; rfl
 
-end Morphology.Diagnostics
+end Theories.Morphology.Diagnostics

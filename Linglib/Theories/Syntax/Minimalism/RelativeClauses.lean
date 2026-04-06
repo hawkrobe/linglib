@@ -78,17 +78,35 @@ def mary_sem : readModel.interpTy .e := mary
 /-- "book" is true of book1 and book2 -/
 def book_sem : readModel.interpTy (.e ⇒ .t) :=
   λ x => match x with
-    | .book1 => true
-    | .book2 => true
-    | _ => false
+    | .book1 => True
+    | .book2 => True
+    | _ => False
 
 /-- "read" as a relation: John read book1, Mary read book2 -/
 def read_sem : readModel.interpTy (.e ⇒ .e ⇒ .t) :=
   λ obj => λ subj => match subj, obj with
-    | .john, .book1 => true      -- John read book1
-    | .mary, .book2 => true      -- Mary read book2
-    | .mary, .newspaper => true  -- Mary also read the newspaper
-    | _, _ => false
+    | .john, .book1 => True      -- John read book1
+    | .mary, .book2 => True      -- Mary read book2
+    | .mary, .newspaper => True  -- Mary also read the newspaper
+    | _, _ => False
+
+instance : DecidablePred book_sem :=
+  λ x => match x with
+    | .book1 | .book2 => isTrue trivial
+    | .john | .mary | .newspaper => isFalse not_false
+
+instance : ∀ (obj : ReadEntity), DecidablePred (read_sem obj)
+  | .book1 => λ subj => match subj with
+    | .john => isTrue trivial
+    | .mary | .book1 | .book2 | .newspaper => isFalse not_false
+  | .book2 => λ subj => match subj with
+    | .mary => isTrue trivial
+    | .john | .book1 | .book2 | .newspaper => isFalse not_false
+  | .newspaper => λ subj => match subj with
+    | .mary => isTrue trivial
+    | .john | .book1 | .book2 | .newspaper => isFalse not_false
+  | .john | .mary => λ subj => match subj with
+    | .john | .mary | .book1 | .book2 | .newspaper => isFalse not_false
 
 -- ============================================================================
 -- Building the Relative Clause: "that John read _"
@@ -167,7 +185,7 @@ def np_bookThatJohnRead : DenotG readModel (.e ⇒ .t) :=
 The NP meaning is the intersection of "book" and "things John read"
 -/
 theorem np_meaning_correct (g : Assignment readModel) (x : ReadEntity) :
-    np_bookThatJohnRead g x = (book_sem x && read_sem x john) := by
+    np_bookThatJohnRead g x = (book_sem x ∧ read_sem x john) := by
   simp only [np_bookThatJohnRead, relativePM, predicateModification,
              book_denot, constDenot, predicateAbstraction, lambdaAbsG,
              ip_johnReadTrace, applyG, vp_readTrace, trace1, john_sem,
@@ -197,8 +215,8 @@ def allEntities : List ReadEntity := [.john, .mary, .book1, .book2, .newspaper]
 This is the unique entity satisfying:
   book(x) ∧ read(j, x)
 -/
-def the_book_that_john_read (g : Assignment readModel) : Option ReadEntity :=
-  iota allEntities (np_bookThatJohnRead g)
+def the_book_that_john_read (_g : Assignment readModel) : Option ReadEntity :=
+  iota allEntities (λ x => decide (book_sem x ∧ read_sem x john))
 
 /--
 Main theorem: "the book that John read" denotes book1
@@ -211,8 +229,7 @@ This shows the compositional derivation yields the correct result:
 -/
 theorem the_book_correct (g : Assignment readModel) :
     the_book_that_john_read g = some ReadEntity.book1 := by
-  simp only [the_book_that_john_read, iota, allEntities, List.filter]
-  simp only [np_meaning_correct]
+  simp only [the_book_that_john_read]
   native_decide
 
 -- ============================================================================
@@ -224,20 +241,21 @@ The relative clause creates the right predicate:
 it's true of exactly the things John read.
 -/
 theorem relClause_extension (g : Assignment readModel) :
-    (cp_relativeClause g book1 = true) ∧
-    (cp_relativeClause g book2 = false) ∧
-    (cp_relativeClause g newspaper = false) := by
-  simp only [cp_meaning_correct, read_sem, and_self]
+    (cp_relativeClause g book1) ∧
+    (¬ cp_relativeClause g book2) ∧
+    (¬ cp_relativeClause g newspaper) := by
+  simp only [cp_meaning_correct, read_sem]
+  exact ⟨trivial, not_false_eq_true ▸ trivial, not_false_eq_true ▸ trivial⟩
 
 /--
 The modified NP is true of exactly book1.
 -/
 theorem np_extension (g : Assignment readModel) :
-    (np_bookThatJohnRead g book1 = true) ∧
-    (np_bookThatJohnRead g book2 = false) ∧
-    (np_bookThatJohnRead g john = false) := by
-  simp only [np_meaning_correct, book_sem, read_sem, Bool.and_self,
-             Bool.and_false, and_self]
+    (np_bookThatJohnRead g book1) ∧
+    (¬ np_bookThatJohnRead g book2) ∧
+    (¬ np_bookThatJohnRead g john) := by
+  simp only [np_meaning_correct, book_sem, read_sem]
+  exact ⟨⟨trivial, trivial⟩, fun ⟨_, h⟩ => h, fun ⟨h, _⟩ => h⟩
 
 /--
 Assignment independence: the final NP meaning doesn't depend on

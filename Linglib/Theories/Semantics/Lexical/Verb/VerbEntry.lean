@@ -180,6 +180,24 @@ def PresupTriggerType.isSoft : PresupTriggerType → Bool
   | .prerequisiteSoft => true
 
 /--
+Postsupposition type: output-context constraint distinct from presuppositions.
+
+@cite{glass-2025} argues that Mandarin yǐwéi has a postsupposition ◇¬p —
+after accepting "x yǐwéi p", the CG must be compatible with ¬p.
+This cannot be derived from veridicality alone.
+
+The concrete `Core.Postsupposition.Postsupposition W` is parameterized
+by the world type; this enum is the world-type-independent tag stored
+in `VerbCore`.
+-/
+inductive PostsupType where
+  /-- Output context must be compatible with ¬p: ◇¬p (@cite{glass-2025}). -/
+  | weakContrafactive
+  /-- Output context must entail ¬p: ⊨¬p (hypothetical, UNATTESTED). -/
+  | strongContrafactive
+  deriving DecidableEq, Repr
+
+/--
 Complement presupposition projection behavior (@cite{karttunen-1973}).
 
 Orthogonal to `PresupTriggerType` (whether the verb *triggers* presuppositions):
@@ -349,6 +367,9 @@ structure VerbCore where
   verbIncClass : Option VerbIncClass := none
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
+  /-- Output-context constraint (postsupposition), distinct from
+      presuppositions. @cite{glass-2025}: yǐwéi has ◇¬p postsupposition. -/
+  postsupType : Option PostsupType := none
   /-- How does the verb treat presuppositions of its complement?
       Orthogonal to `presupType`. @cite{karttunen-1973} -/
   projectionBehavior : Option ProjectionBehavior := none
@@ -475,6 +496,11 @@ def VerbCore.presupposesComplement (v : VerbCore) : Bool :=
 /-- Is this verb a presupposition trigger? -/
 def VerbCore.isPresupTrigger (v : VerbCore) : Bool :=
   v.presupType.isSome
+
+/-- Does this verb have a postsupposition (output-context constraint)?
+    DERIVED from `postsupType`. -/
+def VerbCore.hasPostsupposition (v : VerbCore) : Bool :=
+  v.postsupType.isSome
 
 /-- Presupposition trigger type DERIVED from event structure rather than
     stipulated. @cite{roberts-simons-2024} argue that presupposition status

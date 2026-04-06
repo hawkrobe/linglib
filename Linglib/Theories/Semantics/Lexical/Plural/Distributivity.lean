@@ -345,6 +345,21 @@ theorem distMaximal_singleton {Atom : Type*} {W : Type*}
   cases P a w <;> simp
 
 /--
+On pairs, `distMaximal` reduces to conjunction of individual checks.
+
+This is the two-atom instance of Link's distributive inference
+(`distr_atom_part` in Link1983.lean): for a distributive P, checking
+`*P` on a two-atom plurality {a, b} reduces to P(a) ∧ P(b).
+
+When `a = b`, `{a, b} = {a}` (Finset dedup) and the result
+degenerates to `P a w` (= `P a w && P a w` by `Bool.and_self`).
+-/
+theorem distMaximal_pair (P : Atom → W → Bool) (a b : Atom) (w : W) :
+    distMaximal P {a, b} w = (P a w && P b w) := by
+  simp only [distMaximal, Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq]
+  cases P a w <;> cases P b w <;> simp
+
+/--
 **Atom Vacuity Theorem (general).**
 
 On singletons, `distTolerant` reduces to the predicate itself for ANY

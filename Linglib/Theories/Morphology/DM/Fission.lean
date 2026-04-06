@@ -15,7 +15,7 @@ The key parameters of any Fission rule:
 
 -/
 
-namespace Minimalism.Morphology
+namespace Theories.Morphology.DM.Fission
 
 open Minimalism
 
@@ -78,4 +78,4 @@ def fissionSatisfiesPF {Person : Type} (rule : FissionRule Person)
   | some output => pf.isSatisfied [output.cl1Form]
   | none => false
 
-end Minimalism.Morphology
+end Theories.Morphology.DM.Fission

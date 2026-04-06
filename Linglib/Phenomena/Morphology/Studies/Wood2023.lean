@@ -57,7 +57,7 @@ with multiple context-dependent meanings:
 
 namespace Phenomena.Morphology.Studies.Wood2023
 
-open Morphology.DM.Allosemy
+open Theories.Morphology.DM.Allosemy
 open Fragments.Icelandic.Nominalizations
 open Fragments.Icelandic.Predicates
 

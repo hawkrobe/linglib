@@ -36,7 +36,10 @@ Four major theories of presupposition projection all fail to predict (2b):
 4. **Schlenker's local contexts** (§2.4, @cite{schlenker-2009}): the
    pragmatic condition on local contexts forces s₀ to contain only worlds
    where one disjunct's assertion-plus-presupposition holds, making the
-   disjunction uninformative.
+   disjunction uninformative. Formalized in
+   `Semantics.Modality.Disjunction.exhaustivity_implies_uninformative`:
+   Geurts's exhaustivity constraint IS Schlenker's pragmatic condition,
+   and exhaustivity directly entails orFlex uninformativity.
 
 ## Proposed reactions
 
@@ -59,8 +62,10 @@ and dynamic update semantics:
 - `Core.Logic.Truth3.join` (Strong Kleene): disjunction never false
 - `Core.Presupposition.PrProp.or` (classical): never defined
 - `Core.Presupposition.PrProp.orFilter` (filtering): wrong presupposition
-- `Core.Presupposition.PrProp.orFlex` (flexible): correct
+- `Core.Presupposition.PrProp.orKP` (K&P two-dimensional): presup entails assertion
+- `Core.Presupposition.PrProp.orFlex` (flexible): correct — equals `orBelnap`
 - `Semantics.Dynamic.UpdateSemantics` (dynamic): uninformative when defined
+- `Semantics.Modality.Disjunction` (Geurts): exhaustivity → uninformative
 -/
 
 namespace Phenomena.Presupposition.Studies.Yagi2025
@@ -151,8 +156,9 @@ theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
 -- ══════════════════════════════════════════════════════════
 -- § Failure 2: Two-dimensional semantics (Yagi §2.2)
 -- @cite{karttunen-peters-1979}
--- The symmetric K&P definition uses filtering: Π(φ ∨ ψ) =
--- (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ)), which is PrProp.orFilter.
+-- Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ))
+-- This is PrProp.orKP, NOT PrProp.orFilter (which encodes the
+-- Heim/Schlenker filtering rule with different polarity).
 -- ══════════════════════════════════════════════════════════
 
 /-- Classical disjunction requires both presuppositions: presup = p ∧ q. -/
@@ -165,7 +171,9 @@ theorem classical_never_defined : ∀ w, classicalDisj.presup w = false := by
   intro w; cases w <;> rfl
 
 /-- Filtering disjunction (Heim/Schlenker-style symmetric filtering).
-Corresponds to Definition 2 in Yagi: Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ)). -/
+Encodes (A(φ) → Π(ψ)) ∧ (A(ψ) → Π(φ)) ∧ (Π(φ) ∨ Π(ψ)), which is
+STRICTER than K&P Definition 2: orFilter demands presuppositions hold
+when assertions are TRUE; K&P demands them when assertions are FALSE. -/
 def filterDisj : PrProp W := PrProp.orFilter kingOpensParl presConductsCeremony
 
 /-- orFilter predicts presupposition failure at kingOpens, where the
@@ -178,25 +186,18 @@ theorem filter_wrong_at_kingOpens :
 theorem expected_satisfied_at_kingOpens :
     expectedPresup W.kingOpens = true := by rfl
 
-/-- K&P two-dimensional definition (Definition 2 in Yagi):
-    Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ))
-             = (ψ ∨ p) ∧ (φ ∨ q)
-
-Note: this differs from `orFilter`, which implements the Heim/Schlenker
-filtering rule (¬φ ∨ q) ∧ (¬ψ ∨ p) ∧ (p ∨ q). The two-dimensional
-definition uses A(φ) and A(ψ) (assertions), not ¬A(φ) and ¬A(ψ). -/
-def kpDisj : PrProp W where
-  presup := fun w => (presConductsCeremony.assertion w || hasKing w) &&
-                     (kingOpensParl.assertion w || hasPresident w)
-  assertion := fun w => kingOpensParl.assertion w || presConductsCeremony.assertion w
+/-- K&P two-dimensional disjunction applied to the Buganda scenario.
+Uses the general `PrProp.orKP` connective from Core. -/
+abbrev kpDisj : PrProp W := PrProp.orKP kingOpensParl presConductsCeremony
 
 /-- K&P's presupposition entails the assertion when presuppositions conflict:
-whenever Π = 1, A = 1. This is Yagi §2.2 (5)–(6): the defined cases (6a–6c)
-all make A true, and (6d) p ∧ φ ∧ q is impossible since p ∧ q = ⊥. -/
+whenever Π = 1, A = 1. Derived from the general
+`PrProp.orKP_presup_entails_when_conflicting` theorem using `presups_conflict`.
+@cite{yagi-2025} §2.2 (5)–(6). -/
 theorem kp_presup_entails_assertion : ∀ w,
-    kpDisj.presup w = true → kpDisj.assertion w = true := by
-  intro w; cases w <;> simp [kpDisj, kingOpensParl, presConductsCeremony,
-    hasKing, hasPresident]
+    kpDisj.presup w = true → kpDisj.assertion w = true :=
+  fun w h => PrProp.orKP_presup_entails_when_conflicting _ _ w
+    (fun ⟨hp, hq⟩ => presups_conflict w ⟨hp, hq⟩) h
 
 
 -- ══════════════════════════════════════════════════════════
@@ -244,19 +245,16 @@ theorem update_yields_undefined :
     hasKing_not_supported
   simp [h]
 
-/-- The update is also undefined on a king-only substate: after the left
-    disjunct filters to king-opens worlds, the negated context (king-doesn't
-    worlds) fails the second presupposition check (hasPresident = false at
-    all king-worlds).
-
-    @cite{yagi-2025} §2.3: the update is NEVER both defined and informative.
-    This is shown pointwise: at every world, either the presupposition
-    fails or both disjuncts are not simultaneously false. -/
-theorem update_never_false_pointwise : ∀ w : W,
-    -- At every world, the PrProp disjunction is never defined-and-false:
-    -- either the presupposition fails (undefined) or some disjunct is true
-    (PrProp.or kingOpensParl presConductsCeremony).eval w ≠ .false := by
-  intro w; cases w <;> native_decide
+open Semantics.Dynamic.UpdateSemantics in
+/-- Both presuppositions fail on bugandaState: neither p nor q is
+    universally supported, so the update can never pass both presupposition
+    checks. Combined with `update_yields_undefined`, this shows that the
+    standard dynamic definition has no defined-and-informative output for
+    conflicting presuppositions (@cite{yagi-2025} §2.3). -/
+theorem neither_presup_supported :
+    Update.prop hasKing bugandaState ≠ bugandaState ∧
+    Update.prop hasPresident bugandaState ≠ bugandaState :=
+  ⟨hasKing_not_supported, hasPresident_not_supported⟩
 
 
 -- ══════════════════════════════════════════════════════════
@@ -266,7 +264,9 @@ theorem update_never_false_pointwise : ∀ w : W,
 -- presupposition entirely.
 -- ══════════════════════════════════════════════════════════
 
-/-- Weak Kleene disjunction with meta-assertion on each disjunct. -/
+/-- Strong Kleene disjunction with meta-assertion on each disjunct.
+Since meta-assertion maps ∗ to 0, both disjuncts are bivalent, so
+Strong and Weak Kleene agree (@cite{yagi-2025} eq. (10), Definition 7). -/
 def metaAssertDisj : Prop3 W :=
   Prop3.or (Prop3.metaAssert kingOpensParl.eval) (Prop3.metaAssert presConductsCeremony.eval)
 
@@ -323,6 +323,18 @@ theorem flex_always_defined : ∀ w, flexDisj.eval w ≠ .indet := by
   intro w
   cases w <;> simp [flexDisj, PrProp.orFlex, PrProp.eval, kingOpensParl, presConductsCeremony,
     hasKing, hasPresident, Truth3.ofBool]
+
+/-- Flexible accommodation IS Belnap's conditional assertion disjunction.
+@cite{geurts-2005}'s flexible accommodation and @cite{belnap-1970}'s
+conditional assertion produce the same connective: each disjunct
+contributes its content only when its presupposition is met.
+Derived from the general `PrProp.orFlex_eq_orBelnap`. This is an
+instance of `PrProp.belnapLift`: for any binary connective `f` with
+identity element `id`, flexible accommodation = Belnap conditional
+assertion = `belnapLift f id`. -/
+theorem flex_is_belnap :
+    flexDisj = PrProp.orBelnap kingOpensParl presConductsCeremony :=
+  PrProp.orFlex_eq_orBelnap _ _
 
 
 -- ══════════════════════════════════════════════════════════
@@ -457,6 +469,12 @@ theorem classical_fails_2a : ∀ w, classicalDisj.presup w = false :=
 /-- orFilter: satisfies (2a)? No — wrong presupposition at some worlds. -/
 theorem filter_fails_2a : filterDisj.presup W.kingOpens = false := rfl
 
+/-- K&P (orKP): satisfies (2a)? Yes — correct presupposition when defined.
+Satisfies (2b)? No — presupposition entails assertion. -/
+theorem kp_fails_2b : ∀ w,
+    kpDisj.presup w = true → kpDisj.assertion w = true :=
+  kp_presup_entails_assertion
+
 /-- Meta-assertion: satisfies (2b)? Yes. Satisfies (2a)? No — no presupposition. -/
 theorem metaAssert_fails_2a : metaAssertDisj W.presidentDoesnt ≠ .indet := by
   native_decide
@@ -469,5 +487,11 @@ theorem orFlex_satisfies_both :
     flexDisj.eval W.kingDoesnt = .false :=
   ⟨flex_correct_presup, by simp [flexDisj, PrProp.orFlex, PrProp.eval,
     kingOpensParl, presConductsCeremony, hasKing, hasPresident, Truth3.ofBool]⟩
+
+/-- orFlex = orBelnap: flexible accommodation IS conditional assertion.
+Two independent traditions converge on the same connective. -/
+theorem orFlex_eq_orBelnap_summary :
+    PrProp.orFlex = @PrProp.orBelnap W :=
+  funext₂ PrProp.orFlex_eq_orBelnap
 
 end Phenomena.Presupposition.Studies.Yagi2025

@@ -133,9 +133,17 @@ def isBottle : bottleModel.Entity → Bool := λ _ => true
 -- §4. Truth Table: "Every bottle is empty" under each DDRP
 -- ============================================================================
 
+/-- Check if all entities in the restrictor satisfy the scope. -/
+private def boolForall (C R S : Entity → Bool) : Bool :=
+  [Entity.b1, .b2, .b3, .b4].all (fun e => !(C e && R e) || S e)
+
+/-- Check if some entity in the restrictor satisfies the scope. -/
+private def boolExists (C R S : Entity → Bool) : Bool :=
+  [Entity.b1, .b2, .b3, .b4].any (fun e => C e && R e && S e)
+
 /-- Truth of "every bottle is empty" under a given spatial domain restriction. -/
 def everyBottleEmpty (scale : SpatialScale) (w : World) : Bool :=
-  every_restricted bottleModel (sceneDDRP.region scale) isBottle (emptyIn w)
+  boolForall (sceneDDRP.region scale) isBottle (emptyIn w)
 
 -- w_near: only proximal bottles empty
 -- Only peripersonal restriction licenses the utterance.
@@ -161,7 +169,7 @@ theorem w_all_vista : everyBottleEmpty .vista .allEmpty = true := by native_deci
 
 /-- Truth of "some bottle is empty" under a given spatial domain restriction. -/
 def someBottleEmpty (scale : SpatialScale) (w : World) : Bool :=
-  some_restricted bottleModel (sceneDDRP.region scale) isBottle (emptyIn w)
+  boolExists (sceneDDRP.region scale) isBottle (emptyIn w)
 
 -- w_near: only proximal bottles empty
 -- All restrictions license "some bottle is empty" (there's always a witness).
@@ -219,36 +227,36 @@ theorem monotonicity_contrast :
 theorem nesting_action_to_peri (w : World) :
     everyBottleEmpty .action w = true →
     everyBottleEmpty .peripersonal w = true := by
-  exact DDRP.every_nesting sceneDDRP isBottle (emptyIn w) (show SpatialScale.peripersonal ≤ .action by decide)
+  cases w <;> simp [everyBottleEmpty, boolForall, sceneDDRP, near, mid, isBottle, emptyIn]
 
 theorem nesting_vista_to_action (w : World) :
     everyBottleEmpty .vista w = true →
     everyBottleEmpty .action w = true := by
-  exact DDRP.every_nesting sceneDDRP isBottle (emptyIn w) (show SpatialScale.action ≤ .vista by decide)
+  cases w <;> simp [everyBottleEmpty, boolForall, sceneDDRP, near, mid, isBottle, emptyIn]
 
 /-- Transitive nesting: vista → peripersonal (2-step composition). -/
 theorem nesting_vista_to_peri (w : World) :
     everyBottleEmpty .vista w = true →
     everyBottleEmpty .peripersonal w = true := by
-  exact DDRP.every_nesting sceneDDRP isBottle (emptyIn w) (show SpatialScale.peripersonal ≤ .vista by decide)
+  cases w <;> simp [everyBottleEmpty, boolForall, sceneDDRP, near, mid, isBottle, emptyIn]
 
 /-- ⟦some⟧ nesting (reversed): truth under any scale entails truth under any
     larger scale. The ↑MON dual of ⟦every⟧ nesting. -/
 theorem some_nesting_peri_to_action (w : World) :
     someBottleEmpty .peripersonal w = true →
     someBottleEmpty .action w = true := by
-  exact DDRP.some_nesting sceneDDRP isBottle (emptyIn w) (show SpatialScale.peripersonal ≤ .action by decide)
+  cases w <;> simp [someBottleEmpty, boolExists, sceneDDRP, near, mid, isBottle, emptyIn]
 
 theorem some_nesting_action_to_vista (w : World) :
     someBottleEmpty .action w = true →
     someBottleEmpty .vista w = true := by
-  exact DDRP.some_nesting sceneDDRP isBottle (emptyIn w) (show SpatialScale.action ≤ .vista by decide)
+  cases w <;> simp [someBottleEmpty, boolExists, sceneDDRP, near, mid, isBottle, emptyIn]
 
 /-- Transitive ⟦some⟧ nesting: peripersonal → vista (2-step composition). -/
 theorem some_nesting_peri_to_vista (w : World) :
     someBottleEmpty .peripersonal w = true →
     someBottleEmpty .vista w = true := by
-  exact DDRP.some_nesting sceneDDRP isBottle (emptyIn w) (show SpatialScale.peripersonal ≤ .vista by decide)
+  cases w <;> simp [someBottleEmpty, boolExists, sceneDDRP, near, mid, isBottle, emptyIn]
 
 -- ============================================================================
 -- §8. RSA Connection: DDRPs as Latent Interpretation Variables
@@ -395,8 +403,7 @@ theorem shared_scene_shared_ddrp (scene : SpatialScene Entity)
 theorem perception_generates_rsa_ddrp :
     ∀ (s : SpatialScale) (w : World),
       everyBottleEmpty s w =
-        every_restricted bottleModel ((sceneToDDRP dinnerScene).region s)
-          isBottle (emptyIn w) := by
+        boolForall ((sceneToDDRP dinnerScene).region s) isBottle (emptyIn w) := by
   intro s w
   cases s <;> cases w <;> native_decide
 
@@ -433,10 +440,8 @@ theorem different_scenes_different_ddrps :
 /-- Without perceptual co-presence, domain-restricted quantifiers can
     receive different truth values. -/
 theorem perception_mismatch_changes_truth :
-    every_restricted bottleModel ((sceneToDDRP dinnerScene).region .action)
-      isBottle (emptyIn .nearEmpty) = false ∧
-    every_restricted bottleModel ((sceneToDDRP partitionScene).region .action)
-      isBottle (emptyIn .nearEmpty) = true := by
+    boolForall ((sceneToDDRP dinnerScene).region .action) isBottle (emptyIn .nearEmpty) = false ∧
+    boolForall ((sceneToDDRP partitionScene).region .action) isBottle (emptyIn .nearEmpty) = true := by
   constructor <;> native_decide
 
 end Phenomena.Quantification.Studies.RitchieSchiller2024

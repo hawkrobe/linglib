@@ -151,13 +151,17 @@ def restrictedExists {m : Model} [Fintype m.Entity]
     (elements.filter C).all B. -/
 theorem belnap_forall_content_eq_every {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
-    (restrictedForall C B).assertion () = every_sem m C B := rfl
+    ((restrictedForall C B).assertion () = true) ↔
+      every_sem m (fun x => C x = true) (fun x => B x = true) := by
+  simp only [restrictedForall, decide_eq_true_eq, every_sem]
 
 /-- **Content bridge (∃)**: what Belnap's ∃x(Cx/Bx) asserts (when
     assertive) is exactly what `some_sem` computes. -/
 theorem belnap_exists_content_eq_some {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
-    (restrictedExists C B).assertion () = some_sem m C B := rfl
+    ((restrictedExists C B).assertion () = true) ↔
+      some_sem m (fun x => C x = true) (fun x => B x = true) := by
+  simp only [restrictedExists, decide_eq_true_eq, some_sem]
 
 /-- **Assertiveness = existential presupposition**: Belnap's
     assertiveness condition for ∀x(Cx/Bx) is exactly the existential
@@ -303,7 +307,8 @@ theorem i_conversion_content {m : Model} [Fintype m.Entity]
     (restrictedExists C B).assertion () =
     (restrictedExists B C).assertion () := by
   simp only [restrictedExists]
-  exact some_symmetric C B
+  congr 1; exact propext (⟨fun ⟨x, hC, hB⟩ => ⟨x, hB, hC⟩,
+                            fun ⟨x, hB, hC⟩ => ⟨x, hC, hB⟩⟩)
 
 /-- **I-conversion is equitrue** (p. 8): "truth is preserved in
     passing from one to the other." If ∃x(Cx/Bx)'s assertion holds,

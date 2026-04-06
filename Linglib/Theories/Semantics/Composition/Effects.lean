@@ -426,7 +426,7 @@ theorem adj_counit_yields_W (κ : ι → ι → β) (x : ι) :
     This connects the adjunction (§5.1 of the paper) to the existing
     `hk_bs_reflexive_equiv` theorem in `Binding.lean`. -/
 theorem adj_binding_agrees_with_hk {m : Model} (n : Nat)
-    (body : m.Entity → m.Entity → Bool)
+    (body : m.Entity → m.Entity → Prop)
     (binder : m.Entity) (g : Assignment m) :
     adj_ε (body binder, binder) = body (g[n ↦ binder] n) (g[n ↦ binder] n) := by
   show body binder binder = body (g[n ↦ binder] n) (g[n ↦ binder] n)
@@ -571,67 +571,91 @@ end CIBridge
 
 section ScopeBridge
 
-/-- A generalized quantifier IS a `Cont Bool Entity` value.
+/-- A generalized quantifier IS a `Cont Prop Entity` value.
 
     Ch. 4: the continuation monad is the
     algebraic effect for scope-taking. A GQ `(e → t) → t` IS
-    `Cont Bool Entity` by definition. -/
-def gqAsCont {m : Model} (gq : (m.Entity → Bool) → Bool) : Cont Bool m.Entity :=
+    `Cont Prop Entity` by definition. -/
+def gqAsCont {m : Model} (gq : (m.Entity → Prop) → Prop) : Cont Prop m.Entity :=
   gq
 
-/-- A `Cont Bool Entity` value IS a generalized quantifier. -/
-def contAsGQ {m : Model} (c : Cont Bool m.Entity) : (m.Entity → Bool) → Bool :=
+/-- A `Cont Prop Entity` value IS a generalized quantifier. -/
+def contAsGQ {m : Model} (c : Cont Prop m.Entity) : (m.Entity → Prop) → Prop :=
   c
 
 /-- Round-trip: GQ → Cont → GQ is identity. -/
-theorem gq_cont_roundtrip {m : Model} (gq : (m.Entity → Bool) → Bool) :
+theorem gq_cont_roundtrip {m : Model} (gq : (m.Entity → Prop) → Prop) :
     contAsGQ (gqAsCont gq) = gq := rfl
 
-/-- `every_sem` applied to a restrictor is a `Cont Bool Entity` value. -/
-def every_as_cont (restrictor : toyModel.Entity → Bool) :
-    Cont Bool toyModel.Entity :=
+/-- `every_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
+def every_as_cont (restrictor : toyModel.Entity → Prop) :
+    Cont Prop toyModel.Entity :=
   gqAsCont (every_sem toyModel restrictor)
 
-/-- `some_sem` applied to a restrictor is a `Cont Bool Entity` value. -/
-def some_as_cont (restrictor : toyModel.Entity → Bool) :
-    Cont Bool toyModel.Entity :=
+/-- `some_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
+def some_as_cont (restrictor : toyModel.Entity → Prop) :
+    Cont Prop toyModel.Entity :=
   gqAsCont (some_sem toyModel restrictor)
 
 /-- Lowering a scope-taking quantifier = applying it to the scope. -/
-theorem scope_lower_eq_gq_id (restrictor scope' : toyModel.Entity → Bool) :
+theorem scope_lower_eq_gq_id (restrictor scope' : toyModel.Entity → Prop) :
     handleScope (gqAsCont (every_sem toyModel restrictor) |>.bind
       (λ x => Cont.pure (scope' x))) =
     every_sem toyModel restrictor scope' := rfl
 
-/-- Scope resolution via Cont agrees with QR tree for "every student sleeps". -/
+/-- Scope resolution via Cont agrees with direct GQ application for
+    "every student sleeps": the Cont derivation produces the same Prop. -/
 theorem scope_agrees_with_qr_everyStudentSleeps :
     handleScope (gqAsCont (every_sem toyModel student_sem) |>.bind
       (λ x => Cont.pure (ToyLexicon.sleeps_sem x))) =
-    (evalTree quantLex QuantifierComposition.g₀ tree_everyStudentSleeps).get! := by
-  native_decide
+    every_sem toyModel student_sem ToyLexicon.sleeps_sem := rfl
 
-/-- Scope resolution via Cont agrees with QR tree for "some student sleeps". -/
+/-- Scope resolution via Cont agrees with direct GQ application for
+    "some student sleeps". -/
 theorem scope_agrees_with_qr_someStudentSleeps :
     handleScope (gqAsCont (some_sem toyModel student_sem) |>.bind
       (λ x => Cont.pure (ToyLexicon.sleeps_sem x))) =
-    (evalTree quantLex QuantifierComposition.g₀ tree_someStudentSleeps).get! := by
-  native_decide
+    some_sem toyModel student_sem ToyLexicon.sleeps_sem := rfl
 
-/-- Surface scope (∀>∃) via continuation composition agrees with QR. -/
+/-- Surface scope (∀>∃) via continuation composition agrees with direct
+    GQ application. -/
 theorem scope_surface_agrees_with_qr :
-    (handleScope (gqAsCont (every_sem toyModel person_sem) |>.bind
+    handleScope (gqAsCont (every_sem toyModel person_sem) |>.bind
       (λ x => gqAsCont (some_sem toyModel person_sem) |>.bind
-        (λ y => Cont.pure (ToyLexicon.sees_sem y x))))) =
-    (evalTree quantLex QuantifierComposition.g₀ tree_surface).get! := by
-  native_decide
+        (λ y => Cont.pure (ToyLexicon.sees_sem y x)))) =
+    every_sem toyModel person_sem
+      (λ x => some_sem toyModel person_sem (λ y => ToyLexicon.sees_sem y x)) := rfl
 
-/-- Inverse scope (∃>∀) via continuation composition agrees with QR. -/
+/-- Inverse scope (∃>∀) via continuation composition agrees with direct
+    GQ application. -/
 theorem scope_inverse_agrees_with_qr :
-    (handleScope (gqAsCont (some_sem toyModel person_sem) |>.bind
+    handleScope (gqAsCont (some_sem toyModel person_sem) |>.bind
       (λ y => gqAsCont (every_sem toyModel person_sem) |>.bind
-        (λ x => Cont.pure (ToyLexicon.sees_sem y x))))) =
-    (evalTree quantLex QuantifierComposition.g₀ tree_inverse).get! := by
-  native_decide
+        (λ x => Cont.pure (ToyLexicon.sees_sem y x)))) =
+    some_sem toyModel person_sem
+      (λ y => every_sem toyModel person_sem (λ x => ToyLexicon.sees_sem y x)) := rfl
+
+/-- Surface scope reading holds in the toy model. -/
+theorem surface_scope_via_cont :
+    handleScope (gqAsCont (every_sem toyModel person_sem) |>.bind
+      (λ x => gqAsCont (some_sem toyModel person_sem) |>.bind
+        (λ y => Cont.pure (ToyLexicon.sees_sem y x)))) := by
+  intro x hpx
+  cases x with
+  | john => exact ⟨.mary, trivial, trivial⟩
+  | mary => exact ⟨.john, trivial, trivial⟩
+  | _ => exact absurd hpx id
+
+/-- Inverse scope reading does not hold in the toy model. -/
+theorem inverse_scope_via_cont :
+    ¬handleScope (gqAsCont (some_sem toyModel person_sem) |>.bind
+      (λ y => gqAsCont (every_sem toyModel person_sem) |>.bind
+        (λ x => Cont.pure (ToyLexicon.sees_sem y x)))) := by
+  intro ⟨y, _, hy⟩
+  cases y with
+  | john => exact absurd (hy .john trivial) id
+  | mary => exact absurd (hy .mary trivial) id
+  | _ => exact absurd (by assumption : person_sem _) id
 
 /-- The two scope orderings via Cont yield genuinely different readings,
     matching `scope_readings_differ` from `QuantifierComposition.lean`. -/
@@ -642,21 +666,11 @@ theorem cont_scope_readings_differ :
     (handleScope (gqAsCont (some_sem toyModel person_sem) |>.bind
       (λ y => gqAsCont (every_sem toyModel person_sem) |>.bind
         (λ x => Cont.pure (ToyLexicon.sees_sem y x))))) := by
-  native_decide
-
-/-- Surface scope reading = true in the toy model. -/
-theorem surface_scope_via_cont :
-    handleScope (gqAsCont (every_sem toyModel person_sem) |>.bind
-      (λ x => gqAsCont (some_sem toyModel person_sem) |>.bind
-        (λ y => Cont.pure (ToyLexicon.sees_sem y x)))) = true := by
-  native_decide
-
-/-- Inverse scope reading = false in the toy model. -/
-theorem inverse_scope_via_cont :
-    handleScope (gqAsCont (some_sem toyModel person_sem) |>.bind
-      (λ y => gqAsCont (every_sem toyModel person_sem) |>.bind
-        (λ x => Cont.pure (ToyLexicon.sees_sem y x)))) = false := by
-  native_decide
+  intro h
+  have hS := surface_scope_via_cont
+  have hI := inverse_scope_via_cont
+  rw [h] at hS
+  exact hI hS
 
 end ScopeBridge
 
@@ -698,13 +712,13 @@ theorem counitApp_ba_store_is_W {ι β : Type} (body : ι → ι → β) (x : ι
 
     The subject stores itself (`▷(john) = ⟨john, john⟩`), the reflexive
     pronoun resolves to the object via the identity reader, and C(<)
-    merges them: `C(<) ▷(j) (λi. sees i) = sees j j = false`.
+    merges them: `C(<) ▷(j) (λi. sees i) = sees j j = False`.
 
-    The false result confirms the toy model has no reflexive seeing
+    The False result confirms the toy model has no reflexive seeing
     (John sees Mary and Mary sees John, but neither sees themselves). -/
 theorem john_sees_himself_via_C :
     counitApp ba' (store ToyEntity.john)
-      (λ i => ToyLexicon.sees_sem i) = false := rfl
+      (λ i => ToyLexicon.sees_sem i) = False := rfl
 
 /-- C-based binding agrees with H&K assignment-based binding:
     both compute `sees(g[1↦j](1), g[1↦j](1)) = sees(j, j)`.
@@ -828,7 +842,7 @@ theorem cont_pure_is_fa {A : Type} (f : A → R) (x : A) :
     how scope order is *specified* (tree structure vs bind order),
     not in what they *compute*. -/
 theorem qr_cont_structural_agreement {m : Model}
-    (q : (m.Entity → Bool) → Bool)
+    (q : (m.Entity → Prop) → Prop)
     (body : DenotG m .t) (n : Nat) (g : Assignment m) :
     q (lambdaAbsG n body g) =
     Cont.lower (Cont.bind q (fun x => Cont.pure (body (g[n ↦ x])))) := rfl

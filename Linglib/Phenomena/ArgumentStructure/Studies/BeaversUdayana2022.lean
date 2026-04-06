@@ -320,7 +320,7 @@ theorem dispositional_derivation :
     The agent is the surface subject. -/
 theorem incorporation_derivation :
     suppressArg z (incorporate V np) agent =
-    (V z agent && np z) := rfl
+    (V z agent ∧ np z) := rfl
 
 /-- **Active voice derivation** (contrast):
     Active (meN-) applies the identity, preserving both arguments.
@@ -334,7 +334,7 @@ theorem active_derivation :
 theorem operation_is_identical :
     -- Both use suppressArg:
     suppressArg z (V patient) = V patient z ∧
-    suppressArg z (incorporate V np) agent = (V z agent && np z) :=
+    suppressArg z (incorporate V np) agent = (V z agent ∧ np z) :=
   ⟨rfl, rfl⟩
 
 /-- Agent surfaces as subject iff the VP retains both arguments
@@ -343,7 +343,7 @@ theorem operation_is_identical :
 theorem agent_surfaces_iff_incorporation :
     -- After incorporation: result has type e ⇒ t, so agent fills it
     (fun a => suppressArg z (incorporate V np) a) =
-    (fun a => V z a && np z) := rfl
+    (fun a => V z a ∧ np z) := rfl
 
 end Compositional
 

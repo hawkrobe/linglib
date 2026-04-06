@@ -225,7 +225,7 @@ The bridge theorems below verify that these independent characterizations
 agree on whether a morphological operation carries semantic content. -/
 
 open Phenomena.Morphology.ZwickyPullum1983 (affixPluralS affixEd)
-open Morphology.Diagnostics (CliticAffixProfile)
+open Theories.Morphology.Diagnostics (CliticAffixProfile)
 
 /-- The plural `-s` affix is classified as an inflectional affix by
     Zwicky's diagnostics, AND is semantically non-vacuous in the

@@ -26,36 +26,29 @@ inductive ToyIEntity where
   | phosphorus -- the evening star (= Venus, but potentially different in other worlds)
   deriving Repr, DecidableEq
 
-def toyIModel : IModel := {
+def toyIModel : Model := {
   Entity := ToyIEntity
+  World := World
   decEq := inferInstance
 }
 
 /-- "sleeps" as a world-dependent property. -/
 def sleeps : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
   λ w x => match w, x with
-    | .w0, .john => true
-    | .w0, .mary => false
-    | .w1, .john => false
-    | .w1, .mary => true
-    | .w2, .john => true
-    | .w2, .mary => true
-    | .w3, .john => false
-    | .w3, .mary => false
-    | _, _ => false
+    | .w0, .john => True
+    | .w1, .mary => True
+    | .w2, .john => True
+    | .w2, .mary => True
+    | _, _ => False
 
 /-- "is happy" as a world-dependent property. -/
 def happy : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
   λ w x => match w, x with
-    | .w0, .john => true
-    | .w0, .mary => true
-    | .w1, .john => false
-    | .w1, .mary => true
-    | .w2, .john => true
-    | .w2, .mary => false
-    | .w3, .john => false
-    | .w3, .mary => false
-    | _, _ => false
+    | .w0, .john => True
+    | .w0, .mary => True
+    | .w1, .mary => True
+    | .w2, .john => True
+    | _, _ => False
 
 /-- "the morning star" - an individual concept that picks out potentially
 different individuals in different worlds. -/
@@ -99,37 +92,41 @@ def believes_access : ToyIEntity → World → World → Bool
 ⟦believe⟧(a)(p)(w) = ∀w'. R(a,w,w') → p(w') -/
 def believe : toyIModel.interpTy (.e ⇒ Ty.prop ⇒ .t) :=
   λ agent prop =>
-    allWorlds.all λ w' =>
-      !believes_access agent .w0 w' || prop w'
+    ∀ w' : World, believes_access agent .w0 w' = true → prop w'
 
 /-- Extended believe that's world-dependent. -/
 def believeAt : World → toyIModel.interpTy (.e ⇒ Ty.prop ⇒ .t) :=
   λ evalWorld agent prop =>
-    allWorlds.all λ w' =>
-      !believes_access agent evalWorld w' || prop w'
+    ∀ w' : World, believes_access agent evalWorld w' = true → prop w'
 
 /-- "John believes Mary sleeps" (de dicto) -/
 def johnBelievesMary_deDicto : toyIModel.interpTy .t :=
   let marySleeps : toyIModel.interpTy Ty.prop := λ w => sleeps w .mary
   believe .john marySleeps
 
-#guard !johnBelievesMary_deDicto
+/-- John does NOT believe Mary sleeps: Mary doesn't sleep in w0 (John's accessible world). -/
+theorem johnDoesNotBelieveMarySleeps : ¬johnBelievesMary_deDicto := by
+  intro h
+  exact h .w0 rfl
 
 /-- "John believes John sleeps" (de dicto) -/
 def johnBelievesJohnSleeps : toyIModel.interpTy .t :=
   let johnSleeps : toyIModel.interpTy Ty.prop := λ w => sleeps w .john
   believe .john johnSleeps
 
-#guard johnBelievesJohnSleeps
+/-- John believes he sleeps: he sleeps in both w0 and w2. -/
+theorem johnBelievesJohnSleeps_true : johnBelievesJohnSleeps := by
+  intro w' h
+  cases w' <;> simp_all [believes_access, sleeps]
 
 /-- Proposition: "John ate some cookies" (simplified) -/
-def someCookies : toyIModel.interpTy Ty.prop := λ _ => true
+def someCookies : toyIModel.interpTy Ty.prop := λ _ => True
 
 /-- Proposition: "John ate all cookies" (simplified) -/
 def allCookies : toyIModel.interpTy Ty.prop :=
   λ w => match w with
-    | .w0 | .w1 => true
-    | .w2 | .w3 => false
+    | .w0 | .w1 => True
+    | .w2 | .w3 => False
 
 /-- "Mary believes John ate some cookies" -/
 def maryBelievesSome : toyIModel.interpTy .t := believe .mary someCookies
@@ -137,7 +134,9 @@ def maryBelievesSome : toyIModel.interpTy .t := believe .mary someCookies
 /-- "Mary believes John ate all cookies" -/
 def maryBelievesAll : toyIModel.interpTy .t := believe .mary allCookies
 
-#guard maryBelievesSome
+/-- Mary believes John ate some cookies (trivially true proposition). -/
+theorem maryBelievesSome_true : maryBelievesSome := by
+  intro _ _; trivial
 
 /-- Belief is intensional: co-extensional expressions can differ under belief. -/
 theorem belief_intensional :
@@ -151,7 +150,7 @@ theorem belief_intensional :
     cases this
 
 /-- Up-down identity: applying down after up returns the original value. -/
-theorem up_down_identity {m : IModel} {τ : Ty} (x : m.interpTy τ) (w : World) :
+theorem up_down_identity {m : Model} {τ : Ty} (x : m.interpTy τ) (w : m.World) :
     down (up x) w = x := rfl
 
 /-! ## Bridge to Direct Reference Theory

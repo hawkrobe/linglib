@@ -31,7 +31,7 @@ targets and feminine on others in the same clause
 
 namespace Fragments.Russian.Gender
 
-open Morphology.DM
+open Theories.Morphology.DM
 
 -- ============================================================================
 -- § 1: Declension Classes

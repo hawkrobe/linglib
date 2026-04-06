@@ -125,7 +125,7 @@ theorem berSemG_eq_suppressArg {m : Model} {τ : Ty} (n : ℕ)
 def diSemProp {m : Model} (n : ℕ)
     (vp : DenotG m (.e ⇒ .e ⇒ .t))
     : Assignment m → m.Entity → Prop :=
-  fun g patient => ∃ x : m.Entity, vp (g[n ↦ x]) x patient = true
+  fun g patient => ∃ x : m.Entity, vp (g[n ↦ x]) x patient
 
 -- ============================================================================
 -- § 4: Noun Incorporation
@@ -149,7 +149,7 @@ def incorporate {m : Model}
     (verb : m.interpTy (.e ⇒ .e ⇒ .t))
     (np : m.interpTy (.e ⇒ .t))
     : m.interpTy (.e ⇒ .e ⇒ .t) :=
-  fun obj subj => verb obj subj && np obj
+  fun obj subj => verb obj subj ∧ np obj
 
 -- ============================================================================
 -- § 5: Key Properties
@@ -182,7 +182,7 @@ theorem suppression_after_incorporation {m : Model}
     (np : m.interpTy (.e ⇒ .t))
     (z : m.Entity) (agent : m.Entity) :
     suppressArg z (incorporate verb np) agent =
-    (verb z agent && np z) := rfl
+    (verb z agent ∧ np z) := rfl
 
 /-- The core unification: `suppressArg` is the SAME function in both
     derivations. The difference in surface argument structure comes
@@ -199,7 +199,7 @@ theorem same_operation_different_types {m : Model}
     suppressArg z (verb patient) = verb patient z ∧
     -- Incorporation: suppress object, agent remains
     (fun agent => suppressArg z (incorporate verb np) agent) =
-    (fun agent => verb z agent && np z) :=
+    (fun agent => verb z agent ∧ np z) :=
   ⟨rfl, rfl⟩
 
 /-- Incorporation preserves both arguments: the incorporated VP still
@@ -208,7 +208,7 @@ theorem incorporate_preserves_arity {m : Model}
     (verb : m.interpTy (.e ⇒ .e ⇒ .t))
     (np : m.interpTy (.e ⇒ .t)) :
     (incorporate verb np : m.interpTy (.e ⇒ .e ⇒ .t)) =
-    fun obj subj => verb obj subj && np obj := rfl
+    fun obj subj => verb obj subj ∧ np obj := rfl
 
 /-- Assignment-relative suppression: berSemG does not fix how the open
     variable is interpreted — different assignments yield different

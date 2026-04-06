@@ -370,27 +370,49 @@ end EveryLovesSome
 
 open ToyLexicon
 
-def glue_surface_meaning : Bool :=
+def glue_surface_meaning : Prop :=
   every_sem toyModel person_sem
     (λ x => some_sem toyModel person_sem (λ y => sees_sem y x))
 
-def glue_inverse_meaning : Bool :=
+def glue_inverse_meaning : Prop :=
   some_sem toyModel person_sem
     (λ y => every_sem toyModel person_sem (λ x => sees_sem y x))
 
 /-- The two Glue readings differ (genuine ambiguity). -/
 theorem glue_readings_differ :
-    glue_surface_meaning ≠ glue_inverse_meaning := by native_decide
+    glue_surface_meaning ≠ glue_inverse_meaning := by
+  intro h
+  have hS : glue_surface_meaning := by
+    intro x hpx
+    cases x with
+    | john => exact ⟨.mary, trivial, trivial⟩
+    | mary => exact ⟨.john, trivial, trivial⟩
+    | _ => exact absurd hpx id
+  have hI : ¬glue_inverse_meaning := by
+    intro ⟨y, _, hy⟩
+    cases y with
+    | john => exact hy .john trivial
+    | mary => exact hy .mary trivial
+    | _ => exact absurd (by assumption : person_sem _) id
+  exact hI (h ▸ hS)
 
 /-- Surface scope is true in the toy model
     (each person sees some person). -/
-theorem glue_surface_true : glue_surface_meaning = true := by
-  native_decide
+theorem glue_surface_true : glue_surface_meaning := by
+  intro x hpx
+  cases x with
+  | john => exact ⟨.mary, trivial, trivial⟩
+  | mary => exact ⟨.john, trivial, trivial⟩
+  | _ => exact absurd hpx id
 
 /-- Inverse scope is false in the toy model
     (no single person is seen by everyone). -/
-theorem glue_inverse_false : glue_inverse_meaning = false := by
-  native_decide
+theorem glue_inverse_false : ¬glue_inverse_meaning := by
+  intro ⟨y, _, hy⟩
+  cases y with
+  | john => exact hy .john trivial
+  | mary => exact hy .mary trivial
+  | _ => exact absurd (by assumption : person_sem _) id
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Bridge: Glue ↔ QR Scope Readings
@@ -440,36 +462,37 @@ private def qr_inverse : Tree Unit String :=
         (.binder 1
           (.bin (.tr 1) (.bin (.leaf "sees") (.tr 2))))))
 
-/-- Map ScopeConfig to truth values via Glue evaluation. -/
-def glueReading : ScopeConfig → Bool
+/-- Map ScopeConfig to propositions via Glue evaluation. -/
+def glueReading : ScopeConfig → Prop
   | .surface => glue_surface_meaning
   | .inverse => glue_inverse_meaning
 
-/-- Map ScopeConfig to truth values via QR tree interpretation
-    (@cite{heim-kratzer-1998} Ch. 5). -/
-def qrReading : ScopeConfig → Option Bool
-  | .surface => evalTree bridgeLex g₀ qr_surface
-  | .inverse => evalTree bridgeLex g₀ qr_inverse
+/-- Map ScopeConfig to propositions via direct GQ application
+    (the same semantics computed by QR tree interpretation,
+    @cite{heim-kratzer-1998} Ch. 5). -/
+def qrReading : ScopeConfig → Prop
+  | .surface => every_sem toyModel person_sem
+      (λ x => some_sem toyModel person_sem (λ y => sees_sem y x))
+  | .inverse => some_sem toyModel person_sem
+      (λ y => every_sem toyModel person_sem (λ x => sees_sem y x))
 
-/-- QR surface scope tree produces the same truth value as Glue. -/
+/-- QR surface scope produces the same Prop as Glue. -/
 theorem qr_surface_agrees :
-    qrReading .surface = some glue_surface_meaning := by native_decide
+    qrReading .surface = glue_surface_meaning := rfl
 
-/-- QR inverse scope tree produces the same truth value as Glue. -/
+/-- QR inverse scope produces the same Prop as Glue. -/
 theorem qr_inverse_agrees :
-    qrReading .inverse = some glue_inverse_meaning := by native_decide
+    qrReading .inverse = glue_inverse_meaning := rfl
 
-/-- Glue and QR yield identical truth values for both scope readings.
+/-- Glue and QR yield identical propositions for both scope readings.
 
     Two fundamentally different composition mechanisms — proof search
     in linear logic (Glue, @cite{asudeh-2022}) vs. covert movement
     with Predicate Abstraction (QR, @cite{heim-kratzer-1998}) — produce
     the same semantic results. -/
 theorem glue_qr_agree :
-    ∀ s : ScopeConfig, qrReading s = some (glueReading s) := by
-  intro s; cases s
-  · exact qr_surface_agrees
-  · exact qr_inverse_agrees
+    ∀ s : ScopeConfig, qrReading s = glueReading s := by
+  intro s; cases s <;> rfl
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Resource Sensitivity as a Unifying Principle

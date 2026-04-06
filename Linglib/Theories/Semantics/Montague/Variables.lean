@@ -283,8 +283,8 @@ theorem resolve_eq_existsClosure_diag (κ l : Nat) (φ : Assignment m → Prop)
 /-- Lambda abstraction at n is the "integrand" of existential closure:
 `∃n.φ = ∃x. (λn.φ)(g)(x)`. -/
 theorem existsClosure_eq_exists_lambda (n : Nat) (body : DenotG m .t) (g : Assignment m) :
-    existsClosure n (fun g' => body g' = true) g ↔
-    ∃ x : m.Entity, lambdaAbsG n body g x = true := by
+    existsClosure n (fun g' => body g') g ↔
+    ∃ x : m.Entity, lambdaAbsG n body g x := by
   simp [existsClosure, lambdaAbsG]
 
 -- ────────────────────────────────────────────────────

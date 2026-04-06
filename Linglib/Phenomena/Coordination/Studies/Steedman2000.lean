@@ -145,7 +145,7 @@ theorem ccg_coordination_semantics_correct :
     ∀ e : ToyEntity,
       coordMeaningAt e = pointwiseConjAt e := by
   intro e
-  cases e <;> native_decide
+  cases e <;> rfl
 
 -- Summary: CCG Captures Non-Constituent Coordination
 

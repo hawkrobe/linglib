@@ -66,7 +66,7 @@ The mapping is partial in two ways:
 
 namespace Phenomena.Gender.Typology
 
-open Morphology.DM
+open Theories.Morphology.DM
 
 /-- Whether a `SemanticBasis` falls within the semantic core.
 
@@ -101,7 +101,7 @@ def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
 
 end Phenomena.Gender.Typology
 
-namespace Morphology.DM
+namespace Theories.Morphology.DM
 
 open Phenomena.Gender.Typology
 
@@ -112,7 +112,7 @@ def GenderDimension.toSemanticBasis : GenderDimension → SemanticBasis
   | .masc => .sex
   | .anim => .animacy
 
-end Morphology.DM
+end Theories.Morphology.DM
 
 -- ============================================================================
 -- Main study namespace
@@ -121,7 +121,7 @@ end Morphology.DM
 namespace Phenomena.Gender.Studies.Kramer2020
 
 open Phenomena.Gender.Typology
-open Morphology.DM
+open Theories.Morphology.DM
 
 -- ============================================================================
 -- § 1: The Semantic Core Generalization (@cite{kramer-2020} ex. 2/28)

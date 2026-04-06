@@ -47,7 +47,7 @@ I-complexity low even when E-complexity is high.
 
 -/
 
-namespace Morphology.WP
+namespace Theories.Morphology.WP
 
 open Core.InformationTheory
 
@@ -234,4 +234,4 @@ def fromStems {σ : Type} (stems : List (Core.Morphology.Stem σ))
   let unique := groupBySum (allParadigms.map λ ic => (ic, (1 : ℚ)))
   { entries := unique.map λ (ic, count) => (ic, count / total) }
 
-end Morphology.WP
+end Theories.Morphology.WP

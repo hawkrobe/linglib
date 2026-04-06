@@ -18,7 +18,7 @@ structural distinction follows @cite{myler-2016} (following @cite{alexiadou-2003
 @cite{barker-1995}).
 -/
 
-namespace Morphology.DM
+namespace Theories.Morphology.DM
 
 -- ============================================================================
 -- § 1: Structural Positions in the Nominal Domain
@@ -207,4 +207,4 @@ theorem both_mechanisms_glh_consistent :
     genderLocalityHypothesis PossessionGenderMechanism.inheritedGender.possessorPosition = true :=
   ⟨rfl, rfl⟩
 
-end Morphology.DM
+end Theories.Morphology.DM

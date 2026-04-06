@@ -81,15 +81,6 @@ def QForall {α : Type*} [PartialOrder α]
 -- § 3. Properties of maxNonOverlap
 -- ════════════════════════════════════════════════════
 
-/-- Overlap is reflexive: every element overlaps itself (via x ≤ x). -/
-theorem overlap_refl {α : Type*} [PartialOrder α] (x : α) : Overlap x x :=
-  ⟨x, le_refl x, le_refl x⟩
-
-/-- Overlap is symmetric. -/
-theorem overlap_symm {α : Type*} [PartialOrder α] {x y : α}
-    (h : Overlap x y) : Overlap y x :=
-  let ⟨z, hzx, hzy⟩ := h; ⟨z, hzy, hzx⟩
-
 /-- maxNonOverlap implies isMaximal: if x absorbs all overlapping
     P-elements, it is certainly maximal (no proper P-extension). -/
 theorem maxNonOverlap_imp_isMaximal {α : Type*} [PartialOrder α]
@@ -146,7 +137,7 @@ theorem dng_atoms {α : Type*} [PartialOrder α]
   constructor
   · intro hQ x hPx
     have hMNO : maxNonOverlap P x :=
-      maxNonOverlap_of_atom hPx (hAtoms x hPx) (λ y hy hov => hDisj y x hy hPx (overlap_symm hov))
+      maxNonOverlap_of_atom hPx (hAtoms x hPx) (λ y hy hov => hDisj y x hy hPx (Overlap.symm hov))
     exact hQ x hMNO
   · intro hAll x ⟨hPx, _⟩
     exact hAll x hPx

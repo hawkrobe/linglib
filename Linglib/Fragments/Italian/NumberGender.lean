@@ -19,7 +19,7 @@ within nP can condition gender; features outside nP cannot.
 
 namespace Fragments.Italian.NumberGender
 
-open Morphology.DM
+open Theories.Morphology.DM
 open Fragments.Italian.Nouns (Gender)
 
 -- ============================================================================

@@ -121,9 +121,9 @@ def allScopeConfigs : List ScopeConfig := [.surface, .inverse]
 def allQNScopes : List QNScope := [.forallNeg, .negForall]
 
 /-- Check if scope config yields true under given semantics -/
-def scopeYieldsTrue {m : Model}
+def scopeYieldsTrue {m : Model} [∀ (p : m.interpTy .t), Decidable p]
     (d : ScopeDerivation m .t) (s : ScopeConfig) : Bool :=
-  d.meaningAt s
+  decide (d.meaningAt s)
 
 -- ============================================================================
 -- Scope Entailment (@cite{musolino-lidz-2003})

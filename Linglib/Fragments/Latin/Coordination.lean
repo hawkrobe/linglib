@@ -42,6 +42,7 @@ def et : CoordEntry :=
 def que : CoordEntry :=
   { form := "-que", gloss := "and (enclitic)"
   , role := .mu, boundness := .bound
+  , alsoAdditive := true
   , note := "postpositive enclitic; archaic/formal register" }
 
 /-- *atque* / *ac* — emphatic conjunction, J variant.

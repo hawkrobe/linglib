@@ -672,7 +672,7 @@ theorem icelandic_fem_not_entails_masc :
     the same exponents. This connects the gender resolution mechanism to
     the formal DM vocabulary insertion framework. -/
 
-open Morphology.DM.VI (FeatureVI subsetPrinciple)
+open Theories.Morphology.DM.VI (FeatureVI subsetPrinciple)
 
 /-- Greek vocabulary items as `FeatureVI` entries (schema 21).
     Most specific first: {FEM,MASC} → F, {MASC} → M, {} → N. -/

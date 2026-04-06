@@ -57,7 +57,7 @@ instance : Fintype studentModel.Entity where
   complete := fun x => by cases x <;> (unfold studentModel; simp)
 
 /-- All entities are students in this model -/
-def isStudent : studentModel.interpTy (.e ⇒ .t) := λ _ => true
+def isStudent : studentModel.interpTy (.e ⇒ .t) := λ _ => True
 
 /--
 "Passed" predicate indexed by world.
@@ -65,14 +65,14 @@ World w means exactly w students passed (Alice, then Bob, then Carol).
 -/
 def passedAt (w : Fin 4) : studentModel.interpTy (.e ⇒ .t) := λ s =>
   match w.val, s with
-  | 0, _ => false
-  | 1, .alice => true
-  | 1, _ => false
-  | 2, .alice => true
-  | 2, .bob => true
-  | 2, .carol => false
-  | 3, _ => true
-  | _, _ => false  -- shouldn't happen for Fin 4
+  | 0, _ => False
+  | 1, .alice => True
+  | 1, _ => False
+  | 2, .alice => True
+  | 2, .bob => True
+  | 2, .carol => False
+  | 3, _ => True
+  | _, _ => False  -- shouldn't happen for Fin 4
 
 
 /-
@@ -92,33 +92,34 @@ def passedAt (w : Fin 4) : studentModel.interpTy (.e ⇒ .t) := λ s =>
 -/
 
 /-- "Some students passed" computed compositionally -/
-def somePassedMontague (w : Fin 4) : Bool :=
+def somePassedMontague (w : Fin 4) : Prop :=
   some_sem studentModel isStudent (passedAt w)
 
 /-- "All students passed" computed compositionally -/
-def allPassedMontague (w : Fin 4) : Bool :=
+def allPassedMontague (w : Fin 4) : Prop :=
   every_sem studentModel isStudent (passedAt w)
 
 -- Verify the compositional definitions match expectations
-example : somePassedMontague ⟨0, by omega⟩ = false := rfl
-example : somePassedMontague ⟨1, by omega⟩ = true := rfl
-example : somePassedMontague ⟨2, by omega⟩ = true := rfl
-example : somePassedMontague ⟨3, by omega⟩ = true := rfl
+example : ¬somePassedMontague ⟨0, by omega⟩ := by
+  simp only [somePassedMontague, some_sem, isStudent, passedAt]; push_neg; intros x; cases x <;> trivial
+example : somePassedMontague ⟨1, by omega⟩ := ⟨.alice, trivial, trivial⟩
+example : somePassedMontague ⟨2, by omega⟩ := ⟨.alice, trivial, trivial⟩
+example : somePassedMontague ⟨3, by omega⟩ := ⟨.alice, trivial, trivial⟩
 
-example : allPassedMontague ⟨0, by omega⟩ = false := rfl
-example : allPassedMontague ⟨1, by omega⟩ = false := rfl
-example : allPassedMontague ⟨2, by omega⟩ = false := rfl
-example : allPassedMontague ⟨3, by omega⟩ = true := rfl
-
-
-/-- Convert Bool to Prop -/
-@[reducible] def boolToProp (b : Bool) : Prop := b = true
+example : ¬allPassedMontague ⟨0, by omega⟩ := by
+  intro h; exact h .alice trivial
+example : ¬allPassedMontague ⟨1, by omega⟩ := by
+  intro h; exact h .bob trivial
+example : ¬allPassedMontague ⟨2, by omega⟩ := by
+  intro h; exact h .carol trivial
+example : allPassedMontague ⟨3, by omega⟩ := by
+  simp only [allPassedMontague, every_sem, isStudent, passedAt]; intros x _; cases x <;> trivial
 
 /-- "Some students passed" as Prop' (Fin 4) -/
-def somePassed_Prop : Prop' (Fin 4) := λ w => boolToProp (somePassedMontague w)
+def somePassed_Prop : Prop' (Fin 4) := somePassedMontague
 
 /-- "All students passed" as Prop' (Fin 4) -/
-def allPassed_Prop : Prop' (Fin 4) := λ w => boolToProp (allPassedMontague w)
+def allPassed_Prop : Prop' (Fin 4) := allPassedMontague
 
 /-- Alternative set for exhaustivity -/
 def someAllALT_Montague : Set (Prop' (Fin 4)) := {somePassed_Prop, allPassed_Prop}
@@ -137,17 +138,38 @@ def someStudents_handcrafted : Prop' (Fin 4) := λ w => w.val ≥ 1
 /-- allStudents from Operators.lean -/
 def allStudents_handcrafted : Prop' (Fin 4) := λ w => w.val = 3
 
+/-- Helper: passedAt w alice is True iff w.val ≥ 1 -/
+private theorem passedAt_alice (w : Fin 4) : passedAt w .alice ↔ w.val ≥ 1 := by
+  rcases w with ⟨_ | _ | _ | n, hw⟩
+  · simp [passedAt]
+  · simp [passedAt]
+  · simp [passedAt]
+  · have : n = 0 := by omega
+    subst this; simp [passedAt]
+
 /-- Compositional "some" matches hand-crafted definition -/
 theorem somePassed_eq_handcrafted :
     ∀ w : Fin 4, somePassed_Prop w ↔ someStudents_handcrafted w := by
-  intro w; unfold somePassed_Prop someStudents_handcrafted
-  fin_cases w <;> native_decide
+  intro w; constructor
+  · intro ⟨x, _, hx⟩
+    rcases w with ⟨_ | _ | _ | _, hw⟩ <;> cases x <;> simp_all [passedAt, someStudents_handcrafted]
+  · intro hw
+    exact ⟨.alice, trivial, (passedAt_alice w).mpr hw⟩
 
 /-- Compositional "all" matches hand-crafted definition -/
 theorem allPassed_eq_handcrafted :
     ∀ w : Fin 4, allPassed_Prop w ↔ allStudents_handcrafted w := by
-  intro w; unfold allPassed_Prop allStudents_handcrafted
-  fin_cases w <;> native_decide
+  intro w; constructor
+  · intro h
+    rcases w with ⟨_ | _ | _ | _, hw⟩
+    · exact absurd (h .alice trivial) id
+    · exact absurd (h .bob trivial) id
+    · exact absurd (h .carol trivial) id
+    · simp [allStudents_handcrafted]; omega
+  · intro hw
+    simp only [allStudents_handcrafted] at hw
+    intro x _
+    rcases w with ⟨_ | _ | _ | _, _⟩ <;> cases x <;> simp_all [passedAt]
 
 
 /-
@@ -164,17 +186,16 @@ def w1_montague : Fin 4 := ⟨1, by omega⟩
 def w3_montague : Fin 4 := ⟨3, by omega⟩
 
 /-- At w1, "some passed" holds -/
-theorem w1_somePassed : somePassed_Prop w1_montague := by
-  unfold somePassed_Prop; native_decide
+theorem w1_somePassed : somePassed_Prop w1_montague :=
+  ⟨.alice, trivial, trivial⟩
 
 /-- At w1, "all passed" does NOT hold -/
 theorem w1_not_allPassed : ¬(allPassed_Prop w1_montague) := by
-  unfold allPassed_Prop; native_decide
+  intro h; exact h .bob trivial
 
 /-- At w3, both "some" and "all" hold -/
-theorem w3_both : somePassed_Prop w3_montague ∧ allPassed_Prop w3_montague := by
-  unfold somePassed_Prop allPassed_Prop
-  exact ⟨by native_decide, by native_decide⟩
+theorem w3_both : somePassed_Prop w3_montague ∧ allPassed_Prop w3_montague :=
+  ⟨⟨.alice, trivial, trivial⟩, fun x _ => by cases x <;> trivial⟩
 
 /--
 **Main Result**: exhMW(some) holds at w1 (compositionally derived).

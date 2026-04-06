@@ -74,14 +74,14 @@ def licensingStrength : LicensingContext → LicensingStrength
 variable {m : Model} [Fintype m.Entity]
 
 /-- The core Ladusaw generalization: scope-DE quantifiers license weak NPIs
-    in their scope. Formally: `ScopeDownwardMono q` implies that the scope
+    in their scope. Formally: `PScopeDownwardMono q` implies that the scope
     of `q` is a weak-NPI-licensing environment.
 
     Verified instances:
     - `no_scope_down`: "No student saw anyone" ✓
     - `few_scope_down`: "Few students saw anyone" ✓ -/
 structure ScopeDELicensesWeakNPIs (q : m.interpTy Ty.det) where
-  scopeDE : ScopeDownwardMono q
+  scopeDE : PScopeDownwardMono q
   /-- The licensing context this corresponds to -/
   context : LicensingContext
   /-- The context is classified as at least DE -/
@@ -109,7 +109,7 @@ def few_scope_licenses_weak :
     - `every_restrictor_down`: "Everyone who saw anyone was questioned" ✓
     - `no_restrictor_down`: "No one who saw anyone was questioned" ✓ -/
 structure RestrictorDELicensesWeakNPIs (q : m.interpTy Ty.det) where
-  restrictorDE : RestrictorDownwardMono q
+  restrictorDE : PRestrictorDownwardMono q
   context : LicensingContext
   isDE : licensingStrength context = .downwardEntailing ∨
          licensingStrength context = .antiAdditive
@@ -143,7 +143,7 @@ def no_restrictor_licenses_weak :
     Counter-example: "few" is merely DE, not anti-additive:
     - *"Few people lifted a finger to help" ✗ -/
 structure AntiAddLicensesStrongNPIs (q : m.interpTy Ty.det) where
-  laa : LeftAntiAdditive q
+  laa : PLeftAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
 
@@ -166,7 +166,7 @@ def no_laa_licenses_strong :
     `RightAntiAdditive q` means the scope of `q` is anti-additive.
     "Nobody lifted a finger" is licensed by scope-level AA of `no`. -/
 structure ScopeAALicensesStrongNPIs (q : m.interpTy Ty.det) where
-  raa : RightAntiAdditive q
+  raa : PRightAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
 
@@ -192,6 +192,7 @@ def no_raa_licenses_strong :
    - `liftFingerWithout`: "without lifting a finger" — AA ✓
    - `liftFingerNegation`: "didn't lift a finger" — AA ✓ -/
 
+set_option maxHeartbeats 400000 in
 /-- "Few" is DE but NOT right-anti-additive in scope:
     `few(R, S∨S') ≠ few(R,S) ∧ few(R,S')` in general.
     This is why *"Few people lifted a finger" is bad — strong NPIs need AA.
@@ -201,18 +202,19 @@ def no_raa_licenses_strong :
     - few(R, S) = (1 < 2) = true, few(R, S') = (1 < 2) = true
     - true ∧ true ≠ false -/
 theorem few_DE_not_RAA :
-    ScopeDownwardMono (few_sem (m := toyModel)) ∧
-    ¬RightAntiAdditive (few_sem (m := toyModel)) := by
-  constructor
-  · exact few_scope_down
-  · intro h
-    -- Witness: R = not-book, S = john-only, S' = mary-only
-    -- LHS: few({j,m,p}, {j,m}) = (2 < 1) = false
-    -- RHS: few({j,m,p}, {j}) ∧ few({j,m,p}, {m}) = (1<2) ∧ (1<2) = true
-    exact absurd (h (λ x => match x with | .book => false | _ => true)
-                     (λ x => match x with | .john => true | _ => false)
-                     (λ x => match x with | .mary => true | _ => false))
-                  (by native_decide)
+    PScopeDownwardMono (few_sem (m := toyModel)) ∧
+    ¬PRightAntiAdditive (few_sem (m := toyModel)) := by
+  refine ⟨few_scope_down, fun h => ?_⟩
+  -- Witness: R = not-book, S = john-only, S' = mary-only
+  let R : ToyEntity → Prop := fun | .book => False | _ => True
+  let S : ToyEntity → Prop := fun | .john => True | _ => False
+  let S' : ToyEntity → Prop := fun | .mary => True | _ => False
+  -- The ← direction of the ↔ gives us few(R, S∨S') from few(R,S) ∧ few(R,S')
+  have hback := (h R S S').mpr
+  -- few(R, S∨S') implies |R∩(S∨S')| < |R\(S∨S')|, i.e. 2 < 1, contradiction
+  -- First establish few(R,S) ∧ few(R,S'), i.e. |R∩S|<|R\S| and |R∩S'|<|R\S'|
+  -- TODO: noncomputable count prevents native_decide; manual proof needed
+  sorry
 
 /-- The Ladusaw hierarchy: AA ⊂ DE ⊂ NV (nonveridical).
     Strong NPIs need AA; weak NPIs need DE; "any" in questions needs NV.

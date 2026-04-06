@@ -40,7 +40,7 @@ The `Categorizer` and `CategorizedRoot` types from
 terminal nodes that VI targets.
 -/
 
-namespace Morphology.DM.VI
+namespace Theories.Morphology.DM.VI
 
 -- ============================================================================
 -- § 1: Vocabulary Item
@@ -222,4 +222,4 @@ theorem elsewhere_always_matches {F E : Type} [BEq F]
     (FeatureVI.mk ([] : List F) e).features.all (target.contains ·) = true := by
   simp [List.all_nil]
 
-end Morphology.DM.VI
+end Theories.Morphology.DM.VI

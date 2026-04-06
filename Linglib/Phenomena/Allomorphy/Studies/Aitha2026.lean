@@ -6,6 +6,7 @@ import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.ProsodicWord
 import Linglib.Theories.Morphology.DM.RichExponent
+import Linglib.Theories.Phonology.Moraic.CompensatoryLengthening
 open Theories.Morphology.CaseContainment
 
 /-!
@@ -52,7 +53,7 @@ Telugu nouns exhibit two stem alternation patterns:
 namespace Phenomena.Allomorphy.Studies.Aitha2026
 
 open Core Core.OT Core.ConstraintEvaluation
-open Morphology.DM.VI
+open Theories.Morphology.DM.VI
 open Theories.Phonology.Syllable
 
 -- ============================================================================
@@ -487,7 +488,7 @@ section WordLevel
 
 open Theories.Phonology.StratalOT
 open Theories.Phonology.ProsodicWord
-open Morphology.DM.RichRepresentation
+open Theories.Morphology.DM.RichRepresentation
 
 /-- The singular suffix *-ni* carries prespecified stress.
     This prespecification, interacting with FT-BIN(μ) and IDENT-STRESS
@@ -780,5 +781,40 @@ theorem central_argument :
     -- (3) Weak is outward-sensitive
     isOutwardSensitive (conditioningPos := 2) (targetPos := 1) = true := by
   exact ⟨by native_decide, by native_decide, rfl⟩
+
+-- ============================================================================
+-- § 9: Connection to Moraic CL Theory (@cite{hayes-1989})
+-- ============================================================================
+
+section MoraicCLConnection
+
+open Theories.Phonology (Segment)
+open Theories.Phonology.Moraic (MoraicParams syllableToMoraic MoraicSyllable)
+open Theories.Phonology.Moraic.CL (deleteMoraic spreadToFill)
+
+/-- Telugu has Weight by Position: coda consonants bear morae, making
+    CVC syllables heavy. This is assumed by the Stem-level parse, where
+    *dram* (CVC) is treated as heavy (2μ). -/
+def teluguMoraicParams : MoraicParams := { wbp := true }
+
+/-- In a WBP language like Telugu, deleting a coda consonant strands one
+    mora — this is @cite{hayes-1989}'s **classical CL** (§5.1.1).
+
+    This grounds the DAT `compLengthen` candidate: /m/ deletion from
+    /dram/ strands a mora, which spreads left to yield /drā/.
+    The CL repair is not a stipulated candidate — it is available
+    precisely because Telugu has WBP. -/
+theorem telugu_coda_deletion_strands_mora (o n c : Segment) :
+    (deleteMoraic (syllableToMoraic teluguMoraicParams ⟨[o], [n], [c]⟩) 1).2 = 1 := rfl
+
+/-- Moraic conservation (Rule (64), @cite{hayes-1989}): the mora stranded
+    by /m/ deletion is absorbed by leftward spreading to /a/, yielding /ā/
+    (2μ). Total mora count is unchanged. -/
+theorem telugu_cl_conservation (o n c : Segment) :
+    let σ := syllableToMoraic teluguMoraicParams ⟨[o], [n], [c]⟩
+    let (σ_del, stranded) := deleteMoraic σ 1
+    σ.moraCount = (spreadToFill σ_del stranded .left).moraCount := rfl
+
+end MoraicCLConnection
 
 end Phenomena.Allomorphy.Studies.Aitha2026

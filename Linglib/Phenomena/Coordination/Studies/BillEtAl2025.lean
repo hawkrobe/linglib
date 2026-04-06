@@ -481,7 +481,7 @@ is equivalent to applying the predicate directly.
 This is the core of the M&S decomposition: the roundtrip through
 ☉ + MU + J recovers ordinary conjunction semantics.
 -/
-theorem typeRaise_incl_reduces {m : Semantics.Montague.Model} (e : m.Entity) (p : m.Entity → Bool) :
+theorem typeRaise_incl_reduces {m : Semantics.Montague.Model} (e : m.Entity) (p : m.Entity → Prop) :
     typeRaise e p = p e := rfl
 
 open Semantics.Montague.Conjunction in
@@ -490,8 +490,8 @@ Full M&S derivation: "DP₁ and DP₂ VP" via ☉ + MU + J
 yields the same result as Partee & Rooth's `coordEntities`.
 -/
 theorem ms_decomposition_eq_coord {m : Semantics.Montague.Model} (e1 e2 : m.Entity)
-    (p : m.Entity → Bool) :
-    (typeRaise e1 p && typeRaise e2 p) = coordEntities e1 e2 p := rfl
+    (p : m.Entity → Prop) :
+    (typeRaise e1 p ∧ typeRaise e2 p) = coordEntities e1 e2 p := rfl
 
 -- ============================================================================
 -- § MU ↔ Distributivity: The Root Explanation
@@ -544,10 +544,10 @@ This can't be an `abbrev` — the types are different (Montague
 for cross-theory unification.
 -/
 theorem mu_is_distributive_check {m : Semantics.Montague.Model}
-    (e1 e2 : m.Entity) (P : m.Entity → Bool) :
+    (e1 e2 : m.Entity) (P : m.Entity → Unit → Bool) :
     letI := m.decEq
-    coordEntities e1 e2 P =
-    distMaximal (fun a (_ : Unit) => P a) {e1, e2} () := by
+    coordEntities e1 e2 (fun a => P a () = true) ↔
+    (distMaximal P {e1, e2} () = true) := by
   letI := m.decEq
   simp [coordEntities_both_satisfy, distMaximal_pair]
 

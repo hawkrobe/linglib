@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
 import Linglib.Theories.Semantics.Lexical.Determiner.ONEModifiers
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
+import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.German.Distributives
 
 /-!
@@ -97,36 +98,13 @@ def typologicalSample : List UQLanguageEntry :=
       distForm := "dono-N-mo", nonDistForm := "zenbu/minna", family := "Japonic" }
   ]
 
-/-- Both system types are attested. -/
-theorem both_types_attested :
-    (∃ e ∈ typologicalSample, e.systemType = .oneForm) ∧
-    (∃ e ∈ typologicalSample, e.systemType = .twoForm) :=
-  ⟨⟨_, List.mem_cons_self _ _, rfl⟩,
-   ⟨_, List.mem_cons.mpr (List.mem_cons.mpr (List.mem_cons.mpr
-      (List.mem_cons.mpr (List.mem_cons.mpr (List.mem_cons.mpr
-      (List.mem_cons_self _ _)))))).1, rfl⟩⟩
+/-- 1-form count -/
+theorem oneForm_count :
+    (typologicalSample.filter (·.systemType == .oneForm)).length = 6 := by native_decide
 
--- ════════════════════════════════════════════════════
--- § 2. The DNG as Stated Generalization
--- ════════════════════════════════════════════════════
-
-/-- The Distributivity-Number Generalization (DNG).
-    A structurally-typed statement of the paper's central claim. -/
-structure DNG where
-  /-- SG complement → [+dist]: Q_∀ distributes over atoms -/
-  sg_dist : ∀ {α : Type*} [PartialOrder α] {P Q : α → Prop}
-    (hAtoms : ∀ x, P x → Atom x)
-    (hDisj : ∀ x y, P x → P y → Overlap x y → x = y),
-    QForall P Q ↔ ∀ x, P x → Q x
-  /-- PL complement → [−dist]: Q_∀ applies to the unique max -/
-  pl_nondist : ∀ {α : Type*} [SemilatticeSup α] {P Q : α → Prop}
-    (hCum : CUM P) {m : α} (hMax : isMaximal P m),
-    QForall P Q ↔ Q m
-
-/-- The DNG is proved as a theorem, not stipulated. -/
-def dng_verified : DNG where
-  sg_dist := λ hAtoms hDisj => dng_atoms hAtoms hDisj
-  pl_nondist := λ hCum hMax => dng_cum' hCum hMax
+/-- 2-form count -/
+theorem twoForm_count :
+    (typologicalSample.filter (·.systemType == .twoForm)).length = 5 := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Finite Model: 3-Atom Powerset Lattice
@@ -170,7 +148,8 @@ theorem student_disjoint : ∀ (x y : Student),
     (fun _ => True : Student → Prop) y →
     Mereology.Overlap x y → x = y := by
   intro x y _ _ ⟨z, hzx, hzy⟩
-  exact hzx.trans hzy.symm
+  -- In Student's flat order, ≤ is =, so hzx : z = x and hzy : z = y
+  exact hzx.symm.trans hzy
 
 /-- DNG-SG: Q_∀ on a flat domain distributes to each element. -/
 theorem dng_sg_concrete :
@@ -183,7 +162,7 @@ theorem dng_sg_concrete :
 theorem dng_sg_false : ¬QForall (fun _ : Student => True) passed := by
   rw [dng_sg_concrete]
   intro h
-  exact absurd (h .carol) (by trivial)
+  exact h .carol
 
 end FiniteModel
 
@@ -228,7 +207,7 @@ theorem QForall_cum_iff_allSatisfy
 -- § 5. English every/each/all Decomposition Verification
 -- ════════════════════════════════════════════════════
 
-/-- The English decomposition from the paper:
+/-! The English decomposition from the paper:
     - all = Q_∀ (bare, no ONE)
     - every = Q_∀ + ONE_∅
     - each = Q_∀ + ONE_∅ + ONE_AT
@@ -287,7 +266,56 @@ theorem german_dng_explained :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 7. The *each ten minutes Test
+-- § 7. English Fragment Consistency
+-- ════════════════════════════════════════════════════
+
+/-! Connect the Q_∀ decomposition to the English fragment's `DistMaxClass`
+    and semantic entries in `Fragments/English/Determiners.lean`.
+
+    The NLLT decomposition predicts:
+    - each = Q_∀[ONE_AT] → [+dist] (atoms), [+max] (atoms vacuously maximal)
+    - every = Q_∀[ONE_∅] → [+dist] (non-overlap), [+max]
+    - all = bare Q_∀ → [−dist] (CUM complement), [+max]
+
+    These predictions match the Fragment's DistMaxClass assignments. -/
+
+open Fragments.English.Determiners in
+/-- English each's DistMaxClass matches the ONE_AT prediction:
+    [+dist] (ONE_AT forces atom complement) and [+max]. -/
+theorem each_matches_ONE_AT_prediction :
+    each_distMaxClass = .distMax := rfl
+
+open Fragments.English.Determiners in
+/-- English every's DistMaxClass matches the ONE_∅ prediction:
+    [+dist] (ONE_∅ forces non-overlap) and [+max]. -/
+theorem every_matches_ONE_empty_prediction :
+    every_distMaxClass = .distMax := rfl
+
+open Fragments.English.Determiners in
+/-- English all's DistMaxClass matches bare Q_∀ prediction:
+    [−dist] (no ONE, CUM complement → collective) and [+max]. -/
+theorem all_matches_bare_QForall_prediction :
+    all_distMaxClass = .nonDistMax := rfl
+
+open Fragments.English.Determiners in
+/-- The NLLT theory predicts each ⊂ every in presuppositional strength.
+    Both share DistMaxClass (both are +dist, +max), but each additionally
+    requires atomicity (ONE_AT). This distinction doesn't show up in
+    DistMaxClass (which collapses each and every) but IS captured by
+    the Q_∀+ONE decomposition. -/
+theorem each_every_same_distmax_different_presup :
+    each_distMaxClass = every_distMaxClass := rfl
+
+open Fragments.English.Determiners in
+/-- The Fragment's `eachSem` = `distMaximal` is the computational
+    counterpart of Q_∀[ONE_AT]: both distribute over atoms.
+    Q_∀[ONE_AT] ⊢ ∀x, P(x) → Q(x) (by `every_distributes`),
+    and `distMaximal` checks ∀a ∈ X, P(a)(w). -/
+theorem eachSem_is_distMaximal {Atom W : Type*} [DecidableEq Atom]
+    (P : Atom → W → Bool) : eachSem P = distMaximal P := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 8. The *each ten minutes Test
 -- ════════════════════════════════════════════════════
 
 /-! ONE_AT explains the ungrammaticality of *each ten minutes:
@@ -296,14 +324,9 @@ theorem german_dng_explained :
     "Every ten minutes" is fine: intervals can be non-overlapping
     (satisfying ONE_∅) without being atomic. -/
 
-/-- Intervals are non-atomic: they have proper parts. -/
-structure Interval where
-  start : Nat
-  stop : Nat
-  h : start < stop
-
-/-- A sequence of 10-minute intervals is non-overlapping but not atomic.
-    ONE_∅ accepts, ONE_AT rejects → *every ten minutes is fine, *each ten minutes is out. -/
+/-- ONE_AT rejects non-atomic predicates.
+    *every ten minutes* is fine (ONE_∅ accepts non-overlapping intervals),
+    but *each ten minutes* is out (ONE_AT requires atoms). -/
 theorem each_ten_minutes_blocked {α : Type*} [PartialOrder α]
     {P : α → Prop}
     (hNonAtomic : ∃ x, P x ∧ ¬Atom x)

@@ -58,8 +58,8 @@ and Fragment data from `Fragments/Teop/Nouns.lean` and
 
 namespace Phenomena.Morphology.Studies.Adamson2024
 
-open Morphology.DM
-open Morphology.DM.VI
+open Theories.Morphology.DM
+open Theories.Morphology.DM.VI
 open Minimalism
 
 -- ============================================================================
@@ -461,7 +461,7 @@ and gender II co-occurs with non-relational (no possessor slot). The
 correlation is structural — both paths read `selectsD` from the same
 n-head. -/
 
-open Morphology.DM.CategorizerSemantics
+open Theories.Morphology.DM.CategorizerSemantics
 
 /-- The PF derivation pipeline: n-head → gender → article.
     Gender is an intermediate value computed from φ-features, then fed

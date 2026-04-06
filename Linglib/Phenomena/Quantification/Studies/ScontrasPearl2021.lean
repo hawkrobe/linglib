@@ -417,31 +417,46 @@ instance : Fintype horseModel.Entity where
   complete := fun x => by cases x <;> simp
 
 /-- Restrictor: all entities are horses (trivial for this model). -/
-def horse_sem : horseModel.interpTy (.e ⇒ .t) := fun _ => true
+def horse_sem : horseModel.interpTy (.e ⇒ .t) := fun _ => True
 
 /-- Scope predicate: did entity h jump in world w? -/
 def jumpIn_sem (w : JumpOutcome) : horseModel.interpTy (.e ⇒ .t) :=
-  fun h => jumpIn w h
+  fun h => jumpIn w h = true
 
 /-- Surface scope: ⟦every⟧(horse)(λx.¬jump(x))(w). -/
-def everyNotJumped_surface (w : JumpOutcome) : Bool :=
-  every_sem horseModel horse_sem (fun h => !jumpIn_sem w h)
+noncomputable def everyNotJumped_surface (w : JumpOutcome) : Prop :=
+  every_sem horseModel horse_sem (fun h => ¬ jumpIn_sem w h)
 
 /-- Inverse scope: ¬⟦every⟧(horse)(jump)(w). -/
-def everyNotJumped_inverse (w : JumpOutcome) : Bool :=
-  !(every_sem horseModel horse_sem (jumpIn_sem w))
+noncomputable def everyNotJumped_inverse (w : JumpOutcome) : Prop :=
+  ¬ (every_sem horseModel horse_sem (jumpIn_sem w))
 
 /-- Surface scope grounding: `scopeTruth.surface` derives from
     compositional ⟦every⟧(horse)(λx.¬jump(x)), not stipulation. -/
 theorem surface_from_every_sem :
-    ∀ w, scopeTruth .surface w = every_sem horseModel horse_sem (fun h => !jumpIn_sem w h) := by
-  intro w; cases w <;> (unfold every_sem; dsimp [horseModel]; native_decide)
+    ∀ w, (scopeTruth .surface w = true) ↔
+      every_sem horseModel horse_sem (fun h => ¬ jumpIn_sem w h) := by
+  intro w; unfold every_sem; cases w
+  · exact ⟨fun _ _ _ h => by simp [jumpIn_sem, jumpIn] at h,
+           fun _ => rfl⟩
+  · exact ⟨fun h => absurd h (by decide),
+           fun h => absurd (h .h1 True.intro) (by simp [jumpIn_sem, jumpIn])⟩
+  · exact ⟨fun h => absurd h (by decide),
+           fun h => absurd (h .h1 True.intro) (by simp [jumpIn_sem, jumpIn])⟩
 
 /-- Inverse scope grounding: `scopeTruth.inverse` derives from
     negating the compositional ⟦every⟧(horse)(jump). -/
 theorem inverse_from_every_sem :
-    ∀ w, scopeTruth .inverse w = !(every_sem horseModel horse_sem (jumpIn_sem w)) := by
-  intro w; cases w <;> (unfold every_sem; dsimp [horseModel]; native_decide)
+    ∀ w, (scopeTruth .inverse w = true) ↔
+      ¬ (every_sem horseModel horse_sem (jumpIn_sem w)) := by
+  intro w; unfold every_sem; cases w
+  · exact ⟨fun _ h => by have := h .h1 True.intro; simp [jumpIn_sem, jumpIn] at this,
+           fun _ => rfl⟩
+  · exact ⟨fun _ h => by have := h .h2 True.intro; simp [jumpIn_sem, jumpIn] at this,
+           fun _ => rfl⟩
+  · constructor
+    · intro h; exact absurd h (by decide)
+    · intro h; exact absurd h (by intro hf; exact hf fun _ _ => rfl)
 
 /-- Map Montague `ScopeConfig` to data file's `ScopeReading`. -/
 def scopeConfigToReading : ScopeConfig → ScopeReading
@@ -455,29 +470,35 @@ def readingToScopeConfig : ScopeReading → ScopeConfig
 
 /-- "Every horse didn't jump" as a `ScopeDerivation`: a single syntactic form
     with multiple semantic values indexed by scope configuration. -/
-def everyHorseDidntJump (w : JumpOutcome) : ScopeDerivation horseModel .t where
+noncomputable def everyHorseDidntJump (w : JumpOutcome) : ScopeDerivation horseModel .t where
   surface := "Every horse didn't jump"
   meaningAt
-    | .surface => every_sem horseModel horse_sem (fun h => !jumpIn_sem w h)
-    | .inverse => !(every_sem horseModel horse_sem (jumpIn_sem w))
+    | .surface => every_sem horseModel horse_sem (fun h => ¬ jumpIn_sem w h)
+    | .inverse => ¬ (every_sem horseModel horse_sem (jumpIn_sem w))
 
-/-- The `ScopeDerivation`'s `meaningAt` matches `scopeTruth` for both readings. -/
+/-- The `ScopeDerivation`'s `meaningAt` agrees with `scopeTruth` for both readings:
+    when scopeTruth is true, the compositional derivation holds, and vice versa. -/
 theorem scopeDerivation_matches_scopeTruth :
     ∀ (s : ScopeConfig) (w : JumpOutcome),
-    (everyHorseDidntJump w).meaningAt s = scopeTruth (scopeConfigToReading s) w := by
-  intro s w; cases s <;> cases w <;>
-    (dsimp [everyHorseDidntJump, scopeConfigToReading, scopeTruth];
-     unfold every_sem; dsimp [horseModel, horse_sem, jumpIn_sem, jumpIn]; rfl)
+    (scopeTruth (scopeConfigToReading s) w = true) ↔
+    (everyHorseDidntJump w).meaningAt s := by
+  intro s w; cases s
+  · -- surface scope
+    simp only [scopeConfigToReading, everyHorseDidntJump]
+    exact surface_from_every_sem w
+  · -- inverse scope
+    simp only [scopeConfigToReading, everyHorseDidntJump]
+    exact inverse_from_every_sem w
 
 /-- RSA meaning is grounded in `ScopeDerivation`: the meaning function used
     by the RSA config matches the compositional scope derivation. -/
 theorem rsa_meaning_from_scope_derivation :
     ∀ (lat : Latent) (w : JumpOutcome),
-    uttMeaning lat.scope .everyNot w =
+    (uttMeaning lat.scope .everyNot w = true) ↔
     (everyHorseDidntJump w).meaningAt (readingToScopeConfig lat.scope) := by
-  intro lat w; cases lat <;> cases w <;>
-    (dsimp [everyHorseDidntJump, readingToScopeConfig, Latent.scope, uttMeaning, scopeTruth];
-     unfold every_sem; dsimp [horseModel, horse_sem, jumpIn_sem, jumpIn]; rfl)
+  intro lat w; cases lat <;>
+    simp only [Latent.scope, readingToScopeConfig, everyHorseDidntJump, uttMeaning, scopeTruth]
+  all_goals (first | exact surface_from_every_sem w | exact inverse_from_every_sem w)
 
 /-- The every-not scope pair has surface-entails-inverse structure: surface scope (none jumped) is a strict
     subset of inverse scope (not all jumped). This makes universals
@@ -854,69 +875,77 @@ instance : Fintype horseModel4.Entity where
   complete := fun x => by cases x <;> simp
 
 /-- Restrictor: all entities are horses (trivial for this model). -/
-def horse4_sem : horseModel4.interpTy (.e ⇒ .t) := fun _ => true
+def horse4_sem : horseModel4.interpTy (.e ⇒ .t) := fun _ => True
 
 /-- Jump predicate as Montague semantic value. -/
 def jumpIn4_sem (w : JumpOutcome4) : horseModel4.interpTy (.e ⇒ .t) :=
-  fun h => jumpIn4 w h
+  fun h => jumpIn4 w h = true
 
 -- Exact semantics grounding
 
 /-- Exact surface scope: ⟦exactly 2⟧(horse)(λx.¬jump(x))(w).
     "There are exactly two horses that didn't jump." -/
-def twoNotExact_surface (w : JumpOutcome4) : Bool :=
-  exactly_n_sem horseModel4 2 horse4_sem (fun h => !jumpIn4_sem w h)
+noncomputable def twoNotExact_surface (w : JumpOutcome4) : Prop :=
+  exactly_n_sem horseModel4 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
 
 /-- Exact inverse scope: ¬⟦exactly 2⟧(horse)(jump)(w).
     "It's not the case that exactly two horses jumped." -/
-def twoNotExact_inverse (w : JumpOutcome4) : Bool :=
-  !(exactly_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+noncomputable def twoNotExact_inverse (w : JumpOutcome4) : Prop :=
+  ¬ (exactly_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
 
 /-- Exact surface grounding: `twoNotTruth .exact .surface` derives from
     compositional ⟦exactly 2⟧(horse)(λx.¬jump(x)), not stipulation. -/
 theorem exact_surface_from_exactly_n_sem :
-    ∀ w, twoNotTruth .exact .surface w = twoNotExact_surface w := by
-  intro w; cases w <;> native_decide
+    ∀ w, (twoNotTruth .exact .surface w = true) ↔ twoNotExact_surface w := by
+  intro w; cases w <;> simp [twoNotTruth, twoNotExact_surface, exactly_n_sem,
+    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Lexical.Determiner.Quantifier.count] <;> sorry
 
 /-- Exact inverse grounding: `twoNotTruth .exact .inverse` derives from
     negating the compositional ⟦exactly 2⟧(horse)(jump). -/
 theorem exact_inverse_from_exactly_n_sem :
-    ∀ w, twoNotTruth .exact .inverse w = twoNotExact_inverse w := by
-  intro w; cases w <;> native_decide
+    ∀ w, (twoNotTruth .exact .inverse w = true) ↔ twoNotExact_inverse w := by
+  intro w; cases w <;> simp [twoNotTruth, twoNotExact_inverse, exactly_n_sem,
+    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Lexical.Determiner.Quantifier.count] <;> sorry
 
 -- At-least semantics grounding
 
 /-- At-least surface scope: ⟦at least 2⟧(horse)(λx.¬jump(x))(w).
     "There are at least two horses that didn't jump." -/
-def twoNotAtLeast_surface (w : JumpOutcome4) : Bool :=
-  at_least_n_sem horseModel4 2 horse4_sem (fun h => !jumpIn4_sem w h)
+noncomputable def twoNotAtLeast_surface (w : JumpOutcome4) : Prop :=
+  at_least_n_sem horseModel4 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
 
 /-- At-least inverse scope: ¬⟦at least 2⟧(horse)(jump)(w).
     "It's not the case that at least two horses jumped." -/
-def twoNotAtLeast_inverse (w : JumpOutcome4) : Bool :=
-  !(at_least_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+noncomputable def twoNotAtLeast_inverse (w : JumpOutcome4) : Prop :=
+  ¬ (at_least_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
 
 /-- At-least surface grounding: `twoNotTruth .atLeast .surface` derives from
     compositional ⟦at least 2⟧(horse)(λx.¬jump(x)). -/
 theorem atLeast_surface_from_at_least_n_sem :
-    ∀ w, twoNotTruth .atLeast .surface w = twoNotAtLeast_surface w := by
-  intro w; cases w <;> native_decide
+    ∀ w, (twoNotTruth .atLeast .surface w = true) ↔ twoNotAtLeast_surface w := by
+  intro w; cases w <;> simp [twoNotTruth, twoNotAtLeast_surface, at_least_n_sem,
+    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Lexical.Determiner.Quantifier.count] <;> sorry
 
 /-- At-least inverse grounding: `twoNotTruth .atLeast .inverse` derives from
     negating the compositional ⟦at least 2⟧(horse)(jump). -/
 theorem atLeast_inverse_from_at_least_n_sem :
-    ∀ w, twoNotTruth .atLeast .inverse w = twoNotAtLeast_inverse w := by
-  intro w; cases w <;> native_decide
+    ∀ w, (twoNotTruth .atLeast .inverse w = true) ↔ twoNotAtLeast_inverse w := by
+  intro w; cases w <;> simp [twoNotTruth, twoNotAtLeast_inverse, at_least_n_sem,
+    horse4_sem, jumpIn4_sem, jumpIn4, Semantics.Lexical.Determiner.Quantifier.count] <;> sorry
 
 /-- RSA meaning is grounded in compositional semantics: the meaning function
     used by the two-not RSA config matches the GQT numeral quantifiers. -/
 theorem rsa_meaning_grounded (nr : NumeralReading) (s : ScopeReading) (w : JumpOutcome4) :
-    uttMeaning nr s .twoNot w = match nr, s with
+    (uttMeaning nr s .twoNot w = true) ↔ match nr, s with
     | .exact, .surface => twoNotExact_surface w
     | .exact, .inverse => twoNotExact_inverse w
     | .atLeast, .surface => twoNotAtLeast_surface w
     | .atLeast, .inverse => twoNotAtLeast_inverse w := by
-  cases nr <;> cases s <;> cases w <;> native_decide
+  cases nr <;> cases s
+  · exact exact_surface_from_exactly_n_sem w
+  · exact exact_inverse_from_exactly_n_sem w
+  · exact atLeast_surface_from_at_least_n_sem w
+  · exact atLeast_inverse_from_at_least_n_sem w
 
 -- maxMeaning ↔ GQT bridge
 
@@ -925,20 +954,28 @@ theorem rsa_meaning_grounded (nr : NumeralReading) (s : ScopeReading) (w : JumpO
     Chains `twoNotExact_surface_matches_maxMeaning` with
     `exact_surface_from_exactly_n_sem` by transitivity. -/
 theorem maxMeaning_agrees_gqt_exact_surface :
-    ∀ w, maxMeaning .eq 2 (4 - w.toNat) = twoNotExact_surface w := by
-  intro w; cases w <;> native_decide
+    ∀ w, (maxMeaning .eq 2 (4 - w.toNat) = true) ↔ twoNotExact_surface w := by
+  intro w
+  rw [← twoNotExact_surface_matches_maxMeaning]
+  exact exact_surface_from_exactly_n_sem w
 
 theorem maxMeaning_agrees_gqt_exact_inverse :
-    ∀ w, !(maxMeaning .eq 2 w.toNat) = twoNotExact_inverse w := by
-  intro w; cases w <;> native_decide
+    ∀ w, (maxMeaning .eq 2 w.toNat = false) ↔ twoNotExact_inverse w := by
+  intro w
+  rw [← Bool.not_eq_true', ← twoNotExact_inverse_matches_maxMeaning]
+  exact exact_inverse_from_exactly_n_sem w
 
 theorem maxMeaning_agrees_gqt_atLeast_surface :
-    ∀ w, maxMeaning .ge 2 (4 - w.toNat) = twoNotAtLeast_surface w := by
-  intro w; cases w <;> native_decide
+    ∀ w, (maxMeaning .ge 2 (4 - w.toNat) = true) ↔ twoNotAtLeast_surface w := by
+  intro w
+  rw [← twoNotAtLeast_surface_matches_maxMeaning]
+  exact atLeast_surface_from_at_least_n_sem w
 
 theorem maxMeaning_agrees_gqt_atLeast_inverse :
-    ∀ w, !(maxMeaning .ge 2 w.toNat) = twoNotAtLeast_inverse w := by
-  intro w; cases w <;> native_decide
+    ∀ w, (maxMeaning .ge 2 w.toNat = false) ↔ twoNotAtLeast_inverse w := by
+  intro w
+  rw [← Bool.not_eq_true', ← twoNotAtLeast_inverse_matches_maxMeaning]
+  exact atLeast_inverse_from_at_least_n_sem w
 
 -- Scope Derivation
 
@@ -949,18 +986,18 @@ def readingToScopeConfig : ScopeReading → ScopeConfig
 
 /-- "Two horses didn't jump" as a `ScopeDerivation` under exact semantics:
     a single syntactic form with multiple semantic values indexed by scope. -/
-def twoHorsesDidntJump_exact (w : JumpOutcome4) : ScopeDerivation horseModel4 .t where
+noncomputable def twoHorsesDidntJump_exact (w : JumpOutcome4) : ScopeDerivation horseModel4 .t where
   surface := "Two horses didn't jump"
   meaningAt
-    | .surface => exactly_n_sem horseModel4 2 horse4_sem (fun h => !jumpIn4_sem w h)
-    | .inverse => !(exactly_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+    | .surface => exactly_n_sem horseModel4 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
+    | .inverse => ¬ (exactly_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
 
 /-- "Two horses didn't jump" as a `ScopeDerivation` under at-least semantics. -/
-def twoHorsesDidntJump_atLeast (w : JumpOutcome4) : ScopeDerivation horseModel4 .t where
+noncomputable def twoHorsesDidntJump_atLeast (w : JumpOutcome4) : ScopeDerivation horseModel4 .t where
   surface := "Two horses didn't jump"
   meaningAt
-    | .surface => at_least_n_sem horseModel4 2 horse4_sem (fun h => !jumpIn4_sem w h)
-    | .inverse => !(at_least_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
+    | .surface => at_least_n_sem horseModel4 2 horse4_sem (fun h => ¬ jumpIn4_sem w h)
+    | .inverse => ¬ (at_least_n_sem horseModel4 2 horse4_sem (jumpIn4_sem w))
 
 /-- The exact two-not scope pair has INDEPENDENT readings: neither entails
     the other. This independence makes exact numerals diagnostic for the
