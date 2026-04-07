@@ -234,6 +234,10 @@ structure ValencyClause where
   object : Option Word
   /-- The valency frame for this verb form -/
   frame : ValencyFrame
+  /-- Whether the subject denotes a plurality. Defaults to matching
+      syntactic number. Override for languages where syntactic and
+      semantic number diverge (@cite{rakosi-2019}). -/
+  semanticPl : Bool := subject.features.number == some .pl
   deriving Repr
 
 /-- Parse a sentence into a valency clause -/
@@ -241,11 +245,11 @@ def parseValencyClause (ws : List Word) : Option ValencyClause :=
   match ws with
   | [subj, v, obj] =>
     if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
-      some ⟨subj, v, some obj, transitiveFrame v.form⟩
+      some { subject := subj, verb := v, object := some obj, frame := transitiveFrame v.form }
     else none
   | [subj, v] =>
     if isNominalCat subj.cat && v.cat == .VERB then
-      some ⟨subj, v, none, intransitiveFrame v.form⟩
+      some { subject := subj, verb := v, object := none, frame := intransitiveFrame v.form }
     else none
   | _ => none
 
@@ -281,7 +285,8 @@ def reflexiveLicensed (clause : ValencyClause) : Bool :=
     A reciprocal must be:
     1. A conjunct valent in some valency frame
     2. Preceded by a full valent in that frame
-    3. The full valent must be plural -/
+    3. The full valent must denote a plurality (semantic, not morphosyntactic;
+       @cite{rakosi-2019}) -/
 def reciprocalLicensed (clause : ValencyClause) : Bool :=
   match clause.object with
   | none => false
@@ -294,17 +299,27 @@ def reciprocalLicensed (clause : ValencyClause) : Bool :=
         anaphorIdx := 1
       }
       crdcSatisfied config &&
-      clause.subject.features.number == some .pl
+      clause.semanticPl
     | _ => true
 
 /-- Pronoun constraint under CRDC
 
-    A pronoun as conjunct valent cannot corefer with the full valent
-    in the same valency frame. -/
-def pronounLocallyFree (_clause : ValencyClause) : Bool :=
-  -- Under CRDC, a pronoun in conjunct valent position cannot be
-  -- coreferent with the full valent (same prediction as Principle B)
-  false
+    A pronoun as conjunct valent cannot corefer with a preceding full
+    valent in the same valency frame. Derived from `crdcSatisfied`:
+    if no full valent precedes the pronoun, local coreference is free. -/
+def pronounLocallyFree (clause : ValencyClause) : Bool :=
+  match clause.object with
+  | none => true
+  | some obj =>
+    match classifyNominal obj with
+    | some .pronoun =>
+      let config : CRDCConfig := {
+        frame := clause.frame
+        antecedentIdx := 0
+        anaphorIdx := 1
+      }
+      !crdcSatisfied config
+    | _ => true
 
 /-- Is a sentence grammatical for coreference under CRDC? -/
 def grammaticalForCoreference (ws : List Word) : Bool :=
@@ -338,7 +353,7 @@ def reflexiveLicensedInSentence (ws : List Word) : Bool :=
 def pronounCoreferenceBlocked (ws : List Word) : Bool :=
   match parseValencyClause ws with
   | none => false
-  | some _ => true  -- Always blocked locally under CRDC
+  | some clause => !pronounLocallyFree clause
 
 -- Binding theory tests are verified by native_decide theorems in
 -- Phenomena.Anaphora.Studies.OsborneLi2023
@@ -370,18 +385,33 @@ def computeCoreferenceStatus (clause : ValencyClause) (i j : Nat) : Interfaces.C
           antecedentIdx := 0
           anaphorIdx := 1
         }
-        if crdcSatisfied config && clause.subject.features.number == some .pl
+        if crdcSatisfied config && clause.semanticPl
         then .obligatory
         else .blocked
       | some .pronoun => .blocked
       | some .rExpression => .possible
       | none => .unspecified
   else if i == 2 && j == 0 then
-    -- Object-subject: object is conjunct, cannot bind subject
+    -- Can object (conjunct valent at position 1) bind subject (full valent
+    -- at position 0)? Derived: conjunct valent cannot precede full valent
+    let config : CRDCConfig := {
+      frame := clause.frame
+      antecedentIdx := 1
+      anaphorIdx := 0
+    }
     match classifyNominal clause.subject with
-    | some .reflexive => .blocked
-    | some .reciprocal => .blocked
-    | some .pronoun => .possible
+    | some .reflexive =>
+      if crdcSatisfied config
+      then .obligatory
+      else .blocked
+    | some .reciprocal =>
+      if crdcSatisfied config
+      then .obligatory
+      else .blocked
+    | some .pronoun =>
+      if crdcSatisfied config
+      then .blocked
+      else .possible
     | _ => .possible
   else
     .unspecified

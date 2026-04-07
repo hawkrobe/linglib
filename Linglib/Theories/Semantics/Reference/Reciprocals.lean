@@ -310,4 +310,99 @@ def AnaphoricRelation.denotes (r : AnaphoricRelation) {S E : Type*}
   | .groupIdentity => groupIdentitySem u_ant u_pro
   | .reciprocity   => reciprocitySem u_ant u_pro
 
+-- ════════════════════════════════════════════════════════════════
+-- § 9: Plurality Licensing — Morphosyntactic vs. Semantic
+-- (@cite{rakosi-2019})
+-- ════════════════════════════════════════════════════════════════
+
+/-- What kind of plurality an anaphor requires from its antecedent.
+
+    @cite{rakosi-2019} demonstrates that Hungarian reciprocals (*egymás*)
+    tolerate morphosyntactically singular antecedents (quantified NPs,
+    singular coordinate DPs, collective nouns) while reflexives
+    (*maga/maguk*) require morphosyntactic plurality (plural noun head,
+    plural verb agreement, plural anaphor form).
+
+    This distinction is derivable from the formal semantics:
+    - **Reflexive binding** (=) operates via φ-feature agreement — the
+      anaphor must match the morphosyntactic features of its antecedent
+      and the verb. Agreement is a syntactic mechanism, so it requires
+      syntactic number marking.
+    - **Reciprocity** (R) requires per-situation distinctness
+      (`u_ant s ≠ u_pro s`), which presupposes multiple individuals in
+      the denotation. This is a semantic requirement: the antecedent
+      must *denote* a plurality, but need not *bear plural morphology*. -/
+inductive PluralityRequirement where
+  /-- Requires plural morphology on the antecedent, plural agreement
+      on the verb, and matching plural form on the anaphor.
+      Characteristic of reflexive anaphors cross-linguistically. -/
+  | morphosyntactic
+  /-- Requires only that the antecedent denote a set of multiple
+      individuals. Syntactic number features are irrelevant.
+      Characteristic of reciprocal anaphors cross-linguistically. -/
+  | semantic
+  deriving DecidableEq, Repr
+
+/-- The plurality requirement for each anaphor type, derived from
+    the underlying anaphoric relation:
+    - Reflexives use binding (=), which operates via φ-agreement →
+      morphosyntactic plurality required.
+    - Reciprocals use reciprocity (R), which requires semantic
+      distinctness → semantic plurality sufficient. -/
+def anaphorPluralityReq (isReciprocal : Bool) : PluralityRequirement :=
+  if isReciprocal then .semantic else .morphosyntactic
+
+/-- Whether an antecedent satisfies the plurality requirement.
+    `syntacticPl` = the antecedent bears plural morphology and triggers
+    plural agreement. `semanticPl` = the antecedent denotes a plurality
+    (true for quantified NPs, coordinate DPs, collective nouns, even when
+    syntactically singular). -/
+def satisfiesPluralityReq (req : PluralityRequirement)
+    (syntacticPl semanticPl : Bool) : Bool :=
+  match req with
+  | .morphosyntactic => syntacticPl
+  | .semantic        => semanticPl
+
+/-- Semantic plurality implies morphosyntactic plurality is not required
+    for reciprocals: if the antecedent denotes a plurality, the reciprocal
+    is licensed regardless of syntactic number. -/
+theorem recip_licensed_by_semantic_plurality (semanticPl : Bool)
+    (h : semanticPl = true) :
+    satisfiesPluralityReq (anaphorPluralityReq true) false semanticPl = true := by
+  simp [satisfiesPluralityReq, anaphorPluralityReq, h]
+
+/-- Reflexives require morphosyntactic plurality: semantic plurality
+    alone is insufficient. -/
+theorem refl_needs_morphosyntactic_plurality :
+    satisfiesPluralityReq (anaphorPluralityReq false) false true = false := rfl
+
+/-- When an antecedent IS morphosyntactically plural, both anaphor
+    types are licensed (morphosyntactic plurality implies semantic). -/
+theorem morphosyntactic_pl_licenses_both :
+    satisfiesPluralityReq (anaphorPluralityReq false) true true = true ∧
+    satisfiesPluralityReq (anaphorPluralityReq true) true true = true := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 10: Connecting Plurality Licensing to Formal Semantics
+-- ════════════════════════════════════════════════════════════════
+
+/-- The semantic justification: reciprocity (R) requires at least two
+    distinct values in the range of the discourse referent function.
+    This is a property of the *denotation*, not of morphological features.
+    We prove: if reciprocity holds for any situation, then the
+    discourse referent function is not constant — i.e., there exist
+    at least two distinct individuals. -/
+theorem reciprocity_implies_multiple_individuals {S E : Type*}
+    {u_ant u_pro : S → E} (s : S)
+    (h : reciprocitySem u_ant u_pro) :
+    ∃ (a b : E), a ≠ b :=
+  ⟨u_ant s, u_pro s, h.2 s⟩
+
+/-- Binding (=) is compatible with a constant function (single individual).
+    A constant function can satisfy binding but not reciprocity.
+    This is WHY reflexives don't need semantic plurality and reciprocals do. -/
+theorem binding_compatible_with_singleton {E : Type*} (e : E) :
+    bindingSem (fun (_ : Unit) => e) (fun (_ : Unit) => e) :=
+  fun _ => rfl
+
 end Semantics.Reference.Reciprocals

@@ -462,10 +462,13 @@ theorem hungarian_recip_not_reflexive :
     Fragments.Hungarian.Reciprocals.egymas.form ≠
     Fragments.Hungarian.Reciprocals.maga.form := by decide
 
-/-- Hungarian allows singular antecedents for the reciprocal, which
-    forces wide scope (the singular null pronoun must be bound). -/
+/-- Hungarian allows singular antecedents for the reciprocal
+    (@cite{rakosi-2019}), which forces wide scope (the singular null
+    pronoun must be bound). All four singular construction types
+    license the reciprocal. -/
 theorem hungarian_singular_forces_wide :
-    Fragments.Hungarian.Reciprocals.allowsSingularAntecedent = true ∧
+    Fragments.Hungarian.Reciprocals.singularConstructions.map
+      Fragments.Hungarian.Reciprocals.reciprocalLicensed = [true, true, true, true] ∧
     Fragments.Hungarian.Reciprocals.singularAntecedentForcesWideScope = true := ⟨rfl, rfl⟩
 
 /-- Wan logophoric pronoun *mɔ̄* is formally distinct from the ordinary

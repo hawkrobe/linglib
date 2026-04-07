@@ -118,6 +118,10 @@ structure SimpleClause where
   subject : Word
   verb : Word
   object : Option Word
+  /-- Whether the subject denotes a plurality. Defaults to matching
+      syntactic number. Override for languages where syntactic and
+      semantic number diverge (@cite{rakosi-2019}). -/
+  semanticPl : Bool := subject.features.number == some .pl
   deriving Repr
 
 /-- Parse a simple transitive sentence into a clause. -/
@@ -125,22 +129,40 @@ def parseSimpleClause (ws : List Word) : Option SimpleClause :=
   match ws with
   | [subj, v, obj] =>
     if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
-      some ⟨subj, v, some obj⟩
+      some { subject := subj, verb := v, object := some obj }
     else none
   | [subj, v] =>
     if isNominalCat subj.cat && v.cat == .VERB then
-      some ⟨subj, v, none⟩
+      some { subject := subj, verb := v, object := none }
     else none
   | _ => none
 
+/-- Convert a word to a minimal HPSG Synsem for ARG-ST construction. -/
+private def wordToSynsem (w : Word) : HPSG.Synsem :=
+  { cat := w.cat }
+
+/-- Build the ARG-ST for a simple clause from its arguments.
+
+    ARG-ST = [subject, object] — the verb's argument structure list,
+    ordered by obliqueness (@cite{sag-wasow-bender-2003} Ch. 7). -/
+def SimpleClause.toArgSt (clause : SimpleClause) : HPSG.ArgSt :=
+  match clause.object with
+  | none => { args := [wordToSynsem clause.subject] }
+  | some obj => { args := [wordToSynsem clause.subject, wordToSynsem obj] }
+
 /-- Does the subject outrank the object on ARG-ST?
 
-    In a simple clause, ARG-ST = [subject, object], so the subject
-    at position 0 always outranks the object at position 1. -/
-def subjectOutranksObject (_clause : SimpleClause) : Bool := true
+    Derived from `ArgSt.outranks`: subject at position 0 outranks
+    object at position 1 iff `0 < 1 ∧ 1 < args.length`. -/
+def subjectOutranksObject (clause : SimpleClause) : Bool :=
+  clause.toArgSt.outranks 0 1
 
-/-- In a simple clause, subject and object are on the same ARG-ST list. -/
-def sameArgSt (_clause : SimpleClause) : Bool := true
+/-- Subject and object are on the same ARG-ST list: both are valid
+    indices in the ARG-ST built from the verb's argument structure. -/
+def sameArgSt (clause : SimpleClause) : Bool :=
+  match clause.object with
+  | none => true
+  | some _ => 1 < clause.toArgSt.args.length
 
 end ArgStOutranking
 
@@ -195,7 +217,10 @@ def reflexiveLicensed (clause : SimpleClause) : Bool :=
     | _ => true
 
 /-- Principle A for reciprocals: a reciprocal ([MODE ana]) must be outranked
-    by a plural coindexed element. -/
+    by a semantically plural coindexed element. The plurality requirement
+    is semantic (LF), not morphosyntactic — reciprocals are licensed by
+    quantified NPs, singular coordinate DPs, and collective nouns that
+    are syntactically singular (@cite{rakosi-2019}). -/
 def reciprocalLicensed (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
@@ -204,7 +229,7 @@ def reciprocalLicensed (clause : SimpleClause) : Bool :=
     | some .reciprocal =>
       subjectOutranksObject clause &&
       sameArgSt clause &&
-      clause.subject.features.number == some .pl
+      clause.semanticPl
     | _ => true
 
 /-- Principle B (SWB2003): A [MODE ref] element must NOT be outranked
@@ -376,18 +401,26 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
         else .possible
       | _ => .unspecified
   else if i == 2 && j == 0 then
-    -- Object does not outrank subject
+    -- Does the object outrank the subject on ARG-ST?
+    -- Derived: outranks requires i < j, but object (1) > subject (0)
+    let objectOutranks := clause.toArgSt.outranks 1 0
     match classifyMode clause.subject with
-    | some .ana => .blocked      -- Anaphor with no outranker
-    | some .ref => .possible     -- Not outranked, no constraint
+    | some .ana =>
+      if objectOutranks && sameArgSt clause
+      then .obligatory
+      else .blocked
+    | some .ref =>
+      if objectOutranks && sameArgSt clause
+      then .blocked
+      else .possible
     | _ => .unspecified
   else
     .unspecified
 
 -- Principle B applies uniformly to [MODE ref] — both pronouns and R-expressions
-private def johnSeesHim : SimpleClause := ⟨john, sees, some him⟩
-private def johnSeesMary : SimpleClause := ⟨john, sees, some mary⟩
-private def johnSeesHimself : SimpleClause := ⟨john, sees, some himself⟩
+private def johnSeesHim : SimpleClause := { subject := john, verb := sees, object := some him }
+private def johnSeesMary : SimpleClause := { subject := john, verb := sees, object := some mary }
+private def johnSeesHimself : SimpleClause := { subject := john, verb := sees, object := some himself }
 
 -- Principle A: anaphor must be outranked → obligatory coreference
 #guard computeCoreferenceStatus johnSeesHimself 0 2 == .obligatory
@@ -442,8 +475,11 @@ Both theories make the same predictions for simple cases:
 3. AAP (agreement) ↔ Feature checking
 
 The difference is in mechanism:
-- Minimalism: structural (tree geometry, c-command)
-- HPSG: feature-based (ARG-ST ordering, constraint satisfaction)
+- Minimalism: structural (tree geometry, c-command via `cCommandsInB`)
+- HPSG: feature-based (ARG-ST ordering via `ArgSt.outranks`, constraint satisfaction)
+
+In this implementation, HPSG outranking is derived from the actual ARG-ST
+list built from the clause's arguments, not hardcoded.
 -/
 
 end HPSG.Coreference

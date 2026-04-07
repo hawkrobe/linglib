@@ -128,7 +128,7 @@ private def eachOther : Word := ⟨"each other", .PRON, { person := some .third,
 /-- Reciprocals require a plural/coordinated antecedent and local binding. -/
 def reciprocalCoreferenceData : PhenomenonData := {
   name := "Reciprocal Coreference"
-  generalization := "Reciprocals require a c-commanding plural antecedent in the local domain"
+  generalization := "Reciprocals require a c-commanding semantically plural antecedent in the local domain"
   pairs := [
     -- Coordinated antecedent required
     { grammatical := [sam, and_, pat, saw, eachOther]
@@ -147,7 +147,7 @@ def reciprocalCoreferenceData : PhenomenonData := {
     { grammatical := [they, see, eachOther]
       ungrammatical := [john, sees, eachOther]  -- singular antecedent fails
       clauseType := .declarative
-      description := "Reciprocal requires plural antecedent" }
+      description := "Reciprocal requires semantically plural antecedent" }
   ]
 }
 

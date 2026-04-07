@@ -5,6 +5,7 @@ Reflexives require short dependency paths; locality = same subgraph rooted at ve
 References: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
+import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
 import Linglib.Core.Interface
 
@@ -19,6 +20,10 @@ structure SimpleClause where
   subject : Word
   verb : Word
   object : Option Word
+  /-- Whether the subject denotes a plurality. Defaults to matching
+      syntactic number. Override for languages where syntactic and
+      semantic number diverge (@cite{rakosi-2019}). -/
+  semanticPl : Bool := subject.features.number == some .pl
   deriving Repr
 
 /-- Parse a simple transitive sentence into a clause. -/
@@ -26,29 +31,75 @@ def parseSimpleClause (ws : List Word) : Option SimpleClause :=
   match ws with
   | [subj, v, obj] =>
     if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
-      some ⟨subj, v, some obj⟩
+      some { subject := subj, verb := v, object := some obj }
     else none
   | [subj, v] =>
     if isNominalCat subj.cat && v.cat == .VERB then
-      some ⟨subj, v, none⟩
+      some { subject := subj, verb := v, object := none }
     else none
   | _ => none
 
-/-- Subject and object are co-dependents of the same verb, hence in the same local domain. -/
-def sameLocalDomain (_clause : SimpleClause) : Bool := true
+/-- Build a dependency tree from a simple clause.
 
-/-- Path length from subject to object = 2 (Subj --subj--> V <--obj-- Obj). -/
-def pathLength (_clause : SimpleClause) : Nat := 2
+    Indices: 0 = subject, 1 = verb (root), 2 = object (if present).
+    Dependencies: subject ←nsubj— verb, object ←obj— verb. -/
+def SimpleClause.toDepTree (clause : SimpleClause) : DepTree :=
+  let words := match clause.object with
+    | none => [clause.subject, clause.verb]
+    | some obj => [clause.subject, clause.verb, obj]
+  let deps : List Dependency := [⟨1, 0, .nsubj⟩] ++
+    match clause.object with
+    | none => []
+    | some _ => [⟨1, 2, .obj⟩]
+  { words := words, deps := deps, rootIdx := 1 }
+
+/-- Same local domain: both subject and object are dependents of the
+    same head (the verb), hence in the same dependency subgraph. -/
+def sameLocalDomain (clause : SimpleClause) : Bool :=
+  match clause.object with
+  | none => true
+  | some _ =>
+    let tree := clause.toDepTree
+    (tree.deps.any fun d => d.depIdx == 0 && d.headIdx == tree.rootIdx) &&
+    (tree.deps.any fun d => d.depIdx == 2 && d.headIdx == tree.rootIdx)
+
+/-- Path length from subject to object: count edges through the shared
+    head (subject → verb → object). -/
+def pathLength (clause : SimpleClause) : Nat :=
+  match clause.object with
+  | none => 0
+  | some _ =>
+    let tree := clause.toDepTree
+    let subjEdge := if tree.deps.any (fun d => d.depIdx == 0) then 1 else 0
+    let objEdge := if tree.deps.any (fun d => d.depIdx == 2) then 1 else 0
+    subjEdge + objEdge
 
 end DependencyBasedLocality
 
 section DependencyBasedCommand
 
-/-- W1 d-commands W2 if both are dependents of the same head H and W1 is the subject. -/
-def subjectDCommandsObject (_clause : SimpleClause) : Bool := true
+/-- D-command: word at index `i` d-commands word at index `j` in a
+    dependency tree if both are dependents of the same head and `i`
+    bears the subject relation (nsubj). -/
+def dCommands (tree : DepTree) (i j : Nat) : Bool :=
+  tree.deps.any fun di =>
+    di.depIdx == i && di.depType == .nsubj &&
+    tree.deps.any fun dj =>
+      dj.depIdx == j && di.headIdx == dj.headIdx
 
-/-- Object does not d-command subject. -/
-def objectDCommandsSubject (_clause : SimpleClause) : Bool := false
+/-- Subject d-commands object: derived from the dependency tree.
+    Both are dependents of the verb, and the subject bears nsubj. -/
+def subjectDCommandsObject (clause : SimpleClause) : Bool :=
+  match clause.object with
+  | none => false
+  | some _ => dCommands clause.toDepTree 0 2
+
+/-- Object does not d-command subject: derived from the tree.
+    The object bears obj, not nsubj, so d-command fails. -/
+def objectDCommandsSubject (clause : SimpleClause) : Bool :=
+  match clause.object with
+  | none => false
+  | some _ => dCommands clause.toDepTree 2 0
 
 end DependencyBasedCommand
 
@@ -68,7 +119,9 @@ def reflexiveLicensed (clause : SimpleClause) : Bool :=
       phiAgree clause.subject obj
     | _ => true
 
-/-- Reciprocals must be d-commanded by a plural antecedent in the local domain. -/
+/-- Reciprocals must be d-commanded by a semantically plural antecedent.
+    The plurality requirement is semantic, not morphosyntactic
+    (@cite{rakosi-2019}). -/
 def reciprocalLicensed (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
@@ -77,7 +130,7 @@ def reciprocalLicensed (clause : SimpleClause) : Bool :=
     | some .reciprocal =>
       subjectDCommandsObject clause &&
       sameLocalDomain clause &&
-      clause.subject.features.number == some .pl
+      clause.semanticPl
     | _ => true
 
 /-- A pronoun must not be d-commanded by a coreferent antecedent locally. -/
@@ -203,7 +256,7 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
         else .blocked
       | some .reciprocal =>
         if subjectDCommandsObject clause && sameLocalDomain clause &&
-           clause.subject.features.number == some .pl
+           clause.semanticPl
         then .obligatory
         else .blocked
       | some .pronoun =>
@@ -213,11 +266,21 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
       | some .rExpression => .possible
       | none => .unspecified
   else if i == 2 && j == 0 then
-    -- Object doesn't d-command subject
+    -- Does the object d-command the subject?
+    -- Derived: object bears .obj (not .nsubj), so d-command fails
     match classifyNominal clause.subject with
-    | some .reflexive => .blocked
-    | some .reciprocal => .blocked
-    | some .pronoun => .possible
+    | some .reflexive =>
+      if objectDCommandsSubject clause && sameLocalDomain clause
+      then .obligatory
+      else .blocked
+    | some .reciprocal =>
+      if objectDCommandsSubject clause && sameLocalDomain clause
+      then .obligatory
+      else .blocked
+    | some .pronoun =>
+      if objectDCommandsSubject clause && sameLocalDomain clause
+      then .blocked
+      else .possible
     | _ => .possible
   else
     .unspecified

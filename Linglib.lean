@@ -752,6 +752,7 @@ import Linglib.Phenomena.Anaphora.Studies.ParasiticAttitudes
 import Linglib.Phenomena.Anaphora.Studies.Spector2025
 import Linglib.Phenomena.Anaphora.Studies.Charlow2018
 import Linglib.Phenomena.Anaphora.Studies.DalrympleHaug2024
+import Linglib.Phenomena.Anaphora.Studies.Rakosi2019
 import Linglib.Phenomena.Anaphora.Studies.HaugDalrymple2020
 import Linglib.Phenomena.Anaphora.Studies.GroenendijkStokhof1991
 import Linglib.Phenomena.Alignment.Typology
