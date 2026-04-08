@@ -102,4 +102,48 @@ theorem toLFTree_merge (x y : SyntacticObject) :
     (merge x y).toLFTree = .bin x.toLFTree y.toLFTree := by
   rfl
 
+/-! ## End-to-end derivation: the Y-model pipeline
+
+Demonstrate the full narrow-syntax → Spell-Out → LF/PF path for a
+minimal VP "sat the cat", proving the Y-model actually composes:
+
+```
+                    ┌→ LF: .bin (.leaf "sat") (.bin (.leaf "the") (.leaf "cat"))
+sat the cat → SO →
+                    └→ PF: ["sat", "the", "cat"]
+```
+-/
+
+section YModelDemo
+
+private def sat : SyntacticObject := mkLeafPhon .V [.D] "sat" 1
+private def the : SyntacticObject := mkLeafPhon .D [.N] "the" 2
+private def cat : SyntacticObject := mkLeafPhon .N [] "cat" 3
+
+/-- Step 1 — Narrow syntax: build DP via Merge(the, cat) -/
+private def thecat : SyntacticObject := merge the cat
+
+/-- Step 2 — Narrow syntax: build VP via Merge(sat, DP) -/
+private def satthecat : SyntacticObject := merge sat thecat
+
+/-- Step 3a — Spell-Out → LF: `toLFTree` produces a binary tree of
+    phonological labels ready for compositional interpretation. -/
+theorem satthecat_toLFTree :
+    satthecat.toLFTree = .bin (.leaf "sat") (.bin (.leaf "the") (.leaf "cat")) := by
+  rfl
+
+/-- Step 3b — Spell-Out → PF: `linearize` yields left-to-right word order. -/
+theorem satthecat_toPF :
+    (linearize satthecat).map LIToken.phonForm = ["sat", "the", "cat"] := by
+  rfl
+
+/-- PF and LF are independent projections of the same SO (the Y-model).
+    Both branches start from `satthecat` but produce different types. -/
+theorem y_model_branches :
+    satthecat.toLFTree = .bin (.leaf "sat") (.bin (.leaf "the") (.leaf "cat")) ∧
+    (linearize satthecat).map LIToken.phonForm = ["sat", "the", "cat"] :=
+  ⟨satthecat_toLFTree, satthecat_toPF⟩
+
+end YModelDemo
+
 end Minimalism

@@ -1,4 +1,7 @@
-/-
+import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Mathlib.Data.Rat.Defs
+
+/-!
 # Evaluative Measure Semantics for Deadjectival Intensifiers
 
 @cite{nouwen-2024} proposes that deadjectival intensifiers derive their degree
@@ -12,7 +15,10 @@ assigns high values to degrees that are evaluated negatively.
 For "horrible": μ_horrible(d) peaks at extreme degrees (far from the norm).
 For "pleasant": μ_pleasant(d) peaks at moderate degrees (near the norm).
 
-## Intensified Meaning (Nouwen eq. 45)
+## Intensified Meaning
+
+Simplified from @cite{nouwen-2024} eq. 44–45; the RSA model (§4, eq. 72)
+uses this direct degree-level intersection:
 
 ⟦horribly warm⟧ = λd. warm(d) ∧ horrible(d)
 
@@ -20,34 +26,16 @@ The intensified positive form is the conjunction (intersection) of:
 1. The base adjective's positive meaning: d > θ_adj
 2. The evaluative measure exceeding its own threshold: μ_eval(d) > θ_eval
 
+Note: the full compositional semantics (eq. 45) applies μ_D to a proposition
+about the degree, not directly to the degree. This simplification suffices
+for the RSA pragmatic model.
 -/
-
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
-import Mathlib.Data.Rat.Defs
 
 namespace Semantics.Lexical.Adjective.Intensification
 
+open Core (EvaluativeValence)
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
 open Semantics.Degree (positiveMeaning)
-
--- Evaluative Valence (shared with Phenomena.Gradability.Intensifiers)
-
-/--
-Evaluative valence of an adjectival base.
-
-This is distinct from scalar polarity (positive/negative scale direction):
-- **positive**: the adjective denotes a good/desirable property (pleasant, nice)
-- **negative**: the adjective denotes a bad/undesirable property (horrible, terrible)
-- **neutral**: no inherent evaluative content (usual, possible)
-
-@cite{nouwen-2024} argues that evaluative valence, not scalar polarity,
-determines the intensifier's degree class.
--/
-inductive EvaluativeValence where
-  | positive   -- pleasant, nice, decent
-  | negative   -- horrible, terrible, awful
-  | neutral    -- usual, possible (non-evaluative)
-  deriving Repr, DecidableEq
 
 -- Evaluative Measure Functions
 
@@ -105,7 +93,7 @@ def muPleasant (max : Nat) : EvaluativeMeasure max where
 -- Intensified Meaning (Nouwen eq. 45)
 
 /--
-Intensified positive meaning (@cite{nouwen-2024}, eq. 45).
+Intensified positive meaning (simplified from @cite{nouwen-2024} eq. 44–45).
 
 ⟦ADV-ly ADJ⟧(d, θ_adj, θ_eval) = (d > θ_adj) ∧ (μ_eval(d) > θ_eval)
 

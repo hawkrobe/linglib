@@ -9,6 +9,7 @@ namespace Fragments.English.Predicates.Adjectival
 
 open Semantics.Lexical.Adjective (AntonymRelation GradableAdjEntry)
 open Core.Scale (Boundedness)
+open Core (EvaluativeValence)
 open Semantics.Lexical.Adjective (NegationType)
 
 
@@ -51,6 +52,7 @@ def happy : AdjectivalPredicateEntry where
   dimension := .happiness
   antonymForm := some "unhappy"
   antonymRelation := some .contrary
+  evaluativeValence := some .positive
 
 /-- "unhappy" — open scale, contrary to "happy" -/
 def unhappy : AdjectivalPredicateEntry where
@@ -59,6 +61,7 @@ def unhappy : AdjectivalPredicateEntry where
   dimension := .happiness
   antonymForm := some "happy"
   antonymRelation := some .contrary
+  evaluativeValence := some .negative
 
 /-- "sad" — open scale, contrary to "happy" (near-synonym of unhappy) -/
 def sad : AdjectivalPredicateEntry where
@@ -67,6 +70,7 @@ def sad : AdjectivalPredicateEntry where
   dimension := .happiness
   antonymForm := some "happy"
   antonymRelation := some .contrary
+  evaluativeValence := some .negative
 
 
 /-- "full" — closed scale, contradictory to "empty" -/
@@ -151,6 +155,7 @@ def dirty : AdjectivalPredicateEntry where
   dimension := .cleanliness
   antonymForm := some "clean"
   antonymRelation := some .contradictory
+  evaluativeValence := some .negative
 
 /-- "straight" — closed scale (maximally straight), contradictory to "bent" -/
 def straight : AdjectivalPredicateEntry where
@@ -325,6 +330,7 @@ def pristine : AdjectivalPredicateEntry where
   dimension := .cleanliness
   antonymForm := some "filthy"
   antonymRelation := some .contrary
+  evaluativeValence := some .positive
 
 /-- "filthy" — closed scale, contrary to "pristine" (extreme absolute: gap exists) -/
 def filthy : AdjectivalPredicateEntry where
@@ -333,6 +339,7 @@ def filthy : AdjectivalPredicateEntry where
   dimension := .cleanliness
   antonymForm := some "pristine"
   antonymRelation := some .contrary
+  evaluativeValence := some .negative
 
 /-- "long" — open scale, contrary to "short" (length dimension) -/
 def long : AdjectivalPredicateEntry where
@@ -510,6 +517,7 @@ def good : AdjectivalPredicateEntry where
   dimension := .value
   antonymForm := some "bad"
   antonymRelation := some .contrary
+  evaluativeValence := some .positive
 
 /-- "bad" — value scale, contrary to "good" -/
 def bad : AdjectivalPredicateEntry where
@@ -518,6 +526,7 @@ def bad : AdjectivalPredicateEntry where
   dimension := .value
   antonymForm := some "good"
   antonymRelation := some .contrary
+  evaluativeValence := some .negative
 
 /-- "beautiful" — open scale, contrary to "ugly" -/
 def beautiful : AdjectivalPredicateEntry where
@@ -526,6 +535,7 @@ def beautiful : AdjectivalPredicateEntry where
   dimension := .beauty
   antonymForm := some "ugly"
   antonymRelation := some .contrary
+  evaluativeValence := some .positive
 
 /-- "ugly" — open scale, contrary to "beautiful" -/
 def ugly : AdjectivalPredicateEntry where
@@ -534,6 +544,7 @@ def ugly : AdjectivalPredicateEntry where
   dimension := .beauty
   antonymForm := some "beautiful"
   antonymRelation := some .contrary
+  evaluativeValence := some .negative
 
 /-- "important" — open scale -/
 def important : AdjectivalPredicateEntry where
@@ -548,6 +559,7 @@ def safe : AdjectivalPredicateEntry where
   dimension := .safety
   antonymForm := some "dangerous"
   antonymRelation := some .contrary
+  evaluativeValence := some .positive
 
 /-- "dangerous" — open scale, contrary to "safe" -/
 def dangerous : AdjectivalPredicateEntry where
@@ -556,6 +568,7 @@ def dangerous : AdjectivalPredicateEntry where
   dimension := .danger
   antonymForm := some "safe"
   antonymRelation := some .contrary
+  evaluativeValence := some .negative
 
 /-! ## Physical disturbance deverbal adjectives
 
@@ -607,11 +620,20 @@ required for pursuit. They share properties with both relative (context-sensitiv
 gradable) and absolute (no zone of indifference, crisp judgments, *barely*
 compatible) predicates. -/
 
+/-- "nice" — open scale, positive evaluative (@cite{nouwen-2024}).
+    Base for M-degree intensifier *nicely*. -/
+def nice : AdjectivalPredicateEntry where
+  form := "nice"
+  scaleType := .open_
+  dimension := .value
+  evaluativeValence := some .positive
+
 /-- "decent" — value scale, necessity standard (@cite{beltrama-2025}) -/
 def decent : AdjectivalPredicateEntry where
   form := "decent"
   scaleType := .lowerBounded
   dimension := .value
+  evaluativeValence := some .positive
 
 /-- "acceptable" — value scale, necessity standard (@cite{beltrama-2025}).
     Deverbal *-able* form: modal suffix contributes functional standard. -/
@@ -619,12 +641,14 @@ def acceptable : AdjectivalPredicateEntry where
   form := "acceptable"
   scaleType := .lowerBounded
   dimension := .value
+  evaluativeValence := some .positive
 
 /-- "adequate" — value scale, necessity standard (@cite{beltrama-2025}) -/
 def adequate : AdjectivalPredicateEntry where
   form := "adequate"
   scaleType := .lowerBounded
   dimension := .value
+  evaluativeValence := some .positive
 
 /-- All adjectival predicate entries -/
 def allEntries : List (AdjectivalPredicateEntry) := [
@@ -658,7 +682,7 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   -- Sensory
   bright, dark, loud, quiet,
   -- Evaluative
-  good, bad, beautiful, ugly, important, safe, dangerous,
+  good, bad, beautiful, ugly, important, safe, dangerous, nice,
   -- Mildly positive adjectives (@cite{beltrama-2025})
   decent, acceptable, adequate
 ]

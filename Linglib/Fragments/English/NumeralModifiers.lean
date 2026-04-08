@@ -19,6 +19,7 @@ from "up to" (positive), predicting divergent framing effects.
 -/
 
 import Linglib.Core.Lexical.Word
+import Linglib.Core.PropertyDomain
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 
@@ -56,17 +57,7 @@ inductive PragmaticFunction where
   | boundSignal     -- Signals bound on the distribution (at least, at most, etc.)
   deriving Repr, DecidableEq
 
-/-- Evaluative valence of a bound-setting modifier.
-
-Distinguishes modifiers with the same truth conditions but different framing:
-- "at most 100" (negative valence) → reversed framing (endorsed more in negative contexts)
-- "up to 100" (positive valence) → standard framing (endorsed more in positive contexts)
--/
-inductive EvaluativeValence where
-  | positive   -- "up to", "from...on": invites positive evaluation
-  | negative   -- "at most": invites negative evaluation
-  | neutral    -- "at least", "more than", "fewer than": no evaluative bias
-  deriving Repr, DecidableEq
+open Core (EvaluativeValence)
 
 /-- Lexical entry for a numeral modifier. -/
 structure NumeralModifierEntry where

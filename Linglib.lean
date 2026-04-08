@@ -874,6 +874,7 @@ import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Phenomena.FillerGap.LongDistance
 import Linglib.Phenomena.FillerGap.Typology
 import Linglib.Phenomena.Focus.Basic
+import Linglib.Phenomena.Focus.Studies.Roberts2012
 import Linglib.Phenomena.Focus.Studies.Rooth1992
 import Linglib.Phenomena.Focus.PolarityStress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
@@ -1552,6 +1553,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Algebra
 import Linglib.Theories.Syntax.Minimalism.Core.Counting
 import Linglib.Theories.Syntax.Minimalism.Formal.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalism.Formal.Coproduct
+import Linglib.Theories.Syntax.Minimalism.Formal.HopfAlgebra
 import Linglib.Theories.Syntax.Minimalism.Formal.MinimalSearch
 import Linglib.Theories.Syntax.Minimalism.Formal.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace

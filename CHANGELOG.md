@@ -1,5 +1,101 @@
 # Changelog
 
+## [0.229.586] - 2026-04-08
+
+### Changed
+- **`refinesOn_iff_questionEntails_of_partition`** (`Core/Partition.lean`): close sorry — full structured proof that partition refinement = question entailment; adds `hne : worlds ≠ []` hypothesis (forward direction is false for empty worlds); 6 private helper lemmas (partition uniqueness, filter characterization, entailment extraction)
+
+## [0.229.585] - 2026-04-08
+
+### Added
+- **`Issue.isPartition`** (`Core/Discourse/QUD.lean`): partition property check — every world satisfies exactly one alternative; required for the bridge theorem
+- **`refinesOn`** (`Core/Discourse/QUD.lean`): decidable `Bool`-valued partition refinement restricted to a finite element list — the `Bool` analogue of `QUD.refines` (`Prop`-valued, universally quantified)
+- **`QUD.toIssue`** (`Core/Partition.lean`): inverse of `Issue.toQUD` — converts QUD equivalence relation to Issue alternatives via `toCells`
+- **`refinesOn_iff_questionEntails_of_partition`** (`Core/Partition.lean`): bridge theorem stating that for genuine partitions, decidable refinement and question entailment coincide (sorry; @cite{groenendijk-stokhof-1984})
+- **Roberts2012 bridge verification** (`Roberts2012.lean`): concrete `native_decide` proofs that `refinesOn` and `questionEntails` agree on all D₀ partition pairs (q₁→q_a, q₁→q_b, q_a→q_ai, q_a→q₁); partition property verified for q_a, q_b, q_ai, q_1; round-trip cell counts (4, 16, 2) verified
+
+## [0.229.584] - 2026-04-08
+
+### Added
+- **`comulAlgHom_ofTree`** (`HopfAlgebra.lean`): key reduction lemma — `comulAlgHom (ofTree T) = comulGen T` via `MonoidAlgebra.lift_single`
+- **`comulAlgHom_toLinearMap_one`**: the comul linear map sends 1 to 1 ⊗ₜ 1
+- **`comulGen_primitive`**: simplification for primitive elements (no reduced coproduct terms)
+- **`coassoc_gen_primitive`** (`HopfAlgebra.lean`): coassociativity proved for all primitive elements (trees with empty `reducedCoproductTerms`): leaf case, bush case, and any deeper tree with no internal proper subtrees
+- **`coassoc_gen` leaf case**: structural induction on `SyntacticObject`, leaf branch closed via `coassoc_gen_primitive`; node branch sorry'd pending nested cut bijection formalization
+
+## [0.229.583] - 2026-04-08
+
+### Added
+- **`Issue.toQUD`** (`Core/Discourse/QUD.lean`): bridge from `Issue W` (alternatives) to `QUD W` (equivalence relation) via `QUD.ofProject` on alternative profiles — connects the two question representations
+- **`Strategy.isComplete`** (`Core/Discourse/QUD.lean`): well-formedness predicate for strategies of inquiry — checks that child question intersection entails the parent (Roberts Def 12)
+- **`Strategy.leaves`** (`Core/Discourse/QUD.lean`): extract leaf (terminal) questions from a strategy
+- **`moveRelevantToStrategy`** (`Core/Discourse/QUD.lean`): strategy-aware relevance check — derives subquestions from the strategy tree
+- **Roberts2012 at-issueness bridge**: `qa_qud`, `rogerBeans_at_issue_wrt_qa`, `hannahBeans_not_at_issue_wrt_qa` — connects `Issue.toQUD` to `atIssuenessFromQUD` with positive/negative demos
+- **Roberts2012 strategy completeness proofs**: `strat_1_root_complete`, `strat_1_qa_complete`, `strat_1_qb_complete` — all 3 strategy nodes verified complete
+- **Roberts2012 strategy-aware relevance**: `hannahBeans_relevant_to_strategy` via `moveRelevantToStrategy`
+
+- **Roberts2012 negative entailment tests**: `qa_not_entails_q1`, `qai_not_entails_qa` — proves question entailment is asymmetric (subquestions don't entail parents)
+- **Roberts2012 partition well-formedness**: `qa_partition`, `qb_partition` — every world satisfies exactly one alternative
+
+### Changed
+- **Roberts2012 polar questions** now derived from `Issue.polar` (not hand-constructed)
+- **Roberts2012 `q_1`** (Big Question) now derived compositionally as `q_a.inter q_b allWorlds` (not hand-stipulated with 16 singleton alternatives)
+- **Roberts2012 imports**: removed unused `InformationStructure` import; added `AtIssueness` for `Issue.toQUD` bridge
+
+## [0.229.582] - 2026-04-08
+
+### Added
+- **Roberts 2012 study file** (`Phenomena/Focus/Studies/Roberts2012.lean`): D₀ worked example formalizing Roberts' "Information structure in discourse"
+  - `D0World` (16 worlds, 4 Boolean dimensions: Hannah/Roger × beans/tofu)
+  - 7 questions (`q_1`, `q_a`, `q_b`, `q_ai`, `q_aii`, `q_bi`, `q_bii`) as `Issue` values
+  - Question entailment theorems (6): `q1_entails_qa`, `qa_entails_qai`, etc.
+  - Strategy of inquiry: `strat_1` (rose tree with 7 questions)
+  - QUD stack traces: push/pop through D₀ discourse
+  - Negative partial answerhood demo: "Hannah didn't eat beans" settles q_ai
+  - Relevance demo: assertions and subquestions relevant to the Big Question
+  - Focus–question type identity theorem (Rooth–Hamblin)
+- **`QUDStack`** (`Core/Discourse/QUD.lean`): ordered stack of accepted, unanswered questions (Roberts Def 10g)
+  - `empty`, `push`, `pop`, `immediateQUD`, `depth`
+- **`Strategy`** (`Core/Discourse/QUD.lean`): strategy of inquiry as rose tree (Roberts Def 12)
+  - `question`, `substrategies`, `allQuestions`
+
+### Fixed
+- **`partiallyAnswers`** (`Core/Discourse/QUD.lean`): now checks both positive AND negative answerhood (Roberts Def 3a) — a proposition that rules out an alternative also partially answers the question
+
+## [0.229.581] - 2026-04-08
+
+### Changed
+- **Instantiate Mathlib `Coalgebra ℤ Hc`** (`Formal/HopfAlgebra.lean`): replace bridge theorems with direct type class instantiation
+  - `Hc := MonoidAlgebra ℤ (FreeMonoid SyntacticObject)` — the proper Mathlib algebra type for H^c
+  - `def` (not `abbrev`) blocks Mathlib's coefficient-induced coalgebra; CK coproduct is custom
+  - Forward `Semiring`, `Ring`, `Algebra ℤ` from `MonoidAlgebra`; `DFunLike` for coefficient access
+  - **Comul as AlgHom** (fully defined, no sorry):
+    - `comulGen : SyntacticObject → Hc ⊗ Hc` — CK coproduct on single trees
+    - `comulMonoidHom` — multiplicative extension via `FreeMonoid.lift`
+    - `comulAlgHom : Hc →ₐ[ℤ] Hc ⊗ Hc` — linear extension via `MonoidAlgebra.lift`
+  - `Hc.hcCounit : Hc →ₗ[ℤ] ℤ` — counit as a `LinearMap`
+  - `Hc.instCoalgebra : Coalgebra ℤ Hc` — coassociativity/counitality sorry'd
+  - `coassoc_gen` — generator-level coassociativity for structural induction
+  - Removed: bridge section, vacuous `coassociativity` (conclusion was `v' = v'`)
+  - **Strategy**: `AlgHom` comul + `algHom_ext` reduces coassociativity to structural induction on trees
+
+## [0.229.580] - 2026-04-07
+
+### Added
+- **Hopf algebra structure** (`Formal/HopfAlgebra.lean`): Connes-Kreimer Hopf algebra H^c on binary forests (@cite{marcolli-chomsky-berwick-2025} §1.2)
+  - `Forest`, `FLinComb`: forest basis and ℤ-linear combinations
+  - `forestDeg`: grading by leaf count with `forestDeg_mul` (additivity) and `connected` (degree-0 = 1-dimensional)
+  - `counit`: augmentation map ε with `counit_multiplicative` and `counit_pos_deg`
+  - `reducedCoproductTerms`: leading reduced coproduct Δ̄^c₍₂₎ with `reducedCoproductTerms_leaf`, `reducedCoproductTerms_bush`
+  - `antipode`: recursive formula S(T) = -T - Σ S(T_v)·(T/^c T_v) (eq. 1.2.12) via fuel-based `antipodeAux`
+  - `antipode_leaf`, `antipode_bush`: fully proved; `antipode_leading_term`: S(T) always starts with -T
+  - `coproduct_preserves_grading`: deg([v]) + deg([q]) = deg([T]) + 1
+  - `coassociativity`: stated (sorry) — the deep structural property (Lemma 1.2.10)
+- **Y-model end-to-end demo** (`SpellOut.lean`): Merge → SO → Spell-Out → LF/PF for "sat the cat"
+  - `satthecat_toLFTree`: proves LF tree = `.bin (.leaf "sat") (.bin (.leaf "the") (.leaf "cat"))` by rfl
+  - `satthecat_toPF`: proves PF yield = `["sat", "the", "cat"]` by rfl
+  - `y_model_branches`: both branches from the same SO (the Y-model property)
+
 ## [0.229.579] - 2026-04-07
 
 ### Changed

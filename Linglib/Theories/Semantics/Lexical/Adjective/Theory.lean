@@ -162,6 +162,11 @@ structure GradableAdjEntry where
   antonymForm : Option String := none
   antonymRelation : Option AntonymRelation := none
   spatialConfigType : Option SpatialConfigType := none
+  /-- Evaluative valence of the adjective, when applicable.
+      Determines intensifier degree class (@cite{nouwen-2024}):
+      negative-evaluative bases yield H-degree intensifiers,
+      positive-evaluative bases yield M-degree intensifiers. -/
+  evaluativeValence : Option Core.EvaluativeValence := none
   deriving Repr
 
 -- ════════════════════════════════════════════════════

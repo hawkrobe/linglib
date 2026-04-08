@@ -372,6 +372,26 @@ def ofAlternatives (alts : List (InfoState W)) : Issue W :=
 def which {E : Type*} (domain : List E) (pred : E → W → Bool) : Issue W :=
   { alternatives := domain.map λ e => λ w => pred e w }
 
+/-- Convert an Issue to a QUD: two worlds are equivalent iff they assign the
+    same truth value to every alternative.
+
+    This bridges the two question representations in the library:
+    - `Issue W` (Hamblin/inquisitive: list of propositional alternatives)
+    - `QUD M` (equivalence relation: partition of the meaning space)
+
+    The equivalence relation is: w₁ ~ w₂ iff ∀ alt ∈ q, alt(w₁) = alt(w₂).
+    Uses `QUD.ofProject` with the "alternative profile" as the projection. -/
+def toQUD (q : Issue W) (name : String := "") : QUD W :=
+  QUD.ofProject (fun w => q.alternatives.map (· w)) name
+
+/-- An issue is a genuine partition of the world list: every world satisfies
+    exactly one alternative.
+
+    Required for the partition-refinement ↔ question-entailment bridge
+    theorem (@cite{groenendijk-stokhof-1984}; see `Core/Partition.lean`). -/
+def isPartition (q : Issue W) (worlds : List W) : Bool :=
+  worlds.all fun w => (q.alternatives.filter (· w)).length == 1
+
 end Issue
 
 -- Propositional Content of Issues
@@ -443,15 +463,35 @@ theorem empty_not_inquisitive {W : Type*} :
 -- - QUD.refines q q'   ≡  q's partition refines q' (knows q → knows q')
 -- - questionEntails Q q ≡  every alternative of Q entails some alt of q
 -- These are the same relation at different levels of abstraction.
+-- The formal bridge theorem is `refinesOn_iff_questionEntails_of_partition`
+-- in Core/Partition.lean.
 
-/-- A proposition p partially answers an issue q if p entails at least one
-of q's alternatives.
+/-- Decidable refinement restricted to a finite element list.
 
-@cite{roberts-2012}: a partial answer to Q is a proposition that, when added to
-the common ground, resolves at least one alternative. We use the strong
-version: p entails (is a subset) some alternative of q. -/
+    `refinesOn q q' elements` holds iff for all `w, v ∈ elements`,
+    `q.sameAnswer w v = true → q'.sameAnswer w v = true`.
+
+    This is the `Bool`-valued analogue of `QUD.refines` (Core/Partition.lean),
+    quantifying only over elements in the list rather than all of type `M`.
+    For genuine partitions (see `Issue.isPartition`), this coincides with
+    `questionEntails` — the formal bridge connecting the two question
+    representations in the library. -/
+def refinesOn {M : Type*} (q q' : QUD M) (elements : List M) : Bool :=
+  elements.all fun w =>
+    elements.all fun v =>
+      !q.sameAnswer w v || q'.sameAnswer w v
+
+/-- A proposition p partially answers an issue q if p settles at least one
+of q's alternatives — either confirming it or ruling it out.
+
+@cite{roberts-2012} Def. 3a: a partial answer contextually entails the
+evaluation — either true or false — of at least one element of q-alt(q).
+
+The positive-only version (`propEntails p alt`) misses negative partial
+answerhood, where p rules out an alternative entirely (`propEntails p ¬alt`). -/
 def partiallyAnswers {W : Type*} (p : W → Bool) (q : Issue W) (worlds : List W) : Bool :=
-  q.alternatives.any fun alt => propEntails p alt worlds
+  q.alternatives.any fun alt =>
+    propEntails p alt worlds || propEntails p (fun w => !alt w) worlds
 
 /-- Question q₁ entails question q₂ iff every alternative of q₁ entails
 some alternative of q₂.
@@ -524,5 +564,109 @@ theorem partiallyAnswers_implies_relevant {W : Type*}
   unfold moveRelevant
   rw [List.any_eq_true]
   exact ⟨alt, hAlt, by simp [hPA]⟩
+
+-- ════════════════════════════════════════════════════
+-- § QUD Stack
+-- ════════════════════════════════════════════════════
+
+/-- A QUD stack: ordered list of accepted, unanswered questions.
+    The head is the immediate QUD (most recently accepted question).
+
+    @cite{roberts-2012} Def. 10g: "QUD_m = the set of all questions which have
+    been accepted as questions (i.e., accepted as being worth answering)
+    at m, but which have not yet been answered." The stack ordering
+    reflects discourse subordination — subquestions pushed on top. -/
+structure QUDStack (W : Type*) where
+  questions : List (Issue W)
+
+namespace QUDStack
+
+variable {W : Type*}
+
+/-- Empty QUD stack (discourse initial state). -/
+def empty : QUDStack W := ⟨[]⟩
+
+/-- The immediate QUD: the most recently accepted, unanswered question. -/
+def immediateQUD (s : QUDStack W) : Option (Issue W) := s.questions.head?
+
+/-- Accept a new question: push onto the stack.
+    @cite{roberts-2012}: "a subquestion of QUD is pushed onto QUD." -/
+def push (s : QUDStack W) (q : Issue W) : QUDStack W := ⟨q :: s.questions⟩
+
+/-- Answer the immediate QUD: pop from the stack.
+    @cite{roberts-2012}: "an answer to QUD pops QUD off the stack." -/
+def pop (s : QUDStack W) : QUDStack W := ⟨s.questions.tail⟩
+
+/-- Current depth of the QUD stack. -/
+def depth (s : QUDStack W) : Nat := s.questions.length
+
+end QUDStack
+
+-- ════════════════════════════════════════════════════
+-- § Strategy of Inquiry
+-- ════════════════════════════════════════════════════
+
+/-- A strategy of inquiry: a plan to answer a question by pursuing subquestions.
+
+    @cite{roberts-2012} Def. 12: "A strategy of inquiry Strat(q) is a set
+    of questions {q₁, ..., qₙ} such that ... if all the questions in
+    Strat(q) were answered, q would be answered too."
+
+    Modeled as a rose tree: each node is a question, children are
+    subquestions whose collective answers resolve the parent. -/
+inductive Strategy (W : Type*) where
+  | leaf : Issue W → Strategy W
+  | branch : Issue W → List (Strategy W) → Strategy W
+
+namespace Strategy
+
+variable {W : Type*}
+
+/-- The question at the root of this (sub)strategy. -/
+def question : Strategy W → Issue W
+  | .leaf q | .branch q _ => q
+
+/-- Immediate substrategies (empty for leaves). -/
+def substrategies : Strategy W → List (Strategy W)
+  | .leaf _ => []
+  | .branch _ ss => ss
+
+/-- All questions in the strategy (root + all descendants). -/
+def allQuestions : Strategy W → List (Issue W)
+  | .leaf q => [q]
+  | .branch q ss => q :: ss.flatMap allQuestions
+
+/-- Leaf questions only (terminal nodes of the strategy). -/
+def leaves : Strategy W → List (Issue W)
+  | .leaf q => [q]
+  | .branch _ ss => ss.flatMap leaves
+
+/-- A strategy is **complete** at a single level: the intersection of
+    child questions entails the parent question.
+
+    @cite{roberts-2012} Def. 12: answering all subquestions answers the parent.
+
+    This checks only the root node; use separately on sub-strategies
+    for full-tree verification. -/
+def isComplete (s : Strategy W) (worlds : List W) : Bool :=
+  match s with
+  | .leaf _ => true
+  | .branch q children =>
+    let combined := children.map (·.question) |>.foldl (·.inter · worlds)
+      (Issue.ofAlternatives [trivialState])
+    questionEntails combined q worlds
+
+end Strategy
+
+/-- A discourse move is relevant to a strategy if it partially answers
+    any question in the strategy.
+
+    Derived from `moveRelevant` by extracting all subquestions from the
+    strategy tree. -/
+def moveRelevantToStrategy {W : Type*} (den : Issue W) (strat : Strategy W)
+    (worlds : List W) : Bool :=
+  let allQs := strat.allQuestions
+  den.alternatives.any fun alt =>
+    allQs.any fun q => partiallyAnswers alt q worlds
 
 end Discourse

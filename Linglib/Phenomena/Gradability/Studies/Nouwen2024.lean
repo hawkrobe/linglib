@@ -1,5 +1,6 @@
 import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
+import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs
 
@@ -66,7 +67,7 @@ All qualitative Goldilocks predictions are preserved.
 
 namespace Phenomena.Gradability.Intensifiers
 
-open Semantics.Lexical.Adjective.Intensification (EvaluativeValence)
+open Core (EvaluativeValence)
 
 /--
 Intensifier degree class (Figure 2).
@@ -77,6 +78,22 @@ Intensifier degree class (Figure 2).
 inductive IntensifierClass where
   | H  -- high degree
   | M  -- moderate degree
+  deriving Repr, DecidableEq
+
+/--
+Classification of adjectival base for deadjectival intensifiers
+(@cite{nouwen-2024} §2.4).
+
+- **evaluative**: core case — horrible, pleasant, nice
+- **mirative**: non-evaluative but extremity-sensitive — unusual, surprising, remarkable
+- **modal**: epistemic modals — impossible, possible, usual, expected
+- **dimensional**: degree adjectives — tall, short (not productive as intensifiers)
+-/
+inductive BaseKind where
+  | evaluative
+  | mirative
+  | modal
+  | dimensional
   deriving Repr, DecidableEq
 
 /--
@@ -94,9 +111,9 @@ structure IntensifierEntry where
   valence : EvaluativeValence
   /-- Degree class as intensifier -/
   class_ : IntensifierClass
-  /-- Whether the base is a modal adjective -/
-  isModal : Bool := false
-  /-- For modal bases: polarity of the modal (negative = unlikely/impossible) -/
+  /-- Base classification: evaluative, mirative, modal, or dimensional -/
+  baseKind : BaseKind := .evaluative
+  /-- For modal/mirative bases: polarity (negative = unlikely/impossible) -/
   modalPolarity : Option EvaluativeValence := none
   /-- Whether the evaluative content is bleached in adverbial use -/
   bleached : Bool := false
@@ -146,65 +163,121 @@ def decently : IntensifierEntry :=
 
 def unusually : IntensifierEntry :=
   { adverb := "unusually", adjBase := "unusual"
-  , valence := .negative, class_ := .H
-  , isModal := true, modalPolarity := some .negative }
+  , valence := .neutral, class_ := .H
+  , baseKind := .mirative, modalPolarity := some .negative }
 
 def surprisingly : IntensifierEntry :=
   { adverb := "surprisingly", adjBase := "surprising"
-  , valence := .negative, class_ := .H
-  , isModal := true, modalPolarity := some .negative }
+  , valence := .neutral, class_ := .H
+  , baseKind := .mirative, modalPolarity := some .negative }
 
 def impossibly : IntensifierEntry :=
   { adverb := "impossibly", adjBase := "impossible"
-  , valence := .negative, class_ := .H
-  , isModal := true, modalPolarity := some .negative }
+  , valence := .neutral, class_ := .H
+  , baseKind := .modal, modalPolarity := some .negative }
 
 def remarkably : IntensifierEntry :=
   { adverb := "remarkably", adjBase := "remarkable"
-  , valence := .negative, class_ := .H
-  , isModal := true, modalPolarity := some .negative }
+  , valence := .neutral, class_ := .H
+  , baseKind := .mirative, modalPolarity := some .negative }
 
 -- Positive modal → unattested as intensifiers
 
 def usually_ : IntensifierEntry :=
   { adverb := "*usually", adjBase := "usual"
-  , valence := .positive, class_ := .M
-  , isModal := true, modalPolarity := some .positive
+  , valence := .neutral, class_ := .M
+  , baseKind := .modal, modalPolarity := some .positive
   , attested := false }
 
 def expectedly_ : IntensifierEntry :=
   { adverb := "*expectedly", adjBase := "expected"
-  , valence := .positive, class_ := .M
-  , isModal := true, modalPolarity := some .positive
+  , valence := .neutral, class_ := .M
+  , baseKind := .modal, modalPolarity := some .positive
   , attested := false }
 
 def possibly_ : IntensifierEntry :=
   { adverb := "*possibly", adjBase := "possible"
-  , valence := .positive, class_ := .M
-  , isModal := true, modalPolarity := some .positive
+  , valence := .neutral, class_ := .M
+  , baseKind := .modal, modalPolarity := some .positive
   , attested := false }
+
+-- Additional negative-evaluative → H (Figure 2 survey data)
+
+def disgustingly : IntensifierEntry :=
+  { adverb := "disgustingly", adjBase := "disgusting"
+  , valence := .negative, class_ := .H, bleached := true }
+
+def annoyingly : IntensifierEntry :=
+  { adverb := "annoyingly", adjBase := "annoying"
+  , valence := .negative, class_ := .H, bleached := true }
+
+def unpleasantly : IntensifierEntry :=
+  { adverb := "unpleasantly", adjBase := "unpleasant"
+  , valence := .negative, class_ := .H, bleached := true }
+
+def scarily : IntensifierEntry :=
+  { adverb := "scarily", adjBase := "scary"
+  , valence := .negative, class_ := .H, bleached := true }
+
+-- Additional positive-evaluative → M (Figure 2 survey data)
+
+def wonderfully : IntensifierEntry :=
+  { adverb := "wonderfully", adjBase := "wonderful"
+  , valence := .positive, class_ := .M }
+
+def beautifully_ : IntensifierEntry :=
+  { adverb := "beautifully", adjBase := "beautiful"
+  , valence := .positive, class_ := .M }
+
+def delightfully : IntensifierEntry :=
+  { adverb := "delightfully", adjBase := "delightful"
+  , valence := .positive, class_ := .M }
+
+def gorgeously : IntensifierEntry :=
+  { adverb := "gorgeously", adjBase := "gorgeous"
+  , valence := .positive, class_ := .M }
+
+-- Additional mirative → H (Figure 2 survey data)
+
+def stunningly : IntensifierEntry :=
+  { adverb := "stunningly", adjBase := "stunning"
+  , valence := .neutral, class_ := .H
+  , baseKind := .mirative, modalPolarity := some .negative }
 
 -- All entries
 
 def allEntries : List IntensifierEntry :=
   [ horribly, terribly, awfully, dreadfully, frighteningly
+  , disgustingly, annoyingly, unpleasantly, scarily
   , pleasantly, nicely, decently
-  , unusually, surprisingly, impossibly, remarkably
+  , wonderfully, beautifully_, delightfully, gorgeously
+  , unusually, surprisingly, impossibly, remarkably, stunningly
   , usually_, expectedly_, possibly_ ]
 
 -- Goldilocks Effect (§3)
 
 /--
-The Goldilocks effect: evaluative valence determines degree class.
+The Goldilocks effect: base kind and valence determine degree class.
 
 - Negative-evaluative bases yield high-degree (H) intensifiers
 - Positive-evaluative bases yield moderate-degree (M) intensifiers
+- Miratives always yield H (extremity-sensitive, not evaluative; §2.4.2)
+- Modals: negative polarity → H, positive polarity → M
 -/
 def goldilocksHolds (e : IntensifierEntry) : Bool :=
-  match e.valence with
-  | .negative => e.class_ == .H
-  | .positive => e.class_ == .M
-  | .neutral  => true  -- neutral bases don't constrain
+  match e.baseKind with
+  | .evaluative =>
+    match e.valence with
+    | .negative => e.class_ == .H
+    | .positive => e.class_ == .M
+    | .neutral  => true
+  | .mirative => e.class_ == .H
+  | .modal =>
+    match e.modalPolarity with
+    | some .negative => e.class_ == .H
+    | some .positive => e.class_ == .M
+    | _ => true
+  | .dimensional => true
 
 -- Per-datum verification
 
@@ -213,26 +286,41 @@ theorem terribly_goldilocks : goldilocksHolds terribly = true := by native_decid
 theorem awfully_goldilocks : goldilocksHolds awfully = true := by native_decide
 theorem dreadfully_goldilocks : goldilocksHolds dreadfully = true := by native_decide
 theorem frighteningly_goldilocks : goldilocksHolds frighteningly = true := by native_decide
+theorem disgustingly_goldilocks : goldilocksHolds disgustingly = true := by native_decide
+theorem annoyingly_goldilocks : goldilocksHolds annoyingly = true := by native_decide
+theorem unpleasantly_goldilocks : goldilocksHolds unpleasantly = true := by native_decide
+theorem scarily_goldilocks : goldilocksHolds scarily = true := by native_decide
 theorem pleasantly_goldilocks : goldilocksHolds pleasantly = true := by native_decide
 theorem nicely_goldilocks : goldilocksHolds nicely = true := by native_decide
 theorem decently_goldilocks : goldilocksHolds decently = true := by native_decide
+theorem wonderfully_goldilocks : goldilocksHolds wonderfully = true := by native_decide
+theorem beautifully_goldilocks : goldilocksHolds beautifully_ = true := by native_decide
+theorem delightfully_goldilocks : goldilocksHolds delightfully = true := by native_decide
+theorem gorgeously_goldilocks : goldilocksHolds gorgeously = true := by native_decide
+theorem unusually_goldilocks : goldilocksHolds unusually = true := by native_decide
+theorem surprisingly_goldilocks : goldilocksHolds surprisingly = true := by native_decide
+theorem impossibly_goldilocks : goldilocksHolds impossibly = true := by native_decide
+theorem remarkably_goldilocks : goldilocksHolds remarkably = true := by native_decide
+theorem stunningly_goldilocks : goldilocksHolds stunningly = true := by native_decide
 
 -- Zwicky's Generalization (§3.2)
 
 /--
-Zwicky's generalization: modal adjectives with negative polarity
-can serve as intensifiers; positive-polarity modal adjectives cannot.
+Zwicky's generalization: modal/mirative adjectives with negative polarity
+can serve as intensifiers; positive-polarity ones cannot.
 
-- "unusually warm" ✓ (negative modal → attested)
+- "unusually warm" ✓ (negative mirative → attested)
+- "impossibly warm" ✓ (negative modal → attested)
 - "*usually warm" ✗ (positive modal → unattested)
 -/
 def zwickyHolds (e : IntensifierEntry) : Bool :=
-  if e.isModal then
+  match e.baseKind with
+  | .modal | .mirative =>
     match e.modalPolarity with
     | some .negative => e.attested
     | some .positive => !e.attested
     | _ => true
-  else true
+  | _ => true
 
 -- Per-datum verification
 
@@ -240,6 +328,7 @@ theorem unusually_zwicky : zwickyHolds unusually = true := by native_decide
 theorem surprisingly_zwicky : zwickyHolds surprisingly = true := by native_decide
 theorem impossibly_zwicky : zwickyHolds impossibly = true := by native_decide
 theorem remarkably_zwicky : zwickyHolds remarkably = true := by native_decide
+theorem stunningly_zwicky : zwickyHolds stunningly = true := by native_decide
 theorem usually_zwicky : zwickyHolds usually_ = true := by native_decide
 theorem expectedly_zwicky : zwickyHolds expectedly_ = true := by native_decide
 theorem possibly_zwicky : zwickyHolds possibly_ = true := by native_decide
@@ -252,8 +341,41 @@ def attestedCount : Nat := (allEntries.filter (·.attested)).length
 /-- Count of unattested intensifiers -/
 def unattestedCount : Nat := (allEntries.filter (!·.attested)).length
 
-#guard attestedCount == 12
+#guard attestedCount == 21
 #guard unattestedCount == 3
+
+-- ════════════════════════════════════════════════════
+-- Fragment Bridge
+-- ════════════════════════════════════════════════════
+
+/-- Look up the Fragment adjective entry for an intensifier's adjectival base. -/
+def IntensifierEntry.fragmentEntry (e : IntensifierEntry) :
+    Option Semantics.Lexical.Adjective.GradableAdjEntry :=
+  Fragments.English.Predicates.Adjectival.lookup e.adjBase
+
+/-- Bridge: pleasant's Fragment entry has positive evaluative valence,
+    matching the intensifier layer's valence for pleasantly. -/
+theorem pleasant_valence_bridge :
+    (pleasantly.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+/-- Bridge: nice's Fragment entry has positive evaluative valence,
+    matching the intensifier layer's valence for nicely. -/
+theorem nice_valence_bridge :
+    (nicely.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+/-- Bridge: decent's Fragment entry has positive evaluative valence,
+    matching the intensifier layer's valence for decently. -/
+theorem decent_valence_bridge :
+    (decently.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+/-- Bridge: beautiful's Fragment entry has positive evaluative valence,
+    matching the intensifier layer's valence for beautifully. -/
+theorem beautiful_valence_bridge :
+    (beautifully_.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
 
 end Phenomena.Gradability.Intensifiers
 
@@ -274,7 +396,8 @@ abbrev Height := Core.Scale.Degree 6
 abbrev Threshold := Core.Scale.Threshold 6
 
 open Core.Scale (deg thr)
-open Semantics.Lexical.Adjective.Intensification (EvaluativeValence EvaluativeMeasure)
+open Core (EvaluativeValence)
+open Semantics.Lexical.Adjective.Intensification (EvaluativeMeasure)
 open Semantics.Degree (positiveMeaning)
 
 /-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ, specialized to scale 6. -/
