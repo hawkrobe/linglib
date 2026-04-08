@@ -1,5 +1,94 @@
 # Changelog
 
+## [0.229.579] - 2026-04-07
+
+### Changed
+- **Copula.lean cleanup and Myler2016.lean extraction**: separate pure copula theory from Myler's empirical predictions
+  - Remove dead `possessionType`/`interpSource` stubs (returned `none` for all inputs)
+  - Fix docstring hallucination: voiceAllosemeForComplement cascade line 3 said "Stative SC / possessedDP / modalBase → holder" but only stativeSC → holder
+  - Derive `nominalAllowsDelayedGratification` from `VAlloseme.introducesEvent` instead of bare `Bool`
+  - Derive `FreeHead.yieldsEventiveExpHave` from `allowsDelayedGratification` (was duplicate definition)
+  - Strengthen `too_many_meanings_solution` from trivially true `∀ c, ∃ r, f c = r` to `Function.Injective haveReading`
+  - Derive `isHaveVerbLanguage` from `copulaVI` instead of 3 redundant Bool parameters
+  - Express Icelandic hafa/eiga VI as `VocabItem`s with `icelandicVI_agrees_vocabItem` bridge theorem
+  - Extract §8 (Icelandic), §9 (puzzle solutions), §10 (cross-module bridges) to `Phenomena/Possession/Studies/Myler2016.lean`
+  - Remove 4 unnecessary imports from Copula.lean (Applicative, SmallClause, NominalStructure, Barker2011)
+
+## [0.229.578] - 2026-04-07
+
+### Added
+- **Spell-Out bridge** (`SpellOut.lean`): Y-model interface connecting narrow syntax to compositional semantics
+  - `SyntacticObject.toLFTree`: converts SO → `Tree Unit String` for `interp`; traces (id ≥ 10000) become `Tree.tr n`, terminals become `Tree.leaf phonForm`, binary nodes become `Tree.bin`
+  - `SyntacticObject.toPF`: alias for `linearize` making Y-model explicit
+  - Structural preservation theorems: `toLFTree_leaf`, `toLFTree_trace`, `toLFTree_node`, `toLFTree_merge` — all fully proved (0 sorrys)
+
+## [0.229.577] - 2026-04-07
+
+### Changed
+- **Copula.lean deep integration refactor**: connect Myler 2016 HAVE/BE theory to 5 existing modules instead of standing alone
+  - **VocabItem bridge**: `copulaVIRules` expresses the VI rule as `VocabItem VoiceHead Unit` from VocabularyInsertion.lean; `copulaVI_agrees_vocabItem` proves agreement with `copulaVI`
+  - **VoiceTheta bridge**: `haveThetaPrediction` composes HaveComplement → VoiceAlloseme → VoiceFlavor → ThetaRole; per-reading theorems (`lightVerb_assigns_agent`, `causer_assigns_experiencer`, `relational_no_theta`, etc.)
+  - **Barker2011 bridge**: `relational_have_requires_pred2` connects possessedDP to Barker's NominalInterpType.pred2; `bare_sortal_blocks_relational` derives from π theory
+  - **NominalStructure bridge**: `both_possession_types_allow_have` and `possession_type_orthogonal_to_copula` connect to PossessionType (inalienable/alienable)
+  - **Possession typology bridge**: `isHaveVerbLanguage` connects DM analysis to PredicativePossession.haveVerb
+  - `voiceAllosemeForComplement` refactored from flat pattern match to property-based derivation (`isSaturatedEventiveVoiceP`, `isEventDP`, `isStativePredicate`); `voiceAlloseme_agrees_fromComplement` proves agreement with `VoiceAlloseme.fromComplement`
+  - `isStative` → `isStativePredicate`: fixes semantic error where possessedDP/modalBase were classified as stative (Voice is vacuous for these, not holder)
+  - New imports: VocabularyInsertion, NominalStructure, VoiceTheta, Barker2011
+
+## [0.229.576] - 2026-04-07
+
+### Added
+- **Myler 2016 HAVE/BE theory** (@cite{myler-2016}): formalize "Building and Interpreting Possession Sentences" — the core copula decomposition and HAVE paradigm
+  - `Theories/Syntax/Minimalism/Core/Copula.lean`: HAVE = BE + Voice_{D},φ
+  - `CopulaForm` (have | be), `copulaVI` rule: v ⇔ HAVE / ___Voice_{D},φ ; v ⇔ BE / elsewhere
+  - `vi_characterization`: HAVE ↔ Voice has D, is not nonThematic or passive (fully proved)
+  - `GratificationType` (instant | delayed | raising): delayed gratification has no syntactic reflex below — distinguishes from raising/control
+  - `FreeHead` with ±D: `free_complementarity` proves eventive experiencer HAVE and free datives are complementary (English vs Spanish)
+  - `HaveComplement` (6 types) × `VoiceAlloseme` → `HaveReading` (9 types): Myler's table (100)
+  - Per-cell verification: `engineer_only_from_voiceP`, `expletive_voice_complement_determines_meaning`, `agent_blocked_by_stativeSC`
+  - `nominalAllowsDelayedGratification`: CENs block delayed gratification (verbal substructure forces instant)
+  - Icelandic *hafa*/*eiga* VI rules with bidirectional conditioning: `eiga_iff_no_pp`, `hafa_iff_pred`
+  - `too_many_meanings_solution`, `too_many_structures_solution`: both puzzles solved formally
+
+### Changed
+- **Voice allosemy extended** (`Theories/Morphology/DM/Allosemy.lean`): `VoiceAlloseme` now has 4 variants (agent | holder | engineer | expletive), up from 2
+  - `engineer`: λx.λe.Engineer(x,e) — ECM *have* with saturated eventive VoiceP complement
+  - `expletive`: λx.x — identity, for relational/light-verb *have*
+  - `assignsTheta`: agent/holder/engineer assign θ; expletive does not
+  - `toFlavor` fixed: holder → experiencer (was incorrectly agentive); expletive → expletive
+  - `voice_alloseme_theta_consistent`: alloseme θ-assignment matches syntactic flavor θ-assignment
+
+## [0.229.575] - 2026-04-07
+
+### Added
+- **Subtree contiguity & n-ary overgeneration (§1.11.4, Lemma 1.11.8)**: extend `Formal/BinaryOptimality.lean` with the structural property distinguishing binary from n-ary trees
+  - `linearize_contiguous`: subtree leaves form a contiguous block in the parent's linearization (fully proved)
+  - `alternating_not_two_intervals`: three alternating positions {0,2,4} can't be covered by two contiguous intervals (ternary case of Lemma 1.11.8, proved by `native_decide`)
+  - `nary_overgeneration`: general statement of Lemma 1.11.8 for n ≥ 3 (sorry — topological step requires Jordan curve theorem)
+  - `contains_node_child`: helper factoring containment routing to left/right child
+
+## [0.229.574] - 2026-04-07
+
+### Added
+- **Deletion quotient T/^d (Definition 1.2.5)**: formalize the deletion coproduct from §1.2 of @cite{marcolli-chomsky-berwick-2025}
+  - `Formal/Coproduct.lean`: `deletionQuotient` (T/^d — delete subtree, contract edges to binary)
+  - `deletionQuotient_leafCount`: (T/^d v).leafCount = T.leafCount - v.leafCount
+  - `deletion_vs_contraction_leafCount`: T/^c has exactly one more leaf than T/^d (the trace leaf)
+  - `leadingCoproductD`: Δ^d₍₂₎(T) — leading coproduct with deletion quotient
+  - Documents the three quotient types (T/^c, T/^d, T/^ρ) and their projection relationships
+
+## [0.229.573] - 2026-04-07
+
+### Added
+- **Minimal Search (Proposition 1.5.1)**: formalize §1.5 of @cite{marcolli-chomsky-berwick-2025} — depth-based search cost of Merge operations
+  - `Formal/MinimalSearch.lean`: `searchCost` (net coproduct depth after cancellation)
+  - `depthOf_self`: workspace roots have depth 0
+  - `depthOf_some_of_containsOrEq`: contained terms are findable (depth exists)
+  - `depthOf_pos_of_contains`: proper subtrees have depth ≥ 1 (key search lemma)
+  - `em_zero_cost`: EM has zero search cost (both operands at depth 0)
+  - `im_zero_cost`: IM has zero search cost (extraction and quotient depths cancel in the coproduct)
+  - `sideward_positive_cost`/`sideward_cost_gt_em_im`: Sideward Merge has strictly positive cost
+
 ## [0.229.572] - 2026-04-07
 
 ### Added

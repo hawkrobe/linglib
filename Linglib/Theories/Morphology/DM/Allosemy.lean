@@ -268,32 +268,65 @@ theorem n_has_nine_allosemes : nAllosemic.allosemeCount = 9 := rfl
     §2.3: while Voice_{D} must introduce a DP argument,
     the thematic interpretation of that argument can be left to allosemy.
     The denotations in @cite{kratzer-1996} correspond not to separate
-    syntactic heads, but to allosemes of a single Voice head. -/
+    syntactic heads, but to allosemes of a single Voice head.
+
+    @cite{myler-2016} Ch. 4 extends this to four allosemes, adding
+    the engineer role (for ECM *have*) and the expletive/identity
+    alloseme (for relational and light-verb *have* where Voice assigns
+    no θ-role). The conditioning environments (98a–d):
+
+    - `agent`:    ⟦Voice⟧ = λx.λe. Agent(x,e)     / ___(agentive, dynamic event)
+    - `holder`:   ⟦Voice⟧ = λx.λe. Holder(x,e)    / ___(stative eventuality)
+    - `engineer`: ⟦Voice⟧ = λx.λe. Engineer(x,e)  / ___v_BE Eventive-VoiceP⟨s,t⟩
+    - `expletive`:⟦Voice⟧ = λx.x                  / ___(elsewhere) -/
 inductive VoiceAlloseme where
-  | agent   -- λx.λe. agent(x)(e) — combines with action VPs
-  | holder  -- λx.λs. holder(x)(s) — combines with stative VPs
+  | agent     -- λx.λe. Agent(x,e) — combines with action VPs
+  | holder    -- λx.λe. Holder(x,e) — combines with stative VPs (includes causer, experiencer)
+  | engineer  -- λx.λe. Engineer(x,e) — ECM *have*: complement is saturated eventive VoiceP
+  | expletive -- λx.x — type-neutral identity; no θ-role (relational *have*, light-verb *have*)
   deriving DecidableEq, Repr
 
-/-- Voice alloseme selection from VP semantics. -/
-def VoiceAlloseme.fromVPType (vpIsAction : Bool) : VoiceAlloseme :=
-  if vpIsAction then .agent else .holder
+/-- Does this Voice alloseme assign a thematic role to the external argument? -/
+def VoiceAlloseme.assignsTheta : VoiceAlloseme → Bool
+  | .agent    => true
+  | .holder   => true
+  | .engineer => true
+  | .expletive => false
 
-/-- Bridge: both Voice allosemes map to `VoiceFlavor.agentive`.
+/-- Voice alloseme selection from complement properties.
 
-    This is intentionally lossy: `VoiceFlavor` is a syntactic
-    classification (Voice_D introduces a DP specifier), while
-    `VoiceAlloseme` captures a purely semantic distinction (agent
-    vs. holder thematic role). Both agent and holder are syntactically
-    Voice_D; the thematic interpretation is resolved at LF by the
-    semantics of the VP complement, not in the syntax. -/
+    @cite{myler-2016} table (100): the alloseme is determined by
+    the nature of *have*'s complement and whether the VP is eventive.
+    Engineer is the most specific: it requires a saturated eventive
+    VoiceP as complement. The elsewhere case is expletive (identity). -/
+def VoiceAlloseme.fromComplement
+    (complementIsEventiveVoiceP : Bool)
+    (complementIsStative : Bool) : VoiceAlloseme :=
+  if complementIsEventiveVoiceP then .engineer
+  else if complementIsStative then .holder
+  else .expletive
+
+/-- Bridge: Voice allosemes to syntactic `VoiceFlavor`.
+
+    @cite{myler-2016}: syntactically, all four allosemes realize
+    the same Voice_{D} — transitive Voice with a DP specifier.
+    The θ-role distinction is resolved at LF, not in the syntax.
+    We map to the flavor that best captures the syntactic behavior:
+    agent/engineer → agentive (phase head, assigns θ);
+    holder → experiencer (assigns θ, stative);
+    expletive → expletive (no θ, no semantics). -/
 def VoiceAlloseme.toFlavor : VoiceAlloseme → VoiceFlavor
-  | .agent  => .agentive
-  | .holder => .agentive
+  | .agent    => .agentive
+  | .holder   => .experiencer
+  | .engineer => .agentive
+  | .expletive => .expletive
 
-/-- Both Voice allosemes map to the same syntactic Voice flavor:
-    the distinction is purely semantic, invisible to syntax. -/
-theorem voice_allosemy_syntactically_invisible :
-    VoiceAlloseme.agent.toFlavor = VoiceAlloseme.holder.toFlavor := rfl
+/-- All θ-assigning Voice allosemes map to θ-assigning syntactic flavors;
+    the non-θ expletive maps to a non-θ flavor. -/
+theorem voice_alloseme_theta_consistent (a : VoiceAlloseme) :
+    a.assignsTheta = (VoiceHead.assignsTheta
+      { flavor := a.toFlavor, hasD := true, phaseHead := true }) := by
+  cases a <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 5. Nominalization Reading Derivation (Ch. 3)

@@ -345,6 +345,61 @@ theorem S2_nonneg (cfg : RSAConfig U W) (w : W) (u : U) :
     0 ≤ cfg.S2 w u :=
   cfg.S2agent.policy_nonneg w u
 
+theorem L1_nonneg (cfg : RSAConfig U W) (u : U) (w : W) :
+    0 ≤ cfg.L1 u w :=
+  cfg.L1agent.policy_nonneg u w
+
+theorem L1_latent_nonneg (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) :
+    0 ≤ cfg.L1_latent u l := by
+  simp only [L1_latent]
+  split
+  · exact le_refl 0
+  · exact div_nonneg
+      (Finset.sum_nonneg fun w _ =>
+        mul_nonneg (mul_nonneg (cfg.worldPrior_nonneg w) (cfg.latentPrior_nonneg w l))
+          (cfg.S1_nonneg l w u))
+      (Finset.sum_nonneg fun l' _ =>
+        Finset.sum_nonneg fun w _ =>
+          mul_nonneg (mul_nonneg (cfg.worldPrior_nonneg w) (cfg.latentPrior_nonneg w l'))
+            (cfg.S1_nonneg l' w u))
+
+-- ============================================================================
+-- Stack: Composing RSA Levels
+-- ============================================================================
+
+/-- Build a higher-level RSAConfig from a lower-level one.
+
+The lower-level per-lexicon listener l₁(w|u,L) becomes the new L0 meaning.
+The new S1 scoring rule applies `rpow(l₁(w|u,L), α₂)` times an optional
+`bonus` (e.g., L₁(L|u)^β for expertise) and `costFactor` (e.g., exp(-C(u))).
+
+This gives `S₂(u|w,L) ∝ l₁(w|u,L)^α₂ · bonus(L,u) · costFactor(u)`,
+matching eq 15 of @cite{potts-levy-2015} when `bonus = L₁(L|u)` and
+`costFactor = exp(-C(u))`.
+
+The stacked config's L1 = L₂ (world posterior) and L1_latent = L₂_latent
+(lexicon posterior), all provable with `rsa_predict`. -/
+noncomputable def stack (cfg : RSAConfig U W)
+    (α₂ : ℝ) (hα₂ : 0 < α₂)
+    (bonus : cfg.Latent → U → ℝ := fun _ _ => 1)
+    (bonus_nonneg : ∀ l u, 0 ≤ bonus l u := by intros; norm_num)
+    (costFactor : U → ℝ := fun _ => 1)
+    (costFactor_nonneg : ∀ u, 0 ≤ costFactor u := by intros; norm_num)
+    : RSAConfig U W where
+  Latent := cfg.Latent
+  meaning _ l u w := cfg.worldPrior w * cfg.S1 l w u
+  meaning_nonneg _ l u w := mul_nonneg (cfg.worldPrior_nonneg w) (cfg.S1_nonneg l w u)
+  s1Score l0 α l w u := Real.rpow (l0 u w) α * bonus l u * costFactor u
+  s1Score_nonneg _ _ l _ u hl0 hα :=
+    mul_nonneg (mul_nonneg (Real.rpow_nonneg (hl0 _ _) _) (bonus_nonneg l u))
+      (costFactor_nonneg u)
+  α := α₂
+  α_pos := hα₂
+  latentPrior := cfg.latentPrior
+  latentPrior_nonneg := cfg.latentPrior_nonneg
+  worldPrior := cfg.worldPrior
+  worldPrior_nonneg := cfg.worldPrior_nonneg
+
 -- ============================================================================
 -- Sequential RSA: Trajectory Probabilities
 -- ============================================================================

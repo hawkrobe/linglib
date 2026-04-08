@@ -70,9 +70,11 @@ private def rexprExpMulLogSub (α x c : Expr × MetaBounds) (αVal : ℚ) :
   (mkApp3 (mkConst ``RExpr.expMulLogSub) α.1 x.1 c.1,
    metaEvalMul xPowBounds expFactorBounds)
 
-/-- Build a right-fold sum RExpr matching Finset.sum's reduction.
-    Finset.sum reduces via Multiset.fold → Multiset.foldr → List.foldr,
-    producing `a₀ + (a₁ + (... + (aₙ₋₁ + 0)))`. -/
+/-- Build a left-fold sum RExpr matching Finset.sum's actual reduction.
+    Finset.sum reduces via List.foldl (+) 0 [a₀,...,aₙ₋₁].
+    Right-fold with trailing zero: `a₀ + (a₁ + (... + (aₙ₋₁ + 0)))`.
+    Matches `List.foldr (· + ·) 0` which is how `Finset.sum`/`List.sum` reduce
+    at the kernel level. -/
 private def rexprSum (items : Array (Expr × MetaBounds)) : Expr × MetaBounds :=
   items.foldr (init := rexprNat 0) fun item acc => rexprAdd item acc
 

@@ -434,22 +434,123 @@ theorem AorX_signals_excl_vs_A :
   rsa_predict
 
 -- ============================================================================
--- §11. Findings
+-- §11. Full Expertise Model (Stacked RSA, eq 15)
+-- ============================================================================
+
+/-! The paper's distinctive contribution is the **expertise parameter β**
+in the S₂ speaker utility (eq 15):
+
+  `S₂(m|w,L) ∝ l₁(w|m,L)^α · L₁(L|m)^β · exp(-C(m))`
+
+The expertise speaker simultaneously signals world knowledge (informativity
+via l₁) and lexicon knowledge (expertise via L₁). We implement this as a
+**stacked RSAConfig**: the base config's per-lexicon listener l₁ becomes
+the upper level's L0 meaning, with the expertise bonus `L₁(L|m)` and
+disjunction cost `exp(-C(m))` entering via `stack`'s `bonus` and
+`costFactor` parameters.
+
+Since `exp(-1) ∉ ℚ`, the cost penalty is approximated as `37/100 ≈ 0.37`
+(close to `exp(-1) ≈ 0.368`). Qualitative predictions are robust to the
+exact value (paper Section 5.4). -/
+
+/-- Disjunction cost penalty: `exp(-C(m))`. The paper uses `C(or) = 1`,
+    giving `exp(-1) ≈ 0.368`. We use `37/100` as a rational approximation. -/
+noncomputable def disjCost : Utterance → ℝ
+  | .AorX => 37/100
+  | _ => 1
+
+theorem disjCost_nonneg (u : Utterance) : 0 ≤ disjCost u := by
+  cases u <;> simp [disjCost] <;> norm_num
+
+open RSA in
+/-- Expertise model: `cfg.stack` with α₂ = 2, β = 1.
+
+`S₂(m|w,L) ∝ l₁(w|m,L)^2 · L₁(L|m) · exp(-C(m))`.
+
+The stacked L1 = L₂ (world posterior), stacked L1_latent = L₂_latent
+(lexicon posterior). -/
+noncomputable def expertiseCfg : RSAConfig Utterance World :=
+  cfg.stack 2 two_pos
+    (bonus := fun l u => cfg.L1_latent u l)
+    (bonus_nonneg := fun l u => cfg.L1_latent_nonneg u l)
+    (costFactor := disjCost)
+    (costFactor_nonneg := disjCost_nonneg)
+
+-- ---- L₂ World Predictions ----
+
+/-- L₂ hearing "A or X": uncertainty state w₁₂ dominates w₁. -/
+theorem L2_AorX_w12_vs_w1 :
+    expertiseCfg.L1 .AorX .w₁₂ > expertiseCfg.L1 .AorX .w₁ := by
+  rsa_predict
+
+/-- L₂ hearing "A or X": uncertainty state w₁₂ dominates w₂. -/
+theorem L2_AorX_w12_vs_w2 :
+    expertiseCfg.L1 .AorX .w₁₂ > expertiseCfg.L1 .AorX .w₂ := by
+  rsa_predict
+
+/-- L₂ hearing "A or X": w₁ > w₂. -/
+theorem L2_AorX_w1_vs_w2 :
+    expertiseCfg.L1 .AorX .w₁ > expertiseCfg.L1 .AorX .w₂ := by
+  rsa_predict
+
+-- ---- L₂ Lexicon Predictions ----
+
+/-- L₂ lexicon inference: excl dominates base for "A or X". -/
+theorem L2_AorX_excl_vs_base :
+    expertiseCfg.L1_latent .AorX .excl > expertiseCfg.L1_latent .AorX .base := by
+  rsa_predict
+
+/-- L₂ lexicon inference: excl dominates syn for "A or X". -/
+theorem L2_AorX_excl_vs_syn :
+    expertiseCfg.L1_latent .AorX .excl > expertiseCfg.L1_latent .AorX .syn := by
+  rsa_predict
+
+/-- L₂ lexicon inference: base > syn. Full ordering: excl > base > syn. -/
+theorem L2_AorX_base_vs_syn :
+    expertiseCfg.L1_latent .AorX .base > expertiseCfg.L1_latent .AorX .syn := by
+  rsa_predict
+
+-- ---- S₂ Expertise Speaker Predictions ----
+
+/-- S₂ at w₁₂ prefers "A or X" over "A" (marginalized over lexica). -/
+theorem S2_expertise_w12_AorX_vs_A :
+    expertiseCfg.S2 .w₁₂ .AorX > expertiseCfg.S2 .w₁₂ .A := by
+  rsa_predict
+
+/-- S₂ at w₁ prefers "A" over "A or X" (marginalized over lexica). -/
+theorem S2_expertise_w1_A_vs_AorX :
+    expertiseCfg.S2 .w₁ .A > expertiseCfg.S2 .w₁ .AorX := by
+  rsa_predict
+
+-- ============================================================================
+-- §12. Findings
 -- ============================================================================
 
 /-- The qualitative findings from the @cite{potts-levy-2015} LU + expertise model. -/
 inductive Finding where
+  /-- L1 -/
   | uncertainty_w12_vs_w1
   | uncertainty_w12_vs_w2
   | uncertainty_w1_vs_w2
   | lexicon_excl_vs_base
   | lexicon_excl_vs_syn
   | lexicon_base_vs_syn
+  /-- S1 -/
   | s1_w12_prefers_AorX
   | s1_w1_prefers_A
+  /-- S2 endorsement -/
   | s2_w12_AorX
   | s2_w1_A
   | AorX_signals_excl
+  /-- L2 expertise (stacked) -/
+  | L2_w12_vs_w1
+  | L2_w12_vs_w2
+  | L2_w1_vs_w2
+  | L2_excl_vs_base
+  | L2_excl_vs_syn
+  | L2_base_vs_syn
+  | S2_expertise_w12_AorX
+  | S2_expertise_w1_A
   deriving Repr
 
 /-- Verification: each finding is backed by a proved theorem. -/
@@ -464,8 +565,15 @@ def Finding.verified : Finding → Prop
   | .s1_w1_prefers_A => cfg.S1 .excl .w₁ .A > cfg.S1 .excl .w₁ .AorX
   | .s2_w12_AorX => cfg.S2 .w₁₂ .AorX > cfg.S2 .w₁₂ .A
   | .s2_w1_A => cfg.S2 .w₁ .A > cfg.S2 .w₁ .AorX
-  | .AorX_signals_excl =>
-      cfg.L1_latent .AorX Lex.excl > cfg.L1_latent .A Lex.excl
+  | .AorX_signals_excl => cfg.L1_latent .AorX Lex.excl > cfg.L1_latent .A Lex.excl
+  | .L2_w12_vs_w1 => expertiseCfg.L1 .AorX .w₁₂ > expertiseCfg.L1 .AorX .w₁
+  | .L2_w12_vs_w2 => expertiseCfg.L1 .AorX .w₁₂ > expertiseCfg.L1 .AorX .w₂
+  | .L2_w1_vs_w2 => expertiseCfg.L1 .AorX .w₁ > expertiseCfg.L1 .AorX .w₂
+  | .L2_excl_vs_base => expertiseCfg.L1_latent .AorX .excl > expertiseCfg.L1_latent .AorX .base
+  | .L2_excl_vs_syn => expertiseCfg.L1_latent .AorX .excl > expertiseCfg.L1_latent .AorX .syn
+  | .L2_base_vs_syn => expertiseCfg.L1_latent .AorX .base > expertiseCfg.L1_latent .AorX .syn
+  | .S2_expertise_w12_AorX => expertiseCfg.S2 .w₁₂ .AorX > expertiseCfg.S2 .w₁₂ .A
+  | .S2_expertise_w1_A => expertiseCfg.S2 .w₁ .A > expertiseCfg.S2 .w₁ .AorX
 
 theorem all_findings_verified (f : Finding) : f.verified := by
   cases f <;> simp only [Finding.verified]
@@ -480,137 +588,13 @@ theorem all_findings_verified (f : Finding) : f.verified := by
   · exact s2_w12_AorX_vs_A
   · exact s2_w1_A_vs_AorX
   · exact AorX_signals_excl_vs_A
-
--- ============================================================================
--- §12. Full Expertise Model (Paper's Equations 10–17, exact ℚ)
--- ============================================================================
-
-/-! The paper's distinctive contribution is the **expertise parameter β**
-in the S₂ speaker utility (eq 15). This section implements the complete
-model hierarchy — l₀ → s₁ → l₁ → L₁ → S₂ → L₂ — in exact ℚ arithmetic,
-with the paper's Hurfordian parameters: **α = 2, β = 1, C(or) = 1**.
-
-Since `exp(-1) ∉ ℚ`, the cost penalty is approximated as `37/100 ≈ 0.37`
-(close to `exp(-1) ≈ 0.368`). Qualitative predictions are robust to the
-exact value (paper Section 5.4, Figures 13–14). All predictions are
-verified by `native_decide` on exact ℚ arithmetic. -/
-
-section FullModel
-
--- Explicit sums over our finite types (simpler than Finset for native_decide)
-private def sumW (f : World → ℚ) : ℚ := f .w₁ + f .w₂ + f .w₁₂
-private def sumU (f : Utterance → ℚ) : ℚ := f .A + f .B + f .X + f .AorX + f .null
-private def sumL (f : Lex → ℚ) : ℚ := f .base + f .excl + f .syn
-
-/-- Disjunction cost penalty. The paper uses `C(or) = 1`, giving
-    `exp(-1) ≈ 0.368`. We use `37/100` as a ℚ approximation. -/
-def disjPenalty : Utterance → ℚ
-  | .AorX => 37/100
-  | _ => 1
-
-/-- Count of worlds where `u` is true under lexicon `l`. -/
-private def nTrue (l : Lex) (u : Utterance) : ℚ :=
-  sumW (λ w => if truth l u w then 1 else 0)
-
-/-- Literal listener l₀ (eq 10): uniform over truth-compatible worlds.
-    `l₀(w|m,L) ∝ P(w)` if `w ∈ L(m)`, else 0. -/
-def l0q (l : Lex) (u : Utterance) (w : World) : ℚ :=
-  if truth l u w then
-    let n := nTrue l u
-    if n = 0 then 0 else 1 / n
-  else 0
-
-/-- Speaker s₁ unnormalized score (eq 11).
-    `s₁(m|w,L) ∝ l₀(w|m,L)^α · exp(-C(m))`. -/
-def s1q_score (l : Lex) (w : World) (u : Utterance) : ℚ :=
-  l0q l u w ^ 2 * disjPenalty u
-
-/-- Normalized s₁: `P(m|w,L)`. -/
-def s1q (l : Lex) (w : World) (u : Utterance) : ℚ :=
-  let Z := sumU (s1q_score l w)
-  if Z = 0 then 0 else s1q_score l w u / Z
-
-/-- Per-lexicon pragmatic listener l₁ (eq 12).
-    `l₁(w|m,L) ∝ s₁(m|w,L) · P(w)`. Uniform `P(w) = 1/3`. -/
-def l1q (l : Lex) (u : Utterance) (w : World) : ℚ :=
-  let Z := sumW (λ w' => s1q l w' u)
-  if Z = 0 then 0 else s1q l w u / Z
-
-/-- L₁ lexicon marginal (eq 14): `P(L|m)`.
-    `L₁(L|m) ∝ P(L) · Σ_w s₁(m|w,L) · P(w)`. With uniform priors,
-    `L₁(L|m) ∝ Σ_w s₁(m|w,L)`. -/
-def L1q_lex (u : Utterance) (l : Lex) : ℚ :=
-  let score := sumW (λ w => s1q l w u)
-  let Z := sumL (λ l' => sumW (λ w => s1q l' w u))
-  if Z = 0 then 0 else score / Z
-
-/-- S₂ expertise speaker score (eq 15, multiplicative form).
-    `S₂(m|w,L) ∝ l₁(w|m,L)^α · L₁(L|m)^β · exp(-C(m))`.
-    Hurfordian parameters: α = 2, β = 1. -/
-def S2q_score (w : World) (l : Lex) (u : Utterance) : ℚ :=
-  l1q l u w ^ 2 * L1q_lex u l * disjPenalty u
-
-/-- Normalized S₂: `P(m|w,L)`. -/
-def S2q (w : World) (l : Lex) (u : Utterance) : ℚ :=
-  let Z := sumU (S2q_score w l)
-  if Z = 0 then 0 else S2q_score w l u / Z
-
-/-- L₂ world marginal: `P(w|m)`.
-    `L₂(w|m) ∝ Σ_L S₂(m|w,L)` (uniform priors). -/
-def L2q_world (u : Utterance) (w : World) : ℚ :=
-  let score := sumL (λ l => S2q w l u)
-  let Z := sumW (λ w' => sumL (λ l => S2q w' l u))
-  if Z = 0 then 0 else score / Z
-
-/-- L₂ lexicon marginal: `P(L|m)`. -/
-def L2q_lex (u : Utterance) (l : Lex) : ℚ :=
-  let score := sumW (λ w => S2q w l u)
-  let Z := sumL (λ l' => sumW (λ w => S2q w l' u))
-  if Z = 0 then 0 else score / Z
-
-/-- S₂ marginalized over lexica (eq 17).
-    `S₂(m|w) ∝ Σ_L S₂(m|w,L) · P_L(L)`. -/
-def S2q_marg (w : World) (u : Utterance) : ℚ :=
-  sumL (λ l => S2q_score w l u)
-
--- ---- L₂ World Predictions (Paper Figure 10) ----
-
-/-- L₂ hearing "A or X": uncertainty state w₁₂ dominates w₁. -/
-theorem L2_AorX_w12_vs_w1 :
-    L2q_world .AorX .w₁₂ > L2q_world .AorX .w₁ := by native_decide
-
-/-- L₂ hearing "A or X": uncertainty state w₁₂ dominates w₂. -/
-theorem L2_AorX_w12_vs_w2 :
-    L2q_world .AorX .w₁₂ > L2q_world .AorX .w₂ := by native_decide
-
-/-- L₂ hearing "A or X": w₁ > w₂. -/
-theorem L2_AorX_w1_vs_w2 :
-    L2q_world .AorX .w₁ > L2q_world .AorX .w₂ := by native_decide
-
--- ---- L₂ Lexicon Predictions (Paper Figure 10) ----
-
-/-- L₂ lexicon inference: excl dominates base for "A or X". -/
-theorem L2_AorX_excl_vs_base :
-    L2q_lex .AorX .excl > L2q_lex .AorX .base := by native_decide
-
-/-- L₂ lexicon inference: excl dominates syn for "A or X". -/
-theorem L2_AorX_excl_vs_syn :
-    L2q_lex .AorX .excl > L2q_lex .AorX .syn := by native_decide
-
-/-- L₂ lexicon inference: base > syn. Full ordering: excl > base > syn. -/
-theorem L2_AorX_base_vs_syn :
-    L2q_lex .AorX .base > L2q_lex .AorX .syn := by native_decide
-
--- ---- S₂ Expertise Speaker Predictions ----
-
-/-- S₂ at w₁₂ prefers "A or X" over "A" (marginalized over lexica). -/
-theorem S2_marg_w12_AorX_vs_A :
-    S2q_marg .w₁₂ .AorX > S2q_marg .w₁₂ .A := by native_decide
-
-/-- S₂ at w₁ prefers "A" over "A or X" (marginalized over lexica). -/
-theorem S2_marg_w1_A_vs_AorX :
-    S2q_marg .w₁ .A > S2q_marg .w₁ .AorX := by native_decide
-
-end FullModel
+  · exact L2_AorX_w12_vs_w1
+  · exact L2_AorX_w12_vs_w2
+  · exact L2_AorX_w1_vs_w2
+  · exact L2_AorX_excl_vs_base
+  · exact L2_AorX_excl_vs_syn
+  · exact L2_AorX_base_vs_syn
+  · exact S2_expertise_w12_AorX_vs_A
+  · exact S2_expertise_w1_A_vs_AorX
 
 end Phenomena.ScalarImplicatures.Studies.PottsLevy2015

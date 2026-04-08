@@ -1100,6 +1100,7 @@ import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024
 import Linglib.Phenomena.Possession.Typology
 import Linglib.Phenomena.Possession.Studies.Heine1997
 import Linglib.Phenomena.Possession.Studies.HaninkKoontzGarboden2025
+import Linglib.Phenomena.Possession.Studies.Myler2016
 import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024_UPH
@@ -1521,6 +1522,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.EPP
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
+import Linglib.Theories.Syntax.Minimalism.Core.Copula
 import Linglib.Theories.Syntax.Minimalism.Core.Cascade
 import Linglib.Theories.Syntax.Minimalism.Core.CMH
 import Linglib.Theories.Syntax.Minimalism.Core.MCommand
@@ -1550,9 +1552,11 @@ import Linglib.Theories.Syntax.Minimalism.Core.Algebra
 import Linglib.Theories.Syntax.Minimalism.Core.Counting
 import Linglib.Theories.Syntax.Minimalism.Formal.BinaryOptimality
 import Linglib.Theories.Syntax.Minimalism.Formal.Coproduct
+import Linglib.Theories.Syntax.Minimalism.Formal.MinimalSearch
 import Linglib.Theories.Syntax.Minimalism.Formal.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
+import Linglib.Theories.Syntax.Minimalism.SpellOut
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.LCA
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.Spellout
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization

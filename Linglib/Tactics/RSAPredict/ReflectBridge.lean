@@ -286,11 +286,11 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   let (lhsRExpr, lhsBounds, rhsRExpr, rhsBounds) ← match builderResult with
     | some (lr, lb, rr, rb) => pure (lr, lb, rr, rb)
     | none => do
-      -- Pre-seed L1/L1_latent cache for any RSAConfig references in the goal.
-      -- This builds the full L0→S1→L1 stack algebraically, bypassing the slow
-      -- S1→S1agent→policy→Finset.sum whnf chain.
-      try tryPreseedL1 persistentReifyCache activeLhs activeRhs
-      catch ex => logInfo m!"rsa_predict: [generic-L1] skipped ({ex.toMessageData})"
+      -- NOTE: tryPreseedL1 removed — builder-seeded RExprs have structural
+      -- mismatches with actual L1/L1_latent definitions (sum fold direction,
+      -- intermediate iteZero/rpow structure), causing kernel type mismatch
+      -- when the generic reifier picks them up via normal cache lookup.
+      -- The generic reifier handles L1 expressions correctly via unfoldDefinition?.
       let (lr, lb) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
       let (rr, rb) ← reifyToRExpr persistentReifyCache activeRhs maxDepth
       pure (lr, lb, rr, rb)

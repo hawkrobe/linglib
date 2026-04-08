@@ -745,23 +745,10 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     if !e.equal e' then
       return ← reifyToRExpr cache e' (depth - 1)
 
-  -- L1/L1_latent cache hit via mkAppM key reconstruction.
-  -- The preseed stores keys constructed via mkAppM, which synthesizes its own
-  -- instance terms. The expression here may have different instance terms
-  -- (from the original elaboration context), so reconstruct the mkAppM key
-  -- from the explicit args (cfg, u, w) to match the preseed.
-  if fn.isConstOf ``RSA.RSAConfig.L1 && args.size ≥ 3 then
-    let altKey ← mkAppM ``RSA.RSAConfig.L1
-      #[args[args.size - 3]!, args[args.size - 2]!, args[args.size - 1]!]
-    if let some result := (← cache.get).get? altKey then
-      cache.modify fun m => m.insert key result  -- cache under original key too
-      return result
-  if fn.isConstOf ``RSA.RSAConfig.L1_latent && args.size ≥ 3 then
-    let altKey ← mkAppM ``RSA.RSAConfig.L1_latent
-      #[args[args.size - 3]!, args[args.size - 2]!, args[args.size - 1]!]
-    if let some result := (← cache.get).get? altKey then
-      cache.modify fun m => m.insert key result
-      return result
+  -- L1/L1_latent altKey lookup DISABLED: tryPreseedL1 (which seeded these entries)
+  -- has been removed because builder-seeded RExprs caused kernel type mismatch
+  -- on cross-utterance products (L1 * L1_latent). The builder (tryRSABuild)
+  -- resolves its own entries directly, so these lookups are no longer needed.
 
   -- Default: unfold one definition, headBeta (transparent)
   if let some e' ← unfoldDefinition? e then

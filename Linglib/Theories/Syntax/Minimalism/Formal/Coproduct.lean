@@ -11,13 +11,17 @@ key structure connecting Merge to Hopf algebra formalism from QFT renormalizatio
 
 ## Main definitions
 
-- `quotientTree`: T with subtree at v contracted to a leaf
+- `quotientTree`: T/^c — contraction quotient (subtree → trace leaf)
+- `deletionQuotient`: T/^d — deletion quotient (subtree deleted, edges contracted)
 - `AdmissibleCut`: set of non-overlapping internal nodes to cut
-- `leadingCoproduct`: Δ₍₂₎(T) = Σᵥ Tᵥ ⊗ T/Tᵥ
+- `leadingCoproduct`: Δ^c₍₂₎(T) = Σᵥ Tᵥ ⊗ T/^c Tᵥ
+- `leadingCoproductD`: Δ^d₍₂₎(T) = Σᵥ Tᵥ ⊗ T/^d Tᵥ
 
 ## Main results
 
-- `coproduct_size_identity`: T.leafCount = v.leafCount + (T/v).leafCount - 1
+- `coproduct_size_identity`: T.leafCount = v.leafCount + (T/^c v).leafCount - 1
+- `deletionQuotient_leafCount`: (T/^d v).leafCount = T.leafCount - v.leafCount
+- `deletion_vs_contraction_leafCount`: T/^c has one more leaf than T/^d (the trace)
 - `workspace_merge_partition`: EM/IM selection determined by containment
 
 -/
@@ -34,7 +38,8 @@ Given a tree T and a contained subtree Tᵥ, the contraction quotient
 T/^c Tᵥ is obtained by replacing Tᵥ with a single leaf (contracting
 the subtree to a point). The book also defines deletion quotient T/^d
 (removing the trace) and remainder quotient T/^ρ (admissible cuts);
-only T/^c is formalized here. -/
+T/^c and T/^d are formalized here; T/^ρ requires n-ary trees
+(not formalized). -/
 
 /-- A placeholder leaf token for quotient tree contraction points -/
 private def quotientLeafToken : LIToken :=
@@ -309,5 +314,151 @@ theorem workspace_merge_partition (α β : SyntacticObject)
   constructor
   · intro _; exact em_contains_merge α β F
   · intro _; exact im_contains_merge α β F
+
+/-! ## Deletion quotient (T/^d, Definition 1.2.5)
+
+The deletion quotient T/^d T_v deletes the subtree T_v from T entirely.
+Where the contraction quotient T/^c leaves a trace leaf, the deletion
+quotient removes T_v and contracts the parent edge to maintain binary
+branching.
+
+Three quotient types (Definition 1.2.8, ω ∈ {c, d, ρ}):
+- T/^c (contraction): subtree → trace leaf (`quotientTree` above)
+- T/^d (deletion): subtree deleted, edges contracted (this section)
+- T/^ρ (remainder): non-binary tree from admissible cut (requires n-ary
+  trees, not formalized)
+
+The coproducts are related by projections (§1.2.1):
+  Δ^d = (id ⊗ Π_{d,c}) ∘ Δ^c -/
+
+/-- Deletion quotient: delete subtree v from T, bypassing parent nodes
+    via edge contraction (Definition 1.2.5). Returns `none` if v equals T
+    (would produce empty tree) or v is not found. -/
+def deletionQuotient (T v : SyntacticObject) : Option SyntacticObject :=
+  if T == v then none
+  else match T with
+    | .leaf _ => none
+    | .node a b =>
+      if a == v then some b
+      else if b == v then some a
+      else
+        match deletionQuotient a v with
+        | some a' => some (.node a' b)
+        | none =>
+          match deletionQuotient b v with
+          | some b' => some (.node a b')
+          | none => none
+
+/-- If deletionQuotient succeeds, T containsOrEq v. -/
+private theorem deletionQuotient_implies_containsOrEq (T v : SyntacticObject)
+    (h : (deletionQuotient T v).isSome = true) : containsOrEq T v := by
+  induction T with
+  | leaf tok =>
+    simp only [deletionQuotient] at h
+    split at h
+    · rename_i heq; rw [beq_iff_eq] at heq; exact Or.inl heq
+    · simp at h
+  | node a b iha ihb =>
+    simp only [deletionQuotient] at h
+    split at h
+    · rename_i heq; rw [beq_iff_eq] at heq; exact Or.inl heq
+    · rename_i hne
+      split at h  -- if a == v
+      · rename_i heq; rw [beq_iff_eq] at heq
+        exact Or.inr (contains.imm _ _
+          (by simp only [immediatelyContains]; exact Or.inl heq.symm))
+      · split at h  -- if b == v
+        · rename_i _ heq; rw [beq_iff_eq] at heq
+          exact Or.inr (contains.imm _ _
+            (by simp only [immediatelyContains]; exact Or.inr heq.symm))
+        · split at h  -- match deletionQuotient a v
+          · rename_i a' ha'
+            have := iha (by simp [ha'])
+            rcases this with rfl | hc
+            · exact Or.inr (contains.imm _ _ (by simp [immediatelyContains]))
+            · exact Or.inr (contains.trans _ _ a
+                (by simp [immediatelyContains]) hc)
+          · split at h  -- match deletionQuotient b v
+            · rename_i _ b' hb'
+              have := ihb (by simp [hb'])
+              rcases this with rfl | hc
+              · exact Or.inr (contains.imm _ _ (by simp [immediatelyContains]))
+              · exact Or.inr (contains.trans _ _ b
+                  (by simp [immediatelyContains]) hc)
+            · simp at h
+
+/-- Deletion quotient leafCount:
+    (T/^d v).leafCount = T.leafCount - v.leafCount. -/
+private theorem deletionQuotient_leafCount_aux (T v : SyntacticObject) :
+    ∀ q, deletionQuotient T v = some q →
+    q.leafCount = T.leafCount - v.leafCount := by
+  induction T with
+  | leaf tok =>
+    intro q hq
+    simp only [deletionQuotient] at hq
+    split at hq <;> simp at hq
+  | node a b iha ihb =>
+    intro q hq
+    simp only [deletionQuotient] at hq
+    split at hq
+    · simp at hq
+    · rename_i hne
+      split at hq  -- if a == v
+      · rename_i heq; rw [beq_iff_eq] at heq; subst heq
+        simp at hq; subst hq
+        simp [SyntacticObject.leafCount]
+      · split at hq  -- if b == v
+        · rename_i _ heq; rw [beq_iff_eq] at heq; subst heq
+          simp at hq; subst hq
+          simp only [SyntacticObject.leafCount]; omega
+        · split at hq  -- match deletionQuotient a v
+          · rename_i a' ha'
+            have hqeq : q = .node a' b := by cases hq; rfl
+            subst hqeq
+            simp only [SyntacticObject.leafCount]
+            have := iha a' ha'
+            have hle : v.leafCount ≤ a.leafCount :=
+              leafCount_le_of_containsOrEq a v
+                (deletionQuotient_implies_containsOrEq a v (by simp [ha']))
+            omega
+          · split at hq  -- match deletionQuotient b v
+            · rename_i _ b' hb'
+              have hqeq : q = .node a b' := by cases hq; rfl
+              subst hqeq
+              simp only [SyntacticObject.leafCount]
+              have := ihb b' hb'
+              have hle : v.leafCount ≤ b.leafCount :=
+                leafCount_le_of_containsOrEq b v
+                  (deletionQuotient_implies_containsOrEq b v (by simp [hb']))
+              omega
+            · simp at hq
+
+theorem deletionQuotient_leafCount (T v q : SyntacticObject)
+    (_h : contains T v) (hq : deletionQuotient T v = some q) :
+    q.leafCount = T.leafCount - v.leafCount :=
+  deletionQuotient_leafCount_aux T v q hq
+
+/-- The contraction quotient has exactly one more leaf than the deletion
+    quotient—the trace leaf at the extraction site. This reflects the
+    projection Π_{d,c}: delete trace and contract edges. -/
+theorem deletion_vs_contraction_leafCount (T v q_c q_d : SyntacticObject)
+    (h : contains T v)
+    (hqc : quotientTree T v = some q_c)
+    (hqd : deletionQuotient T v = some q_d) :
+    q_c.leafCount = q_d.leafCount + 1 := by
+  have h1 := quotientTree_leafCount T v q_c h hqc
+  have h2 := deletionQuotient_leafCount T v q_d h hqd
+  have hle : v.leafCount ≤ T.leafCount :=
+    leafCount_le_of_containsOrEq T v (Or.inr h)
+  omega
+
+/-- Leading coproduct with deletion quotient:
+    Δ^d₍₂₎(T) = Σ_{v ∈ V_int} Tᵥ ⊗ T/^d Tᵥ -/
+def leadingCoproductD (T : SyntacticObject) :
+    List (SyntacticObject × Option SyntacticObject) :=
+  T.properSubtrees.filterMap (λ v =>
+    match v with
+    | .leaf _ => none
+    | .node _ _ => some (v, deletionQuotient T v))
 
 end Minimalism
