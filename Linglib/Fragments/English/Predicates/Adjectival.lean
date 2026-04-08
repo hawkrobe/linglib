@@ -628,6 +628,16 @@ def nice : AdjectivalPredicateEntry where
   dimension := .value
   evaluativeValence := some .positive
 
+/-- "pleasant" — open scale, positive evaluative (@cite{nouwen-2024}).
+    Base for M-degree intensifier *pleasantly*. -/
+def pleasant : AdjectivalPredicateEntry where
+  form := "pleasant"
+  scaleType := .open_
+  dimension := .value
+  antonymForm := some "unpleasant"
+  antonymRelation := some .contrary
+  evaluativeValence := some .positive
+
 /-- "decent" — value scale, necessity standard (@cite{beltrama-2025}) -/
 def decent : AdjectivalPredicateEntry where
   form := "decent"
@@ -682,7 +692,7 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   -- Sensory
   bright, dark, loud, quiet,
   -- Evaluative
-  good, bad, beautiful, ugly, important, safe, dangerous, nice,
+  good, bad, beautiful, ugly, important, safe, dangerous, nice, pleasant,
   -- Mildly positive adjectives (@cite{beltrama-2025})
   decent, acceptable, adequate
 ]

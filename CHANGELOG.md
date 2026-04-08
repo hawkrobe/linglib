@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.587] - 2026-04-08
+
+### Added
+- **`pleasant` entry** (`Adjectival.lean`): open scale, positive evaluative; base for M-degree intensifier *pleasantly*
+
+### Fixed
+- **`Cat.K` missing cases** (`ExtendedProjection/Basic.lean`, `Properties.lean`): add inherent case shell to `catFeatures` ([-V, +N]), `fValue` (F5), `catFamily` (nominal), `categorialFeatures` ([N]), `epSemanticType` (entity), `argumentDomainCat` (nP); fixes build errors from @cite{newman-2024}'s `K` constructor
+- **`EvaluativeValence` stale reference** (`Beltrama2025.lean`): update open from deleted `Intensification.EvaluativeValence` to `Core.EvaluativeValence`
+
 ## [0.229.586] - 2026-04-08
 
 ### Changed

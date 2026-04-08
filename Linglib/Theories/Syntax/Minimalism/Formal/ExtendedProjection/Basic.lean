@@ -70,6 +70,7 @@ def catFeatures : Cat → CatFeatures
   | .Num   => ⟨false, true⟩    -- [-V, +N] (number, @cite{ritter-1991})
   | .Q     => ⟨false, true⟩    -- [-V, +N] (quantity/classifier, @cite{borer-2005})
   | .D     => ⟨false, true⟩    -- [-V, +N]
+  | .K     => ⟨false, true⟩    -- [-V, +N] (inherent case shell, @cite{newman-2024})
   | .A     => ⟨true,  true⟩    -- [+V, +N]
   | .a     => ⟨true,  true⟩    -- [+V, +N] (adjectival categorizer, @cite{panagiotidis-2015})
   | .P | .Place | .Path => ⟨false, false⟩   -- [-V, -N]
@@ -116,7 +117,7 @@ def fValue : Cat → Nat
   | .Pol | .Asp | .Evid | .Path => 2   -- specification domain (F2)
   | .Fin | .Num                 => 3   -- inner edge (F3)
   | .Foc | .D                   => 4   -- discourse / referential (F4)
-  | .Top | .Rel                 => 5   -- topic field (F5, @cite{rizzi-1997}/2001)
+  | .Top | .Rel | .K            => 5   -- topic field / case shell (F5)
   | .C | .Force                 => 6   -- complementizer/force (F6)
   | .SA                         => 7   -- speech act (F7, @cite{speas-tenny-2003})
 
@@ -171,7 +172,7 @@ inductive CatFamily where
 def catFamily : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => .verbal
-  | .N | .n | .Num | .Q | .D           => .nominal
+  | .N | .n | .Num | .Q | .D | .K      => .nominal
   | .A | .a                              => .adjectival
   | .P | .Place | .Path                 => .adpositional
 
@@ -215,7 +216,7 @@ structure CategorialFeatures where
 def categorialFeatures : Cat → CategorialFeatures
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => ⟨false, true⟩   -- [V]
-  | .N | .n | .Num | .Q | .D           => ⟨true, false⟩   -- [N]
+  | .N | .n | .Num | .Q | .D | .K      => ⟨true, false⟩   -- [N]
   | .A | .a                              => ⟨true, true⟩    -- [N, V]
   | .P | .Place | .Path                 => ⟨false, false⟩  -- default (no features)
 
@@ -356,7 +357,7 @@ theorem f0_iff_lexical (c : Cat) :
 
 /-- F1+ is exactly the functional heads. -/
 theorem fpos_iff_functional (c : Cat) :
-    isFHead c = true ↔ (c = .v ∨ c = .n ∨ c = .a ∨ c = .Place ∨ c = .Path ∨ c = .Num ∨ c = .Q ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol ∨ c = .Asp ∨ c = .Evid) := by
+    isFHead c = true ↔ (c = .v ∨ c = .n ∨ c = .a ∨ c = .Place ∨ c = .Path ∨ c = .Num ∨ c = .Q ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol ∨ c = .Asp ∨ c = .Evid ∨ c = .K) := by
   cases c <;> simp [isFHead, fValue]
 
 -- Family consistency
