@@ -173,6 +173,10 @@ def Dimension.beauty : Dimension := ⟨"beauty", .evaluative⟩
 def Dimension.importance : Dimension := ⟨"importance", .evaluative⟩
 def Dimension.safety : Dimension := ⟨"safety", .evaluative⟩
 
+-- Epistemic/modal domain (for modal and mirative adjectives)
+def Dimension.expectation : Dimension := ⟨"expectation", .psychological⟩
+def Dimension.possibility : Dimension := ⟨"possibility", .psychological⟩
+
 -- General size dimension (large/small/gigantic/tiny)
 def Dimension.generalSize : Dimension := ⟨"size", .size⟩
 

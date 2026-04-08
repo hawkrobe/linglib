@@ -54,7 +54,9 @@ import Mathlib.Algebra.Ring.Int.Defs
 import Mathlib.Algebra.MonoidAlgebra.Basic
 import Mathlib.RingTheory.Coalgebra.Basic
 import Mathlib.RingTheory.TensorProduct.Basic
+import Mathlib.RingTheory.TensorProduct.Maps
 
+open scoped TensorProduct
 namespace Minimalism
 
 /-! ## Types: forests and linear combinations
@@ -456,6 +458,241 @@ noncomputable def hcCounit : Hc →ₗ[ℤ] ℤ where
   map_add' x y := Finsupp.add_apply x y _
   map_smul' r x := congr_fun (Finsupp.coe_smul r x) _
 
+/-! ### Counit axioms (ε ⊗ id) ∘ Δ and (id ⊗ ε) ∘ Δ -/
+
+instance : DecidableEq (FreeMonoid SyntacticObject) :=
+  inferInstanceAs (DecidableEq (List SyntacticObject))
+
+/-- The counit as a multiplicative monoid homomorphism on free monoid generators:
+    sends every tree to 0 (in multiplicative ℤ). -/
+noncomputable def counitMonoidHom : FreeMonoid SyntacticObject →* ℤ :=
+  FreeMonoid.lift (fun _ : SyntacticObject => (0 : ℤ))
+
+private theorem counitMonoidHom_of (T : SyntacticObject) :
+    counitMonoidHom (FreeMonoid.of T) = 0 := by
+  show (FreeMonoid.lift (fun _ : SyntacticObject => (0 : ℤ))) (FreeMonoid.of T) = 0
+  rw [FreeMonoid.lift_eval_of]
+
+private theorem counitMonoidHom_ne_one (m : FreeMonoid SyntacticObject) (hm : m ≠ 1) :
+    counitMonoidHom m = 0 := by
+  induction m using FreeMonoid.recOn with
+  | h0 => exact absurd rfl hm
+  | ih T ts _ =>
+    show counitMonoidHom (FreeMonoid.of T * ts) = 0
+    rw [map_mul, counitMonoidHom_of, zero_mul]
+
+/-- The counit lifted to an algebra homomorphism on Hc via `MonoidAlgebra.lift`. -/
+noncomputable def hcCounitAlgHom : Hc →ₐ[ℤ] ℤ :=
+  MonoidAlgebra.lift ℤ ℤ (FreeMonoid SyntacticObject) counitMonoidHom
+
+private theorem hcCounitAlgHom_single (m : FreeMonoid SyntacticObject) (r : ℤ) :
+    hcCounitAlgHom (Finsupp.single m r : Hc) = r * counitMonoidHom m := by
+  change ((MonoidAlgebra.lift ℤ ℤ (FreeMonoid SyntacticObject)) counitMonoidHom)
+    (MonoidAlgebra.single m r) = _
+  rw [MonoidAlgebra.lift_single, smul_eq_mul]
+
+private theorem hcCounit_single (m : FreeMonoid SyntacticObject) (r : ℤ) :
+    hcCounit (Finsupp.single m r : Hc) = if m = 1 then r else 0 := by
+  show (Finsupp.single m r : FreeMonoid SyntacticObject →₀ ℤ) 1 = _
+  simp [Finsupp.single_apply]
+
+set_option maxHeartbeats 400000 in
+private theorem hcCounitAlgHom_eq_hcCounit :
+    hcCounitAlgHom.toLinearMap = hcCounit := by
+  apply LinearMap.ext; intro x; show hcCounitAlgHom x = hcCounit x
+  induction x using Finsupp.induction_linear with
+  | zero => exact (map_zero hcCounitAlgHom).trans (map_zero hcCounit).symm
+  | add f g hf hg =>
+    exact (map_add hcCounitAlgHom f g).trans
+      (congr_arg₂ (· + ·) hf hg |>.trans (map_add hcCounit f g).symm)
+  | single m r =>
+    rw [hcCounitAlgHom_single, hcCounit_single]
+    by_cases hm : m = 1
+    · subst hm; simp [map_one]
+    · rw [counitMonoidHom_ne_one m hm, mul_zero, if_neg hm]
+
+private theorem hcCounitAlgHom_ofTree (T : SyntacticObject) :
+    hcCounitAlgHom (ofTree T) = 0 := by
+  unfold ofTree ofForest
+  rw [hcCounitAlgHom_single]
+  have h : counitMonoidHom (FreeMonoid.ofList [T]) = 0 :=
+    counitMonoidHom_ne_one _ (fun h => List.cons_ne_nil T [] h)
+  rw [h, mul_zero]
+
+-- (ε ⊗ id) ∘ Δ as an AlgHom
+private noncomputable def rTensorCounitComul : Hc →ₐ[ℤ] (ℤ ⊗[ℤ] Hc) :=
+  (Algebra.TensorProduct.map hcCounitAlgHom (AlgHom.id ℤ Hc)).comp comulAlgHom
+
+private theorem mapCounit_fold
+    (L : List (SyntacticObject × SyntacticObject))
+    (acc : Hc ⊗[ℤ] Hc) :
+    (Algebra.TensorProduct.map hcCounitAlgHom (AlgHom.id ℤ Hc))
+      (L.foldl (fun a p => a + ofTree p.1 ⊗ₜ[ℤ] ofTree p.2) acc) =
+    (Algebra.TensorProduct.map hcCounitAlgHom (AlgHom.id ℤ Hc)) acc := by
+  induction L generalizing acc with
+  | nil => rfl
+  | cons p tl ih =>
+    simp only [List.foldl_cons]
+    rw [ih]
+    simp only [map_add, Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id,
+               hcCounitAlgHom_ofTree, TensorProduct.zero_tmul, add_zero]
+
+set_option maxHeartbeats 1600000 in
+private theorem rTensorCounitComul_ofTree (T : SyntacticObject) :
+    rTensorCounitComul (ofTree T) = (1 : ℤ) ⊗ₜ[ℤ] ofTree T := by
+  unfold rTensorCounitComul
+  simp only [AlgHom.comp_apply, comulAlgHom_ofTree]
+  unfold comulGen
+  simp only [map_add, Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id,
+             hcCounitAlgHom_ofTree, map_one hcCounitAlgHom]
+  rw [mapCounit_fold, map_zero]
+  simp only [TensorProduct.zero_tmul, zero_add, add_zero]
+
+set_option maxHeartbeats 1600000 in
+private theorem rTensorCounitComul_eq_includeRight :
+    rTensorCounitComul =
+    (Algebra.TensorProduct.includeRight : Hc →ₐ[ℤ] ℤ ⊗[ℤ] Hc) := by
+  apply MonoidAlgebra.algHom_ext
+  intro m
+  induction m using FreeMonoid.recOn with
+  | h0 => exact map_one rTensorCounitComul
+  | ih T ts ih =>
+    let a : Hc := MonoidAlgebra.single (FreeMonoid.of T) 1
+    let b : Hc := MonoidAlgebra.single ts 1
+    have hsplit : (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc) = a * b :=
+      (MonoidAlgebra.single_mul_single (R := ℤ) (FreeMonoid.of T) ts 1 1).symm
+    have hih : rTensorCounitComul b = Algebra.TensorProduct.includeRight b := ih
+    calc rTensorCounitComul (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc)
+        = rTensorCounitComul (a * b) := by rw [hsplit]
+      _ = rTensorCounitComul a * rTensorCounitComul b := map_mul ..
+      _ = rTensorCounitComul a * Algebra.TensorProduct.includeRight b := by rw [hih]
+      _ = Algebra.TensorProduct.includeRight a *
+          Algebra.TensorProduct.includeRight b := by
+          congr 1
+          change rTensorCounitComul (ofTree T) = _
+          rw [rTensorCounitComul_ofTree, Algebra.TensorProduct.includeRight_apply (R := ℤ)]
+          rfl
+      _ = Algebra.TensorProduct.includeRight (a * b) := (map_mul ..).symm
+      _ = Algebra.TensorProduct.includeRight
+            (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc) :=
+          congr_arg _ hsplit.symm
+
+private theorem algMap_eq_rTensor :
+    (Algebra.TensorProduct.map hcCounitAlgHom (AlgHom.id ℤ Hc)).toLinearMap =
+    hcCounit.rTensor Hc := by
+  apply TensorProduct.ext'
+  intro a b
+  simp only [AlgHom.toLinearMap_apply, LinearMap.rTensor_tmul]
+  show hcCounitAlgHom a ⊗ₜ[ℤ] b = hcCounit a ⊗ₜ[ℤ] b
+  congr 1
+  exact LinearMap.congr_fun hcCounitAlgHom_eq_hcCounit a
+
+private theorem includeRight_toLinearMap :
+    (Algebra.TensorProduct.includeRight : Hc →ₐ[ℤ] ℤ ⊗[ℤ] Hc).toLinearMap =
+    TensorProduct.mk ℤ ℤ Hc 1 := by
+  ext x
+  simp [Algebra.TensorProduct.includeRight_apply, TensorProduct.mk_apply]
+
+/-- Right counit axiom: (ε ⊗ id) ∘ Δ = x ↦ 1 ⊗ x. -/
+private theorem rTensor_counit_comp_comul_proof :
+    hcCounit.rTensor Hc ∘ₗ comulAlgHom.toLinearMap = TensorProduct.mk ℤ ℤ Hc 1 := by
+  have h := congr_arg AlgHom.toLinearMap rTensorCounitComul_eq_includeRight
+  simp only [rTensorCounitComul, AlgHom.comp_toLinearMap] at h
+  rw [algMap_eq_rTensor, includeRight_toLinearMap] at h
+  exact h
+
+-- (id ⊗ ε) ∘ Δ as an AlgHom
+private noncomputable def tensorOneHom : Hc →ₐ[ℤ] Hc ⊗[ℤ] ℤ where
+  toFun x := x ⊗ₜ 1
+  map_one' := rfl
+  map_mul' x y := by simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one]
+  map_zero' := by simp only [TensorProduct.zero_tmul]
+  map_add' x y := by simp only [TensorProduct.add_tmul]
+  commutes' r := by
+    show algebraMap ℤ Hc r ⊗ₜ[ℤ] (1 : ℤ) = algebraMap ℤ (Hc ⊗[ℤ] ℤ) r
+    rw [Algebra.TensorProduct.algebraMap_apply]
+
+private noncomputable def lTensorCounitComul : Hc →ₐ[ℤ] (Hc ⊗[ℤ] ℤ) :=
+  (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) hcCounitAlgHom).comp comulAlgHom
+
+private theorem mapCounitR_fold
+    (L : List (SyntacticObject × SyntacticObject))
+    (acc : Hc ⊗[ℤ] Hc) :
+    (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) hcCounitAlgHom)
+      (L.foldl (fun a p => a + ofTree p.1 ⊗ₜ[ℤ] ofTree p.2) acc) =
+    (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) hcCounitAlgHom) acc := by
+  induction L generalizing acc with
+  | nil => rfl
+  | cons p tl ih =>
+    simp only [List.foldl_cons]
+    rw [ih]
+    simp only [map_add, Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id,
+               hcCounitAlgHom_ofTree, TensorProduct.tmul_zero, add_zero]
+
+set_option maxHeartbeats 1600000 in
+private theorem lTensorCounitComul_ofTree (T : SyntacticObject) :
+    lTensorCounitComul (ofTree T) = ofTree T ⊗ₜ[ℤ] (1 : ℤ) := by
+  unfold lTensorCounitComul
+  simp only [AlgHom.comp_apply, comulAlgHom_ofTree]
+  unfold comulGen
+  simp only [map_add, Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id,
+             hcCounitAlgHom_ofTree, map_one hcCounitAlgHom]
+  rw [mapCounitR_fold, map_zero]
+  simp only [TensorProduct.tmul_zero, add_zero]
+
+set_option maxHeartbeats 1600000 in
+private theorem lTensorCounitComul_eq_tensorOneHom :
+    lTensorCounitComul = tensorOneHom := by
+  apply MonoidAlgebra.algHom_ext
+  intro m
+  induction m using FreeMonoid.recOn with
+  | h0 => exact map_one lTensorCounitComul
+  | ih T ts ih =>
+    let a : Hc := MonoidAlgebra.single (FreeMonoid.of T) 1
+    let b : Hc := MonoidAlgebra.single ts 1
+    have hsplit : (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc) = a * b :=
+      (MonoidAlgebra.single_mul_single (R := ℤ) (FreeMonoid.of T) ts 1 1).symm
+    have hih : lTensorCounitComul b = tensorOneHom b := ih
+    calc lTensorCounitComul (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc)
+        = lTensorCounitComul (a * b) := by rw [hsplit]
+      _ = lTensorCounitComul a * lTensorCounitComul b := map_mul ..
+      _ = lTensorCounitComul a * tensorOneHom b := by rw [hih]
+      _ = tensorOneHom a * tensorOneHom b := by
+          congr 1
+          change lTensorCounitComul (ofTree T) = _
+          rw [lTensorCounitComul_ofTree]
+          show ofTree T ⊗ₜ[ℤ] (1 : ℤ) = tensorOneHom (ofTree T)
+          rfl
+      _ = tensorOneHom (a * b) := (map_mul ..).symm
+      _ = tensorOneHom (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc) :=
+          congr_arg _ hsplit.symm
+
+private theorem algMapR_eq_lTensor :
+    (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) hcCounitAlgHom).toLinearMap =
+    hcCounit.lTensor Hc := by
+  apply TensorProduct.ext'
+  intro a b
+  simp only [AlgHom.toLinearMap_apply, LinearMap.lTensor_tmul]
+  show a ⊗ₜ[ℤ] hcCounitAlgHom b = a ⊗ₜ[ℤ] hcCounit b
+  congr 1
+  exact LinearMap.congr_fun hcCounitAlgHom_eq_hcCounit b
+
+private theorem tensorOneHom_toLinearMap :
+    tensorOneHom.toLinearMap = (TensorProduct.mk ℤ Hc ℤ).flip 1 := by
+  apply LinearMap.ext; intro x
+  simp only [AlgHom.toLinearMap_apply, tensorOneHom, AlgHom.coe_mk, RingHom.coe_mk,
+             MonoidHom.coe_mk, OneHom.coe_mk]
+  rfl
+
+/-- Left counit axiom: (id ⊗ ε) ∘ Δ = x ↦ x ⊗ 1. -/
+private theorem lTensor_counit_comp_comul_proof :
+    hcCounit.lTensor Hc ∘ₗ comulAlgHom.toLinearMap =
+    (TensorProduct.mk ℤ Hc ℤ).flip 1 := by
+  have h := congr_arg AlgHom.toLinearMap lTensorCounitComul_eq_tensorOneHom
+  simp only [lTensorCounitComul, AlgHom.comp_toLinearMap] at h
+  rw [algMapR_eq_lTensor, tensorOneHom_toLinearMap] at h
+  exact h
+
 /-! ### Antipode -/
 
 /-- Antipode as a linear endomorphism: the linear extension of
@@ -477,8 +714,8 @@ noncomputable instance instCoalgebra : Coalgebra ℤ Hc where
   comul := comulAlgHom.toLinearMap
   counit := hcCounit
   coassoc := sorry
-  rTensor_counit_comp_comul := sorry
-  lTensor_counit_comp_comul := sorry
+  rTensor_counit_comp_comul := rTensor_counit_comp_comul_proof
+  lTensor_counit_comp_comul := lTensor_counit_comp_comul_proof
 
 /-! ### Coassociativity reduction to generators
 

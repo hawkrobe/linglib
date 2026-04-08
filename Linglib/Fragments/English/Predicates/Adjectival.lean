@@ -660,6 +660,173 @@ def adequate : AdjectivalPredicateEntry where
   dimension := .value
   evaluativeValence := some .positive
 
+/-! ## Deadjectival intensifier bases (@cite{nouwen-2024})
+
+Adjectival bases for deadjectival intensifiers. Evaluative adjectives
+(horrible, wonderful) derive H-degree or M-degree intensifiers via the
+Goldilocks effect. Mirative (unusual, surprising) and modal (possible,
+impossible) bases follow Zwicky's generalization. -/
+
+-- Negative-evaluative bases → H-degree intensifiers
+
+/-- "horrible" — open scale, negative evaluative. Base for H-degree *horribly*. -/
+def horrible : AdjectivalPredicateEntry where
+  form := "horrible"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .negative
+
+/-- "terrible" — open scale, negative evaluative. Base for H-degree *terribly*. -/
+def terrible : AdjectivalPredicateEntry where
+  form := "terrible"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .negative
+
+/-- "awful" — open scale, negative evaluative. Base for H-degree *awfully*. -/
+def awful : AdjectivalPredicateEntry where
+  form := "awful"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .negative
+
+/-- "dreadful" — open scale, negative evaluative. Base for H-degree *dreadfully*. -/
+def dreadful : AdjectivalPredicateEntry where
+  form := "dreadful"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .negative
+
+/-- "frightening" — open scale, negative evaluative. Base for H-degree *frighteningly*. -/
+def frightening : AdjectivalPredicateEntry where
+  form := "frightening"
+  scaleType := .open_
+  dimension := .danger
+  evaluativeValence := some .negative
+
+/-- "disgusting" — open scale, negative evaluative. Base for H-degree *disgustingly*. -/
+def disgusting : AdjectivalPredicateEntry where
+  form := "disgusting"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .negative
+
+/-- "annoying" — open scale, negative evaluative. Base for H-degree *annoyingly*. -/
+def annoying : AdjectivalPredicateEntry where
+  form := "annoying"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .negative
+
+/-- "unpleasant" — open scale, negative evaluative, contrary to "pleasant". -/
+def unpleasant : AdjectivalPredicateEntry where
+  form := "unpleasant"
+  scaleType := .open_
+  dimension := .value
+  antonymForm := some "pleasant"
+  antonymRelation := some .contrary
+  evaluativeValence := some .negative
+
+/-- "scary" — open scale, negative evaluative. Base for H-degree *scarily*. -/
+def scary : AdjectivalPredicateEntry where
+  form := "scary"
+  scaleType := .open_
+  dimension := .danger
+  evaluativeValence := some .negative
+
+-- Positive-evaluative bases → M-degree intensifiers
+
+/-- "wonderful" — open scale, positive evaluative. Base for M-degree *wonderfully*. -/
+def wonderful : AdjectivalPredicateEntry where
+  form := "wonderful"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .positive
+
+/-- "delightful" — open scale, positive evaluative. Base for M-degree *delightfully*. -/
+def delightful : AdjectivalPredicateEntry where
+  form := "delightful"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .positive
+
+/-- "gorgeous" — open scale, positive evaluative. Base for M-degree *gorgeously*. -/
+def gorgeous : AdjectivalPredicateEntry where
+  form := "gorgeous"
+  scaleType := .open_
+  dimension := .beauty
+  evaluativeValence := some .positive
+
+-- Mirative bases → H-degree intensifiers (not evaluative; §2.4.2)
+
+/-- "unusual" — open scale, neutral (mirative), contrary to "usual". -/
+def unusual : AdjectivalPredicateEntry where
+  form := "unusual"
+  scaleType := .open_
+  dimension := .expectation
+  antonymForm := some "usual"
+  antonymRelation := some .contrary
+  evaluativeValence := some .neutral
+
+/-- "surprising" — open scale, neutral (mirative). Base for H-degree *surprisingly*. -/
+def surprising : AdjectivalPredicateEntry where
+  form := "surprising"
+  scaleType := .open_
+  dimension := .expectation
+  evaluativeValence := some .neutral
+
+/-- "remarkable" — open scale, positive evaluative (§2.4.1). Extreme positive
+    evaluation: H-degree *remarkably* despite positive valence (Goldilocks exception). -/
+def remarkable : AdjectivalPredicateEntry where
+  form := "remarkable"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .positive
+
+/-- "stunning" — open scale, positive evaluative (Figure 2, upper-right quadrant).
+    Extreme positive evaluation: H-degree *stunningly* (Goldilocks exception). -/
+def stunning : AdjectivalPredicateEntry where
+  form := "stunning"
+  scaleType := .open_
+  dimension := .quality
+  evaluativeValence := some .positive
+
+-- Modal bases (Zwicky's generalization)
+
+/-- "usual" — open scale, neutral (modal), contrary to "unusual". -/
+def usual : AdjectivalPredicateEntry where
+  form := "usual"
+  scaleType := .open_
+  dimension := .expectation
+  antonymForm := some "unusual"
+  antonymRelation := some .contrary
+  evaluativeValence := some .neutral
+
+/-- "expected" — open scale, neutral (modal). Unattested as intensifier (*expectedly). -/
+def expected : AdjectivalPredicateEntry where
+  form := "expected"
+  scaleType := .open_
+  dimension := .expectation
+  evaluativeValence := some .neutral
+
+/-- "possible" — open scale, neutral (modal), contradictory to "impossible". -/
+def possible : AdjectivalPredicateEntry where
+  form := "possible"
+  scaleType := .open_
+  dimension := .possibility
+  antonymForm := some "impossible"
+  antonymRelation := some .contradictory
+  evaluativeValence := some .neutral
+
+/-- "impossible" — open scale, neutral (modal), contradictory to "possible". -/
+def impossible : AdjectivalPredicateEntry where
+  form := "impossible"
+  scaleType := .open_
+  dimension := .possibility
+  antonymForm := some "possible"
+  antonymRelation := some .contradictory
+  evaluativeValence := some .neutral
+
 /-- All adjectival predicate entries -/
 def allEntries : List (AdjectivalPredicateEntry) := [
   -- Height / size
@@ -694,7 +861,16 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   -- Evaluative
   good, bad, beautiful, ugly, important, safe, dangerous, nice, pleasant,
   -- Mildly positive adjectives (@cite{beltrama-2025})
-  decent, acceptable, adequate
+  decent, acceptable, adequate,
+  -- Intensifier bases: negative-evaluative (@cite{nouwen-2024})
+  horrible, terrible, awful, dreadful, frightening,
+  disgusting, annoying, unpleasant, scary,
+  -- Intensifier bases: positive-evaluative
+  wonderful, delightful, gorgeous,
+  -- Intensifier bases: mirative
+  unusual, surprising, remarkable, stunning,
+  -- Intensifier bases: modal
+  usual, expected, possible, impossible
 ]
 
 /-- Look up an entry by form -/

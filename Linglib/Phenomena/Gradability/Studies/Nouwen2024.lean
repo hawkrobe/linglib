@@ -27,6 +27,12 @@ Extends @cite{lassiter-goodman-2017} threshold RSA with **evaluative measures**:
 deadjectival adverbs (horribly, pleasantly) derive their degree function
 from the evaluative meaning of their adjectival base.
 
+**Measure function simplification**: The paper uses f(x) = x² for negative
+evaluation and a Gaussian for positive evaluation (handcrafted proof-of-concept
+functions). Our formalization uses |d − norm| and norm − |d − norm| respectively
+(linear/triangular). Both preserve the qualitative shape: negative measures peak
+at extremes, positive measures peak at the norm.
+
 ### Two-Threshold Simultaneous Model
 
   P_L1(h, θ, θ_e | u) ∝ P_S1(u | h, θ, θ_e) × P(h) × P(θ) × P(θ_e)
@@ -62,7 +68,7 @@ All qualitative Goldilocks predictions are preserved.
 -/
 
 -- ============================================================================
--- §1. Empirical Data (§3)
+-- §1. Empirical Data (§2)
 -- ============================================================================
 
 namespace Phenomena.Gradability.Intensifiers
@@ -113,12 +119,23 @@ structure IntensifierEntry where
   class_ : IntensifierClass
   /-- Base classification: evaluative, mirative, modal, or dimensional -/
   baseKind : BaseKind := .evaluative
-  /-- For modal/mirative bases: polarity (negative = unlikely/impossible) -/
-  modalPolarity : Option EvaluativeValence := none
+  /-- Deviation polarity: whether the base denotes deviation from or
+      conformity with expectation/norm.
+      - `some .negative` = deviation (unusual, impossible, horrible)
+      - `some .positive` = conformity (usual, expected, possible)
+      - `none` = not applicable (evaluative bases without modal/mirative content)
+      Named `deviationPolarity` rather than `modalPolarity` because miratives
+      are not modal (§2.4.2) — the shared property is deviation from norm. -/
+  deviationPolarity : Option EvaluativeValence := none
   /-- Whether the evaluative content is bleached in adverbial use -/
   bleached : Bool := false
   /-- Whether the intensifier use is attested -/
   attested : Bool := true
+  /-- Goldilocks exception: extreme positive evaluatives (remarkable, stunning)
+      are H-degree despite positive valence. The paper acknowledges (p. 2:9)
+      that extreme evaluations and manner implicatures can override the
+      default valence→class mapping. -/
+  goldilocksException : Bool := false
   deriving Repr
 
 -- Intensifier Data (Figure 2)
@@ -136,6 +153,9 @@ def terribly : IntensifierEntry :=
 def awfully : IntensifierEntry :=
   { adverb := "awfully", adjBase := "awful"
   , valence := .negative, class_ := .H, bleached := true }
+
+-- dreadfully/frighteningly follow the same pattern as horribly/terribly
+-- but are not in the paper's Figure 2 survey or mentioned in the text.
 
 def dreadfully : IntensifierEntry :=
   { adverb := "dreadfully", adjBase := "dreadful"
@@ -159,46 +179,54 @@ def decently : IntensifierEntry :=
   { adverb := "decently", adjBase := "decent"
   , valence := .positive, class_ := .M }
 
--- Negative modal → High degree (H), attested
+-- Mirative → High degree (H), attested
+-- Miratives express deviation from expectation (§2.4.2), not evaluation.
 
 def unusually : IntensifierEntry :=
   { adverb := "unusually", adjBase := "unusual"
   , valence := .neutral, class_ := .H
-  , baseKind := .mirative, modalPolarity := some .negative }
+  , baseKind := .mirative, deviationPolarity := some .negative }
 
 def surprisingly : IntensifierEntry :=
   { adverb := "surprisingly", adjBase := "surprising"
   , valence := .neutral, class_ := .H
-  , baseKind := .mirative, modalPolarity := some .negative }
+  , baseKind := .mirative, deviationPolarity := some .negative }
+
+-- Negative modal → High degree (H), attested
 
 def impossibly : IntensifierEntry :=
   { adverb := "impossibly", adjBase := "impossible"
   , valence := .neutral, class_ := .H
-  , baseKind := .modal, modalPolarity := some .negative }
+  , baseKind := .modal, deviationPolarity := some .negative }
+
+-- Extreme positive-evaluative → High degree (Goldilocks exception)
+-- The paper (§2.4.1) classifies "remarkable" as evaluative, not mirative.
+-- It produces H-degree despite positive valence because extreme positive
+-- evaluation (like extreme negative evaluation) targets scale extremes.
 
 def remarkably : IntensifierEntry :=
   { adverb := "remarkably", adjBase := "remarkable"
-  , valence := .neutral, class_ := .H
-  , baseKind := .mirative, modalPolarity := some .negative }
+  , valence := .positive, class_ := .H
+  , goldilocksException := true }
 
--- Positive modal → unattested as intensifiers
+-- Positive modal → unattested as intensifiers (Zwicky's generalization)
 
 def usually_ : IntensifierEntry :=
   { adverb := "*usually", adjBase := "usual"
   , valence := .neutral, class_ := .M
-  , baseKind := .modal, modalPolarity := some .positive
+  , baseKind := .modal, deviationPolarity := some .positive
   , attested := false }
 
 def expectedly_ : IntensifierEntry :=
   { adverb := "*expectedly", adjBase := "expected"
   , valence := .neutral, class_ := .M
-  , baseKind := .modal, modalPolarity := some .positive
+  , baseKind := .modal, deviationPolarity := some .positive
   , attested := false }
 
 def possibly_ : IntensifierEntry :=
   { adverb := "*possibly", adjBase := "possible"
   , valence := .neutral, class_ := .M
-  , baseKind := .modal, modalPolarity := some .positive
+  , baseKind := .modal, deviationPolarity := some .positive
   , attested := false }
 
 -- Additional negative-evaluative → H (Figure 2 survey data)
@@ -237,12 +265,14 @@ def gorgeously : IntensifierEntry :=
   { adverb := "gorgeously", adjBase := "gorgeous"
   , valence := .positive, class_ := .M }
 
--- Additional mirative → H (Figure 2 survey data)
+-- Additional extreme positive-evaluative → H (Figure 2 survey data)
+-- Like remarkably, stunningly is positive-evaluative but H-degree (§2.4.1,
+-- Figure 2 upper-right quadrant: high valence, high temperature response).
 
 def stunningly : IntensifierEntry :=
   { adverb := "stunningly", adjBase := "stunning"
-  , valence := .neutral, class_ := .H
-  , baseKind := .mirative, modalPolarity := some .negative }
+  , valence := .positive, class_ := .H
+  , goldilocksException := true }
 
 -- All entries
 
@@ -257,15 +287,18 @@ def allEntries : List IntensifierEntry :=
 -- Goldilocks Effect (§3)
 
 /--
-The Goldilocks effect: base kind and valence determine degree class.
+The Goldilocks effect (§2.3): base kind and valence determine degree class.
 
 - Negative-evaluative bases yield high-degree (H) intensifiers
 - Positive-evaluative bases yield moderate-degree (M) intensifiers
-- Miratives always yield H (extremity-sensitive, not evaluative; §2.4.2)
-- Modals: negative polarity → H, positive polarity → M
+- Miratives always yield H (deviation from expectation targets extremes; §2.4.2)
+- Modals: negative deviation → H, positive (conformity) → M
+- Goldilocks exceptions (e.g., remarkably, stunningly): extreme positive
+  evaluatives that yield H despite positive valence (p. 2:9)
 -/
 def goldilocksHolds (e : IntensifierEntry) : Bool :=
-  match e.baseKind with
+  if e.goldilocksException then e.class_ == .H
+  else match e.baseKind with
   | .evaluative =>
     match e.valence with
     | .negative => e.class_ == .H
@@ -273,7 +306,7 @@ def goldilocksHolds (e : IntensifierEntry) : Bool :=
     | .neutral  => true
   | .mirative => e.class_ == .H
   | .modal =>
-    match e.modalPolarity with
+    match e.deviationPolarity with
     | some .negative => e.class_ == .H
     | some .positive => e.class_ == .M
     | _ => true
@@ -306,17 +339,22 @@ theorem stunningly_goldilocks : goldilocksHolds stunningly = true := by native_d
 -- Zwicky's Generalization (§3.2)
 
 /--
-Zwicky's generalization: modal/mirative adjectives with negative polarity
-can serve as intensifiers; positive-polarity ones cannot.
+Zwicky's generalization (§2.5, @cite{zwicky-1970}): among modal/mirative
+adjectives, only those denoting deviation from expectation (negative
+deviation polarity) can serve as intensifiers; conformity-denoting ones
+(positive deviation polarity) cannot.
 
-- "unusually warm" ✓ (negative mirative → attested)
-- "impossibly warm" ✓ (negative modal → attested)
-- "*usually warm" ✗ (positive modal → unattested)
+- "unusually warm" ✓ (deviation → attested)
+- "impossibly warm" ✓ (deviation → attested)
+- "*usually warm" ✗ (conformity → unattested)
+
+This restriction does NOT extend to evaluatives (§2.5, (28)-(30)):
+both "pleasantly warm" and "unpleasantly warm" are attested.
 -/
 def zwickyHolds (e : IntensifierEntry) : Bool :=
   match e.baseKind with
   | .modal | .mirative =>
-    match e.modalPolarity with
+    match e.deviationPolarity with
     | some .negative => e.attested
     | some .positive => !e.attested
     | _ => true
@@ -327,8 +365,8 @@ def zwickyHolds (e : IntensifierEntry) : Bool :=
 theorem unusually_zwicky : zwickyHolds unusually = true := by native_decide
 theorem surprisingly_zwicky : zwickyHolds surprisingly = true := by native_decide
 theorem impossibly_zwicky : zwickyHolds impossibly = true := by native_decide
-theorem remarkably_zwicky : zwickyHolds remarkably = true := by native_decide
-theorem stunningly_zwicky : zwickyHolds stunningly = true := by native_decide
+-- remarkably/stunningly are evaluative (not modal/mirative), so Zwicky
+-- doesn't apply to them — both polarities are productive for evaluatives.
 theorem usually_zwicky : zwickyHolds usually_ = true := by native_decide
 theorem expectedly_zwicky : zwickyHolds expectedly_ = true := by native_decide
 theorem possibly_zwicky : zwickyHolds possibly_ = true := by native_decide
@@ -375,6 +413,180 @@ theorem decent_valence_bridge :
     matching the intensifier layer's valence for beautifully. -/
 theorem beautiful_valence_bridge :
     (beautifully_.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+-- Negative-evaluative bridges (H-degree)
+
+theorem horrible_valence_bridge :
+    (horribly.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+theorem terrible_valence_bridge :
+    (terribly.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+theorem awful_valence_bridge :
+    (awfully.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+theorem dreadful_valence_bridge :
+    (dreadfully.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+theorem frightening_valence_bridge :
+    (frighteningly.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+theorem disgusting_valence_bridge :
+    (disgustingly.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+theorem annoying_valence_bridge :
+    (annoyingly.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+theorem unpleasant_valence_bridge :
+    (unpleasantly.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+theorem scary_valence_bridge :
+    (scarily.fragmentEntry.bind (·.evaluativeValence)) = some .negative := by
+  native_decide
+
+-- Positive-evaluative bridges (M-degree)
+
+theorem wonderful_valence_bridge :
+    (wonderfully.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+theorem delightful_valence_bridge :
+    (delightfully.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+theorem gorgeous_valence_bridge :
+    (gorgeously.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+-- Mirative bridges (neutral valence)
+
+theorem unusual_valence_bridge :
+    (unusually.fragmentEntry.bind (·.evaluativeValence)) = some .neutral := by
+  native_decide
+
+theorem surprising_valence_bridge :
+    (surprisingly.fragmentEntry.bind (·.evaluativeValence)) = some .neutral := by
+  native_decide
+
+theorem remarkable_valence_bridge :
+    (remarkably.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+theorem stunning_valence_bridge :
+    (stunningly.fragmentEntry.bind (·.evaluativeValence)) = some .positive := by
+  native_decide
+
+-- Modal bridges (neutral valence)
+
+theorem usual_valence_bridge :
+    (usually_.fragmentEntry.bind (·.evaluativeValence)) = some .neutral := by
+  native_decide
+
+theorem expected_valence_bridge :
+    (expectedly_.fragmentEntry.bind (·.evaluativeValence)) = some .neutral := by
+  native_decide
+
+theorem possible_valence_bridge :
+    (possibly_.fragmentEntry.bind (·.evaluativeValence)) = some .neutral := by
+  native_decide
+
+theorem impossible_valence_bridge :
+    (impossibly.fragmentEntry.bind (·.evaluativeValence)) = some .neutral := by
+  native_decide
+
+-- ════════════════════════════════════════════════════
+-- Universal Bridge: all entries resolve and agree
+-- ════════════════════════════════════════════════════
+
+/-- Every intensifier entry's adjectival base resolves to a Fragment entry. -/
+theorem all_bases_resolve :
+    allEntries.all (·.fragmentEntry.isSome) = true := by
+  native_decide
+
+/-- Every intensifier entry's evaluative valence matches its Fragment entry's.
+    This is the key integration theorem: changes to either the intensifier
+    data or the Fragment entries will break this if they disagree. -/
+theorem all_valences_agree :
+    allEntries.all (λ e =>
+      e.fragmentEntry.bind (·.evaluativeValence) == some e.valence) = true := by
+  native_decide
+
+-- ════════════════════════════════════════════════════
+-- Derived Structural Properties
+-- ════════════════════════════════════════════════════
+
+/-- All intensifier bases except necessity-standard evaluatives have open
+    scales (§2.1, fn. 3: "I will restrict my attention to adjectives with
+    open-ended scales"). "Decent" is the one exception: it has a lower-bounded
+    scale (@cite{kennedy-mcnally-2005} necessity standard). Derived from Fragment. -/
+theorem non_necessity_bases_open_scale :
+    (allEntries.filter (λ e => e.adjBase != "decent")).all (λ e =>
+      match e.fragmentEntry with
+      | some a => a.scaleType == .open_
+      | none => false) = true := by
+  native_decide
+
+/-- All bleached intensifiers have negative evaluative bases (§2.2–2.3).
+    Bleaching is a diachronic process: the negative evaluative content
+    ("it is horrible that...") is lost, leaving only the degree function
+    (extremity). This historical process systematically targeted negative
+    evaluatives, not positive ones. Derived from the data. -/
+theorem bleached_implies_negative :
+    (allEntries.filter (·.bleached)).all
+      (·.valence == .negative) = true := by
+  native_decide
+
+/-- Zwicky's restriction does NOT extend to evaluatives (§2.5, (28)–(30)):
+    "The weather was pleasantly / unpleasantly warm." Both positive and
+    negative evaluative intensifiers are attested. -/
+theorem zwicky_evaluative_both_attested :
+    (allEntries.filter (·.baseKind == .evaluative)).all
+      (·.attested) = true := by
+  native_decide
+
+/-- Evaluative intensifiers come in both positive and negative valence.
+    (Contrast with modals, where only deviation-denoting bases intensify.) -/
+theorem evaluative_has_both_polarities :
+    (allEntries.filter (λ e => e.baseKind == .evaluative && e.valence == .positive)).length > 0 ∧
+    (allEntries.filter (λ e => e.baseKind == .evaluative && e.valence == .negative)).length > 0 := by
+  native_decide
+
+/-- The Goldilocks effect holds universally across all entries (including
+    exceptions, which are handled by the `goldilocksException` flag). -/
+theorem goldilocks_universal :
+    allEntries.all goldilocksHolds = true := by
+  native_decide
+
+/-- Zwicky's generalization holds for all modal/mirative entries. -/
+theorem zwicky_universal :
+    allEntries.all zwickyHolds = true := by
+  native_decide
+
+/-- Goldilocks exceptions are all positive-evaluative H-degree adverbs.
+    They represent extreme positive evaluation (remarkable, stunning) where
+    the extremity of the evaluation, rather than its polarity, determines
+    the degree class. -/
+theorem goldilocks_exceptions_are_positive_H :
+    (allEntries.filter (·.goldilocksException)).all
+      (λ e => e.valence == .positive && e.class_ == .H) = true := by
+  native_decide
+
+/-- Antonym consistency: every intensifier entry whose Fragment base has
+    an antonym can also look up that antonym in the Fragment. -/
+theorem antonym_pairs_resolve :
+    allEntries.all (λ e =>
+      match e.fragmentEntry.bind (·.antonymForm) with
+      | some ant => (Fragments.English.Predicates.Adjectival.lookup ant).isSome
+      | none => true) = true := by
   native_decide
 
 end Phenomena.Gradability.Intensifiers
@@ -861,14 +1073,15 @@ predictions. -/
 def muUsualN : Height → ℕ := λ _ => 3
 
 /-- μ_unusual has the same shape as μ_horrible: peaks at extremes.
-    Negative modals pattern with negative evaluatives because both assign
-    high values to heights far from the norm. -/
+    Deviation-denoting adjectives (unusual, impossible) pattern with
+    negative evaluatives (horrible, terrible) because both assign high
+    values to heights far from the norm (§5). -/
 def muUnusualN : Height → ℕ := muHorrible
 
-/-- Negative modal and negative evaluative measures are structurally identical.
-    This is the semantic foundation of why both types make good intensifiers
-    (§5: "the corresponding measure function has a shape
-    similar to that of negative evaluatives"). -/
+/-- Deviation measures and negative evaluative measures are structurally
+    identical. This is the semantic foundation of why both types make good
+    intensifiers — "the corresponding measure function has a shape similar
+    to that of negative evaluatives" (§5). -/
 theorem muUnusualN_eq_muHorrible : muUnusualN = muHorrible := rfl
 
 /-- Bare adjective RSAConfig: "warm" vs silence with the original height prior.

@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.229.589] - 2026-04-08
+
+### Changed
+- **`modalPolarity` → `deviationPolarity`** (`Nouwen2024.lean`): rename field to reflect semantic content — whether base denotes deviation from (negative) or conformity with (positive) expectation; applies to both miratives and modals
+- **`remarkably`, `stunningly` reclassified** (`Nouwen2024.lean`, `Adjectival.lean`): now positive-evaluative with `goldilocksException := true` (not mirative); dimension `.expectation` → `.quality`, valence `.neutral` → `.positive` per §2.4.1
+- **`goldilocksHolds` updated** (`Nouwen2024.lean`): handles `goldilocksException` flag for extreme positive evaluatives that yield H-degree despite positive valence
+- **`zwickyHolds` updated** (`Nouwen2024.lean`): uses `deviationPolarity` field name
+
+### Added
+- **`goldilocksException` field** (`Nouwen2024.lean`): `Bool := false` on `IntensifierEntry` for extreme positive evaluatives (remarkable, stunning) that are H-degree despite positive valence
+- **`BaseKind` enum** (`Nouwen2024.lean`): evaluative/mirative/modal/dimensional per §2.4
+- **8 derived structural theorems** (`Nouwen2024.lean`): `non_necessity_bases_open_scale` (all non-necessity bases open), `bleached_implies_negative`, `zwicky_evaluative_both_attested`, `evaluative_has_both_polarities`, `goldilocks_universal`, `zwicky_universal`, `goldilocks_exceptions_are_positive_H`, `antonym_pairs_resolve`
+- **Section reference fix** (`Nouwen2024.lean`): Goldilocks effect is §2, not §3
+
+## [0.229.588] - 2026-04-08
+
+### Added
+- **20 intensifier base entries** (`Adjectival.lean`): Fragment adjective entries for all adjectival bases from @cite{nouwen-2024} Figure 2 — negative-evaluative (horrible, terrible, awful, dreadful, frightening, disgusting, annoying, unpleasant, scary), positive-evaluative (wonderful, delightful, gorgeous), mirative (unusual, surprising, remarkable, stunning), modal (usual, expected, possible, impossible); all annotated with `evaluativeValence`
+- **`Dimension.expectation`, `Dimension.possibility`** (`PropertyDomain.lean`): psychological-domain smart constructors for mirative/modal adjective bases
+- **24 per-datum valence bridge theorems** (`Nouwen2024.lean`): every intensifier entry's Fragment lookup returns matching evaluative valence; breaks if either side changes
+- **`all_bases_resolve`** (`Nouwen2024.lean`): universal theorem — every intensifier's `adjBase` resolves to a Fragment entry via `lookup`
+- **`all_valences_agree`** (`Nouwen2024.lean`): universal theorem — all 24 Fragment entries' evaluative valences match their intensifier layer counterparts
+
 ## [0.229.587] - 2026-04-08
 
 ### Added
