@@ -4,7 +4,6 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Phenomena.Focus.Studies.DeoThomas2025
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Questions.LeftPeriphery
 import Linglib.Theories.Semantics.Questions.Utility.Polarity
@@ -581,27 +580,7 @@ theorem wxdy_requires_progressive_aspect (c : VendlerClass) :
   progressive_accepts_durative_dynamic c
 
 -- ============================================================================
--- J. Domain widening bridge (Focus/DomainWidening.lean)
--- ============================================================================
-
-open Semantics.Montague.Sentence.DomainWidening
-
-/-- WXDY's incredulity arises from a normative expectation violation:
-the situation violates what the speaker considers normal/appropriate.
-This is the same alternative source as counterexpectational *just*
-("He's just texting during the lecture!"). -/
-def wxdyAlternativeSource : AlternativeSource := .normative
-
-/-- WXDY's incongruity and counterexpectational *just* share the same
-alternative source: both involve normative expectations being violated.
-
-- WXDY: "What's this fly doing in my soup?" — violates dining norms
-- *just*: "He's just texting during the lecture!" — violates classroom norms -/
-theorem wxdy_incongruity_is_counterexpectational :
-    wxdyAlternativeSource = associatedSource .counterexpectational := rfl
-
--- ============================================================================
--- K. Polarity / rhetorical question bridge (Semantics.Questions/Polarity.lean)
+-- J. Polarity / rhetorical question bridge (Semantics.Questions/Polarity.lean)
 -- ============================================================================
 
 open Semantics.Questions.Polarity

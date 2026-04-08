@@ -51,6 +51,7 @@ inductive Cat where
   | Pol   -- polarity (@cite{laka-1990}; ΣP for affirmation/negation)
   | Asp   -- aspect (@cite{cinque-1999}; inner inflectional, between Voice and T)
   | Evid  -- evidential (@cite{cinque-1999}; outer inflectional, above T below Fin)
+  | K     -- inherent case shell (@cite{newman-2024}; KP wraps DP for oblique/inherent case; explains no-IO-passive languages)
   deriving Repr, DecidableEq, Inhabited
 
 /-- Selectional stack consumed left-to-right -/
@@ -250,9 +251,9 @@ theorem leaf_node_relation (so : SyntacticObject) :
 -- ============================================================================
 
 /-- All nodes in a `SyntacticObject`, including the root itself. -/
-def subterms : SyntacticObject → List SyntacticObject
+def SyntacticObject.subtrees : SyntacticObject → List SyntacticObject
   | so@(.leaf _) => [so]
-  | so@(.node l r) => so :: (subterms l ++ subterms r)
+  | so@(.node l r) => so :: (l.subtrees ++ r.subtrees)
 
 /-- The terminal (leaf) nodes of a `SyntacticObject`. -/
 def terminalNodes : SyntacticObject → List SyntacticObject
@@ -270,22 +271,22 @@ theorem terminalNodes_are_leaves {so t : SyntacticObject}
     simp only [terminalNodes, List.mem_append] at h
     exact h.elim ihl ihr
 
-/-- Every terminal is a subterm. -/
-theorem terminalNodes_sub_subterms {so t : SyntacticObject}
-    (h : t ∈ terminalNodes so) : t ∈ subterms so := by
+/-- Every terminal is a subtree. -/
+theorem terminalNodes_sub_subtrees {so t : SyntacticObject}
+    (h : t ∈ terminalNodes so) : t ∈ so.subtrees := by
   induction so with
   | leaf _ =>
     simp only [terminalNodes] at h
-    simp only [subterms]
+    simp only [SyntacticObject.subtrees]
     exact h
   | node l r ihl ihr =>
     simp only [terminalNodes, List.mem_append] at h
-    simp only [subterms, List.mem_cons, List.mem_append]
+    simp only [SyntacticObject.subtrees, List.mem_cons, List.mem_append]
     exact h.elim (fun h => Or.inr (Or.inl (ihl h)))
                  (fun h => Or.inr (Or.inr (ihr h)))
 
-/-- The root is always in its own subterms. -/
-theorem self_mem_subterms (so : SyntacticObject) : so ∈ subterms so := by
+/-- The root is always in its own subtrees. -/
+theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
   cases so with
   | leaf _ => exact List.mem_cons.mpr (Or.inl rfl)
   | node _ _ => exact List.mem_cons.mpr (Or.inl rfl)
@@ -442,6 +443,10 @@ theorem containsB_iff {x y : SyntacticObject} :
     containsB x y = true ↔ contains x y :=
   ⟨containsB_implies_contains, contains_implies_containsB⟩
 
+/-- Containment is decidable (derived from the Boolean predicate). -/
+instance decContains (x y : SyntacticObject) : Decidable (contains x y) :=
+  decidable_of_iff (containsB x y = true) containsB_iff
+
 -- Part 4: Membership in Derivation
 
 /-- X is a term of Y iff X = Y or Y contains X
@@ -484,13 +489,13 @@ theorem containsOrEq_trans {x y z : SyntacticObject}
 -- The tree-free `areSisters` / `cCommands` definitions that were here
 -- previously are unsound: sisterhood holds for ANY pair of distinct SOs
 -- (witness: `node x y`), making asymmetric c-command trivially false.
--- The tree-relative versions below restrict witnesses to subterms of a
+-- The tree-relative versions below restrict witnesses to subtrees of a
 -- given root, correctly capturing structural asymmetries.
 
 /-- X and Y are sisters IN tree `root`: they are distinct co-daughters of
-    some node that is a subterm of `root`. -/
+    some node that is a subtree of `root`. -/
 def areSistersIn (root x y : SyntacticObject) : Prop :=
-  ∃ z, z ∈ subterms root ∧ immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
+  ∃ z, z ∈ root.subtrees ∧ immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
 
 /-- X c-commands Y IN tree `root`: X has a sister (in `root`) that
     contains-or-equals Y. -/
@@ -505,11 +510,11 @@ def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
 
 /-- Boolean c-command check: does `x` c-command `y` in tree `root`?
 
-    Searches all subterms of `root` for a parent node whose children
+    Searches all subtrees of `root` for a parent node whose children
     include `x` and some sibling `z` where `z` equals or contains `y`.
     Mirrors `cCommandsIn` but is decidable by computation. -/
 def cCommandsInB (root x y : SyntacticObject) : Bool :=
-  (subterms root).any λ parent =>
+  root.subtrees.any λ parent =>
     match parent with
     | .node a b =>
       (a == x && x != y && (b == y || containsB b y)) ||

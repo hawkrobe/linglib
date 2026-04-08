@@ -1,8 +1,8 @@
 /-
 # Binary Optimality of Merge
 
-Formalizes §4 of @cite{marcolli-chomsky-berwick-2023}: binary Merge uniquely
-achieves all possible string lengths (Lemma 4.4), and the Catalan number
+Formalizes §1.11 of @cite{marcolli-chomsky-berwick-2025}: binary Merge uniquely
+achieves all possible string lengths (Lemma 1.11.4), and the Catalan number
 connection for counting SO shapes.
 
 ## Main definitions
@@ -19,7 +19,7 @@ connection for counting SO shapes.
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv
+import Linglib.Theories.Syntax.Minimalism.Core.Algebra
 import Mathlib.Combinatorics.Enumerative.Catalan
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
@@ -39,7 +39,7 @@ def NaryTree.leafCount {n : Nat} : NaryTree n → Nat
   | .leaf => 1
   | .node children => Finset.univ.sum (λ i => (children i).leafCount)
 
-/-! ## Achievable leaf counts (Lemma 4.4)
+/-! ## Achievable leaf counts (Lemma 1.11.4)
 
 For n-ary trees:
 - Binary (n=2): every k ≥ 1 is achievable
@@ -144,7 +144,7 @@ theorem nary_misses_two (n : Nat) (hn : n ≥ 3) :
   omega
 
 /-- Binary Merge is uniquely optimal: it's the only n ≥ 2 that achieves all
-    leaf counts (Lemma 4.4). -/
+    leaf counts (Lemma 1.11.4). -/
 theorem binary_unique_optimal (n : Nat) (hn : n ≥ 2)
     (h : ∀ k, k ≥ 1 → k ∈ achievableLeafCounts n) :
     n = 2 := by
@@ -154,59 +154,88 @@ theorem binary_unique_optimal (n : Nat) (hn : n ≥ 2)
 
 /-! ## Catalan bridge
 
-The number of binary tree shapes with n internal nodes equals the nth
-Catalan number. We connect this to SyntacticObject via the FreeMagma
-equivalence. -/
+The number of SO shapes with n internal nodes equals the nth Catalan
+number. We bridge `SyntacticObject.shape` (→ `TreeShape`) to mathlib's
+`Tree Unit` (which has the Catalan theorem) via explicit bijection. -/
 
-/-- Binary tree shape: SO with Unit tokens (only tree structure matters) -/
-abbrev SOShape := FreeMagma Unit
+/-- Node count of a tree shape -/
+def TreeShape.nodeCount : TreeShape → Nat
+  | .leaf => 0
+  | .node a b => 1 + a.nodeCount + b.nodeCount
 
-/-- Count internal nodes of a FreeMagma tree -/
-def freemagmaNodeCount {α : Type*} : FreeMagma α → Nat
-  | .of _ => 0
-  | .mul a b => 1 + freemagmaNodeCount a + freemagmaNodeCount b
-
-/-- The nodeCount of an SO equals the nodeCount of its FreeMagma image -/
-theorem nodeCount_preserved (so : SyntacticObject) :
-    so.nodeCount = freemagmaNodeCount (toFreeMagma so) := by
+/-- SO.shape preserves nodeCount -/
+theorem shape_nodeCount (so : SyntacticObject) :
+    so.shape.nodeCount = so.nodeCount := by
   induction so with
-  | leaf _ => simp [SyntacticObject.nodeCount, toFreeMagma, freemagmaNodeCount]
+  | leaf _ => simp [SyntacticObject.shape, TreeShape.nodeCount, SyntacticObject.nodeCount]
   | node a b iha ihb =>
-    simp [SyntacticObject.nodeCount, toFreeMagma, freemagmaNodeCount]
-    omega
+    simp [SyntacticObject.shape, TreeShape.nodeCount, SyntacticObject.nodeCount, iha, ihb]
 
-/-- Internal node count = FreeMagma.length - 1 for FreeMagma trees -/
-theorem freemagmaNodeCount_eq_length_sub {α : Type*} (fm : FreeMagma α) :
-    freemagmaNodeCount fm = fm.length - 1 := by
-  induction fm with
-  | ih1 _ => simp [freemagmaNodeCount, FreeMagma.length]
-  | ih2 a b iha ihb =>
-    simp [freemagmaNodeCount, FreeMagma.length]
-    have := a.length_pos
-    have := b.length_pos
-    omega
-
-/-- SO.nodeCount = FreeMagma.length - 1 via the isomorphism.
-    Bridges `leaf_node_relation` to `FreeMagma.length`. -/
+/-- SO.nodeCount = FreeMagma.length - 1 via the isomorphism -/
 theorem nodeCount_eq_freeMagma_length_sub (so : SyntacticObject) :
     so.nodeCount = (toFreeMagma so).length - 1 := by
   have h1 := leafCount_eq_freeMagma_length so
   have h2 := leaf_node_relation so
   omega
 
-/-- Map an SO to its shape (forget token identity, keep tree structure) -/
-def SyntacticObject.toShape (so : SyntacticObject) : SOShape :=
-  FreeMagma.map (λ _ => ()) (toFreeMagma so)
+/-! ### TreeShape ≃ Tree Unit
 
-/-- The number of binary tree shapes with n internal nodes equals the nth
-    Catalan number.
+`TreeShape` (leaf/node) and mathlib's `Tree Unit` (nil/node) are the same
+inductive structure. The bijection preserves internal node count, connecting
+`SyntacticObject.shape` to mathlib's Catalan combinatorics. -/
 
-    This is a direct application of mathlib's `treesOfNumNodesEq_card_eq_catalan`,
-    which counts Tree Unit shapes. The connection to SyntacticObject goes through
-    the FreeMagma ≃ SO equivalence and the well-known bijection between
-    full binary trees and Tree Unit. -/
-theorem tree_shapes_catalan (n : Nat) :
+/-- Map TreeShape to Tree Unit -/
+def TreeShape.toTree : TreeShape → Tree Unit
+  | .leaf => .nil
+  | .node a b => .node () a.toTree b.toTree
+
+/-- Map Tree Unit to TreeShape -/
+def _root_.Tree.toTreeShape : Tree Unit → TreeShape
+  | .nil => .leaf
+  | .node () a b => .node a.toTreeShape b.toTreeShape
+
+@[simp]
+theorem toTree_toTreeShape (t : TreeShape) : t.toTree.toTreeShape = t := by
+  induction t with
+  | leaf => rfl
+  | node a b iha ihb => simp [TreeShape.toTree, Tree.toTreeShape, iha, ihb]
+
+@[simp]
+theorem toTreeShape_toTree (t : Tree Unit) : t.toTreeShape.toTree = t := by
+  induction t with
+  | nil => rfl
+  | node u a b iha ihb => cases u; simp [Tree.toTreeShape, TreeShape.toTree, iha, ihb]
+
+/-- TreeShape ≃ Tree Unit — the same inductive structure -/
+def treeShapeTreeEquiv : TreeShape ≃ Tree Unit where
+  toFun := TreeShape.toTree
+  invFun := Tree.toTreeShape
+  left_inv := toTree_toTreeShape
+  right_inv := toTreeShape_toTree
+
+/-- The bijection preserves internal node count -/
+theorem toTree_numNodes (t : TreeShape) :
+    t.toTree.numNodes = t.nodeCount := by
+  induction t with
+  | leaf => simp [TreeShape.toTree, TreeShape.nodeCount, Tree.numNodes]
+  | node a b iha ihb =>
+    simp [TreeShape.toTree, TreeShape.nodeCount, Tree.numNodes, iha, ihb]
+    omega
+
+/-- The number of SO shapes with n internal nodes equals the nth Catalan
+    number.
+
+    The proof chain: `SyntacticObject.shape` erases labels to `TreeShape`,
+    `treeShapeTreeEquiv` bijects with `Tree Unit`, and mathlib's
+    `treesOfNumNodesEq_card_eq_catalan` counts `Tree Unit` shapes. -/
+theorem so_shapes_catalan (n : Nat) :
     (Tree.treesOfNumNodesEq n).card = catalan n :=
   Tree.treesOfNumNodesEq_card_eq_catalan n
+
+/-- Every TreeShape with n nodes maps to a member of treesOfNumNodesEq n -/
+theorem toTree_mem_treesOfNumNodesEq (t : TreeShape) :
+    t.toTree ∈ Tree.treesOfNumNodesEq t.nodeCount := by
+  rw [Tree.mem_treesOfNumNodesEq]
+  exact toTree_numNodes t
 
 end Minimalism

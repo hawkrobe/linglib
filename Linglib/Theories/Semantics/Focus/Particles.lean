@@ -180,9 +180,11 @@ structure TraditionalOnly where
 def TraditionalOnly.presupposition (only : TraditionalOnly (World := World)) : BProp World :=
   only.prejacent
 
-/-- "only" asserts no alternative is true (except prejacent) -/
+/-- "only" asserts no alternative is true.
+    The alternatives list excludes the prejacent (Roothian focus alternatives
+    minus the focused element's contribution). -/
 def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : BProp World :=
-  λ w => only.alternatives.all (λ alt => !alt w || (alt w == only.prejacent w))
+  λ w => only.alternatives.all (λ alt => !alt w)
 
 /-- Full "only" meaning -/
 def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World) : Prop :=

@@ -169,7 +169,7 @@ theorem vp_ccommands_subject :
   rw [h_final]
   -- VP's sister is T', which dominates the subject
   exact ⟨.node t_head (.node n_dakdanakan (.node v_head (mkTrace 0))),
-         ⟨_, self_mem_subterms _, Or.inl rfl, Or.inr rfl, by decide⟩,
+         ⟨_, self_mem_subtrees _, Or.inl rfl, Or.inr rfl, by decide⟩,
          Or.inr (contains.trans _ _ _ (Or.inr rfl) (contains.imm _ _ (Or.inl rfl)))⟩
 
 -- ============================================================================

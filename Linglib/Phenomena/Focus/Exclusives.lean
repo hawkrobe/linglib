@@ -34,7 +34,10 @@ namespace Phenomena.Focus.Exclusives
 -- Flavors of *just*
 -- ============================================================================
 
-/-- The 7 interpretive flavors of *just* (@cite{deo-thomas-2025}: §2). -/
+/-- The interpretive flavors of *just* (@cite{deo-thomas-2025}: §2).
+    Nine constructors covering the paper's 7 major categories, with
+    precisifying split into equality/proximity (§2.3.1-2) and complement
+    exclusion separated from rank order (§2.1). -/
 inductive JustFlavor where
   | complementExclusion  -- "She just went to Spain and Portugal" → nowhere else
   | rankOrder            -- "She is just an intern" → nothing higher on scale

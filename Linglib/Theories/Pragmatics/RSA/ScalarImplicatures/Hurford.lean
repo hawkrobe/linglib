@@ -1,5 +1,3 @@
-import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
-
 /-!
 # RSA Analysis of Hurford's Constraint
 @cite{hurford-1974} @cite{singh-2008} @cite{potts-levy-2015}

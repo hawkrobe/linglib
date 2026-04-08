@@ -392,6 +392,35 @@ content" terminology in defining the at-issue content of discourse *only*. -/
 abbrev Issue.highlighted {W : Type*} (q : Issue W) : W → Bool :=
   q.infoContent
 
+-- Width Relation (@cite{deo-thomas-2025})
+
+/-- Proper containment of info states over a finite world list.
+    `properlyContains σ σ' worlds` holds when σ' ⊆ σ and σ ∖ σ' ≠ ∅. -/
+def properlyContains {W : Type*} (σ σ' : InfoState W) (worlds : List W) : Bool :=
+  worlds.all (λ w => !σ' w || σ w) &&
+  worlds.any (λ w => σ w && !σ' w)
+
+/-- The width relation between questions (@cite{deo-thomas-2025} (32)).
+
+    `q1.widerThan q2 worlds` holds when q1 is wider (more inquisitive) than q2:
+    (a) Same cover: ∪q1 = ∪q2
+    (b) No q2-answer is properly contained in any q1-answer
+    (c) Some q1-answer is properly contained in some q2-answer
+
+    A wider question makes finer distinctions — its answers are individually
+    more specific, allowing more informative resolutions. This is weaker than
+    question entailment (@cite{groenendijk-stokhof-1984}) because granularity-based
+    construals generally cannot be ordered by entailment strength (fn. 20). -/
+def Issue.widerThan {W : Type*} (q1 q2 : Issue W) (worlds : List W) : Bool :=
+  -- (a) Same informational content
+  worlds.all (λ w => q1.infoContent w == q2.infoContent w) &&
+  -- (b) No q2-answer properly contained in any q1-answer
+  q2.alternatives.all (λ p2 =>
+    !q1.alternatives.any (λ p1 => properlyContains p1 p2 worlds)) &&
+  -- (c) Some q1-answer properly contained in some q2-answer
+  q1.alternatives.any (λ p1 =>
+    q2.alternatives.any (λ p2 => properlyContains p2 p1 worlds))
+
 -- Theorems
 
 /-- Polar questions are always inquisitive (two alternatives). -/

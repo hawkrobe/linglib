@@ -1,5 +1,94 @@
 # Changelog
 
+## [0.229.572] - 2026-04-07
+
+### Added
+- **No Complexity Loss (Proposition 1.6.10)**: formalize §1.6.3 of @cite{marcolli-chomsky-berwick-2025} — the NCL constraint on Merge operations
+  - `Formal/NoComplexityLoss.lean`: `deg` (= leafCount, Hopf algebra grading), `satisfiesNCL` predicate
+  - `merge_deg_ge_left`/`merge_deg_ge_right`: Merge is degree-nondecreasing
+  - `em_satisfies_ncl`: External Merge satisfies NCL (no hypotheses needed beyond workspace membership)
+  - `im_satisfies_ncl`: Internal Merge satisfies NCL
+  - `contains_leafCount_lt`: containment implies strict leafCount inequality (new bridge lemma)
+  - `quotient_deg_lt`: quotient tree has strictly lower degree when extracted subtree has ≥ 2 leaves
+  - `sideward_2b_violates_ncl`: Sideward Merge type 2(b) violates NCL — proves the key negative direction
+
+## [0.229.571] - 2026-04-07
+
+### Changed
+- **Newman 2024 audit and cleanup**: refactor CMH formalization for accuracy, elegance, and deeper integration
+  - `CMH.lean`: add `NominalType` (whDP/dp/nonDP) with entailment hierarchy (`checksMerge`, `checksWh`, `aMovementFeatures`, `subsumes`, `canAMove`), replacing standalone `kpChecksFeature`/`dpChecksFeature`; fix anti-redundancy to require probe adjacency (`probesAdjacent`); add `raising` and `maximalVerb` verb types; remove vacuous `satisfiesNonDPFirst`
+  - `Newman2024.lean`: derive DOMA feature counts from `NominalType.aMovementFeatures` (not magic numbers); add 11 entailment hierarchy theorems; add raising/maximal verb type tests; replace shallow Voice examples with cross-module `voice_hasD_ne_assignsTheta` theorem identifying CMH [·D·] vs Voice hasD as distinct features; add Feature Failure §9 connecting to `ObligatoryOperations.lean` (`cmhFeatureModel`, `feature_failure_converges`); add binding predictions §10 with concrete trees testing c-command in low-XP vs DOC structures (`binding_asymmetry_iff_vp_complement`, `doc_agent_not_ccommands_DO`)
+
+## [0.229.570] - 2026-04-07
+
+### Changed
+- **Counting convention**: adopt @cite{marcolli-chomsky-berwick-2025} Proposition 1.6.4 convention — `numAcc` now counts *proper* accessible terms (excluding each tree's root), matching the book's α. EM on non-leaf inputs gives Δα = +2, Δσ = +1
+  - New `SyntacticObject.properAccessibleTerms`: accessible terms excluding root
+  - `numAcc` redefined via `properAccessibleTerms`
+  - `em_acc_increases`: now proves Δα = +2 (was +1) with `nodeCount ≥ 1` hypotheses
+  - `em_wsSize_change`: now proves Δσ = +1 (was 0)
+  - `im_acc_change`: adds `hnodeT` hypothesis (conclusion unchanged: Δα = 1 + β.nodeCount)
+  - Removed `numAcc_eq_numVertices` and `wsSize_eq_wsSizeAlt` (no longer hold)
+- **Bibliography**: `marcolli-chomsky-berwick-2023` (arXiv preprint) → `marcolli-chomsky-berwick-2025` (MIT Press book)
+- **Section references**: fixed 11 hallucinated arxiv-era references (§2.x → §1.x) across Counting, Coproduct, BinaryOptimality, Algebra
+
+## [0.229.569] - 2026-04-07
+
+### Added
+- **Newman 2024 — *When Arguments Merge***: formalize the Categorial Merge Hypothesis from Newman's MIT Press monograph
+  - `Core/CMH.lean`: three Merge features (`MergeFeature` D/X/V), `MergeBundle`, `CMHHead`, `VPProfile` verb type space, Non-DP First ordering, VP-as-specifier, Weak Economy (`PendingOp`/`weakEconomyValid`), Generalized Tucking In, KP/DP feature-checking asymmetry, anti-redundancy in agreement (`AgreeCopy`/`applyAntiRedundancy`)
+  - `Core/MCommand.lean`: m-command (`mCommandsB`) — weaker than c-command, predicts binding in multi-specifier configurations; `isMaximalProjectionIn`, binding Principles A/B via m-command
+  - `Phenomena/ArgumentStructure/Studies/Newman2024.lean`: 22 verified theorems — verb type inventory (§1), VP-as-specifier consequences (§2), KP blocks passive (§3), symmetric passives (§4), DOMA (§5), Mayan Agent Focus anti-redundancy (§6), Greek clitic doubling optionality (§7), Voice typology mapping (§8)
+  - `K` category added to `Cat` enum in `Basic.lean` for inherent case shells
+
+## [0.229.568] - 2026-04-07
+
+### Added
+- **Potts & Levy 2015 expertise model (§10)**: S2-level predictions for speaker expertise — `s2_w12_AorX_vs_A`, `s2_w1_A_vs_AorX`, `AorX_signals_excl_vs_A`; 10 findings total across L1/S1/S2 levels, all verified
+
+## [0.229.567] - 2026-04-07
+
+### Changed
+- **Minimalism reorganization**: promote MCB2023 algebraic foundations from `Formal/MCB2023/` into `Core/`, making free magma structure and workspace counting foundational rather than a parallel side-module
+  - `Formal/MCB2023/FreeMagmaEquiv.lean` → **`Core/Algebra.lean`**: SO ≅ FreeMagma isomorphism, Mul instance, universal property, subterm bridge
+  - `Formal/MCB2023/Accessible.lean` → **`Core/Counting.lean`**: b₀, numAcc, wsSize, emWorkspace/imWorkspace, EM/IM counting theorems, sideward merge violation
+  - `Formal/MCB2023/BinaryOptimality.lean` → **`Formal/BinaryOptimality.lean`**: derived result, no longer paper-namespaced
+  - `Formal/MCB2023/Coproduct.lean` → **`Formal/Coproduct.lean`**: derived result, no longer paper-namespaced
+  - `Formal/MCB2023/` directory removed
+- **`subterms` → `SyntacticObject.subtrees`** throughout Minimalism: consistent method syntax, eliminates bare-name references in LCA.lean, Amalgamation.lean
+- **`moverInTarget` → `containsB`** in Workspace.lean: eliminate reimplemented containment check, use existing infrastructure from Basic.lean
+
+### Added
+- **`TreeShape ≃ Tree Unit`** bijection in BinaryOptimality.lean: `treeShapeTreeEquiv` with `toTree_numNodes` (preserves node count), `toTree_mem_treesOfNumNodesEq`; closes the Catalan gap — `so_shapes_catalan` now connects to SO shapes via the bijection chain
+- **`Decidable (contains x y)`** instance in Basic.lean: derived from `containsB_iff`
+- **`merge_ne_right`** in Coproduct.lean: `merge T₁ T₂ ≠ T₂` (structural size argument)
+
+### Removed
+- **`SOShape`** (duplicate of `TreeShape`), **`SyntacticObject.toShape`** (duplicate of `.shape`), **`freemagmaNodeCount`** and associated lemmas from BinaryOptimality.lean
+- **`listExternalMerge`/`listInternalMerge`** from Coproduct.lean (duplicated `emWorkspace`/`imWorkspace` from Counting.lean)
+- **`moverInTarget`** from Workspace.lean (reimplemented `containsB`)
+
+### Fixed
+- **`em_acc_increases` docstring**: fixed (superseded by 0.229.570 counting convention change)
+- **`em_wsSize_change` docstring**: fixed (superseded by 0.229.570 counting convention change)
+- **`em_contains_merge` proof**: explicit structural inequality proof for `emWorkspace` filter pass-through
+- **references.bib**: `marcolli-chomsky-berwick-2023` sources field updated to new file paths
+
+## [0.229.566] - 2026-04-07
+
+### Added
+- **Potts & Levy 2015** (`Phenomena/ScalarImplicatures/Studies/PottsLevy2015.lean`): formalize Hurford-violating disjunction model — 3 worlds (w₁/w₂/w₁₂ with join closure), 5 utterances, 3 lexica (base/excl/syn), RSAConfig with Latent := Lex; exhaustification grounding (`excl_is_base_minus_A`, `syn_is_base_A`); structural theorems (syn redundancy, excl disjointness, join truth); L1 uncertainty implicature (w₁₂ > w₁ > w₂ for "A or X"); L1 lexicon inference (excl > base > syn); S1 speaker rationality (speaker at w₁₂ prefers AorX, speaker at w₁ prefers A); bridge to Hurford data (`someOrAll.felicitous`, `someOrAll.rescueMethod`)
+
+### Removed
+- **`LexicalUncertainty/Compositional.lean`** — deleted entirely (`CompUtt`, `AtomicLexicon`, `CompLUScenario`, `ThreePointWorld`, `NumeralAtom`, `EmbeddedSIPrediction`, `violatesHurford`, `entails` — all unused outside the file, superseded by RSAConfig-based models)
+- **`LUScenario`** from `LexicalUncertainty/Basic.lean` — sole user (`Marginalization.lursa_to_sds_exists`) rewritten to take `LURSAPackage`
+- **`LexicalRefinement`**, **`ObsState`**, **`ScalarWorld`**, **`SomeOrAllUtt`**, **`LUTheorems`**, **`Lexicon.ofScenario`** from `Basic.lean` — all unused outside the file
+- Vestigial LU imports from `Hurford.lean`, `Embedded/Basic.lean`, `SDSandRSA.lean`
+- `Basic.lean` import of `RSA.Core.Config` (no longer needed without `LUScenario`)
+
+### Fixed
+- **references.bib**: `potts-levy-2015` — add missing co-author (Roger Levy), fix venue name, add page numbers, update role to formalized
+
 ## [0.229.565] - 2026-04-06
 
 ### Added

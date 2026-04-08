@@ -299,7 +299,7 @@ theorem hmc_violation_diagnostic (root : SyntacticObject)
     once as a subterm of `root`. Under copy theory, Internal Merge creates
     copies; verb doubling = multiple copies pronounced. -/
 def hasMultiplePronunciations (x root : SyntacticObject) : Prop :=
-  ((subterms root).filter (· == x)).length > 1
+  (root.subtrees.filter (· == x)).length > 1
 
 /-- An SO is a complex morphological word if it is a leaf whose `LexicalItem`
     has more than one feature bundle (i.e., was produced by `LexicalItem.combine`

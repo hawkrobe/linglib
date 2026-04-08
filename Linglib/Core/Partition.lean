@@ -364,6 +364,24 @@ theorem toCells_nonempty (q : QUD M) (w : M) (ws : List M) :
   rw [this] at hw
   exact List.not_mem_nil hw
 
+/-- Every element in the input list belongs to some cell of `toCells`. -/
+theorem toCells_covers (q : QUD M) (elements : List M) (w : M) (hw : w ∈ elements) :
+    ∃ c ∈ q.toCells elements, c w = true := by
+  obtain ⟨r, hr, hsame⟩ := repFold_covers q elements [] w hw
+  exact ⟨fun w' => q.sameAnswer r w', List.mem_map.mpr ⟨r, hr, rfl⟩, hsame⟩
+
+/-- Every cell in `toCells` has a representative from the input list,
+    and cell membership equals `sameAnswer` with the representative. -/
+theorem toCells_exists_rep (q : QUD M) (elements : List M) (c : M → Bool)
+    (hc : c ∈ q.toCells elements) :
+    ∃ rep ∈ elements, ∀ w, c w = q.sameAnswer rep w := by
+  simp only [toCells, List.mem_map] at hc
+  obtain ⟨rep, hrep, rfl⟩ := hc
+  refine ⟨rep, ?_, fun w => rfl⟩
+  rcases mem_repFold_sub q elements [] rep hrep with h | h
+  · exact absurd h List.not_mem_nil
+  · exact h
+
 /-! ### Proper Coarsening -/
 
 /-- Q is a proper coarsening of Q' over a finite domain iff Q coarsens Q'

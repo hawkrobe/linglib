@@ -97,7 +97,24 @@ def either_ : Entry :=
   , threshold := none
   , application := .focusingAdverb }
 
-def allEntries : List Entry := [even_, only_, also, too_, either_]
+/-- "just" — domain-widening focus particle.
+    @cite{deo-thomas-2025}: *just* signals that the CQ is the widest
+    answerable construal of an underspecified question. Unlike *only*,
+    *just* does not conventionally encode exclusion — exhaustification
+    arises as a mandatory Quantity implicature.
+    Not truth-functional: the at-issue content is simply the prejacent.
+    The CQ-signaling component is backgrounded (fn. 22 of the paper
+    leaves the precise status as presupposition vs conventional implicature
+    open for future research). -/
+def just_ : Entry :=
+  { form := "just"
+  , truthFunctional := false
+  , contributionLayer := .presupposition
+  , threshold := none
+  , application := .focusingAdverb
+  , exclusionVariety := none }
+
+def allEntries : List Entry := [even_, only_, just_, also, too_, either_]
 
 -- ============================================================
 -- Verification
@@ -160,5 +177,36 @@ not captured in the Entry type — polarity licensing is in
 theorem either_same_profile_as_too :
     either_.truthFunctional = too_.truthFunctional ∧
     either_.contributionLayer = too_.contributionLayer := ⟨rfl, rfl⟩
+
+-- ============================================================
+-- "just" (@cite{deo-thomas-2025})
+-- ============================================================
+
+/-- "just" does not affect truth conditions (prejacent is the at-issue content). -/
+theorem just_not_truth_functional :
+    just_.truthFunctional = false := rfl
+
+/-- "just" is not an exclusive — no conventional exclusion.
+    Exhaustification arises pragmatically via mandatory Quantity implicature
+    (@cite{deo-thomas-2025} §4.1). -/
+theorem just_not_exclusive :
+    just_.exclusionVariety = none := rfl
+
+/-- "just" and "only" differ on truth-functionality and exclusion.
+    This is the core of @cite{deo-thomas-2025}'s argument: *just* is not
+    a variant of *only* — it has a fundamentally different discourse function.
+    *only* conventionally excludes alternatives; *just* widens the question. -/
+theorem just_only_differ :
+    just_.truthFunctional ≠ only_.truthFunctional ∧
+    just_.exclusionVariety ≠ only_.exclusionVariety := by
+  exact ⟨by decide, by decide⟩
+
+/-- "just" and "even" are both non-truth-functional but differ in content layer.
+    *even* contributes via conventional implicature (likelihood presupposition);
+    *just* contributes via presupposition (CQ-signaling). -/
+theorem just_even_same_truth_diff_layer :
+    just_.truthFunctional = even_.truthFunctional ∧
+    just_.contributionLayer ≠ even_.contributionLayer := by
+  exact ⟨rfl, by decide⟩
 
 end Fragments.English.FocusParticles

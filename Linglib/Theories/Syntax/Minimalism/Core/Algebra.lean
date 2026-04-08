@@ -1,13 +1,12 @@
 /-
-# SyntacticObject ≅ FreeMagma LIToken
+# Algebraic Structure of Merge
 
-The key observation of @cite{marcolli-chomsky-berwick-2023} is that Merge
-endows syntactic objects with free magma structure. We make this precise:
-`SyntacticObject` (leaf/node) and mathlib's `FreeMagma LIToken` (of/mul)
-are literally the same inductive type.
+Merge endows syntactic objects with free magma structure
+(@cite{marcolli-chomsky-berwick-2025}): `SyntacticObject` (leaf/node) and
+mathlib's `FreeMagma LIToken` (of/mul) are literally the same inductive type.
 
-Establishing this isomorphism connects linglib's syntax to mathlib's
-entire algebraic hierarchy.
+This isomorphism is foundational — it connects linglib's syntax to mathlib's
+entire algebraic hierarchy and makes the universal property of Merge explicit.
 
 ## Main definitions
 
@@ -16,6 +15,8 @@ entire algebraic hierarchy.
 - `Mul SyntacticObject`: positions SO as a magma via `merge`
 - `toFreeMagmaMulHom`: magma homomorphism SO →ₙ* FreeMagma LIToken
 - `SyntacticObject.liftMagma`: universal property via FreeMagma.lift
+- `contains_iff_properSubterm`: containment = subterm in the magma
+- `leafCount_pos`: always positive, derived from mathlib's `FreeMagma.length_pos`
 
 -/
 

@@ -1,9 +1,9 @@
 /-
-# Coproduct Structure and Merge on Workspaces
+# Coproduct Structure
 
-
-Formalizes §2.2–2.3 of @cite{marcolli-chomsky-berwick-2023}: quotient trees T/Tᵥ,
-admissible cuts, the leading coproduct term, and Merge as a workspace operator.
+Formalizes the coproduct decomposition of @cite{marcolli-chomsky-berwick-2025}:
+quotient trees T/Tᵥ, admissible cuts, the leading coproduct term, and the
+connection between workspace merge and the coproduct structure.
 
 The coproduct Δ(T) decomposes a tree into pairs (subtree, quotient) and is the
 key structure connecting Merge to Hopf algebra formalism from QFT renormalization
@@ -11,23 +11,30 @@ key structure connecting Merge to Hopf algebra formalism from QFT renormalizatio
 
 ## Main definitions
 
-- `quotientTree`: T with subtree at v contracted to a leaf (Def 2.5)
-- `AdmissibleCut`: set of non-overlapping internal nodes to cut (§2.2)
-- `leadingCoproduct`: Δ₍₂₎(T) = Σᵥ Tᵥ ⊗ T/Tᵥ (eq 2.16)
-- `forestExternalMerge` / `forestInternalMerge`: Merge lifted to workspaces
+- `quotientTree`: T with subtree at v contracted to a leaf
+- `AdmissibleCut`: set of non-overlapping internal nodes to cut
+- `leadingCoproduct`: Δ₍₂₎(T) = Σᵥ Tᵥ ⊗ T/Tᵥ
+
+## Main results
+
+- `coproduct_size_identity`: T.leafCount = v.leafCount + (T/v).leafCount - 1
+- `workspace_merge_partition`: EM/IM selection determined by containment
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Accessible
+import Linglib.Theories.Syntax.Minimalism.Core.Counting
 import Mathlib.Order.Antichain
 import Mathlib.Data.Finset.Basic
 
 namespace Minimalism
 
-/-! ## Quotient tree (Definition 2.5)
+/-! ## Quotient tree (contraction, T/^c)
 
-Given a tree T and a contained subtree Tᵥ, the quotient tree T/Tᵥ is obtained
-by replacing Tᵥ with a single leaf (contracting the subtree to a point). -/
+Given a tree T and a contained subtree Tᵥ, the contraction quotient
+T/^c Tᵥ is obtained by replacing Tᵥ with a single leaf (contracting
+the subtree to a point). The book also defines deletion quotient T/^d
+(removing the trace) and remainder quotient T/^ρ (admissible cuts);
+only T/^c is formalized here. -/
 
 /-- A placeholder leaf token for quotient tree contraction points -/
 private def quotientLeafToken : LIToken :=
@@ -194,7 +201,7 @@ theorem quotientTree_leafCount (T v q : SyntacticObject)
     q.leafCount = T.leafCount - v.leafCount + 1 :=
   quotientTree_leafCount_aux T v q hq
 
-/-! ## Admissible cuts (§2.2)
+/-! ## Admissible cuts (§1.2)
 
 An admissible cut is a set of internal nodes such that no two are
 in an ancestor-descendant relation (i.e., they are pairwise incomparable
@@ -224,7 +231,7 @@ def numAdmissibleCuts (so : SyntacticObject) : Nat :=
   | .leaf _ => 1  -- only the trivial cut
   | .node a b => numAdmissibleCuts a * numAdmissibleCuts b + 1
 
-/-! ## Leading coproduct (equation 2.16)
+/-! ## Leading coproduct (Definition 1.2.8)
 
 The leading coproduct Δ₍₂₎(T) extracts each proper subtree Tᵥ and pairs it
 with the quotient T/Tᵥ:
@@ -253,59 +260,54 @@ theorem coproduct_size_identity (T v q : SyntacticObject)
   -- h : q.leafCount = T.leafCount - v.leafCount + 1
   have hle : v.leafCount ≤ T.leafCount :=
     leafCount_le_of_containsOrEq T v (Or.inr hc)
-  have hqpos : q.leafCount ≥ 1 := by omega
+  have hqpos : q.leafCount ≥ 1 := leafCount_pos q
   omega
 
-/-! ## Merge on workspaces (Definition 2.10)
+/-! ## Merge on workspaces (Definition 1.3.4)
 
 Merge lifts from an operation on pairs of SOs to an operation on
-the workspace (list of SOs). The algebraic formulation uses the coproduct
-to identify which subterms can be re-merged (Internal Merge) or
-combines distinct workspace members (External Merge). -/
+the workspace (list of SOs). `emWorkspace` and `imWorkspace` are defined
+in `Core.Counting`; here we prove membership and partition properties
+connecting them to the coproduct structure. -/
 
-/-- External Merge on workspace: combine two members into one -/
-def listExternalMerge (T₁ T₂ : SyntacticObject)
-    (F : List SyntacticObject) : List SyntacticObject :=
-  merge T₁ T₂ :: (F.filter (· != T₁)).filter (· != T₂)
-
-/-- Internal Merge on workspace: re-merge a contained subterm -/
-def listInternalMerge (T β : SyntacticObject)
-    (F : List SyntacticObject) : List SyntacticObject :=
-  merge β T :: F.filter (· != T)
+/-- merge(T₁, T₂) = node T₁ T₂ is strictly larger than T₂ -/
+private theorem merge_ne_right (T₁ T₂ : SyntacticObject) : merge T₁ T₂ ≠ T₂ := by
+  intro heq; have := congrArg sizeOf heq; simp [merge] at this
 
 /-- External Merge on workspaces produces a workspace containing merge(T₁, T₂) -/
-theorem list_em_contains_merge (T₁ T₂ : SyntacticObject)
+theorem em_contains_merge (T₁ T₂ : SyntacticObject)
     (F : List SyntacticObject) :
-    merge T₁ T₂ ∈ listExternalMerge T₁ T₂ F := by
-  simp [listExternalMerge]
+    merge T₁ T₂ ∈ emWorkspace T₁ T₂ F := by
+  simp only [emWorkspace]
+  rw [List.filter_cons, if_pos (by simp [bne_iff_ne, merge_ne_right])]
+  exact List.Mem.head _
 
 /-- Internal Merge on workspaces produces a workspace containing merge(β, T) -/
-theorem list_im_contains_merge (T β : SyntacticObject)
+theorem im_contains_merge (T β : SyntacticObject)
     (F : List SyntacticObject) :
-    merge β T ∈ listInternalMerge T β F := by
-  simp [listInternalMerge]
+    merge β T ∈ imWorkspace T β F := by
+  simp [imWorkspace]
 
 /-- The workspace merge operation reduces to pointwise merge on SOs.
-    This is the key theorem that the algebraic (Hopf algebra) formulation
-    recovers the simple set-theoretic Merge operation. -/
+    The algebraic (Hopf algebra) formulation recovers the simple
+    set-theoretic Merge operation. -/
 theorem workspace_merge_recovers_merge (T₁ T₂ : SyntacticObject) :
-    merge T₁ T₂ ∈ listExternalMerge T₁ T₂ [T₁, T₂] := by
-  simp [listExternalMerge]
+    merge T₁ T₂ ∈ emWorkspace T₁ T₂ [T₁, T₂] :=
+  em_contains_merge T₁ T₂ [T₁, T₂]
 
 /-- Connection to MergeUnification: the EM/IM workspace operations align
     with the containment-based partition. When inputs are incomparable,
-    listExternalMerge is the appropriate operation; when one contains the
-    other, listInternalMerge is appropriate. -/
+    `emWorkspace` is the appropriate operation; when one contains the
+    other, `imWorkspace` is appropriate. -/
 theorem workspace_merge_partition (α β : SyntacticObject)
     (_hne : α ≠ β) (F : List SyntacticObject)
     (_hα : α ∈ F) :
-    -- The operation is determined by the containment relationship
     (¬contains α β ∧ ¬contains β α →
-      merge α β ∈ listExternalMerge α β F) ∧
+      merge α β ∈ emWorkspace α β F) ∧
     (contains α β →
-      merge β α ∈ listInternalMerge α β F) := by
+      merge β α ∈ imWorkspace α β F) := by
   constructor
-  · intro _; exact list_em_contains_merge α β F
-  · intro _; exact list_im_contains_merge α β F
+  · intro _; exact em_contains_merge α β F
+  · intro _; exact im_contains_merge α β F
 
 end Minimalism

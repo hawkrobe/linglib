@@ -189,24 +189,12 @@ structure InternalMergeOp where
   trigger : MergeTrigger
   deriving Repr
 
-/-- Check if mover is contained in target -/
-def moverInTarget (op : InternalMergeOp) : Bool :=
-  -- Simple containment check
-  let rec checkContains (so : SyntacticObject) : Bool :=
-    if so == op.mover then true
-    else match so with
-      | .leaf _ => false
-      | .node a b => checkContains a || checkContains b
-  checkContains op.target
-
 /-- Apply internal merge to workspace -/
 def applyInternalMerge (w : Workspace) (op : InternalMergeOp) : Option Workspace :=
   -- Target must be in workspace
   if !w.objects.contains op.target then none
-  -- Mover must be contained in target
-  else if !moverInTarget op then none
-  -- Mover must be different from target (proper containment)
-  else if op.target == op.mover then none
+  -- Mover must be properly contained in target
+  else if !containsB op.target op.mover then none
   else
     let objects' := w.objects.filter (· != op.target)
     -- Use merge directly (internal merge places mover at edge of target)

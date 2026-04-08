@@ -1,45 +1,17 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
-# Lexical Uncertainty Extension to RSA
+# Lexical Uncertainty: Core Types
 
-## Architecture
+The `Lexicon` type used by lexical uncertainty models in RSA.
 
-Lexical uncertainty posits that speakers and listeners have uncertainty about
-the semantic content of utterances. Rather than a fixed lexicon, there is a
-set of possible lexica Λ, and pragmatic inference involves reasoning about
-which lexicon is in use.
-
-### Innovation
-
-The marginalization over lexica happens at L₁, not L₀:
-- L₀ is still parameterized by a specific lexicon L
-- S₁ believes L₀ uses lexicon L (and is certain about it)
-- L₁ is uncertain which lexicon S₁/L₀ are using, and marginalizes
-
-### What This Derives
-
-1. **M-implicatures**: Complex expressions → marked (low-probability) interpretations
-2. **Ignorance implicatures**: "some or all" → speaker doesn't know which
-3. **Non-convex disjunctive implicatures**: "one or three" ≠ "one or two"
-
-## Relationship to RSAConfig
-
-The `LUScenario` type below is conceptually subsumed by `RSAConfig` with
-`Latent := Lexicon`. The @cite{potts-etal-2016} study demonstrates this:
-it uses standard `RSAConfig` with `Latent := Lexicon` (weak vs strong "some")
-and derives DE blocking and UE enrichment without any LU-specific infrastructure.
-
-This file is retained for:
-- The `Lexicon` type and `Refinement` infrastructure
-- The `LUScenario` structure as a reference for the LU architecture
-- The `symmetry_breaking_possible` conjecture (which could now be discharged
-  using the @cite{potts-etal-2016} model as a concrete witness via `RSAConfig`)
-
+For RSA models with lexical uncertainty, use `RSAConfig` with
+`Latent := YourLexiconType` (see @cite{potts-etal-2016} and
+@cite{potts-levy-2015} for examples). This file provides the
+shared `Lexicon` type used by:
+- `GrammarDist.lean` (Construction Grammar as distribution over lexica)
+- `SDS/Marginalization.lean` (SDS ↔ LU-RSA bidirectional translation)
 -/
-
--- Lexicon: A mapping from utterances to truth functions
 
 /--
 A lexicon maps each utterance to a truth function over worlds.
@@ -57,10 +29,6 @@ namespace Lexicon
 
 variable {U W : Type}
 
-/-- Create a lexicon from an RSAScenario's meaning function -/
-def ofScenario {U W : Type} (_utts : List U) (_worlds : List W) (φ : U → W → ℚ) : Lexicon U W where
-  meaning := φ
-
 /-- Two lexica are equivalent if they assign the same meanings -/
 def equiv (L₁ L₂ : Lexicon U W) : Prop :=
   ∀ u w, L₁.meaning u w = L₂.meaning u w
@@ -73,142 +41,3 @@ def refines (L_refined L_base : Lexicon U W) : Prop :=
 notation:50 L' " ≤ₗ " L => refines L' L
 
 end Lexicon
-
--- LexicalUncertaintyScenario: RSA with multiple possible lexica
-
-/--
-Lexical Uncertainty RSA Scenario.
-
-Extends the basic RSA setup with:
-- A set of possible lexica Λ
-- A prior distribution over lexica
-
-The semantic content of utterances is not fixed; rather, pragmatic inference
-jointly determines both the interpretation AND the lexicon.
--/
-structure LUScenario where
-  /-- Type of utterances -/
-  Utterance : Type
-  /-- Type of possible worlds -/
-  World : Type
-  /-- Base semantic lexicon (unrefined meanings) -/
-  baseLexicon : Lexicon Utterance World
-  /-- Set of possible refined lexica -/
-  lexica : List (Lexicon Utterance World)
-  /-- Prior over lexica (default: uniform) -/
-  lexPrior : Lexicon Utterance World → ℚ := λ _ => 1
-  /-- Prior over worlds -/
-  worldPrior : World → ℚ := λ _ => 1
-  /-- Enumeration of utterances -/
-  utterances : List Utterance
-  /-- Enumeration of worlds -/
-  worlds : List World
-  /-- Rationality parameter. Higher values = more informative speaker. -/
-  α : ℕ := 1
-  /-- Null utterance cost (high, to discourage) -/
-  nullCost : ℚ := 10
-  [uttBEq : BEq Utterance]
-  [worldBEq : BEq World]
-  [worldDecEq : DecidableEq World]
-
-attribute [instance] LUScenario.uttBEq LUScenario.worldBEq LUScenario.worldDecEq
-
--- Lexical Refinement: Generating Λ from base semantics
-
-namespace LexicalRefinement
-
-/--
-A refinement of a truth function: a subset of worlds where it's true.
-
-Given base meaning M : W → Bool, a valid refinement M' satisfies:
-  ∀ w, M(w) = false → M'(w) = false
-
-That is, M' can only narrow down the set of true worlds, not expand it.
--/
-structure Refinement (W : Type) where
-  /-- The refined meaning as a subset indicator -/
-  meaning : W → Bool
-
-/--
-Check if one meaning refines another (is more specific).
-
-M' refines M iff M' ⊆ M (as sets of worlds).
--/
-def Refinement.isValidFor {W : Type} (r : Refinement W) (base : W → Bool) : Prop :=
-  ∀ w, base w = false → r.meaning w = false
-
-/--
-Generate all valid refinements of a Boolean meaning over finite worlds.
-
-For a base meaning true at n worlds, there are 2ⁿ - 1 valid non-trivial refinements
-(excluding the empty refinement which would be contradictory).
--/
-def allRefinements {W : Type} [DecidableEq W] (worlds : List W) (base : W → Bool)
-    : List (Refinement W) :=
-  -- Get worlds where base is true
-  let trueWorlds := worlds.filter base
-  -- Generate all non-empty subsets
-  let subsets := trueWorlds.sublists.filter (·.length > 0)
-  -- Convert each subset to a refinement
-  subsets.map λ subset =>
-    { meaning := λ w => subset.contains w }
-
-end LexicalRefinement
-
--- Some-or-All Ignorance Implicature Types
-
-/--
-Observation states for ignorance implicatures.
-
-The speaker may:
-- Know all passed (∀)
-- Know some-but-not-all passed (∃¬∀)
-- Be ignorant (?)
--/
-inductive ObsState where
-  | knowAll      -- Speaker observed all passed
-  | knowSomeNot  -- Speaker observed some-but-not-all passed
-  | ignorant     -- Speaker made no observation
-  deriving Repr, DecidableEq
-
-/--
-World states for scalar scenarios.
--/
-inductive ScalarWorld where
-  | all     -- All passed
-  | someNot -- Some but not all passed
-  deriving Repr, DecidableEq
-
-/--
-Utterances for some-or-all ignorance implicatures.
--/
-inductive SomeOrAllUtt where
-  | all_
-  | some_
-  | someOrAll
-  deriving Repr, DecidableEq
-
--- Theorems
-
-namespace LUTheorems
-
-/--
-Symmetry breaking: semantically equivalent utterances can get different interpretations.
-
-This is the key property that enables M-implicatures.
--/
-theorem symmetry_breaking_possible :
-    ∃ (S : LUScenario) (u₁ u₂ : S.Utterance) (w : S.World),
-      -- u₁ and u₂ have same base meaning
-      S.baseLexicon.meaning u₁ = S.baseLexicon.meaning u₂ ∧
-      -- But different L₁ interpretations (under some LU-RSA model)
-      True := by
-  -- Witness: trivial scenario where both utterances have identical meanings
-  let S : LUScenario := {
-    Utterance := Bool, World := Unit,
-    baseLexicon := ⟨fun _ _ => 1⟩, lexica := [],
-    utterances := [true, false], worlds := [()]
-  }
-  exact ⟨S, true, false, (), rfl, trivial⟩
-
-end LUTheorems

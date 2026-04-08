@@ -64,7 +64,7 @@ The pragmatic listener:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
+import Mathlib.Tactic.Ring
 
 namespace Comparisons.SDSandRSA
 
@@ -176,8 +176,8 @@ Product of experts gives zero when either expert gives zero.
 theorem poe_zero_absorbing {α : Type} (p₁ p₂ : α → ℚ) (support : List α) (a : α) :
     p₁ a = 0 → productOfExperts p₁ p₂ support a = 0 := by
   intro h
-  simp only [productOfExperts, h, zero_mul]
-  split_ifs <;> simp
+  simp only [productOfExperts, h, Rat.zero_mul]
+  split_ifs <;> ring
 
 
 /-!

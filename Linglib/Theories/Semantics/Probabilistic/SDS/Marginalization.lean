@@ -194,18 +194,6 @@ theorem lursa_trivial_selectional {U W : Type} (ind : LURSAInducedSDS U W)
     SDSConstraintSystem.selectionalFactor ind L = 1 := rfl
 
 /--
-Theorem: Every LU-RSA scenario can be represented as an SDS system.
-
-Given an LU-RSA scenario with lexicon prior P(L), we construct an SDS
-system where scenarioFactor = P(L) and selectionalFactor = 1.
--/
-theorem lursa_to_sds_exists (S : LUScenario) :
-    ∃ (sds : LURSAInducedSDS S.Utterance S.World),
-      sds.lexica = S.lexica ∧
-      sds.lexPrior = S.lexPrior :=
-  ⟨{ lexica := S.lexica, lexPrior := S.lexPrior }, rfl, rfl⟩
-
-/--
 SDS with trivial selectional factors is equivalent to unfactored prior.
 
 When selectionalFactor(θ) = 1 for all θ, the SDS posterior reduces to
@@ -327,6 +315,18 @@ def lursaToSDS (pkg : LURSAPackage) : SDSPackage where
   Param := Lexicon pkg.U pkg.W
   inst := inferInstance
   sys := { lexica := pkg.lexica, lexPrior := pkg.prior }
+
+/--
+Every LU-RSA package can be represented as an SDS system.
+
+Given an LU-RSA package with lexicon prior P(L), we construct an SDS
+system where scenarioFactor = P(L) and selectionalFactor = 1.
+-/
+theorem lursa_to_sds_exists (pkg : LURSAPackage) :
+    ∃ (sds : LURSAInducedSDS pkg.U pkg.W),
+      sds.lexica = pkg.lexica ∧
+      sds.lexPrior = pkg.prior :=
+  ⟨{ lexica := pkg.lexica, lexPrior := pkg.prior }, rfl, rfl⟩
 
 /--
 Round-trip property: LU-RSA → SDS → LU-RSA preserves the prior structure.

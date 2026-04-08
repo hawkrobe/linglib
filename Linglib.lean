@@ -1241,6 +1241,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.RelevanceTheory
 import Linglib.Phenomena.ScalarImplicatures.Studies.Geurts2010
 import Linglib.Phenomena.ScalarImplicatures.Studies.RSAHurford
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
+import Linglib.Phenomena.ScalarImplicatures.Studies.PottsLevy2015
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.Phonology.Typology
 import Linglib.Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000
@@ -1521,6 +1522,8 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
 import Linglib.Theories.Syntax.Minimalism.Core.Cascade
+import Linglib.Theories.Syntax.Minimalism.Core.CMH
+import Linglib.Theories.Syntax.Minimalism.Core.MCommand
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.TopologicalMapping
@@ -1542,10 +1545,12 @@ import Linglib.Theories.Morphology.PFM.Core
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 import Linglib.Phenomena.ArgumentStructure.Studies.Bruening2021
-import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv
-import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Accessible
-import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.BinaryOptimality
-import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Coproduct
+import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
+import Linglib.Theories.Syntax.Minimalism.Core.Algebra
+import Linglib.Theories.Syntax.Minimalism.Core.Counting
+import Linglib.Theories.Syntax.Minimalism.Formal.BinaryOptimality
+import Linglib.Theories.Syntax.Minimalism.Formal.Coproduct
+import Linglib.Theories.Syntax.Minimalism.Formal.NoComplexityLoss
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.LCA
@@ -1902,7 +1907,6 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.RateDistorti
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynamics
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
-import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
 import Linglib.Theories.Diachronic.Grammaticalization
 import Linglib.Theories.Diachronic.Lexicalization
 import Linglib.Theories.Diachronic.ModalChange

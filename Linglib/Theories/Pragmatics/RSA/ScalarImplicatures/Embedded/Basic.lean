@@ -1,5 +1,4 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 
 /-!
 # RSA Embedded Scalar Implicatures: Simplified Model (For Analysis)

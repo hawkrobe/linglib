@@ -56,7 +56,7 @@ theorem dominatedTerminals_node (l r : SyntacticObject) :
     subterms X, Y of `root` such that X asymmetrically c-commands Y
     (within `root`), `a ∈ d(X)`, and `b ∈ d(Y)`. -/
 def lcaPrecedesIn (root a b : SyntacticObject) : Prop :=
-  ∃ x y, x ∈ subterms root ∧ y ∈ subterms root ∧
+  ∃ x y, x ∈ root.subtrees ∧ y ∈ root.subtrees ∧
     asymCCommandsIn root x y ∧
     a ∈ dominatedTerminals x ∧ b ∈ dominatedTerminals y
 
@@ -79,8 +79,8 @@ structure SatisfiesLCAIn (root : SyntacticObject) : Prop where
 -- ============================================================================
 
 /-- Subterms of a three-leaf tree `node (leaf s) (node (leaf h) (leaf c))`. -/
-private theorem subterms_shc (s h c : LIToken) :
-    subterms (.node (.leaf s) (.node (.leaf h) (.leaf c))) =
+private theorem subtrees_shc (s h c : LIToken) :
+    (.node (.leaf s) (.node (.leaf h) (.leaf c)) : SyntacticObject).subtrees =
     [.node (.leaf s) (.node (.leaf h) (.leaf c)),
      .leaf s, .node (.leaf h) (.leaf c), .leaf h, .leaf c] := rfl
 
@@ -90,7 +90,7 @@ theorem outer_cCommandsIn_inner_left (x y z : SyntacticObject)
     (hne : x ≠ .node y z) :
     cCommandsIn (.node x (.node y z)) x y :=
   ⟨.node y z,
-   ⟨.node x (.node y z), self_mem_subterms _, Or.inl rfl, Or.inr rfl, hne⟩,
+   ⟨.node x (.node y z), self_mem_subtrees _, Or.inl rfl, Or.inr rfl, hne⟩,
    Or.inr (contains.imm _ _ (Or.inl rfl))⟩
 
 /-- In `root = node x (node y z)`, `x` c-commands `z` within `root`.
@@ -99,7 +99,7 @@ theorem outer_cCommandsIn_inner_right (x y z : SyntacticObject)
     (hne : x ≠ .node y z) :
     cCommandsIn (.node x (.node y z)) x z :=
   ⟨.node y z,
-   ⟨.node x (.node y z), self_mem_subterms _, Or.inl rfl, Or.inr rfl, hne⟩,
+   ⟨.node x (.node y z), self_mem_subtrees _, Or.inl rfl, Or.inr rfl, hne⟩,
    Or.inr (contains.imm _ _ (Or.inr rfl))⟩
 
 /-- An inner leaf does not c-command the outer leaf in a three-leaf tree.
@@ -111,7 +111,7 @@ private theorem inner_not_cCommandsIn_outer (s h c : LIToken)
     (inner : LIToken) (hinner : inner = h ∨ inner = c) :
     ¬cCommandsIn (.node (.leaf s) (.node (.leaf h) (.leaf c))) (.leaf inner) (.leaf s) := by
   intro ⟨z, ⟨w, hw_mem, hw_inner, hw_z, hne_iz⟩, hz_s⟩
-  rw [subterms_shc] at hw_mem
+  rw [subtrees_shc] at hw_mem
   simp only [List.mem_cons, List.mem_nil_iff, or_false] at hw_mem
   rcases hw_mem with rfl | rfl | rfl | rfl | rfl
   · -- w = root: inner can't be a daughter of root
@@ -164,20 +164,20 @@ theorem outer_precedes_inner (x y z : LIToken)
           ⟨.leaf x, .leaf z, ?_, ?_, ?_, ?_, ?_⟩⟩
   -- x precedes y: membership in subterms
   · exact List.mem_cons.mpr (Or.inr (List.mem_append.mpr
-      (Or.inl (self_mem_subterms _))))
+      (Or.inl (self_mem_subtrees _))))
   · exact List.mem_cons.mpr (Or.inr (List.mem_append.mpr
       (Or.inr (List.mem_cons.mpr (Or.inr (List.mem_append.mpr
-        (Or.inl (self_mem_subterms _))))))))
+        (Or.inl (self_mem_subtrees _))))))))
   · exact ⟨outer_cCommandsIn_inner_left _ _ _ (fun h => nomatch h),
            inner_not_cCommandsIn_outer x y z hne_xy hne_xz hne_yz y (Or.inl rfl)⟩
   · exact leaf_mem_dominatedTerminals x
   · exact leaf_mem_dominatedTerminals y
   -- x precedes z: membership in subterms
   · exact List.mem_cons.mpr (Or.inr (List.mem_append.mpr
-      (Or.inl (self_mem_subterms _))))
+      (Or.inl (self_mem_subtrees _))))
   · exact List.mem_cons.mpr (Or.inr (List.mem_append.mpr
       (Or.inr (List.mem_cons.mpr (Or.inr (List.mem_append.mpr
-        (Or.inr (self_mem_subterms _))))))))
+        (Or.inr (self_mem_subtrees _))))))))
   · exact ⟨outer_cCommandsIn_inner_right _ _ _ (fun h => nomatch h),
            inner_not_cCommandsIn_outer x y z hne_xy hne_xz hne_yz z (Or.inr rfl)⟩
   · exact leaf_mem_dominatedTerminals x
@@ -222,7 +222,7 @@ theorem no_right_specifier
     let root := SyntacticObject.node (.node head compl) spec
     cCommandsIn root spec head :=
   ⟨.node head compl,
-    ⟨.node (.node head compl) spec, self_mem_subterms _,
+    ⟨.node (.node head compl) spec, self_mem_subtrees _,
      Or.inr rfl, Or.inl rfl, Ne.symm hne_hc_node⟩,
     Or.inr (contains.imm _ _ (Or.inl rfl))⟩
 
@@ -263,7 +263,7 @@ theorem sister_terminals_unordered (a b : LIToken) (hne : a ≠ b) :
   intro ⟨_, hno⟩
   apply hno
   refine ⟨.leaf a, ?_, Or.inl rfl⟩
-  refine ⟨.node (.leaf a) (.leaf b), self_mem_subterms _, Or.inr rfl, Or.inl rfl, ?_⟩
+  refine ⟨.node (.leaf a) (.leaf b), self_mem_subtrees _, Or.inr rfl, Or.inl rfl, ?_⟩
   intro h
   injection h with h'
   exact hne h'.symm
@@ -295,13 +295,13 @@ example : exampleTree.phonYield = ["the", "saw", "Mary"] := by
 /-- Spec c-commands head within the example tree. -/
 example : cCommandsIn exampleTree specTok headTok :=
   ⟨.node headTok complTok,
-    ⟨exampleTree, self_mem_subterms _, Or.inl rfl, Or.inr rfl, by decide⟩,
+    ⟨exampleTree, self_mem_subtrees _, Or.inl rfl, Or.inr rfl, by decide⟩,
     Or.inr (contains.imm _ _ (Or.inl rfl))⟩
 
 /-- Spec c-commands complement within the example tree. -/
 example : cCommandsIn exampleTree specTok complTok :=
   ⟨.node headTok complTok,
-    ⟨exampleTree, self_mem_subterms _, Or.inl rfl, Or.inr rfl, by decide⟩,
+    ⟨exampleTree, self_mem_subtrees _, Or.inl rfl, Or.inr rfl, by decide⟩,
     Or.inr (contains.imm _ _ (Or.inr rfl))⟩
 
 end Examples

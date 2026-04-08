@@ -100,7 +100,7 @@ Standard LU uses a flat prior over lexicons; grammar uncertainty extends
 this by additionally varying production frequency. -/
 def grammarOfLexicon (L : Lexicon U W) : Grammar U W where
   freq := fun _ => 1
-  freq_nonneg := fun _ => by norm_num
+  freq_nonneg := fun _ => le_of_lt one_pos
   meaning := L.meaning
 
 /-- Round-trip: Lexicon → Grammar → Lexicon preserves meaning.

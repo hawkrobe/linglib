@@ -994,17 +994,18 @@
   validated = {true},
   sources   = {Theories/Pragmatics/RSA/Core/Config.lean}
 }% REF: Potts & Levy (2015). Negotiating lexical uncertainty and speaker expertise with disjunction. BLS 41.
-@article{potts-levy-2015,
-  author    = {Potts, Christopher},
+@inproceedings{potts-levy-2015,
+  author    = {Potts, Christopher and Levy, Roger},
   year      = {2015},
   title     = {Negotiating lexical uncertainty and speaker expertise with disjunction},
-  journal   = {BLS 41},
+  booktitle = {Proceedings of the 41st Annual Meeting of the Berkeley Linguistics Society},
   doi       = {10.20354/b4414110013},
   volume    = {41},
+  pages     = {417--445},
   subfield  = {pragmatics/rsa},
-  role      = {cited},
+  role      = {formalized},
   validated = {true},
-  sources   = {Theories/Pragmatics/RSA/ScalarImplicatures/Hurford.lean}
+  sources   = {Theories/Pragmatics/RSA/ScalarImplicatures/Hurford.lean, Phenomena/ScalarImplicatures/Studies/PottsLevy2015.lean}
 }% REF: van Tiel, B., Van Miltenburg, E., Zevakhina, N., & Geurts, B. (2016). Scalar diversity. Journal of Semantics, 33(1), 137
 @article{van-tiel-geurts-2016,
   author    = {Van Tiel, Bob and Van Miltenburg, Emiel and Zevakhina, Natalia and Geurts, Bart},
@@ -11008,16 +11009,17 @@
   role      = {formalized},
   sources   = {Core/Agent/Learning.lean}
 }
-@misc{marcolli-chomsky-berwick-2023,
+@book{marcolli-chomsky-berwick-2025,
   author    = {Marcolli, Matilde and Chomsky, Noam and Berwick, Robert C.},
-  year      = {2023},
-  title     = {Mathematical Structure of Syntactic Merge},
-  howpublished = {arXiv:2305.18278},
-  doi       = {10.48550/arXiv.2305.18278},
-    subfield  = {syntax},
+  year      = {2025},
+  title     = {Mathematical Structure of Syntactic Merge: An Algebraic Model for Generative Linguistics},
+  publisher = {The MIT Press},
+  series    = {Linguistic Inquiry Monographs},
+  isbn      = {9780262552134},
+  subfield  = {syntax},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Syntax/Minimalism/Formal/MCB2023/Coproduct.lean}
+  sources   = {Theories/Syntax/Minimalism/Core/Algebra.lean, Theories/Syntax/Minimalism/Core/Counting.lean, Theories/Syntax/Minimalism/Formal/BinaryOptimality.lean, Theories/Syntax/Minimalism/Formal/Coproduct.lean}
 }
 @article{zegarac-clark-1999,
   author    = {Zegarac, Vladimir and Clark, Billy},
@@ -17521,4 +17523,29 @@
   role      = {cited},
   validated = {false},
   sources   = {Phenomena/Countability/Studies/Moon2026.lean}
+}
+@book{newman-2024,
+  author    = {Newman, Elise},
+  year      = {2024},
+  title     = {When Arguments Merge},
+  publisher = {The MIT Press},
+  series    = {Linguistic Inquiry Monographs},
+  number    = {88},
+  isbn      = {9780262379960},
+  subfield  = {syntax/minimalism},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Theories/Syntax/Minimalism/Core/CMH.lean;Theories/Syntax/Minimalism/Core/MCommand.lean;Phenomena/ArgumentStructure/Studies/Newman2024.lean}
+}
+@inproceedings{paille-2020,
+  author    = {Paill{\'e}, Mathieu},
+  year      = {2020},
+  title     = {Tucking-in and Pivot-Third Word Order},
+  booktitle = {Proceedings of the Austronesian Formal Linguistics Association (AFLA)},
+  volume    = {27},
+  pages     = {83--97},
+  subfield  = {syntax/minimalism},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Syntax/Minimalism/Core/CMH.lean}
 }

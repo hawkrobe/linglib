@@ -1,6 +1,8 @@
 import Mathlib.Order.Basic
 import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Core.Scales.Scale
+import Linglib.Core.Discourse.QUD
+import Linglib.Core.Partition
 
 /-!
 # Granularity-Sensitive Degree Semantics @cite{thomas-deo-2020}
@@ -206,5 +208,62 @@ theorem just_rules_out (p : G → D → Prop) (finest g : G)
   intro hg; exact h_not_strongest (hjust.2 g hg)
 
 end JustTheory
+
+-- ════════════════════════════════════════════════════
+-- § 4. Granularity–Question Bridge
+-- ════════════════════════════════════════════════════
+
+/-! ### Grain width → partition → question width
+
+The degree-level infrastructure above handles what happens *within* a
+grain cell (equatives compare against infimum, comparatives against
+supremum). This section connects to the *question* level: how grain
+width determines a partition on the scale, and how finer grains produce
+wider questions (@cite{deo-thomas-2025} §3.1.2–3.2).
+
+The key chain:
+- Grain width ε induces a partition via ⌊d/ε⌋ (integer division)
+- If ε₁ ∣ ε₂, the ε₁-partition refines the ε₂-partition
+- Partition refinement implies question width (`refinement_implies_wider`)
+
+The first two steps live here; the third is composed in the study file
+since it requires `toIssue` from inquisitive semantics. -/
+
+section GranularityQuestion
+
+/-- If ε₁ divides ε₂, then knowing ⌊d/ε₁⌋ determines ⌊d/ε₂⌋.
+
+    This is the number-theoretic core of the granularity–refinement
+    bridge: finer grain indices determine coarser grain indices.
+    Uses `Nat.div_div_eq_div_mul`: a / b / c = a / (b * c). -/
+theorem div_determined_by_finer (d₁ d₂ ε₁ ε₂ : Nat)
+    (hdvd : ε₁ ∣ ε₂) (heq : d₁ / ε₁ = d₂ / ε₁) : d₁ / ε₂ = d₂ / ε₂ := by
+  obtain ⟨k, rfl⟩ := hdvd
+  simp only [← Nat.div_div_eq_div_mul]
+  rw [heq]
+
+/-- A granularity QUD on `Fin n`, parameterized by grain width ε.
+
+    Maps each degree d to grain index ⌊d/ε⌋, inducing a partition where
+    degrees in the same grain cell are indistinguishable.
+
+    @cite{deo-thomas-2025} definition (22): γ maps each point p to a cell I
+    of a partition such that p ∈ I. For uniform grain width ε on a discrete
+    scale, this is exactly integer division by ε. -/
+def granQUD (n : Nat) (ε : Nat) : QUD (Fin n) :=
+  QUD.ofProject (λ w => w.val / ε)
+
+/-- Finer granularity induces partition refinement.
+
+    @cite{deo-thomas-2025} §3.1.2, (23): if ε₁ divides ε₂ (finer grain
+    fits evenly into coarser grain), then the ε₁-partition refines the
+    ε₂-partition. Every fine cell is contained in exactly one coarse cell. -/
+theorem finer_granularity_refines (n ε₁ ε₂ : Nat) (hdvd : ε₁ ∣ ε₂) :
+    QUD.refines (granQUD n ε₁) (granQUD n ε₂) := by
+  intro w v h
+  simp only [granQUD, QUD.ofProject, beq_iff_eq] at *
+  exact div_determined_by_finer w.val v.val ε₁ ε₂ hdvd h
+
+end GranularityQuestion
 
 end Semantics.Degree.Granularity

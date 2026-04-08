@@ -270,7 +270,7 @@ theorem vP_ccommands_subject_erlewine :
   rw [h_final]
   -- vP_traced's sister is C', which dominates n_dakdanakan
   exact ⟨.node c_head_e (.node n_dakdanakan (.node t_head_e (mkTrace 1))),
-         ⟨_, self_mem_subterms _, Or.inl rfl, Or.inr rfl, by decide⟩,
+         ⟨_, self_mem_subtrees _, Or.inl rfl, Or.inr rfl, by decide⟩,
          Or.inr (contains.trans _ _ _ (Or.inr rfl) (contains.imm _ _ (Or.inl rfl)))⟩
 
 /-- Same VP base in both analyses (stage after first merge). -/
