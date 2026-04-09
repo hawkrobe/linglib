@@ -200,6 +200,28 @@ theorem reducedCoproductTerms_bush (a b : LIToken) :
   simp [reducedCoproductTerms, SyntacticObject.properSubtrees,
         SyntacticObject.subtrees, List.filterMap]
 
+/-- Non-trivial admissible cut terms: entries from `cutOptions` with non-empty
+    pruned forest. These are the full reduced coproduct terms including
+    multi-cut antichains (not just single-node cuts). -/
+def cutTerms (T : SyntacticObject) : List (List SyntacticObject × SyntacticObject) :=
+  (cutOptions T).filter fun ⟨P, _⟩ => !P.isEmpty
+
+theorem cutTerms_leaf (tok : LIToken) :
+    cutTerms (.leaf tok) = [] := by
+  simp [cutTerms, cutOptions]
+
+theorem cutTerms_bush (a b : LIToken) :
+    cutTerms (.node (.leaf a) (.leaf b)) = [] := by
+  simp [cutTerms, cutOptions]
+
+private theorem cutTerms_forall_nonempty (T : SyntacticObject) :
+    ∀ x ∈ cutTerms T, x.1 ≠ [] := by
+  intro ⟨P, R⟩ hmem
+  simp only [cutTerms, List.mem_filter] at hmem
+  cases P with
+  | nil => simp at hmem
+  | cons h t => exact List.cons_ne_nil h t
+
 /-! ## Antipode S (eq. 1.2.12)
 
 The antipode S is defined recursively by the formula:
@@ -394,15 +416,19 @@ noncomputable def ofTree (T : SyntacticObject) : Hc :=
 /-! ### Comultiplication (CK coproduct as AlgHom) -/
 
 /-- CK coproduct on a single tree:
-    Δ(T) = [T] ⊗ 1 + 1 ⊗ [T] + Σ_{(v,q) ∈ Δ̄(T)} [v] ⊗ [q]
+    Δ(T) = T ⊗ 1 + 1 ⊗ T + Σ_{(P,R) ∈ cutTerms(T)} (∏P) ⊗ R
+
+    The sum ranges over all non-trivial admissible cut antichains
+    (from `cutTerms`), including multi-node cuts. Each term pairs
+    the forest of pruned subtrees `P` with the quotient tree `R`.
 
     This is the value on generators. The full coproduct on forests
     extends multiplicatively via `FreeMonoid.lift`, and linearly
     to all of Hc via `MonoidAlgebra.lift`. -/
 noncomputable def comulGen (T : SyntacticObject) : Hc ⊗[ℤ] Hc :=
   ofTree T ⊗ₜ 1 + 1 ⊗ₜ ofTree T +
-  (reducedCoproductTerms T).foldl
-    (fun acc ⟨v, q⟩ => acc + ofTree v ⊗ₜ ofTree q) 0
+  (cutTerms T).foldl
+    (fun acc ⟨P, R⟩ => acc + ofForest P ⊗ₜ ofTree R) 0
 
 /-- CK coproduct as a monoid homomorphism on forests.
     Multiplicative: Δ(F₁ ⊔ F₂) = Δ(F₁) · Δ(F₂)
@@ -442,9 +468,9 @@ theorem comulAlgHom_toLinearMap_one :
   rw [map_one]; rfl
 
 /-- comulGen simplifies for primitive elements (trees with no
-    reduced coproduct terms). Leaves and bushes are primitive. -/
+    non-trivial cut terms). Leaves and bushes are primitive. -/
 theorem comulGen_primitive (T : SyntacticObject)
-    (h : reducedCoproductTerms T = []) :
+    (h : cutTerms T = []) :
     comulGen T = ofTree T ⊗ₜ 1 + 1 ⊗ₜ ofTree T := by
   simp [comulGen, h]
 
@@ -519,23 +545,37 @@ private theorem hcCounitAlgHom_ofTree (T : SyntacticObject) :
     counitMonoidHom_ne_one _ (fun h => List.cons_ne_nil T [] h)
   rw [h, mul_zero]
 
+private theorem hcCounitAlgHom_ofForest_nonempty (P : List SyntacticObject) (hP : P ≠ []) :
+    hcCounitAlgHom (ofForest P) = 0 := by
+  unfold ofForest
+  rw [hcCounitAlgHom_single]
+  cases P with
+  | nil => exact absurd rfl hP
+  | cons hd tl =>
+    have h : counitMonoidHom (FreeMonoid.ofList (hd :: tl)) = 0 :=
+      counitMonoidHom_ne_one _ (fun h => List.cons_ne_nil hd tl h)
+    rw [h, mul_zero]
+
 -- (ε ⊗ id) ∘ Δ as an AlgHom
 private noncomputable def rTensorCounitComul : Hc →ₐ[ℤ] (ℤ ⊗[ℤ] Hc) :=
   (Algebra.TensorProduct.map hcCounitAlgHom (AlgHom.id ℤ Hc)).comp comulAlgHom
 
 private theorem mapCounit_fold
-    (L : List (SyntacticObject × SyntacticObject))
+    (L : List (List SyntacticObject × SyntacticObject))
+    (hL : ∀ x ∈ L, x.1 ≠ [])
     (acc : Hc ⊗[ℤ] Hc) :
     (Algebra.TensorProduct.map hcCounitAlgHom (AlgHom.id ℤ Hc))
-      (L.foldl (fun a p => a + ofTree p.1 ⊗ₜ[ℤ] ofTree p.2) acc) =
+      (L.foldl (fun a ⟨P, R⟩ => a + ofForest P ⊗ₜ[ℤ] ofTree R) acc) =
     (Algebra.TensorProduct.map hcCounitAlgHom (AlgHom.id ℤ Hc)) acc := by
   induction L generalizing acc with
   | nil => rfl
   | cons p tl ih =>
     simp only [List.foldl_cons]
-    rw [ih]
+    rw [ih (fun x hx => hL x (.tail _ hx))]
+    have hP : p.1 ≠ [] := hL p (.head _)
+    have hcounit : hcCounitAlgHom (ofForest p.1) = 0 := hcCounitAlgHom_ofForest_nonempty p.1 hP
     simp only [map_add, Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id,
-               hcCounitAlgHom_ofTree, TensorProduct.zero_tmul, add_zero]
+               hcounit, TensorProduct.zero_tmul, add_zero]
 
 set_option maxHeartbeats 1600000 in
 private theorem rTensorCounitComul_ofTree (T : SyntacticObject) :
@@ -545,7 +585,7 @@ private theorem rTensorCounitComul_ofTree (T : SyntacticObject) :
   unfold comulGen
   simp only [map_add, Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id,
              hcCounitAlgHom_ofTree, map_one hcCounitAlgHom]
-  rw [mapCounit_fold, map_zero]
+  rw [mapCounit_fold _ (cutTerms_forall_nonempty T), map_zero]
   simp only [TensorProduct.zero_tmul, zero_add, add_zero]
 
 set_option maxHeartbeats 1600000 in
@@ -616,10 +656,10 @@ private noncomputable def lTensorCounitComul : Hc →ₐ[ℤ] (Hc ⊗[ℤ] ℤ) 
   (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) hcCounitAlgHom).comp comulAlgHom
 
 private theorem mapCounitR_fold
-    (L : List (SyntacticObject × SyntacticObject))
+    (L : List (List SyntacticObject × SyntacticObject))
     (acc : Hc ⊗[ℤ] Hc) :
     (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) hcCounitAlgHom)
-      (L.foldl (fun a p => a + ofTree p.1 ⊗ₜ[ℤ] ofTree p.2) acc) =
+      (L.foldl (fun a ⟨P, R⟩ => a + ofForest P ⊗ₜ[ℤ] ofTree R) acc) =
     (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) hcCounitAlgHom) acc := by
   induction L generalizing acc with
   | nil => rfl
@@ -695,64 +735,50 @@ private theorem lTensor_counit_comp_comul_proof :
 
 /-! ### Antipode -/
 
-/-- Antipode as a linear endomorphism: the linear extension of
-    S(T) = -T - Σ S(T_v)·(T/^c T_v) (eq. 1.2.12). -/
-noncomputable def hcAntipode : Hc →ₗ[ℤ] Hc where
-  toFun := sorry
-  map_add' := sorry
-  map_smul' := sorry
+/-- Convert an `FLinComb` (list of coefficient-forest pairs) to an `Hc` element:
+    `[(c₁, F₁), ..., (cₙ, Fₙ)] ↦ c₁ · F₁ + ... + cₙ · Fₙ`. -/
+noncomputable def fLinCombToHc (l : FLinComb) : Hc :=
+  l.foldl (fun acc ⟨c, F⟩ => acc + c • ofForest F) 0
 
-/-! ### Coalgebra instance -/
+/-- Antipode on a single tree, as an element of `Hc`.
+    Lifts the concrete `antipode : SyntacticObject → FLinComb` to the
+    Mathlib-grounded algebra. -/
+noncomputable def antipodeTree (T : SyntacticObject) : Hc :=
+  fLinCombToHc (antipode T)
 
-/-- The Connes-Kreimer coalgebra structure on H^c.
+/-- Antipode extended anti-homomorphically to forests:
+    `S(T₁ · T₂ · ... · Tₙ) = S(Tₙ) · ... · S(T₂) · S(T₁)`.
 
-    `comul` is constructed as an `AlgHom` (via `comulAlgHom`), then
-    the `AlgHom.toLinearMap` is extracted for the `Coalgebra` instance.
-    Coassociativity reduces to checking on generators (single trees)
-    via `MonoidAlgebra.algHom_ext`. -/
-noncomputable instance instCoalgebra : Coalgebra ℤ Hc where
-  comul := comulAlgHom.toLinearMap
-  counit := hcCounit
-  coassoc := sorry
-  rTensor_counit_comp_comul := rTensor_counit_comp_comul_proof
-  lTensor_counit_comp_comul := lTensor_counit_comp_comul_proof
+    The reversal comes from the antipode being an anti-homomorphism
+    in any Hopf algebra: `S(ab) = S(b) · S(a)`. -/
+noncomputable def antipodeForest (m : FreeMonoid SyntacticObject) : Hc :=
+  (FreeMonoid.toList m).foldl (fun acc T => antipodeTree T * acc) 1
 
-/-! ### Coassociativity reduction to generators
+/-- Antipode as a linear endomorphism of `Hc`.
 
-Coassociativity `(Δ ⊗ id) ∘ Δ = (id ⊗ Δ) ∘ Δ` is an equation of
-linear maps `Hc → Hc ⊗ Hc ⊗ Hc`. Since `Δ` is an `AlgHom` and
-both sides are `AlgHom`s (compositions of algebra homomorphisms),
-`MonoidAlgebra.algHom_ext` reduces this to checking on generators
-`single m 1` for each `m : FreeMonoid SyntacticObject`. Since
-forests are products of single trees and `Δ` is multiplicative,
-it suffices to check on single trees — i.e., structural induction
-on `SyntacticObject`.
+    Constructed as the linear extension of `antipodeForest` via
+    `Finsupp.linearCombination`: `S(Σ cᵢ Fᵢ) = Σ cᵢ · S(Fᵢ)`.
+    Linearity (`map_add'`, `map_smul'`) holds by construction. -/
+noncomputable def hcAntipode : Hc →ₗ[ℤ] Hc :=
+  Finsupp.linearCombination ℤ antipodeForest
 
-### Proof structure
+/-! ### Coassociativity on generators
 
+Coassociativity `(Δ ⊗ id) ∘ Δ = (id ⊗ Δ) ∘ Δ` for single trees.
 The proof proceeds by `cases T`:
 
-- **Leaf/bush (primitive elements)**: When `reducedCoproductTerms T = []`,
+- **Leaf/bush (primitive elements)**: When `cutTerms T = []`,
   `comulGen T = T ⊗ₜ 1 + 1 ⊗ₜ T`. Both sides expand to
   `T ⊗ₜ (1 ⊗ₜ 1) + 1 ⊗ₜ (T ⊗ₜ 1) + 1 ⊗ₜ (1 ⊗ₜ T)`.
-  Proved by `coassoc_gen_primitive`.
 
-- **Node (non-primitive)**: When `reducedCoproductTerms T ≠ []`,
-  the additional terms `Σ vᵢ ⊗ₜ qᵢ` produce nested coproducts
-  `Σ comul(vᵢ) ⊗ₜ qᵢ` (LHS) vs `Σ vᵢ ⊗ₜ comul(qᵢ)` (RHS).
-  Coassociativity follows from a bijection on admissible cut pairs:
-  "cut T, then cut the pruned subtree vᵢ" corresponds to
-  "cut T, then cut the quotient qᵢ" (@cite{marcolli-chomsky-berwick-2025}
-  Lemma 1.2.10). TODO: formalize the nested cut bijection. -/
+- **Node (non-primitive)**: The nested cut bijection
+  (@cite{marcolli-chomsky-berwick-2025} Lemma 1.2.10). -/
 
 set_option maxHeartbeats 800000 in
 /-- Coassociativity for primitive elements: trees T with
-    `reducedCoproductTerms T = []` (leaves and bushes).
-
-    For primitive elements, `comulGen T = T ⊗ₜ 1 + 1 ⊗ₜ T`,
-    and the proof reduces to tensor algebra manipulation + `abel`. -/
+    `cutTerms T = []` (leaves and bushes). -/
 theorem coassoc_gen_primitive (T : SyntacticObject)
-    (h : reducedCoproductTerms T = []) :
+    (h : cutTerms T = []) :
     TensorProduct.assoc ℤ Hc Hc Hc
       (comulAlgHom.toLinearMap.rTensor Hc (comulAlgHom (ofTree T))) =
     comulAlgHom.toLinearMap.lTensor Hc (comulAlgHom (ofTree T)) := by
@@ -764,27 +790,192 @@ theorem coassoc_gen_primitive (T : SyntacticObject)
              map_add, TensorProduct.assoc_tmul]
   abel
 
-/-- Coassociativity on a single tree: the two orderings of nested
-    coproduct application produce the same triple tensor.
+/-- Coassociativity on a single tree: the generator-level statement
+    that, together with `MonoidAlgebra.algHom_ext`, implies `Coalgebra.coassoc`.
 
-    This is the generator-level statement that, together with
-    `MonoidAlgebra.algHom_ext`, implies the full `Coalgebra.coassoc`.
+    Proved for primitive elements (leaf, bush). The node case reduces to
+    the **core double-cut identity** on the `cutTerms` sum: after expanding
+    `comulGen` into structural terms (`T⊗1`, `1⊗T`) plus the cut-terms sum `S`,
+    the structural terms cancel by `TensorProduct.assoc_tmul`, leaving
 
-    Proved for primitive elements (leaf, bush). The node case requires
-    formalizing the bijection on nested admissible cuts. -/
+      `assoc(S ⊗ₜ 1) + assoc((Δ ⊗ id)(S)) = 1 ⊗ₜ S + (id ⊗ Δ)(S)`
+
+    This identity holds because both sides enumerate the same set of
+    *nested admissible cuts* — pairs `C₁ ⊆ C₂` of antichains in the
+    subtree poset (@cite{connes-marcolli-2008} Theorem 1.27,
+    @cite{marcolli-chomsky-berwick-2025} Lemma 1.2.10). -/
 theorem coassoc_gen (T : SyntacticObject) :
     TensorProduct.assoc ℤ Hc Hc Hc
       (comulAlgHom.toLinearMap.rTensor Hc (comulAlgHom (ofTree T))) =
     comulAlgHom.toLinearMap.lTensor Hc (comulAlgHom (ofTree T)) := by
   cases T with
-  | leaf tok => exact coassoc_gen_primitive _ (reducedCoproductTerms_leaf tok)
+  | leaf tok => exact coassoc_gen_primitive _ (cutTerms_leaf tok)
   | node a b =>
-    -- TODO: The non-primitive case requires showing that nested
-    -- applications of comul to the reduced coproduct terms of (node a b)
-    -- produce the same triple tensor in both orderings. This is the
-    -- combinatorial heart of the CK coassociativity proof: a bijection
-    -- between pairs of nested admissible cuts.
+    rw [comulAlgHom_ofTree]
+    simp only [comulGen, map_add, LinearMap.rTensor_tmul, LinearMap.lTensor_tmul]
+    rw [comulAlgHom_toLinearMap_one,
+        show comulAlgHom.toLinearMap (ofTree (.node a b)) = comulGen (.node a b)
+          from comulAlgHom_ofTree _]
+    set S := (cutTerms (.node a b)).foldl
+      (fun acc x => acc + ofForest x.1 ⊗ₜ[ℤ] ofTree x.2) (0 : Hc ⊗[ℤ] Hc) with hS
+    rw [show comulGen (.node a b) =
+        ofTree (.node a b) ⊗ₜ[ℤ] (1 : Hc) + (1 : Hc) ⊗ₜ[ℤ] ofTree (.node a b) + S from rfl]
+    simp only [TensorProduct.add_tmul, map_add, TensorProduct.assoc_tmul,
+               TensorProduct.tmul_add]
+    -- Remaining goal: structural terms (T⊗(1⊗1), 1⊗(T⊗1), 1⊗(1⊗T)) cancel,
+    -- leaving the core double-cut identity about S.
+    -- TODO: Prove the core identity using the Cartesian product structure
+    -- of `cutOptions`. Both sides enumerate nested admissible cuts via
+    -- the bijection ρ(γ) = γ \ γ' (Connes-Marcolli Theorem 1.27).
     sorry
+
+/-! ### Coassociativity lifting
+
+Coassociativity `(Δ ⊗ id) ∘ Δ = assoc ∘ (id ⊗ Δ) ∘ Δ` is proved by
+lifting from generators to all of `Hc`. The strategy:
+
+1. Define LHS and RHS as `AlgHom`s into `Hc ⊗ (Hc ⊗ Hc)`
+2. Prove they agree on single trees using `coassoc_gen`
+3. Extend to all of `Hc` via `MonoidAlgebra.algHom_ext` + `FreeMonoid.recOn`
+4. Bridge the `AlgHom` equality to the `Coalgebra.coassoc` `LinearMap` equation
+
+Coercion management is delicate: `Algebra.TensorProduct.assoc` is an
+`AlgEquiv`, the coalgebra axiom uses `TensorProduct.assoc` (`LinearEquiv`),
+and `comulAlgHom` coerces differently as `AlgHom` vs `LinearMap`.
+Pointwise bridge lemmas (`map_rTensor_apply`, `algAssoc_toLinearMap`, etc.)
+handle each mismatch. -/
+
+-- Pre-declare instances: right-associated triple tensor needs extra heartbeats
+set_option synthInstance.maxHeartbeats 400000 in
+noncomputable instance : Semiring (Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)) :=
+  Algebra.TensorProduct.instSemiring
+set_option synthInstance.maxHeartbeats 400000 in
+noncomputable instance : Algebra ℤ (Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)) :=
+  Algebra.TensorProduct.instAlgebra
+
+/-- RHS of coassociativity as an AlgHom: `(id ⊗ Δ) ∘ Δ`. -/
+noncomputable def coassocRHSAlg : Hc →ₐ[ℤ] Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc) :=
+  (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) comulAlgHom).comp comulAlgHom
+
+/-- LHS of coassociativity as an AlgHom: `assoc ∘ (Δ ⊗ id) ∘ Δ`. -/
+noncomputable def coassocLHSAlg : Hc →ₐ[ℤ] Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc) :=
+  ((Algebra.TensorProduct.assoc (R := ℤ) (S := ℤ) (A := Hc) ℤ Hc Hc).toAlgHom.comp
+    (Algebra.TensorProduct.map comulAlgHom (AlgHom.id ℤ Hc))).comp comulAlgHom
+
+-- Pointwise bridges: AlgHom.map agrees with LinearMap.rTensor/lTensor
+private theorem map_rTensor_apply (x : Hc ⊗[ℤ] Hc) :
+    (Algebra.TensorProduct.map comulAlgHom (AlgHom.id ℤ Hc) : _ →ₐ[ℤ] _) x =
+    comulAlgHom.toLinearMap.rTensor Hc x := by
+  induction x using TensorProduct.induction_on with
+  | zero => simp only [map_zero]
+  | add _ _ h1 h2 => simp only [map_add, h1, h2]
+  | tmul a b =>
+    simp only [Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id,
+               LinearMap.rTensor_tmul, AlgHom.toLinearMap_apply]
+
+private theorem map_lTensor_apply (x : Hc ⊗[ℤ] Hc) :
+    (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) comulAlgHom : _ →ₐ[ℤ] _) x =
+    comulAlgHom.toLinearMap.lTensor Hc x := by
+  induction x using TensorProduct.induction_on with
+  | zero => simp only [map_zero]
+  | add _ _ h1 h2 => simp only [map_add, h1, h2]
+  | tmul a b =>
+    simp only [Algebra.TensorProduct.map_tmul, AlgHom.coe_id, id,
+               LinearMap.lTensor_tmul, AlgHom.toLinearMap_apply]
+
+-- Bridge: Algebra.TensorProduct.assoc (AlgEquiv) = TensorProduct.assoc (LinearEquiv)
+private theorem algAssoc_toLinearMap :
+    (Algebra.TensorProduct.assoc (R := ℤ) (S := ℤ) (A := Hc) ℤ Hc Hc).toAlgHom.toLinearMap =
+    (TensorProduct.assoc ℤ Hc Hc Hc).toLinearMap := by
+  apply TensorProduct.ext'
+  intro ab c
+  induction ab using TensorProduct.induction_on with
+  | zero => simp only [TensorProduct.zero_tmul, map_zero]
+  | tmul a b => rfl
+  | add x y h1 h2 =>
+    simp only [TensorProduct.add_tmul, map_add, h1, h2]
+
+private theorem algAssoc_apply (x : (Hc ⊗[ℤ] Hc) ⊗[ℤ] Hc) :
+    (Algebra.TensorProduct.assoc (R := ℤ) (S := ℤ) (A := Hc) ℤ Hc Hc : _ ≃ₐ[ℤ] _) x =
+    TensorProduct.assoc ℤ Hc Hc Hc x := LinearMap.congr_fun algAssoc_toLinearMap x
+
+-- Generator-level: LHS = RHS on single trees
+set_option maxHeartbeats 800000 in
+private theorem coassocAlg_ofTree (T : SyntacticObject) :
+    coassocLHSAlg (ofTree T) = coassocRHSAlg (ofTree T) := by
+  change (Algebra.TensorProduct.assoc (R := ℤ) (S := ℤ) (A := Hc) ℤ Hc Hc)
+    ((Algebra.TensorProduct.map comulAlgHom (AlgHom.id ℤ Hc)) (comulAlgHom (ofTree T))) =
+    (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) comulAlgHom) (comulAlgHom (ofTree T))
+  rw [map_rTensor_apply, algAssoc_apply, map_lTensor_apply]
+  exact coassoc_gen T
+
+-- Lift to all of Hc via MonoidAlgebra.algHom_ext + FreeMonoid.recOn
+set_option maxHeartbeats 1600000 in
+private theorem coassocLHSAlg_eq_coassocRHSAlg :
+    coassocLHSAlg = coassocRHSAlg := by
+  apply MonoidAlgebra.algHom_ext
+  intro m
+  induction m using FreeMonoid.recOn with
+  | h0 => exact coassocLHSAlg.map_one'.trans coassocRHSAlg.map_one'.symm
+  | ih T ts ih =>
+    let a : Hc := MonoidAlgebra.single (FreeMonoid.of T) 1
+    let b : Hc := MonoidAlgebra.single ts 1
+    have hsplit : (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc) = a * b :=
+      (MonoidAlgebra.single_mul_single (R := ℤ) (FreeMonoid.of T) ts 1 1).symm
+    have hih : coassocLHSAlg b = coassocRHSAlg b := ih
+    calc coassocLHSAlg (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc)
+        = coassocLHSAlg (a * b) := by rw [hsplit]
+      _ = coassocLHSAlg a * coassocLHSAlg b := map_mul coassocLHSAlg a b
+      _ = coassocLHSAlg a * coassocRHSAlg b := by rw [hih]
+      _ = coassocRHSAlg a * coassocRHSAlg b := by
+          congr 1; exact coassocAlg_ofTree T
+      _ = coassocRHSAlg (a * b) := (map_mul coassocRHSAlg a b).symm
+      _ = coassocRHSAlg (MonoidAlgebra.single (FreeMonoid.of T * ts) 1 : Hc) :=
+          congr_arg _ hsplit.symm
+
+-- Bridge AlgHom-level equality to the LinearMap equation in Coalgebra.coassoc
+private theorem coassocLHS_eq_linLHS (x : Hc) :
+    coassocLHSAlg x =
+    TensorProduct.assoc ℤ Hc Hc Hc
+      (comulAlgHom.toLinearMap.rTensor Hc (comulAlgHom.toLinearMap x)) := by
+  change (Algebra.TensorProduct.assoc (R := ℤ) (S := ℤ) (A := Hc) ℤ Hc Hc)
+    ((Algebra.TensorProduct.map comulAlgHom (AlgHom.id ℤ Hc)) (comulAlgHom x)) = _
+  rw [map_rTensor_apply, algAssoc_apply]; rfl
+
+private theorem coassocRHS_eq_linRHS (x : Hc) :
+    coassocRHSAlg x =
+    comulAlgHom.toLinearMap.lTensor Hc (comulAlgHom.toLinearMap x) := by
+  change (Algebra.TensorProduct.map (AlgHom.id ℤ Hc) comulAlgHom) (comulAlgHom x) = _
+  rw [map_lTensor_apply]; rfl
+
+/-- Coassociativity of the CK coproduct as a `LinearMap` equation:
+    `assoc ∘ (Δ ⊗ id) ∘ Δ = (id ⊗ Δ) ∘ Δ`.
+
+    This is the coalgebra axiom. Proved by lifting the `AlgHom`-level
+    equality `coassocLHSAlg = coassocRHSAlg` through pointwise bridges. -/
+private theorem coassoc_proof :
+    TensorProduct.assoc ℤ Hc Hc Hc ∘ₗ
+      comulAlgHom.toLinearMap.rTensor Hc ∘ₗ comulAlgHom.toLinearMap =
+    comulAlgHom.toLinearMap.lTensor Hc ∘ₗ comulAlgHom.toLinearMap := by
+  ext x
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe]
+  rw [← coassocLHS_eq_linLHS, ← coassocRHS_eq_linRHS]
+  exact DFunLike.congr_fun coassocLHSAlg_eq_coassocRHSAlg x
+
+/-! ### Coalgebra instance -/
+
+/-- The Connes-Kreimer coalgebra structure on H^c.
+
+    `comul` is constructed as an `AlgHom` (via `comulAlgHom`), then
+    the `AlgHom.toLinearMap` is extracted for the `Coalgebra` instance.
+    Coassociativity is proved by lifting from generators via
+    `MonoidAlgebra.algHom_ext`. -/
+noncomputable instance instCoalgebra : Coalgebra ℤ Hc where
+  comul := comulAlgHom.toLinearMap
+  counit := hcCounit
+  coassoc := coassoc_proof
+  rTensor_counit_comp_comul := rTensor_counit_comp_comul_proof
+  lTensor_counit_comp_comul := lTensor_counit_comp_comul_proof
 
 end Hc
 
