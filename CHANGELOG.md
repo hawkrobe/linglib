@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.603] - 2026-04-09
+
+### Changed
+- **Entailment proofs grounded in NPQ lattice** (`AlonsoOvalleMoghiseh2025b.lean` §5): `conj_entails_atoms`, `atom_entails_containing_disj`, `conj_entails_disj` now derive from lattice theorems (`conjGQ_le_individual`, `individual_le_disjGQ`, `conjGQ_le_disjGQ'`) via `npq_le_entails` bridge, replacing opaque `rfl` proofs with structural chains through the GQ generator lattice
+- **`conjGQ_le_disjGQ'`** (`Generators.lean`): added lattice-order form (⊓(X) ≤ ⊔(X)) alongside existing pointwise form
+
 ## [0.229.602] - 2026-04-08
 
 ### Added
