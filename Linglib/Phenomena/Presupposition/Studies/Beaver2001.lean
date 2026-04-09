@@ -1,6 +1,5 @@
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Logic.ThreeValuedLogic
-import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Semantics.Presupposition.Accommodation
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Dynamic.ABLE.Basic
@@ -127,8 +126,7 @@ theorem sk_binary_presup_uniform (p q : PrProp W) :
     Swapping φ and ψ does not change the presupposition. -/
 theorem sk_presup_symmetric (p q : PrProp W) :
     (PrProp.and p q).presup = (PrProp.and q p).presup := by
-  funext w; simp only [PrProp.and]
-  cases p.presup w <;> cases q.presup w <;> rfl
+  funext w; simp only [PrProp.and]; exact propext And.comm
 
 /-- Filtering presuppositions are NOT symmetric: there exist p, q where
     swapping the operands changes the presupposition. This is the empirically
@@ -137,8 +135,11 @@ theorem sk_presup_symmetric (p q : PrProp W) :
 theorem filtering_presup_not_symmetric :
     ∃ (p q : PrProp Bool),
       (PrProp.andFilter p q).presup ≠ (PrProp.andFilter q p).presup := by
-  refine ⟨⟨λ _ => true, λ b => b⟩, ⟨λ _ => false, λ _ => true⟩, ?_⟩
-  intro h; exact absurd (congr_fun h false) (by decide)
+  refine ⟨⟨λ _ => True, λ _ => False⟩, ⟨λ _ => False, λ _ => True⟩, ?_⟩
+  intro h
+  have := congr_fun h false
+  simp only [PrProp.andFilter] at this
+  exact (this.mp ⟨trivial, fun h => h.elim⟩).1
 
 -- ══════════════════════════════════════════════════════════
 -- § 2. PrProp as Two-Dimensional Representation
@@ -172,13 +173,13 @@ ensuring the variables agree across dimensions. -/
     depends on `p.assertion` (assertion of the antecedent) — linking
     the two dimensions. -/
 theorem filtering_links_dimensions (p q : PrProp W) (w : W) :
-    (PrProp.impFilter p q).presup w =
-    (p.presup w && ((p.assertion w).not || q.presup w)) := rfl
+    (PrProp.impFilter p q).presup w ↔
+    (p.presup w ∧ (p.assertion w → q.presup w)) := Iff.rfl
 
 /-- SK connectives do NOT link dimensions: they reference only `.presup`,
     ignoring `.assertion`. This means they cannot capture filtering. -/
 theorem sk_ignores_assertion (p q : PrProp W) (w : W) :
-    (PrProp.and p q).presup w = (p.presup w && q.presup w) := rfl
+    (PrProp.and p q).presup w ↔ (p.presup w ∧ q.presup w) := Iff.rfl
 
 -- ══════════════════════════════════════════════════════════
 -- § 3. Heritage = Filtering (by construction)
@@ -196,31 +197,27 @@ read from the same `PrProp.presup` and `PrProp.assertion` fields. -/
 /-- Heritage function for conditionals IS `.presup` of `impFilter`.
     @cite{beaver-2001} Ch. 3: heritage, filtering, and CCP agree. -/
 example (p q : PrProp W) : (PrProp.impFilter p q).presup =
-    (λ w => p.presup w && ((p.assertion w).not || q.presup w)) := rfl
+    (λ w => p.presup w ∧ (p.assertion w → q.presup w)) := rfl
 
 /-- Heritage function for conjunction IS `.presup` of `andFilter`. -/
 example (p q : PrProp W) : (PrProp.andFilter p q).presup =
-    (λ w => p.presup w && ((p.assertion w).not || q.presup w)) := rfl
+    (λ w => p.presup w ∧ (p.assertion w → q.presup w)) := rfl
 
 /-- Heritage function for disjunction IS `.presup` of `orFilter` (symmetric). -/
 example (p q : PrProp W) : (PrProp.orFilter p q).presup =
-    (λ w => ((p.assertion w).not || q.presup w) &&
-            ((q.assertion w).not || p.presup w) &&
-            (p.presup w || q.presup w)) := rfl
+    (λ w => (p.assertion w → q.presup w) ∧
+            (q.assertion w → p.presup w) ∧
+            (p.presup w ∨ q.presup w)) := rfl
 
 /-- Filtering vs SK: filtering conjunction is strictly weaker than SK
     conjunction in its presupposition requirements. When p's assertion
     entails q's presupposition, filtering drops q's presupposition
     entirely — SK never does. -/
 theorem filtering_weaker_than_sk (p q : PrProp W)
-    (h : ∀ w, p.assertion w = true → q.presup w = true) :
+    (h : ∀ w, p.assertion w → q.presup w) :
     (PrProp.andFilter p q).presup = p.presup := by
   funext w; simp only [PrProp.andFilter]
-  cases hp : p.presup w
-  · rfl
-  · cases ha : p.assertion w
-    · rfl
-    · simp [h w ha]
+  exact propext ⟨fun ⟨hp, _⟩ => hp, fun hp => ⟨hp, h w⟩⟩
 
 -- ══════════════════════════════════════════════════════════
 -- § 4. Static ↔ Dynamic Agreement
@@ -259,9 +256,9 @@ example (c : ContextSet W) (p : BProp W) :
     3. Local contexts (@cite{schlenker-2009}) -/
 theorem static_dynamic_agreement (c : ContextSet W)
     (p q : PrProp W) :
-    (∀ w, c w → (PrProp.impFilter p q).presup w = true) ↔
-    (∀ w, c w → p.presup w = true ∧
-                (p.assertion w = true → q.presup w = true)) :=
+    (∀ w, c w → (PrProp.impFilter p q).presup w) ↔
+    (∀ w, c w → p.presup w ∧
+                (p.assertion w → q.presup w)) :=
   Semantics.Presupposition.LocalContext.local_context_matches_impFilter c p q
 
 -- ══════════════════════════════════════════════════════════
@@ -314,26 +311,26 @@ inductive SpiffWorld where
 
 /-- "Spiff lands on Planet X" — no presupposition. -/
 def spiffLands : PrProp SpiffWorld where
-  presup := λ _ => true
+  presup := λ _ => True
   assertion := λ w => match w with
-    | .onPlanetX_heavy | .onPlanetX_light => true
-    | _ => false
+    | .onPlanetX_heavy | .onPlanetX_light => True
+    | _ => False
 
 /-- "Spiff's weight is greater than on Earth" — presupposes being
     somewhere with weight (not in space). -/
 def weightGreater : PrProp SpiffWorld where
   presup := λ w => match w with
-    | .inSpace => false
-    | _ => true
+    | .inSpace => False
+    | _ => True
   assertion := λ w => match w with
-    | .onPlanetX_heavy => true
-    | _ => false
+    | .onPlanetX_heavy => True
+    | _ => False
 
 /-- Filtering correctly predicts: the antecedent filters the
     consequent's presupposition. -/
 theorem spiff_conditional_filters :
-    ∀ w, spiffLands.presup w = true →
-    (spiffLands.assertion w = true → weightGreater.presup w = true) := by
+    ∀ w, spiffLands.presup w →
+    (spiffLands.assertion w → weightGreater.presup w) := by
   intro w _ ha
   cases w <;> simp_all [spiffLands, weightGreater]
 
@@ -350,7 +347,7 @@ def conditionalPresup : BProp SpiffWorld :=
     prediction. Filtering predicts weight-is-defined; the conditional
     presupposition additionally requires weight > Earth. -/
 theorem conditional_presup_stronger_than_filtering :
-    ∃ w, (PrProp.impFilter spiffLands weightGreater).presup w = true ∧
+    ∃ w, (PrProp.impFilter spiffLands weightGreater).presup w ∧
          conditionalPresup w = false := by
   exact ⟨.onPlanetX_light, by simp [PrProp.impFilter, spiffLands, weightGreater],
          by simp [conditionalPresup]⟩

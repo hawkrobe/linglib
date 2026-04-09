@@ -44,8 +44,7 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
 
 -/
 
-import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Modality.EpistemicLogic
 
@@ -54,6 +53,7 @@ namespace Semantics.Presupposition.BeliefEmbedding
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
+open Core.PresuppositionContext
 open Semantics.Presupposition.LocalContext
 
 variable {W : Type*} {Agent : Type*}
@@ -277,7 +277,7 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
     (w_star : W) (_h : blc.globalCtx w_star) :
     presupFiltered (beliefToLocalCtx blc w_star _h) p ↔
     ContextSet.entails (blc.atWorld w_star) p.presup := by
-  simp [presupFiltered, beliefToLocalCtx]
+  simp [presupSatisfied, beliefToLocalCtx]
 
 -- ════════════════════════════════════════════════════════════════
 -- § Bool/Prop Bridge: CommonGround ↔ BeliefEmbedding

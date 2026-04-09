@@ -1,7 +1,6 @@
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.NegRaising
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Semantics.Postsupposition
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Fragments.English.Predicates.Verbal
@@ -91,24 +90,24 @@ theorems in §4.
 -/
 
 /-- *know*: presupposes p (factive). -/
-private def knowPresup : PrProp MiniWorld :=
-  { presup := prop         -- p must hold
-  , assertion := λ _ => true }  -- (at-issue suppressed for CG tests)
+private def knowPresup : PrProp MiniWorld where
+  presup := λ w => prop w = true
+  assertion := λ _ => True
 
 /-- *think*: no presupposition (nonfactive). -/
-private def thinkPresup : PrProp MiniWorld :=
-  { presup := λ _ => true   -- no constraint
-  , assertion := λ _ => true }
+private def thinkPresup : PrProp MiniWorld where
+  presup := λ _ => True
+  assertion := λ _ => True
 
 /-- Hypothetical *contra*: presupposes ¬p (strong contrafactive). -/
-private def contraPresup : PrProp MiniWorld :=
-  { presup := λ w => !prop w   -- ¬p must hold
-  , assertion := λ _ => true }
+private def contraPresup : PrProp MiniWorld where
+  presup := λ w => prop w = false
+  assertion := λ _ => True
 
 /-- yǐwéi: nonfactive PrProp + postsupposition ◇¬p. -/
-private def yiweiPresup : PrProp MiniWorld :=
-  { presup := λ _ => true      -- no input-context presupposition
-  , assertion := λ _ => true }
+private def yiweiPresup : PrProp MiniWorld where
+  presup := λ _ => True
+  assertion := λ _ => True
 
 /-- yǐwéi's postsupposition: CG must be compatible with ¬p. -/
 private def yiweiPostsup : Postsupposition MiniWorld :=
@@ -135,32 +134,43 @@ We verify this by checking the presup field against each context type.
 -- know: presup satisfied only in factive context
 
 theorem know_satisfied_factive :
-    factiveCtx.all knowPresup.presup = true := rfl
+    ∀ w ∈ factiveCtx, knowPresup.presup w := by
+  intro w hw; simp only [factiveCtx, List.mem_cons, List.mem_nil_iff, or_false] at hw
+  subst hw; rfl
 
 theorem know_fails_neutral :
-    neutralCtx.all knowPresup.presup = false := rfl
+    ¬∀ w ∈ neutralCtx, knowPresup.presup w := by
+  intro h; have := h .w1 (List.mem_cons.mpr (.inr (List.mem_cons.mpr (.inl rfl))))
+  simp [knowPresup, prop] at this
 
 theorem know_fails_contrafactive :
-    contrafactiveCtx.all knowPresup.presup = false := rfl
+    ¬∀ w ∈ contrafactiveCtx, knowPresup.presup w := by
+  intro h; have := h .w1 (List.mem_cons.mpr (.inl rfl))
+  simp [knowPresup, prop] at this
 
 -- think: presup satisfied in all contexts (no constraint)
 
 theorem think_satisfied_factive :
-    factiveCtx.all thinkPresup.presup = true := rfl
+    ∀ w ∈ factiveCtx, thinkPresup.presup w := by
+  intro _ _; trivial
 
 theorem think_satisfied_neutral :
-    neutralCtx.all thinkPresup.presup = true := rfl
+    ∀ w ∈ neutralCtx, thinkPresup.presup w := by
+  intro _ _; trivial
 
 theorem think_satisfied_contrafactive :
-    contrafactiveCtx.all thinkPresup.presup = true := rfl
+    ∀ w ∈ contrafactiveCtx, thinkPresup.presup w := by
+  intro _ _; trivial
 
 -- yǐwéi: presup (input) satisfied everywhere; postsup fails in factive ctx
 
 theorem yiwei_presup_satisfied_factive :
-    factiveCtx.all yiweiPresup.presup = true := rfl
+    ∀ w ∈ factiveCtx, yiweiPresup.presup w := by
+  intro _ _; trivial
 
 theorem yiwei_presup_satisfied_neutral :
-    neutralCtx.all yiweiPresup.presup = true := rfl
+    ∀ w ∈ neutralCtx, yiweiPresup.presup w := by
+  intro _ _; trivial
 
 theorem yiwei_postsup_fails_factive :
     yiweiPostsup.satisfied factiveCtx prop = false := rfl
@@ -174,13 +184,19 @@ theorem yiwei_postsup_satisfied_contrafactive :
 -- contra: presup satisfied only in contrafactive context
 
 theorem contra_fails_factive :
-    factiveCtx.all contraPresup.presup = false := rfl
+    ¬∀ w ∈ factiveCtx, contraPresup.presup w := by
+  intro h; have := h .w0 (List.mem_cons.mpr (.inl rfl))
+  simp [contraPresup, prop] at this
 
 theorem contra_fails_neutral :
-    neutralCtx.all contraPresup.presup = false := rfl
+    ¬∀ w ∈ neutralCtx, contraPresup.presup w := by
+  intro h; have := h .w0 (List.mem_cons.mpr (.inl rfl))
+  simp [contraPresup, prop] at this
 
 theorem contra_satisfied_contrafactive :
-    contrafactiveCtx.all contraPresup.presup = true := rfl
+    ∀ w ∈ contrafactiveCtx, contraPresup.presup w := by
+  intro w hw; simp only [contrafactiveCtx, List.mem_cons, List.mem_nil_iff, or_false] at hw
+  subst hw; rfl
 
 -- ============================================================================
 -- §4. Per-Verb Verification: Fragment Entries → PresupClass
@@ -326,9 +342,9 @@ theorem know_presup_fails_endtoend :
 /-- End-to-end: yǐwéi's postsupposition is satisfied in a neutral context
     (where veridicality-based presupposition is vacuously OK). -/
 theorem yiwei_endtoend :
-    neutralCtx.all yiweiPresup.presup = true ∧
+    (∀ w ∈ neutralCtx, yiweiPresup.presup w) ∧
     yiweiPostsup.satisfied neutralCtx prop = true :=
-  ⟨rfl, rfl⟩
+  ⟨fun _ _ => trivial, rfl⟩
 
 -- ============================================================================
 -- §8. Connection to Neg-Raising (@cite{glass-2025} §4.2)

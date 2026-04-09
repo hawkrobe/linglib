@@ -1,5 +1,4 @@
-import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.CommonGround
+import Linglib.Core.Semantics.PresuppositionContext
 
 /-!
 # Accommodation
@@ -42,6 +41,7 @@ open Classical
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
+open Core.PresuppositionContext
 
 variable {W : Type*}
 
@@ -69,52 +69,13 @@ inductive AccommodationLevel where
 /-- Global accommodation: update the context to include the presupposition.
  @cite{lewis-1979}: "presupposition P comes into existence."
 
- Formally, this intersects the context set with the presupposition,
- removing worlds where the presupposition fails. -/
-def globalAccommodate (c : ContextSet W) (presup : BProp W) : ContextSet W :=
- λ w => c w ∧ presup w = true
-
-/-- Global accommodation strengthens the context (is eliminative). -/
-theorem globalAccommodate_strengthens (c : ContextSet W) (presup : BProp W) :
- ∀ w, globalAccommodate c presup w → c w := λ _ h => h.1
-
-/-- After global accommodation, the presupposition is entailed. -/
-theorem globalAccommodate_entails (c : ContextSet W) (presup : BProp W) :
- ContextSet.entails (globalAccommodate c presup) presup :=
- λ _ h => h.2
-
-/-- Accommodation is idempotent: accommodating what's already entailed
- doesn't change the context. -/
-theorem globalAccommodate_idempotent (c : ContextSet W) (presup : BProp W)
- (h : ContextSet.entails c presup) :
- ∀ w, globalAccommodate c presup w ↔ c w := by
- intro w
- constructor
- · exact globalAccommodate_strengthens c presup w
- · intro hw; exact ⟨hw, h w hw⟩
-
-/-- Accommodation via PrProp.defined: `globalAccommodate c p.presup` restricts
- the context to points where `PrProp.defined` holds. This is the structural
- connection between accommodation and PrProp — accommodation targets
- `.presup` by construction. -/
-theorem globalAccommodate_eq_defined (c : ContextSet W) (p : PrProp W) :
- ∀ w, globalAccommodate c p.presup w ↔ c w ∧ PrProp.defined w p :=
- λ _ => Iff.rfl
+ Delegates to `Core.PresuppositionContext.accommodate`. -/
+abbrev globalAccommodate (c : ContextSet W) (presup : Prop' W) : ContextSet W :=
+ accommodate c presup
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Accommodation Constraints
 -- ════════════════════════════════════════════════════════════════
-
-/-- Informativity: the accommodated content must add new information.
- The context must not already entail the presupposition.
- @cite{beaver-2001} Ch. 5.3. -/
-def isInformative (c : ContextSet W) (presup : BProp W) : Prop :=
- ¬ContextSet.entails c presup
-
-/-- Consistency: the result of accommodation must be non-empty.
- @cite{beaver-2001} Ch. 5.3. -/
-def isConsistent (c : ContextSet W) (presup : BProp W) : Prop :=
- ContextSet.nonEmpty (globalAccommodate c presup)
 
 /-- Trapping: a presupposition with a bound variable cannot be
  accommodated above its binder. @cite{beaver-2001} Ch. 5.3.
@@ -127,10 +88,11 @@ def isTrapped (bindingDepth : Nat) : AccommodationLevel → Bool
  | .intermediate d => d < bindingDepth -- cannot go above binder
  | .local => false -- local is always below binder
 
-/-- All constraints bundled together. -/
-structure AccommodationOK (c : ContextSet W) (presup : BProp W) : Prop where
- informative : isInformative c presup
- consistent : isConsistent c presup
+/-- All constraints bundled together.
+ Uses canonical operations from `Core.PresuppositionContext`. -/
+structure AccommodationOK (c : ContextSet W) (presup : Prop' W) : Prop where
+ informative : accommodationInformative c presup
+ consistent : accommodationConsistent c presup
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Accommodation Strategies
@@ -161,7 +123,7 @@ inductive AccommodationStrategy where
  for global over local accommodation, we recapture the effect of
  Gazdar's assumption that presupposition cancellation occurs only
  under the threat of inconsistency." -/
-noncomputable def heimSelect (c : ContextSet W) (presup : BProp W) :
+noncomputable def heimSelect (c : ContextSet W) (presup : Prop' W) :
  AccommodationLevel :=
  if ContextSet.nonEmpty (globalAccommodate c presup)
  then .global
@@ -181,14 +143,14 @@ noncomputable def heimSelect (c : ContextSet W) (presup : BProp W) :
  @cite{beaver-2001} Ch. 5.8.1: "with one short remark buried in a
  terse paper, Heim offers a simple synthesis between the two antitheses
  of 1970s presupposition theory." -/
-theorem heim_cancellation_equivalence (c : ContextSet W) (presup : BProp W)
+theorem heim_cancellation_equivalence (c : ContextSet W) (presup : Prop' W)
  (h_inconsistent : ¬ContextSet.nonEmpty (globalAccommodate c presup)) :
  heimSelect c presup = .local := by
  simp only [heimSelect, h_inconsistent, ↓reduceIte]
 
 /-- When global accommodation IS consistent, Heim's strategy projects
  the presupposition globally — matching Karttunen's projection. -/
-theorem heim_projection_when_consistent (c : ContextSet W) (presup : BProp W)
+theorem heim_projection_when_consistent (c : ContextSet W) (presup : Prop' W)
  (h_consistent : ContextSet.nonEmpty (globalAccommodate c presup)) :
  heimSelect c presup = .global := by
  simp only [heimSelect, h_consistent, ↓reduceIte]
@@ -203,7 +165,7 @@ theorem heim_projection_when_consistent (c : ContextSet W) (presup : BProp W)
 
  This is formalized as: the Heim preference strategy never selects
  intermediate accommodation. -/
-theorem heim_never_intermediate (c : ContextSet W) (presup : BProp W) :
+theorem heim_never_intermediate (c : ContextSet W) (presup : Prop' W) :
  ∀ d, heimSelect c presup ≠ .intermediate d := by
  intro d
  by_cases h : ContextSet.nonEmpty (globalAccommodate c presup)

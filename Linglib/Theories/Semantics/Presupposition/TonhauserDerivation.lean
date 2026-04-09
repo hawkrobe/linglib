@@ -81,8 +81,7 @@ information structure (see Core.QUD, Core.InformationStructure).
 
 -/
 
-import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 
@@ -91,6 +90,7 @@ namespace Semantics.Presupposition.TonhauserDerivation
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
+open Core.PresuppositionContext
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding
 
@@ -201,7 +201,7 @@ theorem negation_projects (c : ContextSet W) (p : PrProp W) :
 "if p then qq'" — if p.assertion entails q.presup, it's filtered.
 -/
 theorem conditional_filters (c : LocalCtx W) (p q : PrProp W)
-    (h : ∀ w, c.worlds w → p.assertion w = true → q.presup w = true) :
+    (h : ∀ w, c.worlds w → p.assertion w → q.presup w) :
     presupFiltered (localCtxConsequent c p) q :=
   conditional_filters_when_entailed c p q h
 

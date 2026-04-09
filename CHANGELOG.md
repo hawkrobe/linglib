@@ -1,5 +1,88 @@
 # Changelog
 
+## [0.229.601] - 2026-04-08
+
+### Added
+- **PresuppositionContext bridge module** (`Core/Semantics/PresuppositionContext.lean`): canonical vocabulary connecting `PrProp W` to `ContextSet W` — `presupSatisfied`, `presupSatisfiable`, `presupProjects`, `accommodate`, `accommodationInformative`, `accommodationConsistent`; `HasContextSet` generalizations (`presupSatisfiedIn`, `presupSatisfiableIn`, `presupProjectsFrom`); 8 bridge theorems; new `presupSatisfiable` operation enables Enguehard 2024 conceivability presuppositions
+
+### Changed
+- **Presupposition infrastructure consolidated**: `LocalContext.lean`, `Accommodation.lean`, `BeliefEmbedding.lean`, `TonhauserDerivation.lean` now import `PresuppositionContext` instead of separately importing `Presupposition` + `CommonGround`; `presupFiltered`/`presupProjects` in LocalContext and `globalAccommodate`/`AccommodationOK` in Accommodation delegate to canonical operations via `abbrev`; `Glass2025.lean` and `Beaver2001.lean` imports consolidated
+
+## [0.229.600] - 2026-04-08
+
+### Added
+- **Maximize Presupposition theory module** (`Theories/Semantics/Presupposition/MaximizePresupposition.lean`): @cite{heim-1991} — general, domain-agnostic formulation of MP as an OT constraint; `mpConstraintOf maxStrength strength` builds MP constraint for arbitrary candidate types; `markednessPenalty strength` builds the dual markedness constraint; `mp_reverses_markedness` proves MP and markedness impose opposite orderings (generalizes `tod_reverses_mp`); `mp_selects_strongest`/`markedness_selects_weakest` prove constraint-dominance results via `optimal_zero_first`; `mp_markedness_complementary` proves violation counts sum to `maxStrength`; phi-feature instance: `phiMP` = `mpConstraintOf 2 presupStrength` with `phi_same_assertion` (bridge to `phiPresup_same_assertion`), `phi_strength_nesting` (bridge to `phiPresup_nesting`), `phi_mp_selects_maximal`, `phi_mp_reverses_markedness`; presuppositional strict total order: `specLevel_injective_wf`, `presupWeakerThan_irrefl`/`_trans`/`_asymm`/`_total`; zero sorrys
+- Wang2023 bridge theorems: `mpConstraint_eq_phiMP` (= `rfl`), `todConstraint_eval_eq_markednessPenalty`, `tod_reverses_mp_from_general` — connects Wang2023's constraints to the general theory
+
+## [0.229.599] - 2026-04-08
+
+### Added
+- **General ToD >> MP! theorem** (`Phenomena/Politeness/Studies/Wang2023.lean`): `tod_mp_general` — structural proof that for ANY set of well-formed `PrivativePair` candidates containing `.minimal`, ToD >> MP! selects `.minimal` as the unique winner; subsumes the binary `native_decide` proof (`tod_mp_selects_minimal`); two components: `tod_mp_only_minimal` (via `optimal_zero_first` + case split on Bool fields) and `tod_mp_minimal_is_optimal` (via lexicographic dominance of `[0, maxSpec]` profile); zero sorrys
+
+## [0.229.598] - 2026-04-08
+
+### Changed
+- **BPrProp eliminated — PrProp is now the sole presuppositional proposition type** (`Core/Semantics/Presupposition.lean` + ~30 downstream files): deleted `BPrProp` (Bool-based), kept only `PrProp` with `presup : W → Prop` and `assertion : W → Prop` (Mathlib convention); all connectives (`neg`, `andFilter`, `impFilter`, `orFilter`, `orFlex`, `orBelnap`, `andBelnap`, `belnapLift`, `xor`, `orKP`, `orWeak`, `andWeak`) now produce `∧`/`∨`/`¬`/`→` directly; `PrProp.ofBool` convenience for backward-compatible Bool→Prop wrapping; `decide` used only for `List.filter`; `native_decide` proofs replaced with structured proofs throughout; bridge files updated (ContentLayer, CommonGround, Accommodation, Disjunction, StrawsonEntailment, Parasitic, TonhauserDerivation, TypeTheoretic/Discourse); 25 downstream study files migrated; zero new sorrys
+
+## [0.229.597] - 2026-04-08
+
+### Added
+- **Wang (Ruoan) 2023: Honorifics without [HON]** (`Phenomena/Politeness/Studies/Wang2023.lean`): @cite{wang-r-2023} — ToD (Taboo of Directness) and MP! as OT constraints on `PrivativePair` candidates; `tod_mp_selects_minimal` derives that respect contexts recruit the semantically unmarked phi-feature value; binary factorial typology (2 types); ternary Strong/Weak ToD for articulated number systems (`wtod_mp_stod_selects_dual`, `stod_mp_wtod_selects_plural`); ternary factorial typology (3 types); `ihon_redundant_for_recruitment` — [iHON] eliminability bridge to @cite{alok-bhalla-2026}; bridges to allocutive data in `Honorifics.lean`; zero sorrys
+- **Phi-feature presuppositional theory** (`Theories/Semantics/Presupposition/PhiFeatures.lean`): extracted general phi-feature presuppositional semantics from `Sauerland2003.lean` into `Theories/`; `phiPresup`, `sgSem`/`plSem`/`dualSem`, `firstSem`/`secondSem`/`thirdSem` definitions; new definiteness presuppositions (`defSem`/`indefSem`); semantic markedness (`isSemanticUnmarked`/`isSemanticMarked`); presuppositional strength ordering
+
+### Changed
+- **Sauerland 2003 refactored** (`Phenomena/Plurals/Studies/Sauerland2003.lean`): removed extracted general phi-feature theory (now imported from `PhiFeatures.lean`); file reduced from ~600 to ~350 lines; study-specific theorems preserved
+
+## [0.229.596] - 2026-04-08
+
+### Changed
+- **Sauerland 2003: `phiPresup` refactor** (`Phenomena/Plurals/Studies/Sauerland2003.lean`): `phiPresup : PrivativePair → PrProp E` generates presuppositional denotations from privative feature geometry; `phiPresup_nesting` DERIVES the Feature-Subset Principle from the algebraic structure (domain nesting = consequence of specLevel ordering, not a stipulation); `phiPresup_same_assertion` proves φ-feature competition is presuppositional not at-issue; `sgSem`/`dualSem`/`plSem` shown as `phiPresup` instances at maximal/intermediate/minimal cells; person section refactored from `PrProp Unit` to `PrProp E` with mereological presuppositions (`speaker ≤ x`, `speaker ≤ x ∨ addressee ≤ x`); person nesting derived as corollary of `phiPresup_nesting` (`person_nesting_from_phi`); isomorphism docstring updated to note both are `phiPresup` instances
+
+## [0.229.595] - 2026-04-08
+
+### Changed
+- **Sauerland 2003 deeper integration** (`Phenomena/Plurals/Studies/Sauerland2003.lean`): JE presupposition now includes scope-predicate definedness (paper's (30b) — presupposition projection under *every*); `je_presup_projects` and `je_total_reduces` theorems; bridge to `Multiplicity.PluralTheory.implicature`; `number_competition_is_presuppositional` theorem (same assertion + different presupposition = MP, not Horn scale); `sauerland_is_implicature_theory` and `multiplicity_monotonicity_from_competition`
+
+## [0.229.594] - 2026-04-08
+
+### Added
+- **Sauerland 2003 presuppositional number** (`Phenomena/Plurals/Studies/Sauerland2003.lean`): @cite{sauerland-2003} "A New Semantics for Number" — `sgSem`/`plSem` as `PrProp` values grounded in `Mereology.Atom`; bridge theorems connecting `PrivativePair.specLevel` to presuppositional strength; Feature-Subset Principle derived from `spec_strict_order`; Maximize Presupposition derives singular preference (`mp_blocks_plural_at_atom`); coordination forces plural on non-atomic sums; `JE` decomposition of *every* restricted to atoms; person features as presuppositions (`firstSem`/`secondSem`/`thirdSem`) with domain nesting; `person_number_isomorphism` (semantic content of Harbour's phi kernel); multiplicity inference derived from MP; zero sorrys
+
+## [0.229.593] - 2026-04-08
+
+### Changed
+- **PrProp migrated from Bool to Prop** (`Core/Semantics/Presupposition.lean`): `PrProp W` is now Prop-based (canonical); old Bool-based type renamed to `BPrProp W`; coercion `BPrProp → PrProp` via `= true`; Prop-based connectives (neg, and, or, imp, andFilter, impFilter, orFilter)
+- **StructuredProp eliminated** (`PresuppositionalExhaustification.lean`): pex now returns `PrProp World` directly, integrating with presupposition projection infrastructure
+- **50 downstream files** updated: `PrProp` → `BPrProp` for Bool-based consumers
+- **Del Pinal et al. 2024 study file cleanup**: removed dead `NegFactivePred` structure, fixed stale docstring reference, added "only" mirror-image section (§7)
+
+## [0.229.592] - 2026-04-08
+
+### Added
+- **Mandarin *daodi* fragment** (`Fragments/Mandarin/Questions.lean`): ANDL modifier entry with independent movement type, shared POV feature [*ud*], bridge theorems to ChanShen2026 `andlLicensedInSitu`, cross-linguistic minimal pair with *the-hell*
+- **Mandarin `QuestionProfile`** (`Phenomena/Questions/Typology.lean`): WALS-grounded (92A final, 93A in-situ, 116A particle) with grounding theorems for all three chapters
+
+## [0.229.591] - 2026-04-08
+
+### Added
+- **Presuppositional exhaustification (pex^{IE+II})** (`Theories/Semantics/Exhaustification/PresuppositionalExhaustification.lean`): @cite{delpinal-bassi-sauerland-2024} core operator — `StructuredProp` (assertion + presupposition), `homogeneous` predicate, `pexIEII` operator; zero sorrys; proves FC, double prohibition, negative FC, and basic scalar equivalence
+- **Del Pinal et al. 2024 study file** (`Phenomena/Modality/Studies/DelPinalBassiSauerland2024.lean`): negative factive embedding (§3), filtering FC in disjunction (§4), bridge theorems to FreeChoice data, structural comparison with flat exh
+- **pex as 8th theory in FreeChoiceCompare** (`Phenomena/Modality/FreeChoiceCompare.lean`): comparison table updated with Del Pinal et al. 2024, embedded FC row added
+- **2 bibliography entries** (`references.bib`): delpinal-bassi-sauerland-2024 (S&P 17, Article 3), bassi-delpinal-sauerland-2021 (S&P 14(11))
+
+### Changed
+- **`target_in_II` made public** (`InnocentInclusion.lean`): was private, needed by pex proofs
+
+## [0.229.590] - 2026-04-08
+
+### Added
+- **Chan & Shen 2026 formalization** (`Phenomena/Questions/Studies/ChanShen2026.lean`): wh-the-hell licensing in Singlish — POV feature, parasitic movement, 2×2 factorial experiment data, alternative account comparison (intervention, AttP, negative attitude ascription), cross-study bridge to ShenHuang2026 island framework, cross-linguistic daodi/the-hell ANDLMovementType parameter
+- **Singlish question fragment** (`Fragments/Singlish/Questions.lean`): first contact-variety fragment — WhStrategy struct, three strategies (full/partial/in-situ), derived `reachesMatrixSpecCP`, bridge `WhInterpMechanism.toDependencyType` to ShenHuang2026, sentence-final particle *ah*
+- **`WhInterpMechanism` type** (`Phenomena/Questions/Typology.lean`): derivational wh-interpretation mechanism (overtMovement/covertMovement/unselectiveBinding) with derived `reachesSpecCP` and `islandSensitive`; complements WALS-level `WhMovementStrategy`
+- **`pov` feature** (`Theories/Syntax/Minimalism/Core/Features.lean`): [±d] point-of-view feature value and `sameType` matcher for Agree-based POV licensing
+- **Singlish `QuestionProfile`** (`Phenomena/Questions/Typology.lean`): WALS-style typological profile — `.mixed` wh-movement, `.final` particle position, `.particle` polar question strategy
+- **9 bibliography entries** (`references.bib`): chan-shen-2026, chou-2012, den-dikken-giannakidou-2002, sato-2013, sato-ngui-2017, vu-lohiniva-2020, merchant-2002, rawlins-2008, pesetsky-1987
+
 ## [0.229.589] - 2026-04-08
 
 ### Changed

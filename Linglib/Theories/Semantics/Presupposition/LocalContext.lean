@@ -33,8 +33,7 @@ For a sentence S with embedded clause φ at position i:
 
 -/
 
-import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Context.Tower
 
 namespace Semantics.Presupposition.LocalContext
@@ -42,6 +41,7 @@ namespace Semantics.Presupposition.LocalContext
 open Core.Presupposition
 open Core.Proposition
 open Core.CommonGround
+open Core.PresuppositionContext
 
 variable {W : Type*}
 
@@ -61,6 +61,9 @@ structure LocalCtx (W : Type*) where
   position : Nat
   /-- Embedding depth (for intermediate accommodation) -/
   depth : Nat := 0
+
+instance : HasContextSet (LocalCtx W) W where
+  toContextSet := LocalCtx.worlds
 
 /--
 Initial local context: the global context at position 0.
@@ -109,29 +112,22 @@ Local context for each disjunct.
 (and symmetrically for P)
 -/
 def localCtxSecondDisjunct (c : LocalCtx W) (first : PrProp W) : LocalCtx W :=
-  { worlds := λ w => c.worlds w ∧ first.assertion w = false
+  { worlds := λ w => c.worlds w ∧ ¬first.assertion w
   , position := c.position + 1
   , depth := c.depth }
 
 
-/--
-A presupposition projects at a local context if it's not entailed.
+/-- A presupposition projects at a local context if it's not entailed.
+    Delegates to `Core.PresuppositionContext.presupProjects`. -/
+abbrev presupProjects (lc : LocalCtx W) (p : PrProp W) : Prop :=
+  Core.PresuppositionContext.presupProjects lc.worlds p
 
-Projection is the default. Filtering (non-projection) happens when the
-local context already satisfies the presupposition.
--/
-def presupProjects (lc : LocalCtx W) (p : PrProp W) : Prop :=
-  ¬ ContextSet.entails lc.worlds p.presup
+/-- A presupposition is filtered (satisfied) at a local context if it IS entailed.
+    Delegates to `Core.PresuppositionContext.presupSatisfied`. -/
+abbrev presupFiltered (lc : LocalCtx W) (p : PrProp W) : Prop :=
+  Core.PresuppositionContext.presupSatisfied lc.worlds p
 
-/--
-A presupposition is filtered at a local context if it IS entailed.
--/
-def presupFiltered (lc : LocalCtx W) (p : PrProp W) : Prop :=
-  ContextSet.entails lc.worlds p.presup
-
-/--
-Projection and filtering are complementary.
--/
+/-- Projection and filtering are complementary. -/
 theorem projects_iff_not_filtered (lc : LocalCtx W) (p : PrProp W) :
     presupProjects lc p ↔ ¬ presupFiltered lc p := Iff.rfl
 
@@ -143,7 +139,7 @@ entails the presupposition.
 This formalizes the core insight of filtering semantics.
 -/
 theorem conditional_filters_when_entailed (c : LocalCtx W) (p q : PrProp W)
-    (h : ∀ w, c.worlds w → p.assertion w = true → q.presup w = true) :
+    (h : ∀ w, c.worlds w → p.assertion w → q.presup w) :
     presupFiltered (localCtxConsequent c p) q := by
   intro w hw
   have ⟨hw_in, hp_true⟩ := hw
@@ -154,12 +150,11 @@ If antecedent assertion doesn't entail consequent presupposition,
 it projects.
 -/
 theorem conditional_projects_when_not_entailed (c : LocalCtx W) (p q : PrProp W)
-    (h : ∃ w, c.worlds w ∧ p.assertion w = true ∧ q.presup w = false) :
+    (h : ∃ w, c.worlds w ∧ p.assertion w ∧ ¬q.presup w) :
     presupProjects (localCtxConsequent c p) q := by
   obtain ⟨w, hw_in, hp_true, hq_false⟩ := h
   intro hfilter
-  have := hfilter w ⟨hw_in, hp_true⟩
-  simp [hq_false] at this
+  exact hq_false (hfilter w ⟨hw_in, hp_true⟩)
 
 /--
 Negation doesn't filter presuppositions.
@@ -183,19 +178,19 @@ inductive KingWorld' where
 "The king exists" — no presupposition.
 -/
 def kingExists' : PrProp KingWorld' :=
-  { presup := λ _ => true
+  { presup := λ _ => True
   , assertion := λ w => match w with
-      | .kingExists => true
-      | .noKing => false }
+      | .kingExists => True
+      | .noKing => False }
 
 /--
 "The king is bald" — presupposes king exists.
 -/
 def kingBald' : PrProp KingWorld' :=
   { presup := λ w => match w with
-      | .kingExists => true
-      | .noKing => false
-  , assertion := λ _ => true }
+      | .kingExists => True
+      | .noKing => False
+  , assertion := λ _ => True }
 
 /--
 In the conditional, the presupposition is filtered.
@@ -207,12 +202,12 @@ theorem king_conditional_filters (c : ContextSet KingWorld')
     (h : c KingWorld'.noKing ∨ c KingWorld'.kingExists) :
     presupFiltered (localCtxConsequent (initialLocalCtx c) kingExists') kingBald' := by
   intro w hw
-  -- w is in {v ∈ c | kingExists'.assertion v = true}
-  -- So kingExists'.assertion w = true, meaning w = kingExists
+  -- w is in {v ∈ c | kingExists'.assertion v}
+  -- So kingExists'.assertion w holds, meaning w = kingExists
   obtain ⟨_, hw_assert⟩ := hw
   cases w with
-  | kingExists => rfl
-  | noKing => simp [kingExists'] at hw_assert
+  | kingExists => exact trivial
+  | noKing => exact absurd hw_assert (by simp [kingExists'])
 
 
 /--
@@ -224,27 +219,17 @@ This theorem shows the correspondence between:
 - Kracht's filtering implication formula
 -/
 theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
-    (∀ w, c w → (PrProp.impFilter p q).presup w = true) ↔
-    (∀ w, c w → p.presup w = true ∧ (p.assertion w = true → q.presup w = true)) := by
+    (∀ w, c w → (PrProp.impFilter p q).presup w) ↔
+    (∀ w, c w → p.presup w ∧ (p.assertion w → q.presup w)) := by
   constructor
   · intro h w hw
-    specialize h w hw
-    simp only [PrProp.impFilter] at h
-    cases hp : p.presup w
-    · simp [hp] at h
-    · simp only [hp, Bool.true_and] at h
-      constructor
-      · rfl
-      · intro ha
-        cases hq : q.presup w
-        · simp [ha, hq] at h
-        · rfl
+    have h' := h w hw
+    simp only [PrProp.impFilter] at h'
+    exact h'
   · intro h w hw
     obtain ⟨hp, himp⟩ := h w hw
-    simp only [PrProp.impFilter, hp, Bool.true_and]
-    cases ha : p.assertion w
-    · simp
-    · simp [himp ha]
+    simp only [PrProp.impFilter]
+    exact ⟨hp, himp⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § Tower Depth Bridge

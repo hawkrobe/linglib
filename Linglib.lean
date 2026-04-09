@@ -43,6 +43,7 @@ import Linglib.Core.Conjectures
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Parse
 import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Semantics.Postsupposition
 import Linglib.Core.Semantics.ContentLayer
 import Linglib.Core.Agent.ProductOfExperts
@@ -599,6 +600,7 @@ import Linglib.Fragments.Russian.Possession
 import Linglib.Fragments.Russian.Gender
 import Linglib.Fragments.Serbian.Case
 import Linglib.Fragments.Serbian.TemporalConnectives
+import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Slovenian.Case
 import Linglib.Fragments.Slovenian.QuestionParticles
 import Linglib.Fragments.Pipil.AuxiliaryVerbs
@@ -682,6 +684,7 @@ import Linglib.Fragments.German.QuestionParticles
 import Linglib.Fragments.Japanese.PolarityItems
 import Linglib.Fragments.Korean.PolarityItems
 import Linglib.Fragments.Mandarin.PolarityItems
+import Linglib.Fragments.Mandarin.Questions
 import Linglib.Fragments.Turkish.PolarityItems
 import Linglib.Fragments.Hindi.PolarityItems
 import Linglib.Fragments.Finnish.PolarityItems
@@ -1023,6 +1026,7 @@ import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.Studies.BarLevFox2020
+import Linglib.Phenomena.Modality.Studies.DelPinalBassiSauerland2024
 import Linglib.Phenomena.Modality.Studies.Kratzer1981
 import Linglib.Phenomena.Modality.Studies.CiardelliGuerrini2026
 import Linglib.Phenomena.Modality.Studies.ElliottSudo2025
@@ -1177,6 +1181,8 @@ import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Questions.Studies.Dayal2025
 import Linglib.Phenomena.Questions.Studies.Uegaki2022
+import Linglib.Phenomena.Questions.Studies.ChanShen2026
+import Linglib.Phenomena.Questions.Studies.AlonsoOvalleMoghiseh2025b
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
@@ -1499,6 +1505,7 @@ import Linglib.Theories.Syntax.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.Politeness.Studies.AlokBhalla2026
+import Linglib.Phenomena.Politeness.Studies.Wang2023
 import Linglib.Phenomena.SocialMeaning.Studies.Burnett2019
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2006
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
@@ -1683,6 +1690,8 @@ import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
 import Linglib.Theories.Semantics.Presupposition.TonhauserDerivation
 import Linglib.Theories.Semantics.Presupposition.Transparency
 import Linglib.Theories.Semantics.Presupposition.Accommodation
+import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
+import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 import Linglib.Theories.Semantics.Tense.TemporalAdverbials
@@ -1867,12 +1876,14 @@ import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Exhaustification.InnocentInclusion
+import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
 import Linglib.Theories.Semantics.Exhaustification.ScalePredictions
 import Linglib.Theories.Semantics.Exhaustification.SplitExhaustification
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018
 import Linglib.Phenomena.Plurals.Studies.Magri2014
 import Linglib.Phenomena.Plurals.Studies.BarLev2021
+import Linglib.Phenomena.Plurals.Studies.Sauerland2003
 import Linglib.Phenomena.Plurals.Studies.VerbalNumber
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.ScalarImplicatures.Studies.Chierchia2004
