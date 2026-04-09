@@ -92,7 +92,7 @@ abbrev atomic {W : Type*} := @PrProp.ofBProp W
 
 /-- Atomic sentences are assertive at every world (Belnap's (6)). -/
 theorem atomic_always_assertive {W : Type*} (p : BProp W) (w : W) :
-    (atomic p).presup w = true := rfl
+    (atomic p).presup w := trivial
 
 -- ════════════════════════════════════════════════════════════════
 -- §4. Connectives under Conditional Assertion
@@ -128,8 +128,8 @@ abbrev belnapOr {W : Type*} := @PrProp.orBelnap W
     conditional assertion (§2) and standard universal quantification (§4). -/
 def restrictedForall {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) : PrProp Unit where
-  presup := λ _ => decide (∃ x : m.Entity, C x = true)
-  assertion := λ _ => decide (∀ x : m.Entity, C x = true → B x = true)
+  presup := λ _ => ∃ x : m.Entity, C x = true
+  assertion := λ _ => ∀ x : m.Entity, C x = true → B x = true
 
 /-- Belnap's (12): restricted existential quantification.
 
@@ -137,8 +137,8 @@ def restrictedForall {m : Model} [Fintype m.Entity]
     What it asserts = disjunction of Bt for all t such that Ct is true. -/
 def restrictedExists {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) : PrProp Unit where
-  presup := λ _ => decide (∃ x : m.Entity, C x = true)
-  assertion := λ _ => decide (∃ x : m.Entity, C x = true ∧ B x = true)
+  presup := λ _ => ∃ x : m.Entity, C x = true
+  assertion := λ _ => ∃ x : m.Entity, C x = true ∧ B x = true
 
 -- ════════════════════════════════════════════════════════════════
 -- §5. Bridge: Belnap ↔ Standard GQ Infrastructure
@@ -151,17 +151,17 @@ def restrictedExists {m : Model} [Fintype m.Entity]
     (elements.filter C).all B. -/
 theorem belnap_forall_content_eq_every {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
-    ((restrictedForall C B).assertion () = true) ↔
+    (restrictedForall C B).assertion () ↔
       every_sem m (fun x => C x = true) (fun x => B x = true) := by
-  simp only [restrictedForall, decide_eq_true_eq, every_sem]
+  simp only [restrictedForall, every_sem]
 
 /-- **Content bridge (∃)**: what Belnap's ∃x(Cx/Bx) asserts (when
     assertive) is exactly what `some_sem` computes. -/
 theorem belnap_exists_content_eq_some {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
-    ((restrictedExists C B).assertion () = true) ↔
+    (restrictedExists C B).assertion () ↔
       some_sem m (fun x => C x = true) (fun x => B x = true) := by
-  simp only [restrictedExists, decide_eq_true_eq, some_sem]
+  simp only [restrictedExists, some_sem]
 
 /-- **Assertiveness = existential presupposition**: Belnap's
     assertiveness condition for ∀x(Cx/Bx) is exactly the existential
@@ -174,7 +174,7 @@ theorem belnap_exists_content_eq_some {m : Model} [Fintype m.Entity]
     when the restrictor is non-empty. -/
 theorem assertive_iff_restrictor_nonempty {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
-    (restrictedForall C B).presup () = decide (∃ x : m.Entity, C x = true) := rfl
+    (restrictedForall C B).presup () ↔ ∃ x : m.Entity, C x = true := Iff.rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- §5. Square of Opposition
@@ -207,19 +207,22 @@ theorem square_equiassertive {m : Model} [Fintype m.Entity]
   ⟨rfl, rfl, rfl⟩
 
 /-- The **content square**: extract the assertion-level content into a
-    `Square (Unit → Bool)`, suitable for constructing `SquareRelations`. -/
-def contentSquare {m : Model} [Fintype m.Entity]
+    `Square (Unit → Bool)`, suitable for constructing `SquareRelations`.
+
+    Since `PrProp` assertions are now `Prop`-valued, we use `decide` to
+    convert back to `Bool` for compatibility with `SquareRelations`. -/
+def contentSquare {m : Model} [Fintype m.Entity] [DecidableEq m.Entity]
     (C B : m.Entity → Bool) : Square (Unit → Bool) where
-  A := (belnapSquare C B).A.assertion
-  E := (belnapSquare C B).E.assertion
-  I := (belnapSquare C B).I.assertion
-  O := (belnapSquare C B).O.assertion
+  A := λ _ => decide (∀ x : m.Entity, C x = true → B x = true)
+  E := λ _ => decide (∀ x : m.Entity, C x = true → (!B x) = true)
+  I := λ _ => decide (∃ x : m.Entity, C x = true ∧ B x = true)
+  O := λ _ => decide (∃ x : m.Entity, C x = true ∧ (!B x) = true)
 
 /-- A and O have contradictory content (when both assertive). -/
-theorem a_o_contradictory {m : Model} [Fintype m.Entity]
+theorem a_o_contradictory {m : Model} [Fintype m.Entity] [DecidableEq m.Entity]
     (C B : m.Entity → Bool) (w : Unit) :
     (contentSquare C B).A w = !((contentSquare C B).O w) := by
-  simp only [contentSquare, belnapSquare, restrictedForall, restrictedExists]
+  simp only [contentSquare]
   rw [Bool.eq_iff_iff]
   simp only [decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
   constructor
@@ -230,10 +233,10 @@ theorem a_o_contradictory {m : Model} [Fintype m.Entity]
     exact h ⟨x, hCx, by cases B x <;> simp_all⟩
 
 /-- E and I have contradictory content (when both assertive). -/
-theorem e_i_contradictory {m : Model} [Fintype m.Entity]
+theorem e_i_contradictory {m : Model} [Fintype m.Entity] [DecidableEq m.Entity]
     (C B : m.Entity → Bool) (w : Unit) :
     (contentSquare C B).E w = !((contentSquare C B).I w) := by
-  simp only [contentSquare, belnapSquare, restrictedForall, restrictedExists]
+  simp only [contentSquare]
   rw [Bool.eq_iff_iff]
   simp only [decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
   constructor
@@ -247,36 +250,35 @@ theorem e_i_contradictory {m : Model} [Fintype m.Entity]
     restrictor is non-empty. The non-empty condition is exactly Belnap's
     assertiveness condition — the square's relations hold precisely in
     the worlds where the forms are assertive. -/
-theorem content_square_relations {m : Model} [Fintype m.Entity]
+theorem content_square_relations {m : Model} [Fintype m.Entity] [DecidableEq m.Entity]
     (C B : m.Entity → Bool)
-    (hR : decide (∃ x : m.Entity, C x = true) = true) :
+    (hR : ∃ x : m.Entity, C x = true) :
     SquareRelations (contentSquare C B) where
   contradAO := a_o_contradictory C B
   contradEI := e_i_contradictory C B
   contraryAE := λ w hA => by
     have hEI := e_i_contradictory C B w
     rw [hEI]; simp only [Bool.not_eq_false']
-    simp only [contentSquare, belnapSquare, restrictedExists, restrictedForall] at *
-    rw [decide_eq_true_eq] at hR hA ⊢
+    simp only [contentSquare] at *
+    rw [decide_eq_true_eq] at hA ⊢
     obtain ⟨x, hCx⟩ := hR
     exact ⟨x, hCx, hA x hCx⟩
   subalternAI := λ w hA => by
-    simp only [contentSquare, belnapSquare, restrictedForall, restrictedExists] at *
-    rw [decide_eq_true_eq] at hR hA ⊢
+    simp only [contentSquare] at *
+    rw [decide_eq_true_eq] at hA ⊢
     obtain ⟨x, hCx⟩ := hR
     exact ⟨x, hCx, hA x hCx⟩
   subalternEO := λ w hE => by
-    simp only [contentSquare, belnapSquare, restrictedForall, restrictedExists] at *
-    rw [decide_eq_true_eq] at hR hE ⊢
+    simp only [contentSquare] at *
+    rw [decide_eq_true_eq] at hE ⊢
     obtain ⟨x, hCx⟩ := hR
     exact ⟨x, hCx, hE x hCx⟩
   subcontrIO := λ w hI => by
-    simp only [contentSquare, belnapSquare, restrictedExists] at *
-    rw [decide_eq_true_eq] at hR ⊢
-    rw [decide_eq_false_iff_not] at hI; push_neg at hI
+    simp only [contentSquare] at *
+    rw [decide_eq_false_iff_not] at hI; push Not at hI
     obtain ⟨x, hCx⟩ := hR
     have hBf := hI x hCx
-    exact ⟨x, hCx, by simp [hBf]⟩
+    exact decide_eq_true_eq.mpr ⟨x, hCx, by simp [hBf]⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- §5. Obversion
@@ -304,11 +306,11 @@ theorem obversion {m : Model} [Fintype m.Entity]
     the second requires ∃xBx. -/
 theorem i_conversion_content {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
-    (restrictedExists C B).assertion () =
+    (restrictedExists C B).assertion () ↔
     (restrictedExists B C).assertion () := by
   simp only [restrictedExists]
-  congr 1; exact propext (⟨fun ⟨x, hC, hB⟩ => ⟨x, hB, hC⟩,
-                            fun ⟨x, hB, hC⟩ => ⟨x, hC, hB⟩⟩)
+  exact ⟨fun ⟨x, hC, hB⟩ => ⟨x, hB, hC⟩,
+         fun ⟨x, hB, hC⟩ => ⟨x, hC, hB⟩⟩
 
 /-- **I-conversion is equitrue** (p. 8): "truth is preserved in
     passing from one to the other." If ∃x(Cx/Bx)'s assertion holds,
@@ -322,25 +324,25 @@ theorem i_conversion_content {m : Model} [Fintype m.Entity]
     'Some animals are unicorns' is just plain false." -/
 theorem i_conversion_equitrue {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool)
-    (hTrue : (restrictedExists C B).assertion () = true) :
-    (restrictedExists B C).presup () = true ∧
-    (restrictedExists B C).assertion () = true := by
+    (hTrue : (restrictedExists C B).assertion ()) :
+    (restrictedExists B C).presup () ∧
+    (restrictedExists B C).assertion () := by
   constructor
   · simp only [restrictedExists] at *
-    rw [decide_eq_true_eq] at hTrue ⊢
     obtain ⟨x, hCx, hBx⟩ := hTrue
     exact ⟨x, hBx⟩
-  · exact (i_conversion_content C B).symm ▸ hTrue
+  · exact (i_conversion_content C B).mp hTrue
 
-/-- I-conversion is NOT equi-assertive in general. -/
+/-- I-conversion is NOT equi-assertive in general:
+    ∃xCx can hold while ∃xBx fails (or vice versa). -/
 theorem i_conversion_not_equiassertive :
     ∃ (m : Model) (_ : Fintype m.Entity) (C B : m.Entity → Bool),
-    (restrictedExists C B).presup () ≠
-    (restrictedExists B C).presup () := by
+    ((restrictedExists C B).presup () ∧ ¬(restrictedExists B C).presup ()) := by
   refine ⟨toyModel, inferInstance,
     (λ x => match x with | .john => true | _ => false),
     (λ _ => false), ?_⟩
-  native_decide
+  simp only [restrictedExists]
+  exact ⟨⟨.john, rfl⟩, fun ⟨_, h⟩ => nomatch h⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- §5. Barbara Syllogism
@@ -358,14 +360,13 @@ theorem i_conversion_not_equiassertive :
     is assertive) and ∃xAx (conclusion is assertive, same as minor). -/
 theorem barbara_assertive {m : Model} [Fintype m.Entity]
     (A C B : m.Entity → Bool)
-    (hMinorAssertive : (restrictedForall A C).presup () = true)
-    (hMinorTrue : (restrictedForall A C).assertion () = true) :
-    (restrictedForall C B).presup () = true ∧
-    (restrictedForall A B).presup () = true := by
+    (hMinorAssertive : (restrictedForall A C).presup ())
+    (hMinorTrue : (restrictedForall A C).assertion ()) :
+    (restrictedForall C B).presup () ∧
+    (restrictedForall A B).presup () := by
   simp only [restrictedForall] at *
   constructor
-  · rw [decide_eq_true_eq] at *
-    obtain ⟨x, hAx⟩ := hMinorAssertive
+  · obtain ⟨x, hAx⟩ := hMinorAssertive
     exact ⟨x, hMinorTrue x hAx⟩
   · exact hMinorAssertive
 
@@ -382,11 +383,10 @@ theorem barbara_assertive {m : Model} [Fintype m.Entity]
     major and her minor only minor." -/
 theorem barbara {m : Model} [Fintype m.Entity]
     (A C B : m.Entity → Bool)
-    (hMajor : (restrictedForall C B).assertion () = true)
-    (hMinor : (restrictedForall A C).assertion () = true) :
-    (restrictedForall A B).assertion () = true := by
+    (hMajor : (restrictedForall C B).assertion ())
+    (hMinor : (restrictedForall A C).assertion ()) :
+    (restrictedForall A B).assertion () := by
   simp only [restrictedForall] at *
-  rw [decide_eq_true_eq] at *
   intro x hAx
   exact hMajor x (hMinor x hAx)
 
@@ -407,9 +407,9 @@ theorem barbara {m : Model} [Fintype m.Entity]
     ∀x(Cx/Bx)." -/
 theorem contrapositive_different_assertiveness {m : Model} [Fintype m.Entity]
     (C B : m.Entity → Bool) :
-    (restrictedForall C B).presup () = decide (∃ x : m.Entity, C x = true) ∧
-    (restrictedForall (λ x => !B x) (λ x => !C x)).presup () =
-      decide (∃ x : m.Entity, (!B x) = true) :=
-  ⟨rfl, rfl⟩
+    ((restrictedForall C B).presup () ↔ ∃ x : m.Entity, C x = true) ∧
+    ((restrictedForall (λ x => !B x) (λ x => !C x)).presup () ↔
+      ∃ x : m.Entity, (!B x) = true) :=
+  ⟨Iff.rfl, Iff.rfl⟩
 
 end Phenomena.Conditionals.Studies.Belnap1970

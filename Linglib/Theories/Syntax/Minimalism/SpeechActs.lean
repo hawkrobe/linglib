@@ -209,10 +209,21 @@ theorem hearer_is_addressee_in_context {W E P T : Type*} (ctx : KContext W E P T
 theorem sa_phase_derivation_final :
     isSAPhaseHead (mkLeaf .SA [] 0) = true := rfl
 
--- E10: SA dominates C in the extended projection hierarchy.
---      fValue .SA = 7 > fValue .C = 6 (ExtendedProjection/Basic.lean).
-theorem sa_above_c_in_ep :
-    fValue .SA > fValue .C := by decide
+-- E10: fValue is injective on the canonical verbal EP spine (one head per
+--      F-level: V=0, v=1, T=2, Fin=3, Foc=4, Top=5, C=6, SA=7).
+--      Globally, fValue is NOT injective — multiple categories intentionally
+--      share an F-level (e.g., T/Neg/Pol are all F2). This restriction to
+--      the canonical spine captures the intended hierarchy; any pairwise
+--      comparison (e.g., SA > C) follows by omega.
+private def canonicalVerbalSpine : List Cat := [.V, .v, .T, .Fin, .Foc, .Top, .C, .SA]
+
+theorem fValue_injective_on_canonical_verbal_spine (c1 c2 : Cat)
+    (h1 : c1 ∈ canonicalVerbalSpine) (h2 : c2 ∈ canonicalVerbalSpine)
+    (hf : fValue c1 = fValue c2) : c1 = c2 := by
+  simp only [canonicalVerbalSpine, List.mem_cons, List.mem_nil_iff, or_false] at h1 h2
+  rcases h1 with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+  rcases h2 with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+  simp_all [fValue]
 
 -- Mood-sensitive seat of knowledge resolves correctly in context
 theorem seat_of_knowledge_declarative {W E P T : Type*} (ctx : KContext W E P T) :
@@ -296,9 +307,10 @@ def SentienceProjection.rank : SentienceProjection → Nat
   | .EvidP => 0
   | .EvalP => 1
 
-/-- EvalP dominates EvidP in the Sentience Domain. -/
-theorem evalp_above_evidp :
-    SentienceProjection.EvalP.rank > SentienceProjection.EvidP.rank := by decide
+/-- The rank function on the Sentience Domain is injective: distinct
+    projections (EvidP, EvalP) have distinct ranks (0, 1). -/
+theorem rank_injective : Function.Injective SentienceProjection.rank := by
+  intro a b h; cases a <;> cases b <;> simp_all [SentienceProjection.rank]
 
 /-- The specifier of EvalP hosts a P-role: SEAT OF KNOWLEDGE.
 

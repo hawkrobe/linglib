@@ -461,14 +461,11 @@ theorem bridge_no_extraction_clash (v : VerbDecomp) (h : v.hasMannerWeight = fal
   simp only [defaultDimension, h, Bool.false_eq_true, ite_false, complementStatus,
              extractedFillerStatus]; rfl
 
-/-- Backgrounded extraction is strictly worse than neutral.
-Uses `DiscourseStatus.rank` from `Core/InformationStructure.lean`. -/
-theorem backgrounded_lt_new :
-    DiscourseStatus.given.rank < DiscourseStatus.new.rank := by native_decide
-
-/-- Neutral extraction is strictly worse than focused. -/
-theorem new_lt_focused :
-    DiscourseStatus.new.rank < DiscourseStatus.focused.rank := by native_decide
+/-- `DiscourseStatus.rank` is injective: distinct statuses have distinct ranks.
+Subsumes the pairwise chain `backgrounded_lt_new` / `new_lt_focused`. -/
+theorem DiscourseStatus.rank_injective (a b : DiscourseStatus)
+    (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [DiscourseStatus.rank]
 
 
 /-! ## §7. Prosodic Amelioration (Experiments 1 & 3b)
@@ -784,15 +781,12 @@ theorem shout_lexical : shoutDecomp.mannerWeightSource = .lexical := rfl
 theorem say_softly_compositional : saySoftlyDecomp.mannerWeightSource = .compositional := rfl
 theorem say_none_source : sayDecomp.mannerWeightSource = .none := rfl
 
-/-- Lexical manner weight is stronger than compositional. -/
-theorem lexical_rank_gt_compositional :
-    MannerWeightSource.rank .lexical > MannerWeightSource.rank .compositional := by
-  native_decide
-
-/-- Compositional manner weight is stronger than none. -/
-theorem compositional_rank_gt_none :
-    MannerWeightSource.rank .compositional > MannerWeightSource.rank .none := by
-  native_decide
+/-- `MannerWeightSource.rank` is injective: distinct sources have distinct ranks.
+Subsumes the pairwise chain `lexical_rank_gt_compositional` /
+`compositional_rank_gt_none`. -/
+theorem MannerWeightSource.rank_injective (a b : MannerWeightSource)
+    (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [MannerWeightSource.rank]
 
 /-- Any manner weight (lexical or compositional) yields `hasMannerWeight = true`.
 The binary and gradient models are consistent. -/
@@ -834,7 +828,7 @@ Backgroundedness is derived from the formal model (§6 `mos_island_effect`).
 Projectivity follows from the anti-correlation with at-issueness
 (@cite{tonhauser-beaver-degen-2018}): backgrounded content is not at-issue,
 and not-at-issue content projects. Extraction resistance follows from
-backgroundedness (§6 `backgrounded_lt_new`). -/
+backgroundedness (§6 `DiscourseStatus.rank_injective`). -/
 def mosComplementProfile : ExtractionProfile := ⟨true, true, true⟩
 
 /-- Factive verb complement (*notice*, *discover*): projective but NOT

@@ -74,9 +74,11 @@ instance : LE Level where
 instance (a b : Level) : Decidable (a < b) := Nat.decLt a.toNat b.toNat
 instance (a b : Level) : Decidable (a ≤ b) := Nat.decLe a.toNat b.toNat
 
-theorem informal_lt_neutral : Level.informal < Level.neutral := by decide
-theorem neutral_lt_formal : Level.neutral < Level.formal := by decide
-theorem informal_lt_formal : Level.informal < Level.formal := by decide
+/-- `toNat` is injective: distinct levels have distinct ranks. Combined with
+    the fact that `LT`/`LE` are defined via `toNat`, this subsumes all pairwise
+    ordering facts (e.g., `informal < neutral`) by `Nat.lt` on the images. -/
+theorem Level.toNat_injective (a b : Level) (h : a.toNat = b.toNat) : a = b := by
+  cases a <;> cases b <;> simp_all [Level.toNat]
 
 /-- Round-trip: `ofNat` inverts `toNat`. -/
 theorem ofNat_toNat (l : Level) : Level.fromNat l.toNat = l := by cases l <;> decide

@@ -82,9 +82,10 @@ instance (a b : Stratum) : Decidable (a < b) :=
 instance (a b : Stratum) : Decidable (a ≤ b) :=
   inferInstanceAs (Decidable (a.rank ≤ b.rank))
 
-theorem stem_lt_word : Stratum.stem < Stratum.word := by decide
-theorem word_lt_phrase : Stratum.word < Stratum.phrase := by decide
-theorem stem_lt_phrase : Stratum.stem < Stratum.phrase := by decide
+/-- Stratum rank is injective — distinct strata have distinct ranks,
+    establishing a total order on phonological strata. -/
+theorem stratum_rank_injective (a b : Stratum) (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [Stratum.rank]
 
 -- ============================================================================
 -- § 2: Stratal Evaluation

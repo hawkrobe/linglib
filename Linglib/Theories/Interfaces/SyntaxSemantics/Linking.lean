@@ -149,58 +149,51 @@ def ThetaRole.canonicalProfile : ThetaRole → EntailmentProfile
   | .goal        => ⟨false, false, false, false, true,  false, false, false, false, false⟩
   | .source      => ⟨false, false, false, false, true,  false, false, false, false, false⟩
 
--- Round-trip: toRole ∘ canonicalProfile for distinguishable roles
+-- Round-trip: toRole ∘ canonicalProfile
 
-/-- Agent survives round-trip. -/
-theorem toRole_canonical_agent :
-    (ThetaRole.canonicalProfile .agent).toRole = some .agent := by native_decide
+/-- Instrument and stimulus have identical canonical profiles — both are
+    {causation, independentExistence}. `toRole` cannot distinguish them. -/
+theorem instrument_stimulus_same_profile :
+    ThetaRole.canonicalProfile .instrument = ThetaRole.canonicalProfile .stimulus := rfl
 
-/-- Patient survives round-trip. -/
-theorem toRole_canonical_patient :
-    (ThetaRole.canonicalProfile .patient).toRole = some .patient := by native_decide
+/-- Goal and source have identical canonical profiles — both are
+    {independentExistence} only. `toRole` cannot distinguish them. -/
+theorem goal_source_same_profile :
+    ThetaRole.canonicalProfile .goal = ThetaRole.canonicalProfile .source := rfl
 
-/-- Theme survives round-trip. -/
-theorem toRole_canonical_theme :
-    (ThetaRole.canonicalProfile .theme).toRole = some .theme := by native_decide
+/-- `toRole ∘ canonicalProfile` is a retraction: it recovers a role whose
+    canonical profile matches the input's. This partitions ThetaRole into
+    equivalence classes under profile identity:
 
-/-- Experiencer survives round-trip. -/
-theorem toRole_canonical_experiencer :
-    (ThetaRole.canonicalProfile .experiencer).toRole = some .experiencer := by native_decide
+    - Singletons: agent, patient, theme, experiencer (recoverable)
+    - {instrument, stimulus} — both map to stimulus
+    - {goal, source} — both map to goal
 
-/-- Stimulus survives round-trip. -/
-theorem toRole_canonical_stimulus :
-    (ThetaRole.canonicalProfile .stimulus).toRole = some .stimulus := by native_decide
-
-/-- Goal survives round-trip. -/
-theorem toRole_canonical_goal :
-    (ThetaRole.canonicalProfile .goal).toRole = some .goal := by native_decide
-
-/-- Instrument collapses to stimulus (identical profiles: {C, IE}). -/
-theorem toRole_canonical_instrument :
-    (ThetaRole.canonicalProfile .instrument).toRole = some .stimulus := by native_decide
-
-/-- Source collapses to goal (identical profiles: {IE}). -/
-theorem toRole_canonical_source :
-    (ThetaRole.canonicalProfile .source).toRole = some .goal := by native_decide
+    The proof is uniform: `cases r` splits into 8 constructors, and for each,
+    both `toRole` and profile equality reduce by `rfl`. -/
+theorem toRole_canonicalProfile_roundtrip (r : ThetaRole) :
+    ∃ r', (r.canonicalProfile).toRole = some r' ∧
+          r'.canonicalProfile = r.canonicalProfile := by
+  cases r <;> exact ⟨_, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 4. toRole on Canonical Verb Profiles
 -- ════════════════════════════════════════════════════════════════════════
 
 /-- "kick" subject profile → agent. -/
-theorem kick_subject_toRole : kickSubjectProfile.toRole = some .agent := by native_decide
+theorem kick_subject_toRole : kickSubjectProfile.toRole = some .agent := by rfl
 
 /-- "kick" object profile → patient. -/
-theorem kick_object_toRole : kickObjectProfile.toRole = some .patient := by native_decide
+theorem kick_object_toRole : kickObjectProfile.toRole = some .patient := by rfl
 
 /-- "see" subject profile → experiencer. -/
-theorem see_subject_toRole : seeSubjectProfile.toRole = some .experiencer := by native_decide
+theorem see_subject_toRole : seeSubjectProfile.toRole = some .experiencer := by rfl
 
 /-- "arrive" subject profile → none (mixed P-Agent + P-Patient: movement disqualifies). -/
-theorem arrive_subject_toRole : arriveSubjectProfile.toRole = none := by native_decide
+theorem arrive_subject_toRole : arriveSubjectProfile.toRole = none := by rfl
 
 /-- "die" subject profile → patient (pure P-Patient). -/
-theorem die_subject_toRole : dieSubjectProfile.toRole = some .patient := by native_decide
+theorem die_subject_toRole : dieSubjectProfile.toRole = some .patient := by rfl
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 5. ASP Verification with Canonical Profiles
@@ -212,57 +205,50 @@ theorem die_subject_toRole : dieSubjectProfile.toRole = some .patient := by nati
 theorem agent_outranks_patient :
     outranksForSubject
       (ThetaRole.canonicalProfile .agent)
-      (ThetaRole.canonicalProfile .patient) = true := by native_decide
+      (ThetaRole.canonicalProfile .patient) = true := by rfl
 
 /-- Agent outranks instrument (lattice: {V,S,C,M,IE} ⊃ {C,IE}). -/
 theorem agent_outranks_instrument :
     outranksForSubject
       (ThetaRole.canonicalProfile .agent)
-      (ThetaRole.canonicalProfile .instrument) = true := by native_decide
+      (ThetaRole.canonicalProfile .instrument) = true := by rfl
 
 /-- Agent outranks experiencer (lattice: {V,S,C,M,IE} ⊃ {S,IE}). -/
 theorem agent_outranks_experiencer :
     outranksForSubject
       (ThetaRole.canonicalProfile .agent)
-      (ThetaRole.canonicalProfile .experiencer) = true := by native_decide
+      (ThetaRole.canonicalProfile .experiencer) = true := by rfl
 
 /-- Experiencer and instrument have incomparable P-Agent sets ({S,IE} ⊥ {C,IE}),
     but also equal P-Patient (both 0) → alternation predicted. -/
 theorem experiencer_instrument_alternation :
     allowsAlternation
       (ThetaRole.canonicalProfile .experiencer)
-      (ThetaRole.canonicalProfile .instrument) = true := by native_decide
+      (ThetaRole.canonicalProfile .instrument) = true := by rfl
 
 /-- Experiencer and stimulus have equal profiles → alternation (like/please). -/
 theorem experiencer_stimulus_alternation :
     allowsAlternation
       (ThetaRole.canonicalProfile .experiencer)
-      (ThetaRole.canonicalProfile .stimulus) = true := by native_decide
+      (ThetaRole.canonicalProfile .stimulus) = true := by rfl
 
--- Role hierarchy (informational)
+/-- Agent is maximally proto-agentive and minimally proto-patientive —
+    the archetype at one end of Dowty's continuum. -/
+theorem agent_maximal_pAgent :
+    (ThetaRole.canonicalProfile .agent).pAgentScore = 5 ∧
+    (ThetaRole.canonicalProfile .agent).pPatientScore = 0 := ⟨rfl, rfl⟩
 
-theorem agent_pAgent_score :
-    (ThetaRole.canonicalProfile .agent).pAgentScore = 5 := by native_decide
+/-- Patient is maximally proto-patientive and minimally proto-agentive —
+    the archetype at the opposite end. -/
+theorem patient_maximal_pPatient :
+    (ThetaRole.canonicalProfile .patient).pAgentScore = 0 ∧
+    (ThetaRole.canonicalProfile .patient).pPatientScore = 3 := ⟨rfl, rfl⟩
 
-theorem patient_pAgent_score :
-    (ThetaRole.canonicalProfile .patient).pAgentScore = 0 := by native_decide
-
-theorem agent_pPatient_score :
-    (ThetaRole.canonicalProfile .agent).pPatientScore = 0 := by native_decide
-
-theorem patient_pPatient_score :
-    (ThetaRole.canonicalProfile .patient).pPatientScore = 3 := by native_decide
-
--- Well-formedness of canonical profiles
-
-theorem canonical_agent_wellformed :
-    (ThetaRole.canonicalProfile .agent).wellFormedInternal = true := by native_decide
-
-theorem canonical_experiencer_wellformed :
-    (ThetaRole.canonicalProfile .experiencer).wellFormedInternal = true := by native_decide
-
-theorem canonical_patient_wellformed :
-    (ThetaRole.canonicalProfile .patient).wellFormedInternal = true := by native_decide
+/-- All canonical profiles satisfy the well-formedness constraint:
+    volition entails sentience. -/
+theorem canonical_profiles_wellformed (r : ThetaRole) :
+    (r.canonicalProfile).wellFormedInternal = true := by
+  cases r <;> rfl
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 6. Argument position

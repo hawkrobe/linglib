@@ -114,12 +114,11 @@ theorem occasion_presup_projects {W : Type*}
     Presupposition "Peter did something wrong" is NOT entailed → projects. -/
 theorem heim_antecedent_projects {W : Type*}
     (c : ContextSet W) (trigger _consequence : PrProp W)
-    (h : ∃ w, c w ∧ trigger.presup w = false) :
+    (h : ∃ w, c w ∧ ¬trigger.presup w) :
     presupProjects (initialLocalCtx c) trigger := by
   obtain ⟨w, hw_in, hpresup_false⟩ := h
   intro hfilter
-  have := hfilter w hw_in
-  simp [hpresup_false] at this
+  exact hpresup_false (hfilter w hw_in)
 
 -- ════════════════════════════════════════════════════
 -- § 4. Symmetric Filtering (@cite{schlenker-2008}, 2009)
@@ -143,7 +142,7 @@ def symmetricLocalCtxAntecedent {W : Type*}
     symmetric filtering predicts the presupposition is filtered. -/
 theorem symmetric_filters_when_consequent_entails {W : Type*}
     (c : LocalCtx W) (trigger consequent : PrProp W)
-    (h : ∀ w, c.worlds w → consequent.assertion w = true → trigger.presup w = true) :
+    (h : ∀ w, c.worlds w → consequent.assertion w → trigger.presup w) :
     presupFiltered (symmetricLocalCtxAntecedent c consequent) trigger := by
   intro w hw
   have ⟨hw_in, hcons⟩ := hw
@@ -167,8 +166,8 @@ theorem symmetric_filters_when_consequent_entails {W : Type*}
     the presupposition is filtered (matching experimental judgments). -/
 theorem cataphoric_resolution_possible {W : Type*}
     (c : LocalCtx W) (trigger consequent : PrProp W)
-    (h_entails : ∀ w, c.worlds w → consequent.assertion w = true →
-                       trigger.presup w = true) :
+    (h_entails : ∀ w, c.worlds w → consequent.assertion w →
+                       trigger.presup w) :
     -- Symmetric filtering: presupposition IS filtered
     presupFiltered (symmetricLocalCtxAntecedent c consequent) trigger := by
   exact symmetric_filters_when_consequent_entails c trigger consequent h_entails

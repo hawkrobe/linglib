@@ -323,13 +323,15 @@ theorem fail_not_defined_in_qNapRest :
 
 /-- The PrProp wrapper: nap is defined AND true. -/
 theorem nap_prprop_holds :
-    (wantPrProp belNapRest desRest qNapRest nap).presup .w0 = true ∧
-    (wantPrProp belNapRest desRest qNapRest nap).assertion .w0 = true := by
-  constructor <;> native_decide
+    (wantPrProp belNapRest desRest qNapRest nap).presup .w0 ∧
+    (wantPrProp belNapRest desRest qNapRest nap).assertion .w0 := by
+  simp only [wantPrProp]
+  exact ⟨by native_decide, by native_decide⟩
 
 /-- The PrProp wrapper: fail is undefined (presup fails). -/
 theorem fail_prprop_undefined :
-    (wantPrProp belNapRest desRest qNapRest fail).presup .w0 = false := by native_decide
+    ¬(wantPrProp belNapRest desRest qNapRest fail).presup .w0 := by
+  simp only [wantPrProp]; native_decide
 
 -- ============================================================================
 -- §10. Belief-sensitivity: Avoid-war scenario (§4.2)

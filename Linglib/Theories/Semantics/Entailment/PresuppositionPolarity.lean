@@ -46,7 +46,7 @@ This function captures that basic behavior.
 More complex interactions (e.g., presupposition strengthening under
 negation) would require extending this.
 -/
-def presupProjectsAt (_ctx : ContextPolarity) (p : PrProp W) : BProp W :=
+def presupProjectsAt (_ctx : ContextPolarity) (p : PrProp W) : Prop' W :=
   p.presup
 
 /--

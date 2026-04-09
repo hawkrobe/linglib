@@ -193,12 +193,12 @@ def mustBase : ModalBase := λ _ => [bottlesEmpty, johnDrank]
 def beliefOrdering : OrderingSource := λ _ => [johnDrank]
 
 theorem ev_presup_satisfied (w : World) :
-    (izvorskiEv evBase beliefOrdering johnDrank).presup w = true := by
-  cases w <;> native_decide
+    (izvorskiEv evBase beliefOrdering johnDrank).presup w := by
+  simp only [izvorskiEv]; cases w <;> native_decide
 
 theorem ev_asserts_drank (w : World) :
-    (izvorskiEv evBase beliefOrdering johnDrank).assertion w = true := by
-  cases w <;> native_decide
+    (izvorskiEv evBase beliefOrdering johnDrank).assertion w := by
+  simp only [izvorskiEv]; cases w <;> native_decide
 
 theorem must_accessible_subset_ev (w w' : World)
     (hw' : w' ∈ accessibleWorlds mustBase w) :
@@ -217,9 +217,9 @@ theorem restricted_base_enlarges_access
   exact extension_antitone (f_ev w) (f_must w) w' (h w) hw'
 
 theorem ev_and_must_agree_here (w : World) :
-    (izvorskiEv evBase beliefOrdering johnDrank).assertion w =
-    necessity mustBase beliefOrdering johnDrank w := by
-  cases w <;> native_decide
+    (izvorskiEv evBase beliefOrdering johnDrank).assertion w ↔
+    (necessity mustBase beliefOrdering johnDrank w : Prop) := by
+  simp only [izvorskiEv]; cases w <;> native_decide
 
 private def pOnlyW0 : BProp World
   | .w0 => true
@@ -227,8 +227,9 @@ private def pOnlyW0 : BProp World
 
 theorem izvorski_koev_diverge :
     ∃ (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
-      (izvorskiEv f g p).assertion w ≠ p w :=
-  ⟨emptyBackground, emptyBackground, pOnlyW0, .w0, by native_decide⟩
+      (izvorskiEv f g p).assertion w ≠ p w := by
+  refine ⟨emptyBackground, emptyBackground, pOnlyW0, .w0, ?_⟩
+  simp only [izvorskiEv]; native_decide
 
 theorem izvorski_collapses_to_koev_when_realistic
     (f : ModalBase) (p : BProp World) (w : World)

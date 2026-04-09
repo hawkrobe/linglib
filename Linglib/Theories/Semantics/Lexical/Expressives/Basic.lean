@@ -330,38 +330,44 @@ This provides a new cross-module connection between:
 -/
 
 /--
-CI lift: type-shift a presuppositional proposition into a two-dimensional meaning.
+CI lift: type-shift a Bool-valued presupposition/assertion pair into a
+two-dimensional meaning.
 
 The presupposition becomes CI content (projects universally), while the
 assertion becomes at-issue content (composes truth-functionally).
 
 This is the ⟦CI⟧ operator from @cite{wang-2025}.
+
+Takes Bool functions directly because `TwoDimProp` is Bool-valued.
+To lift a `PrProp` constructed via `PrProp.ofBool`, pass the original
+Bool functions rather than the Prop-wrapped fields.
 -/
-def ciLift {W : Type*} (p : Core.Presupposition.PrProp W) : TwoDimProp W :=
-  { atIssue := p.assertion
-  , ci := p.presup }
+def ciLift {W : Type*} (presupBool assertionBool : BProp W) : TwoDimProp W :=
+  { atIssue := assertionBool
+  , ci := presupBool }
 
 /--
 CI lift preserves the assertion as at-issue content.
 -/
-theorem ciLift_atIssue {W : Type*} (p : Core.Presupposition.PrProp W) :
-    (ciLift p).atIssue = p.assertion := rfl
+theorem ciLift_atIssue {W : Type*} (presupBool assertionBool : BProp W) :
+    (ciLift presupBool assertionBool).atIssue = assertionBool := rfl
 
 /--
 CI lift maps presupposition to CI dimension.
 -/
-theorem ciLift_ci {W : Type*} (p : Core.Presupposition.PrProp W) :
-    (ciLift p).ci = p.presup := rfl
+theorem ciLift_ci {W : Type*} (presupBool assertionBool : BProp W) :
+    (ciLift presupBool assertionBool).ci = presupBool := rfl
 
 /--
 De re reading: when CG entails the presupposition, the CI dimension is satisfied
 at all CG worlds. This means the presupposition is resolved against the CG
 regardless of what is embedded under an attitude verb.
 -/
-theorem deRe_from_ciLift {W : Type*} (p : Core.Presupposition.PrProp W)
-    (cg : Core.Proposition.BProp W)
-    (h : ∀ w, cg w = true → p.presup w = true) :
-    ∀ w, cg w = true → (ciLift p).ci w = true :=
+theorem deRe_from_ciLift {W : Type*} (presupBool : BProp W)
+    (assertionBool : BProp W)
+    (cg : BProp W)
+    (h : ∀ w, cg w = true → presupBool w = true) :
+    ∀ w, cg w = true → (ciLift presupBool assertionBool).ci w = true :=
   h
 
 /--
@@ -371,14 +377,15 @@ at-issue content but preserves the presupposition (as CI).
 This matches both Potts' CI projection and standard presupposition projection
 through negation.
 -/
-theorem ciLift_neg_preserves_presup {W : Type*} (p : Core.Presupposition.PrProp W) :
-    (TwoDimProp.neg (ciLift p)).ci = p.presup := rfl
+theorem ciLift_neg_preserves_presup {W : Type*} (presupBool assertionBool : BProp W) :
+    (TwoDimProp.neg (ciLift presupBool assertionBool)).ci = presupBool := rfl
 
 /--
-Round-trip: CI lift then extract components recovers the original PrProp.
+Round-trip: CI lift then extract components recovers the original Bool functions.
 -/
-theorem ciLift_roundtrip {W : Type*} (p : Core.Presupposition.PrProp W) :
-    Core.Presupposition.PrProp.mk (ciLift p).ci (ciLift p).atIssue = p := by
-  cases p; rfl
+theorem ciLift_roundtrip {W : Type*} (presupBool assertionBool : BProp W) :
+    (ciLift presupBool assertionBool).ci = presupBool ∧
+    (ciLift presupBool assertionBool).atIssue = assertionBool :=
+  ⟨rfl, rfl⟩
 
 end Semantics.Lexical.Expressives

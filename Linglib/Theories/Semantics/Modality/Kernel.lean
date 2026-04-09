@@ -262,13 +262,11 @@ theorem partition_implies_entailment (k : Kernel) (φ : BProp World)
 
 /-- ⟦must φ⟧: presupposes K doesn't settle φ; asserts B_K ⊆ ⟦φ⟧. -/
 def kernelMust (k : Kernel) (φ : BProp World) : PrProp World :=
-  { presup := λ _ => !directlySettlesExplicit k φ
-  , assertion := λ _ => Kratzer.followsFrom φ k.props }
+  PrProp.ofBool (λ _ => !directlySettlesExplicit k φ) (λ _ => Kratzer.followsFrom φ k.props)
 
 /-- ⟦might φ⟧: presupposes K doesn't settle φ; asserts B_K ∩ ⟦φ⟧ ≠ ∅. -/
 def kernelMight (k : Kernel) (φ : BProp World) : PrProp World :=
-  { presup := λ _ => !directlySettlesExplicit k φ
-  , assertion := λ _ => isCompatibleWith φ k.props }
+  PrProp.ofBool (λ _ => !directlySettlesExplicit k φ) (λ _ => isCompatibleWith φ k.props)
 
 /-- ⟦can't φ⟧ = must(¬φ). -/
 def kernelCant (k : Kernel) (φ : BProp World) : PrProp World :=
@@ -276,51 +274,48 @@ def kernelCant (k : Kernel) (φ : BProp World) : PrProp World :=
 
 /-- World-dependent ⟦must φ⟧. -/
 def kernelMustW (kb : KernelBackground) (φ : BProp World) : PrProp World :=
-  { presup := λ w => !directlySettlesExplicit (kb w) φ
-  , assertion := λ w => Kratzer.followsFrom φ (kb w).props }
+  PrProp.ofBool (λ w => !directlySettlesExplicit (kb w) φ) (λ w => Kratzer.followsFrom φ (kb w).props)
 
 /-- World-dependent ⟦might φ⟧. -/
 def kernelMightW (kb : KernelBackground) (φ : BProp World) : PrProp World :=
-  { presup := λ w => !directlySettlesExplicit (kb w) φ
-  , assertion := λ w => isCompatibleWith φ (kb w).props }
+  PrProp.ofBool (λ w => !directlySettlesExplicit (kb w) φ) (λ w => isCompatibleWith φ (kb w).props)
 
 /-! ## Core properties -/
 
 /-- Must is strong: when defined, must φ = universal necessity over B_K. -/
 theorem must_is_strong (k : Kernel) (φ : BProp World) (w : World)
-    (_hDef : (kernelMust k φ).presup w = true) :
-    (kernelMust k φ).assertion w = simpleNecessity k.toModalBase φ w := by
-  unfold kernelMust simpleNecessity accessibleWorlds Kernel.toModalBase followsFrom
+    (_hDef : (kernelMust k φ).presup w) :
+    (kernelMust k φ).assertion w = (simpleNecessity k.toModalBase φ w = true) := by
+  unfold kernelMust PrProp.ofBool simpleNecessity accessibleWorlds Kernel.toModalBase followsFrom
   rfl
 
 /-- T axiom: must φ entails φ when B_K is realistic (w ∈ B_K). -/
 theorem must_entails_prejacent (k : Kernel) (φ : BProp World) (w : World)
     (hReal : w ∈ k.base)
-    (_hDef : (kernelMust k φ).presup w = true)
-    (hTrue : (kernelMust k φ).assertion w = true) :
+    (_hDef : (kernelMust k φ).presup w)
+    (hTrue : (kernelMust k φ).assertion w) :
     φ w = true := by
-  unfold kernelMust at hTrue
-  unfold followsFrom at hTrue
-  unfold Kernel.base at hReal
+  simp only [kernelMust, PrProp.ofBool] at hTrue
   exact List.all_eq_true.mp hTrue w hReal
 
 /-- Duality: might φ ↔ ¬(must ¬φ) in assertion content. -/
 theorem kernel_duality (k : Kernel) (φ : BProp World) (w : World) :
-    (kernelMight k φ).assertion w = !(kernelMust k (λ w' => !φ w')).assertion w := by
-  simp only [kernelMight, kernelMust, isCompatibleWith, isConsistent, followsFrom]
+    (kernelMight k φ).assertion w ↔ ¬(kernelMust k (λ w' => !φ w')).assertion w := by
+  simp only [kernelMight, kernelMust, PrProp.ofBool, isCompatibleWith, isConsistent, followsFrom]
   rw [propIntersection_cons, filter_isEmpty_eq_all_not]
+  simp only [Bool.not_eq_true, Bool.not_eq_true']
 
 /-- Empty kernel: nothing is settled, so must is always defined. -/
 theorem empty_kernel_always_defined (φ : BProp World) (w : World) :
-    (kernelMust ⟨[]⟩ φ).presup w = true := by
-  simp only [kernelMust, directlySettlesExplicit, List.any_nil, Bool.not_false]
+    (kernelMust ⟨[]⟩ φ).presup w := by
+  simp only [kernelMust, PrProp.ofBool, directlySettlesExplicit, List.any_nil, Bool.not_false]
 
 /-! ## Bridge to Kratzer.lean -/
 
 /-- Kernel must assertion = Kratzer simple necessity. -/
 theorem kernelMust_eq_simpleNecessity (k : Kernel) (φ : BProp World) (w : World) :
-    (kernelMust k φ).assertion w = simpleNecessity k.toModalBase φ w := by
-  unfold kernelMust simpleNecessity accessibleWorlds Kernel.toModalBase followsFrom
+    (kernelMust k φ).assertion w = (simpleNecessity k.toModalBase φ w = true) := by
+  unfold kernelMust PrProp.ofBool simpleNecessity accessibleWorlds Kernel.toModalBase followsFrom
   rfl
 
 /-- Kernel must assertion = full Kratzer necessity with empty ordering.
@@ -328,7 +323,7 @@ theorem kernelMust_eq_simpleNecessity (k : Kernel) (φ : BProp World) (w : World
     This extends `kernelMust_eq_simpleNecessity` by connecting through
     `kernelMust_eq_simpleNecessity`: kernel must = simple necessity. -/
 theorem kernelMust_eq_necessity (k : Kernel) (φ : BProp World) (w : World) :
-    (kernelMust k φ).assertion w = necessity k.toModalBase emptyBackground φ w := by
+    (kernelMust k φ).assertion w = (necessity k.toModalBase emptyBackground φ w = true) := by
   rw [kernelMust_eq_simpleNecessity]
   unfold simpleNecessity necessity emptyBackground
   rw [empty_ordering_simple]
@@ -339,7 +334,7 @@ theorem kernelMust_eq_necessity (k : Kernel) (φ : BProp World) (w : World) :
     kernel must is exactly Kratzer necessity with the kernel's epistemic flavor. -/
 theorem kernelMust_eq_epistemicNecessity (k : Kernel) (φ : BProp World) (w : World) :
     (kernelMust k φ).assertion w =
-    necessity k.toEpistemicFlavor.evidence k.toEpistemicFlavor.ordering φ w := by
+    (necessity k.toEpistemicFlavor.evidence k.toEpistemicFlavor.ordering φ w = true) := by
   rw [kernelMust_eq_necessity]
   rfl
 
@@ -348,7 +343,7 @@ theorem kernelMust_eq_epistemicNecessity (k : Kernel) (φ : BProp World) (w : Wo
     `kernelMustW kb φ` asserts `necessity (kb.toModalBase) emptyBackground φ`
     at each world. -/
 theorem kernelMustW_eq_necessity (kb : KernelBackground) (φ : BProp World) (w : World) :
-    (kernelMustW kb φ).assertion w = necessity kb.toModalBase emptyBackground φ w :=
+    (kernelMustW kb φ).assertion w = (necessity kb.toModalBase emptyBackground φ w = true) :=
   kernelMust_eq_necessity (kb w) φ w
 
 /-! ## Mastermind example (@cite{von-fintel-gillies-2010} pp. 365–366)
@@ -374,16 +369,19 @@ theorem mastermind_blue_follows :
     mastermindK.followsFrom blue = true := by native_decide
 
 theorem mastermind_must_blue_defined :
-    (kernelMust mastermindK blue).presup .w0 = true := by native_decide
+    (kernelMust mastermindK blue).presup .w0 := by
+  simp only [kernelMust, PrProp.ofBool]; native_decide
 
 theorem mastermind_must_blue_true :
-    (kernelMust mastermindK blue).assertion .w0 = true := by native_decide
+    (kernelMust mastermindK blue).assertion .w0 := by
+  simp only [kernelMust, PrProp.ofBool]; native_decide
 
 theorem mastermind_red_settled :
     directlySettlesExplicit mastermindK red = true := by native_decide
 
 theorem mastermind_might_red_undefined :
-    (kernelMight mastermindK red).presup .w0 = false := by native_decide
+    ¬(kernelMight mastermindK red).presup .w0 := by
+  simp only [kernelMight, PrProp.ofBool]; native_decide
 
 theorem mastermind_redOrBlue_settled :
     directlySettlesExplicit mastermindK redOrBlue = true := by native_decide
@@ -435,18 +433,20 @@ theorem entailment_settling_gap :
 /-- **Indirectness ≠ weakness**: three independent cases show indirectness
 and assertion strength are orthogonal dimensions. -/
 theorem indirectness_neq_weakness :
-    ((kernelMust mastermindK blue).presup .w0 = true ∧
-     (kernelMust mastermindK blue).assertion .w0 = true) ∧
-    (kernelMust mastermindK red).presup .w0 = false ∧
-    ((kernelMust indirectK blue).presup .w0 = true ∧
-     (kernelMust indirectK blue).assertion .w0 = false) := by native_decide
+    ((kernelMust mastermindK blue).presup .w0 ∧
+     (kernelMust mastermindK blue).assertion .w0) ∧
+    ¬(kernelMust mastermindK red).presup .w0 ∧
+    ((kernelMust indirectK blue).presup .w0 ∧
+     ¬(kernelMust indirectK blue).assertion .w0) := by
+  simp only [kernelMust, PrProp.ofBool]; exact ⟨⟨by native_decide, by native_decide⟩,
+    by native_decide, by native_decide, by native_decide⟩
 
 /-- **Modus ponens with must** (@cite{von-fintel-gillies-2010} Arg 4.3.1): the argument form
 "if φ, must ψ; φ; ∴ ψ" is valid under realistic B_K. -/
 theorem modus_ponens_with_must (k : Kernel) (φ ψ : BProp World) (w : World)
     (hReal : w ∈ k.base)
-    (_hDef : (kernelMust k ψ).presup w = true)
-    (hCond : φ w = true → (kernelMust k ψ).assertion w = true)
+    (_hDef : (kernelMust k ψ).presup w)
+    (hCond : φ w = true → (kernelMust k ψ).assertion w)
     (hPhi : φ w = true) :
     ψ w = true :=
   must_entails_prejacent k ψ w hReal _hDef (hCond hPhi)
@@ -454,19 +454,19 @@ theorem modus_ponens_with_must (k : Kernel) (φ ψ : BProp World) (w : World)
 /-- **Must-perhaps contradiction** (@cite{von-fintel-gillies-2010} Arg 4.3.2): must φ ∧ might ¬φ
 is contradictory. When B_K ⊆ ⟦φ⟧, we have B_K ∩ ⟦¬φ⟧ = ∅. -/
 theorem must_perhaps_contradiction (k : Kernel) (φ : BProp World) (w : World)
-    (_hDef : (kernelMust k φ).presup w = true)
-    (hMust : (kernelMust k φ).assertion w = true) :
-    (kernelMight k (λ w' => !φ w')).assertion w = false := by
-  rw [kernel_duality]
-  simp only [kernelMust] at hMust ⊢
-  simp only [followsFrom, propIntersection] at hMust ⊢
+    (_hDef : (kernelMust k φ).presup w)
+    (hMust : (kernelMust k φ).assertion w) :
+    ¬(kernelMight k (λ w' => !φ w')).assertion w := by
+  simp only [kernelMight, kernelMust, PrProp.ofBool, isCompatibleWith, isConsistent,
+    followsFrom] at hMust ⊢
+  rw [propIntersection_cons, filter_isEmpty_eq_all_not]
   simp [hMust]
 
 /-- Direct evidence infelicity: when K settles φ, must φ is undefined. -/
 theorem direct_evidence_infelicity (k : Kernel) (φ : BProp World) (w : World)
     (hSettled : directlySettlesExplicit k φ = true) :
-    (kernelMust k φ).presup w = false := by
-  simp only [kernelMust, hSettled, Bool.not_true]
+    ¬(kernelMust k φ).presup w := by
+  simp only [kernelMust, PrProp.ofBool, hSettled, Bool.not_true, Bool.false_eq_true, not_false_eq_true]
 
 /-- Settling is monotone: more propositions in K means more is settled. -/
 theorem settling_monotone (k : Kernel) (p : BProp World) (φ : BProp World)
@@ -485,19 +485,19 @@ with *it's possible that φ*. Kernel semantics resolves this because
 /-- **Can't–might exclusion** (@cite{von-fintel-gillies-2021} Obs 5): when can't φ holds
 (B_K ⊆ ⟦¬φ⟧), might φ is false (B_K ∩ ⟦φ⟧ = ∅). -/
 theorem cant_might_exclusion (k : Kernel) (φ : BProp World) (w : World)
-    (hCant : (kernelCant k φ).assertion w = true) :
-    (kernelMight k φ).assertion w = false := by
-  rw [kernel_duality]
-  simp only [kernelCant, kernelMust] at hCant ⊢
-  simp only [followsFrom, propIntersection] at hCant ⊢
+    (hCant : (kernelCant k φ).assertion w) :
+    ¬(kernelMight k φ).assertion w := by
+  simp only [kernelCant, kernelMight, kernelMust, PrProp.ofBool, isCompatibleWith, isConsistent,
+    followsFrom] at hCant ⊢
+  rw [propIntersection_cons, filter_isEmpty_eq_all_not]
   simp [hCant]
 
 /-- **Can't entails negation** (@cite{von-fintel-gillies-2021} via S2): when B_K is realistic
 and can't φ is defined and true, φ(w) = false. -/
 theorem cant_entails_negation (k : Kernel) (φ : BProp World) (w : World)
     (hReal : w ∈ k.base)
-    (_hDef : (kernelCant k φ).presup w = true)
-    (hTrue : (kernelCant k φ).assertion w = true) :
+    (_hDef : (kernelCant k φ).presup w)
+    (hTrue : (kernelCant k φ).assertion w) :
     φ w = false := by
   have hNeg := must_entails_prejacent k (λ w' => !φ w') w hReal _hDef hTrue
   simp only [Bool.not_eq_true'] at hNeg
@@ -515,15 +515,18 @@ must(blue), which is defined (blue unsettled), true (B_K ⊆ ⟦blue⟧),
 and excludes might(notBlue). -/
 theorem cant_dilemma_resolved :
     mastermindK.base.elem .w1 = true ∧
-    (kernelCant mastermindK notBlue).presup .w1 = true ∧
-    (kernelCant mastermindK notBlue).assertion .w1 = true ∧
-    (kernelMight mastermindK notBlue).assertion .w1 = false ∧
-    notBlue .w1 = false := by native_decide
+    (kernelCant mastermindK notBlue).presup .w1 ∧
+    (kernelCant mastermindK notBlue).assertion .w1 ∧
+    ¬(kernelMight mastermindK notBlue).assertion .w1 ∧
+    notBlue .w1 = false := by
+  simp only [kernelCant, kernelMight, kernelMust, PrProp.ofBool]
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 /-- Direct evidence blocks can't, paralleling must: when K settles ¬φ,
 can't φ has presupposition failure. -/
 theorem cant_direct_evidence_infelicity :
-    (kernelCant mastermindK red).presup .w0 = false := by native_decide
+    ¬(kernelCant mastermindK red).presup .w0 := by
+  simp only [kernelCant, kernelMust, PrProp.ofBool]; native_decide
 
 /-- can't φ and must(¬φ) are intensionally identical. -/
 theorem cant_eq_must_neg (k : Kernel) (φ : BProp World) (w : World) :
@@ -618,7 +621,9 @@ theorem expected_evidence_infelicitous :
 /-- Nandao reuses the mastermind kernel: "must blue" and "nandao blue?" share
 condition (iii). When must is defined, nandao's indirectness condition holds. -/
 theorem nandao_mastermind_bridge :
-    (kernelMust mastermindK blue).presup .w0 = true ∧
-    !directlySettlesExplicit mastermindK blue = true := by native_decide
+    (kernelMust mastermindK blue).presup .w0 ∧
+    !directlySettlesExplicit mastermindK blue = true := by
+  simp only [kernelMust, PrProp.ofBool]
+  exact ⟨by native_decide, by native_decide⟩
 
 end Semantics.Modality

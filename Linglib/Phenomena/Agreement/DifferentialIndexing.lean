@@ -70,7 +70,8 @@ def IndexingPersonLevel.rank : IndexingPersonLevel → Nat
 /-- All indexing person levels. -/
 def IndexingPersonLevel.all : List IndexingPersonLevel := [.sap, .third]
 
-theorem person_sap_gt_third : IndexingPersonLevel.sap.rank > IndexingPersonLevel.third.rank := by decide
+theorem indexing_person_rank_injective (a b : IndexingPersonLevel) (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [IndexingPersonLevel.rank]
 
 -- ============================================================================
 -- § 2: Indexing Fragment

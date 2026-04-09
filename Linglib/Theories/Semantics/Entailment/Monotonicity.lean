@@ -27,7 +27,7 @@ This bridges the entailment-testing infrastructure (finite, decidable)
 with the model-theoretic GQ definitions (proved conservative and monotone
 for arbitrary finite models).
 
-**Relation to general monotonicity theorems.** The `native_decide` proofs
+**Relation to general monotonicity theorems.** The `decide` proofs
 below verify monotonicity over the 4-element `World` model. The general
 theorems — `every_scope_up`, `no_scope_down`, `every_restrictor_down`,
 `some_scope_up` — are proved for arbitrary `Fintype` in
@@ -83,15 +83,15 @@ def no_scope : BProp World → BProp World :=
 
 /-- "Every" is UE in scope. -/
 theorem every_scope_UE : isUpwardEntailing every_scope testCases = true := by
-  native_decide
+  decide
 
 /-- "Some" is UE in scope. -/
 theorem some_scope_UE : isUpwardEntailing some_scope testCases = true := by
-  native_decide
+  decide
 
 /-- "No" is DE in scope. -/
 theorem no_scope_DE : isDownwardEntailing no_scope testCases = true := by
-  native_decide
+  decide
 
 /-- Fixed scope for testing restrictor monotonicity. -/
 def fixedScope : BProp World := p012
@@ -102,7 +102,7 @@ def every_restr : BProp World → BProp World :=
 
 /-- "Every" is DE in restrictor. -/
 theorem every_restr_DE : isDownwardEntailing every_restr testCases = true := by
-  native_decide
+  decide
 
 end QuantifierSemantics
 

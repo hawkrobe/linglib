@@ -76,9 +76,9 @@ def PreferentialParasiticOn {W E : Type*}
     (dox : DoxasticPredicate W E) : Prop :=
   ∀ (agent : E) (p : PrProp W) (w : W) (worlds : List W),
     -- If presupposition holds in all belief worlds...
-    (∀ w' ∈ worlds, dox.access agent w w' = true → p.presup w' = true) →
+    (∀ w' ∈ worlds, dox.access agent w w' = true → p.presup w') →
     -- ...then presupposition is satisfied locally for the preferential attitude
-    ∀ w' ∈ worlds, p.presup w' = true ∨ dox.access agent w w' = false
+    ∀ w' ∈ worlds, p.presup w' ∨ dox.access agent w w' = false
 
 
 /--
@@ -283,7 +283,7 @@ theorem parasitic_uses_belief_local_context {W E : Type*}
     (p : PrProp W) :
     let blc := toBeliefLocalCtx dox globalCtx agent
     presupAttributedToHolder blc p ↔
-    ∀ w_star, globalCtx w_star → ∀ w', dox agent w_star w' → p.presup w' = true := by
+    ∀ w_star, globalCtx w_star → ∀ w', dox agent w_star w' → p.presup w' := by
   simp only [toBeliefLocalCtx, presupAttributedToHolder, BeliefLocalCtx.atWorld,
         Core.CommonGround.ContextSet.entails]
   constructor

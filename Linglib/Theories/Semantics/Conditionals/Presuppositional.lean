@@ -79,18 +79,20 @@ def trivialCloser : W → W → W → Bool := fun _ _ _ => true
   p-worlds (contrast with K/P's LOCAL check)
 - **Assertion**: q holds at all CLOS-closest p-worlds
 
-When the antecedent p has no presupposition, use `PrProp.ofBProp`. -/
+When the antecedent p has no presupposition, use `PrProp.ofProp'`.
+Requires `[DecidablePred p.assertion]` for `List.filter`. -/
 def ifPresup [DecidableEq W] (closer : W → W → W → Bool)
-    (restriction : List W) (p : PrProp W) (q : PrProp W) : PrProp W :=
-  { presup := fun w =>
-      -- Outer: antecedent defined at w
-      p.presup w &&
-      -- Inner (CLOS): consequent defined at all closest p-worlds
-      let closest := closB closer restriction (restriction.filter p.assertion) w
-      closest.all q.presup
-  , assertion := fun w =>
-      let closest := closB closer restriction (restriction.filter p.assertion) w
-      closest.isEmpty || closest.all q.assertion }
+    (restriction : List W) (p : PrProp W) (q : PrProp W)
+    [DecidablePred p.assertion] : PrProp W where
+  presup := fun w =>
+    p.presup w ∧
+    let closest := closB closer restriction
+      (restriction.filter (fun w => decide (p.assertion w))) w
+    ∀ w' ∈ closest, q.presup w'
+  assertion := fun w =>
+    let closest := closB closer restriction
+      (restriction.filter (fun w => decide (p.assertion w))) w
+    ∀ w' ∈ closest, q.assertion w'
 
 -- ════════════════════════════════════════════════════════════════
 -- § K/P conditional (@cite{sharvit-2025}, (100)) — for comparison
@@ -105,17 +107,16 @@ def ifPresup [DecidableEq W] (closer : W → W → W → Bool)
   quantificational domain as K/P* with trivial similarity)
 
 The difference from K/P* is entirely in the inner presupposition:
-K/P checks locally at w, K/P* checks globally via CLOS. -/
+K/P checks locally at w, K/P* checks globally via CLOS.
+Requires `[DecidablePred p.assertion]` for `List.filter`. -/
 def ifKP [DecidableEq W] (restriction : List W)
-    (p : PrProp W) (q : PrProp W) : PrProp W :=
-  { presup := fun w =>
-      -- Outer: antecedent defined at w
-      p.presup w &&
-      -- Inner (LOCAL): if antecedent true at w, consequent defined at w
-      (!p.assertion w || q.presup w)
-  , assertion := fun _w =>
-      let pWorlds := restriction.filter p.assertion
-      pWorlds.isEmpty || pWorlds.all q.assertion }
+    (p : PrProp W) (q : PrProp W)
+    [DecidablePred p.assertion] : PrProp W where
+  presup := fun w =>
+    p.presup w ∧ (p.assertion w → q.presup w)
+  assertion := fun _w =>
+    let pWorlds := restriction.filter (fun w => decide (p.assertion w))
+    ∀ w' ∈ pWorlds, q.assertion w'
 
 -- ════════════════════════════════════════════════════════════════
 -- § Contextual Plausibility and type-flexible disjunction
@@ -145,8 +146,8 @@ def orProperties {E : Type*} [DecidableEq (E → Bool)]
 
 Used in `orPresup`: the CLOS-based disjunction checks presuppositions at
 closest worlds where the OTHER disjunct is defined-and-false. -/
-def definedFalse (p : PrProp W) : BProp W :=
-  fun w => p.presup w && !p.assertion w
+def definedFalse (p : PrProp W) : Prop' W :=
+  fun w => p.presup w ∧ ¬p.assertion w
 
 /-- K/P* presuppositional conjunction (@cite{sharvit-2025}, (127)).
 
@@ -156,16 +157,18 @@ def definedFalse (p : PrProp W) : BProp W :=
 
 This is asymmetric: the CLOS-based check only goes from P₁-worlds to P₂.
 The asymmetry mirrors K/P's `andFilter`, but uses CLOS-based rather than
-local presupposition checking. -/
+local presupposition checking.
+Requires `[DecidablePred p.assertion]` for `List.filter`. -/
 def andPresup [DecidableEq W] (closer : W → W → W → Bool)
-    (restriction : List W) (p q : PrProp W) : PrProp W :=
-  { presup := fun w =>
-      p.presup w &&
-      q.presup w &&
-      let closest := closB closer restriction (restriction.filter p.assertion) w
-      closest.all q.presup
-  , assertion := fun w =>
-      p.assertion w && q.assertion w }
+    (restriction : List W) (p q : PrProp W)
+    [DecidablePred p.assertion] : PrProp W where
+  presup := fun w =>
+    p.presup w ∧ q.presup w ∧
+    let closest := closB closer restriction
+      (restriction.filter (fun w => decide (p.assertion w))) w
+    ∀ w' ∈ closest, q.presup w'
+  assertion := fun w =>
+    p.assertion w ∧ q.assertion w
 
 /-- K/P* presuppositional disjunction (@cite{sharvit-2025}, (128)).
 
@@ -183,19 +186,32 @@ Note: For the Rooth-Partee puzzle where disjuncts have conflicting
 presuppositions (penniless entails ¬hasMoney, proud presupposes hasMoney),
 the propositional `or^{K/P\*}` may still be undefined at worlds where one
 presupposition fails. The paper's full solution uses K/P\*\* (type-flexible
-connectives, (142)) which operates at the property level. -/
+connectives, (142)) which operates at the property level.
+Requires `[DecidablePred p.assertion] [DecidablePred q.assertion]` and
+decidability of `definedFalse` for `List.filter`. -/
 def orPresup [DecidableEq W] (closer : W → W → W → Bool)
-    (restriction : List W) (p q : PrProp W) : PrProp W :=
-  { presup := fun w =>
-      -- Condition 1: at least one direction of and^{K/P*} is defined
-      ((andPresup closer restriction p q).presup w ||
-       (andPresup closer restriction q p).presup w) &&
-      -- Condition 2: and^{K/P*}(¬assert(P₁))(P₂) is defined
-      (andPresup closer restriction (PrProp.ofBProp (definedFalse p)) q).presup w &&
-      -- Condition 3: and^{K/P*}(¬assert(P₂))(P₁) is defined
-      (andPresup closer restriction (PrProp.ofBProp (definedFalse q)) p).presup w
-  , assertion := fun w =>
-      p.assertion w || q.assertion w }
+    (restriction : List W) (p q : PrProp W)
+    [DecidablePred p.assertion] [DecidablePred q.assertion]
+    [DecidablePred (definedFalse p)] [DecidablePred (definedFalse q)]
+    : PrProp W where
+  presup := fun w =>
+    let closP := closB closer restriction
+      (restriction.filter (fun w => decide (p.assertion w))) w
+    let closQ := closB closer restriction
+      (restriction.filter (fun w => decide (q.assertion w))) w
+    let closDfP := closB closer restriction
+      (restriction.filter (fun w => decide (definedFalse p w))) w
+    let closDfQ := closB closer restriction
+      (restriction.filter (fun w => decide (definedFalse q w))) w
+    -- Condition 1: at least one direction of and^{K/P*} is defined
+    (  (p.presup w ∧ q.presup w ∧ ∀ w' ∈ closP, q.presup w')
+     ∨ (q.presup w ∧ p.presup w ∧ ∀ w' ∈ closQ, p.presup w')) ∧
+    -- Condition 2: and^{K/P*}(¬assert(P₁))(P₂) is defined
+    (q.presup w ∧ ∀ w' ∈ closDfP, q.presup w') ∧
+    -- Condition 3: and^{K/P*}(¬assert(P₂))(P₁) is defined
+    (p.presup w ∧ ∀ w' ∈ closDfQ, p.presup w')
+  assertion := fun w =>
+    p.assertion w ∨ q.assertion w
 
 -- ════════════════════════════════════════════════════════════════
 -- § Set-based CLOS (non-computable)
@@ -221,37 +237,31 @@ def clos (closer : W → W → W → Prop)
 This is Sharvit's observation that K/P's `or` does not distinguish
 left from right. -/
 theorem orFilter_symmetric (p q : PrProp W) (w : W) :
-    (PrProp.orFilter p q).presup w = (PrProp.orFilter q p).presup w := by
+    (PrProp.orFilter p q).presup w ↔ (PrProp.orFilter q p).presup w := by
   simp only [PrProp.orFilter]
-  cases p.assertion w <;> cases q.assertion w <;>
-  cases p.presup w <;> cases q.presup w <;> simp_all
+  tauto
 
 /-- K/P*'s inner presupposition (CLOS) entails K/P's inner presupposition
 (local) when the evaluation world is in CLOS.
 
 If CLOS-closest p-worlds all satisfy q.presup (K/P* condition), and w is
-among them (hw), then q.presup w = true — which is what K/P checks locally.
+among them (hw), then q.presup w — which is what K/P checks locally.
 
 The hypothesis `hw` holds automatically with trivial similarity when
-w ∈ restriction and p.assertion w = true, since `trivialCloser` never
+w ∈ restriction and p.assertion w, since `trivialCloser` never
 dominates any world. Without it, the theorem is false: a non-trivial
-ordering can exclude w from CLOS even when p(w) = true. -/
+ordering can exclude w from CLOS even when p(w). -/
 theorem kpstar_presup_implies_kp_presup [DecidableEq W]
     (closer : W → W → W → Bool) (restriction : List W)
     (p : PrProp W) (q : PrProp W) (w : W)
-    (hp : p.assertion w = true)
-    (hw : w ∈ closB closer restriction (restriction.filter p.assertion) w) :
-    (ifPresup closer restriction p q).presup w = true →
-    (ifKP restriction p q).presup w = true := by
-  simp only [ifPresup, ifKP]
-  intro h_star
-  have h_ppresup : p.presup w = true := by
-    revert h_star; cases p.presup w <;> simp
-  have h_all : (closB closer restriction (restriction.filter p.assertion) w).all q.presup = true := by
-    revert h_star; rw [h_ppresup]; simp
-  have h_qpresup : q.presup w = true :=
-    List.all_eq_true.mp h_all w hw
-  simp [h_ppresup, hp, h_qpresup]
+    [DecidablePred p.assertion]
+    (hp : p.assertion w)
+    (hw : w ∈ closB closer restriction
+      (restriction.filter (fun w => decide (p.assertion w))) w) :
+    (ifPresup closer restriction p q).presup w →
+    (ifKP restriction p q).presup w := by
+  intro ⟨hpresup, hall⟩
+  exact ⟨hpresup, fun _ => hall w hw⟩
 
 /-- The converse fails: K/P's local presupposition does NOT entail K/P*'s
 global CLOS presupposition. This is the Rooth-Partee gap.
@@ -260,17 +270,19 @@ Witness: w₀ where p is false and q.presup holds (K/P vacuously satisfied),
 but some p-world w₁ has q.presup = false (K/P* fails globally). -/
 theorem kp_presup_does_not_imply_kpstar :
     ∃ (W : Type) (_ : DecidableEq W) (restriction : List W)
-      (p : PrProp W) (q : PrProp W) (w : W),
-      (ifKP restriction p q).presup w = true ∧
-      (ifPresup trivialCloser restriction p q).presup w = false := by
+      (p : PrProp W) (q : PrProp W)
+      (_ : DecidablePred p.assertion)
+      (w : W),
+      (ifKP restriction p q).presup w ∧
+      ¬(ifPresup trivialCloser restriction p q).presup w := by
   refine ⟨Bool, inferInstance, [false, true],
-    ⟨fun _ => true, fun b => b⟩,
-    ⟨fun _ => false, fun _ => true⟩, false, ?_, ?_⟩
-  · -- K/P presup at false: p.presup true, !p.assertion false = !false = true,
-    -- so true && true = true
-    native_decide
-  · -- K/P* presup at false: p.presup true, but closB returns [true] where
-    -- q.presup true = false, so all check fails
-    native_decide
+    ⟨fun _ => True, fun b => b = true⟩,
+    ⟨fun _ => False, fun _ => True⟩,
+    inferInstance,
+    false, ?_, ?_⟩
+  · exact ⟨trivial, fun h => Bool.noConfusion h⟩
+  · intro ⟨_, hall⟩
+    have := hall true (by simp [closB, trivialCloser, List.filter])
+    exact this
 
 end Semantics.Conditionals.Presuppositional

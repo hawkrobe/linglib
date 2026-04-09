@@ -2,67 +2,37 @@ import Linglib.Core.Logic.Truth3
 import Linglib.Core.Semantics.Proposition
 
 /-!
-# Partial Propositions (PrProp)
+# Partial Propositions
 @cite{heim-1983} @cite{schlenker-2009} @cite{von-fintel-1999} @cite{geurts-2005} @cite{belnap-1970}
 
-`PrProp W` is linglib's canonical representation of **partial propositions** —
-propositions that may be undefined at some evaluation points. The type
-parameter `W` is the evaluation domain: worlds, possibilities, events,
-world-assignment pairs, or any other type. The two fields are:
-- `presup` (= definedness): whether the proposition says anything at this point
-- `assertion` (= content): what it says when defined
+Partial propositions — propositions that may be undefined at some evaluation
+points.
+
+**`PrProp W`**: `presup : Prop' W`, `assertion : Prop' W`. The canonical type
+for partial propositions. Following the Mathlib convention, fields are
+Prop-valued; use `open Classical` + `by_cases` for case splits. For
+computational evaluation with concrete Bool values, use `PrProp.ofBool` to
+construct and `PrProp.eval` to evaluate.
+
+**`PrValue W α`** (Bool-based presupposition, polymorphic value): a separate
+type for presupposed non-boolean values (degrees, entities, etc.).
 
 ## Domain generality
 
 `PrProp W` is parametric over `W`. Common instantiations:
 - `PrProp World` — classical presupposition over possible worlds
 - `PrProp (Possibility W E)` — dynamic presupposition over world-assignment pairs
-- `PrProp (W × Event)` — event presuppositions (preconditions on events)
-- `PrProp (W × Time)` — temporal presuppositions
-
-All operations (filtering connectives, `eval`, accommodation) work
-uniformly across domains because they are pointwise over `W`.
 
 ## Satisfaction relations
 
-Two satisfaction relations connect PrProp to CCP's `updateFromSat`:
-- `PrProp.defined w p` — presupposition holds at w (definedness test)
-- `PrProp.holds w p` — both presupposition and assertion hold (full satisfaction)
-
-These enable structural integration with the dynamic semantics layer:
-`updateFromSat PrProp.holds p` produces a `CCP W` that is eliminative,
-distributive, and supports the Galois connection — all by construction.
-
-## Linguistic interpretations
-
-- **Presupposition**: `presup` = presupposition holds; failure = undefined
-  (@cite{heim-1983}, @cite{schlenker-2009})
-- **Conditional assertion**: `presup` = assertive; failure = nonassertive
-  (@cite{belnap-1970}: "(A/B) is assertive_w just in case A is true_w")
-- **Homogeneity**: `presup` = all atoms agree; failure = truth-value gap
-  (@cite{kriz-2016})
+- `PrProp.defined w p` — presupposition holds at w
+- `PrProp.holds w p` — both presupposition and assertion hold
 
 ## Connective systems
 
 The choice of connective system (how gaps behave under ∧/∨) is orthogonal
-to `PrProp` itself — see `Truth3.GapPolicy`:
-- Classical (`PrProp.and`): both must be defined
-- Filtering (`PrProp.andFilter`): one can satisfy the other's presupposition
-- Belnap (`PrProp.andBelnap`): gaps are skipped, defined operands contribute
-- Belnap lift (`PrProp.belnapLift`): uniform construction parameterized by
-  a binary Boolean function `f` and its identity element `id`. All Belnap
-  and flex connectives are instances: `orBelnap = belnapLift (·||·) false`,
-  `andBelnap = belnapLift (·&&·) true`, and `orFlex`/`andFlex` are the same
-
-## Structural joints
-
-Everything in the presupposition system derives from `.presup` and `.assertion`:
-- Heritage function for `p → q` = `(impFilter p q).presup` (by construction)
-- CCP update = `updateFromSat PrProp.holds p` (from CCP infrastructure)
-- Presupposition test = `updateFromSat PrProp.defined p`
-- Accommodation = intersect context with `{w | PrProp.defined w p}`
-- Local context satisfaction = `supportOf PrProp.defined s p`
-
+to the representation type — see `Truth3.GapPolicy`. The full set is provided:
+classical, filtering (Karttunen), Belnap, flexible, Weak Kleene, K&P.
 -/
 
 namespace Core.Presupposition
@@ -73,7 +43,7 @@ open Core.Proposition
 /-- A presupposed value: a value that is only defined when its
 presupposition holds.
 
-`PrValue W α` generalizes `PrProp W` (= `PrValue W Bool`): the
+`PrValue W α` generalizes presuppositional propositions: the
 presupposition is always `W → Bool`, but the at-issue content can be
 any type — a truth value (`Bool`), a degree (`ℚ`), a measure, etc.
 
@@ -101,115 +71,146 @@ def pure (a : W → α) : PrValue W α where
 
 end PrValue
 
-/-- A presuppositional proposition: assertion + presupposition. -/
+-- ════════════════════════════════════════════════════════════════
+-- PrProp: Prop-based partial propositions
+-- ════════════════════════════════════════════════════════════════
+
+/-- A presuppositional proposition: assertion + presupposition.
+
+    Fields are `Prop`-valued following the Mathlib convention. For
+    Bool-valued construction, use `PrProp.ofBool`. -/
+@[ext]
 structure PrProp (W : Type*) where
   /-- The presupposition (must hold for definedness). -/
-  presup : W -> Bool
+  presup : Prop' W
   /-- The at-issue content (assertion). -/
-  assertion : W -> Bool
+  assertion : Prop' W
 
 namespace PrProp
 
+open Classical
+
 variable {W : Type*}
+
+-- ════════════════════════════════════════════════════════════════
+-- Constructors
+-- ════════════════════════════════════════════════════════════════
+
+/-- Convenience constructor from Bool-valued functions.
+    Wraps both fields with `= true`, preserving decidability for
+    `native_decide` proofs. -/
+def ofBool (presup assertion : W → Bool) : PrProp W where
+  presup := fun w => presup w = true
+  assertion := fun w => assertion w = true
+
+/-- Create a presuppositionless proposition from a BProp. -/
+def ofBProp (p : BProp W) : PrProp W where
+  presup := fun _ => True
+  assertion := fun w => p w = true
+
+/-- Create a presuppositionless proposition from a Prop'. -/
+def ofProp' (p : Prop' W) : PrProp W where
+  presup := fun _ => True
+  assertion := p
+
+/-- Convert a three-valued proposition to a PrProp.
+    Inverse of `PrProp.eval`: defined iff value ≠ indet,
+    assertion iff value = true. -/
+def ofProp3 (p : Prop3 W) : PrProp W where
+  presup := fun w => p w ≠ .indet
+  assertion := fun w => p w = .true
 
 /-- Convert a presupposed Bool value (`PrValue W Bool`) to `PrProp W`. -/
 def ofPrValue (pv : PrValue W Bool) : PrProp W where
-  presup := pv.presup
-  assertion := pv.value
+  presup := fun w => pv.presup w = true
+  assertion := fun w => pv.value w = true
 
-/-- Convert a `PrProp` to a `PrValue W Bool`. -/
-def toPrValue (p : PrProp W) : PrValue W Bool where
-  presup := p.presup
-  value := p.assertion
+/-- Convert a `PrProp` to a `PrValue W Bool` (noncomputable — requires
+    deciding Props to produce Bool values). -/
+noncomputable def toPrValue (p : PrProp W) : PrValue W Bool where
+  presup := fun w => decide (p.presup w)
+  value := fun w => decide (p.assertion w)
 
-/-- Evaluate a presuppositional proposition to three-valued truth. -/
-def eval (p : PrProp W) : Prop3 W := λ w =>
-  if p.presup w then Truth3.ofBool (p.assertion w) else .indet
+/-- Belnap's conditional assertion (A/B): assert B on condition A.
 
-/-- Definedness relation: presupposition holds at the evaluation point.
+    Assertive_w iff A is true at w; what is asserted = B.
+    @cite{belnap-1970}, (3): "(A/B) is assertive_w just in case
+    A is true_w. (A/B)_w = B_w." -/
+def condAssert (A B : Prop' W) : PrProp W where
+  presup := A
+  assertion := B
 
-    Argument order `(w : W) (p : PrProp W)` matches `updateFromSat`:
-    `updateFromSat PrProp.defined p` gives the presupposition test CCP. -/
-def defined (w : W) (p : PrProp W) : Prop := p.presup w = true
+-- ════════════════════════════════════════════════════════════════
+-- Satisfaction Relations
+-- ════════════════════════════════════════════════════════════════
 
 /-- Full satisfaction relation: both presupposition and assertion hold.
 
+    Argument order `(w : W) (p : PrProp W)` supports `updateFromSat`:
     `updateFromSat PrProp.holds p` gives the full CCP (presupposition
-    test + assertion filter). This CCP is automatically eliminative and
-    distributive via CCP's `updateFromSat` infrastructure. -/
-def holds (w : W) (p : PrProp W) : Prop := p.presup w = true ∧ p.assertion w = true
+    test + assertion filter). -/
+def holds (w : W) (p : PrProp W) : Prop := p.presup w ∧ p.assertion w
 
-/-- Evaluation is defined iff presupposition holds. -/
-theorem eval_isDefined (p : PrProp W) (w : W) :
-    (p.eval w).isDefined = p.presup w := by
-  simp only [eval]
-  cases hp : p.presup w
-  · simp [Truth3.isDefined]
-  · cases p.assertion w <;> simp [Truth3.ofBool, Truth3.isDefined]
+/-- Definedness relation: presupposition holds at the evaluation point.
+
+    Argument order `(w : W) (p : PrProp W)` supports `updateFromSat`:
+    `updateFromSat PrProp.defined p` gives the presupposition test CCP. -/
+def defined (w : W) (p : PrProp W) : Prop := p.presup w
+
+-- ════════════════════════════════════════════════════════════════
+-- Constants
+-- ════════════════════════════════════════════════════════════════
+
+/-- Create a tautological presupposition. -/
+def top : PrProp W where
+  presup := fun _ => True
+  assertion := fun _ => True
+
+/-- Create a contradictory presupposition. -/
+def bot : PrProp W where
+  presup := fun _ => True
+  assertion := fun _ => False
+
+/-- Create a presupposition failure (never defined). -/
+def undefined : PrProp W where
+  presup := fun _ => False
+  assertion := fun _ => False
+
+-- ════════════════════════════════════════════════════════════════
+-- Evaluation
+-- ════════════════════════════════════════════════════════════════
+
+/-- Evaluate a presuppositional proposition to three-valued truth.
+    Noncomputable because it decides Prop-valued presupposition and
+    assertion via classical logic. -/
+noncomputable def eval (p : PrProp W) : Prop3 W := fun w =>
+  if p.presup w then
+    if p.assertion w then .true else .false
+  else .indet
+
+-- ════════════════════════════════════════════════════════════════
+-- Classical Connectives
+-- ════════════════════════════════════════════════════════════════
 
 /-- Classical negation of a presuppositional proposition. -/
-def neg (p : PrProp W) : PrProp W :=
-  { presup := p.presup
-  , assertion := λ w => !p.assertion w }
+def neg (p : PrProp W) : PrProp W where
+  presup := p.presup
+  assertion := fun w => ¬p.assertion w
 
 /-- Classical conjunction: both presuppositions must hold. -/
-def and (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w && q.presup w
-  , assertion := λ w => p.assertion w && q.assertion w }
+def and (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∧ q.presup w
+  assertion := fun w => p.assertion w ∧ q.assertion w
 
 /-- Classical disjunction: both presuppositions must hold. -/
-def or (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w && q.presup w
-  , assertion := λ w => p.assertion w || q.assertion w }
+def or (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∧ q.presup w
+  assertion := fun w => p.assertion w ∨ q.assertion w
 
 /-- Classical implication: both presuppositions must hold. -/
-def imp (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w && q.presup w
-  , assertion := λ w => !p.assertion w || q.assertion w }
-
-/-- Filtering conjunction: antecedent can satisfy consequent's presupposition. -/
-def andFilter (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w && (!p.assertion w || q.presup w)
-  , assertion := λ w => p.assertion w && q.assertion w }
-
-/-- Filtering implication: antecedent can satisfy consequent's presupposition. -/
-def impFilter (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w && (!p.assertion w || q.presup w)
-  , assertion := λ w => !p.assertion w || q.assertion w }
-
-/-- Filtering disjunction: disjuncts can satisfy each other's presuppositions. -/
-def orFilter (p q : PrProp W) : PrProp W :=
-  { presup := λ w =>
-      (!p.assertion w || q.presup w) &&
-      (!q.assertion w || p.presup w) &&
-      (p.presup w || q.presup w)
-  , assertion := λ w => p.assertion w || q.assertion w }
-
-/-- K&P two-dimensional disjunction (@cite{karttunen-peters-1979}).
-
-    Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ))
-             = (A(ψ) ∨ Π(φ)) ∧ (A(φ) ∨ Π(ψ))
-    A(φ ∨ ψ) = A(φ) ∨ A(ψ)
-
-    Uses the symmetric version from @cite{yagi-2025} Definition 2
-    (cf. @cite{kalomoiros-schwarz-2021} for experimental support of
-    symmetry). Differs from `orFilter`, which encodes the Heim/Schlenker
-    filtering rule (A(φ) → Π(ψ)) ∧ (A(ψ) → Π(φ)) ∧ (Π(φ) ∨ Π(ψ)). -/
-def orKP (p q : PrProp W) : PrProp W :=
-  { presup := λ w => (q.assertion w || p.presup w) && (p.assertion w || q.presup w)
-  , assertion := λ w => p.assertion w || q.assertion w }
-
-/-- When presuppositions conflict at w, K&P's presupposition entails the
-    assertion: defined → true, so the disjunction can never be both defined
-    and false. @cite{yagi-2025} §2.2 -/
-theorem orKP_presup_entails_when_conflicting (p q : PrProp W) (w : W)
-    (h_conflict : ¬(p.presup w = true ∧ q.presup w = true))
-    (h_presup : (orKP p q).presup w = true) :
-    (orKP p q).assertion w = true := by
-  simp only [orKP] at h_presup ⊢
-  cases hp : p.presup w <;> cases hq : q.presup w <;>
-    cases hpa : p.assertion w <;> cases hqa : q.assertion w <;>
-    simp_all
+def imp (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∧ q.presup w
+  assertion := fun w => p.assertion w → q.assertion w
 
 /-- Exclusive disjunction: both presuppositions must hold (no filtering).
 
@@ -217,128 +218,73 @@ theorem orKP_presup_entails_when_conflicting (p q : PrProp W) (w : W)
     unconditionally (`xor_indet_iff`), so exclusive disjunction never
     filters presupposition failure from either disjunct.
     @cite{wang-davidson-2026} -/
-def xor (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w && q.presup w
-  , assertion := λ w => p.assertion w ^^ q.assertion w }
+def xor (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∧ q.presup w
+  assertion := fun w => (p.assertion w ∧ ¬q.assertion w) ∨ (¬p.assertion w ∧ q.assertion w)
+
+-- ════════════════════════════════════════════════════════════════
+-- Filtering Connectives (Karttunen)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Filtering conjunction: antecedent can satisfy consequent's presupposition. -/
+def andFilter (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∧ (p.assertion w → q.presup w)
+  assertion := fun w => p.assertion w ∧ q.assertion w
+
+/-- Filtering implication: antecedent can satisfy consequent's presupposition. -/
+def impFilter (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∧ (p.assertion w → q.presup w)
+  assertion := fun w => p.assertion w → q.assertion w
+
+/-- Filtering disjunction: disjuncts can satisfy each other's presuppositions. -/
+def orFilter (p q : PrProp W) : PrProp W where
+  presup := fun w =>
+    (p.assertion w → q.presup w) ∧
+    (q.assertion w → p.presup w) ∧
+    (p.presup w ∨ q.presup w)
+  assertion := fun w => p.assertion w ∨ q.assertion w
 
 -- Notation for filtering connectives
 scoped infixl:65 " /\\' " => andFilter
 scoped infixr:55 " ->' " => impFilter
 scoped infixl:60 " \\/' " => orFilter
 
-/-- Negation preserves presupposition. -/
-theorem neg_presup (p : PrProp W) : (neg p).presup = p.presup := rfl
+-- ════════════════════════════════════════════════════════════════
+-- K&P Two-Dimensional Disjunction
+-- ════════════════════════════════════════════════════════════════
 
-/-- Double negation preserves assertion. -/
-theorem neg_neg_assertion (p : PrProp W) (w : W) :
-    (neg (neg p)).assertion w = p.assertion w := by
-  simp [neg, Bool.not_not]
+/-- K&P two-dimensional disjunction (@cite{karttunen-peters-1979}).
 
-/-- Filtering implication eliminates presupposition when antecedent entails it. -/
-theorem impFilter_eliminates_presup (p q : PrProp W)
-    (h : forall w, p.assertion w = true -> q.presup w = true) :
-    (impFilter p q).presup = p.presup := by
-  funext w
-  simp only [impFilter]
-  cases hp : p.presup w
-  · simp
-  · simp only [Bool.true_and]
-    cases ha : p.assertion w
-    · simp
-    · simp [h w ha]
+    Π(φ ∨ ψ) = (A(ψ) ∨ Π(φ)) ∧ (A(φ) ∨ Π(ψ))
+    A(φ ∨ ψ) = A(φ) ∨ A(ψ)
 
-/-- When A(p) = P(q), filtering implication has trivial presupposition. -/
-theorem impFilter_trivializes_presup (p q : PrProp W)
-    (h : p.assertion = q.presup) :
-    (impFilter p q).presup = p.presup := by
-  funext w
-  simp only [impFilter, h]
-  cases hp : p.presup w
-  · simp
-  · simp only [Bool.true_and]
-    cases hq : q.presup w <;> simp
+    Uses the symmetric version from @cite{yagi-2025} Definition 2
+    (cf. @cite{kalomoiros-schwarz-2021} for experimental support of
+    symmetry). -/
+def orKP (p q : PrProp W) : PrProp W where
+  presup := fun w => (q.assertion w ∨ p.presup w) ∧ (p.assertion w ∨ q.presup w)
+  assertion := fun w => p.assertion w ∨ q.assertion w
 
-/-- Create a presuppositionless proposition from a BProp. -/
-def ofBProp (p : BProp W) : PrProp W :=
-  { presup := λ _ => true
-  , assertion := p }
+-- ════════════════════════════════════════════════════════════════
+-- Weak Kleene
+-- ════════════════════════════════════════════════════════════════
 
-/-- Create a tautological presupposition. -/
-def top : PrProp W :=
-  { presup := λ _ => true
-  , assertion := λ _ => true }
+/-- Weak Kleene disjunction: undefined iff either operand undefined.
+    Both disjuncts must be defined for the disjunction to be defined.
 
-/-- Create a contradictory presupposition. -/
-def bot : PrProp W :=
-  { presup := λ _ => true
-  , assertion := λ _ => false }
+    @cite{kleene-1952}: indet is absorbing for both ∧ and ∨. -/
+def orWeak (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∧ q.presup w
+  assertion := fun w => p.assertion w ∨ q.assertion w
 
-/-- Create a presupposition failure (never defined). -/
-def undefined : PrProp W :=
-  { presup := λ _ => false
-  , assertion := λ _ => false }
+/-- Weak Kleene conjunction. -/
+def andWeak (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∧ q.presup w
+  assertion := fun w => p.assertion w ∧ q.assertion w
 
-/-- ofBProp creates presuppositionless propositions. -/
-theorem ofBProp_no_presup (p : BProp W) (w : W) : (ofBProp p).presup w = true := rfl
-
-/-- ofBProp preserves assertion. -/
-theorem ofBProp_assertion (p : BProp W) (w : W) : (ofBProp p).assertion w = p w := rfl
-
-/-- Negation evaluation. -/
-theorem eval_neg (p : PrProp W) (w : W) :
-    (neg p).eval w = Truth3.neg (p.eval w) := by
-  simp only [eval, neg]
-  split
-  · simp [Truth3.neg_ofBool]
-  · rfl
-
-/-- Classical conjunction evaluation (both defined). -/
-theorem eval_and (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (hq : q.presup w = true) :
-    (and p q).eval w = Truth3.meet (p.eval w) (q.eval w) := by
-  simp only [eval, and, hp, hq, Bool.true_and, ite_true, Truth3.meet_ofBool]
-
-/-- Filtering implication when antecedent false: result is true. -/
-theorem eval_impFilter_antecedent_false (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (ha : p.assertion w = false) :
-    (impFilter p q).eval w = .true := by
-  simp only [eval, impFilter, hp, ha, Bool.true_and, Bool.not_false, Bool.true_or,
-             Truth3.ofBool, ite_true]
-
-/-- Filtering implication when antecedent true: depends on consequent. -/
-theorem eval_impFilter_antecedent_true (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (ha : p.assertion w = true) (hq : q.presup w = true) :
-    (impFilter p q).eval w = Truth3.ofBool (q.assertion w) := by
-  simp only [eval, impFilter, hp, ha, hq, Bool.true_and, Bool.not_true, Bool.false_or,
-             Truth3.ofBool, ite_true]
-
-/-- Exclusive disjunction evaluation matches `Truth3.xor` when both defined. -/
-theorem eval_xor (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (hq : q.presup w = true) :
-    (xor p q).eval w = Truth3.xor (p.eval w) (q.eval w) := by
-  simp only [eval, xor, hp, hq, Bool.true_and, ite_true]
-  cases p.assertion w <;> cases q.assertion w <;> rfl
-
-/-- Exclusive disjunction never filters: when either presupposition fails,
-    the result is undefined. @cite{wang-davidson-2026} -/
-theorem eval_xor_no_filter (p q : PrProp W) (w : W)
-    (hq : q.presup w = false) :
-    (xor p q).eval w = .indet := by
-  simp only [eval, xor, hq, Bool.and_false]; rfl
-
-/-- Strong entailment: p entails q at all worlds where both are defined. -/
-def strongEntails (p q : PrProp W) : Prop :=
-  forall w, p.presup w = true -> q.presup w = true ->
-    p.assertion w = true -> q.assertion w = true
-
-/-- Strawson entailment: p entails q at worlds where p is defined and true. -/
-def strawsonEntails (p q : PrProp W) : Prop :=
-  forall w, p.presup w = true -> p.assertion w = true ->
-    q.presup w = true /\ (q.presup w = true -> q.assertion w = true)
-
-/-- Strawson equivalence: mutual Strawson entailment. -/
-def strawsonEquiv (p q : PrProp W) : Prop :=
-  strawsonEntails p q ∧ strawsonEntails q p
+-- ════════════════════════════════════════════════════════════════
+-- Flexible Accommodation
+-- ════════════════════════════════════════════════════════════════
 
 /-- Flexible accommodation disjunction.
 
@@ -349,69 +295,273 @@ standard disjunction and filtering disjunction both fail for this case,
 but flexible accommodation correctly predicts presupposition p ∨ q and
 allows the disjunction to be false.
 
-Formally, this is the static counterpart of Yagi's dynamic update:
-  s[φ ∨ ψ] = s[χ][φ] ∪ s[ω][ψ], where s[χ] ∪ s[ω] = s
-When presuppositions conflict, χ = ¬q and ω = ¬p, giving pointwise:
-  (p(w) ∧ φ(w)) ∨ (q(w) ∧ ψ(w))
+Formally, this is the static counterpart of @cite{yagi-2025}'s dynamic update.
 -/
-def orFlex (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w || q.presup w
-  , assertion := λ w => (p.presup w && p.assertion w) || (q.presup w && q.assertion w) }
-
-/-- orFlex reduces to standard disjunction when both presuppositions hold. -/
-theorem orFlex_eq_or_when_both_defined (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (hq : q.presup w = true) :
-    (orFlex p q).assertion w = (or p q).assertion w := by
-  simp only [orFlex, or, hp, hq, Bool.true_and]
-
-/-- orFlex presupposition is weaker than or's (p ∨ q vs p ∧ q). -/
-theorem orFlex_presup_weaker (p q : PrProp W) (w : W)
-    (h : (or p q).presup w = true) :
-    (orFlex p q).presup w = true := by
-  simp only [or, orFlex] at *
-  cases hp : p.presup w <;> cases hq : q.presup w <;> simp_all
+def orFlex (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∨ q.presup w
+  assertion := fun w => (p.presup w ∧ p.assertion w) ∨ (q.presup w ∧ q.assertion w)
 
 /-- Flexible accommodation conjunction.
 
 Each conjunct is evaluated only against worlds where its own presupposition
 holds. Undefined conjuncts are vacuously true (the identity element for ∧),
 so they don't constrain the result. Dual of `orFlex`. -/
-def andFlex (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w || q.presup w
-  , assertion := λ w => (!p.presup w || p.assertion w) && (!q.presup w || q.assertion w) }
+def andFlex (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∨ q.presup w
+  assertion := fun w => (p.presup w → p.assertion w) ∧ (q.presup w → q.assertion w)
 
-/-- andFlex reduces to standard conjunction when both presuppositions hold. -/
-theorem andFlex_eq_and_when_both_defined (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (hq : q.presup w = true) :
-    (andFlex p q).assertion w = (and p q).assertion w := by
-  simp only [andFlex, and, hp, hq, Bool.not_true, Bool.false_or]
+-- ════════════════════════════════════════════════════════════════
+-- Belnap Conditional Assertion
+-- @cite{belnap-1970}
+-- ════════════════════════════════════════════════════════════════
 
-/-- andFlex presupposition is weaker than and's (p ∨ q vs p ∧ q). -/
-theorem andFlex_presup_weaker (p q : PrProp W) (w : W)
-    (h : (and p q).presup w = true) :
-    (andFlex p q).presup w = true := by
-  simp only [and, andFlex] at *
-  cases hp : p.presup w <;> cases hq : q.presup w <;> simp_all
+/-- Alias for `presup` under the Belnap reading: whether the proposition
+    is **assertive** at w (asserts something, vs nonassertive/silent). -/
+abbrev assertive (p : PrProp W) : Prop' W := p.presup
 
-/-- Weak Kleene disjunction: undefined iff either operand undefined.
-    Both disjuncts must be defined for the disjunction to be defined.
+/-- Belnap conjunction: assertive iff at least one conjunct is assertive.
+    What it asserts = conjunction of assertive conjuncts' content.
 
-    @cite{kleene-1952}: indet is absorbing for both ∧ and ∨. -/
-def orWeak (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w && q.presup w
-  , assertion := λ w => p.assertion w || q.assertion w }
+    @cite{belnap-1970}, (8). Contrast with classical `PrProp.and` (both
+    must be defined) and filtering `PrProp.andFilter` (left-to-right). -/
+def andBelnap (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∨ q.presup w
+  assertion := fun w =>
+    (p.presup w → p.assertion w) ∧ (q.presup w → q.assertion w)
 
-/-- Weak Kleene conjunction. -/
-def andWeak (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w && q.presup w
-  , assertion := λ w => p.assertion w && q.assertion w }
+/-- Belnap disjunction: assertive iff at least one disjunct is assertive.
+    What it asserts = disjunction of assertive disjuncts' content.
 
-/-- `orWeak` evaluates to `Truth3.joinWeak` pointwise. -/
-theorem eval_orWeak (p q : PrProp W) (w : W) :
-    (orWeak p q).eval w = Truth3.joinWeak (p.eval w) (q.eval w) := by
-  simp only [eval, orWeak, Truth3.joinWeak, Truth3.ofBool]
-  cases p.presup w <;> cases q.presup w <;>
-    simp <;> cases p.assertion w <;> cases q.assertion w <;> rfl
+    @cite{belnap-1970}, (9). -/
+def orBelnap (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∨ q.presup w
+  assertion := fun w =>
+    (p.presup w ∧ p.assertion w) ∨ (q.presup w ∧ q.assertion w)
+
+/-- **Belnap lift**: uniform construction for conditional assertion connectives.
+
+    Given a binary Prop function `f` and its identity element `id`,
+    constructs a PrProp connective where:
+    - Defined (assertive) iff at least one operand is defined
+    - Assertion applies `f` to each operand's content, substituting `id`
+      for undefined operands (making them "silent")
+
+    @cite{belnap-1970}: undefined operands contribute the identity element.
+    Noncomputable because it uses classical `if` on Props.
+
+    Defined instances:
+    - `belnapLift (· ∨ ·) False` = `orBelnap` = `orFlex` (False is identity for ∨)
+    - `belnapLift (· ∧ ·) True` = `andBelnap` = `andFlex` (True is identity for ∧)
+    -/
+noncomputable def belnapLift (f : Prop → Prop → Prop) (id : Prop)
+    (p q : PrProp W) : PrProp W where
+  presup := fun w => p.presup w ∨ q.presup w
+  assertion := fun w => f (if p.presup w then p.assertion w else id)
+                          (if q.presup w then q.assertion w else id)
+
+-- ════════════════════════════════════════════════════════════════
+-- Entailment Relations
+-- ════════════════════════════════════════════════════════════════
+
+/-- Strong entailment: p entails q at all worlds where both are defined. -/
+def strongEntails (p q : PrProp W) : Prop :=
+  ∀ w, p.presup w → q.presup w → p.assertion w → q.assertion w
+
+/-- Strawson entailment: p entails q at worlds where p is defined and true. -/
+def strawsonEntails (p q : PrProp W) : Prop :=
+  ∀ w, p.presup w → p.assertion w → q.presup w ∧ (q.presup w → q.assertion w)
+
+/-- Strawson equivalence: mutual Strawson entailment. -/
+def strawsonEquiv (p q : PrProp W) : Prop :=
+  strawsonEntails p q ∧ strawsonEntails q p
+
+-- ════════════════════════════════════════════════════════════════
+-- Genuineness
+-- @cite{zimmermann-2000} @cite{geurts-2005} @cite{katzir-singh-2012}
+-- ════════════════════════════════════════════════════════════════
+
+/-- **Genuineness** for disjunction: both disjuncts are "live possibilities"
+    in a state. Each disjunct must be satisfied (presupposition and assertion
+    hold) at some world in the state.
+
+    @cite{zimmermann-2000}: disjunction requires that each disjunct be a
+    "live possibility." @cite{yagi-2025} Definition 8. -/
+def genuineness (p q : PrProp W) (s : Finset W) : Prop :=
+  (∃ w ∈ s, p.holds w) ∧
+  (∃ w ∈ s, q.holds w)
+
+-- ════════════════════════════════════════════════════════════════
+-- Projections
+-- ════════════════════════════════════════════════════════════════
+
+/-- Presupposition projection: get the presupposition as a Prop'. -/
+def projectPresup (p : PrProp W) : Prop' W := p.presup
+
+/-- Assertion extraction: get the assertion as a Prop'. -/
+def projectAssertion (p : PrProp W) : Prop' W := p.assertion
+
+-- ════════════════════════════════════════════════════════════════
+-- Extensionality
+-- ════════════════════════════════════════════════════════════════
+
+/-- Extensionality for PrProp via pointwise ↔. -/
+theorem ext_pointwise {p q : PrProp W}
+    (h₁ : ∀ w, p.presup w ↔ q.presup w)
+    (h₂ : ∀ w, p.assertion w ↔ q.assertion w) : p = q := by
+  cases p; cases q; simp only [mk.injEq]
+  exact ⟨funext fun w => propext (h₁ w), funext fun w => propext (h₂ w)⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- Negation Theorems
+-- ════════════════════════════════════════════════════════════════
+
+/-- Negation preserves presupposition. -/
+theorem neg_presup (p : PrProp W) : (neg p).presup = p.presup := rfl
+
+/-- Presupposition projects through negation (by construction). -/
+theorem neg_presup_eq (p : PrProp W) (w : W) :
+    (neg p).presup w ↔ p.presup w := Iff.rfl
+
+/-- Double negation restores assertion (classical). -/
+theorem neg_neg_assertion (p : PrProp W) (w : W) :
+    (neg (neg p)).assertion w ↔ p.assertion w := Classical.not_not
+
+/-- Double negation identity. -/
+theorem neg_neg (p : PrProp W) : neg (neg p) = p :=
+  ext_pointwise (fun _ => Iff.rfl) (fun _ => Classical.not_not)
+
+-- ════════════════════════════════════════════════════════════════
+-- Filtering Theorems
+-- ════════════════════════════════════════════════════════════════
+
+/-- Filtering implication eliminates presupposition when antecedent entails it. -/
+theorem impFilter_eliminates_presup (p q : PrProp W)
+    (h : ∀ w, p.assertion w → q.presup w) :
+    (impFilter p q).presup = p.presup := by
+  funext w; simp only [impFilter]
+  exact propext ⟨fun ⟨hp, _⟩ => hp, fun hp => ⟨hp, h w⟩⟩
+
+/-- When A(p) = P(q), filtering implication has trivial presupposition. -/
+theorem impFilter_trivializes_presup (p q : PrProp W)
+    (h : p.assertion = q.presup) :
+    (impFilter p q).presup = p.presup :=
+  impFilter_eliminates_presup p q (fun w ha => h ▸ ha)
+
+-- ════════════════════════════════════════════════════════════════
+-- ofBProp Theorems
+-- ════════════════════════════════════════════════════════════════
+
+/-- ofBProp creates presuppositionless propositions. -/
+theorem ofBProp_no_presup (p : BProp W) (w : W) : (ofBProp p).presup w := trivial
+
+/-- ofBProp preserves assertion (modulo Bool→Prop wrapping). -/
+theorem ofBProp_assertion (p : BProp W) (w : W) :
+    (ofBProp p).assertion w ↔ (p w = true) := Iff.rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- Evaluation Theorems
+-- ════════════════════════════════════════════════════════════════
+
+/-- Evaluation is defined iff presupposition holds. -/
+theorem eval_isDefined (p : PrProp W) (w : W) :
+    (p.eval w).isDefined = true ↔ p.presup w := by
+  simp only [eval]
+  by_cases hp : p.presup w
+  · simp only [if_pos hp]
+    by_cases ha : p.assertion w
+    · simp only [if_pos ha]; exact iff_of_true rfl hp
+    · simp only [if_neg ha]; exact iff_of_true rfl hp
+  · simp only [if_neg hp]; exact iff_of_false (by decide) hp
+
+/-- Negation evaluation. -/
+theorem eval_neg (p : PrProp W) (w : W) :
+    (neg p).eval w = Truth3.neg (p.eval w) := by
+  simp only [eval, neg]
+  by_cases hp : p.presup w
+  · simp only [if_pos hp]
+    by_cases ha : p.assertion w
+    · simp [if_pos ha, if_neg (not_not.mpr ha), Truth3.neg]
+    · simp [if_neg ha, if_pos ha, Truth3.neg]
+  · simp [if_neg hp, Truth3.neg]
+
+/-- Classical conjunction evaluation (both defined). -/
+theorem eval_and (p q : PrProp W) (w : W)
+    (hp : p.presup w) (hq : q.presup w) :
+    (and p q).eval w = Truth3.meet (p.eval w) (q.eval w) := by
+  have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
+  simp only [eval, and, if_pos hp, if_pos hq, if_pos hpq]
+  by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [ha, hb, Truth3.meet]
+
+/-- Filtering implication when antecedent false: result is true. -/
+theorem eval_impFilter_antecedent_false (p q : PrProp W) (w : W)
+    (hp : p.presup w) (ha : ¬p.assertion w) :
+    (impFilter p q).eval w = .true := by
+  have hpresup : (impFilter p q).presup w := ⟨hp, fun h => absurd h ha⟩
+  have hassert : (impFilter p q).assertion w := fun h => absurd h ha
+  simp only [eval, if_pos hpresup, if_pos hassert]
+
+/-- Filtering implication when antecedent true: depends on consequent. -/
+theorem eval_impFilter_antecedent_true (p q : PrProp W) (w : W)
+    (hp : p.presup w) (ha : p.assertion w) (hq : q.presup w) :
+    (impFilter p q).eval w =
+      if q.assertion w then .true else .false := by
+  have hpresup : (impFilter p q).presup w := ⟨hp, fun _ => hq⟩
+  by_cases hqa : q.assertion w
+  · have hass : (impFilter p q).assertion w := fun _ => hqa
+    simp only [eval, if_pos hpresup, if_pos hass, if_pos hqa]
+  · have hass : ¬(impFilter p q).assertion w := fun h => hqa (h ha)
+    simp only [eval, if_pos hpresup, if_neg hass, if_neg hqa]
+
+/-- Exclusive disjunction evaluation matches `Truth3.xor` when both defined. -/
+theorem eval_xor (p q : PrProp W) (w : W)
+    (hp : p.presup w) (hq : q.presup w) :
+    (xor p q).eval w = Truth3.xor (p.eval w) (q.eval w) := by
+  have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
+  simp only [eval, xor, if_pos hp, if_pos hq, if_pos hpq]
+  by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [ha, hb, Truth3.xor, not_not]
+
+/-- Exclusive disjunction never filters: when either presupposition fails,
+    the result is undefined. @cite{wang-davidson-2026} -/
+theorem eval_xor_no_filter (p q : PrProp W) (w : W)
+    (hq : ¬q.presup w) :
+    (xor p q).eval w = .indet := by
+  have : ¬(xor p q).presup w := fun ⟨_, hq'⟩ => hq hq'
+  simp [eval, if_neg this]
+
+-- ════════════════════════════════════════════════════════════════
+-- orKP Theorem
+-- ════════════════════════════════════════════════════════════════
+
+/-- When presuppositions conflict at w, K&P's presupposition entails the
+    assertion: defined → true, so the disjunction can never be both defined
+    and false. @cite{yagi-2025} §2.2 -/
+theorem orKP_presup_entails_when_conflicting (p q : PrProp W) (w : W)
+    (h_conflict : ¬(p.presup w ∧ q.presup w))
+    (h_presup : (orKP p q).presup w) :
+    (orKP p q).assertion w := by
+  simp only [orKP] at h_presup ⊢
+  obtain ⟨h1, h2⟩ := h_presup
+  by_cases hp : p.presup w
+  · have hq : ¬q.presup w := fun hq => h_conflict ⟨hp, hq⟩
+    exact Or.inl (h2.resolve_right hq)
+  · exact Or.inr (h1.resolve_right hp)
+
+-- ════════════════════════════════════════════════════════════════
+-- Flex / Belnap Equality Theorems
+-- ════════════════════════════════════════════════════════════════
+
+/-- Flexible accommodation disjunction IS Belnap disjunction.
+    The two concepts, developed independently
+    (@cite{belnap-1970} vs @cite{geurts-2005}/@cite{aloni-2022}), produce
+    identical truth conditions. -/
+theorem orFlex_eq_orBelnap (p q : PrProp W) : orFlex p q = orBelnap p q := rfl
+
+/-- Flexible accommodation conjunction IS Belnap conjunction.
+    Extends `orFlex_eq_orBelnap`: the flex = Belnap identity holds for
+    all binary connectives, not just disjunction. -/
+theorem andFlex_eq_andBelnap (p q : PrProp W) : andFlex p q = andBelnap p q := rfl
 
 /-- `orWeak` agrees with `or` — they have the same definition for inclusive
     disjunction, since both require both presuppositions. -/
@@ -421,129 +571,63 @@ theorem orWeak_eq_or (p q : PrProp W) : orWeak p q = or p q := rfl
     conjunction, since both require both presuppositions. -/
 theorem andWeak_eq_and (p q : PrProp W) : andWeak p q = and p q := rfl
 
--- ════════════════════════════════════════════════════════════════
--- Genuineness
--- @cite{zimmermann-2000} @cite{geurts-2005} @cite{katzir-singh-2012}
--- ════════════════════════════════════════════════════════════════
+/-- orFlex reduces to standard disjunction when both presuppositions hold. -/
+theorem orFlex_eq_or_when_both_defined (p q : PrProp W) (w : W)
+    (hp : p.presup w) (hq : q.presup w) :
+    (orFlex p q).assertion w ↔ (or p q).assertion w := by
+  simp only [orFlex, or]
+  constructor
+  · rintro (⟨_, ha⟩ | ⟨_, ha⟩) <;> [exact Or.inl ha; exact Or.inr ha]
+  · rintro (ha | ha) <;> [exact Or.inl ⟨hp, ha⟩; exact Or.inr ⟨hq, ha⟩]
 
-/-- **Genuineness** for disjunction: both disjuncts are "live possibilities"
-    in a state. Each disjunct must be true (defined and asserted) at some
-    world, and false (or undefined) at another, making the disjunction
-    informative.
+/-- orFlex presupposition is weaker than or's (p ∨ q vs p ∧ q). -/
+theorem orFlex_presup_weaker (p q : PrProp W) (w : W)
+    (h : (or p q).presup w) :
+    (orFlex p q).presup w := by
+  exact Or.inl h.1
 
-    @cite{zimmermann-2000}: disjunction requires that each disjunct be a
-    "live possibility." @cite{yagi-2025} Definition 8: genuineness requires
-    worlds w, w' in the result of the update where each disjunct is solely
-    responsible for truth.
+/-- andFlex reduces to standard conjunction when both presuppositions hold. -/
+theorem andFlex_eq_and_when_both_defined (p q : PrProp W) (w : W)
+    (hp : p.presup w) (hq : q.presup w) :
+    (andFlex p q).assertion w ↔ (and p q).assertion w := by
+  simp only [andFlex, and]
+  constructor
+  · intro ⟨h1, h2⟩; exact ⟨h1 hp, h2 hq⟩
+  · intro ⟨h1, h2⟩; exact ⟨fun _ => h1, fun _ => h2⟩
 
-    This static version checks that the input state s has witness worlds
-    for each disjunct. The full dynamic version (@cite{yagi-2025}
-    Definition 8) additionally requires the witnesses to survive the
-    update, i.e., w ∈ s[φ ∨ ψ]. -/
-def genuineness (p q : PrProp W) (s : Finset W) : Prop :=
-  (∃ w ∈ s, p.eval w = .true) ∧
-  (∃ w ∈ s, q.eval w = .true)
-
-/-- Genuineness is symmetric. -/
-theorem genuineness_comm (p q : PrProp W) (s : Finset W) :
-    genuineness p q s ↔ genuineness q p s := by
-  simp only [genuineness, and_comm]
-
-/-- Presupposition projection: get the presupposition as a classical proposition. -/
-def projectPresup (p : PrProp W) : BProp W := p.presup
-
-/-- Assertion extraction: get the assertion as a classical proposition. -/
-def projectAssertion (p : PrProp W) : BProp W := p.assertion
+/-- andFlex presupposition is weaker than and's (p ∨ q vs p ∧ q). -/
+theorem andFlex_presup_weaker (p q : PrProp W) (w : W)
+    (h : (and p q).presup w) :
+    (andFlex p q).presup w := by
+  exact Or.inl h.1
 
 -- ════════════════════════════════════════════════════════════════
--- Belnap Conditional Assertion Reading
--- @cite{belnap-1970}
+-- Eval: Weak Kleene / Belnap / Flex
 -- ════════════════════════════════════════════════════════════════
 
-/-- Alias for `presup` under the Belnap reading: whether the proposition
-    is **assertive** at w (asserts something, vs nonassertive/silent). -/
-abbrev assertive (p : PrProp W) : BProp W := p.presup
-
-/-- Belnap's conditional assertion (A/B): assert B on condition A.
-
-    Assertive_w iff A is true at w; what is asserted = B.
-    @cite{belnap-1970}, (3): "(A/B) is assertive_w just in case
-    A is true_w. (A/B)_w = B_w." -/
-def condAssert (A B : BProp W) : PrProp W :=
-  { presup := A, assertion := B }
-
-/-- **Belnap lift**: uniform construction for conditional assertion connectives.
-
-    Given a binary Boolean function `f` and its identity element `id`,
-    constructs a PrProp connective where:
-    - Defined (assertive) iff at least one operand is defined
-    - Assertion applies `f` to each operand's content, substituting `id`
-      for undefined operands (making them "silent")
-
-    @cite{belnap-1970}: undefined operands contribute the identity element,
-    as if they weren't there. This is the uniform principle behind both
-    Belnap's conditional assertion connectives and Geurts/Aloni's flexible
-    accommodation — the two constructions are the same (`orFlex_eq_belnapLift`,
-    `andFlex_eq_belnapLift`).
-
-    Defined instances:
-    - `belnapLift (· || ·) false` = `orBelnap` = `orFlex` (false is identity for ∨)
-    - `belnapLift (· && ·) true` = `andBelnap` = `andFlex` (true is identity for ∧)
-
-    The pattern extends to other connectives (e.g., ⊕ with id = false,
-    → with left-id = true), but we define instances only when there
-    is a downstream consumer. -/
-def belnapLift (f : Bool → Bool → Bool) (id : Bool)
-    (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w || q.presup w
-  , assertion := λ w => f (if p.presup w then p.assertion w else id)
-                          (if q.presup w then q.assertion w else id) }
-
-/-- Belnap conjunction: assertive iff at least one conjunct is assertive.
-    What it asserts = conjunction of assertive conjuncts' content.
-
-    @cite{belnap-1970}, (8). Contrast with classical `PrProp.and` (both
-    must be defined) and filtering `PrProp.andFilter` (left-to-right). -/
-def andBelnap (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w || q.presup w
-  , assertion := λ w =>
-      (if p.presup w then p.assertion w else true) &&
-      (if q.presup w then q.assertion w else true) }
-
-/-- Belnap disjunction: assertive iff at least one disjunct is assertive.
-    What it asserts = disjunction of assertive disjuncts' content.
-
-    @cite{belnap-1970}, (9). -/
-def orBelnap (p q : PrProp W) : PrProp W :=
-  { presup := λ w => p.presup w || q.presup w
-  , assertion := λ w =>
-      (if p.presup w then p.assertion w else false) ||
-      (if q.presup w then q.assertion w else false) }
+/-- `orWeak` evaluates to `Truth3.joinWeak` pointwise. -/
+theorem eval_orWeak (p q : PrProp W) (w : W) :
+    (orWeak p q).eval w = Truth3.joinWeak (p.eval w) (q.eval w) := by
+  simp only [eval, orWeak, Truth3.joinWeak]
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
+    by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [ha, hb, Truth3.join, Truth3.ofBool]
 
 /-- Belnap conjunction evaluates to `Truth3.meetBelnap` pointwise. -/
 theorem eval_andBelnap (p q : PrProp W) (w : W) :
     (andBelnap p q).eval w = Truth3.meetBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, andBelnap, Truth3.meetBelnap, Truth3.meet, Truth3.ofBool]
-  cases p.presup w <;> cases q.presup w <;>
-    simp <;> cases p.assertion w <;> cases q.assertion w <;> rfl
+  simp only [eval, andBelnap, Truth3.meetBelnap, Truth3.meet]
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
+    by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [ha, hb, Truth3.ofBool]
 
 /-- Belnap disjunction evaluates to `Truth3.joinBelnap` pointwise. -/
 theorem eval_orBelnap (p q : PrProp W) (w : W) :
     (orBelnap p q).eval w = Truth3.joinBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, orBelnap, Truth3.joinBelnap, Truth3.join, Truth3.ofBool]
-  cases p.presup w <;> cases q.presup w <;>
-    simp <;> cases p.assertion w <;> cases q.assertion w <;> rfl
-
-/-- Flexible accommodation disjunction is Belnap's conditional assertion
-    disjunction. The two concepts, developed independently
-    (@cite{belnap-1970} vs @cite{geurts-2005}/@cite{aloni-2022}), produce
-    identical truth conditions: each disjunct contributes its content only
-    when its presupposition is met, and the overall presupposition is
-    the disjunction of the component presuppositions. -/
-theorem orFlex_eq_orBelnap (p q : PrProp W) : orFlex p q = orBelnap p q := by
-  simp only [orFlex, orBelnap]
-  congr 1; funext w
-  cases p.presup w <;> cases q.presup w <;> simp
+  simp only [eval, orBelnap, Truth3.joinBelnap, Truth3.join]
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq] <;>
+    by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [ha, hb, Truth3.ofBool]
 
 /-- `orFlex` evaluates to `Truth3.joinBelnap` pointwise.
     Corollary of `orFlex_eq_orBelnap` + `eval_orBelnap`. -/
@@ -554,75 +638,70 @@ theorem eval_orFlex (p q : PrProp W) (w : W) :
 /-- `andFlex` evaluates to `Truth3.meetBelnap` pointwise. -/
 theorem eval_andFlex (p q : PrProp W) (w : W) :
     (andFlex p q).eval w = Truth3.meetBelnap (p.eval w) (q.eval w) := by
-  simp only [eval, andFlex, Truth3.meetBelnap, Truth3.meet, Truth3.ofBool]
-  cases p.presup w <;> cases q.presup w <;>
-    simp <;> cases p.assertion w <;> cases q.assertion w <;> rfl
+  rw [andFlex_eq_andBelnap]; exact eval_andBelnap p q w
 
 -- ════════════════════════════════════════════════════════════════
 -- Belnap Lift: Unification
 -- ════════════════════════════════════════════════════════════════
 
-/-- `orBelnap` is the Belnap lift of `(· || ·)` with identity `false`. -/
+/-- `orBelnap` is the Belnap lift of `(· ∨ ·)` with identity `False`. -/
 theorem orBelnap_eq_belnapLift (p q : PrProp W) :
-    orBelnap p q = belnapLift (· || ·) false p q := rfl
+    orBelnap p q = belnapLift (· ∨ ·) False p q :=
+  ext_pointwise (fun _ => Iff.rfl) (fun w => by
+    simp only [orBelnap, belnapLift]
+    by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq])
 
-/-- `andBelnap` is the Belnap lift of `(· && ·)` with identity `true`. -/
+/-- `andBelnap` is the Belnap lift of `(· ∧ ·)` with identity `True`. -/
 theorem andBelnap_eq_belnapLift (p q : PrProp W) :
-    andBelnap p q = belnapLift (· && ·) true p q := rfl
+    andBelnap p q = belnapLift (· ∧ ·) True p q :=
+  ext_pointwise (fun _ => Iff.rfl) (fun w => by
+    simp only [andBelnap, belnapLift]
+    by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq])
 
-/-- `orFlex` is the Belnap lift of `(· || ·)` with identity `false`.
+/-- `orFlex` is the Belnap lift of `(· ∨ ·)` with identity `False`.
     Corollary: flexible accommodation = conditional assertion = Belnap lift,
     all three for any binary connective. -/
 theorem orFlex_eq_belnapLift (p q : PrProp W) :
-    orFlex p q = belnapLift (· || ·) false p q :=
-  orFlex_eq_orBelnap p q
+    orFlex p q = belnapLift (· ∨ ·) False p q :=
+  orFlex_eq_orBelnap p q ▸ orBelnap_eq_belnapLift p q
 
-/-- Flexible accommodation conjunction IS Belnap conjunction.
-    Extends `orFlex_eq_orBelnap`: the flex = Belnap identity holds for
-    all binary connectives, not just disjunction. -/
-theorem andFlex_eq_andBelnap (p q : PrProp W) : andFlex p q = andBelnap p q := by
-  simp only [andFlex, andBelnap]
-  congr 1; funext w
-  cases p.presup w <;> cases q.presup w <;> simp
-
-/-- `andFlex` is the Belnap lift of `(· && ·)` with identity `true`. -/
+/-- `andFlex` is the Belnap lift of `(· ∧ ·)` with identity `True`. -/
 theorem andFlex_eq_belnapLift (p q : PrProp W) :
-    andFlex p q = belnapLift (· && ·) true p q :=
-  andFlex_eq_andBelnap p q
+    andFlex p q = belnapLift (· ∧ ·) True p q :=
+  andFlex_eq_andBelnap p q ▸ andBelnap_eq_belnapLift p q
 
 /-- Belnap lift reduces to the classical operation when both presuppositions hold.
     The identity element is never used — both operands contribute directly. -/
-theorem belnapLift_eq_classical (f : Bool → Bool → Bool) (id : Bool)
+theorem belnapLift_eq_classical (f : Prop → Prop → Prop) (id : Prop)
     (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (hq : q.presup w = true) :
+    (hp : p.presup w) (hq : q.presup w) :
     (belnapLift f id p q).assertion w = f (p.assertion w) (q.assertion w) := by
-  simp [belnapLift, hp, hq]
+  simp only [belnapLift, if_pos hp, if_pos hq]
 
 /-- When only the left operand is defined and `id` is a right identity,
     belnapLift returns the left operand's value: the right operand is
     invisible. -/
-theorem belnapLift_right_undefined (f : Bool → Bool → Bool) (id : Bool)
+theorem belnapLift_right_undefined (f : Prop → Prop → Prop) (id : Prop)
     (hid : ∀ b, f b id = b) (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (hq : q.presup w = false) :
+    (hp : p.presup w) (hq : ¬q.presup w) :
     (belnapLift f id p q).assertion w = p.assertion w := by
-  simp [belnapLift, hp, hq, hid]
+  simp only [belnapLift, if_pos hp, if_neg hq, hid]
 
 /-- When only the right operand is defined and `id` is a left identity,
     belnapLift returns the right operand's value. -/
-theorem belnapLift_left_undefined (f : Bool → Bool → Bool) (id : Bool)
+theorem belnapLift_left_undefined (f : Prop → Prop → Prop) (id : Prop)
     (hid : ∀ b, f id b = b) (p q : PrProp W) (w : W)
-    (hp : p.presup w = false) (hq : q.presup w = true) :
+    (hp : ¬p.presup w) (hq : q.presup w) :
     (belnapLift f id p q).assertion w = q.assertion w := by
-  simp [belnapLift, hp, hq, hid]
+  simp only [belnapLift, if_neg hp, if_pos hq, hid]
 
 /-- belnapLift is commutative when `f` is commutative. -/
-theorem belnapLift_comm (f : Bool → Bool → Bool)
-    (hcomm : ∀ a b, f a b = f b a) (id : Bool) (p q : PrProp W) :
-    belnapLift f id p q = belnapLift f id q p := by
-  simp only [belnapLift]
-  congr 1
-  · funext w; exact Bool.or_comm (p.presup w) (q.presup w)
-  · funext w; exact hcomm _ _
+theorem belnapLift_comm (f : Prop → Prop → Prop)
+    (hcomm : ∀ a b, f a b = f b a) (id : Prop) (p q : PrProp W) :
+    belnapLift f id p q = belnapLift f id q p :=
+  ext_pointwise
+    (fun _ => or_comm)
+    (fun w => Iff.of_eq (by simp only [belnapLift]; exact hcomm _ _))
 
 -- ════════════════════════════════════════════════════════════════
 -- Collapse: All connective families agree when both defined
@@ -632,42 +711,53 @@ theorem belnapLift_comm (f : Bool → Bool → Bool)
     agree on assertion: classical = filtering = K&P = flex = Belnap.
     The theories diverge only when presuppositions conflict. -/
 theorem all_or_agree_when_both_defined (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (hq : q.presup w = true) :
-    (or p q).assertion w = (orFilter p q).assertion w ∧
-    (or p q).assertion w = (orKP p q).assertion w ∧
-    (or p q).assertion w = (orFlex p q).assertion w ∧
-    (or p q).assertion w = (orBelnap p q).assertion w ∧
-    (or p q).assertion w = (orWeak p q).assertion w := by
-  simp [or, orFilter, orKP, orFlex, orBelnap, orWeak, hp, hq]
+    (hp : p.presup w) (hq : q.presup w) :
+    ((or p q).assertion w ↔ (orFilter p q).assertion w) ∧
+    ((or p q).assertion w ↔ (orKP p q).assertion w) ∧
+    ((or p q).assertion w ↔ (orFlex p q).assertion w) ∧
+    ((or p q).assertion w ↔ (orBelnap p q).assertion w) ∧
+    ((or p q).assertion w ↔ (orWeak p q).assertion w) := by
+  refine ⟨Iff.rfl, Iff.rfl, ?_, ?_, Iff.rfl⟩
+  · exact (orFlex_eq_or_when_both_defined p q w hp hq).symm
+  · exact (orFlex_eq_or_when_both_defined p q w hp hq).symm
 
 /-- When both presuppositions hold at w, ALL conjunction connectives
     agree on assertion: classical = filtering = flex = Belnap.
     The theories diverge only when presuppositions conflict. -/
 theorem all_and_agree_when_both_defined (p q : PrProp W) (w : W)
-    (hp : p.presup w = true) (hq : q.presup w = true) :
-    (and p q).assertion w = (andFilter p q).assertion w ∧
-    (and p q).assertion w = (andFlex p q).assertion w ∧
-    (and p q).assertion w = (andBelnap p q).assertion w ∧
-    (and p q).assertion w = (andWeak p q).assertion w := by
-  simp [and, andFilter, andFlex, andBelnap, andWeak, hp, hq]
+    (hp : p.presup w) (hq : q.presup w) :
+    ((and p q).assertion w ↔ (andFilter p q).assertion w) ∧
+    ((and p q).assertion w ↔ (andFlex p q).assertion w) ∧
+    ((and p q).assertion w ↔ (andBelnap p q).assertion w) ∧
+    ((and p q).assertion w ↔ (andWeak p q).assertion w) := by
+  refine ⟨?_, ?_, ?_, Iff.rfl⟩
+  · exact Iff.rfl
+  · exact (andFlex_eq_and_when_both_defined p q w hp hq).symm
+  · exact (andFlex_eq_and_when_both_defined p q w hp hq).symm
 
 -- ════════════════════════════════════════════════════════════════
 -- Round-trip: Prop3 ↔ PrProp
 -- ════════════════════════════════════════════════════════════════
 
-/-- Convert a three-valued proposition to a PrProp.
-
-    Inverse of `PrProp.eval`: defined ↔ value ≠ indet,
-    assertion ↔ value = true. -/
-def ofProp3 (p : Prop3 W) : PrProp W :=
-  { presup := λ w => (p w).isDefined
-  , assertion := λ w => (p w).toBoolOrFalse }
-
 /-- `Prop3 → PrProp → Prop3` round-trip is the identity. -/
 theorem eval_ofProp3 (p : Prop3 W) : (ofProp3 p).eval = p := by
-  funext w
-  simp only [eval, ofProp3]
-  cases p w <;> rfl
+  funext w; simp only [eval, ofProp3]
+  by_cases h1 : p w ≠ .indet
+  · rw [if_pos h1]
+    by_cases h2 : p w = .true
+    · rw [if_pos h2, h2]
+    · rw [if_neg h2]; symm
+      exact match p w, h1, h2 with | .false, _, _ => rfl
+  · rw [if_neg h1]; symm; exact not_not.mp h1
+
+-- ════════════════════════════════════════════════════════════════
+-- Genuineness
+-- ════════════════════════════════════════════════════════════════
+
+/-- Genuineness is symmetric. -/
+theorem genuineness_comm (p q : PrProp W) (s : Finset W) :
+    genuineness p q s ↔ genuineness q p s := by
+  simp only [genuineness, and_comm]
 
 end PrProp
 

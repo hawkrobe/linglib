@@ -214,9 +214,19 @@ theorem donkey_uniqueness_from_minimality
     (s : F.Sit)
     (h_minimal : F.isMinimal (λ s => match domain.filter (λ e => restrictor e s) with
                                       | [_] => true | _ => false) s) :
-    (the_sit F domain restrictor scope).presup s = true := by
+    (the_sit F domain restrictor scope).presup s := by
+  -- h_minimal.1 : (match filter ... | [_] => true | _ => false) = true (Bool)
+  -- goal : (the_sit ...).presup s, which is (match filter ... | [_] => true | _ => false) : Prop
+  -- The Bool coercion to Prop means `true` → `True`, `false` → `False`
+  -- We need to show the Prop version given the Bool version
+  have hbool := h_minimal.1
   simp only [the_sit]
-  exact h_minimal.1
+  -- Both the hypothesis and goal match on the same expression
+  -- Split on the filter result
+  match hf : domain.filter (fun e => restrictor e s) with
+  | [_] => trivial
+  | [] => simp [hf] at hbool
+  | _ :: _ :: _ => simp [hf] at hbool
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -479,7 +489,8 @@ theorem attributive_assertion :
     theMurderer.assertion .wActual = false := rfl
 
 theorem ref_attr_diverge :
-    theMurderer.assertion .sCourtroom ≠ theMurderer.assertion .wActual := nofun
+    theMurderer.assertion .sCourtroom ≠ theMurderer.assertion .wActual := by
+  simp [theMurderer, the_sit', allEnts, isMurderer, isInsane]
 
 def refSitVar : SitVar := .free
 def attrSitVar : SitVar := .bound 1
@@ -662,7 +673,8 @@ theorem deDicto_presup : thePresident.presup .belief = true := rfl
 theorem deDicto_assertion : thePresident.assertion .belief = true := rfl
 
 theorem deRe_deDicto_diverge :
-    thePresident.assertion .actual ≠ thePresident.assertion .belief := nofun
+    thePresident.assertion .actual ≠ thePresident.assertion .belief := by
+  simp [thePresident, the_sit', bEnts, isPresident, isSpy]
 
 theorem deRe_is_free : SitVarStatus.free = useModeToSitVar .referential := rfl
 theorem deDicto_is_bound : SitVarStatus.bound = useModeToSitVar .attributive := rfl

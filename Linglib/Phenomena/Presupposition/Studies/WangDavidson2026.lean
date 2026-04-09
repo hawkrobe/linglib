@@ -132,7 +132,7 @@ variable {W : Type*}
 /-- `PrProp.xor` does not filter: when q's presupposition fails,
     the result is always undefined regardless of p. -/
 theorem prprop_exclusive_no_filter (p q : PrProp W) (w : W)
-    (hq : q.presup w = false) :
+    (hq : ¬q.presup w) :
     (PrProp.xor p q).eval w = .indet :=
   PrProp.eval_xor_no_filter p q w hq
 

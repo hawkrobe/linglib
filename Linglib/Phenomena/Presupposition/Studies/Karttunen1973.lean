@@ -52,6 +52,7 @@ correct `ProjectionBehavior` annotations.
 
 namespace Phenomena.Presupposition.Studies.Karttunen1973
 
+open Classical
 open Core.Presupposition
 open Core.Proposition
 open Core.Verbs (ProjectionBehavior)
@@ -141,15 +142,15 @@ variable {W : Type*}
 /-- Rule 13a: If A presupposes C (A >> C), then "If A then B" >> C.
     The antecedent's presupposition always projects. -/
 theorem rule13a (p q : PrProp W) (w : W)
-    (hp : p.presup w = false) :
-    (PrProp.impFilter p q).presup w = false := by
+    (hp : ¬p.presup w) :
+    ¬(PrProp.impFilter p q).presup w := by
   simp [PrProp.impFilter, hp]
 
 /-- Rule 13b: If B >> C, then "If A then B" >> C, unless A ⊨ C.
     When A's assertion entails B's presupposition, the presupposition
     is filtered out. -/
 theorem rule13b (p q : PrProp W)
-    (h : ∀ w, p.assertion w = true → q.presup w = true) :
+    (h : ∀ w, p.assertion w → q.presup w) :
     (PrProp.impFilter p q).presup = p.presup :=
   PrProp.impFilter_eliminates_presup p q h
 
@@ -161,10 +162,10 @@ theorem rule17_same_presup_as_rule13 (p q : PrProp W) (w : W) :
 /-- Rule 24: filtering for disjunction uses ¬A instead of A.
     "A or B" >> C unless ¬A ⊨ C (i.e., ¬A's truth entails C). -/
 theorem rule24_negation_asymmetry (p q : PrProp W) (w : W) :
-    (PrProp.orFilter p q).presup w =
-    ((!p.assertion w || q.presup w) &&
-     (!q.assertion w || p.presup w) &&
-     (p.presup w || q.presup w)) := rfl
+    (PrProp.orFilter p q).presup w ↔
+    (p.assertion w → q.presup w) ∧
+    (q.assertion w → p.presup w) ∧
+    (p.presup w ∨ q.presup w) := Iff.rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Classical-Logic Equivalence (§8)
@@ -205,44 +206,46 @@ inductive JackWorld where
 
 /-- "Jack has children" — no presupposition. -/
 def jackHasChildren : PrProp JackWorld :=
-  { presup := fun _ => true
-  , assertion := fun w => match w with
+  PrProp.ofBool
+    (fun _ => true)
+    (fun w => match w with
       | .hasChildren_allBald | .hasChildren_notAllBald => true
-      | .noChildren => false }
+      | .noChildren => false)
 
 /-- "All of Jack's children are bald" — presupposes Jack has children. -/
 def allChildrenBald : PrProp JackWorld :=
-  { presup := fun w => match w with
+  PrProp.ofBool
+    (fun w => match w with
       | .hasChildren_allBald | .hasChildren_notAllBald => true
-      | .noChildren => false
-  , assertion := fun w => match w with
+      | .noChildren => false)
+    (fun w => match w with
       | .hasChildren_allBald => true
-      | .hasChildren_notAllBald | .noChildren => false }
+      | .hasChildren_notAllBald | .noChildren => false)
 
 /-- Ex. (11a): "If Jack has children, then all of Jack's children
     are bald." The presupposition of the consequent ("Jack has children")
     is filtered because the antecedent entails it. -/
 theorem ex11a_presup_filtered :
-    (PrProp.impFilter jackHasChildren allChildrenBald).presup = fun _ => true := by
-  funext w; cases w <;> rfl
+    (PrProp.impFilter jackHasChildren allChildrenBald).presup = fun _ => True := by
+  funext w; simp [PrProp.impFilter, jackHasChildren, allChildrenBald, PrProp.ofBool]
 
 /-- Ex. (10a)/(10b): When the two clauses are semantically unrelated,
     the conditional has all the presuppositions of its constituents.
     We model this with presuppositionless antecedent + presuppositional
     consequent where the antecedent doesn't entail the presupposition. -/
 theorem unrelated_clauses_project (p q : PrProp W) (w : W)
-    (hp_def : p.presup w = true)
-    (hp_true : p.assertion w = true)
-    (hq_undef : q.presup w = false) :
-    (PrProp.impFilter p q).presup w = false := by
+    (hp_def : p.presup w)
+    (hp_true : p.assertion w)
+    (hq_undef : ¬q.presup w) :
+    ¬(PrProp.impFilter p q).presup w := by
   simp [PrProp.impFilter, hp_def, hp_true, hq_undef]
 
 /-- Ex. (16a): "Jack has children and all of Jack's children are bald."
     Same filtering as the conditional — the conjunction doesn't
     presuppose Jack has children. -/
 theorem ex16a_presup_filtered :
-    (PrProp.andFilter jackHasChildren allChildrenBald).presup = fun _ => true := by
-  funext w; cases w <;> rfl
+    (PrProp.andFilter jackHasChildren allChildrenBald).presup = fun _ => True := by
+  funext w; simp [PrProp.andFilter, jackHasChildren, allChildrenBald, PrProp.ofBool]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Three-Valued Logic Comparison (§10) — Historical
@@ -273,16 +276,16 @@ theorem ex16a_presup_filtered :
 /-- Bochvar internal conjunction = `PrProp.and`: both presuppositions
     must hold. This is the cumulative hypothesis. -/
 theorem bochvar_internal_is_classical (p q : PrProp W) (w : W) :
-    (PrProp.and p q).presup w = (p.presup w && q.presup w) := rfl
+    (PrProp.and p q).presup w ↔ (p.presup w ∧ q.presup w) := Iff.rfl
 
 /-- The filtering conjunction is strictly weaker than classical:
     it can be defined even when q's presupposition fails (if p's
     assertion is false). -/
 theorem filter_weaker_than_classical (p q : PrProp W) (w : W)
-    (h : (PrProp.and p q).presup w = true) :
-    (PrProp.andFilter p q).presup w = true := by
+    (h : (PrProp.and p q).presup w) :
+    (PrProp.andFilter p q).presup w := by
   simp [PrProp.and, PrProp.andFilter] at *
-  exact ⟨h.1, by cases p.assertion w <;> simp_all⟩
+  exact ⟨h.1, fun _ => h.2⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6. Internal vs External Negation (§10) — Historical
@@ -301,12 +304,12 @@ theorem filter_weaker_than_classical (p q : PrProp W) (w : W)
 
 /-- External negation: maps undefined to false (a plug). -/
 def negExternal (p : PrProp W) : PrProp W :=
-  { presup := fun _ => true
-  , assertion := fun w => p.presup w && p.assertion w }
+  { presup := fun _ => True
+  , assertion := fun w => p.presup w ∧ p.assertion w }
 
 /-- External negation is always defined (it's a plug). -/
 theorem negExternal_always_defined (p : PrProp W) (w : W) :
-    (negExternal p).presup w = true := rfl
+    (negExternal p).presup w := trivial
 
 /-- Internal negation preserves presupposition (it's a hole). -/
 theorem neg_internal_preserves (p : PrProp W) :
@@ -314,8 +317,8 @@ theorem neg_internal_preserves (p : PrProp W) :
 
 /-- The two negations agree when the presupposition holds. -/
 theorem neg_agree_when_defined (p : PrProp W) (w : W)
-    (h : p.presup w = true) :
-    (PrProp.neg p).assertion w = !(negExternal p).assertion w := by
+    (h : p.presup w) :
+    (PrProp.neg p).assertion w ↔ ¬(negExternal p).assertion w := by
   simp [PrProp.neg, negExternal, h]
 
 -- ════════════════════════════════════════════════════════════════
@@ -341,7 +344,7 @@ theorem neg_agree_when_defined (p : PrProp W) (w : W)
 /-- The simple filtering condition (rule 13b) is the special case of
     the revised condition (rule 17b') where X = ∅. -/
 theorem simple_is_special_case_of_revised (p q : PrProp W)
-    (h : ∀ w, p.assertion w = true → q.presup w = true) :
+    (h : ∀ w, p.assertion w → q.presup w) :
     (PrProp.impFilter p q).presup = p.presup :=
   PrProp.impFilter_eliminates_presup p q h
 

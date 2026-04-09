@@ -428,8 +428,9 @@ theorem modal_can_weaken :
       (indirectScenario.toEvidentialProp p).assertion ≠
       (modalEvidential true must_p).assertion := by
   refine ⟨fun _ => true, fun _ => false, ?_⟩
+  simp only [LearningScenario.toEvidentialProp, modalEvidential]
   intro h
-  exact absurd (congr_fun h ()) (by decide)
+  exact absurd (congr_fun h ()) (by simp)
 
 /-- Property (6iv): the evidential presupposition projects past negation.
     Negating the evidential negates the assertion (p → ¬p) but preserves

@@ -155,15 +155,15 @@ But with presupposition satisfied:
 Uses `Core.Presupposition.PrProp` directly, making the presupposition/assertion
 split structural rather than ad-hoc.
 -/
-def onlyPrProp (x : World → Bool) (scope : BProp World) : Core.Presupposition.PrProp World where
-  presup := λ _ => allWorlds.any λ y => x y && scope y
-  assertion := λ _ => allWorlds.all λ y => x y || !(scope y)
+def onlyPrProp (x : World → Bool) (scope : BProp World) : Core.Presupposition.PrProp World :=
+  .ofBool (λ _ => allWorlds.any λ y => x y && scope y)
+          (λ _ => allWorlds.all λ y => x y || !(scope y))
 
 /--
 The full "only" meaning: presupposition + assertion combined.
 
 "Only x VP" is true at w iff x satisfies VP AND no one else does.
-Equivalent to `(onlyPrProp x scope).presup w && (onlyPrProp x scope).assertion w`.
+Equivalent to `(onlyPrProp x scope).presup w ∧ (onlyPrProp x scope).assertion w`.
 -/
 def onlyFull (x : World → Bool) (scope : BProp World) : BProp World :=
   λ _w => (allWorlds.any λ y => x y && scope y) &&
@@ -171,8 +171,8 @@ def onlyFull (x : World → Bool) (scope : BProp World) : BProp World :=
 
 /-- `onlyFull` equals the conjunction of `onlyPrProp`'s components. -/
 theorem onlyFull_eq_prprop (x : World → Bool) (scope : BProp World) (w : World) :
-    onlyFull x scope w = ((onlyPrProp x scope).presup w && (onlyPrProp x scope).assertion w) :=
-  rfl
+    onlyFull x scope w = true ↔ (onlyPrProp x scope).presup w ∧ (onlyPrProp x scope).assertion w := by
+  simp [onlyFull, onlyPrProp, Core.Presupposition.PrProp.ofBool, Bool.and_eq_true]
 
 /--
 "Only" (full meaning) is not classically DE (von Fintel ex 11).

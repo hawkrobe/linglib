@@ -21,6 +21,7 @@ import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.NonBivalence
 import Linglib.Core.Logic.Quantification
 import Linglib.Core.Logic.Quantification.Defs
+import Linglib.Core.Logic.Quantification.Generators
 import Linglib.Core.Logic.Quantification.Properties
 import Linglib.Core.Logic.Quantification.NumberTree
 import Linglib.Core.Logic.Quantification.Lattice

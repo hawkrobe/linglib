@@ -108,14 +108,12 @@ theorem presups_conflict : ∀ w, ¬(hasKing w = true ∧ hasPresident w = true)
   intro w; cases w <;> simp [hasKing, hasPresident]
 
 /-- φ_p: "The King is opening parliament" — presupposes hasKing. -/
-def kingOpensParl : PrProp W where
-  presup := hasKing
-  assertion := fun | .kingOpens => true | _ => false
+def kingOpensParl : PrProp W :=
+  PrProp.ofBool hasKing (fun | .kingOpens => true | _ => false)
 
 /-- ψ_q: "The President is conducting the ceremony" — presupposes hasPresident. -/
-def presConductsCeremony : PrProp W where
-  presup := hasPresident
-  assertion := fun | .presidentConducts => true | _ => false
+def presConductsCeremony : PrProp W :=
+  PrProp.ofBool hasPresident (fun | .presidentConducts => true | _ => false)
 
 
 -- ══════════════════════════════════════════════════════════
@@ -133,9 +131,9 @@ theorem presup_universal : ∀ w, expectedPresup w = true := by
 At kingDoesnt the presupposition is satisfied but both disjuncts fail. -/
 theorem can_be_false :
     expectedPresup W.kingDoesnt = true ∧
-    kingOpensParl.assertion W.kingDoesnt = false ∧
-    presConductsCeremony.assertion W.kingDoesnt = false :=
-  ⟨rfl, rfl, rfl⟩
+    ¬kingOpensParl.assertion W.kingDoesnt ∧
+    ¬presConductsCeremony.assertion W.kingDoesnt :=
+  ⟨rfl, by simp [kingOpensParl, PrProp.ofBool], by simp [presConductsCeremony, PrProp.ofBool]⟩
 
 
 -- ══════════════════════════════════════════════════════════
@@ -143,14 +141,16 @@ theorem can_be_false :
 -- ══════════════════════════════════════════════════════════
 
 /-- Strong Kleene disjunction of the two presuppositional propositions. -/
-def skDisj : Prop3 W :=
+noncomputable def skDisj : Prop3 W :=
   Prop3.or kingOpensParl.eval presConductsCeremony.eval
 
 /-- Strong Kleene never produces false for this disjunction.
 Because presuppositions conflict, at least one disjunct is always undefined,
 so the table never reaches the 0 ∨ 0 = 0 row. -/
 theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
-  intro w; cases w <;> native_decide
+  intro w; cases w <;>
+    simp [skDisj, Prop3.or, PrProp.eval, kingOpensParl, presConductsCeremony,
+      PrProp.ofBool, hasKing, hasPresident, Truth3.join, Truth3.ofBool]
 
 
 -- ══════════════════════════════════════════════════════════
@@ -167,8 +167,10 @@ def classicalDisj : PrProp W := PrProp.or kingOpensParl presConductsCeremony
 /-- PrProp.or is never defined when presuppositions conflict.
 This captures Definition 3 in Yagi: truth value of φ is based on
 A(φ) and Π(φ); when Π(φ) = 0, φ = ∗. -/
-theorem classical_never_defined : ∀ w, classicalDisj.presup w = false := by
-  intro w; cases w <;> rfl
+theorem classical_never_defined : ∀ w, ¬classicalDisj.presup w := by
+  intro w hw
+  cases w <;> simp [classicalDisj, PrProp.or, kingOpensParl, presConductsCeremony,
+    PrProp.ofBool, hasKing, hasPresident] at hw
 
 /-- Filtering disjunction (Heim/Schlenker-style symmetric filtering).
 Encodes (A(φ) → Π(ψ)) ∧ (A(ψ) → Π(φ)) ∧ (Π(φ) ∨ Π(ψ)), which is
@@ -180,7 +182,9 @@ def filterDisj : PrProp W := PrProp.orFilter kingOpensParl presConductsCeremony
 disjunction should clearly be true. The filtering condition demands
 the second presupposition hold when the first assertion is true. -/
 theorem filter_wrong_at_kingOpens :
-    filterDisj.presup W.kingOpens = false := by rfl
+    ¬filterDisj.presup W.kingOpens := by
+  simp [filterDisj, PrProp.orFilter, kingOpensParl, presConductsCeremony,
+    PrProp.ofBool, hasKing, hasPresident]
 
 /-- But the expected presupposition IS satisfied there. -/
 theorem expected_satisfied_at_kingOpens :
@@ -195,9 +199,12 @@ whenever Π = 1, A = 1. Derived from the general
 `PrProp.orKP_presup_entails_when_conflicting` theorem using `presups_conflict`.
 @cite{yagi-2025} §2.2 (5)–(6). -/
 theorem kp_presup_entails_assertion : ∀ w,
-    kpDisj.presup w = true → kpDisj.assertion w = true :=
-  fun w h => PrProp.orKP_presup_entails_when_conflicting _ _ w
-    (fun ⟨hp, hq⟩ => presups_conflict w ⟨hp, hq⟩) h
+    kpDisj.presup w → kpDisj.assertion w := by
+  intro w h
+  apply PrProp.orKP_presup_entails_when_conflicting _ _ w _ h
+  intro ⟨hp, hq⟩
+  simp [kingOpensParl, presConductsCeremony, PrProp.ofBool] at hp hq
+  exact presups_conflict w ⟨hp, hq⟩
 
 
 -- ══════════════════════════════════════════════════════════
@@ -230,14 +237,24 @@ theorem hasPresident_not_supported :
     rw [h]; simp [bugandaState]
   simp [Update.prop, hasPresident] at this
 
+/-- Bool assertion function for "King opens parliament". -/
+def kingOpensB : BProp W
+  | .kingOpens => true
+  | _ => false
+
+/-- Bool assertion function for "President conducts ceremony". -/
+def presConductsB : BProp W
+  | .presidentConducts => true
+  | _ => false
+
 open Semantics.Dynamic.UpdateSemantics in
 /-- The presuppositional disjunction update yields ∗ (none) on bugandaState.
 
     @cite{yagi-2025} §2.3: the update s[φ_p ∨ ψ_q] results in undefinedness
     because the presupposition check for the first disjunct (s[p] = s) fails. -/
 theorem update_yields_undefined :
-    PUpdate.disjPresup hasKing kingOpensParl.assertion hasPresident
-      presConductsCeremony.assertion (some bugandaState) = none := by
+    PUpdate.disjPresup hasKing kingOpensB hasPresident
+      presConductsB (some bugandaState) = none := by
   simp only [PUpdate.disjPresup, PUpdate.presup]
   -- The presupposition check: Update.prop hasKing bugandaState = bugandaState?
   -- No — it eliminates president-worlds
@@ -267,7 +284,7 @@ theorem neither_presup_supported :
 /-- Strong Kleene disjunction with meta-assertion on each disjunct.
 Since meta-assertion maps ∗ to 0, both disjuncts are bivalent, so
 Strong and Weak Kleene agree (@cite{yagi-2025} eq. (10), Definition 7). -/
-def metaAssertDisj : Prop3 W :=
+noncomputable def metaAssertDisj : Prop3 W :=
   Prop3.or (Prop3.metaAssert kingOpensParl.eval) (Prop3.metaAssert presConductsCeremony.eval)
 
 /-- Meta-assertion allows falsity (unlike Strong Kleene).
@@ -275,8 +292,8 @@ Satisfies observation (2b). -/
 theorem metaAssert_allows_falsity :
     metaAssertDisj W.kingDoesnt = .false := by
   simp [metaAssertDisj, Prop3.or, Prop3.metaAssert, Truth3.metaAssert,
-    PrProp.eval, kingOpensParl, presConductsCeremony, hasKing, hasPresident,
-    Truth3.join, Truth3.ofBool]
+    PrProp.eval, kingOpensParl, presConductsCeremony, PrProp.ofBool,
+    hasKing, hasPresident, Truth3.join, Truth3.ofBool]
 
 /-- But meta-assertion loses the presupposition: 𝒜φ_p has no presupposition
 at all (it maps ∗ to 0), so the Strong Kleene disjunction 𝒜φ_p ∨_s ψ_q
@@ -284,12 +301,18 @@ only presupposes ¬𝒜ψ_q → p (Yagi (11)), not the expected p ∨ q.
 
 Violates observation (2a): the disjunction should presuppose p ∨ q. -/
 theorem metaAssert_always_defined : ∀ w, (metaAssertDisj w).isDefined = true := by
-  intro w; cases w <;> native_decide
+  intro w; cases w <;>
+    simp [metaAssertDisj, Prop3.or, Prop3.metaAssert, Truth3.metaAssert,
+      PrProp.eval, kingOpensParl, presConductsCeremony, PrProp.ofBool,
+      hasKing, hasPresident, Truth3.join, Truth3.ofBool, Truth3.isDefined]
 
 /-- The meta-assertion disjunction is bivalent — it has no gap at all,
 so it cannot carry any presupposition via the standard gap mechanism. -/
 theorem metaAssert_no_gap : ∀ w, metaAssertDisj w ≠ .indet := by
-  intro w; cases w <;> native_decide
+  intro w; cases w <;>
+    simp [metaAssertDisj, Prop3.or, Prop3.metaAssert, Truth3.metaAssert,
+      PrProp.eval, kingOpensParl, presConductsCeremony, PrProp.ofBool,
+      hasKing, hasPresident, Truth3.join, Truth3.ofBool]
 
 
 -- ══════════════════════════════════════════════════════════
@@ -303,8 +326,10 @@ def flexDisj : PrProp W := PrProp.orFlex kingOpensParl presConductsCeremony
 /-- Flexible accommodation gives the correct presupposition p ∨ q.
 Satisfies observation (2a). -/
 theorem flex_correct_presup :
-    flexDisj.presup = expectedPresup := by
-  funext w; cases w <;> rfl
+    ∀ w, flexDisj.presup w ↔ (expectedPresup w = true) := by
+  intro w; cases w <;>
+    simp [flexDisj, PrProp.orFlex, kingOpensParl, presConductsCeremony,
+      PrProp.ofBool, hasKing, hasPresident, expectedPresup]
 
 /-- Complete truth table: flexible accommodation predicts the right
 value at every world. -/
@@ -315,14 +340,14 @@ theorem flex_truth_table :
     flexDisj.eval W.presidentDoesnt = .false := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     simp [flexDisj, PrProp.orFlex, PrProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident, Truth3.ofBool]
+      PrProp.ofBool, hasKing, hasPresident, Truth3.ofBool]
 
 /-- Flexible accommodation is always defined (never undefined).
 The presupposition p ∨ q is a tautology in this world model. -/
 theorem flex_always_defined : ∀ w, flexDisj.eval w ≠ .indet := by
   intro w
   cases w <;> simp [flexDisj, PrProp.orFlex, PrProp.eval, kingOpensParl, presConductsCeremony,
-    hasKing, hasPresident, Truth3.ofBool]
+    PrProp.ofBool, hasKing, hasPresident, Truth3.ofBool]
 
 /-- Flexible accommodation IS Belnap's conditional assertion disjunction.
 @cite{geurts-2005}'s flexible accommodation and @cite{belnap-1970}'s
@@ -348,8 +373,12 @@ theorem flex_genuineness :
     PrProp.genuineness kingOpensParl presConductsCeremony
       ⟨[W.kingOpens, W.presidentConducts], by simp⟩ := by
   constructor
-  · exact ⟨W.kingOpens, by simp, by native_decide⟩
-  · exact ⟨W.presidentConducts, by simp, by native_decide⟩
+  · exact ⟨W.kingOpens, by simp,
+      ⟨by simp [kingOpensParl, PrProp.ofBool, hasKing],
+       by simp [kingOpensParl, PrProp.ofBool]⟩⟩
+  · exact ⟨W.presidentConducts, by simp,
+      ⟨by simp [presConductsCeremony, PrProp.ofBool, hasPresident],
+       by simp [presConductsCeremony, PrProp.ofBool]⟩⟩
 
 
 -- ══════════════════════════════════════════════════════════
@@ -372,7 +401,8 @@ theorem neg_flex_truth_table :
     negFlexDisj.eval W.presidentDoesnt = .true := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     simp [negFlexDisj, PrProp.neg, flexDisj, PrProp.orFlex, PrProp.eval,
-      kingOpensParl, presConductsCeremony, hasKing, hasPresident, Truth3.ofBool]
+      kingOpensParl, presConductsCeremony, PrProp.ofBool,
+      hasKing, hasPresident, Truth3.ofBool]
 
 /-- The static negation of orFlex matches example (3)/(4) in Yagi:
 "Neither is the King opening parliament nor is the President conducting
@@ -391,8 +421,8 @@ and dynamic shows up precisely here. -/
 theorem neg_static_vs_dynamic_divergence :
     -- Statically, negation works fine: preserves presupposition, flips assertion
     (PrProp.neg flexDisj).presup = flexDisj.presup ∧
-    (∀ w, (PrProp.neg flexDisj).assertion w = !flexDisj.assertion w) :=
-  ⟨rfl, fun _ => rfl⟩
+    (∀ w, (PrProp.neg flexDisj).assertion w ↔ ¬flexDisj.assertion w) :=
+  ⟨rfl, fun _ => Iff.rfl⟩
 
 
 -- ══════════════════════════════════════════════════════════
@@ -418,9 +448,8 @@ def solved : BProp W18
   | .notSolved => false
 
 /-- "Mary realized the problem is solved" — factive: presupposes problem is solved. -/
-def maryRealized : PrProp W18 where
-  presup := solved
-  assertion := fun | .solvedRealized => true | _ => false
+def maryRealized : PrProp W18 :=
+  PrProp.ofBool solved (fun | .solvedRealized => true | _ => false)
 
 /-- "John didn't solve the problem" — no presupposition. -/
 def johnDidntSolve : PrProp W18 := PrProp.ofBProp (fun w => !solved w)
@@ -434,22 +463,22 @@ Note: the ASYMMETRIC Heim/Karttunen rule would correctly filter here,
 because ¬(John didn't solve) = (John solved) entails (problem is solved).
 linglib's `orFilter` uses the symmetric version. -/
 theorem ex18_symmetric_filter_overgenerates :
-    (PrProp.orFilter johnDidntSolve maryRealized).presup W18.notSolved = false := by
-  simp [PrProp.orFilter, johnDidntSolve, PrProp.ofBProp, maryRealized, solved]
+    ¬(PrProp.orFilter johnDidntSolve maryRealized).presup W18.notSolved := by
+  simp [PrProp.orFilter, johnDidntSolve, PrProp.ofBProp, maryRealized, PrProp.ofBool, solved]
 
 /-- orFlex handles (18) correctly: the presupposition is
 "johnDidntSolve.presup ∨ maryRealized.presup" = "true ∨ solved" = true.
 The first disjunct has no presupposition, so the disjunction of
 presuppositions is trivially satisfied. -/
 theorem ex18_orFlex_no_projection :
-    (PrProp.orFlex johnDidntSolve maryRealized).presup W18.notSolved = true := by
-  simp [PrProp.orFlex, johnDidntSolve, PrProp.ofBProp, maryRealized, solved]
+    (PrProp.orFlex johnDidntSolve maryRealized).presup W18.notSolved := by
+  simp [PrProp.orFlex, johnDidntSolve, PrProp.ofBProp, maryRealized, PrProp.ofBool, solved]
 
 /-- The key difference: (18) does NOT have conflicting presuppositions.
 The first disjunct has no presupposition (presuppositionless), so there
 is no conflict. Flexible accommodation with χ = ω = ⊤ works fine. -/
-theorem ex18_no_conflict : ∀ w, johnDidntSolve.presup w = true := by
-  intro w; rfl
+theorem ex18_no_conflict : ∀ w, johnDidntSolve.presup w := by
+  intro w; simp [johnDidntSolve, PrProp.ofBProp]
 
 
 -- ══════════════════════════════════════════════════════════
@@ -460,33 +489,34 @@ theorem ex18_no_conflict : ∀ w, johnDidntSolve.presup w = true := by
 disjunction doesn't have a classical presupposition.
 Satisfies (2b)? No — never false. -/
 theorem sk_fails_2b : ∃ w, expectedPresup w = true ∧ skDisj w ≠ .false :=
-  ⟨W.kingDoesnt, rfl, by native_decide⟩
+  ⟨W.kingDoesnt, rfl, strong_kleene_never_false _⟩
 
 /-- Classical or: satisfies (2a)? No — never defined. -/
-theorem classical_fails_2a : ∀ w, classicalDisj.presup w = false :=
+theorem classical_fails_2a : ∀ w, ¬classicalDisj.presup w :=
   classical_never_defined
 
 /-- orFilter: satisfies (2a)? No — wrong presupposition at some worlds. -/
-theorem filter_fails_2a : filterDisj.presup W.kingOpens = false := rfl
+theorem filter_fails_2a : ¬filterDisj.presup W.kingOpens := filter_wrong_at_kingOpens
 
 /-- K&P (orKP): satisfies (2a)? Yes — correct presupposition when defined.
 Satisfies (2b)? No — presupposition entails assertion. -/
 theorem kp_fails_2b : ∀ w,
-    kpDisj.presup w = true → kpDisj.assertion w = true :=
+    kpDisj.presup w → kpDisj.assertion w :=
   kp_presup_entails_assertion
 
 /-- Meta-assertion: satisfies (2b)? Yes. Satisfies (2a)? No — no presupposition. -/
-theorem metaAssert_fails_2a : metaAssertDisj W.presidentDoesnt ≠ .indet := by
-  native_decide
+theorem metaAssert_fails_2a : metaAssertDisj W.presidentDoesnt ≠ .indet :=
+  metaAssert_no_gap _
 
 /-- orFlex: satisfies both (2a) and (2b). -/
 theorem orFlex_satisfies_both :
     -- (2a): correct presupposition
-    flexDisj.presup = expectedPresup ∧
+    (∀ w, flexDisj.presup w ↔ (expectedPresup w = true)) ∧
     -- (2b): can be false
     flexDisj.eval W.kingDoesnt = .false :=
   ⟨flex_correct_presup, by simp [flexDisj, PrProp.orFlex, PrProp.eval,
-    kingOpensParl, presConductsCeremony, hasKing, hasPresident, Truth3.ofBool]⟩
+    kingOpensParl, presConductsCeremony, PrProp.ofBool,
+    hasKing, hasPresident, Truth3.ofBool]⟩
 
 /-- orFlex = orBelnap: flexible accommodation IS conditional assertion.
 Two independent traditions converge on the same connective. -/

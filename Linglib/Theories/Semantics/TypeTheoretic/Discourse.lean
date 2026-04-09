@@ -270,17 +270,16 @@ def Parametric.toPrProp {W : Type*} (p : Parametric (Core.Proposition.BProp W))
 /-- Convert a PrProp back to a Parametric. -/
 def _root_.Core.Presupposition.PrProp.toParametric {W : Type*}
     (p : Core.Presupposition.PrProp W) :
-    Parametric (Core.Proposition.BProp W) where
-  Bg := { w : W // p.presup w = true }
+    Parametric (Core.Proposition.Prop' W) where
+  Bg := { w : W // p.presup w }
   fg := λ _ => p.assertion
 
 /-- Parametric ↔ PrProp roundtrip: the assertion component survives
 when the presupposition holds. -/
 theorem toParametric_toPrProp_assertion {W : Type*} (p : Core.Presupposition.PrProp W) (w : W)
-    (hp : p.presup w = true) :
-    (p.toParametric.toPrProp p.presup
-      (λ w h => ⟨w, h⟩)).assertion w = p.assertion w := by
-  simp only [Parametric.toPrProp, Core.Presupposition.PrProp.toParametric, dif_pos hp]
+    (hp : p.presup w) :
+    p.toParametric.fg ⟨w, hp⟩ w ↔ p.assertion w := by
+  simp only [Core.Presupposition.PrProp.toParametric]
 
 /-- When a Parametric has a Bool-valued background, it directly maps to PrProp. -/
 def Parametric.toPrPropSimple {W : Type*}

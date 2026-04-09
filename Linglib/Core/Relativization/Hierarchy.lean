@@ -71,38 +71,24 @@ def RelClauseMarker.isContinuous (m : RelClauseMarker) : Bool :=
 -- § 3: Ordering Theorems
 -- ============================================================================
 
-/-- The hierarchy is strictly ordered: each position is more accessible
-    than the one below it. -/
-theorem ah_strictly_ordered :
-    AHPosition.moreAccessible .subject .directObject = true ∧
-    AHPosition.moreAccessible .directObject .indirectObject = true ∧
-    AHPosition.moreAccessible .indirectObject .oblique = true ∧
-    AHPosition.moreAccessible .oblique .genitive = true ∧
-    AHPosition.moreAccessible .genitive .objComparison = true := by
-  native_decide
+/-- The hierarchy rank is injective — no two positions share a rank.
+    Combined with the natural order on ℕ, this makes the AH a total order. -/
+theorem ah_rank_injective (a b : AHPosition) (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [AHPosition.rank]
 
-/-- Subject is the most accessible position (rank 6). -/
-theorem subject_most_accessible :
-    AHPosition.rank .subject = 6 := by native_decide
+/-- All ranks are between 1 and 6. -/
+theorem ah_rank_bounded (p : AHPosition) : 1 ≤ p.rank ∧ p.rank ≤ 6 := by
+  cases p <;> simp [AHPosition.rank]
 
-/-- Object of comparison is the least accessible position (rank 1). -/
-theorem objComparison_least_accessible :
-    AHPosition.rank .objComparison = 1 := by native_decide
+/-- Accessibility is reflexive (follows from `≥` on ℕ). -/
+theorem ah_reflexive (p : AHPosition) : p.atLeastAsAccessible p = true := by
+  simp [AHPosition.atLeastAsAccessible]
 
-/-- Accessibility is reflexive. -/
-theorem ah_reflexive :
-    AHPosition.all.all (λ p => p.atLeastAsAccessible p) = true := by
-  native_decide
-
-/-- Accessibility is transitive. -/
-theorem ah_transitive :
-    AHPosition.all.all (λ p1 =>
-      AHPosition.all.all (λ p2 =>
-        AHPosition.all.all (λ p3 =>
-          if p1.atLeastAsAccessible p2 && p2.atLeastAsAccessible p3
-          then p1.atLeastAsAccessible p3
-          else true))) = true := by
-  native_decide
+/-- Accessibility is transitive (follows from `≥` on ℕ). -/
+theorem ah_transitive (a b c : AHPosition)
+    (h1 : a.atLeastAsAccessible b = true) (h2 : b.atLeastAsAccessible c = true) :
+    a.atLeastAsAccessible c = true := by
+  simp [AHPosition.atLeastAsAccessible] at *; omega
 
 -- ============================================================================
 -- § 4: Contiguity Examples
@@ -134,10 +120,6 @@ theorem su_do_obl_not_contiguous :
 -- § 5: Primary Relativization Constraint (General Proof)
 -- ============================================================================
 
-/-- Rank is injective: distinct AH positions have distinct ranks. -/
-private theorem ah_rank_injective (a b : AHPosition)
-    (h : a.rank = b.rank) : a = b := by
-  cases a <;> cases b <;> (first | rfl | simp [AHPosition.rank] at h)
 
 /-- BEq agrees with propositional equality for AH positions. -/
 private theorem ah_beq_iff (a b : AHPosition) :

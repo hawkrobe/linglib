@@ -37,6 +37,7 @@ open Semantics.Tense.Evidential
 open Semantics.Modality
 open Semantics.Attitudes.Intensional (World allWorlds)
 open Core.Proposition (World4 BProp)
+open Core.Presupposition (PrProp)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Raincoat Scenario (parallel to Kernel.lean)
@@ -91,8 +92,8 @@ theorem raincoat_not_settled :
     target event) would require formalizing causation. -/
 theorem downstream_implies_must_defined :
     downstreamEvidence raincoatFrame ∧
-    (kernelMust raincoatK isRaining).presup .w0 = true := by
-  exact ⟨raincoat_downstream, by native_decide⟩
+    (kernelMust raincoatK isRaining).presup .w0 := by
+  exact ⟨raincoat_downstream, by simp only [kernelMust, PrProp.ofBool]; native_decide⟩
 
 /-- **Tense–modal evidential parallel**: both Cumming's nonfuture constraint
     and VF&G's `kernelMust` presupposition hold simultaneously for the same
@@ -103,12 +104,13 @@ theorem tense_modal_evidential_parallel :
     -- Cumming: nonfuture tense is felicitous (downstream evidence)
     downstreamEvidence raincoatFrame ∧
     -- VF&G: must is defined (kernel doesn't settle)
-    (kernelMust raincoatK isRaining).presup .w0 = true ∧
+    (kernelMust raincoatK isRaining).presup .w0 ∧
     -- VF&G: must is true (B_K entails isRaining? No — B_K = {w0, w1})
     -- Actually B_K does NOT entail isRaining (w1 ∈ B_K but ¬isRaining(w1))
     -- So must is defined but FALSE — the speaker doesn't have enough evidence
     -- for "must". This is correct: the raincoat alone doesn't prove rain.
-    (kernelMust raincoatK isRaining).assertion .w0 = false := by
+    ¬(kernelMust raincoatK isRaining).assertion .w0 := by
+  simp only [kernelMust, PrProp.ofBool]
   exact ⟨raincoat_downstream, by native_decide, by native_decide⟩
 
 /-- **Direct evidence blocks both**: when evidence is direct (the speaker
@@ -124,12 +126,13 @@ theorem direct_evidence_blocks_both :
     -- Direct evidence settles the prejacent
     directlySettlesExplicit directK isRaining = true ∧
     -- Therefore must is undefined (presupposition failure)
-    (kernelMust directK isRaining).presup .w0 = false ∧
+    ¬(kernelMust directK isRaining).presup .w0 ∧
     -- A direct-observation frame: T = A (saw the rain as it happened)
     let directFrame : EvidentialFrame ℤ :=
       { speechTime := 0, perspectiveTime := 0, referenceTime := 0, eventTime := -1, acquisitionTime := -1 }
     -- Downstream constraint trivially satisfied (T = A → T ≤ A)
     downstreamEvidence directFrame := by
+  simp only [kernelMust, PrProp.ofBool]
   refine ⟨by native_decide, by native_decide, ?_⟩
   show (-1 : ℤ) ≤ -1; omega
 
@@ -158,7 +161,8 @@ theorem inferential_claim_must_profile :
     inferentialClaim.authority = .nonparticipant ∧
     -- Concrete witness: raincoat kernel doesn't settle but must is defined
     directlySettlesExplicit raincoatK isRaining = false ∧
-    (kernelMust raincoatK isRaining).presup .w0 = true := by
+    (kernelMust raincoatK isRaining).presup .w0 := by
+  simp only [kernelMust, PrProp.ofBool]
   exact ⟨rfl, rfl, by native_decide, by native_decide⟩
 
 /-- Ego↔direct and nonparticipant↔indirect form natural pairs.

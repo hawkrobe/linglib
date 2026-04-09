@@ -43,6 +43,8 @@ namespace Phenomena.Presupposition.Compare
 
 open Core.Presupposition
 
+open Classical
+
 -- Filtering Theory Predictions
 
 section Filtering
@@ -53,15 +55,15 @@ variable {W : Type*}
 A factive verb "know" has a presupposition: C must be true.
 -/
 def factivePresup (c : W → Bool) : PrProp W where
-  presup := c
-  assertion := λ _ => true  -- Simplified: just the presupposition component
+  presup := fun w => c w = true
+  assertion := λ _ => True  -- Simplified: just the presupposition component
 
 /--
 A non-factive verb "think" has NO presupposition.
 -/
 def nonFactivePresup : PrProp W where
-  presup := λ _ => true
-  assertion := λ _ => true
+  presup := λ _ => True
+  assertion := λ _ => True
 
 /--
 The filtering prediction for "if A then know-C":
@@ -85,7 +87,7 @@ which is NOT tautological.
 -/
 theorem filtering_know_nontrivial (a c : W → Bool)
     (h : ∃ w, a w = true ∧ c w = false) :
-    ∃ w, (filteringPrediction_know a c).presup w = false := by
+    ∃ w, ¬(filteringPrediction_know a c).presup w := by
   obtain ⟨w, ha, hc⟩ := h
   use w
   simp [filteringPrediction_know, PrProp.impFilter, PrProp.ofBProp, factivePresup, ha, hc]
@@ -96,10 +98,10 @@ The presupposition of "if A then think-C" is always true,
 regardless of A, because "think" contributes no presupposition.
 -/
 theorem filtering_think_trivial (a : W → Bool) :
-    ∀ w, (filteringPrediction_think a).presup w = true := by
+    ∀ w, (filteringPrediction_think a).presup w := by
   intro w
   simp only [filteringPrediction_think, PrProp.impFilter, PrProp.ofBProp, nonFactivePresup]
-  cases a w <;> rfl
+  exact ⟨trivial, fun _ => trivial⟩
 
 end Filtering
 
@@ -184,11 +186,10 @@ theorem filtering_is_limiting_case :
     -- (because A → C is already satisfied)
     ∀ {W : Type*} (a c : W → Bool),
       (∀ w, a w = true → c w = true) →
-      (∀ w, (filteringPrediction_know a c).presup w = true) := by
+      (∀ w, (filteringPrediction_know a c).presup w) := by
   intro W a c h_entails w
   simp [filteringPrediction_know, PrProp.impFilter, PrProp.ofBProp, factivePresup]
-  cases ha : a w
-  · simp
-  · simp [h_entails w ha]
+  intro ha
+  exact h_entails w ha
 
 end Phenomena.Presupposition.Compare

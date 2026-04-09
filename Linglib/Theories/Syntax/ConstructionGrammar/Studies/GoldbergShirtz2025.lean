@@ -163,8 +163,7 @@ The presupposition is the situation type proposition itself:
 if the PAL is "grab-and-go", the presupposition is that grab-and-go
 situations are a recognized category for both speaker and addressee. -/
 def palPresupposition (W : Type*) (situationType : BProp W) : PrProp W :=
-  { presup := situationType
-  , assertion := λ _ => true }
+  PrProp.ofBool situationType (λ _ => true)
 
 /-- PAL two-dimensional meaning (@cite{potts-2005} two-dimensional semantics).
 
@@ -183,7 +182,7 @@ is satisfied. -/
 theorem pal_presup_satisfied_by_cg (W : Type*)
     (situationType : BProp W) (c : ContextSet W)
     (h : c ⊧ situationType) :
-    ∀ w, c w → (palPresupposition W situationType).presup w = true :=
+    ∀ w, c w → (palPresupposition W situationType).presup w :=
   h
 
 /-- PAL CI projects through negation (inherits from TwoDimProp).
@@ -216,11 +215,11 @@ theorem claim_form_motivates_function_holds : claim_form_motivates_function := b
 Supported by Studies 1a (common knowledge) and 1b (shared background):
 PALs are preferred when the situation type is mutually known. -/
 def claim_pal_presupposes_familiarity : Prop :=
-  ∀ (W : Type*) (sitType : BProp W),
-    (palPresupposition W sitType).presup = sitType
+  ∀ (W : Type*) (sitType : BProp W) (w : W),
+    (palPresupposition W sitType).presup w ↔ (sitType w = true)
 
 /-- Claim 2 holds by definition of palPresupposition. -/
 theorem claim_pal_presupposes_familiarity_holds :
-    claim_pal_presupposes_familiarity := λ _ _ => rfl
+    claim_pal_presupposes_familiarity := λ _ _ _ => Iff.rfl
 
 end ConstructionGrammar.Studies.GoldbergShirtz2025

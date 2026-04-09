@@ -4,7 +4,7 @@ import Linglib.Core.WALS.Features.F116A
 
 /-!
 # Cross-Linguistic Question Typology
-@cite{bhatt-dayal-2020} @cite{dayal-2025} @cite{mccloskey-2006} @cite{zu-2018}
+@cite{bhatt-dayal-2020} @cite{dayal-2025} @cite{mccloskey-2006} @cite{zu-2018} @cite{sato-2013} @cite{sato-ngui-2017} @cite{chan-shen-2026}
 
 Theory-neutral cross-linguistic data on question formation and embedding,
 following @cite{dayal-2025}. Covers:
@@ -20,7 +20,7 @@ Theories/) lives in `Questions.TypologyBridge`.
 
 ## Languages covered
 
-- English, Hindi-Urdu, Japanese, Italian, Newari
+- English, Hindi-Urdu, Japanese, Italian, Newari, Singlish, Mandarin
 
 -/
 
@@ -220,6 +220,41 @@ inductive WhMovementStrategy where
   | mixed     -- Both strategies available
   deriving DecidableEq, Repr
 
+/-- How a wh-phrase is interpreted at the syntax-semantics interface.
+    Distinct from `WhMovementStrategy` (surface position): the same surface
+    position (in-situ) can arise from different mechanisms (covert movement
+    vs unselective binding), with different empirical consequences for
+    island sensitivity and modifier licensing.
+
+    @cite{pesetsky-1987} @cite{sato-ngui-2017} @cite{chan-shen-2026} -/
+inductive WhInterpMechanism where
+  | overtMovement       -- successive cyclic movement to Spec-CP (checks [+wh])
+  | covertMovement      -- LF movement to Spec-CP (island-sensitive)
+  | unselectiveBinding  -- Q operator in C binds variable in situ (island-insensitive)
+  deriving DecidableEq, Repr
+
+/-- Does this mechanism involve the wh-phrase reaching matrix Spec-CP
+    (overtly or covertly)? -/
+def WhInterpMechanism.reachesSpecCP : WhInterpMechanism → Bool
+  | .overtMovement      => true
+  | .covertMovement     => true
+  | .unselectiveBinding => false
+
+/-- Is this mechanism sensitive to syntactic islands? -/
+def WhInterpMechanism.islandSensitive : WhInterpMechanism → Bool
+  | .overtMovement      => true
+  | .covertMovement     => true
+  | .unselectiveBinding => false
+
+/-- For all current mechanisms, `reachesSpecCP` and `islandSensitive` return
+    the same value. This is a contingent fact about the current taxonomy, not
+    a necessary truth: a future mechanism (e.g., long-distance Agree) could
+    be island-sensitive without reaching Spec-CP, or reach Spec-CP without
+    island sensitivity. The functions are kept separate for this reason. -/
+theorem reachesSpecCP_eq_islandSensitive (m : WhInterpMechanism) :
+    m.reachesSpecCP = m.islandSensitive := by
+  cases m <;> rfl
+
 /-- WALS Ch 116A: How polar questions are formed. -/
 inductive PolarQuestionStrategy where
   | particle                  -- Question particle
@@ -313,9 +348,30 @@ def newari_qProfile : QuestionProfile :=
   , whMovement := some .inSitu
   , polarStrategy := some .particle }
 
+/-- Colloquial Singapore English (Singlish).
+    Not in WALS (contact variety). Wh-movement classified as `.mixed`
+    because all three strategies (full movement, partial movement,
+    in-situ) are interchangeable (@cite{sato-2013}). Polar questions
+    use sentence-final particles (*ah*, *meh*) (@cite{sato-ngui-2017}). -/
+def singlish_qProfile : QuestionProfile :=
+  { language := "Singlish", walsCode := "cse"
+  , qParticlePos := some .final
+  , whMovement := some .mixed
+  , polarStrategy := some .particle }
+
+/-- Mandarin Chinese. WALS-grounded (all three chapters).
+    Wh-in-situ, sentence-final question particle (吗 ma), polar via particle.
+    @cite{chan-shen-2026} -/
+def mandarin_qProfile : QuestionProfile :=
+  { language := "Mandarin", walsCode := "mnd"
+  , qParticlePos := some .final
+  , whMovement := some .inSitu
+  , polarStrategy := some .particle }
+
 def allQuestionProfiles : List QuestionProfile :=
   [english_qProfile, hindi_qProfile, japanese_qProfile,
-   italian_qProfile, newari_qProfile]
+   italian_qProfile, newari_qProfile, singlish_qProfile,
+   mandarin_qProfile]
 
 -- ============================================================================
 -- WALS Grounding: Ch 92A (Position of Polar Question Particles)
@@ -341,6 +397,10 @@ theorem newari_ch92 :
     (Core.WALS.F92A.lookup "new").map (fromWALS92A ·.value) =
       newari_qProfile.qParticlePos := by
   native_decide
+theorem mandarin_ch92 :
+    (Core.WALS.F92A.lookup "mnd").map (fromWALS92A ·.value) =
+      mandarin_qProfile.qParticlePos := by
+  native_decide
 
 -- ============================================================================
 -- WALS Grounding: Ch 93A (Position of Interrogative Phrases)
@@ -362,6 +422,10 @@ theorem japanese_ch93 :
 theorem newari_ch93 :
     (Core.WALS.F93A.lookup "new").map (fromWALS93A ·.value) =
       newari_qProfile.whMovement := by
+  native_decide
+theorem mandarin_ch93 :
+    (Core.WALS.F93A.lookup "mnd").map (fromWALS93A ·.value) =
+      mandarin_qProfile.whMovement := by
   native_decide
 
 -- ============================================================================
@@ -387,6 +451,10 @@ theorem italian_ch116 :
 theorem newari_ch116 :
     (Core.WALS.F116A.lookup "new").map (fromWALS116A ·.value) =
       newari_qProfile.polarStrategy := by
+  native_decide
+theorem mandarin_ch116 :
+    (Core.WALS.F116A.lookup "mnd").map (fromWALS116A ·.value) =
+      mandarin_qProfile.polarStrategy := by
   native_decide
 
 end Phenomena.Questions.Typology

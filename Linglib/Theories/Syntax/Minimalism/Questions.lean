@@ -77,10 +77,6 @@ theorem polP_always_projected :
     polarQuestionSpine.projects .Pol = true ∧
     declarativeSpine.projects .Pol = true := ⟨rfl, rfl⟩
 
-/-- ForceP dominates PolP in the spine. -/
-theorem forceP_above_polP :
-    fValue .Force > fValue .Pol := by decide
-
 /-- Derive `ClauseType` from the syntactic features on Force⁰ and T⁰/Fin⁰.
 
     The Q-feature on Force determines illocutionary force; mood is

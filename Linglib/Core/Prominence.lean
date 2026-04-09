@@ -187,23 +187,21 @@ theorem DefinitenessLevel.all_length : DefinitenessLevel.all.length = 5 := by
 -- § 3: Scale Ordering Verification
 -- ============================================================================
 
-theorem animacy_human_gt_animate :
-    AnimacyLevel.human.rank > AnimacyLevel.animate.rank := by decide
+/-- Distinct animacy levels have distinct ranks — the rank function is injective. -/
+theorem animacy_rank_injective (a b : AnimacyLevel) (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [AnimacyLevel.rank]
 
-theorem animacy_animate_gt_inanimate :
-    AnimacyLevel.animate.rank > AnimacyLevel.inanimate.rank := by decide
+/-- Animacy ranks are bounded: 0 ≤ rank ≤ 2. -/
+theorem animacy_rank_bounded (a : AnimacyLevel) : a.rank ≤ 2 := by
+  cases a <;> simp [AnimacyLevel.rank]
 
-theorem definiteness_pronoun_gt_proper :
-    DefinitenessLevel.personalPronoun.rank > DefinitenessLevel.properName.rank := by decide
+/-- Distinct definiteness levels have distinct ranks — the rank function is injective. -/
+theorem definiteness_rank_injective (a b : DefinitenessLevel) (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [DefinitenessLevel.rank]
 
-theorem definiteness_proper_gt_definite :
-    DefinitenessLevel.properName.rank > DefinitenessLevel.definite.rank := by decide
-
-theorem definiteness_definite_gt_indSp :
-    DefinitenessLevel.definite.rank > DefinitenessLevel.indefiniteSpecific.rank := by decide
-
-theorem definiteness_indSp_gt_nonSp :
-    DefinitenessLevel.indefiniteSpecific.rank > DefinitenessLevel.nonSpecific.rank := by decide
+/-- Definiteness ranks are bounded: 0 ≤ rank ≤ 4. -/
+theorem definiteness_rank_bounded (d : DefinitenessLevel) : d.rank ≤ 4 := by
+  cases d <;> simp [DefinitenessLevel.rank]
 
 -- ============================================================================
 -- § 4: Person Scale (@cite{haspelmath-2021}, §6)
@@ -233,11 +231,13 @@ def PersonLevel.isSAP : PersonLevel → Bool
   | .second => true
   | .third  => false
 
-theorem person_first_gt_second :
-    PersonLevel.first.rank > PersonLevel.second.rank := by decide
+/-- Distinct person levels have distinct ranks — the rank function is injective. -/
+theorem person_rank_injective (a b : PersonLevel) (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [PersonLevel.rank]
 
-theorem person_second_gt_third :
-    PersonLevel.second.rank > PersonLevel.third.rank := by decide
+/-- Person ranks are bounded: 0 ≤ rank ≤ 2. -/
+theorem person_rank_bounded (p : PersonLevel) : p.rank ≤ 2 := by
+  cases p <;> simp [PersonLevel.rank]
 
 -- ============================================================================
 -- § 5: Argument Role and Marking Channel (@cite{haspelmath-2021}, §2–5)

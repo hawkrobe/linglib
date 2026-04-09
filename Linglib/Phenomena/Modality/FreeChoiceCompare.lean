@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Exhaustification.InnocentInclusion
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
@@ -10,7 +11,7 @@ import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic
 
 /-!
 # Free Choice: Theory Comparison
-@cite{aloni-2022} @cite{alsop-2024} @cite{bar-lev-fox-2020} @cite{champollion-alsop-grosu-2019} @cite{elliott-2025} @cite{fox-2007} @cite{holliday-mandelkern-2024}
+@cite{aloni-2022} @cite{alsop-2024} @cite{bar-lev-fox-2020} @cite{champollion-alsop-grosu-2019} @cite{delpinal-bassi-sauerland-2024} @cite{elliott-2025} @cite{fox-2007} @cite{holliday-mandelkern-2024}
 
 Comparing how different theories derive free choice inferences.
 
@@ -26,11 +27,12 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 
 1. **@cite{fox-2007}**: Double exhaustification (Exh²) with Innocent Exclusion
 2. **@cite{bar-lev-fox-2020}**: Innocent Inclusion (II) + Innocent Exclusion (IE)
-3. **@cite{champollion-alsop-grosu-2019}**: RSA with semantic uncertainty (disjunction)
-4. **@cite{alsop-2024}**: RSA with Global Intentions (universal *any*)
-5. **@cite{aloni-2022}**: BSML - Bilateral State-based Modal Logic (team semantics)
-6. **@cite{elliott-sudo-2025}**: BUS - Bilateral Update Semantics (dynamic)
-7. **@cite{holliday-mandelkern-2024}**: Possibility semantics (ortholattice algebra)
+3. **@cite{delpinal-bassi-sauerland-2024}**: Presuppositional exhaustification (pex^{IE+II})
+4. **@cite{champollion-alsop-grosu-2019}**: RSA with semantic uncertainty (disjunction)
+5. **@cite{alsop-2024}**: RSA with Global Intentions (universal *any*)
+6. **@cite{aloni-2022}**: BSML - Bilateral State-based Modal Logic (team semantics)
+7. **@cite{elliott-sudo-2025}**: BUS - Bilateral Update Semantics (dynamic)
+8. **@cite{holliday-mandelkern-2024}**: Possibility semantics (ortholattice algebra)
 
 -/
 
@@ -46,6 +48,7 @@ open Semantics.Dynamic.BUS.FreeChoice
 open Semantics.Dynamic.BSML
 open Phenomena.Modality.Studies.Aloni2022
 open Semantics.PossibilitySemantics
+open Exhaustification.Presuppositional
 
 -- ============================================================================
 -- SECTION 1: The Free Choice Puzzle
@@ -145,6 +148,50 @@ theorem barlevfox_derives_fc :
     ∀ w, exhIEII fcALT fcPrejacent w →
       Exhaustification.FreeChoice.permA w ∧ Exhaustification.FreeChoice.permB w :=
   Exhaustification.FreeChoice.free_choice
+
+-- ============================================================================
+-- SECTION 2b: @cite{delpinal-bassi-sauerland-2024} - Presuppositional Exhaustification
+-- ============================================================================
+
+/-!
+## Presuppositional Exhaustification (pex^{IE+II})
+
+@cite{delpinal-bassi-sauerland-2024} modify @cite{bar-lev-fox-2020}'s exh^{IE+II}
+by splitting the output into assertive and presuppositional components:
+
+- **pex asserts**: only the prejacent φ
+- **pex presupposes**: (i) ¬IE alternatives, (ii) homogeneity over II alternatives
+
+### Why the Split Matters
+
+For basic FC, pex and exh agree: both entail ◇p ∧ ◇q.
+
+The difference emerges under **embedding**:
+- **Under negation**: pex's presupposition projects → double prohibition
+  (no economy stipulation needed)
+- **Under factives**: FC projects as presupposition
+  ("unaware that ◇(t∨c)" presupposes ◇t ∧ ◇c)
+- **In disjunction**: presupposition filters/projects → filtering FC
+  ("Either ¬◇ling or ◇(syn ∨ sem)" derives ◇syn ∧ ◇sem)
+
+pex is the only exhaustification-based account that handles these
+embedded FC puzzles without auxiliary mechanisms.
+-/
+
+/-- Del Pinal et al.: FC via presuppositional exhaustification -/
+theorem delpinal_derives_fc :
+    ∀ w, pexFC.holds w →
+      Exhaustification.FreeChoice.permA w ∧ Exhaustification.FreeChoice.permB w :=
+  pex_fc
+
+/-- Del Pinal et al.: Double prohibition via pex (no economy needed) -/
+theorem delpinal_double_prohibition :
+    ∀ w, negPexFC.holds w →
+      ¬Exhaustification.FreeChoice.permA w ∧ ¬Exhaustification.FreeChoice.permB w :=
+  pex_double_prohibition
+
+/-- Del Pinal et al.: pex's presupposition survives negation (by construction) -/
+theorem delpinal_presup_projects : pexFC.neg.presup = pexFC.presup := rfl
 
 -- ============================================================================
 -- SECTION 3: @cite{champollion-alsop-grosu-2019} - RSA + Semantic Uncertainty
@@ -376,20 +423,21 @@ theorem hollidayMandelkern_fc_fails_at_knowledge :
 /-!
 ## Side-by-Side Comparison
 
-| Aspect | Bar-Lev & Fox | Champollion et al. | Alsop | Aloni | E&S |
-|--------|--------------|-------------------|-------|-------|-----|
-| **Framework** | Neo-Gricean | RSA | RSA | Team Sem | Dynamic |
-| **Type** | Pragmatic | Pragmatic | Pragmatic | Semantic | Semantic |
-| **Key mechanism** | Innocent Inclusion | Semantic uncertainty | Parse ambiguity | NE + split ∨ | Modal ∨ precond |
-| **Nature** | Categorical | Probabilistic | Probabilistic | Categorical | Categorical |
-| **Anaphora** | No | No | No | No | Yes |
-| **Why FC works** | Non-closure | Avoid I₂ | Dayal informative | NE forces both | Both contribute |
+| Aspect | Bar-Lev & Fox | Del Pinal et al. | Champollion et al. | Alsop | Aloni | E&S |
+|--------|--------------|-----------------|-------------------|-------|-------|-----|
+| **Framework** | Neo-Gricean | Neo-Gricean | RSA | RSA | Team Sem | Dynamic |
+| **Type** | Pragmatic | Pragmatic | Pragmatic | Pragmatic | Semantic | Semantic |
+| **Key mechanism** | II | pex (II → presup) | Sem. uncertainty | Parse ambiguity | NE + split ∨ | Modal ∨ precond |
+| **Nature** | Categorical | Categorical | Probabilistic | Probabilistic | Categorical | Categorical |
+| **Embedded FC** | No | Yes | No | No | No | Partial |
+| **Why FC works** | Non-closure | Homogeneity | Avoid I₂ | Dayal informative | NE forces both | Both contribute |
 -/
 
 /-- Comparison result type (extended for all theories) -/
 structure TheoryComparison where
   phenomenon : String
   barlevfox : String
+  delpinal : String
   champollion : String
   alsop : String
   aloni : String
@@ -401,6 +449,7 @@ structure TheoryComparison where
 def fciComparison : TheoryComparison :=
   { phenomenon := "Free Choice Inference"
   , barlevfox := "Derived via II: ◇a, ◇b ∈ II"
+  , delpinal := "Derived via pex: homogeneity presupposition"
   , champollion := "L1: P(FCI states | Or) ≈ 100%"
   , alsop := "L1: P(exclusiveness | any) ≈ 100%"
   , aloni := "Semantic: [◇(α∨β)]⁺ ⊨ ◇α ∧ ◇β"
@@ -411,6 +460,7 @@ def fciComparison : TheoryComparison :=
 def dualProhibitionComparison : TheoryComparison :=
   { phenomenon := "Dual Prohibition"
   , barlevfox := "Maximize Strength"
+  , delpinal := "Presupposition projects through negation"
   , champollion := "Automatic (RSA strengthens)"
   , alsop := "Automatic (RSA strengthens)"
   , aloni := "Semantic: [¬◇(α∨β)]⁺ ⊨ ¬◇α ∧ ¬◇β"
@@ -421,16 +471,29 @@ def dualProhibitionComparison : TheoryComparison :=
 def secondaryInference : TheoryComparison :=
   { phenomenon := "Secondary Inference (EI / not-every)"
   , barlevfox := "IE excludes ◇(a∧b)"
+  , delpinal := "IE exclusion presupposed"
   , champollion := "EI prior-sensitive"
   , alsop := "Not-every prior-sensitive"
   , aloni := "Not primary focus"
   , elliottSudo := "Not primary focus"
   , allAgree := true }
 
+/-- Embedded FC (under factives, in disjunctions) -/
+def embeddedFCComparison : TheoryComparison :=
+  { phenomenon := "Embedded FC (factives, disjunctions)"
+  , barlevfox := "Not addressed"
+  , delpinal := "Primary motivation (presupposition projection)"
+  , champollion := "Not addressed"
+  , alsop := "Not addressed"
+  , aloni := "Not addressed"
+  , elliottSudo := "Not addressed"
+  , allAgree := false }
+
 /-- Cross-disjunct anaphora -/
 def anaphoraComparison : TheoryComparison :=
   { phenomenon := "Cross-disjunct anaphora"
   , barlevfox := "Not addressed"
+  , delpinal := "Not addressed"
   , champollion := "Not addressed"
   , alsop := "Not addressed"
   , aloni := "Not addressed"
@@ -439,7 +502,8 @@ def anaphoraComparison : TheoryComparison :=
 
 /-- All comparisons -/
 def allComparisons : List TheoryComparison :=
-  [fciComparison, dualProhibitionComparison, secondaryInference, anaphoraComparison]
+  [fciComparison, dualProhibitionComparison, secondaryInference,
+   embeddedFCComparison, anaphoraComparison]
 
 -- ============================================================================
 -- SECTION 5: Pragmatic vs Semantic Approaches
@@ -479,6 +543,7 @@ inductive ApproachType where
 /-- Classify theories by approach -/
 def theoryApproach : String → ApproachType
   | "Bar-Lev & Fox 2020" => .pragmatic
+  | "Del Pinal et al. 2024" => .pragmatic
   | "Champollion et al. 2019" => .pragmatic
   | "Alsop 2024" => .pragmatic
   | "Aloni 2022" => .semantic
@@ -706,10 +771,11 @@ theorem only_cg_explains_lf :
 /-!
 ## Summary: Free Choice Theory Landscape
 
-### Seven Theories, Three Approaches
+### Eight Theories, Three Approaches
 
 **Pragmatic (FC as implicature)**:
 - @cite{bar-lev-fox-2020}: Innocent Inclusion (categorical)
+- @cite{delpinal-bassi-sauerland-2024}: Presuppositional exhaustification (categorical, handles embedding)
 - @cite{champollion-alsop-grosu-2019}: RSA + interpretation uncertainty (gradient)
 - @cite{alsop-2024}: RSA + parse ambiguity (gradient)
 
@@ -732,6 +798,7 @@ theorem only_cg_explains_lf :
 | Gradient judgments | RSA approaches |
 | EI asymmetry | RSA approaches |
 | Formal precision | Bar-Lev & Fox |
+| Embedded FC (factives, filtering) | Del Pinal et al. |
 | Cross-disjunct anaphora | Elliott & Sudo |
 | Static team semantics | Aloni |
 | Why FC fails selectively | Holliday & Mandelkern |
@@ -741,6 +808,7 @@ theorem only_cg_explains_lf :
 
 Each theory contributes something unique:
 - **Bar-Lev & Fox**: WHY closure under ∧ matters
+- **Del Pinal et al.**: HOW FC interacts with presupposition projection
 - **Champollion et al.**: HOW reasoning produces gradient judgments
 - **Alsop**: Extension to universal FCIs (*any*)
 - **Aloni**: Static team-semantic alternative to dynamics

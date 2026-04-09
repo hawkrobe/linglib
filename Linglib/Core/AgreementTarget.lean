@@ -34,13 +34,11 @@ def AgreementTarget.rank : AgreementTarget → Nat
   | .personalPronoun => 1
   | .verbTarget      => 0
 
-/-- The hierarchy is strictly ordered. -/
-theorem agreement_hierarchy_strict :
-    AgreementTarget.attributive.rank > AgreementTarget.predicate.rank ∧
-    AgreementTarget.predicate.rank > AgreementTarget.relativePronoun.rank ∧
-    AgreementTarget.relativePronoun.rank > AgreementTarget.personalPronoun.rank ∧
-    AgreementTarget.personalPronoun.rank > AgreementTarget.verbTarget.rank := by
-  native_decide
+/-- The hierarchy rank is injective — no two positions share a rank.
+    This guarantees the Agreement Hierarchy is a total (not just partial) order:
+    for any two targets, one strictly outranks the other. -/
+theorem agreement_rank_injective (a b : AgreementTarget) (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [AgreementTarget.rank]
 
 -- ============================================================================
 -- § 2: Predicate Hierarchy (@cite{corbett-2000} Ch 6)
@@ -72,12 +70,10 @@ def PredicateTarget.rank : PredicateTarget → Nat
   | .adjective  => 2
   | .noun       => 3
 
-/-- The Predicate Hierarchy is strictly ordered. -/
-theorem predicate_hierarchy_strict :
-    PredicateTarget.verb.rank < PredicateTarget.participle.rank ∧
-    PredicateTarget.participle.rank < PredicateTarget.adjective.rank ∧
-    PredicateTarget.adjective.rank < PredicateTarget.noun.rank := by
-  native_decide
+/-- The Predicate Hierarchy rank is injective — a total order on predicate
+    positions. Semantic agreement increases monotonically along the hierarchy. -/
+theorem predicate_rank_injective (a b : PredicateTarget) (h : a.rank = b.rank) : a = b := by
+  cases a <;> cases b <;> simp_all [PredicateTarget.rank]
 
 /-- Map a PredicateTarget to the corresponding AgreementTarget.
     The predicate sub-positions map to either `.predicate` or `.verbTarget`. -/

@@ -120,6 +120,7 @@ inductive FeatureVal where
   | catV : Bool → FeatureVal       -- [V] temporal predication (@cite{panagiotidis-2015})
   | foc : Bool → FeatureVal       -- [±FOC] information structure (@cite{westergaard-2009})
   | pol : Bool → FeatureVal       -- [±Pol] polarity (@cite{laka-1990}; @cite{holmberg-2016})
+  | pov : Bool → FeatureVal      -- [±d] point-of-view (@cite{chou-2012}; @cite{chan-shen-2026})
   deriving Repr, DecidableEq
 
 /-- Do two feature values have the same type, ignoring specific values?
@@ -151,6 +152,7 @@ def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
   | .catV _, .catV _ => true
   | .foc _, .foc _ => true
   | .pol _, .pol _ => true
+  | .pov _, .pov _ => true
   | _, _ => false
 
 -- ============================================================================

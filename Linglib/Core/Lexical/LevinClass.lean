@@ -1065,7 +1065,7 @@ def LevinClass.specImpliesManner (c : LevinClass) : Bool :=
 
 theorem levin_spec_implies_bkg_manner :
     ∀ c : LevinClass, c.specImpliesManner = true := by
-  intro c; cases c <;> native_decide
+  intro c; cases c <;> decide
 
 /-- CausativeResult roots always have changeOfState: every class whose
     root entails externally caused result (causativeResult) has CoS in
@@ -1076,7 +1076,7 @@ def LevinClass.causativeResultImpliesCos (c : LevinClass) : Bool :=
 
 theorem causativeResult_always_cos :
     ∀ c : LevinClass, c.causativeResultImpliesCos = true := by
-  intro c; cases c <;> native_decide
+  intro c; cases c <;> decide
 
 /-- Root cause implies either event causation or non-detachable causation:
     if B&KG says the root entails cause, then Levin's MC has causation = true
@@ -1089,4 +1089,4 @@ def LevinClass.causeImpliesCausationOrNonDetach (c : LevinClass) : Bool :=
 
 theorem root_cause_accounted_for :
     ∀ c : LevinClass, c.causeImpliesCausationOrNonDetach = true := by
-  intro c; cases c <;> native_decide
+  intro c; cases c <;> decide

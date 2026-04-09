@@ -108,26 +108,32 @@ open Core.Presupposition in
     This is the canonical projection: `PrProp` is the 2-layer special case
     where implicature is invisible. -/
 def LayeredProp.toPrProp {W : Type*} (lp : LayeredProp W) : PrProp W :=
-  { presup := lp.presupposition
-  , assertion := lp.atIssue }
+  { presup := fun w => lp.presupposition w = true
+  , assertion := fun w => lp.atIssue w = true }
 
-open Core.Presupposition in
+open Core.Presupposition Classical in
 /-- Lift a `PrProp` to a `LayeredProp` with trivially true implicature.
 
     This is the canonical embedding: every `PrProp` is a `LayeredProp` with
-    no implicature content. -/
-def LayeredProp.ofPrProp {W : Type*} (p : PrProp W) : LayeredProp W :=
-  { presupposition := p.presup
-  , atIssue := p.assertion
+    no implicature content. Noncomputable because Prop → Bool requires
+    classical decidability. -/
+noncomputable def LayeredProp.ofPrProp {W : Type*} (p : PrProp W) : LayeredProp W :=
+  { presupposition := fun w => if p.presup w then true else false
+  , atIssue := fun w => if p.assertion w then true else false
   , implicature := λ _ => true }
 
-open Core.Presupposition in
+open Core.Presupposition Classical in
 /-- The round-trip `PrProp → LayeredProp → PrProp` is the identity.
 
     This confirms that `PrProp` embeds faithfully into `LayeredProp`:
     no information is lost or added in the embedding. -/
 theorem LayeredProp.roundtrip_prprop {W : Type*} (p : PrProp W) :
-    (LayeredProp.ofPrProp p).toPrProp = p := rfl
+    (LayeredProp.ofPrProp p).toPrProp = p := by
+  ext w
+  · simp only [ofPrProp, toPrProp]
+    by_cases h : p.presup w <;> simp [h]
+  · simp only [ofPrProp, toPrProp]
+    by_cases h : p.assertion w <;> simp [h]
 
 -- ════════════════════════════════════════════════════
 -- § Offensive Layers (Denial Targeting)

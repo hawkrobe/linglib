@@ -1128,20 +1128,34 @@ conjunction produces the same Bool value as `andFilter` when we interpret
 `truth` as `assertion` and `felicitous` as `presup`.
 -/
 theorem pip_felicity_agrees_with_andFilter {W : Type*} (φ ψ : Felicity.PIPExpr W) (w : W) :
-    (Felicity.PIPExpr.conj φ ψ).felicitous w =
+    ((Felicity.PIPExpr.conj φ ψ).felicitous w = true) ↔
     (Core.Presupposition.PrProp.andFilter
-      ⟨φ.felicitous, φ.truth⟩
-      ⟨ψ.felicitous, ψ.truth⟩).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.andFilter]
+      (Core.Presupposition.PrProp.ofBool φ.felicitous φ.truth)
+      (Core.Presupposition.PrProp.ofBool ψ.felicitous ψ.truth)).presup w := by
+  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.andFilter,
+    Core.Presupposition.PrProp.ofBool, Bool.and_eq_true, Bool.or_eq_true]
+  constructor
+  · intro ⟨h1, h2⟩
+    exact ⟨h1, fun ht => by
+      rcases h2 with h | h
+      · exact absurd ht (by simp [Bool.not_eq_true'] at h; rw [h]; decide)
+      · exact h⟩
+  · intro ⟨h1, h2⟩
+    refine ⟨h1, ?_⟩
+    by_cases ht : φ.truth w = true
+    · exact Or.inr (h2 ht)
+    · simp [Bool.not_eq_true, ht]
 
 /--
 PIP's F operator for negation agrees with `PrProp.neg`: both preserve the
 presupposition/felicity of the negated expression unchanged.
 -/
 theorem pip_felicity_agrees_with_neg {W : Type*} (φ : Felicity.PIPExpr W) (w : W) :
-    (Felicity.PIPExpr.neg φ).felicitous w =
-    (Core.Presupposition.PrProp.neg ⟨φ.felicitous, φ.truth⟩).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.neg]
+    ((Felicity.PIPExpr.neg φ).felicitous w = true) ↔
+    (Core.Presupposition.PrProp.neg
+      (Core.Presupposition.PrProp.ofBool φ.felicitous φ.truth)).presup w := by
+  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.neg,
+    Core.Presupposition.PrProp.ofBool]
 
 /--
 PIP's presupposition construct `φ|ψ` agrees with `PrProp.andFilter` where

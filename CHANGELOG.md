@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.602] - 2026-04-08
+
+### Added
+- **HonLevel ↔ PrivativePair bridge** (`Phenomena/Politeness/Studies/Wang2023.lean` §8): `PhiFeatures HonLevel` instance mapping nh/h/hh to minimal/intermediate/maximal; `honLevel_all_wellFormed`, `honLevel_specLevel` (nh=0, h=1, hh=2), `honLevel_specLevel_injective`, `honLevel_eq_discriminatory_power`; `ihon_structurally_redundant` — combines isomorphism + `tod_mp_general` to show [iHON] is structurally eliminable for recruitment; zero sorrys
+
 ## [0.229.601] - 2026-04-08
 
 ### Added

@@ -453,7 +453,7 @@ theorem compose_identity_right (s : EntailmentSig) : compose s .all = s := by
 /-- Composition is associative. -/
 theorem compose_assoc (a b c : EntailmentSig) :
     compose (compose a b) c = compose a (compose b c) := by
-  cases a <;> cases b <;> cases c <;> native_decide
+  cases a <;> cases b <;> cases c <;> rfl
 
 -- Monoid instance (compose with identity `all`)
 instance : Mul EntailmentSig where mul := compose
@@ -663,7 +663,7 @@ disagree.
 theorem toContextPolarity_compose (φ ψ : EntailmentSig) :
     toContextPolarity (φ * ψ) =
     (toContextPolarity φ).compose (toContextPolarity ψ) := by
-  cases φ <;> cases ψ <;> native_decide
+  cases φ <;> cases ψ <;> rfl
 
 /--
 Compute the projectivity signature of a context from the signatures along
@@ -733,7 +733,7 @@ the only content of this theorem is that the two probe relations
 theorem projection_composition (R : NLRelation) (φ ψ : EntailmentSig) :
     EntailmentSig.project (EntailmentSig.project R φ) ψ =
     EntailmentSig.project R (EntailmentSig.compose ψ φ) := by
-  cases R <;> cases φ <;> cases ψ <;> native_decide
+  cases R <;> cases φ <;> cases ψ <;> rfl
 
 
 -- ============================================================================
@@ -750,7 +750,8 @@ which is sufficient for weak NPI licensing.
 theorem de_signature_licenses_weak_npi (σ : EntailmentSig) :
     EntailmentSig.toContextPolarity σ = .downward →
     (EntailmentSig.toDEStrength σ).isSome = true := by
-  cases σ <;> simp [EntailmentSig.toContextPolarity] <;> native_decide
+  cases σ <;> simp [EntailmentSig.toContextPolarity, EntailmentSig.toDEStrength,
+    EntailmentSig.project]
 
 /--
 Anti-additive or stronger signature licenses strong NPIs.
@@ -762,7 +763,8 @@ theorem strong_npi_requires_antiadditive (σ : EntailmentSig) :
     EntailmentSig.toDEStrength σ = some DEStrength.antiAdditive ∨
     EntailmentSig.toDEStrength σ = some DEStrength.antiMorphic →
     EntailmentSig.toContextPolarity σ = ContextPolarity.downward := by
-  cases σ <;> simp [EntailmentSig.toContextPolarity] <;> native_decide
+  cases σ <;> simp [EntailmentSig.toDEStrength, EntailmentSig.toContextPolarity,
+    EntailmentSig.project]
 
 -- Verify: antiMult is DE but NOT anti-additive (licenses weak but not strong NPIs)
 #guard EntailmentSig.toDEStrength .antiMult == some .weak

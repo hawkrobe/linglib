@@ -114,13 +114,13 @@ This captures the traditional presupposition analysis. The paper's key
 contribution is showing that this presupposition structure EMERGES from
 RSA reasoning over Boolean truth conditions, without being stipulated. -/
 def greenCardPrProp : PrProp GCWorld where
-  presup := λ w => match w with | .usCitizen => false | _ => true
-  assertion := λ w => match w with | .gcHolder => true | _ => false
+  presup := λ w => match w with | .usCitizen => False | _ => True
+  assertion := λ w => match w with | .gcHolder => True | _ => False
 
 /-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
 theorem gcMeaning_greenCard_eq_prprop (w : GCWorld) :
-    gcMeaning .greenCard w = (greenCardPrProp.presup w && greenCardPrProp.assertion w) := by
-  cases w <;> rfl
+    (gcMeaning .greenCard w = true) ↔ (greenCardPrProp.presup w ∧ greenCardPrProp.assertion w) := by
+  cases w <;> simp [gcMeaning, greenCardPrProp]
 
 /-- "not green card" is Boolean negation of "green card". -/
 theorem gcMeaning_notGreenCard_eq_neg (w : GCWorld) :
@@ -332,8 +332,8 @@ def fgsQUDProjectBridge : FGSQUD → FGSWorld → FGSWorld → Bool
 
 /-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
 theorem greenCard_meaning_from_prprop (w : GCWorld) :
-    gcMeaning .greenCard w =
-    (greenCardPrProp.presup w && greenCardPrProp.assertion w) :=
+    (gcMeaning .greenCard w = true) ↔
+    (greenCardPrProp.presup w ∧ greenCardPrProp.assertion w) :=
   gcMeaning_greenCard_eq_prprop w
 
 /-- "not green card" is Boolean negation — no presupposition in the semantics. -/

@@ -376,7 +376,7 @@ private theorem extend_II_with_target
 
 /-- Helper: a target alternative in fcALT that holds at.separatelyAB and is
     implied by permAandB is innocently includable. -/
-private theorem target_in_II
+theorem target_in_II
     (target : Prop' FCWorld)
     (htarget_alt : target ∈ fcALT)
     (htarget_sep : target FCWorld.separatelyAB)

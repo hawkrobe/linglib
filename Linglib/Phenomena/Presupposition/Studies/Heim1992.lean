@@ -118,9 +118,9 @@ def frame : KnowledgeBeliefFrame AttWorld Holder :=
     True at `believed`, false at `actual`. -/
 def presup : PrProp AttWorld :=
   { presup := fun w => match w with
-      | .believed => true
-      | .actual => false
-  , assertion := fun _ => true }
+      | .believed => True
+      | .actual => False
+  , assertion := fun _ => True }
 
 /-- Global context: both worlds are in the context set. -/
 def globalCtx : ContextSet AttWorld := fun _ => True
@@ -145,7 +145,7 @@ def beliefLocal : BeliefLocalCtx AttWorld Holder :=
     the knowledge-accessible worlds from `actual`. -/
 theorem reflexivity_forces_actual_truth
     (h : ContextSet.entails (knowledgeLocal.atWorld .actual) presup.presup) :
-    presup.presup .actual = true := by
+    presup.presup .actual := by
   apply h
   constructor
   · trivial
@@ -155,22 +155,22 @@ theorem reflexivity_forces_actual_truth
 /-- KD45 non-reflexivity permits false presuppositions under belief embedding.
 
     The presupposition is filtered at `actual` (entailed by the belief local
-    context) even though `presup actual = false`. This is because the only
+    context) even though `presup actual` is false. This is because the only
     belief-accessible world from `actual` is `believed`, where the
     presupposition holds. -/
 theorem non_reflexivity_permits_false_presup :
     ContextSet.entails (beliefLocal.atWorld .actual) presup.presup
-    ∧ presup.presup .actual = false := by
+    ∧ ¬presup.presup .actual := by
   constructor
   · intro w ⟨_, hbel⟩
-    show presup.presup w = true
+    show presup.presup w
     cases w with
-    | believed => rfl
+    | believed => trivial
     | actual =>
       exfalso
       have : agentBelievesR .john .actual .actual = true := hbel
       simp [agentBelievesR, believesR] at this
-  · rfl
+  · simp [presup]
 
 /-- The @cite{heim-1992} know/believe asymmetry.
 

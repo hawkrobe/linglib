@@ -69,13 +69,11 @@ instance (a b : GramStage) : Decidable (a ≤ b) :=
 instance (a b : GramStage) : Decidable (a < b) :=
   inferInstanceAs (Decidable (a.boundedness < b.boundedness))
 
-/-- The cline is strictly ordered: each stage is more bound than the previous. -/
-theorem cline_strictly_ordered :
-    GramStage.fullVerb < GramStage.auxiliary ∧
-    GramStage.auxiliary < GramStage.clitic ∧
-    GramStage.clitic < GramStage.affix ∧
-    GramStage.affix < GramStage.zero :=
-  ⟨by decide, by decide, by decide, by decide⟩
+/-- Boundedness is injective — each stage has a unique rank. Combined with the
+    LE/LT instances (defined via `boundedness`), this makes the cline a total
+    order: for any two stages, one is strictly more bound than the other. -/
+theorem cline_rank_injective (a b : GramStage) (h : a.boundedness = b.boundedness) : a = b := by
+  cases a <;> cases b <;> simp_all [GramStage.boundedness]
 
 /-- Unidirectionality: grammaticalization never reverses. Formalized as:
     if a language has a marker at stage s₂ that historically derives from

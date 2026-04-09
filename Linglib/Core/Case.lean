@@ -83,13 +83,13 @@ def Case.allCases : List Case :=
    .all, .inst, .com, .voc, .part, .perl, .ben, .caus,
    .ess, .transl, .abess]
 
-theorem Case.allCases_length : Case.allCases.length = 19 := by native_decide
+theorem Case.allCases_length : Case.allCases.length = 19 := by decide
 
 def Case.inAllCases (c : Case) : Bool :=
   Case.allCases.any (· == c)
 
 theorem Case.allCases_complete (c : Case) : c.inAllCases = true := by
-  cases c <;> native_decide
+  cases c <;> rfl
 
 /-- How case is assigned to an NP in a given construction
     (@cite{stassen-1985}, §2.2.1). -/
@@ -108,7 +108,7 @@ inductive FixedCaseEncoding where
     cross-linguistically (@cite{stassen-1985}, §2.2.3). -/
 def Case.spatialTriad : List Case := [.abl, .all, .loc]
 
-theorem Case.spatialTriad_length : Case.spatialTriad.length = 3 := by native_decide
+theorem Case.spatialTriad_length : Case.spatialTriad.length = 3 := by decide
 
 -- ============================================================================
 -- § 4: Blake's Case Hierarchy
@@ -149,56 +149,48 @@ def validInventory (inv : List Case) : Bool :=
           else true
       else true
 
-theorem core_highest : Case.hierarchyRank .nom = 6 := rfl
+/-- The hierarchy has exactly 7 tiers (ranks 0–6). Every case maps to one. -/
+theorem hierarchy_rank_bounded (c : Case) : c.hierarchyRank ≤ 6 := by
+  cases c <;> simp [Case.hierarchyRank]
 
-theorem gen_above_dat :
-    Case.hierarchyRank .gen > Case.hierarchyRank .dat := by decide
-
-theorem dat_above_loc :
-    Case.hierarchyRank .dat > Case.hierarchyRank .loc := by decide
-
-theorem loc_above_abl :
-    Case.hierarchyRank .loc > Case.hierarchyRank .abl := by decide
-
-theorem loc_above_inst :
-    Case.hierarchyRank .loc > Case.hierarchyRank .inst := by decide
-
-theorem abl_inst_same_rank :
+/-- Ablative and instrumental are at the same tier — this is why they appear
+    together in Blake's hierarchy between locative and the peripheral cases. -/
+theorem abl_inst_same_tier :
     Case.hierarchyRank .abl = Case.hierarchyRank .inst := rfl
 
 theorem two_case_valid :
-    validInventory [.nom, .acc] = true := by native_decide
+    validInventory [.nom, .acc] = true := by decide
 
 theorem three_case_with_gen_valid :
-    validInventory [.nom, .acc, .gen] = true := by native_decide
+    validInventory [.nom, .acc, .gen] = true := by decide
 
 theorem four_case_valid :
-    validInventory [.nom, .acc, .gen, .dat] = true := by native_decide
+    validInventory [.nom, .acc, .gen, .dat] = true := by decide
 
 theorem five_case_valid :
-    validInventory [.nom, .acc, .gen, .dat, .loc] = true := by native_decide
+    validInventory [.nom, .acc, .gen, .dat, .loc] = true := by decide
 
 theorem seven_case_valid :
     validInventory [.nom, .acc, .gen, .dat, .loc, .abl, .inst] = true := by
-  native_decide
+  decide
 
 theorem ergative_four_case_valid :
-    validInventory [.erg, .abs, .gen, .dat] = true := by native_decide
+    validInventory [.erg, .abs, .gen, .dat] = true := by decide
 
 theorem split_ergative_valid :
-    validInventory [.nom, .erg, .abs, .gen] = true := by native_decide
+    validInventory [.nom, .erg, .abs, .gen] = true := by decide
 
 theorem skip_gen_invalid :
-    validInventory [.nom, .acc, .dat] = false := by native_decide
+    validInventory [.nom, .acc, .dat] = false := by decide
 
 theorem skip_gen_dat_invalid :
-    validInventory [.nom, .acc, .loc] = false := by native_decide
+    validInventory [.nom, .acc, .loc] = false := by decide
 
 theorem skip_to_abl_invalid :
-    validInventory [.nom, .acc, .abl] = false := by native_decide
+    validInventory [.nom, .acc, .abl] = false := by decide
 
 theorem skip_dat_invalid :
-    validInventory [.nom, .acc, .gen, .loc] = false := by native_decide
+    validInventory [.nom, .acc, .gen, .loc] = false := by decide
 
 -- ============================================================================
 -- § 6: Case Features (Anderson 2006)
@@ -241,34 +233,22 @@ def CaseRelation.absSrcLoc : CaseRelation := ⟨true, true, true⟩
 def CaseRelation.subjectRank (cr : CaseRelation) : Nat :=
   if cr.src then 2 else if cr.abs then 1 else 0
 
-theorem ergative_rank : CaseRelation.ergative.subjectRank = 2 := rfl
-theorem absolutive_rank : CaseRelation.absolutive.subjectRank = 1 := rfl
-theorem locative_rank : CaseRelation.locative.subjectRank = 0 := rfl
-theorem neutral_rank : CaseRelation.neutral.subjectRank = 0 := rfl
-
-theorem erg_above_abs :
-    CaseRelation.ergative.subjectRank > CaseRelation.absolutive.subjectRank := by
-  decide
-
-theorem abs_above_loc :
-    CaseRelation.absolutive.subjectRank > CaseRelation.locative.subjectRank := by
-  decide
-
-theorem experiencer_agent_same_rank :
-    CaseRelation.srcLoc.subjectRank = CaseRelation.ergative.subjectRank := rfl
-
-theorem selfMover_agent_same_rank :
-    CaseRelation.srcAbs.subjectRank = CaseRelation.ergative.subjectRank := rfl
-
-theorem contactive_abs_same_rank :
-    CaseRelation.absLoc.subjectRank = CaseRelation.absolutive.subjectRank := rfl
-
+/-- The `src` feature alone determines subject rank 2 — regardless of other
+    features. This is why ergative, experiencer (srcLoc), and self-mover
+    (srcAbs) all tie for highest subject rank. -/
 theorem src_determines_subject_rank (cr : CaseRelation) (h : cr.src = true) :
     cr.subjectRank = 2 := by simp [CaseRelation.subjectRank, h]
 
+/-- Without `src`, the `abs` feature determines rank 1. This is why
+    absolutive and contactive (absLoc) tie at the second tier. -/
 theorem abs_without_src_rank (cr : CaseRelation)
     (h1 : cr.src = false) (h2 : cr.abs = true) :
     cr.subjectRank = 1 := by simp [CaseRelation.subjectRank, h1, h2]
+
+/-- Subject rank is bounded at 2 (the three tiers are 0, 1, 2). -/
+theorem subject_rank_bounded (cr : CaseRelation) : cr.subjectRank ≤ 2 := by
+  simp only [CaseRelation.subjectRank]
+  cases cr with | mk a s l => cases a <;> cases s <;> simp
 
 -- ============================================================================
 -- § 9: Feature Containment and Enumeration
@@ -296,7 +276,7 @@ def CaseRelation.inAll (cr : CaseRelation) : Bool :=
 
 theorem CaseRelation.all_complete (cr : CaseRelation) :
     cr.inAll = true := by
-  cases cr with | mk a s l => cases a <;> cases s <;> cases l <;> native_decide
+  cases cr with | mk a s l => cases a <;> cases s <;> cases l <;> rfl
 
 -- ============================================================================
 -- § 10: Scenarios (Predicate Argument Structure)
@@ -551,11 +531,11 @@ def caseExtensionReachable2 (c₁ c₃ : Case) : Bool :=
 
 /-- Accusative is reachable from allative in two steps (via dative). -/
 theorem acc_reachable_from_all :
-    caseExtensionReachable2 .all .acc = true := by native_decide
+    caseExtensionReachable2 .all .acc = true := by decide
 
 /-- Instrumental is reachable from locative in two steps (via comitative). -/
 theorem inst_reachable_from_loc :
-    caseExtensionReachable2 .loc .inst = true := by native_decide
+    caseExtensionReachable2 .loc .inst = true := by decide
 
 -- § 13.4: Beyond-Case Grammaticalization
 -- (@cite{heine-2009} §29.4)

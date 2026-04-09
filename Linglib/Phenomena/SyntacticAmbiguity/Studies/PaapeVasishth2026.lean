@@ -540,21 +540,22 @@ def toldScope : DiscEntity → Bool := fun _ => true
     two entities satisfy the restrictor, so the presupposition
     of `the_uniq` is not met. -/
 theorem bare_fails_nonunique :
-    (the_uniq nonUniqueDomain isWoman toldScope).presup () = false := by
-  native_decide
+    ¬(the_uniq nonUniqueDomain isWoman toldScope).presup () := by
+  simp only [the_uniq, nonUniqueDomain, List.filter, isWoman]; decide
 
 /-- In non-unique context, modified "the woman that he'd risked his
     life for" SUCCEEDS: the RC modifier narrows to one entity. -/
 theorem modified_succeeds_nonunique :
     (the_uniq nonUniqueDomain
-      (fun e => isWoman e && rcModifier e) toldScope).presup () = true := by
-  native_decide
+      (fun e => isWoman e && rcModifier e) toldScope).presup () := by
+  simp only [the_uniq, nonUniqueDomain, List.filter, isWoman, rcModifier,
+    Bool.and_false, Bool.true_and]
 
 /-- In unique context, bare "the woman" already SUCCEEDS:
     only one entity satisfies the restrictor, so no modifier needed. -/
 theorem bare_succeeds_unique :
-    (the_uniq uniqueDomain isWoman toldScope).presup () = true := by
-  native_decide
+    (the_uniq uniqueDomain isWoman toldScope).presup () := by
+  simp only [the_uniq, uniqueDomain, List.filter, isWoman]
 
 /-- The full argument chain: uniqueness presupposition grounds
     `contextSupports` from `Basic.lean`.
@@ -565,14 +566,20 @@ theorem bare_succeeds_unique :
     4. This is exactly `contextSupports .uniqueReferent .complementClause` -/
 theorem uniqueness_grounds_context_supports :
     -- Non-unique: bare fails, modified succeeds, RC is supported
-    (the_uniq nonUniqueDomain isWoman toldScope).presup () = false ∧
+    ¬(the_uniq nonUniqueDomain isWoman toldScope).presup () ∧
     (the_uniq nonUniqueDomain (fun e => isWoman e && rcModifier e)
-      toldScope).presup () = true ∧
+      toldScope).presup () ∧
     contextSupports .nonUniqueReferents .relativeClause = true ∧
     -- Unique: bare succeeds, CC is supported
-    (the_uniq uniqueDomain isWoman toldScope).presup () = true ∧
+    (the_uniq uniqueDomain isWoman toldScope).presup () ∧
     contextSupports .uniqueReferent .complementClause = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · simp only [the_uniq, nonUniqueDomain, List.filter, isWoman]; decide
+  · simp only [the_uniq, nonUniqueDomain, List.filter, isWoman, rcModifier,
+      Bool.and_false, Bool.true_and]
+  · native_decide
+  · simp only [the_uniq, uniqueDomain, List.filter, isWoman]
+  · native_decide
 
 -- ────────────────────────────────────────────────────
 -- § 9b. Formal Shared Mechanism: modifierNecessary

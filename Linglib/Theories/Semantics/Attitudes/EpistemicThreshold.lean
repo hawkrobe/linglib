@@ -151,14 +151,10 @@ modeled via `holdsAt` but via `failsThreshold` (§3). -/
 def uncertain_ : EpistemicEntry := ⟨"uncertain", 7/10, false⟩
 def unlikely_  : EpistemicEntry := ⟨"unlikely", 2/5, false⟩
 
-/-- The full threshold scale (Table 1(b)):
-    must = certain > should > believes > likely = uncertain > unlikely > may > might = could -/
-theorem scale_must_gt_should : (19 : ℚ)/20 > 4/5 := by norm_num
-theorem scale_should_gt_believes : (4 : ℚ)/5 > 3/4 := by norm_num
-theorem scale_believes_gt_likely : (3 : ℚ)/4 > 7/10 := by norm_num
-theorem scale_likely_gt_unlikely : (7 : ℚ)/10 > 2/5 := by norm_num
-theorem scale_unlikely_gt_may : (2 : ℚ)/5 > 3/10 := by norm_num
-theorem scale_may_gt_might : (3 : ℚ)/10 > 1/5 := by norm_num
+/-- The full threshold scale (Table 1(b)) is strictly decreasing:
+    must = certain > should > believes > likely = uncertain > unlikely > may > might = could. -/
+theorem epistemic_scale_sorted :
+    [19/20, 4/5, 3/4, 7/10, 2/5, 3/10, (1 : ℚ)/5].IsChain (· > ·) := by native_decide
 
 /-- The superlative multiplier α_most = 1.5 (Table 1(b)). -/
 def α_most : ℚ := 3/2

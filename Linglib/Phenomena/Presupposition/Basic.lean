@@ -63,10 +63,10 @@ This sentence has:
 - Assertion: the king exists
 -/
 def kingExists : PrProp KingWorld :=
-  { presup := λ _ => true
+  { presup := λ _ => True
   , assertion := λ w => match w with
-      | .kingExists => true
-      | .noKing => false
+      | .kingExists => True
+      | .noKing => False
   }
 
 /--
@@ -78,9 +78,9 @@ This sentence has:
 -/
 def kingBald : PrProp KingWorld :=
   { presup := λ w => match w with
-      | .kingExists => true
-      | .noKing => false
-  , assertion := λ _ => true
+      | .kingExists => True
+      | .noKing => False
+  , assertion := λ _ => True
   }
 
 /--
@@ -97,10 +97,10 @@ def ifKingThenBald : PrProp KingWorld :=
 
 This demonstrates presupposition filtering.
 -/
-theorem ifKingThenBald_no_presup : ifKingThenBald.presup = λ _ => true := by
+theorem ifKingThenBald_no_presup : ifKingThenBald.presup = λ _ => True := by
   funext w
   simp only [ifKingThenBald, PrProp.impFilter, kingExists, kingBald]
-  cases w <;> rfl
+  cases w <;> simp
 
 /--
 "The king isn't bald" — negation preserves presupposition.
@@ -130,11 +130,11 @@ instance : FiniteWorlds RainWorld where
 "It's raining" — no presupposition.
 -/
 def raining : PrProp RainWorld :=
-  { presup := λ _ => true
+  { presup := λ _ => True
   , assertion := λ w => match w with
-      | .rainingBelieved => true
-      | .rainingNotBelieved => true
-      | .notRaining => false
+      | .rainingBelieved => True
+      | .rainingNotBelieved => True
+      | .notRaining => False
   }
 
 /--
@@ -145,13 +145,13 @@ Asserts: John believes it's raining
 -/
 def johnKnowsRaining : PrProp RainWorld :=
   { presup := λ w => match w with
-      | .rainingBelieved => true
-      | .rainingNotBelieved => true
-      | .notRaining => false  -- Presupposition fails
+      | .rainingBelieved => True
+      | .rainingNotBelieved => True
+      | .notRaining => False
   , assertion := λ w => match w with
-      | .rainingBelieved => true
-      | .rainingNotBelieved => false
-      | .notRaining => false  -- Undefined, but we need a value
+      | .rainingBelieved => True
+      | .rainingNotBelieved => False
+      | .notRaining => False
   }
 
 /--
@@ -187,13 +187,13 @@ Asserts: John no longer smokes
 -/
 def johnStoppedSmoking : PrProp SmokingWorld :=
   { presup := λ w => match w with
-      | .usedToNowQuit => true
-      | .usedToStillDoes => true
-      | .neverSmoked => false  -- Presupposition fails
+      | .usedToNowQuit => True
+      | .usedToStillDoes => True
+      | .neverSmoked => False
   , assertion := λ w => match w with
-      | .usedToNowQuit => true
-      | .usedToStillDoes => false
-      | .neverSmoked => false
+      | .usedToNowQuit => True
+      | .usedToStillDoes => False
+      | .neverSmoked => False
   }
 
 /--
@@ -217,11 +217,11 @@ This creates a pragmatically odd sentence (you can't currently smoke AND have st
 -/
 def johnSmokesAndStopped : PrProp SmokingWorld :=
   let johnSmokes : PrProp SmokingWorld :=
-    { presup := λ _ => true
+    { presup := λ _ => True
     , assertion := λ w => match w with
-        | .usedToNowQuit => false
-        | .usedToStillDoes => true
-        | .neverSmoked => false
+        | .usedToNowQuit => False
+        | .usedToStillDoes => True
+        | .neverSmoked => False
     }
   PrProp.andFilter johnSmokes johnStoppedSmoking
 

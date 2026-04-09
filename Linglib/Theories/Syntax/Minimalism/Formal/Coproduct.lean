@@ -236,6 +236,30 @@ def numAdmissibleCuts (so : SyntacticObject) : Nat :=
   | .leaf _ => 1  -- only the trivial cut
   | .node a b => numAdmissibleCuts a * numAdmissibleCuts b + 1
 
+/-- All admissible cut options for a tree, excluding cutting the root itself.
+    Returns pairs `(P, R)` where `P` is the list of pruned subtrees (forest)
+    and `R` is the quotient tree with stump leaves at cut points.
+
+    The trivial cut `([], T)` is always included. For `node a b`, the result
+    is the Cartesian product of "extended" options for each child: either
+    recurse into the child's cuts, or cut the child entirely (if it's an
+    internal node, replacing it with a stump leaf).
+
+    This generates ALL admissible cut antichains, not just single-node cuts.
+    Multi-node antichains arise when independent subtrees (incomparable under
+    containment) are cut simultaneously. -/
+def cutOptions : SyntacticObject → List (List SyntacticObject × SyntacticObject)
+  | .leaf tok => [([], .leaf tok)]
+  | .node a b =>
+    let aExt := cutOptions a ++
+      match a with | .node _ _ => [([a], .leaf quotientLeafToken)] | .leaf _ => []
+    let bExt := cutOptions b ++
+      match b with | .node _ _ => [([b], .leaf quotientLeafToken)] | .leaf _ => []
+    aExt.flatMap fun ⟨Pa, Ra⟩ => bExt.map fun ⟨Pb, Rb⟩ => (Pa ++ Pb, .node Ra Rb)
+
+theorem cutOptions_leaf (tok : LIToken) :
+    cutOptions (.leaf tok) = [([], .leaf tok)] := rfl
+
 /-! ## Leading coproduct (Definition 1.2.8)
 
 The leading coproduct Δ₍₂₎(T) extracts each proper subtree Tᵥ and pairs it

@@ -189,39 +189,53 @@ theorem default_existential_holds_iff [FiniteWorlds W]
 -- ══════════════════════════════════════════════════════════
 
 /-- Construct a Geurts existential disjunction from two presuppositional
-propositions: domains = presuppositions, contents = assertions. -/
-def fromPrProp (p q : PrProp W) : MDisjunction W :=
-  [ { domain := p.presup, force := .existential, content := p.assertion }
-  , { domain := q.presup, force := .existential, content := q.assertion } ]
+propositions: domains = presuppositions, contents = assertions.
+Requires decidability for the Prop→Bool bridge. -/
+def fromPrProp (p q : PrProp W)
+    [DecidablePred p.presup] [DecidablePred p.assertion]
+    [DecidablePred q.presup] [DecidablePred q.assertion] : MDisjunction W :=
+  [ { domain := fun w => decide (p.presup w), force := .existential,
+      content := fun w => decide (p.assertion w) }
+  , { domain := fun w => decide (q.presup w), force := .existential,
+      content := fun w => decide (q.assertion w) } ]
 
 /-- The overall presupposition of a Geurts disjunction from PrProps is
 p.presup ∨ q.presup — matching PrProp.orFlex. -/
-theorem fromPrProp_presup_eq_orFlex (p q : PrProp W) (w : W) :
-    (fromPrProp p q).any (fun d => d.domain w) =
+theorem fromPrProp_presup_iff_orFlex (p q : PrProp W) (w : W)
+    [DecidablePred p.presup] [DecidablePred p.assertion]
+    [DecidablePred q.presup] [DecidablePred q.assertion] :
+    (fromPrProp p q).any (fun d => d.domain w) = true ↔
     (PrProp.orFlex p q).presup w := by
-  simp [fromPrProp, PrProp.orFlex, List.any_cons, List.any_nil]
+  simp [fromPrProp, PrProp.orFlex, List.any_cons, List.any_nil, decide_eq_true_eq]
 
 /-- The assertion of a Geurts disjunction from PrProps matches orFlex:
 (p.presup ∧ p.assertion) ∨ (q.presup ∧ q.assertion). -/
-theorem fromPrProp_cell_eq_orFlex (p q : PrProp W) (w : W) :
-    (fromPrProp p q).any (fun d => d.cell w) =
+theorem fromPrProp_cell_iff_orFlex (p q : PrProp W) (w : W)
+    [DecidablePred p.presup] [DecidablePred p.assertion]
+    [DecidablePred q.presup] [DecidablePred q.assertion] :
+    (fromPrProp p q).any (fun d => d.cell w) = true ↔
     (PrProp.orFlex p q).assertion w := by
-  simp [fromPrProp, Disjunct.cell, PrProp.orFlex, List.any_cons, List.any_nil]
+  simp [fromPrProp, Disjunct.cell, PrProp.orFlex, List.any_cons, List.any_nil,
+    Bool.and_eq_true, decide_eq_true_eq]
 
 /-- The three-way equivalence: Geurts (modal conjunction) =
 PrProp.orBelnap (conditional assertion, @cite{belnap-1970}).
-Transitivity via `fromPrProp_presup_eq_orFlex` + `orFlex_eq_orBelnap`. -/
-theorem fromPrProp_presup_eq_orBelnap (p q : PrProp W) (w : W) :
-    (fromPrProp p q).any (fun d => d.domain w) =
+Transitivity via `fromPrProp_presup_iff_orFlex` + `orFlex_eq_orBelnap`. -/
+theorem fromPrProp_presup_iff_orBelnap (p q : PrProp W) (w : W)
+    [DecidablePred p.presup] [DecidablePred p.assertion]
+    [DecidablePred q.presup] [DecidablePred q.assertion] :
+    (fromPrProp p q).any (fun d => d.domain w) = true ↔
     (PrProp.orBelnap p q).presup w := by
-  rw [fromPrProp_presup_eq_orFlex, ← PrProp.orFlex_eq_orBelnap]
+  rw [fromPrProp_presup_iff_orFlex, ← PrProp.orFlex_eq_orBelnap]
 
 /-- The three-way equivalence (assertion side):
 Geurts cell = orBelnap assertion = orFlex assertion. -/
-theorem fromPrProp_cell_eq_orBelnap (p q : PrProp W) (w : W) :
-    (fromPrProp p q).any (fun d => d.cell w) =
+theorem fromPrProp_cell_iff_orBelnap (p q : PrProp W) (w : W)
+    [DecidablePred p.presup] [DecidablePred p.assertion]
+    [DecidablePred q.presup] [DecidablePred q.assertion] :
+    (fromPrProp p q).any (fun d => d.cell w) = true ↔
     (PrProp.orBelnap p q).assertion w := by
-  rw [fromPrProp_cell_eq_orFlex, ← PrProp.orFlex_eq_orBelnap]
+  rw [fromPrProp_cell_iff_orFlex, ← PrProp.orFlex_eq_orBelnap]
 
 /-- **Exhaustivity forces uninformativity.** If Geurts's exhaustivity
 constraint holds for context C, the disjunction (orFlex/orBelnap) is
@@ -234,20 +248,26 @@ disjunction trivially satisfied. Geurts's exhaustivity constraint makes
 this explicit: it IS the constraint that contexts must be covered by
 disjunct cells. -/
 theorem exhaustivity_implies_uninformative (p q : PrProp W)
+    [DecidablePred p.presup] [DecidablePred p.assertion]
+    [DecidablePred q.presup] [DecidablePred q.assertion]
     (C : BProp W) (h_exh : exhaustivity C (fromPrProp p q))
     (w : W) (hw : C w = true) :
-    (PrProp.orFlex p q).assertion w = true := by
-  rw [← fromPrProp_cell_eq_orFlex]; exact h_exh w hw
+    (PrProp.orFlex p q).assertion w := by
+  exact (fromPrProp_cell_iff_orFlex p q w).mp (h_exh w hw)
 
 /-- When presuppositions conflict (p ∧ q = ⊥), the Geurts domains are
 automatically disjoint — the Disjointness constraint is satisfied for free. -/
 theorem conflicting_presups_disjoint (p q : PrProp W)
-    (h_conflict : ∀ w, ¬(p.presup w = true ∧ q.presup w = true)) :
+    [DecidablePred p.presup] [DecidablePred p.assertion]
+    [DecidablePred q.presup] [DecidablePred q.assertion]
+    (h_conflict : ∀ w, ¬(p.presup w ∧ q.presup w)) :
     disjointness₂
-      { domain := p.presup, force := .existential, content := p.assertion }
-      { domain := q.presup, force := .existential, content := q.assertion } := by
+      { domain := fun w => decide (p.presup w), force := .existential,
+        content := fun w => decide (p.assertion w) }
+      { domain := fun w => decide (q.presup w), force := .existential,
+        content := fun w => decide (q.assertion w) } := by
   intro w ⟨h1, h2⟩
-  simp [Disjunct.cell] at h1 h2
+  simp [Disjunct.cell, Bool.and_eq_true, decide_eq_true_eq] at h1 h2
   exact h_conflict w ⟨h1.1, h2.1⟩
 
 

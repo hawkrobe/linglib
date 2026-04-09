@@ -174,7 +174,7 @@ theorem negation_projects_phenomenon :
 
 /-- The king example's presupposition is indeed filtered. -/
 theorem king_example_filtered :
-    Phenomena.Presupposition.ifKingThenBald.presup = λ _ => true :=
+    Phenomena.Presupposition.ifKingThenBald.presup = λ _ => True :=
   Phenomena.Presupposition.ifKingThenBald_no_presup
 
 -- ============================================================================

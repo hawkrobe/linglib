@@ -246,17 +246,17 @@ theorem IC_violation_always_blocks (input : WangInput W) (hIC : input.ic = false
 -- ============================================================================
 
 /--
-When IC is satisfied and CG entails the presupposition, the CI-lifted
-form yields a felicitous two-dimensional meaning where:
-- The at-issue content is evaluable (assertion)
-- The CI content (presupposition) is satisfied at all CG worlds
+When CG entails the Bool presupposition, the CI-lifted form yields a
+felicitous two-dimensional meaning where the CI content (presupposition)
+is satisfied at all CG worlds.
 
 This connects the constraint-based analysis to the CI bifurcation approach
-for de re presupposition.
+for de re presupposition. Takes the Bool presupposition directly since
+`ciLift` operates on `BProp` (Bool-valued) functions.
 -/
-theorem ciLift_felicitous_when_fp_holds (p : PrProp W)
-    (cg : ContextSet W) (hfp : satisfiesFP cg p) :
-    ∀ w, cg w → (ciLift p).ci w = true := by
+theorem ciLift_felicitous_when_fp_holds (presupBool assertionBool : BProp W)
+    (cg : BProp W) (hfp : ∀ w, cg w = true → presupBool w = true) :
+    ∀ w, cg w = true → (ciLift presupBool assertionBool).ci w = true := by
   intro w hw
   exact hfp w hw
 
