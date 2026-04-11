@@ -240,6 +240,7 @@ inductive SenseTag where
   | causative     -- Causative use of otherwise non-causative verb
   | instrumental  -- Instrument-specific sense
   | occasion      -- Occasion verb sense (@cite{solstad-bott-2024}): agent-evocator subject
+  | stative       -- Stative reading of a polysemous verb (e.g., *suivre* 'follow' positional)
   deriving DecidableEq, Repr
 
 /--
@@ -270,6 +271,25 @@ inductive ComplementType where
     do not. -/
 def ComplementType.isFinite : ComplementType → Bool
   | .finiteClause | .question => true
+  | _ => false
+
+/-- Is this complement type a nominal (DP) argument?
+
+    Nominal complements project DP: the verb selects a noun phrase
+    in object position. Relevant to c-selection in coordination:
+    a verb that only selects nominal complements cannot independently
+    license a CP conjunct (@cite{schwarzer-2026}). -/
+def ComplementType.isNominal : ComplementType → Bool
+  | .np | .np_np | .np_pp => true
+  | _ => false
+
+/-- Is this complement type a clausal (CP) argument?
+
+    Clausal complements project CP or reduced clausal structure.
+    This covers finite clauses (*dass*-clauses), infinitivals,
+    gerunds, small clauses, and embedded questions. -/
+def ComplementType.isClausal : ComplementType → Bool
+  | .finiteClause | .infinitival | .gerund | .smallClause | .question => true
   | _ => false
 
 /--
@@ -576,6 +596,22 @@ def complementToValence : ComplementType → Valence
   | .np_np => .ditransitive
   | .np_pp => .locative
   | _ => .clausal
+
+/-- Can this verb take a clausal (CP) complement?
+
+    Checks both primary and alternate complement frames. Used to classify
+    verbs as CP-selecting vs non-CP-selecting for coordination studies
+    (@cite{schwarzer-2026}). -/
+def VerbCore.canTakeClausalComplement (v : VerbCore) : Bool :=
+  v.complementType.isClausal ||
+  match v.altComplementType with | some ct => ct.isClausal | none => false
+
+/-- Can this verb take a nominal (DP) complement?
+
+    Checks both primary and alternate complement frames. -/
+def VerbCore.canTakeNominalComplement (v : VerbCore) : Bool :=
+  v.complementType.isNominal ||
+  match v.altComplementType with | some ct => ct.isNominal | none => false
 
 /-- Look up a verb core by citation form and sense tag. -/
 def lookupSense (verbs : List VerbCore) (form : String) (tag : SenseTag := .default) :

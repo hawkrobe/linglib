@@ -4,11 +4,33 @@
 ## The Phenomenon
 
 Coordination allows two or more elements to be joined by a conjunction.
-Key constraints:
-1. Coordinated elements must have matching categories
-2. Coordinated verbs must have matching argument structures
 
-## The Data
+### Wasow's generalization (@cite{pullum-zwicky-1986})
+
+If a coordinate structure occurs in some position in a syntactic
+representation, each of its conjuncts must have syntactic feature values
+that would allow it individually to occur in that position.
+
+This is weaker than the Law of Coordination of Likes (@cite{chomsky-1957}),
+which requires conjuncts to have *identical* categories. Wasow's
+generalization correctly allows category mismatches when both conjuncts
+independently satisfy the position's selectional requirements (e.g., NP ∧ AP
+as complement of *become*), while still ruling out cases where one conjunct
+cannot occur in the position at all.
+
+### Selection-violating coordination (@cite{sag-etal-1985})
+
+Even Wasow's generalization is too strict: CPs can appear coordinated
+with DPs in positions that only select DPs, provided the DP conjunct
+is structurally more prominent:
+
+  (3a) You can depend on [DP my assistant] and [CP that he will be on time]. ✓
+  (3b) *You can depend on [CP that my assistant will be on time]. ✗
+  (3c) *You can depend on [CP that he will be on time] and [DP his intelligence]. ✗
+
+The CP is "smuggled" into a position it could not occupy alone.
+
+## Basic coordination data
 
   (1a) John and Mary sleep ✓ NP coordination
   (1b) *John and sleeps ✗ category mismatch (D + V)
@@ -18,8 +40,6 @@ Key constraints:
 
   (3a) John sees and hears Mary ✓ VP coordination (shared args)
   (3b) *John sees and sleeps Mary ✗ valence mismatch (trans + intrans)
-
-Reference: @cite{gibson-2025}
 -/
 
 import Linglib.Core.Grammar
@@ -31,7 +51,7 @@ import Linglib.Core.Grammar
 /-- NP coordination minimal pairs -/
 def npCoordinationData : StringPhenomenonData := {
   name := "NP Coordination"
-  generalization := "Coordinated NPs must have matching categories"
+  generalization := "Each conjunct must individually satisfy the syntactic features of the position (Wasow's generalization)"
   pairs := [
     { grammatical := "John and Mary sleep"
       ungrammatical := "John and sleeps"
@@ -76,6 +96,31 @@ def sCoordinationData : StringPhenomenonData := {
       ungrammatical := "John sees Mary and sees John"
       clauseType := .declarative
       description := "Each conjunct needs a subject" }
+  ]
+}
+
+-- ============================================================================
+-- Selection-Violating Coordination (@cite{sag-etal-1985})
+-- ============================================================================
+
+/-- Selection-violating (DP&CP) coordination data.
+
+    A CP that is not independently selected by the predicate can appear
+    in a coordination with a selected DP, provided the DP is first
+    (@cite{sag-etal-1985}, @cite{schwarzer-2026}). -/
+def selectionViolatingData : StringPhenomenonData := {
+  name := "Selection-Violating Coordination"
+  generalization := "An unselected CP can be smuggled into a DP-selecting position via coordination with a DP"
+  pairs := [
+    { grammatical := "You can depend on my assistant and that he will be on time"
+      ungrammatical := "You can depend on that my assistant will be on time"
+      clauseType := .declarative
+      description := "DP&CP coordination: DP first, unselected CP second (Sag et al. 1985)" },
+
+    { grammatical := "You can depend on my assistant and that he will be on time"
+      ungrammatical := "You can depend on that he will be on time and his intelligence"
+      clauseType := .declarative
+      description := "CP-first order is ungrammatical (Sag et al. 1985)" }
   ]
 }
 

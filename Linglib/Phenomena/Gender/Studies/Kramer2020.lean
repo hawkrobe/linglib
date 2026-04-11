@@ -1,3 +1,4 @@
+import Linglib.Core.Gender
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Fragments.Spanish.Gender
@@ -879,89 +880,62 @@ In Set 2 languages (Maa, Wari'), the same logic yields feminine as default:
 
 The polarity of the u-feature determines which gender is arbitrary vs default. -/
 
-/-- Derive the surface gender for Set 1 Spanish: plain n has no [+FEM],
-    so the [+FEM] VI rule does not match, yielding default masculine. -/
-inductive SurfaceGender where
-  | masculine
-  | feminine
-  deriving DecidableEq, Repr
+open Core (SurfaceGender)
 
-/-- Set 1 default gender derivation: if n has no [+FEM] feature, the
-    default VI rule inserts masculine. If n has [+FEM] (interpretable or
-    uninterpretable), VI inserts feminine.
-    (@cite{kramer-2015} §6.2; @cite{kramer-2020} §3) -/
-def set1SurfaceGender (ch : CatHead) : SurfaceGender :=
-  match ch.phi.gender with
-  | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
-  | none    => .masculine  -- default: no gender feature → masculine
-
-/-- Set 2 default gender derivation: if n has no [−FEM] feature, the
-    default VI rule inserts feminine. If n has [−FEM] (interpretable or
-    uninterpretable), VI inserts masculine.
-    (@cite{kramer-2015} §6.3) -/
-def set2SurfaceGender (ch : CatHead) : SurfaceGender :=
-  match ch.phi.gender with
-  | some gf => if gf.val == ⟨.fem, .neg⟩ then .masculine else .feminine
-  | none    => .feminine  -- default: no gender feature → feminine
-
--- Set 1 (Spanish) derivation chain
+-- Set 1 (Spanish) derivation chain — uses DM bridge (CatHead.surfaceGenderSet1)
 
 /-- Plain n → masculine (the default). -/
 theorem set1_plain_n_masculine :
-    set1SurfaceGender CatHead.n_plain = .masculine := rfl
+    CatHead.n_plain.surfaceGenderSet1 = .masculine := rfl
 
 /-- i[+FEM] → feminine (natural female). -/
 theorem set1_iFem_feminine :
-    set1SurfaceGender CatHead.n_iFem = .feminine := rfl
+    CatHead.n_iFem.surfaceGenderSet1 = .feminine := rfl
 
 /-- i[−FEM] → masculine (natural male). -/
 theorem set1_iMasc_masculine :
-    set1SurfaceGender CatHead.n_iMasc = .masculine := rfl
+    CatHead.n_iMasc.surfaceGenderSet1 = .masculine := rfl
 
 /-- u[+FEM] → feminine (arbitrary feminine). -/
 theorem set1_uFem_feminine :
-    set1SurfaceGender CatHead.n_uFem = .feminine := rfl
+    CatHead.n_uFem.surfaceGenderSet1 = .feminine := rfl
 
--- Set 2 (Maa) derivation chain
+-- Set 2 (Maa) derivation chain — uses DM bridge (CatHead.surfaceGenderSet2)
 
 /-- Plain n → feminine (the default in Set 2). -/
 theorem set2_plain_n_feminine :
-    set2SurfaceGender CatHead.n_plain = .feminine := rfl
+    CatHead.n_plain.surfaceGenderSet2 = .feminine := rfl
 
 /-- u[−FEM] → masculine (arbitrary masculine in Set 2). -/
 theorem set2_uNegFem_masculine :
-    set2SurfaceGender CatHead.n_uNegFem = .masculine := rfl
+    CatHead.n_uNegFem.surfaceGenderSet2 = .masculine := rfl
 
 /-- i[−FEM] → masculine (natural male, same in both sets). -/
 theorem set2_iMasc_masculine :
-    set2SurfaceGender CatHead.n_iMasc = .masculine := rfl
+    CatHead.n_iMasc.surfaceGenderSet2 = .masculine := rfl
 
 /-- i[+FEM] → feminine (natural female, same in both sets). -/
 theorem set2_iFem_feminine :
-    set2SurfaceGender CatHead.n_iFem = .feminine := rfl
-
-/-- The Set 1 ↔ Set 2 contrast: plain n defaults to OPPOSITE genders. -/
-theorem set1_set2_default_contrast :
-    set1SurfaceGender CatHead.n_plain ≠ set2SurfaceGender CatHead.n_plain := by decide
+    CatHead.n_iFem.surfaceGenderSet2 = .feminine := rfl
 
 /-- Verify the full derivation chain for Spanish fragment nouns:
     the surface gender computed from each noun's CatHead matches
     the expected gender assignment. -/
 theorem spanish_derivation_chain :
-    set1SurfaceGender Fragments.Spanish.Gender.mujer.nHead = .feminine ∧
-    set1SurfaceGender Fragments.Spanish.Gender.hombre.nHead = .masculine ∧
-    set1SurfaceGender Fragments.Spanish.Gender.mesa.nHead = .feminine ∧
-    set1SurfaceGender Fragments.Spanish.Gender.libro.nHead = .masculine ∧
-    set1SurfaceGender Fragments.Spanish.Gender.persona.nHead = .feminine ∧
-    set1SurfaceGender Fragments.Spanish.Gender.ángel.nHead = .masculine :=
+    Fragments.Spanish.Gender.mujer.nHead.surfaceGenderSet1 = .feminine ∧
+    Fragments.Spanish.Gender.hombre.nHead.surfaceGenderSet1 = .masculine ∧
+    Fragments.Spanish.Gender.mesa.nHead.surfaceGenderSet1 = .feminine ∧
+    Fragments.Spanish.Gender.libro.nHead.surfaceGenderSet1 = .masculine ∧
+    Fragments.Spanish.Gender.persona.nHead.surfaceGenderSet1 = .feminine ∧
+    Fragments.Spanish.Gender.ángel.nHead.surfaceGenderSet1 = .masculine :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Fixed-gender nouns: *persona* surfaces as feminine despite denoting
     persons of any sex; *ángel* surfaces as masculine. The derivation
     chain correctly predicts this from their n heads. -/
 theorem fixed_gender_from_n_head :
-    set1SurfaceGender Fragments.Spanish.Gender.persona.nHead = .feminine ∧
-    set1SurfaceGender Fragments.Spanish.Gender.ángel.nHead = .masculine := ⟨rfl, rfl⟩
+    Fragments.Spanish.Gender.persona.nHead.surfaceGenderSet1 = .feminine ∧
+    Fragments.Spanish.Gender.ángel.nHead.surfaceGenderSet1 = .masculine := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 13: Russian Gender (@cite{kramer-2020} §2.3.2, §3.3.2)

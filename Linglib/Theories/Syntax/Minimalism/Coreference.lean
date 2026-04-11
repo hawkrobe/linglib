@@ -30,18 +30,19 @@ inductive NominalType where
 def isNominalCat (c : UD.UPOS) : Bool :=
   c == .PROPN || c == .NOUN || c == .PRON
 
-/-- Classify a word as a nominal type -/
+/-- Classify a word as a nominal type.
+    Derives classification from `Fragments.English.Pronouns` rather than
+    hardcoding string lists. Falls back to UPOS for R-expressions. -/
 def classifyNominal (w : Word) : Option NominalType :=
-  if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
-    some .reflexive
-  else if w.form ∈ ["each other", "one another"] then
-    some .reciprocal
-  else if w.form ∈ ["he", "she", "they", "him", "her", "them", "it"] then
-    some .pronoun
-  else if isNominalCat w.cat then
-    some .rExpression
-  else
-    none
+  match Fragments.English.Pronouns.lookup w.form with
+  | some entry => match entry.pronounType with
+    | .reflexive => some .reflexive
+    | .reciprocal => some .reciprocal
+    | .personal => some .pronoun
+    | _ => some .pronoun  -- wh, relative, demonstrative treated as pronominal
+  | none =>
+    if isNominalCat w.cat then some .rExpression
+    else none
 
 /-- Simple clause structure for coreference checking.
     `semanticPl` tracks whether the subject denotes a plurality,
@@ -131,23 +132,19 @@ def sameLocalDomain (clause : SimpleClause) : Bool :=
 def inSameBindingDomain (_clause : SimpleClause) (_pos1 _pos2 : String) : Bool :=
   true
 
-/-- Phi-feature agreement for coreference -/
+/-- Phi-feature agreement for coreference.
+    Checks person, number, and gender agreement between antecedent and
+    anaphor. Person and number come from `Word.Features`; gender uses
+    `Fragments.English.Pronouns.genderAgrees` since `Word` currently
+    lacks a gender field. -/
 def phiAgree (w1 w2 : Word) : Bool :=
   let personMatch := match w1.features.person, w2.features.person with
     | some p1, some p2 => p1 == p2
-    | _, _ => true
+    | _, _ => true  -- vacuous if either lacks person
   let numberMatch := match w1.features.number, w2.features.number with
     | some n1, some n2 => n1 == n2
-    | _, _ => true
-  let genderMatch :=
-    if w2.form == "himself" then
-      w1.form ∈ ["John", "he", "him"]
-    else if w2.form == "herself" then
-      w1.form ∈ ["Mary", "she", "her"]
-    else if w2.form ∈ ["themselves", "ourselves"] then
-      w1.features.number == some .pl
-    else
-      true
+    | _, _ => true  -- vacuous if either lacks number
+  let genderMatch := Fragments.English.Pronouns.genderAgrees w1.form w2.form
   personMatch && numberMatch && genderMatch
 
 /-- Principle A: Reflexives must be bound locally -/

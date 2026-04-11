@@ -175,7 +175,7 @@ States and activities map to stative (both are atelic/non-dynamic enough
 for PresCF interpretation). Achievements and accomplishments map to telic
 (both have endpoints, triggering FLV interpretation). -/
 def VendlerClass.toIatridou : VendlerClass → IatridouPredType
-  | .state | .activity => .stative
+  | .state | .activity | .semelfactive => .stative
   | .achievement | .accomplishment => .telic
 
 -- ════════════════════════════════════════════════════════════════

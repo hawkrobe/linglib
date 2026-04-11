@@ -144,7 +144,7 @@ theorem unbounded_path_atelic {Loc Time : Type*} [LinearOrder Time]
     whether the VP it creates is telic or atelic.
 
     This is the spatial analog of the QUA/CUM ↔ telic/atelic correspondence
-    from `vendlerClass_telic_implies_qua_intent` / `vendlerClass_atelic_implies_cum_intent`
+    from `vendlerClass_telic_cases` / `vendlerClass_atelic_cases`
     in `Events/Mereology.lean`. -/
 def pathShapeToTelicity : PathShape → Telicity
   | .bounded => .telic

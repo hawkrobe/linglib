@@ -335,7 +335,7 @@ theorem sauerland_is_implicature_theory :
 
 /-- The monotonicity sensitivity follows from the pragmatic nature of
     the inference: scalar/presuppositional inferences arise in UE
-    but not DE contexts. Cross-reference: `Multiplicity.monotonicity_pattern`. -/
+    but not DE contexts. Cross-reference: `Multiplicity.fedGiraffes_monotonicity`. -/
 theorem multiplicity_monotonicity_from_competition {E : Type*} [PartialOrder E]
     (x : E) :
     -- In UE: if [Sg] is satisfied, MP blocks [Pl] → using [Pl] implicates ¬Atom

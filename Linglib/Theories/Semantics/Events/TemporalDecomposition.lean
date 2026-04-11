@@ -121,6 +121,7 @@ def hasComplexDecomposition : VendlerClass → Bool
   | .achievement => true
   | .state => false
   | .activity => false
+  | .semelfactive => false
 
 /-- Complex decomposition ↔ telicity. -/
 theorem hasComplexDecomposition_iff_telic (c : VendlerClass) :
@@ -234,7 +235,12 @@ theorem prfv_phasePred {Time : Type*} [LinearOrder Time]
 
     Counterexample: activity = [0, 10], result = [15, 20], ref = [3, 7].
     The reference [3, 7] is properly inside the activity [0, 10], but
-    entirely before the result [15, 20]. -/
+    entirely before the result [15, 20].
+
+    See also `Causation.ProgressiveCausation.progressive_not_entails_perfective`
+    for the causal explanation: the initiator is type-level sufficient
+    (progressive holds) but an intervening event can prevent token-level
+    completion (perfective fails). -/
 theorem progressive_before_result :
     ∃ (phases : SubeventPhases ℤ) (t : Interval ℤ),
       IMPF (phasePred phases.activityTrace) () t ∧

@@ -1,3 +1,4 @@
+import Linglib.Core.Gender
 import Linglib.Core.Lexical.Word
 
 /-!
@@ -62,6 +63,15 @@ inductive Gender where
   | wd       -- =tún (wooden gender)
   | aml      -- =rí (animal gender)
   deriving DecidableEq, Repr
+
+/-- Map SMPM gender to the shared surface-level gender type.
+    Only fem/masc map directly; the remaining four genders
+    (neutral, liquid, wooden, animal) are language-specific
+    noun class distinctions without cross-linguistic surface equivalents. -/
+def Gender.toSurfaceGender : Gender → Core.SurfaceGender
+  | .fem  => .feminine
+  | .masc => .masculine
+  | _     => .common  -- neutral/liq/wd/aml: no sex-based distinction
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Pronoun Paradigm

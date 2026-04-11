@@ -167,6 +167,7 @@ def predictsSSR : Option VendlerClass → Bool
   | some .activity => true
   | some .achievement => false
   | some .accomplishment => false
+  | some .semelfactive => false  -- punctual, no subinterval property
   | none => false
 
 /-- States and activities are atelic → predict SSR → accept "for X". -/

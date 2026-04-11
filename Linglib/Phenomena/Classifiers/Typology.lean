@@ -90,6 +90,17 @@ structure NounCategorizationSystem where
   hasUnmarkedDefault : Bool := false
   /-- Preferred semantic parameters (§11.2, Table 11.13) -/
   preferredSemantics : List SemanticParameter := []
+  /-- Classifier strategy: does the CLF serve the numeral or the noun?
+      @cite{little-moroney-royer-2022}. Only meaningful for numeral classifier
+      systems; `none` for noun class / verbal / relational classifiers. -/
+  classifierStrategy : Option ClassifierStrategy := none
+  /-- Does the language have obligatory grammatical number marking? -/
+  hasObligatoryNumber : Bool := false
+  /-- Can classifiers and plural marking co-occur? Predicted by CLF-for-NUM
+      (@cite{little-moroney-royer-2022} §3.4: CLF and PL are in different
+      projections) but not by CLF-for-N (same projection, complementary
+      distribution per @cite{borer-2005}). -/
+  pluralClfCooccur : Bool := false
   /-- Citation -/
   source : String := ""
   deriving Repr
@@ -138,6 +149,7 @@ def french : NounCategorizationSystem :=
   , isObligatory := true
   , hasUnmarkedDefault := true  -- Masculine is unmarked
   , preferredSemantics := [.sex, .animacy]
+  , hasObligatoryNumber := true  -- le/les, un/des
   , source := "Aikhenvald (2000), §2" }
 
 -- ============================================================================
@@ -160,6 +172,7 @@ def italian : NounCategorizationSystem :=
   , isObligatory := true
   , hasUnmarkedDefault := true  -- Masculine is unmarked
   , preferredSemantics := [.sex, .animacy]
+  , hasObligatoryNumber := true  -- il/i, la/le, un/una
   , source := "Aikhenvald (2000), §2; Chierchia (1998)" }
 
 -- ============================================================================
@@ -173,7 +186,7 @@ def mandarin : NounCategorizationSystem :=
   { language := "Mandarin"
   , family := "Sino-Tibetan"
   , classifierType := .numeralClassifier
-  , scopes := [.numeralNP]
+  , scopes := [.numeralNP, .attributiveNP]  -- CLF with numerals AND demonstratives (那本书)
   , assignment := .semantic
   , realizations := [.freeForm]
   , hasAgreement := false
@@ -181,6 +194,7 @@ def mandarin : NounCategorizationSystem :=
   , isObligatory := true
   , hasUnmarkedDefault := true  -- 个 gè is default
   , preferredSemantics := semanticsFromClassifiers Fragments.Mandarin.Classifiers.allClassifiers
+  , classifierStrategy := some .forNoun  -- @cite{chierchia-1998}: CLF atomizes noun
   , source := "Aikhenvald (2000), §4, §11.2.3" }
 
 -- ============================================================================
@@ -202,6 +216,7 @@ def japanese : NounCategorizationSystem :=
   , isObligatory := true
   , hasUnmarkedDefault := true  -- つ tsu is default
   , preferredSemantics := semanticsFromClassifiers Fragments.Japanese.Classifiers.allClassifiers
+  , classifierStrategy := some .forNoun  -- @cite{chierchia-1998}: CLF atomizes noun
   , source := "@cite{aikhenvald-2000}; @cite{downing-1996}" }
 
 -- ============================================================================
@@ -451,11 +466,20 @@ theorem noun_class_more_interactions :
 -- §13: @cite{greenberg-1972} universal
 -- ============================================================================
 
-/- @cite{greenberg-1972}: Numeral classifiers and obligatory number marking are
-   in complementary distribution. Witnessed by Mandarin (no number morphology)
-   and Japanese (optional -tachi) vs. French (obligatory singular/plural).
-   TODO: Add `hasObligatoryNumber : Bool` to NounCategorizationSystem to state
-   this formally. -/
+/-- @cite{greenberg-1972}: Numeral classifiers and obligatory number marking are
+    in complementary distribution. Witnessed by Mandarin (no number morphology)
+    and Japanese (optional -tachi) vs. French (obligatory singular/plural).
+
+    @cite{little-moroney-royer-2022} §3.4 refine this: the complementarity
+    holds for CLF-for-N languages (where CLF and PL occupy the same functional
+    projection) but not for CLF-for-NUM languages (where CLF is in a different
+    projection and can co-occur with PL, as in Ch'ol ex. 30 and Mi'gmaq ex. 31). -/
+theorem greenberg_complementarity :
+    (allSystems.filter (isClassifierType ·.classifierType)).all
+      (!·.hasObligatoryNumber) = true ∧
+    (allSystems.filter (isNounClassType ·.classifierType)).all
+      (·.hasObligatoryNumber) = true := by
+  constructor <;> native_decide
 
 /-- No type-shift blocking in Mandarin. -/
 theorem mandarin_no_blocking :
@@ -551,5 +575,114 @@ theorem no_classifiers_over_half :
 theorem obligatory_more_common_than_optional :
     ch55Distribution.obligatory > ch55Distribution.optional := by
   native_decide
+
+-- ============================================================================
+-- §15: Bantu Noun Class Systems
+-- ============================================================================
+
+/-- Xhosa noun categorization: 11-class system (classes 1-10, 15).
+    5 genders (A-E), 3 with interpretable semantic cores.
+    Agreement on all NP-internal and clause-level targets.
+    @cite{carstens-2026} @cite{taraldsen-et-al-2018} -/
+def xhosa : NounCategorizationSystem :=
+  { language := "Xhosa"
+  , family := "Bantu"
+  , classifierType := .nounClass
+  , scopes := [.headModifierNP, .predicateArgument]
+  , assignment := .mixed
+  , realizations := [.prefix]
+  , hasAgreement := true
+  , inventorySize := 11  -- cl1-cl10 + cl15
+  , isObligatory := true
+  , hasUnmarkedDefault := true  -- class 2 ba- / class 8 zi- as defaults
+  , preferredSemantics := [.humanness, .animacy]
+  , source := "@cite{carstens-2026}; @cite{taraldsen-et-al-2018}" }
+
+/-- Shona noun categorization: 14-class system (classes 1-14).
+    8 genders, binary human vs. non-human semantic split.
+    @cite{carstens-2026} -/
+def shona : NounCategorizationSystem :=
+  { language := "Shona"
+  , family := "Bantu"
+  , classifierType := .nounClass
+  , scopes := [.headModifierNP, .predicateArgument]
+  , assignment := .mixed
+  , realizations := [.prefix]
+  , hasAgreement := true
+  , inventorySize := 14  -- cl1-cl14
+  , isObligatory := true
+  , hasUnmarkedDefault := true
+  , preferredSemantics := [.humanness, .animacy]
+  , source := "@cite{carstens-2026}" }
+
+/-- Swahili noun categorization: 15-class system (classes 1-10, 14-18).
+    Agreement on modifiers, verb, and demonstratives.
+    @cite{aikhenvald-2000} -/
+def swahili : NounCategorizationSystem :=
+  { language := "Swahili"
+  , family := "Bantu"
+  , classifierType := .nounClass
+  , scopes := [.headModifierNP, .predicateArgument]
+  , assignment := .mixed
+  , realizations := [.prefix]
+  , hasAgreement := true
+  , inventorySize := 15  -- cl1-cl10, cl14-cl18
+  , isObligatory := true
+  , hasUnmarkedDefault := true
+  , preferredSemantics := [.humanness, .animacy]
+  , source := "@cite{aikhenvald-2000}" }
+
+-- ============================================================================
+-- §16: Bantu Verification
+-- ============================================================================
+
+theorem xhosa_is_noun_class :
+    isNounClassType xhosa.classifierType = true := rfl
+
+theorem shona_is_noun_class :
+    isNounClassType shona.classifierType = true := rfl
+
+theorem swahili_is_noun_class :
+    isNounClassType swahili.classifierType = true := rfl
+
+theorem xhosa_has_agreement : xhosa.hasAgreement = true := rfl
+
+/-- All three Bantu systems satisfy the noun-class inventory bound
+    (<=20, @cite{aikhenvald-2000} Table 15.1). -/
+theorem bantu_satisfies_inventory_bound :
+    xhosa.inventorySize ≤ 20 ∧
+    shona.inventorySize ≤ 20 ∧
+    swahili.inventorySize ≤ 20 := by decide
+
+/-- All Bantu systems use prefix realization. -/
+theorem bantu_has_prefix_realization :
+    xhosa.realizations.any (· == .prefix) = true ∧
+    shona.realizations.any (· == .prefix) = true ∧
+    swahili.realizations.any (· == .prefix) = true := by native_decide
+
+-- ============================================================================
+-- §17: Extended Cross-Linguistic Summary
+-- ============================================================================
+
+/-- Extended system list including Bantu languages. -/
+def allSystemsExtended : List NounCategorizationSystem :=
+  [french, italian, mandarin, japanese, xhosa, shona, swahili]
+
+/-- The extended universal still holds: classifier -> no agreement,
+    noun class -> agreement (Aikhenvald Table 15.1). -/
+theorem classifier_no_agreement_nounclass_agreement_extended :
+    (allSystemsExtended.filter (isClassifierType ·.classifierType)).all
+      (!·.hasAgreement) = true ∧
+    (allSystemsExtended.filter (isNounClassType ·.classifierType)).all
+      (·.hasAgreement) = true := by
+  constructor <;> native_decide
+
+/-- Extended obligatoriness: all seven systems are obligatory. -/
+theorem all_obligatory_extended :
+    allSystemsExtended.all (·.isObligatory) = true := by native_decide
+
+/-- Extended default: all seven systems have an unmarked default. -/
+theorem all_have_default_extended :
+    allSystemsExtended.all (·.hasUnmarkedDefault) = true := by native_decide
 
 end Phenomena.Classifiers.Typology

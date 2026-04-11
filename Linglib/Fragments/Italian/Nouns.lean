@@ -1,3 +1,4 @@
+import Linglib.Core.Gender
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
@@ -25,16 +26,7 @@ indefinite plural — Italian has no bare plural arguments.
 namespace Fragments.Italian.Nouns
 
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
-
--- ============================================================================
--- § 1: Gender and Number
--- ============================================================================
-
-/-- Grammatical gender (Italian has no neuter). -/
-inductive Gender where
-  | masc  -- Masculine
-  | fem   -- Feminine
-  deriving DecidableEq, Repr
+open Core (SurfaceGender)
 
 -- ============================================================================
 -- § 2: Noun Entry
@@ -47,7 +39,7 @@ structure NounEntry where
   /-- Plural form -/
   formPl : Option String := none
   /-- Grammatical gender -/
-  gender : Gender
+  gender : SurfaceGender
   /-- Is this a count noun? -/
   countable : Bool := true
   /-- Is this a proper name? -/
@@ -112,30 +104,26 @@ structure NP where
     modeled here). -/
 def defNP (n : NounEntry) (num : Number := .sg) : NP :=
   let det := match num, n.gender with
-    | .sg, .masc => Determiner.il
-    | .sg, .fem => Determiner.la
-    | .pl, .masc => Determiner.i
-    | .pl, .fem => Determiner.le
-    | _, .masc => Determiner.i   -- fallback for non-binary number
-    | _, .fem => Determiner.le
+    | .sg, .feminine => Determiner.la
+    | .sg, _ => Determiner.il        -- masculine is default
+    | .pl, .feminine => Determiner.le
+    | _, _ => Determiner.i
   { noun := n, number := num, isBare := false, determiner := some det }
 
 /-- Create an indefinite singular NP (un/una). -/
 def indefNP (n : NounEntry) : NP :=
   let det := match n.gender with
-    | .masc => Determiner.un
-    | .fem => Determiner.una
+    | .feminine => Determiner.una
+    | _ => Determiner.un  -- masculine is default
   { noun := n, number := .sg, isBare := false, determiner := some det }
 
 /-- Create a partitive NP (del/della for mass, dei/delle for plural). -/
 def partNP (n : NounEntry) (num : Number := .sg) : NP :=
   let det := match num, n.gender with
-    | .sg, .masc => Determiner.del
-    | .sg, .fem => Determiner.della
-    | .pl, .masc => Determiner.dei
-    | .pl, .fem => Determiner.delle
-    | _, .masc => Determiner.dei   -- fallback for non-binary number
-    | _, .fem => Determiner.delle
+    | .sg, .feminine => Determiner.della
+    | .sg, _ => Determiner.del        -- masculine is default
+    | .pl, .feminine => Determiner.delle
+    | _, _ => Determiner.dei
   { noun := n, number := num, isBare := false, determiner := some det }
 
 /-- Create a bare NP (restricted in Italian). -/
@@ -147,27 +135,27 @@ def bareNP (n : NounEntry) (num : Number := .sg) : NP :=
 -- ============================================================================
 
 -- Count nouns (masculine)
-def libro : NounEntry := { formSg := "libro", formPl := some "libri", gender := .masc }
-def ragazzo : NounEntry := { formSg := "ragazzo", formPl := some "ragazzi", gender := .masc }
-def uomo : NounEntry := { formSg := "uomo", formPl := some "uomini", gender := .masc }
-def gatto : NounEntry := { formSg := "gatto", formPl := some "gatti", gender := .masc }
-def cane : NounEntry := { formSg := "cane", formPl := some "cani", gender := .masc }
-def tavolo : NounEntry := { formSg := "tavolo", formPl := some "tavoli", gender := .masc }
+def libro : NounEntry := { formSg := "libro", formPl := some "libri", gender := .masculine }
+def ragazzo : NounEntry := { formSg := "ragazzo", formPl := some "ragazzi", gender := .masculine }
+def uomo : NounEntry := { formSg := "uomo", formPl := some "uomini", gender := .masculine }
+def gatto : NounEntry := { formSg := "gatto", formPl := some "gatti", gender := .masculine }
+def cane : NounEntry := { formSg := "cane", formPl := some "cani", gender := .masculine }
+def tavolo : NounEntry := { formSg := "tavolo", formPl := some "tavoli", gender := .masculine }
 
 -- Count nouns (feminine)
-def ragazza : NounEntry := { formSg := "ragazza", formPl := some "ragazze", gender := .fem }
-def donna : NounEntry := { formSg := "donna", formPl := some "donne", gender := .fem }
-def casa : NounEntry := { formSg := "casa", formPl := some "case", gender := .fem }
+def ragazza : NounEntry := { formSg := "ragazza", formPl := some "ragazze", gender := .feminine }
+def donna : NounEntry := { formSg := "donna", formPl := some "donne", gender := .feminine }
+def casa : NounEntry := { formSg := "casa", formPl := some "case", gender := .feminine }
 
 -- Mass nouns
-def acqua : NounEntry := { formSg := "acqua", formPl := none, gender := .fem, countable := false }
-def vino : NounEntry := { formSg := "vino", formPl := none, gender := .masc, countable := false }
-def pane : NounEntry := { formSg := "pane", formPl := none, gender := .masc, countable := false }
-def latte : NounEntry := { formSg := "latte", formPl := none, gender := .masc, countable := false }
+def acqua : NounEntry := { formSg := "acqua", formPl := none, gender := .feminine, countable := false }
+def vino : NounEntry := { formSg := "vino", formPl := none, gender := .masculine, countable := false }
+def pane : NounEntry := { formSg := "pane", formPl := none, gender := .masculine, countable := false }
+def latte : NounEntry := { formSg := "latte", formPl := none, gender := .masculine, countable := false }
 
 -- Proper names
-def paolo : NounEntry := { formSg := "Paolo", formPl := none, gender := .masc, proper := true }
-def maria : NounEntry := { formSg := "Maria", formPl := none, gender := .fem, proper := true }
+def paolo : NounEntry := { formSg := "Paolo", formPl := none, gender := .masculine, proper := true }
+def maria : NounEntry := { formSg := "Maria", formPl := none, gender := .feminine, proper := true }
 
 -- ============================================================================
 -- § 8: Lexicon Access

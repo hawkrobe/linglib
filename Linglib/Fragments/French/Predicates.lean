@@ -18,7 +18,8 @@ namespace Fragments.French.Predicates
 
 open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
-open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile)
+open Semantics.Lexical.Verb.EntailmentProfile
+  (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)
 
 /-- French verb entry: extends VerbCore with French inflectional paradigm. -/
 structure FrenchVerbEntry extends VerbCore where
@@ -174,10 +175,201 @@ def refroidir : FrenchVerbEntry where
   complementType := .none
   subjectEntailments := some cosSubjectProfile
 
+-- ============================================================================
+-- § Passive Agent preposition selection: par vs de
+-- @cite{staps-rooryck-2024}
+-- ============================================================================
+
+/-- Prototypical transitive subject: V+S+C+M+IE (5 P-Ag).
+    Identical to @cite{dowty-1991}'s canonical agent (`kickSubjectProfile`).
+    Used for *laver*, *écrire*, *construire*, *tuer*, etc. -/
+abbrev protoTransSubjectProfile := kickSubjectProfile
+
+/-- Prototypical transitive object: CoS+CA (2 P-Pat).
+    Used for *laver*, *tuer*, etc. -/
+def protoTransObjectProfile : EntailmentProfile where
+  volition := false; sentience := false; causation := false
+  movement := false; independentExistence := false
+  changeOfState := true; incrementalTheme := false
+  causallyAffected := true; stationary := false
+  dependentExistence := false
+
+/-- Experiencer subject: S+IE (2 P-Ag).
+    Identical to @cite{dowty-1991}'s perception profile (`seeSubjectProfile`).
+    Used for *aimer*, *adorer*, *respecter*. -/
+abbrev experiencerSubjectProfile := seeSubjectProfile
+
+/-- Minimal participant: IE only (1 P-Ag, 0 P-Pat).
+    The participant exists independently of the event but has no
+    agentive involvement (no volition, causation, movement) and no
+    patientive involvement (no change, affectedness).
+
+    Used for:
+    - Objects of psych verbs (*aimer*, *adorer*, *respecter*): the stimulus
+    - Objects of accompaniment/following verbs (*accompagner*, *suivre*,
+      *précéder*): the co-participant
+    - Subjects of stative positional verbs (*précéder*, stative *suivre*):
+      the entity in a fixed relation -/
+def minimalParticipantProfile : EntailmentProfile where
+  volition := false; sentience := false; causation := false
+  movement := false; independentExistence := true
+  changeOfState := false; incrementalTheme := false
+  causallyAffected := false; stationary := false
+  dependentExistence := false
+
+/-- Stative positional subjects have the same profile as minimal
+    participants: IE only. The subject of *précéder* and the object
+    of *aimer* occupy the same proto-role space — both have no
+    agentive or patientive entailments beyond independent existence. -/
+abbrev stativePositionalSubjectProfile := minimalParticipantProfile
+
+/-- Dynamic motion subject: V+S+M+IE (4 P-Ag).
+    Identical to `runSubjectProfile` — volitional self-propelled motion
+    without causing a change in another participant.
+    Used for dynamic *suivre* ('follow' with volition). -/
+abbrev dynamicFollowSubjectProfile := runSubjectProfile
+
+/-- Accompany subject: S+M+IE (3 P-Ag).
+    Used for *accompagner*. Movement without obligatory volition:
+    the accompaniment may or may not be volitional (parents
+    accompanying children may be passive observers). -/
+def accompanySubjectProfile : EntailmentProfile where
+  volition := false; sentience := true; causation := false
+  movement := true; independentExistence := true
+  changeOfState := false; incrementalTheme := false
+  causallyAffected := false; stationary := false
+  dependentExistence := false
+
+-- laver — 'wash'. Prototypical transitive: par only.
+def laver : FrenchVerbEntry where
+  form := "laver"; form3sg := "lave"; formPasse := "lava"
+  formPartPasse := "lavé"; formPartPres := "lavant"
+  complementType := .np
+  subjectEntailments := some protoTransSubjectProfile
+  objectEntailments := some protoTransObjectProfile
+  vendlerClass := some .accomplishment
+
+-- écrire — 'write'. Creation verb: par only.
+def ecrire : FrenchVerbEntry where
+  form := "écrire"; form3sg := "écrit"; formPasse := "écrivit"
+  formPartPasse := "écrit"; formPartPres := "écrivant"
+  complementType := .np
+  subjectEntailments := some protoTransSubjectProfile
+  objectEntailments := some { protoTransObjectProfile with
+    incrementalTheme := true, dependentExistence := true }
+  vendlerClass := some .accomplishment
+
+-- construire — 'build'. Creation verb: par only.
+def construire : FrenchVerbEntry where
+  form := "construire"; form3sg := "construit"; formPasse := "construisit"
+  formPartPasse := "construit"; formPartPres := "construisant"
+  complementType := .np
+  subjectEntailments := some protoTransSubjectProfile
+  objectEntailments := some { protoTransObjectProfile with
+    incrementalTheme := true, dependentExistence := true }
+  vendlerClass := some .accomplishment
+
+-- tuer — 'kill'. Highly transitive: par only.
+def tuer : FrenchVerbEntry where
+  form := "tuer"; form3sg := "tue"; formPasse := "tua"
+  formPartPasse := "tué"; formPartPres := "tuant"
+  complementType := .np
+  subjectEntailments := some protoTransSubjectProfile
+  objectEntailments := some { protoTransObjectProfile with
+    dependentExistence := true }
+  vendlerClass := some .achievement
+
+-- aimer — 'love'. Psych stative: both par and de.
+def aimer : FrenchVerbEntry where
+  form := "aimer"; form3sg := "aime"; formPasse := "aima"
+  formPartPasse := "aimé"; formPartPres := "aimant"
+  complementType := .np
+  subjectEntailments := some experiencerSubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .state
+
+-- adorer — 'adore, worship'. Psych stative: both par and de.
+def adorer : FrenchVerbEntry where
+  form := "adorer"; form3sg := "adore"; formPasse := "adora"
+  formPartPasse := "adoré"; formPartPres := "adorant"
+  complementType := .np
+  subjectEntailments := some experiencerSubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .state
+
+-- respecter — 'respect'. Psych stative: both par and de.
+def respecter : FrenchVerbEntry where
+  form := "respecter"; form3sg := "respecte"; formPasse := "respecta"
+  formPartPasse := "respecté"; formPartPres := "respectant"
+  complementType := .np
+  subjectEntailments := some experiencerSubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .state
+
+-- accompagner — 'accompany'. Par/de depending on involvement.
+def accompagner : FrenchVerbEntry where
+  form := "accompagner"; form3sg := "accompagne"; formPasse := "accompagna"
+  formPartPasse := "accompagné"; formPartPres := "accompagnant"
+  complementType := .np
+  subjectEntailments := some accompanySubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .activity
+
+-- suivre — 'follow' (dynamic reading). Par preferred.
+def suivreDyn : FrenchVerbEntry where
+  form := "suivre"; form3sg := "suit"; formPasse := "suivit"
+  formPartPasse := "suivi"; formPartPres := "suivant"
+  complementType := .np
+  senseTag := .default
+  subjectEntailments := some dynamicFollowSubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .activity
+
+-- suivre — 'follow' (stative/positional reading). De preferred.
+def suivreStat : FrenchVerbEntry where
+  form := "suivre"; form3sg := "suit"; formPasse := "suivit"
+  formPartPasse := "suivi"; formPartPres := "suivant"
+  complementType := .np
+  senseTag := .stative
+  subjectEntailments := some stativePositionalSubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .state
+
+-- précéder — 'precede'. Stative: de preferred.
+def preceder : FrenchVerbEntry where
+  form := "précéder"; form3sg := "précède"; formPasse := "précéda"
+  formPartPasse := "précédé"; formPartPres := "précédant"
+  complementType := .np
+  subjectEntailments := some stativePositionalSubjectProfile
+  objectEntailments := some minimalParticipantProfile
+  vendlerClass := some .state
+
+-- abandonner — 'abandon'. Telic: par; atelic: par/de.
+def abandonner : FrenchVerbEntry where
+  form := "abandonner"; form3sg := "abandonne"; formPasse := "abandonna"
+  formPartPasse := "abandonné"; formPartPres := "abandonnant"
+  complementType := .np
+  subjectEntailments := some protoTransSubjectProfile
+  objectEntailments := some protoTransObjectProfile
+  vendlerClass := some .accomplishment
+
+-- délaisser — 'abandon, neglect'. Similar to abandonner.
+def delaisser : FrenchVerbEntry where
+  form := "délaisser"; form3sg := "délaisse"; formPasse := "délaissa"
+  formPartPasse := "délaissé"; formPartPres := "délaissant"
+  complementType := .np
+  subjectEntailments := some protoTransSubjectProfile
+  objectEntailments := some protoTransObjectProfile
+  vendlerClass := some .accomplishment
+
 def allVerbs : List FrenchVerbEntry :=
   [faire, laisser,
    brunir, noircir, palir, rajeunir, rougir,
-   approcher, durcir, plier, radoucir, refroidir]
+   approcher, durcir, plier, radoucir, refroidir,
+   laver, ecrire, construire, tuer,
+   aimer, adorer, respecter, accompagner,
+   suivreDyn, suivreStat, preceder,
+   abandonner, delaisser]
 
 def lookup (form : String) : Option FrenchVerbEntry :=
   allVerbs.find? (·.form == form)

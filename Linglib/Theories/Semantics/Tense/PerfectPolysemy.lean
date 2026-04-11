@@ -110,6 +110,7 @@ def availableReadings : VendlerClass → List PerfectReading
   | .activity => [.existential, .universal]
   | .achievement => [.existential, .universal, .resultative, .presentState]
   | .accomplishment => [.existential, .universal, .resultative, .presentState]
+  | .semelfactive => [.existential]
 
 /-- Telic classes have strictly more available readings than atelic classes. -/
 theorem telic_more_readings :
@@ -296,12 +297,9 @@ theorem resultative_from_result_contains {Time : Type*} [LinearOrder Time]
   h_R_in_result
 
 /-- The existential reading is available for all Vendler classes (it uses
-    only the full runtime, not the subevent structure). The universal
-    reading is similarly available for all classes. These correspond to
-    the atelic-compatible readings. -/
+    only the full runtime, not the subevent structure). -/
 theorem existential_available_for_all_classes (c : VendlerClass) :
-    PerfectReading.existential ∈ availableReadings c ∧
-    PerfectReading.universal ∈ availableReadings c := by
+    PerfectReading.existential ∈ availableReadings c := by
   cases c <;> simp [availableReadings]
 
 -- ════════════════════════════════════════════════════

@@ -2543,13 +2543,60 @@ def breathe : VerbEntry := .mkRegular {
   vendlerClass := some .activity
   levinClass := some .bodyProcess }
 
-/-- "cough" — Levin 40.1 Body Process verbs. -/
+/-- "cough" — Levin 40.1 Body Process verbs.
+    Semelfactive: single involuntary event, no result state (@cite{smith-1997} §2.4.3). -/
 def cough : VerbEntry := .mkRegular {
   form := "cough"
   complementType := .none
   passivizable := false
-  vendlerClass := some .activity
+  vendlerClass := some .semelfactive
   levinClass := some .bodyProcess }
+
+/-- "hiccup" — Levin 40.1 Body Process verbs.
+    Semelfactive: single involuntary body event (@cite{smith-1997} §2.4.3). -/
+def hiccup : VerbEntry := .mkRegular {
+  form := "hiccup"
+  complementType := .none
+  passivizable := false
+  vendlerClass := some .semelfactive
+  levinClass := some .bodyProcess }
+
+/-- "blink" — Levin 40.3 Body-Internal Motion.
+    Semelfactive: single instantaneous eye movement (@cite{smith-1997} §2.4.3). -/
+def blink : VerbEntry := .mkRegular {
+  form := "blink"
+  complementType := .none
+  passivizable := false
+  vendlerClass := some .semelfactive
+  levinClass := some .bodyProcess }
+
+/-- "knock" — Levin 18.1 Hit verbs (intransitive use).
+    Semelfactive: single percussive contact event
+    (@cite{smith-1997} §2.4.3: "Guy knocked at the door"). -/
+def knock : VerbEntry := .mkRegular {
+  form := "knock"
+  complementType := .none
+  passivizable := false
+  vendlerClass := some .semelfactive
+  levinClass := some .hit }
+
+/-- "tap" — Levin 18.1 Hit verbs (intransitive use).
+    Semelfactive: single light percussive contact event (@cite{smith-1997} §2.4.3). -/
+def tap : VerbEntry := .mkRegular {
+  form := "tap"
+  complementType := .none
+  passivizable := false
+  vendlerClass := some .semelfactive
+  levinClass := some .hit }
+
+/-- "flash" — Levin 43.1 Light Emission verbs.
+    Semelfactive: single instantaneous light event (@cite{smith-1997} §2.4.3). -/
+def flash : VerbEntry := .mkRegular {
+  form := "flash"
+  complementType := .none
+  passivizable := false
+  vendlerClass := some .semelfactive
+  levinClass := some .lightEmission }
 
 /-- "flinch" — Levin 40.5 Flinch verbs. Involuntary reaction. -/
 def flinch : VerbEntry := .mkRegular {

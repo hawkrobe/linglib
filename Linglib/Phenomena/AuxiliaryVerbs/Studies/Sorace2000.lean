@@ -34,6 +34,7 @@ def vendlerClassToTypicalTransitivity : VendlerClass → TransitivityClass
   | .accomplishment => .transitive
   | .activity       => .unergative
   | .state          => .unergative
+  | .semelfactive   => .unergative
 
 /-- Achievements are typically unaccusative. -/
 theorem achievement_typically_unaccusative :

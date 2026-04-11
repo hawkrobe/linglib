@@ -26,6 +26,15 @@ Merge → SO → Spell-Out
 - Predicate Abstraction (λ-binding at landing sites) is a separate step
   handled by `Interfaces/SyntaxSemantics/Minimalism/Interface.lean`.
 
+## Feature convergence
+
+Before Spell-Out sends an SO to the interfaces, strong features must be
+checked (see `Core.Checking.convergesAtSpellOut`). After Spell-Out,
+covert operations on the LF branch check remaining –Interpretable features.
+At LF, all –Interpretable features must be checked for the derivation to
+converge (`Core.Checking.convergesAtLF`). See `Core.Economy.Admissibility`
+for the full admissibility conditions.
+
 @cite{chomsky-1995} @cite{heim-kratzer-1998}
 -/
 

@@ -500,10 +500,21 @@ def anaphoraComparison : TheoryComparison :=
   , elliottSudo := "Primary motivation (bathroom sentences)"
   , allAgree := false }
 
+/-- Non-monotonic FC ("exactly one" sentences) -/
+def nonMonotonicFCComparison : TheoryComparison :=
+  { phenomenon := "Non-monotonic FC (exactly n)"
+  , barlevfox := "Problematic auxiliary assumptions"
+  , delpinal := "Straightforward (universal homogeneity + cardinality)"
+  , champollion := "Not addressed"
+  , alsop := "Not addressed"
+  , aloni := "Not addressed"
+  , elliottSudo := "Not addressed"
+  , allAgree := false }
+
 /-- All comparisons -/
 def allComparisons : List TheoryComparison :=
   [fciComparison, dualProhibitionComparison, secondaryInference,
-   embeddedFCComparison, anaphoraComparison]
+   embeddedFCComparison, nonMonotonicFCComparison, anaphoraComparison]
 
 -- ============================================================================
 -- SECTION 5: Pragmatic vs Semantic Approaches

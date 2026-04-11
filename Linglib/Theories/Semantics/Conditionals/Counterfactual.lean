@@ -536,6 +536,9 @@ This connects to @cite{nadathur-lauer-2020}:
 - Counterfactual dependence (necessity) = selection-based conditionals
 
 See `Theories/NadathurLauer2020/` for the causal model infrastructure.
+See `Phenomena/Causation/Studies/Lewis1973.lean` for the full formalization
+of @cite{lewis-1973-causation}'s causal dependence, causation as transitive
+closure, epiphenomena asymmetry, and bridge theorems to CC-selection.
 -/
 
 /--

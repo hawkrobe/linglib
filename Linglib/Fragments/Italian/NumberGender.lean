@@ -20,7 +20,7 @@ within nP can condition gender; features outside nP cannot.
 namespace Fragments.Italian.NumberGender
 
 open Theories.Morphology.DM
-open Fragments.Italian.Nouns (Gender)
+open Core (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Plural Classes
@@ -60,15 +60,15 @@ structure NumberGenderNoun where
   formSg : String
   formPl : String
   gloss : String
-  sgGender : Gender
+  sgGender : SurfaceGender
   pluralClass : PluralClass
   deriving DecidableEq, Repr
 
 /-- Plural gender: -a plurals are always feminine; regular plurals
     preserve the singular gender. -/
-def NumberGenderNoun.plGender (n : NumberGenderNoun) : Gender :=
+def NumberGenderNoun.plGender (n : NumberGenderNoun) : SurfaceGender :=
   match n.pluralClass with
-  | .aPlural => .fem
+  | .aPlural => .feminine
   | .regular => n.sgGender
 
 /-- Does this noun's gender change between singular and plural? -/
@@ -86,37 +86,37 @@ The body-part semantics parallels the Teop/Jarawara data: body parts
 interact with n in special ways across languages. -/
 
 def braccio : NumberGenderNoun :=
-  ⟨"braccio", "braccia", "arm", .masc, .aPlural⟩
+  ⟨"braccio", "braccia", "arm", .masculine, .aPlural⟩
 def dito : NumberGenderNoun :=
-  ⟨"dito", "dita", "finger", .masc, .aPlural⟩
+  ⟨"dito", "dita", "finger", .masculine, .aPlural⟩
 def ginocchio : NumberGenderNoun :=
-  ⟨"ginocchio", "ginocchia", "knee", .masc, .aPlural⟩
+  ⟨"ginocchio", "ginocchia", "knee", .masculine, .aPlural⟩
 def labbro : NumberGenderNoun :=
-  ⟨"labbro", "labbra", "lip", .masc, .aPlural⟩
+  ⟨"labbro", "labbra", "lip", .masculine, .aPlural⟩
 def osso : NumberGenderNoun :=
-  ⟨"osso", "ossa", "bone", .masc, .aPlural⟩
+  ⟨"osso", "ossa", "bone", .masculine, .aPlural⟩
 def sopracciglio : NumberGenderNoun :=
-  ⟨"sopracciglio", "sopracciglia", "eyebrow", .masc, .aPlural⟩
+  ⟨"sopracciglio", "sopracciglia", "eyebrow", .masculine, .aPlural⟩
 
 /-! ### -a plural non-body parts -/
 
 def uovo : NumberGenderNoun :=
-  ⟨"uovo", "uova", "egg", .masc, .aPlural⟩
+  ⟨"uovo", "uova", "egg", .masculine, .aPlural⟩
 def paio : NumberGenderNoun :=
-  ⟨"paio", "paia", "pair", .masc, .aPlural⟩
+  ⟨"paio", "paia", "pair", .masculine, .aPlural⟩
 def miglio : NumberGenderNoun :=
-  ⟨"miglio", "miglia", "mile", .masc, .aPlural⟩
+  ⟨"miglio", "miglia", "mile", .masculine, .aPlural⟩
 
 /-! ### Regular plurals (gender-preserving) -/
 
 def libroNG : NumberGenderNoun :=
-  ⟨"libro", "libri", "book", .masc, .regular⟩
+  ⟨"libro", "libri", "book", .masculine, .regular⟩
 def ragazzoNG : NumberGenderNoun :=
-  ⟨"ragazzo", "ragazzi", "boy", .masc, .regular⟩
+  ⟨"ragazzo", "ragazzi", "boy", .masculine, .regular⟩
 def casaNG : NumberGenderNoun :=
-  ⟨"casa", "case", "house", .fem, .regular⟩
+  ⟨"casa", "case", "house", .feminine, .regular⟩
 def ragazzaNG : NumberGenderNoun :=
-  ⟨"ragazza", "ragazze", "girl", .fem, .regular⟩
+  ⟨"ragazza", "ragazze", "girl", .feminine, .regular⟩
 
 /-- All -a plural nouns. -/
 def aPluralNouns : List NumberGenderNoun :=
@@ -149,9 +149,9 @@ theorem casa_preserves : casaNG.genderChanges = false := rfl
 theorem ragazza_preserves : ragazzaNG.genderChanges = false := rfl
 
 -- Plural gender values
-theorem braccio_pl_fem : braccio.plGender = .fem := rfl
-theorem libro_pl_masc : libroNG.plGender = .masc := rfl
-theorem casa_pl_fem : casaNG.plGender = .fem := rfl
+theorem braccio_pl_fem : braccio.plGender = .feminine := rfl
+theorem libro_pl_masc : libroNG.plGender = .masculine := rfl
+theorem casa_pl_fem : casaNG.plGender = .feminine := rfl
 
 -- ============================================================================
 -- § 5: GLH Predictions
@@ -180,7 +180,7 @@ theorem gender_change_tracks_glh :
 /-- All -a plural nouns are masculine in the singular. The gender change
     is always masc → fem, never fem → masc. -/
 theorem aPlural_always_masc_sg :
-    aPluralNouns.all (fun n => n.sgGender == .masc) = true := by native_decide
+    aPluralNouns.all (fun n => n.sgGender == .masculine) = true := by native_decide
 
 /-- The -a plural class is exclusively body parts and measure nouns.
     6 of 9 are body parts — the same semantic class that drives

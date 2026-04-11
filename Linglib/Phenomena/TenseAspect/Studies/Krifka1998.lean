@@ -197,10 +197,12 @@ theorem telic_licenses_inX (c : VendlerClass) (h : c.telicity = .telic) :
     inXPrediction c = .accept := by
   cases c <;> simp_all [VendlerClass.telicity, inXPrediction]
 
-/-- Atelic VPs (CUM) license "for X" adverbials. -/
-theorem atelic_licenses_forX (c : VendlerClass) (h : c.telicity = .atelic) :
+/-- Durative atelic VPs (CUM + durative) license "for X" adverbials.
+    Semelfactives are atelic but punctual — "for X" coerces to iterative. -/
+theorem durative_atelic_licenses_forX (c : VendlerClass)
+    (h : c.telicity = .atelic) (hd : c.duration = .durative) :
     forXPrediction c = .accept := by
-  cases c <;> simp_all [VendlerClass.telicity, forXPrediction]
+  cases c <;> simp_all [VendlerClass.telicity, VendlerClass.duration, forXPrediction]
 
 /-- "eat two apples" (accomplishment) licenses "in X". -/
 theorem eat_two_apples_licenses_inX :

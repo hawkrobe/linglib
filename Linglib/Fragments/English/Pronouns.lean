@@ -99,6 +99,54 @@ def why : PronounEntry := { form := "why", pronounType := .wh, wh := true }
 def how : PronounEntry := { form := "how", pronounType := .wh, wh := true }
 
 -- ============================================================================
+-- Gender Paradigm
+-- ============================================================================
+
+/-- English pronominal gender paradigm. Used for binding agreement
+    (Principle A/B), since `Word.Features` currently lacks a gender
+    field. Each paradigm class groups the personal and reflexive
+    pronouns that must agree in gender. -/
+inductive GenderParadigm where
+  | masculine   -- he/him/himself
+  | feminine    -- she/her/herself
+  | neuter      -- it/itself
+  | plural      -- they/them/themselves (number-only, no gender)
+  | unspecified -- first/second person, reciprocals, etc.
+  deriving DecidableEq, Repr
+
+/-- Map a pronoun form to its gender paradigm. -/
+def genderOf (form : String) : GenderParadigm :=
+  if form ∈ ["he", "him", "himself"] then .masculine
+  else if form ∈ ["she", "her", "herself"] then .feminine
+  else if form ∈ ["it", "itself"] then .neuter
+  else if form ∈ ["they", "them", "themselves"] then .plural
+  else .unspecified
+
+/-- Map a proper noun to its gender paradigm, if known.
+    Returns `.unspecified` for unknown names. -/
+def nameGender (form : String) : GenderParadigm :=
+  if form ∈ ["John", "Bill", "Fred"] then .masculine
+  else if form ∈ ["Mary", "Sue"] then .feminine
+  else .unspecified
+
+/-- Do two forms agree in gender? Unspecified gender agrees with anything. -/
+def genderAgrees (form1 form2 : String) : Bool :=
+  let g1 := match nameGender form1 with
+    | .unspecified => genderOf form1
+    | g => g
+  let g2 := match nameGender form2 with
+    | .unspecified => genderOf form2
+    | g => g
+  match g1, g2 with
+  | .unspecified, _ => true
+  | _, .unspecified => true
+  | .plural, .plural => true
+  | .masculine, .masculine => true
+  | .feminine, .feminine => true
+  | .neuter, .neuter => true
+  | _, _ => false
+
+-- ============================================================================
 -- Conversion to Word
 -- ============================================================================
 

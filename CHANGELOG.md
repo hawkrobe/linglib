@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.229.641] - 2026-04-10
+
+### Added
+- **MixedQuotation.lean**: new `Theories/Semantics/Quotation/` module formalizing mixed quotation operators from @cite{kirk-giannini-2024} — `MQContext`, `applyMQ` (𝔐), `applyApprop` (𝔄), `shunt` (↓), `diag` (†); CI projection theorems; two-layer peripheral content model (`MQProp`) with R-content vs ◆-content separation, `shunt_conserves` (total information invariance under ↓), `full_chain_preserves_rContent`, `toFlat` projection showing flat model loses R-content
+- **KirkGiannini2024.lean**: new `Phenomena/Quotation/Studies/` with five applications (mongoose/mongooses, Giorgione/Barbarelli, damn-in-quotation, gradual depreciation, N-word reclamation); concrete CI projection model; `ci_replaced_by_attribution` theorem
+- **Effects.lean**: CIBridge section — `ci_projection_universal` (Functor law), `runCIWriter` (Writer→TwoDimProp shunting bridge), `runCIWriter_twoDim`/`_twoDim_fn`, `runCIWriter_log_append` (multi-CI compositionality), `runCIWriter_idempotent` (retraction)
+- **Basic.lean** (Expressives): `pureQuote` — pure quotation strips CI content, preserving only at-issue; `pureQuote_strips_ci`, `pureQuote_preserves_atIssue`
+- **PresuppositionalExhaustification.lean**: `pex` operator from @cite{delpinal-bassi-sauerland-2024}
+- **DelPinalBassiSauerland2024.lean**: free choice via presuppositional exhaustification
+- **Enguehard2024.lean**: plural multiplicity implicature via pex
+- **BrueningAlKhalaf2020.lean**, **Bruening2025.lean**, **Schwarzer2026.lean**: category-mismatch coordination studies
+- **StapsRooryck2024.lean**: spatial-causal polysemy of French agent prepositions (*par*/*de*)
+- **ChanShen2026.lean**: *wh-the-hell* licensing conditions; **Singlish/Questions.lean** fragment
+- **AhnKocabDavidson2026.lean**: proper name semantics and referential opacity
+- **LittleMoroneyRoyer2022.lean**: classifier typology; **Shan/Classifiers.lean**, **Mayan/Chol/Classifiers.lean** fragments
+- **Core/Gender.lean**: surface gender infrastructure; **German/Gender.lean**, **Hausa/Gender.lean** fragments
+- **German/Coordination.lean**: German coordination morphology
+- **Composition.lean** (Tense/Aspect): VP-level situation type composition
+- **Checking.lean** (Minimalism): feature checking lifecycle
+- **Mandarin/Questions.lean**: Mandarin wh-question formation fragment
+
+### Changed
+- **Multiplicity.lean**: refactored plural multiplicity data
+- **Classifiers/Typology.lean**: expanded classifier typology
+- **Coordination/Data.lean**, **Typology.lean**: expanded coordination data and typology
+- Various fragment files (French, German, Italian, Shona, Swahili, Xhosa, Mixtec, Teop): expanded lexical entries, gender/number features, coordination morphology
+- Various theory files: expanded presupposition, events, conditionals, minimalist syntax
+
 ## [0.229.640] - 2026-04-10
 
 ### Changed

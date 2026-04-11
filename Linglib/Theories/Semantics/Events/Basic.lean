@@ -119,7 +119,7 @@ theorem eventSort_roundtrip (s : EventSort) :
 theorem vendlerClass_sort_agrees (c : VendlerClass) :
     dynamicityToEventSort c.dynamicity = match c with
       | .state => EventSort.state
-      | .activity | .achievement | .accomplishment => EventSort.action := by
+      | .activity | .achievement | .accomplishment | .semelfactive => EventSort.action := by
   cases c <;> rfl
 
 -- ════════════════════════════════════════════════════

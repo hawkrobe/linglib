@@ -474,6 +474,33 @@ theorem comulGen_primitive (T : SyntacticObject)
     comulGen T = ofTree T ⊗ₜ 1 + 1 ⊗ₜ ofTree T := by
   simp [comulGen, h]
 
+/-! ### Forest algebra lemmas -/
+
+theorem ofForest_nil : ofForest ([] : Forest) = (1 : Hc) := by
+  unfold ofForest
+  rw [FreeMonoid.ofList_nil]
+  exact MonoidAlgebra.one_def.symm
+
+theorem ofForest_append (Pa Pb : Forest) :
+    ofForest (Pa ++ Pb) = ofForest Pa * ofForest Pb := by
+  show MonoidAlgebra.single (FreeMonoid.ofList (Pa ++ Pb)) (1 : ℤ) =
+    MonoidAlgebra.single (FreeMonoid.ofList Pa) 1 *
+    MonoidAlgebra.single (FreeMonoid.ofList Pb) 1
+  rw [FreeMonoid.ofList_append]
+  conv_lhs => rw [show (1 : ℤ) = 1 * 1 from (mul_one 1).symm]
+  exact (MonoidAlgebra.single_mul_single _ _ _ _).symm
+
+theorem comulAlgHom_ofForest_cons (T : SyntacticObject) (F : Forest) :
+    comulAlgHom (ofForest (T :: F)) = comulGen T * comulAlgHom (ofForest F) := by
+  show comulAlgHom (ofForest ([T] ++ F)) = _
+  rw [ofForest_append, map_mul comulAlgHom]
+  congr 1
+  exact comulAlgHom_ofTree T
+
+theorem comulAlgHom_ofForest_nil :
+    comulAlgHom (ofForest ([] : Forest)) = 1 := by
+  rw [ofForest_nil, map_one]
+
 /-! ### Counit -/
 
 /-- Counit as a linear map: ε(Σ cᵢ Fᵢ) = c_∅ (coefficient of the empty forest).
@@ -762,6 +789,414 @@ noncomputable def antipodeForest (m : FreeMonoid SyntacticObject) : Hc :=
 noncomputable def hcAntipode : Hc →ₗ[ℤ] Hc :=
   Finsupp.linearCombination ℤ antipodeForest
 
+/-! ### Double-cut sum (nested admissible cuts)
+
+The double-cut sum is `Σ_{(P,R) ∈ cutTerms(T)} ofForest(P) ⊗ cutTermsSum(R)`.
+This is the common non-structural part of both sides of the coassociativity
+identity on a node `T = node a b`.
+
+For the **RHS** decomposition, this form is natural: expanding `Δ(R)` into
+`R⊗1 + 1⊗R + cutTermsSum(R)` per-term gives the structural sum plus
+`Σ P ⊗ cutTermsSum(R)` directly.
+
+For the **LHS** decomposition, this requires the double-cut bijection:
+`Σ assoc(δ(P) ⊗ R) = Σ P ⊗ cutTermsSum(R)` where `δ(P)` is the
+non-structural part of `Δ(ofForest P)`. -/
+
+/-- The non-structural part of comulGen: `cutTermsSum(T) = Δ(T) - T⊗1 - 1⊗T`. -/
+noncomputable def cutTermsSum (T : SyntacticObject) : Hc ⊗[ℤ] Hc :=
+  (cutTerms T).foldl (fun acc ⟨P, R⟩ => acc + ofForest P ⊗ₜ[ℤ] ofTree R) 0
+
+private theorem foldl_add_shift' {M : Type*} [AddCommMonoid M]
+    {α : Type*} (f : α → M) (L : List α) (init : M) :
+    L.foldl (fun acc x => acc + f x) init = init + (L.map f).sum := by
+  induction L generalizing init with
+  | nil => simp
+  | cons hd tl ih =>
+    simp only [List.foldl_cons, List.map_cons, List.sum_cons]
+    rw [ih, add_assoc]
+
+private theorem foldl_add_eq_sum {M : Type*} [AddCommMonoid M]
+    {α : Type*} (f : α → M) (L : List α) :
+    L.foldl (fun acc x => acc + f x) 0 = (L.map f).sum := by
+  rw [foldl_add_shift', zero_add]
+
+/-- Double-cut sum: `Σ_{(P,R) ∈ cutTerms(T)} ofForest(P) ⊗ cutTermsSum(R)`.
+    This is the common non-structural part of both sides of coassociativity. -/
+noncomputable def doubleCutSum (a b : SyntacticObject) :
+    Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc) :=
+  (cutTerms (.node a b)).foldl
+    (fun acc ⟨P, R⟩ => acc + ofForest P ⊗ₜ[ℤ] cutTermsSum R) 0
+
+-- cutTermsSum as map/sum (from foldl)
+theorem cutTermsSum_eq_map_sum (T : SyntacticObject) :
+    cutTermsSum T = ((cutTerms T).map fun x =>
+      ofForest x.1 ⊗ₜ[ℤ] ofTree x.2).sum :=
+  foldl_add_eq_sum _ _
+
+-- doubleCutSum as map/sum (from foldl)
+theorem doubleCutSum_eq_map_sum (a b : SyntacticObject) :
+    doubleCutSum a b = ((cutTerms (.node a b)).map fun x =>
+      ofForest x.1 ⊗ₜ[ℤ] cutTermsSum x.2).sum :=
+  foldl_add_eq_sum _ _
+
+-- Distribute ⊗ₜ over List.sum
+private theorem tmul_list_sum (p : Hc) (L : List (Hc ⊗[ℤ] Hc)) :
+    p ⊗ₜ[ℤ] L.sum = (L.map fun x => p ⊗ₜ[ℤ] x).sum := by
+  induction L with
+  | nil => simp [TensorProduct.tmul_zero]
+  | cons hd tl ih =>
+    simp only [List.sum_cons, List.map_cons, TensorProduct.tmul_add, ih]
+
+/-- `comulGen` decomposes into structural terms plus `cutTermsSum`. -/
+theorem comulGen_eq_parts (R : SyntacticObject) :
+    comulGen R = ofTree R ⊗ₜ[ℤ] (1 : Hc) + (1 : Hc) ⊗ₜ[ℤ] ofTree R + cutTermsSum R := rfl
+
+-- Reduced coproduct of singleton forest = cutTermsSum
+theorem delta_singleton (T : SyntacticObject) :
+    comulAlgHom (ofForest [T]) - ofForest [T] ⊗ₜ[ℤ] (1 : Hc) -
+    (1 : Hc) ⊗ₜ[ℤ] ofForest [T] = cutTermsSum T := by
+  show comulAlgHom (ofTree T) - ofTree T ⊗ₜ 1 - 1 ⊗ₜ ofTree T = cutTermsSum T
+  rw [comulAlgHom_ofTree, comulGen_eq_parts]; abel
+
+/-! ### Nested cut triples
+
+Both sides of the double-cut identity enumerate **nested admissible cut pairs**
+`C₁ ⊆ C₂` in the subtree poset, producing triples `(F₁, F₂, Q)`. The
+RHS groups by the outer cut `C₁`; the LHS groups by the outer cut `C₂`.
+We define the common flattened sum and prove both sides equal it. -/
+
+/-- All nested cut triples `(P, F₂, Q)` of `node a b`:
+    outer cut gives `(P, R)`, inner cut of `R` gives `(F₂, Q)`. -/
+def nestedCutTriples (a b : SyntacticObject) :
+    List (Forest × Forest × SyntacticObject) :=
+  (cutTerms (.node a b)).flatMap fun ⟨P, R⟩ =>
+    (cutTerms R).map fun ⟨F₂, Q⟩ => (P, F₂, Q)
+
+/-- Sum over nested cut triples. -/
+noncomputable def nestedCutSum (a b : SyntacticObject) :
+    Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc) :=
+  ((nestedCutTriples a b).map fun t =>
+    ofForest t.1 ⊗ₜ[ℤ] (ofForest t.2.1 ⊗ₜ[ℤ] ofTree t.2.2)).sum
+
+/-- RHS of double-cut identity equals nestedCutSum. -/
+theorem rhs_eq_nestedCutSum (a b : SyntacticObject) :
+    doubleCutSum a b = nestedCutSum a b := by
+  rw [doubleCutSum_eq_map_sum]
+  unfold nestedCutSum nestedCutTriples
+  suffices h : ∀ L : List (Forest × SyntacticObject),
+      (L.map fun x => ofForest x.1 ⊗ₜ[ℤ] cutTermsSum x.2).sum =
+      ((L.flatMap fun x =>
+        (cutTerms x.2).map fun y => (x.1, y.1, y.2)).map fun t =>
+        ofForest t.1 ⊗ₜ[ℤ] (ofForest t.2.1 ⊗ₜ[ℤ] ofTree t.2.2)).sum by
+    exact h _
+  intro L
+  induction L with
+  | nil => simp
+  | cons hd tl ih =>
+    simp only [List.map_cons, List.sum_cons, List.flatMap_cons,
+      List.map_append, List.sum_append]
+    rw [cutTermsSum_eq_map_sum, tmul_list_sum]
+    simp only [List.map_map, Function.comp_def, ih]
+
+-- Per-term RHS identity: 1⊗(P⊗R) + P⊗Δ(R) = structural(P,R) + P⊗cutTermsSum(R)
+set_option synthInstance.maxHeartbeats 4000000 in
+set_option maxHeartbeats 4000000 in
+private theorem rhs_per_term (P : Forest) (R : SyntacticObject) :
+    Add.add
+      ((1 : Hc) ⊗ₜ[ℤ] (ofForest P ⊗ₜ[ℤ] ofTree R))
+      (ofForest P ⊗ₜ[ℤ] (comulAlgHom (ofTree R) : Hc ⊗[ℤ] Hc))
+    =
+    Add.add
+      (Add.add (Add.add
+        (ofForest P ⊗ₜ[ℤ] (ofTree R ⊗ₜ[ℤ] (1 : Hc)))
+        (ofForest P ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree R)))
+        ((1 : Hc) ⊗ₜ[ℤ] (ofForest P ⊗ₜ[ℤ] ofTree R)))
+      (ofForest P ⊗ₜ[ℤ] cutTermsSum R) := by
+  rw [comulAlgHom_ofTree, comulGen_eq_parts]
+  simp only [TensorProduct.tmul_add]
+  have h_eq : ∀ (x y : Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)), Add.add x y = x + y := fun _ _ => rfl
+  simp only [h_eq]
+  abel_nf
+
+/-- `lTensor` on a pure tensor. -/
+private theorem lTensor_tmul_eq (P : Forest) (R : SyntacticObject) :
+    (LinearMap.lTensor Hc comulAlgHom.toLinearMap) (ofForest P ⊗ₜ[ℤ] ofTree R) =
+    ofForest P ⊗ₜ[ℤ] (comulAlgHom (ofTree R) : Hc ⊗[ℤ] Hc) := by
+  rw [LinearMap.lTensor_tmul]; rfl
+
+-- RHS sum induction: lifts rhs_per_term over a list of (Forest × SyntacticObject)
+set_option synthInstance.maxHeartbeats 4000000 in
+set_option maxHeartbeats 8000000 in
+private theorem rhs_sum_induction
+    (L : List (Forest × SyntacticObject)) :
+    Add.add
+      ((1 : Hc) ⊗ₜ[ℤ] (L.map fun x => ofForest x.1 ⊗ₜ[ℤ] ofTree x.2).sum)
+      ((LinearMap.lTensor Hc comulAlgHom.toLinearMap)
+        (L.map fun x => ofForest x.1 ⊗ₜ[ℤ] ofTree x.2).sum)
+    =
+    Add.add
+      ((L.map fun x =>
+        Add.add (Add.add
+          (ofForest x.1 ⊗ₜ[ℤ] (ofTree x.2 ⊗ₜ[ℤ] (1 : Hc)))
+          (ofForest x.1 ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree x.2)))
+          ((1 : Hc) ⊗ₜ[ℤ] (ofForest x.1 ⊗ₜ[ℤ] ofTree x.2))).sum)
+      ((L.map fun x => ofForest x.1 ⊗ₜ[ℤ] cutTermsSum x.2).sum) := by
+  have h_eq : ∀ (x y : Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)), Add.add x y = x + y := fun _ _ => rfl
+  simp only [h_eq]
+  induction L with
+  | nil =>
+    simp only [List.map_nil, List.sum_nil, TensorProduct.tmul_zero, map_zero]
+    exact rfl
+  | cons hd tl ih =>
+    simp only [List.map_cons, List.sum_cons, TensorProduct.tmul_add, map_add]
+    rw [lTensor_tmul_eq]
+    have head_eq := rhs_per_term hd.1 hd.2
+    suffices ∀ (a b c d e f : Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)),
+        Add.add a c = Add.add e f →
+        Add.add b d = Add.add
+          ((tl.map fun x =>
+            Add.add (Add.add
+              (ofForest x.1 ⊗ₜ[ℤ] (ofTree x.2 ⊗ₜ[ℤ] (1 : Hc)))
+              (ofForest x.1 ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree x.2)))
+              ((1 : Hc) ⊗ₜ[ℤ] (ofForest x.1 ⊗ₜ[ℤ] ofTree x.2))).sum)
+          ((tl.map fun x => ofForest x.1 ⊗ₜ[ℤ] cutTermsSum x.2).sum) →
+        Add.add (a + b) (c + d) = Add.add (e +
+          (tl.map fun x =>
+            Add.add (Add.add
+              (ofForest x.1 ⊗ₜ[ℤ] (ofTree x.2 ⊗ₜ[ℤ] (1 : Hc)))
+              (ofForest x.1 ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree x.2)))
+              ((1 : Hc) ⊗ₜ[ℤ] (ofForest x.1 ⊗ₜ[ℤ] ofTree x.2))).sum)
+          (f + (tl.map fun x => ofForest x.1 ⊗ₜ[ℤ] cutTermsSum x.2).sum) from
+      this _ _ _ _ _ _ head_eq ih
+    intro a b c d e f hac hbd
+    simp only [h_eq] at hac hbd ⊢
+    have step1 : a + b + (c + d) = (a + c) + (b + d) := by abel
+    rw [step1, hac, hbd]
+    abel_nf
+
+/-! ### LHS per-term decomposition
+
+Parallel to the RHS per-term decomposition, we decompose the LHS of the
+core identity into structural terms plus `forestDeltaTmul` (the
+reassociated non-structural part of `Δ(ofForest P)` tensored with `R`). -/
+
+private theorem rTensor_tmul_eq (P : Forest) (R : SyntacticObject) :
+    (LinearMap.rTensor Hc comulAlgHom.toLinearMap) (ofForest P ⊗ₜ[ℤ] ofTree R) =
+    (comulAlgHom (ofForest P) : Hc ⊗[ℤ] Hc) ⊗ₜ[ℤ] ofTree R := by
+  rw [LinearMap.rTensor_tmul]; rfl
+
+set_option synthInstance.maxHeartbeats 4000000 in
+set_option maxHeartbeats 8000000 in
+private theorem lhs_per_term (P : Forest) (R : SyntacticObject) :
+    Add.add
+      ((TensorProduct.assoc ℤ Hc Hc Hc) ((ofForest P ⊗ₜ[ℤ] ofTree R) ⊗ₜ[ℤ] (1 : Hc)))
+      ((TensorProduct.assoc ℤ Hc Hc Hc)
+        ((comulAlgHom (ofForest P) : Hc ⊗[ℤ] Hc) ⊗ₜ[ℤ] ofTree R))
+    =
+    Add.add
+      (Add.add (Add.add
+        (ofForest P ⊗ₜ[ℤ] (ofTree R ⊗ₜ[ℤ] (1 : Hc)))
+        (ofForest P ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree R)))
+        ((1 : Hc) ⊗ₜ[ℤ] (ofForest P ⊗ₜ[ℤ] ofTree R)))
+      ((TensorProduct.assoc ℤ Hc Hc Hc)
+        ((comulAlgHom (ofForest P) - ofForest P ⊗ₜ[ℤ] 1 -
+          1 ⊗ₜ[ℤ] ofForest P) ⊗ₜ[ℤ] ofTree R)) := by
+  rw [TensorProduct.assoc_tmul]
+  have h_decomp : (comulAlgHom (ofForest P) : Hc ⊗[ℤ] Hc) =
+      ofForest P ⊗ₜ[ℤ] 1 + 1 ⊗ₜ[ℤ] ofForest P +
+      (comulAlgHom (ofForest P) - ofForest P ⊗ₜ[ℤ] 1 -
+        1 ⊗ₜ[ℤ] ofForest P) := by abel
+  have h2 : (TensorProduct.assoc ℤ Hc Hc Hc)
+      ((comulAlgHom (ofForest P) : Hc ⊗[ℤ] Hc) ⊗ₜ[ℤ] ofTree R) =
+      Add.add (Add.add
+        (ofForest P ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree R))
+        ((1 : Hc) ⊗ₜ[ℤ] (ofForest P ⊗ₜ[ℤ] ofTree R)))
+      ((TensorProduct.assoc ℤ Hc Hc Hc)
+        ((comulAlgHom (ofForest P) - ofForest P ⊗ₜ[ℤ] 1 -
+          1 ⊗ₜ[ℤ] ofForest P) ⊗ₜ[ℤ] ofTree R)) := by
+    conv_lhs => rw [show (comulAlgHom (ofForest P) : Hc ⊗[ℤ] Hc) = _ from h_decomp]
+    simp only [TensorProduct.add_tmul, map_add, TensorProduct.assoc_tmul]
+    rfl
+  rw [h2]
+  suffices ∀ (a b c d : Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)),
+      Add.add a (Add.add (Add.add b c) d) =
+      Add.add (Add.add (Add.add a b) c) d by exact this _ _ _ _
+  intro a b c d
+  have h_eq : ∀ (x y : Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)), Add.add x y = x + y := fun _ _ => rfl
+  simp only [h_eq]
+  abel
+
+/-- Non-structural part of `Δ(ofForest P)` tensored with `R`, reassociated.
+    `forestDeltaTmul P R = assoc((Δ(P) - P⊗1 - 1⊗P) ⊗ R)`.
+
+    Wrapped as an abbreviation so `abel_nf` treats the `Sub.sub` inside
+    as an opaque atom, preventing `-1 •` normalization mismatches. -/
+private noncomputable def forestDeltaTmul (P : Forest) (R : SyntacticObject) :
+    Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc) :=
+  (TensorProduct.assoc ℤ Hc Hc Hc)
+    ((comulAlgHom (ofForest P) - ofForest P ⊗ₜ[ℤ] 1 -
+      1 ⊗ₜ[ℤ] ofForest P) ⊗ₜ[ℤ] ofTree R)
+
+private theorem lhs_per_term' (P : Forest) (R : SyntacticObject) :
+    Add.add
+      ((TensorProduct.assoc ℤ Hc Hc Hc) ((ofForest P ⊗ₜ[ℤ] ofTree R) ⊗ₜ[ℤ] (1 : Hc)))
+      ((TensorProduct.assoc ℤ Hc Hc Hc)
+        ((comulAlgHom (ofForest P) : Hc ⊗[ℤ] Hc) ⊗ₜ[ℤ] ofTree R))
+    =
+    Add.add
+      (Add.add (Add.add
+        (ofForest P ⊗ₜ[ℤ] (ofTree R ⊗ₜ[ℤ] (1 : Hc)))
+        (ofForest P ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree R)))
+        ((1 : Hc) ⊗ₜ[ℤ] (ofForest P ⊗ₜ[ℤ] ofTree R)))
+      (forestDeltaTmul P R) :=
+  lhs_per_term P R
+
+-- LHS sum induction: lifts lhs_per_term over a list of (Forest × SyntacticObject)
+set_option synthInstance.maxHeartbeats 4000000 in
+set_option maxHeartbeats 8000000 in
+private theorem lhs_sum_induction
+    (L : List (Forest × SyntacticObject)) :
+    Add.add
+      ((TensorProduct.assoc ℤ Hc Hc Hc)
+        ((L.map fun x => ofForest x.1 ⊗ₜ[ℤ] ofTree x.2).sum ⊗ₜ[ℤ] (1 : Hc)))
+      ((TensorProduct.assoc ℤ Hc Hc Hc)
+        ((LinearMap.rTensor Hc comulAlgHom.toLinearMap)
+          (L.map fun x => ofForest x.1 ⊗ₜ[ℤ] ofTree x.2).sum))
+    =
+    Add.add
+      ((L.map fun x =>
+        Add.add (Add.add
+          (ofForest x.1 ⊗ₜ[ℤ] (ofTree x.2 ⊗ₜ[ℤ] (1 : Hc)))
+          (ofForest x.1 ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree x.2)))
+          ((1 : Hc) ⊗ₜ[ℤ] (ofForest x.1 ⊗ₜ[ℤ] ofTree x.2))).sum)
+      ((L.map fun x => forestDeltaTmul x.1 x.2).sum) := by
+  have h_eq : ∀ (x y : Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)), Add.add x y = x + y := fun _ _ => rfl
+  simp only [h_eq]
+  induction L with
+  | nil =>
+    simp only [List.map_nil, List.sum_nil, TensorProduct.zero_tmul, map_zero]
+    exact rfl
+  | cons hd tl ih =>
+    simp only [List.map_cons, List.sum_cons, TensorProduct.add_tmul, map_add]
+    rw [rTensor_tmul_eq]
+    have head_eq := lhs_per_term' hd.1 hd.2
+    suffices ∀ (a b c d e f : Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)),
+        Add.add a c = Add.add e f →
+        Add.add b d = Add.add
+          ((tl.map fun x =>
+            Add.add (Add.add
+              (ofForest x.1 ⊗ₜ[ℤ] (ofTree x.2 ⊗ₜ[ℤ] (1 : Hc)))
+              (ofForest x.1 ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree x.2)))
+              ((1 : Hc) ⊗ₜ[ℤ] (ofForest x.1 ⊗ₜ[ℤ] ofTree x.2))).sum)
+          ((tl.map fun x => forestDeltaTmul x.1 x.2).sum) →
+        Add.add (a + b) (c + d) = Add.add (e +
+          (tl.map fun x =>
+            Add.add (Add.add
+              (ofForest x.1 ⊗ₜ[ℤ] (ofTree x.2 ⊗ₜ[ℤ] (1 : Hc)))
+              (ofForest x.1 ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree x.2)))
+              ((1 : Hc) ⊗ₜ[ℤ] (ofForest x.1 ⊗ₜ[ℤ] ofTree x.2))).sum)
+          (f + (tl.map fun x => forestDeltaTmul x.1 x.2).sum) from
+      this _ _ _ _ _ _ head_eq ih
+    intro a b c d e f hac hbd
+    simp only [h_eq] at hac hbd ⊢
+    have step1 : a + b + (c + d) = (a + c) + (b + d) := by abel
+    rw [step1, hac, hbd]
+    abel_nf
+
+-- LHS of the core identity = structural terms + forest delta sum
+set_option synthInstance.maxHeartbeats 4000000 in
+set_option maxHeartbeats 8000000 in
+private theorem lhs_decomposition (a b : SyntacticObject) :
+    let S := (cutTerms (.node a b)).foldl
+      (fun acc x => acc + ofForest x.1 ⊗ₜ[ℤ] ofTree x.2) (0 : Hc ⊗[ℤ] Hc)
+    Add.add
+      ((TensorProduct.assoc ℤ Hc Hc Hc) (S ⊗ₜ[ℤ] (1 : Hc)))
+      ((TensorProduct.assoc ℤ Hc Hc Hc) ((LinearMap.rTensor Hc comulAlgHom.toLinearMap) S))
+    =
+    Add.add
+      (((cutTerms (.node a b)).map fun ⟨P, R⟩ =>
+        Add.add (Add.add
+          (ofForest P ⊗ₜ[ℤ] (ofTree R ⊗ₜ[ℤ] (1 : Hc)))
+          (ofForest P ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree R)))
+          ((1 : Hc) ⊗ₜ[ℤ] (ofForest P ⊗ₜ[ℤ] ofTree R))).sum)
+      (((cutTerms (.node a b)).map fun ⟨P, R⟩ =>
+        forestDeltaTmul P R).sum) := by
+  intro S
+  have hS : S = ((cutTerms (.node a b)).map
+      fun x => ofForest x.1 ⊗ₜ[ℤ] ofTree x.2).sum :=
+    foldl_add_eq_sum _ _
+  rw [hS]
+  exact lhs_sum_induction _
+
+-- RHS of the core identity = structural terms + doubleCutSum
+set_option synthInstance.maxHeartbeats 4000000 in
+set_option maxHeartbeats 8000000 in
+private theorem rhs_decomposition (a b : SyntacticObject) :
+    let S := (cutTerms (.node a b)).foldl
+      (fun acc x => acc + ofForest x.1 ⊗ₜ[ℤ] ofTree x.2) (0 : Hc ⊗[ℤ] Hc)
+    Add.add
+      ((1 : Hc) ⊗ₜ[ℤ] S)
+      ((LinearMap.lTensor Hc comulAlgHom.toLinearMap) S)
+    =
+    Add.add
+      (((cutTerms (.node a b)).map fun ⟨P, R⟩ =>
+        Add.add (Add.add
+          (ofForest P ⊗ₜ[ℤ] (ofTree R ⊗ₜ[ℤ] (1 : Hc)))
+          (ofForest P ⊗ₜ[ℤ] ((1 : Hc) ⊗ₜ[ℤ] ofTree R)))
+          ((1 : Hc) ⊗ₜ[ℤ] (ofForest P ⊗ₜ[ℤ] ofTree R))).sum)
+      (doubleCutSum a b) := by
+  intro S
+  -- Convert S from foldl to sum
+  have hS : S = ((cutTerms (.node a b)).map
+      fun x => ofForest x.1 ⊗ₜ[ℤ] ofTree x.2).sum :=
+    foldl_add_eq_sum _ _
+  -- Convert doubleCutSum from foldl to sum
+  have hDCS : doubleCutSum a b = ((cutTerms (.node a b)).map
+      fun x => ofForest x.1 ⊗ₜ[ℤ] cutTermsSum x.2).sum :=
+    foldl_add_eq_sum _ _
+  rw [hS, hDCS]
+  exact rhs_sum_induction _
+
+/-- The double-cut identity: summing `assoc(δ(P) ⊗ R)` over `cutTerms(T)`
+    equals summing `P ⊗ cutTermsSum(R)`.
+
+    This is equivalent to coassociativity of the reduced coproduct:
+    `assoc ∘ (δ ⊗ id) ∘ δ = (id ⊗ δ) ∘ δ` on `T`.
+
+    Proof requires the nested admissible cut bijection: both sides
+    enumerate pairs of antichains `C₁ ⊆ C₂` in the subtree poset,
+    grouped differently (@cite{connes-marcolli-2008} Theorem 1.27,
+    @cite{marcolli-chomsky-berwick-2025} Lemma 1.2.10).
+
+    TODO: formalize the bijection between (outer cut + cut pruned forest)
+    and (inner cut + cut residual tree). -/
+private theorem double_cut_identity (a b : SyntacticObject) :
+    ((cutTerms (.node a b)).map fun ⟨P, R⟩ =>
+      forestDeltaTmul P R).sum =
+    doubleCutSum a b := by
+  sorry
+
+-- Core identity: both sides of coassociativity equal after structural
+-- cancellation, via lhs_decomposition + double_cut_identity + rhs_decomposition
+set_option synthInstance.maxHeartbeats 4000000 in
+set_option maxHeartbeats 8000000 in
+private theorem core_identity (a b : SyntacticObject) :
+    let S := (cutTerms (.node a b)).foldl
+      (fun acc x => acc + ofForest x.1 ⊗ₜ[ℤ] ofTree x.2) (0 : Hc ⊗[ℤ] Hc)
+    Add.add
+      ((TensorProduct.assoc ℤ Hc Hc Hc) (S ⊗ₜ[ℤ] (1 : Hc)))
+      ((TensorProduct.assoc ℤ Hc Hc Hc) ((LinearMap.rTensor Hc comulAlgHom.toLinearMap) S))
+    =
+    Add.add
+      ((1 : Hc) ⊗ₜ[ℤ] S)
+      ((LinearMap.lTensor Hc comulAlgHom.toLinearMap) S) := by
+  intro S
+  rw [lhs_decomposition]
+  rw [rhs_decomposition]
+  congr 1
+  exact double_cut_identity a b
+
 /-! ### Coassociativity on generators
 
 Coassociativity `(Δ ⊗ id) ∘ Δ = (id ⊗ Δ) ∘ Δ` for single trees.
@@ -822,12 +1257,19 @@ theorem coassoc_gen (T : SyntacticObject) :
         ofTree (.node a b) ⊗ₜ[ℤ] (1 : Hc) + (1 : Hc) ⊗ₜ[ℤ] ofTree (.node a b) + S from rfl]
     simp only [TensorProduct.add_tmul, map_add, TensorProduct.assoc_tmul,
                TensorProduct.tmul_add]
-    -- Remaining goal: structural terms (T⊗(1⊗1), 1⊗(T⊗1), 1⊗(1⊗T)) cancel,
-    -- leaving the core double-cut identity about S.
-    -- TODO: Prove the core identity using the Cartesian product structure
-    -- of `cutOptions`. Both sides enumerate nested admissible cuts via
-    -- the bijection ρ(γ) = γ \ γ' (Connes-Marcolli Theorem 1.27).
-    sorry
+    -- Cancel structural terms, reducing to the core double-cut identity about S
+    set X := (TensorProduct.assoc ℤ Hc Hc Hc) (S ⊗ₜ[ℤ] (1 : Hc))
+    set Y := (TensorProduct.assoc ℤ Hc Hc Hc) ((LinearMap.rTensor Hc comulAlgHom.toLinearMap) S)
+    have h : Add.add X Y =
+        Add.add ((1 : Hc) ⊗ₜ[ℤ] S) ((LinearMap.lTensor Hc comulAlgHom.toLinearMap) S) :=
+      core_identity a b
+    suffices ∀ (p q r s t u v : Hc ⊗[ℤ] (Hc ⊗[ℤ] Hc)),
+        Add.add s t = Add.add u v →
+        p + q + s + r + t = p + (q + r + u) + v from this _ _ _ _ _ _ _ h
+    intro p q r s t u v heq
+    have lhs : p + q + s + r + t = p + q + r + (s + t) := by abel
+    have rhs : p + (q + r + u) + v = p + q + r + (u + v) := by abel
+    rw [lhs, rhs]; congr 1
 
 /-! ### Coassociativity lifting
 

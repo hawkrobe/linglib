@@ -370,7 +370,115 @@ def verbinden : GermanVerbEntry where
   vendlerClass := some .accomplishment
 
 -- ============================================================================
--- § 5: Verb List
+-- § 5: Selection-Violating Coordination Verbs (@cite{schwarzer-2026})
+-- ============================================================================
+
+/-! Verbs used in @cite{schwarzer-2026} to test DP-CP coordination in German.
+
+**Non-CP-selecting** (DP complement only): *beenden*, *streichen*,
+*übereilen*, *entwickeln*. These verbs do not independently license a
+*dass*-clause complement; a CP can only appear via coordination with a DP.
+
+**CP-and-DP-selecting**: *veranlassen*, *vergessen*, *erwarten*, *beschließen*.
+These verbs take both DP and *dass*-clause complements. -/
+
+section NonCPSelecting
+
+/-- *beenden* — "end/stop": takes only DP complement.
+    "Die Stadt beendet [DP die Überarbeitung]."
+    "*Die Stadt beendet, [CP dass für Neugeborene ein Baum gepflanzt wird]." -/
+def beenden : GermanVerbEntry where
+  form := "beenden"
+  form3sg := "beendet"
+  formPast := "beendete"
+  formPastPart := "beendet"
+  complementType := .np
+  vendlerClass := some .accomplishment
+
+/-- *streichen* — "cancel/delete": takes only DP complement.
+    "Die Stadt streicht [DP das Programm]."
+    "*Die Stadt streicht, [CP dass Neugeborene einen Baum bekommen]." -/
+def streichen : GermanVerbEntry where
+  form := "streichen"
+  form3sg := "streicht"
+  formPast := "strich"
+  formPastPart := "gestrichen"
+  complementType := .np
+  vendlerClass := some .accomplishment
+
+/-- *übereilen* — "(not) rush": takes only DP complement.
+    "Die Stadt übereilt [DP die Entscheidung] (nicht)." -/
+def uebereilen : GermanVerbEntry where
+  form := "übereilen"
+  form3sg := "übereilt"
+  formPast := "übereilte"
+  formPastPart := "übereilt"
+  complementType := .np
+
+/-- *entwickeln* — "develop": takes only DP complement.
+    "Die Stadt entwickelt [DP ein neues Konzept]." -/
+def entwickeln : GermanVerbEntry where
+  form := "entwickeln"
+  form3sg := "entwickelt"
+  formPast := "entwickelte"
+  formPastPart := "entwickelt"
+  complementType := .np
+  vendlerClass := some .accomplishment
+
+end NonCPSelecting
+
+section CPAndDPSelecting
+
+/-- *veranlassen* — "induce/arrange": takes DP or *dass*-clause.
+    "Die Stadt veranlasst [DP die Überarbeitung]."
+    "Die Stadt veranlasst, [CP dass ein Baum gepflanzt wird]." -/
+def veranlassen : GermanVerbEntry where
+  form := "veranlassen"
+  form3sg := "veranlasst"
+  formPast := "veranlasste"
+  formPastPart := "veranlasst"
+  complementType := .np
+  altComplementType := some .finiteClause
+
+/-- *vergessen* — "forget": takes DP or *dass*-clause.
+    "Ich vergesse [DP den Termin]."
+    "Ich vergesse, [CP dass ich einen Termin habe]." -/
+def vergessen : GermanVerbEntry where
+  form := "vergessen"
+  form3sg := "vergisst"
+  formPast := "vergaß"
+  formPastPart := "vergessen"
+  complementType := .np
+  altComplementType := some .finiteClause
+  opaqueContext := true
+
+/-- *erwarten* — "expect": takes DP or *dass*-clause.
+    "Ich erwarte [DP eine Antwort]."
+    "Ich erwarte, [CP dass er kommt]." -/
+def erwarten : GermanVerbEntry where
+  form := "erwarten"
+  form3sg := "erwartet"
+  formPast := "erwartete"
+  formPastPart := "erwartet"
+  complementType := .np
+  altComplementType := some .finiteClause
+  opaqueContext := true
+
+/-- *beschließen* — "decide": takes DP or *dass*-clause.
+    "Die Stadt beschließt [DP den Plan]."
+    "Die Stadt beschließt, [CP dass der Plan umgesetzt wird]." -/
+def beschliessen : GermanVerbEntry where
+  form := "beschließen"
+  form3sg := "beschließt"
+  formPast := "beschloss"
+  formPastPart := "beschlossen"
+  complementType := .np
+  altComplementType := some .finiteClause
+
+end CPAndDPSelecting
+
+-- ============================================================================
+-- § 6: Verb List
 -- ============================================================================
 
 def allVerbs : List GermanVerbEntry :=
@@ -379,13 +487,15 @@ def allVerbs : List GermanVerbEntry :=
    bestrafen, belohnen, loben, kritisieren, danken,
    verklagen, gratulieren, zurechtweisen,
    haemmern, malen, kuessen, fuehren, rauben,
-   brechen, frieren, beobachten, einfuehren, verbinden]
+   brechen, frieren, beobachten, einfuehren, verbinden,
+   beenden, streichen, uebereilen, entwickeln,
+   veranlassen, vergessen, erwarten, beschliessen]
 
 def lookup (form : String) : Option GermanVerbEntry :=
   allVerbs.find? (·.form == form)
 
 -- ============================================================================
--- § 6: Occasion Verb Grounding Theorems
+-- § 7: Occasion Verb Grounding Theorems
 -- ============================================================================
 
 /-- All 8 German occasion verbs are soft presupposition triggers. -/
@@ -416,7 +526,7 @@ theorem occasion_verbs_are_action :
     kritisieren.senseTag = .occasion := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 7: Causative Grounding Theorems
+-- § 8: Causative Grounding Theorems
 -- ============================================================================
 
 /-- *lassen* uses `.enable` builder (permissive). -/
@@ -437,7 +547,7 @@ theorem lexical_causatives_use_make :
     zerbrechen.causativeBuilder = some .make := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 8: Attitude Grounding Theorems
+-- § 9: Attitude Grounding Theorems
 -- ============================================================================
 
 /-- *hoffen* and *wünschen* are positive preferential (Class 3). -/
@@ -457,7 +567,41 @@ theorem sorgen_is_uncertainty :
     sorgen.attitudeBuilder = some (.preferential .uncertaintyBased) := rfl
 
 -- ============================================================================
--- § 9: Cross-Linguistic Bridge Theorems
+-- § 10: Selection-Violating Coordination Grounding Theorems (@cite{schwarzer-2026})
+-- ============================================================================
+
+/-- Non-CP-selecting verbs cannot take clausal complements.
+    Their `complementType` is `.np` with no `altComplementType`. -/
+theorem nonCPSelecting_profile :
+    beenden.toVerbCore.canTakeClausalComplement = false ∧
+    streichen.toVerbCore.canTakeClausalComplement = false ∧
+    uebereilen.toVerbCore.canTakeClausalComplement = false ∧
+    entwickeln.toVerbCore.canTakeClausalComplement = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- CP-and-DP-selecting verbs can take clausal complements.
+    They have `altComplementType := some .finiteClause`. -/
+theorem cpSelecting_profile :
+    veranlassen.toVerbCore.canTakeClausalComplement = true ∧
+    vergessen.toVerbCore.canTakeClausalComplement = true ∧
+    erwarten.toVerbCore.canTakeClausalComplement = true ∧
+    beschliessen.toVerbCore.canTakeClausalComplement = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- All 8 experimental verbs can take nominal (DP) complements. -/
+theorem all_experimental_select_dp :
+    beenden.toVerbCore.canTakeNominalComplement = true ∧
+    streichen.toVerbCore.canTakeNominalComplement = true ∧
+    uebereilen.toVerbCore.canTakeNominalComplement = true ∧
+    entwickeln.toVerbCore.canTakeNominalComplement = true ∧
+    veranlassen.toVerbCore.canTakeNominalComplement = true ∧
+    vergessen.toVerbCore.canTakeNominalComplement = true ∧
+    erwarten.toVerbCore.canTakeNominalComplement = true ∧
+    beschliessen.toVerbCore.canTakeNominalComplement = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 11: Cross-Linguistic Bridge Theorems
 -- ============================================================================
 
 /-- German *fürchten* matches Japanese 恐れ *osore* and Turkish *kork-*:

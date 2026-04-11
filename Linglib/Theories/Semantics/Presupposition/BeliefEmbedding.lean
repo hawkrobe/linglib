@@ -353,4 +353,69 @@ theorem knowledge_filtered_implies_belief_filtered
 
 end BoolPropBridge
 
+-- ════════════════════════════════════════════════════════════════
+-- § Opaque vs Transparent Projection
+-- @cite{delpinal-bassi-sauerland-2024} §3.2
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### Opaque vs Transparent Presupposition Projection
+
+@cite{delpinal-bassi-sauerland-2024} §3.2 distinguish two projection modes for
+presuppositions under attitude predicates:
+
+- **Transparent**: presupposition evaluated in the global context (speaker's
+  knowledge state). Implemented by `PrProp.negFactive`: the factive
+  presupposes the complement holds in reality.
+
+- **Opaque**: presupposition attributed to the attitude holder's belief state.
+  This is `presupAttributedToHolder`: the presupposition holds at all
+  doxastically accessible worlds.
+
+Both modes yield free choice when applied to pex output, because both ensure
+homogeneity is satisfied (in different contexts) along with the prejacent.
+-/
+
+section OpaqueTransparent
+
+variable {W : Type*} {Agent : Type*}
+
+/-- Transparent projection: presupposition projects to the speaker's (global)
+    context, evaluated independently of the attitude holder's beliefs.
+    Captures negative factives ("is unaware that"): the factive presupposes
+    the complement *holds* in the actual world.
+
+    @cite{delpinal-bassi-sauerland-2024} §3.2 -/
+def transparentProjection (globalCtx : ContextSet W) (p : PrProp W) : Prop :=
+  ContextSet.entails globalCtx p.presup
+
+/-- `PrProp.negFactive` subsumes transparent projection: its presupposition
+    (complement holds = presup ∧ assertion) entails transparent projection of
+    the complement's presupposition.
+
+    This grounds the `negFactive` combinator in the projection theory.
+    @cite{heim-1992}, @cite{delpinal-bassi-sauerland-2024} §3.2 -/
+theorem negFactive_entails_transparent (complement : PrProp W)
+    (believes : Prop' W → Prop' W) (globalCtx : ContextSet W)
+    (h : ContextSet.entails globalCtx (PrProp.negFactive complement believes).presup) :
+    transparentProjection globalCtx complement := by
+  intro w hw
+  exact (h w hw).1
+
+/-- Under S5 knowledge (reflexive accessibility), opaque projection implies
+    transparent projection.
+
+    Reflexive `dox` means the evaluation world is among its own accessible
+    worlds. What holds at all accessible worlds holds at the evaluation world.
+    @cite{hintikka-1962}: S5 knowledge is reflexive. -/
+theorem opaque_implies_transparent_when_reflexive
+    (blc : BeliefLocalCtx W Agent) (p : PrProp W)
+    (hReflexive : ∀ w, blc.globalCtx w → blc.dox blc.agent w w)
+    (hOpaque : presupAttributedToHolder blc p) :
+    transparentProjection blc.globalCtx p := by
+  intro w hw
+  exact hOpaque w hw w ⟨hw, hReflexive w hw⟩
+
+end OpaqueTransparent
+
 end Semantics.Presupposition.BeliefEmbedding

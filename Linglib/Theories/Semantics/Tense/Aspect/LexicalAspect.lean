@@ -1,13 +1,14 @@
 import Linglib.Core.Scales.Scale
 
-/-
-Aspectual categories following @cite{vendler-1957} and @cite{dowty-1979}.
-Three binary features (telicity, duration, dynamicity) yield four Vendler classes.
-Aspectual shifts (telicize, atelicize, duratize) model compositional coercion.
+/-!
+# Situation Type Classification
 
-- Vendler, Z. (1957). Verbs and times.
-- Dowty, D. (1979). Word Meaning and Montague Grammar.
-- Smith, C. (1991). The Parameter of Aspect.
+Five situation types classified by three binary features (telicity, duration,
+dynamicity), following @cite{smith-1997} and @cite{vendler-1957}.
+@cite{vendler-1957} identified four classes; @cite{smith-1997} added
+semelfactives as a fifth, completing the feature space.
+
+Aspectual shifts (telicize, atelicize, duratize) model compositional coercion.
 -/
 
 namespace Semantics.Tense.Aspect.LexicalAspect
@@ -43,12 +44,16 @@ def Telicity.toMereoTag : Telicity → Core.Scale.MereoTag
 
 section VendlerClassification
 
-/-- Vendler's four-way classification of eventualities. -/
+/-- Five-way situation type classification (@cite{smith-1997}).
+    Three binary features [±dynamic, ±durative, ±telic] yield five classes.
+    The name `VendlerClass` is retained for compatibility; @cite{vendler-1957}
+    identified the first four, @cite{smith-1997} added semelfactives. -/
 inductive VendlerClass where
   | state         -- [-dynamic, +durative]  know, love
   | activity      -- [+dynamic, +durative, -telic]  run, swim
   | achievement   -- [+dynamic, -durative, +telic]  recognize, die
   | accomplishment -- [+dynamic, +durative, +telic]  build, write
+  | semelfactive  -- [+dynamic, -durative, -telic]  cough, tap, flash
   deriving DecidableEq, Repr, Inhabited
 
 /-- Get the telicity of a Vendler class (states treated as atelic). -/
@@ -57,6 +62,7 @@ def VendlerClass.telicity : VendlerClass → Telicity
   | .activity => .atelic
   | .achievement => .telic
   | .accomplishment => .telic
+  | .semelfactive => .atelic  -- No natural endpoint
 
 /-- Get the duration of a Vendler class. -/
 def VendlerClass.duration : VendlerClass → Duration
@@ -64,6 +70,7 @@ def VendlerClass.duration : VendlerClass → Duration
   | .activity => .durative
   | .achievement => .punctual
   | .accomplishment => .durative
+  | .semelfactive => .punctual  -- Instantaneous
 
 /-- Get the dynamicity of a Vendler class. -/
 def VendlerClass.dynamicity : VendlerClass → Dynamicity
@@ -71,6 +78,7 @@ def VendlerClass.dynamicity : VendlerClass → Dynamicity
   | .activity => .dynamic
   | .achievement => .dynamic
   | .accomplishment => .dynamic
+  | .semelfactive => .dynamic
 
 /-- States are stative. -/
 theorem state_is_stative : VendlerClass.state.dynamicity = .stative := rfl
@@ -93,6 +101,15 @@ theorem accomplishment_is_telic : VendlerClass.accomplishment.telicity = .telic 
 /-- Accomplishments are durative. -/
 theorem accomplishment_is_durative : VendlerClass.accomplishment.duration = .durative := rfl
 
+/-- Semelfactives are atelic. -/
+theorem semelfactive_is_atelic : VendlerClass.semelfactive.telicity = .atelic := rfl
+
+/-- Semelfactives are punctual. -/
+theorem semelfactive_is_punctual : VendlerClass.semelfactive.duration = .punctual := rfl
+
+/-- Semelfactives are dynamic. -/
+theorem semelfactive_is_dynamic : VendlerClass.semelfactive.dynamicity = .dynamic := rfl
+
 /-- All dynamic classes involve change. -/
 theorem dynamic_classes_are_dynamic (c : VendlerClass) :
     c ≠ .state → c.dynamicity = .dynamic := by
@@ -102,6 +119,7 @@ theorem dynamic_classes_are_dynamic (c : VendlerClass) :
   | activity => rfl
   | achievement => rfl
   | accomplishment => rfl
+  | semelfactive => rfl
 
 /-- All telic classes have endpoints. -/
 theorem telic_classes (c : VendlerClass) :
@@ -122,14 +140,15 @@ structure AspectualProfile where
   dynamicity : Dynamicity
   deriving DecidableEq, Repr
 
-/-- Convert an aspectual profile to a Vendler class (semelfactives mapped to activity). -/
+/-- Convert an aspectual profile to a situation type.
+    All five [±dynamic, ±durative, ±telic] combinations are distinguished. -/
 def AspectualProfile.toVendlerClass (p : AspectualProfile) : VendlerClass :=
   match p.dynamicity, p.duration, p.telicity with
   | .stative, _, _ => .state
   | .dynamic, .durative, .atelic => .activity
   | .dynamic, .punctual, .telic => .achievement
   | .dynamic, .durative, .telic => .accomplishment
-  | .dynamic, .punctual, .atelic => .activity
+  | .dynamic, .punctual, .atelic => .semelfactive
 
 /-- Convert a Vendler class to its canonical aspectual profile. -/
 def VendlerClass.toProfile (c : VendlerClass) : AspectualProfile :=
@@ -153,7 +172,11 @@ def achievementProfile : AspectualProfile :=
 def accomplishmentProfile : AspectualProfile :=
   { telicity := .telic, duration := .durative, dynamicity := .dynamic }
 
-/-- Converting a Vendler class to a profile and back is identity. -/
+/-- Canonical profile for semelfactives. -/
+def semelfactiveProfile : AspectualProfile :=
+  { telicity := .atelic, duration := .punctual, dynamicity := .dynamic }
+
+/-- Converting a situation type to a profile and back is identity. -/
 theorem vendler_profile_roundtrip (c : VendlerClass) :
     c.toProfile.toVendlerClass = c := by
   cases c <;> rfl
@@ -169,6 +192,9 @@ theorem achievementProfile_toClass : achievementProfile.toVendlerClass = .achiev
 
 /-- The canonical accomplishment profile maps to the accomplishment class. -/
 theorem accomplishmentProfile_toClass : accomplishmentProfile.toVendlerClass = .accomplishment := rfl
+
+/-- The canonical semelfactive profile maps to the semelfactive class. -/
+theorem semelfactiveProfile_toClass : semelfactiveProfile.toVendlerClass = .semelfactive := rfl
 
 end AspectualProfile
 
@@ -202,6 +228,14 @@ theorem atelicize_accomplishment :
 theorem duratize_achievement :
     achievementProfile.duratize.toVendlerClass = .accomplishment := rfl
 
+/-- Duratizing a semelfactive yields an activity (iterative reading). -/
+theorem duratize_semelfactive :
+    semelfactiveProfile.duratize.toVendlerClass = .activity := rfl
+
+/-- Telicizing a semelfactive yields an achievement. -/
+theorem telicize_semelfactive :
+    semelfactiveProfile.telicize.toVendlerClass = .achievement := rfl
+
 /-- Telicize is idempotent. -/
 theorem telicize_idempotent (p : AspectualProfile) :
     p.telicize.telicize = p.telicize := rfl
@@ -214,16 +248,36 @@ end Shifts
 
 section Homogeneity
 
-/-- Whether a predicate is homogeneous (has the subinterval property). -/
+/-- Whether a predicate has the subinterval property (qualified).
+    States and activities both have it, but with different strength:
+    - **States** have the *full* SIP: every subinterval of a knowing event
+      is a knowing event (@cite{smith-1997} p. 23).
+    - **Activities** have a *qualified* SIP: subintervals down to a
+      minimum size are activity events, but below that minimum they
+      are not (you can't be "walking" in an interval smaller than a
+      single stride). See `hasFullSubintervalProp` for the distinction. -/
 def AspectualProfile.isHomogeneous (p : AspectualProfile) : Bool :=
   match p.toVendlerClass with
   | .state | .activity => true
-  | .achievement | .accomplishment => false
+  | .achievement | .accomplishment | .semelfactive => false
 
-/-- States are homogeneous. -/
+/-- Whether the situation type has the *full* (unqualified) subinterval
+    property. Only states satisfy this: every subinterval of a state event
+    is itself a state event, with no minimum-size qualification.
+    Activities have a qualified SIP (above a minimum interval); all other
+    types lack it entirely.
+
+    This distinction is the semantic content behind @cite{zhao-2025}'s
+    ATOM-DIST_t: states distribute over temporal atoms, activities do not.
+    See `predictsAtomDist_iff_stative`. -/
+def VendlerClass.hasFullSubintervalProp : VendlerClass → Bool
+  | .state => true
+  | .activity | .achievement | .accomplishment | .semelfactive => false
+
+/-- States are homogeneous (full SIP). -/
 theorem state_is_homogeneous : stateProfile.isHomogeneous = true := rfl
 
-/-- Activities are homogeneous. -/
+/-- Activities are homogeneous (qualified SIP — above minimum intervals). -/
 theorem activity_is_homogeneous : activityProfile.isHomogeneous = true := rfl
 
 /-- Achievements are not homogeneous. -/
@@ -232,11 +286,54 @@ theorem achievement_not_homogeneous : achievementProfile.isHomogeneous = false :
 /-- Accomplishments are not homogeneous. -/
 theorem accomplishment_not_homogeneous : accomplishmentProfile.isHomogeneous = false := rfl
 
-/-- Homogeneous iff atelic. -/
-theorem homogeneous_iff_atelic (p : AspectualProfile) :
-    p.isHomogeneous = true ↔ p.toVendlerClass.telicity = .atelic := by
+/-- Semelfactives are not homogeneous (punctual — no proper subintervals). -/
+theorem semelfactive_not_homogeneous : semelfactiveProfile.isHomogeneous = false := rfl
+
+/-- States have the full (unqualified) SIP. -/
+theorem state_has_full_sip : VendlerClass.state.hasFullSubintervalProp = true := rfl
+
+/-- Activities do NOT have the full SIP — only a qualified version. -/
+theorem activity_lacks_full_sip : VendlerClass.activity.hasFullSubintervalProp = false := rfl
+
+/-- Full SIP implies qualified SIP (homogeneity), but not vice versa. -/
+theorem fullSIP_implies_homogeneous (c : VendlerClass)
+    (h : c.hasFullSubintervalProp = true) :
+    c.toProfile.isHomogeneous = true := by
+  cases c <;> simp_all [VendlerClass.hasFullSubintervalProp]; rfl
+
+/-- VendlerClass predicts the (qualified) subinterval property:
+    states and activities have it, others don't.
+    This matches `isHomogeneous` — see `sub_agrees_with_homogeneous`.
+
+    Note: states have the *full* SIP (every subinterval, no minimum),
+    while activities have a *qualified* SIP (subintervals above a
+    minimum size). This predicate returns `true` for both — use
+    `VendlerClass.hasFullSubintervalProp` to distinguish them. -/
+def predictsSubintervalProp : VendlerClass → Bool
+  | .state | .activity => true
+  | .achievement | .accomplishment | .semelfactive => false
+
+/-- SUB prediction agrees with homogeneity. -/
+theorem sub_agrees_with_homogeneous (c : VendlerClass) :
+    predictsSubintervalProp c = c.toProfile.isHomogeneous := by
+  cases c <;> rfl
+
+/-- Full SIP is strictly stronger than qualified SIP:
+    states have full SIP, activities have only qualified SIP. -/
+theorem fullSIP_strictly_stronger :
+    VendlerClass.state.hasFullSubintervalProp = true ∧
+    predictsSubintervalProp .state = true ∧
+    VendlerClass.activity.hasFullSubintervalProp = false ∧
+    predictsSubintervalProp .activity = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Homogeneous iff durative and atelic.
+    Semelfactives are atelic but not homogeneous (punctual), so
+    homogeneity requires both atelicity and duration. -/
+theorem homogeneous_iff_durative_atelic (p : AspectualProfile) :
+    p.isHomogeneous = true ↔
+    (p.toVendlerClass = .state ∨ p.toVendlerClass = .activity) := by
   simp only [AspectualProfile.isHomogeneous]
-  cases h : p.toVendlerClass <;> simp [VendlerClass.telicity]
+  cases h : p.toVendlerClass <;> simp
 
 end Homogeneity
 
@@ -251,7 +348,7 @@ section AtomicDistributivity
       NYU dissertation, Ch. 5. -/
 def VendlerClass.predictsAtomDist : VendlerClass → Bool
   | .state => true
-  | .activity | .achievement | .accomplishment => false
+  | .activity | .achievement | .accomplishment | .semelfactive => false
 
 /-- ATOM-DIST_t prediction coincides with stative dynamicity. -/
 theorem predictsAtomDist_iff_stative (c : VendlerClass) :
@@ -281,6 +378,11 @@ theorem atomDist_implies_homogeneous (c : VendlerClass)
 theorem predictsAtomDist_iff_not_dynamic (c : VendlerClass) :
     (c.predictsAtomDist = false) ↔ (c.dynamicity = .dynamic) := by
   cases c <;> simp [VendlerClass.predictsAtomDist, VendlerClass.dynamicity]
+
+/-- Full SIP coincides with ATOM-DIST_t — both pick out exactly states. -/
+theorem fullSIP_iff_atomDist (c : VendlerClass) :
+    c.hasFullSubintervalProp = c.predictsAtomDist := by
+  cases c <;> rfl
 
 end AtomicDistributivity
 

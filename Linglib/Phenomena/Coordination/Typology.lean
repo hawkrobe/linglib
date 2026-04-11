@@ -7,6 +7,7 @@ import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Japanese.Coordination
+import Linglib.Fragments.German.Coordination
 
 /-!
 # Cross-Linguistic Typology of Coordination
@@ -204,6 +205,19 @@ def english : ConjunctionSystem :=
   , strategies := [.jOnly]
   , patterns := [.a_co_b]
   , iso := "eng" }
+
+/--
+German uses "und" (J, free word), like English "and". J-only strategy.
+German is the test language for @cite{schwarzer-2026}'s study of
+selection-violating coordination in OV environments.
+-/
+def german : ConjunctionSystem :=
+  { language := "German"
+  , morphemes :=
+    [ { entry := Fragments.German.Coordination.und } ]
+  , strategies := [.jOnly]
+  , patterns := [.a_co_b]
+  , iso := "deu" }
 
 /--
 Japanese conjunction uses "to" (J) and "mo" (MU).
@@ -456,7 +470,7 @@ def finnish : ConjunctionSystem :=
   , iso := "fin" }
 
 def allLanguages : List ConjunctionSystem :=
-  [ english, japanese, hungarian, georgian, latin, korean, slovenian
+  [ english, german, japanese, hungarian, georgian, latin, korean, slovenian
   , lango, hausa, yoruba, kannada, martuthunira, classicalTibetan
   , hindiUrdu, turkish, irish, persian, finnish ]
 

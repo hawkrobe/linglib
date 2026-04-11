@@ -445,7 +445,7 @@ theorem impFilter_eliminates_presup (p q : PrProp W)
 theorem impFilter_trivializes_presup (p q : PrProp W)
     (h : p.assertion = q.presup) :
     (impFilter p q).presup = p.presup :=
-  impFilter_eliminates_presup p q (fun w ha => h ▸ ha)
+  impFilter_eliminates_presup p q (fun _ ha => h ▸ ha)
 
 -- ════════════════════════════════════════════════════════════════
 -- ofBProp Theorems
@@ -758,6 +758,95 @@ theorem eval_ofProp3 (p : Prop3 W) : (ofProp3 p).eval = p := by
 theorem genuineness_comm (p q : PrProp W) (s : Finset W) :
     genuineness p q s ↔ genuineness q p s := by
   simp only [genuineness, and_comm]
+
+-- ════════════════════════════════════════════════════════════════
+-- Embedding Combinators
+-- @cite{heim-1992} @cite{karttunen-1973} @cite{delpinal-bassi-sauerland-2024}
+-- ════════════════════════════════════════════════════════════════
+
+/-- Asymmetric filtering disjunction: plain proposition ∨ PrProp.
+
+    For "A ∨ B_ψ" where only B carries a presupposition ψ, the overall
+    presupposition is ¬A → ψ (Karttunen's generalization for disjunction).
+    The assertion is A ∨ B.
+
+    This is the standard projection rule for presuppositions in the second
+    disjunct of a disjunction. @cite{karttunen-1973}, @cite{heim-1983} -/
+def disjFilterLeft (firstDisjunct : Prop' W) (second : PrProp W) :
+    PrProp W where
+  assertion := fun w => firstDisjunct w ∨ second.assertion w
+  presup := fun w => ¬firstDisjunct w → second.presup w
+
+/-- Embedding under a negative factive (e.g., "is unaware that").
+
+    "x is unaware that p" presupposes p and asserts ¬Bel_x(p).
+    When the complement is a PrProp, the factive presupposes both
+    the assertion and presupposition of its complement (i.e., full
+    satisfaction), and asserts that the subject doesn't believe the
+    assertive component.
+
+    @cite{heim-1992}: factives presuppose their complement.
+    @cite{delpinal-bassi-sauerland-2024} §3: this is what makes pex
+    solve the presupposed FC puzzle — the homogeneity presupposition
+    projects through the factive independently of the belief content. -/
+def negFactive (complement : PrProp W)
+    (believes : Prop' W → Prop' W) : PrProp W where
+  assertion := fun w => ¬(believes complement.assertion w)
+  presup := fun w => complement.holds w
+
+/-- When the first disjunct is false, `disjFilterLeft` recovers full
+    satisfaction of the second disjunct. -/
+theorem disjFilterLeft_recovers (firstDisjunct : Prop' W) (sp : PrProp W)
+    (w : W) (hFirst : ¬firstDisjunct w)
+    (hFiltered : (disjFilterLeft firstDisjunct sp).holds w) :
+    sp.holds w := by
+  obtain ⟨hPresup, hAssert⟩ := hFiltered
+  exact ⟨hPresup hFirst, hAssert.resolve_left hFirst⟩
+
+/-- Presupposition of `negFactive` is full satisfaction of the complement. -/
+theorem negFactive_presup_eq (complement : PrProp W)
+    (believes : Prop' W → Prop' W) :
+    (negFactive complement believes).presup = complement.holds := rfl
+
+/-- Universal presupposition projection: presuppositions project
+    universally from the scope of a universal quantifier.
+
+    For ∀x ∈ S, φ(x) where φ(x) is a PrProp:
+    - asserts: ∀x ∈ S, assertion(φ(x))
+    - presupposes: ∀x ∈ S, presup(φ(x))
+
+    @cite{chemla-2009a}, @cite{fox-2013}, @cite{mayr-sauerland-2015}:
+    presuppositions triggered in the scope of a universal quantifier
+    tend to project universally. -/
+def forallPr {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp W where
+  presup := fun w => ∀ x, S x → (φ x).presup w
+  assertion := fun w => ∀ x, S x → (φ x).assertion w
+
+/-- Existential presupposition projection (universal presup, existential assert).
+
+    For ∃x ∈ S, φ(x): presuppositions still project universally,
+    but the assertion is existential.
+
+    This models the pattern where ∃x ∈ S(φ(x)) presupposes
+    ∀x ∈ S(presup(φ(x))) — the "universal projection from existential
+    quantifier" pattern supported by @cite{chemla-2009a}. -/
+def existsPrUniv {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp W where
+  presup := fun w => ∀ x, S x → (φ x).presup w
+  assertion := fun w => ∃ x, S x ∧ (φ x).assertion w
+
+/-- Negated existential with universal presupposition projection.
+
+    For ¬∃x ∈ S, φ(x): equivalent to ∀x ∈ S, ¬φ(x).
+    Presuppositions project universally. -/
+def negExistsPr {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp W where
+  presup := fun w => ∀ x, S x → (φ x).presup w
+  assertion := fun w => ¬∃ x, S x ∧ (φ x).assertion w
+
+/-- `forallPr` holds iff every member satisfies both presupposition and assertion. -/
+theorem forallPr_holds {α : Type*} (S : α → Prop) (φ : α → PrProp W) (w : W) :
+    (forallPr S φ).holds w ↔
+      (∀ x, S x → (φ x).presup w) ∧ (∀ x, S x → (φ x).assertion w) :=
+  Iff.rfl
 
 end PrProp
 

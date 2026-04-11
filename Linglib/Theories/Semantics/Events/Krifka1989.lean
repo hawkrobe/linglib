@@ -126,8 +126,8 @@ theorem forAdverbial_subsumes_qmod
 
     CUM is Krifka's mereological characterization of atelicity: the VP
     has cumulative reference, so no natural endpoint. The connection to
-    VendlerClass goes via `vendlerClass_atelic_implies_cum_intent` in
-    Mereology.lean: atelic classes (states, activities) have CUM. -/
+    VendlerClass goes via `vendlerClass_atelic_cases` in
+    Mereology.lean: atelic classes (states, activities, semelfactives) have CUM. -/
 theorem cum_transfer {θ : α → β → Prop} {OBJ : α → Prop}
     (hCumTheta : CumTheta θ) (hObj : CUM OBJ) :
     CUM (VP θ OBJ) :=
@@ -141,7 +141,7 @@ theorem cum_transfer {θ : α → β → Prop} {OBJ : α → Prop}
 
     QUA is Krifka's mereological characterization of telicity: the VP has
     quantized reference, so it has a natural endpoint. The connection to
-    VendlerClass goes via `vendlerClass_telic_implies_qua_intent` in
+    VendlerClass goes via `vendlerClass_telic_cases` in
     Mereology.lean: telic classes (achievements, accomplishments) have QUA. -/
 theorem qua_transfer {θ : α → β → Prop} {OBJ : α → Prop}
     (hUP : UP θ) (hSinc : SINC θ) (hQua : QUA OBJ) :

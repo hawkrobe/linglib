@@ -37,10 +37,15 @@ Three main accounts:
 - @cite{tieu-etal-2020}
 -/
 
+set_option autoImplicit false
+
 namespace Phenomena.Plurals.Multiplicity
 
 open Core (Polarity)
 
+-- ============================================================================
+-- §1  Empirical Data
+-- ============================================================================
 
 /--
 A multiplicity inference datum: a bare plural sentence tested
@@ -78,14 +83,21 @@ def booksOnDesk : MultiplicityDatum :=
   , multiplicityInNegative := false
   }
 
-def allExamples : List MultiplicityDatum :=
-  [fedGiraffes, booksOnDesk]
+-- ── Per-datum monotonicity verification ──────────────────────
 
-/-- Multiplicity arises in UE but not DE — the core monotonicity pattern. -/
-theorem monotonicity_pattern :
-    allExamples.all (λ d => d.multiplicityInPositive && !d.multiplicityInNegative) := by
-  native_decide
+/-- Multiplicity arises in UE but not DE for "fed giraffes". -/
+theorem fedGiraffes_monotonicity :
+    fedGiraffes.multiplicityInPositive = true ∧
+    fedGiraffes.multiplicityInNegative = false := ⟨rfl, rfl⟩
 
+/-- Multiplicity arises in UE but not DE for "books on desk". -/
+theorem booksOnDesk_monotonicity :
+    booksOnDesk.multiplicityInPositive = true ∧
+    booksOnDesk.multiplicityInNegative = false := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- §2  Scalar Parallels
+-- ============================================================================
 
 /--
 The monotonicity sensitivity of multiplicity inferences parallels that
@@ -131,14 +143,26 @@ def orAndParallel : MonotonicityParallel :=
   , arisesInDE := false
   }
 
-def allParallels : List MonotonicityParallel :=
-  [someAllParallel, pluralSingularParallel, orAndParallel]
+-- ── Per-parallel monotonicity verification ───────────────────
 
-/-- All three scales show the same monotonicity pattern. -/
-theorem uniform_monotonicity :
-    allParallels.all (λ p => p.arisesInUE && !p.arisesInDE) := by
-  native_decide
+/-- Some/all: implicature in UE, not in DE. -/
+theorem someAll_monotonicity :
+    someAllParallel.arisesInUE = true ∧
+    someAllParallel.arisesInDE = false := ⟨rfl, rfl⟩
 
+/-- Plural/singular: multiplicity in UE, not in DE. -/
+theorem pluralSingular_monotonicity :
+    pluralSingularParallel.arisesInUE = true ∧
+    pluralSingularParallel.arisesInDE = false := ⟨rfl, rfl⟩
+
+/-- Or/and: exclusivity in UE, not in DE. -/
+theorem orAnd_monotonicity :
+    orAndParallel.arisesInUE = true ∧
+    orAndParallel.arisesInDE = false := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- §3  Competing Theories
+-- ============================================================================
 
 /--
 Competing theoretical approaches to multiplicity inferences.
@@ -152,89 +176,86 @@ inductive PluralTheory where
   | homogeneity
   deriving DecidableEq, Repr, Inhabited
 
-/--
-Key predictions where the three theories diverge.
--/
-structure TheoryPrediction where
-  /-- The theory -/
-  theory : PluralTheory
-  /-- Does it predict children compute fewer multiplicity inferences? -/
-  childrenComputeFewer : Bool
-  /-- Does it predict multiplicity rates correlate with SI rates? -/
-  multiplicityCorrelatesWithSI : Bool
-  /-- Can it account for asymmetric polarity pattern in children? -/
-  accountsForPolarityAsymmetry : Bool
-  deriving Repr, DecidableEq
+-- ── Core mechanistic property ────────────────────────────────
 
-/--
-Positive vs negative plural sentences in singular contexts.
+/-- The fundamental discriminating property: does the theory analyze
+    multiplicity as arising via the same mechanism as scalar implicatures?
 
-In a context where only one giraffe was fed:
-- "Emily fed giraffes" is literally true (one or more) but carries a false
-  multiplicity implicature → intermediate status (true but misleading)
-- "Emily didn't feed giraffes" is literally false → clearly false
+    This is the single primitive from which all empirical predictions
+    are derived. The implicature theory says multiplicity IS an SI;
+    ambiguity says it arises from lexical polysemy + Strongest Meaning;
+    homogeneity says it arises from presupposition. -/
+def PluralTheory.usesSIMechanism : PluralTheory → Bool
+  | .implicature => true
+  | _ => false
 
-The three theories predict:
-- Ambiguity: both undefined (homogeneous gap) or both false → same status
-- Homogeneity: both undefined → same status
-- Implicature: positive = true with false implicature, negative = false → different
--/
-structure SingularContextPrediction where
-  /-- The theory -/
-  theory : PluralTheory
-  /-- Does positive get different status from negative? -/
-  positiveNegativeDiffer : Bool
-  deriving Repr, DecidableEq
+-- ── Derived predictions ─────────────────────────────────────
+-- Each prediction follows from the mechanistic claim: if multiplicity
+-- is an SI, then known properties of SIs (acquisition delay, uniformity,
+-- polarity sensitivity, truth-value asymmetry) transfer to multiplicity.
 
-def ambiguitySingularPrediction : SingularContextPrediction :=
-  { theory := .ambiguity, positiveNegativeDiffer := false }
+/-- Children undercompute SIs (@cite{noveck-2001}). If multiplicity IS
+    an SI, children should compute fewer multiplicity inferences. -/
+def PluralTheory.predictsChildrenComputeFewer (t : PluralTheory) : Bool :=
+  t.usesSIMechanism
 
-def implicatureSingularPrediction : SingularContextPrediction :=
-  { theory := .implicature, positiveNegativeDiffer := true }
+/-- SIs sharing a mechanism have correlated rates within individuals
+    (Uniformity Prediction). Multiplicity rates should correlate with
+    standard SI rates iff they share the SI mechanism. -/
+def PluralTheory.predictsMultiplicitySICorrelation (t : PluralTheory) : Bool :=
+  t.usesSIMechanism
 
-def homogeneitySingularPrediction : SingularContextPrediction :=
-  { theory := .homogeneity, positiveNegativeDiffer := false }
+/-- SIs show UE/DE polarity asymmetry. If multiplicity is an SI,
+    the polarity asymmetry in children follows from children's general
+    difficulty with SIs. -/
+def PluralTheory.accountsForPolarityAsymmetry (t : PluralTheory) : Bool :=
+  t.usesSIMechanism
 
-def allSingularPredictions : List SingularContextPrediction :=
-  [ambiguitySingularPrediction, implicatureSingularPrediction, homogeneitySingularPrediction]
+/-- In singular contexts (exactly one object acted on):
+    - If multiplicity is an SI: positive is literally true + false
+      implicature (misleading); negative is literally false → different
+      truth-value status.
+    - If multiplicity is lexical/presuppositional: both are undefined
+      or both false → same status.
+    Only the SI mechanism predicts asymmetric truth-value judgments. -/
+def PluralTheory.positiveNegativeDiffer (t : PluralTheory) : Bool :=
+  t.usesSIMechanism
 
-/-- Only the implicature approach predicts different status for
-    positive vs negative in singular contexts. -/
-theorem singular_context_discriminates :
-    allSingularPredictions.filter (·.positiveNegativeDiffer) =
-    [implicatureSingularPrediction] := by
-  native_decide
+-- ── Structural theorems ─────────────────────────────────────
 
-def ambiguityPrediction : TheoryPrediction :=
-  { theory := .ambiguity
-  , childrenComputeFewer := false  -- no clear prediction
-  , multiplicityCorrelatesWithSI := false  -- different mechanisms
-  , accountsForPolarityAsymmetry := false  -- challenged by data
-  }
+/-- All four predictions reduce to the single mechanistic property.
+    This makes the structure explicit: we don't have four independent
+    stipulations, but one property with four consequences. -/
+theorem predictions_equivalent_to_mechanism (t : PluralTheory) :
+    (t.predictsChildrenComputeFewer = true ↔ t.usesSIMechanism = true) ∧
+    (t.predictsMultiplicitySICorrelation = true ↔ t.usesSIMechanism = true) ∧
+    (t.accountsForPolarityAsymmetry = true ↔ t.usesSIMechanism = true) ∧
+    (t.positiveNegativeDiffer = true ↔ t.usesSIMechanism = true) :=
+  ⟨Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl⟩
 
-def implicaturePrediction : TheoryPrediction :=
-  { theory := .implicature
-  , childrenComputeFewer := true   -- same mechanism as SI
-  , multiplicityCorrelatesWithSI := true   -- Uniformity Prediction
-  , accountsForPolarityAsymmetry := true   -- follows from implicature theory
-  }
+/-- The implicature theory is uniquely identified by ANY of the four
+    predictions (since they all reduce to `usesSIMechanism`). -/
+theorem implicature_uniquely_predicts (t : PluralTheory)
+    (h : t.usesSIMechanism = true) :
+    t = .implicature := by
+  cases t <;> simp_all [PluralTheory.usesSIMechanism]
 
-def homogeneityPrediction : TheoryPrediction :=
-  { theory := .homogeneity
-  , childrenComputeFewer := false  -- no clear prediction
-  , multiplicityCorrelatesWithSI := false  -- different mechanisms
-  , accountsForPolarityAsymmetry := false  -- challenged by data
-  }
+/-- Any single prediction suffices to identify the implicature theory,
+    since all predictions reduce to `usesSIMechanism`. Here we show this
+    for `predictsChildrenComputeFewer` (the others are identical). -/
+theorem childrenComputeFewer_identifies (t : PluralTheory)
+    (h : t.predictsChildrenComputeFewer = true) :
+    t = .implicature :=
+  implicature_uniquely_predicts t h
 
-def allPredictions : List TheoryPrediction :=
-  [ambiguityPrediction, implicaturePrediction, homogeneityPrediction]
+/-- Singular context asymmetry identifies implicature. -/
+theorem implicature_uniquely_discriminates_singular (t : PluralTheory)
+    (h : t.positiveNegativeDiffer = true) :
+    t = .implicature :=
+  implicature_uniquely_predicts t h
 
-/-- Only the implicature approach predicts all three findings. -/
-theorem implicature_uniquely_predicts :
-    allPredictions.filter (λ p =>
-      p.childrenComputeFewer && p.multiplicityCorrelatesWithSI &&
-      p.accountsForPolarityAsymmetry) =
-    [implicaturePrediction] := by
-  native_decide
+/-- The competing theories do NOT use the SI mechanism. -/
+theorem ambiguity_not_si : PluralTheory.ambiguity.usesSIMechanism = false := rfl
+theorem homogeneity_not_si : PluralTheory.homogeneity.usesSIMechanism = false := rfl
 
 end Phenomena.Plurals.Multiplicity

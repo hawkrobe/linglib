@@ -31,3 +31,6 @@ lean_lib KennedyRSA where
 lean_lib SeMarkingRSA where
   srcDir := "blog/lean"
   globs := #[.submodules `SeMarkingRSA]
+
+lean_lib scratch where
+  globs := #[.submodules `scratch]

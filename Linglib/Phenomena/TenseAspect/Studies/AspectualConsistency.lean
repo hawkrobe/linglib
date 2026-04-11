@@ -442,9 +442,10 @@ def pipelineOK (v : VerbEntry) : Bool :=
     let mt := tel.toMereoTag
     let bnd := mt.toBoundedness
     let licensed := LicensingPipeline.isLicensed bnd
-    -- Licensed verbs should accept "in X", blocked verbs "for X"
+    -- Licensed (telic) verbs accept "in X"; blocked (atelic) verbs
+    -- accept or are coerced with "for X" (semelfactives are coerced).
     if licensed then inXPrediction vc == .accept
-    else forXPrediction vc == .accept
+    else forXPrediction vc == .accept || forXPrediction vc == .coerced
 
 /-- Every verb in the fragment passes pipeline consistency. -/
 theorem all_verbs_pipeline_ok :

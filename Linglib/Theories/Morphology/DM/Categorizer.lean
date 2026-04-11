@@ -1,3 +1,4 @@
+import Linglib.Core.Gender
 import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Features
@@ -670,5 +671,91 @@ theorem phase_boundary_at_voice_not_categorizer (c : Categorizer) :
 theorem voice_introduces_external_arg :
     voiceAgent.hasD = true ∧ voiceAgent.assignsTheta = true :=
   ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 6: Surface Gender Bridge (@cite{kramer-2020} §3; @cite{kramer-2015} Chs 5-7)
+-- ============================================================================
+
+/-! The bridge between DM phi-features on n and descriptive `SurfaceGender`
+is mediated by Vocabulary Insertion (VI). Different VI systems yield
+different surface genders from the same underlying features.
+
+Three VI patterns are attested (@cite{kramer-2015} Chs 5-7):
+
+- **Set 1** (Amharic, Spanish): [+FEM] → feminine, else → masculine (2 genders)
+- **Set 2** (Maa, Wari'): [−FEM] → masculine, else → feminine (2 genders)
+- **3-gender** (Russian, Mangarayi, Lavukaleve): [+FEM] → feminine,
+  [−FEM] → masculine, no feature → neuter (3 genders)
+
+For animacy-based systems (Teop, Algonquian), [+ANIM] → animate,
+[−ANIM]/none → inanimate (2 genders). -/
+
+open Core (SurfaceGender)
+
+/-- Set 1 VI: [+FEM] → feminine, else → masculine.
+    Default gender: masculine (plain n has no [+FEM]).
+    Languages: Amharic, Spanish. (@cite{kramer-2015} Ch 6) -/
+def CatHead.surfaceGenderSet1 (ch : CatHead) : SurfaceGender :=
+  match ch.phi.gender with
+  | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
+  | none    => .masculine
+
+/-- Set 2 VI: [−FEM] → masculine, else → feminine.
+    Default gender: feminine (plain n has no [−FEM]).
+    Languages: Maa, Wari'. (@cite{kramer-2015} Ch 6) -/
+def CatHead.surfaceGenderSet2 (ch : CatHead) : SurfaceGender :=
+  match ch.phi.gender with
+  | some gf => if gf.val == ⟨.fem, .neg⟩ then .masculine else .feminine
+  | none    => .feminine
+
+/-- Three-gender VI: [+FEM] → feminine, [−FEM] → masculine, none → neuter.
+    Languages: Russian, Mangarayi, Lavukaleve. (@cite{kramer-2015} Ch 7) -/
+def CatHead.surfaceGenderThree (ch : CatHead) : SurfaceGender :=
+  match ch.phi.gender with
+  | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
+  | none    => .neuter
+
+/-- Animacy VI: [+ANIM] → animate, else → inanimate.
+    Languages: Teop, Algonquian, Lealao Chinantec. (@cite{kramer-2015} Ch 5) -/
+def CatHead.surfaceGenderAnimacy (ch : CatHead) : SurfaceGender :=
+  match ch.phi.gender with
+  | some gf => if gf.val.dim == .anim && gf.val.pol == .pos
+               then .animate else .inanimate
+  | none    => .inanimate
+
+-- Verification: canonical n heads produce expected surface genders
+
+theorem set1_verification :
+    CatHead.n_iFem.surfaceGenderSet1 = .feminine ∧
+    CatHead.n_iMasc.surfaceGenderSet1 = .masculine ∧
+    CatHead.n_uFem.surfaceGenderSet1 = .feminine ∧
+    CatHead.n_plain.surfaceGenderSet1 = .masculine := ⟨rfl, rfl, rfl, rfl⟩
+
+theorem set2_verification :
+    CatHead.n_iFem.surfaceGenderSet2 = .feminine ∧
+    CatHead.n_iMasc.surfaceGenderSet2 = .masculine ∧
+    CatHead.n_uNegFem.surfaceGenderSet2 = .masculine ∧
+    CatHead.n_plain.surfaceGenderSet2 = .feminine := ⟨rfl, rfl, rfl, rfl⟩
+
+theorem three_gender_verification :
+    CatHead.n_iFem.surfaceGenderThree = .feminine ∧
+    CatHead.n_iMasc.surfaceGenderThree = .masculine ∧
+    CatHead.n_uFem.surfaceGenderThree = .feminine ∧
+    CatHead.n_uNegFem.surfaceGenderThree = .masculine ∧
+    CatHead.n_plain.surfaceGenderThree = .neuter := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+theorem animacy_verification :
+    CatHead.n_iAnim.surfaceGenderAnimacy = .animate ∧
+    CatHead.n_iInanim.surfaceGenderAnimacy = .inanimate ∧
+    CatHead.n_uAnim.surfaceGenderAnimacy = .animate ∧
+    CatHead.n_plain.surfaceGenderAnimacy = .inanimate := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Set 1 and Set 2 agree on natural gender (i[+FEM] → feminine,
+    i[−FEM] → masculine) but differ on the default (plain n).
+    @cite{kramer-2015} Ch 6: the polarity of u determines which
+    gender is arbitrary vs default. -/
+theorem set1_set2_default_contrast :
+    CatHead.n_plain.surfaceGenderSet1 ≠ CatHead.n_plain.surfaceGenderSet2 := by
+  decide
 
 end Theories.Morphology.DM

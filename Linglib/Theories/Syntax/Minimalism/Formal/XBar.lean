@@ -1,8 +1,19 @@
 /-
-# X-Bar Theory
-
+# X-Bar Theory (Pre–Bare Phrase Structure)
+@cite{adger-2003} @cite{chomsky-1995}
 
 Formalization of X-Bar structure following @cite{adger-2003} Chapter 2.
+
+**Architectural note**: @cite{chomsky-1995} Ch 4 §4.3 argues that X-Bar
+theory should be *eliminated* in favor of bare phrase structure, where
+bar levels (X⁰, X', XP) are not primitive but relational properties
+derived from Merge and projection. The bare phrase structure approach
+is formalized in `Labeling.lean` (relational `isMaximalIn`/`isMinimalIn`).
+
+This file retains the traditional X-Bar schema as a descriptive
+convenience and for compatibility with @cite{adger-2003}'s pedagogy.
+For theoretical work, prefer the bare phrase structure primitives
+in `Core/Labeling.lean`.
 
 ## The X-Bar Schema
 

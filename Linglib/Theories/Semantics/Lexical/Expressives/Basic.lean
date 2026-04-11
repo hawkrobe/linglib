@@ -12,7 +12,9 @@ Natural language meanings have TWO dimensions:
 
 These dimensions are INDEPENDENT:
 - CIs don't affect truth conditions
-- CIs project through ALL operators (negation, conditionals, etc.)
+- CIs project through truth-functional operators (negation, conditionals, etc.)
+- Exception: quotation blocks CI projection (@cite{kirk-giannini-2024} §3;
+  @cite{potts-2005} also acknowledges this). See `pureQuote`.
 
 ## The LCI Type System
 
@@ -82,6 +84,30 @@ Combine at-issue content with CI content.
 -/
 def withCI (p : BProp W) (c : BProp W) : TwoDimProp W :=
   { atIssue := p, ci := c }
+
+/--
+Pure quotation: strips CI content, preserving only at-issue content.
+
+When an expression is purely quoted, its CI content (expressives, slurs,
+NRRCs) does not project. The quoted material is "frozen" — its peripheral
+content is blocked from passing up the tree.
+
+This operation is the semantic reflex of pure quotation blocking peripheral
+content passage (@cite{kirk-giannini-2024}, Appendix Remark 6).
+
+Example: In "He said 'that bastard Jones left'", the expressive
+'bastard' is inside pure quotation and does not project to the speaker.
+-/
+def pureQuote (p : TwoDimProp W) : TwoDimProp W :=
+  { atIssue := p.atIssue, ci := λ _ => true }
+
+/-- Pure quotation neutralizes CI content. -/
+theorem pureQuote_strips_ci (p : TwoDimProp W) (w : W) :
+    (pureQuote p).ci w = true := rfl
+
+/-- Pure quotation preserves at-issue content. -/
+theorem pureQuote_preserves_atIssue (p : TwoDimProp W) :
+    (pureQuote p).atIssue = p.atIssue := rfl
 
 
 /--

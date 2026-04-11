@@ -55,6 +55,7 @@ namespace Theories.Syntax.Minimalism.Agreement.CoordinateResolution
 
 open Core.Number (Category)
 open Core.Prominence (PersonLevel)
+open _root_.Minimalism (Interpretability)
 open GenderResolution (AnnotatedFeature FeatureBundle)
 
 -- ============================================================================
@@ -319,7 +320,7 @@ def personOp : ResolutionOp PersonLevel := ⟨personResolve⟩
     u-features are excluded from the resolution calculus
     (@cite{adamson-anagnostopoulou-2025}, @cite{carstens-2026}). -/
 def percolate {F : Type} (a : AnnotatedFeature F) : Option F :=
-  if a.interp then some a.value else none
+  if a.interp == .interpretable then some a.value else none
 
 /-- Resolve two annotated features: percolate, then apply the operation.
 
@@ -348,9 +349,9 @@ theorem person_total (p₁ p₂ : PersonLevel) :
     features match — the only dimension that can fail, triggering
     default agreement. -/
 theorem gender_singleton_iff_match {G : Type} [BEq G] [LawfulBEq G] (g₁ g₂ : G) :
-    (GenderResolution.resolve [⟨g₁, true⟩] [⟨g₂, true⟩]).isSome = (g₁ == g₂) := by
-  have hp₁ : GenderResolution.percolateI (F := G) [⟨g₁, true⟩] = [g₁] := rfl
-  have hp₂ : GenderResolution.percolateI (F := G) [⟨g₂, true⟩] = [g₂] := rfl
+    (GenderResolution.resolve [⟨g₁, .interpretable⟩] [⟨g₂, .interpretable⟩]).isSome = (g₁ == g₂) := by
+  have hp₁ : GenderResolution.percolateI (F := G) [⟨g₁, .interpretable⟩] = [g₁] := rfl
+  have hp₂ : GenderResolution.percolateI (F := G) [⟨g₂, .interpretable⟩] = [g₂] := rfl
   by_cases h : g₁ = g₂
   · subst h
     have hi : GenderResolution.intersectFeatures [g₁] [g₁] = [g₁] := by
@@ -389,7 +390,7 @@ theorem gender_only_fallible :
     (∀ p₁ p₂ : PersonLevel, (personResolve p₁ p₂).isSome = true) ∧
     (∃ g₁ g₂ : FeatureBundle Bool,
       (GenderResolution.resolve g₁ g₂).isSome = false) :=
-  ⟨number_total, person_total, ⟨[⟨true, true⟩], [⟨false, true⟩], rfl⟩⟩
+  ⟨number_total, person_total, ⟨[⟨true, .interpretable⟩], [⟨false, .interpretable⟩], rfl⟩⟩
 
 -- ============================================================================
 -- § 8: Composed Phi-Resolution
@@ -427,26 +428,26 @@ private inductive ExGender where | m | f | n deriving DecidableEq
 
 /-- English {sg, pl}: 1st + 3rd → 1st, sg + sg → pl, [m] + [m] → [m]. -/
 example : resolveCoordinate [.singular, .plural]
-    (⟨⟨.first, true⟩, ⟨.singular, true⟩, [⟨ExGender.m, true⟩]⟩ : PhiBundle ExGender)
-    ⟨⟨.third, true⟩, ⟨.singular, true⟩, [⟨ExGender.m, true⟩]⟩
+    (⟨⟨.first, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .interpretable⟩]⟩ : PhiBundle ExGender)
+    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .interpretable⟩]⟩ : PhiBundle ExGender)
     = ⟨some .first, some .plural, some [.m]⟩ := rfl
 
 /-- Slovene {sg, du, pl}: sg + sg → du (the lattice-canonical result). -/
 example : resolveCoordinate [.singular, .dual, .plural]
-    (⟨⟨.third, true⟩, ⟨.singular, true⟩, [⟨ExGender.m, true⟩]⟩ : PhiBundle ExGender)
-    ⟨⟨.third, true⟩, ⟨.singular, true⟩, [⟨ExGender.m, true⟩]⟩
+    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .interpretable⟩]⟩ : PhiBundle ExGender)
+    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .interpretable⟩]⟩ : PhiBundle ExGender)
     = ⟨some .third, some .dual, some [.m]⟩ := rfl
 
 /-- Gender mismatch: [m] + [f] → none (default). -/
 example : resolveCoordinate [.singular, .plural]
-    (⟨⟨.third, true⟩, ⟨.singular, true⟩, [⟨ExGender.m, true⟩]⟩ : PhiBundle ExGender)
-    ⟨⟨.third, true⟩, ⟨.singular, true⟩, [⟨ExGender.f, true⟩]⟩
+    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .interpretable⟩]⟩ : PhiBundle ExGender)
+    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.f, .interpretable⟩]⟩ : PhiBundle ExGender)
     = ⟨some .third, some .plural, none⟩ := rfl
 
 /-- Uninterpretable gender: u + u → none regardless of values. -/
 example : resolveCoordinate [.singular, .plural]
-    (⟨⟨.third, true⟩, ⟨.singular, true⟩, [⟨ExGender.m, false⟩]⟩ : PhiBundle ExGender)
-    ⟨⟨.third, true⟩, ⟨.singular, true⟩, [⟨ExGender.m, false⟩]⟩
+    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .uninterpretable⟩]⟩ : PhiBundle ExGender)
+    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .uninterpretable⟩]⟩ : PhiBundle ExGender)
     = ⟨some .third, some .plural, none⟩ := rfl
 
 -- ============================================================================

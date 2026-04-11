@@ -128,4 +128,29 @@ to acquire (closer to 1-to-1 form-meaning mapping).
 def ConjunctionStrategy.predictedTransparency : ConjunctionStrategy → Nat :=
   ConjunctionStrategy.overtMorphemeCount
 
+-- ============================================================================
+-- Structural Symmetry (@cite{schwarzer-2026})
+-- ============================================================================
+
+/--
+Structural symmetry of a coordinate phrase.
+
+The three groups of analyses for selection-violating coordination
+(@cite{schwarzer-2026}) disagree on this parameter:
+- **Bottom-up accounts** assume `asymmetric` structure: the first conjunct
+  is structurally more prominent (c-commands the second), so only it must
+  satisfy the selector's c-selectional requirements.
+- **Linear/temporal closeness accounts** are compatible with either, but
+  their predictions derive from linear/temporal order, not structure.
+- **Symmetric accounts** (@cite{neeleman-etal-2022}, @cite{przepiorkowski-2024})
+  posit flat or multidominance structures with no structural prominence.
+-/
+inductive CoordSymmetry where
+  /-- Flat or multidominance: no conjunct is structurally more prominent. -/
+  | symmetric
+  /-- Binary &P: first conjunct is structurally more prominent
+      (c-commands the second conjunct). -/
+  | asymmetric
+  deriving DecidableEq, Repr, BEq
+
 end Core.Coordination

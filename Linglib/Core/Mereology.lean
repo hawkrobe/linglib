@@ -320,6 +320,40 @@ theorem qmod_sub {α μTy : Type*} {R : α → Prop} {μ : α → μTy} {n : μT
   h.1
 
 -- ════════════════════════════════════════════════════
+-- § 6b. Atomization (@cite{little-moroney-royer-2022})
+-- ════════════════════════════════════════════════════
+
+/-- Atomize a predicate: restrict P to its atomic members.
+    @cite{little-moroney-royer-2022} eq. (13):
+    ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]
+
+    In classifier-for-noun theories (@cite{chierchia-1998}; @cite{jenks-2011};
+    @cite{dayal-2012}; @cite{nomoto-2013}), the classifier atomizes the noun
+    denotation so the numeral can count individual entities. This is the
+    semantic contribution that distinguishes CLF-for-N from CLF-for-NUM. -/
+def atomize {α : Type*} [PartialOrder α] (P : α → Prop) : α → Prop :=
+  fun x => P x ∧ Atom x
+
+/-- Atomize restricts: atomize P ⊆ P. -/
+theorem atomize_sub {α : Type*} [PartialOrder α]
+    {P : α → Prop} {x : α} (h : atomize P x) : P x :=
+  h.1
+
+/-- Atomized predicates are quantized: no proper part of an atom is an atom. -/
+theorem atomize_qua {α : Type*} [PartialOrder α]
+    {P : α → Prop} : QUA (atomize P) := by
+  intro x y ⟨_, hAtom⟩ hlt _
+  exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)
+
+/-- Atomize turns cumulative predicates into quantized ones.
+    This is the core of CLF-for-N semantics: the classifier takes a
+    cumulative noun denotation (an atomic join-semilattice) and produces
+    a quantized set of atoms suitable for counting. -/
+theorem atomize_of_cum_is_qua {α : Type*} [SemilatticeSup α]
+    {P : α → Prop} (_hCum : CUM P) : QUA (atomize P) :=
+  atomize_qua
+
+-- ════════════════════════════════════════════════════
 -- § 7. Maximality and Atom Counting (@cite{charlow-2021})
 -- ════════════════════════════════════════════════════
 

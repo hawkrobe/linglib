@@ -90,6 +90,7 @@ def forXPrediction : VendlerClass → DiagnosticResult
   | .activity => .accept
   | .achievement => .reject
   | .accomplishment => .coerced  -- "built houses for a year" = repeated building
+  | .semelfactive => .coerced    -- "coughed for an hour" = iterative reading
 
 /--
 The "for X" test identifies atelic predicates.
@@ -97,8 +98,8 @@ The "for X" test identifies atelic predicates.
 States and activities pass; achievements fail; accomplishments require coercion.
 -/
 theorem forX_identifies_atelic (c : VendlerClass) :
-    forXPrediction c = .accept ↔ c.telicity = .atelic := by
-  cases c <;> simp [forXPrediction, VendlerClass.telicity]
+    forXPrediction c = .accept ↔ (c = .state ∨ c = .activity) := by
+  cases c <;> simp [forXPrediction]
 
 -- "In X" Adverbial Test
 
@@ -118,6 +119,7 @@ def inXPrediction : VendlerClass → DiagnosticResult
   | .activity => .reject
   | .achievement => .accept
   | .accomplishment => .accept
+  | .semelfactive => .reject     -- *"coughed in an hour" (no endpoint)
 
 /--
 The "in X" test identifies telic predicates.
@@ -127,6 +129,7 @@ Achievements and accomplishments pass; states and activities fail.
 theorem inX_identifies_telic (c : VendlerClass) :
     inXPrediction c = .accept ↔ c.telicity = .telic := by
   cases c <;> simp [inXPrediction, VendlerClass.telicity]
+
 
 -- Progressive Test
 
@@ -147,6 +150,7 @@ def progressivePrediction : VendlerClass → DiagnosticResult
   | .activity => .accept
   | .achievement => .marginal  -- "The train is arriving" (preliminary stages)
   | .accomplishment => .accept
+  | .semelfactive => .coerced  -- "He is coughing" = iterative reading
 
 /--
 The progressive test distinguishes dynamic and durative predicates.
@@ -175,8 +179,9 @@ This test identifies predicates with internal duration/stages.
 def stopVingPrediction : VendlerClass → DiagnosticResult
   | .state => .marginal  -- "stopped loving her" — requires inchoative reading
   | .activity => .accept
-  | .achievement => .coerced  -- "stopped coughing" = stopped iterative coughing
+  | .achievement => .coerced  -- "stopped recognizing" = iterative
   | .accomplishment => .accept
+  | .semelfactive => .coerced  -- "stopped coughing" = stopped iterative coughing
 
 -- Imperative Test
 
@@ -194,6 +199,7 @@ def imperativePrediction : VendlerClass → DiagnosticResult
   | .activity => .accept
   | .achievement => .marginal  -- Some achievements are controllable
   | .accomplishment => .accept
+  | .semelfactive => .accept   -- "Cough!" (controllable, agentive)
 
 -- Full Diagnostic Battery
 
@@ -259,6 +265,16 @@ def accomplishmentDiagnostics : DiagnosticBattery :=
   , imperative := .accept }
 
 /--
+Expected diagnostic battery for semelfactives.
+-/
+def semelfactiveDiagnostics : DiagnosticBattery :=
+  { forX := .coerced     -- "coughed for an hour" = iterative
+  , inX := .reject       -- *"coughed in an hour"
+  , progressive := .coerced  -- "is coughing" = iterative
+  , stopVing := .coerced     -- "stopped coughing" = iterative
+  , imperative := .accept }  -- "Cough!"
+
+/--
 Running diagnostics on each class gives the expected battery.
 -/
 theorem diagnostics_correct (c : VendlerClass) :
@@ -266,7 +282,8 @@ theorem diagnostics_correct (c : VendlerClass) :
       | .state => stateDiagnostics
       | .activity => activityDiagnostics
       | .achievement => achievementDiagnostics
-      | .accomplishment => accomplishmentDiagnostics := by
+      | .accomplishment => accomplishmentDiagnostics
+      | .semelfactive => semelfactiveDiagnostics := by
   cases c <;> rfl
 
 -- Example Verb Data
@@ -364,5 +381,45 @@ def allVerbData : List VerbAspectData :=
 Import this module for empirical tests and example data.
 Use `runDiagnostics` to get predictions for any Vendler class.
 -/
+
+-- ════════════════════════════════════════════════════
+-- § Derivation from Features
+-- ════════════════════════════════════════════════════
+
+/-! The diagnostic predictions above are hand-coded per class.
+    These derivation theorems show they are *consequences* of Smith's
+    3-feature decomposition, not independent stipulations. -/
+
+/-- "in X" acceptance is equivalent to telicity.
+    This is the content of `inX_identifies_telic`, but stated purely
+    in terms of the feature function — the diagnostic *follows from*
+    the telicity feature. -/
+theorem inX_from_telicity (c : VendlerClass) :
+    inXPrediction c = .accept ↔ c.telicity = .telic := by
+  cases c <;> simp [inXPrediction, VendlerClass.telicity]
+
+/-- "for X" acceptance is equivalent to atelicity + duration.
+    Semelfactives are atelic but only accept "for X" with coercion
+    (because they are punctual — no duration to measure).
+    The diagnostic follows from two features, not from the class label. -/
+theorem forX_from_features (c : VendlerClass) :
+    forXPrediction c = .accept ↔
+    (c.telicity = .atelic ∧ c.duration = .durative) := by
+  cases c <;> simp [forXPrediction, VendlerClass.telicity, VendlerClass.duration]
+
+/-- Semelfactive coercion under "for X" derives from being atelic
+    but punctual: atelicity licenses temporal modification, but
+    punctuality forces iterative reinterpretation. -/
+theorem forX_semelfactive_coercion :
+    forXPrediction .semelfactive = .coerced ∧
+    VendlerClass.semelfactive.telicity = .atelic ∧
+    VendlerClass.semelfactive.duration = .punctual := ⟨rfl, rfl, rfl⟩
+
+/-- Progressive acceptance is equivalent to being durative and dynamic.
+    States fail (not dynamic); achievements/semelfactives fail (not durative). -/
+theorem progressive_from_features (c : VendlerClass) :
+    progressivePrediction c = .accept ↔
+    (c.dynamicity = .dynamic ∧ c.duration = .durative) := by
+  cases c <;> simp [progressivePrediction, VendlerClass.dynamicity, VendlerClass.duration]
 
 end Phenomena.TenseAspect.Diagnostics

@@ -1,3 +1,4 @@
+import Linglib.Core.Gender
 import Linglib.Fragments.Bantu.Params
 
 /-!
@@ -136,5 +137,17 @@ def Gender.status : Gender → GenderStatus
   | .genderA => .interpretable .human
   | .genderD => .interpretable .nonhuman
   | _ => .uninterpretable
+
+-- ============================================================================
+-- § 5: Bridge to Core.SurfaceGender
+-- ============================================================================
+
+/-- Map Shona gender classes to the shared surface-level gender type.
+    Gender A (cl1/cl2, human) → animate; all others → inanimate.
+    Shona's binary [±human] split maps naturally to the animate/inanimate
+    distinction. -/
+def Gender.toSurfaceGender : Gender → Core.SurfaceGender
+  | .genderA => .animate
+  | _ => .inanimate
 
 end Fragments.Shona

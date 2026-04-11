@@ -71,12 +71,15 @@ abbrev PointPred (W Time : Type*) := Situation W Time → Prop
 -- § Klein's Viewpoint Classification
 -- ════════════════════════════════════════════════════
 
-/-- @cite{klein-1994} viewpoint aspect types. -/
+/-- Viewpoint aspect types. @cite{klein-1994} identified imperfective,
+    perfective, perfect, and prospective. @cite{smith-1997} added the
+    neutral viewpoint (default in the absence of overt aspect morphology). -/
 inductive ViewpointType where
   | imperfective  -- TT INCL TSit
   | perfective    -- TT AT TSit
   | perfect       -- TT AFTER TSit
   | prospective   -- TT BEFORE TSit
+  | neutral       -- Smith 1997: initial endpoint + internal stages visible, F(e) not visible
   deriving DecidableEq, Repr, Inhabited
 
 /-- Bool-level viewpoint aspect, capturing the perfective/imperfective distinction
@@ -95,7 +98,7 @@ inductive ViewpointAspectB where
 def ViewpointType.toBoolAspect : ViewpointType → Option ViewpointAspectB
   | .perfective => some .perfective
   | .imperfective => some .imperfective
-  | .perfect | .prospective => none
+  | .perfect | .prospective | .neutral => none
 
 /-- Embed `ViewpointAspectB` back into Klein's full classification. -/
 def ViewpointAspectB.toKleinViewpoint : ViewpointAspectB → ViewpointType
@@ -114,6 +117,7 @@ def ViewpointType.ttTSitRelation {Time : Type*} [LinearOrder Time]
   | .perfective   => tsit.subinterval tt
   | .perfect      => tt.isAfter tsit
   | .prospective  => tt.isBefore tsit
+  | .neutral      => tt.initialOverlap tsit
 
 -- ════════════════════════════════════════════════════
 -- § Aspect Operators
@@ -127,7 +131,7 @@ def IMPF (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, t.properSubinterval e.τ ∧ P w e
 
 /-- **PERFECTIVE**: event runtime contained in reference time.
-    @cite{klein-1994}: TT AT TSit (simplified to TSit ⊆ TT, following @cite{smith-1991}).
+    @cite{klein-1994}: TT AT TSit (simplified to TSit ⊆ TT, following @cite{smith-1997}).
     @cite{knick-sharf-2026} eq. 28. -/
 def PRFV (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, e.τ.subinterval t ∧ P w e
@@ -137,12 +141,18 @@ def PRFV (P : EventPred W Time) : IntervalPred W Time :=
 def PROSP (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, t.isBefore e.τ ∧ P w e
 
-/-- **NEUTRAL**: initial overlap between reference time and event runtime.
+/-- **INIT_OVERLAP**: initial overlap between reference time and event runtime.
     @cite{pancheva-2003} eq. 7b: ⟦NEUTRAL⟧ = λP.λi.∃e[i ∂τ(e) & P(e)]
     The beginning of the eventuality is in the reference interval,
-    but the end may extend beyond. Derives Experiential perfect readings. -/
-def NEUTRAL (P : EventPred W Time) : IntervalPred W Time :=
+    but the end may extend beyond. Derives experiential perfect readings.
+
+    Renamed from `NEUTRAL` to avoid collision with @cite{smith-1997}'s
+    neutral viewpoint (`ViewpointType.neutral`), which is a different concept.
+    Pancheva's operator is an inner Asp₂ head; Smith's neutral viewpoint is
+    a default viewpoint type. -/
+def INIT_OVERLAP (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, t.initialOverlap e.τ ∧ P w e
+
 
 -- ════════════════════════════════════════════════════
 -- § Perfect Time Span / Extended Now
@@ -254,11 +264,11 @@ namespace Semantics.Tense.Aspect.LexicalAspect
 /-- States and activities naturally pair with IMPF (homogeneous). -/
 def VendlerClass.naturallyImperfective : VendlerClass → Bool
   | .state | .activity => true
-  | .achievement | .accomplishment => false
+  | .achievement | .accomplishment | .semelfactive => false
 
 /-- Achievements and accomplishments naturally pair with PRFV (telic). -/
 def VendlerClass.naturallyPerfective : VendlerClass → Bool
-  | .state | .activity => false
+  | .state | .activity | .semelfactive => false
   | .achievement | .accomplishment => true
 
 end Semantics.Tense.Aspect.LexicalAspect
@@ -314,7 +324,7 @@ theorem impf_prfv_opposite_containment (P : EventPred W Time) (w : W) (t : Inter
 
 /-! @cite{pancheva-2003} decomposes perfect participles into two aspect heads:
     [T [Asp₁=PERFECT [Asp₂=VIEWPOINT [vP]]]]. The inner Asp₂ (UNBOUNDED,
-    NEUTRAL, or BOUNDED) determines the perfect type (universal, experiential,
+    INIT_OVERLAP, or BOUNDED) determines the perfect type (universal, experiential,
     or resultative). The outer Asp₁ = PERFECT introduces the PTS via a
     **final subinterval** relation rather than a point-based right boundary. -/
 
@@ -371,7 +381,7 @@ theorem perf_p_monotone (p q : IntervalPred W Time)
     BOUNDED is a simplification sufficient for the temporal structure. -/
 inductive PerfectType where
   | universal     -- PERFECT(UNBOUNDED): ongoing through PTS
-  | experiential  -- PERFECT(NEUTRAL): began within PTS
+  | experiential  -- PERFECT(INIT_OVERLAP): began within PTS
   | resultative   -- PERFECT(BOUNDED): completed within PTS (simplified)
   deriving DecidableEq, Repr
 
@@ -381,11 +391,11 @@ inductive PerfectType where
 abbrev universalPerfect (P : EventPred W Time) : IntervalPred W Time :=
   PERF_P (UNBOUNDED P)
 
-/-- Experiential perfect: PERF_P(NEUTRAL(V)).
+/-- Experiential perfect: PERF_P(INIT_OVERLAP(V)).
     "has visited Paris" — event began within PTS.
-    @cite{pancheva-2003}: neutral aspect allows event to extend beyond PTS. -/
+    @cite{pancheva-2003}: initial-overlap aspect allows event to extend beyond PTS. -/
 abbrev experientialPerfect (P : EventPred W Time) : IntervalPred W Time :=
-  PERF_P (NEUTRAL P)
+  PERF_P (INIT_OVERLAP P)
 
 /-- Resultative perfect: PERF_P(BOUNDED(V)).
     "has broken the vase" — event completed within PTS.

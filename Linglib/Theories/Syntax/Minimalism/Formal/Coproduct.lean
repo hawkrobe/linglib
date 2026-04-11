@@ -42,7 +42,7 @@ T/^c and T/^d are formalized here; T/^ρ requires n-ary trees
 (not formalized). -/
 
 /-- A placeholder leaf token for quotient tree contraction points -/
-private def quotientLeafToken : LIToken :=
+def quotientLeafToken : LIToken :=
   ⟨LexicalItem.simple .N [], 0⟩
 
 /-- Quotient tree: replace the first occurrence of `v` in `T` with a leaf.
@@ -259,6 +259,21 @@ def cutOptions : SyntacticObject → List (List SyntacticObject × SyntacticObje
 
 theorem cutOptions_leaf (tok : LIToken) :
     cutOptions (.leaf tok) = [([], .leaf tok)] := rfl
+
+/-- Extended cut options: `cutOptions T` plus (if T is an internal node) the
+    option of cutting T entirely, replacing it with a stump leaf.
+    This is the factor set in the Cartesian product decomposition of
+    `cutOptions (node a b) = extOptions(a) ×_cart extOptions(b)`. -/
+def extOptions (T : SyntacticObject) :
+    List (List SyntacticObject × SyntacticObject) :=
+  cutOptions T ++ match T with
+    | .node _ _ => [([T], .leaf quotientLeafToken)]
+    | .leaf _ => []
+
+theorem cutOptions_node (a b : SyntacticObject) :
+    cutOptions (.node a b) =
+    (extOptions a).flatMap fun ⟨Pa, Ra⟩ =>
+      (extOptions b).map fun ⟨Pb, Rb⟩ => (Pa ++ Pb, .node Ra Rb) := rfl
 
 /-! ## Leading coproduct (Definition 1.2.8)
 

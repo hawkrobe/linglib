@@ -276,18 +276,6 @@ def CausativeBuilder.selectionMode : CausativeBuilder → CCSelectionMode
   | .cause => .memberOfSufficientSet
   | .make | .force | .enable | .prevent => .completionOfSufficientSet
 
-/-- Derive a `CausalProfile` from a builder.
-
-    The profile captures which causal-model properties the builder asserts.
-    This connects `CausativeBuilder` to `CausalProfile`
-    (Core/StructuralEquationModel.lean) without requiring model evaluation. -/
-def CausativeBuilder.toProfile : CausativeBuilder → CausalProfile
-  | .cause => { sufficient := false, necessary := true, direct := false }
-  | .make => { sufficient := true, necessary := false, direct := false }
-  | .force => { sufficient := true, necessary := false, direct := true }
-  | .enable => { sufficient := true, necessary := false, direct := false }
-  | .prevent => { sufficient := false, necessary := false, direct := false }
-
 /-- Sufficiency builders have completion selection mode. -/
 theorem sufficiency_selects_completion (b : CausativeBuilder)
     (h : b.assertsSufficiency = true) :

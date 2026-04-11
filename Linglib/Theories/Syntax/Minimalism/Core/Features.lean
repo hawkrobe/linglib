@@ -4,13 +4,26 @@ import Linglib.Core.Prominence
 
 /-!
 # Feature Infrastructure for Minimalist Agree
-@cite{adger-2003} @cite{chomsky-2000} @cite{chomsky-2001} @cite{alok-2020} @cite{alok-bhalla-2026} @cite{lobeck-1995} @cite{panagiotidis-2015} @cite{pollock-1989}
+@cite{adger-2003} @cite{chomsky-1995} @cite{chomsky-2000} @cite{chomsky-2001} @cite{alok-2020} @cite{alok-bhalla-2026} @cite{lobeck-1995} @cite{panagiotidis-2015} @cite{pollock-1989}
 
 Phi-features, case values, and feature bundles — the shared infrastructure
 underlying all Agree-based operations. Extracted from `Agree.lean` to
 separate the feature *types* (what can be checked) from the Agree
 *operation* (how checking works) and the *failure model* (what happens
 when checking fails; see `ObligatoryOperations.lean`).
+
+## ±Interpretable Features (@cite{chomsky-1995} Ch 4 §4.5)
+
+The ±Interpretable distinction is orthogonal to valued/unvalued:
+
+- **+Interpretable**: contributes to meaning, survives to LF.
+  Categorial features ([N], [V], [D], [C]) and φ-features of nouns.
+- **–Interpretable**: must be checked and deleted before LF.
+  Case features, φ-features of T/v, strong [nominal-] features.
+
+Interpretability is determined by the combination of feature type and
+host category: person on N is +Interpretable, person on T is
+–Interpretable. `isInterpretableOn` encodes this mapping.
 
 ## Design Decision: `PersonLevel` replaces `Nat`
 
@@ -159,10 +172,21 @@ def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
 -- § 5: Grammatical Features (Valued / Unvalued)
 -- ============================================================================
 
-/-- A grammatical feature: either valued or unvalued
+/-- A grammatical feature: either valued or unvalued.
 
-    - Valued (interpretable): contributes to meaning, can be a goal
-    - Unvalued (uninterpretable): must be checked, acts as probe -/
+    **Valued vs unvalued** is about whether the feature carries a specific
+    value (person:3) or just a type placeholder (person:_). This is
+    orthogonal to ±Interpretable (see `Interpretability` below):
+
+    |                 | +Interpretable          | –Interpretable               |
+    |-----------------|------------------------|-------------------------------|
+    | **Valued**      | φ of N (person:3)      | —                             |
+    | **Unvalued**    | —                      | φ of T/v, Case of N           |
+
+    Unvalued features act as probes; valued features can be goals.
+    But interpretability determines whether a feature *must be checked
+    and deleted* before LF — a separate question from whether it
+    currently carries a value. -/
 inductive GramFeature where
   | valued : FeatureVal → GramFeature
   | unvalued : FeatureVal → GramFeature  -- The FeatureVal indicates feature TYPE
@@ -209,5 +233,54 @@ def hasValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
     Uses `sameType` for type-level matching. -/
 def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeature :=
   fb.find? λ f => f.isValued && f.featureType.sameType ftype
+
+-- ============================================================================
+-- § 7: ±Interpretable Features
+-- ============================================================================
+
+/-- Whether a feature is interpretable (contributes to LF) or
+    uninterpretable (must be checked and deleted before LF).
+
+    This is the central distinction of @cite{chomsky-1995} Ch 4 §4.5.
+    It is orthogonal to valued/unvalued: a feature can be interpretable
+    but unvalued (rare), or uninterpretable but valued (never, in the
+    standard theory). The typical pairings are:
+
+    - +Interpretable, valued: φ-features on nouns, categorial features
+    - –Interpretable, unvalued: φ-features on T/v, Case on nouns
+
+    `AgreeSOT.lean` uses `Interpretability` directly for tense features.
+    `GenderResolution.lean`'s `AnnotatedFeature.interp` uses `Interpretability`
+    directly; `CoordinateResolution.lean`, `AdamsonAnagnostopoulou2025.lean`,
+    and `Carstens2026.lean` all use it via `open _root_.Minimalism`. -/
+inductive Interpretability where
+  | interpretable    -- +Interp: contributes to LF, survives
+  | uninterpretable  -- –Interp: must be checked and deleted
+  deriving Repr, DecidableEq
+
+/-- Whether a feature is inherently interpretable regardless of host.
+
+    Some features are always interpretable (categorial, honorific,
+    factive) or always uninterpretable (Case, EPP, ellipsis).
+    For features whose interpretability depends on host category
+    (phi, wh, tense), see `isInterpretableOn` in `Checking.lean`. -/
+def FeatureVal.inherentInterpretability : FeatureVal → Option Interpretability
+  | .catN _ | .catV _ => some .interpretable
+  | .case _ => some .uninterpretable
+  | .epp _ => some .uninterpretable
+  | .ellipsis _ => some .uninterpretable
+  | .oblique _ => some .uninterpretable
+  | .hon _ => some .interpretable
+  | .neg _ => some .interpretable
+  | .factive _ | .pol _ | .pov _ => some .interpretable
+  | _ => none  -- host-dependent: phi, wh, q, tense, finite, foc, rel
+
+/-- Case is always uninterpretable. -/
+theorem case_always_uninterpretable (cv : CaseVal) :
+    FeatureVal.inherentInterpretability (.case cv) = some .uninterpretable := rfl
+
+/-- Categorial [N] is always interpretable. -/
+theorem catN_always_interpretable (b : Bool) :
+    FeatureVal.inherentInterpretability (.catN b) = some .interpretable := rfl
 
 end Minimalism

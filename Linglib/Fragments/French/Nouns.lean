@@ -1,3 +1,4 @@
+import Linglib.Core.Gender
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
@@ -9,13 +10,7 @@ French NP structure with gender. Bare arguments restricted (@cite{chierchia-1998
 namespace Fragments.French.Nouns
 
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
-
-
-/-- Grammatical gender -/
-inductive Gender where
-  | masc  -- Masculine
-  | fem   -- Feminine
-  deriving DecidableEq, Repr
+open Core (SurfaceGender)
 
 /--
 A lexical entry for a French noun.
@@ -28,7 +23,7 @@ structure NounEntry where
   /-- Plural form -/
   formPl : Option String := none
   /-- Grammatical gender -/
-  gender : Gender
+  gender : SurfaceGender
   /-- Is this a count noun? -/
   countable : Bool := true
   /-- Is this a proper name? -/
@@ -76,16 +71,16 @@ def frenchMapping : NominalMapping := .predOnly
 /-- Create a definite NP (le/la/les) -/
 def defNP (n : NounEntry) (num : Number := .sg) : NP :=
   let det := match num, n.gender with
-    | .sg, .masc => Determiner.le
-    | .sg, .fem => Determiner.la
+    | .sg, .masculine => Determiner.le
+    | .sg, .feminine => Determiner.la
     | _, _ => Determiner.les      -- plural (and fallback for non-binary number)
   { noun := n, number := num, isBare := false, determiner := some det }
 
 /-- Create an indefinite singular NP (un/une) -/
 def indefNP (n : NounEntry) : NP :=
   let det := match n.gender with
-    | .masc => Determiner.un
-    | .fem => Determiner.une
+    | .feminine => Determiner.une
+    | _ => Determiner.un  -- masculine is default
   { noun := n, number := .sg, isBare := false, determiner := some det }
 
 /-- Create an indefinite plural NP (des) -/
@@ -95,8 +90,8 @@ def desNP (n : NounEntry) : NP :=
 /-- Create a partitive NP (du/de la) for mass nouns -/
 def partNP (n : NounEntry) : NP :=
   let det := match n.gender with
-    | .masc => Determiner.du
-    | .fem => Determiner.dela
+    | .feminine => Determiner.dela
+    | _ => Determiner.du  -- masculine is default
   { noun := n, number := .sg, isBare := false, determiner := some det }
 
 /-- Create a bare NP (restricted in French) -/
@@ -104,31 +99,31 @@ def bareNP (n : NounEntry) (num : Number := .sg) : NP :=
   { noun := n, number := num, isBare := true }
 
 
-def chien : NounEntry := { formSg := "chien", formPl := some "chiens", gender := .masc }
-def chat : NounEntry := { formSg := "chat", formPl := some "chats", gender := .masc }
-def livre : NounEntry := { formSg := "livre", formPl := some "livres", gender := .masc }
-def homme : NounEntry := { formSg := "homme", formPl := some "hommes", gender := .masc }
-def garcon : NounEntry := { formSg := "garçon", formPl := some "garçons", gender := .masc }
-def professeur : NounEntry := { formSg := "professeur", formPl := some "professeurs", gender := .masc }
-def etudiant : NounEntry := { formSg := "étudiant", formPl := some "étudiants", gender := .masc }
-def avocat : NounEntry := { formSg := "avocat", formPl := some "avocats", gender := .masc }
-def cheval : NounEntry := { formSg := "cheval", formPl := some "chevaux", gender := .masc }
+def chien : NounEntry := { formSg := "chien", formPl := some "chiens", gender := .masculine }
+def chat : NounEntry := { formSg := "chat", formPl := some "chats", gender := .masculine }
+def livre : NounEntry := { formSg := "livre", formPl := some "livres", gender := .masculine }
+def homme : NounEntry := { formSg := "homme", formPl := some "hommes", gender := .masculine }
+def garcon : NounEntry := { formSg := "garçon", formPl := some "garçons", gender := .masculine }
+def professeur : NounEntry := { formSg := "professeur", formPl := some "professeurs", gender := .masculine }
+def etudiant : NounEntry := { formSg := "étudiant", formPl := some "étudiants", gender := .masculine }
+def avocat : NounEntry := { formSg := "avocat", formPl := some "avocats", gender := .masculine }
+def cheval : NounEntry := { formSg := "cheval", formPl := some "chevaux", gender := .masculine }
 
-def fille : NounEntry := { formSg := "fille", formPl := some "filles", gender := .fem }
-def femme : NounEntry := { formSg := "femme", formPl := some "femmes", gender := .fem }
-def table : NounEntry := { formSg := "table", formPl := some "tables", gender := .fem }
-def pomme : NounEntry := { formSg := "pomme", formPl := some "pommes", gender := .fem }
-def fleur : NounEntry := { formSg := "fleur", formPl := some "fleurs", gender := .fem }
+def fille : NounEntry := { formSg := "fille", formPl := some "filles", gender := .feminine }
+def femme : NounEntry := { formSg := "femme", formPl := some "femmes", gender := .feminine }
+def table : NounEntry := { formSg := "table", formPl := some "tables", gender := .feminine }
+def pomme : NounEntry := { formSg := "pomme", formPl := some "pommes", gender := .feminine }
+def fleur : NounEntry := { formSg := "fleur", formPl := some "fleurs", gender := .feminine }
 
-def eau : NounEntry := { formSg := "eau", formPl := none, gender := .fem, countable := false }
-def vin : NounEntry := { formSg := "vin", formPl := none, gender := .masc, countable := false }
-def pain : NounEntry := { formSg := "pain", formPl := none, gender := .masc, countable := false }
-def lait : NounEntry := { formSg := "lait", formPl := none, gender := .masc, countable := false }
+def eau : NounEntry := { formSg := "eau", formPl := none, gender := .feminine, countable := false }
+def vin : NounEntry := { formSg := "vin", formPl := none, gender := .masculine, countable := false }
+def pain : NounEntry := { formSg := "pain", formPl := none, gender := .masculine, countable := false }
+def lait : NounEntry := { formSg := "lait", formPl := none, gender := .masculine, countable := false }
 
 
-def jean : NounEntry := { formSg := "Jean", formPl := none, gender := .masc, proper := true }
-def marie : NounEntry := { formSg := "Marie", formPl := none, gender := .fem, proper := true }
-def pierre : NounEntry := { formSg := "Pierre", formPl := none, gender := .masc, proper := true }
+def jean : NounEntry := { formSg := "Jean", formPl := none, gender := .masculine, proper := true }
+def marie : NounEntry := { formSg := "Marie", formPl := none, gender := .feminine, proper := true }
+def pierre : NounEntry := { formSg := "Pierre", formPl := none, gender := .masculine, proper := true }
 
 
 def allNouns : List NounEntry := [

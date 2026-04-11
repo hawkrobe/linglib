@@ -248,20 +248,22 @@ theorem surviving_is_neg_gtia_pfv :
 
 /-- The subinterval property (homogeneity) corresponds to open-scale
     boundedness in the Kennedy–Rouillard isomorphism.
-    `homogeneous_iff_atelic` (from Aspect.lean) + `atelic_open` (from
-    MaximalInformativity.lean) form the bridge chain:
-    homogeneous → atelic → open scale → E-TIA blocked. -/
+    `homogeneous_iff_durative_atelic` (from LexicalAspect.lean) +
+    `atelic_open` (from MaximalInformativity.lean) form the bridge chain:
+    homogeneous → state ∨ activity → atelic → open scale → E-TIA blocked. -/
 theorem homogeneous_implies_open_scale (p : AspectualProfile)
     (h : p.isHomogeneous = true) :
     scaleBoundedness p.toVendlerClass = .open_ := by
-  rw [(homogeneous_iff_atelic p).mp h |> atelic_open p.toVendlerClass]
+  have hvc := (homogeneous_iff_durative_atelic p).mp h
+  rcases hvc with hc | hc <;> rw [hc] <;> native_decide
 
-/-- Non-homogeneous (telic) → closed scale → E-TIA licensed. -/
-theorem nonhomogeneous_implies_closed_scale (p : AspectualProfile)
-    (h : p.isHomogeneous = false) :
+/-- Telic → closed scale → E-TIA licensed.
+    Note: non-homogeneous alone is insufficient — semelfactives are
+    non-homogeneous (punctual) but atelic, mapping to open scale. -/
+theorem telic_implies_closed_scale (p : AspectualProfile)
+    (h : p.toVendlerClass.telicity = .telic) :
     scaleBoundedness p.toVendlerClass = .closed := by
-  cases hc : p.toVendlerClass <;>
-    first | rfl | (simp [hc, AspectualProfile.isHomogeneous] at h)
+  exact telic_closed p.toVendlerClass h
 
 -- ════════════════════════════════════════════════════
 -- § 8. NPI Bridge: G-TIAs as NPIs Licensed by MIP

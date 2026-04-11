@@ -558,6 +558,24 @@ variable {W : Type}
 def twoDimToWriter (p : TwoDimProp W) : Writer (W → Bool) (W → Bool) :=
   ⟨p.atIssue, [p.ci]⟩
 
+-- ────────────────────────────────────────────────────
+-- CI projection universality
+-- ────────────────────────────────────────────────────
+
+/-- **CI projection universality.** Any operation that acts via
+    `Writer.map` (i.e., transforms the value but leaves the log untouched)
+    automatically preserves all CI content.
+
+    This is the general principle behind CI projection through negation,
+    conditionals, and questions: they are all Functor maps on the Writer.
+    Projection is not a special property of each operator — it is the
+    Functor law.
+
+    Specializes to `twoDim_neg_ci_via_writer` when `f = fun p w => !p w`. -/
+theorem ci_projection_universal {W A B : Type}
+    (f : A → B) (m : Writer (W → Bool) A) :
+    (Writer.map f m).log = m.log := rfl
+
 /-- CI projection through negation follows from the Writer architecture:
     `map` transforms the value but leaves the log untouched. -/
 theorem twoDim_neg_ci_via_writer (p : TwoDimProp W) :
@@ -566,6 +584,97 @@ theorem twoDim_neg_ci_via_writer (p : TwoDimProp W) :
 /-- The at-issue content of negation is pointwise negation of the original. -/
 theorem twoDim_neg_val_via_writer (p : TwoDimProp W) :
     (twoDimToWriter (TwoDimProp.neg p)).val = λ w => !p.atIssue w := rfl
+
+-- ────────────────────────────────────────────────────
+-- Running the CI Writer (shunting)
+-- ────────────────────────────────────────────────────
+
+/-- Run a CI Writer by conjoining all log entries with the value.
+
+    This is the Writer counterpart of shunting (↓ from
+    @cite{kirk-giannini-2024}): peripheral content is folded into
+    the at-issue dimension via conjunction, and the CI dimension
+    becomes trivial. The result is a `TwoDimProp` with all information
+    in the at-issue dimension.
+
+    For a single-CI Writer (the standard case from `twoDimToWriter`),
+    this computes `atIssue w && ci w` — identical to the `shunt`
+    function in `Theories.Semantics.Quotation.MixedQuotation`.
+
+    For multi-CI Writers (e.g., "that bastard John met that jerk Pete"
+    with two CI entries), this conjoins all CIs into at-issue content. -/
+def runCIWriter {W : Type} (m : Writer (W → Bool) (W → Bool)) : TwoDimProp W :=
+  { atIssue := λ w => m.log.foldl (λ acc ci => acc && ci w) (m.val w)
+  , ci := λ _ => true }
+
+/-- Running a CI Writer consumes the log: the result has trivial CI. -/
+theorem runCIWriter_trivial_ci {W : Type} (m : Writer (W → Bool) (W → Bool)) (w : W) :
+    (runCIWriter m).ci w = true := rfl
+
+/-- Running a Writer with an empty log preserves the value unchanged. -/
+theorem runCIWriter_empty_log {W : Type} (val : W → Bool) (w : W) :
+    (runCIWriter ⟨val, []⟩).atIssue w = val w := rfl
+
+/-- Running a Writer with a trivially-true log entry preserves the
+    value unchanged.
+
+    Pure quotation = clearing the log to `[λ _ => true]`. Running
+    such a Writer recovers the original at-issue content. -/
+theorem runCIWriter_trivial_log {W : Type} (val : W → Bool) (w : W) :
+    (runCIWriter ⟨val, [λ _ => true]⟩).atIssue w = val w := by
+  simp [runCIWriter, Bool.and_true]
+
+-- ────────────────────────────────────────────────────
+-- Single-CI round-trip (TwoDimProp ↔ Writer)
+-- ────────────────────────────────────────────────────
+
+/-- **Single-CI round-trip.** Embedding a `TwoDimProp` into Writer then
+    running conjoins the at-issue and CI dimensions — exactly the
+    shunting operation ↓ from @cite{kirk-giannini-2024}.
+
+    This is definitionally equal to `shunt` from
+    `Theories.Semantics.Quotation.MixedQuotation`. -/
+theorem runCIWriter_twoDim {W : Type} (p : TwoDimProp W) (w : W) :
+    (runCIWriter (twoDimToWriter p)).atIssue w = (p.atIssue w && p.ci w) := rfl
+
+/-- Function-level version: the round-trip is shunting as a function,
+    not just at a single world. -/
+theorem runCIWriter_twoDim_fn {W : Type} (p : TwoDimProp W) :
+    (runCIWriter (twoDimToWriter p)).atIssue = λ w => p.atIssue w && p.ci w := rfl
+
+-- ────────────────────────────────────────────────────
+-- Multi-CI compositionality
+-- ────────────────────────────────────────────────────
+
+/-- **Log compositionality.** Running a Writer whose log is a
+    concatenation = running the first part, then folding the rest on top.
+
+    This is the multi-CI generalization of shunting. When `Writer.bind`
+    sequences two CI-producing computations (e.g., "that bastard John
+    met that jerk Pete"), their logs are concatenated. Running the result
+    conjoins all CIs into the at-issue dimension.
+
+    Follows from `List.foldl_append`. -/
+theorem runCIWriter_log_append {W : Type}
+    (val : W → Bool) (cis₁ cis₂ : List (W → Bool)) (w : W) :
+    (runCIWriter ⟨val, cis₁ ++ cis₂⟩).atIssue w =
+    cis₂.foldl (λ acc ci => acc && ci w)
+      ((runCIWriter ⟨val, cis₁⟩).atIssue w) := by
+  simp [runCIWriter, List.foldl_append]
+
+/-- **Idempotency.** Running, re-embedding, and running again = running once.
+
+    After `runCIWriter` consumes the log, the CI dimension is trivial.
+    Re-embedding (via `twoDimToWriter`) creates a `[fun _ => true]` log.
+    Running again conjoins with `true`, which is the identity.
+
+    This is the retraction property: `runCIWriter ∘ twoDimToWriter` is
+    idempotent on the image of `runCIWriter`. -/
+theorem runCIWriter_idempotent {W : Type}
+    (m : Writer (W → Bool) (W → Bool)) (w : W) :
+    (runCIWriter (twoDimToWriter (runCIWriter m))).atIssue w =
+    (runCIWriter m).atIssue w := by
+  simp [runCIWriter, twoDimToWriter, Bool.and_true]
 
 end CIBridge
 

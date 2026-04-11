@@ -1,3 +1,5 @@
+import Linglib.Theories.Syntax.Minimalism.Core.Features
+
 /-!
 # Gender Resolution in Coordination
 
@@ -50,6 +52,8 @@ Match** (most specific semantic core wins).
 
 namespace Theories.Syntax.Minimalism.Agreement.GenderResolution
 
+open _root_.Minimalism (Interpretability)
+
 -- ============================================================================
 -- § 1: Annotated Features
 -- ============================================================================
@@ -57,10 +61,12 @@ namespace Theories.Syntax.Minimalism.Agreement.GenderResolution
 /-- A gender feature annotated with interpretability.
     @cite{kramer-2015}: gender features on categorizing heads n are either
     interpretable (i) — natural gender — or uninterpretable (u) — arbitrary.
-    Only i-features enter the resolution calculus. -/
+    Only i-features enter the resolution calculus.
+
+    Uses the unified `Interpretability` type from `Features.lean`. -/
 structure AnnotatedFeature (F : Type) where
   value : F
-  interp : Bool
+  interp : Interpretability
   deriving DecidableEq, Repr
 
 /-- A feature bundle on a conjunct DP. Features are ordered from outermost
@@ -76,7 +82,7 @@ abbrev FeatureBundle (F : Type) := List (AnnotatedFeature F)
     u-features are excluded from the resolution calculus
     (@cite{adamson-anagnostopoulou-2025}). -/
 def percolateI {F : Type} (fs : FeatureBundle F) : List F :=
-  (fs.filter (·.interp)).map (·.value)
+  (fs.filter (·.interp == .interpretable)).map (·.value)
 
 -- ============================================================================
 -- § 3: Intersection and Resolution
@@ -115,8 +121,8 @@ def resolve {F : Type} [BEq F]
     requires `LawfulBEq` to ensure `f == f = true`. -/
 theorem singleton_self_matching {F : Type} [BEq F] [LawfulBEq F]
     (f : F) :
-    resolve [⟨f, true⟩] [⟨f, true⟩] = some [f] := by
-  have hp : percolateI (F := F) [⟨f, true⟩] = [f] := rfl
+    resolve [⟨f, .interpretable⟩] [⟨f, .interpretable⟩] = some [f] := by
+  have hp : percolateI (F := F) [⟨f, .interpretable⟩] = [f] := rfl
   suffices h : intersectFeatures [f] [f] = [f] by
     simp only [resolve, hp, h]
   unfold intersectFeatures
@@ -127,7 +133,7 @@ theorem singleton_self_matching {F : Type} [BEq F] [LawfulBEq F]
     a singleton u-feature bundle always yields `none`. -/
 theorem singleton_u_default {F : Type} [BEq F]
     (f : F) :
-    resolve [⟨f, false⟩] [⟨f, false⟩] = none := by
+    resolve [⟨f, .uninterpretable⟩] [⟨f, .uninterpretable⟩] = none := by
   unfold resolve percolateI intersectFeatures
   rfl
 

@@ -54,13 +54,14 @@ namespace Phenomena.Agreement.Studies.Carstens2026
 
 open Fragments.Bantu
 open Theories.Syntax.Minimalism.Agreement.GenderResolution
+open _root_.Minimalism (Interpretability)
 
 -- ============================================================================
 -- Preamble: Fragment → Theory Bridge
 -- ============================================================================
 
 /-- A single interpretable nP layer bearing `SemanticCore` c. -/
-def nP (c : SemanticCore) : FeatureBundle SemanticCore := [⟨c, true⟩]
+def nP (c : SemanticCore) : FeatureBundle SemanticCore := [⟨c, .interpretable⟩]
 
 /-- An uninterpretable nP layer (no features to percolate). -/
 def nP_u : FeatureBundle SemanticCore := []
@@ -600,14 +601,14 @@ def TwoGrammarFeature.specificity (f : TwoGrammarFeature) : Nat :=
     Inner: class 7, core i[inanimate] from gender D.
     @cite{carstens-2026} (78)a, (79)a, (80)a. -/
 def trainFeatures : FeatureBundle TwoGrammarFeature :=
-  [⟨⟨1, false⟩, true⟩, ⟨⟨7, true⟩, true⟩]
+  [⟨⟨1, false⟩, .interpretable⟩, ⟨⟨7, true⟩, .interpretable⟩]
 
 /-- Feature bundle for diviner.7: [n₇(arbitrary) [n₁(core human) √DIVINER]].
     Outer: class 7, arbitrary i[entity] from gender D.
     Inner: class 1, core i[human] from gender A.
     @cite{carstens-2026} (78)b, (79)b, (80)b. -/
 def divinerFeatures : FeatureBundle TwoGrammarFeature :=
-  [⟨⟨7, false⟩, true⟩, ⟨⟨1, true⟩, true⟩]
+  [⟨⟨7, false⟩, .interpretable⟩, ⟨⟨1, true⟩, .interpretable⟩]
 
 /-- Intersection for train.1a & machine.1a: both layers survive.
     @cite{carstens-2026} (79)a: &P {1, {7}} ∩ {1, {7}} = {1, {7}}. -/
@@ -692,8 +693,8 @@ open Theories.Syntax.Minimalism.Agreement.CoordinateResolution
 /-- A Bantu singular DP's phi-bundle: 3rd person (all full DPs are 3rd),
     singular number, gender from the noun's gender status. -/
 def bantuDP (s : GenderStatus) : PhiBundle SemanticCore :=
-  { person := ⟨.third, true⟩
-    number := ⟨.singular, true⟩
+  { person := ⟨.third, .interpretable⟩
+    number := ⟨.singular, .interpretable⟩
     gender := statusToBundle s }
 
 /-- Conjoined Bantu singulars → plural number (summation).
@@ -770,7 +771,7 @@ theorem bantu_aa_self_matching_consistent :
       = true) ∧
     -- A&A: singleton i-features self-match
     (∀ f : GenderNode,
-      (resolve [⟨f, true⟩] [⟨f, true⟩]).isSome = true) := by
+      (resolve [⟨f, .interpretable⟩] [⟨f, .interpretable⟩]).isSome = true) := by
   constructor
   · intro c; cases c <;> native_decide
   · intro f; cases f <;> native_decide

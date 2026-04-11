@@ -798,6 +798,7 @@ import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025
 import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
+import Linglib.Phenomena.TenseAspect.Studies.Smith1997
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
@@ -1131,6 +1132,7 @@ import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2022
 import Linglib.Phenomena.Presupposition.Studies.GroveWhite2025
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Phenomena.Expressives.Studies.LoGuercio2025
+import Linglib.Phenomena.Quotation.Studies.KirkGiannini2024
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
@@ -1653,6 +1655,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.ONEModifiers
 import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
+import Linglib.Theories.Semantics.Quotation.MixedQuotation
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
@@ -1721,6 +1724,7 @@ import Linglib.Theories.Semantics.Tense.ConditionalShift
 import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
+import Linglib.Theories.Semantics.Tense.Aspect.Composition
 import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty
 import Linglib.Theories.Semantics.Tense.MaximalInformativity
 import Linglib.Theories.Semantics.Tense.PTS
@@ -1951,6 +1955,7 @@ import Linglib.Phenomena.Causation.Studies.KonukEtAl2026
 import Linglib.Phenomena.Causation.Studies.KoontzGarboden2009
 import Linglib.Phenomena.Causation.Studies.Krejci2012
 import Linglib.Phenomena.Causation.Studies.Song1996
+import Linglib.Phenomena.Causation.Studies.Lewis1973
 import Linglib.Phenomena.Ellipsis.Studies.BergenGoodman2015
 import Linglib.Phenomena.Ellipsis.Studies.Osborne2019
 import Linglib.Phenomena.Ellipsis.Studies.Osborne2019Parallelism

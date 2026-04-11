@@ -40,7 +40,8 @@ namespace Phenomena.Plurals.Studies.TieuEtAl2020
 
 open Alternatives (Monotonicity)
 open Alternatives.Number (NumberExpr numberScale)
-open Phenomena.Plurals.Multiplicity (PluralTheory MonotonicityParallel)
+open Phenomena.Plurals.Multiplicity (PluralTheory MonotonicityParallel
+  implicature_uniquely_predicts)
 
 
 -- Experimental Design
@@ -148,10 +149,10 @@ def uniformityConfirmed : UniformityResult :=
 
 /-- All three components of the Uniformity Prediction are confirmed. -/
 theorem uniformity_all_confirmed :
-    uniformityConfirmed.childrenFewerMultiplicity &&
-    uniformityConfirmed.childrenFewerSI &&
-    uniformityConfirmed.correlatedInChildren = true := by
-  native_decide
+    uniformityConfirmed.childrenFewerMultiplicity = true ∧
+    uniformityConfirmed.childrenFewerSI = true ∧
+    uniformityConfirmed.correlatedInChildren = true :=
+  ⟨rfl, rfl, rfl⟩
 
 
 -- Connection to Horn Scale Infrastructure
@@ -160,19 +161,19 @@ theorem uniformity_all_confirmed :
     using the plural (weaker) implicates the negation of the singular (stronger). -/
 theorem plural_has_singular_alternative :
     Alternatives.strongerAlternatives numberScale .plural = [.singular] := by
-  native_decide
+  decide
 
 /-- In DE contexts, the scale reverses (weaker alternatives are relevant),
     so the multiplicity inference does not arise. -/
 theorem de_context_no_multiplicity :
     Alternatives.scalarAlternativesInContext numberScale .plural .downward = [] := by
-  native_decide
+  decide
 
 /-- In UE contexts, the singular is the relevant alternative,
     producing the multiplicity inference. -/
 theorem ue_context_multiplicity :
     Alternatives.scalarAlternativesInContext numberScale .plural .upward = [.singular] := by
-  native_decide
+  decide
 
 
 -- Cross-reference to Multiplicity data
@@ -184,12 +185,13 @@ theorem consistent_with_monotonicity_data :
     Phenomena.Plurals.Multiplicity.fedGiraffes.multiplicityInNegative = false := by
   exact ⟨rfl, rfl⟩
 
-/-- The implicature approach uniquely predicts all three findings. -/
-theorem implicature_supported :
-    Phenomena.Plurals.Multiplicity.implicaturePrediction.childrenComputeFewer = true ∧
-    Phenomena.Plurals.Multiplicity.implicaturePrediction.multiplicityCorrelatesWithSI = true ∧
-    Phenomena.Plurals.Multiplicity.implicaturePrediction.accountsForPolarityAsymmetry = true := by
-  exact ⟨rfl, rfl, rfl⟩
+/-- The implicature approach is uniquely identified by any of the three
+    findings. Here we use `predictsChildrenComputeFewer`: any theory
+    predicting children compute fewer must use the SI mechanism. -/
+theorem implicature_uniquely_supported (t : PluralTheory)
+    (h : t.usesSIMechanism = true) :
+    t = .implicature :=
+  Phenomena.Plurals.Multiplicity.implicature_uniquely_predicts t h
 
 
 -- Experiment 3: Singular contexts (adults-only, ternary judgment)
@@ -235,10 +237,12 @@ theorem exp3_confirms_asymmetry :
     exp3_positive_plural.preferredReward ≠ exp3_negative_plural.preferredReward := by
   decide
 
-/-- The singular context finding matches the implicature theory's prediction. -/
-theorem exp3_matches_implicature_prediction :
-    Phenomena.Plurals.Multiplicity.implicatureSingularPrediction.positiveNegativeDiffer = true := by
-  rfl
+/-- The singular context finding matches the implicature theory's prediction:
+    the implicature account uniquely predicts positive/negative asymmetry. -/
+theorem exp3_matches_implicature_prediction (t : PluralTheory)
+    (h : t.positiveNegativeDiffer = true) :
+    t = .implicature :=
+  Phenomena.Plurals.Multiplicity.implicature_uniquely_discriminates_singular t h
 
 
 -- Cross-directory bridge: Multiplicity parallels scalar implicatures
@@ -262,6 +266,6 @@ theorem scales_predict_same_pattern :
     (Alternatives.scalarAlternativesInContext numberScale .plural .downward).length = 0 ∧
     (Alternatives.scalarAlternativesInContext
       Alternatives.Quantifiers.quantScale .some_ .upward).length > 0 := by
-  native_decide
+  decide
 
 end Phenomena.Plurals.Studies.TieuEtAl2020

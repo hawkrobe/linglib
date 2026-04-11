@@ -174,6 +174,31 @@ structure ClassifierEntry where
   shapeDimension : Option ShapeDimension := none
   deriving Repr, BEq
 
+-- ============================================================================
+-- §5 Classifier Strategy (@cite{little-moroney-royer-2022})
+-- ============================================================================
+
+/-- The semantic strategy by which a classifier mediates between numeral and noun.
+    @cite{little-moroney-royer-2022} argue that "numeral classifier" is a
+    heterogeneous category: two typologically distinct languages (Ch'ol and Shan)
+    both have obligatory numeral classifiers, but the classifier plays a
+    fundamentally different semantic role.
+
+    - **forNumeral** (CLF-for-NUM): the classifier is a measure function required
+      by the numeral. The numeral takes the classifier as its first argument:
+      ⟦TWO⟧ = λm⟨e,n⟩λPλx.[P(x) ∧ m(x) = 2]. Predicts: numeral idiosyncrasies
+      in CLF requirement, CLF obligatory even without a noun (counting contexts),
+      CLF + plural marking can co-occur (different projections).
+    - **forNoun** (CLF-for-N): the classifier atomizes the noun denotation so the
+      numeral can count. ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]. Predicts:
+      noun idiosyncrasies in CLF requirement, CLF appears beyond numerals
+      (with quantifiers, demonstratives, relative clauses), CLF + plural marking
+      in complementary distribution (same projection). -/
+inductive ClassifierStrategy where
+  | forNumeral  -- CLF is measure function for the numeral (Krifka 1995; Bale & Coon 2014)
+  | forNoun     -- CLF atomizes noun denotation (Chierchia 1998; Jenks 2011; Nomoto 2013)
+  deriving DecidableEq, Repr
+
 /-- Whether this classifier encodes a given semantic parameter. -/
 def ClassifierEntry.encodes (c : ClassifierEntry) (p : SemanticParameter) : Bool :=
   c.semantics.any (· == p)

@@ -231,6 +231,24 @@ theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
     simp only [PrProp.impFilter]
     exact ⟨hp, himp⟩
 
+/-- Schlenker's local context at the second disjunct derives Karttunen's
+    asymmetric disjunction filter (`PrProp.disjFilterLeft`).
+
+    For "A ∨ B_ψ" in context c:
+    - Schlenker: local context at B is c ∧ ¬A; ψ filtered iff c ∧ ¬A ⊧ ψ
+    - Karttunen: residual presupposition is ¬A → ψ; satisfied iff ∀w∈c, ¬A(w) → ψ(w)
+
+    These are the same condition (currying/uncurrying the conjunction).
+    Analogous to `local_context_matches_impFilter` for conditionals.
+    @cite{schlenker-2009}, @cite{karttunen-1973} -/
+theorem local_context_matches_disjFilterLeft (c : ContextSet W)
+    (firstDisjunct : PrProp W) (second : PrProp W) :
+    presupFiltered (localCtxSecondDisjunct (initialLocalCtx c) firstDisjunct) second ↔
+    (∀ w, c w → (PrProp.disjFilterLeft firstDisjunct.assertion second).presup w) := by
+  constructor
+  · intro h w hc hn; exact h w ⟨hc, hn⟩
+  · intro h w ⟨hc, hn⟩; exact h w hc hn
+
 -- ════════════════════════════════════════════════════════════════
 -- § Tower Depth Bridge
 -- ════════════════════════════════════════════════════════════════

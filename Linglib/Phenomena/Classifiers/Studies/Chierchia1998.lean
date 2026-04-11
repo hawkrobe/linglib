@@ -17,6 +17,21 @@ Parameter from `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`.
   `french_chierchia_consistent`, `italian_chierchia_consistent`:
   Actual classifier types match predictions
 
+## Classifier Strategy Connection (@cite{little-moroney-royer-2022})
+
+@cite{chierchia-1998}'s theory is a CLF-for-N theory: the classifier
+atomizes the noun denotation (which denotes kinds in [+arg, -pred]
+languages). This predicts that classifiers in [+arg, -pred] languages
+should appear beyond numerals — with demonstratives, quantifiers, and
+relative clauses. Mandarin and Japanese confirm this (那本书 'that CLF
+book', Mandarin).
+
+The NMP-to-classifier bridge is accurate at Aikhenvald's morphosyntactic
+level but does not distinguish between CLF-for-NUM and CLF-for-N within
+the numeral classifier type. Both Ch'ol (CLF-for-NUM) and Shan (CLF-for-N)
+are `numeralClassifier` in Aikhenvald's typology. The `ClassifierStrategy`
+field on `NounCategorizationSystem` captures this finer distinction.
+
 ## Known gaps
 
 - English [+arg, +pred] prediction (no system) not yet connected to data
@@ -89,5 +104,16 @@ theorem italian_chierchia_consistent :
 theorem french_italian_same_mapping :
     Fragments.French.Nouns.frenchMapping =
       Fragments.Italian.Nouns.italianMapping := rfl
+
+/-- @cite{chierchia-1998}'s theory is a CLF-for-N theory: the classifier
+    atomizes the noun denotation. This predicts CLF-for-N strategy for
+    [+arg, -pred] languages, which is confirmed by Mandarin and Japanese
+    (@cite{little-moroney-royer-2022}).
+
+    The NMP determines that nouns denote kinds (need individuation),
+    so classifiers serve the noun (atomization), not the numeral. -/
+theorem chierchia_predicts_clf_for_noun :
+    mandarin.classifierStrategy = some .forNoun ∧
+    japanese.classifierStrategy = some .forNoun := ⟨rfl, rfl⟩
 
 end Phenomena.Classifiers.Studies.Chierchia1998

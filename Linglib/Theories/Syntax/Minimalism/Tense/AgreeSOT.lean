@@ -45,29 +45,24 @@ namespace Minimalism.Tense.AgreeSOT
 open Core.Tense
 open Core.Reichenbach
 open Semantics.Tense
-open Minimalism (FeatureVal GramFeature)
+open Minimalism (FeatureVal GramFeature Interpretability)
 
 
 -- ════════════════════════════════════════════════════════════════
 -- § Tense Feature Interpretability
 -- ════════════════════════════════════════════════════════════════
 
-/-- Tense feature interpretability. Following @cite{zeijlstra-2012}:
-    - Interpretable [iPAST]: contributes past semantics
-    - Uninterpretable [uPAST]: checked by Agree, semantically vacuous -/
-inductive TenseFeatureStatus where
-  /-- [iT] -- semantically active -/
-  | interpretable
-  /-- [uT] -- checked by Agree, semantically vacuous -/
-  | uninterpretable
-  deriving DecidableEq, Repr
+/-- A tense head with its feature specification.
 
-/-- A tense head with its feature specification. -/
+    Uses the unified `Interpretability` type from `Features.lean` rather
+    than a local reinvention. Following @cite{zeijlstra-2012}:
+    - `.interpretable` [iPAST]: contributes past semantics
+    - `.uninterpretable` [uPAST]: checked by Agree, semantically vacuous -/
 structure TenseHead where
   /-- The tense value (past/present/future) -/
   tense : GramTense
   /-- Whether this tense feature is interpretable or uninterpretable -/
-  status : TenseFeatureStatus
+  status : Interpretability
   deriving DecidableEq, Repr
 
 /-- Is a tense head semantically active? Only interpretable features
@@ -261,8 +256,14 @@ def negativeConcord : ConcordParallel where
 -- ════════════════════════════════════════════════════════════════
 
 /-- Map a TenseHead to the Minimalism Agree infrastructure.
-    An interpretable [iPAST] maps to `GramFeature.valued (.tense true)`;
-    an uninterpretable [uPAST] maps to `GramFeature.unvalued (.tense true)`. -/
+
+    In the SOT domain, the ±Interpretable and ±Valued axes coincide:
+    - [iPAST] is both interpretable AND valued (contributes semantics)
+    - [uPAST] is both uninterpretable AND unvalued (probe, needs Agree)
+
+    This is the typical pairing (@cite{chomsky-1995} Ch 4 §4.5), but the
+    two distinctions are in principle orthogonal — see `Features.lean`
+    for the general case. -/
 def TenseHead.toGramFeature (th : TenseHead) : GramFeature :=
   match th.status with
   | .interpretable => .valued (.tense true)

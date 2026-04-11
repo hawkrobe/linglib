@@ -330,13 +330,14 @@ def doTestPrediction : VendlerClass → DiagnosticResult
   | .activity      => .accept
   | .achievement   => .marginal
   | .accomplishment => .accept
+  | .semelfactive  => .accept    -- "What John did was cough" (agentive, dynamic)
 
-/-- The do-test accepts exactly the durative dynamic classes
-    (activity, accomplishment). -/
-theorem doTest_accepts_durative_dynamic (c : VendlerClass) :
+/-- The do-test accepts exactly the non-stative dynamic classes
+    (activity, accomplishment, semelfactive). -/
+theorem doTest_accepts_dynamic (c : VendlerClass) :
     doTestPrediction c = .accept ↔
-    (c.duration = .durative ∧ c.dynamicity = .dynamic) := by
-  cases c <;> simp [doTestPrediction, VendlerClass.duration, VendlerClass.dynamicity]
+    (c.dynamicity = .dynamic ∧ c ≠ .achievement) := by
+  cases c <;> simp [doTestPrediction, VendlerClass.dynamicity]
 
 /-- Passing the do-test (for a whole Vendler class, not marginal)
     implies either a dynamic event or a volitive state.

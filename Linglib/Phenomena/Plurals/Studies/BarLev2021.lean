@@ -709,7 +709,7 @@ theorem partial_pruning_not_universal :
 
 open Phenomena.Plurals.Homogeneity (switchesExample conjunctionExample)
 open Phenomena.Plurals.Multiplicity (MonotonicityParallel pluralSingularParallel
-  PluralTheory implicaturePrediction)
+  PluralTheory)
 
 /-- Bar-Lev's theory predicts the full truth-value pattern for the
     switches example: universal in ALL, denial in NONE, gap in between.
@@ -723,14 +723,13 @@ theorem matches_switches_data :
     switchesExample.negativeInGap = .neitherTrueNorFalse :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- Bar-Lev's theory is an implicature account: multiplicity inferences
-    arise via the same mechanism as scalar implicatures, predicting
-    uniform monotonicity sensitivity. -/
-theorem is_implicature_account :
-    implicaturePrediction.childrenComputeFewer = true ∧
-    implicaturePrediction.multiplicityCorrelatesWithSI = true ∧
-    implicaturePrediction.accountsForPolarityAsymmetry = true :=
-  ⟨rfl, rfl, rfl⟩
+/-- Bar-Lev's theory is an implicature account: any theory using the SI
+    mechanism for multiplicity is uniquely identified as the implicature
+    theory. Bar-Lev's exhaustification-based approach is precisely this. -/
+theorem is_implicature_account (t : PluralTheory)
+    (h : t.usesSIMechanism = true) :
+    t = .implicature :=
+  Phenomena.Plurals.Multiplicity.implicature_uniquely_predicts t h
 
 
 -- ============================================================

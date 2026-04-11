@@ -56,6 +56,8 @@ prediction is a verified theorem.
 
 namespace Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
 
+open _root_.Minimalism (Interpretability)
+
 open Theories.Syntax.Minimalism.Agreement.GenderResolution
 
 -- ============================================================================
@@ -146,24 +148,24 @@ def bcsVI (fs : List GenderNode) : Infl :=
 /-- Human feminine (*gineka* 'woman'): iFs = {CLASS, MASC, FEM}.
     Conceptual gender — all features interpretable. -/
 private abbrev gkHF : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨masc, true⟩, ⟨fem, true⟩]
+  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩]
 
 /-- Human masculine (*andras* 'man'): iFs = {CLASS, MASC}. -/
 private abbrev gkHM : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨masc, true⟩]
+  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
 
 /-- Inanimate feminine (*karekla* 'chair'): iCLASS + uMASC, uFEM.
     Only CLASS is interpretable; MASC and FEM are arbitrary. -/
 private abbrev gkIF : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨masc, false⟩, ⟨fem, false⟩]
+  [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
 
 /-- Inanimate masculine (*pinakas* 'blackboard'): iCLASS + uMASC. -/
 private abbrev gkIM : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨masc, false⟩]
+  [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩]
 
 /-- Inanimate neuter (*piruni* 'fork'): iCLASS only. -/
 private abbrev gkIN : FeatureBundle GenderNode :=
-  [⟨cls, true⟩]
+  [⟨cls, .interpretable⟩]
 
 -- ============================================================================
 -- § 4: Greek — Resolution Predictions
@@ -225,13 +227,13 @@ theorem gk_no_default_inanim :
 /-- *megalofiia* 'genius' referring to a man.
     uF = {CLASS, MASC, FEM} (arbitrary feminine), iF = {CLASS, MASC}. -/
 private abbrev gkFixedFemMale : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨masc, true⟩,
-   ⟨cls, false⟩, ⟨masc, false⟩, ⟨fem, false⟩]
+  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩,
+   ⟨cls, .uninterpretable⟩, ⟨masc, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
 
 /-- *thima* 'victim' referring to a woman.
     uF = {CLASS} (arbitrary neuter), iF = {CLASS, MASC, FEM}. -/
 private abbrev gkFixedNeutFemale : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨masc, true⟩, ⟨fem, true⟩, ⟨cls, false⟩]
+  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩, ⟨cls, .uninterpretable⟩]
 
 /-- (36) *megalofiia* (male referent) + sister → masculine (M♂ + F♀ = M).
     Despite both being grammatically feminine, iF resolution
@@ -383,24 +385,24 @@ theorem gk_clausal_default : greekVI [] = .neut := by native_decide
 /-- Icelandic human feminine: iFs = {CLASS, FEM}.
     No iMASC — FEM is independent of MASC in this geometry. -/
 private abbrev isHF : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨fem, true⟩]
+  [⟨cls, .interpretable⟩, ⟨fem, .interpretable⟩]
 
 /-- Icelandic human masculine: iFs = {CLASS, MASC}. -/
 private abbrev isHM : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨masc, true⟩]
+  [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
 
 /-- Icelandic inanimate feminine (*skeið* 'spoon'): iCLASS + uFEM.
     Only CLASS is interpretable; FEM is arbitrary. -/
 private abbrev isIF : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨fem, false⟩]
+  [⟨cls, .interpretable⟩, ⟨fem, .uninterpretable⟩]
 
 /-- Icelandic inanimate masculine (*stóll* 'chair'): iCLASS + uMASC. -/
 private abbrev isIM : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨masc, false⟩]
+  [⟨cls, .interpretable⟩, ⟨masc, .uninterpretable⟩]
 
 /-- Icelandic inanimate neuter (*epli* 'apple'): iCLASS only. -/
 private abbrev isIN : FeatureBundle GenderNode :=
-  [⟨cls, true⟩]
+  [⟨cls, .interpretable⟩]
 
 /-- (60) Mismatched humans → {CLASS} → neuter.
     {CLASS,MASC} ∩ {CLASS,FEM} = {CLASS}. Because MASC and FEM are
@@ -456,28 +458,28 @@ theorem geometry_drives_variation :
 
 /-- BCS human feminine: iFs = {CLASS, INDIV, MASC, ANIM, FEM}. -/
 private abbrev bcsHF : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨indiv, true⟩, ⟨masc, true⟩, ⟨anim, true⟩, ⟨fem, true⟩]
+  [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨anim, .interpretable⟩, ⟨fem, .interpretable⟩]
 
 /-- BCS human masculine: iFs = {CLASS, INDIV, MASC, ANIM}. -/
 private abbrev bcsHM : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨indiv, true⟩, ⟨masc, true⟩, ⟨anim, true⟩]
+  [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨anim, .interpretable⟩]
 
 /-- BCS inanimate masculine (*pesak* 'sand'): iFs = {CLASS, INDIV, MASC}.
     MASC without ANIM → inanimate interpretation. -/
 private abbrev bcsIM : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨indiv, true⟩, ⟨masc, true⟩]
+  [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩]
 
 /-- BCS inanimate feminine (*knjiga* 'book'): iFs = {CLASS, INDIV, MASC},
     uFs include ANIM + FEM (arbitrary feminine). -/
 private abbrev bcsIF : FeatureBundle GenderNode :=
-  [⟨cls, true⟩, ⟨indiv, true⟩, ⟨masc, true⟩,
-   ⟨anim, false⟩, ⟨fem, false⟩]
+  [⟨cls, .interpretable⟩, ⟨indiv, .interpretable⟩, ⟨masc, .interpretable⟩,
+   ⟨anim, .uninterpretable⟩, ⟨fem, .uninterpretable⟩]
 
 /-- BCS neuter noun (*mleko* 'milk'): iFs = {CLASS} only.
     Neuter = mass in BCS: no INDIV. This is why neuter nouns cannot
     form count plurals — they lack the individuation feature. -/
 private abbrev bcsN : FeatureBundle GenderNode :=
-  [⟨cls, true⟩]
+  [⟨cls, .interpretable⟩]
 
 /-- (68) Mismatched humans → {CLASS, INDIV, MASC, ANIM} → masculine.
     {CLASS,INDIV,MASC,ANIM,FEM} ∩ {CLASS,INDIV,MASC,ANIM}
@@ -608,17 +610,17 @@ theorem no_aba_syncretism :
 /-- Greek geometry (17): CLASS > MASC > FEM (linear chain).
     FEM entails MASC entails CLASS. -/
 def greekGeometry : GenderNode → FeatureBundle GenderNode
-  | .fem  => [⟨cls, true⟩, ⟨masc, true⟩, ⟨fem, true⟩]
-  | .masc => [⟨cls, true⟩, ⟨masc, true⟩]
-  | .cls  => [⟨cls, true⟩]
+  | .fem  => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩, ⟨fem, .interpretable⟩]
+  | .masc => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
+  | .cls  => [⟨cls, .interpretable⟩]
   | _     => []
 
 /-- Icelandic geometry (63): CLASS > {MASC, FEM} (independent siblings).
     Neither FEM nor MASC entails the other. -/
 def icelandicGeometry : GenderNode → FeatureBundle GenderNode
-  | .fem  => [⟨cls, true⟩, ⟨fem, true⟩]
-  | .masc => [⟨cls, true⟩, ⟨masc, true⟩]
-  | .cls  => [⟨cls, true⟩]
+  | .fem  => [⟨cls, .interpretable⟩, ⟨fem, .interpretable⟩]
+  | .masc => [⟨cls, .interpretable⟩, ⟨masc, .interpretable⟩]
+  | .cls  => [⟨cls, .interpretable⟩]
   | _     => []
 
 /-- The linear chain geometry guarantees that mismatched human

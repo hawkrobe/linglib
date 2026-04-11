@@ -160,17 +160,17 @@ noncomputable instance instIsSumHomRuntime (Time : Type*) [LinearOrder Time]
 -- § 5. Bridges to Existing Types
 -- ════════════════════════════════════════════════════
 
-/-- Atelic Vendler classes yield predicates that are naturally cumulative. States and activities have the subinterval
-    property, which entails CUM for their event predicates. -/
-theorem vendlerClass_atelic_implies_cum_intent
+/-- Atelic Vendler classes are exactly states, activities, and semelfactives. -/
+theorem vendlerClass_atelic_cases
     (c : VendlerClass) (h : c.telicity = .atelic) :
-    c = .state ∨ c = .activity := by
-  cases c <;> simp [VendlerClass.telicity] at h <;> try exact Or.inl rfl
-  · exact Or.inr rfl
+    c = .state ∨ c = .activity ∨ c = .semelfactive := by
+  cases c <;> simp [VendlerClass.telicity] at h <;> first
+    | exact Or.inl rfl
+    | exact Or.inr (Or.inl rfl)
+    | exact Or.inr (Or.inr rfl)
 
-/-- Telic Vendler classes yield predicates that are naturally quantized. Achievements and accomplishments lack
-    the subinterval property, corresponding to QUA. -/
-theorem vendlerClass_telic_implies_qua_intent
+/-- Telic Vendler classes are exactly achievements and accomplishments. -/
+theorem vendlerClass_telic_cases
     (c : VendlerClass) (h : c.telicity = .telic) :
     c = .achievement ∨ c = .accomplishment := by
   cases c <;> simp [VendlerClass.telicity] at h

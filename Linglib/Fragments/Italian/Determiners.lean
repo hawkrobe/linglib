@@ -1,3 +1,4 @@
+import Linglib.Core.Gender
 import Linglib.Core.Lexical.Word
 
 /-! # Italian Determiners (Quantifiers)
@@ -17,6 +18,8 @@ Italian quantifiers agree in gender and/or number with their NP:
 -/
 
 namespace Fragments.Italian.Determiners
+
+open Core (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Shared Enums
@@ -43,10 +46,7 @@ inductive Strength where
   | strong
   deriving DecidableEq, Repr
 
-/-- Gender for agreement. -/
-inductive Gender where
-  | masc | fem
-  deriving DecidableEq, Repr
+-- Gender for agreement: uses Core.SurfaceGender.
 
 -- ============================================================================
 -- § 2: Quantifier Entry
@@ -59,7 +59,7 @@ structure ItalianQuantifierEntry where
   monotonicity : Monotonicity := .increasing
   strength : Strength := .weak
   /-- Gender agreement (none = invariant) -/
-  gender : Option Gender := none
+  gender : Option SurfaceGender := none
   /-- Number restriction -/
   number : Option Number := none
   deriving Repr, BEq
@@ -88,7 +88,7 @@ def nessuno : ItalianQuantifierEntry :=
   { form := "nessuno"
   , qforce := .negative
   , monotonicity := .decreasing
-  , gender := some .masc
+  , gender := some .masculine
   , number := some .sg }
 
 /-- *nessuna* — no one (feminine, singular, negative concord). -/
@@ -96,7 +96,7 @@ def nessuna : ItalianQuantifierEntry :=
   { form := "nessuna"
   , qforce := .negative
   , monotonicity := .decreasing
-  , gender := some .fem
+  , gender := some .feminine
   , number := some .sg }
 
 /-- *tutti* — all (masculine, plural, universal). -/
@@ -105,7 +105,7 @@ def tutti : ItalianQuantifierEntry :=
   , qforce := .universal
   , monotonicity := .increasing
   , strength := .strong
-  , gender := some .masc
+  , gender := some .masculine
   , number := some .pl }
 
 /-- *tutte* — all (feminine, plural, universal). -/
@@ -114,7 +114,7 @@ def tutte : ItalianQuantifierEntry :=
   , qforce := .universal
   , monotonicity := .increasing
   , strength := .strong
-  , gender := some .fem
+  , gender := some .feminine
   , number := some .pl }
 
 /-- *alcuni* — some (masculine, plural, existential). -/
@@ -122,7 +122,7 @@ def alcuni : ItalianQuantifierEntry :=
   { form := "alcuni"
   , qforce := .existential
   , monotonicity := .increasing
-  , gender := some .masc
+  , gender := some .masculine
   , number := some .pl }
 
 /-- *alcune* — some (feminine, plural, existential). -/
@@ -130,7 +130,7 @@ def alcune : ItalianQuantifierEntry :=
   { form := "alcune"
   , qforce := .existential
   , monotonicity := .increasing
-  , gender := some .fem
+  , gender := some .feminine
   , number := some .pl }
 
 /-- *molti* — many (masculine, plural, proportional). -/
@@ -138,7 +138,7 @@ def molti : ItalianQuantifierEntry :=
   { form := "molti"
   , qforce := .proportional
   , monotonicity := .increasing
-  , gender := some .masc
+  , gender := some .masculine
   , number := some .pl }
 
 /-- *molte* — many (feminine, plural, proportional). -/
@@ -146,7 +146,7 @@ def molte : ItalianQuantifierEntry :=
   { form := "molte"
   , qforce := .proportional
   , monotonicity := .increasing
-  , gender := some .fem
+  , gender := some .feminine
   , number := some .pl }
 
 /-- *pochi* — few (masculine, plural, proportional, decreasing). -/
@@ -154,7 +154,7 @@ def pochi : ItalianQuantifierEntry :=
   { form := "pochi"
   , qforce := .proportional
   , monotonicity := .decreasing
-  , gender := some .masc
+  , gender := some .masculine
   , number := some .pl }
 
 /-- *poche* — few (feminine, plural, proportional, decreasing). -/
@@ -162,7 +162,7 @@ def poche : ItalianQuantifierEntry :=
   { form := "poche"
   , qforce := .proportional
   , monotonicity := .decreasing
-  , gender := some .fem
+  , gender := some .feminine
   , number := some .pl }
 
 -- ============================================================================
@@ -212,14 +212,14 @@ theorem pochi_decreasing :
 
 /-- Gender agreement: nessuno/nessuna are masculine/feminine forms of the same quantifier. -/
 theorem nessuno_nessuna_gender :
-    nessuno.gender = some .masc ∧
-    nessuna.gender = some .fem ∧
+    nessuno.gender = some .masculine ∧
+    nessuna.gender = some .feminine ∧
     nessuno.qforce = nessuna.qforce := ⟨rfl, rfl, rfl⟩
 
 /-- Gender agreement: tutti/tutte are masculine/feminine forms of the same quantifier. -/
 theorem tutti_tutte_gender :
-    tutti.gender = some .masc ∧
-    tutte.gender = some .fem ∧
+    tutti.gender = some .masculine ∧
+    tutte.gender = some .feminine ∧
     tutti.qforce = tutte.qforce := ⟨rfl, rfl, rfl⟩
 
 end Fragments.Italian.Determiners

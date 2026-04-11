@@ -2,6 +2,7 @@ import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.CCSelection
+import Linglib.Theories.Semantics.Events.TemporalDecomposition
 
 /-!
 # Progressive Aspect and Causal Structure
@@ -45,6 +46,16 @@ A `CausalProcess` packages a `CausalDynamics` with an initiating action
 and a result state. Progressive semantics checks that the initiator is
 type-level sufficient (the causal trajectory exists); perfective semantics
 checks token-level completion (the effect actually obtained).
+
+## Bridge to TemporalDecomposition
+
+`CausallyGroundedEvent` (§ 5) connects this module to
+`Events.TemporalDecomposition`: the causal process provides the
+explanatory mechanism (why activity leads to result), while
+`SubeventPhases` provides the observable interval structure (activity
+trace precedes result trace). The imperfective paradox is formalized
+at both levels — causal (`progressive_not_entails_perfective`) and
+temporal (`progressive_before_result`).
 -/
 
 namespace Causation.ProgressiveCausation
@@ -194,5 +205,77 @@ theorem typeLevelHolds_is_normalDevelopment (proc : CausalProcess) :
     proc.typeLevelHolds =
     (normalDevelopment proc.dynamics
       (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 5. Bridge to Temporal Decomposition
+-- ════════════════════════════════════════════════════
+
+/-- A causally grounded telic event: bridges `CausalProcess` (causal
+    explanation) with `SubeventPhases` (temporal realization).
+
+    @cite{nadathur-bar-asher-siegal-2024}: telic predicates encode
+    structured causal models. The activity phase corresponds to the
+    initiating action (the `CausalProcess.initiator`); the result phase
+    corresponds to the effect variable (`CausalProcess.result`). The
+    causal model explains WHY the activity leads to the result: the
+    initiator is type-level sufficient for the effect.
+
+    This bridges ProgressiveCausation (§ 2–3) and TemporalDecomposition
+    (§ 6–7): the causal process provides the explanatory mechanism,
+    while `SubeventPhases` provides the observable interval structure.
+
+    - Causal side: `process.progressiveTrue` = type-level sufficiency
+    - Temporal side: `IMPF (phasePred phases.activityTrace)` = progressive
+    - Both formalize the same phenomenon at different levels of description -/
+structure CausallyGroundedEvent (Time : Type*) [LinearOrder Time] where
+  /-- The causal process underlying the event -/
+  process : CausalProcess
+  /-- The temporal phases: activity and result with ordering -/
+  phases : Semantics.Events.SubeventPhases Time
+  /-- The causal trajectory is viable: the initiator is type-level
+      sufficient for the result under enabling conditions -/
+  causallyViable : process.typeLevelHolds = true
+
+/-- A causally grounded event's progressive is always true: the causal
+    trajectory from initiator to result exists (by `causallyViable`).
+
+    This is the causal counterpart of
+    `TemporalDecomposition.progressive_before_result`: the temporal
+    theorem says IMPF(activity) CAN hold before the result; the causal
+    theorem says WHY — the initiator is type-level sufficient for the
+    result in the causal model. -/
+theorem CausallyGroundedEvent.progressiveTrue
+    {Time : Type*} [LinearOrder Time]
+    (cge : CausallyGroundedEvent Time) :
+    cge.process.progressiveTrue = true := cge.causallyViable
+
+/-- Token-level completion (perfective) is NOT guaranteed for causally
+    grounded events. The causal trajectory exists (progressive), but
+    an intervening event may prevent the result from obtaining.
+
+    This is the causal explanation of
+    `TemporalDecomposition.progressive_before_result`: in temporal
+    terms, the reference time can be inside the activity phase but
+    before the result. In causal terms, the initiator is sufficient
+    but an overdetermining backup cause breaks the completion test.
+
+    "Mary was opening the door [when it jammed]" — the causal process
+    is underway (type-level sufficient) but the token-level result
+    need not obtain. -/
+theorem causallyGroundedEvent_progressive_not_perfective :
+    ∃ (cge : CausallyGroundedEvent ℤ),
+      cge.process.progressiveTrue = true ∧
+      cge.process.perfectiveTrue = false := by
+  refine ⟨{
+    process := {
+      dynamics := ⟨[CausalLaw.simple (mkVar "a") (mkVar "r"),
+                     CausalLaw.simple (mkVar "b") (mkVar "r")]⟩,
+      initiator := mkVar "a",
+      result := mkVar "r",
+      enablingConditions := Situation.empty.extend (mkVar "b") true },
+    phases := ⟨⟨0, 10, by omega⟩, ⟨15, 20, by omega⟩, by dsimp; omega⟩,
+    causallyViable := by native_decide }, ?_, ?_⟩
+  · native_decide
+  · native_decide
 
 end Causation.ProgressiveCausation

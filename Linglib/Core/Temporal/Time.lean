@@ -5,7 +5,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Theory-Neutral Temporal Infrastructure
-@cite{allen-1983} @cite{champollion-2015} @cite{fox-hackl-2006} @cite{kamp-reyle-1993} @cite{klein-1994} @cite{kratzer-1989} @cite{rouillard-2026} @cite{zhao-2025} @cite{smith-1991}
+@cite{allen-1983} @cite{champollion-2015} @cite{fox-hackl-2006} @cite{kamp-reyle-1993} @cite{klein-1994} @cite{kratzer-1989} @cite{rouillard-2026} @cite{zhao-2025} @cite{smith-1997}
 
 Framework-agnostic types for temporal reasoning: intervals, temporal relations,
 situations (world–time pairs), and concrete time instances.
@@ -152,7 +152,7 @@ def finalSubinterval (i₁ i₂ : Interval Time) : Prop :=
 /-- Initial overlap (∂): i₁ and i₂ overlap, and the start of i₂ is in i₁.
     @cite{pancheva-2003}: i ∂τ(e) — the beginning of the eventuality is included
     in the reference interval but the end may not be.
-    Used for NEUTRAL viewpoint aspect. -/
+    @cite{smith-1997}: the neutral viewpoint uses the same interval relation. -/
 def initialOverlap (i₁ i₂ : Interval Time) : Prop :=
   i₁.overlaps i₂ ∧ i₁.contains i₂.start
 
