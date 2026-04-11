@@ -547,6 +547,7 @@ import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Japanese.Morph
 import Linglib.Fragments.Japanese.Negation
+import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Fragments.Mandarin.DiscourseParticles
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Modals
@@ -1112,7 +1113,7 @@ import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
 import Linglib.Phenomena.Polysemy.Data
-import Linglib.Phenomena.Polysemy.Studies.Clark1983
+import Linglib.Phenomena.Nonliteral.Studies.Clark1983
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
 import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024
@@ -1247,7 +1248,7 @@ import Linglib.Phenomena.TenseAspect.Studies.AspectualConsistency
 import Linglib.Phenomena.TenseAspect.Studies.KennedyLevin2008
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
-import Linglib.Phenomena.TemporalConnectives.Studies.OgiharaST2024
+import Linglib.Phenomena.TemporalConnectives.Studies.BeaverCondoravdi2003
 import Linglib.Phenomena.TenseAspect.Typology
 import Linglib.Phenomena.TenseAspect.Studies.Cruse1973
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024

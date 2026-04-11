@@ -4,26 +4,29 @@ import Linglib.Theories.Semantics.Mood.Basic
 
 /-!
 # Anderson Conditionals and Domain Expansion
-@cite{condoravdi-2002}
+@cite{condoravdi-2002} @cite{mizuno-2024} @cite{schlenker-2004}
 
 Formalizes the connection between backward temporal shifts and domain expansion
-in conditionals, following Mizuno's argument: the historical present (HP) in
-conditional antecedents achieves domain expansion because moving time backward
-expands the set of historical alternatives.
+in conditionals. @cite{mizuno-2024} argues that Japanese Anderson conditionals
+use the Historical Present (@cite{schlenker-2004}) to achieve domain expansion
+without X-marking: Non-Past morphology shifts the evaluation time backward,
+and under branching time (@cite{condoravdi-2002}), earlier times have more
+historical alternatives, so the domain expands.
 
 ## Key Results
 
-- `andersonConditional` — HP in antecedent pushes a temporal shift + domain expands
-- `hp_achieves_expansion` — Mizuno's argument: backward time + domain monotonicity
-  yields expansion
+- `andersonConditional` — HP-shifted antecedent evaluated against expanded domain
+- `hp_achieves_expansion` — backward time + domain monotonicity yields expansion
+- `trivialConsequent` / `nonTrivialConsequent` — formalize the triviality puzzle
+- `expansion_resolves_triviality` — domain expansion makes conditionals non-trivial
 - Bridge to `BranchingTime.historicalBase` and `Mood.SUBJ`
 
 ## Connection to ContextTower
 
-The HP shift in the antecedent of an Anderson conditional is modeled as a
-tower push of an `hpShift`: a context shift that moves time backward and
-expands the domain. This connects the modal-temporal interaction in
-conditionals to the tower architecture.
+The HP shift in an Anderson conditional is modeled as a tower push of an
+`hpShift`: a context shift that moves time backward and expands the domain.
+In @cite{schlenker-2004}'s terms, the push shifts the Context of Utterance v
+while preserving the Context of Thought θ (= `tower.origin`).
 
 -/
 
@@ -43,13 +46,20 @@ section AndersonConditional
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*} [Preorder T]
 
-/-- An Anderson conditional: the antecedent is evaluated at an HP-shifted
-    context (backward time, expanded domain), and the consequent is
-    evaluated at the original context.
+/-- An Anderson conditional (context-level model): the antecedent is
+    evaluated at an HP-shifted context (backward time, expanded domain),
+    and the consequent is evaluated at the original context.
 
-    The HP shift in the antecedent is what gives counterfactual conditionals
-    their widened modal base — by shifting time backward, more futures branch,
-    and the domain of quantification expands. -/
+    This models the HP shift's effect on a single evaluation point.
+    The full Kratzer-style analysis — restricted universal quantification
+    over the expanded domain D⁺ — is `domainRestrictedConditional`:
+
+      `domainRestrictedConditional D⁺ antecedent consequent`
+      = ∀ w ∈ D⁺, antecedent(w) → consequent(w)
+
+    The domain expansion machinery here (`hpShift`, `hp_achieves_expansion`)
+    provides the D⁺, and `trivial_domainRestricted` /
+    `nontrivial_conditional_excludes` show why expansion matters. -/
 def andersonConditional
     (antecedent : RichContext W E P T → Prop)
     (consequent : RichContext W E P T → Prop)
@@ -74,12 +84,14 @@ section Expansion
 
 variable {W : Type*} {T : Type*} [Preorder T]
 
-/-- Mizuno's argument: backward time + domain monotonicity yields expansion.
+/-- @cite{mizuno-2024}'s argument: backward time + domain monotonicity yields
+    expansion.
 
     If the world history is backwards-closed (worlds that agree up to `t`
     also agree up to `t' ≤ t`), then the historical alternatives at an
-    earlier time are a superset of those at a later time. This is domain
-    monotonicity. -/
+    earlier time are a superset of those at a later time. This is why
+    O-marking (Non-Past / HP) in Japanese Anderson conditionals expands
+    the domain without X-marking. -/
 theorem hp_achieves_expansion
     (history : WorldHistory W T)
     (h_bc : history.backwardsClosed)
@@ -111,6 +123,22 @@ section Triviality
 
 variable {W : Type*}
 
+/-- Domain-restricted conditional: the standard Kratzer-style analysis of
+    conditionals as restricted universal quantification over a modal domain.
+
+      ∀ w ∈ D, antecedent(w) → consequent(w)
+
+    @cite{kratzer-1986}: if-clauses restrict the modal domain rather than
+    functioning as binary connectives. This is the Prop-level counterpart
+    of `Semantics.Conditionals.Restrictor.conditionalNecessity` (which
+    operates over finite `BProp World` for computation).
+
+    Both X-marking and O-marking strategies for Anderson conditionals work
+    by expanding D to D⁺ ⊃ D, making this quantification non-trivial. -/
+def domainRestrictedConditional
+    (domain : Set W) (antecedent consequent : W → Prop) : Prop :=
+  ∀ w ∈ domain, antecedent w → consequent w
+
 /-- A conditional is trivial when every world in the domain satisfies
     the consequent. The antecedent restriction does no work — the
     conditional is vacuously true regardless of what the antecedent says.
@@ -127,6 +155,18 @@ def trivialConsequent (domain : Set W) (consequent : W → Prop) : Prop :=
     antecedent restriction does meaningful work. -/
 def nonTrivialConsequent (domain : Set W) (consequent : W → Prop) : Prop :=
   ∃ w ∈ domain, ¬ consequent w
+
+/-- The triviality problem: when the consequent is trivial, the
+    domain-restricted conditional is vacuously true regardless of the
+    antecedent. This is why O-marked English Anderson conditionals are
+    infelicitous — the consequent is an observed fact true at all worlds
+    in D, so the conditional adds no information. -/
+theorem trivial_domainRestricted
+    (domain : Set W)
+    (antecedent consequent : W → Prop)
+    (h_trivial : trivialConsequent domain consequent) :
+    domainRestrictedConditional domain antecedent consequent :=
+  λ w hw _ => h_trivial w hw
 
 /-- Domain expansion resolves triviality: if the original domain makes the
     consequent trivial, but the expanded domain contains a world where the
@@ -149,10 +189,27 @@ theorem expansion_resolves_triviality
     nonTrivialConsequent expandedDomain consequent :=
   ⟨w, hw, hw_fails⟩
 
-/-- Contrapositive: if a conditional over a domain is trivial and a superset
-    is also trivial, then every world in the superset satisfies the consequent.
-    This shows that triviality is monotone: expanding the domain can only
-    resolve triviality, never introduce it. -/
+/-- When the domain-restricted conditional holds over an expanded domain
+    where the consequent is non-trivial, the antecedent must exclude at
+    least one world. The antecedent restriction is doing genuine work —
+    it is not vacuously satisfied.
+
+    This is the formal payoff of domain expansion: the conditional becomes
+    informative because the antecedent partitions D⁺ into worlds where
+    the consequent holds (via the conditional) and worlds where it fails
+    (via non-triviality). -/
+theorem nontrivial_conditional_excludes
+    (domain : Set W)
+    (antecedent consequent : W → Prop)
+    (h_nontrivial : nonTrivialConsequent domain consequent)
+    (h_cond : domainRestrictedConditional domain antecedent consequent) :
+    ∃ w ∈ domain, ¬ antecedent w := by
+  obtain ⟨w, hw, hw_fails⟩ := h_nontrivial
+  exact ⟨w, hw, λ ha => hw_fails (h_cond w hw ha)⟩
+
+/-- Triviality is monotone: if a superset domain is trivial, then
+    so is any subset domain. Expanding the domain can only resolve
+    triviality, never introduce it. -/
 theorem trivial_monotone
     (smallDomain expandedDomain : Set W)
     (consequent : W → Prop)

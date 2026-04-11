@@ -49,7 +49,43 @@ inductive ModalComponentStatus where
 
 
 -- ════════════════════════════════════════════════════
--- § 2. Modal Indefinite Entry
+-- § 2. Anchor Constraint
+-- ════════════════════════════════════════════════════
+
+/-- Whether the anchoring function f has a definedness condition.
+    @cite{alonso-ovalle-royer-2024} §4.1–4.2.
+
+    Modal indefinites whose modal component is at-issue project their
+    modal domain from an event argument via an anchoring function f.
+    The key lexical distinction is whether f has no definedness condition
+    (accepting any event) or presupposes normative content. Note that
+    f's definedness controls which events CAN anchor the MI; content
+    licensing (whether the event has propositional content) independently
+    determines the resulting modal flavor. -/
+inductive AnchorConstraint where
+  /-- f has no definedness condition: defined for any event regardless
+      of content. The anchor constraint does not restrict WHERE f can
+      anchor. Whether the resulting background is epistemic, however,
+      depends on the specific projection function f — not just on
+      anchor definedness or content licensing. For *yalnhej*, f yields
+      an epistemic background from contentful events; for *n'importe
+      quel* and *un qualsiasi*, f always yields a circumstantial/
+      indiscriminacy background regardless of the event's content
+      (@cite{alonso-ovalle-royer-2024}, §6.2: "different functions
+      projecting modal domains from those anchors").
+      Ex: Chuj *yalnhej*, French *n'importe quel*, Italian *un qualsiasi*. -/
+  | unrestricted
+  /-- f presupposes that its event argument has normative content
+      (a decision subevent of a volitional event). Speech acts lack
+      normative content, so f(speech event) is undefined → no epistemic.
+      Only yields RC readings (from volitional VP events).
+      Ex: Spanish *uno cualquiera*. -/
+  | volitionalOnly
+  deriving DecidableEq, Repr
+
+
+-- ════════════════════════════════════════════════════
+-- § 3. Modal Indefinite Entry
 -- ════════════════════════════════════════════════════
 
 /-- A cross-linguistic modal indefinite entry parameterized along
@@ -75,6 +111,17 @@ structure ModalIndefiniteEntry where
   /-- Can the item appear in predicative position?
       Correlates with unremarkable readings per A-@cite{alonso-ovalle-royer-2024}. -/
   canBePredicate : Bool := false
+  /-- Anchor constraint on the anchoring function f.
+      Only applicable to at-issue modal indefinites analyzed via
+      event-relative anchoring (@cite{alonso-ovalle-royer-2024}).
+      `none` for items with non-at-issue modal components
+      (e.g., *algún*, *irgendein*) where the mechanism is
+      conversational implicature or domain widening. -/
+  anchorConstraint : Option AnchorConstraint := none
+  /-- Whether the item is number-neutral (compatible with singular
+      and plural reference). Chuj *yalnhej* is number-neutral
+      (wh-phrase origin); Spanish *algún* is singular-only. -/
+  numberNeutral : Bool := false
   /-- Source citation -/
   source : String := ""
   deriving Repr

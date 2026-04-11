@@ -176,6 +176,7 @@ def Dimension.safety : Dimension := ⟨"safety", .evaluative⟩
 -- Epistemic/modal domain (for modal and mirative adjectives)
 def Dimension.expectation : Dimension := ⟨"expectation", .psychological⟩
 def Dimension.possibility : Dimension := ⟨"possibility", .psychological⟩
+def Dimension.confidence : Dimension := ⟨"confidence", .psychological⟩
 
 -- General size dimension (large/small/gigantic/tiny)
 def Dimension.generalSize : Dimension := ⟨"size", .size⟩

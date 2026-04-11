@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.229.662] - 2026-04-11
+
+### Changed
+- **OgiharaST2024.lean**: formalize Definition 19 (revamped truth conditions) — `OST.before` with three cases: `beforeCase_veridical` (complement already after A-time), `beforeCase_false` (complement already before A-time), `beforeCase_modal` (via alt + CAUSE); prove `beforeCase_veridical_entails_complement`, `beforeCase_modal_nonveridical` (concrete counterexample), `cases_i_ii_exclusive`, `mozart_is_case_iii`; formalize `BCCounterexampleDatum` structurally (typed `aTime`/`complementUpperBound`/`boundedBefore` fields replacing string fields, `bc_cannot_place_bounded_complement` theorem); strengthen progressive bridge with SubintervalProperty connection (`csip_entails_completion`, `non_csip_lacks_completion`, `progressive_before_modal_resolution`, `csip_determines_modal_need`); deduplicate `BeforeContextualStatus` → reuse `BeaverCondoravdi.BeforeReading`
+- **BeaverCondoravdi2003.lean**: add `equivIE_trivial_iff_agree` and `histAlt_subset_altIE_trivial` proving equivIE generalizes initialBranchPoint under trivial counterpart/co-occurrence; fix `@cite` formatting in module docstring
+- **Compare.lean**: reclassify `ostProfile` from `quantificationalEvent` (Level 3) to `intensionalRevised` (Level 4) — O&ST extends B&C's intensional framework with ≃_{I,e}, not a separate quantificational theory; the ∃∀/∃∃ asymmetry is Anscombe 1964's contribution; update level hierarchy to show B&C = O&ST at Level 4
+
+## [0.229.661] - 2026-04-11
+
+### Changed
+- **Temporal connectives reorg**: move study-specific theories from `Theories/Semantics/Tense/TemporalConnectives/` to `Phenomena/TemporalConnectives/Studies/` — Anscombe.lean→Anscombe1964.lean (merged with event-level AnscombeEvent), Karttunen.lean→Karttunen1974.lean, BeaverCondoravdi.lean→BeaverCondoravdi2003.lean, Rett.lean merged into Rett2020.lean; hub now re-exports only Basic.lean + EventBridge.lean
+- **OgiharaST2024.lean**: merge TemporalConnectives and TenseAspect versions into single file; re-attribute OST.lean to Anscombe/Krifka event-level variant (was misattributed to O&ST 2024); fix 3 fabricated counterexamples with actual paper examples (§5.1, exx. 20a-c); add progressive–before structural parallel bridge theorem (§3); add eventuality-relative equivalence ≃_{I,e} (def 17), eventuality-relative alternatives (def 18a-c), downward closure to BeaverCondoravdi2003.lean; add veridicality↔presupposition bridge (§19-23)
+
+## [0.229.660] - 2026-04-11
+
+### Changed
+- **Clark1983.lean**: add §12 `ContextualMeaning` — the deeper formal principle that meaning factors through direct meaning + common ground; `ContextualMeaning W` structure (`directMeaning` + `compute : CG W → (W → Bool)`), `evaluate` producing `GoalHierarchy` at a specific CG, `isCGIndependent`/`isCGDependent` predicates; `stereosMeaning` — single `ContextualMeaning` generating both Arlene's and Bombeck's `GoalHierarchy`s (`stereos_arlene`, `stereos_bombeck` proved via `if_neg`/`if_pos`); `stereos_is_cg_dependent`; `cg_independent_conventional`, `cg_dependent_innovative`, `cg_independent_lexicon_suffices` connecting CG-independence to sense-selection adequacy
+
+## [0.229.659] - 2026-04-11
+
+### Changed
+- **Clark1983.lean**: add §10 Arlene vs Bombeck *stereos* example (pp. 326-327) — `StereosWorld` finite type, `arlenesGoalHierarchy` (conventional, `rfl`), `bombecksGoalHierarchy` (innovative, diverges at `⟨true, false⟩`), `conventionalLexicon` that handles Arlene but fails Bombeck, `bombeck_cg_determines_meaning`; add §11 bridge to indirect speech acts — import `Core.Discourse.SpeechActs`, `indirectActGoalHierarchy` showing indirect speech acts produce the same `GoalHierarchy` type as contextual expressions, `indirect_act_innovative`, `same_mechanism`; docstring connecting Clark's goal hierarchy to @cite{roberts-2012}'s `Strategy` (same rose-tree structure at different levels)
+
+## [0.229.658] - 2026-04-11
+
+### Changed
+- **Clark1983.lean**: move from `Phenomena/Polysemy/Studies/` to `Phenomena/Nonliteral/Studies/` (Clark's whole argument is that contextual expressions are NOT polysemous — they have nonce senses, not multiple pre-existing senses); add §5 five properties shared with indirect illocutionary acts (`IndirectUseProperty` enum, pp. 319-321); add §6 goal hierarchies and the intentional view of parsing (`GoalHierarchy` with `directMeaning`/`intendedMeaning`/`commonGround`, `isConventional`/`isInnovative` distinction, `conventional_bridge_trivial`, `traditional_is_special_case`, pp. 323-328); replace bare `nounDenotesRole : Bool` with structural `nounDenotation : W → Bool` + `nounParticipates` constraint (condition f); add `finite_lexicon_incomplete` connecting `FiniteLexicon` to `nonce_senses_not_exhaustible`; add `denominalGoalHierarchy`/`denominal_is_innovative` connecting `DenominalVerbConvention` to `GoalHierarchy`; remove `expressionClass` constant function and vacuous `all_contextual_types_shift_sense`; reframe LU-RSA docstrings (LU-RSA operationalizes one dimension of Clark's proposal, not Clark as precursor to LU-RSA)
+
+## [0.229.657] - 2026-04-11
+
+### Changed
+- **Core/ModalIndefinite.lean**: add `AnchorConstraint` enum (`.unrestricted` | `.volitionalOnly`) capturing @cite{alonso-ovalle-royer-2024}'s key lexical distinction for anchoring function definedness; add `anchorConstraint` and `numberNeutral` fields to `ModalIndefiniteEntry`
+- **AlonsoOvalleRoyer2024.lean** (500→270 lines): overhaul study file — factor `ChujDPPosition` (5-way, conflated position+volitionality) into `ChujArgPosition` (3-way) + `volitional : Bool`; DERIVE flavor predictions from `EventBinder.toAnchorType` + `AnchorType.toFlavor` via `miAnchorFlavor`/`baseMIFlavors`/`rcAvailable`/`predictedMIFlavors` pipeline (was stipulated in parallel `yalnhejFlavorsAt`/`availableAnchors` then proved consistent); delete 4 custom record types (`YalnhejExample`, `MaximalityDatum`, `HarmonicDatum`, `UnremarkableReadingDatum`); add `AnchorConstraint` bridge theorems (`at_issue_iff_anchored`, `volitional_blocks_epistemic`); connect harmonic interpretations to `EventBinder` content licensing
+- **Fragments/{Chuj,Spanish,German,French,Italian}/ModalIndefinites.lean**: add `anchorConstraint` and `numberNeutral` fields to all 7 entries with per-entry verification theorems
+
+## [0.229.656] - 2026-04-11
+
+### Changed
+- **Clark1983.lean**: fix Table 9.1 `ExpressionClass` (was `senseAlterability x referenceAlterability` making `purelyIntensional = properName`, now correct `MeaningAspect x Alterability` with all four types distinct); close `nonce_senses_not_exhaustible` sorry (counting argument via `Fintype.card_fun`); derive `DenominalVerbConvention` conditions (b)-(e) from `CG`-entailment instead of bare Bool fields; delete stipulated `PorchExample`/`TeapotExample`/`SharedProperty`/`NonceSituation`; add `ParserFailure` (non-parsing vs mis-parsing, p. 299), `expression_types_distinct`; 524→420 lines, 0 sorrys
+
 ## [0.229.655] - 2026-04-11
 
 ### Changed

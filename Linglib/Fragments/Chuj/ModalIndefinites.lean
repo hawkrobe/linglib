@@ -48,6 +48,8 @@ def yalnhejEntry : ModalIndefiniteEntry where
   positionSensitive := true
   hasUnremarkableReading := false
   canBePredicate := false
+  anchorConstraint := some .unrestricted
+  numberNeutral := true
   source := "Alonso-Ovalle & Royer 2024"
 
 /-- *komon*: mass/plural modal modifier.
@@ -61,6 +63,7 @@ def komonEntry : ModalIndefiniteEntry where
   upperBounded := false
   hasUnremarkableReading := true
   canBePredicate := true
+  anchorConstraint := some .unrestricted
   source := "Alonso-Ovalle & Royer 2021"
 
 
@@ -69,21 +72,24 @@ def komonEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem yalnhej_at_issue : yalnhejEntry.status = .atIssue := rfl
-theorem yalnhej_has_epistemic : yalnhejEntry.hasEpistemic = true := by native_decide
-theorem yalnhej_has_rc : yalnhejEntry.hasCircumstantial = true := by native_decide
+theorem yalnhej_has_epistemic : yalnhejEntry.hasEpistemic = true := rfl
+theorem yalnhej_has_rc : yalnhejEntry.hasCircumstantial = true := rfl
 theorem yalnhej_not_ub : yalnhejEntry.upperBounded = false := rfl
 theorem yalnhej_pos_sensitive : yalnhejEntry.positionSensitive = true := rfl
+theorem yalnhej_unrestricted : yalnhejEntry.anchorConstraint = some .unrestricted := rfl
+theorem yalnhej_number_neutral : yalnhejEntry.numberNeutral = true := rfl
 
 theorem komon_at_issue : komonEntry.status = .atIssue := rfl
-theorem komon_rc_only : komonEntry.hasEpistemic = false ∧ komonEntry.hasCircumstantial = true := by
-  constructor <;> native_decide
+theorem komon_rc_only : komonEntry.hasEpistemic = false ∧ komonEntry.hasCircumstantial = true :=
+  ⟨rfl, rfl⟩
 theorem komon_not_ub : komonEntry.upperBounded = false := rfl
+theorem komon_unrestricted : komonEntry.anchorConstraint = some .unrestricted := rfl
 
 /-- *yalnhej* and *komon* differ in flavor inventory: *yalnhej* has
     epistemic + RC, *komon* has RC only. -/
 theorem yalnhej_komon_flavor_difference :
-    yalnhejEntry.hasEpistemic = true ∧ komonEntry.hasEpistemic = false := by
-  constructor <;> native_decide
+    yalnhejEntry.hasEpistemic = true ∧ komonEntry.hasEpistemic = false :=
+  ⟨rfl, rfl⟩
 
 
 end Fragments.Chuj.ModalIndefinites

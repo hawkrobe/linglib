@@ -2,6 +2,7 @@ import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Scales.EpistemicScale
 import Linglib.Core.Agent.BToM
 import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Attitudes.Confidence
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -960,5 +961,50 @@ theorem threshold_exhaustive (cr : AgentCredence E W) (θ : ℚ)
     meetsThreshold cr θ a φ ∨ failsThreshold cr θ a φ := by
   simp only [meetsThreshold, failsThreshold, ge_iff_le]
   exact le_or_gt θ (cr a φ)
+
+-- ============================================================================
+-- §14. AgentCredence → ConfidenceOrdering Bridge
+-- ============================================================================
+
+/-!
+### Constructing a Confidence Ordering from Probabilistic Credence
+
+CSW's `ConfidenceOrdering` (`Confidence.lean`) is deliberately weaker than
+probabilistic credence: it permits conjunction fallacies and does not
+require connectedness. When we DO have a probabilistic `AgentCredence`,
+we can construct a `ConfidenceOrdering` from it — and this induced
+ordering has strictly more structure (total, conjunction-respecting).
+
+The bridge makes the CSW/LaBToM divergence a proven structural fact.
+-/
+
+open Semantics.Attitudes.Confidence
+
+/-- Credence-induced ordering on propositions: `φ ≤_cr ψ` iff
+    `cr a φ ≤ cr a ψ`. Defined as a predicate rather than a `Preorder`
+    instance to avoid clashing with existing `BProp W` instances.
+
+    Reflexivity and transitivity follow from `ℚ`'s linear order. -/
+def credenceLe (cr : AgentCredence E W) (a : E) (φ ψ : BProp W) : Prop :=
+  cr a φ ≤ cr a ψ
+
+theorem credenceLe_refl (cr : AgentCredence E W) (a : E) (φ : BProp W) :
+    credenceLe cr a φ φ := le_refl _
+
+theorem credenceLe_trans (cr : AgentCredence E W) (a : E)
+    (φ ψ χ : BProp W) (h₁ : credenceLe cr a φ ψ) (h₂ : credenceLe cr a ψ χ) :
+    credenceLe cr a φ χ := le_trans h₁ h₂
+
+/-- The credence-induced ordering is connected (total): for any two
+    propositions, either `φ ≤ ψ` or `ψ ≤ φ`.
+
+    CSW's general `ConfidenceOrdering` does NOT require this — they are
+    agnostic about whether (58) is consistent. The credence-induced
+    ordering settles this: probabilistic agents always have connected
+    confidence orderings, because `ℚ` is linearly ordered. -/
+theorem credenceLe_connected (cr : AgentCredence E W)
+    (a : E) (φ ψ : BProp W) :
+    credenceLe cr a φ ψ ∨ credenceLe cr a ψ φ :=
+  le_total (cr a φ) (cr a ψ)
 
 end Semantics.Attitudes.EpistemicThreshold

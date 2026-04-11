@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Attitudes.NegRaising
-import Linglib.Theories.Semantics.Tense.TemporalConnectives.Karttunen
+import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Conditionals.Basic

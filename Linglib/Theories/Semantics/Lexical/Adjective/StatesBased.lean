@@ -116,26 +116,19 @@ theorem asymEntails_positive_region (e₁ e₂ : StatesBasedEntry S)
 abbrev admissibleMeasure {D : Type*} [Preorder D] (μ : S → D) : Prop :=
   StrictMono μ
 
-/-- Comparative semantics on states (CSW eq. 37): "A is more G than B"
+/-- Comparative semantics on states (CSW (32)): "A is more G than B"
     iff the measure of A's state exceeds the measure of B's state.
 
-    The key CSW insight: the comparative uses only the background ordering
-    (via an admissible measure), not the contrast point. The positive
-    region is irrelevant to comparative truth conditions. -/
+    The key CSW insight (§3.4): the comparative uses only the background
+    ordering (via an admissible measure), not the contrast point. This is
+    captured architecturally by the type signature — `statesComparativeSem`
+    takes no `StatesBasedEntry` parameter, so the contrast point that
+    distinguishes scale-mates (`confident`/`certain`, `warm`/`hot`) is
+    invisible to the comparative. Scale-mate comparative equivalence
+    (CSW (72)) holds by construction. -/
 def statesComparativeSem {D : Type*} [Preorder D]
     (μ : S → D) (s_a s_b : S) : Prop :=
   μ s_b < μ s_a
-
-/-- The comparative is independent of the contrast point: `more` accesses
-    only the background ordering, discarding positive-region info (CSW §3.4).
-
-    For any two entries `e₁`, `e₂` on the same scale, the comparative
-    truth conditions are identical. -/
-theorem comparative_ignores_contrastPoint {D : Type*} [Preorder D]
-    (e₁ e₂ : StatesBasedEntry S) (_h : e₁.scale = e₂.scale)
-    (μ : S → D) (s_a s_b : S) :
-    statesComparativeSem μ s_a s_b ↔ statesComparativeSem μ s_a s_b :=
-  Iff.rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. Bridge: States-Based ↔ Kennedy
@@ -165,22 +158,5 @@ theorem statesBased_iff_kennedy
     have := hMono h_lt
     rw [hBridge] at this
     exact absurd h (not_le.mpr this)
-
--- ════════════════════════════════════════════════════
--- § 5. Comparative Equivalence of Scale-Mates
--- ════════════════════════════════════════════════════
-
-/-- Scale-mates have identical comparative truth conditions (CSW (72)):
-    "more confident that p than that q" ↔ "more certain that p than that q".
-
-    This follows trivially from the fact that comparative semantics depends
-    only on the measure function and the states, not on the entry. The
-    theorem's value is documentary — it makes explicit the CSW insight
-    that the comparative is entry-independent. -/
-theorem comparative_scalemate_equiv {D : Type*} [Preorder D]
-    (e₁ e₂ : StatesBasedEntry S) (_h : areScaleMates e₁ e₂)
-    (μ : S → D) (s_a s_b : S) :
-    statesComparativeSem μ s_a s_b ↔ statesComparativeSem μ s_a s_b :=
-  Iff.rfl
 
 end Semantics.Lexical.Adjective.StatesBased

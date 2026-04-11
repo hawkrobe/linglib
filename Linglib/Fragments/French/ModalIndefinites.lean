@@ -30,6 +30,7 @@ def nimporteQuelEntry : ModalIndefiniteEntry where
   upperBounded := false
   hasUnremarkableReading := false
   canBePredicate := false
+  anchorConstraint := some .unrestricted
   source := "Jayez & Tovena 2006"
 
 
@@ -38,9 +39,10 @@ def nimporteQuelEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem nimporteQuel_at_issue : nimporteQuelEntry.status = .atIssue := rfl
-theorem nimporteQuel_rc : nimporteQuelEntry.hasCircumstantial = true := by native_decide
-theorem nimporteQuel_no_epistemic : nimporteQuelEntry.hasEpistemic = false := by native_decide
+theorem nimporteQuel_rc : nimporteQuelEntry.hasCircumstantial = true := rfl
+theorem nimporteQuel_no_epistemic : nimporteQuelEntry.hasEpistemic = false := rfl
 theorem nimporteQuel_not_ub : nimporteQuelEntry.upperBounded = false := rfl
+theorem nimporteQuel_unrestricted : nimporteQuelEntry.anchorConstraint = some .unrestricted := rfl
 
 
 end Fragments.French.ModalIndefinites

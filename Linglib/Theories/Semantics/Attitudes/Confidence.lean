@@ -127,34 +127,48 @@ def confidentEntry {E W : Type*} (co : ConfidenceOrdering E W)
 /-- `certain`: positive region begins at the maximum — `certain` picks out
     the maximal elements of the confidence ordering (CSW §5.2, Figure 3).
     `certain` and `confident` share the same background ordering but
-    `certain` has a higher contrast point. -/
+    `certain`'s contrast point IS the top of the ordering.
+
+    The `h_top` constraint formalizes the maximality claim: no confidence
+    state is ranked above `maxPt`. This predicts (69): "fully/completely/
+    100% confident = certain" — modifier evidence for endpoint status.
+    And (68): "??But she's even more certain" — once certain, you can't
+    be more certain in the ordering. -/
 def certainEntry {E W : Type*} (co : ConfidenceOrdering E W)
-    (maxPt : ConfidenceState E W) :
+    (maxPt : ConfidenceState E W)
+    (_h_top : ∀ s : ConfidenceState E W, co.le s maxPt) :
     @StatesBasedEntry (ConfidenceState E W) co.toPreorder :=
   confidenceEntry co maxPt .upperBounded
 
 /-- `certain` entails `confident`: every state in the certainty region
     is also in the confidence region (CSW (65)).
 
-    This follows from `asymEntails` when the certainty contrast point
-    is at least as high as the confidence contrast point. -/
+    Derived from `certainEntry`'s maximality constraint: since `maxPt`
+    is the top element, `confPt ≤ maxPt` holds for any contrast point.
+    No free hypothesis needed — the entailment follows from the
+    structural claim that `certain` picks out maximal elements. -/
 theorem certain_entails_confident {E W : Type*}
     (co : ConfidenceOrdering E W)
     (confPt maxPt : ConfidenceState E W)
-    (h : co.le confPt maxPt) :
-    @asymEntails _ co.toPreorder (certainEntry co maxPt) (confidentEntry co confPt) := by
+    (h_top : ∀ s : ConfidenceState E W, co.le s maxPt) :
+    @asymEntails _ co.toPreorder (certainEntry co maxPt h_top) (confidentEntry co confPt) := by
   show co.le confPt maxPt
-  exact h
+  exact h_top confPt
 
 /-- The entailment is asymmetric when the contrast points differ:
-    confidence does NOT entail certainty (CSW (65b)). -/
+    confidence does NOT entail certainty (CSW (65b)).
+
+    The confidence contrast point `confPt` is strictly below the
+    certainty contrast point `maxPt` — there exist states in the
+    confidence region that are NOT in the certainty region. -/
 theorem confident_not_entails_certain {E W : Type*}
     (co : ConfidenceOrdering E W)
     (confPt maxPt : ConfidenceState E W)
-    (h_strict : co.le confPt maxPt ∧ ¬co.le maxPt confPt) :
-    ¬@asymEntails _ co.toPreorder (confidentEntry co confPt) (certainEntry co maxPt) := by
+    (h_top : ∀ s : ConfidenceState E W, co.le s maxPt)
+    (h_strict : ¬co.le maxPt confPt) :
+    ¬@asymEntails _ co.toPreorder (confidentEntry co confPt) (certainEntry co maxPt h_top) := by
   show ¬co.le maxPt confPt
-  exact h_strict.2
+  exact h_strict
 
 -- ════════════════════════════════════════════════════
 -- § 4. Logic of Confidence (CSW §4.6)
@@ -218,5 +232,69 @@ theorem conjunction_fallacy_compatible :
     ∃ (contrastPt high low : ℕ),
       contrastPt ≤ high ∧ ¬(contrastPt ≤ low) :=
   ⟨1, 2, 0, by omega, by omega⟩
+
+/-- CSW (59): under the negation-as-contrast assumption, confidence
+    that p entails being more confident of p than of ¬p.
+
+    If the contrast point for confidence-that-p is a state about ¬p
+    (`s_neg`), and the subject's confidence state (`s_p`) is strictly
+    above `s_neg` in the ordering, then any admissible (strictly
+    monotone) measure maps `s_neg` to a strictly lower degree than
+    `s_p` — i.e., the subject is more confident of p than of ¬p.
+
+    CSW note that this prediction is "controversial" (§4.6, p. 27):
+    it requires the assumption that `contrast` always maps a proposition
+    to its negation, which they ultimately remain agnostic about. -/
+theorem positive_entails_comparative {E W : Type*}
+    (co : ConfidenceOrdering E W)
+    {D : Type*} [Preorder D]
+    (μ : ConfidenceState E W → D)
+    (hMono : letI := co.toPreorder; StrictMono μ)
+    (s_p s_neg : ConfidenceState E W)
+    (h_pos : co.le s_neg s_p)
+    (h_strict : ¬co.le s_p s_neg) :
+    letI := co.toPreorder
+    statesComparativeSem μ s_p s_neg := by
+  show μ s_neg < μ s_p
+  letI := co.toPreorder
+  exact hMono ⟨h_pos, h_strict⟩
+
+-- ════════════════════════════════════════════════════
+-- § 5. Bridge to Neo-Davidsonian Event Semantics
+-- ════════════════════════════════════════════════════
+
+/-- CSW's logical form (44) for "Ann is confident that it's raining":
+    `∃s_v : s ∈ Dom(⟨D^ho(s)_conf, ≿⟩). [ho(s) = a ∧ confidence_C(s) ∧ θ(s) = rain]`
+
+    This is an instance of `stativeLogicalForm` (`ThematicRoles.lean`):
+    existential closure over states with a holder role, plus conjuncts
+    restricting the state to be a confidence state with the right theme.
+
+    `confPred` is the predicate on events/states that selects for
+    confidence states about proposition `p` in the positive region. -/
+def confidenceLogicalForm {E W : Type*}
+    (co : ConfidenceOrdering E W)
+    (entry : @StatesBasedEntry _ co.toPreorder)
+    (holder : E) (p : W → Prop) : Prop :=
+  ∃ s : ConfidenceState E W,
+    s.holder = holder ∧
+    @StatesBasedEntry.inPositiveRegion _ co.toPreorder entry s ∧
+    s.theme = p
+
+/-- CSW's logical form (47) for comparative confidence:
+    "Ann is more confident that p than that q" iff there exists a
+    confidence state about p whose measure exceeds the max of states
+    about q. Under unique-state assumptions, this reduces to
+    `μ(s_p) > μ(s_q)`, matching `statesComparativeSem`. -/
+def comparativeConfidenceLogicalForm {E W : Type*}
+    (co : ConfidenceOrdering E W)
+    {D : Type*} [LinearOrder D]
+    (μ : ConfidenceState E W → D)
+    (holder : E) (p q : W → Prop) : Prop :=
+  ∃ s_p s_q : ConfidenceState E W,
+    s_p.holder = holder ∧ s_p.theme = p ∧
+    s_q.holder = holder ∧ s_q.theme = q ∧
+    letI := co.toPreorder
+    statesComparativeSem μ s_p s_q
 
 end Semantics.Attitudes.Confidence

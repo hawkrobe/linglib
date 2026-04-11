@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.TemporalConnectives.Karttunen
+import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Fragments.Greek.TemporalConnectives

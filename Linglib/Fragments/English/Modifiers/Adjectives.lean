@@ -252,6 +252,38 @@ def dry : AdjModifierEntry :=
   , isLowerEndpoint := true }
 
 -- ============================================================================
+-- Gradable Attitude Adjectives (@cite{cariani-santorio-wellwood-2024})
+-- ============================================================================
+
+/-- `confident`: gradable attitude adjective on an upper-bounded confidence
+    scale. Denotes a positive region of a holder-relativized confidence
+    ordering (CSW §4.2, Figure 2). -/
+def confident : AdjModifierEntry :=
+  { form := "confident"
+  , formComp := some "more confident"
+  , formSuper := some "most confident"
+  , scaleType := .upperBounded
+  , dimension := .confidence }
+
+/-- `certain`: gradable attitude adjective picking out the maximal elements
+    of the confidence ordering (CSW §5.2, Figure 3). Scale-mate of
+    `confident` with a higher contrast point. -/
+def certain : AdjModifierEntry :=
+  { form := "certain"
+  , formComp := some "more certain"
+  , formSuper := some "most certain"
+  , scaleType := .upperBounded
+  , dimension := .confidence }
+
+/-- `sure`: near-synonym of `confident` on the confidence scale. -/
+def sure : AdjModifierEntry :=
+  { form := "sure"
+  , formComp := some "surer"
+  , formSuper := some "surest"
+  , scaleType := .upperBounded
+  , dimension := .confidence }
+
+-- ============================================================================
 -- Non-Gradable / Absolute Adjectives
 -- ============================================================================
 
@@ -301,6 +333,7 @@ def allEntries : List AdjModifierEntry := [
   good, bad,
   smart,
   hot, cold,
+  confident, certain, sure,
   full, empty_, wet, dry,
   dead, pregnant
 ]

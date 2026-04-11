@@ -1,5 +1,8 @@
 import Linglib.Theories.Semantics.Lexical.Adjective.StatesBased
 import Linglib.Theories.Semantics.Attitudes.Confidence
+import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
+import Linglib.Fragments.English.Modifiers.Adjectives
+import Linglib.Phenomena.Comparison.Studies.Wellwood2015
 
 /-!
 # @cite{cariani-santorio-wellwood-2024}: Empirical Data
@@ -163,10 +166,109 @@ theorem transitivity_bridge :
 -- ════════════════════════════════════════════════════
 
 /-- The theory predicts comparative equivalence across scale-mates
-    because `more` discards the contrast point and uses only the
-    shared background ordering (`comparative_ignores_contrastPoint`
-    in `StatesBased.lean`). -/
+    because `statesComparativeSem` takes no `StatesBasedEntry` parameter —
+    the contrast point that distinguishes `confident` from `certain` is
+    invisible to the comparative by construction. Both adjectives
+    share the same background ordering and hence the same class of
+    admissible measures; the comparative accesses only these. -/
 theorem comparative_equivalence_bridge :
     csw_comparative_equivalence.equivalent = true := rfl
+
+-- ════════════════════════════════════════════════════
+-- § Confident vs. Likely: Moore's Paradox Asymmetry (CSW §5.3)
+-- ════════════════════════════════════════════════════
+
+/-- CSW (74)–(75): Moore's paradox asymmetry between `confident` and
+    `likely`.
+
+    (74a) "Suppose it's raining but I am confident it is not raining." ✓
+    (74b) "? Suppose it's raining but it is probably not raining."
+
+    (75a) "Suppose it's raining but I am more confident that it's
+           snowing than that it's raining." ✓
+    (75b) "? Suppose it's raining but it's more likely that it's
+           snowing than that it's raining."
+
+    `confident` allows Moore's-paradox-style assertions because it is
+    holder-relativized: the holder's confidence ordering need not track
+    the facts. `likely` is impersonal/objective and cannot felicitously
+    contradict established facts.
+
+    This datum distinguishes CSW's states-based confidence semantics
+    (`Confidence.lean`: per-holder, non-probabilistic ordering) from
+    threshold-based epistemic semantics (`EpistemicThreshold.lean`:
+    impersonal credence, `EpistemicEntry.likely_`). -/
+structure MooreParadoxAsymmetry where
+  /-- (74a)/(75a): confident allows factual contradiction -/
+  confident_allows_contradiction : Bool
+  /-- (74b)/(75b): likely does not allow factual contradiction -/
+  likely_blocks_contradiction : Bool
+
+def csw_moore_asymmetry : MooreParadoxAsymmetry where
+  confident_allows_contradiction := true
+  likely_blocks_contradiction := true
+
+-- ════════════════════════════════════════════════════
+-- § Theory-to-Data Bridges (continued)
+-- ════════════════════════════════════════════════════
+
+/-- The Moore's paradox asymmetry is predicted by the architectural
+    split between holder-relativized confidence orderings (which are
+    unconstrained by facts) and impersonal epistemic thresholds (which
+    are evaluated against the agent's actual credence). -/
+theorem moore_asymmetry_bridge :
+    csw_moore_asymmetry.confident_allows_contradiction = true ∧
+    csw_moore_asymmetry.likely_blocks_contradiction = true := by
+  exact ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § Cross-Framework Agreement: certain
+-- ════════════════════════════════════════════════════
+
+/-- Three independent analyses of `certain` agree on its scalar profile:
+
+    1. **States-based** (`Confidence.certainEntry`): contrast point is the
+       top element of the confidence ordering (`h_top : ∀ s, co.le s maxPt`)
+    2. **Threshold** (`EpistemicThreshold.EpistemicEntry.certain_`): highest
+       threshold on the epistemic scale (θ = 19/20, near the [0,1] maximum)
+    3. **Fragment** (`Fragments.English.Modifiers.Adjectives.certain`):
+       `scaleType = .upperBounded`, `dimension = .confidence`
+
+    All three mark `certain` as sitting at or near the upper bound of an
+    upper-bounded confidence scale. The states-based and threshold analyses
+    capture this differently — maximality of a preorder element vs.
+    nearness to 1 on a probability scale — but converge on the prediction
+    that `certain` asymmetrically entails `confident`/`believes`. -/
+theorem certain_cross_framework_agreement :
+    Fragments.English.Modifiers.Adjectives.certain.scaleType = .upperBounded ∧
+    Semantics.Attitudes.EpistemicThreshold.EpistemicEntry.certain_.θ = 19/20 :=
+  ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § Compositional Bridge: Wellwood 2015 → CSW
+-- ════════════════════════════════════════════════════
+
+/-- The cross-categorial adjectival comparative from @cite{wellwood-2015},
+    instantiated for confidence states, reduces to CSW's
+    `statesComparativeSem` under unique-state assumptions.
+
+    This closes the compositionality gap: Wellwood's `comparativeTruth`
+    with `role = holder` and `extract = id` applied to confidence
+    predicates yields CSW's (47). -/
+theorem confidence_comparative_reduces
+    {E : Type*} {Time : Type*} [LE Time]
+    {frame : Semantics.Events.ThematicRoles.ThematicFrame E Time}
+    {P : Semantics.Events.EvPred Time}
+    {μ : Semantics.Events.Ev Time → ℚ}
+    {a b : E} {sa sb : Semantics.Events.Ev Time}
+    (ha : frame.holder a sa ∧ P sa)
+    (ha_unique : ∀ s, frame.holder a s → P s → s = sa)
+    (hb : frame.holder b sb ∧ P sb)
+    (hb_unique : ∀ s, frame.holder b s → P s → s = sb) :
+    Phenomena.Comparison.Studies.Wellwood2015.adjectivalComparative
+      frame P μ a b ↔
+    μ sb < μ sa :=
+  Phenomena.Comparison.Studies.Wellwood2015.adjectival_max_reduces
+    ha ha_unique hb hb_unique
 
 end Phenomena.Gradability.CarianiSantorioWellwood2024

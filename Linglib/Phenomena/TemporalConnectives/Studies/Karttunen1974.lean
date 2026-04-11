@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.TemporalConnectives.Anscombe
+import Linglib.Phenomena.TemporalConnectives.Studies.Anscombe1964
 
 /-!
 # @cite{karttunen-1974}: *Until*, *When*, and the Two-*Until* Hypothesis

@@ -30,6 +30,7 @@ def unQualsiasiEntry : ModalIndefiniteEntry where
   upperBounded := false
   hasUnremarkableReading := false
   canBePredicate := false
+  anchorConstraint := some .unrestricted
   source := "Chierchia 2013"
 
 
@@ -38,9 +39,10 @@ def unQualsiasiEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem unQualsiasi_at_issue : unQualsiasiEntry.status = .atIssue := rfl
-theorem unQualsiasi_rc : unQualsiasiEntry.hasCircumstantial = true := by native_decide
-theorem unQualsiasi_no_epistemic : unQualsiasiEntry.hasEpistemic = false := by native_decide
+theorem unQualsiasi_rc : unQualsiasiEntry.hasCircumstantial = true := rfl
+theorem unQualsiasi_no_epistemic : unQualsiasiEntry.hasEpistemic = false := rfl
 theorem unQualsiasi_not_ub : unQualsiasiEntry.upperBounded = false := rfl
+theorem unQualsiasi_unrestricted : unQualsiasiEntry.anchorConstraint = some .unrestricted := rfl
 
 
 end Fragments.Italian.ModalIndefinites

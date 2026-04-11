@@ -1,6 +1,6 @@
 import Linglib.Core.Empirical
 import Linglib.Fragments.English.TemporalExpressions
-import Linglib.Theories.Semantics.Tense.TemporalConnectives.Rett
+import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Serbian.TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.Compare

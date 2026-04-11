@@ -1,79 +1,103 @@
 import Linglib.Theories.Semantics.Conditionals.Iatridou
 import Linglib.Theories.Semantics.Reference.Kaplan
+import Linglib.Theories.Semantics.Tense.ConditionalShift
 
 /-!
 # Anderson Conditionals: Crosslinguistic Marking Strategies
-@cite{mizuno-2024} @cite{anderson-1951}Formalizes the crosslinguistic typology of Anderson conditionals from @cite{iatridou-2000}
-@cite{mizuno-2024} "Strategies for Anderson Conditionals", *Semantics and
-Pragmatics* 17(8): 1–14.
+@cite{anderson-1951} @cite{mizuno-2024} @cite{schlenker-2004} @cite{condoravdi-2002} @cite{von-fintel-iatridou-2023}
 
 ## Anderson Conditionals
 
-Anderson conditionals are counterfactuals where the speaker
-believes the antecedent is actually true:
+Anderson conditionals (@cite{anderson-1951}) are conditionals in which the
+antecedent is an explanans for observed facts described in the consequent:
 
-> "If Jones had taken arsenic, he would have shown exactly the symptoms
-> he is *actually* showing."
+> "If Jones had taken arsenic, he would show exactly the symptoms
+> he is *actually* showing. So, it looks like he did take arsenic."
 
-The speaker believes Jones *did* take arsenic, and uses the conditional
-to argue from the observed symptoms to that conclusion. The challenge:
-how does the consequent describe the actual world when the conditional
-morphology shifts evaluation to counterfactual alternatives?
+The speaker believes the antecedent is true and uses the conditional to
+argue from observed evidence to that conclusion. Despite using
+counterfactual morphology (in English), Anderson conditionals are
+epistemically indicative — the follow-up "So it looks like he did" is
+felicitous.
 
-## Two Marking Strategies
+## The Triviality Problem
 
-Mizuno identifies two crosslinguistic strategies:
+The consequent of an Anderson conditional describes an observed fact — it
+holds at every world in the live domain D. Under standard conditional
+semantics (universal quantification over D), this makes the conditional
+trivially true regardless of the antecedent. Both crosslinguistic
+strategies avoid triviality by expanding the domain:
 
-- **X-marking** (English): Counterfactual morphology (fake past) in the
-  antecedent shifts the evaluation world away from the actual world,
-  producing modal ExclF. "Actually" in the consequent
-  recovers the actual world via Kaplanian origin access.
+### X-marking (English)
 
-- **O-marking** (Japanese): Non-Past / Historical Present in the consequent.
-  No counterfactual morphology, so no ExclF — the evaluation world remains
-  the actual world. The consequent directly describes actuality.
+Counterfactual morphology (fake past) expands the domain from D to D⁺ ⊃ D,
+including worlds where the consequent may fail. The conditional becomes
+non-trivial. "Actually" in the consequent recovers the actual world via
+Kaplanian origin access, since X-marking shifts the evaluation world away.
 
-## Connection to Existing Infrastructure
+### O-marking with Historical Present (Japanese)
 
-- **X-marking**: `subjShift_produces_modal_exclF` (Iatridou) produces the
-  world shift; `opActually_shift_invariant` (Kaplan) recovers the origin.
-- **O-marking**: `root_no_modal_exclF` (Iatridou) — no shift means no ExclF,
-  so the actual world is directly accessible.
+Non-Past morphology in the consequent triggers a perspectival shift
+analogous to the Historical Present. Following @cite{schlenker-2004}'s
+bicontextual analysis, this shifts the Context of Utterance v backward in
+time (to v' with TIME(v') < TIME(v)) while preserving the Context of
+Thought θ at the utterance time. In the ContextTower, θ = `origin` and
+v = `innermost` after the shift.
+
+Under branching time (@cite{condoravdi-2002}), this backward shift expands
+the domain: D_{w,t'} ⊃ D_{w,t} because more futures branch from earlier
+times. The conditional becomes non-trivial without counterfactual morphology.
+Temporal indexicals like *sakuya* 'last night' evaluate against θ (origin),
+not v, paralleling HP in narrative contexts.
 
 ## FLV Correlation
 
-The availability of X-marking for Anderson conditionals correlates with its
-availability for Future Less Vivid conditionals:
-- English: X-marking available for both Anderson and FLV
-- Japanese: X-marking available for neither
-- Mandarin: X-marking available for neither
+@cite{mizuno-2024}: the availability of X-marking for Anderson conditionals
+and for Future Less Vivid conditionals seem to stand or fall together
+across languages (English has both; Japanese and Mandarin have neither).
+This correlation is captured empirically in the study file, not derived
+from the marking strategy type.
 
 -/
 
 namespace Semantics.Conditionals.Anderson
 
-open Core.Context (KContext ContextTower ContextShift)
+open Core.Context (KContext ContextTower ContextShift RichContext
+  hpShift xMarkingShift DomainExpanding)
 open Semantics.Conditionals.Iatridou (ExclF)
 open Semantics.Reference.Kaplan (opActually_access opActually_shift_invariant)
 open Semantics.Mood (subjShift)
+open Semantics.Tense.ConditionalShift (domainRestrictedConditional
+  trivialConsequent nonTrivialConsequent
+  trivial_domainRestricted expansion_resolves_triviality
+  nontrivial_conditional_excludes)
 
 -- ════════════════════════════════════════════════════════════════
 -- § Marking Strategy Typology
 -- ════════════════════════════════════════════════════════════════
 
-/-- The two crosslinguistic marking strategies for Anderson conditionals.
+/-- The two crosslinguistic strategies for Anderson conditionals.
 
-@cite{mizuno-2024}: languages differ in whether they use X-marking (counterfactual
-morphology) or O-marking (indicative/non-past) to express Anderson conditionals.
-English requires X-marking; Japanese requires O-marking. -/
+@cite{von-fintel-iatridou-2023} introduce the O-marking/X-marking
+distinction as a general typological label for grammatical means of
+distinguishing live from non-live possibilities.
+@cite{mizuno-2024}: languages differ in whether they use X-marking
+(counterfactual morphology) or O-marking (non-past) to express Anderson
+conditionals. Both strategies achieve domain expansion — and thus avoid
+triviality — via different mechanisms. -/
 inductive MarkingStrategy where
-  /-- X-marking: CF morphology in antecedent + "actually" recovers actual world.
+  /-- X-marking: counterfactual morphology expands the domain from D to D⁺.
+      "Actually" in the consequent recovers the actual world via Kaplanian
+      origin access.
       English: "If Jones *had taken* arsenic, he *would have shown* exactly
       the symptoms he is *actually* showing." -/
   | xMarking
-  /-- O-marking: Non-Past/Historical Present — no CF morphology, actual world
-      directly accessible.
-      Japanese: "Jones-ga... nom-*eba*,... mise-*ru* (hazuda)." -/
+  /-- O-marking: Non-Past morphology triggers a perspectival shift analogous
+      to the Historical Present (@cite{schlenker-2004}). The backward time
+      shift expands the domain under branching time, avoiding triviality
+      without counterfactual morphology. The actual world is directly
+      accessible (no world shift, so no need for "actually").
+      Japanese: "Jones-si-ga... nom-*eba*,... mise-*ru* (hazuda)." -/
   | oMarking
   deriving DecidableEq, Repr
 
@@ -84,14 +108,9 @@ inductive MarkingStrategy where
 /-- X-marking strategy uses counterfactual morphology; O-marking does not.
 
     This is the single primitive property of marking strategies. All other
-    properties (ExclF production, "actually" requirement, FLV availability)
-    are derived from it — they are `abbrev`s equal to `hasXMarking`, with
-    docstrings explaining *why* the correlation holds.
-
-    Both strategies access the actual world in the consequent — X-marking
-    via Kaplanian "actually" (origin access through shifted tower), O-marking
-    directly (no world shift). This is universal, not a distinguishing
-    property. -/
+    properties (ExclF production, "actually" requirement) are derived from
+    it — they are `abbrev`s equal to `hasXMarking`, with docstrings
+    explaining *why* the correlation holds. -/
 def MarkingStrategy.hasXMarking : MarkingStrategy → Bool
   | .xMarking => true
   | .oMarking => false
@@ -141,7 +160,7 @@ theorem xMarking_produces_exclF (c : KContext W E P T) (w' : W) (t' : T)
 
     In an Anderson conditional with X-marking, the CF morphology pushes
     the tower (shifting the evaluation world). But "actually" — being a
-    Kaplanian indexical with `depth =.origin` — resolves to the speech-act
+    Kaplanian indexical with `depth = .origin` — resolves to the speech-act
     world regardless. This is what makes Anderson conditionals felicitous
     despite the counterfactual morphology: "actually" reaches through the
     CF layer to access the actual world.
@@ -163,17 +182,117 @@ theorem oMarking_no_exclF (c : KContext W E P T) :
     ¬ ExclF .modal (ContextTower.root c) :=
   Iatridou.root_no_modal_exclF c
 
-/-- X-marking is available for FLV where it's available for Anderson.
+-- ════════════════════════════════════════════════════════════════
+-- § Domain Expansion Bridge
+-- ════════════════════════════════════════════════════════════════
 
-    @cite{mizuno-2024}: "the availability of X-marking for Anderson
-    conditionals and the availability of X-marking for Future Less Vivid
-    conditionals seem to stand or fall together."
+/-- X-marking shift produces modal ExclF on RichContext towers.
 
-    English (X-marking for Anderson) → X-marking available for FLV.
-    Japanese (O-marking for Anderson) → X-marking NOT available for FLV.
+The `xMarkingShift` (from Rich.lean) changes both world and time. When
+the counterfactual world differs from the origin, the resulting tower
+has modal ExclF. -/
+theorem xMarking_produces_modal_exclF
+    (rc : RichContext W E P T)
+    (pastTime : T) (cfWorld : W) (expandedDomain : Set W)
+    (h : cfWorld ≠ rc.base.world) :
+    ((xMarkingShift (E := E) (P := P) pastTime cfWorld expandedDomain).apply rc
+      ).base.world ≠ rc.base.world :=
+  h
 
-    Definitionally equal to `hasXMarking` — an empirical generalization
-    over English, Japanese, and Mandarin, not a logical necessity. -/
-abbrev MarkingStrategy.flvXMarkingAvailable (s : MarkingStrategy) : Bool := s.hasXMarking
+/-- Both strategies avoid triviality by expanding the domain. This theorem
+    witnesses the general pattern: if a domain expansion produces a world
+    where the consequent fails, the conditional is non-trivial.
+
+    - X-marking achieves this via `xMarkingShift` (CF morphology → D⁺)
+    - O-marking achieves this via `hpShift` (HP → backward time → D⁺)
+
+    Wraps `ConditionalShift.expansion_resolves_triviality`. -/
+theorem domain_expansion_avoids_triviality
+    (smallDomain expandedDomain : Set W)
+    (consequent : W → Prop)
+    (h_subset : smallDomain ⊆ expandedDomain)
+    (h_trivial : trivialConsequent smallDomain consequent)
+    (w : W) (hw : w ∈ expandedDomain) (hw_fails : ¬ consequent w) :
+    nonTrivialConsequent expandedDomain consequent :=
+  expansion_resolves_triviality smallDomain expandedDomain consequent
+    h_subset h_trivial w hw hw_fails
+
+/-- The O-marking triviality problem: without domain expansion, the
+    Anderson conditional is vacuously true. The `domainRestrictedConditional`
+    over the non-expanded domain D is trivially satisfied because the
+    consequent (an observed fact) holds at every world in D.
+
+    This is why English O-marked Anderson conditionals (ex. 2 in
+    @cite{mizuno-2024}) are infelicitous. -/
+theorem oMarking_trivial
+    (domain : Set W)
+    (antecedent consequent : W → Prop)
+    (h_trivial : trivialConsequent domain consequent) :
+    domainRestrictedConditional domain antecedent consequent :=
+  trivial_domainRestricted domain antecedent consequent h_trivial
+
+/-- The X-marking / O-marking payoff: when domain expansion makes the
+    consequent non-trivial, the antecedent of a true conditional must
+    exclude at least one world in D⁺. The conditional is informative —
+    the antecedent restriction partitions D⁺ into consequent-satisfying
+    worlds (selected by the conditional) and consequent-failing worlds
+    (excluded by the antecedent).
+
+    This is why domain expansion resolves the triviality problem:
+    the Anderson conditional "If Jones took arsenic, he would show these
+    symptoms" is non-trivially true because the expanded domain includes
+    worlds where Jones shows different symptoms, and the antecedent
+    excludes those worlds. -/
+theorem expanded_conditional_informative
+    (expandedDomain : Set W)
+    (antecedent consequent : W → Prop)
+    (h_nontrivial : nonTrivialConsequent expandedDomain consequent)
+    (h_cond : domainRestrictedConditional expandedDomain antecedent consequent) :
+    ∃ w ∈ expandedDomain, ¬ antecedent w :=
+  nontrivial_conditional_excludes expandedDomain antecedent consequent
+    h_nontrivial h_cond
+
+-- ════════════════════════════════════════════════════════════════
+-- § Bicontextual Semantics (@cite{schlenker-2004})
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+### ContextTower as Bicontextual Semantics
+
+@cite{schlenker-2004} distinguishes two evaluation contexts:
+
+- **Context of Thought θ**: temporal coordinate identical to utterance time.
+  Temporal indexicals (*seventy-eight years ago*, *sakuya* 'last night')
+  evaluate against θ.
+- **Context of Utterance v**: temporal coordinate can be shifted by HP.
+  Tense morphology evaluates against v.
+
+The `ContextTower` implements this distinction:
+
+- `tower.origin` = θ (speech-act context, stable under shifts)
+- `tower.innermost` = v (after HP or subjunctive shift)
+
+In a root tower (no shifts), θ = v. An HP shift pushes the tower,
+creating v' with TIME(v') < TIME(θ) while `origin` remains θ.
+An X-marking shift pushes the tower, creating v' with
+WORLD(v') ≠ WORLD(θ) — which is exactly modal ExclF.
+
+This structural correspondence means the `origin_stable` theorem
+(`AccessPattern.origin_stable`) directly captures Schlenker's claim
+that indexicals anchored to θ are unaffected by HP or CF shifts.
+-/
+
+/-- In O-marking (HP) strategy, temporal indexicals still evaluate against
+    the speech-act context (θ = origin), not the shifted context (v = innermost).
+
+    This explains why Japanese *sakuya* 'last night' in the antecedent
+    of (4a) evaluates against the utterance time, paralleling the behavior
+    of *seventy-eight years ago* in Schlenker's HP example (5). -/
+theorem oMarking_indexicals_at_origin
+    (ap : Core.Context.AccessPattern (KContext W E P T) W)
+    (hd : ap.depth = .origin)
+    (t : ContextTower (KContext W E P T)) (σ : ContextShift (KContext W E P T)) :
+    ap.resolve (t.push σ) = ap.resolve t :=
+  Core.Context.AccessPattern.origin_stable ap hd t σ
 
 end Semantics.Conditionals.Anderson

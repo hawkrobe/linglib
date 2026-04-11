@@ -16,13 +16,16 @@ levels of semantic representation:
    (before-start, after-finish). Non-default readings require covert
    **INCHOAT** or **COMPLET** operators that incur measurable processing cost.
 
-3. **Level 3 — Quantificational Event**:
-   Event-level. Derives the veridicality asymmetry from quantificational
-   structure (∃∃ for *after*, ∃∀ for *before*).
+3. **Level 4 — Intensional Uniform** (@cite{beaver-condoravdi-2003}):
+   World–time pairs with historical alternatives. Uniform `earliest` operator
+   for both connectives. Derives veridicality from branching time (initial
+   branch point condition).
 
-4. **Level 4 — Intensional Uniform**: World–time pairs
-   with historical alternatives. Uniform `earliest` operator for both connectives.
-   Derives veridicality from branching time (initial branch point condition).
+4. **Level 4 — Intensional Revised** (@cite{ogihara-steinert-threlkeld-2024}):
+   Extends B&C with eventuality-relative equivalence (≃_{I,e}) and revamped
+   alt(w,I,e). Derives veridicality from the same branching-time architecture
+   but adds CAUSE and event continuation. The ∃∀/∃∃ quantificational asymmetry
+   (from @cite{anscombe-1964}) is employed but is not O&ST's contribution.
 
 ## Empirical Discriminators
 
@@ -51,8 +54,8 @@ open Fragments.English.TemporalExpressions
 inductive BeforeAfterTheory where
   | underspecification     -- @cite{anscombe-1964}, @cite{krifka-2010b}
   | ambiguity              -- @cite{rett-2020}
-  | quantificationalEvent  -- @cite{ogihara-steinert-threlkeld-2024}
   | intensionalUniform     -- @cite{beaver-condoravdi-2003}
+  | intensionalRevised     -- @cite{ogihara-steinert-threlkeld-2024}
   deriving DecidableEq, Repr
 
 /-- Theory profile: what each theory posits and predicts. -/
@@ -97,16 +100,19 @@ def rettProfile : TheoryProfile :=
   , derivesVeridicality := false
   , level := 2 }
 
-/-- O&ST: event-level quantificational asymmetry derives the veridicality contrast
-    directly from the semantics (∃∃ for after, ∃∀ for before). -/
+/-- O&ST: extends B&C's intensional framework with eventuality-relative
+    equivalence (≃_{I,e}) and revamped alt(w,I,e). Derives veridicality from
+    branching time + event continuation, with CAUSE mediating the non-veridical
+    reading. The quantificational asymmetry (∃∀ vs ∃∃) comes from
+    @cite{anscombe-1964}, not from O&ST's own contribution. -/
 def ostProfile : TheoryProfile :=
-  { theory := .quantificationalEvent
+  { theory := .intensionalRevised
   , singleLexicalEntry := true
   , positsCoercion := false
   , predictsProcessingCost := false
-  , npiMechanism := "universal quantifier over complement events (∀e₂)"
+  , npiMechanism := "downward entailment inherited from Anscombe's ∀ over complement"
   , derivesVeridicality := true
-  , level := 3 }
+  , level := 4 }
 
 /-- B&C: uniform analysis with `earliest` across historical alternatives.
     Veridicality derived from branching time (initial branch point condition),
@@ -141,8 +147,8 @@ theorem morphology_discriminates : rettPredictsOvertMorphology = true := rfl
 theorem theories_distinct : anscombeProfile.theory ≠ rettProfile.theory := by decide
 
 /-- O&ST and B&C both derive veridicality; Anscombe and Rett do not.
-    O&ST derives it from quantificational asymmetry (∃∃ vs ∃∀);
-    B&C derives it from branching time (initial branch point condition). -/
+    Both O&ST and B&C derive it from branching time; O&ST additionally
+    uses eventuality-relative equivalence and CAUSE. -/
 theorem veridicality_derivation :
     ostProfile.derivesVeridicality = true ∧
     bcProfile.derivesVeridicality = true ∧
@@ -150,12 +156,13 @@ theorem veridicality_derivation :
     rettProfile.derivesVeridicality = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- The four theories form a strict level hierarchy:
-    Anscombe (1) < Rett (2) < O&ST (3) < B&C (4). -/
+/-- The theories span three levels: Anscombe (1) < Rett (2) < B&C = O&ST (4).
+    B&C and O&ST are both Level 4 (intensional with branching time);
+    O&ST extends B&C with eventuality-relative equivalence. -/
 theorem level_hierarchy :
     anscombeProfile.level < rettProfile.level ∧
-    rettProfile.level < ostProfile.level ∧
-    ostProfile.level < bcProfile.level :=
+    rettProfile.level < bcProfile.level ∧
+    ostProfile.level = bcProfile.level :=
   ⟨by decide, by decide, by decide⟩
 
 /-- All four theories are distinct. -/

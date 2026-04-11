@@ -4,7 +4,9 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # @cite{beaver-condoravdi-2003}: Uniform Analysis with `earliest`
-@cite{beaver-condoravdi-2003} @cite{thomason-1984}A **uniform** semantics for *before* and *after*: both connectives use the
+@cite{beaver-condoravdi-2003} @cite{thomason-1984}
+
+A **uniform** semantics for *before* and *after*: both connectives use the
 same `earliest` operator, with the veridicality asymmetry derived from
 **branching time** and historical alternatives rather than quantificational
 asymmetry.
@@ -236,5 +238,124 @@ theorem BC.uniform_structure (A B : Set (W × T)) (alt : HistAlt W T) (w : W) :
     (BC.before A B alt w ↔ ∃ t, (w, t) ∈ A ∧ ∃ te ∈ earliestAlt alt B w t, t < te) ∧
     (BC.after A B alt w ↔ ∃ t, (w, t) ∈ A ∧ ∃ te ∈ earliestAlt alt B w t, t > te) :=
   ⟨Iff.rfl, Iff.rfl⟩
+
+-- ============================================================================
+-- § 7: O&ST Eventuality-Relative Equivalence (def 17)
+-- ============================================================================
+
+/-! @cite{ogihara-steinert-threlkeld-2024} §4 propose revising B&C's equivalence
+    relation to be sensitive to both an interval I and an eventuality e. The key
+    idea: alternative worlds must contain a counterpart of e that co-occurs with
+    e throughout the interval [START_w(e₁), START(I)), and worlds must be
+    identical at all earlier intervals.
+
+    This allows w₂ to become distinct from w₁ before I as long as they contain
+    events that start simultaneously, share the same set of participants, and
+    run up until I (not necessarily including I). -/
+
+/-- Counterpart relation on eventualities across worlds
+    (@cite{ogihara-steinert-threlkeld-2024}, fn. 18): counterpart eventualities
+    share essential properties such as starting time and thematic participants. -/
+abbrev Counterpart (W T : Type*) := W → T → W → T → Prop
+
+/-- **Eventuality-relative equivalence** ≃_{I,e₁}
+    (@cite{ogihara-steinert-threlkeld-2024}, def 17).
+
+    For worlds w₁, w₂ ∈ W, interval I, and eventuality e₁ in w₁,
+    w₁ ≃_{I,e₁} w₂ iff:
+
+    (i) there is an eventuality e₂ in w₂ understood as e₁'s counterpart;
+    (ii) e₁ and e₂ co-occur throughout [START_{w₁}(e₁), START(I));
+    (iii) at all intervals I₁ < START_{w₁}(e₁), w₁ and w₂ are identical.
+
+    The `coOccur` parameter models condition (ii): both eventualities occur
+    throughout the interval [start_e, start_I). The `agree` parameter
+    models condition (iii): world identity at earlier intervals. -/
+def equivIE
+    (counterpart : Counterpart W T)
+    (coOccur : W → T → W → T → T → T → Prop)
+    (agree : T → W → W → Prop)
+    (w₁ w₂ : W) (startI : T) (e₁_start : T) : Prop :=
+  -- (i) counterpart exists
+  counterpart w₁ e₁_start w₂ e₁_start ∧
+  -- (ii) co-occurrence throughout [start_e, start_I)
+  coOccur w₁ e₁_start w₂ e₁_start e₁_start startI ∧
+  -- (iii) identical at all earlier times
+  (∀ t', t' < e₁_start → agree t' w₁ w₂)
+
+-- ============================================================================
+-- § 8: Revamped Alternative Set (def 18)
+-- ============================================================================
+
+/-! The revised alt(w, I, e) uses the eventuality-relative equivalence
+    (@cite{ogihara-steinert-threlkeld-2024}, def 18a). -/
+
+/-- **Eventuality-relative alternatives** alt(w, I, e)
+    (@cite{ogihara-steinert-threlkeld-2024}, def 18a):
+    alt(w, I, e) ⊆ {w' : w ≃_{I,e} w'}. -/
+def altIE
+    (counterpart : Counterpart W T)
+    (coOccur : W → T → W → T → T → T → Prop)
+    (agree : T → W → W → Prop)
+    (w : W) (startI : T) (e_start : T) : Set W :=
+  { w' | equivIE counterpart coOccur agree w w' startI e_start }
+
+/-- **Event continuation condition** (@cite{ogihara-steinert-threlkeld-2024}, def 18b):
+    alt(w, I, e) contains only those worlds w' in which the counterpart
+    eventuality of e develops beyond I, as long as this is reasonable.
+    Modeled as a predicate on the alternative set. -/
+def eventContinuation (alt : Set W) (continues : W → Prop) : Set W :=
+  { w' ∈ alt | continues w' }
+
+/-- **Downward closure** (@cite{ogihara-steinert-threlkeld-2024}, def 18c):
+    If w ≃_{I,e} w' and I' < I, then w ≃_{I',e} w'.
+    Earlier equivalence classes are supersets. -/
+theorem equivIE_downward_closed
+    (counterpart : Counterpart W T)
+    (coOccur : W → T → W → T → T → T → Prop)
+    (coOccur_mono : ∀ w₁ e₁ w₂ e₂ s₁ s₂ s₂',
+      s₂' ≤ s₂ → coOccur w₁ e₁ w₂ e₂ s₁ s₂ → coOccur w₁ e₁ w₂ e₂ s₁ s₂')
+    (agree : T → W → W → Prop)
+    (w₁ w₂ : W) (startI startI' : T) (e_start : T)
+    (hle : startI' ≤ startI)
+    (h : equivIE counterpart coOccur agree w₁ w₂ startI e_start) :
+    equivIE counterpart coOccur agree w₁ w₂ startI' e_start :=
+  ⟨h.1, coOccur_mono w₁ e_start w₂ e_start e_start startI startI' hle h.2.1, h.2.2⟩
+
+-- ============================================================================
+-- § 9: equivIE Generalizes initialBranchPoint
+-- ============================================================================
+
+/-! O&ST's eventuality-relative equivalence ≃_{I,e} is a strict generalization
+    of B&C's initial branch point condition. Under trivial counterpart and
+    co-occurrence relations (always true), `equivIE` reduces to condition (iii)
+    alone: identity at all times before the eventuality's start — which is
+    exactly B&C's `initialBranchPoint` restricted to a single world pair.
+
+    This shows that the O&ST framework subsumes B&C: any `HistAlt` satisfying
+    `initialBranchPoint` can be recovered as an `altIE` with trivial parameters. -/
+
+/-- Under trivial counterpart (always holds) and trivial co-occurrence (always
+    holds), `equivIE` reduces to B&C's condition (iii): agreement at all
+    earlier times. This is the per-world-pair content of `initialBranchPoint`. -/
+theorem equivIE_trivial_iff_agree
+    (agree : T → W → W → Prop)
+    (w₁ w₂ : W) (startI e_start : T) :
+    equivIE (fun _ _ _ _ => True) (fun _ _ _ _ _ _ => True) agree w₁ w₂ startI e_start ↔
+    (∀ t', t' < e_start → agree t' w₁ w₂) := by
+  simp [equivIE]
+
+/-- B&C's `alt(w,t)` under `initialBranchPoint` is a subset of `altIE` with
+    trivial counterpart/co-occurrence, when the eventuality starts at t.
+    That is: any world sharing w's history up to t (B&C-style) also satisfies
+    the trivial ≃_{I,e} (O&ST-style). -/
+theorem histAlt_subset_altIE_trivial
+    (alt : HistAlt W T) (agree : T → W → W → Prop)
+    (hIBP : initialBranchPoint alt agree)
+    (w : W) (t : T) :
+    alt w t ⊆ altIE (fun _ _ _ _ => True) (fun _ _ _ _ _ _ => True) agree w t t := by
+  intro w' hw'
+  rw [altIE, Set.mem_setOf_eq, equivIE_trivial_iff_agree]
+  exact hIBP w t w' hw'
 
 end Semantics.Tense.TemporalConnectives.BeaverCondoravdi

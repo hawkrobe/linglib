@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Tense.TemporalConnectives
+import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData

@@ -51,6 +51,7 @@ def unoCualquieraEntry : ModalIndefiniteEntry where
   upperBounded := true
   hasUnremarkableReading := true
   canBePredicate := true
+  anchorConstraint := some .volitionalOnly
   source := "Alonso-Ovalle & Menéndez-Benito 2018"
 
 
@@ -59,14 +60,16 @@ def unoCualquieraEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem algún_not_at_issue : algúnEntry.status = .notAtIssue := rfl
-theorem algún_epistemic : algúnEntry.hasEpistemic = true := by native_decide
-theorem algún_no_rc : algúnEntry.hasCircumstantial = false := by native_decide
+theorem algún_epistemic : algúnEntry.hasEpistemic = true := rfl
+theorem algún_no_rc : algúnEntry.hasCircumstantial = false := rfl
 theorem algún_ub : algúnEntry.upperBounded = true := rfl
+theorem algún_no_anchor : algúnEntry.anchorConstraint = none := rfl
 
 theorem unoCualquiera_at_issue : unoCualquieraEntry.status = .atIssue := rfl
-theorem unoCualquiera_rc : unoCualquieraEntry.hasCircumstantial = true := by native_decide
-theorem unoCualquiera_no_epistemic : unoCualquieraEntry.hasEpistemic = false := by native_decide
+theorem unoCualquiera_rc : unoCualquieraEntry.hasCircumstantial = true := rfl
+theorem unoCualquiera_no_epistemic : unoCualquieraEntry.hasEpistemic = false := rfl
 theorem unoCualquiera_ub : unoCualquieraEntry.upperBounded = true := rfl
+theorem unoCualquiera_volitional : unoCualquieraEntry.anchorConstraint = some .volitionalOnly := rfl
 
 /-- *algún* and *uno cualquiera* share upper-boundedness but differ in
     status and flavor: *algún* is not-at-issue + epistemic, *uno cualquiera*
