@@ -1786,6 +1786,8 @@ import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Theories.Semantics.Causation.MorphologicalCausation
+import Linglib.Theories.Semantics.Causation.ProgressiveCausation
+import Linglib.Phenomena.Causation.Studies.BarAsherSiegal2026
 import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
 import Linglib.Theories.Semantics.Conditionals.AlternativeSensitive
 import Linglib.Theories.Semantics.Conditionals.Assertability

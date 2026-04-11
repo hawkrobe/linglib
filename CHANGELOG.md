@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.632] - 2026-04-10
+
+### Added
+- **ProgressiveCausation.lean**: `CausalProcess` structure formalizing type-level vs token-level causation from @cite{nadathur-bar-asher-siegal-2024}; `progressiveTrue`/`perfectiveTrue` semantics; `perfective_entails_progressive` theorem; `progressive_not_entails_perfective` (imperfective paradox); `typeLevelHolds_is_normalDevelopment` connecting to @cite{dowty-1979} inertia worlds
+- **BarAsherSiegal2026.lean**: door-opening model from @cite{bar-asher-siegal-2026} Figure 1 with two sufficient sets (manual + automatic); demonstrates CC-selection divergence: `open_not_cause_full` (completion succeeds, member fails in multi-pathway model); `open_and_cause_single` (both succeed in single-pathway model)
+- **CCSelection.lean §5**: `typeLevelSufficiency`/`tokenLevelCausation` predicates; `type_level_enables_token_level` and `type_level_not_sufficient_for_token` theorems
+- **CCSelection.lean §6**: `actualizationHolds` predicate (the "only completed sufficient set" constraint from @cite{baglini-bar-asher-siegal-2025}); `completesForEffect_eq_actualization` proving it equals `completesForEffect`; `actualization_fails_overdetermination` and `actualization_holds_sole_cause`
+- **CCSelection.lean §7**: `CausalDependency` structure formalizing @cite{bar-asher-siegal-boneh-2020}'s [c] D [e] structural dependency; `.satisfies`, `.profile`, `.actualized` methods
+- **references.bib**: added `baglini-bar-asher-siegal-2020`, `bar-asher-siegal-boneh-2020`, `nadathur-bar-asher-siegal-2024`, `fodor-1970` entries
+
+### Changed
+- **CCSelection.lean**: normalized "Fodor 1970" to `@cite{fodor-1970}`
+
 ## [0.229.631] - 2026-04-10
 
 ### Added
