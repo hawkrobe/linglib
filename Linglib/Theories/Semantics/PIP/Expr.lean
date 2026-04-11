@@ -20,7 +20,6 @@ extended with:
 |-------------|-----------|-------------|
 | `exists_` | 43 | ∃x.φ — existential quantification over domain D |
 | `forall_` | 43 | ∀x.φ — universal quantification over domain D |
-| `sigma` | 25–27 | Σx.φ — set abstraction (summation) |
 | `labelDef` | 17.3 | X ≡ φ — tautological formula label definition |
 | `must` | 28 | □φ — universal modality (EVERY over worlds) |
 | `might` | 28 | ◇φ — existential modality (SOME over worlds) |

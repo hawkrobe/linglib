@@ -30,7 +30,7 @@ open Core.Proposition (FiniteWorlds)
 
 
 -- ============================================================
--- §1: Sigma Evaluation (paper items 25–27)
+-- §1: Sigma Evaluation (paper's Σ operator and ZF expansion)
 -- ============================================================
 
 section Sigma
@@ -44,6 +44,10 @@ Collects all individuals satisfying a formula body at a given world.
 The output is a `Set D` (type e), not a formula (type t). This is the
 fundamental bridge between PIP's formula language and its set-based
 compositional interface.
+
+This is the *static* analogue of `PIP.Basic.summationFiltered`, which
+performs the same collection on the dynamic `IContext` level. Agreement
+between the two is part of the static↔dynamic correspondence.
 -/
 def sigmaEval (body : D → PIPExprF W D) (w : W) : Set D :=
   { d | (body d).truth w = true }
@@ -130,7 +134,7 @@ end Sigma
 
 
 -- ============================================================
--- §2: Set-Based Generalized Quantifiers (paper §3.2)
+-- §2: Set-Based Generalized Quantifiers (paper's EVERY/SOME definitions)
 -- ============================================================
 
 section GQ
@@ -142,22 +146,6 @@ def setEvery (R S : Set α) : Prop := R ⊆ S
 
 /-- SOME(R, S) = (R ∩ S).Nonempty. Existential quantification as intersection. -/
 def setSome (R S : Set α) : Prop := (R ∩ S).Nonempty
-
-/-- Conservativity: EVERY(R, S) ↔ EVERY(R, R ∩ S). -/
-theorem setEvery_conservative (R S : Set α) :
-    setEvery R S ↔ setEvery R (R ∩ S) := by
-  simp only [setEvery]
-  constructor
-  · intro h x hx; exact ⟨hx, h hx⟩
-  · intro h x hx; exact (h hx).2
-
-/-- Conservativity: SOME(R, S) ↔ SOME(R, R ∩ S). -/
-theorem setSome_conservative (R S : Set α) :
-    setSome R S ↔ setSome R (R ∩ S) := by
-  simp only [setSome]
-  constructor
-  · rintro ⟨x, hxR, hxS⟩; exact ⟨x, hxR, hxR, hxS⟩
-  · rintro ⟨x, hxR, _, hxS⟩; exact ⟨x, hxR, hxS⟩
 
 /-- EVERY is downward monotone in its first argument. -/
 theorem setEvery_antimono_left {R₁ R₂ S : Set α} (h : R₁ ⊆ R₂)
@@ -213,7 +201,7 @@ end GQ
 
 
 -- ============================================================
--- §3: Three-Argument Modals (paper §3.3, items 48–51)
+-- §3: Three-Argument Modals (paper's MUST/MIGHT with modal base β)
 -- ============================================================
 
 section ThreeArgModals
@@ -225,6 +213,13 @@ MUST(β, W₁, W₂) = β ∩ W₁ ⊆ W₂.
 
 Three-argument necessity: the modal base β restricted by W₁ is
 included in W₂. When W₁ = ⊤, reduces to β ⊆ W₂.
+
+The modal base β corresponds to `accessRelToBase R w` for an
+`AccessRel W` from `Core.Logic.ModalLogic`. `PIP.Connectives.must`
+provides the dynamic implementation; `must_truth_iff_mustBase` below
+bridges the static `PIPExprF.must` to this set-based formulation.
+Cf. `Theories.Semantics.Modality.Kratzer.simpleNecessity` for the
+Kratzerian analogue (monomorphic over `World`).
 -/
 def mustBase (β W₁ W₂ : Set W) : Prop := β ∩ W₁ ⊆ W₂
 
@@ -301,7 +296,7 @@ end ThreeArgModals
 
 
 -- ============================================================
--- §4: FX Operation — Restricted Variable Lifting (paper §3.4, item 84)
+-- §4: FX Operation — Restricted Variable Lifting (paper's ↑-lifting operator)
 -- ============================================================
 
 section FX
@@ -311,11 +306,20 @@ variable {W D : Type*}
 /--
 FX (↑f): lift a thematic-role predicate into a formula modifier.
 
-  ↑f = λφλx. f(x) ∧ φ
+  ↑f = λφλx. f(x) ∧ φ     (base case, when f : ⟨e, t⟩)
 
 Given a predicate `f : D → W → Bool` (e.g., AGENT, PATIENT),
 `fxApply f φ x` conjoins `f(x)` with formula `φ`, producing a
 restricted variable: x is constrained to satisfy both `f` and `φ`.
+
+This implements the base case of the paper's recursive ↑-lifting.
+The recursive case (for multi-argument predicates like ⟨e, ⟨e, t⟩⟩)
+applies ↑ to each curried application. Iterated application via
+`fxApply_twice` captures the effect for two-argument roles.
+
+Cf. `Theories.Semantics.Events.ThematicRoles.ThematicRel` for the
+general Davidsonian role type `Entity → Ev → Prop`; FX is PIP's
+mechanism for composing such roles with restricted variables.
 -/
 def fxApply (f : D → W → Bool) (φ : W → Bool) (x : D) : W → Bool :=
   λ w => f x w && φ w
@@ -344,33 +348,30 @@ end FX
 
 
 -- ============================================================
--- §5: Simple vs Summation Pronouns (paper §4.1)
+-- §5: Simple vs Summation Pronouns (paper's §4.1 pronoun types)
 -- ============================================================
 
-section Pronouns
+/-!
+### Summation Pronouns
 
-variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+The paper distinguishes **simple pronouns** (type e: a single variable x
+with presupposition SG(x)) from **summation pronouns** (type e: ΣxX with
+presupposition PL(ΣxX)). The key insight: the *semantic* denotation of a
+summation pronoun IS `sigmaEval` — the exhaustive set of all satisfiers.
+The simple/summation distinction is *structural* (syntactic tree shape)
+and *presuppositional* (SG vs PL), not truth-conditional.
 
-/--
-Summation pronoun denotation: the set of all satisfiers.
+Concretely:
+- Simple pronoun: she_x = x | FEM(x) ∧ SG(x)
+- Summation pronoun: they^X_x = ΣxX | PL(ΣxX)
 
-A summation pronoun referring to variable x under formula φ
-denotes Σxφ = {d | φ(d) is true at w}. This is exhaustive: it
-includes every entity satisfying the descriptive content, not
-just a single witness.
+Both resolve to sigma sets for the pronoun's descriptive content.
+The presuppositional difference (SG for singularity, PL for plurality)
+is handled by `PIP.Bridges.single` and `PIP.Bridges.plural`.
+
+No separate `summPronounDenot` definition is needed: summation pronoun
+denotation = `sigmaEval` by the paper's own analysis.
 -/
-def summPronounDenot (body : D → PIPExprF W D) (w : W) : Set D :=
-  sigmaEval body w
-
-/-- Every satisfier is in the summation pronoun's denotation. -/
-theorem summPron_exhaustive (body : D → PIPExprF W D) (w : W) (d : D)
-    (h : (body d).truth w = true) : d ∈ summPronounDenot body w := h
-
-/-- A value is in the summation denotation iff it satisfies the body. -/
-theorem summPron_iff (body : D → PIPExprF W D) (w : W) (d : D) :
-    d ∈ summPronounDenot body w ↔ (body d).truth w = true := Iff.rfl
-
-end Pronouns
 
 
 -- ============================================================

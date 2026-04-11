@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.PIP.Expr
 import Linglib.Theories.Semantics.PIP.Felicity
 import Linglib.Theories.Semantics.PIP.Connectives
+import Linglib.Theories.Semantics.PIP.Composition
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Lexical.Plural.Link1983
@@ -192,6 +193,67 @@ theorem pipSome_scope_upward_mono {α : Type*} :
   intro R S S' hSS' ⟨x, hR, hS⟩
   exact ⟨x, hR, hSS' x hS⟩
 
+-- Bridge: set-based GQs (Composition.lean) ↔ predicate-based PropGQ
+
+/--
+`setEvery` from `PIP.Composition` agrees with `pipEvery` (and hence `every_sem`).
+
+Both express universal GQ as set inclusion / pointwise implication.
+This bridge lets `setEvery` inherit all `PropGQ` property proofs
+(conservativity, monotonicity) from `pipEvery_conservative` etc.
+-/
+theorem setEvery_eq_pipEvery {α : Type*} (R S : Set α) :
+    setEvery R S ↔ pipEvery R S :=
+  ⟨fun h x hx => h hx, fun h x hx => h x hx⟩
+
+/--
+`setSome` from `PIP.Composition` agrees with `pipSome` (and hence `some_sem`).
+-/
+theorem setSome_eq_pipSome {α : Type*} (R S : Set α) :
+    setSome R S ↔ pipSome R S :=
+  ⟨fun ⟨x, hx⟩ => ⟨x, hx.1, hx.2⟩, fun ⟨x, hr, hs⟩ => ⟨x, hr, hs⟩⟩
+
+/--
+Conservativity of `setEvery` derived from the PropGQ proof.
+-/
+theorem setEvery_conservative' {α : Type*} (R S : Set α) :
+    setEvery R S ↔ setEvery R (R ∩ S) := by
+  rw [setEvery_eq_pipEvery, setEvery_eq_pipEvery]
+  exact pipEvery_conservative R S
+
+/--
+Conservativity of `setSome` derived from the PropGQ proof.
+-/
+theorem setSome_conservative' {α : Type*} (R S : Set α) :
+    setSome R S ↔ setSome R (R ∩ S) := by
+  rw [setSome_eq_pipSome, setSome_eq_pipSome]
+  exact pipSome_conservative R S
+
+-- Bridge: PIP's PropGQ ↔ model-theoretic GQ from Quantifier.lean
+
+/--
+PIP's EVERY is definitionally equal to `every_sem` from `Quantifier.lean`.
+
+This closes the full bridge chain:
+  `setEvery R S` ↔ `pipEvery R S` = `every_sem m R S`
+
+All GQ property proofs in Quantifier.lean (duality, monotonicity,
+Zwarts monotonicity hierarchy, quantity invariance, etc.) apply
+directly to PIP's quantifiers.
+-/
+theorem pipEvery_eq_every_sem (m : Semantics.Montague.Model)
+    [Fintype m.Entity] :
+    (pipEvery : Semantics.Quantification.Quantifier.PropGQ m.Entity) =
+    Semantics.Quantification.Quantifier.every_sem m := rfl
+
+/--
+PIP's SOME is definitionally equal to `some_sem` from `Quantifier.lean`.
+-/
+theorem pipSome_eq_some_sem (m : Semantics.Montague.Model)
+    [Fintype m.Entity] :
+    (pipSome : Semantics.Quantification.Quantifier.PropGQ m.Entity) =
+    Semantics.Quantification.Quantifier.some_sem m := rfl
+
 
 -- ============================================================
 -- § 3. SINGLE / PLURAL — Link's Atom / properPlural
@@ -328,19 +390,22 @@ than definitional.
 -/
 
 /--
-PIP's modal base (AccessRel) is structurally a Kratzer modal base.
+Full Kratzer bridge: PIP's three-argument `mustBase` agrees with
+`kripkeEval .necessity` when the modal base comes from an AccessRel
+and the restriction is tautological.
 
-A Kratzer modal base maps each world to a set of propositions whose
-intersection gives the accessible worlds. An AccessRel directly encodes
-the resulting accessibility. The equivalence:
+This composes two independently proved correspondences:
+1. `must_truth_iff_mustBase` (Composition): PIPExprF.must ↔ mustBase
+2. `must_truth_agrees_kripkeEval` (Connectives): PIPExprF.must ↔ kripkeEval
 
-  R w w' = true  ↔  w' ∈ ⋂(modal_base(w))
-
-This is the standard correspondence between relational and
-neighborhood semantics for modal logic.
+The composed result: `mustBase (accessRelToBase R w) ⊤ S ↔ kripkeEval R .necessity ...`
 -/
-theorem modal_base_is_access_rel {W : Type*} (R : AccessRel W) :
-    ∀ w w' : W, R w w' = true ↔ R w w' = true := fun _ _ => Iff.rfl
+theorem mustBase_agrees_kripkeEval {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } ↔
+    kripkeEval R .necessity φ.truth w = true :=
+  (must_truth_iff_mustBase R φ w).symm.trans (by
+    simp only [PIPExprF.truth, kripkeEval])
 
 
 -- ============================================================

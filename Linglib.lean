@@ -755,6 +755,7 @@ import Linglib.Phenomena.Anaphora.Studies.Cooper2023
 import Linglib.Phenomena.Anaphora.Studies.Heim1982
 import Linglib.Phenomena.Anaphora.Studies.KampReyle1993
 import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
+import Linglib.Phenomena.Anaphora.Studies.AbneyKeshet2025
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
@@ -1528,7 +1529,9 @@ import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.Politeness.Studies.AlokBhalla2026
 import Linglib.Phenomena.Politeness.Studies.Wang2023
 import Linglib.Phenomena.SentenceMood.Studies.Gutzmann2015
+import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Phenomena.SocialMeaning.Studies.Burnett2019
+import Linglib.Phenomena.SocialMeaning.Studies.Eckert2008
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2006
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
 import Linglib.Phenomena.SocialMeaning.Studies.Ochs1992
@@ -1583,6 +1586,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Newman2024
 import Linglib.Theories.Syntax.Minimalism.Core.Algebra
 import Linglib.Theories.Syntax.Minimalism.Core.Counting
 import Linglib.Theories.Syntax.Minimalism.Formal.BinaryOptimality
+import Linglib.Theories.Syntax.Minimalism.Formal.Coassociativity
 import Linglib.Theories.Syntax.Minimalism.Formal.Coproduct
 import Linglib.Theories.Syntax.Minimalism.Formal.HopfAlgebra
 import Linglib.Theories.Syntax.Minimalism.Formal.MinimalSearch

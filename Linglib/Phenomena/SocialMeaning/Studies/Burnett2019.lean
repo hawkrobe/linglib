@@ -2,6 +2,7 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Theories.Sociolinguistics.SMG
 import Linglib.Core.SocialMeaning
+import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -49,6 +50,7 @@ namespace Phenomena.SocialMeaning.Studies.Burnett2019
 
 open Sociolinguistics
 open Sociolinguistics.EckertMontague
+open Phenomena.SocialMeaning.ING
 open RSA
 
 -- ============================================================================
@@ -78,15 +80,8 @@ instance : Fintype Persona where
   elems := {.coolGuy, .sternLeader, .doofus, .asshole}
   complete := by intro x; cases x <;> simp
 
-/-- ING variants (Burnett example (8)). -/
-inductive INGVariant where
-  | ing  -- *-ing* [ɪŋ]
-  | in'  -- *-in'* [ɪn]
-  deriving DecidableEq, Repr
-
-instance : Fintype INGVariant where
-  elems := {.ing, .in'}
-  complete := by intro x; cases x <;> simp
+-- INGVariant is imported from Phenomena.SocialMeaning.ING
+-- Burnett's *-ing* = .velar, *-in'* = .apical
 
 -- ============================================================================
 -- §2. Meaning: grounded in Eckert–Montague lift
@@ -120,8 +115,8 @@ def Persona.toFinset : Persona → Finset PersonaTrait
 
 /-- Eckert fields for (ING) (Burnett example (10)). -/
 def ingEckertField : INGVariant → Finset PersonaTrait
-  | .ing => {.competent, .aloof}
-  | .in' => {.incompetent, .friendly}
+  | .velar => {.competent, .aloof}
+  | .apical => {.incompetent, .friendly}
 
 /-- The ING grounded field: both Eckert fields are consistent. -/
 def ingField : GroundedField INGVariant burnettSpace where
@@ -131,14 +126,14 @@ def ingField : GroundedField INGVariant burnettSpace where
 /-- Meaning via the EM intersection lift: persona p is compatible with
     variant v iff p shares ≥1 property with v's Eckert field. -/
 def ingMeaning : INGVariant → Persona → Bool
-  | .ing, .coolGuy     => true   -- coolGuy has competent ∈ {comp, aloof}
-  | .ing, .sternLeader => true   -- sternLeader has comp AND aloof
-  | .ing, .asshole     => true   -- asshole has aloof ∈ {comp, aloof}
-  | .ing, .doofus      => false  -- doofus has neither comp nor aloof
-  | .in', .coolGuy     => true   -- coolGuy has friendly ∈ {incomp, friendly}
-  | .in', .sternLeader => false  -- sternLeader has neither incomp nor friendly
-  | .in', .asshole     => true   -- asshole has incomp ∈ {incomp, friendly}
-  | .in', .doofus      => true   -- doofus has incomp AND friendly
+  | .velar,.coolGuy     => true   -- coolGuy has competent ∈ {comp, aloof}
+  | .velar,.sternLeader => true   -- sternLeader has comp AND aloof
+  | .velar,.asshole     => true   -- asshole has aloof ∈ {comp, aloof}
+  | .velar,.doofus      => false  -- doofus has neither comp nor aloof
+  | .apical,.coolGuy     => true   -- coolGuy has friendly ∈ {incomp, friendly}
+  | .apical,.sternLeader => false  -- sternLeader has neither incomp nor friendly
+  | .apical,.asshole     => true   -- asshole has incomp ∈ {incomp, friendly}
+  | .apical,.doofus      => true   -- doofus has incomp AND friendly
 
 /-- **Grounding theorem**: the inline meaning function equals the
     theory-layer `emMeaningMI` applied to the ING Eckert fields. -/
@@ -148,12 +143,12 @@ theorem ingMeaning_eq_emMeaningMI (v : INGVariant) (p : Persona) :
 
 /-- *-ing* is compatible with 3 personae (Table 1: excludes doofus). -/
 theorem ing_compat_count :
-    (Finset.univ.filter (fun p => ingMeaning .ing p = true)).card = 3 := by
+    (Finset.univ.filter (fun p => ingMeaning .velar p = true)).card = 3 := by
   native_decide
 
 /-- *-in'* is compatible with 3 personae (Table 1: excludes stern leader). -/
 theorem in'_compat_count :
-    (Finset.univ.filter (fun p => ingMeaning .in' p = true)).card = 3 := by
+    (Finset.univ.filter (fun p => ingMeaning .apical p = true)).card = 3 := by
   native_decide
 
 -- ============================================================================
@@ -258,19 +253,19 @@ section casual
     Burnett (p. 435): "we predict that Obama will use -in' around **69%**
     of the time [...] which is close to what Labov found" (72%). -/
 theorem casual_coolGuy_prefers_in' :
-    casualCfg.S1 () .coolGuy .in' > casualCfg.S1 () .coolGuy .ing := by
+    casualCfg.S1 () .coolGuy .apical > casualCfg.S1 () .coolGuy .velar := by
   rsa_predict
 
 /-- Stern leader only uses *-ing*: *-in'* is incompatible (Table 1).
     This predicts ~0% *-in'* in formal contexts where Obama constructs
     the stern leader. -/
 theorem casual_sternLeader_prefers_ing :
-    casualCfg.S1 () .sternLeader .ing > casualCfg.S1 () .sternLeader .in' := by
+    casualCfg.S1 () .sternLeader .velar > casualCfg.S1 () .sternLeader .apical := by
   rsa_predict
 
 /-- The doofus only uses *-in'*: *-ing* is incompatible (Table 1). -/
 theorem casual_doofus_prefers_in' :
-    casualCfg.S1 () .doofus .in' > casualCfg.S1 () .doofus .ing := by
+    casualCfg.S1 () .doofus .apical > casualCfg.S1 () .doofus .velar := by
   rsa_predict
 
 end casual
@@ -284,7 +279,7 @@ section styleShifting
 /-- In the careful context, the cool-guy now prefers *-ing* over *-in'*.
     The prior shift reverses the informativity ranking. -/
 theorem careful_coolGuy_prefers_ing :
-    carefulCfg.S1 () .coolGuy .ing > carefulCfg.S1 () .coolGuy .in' := by
+    carefulCfg.S1 () .coolGuy .velar > carefulCfg.S1 () .coolGuy .apical := by
   rsa_predict
 
 end styleShifting
@@ -309,7 +304,7 @@ The personae reinterpret as:
 /-- The asshole prefers *-in'* in the casual context (both variants are
     compatible, but *-in'* is more informative given the prior). -/
 theorem casual_asshole_prefers_in' :
-    casualCfg.S1 () .asshole .in' > casualCfg.S1 () .asshole .ing := by
+    casualCfg.S1 () .asshole .apical > casualCfg.S1 () .asshole .velar := by
   rsa_predict
 
 section tRelease
@@ -318,33 +313,33 @@ section tRelease
     (Burnett Table 11). With uniform prior, the exclusive variant
     (only *-ing* compatible) gets double the L1 weight. -/
 theorem rice_released_sternLeader :
-    riceCfg.L1 .ing .sternLeader > riceCfg.L1 .ing .coolGuy := by
+    riceCfg.L1 .velar .sternLeader > riceCfg.L1 .velar .coolGuy := by
   rsa_predict
 
 /-- Rice: flapped /t/ triggers {inarticulate, friendly} = doofus
     (Burnett Table 11). Symmetric to the released case. -/
 theorem rice_flapped_doofus :
-    riceCfg.L1 .in' .doofus > riceCfg.L1 .in' .coolGuy := by
+    riceCfg.L1 .apical .doofus > riceCfg.L1 .apical .coolGuy := by
   rsa_predict
 
 /-- Pelosi: released /t/ predominantly triggers {inarticulate, aloof} —
     the strong prior that she is inarticulate overwhelms the released /t/
     association with articulateness (Burnett Table 14). -/
 theorem pelosi_released_inarticAloof :
-    pelosiCfg.L1 .ing .asshole > pelosiCfg.L1 .ing .sternLeader := by
+    pelosiCfg.L1 .velar .asshole > pelosiCfg.L1 .velar .sternLeader := by
   rsa_predict
 
 /-- Pelosi: flapped /t/ triggers {inarticulate, friendly} (Table 14). -/
 theorem pelosi_flapped_friendly :
-    pelosiCfg.L1 .in' .doofus > pelosiCfg.L1 .in' .asshole := by
+    pelosiCfg.L1 .apical .doofus > pelosiCfg.L1 .apical .asshole := by
   rsa_predict
 
 /-- Bush "bulletproofing" (Burnett p. 444, Table 16): the prior is so
     extreme that variant choice has no practical effect. Both released and
     flapped /t/ yield >90% {inarticulate, aloof}. -/
 theorem bush_bulletproofing :
-    bushCfg.L1 .ing .asshole > 9/10 ∧
-    bushCfg.L1 .in' .asshole > 9/10 := by
+    bushCfg.L1 .velar .asshole > 9/10 ∧
+    bushCfg.L1 .apical .asshole > 9/10 := by
   exact ⟨by rsa_predict, by rsa_predict⟩
 
 end tRelease
@@ -361,9 +356,9 @@ end tRelease
     through careful (33%) to formal (3%). -/
 theorem smg_matches_labov_direction :
     -- SMG: cool-guy prefers -in' in casual context
-    casualCfg.S1 () .coolGuy .in' > casualCfg.S1 () .coolGuy .ing ∧
+    casualCfg.S1 () .coolGuy .apical > casualCfg.S1 () .coolGuy .velar ∧
     -- SMG: cool-guy prefers -ing in careful context
-    carefulCfg.S1 () .coolGuy .ing > carefulCfg.S1 () .coolGuy .in' ∧
+    carefulCfg.S1 () .coolGuy .velar > carefulCfg.S1 () .coolGuy .apical ∧
     -- Observed: casual > careful > formal
     Labov2012.obama_ING.casual > Labov2012.obama_ING.careful ∧
     Labov2012.obama_ING.careful > Labov2012.obama_ING.formal :=
@@ -426,14 +421,14 @@ theorem smg_meaning_grounded (v : INGVariant) (p : Persona) :
     (incompatible: stern leader = {competent, aloof} shares no
     property with [-in'] = {incompetent, friendly}). -/
 theorem smg_L0_in'_excludes_sternLeader :
-    naiveListener casualSMG .in' .sternLeader = 0 := by
+    naiveListener casualSMG .apical .sternLeader = 0 := by
   native_decide
 
 /-- The naive listener excludes doofus after hearing *-ing*
     (incompatible: doofus = {incompetent, friendly} shares no
     property with [-ing] = {competent, aloof}). -/
 theorem smg_L0_ing_excludes_doofus :
-    naiveListener casualSMG .ing .doofus = 0 := by
+    naiveListener casualSMG .velar .doofus = 0 := by
   native_decide
 
 /-- The naive listener assigns equal probability (1/3) to all
@@ -443,12 +438,12 @@ theorem smg_L0_ing_excludes_doofus :
     This is the structural content of the meaning function: each variant
     partitions personae into compatible (1/3) and incompatible (0). -/
 theorem smg_L0_uniform_compatible :
-    naiveListener casualSMG .ing .coolGuy = 1/3 ∧
-    naiveListener casualSMG .ing .sternLeader = 1/3 ∧
-    naiveListener casualSMG .ing .asshole = 1/3 ∧
-    naiveListener casualSMG .in' .coolGuy = 1/3 ∧
-    naiveListener casualSMG .in' .asshole = 1/3 ∧
-    naiveListener casualSMG .in' .doofus = 1/3 := by
+    naiveListener casualSMG .velar .coolGuy = 1/3 ∧
+    naiveListener casualSMG .velar .sternLeader = 1/3 ∧
+    naiveListener casualSMG .velar .asshole = 1/3 ∧
+    naiveListener casualSMG .apical .coolGuy = 1/3 ∧
+    naiveListener casualSMG .apical .asshole = 1/3 ∧
+    naiveListener casualSMG .apical .doofus = 1/3 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
 end smgBridge

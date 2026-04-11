@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.229.650] - 2026-04-11
+
+### Changed
+- **HopfAlgebra.lean**: close ALL sorrys — `double_cut_identity` proved via per-child `List.Perm` bijection; split coassociativity proof into new `Coassociativity.lean` (~1460 lines); proof chain: `lhsTriples ~ nestedCutTriples` (combinatorial permutation) → `double_cut_identity` → `core_identity` → `coassoc_gen` → `Coalgebra ℤ Hc` instance; zero sorrys remaining in both files
+- **Coassociativity.lean**: new file containing coassociativity proof infrastructure — forest splitting (`treeTerms`/`forestTerms`/`nontrivialTerms`), product-to-sum expansion (`comul_forest_eq_terms`), reduced coproduct partition (`forestDelta_eq_nontrivial`), per-child permutation (`childLHS_perm_childRHS` by structural induction), factorization via `flatMap_comm_perm`, `Coalgebra ℤ Hc` instance
+
+## [0.229.649] - 2026-04-11
+
+### Added
+- **SocialMeaning/ING.lean**: shared `INGVariant` type (.velar/.apical) for the (ING) variable, imported by both Eckert2008 and Burnett2019
+- **Eckert2008.lean §8**: ING → SCM bridge — `ingFieldSCM` (ING field projected to SocialDimension), `ingGroundedField` (via `fromIndexicalField`), `ingEM` (Eckert-Montague lift); velar indexes {competent, antiSolidary}, apical indexes {incompetent, solidary}; theorems: `velar_scm_properties`, `apical_scm_properties`, `velar_em_count`/`apical_em_count` (6/8 personae compatible), `velar_apical_em_differ`
+
+### Changed
+- **Eckert2008.lean**: social type accuracy (Figure 4): Nerd Girl drop `effortful` (3 qualities), Gay Diva drop `formal/elegant/polite/clear` (4 qualities), School Teacher add `polite` (7 qualities); new `nerdGirl_subset_schoolTeacher` theorem; ING dimension comment updated to dual articulate/pretentious label (Figure 3); `stanceQualityAssoc` docstring notes modeling choices
+- **Burnett2019.lean**: use shared `INGVariant` from `SocialMeaning.ING`; constructors renamed `.ing`→`.velar`, `.in'`→`.apical`; all theorems preserved
+
+## [0.229.648] - 2026-04-11
+
+### Changed
+- **PIP/Composition.lean**: remove redundant `setEvery_conservative`/`setSome_conservative` (now derived from PropGQ framework in Bridges)
+- **PIP/Bridges.lean**: replace vacuous `modal_base_is_access_rel` tautology with real `mustBase_agrees_kripkeEval` bridge (composes `must_truth_iff_mustBase` + kripkeEval agreement); add `pipEvery_eq_every_sem`/`pipSome_eq_some_sem` closing the chain `setEvery ↔ pipEvery = every_sem`
+- **AbneyKeshet2025.lean**: remove unused `Ent2` type; fix hallucinated item number references in modal subordination docstring; add §8 paycheck pronouns (paper §4.2) — finite model with `paycheckBody` showing sigma set varies with external free variable (`paycheck_varies`), `single` presupposition satisfaction (`paycheck_alice_single`/`paycheck_bob_single`); zero sorrys
+
+## [0.229.647] - 2026-04-11
+
+### Added
+- **Eckert2008.lean**: new `Phenomena/SocialMeaning/Studies/` — @cite{eckert-2008}'s indexical field theory formalized with three case studies: (ING) sign-valued field (Figure 3, 4 bipolar dimensions, perfect anti-correlation theorem), /t/ release stance accretion (Figure 4, 4 stances → 9 qualities via `composeIndex` paralleling Ochs's indirect indexicality), social type anchoring (British/SchoolTeacher/NerdGirl/GayDiva with coverage/uniqueness theorems), Belten High leadership data (Figure 1, burnoutGirls universal leadership across 7 NCS variables, gender×orientation interaction theorems); 2 bib entries (campbell-kibler-2007, podesva-2007)
+
+## [0.229.646] - 2026-04-11
+
+### Added
+- **PIP/Composition.lean**: new `Theories/Semantics/PIP/` module — @cite{abney-keshet-2025}'s set-based compositional operations for PIP; `sigmaEval` (Σxφ → Set D, cross-refs `PIP.Basic.summationFiltered`), `setEvery`/`setSome` (set-based GQs), `mustBase`/`mightBase` (three-argument modals with explicit modal base, cross-refs `Core.ModalLogic.kripkeEval` + Kratzer), `fxApply` (FX type-lifting base case, cross-refs `ThematicRoles.ThematicRel`); ~35 theorems including `exists_iff_sigma_nonempty`, `forall_iff_sigma_univ`, `sigmaEval_conj`/`_disj`/`_neg` (sigma set algebra), `setEvery_conservative`/`setSome_conservative`, `gq_duality`, `modal_duality`, `must_truth_iff_mustBase`/`might_truth_iff_mightBase` (List↔Set bridges), `fxApply_twice`, `sigma_subordination`; zero sorrys
+- **PIP/Bridges.lean**: add `setEvery_eq_pipEvery`, `setSome_eq_pipSome` (bridge to `PropGQ`), `setEvery_conservative'`/`setSome_conservative'` (derived from `pipEvery_conservative`/`pipSome_conservative`); imports `PIP.Composition`
+- **AbneyKeshet2025.lean**: new `Phenomena/Anaphora/Studies/` — two finite models verifying @cite{abney-keshet-2025}'s predictions; Model 1 (4 entities, 1 world): sigma evaluation, sigma set algebra, GQ over sigma sets via `setEvery` (derived from Bridges), quantificational subordination via `sigma_subordination`, exists↔sigma bridge, strong donkey with `plural` presupposition from Bridges, FX thematic roles; Model 2 (2 worlds, 3 entities): modal subordination with `mightBase`/`mustBase` (wolf/Tim), modal duality instantiation; zero sorrys
+- **references.bib**: add `abney-keshet-2025` (Glossa, DOI 10.16995/glossa.16422)
+
 ## [0.229.645] - 2026-04-11
 
 ### Added

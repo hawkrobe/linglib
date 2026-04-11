@@ -493,4 +493,58 @@ instance {I W : Type} : HasContextSet (MetalinguisticCG I W) W where
   toContextSet := MetalinguisticCG.toContextSet
 
 
+-- ════════════════════════════════════════════════════════════════
+-- § 7. Revised MC Characterization (for MetalinguisticDegree.lean)
+-- ════════════════════════════════════════════════════════════════
+
+-- Converts Bool disjunction to implication form
+private theorem bGuard (a b c : Bool) :
+    (!(a && b)) = true ∨ c = true ↔ (a = true → b = true → c = true) := by
+  cases a <;> cases b <;> cases c <;> simp
+
+private theorem bGuardNeg (a d c : Bool) :
+    (!(a && !d)) = true ∨ c = true ↔ (a = true → d = false → c = true) := by
+  cases a <;> cases d <;> cases c <;> simp
+
+/-- Prop-level characterization of revised MC (`evalRevised` on `.mc A B`).
+Converts Boolean `bAny`/`bAll` wrappers to standard Prop quantifiers. -/
+theorem evalRevised_mc_iff {I W Pred Entity : Type} [Fintype I]
+    (interpFn : I → Interpretation W Pred Entity)
+    (A B : MFormula Pred Entity)
+    (ord : SemanticOrdering I) (i : I) (w : W) :
+    evalRevised interpFn (.mc A B) ord i w = true ↔
+    ∃ i' : I,
+      ord.le i' i = true ∧
+      evalRevised interpFn A ord i' w = true ∧
+      evalRevised interpFn B ord i' w = false ∧
+      ((∀ i'' : I, ord.le i'' i = true → evalRevised interpFn B ord i'' w = true →
+         ord.lt i'' i' = true) ∨
+       (∀ i'' : I, ord.le i'' i = true → evalRevised interpFn A ord i'' w = false →
+         ord.lt i'' i' = true)) := by
+  -- evalRevised (.mc A B) is definitionally bAny I (λ i' => ...)
+  show (bAny I fun i' => ord.le i' i && evalRevised interpFn A ord i' w &&
+       !(evalRevised interpFn B ord i' w) &&
+       (bAll I (fun i'' => !(ord.le i'' i && evalRevised interpFn B ord i'' w) ||
+          ord.lt i'' i') ||
+        bAll I (fun i'' => !(ord.le i'' i && !(evalRevised interpFn A ord i'' w)) ||
+          ord.lt i'' i')))
+    = true ↔ _
+  simp only [bAny, bAll, decide_eq_true_eq, Bool.and_eq_true, Bool.or_eq_true]
+  constructor
+  · rintro ⟨i', ⟨⟨h_le, h_A⟩, h_nB⟩, h_dom⟩
+    have h_B : evalRevised interpFn B ord i' w = false := by
+      revert h_nB; cases evalRevised interpFn B ord i' w <;> simp
+    refine ⟨i', h_le, h_A, h_B, ?_⟩
+    rcases h_dom with h1 | h2
+    · exact Or.inl fun i'' h_le'' h_B'' => by
+        have := h1 i''; rw [bGuard] at this; exact this h_le'' h_B''
+    · exact Or.inr fun i'' h_le'' h_A'' => by
+        have := h2 i''; rw [bGuardNeg] at this; exact this h_le'' h_A''
+  · rintro ⟨i', h_le, h_A, h_B, h_dom⟩
+    refine ⟨i', ⟨⟨h_le, h_A⟩, by simp [h_B]⟩, ?_⟩
+    rcases h_dom with h1 | h2
+    · exact Or.inl fun i'' => by rw [bGuard]; exact h1 i''
+    · exact Or.inr fun i'' => by rw [bGuardNeg]; exact h2 i''
+
+
 end Semantics.Comparison.Metalinguistic

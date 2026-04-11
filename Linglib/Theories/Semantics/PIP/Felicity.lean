@@ -17,11 +17,10 @@ This file provides:
 ## Relationship to `PIP.Expr`
 
 `PIPExprF W D` in `Expr.lean` is the **full** PIP expression type with
-quantifiers (`∃x`, `∀x`), modals (`□`, `◇`), label definitions, and
-summation. It defines its own `truth` and `felicitous` functions covering
-all constructors, including the quantifier felicity clauses (items 43,
-47a-d). The propositional `PIPExpr W` here is the restriction to `D = Empty`.
-`embedProp` in `Expr.lean` witnesses this embedding.
+quantifiers (`∃x`, `∀x`), modals (`□`, `◇`), and label definitions.
+It defines its own `truth` and `felicitous` functions covering all
+constructors, including the quantifier felicity clauses (items 35, 39d).
+The propositional `PIPExpr W` here is the restriction to `D = Empty`.
 
 ## The F Operator (Propositional)
 
@@ -251,6 +250,220 @@ theorem must_allows_anaphora
   unfold singlePresup
   show (true && pronoun_presup w) = true
   rw [h_presup_follows, h_must_realistic]; rfl
+
+
+-- ============================================================
+-- Full PIPExprF Felicity: Quantifier/Modal Projection (§2.4.4)
+-- ============================================================
+
+/-!
+### Quantifier and Modal Felicity Projection
+
+@cite{abney-keshet-2025}
+
+The full `PIPExprF` type (Expr.lean) extends the propositional fragment
+with quantifiers and modals. Its `felicitous` function implements
+the paper's key design: **felicity projects universally** through
+both quantifiers and modals, while truth projects existentially or
+universally as usual. This asymmetry is PIP's mechanism for
+presupposition projection.
+
+The felicity clauses (in `PIPExprF.felicitous`):
+- F(∃xφ) = ∀x.Fφ — universal over witnesses (item 39d)
+- F(∀xφ) = ∀x.Fφ — (item 35)
+- F(□φ) = ∀w'.Fφ — universal over accessible worlds
+- F(◇φ) = ∀w'.Fφ — ALSO universal (truth differs: existential)
+
+This section derives:
+1. **Prop-level iff characterizations** for each clause
+2. **Factored presupposition projection** — the strongest form: a
+   presupposition under a universally-felicitous operator factors out
+   of the universal check. This is an instance of `forall_and_right`
+   (quantifiers, uniform ψ, requires `Nonempty D`) or `forall_and`
+   (modals, world-varying ψ, unconditional).
+3. **One-directional extraction** as corollaries
+-/
+
+section FullFelicity
+
+open Core.Proposition (FiniteWorlds)
+open Core.ModalLogic (AccessRel)
+
+variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+
+
+-- ======== Prop-level iff characterizations ========
+
+/-- F(∃xφ) iff ∀d, F(φ(d)) — existential felicity is universal
+    over the domain (item 39d). -/
+theorem existsF_felicitous_iff (body : D → PIPExprF W D) (w : W) :
+    (PIPExprF.exists_ body).felicitous w = true ↔
+    ∀ d, (body d).felicitous w = true := by
+  simp only [PIPExprF.felicitous]
+  constructor
+  · intro h d; exact List.all_eq_true.mp h d (FiniteDomain.complete d)
+  · intro h; exact List.all_eq_true.mpr (λ d _ => h d)
+
+/-- F(∀xφ) iff ∀d, F(φ(d)) (item 35). -/
+theorem forallF_felicitous_iff (body : D → PIPExprF W D) (w : W) :
+    (PIPExprF.forall_ body).felicitous w = true ↔
+    ∀ d, (body d).felicitous w = true := by
+  simp only [PIPExprF.felicitous]
+  constructor
+  · intro h d; exact List.all_eq_true.mp h d (FiniteDomain.complete d)
+  · intro h; exact List.all_eq_true.mpr (λ d _ => h d)
+
+/-- ∃ and ∀ have identical felicity clauses — both project universally.
+    The difference is only in truth conditions (∃ vs ∀). -/
+theorem existsF_forallF_felicity_agree (body : D → PIPExprF W D) (w : W) :
+    (PIPExprF.exists_ body).felicitous w =
+    (PIPExprF.forall_ body).felicitous w := rfl
+
+/-- F(□_R φ) iff φ is felicitous at every R-accessible world. -/
+theorem mustF_felicitous_iff (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (PIPExprF.must R φ).felicitous w = true ↔
+    ∀ w', R w w' = true → φ.felicitous w' = true := by
+  simp only [PIPExprF.felicitous]
+  constructor
+  · intro h w' hw'
+    exact List.all_eq_true.mp h w'
+      (List.mem_filter.mpr ⟨FiniteWorlds.complete w', hw'⟩)
+  · intro h
+    exact List.all_eq_true.mpr (λ w' hw' => h w' (List.mem_filter.mp hw').2)
+
+/-- F(◇_R φ) iff φ is felicitous at every R-accessible world.
+    Truth is existential for ◇ but felicity is universal for both. -/
+theorem mightF_felicitous_iff (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (PIPExprF.might R φ).felicitous w = true ↔
+    ∀ w', R w w' = true → φ.felicitous w' = true := by
+  simp only [PIPExprF.felicitous]
+  constructor
+  · intro h w' hw'
+    exact List.all_eq_true.mp h w'
+      (List.mem_filter.mpr ⟨FiniteWorlds.complete w', hw'⟩)
+  · intro h
+    exact List.all_eq_true.mpr (λ w' hw' => h w' (List.mem_filter.mp hw').2)
+
+/-- □ and ◇ have identical felicity clauses — both project universally.
+    The asymmetry between must and might is in truth, not felicity. -/
+theorem mustF_mightF_felicity_agree (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (PIPExprF.must R φ).felicitous w =
+    (PIPExprF.might R φ).felicitous w := rfl
+
+
+-- ======== Factored presupposition projection (strongest form) ========
+
+/--
+Factored projection through ∃: a uniform presupposition ψ factors out
+of the universal felicity check.
+
+  F(∃x(φ(x)|ψ)) ↔ (∀d, F(φ(d))) ∧ ψ
+
+This is the strongest form of quantifier presupposition projection.
+`Nonempty D` is required: if D is empty, the LHS is vacuously true
+regardless of ψ (no witnesses to check), so the → direction fails.
+
+Mathematically, this is `forall_and_right` (Mathlib): the presupposition
+ψ doesn't vary with d, so it factors out of `∀d, (F(φ(d)) ∧ ψ)`.
+-/
+theorem existsF_presup_factored [Nonempty D]
+    (φ : D → PIPExprF W D) (ψ : W → Bool) (w : W) :
+    (PIPExprF.exists_ (λ d => PIPExprF.presup (φ d) ψ)).felicitous w = true ↔
+    (∀ d, (φ d).felicitous w = true) ∧ ψ w = true := by
+  rw [existsF_felicitous_iff]
+  simp only [PIPExprF.felicitous, Bool.and_eq_true]
+  exact forall_and_right _ _
+
+/-- Factored projection through ∀ — identical to ∃ since both have
+    the same felicity clause. -/
+theorem forallF_presup_factored [Nonempty D]
+    (φ : D → PIPExprF W D) (ψ : W → Bool) (w : W) :
+    (PIPExprF.forall_ (λ d => PIPExprF.presup (φ d) ψ)).felicitous w = true ↔
+    (∀ d, (φ d).felicitous w = true) ∧ ψ w = true := by
+  rw [forallF_felicitous_iff]
+  simp only [PIPExprF.felicitous, Bool.and_eq_true]
+  exact forall_and_right _ _
+
+/--
+Factored projection through □: presupposition ψ and body felicity
+separate into independent universal checks over accessible worlds.
+
+  F(□(φ|ψ)) ↔ (∀w', R w w' → F(φ)(w')) ∧ (∀w', R w w' → ψ(w'))
+
+No `Nonempty` hypothesis needed: ψ varies with w', so this is a
+direct instance of `∀x, (P x ∧ Q x) ↔ (∀x, P x) ∧ (∀x, Q x)`.
+-/
+theorem mustF_presup_factored
+    (R : AccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w : W) :
+    (PIPExprF.must R (PIPExprF.presup φ ψ)).felicitous w = true ↔
+    (∀ w', R w w' = true → φ.felicitous w' = true) ∧
+    (∀ w', R w w' = true → ψ w' = true) := by
+  rw [mustF_felicitous_iff]
+  simp only [PIPExprF.felicitous, Bool.and_eq_true]
+  exact ⟨fun h => ⟨fun w' hw' => (h w' hw').1, fun w' hw' => (h w' hw').2⟩,
+         fun ⟨h1, h2⟩ w' hw' => ⟨h1 w' hw', h2 w' hw'⟩⟩
+
+/-- Factored projection through ◇ — identical structure to □. -/
+theorem mightF_presup_factored
+    (R : AccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w : W) :
+    (PIPExprF.might R (PIPExprF.presup φ ψ)).felicitous w = true ↔
+    (∀ w', R w w' = true → φ.felicitous w' = true) ∧
+    (∀ w', R w w' = true → ψ w' = true) := by
+  rw [mightF_felicitous_iff]
+  simp only [PIPExprF.felicitous, Bool.and_eq_true]
+  exact ⟨fun h => ⟨fun w' hw' => (h w' hw').1, fun w' hw' => (h w' hw').2⟩,
+         fun ⟨h1, h2⟩ w' hw' => ⟨h1 w' hw', h2 w' hw'⟩⟩
+
+
+-- ======== Extraction corollaries ========
+
+/-- Presupposition extraction through ∃: if ∃x(φ(x)|ψ) is felicitous,
+    then ψ holds. Follows from the factored form by projecting `.2`. -/
+theorem existsF_presup_projection
+    (φ : D → PIPExprF W D) (ψ : W → Bool) (w : W) (d : D)
+    (hF : (PIPExprF.exists_ (λ d => PIPExprF.presup (φ d) ψ)).felicitous w = true) :
+    ψ w = true :=
+  haveI : Nonempty D := ⟨d⟩
+  (existsF_presup_factored φ ψ w).mp hF |>.2
+
+/-- Presupposition extraction through ∀. -/
+theorem forallF_presup_projection
+    (φ : D → PIPExprF W D) (ψ : W → Bool) (w : W) (d : D)
+    (hF : (PIPExprF.forall_ (λ d => PIPExprF.presup (φ d) ψ)).felicitous w = true) :
+    ψ w = true :=
+  haveI : Nonempty D := ⟨d⟩
+  (forallF_presup_factored φ ψ w).mp hF |>.2
+
+/-- Presupposition extraction through □ at an accessible world. -/
+theorem mustF_presup_at_accessible
+    (R : AccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w w' : W)
+    (hR : R w w' = true)
+    (hF : (PIPExprF.must R (PIPExprF.presup φ ψ)).felicitous w = true) :
+    ψ w' = true :=
+  (mustF_presup_factored R φ ψ w).mp hF |>.2 w' hR
+
+/-- Presupposition extraction through ◇ at an accessible world. -/
+theorem mightF_presup_at_accessible
+    (R : AccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w w' : W)
+    (hR : R w w' = true)
+    (hF : (PIPExprF.might R (PIPExprF.presup φ ψ)).felicitous w = true) :
+    ψ w' = true :=
+  (mightF_presup_factored R φ ψ w).mp hF |>.2 w' hR
+
+
+-- ======== Sigma body felicity (item 39f) ========
+
+/-- Sigma body felicity: for Σxφ to appear felicitously in a discourse,
+    φ must be felicitous for every witness d. This is item (39f) in the
+    common case with no additional local variables. Since `sigmaEval`
+    (Composition.lean) takes the same body type `D → PIPExprF W D` as
+    `∃`, sigma felicity reduces to existential felicity. -/
+theorem sigma_body_felicitous_iff (body : D → PIPExprF W D) (w : W) :
+    (∀ d, (body d).felicitous w = true) ↔
+    (PIPExprF.exists_ body).felicitous w = true :=
+  (existsF_felicitous_iff body w).symm
+
+end FullFelicity
 
 
 end Semantics.PIP.Felicity
