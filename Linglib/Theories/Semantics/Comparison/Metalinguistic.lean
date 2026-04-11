@@ -81,28 +81,68 @@ structure Interpretation (W : Type) (Pred : Type) (Entity : Type) where
 /-- A semantic ordering is a total preorder on a set of interpretations.
 
 Represents a speaker's relative interpretive commitments: `le i j` means
-the speaker is at least as committed to j as to i. -/
+the speaker is at least as committed to j as to i.
+
+`le` is Prop-valued with `DecidableRel` for decidable computation.
+Use `ofBool` for the common case of defining orderings via pattern matching. -/
 structure SemanticOrdering (I : Type) where
   /-- The preorder relation: `le i j` means i is ranked no higher than j. -/
-  le : I → I → Bool
+  le : I → I → Prop
   /-- Reflexivity -/
-  le_refl : ∀ (i : I), le i i = true
+  le_refl : ∀ (i : I), le i i
   /-- Transitivity -/
-  le_trans : ∀ (i j k : I), le i j = true → le j k = true → le i k = true
+  le_trans : ∀ (i j k : I), le i j → le j k → le i k
   /-- Totality: any two interpretations are comparable -/
-  le_total : ∀ (i j : I), le i j = true ∨ le j i = true
+  le_total : ∀ (i j : I), le i j ∨ le j i
+  /-- Decidability of the ordering relation -/
+  decRel : DecidableRel le
+
+attribute [instance] SemanticOrdering.decRel
 
 namespace SemanticOrdering
 
 variable {I : Type} (ord : SemanticOrdering I)
 
-/-- Strict ordering: i is ranked strictly below j. -/
-def lt (i j : I) : Bool := ord.le i j && !ord.le j i
+/-- Bool-valued le for computation (eval, native_decide). -/
+def leB (i j : I) : Bool := decide (ord.le i j)
+
+/-- Strict ordering (Prop): i is ranked strictly below j. -/
+def lt (i j : I) : Prop := ord.le i j ∧ ¬ ord.le j i
+
+/-- Decidability of the strict ordering. -/
+instance decRelLt : DecidableRel ord.lt :=
+  fun i j => show Decidable (ord.le i j ∧ ¬ ord.le j i) from inferInstance
+
+/-- Bool-valued strict ordering for computation. -/
+def ltB (i j : I) : Bool := ord.leB i j && !ord.leB j i
 
 /-- Equivalence: i and j are ranked at the same level. -/
-def equiv (i j : I) : Bool := ord.le i j && ord.le j i
+def equiv (i j : I) : Prop := ord.le i j ∧ ord.le j i
+
+/-- Bool-valued equivalence for computation. -/
+def equivB (i j : I) : Bool := ord.leB i j && ord.leB j i
+
+/-- ¬(a < b) → b ≤ a (by totality). -/
+theorem le_of_not_lt {a b : I} : ¬ ord.lt a b → ord.le b a := by
+  intro h
+  rcases ord.le_total a b with hab | hba
+  · exact Classical.byContradiction fun hba => h ⟨hab, hba⟩
+  · exact hba
 
 end SemanticOrdering
+
+/-- Construct a `SemanticOrdering` from a Bool-valued function.
+Convenient for defining concrete orderings via pattern matching. -/
+def SemanticOrdering.ofBool {I : Type} (f : I → I → Bool)
+    (h_refl : ∀ i, f i i = true)
+    (h_trans : ∀ i j k, f i j = true → f j k = true → f i k = true)
+    (h_total : ∀ i j, f i j = true ∨ f j i = true) :
+    SemanticOrdering I where
+  le i j := f i j = true
+  le_refl := h_refl
+  le_trans := h_trans
+  le_total := h_total
+  decRel _ _ := inferInstance
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -161,14 +201,14 @@ def eval {I W Pred Entity : Type} [Fintype I]
   | .mc A B =>
     -- ∃ i' ≤ i : ⟦A ∧ ¬B⟧^{i'} = 1 ∧ ∀ i'' ≤ i : ⟦B ∧ ¬A⟧^{i''} = 1 → i'' < i'
     bAny I λ i' =>
-      ord.le i' i &&
+      ord.leB i' i &&
       eval interpFn A ord i' w &&
       !(eval interpFn B ord i' w) &&
       bAll I λ i'' =>
-        !(ord.le i'' i &&
+        !(ord.leB i'' i &&
           eval interpFn B ord i'' w &&
           !(eval interpFn A ord i'' w)) ||
-        (ord.lt i'' i')
+        (ord.ltB i'' i')
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -177,7 +217,7 @@ def eval {I W Pred Entity : Type} [Fintype I]
 
 /-- Is interpretation i maximal in the ordering? -/
 def isMaximal {I : Type} [Fintype I] (ord : SemanticOrdering I) (i : I) : Bool :=
-  bAll I λ i' => !ord.lt i i'
+  bAll I λ i' => !ord.ltB i i'
 
 /-- Assertoric content: A is true at all ≤-maximal interpretations.
 
@@ -226,21 +266,21 @@ structure DistanceFunction (I : Type) (ord : SemanticOrdering I) where
   /-- Centered: i ∈ d(i) -/
   centered : ∀ (i : I), close i i = true
   /-- Top-bounded: if i' ∈ d(i), then i' ≤ i -/
-  topBounded : ∀ (i i' : I), close i i' = true → ord.le i' i = true
+  topBounded : ∀ (i i' : I), close i i' = true → ord.le i' i
   /-- Convex: if i' ∈ d(i) and i' ≤ i'' ≤ i, then i'' ∈ d(i) -/
   convex : ∀ (i i' i'' : I),
-    close i i' = true → ord.le i' i'' = true → ord.le i'' i = true →
+    close i i' = true → ord.le i' i'' → ord.le i'' i →
     close i i'' = true
   /-- Noncontractive: if i' ∈ d(i) and i' ≤ j ≤ i, then i' ∈ d(j) -/
   noncontractive : ∀ (i i' j : I),
-    close i i' = true → ord.le i' j = true → ord.le j i = true →
+    close i i' = true → ord.le i' j → ord.le j i →
     close j i' = true
 
 /-- "Far below": i ≪ j iff i ≤ j and i ∉ d(j).
 i is ranked below j and not even reasonably close. -/
 def farBelow {I : Type} (ord : SemanticOrdering I) (d : DistanceFunction I ord)
     (i j : I) : Bool :=
-  ord.le i j && !d.close j i
+  ord.leB i j && !d.close j i
 
 /-- Much more (A ≫ B): like A ≻ B but with ≪ instead of <.
 
@@ -252,11 +292,11 @@ def evalMuchMore {I W Pred Entity : Type} [Fintype I]
     (ord : SemanticOrdering I) (d : DistanceFunction I ord)
     (i : I) (w : W) : Bool :=
   bAny I λ i' =>
-    ord.le i' i &&
+    ord.leB i' i &&
     eval interpFn φ ord i' w &&
     !(eval interpFn ψ ord i' w) &&
     bAll I λ i'' =>
-      !(ord.le i'' i &&
+      !(ord.leB i'' i &&
         eval interpFn ψ ord i'' w &&
         !(eval interpFn φ ord i'' w)) ||
       farBelow ord d i'' i'
@@ -296,15 +336,15 @@ def evalMostly {I W Pred Entity : Type} [Fintype I]
     (ord : SemanticOrdering I) (d : DistanceFunction I ord)
     (i : I) (w : W) : Bool :=
   bAny I λ i' =>
-    ord.lt i' i &&
+    ord.ltB i' i &&
     d.close i i' &&
     -- (ii) all j at the same rank as i' satisfy A
-    bAll I (λ j => !(ord.equiv j i') || eval interpFn φ ord j w) &&
+    bAll I (λ j => !(ord.equivB j i') || eval interpFn φ ord j w) &&
     -- (iii) all A-false levels below i are below i'
     bAll I (λ i'' =>
-      !(ord.lt i'' i &&
-        bAll I (λ j => !(ord.equiv j i'') || !(eval interpFn φ ord j w))) ||
-      ord.lt i'' i')
+      !(ord.ltB i'' i &&
+        bAll I (λ j => !(ord.equivB j i'') || !(eval interpFn φ ord j w))) ||
+      ord.ltB i'' i')
 
 /-- No Reversal constraint (van Benthem 1990; §7 of @cite{rudolph-kocurek-2024}).
 
@@ -324,7 +364,7 @@ def noReversal {I W Pred Entity : Type}
     (ord : SemanticOrdering I)
     (P : Pred) (w : W) (e1 e2 : Entity) : Prop :=
   ∀ (i i' : I),
-    ord.le i' i = true →
+    ord.le i' i →
     (interpFn i).ext P w e1 = true →
     (interpFn i).ext P w e2 = false →
     (interpFn i').ext P w e2 = true →
@@ -365,18 +405,18 @@ def evalRevised {I W Pred Entity : Type} [Fintype I]
   | .disj A B => evalRevised interpFn A ord i w || evalRevised interpFn B ord i w
   | .mc A B =>
     bAny I λ i' =>
-      ord.le i' i &&
+      ord.leB i' i &&
       evalRevised interpFn A ord i' w &&
       !(evalRevised interpFn B ord i' w) &&
       (-- (a): witness dominates all B-interpretations
        bAll I (λ i'' =>
-         !(ord.le i'' i && evalRevised interpFn B ord i'' w) ||
-         ord.lt i'' i')
+         !(ord.leB i'' i && evalRevised interpFn B ord i'' w) ||
+         ord.ltB i'' i')
        ||
        -- (b): witness dominates all ¬A-interpretations
        bAll I (λ i'' =>
-         !(ord.le i'' i && !(evalRevised interpFn A ord i'' w)) ||
-         ord.lt i'' i'))
+         !(ord.leB i'' i && !(evalRevised interpFn A ord i'' w)) ||
+         ord.ltB i'' i'))
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -441,7 +481,7 @@ def evalMCond {I W Pred Entity : Type} [Fintype I]
     (interpFn : I → Interpretation W Pred Entity)
     (A B : MFormula Pred Entity)
     (ord : SemanticOrdering I) (i : I) (w : W) : Bool :=
-  let le := ord.le
+  let le := ord.leB
   let leA := restrictLE interpFn A le w
   bAll I λ i' =>
     !(le i' i && evalGen interpFn A le i' w) ||
@@ -497,6 +537,16 @@ instance {I W : Type} : HasContextSet (MetalinguisticCG I W) W where
 -- § 7. Revised MC Characterization (for MetalinguisticDegree.lean)
 -- ════════════════════════════════════════════════════════════════
 
+-- Bridge between leB/ltB and Prop-valued le/lt
+private theorem leB_iff {I : Type} (ord : SemanticOrdering I) (i j : I) :
+    ord.leB i j = true ↔ ord.le i j := by
+  simp [SemanticOrdering.leB, decide_eq_true_eq]
+
+private theorem ltB_iff {I : Type} (ord : SemanticOrdering I) (i j : I) :
+    ord.ltB i j = true ↔ ord.lt i j := by
+  simp [SemanticOrdering.ltB, SemanticOrdering.leB, SemanticOrdering.lt,
+    Bool.and_eq_true, Bool.not_eq_true', decide_eq_true_eq, decide_eq_false_iff_not]
+
 -- Converts Bool disjunction to implication form
 private theorem bGuard (a b c : Bool) :
     (!(a && b)) = true ∨ c = true ↔ (a = true → b = true → c = true) := by
@@ -514,37 +564,43 @@ theorem evalRevised_mc_iff {I W Pred Entity : Type} [Fintype I]
     (ord : SemanticOrdering I) (i : I) (w : W) :
     evalRevised interpFn (.mc A B) ord i w = true ↔
     ∃ i' : I,
-      ord.le i' i = true ∧
+      ord.le i' i ∧
       evalRevised interpFn A ord i' w = true ∧
       evalRevised interpFn B ord i' w = false ∧
-      ((∀ i'' : I, ord.le i'' i = true → evalRevised interpFn B ord i'' w = true →
-         ord.lt i'' i' = true) ∨
-       (∀ i'' : I, ord.le i'' i = true → evalRevised interpFn A ord i'' w = false →
-         ord.lt i'' i' = true)) := by
-  -- evalRevised (.mc A B) is definitionally bAny I (λ i' => ...)
-  show (bAny I fun i' => ord.le i' i && evalRevised interpFn A ord i' w &&
+      ((∀ i'' : I, ord.le i'' i → evalRevised interpFn B ord i'' w = true →
+         ord.lt i'' i') ∨
+       (∀ i'' : I, ord.le i'' i → evalRevised interpFn A ord i'' w = false →
+         ord.lt i'' i')) := by
+  -- evalRevised (.mc A B) reduces to bAny/bAll over leB/ltB
+  show (bAny I fun i' => ord.leB i' i && evalRevised interpFn A ord i' w &&
        !(evalRevised interpFn B ord i' w) &&
-       (bAll I (fun i'' => !(ord.le i'' i && evalRevised interpFn B ord i'' w) ||
-          ord.lt i'' i') ||
-        bAll I (fun i'' => !(ord.le i'' i && !(evalRevised interpFn A ord i'' w)) ||
-          ord.lt i'' i')))
+       (bAll I (fun i'' => !(ord.leB i'' i && evalRevised interpFn B ord i'' w) ||
+          ord.ltB i'' i') ||
+        bAll I (fun i'' => !(ord.leB i'' i && !(evalRevised interpFn A ord i'' w)) ||
+          ord.ltB i'' i')))
     = true ↔ _
   simp only [bAny, bAll, decide_eq_true_eq, Bool.and_eq_true, Bool.or_eq_true]
   constructor
   · rintro ⟨i', ⟨⟨h_le, h_A⟩, h_nB⟩, h_dom⟩
     have h_B : evalRevised interpFn B ord i' w = false := by
       revert h_nB; cases evalRevised interpFn B ord i' w <;> simp
-    refine ⟨i', h_le, h_A, h_B, ?_⟩
+    refine ⟨i', (leB_iff ord i' i).mp h_le, h_A, h_B, ?_⟩
     rcases h_dom with h1 | h2
     · exact Or.inl fun i'' h_le'' h_B'' => by
-        have := h1 i''; rw [bGuard] at this; exact this h_le'' h_B''
+        have := h1 i''; rw [bGuard] at this
+        exact (ltB_iff ord i'' i').mp (this ((leB_iff ord i'' i).mpr h_le'') h_B'')
     · exact Or.inr fun i'' h_le'' h_A'' => by
-        have := h2 i''; rw [bGuardNeg] at this; exact this h_le'' h_A''
+        have := h2 i''; rw [bGuardNeg] at this
+        exact (ltB_iff ord i'' i').mp (this ((leB_iff ord i'' i).mpr h_le'') h_A'')
   · rintro ⟨i', h_le, h_A, h_B, h_dom⟩
-    refine ⟨i', ⟨⟨h_le, h_A⟩, by simp [h_B]⟩, ?_⟩
+    refine ⟨i', ⟨⟨(leB_iff ord i' i).mpr h_le, h_A⟩, by simp [h_B]⟩, ?_⟩
     rcases h_dom with h1 | h2
-    · exact Or.inl fun i'' => by rw [bGuard]; exact h1 i''
-    · exact Or.inr fun i'' => by rw [bGuardNeg]; exact h2 i''
+    · exact Or.inl fun i'' => by
+        rw [bGuard]; intro h_le'' h_B''
+        exact (ltB_iff ord i'' i').mpr (h1 i'' ((leB_iff ord i'' i).mp h_le'') h_B'')
+    · exact Or.inr fun i'' => by
+        rw [bGuardNeg]; intro h_le'' h_A''
+        exact (ltB_iff ord i'' i').mpr (h2 i'' ((leB_iff ord i'' i).mp h_le'') h_A'')
 
 
 end Semantics.Comparison.Metalinguistic

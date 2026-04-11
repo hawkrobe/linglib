@@ -130,16 +130,17 @@ instance : Fintype I3 where
   complete := by intro x; cases x <;> simp
 
 /-- Linear ordering: i0 ≤ i1 ≤ i2. -/
-def ord₃ : SemanticOrdering I3 where
-  le := λ i j => match i, j with
-    | .i0, _ => true
-    | .i1, .i0 => false
-    | .i1, _ => true
-    | .i2, .i2 => true
-    | .i2, _ => false
-  le_refl := by intro i; cases i <;> rfl
-  le_trans := by intro i j k hij hjk; cases i <;> cases j <;> cases k <;> simp_all
-  le_total := by intro i j; cases i <;> cases j <;> simp
+def ord₃ : SemanticOrdering I3 :=
+  SemanticOrdering.ofBool
+    (λ i j => match i, j with
+      | .i0, _ => true
+      | .i1, .i0 => false
+      | .i1, _ => true
+      | .i2, .i2 => true
+      | .i2, _ => false)
+    (by intro i; cases i <;> rfl)
+    (by intro i j k hij hjk; cases i <;> cases j <;> cases k <;> simp_all)
+    (by intro i j; cases i <;> cases j <;> simp)
 
 /-- Interpretation function:
 - i₀: Ann is a philosopher, not a linguist
@@ -250,11 +251,12 @@ instance : Fintype I2 where
   complete := by intro x; cases x <;> simp
 
 /-- Tied ordering: j0 ≡ j1 (both maximal). -/
-def tiedOrd : SemanticOrdering I2 where
-  le := λ _ _ => true
-  le_refl := by intro i; cases i <;> rfl
-  le_trans := by intro i j k _ _; cases i <;> cases j <;> cases k <;> rfl
-  le_total := by intro i j; left; cases i <;> cases j <;> rfl
+def tiedOrd : SemanticOrdering I2 :=
+  SemanticOrdering.ofBool
+    (λ _ _ => true)
+    (by intro i; cases i <;> rfl)
+    (by intro i j k _ _; cases i <;> cases j <;> cases k <;> rfl)
+    (by intro i j; left; cases i <;> cases j <;> rfl)
 
 /-- j₀: La true, Pa false; j₁: La false, Pa true. -/
 def interp₂ : I2 → Interpretation W Pred Entity
@@ -516,7 +518,7 @@ theorem mc_equals_delineation_under_nr :
       -- Full MC with domination clause
       eval interpNR (.mc Ta Tb) ord₃ i .w0 =
       -- Delineation: just check for a witness (no domination needed)
-      (decide (∃ i' : I3, ord₃.le i' i = true ∧
+      (decide (∃ i' : I3, ord₃.le i' i ∧
         (interpNR i').ext .tall .w0 .ann = true ∧
         (interpNR i').ext .tall .w0 .ben = false) : Bool) := by native_decide
 
@@ -542,7 +544,7 @@ i₀, violating the domination clause), but the simple delineation
 condition (∃ Fa∧¬Fb) is TRUE (i₀ is a witness). -/
 theorem mc_delineation_diverge_without_nr :
     eval interpNR_bad (.mc Ta Tb) ord₃ .i2 .w0 = false ∧
-    (decide (∃ i' : I3, ord₃.le i' .i2 = true ∧
+    (decide (∃ i' : I3, ord₃.le i' .i2 ∧
       (interpNR_bad i').ext .tall .w0 .ann = true ∧
       (interpNR_bad i').ext .tall .w0 .ben = false) : Bool) = true :=
   ⟨by native_decide, by native_decide⟩
@@ -622,18 +624,19 @@ instance : Fintype I4 where
 /-- Ordering: l < j ≡ k < i (three levels).
 j and k are tied at the middle level — this is essential for the
 equatives La ≈ Pa and Pa ≈ Ca to hold (witnesses block each other). -/
-def ord₄ : SemanticOrdering I4 where
-  le := λ x y => match x, y with
-    | .l, _ => true
-    | .j, .l => false
-    | .j, _ => true
-    | .k, .l => false
-    | .k, _ => true
-    | .i, .i => true
-    | .i, _ => false
-  le_refl := by intro x; cases x <;> rfl
-  le_trans := by intro x y z hxy hyz; cases x <;> cases y <;> cases z <;> simp_all
-  le_total := by intro x y; cases x <;> cases y <;> simp
+def ord₄ : SemanticOrdering I4 :=
+  SemanticOrdering.ofBool
+    (λ x y => match x, y with
+      | .l, _ => true
+      | .j, .l => false
+      | .j, _ => true
+      | .k, .l => false
+      | .k, _ => true
+      | .i, .i => true
+      | .i, _ => false)
+    (by intro x; cases x <;> rfl)
+    (by intro x y z hxy hyz; cases x <;> cases y <;> cases z <;> simp_all)
+    (by intro x y; cases x <;> cases y <;> simp)
 
 /-- Interpretation function for transitivity counterexample:
 - i: all three true  (linguist, philosopher, psychologist)

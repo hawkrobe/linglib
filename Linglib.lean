@@ -1112,6 +1112,7 @@ import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Processing.Studies.GiulianelliEtAl2026
 import Linglib.Phenomena.Polysemy.Data
+import Linglib.Phenomena.Polysemy.Studies.Clark1983
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Polysemy.Studies.XuEtAl2024
 import Linglib.Phenomena.Polysemy.Studies.ErkHerbelot2024

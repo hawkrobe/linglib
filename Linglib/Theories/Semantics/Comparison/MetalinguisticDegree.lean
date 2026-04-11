@@ -37,19 +37,13 @@ open Semantics.Comparison.Metalinguistic
 
 /-- Convert a `SemanticOrdering` to a Mathlib `Preorder`.
 
-Wraps the Bool-valued `le` as a Prop-valued `≤`, following the
-`QUD.toSetoid` pattern. A `def` (not an instance) to avoid global
-instance pollution — use `letI := ord.toPreorder` locally. -/
-def SemanticOrdering.toPreorder {I : Type} (ord : SemanticOrdering I) :
+A `def` (not an instance) to avoid global instance pollution —
+use `letI := ord.toPreorder` locally to bring `≤`/`<` into scope. -/
+@[reducible] def SemanticOrdering.toPreorder {I : Type} (ord : SemanticOrdering I) :
     Preorder I where
-  le i j := ord.le i j = true
-  le_refl i := ord.le_refl i
-  le_trans i j k hij hjk := ord.le_trans i j k hij hjk
-
-/-- The semantic ordering is total. -/
-theorem SemanticOrdering.isTotal {I : Type} (ord : SemanticOrdering I) :
-    ∀ (i j : I), ord.le i j = true ∨ ord.le j i = true :=
-  ord.le_total
+  le := ord.le
+  le_refl := ord.le_refl
+  le_trans _ _ _ := ord.le_trans _ _ _
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -87,8 +81,8 @@ interpretation sets rather than formulas. -/
 def equivCond1 {I : Type} [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (i : I)
     (X Y : Finset I) : Prop :=
-  (∀ i' ∈ X \ Y, ∃ i'' ∈ Y \ X, ord.le i' i'' = true) ∧
-  (∀ i' ∈ Y \ X, ∃ i'' ∈ X \ Y, ord.le i' i'' = true)
+  (∀ i' ∈ X \ Y, ∃ i'' ∈ Y \ X, ord.le i' i'') ∧
+  (∀ i' ∈ Y \ X, ∃ i'' ∈ X \ Y, ord.le i' i'')
 
 /-- Condition (ii) of the ∼ equivalence: every element of the
 symmetric difference (X ∪ Y) \ (X ∩ Y) is dominated by both
@@ -101,8 +95,8 @@ def equivCond2 {I : Type} [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (i : I)
     (X Y : Finset I) : Prop :=
   ∀ i' ∈ (X ∪ Y) \ (X ∩ Y),
-    (∃ i'' ∈ X ∩ Y, ord.le i' i'' = true) ∧
-    (∃ i'' ∈ field ord i \ (X ∪ Y), ord.le i' i'' = true)
+    (∃ i'' ∈ X ∩ Y, ord.le i' i'') ∧
+    (∃ i'' ∈ field ord i \ (X ∪ Y), ord.le i' i'')
 
 /-- Metalinguistic degree equivalence: X ∼_i Y.
 
@@ -122,16 +116,16 @@ def degreeEquiv {I : Type} [Fintype I] [DecidableEq I]
 def equivCond1B {I : Type} [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (i : I)
     (X Y : Finset I) : Bool :=
-  decide (∀ i' ∈ X \ Y, ∃ i'' ∈ Y \ X, ord.le i' i'' = true) &&
-  decide (∀ i' ∈ Y \ X, ∃ i'' ∈ X \ Y, ord.le i' i'' = true)
+  decide (∀ i' ∈ X \ Y, ∃ i'' ∈ Y \ X, ord.le i' i'') &&
+  decide (∀ i' ∈ Y \ X, ∃ i'' ∈ X \ Y, ord.le i' i'')
 
 /-- Bool-valued decidable version of equivCond2. -/
 def equivCond2B {I : Type} [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (i : I)
     (X Y : Finset I) : Bool :=
   decide (∀ i' ∈ (X ∪ Y) \ (X ∩ Y),
-    (∃ i'' ∈ X ∩ Y, ord.le i' i'' = true) ∧
-    (∃ i'' ∈ field ord i \ (X ∪ Y), ord.le i' i'' = true))
+    (∃ i'' ∈ X ∩ Y, ord.le i' i'') ∧
+    (∃ i'' ∈ field ord i \ (X ∪ Y), ord.le i' i''))
 
 /-- Bool-valued decidable version of degreeEquiv. -/
 def degreeEquivB {I : Type} [Fintype I] [DecidableEq I]
@@ -190,9 +184,9 @@ def strictlyBetter {I : Type} [Fintype I] [DecidableEq I]
     (X Y : Finset I) : Prop :=
   ∃ i' ∈ X \ Y,
     i' ∈ field ord i ∧
-    (∀ i'' ∈ Y \ X, ord.lt i'' i' = true) ∧
-    ((∀ i'' ∈ X ∩ Y, ord.lt i'' i' = true) ∨
-     (∀ i'' ∈ field ord i \ (X ∪ Y), ord.lt i'' i' = true))
+    (∀ i'' ∈ Y \ X, ord.lt i'' i') ∧
+    ((∀ i'' ∈ X ∩ Y, ord.lt i'' i') ∨
+     (∀ i'' ∈ field ord i \ (X ∪ Y), ord.lt i'' i'))
 
 /-- Bool-valued decidable version of strictlyBetter. -/
 def strictlyBetterB {I : Type} [Fintype I] [DecidableEq I]
@@ -200,9 +194,9 @@ def strictlyBetterB {I : Type} [Fintype I] [DecidableEq I]
     (X Y : Finset I) : Bool :=
   decide (∃ i' ∈ X \ Y,
     i' ∈ field ord i ∧
-    (∀ i'' ∈ Y \ X, ord.lt i'' i' = true) ∧
-    ((∀ i'' ∈ X ∩ Y, ord.lt i'' i' = true) ∨
-     (∀ i'' ∈ field ord i \ (X ∪ Y), ord.lt i'' i' = true)))
+    (∀ i'' ∈ Y \ X, ord.lt i'' i') ∧
+    ((∀ i'' ∈ X ∩ Y, ord.lt i'' i') ∨
+     (∀ i'' ∈ field ord i \ (X ∪ Y), ord.lt i'' i')))
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -212,7 +206,7 @@ def strictlyBetterB {I : Type} [Fintype I] [DecidableEq I]
 /-- Every nonempty Finset has a maximal element under a total preorder. -/
 private lemma exists_le_max {I : Type} [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (S : Finset I) (hS : S.Nonempty) :
-    ∃ m ∈ S, ∀ s ∈ S, ord.le s m = true := by
+    ∃ m ∈ S, ∀ s ∈ S, ord.le s m := by
   induction S using Finset.cons_induction with
   | empty => exact absurd hS (by simp)
   | cons x S' hx ih =>
@@ -231,62 +225,38 @@ private lemma exists_le_max {I : Type} [Fintype I] [DecidableEq I]
       exact ⟨x, Finset.mem_cons_self x S', fun s hs => by
         simp [hS'] at hs; exact hs ▸ ord.le_refl _⟩
 
-/-- ¬(a < b) ↔ b ≤ a (by totality). -/
-private lemma not_lt_iff_ge {I : Type} (ord : SemanticOrdering I) (a b : I) :
-    ord.lt a b = false ↔ ord.le b a = true := by
-  constructor
-  · intro h
-    rcases ord.le_total a b with hab | hba
-    · simp [SemanticOrdering.lt, hab] at h; exact h
-    · exact hba
-  · intro h; simp [SemanticOrdering.lt, h]
-
-/-- a < b → a ≤ b. -/
-private lemma le_of_lt' {I : Type} (ord : SemanticOrdering I) (a b : I) :
-    ord.lt a b = true → ord.le a b = true := by
-  simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true']
-  exact fun ⟨h, _⟩ => h
-
 /-- a ≤ b ∧ b < c → a < c. -/
 private lemma le_lt_trans' {I : Type} (ord : SemanticOrdering I) (a b c : I) :
-    ord.le a b = true → ord.lt b c = true → ord.lt a c = true := by
-  simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true']
-  intro hab ⟨hbc, hncb⟩
-  refine ⟨ord.le_trans a b c hab hbc, ?_⟩
-  cases hca : ord.le c a
-  · rfl
-  · exact absurd (ord.le_trans c a b hca hab) (by simp [hncb])
+    ord.le a b → ord.lt b c → ord.lt a c :=
+  fun hab ⟨hbc, hncb⟩ =>
+    ⟨ord.le_trans a b c hab hbc, fun hca => hncb (ord.le_trans c a b hca hab)⟩
 
 /-- a < b ∧ b ≤ c → a < c. -/
 private lemma lt_le_trans' {I : Type} (ord : SemanticOrdering I) (a b c : I) :
-    ord.lt a b = true → ord.le b c = true → ord.lt a c = true := by
-  simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true']
-  intro ⟨hab, hnba⟩ hbc
-  refine ⟨ord.le_trans a b c hab hbc, ?_⟩
-  cases hca : ord.le c a
-  · rfl
-  · exact absurd (ord.le_trans b c a hbc hca) (by simp [hnba])
+    ord.lt a b → ord.le b c → ord.lt a c :=
+  fun ⟨hab, hnba⟩ hbc =>
+    ⟨ord.le_trans a b c hab hbc, fun hca => hnba (ord.le_trans b c a hbc hca)⟩
 
 /-- lt is irreflexive. -/
 private lemma lt_irrefl' {I : Type} (ord : SemanticOrdering I) (m : I) :
-    ord.lt m m ≠ true := by
-  simp [SemanticOrdering.lt, ord.le_refl]
+    ¬ ord.lt m m :=
+  fun ⟨_, h⟩ => h (ord.le_refl m)
 
 /-- b ≠ true → b = false. -/
 private theorem bool_eq_false_of_ne_true {b : Bool} (h : ¬ (b = true)) :
     b = false := by cases b <;> simp_all
 
-/-- ¬(lt a b = true) → le b a = true (totality). -/
+/-- ¬(a < b) → b ≤ a (totality). -/
 private lemma ge_of_not_lt {I : Type} (ord : SemanticOrdering I) (a b : I) :
-    ¬ (ord.lt a b = true) → ord.le b a = true := by
-  intro h; exact (not_lt_iff_ge ord a b).mp (bool_eq_false_of_ne_true h)
+    ¬ ord.lt a b → ord.le b a :=
+  SemanticOrdering.le_of_not_lt ord
 
 /-- If m dominates X ∩ Y and Y \ X, it dominates all of Y. -/
 private lemma dom_all_of_inter_sdiff {I : Type} [DecidableEq I]
     (ord : SemanticOrdering I) (m : I) (X Y : Finset I)
-    (h_cap : ∀ c ∈ X ∩ Y, ord.lt c m = true)
-    (h_sdiff : ∀ y ∈ Y \ X, ord.lt y m = true) :
-    ∀ y ∈ Y, ord.lt y m = true := by
+    (h_cap : ∀ c ∈ X ∩ Y, ord.lt c m)
+    (h_sdiff : ∀ y ∈ Y \ X, ord.lt y m) :
+    ∀ y ∈ Y, ord.lt y m := by
   intro y hy
   by_cases hyx : y ∈ X
   · exact h_cap y (Finset.mem_inter.mpr ⟨hyx, hy⟩)
@@ -295,9 +265,9 @@ private lemma dom_all_of_inter_sdiff {I : Type} [DecidableEq I]
 /-- If m dominates Y \ X and field \ (X ∪ Y), it dominates field \ X. -/
 private lemma dom_fX_of_sdiff_comp {I : Type} [Fintype I] [DecidableEq I]
     (ord : SemanticOrdering I) (i : I) (m : I) (X Y : Finset I)
-    (h_yx : ∀ y ∈ Y \ X, ord.lt y m = true)
-    (h_comp : ∀ c ∈ field ord i \ (X ∪ Y), ord.lt c m = true) :
-    ∀ c ∈ field ord i \ X, ord.lt c m = true := by
+    (h_yx : ∀ y ∈ Y \ X, ord.lt y m)
+    (h_comp : ∀ c ∈ field ord i \ (X ∪ Y), ord.lt c m) :
+    ∀ c ∈ field ord i \ X, ord.lt c m := by
   intro c hc
   by_cases hc_y : c ∈ Y
   · exact h_yx c (Finset.mem_sdiff.mpr ⟨hc_y, (Finset.mem_sdiff.mp hc).2⟩)
@@ -360,9 +330,7 @@ theorem degreeEquiv_not_strictlyBetter {I : Type} [Fintype I] [DecidableEq I]
   rcases h_eq with ⟨h_match, _⟩ | h2
   · -- equivCond1: i' ∈ X\Y is matched by i'' ∈ Y\X with i' ≤ i''
     obtain ⟨i'', h_i''_sdiff, h_le⟩ := h_match i' h_sdiff
-    have h_lt := h_ymx i'' h_i''_sdiff
-    simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at h_lt
-    simp [h_lt.2] at h_le
+    exact (h_ymx i'' h_i''_sdiff).2 h_le
   · -- equivCond2: i' ∈ (X ∪ Y) \ (X ∩ Y), dominated by X∩Y and field\(X∪Y)
     have h_symdiff : i' ∈ (X ∪ Y) \ (X ∩ Y) :=
       Finset.mem_sdiff.mpr
@@ -370,12 +338,8 @@ theorem degreeEquiv_not_strictlyBetter {I : Type} [Fintype I] [DecidableEq I]
          fun h => (Finset.mem_sdiff.mp h_sdiff).2 (Finset.mem_inter.mp h).2⟩
     obtain ⟨⟨i₁, h_i₁_mem, h_le₁⟩, ⟨i₂, h_i₂_mem, h_le₂⟩⟩ := h2 i' h_symdiff
     rcases h_inner with h_cap | h_comp
-    · have h_lt := h_cap i₁ h_i₁_mem
-      simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at h_lt
-      simp [h_lt.2] at h_le₁
-    · have h_lt := h_comp i₂ h_i₂_mem
-      simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at h_lt
-      simp [h_lt.2] at h_le₂
+    · exact (h_cap i₁ h_i₁_mem).2 h_le₁
+    · exact (h_comp i₂ h_i₂_mem).2 h_le₂
 
 /-- Fact 11: ⊐ respects ∼ on the right.
 If X ⊐ Y and Y ∼ Z (with all sets in the field), then X ⊐ Z.
@@ -395,7 +359,7 @@ theorem strictlyBetter_respects_right {I : Type} [Fintype I] [DecidableEq I]
   · -- LEFT INNER: m dominates all of Y
     have m_dom_Y := dom_all_of_inter_sdiff ord m X Y h_left hm_yx
     -- z ∈ Z, z ∉ Y → lt z m (via Y∼Z matching + m_dom_Y)
-    have z_ny_lt : ∀ z, z ∈ Z → z ∉ Y → ord.lt z m = true := by
+    have z_ny_lt : ∀ z, z ∈ Z → z ∉ Y → ord.lt z m := by
       intro z hz hny
       rcases hyz with ⟨_, hyz_b⟩ | hyz2
       · obtain ⟨y', hy', hle⟩ := hyz_b z (Finset.mem_sdiff.mpr ⟨hz, hny⟩)
@@ -419,16 +383,14 @@ theorem strictlyBetter_respects_right {I : Type} [Fintype I] [DecidableEq I]
   · -- RIGHT INNER: m dominates field \ X
     have m_dom_fX := dom_fX_of_sdiff_comp ord i m X Y hm_yx h_right
     -- Helper: w ∈ X forced when m_dom_fX w gives lt w m, contradicting le m w
-    have forced_in_X (w : I) (hw_f : w ∈ field ord i) (hle : ord.le m w = true) :
+    have forced_in_X (w : I) (hw_f : w ∈ field ord i) (hle : ord.le m w) :
         w ∈ X := by
       by_contra h
-      have h_lt := m_dom_fX w (Finset.mem_sdiff.mpr ⟨hw_f, h⟩)
-      simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at h_lt
-      simp [h_lt.2] at hle
+      exact (m_dom_fX w (Finset.mem_sdiff.mpr ⟨hw_f, h⟩)).2 hle
     by_cases hm_z : m ∈ Z
     · -- m ∈ Z ∩ X: find alternative witness via Y∼Z
       -- Helper: once we have witness w ∈ X\Z with le m w, build the ⊐ proof
-      suffices ∃ w, w ∈ X \ Z ∧ w ∈ field ord i ∧ ord.le m w = true from by
+      suffices ∃ w, w ∈ X \ Z ∧ w ∈ field ord i ∧ ord.le m w from by
         obtain ⟨w, hw_sd, hw_f, hle⟩ := this
         refine ⟨w, hw_sd, hw_f, ?_, Or.inr ?_⟩
         · intro z hz; exact lt_le_trans' ord z m w
@@ -483,7 +445,7 @@ theorem strictlyBetter_respects_left {I : Type} [Fintype I] [DecidableEq I]
       · intro c hc; exact m_dom_Y c (Finset.mem_inter.mp hc).2
     · -- m ∉ Z: use X∼Z to find w ∈ Z with le m w, w ∉ Y forced
       -- Once we have w, the proof is uniform
-      suffices ∃ w, w ∈ Z \ Y ∧ w ∈ field ord i ∧ ord.le m w = true from by
+      suffices ∃ w, w ∈ Z \ Y ∧ w ∈ field ord i ∧ ord.le m w from by
         obtain ⟨w, hw_sd, hw_f, hle⟩ := this
         refine ⟨w, hw_sd, hw_f, ?_, Or.inl ?_⟩
         · intro y hy; exact lt_le_trans' ord y m w
@@ -491,11 +453,8 @@ theorem strictlyBetter_respects_left {I : Type} [Fintype I] [DecidableEq I]
         · intro c hc; exact lt_le_trans' ord c m w
             (m_dom_Y c (Finset.mem_inter.mp hc).2) hle
       -- Helper: w ∉ Y when m_dom_Y w and le m w (lt w m contradicts le m w)
-      have not_in_Y (w : I) (hle : ord.le m w = true) : w ∉ Y := by
-        intro h
-        have h_lt := m_dom_Y w h
-        simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at h_lt
-        simp [h_lt.2] at hle
+      have not_in_Y (w : I) (hle : ord.le m w) : w ∉ Y :=
+        fun h => (m_dom_Y w h).2 hle
       rcases hxz with ⟨hxz_a, _⟩ | hxz2
       · obtain ⟨z₀, hz₀, hle⟩ := hxz_a m (Finset.mem_sdiff.mpr ⟨hm_x, hm_z⟩)
         exact ⟨z₀, Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hz₀).1, not_in_Y z₀ hle⟩,
@@ -508,7 +467,7 @@ theorem strictlyBetter_respects_left {I : Type} [Fintype I] [DecidableEq I]
   · -- RIGHT INNER: m dominates field \ X
     have m_dom_fX := dom_fX_of_sdiff_comp ord i m X Y hm_yx h_right
     -- c ∈ X\Z → lt c m (via X∼Z matching to field\X, then m_dom_fX)
-    have lt_via_xz : ∀ c, c ∈ X → c ∉ Z → ord.lt c m = true := by
+    have lt_via_xz : ∀ c, c ∈ X → c ∉ Z → ord.lt c m := by
       intro c hc_x hc_nz
       rcases hxz with ⟨hxz_a, _⟩ | hxz2
       · obtain ⟨z', hz', hle⟩ := hxz_a c (Finset.mem_sdiff.mpr ⟨hc_x, hc_nz⟩)
@@ -553,14 +512,14 @@ theorem strictlyBetter_trans {I : Type} [Fintype I] [DecidableEq I]
   have hm₂_y := (Finset.mem_sdiff.mp hm₂_sd).1
   have hm₂_nz := (Finset.mem_sdiff.mp hm₂_sd).2
   -- Key helper: z ∈ Z\X → lt z m₁ (when m₂ ≤ m₁)
-  have zx_lt_m1 (hle : ord.le m₂ m₁ = true) (z : I) (hz : z ∈ Z \ X) : ord.lt z m₁ = true := by
+  have zx_lt_m1 (hle : ord.le m₂ m₁) (z : I) (hz : z ∈ Z \ X) : ord.lt z m₁ := by
     have hz_z := (Finset.mem_sdiff.mp hz).1
     have hz_nx := (Finset.mem_sdiff.mp hz).2
     by_cases hz_y : z ∈ Y
     · exact hm₁_yx z (Finset.mem_sdiff.mpr ⟨hz_y, hz_nx⟩)
     · exact lt_le_trans' ord z m₂ m₁ (hm₂_zy z (Finset.mem_sdiff.mpr ⟨hz_z, hz_y⟩)) hle
   -- Key helper: z ∈ Z\X → lt z m₂ (when m₁ ≤ m₂)
-  have zx_lt_m2 (hle : ord.le m₁ m₂ = true) (z : I) (hz : z ∈ Z \ X) : ord.lt z m₂ = true := by
+  have zx_lt_m2 (hle : ord.le m₁ m₂) (z : I) (hz : z ∈ Z \ X) : ord.lt z m₂ := by
     have hz_z := (Finset.mem_sdiff.mp hz).1
     have hz_nx := (Finset.mem_sdiff.mp hz).2
     by_cases hz_y : z ∈ Y
@@ -637,15 +596,15 @@ theorem strictlyBetter_total {I : Type} [Fintype I] [DecidableEq I]
   · exact Or.inl (h_eq ▸ degreeEquiv_refl ord i X)
   · obtain ⟨m, hm, hm_max⟩ := exists_le_max ord _ (symdiff_nonempty X Y h_eq)
     -- Helper: any element of the symdiff ≤ m
-    have hm_max' : ∀ s ∈ (X \ Y) ∪ (Y \ X), ord.le s m = true := hm_max
+    have hm_max' : ∀ s ∈ (X \ Y) ∪ (Y \ X), ord.le s m := hm_max
     rcases Finset.mem_union.mp hm with hm_xy | hm_yx
     · -- m ∈ X\Y: either equivCond1, or strictlyBetter X Y
       have hm_field : m ∈ field ord i := hX (Finset.mem_sdiff.mp hm_xy).1
-      by_cases h_all_yx : ∀ y ∈ Y \ X, ord.lt y m = true
+      by_cases h_all_yx : ∀ y ∈ Y \ X, ord.lt y m
       · -- All Y\X < m: check inner disjunct
-        by_cases h_cap : ∀ c ∈ X ∩ Y, ord.lt c m = true
+        by_cases h_cap : ∀ c ∈ X ∩ Y, ord.lt c m
         · exact Or.inr (Or.inl ⟨m, hm_xy, hm_field, h_all_yx, Or.inl h_cap⟩)
-        · by_cases h_comp : ∀ c ∈ field ord i \ (X ∪ Y), ord.lt c m = true
+        · by_cases h_comp : ∀ c ∈ field ord i \ (X ∪ Y), ord.lt c m
           · exact Or.inr (Or.inl ⟨m, hm_xy, hm_field, h_all_yx, Or.inr h_comp⟩)
           · -- Neither inner holds: equivCond2
             push Not at h_cap h_comp
@@ -669,11 +628,11 @@ theorem strictlyBetter_total {I : Type} [Fintype I] [DecidableEq I]
               hm_max' y (Finset.mem_union.mpr (Or.inr hy))⟩⟩)
     · -- m ∈ Y\X: symmetric case — either equivCond1, or strictlyBetter Y X
       have hm_field : m ∈ field ord i := hY (Finset.mem_sdiff.mp hm_yx).1
-      by_cases h_all_xy : ∀ x ∈ X \ Y, ord.lt x m = true
+      by_cases h_all_xy : ∀ x ∈ X \ Y, ord.lt x m
       · -- All X\Y < m: check inner disjunct
-        by_cases h_cap : ∀ c ∈ Y ∩ X, ord.lt c m = true
+        by_cases h_cap : ∀ c ∈ Y ∩ X, ord.lt c m
         · exact Or.inr (Or.inr ⟨m, hm_yx, hm_field, h_all_xy, Or.inl h_cap⟩)
-        · by_cases h_comp : ∀ c ∈ field ord i \ (Y ∪ X), ord.lt c m = true
+        · by_cases h_comp : ∀ c ∈ field ord i \ (Y ∪ X), ord.lt c m
           · exact Or.inr (Or.inr ⟨m, hm_yx, hm_field, h_all_xy, Or.inr h_comp⟩)
           · -- Neither inner holds: equivCond2
             push Not at h_cap h_comp
@@ -778,7 +737,7 @@ def formulaDeg {I W Pred Entity : Type} [Fintype I] [DecidableEq I]
 /-- Membership in `field`: j ∈ I_i iff j ≤ i. -/
 private theorem mem_field_iff {I : Type} [Fintype I] [DecidableEq I]
     {ord : SemanticOrdering I} {i j : I} :
-    j ∈ field ord i ↔ ord.le j i = true := by
+    j ∈ field ord i ↔ ord.le j i := by
   simp [field]
 
 /-- Membership in `denotation`: j ∈ ⟦φ⟧_i iff j ≤ i and ⟦φ⟧^j = 1. -/
@@ -788,7 +747,7 @@ private theorem mem_denotation_iff {I W Pred Entity : Type}
     {φ : MFormula Pred Entity}
     {ord : SemanticOrdering I} {i j : I} {w : W} :
     j ∈ denotation interpFn φ ord i w ↔
-    ord.le j i = true ∧ evalRevised interpFn φ ord j w = true := by
+    ord.le j i ∧ evalRevised interpFn φ ord j w = true := by
   simp [denotation, field]
 
 /-- Fact 10: revised MC holds iff denotation of A ⊐ denotation of B.

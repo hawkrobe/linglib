@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.655] - 2026-04-11
+
+### Changed
+- **Metalinguistic.lean**: `SemanticOrdering.le` now Prop-valued with `DecidableRel` (was Bool); add `leB`/`ltB`/`equivB` Bool accessors, `ofBool` smart constructor, `DecidableRel` for `lt`, `le_of_not_lt` theorem
+- **MetalinguisticDegree.lean** (947→906 lines): remove 5 `simp [SemanticOrdering.lt, Bool.and_eq_true, ...]` proof patterns → `exact absurd hle h_lt.2`; simplify `le_lt_trans'`/`lt_le_trans'`/`lt_irrefl'` to term-mode; `ge_of_not_lt` delegates to `le_of_not_lt`; fix paren damage in `strictlyBetter`/`strictlyBetterB`
+- **RudolphKocurek2024.lean**: `ord₃`/`tiedOrd`/`ord₄` converted to `SemanticOrdering.ofBool`
+
+### Added
+- **Clark1983.lean** (`Phenomena/Polysemy/Studies/`): formalize @cite{clark-1983} "Making sense of nonce sense" — sense-selection vs sense-creation distinction, 2×2 expression classification (fixed/shifting × sense/reference), 10 contextual expression types (Table 9.2), Innovative Denominal Verb Convention (6 conditions), non-denumerability argument against lexical rules, bridge to LU-RSA `Lexicon` type (`SenseCreationParser` generalizes `senseSelectionParser`), bridge to DM `Recategorization.denominal` (`DenominalVerb` bundles syntax + pragmatics, `dm_underdetermines_meaning` proves same root → same category but underdetermined meaning)
+- **references.bib**: add `clark-1983` (Making sense of nonce sense, 1983) and `clark-clark-1979` (When nouns surface as verbs, Language 55)
+
 ## [0.229.654] - 2026-04-11
 
 ### Changed
