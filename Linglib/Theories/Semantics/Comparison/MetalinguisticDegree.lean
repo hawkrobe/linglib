@@ -14,8 +14,8 @@ an index ⟨≤, i, w⟩) is the equivalence class of its denotation set
 
 ## Key Results
 
-- **∼ is an equivalence relation** (Fact 8): reflexive ✓, symmetric ✓, transitive (sorry)
-- **⊐ properties** (Facts 11–12): irreflexive ✓, transitive ✓, total ✓, respects ∼ (sorry)
+- **∼ is an equivalence relation** (Fact 8): reflexive ✓, symmetric ✓, transitive ✓ (⊆ field)
+- **⊐ properties** (Facts 11–12): irreflexive ✓, transitive ✓, total ✓, respects ∼ ✓ (⊆ field)
 - **A ≈ B iff deg(A) = deg(B)** (Fact 9) ✓: ME = same metalinguistic degree
 - **A ≻ B iff deg(A) ⊐ deg(B)** (Fact 10) ✓: revised MC = degree ordering
 
@@ -174,62 +174,8 @@ theorem degreeEquiv_symm {I : Type} [Fintype I] [DecidableEq I]
     · obtain ⟨i'', hi''mem, hi''le⟩ := h2b
       exact ⟨i'', by rwa [Finset.union_comm] at hi''mem, hi''le⟩
 
-/-- Fact 8c: ∼ is transitive.
-TODO: The equivCond1×equivCond1 case requires a Schröder-Bernstein
-style "bouncing chain" argument: given x ∈ X\Z, match through
-Y\Z → Z\Y → Y\X → X\Y → ... until a Z\X element is found.
-Termination follows from finiteness (pigeonhole), but the
-Lean formalization of the chain + extraction is nontrivial.
-The other three cases (cond1×cond2, cond2×cond1, cond2×cond2)
-have similar complexity. -/
-theorem degreeEquiv_trans {I : Type} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I) :
-    degreeEquiv ord i X Y → degreeEquiv ord i Y Z →
-    degreeEquiv ord i X Z := by
-  sorry
-
-/-- The metalinguistic setoid: ∼ as a Mathlib `Setoid` on `Finset I`. -/
-def metalinguisticSetoid {I : Type} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) : Setoid (Finset I) where
-  r := degreeEquiv ord i
-  iseqv := {
-    refl := degreeEquiv_refl ord i
-    symm := degreeEquiv_symm ord i _ _
-    trans := degreeEquiv_trans ord i _ _ _
-  }
-
-
 -- ════════════════════════════════════════════════════════════════
--- § 4. Metalinguistic Degree Type
--- ════════════════════════════════════════════════════════════════
-
-/-- The type of metalinguistic degrees: equivalence classes of
-interpretation sets under ∼.
-
-A metalinguistic degree is a *set of sets of interpretations* —
-all the interpretation sets that are "ranked as high" as each other.
-The degree of a sentence A is `deg(⟦A⟧_i)`. -/
-def MetaDegree (I : Type) [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) :=
-  Quotient (metalinguisticSetoid ord i)
-
-/-- Compute the metalinguistic degree of an interpretation set. -/
-def deg {I : Type} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X : Finset I) :
-    MetaDegree I ord i :=
-  Quotient.mk (metalinguisticSetoid ord i) X
-
-/-- The metalinguistic degree of a formula's denotation. -/
-def formulaDeg {I W Pred Entity : Type} [Fintype I] [DecidableEq I]
-    (interpFn : I → Interpretation W Pred Entity)
-    (φ : MFormula Pred Entity)
-    (ord : SemanticOrdering I) (i : I) (w : W) :
-    MetaDegree I ord i :=
-  deg ord i (denotation interpFn φ ord i w)
-
-
--- ════════════════════════════════════════════════════════════════
--- § 5. The ⊐ Ordering on Sets (Supplement §C, p. 10)
+-- § 4. The ⊐ Ordering on Sets (Supplement §C, p. 10)
 -- ════════════════════════════════════════════════════════════════
 
 /-- X ⊐ Y: interpretation set X is strictly better than Y.
@@ -400,24 +346,195 @@ theorem degreeEquiv_not_strictlyBetter {I : Type} [Fintype I] [DecidableEq I]
       simp [h_lt.2] at h_le₂
 
 /-- Fact 11: ⊐ respects ∼ on the right.
-TODO: If X ⊐ Y and Y ∼ Z, then X ⊐ Z. The difficulty is that
-under equivCond1(Y,Z) with the RIGHT inner disjunct of X⊐Y,
-the witness m may be in Z (so m ∉ X\Z). The alternative witness
-y₀ ∈ Y\Z (matched to m) requires Y ⊆ field for y₀ ∈ field.
-This theorem may need ⊆ field hypotheses to be provable. -/
+If X ⊐ Y and Y ∼ Z (with all sets in the field), then X ⊐ Z.
+Under left inner: m dominates all of Y, m ∉ Z is forced, and
+matching through Y∼Z extends domination to Z\Y.
+Under right inner: m dominates field\X; if m ∉ Z, Z\X ⊆ field\X;
+if m ∈ Z, use Y∼Z to find alternative witness in X\Z. -/
 theorem strictlyBetter_respects_right {I : Type} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I) :
+    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I)
+    (_hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     strictlyBetter ord i X Y → degreeEquiv ord i Y Z →
     strictlyBetter ord i X Z := by
-  sorry
+  rintro ⟨m, hm_sd, hm_f, hm_yx, hm_inner⟩ hyz
+  have hm_x := (Finset.mem_sdiff.mp hm_sd).1
+  have hm_ny := (Finset.mem_sdiff.mp hm_sd).2
+  rcases hm_inner with h_left | h_right
+  · -- LEFT INNER: m dominates all of Y
+    have m_dom_Y : ∀ y ∈ Y, ord.lt y m = true := by
+      intro y hy
+      by_cases hyx : y ∈ X
+      · exact h_left y (Finset.mem_inter.mpr ⟨hyx, hy⟩)
+      · exact hm_yx y (Finset.mem_sdiff.mpr ⟨hy, hyx⟩)
+    -- z ∈ Z, z ∉ Y → lt z m (via Y∼Z matching + m_dom_Y)
+    have z_ny_lt : ∀ z, z ∈ Z → z ∉ Y → ord.lt z m = true := by
+      intro z hz hny
+      rcases hyz with ⟨_, hyz_b⟩ | hyz2
+      · obtain ⟨y', hy', hle⟩ := hyz_b z (Finset.mem_sdiff.mpr ⟨hz, hny⟩)
+        exact le_lt_trans' ord z y' m hle (m_dom_Y y' (Finset.mem_sdiff.mp hy').1)
+      · obtain ⟨⟨c, hc, hle⟩, _⟩ := hyz2 z
+          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inr hz),
+            fun h => hny (Finset.mem_inter.mp h).1⟩)
+        exact le_lt_trans' ord z c m hle (m_dom_Y c (Finset.mem_inter.mp hc).1)
+    -- m ∉ Z forced: z_ny_lt m would give lt m m
+    have hm_nz : m ∉ Z := by
+      intro hm_z; have := z_ny_lt m hm_z hm_ny
+      simp [SemanticOrdering.lt, ord.le_refl] at this
+    refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_x, hm_nz⟩, hm_f, ?_, Or.inl ?_⟩
+    · intro z hz
+      by_cases hz_y : z ∈ Y
+      · exact hm_yx z (Finset.mem_sdiff.mpr ⟨hz_y, (Finset.mem_sdiff.mp hz).2⟩)
+      · exact z_ny_lt z (Finset.mem_sdiff.mp hz).1 hz_y
+    · intro c hc
+      by_cases hc_y : c ∈ Y
+      · exact m_dom_Y c hc_y
+      · exact z_ny_lt c (Finset.mem_inter.mp hc).2 hc_y
+  · -- RIGHT INNER: m dominates field \ X
+    have m_dom_fX : ∀ c ∈ field ord i \ X, ord.lt c m = true := by
+      intro c hc
+      by_cases hc_y : c ∈ Y
+      · exact hm_yx c (Finset.mem_sdiff.mpr ⟨hc_y, (Finset.mem_sdiff.mp hc).2⟩)
+      · exact h_right c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
+          fun h => Finset.mem_union.mp h |>.elim (Finset.mem_sdiff.mp hc).2 hc_y⟩)
+    by_cases hm_z : m ∈ Z
+    · -- m ∈ Z ∩ X: find alternative witness via Y∼Z
+      rcases hyz with ⟨_, hyz_b⟩ | hyz2
+      · -- cond1: m ∈ Z\Y → ∃ y₀ ∈ Y\Z, le m y₀; y₀ ∈ X forced
+        obtain ⟨y₀, hy₀, hle⟩ := hyz_b m (Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩)
+        have hy₀_x : y₀ ∈ X := by
+          by_contra h
+          have := m_dom_fX y₀ (Finset.mem_sdiff.mpr ⟨hYf (Finset.mem_sdiff.mp hy₀).1, h⟩)
+          simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at this
+          simp [this.2] at hle
+        refine ⟨y₀, Finset.mem_sdiff.mpr ⟨hy₀_x, (Finset.mem_sdiff.mp hy₀).2⟩,
+                hYf (Finset.mem_sdiff.mp hy₀).1, ?_, Or.inr ?_⟩
+        · intro z hz; exact lt_le_trans' ord z m y₀
+            (m_dom_fX z (Finset.mem_sdiff.mpr ⟨hZf (Finset.mem_sdiff.mp hz).1,
+              (Finset.mem_sdiff.mp hz).2⟩)) hle
+        · intro c hc; exact lt_le_trans' ord c m y₀
+            (m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
+              fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)) hle
+      · -- cond2: ∃ c₂ ∈ field\(Y∪Z), le m c₂; c₂ ∈ X forced
+        obtain ⟨_, ⟨c₂, hc₂, hle⟩⟩ := hyz2 m
+          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inr hm_z),
+            fun h => hm_ny (Finset.mem_inter.mp h).1⟩)
+        have hc₂_x : c₂ ∈ X := by
+          by_contra h
+          have := m_dom_fX c₂ (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc₂).1, h⟩)
+          simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at this
+          simp [this.2] at hle
+        have hc₂_nz : c₂ ∉ Z :=
+          fun h => (Finset.mem_sdiff.mp hc₂).2 (Finset.mem_union.mpr (Or.inr h))
+        refine ⟨c₂, Finset.mem_sdiff.mpr ⟨hc₂_x, hc₂_nz⟩,
+                (Finset.mem_sdiff.mp hc₂).1, ?_, Or.inr ?_⟩
+        · intro z hz; exact lt_le_trans' ord z m c₂
+            (m_dom_fX z (Finset.mem_sdiff.mpr ⟨hZf (Finset.mem_sdiff.mp hz).1,
+              (Finset.mem_sdiff.mp hz).2⟩)) hle
+        · intro c hc; exact lt_le_trans' ord c m c₂
+            (m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
+              fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)) hle
+    · -- m ∉ Z: witness = m ∈ X\Z
+      refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_x, hm_z⟩, hm_f, ?_, Or.inr ?_⟩
+      · intro z hz; exact m_dom_fX z (Finset.mem_sdiff.mpr
+          ⟨hZf (Finset.mem_sdiff.mp hz).1, (Finset.mem_sdiff.mp hz).2⟩)
+      · intro c hc; exact m_dom_fX c (Finset.mem_sdiff.mpr
+          ⟨(Finset.mem_sdiff.mp hc).1,
+           fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h))⟩)
 
 /-- Fact 11: ⊐ respects ∼ on the left.
-TODO: Same difficulty as `strictlyBetter_respects_right`. -/
+If X ⊐ Y and X ∼ Z (with all sets in the field), then Z ⊐ Y.
+Under left inner: m dominates all of Y; use X∼Z to find
+a witness in Z\Y (either m itself or a matched element).
+Under right inner: m dominates field\X; m ∈ Z is forced
+(matching m ∈ X\Z through X∼Z yields z ∈ field\X < m,
+contradicting le m z); elements of Y\Z ∩ X use X∼Z
+matching to field\X for domination. -/
 theorem strictlyBetter_respects_left {I : Type} [Fintype I] [DecidableEq I]
-    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I) :
+    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I)
+    (hXf : X ⊆ field ord i) (_hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
     strictlyBetter ord i X Y → degreeEquiv ord i X Z →
     strictlyBetter ord i Z Y := by
-  sorry
+  rintro ⟨m, hm_sd, hm_f, hm_yx, hm_inner⟩ hxz
+  have hm_x := (Finset.mem_sdiff.mp hm_sd).1
+  have hm_ny := (Finset.mem_sdiff.mp hm_sd).2
+  rcases hm_inner with h_left | h_right
+  · -- LEFT INNER: m dominates all of Y
+    have m_dom_Y : ∀ y ∈ Y, ord.lt y m = true := by
+      intro y hy
+      by_cases hyx : y ∈ X
+      · exact h_left y (Finset.mem_inter.mpr ⟨hyx, hy⟩)
+      · exact hm_yx y (Finset.mem_sdiff.mpr ⟨hy, hyx⟩)
+    by_cases hm_z : m ∈ Z
+    · -- m ∈ Z: witness m ∈ Z\Y
+      refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩, hm_f, ?_, Or.inl ?_⟩
+      · intro y hy; exact m_dom_Y y (Finset.mem_sdiff.mp hy).1
+      · intro c hc; exact m_dom_Y c (Finset.mem_inter.mp hc).2
+    · -- m ∉ Z: use X∼Z to find witness in Z with le m witness
+      rcases hxz with ⟨hxz_a, _⟩ | hxz2
+      · -- cond1: m ∈ X\Z → ∃ z₀ ∈ Z\X, le m z₀; z₀ ∉ Y forced
+        obtain ⟨z₀, hz₀, hle⟩ := hxz_a m (Finset.mem_sdiff.mpr ⟨hm_x, hm_z⟩)
+        have hz₀_ny : z₀ ∉ Y := by
+          intro h; have := m_dom_Y z₀ h
+          simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at this
+          simp [this.2] at hle
+        refine ⟨z₀, Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hz₀).1, hz₀_ny⟩,
+                hZf (Finset.mem_sdiff.mp hz₀).1, ?_, Or.inl ?_⟩
+        · intro y hy; exact lt_le_trans' ord y m z₀
+            (m_dom_Y y (Finset.mem_sdiff.mp hy).1) hle
+        · intro c hc; exact lt_le_trans' ord c m z₀
+            (m_dom_Y c (Finset.mem_inter.mp hc).2) hle
+      · -- cond2: m ∈ (X∪Z)\(X∩Z) → ∃ z₁ ∈ X∩Z, le m z₁; z₁ ∉ Y forced
+        obtain ⟨⟨z₁, hz₁, hle⟩, _⟩ := hxz2 m
+          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inl hm_x),
+            fun h => hm_z (Finset.mem_inter.mp h).2⟩)
+        have hz₁_ny : z₁ ∉ Y := by
+          intro h; have := m_dom_Y z₁ h
+          simp only [SemanticOrdering.lt, Bool.and_eq_true, Bool.not_eq_true'] at this
+          simp [this.2] at hle
+        refine ⟨z₁, Finset.mem_sdiff.mpr ⟨(Finset.mem_inter.mp hz₁).2, hz₁_ny⟩,
+                hXf (Finset.mem_inter.mp hz₁).1, ?_, Or.inl ?_⟩
+        · intro y hy; exact lt_le_trans' ord y m z₁
+            (m_dom_Y y (Finset.mem_sdiff.mp hy).1) hle
+        · intro c hc; exact lt_le_trans' ord c m z₁
+            (m_dom_Y c (Finset.mem_inter.mp hc).2) hle
+  · -- RIGHT INNER: m dominates field \ X
+    have m_dom_fX : ∀ c ∈ field ord i \ X, ord.lt c m = true := by
+      intro c hc
+      by_cases hc_y : c ∈ Y
+      · exact hm_yx c (Finset.mem_sdiff.mpr ⟨hc_y, (Finset.mem_sdiff.mp hc).2⟩)
+      · exact h_right c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1,
+          fun h => Finset.mem_union.mp h |>.elim (Finset.mem_sdiff.mp hc).2 hc_y⟩)
+    -- c ∈ X\Z → lt c m (via X∼Z matching to field\X, then m_dom_fX)
+    have lt_via_xz : ∀ c, c ∈ X → c ∉ Z → ord.lt c m = true := by
+      intro c hc_x hc_nz
+      rcases hxz with ⟨hxz_a, _⟩ | hxz2
+      · obtain ⟨z', hz', hle⟩ := hxz_a c (Finset.mem_sdiff.mpr ⟨hc_x, hc_nz⟩)
+        exact le_lt_trans' ord c z' m hle (m_dom_fX z'
+          (Finset.mem_sdiff.mpr ⟨hZf (Finset.mem_sdiff.mp hz').1,
+            (Finset.mem_sdiff.mp hz').2⟩))
+      · obtain ⟨_, ⟨c', hc', hle⟩⟩ := hxz2 c
+          (Finset.mem_sdiff.mpr ⟨Finset.mem_union.mpr (Or.inl hc_x),
+            fun h => hc_nz (Finset.mem_inter.mp h).2⟩)
+        exact le_lt_trans' ord c c' m hle (m_dom_fX c'
+          (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc').1,
+            fun h => (Finset.mem_sdiff.mp hc').2 (Finset.mem_union.mpr (Or.inl h))⟩))
+    -- m ∈ Z forced: if m ∉ Z, lt_via_xz gives lt m m
+    have hm_z : m ∈ Z := by
+      by_contra hm_nz; have := lt_via_xz m hm_x hm_nz
+      simp [SemanticOrdering.lt, ord.le_refl] at this
+    -- Witness m ∈ Z\Y
+    refine ⟨m, Finset.mem_sdiff.mpr ⟨hm_z, hm_ny⟩, hm_f, ?_, Or.inr ?_⟩
+    · -- ∀ y ∈ Y\Z, lt y m
+      intro y hy
+      by_cases hy_x : y ∈ X
+      · exact lt_via_xz y hy_x (Finset.mem_sdiff.mp hy).2
+      · exact hm_yx y (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hy).1, hy_x⟩)
+    · -- ∀ c ∈ field\(Z∪Y), lt c m
+      intro c hc
+      by_cases hc_x : c ∈ X
+      · exact lt_via_xz c hc_x
+          (fun h => (Finset.mem_sdiff.mp hc).2 (Finset.mem_union.mpr (Or.inl h)))
+      · exact m_dom_fX c (Finset.mem_sdiff.mpr ⟨(Finset.mem_sdiff.mp hc).1, hc_x⟩)
 
 /-- Fact 12b: ⊐ is transitive on sets.
 Given witnesses m₁ (X⊐Y) and m₂ (Y⊐Z), split on which is higher.
@@ -607,7 +724,79 @@ theorem strictlyBetter_total {I : Type} [Fintype I] [DecidableEq I]
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Facts 9–10: Correspondence with Revised Semantics
+-- § 7. Fact 8c: ∼ Transitivity (via Totality + Respects)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Fact 8c: ∼ is transitive (for sets in the field).
+Indirect proof: if ¬(X∼Z), totality gives X⊐Z or Z⊐X.
+- X⊐Z: respects_right(X,Z,Y) with Z∼Y gives X⊐Y, contradicting X∼Y.
+- Z⊐X: respects_right(Z,X,Y) with X∼Y gives Z⊐Y, contradicting Y∼Z.
+This avoids the direct Schröder-Bernstein bouncing chain argument. -/
+theorem degreeEquiv_trans {I : Type} [Fintype I] [DecidableEq I]
+    (ord : SemanticOrdering I) (i : I) (X Y Z : Finset I)
+    (hXf : X ⊆ field ord i) (hYf : Y ⊆ field ord i) (hZf : Z ⊆ field ord i) :
+    degreeEquiv ord i X Y → degreeEquiv ord i Y Z →
+    degreeEquiv ord i X Z := by
+  intro hxy hyz
+  by_contra h_neq
+  rcases strictlyBetter_total ord i X Z hXf hZf with h | h | h
+  · exact h_neq h
+  · -- X ⊐ Z, Z ∼ Y → X ⊐ Y, contradicts X ∼ Y
+    exact degreeEquiv_not_strictlyBetter ord i X Y hxy
+      (strictlyBetter_respects_right ord i X Z Y hXf hZf hYf h
+        (degreeEquiv_symm ord i Y Z hyz))
+  · -- Z ⊐ X, X ∼ Y → Z ⊐ Y, contradicts Y ∼ Z
+    exact degreeEquiv_not_strictlyBetter ord i Z Y
+      (degreeEquiv_symm ord i Y Z hyz)
+      (strictlyBetter_respects_right ord i Z X Y hZf hXf hYf h hxy)
+
+/-- The metalinguistic setoid: ∼ as a Mathlib `Setoid` on field-subsets.
+The carrier is `{X : Finset I // X ⊆ field ord i}` because
+transitivity requires the ⊆ field hypothesis (via totality). -/
+def metalinguisticSetoid {I : Type} [Fintype I] [DecidableEq I]
+    (ord : SemanticOrdering I) (i : I) :
+    Setoid {X : Finset I // X ⊆ field ord i} where
+  r X Y := degreeEquiv ord i X.1 Y.1
+  iseqv := {
+    refl := fun X => degreeEquiv_refl ord i X.1
+    symm := fun {X Y} h => degreeEquiv_symm ord i X.1 Y.1 h
+    trans := fun {X Y Z} hxy hyz =>
+      degreeEquiv_trans ord i X.1 Y.1 Z.1 X.2 Y.2 Z.2 hxy hyz
+  }
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 8. Metalinguistic Degree Type
+-- ════════════════════════════════════════════════════════════════
+
+/-- The type of metalinguistic degrees: equivalence classes of
+interpretation sets under ∼.
+
+A metalinguistic degree is a *set of sets of interpretations* —
+all the interpretation sets that are "ranked as high" as each other.
+The degree of a sentence A is `deg(⟦A⟧_i)`. -/
+def MetaDegree (I : Type) [Fintype I] [DecidableEq I]
+    (ord : SemanticOrdering I) (i : I) :=
+  Quotient (metalinguisticSetoid ord i)
+
+/-- Compute the metalinguistic degree of an interpretation set. -/
+def deg {I : Type} [Fintype I] [DecidableEq I]
+    (ord : SemanticOrdering I) (i : I)
+    (X : Finset I) (hX : X ⊆ field ord i) :
+    MetaDegree I ord i :=
+  Quotient.mk (metalinguisticSetoid ord i) ⟨X, hX⟩
+
+/-- The metalinguistic degree of a formula's denotation. -/
+def formulaDeg {I W Pred Entity : Type} [Fintype I] [DecidableEq I]
+    (interpFn : I → Interpretation W Pred Entity)
+    (φ : MFormula Pred Entity)
+    (ord : SemanticOrdering I) (i : I) (w : W) :
+    MetaDegree I ord i :=
+  deg ord i (denotation interpFn φ ord i w) (Finset.filter_subset _ _)
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 9. Facts 9–10: Correspondence with Revised Semantics
 -- ════════════════════════════════════════════════════════════════
 
 /-- Membership in `field`: j ∈ I_i iff j ≤ i. -/

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.229.653] - 2026-04-11
+
+### Changed
+- **MetalinguisticDegree.lean**: close all 3 remaining sorrys — `strictlyBetter_respects_right/left` (Fact 11: ⊐ respects ~ on both sides, with ⊆ field hypotheses), `degreeEquiv_trans` (Fact 8c: ~ transitivity via indirect argument through totality + respects, avoiding Schröder-Bernstein bouncing chain); Setoid carrier changed to `{X // X ⊆ field}` subtype; zero sorrys remaining
+
+## [0.229.652] - 2026-04-11
+
+### Changed
+- **SolstadBott2024.lean**: add empirical data from all 3 experiments — Exp 1 regression (Table 1: intercept=50.81, anaphoric β=22.37, cataphoric β=17.95), Exp 1 Block 2 projectivity (0.79)/at-issueness (0.32), Exp 2 psych verb non-clustering (H6 rejected: occasion 0.69 >> SE 0.54; H7 confirmed: occasion 0.69 >> ES 0.52), Exp 3 Table 3 filtering regressions (occasion: β=−1.97 n.s. → symmetric; Mandelkern: β=−30.16 *** → asymmetric); add 16-verb inventory, "cage of their own" `TriggerProfile` theorem, SolstadBott2022 bridge (IC/presupposition dissociation)
+- **German Predicates**: add 8 missing occasion verbs (anzeigen, auszeichnen, belangen, ehren, entlassen, sich rächen an, sich revanchieren bei, zur Verantwortung ziehen) — now all 16 from @cite{solstad-bott-2024}; update grounding theorems to cover all 16
+
+## [0.229.651] - 2026-04-11
+
+### Changed
+- **SolstadBott2022/2024 reorganization**: split IC data (2022 paper) from presupposition analysis (2024 paper) — consolidate Data.lean + ProtoRole.lean into single `ImplicitCausality/Studies/SolstadBott2022.lean`; move Projectivity.lean → `Presupposition/Studies/SolstadBott2024.lean`; delete Presupposition.lean (conflated Nadathur implicatives with S&B occasion verbs); add Exp 3 forced-coreference data (Table 3: asymmetry hypothesis — explanations dominate even in incongruent conditions) and Exp 4 explanation-type data (Table 4: explanatory specifications exclusive to congruent explanations, consequence specifications never produced); add `FilteringDirection` and `ContextPolarity` types; fix namespace from `SolstadBott2024` → `SolstadBott2022` for IC data
+
 ## [0.229.650] - 2026-04-11
 
 ### Changed
