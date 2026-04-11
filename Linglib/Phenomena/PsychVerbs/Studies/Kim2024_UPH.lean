@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2022
 
 /-!
 # Uniform Projection Hypothesis for Psych Verbs
@@ -56,7 +56,7 @@ open Semantics.Causation.PsychCausalLink
 open Core.Time (Interval)
 open Fragments.English.Predicates.Verbal
 open Phenomena.PsychVerbs.Data
-open Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
+open Phenomena.ImplicitCausality.Studies.SolstadBott2022
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)
 open Semantics.Lexical.Verb.EntailmentProfile
 

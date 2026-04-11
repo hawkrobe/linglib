@@ -945,11 +945,10 @@ import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Directives.Studies.RuytenbeekEtAl2017
 import Linglib.Phenomena.Directives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Directives.Typology
--- Phenomena: Implicit Causality (Solstad & Bott 2022, 2024)
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Presupposition
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Projectivity
+-- Phenomena: Implicit Causality (Solstad & Bott 2022)
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2022
+-- Phenomena: Presupposition — Solstad & Bott 2024 (occasion verb projectivity)
+import Linglib.Phenomena.Presupposition.Studies.SolstadBott2024
 -- Phenomena: Imprecision (extracted from Gradability/)
 import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning

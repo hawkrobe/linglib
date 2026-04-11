@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.654] - 2026-04-11
+
+### Changed
+- **SolstadBott2024.lean**: fix Exp3 field names (`trigFirst_vs_trigOnly` → `trigOnly_vs_trigFirst`), fix `factiveProfile.contextPolarities` (factives have no SCF, was `[.mAnaphoric]` → `[]`); add GPP bridge (§12): `GradientPair` instances derived from existing data, GPP correlation coefficients (r = −0.70 Exp 1, r = −0.90 Exp 2), `occasion_verbs_satisfy_gpp`, `gpp_orders_occasion_vs_psych`, `psych_verbs_midrange`; add H8 interaction theorem; import `Core.Discourse.AtIssueness`
+
 ## [0.229.653] - 2026-04-11
 
 ### Changed

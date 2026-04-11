@@ -239,6 +239,90 @@ def zurechtweisen : GermanVerbEntry where
   presupType := some .softTrigger
   senseTag := .occasion
 
+/-- *anzeigen* — "report (to authorities)": presupposes the object did something illegal -/
+def anzeigen : GermanVerbEntry where
+  form := "anzeigen"
+  form3sg := "zeigt an"
+  formPast := "zeigte an"
+  formPastPart := "angezeigt"
+  complementType := .np
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *auszeichnen* — "award/honor": presupposes the object did something meritorious -/
+def auszeichnen : GermanVerbEntry where
+  form := "auszeichnen"
+  form3sg := "zeichnet aus"
+  formPast := "zeichnete aus"
+  formPastPart := "ausgezeichnet"
+  complementType := .np
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *belangen* — "prosecute": presupposes the object committed an offense -/
+def belangen : GermanVerbEntry where
+  form := "belangen"
+  form3sg := "belangt"
+  formPast := "belangte"
+  formPastPart := "belangt"
+  complementType := .np
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *ehren* — "honor": presupposes the object did something worthy of honor -/
+def ehren : GermanVerbEntry where
+  form := "ehren"
+  form3sg := "ehrt"
+  formPast := "ehrte"
+  formPastPart := "geehrt"
+  complementType := .np
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *entlassen* — "dismiss/fire": presupposes the object did something
+    warranting dismissal -/
+def entlassen : GermanVerbEntry where
+  form := "entlassen"
+  form3sg := "entlässt"
+  formPast := "entließ"
+  formPastPart := "entlassen"
+  complementType := .np
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *sich rächen an* — "take revenge on": presupposes the object
+    wronged the subject -/
+def raechen : GermanVerbEntry where
+  form := "sich rächen an"
+  form3sg := "rächt sich"
+  formPast := "rächte sich"
+  formPastPart := "sich gerächt"
+  complementType := .np
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *sich revanchieren bei* — "reciprocate/repay": presupposes the
+    object did something for the subject -/
+def revanchieren : GermanVerbEntry where
+  form := "sich revanchieren bei"
+  form3sg := "revanchiert sich"
+  formPast := "revanchierte sich"
+  formPastPart := "sich revanchiert"
+  complementType := .np
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *zur Verantwortung ziehen* — "hold accountable": presupposes
+    the object is responsible for a wrongdoing -/
+def zurVerantwortungZiehen : GermanVerbEntry where
+  form := "zur Verantwortung ziehen"
+  form3sg := "zieht zur Verantwortung"
+  formPast := "zog zur Verantwortung"
+  formPastPart := "zur Verantwortung gezogen"
+  complementType := .np
+  presupType := some .softTrigger
+  senseTag := .occasion
+
 -- ============================================================================
 -- § 4: Verbs from @cite{benz-2025} (Chs. 3–5)
 -- ============================================================================
@@ -486,6 +570,8 @@ def allVerbs : List GermanVerbEntry :=
    hoffen, fuerchten, befuerchten, wuenschen, sorgen,
    bestrafen, belohnen, loben, kritisieren, danken,
    verklagen, gratulieren, zurechtweisen,
+   anzeigen, auszeichnen, belangen, ehren, entlassen,
+   raechen, revanchieren, zurVerantwortungZiehen,
    haemmern, malen, kuessen, fuehren, rauben,
    brechen, frieren, beobachten, einfuehren, verbinden,
    beenden, streichen, uebereilen, entwickeln,
@@ -498,7 +584,7 @@ def lookup (form : String) : Option GermanVerbEntry :=
 -- § 7: Occasion Verb Grounding Theorems
 -- ============================================================================
 
-/-- All 8 German occasion verbs are soft presupposition triggers. -/
+/-- All 16 German occasion verbs are soft presupposition triggers. -/
 theorem occasion_verbs_soft_trigger :
     bestrafen.presupType = some .softTrigger ∧
     belohnen.presupType = some .softTrigger ∧
@@ -507,23 +593,38 @@ theorem occasion_verbs_soft_trigger :
     danken.presupType = some .softTrigger ∧
     verklagen.presupType = some .softTrigger ∧
     gratulieren.presupType = some .softTrigger ∧
-    zurechtweisen.presupType = some .softTrigger :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    zurechtweisen.presupType = some .softTrigger ∧
+    anzeigen.presupType = some .softTrigger ∧
+    auszeichnen.presupType = some .softTrigger ∧
+    belangen.presupType = some .softTrigger ∧
+    ehren.presupType = some .softTrigger ∧
+    entlassen.presupType = some .softTrigger ∧
+    raechen.presupType = some .softTrigger ∧
+    revanchieren.presupType = some .softTrigger ∧
+    zurVerantwortungZiehen.presupType = some .softTrigger :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl,
+   rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- All German occasion verbs use the `.occasion` sense tag. -/
+/-- All 16 German occasion verbs use the `.occasion` sense tag. -/
 theorem occasion_verbs_sense_tag :
     bestrafen.senseTag = .occasion ∧
     belohnen.senseTag = .occasion ∧
     loben.senseTag = .occasion ∧
-    kritisieren.senseTag = .occasion := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- German occasion verbs are interpersonal action verbs (not semi-modal).
-    Their agent-subject behavior follows from being non-occasion senseTag
-    (unlike English semi-modal occasion verbs which have experiencer subjects). -/
-theorem occasion_verbs_are_action :
-    bestrafen.senseTag = .occasion ∧
-    belohnen.senseTag = .occasion ∧
-    kritisieren.senseTag = .occasion := ⟨rfl, rfl, rfl⟩
+    kritisieren.senseTag = .occasion ∧
+    danken.senseTag = .occasion ∧
+    verklagen.senseTag = .occasion ∧
+    gratulieren.senseTag = .occasion ∧
+    zurechtweisen.senseTag = .occasion ∧
+    anzeigen.senseTag = .occasion ∧
+    auszeichnen.senseTag = .occasion ∧
+    belangen.senseTag = .occasion ∧
+    ehren.senseTag = .occasion ∧
+    entlassen.senseTag = .occasion ∧
+    raechen.senseTag = .occasion ∧
+    revanchieren.senseTag = .occasion ∧
+    zurVerantwortungZiehen.senseTag = .occasion :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl,
+   rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 8: Causative Grounding Theorems
