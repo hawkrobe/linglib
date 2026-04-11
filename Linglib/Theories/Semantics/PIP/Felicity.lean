@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.PIP.Basic
+import Linglib.Theories.Semantics.PIP.Expr
 
 /-!
-# PIP Felicity Conditions (Static Formulation)
+# PIP Felicity Conditions (Propositional Fragment)
 
 @cite{keshet-abney-2024} @cite{karttunen-1973}
 
@@ -14,7 +14,16 @@ This file provides:
 2. A recursive `felicitous` function implementing the F operator
 3. The key derived theorems from the paper (items 41–42, 44–45c)
 
-## The F Operator
+## Relationship to `PIP.Expr`
+
+`PIPExprF W D` in `Expr.lean` is the **full** PIP expression type with
+quantifiers (`∃x`, `∀x`), modals (`□`, `◇`), label definitions, and
+summation. It defines its own `truth` and `felicitous` functions covering
+all constructors, including the quantifier felicity clauses (items 43,
+47a-d). The propositional `PIPExpr W` here is the restriction to `D = Empty`.
+`embedProp` in `Expr.lean` witnesses this embedding.
+
+## The F Operator (Propositional)
 
 F is defined recursively on the structure of PIP expressions.
 This file covers the propositional fragment (items 40–42, 44–45c):
@@ -26,8 +35,9 @@ This file covers the propositional fragment (items 40–42, 44–45c):
 | ¬φ | Fφ |
 | P(α₁,...,αₙ) | true |
 
-The quantifier clauses (F(∃xφ) iff ∀x.Fφ, item 43) require a separate
-domain type D and are not included here. See `PIPExpr` docstring.
+The full quantifier/modal clauses are in `PIPExprF.felicitous` (`Expr.lean`):
+- F(∃xφ) iff ∀x.Fφ — felicity universal over witnesses (item 43)
+- F(□φ) iff ∀w'.Fφ — felicity universal over accessible worlds (item 47)
 
 The asymmetric conjunction clause (Karttunen's insight) allows the first
 conjunct to satisfy presuppositions of the second. This is what makes

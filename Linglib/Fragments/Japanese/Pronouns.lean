@@ -25,9 +25,15 @@ open Core.Register (Level)
 def watashi : PronounEntry :=
   { form := "watashi", script := some "私", person := some .first, number := some .sg, register := .formal }
 
-/-- 僕 *boku* — 1sg male informal. -/
+/-- 僕 *boku* — 1sg informal, masculine-associated via register
+    (no inherent gender feature; cf. @cite{ochs-1992}). -/
 def boku : PronounEntry :=
   { form := "boku", script := some "僕", person := some .first, number := some .sg, register := .informal }
+
+/-- 俺 *ore* — 1sg male very informal. Strongly indexes masculine identity
+    through assertive/coarse interactional stance (@cite{ochs-1992}). -/
+def ore : PronounEntry :=
+  { form := "ore", script := some "俺", person := some .first, number := some .sg, register := .informal }
 
 /-- 私たち *watashitachi* — 1pl. -/
 def watashitachi : PronounEntry :=
@@ -79,7 +85,7 @@ def otagai : PronounEntry :=
 def secondPersonPronouns : List PronounEntry := [kimi, anata]
 
 def allPronouns : List PronounEntry :=
-  [watashi, boku, watashitachi] ++ secondPersonPronouns ++ [kare, kanojo, karera, otagai]
+  [watashi, boku, ore, watashitachi] ++ secondPersonPronouns ++ [kare, kanojo, karera, otagai]
 
 -- ============================================================================
 -- Allocutive Particles (SAP-layer)

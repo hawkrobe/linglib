@@ -413,69 +413,10 @@ def quantifierBindings (boundVar restrictorVar : IVar) :
     ⟨restrictorVar, .local, none⟩ ]
 
 
--- ============================================================
--- Generalized Quantifiers (paper items 28, 53–56)
--- ============================================================
-
-/-!
-### PIP Generalized Quantifiers (paper items 28, 53–56)
-
-The paper defines (item 28):
-- EVERY(x, y) iff x ⊆ y
-- MOST(x, y) iff |x ∩ y|/|x| > θ
-- SOME(x, y) iff x ∩ y ≠ ∅
-
-Summation Σxφ collects entity values from assignments satisfying φ.
-GQs take two summation terms as arguments: the restrictor and the
-nuclear scope.
--/
-
-/-- EVERY(restriction, scope) iff restriction ⊆ scope (paper item 28) -/
-def gqEvery {α : Type*} (restriction scope : Set α) : Prop :=
-  restriction ⊆ scope
-
-/-- SOME(restriction, scope) iff restriction ∩ scope ≠ ∅ -/
-def gqSome {α : Type*} (restriction scope : Set α) : Prop :=
-  (restriction ∩ scope).Nonempty
-
 /-- `forall_` encodes EVERY via ¬∃x.¬ (paper item 56) -/
 theorem forall_eq_neg_exists_neg {W E : Type*} (v : IVar) (domain : Set E)
     (body : PUpdate W E) :
     forall_ v domain body = negation (exists_ v domain (negation body)) := rfl
-
-
--- ============================================================
--- SINGLE / PLURAL (paper items 71, 84)
--- ============================================================
-
-/--
-SINGLE(τ) ↔ |τ| = 1 (paper item 71)
-
-The existential presupposition of singular pronouns: she_τ ↝ τ|SINGLE(τ).
-A singular pronoun presupposes that its denotation is a singleton.
--/
-def single {α : Type*} (s : Set α) : Prop :=
-  ∃ a, s = {a}
-
-/--
-PLURAL(τ) ↔ |τ| > 1 (paper item 84)
-
-The presupposition of plural pronouns: they_τ ↝ τ|PLURAL(τ).
--/
-def plural {α : Type*} (s : Set α) : Prop :=
-  ∃ a b, a ≠ b ∧ a ∈ s ∧ b ∈ s
-
-/-- A singleton set satisfies SINGLE. -/
-theorem single_singleton {α : Type*} (a : α) : single ({a} : Set α) :=
-  ⟨a, rfl⟩
-
-/-- SINGLE and PLURAL are mutually exclusive. -/
-theorem single_not_plural {α : Type*} (s : Set α)
-    (hs : single s) : ¬plural s := by
-  obtain ⟨a, rfl⟩ := hs
-  intro ⟨x, y, hne, hx, hy⟩
-  simp only [Set.mem_singleton_iff] at hx hy
-  exact hne (hx.trans hy.symm)
 
 
 end Semantics.PIP

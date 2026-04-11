@@ -282,4 +282,41 @@ structure BoundVar where
   deriving Repr
 
 
+-- ============================================================
+-- Summation (paper §2.2, items 25–27)
+-- ============================================================
+
+/--
+Summation: Σxφ = ⋃{g(x) : g ∈ G, ⟦φ⟧^{M,{g},w*} = 1}
+
+Collects entity values across assignments satisfying a predicate.
+For "Every farmer bought a donkey. They paid a lot for them.",
+"them" = Σx(donkey(x)).
+
+This is a core PIP operation (paper items 25–27), not study-specific.
+GQ arguments in PIP take two summation terms: restrictor and scope.
+-/
+def summationFiltered {W E : Type*} (c : IContext W E) (v : IVar)
+    (φ : ICDRTAssignment W E → W → Bool) : Set (Entity E) :=
+  { e | ∃ g w, (g, w) ∈ c ∧ φ g w = true ∧ g.indiv v w = e }
+
+/-- Summation without filtering: collects all values of variable v. -/
+def summationValues {W E : Type*} (c : IContext W E) (v : IVar) : Set (Entity E) :=
+  { e | ∃ g w, (g, w) ∈ c ∧ g.indiv v w = e }
+
+/-- Unfiltered summation equals trivially filtered summation. -/
+theorem summationValues_eq_trivial_filter {W E : Type*}
+    (c : IContext W E) (v : IVar) :
+    summationValues c v = summationFiltered c v (λ _ _ => true) := by
+  ext e; simp [summationValues, summationFiltered]
+
+/-- Any assignment in a non-empty context contributes to summation. -/
+theorem summation_nonempty {W E : Type*}
+    (c : IContext W E) (v : IVar)
+    (gw : ICDRTAssignment W E × W)
+    (h : gw ∈ c) :
+    gw.1.indiv v gw.2 ∈ summationValues c v :=
+  ⟨gw.1, gw.2, h, rfl⟩
+
+
 end Semantics.PIP

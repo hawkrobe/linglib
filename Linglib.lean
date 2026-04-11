@@ -688,6 +688,7 @@ import Linglib.Fragments.Russian.Indefinites
 import Linglib.Fragments.German.PolarityItems
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.German.QuestionParticles
+import Linglib.Fragments.German.ModalParticles
 import Linglib.Fragments.Japanese.PolarityItems
 import Linglib.Fragments.Korean.PolarityItems
 import Linglib.Fragments.Mandarin.PolarityItems
@@ -1169,6 +1170,7 @@ import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
 import Linglib.Phenomena.Quantification.Studies.Elliott2025
+import Linglib.Phenomena.Quantification.Studies.Mirrazi2024
 import Linglib.Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Phenomena.Questions.Typology
@@ -1437,7 +1439,10 @@ import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Operators
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations
 import Linglib.Theories.Semantics.PIP.Basic
+import Linglib.Theories.Semantics.PIP.Bridges
+import Linglib.Theories.Semantics.PIP.Composition
 import Linglib.Theories.Semantics.PIP.Connectives
+import Linglib.Theories.Semantics.PIP.Expr
 import Linglib.Theories.Semantics.PIP.Felicity
 import Linglib.Theories.Semantics.Dynamic.PLA.Basic
 import Linglib.Theories.Semantics.Dynamic.PLA.Belief
@@ -1522,9 +1527,11 @@ import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.Politeness.Studies.AlokBhalla2026
 import Linglib.Phenomena.Politeness.Studies.Wang2023
+import Linglib.Phenomena.SentenceMood.Studies.Gutzmann2015
 import Linglib.Phenomena.SocialMeaning.Studies.Burnett2019
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2006
 import Linglib.Phenomena.SocialMeaning.Studies.Labov2012
+import Linglib.Phenomena.SocialMeaning.Studies.Ochs1992
 import Linglib.Theories.Syntax.Minimalism.Inversion
 import Linglib.Theories.Syntax.Minimalism.SpeechActs
 import Linglib.Theories.Syntax.Minimalism.Polarity
@@ -1603,6 +1610,8 @@ import Linglib.Theories.Semantics.Degree.DegreeAbstraction
 import Linglib.Theories.Semantics.Degree.Intervals
 import Linglib.Theories.Semantics.Comparison.Delineation
 import Linglib.Theories.Semantics.Comparison.Hierarchy
+import Linglib.Theories.Semantics.Comparison.Metalinguistic
+import Linglib.Theories.Semantics.Comparison.MetalinguisticDegree
 import Linglib.Theories.Semantics.Degree.Granularity
 -- Theories: Semantics.Supervaluation (general supervaluation framework)
 import Linglib.Theories.Semantics.Supervaluation.Basic
@@ -1828,6 +1837,8 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.ModalIndefinites
 import Linglib.Theories.Semantics.Modality.Narrog
 import Linglib.Theories.Semantics.Mood.Basic
+import Linglib.Theories.Semantics.Mood.SentenceMoodUCI
+import Linglib.Theories.Semantics.UseConditional.LTU
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan
 import Linglib.Theories.Semantics.Reference.Donnellan
@@ -1982,6 +1993,7 @@ import Linglib.Phenomena.Gradability.Studies.Sassoon2013
 import Linglib.Phenomena.Gradability.Studies.Tham2025
 import Linglib.Phenomena.Gradability.Studies.Beltrama2025
 import Linglib.Phenomena.Gradability.Studies.WaldonEtAl2023
+import Linglib.Phenomena.Gradability.Studies.RudolphKocurek2024
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.Elbourne2013
 import Linglib.Phenomena.Reference.Studies.Longobardi2005

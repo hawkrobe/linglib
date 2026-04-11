@@ -66,14 +66,6 @@ open Phenomena.Plurals.Studies.HaslingerHienEtAl2025
     system from @cite{haslinger-etal-2025-nllt}. *koo-wane* maps
     to Q_∀[ONE_∅] and *duk(a)* to bare Q_∀. -/
 
-/-- The *koo*/*duk* split parallels the English every/all and German
-    jeder/alle splits — same Q_∀, different complement selection.
-    @cite{zimmermann-2026} §4.1, @cite{haslinger-etal-2025-nllt}. -/
-theorem hausa_parallels_english :
-    HausaUQ.koo.isDistributive = true ∧
-    HausaUQ.duk.isDistributive = false := by
-  exact ⟨rfl, rfl⟩
-
 -- ════════════════════════════════════════════════════
 -- § 2. *koo* = Q_∀[ONE_∅]: Distributive Universal
 -- ════════════════════════════════════════════════════
@@ -125,20 +117,6 @@ theorem duk_collective {α : Type*} [SemilatticeSup α]
 
     @cite{zimmermann-2026} §3.3 exx. (13), (15). -/
 
-/-- Hausa *wani* and Akan *bí* differ in scope under negation:
-    *bí* (CF) forces wide scope; *wani* (∃) allows narrow scope.
-    This contrast is derived from `IndefType`, not stipulated per-language.
-    @cite{zimmermann-2026} §3.3 exx. (13), (15). -/
-theorem indef_scope_contrast :
-    -- Akan bí: CF → obligatory wide scope under negation
-    biIndefType.forcesWideScopeUnderNeg = true ∧
-    -- Hausa wani: ∃ → narrow scope available under negation
-    HausaIndef.wani.indefType.allowsNarrowScopeUnderNeg = true ∧
-    -- Bare NPs in both languages: ∃ → narrow scope
-    bareNPIndefType.allowsNarrowScopeUnderNeg = true ∧
-    HausaIndef.bare.indefType.allowsNarrowScopeUnderNeg = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
-
 /-- The CF analysis of *bí* predicts wide scope under negation:
     the CF is applied before negation takes effect.
 
@@ -182,14 +160,10 @@ theorem wani_exists_narrow_scope {E : Type*}
 
     But it leaves open: why is *nó* absent on superlative NPs? -/
 
-/-- The three analyses all agree that *nó* contributes some form of
+/-! The three analyses all agree that *nó* contributes some form of
     discourse-linking. The key empirical test: *nó* is bad with
     globally unique NPs but required with anaphoric ones.
     @cite{owusu-2022} ex. (1)–(2), @cite{zimmermann-2026} §3.1. -/
-theorem no_discourse_linking :
-    preferredAnalysis = .weak ∧
-    preferredAnalysis.toPresupType = .uniqueness :=
-  ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Interpretive Flexibility of *bi-ara*
@@ -206,12 +180,6 @@ theorem no_discourse_linking :
     that the base indefinite is a choice function, not an ∃-quantifier.
     @cite{zimmermann-2026} §4.1.2 ex. (27). -/
 
-/-- *bi-ara* is structurally complex: INDEF (*bí*) + scalar operator
-    (*ara*). The base indefinite *bí* is a choice function — derived
-    from `IndefType`, not stipulated.
-    @cite{owusu-2022}, @cite{zimmermann-2026} §3.3. -/
-theorem biara_base_is_cf :
-    biIndefType = .choiceFunction := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 6. Extended Typological Sample
@@ -231,10 +199,6 @@ def hausaUQEntry : UQLanguageEntry where
   distForm := "koo-wane(m.)/koo-wace(f.)"
   nonDistForm := "duk(a)"
   family := "Chadic"
-
-/-- Verify Hausa is classified as 2-form. -/
-theorem hausa_is_two_form :
-    hausaUQEntry.systemType = .twoForm := rfl
 
 /-- Akan *bi-ara* entry for the typological sample.
     Akan is harder to classify: *bi-ara* is the only overt universal

@@ -1,4 +1,5 @@
 import Mathlib.Init
+import Linglib.Core.Semantics.Intension
 
 /-!
 # Choice Functions for Indefinite Determiners
@@ -19,6 +20,17 @@ site of the choice function variable itself:
   → flexible scope (wide, intermediate, narrow)
 - **Contextually bound CF** (Kratzer): situation parameter determines
   scope → scope fixed by situation binding
+
+## World-Skolemized Choice Functions
+
+@cite{mirrazi-2024} proposes that indefinite determiners can introduce a
+world variable into the choice function, yielding type `⟨s, ⟨⟨e,t⟩, e⟩⟩`.
+When this world variable is **bound** by an intensional operator, the CF
+picks possibly different individuals in different worlds (de dicto), while
+the existential closure over the CF itself can sit above negation (wide
+pseudo-scope). When the world variable is **free**, the CF is evaluated at
+the actual world (de re). This is captured by connecting `SkolemCF` to
+`Core.SitVarStatus`.
 
 ## Application to African Languages
 
@@ -102,22 +114,21 @@ inductive IndefType where
   | choiceFunction -- Choice function: scope via situation binding
   deriving DecidableEq, Repr
 
-/-- CF-based indefinites force wide scope under negation;
-    ∃-based indefinites allow narrow scope. Derived from the
-    semantic architecture, not stipulated per-language. -/
-def IndefType.forcesWideScopeUnderNeg : IndefType → Bool
-  | .choiceFunction => true
+/-- Whether wide pseudo-scope de dicto readings are predicted.
+
+    @cite{mirrazi-2024} §3: the pseudo-de dicto reading requires BOTH:
+    (1) CF semantics — to separate ∃-closure (above negation) from
+        descriptive content (below the intensional operator)
+    (2) A world variable on the determiner — so the CF's output varies
+        across worlds, yielding de dicto construal
+
+    This DERIVES the cross-linguistic variation: Farsi (CF + world var) ✓,
+    German/French (no world var on indefinite determiners) ✗.
+    @cite{schwarz-2012}. -/
+def IndefType.canPseudoDeDicto (t : IndefType) (hasWorldVar : Bool) : Bool :=
+  match t with
+  | .choiceFunction => hasWorldVar
   | .existential    => false
-
-/-- ∃-based indefinites can take narrow scope; CF cannot. -/
-def IndefType.allowsNarrowScopeUnderNeg : IndefType → Bool
-  | .existential    => true
-  | .choiceFunction => false
-
-/-- Wide and narrow scope under negation are complementary. -/
-theorem scope_complementary (t : IndefType) :
-    t.forcesWideScopeUnderNeg = !t.allowsNarrowScopeUnderNeg := by
-  cases t <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. Scope via Situation Binding
@@ -147,5 +158,38 @@ theorem exists_narrow_scope_under_negation {E : Type*}
     (hNoMatch : ∀ x, N x → ¬VP x) :
     ¬∃ x, N x ∧ VP x :=
   fun ⟨x, hNx, hVPx⟩ => hNoMatch x hNx hVPx
+
+-- ════════════════════════════════════════════════════
+-- § 5. World Variable and De Re / De Dicto
+-- ════════════════════════════════════════════════════
+
+open Core.SitVarStatus (SitVarStatus)
+
+/-- Evaluate a skolemized CF according to the status of its world variable.
+    - `SitVarStatus.free`: evaluate at `w₀` (the actual world) → de re
+    - `SitVarStatus.bound`: evaluate at the bound world `w'` → de dicto
+
+    @cite{mirrazi-2024} §3: this is the mechanism that produces wide
+    pseudo-scope de dicto readings. The ∃-closure over `f` sits above
+    negation (wide scope), while the world argument is bound by the
+    intensional operator (de dicto). -/
+def SkolemCF.evalAt {S E : Type*} (f : SkolemCF S E)
+    (status : SitVarStatus) (w₀ wBound : S) (nounProp : E → Prop) : E :=
+  match status with
+  | .free  => f w₀ nounProp
+  | .bound => f wBound nounProp
+
+/-- A world-skolemized CF can return different individuals at different
+    worlds — this is what solves the fixed-set problem.
+
+    @cite{mirrazi-2024} ex. (45): even when the NP extension is rigid (the
+    same set at every world), a world-skolemized CF `f(w', P)` can pick
+    different members at different worlds because `f` is a function of `w'`. -/
+theorem SkolemCF.cross_world_variation {S E : Type*}
+    (f : SkolemCF S E) (w₁ w₂ : S) (P : E → Prop)
+    (hVary : f w₁ P ≠ f w₂ P) :
+    f.evalAt .bound w₁ w₂ P ≠ f.evalAt .bound w₂ w₁ P := by
+  simp [SkolemCF.evalAt]
+  exact Ne.symm hVary
 
 end Semantics.Lexical.Determiner.ChoiceFunction

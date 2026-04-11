@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.229.645] - 2026-04-11
+
+### Added
+- **Ochs1992.lean**: new `Phenomena/SocialMeaning/Studies/` — @cite{ochs-1992}'s indirect indexicality thesis formalized as composition of association maps; `Stance` (4 interactional stances: coarse/delicate intensity, emphatic, confirmation-seeking), `GenderPole`, `SFP` (5 Japanese sentence-final particles); `formStanceAssoc` (form→stance), `stanceGenderAssoc` (stance→gender), `composedAssoc` (indirect form→gender via `composeIndex`); universal non-exclusivity (`all_nonexclusive`), ze/wa symmetry (`ze_wa_symmetry`), mediation/factorization/ranking theorems, bridge to `IndexicalField`
+- **Core/SocialMeaning.lean**: `composeIndex` (sum-product composition of association maps, formalizing indirect indexicality)
+- **Japanese/Pronouns.lean**: add *ore* (俺) 1sg very informal pronoun; update *boku* docstring to note mediated gender association
+
+## [0.229.644] - 2026-04-10
+
+### Added
+- **Metalinguistic.lean**: new `Theories/Semantics/Comparison/` module — @cite{rudolph-kocurek-2024}'s semantic expressivist framework for metalinguistic comparatives/equatives; `SemanticOrdering` (total preorder on interpretations); `MFormula` with `.mc` (metalinguistic comparative ≻); `eval` implementing equation (48); `assertoricContent` (truth at all maximal interpretations); `truthPreserves`/`acceptancePreserves` (classical vs nonclassical entailment); `DistanceFunction` with centeredness/convexity/noncontractivity axioms; `evalMuchMore`/`evalVery`/`evalSorta` degree modifiers; `OrderingWorldPair`/`MetalinguisticCG` with `HasContextSet` instance connecting to Stalnaker common ground
+- **RudolphKocurek2024.lean**: new `Phenomena/Gradability/Studies/` — finite model verification of metalinguistic gradability predictions; Model 1 (3 linear interpretations): MC consistent with truth of both constituents, asymmetry, irreflexivity, equative reflexivity/symmetry; Model 2 (2 tied interpretations): borderline cases, nonclassicality of acceptance-preservation (parallels @cite{yalcin-2007}); assertoric content tests; degree modifier (`very`/`sorta`) verification with distance function; `noReversal` bridge to delineation comparatives (@cite{klein-1980})
+
+## [0.229.643] - 2026-04-10
+
+### Added
+- **LTU.lean**: new `Theories/Semantics/UseConditional/` module — @cite{gutzmann-2015}'s three-dimensional compositional semantics (L_TU); `UCType` type system with `isUCType`; `UCIClass` with 5 named UCI classes; `ThreeDimMeaning C W` with t-dim/s-dim/u-dim (context vs world indexing); `multidimApp`, `ucElim`, `ofTruthConditional`, `ofUCI`, `toTwoDim` bridge to `TwoDimProp`; 5 key theorems (UE preserves t-dim, resets s-dim, MA merges u-dims)
+- **SentenceMoodUCI.lean**: new `Theories/Semantics/Mood/` module — sentence mood operators as use-conditional meaning; `MoodContext W`; `deont`/`epis`/`episModifier`/`hknow`; German clause type derivations (`dassVLMood`, `v2DeclMood`, `v2InterrogMood`, `vlInterrogMood`); 4 theorems including `v2_vs_vl_interrog` (Cuban cigar argument)
+- **ModalParticles.lean**: new `Fragments/German/` — modal particle lexical entries (*ja*, *denn*, *wohl*, *halt*, *doch*) as functional expletive UCIs; `ModalParticleEntry` with mood distribution booleans; per-datum verification; `native_decide` distribution pattern theorems
+- **Gutzmann2015.lean**: new `Phenomena/SentenceMood/Studies/` — `MoodObservation` data for 5 German clause types; theory-observation bridge theorems; `cuban_cigar` (V2 vs VL interrogative HKNOW distinction); modal particle–mood interaction theorems (`wohl_tracks_epis`, `ja_declarative_restriction`, `denn_interrogative_restriction`)
+
+## [0.229.642] - 2026-04-10
+
+### Added
+- **Mirrazi2024.lean**: new `Phenomena/Quantification/Studies/` — scope paradox (wide pseudo-scope de dicto), CF-yields-attested-reading, indefinite/universal asymmetry, fixed-set problem + world-skolemization solution, cross-linguistic variation parameter; bridge theorems to Farsi fragment
+- **ChoiceFunction.lean**: `WorldVarConfig`, `SkolemCF.evalAt` (connects `SitVarStatus` to `SkolemCF` — free→de re, bound→de dicto), `SkolemCF.cross_world_variation`; import `Core.Semantics.Intension`; expanded module docstring with world-skolemization section
+- **Farsi/Determiners.lean**: `PlainIndefiniteEntry` structure; `ye`, `candTa`, `doTa` entries as choice-function indefinites with world variables; per-entry `_is_cf` and `_has_world_var` theorems; import `ChoiceFunction`; expanded module docstring distinguishing EFCI (*yek-i*) from plain CF (*ye/čand-ta/do-ta*)
+
 ## [0.229.641] - 2026-04-10
 
 ### Added

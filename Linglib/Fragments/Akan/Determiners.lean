@@ -165,31 +165,22 @@ inductive BiaraReading where
 -- § 5. Bridge Theorems
 -- ════════════════════════════════════════════════════
 
-/-- *bí* forces wide scope under negation — derived from its CF
-    analysis type, not stipulated independently.
+/-- *bí* is a choice function indefinite.
     @cite{owusu-2022}, @cite{zimmermann-2026} §3.3 ex. (15). -/
-theorem bi_forces_wide_scope :
-    biIndefType.forcesWideScopeUnderNeg = true := rfl
+theorem bi_is_cf : biIndefType = .choiceFunction := rfl
 
-/-- Bare NPs allow narrow scope — derived from their ∃ analysis type. -/
-theorem bareNP_allows_narrow_scope :
-    bareNPIndefType.allowsNarrowScopeUnderNeg = true := rfl
+/-- Bare NPs are ∃-quantifier indefinites. -/
+theorem bareNP_is_existential : bareNPIndefType = .existential := rfl
 
-/-- The scope contrast between *bí* and bare NPs follows from
-    the CF vs ∃ distinction, not from a per-lexeme stipulation. -/
-theorem bi_vs_bare_scope_derived :
-    biIndefType.forcesWideScopeUnderNeg = true ∧
-    bareNPIndefType.forcesWideScopeUnderNeg = false :=
-  ⟨rfl, rfl⟩
+/-- Strong analysis of *nó* predicts familiarity presupposition.
+    @cite{schwarz-2013}. -/
+theorem strong_presup_familiarity :
+    NoAnalysis.strong.toPresupType = .familiarity := rfl
 
-/-- *nó* contributes familiarity regardless of the chosen analysis:
-    both the strong and demonstrative analyses predict familiarity;
-    Bombi's weak analysis predicts uniqueness but evaluated against
-    a discourse-restricted situation (functionally similar). -/
-theorem no_requires_discourse_link :
-    NoAnalysis.strong.toPresupType = .familiarity ∧
-    NoAnalysis.demonstrative.toPresupType = .familiarity :=
-  ⟨rfl, rfl⟩
+/-- Demonstrative analysis of *nó* also predicts familiarity.
+    @cite{owusu-2022}. -/
+theorem demonstrative_presup_familiarity :
+    NoAnalysis.demonstrative.toPresupType = .familiarity := rfl
 
 /-- Akan's article system: overt DEF marker (*nó*) for familiarity,
     bare NP for uniqueness-based definiteness. This is the reverse of

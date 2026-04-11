@@ -146,34 +146,18 @@ theorem koo_is_distributive : HausaUQ.koo.isDistributive = true := rfl
 /-- *duk(a)* is non-distributive: it applies to the maximal sum. -/
 theorem duk_is_nondistributive : HausaUQ.duk.isDistributive = false := rfl
 
-/-- *koo* selects SG count NPs (atoms), *duk* selects DEF PL/mass NPs.
-    This complement difference is what drives the distributivity split
-    via the DNG (@cite{haslinger-etal-2025-nllt}). -/
-theorem complement_split :
-    HausaUQ.koo.takesSGCount = true ∧ HausaUQ.duk.takesDEFPlural = true :=
-  ⟨rfl, rfl⟩
+/-- *koo* selects SG count NPs (atoms).
+    @cite{zimmermann-2008}, @cite{haslinger-etal-2025-nllt}. -/
+theorem koo_takes_sg_count : HausaUQ.koo.takesSGCount = true := rfl
 
-/-- Only *koo*-quantifiers can semantically bind SG pronouns, because
-    only they distribute over individual atoms. *duk*-NPs cannot bind
-    SG pronouns; they require PL pronominal forms.
-    @cite{zimmermann-2008}, @cite{zimmermann-2026} §4.1 ex. (23). -/
-theorem koo_binds_sg_pronouns :
-    HausaUQ.koo.isDistributive = true ∧ HausaUQ.duk.isDistributive = false :=
-  ⟨rfl, rfl⟩
+/-- *duk* selects DEF PL/mass NPs.
+    @cite{zimmermann-2008}, @cite{haslinger-etal-2025-nllt}. -/
+theorem duk_takes_def_plural : HausaUQ.duk.takesDEFPlural = true := rfl
 
-/-- Both Hausa INDEFs are ∃-quantifiers, so both allow narrow scope
-    under negation. Scope differences are not from analysis type but
-    from whether the ∃ is overt (*wani*, can QR) or covert (bare, local).
-    @cite{zimmermann-2014}. -/
-theorem hausa_indefs_allow_narrow_scope :
-    HausaIndef.bare.indefType.allowsNarrowScopeUnderNeg = true ∧
-    HausaIndef.wani.indefType.allowsNarrowScopeUnderNeg = true :=
-  ⟨rfl, rfl⟩
+/-- Bare NPs are ∃-quantifier indefinites. @cite{zimmermann-2014}. -/
+theorem bare_is_existential : HausaIndef.bare.indefType = .existential := rfl
 
-/-- *duk(a)* cannot co-occur with collective predicates like *gather*
-    due to its distributive semantic nature — only the semantic nature
-    of *koo* forces atom-level distribution.
-    @cite{zimmermann-2008}, @cite{zimmermann-2026} §4.1 ex. (22). -/
-theorem duk_allows_collective : HausaUQ.duk.isDistributive = false := rfl
+/-- *wani/wata* are ∃-quantifier indefinites. @cite{zimmermann-2014}. -/
+theorem wani_is_existential : HausaIndef.wani.indefType = .existential := rfl
 
 end Fragments.Hausa.Determiners

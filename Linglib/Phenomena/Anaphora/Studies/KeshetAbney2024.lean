@@ -1,7 +1,7 @@
+import Linglib.Theories.Semantics.PIP.Bridges
 import Linglib.Theories.Semantics.PIP.Connectives
 import Linglib.Theories.Semantics.PIP.Felicity
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
-import Linglib.Core.Semantics.Presupposition
 import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.CrossSentential
@@ -343,40 +343,6 @@ end Paycheck
 
 
 -- ============================================================
--- Summation (paper §2.2, items 25–27)
--- ============================================================
-
-section Summation
-
-/--
-Summation: Σxφ = ⋃{g(x) : g ∈ G, ⟦φ⟧^{M,{g},w*} = 1}
-
-Collects entity values across assignments. For "Every farmer bought
-a donkey. They paid a lot for them.", "them" = Σx(donkey(x)).
--/
-def summationFiltered {W E : Type*} (c : IContext W E) (v : IVar)
-    (φ : ICDRTAssignment W E → W → Bool) : Set (Entity E) :=
-  { e | ∃ g w, (g, w) ∈ c ∧ φ g w = true ∧ g.indiv v w = e }
-
-def summationValues {W E : Type*} (c : IContext W E) (v : IVar) : Set (Entity E) :=
-  { e | ∃ g w, (g, w) ∈ c ∧ g.indiv v w = e }
-
-theorem summationValues_eq_trivial_filter {W E : Type*}
-    (c : IContext W E) (v : IVar) :
-    summationValues c v = summationFiltered c v (λ _ _ => true) := by
-  ext e; simp [summationValues, summationFiltered]
-
-theorem summation_nonempty {W E : Type*}
-    (c : IContext W E) (v : IVar)
-    (gw : ICDRTAssignment W E × W)
-    (h : gw ∈ c) :
-    gw.1.indiv v gw.2 ∈ summationValues c v :=
-  ⟨gw.1, gw.2, h, rfl⟩
-
-end Summation
-
-
--- ============================================================
 -- Modal Subordination Data (from @cite{roberts-1989})
 -- ============================================================
 
@@ -600,6 +566,7 @@ def αBurger : FLabel := ⟨10⟩
 def vBurger : IVar := ⟨10⟩
 
 def ibAccess : AccessRel IBWorld
+  | .actual, .actual => true
   | .actual, .burgerW => true
   | _, _ => false
 
@@ -632,12 +599,21 @@ instance : FiniteWorlds IBWorld where
   complete := by intro w; cases w <;> simp [ibWorlds]
 
 /--
-Might does NOT give reflexivity at .actual — `ibAccess .actual .actual = false`.
-This is why might blocks anaphora: the evaluation world is not among the
-accessible worlds, so the description need not hold there.
+Might blocks anaphora NOT because of non-reflexive access, but because the
+burger **description** is world-dependent: `isBurgerAt g .actual = false`
+for all g (burger_desc_fails_at_actual). Even with a reflexive modal base,
+the description Σb(BURGER_w([b])) is empty at .actual — no burger there.
+
+The accessibility IS reflexive at .actual (ibAccess .actual .actual = true),
+confirming that the blocking mechanism is about description content, not
+accessibility structure.
 -/
-theorem burger_not_realistic :
-    ibAccess .actual .actual = false := rfl
+theorem burger_desc_world_dependent :
+    isBurgerAt
+      { indiv := λ _ _ => .some .burger, prop := λ _ => ∅ }
+      .actual = false ∧
+    ibAccess .actual .actual = true :=
+  ⟨rfl, rfl⟩
 
 end IntensionalBurger
 
@@ -970,20 +946,26 @@ theorem label_monotonicity_is_uniform :
 -- ============================================================
 
 /--
-The might/must asymmetry is grounded in the T axiom of modal logic.
+The might/must asymmetry is grounded in descriptions, not accessibility.
 
-PIP's `must` agrees with `Core.ModalLogic.kripkeEval .necessity`
-(`must_truth_agrees_kripkeEval`). When the accessibility relation is
-reflexive at the evaluation world (realistic modal base), the T axiom
-(`must_realistic_at`) guarantees the description holds there — enabling
-anaphora. Non-reflexive `might` lacks this guarantee.
+Both modal bases are reflexive at .actual. The difference:
+- Must (animal): the description `isAnimalInShed` is world-INdependent
+  (holds at all worlds) → SINGLE succeeds at every context-set world.
+- Might (burger): the description `isBurgerAt` is world-dependent
+  (holds only at .burgerW) → SINGLE fails at .actual.
+
+The T axiom is necessary but not sufficient: reflexivity guarantees the
+description is checked at the evaluation world, but the description
+itself must hold there.
 -/
 theorem intensional_anaphora_is_T_axiom :
-    -- Must's accessibility is reflexive at actual → description guaranteed
+    -- Must's accessibility is reflexive at actual
     iaAccess .actual .actual = true ∧
-    -- Might's accessibility is NOT reflexive at actual → no guarantee
-    ibAccess .actual .actual = false :=
-  ⟨animal_must_realistic, burger_not_realistic⟩
+    -- Might's accessibility is ALSO reflexive at actual
+    ibAccess .actual .actual = true ∧
+    -- But the burger description fails at actual (world-dependent)
+    (∀ g : ICDRTAssignment IBWorld IBEntity, isBurgerAt g .actual = false) :=
+  ⟨animal_must_realistic, rfl, burger_desc_fails_at_actual⟩
 
 
 -- ============================================================
@@ -1105,74 +1087,262 @@ theorem pip_solves_dpl_negation_problem :
 
 
 -- ============================================================
--- Bridge 8: Presupposition Projection — Karttunen's Conjunction
+-- Bridge 8: Presupposition Projection
 -- ============================================================
 
-/--
-PIP's F operator and `Core.Presupposition.PrProp.andFilter` implement the
-same Karttunen conjunction clause (@cite{karttunen-1973}).
-
-**PIP Felicity** (`PIPExpr.felicitous` for `.conj φ ψ`):
-  `φ.felicitous w && ((φ.truth w).not || ψ.felicitous w)`
-
-**PrProp.andFilter** (`Core.Presupposition`):
-  `p.presup w && (!p.assertion w || q.presup w)`
-
-These are structurally identical: the first conjunct's felicity/presupposition
-must hold, AND the second conjunct's felicity/presupposition must hold whenever
-the first conjunct is true. The first conjunct's truth can "satisfy" the second
-conjunct's presupposition.
-
-This theorem proves the correspondence by showing that PIP's F operator on
-conjunction produces the same Bool value as `andFilter` when we interpret
-`truth` as `assertion` and `felicitous` as `presup`.
+/-!
+Presupposition projection bridges are in `PIP.Bridges`:
+- `pip_felicity_agrees_with_andFilter` — F(φ ∧ ψ) ↔ andFilter
+- `pip_felicity_agrees_with_neg` — F(¬φ) ↔ PrProp.neg
+- `pip_felicity_agrees_with_impFilter` — F(φ → ψ) ↔ impFilter
+- `pip_felicity_agrees_with_orFilter` — F(φ ∨ ψ) decomposition
 -/
-theorem pip_felicity_agrees_with_andFilter {W : Type*} (φ ψ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.conj φ ψ).felicitous w = true) ↔
-    (Core.Presupposition.PrProp.andFilter
-      (Core.Presupposition.PrProp.ofBool φ.felicitous φ.truth)
-      (Core.Presupposition.PrProp.ofBool ψ.felicitous ψ.truth)).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.andFilter,
-    Core.Presupposition.PrProp.ofBool, Bool.and_eq_true, Bool.or_eq_true]
-  constructor
-  · intro ⟨h1, h2⟩
-    exact ⟨h1, fun ht => by
-      rcases h2 with h | h
-      · exact absurd ht (by simp [Bool.not_eq_true'] at h; rw [h]; decide)
-      · exact h⟩
-  · intro ⟨h1, h2⟩
-    refine ⟨h1, ?_⟩
-    by_cases ht : φ.truth w = true
-    · exact Or.inr (h2 ht)
-    · simp [Bool.not_eq_true, ht]
+
+
+-- ============================================================
+-- Donkey Anaphora (paper §2.6.2, items 53–56)
+-- ============================================================
+
+section Donkey
+
+/-!
+### PIP Donkey Derivation
+
+"Every farmer who owns a donkey beats it." (paper items 53–56)
+
+PIP analysis: ∀x(farmer(x) ∧ ∃^αD y(donkey(y) ∧ owns(x,y)) →
+              beats(x, DEF_αD{y}))
+
+The label αD for the donkey is registered inside the restrictor's
+existential. Because ∀ = ¬∃¬ and labels survive both negations,
+αD is available in the nuclear scope for DEF_αD retrieval.
+
+Key property: formula label subordination. The label αD is subordinated
+to the restrictor — its descriptive content is "donkey(y) ∧ owns(x,y)".
+When the pronoun "it" (= DEF_αD{y}) is resolved, it finds the unique
+donkey owned by the farmer under discussion.
+-/
+
+inductive DWorld where
+  | w0
+  deriving DecidableEq, Repr, Inhabited
+
+inductive DEntity where
+  | farmer1 | farmer2 | donkey1 | donkey2
+  deriving DecidableEq, Repr, Inhabited
+
+def dWorlds : List DWorld := [.w0]
+def αDonkey : FLabel := ⟨30⟩
+def vFarmer : IVar := ⟨30⟩
+def vDonkey : IVar := ⟨31⟩
+
+def isFarmer (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Bool :=
+  match g.indiv vFarmer w with
+  | .some .farmer1 | .some .farmer2 => true
+  | _ => false
+
+def isDonkey (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Bool :=
+  match g.indiv vDonkey w with
+  | .some .donkey1 | .some .donkey2 => true
+  | _ => false
+
+/-- Ownership: farmer1 owns donkey1, farmer2 owns donkey2. -/
+def owns (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Bool :=
+  match g.indiv vFarmer w, g.indiv vDonkey w with
+  | .some .farmer1, .some .donkey1 => true
+  | .some .farmer2, .some .donkey2 => true
+  | _, _ => false
+
+/-- Beating: every farmer who owns a donkey beats it. -/
+def beats (g : ICDRTAssignment DWorld DEntity) (w : DWorld) : Bool :=
+  match g.indiv vFarmer w, g.indiv vDonkey w with
+  | .some .farmer1, .some .donkey1 => true
+  | .some .farmer2, .some .donkey2 => true
+  | _, _ => false
 
 /--
-PIP's F operator for negation agrees with `PrProp.neg`: both preserve the
-presupposition/felicity of the negated expression unchanged.
+"Every farmer who owns a donkey beats it."
+
+PIP formula: ∀x(farmer(x) ∧ ∃^αD y(donkey(y) ∧ owns(x,y)) →
+             beats(x, DEF_αD))
+
+Dynamic encoding: forall_ = ¬∃¬, with labeled existential for the donkey.
 -/
-theorem pip_felicity_agrees_with_neg {W : Type*} (φ : Felicity.PIPExpr W) (w : W) :
-    ((Felicity.PIPExpr.neg φ).felicitous w = true) ↔
-    (Core.Presupposition.PrProp.neg
-      (Core.Presupposition.PrProp.ofBool φ.felicitous φ.truth)).presup w := by
-  simp only [Felicity.PIPExpr.felicitous, Core.Presupposition.PrProp.neg,
-    Core.Presupposition.PrProp.ofBool]
+def donkeySentence : PUpdate DWorld DEntity :=
+  forall_ vFarmer {.farmer1, .farmer2}
+    (conj
+      (atom (λ g w => isFarmer g w))
+      (conj
+        (existsLabeled αDonkey vDonkey {.donkey1, .donkey2}
+          isDonkey
+          (atom (λ g w => isDonkey g w && owns g w)))
+        (conj
+          (retrieveDef αDonkey)
+          (atom beats))))
 
-/--
-PIP's presupposition construct `φ|ψ` agrees with `PrProp.andFilter` where
-the presupposition is an atom (always felicitous) and the assertion is the
-presupposed content.
+instance : FiniteWorlds DWorld where
+  worlds := dWorlds
+  complete := by intro w; cases w; simp [dWorlds]
 
-  F(φ|ψ) = Fφ ∧ ψ
-  andFilter(⟨Fφ, Tφ⟩, ⟨ψ, trivial⟩).presup = Fφ ∧ (!Tφ ∨ ψ)
+/-- The donkey label is registered through the forall (¬∃¬). -/
+theorem donkey_label_registered (d : Discourse DWorld DEntity) :
+    (donkeySentence d).labels.registered αDonkey = true := by
+  simp only [donkeySentence, forall_, negation, exists_, existsLabeled, atom,
+             conj, retrieveDef, Discourse.mapInfo,
+             LabelStore.registered, Option.isSome, LabelStore.register,
+             LabelStore.lookup, αDonkey]
+  rfl
 
-These differ slightly: `andFilter` is the conjunction clause, while `φ|ψ`
-is a dedicated presupposition construct. The equivalence holds when the
-presupposition ψ is not conditioned on φ's truth — which is correct,
-since ψ must hold unconditionally for φ|ψ to be felicitous.
+end Donkey
+
+
+-- ============================================================
+-- Hob-Nob (paper §3.5, items 91–93)
+-- ============================================================
+
+section HobNob
+
+/-!
+### Cross-Attitude Anaphora: Hob-Nob
+
+"Hob thinks a witch blighted his mare. Nob wonders whether
+she (the same witch) killed his cow." (Geach 1967)
+
+PIP analysis (paper items 91–93): The label αWitch is registered
+under Hob's belief attitude. Nob's wonder attitude retrieves the
+same label. Label persistence across attitude operators is the
+same mechanism as modal subordination.
+
+Key property: labels are part of the discourse state, not the
+information state. Since attitudes (like modals) affect only the
+info state while preserving labels, cross-attitude anaphora works
+by the same mechanism as cross-modal anaphora.
 -/
-theorem pip_presup_unconditional {W : Type*} (φ : Felicity.PIPExpr W) (ψ : W → Bool) (w : W) :
-    (Felicity.PIPExpr.presup φ ψ).felicitous w =
-    (φ.felicitous w && ψ w) := rfl
+
+inductive HNWorld where
+  | actual | hobBelief | nobWonder
+  deriving DecidableEq, Repr, Inhabited
+
+inductive HNEntity where
+  | witch
+  deriving DecidableEq, Repr, Inhabited
+
+def hnWorlds : List HNWorld := [.actual, .hobBelief, .nobWonder]
+def αWitch : FLabel := ⟨40⟩
+def vWitch : IVar := ⟨40⟩
+
+/-- Hob's doxastic accessibility: Hob believes from actual to hobBelief. -/
+def hobAccess : AccessRel HNWorld
+  | .actual, .hobBelief => true
+  | _, _ => false
+
+/-- Nob's bouletic accessibility: Nob wonders from actual to nobWonder. -/
+def nobAccess : AccessRel HNWorld
+  | .actual, .nobWonder => true
+  | _, _ => false
+
+def isWitch (g : ICDRTAssignment HNWorld HNEntity) (w : HNWorld) : Bool :=
+  g.indiv vWitch w == .some .witch
+
+/-- Hob's belief: "a witch blighted his mare" -/
+def hobBelief : PUpdate HNWorld HNEntity :=
+  must hobAccess hnWorlds
+    (existsLabeled αWitch vWitch {.witch}
+      isWitch
+      (atom isWitch))
+
+/-- Nob's wonder: "she killed his cow" — retrieves αWitch from Hob's belief. -/
+def nobWonder : PUpdate HNWorld HNEntity :=
+  conj
+    (retrieveDef αWitch)
+    (might nobAccess hnWorlds
+      (atom (λ g w => g.indiv vWitch w != .star)))
+
+/-- The full Hob-Nob discourse. -/
+def hobNobDiscourse : PUpdate HNWorld HNEntity :=
+  conj hobBelief nobWonder
+
+/-- The witch label survives from Hob's belief to Nob's wonder. -/
+theorem hobnob_label_persists (d : Discourse HNWorld HNEntity) :
+    (hobBelief d).labels.registered αWitch = true := by
+  simp only [hobBelief, must, modalExpand, existsLabeled, atom,
+             Discourse.mapInfo, LabelStore.registered, Option.isSome,
+             LabelStore.register, αWitch]
+  rfl
+
+/-- After the full discourse, αWitch is still available. -/
+theorem hobnob_full_label_available (d : Discourse HNWorld HNEntity) :
+    (hobNobDiscourse d).labels.registered αWitch = true := by
+  simp only [hobNobDiscourse, conj, nobWonder, hobBelief, must, might,
+             modalExpand, existsLabeled, atom, retrieveDef,
+             Discourse.mapInfo, LabelStore.registered, Option.isSome,
+             LabelStore.register, LabelStore.lookup, αWitch, vWitch, isWitch]
+  rfl
+
+end HobNob
+
+
+-- ============================================================
+-- Semantic Framework Comparison
+-- ============================================================
+
+/-!
+### DPL vs ICDRT vs PIP: Coverage Comparison
+
+The three frameworks have different coverage profiles for anaphora
+phenomena. PIP's descriptive content mechanism handles all cases
+uniformly; DPL and ICDRT each miss some.
+
+| Phenomenon | DPL | ICDRT | PIP |
+|---|---|---|---|
+| Cross-sentential | ✓ | ✓ | ✓ |
+| Negation blocks | ✓ | ✓ | ✓ |
+| Donkey anaphora | ✓ | ✓ | ✓ |
+| Double negation | ✗ | ✓ | ✓ |
+| Bathroom sentences | ✗ | ✓ | ✓ |
+| Modal subordination | ✗ | ✓ | ✓ |
+| Paycheck pronouns | ✗ | ✗ | ✓ |
+| Intensional anaphora | ✗ | ✗ | ✓ |
+-/
+
+/-- Coverage datum for framework comparison. -/
+structure CoverageDatum where
+  phenomenon : String
+  dpl : Bool
+  icdrt : Bool
+  pip : Bool
+  deriving Repr
+
+def coverageData : List CoverageDatum := [
+  ⟨"Cross-sentential", true, true, true⟩,
+  ⟨"Negation blocks", true, true, true⟩,
+  ⟨"Donkey anaphora", true, true, true⟩,
+  ⟨"Double negation", false, true, true⟩,
+  ⟨"Bathroom sentences", false, true, true⟩,
+  ⟨"Modal subordination", false, true, true⟩,
+  ⟨"Paycheck pronouns", false, false, true⟩,
+  ⟨"Intensional anaphora", false, false, true⟩
+]
+
+/-- PIP covers all phenomena (all pip fields are true). -/
+theorem pip_covers_all :
+    coverageData.all (·.pip) = true := by native_decide
+
+/-- DPL misses 5 phenomena. -/
+theorem dpl_misses_five :
+    (coverageData.filter (! ·.dpl)).length = 5 := by native_decide
+
+/-- ICDRT misses 2 phenomena (paycheck + intensional). -/
+theorem icdrt_misses_two :
+    (coverageData.filter (! ·.icdrt)).length = 2 := by native_decide
+
+/-- PIP strictly extends ICDRT: everything ICDRT covers, PIP covers too. -/
+theorem pip_extends_icdrt :
+    coverageData.all (λ d => !d.icdrt || d.pip) = true := by native_decide
+
+/-- PIP strictly extends DPL. -/
+theorem pip_extends_dpl :
+    coverageData.all (λ d => !d.dpl || d.pip) = true := by native_decide
 
 
 end Phenomena.Anaphora.Studies.KeshetAbney2024

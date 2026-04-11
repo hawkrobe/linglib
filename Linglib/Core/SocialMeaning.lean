@@ -253,4 +253,27 @@ def VariableBehavior.isMarker (vb : VariableBehavior) : Prop :=
 def VariableBehavior.isStereotype (vb : VariableBehavior) : Prop :=
   vb.order = .third
 
+-- ============================================================================
+-- Indirect indexicality (@cite{ochs-1992}, @cite{silverstein-1976})
+-- ============================================================================
+
+/-- Compose two association maps through an intermediate domain.
+
+    The composed association of source `s` with target `t` is the sum
+    over all mediating elements `m` of `f₁(s,m) × f₂(m,t)`:
+
+      composed(s, t) = Σ_m f₁(s,m) × f₂(m,t)
+
+    This formalizes @cite{ochs-1992}'s indirect indexicality: linguistic
+    forms do not directly index gender; they index stances, which in turn
+    index gender. The composed value captures how strongly a form
+    indirectly indexes a gender category.
+
+    Requires a list of all mediators (study files with `[Fintype M]`
+    pass `Fintype.elems.toList`). -/
+def composeIndex {S M T : Type}
+    (f₁ : S → M → ℚ) (f₂ : M → T → ℚ)
+    (allM : List M) (s : S) (t : T) : ℚ :=
+  (allM.map fun m => f₁ s m * f₂ m t).sum
+
 end Core.SocialMeaning
