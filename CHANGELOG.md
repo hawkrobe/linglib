@@ -1,5 +1,81 @@
 # Changelog
 
+## [0.229.640] - 2026-04-10
+
+### Changed
+- **Lewis1973.lean**: closed `dependence_implies_causation` sorry with structured proof (`hasChainAux_self` reflexivity + one-step chain via `List.mem_filter` / `List.any_eq_true`); renamed `preemption_c2_passes_butfor` → `preemption_c2_butfor_fails` (name was misleading — theorem proves `= false`)
+
+## [0.229.639] - 2026-04-10
+
+### Added
+- **SubintervalProperty.lean**: `impf_entails_prfv_of_csip` — CSIP(P) → IMPF(P) ⊆ PRFV(P), the formal reason the imperfective paradox doesn't arise for homogeneous predicates; closed `csip_necessary_for_impf_prfv` sorry via refined predicate trick (Q carries reverse containment, mutual ⊆ closes to =), completing the biconditional: (∀P, IMPF(P) ⊆ PRFV(P)) ⟺ (∀P, CSIP(P))
+
+## [0.229.638] - 2026-04-10
+
+### Added
+- **LexicalAspect.lean**: `VendlerClass.hasFullSubintervalProp` distinguishing states' full SIP from activities' qualified SIP; `fullSIP_iff_atomDist` connecting to ATOM-DIST_t; `fullSIP_implies_homogeneous` (full ⊂ qualified)
+- **SubintervalProperty.lean**: `fullSIP_strictly_stronger` (states have full SIP, activities have only qualified); closed `imperfective_paradox_possible` sorry — concrete counterexample via "telic" predicate on nontrivial Time
+- **Smith1997.lean**: `PerfStativeParam` ternary type (`.closed`/`.open`/`.excluded`) replacing `perfectiveCoversStatives : Bool`; `focusesPreliminaryStages` discriminating neutral from imperfective viewpoints; `PerfectiveEffect` type with `perfectiveEffect` predicting completion (telic) vs termination (atelic) under perfective; `completion_iff_telic`; `resultState_iff_naturalEndpoint` documenting the extensional collapse; WALS bridge theorems connecting Smith's viewpoint inventories to typological profiles
+- **Verbal.lean**: added semelfactive verbs `hiccup`, `blink`, `knock`, `tap`, `flash` from @cite{smith-1997}
+
+### Changed
+- **Smith1997.lean**: replaced `hasResultState` (redundant with `hasNaturalEndpoint`) with `resultState_iff_naturalEndpoint` theorem; improved `hasPreliminaryStages` docstring to clarify detachable vs non-detachable process stages
+- **LexicalAspect.lean**: updated `isHomogeneous` docstring to note activities' qualified SIP
+
+## [0.229.637] - 2026-04-10
+
+### Added
+- **Lewis1973.lean**: formalization of Lewis's counterfactual analysis of causation — `lewisButFor` (intervention-based but-for), `lewisDependence` (causal dependence), `lewisCausation` (transitive closure); epiphenomena model (barometer/storm/pressure) with `full_causal_asymmetry` (6-way); overdetermination failure; preemption analysis showing late-preemption limitation; `lewis_vs_def10b_chain` proving Lewis's but-for and Nadathur's Def 10b DIVERGE on chains (Lewis says necessary, Def 10b says not); bridge theorems to CC-selection and BAS 2026 door model
+- **references.bib**: added `lewis-1973-causation` (The Journal of Philosophy 70(17), DOI 10.2307/2025310)
+
+### Changed
+- **Builder.lean**: removed dead `CausativeBuilder.toProfile` (never referenced)
+- **Counterfactual.lean**: added cross-reference to Lewis1973.lean in causal model section docstring
+
+## [0.229.636] - 2026-04-10
+
+### Added
+- **Composition.lean**: VP-level situation type composition rules from @cite{smith-1997} §3.3; `composeWithNP` (count/mass NP × verb telicity), `composeWithPP` (directional/locative), `overrideTelicity`/`overrideDuration` (Principle of External Override §3.2.5); 12 verification theorems for Smith's examples; `override_absorbs_composition` proving override is the final word
+- **Smith1997.lean**: study file formalizing the two-component theory; temporal schemata per situation type (§2), viewpoint visibility properties (§4.1), `AspectualInterpretation` type with `independence_free_generation` (25 = 5 × 5 products, §4.3), `AspectualSystem` structure with cross-linguistic viewpoint parameters for English/French/Mandarin/Navajo (§4.2), `neutral_between_perf_imperf` (neutral is informationally intermediate), `progressive_requires_stages` derived from features
+
+### Changed
+- **AspectualConsistency.lean**: loosened `pipelineOK` to accept `.coerced` for atelic verbs (needed after `cough` reclassification to semelfactive)
+
+## [0.229.635] - 2026-04-10
+
+### Added
+- **ProgressiveCausation.lean § 5**: `CausallyGroundedEvent` structure bridging causal processes (`CausalProcess`) to temporal intervals (`SubeventPhases`); `causallyGroundedEvent_progressive_not_perfective` connects causal imperfective paradox to temporal `progressive_before_result`
+
+### Changed
+- **Builder.lean**: removed dead `CausativeBuilder.toProfile` (never referenced)
+- **TemporalDecomposition.lean**: added cross-reference to `Causation.ProgressiveCausation.progressive_not_entails_perfective` in `progressive_before_result` docstring
+
+## [0.229.634] - 2026-04-10
+
+### Added
+- **MixedQuotation.lean**: core theory of mixed quotation from @cite{kirk-giannini-2024} — `MQContext`, `shunt` (↓), `diagonalize` (†), `AppropStandard`, `applyApprop` (𝔄); composition theorems `metalinguistic_neg_truth_conditions`, `metalinguistic_neg_targets_appropriateness`, `mixed_quot_strips_original_ci`
+- **KirkGiannini2024.lean**: five applications of covert mixed quotation — CI projection failure (§3), c-monsters via diagonalization (§4, Pluto scenario), metalinguistic negation (§5, mongeese/mongooses), metalinguistic negotiation (§6, Secretariat/athlete), "in a sense" constructions (§7, viruses/alive); 12 verified theorems
+- **Expressives/Basic.lean**: `TwoDimProp.pureQuote` — strips CI content under quotation, with `pureQuote_strips_ci` and `pureQuote_preserves_atIssue` theorems
+- **references.bib**: added `kirk-giannini-2024` entry
+- New directories: `Theories/Semantics/Quotation/`, `Phenomena/Quotation/Studies/`
+
+### Changed
+- **Expressives/Basic.lean**: qualified "CIs project through ALL operators" to note quotation exception (@cite{kirk-giannini-2024} §3)
+
+## [0.229.633] - 2026-04-10
+
+### Added
+- **SubintervalProperty.lean**: VendlerClass bridge (`predictsSubintervalProp`, `sub_agrees_with_homogeneous`); `activity_entailment` theorem (@cite{smith-1997} p. 25: IMPF(activity) entails PRFV at subintervals); `imperfective_paradox_possible` (@cite{smith-1997} p. 29)
+- **Rothstein2004.lean**: feature-derivation theorems — `inX_from_telicity`, `forX_from_features`, `progressive_from_features` derive diagnostic predictions from Smith's 3-feature decomposition; `forX_semelfactive_coercion` showing atelic+punctual → coerced
+- **references.bib**: added `smith-1997` entry (2nd edition, Springer, DOI `10.1007/978-94-011-5606-6`)
+
+### Changed
+- **Core.lean**: deleted misleading `abbrev NEUT := @INIT_OVERLAP` (Smith's neutral viewpoint ≠ Pancheva's INIT_OVERLAP operator); updated `@cite{smith-1991}` → `@cite{smith-1997}`
+- **Verbal.lean**: reclassified `cough` as `.semelfactive` (was `.activity`; @cite{smith-1997} §2.4.3)
+- **Mereology.lean**: renamed `vendlerClass_atelic_implies_cum_intent` → `vendlerClass_atelic_cases`, `vendlerClass_telic_implies_qua_intent` → `vendlerClass_telic_cases` (old names overpromised — theorems enumerate classes, not CUM/QUA properties)
+- **Time.lean**: updated `@cite{smith-1991}` → `@cite{smith-1997}`; fixed `initialOverlap` docstring
+- **Krifka1989.lean, SpatialTrace.lean**: updated docstring references to renamed theorems
+
 ## [0.229.632] - 2026-04-10
 
 ### Added
